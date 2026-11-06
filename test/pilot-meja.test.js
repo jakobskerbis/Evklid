@@ -222,3 +222,36 @@ test("pilot: do 4 profili med pilotom; po koncu ostanejo, novih ni nad paketom (
     assert.equal((await add(call, "Eva")).status, 400, "ne-pilot: po paketu (1 profil)");
   });
 });
+
+test("GDPR (pregled A2): HMAC e-naslova, brisanje zapisov pilota po mesecu, ob koncu pilota in ob izbrisu profila", async () => {
+  const { createHash } = await import("node:crypto");
+  const keys = (store, like) => store.db.prepare("SELECT key FROM kv WHERE key LIKE ?").all(like).map((r) => r.key);
+  await withAccounts({ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, async ({ call, store, kid }) => {
+    await call(`/api/students/${kid.id}/usage`);
+    assert.equal(keys(store, "pilot_stopnja_%").length, 1, "zaklep stopnje zapisan");
+    assert.equal((await call(`/api/students/${kid.id}`, { method: "DELETE" })).status, 200);
+    assert.deepEqual(keys(store, "pilot_stopnja_%"), [], "izbris profila zbriše zaklep");
+    const kid2 = (await call("/api/students", { method: "POST", body: { name: "Eva", birth_year: new Date().getFullYear() - 12, consent: true } })).body;
+    spend(store, kid2, 1);
+    await call(`/api/students/${kid2.id}/usage`);
+    assert.equal((await call("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+    const prej = keys(store, "pilot_prej_%");
+    assert.equal(prej.length, 1);
+    assert.ok(!prej[0].includes(createHash("sha256").update("meja@x.si").digest("hex")), "ne navaden SHA-256");
+    assert.deepEqual(keys(store, "pilot_stopnja_%"), [], "izbris računa zbriše zaklepe");
+  });
+  // Ob zagonu: zapisi preteklih mesecev gredo, tekoči ostanejo; po koncu pilota vsi.
+  const { openDb } = await import("../server/db.js");
+  const { createApp } = await import("../server/app.js");
+  const month = new Date().toISOString().slice(0, 7);
+  for (const [end, left] of [[dayIso(10), ["pilot_prej_x_" + month, "pilot_stopnja_s1_p1_" + month]], [dayIso(-1), []]]) {
+    const prev = process.env.EVKLID_PILOT_DO;
+    process.env.EVKLID_PILOT_DO = end;
+    const store = openDb(":memory:");
+    for (const k of ["pilot_prej_x_2020-01", "pilot_prej_x_" + month, "pilot_stopnja_s1_p1_2020-01", "pilot_stopnja_s1_p1_" + month, "drugo_2020-01"]) store.db.prepare("INSERT INTO kv (key, value) VALUES (?, '1')").run(k);
+    createApp(store, { accounts: true, scheduler: false, resendKey: "re_x", log: { error() {} } });
+    assert.deepEqual(keys(store, "pilot%").sort(), left.sort(), `konec ${end}`);
+    assert.equal(keys(store, "drugo%").length, 1, "drugih zapisov ne briše");
+    prev === undefined ? delete process.env.EVKLID_PILOT_DO : (process.env.EVKLID_PILOT_DO = prev);
+  }
+});

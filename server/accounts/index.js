@@ -9,7 +9,8 @@ import { hashPassword, verifyPassword, needsRehash, fakeVerify, unusablePassword
 import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
-import { unseal } from "../crypto-polje.js";
+import { unseal, auditSecret } from "../crypto-polje.js";
+import { createHmac } from "node:crypto";
 import { exportOtherTables } from "../zasebnost.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES } from "./pilot-meja.js";
@@ -200,22 +201,35 @@ export function mountAccounts(app, store, opts = {}) {
     const row = db.prepare("SELECT until FROM store_level_grace WHERE parent_id = ? AND sub_id = ? AND level = ?").get(parent.id, parent.sub_id, lvl);
     return Date.parse(String(row.until).replace(" ", "T")) > Date.now() ? lvl : null;
   }
-  // Stopnja pilotnega profila v tem mesecu (UTC, kot obdobje meje usage.monthStart): prva, ki jo strežnik vidi v
-  // mesecu (začetek meseca ali nastanek profila). Menjava stopnje sredi meseca meje in stopenj ne dvigne (pregled #477
-  // B2); naslednji mesec velja nova stopnja.
+  // Zapisi pilota v kv (pregled #477 A2, GDPR): ključ se konča z mesecem (UTC, obdobje meje pilota usage.monthStart).
+  //   pilot_stopnja_s<profil>_p<račun>_<LLLL-MM>  zaklenjena stopnja profila (B2)
+  //   pilot_prej_<HMAC e-naslova>_<LLLL-MM>       poraba izbrisanih pilotnih računov istega naslova (B1)
+  // Zapisi preteklih mesecev se brišejo ob zagonu in v opravilu na 30 min (purgePilotKv), po koncu pilota vsi.
+  const monthKey = () => new Date().toISOString().slice(0, 7);
+  const levelKeyPrefix = (studentId) => `pilot_stopnja_s${studentId}_p`;
+  // Stopnja pilotnega profila v tem mesecu: prva, ki jo strežnik vidi v mesecu (začetek meseca ali nastanek profila).
+  // Menjava stopnje sredi meseca meje in stopenj ne dvigne (pregled #477 B2); naslednji mesec velja nova stopnja.
   function pilotLevel(parentId, studentId) {
-    const key = `pilot_stopnja_${parentId}_${studentId}_${new Date().toISOString().slice(0, 7)}`;
+    const key = `${levelKeyPrefix(studentId)}${parentId}_${monthKey()}`;
     const saved = kv.get(key);
     if (saved) return saved;
     const lvl = stopnja(store.getStudent(studentId)?.settings);
     db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(key, lvl);
     return kv.get(key) || lvl;
   }
+  // Ob izbrisu profila ali računa (pregled #477 A2): ponovno uporabljen id profila ne podeduje zaklenjene stopnje.
+  const clearPilotLevels = (studentIds) => {
+    const del = db.prepare("DELETE FROM kv WHERE substr(key, 1, length(?)) = ?");
+    for (const id of studentIds) del.run(levelKeyPrefix(id), levelKeyPrefix(id));
+  };
   // Pilot po e-naslovu (pregled #477 B1): izbris računa in nov račun z istim naslovom meje ne ponastavita. Ob izbrisu
-  // pilotnega računa (sprožilec v schema.js porabi odvzame parent_id) se poraba računa v tem mesecu (UTC, obdobje meje
-  // pilota) zapiše pod zgoščeno vrednost e-naslova (kot garancija.js, brez e-naslova) in se prišteje vsem pilotnim
-  // profilom novega računa z istim naslovom (usage.js priorSpentOf).
-  const pilotKey = (email, month = new Date().toISOString().slice(0, 7)) => `pilot_prej_${sha256(String(email || "").trim().toLowerCase())}_${month}`;
+  // pilotnega računa (sprožilec v schema.js porabi odvzame parent_id) se poraba računa v tem mesecu zapiše pod HMAC
+  // e-naslova s strežniško skrivnostjo (crypto-polje.js auditSecret; brez skrivnosti iz seznama pilota ni razrešljiv)
+  // in se prišteje vsem pilotnim profilom novega računa z istim naslovom (usage.js priorSpentOf). Hramba: do konca
+  // meseca (purgePilotKv), docs/stroski-ai.md, public/zasebnost.html.
+  const pilotSecret = auditSecret(db);
+  const pilotKey = (email, month = monthKey()) =>
+    `pilot_prej_${createHmac("sha256", pilotSecret).update(`pilot:${String(email || "").trim().toLowerCase()}`).digest("hex")}_${month}`;
   function pilotPriorSpent(studentId) {
     const owner = ownerOf(studentId);
     const p = owner ? getParent(owner) : null;
@@ -227,6 +241,17 @@ export function mountAccounts(app, store, opts = {}) {
     const since = db.prepare("SELECT datetime('now','start of month') AS d").get().d;
     const usd = db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND created_at >= ?").get(p.id, since).s;
     if (usd > 0) kv.set(pilotKey(p.email), String((Number(kv.get(pilotKey(p.email))) || 0) + usd));
+  }
+  // Brisanje zapisov pilota: preteklih mesecev vedno, po koncu pilota vseh.
+  function purgePilotKv(now = Date.now()) {
+    const like = "(key LIKE 'pilot\\_prej\\_%' ESCAPE '\\' OR key LIKE 'pilot\\_stopnja\\_%' ESCAPE '\\')";
+    if (now >= pilotEndMs()) return db.prepare(`DELETE FROM kv WHERE ${like}`).run().changes;
+    return db.prepare(`DELETE FROM kv WHERE ${like} AND substr(key, -7) <> ?`).run(new Date(now).toISOString().slice(0, 7)).changes;
+  }
+  try {
+    purgePilotKv(); // ob zagonu
+  } catch (e) {
+    log.error?.("[evklid] brisanje zapisov pilota:", e.message);
   }
   // Koliko profilov sme imeti račun: po paketu (preizkus 2, brezplačno 1, družina do MAX_CHILDREN); član pilota med
   // pilotom PILOT_PROFILES (j 2026-11-06 18:3x), a ne manj kot paket. Po pilotu obstoječi profili ostanejo.
@@ -1461,6 +1486,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     guests.snapshotParent(p.id); // poraba gosta ostane šteta za omrežje
     recordPilotDeletion(p);
+    clearPilotLevels(childIds(p.id));
     db.prepare("DELETE FROM students WHERE parent_id = ?").run(p.id);
     db.prepare("DELETE FROM parents WHERE id = ?").run(p.id);
     // Dnevnik dostopov ostane brez povezave na izbrisani račun (brez e-naslova).
@@ -2101,6 +2127,11 @@ export function mountAccounts(app, store, opts = {}) {
         guests.cleanup();
       } catch (e) {
         log.error?.("[evklid] čiščenje gostov:", e.message);
+      }
+      try {
+        purgePilotKv(); // zapisi pilota preteklih mesecev, po koncu pilota vsi (pregled #477 A2)
+      } catch (e) {
+        log.error?.("[evklid] brisanje zapisov pilota:", e.message);
       }
       try {
         purgeOldGuarantees(db); // zapisi garancije 10 let po odločitvi
