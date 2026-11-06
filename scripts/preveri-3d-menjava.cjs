@@ -89,6 +89,7 @@ const STANJE = `async () => {
     id, ime: d?.ime ?? null, opis: d?.opis ?? null, sij,
     okno: info && !info.hidden ? { ime: info.querySelector(".k3-info-ime")?.textContent, opis: info.querySelector(".k3-info-opis")?.textContent ?? null, r: r(info.getBoundingClientRect()) } : null,
     obvestilo: obv && !obv.hidden ? { besedilo: obv.textContent, r: r(obv.getBoundingClientRect()) } : null,
+    obvestiloBilo: window.__k3Obv || null, // besedilo obvestila od zadnjega klika (na počasnem swiftshaderju morda že skrito)
     leti: !!api.kit.leti,
   };
 }`;
@@ -103,7 +104,14 @@ async function pocakaj(p, pogoj, ms = 30000) {
   }
   return s;
 }
-const klikni = (loc) => loc.evaluate((x) => { x.scrollIntoView({ block: "nearest" }); x.click(); });
+const klikni = (loc) => loc.evaluate((x) => { window.__k3Obv = null; x.scrollIntoView({ block: "nearest" }); x.click(); });
+// Zapomni si vsako prikazano obvestilo (izgine po 4 s, preverjanje kadra na swiftshaderju je lahko počasnejše).
+const SLEDI_OBVESTILU = () => {
+  new MutationObserver(() => {
+    const o = document.querySelector(".k3-obvestilo");
+    if (o && !o.hidden && o.textContent) window.__k3Obv = o.textContent;
+  }).observe(document, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden"] });
+};
 
 /** Po menjavi: okno ustreza novemu stanju, poudarek na novih mrežah, model v kadru, nič čez platno. */
 function preveriStanje(kje, s, { prejId = null, pricakujObvestilo = true } = {}) {
@@ -116,7 +124,7 @@ function preveriStanje(kje, s, { prejId = null, pricakujObvestilo = true } = {})
     if (s.sij === false) napake.push(`${kje}: poudarek ni na novih mrežah dela ${s.id}`);
     if (prekriva(s.okno.r, s.canvas)) napake.push(`${kje}: okno ${s.okno.r} prekriva platno ${s.canvas}`);
   }
-  if (prejId && !s.id && pricakujObvestilo && !s.obvestilo) napake.push(`${kje}: okno dela ${prejId} se je zaprlo brez obvestila`);
+  if (prejId && !s.id && pricakujObvestilo && !s.obvestilo && !s.obvestiloBilo) napake.push(`${kje}: okno dela ${prejId} se je zaprlo brez obvestila`);
   if (s.obvestilo && prekriva(s.obvestilo.r, s.canvas)) napake.push(`${kje}: obvestilo prekriva platno`);
   if (s.izven > MEJA) napake.push(`${kje}: po menjavi ${(s.izven * 100).toFixed(1)} % modela izven kadra`);
 }
@@ -163,7 +171,7 @@ async function kristali(p, nm) {
       const pred = await izberiDel(p, id);
       if (!pred?.okno) { napake.push(`${nm} kristali bcc/${id}: okno se ni odprlo`); continue; }
       await izberiMoznost(p, "led");
-      const s = await pocakaj(p, (x) => x.izven <= MEJA && (x.id !== id || (x.okno?.opis ?? "") === (x.opis ?? "")) && (x.id || x.obvestilo));
+      const s = await pocakaj(p, (x) => x.izven <= MEJA && (x.id !== id || (x.okno?.opis ?? "") === (x.opis ?? "")) && (x.id || x.obvestilo || x.obvestiloBilo));
       preveriStanje(`${nm} kristali bcc→led/${id}${koord ? " (koordinacija)" : ""}`, s, { prejId: id });
     }
   }
@@ -209,7 +217,7 @@ async function puscice(p, nm) {
   await izberiDel(p, "jedro");
   const opisPrej = (await stanje(p))?.opis;
   await klikni(p.locator(".k3-sosed:not(.k3-zrcali)").first());
-  let s = await pocakaj(p, (x) => x.izven <= MEJA && (x.id || x.obvestilo), 60000);
+  let s = await pocakaj(p, (x) => x.izven <= MEJA && (x.id || x.obvestilo || x.obvestiloBilo), 60000);
   preveriStanje(`${nm} ‹ › živalska → naslednja (jedro)`, s, { prejId: "jedro" });
   if (s?.id && s.opis === opisPrej) napake.push(`${nm} ‹ ›: okno kaže opis jedra iz prejšnjega modela`);
   // celica brez jedra: model pred eritrocitom, izbrano jedro, › na eritrocit → »Ta celica nima jedra.«
@@ -220,8 +228,9 @@ async function puscice(p, nm) {
   if (!imaJedro) return napake.push(`${nm} ‹ ›: ${prejsnji} (pred eritrocitom) nima jedra, preizkusa ni mogoče narediti`);
   await izberiDel(p, "jedro");
   await klikni(p.locator(".k3-sosed:not(.k3-zrcali)").first());
-  s = await pocakaj(p, (x) => !!x.obvestilo, 60000);
-  if (!/^Ta celica nima jedra\.$/.test(s?.obvestilo?.besedilo || "")) napake.push(`${nm} ‹ › ${prejsnji} → eritrocit: ni obvestila »Ta celica nima jedra.« (${s?.obvestilo?.besedilo})`);
+  s = await pocakaj(p, (x) => !!(x.obvestilo || x.obvestiloBilo), 60000);
+  const besedilo = s?.obvestilo?.besedilo || s?.obvestiloBilo || "";
+  if (!/^Ta celica nima jedra\.$/.test(besedilo)) napake.push(`${nm} ‹ › ${prejsnji} → eritrocit: ni obvestila »Ta celica nima jedra.« (${besedilo})`);
   preveriStanje(`${nm} ‹ › ${prejsnji} → eritrocit`, s, { prejId: "jedro" });
 }
 
@@ -279,6 +288,7 @@ const base = `http://localhost:${port}`;
     browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
     for (const [nm, opt] of posnetek ? NAPRAVE.slice(0, 1) : NAPRAVE) {
       const ctx = await browser.newContext(opt);
+      await ctx.addInitScript(SLEDI_OBVESTILU);
       const p = await ctx.newPage();
       p.on("pageerror", (e) => napake.push(`${nm}: napaka strani ${e.message.slice(0, 160)}`));
       if (posnetek) {

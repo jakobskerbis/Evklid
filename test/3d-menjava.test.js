@@ -106,7 +106,7 @@ test("kristali: ob menjavi kristala ima osnovna celica opis novega kristala (št
 test("pregledovalnik: ena skupna funkcija ob menjavi, kader po izbiri/stikalu/gumbu, prenos dela med modeli", () => {
   const src = fs.readFileSync(path.join(ROOT, "public/3d/pregledovalnik.js"), "utf8");
   const deli = src.slice(src.indexOf("function deli()"), src.indexOf("const merilo"));
-  assert.match(deli, /obMenjavi\(seznam\)/, "deli() kliče obMenjavi");
+  assert.match(deli, /obMenjavi\(seznam, prejDel\)/, "deli() kliče obMenjavi s prejšnjim delom");
   assert.ok(!/izberi\(null, \{ leti: false \}\);\s*\n\s*else if \(izbran\)/.test(deli), "stari zapis brez osvežitve okna");
   assert.match(src, /c\.tip !== "drsnik"[\s\S]{0,120}poleti\(\.\.\.kadrModela\(\)/, "menjava stanja znova kadrira cel model");
   assert.match(src, /opts\.prenos/);
