@@ -842,9 +842,10 @@ export function createApp(store, opts = {}) {
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
       if (key && !cached && !fix && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
+        // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
         const generic = genericAnswer(result.text, student.name);
         const plain = stripMeta(result.text);
-        if (!codeCheck(plain)) {
+        if (generic !== null && !codeCheck(plain)) {
           const live = verifyLive();
           store.db.prepare("INSERT OR REPLACE INTO answer_cache (key, text, verified) VALUES (?, ?, ?)").run(key, generic, live ? 0 : 1);
           if (live) {

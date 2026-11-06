@@ -65,21 +65,35 @@ test("P2: največ 60 nalog brez povezave na dan, tudi z izdanimi semeni", async 
   }
 });
 
-test("P3: ime se zamenja samo kot cela beseda (»Nikoli« ostane)", () => {
-  assert.equal(genericAnswer("Nikoli ne deli z 0, Nik. Analiza: Nik-ov korak (Nik)", "Nik"), "Nikoli ne deli z 0, {{IME}}. Analiza: {{IME}}-ov korak ({{IME}})");
-  assert.equal(genericAnswer("Ana, Analiza je tu. Ana!", "Ana"), "{{IME}}, Analiza je tu. {{IME}}!");
-  assert.equal(genericAnswer("Žan in Žana", "Žan"), "{{IME}} in Žana");
+test("P3: ime se zamenja samo kot cela beseda, ne glede na velike črke", () => {
+  assert.equal(genericAnswer("Bravo, Nik. Nik-ov korak (Nik) in NIK", "Nik"), "Bravo, {{IME}}. {{IME}}-ov korak ({{IME}}) in {{IME}}");
+  assert.equal(genericAnswer("Ana, x je tu. Ana!", "ana"), "{{IME}}, x je tu. {{IME}}!", "zastavica i");
+  assert.equal(genericAnswer("Žan in Bravo, ŽAN", "Žan"), "{{IME}} in Bravo, {{IME}}", "zastavica u (šumniki)");
   assert.equal(genericAnswer("Lan2 in Lan", "Lan"), "Lan2 in {{IME}}");
   assert.equal(genericAnswer("A je točka", "A"), "A je točka", "enoznakovno ime ostane");
   assert.equal(genericAnswer("Dr. (x) in Dr. (x)", "Dr. (x)"), "{{IME}} in {{IME}}", "posebni znaki v imenu");
+  assert.equal(genericAnswer("Bravo, Ana Marija in Marija!", "Ana Marija"), "Bravo, {{IME}} in {{IME}}!", "besede imena");
 });
 
-test("P3: odgovor iz predpomnilnika ne pokvari besed z imenom prejšnjega učenca", async () => {
+test("P3: sklonjeno ime (ali beseda, ki se z imenom začne) – odgovor se ne shrani za druge", () => {
+  assert.equal(genericAnswer("Jakobu bom pomagal. Bravo, Jakob!", "Jakob"), null, "Jakob/Jakobu");
+  assert.equal(genericAnswer("Bravo, Lan! Lanu predlagam vajo.", "Lan"), null, "Lan/Lanu");
+  assert.equal(genericAnswer("Z Lanom bova vadila.", "Lan"), null, "Lan/Lanom");
+  assert.equal(genericAnswer("Bravo, Ana! Ani bom pokazal.", "Ana"), null, "Ana/Ani");
+  assert.equal(genericAnswer("Ano bom vprašal.", "Ana"), null, "Ana/Ano");
+  assert.equal(genericAnswer("jakobu bom pomagal", "Jakob"), null, "male črke");
+  assert.equal(genericAnswer("Nikoli ne deli z 0, Nik.", "Nik"), null, "beseda se začne z imenom");
+  assert.equal(genericAnswer("Bravo, Ana! Analiza je dobra.", "Ana"), null, "beseda se začne z imenom");
+  assert.equal(genericAnswer("Bravo, Lan! Plan je dober.", "Lan"), "Bravo, {{IME}}! Plan je dober.", "ime sredi besede ne ovira");
+});
+
+test("P3: odgovor iz predpomnilnika nima imena prejšnjega učenca, sklonjeno ime se ne shrani", async () => {
   const store = openDb(":memory:");
+  let reply = "";
   const app = createApp(store, {
     scheduler: false,
     streamFn: async ({ onText }) => {
-      const t = 'Nikoli ne deli z 0, Nik. Analiza pokaže, da je 8 · 7 = 56.\n<<META subject=MAT topic="množenje" error=0 mode=A flag=none>>';
+      const t = `${reply}\n<<META subject=MAT topic="množenje" error=0 mode=A flag=none>>`;
       onText(t);
       return { text: t, stopReason: "end_turn", usage: { input_tokens: 10, output_tokens: 10 }, model: "claude-haiku-4-5" };
     },
@@ -87,21 +101,28 @@ test("P3: odgovor iz predpomnilnika ne pokvari besed z imenom prejšnjega učenc
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   const j = (p, o = {}) => fetch(base + p, { method: o.method || "GET", headers: { "Content-Type": "application/json" }, body: o.body ? JSON.stringify(o.body) : undefined });
-  const ask = async (name) => {
+  const ask = async (name, question) => {
     const s = await (await j("/api/students", { method: "POST", body: { name, settings: { level: "OS", grade: 8 } } })).json();
     const c = await (await j(`/api/students/${s.id}/conversations`, { method: "POST" })).json();
-    const sse = await (await j(`/api/conversations/${c.id}/messages`, { method: "POST", body: { text: "koliko je 8 krat 7" } })).text();
+    const sse = await (await j(`/api/conversations/${c.id}/messages`, { method: "POST", body: { text: question } })).text();
     return JSON.parse(/event: done\ndata: (.*)/.exec(sse)[1]).text;
   };
   try {
-    await ask("Nik");
+    reply = "Bravo, Nik. Analiza pokaže, da je 8 · 7 = 56.";
+    await ask("Nik", "koliko je 8 krat 7");
     const cached = store.db.prepare("SELECT text FROM answer_cache").get()?.text;
     assert.ok(cached, "odgovor je v predpomnilniku");
-    assert.match(cached, /^Nikoli ne deli z 0, \{\{IME\}\}\./);
+    assert.match(cached, /^Bravo, \{\{IME\}\}\. Analiza/);
     store.db.prepare("UPDATE answer_cache SET verified = 1").run();
-    const second = await ask("Ana");
-    assert.match(second, /^Nikoli ne deli z 0, Ana\./);
-    assert.doesNotMatch(second, /Anaoli/);
+    reply = "NE SME PRITI (odgovor mora priti iz predpomnilnika)";
+    const second = await ask("Ana", "koliko je 8 krat 7");
+    assert.match(second, /^Bravo, Ana\. Analiza/);
+    assert.doesNotMatch(second, /Nik/);
+
+    reply = "Jakobu bom pomagal: 9 · 6 = 54. Bravo, Jakob!";
+    await ask("Jakob", "koliko je 9 krat 6");
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 1, "sklonjeno ime: odgovor ni shranjen");
+    assert.ok(!store.db.prepare("SELECT 1 FROM answer_cache WHERE text LIKE '%Jakob%'").get());
   } finally {
     server.close();
   }

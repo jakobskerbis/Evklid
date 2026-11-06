@@ -64,20 +64,36 @@ export function ensureReportsTable(db) {
   if (!cols.has("shown")) db.exec("ALTER TABLE message_reports ADD COLUMN shown TEXT");
 }
 
-// Odgovor za druge učence: ime učenca → {{IME}}, samo kot cela beseda (»Nik« v »Nikoli« ostane,
-// sicer bi naslednji učenec »Ana« prebral »Anaoli«). Enoznakovno ime ostane, kot je.
+// Odgovor za druge učence: ime učenca → {{IME}}, samo kot cela beseda in ne glede na velike črke (»Nik« v
+// »Nikoli« se ne zamenja, sicer bi naslednji učenec »Ana« prebral »Anaoli«). Če ime po zamenjavi še ostane
+// kot začetek besede (sklonjena oblika »Jakobu«, »Lanom«, »Ani« ali beseda, ki se z imenom začne), vrne null:
+// takega odgovora ne shranimo za druge učence, da ime ne pride do njih (P3). Enoznakovno ime ostane, kot je.
+const NAME_EDGE_L = "(?<![\\p{L}\\p{N}_])";
+const NAME_EDGE_R = "(?![\\p{L}\\p{N}_])";
+const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 export function genericAnswer(text, name = "") {
   const n = String(name || "").trim();
   if (n.length < 2) return text;
-  const esc = n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return String(text).replace(new RegExp(`(?<![\\p{L}\\p{N}_])${esc}(?![\\p{L}\\p{N}_])`, "gu"), "{{IME}}");
+  // Celo ime in posamezne besede imena (»Ana Marija« → tudi »Ana«, »Marija«).
+  const parts = [n, ...n.split(/\s+/).filter((w) => w.length >= 2 && w !== n)];
+  let out = String(text);
+  for (const p of parts) out = out.replace(new RegExp(`${NAME_EDGE_L}${escRe(p)}${NAME_EDGE_R}`, "giu"), "{{IME}}");
+  for (const p of parts) {
+    if (new RegExp(`${NAME_EDGE_L}${escRe(p)}\\p{L}`, "iu").test(out)) return null; // Jakob → Jakobu
+    // Osnova brez končnega samoglasnika s kratko končnico: Ana → Ani, Ano; Luka → Luki.
+    const stem = p.replace(/[aeiouy]$/iu, "");
+    if (stem !== p && stem.length >= 2 && new RegExp(`${NAME_EDGE_L}${escRe(stem)}\\p{L}{0,3}${NAME_EDGE_R}`, "iu").test(out)) return null;
+  }
+  return out;
 }
 
 // Odstrani odgovor iz predpomnilnika. Tam je shranjen z {{IME}} namesto imena učenca.
 export function purgeCachedAnswer(db, text, name = "") {
   if (!text) return 0;
-  const generic = genericAnswer(text, name);
-  return Number(db.prepare("DELETE FROM answer_cache WHERE text IN (?, ?)").run(text, generic).changes || 0);
+  // Tudi ključ starih zapisov (pred P3 je bila zamenjava replaceAll, npr. »{{IME}}oli«), dokler ne potečejo.
+  const generic = genericAnswer(text, name) ?? text;
+  const legacy = name.length > 1 ? text.replaceAll(name, "{{IME}}") : text;
+  return Number(db.prepare("DELETE FROM answer_cache WHERE text IN (?, ?, ?)").run(text, generic, legacy).changes || 0);
 }
 
 export function listReports(db, limit = 200) {
