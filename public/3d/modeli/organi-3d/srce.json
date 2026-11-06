@@ -238,10 +238,7 @@
    "barva": "#f43f5e",
    "opis": "Največja arterija; vodi s kisikom bogato kri iz levega prekata v telo.",
    "vozlisca": [
-    "Aorta",
-    "Brachiocephalic trunk",
-    "Left common carotid artery",
-    "Left subclavian artery"
+    "Aorta"
    ],
    "raven": 1
   },
@@ -253,7 +250,11 @@
    "raven": 2,
    "barva": "#fb7185",
    "opis": "Prva veja aortnega loka; razcepi se v desno podključnično arterijo in desno skupno karotido.",
-   "vozlisca": []
+   "vozlisca": [
+    "Brachiocephalic trunk",
+    "Right common carotid artery",
+    "Right subclavian artery"
+   ]
   },
   {
    "id": "leva-skupna-karotida",
@@ -263,7 +264,9 @@
    "raven": 2,
    "barva": "#f472b6",
    "opis": "Druga veja aortnega loka; oskrbuje levo stran glave in vratu.",
-   "vozlisca": []
+   "vozlisca": [
+    "Left common carotid artery"
+   ]
   },
   {
    "id": "leva-podkljucnicna-arterija",
@@ -273,7 +276,9 @@
    "raven": 2,
    "barva": "#e879f9",
    "opis": "Tretja veja aortnega loka; oskrbuje levo roko, del vratu in prsni koš.",
-   "vozlisca": []
+   "vozlisca": [
+    "Left subclavian artery"
+   ]
   },
   {
    "id": "pljucno-deblo",
@@ -282,8 +287,7 @@
    "barva": "#818cf8",
    "opis": "Nese kri brez kisika iz desnega prekata; pod aortnim lokom se razcepi v levo in desno pljučno arterijo.",
    "vozlisca": [
-    "Pulmonary trunk",
-    "Right pulmonary artery"
+    "Pulmonary trunk"
    ],
    "raven": 1
   },
@@ -295,7 +299,10 @@
    "raven": 2,
    "barva": "#6366f1",
    "opis": "Leva in desna pljučna arterija od razcepa nadaljujeta pljučno deblo do pljuč.",
-   "vozlisca": []
+   "vozlisca": [
+    "Left pulmonary artery",
+    "Right pulmonary artery"
+   ]
   },
   {
    "id": "votli-veni",
@@ -329,13 +336,7 @@
    "la": "Arteriae coronariae",
    "barva": "#facc15",
    "opis": "Oskrbujejo srčno mišico s krvjo, ki ji prinaša kisik in hranila.",
-   "vozlisca": [
-    "Anterior interventricular artery",
-    "Circumflex artery of heart",
-    "Left coronary artery",
-    "Right coronary artery",
-    "Right inferolateral branch of right coronary artery"
-   ],
+   "vozlisca": [],
    "raven": 1
   },
   {
@@ -346,7 +347,9 @@
    "raven": 3,
    "barva": "#fde047",
    "opis": "Kratko deblo iz levega aortnega sinusa; razcepi se v sprednjo medprekatno in cirkumfleksno arterijo.",
-   "vozlisca": []
+   "vozlisca": [
+    "Left coronary artery"
+   ]
   },
   {
    "id": "sprednja-medprekatna-arterija",
@@ -356,7 +359,10 @@
    "raven": 3,
    "barva": "#facc15",
    "opis": "V sprednjem medprekatnem žlebu do konice; z diagonalnimi vejami oskrbuje sprednjo steno levega prekata.",
-   "vozlisca": []
+   "vozlisca": [
+    "Anterior interventricular artery",
+    "Diagonal branches of anterior interventricular artery"
+   ]
   },
   {
    "id": "cirkumfleksna-arterija",
@@ -366,7 +372,9 @@
    "raven": 3,
    "barva": "#eab308",
    "opis": "V levem venčnem žlebu okoli levega roba srca; oskrbuje stransko steno levega prekata.",
-   "vozlisca": []
+   "vozlisca": [
+    "Circumflex artery of heart"
+   ]
   },
   {
    "id": "desna-vencna-arterija",
@@ -376,7 +384,10 @@
    "raven": 3,
    "barva": "#ca8a04",
    "opis": "Iz desnega aortnega sinusa po desnem venčnem žlebu; oskrbuje desni preddvor in desni prekat.",
-   "vozlisca": []
+   "vozlisca": [
+    "Right coronary artery",
+    "Right inferolateral branch of right coronary artery"
+   ]
   },
   {
    "id": "zadnja-medprekatna-arterija",
@@ -386,7 +397,9 @@
    "raven": 3,
    "barva": "#a16207",
    "opis": "Navadno veja desne venčne arterije; v zadnjem medprekatnem žlebu oskrbuje spodnjo steno srca.",
-   "vozlisca": []
+   "vozlisca": [
+    "Posterior interventricular artery"
+   ]
   },
   {
    "id": "vencne-vene",
@@ -395,11 +408,8 @@
    "barva": "#a78bfa",
    "opis": "Odvajajo kri iz srčne mišice in se zberejo v venčnem sinusu.",
    "vozlisca": [
-    "Coronary sinus",
-    "Great cardiac vein",
     "Inferior vein of left ventricle",
-    "Inferior vein of left ventricle (//Posterior '')",
-    "Middle cardiac vein"
+    "Inferior vein of left ventricle (//Posterior '')"
    ],
    "raven": 2
   },
@@ -411,7 +421,9 @@
    "raven": 2,
    "barva": "#8b5cf6",
    "opis": "Široka vena v zadnjem venčnem žlebu; zbere kri srčnih ven in jo izlije v desni preddvor.",
-   "vozlisca": []
+   "vozlisca": [
+    "Coronary sinus"
+   ]
   },
   {
    "id": "velika-srcna-vena",
@@ -421,7 +433,9 @@
    "raven": 3,
    "barva": "#7c3aed",
    "opis": "Spremlja sprednjo medprekatno arterijo in se po levem venčnem žlebu nadaljuje v venčni sinus.",
-   "vozlisca": []
+   "vozlisca": [
+    "Great cardiac vein"
+   ]
   },
   {
    "id": "srednja-srcna-vena",
@@ -431,7 +445,9 @@
    "raven": 3,
    "barva": "#6d28d9",
    "opis": "V zadnjem medprekatnem žlebu ob zadnji medprekatni arteriji; izlije se v venčni sinus.",
-   "vozlisca": []
+   "vozlisca": [
+    "Middle cardiac vein"
+   ]
   },
   {
    "id": "papilarne-misice",
@@ -470,7 +486,9 @@
    "vozlisca": [
     "Anterior leaflet of left atrioventricular valve (lastno)",
     "Anterior leaflet of right atrioventricular valve (lastno)",
+    "Chordae tendineae of inferior tricuspid leaflet (lastno)",
     "Chordae tendineae of posterior mitral leaflet (lastno)",
+    "Chordae tendineae of septal tricuspid leaflet (lastno)",
     "Inferior leaflet of right atrioventricular valve",
     "Posterior leaflet of left atrioventricular valve",
     "Septal leaflet of right atrioventricular valve"
@@ -506,7 +524,9 @@
    "raven": 3,
    "barva": "#e5e7eb",
    "opis": "Vezivni trak med pljučnim deblom in aortnim lokom; ostanek voda, ki je pred rojstvom vodil kri mimo pljuč.",
-   "vozlisca": []
+   "vozlisca": [
+    "Ligamentum arteriosum"
+   ]
   },
   {
    "id": "prevodni-sistem",
@@ -515,7 +535,9 @@
    "raven": 2,
    "barva": "#fbbf24",
    "opis": "Shema: sinusni vozel, AV-vozel, Hisov snop in kraka po pretinu vodijo električni signal za utrip.",
-   "vozlisca": []
+   "vozlisca": [
+    "Conducting system of heart (lastno)"
+   ]
   }
  ],
  "prerez": {
@@ -586,10 +608,10 @@
    }
   ]
  },
- "velikost": 0.2656,
+ "velikost": 0.2709,
  "trikotniki": {
-  "racunalnik": 169992,
-  "telefon": 62687
+  "racunalnik": 169993,
+  "telefon": 58211
  },
  "luci": [
   {

@@ -93,7 +93,7 @@ ORGANI = {
                 r"Inferior vena cava \(thoracic part\)|(Left|Right) (superior|inferior) pulmonary vein|Brachiocephalic trunk|Left common carotid artery|Left subclavian artery|"
                 r"(Left|Right) pulmonary artery|Thoracic aorta)( |$)",
         izkljuci=r"Septal branches of anterior interventricular|\?\?\?|Posterior intercostal|Subcostal|Superior phrenic|Bronchial|Oesophageal|Mediastinal|Pericardial",
-        cilj=(170_000, 60_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP
+        cilj=(170_000, 54_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP (telefon ≥ 5 % rezerve)
         # Prekata: odprti debeli lupini, predznak prostornine izbere notranjo stran (zunanja stena izgine, vidna notranjost);
         # preverjeno s posnetkom 2026-11-04 (stari izvoz iz 08:50 je imel prav to obrnjeno smer).
         obrni=r"^(Left|Right) ventricle$",

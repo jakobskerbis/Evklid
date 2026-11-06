@@ -95,6 +95,8 @@ for (const { e, mod } of organi) {
     const p = JSON.parse(fs.readFileSync(path.join(MAPA, `${ime}.json`), "utf8"));
     // PBR (peka.py): oba GLB imata vse tri mape v WebP in UV, ORM je ista slika za AO in hrapavost. Brez tangent (manjši
     // prenos): three tangente normalne mape izračuna iz odvodov UV.
+    // pečeni PBR model telefona: ≥ 5 % rezerve pod mejo (naslednja peka ne sme podreti testa, pregled #461)
+    if (p.pbr) assert.ok(fs.statSync(tel).size <= 0.95 * 2 * MB, `${ime}-telefon.glb: manj kot 5 % rezerve pod 2 MB`);
     if (p.pbr) {
       for (const [j, f] of [[jp, "računalnik"], [jt, "telefon"]]) {
         assert.equal((j.images || []).length, 3, `${ime} (${f}): PBR potrebuje 3 slike`);
