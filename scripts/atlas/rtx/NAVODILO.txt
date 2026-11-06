@@ -19,8 +19,10 @@ Kako začneš
    klikni »Več informacij« in nato »Vseeno zaženi«.
 4. Odpre se črno okno. Pusti ga odprto in ne zapri pokrova prenosnika.
    Računalnik med peko ne bo zaspal sam od sebe.
-5. Ko okno izpiše »KONČANO«, pritisni katerokoli tipko in to sporoči Claudu.
-   Claude bo sam prenesel rezultat (mapa »izhod«).
+5. Ko je prvi organ narejen, okno izpiše »ČAKAM NA NALOGO (to okno pusti
+   odprto)«. Okna ne zapiraj: Claude lahko nato sam zažene naslednje organe,
+   tudi ko te ni doma. Rezultat prenese sam (mapa »izhod«).
+6. Ko okna ne potrebuješ več, ga zapri s križcem.
 
 Če gre kaj narobe
 - Okno izpiše »KONČANO Z NAPAKO«: sporoči Claudu. Podrobnosti so v datoteki

@@ -80,3 +80,37 @@ test("primerjaj-peko.py: PSNR enakih slik je ∞, znane razlike pravilen", { ski
   // MSE = 255² / 48 → PSNR = 10·log10(48) = 16,812 dB
   assert.equal(out, "inf 16.812");
 });
+
+test("rtx.py način čakanja: koda samo po manifestu (SHA-256), naloga.txt preverjena", { skip: !python || process.platform === "win32" }, () => {
+  const cilj = fs.mkdtempSync(path.join(os.tmpdir(), "peka-rtx-"));
+  try {
+    execFileSync("sh", [path.join(RTX, "paket.sh"), cilj], { stdio: "ignore", env: { ...process.env, RAZLICICA: "t1" } });
+    const out = execFileSync("python3", ["-c", `
+import runpy, sys, os, json
+sys.argv = ["rtx.py"]
+g = runpy.run_path(os.path.join(${JSON.stringify(cilj)}, "koda", "rtx.py"), run_name="x")
+k, n = g["KODA"], g["KODA_NOVA"]
+r = [g["manifest_napaka"](k), g["manifest_napaka"](n, "t1"), g["manifest_napaka"](n, "t2")]
+open(os.path.join(n, "peci.py"), "a").write("#")
+r.append(g["manifest_napaka"](n, "t1"))
+open(os.path.join(n, "zlo.py"), "w").write("x")
+r.append(g["manifest_napaka"](n, "t1"))
+def naloga(t):
+    open(g["NALOGA"], "w").write(t); return list(g["beri_nalogo"]())
+r += [naloga('{"id": "n1", "organi": ["mozgani"], "koda": "t1"}'), naloga('{"id": "../x", "organi": ["srce"]}')[1],
+      naloga('{"id": "n2", "organi": ["srce; del"]}')[1], naloga("ni json")[1]]
+print(json.dumps(r, ensure_ascii=False))`], { encoding: "utf8" });
+    const [ok, okNova, drugaRazl, sha, odvecna, naloga, slabId, slabOrgan, niJson] = JSON.parse(out.trim().split("\n").pop());
+    assert.equal(ok, null);
+    assert.equal(okNova, null);
+    assert.match(drugaRazl, /različico 't1'/);
+    assert.match(sha, /peci\.py: SHA-256 se ne ujema/);
+    assert.match(odvecna, /odvečne: \['zlo\.py'\]/);
+    assert.deepEqual(naloga, ["n1", ["mozgani"], "t1"]);
+    assert.match(slabId, /id sme imeti/);
+    assert.match(slabOrgan, /organi morajo biti/);
+    assert.match(niJson, /ni veljaven JSON/);
+  } finally {
+    fs.rmSync(cilj, { recursive: true, force: true });
+  }
+});
