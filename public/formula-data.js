@@ -14,8 +14,16 @@
 // ctx: regularni izraz, ki mora ustrezati celotni formuli (za dvoumne črke).
 // Množenje v formuli: »k x«, »k\,x«, »k \cdot x«, »k \times x« (pregled PR 463: F = k \cdot x ni bil klikljiv).
 const MUL = "\\s*(?:\\\\cdot|\\\\times|\\\\[,;: ])?\\s*";
+// Številka z enoto: S = 1,5 m², V = 2,00 L, a = 2 m/s² (pomen je jasen tudi brez teme).
+const NUM_UNIT = "\\s*=\\s*[\\d\\s{},.]+(?:\\\\[,;!: ])?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?";
+// Temperatura v °C: T = t + 273, t₁ = 37 °C (t tu ni čas; pregled 463 §4).
+const CELZIJ = "t\\s*\\+\\s*273|\\\\circ\\s*\\\\?,?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?C|°\\s*C";
+const T_CELZIJ = { ctx: CELZIJ, n: "temperatura (v °C)", en: "temperature (in °C)", r: "T = t + 273{,}15" };
+// p⁺ (proton) in n⁰ (nevtron) nista tlak in množina snovi.
+const DELEC = "p\\s*\\^\\s*\\{?\\s*\\+|n\\s*\\^\\s*\\{?\\s*0";
 const FIZ = {
-  F: { n: "sila", en: "force", r: "F = m\\,a", u: "N" },
+  // F je pri lečah in zrcalih gorišče.
+  F: { ne: "\\bleč|gorišč|zrcal", n: "sila", en: "force", r: "F = m\\,a", u: "N" },
   F_g: { n: "teža (sila teže)", en: "weight (gravitational force)", r: "F_g = m\\,g", u: "N" },
   F_tr: { n: "sila trenja", en: "friction force", r: "F_{tr} = k_{tr}\\,F_n", u: "N" },
   F_n: { n: "pravokotna (normalna) sila podlage", en: "normal force", u: "N" },
@@ -24,30 +32,35 @@ const FIZ = {
   F_vzg: { n: "sila vzgona", en: "buoyant force", r: "F_{vzg} = \\rho_{tek}\\,g\\,V", u: "N" },
   F_c: { n: "centripetalna sila", en: "centripetal force", r: "F_c = \\frac{m v^2}{r}", u: "N" },
   m: { n: "masa", en: "mass", r: "m = \\rho\\,V", u: "kg" },
-  a: { n: "pospešek", en: "acceleration", r: "a = \\frac{\\Delta v}{\\Delta t}", u: "m/s^2" },
+  // a je tudi razdalja predmeta (leče), rob kvadra, dolžina ročice ali stranica preseka: pospešek le po formuli,
+  // enoti ali temi gibanja in sil.
+  a: { zan: `a${NUM_UNIT}m\\s*/\\s*s\\^|a${NUM_UNIT}\\\\frac\\{\\s*m\\s*\\}\\{\\s*s\\^`, ctx: `a\\s*=\\s*\\\\frac\\{\\s*\\\\Delta\\s*v|F\\s*=\\s*m${MUL}a\\b|a${MUL}t\\^|v_?0?\\s*[+-]\\s*a${MUL}t\\b`, teme: "pospeš|gibanj|\\bsil[aei]?\\b|newton|prost\\w*\\s+pad|\\bmet\\b|kroženj|klanc", ne: "\\bleč|zrcal|gorišč|nosil|torzij|upogib|presek|prerez|kvader|gostot", n: "pospešek", en: "acceleration", r: "a = \\frac{\\Delta v}{\\Delta t}", u: "m/s^2" },
   a_c: { n: "centripetalni pospešek", en: "centripetal acceleration", r: "a_c = \\frac{v^2}{r}", u: "m/s^2" },
   v: { n: "hitrost", en: "velocity (speed)", r: "v = \\frac{s}{t}", u: "m/s" },
   v_0: { n: "začetna hitrost", en: "initial velocity", u: "m/s" },
   s: { n: "pot (premik)", en: "distance (displacement)", r: "s = v\\,t", u: "m" },
-  t: { n: "čas", en: "time", r: "t = \\frac{s}{v}", u: "s" },
+  t: [T_CELZIJ, { n: "čas", en: "time", r: "t = \\frac{s}{v}", u: "s" }],
   t_0: { n: "nihajni (obhodni) čas", en: "period", r: "t_0 = \\frac{1}{\\nu}", u: "s" },
   g: { n: "težni pospešek", en: "gravitational acceleration", r: "g \\approx 9{,}81\\,\\mathrm{m/s^2}", u: "m/s^2" },
   G: [
     { ctx: "\\\\frac\\{\\s*m_?1", n: "gravitacijska konstanta", en: "gravitational constant", r: "G \\approx 6{,}67\\cdot 10^{-11}\\,\\mathrm{N\\,m^2/kg^2}" },
-    { n: "gibalna količina", en: "momentum", r: "G = m\\,v", u: "kg m/s" },
+    // ΔG pri termodinamiki je Gibbsova energija: gibalna količina le po formuli ali temi.
+    { ctx: `G\\s*=\\s*m${MUL}v`, teme: "gibaln|\\btrk|sunek", n: "gibalna količina", en: "momentum", r: "G = m\\,v", u: "kg m/s" },
   ],
   p: [
     { ctx: `p\\s*=\\s*m${MUL}v`, n: "gibalna količina", en: "momentum", r: "p = m\\,v", u: "kg m/s" },
-    { n: "tlak", en: "pressure", r: "p = \\frac{F}{S}", u: "Pa" },
+    { brez: DELEC, n: "tlak", en: "pressure", r: "p = \\frac{F}{S}", u: "Pa" },
   ],
-  S: { n: "ploščina (prečni presek)", en: "area (cross-section)", u: "m^2" },
+  // ΔS pri toploti je entropija.
+  S: { brez: "\\\\Delta\\s*S", ne: "entropij", n: "ploščina (prečni presek)", en: "area (cross-section)", u: "m^2" },
   // A je pri nihanju amplituda, v geometriji ploščina.
-  A: { n: "delo", en: "work", r: "A = F\\,s", u: "J", ne: "nihanj|nihal|valovan|amplitud" },
+  A: { n: "delo", en: "work", r: "A = F\\,s", u: "J", ne: "nihanj|nihal|valovan|amplitud|torzij|nosil|upogib|presek|prerez|elastičn" },
   W: { n: "energija", en: "energy", u: "J" },
   W_k: { n: "kinetična energija", en: "kinetic energy", r: "W_k = \\frac{m v^2}{2}", u: "J" },
   W_p: { n: "potencialna energija", en: "potential energy", r: "W_p = m\\,g\\,h", u: "J" },
   W_pr: { n: "prožnostna energija", en: "elastic energy", r: "W_{pr} = \\frac{k x^2}{2}", u: "J" },
-  E: { n: "energija", en: "energy", u: "J", note: "Pri električnem polju E pomeni jakost polja (enota N/C).", noteEn: "For electric fields E is the field strength (unit N/C)." },
+  // E je v mehaniki trdnin modul elastičnosti (FL/(EA)).
+  E: { ne: "elastičn|nosil|upogib|torzij|young|mehansk\\w*\\s+napetost|trdnost", n: "energija", en: "energy", u: "J", note: "Pri električnem polju E pomeni jakost polja (enota N/C).", noteEn: "For electric fields E is the field strength (unit N/C)." },
   E_k: { n: "kinetična energija", en: "kinetic energy", r: "E_k = \\frac{m v^2}{2}", u: "J" },
   E_p: { n: "potencialna energija", en: "potential energy", r: "E_p = m\\,g\\,h", u: "J" },
   P: { n: "moč", en: "power", r: "P = \\frac{A}{t}", u: "W" },
@@ -65,13 +78,15 @@ const FIZ = {
   e_0: { n: "osnovni naboj", en: "elementary charge", r: "e_0 \\approx 1{,}6\\cdot 10^{-19}\\,\\mathrm{C}", u: "C" },
   q: { n: "električni naboj", en: "electric charge", u: "C" },
   Q: { n: "toplota", en: "heat", r: "Q = m\\,c\\,\\Delta T", u: "J", note: "Pri elektriki Q pomeni naboj (enota C).", noteEn: "In electricity Q means charge (unit C)." },
-  T: { n: "temperatura (absolutna) ali nihajni čas", en: "(absolute) temperature or period", note: "Temperatura se meri v K, nihajni čas v s.", noteEn: "Temperature is measured in K, a period in s." },
+  // T je v mehaniki trdnin navor (torzija).
+  T: { ne: "torzij|nosil|upogib|navor", n: "temperatura (absolutna) ali nihajni čas", en: "(absolute) temperature or period", note: "Temperatura se meri v K, nihajni čas v s.", noteEn: "Temperature is measured in K, a period in s." },
   ν: { n: "frekvenca", en: "frequency", r: "\\nu = \\frac{1}{t_0}", u: "Hz" },
   f: { n: "frekvenca", en: "frequency", r: "f = \\frac{1}{T}", u: "Hz", note: "Pri lečah f pomeni goriščno razdaljo (m).", noteEn: "For lenses f is the focal length (m)." },
   λ: { n: "valovna dolžina", en: "wavelength", r: "\\lambda = \\frac{c}{\\nu}", u: "m" },
   c: [
     { ctx: "\\\\Delta\\s*T|Q\\s*=", n: "specifična toplota", en: "specific heat capacity", r: "c = \\frac{Q}{m\\,\\Delta T}", u: "J/(kg K)" },
-    { n: "hitrost svetlobe (valovanja)", en: "speed of light (of a wave)", r: "c \\approx 3\\cdot 10^{8}\\,\\mathrm{m/s}", u: "m/s" },
+    // c je tudi rob kvadra in specifična toplota (c_p): hitrost svetlobe le pri svetlobi in valovanju.
+    { ctx: `c\\s*=\\s*\\\\lambda|\\\\lambda${MUL}(?:\\\\nu|f\\b)|m${MUL}c\\^|h${MUL}c\\b|\\\\frac\\{\\s*c\\s*\\}\\{\\s*(?:\\\\lambda|n|v)`, teme: "svetlob|valovan|elektromagnet|foton|relativ|optik|\\blom|zvok|interferenc|uklon|spekt", ne: "kvader|kvadr|specifičn|vlažn", n: "hitrost svetlobe (valovanja)", en: "speed of light (of a wave)", r: "c \\approx 3\\cdot 10^{8}\\,\\mathrm{m/s}", u: "m/s" },
   ],
   // k je tudi Boltzmannova konstanta, valovno število, koeficient trenja; x tudi lega (koordinata).
   k: { ctx: `F\\s*=\\s*-?\\s*k${MUL}(?:\\\\Delta\\s*)?x|\\\\frac\\{\\s*k${MUL}x`, teme: "vzmet|prožn|nihal|nihanj|raztez", n: "prožnostni koeficient (konstanta vzmeti)", en: "spring constant", r: "F = k\\,x", u: "N/m" },
@@ -82,7 +97,8 @@ const FIZ = {
   r: { n: "polmer (razdalja)", en: "radius (distance)", u: "m" },
   // M je tudi masa Zemlje, Sonca (gravitacija) ali molska masa.
   M: { ctx: `M\\s*=\\s*r${MUL}F|M\\s*=\\s*F${MUL}r`, teme: "navor|vzvod|ročic|ravnovesj|vrtenj|vrtiln", n: "navor", en: "torque", r: "M = r\\,F", u: "N m" },
-  B: { n: "gostota magnetnega polja", en: "magnetic flux density", u: "T" },
+  // B je tudi podpora nosilca ali točka: gostota magnetnega polja le po formuli, enoti ali temi.
+  B: { zan: `B${NUM_UNIT}(?:m|μ|\\\\mu\\s*)?T\\b`, ctx: `\\\\Phi\\s*=|B${MUL}S|v${MUL}B|l${MUL}B|\\\\mu_0|\\\\times\\s*\\\\vec\\s*B`, teme: "magnet|indukcij|tuljav|lorentz|elektromotor|generator|transformator|\\bnmr|\\bmri", n: "gostota magnetnega polja", en: "magnetic flux density", u: "T" },
   Φ: { n: "magnetni pretok", en: "magnetic flux", r: "\\Phi = B\\,S", u: "Wb" },
   C: { n: "kapaciteta", en: "capacitance", r: "C = \\frac{e}{U}", u: "F" },
   // n je tudi množina snovi (p V = n R T), število nihajev ali vrtljajev, red uklona.
@@ -91,7 +107,8 @@ const FIZ = {
 };
 
 const KEM = {
-  n: { n: "množina snovi", en: "amount of substance", r: "n = \\frac{m}{M}", u: "mol" },
+  // n je tudi nevtron (n⁰), lupina (n = 4), število meritev ali kromosomska garnitura (4n).
+  n: { brez: `${DELEC}|^\\s*\\d+\\s*n\\s*$`, ne: "lupin|kvantn|orbital|kromosom|garnitur|ploid|meritev|ponovit|vzor[ce]", n: "množina snovi", en: "amount of substance", r: "n = \\frac{m}{M}", u: "mol" },
   m: { n: "masa", en: "mass", r: "m = n\\,M", u: "g" },
   M: { n: "molska masa", en: "molar mass", r: "M = \\frac{m}{n}", u: "g/mol", note: "Vsota atomskih mas iz periodnega sistema.", noteEn: "Sum of the atomic masses from the periodic table." },
   M_r: { n: "relativna molekulska masa", en: "relative molecular mass", r: "M_r = \\sum A_r", note: "Nima enote; številsko je enaka molski masi v g/mol.", noteEn: "It has no unit; numerically equal to the molar mass in g/mol." },
@@ -102,12 +119,12 @@ const KEM = {
   V_m: { n: "molska prostornina plina", en: "molar volume of a gas", r: "V_m = \\frac{V}{n}", u: "L/mol", note: "Pri normalnih pogojih je približno 22,4 L/mol.", noteEn: "About 22.4 L/mol at standard conditions." },
   N: { n: "število delcev", en: "number of particles", r: "N = n\\,N_A" },
   N_A: { n: "Avogadrova konstanta", en: "Avogadro constant", r: "N_A \\approx 6{,}022\\cdot 10^{23}\\,\\mathrm{mol^{-1}}", u: "1/mol" },
-  w: { n: "masni delež", en: "mass fraction", r: "w = \\frac{m_{\\text{topljenca}}}{m_{\\text{raztopine}}}", note: "Nima enote; pogosto ga zapišemo v odstotkih.", noteEn: "It has no unit; often written as a percentage." },
+  w: { ctx: "w\\s*=\\s*\\\\frac\\{\\s*m|w\\s*\\(", teme: "delež|raztopin|zmes|sestav|koncentracij", n: "masni delež", en: "mass fraction", r: "w = \\frac{m_{\\text{topljenca}}}{m_{\\text{raztopine}}}", note: "Nima enote; pogosto ga zapišemo v odstotkih.", noteEn: "It has no unit; often written as a percentage." },
   φ: { n: "prostorninski delež", en: "volume fraction", r: "\\varphi = \\frac{V_i}{V}" },
   ρ: { n: "gostota", en: "density", r: "\\rho = \\frac{m}{V}", u: "g/mL" },
-  p: { n: "tlak", en: "pressure", r: "p\\,V = n\\,R\\,T", u: "kPa" },
+  p: { brez: DELEC, n: "tlak", en: "pressure", r: "p\\,V = n\\,R\\,T", u: "kPa" },
   T: { n: "temperatura (absolutna)", en: "(absolute) temperature", r: "T = t + 273{,}15", u: "K" },
-  R: { n: "splošna plinska konstanta", en: "gas constant", r: "R \\approx 8{,}314\\,\\mathrm{J/(mol\\,K)}", u: "J/(mol K)" },
+  R: { ctx: `R${MUL}T|R\\s*(?:=|\\\\approx)\\s*8`, teme: "plin|termodinam|ravnotežj|entalpij|entropij|gibbs|nernst|arrhenius|elektrokem", n: "splošna plinska konstanta", en: "gas constant", r: "R \\approx 8{,}314\\,\\mathrm{J/(mol\\,K)}", u: "J/(mol K)" },
   K_c: { n: "konstanta ravnotežja (s koncentracijami)", en: "equilibrium constant (concentrations)" },
   K_p: { n: "konstanta ravnotežja (s tlaki)", en: "equilibrium constant (pressures)" },
   K_a: { n: "konstanta kisline", en: "acid dissociation constant", r: "K_a = \\frac{[\\mathrm{H_3O^+}][\\mathrm{A^-}]}{[\\mathrm{HA}]}" },
@@ -115,11 +132,26 @@ const KEM = {
   K_w: { n: "ionski produkt vode", en: "ionic product of water", r: "K_w = [\\mathrm{H_3O^+}][\\mathrm{OH^-}] = 10^{-14}" },
   K_sp: { n: "topnostni produkt", en: "solubility product" },
   H: { n: "entalpija", en: "enthalpy", u: "kJ/mol" },
-  S: { n: "entropija", en: "entropy", u: "J/(mol K)" },
+  S: { ctx: `\\\\Delta\\s*S|T${MUL}\\\\Delta\\s*S|S\\s*=\\s*k`, teme: "entropij|termodinam|spontan|gibbs", n: "entropija", en: "entropy", u: "J/(mol K)" },
   G: { n: "prosta entalpija (Gibbsova energija)", en: "Gibbs free energy", r: "\\Delta G = \\Delta H - T\\,\\Delta S", u: "kJ/mol" },
-  Q: { n: "toplota", en: "heat", r: "Q = m\\,c\\,\\Delta T", u: "J" },
-  t: { n: "čas", en: "time", u: "s" },
+  // Q < K je reakcijski kvocient.
+  Q: [
+    { ctx: "Q\\s*[<>=]\\s*K|Q\\s*=\\s*\\\\frac\\{\\s*\\[", n: "reakcijski kvocient", en: "reaction quotient" },
+    { n: "toplota", en: "heat", r: "Q = m\\,c\\,\\Delta T", u: "J" },
+  ],
+  t: [T_CELZIJ, { n: "čas", en: "time", u: "s" }],
 };
+
+// Biologija: posamezna črka iz kemije le, kadar jo formula ali enota potrdi (pregled 463 §4: p = 0,05 ni tlak,
+// V v Vv × Vv ni prostornina, w = W/W_max ni masni delež). Oznake z indeksom (K_a, N_A, M_r …) ostanejo.
+const BIO = Object.fromEntries(Object.entries(KEM).filter(([k]) => k.includes("_")));
+Object.assign(BIO, {
+  m: { ...KEM.m, ctx: `m${NUM_UNIT}(?:[kmμ]?g|\\\\mu\\s*g)\\b|m\\s*=\\s*n${MUL}M|m\\s*=\\s*\\\\rho` },
+  n: { ...KEM.n, ctx: `n${NUM_UNIT}(?:m|μ)?mol\\b|n\\s*=\\s*\\\\frac\\{\\s*m` },
+  c: { ...KEM.c, ctx: `c${NUM_UNIT}(?:m|μ)?mol|c\\s*=\\s*\\\\frac\\{\\s*n` },
+  V: { ...KEM.V, ctx: `V${NUM_UNIT}(?:[mμd]?L|[cdm]?m\\^)` },
+  T: { ...KEM.T, ctx: `T${NUM_UNIT}K\\b|T\\s*=\\s*t\\s*\\+` },
+});
 
 // Pomen črke je odvisen od konteksta (j, 6. 11.: x₁ v Lagrangevem izreku je točka, ne ničla). Polja vnosa:
 //   ctx  – formula (TeX) sama pove pomen (npr. a x² v kvadratni enačbi); zanesljivo.
@@ -150,8 +182,6 @@ const KVAD_NE = "elips|hiperbol|zaporedj|\\bvrst[aeio]?\\b";
 // Po temi sami so a, b, c koeficienti le v formuli brez drugih črk (»a = 1«, »a \\neq 0«), ne v »x = 2a«.
 const KOEF = "^(?:\\\\[a-zA-Z]+|[^a-zA-Z]|[abcD])*$";
 const CIRCLE = "\\\\pi";
-// Številka z enoto ploščine ali prostornine: S = 1,5 m², V = 2,00 L (pomen je jasen tudi zunaj geometrije).
-const NUM_UNIT = "\\s*=\\s*[\\d\\s{},.]+(?:\\\\[,;!: ])?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?";
 // \b: »okrog« ni krog, »atmosfera« ni sfera (ASCII \b tu deluje, ker je pred korenom latinska črka ali nič).
 const KROG = "\\bkrog|krožnic|krožn|valj|stož|\\bsfer|\\bkrogl";
 const GEOM = `geometr|trikotnik|štirikotnik|pravokotnik|paralelogram|trapez|romb|deltoid|mnogokotnik|\\blik|ploščin|obseg|prostornin|površin|prizm|piramid|kock|kvader|\\bteles|\\btelo\\b|${KROG}`;
@@ -204,9 +234,9 @@ const MAT = {
   γ: { ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
 };
 
-const SYMBOLS = { FIZ, KEM, MAT };
+const SYMBOLS = { FIZ, KEM, BIO, MAT };
 // Predmeti brez lastnega slovarja: kateri slovarji veljajo (po vrsti).
-const SUBJECT_TABLES = { FIZ: ["FIZ"], KEM: ["KEM"], MAT: ["MAT"], NAR: ["FIZ", "KEM"], BIO: ["KEM"] };
+const SUBJECT_TABLES = { FIZ: ["FIZ"], KEM: ["KEM"], MAT: ["MAT"], NAR: ["FIZ", "KEM"], BIO: ["BIO"] };
 
 // ---------- enote ----------
 // n: ime (sl), en: ime (en), c: sestava v TeX, d/de: kaj pomeni.
