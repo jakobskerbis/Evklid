@@ -196,3 +196,29 @@ test("lastnik: kredit se ne porabi (chargeCredit kličeta zapis porabe in rezerv
     }
   });
 });
+
+test("pilot: do 4 profili med pilotom; po koncu ostanejo, novih ni nad paketom (j 2026-11-06 18:3x)", async () => {
+  const YEAR = new Date().getFullYear();
+  const add = (call, name) => call("/api/students", { method: "POST", body: { name, birth_year: YEAR - 12, consent: true } });
+  await withAccounts({ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, async ({ call, store, kid }) => {
+    const ids = [kid.id];
+    for (const name of ["Eva", "Tim", "Pia"]) {
+      const r = await add(call, name);
+      assert.equal(r.status, 201, `${name}: ${JSON.stringify(r.body)}`);
+      ids.push(r.body.id);
+    }
+    const fifth = await add(call, "Nik");
+    assert.equal(fifth.status, 400, "največ 4 profili");
+    assert.equal(fifth.body.seats, true);
+    for (const id of ids) assert.equal((await call(`/api/students/${id}/usage`)).body.guaranteed, true, `profil ${id}`);
+    // Konec pilota: profili ostanejo, novega ni (brezplačni paket: 1 profil).
+    process.env.EVKLID_PILOT_DO = dayIso(-1);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM students").get().n, 4, "nič izbrisano");
+    for (const id of ids) assert.equal((await call(`/api/students/${id}`)).status, 200, `profil ${id} ostane`);
+    assert.equal((await add(call, "Nik")).status, 400, "po pilotu po paketu");
+    assert.notEqual((await call(`/api/students/${ids[1]}/usage`)).body.guaranteed, true, "po pilotu običajna meja");
+  });
+  await withAccounts({ EVKLID_PILOT_EMAILS: "drug@x.si" }, async ({ call }) => {
+    assert.equal((await add(call, "Eva")).status, 400, "ne-pilot: po paketu (1 profil)");
+  });
+});

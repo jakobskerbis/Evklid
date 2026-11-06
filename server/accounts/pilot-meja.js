@@ -7,6 +7,9 @@
 // Brez potrjenega e-naslova ne velja nič od tega: sicer bi se kdorkoli registriral s tujim naslovom.
 
 export const PILOT_DO_DEFAULT = "2026-12-15";
+// Največ profilov na računu člana pilota, dokler pilot traja (j 2026-11-06 18:3x). Po koncu pilota obstoječi profili
+// ostanejo (nič se ne izbriše), novih pa ni več kot po paketu.
+export const PILOT_PROFILES = 4;
 
 // Seznam e-naslovov iz okolja (EVKLID_ADMIN_EMAILS, EVKLID_PILOT_EMAILS): ločila vejica, podpičje ali presledek,
 // male črke. Edini razčlenjevalnik za oba seznama (pregled #477 B3: skrbnik in »brez meje« se morata ujemati).

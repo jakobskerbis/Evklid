@@ -12,7 +12,7 @@ import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { exportOtherTables } from "../zasebnost.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
-import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail } from "./pilot-meja.js";
+import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
@@ -228,6 +228,12 @@ export function mountAccounts(app, store, opts = {}) {
     const usd = db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND created_at >= ?").get(p.id, since).s;
     if (usd > 0) kv.set(pilotKey(p.email), String((Number(kv.get(pilotKey(p.email))) || 0) + usd));
   }
+  // Koliko profilov sme imeti račun: po paketu (preizkus 2, brezplačno 1, družina do MAX_CHILDREN); član pilota med
+  // pilotom PILOT_PROFILES (j 2026-11-06 18:3x), a ne manj kot paket. Po pilotu obstoječi profili ostanejo.
+  const profileSeats = (p) => {
+    const plan = Math.min(MAX_CHILDREN, accessOf(p).seats || 1);
+    return isPilotParent(p) ? Math.max(plan, Math.min(MAX_CHILDREN, PILOT_PROFILES)) : plan;
+  };
   // Osebni paket (»Evklid Osebno«): naročnina, preizkus, koda, bonus ali paket pred testom. Vrne { tier, until } ali null.
   function personalOf(studentId) {
     const parentId = ownerOf(studentId);
@@ -951,7 +957,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Gost se prijavi v obstoječi račun: njegove profile prenesemo, če je v paketu prostor.
   const canAdopt = (guest, p) => {
     const n = childIds(guest.id).length;
-    const room = Math.min(MAX_CHILDREN, accessOf(p).seats || 1) - childIds(p.id).length;
+    const room = profileSeats(p) - childIds(p.id).length;
     return !n || (n <= room && !(isMinor(p) && childIds(p.id).length));
   };
   function adoptGuest(guest, p) {
@@ -1235,7 +1241,7 @@ export function mountAccounts(app, store, opts = {}) {
         devices: devices.recent(c.id),
         has_password: locks.hasPassword(c.id),
       })),
-      max_children: Math.min(MAX_CHILDREN, access.seats || 1),
+      max_children: profileSeats(p),
       device_warn_limit: deviceWarnLimit(),
       swap_blocked_until: devices.swapBlockedUntil(p.id),
       // Paketi v valuti, za evre s stopnjo (level) in družinska paketa (family); stari paketi so v planByKey.
@@ -1559,7 +1565,7 @@ export function mountAccounts(app, store, opts = {}) {
     const p = req.parent;
     if (!p.email_verified_at && !p.is_guest) return res.status(403).json({ error: "Najprej potrdi e-naslov (povezava je v e-pošti).", verify: true });
     // Število profilov = paket (preizkus: 2, brezplačno: 1). Menjava profila največ enkrat na 30 dni.
-    const seats = Math.min(MAX_CHILDREN, accessOf(p).seats || 1);
+    const seats = profileSeats(p);
     if (childIds(p.id).length >= seats) {
       return res.status(400).json({
         error: seats === 1 ? "Tvoj paket ima 1 profil. Za drugega otroka izberi paket za 2 otroka v zavihku Račun." : `Tvoj paket ima ${seats} profila.`,
