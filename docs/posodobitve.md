@@ -11,7 +11,7 @@ Ročno ni treba narediti nič.
 | Ob vsakem zagonu (`zagon-windows.bat`, `telefon-windows.bat`, bližnjica, samodejni zagon) | Najprej se prenese najnovejša različica, nato se aplikacija zažene. |
 | Med tekom, vsakih 15 minut | Preveri GitHub (en majhen klic). Če je kaj novega: prenese, namesti nove knjižnice (če se je spremenil `package.json`), počaka na miren trenutek (nihče ne čaka na odgovor inštruktorja, največ 20 minut) in strežnik znova zažene. Povezava za telefon ostane ista. |
 | Ob ponovnem zagonu strežnika | Baza se sama prilagodi novi različici (`server/db.js`), lekcije in naloge se naložijo na novo. |
-| Telefon ali brskalnik, ki je bil odprt | Ko teče nova različica, se stran tiho osveži: ko se aplikacija vrne v ospredje (vsaj 1 minuto v ozadju) ali po 10 minutah brez dotika. Nikoli med tekmovanjem ali ko je v polju napisano, a neposlano besedilo. Nove datoteke pridejo same (service worker najprej vpraša strežnik), nove knjižnice dobijo nov predpomnilnik. |
+| Telefon ali brskalnik, ki je bil odprt | Ko teče nova različica, se stran tiho osveži: ko se aplikacija vrne v ospredje (vsaj 1 minuto v ozadju) ali po 10 minutah brez dotika. Nikoli med tekmovanjem ali ko je v polju napisano, a neposlano besedilo. Nove datoteke pridejo same: service worker datoteke aplikacije iste različice odpre takoj iz predpomnilnika (brez čakanja na omrežje), ob novi različici pa vsako najprej vpraša strežnik; nove knjižnice dobijo nov predpomnilnik. |
 
 Kaj ostane nedotaknjeno: `.env` (ključi, geslo, ngrok), mapa `data/` (učenci, napredek,
 dnevnik) in `node_modules/`. Pobrišejo se samo datoteke, ki jih je prinesla prejšnja
@@ -68,4 +68,9 @@ variables > Actions kot skrivnost `RENDER_DEPLOY_HOOK`.
 - Zagonske datoteke `.bat`/`.command` imajo oznako `EVKLID-SAMOPOSODOBITEV`: dolgi ukazi so v
   eni vrstici z `exit /b` (Mac: vse v funkciji `main`), zato jih posodobitev lahko prepiše med
   tekom. Datoteke brez oznake (stare različice) med tekom ne prepiše.
-- `server/razlicica.js`: različica za `/healthz/stanje` in ime predpomnilnika v `/sw.js`.
+- `server/razlicica.js`: različica za `/healthz/stanje`, ime predpomnilnika v `/sw.js` in `staticVersion()`
+  (commit + prstni odtis mape `public/`, izračun ob zagonu strežnika) = `APP` v `/sw.js`: kopija datoteke
+  aplikacije, ki jo je shranila ista `APP`, se odpre brez omrežja; API in strani strežnika gredo vedno najprej
+  na omrežje (`test/sw-hitrost.test.js`).
+- `server/vstopna-stran.js`: `index.html` z `<link rel="modulepreload">` za vse module prvega odprtja
+  (seznam iz `server/startup-files.js`), proračun velikosti v `test/hitrost-proracun.test.js`.
