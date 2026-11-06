@@ -464,6 +464,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .adm-rep-head > b { flex: 1 1 60%; } /* dolg naslov lekcije ostane ob ikoni, oznaka razloga gre po potrebi v novo vrstico */
 .adm-rep .pill { background: var(--surface); color: var(--text); } /* --muted na --surface-2 je v slogih Igriv/Temen pod 4,5 : 1 */
 .adm-rep button.small { min-height: 40px !important; }
+.adm-rep-state { display: inline-flex; align-items: center; gap: 4px; font-size: .9em; font-weight: 600; }
+.adm-rep-state svg.i { width: 14px; height: 14px; }
 .adm-rep-note { margin: 0; overflow-wrap: anywhere; }
 .adm-rep-shown { justify-self: stretch; display: grid; gap: 4px; }
 .adm-rep-shown .msg { max-width: 100%; margin: 0; contain: layout paint; } /* posnetek nič ne prekrije zunaj kartice */

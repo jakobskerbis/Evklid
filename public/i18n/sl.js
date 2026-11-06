@@ -520,6 +520,7 @@ export default {
   "adm.rep.more": "Podrobnosti",
   "adm.rep.question": "Vprašanje:",
   "adm.rep.fixed": "Popravljeno",
+  "adm.rep.inReview": "V pregledu",
   "adm.rep.reopen": "Znova odpri",
   "adm.rep.none": "Ni prijav.",
   "adm.rep.download": "Prenesi za popravke (.md)",

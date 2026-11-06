@@ -3142,6 +3142,7 @@
   "adm.rep.more": "자세히",
   "adm.rep.question": "질문:",
   "adm.rep.fixed": "수정됨",
+  "adm.rep.inReview": "검토 중",
   "adm.rep.reopen": "다시 열기",
   "adm.rep.none": "신고가 없습니다.",
   "adm.rep.download": "수정용으로 내려받기(.md)",

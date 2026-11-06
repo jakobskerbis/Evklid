@@ -13,8 +13,8 @@ const LEGACY_COOKIES = LEGACY.map((l) => ({ name: `${l.slug}_geslo`, salt: `${l.
 const YEAR = 365 * 24 * 3600;
 // Brez gesla: zdravje strežnika, ikone in opis spletne aplikacije (telefon jih
 // prebere za bližnjico na začetnem zaslonu, preden je uporabnik prijavljen).
-// /api/kozmetika/export ima svoj ključ (server/avatar.js).
-const PUBLIC = [/^\/healthz$/, /^\/api\/kozmetika\/export$/, /^\/manifest\.webmanifest$/, /^\/icons\/[\w.-]+\.png$/, /^\/favicon\.ico$/, /^\/\.well-known\/assetlinks\.json$/];
+// /api/kozmetika/export in /api/prijave/izvoz (ter …/stanje) imata svoj ključ (server/avatar.js, server/reports.js).
+const PUBLIC = [/^\/healthz$/, /^\/api\/kozmetika\/export$/, /^\/api\/prijave\/izvoz$/, /^\/api\/prijave\/(message|lesson|app)\/\d+\/stanje$/, /^\/manifest\.webmanifest$/, /^\/icons\/[\w.-]+\.png$/, /^\/favicon\.ico$/, /^\/\.well-known\/assetlinks\.json$/];
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

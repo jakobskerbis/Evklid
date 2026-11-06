@@ -27,6 +27,16 @@ export function migrateLegacyDb(file) {
   return true;
 }
 
+// Prijave napak (server/reports.js): stanje »in_review« in številka PR s popravkom (dnevni pregled
+// prijav, docs/prijave-pregled.md). Tabeli ustvari server/reports.js; ob prvem zagonu ju tu še ni, zato
+// ensureReportsTable to pokliče še enkrat po ustvarjanju.
+export function migrateReportPr(db) {
+  for (const table of ["message_reports", "bug_reports"]) {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
+    if (cols.length && !cols.includes("pr")) db.exec(`ALTER TABLE ${table} ADD COLUMN pr INTEGER`);
+  }
+}
+
 export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) {
   if (file !== ":memory:") fs.mkdirSync(path.dirname(file), { recursive: true });
   migrateLegacyDb(file);
@@ -263,6 +273,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Tema učne poti pri dogodku (šibke točke iz vseh virov pod istim ključem, server/weaknesses.js).
   const eventCols = db.prepare("PRAGMA table_info(events)").all().map((c) => c.name);
   if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
+  migrateReportPr(db);
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
