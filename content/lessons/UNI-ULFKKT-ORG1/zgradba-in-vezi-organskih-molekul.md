@@ -27,7 +27,7 @@ kjer je $V$ število valenčnih elektronov prostega atoma, $N$ število nevezani
 
 **2. Hibridizacija.** Ogljik v metanu tvori štiri enakovredne vezi pod koti $109{,}5^\circ$, čeprav ima na voljo eno orbitalo $2s$ in tri orbitale $2p$ različnih oblik. Model **hibridizacije** to pojasni: atomske orbitale istega atoma se kombinirajo v nove, enakovredne **hibridne orbitale**, usmerjene čim dlje druga od druge. Natančneje: iz ene orbitale $s$ in $m$ orbital $p$ istega atoma nastane $m + 1$ enakovrednih hibridov $sp^m$, ki so med seboj ortogonalni; preostalih $3 - m$ orbital $p$ ostane nehibridiziranih.
 
-**Izpeljava kotov.** Naj bo hibrid $sp^\lambda$ oblike $h = (s + \sqrt{\lambda}\,p_{\vec u})/\sqrt{1 + \lambda}$, kjer je $p_{\vec u}$ orbitala $p$ v smeri enotskega vektorja $\vec u$. Orbitali $s$ in $p$ sta ortogonalni, za dve orbitali $p$ pa velja $\langle p_{\vec u_1} | p_{\vec u_2} \rangle = \cos\theta$. Iz zahteve $\langle h_1 | h_2 \rangle = (1 + \lambda\cos\theta)/(1 + \lambda) = 0$ sledi $\cos\theta = -1/\lambda$: za $\lambda = 3, 2, 1$ je $\theta = 109{,}47^\circ, 120^\circ, 180^\circ$. Delež orbitale $s$ v hibridu je $1/(1 + \lambda)$.
+**Izpeljava kotov.** Naj bo hibrid $sp^\lambda$ oblike $h = (s + \sqrt{\lambda}\,p_{\vec u})/\sqrt{1 + \lambda}$, kjer je $p_{\vec u}$ orbitala $p$ v smeri enotskega vektorja $\vec u$. Orbitali $s$ in $p$ sta ortogonalni, za dve orbitali $p$ pa velja $\langle p_{\vec u_1} | p_{\vec u_2} \rangle = \cos\theta$. Iz zahteve $\langle h_1 | h_2 \rangle = (1 + \lambda\cos\theta)/(1 + \lambda) = 0$ sledi $\cos\theta = -1/\lambda$: za $\lambda = 3, 2, 1$ je $\theta = 109{,}47^\circ; 120^\circ; 180^\circ$. Delež orbitale $s$ v hibridu je $1/(1 + \lambda)$.
 
 Hibridizacijo atoma določimo iz **sterične številke**: število atomov, vezanih nanj, plus število nevezanih elektronskih parov.
 
@@ -199,7 +199,7 @@ $\mathrm{SN} = \frac{2c + 2 + n - h - x}{2}$ (število obročev + vezi $\pi$). S
 ## Povzetek
 
 - Ogljik tvori štiri vezi; formalni naboj $\mathrm{FN} = V - N - \frac{1}{2}B$.
-- Sterična številka $4, 3, 2$ ustreza hibridizaciji $sp^3, sp^2, sp$ s koti $109{,}5^\circ, 120^\circ, 180^\circ$.
+- Sterična številka $4, 3, 2$ ustreza hibridizaciji $sp^3, sp^2, sp$ s koti $109{,}5^\circ; 120^\circ; 180^\circ$.
 - Enojna vez je $\sigma$, dvojna $\sigma + \pi$, trojna $\sigma + 2\pi$; večkratne vezi so krajše in močnejše, okoli dvojne vezi ni prostega vrtenja.
 - Resonančne strukture se razlikujejo le v legi elektronov $\pi$ in nevezanih parov; prava molekula je hibrid z delokaliziranimi elektroni in nižjo energijo (benzen, karboksilat, amid).
 - Funkcionalne skupine določajo razred in reaktivnost; karbonilne spojine ločimo po skupinah na karbonilnem ogljiku.

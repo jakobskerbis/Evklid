@@ -127,7 +127,7 @@ Pri $a > 1$: $x_1 < x_2 \Rightarrow a^{x_1} < a^{x_2}$. Pri $0 < a < 1$: $x_1 < 
 1. a) Osnova $2 > 1$, funkcija $2^x$ narašča. Ker je $0{,}4 < 0{,}7$, je $2^{0{,}4} < 2^{0{,}7}$.
 2. b) Osnova $0{,}3$ je med $0$ in $1$, funkcija $0{,}3^x$ pada. Ker je $-1{,}2 < -0{,}8$, je $0{,}3^{-1{,}2} > 0{,}3^{-0{,}8}$.
 3. c) Število $1$ zapišemo kot $5^0$. Osnova $5 > 1$, funkcija narašča, in ker je $-0{,}1 < 0$, je $5^{-0{,}1} < 5^0 = 1$.
-4. Računalo potrdi: $2^{0{,}7} \approx 1{,}62 > 2^{0{,}4} \approx 1{,}32$, $0{,}3^{-1{,}2} \approx 4{,}24 > 0{,}3^{-0{,}8} \approx 2{,}62$, $5^{-0{,}1} \approx 0{,}85$.
+4. Računalo potrdi: $2^{0{,}7} \approx 1{,}62 > 2^{0{,}4} \approx 1{,}32$; $0{,}3^{-1{,}2} \approx 4{,}24 > 0{,}3^{-0{,}8} \approx 2{,}62$; $5^{-0{,}1} \approx 0{,}85$.
 5. Odgovor: večja so števila $2^{0{,}7}$, $0{,}3^{-1{,}2}$ in $1$.
 
 ### Primer 3 (težji): klaviatura

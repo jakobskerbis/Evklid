@@ -57,6 +57,8 @@ export const NOTES = {
 };
 
 // Razlogi, zakaj inštruktor ne odgovori (blockInfo). Enako besedilo je v public/i18n/sl.js pod istim ključem.
+// topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false → pripona kode zavrnitve.
+const tpSuffix = (tp) => (tp === "birth" ? "Birth" : tp ? "Topup" : "");
 export const BLOCK_TEXT = {
   "block.daily": "Današnja vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
   "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
@@ -66,6 +68,9 @@ export const BLOCK_TEXT = {
   "block.trialOut": "Vprašanja za inštruktorja v preizkusu so porabljena. Za nadaljevanje naj starš izbere naročnino v zavihku Račun. Vadnica in razlage tem delujejo naprej.",
   "block.passOut": "Paket pred testom je porabljen. Nadaljuješ v brezplačnem paketu. Vadnica in razlage tem delujejo naprej.",
   "block.longChat": "Ta pogovor je predolg za inštruktorja. Začni nov pogovor, pa lahko nadaljuješ.",
+  "block.freeTailBirth": "V tem obdobju paketa si porabil vsa vprašanja za inštruktorja. Spet jih dobiš z novim obdobjem paketa. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
+  "block.capOutBirth": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
+  "block.shareOutBirth": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
   "block.capOut": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej.",
   "block.shareOut": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.capOutTopup": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej.",
@@ -486,7 +491,9 @@ export class Usage {
     if (this.creditOut()) return out("block.creditOut");
     // Skupni proračun se deli po profilih (server/proracun.js); nad svojim delom učenec nadaljuje z dokupljenim kreditom.
     const state = this.budgetState();
-    if (this.overFreeTail(studentId, state)) return out(this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail");
+    // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false.
+    const tail = tpSuffix;
+    if (this.overFreeTail(studentId, state)) return out(`block.freeTail${tail(this.topupPrompt(studentId))}`);
     if (state.cap) {
       if (!this.overShare(studentId, state)) {
         const hard = this.hardBlock(studentId);
@@ -494,8 +501,7 @@ export class Usage {
       }
       // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).
       const capped = state.spent >= state.cap;
-      if (!this.topupPrompt(studentId)) return out(capped ? "block.capOut" : "block.shareOut");
-      return out(capped ? "block.capOutTopup" : "block.shareOutTopup");
+      return out(`${capped ? "block.capOut" : "block.shareOut"}${tail(this.topupPrompt(studentId))}`);
     }
     // Trda meja (server/meje-ai.js): ni prostora niti za najcenejši klic.
     const hard = this.hardBlock(studentId);
@@ -537,7 +543,7 @@ export class Usage {
         key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
         usd: Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) + Math.max(0, sb.credit || 0),
         spent: sb.spent,
-        code: this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail",
+        code: `block.freeTail${tpSuffix(this.topupPrompt(studentId))}`,
       });
     }
     for (const c of [].concat(this.capsOf(studentId) || [])) if (c && Number.isFinite(c.usd)) caps.push(c);

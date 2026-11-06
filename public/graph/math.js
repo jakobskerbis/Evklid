@@ -177,6 +177,19 @@ export class MathError extends Error {
   }
 }
 
+// »1 000«, »12 345«, »2 000 000« (presledek, tudi nedeljiv, med skupinami po 3 števke) je eno število.
+// Brez tega razčlenjevalnik presledek med števkami bere kot množenje (»1 000« = 1 · 0).
+// Skupine z drugačnim številom števk (»12 34«) ostanejo, kot so: to ni zapis tisočic.
+export const joinThousands = (s) =>
+  String(s ?? "").replace(/(?<![\d.,_^])\d{1,3}(?:[   ]\d{3})+(?!\d)/g, (m) => m.replace(/[   ]/g, ""));
+// Ostane presledek med dvema števkama (»12 34«, »1 0005«)? Zapis ni jasen.
+// Število za _ ali ^ (»log_2 8«, »sin^2 30«, »log_10 100«) je indeks ali potenca: ne lepi se z argumentom in ni nejasno.
+export const digitGap = (s) => /(?<![\d_^])\d+[ \t  ]+\d/.test(String(s ?? ""));
+// »1.234,5« (pika za tisočice, vejica za decimalke) je nedvoumno 1234,5: piki odstrani.
+export const joinDotThousands = (s) => String(s ?? "").replace(/(?<![\d.,])\d{1,3}(?:\.\d{3})+(?=,\d)/g, (m) => m.replace(/\./g, ""));
+// Dve piki v istem številu (»1.2.3«, »1.234.567«) brez decimalne vejice: zapis ni jasen.
+export const twoDots = (s) => /\d\.\d+\.\d/.test(String(s ?? ""));
+
 export function normalize(src) {
   return String(src ?? "")
     .replace(/[−–—]/g, "-")

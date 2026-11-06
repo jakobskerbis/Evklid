@@ -185,7 +185,7 @@ Recept za vsako meritev in račun s tokom:
 2. **Ampermeter:** krog odpri in ga vstavi v vrzel. Začni na območju $10\,\mathrm{A}$.
 3. **Voltmeter:** njegovi žici položi na konca porabnika.
 4. **Zapiši** odčitek z enoto, na primer $I = 150\,\mathrm{mA}$, $U = 4{,}5\,\mathrm{V}$.
-5. **Pretvori** v osnovne enote: $150\,\mathrm{mA} = 0{,}15\,\mathrm{A}$, $2\,\mathrm{min} = 120\,\mathrm{s}$.
+5. **Pretvori** v osnovne enote: $150\,\mathrm{mA} = 0{,}15\,\mathrm{A}$; $2\,\mathrm{min} = 120\,\mathrm{s}$.
 6. **Izberi obliko:** iščeš tok, deli elektrino s časom; iščeš elektrino, pomnoži tok s časom; iščeš čas, deli elektrino s tokom.
 7. **Izračunaj:** $e = 0{,}15\,\mathrm{A} \cdot 120\,\mathrm{s} = 18\,\mathrm{As}$.
 8. **Preveri smiselnost** s tabelo kuhinjskih naprav: lučka s tokom $9\,\mathrm{A}$ ali kuhalnik s tokom $9\,\mathrm{mA}$ pomenita, da si se zmotil pri enotah.

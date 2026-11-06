@@ -221,7 +221,7 @@ Natančno navedi Bernoullijevo enačbo z vsemi pogoji in jo izpelji. Nato izpelj
 5. Izrek o kinetični energiji: $(p_1 - p_2)\,\mathrm{d}V - \rho\,\mathrm{d}V\,g(z_2 - z_1) = \tfrac{1}{2}\rho\,\mathrm{d}V(v_2^2 - v_1^2)$. Delimo z $\mathrm{d}V$ in preuredimo, pa dobimo Bernoullijevo enačbo.
 6. Zaprt rezervoar: točka 1 na gladini ($p_0 + \Delta p$, $v_1 \approx 0$, ker je rezervoar velik, $z_1 = h$), točka 2 v curku ($p_0$, $v$, $z_2 = 0$): $p_0 + \Delta p + \rho g h = p_0 + \tfrac{1}{2}\rho v^2$, torej $v = \sqrt{2gh + 2\Delta p/\rho}$.
 7. Torricellijev izrek $v = \sqrt{2gh}$ je poseben primer za $\Delta p = 0$, ko je tlak na gladini enak tlaku ob curku. Tu ne velja: nadtlak hitrost poveča, podtlak jo zmanjša (pri $\Delta p < -\rho g h$ voda sploh ne izteka).
-8. Številke: $2gh = 2 \cdot 9{,}81 \cdot 1{,}0\,\mathrm{m^2/s^2} = 19{,}62\,\mathrm{m^2/s^2}$, $2\Delta p/\rho = 2 \cdot 0{,}50 \cdot 10^5/1000\,\mathrm{m^2/s^2} = 100\,\mathrm{m^2/s^2}$, $v = \sqrt{119{,}62}\,\mathrm{m/s} \approx 10{,}9\,\mathrm{m/s}$.
+8. Številke: $2gh = 2 \cdot 9{,}81 \cdot 1{,}0\,\mathrm{m^2/s^2} = 19{,}62\,\mathrm{m^2/s^2}$; $2\Delta p/\rho = 2 \cdot 0{,}50 \cdot 10^5/1000\,\mathrm{m^2/s^2} = 100\,\mathrm{m^2/s^2}$; $v = \sqrt{119{,}62}\,\mathrm{m/s} \approx 10{,}9\,\mathrm{m/s}$.
 9. Odgovor: $v = \sqrt{2gh + 2\Delta p/\rho} \approx 10{,}9\,\mathrm{m/s}$, skoraj $2{,}5$-krat več kot po Torricelliju ($\sqrt{19{,}62} \approx 4{,}43\,\mathrm{m/s}$); Torricellijev izrek velja le, če je tlak nad gladino enak zunanjemu.
 
 ## Drugače: Na sliki

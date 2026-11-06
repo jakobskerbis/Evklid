@@ -913,8 +913,11 @@ test("preverjanje starosti: premlad otrok dobi povezavo za starše, dijak ima sa
   assert.equal(minAgeOf("DE"), 16);
   assert.equal(minAgeOf("IN"), 18);
   assert.equal(parseBirthDate("2010-02-30"), null);
-  assert.equal(ageOn("2010-06-15", new Date(2025, 5, 14)), 14);
-  assert.equal(ageOn("2010-06-15", new Date(2025, 5, 15)), 15);
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 14, 12))), 14);
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 15, 12))), 15);
+  // »Danes« po slovenskem času: 15. 6. ob 00:30 v Ljubljani je v UTC še 14. 6. (22:30), starost je že 15.
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 14, 22, 30))), 15);
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 14, 21, 30))), 14);
 
   const ymd = (yearsAgo) => {
     const d = new Date();

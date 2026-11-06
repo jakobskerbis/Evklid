@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Prva zgodba: na pohodu si zjutraj $8\,\text{km}$ od koče. Vsako uro prehodiš le polovico poti, ki ti je še ostala. Oddaljenosti od koče ob polnih urah so $8$, $4$, $2$, $1$, $0{,}5$ … kilometra.
+Prva zgodba: na pohodu si zjutraj $8\,\text{km}$ od koče. Vsako uro prehodiš le polovico poti, ki ti je še ostala. Oddaljenosti od koče ob polnih urah so $8$; $4$; $2$; $1$; $0{,}5$ … kilometra.
 
 Druga zgodba: z avtom greš na morje. Prve pol ure stojiš v koloni, nato ves čas voziš s hitrostjo $100\,\text{km/h}$. Navigacija po vsaki uri vožnje izpiše povprečno hitrost celotne poti: približno $67$, $80$, $86$, $89$ … $\text{km/h}$.
 
@@ -15,7 +15,7 @@ Kaj natančno pomeni »ustali se« in kako to dokažemo z računom? Odgovor je *
 
 ## Razlaga
 
-**1. Kaj je zaporedje.** Oddaljenosti s pohoda nariši kot pike na številski premici: $8$, $4$, $2$, $1$, $0{,}5$ … Vsaka pika ima svojo zaporedno številko. Prav to je zaporedje: vsakemu naravnemu številu $n = 1, 2, 3, \ldots$ priredimo realno število $a_n$. Natančneje je **zaporedje** funkcija iz naravnih v realna števila. Številu $a_n$ rečemo **$n$-ti člen**, številu $n$ pa **indeks** (mesto člena). Zaporedje zapišemo kot $a_1, a_2, a_3, \ldots$ ali na kratko $(a_n)$.
+**1. Kaj je zaporedje.** Oddaljenosti s pohoda nariši kot pike na številski premici: $8$; $4$; $2$; $1$; $0{,}5$ … Vsaka pika ima svojo zaporedno številko. Prav to je zaporedje: vsakemu naravnemu številu $n = 1, 2, 3, \ldots$ priredimo realno število $a_n$. Natančneje je **zaporedje** funkcija iz naravnih v realna števila. Številu $a_n$ rečemo **$n$-ti člen**, številu $n$ pa **indeks** (mesto člena). Zaporedje zapišemo kot $a_1, a_2, a_3, \ldots$ ali na kratko $(a_n)$.
 
 **2. Kako podamo zaporedje.** Pri pohodu povemo prvi člen in pravilo, kako iz člena dobimo naslednjega: $a_1 = 8$ in $a_{n+1} = \dfrac{a_n}{2}$. Tak zapis je **rekurziven**. Pogosteje zaporedje podamo s **splošnim členom**, to je s formulo za $a_n$, na primer $a_n = 2 - \dfrac{1}{n}$. Člen izračunaš tako, da vstaviš indeks: $a_1 = 1$, $a_2 = 1{,}5$, $a_3 \approx 1{,}667$.
 
@@ -129,7 +129,7 @@ $a_{n+1} = \dfrac{a_n}{2} + 100$; monotono in omejeno zaporedje je konvergentno;
 **Rešitev:**
 
 1. Pravilo: do jutra ostane $\dfrac{a_n}{2}$, nato bolnik doda $100\,\text{mg}$, zato $a_{n+1} = \dfrac{a_n}{2} + 100$.
-2. Prvi členi: $100$, $150$, $175$, $187{,}5$, $193{,}75$ (v mg). Rastejo vedno počasneje.
+2. Prvi členi: $100$; $150$; $175$; $187{,}5$; $193{,}75$ (v mg). Rastejo vedno počasneje.
 3. Omejenost: če je $a_n < 200$, je $a_{n+1} < \dfrac{200}{2} + 100 = 200$. Ker je $a_1 = 100 < 200$, so po matematični indukciji vsi členi manjši od $200$.
 4. Monotonost: $a_{n+1} - a_n = 100 - \dfrac{a_n}{2}$, kar je pozitivno, ker je $a_n < 200$. Zaporedje strogo narašča.
 5. Zaporedje je naraščajoče in navzgor omejeno, zato je konvergentno. Ker gresta $a_n$ in $a_{n+1}$ proti isti limiti $L$, iz pravila dobimo $L = \dfrac{L}{2} + 100$.
@@ -190,7 +190,7 @@ Pri $\dfrac{1}{n}$ in $L = 0$ vedno zmagaš: za $\varepsilon = 0{,}1$ pokažeš 
 
 ## Drugače: Iz vsakdanjega življenja
 
-Predstavljaj si, da s kalkulatorjem iščeš $\sqrt{2}$ po korakih: $1{,}4$, nato $1{,}41$, $1{,}414$, $1{,}4142$ … To je zaporedje približkov. Je naraščajoče, saj vsakič dodaš števko. Je navzgor omejeno, saj noben približek ne preseže $1{,}5$. Zato ima limito, in ta limita je natanko $\sqrt{2}$, ki ga z nobenim končnim decimalnim zapisom ne zapišeš.
+Predstavljaj si, da s kalkulatorjem iščeš $\sqrt{2}$ po korakih: $1{,}4$; nato $1{,}41$; $1{,}414$; $1{,}4142$ … To je zaporedje približkov. Je naraščajoče, saj vsakič dodaš števko. Je navzgor omejeno, saj noben približek ne preseže $1{,}5$. Zato ima limito, in ta limita je natanko $\sqrt{2}$, ki ga z nobenim končnim decimalnim zapisom ne zapišeš.
 
 ## Drugače: Bolj natančno
 

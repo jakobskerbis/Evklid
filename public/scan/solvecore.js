@@ -9,7 +9,7 @@
 // izraze primerjamo s prvotnim v naključnih točkah, odvode z numeričnim odvodom. Kar ne prestane preverjanja,
 // se ne pokaže kot rešitev (vrne ok:false in vmesnik ponudi AI rešitev, ki se preveri enako).
 
-import { parse, compile, diff, simplify, toTex as mathTex, normalize } from "../graph/math.js";
+import { parse, compile, diff, simplify, toTex as mathTex, normalize, joinThousands, joinDotThousands, digitGap, twoDots } from "../graph/math.js";
 import { Q, P, AlgebraError, polyOf, tryPoly, constQ, termsTex, termTex, isqrt, lcmInt, gcdInt, approxTex, monoKey } from "./algebra.js";
 
 export { Q, P };
@@ -20,9 +20,20 @@ const step = (title, tex, o = {}) => ({ title, tex, ...o });
 // ---------------------------------------------------------------------------
 // Priprava besedila
 
+// Števila v zapisu: »1 000«, »1\,000«, »1~000« je tisoč, ne 1 · 0 (texToText da namesto \, presledek),
+// »1.234,5« je 1234,5.
+const flatNumbers = (text) => joinDotThousands(joinThousands(String(text ?? "").replace(/(\d)(?:\\[,;: ]|~|\{\\,\})(?=\d{3}(?!\d))/g, "$1 ")));
+// Nejasen zapis števila: presledek med števkami, ki ni zapis tisočic (»12 34«, »12 345,678 9«, »2 1/2«),
+// ali dve piki v istem številu (»1.2.3«). Takrat solve ne ugiba (raje nič kot napačen »preverjen« rezultat).
+export const unclearNumber = (text) => {
+  const s = flatNumbers(text);
+  return digitGap(s) || twoDots(s);
+};
+
 // Prepis s fotografije ali tipkovnice → oblika, ki jo razume razčlenjevalnik.
 export function prep(text) {
-  let s = String(text ?? "")
+  // »1 000«, »1\,000«, »1~000« je tisoč, ne 1 · 0 (texToText da namesto \, presledek)
+  let s = flatNumbers(text)
     .replace(/\\left|\\right/g, "")
     .replace(/\\dfrac|\\tfrac/g, "\\frac")
     .replace(/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, "(($1)/($2))")
@@ -1840,7 +1851,7 @@ export function texToText(s) {
     .replace(/\\cdot/g, "*")
     .replace(/\\pi/g, "π")
     .replace(/\{,\}/g, ".")
-    .replace(/\\[,;!]|\\quad/g, " ")
+    .replace(/\\[,;:! ]|\\quad|~/g, " ")
     .replace(/\\tfrac|\\dfrac/g, "\\frac");
   // od znotraj navzven: ^{…}, \sqrt{…}, \frac{…}{…}
   for (let i = 0; i < 12; i++) {
@@ -2166,6 +2177,7 @@ export function parseTask(text) {
 
 // Glavni vstop. Vrne { ok:false, reason } kadar naloge ne znamo rešiti po korakih (takrat pomaga AI).
 export function solve(text, { goal = null, complex = false } = {}) {
+  if (unclearNumber(text)) return { ok: false, reason: "parse", goals: [], goal: null, type: "error" };
   const info = analyze(text);
   const g = goal && info.goals.includes(goal) ? goal : info.goals[0];
   const base = { goals: info.goals, goal: g ?? null };

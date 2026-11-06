@@ -106,12 +106,12 @@ const addTest = (call, kidId, date, name = "Test iz ulomkov") =>
   call(`/api/students/${kidId}/schedule`, { method: "PUT", body: { events: [{ date, kind: "test", name }] } });
 
 test("helpers: pass prices (j 2026-11-04, 75 % rule), pass length, grace period, code form", () => {
-  assert.deepEqual(PASSES.map((p) => [p.days, p.amount]), [[7, 549], [14, 849], [30, 1399]]);
+  assert.deepEqual(PASSES.map((p) => [p.days, p.amount]), [[7, 549], [14, 849]]);
   assert.equal(passForDaysLeft(0).days, 7);
   assert.equal(passForDaysLeft(6).days, 7);
   assert.equal(passForDaysLeft(7).days, 14);
-  assert.equal(passForDaysLeft(29).days, 30);
-  assert.equal(passForDaysLeft(30), null);
+  assert.equal(passForDaysLeft(13).days, 14);
+  assert.equal(passForDaysLeft(14), null, "30-dnevnega paketa ni več (j 2026-11-04)");
   const now = Date.now();
   assert.equal(paidActive({ sub_status: "active" }, now), true);
   assert.equal(paidActive({ sub_status: "past_due", past_due_since: new Date(now - 2 * 86400000).toISOString() }, now), true);
@@ -193,7 +193,7 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       // Brez testa v urniku ni ponudbe.
       let offer = (await a(`/api/students/${kid.id}/pass-offer`)).body;
       assert.equal(offer.offer, null);
-      assert.deepEqual(offer.passes.map((p) => p.amount), [549, 849, 1399]);
+      assert.deepEqual(offer.passes.map((p) => p.amount), [549, 849]);
       // Test čez 9 dni: predlog je paket za 14 dni.
       await addTest(a, kid.id, day(9));
       offer = (await a(`/api/students/${kid.id}/pass-offer`)).body;
@@ -201,12 +201,15 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       assert.equal(offer.offer.suggested, 14);
       assert.equal(offer.offer.pay_link, false);
 
-      // Brez obeh potrditev ni plačila; test čez več kot 30 dni ni dovoljen.
+      // Brez obeh potrditev ni plačila; test dlje, kot ga paket pokrije, ni dovoljen.
       const body = { student_id: kid.id, days: 14, test_date: day(9), test_name: "Test iz ulomkov" };
       const noConsent = await a("/api/billing/pass", { method: "POST", body });
       assert.equal(noConsent.status, 400);
       assert.equal(noConsent.body.consent, true);
       assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, test_date: day(40), adult: true, withdrawal: true } })).status, 400);
+      // 30-dnevnega paketa ni več; test čez 20 dni paket še ne pokrije (najdaljši je 14 dni).
+      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, days: 30, test_date: day(20), adult: true, withdrawal: true } })).status, 400);
+      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, test_date: day(20), adult: true, withdrawal: true } })).status, 400);
       assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, days: 10, adult: true, withdrawal: true } })).status, 400);
 
       const co = await a("/api/billing/pass", { method: "POST", body: { ...body, adult: true, withdrawal: true } });
@@ -452,4 +455,52 @@ test("dnevna opravila: usklajevanje, opomnik pred koncem kode in pred letno obno
   assert.deepEqual([again.promo_end, again.renewal], [0, 0]);
   // Brez force pred 3.00 ali drugič isti dan ne teče.
   assert.equal(await api.billing.billingDaily(new Date()), null);
+});
+
+test("brez mikrotransakcij (j 2026-11-04): dokup samo paketi in samo polnoleten; stari 30-dnevni paket in povezava se bereta brez napake", async () => {
+  await withServer(async ({ client, stripe, store }) => {
+    const a = client();
+    const parent = await registerVerified(a, stripe, "brez@mikro.si");
+    const consent = { adult: true, withdrawal: true };
+    // Poljubnega zneska ni več.
+    let r = await a("/api/billing/credit", { method: "POST", body: { pack: "custom", amount_eur: 37.5, ...consent } });
+    assert.equal(r.status, 400);
+    assert.equal((await a("/api/billing/credit")).body.custom, undefined);
+    assert.equal((await a("/api/billing/credit", { method: "POST", body: { pack: "k10", ...consent } })).status, 200);
+    // Račun brez datuma rojstva (star račun): dokupa ne plača, dokler starosti ne poznamo.
+    store.db.prepare("UPDATE parents SET birth_date = NULL WHERE id = ?").run(parent.id);
+    r = await a("/api/billing/credit", { method: "POST", body: { pack: "k5", ...consent } });
+    assert.equal(r.status, 403);
+    assert.equal((await a("/api/billing/credit")).body.minor, true);
+    // Mladoletni imetnik: 403.
+    store.db.prepare("UPDATE parents SET birth_date = ? WHERE id = ?").run(TEEN, parent.id);
+    assert.equal((await a("/api/billing/credit", { method: "POST", body: { pack: "k5", ...consent } })).status, 403);
+    store.db.prepare("UPDATE parents SET birth_date = ? WHERE id = ?").run(ADULT, parent.id);
+
+    // Že kupljen 30-dnevni paket (pred spremembo) velja do konca in se pokaže brez napake.
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Tia", birth_year: YEAR - 16, consent: true } })).body;
+    const now = Date.now();
+    store.db
+      .prepare("INSERT INTO passes (parent_id, student_id, days, amount, currency, ai_usd, status, starts_at, ends_at, level) VALUES (?, ?, 30, 1399, 'EUR', 2.9, 'active', ?, ?, 'SS')")
+      .run(parent.id, kid.id, new Date(now - 86400000).toISOString(), new Date(now + 29 * 86400000).toISOString());
+    const offer = await a(`/api/students/${kid.id}/pass-offer`);
+    assert.equal(offer.status, 200);
+    assert.equal(offer.body.active.days, 30);
+    assert.equal((await a("/api/account")).body.children[0].pass.days, 30);
+
+    // Neplačana povezava za 30-dnevni paket (ustvarjena prej): ne velja več, plačati je ni mogoče.
+    const { sha256 } = await import("../server/accounts/auth.js");
+    const token = "stara-povezava-za-30-dni-xx";
+    store.db.prepare("UPDATE passes SET status = 'refunded'").run(); // brez aktivnega paketa, da odgovor ni »že plačano«
+    store.db
+      .prepare("INSERT INTO pay_links (token_hash, parent_id, kind, plan_key, student_id, days, test_date, expires_at) VALUES (?, ?, 'pass', 'evklid_pass_30', ?, 30, ?, ?)")
+      .run(sha256(token), parent.id, kid.id, day(20), new Date(now + 86400000).toISOString());
+    const dad = client();
+    r = await dad(`/api/pay/${token}`);
+    assert.equal(r.status, 404);
+    assert.equal(r.body.expired, true);
+    r = await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", ...consent } });
+    assert.equal(r.status, 410);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM passes WHERE days = 30").get().n, 1, "nov 30-dnevni paket ne nastane");
+  });
 });

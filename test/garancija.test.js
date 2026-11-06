@@ -192,7 +192,7 @@ test("garancija: zamujen teden vaje ali boljša ocena ne prineseta vračila", as
   });
 });
 
-test("Podari Evklid: pilotne kode z mejami, sklad iz dodatka in »Podari mesec«, vračilo zniža sklad", async () => {
+test("Podari Evklid: pilotne kode z mejami, sklad iz (starega) dodatka in »Podari mesec«, vračilo zniža sklad; novega dodatka ni", async () => {
   process.env.EVKLID_ADMIN_EMAILS = "skrbnik@pod.si";
   try {
     await withServer(async ({ client, stripe, store, hook }) => {
@@ -221,18 +221,17 @@ test("Podari Evklid: pilotne kode z mejami, sklad iz dodatka in »Podari mesec«
       assert.ok(!JSON.stringify(r.body.children).includes("podari"));
       assert.equal((await client()("/api/podari")).body.in_use_months, 3);
 
-      // Dodatek pri naročnini: enkratna vrstica in podari_id v metadata naročnine.
+      // Dodatka 2/5/10 € pri naročnini ni več (j 2026-11-04): checkout ga prezre, v Stripu je samo naročnina.
       store.db.prepare("UPDATE parents SET gift_until = NULL WHERE id = ?").run(parent.id);
       r = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, podari: 500 } });
       assert.equal(r.status, 200, JSON.stringify(r.body));
       const cs = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1).body;
-      assert.equal(cs["line_items[1][price_data][unit_amount]"], "500");
-      const podariId = cs["subscription_data[metadata][podari_id]"];
-      assert.ok(podariId);
-      // Neznan znesek dodatka se prezre.
-      await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, podari: 333 } });
-      assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1).body["line_items[1][price_data][unit_amount]"], undefined);
-      // invoice.paid potrdi dodatek (enkrat).
+      assert.equal(cs["line_items[1][price_data][unit_amount]"], undefined);
+      assert.equal(cs["subscription_data[metadata][podari_id]"], undefined);
+      assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM podari_fund WHERE kind = 'addon'").get().n, 0);
+      assert.equal((await client()("/api/podari")).body.addons, undefined);
+      // Star dodatek (sklenjen pred spremembo, prvi račun po preizkusu): invoice.paid ga še potrdi (enkrat).
+      const podariId = String(store.db.prepare("INSERT INTO podari_fund (parent_id, kind, amount) VALUES (?, 'addon', 500)").run(parent.id).lastInsertRowid);
       const inv = { id: "in_9", customer: "cus_x", amount_paid: 1499, payment_intent: "pi_add", subscription_details: { metadata: { podari_id: podariId, parent_id: String(parent.id) } } };
       await hook({ id: "evt_1", type: "invoice.paid", data: { object: inv } });
       await hook({ id: "evt_2", type: "invoice.paid", data: { object: { ...inv, id: "in_10", payment_intent: "pi_next" } } });
