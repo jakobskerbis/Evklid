@@ -3,6 +3,7 @@
 import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, canOpen, blindIndex, warnIfNoKey } from "./crypto-polje.js";
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
+import { photoDays as pilotPhotoDays } from "./pilot-naloge.js";
 
 // Šifrirani stolpci. Nešifrirano ostane, kar SQL uporablja za iskanje ali je skupno vsem (glej dokument):
 // students.name (iskanje podvojenih), answer_cache (skupni, brez osebnih podatkov), knowledge_items (samo id-ji predmetov).
@@ -16,6 +17,10 @@ export const SEALED = [
   { table: "schedules", cols: ["data"] },
   // norm (za UNIQUE) postane slepi indeks HMAC, sicer bi razkril vprašanje s kartice.
   { table: "flashcards", cols: ["front", "back"], norm: true },
+  // Naloge za člane pilota (server/pilot-naloge.js): opombe, prepis naloge, fotografija (samo ob soglasju).
+  { table: "pilot_scans", cols: ["note", "problems"] },
+  { table: "pilot_features", cols: ["note"] },
+  { table: "pilot_photos", cols: ["image"] },
 ];
 
 // --- roki hrambe (vse na enem mestu) ---
@@ -157,6 +162,8 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     }
   }
   const nowIso = new Date(now).toISOString();
+  // Fotografije iz nalog pilota (shranjene ob soglasju): po EVKLID_PILOT_PHOTO_DAYS dneh (privzeto 30) ostane le ocena.
+  if (hasTable(db, "pilot_photos")) out.pilotPhotos = Number(db.prepare("DELETE FROM pilot_photos WHERE created_at < datetime(?, 'unixepoch', ?)").run(Math.floor(now / 1000), `-${pilotPhotoDays()} days`).changes);
   if (hasTable(db, "parent_sessions")) out.sessions = Number(db.prepare("DELETE FROM parent_sessions WHERE expires_at < ?").run(nowIso).changes);
   if (hasTable(db, "profile_unlocks")) out.unlocks = Number(db.prepare("DELETE FROM profile_unlocks WHERE expires_at < ?").run(now).changes);
   const ago = (d) => new Date(now - d * 86400000).toISOString().replace("T", " ").slice(0, 19);

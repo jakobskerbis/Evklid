@@ -129,7 +129,7 @@ export function reportsMarkdown({ reports }, topicName = () => null) {
   return lines.join("\n");
 }
 
-export function mountReports(app, store, { loadConversation, loadStudent, localOnly, isAdmin = () => false, topicName = () => null }) {
+export function mountReports(app, store, { loadConversation, loadStudent, localOnly, isAdmin = () => false, isPilot = null, topicName = () => null }) {
   ensureReportsTable(store.db);
 
   const deviceOf = (d) => cleanText([d?.device, d?.screen].filter((x) => typeof x === "string").join(" "), 40) || null;
@@ -202,10 +202,14 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
   });
 
   // Skrbnik v klepetu: »Prijavi napako« (v aplikaciji ali pri inštruktorju) z zadnjimi sporočili pogovora.
+  // Člani pilota (isPilot, server/pilot-naloge.js) tudi, z dnevno mejo prijav kot drugje.
   app.post("/api/students/:id/bug", (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
+    const admin = isAdmin(req);
+    if (!admin && !isPilot) return res.status(403).json({ error: "Samo za skrbnika." });
     const s = loadStudent(req, res);
     if (!s) return;
+    if (!admin && !isPilot(s.id)) return res.status(403).json({ error: "Samo za skrbnika." });
+    if (!admin && perDay(s.id) >= MAX_PER_DAY) return res.status(429).json({ error: "Danes si poslal že veliko prijav. Hvala!" });
     const note = String(req.body?.note || "").trim().slice(0, 2000);
     if (!note) return res.status(400).json({ error: "Opiši napako." });
     let convId = null;

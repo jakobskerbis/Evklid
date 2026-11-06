@@ -112,6 +112,8 @@ export function migrateAccounts(db) {
   // Datum rojstva imetnika računa (preverjanje starosti, glej age.js). Nov račun ga mora imeti (registracija ga zahteva); stari računi: NULL, dokler ga ne vpišejo.
   if (!pcols.includes("birth_date")) db.exec("ALTER TABLE parents ADD COLUMN birth_date TEXT");
   // Star račun brez datuma rojstva: kdaj smo ga ob prijavi vprašali (vprašamo samo enkrat, j 2026-11-06).
+  // Član pilota (server/pilot-naloge.js): skrbnik označi račun v zavihku Račun; vsi profili računa vidijo naloge.
+  if (!pcols.includes("pilot_at")) db.exec("ALTER TABLE parents ADD COLUMN pilot_at TEXT");
   if (!pcols.includes("birth_asked_at")) db.exec("ALTER TABLE parents ADD COLUMN birth_asked_at TEXT");
   // Gost (uporaba brez registracije, odstranjena 2026-10-29; stari gostje ostanejo): račun brez e-naslova, vezan na piškotek naprave.
   // guest_net = zgoščeni IP omrežja, da brisanje piškotkov ne da nove brezplačne kvote.

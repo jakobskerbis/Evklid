@@ -1053,6 +1053,20 @@ export function mountAccounts(app, store, opts = {}) {
             return [];
           }
         })(),
+        // Naloge za člane pilota (server/pilot-naloge.js): ocene, opombe, anketa; fotografija samo kot podatek, da obstaja.
+        pilot: (() => {
+          try {
+            return {
+              scans: q("SELECT s.cond, s.ok, s.note, s.problems, s.created_at, (p.scan_id IS NOT NULL) AS photo_saved, p.created_at AS photo_at FROM pilot_scans s LEFT JOIN pilot_photos p ON p.scan_id = s.id WHERE s.student_id = ?", c.id).map(
+                (r) => ({ ...r, note: unseal(r.note), problems: r.problems ? JSON.parse(unseal(r.problems, "[]") || "[]") : [] }),
+              ),
+              features: q("SELECT feature, ok, note, created_at FROM pilot_features WHERE student_id = ?", c.id).map((r) => ({ ...r, note: unseal(r.note) })),
+              survey: q("SELECT answers, created_at FROM pilot_survey WHERE student_id = ?", c.id),
+            };
+          } catch {
+            return null;
+          }
+        })(),
         // Igre (server/games.js, server/daily-puzzle.js); tabele morda še ne obstajajo.
         games: Object.fromEntries(
           [
