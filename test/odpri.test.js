@@ -30,6 +30,13 @@ test("resolve: words find the right experiment, 3D model, atlas structure, lesso
   const ohm = await one('<<ODPRI poskus="Ohmov zakon">>');
   assert.match(ohm.title, /Ohm/); // ne »Odbojni zakon« (samo beseda »zakon«)
   assert.deepEqual(await one('<<ODPRI 3d="srce" del="levi prekat">>'), { kind: "3d", id: "organ-srce", title: "Srce", del: "levi prekat" });
+  // skupine delov (public/3d/skupine.js): ime skupine → vsi deli hkrati; ime dela ima prednost
+  assert.equal((await one('<<ODPRI 3d="srce" del="zaklopke">>')).del, "skupina-zaklopke");
+  assert.equal((await one('<<ODPRI 3d="srce" del="srčne zaklopke">>')).del, "skupina-zaklopke");
+  assert.equal((await one('<<ODPRI 3d="srce" del="preddvora">>')).del, "skupina-preddvora");
+  assert.equal((await one('<<ODPRI 3d="srce" del="velike žile">>')).del, "skupina-velike-zile");
+  assert.equal((await one('<<ODPRI 3d="srce" del="valves">>')).del, "skupina-zaklopke"); // ime v drugem jeziku
+  assert.equal((await one('<<ODPRI 3d="srce" del="pljučne vene">>')).del, "pljučne vene");
   const femur = await one('<<ODPRI 3d="stegnenica">>');
   assert.equal(femur.id, "atlas");
   assert.match(femur.izberi, /^Femur\.[lr]$/); // id vrstice v atlasu (parna kost), ne ime

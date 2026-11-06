@@ -7,6 +7,7 @@ import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 import { ravenProfila, razlaga, imaRavni } from "./raven.js";
+import { SKUPINE, najdiSkupino } from "./skupine.js";
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -369,9 +370,23 @@ export function odpriModel(el, mod, opts = {}) {
   // hit = { object, instanceId, point } iz tapa (null iz seznama delov); model.izberi lahko vrne drug del (npr. element
   // v InstancedMesh). preklopi: ponoven tap na izbrani del izbiro prekliče. pomakni: false = del iz naslova ob odprtju
   // (plošča in stran se ne premakneta).
+  // Skupine delov (skupine.js): »skupina-<id>« izbere vse dele skupine hkrati (osvetlitev in skriti ovoji okoli njih).
+  const PRED = "skupina-";
+  function skupineModela() {
+    const deli = Array.isArray(model?.deli) ? model.deli : [];
+    return (SKUPINE[info.id] || [])
+      .map((g) => {
+        const clani = deli.filter((d) => g.deli.includes(d.id));
+        const meshes = [...new Set(clani.flatMap((d) => d.meshes || []))];
+        const ime = t(`a3.grp.${g.id}`);
+        return { id: PRED + g.id, skupinaDelov: true, ime, barva: "#6E9BFF", meshes, opis: clani.map((d) => d.ime).join(", "), clani };
+      })
+      .filter((g) => g.clani.length > 1 && g.meshes.length);
+  }
+  const najdiDel = (id) => (model?.deli || []).find((x) => x.id === id) || (String(id || "").startsWith(PRED) ? skupineModela().find((g) => g.id === id) : null) || null;
   function izberi(id, { leti = true, hit = null, preklopi = false, pomakni = true } = {}) {
     let cilj = id;
-    if ((id || hit) && typeof model?.izberi === "function") {
+    if ((id || hit) && typeof model?.izberi === "function" && !String(id || "").startsWith(PRED)) {
       try {
         const r = model.izberi(id, hit);
         if (typeof r === "string") cilj = r;
@@ -380,7 +395,7 @@ export function odpriModel(el, mod, opts = {}) {
       }
     }
     if (preklopi && cilj && cilj === izbran) cilj = null;
-    const d = (model?.deli || []).find((x) => x.id === cilj) || null;
+    const d = najdiDel(cilj);
     // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
     const prej = leti && model?.group ? kadrModela() : null;
     izbran = d ? d.id : null;
@@ -525,12 +540,23 @@ export function odpriModel(el, mod, opts = {}) {
           if (raven === k) return;
           raven = k;
           ravenEl.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(i + 1 === raven)));
-          const d = seznam.find((x) => x.id === izbran);
+          const d = najdiDel(izbran);
           if (d) pokaziInfo(d);
         });
         ravenEl.append(g);
       }
       if (ravenEl.parentNode !== deliEl.parentNode) deliEl.parentNode?.insertBefore(ravenEl, deliEl);
+    }
+    for (const g of skupineModela()) {
+      // skupine pred deli (npr. Zaklopke, Velike žile): en dotik osvetli vse njihove dele
+      const b = mk("button", "k3-del k3-del-skupina");
+      b.type = "button";
+      b.dataset.del = g.id;
+      b.setAttribute("aria-pressed", String(g.id === izbran));
+      b.append(mk("span", "", g.ime));
+      b.title = g.opis;
+      b.addEventListener("click", () => izberi(g.id === izbran ? null : g.id));
+      deliEl.append(b);
     }
     for (const d of seznam) {
       const b = mk("button", "k3-del");
@@ -551,8 +577,8 @@ export function odpriModel(el, mod, opts = {}) {
       deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(stevilo)));
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
-    if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
-    else if (izbran) skrijObdajajoce(seznam.find((d) => d.id === izbran)); // nova faza: drugi ovoji
+    if (izbran && !najdiDel(izbran)) izberi(null, { leti: false });
+    else if (izbran) skrijObdajajoce(najdiDel(izbran)); // nova faza: drugi ovoji
     // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
@@ -1062,7 +1088,10 @@ export function odpriModel(el, mod, opts = {}) {
       const want = fold(zacetek.del);
       const vsi = Array.isArray(model.deli) ? model.deli : [];
       const d = vsi.find((x) => x.id === zacetek.del || fold(x.ime) === want) || vsi.find((x) => fold(x.ime).startsWith(want) || want.startsWith(fold(x.ime)));
-      if (d) requestAnimationFrame(() => !unicen && model === m && izberi(d.id, { pomakni: false }));
+      // ni dela s tem imenom: skupina (»zaklopke«, »organeli« …; id iz strežnika ali besede, tudi v jeziku vmesnika)
+      const g = d ? null : String(zacetek.del).startsWith(PRED) ? zacetek.del : najdiSkupino(info.id, zacetek.del, Object.fromEntries((SKUPINE[info.id] || []).map((x) => [x.id, [t(`a3.grp.${x.id}`)]])));
+      const cilj = d ? d.id : g ? (g.startsWith(PRED) ? g : PRED + g) : null;
+      if (cilj) requestAnimationFrame(() => !unicen && model === m && izberi(cilj, { pomakni: false }));
     }
   }
   const fold = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();

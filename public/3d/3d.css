@@ -156,6 +156,7 @@
 }
 .k3-del[aria-pressed="true"] { border-color: var(--k3-accent); background: var(--k3-accent-soft); }
 /* Raven razlage »OŠ / SŠ / Študij« nad seznamom delov (public/3d/raven.js); »Več o tem« v oknu dela */
+.k3-del-skupina { font-weight: 600; border-color: var(--k3-accent); }
 .k3-info-vec summary { min-height: 40px; display: flex; align-items: center; cursor: pointer; color: var(--k3-accent); font-weight: 600; }
 .k3-info-vec .k3-info-opis { margin-top: 4px; }
 .k3-raven { display: inline-flex; gap: 4px; padding: 3px; margin: 0 0 8px; border: 1px solid var(--k3-rob); border-radius: 999px; background: var(--k3-povrsina); }

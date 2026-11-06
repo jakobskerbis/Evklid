@@ -17,6 +17,7 @@ import { getTopic, getPath, pathKeyFor } from "./curriculum.js";
 import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
 import { formulaSheet } from "./textbook.js";
 import { stopnja } from "../public/stopnja.js";
+import { SKUPINE, najdiSkupino } from "../public/3d/skupine.js";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 export const OPEN_MAX = 4; // orodij pod enim sporočilom (prompt dovoli dve; strežnik je strpen)
@@ -221,13 +222,47 @@ function atlasNames() {
   return ATLAS;
 }
 
+// Skupine delov (public/3d/skupine.js): »zaklopke«, »venčne žile«, »organeli« … → del="skupina-<id>" (pregledovalnik
+// osvetli vse dele skupine). Imena skupin v vseh jezikih iz public/i18n/ui/*.json (a3.grp.<id>). Ime dela ima prednost:
+// »pljučne vene« je del srca, ne skupina; pri organih iz datotek primerjamo z imeni delov.
+let GRP = null;
+function imenaSkupin() {
+  if (GRP) return GRP;
+  GRP = {};
+  const dir = path.join(here, "..", "public", "i18n", "ui");
+  for (const f of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+      for (const [k, v] of Object.entries(j)) if (k.startsWith("a3.grp.")) (GRP[k.slice(7)] ||= []).push(v);
+    } catch {}
+  }
+  return GRP;
+}
+function imenaDelov(id) {
+  const m = /^organ-(.+)$/.exec(id || "");
+  if (!m) return [];
+  try {
+    const j = JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", "modeli", "organi-3d", `${m[1]}.json`), "utf8"));
+    return (j.deli || []).flatMap((d) => [d.id, d.ime, d.la].filter(Boolean));
+  } catch {
+    return [];
+  }
+}
+export function delAliSkupina(modelId, del) {
+  if (!del || !SKUPINE[modelId]) return del;
+  const f = fold(del);
+  if (imenaDelov(modelId).some((x) => fold(x) === f)) return del;
+  const g = najdiSkupino(modelId, del, imenaSkupin());
+  return g ? `skupina-${g}` : del;
+}
+
 async function findModel(q, del) {
   let best = null;
   for (const m of await allModels()) {
     const s = score(q, m.naslov, m.opis);
     if (s && (!best || s > best.s)) best = { s, m };
   }
-  if (best && best.s >= 2) return { kind: "3d", id: best.m.id, title: best.m.naslov, ...(del ? { del } : {}) };
+  if (best && best.s >= 2) return { kind: "3d", id: best.m.id, title: best.m.naslov, ...(del ? { del: delAliSkupina(best.m.id, del) } : {}) };
   // Struktura v atlasu telesa (»stegnenica«, »levi prekat« brez modela srca).
   const want = fold(del || q);
   let hit = atlasNames().find((x) => fold(x.sl) === want);
@@ -315,4 +350,4 @@ export async function resolveOpen(text, settings, { canOpen = null } = {}) {
   return out;
 }
 
-export const _test = { score, findSim, findModel, findLesson, findGame, findFormula, getPath };
+export const _test = { delAliSkupina, score, findSim, findModel, findLesson, findGame, findFormula, getPath };
