@@ -80,9 +80,20 @@ klikljivih črk manj (varna smer).
 | k, x (FIZ) | konstanta vzmeti, raztezek | F = k x (tudi k · x, k × x, k Δx), tema vzmet/prožnost/nihanje | Boltzmannova konstanta, valovno število, lega x |
 | n (FIZ) | lomni količnik | n = c₀/c, sin, tema lom/leča/optika | množina snovi (p V = n R T), število nihajev ali meritev, red uklona |
 | e (FIZ) | naboj | privzeto | e^{−t/τ} (Eulerjevo število) |
-| A (FIZ) | delo | privzeto | amplituda pri nihanju in valovanju |
+| A (FIZ) | delo | privzeto | amplituda pri nihanju in valovanju; ploščina preseka (torzija, nosilci, $FL/(EA)$) |
+| F (FIZ) | sila | privzeto | gorišče pri lečah in zrcalih |
+| a (FIZ) | pospešek | F = m a, v = v₀ + a t, a = v²/r, F/m, enota m/s²; tema gibanje, sile, kroženje | razdalja predmeta (leče), rob kvadra, mrežni parameter, ročica (torzija), stranica preseka |
+| c (FIZ) | hitrost svetlobe (valovanja) | c = λν, mc², hc; tema svetloba, valovanje, zvok, optika | rob kvadra; c_p ne podeduje; specifična toplota ima svojo različico (Q =, ΔT) |
+| t (FIZ, KEM, BIO) | čas / temperatura v °C | °C: T = t + 273, število s °C za = ali ≈; sicer čas (BIO le z enoto časa) | Δt = 300 °C / hitrost je čas |
+| E, T (FIZ) | energija, temperatura | privzeto | modul elastičnosti in navor v mehaniki trdnin (torzija, upogib, nosilci) |
+| B, G (FIZ) | gostota magnetnega polja, gibalna količina | formula (Φ = B S, G = m v), enota T, tema magnetizem / trki | podpora nosilca, teža G, gravitacijska konstanta, Gibbsova energija ΔG |
+| S (FIZ) | ploščina | privzeto | ΔS (entropija) |
+| p, n (KEM) | tlak, množina snovi | p privzeto; n z enoto mol, n = m/M, m = n M ali privzeto | proton p⁺, nevtron n⁰, orbitala np², lupina n = 4, n = 10 meritev, n = 0, 1, 2, kromosomi |
+| Q (KEM) | reakcijski kvocient / toplota | Q < K, Q = K, Q = [ … ] → kvocient; sicer toplota | – |
+| R, S, w (KEM) | plinska konstanta, entropija, masni delež | R T, −ΔH/R; ΔS, T ΔS; w = m/…; ustrezna tema | R_f, R_s, natezna trdnost R_m; substrat [S]; širina vrha w |
+| črke iz kemije (BIO) | m, n, c, V, T, t, ΔG | le z enoto ali formulo; oznake z indeksom (K_a, N_A …) ostanejo | p = 0,05 (p-vrednost), Vv (alel), 4n (garnitura), w = W/W_max (fitnes), R = p/q |
 | H, F, G, ξ (MAT) | – (ni v slovarju) | samo definicija v besedilu ali oznake lekcije | primitivni funkciji F, G, vmesna točka ξ |
-| t, m, v, a, F, s … (FIZ) | čas, masa, hitrost … | privzeto v fiziki | – |
+| m, v, s … (FIZ) | masa, hitrost, pot … | privzeto v fiziki | – |
 
 Nov vnos v slovar: če ima črka v predmetu več kot en pogost pomen, mora imeti `ctx` ali `teme` (in po
 potrebi `ne`/`brez`); sicer bi bila klikljiva povsod. Pomene piše in pregleduje Opus (CLAUDE.md).
