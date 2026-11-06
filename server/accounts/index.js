@@ -274,7 +274,36 @@ export function mountAccounts(app, store, opts = {}) {
     // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
     const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");
     const was = up && up.sub && up.sub === getParent(owner)?.sub_id ? (up.usd ?? planGuarantee(planByKey(up.from))?.usd) : null;
-    return was != null ? { ...g, usd: upgradeMonthUsd(was || 0, g.usd || 0, up.at) } : g;
+    // Mešanje po oknu meje (obdobje naročnine), ne po koledarskem mesecu (pregled #462 L1).
+    const win = paidWindow(getParent(owner));
+    const usd = was != null ? upgradeMonthUsd(was || 0, g.usd || 0, up.at, Date.now(), win) : g.usd;
+    const out = usd !== g.usd ? { ...g, usd, total: Math.min(g.total ?? Infinity, usd + freeStudentMonthlyUsd() * (g.profiles || 1)) } : g;
+    return paidCap(out, owner, win);
+  }
+  // Okno meje plačane naročnine { start, end } (ms) ali null. Sidrano na konec obdobja; neuspelo plačilo (past_due)
+  // ne odpre novega okna. Preklop mesečno ↔ letno (portal Stripe) premakne konec obdobja in bi odprl novo okno brez
+  // novega denarja (pregled #462 L2): okno iste naročnine se zato ne zamenja, dokler od začetka prejšnjega ni minil
+  // mesec (ai_window_<račun>); takrat se začne novo okno ob preteku meseca.
+  function paidWindow(p, now = Date.now()) {
+    if (!p) return null;
+    const failed = p.sub_status === "past_due" && Date.parse(p.past_due_since || "");
+    const iso = monthWindowStart(p.sub_period_end, failed ? failed - DAY : now);
+    if (!iso) return null;
+    let start = Date.parse(iso);
+    if (p.sub_id) {
+      const key = `ai_window_${p.id}`;
+      const prev = JSON.parse(kv.get(key) || "null");
+      if (prev && prev.sub === p.sub_id && start !== prev.start) {
+        const next = addMonthsUtc(prev.start, 1);
+        if (start < next) start = now < next ? prev.start : next;
+      }
+      if (!prev || prev.sub !== p.sub_id || prev.start !== start) kv.set(key, JSON.stringify({ sub: p.sub_id, start }));
+    }
+    return { start, end: addMonthsUtc(start, 1) };
+  }
+  // Meja iz dejanskega plačila obdobja (A2, spodaj): zaenkrat brez sprememb.
+  function paidCap(g) {
+    return g;
   }
   // Brez plačila (j 2026-11-06: trda meja AI): preizkus, aktivacijska koda, bonus in stari profili brez računa imajo nizko
   // stalno mejo za ves račun (server/meje-ai.js NOPAY_USD). Brezplačni rep je ZNOTRAJ te meje (total), tudi pri več
@@ -324,8 +353,8 @@ export function mountAccounts(app, store, opts = {}) {
     const future = (iso) => Date.parse(iso || "") > Date.now();
     switch (tier) {
       case "paid": {
-        const failed = p.sub_status === "past_due" && Date.parse(p.past_due_since || "");
-        return monthWindowStart(p.sub_period_end, failed ? failed - DAY : Date.now());
+        const w = paidWindow(p);
+        return w ? new Date(w.start).toISOString() : null;
       }
       case "gift":
         return monthWindowStart(p.gift_until);
@@ -1624,7 +1653,7 @@ export function mountAccounts(app, store, opts = {}) {
       // Druga zamenjava v istem mesecu: dnevi pred prvo ostanejo pri prvotnem deležu (plans.js upgradeFromUsd).
       const prev = JSON.parse(kv.get(`ai_upgrade_${parentId}`) || "null");
       const now = Date.now();
-      const usd = upgradeFromUsd(prev?.sub === sub.id ? prev : null, fromG.usd || 0, now);
+      const usd = upgradeFromUsd(prev?.sub === sub.id ? prev : null, fromG.usd || 0, now, paidWindow(before, now));
       kv.set(`ai_upgrade_${parentId}`, JSON.stringify({ from: before.sub_plan, usd, at: now, sub: sub.id }));
     }
     update(parentId, {
@@ -1946,6 +1975,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { credits, shareWeightFor, ownerOf, freeOver, guaranteeFor, poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { credits, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

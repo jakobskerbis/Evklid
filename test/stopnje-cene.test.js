@@ -385,9 +385,10 @@ test("nadgradnja med mesecem: zajamčeni AI ta mesec po dnevih (stari paket do n
     assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } })).status, 200);
     const up = JSON.parse(db.prepare("SELECT value FROM kv WHERE key = ?").get(`ai_upgrade_${pid}`).value);
     assert.equal(up.from, "evklid_1_month");
-    assert.equal(api.guaranteeFor(ana), upgradeMonthUsd(before, full, up.at));
+    // Okno meje je obdobje naročnine (pregled #462 L1), ne koledarski mesec.
+    assert.equal(api.guaranteeFor(ana), upgradeMonthUsd(before, full, up.at, Date.now(), api.aiWindowOf(pid)));
     assert.ok(api.guaranteeFor(ana) <= full && api.guaranteeFor(ana) >= before);
-    // Nadgradnja v prejšnjem mesecu: ta mesec ves novi delež.
+    // Nadgradnja v prejšnjem oknu: zdaj ves novi delež.
     db.prepare("UPDATE kv SET value = ? WHERE key = ?").run(JSON.stringify({ ...up, at: Date.UTC(2000, 0, 15) }), `ai_upgrade_${pid}`);
     assert.equal(api.guaranteeFor(ana), full);
   });
@@ -418,10 +419,11 @@ test("nadgradnja dvakrat v mesecu: dnevi pred prvo ostanejo pri prvotnem deležu
     assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_faks_month" } })).status, 200);
     const second = rec();
     assert.equal(second.from, "evklid_ss_month");
-    assert.equal(second.usd, upgradeFromUsd(first, ss, second.at));
+    const win = api.aiWindowOf(pid);
+    assert.equal(second.usd, upgradeFromUsd(first, ss, second.at, win));
     assert.ok(second.usd >= os && second.usd <= ss);
     const g = api.guaranteeFor(ana);
-    assert.equal(g, upgradeMonthUsd(second.usd, faks, second.at));
+    assert.equal(g, upgradeMonthUsd(second.usd, faks, second.at, Date.now(), win));
     assert.ok(g <= faks);
     // Druga naročnina (ali nov račun s ponovno uporabljenim id): zapis ne velja več.
     db.prepare("UPDATE parents SET sub_id = 'sub_b' WHERE id = ?").run(pid);
@@ -503,7 +505,8 @@ test("prehod stopnje: e-pošta z novo ceno 30 dni prej, do takrat stara cena in 
 
 test("obvestila 80 % in 100 % v klepetu; starš otroka pod 15 let dobi e-pošto (enkrat na mejo); brez gumba za nakup", async () => {
   const model = modeParams("chat").model;
-  const tokens = Math.round(0.02 / costUsd(model, { input_tokens: 1 })); // vsak odgovor ≈ 0,02 $
+  // Izhodni žetoni (vhod nad 100k bi bil pri Haikuju po 5× ceni, pregled #462 A1).
+  const tokens = Math.round(0.02 / costUsd(model, { output_tokens: 1 })); // vsak odgovor ≈ 0,02 $
   process.env.EVKLID_AI_GUARANTEE_OS_USD = "0.2575"; // vrednost 0,2575 $ − brezplačni rep 0,2 $ = meja 0,0575 $ = podrobni del 0,05 $ + 15 % hitrega načina
   const store = openDb(":memory:");
   const calls = [];
@@ -523,7 +526,7 @@ test("obvestila 80 % in 100 % v klepetu; starš otroka pod 15 let dobi e-pošto 
     streamFn: async ({ onText }) => {
       const text = 'Odgovor.\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>';
       onText(text);
-      return { text, stopReason: "end_turn", model, usage: { input_tokens: tokens, output_tokens: 0 } };
+      return { text, stopReason: "end_turn", model, usage: { input_tokens: 0, output_tokens: tokens } };
     },
   });
   const server = app.listen(0);
@@ -730,7 +733,7 @@ test("gumb za dokup ob porabi samo polnoletnemu profilu, ne dijaku 15–17 na ra
 
 test("e-pošta staršu pri 80 %, tudi ko mejo prestopi strošek zunaj odgovora (npr. preverjanje)", async () => {
   const model = modeParams("chat").model;
-  const tokens = Math.round(0.02 / costUsd(model, { input_tokens: 1 }));
+  const tokens = Math.round(0.02 / costUsd(model, { output_tokens: 1 }));
   process.env.EVKLID_AI_GUARANTEE_OS_USD = "0.775"; // meja 0,575 $ (brez repa 0,2 $), podrobni del 0,5 $
   const store = openDb(":memory:");
   const calls = [];
@@ -742,7 +745,7 @@ test("e-pošta staršu pri 80 %, tudi ko mejo prestopi strošek zunaj odgovora (
   const streamFn = async ({ onText }) => {
     const text = 'Odgovor.\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>';
     onText(text);
-    return { text, stopReason: "end_turn", model, usage: { input_tokens: tokens, output_tokens: 0 } };
+    return { text, stopReason: "end_turn", model, usage: { input_tokens: 0, output_tokens: tokens } };
   };
   const server = createApp(store, { accounts: true, scheduler: false, stripeKey: "sk_test_x", resendKey: "re_x", fetchFn, log: { error() {} }, streamFn }).listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -992,17 +995,21 @@ test("meja po obdobju naročnine, ne po koledarskem mesecu; past_due ne odpre no
     const ago = (days) => new Date(Date.now() - days * 86400000).toISOString().slice(0, 19).replace("T", " ");
     const spendAt = (days, usd) => db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd, created_at) VALUES (?, 'claude-haiku-5-5', 'chat', ?, ?)").run(ana, usd, ago(days));
     const spent = () => api.aiUsage.capsFor(ana)[0].spent;
-    // Mesečna naročnina, obdobje se konča čez 3 dni (začelo se je pred ~27–28 dnevi, morda v prejšnjem mesecu).
-    subscribe("evklid_1_month", new Date(Date.now() + 3 * 86400000).toISOString());
+    // Mesečna naročnina, obdobje se je končalo pred 1 uro (začelo se je pred ~mesecem, morda v prejšnjem koledarskem
+    // mesecu); obnovitev ob koncu obdobja.
+    const oldEnd = Date.now() - 3600000;
+    subscribe("evklid_1_month", new Date(oldEnd).toISOString());
     spendAt(40, 1); // pred obdobjem: ne šteje
     spendAt(25, 0.3); // v obdobju (lahko v prejšnjem koledarskem mesecu): šteje
     spendAt(1, 0.2);
     assert.ok(Math.abs(spent() - 0.5) < 1e-9, `poraba v obdobju: ${spent()}`);
-    // Obnovitev ni uspela: Stripe je premaknil konec obdobja, a nova meja se ne odpre do plačila.
-    db.prepare("UPDATE parents SET sub_status = 'past_due', past_due_since = ?, sub_period_end = ? WHERE id = ?").run(new Date(Date.now() - 3600000).toISOString(), new Date(Date.now() + 29 * 86400000).toISOString(), pid);
+    // Obnovitev ni uspela: Stripe je premaknil konec obdobja (+1 mesec), a nova meja se ne odpre do plačila.
+    const newEnd = new Date(oldEnd);
+    newEnd.setUTCMonth(newEnd.getUTCMonth() + 1);
+    db.prepare("UPDATE parents SET sub_status = 'past_due', past_due_since = ?, sub_period_end = ? WHERE id = ?").run(new Date(Date.now() - 1800000).toISOString(), newEnd.toISOString(), pid);
     spendAt(0, 0.1);
     assert.ok(Math.abs(spent() - 0.6) < 1e-9, `past_due: staro okno (${spent()})`);
-    // Plačano: novo obdobje (od pred 1 dneva), stara poraba ne šteje.
+    // Plačano: novo obdobje (od konca starega, pred 1 uro), stara poraba ne šteje.
     db.prepare("UPDATE parents SET sub_status = 'active', past_due_since = NULL WHERE id = ?").run(pid);
     assert.ok(spent() < 0.35, `novo obdobje: ${spent()}`);
     // Letna naročnina: mesečna okna, sidrana na konec obdobja.
@@ -1080,7 +1087,14 @@ test("preizkus, koda in bonus: skupni bazen vseh računov brez plačila", async 
       db.prepare("UPDATE parents SET trial_ends_at = ? WHERE id = ?").run(new Date(Date.now() + 3 * 86400000).toISOString(), pid);
       assert.ok(api.aiUsage.capsFor(ana).some((c) => c.key === "nopaypool"));
       db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 0.25)").run(bor);
-      assert.equal(api.aiUsage.hardBlock(ana), "block.freePool");
+      // Izčrpan bazen (pregled #462 L4): ne zaklene, profil dobi meje brezplačnega paketa.
+      const keys = api.aiUsage.capsFor(ana).map((c) => c.key);
+      assert.ok(!keys.includes("nopaypool") && keys.includes("freepool"), keys.join());
+      assert.equal(api.aiUsage.hardBlock(ana), null);
+      // Poraba nad bazenom šteje v skupno mejo brezplačnih (10 $): bazen ne zraste brez meje.
+      db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 10)").run(bor);
+      const free = api.aiUsage.capsFor(ana).find((c) => c.key === "freepool");
+      assert.ok(free.spent >= 10, `nad bazenom: ${free.spent}`);
     });
   } finally {
     delete process.env.EVKLID_NOPAY_POOL_USD;

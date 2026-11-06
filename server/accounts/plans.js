@@ -353,10 +353,14 @@ export const MIN_CEILING_USD = 0.001;
 // Nadgradnja med mesecem: ta mesec zajamčeni AI starega paketa za pretekle dni in novega za preostale (dan
 // nadgradnje šteje k novemu); od naslednjega meseca novi v celoti. Mesec AI je koledarski mesec v UTC (enako
 // kot server/proracun.js periodOf). Nižji paket (ali nadgradnja v prejšnjem mesecu) velja takoj v celoti.
-export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now()) {
+// win = { start, end } (ms): okno meje AI naročnine (pregled #462 L1: obdobje naročnine, ne koledarski mesec);
+// brez win koledarski mesec (stari zapisi, testi).
+const monthOf = (now) => {
   const d = new Date(now);
-  const start = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
-  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+  return { start: Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1), end: Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1) };
+};
+export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now(), win = null) {
+  const { start, end } = win || monthOf(now);
   if (!(upgradedAt >= start && upgradedAt < end) || !(newUsd > oldUsd)) return newUsd;
   const days = Math.round((end - start) / 86400000);
   const left = days - Math.floor((upgradedAt - start) / 86400000);
@@ -365,10 +369,8 @@ export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now()) {
 // Druga zamenjava paketa v istem mesecu: »stari« delež za dneve do nje je povprečje po dnevih prejšnje
 // zamenjave (prev = { usd, at }: stari delež, če je bila nadgradnja, sicer takoj sedanji) in sedanjega paketa
 // (curUsd), da dnevi pred prvo nadgradnjo ne dobijo vmesnega paketa. Brez prev ali iz prejšnjega meseca: curUsd.
-export function upgradeFromUsd(prev, curUsd, now = Date.now()) {
-  const d = new Date(now);
-  const start = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
-  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+export function upgradeFromUsd(prev, curUsd, now = Date.now(), win = null) {
+  const { start, end } = win || monthOf(now);
   if (!prev || !(prev.at >= start && prev.at < end) || !(prev.usd >= 0)) return curUsd;
   const d1 = Math.floor((prev.at - start) / 86400000);
   const d2 = Math.floor((now - start) / 86400000);
