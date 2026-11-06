@@ -2,7 +2,8 @@
 // in računalnik (1280 × 800, miška → visoka, <o>.glb); pogledi celota, prerez in približan prerez (zaklopke, prekati …).
 // Meri prenos (bajti datotek organi-3d/) in čas do prvega prikaza pri omrežju 4G (telefon) in kabel (računalnik).
 // Zagon: node scripts/atlas/posnetki-organa.cjs <organ> <izhodna mapa> [oznaka, npr. staro|novo]
-// Okolje: KOTI=1 (8 kotov, zgoraj, spodaj), ZILE=1 (žile od blizu), RAVEN=1|2|3 (raven delov kot OŠ/SŠ/študij), SAMO=telefon|racunalnik.
+// Okolje: KOTI=1 (8 kotov, zgoraj, spodaj), ZILE=1 (žile od blizu), RAVEN=1|2|3 (raven razlage OŠ/SŠ/študij),
+// SAMO=telefon|racunalnik, UCNE=1 (učne barve), SKUPINA=<ime skupine> (npr. Zaklopke).
 // Izhod: <mapa>/<oznaka>-<telefon|racunalnik>-<pogled>.png in <mapa>/<oznaka>-meritve.json.
 // Potrebuje Playwright s Chromiumom (swiftshader: čas risanja ni čas pravega telefona, primerjaj staro z novim).
 const { spawn } = require("node:child_process");
@@ -111,7 +112,22 @@ const NAPRAVE = {
         await slikaj("zile-zadaj");
         await ponastavi();
       }
-      const stikalo = p.locator(".k3-stikalo .switch").first();
+      // UCNE=1: učne barve (celota); SKUPINA=<ime>: izbira skupine delov (npr. Zaklopke) z osvetlitvijo
+      if (process.env.SKUPINA) {
+        await p.locator(".k3-del-skupina", { hasText: process.env.SKUPINA }).first().click().catch(() => {});
+        await p.waitForTimeout(1500);
+        await slikaj(`skupina-${process.env.SKUPINA.toLowerCase()}`);
+        await p.locator(".k3-del-skupina", { hasText: process.env.SKUPINA }).first().click().catch(() => {});
+        await ponastavi();
+      }
+      if (process.env.UCNE) {
+        await p.locator(".k3-stikalo", { hasText: "Učne barve" }).locator(".switch").first().click().catch(() => {});
+        await p.waitForTimeout(1200);
+        await slikaj("ucne-celota");
+        await p.locator(".k3-stikalo", { hasText: "Učne barve" }).locator(".switch").first().click().catch(() => {});
+        await p.waitForTimeout(800);
+      }
+      const stikalo = p.locator(".k3-stikalo", { hasText: "Prerez" }).locator(".switch").first();
       if (await stikalo.count()) {
         await stikalo.click();
         await p.waitForTimeout(1200);
