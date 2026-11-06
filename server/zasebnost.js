@@ -31,6 +31,9 @@ export const RETENTION = {
   pushLogDays: 90,
   // Račun, ki e-naslova ni potrdil v toliko dneh in nima profilov, plačil ali seje, se izbriše.
   unverifiedDays: 30,
+  // Soglasje plačnika ob nakupu (billing_consents, z e-naslovom plačnika) po izbrisu računa: dokaz soglasja.
+  // ROK ODLOČI j (iskalec napak N2, predlog 5 let = 1826 dni); null = ne briši (stanje pred odločitvijo).
+  billingConsentDays: null,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -164,6 +167,10 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   if (hasTable(db, "push_log")) {
     // period se začne z datumom (YYYY-MM-DD:učenec).
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
+  }
+  if (RETENTION.billingConsentDays && hasTable(db, "billing_consents")) {
+    // Samo soglasja izbrisanih računov (parent_id NULL); pri obstoječem računu ostanejo, dokler je račun.
+    out.billingConsents = Number(db.prepare("DELETE FROM billing_consents WHERE parent_id IS NULL AND created_at < ?").run(ago(RETENTION.billingConsentDays)).changes);
   }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
