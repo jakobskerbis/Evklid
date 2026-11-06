@@ -83,6 +83,26 @@ test("paket.sh: peci.bat in NAVODILO s CRLF, koda z vsemi lokalnimi moduli", { s
   }
 });
 
+test("paket.sh: IZVOR, ki ni v HEAD, ustavi sestavo (ne pošlje stare kode)", { skip: process.platform === "win32" || spawnSync("git", ["-C", ATLAS, "rev-parse", "HEAD"]).status !== 0 }, () => {
+  const cilj = fs.mkdtempSync(path.join(os.tmpdir(), "peka-rtx-"));
+  try {
+    // prazen commit na HEAD ni prednik HEAD → zavrnjeno; HEAD sam je → sprejeto
+    const glava = execFileSync("git", ["-C", ATLAS, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    const drevo = execFileSync("git", ["-C", ATLAS, "rev-parse", "HEAD^{tree}"], { encoding: "utf8" }).trim();
+    const tuj = execFileSync("git", ["-C", ATLAS, "commit-tree", drevo, "-p", glava, "-m", "test"], { encoding: "utf8",
+      env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" } }).trim();
+    const r = spawnSync("sh", [path.join(RTX, "paket.sh"), cilj], { encoding: "utf8", env: { ...process.env, IZVOR: tuj } });
+    assert.equal(r.status, 2);
+    assert.match(r.stderr, /ni v HEAD/);
+    assert.ok(!fs.existsSync(path.join(cilj, "koda")), "brez kode ob zavrnitvi");
+    const ok = spawnSync("sh", [path.join(RTX, "paket.sh"), cilj], { encoding: "utf8", env: { ...process.env, IZVOR: glava } });
+    assert.equal(ok.status, 0, ok.stderr);
+    assert.match(ok.stdout, /izvozi-organe\.py: [0-9a-f]+ /);
+  } finally {
+    fs.rmSync(cilj, { recursive: true, force: true });
+  }
+});
+
 test("primerjaj-peko.py: PSNR enakih slik je ∞, znane razlike pravilen", { skip: !python || spawnSync("python3", ["-c", "import numpy"]).status !== 0 }, () => {
   const out = execFileSync("python3", ["-c",
     "import runpy, sys, numpy as np; g = runpy.run_path(sys.argv[1] + '/primerjaj-peko.py', run_name='x')\n" +
