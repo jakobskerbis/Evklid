@@ -15,6 +15,15 @@ let openEl = null;
 let hooks = {}; // { opened, closed }: aplikacija doda zapis v zgodovino, da tipka Nazaj zapre okno (app.js)
 let openW = 0; // širina okna ob odprtju
 let quietUntil = 0; // lastno drsenje (okno na telefonu odmakne formulo nad list) ne zapre okna
+// Lega drsenja strani in drsnega ovoja ob odprtju (in po lastnem drsenju): okno zapre le drsenje, ki lego zares
+// spremeni. Zakasnel dogodek »scroll« (prejšnje drsenje, na počasni napravi ali v CI pride po odprtju) ga ne zapre.
+let openPos = null;
+const posOf = (t) => (t === document || t === document.documentElement || t === document.body ? window.scrollY : t.scrollTop);
+function rememberPos(el) {
+  openPos = new Map([[document, window.scrollY]]);
+  const sc = el && scrollerOf(el);
+  if (sc) openPos.set(sc, sc.scrollTop);
+}
 function close(fromBack = false) {
   if (!pop || pop.hidden) return false;
   pop.hidden = true;
@@ -52,6 +61,7 @@ function open(el, { again = false, focus = false } = {}) {
   el.classList.add("fx-open");
   openW = window.innerWidth;
   place(el);
+  rememberPos(el);
   if (focus) pop.focus({ preventScroll: true });
   if (!again) hooks.opened?.();
 }
@@ -276,7 +286,9 @@ export function initFormulaInfo(h = {}) {
   window.addEventListener("resize", () => { if (window.innerWidth !== openW) close(); });
   document.addEventListener("scroll", (e) => {
     if (pop?.contains(e.target)) return;
-    if (openEl && performance.now() > quietUntil) close();
+    const key = e.target === document.documentElement || e.target === document.body ? document : e.target;
+    const same = openPos?.has(key) && Math.abs(posOf(key) - openPos.get(key)) < 2;
+    if (openEl && !same && performance.now() > quietUntil) close();
     // Oznaka gre na pojavitev, ki je zdaj na zaslonu: enkrat, ko se drsenje umiri (ne ob vsaki sličici).
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(queueMarks, 120);
