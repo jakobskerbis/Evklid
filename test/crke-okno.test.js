@@ -162,9 +162,12 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     await p.goBack();
     await p.waitForFunction(() => document.getElementById("fx-pop").hidden);
     // 9) Drsenje zapre okno; sprememba širine (obrat) ga zapre, sprememba samo višine (vrstica brskalnika) ne (pregled 463 d).
+    await p.$eval("#vrstica", (el) => el.scrollIntoView({ block: "center" }));
     await tap(row.nth(0));
     await p.waitForTimeout(600); // lastno drsenje okna (telefon) je mimo
-    await p.evaluate(() => window.scrollBy(0, 40));
+    const y0 = await p.evaluate(() => scrollY);
+    await p.evaluate(() => window.scrollBy(0, -40));
+    assert.ok((await p.evaluate(() => scrollY)) < y0, `${vp.width}: stran se je premaknila`);
     await p.waitForFunction(() => document.getElementById("fx-pop").hidden);
     await tap(row.nth(0));
     await p.setViewportSize({ width: vp.width, height: vp.height - 60 });
