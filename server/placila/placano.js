@@ -56,23 +56,74 @@ export function createPaidPeriods(kv) {
     const keep = list.filter((r) => r.end > now - KEEP_DAYS * 86400000).slice(-MAX_ROWS);
     kv.set(key(parentId), JSON.stringify(keep));
   };
+  const json = (k, d) => {
+    try {
+      return JSON.parse(kv.get(k) || "null") ?? d;
+    } catch {
+      return d;
+    }
+  };
+  const refunds = (parentId) => json(`ai_paid_refunds_${parentId}`, {});
+  const loadBal = (parentId) => {
+    const b = json(`ai_paid_bal_${parentId}`, null);
+    return b && typeof b === "object" ? { credit: Number(b.credit) || 0, inv: b.inv || {} } : { credit: 0, inv: {} };
+  };
+  const saveBal = (parentId, b) => {
+    const ids = Object.keys(b.inv);
+    if (ids.length > MAX_ROWS) for (const id of ids.slice(0, ids.length - MAX_ROWS)) delete b.inv[id];
+    kv.set(`ai_paid_bal_${parentId}`, JSON.stringify(b));
+  };
   return {
     // Plačan račun naročnine (invoice.paid): vrstice tega računa zamenjajo prejšnji zapis istega računa.
+    // Vračilo istega računa ostane (pregled #462 H3/K3-3: ponovljen ali zakasnel invoice.paid ga ne izbriše).
+    // Dobroimetje stranke: račun, plačan z dobroimetjem, ki ni prišlo iz denarja (nagrada za priporočilo, ročni
+    // dobropis), ne šteje kot plačilo (H2/K3-2, j: mesec za priporočilo = meja aktivacijske kode). Dobroimetje iz
+    // denarja (proracija: račun z negativnim zneskom, npr. preklop letno → mesečno) šteje, ker ga negativna vrstica
+    // že odšteje (ai_paid_bal_<račun>).
     record(parentId, inv, opts = {}) {
       const sub = typeof inv?.subscription === "string" ? inv.subscription : inv?.subscription?.id || inv?.parent?.subscription_details?.subscription || null;
       if (!parentId || !sub || !inv?.id) return 0;
-      const rows = invoiceRows(inv, opts).map((r) => ({ ...r, sub, inv: inv.id, refunded: 0 }));
-      save(parentId, [...load(parentId).filter((r) => r.inv !== inv.id), ...rows]);
+      const old = load(parentId);
+      const refunded = Math.max(refunds(parentId)[inv.id] || 0, ...old.filter((r) => r.inv === inv.id).map((r) => r.refunded || 0));
+      let rows = invoiceRows(inv, opts).map((r) => ({ ...r, sub, inv: inv.id, refunded }));
+      // Dobroimetje: starting/ending_balance v najmanjših enotah (negativno = dobroimetje stranke).
+      const bal = loadBal(parentId);
+      const prev = bal.inv[inv.id];
+      if (prev) bal.credit += (prev.usedReal || 0) - (prev.added || 0);
+      const delta = (Number(inv.ending_balance) || 0) - (Number(inv.starting_balance) || 0);
+      const effect = { added: 0, usedReal: 0 };
+      if (delta < 0) {
+        effect.added = -delta; // račun z negativnim zneskom: dobroimetje iz proracije (pravi denar)
+        bal.credit += effect.added;
+      } else if (delta > 0) {
+        effect.usedReal = Math.min(bal.credit, delta);
+        bal.credit -= effect.usedReal;
+        const fake = delta - effect.usedReal;
+        const pos = rows.reduce((t, r) => t + Math.max(0, r.cents), 0);
+        if (fake > 0 && pos > 0) {
+          const k = Math.max(0, 1 - fake / pos);
+          rows = rows.map((r) => (r.cents > 0 ? { ...r, eur: r.eur * k, cents: Math.round(r.cents * k) } : r));
+        }
+      }
+      bal.inv[inv.id] = effect;
+      saveBal(parentId, bal);
+      save(parentId, [...old.filter((r) => r.inv !== inv.id), ...rows]);
       return rows.length;
     },
-    // Vračilo (charge.refunded) dela računa: delež vrnjenega zmanjša denar vseh vrstic tega računa.
+    // Vračilo (charge.refunded) dela računa: delež vrnjenega zmanjša denar vseh vrstic tega računa. Shrani se tudi,
+    // ko računa še ni (vračilo pred invoice.paid), in velja ob poznejšem zapisu.
     refund(parentId, invoiceId, fraction) {
       const f = Math.min(1, Math.max(0, Number(fraction) || 0));
+      const all = refunds(parentId);
+      all[invoiceId] = Math.max(all[invoiceId] || 0, f);
+      const ids = Object.keys(all);
+      if (ids.length > MAX_ROWS) for (const id of ids.slice(0, ids.length - MAX_ROWS)) if (id !== invoiceId) delete all[id];
+      kv.set(`ai_paid_refunds_${parentId}`, JSON.stringify(all));
       const list = load(parentId);
       let hit = 0;
-      for (const r of list) if (r.inv === invoiceId) (r.refunded = f), hit++;
+      for (const r of list) if (r.inv === invoiceId) (r.refunded = Math.max(r.refunded || 0, f)), hit++;
       if (hit) save(parentId, list);
-      return hit;
+      return hit || 1;
     },
     // Ali je za naročnino sub zapisano kakšno plačilo (sicer velja cenik, npr. naročnine pred to spremembo).
     has(parentId, sub) {
