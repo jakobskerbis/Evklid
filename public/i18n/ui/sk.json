@@ -3859,5 +3859,10 @@
   "pilot.n.quizSkip": "Testy len s „Neviem“ (nie sú v priemeroch): {n}",
   "pilot.n.blocks": "Súčty sa obnovia až po {n} nových odpovediach.",
   "pilot.n.manage": "Účty v pilote",
-  "pilot.n.backSums": "Späť na súčty"
+  "pilot.n.backSums": "Späť na súčty",
+  "starsi.codeNote": "Účet nemá heslo, preto vám na potvrdenie pošleme kód na e-mail účtu.",
+  "starsi.codeSend": "Poslať kód e-mailom",
+  "starsi.codeLabel": "Kód z e-mailu",
+  "starsi.codeSent": "Kód sme poslali na e-mail účtu.",
+  "pilot.n.realOnly": "Do pilotu pridávajte len skutočných členov, nie vlastné testovacie účty: inak by sa zo súčtov dala vypočítať odpoveď jednotlivca."
 }

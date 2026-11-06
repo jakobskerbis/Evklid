@@ -116,7 +116,8 @@
 .pn-row-text b { display: inline-flex; align-items: center; gap: 8px; }
 .pn-row-btns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-inline-start: auto; }
 .pn-row-btns > button, .pn-actions > button, #pn-survey > .primary { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
-.pn-status { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; font-weight: 600; }
+.pn-status { display: flex; align-items: flex-start; gap: 0.4em; font-weight: 600; }
+.pn-status > svg, .pn-status > .icon { flex-shrink: 0; margin-top: 0.15em; }
 .pn-status .i { width: 16px; height: 16px; }
 .pn-status.ok { color: var(--ok); }
 .pn-status.bad { color: var(--danger); }

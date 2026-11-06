@@ -163,9 +163,14 @@ test("preizkus znanja: skrbnik vidi povprečja šele od 3 učencev, pred in po s
   // Samo »Ne vem« (-1 pri vseh nalogah): ni v povprečjih, šteje se posebej.
   const u5 = Number(db.prepare("INSERT INTO students (name, settings) VALUES ('U5', '{}')").run().lastInsertRowid);
   db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at) VALUES (?, 'pre', 't', '[]', '[-1,-1,-1,-1,-1,-1]', 0, datetime('now'))").run(u5);
-  const q2 = impactReport(db, 3).quiz;
+  let q2 = impactReport(db, 3).quiz;
+  assert.equal(q2.nPre, 5);
+  assert.equal(q2.allSkip, 0, "šteje se samo v paketu (A4): peti še ni v paketu po 3");
+  const u6 = Number(db.prepare("INSERT INTO students (name, settings) VALUES ('U6', '{}')").run().lastInsertRowid);
+  db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at) VALUES (?, 'pre', 't', '[]', '[1,0,0,0,0,0]', 1, datetime('now', '+1 second'))").run(u6);
+  q2 = impactReport(db, 3).quiz;
   assert.equal(q2.allSkip, 1);
-  assert.equal(q2.nPre, 4, "preizkus samo z »Ne vem« ni štet med začetne");
+  assert.equal(q2.shownPre, 5, "samo z »Ne vem« ni v povprečju");
 });
 
 // Račun z lastnim profilom (letnica rojstva `age` let nazaj), potrjen e-naslov, v pilotu.
@@ -314,7 +319,8 @@ test("preizkus znanja brez stropa: naslednja neosvojena tema, 2/2/2 težavnost, 
       assert.equal(q.ceiling.nPaired, 1);
       assert.equal(q.ceiling.pairedPre, Math.round((6 / 9) * 1000) / 1000);
       assert.equal(q.ceiling.pairedPost, Math.round((1 / 9) * 1000) / 1000);
-      assert.equal(q.nPre, 0, "strop ni v začetnem povprečju");
+      assert.equal(q.shownPre, 0, "strop ni v začetnem povprečju");
+      assert.equal(q.nPre, 1, "natančno je samo skupno število");
       assert.match(pilotTasksMarkdown(pilotTasksReport(db)), /strop \(prvič 6\/6/);
     });
   } finally {

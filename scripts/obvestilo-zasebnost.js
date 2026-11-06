@@ -24,7 +24,7 @@ export function recipients(db, version = PRIVACY_VERSION) {
     .all(version, version);
 }
 
-export async function sendAll(db, mailer, { version = PRIVACY_VERSION, baseUrl = process.env.EVKLID_BASE_URL || "" } = {}) {
+export async function sendAll(db, mailer, { version = PRIVACY_VERSION, baseUrl = process.env.EVKLID_BASE_URL || "", pause = 600 } = {}) {
   const msg = privacyChangeEmail(`${baseUrl.replace(/\/$/, "")}/zasebnost.html`);
   let sent = 0;
   let failed = 0;
@@ -35,6 +35,7 @@ export async function sendAll(db, mailer, { version = PRIVACY_VERSION, baseUrl =
     try {
       await mailer.send({ to: r.email, ...msg });
       sent++;
+      if (pause) await new Promise((ok) => setTimeout(ok, pause)); // Resend: približno 2 sporočili na sekundo
     } catch {
       db.prepare("DELETE FROM email_log WHERE parent_id = ? AND kind = 'privacy' AND period = ?").run(r.id, version);
       failed++;

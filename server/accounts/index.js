@@ -1,5 +1,6 @@
 // Starševski računi, soglasja, naročnine (Stripe), priporočila in tedenska poročila (Resend).
 // Vklop: EVKLID_ACCOUNTS=1. Brez tega aplikacija deluje kot prej (brez prijave).
+import crypto from "node:crypto";
 import "../env.js";
 import { BRAND, LEGACY } from "../brand.js";
 import { isLocalRequest } from "../feedback.js";
@@ -16,7 +17,7 @@ import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
-import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
+import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
@@ -130,15 +131,29 @@ export function mountAccounts(app, store, opts = {}) {
   // Potrditev, da dejanje opravi imetnik računa (geslo računa ali nova prijava z Apple), ne kdo drug na napravi s
   // sejo (zaklep računa je privzeto izklopljen): obvestilo o zasebnosti, vprašanje o plačilu, izbris fotografij pilota.
   // Vrne true, false (napačno geslo) ali "throttled".
+  // Isti števec kot izvoz in geslo profila (acct<id>), zato ne da dodatnih ugibanj (A4). Neuspeh se zabeleži pred
+  // preverjanjem (vzporedne zahteve ne presežejo meje) in v dnevnik dostopov. Račun brez gesla (Apple) potrdi s
+  // kodo, poslano na potrjeni e-naslov (POST /api/account/owner-code).
+  const noPassword = (p) => String(p?.password_hash || "").startsWith("none$");
   const confirmOwner = async (req) => {
     const p = req.parent;
     if (!p || p.is_guest) return false;
-    const key = `owner${p.id}`;
+    const key = `acct${p.id}`;
     if (acrossThrottle.blocked(key)) return "throttled";
-    if (await verifyPassword(String(req.body?.password || ""), p.password_hash)) return true;
-    for (const fn of reauthHooks) if (await fn(req, p)) return true;
     acrossThrottle.fail(key);
-    return false;
+    let ok = false;
+    if (noPassword(p)) {
+      const code = String(req.body?.code || "").replace(/\D/g, "");
+      const row = code.length === 6 ? db.prepare("SELECT code_hash, expires_at FROM owner_codes WHERE parent_id = ?").get(p.id) : null;
+      if (row && row.expires_at > Date.now() && row.code_hash === sha256(`${p.id}:${code}`)) {
+        db.prepare("DELETE FROM owner_codes WHERE parent_id = ?").run(p.id);
+        ok = true;
+      }
+    } else ok = await verifyPassword(String(req.body?.password || ""), p.password_hash);
+    if (!ok) for (const fn of reauthHooks) if (await fn(req, p)) ok = true;
+    if (ok) acrossThrottle.reset?.(key);
+    else audit(db, { req, parentId: p.id, action: "owner_confirm", ok: false });
+    return ok;
   };
   const json = express.json({ limit: "100kb" });
   const log = opts.log || console;
@@ -188,6 +203,8 @@ export function mountAccounts(app, store, opts = {}) {
     // Star račun brez datuma rojstva: aplikacija ga ob prijavi enkrat vpraša (need_birth), pozneje v zavihku Račun.
     birth_missing: !p.is_guest && !p.birth_date,
     need_birth: !p.is_guest && !p.birth_date && !p.birth_asked_at,
+    // Račun brez gesla (prijava z Apple): potrditev imetnika s kodo na e-pošto namesto gesla.
+    has_password: !String(p.password_hash || "").startsWith("none$"),
     // Politika zasebnosti se je spremenila po registraciji: aplikacija enkrat pokaže kratko obvestilo s povezavo.
     privacy_notice: !p.is_guest && (p.privacy_seen || p.privacy_version || "") < PRIVACY_VERSION ? PRIVACY_VERSION : null,
     verified: !!p.email_verified_at,
@@ -1101,6 +1118,30 @@ export function mountAccounts(app, store, opts = {}) {
   });
 
   // Obvestilo o spremenjeni politiki zasebnosti zaprto (»V redu« ali ×): ne pokaže se več do naslednje spremembe.
+  // Enkratna koda za račun brez gesla (Apple): 6 števk na potrjeni e-naslov, velja 10 minut, največ 3 na uro.
+  db.exec(`CREATE TABLE IF NOT EXISTS owner_codes (
+    parent_id INTEGER PRIMARY KEY REFERENCES parents(id) ON DELETE CASCADE,
+    code_hash TEXT NOT NULL,
+    expires_at INTEGER NOT NULL
+  )`);
+  const codeThrottle = new Throttle(3, 3600000);
+  app.post("/api/account/owner-code", json, async (req, res) => {
+    const p = req.parent;
+    if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
+    if (!noPassword(p)) return res.status(400).json({ error: "Račun ima geslo." });
+    if (!p.email_verified_at || p.is_guest) return res.status(400).json({ error: "E-naslov ni potrjen." });
+    if (codeThrottle.blocked(`code${p.id}`)) return res.status(429).json({ error: "Preveč kod. Poskusite čez eno uro." });
+    codeThrottle.fail(`code${p.id}`);
+    const code = String(crypto.randomInt(0, 1000000)).padStart(6, "0");
+    db.prepare("INSERT INTO owner_codes (parent_id, code_hash, expires_at) VALUES (?, ?, ?) ON CONFLICT(parent_id) DO UPDATE SET code_hash = excluded.code_hash, expires_at = excluded.expires_at").run(p.id, sha256(`${p.id}:${code}`), Date.now() + 10 * 60000);
+    try {
+      await mailer.send({ to: p.email, ...ownerCodeEmail(code) });
+    } catch {
+      return res.status(502).json({ error: "Kode ni bilo mogoče poslati. Poskusite znova." });
+    }
+    res.json({ ok: true, ...(devLinks(req) ? { dev_code: code } : {}) });
+  });
+
   // Samo z geslom računa (pasica v zavihku Račun), da obvestila ne zapre otrok na starševi napravi.
   app.post("/api/account/privacy-seen", json, async (req, res) => {
     const p = req.parent;
@@ -2092,6 +2133,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { confirmOwner, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

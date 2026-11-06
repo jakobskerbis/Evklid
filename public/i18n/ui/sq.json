@@ -3793,5 +3793,10 @@
   "pilot.n.quizSkip": "Teste vetëm me «Nuk e di» (jo në mesatare): {n}",
   "pilot.n.blocks": "Shumat rifreskohen vetëm pas {n} përgjigjeve të reja.",
   "pilot.n.manage": "Llogaritë në pilot",
-  "pilot.n.backSums": "Kthehu te shumat"
+  "pilot.n.backSums": "Kthehu te shumat",
+  "starsi.codeNote": "Llogaria nuk ka fjalëkalim, prandaj ju dërgojmë një kod konfirmimi në adresën e email-it të llogarisë.",
+  "starsi.codeSend": "Dërgo kodin me email",
+  "starsi.codeLabel": "Kodi nga email-i",
+  "starsi.codeSent": "Kodin e dërguam në adresën e email-it të llogarisë.",
+  "pilot.n.realOnly": "Në pilot shtoni vetëm anëtarë të vërtetë, jo llogaritë tuaja testuese: përndryshe nga shumat mund të llogaritej përgjigjja e një personi."
 }

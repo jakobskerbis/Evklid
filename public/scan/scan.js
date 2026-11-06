@@ -99,6 +99,7 @@ export function showScan({ text = null, goal = null } = {}) {
     owner = sid();
     Object.assign(S, fresh());
     aiSeq++;
+    pilotTask = null; // naloga pilota prejšnjega profila (skupna naprava) ne velja za novega (B4)
     if (stream) stopCamera();
   }
   if (text) {
@@ -506,6 +507,7 @@ async function readImage(dataUrl) {
   }
   S.mode = "reading";
   S.shot = dataUrl;
+  S.readOk = false; // ocena branja za pilot samo, ko je branje res teklo (ne ob izpadu ali v preizkusnem načinu)
   render();
   try {
     const out = await D.api(`/api/students/${sid()}/scan/read`, { method: "POST", body: { image: dataUrl } });
@@ -519,7 +521,8 @@ async function readImage(dataUrl) {
       return render();
     }
     S.problems = out.problems || [];
-    if (!S.problems.length && pilotTask) {
+    S.readOk = !out.error;
+    if (!S.problems.length && pilotTask && S.readOk) {
       // Pilot: tudi neuspešno branje oceni (»Prebrano narobe«), zato ostanemo na prepisu.
       S.given = [];
       S.text = "";
@@ -569,7 +572,7 @@ function renderConfirm(box) {
         <button type="button" class="primary" data-act="solve">${icon("check")}${esc(t("scan.solve"))}</button>
       </div>
     </div>`;
-  if (pilotTask && S.shot) bindPilotRate(box);
+  if (pilotTask && S.shot && S.readOk) bindPilotRate(box);
   const input = box.querySelector("#scan-input");
   const prev = box.querySelector(".scan-preview");
   const err = box.querySelector(".scan-err");

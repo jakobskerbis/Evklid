@@ -3798,5 +3798,10 @@
   "pilot.n.quizSkip": "Testes só com «Não sei» (fora das médias): {n}",
   "pilot.n.blocks": "Os totais só são atualizados após {n} respostas novas.",
   "pilot.n.manage": "Contas no piloto",
-  "pilot.n.backSums": "Voltar aos totais"
+  "pilot.n.backSums": "Voltar aos totais",
+  "starsi.codeNote": "A conta não tem palavra-passe, por isso enviamos um código de confirmação para o e-mail da conta.",
+  "starsi.codeSend": "Enviar código por e-mail",
+  "starsi.codeLabel": "Código do e-mail",
+  "starsi.codeSent": "Enviámos o código para o e-mail da conta.",
+  "pilot.n.realOnly": "Adicione ao piloto apenas membros reais, não as suas contas de teste: caso contrário, dos totais poder-se-ia calcular a resposta de uma pessoa."
 }

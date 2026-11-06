@@ -3791,5 +3791,10 @@
   "pilot.n.quizSkip": "Yalnızca “Bilmiyorum” içeren testler (ortalamada değil): {n}",
   "pilot.n.blocks": "Toplamlar yalnızca {n} yeni yanıttan sonra güncellenir.",
   "pilot.n.manage": "Pilottaki hesaplar",
-  "pilot.n.backSums": "Toplamlara dön"
+  "pilot.n.backSums": "Toplamlara dön",
+  "starsi.codeNote": "Hesabın şifresi yok; bu yüzden hesabın e-posta adresine bir onay kodu gönderiyoruz.",
+  "starsi.codeSend": "Kodu e-postayla gönder",
+  "starsi.codeLabel": "E-postadaki kod",
+  "starsi.codeSent": "Kodu hesabın e-posta adresine gönderdik.",
+  "pilot.n.realOnly": "Pilota yalnızca gerçek üyeler ekleyin, kendi test hesaplarınızı değil: aksi hâlde toplamlardan bir kişinin yanıtı hesaplanabilir."
 }

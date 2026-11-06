@@ -3793,5 +3793,10 @@
   "pilot.n.quizSkip": "Checks with only “I don't know” (not in averages): {n}",
   "pilot.n.blocks": "Totals refresh only after {n} new answers.",
   "pilot.n.manage": "Accounts in the pilot",
-  "pilot.n.backSums": "Back to totals"
+  "pilot.n.backSums": "Back to totals",
+  "starsi.codeNote": "This account has no password, so we send a confirmation code to the account's e-mail address.",
+  "starsi.codeSend": "Send code by e-mail",
+  "starsi.codeLabel": "Code from the e-mail",
+  "starsi.codeSent": "We sent the code to the account's e-mail address.",
+  "pilot.n.realOnly": "Add only real members to the pilot, not your own test accounts: otherwise an individual's answer could be calculated from the totals."
 }

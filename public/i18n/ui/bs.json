@@ -3825,5 +3825,10 @@
   "pilot.n.quizSkip": "Provjere samo s »Ne znam« (nisu u prosjecima): {n}",
   "pilot.n.blocks": "Zbirovi se osvježavaju tek nakon {n} novih odgovora.",
   "pilot.n.manage": "Računi u pilotu",
-  "pilot.n.backSums": "Nazad na zbirove"
+  "pilot.n.backSums": "Nazad na zbirove",
+  "starsi.codeNote": "Račun nema lozinku, pa vam za potvrdu šaljemo kod na e-adresu računa.",
+  "starsi.codeSend": "Pošalji kod e-poštom",
+  "starsi.codeLabel": "Kod iz e-pošte",
+  "starsi.codeSent": "Kod smo poslali na e-adresu računa.",
+  "pilot.n.realOnly": "U pilot dodajte samo prave članove, ne svoje testne račune: inače bi se iz zbirova mogao izračunati odgovor pojedinca."
 }

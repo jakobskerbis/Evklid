@@ -3827,5 +3827,10 @@
   "pilot.n.quizSkip": "Teste doar cu „Nu știu” (nu intră în medii): {n}",
   "pilot.n.blocks": "Totalurile se actualizează doar după {n} răspunsuri noi.",
   "pilot.n.manage": "Conturi în pilot",
-  "pilot.n.backSums": "Înapoi la totaluri"
+  "pilot.n.backSums": "Înapoi la totaluri",
+  "starsi.codeNote": "Contul nu are parolă, așa că vă trimitem un cod de confirmare la adresa de e-mail a contului.",
+  "starsi.codeSend": "Trimite codul pe e-mail",
+  "starsi.codeLabel": "Codul din e-mail",
+  "starsi.codeSent": "Am trimis codul la adresa de e-mail a contului.",
+  "pilot.n.realOnly": "Adăugați în pilot doar membri reali, nu propriile conturi de test: altfel din totaluri s-ar putea calcula răspunsul unei persoane."
 }

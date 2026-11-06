@@ -193,9 +193,11 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
 export function privacyChangeEmail(policyUrl, dateText = "6. novembra 2026") {
   const points = [
     "Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo.",
-    "Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge shranimo samo, če jo otrok, star vsaj 15 let, posebej označi, in jo hranimo največ 30 dni.",
-    "Skrbnik Evklida vidi samo skupna števila brez imen, in to šele, ko so odgovori vsaj trije.",
+    "Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, oceno delov aplikacije, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge in prebrano besedilo shranimo samo, če ju otrok, star vsaj 15 let, posebej označi, in ju hranimo največ 30 dni.",
+    "Skrbnik Evklida vidi skupna števila brez imen, šele ko so odgovori vsaj trije (pri vprašanju o plačilu pet). Vidi tudi kratke opombe brez imena, e-naslove računov v pilotu in fotografije, ki jih je otrok sam označil za shranjevanje.",
+    "Član pilota lahko prijavi napako z zastavico; prijavi se priložita opis in zadnjih 10 sporočil pogovora.",
   ];
+
   const text = `Pozdravljeni,\n\n${dateText} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:\n\n${points.map((p) => `- ${p}`).join("\n")}\n\nNič vam ni treba narediti. Celotna pravila: ${policyUrl}\n\nEkipa Evklid`;
   return {
     subject: "Evklid: posodobili smo pravila zasebnosti",
@@ -204,5 +206,15 @@ export function privacyChangeEmail(policyUrl, dateText = "6. novembra 2026") {
       "Posodobili smo pravila zasebnosti",
       `<p>${esc(dateText)} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:</p><ul>${points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul><p>Nič vam ni treba narediti.</p>${button(policyUrl, "Preberite pravila")}`,
     ),
+  };
+}
+
+// Enkratna koda za potrditev imetnika računa brez gesla (prijava z Apple): skrivanje obvestila o zasebnosti,
+// odgovor o plačilu, izbris fotografij pilota.
+export function ownerCodeEmail(code) {
+  return {
+    subject: "Evklid: koda za potrditev",
+    text: `Vaša koda za potrditev v Evklidu: ${code}\n\nVelja 10 minut. Če je niste zahtevali, sporočilo prezrite.`,
+    html: layout("Koda za potrditev", `<p>Vaša koda za potrditev v Evklidu:</p><p style="font-size:28px;font-weight:bold;letter-spacing:4px">${esc(code)}</p><p style="font-size:13px;color:#5f6779">Velja 10 minut. Če je niste zahtevali, sporočilo prezrite.</p>`),
   };
 }

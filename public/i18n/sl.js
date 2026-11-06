@@ -3216,6 +3216,10 @@ export default {
   "starsi.privHidden": "Obvestilo je skrito.",
   "starsi.wtpPwNote": "Odgovor pošljete z geslom računa, da ne odgovori kdo drug na tej napravi.",
   "starsi.wtpPwNeed": "Vpišite geslo računa.",
+  "starsi.codeNote": "Račun nima gesla, zato vam za potrditev pošljemo kodo na e-naslov računa.",
+  "starsi.codeSend": "Pošlji kodo na e-pošto",
+  "starsi.codeLabel": "Koda iz e-pošte",
+  "starsi.codeSent": "Kodo smo poslali na e-naslov računa.",
   "pn.surveyWait": "Anketa se odpre {date}, po enem tednu uporabe.",
   "pn.surveyText": "Pet vprašanj, odgovoriš z gumbi.",
   "pn.q.overall": "Kako ti je všeč Evklid?",
@@ -3268,6 +3272,7 @@ export default {
   "pilot.n.blocks": "Vsote se osvežijo šele po {n} novih odgovorih.",
   "pilot.n.manage": "Računi v pilotu",
   "pilot.n.backSums": "Nazaj na vsote",
+  "pilot.n.realOnly": "V pilot dodajte samo prave člane, ne svojih testnih računov: iz vsot bi se sicer dal izračunati odgovor posameznika.",
   "pilot.n.few": "Premalo odgovorov za prikaz (vsaj {n}).",
   "zb.fromPilot": "Za pomoč v pilotu",
   // skrbnik: rast in vračanje (server/rast.js)

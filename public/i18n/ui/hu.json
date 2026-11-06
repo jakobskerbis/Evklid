@@ -3791,5 +3791,10 @@
   "pilot.n.quizSkip": "Csak „Nem tudom” válaszos felmérők (nincsenek az átlagban): {n}",
   "pilot.n.blocks": "Az összesítések csak {n} új válasz után frissülnek.",
   "pilot.n.manage": "Fiókok a pilotban",
-  "pilot.n.backSums": "Vissza az összesítésekhez"
+  "pilot.n.backSums": "Vissza az összesítésekhez",
+  "starsi.codeNote": "A fióknak nincs jelszava, ezért megerősítő kódot küldünk a fiók e-mail-címére.",
+  "starsi.codeSend": "Kód küldése e-mailben",
+  "starsi.codeLabel": "Kód az e-mailből",
+  "starsi.codeSent": "A kódot elküldtük a fiók e-mail-címére.",
+  "pilot.n.realOnly": "A pilotba csak valódi tagokat vegyen fel, saját tesztfiókot ne: különben az összesítésekből kiszámítható lenne egy személy válasza."
 }

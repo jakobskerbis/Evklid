@@ -249,7 +249,7 @@ test("e-pošta o novi politiki: brez --poslji nič, nato vsak potrjen obstoječi
     assert.deepEqual(recipients(db).map((r) => r.email), ["staro@b3.si"], "nov račun in nepotrjen naslov ne");
     const sent = [];
     const mailer = { send: async (m) => sent.push(m) };
-    assert.deepEqual(await sendAll(db, mailer, { baseUrl: "https://evklid.si" }), { sent: 1, failed: 0 });
+    assert.deepEqual(await sendAll(db, mailer, { baseUrl: "https://evklid.si", pause: 0 }), { sent: 1, failed: 0 });
     assert.equal(sent[0].to, "staro@b3.si");
     assert.match(sent[0].text, /https:\/\/evklid\.si\/zasebnost\.html/);
     assert.match(sent[0].text, /Nič vam ni treba narediti\./);

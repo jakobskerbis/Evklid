@@ -139,6 +139,9 @@ function maybeNotice(tries = 0) {
 function showNotice(what) {
   if (noticeShown) return;
   if (!pilotState() || busy()) return maybeNotice(1);
+  // Med zamikom se je lahko zamenjal profil: obvestilo izračunamo znova iz trenutnega stanja (B4).
+  what = st?.intro ? "intro" : st?.surveyNotice ? "survey" : st?.quizNotice ? "quiz" : null;
+  if (!what) return;
   noticeShown = true;
   let dlg = $("#pilot-notice");
   if (!dlg) {
@@ -218,6 +221,15 @@ function render() {
   hydrateIcons(box);
 }
 
+// Datum odprtja: v slovenščini »v petek, 13. novembra« (tožilnik dneva, rodilnik meseca; B4 P2-7), drugod Intl.
+const SL_DAY = ["nedeljo", "ponedeljek", "torek", "sredo", "četrtek", "petek", "soboto"];
+const SL_MONTH = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
+export function whenText(iso, lang = currentLang()) {
+  const d = new Date(iso);
+  if (lang === "sl") return `v ${SL_DAY[d.getDay()]}, ${d.getDate()}. ${SL_MONTH[d.getMonth()]}`;
+  return d.toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long" });
+}
+
 const head = (n, ic, title, text, done) =>
   `<div class="pn-head"><span class="pn-num${done ? " done" : ""}" aria-hidden="true">${done ? icon("check") : n}</span><div><h2>${esc(title)}</h2>${text ? `<p class="muted">${esc(text)}</p>` : ""}</div></div>`;
 
@@ -268,7 +280,7 @@ function flagCard(s) {
 }
 
 function surveyCard(s) {
-  const date = new Date(s.surveyOpensAt).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long" });
+  const date = whenText(s.surveyOpensAt);
   let body;
   if (s.survey) body = `<p class="pn-status ok">${icon("circle-check")}${esc(t("pn.surveyDone"))}</p>`;
   else if (!s.surveyOpen) body = `<p class="muted">${esc(t("pn.surveyWait", { date }))}</p>`;
@@ -309,7 +321,7 @@ function quizCard(s) {
       <div class="pn-actions"><button type="button" class="secondary" data-pn="quiz-skip">${icon("circle-help")}<span>${esc(t("pretest.dontKnow"))}</span></button></div>`;
   } else if (both) body = `<p class="pn-status ok">${icon("circle-check")}${esc(t("pn.quizPostDone", { pre: q.pre.score, post: q.post.score, total: q.post.total }))}</p>`;
   else if (q.pre.done && !q.postOpen) {
-    const date = new Date(q.postOpensAt).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long" });
+    const date = whenText(q.postOpensAt);
     body = `<p class="pn-status ok">${icon("circle-check")}${esc(t("pn.quizPreDone", { score: q.pre.score, total: q.pre.total }))}</p><p class="muted">${esc(t("pn.quizWait", { date }))}</p>`;
   } else if (s.quizNone) body = `<p class="muted">${esc(t("pn.quizNone"))}</p>`;
   else {
@@ -481,12 +493,45 @@ export function scanTask(cond) {
   };
 }
 
+// ---------- Račun: potrditev imetnika (geslo računa ali koda na e-pošto pri računu brez gesla) ----------
+
+/** Polje za potrditev imetnika: geslo računa, pri računu brez gesla (Apple) pa koda, poslana na e-naslov. */
+export function proofHtml(id, hasPw = true) {
+  if (hasPw) return `<label for="${id}">${esc(t("starsi.privPw"))}</label><input id="${id}" type="password" autocomplete="current-password">`;
+  return `<p class="muted small">${esc(t("starsi.codeNote"))}</p>
+    <button type="button" class="secondary" data-proof-send>${icon("send")}<span>${esc(t("starsi.codeSend"))}</span></button>
+    <label for="${id}">${esc(t("starsi.codeLabel"))}</label><input id="${id}" inputmode="numeric" autocomplete="one-time-code" maxlength="6">`;
+}
+export const proofBody = (root, id, hasPw = true) => {
+  const v = root.querySelector(`#${id}`)?.value.trim() || "";
+  return hasPw ? { password: v } : { code: v };
+};
+/** Gumb »Pošlji kodo na e-pošto« (enkrat na element). */
+export function wireProof(root, { api, toast }) {
+  if (!root || root.dataset.proofWired) return;
+  root.dataset.proofWired = "1";
+  root.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-proof-send]");
+    if (!b) return;
+    b.disabled = true;
+    try {
+      await api("/api/account/owner-code", { method: "POST" });
+      toast(t("starsi.codeSent"), "check");
+    } catch (err) {
+      toast(err?.message || t("off.noConnection"));
+    } finally {
+      b.disabled = false;
+    }
+  });
+}
+
 // ---------- Račun: starš vidi pilot in shranjene fotografije vsakega profila ----------
 
 /** V seznamu profilov (Račun) pri vsakem profilu: »V pilotu«, število shranjenih fotografij in »Izbriši fotografije«.
  *  Podatki so v acc.children[].pilot (brez zahtev na profil, ki je lahko zaklenjen z geslom). */
-export function paintAccountPilot(list, children, { api, toast }) {
+export function paintAccountPilot(list, children, { api, toast, hasPassword = true }) {
   if (!list) return;
+  wireProof(list, { api, toast });
   for (const c of children || []) {
     const el = list.querySelector(`[data-pn-acc="${c.id}"]`);
     if (!el) continue;
@@ -496,15 +541,27 @@ export function paintAccountPilot(list, children, { api, toast }) {
       if (el.hidden) return (el.innerHTML = "");
       el.innerHTML = `${r.member ? `<span class="pill">${icon("sparkles")}${esc(t("pn.accIn"))}</span>` : ""}
         ${photos ? `<span class="muted small">${esc(t("pn.accPhotos", { n: photos }))}</span>
-        <button type="button" class="secondary" data-pn-acc-del>${icon("trash-2")}<span>${esc(t("pn.deleteAll"))}</span></button>` : ""}`;
-      el.querySelector("[data-pn-acc-del]")?.addEventListener("click", async (e) => {
-        const b = e.currentTarget;
+        <button type="button" class="secondary" data-pn-acc-del>${icon("trash-2")}<span>${esc(t("pn.deleteAll"))}</span></button>
+        <form class="form pn-acc-proof" hidden novalidate>${proofHtml(`pn-acc-pw-${c.id}`, hasPassword)}<p class="form-error" role="alert" hidden></p>
+          <button type="submit" class="primary">${icon("trash-2")}<span>${esc(t("pn.deleteAll"))}</span></button></form>` : ""}`;
+      // Izbris z geslom računa (ali kodo): prvi klik odpre polje, oddaja izbriše (A4 P1-1).
+      const form = el.querySelector(".pn-acc-proof");
+      el.querySelector("[data-pn-acc-del]")?.addEventListener("click", (e) => {
+        e.currentTarget.hidden = true;
+        form.hidden = false;
+        form.querySelector("input")?.focus();
+      });
+      form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const b = form.querySelector("button[type=submit]");
+        const err = form.querySelector(".form-error");
         b.disabled = true;
         try {
-          paint(await api(`/api/account/pilot-photos/${c.id}`, { method: "DELETE" }));
+          paint(await api(`/api/account/pilot-photos/${c.id}`, { method: "DELETE", body: proofBody(form, `pn-acc-pw-${c.id}`, hasPassword) }));
           toast(t("pn.photosDeleted"), "check");
-        } catch (err) {
-          toast(err?.message || t("off.noConnection"));
+        } catch (ex) {
+          err.textContent = ex?.message || t("off.noConnection");
+          err.hidden = false;
           b.disabled = false;
         }
       });
@@ -551,6 +608,7 @@ export async function renderPilotAdmin(box, { api, toast }) {
   const num = (x) => (x == null ? "–" : x);
   box.innerHTML = `
     <p>${esc(t("pilot.n.sum", { members: r.members, photos: r.photos, survey: r.survey.n }))}</p>
+    <p class="muted small">${esc(t("pilot.n.realOnly"))}</p>
     <h3>${esc(t("pilot.n.scan"))}</h3>
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("pilot.n.cond")}${th("pilot.n.n")}${th("pilot.n.ok")}${th("pilot.n.rate")}</tr></thead>
       <tbody>${r.scans.map((s) => `<tr><td>${esc(cond(s.cond))}</td><td>${s.n}</td><td>${num(s.ok)}</td><td>${pc(s.rate)}</td></tr>`).join("")}</tbody></table></div>
@@ -564,7 +622,7 @@ export async function renderPilotAdmin(box, { api, toast }) {
     ${impactHtml(r.impact, { pc, few })}
     ${r.notesHidden ? `<h3>${esc(t("pilot.n.notes"))}</h3><p class="muted">${few}</p>` : ""}
     ${r.notes.length ? `<h3>${esc(t("pilot.n.notes"))}</h3><ul class="pn-admin-notes">${r.notes.map((n) => `<li><small class="muted">${esc(n.kind === "scan" ? cond(n.what) : feat(n.what))} · ${esc(t(n.kind === "scan" ? (n.ok ? "pn.ok" : "pn.bad") : n.ok ? "pn.works" : "pn.broken"))}</small><br>${esc(n.note)}</li>`).join("")}</ul>` : ""}
-    ${r.photoList.length ? `<h3>${esc(t("pilot.n.photosH"))}</h3><ul class="pn-admin-photos">${r.photoList.map((p) => `<li><a href="/api/admin/pilot-naloge/foto/${p.id}" target="_blank" rel="noopener">${icon("image")} ${esc(cond(p.cond))} · ${esc(t(p.ok ? "pn.ok" : "pn.bad"))}</a></li>`).join("")}</ul>` : ""}
+    ${r.photoList.length ? `<h3>${esc(t("pilot.n.photosH"))}</h3><ul class="pn-admin-photos">${r.photoList.map((p) => `<li><a href="/api/admin/pilot-naloge/foto/${p.id}">${icon("image")} ${esc(cond(p.cond))} · ${esc(t(p.ok ? "pn.ok" : "pn.bad"))}</a></li>`).join("")}</ul>` : ""}
     ${r.canAdd ? `<button type="button" class="secondary" data-pn-members>${icon("users")}<span>${esc(t("pilot.n.manage"))}</span></button>` : ""}`;
   box.querySelector("[data-pn-members]")?.addEventListener("click", () => renderPilotMembers(box, { api, toast }));
 }
@@ -608,20 +666,28 @@ const WTP_AMOUNT = ["lt5", "5to10", "10to15", "15to20", "gt20", "skip"];
 const WTP_KEY = { yes: "starsi.wtpYes", maybe: "starsi.wtpMaybe", no: "starsi.wtpNo", skip: "starsi.wtpSkip", lt5: "starsi.wtpLt5", "5to10": "starsi.wtp5to10", "10to15": "starsi.wtp10to15", "15to20": "starsi.wtp15to20", gt20: "starsi.wtpGt20" };
 
 /** Kartica v Računu; el ostane skrit, če vprašanje ni odprto. */
-export function paintAccountWtp(el, wtp, { api, toast }) {
+export function paintAccountWtp(el, wtp, { api, toast, hasPassword = true }) {
   if (!el) return;
+  wireProof(el, { api, toast });
   el.hidden = !wtp?.open;
   if (el.hidden) return (el.innerHTML = "");
   const pick = {};
-  const paint = () => {
+  let paint = () => {
     const amount = pick.pay === "yes" || pick.pay === "maybe";
     el.innerHTML = `<h2>${esc(t("starsi.wtpTitle"))}</h2>
       <fieldset class="pn-q"><legend>${esc(t("starsi.wtpQ"))}</legend><div class="pn-choices">${WTP_PAY.map((k) => `<button type="button" data-wtp-pay="${k}" aria-pressed="${pick.pay === k}">${esc(t(WTP_KEY[k]))}</button>`).join("")}</div></fieldset>
       ${amount ? `<fieldset class="pn-q"><legend>${esc(t("starsi.wtpAmountQ"))}</legend><div class="pn-choices">${WTP_AMOUNT.map((k) => `<button type="button" data-wtp-amount="${k}" aria-pressed="${pick.amount === k}">${esc(t(WTP_KEY[k]))}</button>`).join("")}</div></fieldset>` : ""}
       <p class="muted small">${esc(t("starsi.wtpNote"))}</p>
-      <form class="form pn-wtp-pw" novalidate><label for="pn-wtp-pw">${esc(t("starsi.privPw"))}</label><input id="pn-wtp-pw" type="password" autocomplete="current-password" value="${esc(pick.password || "")}"><p class="muted small">${esc(t("starsi.wtpPwNote"))}</p></form>
+      <form class="form pn-wtp-pw" novalidate>${proofHtml("pn-wtp-pw", hasPassword)}${hasPassword ? `<p class="muted small">${esc(t("starsi.wtpPwNote"))}</p>` : ""}</form>
       <p class="pn-err" role="alert" hidden></p>
       <button type="button" class="primary" data-wtp-send>${esc(t("starsi.wtpSend"))}</button>`;
+  };
+  const repaint = paint;
+  // Geslo ostane samo v polju (lastnost value), nikoli v HTML (A4 P3).
+  paint = () => {
+    repaint();
+    const f = el.querySelector("#pn-wtp-pw");
+    if (f && pick.password) f.value = pick.password;
   };
   paint();
   el.addEventListener("input", (e) => {
@@ -661,7 +727,8 @@ export function paintAccountWtp(el, wtp, { api, toast }) {
     }
     b.disabled = true;
     try {
-      await api("/api/account/pilot-wtp", { method: "POST", body: pick });
+      const { password, ...answer } = pick;
+      await api("/api/account/pilot-wtp", { method: "POST", body: { ...answer, ...proofBody(el, "pn-wtp-pw", hasPassword) } });
       el.innerHTML = `<p class="pn-status ok">${icon("circle-check")}${esc(t("starsi.wtpThanks"))}</p>`;
       toast(t("starsi.wtpThanks"), "check");
     } catch (err) {

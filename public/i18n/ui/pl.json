@@ -3861,5 +3861,10 @@
   "pilot.n.quizSkip": "Sprawdziany tylko z „Nie wiem” (poza średnimi): {n}",
   "pilot.n.blocks": "Sumy odświeżają się dopiero po {n} nowych odpowiedziach.",
   "pilot.n.manage": "Konta w pilotażu",
-  "pilot.n.backSums": "Wróć do sum"
+  "pilot.n.backSums": "Wróć do sum",
+  "starsi.codeNote": "Konto nie ma hasła, dlatego wysyłamy kod potwierdzający na adres e-mail konta.",
+  "starsi.codeSend": "Wyślij kod e-mailem",
+  "starsi.codeLabel": "Kod z e-maila",
+  "starsi.codeSent": "Wysłaliśmy kod na adres e-mail konta.",
+  "pilot.n.realOnly": "Do pilotażu dodawaj tylko prawdziwych członków, nie własne konta testowe: inaczej z sum dałoby się obliczyć odpowiedź jednej osoby."
 }

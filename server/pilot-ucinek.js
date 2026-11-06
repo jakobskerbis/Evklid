@@ -159,30 +159,37 @@ export function impactReport(db, minGroup) {
   const avg = (xs) => Math.round((xs.reduce((s, x) => s + x, 0) / xs.length) * 1000) / 1000;
   // »Ne vem« pri vseh nalogah (-1): preizkus ni meritev znanja, zato ni v povprečjih; prikaže se samo število.
   const allSkip = (r) => parse(r.answers, []).every((a) => a === -1);
-  const valid = rows.filter((r) => !allSkip(r));
-  const postBy = new Map(valid.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
+  // Paket vzamemo iz VSEH končanih preizkusov po času in jih šele v paketu delimo (strop, samo »Ne vem«, ostali):
+  // skupina je odvisna od rezultata, zato bi ločeno število po skupinah razkrilo rezultat zadnjega (pregled A4).
+  const preAll = rows.filter((r) => r.phase === "pre");
+  const postBy = new Map(rows.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
+  const preBlock = block(preAll, minGroup);
+  const order = new Map(rows.map((r, i) => [r, i])); // vrstni red po času konca
+  const pairAll = preAll.filter((r) => postBy.has(r.student_id)).sort((a, b) => order.get(postBy.get(a.student_id)) - order.get(postBy.get(b.student_id)));
+  const pairBlock = block(pairAll, minGroup);
+  const usable = (r) => !allSkip(r) && !allSkip(postBy.get(r.student_id) || r);
   // Pred in po samo pri istih učencih (sicer bi se primerjali različni ljudje). Strop (6/6 prvič, z dodatnimi težjimi
   // nalogami) posebej: drugače bi njihov visok začetek in drugačna sestava popačila povprečje ostalih.
-  const group = (pre) => {
-    const shownPre = block(pre, minGroup);
-    const pairs = block(
-      pre.filter((r) => postBy.has(r.student_id)).sort((a, b) => postBy.get(a.student_id).rowid - postBy.get(b.student_id).rowid || 0),
-      minGroup,
-    ).map((r) => [pct(r), pct(postBy.get(r.student_id))]);
-    const nPaired = pre.filter((r) => postBy.has(r.student_id)).length;
+  const group = (keep) => {
+    const pre = preBlock.filter((r) => !allSkip(r) && keep(r));
+    const pairs = pairBlock.filter((r) => usable(r) && keep(r)).map((r) => [pct(r), pct(postBy.get(r.student_id))]);
     return {
-      nPre: shownN(pre.length, minGroup),
-      nPaired: shownN(nPaired, minGroup),
-      shownPre: shownPre.length,
+      shownPre: pre.length,
       shownPaired: pairs.length,
-      pre: shownPre.length ? avg(shownPre.map(pct)) : null,
+      pre: pre.length ? avg(pre.map(pct)) : null,
       pairedPre: pairs.length ? avg(pairs.map((p) => p[0])) : null,
       pairedPost: pairs.length ? avg(pairs.map((p) => p[1])) : null,
       diff: pairs.length ? avg(pairs.map((p) => p[1] - p[0])) : null,
     };
   };
-  const pre = valid.filter((r) => r.phase === "pre");
-  const quiz = { ...group(pre.filter((r) => !isCeiling(r))), ceiling: group(pre.filter(isCeiling)), allSkip: rows.filter(allSkip).length };
+  // Natančno je samo skupno število; štetja po skupinah so samo znotraj paketa.
+  const quiz = {
+    nPre: shownN(preAll.length, minGroup),
+    nPaired: shownN(pairAll.length, minGroup),
+    ...group((r) => !isCeiling(r)),
+    ceiling: { nPre: preBlock.filter((r) => isCeiling(r) && !allSkip(r)).length, nPaired: pairBlock.filter((r) => isCeiling(r) && usable(r)).length, ...group(isCeiling) },
+    allSkip: preBlock.filter(allSkip).length + pairBlock.filter((r) => !allSkip(r) && allSkip(postBy.get(r.student_id))).length,
+  };
   let wtp = { n: 0, shown: 0, min: WTP_MIN, pay: null, amount: null };
   try {
     const all = db.prepare("SELECT pay, amount FROM pilot_wtp ORDER BY created_at, parent_id").all();

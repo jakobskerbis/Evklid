@@ -3765,5 +3765,10 @@
   "pilot.n.quizSkip": "Bài chỉ có “Không biết” (không tính vào trung bình): {n}",
   "pilot.n.blocks": "Số tổng chỉ cập nhật sau {n} câu trả lời mới.",
   "pilot.n.manage": "Tài khoản trong thử nghiệm",
-  "pilot.n.backSums": "Quay lại số tổng"
+  "pilot.n.backSums": "Quay lại số tổng",
+  "starsi.codeNote": "Tài khoản không có mật khẩu, nên chúng tôi gửi mã xác nhận đến email của tài khoản.",
+  "starsi.codeSend": "Gửi mã qua email",
+  "starsi.codeLabel": "Mã trong email",
+  "starsi.codeSent": "Chúng tôi đã gửi mã đến email của tài khoản.",
+  "pilot.n.realOnly": "Chỉ thêm thành viên thật vào thử nghiệm, không thêm tài khoản thử của mình: nếu không, có thể tính ra câu trả lời của một người từ số tổng."
 }

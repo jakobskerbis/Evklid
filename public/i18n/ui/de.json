@@ -3782,7 +3782,7 @@
   "pilot.n.wtpPay": "Würden zahlen",
   "pilot.n.wtpAmount": "Betrag pro Monat",
   "starsi.privTitle": "Wir haben die Datenschutzregeln aktualisiert",
-  "starsi.privText": "Sie sagen jetzt genauer, welche Daten Sie exportieren und löschen können und wie lange wir sie aufbewahren. Neu sind auch die Pilotaufgaben und die Messung, ob Evklid hilft. Sie müssen nichts tun.",
+  "starsi.privText": "Die Regeln beschreiben jetzt genauer, welche Daten Sie exportieren und löschen können und wie lange wir sie aufbewahren. Neu sind auch die Pilotaufgaben und die Messung, ob Evklid hilft. Sie müssen nichts tun.",
   "starsi.privRead": "Regeln lesen",
   "starsi.privPw": "Kontopasswort",
   "starsi.privPwNote": "Blenden Sie den Hinweis mit dem Kontopasswort aus, damit ihn niemand anderes auf diesem Gerät ausblendet.",
@@ -3793,5 +3793,10 @@
   "pilot.n.quizSkip": "Tests nur mit „Weiß ich nicht“ (nicht in Durchschnitten): {n}",
   "pilot.n.blocks": "Summen werden erst nach {n} neuen Antworten aktualisiert.",
   "pilot.n.manage": "Konten im Pilot",
-  "pilot.n.backSums": "Zurück zu den Summen"
+  "pilot.n.backSums": "Zurück zu den Summen",
+  "starsi.codeNote": "Das Konto hat kein Passwort, daher senden wir Ihnen einen Bestätigungscode an die E-Mail-Adresse des Kontos.",
+  "starsi.codeSend": "Code per E-Mail senden",
+  "starsi.codeLabel": "Code aus der E-Mail",
+  "starsi.codeSent": "Wir haben den Code an die E-Mail-Adresse des Kontos gesendet.",
+  "pilot.n.realOnly": "Nur echte Mitglieder in den Pilot aufnehmen, keine eigenen Testkonten: sonst ließe sich aus den Summen die Antwort einer Person berechnen."
 }

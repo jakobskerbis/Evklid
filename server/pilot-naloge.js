@@ -115,6 +115,16 @@ export function migratePilotTasks(db) {
     db.exec(`UPDATE pilot_photos SET expires_at = datetime(created_at, '+${PHOTO_MAX_DAYS} days') WHERE expires_at IS NULL`);
   }
   if (!hasCol(db, "pilot_state", "photo_day")) db.exec("ALTER TABLE pilot_state ADD COLUMN photo_day TEXT");
+  // Prva ocena (za vsote skrbnika): ponovna ocena istega pogoja ali dela je vidna učencu, vsot pa ne spremeni, sicer bi
+  // se paket po 3 spremenil brez novih odgovorov (pregled A4/B4). Enako created_at ostane čas prve ocene.
+  if (!hasCol(db, "pilot_scans", "ok_first")) {
+    db.exec("ALTER TABLE pilot_scans ADD COLUMN ok_first INTEGER");
+    db.exec("UPDATE pilot_scans SET ok_first = ok WHERE ok_first IS NULL");
+  }
+  if (!hasCol(db, "pilot_features", "ok_first")) {
+    db.exec("ALTER TABLE pilot_features ADD COLUMN ok_first INTEGER");
+    db.exec("UPDATE pilot_features SET ok_first = ok WHERE ok_first IS NULL");
+  }
   if (!hasCol(db, "pilot_state", "quiz_notice_at")) db.exec("ALTER TABLE pilot_state ADD COLUMN quiz_notice_at TEXT");
   if (!hasCol(db, "pilot_state", "photo_n")) db.exec("ALTER TABLE pilot_state ADD COLUMN photo_n INTEGER NOT NULL DEFAULT 0");
 }
@@ -252,14 +262,14 @@ export function pilotTasksReport(db) {
   const few = (n) => n < MIN_GROUP;
   const B = (rows) => block(rows, MIN_GROUP);
   const N = (n) => shownN(n, MIN_GROUP);
-  const scanRows = db.prepare("SELECT id, cond, ok FROM pilot_scans ORDER BY id").all();
+  const scanRows = db.prepare("SELECT id, cond, COALESCE(ok_first, ok) AS ok FROM pilot_scans ORDER BY id").all();
   const scans = SCAN_CONDITIONS.map((c) => {
     const all = scanRows.filter((r) => r.cond === c);
     const b = B(all);
     const ok = b.filter((r) => r.ok).length;
     return b.length ? { cond: c, n: N(all.length), shown: b.length, ok, rate: ok / b.length } : { cond: c, n: N(all.length), shown: 0, ok: null, rate: null };
   });
-  const featRows = db.prepare("SELECT id, feature, ok FROM pilot_features ORDER BY id").all();
+  const featRows = db.prepare("SELECT id, feature, COALESCE(ok_first, ok) AS ok FROM pilot_features ORDER BY id").all();
   const features = FEATURES.map((f) => {
     const all = featRows.filter((r) => r.feature === f);
     const b = B(all);
@@ -268,8 +278,8 @@ export function pilotTasksReport(db) {
   // Opombe brez imena in brez časa; tudi te v paketih po 3 (nova opomba se ne pokaže sama), nato urejene po besedilu.
   const open = (v) => unseal(v, null);
   const noteRows = [
-    ...db.prepare("SELECT 'scan' AS kind, id, cond AS what, ok, note FROM pilot_scans WHERE note IS NOT NULL").all(),
-    ...db.prepare("SELECT 'feature' AS kind, id + 1000000000 AS id, feature AS what, ok, note FROM pilot_features WHERE note IS NOT NULL").all(),
+    ...db.prepare("SELECT 'scan' AS kind, id, cond AS what, COALESCE(ok_first, ok) AS ok, note FROM pilot_scans WHERE note IS NOT NULL").all(),
+    ...db.prepare("SELECT 'feature' AS kind, id + 1000000000 AS id, feature AS what, COALESCE(ok_first, ok) AS ok, note FROM pilot_features WHERE note IS NOT NULL").all(),
   ]
     .map((r) => ({ id: r.id, kind: r.kind, what: r.what, ok: !!r.ok, note: open(r.note) }))
     .filter((r) => r.note)
@@ -277,7 +287,7 @@ export function pilotTasksReport(db) {
   const notes = B(noteRows)
     .map(({ id, ...r }) => r)
     .sort((a, b) => a.kind.localeCompare(b.kind) || a.what.localeCompare(b.what) || a.note.localeCompare(b.note));
-  const allAnswers = db.prepare("SELECT answers FROM pilot_survey ORDER BY created_at, student_id").all().map((r) => {
+  const allAnswers = db.prepare("SELECT answers FROM pilot_survey ORDER BY rowid").all().map((r) => {
     try {
       return JSON.parse(r.answers);
     } catch {
@@ -295,7 +305,7 @@ export function pilotTasksReport(db) {
   // Samo trenutni člani (pilot_state ostane tudi po izstopu, zaradi izvoza in izbrisa).
   const members = db.prepare("SELECT student_id FROM pilot_state").all().filter((r) => pilotMember(db, r.student_id)).length;
   const photos = db.prepare("SELECT COUNT(*) AS n FROM pilot_photos").get().n;
-  const photoList = db.prepare("SELECT p.scan_id AS id, s.cond, s.ok FROM pilot_photos p JOIN pilot_scans s ON s.id = p.scan_id ORDER BY s.cond, p.scan_id").all()
+  const photoList = db.prepare("SELECT p.scan_id AS id, s.cond, s.ok FROM pilot_photos p JOIN pilot_scans s ON s.id = p.scan_id WHERE p.expires_at IS NULL OR p.expires_at > datetime('now') ORDER BY s.cond, p.scan_id").all()
     .map((r) => ({ id: r.id, cond: r.cond, ok: !!r.ok }));
   // Opombe šele, ko je v pilotu vsaj MIN_GROUP članov.
   const showNotes = !few(members) && notes.length > 0;
@@ -426,11 +436,12 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
         // Nova ocena istega pogoja: stara fotografija (in z njo prepis, sprožilec) ne sodi več k njej. Najprej izbris,
         // nato nova ocena, sicer bi sprožilec pobrisal novi prepis.
         db.prepare("DELETE FROM pilot_photos WHERE scan_id = ?").run(id);
-        db.prepare("UPDATE pilot_scans SET ok = ?, note = ?, problems = ?, created_at = datetime('now') WHERE id = ?").run(b.ok ? 1 : 0, n, problems.length ? seal(JSON.stringify(problems)) : null, id);
+        // Opomba se z novo oceno brez opombe ne izbriše (sicer bi se paket opomb pri skrbniku premaknil).
+        db.prepare("UPDATE pilot_scans SET ok = ?, note = COALESCE(?, note), problems = ? WHERE id = ?").run(b.ok ? 1 : 0, n, problems.length ? seal(JSON.stringify(problems)) : null, id);
       } else {
         id = db
-          .prepare("INSERT INTO pilot_scans (student_id, cond, ok, note, problems) VALUES (?, ?, ?, ?, ?)")
-          .run(s.id, b.cond, b.ok ? 1 : 0, n, problems.length ? seal(JSON.stringify(problems)) : null).lastInsertRowid;
+          .prepare("INSERT INTO pilot_scans (student_id, cond, ok, ok_first, note, problems) VALUES (?, ?, ?, ?, ?, ?)")
+          .run(s.id, b.cond, b.ok ? 1 : 0, b.ok ? 1 : 0, n, problems.length ? seal(JSON.stringify(problems)) : null).lastInsertRowid;
       }
       if (image) {
         const days = photoDays();
@@ -464,14 +475,16 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     res.json({ ...pilotState(db, s.id), gained: 0, deleted: Number(n) });
   });
 
-  // Starš v Računu izbriše fotografije profila. Samo imetnik (OWNER_ONLY v account-lock.js) in ne mimo gesla profila:
-  // brat na skupni napravi ne sme izbrisati sestrinih fotografij (preklic tujega soglasja, pregled B3).
-  app.delete("/api/account/pilot-photos/:sid", (req, res) => {
+  // Starš v Računu izbriše fotografije profila: samo imetnik (OWNER_ONLY v account-lock.js) z geslom računa (ali kodo
+  // pri računu brez gesla). Brat na skupni napravi gesla računa ne pozna, starš pa ne potrebuje gesla profila (A4, B3).
+  app.delete("/api/account/pilot-photos/:sid", async (req, res) => {
     if (!accounts || !req.parent) return res.status(404).json({ error: "Ne obstaja." });
     const sid = /^\d{1,12}$/.test(req.params.sid) ? Number(req.params.sid) : NaN;
     const own = Number.isInteger(sid) && db.prepare("SELECT 1 FROM students WHERE id = ? AND parent_id = ?").get(sid, req.parent.id);
     if (!own) return res.status(404).json({ error: "Učenec ne obstaja." });
-    if (owner?.profileLockedFor?.(req, sid)) return res.status(423).json({ error: "Profil je zaklenjen. Najprej ga odkleni z njegovim geslom.", profile_locked: true });
+    const ok = owner?.confirmOwner ? await owner.confirmOwner(req) : false;
+    if (ok === "throttled") return res.status(429).json({ error: "Preveč poskusov. Poskusite čez eno uro." });
+    if (!ok) return res.status(401).json({ error: "Za izbris vpišite geslo računa.", password: true });
     const n = db.prepare("DELETE FROM pilot_photos WHERE student_id = ?").run(sid).changes;
     audit(db, { req, parentId: req.parent.id, actor: "parent", action: "pilot_photos_delete", target: `student:${sid}` });
     res.json({ ...pilotSummary(db, sid), deleted: Number(n) });
@@ -490,8 +503,8 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     if (typeof b.ok !== "boolean" && !prev) return res.status(400).json({ error: "Napačna zahteva." });
     const ok = typeof b.ok === "boolean" ? (b.ok ? 1 : 0) : prev.ok;
     const n = note(b.note, s.name);
-    if (prev) db.prepare("UPDATE pilot_features SET ok = ?, note = COALESCE(?, note), created_at = datetime('now') WHERE id = ?").run(ok, n, prev.id);
-    else db.prepare("INSERT INTO pilot_features (student_id, feature, ok, note) VALUES (?, ?, ?, ?)").run(s.id, b.feature, ok, n);
+    if (prev) db.prepare("UPDATE pilot_features SET ok = ?, note = COALESCE(?, note) WHERE id = ?").run(ok, n, prev.id);
+    else db.prepare("INSERT INTO pilot_features (student_id, feature, ok, ok_first, note) VALUES (?, ?, ?, ?, ?)").run(s.id, b.feature, ok, ok, n);
     const rewarded = db.prepare("SELECT COUNT(*) AS n FROM pilot_rewards WHERE student_id = ? AND item LIKE 'feature:%'").get(s.id).n;
     const hasIt = !!db.prepare("SELECT 1 FROM pilot_rewards WHERE student_id = ? AND item = ?").get(s.id, `feature:${b.feature}`);
     reply(res, s, hasIt || rewarded < FEATURES_SHOWN ? reward(db, progress, s.id, `feature:${b.feature}`, XP.feature) : 0);
@@ -509,6 +522,8 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     const s = member(req, res);
     if (!s) return;
     if (!pilotState(db, s.id).surveyOpen) return res.status(409).json({ error: "Anketa še ni odprta." });
+    // Enkratna (kot plačilo): ponovna oddaja bi premaknila vrstico na konec paketa in razkrila tuj odgovor (B4 P1-1).
+    if (db.prepare("SELECT 1 FROM pilot_survey WHERE student_id = ?").get(s.id)) return res.status(409).json({ error: "Anketa je že oddana." });
     const a = req.body?.answers || {};
     const out = {};
     for (const q of SURVEY_SCALE) {
@@ -517,10 +532,7 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     }
     if (!SURVEY_IMPROVE.includes(req.body?.improve)) return res.status(400).json({ error: "Odgovori na vsa vprašanja." });
     out.improve = req.body.improve;
-    db.prepare("INSERT INTO pilot_survey (student_id, answers) VALUES (?, ?) ON CONFLICT(student_id) DO UPDATE SET answers = excluded.answers, created_at = datetime('now')").run(
-      s.id,
-      JSON.stringify(out),
-    );
+    if (!db.prepare("INSERT OR IGNORE INTO pilot_survey (student_id, answers) VALUES (?, ?)").run(s.id, JSON.stringify(out)).changes) return res.status(409).json({ error: "Anketa je že oddana." });
     reply(res, s, reward(db, progress, s.id, "survey", XP.survey));
   });
 
@@ -559,7 +571,8 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
   app.get("/api/admin/pilot-naloge/foto/:id", (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     const id = /^\d{1,12}$/.test(req.params.id) ? Number(req.params.id) : NaN;
-    const r = Number.isInteger(id) ? db.prepare("SELECT image FROM pilot_photos WHERE scan_id = ?").get(id) : null;
+    // Pretečena fotografija se ne pokaže, tudi preden jo dnevno čiščenje pobriše (B4).
+    const r = Number.isInteger(id) ? db.prepare("SELECT image FROM pilot_photos WHERE scan_id = ? AND (expires_at IS NULL OR expires_at > datetime('now'))").get(id) : null;
     if (!r) return res.status(404).json({ error: "Fotografija ne obstaja." });
     const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(unseal(r.image, "") || "");
     if (!m) return res.status(404).json({ error: "Fotografija ne obstaja." });

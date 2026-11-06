@@ -3765,5 +3765,10 @@
   "pilot.n.quizSkip": "只选“不会”的小测（不计入平均）：{n}",
   "pilot.n.blocks": "总数只在新增 {n} 个回答后才更新。",
   "pilot.n.manage": "试点中的账户",
-  "pilot.n.backSums": "返回总数"
+  "pilot.n.backSums": "返回总数",
+  "starsi.codeNote": "该账户没有密码，因此我们会把确认码发送到账户邮箱。",
+  "starsi.codeSend": "通过邮件发送验证码",
+  "starsi.codeLabel": "邮件中的验证码",
+  "starsi.codeSent": "验证码已发送到账户邮箱。",
+  "pilot.n.realOnly": "试点中只添加真实成员，不要添加自己的测试账户，否则可以从总数算出某个人的回答。"
 }

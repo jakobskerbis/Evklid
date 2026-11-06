@@ -3765,5 +3765,10 @@
   "pilot.n.quizSkip": "‘모르겠어요’만 있는 점검(평균 제외): {n}",
   "pilot.n.blocks": "합계는 새 답변이 {n}개 쌓인 뒤에만 갱신됩니다.",
   "pilot.n.manage": "파일럿 계정",
-  "pilot.n.backSums": "합계로 돌아가기"
+  "pilot.n.backSums": "합계로 돌아가기",
+  "starsi.codeNote": "이 계정에는 비밀번호가 없어서 계정 이메일로 확인 코드를 보내 드립니다.",
+  "starsi.codeSend": "이메일로 코드 보내기",
+  "starsi.codeLabel": "이메일의 코드",
+  "starsi.codeSent": "계정 이메일로 코드를 보냈습니다.",
+  "pilot.n.realOnly": "파일럿에는 실제 참여자만 추가하고 본인 테스트 계정은 넣지 마세요. 그렇지 않으면 합계에서 개인의 답을 계산할 수 있습니다."
 }

@@ -3765,5 +3765,10 @@
   "pilot.n.quizSkip": "Tes hanya dengan “Tidak tahu” (tidak dalam rata-rata): {n}",
   "pilot.n.blocks": "Jumlah baru diperbarui setelah {n} jawaban baru.",
   "pilot.n.manage": "Akun dalam pilot",
-  "pilot.n.backSums": "Kembali ke jumlah"
+  "pilot.n.backSums": "Kembali ke jumlah",
+  "starsi.codeNote": "Akun ini tidak memiliki kata sandi, jadi kami mengirim kode konfirmasi ke email akun.",
+  "starsi.codeSend": "Kirim kode lewat email",
+  "starsi.codeLabel": "Kode dari email",
+  "starsi.codeSent": "Kami telah mengirim kode ke email akun.",
+  "pilot.n.realOnly": "Tambahkan hanya anggota sungguhan ke pilot, bukan akun uji Anda sendiri: jika tidak, jawaban seseorang bisa dihitung dari jumlahnya."
 }

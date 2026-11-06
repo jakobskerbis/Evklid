@@ -119,7 +119,7 @@ test("pilot: nagrada (XP in značka) samo enkrat na točko", async () => {
     assert.equal((await call(`/api/students/${sid}/pilot`)).body.surveyNotice, true);
     assert.equal((await call(`/api/students/${sid}/pilot/survey`, { method: "POST", body: { answers: { overall: 6 }, improve: "scan" } })).status, 400);
     assert.equal((await call(`/api/students/${sid}/pilot/survey`, { method: "POST", body: ans })).body.gained, XP.survey);
-    assert.equal((await call(`/api/students/${sid}/pilot/survey`, { method: "POST", body: ans })).body.gained, 0);
+    assert.equal((await call(`/api/students/${sid}/pilot/survey`, { method: "POST", body: ans })).status, 409, "anketa je enkratna (B4 P1-1)");
     assert.equal(xp(), XP.scan + XP.flag + XP.feature + XP.survey);
 
     // Skrbnik pri enem članu: deleži, povprečja in opombe so skriti (prag MIN_GROUP = 3), da ne razkrijejo osebe.
@@ -145,7 +145,8 @@ test("pilot: nagrada (XP in značka) samo enkrat na točko", async () => {
     r = pilotTasksReport(store.db);
     assert.equal(r.members, 3);
     assert.equal(r.scans.find((s) => s.cond === "dark").n, 3);
-    assert.equal(r.scans.find((s) => s.cond === "dark").ok, 1);
+    // Vsote štejejo prvo oceno: prvi član je »dark« ocenil narobe, nato prav; ponovna ocena vsot ne spremeni (A4/B4).
+    assert.equal(r.scans.find((s) => s.cond === "dark").ok, 0);
     assert.equal(r.features.find((f) => f.feature === "chat").bad, 3);
     assert.equal(r.survey.avg.overall, 5);
     assert.equal(r.survey.improve.scan, 3);
@@ -154,7 +155,7 @@ test("pilot: nagrada (XP in značka) samo enkrat na točko", async () => {
     // Jutranji pregled: samo števila, brez opomb in brez imen ali e-naslovov.
     const md = pilotTasksMarkdown(r);
     assert.doesNotMatch(md, /Maja|@pilot|počasen|Počasno|koren/);
-    assert.match(md, /\| dark \| 3 \| 1 \| 33 % \|/);
+    assert.match(md, /\| dark \| 3 \| 0 \| 0 % \|/);
     // Odstranjen član ne šteje več med člane.
     setPilot(store, "c@pilot.si", false);
     assert.equal(pilotTasksReport(store.db).members, 2);
@@ -351,7 +352,8 @@ test("pilot: starš vidi pilot in fotografije v Računu, izstop iz pilota izbri�
     setPilot(store, "stars@pilot.si", false);
     const st = (await a.call(`/api/students/${a.sid}/pilot`)).body;
     assert.deepEqual(st, { member: false, photos: ["board", "light"] });
-    const del = await a.call(`/api/account/pilot-photos/${a.sid}`, { method: "DELETE" });
+    assert.equal((await a.call(`/api/account/pilot-photos/${a.sid}`, { method: "DELETE" })).status, 401, "brez gesla računa ne (A4)");
+    const del = await a.call(`/api/account/pilot-photos/${a.sid}`, { method: "DELETE", body: { password: "geslo1234" } });
     assert.equal(del.status, 200);
     assert.deepEqual({ member: del.body.member, photos: del.body.photos, deleted: del.body.deleted }, { member: false, photos: 0, deleted: 2 });
     // Skrbnik odstrani račun iz pilota: fotografije gredo takoj.

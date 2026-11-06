@@ -7,7 +7,7 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
-import { renderPilotAdmin, paintAccountPilot, paintAccountWtp } from "./pilot-naloge.js";
+import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
@@ -1444,26 +1444,26 @@ function privacyBanner(acc) {
     <p>${esc(t("starsi.privText"))}</p>
     <p><a class="btn-secondary" href="/zasebnost.html" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("starsi.privRead"))}</span></a></p>
     <form class="form priv-form" novalidate>
-      <p class="muted small">${esc(t("starsi.privPwNote"))}</p>
-      <label for="priv-pw">${esc(t("starsi.privPw"))}</label>
-      <input id="priv-pw" type="password" autocomplete="current-password" required>
+      ${acc.parent.has_password !== false ? `<p class="muted small">${esc(t("starsi.privPwNote"))}</p>` : ""}
+      ${proofHtml("priv-pw", acc.parent.has_password !== false)}
       <p class="form-error" role="alert" hidden></p>
       <button type="submit" class="secondary">${esc(t("starsi.privHide"))}</button>
     </form>
   </div>`;
 }
 
-function wirePrivacyBanner() {
+function wirePrivacyBanner(hasPassword = true) {
   const box = $("#priv-banner");
   const form = box?.querySelector(".priv-form");
   if (!form) return;
+  wireProof(box, { api, toast });
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const err = form.querySelector(".form-error");
     const btn = form.querySelector("button");
     btn.disabled = true;
     try {
-      await api("/api/account/privacy-seen", { method: "POST", body: { password: $("#priv-pw").value } });
+      await api("/api/account/privacy-seen", { method: "POST", body: proofBody(form, "priv-pw", hasPassword) });
       if (status?.parent) status.parent.privacy_notice = null;
       box.remove();
       toast(t("starsi.privHidden"), "check");
@@ -1615,9 +1615,10 @@ export async function renderAccount() {
     }
   });
   bindAdminCodes(acc);
-  paintAccountPilot($(".child-list"), acc.children, { api, toast });
-  paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
-  wirePrivacyBanner(); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
+  const hasPassword = acc.parent.has_password !== false;
+  paintAccountPilot($(".child-list"), acc.children, { api, toast, hasPassword });
+  paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast, hasPassword }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
+  wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
   $("#gift-form")?.addEventListener("submit", async (e) => {

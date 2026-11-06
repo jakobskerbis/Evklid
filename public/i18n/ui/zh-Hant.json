@@ -3765,5 +3765,10 @@
   "pilot.n.quizSkip": "只選「不會」的小測（不計入平均）：{n}",
   "pilot.n.blocks": "總數只在新增 {n} 個回答後才更新。",
   "pilot.n.manage": "試點中的帳戶",
-  "pilot.n.backSums": "返回總數"
+  "pilot.n.backSums": "返回總數",
+  "starsi.codeNote": "此帳戶沒有密碼，因此我們會把確認碼寄到帳戶信箱。",
+  "starsi.codeSend": "透過電子郵件寄送驗證碼",
+  "starsi.codeLabel": "電子郵件中的驗證碼",
+  "starsi.codeSent": "驗證碼已寄到帳戶信箱。",
+  "pilot.n.realOnly": "試點中只加入真實成員，不要加入自己的測試帳戶，否則可以從總數算出某個人的回答。"
 }

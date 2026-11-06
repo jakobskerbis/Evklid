@@ -3765,5 +3765,10 @@
   "pilot.n.quizSkip": "「わからない」だけのチェック（平均に含めない）：{n}",
   "pilot.n.blocks": "合計は新しい回答が{n}件たまってから更新されます。",
   "pilot.n.manage": "パイロットのアカウント",
-  "pilot.n.backSums": "合計に戻る"
+  "pilot.n.backSums": "合計に戻る",
+  "starsi.codeNote": "このアカウントにはパスワードがないため、アカウントのメールアドレスに確認コードを送ります。",
+  "starsi.codeSend": "コードをメールで送る",
+  "starsi.codeLabel": "メールのコード",
+  "starsi.codeSent": "アカウントのメールアドレスにコードを送りました。",
+  "pilot.n.realOnly": "パイロットには本当の参加者だけを追加し、自分のテスト用アカウントは入れないでください。合計から個人の回答を計算できてしまいます。"
 }

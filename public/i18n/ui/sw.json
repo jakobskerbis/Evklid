@@ -3791,5 +3791,10 @@
   "pilot.n.quizSkip": "Majaribio yenye “Sijui” pekee (hayamo kwenye wastani): {n}",
   "pilot.n.blocks": "Jumla husasishwa tu baada ya majibu mapya {n}.",
   "pilot.n.manage": "Akaunti katika majaribio",
-  "pilot.n.backSums": "Rudi kwenye jumla"
+  "pilot.n.backSums": "Rudi kwenye jumla",
+  "starsi.codeNote": "Akaunti hii haina nenosiri, kwa hiyo tunatuma msimbo wa uthibitisho kwa barua pepe ya akaunti.",
+  "starsi.codeSend": "Tuma msimbo kwa barua pepe",
+  "starsi.codeLabel": "Msimbo kutoka barua pepe",
+  "starsi.codeSent": "Tumetuma msimbo kwa barua pepe ya akaunti.",
+  "pilot.n.realOnly": "Ongezeni wanachama halisi tu kwenye majaribio, si akaunti zenu za majaribio: vinginevyo jibu la mtu mmoja lingeweza kuhesabiwa kutoka kwa jumla."
 }

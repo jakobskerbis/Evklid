@@ -188,6 +188,12 @@ export function applyPendingRestore(dbFile, { log = console, now = new Date() } 
   }
   const saved = `${dbFile}.pred-obnovo-${now.toISOString().replace(/[:.]/g, "-")}`;
   moveDb(dbFile, saved);
+  // Shranjena baza (za razveljavitev obnove) brez fotografij pilota: »ne gredo v naše varnostne kopije« (B4 P2-3).
+  try {
+    withoutPilotPhotos(saved);
+  } catch (err) {
+    log.error?.(`[evklid] fotografij pilota iz shranjene baze ni bilo mogoče odstraniti: ${err.message}`);
+  }
   fs.renameSync(src, dbFile);
   log.info?.(`[evklid] baza obnovljena iz kopije; prejšnja je v ${path.basename(saved)}`);
   return { restored: true, saved };

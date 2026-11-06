@@ -3794,5 +3794,10 @@
   "pilot.n.quizSkip": "Verifiche solo con «Non lo so» (escluse dalle medie): {n}",
   "pilot.n.blocks": "I totali si aggiornano solo dopo {n} nuove risposte.",
   "pilot.n.manage": "Account nel pilota",
-  "pilot.n.backSums": "Torna ai totali"
+  "pilot.n.backSums": "Torna ai totali",
+  "starsi.codeNote": "L’account non ha una password, quindi vi inviamo un codice di conferma all’e-mail dell’account.",
+  "starsi.codeSend": "Invia codice via e-mail",
+  "starsi.codeLabel": "Codice dall’e-mail",
+  "starsi.codeSent": "Abbiamo inviato il codice all’e-mail dell’account.",
+  "pilot.n.realOnly": "Aggiungete al pilota solo membri reali, non i vostri account di prova: altrimenti dai totali si potrebbe calcolare la risposta di una persona."
 }

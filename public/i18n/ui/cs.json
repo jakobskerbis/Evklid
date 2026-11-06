@@ -3855,5 +3855,10 @@
   "pilot.n.quizSkip": "Testy jen s „Nevím“ (nejsou v průměrech): {n}",
   "pilot.n.blocks": "Součty se obnoví až po {n} nových odpovědích.",
   "pilot.n.manage": "Účty v pilotu",
-  "pilot.n.backSums": "Zpět na součty"
+  "pilot.n.backSums": "Zpět na součty",
+  "starsi.codeNote": "Účet nemá heslo, proto vám pro potvrzení pošleme kód na e-mail účtu.",
+  "starsi.codeSend": "Poslat kód e-mailem",
+  "starsi.codeLabel": "Kód z e-mailu",
+  "starsi.codeSent": "Kód jsme poslali na e-mail účtu.",
+  "pilot.n.realOnly": "Do pilotu přidávejte jen skutečné členy, ne vlastní testovací účty: jinak by se ze součtů dala spočítat odpověď jednotlivce."
 }
