@@ -192,3 +192,12 @@ test("oštevilčen podnaslov postane naslov, stavek z odebeljenim začetkom osta
   const sentence = "<p><strong>3. Seštevanje</strong> dveh števil je preprosto.</p>";
   assert.equal(subHeadings(sentence), sentence);
 });
+
+test("ločilo takoj za vrstično formulo ostane z njo (kartica »Zapomni si«: pika se ne prelomi sama v novo vrstico)", () => {
+  const html = renderRich("> 📌 **Zapomni si:** rešitev je $x = \\frac{1}{2}$.\n\nOdgovor je $a$, potem $b$ in še $c$!");
+  assert.ok(html.includes("</span>.</span>"), "pika je v ovoju z zadnjo formulo");
+  assert.equal((html.match(/class="fx-nb"/g) || []).length, 3, "tudi vejica in klicaj");
+  // formula sredi stavka, brez ločila, ostane brez ovoja; formula v display načinu tudi
+  assert.ok(!renderRich("Vrednost $x$ je pozitivna").includes("fx-nb"));
+  assert.ok(!renderRich("$$x^2$$.").includes("fx-nb"));
+});

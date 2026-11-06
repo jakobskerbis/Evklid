@@ -99,12 +99,24 @@ export const FX_GROUPS = [
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
 export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" };
 
-// Kemija: elementi, indeksi, naboji, puščice, agregatna stanja.
-export const KEM_ROWS = [
-  ["H", "C", "N", "O", "S", "Cl", "Na", "K", "Ca", "Fe"],
-  ["₂", "₃", "₄", "₅", "₆", "⁺", "⁻", "²⁺", "³⁺", "²⁻"],
-  ["→", "⇌", "↑", "↓", "(aq)", "(s)", "(l)", "(g)", "Δ", "e⁻"],
+// Kemija: dva podzavihka (kot Σ), da zavihek ostane enako visok kot drugi: »Snovi« (elementi in indeksi) in »Reakcije«
+// (» + « med snovmi, puščice (» → «, » ⇌ « s presledkoma, napis tipke brez; ↑ ↓ brez), naboji, agregatna stanja). Tu je vse, kar je imel prej tudi čip »Kemija« v Σ (j, 5. 11.:
+// kemija je bila dvakrat); čip se v Σ ne pokaže več, kjer je zavihek »Kem« (symbols.js symGroups). Napisa podzavihkov
+// sta ključa i18n (tk.kem.el, tk.kem.re); tipka »H₂O« v spodnji vrstici je oblikovanje formule v polju (tk.chemFormat).
+// Naboji so na tipkah izrisani nadpisano ob ◌ (tipkovnica.js), da se ločijo od » + « med snovmi.
+export const KEM_GROUPS = [
+  ["el", "tk.kem.el", [
+    ["H", "C", "N", "O", "S", "Cl", "Na", "K", "Ca", "Fe"],
+    ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"],
+  ]],
+  ["re", "tk.kem.re", [
+    [" + ", " → ", " ⇌ ", "↑", "↓", "Δ", "ΔH", "·", "°C", "e⁻"],
+    ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻", "(aq)", "(s)", "(l)", "(g)"],
+  ]],
 ];
+/** Naboj (⁺, ²⁻, …): na tipki nadpisan ob ◌, da ni videti kot » + « ali »−«. */
+export const KEM_CHARGE = /^[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/;
+export const KEM_ROWS = KEM_GROUPS.flatMap(([, , rows]) => rows);
 
 // Vrstica 123 nad številkami: v matematiki zapisi, drugje pogosti znaki.
 export const NUM_TOP_MATH = [["x²", "²"], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
@@ -191,6 +203,8 @@ export function applyTemplate(value, start, end, ins, maxLength = -1, literal = 
   const sel = v.slice(s, e);
   const at = literal ? -1 : ins.indexOf("@"); // literal: »@« je znak (e-pošta, prilepljena povezava), ne mesto kazalca
   let text = at < 0 ? ins : ins.slice(0, at) + sel + ins.slice(at + 1);
+  // » + «, » → «, » ⇌ « s presledkoma: pred kazalcem je že presledek (ali začetek polja) → brez dvojnega presledka
+  if (!literal && /^ \S/.test(text) && (s === 0 || /\s/.test(v[s - 1]))) text = text.slice(1);
   if (maxLength >= 0) {
     const room = maxLength - (v.length - (e - s));
     if (room <= 0) return { value: v, caret: e, text: "" };

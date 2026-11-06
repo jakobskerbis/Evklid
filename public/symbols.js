@@ -47,8 +47,8 @@ export const GROUPS = {
     keys: [
       k("→", "→", "reakcija"), k("⇌", "⇌", "ravnotežje"), k("↑", "↑", "plin"), k("↓", "↓", "oborina"),
       ..."₀₁₂₃₄₅₆₇₈₉".split("").map((c) => k(c, c, "indeks")),
-      k("⁺"), k("⁻"), k("²⁺"), k("³⁺"), k("²⁻"), k("·", "·", "kristalna voda"),
-      k("(s)"), k("(l)"), k("(g)"), k("(aq)"), k("ΔH"), k("°C"),
+      k("⁺", "⁺", "naboj"), k("⁻", "⁻", "naboj"), k("²⁺", "²⁺", "naboj"), k("³⁺", "³⁺", "naboj"), k("²⁻", "²⁻", "naboj"), k("³⁻", "³⁻", "naboj"), k("·", "·", "kristalna voda"),
+      k("(s)", "(s)", "trdno"), k("(l)", "(l)", "tekoče"), k("(g)", "(g)", "plinasto"), k("(aq)", "(aq)", "raztopljeno v vodi"), k("ΔH", "ΔH", "reakcijska entalpija"), k("°C"),
     ],
   },
 };
@@ -59,6 +59,12 @@ export function groupOrder(level, subject) {
   if (level === "FAKS") return chem ? ["kemija", "analiza", "osnovno", "funkcije", "grske"] : ["analiza", "osnovno", "funkcije", "grske", "kemija"];
   if (level === "SS") return chem ? ["kemija", "osnovno", "funkcije", "grske", "analiza"] : ["osnovno", "funkcije", "grske", "analiza", "kemija"];
   return chem ? ["kemija", "osnovno", "grske"] : ["osnovno", "grske", "kemija"];
+}
+
+/** Skupine v Σ po vrsti. Kjer je zavihek »Kem« (hasKem), čipa »Kemija« ni: kemija je že v zavihku, ne dvakrat. */
+export function symGroups(level, subject, hasKem = false) {
+  const order = groupOrder(level, subject);
+  return [...order, ...Object.keys(GROUPS).filter((g) => !order.includes(g))].filter((g) => !(hasKem && g === "kemija"));
 }
 
 // Kemijske formule: števke za simbolom elementa ali zaklepajem → indeksi (2H2O → 2H₂O, Ca(OH)2 → Ca(OH)₂).
@@ -80,7 +86,7 @@ function formulaPart(f) {
 }
 
 function chemWord(word) {
-  const m = /^(.*?)([?!.,;:]*)$/.exec(word);
+  const m = /^(.*?)([?!.,;:↑↓]*)$/.exec(word); // končni ↑ (plin) in ↓ (oborina) ostaneta: CO2↑ → CO₂↑
   let [, core, tail] = m;
   // naboj: Fe3+, Na+, Cl-
   let charge = "";

@@ -11,11 +11,11 @@
 //   math    polje za matematiko (velja tudi pri nastavitvi »Samo za matematiko«); own: polje ima svoje tipke
 import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
-import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
+import { GROUPS, symGroups, chemFormat } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
-  layoutFor, FX_GROUPS, CAS_SL, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
+  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
@@ -44,7 +44,7 @@ let lastProfile; // f(x) odpre skupino poglavja samo ob novem poglavju; učenče
 let words = null; // seznam za predloge (naloži se, ko so predlogi vklopljeni)
 let starts = null; // predlogi, ko se beseda še ne piše
 
-const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, sys: null, explicit: false };
+const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, kemg: "el", sys: null, explicit: false };
 let board = null;
 let keys = []; // data-k → dejanje
 
@@ -205,9 +205,9 @@ const scopeOf = (f) => f.closest("[data-kb-scope]") || f.closest("form") || f;
 
 // ---------- risanje ----------
 
-function key(label, act, { cls = "", aria = "", hint = "", html = "", role = "" } = {}) {
+function key(label, act, { cls = "", aria = "", hint = "", html = "", role = "", tip = "" } = {}) {
   const i = keys.push(act) - 1;
-  return `<button type="button" class="tk-k ${cls}" data-k="${i}"${role ? ` role="${role}"` : ""}${aria ? ` aria-label="${esc(aria)}"` : ""}>${html || esc(label)}${hint ? `<span class="tk-v" aria-hidden="true">${esc(hint)}</span>` : ""}</button>`;
+  return `<button type="button" class="tk-k ${cls}" data-k="${i}"${role ? ` role="${role}"` : ""}${aria ? ` aria-label="${esc(aria)}"` : ""}${tip ? ` title="${esc(tip)}"` : ""}>${html || esc(label)}${hint ? `<span class="tk-v" aria-hidden="true">${esc(hint)}</span>` : ""}</button>`;
 }
 const chip = (label, act, cls = "") => {
   const i = keys.push(act) - 1;
@@ -375,7 +375,7 @@ function subtabs(list, cur, act) {
   return `<div class="tk-sub" role="tablist">${list
     .map(([id, label]) => {
       const i = keys.push({ a: act, v: id }) - 1;
-      return `<button type="button" role="tab" class="tk-subtab${id === cur ? " on" : ""}" aria-selected="${id === cur}" data-k="${i}">${esc(label)}</button>`;
+      return `<button type="button" role="tab" class="tk-subtab${id === cur ? " on" : ""}" aria-selected="${id === cur}" aria-label="${esc(label)}" data-k="${i}">${esc(label)}</button>`;
     })
     .join("")}</div>`;
 }
@@ -403,8 +403,7 @@ function symName(g) {
 }
 function symHtml() {
   const s = studentSettings() || {};
-  const order = groupOrder(stopnja(s), s.subject);
-  const all = [...order, ...Object.keys(GROUPS).filter((g) => !order.includes(g))];
+  const all = symGroups(stopnja(s), s.subject, S.layers.some((l) => layerId(l) === "kem"));
   if (!all.includes(S.symg)) S.symg = all[0];
   const sl = currentLang() === "sl";
   return `${subtabs(all.map((g) => [g, symName(g)]), S.symg, "symg")}
@@ -413,9 +412,31 @@ function symHtml() {
 }
 
 function kemHtml() {
-  const row = (r, cls = "") => `<div class="tk-row">${r.map((c) => key(c, { a: "ins", v: c }, { cls: (c.length > 2 ? "sm " : "") + cls })).join("")}</div>`;
-  return `${row(KEM_ROWS[0], "el")}${row(KEM_ROWS[1])}${row(KEM_ROWS[2])}
-    <div class="tk-row">${leftKey()}${rightKey()}${key("+", { a: "ins", v: " + " })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
+  if (!KEM_GROUPS.some(([id]) => id === S.kemg)) S.kemg = KEM_GROUPS[0][0];
+  const g = KEM_GROUPS.find(([id]) => id === S.kemg);
+  // opisi tipk (oborina, plin, kristalna voda …) iz GROUPS.kemija; v slovenščini, kot v Σ
+  const sl = currentLang() === "sl";
+  const opis = new Map(GROUPS.kemija.keys.filter((k) => k.title).map((k) => [k.ins, k.title]));
+  const PLAIN = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "−" };
+  const one = (c) => {
+    const d = sl ? opis.get(c.trim()) || "" : "";
+    if (KEM_CHARGE.test(c)) {
+      // naboj: nadpisan ob ◌, da ni videti kot » + « med snovmi
+      const n = [...c].map((x) => PLAIN[x]).join("");
+      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup></span>` });
+    }
+    if (/^[₀-₉]$/.test(c)) {
+      // indeks: ◌ z indeksom (kot naboj), da se vidi, da je indeks in ne številka
+      const n = String("₀₁₂₃₄₅₆₇₈₉".indexOf(c));
+      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sub>${n}</sub></span>` });
+    }
+    const label = c.trim();
+    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${c === " + " ? "sym" : ""}`, aria: d && `${label} ${d}`, tip: d });
+  };
+  const row = (r) => `<div class="tk-row">${r.map(one).join("")}</div>`;
+  return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg")}
+    ${g[2].map(row).join("")}
+    <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
 }
 
 function customHtml(L) {
@@ -512,7 +533,10 @@ function sel(f) {
 function insertText(f, ins, literal = false) {
   if (f.isContentEditable) {
     const at = literal ? -1 : ins.indexOf("@");
-    const text = literal ? ins : ins.replace("@", "");
+    let text = literal ? ins : ins.replace("@", "");
+    const g = getSelection();
+    const prev = g?.anchorNode?.nodeType === 3 ? g.anchorNode.data[g.anchorOffset - 1] : "";
+    if (!literal && /^ \S/.test(text) && (!prev || /\s/.test(prev))) text = text.slice(1); // brez dvojnega presledka
     document.execCommand("insertText", false, text);
     if (at >= 0) for (let i = 0; i < text.length - at; i++) getSelection()?.modify?.("move", "backward", "character");
     return;
@@ -742,6 +766,7 @@ function act(a) {
   }
   if (a.a === "fxg") return (S.fxg = a.v), render();
   if (a.a === "symg") return (S.symg = a.v), render();
+  if (a.a === "kemg") return (S.kemg = a.v), render();
   if (a.a === "hide") return hideKeyboard({ blur: true });
   if (a.a === "globe") return toSystem();
   if (a.a === "sh") {
