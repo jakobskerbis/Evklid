@@ -154,7 +154,7 @@ export const supportsFallback = (model) => !/haiku/.test(model);
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
 // canRound(round): pred vsakim dodatnim krogom orodij; false = brez novega klica (trda meja AI, server/meje-ai.js).
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null, canRound = null }) {
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
@@ -181,7 +181,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
-  if (supportsFallback(model)) {
+  if (supportsFallback(model) && fallback !== false) {
     params.betas = ["server-side-fallback-2026-07-01"];
     params.fallbacks = "default";
   }

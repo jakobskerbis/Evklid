@@ -87,13 +87,14 @@ export function callMaxUsd(model, inputTokens, outputTokens) {
   return ((Math.max(0, inputTokens) * inMax(p)) + Math.max(0, outputTokens) * p.out) / 1e6;
 }
 // Rezerva klica inštruktorja (server/claude.js streamReply) za način mode; extraTokens: skrite opombe in povzetek.
-export function replyReserveUsd({ mode = "chat", system = "", messages = [], tools = null, extraTokens = 0, quickMax = null } = {}) {
+export function replyReserveUsd({ mode = "chat", system = "", messages = [], tools = null, extraTokens = 0, quickMax = null, fallback = true } = {}) {
   const { model, max_tokens } = modeParams(mode);
   const out = quickMax ? Math.min(max_tokens, quickMax) : max_tokens;
   const input = systemTokens(system) + messageTokens(messages) + (tools?.length ? Math.ceil(bytes(JSON.stringify(tools)) / 2) : 0) + extraTokens;
   // Strežniški nadomestni model (fallbacks: "default", ne pri Haikuju): zavrnjen poskus sredi toka in odgovor
   // nadomestnega modela (manj zmogljiv, ne dražji) sta plačana posebej, zato rezerva dveh klicev (pregled #462 S6).
-  return callMaxUsd(model, input, out) * (supportsFallback(model) ? 2 : 1);
+  // Brez prostora za dva klica strežnik pošlje klic brez nadomestnega modela (fallback: false, server/app.js).
+  return callMaxUsd(model, input, out) * (fallback && supportsFallback(model) ? 2 : 1);
 }
 // Zgodovina pod pragom dolgega poziva (Haiku nad 100k žetonov 5×, pregled #462 A1): odreže najstarejše izmenjave,
 // dokler poziv (z rezervo za opombe) ne gre pod prag. Modeli brez dražjega dolgega poziva: nespremenjeno.

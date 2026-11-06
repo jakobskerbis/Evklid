@@ -66,4 +66,6 @@ test("S6: zavrnjen poskus pred nadomestnim modelom je plačan posebej; rezerva S
   const msgs = [{ role: "user", content: "a" }];
   assert.ok(replyReserveUsd({ mode: "deep", system: "s", messages: msgs }) >= 2 * callMaxUsd("claude-opus-5-5", 1, 6000));
   assert.ok(replyReserveUsd({ mode: "chat", system: "s", messages: msgs }) < 2 * callMaxUsd("claude-haiku-5-5", 1, 3000), "Haiku brez nadomestnega modela");
+  const one = replyReserveUsd({ mode: "deep", system: "s", messages: msgs, fallback: false });
+  assert.ok(Math.abs(2 * one - replyReserveUsd({ mode: "deep", system: "s", messages: msgs })) < 1e-12, "brez nadomestnega modela rezerva enega klica");
 });

@@ -659,8 +659,9 @@ export function createApp(store, opts = {}) {
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
     const prior = staleImages(store.apiHistory(conv.id));
-    const reserveFor = (m) =>
+    const reserveFor = (m, fallback = true) =>
       replyReserveUsd({
+        fallback,
         mode: m,
         system,
         messages: fitLongPrompt({ mode: m, system, tools: SETTINGS_TOOLS, messages: [...((m === "deep" || m === "mid") && !routed.boosted ? recentHistory(prior) : windowHistory(prior)), { role: "user", content: userContent }] }),
@@ -669,7 +670,13 @@ export function createApp(store, opts = {}) {
       });
     hold = usage.hold(student.id);
     let mainReserve = reserveFor(mode);
-    if (!hold.take(mainReserve)) {
+    // Strežniški nadomestni model (S6) potrebuje rezervo dveh klicev; brez prostora zanjo gre isti model brez
+    // nadomestnega (zavrnitev ostane zavrnitev), šele nato cenejši način.
+    let noFallback = false;
+    if (!hold.take(mainReserve) && reserveFor(mode, false) < mainReserve && hold.take(reserveFor(mode, false))) {
+      mainReserve = reserveFor(mode, false);
+      noFallback = true;
+    } else if (!hold.held) {
       const alt = (FALLBACK_MODES[mode] || []).find((m) => hold.take((mainReserve = reserveFor(m))));
       if (!alt) {
         busy.delete(conv.id);
@@ -814,6 +821,7 @@ export function createApp(store, opts = {}) {
         tools: SETTINGS_TOOLS,
         onToolUse,
         canRound: () => hold.take(roundReserve()),
+        fallback: !noFallback,
         signal: controller.signal,
         onText: (chunk) => {
           const out = filter.push(chunk);
@@ -851,6 +859,7 @@ export function createApp(store, opts = {}) {
               onToolUse,
               // Vsak dodaten krog orodij je nov klic: rezerva še enkrat (kot pri prvem odgovoru).
               canRound: () => hold.take(roundReserve()),
+              fallback: !noFallback,
               signal: controller.signal,
               onText: (chunk) => {
                 const out = again2.push(chunk);
