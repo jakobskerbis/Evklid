@@ -148,7 +148,8 @@ test("H4: rezervacija ob ponovnem zagonu ne zmanjša kredita (klic zastonj)", as
     release();
     await pending;
     assert.ok(credits.balance(pid) < after, "kontrola: običajen zapis klica gre iz kredita");
-    assert.ok(before - after >= held - 1e-6, `kredit pred ${before}, po ${after}, rezerva ${held}: strošek klica ni šel iz kredita`);
+    // credits.balance zaokroži na 4 decimalke (pred in po): dovoljena napaka 1e-4; luknja (kredit cel) da razliko 0.
+    assert.ok(before - after >= held - 1e-4, `kredit pred ${before}, po ${after}, rezerva ${held}: strošek klica ni šel iz kredita`);
   }, { streamFn: slow });
 });
 
