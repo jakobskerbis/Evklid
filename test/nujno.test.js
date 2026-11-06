@@ -582,3 +582,18 @@ test("zaznavalnik: nabor pregleda D in nove sonde", () => {
   const snov = ["Kako hitro gori sveča?", "Izračunaj, koliko plina porabi štedilnik", "skočil bom do trgovine po zvezek", "Napiši spis o požaru v Notre Dame", "Kako deluje gasilni aparat?", "Babica ima 41 let", "Dim nastane pri gorenju lesa, zakaj?", "Kdo bo streljal enajstmetrovko?", "Iz tega mi sledi, da je x = 2"];
   assert.deepEqual(snov.filter((s) => zaznajNujno(s)), []);
 });
+
+// Neodvisni nabor pregleda E (196 sporočil; pred popravki priklic 66 %, zdaj viden) – nujni z ustrezno vrsto, nenujni brez alarma.
+test("zaznavalnik: nabor pregleda E (vrsta in lažni alarmi)", () => {
+  const { primeri } = JSON.parse(readFileSync(new URL("./nujno-nabor-e.json", import.meta.url), "utf8"));
+  const napacni = primeri
+    .filter((x) => {
+      const g = zaznajNujno(x.besedilo);
+      return x.nujno ? !g || !(x.dovoljeno || [x.vrsta]).includes(g) : g;
+    })
+    .map((x) => `${x.id} ${x.besedilo} → ${zaznajNujno(x.besedilo)}`);
+  assert.deepEqual(napacni, []);
+  // Nesreča ni samopoškodba (U036); namerna je.
+  assert.equal(zaznajNujno("porezal sem se z nozem in kri ful tece"), "zdravje");
+  assert.equal(zaznajNujno("namenoma sem se porezal z nožem"), "stiska");
+});

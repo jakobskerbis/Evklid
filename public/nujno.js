@@ -44,6 +44,10 @@ export function normalize(text) {
 
 // --- znaki po vrstah (vsi jeziki skupaj) ---------------------------------------------------------
 const ZDRAVJE = [
+  // (pregled E) odprt zlom, oteklo grlo, močna krvavitev narečno, zastrupitev (bs srednji spol, it, uk)
+  "kost gleda ven", "kost štrli", "kost moli ven", "odprt zlom", "bone sticking out", "zateklo grlo", "oteklo grlo", "zateka grlo", "oteka grlo",
+  "otekel jezik", "zatekel jezik", "ful krvavim", "ful krvavi", "fest krvavi", "hudo krvavi", "zelo krvavim", "močno krvavim", "otrovalo", "otrovali se",
+  "bevuto la candeggina", "bevuto candeggina", "ha bevuto il detersivo", "випив отрут", "випила отрут", "отруївся", "отруїлася", "отруїлась",
   // sl
   "nezavesten", "nezavestna", "v nezavesti", "?nezavest", "ne morem dihat", "ne mogu disati", "ne mogu da disem", "napad astme", "napadu astme", "astmatični napad", "pol obraza", "povešen obraz", "onesvestil", "onesvestila", "ne diha ", "ne more dihat", "težko diha", "se duši", "zadušil", "zadušila",
   "se ne odziva", "močno krvavi", "zelo krvavi", "ne neha krvavet", "veliko krvi", "kri mu teče", "kri ji teče", "teče mu kri", "teče ji kri",
@@ -166,6 +170,10 @@ const ZDRAVJE = [
 ];
 
 const STISKA = [
+  // (pregled E) narečno »sm«, »been cutting«, »nočem se zbudit«, »nimam razloga«, bs »da nestanem«
+  "sm se rezal", "sm se porezal", "se rezala po", "se rezal po", "se režem po", "been cutting again", "cutting myself again", "started cutting myself", "i cut myself",
+  "nočem se zbudit", "ne bi se rad zbudil", "ne bi se rada zbudila", "dont want to wake up", "nimam razloga da sem", "nimam več razloga da sem", "nimam več razloga za živet", "nimam razloga da živim",
+  "nimam razloga za živet", "no reason to live", "nemam razloga da živim", "nemam razloga za život", "da nestanem", "želim nestati", "hoću nestati",
   // sl (tudi brez šumnikov in narečno: normalize)
   "samomor", "ubil bi se", "ubila bi se", "ubu bi se", "ubijem se", "se bom ubil", "se bom ubila", "nočem več živet", "ne želim več živet",
   "nočem živet", "ne želim živet", "nočem bit živ", "rajši bi bil mrtev", "rajši bi bila mrtva", "raje bi bil mrtev", "raje bi bila mrtva",
@@ -221,6 +229,10 @@ const STISKA = [
 ];
 
 const NASILJE = [
+  // (pregled E) zalezovanje v več jezikih, »ve kje živim«, uk »мене б'є«
+  "vozi za mano", "vozi za nami", "me stalka", "stalka me", "stalkt mich", "verfolgt mich", "che mi segue", "qualcuno mi segue", "mi sta seguendo", "mi stanno seguendo",
+  "valaki követ", "követ engem", "يلاحقني", "يتبعني", "переслідує мене", "стежить за мною",
+  "мене б'є", "мене б'ють", "мене побив", "prati me od", "me prati od", "prati me do", "me prati do",
   // sl
   "me tepe", "me tepejo", "me pretepa", "me pretepajo", "me udari", "me udarja", "me udarjajo", "me brca", "me zlorablja", "me je posilil",
   "me nadleguje", "me izsiljuje", "me ustrahuje", "me zalezuje", "me tuče", "me tuku", "me udara", "me maltretira", "me zlostavlja", "me dira",
@@ -278,6 +290,9 @@ const NASILJE = [
 ];
 
 const NEVARNOST = [
+  // (pregled E) narečno »kuhnji«, bs štednjak, ar »يحترق«, dim iz vtičnice
+  "v kuhnji gori", "gori v kuhnji", "plamen do plafona", "plamen do stropa", "sporet gori", "štednjak gori", "zapalio se šporet", "zapalio se štednjak",
+  "zapalila se kuhinja", "البيت يحترق", "بيتنا يحترق", "المنزل يحترق", "الشقة تحترق", "المطبخ يحترق", "iz vtičnice gre dim", "vtičnica se kadi", "vtičnica iskri", "iz vtičnice iskri",
   // sl
   "?požar ", "?požaru", "gori hiša", "gori v hiši", "gori v stanovanju", "gori v sobi", "gori v kuhinji", "gori v bloku", "polno dima", "puno dima",
   "hiša gori", "gori stanovanje", "stanovanje gori", "gori soba", "gori kuhinja", "dim v sobi", "dim v hiši", "dim v stanovanju", "veliko dima",
@@ -438,7 +453,7 @@ const IZRAZI = {
     ),
     R(`pen[aei]?(?: \\S+){0,3} iz ust`),
     R(`(?:pad(?:el|la|lo|li|e|a)?|pal[ao]?|zgrud\\S*|fell)(?: \\S+){0,5} (?:ne govori|ne diha|ne odpre oci|ne govori nic|not waking up|isnt waking up|wont wake up)`),
-    R(`kri\\S*(?: \\S+){0,5} (?:ne neha|ne preneha|ne prestane|ne stane|wont stop|ne prestaje)`),
+    R(`kri\\S*(?: \\S+){0,8} (?:ne neha|ne preneha|ne prestane|ne stane|wont stop|ne prestaje)`),
     // (pregled D) »ga ne morem zbuditi«; zaužitje z daljšim oknom in »took«
     R(`(?:ga|je|jo|ju|jih) ne (?:morem|moremo|moreva|mogu|mozemo) (?:\\S+ )?(?:zbudit\\S*|prebudit\\S*|probudit\\S*|zbudim|zbudimo)`),
     R(`(?:took|taken|swallowed|popil\\S*|pojedl\\S*|spil\\S*|popio|popila)(?: \\S+){0,5} (?:pills|tablet\\S*|tableta|zdravil|lekov|lijekova|sredstv\\S* za cisc\\S*|varekin\\S*|bleach)`),
@@ -446,10 +461,15 @@ const IZRAZI = {
     R(`porez\\S*(?: \\S+){0,3} kri`),
     R(`${OS} (?:ima|ma|has) (?:39|4[0-3])[.,]\\d`),
     R(
-      `(?:pogoltnil\\S*|pojedl?\\S*|spil\\S*|progutao|progutala|swallowed)(?: \\S+){0,4} (?:baterij\\S*|magnet\\S*|cistil\\S*|steklenic\\S* za cisc\\S*|battery|magnet)`,
+      `(?:pogolt\\S*|pojedl?\\S*|spil\\S*|progutao|progutala|swallowed)(?: \\S+){0,4} (?:baterij\\S*|magnet\\S*|cistil\\S*|steklenic\\S* za cisc\\S*|battery|magnet)`,
     ),
   ],
   stiska: [
+    // (pregled E) namen/načrt, razmišljanje o skoku, samopoškodba z udarci
+    R(`(?:namen|nacrt\\S*|plan\\S*|nameravam|namerava)(?: \\S+){0,2} (?:se )?ubi(?:t|ti|l|la)(?=[ ,.]|$)`),
+    R(`(?:razmisljam|mislim|premisljujem|razmisljal\\S*|razmisljam o tem) (?:\\S+ ){0,2}da (?:bi|se) (?:\\S+ )?(?:(?:skoc\\S*|vrg\\S*)(?: \\S+){0,2} (?:z |s |sa |pod |iz )?(?:most\\S*|okn\\S*|streh\\S*|blok\\S*|vlak\\S*|nebotic\\S*)|ubi\\S*)`),
+    R(`(?:se )?(?:udarim|udarjam|tepem|grizem|pecem|zazigam) (?:\\S+ ){0,4}dokler ne (?:krvav\\S*|zacne krvav\\S*)`),
+    R(`(?:srecn\\S*|bolj\\S*|lazje|bolse) (?:\\S+ )?(?:ce|ko) me (?:ne bi|nebi) (?:blo|bilo|bil|bla|bila)`),
     R(`(?:zaspal\\S*|zaspat\\S*|zaspim|zaspati)(?: \\S+){0,3} (?:se )?(?:nikoli )?(?:vec )?(?:ne|nikad|nikada) (?:vise )?(?:\\S+ )?(?:zbud\\S*|probud\\S*)`),
     R(`(?:fall asleep|go to sleep|sleep)(?: \\S+){0,3} (?:and )?(?:never|not) (?:\\S+ )?wake up`),
     R(`(?:bom|bo|cu|hocem|zelim|moram) (?:\\S+ )?(?:koncal\\S*|koncat\\S*|koncati) (?:vse|s tem|z vsem|zivljenje|svoje zivljenje)`),
@@ -467,6 +487,11 @@ const IZRAZI = {
     R(`(?:zelim|hocu|hoću|zelio bih|zeljela bih)(?: da)? (?:umr|umre|umrem)\\S*`),
     R(`(?:kms|kys myself)(?=[ ,.]|$)`), R(`se (?:bo|bom|bos|bi|bodo|ce|cu) (?:\\S+ )?ubi(?:l|la|li|jem|jes|t|ti)?(?=[ ,.]|$)`)],
   nasilje: [
+    // (pregled E) grožnja z orožjem v obratnem redu, otipavanje, zalezovanje z drugim osebkom
+    R(`${OS} (?:ima|drzi|ma|has|is holding|ima u ruci) (?:\\S+ ){0,2}(?:noz\\S*|pistol\\S*|pistolj\\S*|orozj\\S*|oruzj\\S*|knife|gun)(?: \\S+){0,3} (?:in |and |i )?(?:grozi|groz\\S*|prijeti|preti|threaten\\S*)`),
+    R(`me (?:\\S+ )?(?:dotika|dotikal\\S*|otipava|otipaval\\S*|potipal\\S*|tipa)(?: \\S+){0,3} (?:tam|pod|med nog\\S*|kjer)`),
+    R(`(?:ve|zna|knows) (?:kje|gdje|gde|where) (?:zivim|stanujem|zivis|i live)(?: \\S+){0,3} (?:da me|in me|pa me|i me|and)`),
+    R(`(?:netko|neko|neki|nek|nekdo|neznanec|lik|tip|covjek|covek|muskarac) (?:\\S+ ){0,2}(?:me prati|prati me|ide za mnom|hoda za mnom|hodi za mano|gre za mano)`),
     // (pregled D) nasilje nad drugim v družini; grožnja z orožjem; streljanje (samo z orožjem ali šolo); zalezovanje; grooming
     R(`(?:tepe|tepel\\S*|tuce|tukao|bije|pretepa|hits|beats) (?:\\S+ )?(?:mam\\S*|majk\\S*|brat\\S*|sestr\\S*|mom|mum|sister|brother)`),
     R(`(?:groz|prijet|pret|threaten)\\S*(?: \\S+){0,3} (?:z |s |sa |with )?(?:noz\\S*|pistol\\S*|pistolj\\S*|orozj\\S*|oruzj\\S*|knife|gun)`),
@@ -498,6 +523,11 @@ const IZRAZI = {
     IZS(`(?:hoce|zahteva|wants|trazi|hoce)(?: \\S+){0,3} (?:evr|eur|denar|money|novc|para|kn)\\S*(?: \\S+){0,3} (?:drugace|sicer|ali|or|otherwise|ili)`),
   ],
   nevarnost: [
+    // (pregled E) nekdo vdira, izgubljen v naravi, dim/iskre iz naprave
+    R(`(?:nekdo|neznanec|someone|somebody|netko|neko|nekdo) (?:\\S+ ){0,2}(?:poskusa |hoce |skusa |is trying to |tries to |pokusava |pokusava da )?(?:odpret\\S* vrata|odpira vrata|vdret\\S*|vdira|razbija vrata|razbija okno|lomi vrata|open the door|break in|provaliti|obiti vrata)`),
+    R(`izgubil\\S* (?:sem|sm) se (?:\\S+ ){0,2}(?:v gozdu|v gorah|v hribih|na planini|v jami)|(?:im|i am|i got) lost in the (?:woods|forest|mountains)|izgubio sam se u sumi|izgubila sam se u sumi`),
+    R(`(?:dim|iskr\\S*|plamen\\S*) (?:\\S+ ){0,3}(?:iz )?(?:vticnic\\S*|polniln\\S*|polnilc\\S*|kabl\\S*|stedilnik\\S*|pecic\\S*)|iz (?:vticnic\\S*|polnilc\\S*|stedilnik\\S*) (?:\\S+ ){0,2}(?:gre dim|se kadi|iskri|gori)`),
+    R(`(?:zapali[olia]+ se|gori) (?:\\S+ )?(?:sporet|stednjak|zavjes\\S*|zaves\\S*|ulje u tavi|olje v ponvi)`),
     R(`(?:smrdi|disi|vonja|mirise|smrdi) (?:\\S+ )?(?:po|na|kot) pl[aiu]?n`),
     R(`(?:v (?:kuhinji|hisi|sobi|stanovanju|bloku|garazi|kleti|kuci|stanu|sobi|soli)|doma|pri nas|kod kuce|u kuci|u stanu|kod nas) (?:\\S+ )?(?:gori|se kadi|je dim|ima dima)(?=[ ,.]|$)`),
     R(`gori (?:\\S+ )?(?:doma|pri nas|kod kuce|kod nas)(?=[ ,.]|$)`),
@@ -546,6 +576,10 @@ export function izsiljevanje(text) {
   return any(IZSILJEVANJE, norms, low) || norms.some((n) => IZRAZI.nasilje.some((r) => r.izs && r.re.test(n)));
 }
 
+const NESRECA =
+  /(?:^| )(?:po nesreci|nehote|pomotoma|pri kuhanju|pri rezanju|z nozem|s nozem|z noz\S*|na steklo|s steklom|z zago|accidentally|by accident|while cooking|with a knife|slucajno|nozem)(?=[ ,.]|$)/;
+const SAMOMOR = /(?:samomor|samoubi|ubi[tlj]\S* se|se ubi|umr|umre|zivet|ziveti|zivjet|suicid|kill myself|want to die|nocem vec|namenoma|namerno|nalasc|on purpose)/;
+
 /** Vrsta nujnega primera ali null. Stiska in nasilje pred zdravjem (zahtevata drugačen odgovor). */
 export function zaznajNujno(text) {
   const low = lower(text);
@@ -553,7 +587,11 @@ export function zaznajNujno(text) {
   const norm = normalize(text);
   const norms = [norm, brezPolnil(norm)];
   const snov = SNOV.test(norm);
-  if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms)) return "stiska";
+  if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms)) {
+    // Nesreča (»porezal sem se z nožem in kri teče«): zdravje, razen če sporočilo omenja samomor ali smrt.
+    if (NESRECA.test(norm) && !SAMOMOR.test(norm)) return "zdravje";
+    return "stiska";
+  }
   if (any(PATTERNS.nasilje, norms, low, snov) || izraz("nasilje", norms) || izsiljevanje(text)) return "nasilje";
   if (any(PATTERNS.zdravje, norms, low, snov) || izraz("zdravje", norms) || fever(norm, low)) return "zdravje";
   if (any(P_DOJENCEK, norm, low) && any(P_DOJENCEK_ZNAK, norm, low)) return "zdravje";
