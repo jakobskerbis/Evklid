@@ -65,17 +65,17 @@ klikljivih črk manj (varna smer).
 | Črka | Pomen v slovarju | Velja, ko | Ni ta pomen (primeri) |
 |---|---|---|---|
 | x₁, x₂, x₁,₂ (MAT) | rešitev (ničla) kvadratne enačbe | formula rešitev / Vieta, tema kvadratna enačba/funkcija/neenačba, diskriminanta, Vieta | točke na intervalu (Lagrange, Rolle, Cauchy), člena zaporedja, povprečje, integral, odvod |
-| a, b, c (MAT) | koeficienti kvadratne enačbe | a x², b² − 4ac, formula rešitev; tema kvadratna | stranice trikotnika, poljubna števila, polosi elipse/hiperbole, y = c/x, zaporedje; b v a x² + b (prosti člen) |
+| a, b, c (MAT) | koeficienti kvadratne enačbe | a x² (ne a x³, ne log_a), b² − 4ac, −b ± √, Vieta ob x₁/x₂; tema kvadratna | stranice trikotnika, poljubna števila, polosi elipse/hiperbole, y = c/x, zaporedje; b v a x² + b (prosti člen) |
 | D (MAT) | diskriminanta | b² − 4ac, √D; tema kvadratna | oglišče D, definicijsko območje |
 | k (MAT) | smerni koeficient | y = k x + n; tema premica, linearna funkcija | indeks, celo število (kπ), binomski simbol, zaporedje, lekcija o linearnih enačbah ali sistemih (množitelj ±k) |
 | n (MAT) | začetna vrednost | y = k x + n v isti formuli ali povedi (j, pregled 463: ne vsak n v temi) | naravno število, n-ti koren, mnogokotnik, razmerje m : n |
-| p, q (MAT) | koordinati temena | y = a(x − p)² + q; tema teme/temenska oblika | verjetnost, praštevilo |
+| p, q (MAT) | koordinati temena / središča | (x − p)² + (y − q)² → središče S(p, q); y = a(x − p)² + q, tema teme/temenska oblika → teme | verjetnost, praštevilo, premik grafa f(x − p) + q, stožnice (y² = 2px) |
 | r, d (MAT) | polmer, premer | π v formuli ali tema krog/valj/stožec/krogla | `dx`, integral, vsota, limita, kotne funkcije, »okrog«; d kot razdalja (sekanta, tangenta) |
-| o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, verjetnost P (met kocke), hitrost v |
-| e (MAT) | Eulerjevo število | e^…, ln, exp, lim | – |
+| o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, S v stopinjah (vsota kotov), verjetnost P (met kocke), hitrost v |
+| e (MAT) | Eulerjevo število | e^…, ln, exp, lim | linearna ekscentričnost (e² = a² − b², ε = e/a) |
 | i (MAT) | imaginarna enota | Eulerjeva oblika (e^{iφ}, cos φ ± i sin φ, i² = −1) sama; i², 3 + 4i in tema kompleksna/kvadratna | indeks i, enotski vektor \vec i |
 | a_n, a_1, s_n (MAT) | zaporedje | tema zaporedje/vrsta | koeficienti polinoma |
-| α, β, γ (MAT) | kot | sin/cos/tan, °, ∠ ali geometrijska tema | »ravnina α«, stopnja tveganja α, parameter, skalar (α f + β g) |
+| α, β, γ (MAT) | kot | sin/cos/tan, °, ∠ ali geometrijska tema | »ravnina α«, stopnja tveganja α, parameter, skalar (α f + β g, α, β ∈ ℝ, vektorski prostor), e^{αt}, cos βt, λ = α ± iβ |
 | M (FIZ) | navor | M = r F (tudi r · F), tema navor/vzvod/ravnovesje | masa Zemlje ali Sonca (gravitacija), molska masa (KEM ima svoj M) |
 | k, x (FIZ) | konstanta vzmeti, raztezek | F = k x (tudi k · x, k × x, k Δx), tema vzmet/prožnost/nihanje | Boltzmannova konstanta, valovno število, lega x |
 | n (FIZ) | lomni količnik | n = c₀/c, sin, tema lom/leča/optika | množina snovi (p V = n R T), število nihajev ali meritev, red uklona |
