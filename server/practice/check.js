@@ -24,28 +24,60 @@ export function fmt(x, d = null) {
 }
 
 const SUP = { "²": "2", "³": "3" };
-export function normUnit(u) {
+// Enota brez presledkov in potenc, velike in male črke ostanejo (m = mili, M = mega).
+function unitForm(u) {
   return String(u || "")
-    .toLowerCase()
     .replace(/[²³]/g, (c) => SUP[c])
     .replace(/\^/g, "")
     .replace(/\s+/g, "")
     .replace(/\*|·/g, "")
-    .replace(/°c/g, "°c")
-    .replace(/^stopinj[ae]?$|^°$/, "°")
-    .replace(/kmh$/, "km/h");
+    .replace(/^stopinj[ae]?$|^°$/i, "°")
+    .replace(/kmh$/i, "km/h");
+}
+export function normUnit(u) {
+  return unitForm(u).toLowerCase();
+}
+
+// Ista enota? Velikost črke večinoma ne spremeni pomena (l/L, °C/°c, km/h/Km/h, Hz/hz, M/S, Min, Mol),
+// pri m/M kot predponi pa ga: ms ≠ Ms, mA ≠ MA, mJ ≠ MJ, mm ≠ Mm (razlika je milijardo-krat).
+// Predpona je m/M, ki mu sledi črka in ni začetek »min« ali »mol«; sam m (»M/S«, »M2«, »DM3«) je meter.
+export function sameUnit(a, b) {
+  const x = unitForm(a);
+  const y = unitForm(b);
+  if (x === y) return true;
+  if (x.toLowerCase() !== y.toLowerCase() || x.length !== y.length) return false;
+  for (let i = 0; i < x.length; i++) {
+    if (x[i] === y[i] || !/m/i.test(x[i])) continue;
+    const rest = x.slice(i).toLowerCase();
+    if (!/^\p{L}/u.test(rest.slice(1)) || /^m(?:in|ol)(?!\p{L})/u.test(rest)) continue;
+    // Razlika m/M šteje le, če se preostanek enote ujema tudi v velikosti črk (mJ/MJ, mm/Mm).
+    // »MM«, »MG«, »mhz«: učenec ne pazi na velikost črk, zato zapis sprejmemo.
+    if (x.slice(0, i) + x.slice(i + 1) === y.slice(0, i) + y.slice(i + 1)) return false;
+  }
+  return true;
+}
+
+// Arabske in perzijske števke (٢٫٥, ۲٫۵) → 0–9, arabsko decimalno ločilo ٫ in vejica ، → vejica,
+// arabsko ločilo tisočic ٬ (٢٬٥٠٠) → presledek.
+export function westernDigits(s) {
+  return String(s)
+    .replace(/[\u0660-\u0669]/g, (c) => String(c.charCodeAt(0) - 0x0660))
+    .replace(/[\u06f0-\u06f9]/g, (c) => String(c.charCodeAt(0) - 0x06f0))
+    .replace(/[\u066b\u060c]/g, ",")
+    .replace(/\u066c/g, " ");
 }
 
 // Razčleni vnos, npr. "12,5 cm²", "−3", "1 200", "2.5m".
 // dot: decimalna pika (angleške izpitne naloge); takrat "0.120" ni 120 s piko za tisočice.
 // Skupina tisočic ima natanko 3 števke: "1.1484" je decimalno število, ne 1.148 z enoto "4".
 export function parseNumberWithUnit(input, { dot = false } = {}) {
-  const s = String(input).trim().replace(/−/g, "-");
+  const s = westernDigits(String(input).trim()).replace(/−/g, "-");
   const m = s.match(/^([+-]?\s*(?:\d{1,3}(?:[ .]\d{3}(?!\d))+|\d+)?(?:[.,]\d+)?)\s*(.*)$/);
   if (!m || !/\d/.test(m[1])) return null;
   let num = m[1].replace(/\s/g, "");
-  // "1.200", "-1.200" in "1.200,5" s piko kot ločilom tisočic (natanko 3 števke po vsaki piki)
-  if (!dot && /^[+-]?\d{1,3}(\.\d{3})+(,\d+)?$/.test(num)) num = num.replace(/\./g, "");
+  // "1.200", "-1.200" in "1.200,5" s piko kot ločilom tisočic (natanko 3 števke po vsaki piki).
+  // Z vodilno ničlo (»0.500«, »-0.250«) je zapis vedno decimalen: tisočice se ne začnejo z 0.
+  if (!dot && /^[+-]?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(num)) num = num.replace(/\./g, "");
   num = num.replace(",", ".");
   const value = Number(num);
   if (!Number.isFinite(value)) return null;
@@ -69,14 +101,42 @@ function decimalsWord(d) {
 function checkNumber(ans, input) {
   const p = parseNumberWithUnit(input, { dot: !!ans.dot });
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
+  const res = checkParsed(ans, p);
+  // »2.500« je lahko 2500 (pika za tisočice) ali 2,5 s piko kot decimalnim ločilom (tipkovnica v
+  // angleščini, arabščini, urdujščini). Decimalno branje upoštevamo samo, kadar rezultat res ima tri
+  // decimalke (zahtevano zaokroževanje ali točna vrednost, kot 12,345): sicer je »2.500« za 2,5 najverjetneje
+  // pozabljena pretvorba enot (2500 m namesto 2,5 km) in učenec dobi namig o velikostnem redu.
+  // Pri zaokroževanju na 0 ali 1 decimalko »2.500« skoraj gotovo ni decimalna pika: namig o velikostnem redu.
+  // Pri dveh decimalkah je zapis dvoumen (2500 ali 2,500 z decimalko preveč): napačno, a brez namiga, ki bi
+  // lahko bil napačen (»izračun je pravilen« z razkritim rezultatom ali »1000-krat prevelik«).
+  const dotLike = res.kind !== "correct" && !ans.dot && /^[+-]?[1-9]\d{0,2}\.\d{3}(?!\d)/.test(westernDigits(String(input).trim()).replace(/−/g, "-"));
+  if (dotLike && threeDecimals(ans)) {
+    const q = parseNumberWithUnit(input, { dot: true });
+    const alt = q && checkParsed(ans, q);
+    if (alt?.kind === "correct" || alt?.kind === "rounding") return alt;
+  } else if (dotLike && ans.decimals === 2 && res.kind === "wrong") {
+    const q = parseNumberWithUnit(input, { dot: true });
+    const alt = q && checkParsed(ans, q);
+    if (alt?.kind === "rounding") return { kind: "wrong" };
+  }
+  return res;
+}
+
+// Ima pravilni odgovor lahko tri decimalke? Da, kadar je zahtevano zaokroževanje na vsaj 3 decimalke ali kadar
+// točna vrednost potrebuje natanko tri decimalke (12,345, 0,125; ne pa 2,5 ali 2500).
+function threeDecimals(ans) {
+  if (ans.decimals !== undefined && ans.decimals !== null) return ans.decimals >= 3;
+  const whole = (x) => Math.abs(x - Math.round(x)) <= 1e-9 * Math.max(1, Math.abs(x));
+  return [ans.value, ...(ans.alsoAccept || [])].some((e) => Number.isFinite(e) && whole(e * 1000) && !whole(e * 100));
+}
+
+function checkParsed(ans, p) {
 
   // Enota
   if (ans.unit) {
-    const want = normUnit(ans.unit);
     const got = normUnit(p.unit);
     if (!got) return { kind: "unit", code: "chk.addUnit", message: `Število je zapisano, dodaj še enoto. V kateri enoti je rezultat?` };
-    const alts = (ans.unitAlternatives || []).map(normUnit);
-    if (got !== want && !alts.includes(got)) {
+    if (![ans.unit, ...(ans.unitAlternatives || [])].some((u) => sameUnit(u, p.unit))) {
       return { kind: "unit", code: "chk.unit", params: { unit: ans.unit }, message: `Preveri enoto: rezultat zapiši v ${ans.unit}.` };
     }
   }
@@ -174,9 +234,14 @@ export function diagnose(ans, p) {
 }
 
 function parseFraction(input) {
-  const s = String(input).trim().replace(/−/g, "-").replace(/\s+/g, " ");
-  let m = s.match(/^([+-]?\d+)\s*\/\s*(\d+)$/);
-  if (m) return { num: Number(m[1]), den: Number(m[2]) };
+  const s = westernDigits(String(input).trim()).replace(/−/g, "-").replace(/\s+/g, " ");
+  // predznak lahko stoji tudi v imenovalcu: 3/-4 = -3/4
+  let m = s.match(/^([+-]?\d+)\s*\/\s*([+-]?\d+)$/);
+  if (m) {
+    const num = Number(m[1]);
+    const den = Number(m[2]);
+    return den < 0 ? { num: -num, den: -den } : { num, den };
+  }
   m = s.match(/^([+-]?)(\d+) (\d+)\s*\/\s*(\d+)$/); // mešano število "1 1/2"
   if (m) {
     const sign = m[1] === "-" ? -1 : 1;
@@ -204,7 +269,8 @@ function checkFraction(ans, input) {
     }
     return { kind: "wrong" };
   }
-  if (gcd(f.num, f.den) !== 1) return { kind: "simplify", code: "chk.simplify", message: "Vrednost je pravilna, a ulomek še okrajšaj do konca." };
+  // 0/5 je že 0: okrajšati ni česa
+  if (f.num !== 0 && gcd(f.num, f.den) !== 1) return { kind: "simplify", code: "chk.simplify", message: "Vrednost je pravilna, a ulomek še okrajšaj do konca." };
   return { kind: "correct" };
 }
 

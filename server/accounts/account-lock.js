@@ -8,6 +8,7 @@ export const ACCOUNT_UNLOCK_MIN = () => Number(process.env.EVKLID_ACCOUNT_UNLOCK
 const OWNER_ONLY = [
   [/^\/account\/?$/i, null], // GET, PUT, DELETE
   [/^\/account\/(export|promo|logout-others|weekly-report\/[a-z]+)\/?$/i, null],
+  [/^\/account\/birth-date\/?$/i, "POST"], // datum rojstva imetnika: otrok ga na starševi napravi ne sme vpisati
   [/^\/billing\/(checkout|portal)\/?$/i, null],
   [/^\/admin(\/|$)/i, null],
   [/^\/students\/?$/i, "POST"], // nov profil

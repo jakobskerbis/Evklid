@@ -234,19 +234,19 @@ export const freeMonthlyPoolUsd = () => envUsd("EVKLID_FREE_POOL_USD", 10);
 export const freeStudentMonthlyUsd = () => envUsd("EVKLID_FREE_STUDENT_USD", 0.2);
 
 // ---------- paketi pred testom (enkratno plačilo, j 2026-10-30, cene j 2026-11-04) ----------
-// Poln dostop za en profil za 7, 14 ali 30 dni, brez naročnine. aiUsd = največja poraba AI v času paketa; ko je
+// Poln dostop za en profil za 7 ali 14 dni, brez naročnine. aiUsd = največja poraba AI v času paketa; ko je
 // porabljena, profil do konca paketa dela kot v brezplačnem paketu. Vsak paket ima vsaj 75 % (worstProfit).
+// 30-dnevnega paketa ni več (j 2026-11-04, brez mikrotransakcij); že kupljeni 30-dnevni paketi v bazi (passes.days = 30)
+// veljajo do konca, stare neplačane povezave zanj pa ne veljajo več (billing.js linkView).
 // Zaenkrat samo v evrih.
 export const PASSES = [
   { days: 7, amount: 549, aiUsd: 0.8, label: "Kratka priprava" },
   { days: 14, amount: 849, aiUsd: 1.5, label: "Temeljita priprava" },
-  { days: 30, amount: 1399, aiUsd: 2.9, label: "Velika priprava" },
 ].map((p) => ({ ...p, key: `${BRAND.slug}_pass_${p.days}`, currency: "EUR" }));
-// Paketi pred testom za faks: 6,99 / 11,49 / 19,99 € z mejo AI 1,1 / 2,3 / 4,5 $.
+// Paketi pred testom za faks: 6,99 / 11,49 € z mejo AI 1,1 / 2,3 $.
 export const FAKS_PASSES = [
   { days: 7, amount: 699, aiUsd: 1.1 },
   { days: 14, amount: 1149, aiUsd: 2.3 },
-  { days: 30, amount: 1999, aiUsd: 4.5 },
 ].map((p) => ({ ...PASSES.find((x) => x.days === p.days), ...p, key: `${BRAND.slug}_pass_faks_${p.days}`, level: "FAKS" }));
 // Paketi za stopnjo profila: faks svoje, OŠ in SŠ kot doslej.
 export const passesFor = (level) => (level === "FAKS" ? FAKS_PASSES : PASSES);
@@ -255,7 +255,8 @@ export const passByKey = (key) => [...PASSES, ...FAKS_PASSES].find((p) => p.key 
 // Stopnja, ki jo paket pred testom odpre: faks vse, paket OŠ/SŠ (ista cena) OŠ in SŠ. Paketi, kupljeni pred
 // cenami po stopnjah (level prazen), odprejo vse stopnje kot ob nakupu (null), da študent ne izgubi dostopa.
 export const passLevel = (pass) => (pass?.level === "FAKS" ? "FAKS" : pass?.level ? "SS" : null);
-// Najmanjši paket, ki pokrije čas do dneva po testu (test čez daysLeft dni; 0 = danes).
+// Najmanjši paket, ki pokrije čas do dneva po testu (test čez daysLeft dni; 0 = danes); null, ko je test dlje,
+// kot ga pokrije najdaljši paket (14 dni): takrat se paket še ne ponudi.
 export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find((p) => p.days >= daysLeft + 1) || null;
 
 // ---------- poraba AI v naročnini (j 2026-11-01, deleži j 2026-11-04 »Predlog A«) ----------

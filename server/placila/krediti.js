@@ -23,15 +23,8 @@ export const CREDIT_PACKS = [
   { id: "k20", amount: 2000, currency: "EUR" },
 ];
 export const packById = (id) => CREDIT_PACKS.find((p) => p.id === id) || null;
-// Poljuben znesek brez zgornje meje (j 2026-10-30); spodnja meja zaradi plačilnih stroškov,
-// zgornja je le tehnična meja enega plačila pri Stripu (999.999,99 €).
-export const CUSTOM_MIN_CENTS = 500;
-export const CUSTOM_MAX_CENTS = 99_999_999;
-export function customPack(amountEur) {
-  const cents = Math.round(Number(amountEur) * 100);
-  if (!Number.isFinite(cents) || cents < CUSTOM_MIN_CENTS || cents > CUSTOM_MAX_CENTS) return null;
-  return { id: "custom", amount: cents, currency: "EUR" };
-}
+// Poljubnega zneska ni več (j 2026-11-04, brez mikrotransakcij): samo paketi zgoraj. Stari zapisi s pack »custom«
+// v ai_credit_buys ostanejo in štejejo v stanje kredita kot doslej (balance sešteje credit_usd).
 
 // Učencu in staršu pokažemo samo, za koliko pogovorov z inštruktorjem zadošča kredit (j 2026-10-30:
 // ne deleža plačila ali zneska kredita). Ocena za običajen pogovor (~10 sporočil, hitri model, včasih
