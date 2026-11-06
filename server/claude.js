@@ -74,8 +74,19 @@ export function costUsd(model, u) {
       (u.cache_read_input_tokens || 0) * p.cacheRead +
       (write - write1h) * p.cacheWrite +
       write1h * p.in * 2) /
-    1e6
+      1e6 +
+    // Poskusi, ki jih je strežniški nadomestni model zamenjal (usage.iterations, zavrnitev sredi toka): plačani posebej.
+    (u.extra_cost_usd || 0)
   );
+}
+// Strošek zavrnjenih poskusov pred nadomestnim modelom (fallbacks, platform.claude.com refusals-and-fallback: vsak
+// poskus z izhodom je plačan posebej, zgornji usage šteje le poskus, ki je odgovoril; pregled #462 S6).
+export function fallbackExtraUsd(usage) {
+  const it = Array.isArray(usage?.iterations) ? usage.iterations : [];
+  if (!it.some((x) => x?.type === "fallback_message")) return 0;
+  return it
+    .filter((x) => x && x.type !== "fallback_message")
+    .reduce((t, x) => t + costUsd(x.model, { ...x, cache_creation: x.cache_creation || { ephemeral_1h_input_tokens: x.cache_creation_input_tokens || 0 } }), 0);
 }
 
 export const REFUSAL_TEXT =
@@ -136,7 +147,7 @@ export function quickParams(model) {
 }
 
 // Strežniški nadomestni model ob zavrnitvi podpirajo modeli Opus/Sonnet/Fable, Haiku ne.
-const supportsFallback = (model) => !/haiku/.test(model);
+export const supportsFallback = (model) => !/haiku/.test(model);
 
 /**
  * Pretoči odgovor modela.
@@ -259,7 +270,8 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
       }
       throw err;
     }
-    usage = addUsage(usage, final.usage);
+    const extra = fallbackExtraUsd(final.usage);
+    usage = addUsage(usage, extra ? { ...final.usage, extra_cost_usd: extra } : final.usage);
     stopReason = final.stop_reason;
     finalModel = final.model || model;
     content.push(...final.content);
@@ -290,7 +302,7 @@ export function addUsage(a, b) {
   if (!b) return a;
   if (!a) return { ...b };
   const out = { ...a };
-  for (const k of ["input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens"]) out[k] = (a[k] || 0) + (b[k] || 0);
+  for (const k of ["input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens", "extra_cost_usd"]) out[k] = (a[k] || 0) + (b[k] || 0);
   // Razdelitev zapisov po času (5 min / 1 h) za pravilno ceno (costUsd).
   if (a.cache_creation || b.cache_creation) {
     out.cache_creation = {};

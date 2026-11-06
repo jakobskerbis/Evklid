@@ -12,7 +12,7 @@
 // prompt, orodja) štejemo kot bajti / 2 (slovensko in angleško besedilo ima ~3–4 bajte na žeton); slika največ
 // IMAGE_TOKENS; vsak vhodni žeton po najvišji ceni (zapis v predpomnilnik za 1 h = 2× vhod); izhod = max_tokens.
 import "./env.js";
-import { PRICES, modeParams, MODEL, MODEL_MID } from "./claude.js";
+import { PRICES, modeParams, MODEL, MODEL_MID, supportsFallback } from "./claude.js";
 import { SPLIT_MARKER } from "./prompt.js";
 import {
   PLANS, LEGACY_PLANS, SCHOOL_PLANS, REGIONAL_PRICES, plansFor, planGuarantee, planEurMonth, PASSES, FAKS_PASSES, passCapUsd,
@@ -91,7 +91,9 @@ export function replyReserveUsd({ mode = "chat", system = "", messages = [], too
   const { model, max_tokens } = modeParams(mode);
   const out = quickMax ? Math.min(max_tokens, quickMax) : max_tokens;
   const input = systemTokens(system) + messageTokens(messages) + (tools?.length ? Math.ceil(bytes(JSON.stringify(tools)) / 2) : 0) + extraTokens;
-  return callMaxUsd(model, input, out);
+  // Strežniški nadomestni model (fallbacks: "default", ne pri Haikuju): zavrnjen poskus sredi toka in odgovor
+  // nadomestnega modela (manj zmogljiv, ne dražji) sta plačana posebej, zato rezerva dveh klicev (pregled #462 S6).
+  return callMaxUsd(model, input, out) * (supportsFallback(model) ? 2 : 1);
 }
 // Zgodovina pod pragom dolgega poziva (Haiku nad 100k žetonov 5×, pregled #462 A1): odreže najstarejše izmenjave,
 // dokler poziv (z rezervo za opombe) ne gre pod prag. Modeli brez dražjega dolgega poziva: nespremenjeno.

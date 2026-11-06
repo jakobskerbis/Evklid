@@ -47,3 +47,23 @@ test("A1: Haiku 5.5 nad 100k žetonov poziva 5× cena (zapis in rezerva); dolg p
   assert.ok(messageTokens(fit) < 95_000 && fit.length < big.length && fit[0].role === "user");
   assert.equal(fitLongPrompt({ mode: "deep", system: "s", messages: big }), big, "Opus: brez rezanja");
 });
+
+test("S6: zavrnjen poskus pred nadomestnim modelom je plačan posebej; rezerva Sonneta/Opusa za dva klica", async () => {
+  const { costUsd, fallbackExtraUsd, addUsage } = await import("../server/claude.js");
+  const { replyReserveUsd, callMaxUsd } = await import("../server/meje-ai.js");
+  const usage = {
+    input_tokens: 400, output_tokens: 200,
+    iterations: [
+      { type: "message", model: "claude-opus-5-5", input_tokens: 1000, output_tokens: 500 },
+      { type: "fallback_message", model: "claude-sonnet-5-5", input_tokens: 400, output_tokens: 200 },
+    ],
+  };
+  const extra = fallbackExtraUsd(usage);
+  assert.ok(Math.abs(extra - (1000 * 4 + 500 * 20) / 1e6) < 1e-12);
+  assert.equal(fallbackExtraUsd({ input_tokens: 1 }), 0, "brez nadomestnega modela nič");
+  const total = costUsd("claude-sonnet-5-5", addUsage(null, { ...usage, extra_cost_usd: extra }));
+  assert.ok(Math.abs(total - ((400 * 2 + 200 * 10) / 1e6 + extra)) < 1e-12);
+  const msgs = [{ role: "user", content: "a" }];
+  assert.ok(replyReserveUsd({ mode: "deep", system: "s", messages: msgs }) >= 2 * callMaxUsd("claude-opus-5-5", 1, 6000));
+  assert.ok(replyReserveUsd({ mode: "chat", system: "s", messages: msgs }) < 2 * callMaxUsd("claude-haiku-5-5", 1, 3000), "Haiku brez nadomestnega modela");
+});
