@@ -4,12 +4,10 @@
 // (showView("textbook"), ?pogled=lab, ukaz inštruktorju »odpri laboratorij«) izberejo pravi zavihek v app.js.
 // Atlas ali model iz 3D sveta se odpre čez cel zaslon: stran /3d v okvirju (isti izvor), Nazaj ali Esc ga zapreta.
 import { t } from "./i18n.js";
-import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
 
 export const UCI_TABS = ["textbook", "lab", "3d"];
 const KEY = "evklid.uciZavihek";
-const PREDMETI = ["BIO", "KEM", "FIZ", "MAT", "NAR"];
 
 let D = null; // { escapeHtml, getStudent, showTextbook, showLab, stopReading, askTutor, onOverlay(open) }
 let tab = read();
@@ -33,10 +31,6 @@ function save(v) {
 const $ = (s) => document.querySelector(s);
 const esc = (s) => D.escapeHtml(String(s ?? ""));
 const paneOf = (name) => document.getElementById(`view-${name}`);
-const tr = (k, fallback) => {
-  const s = t(k);
-  return s === k ? fallback : s;
-};
 
 /** Zavihek, ki ga »Uči se« pokaže (zadnji uporabljeni). */
 export const uciTab = () => tab;
@@ -58,6 +52,7 @@ export function setUciTab(name) {
     const p = paneOf(v);
     if (p) p.hidden = v !== name;
   }
+  D?.onTab?.(name); // mehurček inštruktorja se na 3D svetu umakne mreži (okna.js)
 }
 
 /** Izris vidnega zavihka (ob prikazu pogleda »Uči se« v glavnem delu ali v premičnem oknu). */
@@ -139,64 +134,21 @@ export function leaveUci() {
   close3d();
 }
 
-// ---------- 3D svet: kartice strani /3d (atlas telesa in modeli iz kode, docs/3d.md) ----------
-
-const predmetIme = (p) => tr(`subj.${p}`, p);
+// ---------- 3D svet: mreža slik (public/uci-3d.js; atlas telesa in modeli iz kode, docs/3d.md) ----------
 
 async function show3d() {
   const box = document.getElementById("uci-3d-content");
   if (!box) return;
   const mine = D.getStudent()?.settings?.subject || "";
   const key = `${mine}|${document.documentElement.lang}`;
-  if (hub?.key === key && box.querySelector(".uci-3d-card, .uci-3d-atlas")) return;
-  let modeli = [];
+  if (hub?.key === key && box.querySelector(".u3-mreza")) return;
   try {
-    const { seznamModelov } = await import("./3d/modeli.js");
-    modeli = await seznamModelov();
+    const { render3d } = await import("./uci-3d.js");
+    await render3d(box, { mine, open: open3d });
+    hub = { key };
   } catch {
     box.innerHTML = `<p class="muted">${esc(t("a3.loadError"))}</p>`;
-    return;
   }
-  // Področja po vrstnem redu strani /3d, a najprej tista z modeli učenčevega predmeta (in v njih najprej ti modeli).
-  const podrocja = new Map();
-  for (const m of modeli) {
-    if (!podrocja.has(m.podrocje)) podrocja.set(m.podrocje, []);
-    podrocja.get(m.podrocje).push(m);
-  }
-  const moj = (m) => (m.predmet === mine ? 0 : 1);
-  const skupine = [...podrocja.entries()]
-    .map(([p, list]) => ({ p, list: [...list].sort((a, b) => moj(a) - moj(b)), mine: list.some((m) => m.predmet === mine) }))
-    .sort((a, b) => Number(b.mine) - Number(a.mine));
-  // Atlas telesa je biologija: na vrhu za biologijo in naravoslovje (ali če učenčev predmet nima modelov), sicer za njegovimi področji.
-  const atlasFirst = ["BIO", "NAR"].includes(mine) || !PREDMETI.includes(mine) || !skupine.some((g) => g.mine);
-  const atlas = `<a class="card uci-3d-atlas" href="/3d#atlas" data-k3="atlas" data-k3-title="${esc(t("a3.title"))}">
-      <span class="uci-3d-atlas-ic">${icon("bone") || icon("box")}</span>
-      <span class="uci-3d-atlas-txt"><small class="eyebrow">${esc(t("a3.eyebrow"))}</small><b>${esc(t("a3.title"))}</b><span>${esc(t("a3.hubAtlas"))}</span></span>
-      <span class="uci-3d-open">${icon("box")}<span>${esc(t("a3.open"))}</span></span>
-    </a>`;
-  const area = (g) => `<section class="uci-3d-area">
-      <h2>${esc(tr(`a3.area.${g.p}`, g.p))}</h2>
-      <div class="uci-3d-grid">${g.list
-        .map(
-          (m) => `<a class="card uci-3d-card${m.predmet === mine ? " mine" : ""}" href="/3d#${encodeURIComponent(m.id)}" data-k3="${esc(m.id)}" data-k3-title="${esc(m.naslov)}">
-          <small class="uci-3d-subj">${esc(predmetIme(m.predmet))}</small><b dir="auto">${esc(m.naslov)}</b>${m.opis ? `<small dir="auto">${esc(m.opis)}</small>` : ""}
-        </a>`,
-        )
-        .join("")}</div>
-    </section>`;
-  const nMine = skupine.filter((g) => g.mine).length;
-  const parts = skupine.map(area);
-  if (atlasFirst) parts.unshift(atlas);
-  else parts.splice(nMine, 0, atlas);
-  box.innerHTML = `<p class="muted uci-3d-sub">${esc(t("a3.hubSub"))}</p>${parts.join("")}`;
-  hub = { key };
-  box.querySelectorAll("[data-k3]").forEach((a) =>
-    a.addEventListener("click", (e) => {
-      if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // nov zavihek ostane navaden
-      e.preventDefault();
-      open3d(a.dataset.k3, a.dataset.k3Title || "");
-    }),
-  );
 }
 
 /** Odpre atlas (»atlas«) ali model z id-jem čez cel zaslon; param npr. { izberi } (atlas) ali { del } (model). */

@@ -541,7 +541,9 @@ function placeBubble() {
   // Lekcija po korakih: krogi Nazaj · 1/12 · Naprej plavajo na dnu glavnega pogleda, mehurček ostane nad njimi.
   const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
   if (st && st.offsetParent) hi = Math.max(lo, Math.min(hi, a.bottom - st.offsetHeight - size));
-  const y0 = Math.min(Math.max(Math.round((bstate.y ?? 0.72) * window.innerHeight - size / 2), lo), hi);
+  // »Uči se → 3D svet«: mreža slik čez vso širino, zato mehurček stoji tik nad spodnjo vrstico (mreža ima spodnji odmik).
+  const mreza = document.querySelector("#view-3d:not([hidden]) .u3-mreza");
+  const y0 = mreza && mreza.offsetParent ? hi : Math.min(Math.max(Math.round((bstate.y ?? 0.72) * window.innerHeight - size / 2), lo), hi);
   const xOf = (side) => (side === "left" ? 12 : window.innerWidth - size - 12);
   const rects = [...wins.values()].map((w) => w.el.getBoundingClientRect());
   const free = (x, y) => !rects.some((r) => x < r.right + 4 && x + size > r.left - 4 && y < r.bottom + 4 && y + size > r.top - 4);

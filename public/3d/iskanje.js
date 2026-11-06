@@ -32,6 +32,7 @@ export function isciPloscice(ploscice, q, { red = null } = {}) {
       if (naslov.startsWith(b)) o = 7;
       else if (naslov.split(/[\s-]+/).some((w) => w.startsWith(b))) o = 6;
       else if (naslov.includes(b)) o = 5;
+      if (!o && deli.some((x) => x.ime.split(/[\s-]+/).includes(b))) o = 5; // cela beseda imena dela (»kocka« → telesa pred »kockasta kost«, »prekat« → Srce pred »prekata« v atlasu)
       if (!o && deli.some((x) => x.ime.split(/[\s-]+/).some((w) => w.startsWith(b)))) o = 4;
       if (!o && deli.some((x) => x.t.includes(b))) o = 3;
       if (!o && (p.sinonimi || []).some((s) => brezStresic(s).includes(b))) o = 3;
@@ -51,7 +52,24 @@ export function isciPloscice(ploscice, q, { red = null } = {}) {
         if (n && toc > naj) (naj = toc), (del = x.d);
       }
     }
-    ocene.push([{ p, del }, vsota, red ? red(p, i) : i]);
+    ocene.push([{ p, del }, vsota, red ? red(p, i) : i, p.id === "atlas" ? 1 : 0]);
   });
-  return ocene.sort((a, b) => b[1] - a[1] || a[2] - b[2]).map(([r]) => r);
+  // Enako ocenjene: najprej poseben model (»prekat« → Srce pred atlasom z gostim seznamom struktur), nato vrstni red zbirke.
+  return ocene.sort((a, b) => b[1] - a[1] || a[3] - b[3] || a[2] - b[2]).map(([r]) => r);
 }
+
+export const NEDAVNO = "evklid.3d.nedavno"; // zadnji odprti modeli (stran.js zapomni), isti zapis v zbirki /3d in v »Uči se«
+
+/** Zadnji odprti model (id) iz zapisa na napravi; napaka ali prazen zapis = null. */
+export function zadnjiModel(ids, beri) {
+  try {
+    const l = JSON.parse(beri());
+    return (Array.isArray(l) ? l : []).find((id) => typeof id === "string" && ids.includes(id)) || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Nadzor ali del, ki ga odpre zadetek: [ime, ključ, vrednost] → parametri strani /3d (del, izberi (atlas) ali nadzor modela). */
+export const paramDela = (d) => (d && d[1] && d[2] ? { [d[1]]: d[2] } : null);
+

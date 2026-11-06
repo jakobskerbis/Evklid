@@ -324,6 +324,7 @@ async function sosedi(id) {
 
 async function atlas(param, moj) {
   document.title = t("a3.title");
+  zapomni("atlas");
   const host = mk("div", "");
   glavni.replaceChildren(host);
   const { odpriAtlas } = await import("./atlas.js");

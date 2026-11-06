@@ -4314,6 +4314,7 @@ initUci({
     box.focus();
   },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
+  onTab: () => refreshBubble(),
 });
 document.querySelectorAll("[data-open-scan]").forEach((b) => b.addEventListener("click", () => showView("scan")));
 
