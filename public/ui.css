@@ -796,6 +796,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
   padding: 12px 14px; padding-inline-end: 48px; font-size: 0.93rem; line-height: 1.45; display: grid; gap: 6px;
 }
+/* Fokus gre v okno ob odprtju s tipko (Enter); obroba je na ✕, ne na celem oknu. */
+.fx-pop:focus { outline: none; }
 .fx-pop .fx-title { display: flex; align-items: baseline; gap: 8px; color: var(--accent); }
 .fx-pop .fx-title b { color: var(--text); font-size: 1rem; min-width: 0; }
 .fx-pop .fx-title .katex { font-size: 1.25em; color: var(--accent); flex: none; }
@@ -812,6 +814,12 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .fx-pop .fx-close { position: absolute; top: 4px; inset-inline-end: 4px; width: 40px; height: 40px; min-height: 40px !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--muted); font-size: 1.3rem; line-height: 1; }
 .fx-pop .fx-close:hover { color: var(--text); background: var(--surface-2) !important; }
 @media (max-width: 760px) { .fx-pop .fx-sub { padding-inline-start: 0; } .fx-pop .fx-parts { flex-direction: column; gap: 3px; } }
+/* Telefon: okno pomena je spodnji list nad spodnjim menijem (formula-info.js place), nikoli čez formulo. */
+.fx-pop.fx-sheet {
+  position: fixed; left: 0; right: 0; width: auto; top: auto; max-height: min(55vh, 420px); overflow-y: auto;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0; border-bottom: 0; padding: 16px 18px; padding-inline-end: 52px;
+  padding-bottom: calc(14px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+}
 
 /* ---------- Cilj in opomnik (public/goal.js) ---------- */
 .goal-field .goal-box, #settings-goal { display: grid; gap: 10px; margin-top: 8px; }

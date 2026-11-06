@@ -1632,6 +1632,7 @@
   "fx.change": "Промена величине: {what}",
   "fx.close": "Затвори",
   "fx.parts": "Где је",
+  "fx.defined": "Ознака из текста",
   "ap.style": "Стил",
   "ap.styleCist": "Чист",
   "ap.styleCistText": "Миран и прегледан",
