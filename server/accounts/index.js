@@ -11,7 +11,7 @@ import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { exportOtherTables } from "../zasebnost.js";
-import { aiCapFromNetEur, vatRateFor } from "./plans.js";
+import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
@@ -277,7 +277,8 @@ export function mountAccounts(app, store, opts = {}) {
     // DDV po državi kupca (j 2026-11-06 12:53); neznana: najvišja na trgu paketa.
     const country = getParent(owner)?.country;
     const subPlan = planByKey(getParent(owner)?.sub_plan);
-    const g = (subPlan && planGuarantee(subPlan, country ? vatRateFor(country) : undefined)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
+    const vat = country ? (!subPlan?.currency || subPlan.currency === "EUR" ? eurVatFor(country) : vatRateFor(country)) : undefined;
+    const g = (subPlan && planGuarantee(subPlan, vat)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
     // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
     // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
     const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");

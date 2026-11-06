@@ -169,3 +169,13 @@ test("K3-4: osvežitev tečajev – pripeta različica po datumu, rezervni naslo
     P.setFxRates({}, 0);
   }
 });
+
+test("B3: DDV pri plačilu v evrih je največ od Slovenije in države kupca (LU 17 % ne zviša meje)", async () => {
+  const P = await import("../server/accounts/plans.js");
+  assert.equal(P.eurVatFor("LU"), P.VAT_RATE);
+  assert.equal(P.eurVatFor("HU"), 0.27);
+  assert.equal(P.eurVatFor(null), P.VAT_MAX);
+  const { invoiceRows } = await import("../server/placila/placano.js");
+  const [r] = invoiceRows({ currency: "eur", lines: { data: [{ amount: 1220, period: { start: 0, end: 86400 } }] } }, { country: "LU" });
+  assert.ok(Math.abs(r.eur - 10) < 1e-9, "LU: kot Slovenija 22 %");
+});

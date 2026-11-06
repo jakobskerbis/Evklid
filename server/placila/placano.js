@@ -4,7 +4,7 @@
 // Ob invoice.paid se vsaka vrstica računa naročnine zapiše z obdobjem (period.start–end) in zneskom brez DDV in popustov
 // v €; proracije (tudi negativne, npr. preklop letno → mesečno) imajo svoje obdobje. Denar okna meje je vsota vrstic,
 // razporejena po času: znesek × prekrivanje z oknom / dolžina obdobja vrstice. Zapis je v kv (ai_paid_<račun>).
-import { vatRateFor, eurPerUnitNow, currencyDecimals } from "../accounts/plans.js";
+import { vatRateFor, eurVatFor, eurPerUnitNow, currencyDecimals } from "../accounts/plans.js";
 
 const KEEP_DAYS = 400; // dlje od najdaljšega obdobja (leto) + rok za odstop
 const MAX_ROWS = 200;
@@ -17,7 +17,8 @@ export function invoiceRows(inv, { country = null, addonCents = 0 } = {}) {
   const unit = 10 ** currencyDecimals(cur);
   const rate = cur === "EUR" ? 1 : eurPerUnitNow(cur);
   if (!rate) return [];
-  const vat = vatRateFor(inv?.customer_address?.country || country);
+  const who = inv?.customer_address?.country || country;
+  const vat = cur === "EUR" ? eurVatFor(who) : vatRateFor(who);
   let addon = Math.max(0, Number(addonCents) || 0);
   const rows = [];
   for (const l of inv?.lines?.data || []) {

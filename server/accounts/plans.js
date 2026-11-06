@@ -64,6 +64,9 @@ export const VAT_RATES = {
 };
 export const VAT_MAX = 0.27;
 export const vatRateFor = (country) => VAT_RATES[String(country || "").toUpperCase()] ?? VAT_MAX;
+// Plačilo v evrih: največ od stopnje Slovenije in države kupca (pod pragom OSS prodajalec plača slovenski DDV;
+// država se lahko ponaredi z VPN ali naslovom v portalu, pregled #462 B3).
+export const eurVatFor = (country) => Math.max(VAT_RATE, vatRateFor(country));
 export const netOfVat = (eur, vat = VAT_RATE) => (Number(eur) || 0) / (1 + vat);
 export const AI_MAX_SHARE = 0.25;
 // eur = plačilo z DDV; meja = 25 % plačila brez DDV (stopnja vat), v $ navzdol na 0,001 $.
