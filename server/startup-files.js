@@ -43,6 +43,9 @@ export function startupFiles(publicDir, entry = "index.html", later = []) {
     else if (url.endsWith(".js")) visitModule(path.join(publicDir, url));
     else if (fs.existsSync(path.join(publicDir, url))) urls.add(url); // /manifest.webmanifest tvori strežnik sam
   }
+  // Moduli strani, ki jih zažene public/zagon.js (data-moduli="a.js b.js"), so del prvega nalaganja.
+  for (const m of html.matchAll(/\bdata-moduli="([^"]*)"/g))
+    for (const ref of m[1].split(/\s+/).filter(Boolean)) visitModule(path.join(publicDir, ref.replace(/^\.?\//, "")));
   for (const m of later) visitModule(path.join(publicDir, m));
   return [...urls];
 }
