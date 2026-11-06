@@ -4,6 +4,8 @@ import { t, locale, currentLang, applyI18n } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { initDrsniki } from "./drsniki.js";
 import { initSirina } from "./sirina.js";
+// spustni meniji kot v aplikaciji (sistemski <select> pri 360 px odreže »Samodejno«; pregled #457)
+import "./dropdown.js";
 
 const MODES = ["sci", "graph", "tools", "pse"];
 const q = new URLSearchParams(location.search);

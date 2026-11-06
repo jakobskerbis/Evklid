@@ -52,7 +52,13 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       return `<div class="md-table-wrap"><table class="md-table">${inner}</table></div>`;
     });
     html = subHeadings(html);
-    return html.replace(/@@MATH(\d+)@@/g, (m, i) => (math[i] ? renderMath(math[i].tex, math[i].display, true, math[i].sentence) : m));
+    // Ločilo takoj za vrstično formulo (». , ; : ! ?«) ostane z njo v isti vrstici: pika se ne prelomi sama v novo vrstico
+    // (j, 5. 11.: kartica »Zapomni si«). Ne-prelomni ovoj samo za formulo in ločilo, ne za cel stavek.
+    return html.replace(/@@MATH(\d+)@@([.,;:!?]+)?/g, (m, i, punct) => {
+      if (!math[i]) return m;
+      const out = renderMath(math[i].tex, math[i].display, true, math[i].sentence);
+      return punct && !math[i].display ? `<span class="fx-nb">${out}${punct}</span>` : out + (punct || "");
+    });
   }
 
   return { renderMath, renderRich };
