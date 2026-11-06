@@ -231,16 +231,19 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Biotehnološki laboratorij dobiva vzorce iz treh obratov: $50\,\%$ iz prvega, $30\,\%$ iz drugega in $20\,\%$ iz tretjega. Delež kontaminiranih vzorcev je v prvem obratu $1\,\%$, v drugem $2\,\%$, v tretjem $5\,\%$. (a) Kolikšna je verjetnost, da je naključni vzorec kontaminiran? (b) Vzorec je kontaminiran; iz katerega obrata najverjetneje izvira in s kolikšno verjetnostjo? (c) Iz dnevne pošiljke naključno in neodvisno vzamemo $10$ vzorcev. Kolikšna je verjetnost, da je vsaj eden kontaminiran?
+Laboratorij dobi šaržo $20$ epruvet. Iz izkušenj ve, da je $90\,\%$ šarž »dobrih« (v njih je natanko $1$ kontaminirana epruveta), $10\,\%$ pa »slabih« (natanko $5$ kontaminiranih). Iz šarže naključno izberejo $4$ epruvete brez vračanja in med njimi najdejo natanko eno kontaminirano. (a) Kolikšna je verjetnost tega izida pri dobri in pri slabi šarži? (b) Kolikšna je po pregledu verjetnost, da je šarža slaba? (c) Iz preostalih $16$ epruvet vzamejo še eno. Kolikšna je verjetnost, da je kontaminirana?
 
 **Rešitev:**
 
-1. Popoln sistem: $H_1$, $H_2$, $H_3$ (obrat) s $P(H_i) = 0{,}5$; $0{,}3$; $0{,}2$. $K$ je »kontaminiran«.
-2. (a) $P(K) = 0{,}5 \cdot 0{,}01 + 0{,}3 \cdot 0{,}02 + 0{,}2 \cdot 0{,}05 = 0{,}005 + 0{,}006 + 0{,}010 = 0{,}021$.
-3. (b) $P(H_1 \mid K) = 0{,}005/0{,}021 \approx 0{,}238$, $P(H_2 \mid K) = 0{,}006/0{,}021 \approx 0{,}286$, $P(H_3 \mid K) = 0{,}010/0{,}021 \approx 0{,}476$.
-4. Najverjetneje iz tretjega obrata, čeprav ta prispeva najmanj vzorcev: njegov visok delež kontaminacije prevlada.
-5. (c) Vzorci so neodvisni, vsak ni kontaminiran z verjetnostjo $0{,}979$: $P(\geq 1) = 1 - 0{,}979^{10} \approx 1 - 0{,}809 = 0{,}191$.
-6. Odgovor: (a) $2{,}1\,\%$; (b) iz tretjega obrata z verjetnostjo okoli $47{,}6\,\%$; (c) okoli $19\,\%$.
+1. Hipotezi: $D$ (dobra, $P(D) = 0{,}9$) in $S$ (slaba, $P(S) = 0{,}1$); dogodek $E$: »med $4$ izbranimi je natanko $1$ kontaminirana«. Vseh izbir je $\binom{20}{4} = 4845$.
+2. (a) Dobra šarža: kontaminirano izberemo na $\binom{1}{1} = 1$ način, preostale tri izmed $19$ čistih na $\binom{19}{3} = 969$ načinov; $P(E \mid D) = 969/4845 = 0{,}2$.
+3. Slaba šarža: $\binom{5}{1}\binom{15}{3} = 5 \cdot 455 = 2275$; $P(E \mid S) = 2275/4845 \approx 0{,}470$.
+4. (b) Popolna verjetnost: $P(E) = 0{,}9 \cdot 0{,}2 + 0{,}1 \cdot 0{,}470 \approx 0{,}180 + 0{,}047 = 0{,}227$.
+5. Bayes: $P(S \mid E) = 0{,}047/0{,}227 \approx 0{,}207$. Ena najdena kontaminirana epruveta poveča verjetnost slabe šarže z $10\,\%$ na okoli $21\,\%$.
+6. (c) Ponovno uporabimo popolno verjetnost, zdaj z aposteriornima verjetnostma $P(D \mid E) \approx 0{,}793$ in $P(S \mid E) \approx 0{,}207$.
+7. Če je šarža dobra, je bila edina kontaminirana že najdena: med preostalimi $16$ ni nobene, verjetnost $0$. Če je slaba, so med $16$ preostalimi še $4$ kontaminirane: verjetnost $4/16 = 0{,}25$.
+8. $P(\text{naslednja kontaminirana} \mid E) \approx 0{,}793 \cdot 0 + 0{,}207 \cdot 0{,}25 \approx 0{,}052$.
+9. Odgovor: (a) $0{,}20$ in $0{,}47$; (b) okoli $21\,\%$; (c) okoli $5{,}2\,\%$. Ključ je v koraku 6: po opazovanju moramo računati s posodobljenimi verjetnostmi hipotez, ne z apriornimi.
 
 ### Naloga 2
 
@@ -290,6 +293,18 @@ Pogojno verjetnost si predstavljaj z Vennovim diagramom: $\Omega$ je pravokotnik
 **Genetika.** Mendlova pravila so klasična verjetnost na prostoru kombinacij alelov; pogojne verjetnosti (kot v Primeru 4) uporabljajo genetski svetovalci, ko izračunajo verjetnost, da je zdrav sorodnik prenašalec. Pri iskanju motivov v genomu kombinatorika pove, kolikokrat bi neko zaporedje pričakovali po naključju.
 
 **Varnost in zanesljivost.** Verjetnost odpovedi zaporedno vezanih komponent je $1 - \prod(1 - p_i)$, vzporedno vezanih (rezervnih) pa $\prod p_i$ – a le, če so odpovedi neodvisne. Analize drevesa napak v kemijski in jedrski industriji zato posebej iščejo **odpovedi s skupnim vzrokom**, ki to predpostavko kršijo.
+
+## Drugače: Korak za korakom s številkami
+
+Laboratorij dobiva vzorce iz treh obratov: $50\,\%$ iz prvega, $30\,\%$ iz drugega, $20\,\%$ iz tretjega; kontaminiranih je v njih po vrsti $1\,\%$, $2\,\%$ in $5\,\%$. Vzorec je kontaminiran. Iz katerega obrata najverjetneje izvira?
+
+1. **Hipoteze in apriorne verjetnosti:** $P(H_1) = 0{,}5$; $P(H_2) = 0{,}3$; $P(H_3) = 0{,}2$ – skupaj $1$.
+2. **Pogojne verjetnosti podatka:** $P(K \mid H_1) = 0{,}01$; $P(K \mid H_2) = 0{,}02$; $P(K \mid H_3) = 0{,}05$.
+3. **Zmnožki (veje drevesa):** $0{,}5 \cdot 0{,}01 = 0{,}005$; $0{,}3 \cdot 0{,}02 = 0{,}006$; $0{,}2 \cdot 0{,}05 = 0{,}010$.
+4. **Popolna verjetnost (vsota vej):** $P(K) = 0{,}005 + 0{,}006 + 0{,}010 = 0{,}021$.
+5. **Bayes (delež vsake veje):** $0{,}005/0{,}021 \approx 0{,}238$; $0{,}006/0{,}021 \approx 0{,}286$; $0{,}010/0{,}021 \approx 0{,}476$.
+6. **Preizkus:** $0{,}238 + 0{,}286 + 0{,}476 = 1{,}000$. ✓
+7. **Sklep:** najverjetneje iz tretjega obrata, čeprav ta da najmanj vzorcev – njegov visok delež kontaminacije prevlada.
 
 ## Preveri se
 
@@ -345,7 +360,7 @@ H_i, H_k | hipoteze popolnega sistema | | –
 i | zaporedna številka | | –
 D | dogodek »oseba je bolna« | | –
 c | nasprotni dogodek (nadpis, npr. $D^c$ zdrav) | | –
-K | število kontaminiranih epruvet | | – | v Nalogi 1 dogodek »kontaminiran«
+K | število kontaminiranih epruvet | | – | v »Korak za korakom« dogodek »kontaminiran«
 N | število vseh epruvet | | –
 j | število kontaminiranih med izbranimi | | –
 :::

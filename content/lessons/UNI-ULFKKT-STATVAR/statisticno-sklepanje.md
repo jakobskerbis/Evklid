@@ -289,6 +289,20 @@ Dva termometra primerjamo na šestih vzorcih; razlike (termometer A minus termom
 
 **Kakovost in laboratorij.** Kontrolne karte v proizvodnji so zaporedni preizkusi domnev: meji karte sta $\mu_0 \pm 3\sigma/\sqrt n$. Pri validaciji analizne metode s $t$-testom preverimo, ali se rezultat referenčnega materiala razlikuje od certificirane vrednosti.
 
+## Drugače: Korak za korakom s številkami
+
+Pet meritev upora: $99{,}6$; $100{,}4$; $100{,}1$; $99{,}8$ in $100{,}6\,\Omega$. Ali se prava vrednost razlikuje od nazivnih $100{,}0\,\Omega$? ($\alpha = 0{,}05$, $t_{4;\,0{,}975} = 2{,}776$.)
+
+1. **Domnevi:** $H_0\colon \mu = 100{,}0\,\Omega$, $H_1\colon \mu \neq 100{,}0\,\Omega$.
+2. **Povprečje:** vsota je $500{,}5\,\Omega$, $\bar x = 500{,}5/5 = 100{,}1\,\Omega$.
+3. **Odmiki od povprečja:** $-0{,}5$; $0{,}3$; $0$; $-0{,}3$; $0{,}5$; kvadrati $0{,}25$; $0{,}09$; $0$; $0{,}09$; $0{,}25$, vsota $0{,}68$.
+4. **Standardni odklon:** $s = \sqrt{0{,}68/4} = \sqrt{0{,}17} \approx 0{,}412\,\Omega$.
+5. **Standardna napaka:** $s/\sqrt 5 \approx 0{,}412/2{,}236 \approx 0{,}184\,\Omega$.
+6. **Testna statistika:** $t = (100{,}1 - 100{,}0)/0{,}184 \approx 0{,}54$.
+7. **Odločitev:** $|t| = 0{,}54 < 2{,}776$, $H_0$ ne zavrnemo.
+8. **Interval:** $100{,}1 \pm 2{,}776 \cdot 0{,}184 \approx 100{,}1 \pm 0{,}51$, torej $[99{,}59; 100{,}61]\,\Omega$; vsebuje $100{,}0$, kar se ujema z odločitvijo.
+9. **Pomen:** podatki ne kažejo odstopanja, a interval je širok – z le petimi meritvami bi spregledali tudi odstopanje $0{,}4\,\Omega$.
+
 ## Preveri se
 
 ? Katera količina ne sodi v isto skupino kot ostale tri?

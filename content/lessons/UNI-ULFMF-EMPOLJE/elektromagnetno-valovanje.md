@@ -302,6 +302,18 @@ Iz robnih pogojev izpelji odbojnost pri pravokotnem vpadu na mejo dveh nemagnetn
 
 **Vesolje in merjenje.** Tlak sevanja moti tirnice satelitov GPS in ga je treba upoštevati v računih tirnic. V optičnih pincetah fokusiran laserski žarek s tlakom sevanja in lomom drži mikrometrske kroglice ali celice in meri sile reda pikonewtonov.
 
+## Drugače: Bolj natančno
+
+**Fresnelove enačbe.** Pri poševnem vpadu sta odbojna koeficienta za polarizacijo pravokotno na vpadno ravnino ($s$) in vzporedno z njo ($p$) različna:
+
+$$r_s = \frac{n_1\cos\alpha - n_2\cos\beta}{n_1\cos\alpha + n_2\cos\beta}, \qquad r_p = \frac{n_2\cos\alpha - n_1\cos\beta}{n_2\cos\alpha + n_1\cos\beta}.$$
+
+Odbojnost je $R = r^2$. Pri $\alpha = 0$ obe dasta formulo iz Razlage. Koeficient $r_p$ je nič, ko je $n_2\cos\alpha = n_1\cos\beta$; skupaj z lomnim zakonom to da $\alpha + \beta = 90^\circ$ in $\tan\alpha_B = n_2/n_1$ – Brewstrov kot. Pri vpadu skoraj vzporedno s površino gre $R$ za obe polarizaciji proti $1$, zato se tudi mat površine pod zelo položnim kotom svetijo.
+
+**Evanescentno valovanje.** Pri totalnem odboju polje za mejo ne izgine povsem: v redkejši snovi ostane val, ki eksponentno pojema z razdaljo od meje na globini nekaj desetin valovne dolžine in v povprečju ne prenaša energije. Če na to razdaljo približamo drugo gostejšo snov, se del svetlobe prebije (oslabljeni totalni odboj). To izkoriščajo mikroskopija TIRF, ki osvetli le tanko plast celice ob steklu, in spektroskopija ATR.
+
+**Valovanje v prevodniku.** V snovi s specifično prevodnostjo $\sigma_e$ val pojema z globino; pri dobrih prevodnikih je značilna globina (kožni pojav) $\delta = \sqrt{2/(\mu_0\sigma_e\omega)}$. Za baker pri $50\,\mathrm{Hz}$ je okoli $9\,\mathrm{mm}$, pri $1\,\mathrm{GHz}$ le okoli $2\,\mathrm{\mu m}$ – zato kovinski oklop zaduši mikrovalove in zato kovine dobro odbijajo svetlobo.
+
 ## Preveri se
 
 ? V laboratorijskem poročilu piše: »Poyntingov vektor kaže na detektor in ima velikost $20\,\mathrm{W/m^2}$.« Kaj to pomeni?
@@ -385,4 +397,6 @@ R | odbojnost | R = \left(\frac{n_1 - n_2}{n_1 + n_2}\right)^2 | – | pri pravo
 \alpha_B | Brewstrov kot | \tan\alpha_B = \frac{n_2}{n_1} | °
 \theta | vpadni kot na čelno ploskev vlakna | | °
 \theta_1 | kot žarka z osjo v jedru | | °
+r_s, r_p | amplitudna odbojna koeficienta za polarizaciji s in p | | –
+r | amplitudni odbojni koeficient | | – | R = r^2
 :::
