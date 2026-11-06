@@ -3667,5 +3667,12 @@
   "nujno.nasilje.linijaBrezUr": "Gratis: {ime} {stevilka}.",
   "nujno.ure.vedno": "sempre aperto",
   "nujno.ure.delavniki": "nei giorni feriali {od}–{do}",
-  "nujno.ure.ponSob": "dal lunedì al sabato {od}–{do}"
+  "nujno.ure.ponSob": "dal lunedì al sabato {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Non mandare più niente e non pagare. Salva i messaggi e blocca la persona.",
+  "nujno.linijaNeznano": "Chiama {ime}: {stevilka}.",
+  "nujno.ime.otroci": "il telefono per bambini e ragazzi",
+  "nujno.ime.mladi": "il telefono per i giovani",
+  "nujno.ime.samomor": "la linea di prevenzione del suicidio",
+  "nujno.opombaSos": "Le chiamate ai numeri di emergenza sono gratuite.",
+  "nujno.opombaSosMeja": "Le chiamate ai numeri di emergenza sono gratuite. Questo messaggio non conta tra le tue domande."
 }

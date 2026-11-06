@@ -3698,5 +3698,12 @@
   "nujno.nasilje.linijaBrezUr": "Бесплатно: {ime} {stevilka}.",
   "nujno.ure.vedno": "увек отворен",
   "nujno.ure.delavniki": "радним данима {od}–{do}",
-  "nujno.ure.ponSob": "од понедељка до суботе {od}–{do}"
+  "nujno.ure.ponSob": "од понедељка до суботе {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Не шаљи ништа више и не плаћај. Сачувај поруке и блокирај ту особу.",
+  "nujno.linijaNeznano": "Позови {ime}: {stevilka}.",
+  "nujno.ime.otroci": "дечји телефон",
+  "nujno.ime.mladi": "телефон за младе",
+  "nujno.ime.samomor": "телефон за превенцију самоубиства",
+  "nujno.opombaSos": "Позив на бројеве за хитне случајеве је бесплатан.",
+  "nujno.opombaSosMeja": "Позив на бројеве за хитне случајеве је бесплатан. Ова порука ти се не рачуна у питања."
 }

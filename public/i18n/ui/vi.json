@@ -3638,5 +3638,12 @@
   "nujno.nasilje.linijaBrezUr": "Miễn phí: {ime} {stevilka}.",
   "nujno.ure.vedno": "luôn mở cửa",
   "nujno.ure.delavniki": "ngày thường {od}:00–{do}:00",
-  "nujno.ure.ponSob": "thứ Hai đến thứ Bảy {od}:00–{do}:00"
+  "nujno.ure.ponSob": "thứ Hai đến thứ Bảy {od}:00–{do}:00",
+  "nujno.nasilje.izsiljevanje": "Đừng gửi thêm gì nữa và đừng trả tiền. Hãy lưu lại tin nhắn và chặn người đó.",
+  "nujno.linijaNeznano": "Gọi {ime}: {stevilka}.",
+  "nujno.ime.otroci": "đường dây hỗ trợ trẻ em",
+  "nujno.ime.mladi": "đường dây hỗ trợ thanh thiếu niên",
+  "nujno.ime.samomor": "đường dây phòng chống tự tử",
+  "nujno.opombaSos": "Gọi các số khẩn cấp là miễn phí.",
+  "nujno.opombaSosMeja": "Gọi các số khẩn cấp là miễn phí. Tin nhắn này không tính vào số câu hỏi của bạn."
 }

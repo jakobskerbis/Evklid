@@ -36,6 +36,7 @@ export function normalize(text) {
     .replace(/\p{M}/gu, "")
     .normalize("NFC")
     .replace(/./gu, (ch) => CYR[ch] ?? EXTRA[ch] ?? ch)
+    .replace(/[٠-٩۰-۹০-৯०-९]/gu, (d) => String("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹০১২৩৪৫৬৭৮৯०१२३४५६७८९".indexOf(d) % 10))
     .replace(/[^\p{L}\p{N}°.,]+/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -320,12 +321,15 @@ const VROCINA = [
   "發燒", "高烧", "高燒", "熱が", "高熱", "열이", "고열", "ไข้",
 ];
 // Temperatura sama ni znak (»voda ima 42 °C«): šteje le skupaj z osebo (brat, mama, imam …).
-const TEMPERATURA = ["temperatur", "температур", "حرارة", "체온", "体温", "體溫", "ไข้"];
+const TEMPERATURA = ["temperatur", "температур", "حرارة", "حرارت", "درجة حرار", "دمای بدن", "temperatura", "체온", "体温", "體溫", "ไข้"];
 const OSEBA = [
   "brat", "sestr", "mama", "mami", "oči", "ati", "tata", "otrok", "sin ", "hči", "hčer", "babi", "dedi", "imam", "moj", "moja", "mojemu", "prijatel",
   "sošol", "dijete", "dete", "djete", "baka", "deda", "drug", "brother", "sister", "mom", "mum", "dad", "child", "son ", "daughter", "friend",
   "grandma", "grandpa", "i have", "he has", "she has", "my ", "bruder", "schwester", "kind", "ich habe", "mein", "брат", "сестр", "мама", "ребен",
-  "дете",
+  "дете", "hermano", "hermana", "mamá", "papá", "hijo", "hija", "frère", "sœur", "maman", "papa", "fratello", "sorella", "irmão", "irmã",
+  "siostr", "syn ", "córka", "kardeş", "annem", "babam", "oğlum", "kızım", "أخي", "أختي", "أمي", "أبي", "ابني", "ابنتي", "طفلي", "برادر",
+  "خواهر", "مادرم", "پدرم", "بچه", "میرا بھائی", "میری بہن", "मेरा भाई", "मेरी बहन", "anh trai", "em trai", "con tôi", "adik", "kakak",
+  "anak", "弟弟", "哥哥", "妹妹", "姐姐", "孩子", "妈妈", "爸爸", "남동생", "여동생", "엄마", "아빠",
 ];
 // Dojenček + znak bolezni (tudi brez števila).
 const DOJENCEK = [
@@ -420,6 +424,7 @@ const SNOV =
 const OS =
   "(?:brat\\S*|bratec\\S*|sestr\\S*|mam\\S*|mami|oc[ei]\\S*|ati|tat\\S*|ded\\S*|bab\\S*|dojenc\\S*|otrok\\S*|prijatel\\S*|sosol\\S*|beb\\S*|sin|hci|hcer\\S*|dijete|dete|otac|majka|brother|sister|mom|mum|dad|baby|friend|on|ona)";
 const R = (src) => ({ re: new RegExp(`(?:^| )${src}`) });
+const IZS = (src) => ({ ...R(src), izs: true });
 const IZRAZI = {
   zdravje: [
     R(
@@ -439,7 +444,10 @@ const IZRAZI = {
       `(?:pogoltnil\\S*|pojedl?\\S*|spil\\S*|progutao|progutala|swallowed)(?: \\S+){0,4} (?:baterij\\S*|magnet\\S*|cistil\\S*|steklenic\\S* za cisc\\S*|battery|magnet)`,
     ),
   ],
-  stiska: [R(`(?:kms|kys myself)(?=[ ,.]|$)`), R(`se (?:bo|bom|bos|bi|bodo|ce|cu) (?:\\S+ )?ubi(?:l|la|li|jem|jes|t|ti)?(?=[ ,.]|$)`)],
+  stiska: [
+    R(`(?:zelim|hocem|hoces|hoce|bi rad|bi rada|rad bi|rada bi|zelel bi|zelela bi)(?: si)?(?: da bi)? (?:umr|umre|umrl)\\S*`),
+    R(`(?:zelim|hocu|hoću|zelio bih|zeljela bih)(?: da)? (?:umr|umre|umrem)\\S*`),
+    R(`(?:kms|kys myself)(?=[ ,.]|$)`), R(`se (?:bo|bom|bos|bi|bodo|ce|cu) (?:\\S+ )?ubi(?:l|la|li|jem|jes|t|ti)?(?=[ ,.]|$)`)],
   nasilje: [
     // kdo me tepe / pretepa / udari (tudi pretekli čas in vrinjene besede); grožnja »da me bo …«
     R(`me (?:\\S+ ){0,3}(?:tep[aeil]\\S*|pretep\\S*|udar[ijl]\\S*|brc[ae]\\S*|tuku|tukl\\S*|tuc[ae]\\S*|zlorab\\S*|posil\\S*)`),
@@ -449,18 +457,19 @@ const IZRAZI = {
       `(?:dad|mom|mum|father|mother|stepdad|stepmom|brother|he|she|they|uncle|teacher) (?:\\S+ ){0,2}(?:beat|beats|hit|hits|kicked|kicks|punched|punches|slapped|slaps|choked|chokes) me(?=[ ,.]|$)`,
     ),
     // izsiljevanje s slikami (tudi na spletu): slike … ali/drugače … objavim; grozi … objaviti … slike; denar … drugače.
-    R(
+    IZS(
       `(?:slik|fotk|posnet|pics?|photos?|pictures?|nudes?|bilder|fotos?)\\S*(?: \\S+){0,3} (?:ali|al pa|drugace|sicer|ili|or|otherwise|sonst|o)(?: \\S+){0,3} (?:objavim|posljem|razposljem|delim|objavit\\S*|objavil\\S*|objavi[cs]\\S*|posalj[ue]m|post|leak|share|veroffentlich\\S*|publico|pubblico)(?=[ ,.]|$)`,
     ),
-    R(
+    IZS(
       `(?:groz|prijet|pret|threat|droh|amenaz|minacc|menac|amea|ugroz)\\S*(?: \\S+){0,4} (?:objav|posl|razposl|post|leak|share|publi|veroffentl|pubblic|vylo|deli)\\S*(?: \\S+){0,3} (?:slik|fotk|posnet|pics?|photos?|pictures?|nudes?|bild|foto|fotos)\\S*`,
     ),
-    R(`(?:groz|droh|threat)\\S*(?: \\S+){0,3} (?:slik|fotk|pics?|photos?|bilder|fotos)\\S*(?: \\S+){0,2} (?:zu )?(?:objav|post|leak|share|veroffentl)\\S*`),
-    R(`(?:hoce|zahteva|wants|trazi|hoce)(?: \\S+){0,3} (?:evr|eur|denar|money|novc|para|kn)\\S*(?: \\S+){0,3} (?:drugace|sicer|ali|or|otherwise|ili)`),
+    IZS(`(?:groz|droh|threat)\\S*(?: \\S+){0,3} (?:slik|fotk|pics?|photos?|bilder|fotos)\\S*(?: \\S+){0,2} (?:zu )?(?:objav|post|leak|share|veroffentl)\\S*`),
+    IZS(`(?:hoce|zahteva|wants|trazi|hoce)(?: \\S+){0,3} (?:evr|eur|denar|money|novc|para|kn)\\S*(?: \\S+){0,3} (?:drugace|sicer|ali|or|otherwise|ili)`),
   ],
   nevarnost: [
     R(`(?:smrdi|disi|vonja|mirise|smrdi) (?:\\S+ )?(?:po|na|kot) pl[aiu]?n`),
-    R(`v (?:kuhinji|hisi|sobi|stanovanju|bloku|garazi|kleti|kuci|stanu|sobi) gori(?=[ ,.]|$)`),
+    R(`(?:v (?:kuhinji|hisi|sobi|stanovanju|bloku|garazi|kleti|kuci|stanu|sobi|soli)|doma|pri nas|kod kuce|u kuci|u stanu|kod nas) (?:\\S+ )?(?:gori|se kadi|je dim|ima dima)(?=[ ,.]|$)`),
+    R(`gori (?:\\S+ )?(?:doma|pri nas|kod kuce|kod nas)(?=[ ,.]|$)`),
   ],
 };
 const izraz = (vrsta, norms) => norms.some((n) => IZRAZI[vrsta].some((r) => r.re.test(n)));
@@ -488,6 +497,21 @@ function fever(norm, low) {
   return false;
 }
 
+// Izsiljevanje (tudi s slikami ali na spletu): vrsta NASILJE z dodatno vrstico (j potrdil 6. 11., 18:2x).
+const IZSILJEVANJE = compile([
+  "izsiljuj", "izsiljev", "ucjenjuj", "ucenjuj", "blackmail", "sextort", "extort", "erpress", "fait chanter", "chantag", "chantage", "ricatt",
+  "šantaž", "шантаж", "уценув", "vydír", "vydier", "zsarol", "szantaż", "勒索", "ابتزاز", "اخاذی", "=tống tiền", "diperas", "pemerasan", "แบล็กเมล",
+  "恐喝", "협박", "gole slike", "golo sliko", "nude pics", "send nudes", "nacktbilder", "photos nues", "fotos desnud", "foto nud", "fotos nuas",
+  "nagie zdjęcia", "meztelen kép", "裸照", "裸の写真", "나체 사진", "รูปโป๊", "صور عارية",
+]);
+export function izsiljevanje(text) {
+  const low = lower(text);
+  if (!low.trim()) return false;
+  const norm = normalize(text);
+  const norms = [norm, brezPolnil(norm)];
+  return any(IZSILJEVANJE, norms, low) || norms.some((n) => IZRAZI.nasilje.some((r) => r.izs && r.re.test(n)));
+}
+
 /** Vrsta nujnega primera ali null. Stiska in nasilje pred zdravjem (zahtevata drugačen odgovor). */
 export function zaznajNujno(text) {
   const low = lower(text);
@@ -496,7 +520,7 @@ export function zaznajNujno(text) {
   const norms = [norm, brezPolnil(norm)];
   const snov = SNOV.test(norm);
   if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms)) return "stiska";
-  if (any(PATTERNS.nasilje, norms, low, snov) || izraz("nasilje", norms)) return "nasilje";
+  if (any(PATTERNS.nasilje, norms, low, snov) || izraz("nasilje", norms) || izsiljevanje(text)) return "nasilje";
   if (any(PATTERNS.zdravje, norms, low, snov) || izraz("zdravje", norms) || fever(norm, low)) return "zdravje";
   if (any(P_DOJENCEK, norm, low) && any(P_DOJENCEK_ZNAK, norm, low)) return "zdravje";
   if (any(PATTERNS.nevarnost, norms, low, snov) || izraz("nevarnost", norms)) return "nevarnost";
@@ -517,7 +541,7 @@ export const DRZAVE = {
   RS: { sos: "194", gasilci: "193", policija: "192", otroci: { ime: "NADEL", st: "116 111", ure: ["vedno"] } },
   BA: { sos: "124", gasilci: "123", policija: "122", otroci: { ime: "Plavi telefon", st: "080 05 03 05" } },
   MK: { sos: "194", gasilci: "193", policija: "192" },
-  AL: { sos: "112", policija: "129", otroci: { ime: "ALO 116 111", st: "116 111", ure: ["vedno"] } },
+  AL: { sos: "112", policija: "129", otroci: { ime: "ALO", st: "116 111", ure: ["vedno"] } },
   AT: {
     sos: "112",
     policija: "133",
@@ -533,9 +557,20 @@ export const DRZAVE = {
 };
 
 // Država naprave brez poizvedb pri tretjih: najprej časovni pas (Europe/Zagreb …), nato regija jezika (hr-HR).
+// Pasovi držav iz DRZAVE, sosed in vseh šolskih sistemov (public/regions.js); pri drugih pasovih jezik naprave.
 const PAS = {
   "Europe/Ljubljana": "SI", "Europe/Zagreb": "HR", "Europe/Belgrade": "RS", "Europe/Sarajevo": "BA", "Europe/Skopje": "MK",
-  "Europe/Tirane": "AL", "Europe/Vienna": "AT", "Europe/Berlin": "DE", "Europe/Busingen": "DE",
+  "Europe/Tirane": "AL", "Europe/Vienna": "AT", "Europe/Berlin": "DE", "Europe/Busingen": "DE", "Europe/Rome": "IT", "Europe/Budapest": "HU",
+  "Europe/Podgorica": "ME", "Europe/London": "GB", "Europe/Belfast": "GB", "Europe/Zurich": "CH", "Europe/Vaduz": "LI", "Europe/Paris": "FR",
+  "Europe/Monaco": "MC", "Asia/Kolkata": "IN", "Asia/Calcutta": "IN", "Asia/Karachi": "PK", "Asia/Dhaka": "BD", "Asia/Kathmandu": "NP",
+  "Asia/Katmandu": "NP", "Asia/Colombo": "LK", "Africa/Lagos": "NG", "Africa/Accra": "GH", "Africa/Nairobi": "KE", "Africa/Dar_es_Salaam": "TZ",
+  "Africa/Kampala": "UG", "Africa/Kigali": "RW", "Africa/Addis_Ababa": "ET", "Africa/Johannesburg": "ZA", "Africa/Lusaka": "ZM",
+  "Africa/Harare": "ZW", "Africa/Cairo": "EG", "Africa/Dakar": "SN", "Asia/Manila": "PH", "Asia/Jakarta": "ID", "Asia/Makassar": "ID",
+  "Asia/Jayapura": "ID", "Asia/Pontianak": "ID", "Asia/Ho_Chi_Minh": "VN", "Asia/Saigon": "VN", "Asia/Kuala_Lumpur": "MY", "Asia/Kuching": "MY",
+  "Asia/Shanghai": "CN", "Asia/Urumqi": "CN", "Asia/Seoul": "KR", "Asia/Tokyo": "JP", "America/New_York": "US", "America/Chicago": "US",
+  "America/Denver": "US", "America/Los_Angeles": "US", "America/Phoenix": "US", "America/Anchorage": "US", "Pacific/Honolulu": "US",
+  "America/Detroit": "US", "America/Boise": "US", "America/Indiana/Indianapolis": "US", "America/Sao_Paulo": "BR", "America/Fortaleza": "BR",
+  "America/Recife": "BR", "America/Bahia": "BR", "America/Manaus": "BR", "America/Belem": "BR", "America/Cuiaba": "BR",
 };
 export function drzavaNaprave(tz, jeziki) {
   try {
@@ -548,6 +583,23 @@ export function drzavaNaprave(tz, jeziki) {
     if (r && /^[A-Z]{2}$/.test(r)) return r;
   }
   return "";
+}
+
+// Linije iz besedila »help« (public/regions.js): pari ime–številka; številke za nujno pomoč (emergency,
+// police …) so že v vrstici s {sos}. Splošna angleška imena (»Child helpline«) prevede vmesnik.
+const SPLOSNO = [[/^(child|children'?s?) ?(help ?line|line)\b/i, "otroci"], [/^youth (help ?line|counsell?ing)/i, "mladi"], [/^suicide prevention/i, "samomor"]];
+export function linijeIzPomoci(help) {
+  const out = [];
+  for (const part0 of String(help || "").split(",")) {
+    const part = part0.replace(/\([^)]*\)/g, " ").replace(/\s+(or|where available)\b.*$/i, "").trim();
+    if (!part || /^(emergency|police|ambulance|fire|rescue)\b/i.test(part)) continue;
+    let m = part.match(/^(.*?\D)\s*(\+?\d[\d -]*\d|\d+)$/) || part.match(/^(\+?\d[\d -]*\d|\d+)\s+(\D.*)$/);
+    if (!m) continue;
+    const [ime, st] = /^\+?[\d -]+$/.test(m[2]) ? [m[1], m[2]] : [m[2], m[1]];
+    const splosno = SPLOSNO.find(([re]) => re.test(ime.trim()));
+    out.push({ ime: splosno ? [`nujno.ime.${splosno[1]}`, {}] : ime.trim(), st: st.trim() });
+  }
+  return out;
 }
 
 // Številka za nujno pomoč iz besedila »help« (public/regions.js): reševalci pred policijo (pregled C).
@@ -571,13 +623,17 @@ export function stevilke(settings = {}, naprava = "") {
   const d = DRZAVE[drzava];
   if (d) {
     const sosZa = { zdravje: d.sos, stiska: d.sos, nevarnost: d.gasilci || d.sos, nasilje: d.gasilci ? d.policija : d.sos };
-    return { si: false, drzava, faks, sos: d.sos, sosZa, policija: d.policija, linije: { otroci: d.otroci || null, odrasli: d.odrasli || null } };
+    return { si: false, drzava, faks, brezplacno: true, sos: d.sos, sosZa, policija: d.policija, linije: { otroci: d.otroci || null, odrasli: d.odrasli || null } };
   }
-  // Drug šolski sistem ali naprava v državi z vpisanim sistemom: besedilo »help«; sicer Slovenija.
+  // Drug šolski sistem ali naprava v državi z vpisanim sistemom: linije iz »help« (brezplačnost ni preverjena).
   const id = regional ? sys : drzava && drzava !== "SI" && COUNTRY_SYSTEM[drzava];
-  if (!id || !SCHOOL_SYSTEMS[id]) return { si: true, drzava: "SI", faks, sos: "112", policija: "113", otroci: "116 111", odrasli: "116 123" };
-  const help = SCHOOL_SYSTEMS[id].help || "";
-  return { si: false, drzava, faks, sos: izPomoci(help), pomoc: help || null };
+  if (id && SCHOOL_SYSTEMS[id]) {
+    const help = SCHOOL_SYSTEMS[id].help || "";
+    return { si: false, drzava, faks, brezplacno: false, sos: izPomoci(help), tuje: linijeIzPomoci(help) };
+  }
+  // Znana tuja država brez podatkov (npr. telefon v Italiji): samo 112, brez imen slovenskih služb.
+  if (drzava && drzava !== "SI" && /^[A-Z]{2}$/.test(drzava)) return { si: false, drzava, faks, brezplacno: false, sos: "112", tuje: [] };
+  return { si: true, drzava: "SI", faks, brezplacno: true, sos: "112", policija: "113", otroci: "116 111", odrasli: "116 123" };
 }
 
 // Številke v besedilu kot samostojen del od leve proti desni (LRI … PDI): v arabščini, perzijščini in urdujščini
@@ -597,7 +653,17 @@ const ure = (u) => (!u ? null : u[0] === "vedno" ? ["nujno.ure.vedno", {}] : [`n
  * @param {string} vrsta  zdravje | stiska | nasilje | nevarnost
  * @param {object} st     stevilke(settings, naprava)
  */
-export function vrstice(vrsta, st) {
+export function vrstice(vrsta, st, { izsiljevanje = false } = {}) {
+  const v = vrsticeOsnova(vrsta, st);
+  // Izsiljevanje: vrstica takoj za naslovom besedila 3 (j potrdil 6. 11., 18:2x).
+  if (vrsta === "nasilje" && izsiljevanje) v.splice(1, 0, ["nujno.nasilje.izsiljevanje", {}]);
+  return v;
+}
+
+// Opomba pod oknom: »brezplačen« samo, kjer je preverjeno (SI, DRZAVE); drugje samo za številke za nujno pomoč.
+export const opomba = (st, meja) => (st.brezplacno === false ? (meja ? "nujno.opombaSosMeja" : "nujno.opombaSos") : meja ? "nujno.opomba" : "nujno.opombaKratka");
+
+function vrsticeOsnova(vrsta, st) {
   const sos = st.sosZa?.[vrsta] || st.sos;
   const p = { sos, policija: st.policija, otroci: st.otroci, odrasli: st.odrasli, pomoc: st.pomoc };
   const L = (k, extra = {}) => [`nujno.${k}`, { ...p, ...extra }];
@@ -618,13 +684,19 @@ export function vrstice(vrsta, st) {
     }
     return [L("nevarnost.naslov"), L("nevarnost.1"), L("nevarnost.2"), L("nevarnost.3")];
   }
+  if (st.tuje) {
+    const tuja = st.tuje.map((l) => L("linijaNeznano", { ime: l.ime, stevilka: l.st }));
+    if (vrsta === "stiska") return [L("stiska.naslov"), L("stiska.1"), ...tuja, L("stiska.112"), L("stiska.vprasanje")];
+    if (vrsta === "nasilje") return [L("nasilje.naslov"), L("nasilje.1b"), L("nasilje.2"), ...tuja.slice(0, 1)];
+    return [L("nevarnost.naslov"), L("nevarnost.1"), L("nevarnost.2"), L("nevarnost.3")];
+  }
   if (vrsta === "stiska") {
-    const pomoc = !st.si ? (st.pomoc ? [L("stiska.drugje")] : []) : st.faks ? [L("stiska.faks")] : [L("stiska.tom"), L("stiska.sam")];
+    const pomoc = st.faks ? [L("stiska.faks")] : [L("stiska.tom"), L("stiska.sam")];
     return [L("stiska.naslov"), L("stiska.1"), ...pomoc, L("stiska.112"), L("stiska.vprasanje")];
   }
   if (vrsta === "nasilje") {
-    const zadnja = !st.si ? (st.pomoc ? [L("stiska.drugje")] : []) : st.faks ? [L("nasilje.faks")] : [L("nasilje.tom")];
-    return [L("nasilje.naslov"), L(st.si ? "nasilje.1" : "nasilje.1b"), L("nasilje.2"), ...zadnja];
+    const zadnja = st.faks ? [L("nasilje.faks")] : [L("nasilje.tom")];
+    return [L("nasilje.naslov"), L("nasilje.1"), L("nasilje.2"), ...zadnja];
   }
   return [L("nevarnost.naslov"), L("nevarnost.1"), L("nevarnost.2"), L("nevarnost.3")];
 }
@@ -641,7 +713,11 @@ export function klici(vrsta, st) {
     if (vrsta === "nasilje") return [sos, pol, prva?.st].filter(Boolean);
     return [sos];
   }
-  if (!st.si) return [st.sos];
+  if (st.tuje) {
+    if (vrsta === "stiska") return [...st.tuje.map((l) => l.st), sos];
+    if (vrsta === "nasilje") return [sos, ...st.tuje.slice(0, 1).map((l) => l.st)];
+    return [sos];
+  }
   if (vrsta === "stiska") return st.faks ? [st.odrasli, st.sos] : [st.otroci, st.odrasli, st.sos];
   if (vrsta === "nasilje") return st.faks ? [st.sos, st.policija, st.odrasli] : [st.sos, st.policija, st.otroci];
   return [st.sos];

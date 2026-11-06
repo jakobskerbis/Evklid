@@ -3666,5 +3666,12 @@
   "nujno.nasilje.linijaBrezUr": "Бесплатно: {ime} {stevilka}.",
   "nujno.ure.vedno": "секогаш отворено",
   "nujno.ure.delavniki": "работни денови {od}–{do}",
-  "nujno.ure.ponSob": "од понеделник до сабота {od}–{do}"
+  "nujno.ure.ponSob": "од понеделник до сабота {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Не праќај ништо повеќе и не плаќај. Зачувај ги пораките и блокирај ја личноста.",
+  "nujno.linijaNeznano": "Јави се на {ime}: {stevilka}.",
+  "nujno.ime.otroci": "детски телефон",
+  "nujno.ime.mladi": "телефон за млади",
+  "nujno.ime.samomor": "телефон за превенција од самоубиство",
+  "nujno.opombaSos": "Повикот на броевите за итни случаи е бесплатен.",
+  "nujno.opombaSosMeja": "Повикот на броевите за итни случаи е бесплатен. Оваа порака не ти се брои во прашањата."
 }

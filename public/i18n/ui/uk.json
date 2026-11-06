@@ -3734,5 +3734,12 @@
   "nujno.nasilje.linijaBrezUr": "Безкоштовно: {ime} {stevilka}.",
   "nujno.ure.vedno": "працює завжди",
   "nujno.ure.delavniki": "у робочі дні {od}–{do}",
-  "nujno.ure.ponSob": "з понеділка по суботу {od}–{do}"
+  "nujno.ure.ponSob": "з понеділка по суботу {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Більше нічого не надсилай і не плати. Збережи повідомлення і заблокуй цю людину.",
+  "nujno.linijaNeznano": "Зателефонуй: {ime}, {stevilka}.",
+  "nujno.ime.otroci": "дитяча лінія довіри",
+  "nujno.ime.mladi": "молодіжна лінія довіри",
+  "nujno.ime.samomor": "лінія запобігання самогубствам",
+  "nujno.opombaSos": "Дзвінки на номери екстрених служб безкоштовні.",
+  "nujno.opombaSosMeja": "Дзвінки на номери екстрених служб безкоштовні. Це повідомлення не рахується у твоїх запитаннях."
 }

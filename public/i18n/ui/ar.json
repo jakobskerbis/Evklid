@@ -3776,8 +3776,8 @@
   "nujno.stiska.naslov": "أنا أسمعك. أحسنت حين كتبت هذا. لست وحدك.",
   "nujno.stiska.1": "من فضلك أخبر الآن شخصًا بالغًا بقربك أو شخصًا تثق به.",
   "nujno.stiska.tom": "اتصل بهاتف TOM ‏{otroci} (مجانًا، يوميًا من 12 ظهرًا حتى 8 مساءً).",
-  "nujno.stiska.sam": "في الأوقات الأخرى: {odrasli} (Samarijan، مفتوح دائمًا).",
-  "nujno.stiska.faks": "اتصل بـ {odrasli} (Samarijan، مفتوح دائمًا) أو بمركز الإرشاد في جامعتك.",
+  "nujno.stiska.sam": "في الأوقات الأخرى: {odrasli} (ساماريان، مفتوح دائمًا).",
+  "nujno.stiska.faks": "اتصل بـ {odrasli} (ساماريان، مفتوح دائمًا) أو بمركز الإرشاد في جامعتك.",
   "nujno.stiska.drugje": "أرقام المساعدة: {pomoc}.",
   "nujno.stiska.112": "إذا كنت مصابًا أو في خطر الآن، اتصل بـ {sos}.",
   "nujno.stiska.vprasanje": "هل يوجد أحد معك الآن؟",
@@ -3786,7 +3786,7 @@
   "nujno.nasilje.1b": "إذا كنت في خطر الآن، اتصل بـ {sos}.",
   "nujno.nasilje.2": "أخبر شخصًا بالغًا تثق به: معلمًا، أو المرشد المدرسي، أو أحد والديك غير المتورط.",
   "nujno.nasilje.tom": "مجاني ودون ذكر اسمك: هاتف TOM ‏{otroci} (يوميًا من 12 ظهرًا حتى 8 مساءً).",
-  "nujno.nasilje.faks": "مجاني: {odrasli} (Samarijan، مفتوح دائمًا).",
+  "nujno.nasilje.faks": "مجاني: {odrasli} (ساماريان، مفتوح دائمًا).",
   "nujno.nevarnost.naslov": "أولًا اذهب إلى مكان آمن.",
   "nujno.nevarnost.1": "اخرج فورًا وخذ الآخرين معك إن استطعت. لا تعد لأخذ أغراضك.",
   "nujno.nevarnost.2": "عندما تصبح في الخارج، اتصل بـ {sos} أو اطلب من شخص بالغ أن يتصل.",
@@ -3798,5 +3798,12 @@
   "nujno.nasilje.linijaBrezUr": "مجاني: {ime} ‏{stevilka}.",
   "nujno.ure.vedno": "مفتوح دائمًا",
   "nujno.ure.delavniki": "أيام العمل من {od}:00 إلى {do}:00",
-  "nujno.ure.ponSob": "من الاثنين إلى السبت من {od}:00 إلى {do}:00"
+  "nujno.ure.ponSob": "من الاثنين إلى السبت من {od}:00 إلى {do}:00",
+  "nujno.nasilje.izsiljevanje": "لا ترسل أي شيء آخر ولا تدفع. احفظ الرسائل واحظر هذا الشخص.",
+  "nujno.linijaNeznano": "اتصل بـ{ime}: ‏{stevilka}.",
+  "nujno.ime.otroci": "خط مساعدة الأطفال",
+  "nujno.ime.mladi": "خط مساعدة الشباب",
+  "nujno.ime.samomor": "خط الوقاية من الانتحار",
+  "nujno.opombaSos": "الاتصال بأرقام الطوارئ مجاني.",
+  "nujno.opombaSosMeja": "الاتصال بأرقام الطوارئ مجاني. هذه الرسالة لا تُحسب من أسئلتك."
 }

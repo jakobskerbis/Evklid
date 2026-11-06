@@ -3728,5 +3728,12 @@
   "nujno.nasilje.linijaBrezUr": "Zdarma: {ime} {stevilka}.",
   "nujno.ure.vedno": "vždy otevřeno",
   "nujno.ure.delavniki": "v pracovní dny {od}–{do}",
-  "nujno.ure.ponSob": "od pondělí do soboty {od}–{do}"
+  "nujno.ure.ponSob": "od pondělí do soboty {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Už nic neposílej a neplať. Ulož si zprávy a toho člověka zablokuj.",
+  "nujno.linijaNeznano": "Zavolej na {ime}: {stevilka}.",
+  "nujno.ime.otroci": "linku pro děti",
+  "nujno.ime.mladi": "linku pro mladé",
+  "nujno.ime.samomor": "linku prevence sebevražd",
+  "nujno.opombaSos": "Volání na čísla tísňového volání je zdarma.",
+  "nujno.opombaSosMeja": "Volání na čísla tísňového volání je zdarma. Tato zpráva se ti nepočítá do otázek."
 }

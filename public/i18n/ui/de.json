@@ -3666,5 +3666,12 @@
   "nujno.nasilje.linijaBrezUr": "Kostenlos: {ime} {stevilka}.",
   "nujno.ure.vedno": "immer erreichbar",
   "nujno.ure.delavniki": "werktags {od}–{do} Uhr",
-  "nujno.ure.ponSob": "Montag bis Samstag {od}–{do} Uhr"
+  "nujno.ure.ponSob": "Montag bis Samstag {od}–{do} Uhr",
+  "nujno.nasilje.izsiljevanje": "Schick nichts mehr und zahl nichts. Speichere die Nachrichten und blockiere die Person.",
+  "nujno.linijaNeznano": "Ruf {ime} an: {stevilka}.",
+  "nujno.ime.otroci": "das Kinder- und Jugendtelefon",
+  "nujno.ime.mladi": "das Jugendtelefon",
+  "nujno.ime.samomor": "die Suizidpräventions-Hotline",
+  "nujno.opombaSos": "Anrufe bei Notrufnummern sind kostenlos.",
+  "nujno.opombaSosMeja": "Anrufe bei Notrufnummern sind kostenlos. Diese Nachricht zählt nicht zu deinen Fragen."
 }

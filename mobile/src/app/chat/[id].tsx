@@ -100,6 +100,7 @@ export default function Chat() {
         }
         if (!n?.vrsta) return;
         nujnoShown = true;
+        n = { ...n, izs: n.izs ?? !!lokalnoNujno(msgText)?.izs };
         setMessages((all) => {
           const i = all.findIndex((m) => m.id === reply.id);
           const item = nujnoMsg(n, meja);

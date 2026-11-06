@@ -3666,5 +3666,12 @@
   "nujno.nasilje.linijaBrezUr": "Free: {ime} {stevilka}.",
   "nujno.ure.vedno": "always open",
   "nujno.ure.delavniki": "weekdays {od}:00–{do}:00",
-  "nujno.ure.ponSob": "Monday to Saturday {od}:00–{do}:00"
+  "nujno.ure.ponSob": "Monday to Saturday {od}:00–{do}:00",
+  "nujno.nasilje.izsiljevanje": "Do not send anything else and do not pay. Save the messages and block the person.",
+  "nujno.linijaNeznano": "Call {ime}: {stevilka}.",
+  "nujno.ime.otroci": "the children's helpline",
+  "nujno.ime.mladi": "the youth helpline",
+  "nujno.ime.samomor": "the suicide prevention line",
+  "nujno.opombaSos": "Calls to emergency numbers are free.",
+  "nujno.opombaSosMeja": "Calls to emergency numbers are free. This message does not count towards your questions."
 }

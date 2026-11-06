@@ -3664,5 +3664,12 @@
   "nujno.nasilje.linijaBrezUr": "Ücretsiz: {ime} {stevilka}.",
   "nujno.ure.vedno": "her zaman açık",
   "nujno.ure.delavniki": "hafta içi {od}.00–{do}.00",
-  "nujno.ure.ponSob": "pazartesiden cumartesiye {od}.00–{do}.00"
+  "nujno.ure.ponSob": "pazartesiden cumartesiye {od}.00–{do}.00",
+  "nujno.nasilje.izsiljevanje": "Artık hiçbir şey gönderme ve para ödeme. Mesajları sakla ve kişiyi engelle.",
+  "nujno.linijaNeznano": "Ara: {ime}, {stevilka}.",
+  "nujno.ime.otroci": "çocuk yardım hattı",
+  "nujno.ime.mladi": "gençlik hattı",
+  "nujno.ime.samomor": "intiharı önleme hattı",
+  "nujno.opombaSos": "Acil durum numaralarını aramak ücretsizdir.",
+  "nujno.opombaSosMeja": "Acil durum numaralarını aramak ücretsizdir. Bu mesaj sorularından sayılmaz."
 }

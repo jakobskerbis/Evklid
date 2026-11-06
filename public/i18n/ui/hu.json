@@ -3664,5 +3664,12 @@
   "nujno.nasilje.linijaBrezUr": "Ingyenes: {ime} {stevilka}.",
   "nujno.ure.vedno": "mindig elérhető",
   "nujno.ure.delavniki": "hétköznap {od}–{do} óra",
-  "nujno.ure.ponSob": "hétfőtől szombatig {od}–{do} óra"
+  "nujno.ure.ponSob": "hétfőtől szombatig {od}–{do} óra",
+  "nujno.nasilje.izsiljevanje": "Ne küldj többet semmit, és ne fizess. Mentsd el az üzeneteket, és tiltsd le az illetőt.",
+  "nujno.linijaNeznano": "Hívd: {ime}, {stevilka}.",
+  "nujno.ime.otroci": "gyermekvonal",
+  "nujno.ime.mladi": "ifjúsági vonal",
+  "nujno.ime.samomor": "öngyilkosság-megelőzési vonal",
+  "nujno.opombaSos": "A segélyhívó számok hívása ingyenes.",
+  "nujno.opombaSosMeja": "A segélyhívó számok hívása ingyenes. Ez az üzenet nem számít bele a kérdéseidbe."
 }

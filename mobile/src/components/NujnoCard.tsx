@@ -4,17 +4,17 @@
 import React from "react";
 import { Linking, Pressable, Text, View } from "react-native";
 import { getCalendars, getLocales } from "expo-localization";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj } from "../../../public/nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "../../../public/nujno.js";
 import { t } from "@/lib/i18n";
 import { radius, useTheme } from "@/lib/theme";
 import { Icon } from "@/components/ui";
 
-export type Nujno = { vrsta: string };
+export type Nujno = { vrsta: string; izs?: boolean };
 
 // Lokalni zaznavalnik brez AI (strošek 0): takoj ob pošiljanju, brez povezave in ob napaki.
 export const lokalnoNujno = (text?: string): Nujno | null => {
   const vrsta = text ? (zaznajNujno(text) as string | null) : null;
-  return vrsta ? { vrsta } : null;
+  return vrsta ? { vrsta, izs: !!izsiljevanje(text) } : null;
 };
 
 function napravaDrzava(): string {
@@ -26,17 +26,18 @@ function napravaDrzava(): string {
 }
 
 type Line = [string, Record<string, any>];
-const tr = ([k, p]: Line) => t(k, { ...izoliraj(p), ure: p.ure ? t(p.ure[0], p.ure[1]) : "" });
+// Parameter [ključ, parametri] (ure, splošno ime linije) najprej prevedemo.
+const tr = ([k, p]: Line) =>
+  t(k, Object.fromEntries(Object.entries(izoliraj(p) as Record<string, any>).map(([a, v]) => [a, Array.isArray(v) ? t(v[0], v[1]) : (v ?? "")])));
 
 export function NujnoCard({ n, settings, meja, onClose }: { n: Nujno; settings?: Record<string, any>; meja?: boolean; onClose: () => void }) {
   const th = useTheme();
   const st = stevilke(settings || {}, napravaDrzava());
-  const [head, ...rest] = vrstice(n.vrsta, st) as Line[];
+  const [head, ...rest] = vrstice(n.vrsta, st, { izsiljevanje: !!n.izs }) as Line[];
   const calls = (klici(n.vrsta, st) as string[]).filter(Boolean);
   return (
     <View
       accessibilityRole="alert"
-      accessibilityLabel={t("nujno.oznaka")}
       style={{ alignSelf: "stretch", backgroundColor: th.surface, borderRadius: radius.card, borderWidth: 2, borderColor: th.warm, paddingVertical: 14, paddingStart: 16, paddingEnd: 52, gap: 4 }}
     >
       <Pressable
@@ -67,7 +68,7 @@ export function NujnoCard({ n, settings, meja, onClose }: { n: Nujno; settings?:
           </Pressable>
         ))}
       </View>
-      <Text style={{ color: th.muted, fontSize: 13, marginTop: 6 }}>{t(meja ? "nujno.opomba" : "nujno.opombaKratka")}</Text>
+      <Text style={{ color: th.muted, fontSize: 13, marginTop: 6 }}>{t(opomba(st, !!meja))}</Text>
     </View>
   );
 }

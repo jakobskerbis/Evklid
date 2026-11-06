@@ -3666,5 +3666,12 @@
   "nujno.nasilje.linijaBrezUr": "Falas: {ime} {stevilka}.",
   "nujno.ure.vedno": "gjithmonë e hapur",
   "nujno.ure.delavniki": "ditëve të punës {od}–{do}",
-  "nujno.ure.ponSob": "nga e hëna deri të shtunën {od}–{do}"
+  "nujno.ure.ponSob": "nga e hëna deri të shtunën {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Mos dërgo asgjë më dhe mos paguaj. Ruaji mesazhet dhe bllokoje personin.",
+  "nujno.linijaNeznano": "Telefono {ime}: {stevilka}.",
+  "nujno.ime.otroci": "linjën për fëmijë",
+  "nujno.ime.mladi": "linjën për të rinjtë",
+  "nujno.ime.samomor": "linjën për parandalimin e vetëvrasjes",
+  "nujno.opombaSos": "Thirrja në numrat e urgjencës është falas.",
+  "nujno.opombaSosMeja": "Thirrja në numrat e urgjencës është falas. Ky mesazh nuk të llogaritet te pyetjet."
 }

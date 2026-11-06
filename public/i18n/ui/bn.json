@@ -3664,5 +3664,12 @@
   "nujno.nasilje.linijaBrezUr": "বিনামূল্যে: {ime} {stevilka}।",
   "nujno.ure.vedno": "সবসময় খোলা",
   "nujno.ure.delavniki": "কর্মদিবসে {od}:00–{do}:00",
-  "nujno.ure.ponSob": "সোমবার থেকে শনিবার {od}:00–{do}:00"
+  "nujno.ure.ponSob": "সোমবার থেকে শনিবার {od}:00–{do}:00",
+  "nujno.nasilje.izsiljevanje": "আর কিছু পাঠিও না এবং টাকা দিও না। বার্তাগুলো সংরক্ষণ করো এবং লোকটিকে ব্লক করো।",
+  "nujno.linijaNeznano": "{ime}-এ ফোন করো: {stevilka}।",
+  "nujno.ime.otroci": "শিশুদের হেল্পলাইন",
+  "nujno.ime.mladi": "তরুণদের হেল্পলাইন",
+  "nujno.ime.samomor": "আত্মহত্যা প্রতিরোধ হেল্পলাইন",
+  "nujno.opombaSos": "জরুরি নম্বরে ফোন করা বিনামূল্যে।",
+  "nujno.opombaSosMeja": "জরুরি নম্বরে ফোন করা বিনামূল্যে। এই বার্তাটি তোমার প্রশ্নের মধ্যে গোনা হবে না।"
 }

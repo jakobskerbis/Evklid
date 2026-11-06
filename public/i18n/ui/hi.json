@@ -3664,5 +3664,12 @@
   "nujno.nasilje.linijaBrezUr": "मुफ़्त: {ime} {stevilka}।",
   "nujno.ure.vedno": "हमेशा खुला",
   "nujno.ure.delavniki": "कामकाजी दिनों में {od}:00–{do}:00",
-  "nujno.ure.ponSob": "सोमवार से शनिवार {od}:00–{do}:00"
+  "nujno.ure.ponSob": "सोमवार से शनिवार {od}:00–{do}:00",
+  "nujno.nasilje.izsiljevanje": "अब कुछ भी मत भेजो और पैसे मत दो। संदेश सँभालकर रखो और उस व्यक्ति को ब्लॉक करो।",
+  "nujno.linijaNeznano": "{ime} को कॉल करो: {stevilka}।",
+  "nujno.ime.otroci": "बच्चों की हेल्पलाइन",
+  "nujno.ime.mladi": "युवाओं की हेल्पलाइन",
+  "nujno.ime.samomor": "आत्महत्या रोकथाम हेल्पलाइन",
+  "nujno.opombaSos": "आपातकालीन नंबरों पर कॉल मुफ़्त है।",
+  "nujno.opombaSosMeja": "आपातकालीन नंबरों पर कॉल मुफ़्त है। यह संदेश तुम्हारे सवालों में नहीं गिना जाएगा।"
 }

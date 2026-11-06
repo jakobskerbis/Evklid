@@ -3671,5 +3671,12 @@
   "nujno.nasilje.linijaBrezUr": "Grátis: {ime} {stevilka}.",
   "nujno.ure.vedno": "sempre aberto",
   "nujno.ure.delavniki": "dias úteis das {od} às {do} h",
-  "nujno.ure.ponSob": "de segunda a sábado das {od} às {do} h"
+  "nujno.ure.ponSob": "de segunda a sábado das {od} às {do} h",
+  "nujno.nasilje.izsiljevanje": "Não envies mais nada e não pagues. Guarda as mensagens e bloqueia a pessoa.",
+  "nujno.linijaNeznano": "Liga para {ime}: {stevilka}.",
+  "nujno.ime.otroci": "a linha de apoio à criança",
+  "nujno.ime.mladi": "a linha para jovens",
+  "nujno.ime.samomor": "a linha de prevenção do suicídio",
+  "nujno.opombaSos": "As chamadas para números de emergência são gratuitas.",
+  "nujno.opombaSosMeja": "As chamadas para números de emergência são gratuitas. Esta mensagem não conta para as tuas perguntas."
 }

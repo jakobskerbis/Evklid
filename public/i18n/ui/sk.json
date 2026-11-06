@@ -3732,5 +3732,12 @@
   "nujno.nasilje.linijaBrezUr": "Zadarmo: {ime} {stevilka}.",
   "nujno.ure.vedno": "vždy otvorené",
   "nujno.ure.delavniki": "v pracovné dni {od}–{do}",
-  "nujno.ure.ponSob": "od pondelka do soboty {od}–{do}"
+  "nujno.ure.ponSob": "od pondelka do soboty {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Už nič neposielaj a neplať. Ulož si správy a tú osobu zablokuj.",
+  "nujno.linijaNeznano": "Zavolaj na {ime}: {stevilka}.",
+  "nujno.ime.otroci": "linku pre deti",
+  "nujno.ime.mladi": "linku pre mladých",
+  "nujno.ime.samomor": "linku prevencie samovrážd",
+  "nujno.opombaSos": "Volanie na čísla tiesňového volania je zadarmo.",
+  "nujno.opombaSosMeja": "Volanie na čísla tiesňového volania je zadarmo. Táto správa sa ti nepočíta do otázok."
 }

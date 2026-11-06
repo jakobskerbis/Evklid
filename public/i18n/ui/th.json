@@ -3638,5 +3638,12 @@
   "nujno.nasilje.linijaBrezUr": "ฟรี: {ime} {stevilka}",
   "nujno.ure.vedno": "เปิดตลอดเวลา",
   "nujno.ure.delavniki": "วันทำการ {od}:00–{do}:00 น.",
-  "nujno.ure.ponSob": "วันจันทร์ถึงวันเสาร์ {od}:00–{do}:00 น."
+  "nujno.ure.ponSob": "วันจันทร์ถึงวันเสาร์ {od}:00–{do}:00 น.",
+  "nujno.nasilje.izsiljevanje": "อย่าส่งอะไรไปอีกและอย่าจ่ายเงิน เก็บข้อความไว้และบล็อกคนนั้น",
+  "nujno.linijaNeznano": "โทรหา {ime}: {stevilka}",
+  "nujno.ime.otroci": "สายด่วนเด็ก",
+  "nujno.ime.mladi": "สายด่วนเยาวชน",
+  "nujno.ime.samomor": "สายด่วนป้องกันการฆ่าตัวตาย",
+  "nujno.opombaSos": "การโทรหาเบอร์ฉุกเฉินไม่เสียค่าใช้จ่าย",
+  "nujno.opombaSosMeja": "การโทรหาเบอร์ฉุกเฉินไม่เสียค่าใช้จ่าย ข้อความนี้ไม่นับรวมในคำถามของคุณ"
 }

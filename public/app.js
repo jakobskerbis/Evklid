@@ -5,7 +5,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion } from "./i18n.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj } from "./nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "./nujno.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -1050,10 +1050,14 @@ async function send(text, { deep = false, image: attached = null } = {}) {
   let nujnoEl = null;
   const showNujno = (n, opts = {}) => {
     if (nujnoEl) {
-      if (opts.meja) nujnoEl.querySelector(".nujno-opomba").textContent = t("nujno.opomba");
+      if (opts.meja) {
+        nujnoEl.querySelector(".nujno-opomba").textContent = t(opomba(nujnoEl._st, true));
+        nujnoNaVrh(nujnoEl);
+      }
       return;
     }
-    if (n?.vrsta) nujnoEl = addNujno(n, opts);
+    // Izsiljevanje prepozna vmesnik sam iz besedila (tudi, ko vrsto pošlje AI pregled).
+    if (n?.vrsta) nujnoEl = addNujno({ ...n, izs: izsiljevanje(text) }, opts);
   };
   state.sending = true;
   $("#send").disabled = true;
@@ -1084,7 +1088,9 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
       bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
-      if (atBottom) box.scrollTop = box.scrollHeight;
+      // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
+      const vrh = nujnoEl?.isConnected ? box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8 : Infinity;
+      if (atBottom) box.scrollTop = Math.min(box.scrollHeight, vrh);
     };
     paint("");
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
@@ -1234,7 +1240,13 @@ async function send(text, { deep = false, image: attached = null } = {}) {
 // Lokalni zaznavalnik v brskalniku: brez povezave in kot rezerva, ko strežnik ne pošlje vrste.
 function lokalnoNujno(text) {
   const vrsta = zaznajNujno(text);
-  return vrsta ? { vrsta } : null;
+  return vrsta ? { vrsta, izs: izsiljevanje(text) } : null;
+}
+// Okno na vrh vidnega dela klepeta, razen če je učenec seznam sam odmaknil navzgor (pregled B2).
+function nujnoNaVrh(el) {
+  const box = $("#messages");
+  if (!el?.isConnected || el._odmaknjen?.()) return;
+  el.scrollIntoView?.({ block: "start" });
 }
 // Številke v besedilu krepko (kartica: **112**), pregled B.
 function krepke(html, p) {
@@ -1251,26 +1263,39 @@ function addNujno(n, { before = null, meja = false } = {}) {
   const el = document.createElement("section");
   el.className = `msg nujno-card nujno-${n.vrsta}`;
   el.setAttribute("role", "alert");
-  el.setAttribute("aria-label", t("nujno.oznaka"));
+  // Bralnik zaslona prebere naslov in vsebino (aria-labelledby, ne aria-label: pregled B2).
+  const hid = `nujno-h-${Date.now()}`;
+  el.setAttribute("aria-labelledby", hid);
   // Številke vedno tu: strežnik ne pozna države naprave (učenec brez izbrane države, telefon v HR …).
   const st = stevilke(state.student?.settings, drzavaNaprave());
-  const tr = ([k, p]) => t(k, { ...izoliraj(p), ure: p.ure ? t(p.ure[0], p.ure[1]) : "" });
-  const [head, ...rest] = vrstice(n.vrsta, st);
+  // Parameter [ključ, parametri] (ure, splošno ime linije) najprej prevedemo.
+  const tr = ([k, p]) => t(k, Object.fromEntries(Object.entries(izoliraj(p)).map(([a, v]) => [a, Array.isArray(v) ? t(v[0], v[1]) : v ?? ""])));
+  const [head, ...rest] = vrstice(n.vrsta, st, { izsiljevanje: !!n.izs });
   const calls = klici(n.vrsta, st).filter(Boolean);
   el.innerHTML =
     `<button type="button" class="nujno-zapri" aria-label="${escapeHtml(t("nujno.zapri"))}">${icon("x")}</button>` +
-    `<h3>${escapeHtml(tr(head))}</h3>` +
+    `<h3 id="${hid}">${escapeHtml(tr(head))}</h3>` +
     rest.map((v) => `<p>${krepke(escapeHtml(tr(v)), v[1])}</p>`).join("") +
     `<div class="nujno-klici">${calls.map((c) => `<a class="nujno-klic" href="${telHref(c)}">${icon("phone")} ${escapeHtml(t("nujno.klic", izoliraj({ n: c })))}</a>`).join("")}</div>` +
-    `<p class="nujno-opomba">${escapeHtml(t(meja ? "nujno.opomba" : "nujno.opombaKratka"))}</p>`;
-  el.querySelector(".nujno-zapri").addEventListener("click", () => el.remove());
-  // Esc zapre okno, ko je fokus v njem (pregled B); fokusa ne premaknemo, da tipkovnica telefona ostane odprta.
+    `<p class="nujno-opomba">${escapeHtml(t(opomba(st, meja)))}</p>`;
+  el._st = st;
+  // Po zaprtju fokus v polje za vnos (samo z miško in tipkovnico: na telefonu se tipkovnica ne odpre sama).
+  const zapri = () => {
+    el.remove();
+    if (!matchMedia("(hover: none)").matches) $("#input")?.focus();
+  };
+  el.querySelector(".nujno-zapri").addEventListener("click", zapri);
+  // Esc zapre okno, ko je fokus v njem (pregled B).
   el.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") el.remove();
+    if (e.key === "Escape") zapri();
   });
+  // Učenec je seznam sam pomaknil navzgor (bere starejša sporočila): okna ne vlečemo na vrh.
+  const top0 = box.scrollTop;
+  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  el._odmaknjen = () => !atBottom && box.scrollTop < top0 - 40;
   if (before?.isConnected) box.insertBefore(el, before);
   else box.appendChild(el);
-  el.scrollIntoView?.({ block: "nearest" });
+  nujnoNaVrh(el);
   return el;
 }
 

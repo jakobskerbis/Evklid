@@ -3700,5 +3700,12 @@
   "nujno.nasilje.linijaBrezUr": "Gratuit: {ime} {stevilka}.",
   "nujno.ure.vedno": "mereu deschis",
   "nujno.ure.delavniki": "în zilele lucrătoare {od}–{do}",
-  "nujno.ure.ponSob": "de luni până sâmbătă {od}–{do}"
+  "nujno.ure.ponSob": "de luni până sâmbătă {od}–{do}",
+  "nujno.nasilje.izsiljevanje": "Nu mai trimite nimic și nu plăti. Salvează mesajele și blochează persoana.",
+  "nujno.linijaNeznano": "Sună la {ime}: {stevilka}.",
+  "nujno.ime.otroci": "linia pentru copii",
+  "nujno.ime.mladi": "linia pentru tineri",
+  "nujno.ime.samomor": "linia de prevenire a sinuciderii",
+  "nujno.opombaSos": "Apelurile la numerele de urgență sunt gratuite.",
+  "nujno.opombaSosMeja": "Apelurile la numerele de urgență sunt gratuite. Acest mesaj nu se numără la întrebările tale."
 }

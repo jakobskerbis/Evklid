@@ -3664,5 +3664,12 @@
   "nujno.nasilje.linijaBrezUr": "Bure: {ime} {stevilka}.",
   "nujno.ure.vedno": "wazi wakati wote",
   "nujno.ure.delavniki": "siku za kazi kuanzia {od}:00 hadi {do}:00",
-  "nujno.ure.ponSob": "Jumatatu hadi Jumamosi kuanzia {od}:00 hadi {do}:00"
+  "nujno.ure.ponSob": "Jumatatu hadi Jumamosi kuanzia {od}:00 hadi {do}:00",
+  "nujno.nasilje.izsiljevanje": "Usitume kitu kingine chochote na usilipe. Hifadhi ujumbe na umzuie mtu huyo.",
+  "nujno.linijaNeznano": "Piga simu {ime}: {stevilka}.",
+  "nujno.ime.otroci": "simu ya msaada kwa watoto",
+  "nujno.ime.mladi": "simu ya msaada kwa vijana",
+  "nujno.ime.samomor": "simu ya kuzuia kujiua",
+  "nujno.opombaSos": "Kupiga simu kwa namba za dharura ni bure.",
+  "nujno.opombaSosMeja": "Kupiga simu kwa namba za dharura ni bure. Ujumbe huu hauhesabiwi kwenye maswali yako."
 }

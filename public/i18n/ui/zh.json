@@ -3638,5 +3638,12 @@
   "nujno.nasilje.linijaBrezUr": "免费：{ime} {stevilka}。",
   "nujno.ure.vedno": "24 小时开放",
   "nujno.ure.delavniki": "工作日 {od}:00–{do}:00",
-  "nujno.ure.ponSob": "周一至周六 {od}:00–{do}:00"
+  "nujno.ure.ponSob": "周一至周六 {od}:00–{do}:00",
+  "nujno.nasilje.izsiljevanje": "不要再发送任何东西，也不要付钱。保存消息，并拉黑这个人。",
+  "nujno.linijaNeznano": "拨打{ime}：{stevilka}。",
+  "nujno.ime.otroci": "儿童求助热线",
+  "nujno.ime.mladi": "青少年热线",
+  "nujno.ime.samomor": "自杀预防热线",
+  "nujno.opombaSos": "拨打紧急电话免费。",
+  "nujno.opombaSosMeja": "拨打紧急电话免费。这条消息不计入你的提问次数。"
 }

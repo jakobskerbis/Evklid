@@ -3638,5 +3638,12 @@
   "nujno.nasilje.linijaBrezUr": "Gratis: {ime} {stevilka}.",
   "nujno.ure.vedno": "selalu buka",
   "nujno.ure.delavniki": "hari kerja pukul {od}.00–{do}.00",
-  "nujno.ure.ponSob": "Senin sampai Sabtu pukul {od}.00–{do}.00"
+  "nujno.ure.ponSob": "Senin sampai Sabtu pukul {od}.00–{do}.00",
+  "nujno.nasilje.izsiljevanje": "Jangan kirim apa pun lagi dan jangan bayar. Simpan pesannya dan blokir orang itu.",
+  "nujno.linijaNeznano": "Telepon {ime}: {stevilka}.",
+  "nujno.ime.otroci": "layanan telepon anak",
+  "nujno.ime.mladi": "layanan telepon remaja",
+  "nujno.ime.samomor": "layanan pencegahan bunuh diri",
+  "nujno.opombaSos": "Panggilan ke nomor darurat gratis.",
+  "nujno.opombaSosMeja": "Panggilan ke nomor darurat gratis. Pesan ini tidak dihitung sebagai pertanyaanmu."
 }

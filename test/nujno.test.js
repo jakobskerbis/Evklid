@@ -497,7 +497,8 @@ test("številke po državi: preverjene linije, imena samo v svoji državi, drža
   // Država naprave: časovni pas pred jezikom, brez poizvedb na splet.
   assert.equal(drzavaNaprave("Europe/Belgrade", ["en-US"]), "RS");
   assert.equal(drzavaNaprave("", ["bs-BA"]), "BA");
-  assert.equal(drzavaNaprave("America/Chicago", ["sl-SI"]), "SI");
+  assert.equal(drzavaNaprave("America/Chicago", ["sl-SI"]), "US"); // pas pred jezikom (pregled B2)
+  assert.equal(drzavaNaprave("Europe/Madrid", ["sl-SI"]), "SI"); // pas brez vnosa: jezik naprave
   // Linije v tabeli so brezplačne (opomba »klic je brezplačen«).
   for (const [d, x] of Object.entries(DRZAVE)) for (const l of [x.otroci, x.odrasli].filter(Boolean)) assert.match(l.st, /^(116 ?1(11|23)|080|0800|14[27])/, d);
 });
@@ -518,7 +519,48 @@ test("številke se v pisavah od desne proti levi ne obrnejo (»116 111« ostane 
   assert.deepEqual(izoliraj({ otroci: "116 111", ime: "TOM", ure: null }), { otroci: "⁦116 111⁩", ime: "TOM", ure: null });
   for (const f of ["../public/app.js", "../mobile/src/components/NujnoCard.tsx"]) {
     const src = readFileSync(new URL(f, import.meta.url), "utf8");
-    assert.match(src, /\.\.\.izoliraj\(p\)/, f);
+    assert.match(src, /Object\.entries\(izoliraj\(p\)/, f);
     assert.match(src, /t\("nujno\.klic", izoliraj\(\{ n: c \}\)\)/, f);
   }
+});
+
+test("izsiljevanje: vrstica pod NASILJE (j potrdil 6. 11.), navodilo za Haiku, tuje države brez angleških nizov (pregled B2)", async () => {
+  const { izsiljevanje } = await import("../public/nujno.js");
+  const { opomba, linijeIzPomoci } = await import("../public/nujno.js");
+  for (const s of ["pošlji več slik ali jih objavim", "nekdo me izsiljuje z mojimi slikami", "he said send more pics or ill post them", "prijeti da će objaviti moje slike"]) {
+    assert.equal(zaznajNujno(s), "nasilje", s);
+    assert.equal(izsiljevanje(s), true, s);
+  }
+  assert.equal(izsiljevanje("mama me tepe"), false);
+  const st = stevilke({});
+  const v = vrstice("nasilje", st, { izsiljevanje: true });
+  assert.equal(v[1][0], "nujno.nasilje.izsiljevanje");
+  assert.equal(SL["nujno.nasilje.izsiljevanje"], "Ne pošiljaj ničesar več in ne plačaj. Shrani sporočila in blokiraj osebo.");
+  assert.ok(!vrstice("nasilje", st).some(([k]) => k === "nujno.nasilje.izsiljevanje"));
+  assert.match(NAVODILO, /NASILJE = nasilje, zloraba, izsiljevanje ali ustrahovanje \(tudi s slikami ali na spletu\)/);
+  // Albanija: ime brez podvojene številke.
+  assert.equal(DRZAVE.AL.otroci.ime, "ALO");
+  // Druge države: linije kot gumbi, splošna imena prevedena, »emergency« ni v besedilu; brezplačnost samo za nujne številke.
+  const ind = stevilke({ school_system: "IN-CBSE" });
+  assert.deepEqual(klici("stiska", ind), ["1098", "14416", "112"]);
+  assert.deepEqual(linijeIzPomoci("CHILDLINE 1098, Tele-MANAS 14416, emergency 112")[0].ime, ["nujno.ime.otroci", {}]);
+  assert.ok(vrstice("stiska", ind).every(([k]) => k !== "nujno.stiska.drugje"));
+  assert.equal(opomba(ind, true), "nujno.opombaSosMeja");
+  assert.equal(opomba(st, true), "nujno.opomba");
+  assert.equal(opomba(stevilke({}, "HR"), false), "nujno.opombaKratka");
+  // Znana tuja država brez podatkov (telefon v Italiji): 112, brez TOM in Samarijana.
+  const it = stevilke({}, drzavaNaprave("Europe/Rome"));
+  assert.deepEqual(klici("stiska", it), ["112"]);
+  assert.equal(drzavaNaprave("Europe/London", ["sl-SI"]), "GB");
+  assert.deepEqual(klici("stiska", stevilke({}, "GB")), ["0800 1111", "116 123", "999"]);
+  for (const k of ["nujno.nasilje.izsiljevanje", "nujno.linijaNeznano", "nujno.ime.otroci", "nujno.ime.mladi", "nujno.ime.samomor", "nujno.opombaSos", "nujno.opombaSosMeja"]) {
+    assert.ok(SL[k], k);
+    for (const f of readdirSync(new URL("../public/i18n/ui/", import.meta.url))) assert.ok(JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"))[k], `${f}: ${k}`);
+  }
+  for (const f of ["ar.json", "fa.json"]) assert.ok(!readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8").includes("Samarijan"), f);
+});
+
+test("zaznavalnik: primeri iz ponovnega pregleda B2 in številke v drugih pisavah", () => {
+  for (const [s, v] of [["ne zmorem več, želim si umreti", "stiska"], ["doma gori", "nevarnost"], ["أخي حرارته 42", "zdravje"], ["أخي حرارته ٤٢", "zdravje"], ["mi hermano tiene 41 de temperatura", "zdravje"]]) assert.equal(zaznajNujno(s), v, s);
+  for (const s of ["želim si nov telefon", "Kako se izračuna temperatura 42 stopinj v kelvinih?", "تبدیل 42 درجه"]) assert.equal(zaznajNujno(s), null, s);
 });

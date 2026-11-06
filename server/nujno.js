@@ -17,7 +17,7 @@ export const ROK_MS = 5000;
 export const NAVODILO =
   "Si varnostni filter aplikacije za učenje (otroci in mladi). Preberi sporočilo učenca. Odgovori samo z eno besedo: " +
   "ZDRAVJE, STISKA, NASILJE, NEVARNOST ali NE. ZDRAVJE = nekdo je zdaj resno bolan ali poškodovan; STISKA = samopoškodovanje, " +
-  "samomor, huda stiska; NASILJE = nasilje ali zloraba; NEVARNOST = požar, plin, druga nevarnost zdaj. Šolska naloga, zgodba ali " +
+  "samomor, huda stiska; NASILJE = nasilje, zloraba, izsiljevanje ali ustrahovanje (tudi s slikami ali na spletu); NEVARNOST = požar, plin, druga nevarnost zdaj. Šolska naloga, zgodba ali " +
   "vprašanje o snovi brez prave nevarnosti = NE. Če nisi prepričan, izberi kategorijo, ne NE.";
 
 const BESEDA = { ZDRAVJE: "zdravje", STISKA: "stiska", NASILJE: "nasilje", NEVARNOST: "nevarnost" };

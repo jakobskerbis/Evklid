@@ -3638,5 +3638,12 @@
   "nujno.nasilje.linijaBrezUr": "無料：{ime} {stevilka}。",
   "nujno.ure.vedno": "24時間対応",
   "nujno.ure.delavniki": "平日 {od}時〜{do}時",
-  "nujno.ure.ponSob": "月曜〜土曜 {od}時〜{do}時"
+  "nujno.ure.ponSob": "月曜〜土曜 {od}時〜{do}時",
+  "nujno.nasilje.izsiljevanje": "これ以上何も送らないで、お金も払わないで。メッセージは保存して、その人をブロックして。",
+  "nujno.linijaNeznano": "{ime}に電話して：{stevilka}。",
+  "nujno.ime.otroci": "子どもの相談電話",
+  "nujno.ime.mladi": "若者の相談電話",
+  "nujno.ime.samomor": "自殺予防の相談電話",
+  "nujno.opombaSos": "緊急通報番号への電話は無料です。",
+  "nujno.opombaSosMeja": "緊急通報番号への電話は無料です。このメッセージは質問の数に入りません。"
 }

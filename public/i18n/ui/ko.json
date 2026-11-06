@@ -3638,5 +3638,12 @@
   "nujno.nasilje.linijaBrezUr": "무료: {ime} {stevilka}.",
   "nujno.ure.vedno": "24시간 운영",
   "nujno.ure.delavniki": "평일 {od}시~{do}시",
-  "nujno.ure.ponSob": "월요일~토요일 {od}시~{do}시"
+  "nujno.ure.ponSob": "월요일~토요일 {od}시~{do}시",
+  "nujno.nasilje.izsiljevanje": "더 이상 아무것도 보내지 말고 돈도 내지 마. 메시지는 저장하고 그 사람을 차단해.",
+  "nujno.linijaNeznano": "{ime}에 전화해: {stevilka}.",
+  "nujno.ime.otroci": "아동 상담 전화",
+  "nujno.ime.mladi": "청소년 상담 전화",
+  "nujno.ime.samomor": "자살 예방 상담 전화",
+  "nujno.opombaSos": "긴급 번호로 거는 전화는 무료예요.",
+  "nujno.opombaSosMeja": "긴급 번호로 거는 전화는 무료예요. 이 메시지는 질문 수에 포함되지 않아요."
 }
