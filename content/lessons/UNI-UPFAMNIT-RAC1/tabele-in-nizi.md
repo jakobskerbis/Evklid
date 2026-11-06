@@ -417,6 +417,17 @@ Napiši metodo `obrni(double[] a)`, ki tabelo obrne **na mestu** (brez nove tabe
 
 **Slike in bioinformatika.** Satelitski posnetek je dvodimenzionalna tabela pikslov (za vsak kanal svetlobe ena), indeks vegetacije pa izračun za vsak piksel iz dveh kanalov. Zaporedja DNA so dolgi nizi, v katerih iščemo vzorce in štejemo znake, kot v Primeru 4.
 
+## Drugače: Korak za korakom s številkami
+
+Obrni tabelo `a = {3, 8, 1, 6, 4}` na mestu z zanko iz razlage.
+
+1. **Dolžina in število obhodov:** $n = 5$, zanka teče za `i` od $0$ do `n / 2 - 1`; `n / 2` je pri celih številih $2$, torej obhoda `i = 0` in `i = 1`.
+2. **Obhod `i = 0`:** par indeksov $0$ in $n - 1 - 0 = 4$; zamenjamo $3$ in $4$: `{4, 8, 1, 6, 3}`.
+3. **Obhod `i = 1`:** par indeksov $1$ in $5 - 1 - 1 = 3$; zamenjamo $8$ in $6$: `{4, 6, 1, 8, 3}`.
+4. **Srednji element:** indeks $2$ (vrednost $1$) je sam sebi simetričen in ostane.
+5. **Preizkus:** obrnjena prvotna tabela je $4, 6, 1, 8, 3$. ✓
+6. **Zamenjave:** $2 = \lfloor 5/2\rfloor$. Pri tabeli s $6$ elementi bi bile $3$.
+
 ## Preveri se
 
 ? Katera operacija ne sodi zraven, ker ne spremeni prvotnega objekta?
