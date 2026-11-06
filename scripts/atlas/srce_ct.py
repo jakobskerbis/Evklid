@@ -479,7 +479,7 @@ def relief(V, F, oz, epi, dl, L, h_masca):
     rv = (dv == 2) | (dv == 1)  # RV in septalna stran (pretin ima trabekule na desni strani)
     lv = dv == 0
     tr[rv] = 2.0e-3 * (0.65 * greben[rv] + 0.45 * np.clip(mreza2[rv] - 0.45, 0, 1) * 2)
-    tr[lv] = 1.4e-3 * np.clip((0.62 - t[lv]) / 0.3, 0, 1) * (0.7 * greben[lv] + 0.3 * mreza2[lv])
+    tr[lv] = 2.2e-3 * np.clip((0.72 - t[lv]) / 0.3, 0, 1) * (0.7 * greben[lv] + 0.3 * mreza2[lv])
     tr[dv == 3] = 0  # conus gladek (iztočni del)
     # pretin: na levi strani gladek (LV septum je gladek), na desni trabekule v spodnjih 2/3
     sept = dv == 1
@@ -496,7 +496,7 @@ def relief(V, F, oz, epi, dl, L, h_masca):
     h = np.where(h > 2e-4, h + 4e-4 * (lob - 0.5) * np.clip(h / 1.5e-3, 0, 1), h)
     h = _gladi(h, e, st, 3)
     V2 = V + N * (h - 0 * tr)[:, None] + N * tr[:, None]
-    return V2, np.clip(h / 1.0e-3, 0, 1), tr
+    return V2, np.clip((h - 0.35e-3) / 1.0e-3, 0, 1), tr  # pod ~0,4 mm brez barve maščobe (mišica se vidi skozi)
 
 
 def debelina_mascobe(V, F, oz, epi, X_zile):
@@ -519,9 +519,9 @@ def debelina_mascobe(V, F, oz, epi, X_zile):
     g = lambda d, s: np.exp(-(d / s) ** 2)
     zleb = np.maximum.reduce([g(d_av, 0.012), g(d_iv, 0.009)])
     h = np.maximum.reduce([6.0e-3 * g(d_av, 0.0075), 3.4e-3 * g(d_iv, 0.0055), 2.5e-3 * g(d_ar, 0.006),
-                           (0.7e-3 + 2.0e-3 * zleb) * np.clip(1 - d_z / 0.004, 0, 1)])
+                           2.6e-3 * zleb ** 1.5 * np.clip(1 - d_z / 0.004, 0, 1)])  # ob vejah na prosti steni le malo (n8: »reke« maščobe)
     vrv = np.zeros(nV); vrv[F[oz == 2].ravel()] = 1
-    lise = np.clip((_sumi(V, 0.014, 11) - 0.55) / 0.2, 0, 1) * 1.4e-3 * vrv
+    lise = np.clip((_sumi(V, 0.018, 11) - 0.62) / 0.2, 0, 1) * 1.0e-3 * vrv * np.clip(zleb * 2.5, 0, 1)
     h = np.maximum(h, lise)
     return h
 
@@ -535,8 +535,8 @@ def levo_uho(P, C, T, premik, bvh_epi, c_la, sk=0.0):
     if (c0 - c_la) @ n < 0:
         n = -n
     r0 = np.percentile(np.linalg.norm((q - c0) - np.outer((q - c0) @ n, n), axis=1), 90)
-    cilj = np.array([0.35, -1.0, -0.05]); cilj /= np.linalg.norm(cilj)
-    k = 48; L = 0.042
+    cilj = np.array([0.30, -1.0, -0.45]); cilj /= np.linalg.norm(cilj)  # naprej in navzdol čez levi rob pljučnega debla
+    k = 64; L = 0.040
     a = c0 - n * 0.003; b = c0 + n * 0.010; cc = b + (n * 0.3 + cilj).astype(float) / np.linalg.norm(n * 0.3 + cilj) * (L - 0.013)
     S_ = np.linspace(0, 1, k)
     pot = np.array([(1 - s) ** 2 * a + 2 * (1 - s) * s * b + s * s * cc for s in S_])
@@ -555,14 +555,14 @@ def levo_uho(P, C, T, premik, bvh_epi, c_la, sk=0.0):
     # okvirji
     tg = np.gradient(pot, axis=0); tg /= np.linalg.norm(tg, axis=1)[:, None]
     up = np.array([0, 0, 1.0])
-    seg = 28; th = np.linspace(0, 2 * np.pi, seg, endpoint=False)
+    seg = 36; th = np.linspace(0, 2 * np.pi, seg, endpoint=False)
     zun, notr = [], []
     for i in range(k):
         h = bvh_epi.find_nearest(Vector(pot[i])); nn = np.array(h[1]) if h[0] is not None else up
         x = nn - tg[i] * (nn @ tg[i]); x /= np.linalg.norm(x) + 1e-12; y = np.cross(tg[i], x)
         s = S_[i]
-        reznji = 1 - 0.16 * np.clip(np.sin(2 * np.pi * (s * 3.4 + 0.15)), 0, 1) ** 3 * (s > 0.25)
-        zob = 1 + 0.10 * np.sin(3 * th + 7 * s) + 0.05 * np.sin(7 * th - 11 * s)
+        reznji = 1 - 0.08 * np.clip(np.sin(2 * np.pi * (s * 3.0 + 0.15)), 0, 1) ** 2 * (s > 0.25)
+        zob = 1 + 0.05 * np.sin(3 * th + 7 * s) + 0.025 * np.sin(7 * th - 11 * s)
         Ri = R[i] * reznji * (zob if s > 0.2 else np.ones(seg))
         ex = 0.62 if s > 0.2 else 0.62 + (0.2 - s) / 0.2 * 0.38  # ob ustju okroglo
         zun.append(pot[i] + Ri[:, None] * (np.cos(th)[:, None] * x * ex + np.sin(th)[:, None] * y))
@@ -637,18 +637,23 @@ def srce_ct(osnovni, cfg, tmp):
     V2, masca, tr = relief(V, F, oz, epi, dl, Lc, h)
     cfg["_ct"] = dict(P=P, C=C, T=T, Fv=Fv, premik=premik, V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, masca=masca, L=Lc)
     # en zaprt volumen: poenostavimo skupaj (računalnik, telefon), nato razdelimo po delih (brez razpok med deli)
-    vrstice = _deli_iz_unije(V2, F, dl, epi, masca, cfg, tmp)
+    vrstice = _deli_iz_unije(V2, F, dl, epi, masca, cfg, tmp, ohrani=np.clip(tr / 1.2e-3, 0, 1))
     nove += vrstice
     Vu, Fu = levo_uho(P, C, T, premik, bvh_epi, Lc["mitralna"])
     me = _mesh("Left auricle", Vu, Fu)
-    nove.append(["Left auricle", me, "miokard", "levo-srcno-uho", "Left auricle (lastno) / Heart.g", 0])
+    o = bpy.data.objects.new("lu", me); tmp.objects.link(o)  # telefon: 40 % trikotnikov (brez poenostavitve je oglato)
+    mod = o.modifiers.new("dec", "DECIMATE"); mod.ratio = 0.4; mod.use_collapse_triangulate = True
+    cfg.setdefault("_telefon", {})["Left auricle"] = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+    bpy.data.objects.remove(o)
+    nove.append(["Left auricle", me, "miokard", "levo-srcno-uho", "Left auricle (lastno, CT) / Heart.g", 0])  # brez poenostavitve (oglato)
     cfg["_tocke4"] = [Vector(Lc["konica"]), Vector(Lc["mitralna"]), Vector(Lc["trikuspidalna"])]
     if cfg.get("_out"):
-        cfg["_volumen"] = volumen(cfg["_ct"], os.path.join(cfg["_out"], "srce-volumen.png"))
+        zile_m = [r[1] for r in nove if r[2].startswith("vencna-")]
+        cfg["_volumen"] = volumen(cfg["_ct"], os.path.join(cfg["_out"], "srce-volumen.png"), zile=zile_m)
     return nove
 
 
-def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp):
+def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None):
     """Unija sten → mreža z materialnim indeksom po delu, poenostavljena za računalnik in telefon (cfg['ct']['cilj']),
     razdeljena na vrstice; telefonske mreže v cfg['_telefon']. Maske PEKA (R maščoba, G zunaj) so na ogliščih."""
     cilj = cfg.get("ct", {}).get("cilj", (110_000, 30_000))
@@ -666,6 +671,13 @@ def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp):
     for i, c in enumerate(cilj):
         o = bpy.data.objects.new("ct-unija", me); tmp.objects.link(o)
         mod = o.modifiers.new("dec", "DECIMATE"); mod.ratio = min(1.0, c / len(F)); mod.use_collapse_triangulate = True
+        if ohrani is not None:  # trabekule in glavničaste mišice: manj poenostavitve (utež skupine nižja = manj krčenja)
+            vg = o.vertex_groups.new(name="poenostavi")
+            w = 1.0 - 0.75 * ohrani
+            for val in np.unique(np.round(w, 1)):
+                idx = np.nonzero(np.round(w, 1) == val)[0].tolist()
+                vg.add(idx, float(val), "REPLACE")
+            mod.vertex_group = "poenostavi"; mod.vertex_group_factor = 1.0
         m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
         bpy.data.objects.remove(o)
         bm = bmesh.new(); bm.from_mesh(m2)
@@ -725,7 +737,7 @@ def moderatorni_trak(Xs, pap_me, bvh_endo, r):
 
 
 # ---------- prostorska tekstura reza (vsaka ravnina: smer vlaken in maščoba v vsaki točki stene) ----------
-def volumen(ct, pot, korak=0.00125):
+def volumen(ct, pot, korak=0.00125, zile=()):
     """Mreža vokslov v oseh glTF (x, y gor, z spredaj; brez središčenja): RGB = smer mišičnih vlaken (strukturni tenzor
     tetraedrov Rodero 2021, predznak poravnan s krožno smerjo okoli dolge osi LV; zunaj sten vektor 0), A = maščoba (0–1,
     med epikardom CT in površino maščobe). Zapis: PNG s ploščicami rezin po z (vsaka z robom 1 voksel za bilinearno vzorčenje), »Non-Color«.
@@ -796,6 +808,27 @@ def volumen(ct, pot, korak=0.00125):
     f[(f * ref).sum(1) < 0] *= -1
     f[~notri] = 0  # zunaj sten: dolžina 0 (pregledovalnik: |f| < 0,5 = ni stene, pokrov na globini zadnje ploskve)
     fat[~notri] = 0
+    # venčne žile v maščobi: A = 1 (pregledovalnik tam pusti globino zadnje ploskve, da se vidi prerez žile), maščoba 0–0,6
+    zila = np.zeros((n[2], n[1], n[0]), bool)
+    if zile:
+        Pz, Fz = [], []
+        for me in zile:
+            o = sum(len(x) for x in Pz)
+            Pz.append(gl(_tocke(me))); Fz += [[o + i for i in p.vertices] for p in me.polygons]
+        bz = BVHTree.FromPolygons([Vector(v) for v in np.concatenate(Pz)], Fz)
+        for j in range(n[1]):
+            for i in range(n[0]):
+                o = Vector((lo[0] + (i + 0.5) * korak + 1.3e-6, lo[1] + (j + 0.5) * korak + 0.7e-6, lo[2] - korak))
+                zz = []; p_ = o
+                for _ in range(64):
+                    h = bz.ray_cast(p_, Vector((0, 0, 1)), 1.0)
+                    if h[0] is None:
+                        break
+                    zz.append(h[0].z); p_ = h[0] + Vector((0, 0, 1e-6))
+                for a_, b_ in zip(zz[0::2], zz[1::2]):
+                    zila[(zc >= a_ - korak * 0.5) & (zc <= b_ + korak * 0.5), j, i] = True
+    zila = zila.ravel() & notri
+    fat = np.where(zila, 1.0, fat * 0.6)
     # ploščice z robom 1 voksel
     nx, ny, nz = n; tw, th = nx + 2, ny + 2
     st = int(math.ceil(math.sqrt(nz * th / tw)))

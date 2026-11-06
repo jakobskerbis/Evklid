@@ -869,8 +869,8 @@
    "razdalja": 0.03,
    "moc": 0.6,
    "odprtost": true,
-   "endokard": "#d38a7c",
-   "endokardMoc": 0.55,
+   "endokard": "#b86a5c",
+   "endokardMoc": 0.32,
    "endokardTkiva": [
     "miokard"
    ]

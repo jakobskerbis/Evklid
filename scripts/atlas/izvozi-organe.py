@@ -130,8 +130,8 @@ ORGANI = {
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
                 "miokard": dict(barva=(0.26, 0.048, 0.036), barva2=(0.18, 0.034, 0.028), lise=0.45, hrap=0.5, gube=0.00016, gubeMera=0.004,
                                 vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.80, 0.56, 0.16), mascaBarva2=(0.86, 0.50, 0.14),
-                                mascaNasip=0.0012, mascaPremik=0.0035, mascaMera=0.011, mascaZleb=0.58, mascaHrap=0.52, kletka=0.009,
-                                zilice=0.0, notranja=(0.46, 0.14, 0.12), notranjaHrap=0.42),
+                                mascaNasip=0.0010, mascaPremik=0.0016, mascaMera=0.011, mascaZleb=0.58, mascaHrap=0.52, kletka=0.009,
+                                zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
                 # (drobne rdečkaste žilice vzdolž stene), mat-vlažna hrapavost. NARAVNE barve (j, 6. 11.; učne barve so
@@ -143,9 +143,10 @@ ORGANI = {
                               vzdolz=0.00009, vzdolzRazmik=0.0028, vasa=0.45, vasaBarva=(0.55, 0.22, 0.20)),
                 "pljucna": dict(barva=(0.68, 0.53, 0.50), barva2=(0.60, 0.46, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
                                 vzdolz=0.00008, vzdolzRazmik=0.0028, vasa=0.4, vasaBarva=(0.50, 0.20, 0.22)),
-                "vena": dict(barva=(0.16, 0.055, 0.15), barva2=(0.12, 0.04, 0.12), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "vena": dict(barva=(0.17, 0.11, 0.17), barva2=(0.13, 0.08, 0.13), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                              vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.22, 0.05, 0.10)),
-                "pljucna-vena": dict(barva=(0.42, 0.05, 0.17), barva2=(0.34, 0.035, 0.15), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                # pljučne vene: tanka stena, temno rdeče rjave (kri skozi steno), ne magenta (ocena n8)
+                "pljucna-vena": dict(barva=(0.30, 0.11, 0.12), barva2=(0.24, 0.08, 0.10), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                                      vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
                 "vencna-arterija": dict(barva=(0.62, 0.36, 0.30), barva2=(0.54, 0.28, 0.24), lise=0.25, hrap=0.5, gube=0.00003, gubeMera=0.0015, razdeli=1,

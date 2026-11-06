@@ -562,9 +562,10 @@ ${
           orgV4 = orgVolumen( orgQm );
           #ifndef USE_LOGDEPTHBUF
           // Točka ravnine je v steni (|vlakno| > 0,5): pokrov na globini ravnine, ne zadnje ploskve, zato so žile v maščobi
-          // in dno papilarnih mišic za ravnino skriti (kot pri pravem rezu). Sicer (votlina) ostane globina zadnje ploskve.
+          // in dno papilarnih mišic za ravnino skriti (kot pri pravem rezu). Sicer (votlina; A ≈ 1 = venčna žila v maščobi,
+          // katere prerez nariše njen pokrov) ostane globina zadnje ploskve.
           { vec4 orgC = projectionMatrix * viewMatrix * vec4( orgQ, 1.0 );
-            gl_FragDepth = length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
+            gl_FragDepth = length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 && orgV4.a < 0.8 ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
           #endif`
               : ""
           }
@@ -596,7 +597,7 @@ ${
           vec3 orgMaT = orgTkivo( orgQm, 1.0 );
           vec3 orgMa = ${vec3(t.rezMasca || "#d8b060")} * orgMaT / ${vec3(t.rezTkivoMasca || "#af9361")};
           orgMi *= 0.86 + 0.28 * orgVl;
-          float orgFa = smoothstep( 0.28, 0.62, orgV4.a );
+          float orgFa = smoothstep( 0.17, 0.37, orgV4.a ); // A: maščoba 0–0,6, venčna žila 1
           diffuseColor.rgb = mix( orgMi, orgMa, orgFa );
           orgH = mix( orgVl, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgFa );
         }`
