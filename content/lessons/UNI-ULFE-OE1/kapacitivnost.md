@@ -283,13 +283,13 @@ Zgornji in spodnji del sonde sta dva vzporedna kondenzatorja z enakim $C'$, a ra
 - **Merjenje nivoja.** Kapacitivne sonde merijo nivo olj, topil in granulatov v silosih; pri prevodnih tekočinah je palica izolirana in tekočina sama postane druga elektroda.
 - **Kompenzacija jalove moči.** Kondenzatorske baterije ob motorjih v obratih zmanjšajo jalovi tok iz omrežja. Vsaka ima praznilne upore: kondenzator po izklopu ohrani naboj, energija $\frac{1}{2}CU^2$ pri nekaj sto mikrofaradih in $400\,\mathrm{V}$ je že nevarna.
 - **Kabli.** Kapacitivnost $C' \approx 100\,\mathrm{pF/m}$ pri dolgih visokonapetostnih kablih povzroči velik polnilni tok, zato kabelske povezave daljše od nekaj deset kilometrov izvedejo z enosmernim tokom. Pri polaganju kablov preverjajo delne razelektritve, ki kažejo na mehurčke in reže v izolaciji.
-- **Elementi.** Večplastni keramični kondenzatorji (MLCC) zložijo stotine tankih plasti vzporedno, da dobijo mikrofarade v milimetrskem ohišju. Superkondenzatorji imajo zaradi dvojne plasti na poroznem ogljiku kapacitivnosti do tisoč faradov.
+- **Elementi.** Večplastni keramični kondenzatorji (MLCC) zložijo stotine tankih plasti vzporedno, da dobijo mikrofarade v milimetrskem ohišju. Superkondenzatorji imajo zaradi dvojne plasti na poroznem ogljiku kapacitivnosti do nekaj tisoč faradov.
 
 ## Drugače: Bolj natančno
 
 **Sila med ploščama z virtualnim delom.** Odklopljen ploščati kondenzator ima stalen $Q$. Če plošči razmaknemo za $\mathrm{d}x$, se energija poveča za $\mathrm{d}W = \frac{Q^2}{2}\,\mathrm{d}\!\left(\frac{x}{\varepsilon S}\right) = \frac{Q^2}{2\varepsilon S}\,\mathrm{d}x$. To delo opravi zunanja sila, zato se plošči privlačita s silo
 $$F = \frac{Q^2}{2\varepsilon S} = \frac{1}{2}\varepsilon E^2 S.$$
-Sila na ploskev je enaka gostoti energije. Pri priključenem kondenzatorju ($U$ stalen) moramo upoštevati še delo vira, ki je dvakrat večje od spremembe energije kondenzatorja in nasprotnega predznaka; sila pride enaka.
+Sila na ploskev je enaka gostoti energije. Pri priključenem kondenzatorju ($U$ stalen) moramo upoštevati še delo vira: $\mathrm{d}W_\text{vir} = U\,\mathrm{d}Q = U^2\,\mathrm{d}C = 2\,\mathrm{d}W$ (enak predznak, pri razmikanju sta obe negativni). Delo zunanje sile je zato $\mathrm{d}W - \mathrm{d}W_\text{vir} = -\mathrm{d}W$ in sila pride enaka.
 
 **Dvovodni vod.** Za vzporedna vodnika s polmerom $r_0$ na razdalji $d \gg r_0$ je $C' \approx \frac{\pi\varepsilon}{\ln(d/r_0)}$; izpelješ ga s superpozicijo polj dveh nasprotno nabitih premic.
 
@@ -330,7 +330,7 @@ Sila na ploskev je enaka gostoti energije. Pri priključenem kondenzatorju ($U$ 
 ~ Pretvoril si, kot da je $1\,\mathrm{m^2} = 100\,\mathrm{cm^2}$; v resnici je $10^4\,\mathrm{cm^2}$, zato $0{,}0113\,\mathrm{m^2} = 113\,\mathrm{cm^2}$.
 + okoli $113\,\mathrm{cm^2}$
 - okoli $1{,}1\,\mathrm{m^2}$
-~ Razmik si vzel v milimetrih kot $0{,}010\,\mathrm{m}$ namesto $10^{-4}\,\mathrm{m}$.
+~ Razmik $0{,}10\,\mathrm{mm}$ si pretvoril v $0{,}010\,\mathrm{m}$ namesto v $10^{-4}\,\mathrm{m}$.
 > $S = Cd/\varepsilon_0 = 10^{-9} \cdot 10^{-4}/(8{,}854 \cdot 10^{-12})\,\mathrm{m^2} \approx 0{,}0113\,\mathrm{m^2}$.
 
 ? Dva enaka kondenzatorja: prvi nabit na $U_0$, drugi prazen. Povežemo ju vzporedno. Kolikšna je skupna energija po povezavi glede na začetno?

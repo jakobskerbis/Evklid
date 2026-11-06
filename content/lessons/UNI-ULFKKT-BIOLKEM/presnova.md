@@ -41,7 +41,7 @@ $$\mathrm{glukoza + 2\,NAD^+ + 2\,ADP + 2\,P_i \to 2\,piruvat + 2\,NADH + 2\,ATP
 
 *Preizkus:* koliko ATP nastane v izplačilni fazi na eno glukozo? (Štirje, neto dva.)
 
-**Obnova $\mathrm{NAD^+}$.** Celica ima malo $\mathrm{NAD^+}$; brez obnove se glikoliza ustavi pri koraku 6. Ob kisiku ga obnovi dihalna veriga. Brez njega mišica in eritrocit piruvat reducirata v **laktat** (laktat-dehidrogenaza), kvasovke pa v etanol in $\mathrm{CO_2}$.
+**Obnova $\mathrm{NAD^+}$.** Celica ima malo $\mathrm{NAD^+}$; brez obnove se glikoliza ustavi pri koraku 6. Ob kisiku ga obnovi dihalna veriga. Brez njega mišica piruvat reducira v **laktat** (laktat-dehidrogenaza), kvasovke pa v etanol in $\mathrm{CO_2}$. Eritrocit nima mitohondrijev, zato tvori laktat vedno, tudi ob kisiku.
 
 **Uravnavanje.** Uravnavani so nepovratni koraki z velikim negativnim $\Delta G$ v celici. PFK-1 zavirata visok ATP in citrat (energije je dovolj), aktivirata AMP in fruktoza-2,6-bisfosfat.
 
@@ -134,7 +134,7 @@ Preštej ATP, ki nastanejo pri popolni oksidaciji ene glukoze v jetrni celici (c
 **Iščemo:** ATP na glukozo z obema čolničkoma; razmerje porabe glukoze
 
 :::formula
-$\text{ATP} = \text{ATP} + \text{GTP} + 2{,}5 \cdot n(\text{NADH}) + 1{,}5 \cdot n(\mathrm{FADH_2})$
+$n_\text{skupaj}(\text{ATP}) = n(\text{ATP}) + n(\text{GTP}) + 2{,}5 \cdot n(\text{NADH}) + 1{,}5 \cdot n(\mathrm{FADH_2})$
 :::
 
 **Rešitev:**
@@ -163,7 +163,7 @@ $\mathrm{H^+/ATP} = \frac{n_c}{3} + 1$, $\quad \mathrm{P/O} = \frac{n(\mathrm{H^
 1. Sesalci: $8/3 + 1 \approx 3{,}67\,\mathrm{H^+}$/ATP. P/O(NADH) $= 10/3{,}667 \approx 2{,}7$, P/O($\mathrm{FADH_2}$) $= 6/3{,}667 \approx 1{,}6$.
 2. Kvasovka: $10/3 + 1 \approx 4{,}33\,\mathrm{H^+}$/ATP. P/O(NADH) $= 10/4{,}333 \approx 2{,}3$, P/O($\mathrm{FADH_2}$) $= 6/4{,}333 \approx 1{,}4$.
 3. Večji obroč potrebuje več protonov za en obrat, zato da manj ATP na par elektronov. Izmerjene vrednosti ($2{,}5$ in $1{,}5$ pri sesalcih) so nekoliko nižje od teoretičnih, ker del protonov uide skozi membrano.
-4. (b) Kvasovka: NADH skupaj $2 + 2 + 6 = 10$, $\mathrm{FADH_2}$ $2$, ATP in GTP iz substrata $4$. ATP $\approx 4 + 10 \cdot 2{,}308 + 2 \cdot 1{,}385 \approx 29{,}8$, torej okoli $30$.
+4. (b) Kvasovka: NADH skupaj $2 + 2 + 6 = 10$, $\mathrm{FADH_2}$ $2$, ATP in GTP iz substrata $4$. ATP $\approx 4 + 10 \cdot 2{,}308 + 2 \cdot 1{,}385 \approx 29{,}8$, torej okoli $30$. To velja ob predpostavkah naloge; pekovska kvasovka v resnici nima kompleksa I (njena NADH-dehidrogenaza ne črpa protonov), zato je njen dejanski izkoristek še precej nižji.
 5. (c) Energija na mol protonov: $F\,\Delta p = 96\,485 \cdot 0{,}18\,\mathrm{J/mol} \approx 17{,}4\,\mathrm{kJ/mol}$.
 6. Na ATP pri sesalcu: $3{,}667 \cdot 17{,}37\,\mathrm{kJ/mol} \approx 63{,}7\,\mathrm{kJ/mol}$, kar je več od potrebnih $50\,\mathrm{kJ/mol}$; razlika poganja sintezo naprej in se sprosti kot toplota.
 7. Odgovor: sesalci $3{,}7\,\mathrm{H^+}$/ATP, P/O $2{,}7$ in $1{,}6$; kvasovka $4{,}3\,\mathrm{H^+}$/ATP, P/O $2{,}3$ in $1{,}4$ ter okoli $30$ ATP na glukozo; protoni dajo okoli $64\,\mathrm{kJ}$ na mol ATP, kar zadošča.
@@ -231,7 +231,7 @@ Srčna mišica kot gorivo porablja laktat iz krvi. (a) Koliko ATP nastane pri po
 4. (b) Protoni: $5 \cdot 10 + 1 \cdot 6 = 56\,\mathrm{H^+}$; preizkus $56 : 4 = 14$, plus GTP, spet $15$.
 5. (c) Skozi sintazo gre $0{,}7 \cdot 56 = 39{,}2\,\mathrm{H^+}$, kar da $39{,}2 : 4 = 9{,}8$ ATP; skupaj z GTP $10{,}8$ ATP.
 6. Za enako ATP mora srce porabiti $15 : 10{,}8 \approx 1{,}39$-krat več laktata.
-7. Odgovor: laktat da $15$ ATP in prečrpa $56\,\mathrm{H^+}$; s $30\,\%$ uhajanjem le $10{,}8$ ATP, zato mora poraba laktata (in kisika) narasti za okoli $39\,\%$. Pri tem se srce bolj segreje, kar je razlog, da razklopljevalcev kot zdravil za hujšanje ne uporabljajo.
+7. Odgovor: laktat da $15$ ATP in prečrpa $56\,\mathrm{H^+}$; s $30\,\%$ uhajanjem le $10{,}8$ ATP, zato mora poraba laktata (in kisika) narasti za okoli $39\,\%$. Pri tem se srce bolj segreje, kar je razlog, da razklopljevalcev kot zdravil za hujšanje ne uporabljajo več.
 
 ### Naloga 2
 
@@ -268,7 +268,7 @@ Glikoliza je pomožni dizelski agregat v isti stavbi: dela brez jezera, a porabi
 
 - **Klinika.** Laktat v krvi nad okoli $4\,\mathrm{mmol/L}$ kaže na šok ali sepso; antidot pri zastrupitvi s cianidom je hidroksokobalamin, ki cianid veže v cianokobalamin. Metformin, zdravilo za sladkorno bolezen, šibko zavira kompleks I.
 - **Diagnostika raka.** Tumorji pogosto pretežno fermentirajo glukozo tudi ob kisiku (Warburgov učinek). PET z označeno fluorodeoksiglukozo pokaže tkiva z veliko porabo glukoze.
-- **Biotehnologija.** V pivovarni in pri proizvodnji bioetanola je fermentacija želena: kvasovke v anaerobnih razmerah dajo iz glukoze največ etanola. Za proizvodnjo biomase (pekovski kvas) pa reaktor intenzivno prezračujejo, da celice dobijo okoli $15$-krat več ATP na glukozo.
+- **Biotehnologija.** V pivovarni in pri proizvodnji bioetanola je fermentacija želena: kvasovke v anaerobnih razmerah dajo iz glukoze največ etanola. Za proizvodnjo biomase (pekovski kvas) pa reaktor intenzivno prezračujejo, da celice dobijo mnogokrat več ATP na glukozo.
 - **Šport.** Sprinter v nekaj sekundah dela pretežno anaerobno; maratonec uporablja oksidativno fosforilacijo, ki je počasnejša, a na glukozo dá mnogo več ATP.
 
 ## Drugače: Bolj natančno
@@ -325,7 +325,7 @@ za hidrolizo okoli $-50$ do $-55\,\mathrm{kJ/mol}$, zato je tudi sinteza ATP dra
 + Kvasovke so piruvat oksidirale do $\mathrm{CO_2}$ in dobile mnogo več ATP na glukozo, zato so porabile manj sladkorja.
 - Kisik je oksidiral etanol v tanku.
 ~ Neposredna kemijska oksidacija etanola s kisikom pri teh pogojih je zanemarljiva.
-> Pasteurjev učinek: aerobno okoli $30$ ATP na glukozo namesto $2$, zato visok ATP in citrat zavreta PFK-1 in poraba glukoze pade; etanola nastane manj.
+> Pasteurjev učinek: aerobno mnogokrat več ATP na glukozo kot $2$ pri fermentaciji, zato visok ATP in citrat zavreta PFK-1 in poraba glukoze pade; etanola nastane manj.
 
 :::simboli
 \Delta G | sprememba Gibbsove energije (z $^{\circ\prime}$: standardna pri pH 7) | \Delta G^{\circ\prime} = -zF\,\Delta E^{\circ\prime} | kJ/mol

@@ -95,7 +95,7 @@ se število prostih delcev v raztopini poveča s $4$ na $7$. Pomaga tudi to, da 
 :::premisli
 Zakaj se v celični membrani ali krvi, kjer je kovinskih ionov malo, kelati obnesejo še bolje od enoveznih ligandov? Razmisli, kaj se zgodi, ko se ena vez Ni–N za hip pretrga.
 ---
-Pri enoveznem ligandu prekinjena vez pomeni, da ligand odplava in ga v razredčeni raztopini težko nadomesti nov. Pri kelatu ostane drugi konec liganda vezan in prosti konec je tik ob kovini, zato se vez hitro spet sklene. Ta učinek je pri nizkih koncentracijah najpomembnejši, zato zdravila za vezavo kovin vedno uporabljajo kelate.
+Pri enoveznem ligandu prekinjena vez pomeni, da ligand odplava in ga v razredčeni raztopini težko nadomesti nov. Pri kelatu ostane drugi konec liganda vezan in prosti konec je tik ob kovini, zato se vez hitro spet sklene. Ta učinek je pri nizkih koncentracijah najpomembnejši, zato so zdravila za vezavo kovin skoraj vedno kelati.
 :::
 
 ## Rešeni primeri
@@ -156,7 +156,7 @@ $\mu = \sqrt{n(n+2)}\,\mu_\mathrm{B}$; tetraeder: $\mathrm{LFSE} = (-0{,}6\,n_e 
 2. Imeni (anion, končnica -at): tetrakloridonikljat(II) in tetracianidonikljat(II).
 3. Iz $\mu$: $\sqrt{n(n+2)} = 2{,}8$ da $n = 2$, saj je $\sqrt{8} \approx 2{,}83$.
 4. Tetraeder pri $d^8$: $e^4\,t_2^4$, v $t_2$ sta dva neparna elektrona. Kvadrat pri $d^8$: prazna $d_{x^2-y^2}$, nič neparnih. Torej je $[\mathrm{NiCl_4}]^{2-}$ tetraedrski, $[\mathrm{Ni(CN)_4}]^{2-}$ kvadratno planaren.
-5. To se ujema s spektrokemijsko vrsto: šibki $\mathrm{Cl^-}$ in velik ion dasta tetraeder z majhnim razcepom, močni $\mathrm{CN^-}$ velik razcep, pri katerem se prazna $d_{x^2-y^2}$ izplača.
+5. To se ujema s spektrokemijsko vrsto: šibki in veliki ligandi $\mathrm{Cl^-}$ dajo tetraeder z majhnim razcepom, močni $\mathrm{CN^-}$ velik razcep, pri katerem se prazna $d_{x^2-y^2}$ izplača.
 6. LFSE: $(-0{,}6 \cdot 4 + 0{,}4 \cdot 4)\,\Delta_\mathrm{t} = -0{,}8\,\Delta_\mathrm{t} \approx -0{,}8 \cdot \frac{4}{9}\Delta_\mathrm{o} \approx -0{,}36\,\Delta_\mathrm{o}$.
 7. Izomeri $\mathrm{MA_2B_2}$: v tetraedru $1$, v kvadratu $2$ (*cis*, *trans*).
 8. Odgovor: tetrakloridonikljat(II) je tetraedrski ($e^4\,t_2^4$, LFSE $-0{,}8\,\Delta_\mathrm{t} \approx -0{,}36\,\Delta_\mathrm{o}$), tetracianidonikljat(II) kvadratno planaren in diamagneten. $[\mathrm{NiCl_2(CN)_2}]^{2-}$ bi imel en izomer kot tetraeder in dva kot kvadrat.
@@ -194,10 +194,10 @@ $\ln K = 9{,}67 \cdot \ln 10 \approx 22{,}27$, zato $\Delta G^\circ = -8{,}314 \
 
 ## Povzetek
 
-- Kompleks: kovina (Lewisova kislina) in ligandi (Lewisove baze); KŠ je število donorskih atomov. Kelati so večvezni ligandi, ki zaprejo obroč.
+- Kompleks: kovina (Lewisova kislina) in ligandi (Lewisove baze); KŠ je število donorskih atomov. Kelatni ligandi so večvezni ligandi, ki s kovino zaprejo obroč.
 - Ime: kation pred anionom; ligandi po abecedi brez predpon, anionski na -o; oksidacijsko število z rimsko številko; v anionu kovina na -at.
 - Izomerija: ionizacijska, hidratna, vezna; geometrijska (*cis/trans*, *fac/mer*) in optična (kiralni $[\mathrm{M(AA)_3}]$, *cis*-$[\mathrm{M(AA)_2B_2}]$).
-- Tetraeder: obrnjen razcep, $\Delta_\mathrm{t} \approx \frac{4}{9}\Delta_\mathrm{o}$, vedno visokospinski. Kvadrat: $d^8$ z močnim poljem, diamagneten.
+- Tetraeder: obrnjen razcep, $\Delta_\mathrm{t} \approx \frac{4}{9}\Delta_\mathrm{o}$, skoraj vedno visokospinski. Kvadrat: $d^8$ z močnim poljem, diamagneten.
 - $\Delta$ raste z močjo liganda (spektrokemijska vrsta), z oksidacijskim številom in navzdol po skupini.
 - Kelatni učinek je predvsem entropijski: več prostih delcev po izmenjavi.
 
@@ -225,7 +225,7 @@ Odgovori na vprašanje iz uvoda za $[\mathrm{PtCl_2(NH_3)_2}]$. (a) Poimenuj spo
 5. Plazma: $x = \frac{0{,}0030}{0{,}0030 + 0{,}100} \approx 0{,}029$, torej okoli $3\,\%$.
 6. Celica: $x = \frac{0{,}0030}{0{,}0030 + 0{,}004} \approx 0{,}43$, torej okoli $43\,\%$.
 7. Visok klorid v krvi zdravilo varuje pred zamenjavo; v celici nastane reaktivna akva oblika, iz katere se voda zlahka izpodrine z dušikom baze DNK.
-8. (e) Akva oblika se veže na atom N7 gvanina. *Cis* izomer z dvema sosednjima prostima mestoma (pod $90^\circ$) poveže dva sosednja gvanina na isti verigi in DNK ukrivi, kar celica ne zna popraviti. *Trans* izomer ima prosti mesti pod $180^\circ$ in takega mostu ne more narediti.
+8. (e) Akva oblika se veže na atom N7 gvanina. *Cis* izomer z dvema sosednjima prostima mestoma (pod $90^\circ$) poveže dva sosednja gvanina na isti verigi in DNK ukrivi, kar celica težko popravi. *Trans* izomer ima prosti mesti pod $180^\circ$ in takega mostu med sosednjima gvaninoma ne more narediti.
 9. Odgovor: diamindikloridoplatina(II), $d^8$, kvadratno planarna in diamagnetna; dva izomera (tetraeder bi imel enega); v plazmi je zamenjanih okoli $3\,\%$, v celici okoli $43\,\%$; zdravilo je *cis* izomer, ker le ta premosti sosednja gvanina.
 
 ### Naloga 2
@@ -237,7 +237,7 @@ Natančno navedi, kdaj je kompleks kiralen. Za $[\mathrm{Cr(ox)_3}]^{3-}$ in $[\
 1. Kompleks je kiralen, če se njegova zrcalna slika z nobeno rotacijo ne prekrije z njim. To velja natanko tedaj, ko nima nobene zrcalne rotacijske osi; v praksi preverimo zrcalno ravnino in središče simetrije.
 2. $[\mathrm{Cr(ox)_3}]^{3-}$, tris(oksalato)kromat(III): trije obroči okoli kovine tvorijo levi in desni »propeler« (Λ in Δ), brez zrcalne ravnine. Kiralen, dva enantiomera.
 3. $[\mathrm{Co(NH_3)_4Cl_2}]^+$, tetraamindikloridokobaltov(III) ion: ima *cis* in *trans* izomer, oba imata zrcalno ravnino (pri *cis* skozi oba Cl in Co). Ni kiralen, ima pa dva geometrijska izomera.
-4. Kelatni učinek: pri izmenjavi $[\mathrm{ML_6}] + 3\,\mathrm{AA} \rightleftharpoons [\mathrm{M(AA)_3}] + 6\,\mathrm{L}$ se tvorijo enake vrste vezi (npr. M–N), zato je $\Delta H^\circ \approx 0$. Število prostih delcev naraste s $4$ na $7$, $\Delta S^\circ > 0$, zato je $\Delta G^\circ = \Delta H^\circ - T\Delta S^\circ < 0$.
+4. Kelatni učinek: pri izmenjavi $[\mathrm{ML_6}] + 3\,\mathrm{AA} \rightleftharpoons [\mathrm{M(AA)_3}] + 6\,\mathrm{L}$ se tvorijo enake vrste vezi (npr. M–N), zato je $\Delta H^\circ$ majhen. Število prostih delcev naraste s $4$ na $7$, $\Delta S^\circ > 0$, zato je $\Delta G^\circ = \Delta H^\circ - T\Delta S^\circ < 0$; večino prispeva člen $-T\Delta S^\circ$.
 5. Izpeljava: $\beta_6 = \frac{[\mathrm{ML_6}]}{[\mathrm{M}][\mathrm{L}]^6}$ in $\beta_3' = \frac{[\mathrm{M(AA)_3}]}{[\mathrm{M}][\mathrm{AA}]^3}$. Kvocient $\frac{\beta_3'}{\beta_6} = \frac{[\mathrm{M(AA)_3}][\mathrm{L}]^6}{[\mathrm{ML_6}][\mathrm{AA}]^3} = K$, torej $\log K = \log\beta_3' - \log\beta_6$.
 
 ### Naloga 3
@@ -285,7 +285,7 @@ Barvni krog pomaga pri barvi: kompleks z vrhom absorpcije v rumenem delu je vijo
 
 **Pravilo 18 elektronov.** Karbonilni kompleksi nizkovalentnih kovin so obstojni, kadar je vsota elektronov $d$ kovine in elektronov, ki jih podarijo ligandi, enaka $18$: $[\mathrm{Ni(CO)_4}]$ ima $10 + 4 \cdot 2 = 18$, $[\mathrm{Cr(CO)_6}]$ $6 + 6 \cdot 2 = 18$.
 
-**Trans učinek.** V kvadratnih kompleksih Pt(II) ligand pospeši zamenjavo liganda *trans* k sebi; vrstni red $\mathrm{CN^-} > \mathrm{Cl^-} > \mathrm{NH_3} > \mathrm{H_2O}$. Iz $[\mathrm{PtCl_4}]^{2-}$ z amoniakom zato nastane ravno *cis* izomer: drugi $\mathrm{NH_3}$ zamenja klorid *trans* k drugemu kloridu, ne k amoniaku. Tako cisplatin sintetizirajo v industriji.
+**Trans učinek.** V kvadratnih kompleksih Pt(II) ligand pospeši zamenjavo liganda *trans* k sebi; vrstni red $\mathrm{CN^-} > \mathrm{Cl^-} > \mathrm{NH_3} > \mathrm{H_2O}$. Iz $[\mathrm{PtCl_4}]^{2-}$ z amoniakom zato nastane ravno *cis* izomer: drugi $\mathrm{NH_3}$ zamenja klorid *trans* k drugemu kloridu, ne k amoniaku. Na tem temelji sinteza cisplatina.
 
 ## Preveri se
 
@@ -295,7 +295,7 @@ Barvni krog pomaga pri barvi: kompleks z vrhom absorpcije v rumenem delu je vijo
 + Dve orbitali ($e$) spodaj, tri ($t_2$) zgoraj, razcep okoli $\frac{4}{9}\Delta_\mathrm{o}$.
 - Dve orbitali spodaj, tri zgoraj, razcep večji od $\Delta_\mathrm{o}$.
 ~ Štirje ligandi namesto šestih, ki ne kažejo naravnost na orbitale, dajo manjši razcep, ne večjega.
-> V tetraedru se dvigneta $d_{xy}$, $d_{xz}$, $d_{yz}$ ($t_2$), ker so bliže ligandom; $\Delta_\mathrm{t} \approx \frac{4}{9}\Delta_\mathrm{o}$.
+> V tetraedru se dvignejo $d_{xy}$, $d_{xz}$, $d_{yz}$ ($t_2$), ker so bliže ligandom; $\Delta_\mathrm{t} \approx \frac{4}{9}\Delta_\mathrm{o}$.
 
 ? Za kobaltov(II) kompleks z oktaedrskim razcepom $\Delta_\mathrm{o} \approx 110\,\mathrm{kJ/mol}$ oceni razcep v tetraedrskem kompleksu z istim ligandom.
 - okoli $110\,\mathrm{kJ/mol}$

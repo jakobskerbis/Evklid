@@ -56,7 +56,7 @@ Vzorec: odloča število vozlišč lihe stopnje.
 
 *Zadostnost* (indukcija po $m$). Začnimo v poljubnem $v$ in hodimo po še neporabljenih povezavah. Ko pridemo v vozlišče $u \ne v$, smo pri njem porabili liho mnogo povezav, stopnja pa je soda, zato lahko nadaljujemo. Obstanemo lahko le v $v$: dobimo sklenjen sprehod $W$ brez ponovljenih povezav. Če $W$ porabi vse povezave, smo končali. Sicer odstranimo povezave iz $W$; vse stopnje ostanejo sode. Ker je $G$ povezan, ima neka komponenta preostanka s povezavami skupno vozlišče $u$ z $W$. Po indukcijski predpostavki ima ta komponenta Eulerjev obhod, ki ga v $u$ vrinemo v $W$. Tako obdelamo vse komponente. $\square$
 
-Za (b) dodamo novo povezavo med obe lihi vozlišči (če že obstaja, dodamo novo vozlišče, povezano z obema), uporabimo (a) in dodano povezavo spet odstranimo.
+Za (b) dodamo novo povezavo med obe lihi vozlišči (če že obstaja, dodamo novo vozlišče, povezano z obema), uporabimo (a) in dodano povezavo spet odstranimo. Obratno: nesklenjen Eulerjev sprehod od $u$ do $w$ z dodano povezavo $wu$ postane obhod, zato so po (a) vse stopnje sode; brez dodane povezave sta lihi natanko $u$ in $w$.
 
 :::premisli
 Ali ima tloris iz uvoda Eulerjev obhod? In ali je kakšen tloris, kjer je natanko eno vozlišče lihe stopnje?
@@ -198,7 +198,7 @@ $m = 19 = n - 1$ in graf je povezan, zato je po izreku o drevesih drevo (karakte
 
 - **»Povezan graf je Eulerjev.«** To je Majina napaka. Povezanost je nujna, odločajo pa sode stopnje. Preden iščeš obhod, preštej liha vozlišča.
 - **Eulerjev in Hamiltonov zamenjana.** Euler prehodi vsako *povezavo*, Hamilton obišče vsako *vozlišče*. Tloris iz primera 2 je Hamiltonov, a ne Eulerjev; $C_n$ je oboje. Za Hamiltonove grafe sodost stopenj ne pove ničesar.
-- **»Brez $K_4$ so dovolj $3$ barve.«** Primer 3 kaže, da ne. Poln podgraf da le spodnjo mejo; višjo mejo lahko povzroči tudi lih cikel z vozliščem, ki je sosed vseh.
+- **»Brez $K_4$ so dovolj $3$ barve.«** Primer 3 kaže, da ne. Poln podgraf da le spodnjo mejo; višjo spodnjo mejo lahko povzroči tudi lih cikel z vozliščem, ki je sosed vseh.
 - **Zgornja meja brez spodnje.** Kdor najde barvanje s $4$ barvami, je dokazal le $\chi \le 4$. Za enakost moraš utemeljiti še, zakaj $3$ barve ne zadoščajo.
 - **Drevo z $n$ povezavami.** Pri štetju vezi v molekulah ali kablov v omrežju se hitro zmotiš za ena. Drevo ima vedno $n - 1$ povezav; vsaka dodatna povezava ustvari cikel.
 

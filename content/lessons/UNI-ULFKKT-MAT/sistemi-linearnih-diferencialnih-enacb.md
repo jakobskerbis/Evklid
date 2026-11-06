@@ -7,7 +7,7 @@ avtor: AI
 
 Pri utrjevanju epoksidne smole snov A prehaja v vmesni produkt B, ta pa v zamrežen produkt C. V laboratoriju izmerijo, kdaj je B največ: po okoli $9{,}2$ minutah. Kateri korak je hitrejši, prvi ali drugi? Presenetljivo: iz tega časa se tega ne da ugotoviti. Če konstanti hitrosti $k_1 = 0{,}20\,\mathrm{min^{-1}}$ in $k_2 = 0{,}050\,\mathrm{min^{-1}}$ zamenjamo, je vrh B ob natanko istem času, le štirikrat nižji.
 
-Zakaj, pokaže sistem linearnih diferencialnih enačb. Koncentracije treh snovi se spreminjajo hkrati in vplivajo druga na drugo, a ko sistem zapišemo z matriko, ga lastne vrednosti razstavijo na neodvisne eksponentne »načine«. Iz lekcij o enačbah prvega in drugega reda poznaš $y' = ky$ in karakteristično enačbo; iz lekcije o lastnih vrednostih znaš rešiti $A\vec{v} = \lambda\vec{v}$. Tu oboje združimo.
+Zakaj, pokaže sistem linearnih diferencialnih enačb. Koncentracije treh snovi se spreminjajo hkrati in vplivajo druga na drugo, a ko sistem zapišemo z matriko, ga lastne vrednosti razstavijo na neodvisne eksponentne »načine«. Iz lekcij o enačbah prvega in drugega reda poznaš $y' = ky$ in karakteristično enačbo; iz lekcije o determinantah znaš izračunati $\det$. Za ta postopek potrebuješ le še to: število $\lambda$ je **lastna vrednost** matrike $A$, če je $\det(A - \lambda I) = 0$, neničelna rešitev $\vec{v}$ sistema $(A - \lambda I)\vec{v} = \vec{0}$ pa je pripadajoči **lastni vektor** ($A\vec{v} = \lambda\vec{v}$). Podrobneje ju obdela lekcija Lastne vrednosti in lastni vektorji. Tu oboje združimo.
 
 ## Razlaga
 
@@ -136,8 +136,8 @@ $\dot{\vec{x}} = A\vec{x}$ z lastnimi vrednostmi $-k_1$, $-k_2$, $0$; vrh: $\dot
 5. Vrh: $\dot b = 0$ da $k_2e^{-k_2t} = k_1e^{-k_1t}$, torej $t_{\max} = \frac{\ln(k_1/k_2)}{k_1 - k_2} = \frac{\ln 4}{0{,}15}\,\mathrm{min} \approx 9{,}24\,\mathrm{min}$.
 6. Izraz je simetričen: zamenjava $k_1 \leftrightarrow k_2$ zamenja predznak števca in imenovalca, $t_{\max}$ ostane enak. Spremeni pa se faktor $\frac{k_1}{k_1 - k_2}$ pred oklepajem, zato se vrh zniža za faktor $k_2/k_1 = \frac{1}{4}$.
 7. Vrednost vrha (s $\frac{k_1}{k_1 - k_2} = \frac{4}{3}$): $b_{\max} = \frac{4}{3}\left(e^{-0{,}4621} - e^{-1{,}8484}\right)\,\mathrm{mol/L} \approx 0{,}630\,\mathrm{mol/L}$.
-8. Ob $10\,\mathrm{min}$: $a = e^{-2} \approx 0{,}135$, $b = \frac{4}{3}(e^{-0{,}5} - e^{-2}) \approx 0{,}628$, $c \approx 1 - 0{,}135 - 0{,}628 = 0{,}237\,\mathrm{mol/L}$.
-9. Odgovor: vrh B je ob $9{,}2\,\mathrm{min}$ z $0{,}63\,\mathrm{mol/L}$; ob $10\,\mathrm{min}$ je $a \approx 0{,}135$, $b \approx 0{,}628$ in $c \approx 0{,}237\,\mathrm{mol/L}$. Pri zamenjanih konstantah bi bil vrh ob istem času, a le $0{,}16\,\mathrm{mol/L}$, zato za določitev konstant potrebujemo tudi višino vrha ali krivuljo $a(t)$.
+8. Ob $10\,\mathrm{min}$: $a = e^{-2} \approx 0{,}135$, $b = \frac{4}{3}(e^{-0{,}5} - e^{-2}) \approx 0{,}628$, $c = 1 - a - b \approx 0{,}236\,\mathrm{mol/L}$ (z nezaokroženima $a$ in $b$).
+9. Odgovor: vrh B je ob $9{,}2\,\mathrm{min}$ z $0{,}63\,\mathrm{mol/L}$; ob $10\,\mathrm{min}$ je $a \approx 0{,}135$, $b \approx 0{,}628$ in $c \approx 0{,}236\,\mathrm{mol/L}$. Pri zamenjanih konstantah bi bil vrh ob istem času, a le $0{,}16\,\mathrm{mol/L}$, zato za določitev konstant potrebujemo tudi višino vrha ali krivuljo $a(t)$.
 
 ### Primer 4: zdaj ti
 
@@ -289,7 +289,7 @@ kar je posplošitev integrirajočega množitelja iz enačb prvega reda. Primer: 
 - $2$ in $4$
 ~ Predznak: iz $(-3 - \lambda)^2 = 1$ sledi $\lambda = -3 \pm 1$.
 - $-3$ in $1$
-~ Lastne vrednosti trikotne matrike so na diagonali, ta pa ni trikotna.
+~ To sta elementa prve vrstice; lastne vrednosti dobiš iz $\det(A - \lambda I) = 0$.
 > $(-3 - \lambda)^2 - 1 = 0$, $-3 - \lambda = \pm 1$, $\lambda \in \{-2, -4\}$.
 
 ? Pri A → B → C je $k_1 = k_2 = 0{,}25\,\mathrm{min^{-1}}$. Kdaj je B največ?
