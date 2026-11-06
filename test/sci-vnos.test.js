@@ -2,6 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import katex from "katex";
+import { readFileSync } from "node:fs";
 import { entryBase, entryTex, caretTex, caretStops, stopsTex, stripCaret, complete, analyzeLive, CARET, HOLE, TRUST } from "../public/graph/sci-vnos.js";
 import { previewTex } from "../public/graph/scisolve.js";
 import { functionDef } from "../public/graph/scicore.js";
@@ -69,6 +70,11 @@ test("za operatorjem s kazalcem se vidita znak in prazen okvirček", () => {
   assert.equal(complete("sin(2+(3", "7").text, "sin(2+(3))");
   assert.equal(complete("2+", "7777").text, "2+7777");
   assert.equal(complete("2+", "7777").at(2), 2, "kazalec je pred okvirčkom");
+});
+
+test("samostojni kalkulator (mobilna aplikacija) ima spustne menije kot aplikacija: »Samodejno« cel pri 360 px", () => {
+  const src = readFileSync(new URL("../public/kalkulator.js", import.meta.url), "utf8");
+  assert.match(src, /^import "\.\/dropdown\.js";$/m);
 });
 
 test("nerazčlenljivo besedilo ni surovo; vedno natanko en kazalec; merilne točke za dotik", () => {
