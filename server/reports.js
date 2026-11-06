@@ -260,7 +260,7 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     const id = store.db
       .prepare("INSERT INTO bug_reports (student_id, kind, conversation_id, reason, note, context, device) VALUES (?, 'app', ?, ?, ?, ?, ?)")
       .run(s.id, convId, view || "chat", seal(note), context ? seal(context) : null, deviceOf(req.body)).lastInsertRowid;
-    console.warn(`[evklid] skrbnik je prijavil napako #${id}`);
+    console.warn(`[evklid] ${admin ? "skrbnik" : "član pilota"} je prijavil napako #${id}`);
     res.status(201).json({ ok: true, id: Number(id) });
   });
 

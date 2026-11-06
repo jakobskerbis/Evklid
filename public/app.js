@@ -981,6 +981,7 @@ $("#chat-bug").addEventListener("click", (e) => {
     view: "chat",
     toast,
     thanks: bugAdmin ? null : t("pn.bugThanks"), // »najdeš jo v Računu« velja samo za skrbnika
+    ask: bugAdmin ? null : t("pn.bugAsk"), // član pilota: kdo vidi sporočila, ki gredo zraven
     onClose: () => {
       btn.setAttribute("aria-expanded", "false");
       btn.focus();

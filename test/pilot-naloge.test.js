@@ -1,14 +1,23 @@
 // Naloge za člane pilota (server/pilot-naloge.js): samo člani pilota jih vidijo, vsaka nagrada enkrat,
 // fotografija samo ob soglasju in samo za profil, star vsaj 15 let; skrbnik vidi vsote brez imen.
+import crypto from "node:crypto";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { pilotTasksReport, pilotTasksMarkdown, TOTAL, XP, SCAN_CONDITIONS } from "../server/pilot-naloge.js";
+import { pilotTasksReport, pilotTasksMarkdown, TOTAL, XP, SCAN_CONDITIONS, PHOTO_DAILY_MAX } from "../server/pilot-naloge.js";
+import { Leagues } from "../server/leagues.js";
+import { withoutPilotPhotos } from "../server/kopije.js";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { runRetention } from "../server/zasebnost.js";
 import SL from "../public/i18n/sl.js";
 
 const IMG = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==";
+// Fotografije shranimo samo s šifrirnim ključem (brez njega bi bile v bazi nešifrirane).
+process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
 
 async function withServer(fn) {
   const store = openDb(":memory:");
@@ -53,7 +62,7 @@ async function account(client, store, email, born) {
   assert.equal(s.status, 201, JSON.stringify(s.body));
   return { call, sid: s.body.id };
 }
-const setPilot = (store, email) => store.db.prepare("UPDATE parents SET pilot_at = datetime('now') WHERE email = ?").run(email);
+const setPilot = (store, email, on = true) => store.db.prepare(`UPDATE parents SET pilot_at = ${on ? "datetime('now')" : "NULL"} WHERE email = ?`).run(email);
 
 test("pilot: naloge vidijo samo člani pilota, drugi dobijo member:false in 403", async () => {
   await withServer(async ({ client, store }) => {
@@ -113,17 +122,42 @@ test("pilot: nagrada (XP in značka) samo enkrat na točko", async () => {
     assert.equal((await call(`/api/students/${sid}/pilot/survey`, { method: "POST", body: ans })).body.gained, 0);
     assert.equal(xp(), XP.scan + XP.flag + XP.feature + XP.survey);
 
-    // Skrbnik: vsote brez imen; ime v opombi je zamenjano.
-    const r = pilotTasksReport(store.db);
+    // Skrbnik pri enem članu: deleži, povprečja in opombe so skriti (prag MIN_GROUP = 3), da ne razkrijejo osebe.
+    let r = pilotTasksReport(store.db);
     assert.equal(r.members, 1);
+    assert.equal(r.scans.find((s) => s.cond === "dark").ok, null);
+    assert.equal(r.scans.find((s) => s.cond === "dark").rate, null);
+    assert.equal(r.features.find((f) => f.feature === "chat").bad, null);
+    assert.equal(r.survey.avg.overall, null);
+    assert.equal(r.survey.improve, null);
+    assert.equal(r.survey.hidden, true);
+    assert.deepEqual(r.notes, []);
+    assert.equal(r.notesHidden, true);
+    // Še dva člana: od treh odgovorov naprej so vsote vidne; ime v opombi je zamenjano.
+    for (const e of ["b@pilot.si", "c@pilot.si"]) {
+      const o = await account(client, store, e, 18);
+      setPilot(store, e);
+      await o.call(`/api/students/${o.sid}/pilot/scan`, { method: "POST", body: { cond: "dark", ok: false, note: "Maja: koren narobe" } });
+      await o.call(`/api/students/${o.sid}/pilot/feature`, { method: "POST", body: { feature: "chat", ok: false, note: "Počasno" } });
+      store.db.prepare("UPDATE pilot_state SET joined_at = datetime('now', '-8 days') WHERE student_id = ?").run(o.sid);
+      assert.equal((await o.call(`/api/students/${o.sid}/pilot/survey`, { method: "POST", body: ans })).status, 200);
+    }
+    r = pilotTasksReport(store.db);
+    assert.equal(r.members, 3);
+    assert.equal(r.scans.find((s) => s.cond === "dark").n, 3);
     assert.equal(r.scans.find((s) => s.cond === "dark").ok, 1);
-    assert.equal(r.features.find((f) => f.feature === "chat").bad, 1);
+    assert.equal(r.features.find((f) => f.feature === "chat").bad, 3);
     assert.equal(r.survey.avg.overall, 5);
-    assert.equal(r.survey.improve.scan, 1);
-    const md = pilotTasksMarkdown(r);
-    assert.doesNotMatch(md, /Maja|da@pilot/);
-    assert.match(md, /Odgovor je počasen/);
+    assert.equal(r.survey.improve.scan, 3);
+    assert.ok(r.notes.length >= 3);
     assert.equal(r.notes.some((n) => /Maja/.test(n.note)), false);
+    // Jutranji pregled: samo števila, brez opomb in brez imen ali e-naslovov.
+    const md = pilotTasksMarkdown(r);
+    assert.doesNotMatch(md, /Maja|@pilot|počasen|Počasno|koren/);
+    assert.match(md, /\| dark \| 3 \| 1 \| 33 % \|/);
+    // Odstranjen član ne šteje več med člane.
+    setPilot(store, "c@pilot.si", false);
+    assert.equal(pilotTasksReport(store.db).members, 2);
   });
 });
 
@@ -252,7 +286,96 @@ test("pilot: povzetek za jutranji pregled (scripts/pilot-naloge.js) brez imen in
   store.db.close?.();
   const out = execFileSync(process.execPath, ["scripts/pilot-naloge.js"], { env: { ...process.env, EVKLID_DB: file }, encoding: "utf8", cwd: new URL("..", import.meta.url).pathname });
   assert.match(out, /# Pilot: naloge članov/);
-  assert.match(out, /\| board \| 1 \| 0 \| 0 % \|/);
+  assert.match(out, /\| board \| 1 \| – \| – \|/); // ena ocena: pod pragom (MIN_GROUP) brez deleža
   assert.doesNotMatch(out, /Ana/);
   fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("pilot: soglasje z jezikom in rokom, prepis samo s fotografijo, magični bajti, dnevna meja", async () => {
+  await withServer(async ({ client, store }) => {
+    const a = await account(client, store, "zapis@pilot.si", 18);
+    setPilot(store, "zapis@pilot.si");
+    // Brez fotografije: prepis se ne shrani (otrok bere »samo ocena in opomba«).
+    await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "light", ok: true, problems: ["Ime: Maja Novak"] } });
+    assert.equal(store.db.prepare("SELECT problems FROM pilot_scans WHERE cond = 'light'").get().problems, null);
+    // S fotografijo: prepis (šifriran), soglasje kot JSON z različico in jezikom, rok izbrisa.
+    const r = await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "board", ok: true, image: IMG, consent: true, problems: ["x^2=4"], lang: "de" } });
+    assert.equal(r.status, 200);
+    assert.notEqual(store.db.prepare("SELECT problems FROM pilot_scans WHERE cond = 'board'").get().problems, null);
+    const ph = store.db.prepare("SELECT image, consent, expires_at, julianday(expires_at) - julianday(created_at) AS d FROM pilot_photos").get();
+    assert.ok(!ph.image.startsWith("data:image/"));
+    const c = JSON.parse(ph.consent);
+    assert.equal(c.v, 1);
+    assert.equal(c.lang, "de");
+    assert.equal(c.days, 30);
+    assert.match(c.text, /ponudniku umetne inteligence/);
+    assert.ok(Math.abs(ph.d - 30) < 0.01, `rok ${ph.d}`);
+    // Napačne slike: tip ne ustreza bajtom, ni niz, prevelika.
+    for (const image of ["data:image/png;base64,/9j/4AAQSkZJRgABAQ==", { x: 1 }, `data:image/jpeg;base64,/9j/${"A".repeat(2 * 1024 * 1024)}`])
+      assert.equal((await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "screen", ok: true, image, consent: true } })).status, 400);
+    // Dnevna meja shranjenih fotografij.
+    store.db.prepare("UPDATE pilot_state SET photo_day = date('now'), photo_n = ? WHERE student_id = ?").run(PHOTO_DAILY_MAX, a.sid);
+    assert.equal((await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "many", ok: true, image: IMG, consent: true } })).status, 429);
+    // Daljši rok v nastavitvi ne velja (največ 30 dni).
+    process.env.EVKLID_PILOT_PHOTO_DAYS = "90";
+    try {
+      const { photoDays } = await import("../server/pilot-naloge.js");
+      assert.equal(photoDays(), 30);
+    } finally {
+      delete process.env.EVKLID_PILOT_PHOTO_DAYS;
+    }
+  });
+});
+
+test("pilot: starš vidi pilot in fotografije v Računu, izstop iz pilota izbriše fotografije", async () => {
+  await withServer(async ({ client, store }) => {
+    const a = await account(client, store, "stars@pilot.si", 18);
+    const b = await account(client, store, "drug@pilot.si", 18);
+    setPilot(store, "stars@pilot.si");
+    await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "board", ok: true, image: IMG, consent: true } });
+    await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "light", ok: true, image: IMG, consent: true } });
+    const acc = (await a.call("/api/account")).body;
+    assert.deepEqual(acc.children.find((c) => c.id === a.sid).pilot, { member: true, photos: 2 });
+    // Tuj račun ne more izbrisati fotografij drugega.
+    assert.equal((await b.call(`/api/account/pilot-photos/${a.sid}`, { method: "DELETE" })).status, 404);
+    // Bivši član (npr. potekla šolska licenca) še vidi, kje so fotografije, in jih lahko izbriše.
+    setPilot(store, "stars@pilot.si", false);
+    const st = (await a.call(`/api/students/${a.sid}/pilot`)).body;
+    assert.deepEqual(st, { member: false, photos: ["board", "light"] });
+    const del = await a.call(`/api/account/pilot-photos/${a.sid}`, { method: "DELETE" });
+    assert.equal(del.status, 200);
+    assert.deepEqual({ member: del.body.member, photos: del.body.photos, deleted: del.body.deleted }, { member: false, photos: 0, deleted: 2 });
+    // Skrbnik odstrani račun iz pilota: fotografije gredo takoj.
+    setPilot(store, "stars@pilot.si");
+    await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "dark", ok: true, image: IMG, consent: true } });
+    store.db.prepare("UPDATE parents SET is_admin = 1 WHERE email = 'drug@pilot.si'").run();
+    assert.equal((await b.call("/api/admin/pilot-naloge/clani", { method: "POST", body: { email: "stars@pilot.si", on: false } })).status, 200);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM pilot_photos").get().n, 0);
+    // Učenec z vsemi fotografijami naenkrat (DELETE …/pilot/photos) dela tudi za bivšega člana.
+    assert.equal((await a.call(`/api/students/${a.sid}/pilot/photos`, { method: "DELETE" })).status, 200);
+  });
+});
+
+test("pilot: XP iz nalog šteje na profilu, v ligah ne; varnostna kopija je brez fotografij", async () => {
+  const store = openDb(":memory:");
+  const s = store.createStudent("Ana");
+  store.db.prepare("INSERT INTO xp_events (student_id, amount, reason) VALUES (?, 20, 'pilot: survey'), (?, 7, 'naloga')").run(s.id, s.id);
+  const lg = new Leagues(store);
+  const m = lg.xpBetween([s.id], "2000-01-01", "2999-01-01");
+  assert.equal(m.get(s.id), 7);
+  // Kopija: VACUUM INTO, nato brez pilot_photos.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-pilot-kopija-"));
+  try {
+    const file = path.join(dir, "k.db");
+    const src = new DatabaseSync(":memory:");
+    src.exec("CREATE TABLE pilot_photos (scan_id INTEGER PRIMARY KEY, image TEXT); INSERT INTO pilot_photos VALUES (1, 'x'), (2, 'y');");
+    src.exec(`VACUUM INTO '${file}'`);
+    src.close();
+    assert.equal(withoutPilotPhotos(file), 2);
+    const k = new DatabaseSync(file, { readOnly: true });
+    assert.equal(k.prepare("SELECT COUNT(*) AS n FROM pilot_photos").get().n, 0);
+    k.close();
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });

@@ -7,7 +7,7 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
-import { renderPilotAdmin } from "./pilot-naloge.js";
+import { renderPilotAdmin, paintAccountPilot } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
@@ -1477,7 +1477,7 @@ export async function renderAccount() {
       <ul class="child-list">${acc.children
         .map((c) => `<li><b>${esc(c.name)}</b> <span class="muted">(${c.birth_year || "–"})</span> ${
           c.premium ? `<span class="pill ok">${esc(t("acct.fullAccess"))}</span>` : `<span class="pill">${esc(t("acct.freeToday", { used: c.questions_today, max: acc.free_daily_questions }))}</span>`
-        }${c.pass ? ` <span class="pill">${esc(t("acct.passPill", { date: date(c.pass.ends_at) }))}</span>` : ""}${c.level_locked ? ` <span class="pill warn">${esc(levelName(c.level))}: ${esc(t("up.locked"))}</span>` : ""} ${aiPill(c.ai_month)}${c.has_password || acc.children.length < 2 ? "" : ` <span class="pill">${esc(t("lock.none"))}</span>`}</li>`)
+        }${c.pass ? ` <span class="pill">${esc(t("acct.passPill", { date: date(c.pass.ends_at) }))}</span>` : ""}${c.level_locked ? ` <span class="pill warn">${esc(levelName(c.level))}: ${esc(t("up.locked"))}</span>` : ""} ${aiPill(c.ai_month)}${c.has_password || acc.children.length < 2 ? "" : ` <span class="pill">${esc(t("lock.none"))}</span>`}<div class="pn-acc" data-pn-acc="${c.id}" hidden></div></li>`)
         .join("")}</ul>
       ${acc.children.length ? `<details class="profile-pw"><summary>${esc(t("lock.change"))}</summary>
         <form id="profile-pw-form" class="form" novalidate>
@@ -1572,6 +1572,7 @@ export async function renderAccount() {
     }
   });
   bindAdminCodes(acc);
+  paintAccountPilot($(".child-list"), acc.children, { api, toast }); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
   $("#gift-form")?.addEventListener("submit", async (e) => {

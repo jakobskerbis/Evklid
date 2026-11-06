@@ -73,6 +73,9 @@ const ABOUT = {
   pot_tesla: { sl: "Nikola Tesla (1856–1943), izumitelj izmeničnega toka in indukcijskega motorja.", en: "Nikola Tesla (1856–1943), inventor of alternating-current systems and the induction motor." },
 };
 
+// Ime značke »Pilot« v vseh jezikih (enako kot pn.badge v public/i18n); kjer »pilot« pomeni letalca, »pionir«.
+const PILOT_BADGE = { sl: "Pilot", en: "Pilot", de: "Pilot", hr: "Pilot", bs: "Pilot", sr: "Пилот", mk: "Пилот", sq: "Pilot", cs: "Pilot", sk: "Pilot", pl: "Pilot", hu: "Pilot", ro: "Pilot", ru: "Пилот", uk: "Пілот", it: "Pilota", es: "Piloto", pt: "Piloto", fr: "Pilote", tr: "Pilot", ar: "رائد", fa: "پیشگام", ur: "پائلٹ", hi: "पायलट", bn: "পাইলট", id: "Pilot", vi: "Tiên phong", th: "ผู้บุกเบิก", sw: "Mwanzilishi", ja: "パイロット", ko: "파일럿", zh: "试点", "zh-Hant": "試點" };
+
 export const KNOWLEDGE = [
   // Periodni sistem (značke elementov)
   k("el_h", "H", 1, "nonmetal", "common", "Vodik", "Hydrogen", ["KEM-OS-8/kisline-in-baze", "KEM-SS-2/kisline-in-baze"], "kislin"),
@@ -181,7 +184,7 @@ export const KNOWLEDGE = [
   { id: "win_month_podium", collection: "lige", slot: "badge", rarity: "epic", name: { sl: "Mesečne stopničke", en: "Monthly podium" }, need: { league: "monthPodium" } },
   { id: "win_month", collection: "lige", slot: "badge", rarity: "legendary", name: { sl: "Mesečni prvak", en: "Monthly champion" }, need: { league: "month" } },
   // Značka »Pilot« (server/pilot-naloge.js): prva opravljena naloga za člane pilota. Kdor je nima, je ne vidi (hidden).
-  { id: "pilot", collection: "lige", slot: "badge", rarity: "epic", hidden: true, name: { sl: "Pilot", en: "Pilot" }, need: { pilot: true } },
+  { id: "pilot", collection: "lige", slot: "badge", rarity: "epic", hidden: true, name: PILOT_BADGE, need: { pilot: true } },
   // Liki in predmeti iz iger: pravilni odgovori v igrah (games) ali število različnih uspešno končanih iger (cleared).
   ...[
     ["kind_cat", "kind", "common", { games: 20 }, "Mačka", "Cat"],

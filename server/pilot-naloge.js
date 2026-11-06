@@ -9,9 +9,12 @@
 //
 // Zasebnost: shranimo oceno, kratko opombo (šifrirano) in prepis naloge (šifrirano). Fotografijo samo ob izrecnem
 // soglasju (kljukica ob nalogi), samo za profil, star vsaj 15 let (ista previdna meja kot soglasja v
-// accounts/index.js); mlajšim kljukice ne ponudimo. Fotografija je šifrirana, izbriše se po PHOTO_DAYS dneh
-// (zasebnost.js, runRetention) ali takoj, ko jo učenec izbriše. Skrbnik vidi samo vsote brez imen in e-naslovov.
-import { seal, unseal } from "./crypto-polje.js";
+// accounts/index.js); mlajšim kljukice ne ponudimo. Brez ključa EVKLID_DATA_KEY fotografij ne sprejmemo (sicer bi bile
+// nešifrirane). Prepis naloge shranimo samo skupaj s fotografijo. Fotografija se izbriše ob expires_at (največ 30 dni,
+// zasebnost.js runRetention), ob izstopu računa iz pilota ali takoj, ko jo učenec ali starš izbriše; v varnostne kopije
+// ne gre (kopije.js). Skrbnik vidi vsote šele od MIN_GROUP odgovorov naprej, opombe brez imena profila, fotografije
+// s soglasjem (vsak ogled v dnevniku dostopov) in e-naslove računov, ki jih je sam dodal v pilot.
+import { seal, unseal, encryptionOn } from "./crypto-polje.js";
 import { cleanText } from "./settings.js";
 import { schoolAccess } from "./schools.js";
 import { ensureKnowledgeTables } from "./zbirke.js";
@@ -29,15 +32,24 @@ export const XP = { scan: 10, feature: 5, flag: 5, survey: 20 };
 export const TOTAL = SCAN_CONDITIONS.length + FEATURES_SHOWN + 2;
 export const BADGE = "pilot";
 const NOTE_MAX = 300;
-const MAX_IMAGE = 6 * 1024 * 1024;
+// Odjemalec pošlje izrez ≤ 1600 px (JPEG 0,88), torej ≤ ~1,5 MB; več ne sprejmemo.
+const MAX_IMAGE = 2 * 1024 * 1024;
+// Največ toliko shranjenih fotografij na profil na dan (vsaka prepiše prejšnjo istega pogoja, a gre skozi WAL in AES).
+export const PHOTO_DAILY_MAX = 30;
+// Vsote in povprečja (anketa, deleži, opombe) pokažemo šele od toliko odgovorov naprej, da ne razkrijejo posameznika.
+export const MIN_GROUP = 3;
+export const PHOTO_MAX_DAYS = 30;
+export const CONSENT_VERSION = 1;
 const PROBLEMS_MAX = 5;
 export const photoDays = () => {
   const n = Number(process.env.EVKLID_PILOT_PHOTO_DAYS);
-  return Number.isInteger(n) && n > 0 && n <= 90 ? n : 30;
+  return Number.isInteger(n) && n > 0 && n <= PHOTO_MAX_DAYS ? n : PHOTO_MAX_DAYS; // krajši rok je dovoljen, daljši ne
 };
 // Besedilo soglasja, kot ga shranimo ob fotografiji (dokaz, kaj je učenec potrdil).
 export const PHOTO_CONSENT_TEXT = (n = photoDays()) =>
-  `Shrani fotografijo, da izboljšamo branje. Na fotografiji naj bo samo naloga, brez obrazov in imen. Hranimo jo ${n} dni, nato se sama izbriše. Prej jo lahko izbrišeš pod »Pomagaj izboljšati Evklid«.`;
+  `Shrani fotografijo, da izboljšamo branje. Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida; nikomur ju ne pošljemo, tudi ne ponudniku umetne inteligence. Hranimo ju ${n} ${n === 1 ? "dan" : n === 2 ? "dneva" : "dni"}, nato se sama izbrišeta. Prej ju lahko izbrišeš pod »Pomagaj izboljšati Evklid«.`;
+// Zapis soglasja: različica, jezik, v katerem ga je učenec videl, rok in slovensko besedilo te različice.
+export const consentRecord = (lang, n = photoDays()) => JSON.stringify({ v: CONSENT_VERSION, lang, days: n, text: PHOTO_CONSENT_TEXT(n) });
 
 export function migratePilotTasks(db) {
   db.exec(`
@@ -45,7 +57,9 @@ export function migratePilotTasks(db) {
       student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
       joined_at TEXT NOT NULL DEFAULT (datetime('now')),
       intro_at TEXT,                 -- obvestilo ob prvi prijavi zaprto (»Poglej naloge«, »Pozneje« ali ×)
-      survey_notice_at TEXT          -- obvestilo o anketi po enem tednu zaprto
+      survey_notice_at TEXT,         -- obvestilo o anketi po enem tednu zaprto
+      photo_day TEXT,                -- dan (UTC) in število shranjenih fotografij tega dne (PHOTO_DAILY_MAX)
+      photo_n INTEGER NOT NULL DEFAULT 0
     );
     CREATE TABLE IF NOT EXISTS pilot_scans (
       id INTEGER PRIMARY KEY,
@@ -61,8 +75,9 @@ export function migratePilotTasks(db) {
       scan_id INTEGER PRIMARY KEY REFERENCES pilot_scans(id) ON DELETE CASCADE,
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
       image TEXT NOT NULL,           -- data URL, šifrirano
-      consent TEXT NOT NULL,         -- besedilo, ki ga je učenec potrdil
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      consent TEXT NOT NULL,         -- JSON {v, lang, days, text}: kaj je učenec potrdil
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      expires_at TEXT                -- izbris (rok iz soglasja, največ PHOTO_MAX_DAYS)
     );
     CREATE TABLE IF NOT EXISTS pilot_features (
       id INTEGER PRIMARY KEY,
@@ -86,6 +101,13 @@ export function migratePilotTasks(db) {
       PRIMARY KEY (student_id, item)
     );
   `);
+  // Migracije za baze iz prve različice (pred pregledom PR #474).
+  if (!hasCol(db, "pilot_photos", "expires_at")) {
+    db.exec("ALTER TABLE pilot_photos ADD COLUMN expires_at TEXT");
+    db.exec(`UPDATE pilot_photos SET expires_at = datetime(created_at, '+${PHOTO_MAX_DAYS} days') WHERE expires_at IS NULL`);
+  }
+  if (!hasCol(db, "pilot_state", "photo_day")) db.exec("ALTER TABLE pilot_state ADD COLUMN photo_day TEXT");
+  if (!hasCol(db, "pilot_state", "photo_n")) db.exec("ALTER TABLE pilot_state ADD COLUMN photo_n INTEGER NOT NULL DEFAULT 0");
 }
 
 const hasParents = (db) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get();
@@ -109,6 +131,7 @@ export function pilotMember(db, studentId) {
 // Fotografijo smemo ponuditi samo profilu z znano letnico rojstva, ki ni mlajši od 15 (previdno kot pri soglasjih:
 // v letu 15. rojstnega dne še štejemo kot mlajšega).
 export function photoAllowed(db, studentId, now = new Date()) {
+  if (!encryptionOn()) return false; // brez ključa bi bila fotografija v bazi in kopijah nešifrirana
   try {
     if (!hasCol(db, "students", "birth_year")) return false;
     const y = db.prepare("SELECT birth_year FROM students WHERE id = ?").get(studentId)?.birth_year;
@@ -118,11 +141,27 @@ export function photoAllowed(db, studentId, now = new Date()) {
   }
 }
 
+// Za Račun (starš): ali je profil v pilotu in koliko fotografij je shranjenih.
+export function pilotSummary(db, studentId) {
+  let photos = 0;
+  try {
+    photos = db.prepare("SELECT COUNT(*) AS n FROM pilot_photos WHERE student_id = ?").get(studentId).n;
+  } catch {}
+  return { member: !!pilotMember(db, studentId), photos };
+}
+
 const addDays = (sqlTime, days) => new Date(Date.parse(`${String(sqlTime).replace(" ", "T")}Z`) + days * 864e5);
 
 export function pilotState(db, studentId, { now = new Date() } = {}) {
   const member = pilotMember(db, studentId);
-  if (!member) return { member: false };
+  if (!member) {
+    // Bivši član (odstranjen iz pilota, šoli je potekla licenca): fotografije še lahko izbriše (Jaz, Račun).
+    let photos = [];
+    try {
+      photos = db.prepare("SELECT s.cond FROM pilot_photos p JOIN pilot_scans s ON s.id = p.scan_id WHERE p.student_id = ? ORDER BY s.cond").all(studentId).map((r) => r.cond);
+    } catch {}
+    return photos.length ? { member: false, photos } : { member: false };
+  }
   migratePilotTasks(db);
   db.prepare("INSERT OR IGNORE INTO pilot_state (student_id) VALUES (?)").run(studentId);
   const st = db.prepare("SELECT * FROM pilot_state WHERE student_id = ?").get(studentId);
@@ -177,17 +216,22 @@ const note = (v, name) => {
 };
 
 // ---------- skrbnik: vsote brez imen (Račun → »Pilot: naloge članov«, scripts/pilot-naloge.js) ----------
+// Pod MIN_GROUP odgovori so deleži, povprečja in opombe null (UI: »Premalo odgovorov«), da ne razkrijejo posameznika.
 export function pilotTasksReport(db) {
   migratePilotTasks(db);
+  const few = (n) => n < MIN_GROUP;
   const scanRows = db.prepare("SELECT cond, COUNT(*) AS n, SUM(ok) AS ok FROM pilot_scans GROUP BY cond").all();
   const byCond = Object.fromEntries(scanRows.map((r) => [r.cond, r]));
   const scans = SCAN_CONDITIONS.map((c) => {
     const r = byCond[c] || { n: 0, ok: 0 };
-    return { cond: c, n: r.n, ok: r.ok || 0, rate: r.n ? (r.ok || 0) / r.n : null };
+    return few(r.n) ? { cond: c, n: r.n, ok: null, rate: null } : { cond: c, n: r.n, ok: r.ok || 0, rate: (r.ok || 0) / r.n };
   });
   const featRows = db.prepare("SELECT feature, COUNT(*) AS n, SUM(1 - ok) AS bad FROM pilot_features GROUP BY feature").all();
   const byFeat = Object.fromEntries(featRows.map((r) => [r.feature, r]));
-  const features = FEATURES.map((f) => ({ feature: f, n: byFeat[f]?.n || 0, bad: byFeat[f]?.bad || 0 }));
+  const features = FEATURES.map((f) => {
+    const n = byFeat[f]?.n || 0;
+    return { feature: f, n, bad: few(n) ? null : byFeat[f]?.bad || 0 };
+  });
   // Opombe brez imena in brez časa (vrstni red naključen po id-ju ne razkrije, kdo je pisal).
   const open = (v) => unseal(v, null);
   const notes = [
@@ -207,32 +251,42 @@ export function pilotTasksReport(db) {
   const avg = Object.fromEntries(
     SURVEY_SCALE.map((q) => {
       const v = answers.map((a) => a[q]).filter((x) => Number.isInteger(x));
-      return [q, v.length ? Math.round((v.reduce((s, x) => s + x, 0) / v.length) * 10) / 10 : null];
+      return [q, !few(v.length) ? Math.round((v.reduce((s, x) => s + x, 0) / v.length) * 10) / 10 : null];
     }),
   );
-  const improve = Object.fromEntries(SURVEY_IMPROVE.map((k) => [k, answers.filter((a) => a.improve === k).length]));
-  const members = db.prepare("SELECT COUNT(*) AS n FROM pilot_state").get().n;
+  const improve = few(answers.length) ? null : Object.fromEntries(SURVEY_IMPROVE.map((k) => [k, answers.filter((a) => a.improve === k).length]));
+  // Samo trenutni člani (pilot_state ostane tudi po izstopu, zaradi izvoza in izbrisa).
+  const members = db.prepare("SELECT student_id FROM pilot_state").all().filter((r) => pilotMember(db, r.student_id)).length;
   const photos = db.prepare("SELECT COUNT(*) AS n FROM pilot_photos").get().n;
   const photoList = db.prepare("SELECT p.scan_id AS id, s.cond, s.ok FROM pilot_photos p JOIN pilot_scans s ON s.id = p.scan_id ORDER BY s.cond, p.scan_id").all()
     .map((r) => ({ id: r.id, cond: r.cond, ok: !!r.ok }));
-  return { members, scans, features, notes, survey: { n: answers.length, avg, improve }, photos, photoList };
+  // Opombe šele, ko je v pilotu vsaj MIN_GROUP članov in vsaj toliko opomb.
+  const showNotes = !few(members) && !few(notes.length);
+  return { members, minGroup: MIN_GROUP, scans, features, notes: showNotes ? notes : [], notesHidden: !showNotes && notes.length > 0, survey: { n: answers.length, avg, improve, hidden: few(answers.length) }, photos, photoList };
 }
 
-// Povzetek za jutranji pregled (Markdown, brez osebnih podatkov).
+// Povzetek za jutranji pregled (Markdown): samo števila, brez opomb in prostih besedil (te so na skrbniški strani).
 export function pilotTasksMarkdown(r) {
   const pc = (x) => (x == null ? "–" : `${Math.round(x * 100)} %`);
-  const lines = [`# Pilot: naloge članov`, ``, `Člani, ki so odprli naloge: ${r.members}. Shranjenih fotografij: ${r.photos}.`, ``, `## Branje po pogojih`, ``, `| Pogoj | Ocen | Prav | Delež |`, `|---|---|---|---|`];
-  for (const s of r.scans) lines.push(`| ${s.cond} | ${s.n} | ${s.ok} | ${pc(s.rate)} |`);
+  const num = (x) => (x == null ? "–" : x);
+  const lines = [`# Pilot: naloge članov`, ``, `Člani v pilotu, ki so odprli naloge: ${r.members}. Shranjenih fotografij: ${r.photos}. Opomb: ${r.notes.length || (r.notesHidden ? `manj kot ${r.minGroup} prikazanih` : 0)}.`, `Deleži in povprečja so prikazani šele od ${r.minGroup} odgovorov naprej (–).`, ``, `## Branje po pogojih`, ``, `| Pogoj | Ocen | Prav | Delež |`, `|---|---|---|---|`];
+  for (const s of r.scans) lines.push(`| ${s.cond} | ${s.n} | ${num(s.ok)} | ${pc(s.rate)} |`);
   lines.push(``, `## Deli aplikacije`, ``, `| Del | Ocen | Ne deluje |`, `|---|---|---|`);
-  for (const f of r.features) lines.push(`| ${f.feature} | ${f.n} | ${f.bad} |`);
+  for (const f of r.features) lines.push(`| ${f.feature} | ${f.n} | ${num(f.bad)} |`);
   lines.push(``, `## Anketa (${r.survey.n})`, ``);
   for (const [q, v] of Object.entries(r.survey.avg)) lines.push(`- ${q}: ${v ?? "–"}`);
-  lines.push(`- izboljšati najprej: ${Object.entries(r.survey.improve).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", ") || "–"}`);
-  if (r.notes.length) {
-    lines.push(``, `## Opombe`, ``);
-    for (const n of r.notes) lines.push(`- ${n.kind}/${n.what} (${n.ok ? "prav/deluje" : "narobe/ne deluje"}): ${n.note.replace(/\s+/g, " ")}`);
-  }
+  lines.push(`- izboljšati najprej: ${r.survey.improve ? Object.entries(r.survey.improve).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", ") || "–" : "–"}`);
   return `${lines.join("\n")}\n`;
+}
+
+// Data URL slike: PNG, JPEG ali WebP z ujemajočimi se magičnimi bajti (ne poljubna datoteka s takim imenom).
+function isImage(dataUrl) {
+  const m = /^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl);
+  if (!m) return false;
+  const head = Buffer.from(m[2].slice(0, 24), "base64");
+  if (m[1] === "jpeg") return head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff;
+  if (m[1] === "png") return head.subarray(0, 4).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47]));
+  return head.subarray(0, 4).toString("latin1") === "RIFF" && head.subarray(8, 12).toString("latin1") === "WEBP";
 }
 
 // ---------- API ----------
@@ -268,21 +322,28 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     reply(res, s);
   });
 
-  // Ocena branja: { cond, ok, note?, problems?: [besedilo], image?: dataURL, consent?: true }
+  // Ocena branja: { cond, ok, note?, problems?: [besedilo], image?: dataURL, consent?: true, lang? }
+  // Prepis (problems) shranimo samo skupaj s fotografijo (isto soglasje); brez nje samo oceno in opombo.
   app.post("/api/students/:id/pilot/scan", (req, res) => {
     const s = member(req, res);
     if (!s) return;
     const b = req.body || {};
     if (!SCAN_CONDITIONS.includes(b.cond) || typeof b.ok !== "boolean") return res.status(400).json({ error: "Napačna zahteva." });
-    const problems = Array.isArray(b.problems) ? b.problems.filter((p) => typeof p === "string").slice(0, PROBLEMS_MAX).map((p) => p.slice(0, 600)) : [];
     let image = null;
     if (b.image != null && b.consent === true) {
       // Fotografija samo ob soglasju in samo, kjer jo smemo ponuditi; sicer zavrnemo celo zahtevo (nič ne shranimo).
+      if (typeof b.image !== "string") return res.status(400).json({ error: "Slika manjka ali je prevelika." });
+      if (!encryptionOn()) return res.status(503).json({ error: "Fotografij zdaj ne shranjujemo.", photo: false });
       if (!photoAllowed(db, s.id)) return res.status(403).json({ error: "Fotografije za ta profil ne shranjujemo.", photo: false });
-      const m = /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.exec(String(b.image));
-      if (!m || b.image.length > MAX_IMAGE) return res.status(400).json({ error: "Slika manjka ali je prevelika." });
+      if (b.image.length > MAX_IMAGE || !isImage(b.image)) return res.status(400).json({ error: "Slika manjka ali je prevelika." });
+      const today = new Date().toISOString().slice(0, 10);
+      const day = db.prepare("SELECT photo_day, photo_n FROM pilot_state WHERE student_id = ?").get(s.id);
+      if (day?.photo_day === today && day.photo_n >= PHOTO_DAILY_MAX) return res.status(429).json({ error: "Danes je shranjenih fotografij dovolj. Poskusi jutri.", photo: false });
       image = b.image;
     }
+    const problems =
+      image && Array.isArray(b.problems) ? b.problems.filter((p) => typeof p === "string").slice(0, PROBLEMS_MAX).map((p) => p.slice(0, 600)) : [];
+    const lang = typeof b.lang === "string" && /^[a-z]{2,3}(?:-[A-Za-z]{2,4})?$/.test(b.lang) ? b.lang : "sl";
     const n = note(b.note, s.name);
     const prev = db.prepare("SELECT id FROM pilot_scans WHERE student_id = ? AND cond = ?").get(s.id, b.cond);
     db.exec("BEGIN IMMEDIATE");
@@ -298,7 +359,13 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
           .prepare("INSERT INTO pilot_scans (student_id, cond, ok, note, problems) VALUES (?, ?, ?, ?, ?)")
           .run(s.id, b.cond, b.ok ? 1 : 0, n, problems.length ? seal(JSON.stringify(problems)) : null).lastInsertRowid;
       }
-      if (image) db.prepare("INSERT INTO pilot_photos (scan_id, student_id, image, consent) VALUES (?, ?, ?, ?)").run(id, s.id, seal(image), PHOTO_CONSENT_TEXT());
+      if (image) {
+        const days = photoDays();
+        db.prepare(`INSERT INTO pilot_photos (scan_id, student_id, image, consent, expires_at) VALUES (?, ?, ?, ?, datetime('now', '+${days} days'))`).run(id, s.id, seal(image), consentRecord(lang, days));
+        db.prepare(
+          "UPDATE pilot_state SET photo_n = CASE WHEN photo_day = date('now') THEN photo_n + 1 ELSE 1 END, photo_day = date('now') WHERE student_id = ?",
+        ).run(s.id);
+      }
       db.exec("COMMIT");
     } catch (e) {
       db.exec("ROLLBACK");
@@ -316,19 +383,43 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     res.json({ ...pilotState(db, s.id), gained: 0 });
   });
 
+  // Vse fotografije profila naenkrat (bivši član v Jaz, starš v Računu). Ocene ostanejo.
+  app.delete("/api/students/:id/pilot/photos", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const n = db.prepare("DELETE FROM pilot_photos WHERE student_id = ?").run(s.id).changes;
+    res.json({ ...pilotState(db, s.id), gained: 0, deleted: Number(n) });
+  });
+
+  // Starš v Računu izbriše fotografije profila (pot mimo zaklepa profila: starš je lastnik, ne potrebuje odklepa).
+  app.delete("/api/account/pilot-photos/:sid", (req, res) => {
+    if (!accounts || !req.parent) return res.status(404).json({ error: "Ne obstaja." });
+    const sid = /^\d{1,12}$/.test(req.params.sid) ? Number(req.params.sid) : NaN;
+    const own = Number.isInteger(sid) && db.prepare("SELECT 1 FROM students WHERE id = ? AND parent_id = ?").get(sid, req.parent.id);
+    if (!own) return res.status(404).json({ error: "Učenec ne obstaja." });
+    const n = db.prepare("DELETE FROM pilot_photos WHERE student_id = ?").run(sid).changes;
+    audit(db, { req, parentId: req.parent.id, actor: "parent", action: "pilot_photos_delete", target: `student:${sid}` });
+    res.json({ ...pilotSummary(db, sid), deleted: Number(n) });
+  });
+
   // Del aplikacije: { feature, ok, note? }; samo opomba k že dani oceni: { feature, note } (ok ostane).
   app.post("/api/students/:id/pilot/feature", (req, res) => {
     const s = member(req, res);
     if (!s) return;
     const b = req.body || {};
     if (!FEATURES.includes(b.feature)) return res.status(400).json({ error: "Napačna zahteva." });
+    // Aplikacija pokaže 5 delov: »exams« ali »3d« (kdor nima NPZ/mature). Drugega iz para ne sprejmemo.
+    const other = { exams: "3d", "3d": "exams" }[b.feature];
+    if (other && db.prepare("SELECT 1 FROM pilot_features WHERE student_id = ? AND feature = ?").get(s.id, other)) return res.status(409).json({ error: "Ta del ni med tvojimi nalogami." });
     const prev = db.prepare("SELECT id, ok FROM pilot_features WHERE student_id = ? AND feature = ?").get(s.id, b.feature);
     if (typeof b.ok !== "boolean" && !prev) return res.status(400).json({ error: "Napačna zahteva." });
     const ok = typeof b.ok === "boolean" ? (b.ok ? 1 : 0) : prev.ok;
     const n = note(b.note, s.name);
     if (prev) db.prepare("UPDATE pilot_features SET ok = ?, note = COALESCE(?, note), created_at = datetime('now') WHERE id = ?").run(ok, n, prev.id);
     else db.prepare("INSERT INTO pilot_features (student_id, feature, ok, note) VALUES (?, ?, ?, ?)").run(s.id, b.feature, ok, n);
-    reply(res, s, reward(db, progress, s.id, `feature:${b.feature}`, XP.feature));
+    const rewarded = db.prepare("SELECT COUNT(*) AS n FROM pilot_rewards WHERE student_id = ? AND item LIKE 'feature:%'").get(s.id).n;
+    const hasIt = !!db.prepare("SELECT 1 FROM pilot_rewards WHERE student_id = ? AND item = ?").get(s.id, `feature:${b.feature}`);
+    reply(res, s, hasIt || rewarded < FEATURES_SHOWN ? reward(db, progress, s.id, `feature:${b.feature}`, XP.feature) : 0);
   });
 
   // »Razumem« pri zastavici.
@@ -377,6 +468,8 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     if (!p) return res.status(404).json({ error: "Račun s tem e-naslovom ne obstaja." });
     const on = req.body?.on !== false;
     db.prepare(`UPDATE parents SET pilot_at = ${on ? "COALESCE(pilot_at, datetime('now'))" : "NULL"} WHERE id = ?`).run(p.id);
+    // Izstop iz pilota: fotografije profilov tega računa izbrišemo takoj (soglasje velja za sodelovanje v pilotu).
+    if (!on) db.prepare("DELETE FROM pilot_photos WHERE student_id IN (SELECT id FROM students WHERE parent_id = ?)").run(p.id);
     audit(db, { req, parentId: req.parent?.id ?? null, actor: "admin", action: on ? "pilot_add" : "pilot_remove", target: `parent:${p.id}` });
     res.json({ ok: true });
   });

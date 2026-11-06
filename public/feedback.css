@@ -159,3 +159,11 @@
 .pn-admin-add { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .pn-admin-add input { flex: 1 1 200px; min-height: 44px; }
 .pn-admin-add button { min-height: 44px; }
+/* Bivši član pilota s shranjenimi fotografijami (Jaz) in starš v Računu: izbris fotografij */
+.pn-former { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.pn-former .lr-text { flex: 1 1 180px; min-width: 0; }
+.pn-former > button, .pn-acc > button { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.pn-acc { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 6px; }
+.pn-acc .pill { display: inline-flex; align-items: center; gap: 4px; }
+.pn-acc .pill .i { width: 14px; height: 14px; }
+.pn-rate-btns > button { flex: 1 1 140px; justify-content: center; }

@@ -11,6 +11,7 @@ import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { exportOtherTables } from "../zasebnost.js";
+import { pilotSummary } from "../pilot-naloge.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
@@ -930,6 +931,7 @@ export function mountAccounts(app, store, opts = {}) {
         ai_month: aiUsage.studentMonth(c.id),
         devices: devices.recent(c.id),
         has_password: locks.hasPassword(c.id),
+        pilot: pilotSummary(db, c.id), // naloge za pilot: član? koliko fotografij je shranjenih (server/pilot-naloge.js)
       })),
       max_children: Math.min(MAX_CHILDREN, access.seats || 1),
       device_warn_limit: deviceWarnLimit(),

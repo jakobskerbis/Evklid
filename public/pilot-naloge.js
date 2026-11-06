@@ -2,7 +2,7 @@
 // Ob prvi prijavi enkrat obvestilo (»Poglej naloge« / »Pozneje«), po enem tednu enkrat obvestilo o anketi.
 // 1. skeniraj 10 nalog pod različnimi pogoji (ocena »Prebrano prav / narobe« na zaslonu Skeniraj),
 // 2. preizkusi 5 delov aplikacije, 3. kje je zastavica za prijavo napake, 4. kratka anketa. Vse je prostovoljno.
-import { t, locale } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -74,10 +74,43 @@ export async function loadPilot({ notices = true } = {}) {
 function paintMeRow() {
   const row = $("#me-pilot");
   if (!row) return;
+  const card = row.parentElement;
+  // Bivši član pilota s shranjenimi fotografijami: vrstica za izbris (soglasje obljublja izbris »pod Pomagaj izboljšati«).
+  const former = !st?.member && st?.photos?.length ? st.photos.length : 0;
+  let old = $("#me-pilot-photos");
   row.hidden = !st?.member;
-  row.parentElement.hidden = row.hidden;
+  card.hidden = !st?.member && !former;
+  if (former) {
+    if (!old) {
+      old = document.createElement("div");
+      old.id = "me-pilot-photos";
+      old.className = "list-row pn-former";
+      card.append(old);
+      old.addEventListener("click", (e) => {
+        if (e.target.closest("[data-pn-del-all]")) deleteAllPhotos();
+      });
+    }
+    old.hidden = false;
+    old.innerHTML = `<span class="ic">${icon("image")}</span><span class="lr-text"><b>${esc(t("pn.formerTitle"))}</b><small>${esc(t("pn.formerText", { n: former }))}</small></span>
+      <button type="button" class="secondary" data-pn-del-all>${icon("trash-2")}<span>${esc(t("pn.deleteAll"))}</span></button>`;
+  } else if (old) old.hidden = true;
   if (!st?.member) return;
-  row.innerHTML = `<span class="ic">${icon("sparkles")}</span><span class="lr-text"><b>${esc(t("pn.title"))}</b><small>${esc(t("pn.meSub", { done: st.done, total: st.total }))}</small></span>${icon("chevron-right")}`;
+  // Brez števca, dokler ni nič opravljeno (manj pritiska, sodelovanje je prostovoljno).
+  const sub = st.done ? `<small>${esc(t("pn.meSub", { done: st.done, total: st.total }))}</small>` : "";
+  row.innerHTML = `<span class="ic">${icon("sparkles")}</span><span class="lr-text"><b>${esc(t("pn.title"))}</b>${sub}</span>${icon("chevron-right")}`;
+}
+
+async function deleteAllPhotos() {
+  const s = D?.getStudent();
+  if (!s) return;
+  try {
+    st = await D.api(`/api/students/${s.id}/pilot/photos`, { method: "DELETE" });
+    D.toast(t("pn.photosDeleted"), "check");
+  } catch (err) {
+    D.toast(err?.message || t("off.noConnection"));
+  }
+  paintMeRow();
+  if (!$("#view-pilot")?.hidden) render();
 }
 
 // ---------- obvestila (enkrat) ----------
@@ -163,7 +196,7 @@ function render() {
   const pct = Math.round((s.done / Math.max(1, s.total)) * 100);
   box.innerHTML = `
     <div class="card pn-top">
-      <div class="pn-progress-row"><b>${esc(t("pn.progress", { done: s.done, total: s.total }))}</b><span class="pn-badge${s.badge ? " on" : ""}">${icon("badge-check")}<span>Pilot</span></span></div>
+      <div class="pn-progress-row"><b>${esc(t("pn.progress", { done: s.done, total: s.total }))}</b><span class="pn-badge${s.badge ? " on" : ""}">${icon("badge-check")}<span>${esc(t("pn.badge"))}</span></span></div>
       <div class="pn-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${s.total}" aria-valuenow="${s.done}" aria-label="${esc(t("pn.progress", { done: s.done, total: s.total }))}"><span style="width:${pct}%"></span></div>
       <p class="muted small">${esc(t(s.badge ? "pn.badgeOn" : "pn.badgeOff"))}</p>
       <p class="muted small">${esc(t(s.photo.allowed ? "pn.privacyPhoto" : "pn.privacy"))}</p>
@@ -345,14 +378,47 @@ export function scanTask(cond) {
     title: t("pn.rateTitle", { cond: t(`pn.cond.${cond}`) }),
     photo: s.photo,
     async rate({ ok, note, image, consent, problems }) {
-      const body = { cond, ok, problems };
+      const body = { cond, ok };
       if (note) body.note = note;
-      if (consent && image && s.photo.allowed) Object.assign(body, { image, consent: true });
+      // Fotografija in prepis samo ob kljukici (strežnik prepis brez fotografije zavrže).
+      if (consent && image && s.photo.allowed) Object.assign(body, { image, consent: true, problems, lang: currentLang() });
       applied(await post("scan", body));
       D.showView("pilot");
       setTimeout(() => $(`[data-pn="scan"][data-cond="${cond}"]`)?.focus(), 50);
     },
   };
+}
+
+// ---------- Račun: starš vidi pilot in shranjene fotografije vsakega profila ----------
+
+/** V seznamu profilov (Račun) pri vsakem profilu: »V pilotu«, število shranjenih fotografij in »Izbriši fotografije«.
+ *  Podatki so v acc.children[].pilot (brez zahtev na profil, ki je lahko zaklenjen z geslom). */
+export function paintAccountPilot(list, children, { api, toast }) {
+  if (!list) return;
+  for (const c of children || []) {
+    const el = list.querySelector(`[data-pn-acc="${c.id}"]`);
+    if (!el) continue;
+    const paint = (r) => {
+      const photos = r?.photos || 0;
+      el.hidden = !r?.member && !photos;
+      if (el.hidden) return (el.innerHTML = "");
+      el.innerHTML = `${r.member ? `<span class="pill">${icon("sparkles")}${esc(t("pn.accIn"))}</span>` : ""}
+        ${photos ? `<span class="muted small">${esc(t("pn.accPhotos", { n: photos }))}</span>
+        <button type="button" class="secondary" data-pn-acc-del>${icon("trash-2")}<span>${esc(t("pn.deleteAll"))}</span></button>` : ""}`;
+      el.querySelector("[data-pn-acc-del]")?.addEventListener("click", async (e) => {
+        const b = e.currentTarget;
+        b.disabled = true;
+        try {
+          paint(await api(`/api/account/pilot-photos/${c.id}`, { method: "DELETE" }));
+          toast(t("pn.photosDeleted"), "check");
+        } catch (err) {
+          toast(err?.message || t("off.noConnection"));
+          b.disabled = false;
+        }
+      });
+    };
+    paint(c.pilot);
+  }
 }
 
 // ---------- skrbnik: vsote brez imen (Račun → »Pilot: naloge članov«) ----------
@@ -370,17 +436,21 @@ export async function renderPilotAdmin(box, { api, toast }) {
   const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
   const cond = (c) => t(`pn.cond.${c}`);
   const feat = (f) => t(FEATURE_NAME[f] || f);
+  const few = esc(t("pilot.n.few", { n: r.minGroup ?? 3 }));
+  const num = (x) => (x == null ? "–" : x);
   box.innerHTML = `
     <p>${esc(t("pilot.n.sum", { members: r.members, photos: r.photos, survey: r.survey.n }))}</p>
     <h3>${esc(t("pilot.n.scan"))}</h3>
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("pilot.n.cond")}${th("pilot.n.n")}${th("pilot.n.ok")}${th("pilot.n.rate")}</tr></thead>
-      <tbody>${r.scans.map((s) => `<tr><td>${esc(cond(s.cond))}</td><td>${s.n}</td><td>${s.ok}</td><td>${pc(s.rate)}</td></tr>`).join("")}</tbody></table></div>
+      <tbody>${r.scans.map((s) => `<tr><td>${esc(cond(s.cond))}</td><td>${s.n}</td><td>${num(s.ok)}</td><td>${pc(s.rate)}</td></tr>`).join("")}</tbody></table></div>
+    <p class="muted small">${few}</p>
     <h3>${esc(t("pilot.n.feat"))}</h3>
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("pilot.n.feature")}${th("pilot.n.n")}${th("pilot.n.bad")}</tr></thead>
-      <tbody>${r.features.map((f) => `<tr><td>${esc(feat(f.feature))}</td><td>${f.n}</td><td>${f.bad}</td></tr>`).join("")}</tbody></table></div>
+      <tbody>${r.features.map((f) => `<tr><td>${esc(feat(f.feature))}</td><td>${f.n}</td><td>${num(f.bad)}</td></tr>`).join("")}</tbody></table></div>
     <h3>${esc(t("pilot.n.survey"))} (${r.survey.n})</h3>
-    <ul class="pilot-sum">${SCALE.map((q) => `<li><b>${r.survey.avg[q] == null ? "–" : Number(r.survey.avg[q]).toLocaleString(locale())}</b> ${esc(t(`pn.q.${q}`))}</li>`).join("")}
-      <li>${esc(t("pilot.n.improve"))}: ${esc(IMPROVE.filter((k) => r.survey.improve[k]).map((k) => `${t(`pn.i.${k}`)} ${r.survey.improve[k]}`).join(", ") || "–")}</li></ul>
+    ${r.survey.hidden ? `<p class="muted">${few}</p>` : `<ul class="pilot-sum">${SCALE.map((q) => `<li><b>${r.survey.avg[q] == null ? "–" : Number(r.survey.avg[q]).toLocaleString(locale())}</b> ${esc(t(`pn.q.${q}`))}</li>`).join("")}
+      <li>${esc(t("pilot.n.improve"))}: ${esc(IMPROVE.filter((k) => r.survey.improve?.[k]).map((k) => `${t(`pn.i.${k}`)} ${r.survey.improve[k]}`).join(", ") || "–")}</li></ul>`}
+    ${r.notesHidden ? `<h3>${esc(t("pilot.n.notes"))}</h3><p class="muted">${few}</p>` : ""}
     ${r.notes.length ? `<h3>${esc(t("pilot.n.notes"))}</h3><ul class="pn-admin-notes">${r.notes.map((n) => `<li><small class="muted">${esc(n.kind === "scan" ? cond(n.what) : feat(n.what))} · ${esc(t(n.kind === "scan" ? (n.ok ? "pn.ok" : "pn.bad") : n.ok ? "pn.works" : "pn.broken"))}</small><br>${esc(n.note)}</li>`).join("")}</ul>` : ""}
     ${r.photoList.length ? `<h3>${esc(t("pilot.n.photosH"))}</h3><ul class="pn-admin-photos">${r.photoList.map((p) => `<li><a href="/api/admin/pilot-naloge/foto/${p.id}" target="_blank" rel="noopener">${icon("image")} ${esc(cond(p.cond))} · ${esc(t(p.ok ? "pn.ok" : "pn.bad"))}</a></li>`).join("")}</ul>` : ""}
     ${r.canAdd ? `<h3>${esc(t("pilot.n.members"))}</h3>

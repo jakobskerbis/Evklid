@@ -640,6 +640,7 @@ function renderConfirm(box) {
 function bindPilotRate(box) {
   const task = pilotTask;
   const photo = task.photo?.allowed;
+  // Gumba ocene sta enakovredna (nobeden ni poudarjen, sicer bi napihnil »prav«), vrstni red kot »Deluje / Ne deluje«.
   box.insertAdjacentHTML(
     "afterbegin",
     `<div class="card pn-rate">
@@ -649,8 +650,8 @@ function bindPilotRate(box) {
       <input id="pn-rate-note" type="text" maxlength="300" autocomplete="off" placeholder="${esc(t("pn.scanNotePh"))}">
       ${photo ? `<label class="pn-consent"><input type="checkbox" id="pn-rate-photo"><span><b>${esc(t("pn.photoSave"))}</b><small class="muted">${esc(t("pn.photoRules", { n: task.photo.days }))}</small></span></label>` : ""}
       <div class="scan-actions pn-rate-btns">
+        <button type="button" class="secondary" data-pn-rate="ok">${icon("circle-check")}${esc(t("pn.ok"))}</button>
         <button type="button" class="secondary" data-pn-rate="bad">${icon("circle-x")}${esc(t("pn.bad"))}</button>
-        <button type="button" class="primary" data-pn-rate="ok">${icon("circle-check")}${esc(t("pn.ok"))}</button>
       </div>
     </div>`,
   );
