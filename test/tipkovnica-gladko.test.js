@@ -238,6 +238,9 @@ test("swiping the template row scrolls it and inserts nothing; a clean tap inser
   await page.waitForFunction(() => window.ready);
   await page.tap("#v");
   await page.waitForSelector("#tipkovnica .tk-ctx .tk-chip");
+  // Počasen strežnik (CI): počakaj, da se tipkovnica dokonča odpre, sicer poteg zgreši vrstico.
+  await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running"), null, { timeout: 5000 });
+  await page.waitForTimeout(100);
   const row = await page.locator("#tipkovnica .tk-ctx").boundingBox();
   const cdp = await ctx.newCDPSession(page);
   const y = row.y + row.height / 2;
@@ -248,8 +251,10 @@ test("swiping the template row scrolls it and inserts nothing; a clean tap inser
     await page.waitForTimeout(16);
   }
   await touch("touchEnd");
-  await page.waitForTimeout(300);
-  assert.ok(await page.locator("#tipkovnica .tk-ctx").evaluate((r) => r.scrollLeft > 20), "vrstica se je pomaknila");
+  const moved = await page
+    .waitForFunction(() => document.querySelector("#tipkovnica .tk-ctx").scrollLeft > 20, null, { timeout: 2000 })
+    .then(() => true, () => false);
+  assert.ok(moved, "vrstica se je pomaknila");
   assert.equal(await page.inputValue("#v"), "", "poteg ne vpiše predloge");
   await page.locator("#tipkovnica .tk-ctx .tk-chip").filter({ hasText: "π" }).tap();
   await page.waitForTimeout(60);

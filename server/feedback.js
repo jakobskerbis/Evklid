@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getClient, isMockMode, MODEL, quickParams } from "./claude.js";
 import { cleanText } from "./settings.js";
+import { callMaxUsd } from "./meje-ai.js";
 import { seal, unseal, sealJson, unsealJson, encryptionOn } from "./crypto-polje.js";
 
 export const AREAS = ["path", "tutor", "textbook", "competition", "design", "speed", "league"];
@@ -317,6 +318,9 @@ export function mountFeedback(app, store, { usage, file = null, createFn } = {})
     if (!feedbackAiOn()) return res.status(409).json({ error: "Pogovor z AI ni vklopljen." });
     const answers = normalizeFeedback({ interview: req.body?.answers })?.interview || [];
     if (answers.length >= MAX_INTERVIEW_TURNS) return res.json({ question: null, done: true });
+    // Trda meja AI (server/meje-ai.js): kratek klic hitrega modela (do 200 izhodnih žetonov) pod mejo profila.
+    const hold = usage?.guard ? usage.guard(s.id, callMaxUsd(MODEL, 3000 + Buffer.byteLength(JSON.stringify(answers), "utf8"), 200)) : null;
+    if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const r = await nextInterviewQuestion({ answers, lang: cleanText(req.body?.lang, 12) || s.settings.language || "sl", createFn });
       if (r.usage) usage?.log(s.id, r.model, r.usage, "feedback");
@@ -324,6 +328,8 @@ export function mountFeedback(app, store, { usage, file = null, createFn } = {})
     } catch (e) {
       console.warn(`[evklid] pogovor za povratne informacije: ${e.message}`);
       res.status(502).json({ error: "AI trenutno ni dosegljiv." });
+    } finally {
+      hold?.release();
     }
   });
 

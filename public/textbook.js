@@ -102,6 +102,8 @@ function selectionInLesson(sel) {
   // Izbor mora biti znotraj besedila lekcije (ne v gumbih ali menijih).
   const start = sel.anchorNode?.nodeType === 1 ? sel.anchorNode : sel.anchorNode?.parentElement;
   if (!el.closest(SELECT_AREA) && !start?.closest(SELECT_AREA)) return null;
+  // Stran »Lekcija še nastaja« nima snovi (ne obvestilo ne naslov ali cilji): tam »Razloži« ne ponudimo.
+  if (view.querySelector(".tb-pending")) return null;
   const text = selectionText(sel);
   return text.length >= 2 ? text : null;
 }
@@ -434,8 +436,10 @@ async function renderLesson(topicId) {
   current = { id: L.id, name: L.name };
   // Simboli v formulah po predmetu lekcije (FIZ-OS-9 → fizika, fakultetna tema → njen predmet), ne po
   // predmetu v nastavitvah. Oznake lekcije (:::simboli) imajo prednost: T v T = I/I₀ je prepustnost.
-  const lessonSubject = L.subject || (/^([A-Z]{3})-/.exec(L.id || "") || [])[1];
-  const R = (text) => withFormulaSubject(lessonSubject, () => ctx.renderRich(text), L.lesson?.symbols);
+  // Fakultetna tema (UNI-…) ima predmet v podatkih (KEM, FIZ …); »UNI« sam ni predmet (bila bi tabela MAT).
+  const lessonSubject = L.subject || (/^UNI-/.test(L.id || "") ? null : (/^([A-Z]{3})-/.exec(L.id || "") || [])[1]);
+  // Tema za pomen dvoumnih črk: ime lekcije in sklopa (x₁ je ničla le v lekciji o kvadratni enačbi).
+  const R = (text) => withFormulaSubject(lessonSubject, () => ctx.renderRich(text), L.lesson?.symbols, [L.name, L.unit].filter(Boolean).join(" · "));
   const lesson = L.lesson;
   const sections = lesson?.sections || [];
   // Demonstracijo postavimo za rešene primere (ali za razlago, če primerov ni).
@@ -475,10 +479,14 @@ async function renderLesson(topicId) {
     })
     .join("");
 
+  // Tema brez lekcije in brez razlage: le obvestilo (ni česa označiti in »Razložiti«), gumb pa vpraša o temi.
+  const pending = !lesson && !L.explanation;
+  const pendingNext = L.demo && L.practice ? "tbk.pendingDemoPractice" : L.demo ? "tbk.pendingDemo" : L.practice ? "tbk.pendingPractice" : "tbk.pendingAsk";
   const fallback = !lesson
-    ? `<section class="card tb-section"><div class="explanation">${
-        L.explanation ? R(L.explanation) : `<p>Lekcija za to temo še nastaja.${L.demo ? " Medtem si oglej poskus spodaj" : ""}${L.practice ? ", reši nekaj nalog" : ""} ali vprašaj inštruktorja, ki ti temo razloži po korakih.</p>`
-      }</div></section>${SLOT}`
+    ? pending
+      ? `<section class="card tb-section tb-pending"><div class="explanation"><p>${esc(t("tbk.pending"))}${/^(zh|ja)/.test(locale()) ? "" : " "}${esc(t(pendingNext))}</p></div>
+        <div class="actions"><button type="button" class="primary" id="tb-ask-topic">${ic("message-circle")}${esc(t("tbk.askTopic"))}</button></div></section>${SLOT}`
+      : `<section class="card tb-section"><div class="explanation">${R(L.explanation)}</div></section>${SLOT}`
     : "";
 
   const staticItem = (c) => `<li><div class="tb-q">${R(c.q)}</div><ol type="a">${c.options.map((o) => `<li>${R(o)}</li>`).join("")}</ol>
@@ -545,10 +553,10 @@ async function renderLesson(topicId) {
   // ne v levem stolpcu: na računalniku s poskusi desno je ← levo spodaj, številka na sredini in → desno spodaj.
   const nextHtml = `<section class="card tb-next"${stepMode ? " hidden" : ""}>
     <h2>Kaj zdaj?</h2>
-    <div class="actions">
+    ${L.practice || !pending ? `<div class="actions">
       ${L.practice ? `<button type="button" class="primary" id="tb-practice">${ic("pencil")}Vadi naloge</button>` : ""}
-      <button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>
-    </div>
+      ${pending ? "" : `<button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>`}
+    </div>` : ""}
     <div class="tb-nav">
       ${L.prev ? `<button type="button" class="ghost" data-lesson="${esc(L.prev.id)}">← ${esc(L.prev.name)}</button>` : "<span></span>"}
       ${L.next ? `<button type="button" class="ghost" data-lesson="${esc(L.next.id)}">${esc(L.next.name)} →</button>` : ""}
@@ -560,7 +568,7 @@ async function renderLesson(topicId) {
     <h1 class="tb-title">${esc(L.name)}</h1>
     ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="/ucbenik/${L.path}/${L.id.split("/")[1]}#natisni" target="_blank" rel="noopener">${ic("download")}PDF lekcije</a>${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
     ${linkHtml}
-    <p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>
+    ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
     ${lesson && lesson.status !== "pregledano" ? `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, pritisni »Prijavi napako«.</p>` : ""}
@@ -658,9 +666,11 @@ async function renderLesson(topicId) {
     if (!(await ctx.openTopic(L.id))) ctx.nextPractice();
   });
   $("#tb-pretest")?.addEventListener("click", () => ctx.openTopic(L.id));
-  $("#tb-ask").addEventListener("click", () =>
+  $("#tb-ask")?.addEventListener("click", () =>
     ctx.learnWithTutor({ id: L.id, name: L.name }, `Prebral sem lekcijo »${L.name}«, pa mi še ni čisto jasno. Mi razložiš na drug način?`),
   );
+  // Lekcija še nastaja: inštruktor začne s temo (»Začniva s temo: …«, z imenom teme).
+  $("#tb-ask-topic")?.addEventListener("click", () => ctx.learnWithTutor({ id: L.id, name: L.name }));
 }
 
 // ---------- Lekcija po korakih ----------
