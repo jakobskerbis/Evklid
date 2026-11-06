@@ -97,7 +97,7 @@ Ob ohlajanju raztopina sploh ne postane nasičena ali pa le malo. Kristalizira m
 
 Po toči želiš stehtati zrno toče z maso okoli $3\,\mathrm{g}$, in sicer z relativno negotovostjo največ $1\,\%$. Na voljo so kuhinjska tehtnica (zadnja decimalka $1\,\mathrm{g}$), tehtnica za grobo tehtanje ($0{,}01\,\mathrm{g}$) in analitska ($0{,}0001\,\mathrm{g}$).
 
-**Podatki:** $m \approx 3\,\mathrm{g}$, zadnje decimalke $1\,\mathrm{g}$; $0{,}01\,\mathrm{g}$; $0{,}0001\,\mathrm{g}$; dovoljeno največ $1\,\%$
+**Podatki:** $m \approx 3\,\mathrm{g}$, zadnje decimalke treh tehtnic ($1\,\mathrm{g}$; $0{,}01\,\mathrm{g}$; $0{,}0001\,\mathrm{g}$), dovoljeno največ $1\,\%$
 **Iščemo:** relativno negotovost za vsako tehtnico in najprimernejšo tehtnico
 
 :::formula
@@ -133,7 +133,7 @@ $m = m_2 - m_1$, $\quad V = \dfrac{m}{\rho}$
 
 Imamo $50\,\mathrm{g}$ nečistega kalijevega nitrata, ki vsebuje $45\,\mathrm{g}$ $\mathrm{KNO_3}$ in $5\,\mathrm{g}$ $\mathrm{NaCl}$. Raztopimo ga v najmanjši potrebni količini vode pri $80\,^\circ\mathrm{C}$ in ohladimo na $20\,^\circ\mathrm{C}$. (a) Koliko čistega $\mathrm{KNO_3}$ dobimo in kolikšen je izkoristek? (b) Ali $\mathrm{NaCl}$ ostane v raztopini in največ koliko ga sme biti v vzorcu, da še ostane? (c) Kolikšen bi bil izkoristek, če bi po nepotrebnem vzeli $20\,\%$ več vode? Predpostavi, da se soli pri topnosti ne motita.
 
-**Podatki:** $m(\mathrm{KNO_3}) = 45\,\mathrm{g}$, $m(\mathrm{NaCl}) = 5\,\mathrm{g}$; topnost $\mathrm{KNO_3}$: $169\,\mathrm{g}$ na $100\,\mathrm{g}$ vode pri $80\,^\circ\mathrm{C}$; $31{,}6\,\mathrm{g}$ na $100\,\mathrm{g}$ vode pri $20\,^\circ\mathrm{C}$; topnost $\mathrm{NaCl}$ pri $20\,^\circ\mathrm{C}$: $35{,}9\,\mathrm{g}$ na $100\,\mathrm{g}$ vode; v (c) $1{,}20$-krat več vode
+**Podatki:** $m(\mathrm{KNO_3}) = 45\,\mathrm{g}$, $m(\mathrm{NaCl}) = 5\,\mathrm{g}$; topnost $\mathrm{KNO_3}$: $169\,\mathrm{g}$ na $100\,\mathrm{g}$ vode pri $80\,^\circ\mathrm{C}$ in $31{,}6\,\mathrm{g}$ na $100\,\mathrm{g}$ vode pri $20\,^\circ\mathrm{C}$; topnost $\mathrm{NaCl}$ pri $20\,^\circ\mathrm{C}$: $35{,}9\,\mathrm{g}$ na $100\,\mathrm{g}$ vode; v (c) $1{,}20$-krat več vode
 **Iščemo:** maso kristalov, izkoristek, največjo dopustno maso $\mathrm{NaCl}$ in izkoristek pri več vode
 
 :::formula

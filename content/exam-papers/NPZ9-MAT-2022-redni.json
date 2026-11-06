@@ -456,7 +456,7 @@
        "text": "**Ura:** 9.45 je $9 \\cdot 60 + 45 = 585$ minut po polnoči, vožnja traja $2 \\cdot 60 + 35 = 155$ minut. Skupaj $585 + 155 = 740$ minut, $740 = 12 \\cdot 60 + 20$, torej ob 12.20 ✓.\n\nZakaj so drugi zapisi napačni: 11.80 nastane, če seštejemo $45 + 35 = 80$ in pozabimo, da ima ura le $60$ minut (pravilno je $80\\,\\mathrm{min} = 1\\,\\mathrm{h}\\ 20\\,\\mathrm{min}$); 12.80 je ista napaka, le da je ura že povečana; 11.20 nastane, če preneseno uro izpustimo.\n\n**Števec v metrih:** $48\\,736{,}2\\,\\mathrm{km} = 48\\,736\\,200\\,\\mathrm{m}$ in $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126\\,400\\,\\mathrm{m}$. Vsota: $48\\,862\\,600\\,\\mathrm{m} = 48\\,862{,}6\\,\\mathrm{km}$ ✓."
       }
      ],
-     "scoring": "1 t. za obkroženi pravilni zapis B (12.20), 1 t. za pretvorbo $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126{,}4\\,\\mathrm{km}$; 1 t. za stanje števca $48\\,862{,}6\\,\\mathrm{km}$.",
+     "scoring": "1 t. za obkroženi pravilni zapis B (12.20); 1 t. za pretvorbo $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126{,}4\\,\\mathrm{km}$; 1 t. za stanje števca $48\\,862{,}6\\,\\mathrm{km}$.",
      "mistake": "Pri števcu se pogosto pozabi, da je zadnja števka desetinka: kdor prebere $487\\,362\\,\\mathrm{km}$ in prišteje $126{,}4$, dobi nesmiseln rezultat. Tudi $400\\,\\mathrm{m} = 0{,}04\\,\\mathrm{km}$ je napačno: $400$ od $1\\,000$ je $0{,}4$."
     }
    ]

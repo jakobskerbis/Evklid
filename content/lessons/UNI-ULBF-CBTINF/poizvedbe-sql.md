@@ -121,7 +121,7 @@ Vrstni red delov v poizvedbi je vedno enak: `SELECT … FROM … JOIN … ON …
 
 Za manjše popravilo iščeš material, ki stane manj kot $7$ €. Izpiši naziv in ceno, od najcenejšega navzgor.
 
-**Podatki:** tabela `material` (stolpci `id`, `naziv`, `enota`, `cena`; $5$ vrstic, cene $6{,}50$; $2{,}40$; $8{,}90$; $14{,}00$; $1{,}20$ €), meja $7$ €
+**Podatki:** tabela `material` (stolpci `id`, `naziv`, `enota`, `cena`) s $5$ vrsticami, cene ($6{,}50$; $2{,}40$; $8{,}90$; $14{,}00$; $1{,}20$ €), meja $7$ €
 **Iščemo:** poizvedbo in njen rezultat
 
 :::formula

@@ -108,7 +108,7 @@ Na kosu sira piše $0{,}35\,\text{kg}$, v loncu pa je $2{,}08\,\text{l}$ juhe. Z
 
 Za pecivo potrebuješ vsaj $0{,}24\,\text{kg}$ masla. V hladilniku so štirje kosi z masami $0{,}3\,\text{kg}$; $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$ in $0{,}25\,\text{kg}$. Uredi kose od najlažjega do najtežjega. Kateri kosi zadoščajo vsak zase?
 
-**Podatki:** potrebno vsaj $0{,}24\,\text{kg}$; kosi $0{,}3\,\text{kg}$; $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$; $0{,}25\,\text{kg}$
+**Podatki:** potrebno vsaj $0{,}24\,\text{kg}$, kosi ($0{,}3\,\text{kg}$; $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$; $0{,}25\,\text{kg}$)
 **Iščemo:** vrstni red kosov in kose z vsaj $0{,}24\,\text{kg}$
 
 :::formula

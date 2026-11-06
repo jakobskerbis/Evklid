@@ -97,7 +97,7 @@ const MATH_SPLIT = /(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/;
 // Pred tem naštevanja z decimalno vejico dobijo podpičje (»$1{,}5$; $2$«, »$(3; 7{,}5)$«; server/nastevanje.js),
 // razen pri dvojezičnih (indijskih) generatorjih z decimalno piko.
 const plainOnly = (s) => (typeof s === "string" && s.includes("{,}") ? s.split(MATH_SPLIT).map((p, i) => (i % 2 ? p : p.replaceAll("{,}", ","))).join("") : s);
-function plainCommas(t, slovensko = true) {
+export function plainCommas(t, slovensko = true) {
   const plain = slovensko ? (s) => plainOnly(popraviNastevanja(s)) : plainOnly;
   const a = t.answer;
   return {

@@ -121,7 +121,7 @@ Obliko preveriš z `node scripts/check-lesson.js -q content/lessons/<pot>/<slug>
 
 Demonstracija se pokaže za razdelkom »Rešeni primeri«. Formule piši v LaTeX z
 decimalno vejico (`$3{,}5$`). Če je med naštetimi števili vsaj eno decimalno, jih loči s podpičjem:
-`$1{,}5$; $2$ ali $2{,}99$`, točka `$(1{,}5;\ 2)$` (preveri `check-lesson.js`).
+`$1{,}5$; $2$ ali $2{,}99$`, točka `$(1{,}5; 2)$` (preveri `check-lesson.js`).
 
 ## Fakultetne lekcije
 

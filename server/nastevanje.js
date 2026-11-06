@@ -2,7 +2,7 @@
 // decimalno vejico, elemente ločimo s podpičjem: »1,5; 2 ali 2,99«, točka »(1,5; 2)«, interval
 // »(0,5; 1]«. Z navadno vejico se »1,5, 2« prebere kot »1, 5, 2«.
 // Uporabljajo ga server/lesson-check.js (napaka v lekciji), scripts/nastevanje.js (iskanje in
-// popravljanje vsebin) in scripts/preveri-generatorje.js (besedila generatorjev nalog).
+// popravljanje vsebin) in server/practice/index.js (besedila slovenskih generatorjev nalog).
 // Velja samo za slovenska besedila: v angleščini je »1,500, 2« lahko zapis tisočic.
 
 const DEC_TEX = /\d\{,\}\d/; // decimalna vejica v LaTeX: 1{,}5
@@ -94,7 +94,33 @@ export function popraviNastevanja(text) {
     const before = parts[i - 1];
     if (/(?<![\w,])[−-]?\d+(?:,\d+)?, $/.test(before) && startNum(tex(parts[i])) && (/\d,\d+, $/.test(before) || DEC_TEX.test(startNum(tex(parts[i]))))) parts[i - 1] = before.replace(/, $/, "; ");
   }
-  return parts.join("");
+  return poenotiTockovnik(text, parts.join(""));
+}
+
+// Točkovnik: če je ločilo pred »1 t. za …« postalo podpičje, ga dobijo vse točke te vrstice
+// (»1 t. za $a$; 1 t. za $0{,}5$; 1 t. za …«), sicer bi bila ločila mešana. Šteje samo zunaj oklepajev.
+const TOCKA = /^ (?:po )?\d+ t\.(?=\s|,|$)/;
+function poenotiTockovnik(orig, fixed) {
+  if (orig === fixed) return fixed;
+  const a = orig.split("\n");
+  return fixed
+    .split("\n")
+    .map((line, i) => {
+      if (line === a[i]) return line;
+      const seps = [];
+      let depth = 0;
+      for (let k = 0; k < line.length; k++) {
+        const ch = line[k];
+        if (ch === "(") depth++;
+        else if (ch === ")") depth = Math.max(0, depth - 1);
+        else if (!depth && (ch === "," || ch === ";") && TOCKA.test(line.slice(k + 1, k + 12))) seps.push(k);
+      }
+      if (!seps.some((k) => line[k] === ";")) return line;
+      const out = line.split("");
+      for (const k of seps) out[k] = ";";
+      return out.join("");
+    })
+    .join("\n");
 }
 
 // Najdena mesta: [{ line, before, after }] (vrstica z 1, izrez pred in po popravku).

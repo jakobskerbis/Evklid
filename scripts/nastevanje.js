@@ -4,6 +4,8 @@
 //   node scripts/nastevanje.js                 # slovenske vsebine (lekcije, gradiva, formule, izpiti, razlage)
 //   node scripts/nastevanje.js --popravi [poti] # popravi .md in .json; .js samo izpiše (popravi ročno)
 // Vsak zadetek preglej: popravek je podpičje samo med elementi naštevanja, ki stojijo ob številu.
+// »!« pri zadetku: vrstica že ima »; « (ločilo skupin), zato meja med skupinami po popravku morda ni več
+// jasna. Naštevanje daj v oklepaj (»kosmiči ($4\,g$; $0{,}50$ €), jogurt (…)«), uporabi »in« ali razdeli stavek.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -34,17 +36,27 @@ const fixJson = (raw) => raw.replace(JSON_STR, (lit) => {
 });
 
 let n = 0;
+let opozorila = 0;
+// Podpičje, ki je bilo v vrstici že pred popravkom (ne LaTeX-ov presledek »\;«), ločuje nekaj drugega.
+const zePodpicje = (line) => /(?<!\\);\s/.test(line);
 for (const f of files) {
   const raw = fs.readFileSync(f, "utf8");
   const fixed = f.endsWith(".json") ? fixJson(raw) : f.endsWith(".md") ? popraviNastevanja(raw) : null;
   const hits = fixed != null ? diffLines(raw, fixed) : najdiNastevanja(raw);
   if (!hits.length) continue;
   const rel = path.relative(ROOT, f);
-  for (const h of hits) console.log(`${rel}:${h.line}\n  - ${h.before}\n  + ${h.after}`);
+  const lines = raw.split("\n");
+  for (const h of hits) {
+    console.log(`${rel}:${h.line}\n  - ${h.before}\n  + ${h.after}`);
+    if (zePodpicje(lines[h.line - 1])) {
+      opozorila++;
+      console.log("  ! vrstica že ima »; « zunaj naštevanja: preveri, da je meja med skupinami še jasna (naštevanje v oklepaj, »in« ali nov stavek).");
+    }
+  }
   n += hits.length;
   if (fix && fixed != null && fixed !== raw) fs.writeFileSync(f, fixed);
 }
-console.log(`${n} mest${fix ? " (popravljeno v .md in .json; .js popravi ročno)" : ""}.`);
+console.log(`${n} mest${fix ? " (popravljeno v .md in .json; .js popravi ročno)" : ""}.${opozorila ? ` Opozoril »!«: ${opozorila}.` : ""}`);
 process.exit(n && !fix ? 1 : 0);
 
 function diffLines(a, b) {

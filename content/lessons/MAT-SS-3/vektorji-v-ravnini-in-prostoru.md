@@ -212,7 +212,7 @@ Vsa sledijo iz pravil za realna števila, ker računamo po komponentah.
 ~ Pravokotni sili se ne podpirata najbolj. Najbolj se podpirata, ko kažeta v isto smer.
 - Vsi primeri dajo $10\,\mathrm{N}$.
 ~ Tako bi veljalo, če bi se velikosti kar seštele. Seštevamo vektorje, ne dolžin.
-> Skupne sile so $10\,\mathrm{N}$, približno $7{,}07\,\mathrm{N}$; $5\,\mathrm{N}$ in $0\,\mathrm{N}$. Večji kot pomeni manjšo vsoto.
+> Skupne sile so $10\,\mathrm{N}$; približno $7{,}07\,\mathrm{N}$; $5\,\mathrm{N}$ in $0\,\mathrm{N}$. Večji kot pomeni manjšo vsoto.
 
 ? Kaj se zgodi z vektorjem $\vec a$, če ga pomnožimo z $-2$?
 - Postane dvakrat krajši.

@@ -386,7 +386,7 @@
      "points": 6,
      "format": "open",
      "text": "Dolžine stranic trikotnika so zaporedni členi aritmetičnega zaporedja z diferenco $d = 3{,}5\\,\\mathrm{cm}$. Obseg trikotnika je $37{,}5\\,\\mathrm{cm}$. Izračunaj dolžine stranic trikotnika in velikost njegovega največjega notranjega kota. Kot zapiši na minuto natančno.",
-     "answer": "Stranice merijo $9\\,\\mathrm{cm}$; $12{,}5\\,\\mathrm{cm}$ in $16\\,\\mathrm{cm}$; največji kot (nasproti stranice $16\\,\\mathrm{cm}$) je $\\gamma \\approx 94^\\circ 47'$ ($\\cos\\gamma = -\\frac{1}{12}$).",
+     "answer": "Stranice merijo $9\\,\\mathrm{cm}$; $12{,}5\\,\\mathrm{cm}$ in $16\\,\\mathrm{cm}$. Največji kot (nasproti stranice $16\\,\\mathrm{cm}$) je $\\gamma \\approx 94^\\circ 47'$ ($\\cos\\gamma = -\\frac{1}{12}$).",
      "ways": [
       {
        "title": "Po korakih: srednja stranica in kosinusni izrek",

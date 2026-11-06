@@ -105,7 +105,7 @@ $U$ zaokrožimo na eno ali dve veljavni mesti, rezultat pa na isto decimalno mes
 
 Trener petkrat izmeri čas istega teka na posnetku: $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$ in $11{,}24\,\mathrm{s}$. Določi povprečje, standardni odmik in negotovost povprečja.
 
-**Podatki:** $n = 5$; $x_i$: $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$; $11{,}24\,\mathrm{s}$
+**Podatki:** $n = 5$, $x_i$: $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$; $11{,}24\,\mathrm{s}$
 **Iščemo:** $\bar{x}$, $s$ in $u_A$
 
 :::formula

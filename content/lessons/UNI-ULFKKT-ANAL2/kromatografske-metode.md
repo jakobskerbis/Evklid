@@ -112,7 +112,7 @@ $b = \dfrac{\sum (c_i - \bar c)(A_i - \bar A)}{\sum (c_i - \bar c)^2}$, $\quad a
 **Rešitev:**
 
 1. Povprečji: $\bar c = 37{,}5$ mg/L, $\bar A = 4562{,}5$ mAU·s.
-2. Odmiki $c_i - \bar c$ so $-27{,}5$; $-17{,}5$; $2{,}5$; $42{,}5$; odmiki $A_i - \bar A$ so $-3312{,}5$; $-2152{,}5$; $327{,}5$; $5137{,}5$.
+2. Odmiki $c_i - \bar c$ so $-27{,}5$; $-17{,}5$; $2{,}5$; $42{,}5$. Odmiki $A_i - \bar A$ so $-3312{,}5$; $-2152{,}5$; $327{,}5$; $5137{,}5$.
 3. Vsota produktov odmikov: $91\,093{,}75 + 37\,668{,}75 + 818{,}75 + 218\,343{,}75 = 347\,925$.
 4. Vsota kvadratov odmikov $c$: $756{,}25 + 306{,}25 + 6{,}25 + 1806{,}25 = 2875$.
 5. Naklon: $b = 347\,925 / 2875 \approx 121{,}02$ mAU·s na mg/L.
