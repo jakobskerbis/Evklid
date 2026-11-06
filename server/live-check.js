@@ -429,8 +429,10 @@ export function fixBlock(text) {
  * En klic popravka (streamFn kot pri odgovoru, majhen prompt). Haiku → »think«, Sonnet/Opus → isti način.
  * @returns {Promise<{block: string|null, usage, model}>}
  */
+// Način popravka: isti model pri podrobni razlagi, sicer hitri model z več razmisleka (think).
+export const fixModeFor = (mode) => (mode === "deep" || mode === "mid" ? mode : "think");
 export async function correction({ streamFn, mode, answer, issue, language = "sl", signal }) {
-  const fixMode = mode === "deep" || mode === "mid" ? mode : "think";
+  const fixMode = fixModeFor(mode);
   const user = `Student's language code: ${language}\n\nANSWER:\n${String(answer).slice(0, 8000)}\n\nPROBLEM FOUND:\n${String(issue).slice(0, 600)}`;
   const r = await streamFn({ system: FIX_SYSTEM, messages: [{ role: "user", content: [{ type: "text", text: user }] }], mode: fixMode, deep: fixMode === "deep" || fixMode === "mid", onText: () => {}, signal });
   return { block: r?.stopReason === "refusal" ? null : fixBlock(r?.text), usage: r?.usage, model: r?.model, mode: fixMode };

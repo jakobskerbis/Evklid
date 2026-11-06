@@ -47,8 +47,8 @@ import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode } from "./reports.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
-import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, FALLBACK_MODES } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
+import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES } from "./meje-ai.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
@@ -538,6 +538,24 @@ export function createApp(store, opts = {}) {
     const blocked = usage.blockInfo(student.id);
     if (blocked) return res.status(429).json({ ...blocked, limit: true });
     busy.add(conv.id);
+    // Napaka pred pretakanjem (npr. SQLITE_BUSY pri zapisu sporočila): Express 5 jo preda obdelovalcu napak (500).
+    // Ob zaprtju takega odgovora sprostimo pogovor (busy) in rezervacijo, sicer bi ostala zasedena do ponovnega
+    // zagona; neodgovorjeno vprašanje ne šteje (pregled #462). Po začetku pretakanja to naredi spodnji finally.
+    let hold = null;
+    let userMsgId = null;
+    let started = false;
+    let counted = false;
+    res.once("close", () => {
+      if (started) return;
+      busy.delete(conv.id);
+      hold?.release();
+      try {
+        if (userMsgId != null) store.db.prepare("DELETE FROM messages WHERE id = ?").run(userMsgId);
+        if (counted) store.logQuestion(student.id, -1);
+      } catch (e) {
+        console.warn(`[evklid] čiščenje po napaki: ${e?.message || e}`);
+      }
+    });
     // Zajamčena poraba naročnika (j 2026-11-01): stanje pred odgovorom, da ob prehodu 80 % ali 100 % pošljemo obvestilo.
     const allowBefore = accounts ? usage.allowance(student.id) : null;
     // Lahki način: vedno (lite), nikoli (normal) ali po povezavi naprave, ki jo sporoči odjemalec (auto).
@@ -625,7 +643,7 @@ export function createApp(store, opts = {}) {
         tools: SETTINGS_TOOLS,
         extraTokens: 2000, // skrite opombe (preverjen rezultat, sodba) in povzetek starejšega dela pogovora
       });
-    const hold = usage.hold(student.id);
+    hold = usage.hold(student.id);
     let mainReserve = reserveFor(mode);
     if (!hold.take(mainReserve)) {
       const alt = (FALLBACK_MODES[mode] || []).find((m) => hold.take((mainReserve = reserveFor(m))));
@@ -640,9 +658,10 @@ export function createApp(store, opts = {}) {
     }
     // Dodaten krog orodij (nastavitve iz klepeta) je nov klic: rezerva še enkrat, z izhodom prejšnjega kroga na vhodu.
     const roundReserve = () => mainReserve + callMaxUsd(modeParams(mode).model, modeParams(mode).max_tokens + 2000, 0);
-    const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
     // Dnevna meja vprašanj šteje tu (server/db.js question_log), ne po sporočilih: izbris pogovora je ne obide.
+    userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
     store.logQuestion(student.id);
+    counted = true;
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
     // Prošnja za spremembo nastavitev mora poklicati orodje, zato ne iz predpomnilnika odgovorov.
@@ -683,6 +702,7 @@ export function createApp(store, opts = {}) {
     });
     const onToolUse = settingsTools.onToolUse;
     onToolUse.hasPending = () => pendingSettings.has(conv.id);
+    started = true;
     try {
       // Prvi korak pri nalogi iz Vadnice sestavi koda (podatki, iskano, namig), brez klica modela.
       const hinted =
@@ -801,6 +821,8 @@ export function createApp(store, opts = {}) {
               mode,
               tools: SETTINGS_TOOLS,
               onToolUse,
+              // Vsak dodaten krog orodij je nov klic: rezerva še enkrat (kot pri prvem odgovoru).
+              canRound: () => hold.take(roundReserve()),
               signal: controller.signal,
               onText: (chunk) => {
                 const out = again2.push(chunk);
@@ -848,8 +870,10 @@ export function createApp(store, opts = {}) {
             if (!controller.signal.aborted) console.warn(`[evklid] sprotni pregled ni uspel: ${e?.message || e}`);
           }
         }
-        // Popravek: kratek klic istega (ali cenejšega) modela; rezerva po najdražjem možnem načinu.
-        const fixReserve = callMaxUsd(modeParams(mode).model, Buffer.byteLength(plain + issue, "utf8") + 3000, modeParams(mode).max_tokens);
+        // Popravek (server/live-check.js correction): način popravka (pri hitrem modelu »think«, 8000 izhodnih žetonov),
+        // rezerva po njegovih parametrih.
+        const fixMode = fixModeFor(mode);
+        const fixReserve = callMaxUsd(modeParams(fixMode).model, Buffer.byteLength(plain + (issue || ""), "utf8") + 3000, modeParams(fixMode).max_tokens);
         if (issue && liveFixOn() && hold.take(fixReserve)) {
           try {
             const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", signal: controller.signal });
@@ -860,7 +884,7 @@ export function createApp(store, opts = {}) {
               send("delta", { text: fix });
             }
           } catch (e) {
-            if (e?.usage) extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno");
+            if (e?.usage) extraCost += usage.log(student.id, e.model || modeParams(fixMode).model, e.usage, "prekinjeno");
             if (!controller.signal.aborted) console.warn(`[evklid] popravek ni uspel: ${e?.message || e}`);
           }
         }
@@ -1000,7 +1024,8 @@ export function createApp(store, opts = {}) {
       if (!aborted) store.logQuestion(student.id, -1);
       // Neuspelo potezo odstranimo, da zgodovina ostane čista za ponovni poskus.
       store.db.prepare("DELETE FROM messages WHERE id = ?").run(userMsgId);
-      if (again) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
+      // Prekinitev (plačan klic) ne vrne števca zaporednih prošenj: naslednji poskus ne gre spet brezplačno k Opusu.
+      if (again && !aborted) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
       if (!controller.signal.aborted) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
@@ -1359,7 +1384,7 @@ export function createApp(store, opts = {}) {
     const blocked = usage.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
     // Trda meja AI (server/meje-ai.js): branje zapisa (slika, do 200 izhodnih žetonov) pod mejo profila.
-    const hold = usage.guard(s.id, callMaxUsd(OCR_MODEL, 2000 + 2000, 200));
+    const hold = usage.guard(s.id, imageCallReserveUsd(OCR_MODEL, 200, 1, 2000));
     if (!hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const a = t.payload.answer || {};

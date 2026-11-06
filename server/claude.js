@@ -4,6 +4,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { systemBlocks } from "./prompt.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { mockToolCall, mockToolText } from "./chat-settings.js";
+// Zgornja meja vhoda ob prekinitvi pred message_start (krožni uvoz: meje-ai.js uporablja claude.js le v funkcijah).
+import { systemTokens, messageTokens } from "./meje-ai.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 
@@ -183,10 +185,15 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     if (tools?.length && round === MAX_TOOL_ROUNDS) p.tool_choice = { type: "none" };
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
     const stream = getClient().beta.messages.stream(p, { signal });
-    // Poraba sproti (message_start: vhod, message_delta: izhod doslej): ob prekinitvi (učenec zapre
-    // aplikacijo) je klic že plačan, zato napaka nese delno porabo in strežnik jo zapiše (server/app.js).
+    // Poraba sproti: ob prekinitvi (učenec zapre aplikacijo) ali napaki sredi toka je klic že plačan, zato napaka nese
+    // porabo in strežnik jo zapiše (server/app.js). message_start nosi vhod in output_tokens ≈ 1; message_delta s
+    // pravim izhodom pride šele tik pred koncem (pregled #462, KRITIČNO). Brez message_delta zato zapišemo izhod
+    // = max_tokens kroga (razmišljanje je lahko plačano, ne da bi ga videli v toku; rezerva je že vzeta), vsaj bajte
+    // vseh delt. Brez message_start (prekinitev pred prvim dogodkom) zapišemo vhod iz rezerve (meje-ai.js).
     let live = null;
     let liveModel = model;
+    let lastDelta = false;
+    let deltaBytes = 0;
     let final;
     try {
       for await (const event of stream) {
@@ -195,16 +202,28 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
           liveModel = event.message?.model || model;
         } else if (event.type === "message_delta" && event.usage && live) {
           for (const [k, v] of Object.entries(event.usage)) if (typeof v === "number") live[k] = v;
-        } else if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-          const chunk = gap + event.delta.text;
-          gap = "";
-          text += chunk;
-          onText(chunk);
+          lastDelta = true;
+        } else if (event.type === "content_block_delta") {
+          const d = event.delta || {};
+          deltaBytes += Buffer.byteLength(String(d.text ?? d.thinking ?? d.partial_json ?? d.signature ?? ""), "utf8");
+          if (d.type === "text_delta") {
+            const chunk = gap + d.text;
+            gap = "";
+            text += chunk;
+            onText(chunk);
+          }
         }
       }
       final = await stream.finalMessage();
     } catch (err) {
-      const spent = addUsage(usage, live);
+      const roundMax = p.max_tokens || max_tokens;
+      let partial = null;
+      if (live) partial = lastDelta ? live : { ...live, output_tokens: Math.max(roundMax, deltaBytes, live.output_tokens || 0) };
+      else if (signal?.aborted) {
+        const inBound = systemTokens(p.system) + messageTokens(p.messages) + (p.tools?.length ? Math.ceil(Buffer.byteLength(JSON.stringify(p.tools), "utf8") / 2) : 0);
+        partial = { input_tokens: 0, cache_creation_input_tokens: inBound, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: inBound }, output_tokens: 0 };
+      }
+      const spent = addUsage(usage, partial);
       if (spent && err && typeof err === "object") {
         err.usage = spent;
         err.model = liveModel;

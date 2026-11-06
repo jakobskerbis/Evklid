@@ -8,7 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { streamReply, setClient } from "../server/claude.js";
+import { streamReply, setClient, modeParams } from "../server/claude.js";
 import { Usage } from "../server/usage.js";
 import { withAccounts } from "./racuni-pomoc.js";
 
@@ -75,11 +75,11 @@ test("K2: prekinjen odgovor: delna poraba je zapisana, vprašanje ostane šteto"
   }
 });
 
-test("K2: streamReply ob prekinitvi priloži napaki porabo iz message_start in message_delta", async () => {
+// Kot pravi API: message_delta (končni izhod) pride šele tik pred message_stop, zato ga prekinjen tok nima.
+test("K2: streamReply ob prekinitvi priloži napaki porabo (vhod iz message_start, izhod = max_tokens kroga)", async () => {
   const events = [
     { type: "message_start", message: { model: "claude-haiku-4-5", usage: { input_tokens: 1200, output_tokens: 1, cache_read_input_tokens: 300 } } },
     { type: "content_block_delta", delta: { type: "text_delta", text: "Zač" } },
-    { type: "message_delta", usage: { output_tokens: 40 } },
   ];
   setClient({
     beta: {
@@ -107,7 +107,7 @@ test("K2: streamReply ob prekinitvi priloži napaki porabo iz message_start in m
       streamReply({ system: "x", messages: [{ role: "user", content: "a" }], mode: "lite", onText: (t) => (text += t) }),
       (err) => {
         assert.equal(err.usage.input_tokens, 1200);
-        assert.equal(err.usage.output_tokens, 40);
+        assert.equal(err.usage.output_tokens, modeParams("lite").max_tokens);
         assert.equal(err.usage.cache_read_input_tokens, 300);
         assert.equal(err.model, "claude-haiku-4-5");
         return true;

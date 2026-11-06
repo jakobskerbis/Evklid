@@ -354,10 +354,10 @@ export class Usage {
     const q = `SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')${studentId ? " AND student_id = ?" : ""}`;
     return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
   }
-  // Število odgovorov zmogljivejšega modela danes.
+  // Število odgovorov zmogljivejšega modela danes; prekinjeni odgovori štejejo (sicer bi prekinitev obšla dnevno mejo).
   deepToday(studentId, deepModel) {
     return this.db
-      .prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind = 'chat' AND model LIKE ? AND date(created_at) = date('now')")
+      .prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND date(created_at) = date('now')")
       .get(studentId, `%${String(deepModel).replace(/^claude-/, "").split("-")[0]}%`).n;
   }
   // Ali je imetnik aktivacijske kode dosegel skrito omejitev Opusa (danes ali ta mesec).
@@ -564,6 +564,7 @@ export class Usage {
       },
       release() {
         if (held > 0) add(-held);
+        held = 0;
       },
       get held() {
         return held;

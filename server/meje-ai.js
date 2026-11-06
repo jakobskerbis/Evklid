@@ -39,7 +39,8 @@ export const NOPAY_USD = {
 };
 
 // ---------- rezerva enega klica ----------
-export const IMAGE_TOKENS = 2000; // API sliko pomanjša; največ ~1600 žetonov
+// Modeli Claude 4.7 in novejši sprejmejo slike do 2576 px in največ 4784 žetonov (platform.claude.com, vision).
+export const IMAGE_TOKENS = 4800;
 const MSG_OVERHEAD = 20; // oznake vlog in blokov
 const bytes = (s) => Buffer.byteLength(String(s ?? ""), "utf8");
 // Najdražji model (leno: claude.js se lahko naloži za tem modulom).
