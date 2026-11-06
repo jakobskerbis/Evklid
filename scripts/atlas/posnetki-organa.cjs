@@ -68,15 +68,46 @@ const NAPRAVE = {
         await p.screenshot({ path: path.join(izhod, `${oznaka}-${ime}-${pogled}.png`), timeout: 180000 });
       };
       await slikaj("celota");
-      // zadaj: povlečemo po odru (vrtenje za ~180°)
-      const oder = await p.locator(".k3-platno").boundingBox();
-      const cx = oder.x + oder.width / 2, cy = oder.y + oder.height / 2;
-      await p.mouse.move(cx - oder.width * 0.3, cy);
-      await p.mouse.down();
-      await p.mouse.move(cx + oder.width * 0.3, cy, { steps: 12 });
-      await p.mouse.up();
+      // Vrtenje s tipkovnico na platnu (puščica = 10°, enako na telefonu in računalniku; vlečenje z miško na telefonu z
+      // dotikom ne zavrti, zato je bil prejšnji »zadaj« sprednja stran). KOTI=1: 8 kotov okoli navpičnice (0°, 45°, …;
+      // lihi koti ±5°, ker je korak 10°) ter od zgoraj in spodaj; ZILE=1: bližnji posnetki žil spredaj in zadaj.
+      const platno = p.locator(".k3-platno").first();
+      const ponastavi = async () => {
+        await p.locator('[aria-label="Ponastavi"]').first().click().catch(() => {});
+        await p.waitForTimeout(800);
+      };
+      const tipke = async (tipka, n) => {
+        await platno.focus();
+        for (let i = 0; i < n; i++) await p.keyboard.press(tipka);
+        await p.waitForTimeout(700);
+      };
+      if (process.env.KOTI) {
+        let kot = 0;
+        for (let k = 1; k < 8; k++) {
+          const cilj = Math.round((k * 45) / 10);
+          await tipke("ArrowLeft", cilj - kot);
+          kot = cilj;
+          await slikaj(`kot${String(k * 45).padStart(3, "0")}`);
+        }
+        await ponastavi();
+        await tipke("ArrowUp", 9);
+        await slikaj("odzgoraj");
+        await ponastavi();
+        await tipke("ArrowDown", 9);
+        await slikaj("odspodaj");
+        await ponastavi();
+      }
+      await tipke("ArrowLeft", 18);
       await slikaj("zadaj");
-      await p.locator('[aria-label="Ponastavi"]').first().click().catch(() => {});
+      await ponastavi();
+      if (process.env.ZILE) {
+        const blizje = p.locator('[aria-label="Približaj"]').first();
+        for (let i = 0; i < 3; i++) await blizje.click().catch(() => {});
+        await slikaj("zile-spredaj");
+        await tipke("ArrowLeft", 18);
+        await slikaj("zile-zadaj");
+        await ponastavi();
+      }
       const stikalo = p.locator(".k3-stikalo .switch").first();
       if (await stikalo.count()) {
         await stikalo.click();

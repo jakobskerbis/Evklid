@@ -37,9 +37,9 @@ sc.world = bpy.data.worlds.new("w"); sc.world.color = (0.03, 0.035, 0.05)
 cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam")); sc.collection.objects.link(cam); sc.camera = cam; cam.data.lens = 85
 
 
-def slikaj(ime, smer, r=1.0):
+def slikaj(ime, smer, r=1.0, c=None):
     smer = Vector(smer).normalized()
-    cam.location = ctr + smer * R * 4.6 * r
+    cam.location = (c if c is not None else ctr) + smer * R * 4.6 * r
     cam.rotation_euler = (-smer).to_track_quat("-Z", "Y").to_euler()
     sc.render.filepath = os.path.join(izhod, ime + ".png"); bpy.ops.render.render(write_still=True)
 
@@ -56,3 +56,7 @@ for o in obj:  # prerez: obdrži n·p + d ≥ 0
     bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=-n * d / n.length_squared, plane_no=-n, clear_outer=True)
     bm.transform(o.matrix_world.inverted()); bm.to_mesh(me); bm.free()
 slikaj("prerez", (0.05, -1, 0.1)); slikaj("prerez-blizu", (0.05, -1, 0.1), 0.55); slikaj("zgoraj", (0.1, -0.5, 1), 0.7)
+if os.environ.get("BLIZU"):  # dodatni bližnji pogledi prerezov: "x,y,z,r;..." (središče v glTF osah, metri; r delež razdalje)
+    for i, t in enumerate(os.environ["BLIZU"].split(";")):
+        x, y, z, r = map(float, t.split(","))
+        slikaj(f"blizu{i}", (0.05, -1, 0.1), r, Vector((x, -z, y)))

@@ -463,7 +463,8 @@ function materialPokrova(t, ravnine) {
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>\n diffuseColor.rgb *= 0.9 + 0.2 * orgSum( vOrgPos * 60.0 ) * orgSum( vOrgPos * 13.0 );${
-          t.rezVlakna ? `\n diffuseColor.rgb *= 1.0 - 0.07 * smoothstep( 0.2, 0.9, 0.5 + 0.5 * sin( dot( vOrgPos, normalize( vec3( 0.4, 1.0, 0.25 ) ) ) * ${fl(t.rezVlakna)} + 5.0 * orgSum( vOrgPos * 18.0 ) ) ); // snopi mišičnih vlaken na rezu` : ""
+          t.rezVlakna ? `\n { float orgV = 0.5 + 0.5 * sin( dot( vOrgPos, normalize( vec3( 0.4, 1.0, 0.25 ) ) ) * ${fl(t.rezVlakna)} + 9.0 * orgSum( vOrgPos * 22.0 ) + 3.0 * orgSum( vOrgPos * 90.0 ) );
+ diffuseColor.rgb *= 1.0 - 0.06 * smoothstep( 0.35, 0.95, orgV ) * orgSum( vOrgPos * 40.0 ) * 2.0 - 0.07 * ( orgSum( vOrgPos * 7.0 ) - 0.5 ); } // snopi mišičnih vlaken na rezu (nepravilni, prekinjeni, ne enakomerne črte)` : ""
         }${
           t.rezPore
             ? `\n { float orgPw = length( fwidth( vOrgPos ) ) * 2.0; // pore (pljučna goba): temne luknjice in svetli pretini; manjše od ~2 px zbledijo (brez migetanja)

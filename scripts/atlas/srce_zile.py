@@ -457,6 +457,10 @@ def srce_zile(osnovni, cfg, tmp):
             P = bezier_pot(zun + smer * 0.004, -smer, a.lerp(c_la, 0.35), (c_la - a), 16)
             R = [0.0066] * len(P)
             P, R = v_steno(P, R, la, 0.002)
+            L = _dolzine(P)[-1]
+            if L < 0.03:  # žarek je zadel steno zgodaj (štrclj): prosti konec podaljšamo navzven na ≥ 3 cm
+                d0 = (P[0] - P[1]).normalized()
+                P = [P[0] + d0 * (0.03 - L) * (1 - i / 6) for i in range(6)] + P; R = [R[0]] * 6 + R
             P, R = P[::-1], R[::-1]
             P, R = prevzorci(P, R, lambda r: 0.0026)
             z = _Osi(bmesh.new())
