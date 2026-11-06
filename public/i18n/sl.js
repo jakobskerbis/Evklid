@@ -2014,6 +2014,7 @@ export default {
   "fx.change": "Sprememba količine: {what}",
   "fx.close": "Zapri",
   "fx.parts": "Kjer je",
+  "fx.defined": "Oznaka iz besedila",
   "ap.style": "Slog",
   "ap.styleCist": "Čist",
   "ap.styleCistText": "Umirjen in pregleden",

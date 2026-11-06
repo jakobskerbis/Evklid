@@ -1665,6 +1665,7 @@
   "fx.change": "التغير في: {what}",
   "fx.close": "إغلاق",
   "fx.parts": "حيث",
+  "fx.defined": "رمز معرّف في النص",
   "ap.style": "النمط",
   "ap.styleCist": "نظيف",
   "ap.styleCistText": "هادئ وواضح",

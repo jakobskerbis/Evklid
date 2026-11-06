@@ -1635,6 +1635,7 @@
   "fx.change": "Promjena veličine: {what}",
   "fx.close": "Zatvori",
   "fx.parts": "Gdje je",
+  "fx.defined": "Oznaka iz teksta",
   "ap.style": "Stil",
   "ap.styleCist": "Čist",
   "ap.styleCistText": "Miran i pregledan",

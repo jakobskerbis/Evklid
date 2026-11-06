@@ -1625,6 +1625,7 @@
   "fx.change": "Változás: {what}",
   "fx.close": "Bezárás",
   "fx.parts": "Ahol",
+  "fx.defined": "A szövegben megadott jelölés",
   "ap.style": "Stílus",
   "ap.styleCist": "Letisztult",
   "ap.styleCistText": "Nyugodt és átlátható",

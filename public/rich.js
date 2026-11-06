@@ -11,11 +11,13 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
 
   // Označena formula, ki je KaTeX ne zna izrisati, se izriše neoznačena (nikoli rdeč surov LaTeX).
-  // sentence: poved okoli formule, da dvoumna črka dobi pomen iz besedila (formula-data.js annotateTex).
-  function renderMath(tex, display, fx = true, sentence = "") {
+  // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
+  // (formula-data.js annotateTex): block je celo besedilo (kartica, naloga, razdelek) z definicijami oznak.
+  function renderMath(tex, display, fx = true, ctx = "") {
     try {
       if (annotate && fx) {
-        const annotated = annotate(tex, sentence ? { sentence } : null);
+        const o = typeof ctx === "string" ? (ctx ? { sentence: ctx } : null) : ctx;
+        const annotated = annotate(tex, o);
         if (annotated !== tex) {
           try {
             return katex.renderToString(annotated, { ...trusted, throwOnError: true, displayMode: display });
@@ -41,13 +43,14 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       .replace(/\\\[([\s\S]+?)\\\]/g, (_, t) => stash(t, true))
       .replace(/\\\((.+?)\\\)/g, (_, t) => stash(t, false))
       .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
-    if (annotate) for (const m of src.matchAll(/@@MATH(\d+)@@/g)) if (math[m[1]]) math[m[1]].sentence = sentenceAt(src, m[0], m.index);
+    const block = String(text ?? "");
+    if (annotate) for (const m of src.matchAll(/@@MATH(\d+)@@/g)) if (math[m[1]]) math[m[1]].ctx = { sentence: sentenceAt(src, m[0], m.index), block };
     let html = clean(marked.parse(splitFormulaCells(fixTables(src), math), { breaks: true, gfm: true }));
     // Tabela dobi svoj razred (oblika v style.css velja povsod, ne glede na okvir okoli nje);
     // ulomki in potence v njej so v polni velikosti (\displaystyle), sicer so premajhni za branje.
     html = html.replace(/<table>([\s\S]*?)<\/table>/g, (_, body) => {
       const inner = centerNumberColumns(body).replace(/@@MATH(\d+)@@/g, (m, i) =>
-        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].sentence) : m,
+        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].ctx) : m,
       );
       return `<div class="md-table-wrap"><table class="md-table">${inner}</table></div>`;
     });
@@ -56,7 +59,7 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
     // (j, 5. 11.: kartica »Zapomni si«). Ne-prelomni ovoj samo za formulo in ločilo, ne za cel stavek.
     return html.replace(/@@MATH(\d+)@@([.,;:!?]+)?/g, (m, i, punct) => {
       if (!math[i]) return m;
-      const out = renderMath(math[i].tex, math[i].display, true, math[i].sentence);
+      const out = renderMath(math[i].tex, math[i].display, true, math[i].ctx);
       return punct && !math[i].display ? `<span class="fx-nb">${out}${punct}</span>` : out + (punct || "");
     });
   }

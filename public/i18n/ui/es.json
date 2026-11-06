@@ -1625,6 +1625,7 @@
   "fx.change": "Cambio de: {what}",
   "fx.close": "Cerrar",
   "fx.parts": "Donde",
+  "fx.defined": "Símbolo definido en el texto",
   "ap.style": "Estilo",
   "ap.styleCist": "Limpio",
   "ap.styleCistText": "Sereno y claro",

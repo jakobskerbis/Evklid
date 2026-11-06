@@ -1625,6 +1625,7 @@
   "fx.change": "Variation de : {what}",
   "fx.close": "Fermer",
   "fx.parts": "Où",
+  "fx.defined": "Symbole défini dans le texte",
   "ap.style": "Style",
   "ap.styleCist": "Épuré",
   "ap.styleCistText": "Calme et clair",

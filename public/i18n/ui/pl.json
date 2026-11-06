@@ -1645,6 +1645,7 @@
   "fx.change": "Zmiana wielkości: {what}",
   "fx.close": "Zamknij",
   "fx.parts": "Gdzie",
+  "fx.defined": "Oznaczenie z tekstu",
   "ap.style": "Styl",
   "ap.styleCist": "Czysty",
   "ap.styleCistText": "Spokojny i przejrzysty",

@@ -12,13 +12,20 @@ const decode = (s) => decodeURIComponent(s.replace(/\./g, "%"));
 
 let pop = null;
 let openEl = null;
-function close() {
-  if (!pop) return;
+let hooks = {}; // { opened, closed }: aplikacija doda zapis v zgodovino, da tipka Nazaj zapre okno (app.js)
+let openW = 0; // širina okna ob odprtju
+let quietUntil = 0; // lastno drsenje (okno na telefonu odmakne formulo nad list) ne zapre okna
+function close(fromBack = false) {
+  if (!pop || pop.hidden) return false;
   pop.hidden = true;
   openEl?.setAttribute("aria-expanded", "false");
   openEl?.classList.remove("fx-open");
   openEl = null;
+  if (!fromBack) hooks.closed?.();
+  return true;
 }
+// Tipka Nazaj (telefon, brskalnik): zapre okno pomena, pogled ostane (app.js popstate).
+export const closeFormulaPop = () => close(true);
 function open(el) {
   const card = cardFor(decode(el.dataset.fx));
   if (!card) return;
@@ -38,19 +45,67 @@ function open(el) {
   openEl = el;
   el.setAttribute("aria-expanded", "true");
   el.classList.add("fx-open");
-  // Vodoravno ob simbolu, navpično pod (nad) celo formulo, da kartica ne prekrije ulomka.
-  const r0 = el.getBoundingClientRect();
-  const f = (el.closest(".katex") || el).getBoundingClientRect();
-  const r = { left: r0.left, width: r0.width, top: Math.min(r0.top, f.top), bottom: Math.max(r0.bottom, f.bottom) };
-  const w = Math.min(340, window.innerWidth - 24);
-  pop.style.width = `${w}px`;
-  const left = Math.max(12, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 12));
-  // Spodnji meni na telefonu (#tabbar) prekrije dno zaslona: kartica naj se konča nad njim.
+  openW = window.innerWidth;
+  place(el);
+  hooks.opened?.();
+}
+
+// Okno nikoli ne prekrije formule, na katero se nanaša (j, 6. 11.). Računalnik: ob simbolu, pod ali nad celo
+// vrstico formule. Telefon (ozek zaslon): spodnji list nad spodnjim menijem; če bi list prekril formulo,
+// stran zdrsne, da je formula nad njim.
+const SHEET_MAX = 640;
+function place(el) {
+  const line = () => {
+    const r0 = el.getBoundingClientRect();
+    const f = (el.closest(".katex") || el).getBoundingClientRect();
+    return { left: r0.left, width: r0.width, top: Math.min(r0.top, f.top), bottom: Math.max(r0.bottom, f.bottom) };
+  };
+  // Spodnji meni na telefonu (#tabbar) prekrije dno zaslona: okno naj se konča nad njim.
   const bar = document.getElementById("tabbar");
   const barTop = bar && getComputedStyle(bar).display !== "none" ? Math.min(window.innerHeight, bar.getBoundingClientRect().top) : window.innerHeight;
-  const below = r.bottom + 8 + pop.offsetHeight < barTop || r.top < pop.offsetHeight + 16;
-  pop.style.left = `${left + window.scrollX}px`;
-  pop.style.top = `${(below ? r.bottom + 8 : r.top - pop.offsetHeight - 8) + window.scrollY}px`;
+  const sheet = window.innerWidth <= SHEET_MAX;
+  pop.classList.toggle("fx-sheet", sheet);
+  if (sheet) {
+    pop.style.width = "";
+    pop.style.left = "0px";
+    pop.style.top = "";
+    pop.style.bottom = `${Math.max(0, window.innerHeight - barTop)}px`;
+    pop.style.paddingBottom = barTop < window.innerHeight ? "14px" : ""; // nad menijem varni rob ni potreben
+    const sheetTop = barTop - pop.offsetHeight;
+    const r = line();
+    if (r.bottom + 8 > sheetTop) {
+      // Formula pod listom: zdrsni jo nad list (drsni ovoj pogleda ali cela stran).
+      const by = Math.min(r.bottom + 8 - sheetTop, Math.max(0, r.top - 8));
+      const sc = scrollerOf(el);
+      quietUntil = performance.now() + 500;
+      if (sc) sc.scrollTop += by;
+      else window.scrollBy(0, by);
+    }
+    return;
+  }
+  const w = Math.min(340, window.innerWidth - 24);
+  pop.style.width = `${w}px`;
+  pop.style.bottom = "";
+  pop.style.paddingBottom = "";
+  const h = pop.offsetHeight;
+  const r = line();
+  // Ves odstavek (vrstica v kartici, alineja, prikazna formula), če ni predolg: okno ne prekrije njegovega nadaljevanja.
+  const blk = el.closest("p, li, td, th, dd, blockquote, h1, h2, h3, h4, .katex-display");
+  const b = blk?.getBoundingClientRect();
+  const para = b && b.height < window.innerHeight * 0.4 ? { left: b.left, right: b.right, top: Math.min(b.top, r.top), bottom: Math.max(b.bottom, r.bottom) } : null;
+  const left = Math.max(12, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 12));
+  const spots = [];
+  for (const a of para ? [para, r] : [r]) {
+    if (a.bottom + 8 + h < barTop) spots.push({ left, top: a.bottom + 8 });
+    if (a.top - h - 8 > 0) spots.push({ left, top: a.top - h - 8 });
+  }
+  // Ob robu odstavka (levo ali desno), če ni prostora ne pod ne nad njim.
+  const top = Math.max(8, Math.min(r.top, barTop - h - 8));
+  if (para && para.right + 8 + w < window.innerWidth) spots.push({ left: para.right + 8, top });
+  if (para && para.left - 8 - w > 0) spots.push({ left: para.left - 8 - w, top });
+  const at = spots[0] || { left, top: r.bottom + 8 };
+  pop.style.left = `${at.left + window.scrollX}px`;
+  pop.style.top = `${at.top + window.scrollY}px`;
 }
 
 // Okvir dotika naj objame znak, ne razmika za njim: KaTeX da presledek pred »=« in
@@ -167,29 +222,52 @@ function refreshMarks() {
   }
 }
 
-export function initFormulaInfo() {
+// Klikljiva črka, okno pomena in zapiranje okna so svoj dotik: kartica (Ponavljanje), vrstica, povezava ali
+// razdelek okoli formule se ob njem ne odzove (j, 6. 11.: tap na x₁ je obrnil kartico). Zato poslušamo v fazi
+// zajemanja (capture) na dokumentu in dotik ustavimo, preden pride do elementa okoli.
+const active = (el) => el && !blocked(el) && !el.classList.contains("fx-off") && !el.classList.contains("fx-dup");
+// Pravi gumbi in polja zunaj okna delujejo že ob prvem dotiku (okno se le zapre); prazen prostor dotik porabi.
+const CONTROL = "button, a[href], input, select, textarea, summary, label, [contenteditable], #tabbar, nav";
+function stop(e) {
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+}
+export function initFormulaInfo(h = {}) {
+  hooks = h || {};
   document.addEventListener("click", (e) => {
-    if (e.target.closest(".fx-close")) return close();
-    if (pop && pop.contains(e.target)) return;
-    const el = e.target.closest("[data-fx]");
-    if (!el || blocked(el) || el.classList.contains("fx-off") || el.classList.contains("fx-dup")) {
-      queueMarks(); // zavihek ali razdelek se je morda odprl
-      return close();
+    if (pop && !pop.hidden && pop.contains(e.target)) {
+      // Dotik v oknu (tudi ✕) ne obrne kartice in ne odpre ničesar pod oknom.
+      stop(e);
+      if (e.target.closest(".fx-close")) { const el = openEl; close(); el?.focus({ preventScroll: true }); }
+      return;
     }
-    e.preventDefault();
-    if (openEl === el) return close();
+    const el = e.target.closest("[data-fx]");
+    if (active(el)) {
+      e.preventDefault();
+      stop(e);
+      if (openEl === el) return close();
+      close(true); // druga črka: okno ostane odprto (zapis v zgodovini tudi)
+      open(el);
+      return;
+    }
+    queueMarks(); // zavihek ali razdelek se je morda odprl
+    // Okno je odprto: dotik v prazno ga zapre in se tu konča (kartica se ne obrne).
+    if (openEl && !e.target.closest(CONTROL)) {
+      e.preventDefault();
+      stop(e);
+    }
     close();
-    open(el);
-  });
+  }, true);
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && openEl) { const el = openEl; close(); el.focus(); return; }
+    if (e.key === "Escape" && openEl) { const el = openEl; stop(e); close(); el.focus(); return; }
     const el = e.target.closest?.("[data-fx][role=button]");
-    if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); el.click(); }
-  });
-  window.addEventListener("resize", close);
+    if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); stop(e); el.click(); }
+  }, true);
+  // Telefon: vrstica brskalnika se ob drsenju skrije in spremeni le višino okna; okno pomena zapre le nova širina (obrat).
+  window.addEventListener("resize", () => { if (window.innerWidth !== openW) close(); });
   document.addEventListener("scroll", (e) => {
     if (pop?.contains(e.target)) return;
-    if (openEl) close();
+    if (openEl && performance.now() > quietUntil) close();
     // Oznaka gre na pojavitev, ki je zdaj na zaslonu: enkrat, ko se drsenje umiri (ne ob vsaki sličici).
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(queueMarks, 120);

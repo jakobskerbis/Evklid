@@ -1625,6 +1625,7 @@
   "fx.change": "Промена на: {what}",
   "fx.close": "Затвори",
   "fx.parts": "Каде што",
+  "fx.defined": "Ознака од текстот",
   "ap.style": "Стил",
   "ap.styleCist": "Чист",
   "ap.styleCistText": "Смирен и прегледен",
