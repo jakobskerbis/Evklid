@@ -69,10 +69,14 @@ test("paket.sh: peci.bat in NAVODILO s CRLF, koda z vsemi lokalnimi moduli", { s
     assert.equal(beri(path.join(cilj, "organi.txt")).split("\r\n").filter((v) => v && !v.startsWith("#")).join(","), "srce,oko");
     const koda = fs.readdirSync(path.join(cilj, "koda"));
     for (const f of ["rtx.py", "viri.json", "peci.py", "peka.py", "izvozi-organe.py"]) assert.ok(koda.includes(f), f);
-    for (const ime of ["izvozi-organe.py", "peka.py"]) {
-      for (const [, m] of beri(path.join(ATLAS, ime)).matchAll(/^(?:from|import) ([a-z_]+)/gm)) {
+    // prehodno: vsak lokalni modul, ki ga uvozi katerakoli datoteka paketa (tudi znotraj funkcij), je v paketu in
+    // enak izvoru (peka na prenosniku ne sme teči na stari kopiji, pregled #461 n4)
+    for (const ime of koda.filter((f) => f.endsWith(".py"))) {
+      for (const [, m] of beri(path.join(cilj, "koda", ime)).matchAll(/^\s*(?:from|import) ([a-z_]+)/gm)) {
         if (fs.existsSync(path.join(ATLAS, m + ".py"))) assert.ok(koda.includes(m + ".py"), `${ime} uvozi ${m}`);
       }
+      const izvor = ime === "rtx.py" ? path.join(RTX, ime) : path.join(ATLAS, ime);
+      assert.equal(beri(path.join(cilj, "koda", ime)), beri(izvor), `${ime} ni enak izvoru`);
     }
   } finally {
     fs.rmSync(cilj, { recursive: true, force: true });

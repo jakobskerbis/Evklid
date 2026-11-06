@@ -13,8 +13,14 @@ crlf() { sed 's/\r$//; s/$/\r/' "$1" > "$2"; }
 crlf "$TU/peci.bat" "$CILJ/peci.bat"
 crlf "$TU/NAVODILO.txt" "$CILJ/NAVODILO.txt"
 cp "$TU/rtx.py" "$TU/viri.json" "$ATLAS/peci.py" "$ATLAS/peka.py" "$ATLAS/izvozi-organe.py" "$CILJ/koda/"
-for m in $(sed -n 's/^\(from\|import\) \([a-z_]*\).*/\2/p' "$ATLAS/izvozi-organe.py" "$ATLAS/peka.py" | sort -u); do
-  [ -f "$ATLAS/$m.py" ] && cp "$ATLAS/$m.py" "$CILJ/koda/"
+# vsi lokalni moduli, ki jih koda uvozi, prehodno in tudi znotraj funkcij (»    from srce_geometrija import …«):
+# ponavljamo, dokler se seznam ne neha večati
+while :; do
+  pred=$(ls "$CILJ/koda" | wc -l)
+  for m in $(sed -n 's/^[[:space:]]*\(from\|import\) \([a-z_]*\).*/\2/p' "$CILJ"/koda/*.py | sort -u); do
+    [ -f "$ATLAS/$m.py" ] && [ ! -f "$CILJ/koda/$m.py" ] && cp "$ATLAS/$m.py" "$CILJ/koda/"
+  done
+  [ "$(ls "$CILJ/koda" | wc -l)" -eq "$pred" ] && break
 done
 RAZL=${RAZLICICA:-$(git -C "$ATLAS" rev-parse --short HEAD 2>/dev/null || echo r)$(git -C "$ATLAS" diff --quiet HEAD -- . 2>/dev/null || echo -s)}
 python3 - "$CILJ/koda" "$RAZL" <<'EOF'
@@ -24,7 +30,7 @@ dat = {f: hashlib.sha256(open(os.path.join(mapa, f), "rb").read()).hexdigest() f
 json.dump({"razlicica": razl, "datoteke": dat}, open(os.path.join(mapa, "manifest.json"), "w"), indent=1)
 EOF
 rm -rf "$CILJ/koda-nova"; cp -r "$CILJ/koda" "$CILJ/koda-nova"
-echo "različica kode: $RAZL"
+echo "različica kode: $RAZL (veja $(git -C "$ATLAS" rev-parse --abbrev-ref HEAD 2>/dev/null))"
 if [ $# -gt 0 ]; then
   { printf '# Organi za peko, en na vrstico (zapiše Claude).\r\n'; for o in "$@"; do printf '%s\r\n' "$o"; done; } > "$CILJ/organi.txt"
 elif [ ! -f "$CILJ/organi.txt" ]; then
