@@ -126,20 +126,22 @@ ORGANI = {
                                 zilice=0.0, notranja=(0.46, 0.14, 0.12), notranjaHrap=0.42),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
-                # (drobne rdečkaste žilice vzdolž stene), mat-vlažna hrapavost. Aorta bledo rožnato-bela z rdečkastimi
-                # lisami; pljučno deblo v slogu atlasa modro (venska kri), a utišano; votli veni temnejši modrovijolični;
+                # (drobne rdečkaste žilice vzdolž stene), mat-vlažna hrapavost. Aorta v rdečem odtenku (konvencija atlasa
+                # »arterija rdeča«, pregled #461), utišana, z rdečkastimi lisami; pljučno deblo v slogu atlasa modro (venska kri), a utišano; votli veni temnejši modrovijolični;
                 # pljučne vene (s kisikom bogata kri) rdečkasto-vijolične, jasno ločene od arterij in votlih ven.
-                "aorta": dict(barva=(0.62, 0.30, 0.27), barva2=(0.52, 0.17, 0.15), lise=0.45, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "aorta": dict(barva=(0.58, 0.15, 0.13), barva2=(0.48, 0.10, 0.09), lise=0.45, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
                               vzdolz=0.00009, vzdolzRazmik=0.0028, vasa=0.55, vasaBarva=(0.40, 0.05, 0.05)),
                 "pljucna": dict(barva=(0.17, 0.20, 0.44), barva2=(0.13, 0.13, 0.36), lise=0.4, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
                                 vzdolz=0.00008, vzdolzRazmik=0.0028, vasa=0.4, vasaBarva=(0.30, 0.06, 0.10)),
                 "vena": dict(barva=(0.085, 0.075, 0.22), barva2=(0.06, 0.05, 0.17), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                              vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.22, 0.05, 0.10)),
-                "pljucna-vena": dict(barva=(0.36, 0.06, 0.13), barva2=(0.27, 0.04, 0.11), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "pljucna-vena": dict(barva=(0.44, 0.07, 0.15), barva2=(0.35, 0.05, 0.13), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                                      vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
                 "vencna-arterija": dict(barva=(0.72, 0.045, 0.035), barva2=(0.58, 0.03, 0.03), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
                                         vzdolz=0.00002, vzdolzRazmik=0.0012),
+                # prevodni sistem (shema): rumen kot v atlasih, rahlo svetleč
+                "prevodni": dict(barva=(0.78, 0.62, 0.10), barva2=(0.70, 0.52, 0.08), lise=0.15, hrap=0.4, gube=0.00002, gubeMera=0.0015, razdeli=1),
                 "vencna-vena": dict(barva=(0.07, 0.055, 0.20), barva2=(0.05, 0.04, 0.15), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
             },
         ),
@@ -168,7 +170,8 @@ ORGANI = {
             (r"^Left atrium|Left auricle", "levi-preddvor"),
             (r"Left ventricle", "levi-prekat"),
             (r"^Aorta|aorta|Aortic arch|Brachiocephalic|carotid|subclavian", "aorta"),
-            (r"Pulmonary trunk|pulmonary artery|Bifurcation of pulmonary", "pljucno-deblo"),
+            (r"Pulmonary trunk|Bifurcation of pulmonary", "pljucno-deblo"),
+            (r"pulmonary artery", "pljucne-arterije"),
             (r"vena cava", "votli-veni"),
             (r"pulmonary vein", "pljucne-vene"),
             (r"Arteries of heart|coronary artery|interventricular artery|Circumflex", "vencne-arterije"),
@@ -1187,6 +1190,12 @@ def izvozi(organ, cfg):
             src_ = bpy.data.objects.get((o.name + "·src", None))
             bpy.data.objects.remove(o)
             if src_: src_.name = src_.name[:-4]
+    if cfg.get("_tocke4"):  # ravnina prereza v koordinatah glTF (središče organa 0): ohrani zadnji del (n·p + d ≥ 0)
+        g = [Vector((q.x, q.z, -q.y)) - Vector((ctr.x, ctr.z, -ctr.y)) for q in cfg["_tocke4"]]
+        n = (g[1] - g[0]).cross(g[2] - g[0]).normalized()
+        if n.z > 0:
+            n = -n
+        porocilo["ravnina4"] = {"n": [round(x, 4) for x in n], "d": round(-n.dot(sum(g, Vector()) / 3), 4)}
     with open(os.path.join(out, organ + ".vozlisca.json"), "w", encoding="utf-8") as f:
         json.dump(porocilo, f, ensure_ascii=False, indent=1)
 

@@ -104,9 +104,13 @@ def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=3.4, mascaNajma
             zl = 0.0
             if bd is not None:
                 sir = zleb + zlebZila * pas
-                d = bd.find_nearest(v.co, sir)[3]
+                loc, _, _, d = bd.find_nearest(v.co, sir)
                 if d is not None:
                     zl = min(1.0, max(0.0, (sir - d) / (sir * 0.6)))
+                    # žleb: sosednja votlina je OB točki (smer do nje ≈ pravokotna na normalo); če leži POD njo (levo
+                    # srčno uho čez bazo levega prekata in pljučno deblo), je to mišica ušesa, ne maščoba (pregled #461)
+                    if d > 1e-5:
+                        zl *= min(1.0, max(0.0, (0.8 - abs((loc - v.co).normalized().dot(nn))) / 0.3))
             R[i] = max(zl, sled * pas)
         if racunaj:  # glajenje po robovih (2 koraka), maščoba samo zunaj
             e = np.array([tuple(ed.vertices) for ed in me.edges], dtype=np.int64).reshape(-1, 2)

@@ -93,7 +93,7 @@ def _vrh_papilarne(me, proti):
     return Vector(P[d.argmin()]), Vector(P[d.argmax()])
 
 
-def listic(obroc_lok, konica, globina, sredisce, debelina=0.0008, vrstic=10):
+def listic(obroc_lok, konica, globina, sredisce, debelina=0.0008, vrstic=10, trebuh=0.22):
     """Listič zaklopke iz loka obroča: ploskev visi proti konici prekata (odprta zaklopka v diastoli), globina je
     največja na sredini loka (polkrožni ali štirikotni listič), prosti rob rahlo nazobčan. Vrne (bm, prosti rob)."""
     bm = bmesh.new()
@@ -109,7 +109,7 @@ def listic(obroc_lok, konica, globina, sredisce, debelina=0.0008, vrstic=10):
         for k in range(vrstic):
             s = k / (vrstic - 1)
             # listič se najprej spusti ob steni, nato rahlo zavije proti sredini odprtine (trebuh lističa)
-            p = a + smer * g * s + noter * (0.22 * math.sin(math.pi * s * 0.9))
+            p = a + smer * g * s + noter * (trebuh * math.sin(math.pi * s * 0.9))
             vrsta.append(bm.verts.new(p))
         mreza.append(vrsta); rob.append(vrsta[-1].co.copy())
     for i in range(n - 1):
@@ -162,7 +162,7 @@ def papilarna(bm, dno, vrh, polmer, stena=None):
     return glave
 
 
-def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, do=1.0, odmik=0.45):
+def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, do=1.0, odmik=0.45, epi=None):
     """Mesnate trabekule: grebeni in mostički po notranji steni prekata (na steno pritisnjene cevi, ki sledijo površini).
     Začetke izberemo z žarki iz votline (prvi zadetek = notranja stena), smer je pretežno vzdolž dolge osi s šumom;
     od/do = delež razdalje od baze (0) do konice (1), kjer trabekule rastejo (gostejše proti konici)."""
@@ -180,6 +180,10 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
         if hit[0] is None:
             continue
         p, n = hit[0], hit[1]
+        if epi is not None:  # zadetek mora biti notranja stena (endokard), ne epikard ob konici (os sega do zunanje konice)
+            loc, _, fi, dd = epi[0].find_nearest(p, 0.004)
+            if loc is not None and (dd < 0.0025 or (p - loc).dot(epi[1][fi]) > -0.0025):
+                continue
         if n.dot(d) > 0:
             n = -n  # normala proti votlini
         smer = (e * rnd.choice((1, -1)) + (a * math.cos(f + 1.6) + b * math.sin(f + 1.6)) * rnd.uniform(-0.8, 0.8)).normalized()
@@ -198,6 +202,10 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
                 ok = False; break
             if nrm.dot(nn) < 0:
                 nrm = -nrm
+            if epi is not None:  # greben ne sme zaviti čez rob na zunanjo ploskev
+                le, _, fi, dd = epi[0].find_nearest(loc, 0.004)
+                if le is not None and (dd < 0.0025 or (loc - le).dot(epi[1][fi]) > -0.0025):
+                    ok = False; break
             q, nn = loc, nrm
         if not ok or len(tocke) < 5:
             continue
@@ -275,6 +283,46 @@ def odebeli_steno(me, dodatek, rob=(0.004, 0.014), korakov=6):
     return int((w > 1e-5).sum()), float(np.median(debel) * 1000) if debel else 0.0
 
 
+def epikard(mreze):
+    """BVH zunanje ploskve srca (epikard) in zunanja normala po ploskvi: ploskev sten votlin (mreze), pri kateri VSI žarki
+    v stožcu okoli ene strani normale (5 smeri) pobegnejo iz sten (notranja ploskev ima kvečjemu posamezen žarek skozi
+    odprtino zaklopke). Vrne (BVH, [normala navzven])."""
+    V2, F2, off = [], [], 0
+    for me in mreze:
+        V2 += [v.co.copy() for v in me.vertices]; F2 += [[off + i for i in p.vertices] for p in me.polygons]; off += len(me.vertices)
+    T = BVHTree.FromPolygons(V2, F2, epsilon=0.0)
+    F, N, off = [], [], 0
+    for me in mreze:
+        for p in me.polygons:
+            c, n = Vector(p.center), Vector(p.normal)
+            if n.length < 0.5:
+                continue
+            a = n.orthogonal().normalized(); b = n.cross(a)
+            for s in (1, -1):
+                smeri = [n * s] + [(n * s + q * 0.45).normalized() for q in (a, -a, b, -b)]
+                if all(T.ray_cast(c + d * 3e-5, d, 0.3)[0] is None for d in smeri):
+                    F.append([off + i for i in p.vertices]); N.append(n * s); break
+        off += len(me.vertices)
+    return BVHTree.FromPolygons(V2, F, epsilon=0.0), N
+
+
+def pod_epikard(me, epi, globina):
+    """Oglišča notranje strukture (papilarne mišice, trabekule), ki segajo do epikarda ali skozenj, potisne na globino
+    `globina` pod zunanjo ploskev (pregled #461: konice mišic in trakovi trabekul so prebadali spodnjo steno). Vrne število
+    premaknjenih oglišč."""
+    tree, N = epi
+    k = 0
+    for v in me.vertices:
+        loc, _, i, d = tree.find_nearest(v.co, 0.03)
+        if loc is None:
+            continue
+        s = (v.co - loc).dot(N[i])  # > 0: zunaj srca
+        if s > -globina:
+            v.co = v.co - N[i] * (s + globina); k += 1
+    me.update()
+    return k
+
+
 def srce_dodatki(osnovni, cfg, tmp):
     rnd = random.Random(23)
     lv, rv = _mreza(osnovni, r"^Left ventricle$"), _mreza(osnovni, r"^Right ventricle$")
@@ -288,6 +336,8 @@ def srce_dodatki(osnovni, cfg, tmp):
             k, prej = odebeli_steno(me, dod)
             print(f"[organi] srce: stena {rx[1:]} +{dod * 1000:.1f} mm ({k} oglišč, prej mediana {prej:.1f} mm)")
     zl, zd = robne_zanke(lv), robne_zanke(rv)
+    stene = [m for m in (lv, rv, _mreza(osnovni, r"^Left atrium$"), _mreza(osnovni, r"^Right atrium$")) if m is not None]
+    epi = epikard(stene)
     # levi prekat: mitralni obroč = zanka, ki se ujema z odprtino levega preddvora; aortni = najbližje korenu aorte
     aorta = _mreza(osnovni, r"^Ascending aorta$")
     ac = Vector(_tocke(aorta).mean(0)) if aorta else Vector()
@@ -300,6 +350,9 @@ def srce_dodatki(osnovni, cfg, tmp):
     P_rv = _tocke(rv)
     konica_d = Vector(P_rv[np.linalg.norm(P_rv - np.array(trik[0]), axis=1).argmax()])
     vrstice = []
+    # štirivotlinski prerez: ravnina skozi konico levega prekata ter središči mitralnega in trikuspidalnega obroča
+    # (izvozi-organe.py jo zapiše v <organ>.vozlisca.json → prerez.ravnine v srce.json)
+    cfg["_tocke4"] = [konica_l.copy(), mitralni[0].copy(), trik[0].copy()]
 
     def lok_brez(zanka, zasedeno, rob=0.0025):
         """Del obroča, ki ga ne pokriva noben obstoječi listič (prost lok za novi listič), po vrsti."""
@@ -337,7 +390,7 @@ def srce_dodatki(osnovni, cfg, tmp):
         glave = papilarna(bm, dno_n, vrh_n, polm, stena)
         vrstice.append(["Anterolateral papillary muscle of left ventricle (lastno)", _novo(bm, "pap-al"), "miokard", "papilarne-misice",
                         "Anterolateral papillary muscle of left ventricle (lastno) / Left ventricle / Heart.g"])
-        bm, rob = listic(lok, konica_l, globina=0.021, sredisce=mitralni[0])
+        bm, rob = listic(lok, konica_l, globina=0.018, sredisce=mitralni[0], trebuh=0.3)
         # vsaka mišica oskrbuje svojo polovico lističa (komisuri: sprednja-stranska in zadnja-sredinska)
         d0 = (rob[0] - vrh_n).length < (rob[0] - vrh_z).length
         tetive(bm, rob, [(glave[0], 0.0, 0.55) if d0 else (vrh_z, 0.0, 0.55), (vrh_z, 0.45, 1.0) if d0 else (glave[0], 0.45, 1.0)])
@@ -383,10 +436,75 @@ def srce_dodatki(osnovni, cfg, tmp):
             vrstice.append(["Septomarginal trabecula (lastno)", _novo(bm, "sm-trab"), "miokard", "trabekule",
                             "Septomarginal trabecula (lastno) / Right ventricle / Heart.g"])
         print(f"[organi] srce: trikuspidalni sprednji listič na loku {len(lok)} točk")
+    # --- tetive septalnega in spodnjega lističa trikuspidalne zaklopke (Z-Anatomy jih nima): s prostega roba lističa do
+    # vrha najbližje papilarne mišice (septalni listič: septalna mišica, če obstaja), deblo se razcepi v 2 niti
+    pap_sep = _mreza(osnovni, r"^Septal papillary muscle of right ventricle")
+    vrhovi_d = [(_vrh_papilarne(m, trik[0])[0]) for m in (pap_s, pap_i, pap_sep) if m is not None]
+    for rx, ime in ((r"^Septal leaflet of right atrioventricular", "septal"), (r"^Inferior leaflet of right atrioventricular", "inferior")):
+        me_l = _mreza(osnovni, rx)
+        if me_l is None or not vrhovi_d:
+            continue
+        P = _tocke(me_l); d = np.linalg.norm(P - np.array(trik[0]), axis=1)
+        prosti = [Vector(p) for p in P[d > np.percentile(d, 92)]]
+        # enakomerno po robu: urejeno po kotu okoli osi obroča
+        a = trik[2].orthogonal().normalized(); b = trik[2].cross(a)
+        prosti.sort(key=lambda p: math.atan2((p - trik[0]).dot(b), (p - trik[0]).dot(a)))
+        prosti = prosti[::max(1, len(prosti) // 10)][:10]
+        bm = bmesh.new()
+        for j in range(0, len(prosti) - 1, 2):
+            k1, k2 = prosti[j], prosti[j + 1]
+            sred = (k1 + k2) / 2
+            vrh = min(vrhovi_d, key=lambda q: (q - sred).length) if ime == "inferior" or pap_sep is None else _vrh_papilarne(pap_sep, trik[0])[0]
+            raz = vrh.lerp(sred, 0.62)
+            cev(bm, _krivulja(vrh, raz, vrh.lerp(raz, 0.5), 7), [0.00034] * 7, seg=5)
+            for k in (k1, k2):
+                cev(bm, _krivulja(raz, k, raz.lerp(k, 0.5), 6), [0.00021] * 6, seg=5)
+        vrstice.append([f"Chordae tendineae of {ime} tricuspid leaflet (lastno)", _novo(bm, "tet-t" + ime[0]), "zaklopka", "av-zaklopki",
+                        f"Chordae tendineae of {ime} tricuspid leaflet (lastno) / Right atrioventricular valve.g / Heart.g"])
+    # --- prevodni sistem (shematsko, raven študija): sinusni vozel ob ustju zgornje votle vene (zgornji del desnega
+    # preddvora, pod epikardom), AV-vozel v pretinu nad trikuspidalnim obročem, Hisov snop čez vrh mišičnega pretina,
+    # desni krak po desni strani pretina proti septomarginalni trabekuli in konici, levi krak po levi strani pretina
+    # (dva fascikla). Tanke cevi tik pod endokardom (Ø ≈ 1,5–2 mm), vidne v prerezu.
+    ra = _mreza(osnovni, r"^Right atrium$")
+    c_lv, c_rv = Vector(P_lv.mean(0)), Vector(P_rv.mean(0))
+    t_lv, t_rv = _bvh(lv), _bvh(rv)
+
+    def po_pretinu(t, od, do, cilj, k=14, f0=0.0, f1=1.0, zamik=Vector()):
+        pot = []
+        for i in range(k):
+            q = od.lerp(do, f0 + (f1 - f0) * i / (k - 1)) + zamik * (i / (k - 1))
+            d = (cilj - q).normalized()
+            h = t.ray_cast(q, d, 0.06)
+            if h[0] is not None:
+                pot.append(h[0] - d * 0.0007)
+        return pot
+    bm = bmesh.new(); kosov = 0
+    desni = po_pretinu(t_rv, trik[0], konica_d, c_lv, 16, 0.05, 0.8)
+    if len(desni) > 4:
+        cev(bm, desni, [0.0008] * len(desni), seg=6); kosov += 1
+        av = desni[0]
+        e_l = (konica_l - mitralni[0])
+        for zm in (e_l.cross(Vector((0, 0, 1))).normalized() * 0.008, -e_l.cross(Vector((0, 0, 1))).normalized() * 0.008):
+            levi = po_pretinu(t_lv, mitralni[0], konica_l, c_rv, 14, 0.1, 0.75, zm)
+            if len(levi) > 4:
+                cev(bm, _krivulja(av, levi[0], av.lerp(levi[0], 0.5), 6) + levi[1:], [0.0008] * (len(levi) + 5), seg=6); kosov += 1
+        cev(bm, [av + Vector((0, 0, 0.0015)) * (i / 5) for i in range(6)], [0.0016 - 0.0004 * i / 5 for i in range(6)], seg=10)  # AV-vozel
+    if ra is not None:
+        P_ra = _tocke(ra); zg = P_ra[P_ra[:, 2] > np.percentile(P_ra[:, 2], 93)]
+        sa = Vector(zg[zg[:, 0].argmin()]); c_ra = Vector(P_ra.mean(0))
+        sa = sa + (c_ra - sa).normalized() * 0.0012  # tik pod epikardom
+        cev(bm, [sa + Vector((0, 0, -0.012)) * (i / 7) for i in range(8)], [0.0012 + 0.0008 * math.sin(math.pi * i / 7) for i in range(8)], seg=10)
+        kosov += 1
+    if kosov:
+        vrstice.append(["Conducting system of heart (lastno)", _novo(bm, "prevodni"), "prevodni", "prevodni-sistem",
+                        "Conducting system of heart (lastno) / Heart.g"])
+        print(f"[organi] srce: prevodni sistem ({kosov} kosov)")
+    else:
+        bm.free()
     # --- mesnate trabekule: levi prekat drobnejše (ob konici), desni grobe
     for ime, me, obroc, konica, n, r, dl in (("left", lv, mitralni, konica_l, 100, 0.0013, 0.024), ("right", rv, trik, konica_d, 64, 0.0016, 0.028)):
         bm = bmesh.new()
-        st = trabekule(bm, _bvh(me), obroc[0] + (konica - obroc[0]) * 0.12, (konica - obroc[0]) * 0.92, rnd, n, r, dl)
+        st = trabekule(bm, _bvh(me), obroc[0] + (konica - obroc[0]) * 0.12, (konica - obroc[0]) * 0.92, rnd, n, r, dl, epi=epi)
         vrstice.append([f"Trabeculae carneae of {ime} ventricle (lastno)", _novo(bm, "trab-" + ime), "miokard", "trabekule",
                         f"Trabeculae carneae of {ime} ventricle (lastno) / {ime.title()} ventricle / Heart.g"])
         print(f"[organi] srce: trabekule {ime}: {st}")
@@ -425,6 +543,14 @@ def srce_dodatki(osnovni, cfg, tmp):
         zamenjaj |= {r[0] for r in stari}
         print(f"[organi] srce: {ime} zaklopka: 3 žepki, R = {R * 1000:.1f} mm")
     osnovni[:] = [r for r in osnovni if r[0] not in zamenjaj]
+    # mišice (papilarne, trabekule) ne smejo prebiti epikarda: ≥ 1,5 mm pod zunanjo ploskvijo (lističev ne premikamo:
+    # ob obročih zaklopk je razvrstitev zunaj/znotraj negotova)
+    for r in vrstice:
+        if r[2] != "miokard":
+            continue
+        k = pod_epikard(r[1], epi, 0.0015)
+        if k:
+            print(f"[organi] srce: {r[0]}: {k} oglišč pod epikard")
     return vrstice
 
 

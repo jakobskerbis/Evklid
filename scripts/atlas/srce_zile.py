@@ -272,7 +272,19 @@ VELIKE = r"^(Ascending aorta|Aortic arch|Thoracic aorta|Brachiocephalic trunk|Le
          r"Bifurcation of pulmonary trunk|(Left|Right) pulmonary artery|Superior vena cava|Inferior vena cava \(thoracic part\)|" \
          r"(Left|Right) (superior|inferior) pulmonary vein)$"
 VENCNE = r"^(Left coronary artery|Right coronary artery|Anterior interventricular artery|Circumflex artery of heart|" \
-         r"Right inferolateral branch of right coronary artery|Coronary sinus|Great cardiac vein|Middle cardiac vein|Inferior vein of left ventricle.*)$"
+         r"Right inferolateral branch of right coronary artery|Coronary sinus|Great cardiac vein|Middle cardiac vein|Inferior vein of left ventricle.*|Posterior interventricular artery|Diagonal branch.*)$"
+
+
+# Posamezno izbirne žile (pregled #461, »manjka do ravni učbenika« 4): vsaka je svoj del (srce.json: »skupina« pove
+# skupni del, npr. venčne arterije, ki ga vidi OŠ; posamezne žile so v razdelku »Več«).
+DEL_VENCNE = {"Left coronary artery": "leva-vencna-arterija", "Anterior interventricular artery": "sprednja-medprekatna-arterija",
+              "Diagonal branches of anterior interventricular artery": "sprednja-medprekatna-arterija",
+              "Circumflex artery of heart": "cirkumfleksna-arterija", "Right coronary artery": "desna-vencna-arterija",
+              "Right inferolateral branch of right coronary artery": "desna-vencna-arterija",
+              "Posterior interventricular artery": "zadnja-medprekatna-arterija", "Coronary sinus": "vencni-sinus",
+              "Great cardiac vein": "velika-srcna-vena", "Middle cardiac vein": "srednja-srcna-vena"}
+DEL_VEJE = {"Brachiocephalic trunk": "brahiocefalicno-deblo", "Left common carotid artery": "leva-skupna-karotida",
+            "Left subclavian artery": "leva-podkljucnicna-arterija"}
 
 
 def _bvh_vrstic(vrstice):
@@ -287,6 +299,80 @@ def _zanka_blizu(me, tocka):
     from srce_geometrija import robne_zanke
     z = robne_zanke(me)
     return min(z, key=lambda x: (x[0] - tocka).length) if z else None
+
+
+def _po_povrsini(t, a, b, k=14):
+    """Pot a → b, vsaka točka projicirana na najbližjo površino (t: BVH sten srca)."""
+    out = []
+    for i in range(k):
+        q = a.lerp(b, i / (k - 1))
+        loc = t.find_nearest(q, 0.03)[0]
+        out.append(loc if loc is not None else q)
+    return out
+
+
+def dodaj_vencne(K, t, c_srca):
+    """Venčne arterije do ravni učbenika (pregled #461): Z-Anatomy ima pri konici »čop« vzporednih vej LAD (in enakih vej
+    velike srčne vene), nima diagonalnih vej z zgornje in srednje tretjine LAD in nima zadnje medprekatne arterije.
+    - veje LAD (in velike srčne vene), ki se začnejo v spodnjih 45 % višine LAD (ob konici), odstranimo: LAD se konča
+      kot ena žila, ki zavije okoli konice;
+    - dve diagonalni veji (Ø ≈ 2 → 1 mm) z LAD pri 22 % in 40 % dolžine, poševno navzdol čez sprednjo steno levega prekata;
+    - zadnja medprekatna arterija (Ø ≈ 2,2 → 1 mm) iz konca desne venčne arterije (crux) ob srednji srčni veni v zadnjem
+      medprekatnem žlebu proti konici (3,5 mm vstran od vene)."""
+    if t is None:
+        return
+    lad = K.get("Anterior interventricular artery")
+    if lad:
+        glavna = max(lad, key=lambda x: _dolzine(x[0])[-1])
+        z0, z1 = glavna[0][0].z, glavna[0][-1].z
+        meja = z1 + 0.45 * (z0 - z1)
+        for ime in ("Anterior interventricular artery", "Great cardiac vein"):
+            sp = K.get(ime, [])
+            gl = max(sp, key=lambda x: _dolzine(x[0])[-1]) if sp else None
+            K[ime] = [x for x in sp if x is gl or (ime == "Great cardiac vein" and x[0][0].z > z0 - 0.005) or x[0][0].z > meja]
+        P = glavna[0]; s = _dolzine(P); L = s[-1]
+        diag = []
+        for f, dl in ((0.22, 0.048), (0.40, 0.04)):
+            i = int(np.searchsorted(s, f * L))
+            p = P[i]; tg = (P[min(i + 2, len(P) - 1)] - P[max(i - 2, 0)]).normalized()
+            loc, nor, _, _ = t.find_nearest(p, 0.03)
+            if loc is None:
+                continue
+            nor = nor if nor.dot(loc - c_srca) > 0 else -nor
+            stran = nor.cross(tg).normalized()
+            if stran.x < 0:  # proti levemu (bolnikovemu levemu, +x) robu: prosta stena levega prekata
+                stran = -stran
+            cilj = p + (stran * 0.75 + tg * 0.65).normalized() * dl
+            pot = _po_povrsini(t, p + tg * 0.001, cilj, 14)
+            diag.append((pot, [0.00095 - 0.00045 * j / 13 for j in range(14)]))
+        if diag:
+            K["Diagonal branches of anterior interventricular artery"] = diag
+    rca, mcv = K.get("Right coronary artery"), K.get("Middle cardiac vein")
+    if rca and mcv:
+        v = max(mcv, key=lambda x: _dolzine(x[0])[-1])[0]
+        if (v[-1] - c_srca).z > (v[0] - c_srca).z:
+            v = v[::-1]
+        gl = max(rca, key=lambda x: _dolzine(x[0])[-1])[0]
+        crux = min(gl, key=lambda q: (q - v[0]).length)
+        Pv, _ = prevzorci(v, [0.001] * len(v), 0.003)
+        pot = [crux]
+        for i, q in enumerate(Pv[1:], 1):
+            tg = (Pv[min(i + 1, len(Pv) - 1)] - Pv[i - 1]).normalized()
+            loc, nor, _, _ = t.find_nearest(q, 0.03)
+            if loc is None:
+                continue
+            nor = nor if nor.dot(loc - c_srca) > 0 else -nor
+            stran = nor.cross(tg).normalized()
+            if stran.x > 0:  # proti desnemu prekatu (−x)
+                stran = -stran
+            pot.append(t.find_nearest(loc + stran * 0.0035, 0.03)[0] or loc)
+        if len(pot) > 2:  # od crux do žleba po površini (ne ravno skozi zrak)
+            pot = _po_povrsini(t, crux, pot[1], max(3, int((pot[1] - crux).length / 0.003)))[:-1] + pot[1:]
+        L = _dolzine(pot)[-1]
+        pot, _ = obrezi_dolzino(pot, [0] * len(pot), L * 0.85)
+        sp = _dolzine(pot)
+        K["Posterior interventricular artery"] = [(pot, [0.0011 - 0.0006 * x / max(sp[-1], 1e-6) for x in sp])]
+        print(f"[organi] srce: zadnja medprekatna arterija {sp[-1] * 1000:.0f} mm")
 
 
 def srce_zile(osnovni, cfg, tmp):
@@ -327,6 +413,7 @@ def srce_zile(osnovni, cfg, tmp):
                 return obrezi_dolzino(P, R, do)
         return P, R
 
+    aorta_P = aorta_R = pljucna_P = None
     # ---- aorta: koren (zaklopka) → ascendentna → lok → descendentna (ena cev), veje loka
     lističi = [r[1] for r in osnovni if re.search(r"^(Right|Left) coronary leaflet$|^Non-coronary leaflet$|^Semilunar cusps of aortic", r[0])]
     asc, lok, des = najdaljsi("Ascending aorta"), najdaljsi("Aortic arch"), najdaljsi("Thoracic aorta")
@@ -349,6 +436,7 @@ def srce_zile(osnovni, cfg, tmp):
         z = _Osi(bmesh.new())
         cev_stena(z, P, R, 0.0021, 32, zacetek_odprt=True)
         vrstica("Aorta", z, "aorta", "aorta", "Aorta.g")
+        aorta_P, aorta_R = P, R
         T_ao = _bvh_vrstic([nove[-1]])
         # veje loka: začnejo v steni aorte (izhod iz svetline), dolge ≈ 3 cm
         for ime, dl, rmin in (("Brachiocephalic trunk", 0.034, 0.0062), ("Left common carotid artery", 0.03, 0.0042), ("Left subclavian artery", 0.03, 0.0048)):
@@ -372,8 +460,19 @@ def srce_zile(osnovni, cfg, tmp):
             Pv2, Rv2 = obrezi_dolzino(Pv2, Rv2, dl)
             Pv2, Rv2 = prevzorci(Pv2, Rv2, lambda r: max(0.0015, r * 0.3))
             z = _Osi(bmesh.new())
-            cev_stena(z, Pv2, Rv2, 0.0012, 20)
-            vrstica(ime, z, "aorta", "aorta", "Aortic arch / Aorta.g")
+            razcep_bc = ime == "Brachiocephalic trunk" and len(Pv2) > 4
+            cev_stena(z, Pv2, Rv2, 0.0012, 20, konec_odprt=razcep_bc)
+            vrstica(ime, z, "aorta", DEL_VEJE.get(ime, "aorta"), "Aortic arch / Aorta.g")
+            if razcep_bc:  # razcep brahiocefaličnega debla: desna podključnična (bočno desno) in desna skupna karotida (gor)
+                E = Pv2[-1]; tg = (Pv2[-1] - Pv2[-4]).normalized()
+                for ime2, smer, r2, dl2 in (("Right common carotid artery", Vector((-0.25, 0, 1)), 0.0037, 0.02),
+                                            ("Right subclavian artery", Vector((-1, 0.15, 0.25)), 0.0045, 0.02)):
+                    smer = (tg * 0.6 + smer.normalized()).normalized()
+                    P2 = bezier_pot(E - tg * 0.004, tg, E + smer * dl2, smer, 12)
+                    R2 = [Rv2[-1] * (1 - i / 11) + r2 * (i / 11) if i < 6 else r2 for i in range(12)]
+                    z = _Osi(bmesh.new())
+                    cev_stena(z, P2, R2, 0.0011, 18, zacetek_odprt=True)
+                    vrstica(ime2, z, "aorta", "brahiocefalicno-deblo", "Brachiocephalic trunk / Aorta.g")
         del T_ao
     # ---- pljučno deblo → leva pljučna arterija (ena cev), desna iz razcepa
     pt = mreza("Pulmonary trunk")
@@ -394,25 +493,49 @@ def srce_zile(osnovni, cfg, tmp):
                 R[i] = (max(r0, r1) + 0.0012) * (1 - i / len(debl)) + R[len(debl) - 1] * (i / len(debl))
             P, R = obrezi_dolzino(P, R, _dolzine(debl)[-1] + 0.032)
             P, R = prevzorci(P, R, lambda r: max(0.002, r * 0.24))
+            # deblo do razcepa in leva pljučna arterija naprej: ista središčnica (brez stopnice), dva imenovana dela
+            jr = min(range(len(P)), key=lambda q: (P[q] - razcep).length)
+            jr = max(2, min(jr, len(P) - 3))
             z = _Osi(bmesh.new())
-            cev_stena(z, P, R, 0.0016, 28, zacetek_odprt=True)
+            s_r = cev_stena(z, P[:jr + 1], R[:jr + 1], 0.0016, 28, zacetek_odprt=True, konec_odprt=True)
             vrstica("Pulmonary trunk", z, "pljucna", "pljucno-deblo", "Pulmonary arteries.g")
+            z = _Osi(bmesh.new())
+            cev_stena(z, P[jr:], R[jr:], 0.0016, 28, zacetek_odprt=True, s0=s_r)
+            vrstica("Left pulmonary artery", z, "pljucna", "pljucne-arterije", "Pulmonary arteries.g")
+            pljucna_P, pljucna_R, pljucna_j = P, R, jr
             # desna: iz stene debla ob razcepu
             Pr, Rr = zdruzi([rpa], zacetek=razcep)
             j = min(range(len(P)), key=lambda q: (P[q] - razcep).length)
             os_ = (Pr[min(6, len(Pr) - 1)] - Pr[0]).normalized()
             t = (P[min(j + 1, len(P) - 1)] - P[max(j - 1, 0)]).normalized()
             radial = (os_ - t * os_.dot(t)).normalized()
-            rv = max(0.0085, Rr[0] * 0.85)
+            rv = 0.0084
             d = math.sqrt(max((R[j] - 0.0010) ** 2 - rv ** 2, (R[j] * 0.45) ** 2))
             k = next((i for i in range(len(Pr)) if (Pr[i] - P[j]).length > R[j] + 0.006), 2)
             Pv = bezier_pot(P[j] + radial * d, radial, Pr[k], Pr[min(k + 2, len(Pr) - 1)] - Pr[k], 10)[:-1] + Pr[k:]
-            Rv = [rv] * 9 + [max(0.0075, r) for r in Rr[k:]]
+            Rv = [rv] * len(Pv)
             Pv, Rv = obrezi_dolzino(Pv, Rv, 0.045)
+            # enakomerno tanjšanje (Ø ≈ 17 → 15 mm), brez »rokava« iz polmerov krivulje (pregled #461)
+            Lr = _dolzine(Pv); Rv = [0.0084 - 0.0008 * x / max(Lr[-1], 1e-6) for x in Lr]
             Pv, Rv = prevzorci(Pv, Rv, lambda r: max(0.002, r * 0.25))
             z = _Osi(bmesh.new())
             cev_stena(z, Pv, Rv, 0.0014, 24)
-            vrstica("Right pulmonary artery", z, "pljucna", "pljucno-deblo", "Pulmonary arteries.g")
+            vrstica("Right pulmonary artery", z, "pljucna", "pljucne-arterije", "Pulmonary arteries.g")
+    # ---- arterijska vez (lig. arteriosum, ostanek ductus arteriosus): od razcepa pljučnega debla / začetka leve
+    # pljučne arterije do spodnje (vbočene) strani aortnega loka, Ø ≈ 3 mm, dolga ≈ 0,5–1,5 cm
+    if aorta_P and pljucna_P:
+        A = pljucna_P[pljucna_j]; Ra_ = pljucna_R[pljucna_j]
+        i = min(range(len(aorta_P) // 4, len(aorta_P)), key=lambda q: (aorta_P[q] - A).length - aorta_R[q])
+        d = (aorta_P[i] - A).normalized()
+        a, b = A + d * Ra_ * 0.8, aorta_P[i] - d * aorta_R[i] * 0.8
+        if 0.003 < (b - a).length < 0.03:
+            Pl, Rl = prevzorci([a, b], [0.0016, 0.0013], 0.0012)
+            z = _Osi(bmesh.new())
+            cev_polna(z, Pl, Rl, 10)
+            vrstica("Ligamentum arteriosum", z, "zaklopka", "arterijska-vez", "Aortic arch / Aorta.g")
+            print(f"[organi] srce: arterijska vez {(b - a).length * 1000:.1f} mm")
+        else:
+            print(f"[organi] srce: arterijska vez preskočena (razdalja {(b - a).length * 1000:.1f} mm)")
     # ---- votli veni: v desni preddvor
     ra = [r for r in osnovni if r[0] == "Right atrium"]
     for ime, dl in (("Superior vena cava", 0.05), ("Inferior vena cava (thoracic part)", 0.03)):
@@ -426,14 +549,14 @@ def srce_zile(osnovni, cfg, tmp):
         # podaljšaj proti središču preddvora, da gotovo zadene steno
         c_ra = sum((Vector(v.co) for v in ra[0][1].vertices), Vector()) / len(ra[0][1].vertices)
         P = P + [P[-1].lerp(c_ra, 0.5)]; R = R + [R[-1]]
-        P, R = v_steno(P, R, ra, 0.0025)
+        P, R = v_steno(P, R, ra, 0.0015)  # konec sredi stene preddvora: ustje brez kepe v votlini (pregled #461)
         L = _dolzine(P)[-1]
         if L > dl:  # prosti konec skrajšamo (od srca navzven največ dl)
             P, R = P[::-1], R[::-1]; P, R = obrezi_dolzino(P, R, dl); P, R = P[::-1], R[::-1]
         R = [max(r, 0.0095) for r in R]
         P, R = prevzorci(P, R, lambda r: max(0.002, r * 0.25))
         z = _Osi(bmesh.new())
-        cev_stena(z, P, R, 0.0012, 24)
+        cev_stena(z, P, R, 0.0012, 24, konec_odprt=True)
         vrstica(ime, z, "vena", "votli-veni", "Systemic veins.g")
     # ---- levi preddvor: zapri luknjo v zadnji steni, nato štiri pljučne vene
     la = [r for r in osnovni if r[0] == "Left atrium"]
@@ -460,7 +583,7 @@ def srce_zile(osnovni, cfg, tmp):
             # pot: od zunanjega konca proti preddvoru (cilj = točka a), zavije v steno
             P = bezier_pot(zun + smer * 0.004, -smer, a.lerp(c_la, 0.35), (c_la - a), 16)
             R = [0.0066] * len(P)
-            P, R = v_steno(P, R, la, 0.002)
+            P, R = v_steno(P, R, la, 0.0015)
             L = _dolzine(P)[-1]
             if L < 0.03:  # žarek je zadel steno zgodaj (štrclj): prosti konec podaljšamo navzven na ≥ 3 cm
                 d0 = (P[0] - P[1]).normalized()
@@ -468,17 +591,30 @@ def srce_zile(osnovni, cfg, tmp):
             P, R = P[::-1], R[::-1]
             P, R = prevzorci(P, R, lambda r: 0.0026)
             z = _Osi(bmesh.new())
-            cev_stena(z, P, R, 0.0011, 20)
+            cev_stena(z, P, R, 0.0011, 20, zacetek_odprt=True)
             vrstica(ime, z, "pljucna-vena", "pljucne-vene", "Pulmonary veins.g")
     # ---- venčne žile: polne cevi nad površino (tretjina premera v maščobi)
+    dodaj_vencne(K, t_srce, c_srca)
     for ime in sorted(K):
         if not re.search(VENCNE, ime):
             continue
+        for P, R in K[ime]:
+            if len(P) > 1:
+                print(f"[organi] krivulja {ime}: L {_dolzine(P)[-1] * 1000:.0f} mm, r {max(R) * 1000:.2f}, "
+                      f"od {tuple(round(x * 1000) for x in P[0])} do {tuple(round(x * 1000) for x in P[-1])}")
         arterija = "artery" in ime
         z = _Osi(bmesh.new())
         for P, R in K[ime]:
             if len(P) < 2 or _dolzine(P)[-1] < 0.004:
                 continue
+            if arterija and aorta_P:  # ustje v aortnem sinusu: del krivulje v svetlini aorte (rdeča kepa v prerezu) odrežemo
+                def v_aorti(q):
+                    i = min(range(len(aorta_P)), key=lambda j: (aorta_P[j] - q).length)
+                    return (aorta_P[i] - q).length < aorta_R[i] - 0.0005
+                while len(P) > 2 and v_aorti(P[0]):
+                    P, R = P[1:], R[1:]
+                while len(P) > 2 and v_aorti(P[-1]):
+                    P, R = P[:-1], R[:-1]
             if arterija:  # anatomske debeline: deblo ≈ 4 mm, veje se tanjšajo, najtanjše ≈ 1,1 mm
                 R = [max(r * 1.08, 0.00055) for r in R]
             elif ime == "Coronary sinus":
@@ -501,7 +637,7 @@ def srce_zile(osnovni, cfg, tmp):
             seg = 8 if max(R) > 0.0012 else 6
             cev_polna(z, P, R, seg)
         tk = "vencna-arterija" if arterija else "vencna-vena"
-        vrstica(ime, z, tk, "vencne-arterije" if arterija else "vencne-vene", "Arteries of heart.g" if arterija else "Cardiac veins.g")
+        vrstica(ime, z, tk, DEL_VENCNE.get(ime, "vencne-arterije" if arterija else "vencne-vene"), "Arteries of heart.g" if arterija else "Cardiac veins.g")
     # stare (Z-Anatomy) mreže teh žil odstranimo
     zamenjane = re.compile(VELIKE + "|" + VENCNE)
     osnovni[:] = [r for r in osnovni if not zamenjane.search(r[0])]
