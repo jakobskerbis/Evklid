@@ -29,10 +29,10 @@ Pri togem telesu (telesu, pri katerem se razdalje med točkami ne spreminjajo) s
 
 | | delec | togo telo |
 |---|---|---|
-| kje prijemlje sila | vse v isti točki | vsaka sila v svoji točki |
-| kaj sila povzroči | premik | premik in zasuk |
-| kdaj sta sili enakovredni | enak vektor | enak vektor **in** ista nosilka |
-| pogoj mirovanja | $\sum\vec{F} = 0$ | $\sum\vec{F} = 0$ in $\sum\vec{M} = 0$ |
+| prijemališče | skupno | vsaka sila svoje |
+| učinek sile | premik | premik in zasuk |
+| enaki sili | isti vektor | isti vektor, ista nosilka |
+| mirovanje | $\sum\vec{F} = 0$ | še $\sum\vec{M} = 0$ |
 
 **Nosilka** sile je premica skozi prijemališče v smeri sile. Na togem telesu lahko silo premikamo vzdolž nosilke, ne da bi se učinek spremenil (**izrek o premikanju sile po nosilki**): ali vrv vleče voziček od spredaj ali ga drog z isto silo potiska od zadaj, je za togo telo vseeno. Sila na togem telesu je zato **drsni vektor**. Če pa jo premaknemo vzporedno na drugo nosilko, se spremeni njen vrtilni učinek. Ta učinek meri moment.
 

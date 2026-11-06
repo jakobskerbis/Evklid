@@ -29,13 +29,15 @@ V formuli so **atomske** mase (iz tabel), $m(^1\mathrm{H}) = 1{,}007825\,\mathrm
 
 Izračunajmo $W_v$ in **vezavno energijo na nukleon** $W_v/A$ za nekaj jeder:
 
-| jedro | masni defekt / u | $W_v$ / MeV | $W_v/A$ / MeV |
-|---|---|---|---|
-| ${}^2\mathrm{H}$ | $0{,}002388$ | $2{,}22$ | $1{,}11$ |
-| ${}^4\mathrm{He}$ | $0{,}030377$ | $28{,}30$ | $7{,}07$ |
-| ${}^{12}\mathrm{C}$ | $0{,}098940$ | $92{,}16$ | $7{,}68$ |
-| ${}^{56}\mathrm{Fe}$ | $0{,}528462$ | $492{,}3$ | $8{,}79$ |
-| ${}^{238}\mathrm{U}$ | $1{,}934193$ | $1802$ | $7{,}57$ |
+| jedro | $W_v$ / MeV | $W_v/A$ / MeV |
+|---|---|---|
+| ${}^2\mathrm{H}$ | $2{,}22$ | $1{,}11$ |
+| ${}^4\mathrm{He}$ | $28{,}30$ | $7{,}07$ |
+| ${}^{12}\mathrm{C}$ | $92{,}16$ | $7{,}68$ |
+| ${}^{56}\mathrm{Fe}$ | $492{,}3$ | $8{,}79$ |
+| ${}^{238}\mathrm{U}$ | $1802$ | $7{,}57$ |
+
+Masni defekti, iz katerih so izračunane vrednosti, so po vrsti $0{,}002388$; $0{,}030377$; $0{,}098940$; $0{,}528462$ in $1{,}934193\,\mathrm{u}$.
 
 Kaj opaziš? Celotna vezavna energija raste z $A$, kar ni presenetljivo. Toda $W_v/A$ najprej strmo naraste, okoli $A \approx 56$ (železo, nikelj) doseže največjo vrednost okoli $8{,}8\,\mathrm{MeV}$, potem pa počasi pada. Za večino jeder je med $7{,}5$ in $8{,}8\,\mathrm{MeV}$, skoraj stalna.
 
@@ -60,12 +62,14 @@ Na nukleon se vezavna energija poveča za približno $0{,}9\,\mathrm{MeV}$, nukl
 
 Nestabilna jedra spontano razpadajo. Glavne vrste:
 
-| razpad | kaj se zgodi | sprememba |
+| razpad | proces | $A$, $Z$ |
 |---|---|---|
-| $\alpha$ | jedro izseva ${}^4\mathrm{He}$ | $A \to A - 4$, $Z \to Z - 2$ |
-| $\beta^-$ | $n \to p + e^- + \bar\nu_e$ | $A$ enak, $Z \to Z + 1$ |
-| $\beta^+$, zajetje elektrona | $p \to n + e^+ + \nu_e$ | $A$ enak, $Z \to Z - 1$ |
-| $\gamma$ | vzbujeno jedro preide v nižje stanje | $A$, $Z$ enaka |
+| $\alpha$ | izseva ${}^4\mathrm{He}$ | $-4$, $-2$ |
+| $\beta^-$ | $n \to p + e^- + \bar\nu_e$ | $0$, $+1$ |
+| $\beta^+$ | $p \to n + e^+ + \nu_e$ | $0$, $-1$ |
+| $\gamma$ | prehod v nižje stanje | $0$, $0$ |
+
+Enako spremembo kot $\beta^+$ da zajetje elektrona iz ovojnice ($p + e^- \to n + \nu_e$).
 
 Pri vsakem razpadu se ohranjata nukleonsko število in naboj. Oznaka »m« (${}^{99\mathrm{m}}\mathrm{Tc}$) pomeni metastabilno vzbujeno stanje, ki razpade z izsevanjem žarka $\gamma$.
 
@@ -106,8 +110,8 @@ Razpolovni časi izotopov, ki jih pogosto srečaš v biologiji in medicini:
 | izotop | razpad | $t_{1/2}$ | uporaba |
 |---|---|---|---|
 | ${}^{18}\mathrm{F}$ | $\beta^+$ | $110\,\mathrm{min}$ | PET |
-| ${}^{99\mathrm{m}}\mathrm{Tc}$ | $\gamma$ | $6{,}0\,\mathrm{h}$ | scintigrafija |
-| ${}^{32}\mathrm{P}$ | $\beta^-$ | $14{,}3\,\mathrm{d}$ | označevanje DNA |
+| ${}^{99\mathrm{m}}\mathrm{Tc}$ | $\gamma$ | $6{,}0\,\mathrm{h}$ | SPECT |
+| ${}^{32}\mathrm{P}$ | $\beta^-$ | $14{,}3\,\mathrm{d}$ | DNA |
 | ${}^{14}\mathrm{C}$ | $\beta^-$ | $5730$ let | datiranje |
 
 ## Rešeni primeri

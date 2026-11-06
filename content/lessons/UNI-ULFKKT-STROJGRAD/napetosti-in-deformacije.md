@@ -17,7 +17,7 @@ Napetost in njen par, **deformacija**, sta osnovna jezika trdnosti. Z njima izbe
 
 Jekleno žico obesimo, nanjo pa obešamo uteži in merimo podaljšek. Štiri meritve:
 
-| sila $F$ / N | prerez $A$ / mm² | dolžina $L_0$ / m | podaljšek $\Delta L$ / mm |
+| $F$ / N | $A$ / mm² | $L_0$ / m | $\Delta L$ / mm |
 |---|---|---|---|
 | $100$ | $1{,}0$ | $1{,}0$ | $0{,}50$ |
 | $200$ | $1{,}0$ | $1{,}0$ | $1{,}0$ |
@@ -84,12 +84,14 @@ Iz preizkušanca po pretrgu izmerimo še **raztezek po pretrgu** $A = (L_u - L_0
 
 Okvirne vrednosti:
 
-| material | $E$ / GPa | $R_e$ ali $R_{p0{,}2}$ / MPa | $R_m$ / MPa |
+| material | $E$ / GPa | $R_e$ / MPa | $R_m$ / MPa |
 |---|---|---|---|
-| konstrukcijsko jeklo S235 | $210$ | $235$ | $360$ |
-| aluminijeva zlitina | $70$ | $160$ | $215$ |
-| kortikalna kost (nateg) | $17$ | – | $130$ |
+| jeklo S235 | $210$ | $235$ | $360$ |
+| Al zlitina | $70$ | $160$ | $215$ |
+| kost | $17$ | – | $130$ |
 | kita | $1{,}2$ | – | $100$ |
+
+Pri aluminiju je v stolpcu $R_e$ dogovorna meja $R_{p0{,}2}$, pri kosti (kortikalna kost v nategu) in kiti meje tečenja ni.
 
 Kost in kita nimata izrazite meje tečenja: diagram je od začetka rahlo ukrivljen, pretrg nastopi brez vratu.
 

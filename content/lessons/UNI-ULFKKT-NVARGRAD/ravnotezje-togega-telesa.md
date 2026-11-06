@@ -52,12 +52,14 @@ Okoli $A$ (ali $B$). Neznane sile v $A$ imajo nosilke skozi $A$, zato je njihov 
 
 Podpora (vez) telesu prepreči določene premike. Kjer premik prepreči, deluje **reakcija**: sila v smeri preprečenega premika ali moment, kjer prepreči zasuk. Telo v ravnini ima tri **prostostne stopnje** (premik v $x$, premik v $y$, zasuk), zato mora imeti vsaj tri neodvisne reakcije.
 
-| podpora | prepreči | reakcije |
-|---|---|---|
-| pomična (drsna, valjčna) | premik pravokotno na podlago | 1 sila pravokotno na podlago |
-| nepomična členkasta | oba premika | 2 sili ($A_x$, $A_y$) |
-| togo vpetje | oba premika in zasuk | 2 sili in moment $M_A$ |
-| nihajna palica, vrv | premik v smeri palice | 1 sila v smeri palice (vrv le natezna) |
+| podpora | reakcije |
+|---|---|
+| pomična (valjčna) | 1 sila, pravokotna na podlago |
+| nepomična členkasta | 2 sili, $A_x$ in $A_y$ |
+| togo vpetje | 2 sili in moment $M_A$ |
+| nihajna palica, vrv | 1 sila v smeri palice |
+
+Pomična podpora prepreči le premik pravokotno na podlago, nepomična členkasta oba premika, togo vpetje še zasuk. Nihajna palica prepreči premik v svoji smeri; vrv prenese le nateg.
 
 **Diagram prostega telesa.** Telo »sprostimo«: podpore odstranimo in jih nadomestimo z reakcijami. Narišemo vse zunanje sile (teže, obtežbe, dvojice) in vse reakcije z izbranimi smermi. Če pride reakcija negativna, deluje v nasprotni smeri, kot smo jo narisali; računa ne popravljamo.
 
