@@ -127,6 +127,13 @@ export default function Chat() {
         const msg = err instanceof ApiError ? (err.offline ? t("mob.offlineChat") : err.message) : (err as Error).message;
         patch((m) => ({ ...m, text: msg, error: true, streaming: false }));
         failure();
+        // Kot na spletu: brez povezave (ali strežnik zaseden) se besedilo vrne v polje, da se ne izgubi;
+        // ob meji porabe (429) ostane polje prazno, sporočilo je v oblačku.
+        const lost = !(err instanceof ApiError) || err.offline || err.status >= 500 || err.status === 409;
+        if (lost && !body.deep) {
+          setText((cur) => (cur.trim() ? cur : msgText));
+          if (body.image) setPhoto((cur) => cur || body.image || null);
+        }
       } finally {
         setBusy(false);
       }

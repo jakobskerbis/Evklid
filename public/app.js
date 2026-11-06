@@ -1079,7 +1079,8 @@ async function send(text, { deep = false } = {}) {
       bubble.remove();
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
-      throw new Error(serverError(err, res.status));
+      // Meja porabe (429, limit): sporočilo je »poslano« (ostane v oblačku), polje ostane prazno.
+      throw Object.assign(new Error(serverError(err, res.status)), { limit: res.status === 429 && err.limit === true });
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
@@ -1184,8 +1185,11 @@ async function send(text, { deep = false } = {}) {
     const dropped = err instanceof TypeError && /^(network ?error|failed to fetch|load failed|networkerror)/i.test(err.message);
     if (!dropped) console.error(err);
     addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
-    $("#input").value = text;
-    autoGrow();
+    // Neuspelo pošiljanje (omrežje, strežnik): besedilo se vrne v polje, da se ne izgubi. Meja porabe: ne.
+    if (!err.limit) {
+      $("#input").value = text;
+      autoGrow();
+    }
   } finally {
     state.sending = false;
     $("#send").disabled = false;
