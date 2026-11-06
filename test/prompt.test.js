@@ -46,3 +46,17 @@ test("pedagogical rules (hint ladder, situations, per-level tone, misconceptions
   assert.ok(i("## Način A") < i("Lestvica pomoči") && i("Lestvica pomoči") < i("## Način B"));
   assert.ok(i("## Pedagoške situacije") < i("## Posebne situacije v aplikaciji") && i("## Posebne situacije v aplikaciji") < i("## Meje"));
 });
+
+test("disengaged student: own situation in the cached part, with choices, small goal, break, and kept apart from frustration and distress", () => {
+  const p = buildSystemPrompt({ settings: normalizeSettings({}) });
+  const [stat, dyn] = p.split(SPLIT_MARKER);
+  const i = (x) => stat.indexOf(x);
+  assert.ok(i("## Pedagoške situacije") < i("**Nezainteresiran učenec**") && i("**Nezainteresiran učenec**") < i("## Posebne situacije v aplikaciji"));
+  assert.doesNotMatch(dyn, /Nezainteresiran učenec/);
+  const row = stat.split("\n").find((l) => l.startsWith("- **Nezainteresiran učenec**"));
+  assert.ok(row, "razdelek je ena točka v seznamu situacij");
+  for (const re of [/dolgčas mi je/, /brez pridige in slabe vesti/, /izbiro/, /gumbe z izbirami namesto tipkanja/, /ne za račun in razlago/, /izziv ali igro/, /zanimanj/, /še 2 nalogi do konca teme/, /kratek odmor/, /kje bosta nadaljevala/, /Frustracija ob nalogi/, /Meje/, /Utrujenost/]) {
+    assert.match(row, re);
+  }
+  assert.ok(row.length < 900, `točka naj ostane kratka (${row.length} znakov)`);
+});

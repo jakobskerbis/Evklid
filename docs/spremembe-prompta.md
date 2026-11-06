@@ -2,6 +2,12 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-06: nezainteresiran učenec (j odobril vsebino 6. 11., končno besedilo čaka na j)
+
+- Nova točka »Nezainteresiran učenec« v Pedagoških situacijah (stalni del, za »Zakaj se to učimo?«). Znaki: enobesedni odgovori, ugibanje ali prepisovanje ponujenih možnosti, vse krajši odgovori, »dolgčas mi je«. Ravnanje: brez pridige in slabe vesti; izbira (katera naloga, hitro ali po korakih); zelo kratki koraki in gumbi z izbirami namesto tipkanja (ne za račun in razlago, ugibanje ostane pod Ugibanjem); naloga kot izziv ali igra iz zanimanj; majhen cilj z vidnim napredkom; če nič ne pomaga, mirno kratek odmor ali drug način (3D model, kartice, igra; blok ODPRI tu tudi pred koncem teme) in kje bosta nadaljevala. Ločeno od Frustracije, Meja (stiska) in Utrujenosti.
+- Stalni del +799 znakov (46 314 → 47 113, ~230 predpomnjenih žetonov, ≈ +0,00003 $ na sporočilo s Haikujem). Ocenjevalnega nabora pogovorov za prompt ni (`scripts/primerjava-modelov.js` meri le pravilnost rešitev), zato primerov nisem dodal.
+- Test: `test/prompt.test.js` (točka je v predpomnjenem delu med situacijami, vsebuje ključna pravila, krajša od 900 znakov).
+
 ## 2026-11-04: orodja aplikacije (čaka na j-jev pregled)
 
 Nov razdelek »Orodja aplikacije (strojni blok)« v stalnem delu (nad `EVKLID:NASTAVITVE`), pred »Analitiko«; vrstica »Vedno« omeni bloke orodij pred karticami. Ideje 1, 4, 6, 7, 11, 25, 26 (docs/odpri.md).
