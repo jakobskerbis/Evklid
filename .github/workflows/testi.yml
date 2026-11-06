@@ -28,13 +28,13 @@ env:
   RESEND_API_KEY: ""
   # Ista različica kot lokalno (scripts/preveri-aplikacijo.cjs in testi jo naložijo z require("playwright")).
   PLAYWRIGHT_VERSION: "1.63.0"
-  # Zatikajoč se test pade po 10 min z imenom (merjeno na datoteko in na test) (najdaljši zdaj ~2,3 min; testi z lastnim »timeout« ga preglasijo),
+  # Zatikajoč se test pade po 10 min z imenom (velja za datoteko in za test; lastni »timeout« testa velja samo znotraj te meje; najdaljša datoteka zdaj ~2,3 min),
   # --test-force-exit pa konča proces, ki ga odprt brskalnik sicer drži živega.
   TEST_ZASTAVICE: "--test-timeout=600000 --test-force-exit"
 jobs:
   testi:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         timeout-minutes: 5
@@ -56,9 +56,10 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
-      # sredi prenosa z ogledala in požrl 40 min. Brskalniki so v predpomnilniku, apt ostane vedno.
+      # sredi prenosa z ogledala in požrl 40 min; uspešne, a počasne namestitve pa trajajo do ~12 min, zato 13 min na poskus.
+      # Brskalniki so v predpomnilniku, apt ostane vedno.
       - name: Namestitev brskalnikov (omejitev časa + ponovitev)
-        timeout-minutes: 20
+        timeout-minutes: 42
         run: |
           sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
           Acquire::Retries "3";
@@ -66,13 +67,14 @@ jobs:
           Acquire::https::Timeout "30";
           APT
           for poskus in 1 2 3; do
-            if timeout -k 10 5m npx playwright install --with-deps chromium webkit; then exit 0; fi
-            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (5 min)"
+            if timeout -k 10 13m npx playwright install --with-deps chromium webkit; then exit 0; fi
+            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (13 min)"
             # timeout ubije npx, apt pa teče naprej in drži zaklep: ubij ga, prenesene pakete obdrži (naslednji poskus nadaljuje).
-            sudo pkill -9 -f 'apt-get|apt |dpkg' || true
+            sudo pkill -9 -f '[a]pt-get|[a]pt |[d]pkg' || true
             sleep 2
             sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
-            sudo dpkg --configure -a || true
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m dpkg --configure -a --force-confdef --force-confold || true
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m apt-get -f install -y || true
             sleep 5
           done
           echo "::error::Namestitev brskalnikov ni uspela v 3 poskusih"
@@ -80,7 +82,8 @@ jobs:
       # Nestabilni testi: največ 1 ponovitev, samo za datoteke, ki so padle (največ 3). Ponovitev je vidna:
       # opozorilo (annotations_count > 0 v check-runs), vrstica v povzetku zagona, izhod ponovljeno=true in
       # naložen dnevnik. Več padlih datotek = prava napaka, brez ponovitve.
-      - name: npm test
+      # Ukaz mora ustrezati package.json scripts.test (+ $TEST_ZASTAVICE).
+      - name: Testi (kot npm test)
         id: npmtest
         timeout-minutes: 30
         run: |
@@ -109,7 +112,7 @@ jobs:
 
   preveri:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         timeout-minutes: 5
@@ -131,9 +134,10 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
-      # sredi prenosa z ogledala in požrl 40 min. Brskalniki so v predpomnilniku, apt ostane vedno.
+      # sredi prenosa z ogledala in požrl 40 min; uspešne, a počasne namestitve pa trajajo do ~12 min, zato 13 min na poskus.
+      # Brskalniki so v predpomnilniku, apt ostane vedno.
       - name: Namestitev brskalnikov (omejitev časa + ponovitev)
-        timeout-minutes: 20
+        timeout-minutes: 42
         run: |
           sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
           Acquire::Retries "3";
@@ -141,13 +145,14 @@ jobs:
           Acquire::https::Timeout "30";
           APT
           for poskus in 1 2 3; do
-            if timeout -k 10 5m npx playwright install --with-deps chromium; then exit 0; fi
-            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (5 min)"
+            if timeout -k 10 13m npx playwright install --with-deps chromium; then exit 0; fi
+            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (13 min)"
             # timeout ubije npx, apt pa teče naprej in drži zaklep: ubij ga, prenesene pakete obdrži (naslednji poskus nadaljuje).
-            sudo pkill -9 -f 'apt-get|apt |dpkg' || true
+            sudo pkill -9 -f '[a]pt-get|[a]pt |[d]pkg' || true
             sleep 2
             sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
-            sudo dpkg --configure -a || true
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m dpkg --configure -a --force-confdef --force-confold || true
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m apt-get -f install -y || true
             sleep 5
           done
           echo "::error::Namestitev brskalnikov ni uspela v 3 poskusih"
