@@ -90,3 +90,30 @@ test("nerazčlenljivo besedilo ni surovo; vedno natanko en kazalec; merilne toč
   const html = render(stopsTex(base));
   assert.equal((html.match(/data-evk-p=/g) || []).length, stops.length);
 });
+
+test("oklepaj, ki ga vtipka učenec, ostane viden (pregled #457)", () => {
+  assert.notEqual(entryTex("2×(", 3, env).tex, entryTex("2×", 2, env).tex);
+  for (const t of ["2×(", "(2+3", "(", "((1+2)", "1/(2+3"]) {
+    const e = entryTex(t, t.length, env);
+    assert.match(stripCaret(e.tex), /\\left\(/, t);
+    assert.match(stripCaret(e.tex), /\\right\./, t);
+    render(e.tex);
+  }
+  assert.match(entryTex("(2+3", 4, env).tex, /^\\left\( ?2\+3/);
+  // kazalec pred in za oklepajem: natanko en kazalec, TeX se izriše
+  const base = entryBase("(2+3", env);
+  for (let p = 0; p <= 4; p++) {
+    const tex = caretTex(base, p);
+    assert.equal(carets(tex), 1);
+    render(tex);
+  }
+  // učenčev zaklepaj ostane kot prej
+  assert.equal(stripCaret(entryTex("(2+3)", 5, env).tex), previewTex("(2+3)", env));
+});
+
+test("kazalec pred ^ ne dvigne eksponenta (\\smash)", () => {
+  assert.match(CARET, /\\smash/);
+  const sup = (tex) => (/class="msupsub"[\s\S]*?top:\s*(-?[\d.]+em)/.exec(katex.renderToString(tex, { trust: TRUST })) || [])[1];
+  assert.equal(sup(`x${CARET}^{2}`), sup("x^{2}"));
+  assert.ok(sup("x^{2}"), "izmerjen odmik eksponenta");
+});

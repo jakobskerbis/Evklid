@@ -11,7 +11,8 @@ import { parseCommand } from "./cas.js";
 import { chemSub } from "./molska.js";
 
 // Barvi kazalca in okvirčka sta v graph.css (.sc-caret, .sc-hole: CSS spremenljivke, tudi temna tema).
-export const CARET = "{\\htmlClass{sc-caret}{\\rule[-0.25em]{0.08em}{1.15em}}}";
+// \smash: črta kazalca ne sme dvigniti eksponenta, ko stoji pred ^ ali _ (odmik enak kot brez kazalca)
+export const CARET = "{\\htmlClass{sc-caret}{\\smash{\\rule[-0.25em]{0.08em}{1.15em}}}}";
 export const HOLE = "\\htmlClass{sc-hole}{\\square}";
 /** KaTeX `trust` za zapis vnosa: samo oznaki kazalca/okvirčka (htmlClass) in merilne točke (htmlData). */
 export const TRUST = (c) => c.command === "\\htmlClass" || c.command === "\\htmlData";
@@ -289,6 +290,40 @@ function align(A, B) {
   return to;
 }
 
+/** Globina zavitih oklepajev {} pred žetonom i. */
+function depthAt(toks, i) {
+  let d = 0;
+  for (let k = 0; k < i; k++) d += toks[k].kind === "open" ? 1 : toks[k].kind === "close" ? -1 : 0;
+  return d;
+}
+
+/** TeX z vstavljenimi \left( in \right. za učenčeve odprte oklepaje, ki jih je previewTex odstranil; null, če ni kaj vstaviti. */
+function openParens(raw, A, to, toks) {
+  const stack = [];
+  const ins = []; // [indeks žetona, vrstni red (zaklepaj pred oklepajem), niz]
+  A.forEach((a, i) => {
+    if (a.k === "(" || a.k === "[") stack.push(i);
+    else if ((a.k === ")" || a.k === "]") && stack.length) {
+      const o = stack.pop();
+      if (a.s < raw.length || to[o] >= 0) return; // učenčev zaklepaj ali oklepaj, ki je v zapisu že viden
+      let first = -1;
+      for (let j = o + 1; j < i; j++) if (to[j] >= 0) { first = j; break; }
+      let last = -1;
+      for (let j = i - 1; j > o; j--) if (to[j] >= 0) { last = j; break; }
+      if (first < 0 || last < 0) return;
+      const open = texAtoms(toks)[to[first]].t;
+      const close = texAtoms(toks)[to[last]].t + 1;
+      if (open >= close || depthAt(toks, open) !== depthAt(toks, close) || !canInsert(toks, open) || !canInsert(toks, close)) return;
+      ins.push([open, 1, `\\left${A[o].k} `], [close, 0, "\\right."]);
+    }
+  });
+  if (!ins.length) return null;
+  ins.sort((x, y) => y[0] - x[0] || y[1] - x[1]);
+  const parts = toks.map((t) => t.s);
+  for (const [at, , str] of ins) parts.splice(at, 0, str);
+  return parts.join("");
+}
+
 /**
  * Pripravi zapis vnosa (brez kazalca). `render(text)` vrne TeX dokončanega besedila (privzeto liveTex z env).
  * Vrne { ok, tex, ... } za caretTex in caretStops.
@@ -303,10 +338,19 @@ export function entryBase(text, env = {}, render = (s) => liveTex(s, env)) {
     tex = render(done.text);
   } catch {}
   if (!tex) return { ok: false, raw };
-  const toks = lex(tex, hole);
+  let toks = lex(tex, hole);
   const A = textAtoms(done.text, hole);
-  const B = texAtoms(toks);
-  const to = align(A, B);
+  let B = texAtoms(toks);
+  let to = align(A, B);
+  // oklepaj, ki ga je učenec odprl, previewTex pa ga je kot nepotrebnega odstranil, mora ostati viden:
+  // \left( … \right. (zaklepaj, ki ga je dodal complete, ni izrisan, da se vidi, da je oklepaj odprt)
+  const fix = openParens(raw, A, to, toks);
+  if (fix) {
+    tex = fix;
+    toks = lex(tex, hole);
+    B = texAtoms(toks);
+    to = align(A, B);
+  }
   // položaj kazalca → mesto v žetonih (najbližji ujeti atom levo ali desno, kjer je atom lahko samostojen)
   const place = (p) => {
     const q = done.at(p);
