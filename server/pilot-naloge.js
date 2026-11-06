@@ -1,7 +1,7 @@
 // Naloge za člane pilota (j 2026-11-06): »Pomagaj izboljšati Evklid« v zavihku Jaz.
 // 1. skeniranje 10 nalog pod različnimi pogoji z oceno »Prebrano prav / narobe«,
 // 2. preizkus petih delov aplikacije (»Deluje / Ne deluje«), 3. kje je zastavica za prijavo napake,
-// 4. kratka anketa po enem tednu. Nagrada: značka »Pilot« (zbirka »Zmage na lestvicah«, skrita drugim) in XP,
+// 4. kratka anketa po enem tednu, 5. preizkus znanja na začetku in čez 14 dni (server/pilot-ucinek.js). Nagrada: značka »Pilot« (zbirka »Zmage na lestvicah«, skrita drugim) in XP,
 // vsaka točka enkrat (pilot_rewards). Sodelovanje je prostovoljno.
 //
 // Kdo je v pilotu: račun, ki ga skrbnik označi (parents.pilot_at, Račun → »Pilot: naloge članov«), učenec šole
@@ -19,6 +19,7 @@ import { cleanText } from "./settings.js";
 import { schoolAccess } from "./schools.js";
 import { ensureKnowledgeTables } from "./zbirke.js";
 import { audit } from "./dnevnik-dostopov.js";
+import { quizState, wtpState, impactReport, mountPilotImpact } from "./pilot-ucinek.js";
 
 export const SCAN_CONDITIONS = ["light", "dark", "tilted", "handwritten", "printed", "board", "screen", "crumpled", "many", "notation"];
 // Pet delov aplikacije za preizkus; »exams« (NPZ in matura) ima, kdor ima ta zavihek, drugi »3d«.
@@ -28,8 +29,8 @@ export const SURVEY_SCALE = ["overall", "tutor", "scan", "school"];
 export const SURVEY_IMPROVE = ["tutor", "textbook", "practice", "scan", "calc", "speed", "look"];
 export const SURVEY_AFTER_DAYS = 7;
 // XP za vsako opravljeno točko (enkrat): 10 skeniranj, 5 delov, zastavica, anketa.
-export const XP = { scan: 10, feature: 5, flag: 5, survey: 20 };
-export const TOTAL = SCAN_CONDITIONS.length + FEATURES_SHOWN + 2;
+export const XP = { scan: 10, feature: 5, flag: 5, survey: 20, quiz: 10 }; // quiz: za opravljen preizkus (pred, po), ne za rezultat
+export const TOTAL = SCAN_CONDITIONS.length + FEATURES_SHOWN + 2 + 2;
 export const BADGE = "pilot";
 const NOTE_MAX = 300;
 // Odjemalec pošlje izrez ≤ 1600 px (JPEG 0,88), torej ≤ ~1,5 MB; več ne sprejmemo.
@@ -58,6 +59,7 @@ export function migratePilotTasks(db) {
       joined_at TEXT NOT NULL DEFAULT (datetime('now')),
       intro_at TEXT,                 -- obvestilo ob prvi prijavi zaprto (»Poglej naloge«, »Pozneje« ali ×)
       survey_notice_at TEXT,         -- obvestilo o anketi po enem tednu zaprto
+      quiz_notice_at TEXT,           -- obvestilo o drugem preizkusu znanja (čez 14 dni) zaprto
       photo_day TEXT,                -- dan (UTC) in število shranjenih fotografij tega dne (PHOTO_DAILY_MAX)
       photo_n INTEGER NOT NULL DEFAULT 0
     );
@@ -112,6 +114,7 @@ export function migratePilotTasks(db) {
     db.exec(`UPDATE pilot_photos SET expires_at = datetime(created_at, '+${PHOTO_MAX_DAYS} days') WHERE expires_at IS NULL`);
   }
   if (!hasCol(db, "pilot_state", "photo_day")) db.exec("ALTER TABLE pilot_state ADD COLUMN photo_day TEXT");
+  if (!hasCol(db, "pilot_state", "quiz_notice_at")) db.exec("ALTER TABLE pilot_state ADD COLUMN quiz_notice_at TEXT");
   if (!hasCol(db, "pilot_state", "photo_n")) db.exec("ALTER TABLE pilot_state ADD COLUMN photo_n INTEGER NOT NULL DEFAULT 0");
 }
 
@@ -147,6 +150,11 @@ export function photoAllowed(db, studentId, now = new Date()) {
 }
 
 // Za Račun (starš): ali je profil v pilotu in koliko fotografij je shranjenih.
+// Vprašanje o plačilu v Računu (starš ali polnoleten imetnik računa, server/pilot-ucinek.js).
+export function pilotWtp(db, parent) {
+  return wtpState(db, parent, { isMember: (id) => !!pilotMember(db, id) });
+}
+
 export function pilotSummary(db, studentId) {
   let photos = 0;
   try {
@@ -179,8 +187,9 @@ export function pilotState(db, studentId, { now = new Date() } = {}) {
   const survey = !!db.prepare("SELECT 1 FROM pilot_survey WHERE student_id = ?").get(studentId);
   const opens = addDays(st.joined_at, SURVEY_AFTER_DAYS);
   const surveyOpen = now >= opens;
+  const quiz = quizState(db, studentId, now);
   const done =
-    Object.keys(scans).length + Math.min(FEATURES_SHOWN, Object.keys(features).length) + (rewards.has("flag") ? 1 : 0) + (survey ? 1 : 0);
+    Object.keys(scans).length + Math.min(FEATURES_SHOWN, Object.keys(features).length) + (rewards.has("flag") ? 1 : 0) + (survey ? 1 : 0) + (quiz.pre.done ? 1 : 0) + (quiz.post.done ? 1 : 0);
   return {
     member: true,
     via: member,
@@ -188,6 +197,8 @@ export function pilotState(db, studentId, { now = new Date() } = {}) {
     surveyOpen,
     surveyOpensAt: opens.toISOString(),
     surveyNotice: surveyOpen && !survey && !st.survey_notice_at,
+    quiz,
+    quizNotice: quiz.postOpen && !quiz.post.done && !st.quiz_notice_at,
     photo: { allowed: photoAllowed(db, studentId, now), days: photoDays() },
     scans,
     features,
@@ -267,7 +278,7 @@ export function pilotTasksReport(db) {
     .map((r) => ({ id: r.id, cond: r.cond, ok: !!r.ok }));
   // Opombe šele, ko je v pilotu vsaj MIN_GROUP članov in vsaj toliko opomb.
   const showNotes = !few(members) && !few(notes.length);
-  return { members, minGroup: MIN_GROUP, scans, features, notes: showNotes ? notes : [], notesHidden: !showNotes && notes.length > 0, survey: { n: answers.length, avg, improve, hidden: few(answers.length) }, photos, photoList };
+  return { members, minGroup: MIN_GROUP, impact: impactReport(db, MIN_GROUP), scans, features, notes: showNotes ? notes : [], notesHidden: !showNotes && notes.length > 0, survey: { n: answers.length, avg, improve, hidden: few(answers.length) }, photos, photoList };
 }
 
 // Povzetek za jutranji pregled (Markdown): samo števila, brez opomb in prostih besedil (te so na skrbniški strani).
@@ -281,6 +292,15 @@ export function pilotTasksMarkdown(r) {
   lines.push(``, `## Anketa (${r.survey.n})`, ``);
   for (const [q, v] of Object.entries(r.survey.avg)) lines.push(`- ${q}: ${v ?? "–"}`);
   lines.push(`- izboljšati najprej: ${r.survey.improve ? Object.entries(r.survey.improve).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", ") || "–" : "–"}`);
+  const q = r.impact?.quiz;
+  const w = r.impact?.wtp;
+  if (q) {
+    lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkus: ${q.nPre}, povprečje ${pc(q.pre)}`, `- oba preizkusa (isti učenci): ${q.nPaired}, prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
+  }
+  if (w) {
+    const dist = (o) => (o ? Object.entries(o).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", ") || "–" : "–");
+    lines.push(``, `## Pripravljenost za plačilo (${w.n})`, ``, `- bi plačali: ${dist(w.pay)}`, `- znesek na mesec: ${dist(w.amount)}`);
+  }
   return `${lines.join("\n")}\n`;
 }
 
@@ -295,7 +315,7 @@ function isImage(dataUrl) {
 }
 
 // ---------- API ----------
-export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false }) {
+export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, topicFor = () => null }) {
   const db = store.db;
   migratePilotTasks(db);
   const isAdmin = (req) => (accounts ? !!req.parent?.is_admin : isLocalRequest(req));
@@ -309,7 +329,17 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     db.prepare("INSERT OR IGNORE INTO pilot_state (student_id) VALUES (?)").run(s.id);
     return s;
   };
-  const reply = (res, s, gained = 0) => res.json({ ...pilotState(db, s.id), gained });
+  const reply = (res, s, gained = 0, extra = {}) => res.json({ ...pilotState(db, s.id), gained, ...extra });
+  // Merjenje učinka: preizkus znanja (učenec) in vprašanje o plačilu (Račun).
+  mountPilotImpact(app, db, {
+    member,
+    reply,
+    reward: (sid, item) => reward(db, progress, sid, item, XP.quiz),
+    topicFor,
+    langFor: (sid) => progress?.taskLang?.(sid) || "sl",
+    accounts,
+    isMember: (id) => !!pilotMember(db, id),
+  });
 
   app.get("/api/students/:id/pilot", (req, res) => {
     const s = loadStudent(req, res);
@@ -317,11 +347,11 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     res.set("Cache-Control", "no-store").json(pilotState(db, s.id));
   });
 
-  // Obvestilo zaprto: { what: "intro" | "survey" } (enkrat; ponovno odprtje je vedno v zavihku Jaz).
+  // Obvestilo zaprto: { what: "intro" | "survey" | "quiz" } (enkrat; ponovno odprtje je vedno v zavihku Jaz).
   app.post("/api/students/:id/pilot/seen", (req, res) => {
     const s = member(req, res);
     if (!s) return;
-    const col = { intro: "intro_at", survey: "survey_notice_at" }[req.body?.what];
+    const col = { intro: "intro_at", survey: "survey_notice_at", quiz: "quiz_notice_at" }[req.body?.what];
     if (!col) return res.status(400).json({ error: "Napačna zahteva." });
     db.prepare(`UPDATE pilot_state SET ${col} = COALESCE(${col}, datetime('now')) WHERE student_id = ?`).run(s.id);
     reply(res, s);

@@ -11,7 +11,7 @@ import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { exportOtherTables } from "../zasebnost.js";
-import { pilotSummary } from "../pilot-naloge.js";
+import { pilotSummary, pilotWtp } from "../pilot-naloge.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
@@ -169,6 +169,8 @@ export function mountAccounts(app, store, opts = {}) {
     // Star račun brez datuma rojstva: aplikacija ga ob prijavi enkrat vpraša (need_birth), pozneje v zavihku Račun.
     birth_missing: !p.is_guest && !p.birth_date,
     need_birth: !p.is_guest && !p.birth_date && !p.birth_asked_at,
+    // Politika zasebnosti se je spremenila po registraciji: aplikacija enkrat pokaže kratko obvestilo s povezavo.
+    privacy_notice: !p.is_guest && (p.privacy_seen || p.privacy_version || "") < PRIVACY_VERSION ? PRIVACY_VERSION : null,
     verified: !!p.email_verified_at,
     is_admin: !!p.is_admin || isAdminEmail(p),
     weekly_email: !!p.weekly_email,
@@ -842,6 +844,14 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ parent: publicParent(getParent(p.id)), ...(age < minAge ? { under_age: true, min_age: minAge } : {}) });
   });
 
+  // Obvestilo o spremenjeni politiki zasebnosti zaprto (»V redu« ali ×): ne pokaže se več do naslednje spremembe.
+  app.post("/api/account/privacy-seen", (req, res) => {
+    const p = req.parent;
+    if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
+    db.prepare("UPDATE parents SET privacy_seen = ? WHERE id = ?").run(PRIVACY_VERSION, p.id);
+    res.json({ parent: publicParent(getParent(p.id)) });
+  });
+
   // Odklep računa na tej napravi z geslom računa (zavihek Račun, nov ali izbrisan profil).
   app.post("/api/account/unlock", json, async (req, res) => {
     const p = req.parent;
@@ -933,6 +943,8 @@ export function mountAccounts(app, store, opts = {}) {
         has_password: locks.hasPassword(c.id),
         pilot: pilotSummary(db, c.id), // naloge za pilot: član? koliko fotografij je shranjenih (server/pilot-naloge.js)
       })),
+      // Pilot: vprašanje »Ali bi za Evklid plačali?« 14 dni po začetku (samo polnoleten imetnik, server/pilot-ucinek.js).
+      pilot_wtp: pilotWtp(db, p),
       max_children: Math.min(MAX_CHILDREN, access.seats || 1),
       device_warn_limit: deviceWarnLimit(),
       swap_blocked_until: devices.swapBlockedUntil(p.id),

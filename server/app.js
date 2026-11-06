@@ -1362,7 +1362,17 @@ export function createApp(store, opts = {}) {
   const leagues = mountLeagues(app, store, { loadStudent });
   mountSchools(app, store, { loadStudent, leagues, accounts: !!accounts }); // šole, učitelji, licence, razredne naloge
   mountPilot(app, store, { accounts: !!accounts, isLocalRequest }); // merjenje v pilotu (skrbnik)
-  mountPilotTasks(app, store, { loadStudent, progress, accounts: !!accounts, isLocalRequest }); // naloge za člane pilota (Jaz → Pomagaj izboljšati Evklid)
+  mountPilotTasks(app, store, {
+    loadStudent,
+    progress,
+    accounts: !!accounts,
+    isLocalRequest,
+    // Preizkus znanja (server/pilot-ucinek.js): tema, ki se je učenec zdaj uči na svoji poti.
+    topicFor: (s) => {
+      const t = progress.currentTopic(s.id, pathKeyFor(s.settings));
+      return t?.practice ? t.id : null;
+    },
+  }); // naloge za člane pilota (Jaz → Pomagaj izboljšati Evklid)
   // Rast in vračanje (skrbnik): viri, prva naloga, vrnitev po 1 in 7 dneh; profili skrbnika se ne štejejo.
   const adminEmails = (process.env.EVKLID_ADMIN_EMAILS || "").split(",").map((e) => e.trim()).filter(Boolean);
   mountRast(app, store, { accounts: !!accounts, isLocalRequest, adminEmails });

@@ -9,6 +9,7 @@ const OWNER_ONLY = [
   [/^\/account\/?$/i, null], // GET, PUT, DELETE
   [/^\/account\/(export|promo|logout-others|weekly-report\/[a-z]+)\/?$/i, null],
   [/^\/account\/birth-date\/?$/i, "POST"], // datum rojstva imetnika: otrok ga na starševi napravi ne sme vpisati
+  [/^\/account\/(pilot-wtp|privacy-seen)\/?$/i, "POST"], // vprašanje o plačilu in obvestilo o zasebnosti: samo imetnik
   [/^\/billing\/(checkout|portal)\/?$/i, null],
   [/^\/admin(\/|$)/i, null],
   [/^\/students\/?$/i, "POST"], // nov profil

@@ -4332,6 +4332,9 @@ initPilot({
     showView("scan");
   },
   onMember: () => syncBugButton(),
+  // Preizkus znanja v pilotu: besedilo naloge in izbire kot v vadnici (brez klikljivih formul).
+  renderRich: (text) => renderRich(text),
+  choiceHtml: (task, o) => choiceHtml(task, o, false),
 });
 // Laboratorij (public/laboratorij.js): vsi virtualni poskusi; »Odpri temo v učbeniku« odpre lekcijo.
 initLab({ api, escapeHtml, getStudent: () => state.student, openLesson });

@@ -7,7 +7,7 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
-import { renderPilotAdmin, paintAccountPilot } from "./pilot-naloge.js";
+import { renderPilotAdmin, paintAccountPilot, paintAccountWtp } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
@@ -458,7 +458,55 @@ async function route() {
   if (!status.children) return renderAddChild(), false;
   authMode(false);
   adjustAppForAccounts();
+  // Politika zasebnosti se je spremenila: enkrat kratko obvestilo (samo imetniku na odklenjeni napravi), nikoli ne zaklene.
+  if (status.parent.privacy_notice && status.account_unlocked) privacyNotice();
   return true;
+}
+
+let privacyTimer = null;
+function privacyNotice(tries = 0) {
+  clearTimeout(privacyTimer);
+  // Ne čez uvodni ogled ali drugo okno: počakamo (največ nekaj minut), sicer ostane za naslednjo prijavo.
+  const busy = document.body.classList.contains("onboarding") || !$("#tour")?.hidden || !!document.querySelector("dialog[open]");
+  if (busy) {
+    if (tries < 40) privacyTimer = setTimeout(() => privacyNotice(tries + 1), 4000);
+    return;
+  }
+  privacyTimer = setTimeout(() => {
+    if (!status?.parent?.privacy_notice || document.querySelector("dialog[open]")) return privacyNotice(tries + 1);
+    let dlg = $("#privacy-notice");
+    if (!dlg) {
+      dlg = document.createElement("dialog");
+      dlg.id = "privacy-notice";
+      dlg.className = "install-sheet pn-notice";
+      dlg.setAttribute("aria-labelledby", "privacy-notice-title");
+      document.body.append(dlg);
+      const done = () => {
+        dlg.close();
+        if (status?.parent) status.parent.privacy_notice = null;
+        api("/api/account/privacy-seen", { method: "POST" }).catch(() => {});
+      };
+      dlg.addEventListener("cancel", (e) => {
+        e.preventDefault();
+        done();
+      });
+      dlg.addEventListener("click", (e) => {
+        if (e.target === dlg || e.target.closest("[data-priv-ok]")) done();
+        else if (e.target.closest("a[href]")) done(); // prebrano (povezava se odpre v novem zavihku)
+      });
+    }
+    dlg.innerHTML = `<div class="is-box" role="document">
+      <div class="is-head"><span class="pn-notice-ic">${icon("lock")}</span><h2 id="privacy-notice-title">${esc(t("priv.noticeTitle"))}</h2>
+        <button type="button" class="ghost icon-only" data-priv-ok aria-label="${esc(t("priv.noticeOk"))}" title="${esc(t("priv.noticeOk"))}">${icon("x")}</button></div>
+      <p>${esc(t("priv.noticeText"))}</p>
+      <div class="pn-notice-actions">
+        <a class="btn-secondary" href="/zasebnost.html" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("priv.noticeRead"))}</span></a>
+        <button type="button" class="primary" data-priv-ok>${esc(t("priv.noticeOk"))}</button>
+      </div>
+    </div>`;
+    dlg.showModal();
+    $("[data-priv-ok].primary", dlg)?.focus();
+  }, tries ? 0 : 1500);
 }
 
 async function continueFlow() {
@@ -1462,6 +1510,7 @@ export async function renderAccount() {
       ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
       ${promoBox(acc, paid)}
     </div>
+    <div class="card" id="pn-wtp" hidden></div>
     ${acc.promo?.codes ? adminCodes(acc) : ""}
     ${guaranteeBox(acc)}
     ${giftBox(acc)}
@@ -1572,7 +1621,8 @@ export async function renderAccount() {
     }
   });
   bindAdminCodes(acc);
-  paintAccountPilot($(".child-list"), acc.children, { api, toast }); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
+  paintAccountPilot($(".child-list"), acc.children, { api, toast });
+  paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast }); // pilot: »Ali bi za Evklid plačali?« (enkrat) // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
   $("#gift-form")?.addEventListener("submit", async (e) => {

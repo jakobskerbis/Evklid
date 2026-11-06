@@ -96,7 +96,7 @@
 .pn-notice .is-box > p { margin: 10px 0 0; }
 .pn-notice-ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); flex-shrink: 0; }
 .pn-notice-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 16px; }
-.pn-notice-actions > button { min-height: 44px; flex: 1 1 140px; justify-content: center; }
+.pn-notice-actions > button, .pn-notice-actions > a { min-height: 44px; flex: 1 1 140px; justify-content: center; }
 #view-pilot .pn-body { display: flex; flex-direction: column; gap: 12px; }
 #view-pilot .pn-body > .card { margin: 0; }
 .pn-top p { margin: 6px 0 0; }
