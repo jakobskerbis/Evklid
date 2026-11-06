@@ -436,13 +436,20 @@ async function answerTask(p, db, value) {
   await p.locator("#feedback .fb:not(.info), #feedback .fb.info:not(:has-text('Preverjam'))").first().waitFor({ timeout: 5000 });
   await settle(p);
 }
+// Gumb, ki je med zahtevo onemogočen in jo po koncu odstrani ali znova omogoči (#hint-btn, #p-skip): počakaj na konec
+// zahteve. Brez tega je na počasnem strežniku (CI) gumb še viden, a onemogočen, naslednji klik pa čaka na element,
+// ki ga aplikacija medtem odstrani (locator.click: Timeout).
+async function clickUntilIdle(p, sel, opts = {}) {
+  await click(p, sel, opts);
+  await p.waitForFunction((s) => { const b = document.querySelector(s); return !b || !b.disabled || !b.isConnected; }, sel, { timeout: 10000 });
+}
 async function practiceTopic(p, db) {
   // Naslednja tema na učni poti → stran teme (pri novi temi test predznanja).
   await click(p, "#xp-card .next-row[data-open]", { wait: 300 });
   await expectVisible(p, "#view-topic .topic-head, #view-topic #practice .task", "stran teme");
   await screen(p, "tema");
   // Test predznanja: »Ne vem« do konca, nato vaja.
-  for (let i = 0; i < 5 && (await p.locator("#p-skip").isVisible()); i++) await click(p, "#p-skip", { wait: 250 });
+  for (let i = 0; i < 5 && (await p.locator("#p-skip").isVisible()); i++) await clickUntilIdle(p, "#p-skip", { wait: 250 });
   if (await p.locator(".pretest-result").isVisible()) {
     await screen(p, "test-predznanja");
     await click(p, "#pt-practice", { wait: 300 });
@@ -458,7 +465,7 @@ async function practiceTopic(p, db) {
   // Lestev namigov do konca.
   let hints = 0;
   for (; hints < 5 && (await p.locator("#hint-btn").isVisible()); hints++) {
-    await click(p, "#hint-btn", { wait: 200 });
+    await clickUntilIdle(p, "#hint-btn", { wait: 200 });
   }
   const steps = await p.locator("#hint-box .fb.hint").count();
   if (await p.locator("#hint-box").count()) {
