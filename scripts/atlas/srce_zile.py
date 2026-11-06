@@ -324,7 +324,7 @@ def srce_zile(osnovni, cfg, tmp):
         return P, R
 
     # ---- aorta: koren (zaklopka) → ascendentna → lok → descendentna (ena cev), veje loka
-    lističi = [r[1] for r in osnovni if re.search(r"^(Right|Left) coronary leaflet$|^Non-coronary leaflet$", r[0])]
+    lističi = [r[1] for r in osnovni if re.search(r"^(Right|Left) coronary leaflet$|^Non-coronary leaflet$|^Semilunar cusps of aortic", r[0])]
     asc, lok, des = najdaljsi("Ascending aorta"), najdaljsi("Aortic arch"), najdaljsi("Thoracic aorta")
     if asc and lok and des:
         koren = sum((Vector(v.co) for m in lističi for v in m.vertices), Vector()) / max(sum(len(m.vertices) for m in lističi), 1) if lističi else asc[0][0]

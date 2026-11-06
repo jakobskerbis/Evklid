@@ -12,6 +12,11 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=pot)
 sc = bpy.context.scene
 obj = [o for o in sc.objects if o.type == "MESH"]
+if os.environ.get("SKRIJ"):  # regex imen vozlišč, ki jih skrijemo (npr. aorta, da se vidi zaklopka)
+    import re
+    for o in [o for o in obj if re.search(os.environ["SKRIJ"], o.name)]:
+        bpy.data.objects.remove(o)
+    obj = [o for o in sc.objects if o.type == "MESH"]
 BARVE = {"miokard": (0.55, 0.12, 0.1), "zaklopka": (0.9, 0.85, 0.72), "arterija": (0.85, 0.12, 0.1), "vena": (0.15, 0.25, 0.7),
          "pljucna": (0.2, 0.35, 0.8), "pljucna-vena": (0.62, 0.22, 0.38), "aorta": (0.85, 0.6, 0.55), "vencna-arterija": (0.95, 0.12, 0.1),
          "vencna-vena": (0.25, 0.2, 0.55)}
