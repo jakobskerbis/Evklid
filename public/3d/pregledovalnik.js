@@ -7,7 +7,8 @@ import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 import { ravenProfila, razlaga, imaRavni } from "./raven.js";
-import { SKUPINE, najdiSkupino } from "./skupine.js";
+import { SKUPINE, najdiSkupino, delPoImenu } from "./skupine.js";
+import { najdiOvoje, okvir } from "./ovoji.js";
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -314,87 +315,13 @@ export function odpriModel(el, mod, opts = {}) {
   // lupine, telesa) snov učenja.
   const SKRITA_PLAST = 31;
   const skrite = new Map(); // object → izvirna maska plasti
-  const _rc = new THREE.Raycaster();
-  const SMERI = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].map((v) => new THREE.Vector3(...v));
-  function okvirDela(d, box) {
-    box.makeEmpty();
-    for (const m of d.meshes || []) {
-      if (!m) continue;
-      m.updateWorldMatrix(true, true);
-      m.traverseVisible((o) => {
-        if (!o.isMesh || (o.isInstancedMesh && o.count === 0)) return;
-        const g = o.isInstancedMesh ? (o.boundingBox || (o.computeBoundingBox(), o.boundingBox)) : (o.geometry.boundingBox || (o.geometry.computeBoundingBox(), o.geometry.boundingBox));
-        if (g) box.union(g.clone().applyMatrix4(o.matrixWorld));
-      });
-    }
-    return box;
-  }
-  const prostornina = (b) => {
-    const v = b.getSize(new THREE.Vector3());
-    return Math.max(v.x, 1e-6) * Math.max(v.y, 1e-6) * Math.max(v.z, 1e-6);
-  };
+  const okvirDela = (d, box) => okvir(d, box);
+  // Ovoji in stene okoli izbranega dela ali skupine (public/3d/ovoji.js: najdiOvoje, test 3d-ovoji).
   function skrijObdajajoce(d) {
     for (const [o, maska] of skrite) o.layers.mask = maska;
     skrite.clear();
-    if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO") return;
-    const izbrane = new Set();
-    for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
-    const bS = okvirDela(d, new THREE.Box3());
-    if (bS.isEmpty() || !model.group) return;
-    const c = bS.getCenter(new THREE.Vector3());
-    const vS = prostornina(bS);
-    const bP = new THREE.Box3();
-    const R = new THREE.Box3().setFromObject(model.group).getBoundingSphere(new THREE.Sphere()).radius * 2 + 1;
-    const izvor = new THREE.Vector3();
-    for (const p of model.deli) {
-      if (p === d || !p.meshes?.length) continue;
-      if (prostornina(okvirDela(p, bP)) < vS * 1.25) continue; // ovoj je večji od izbranega
-      const mreze = [];
-      // tudi skrite mreže dela: skrit »pokrov« izreza sklene lupino (celica, HIV), da jo žarek iz izreza zadene
-      for (const m of p.meshes) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) mreze.push(o); });
-      if (!mreze.length) continue;
-      const obdaja = SMERI.every((s) => {
-        _rc.set(izvor.copy(c).addScaledVector(s, R), s.clone().negate());
-        _rc.far = R;
-        return _rc.intersectObjects(mreze, false).length > 0;
-      });
-      if (!obdaja) continue;
-      skrij(mreze);
-    }
-    // Skupina (npr. Zaklopke, Organeli): člani so pogosto znotraj več sten, od katerih nobena sama ne obdaja vsega.
-    // Zato skrijemo še vsak večji nečlanski del, ki je prvi zadetek žarka od zunaj (±x, ±y, ±z) proti kateremu od
-    // članov – stene, ki zakrivajo skupino, postanejo nevidne, člani ostanejo osvetljeni.
-    if (d.skupinaDelov && d.clani?.length) {
-      const lastnik = new Map(); // mreža → del (posamezni deli pred skupinskimi, npr. venčna arterija pred skupino)
-      for (const p of [...model.deli].sort((x, y) => (x.skupina ? 0 : 1) - (y.skupina ? 0 : 1))) {
-        if (d.clani.includes(p)) continue;
-        for (const m of p.meshes || []) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) lastnik.set(o, p); });
-      }
-      const vse = [...lastnik.keys()];
-      const bC = new THREE.Box3(), cC = new THREE.Vector3();
-      for (const clan of d.clani) {
-        if (okvirDela(clan, bC).isEmpty()) continue;
-        bC.getCenter(cC);
-        const vC = prostornina(bC);
-        for (const sm of SMERI) {
-          _rc.set(izvor.copy(cC).addScaledVector(sm, R), sm.clone().negate());
-          _rc.far = R;
-          for (const z of _rc.intersectObjects(vse, false)) {
-            if (z.distance >= R) break; // za središčem člana
-            if (skrite.has(z.object)) continue;
-            const p = lastnik.get(z.object);
-            if (!p || prostornina(okvirDela(p, bP)) < vC * 1.25) continue; // manjši del (žila na steni) ostane
-            const mreze = [];
-            for (const m of p.meshes) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) mreze.push(o); });
-            skrij(mreze);
-          }
-        }
-      }
-    }
-  }
-  function skrij(mreze) {
-    for (const o of mreze) {
-      if (skrite.has(o)) continue;
+    if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO" || !model.group) return;
+    for (const o of najdiOvoje(THREE, d, model.deli, model.group, { kamera: kit?.camera?.position })) {
       skrite.set(o, o.layers.mask);
       o.layers.set(SKRITA_PLAST);
     }
@@ -688,6 +615,8 @@ export function odpriModel(el, mod, opts = {}) {
         } catch (err) {
           console.error("3D nadzor", c.id, err);
         }
+        // nadzor je lahko zamenjal materiale (»Učne barve«): sij izbranega dela znova na nove materiale
+        if (izbran && !c.ponastaviPogled) obarvaj(najdiDel(izbran));
         poSpremembi();
         if (c.ponastaviPogled) poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
         else if (prej) kadrirajPogled(prej);
@@ -894,7 +823,7 @@ export function odpriModel(el, mod, opts = {}) {
         if (!model?.group) return;
         const hit = kit.zadetki(ndc, [model.group])[0];
         if (!hit) return izberi(null);
-            const zadeti = (model.deli || []).filter((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
+        const zadeti = (model.deli || []).filter((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
         // tap: OŠ izbere skupni del (npr. Venčne arterije), SŠ in študij najožji (posamezno žilo)
         const d = raven <= 1 ? zadeti.find((x) => !x.skupina) || zadeti[0] : zadeti.find((x) => x.skupina) || zadeti[0];
         izberi(d?.id ?? null, { hit: { object: hit.object, instanceId: hit.instanceId ?? null, point: hit.point.clone() }, preklopi: true });
@@ -1120,7 +1049,8 @@ export function odpriModel(el, mod, opts = {}) {
     if (zacetek.del && !ponastavi) {
       const want = fold(zacetek.del);
       const vsi = Array.isArray(model.deli) ? model.deli : [];
-      const d = vsi.find((x) => x.id === zacetek.del || fold(x.ime) === want) || vsi.find((x) => fold(x.ime).startsWith(want) || want.startsWith(fold(x.ime)));
+      const poImenu = delPoImenu(vsi, zacetek.del); // tudi »membrana« → Celična membrana (ime dela pred skupino)
+      const d = vsi.find((x) => x.id === zacetek.del || fold(x.ime) === want) || vsi.find((x) => x.id === poImenu) || vsi.find((x) => fold(x.ime).startsWith(want) || want.startsWith(fold(x.ime)));
       // ni dela s tem imenom: skupina (»zaklopke«, »organeli« …; id iz strežnika ali besede, tudi v jeziku vmesnika)
       const g = d ? null : String(zacetek.del).startsWith(PRED) ? zacetek.del : najdiSkupino(info.id, zacetek.del, Object.fromEntries((SKUPINE[info.id] || []).map((x) => [x.id, [t(`a3.grp.${x.id}`)]])));
       const cilj = d ? d.id : g ? (g.startsWith(PRED) ? g : PRED + g) : null;

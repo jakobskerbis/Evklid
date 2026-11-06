@@ -17,7 +17,7 @@ import { getTopic, getPath, pathKeyFor } from "./curriculum.js";
 import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
 import { formulaSheet } from "./textbook.js";
 import { stopnja } from "../public/stopnja.js";
-import { SKUPINE, najdiSkupino } from "../public/3d/skupine.js";
+import { SKUPINE, najdiSkupino, delPoImenu } from "../public/3d/skupine.js";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 export const OPEN_MAX = 4; // orodij pod enim sporočilom (prompt dovoli dve; strežnik je strpen)
@@ -238,20 +238,33 @@ function imenaSkupin() {
   }
   return GRP;
 }
+// Imena delov modela (id, slovensko ime, latinsko): organi iz <organ>.json, celice in virusi iz datoteke modela
+// (del("id", "Ime" …) in { id: "…", ime: "…" }). Brez njih bi ime enega dela (»jedro«) postalo skupina (»jedro z deli«).
+const _imena = new Map();
 function imenaDelov(id) {
-  const m = /^organ-(.+)$/.exec(id || "");
-  if (!m) return [];
+  if (_imena.has(id)) return _imena.get(id);
+  let out = [];
   try {
-    const j = JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", "modeli", "organi-3d", `${m[1]}.json`), "utf8"));
-    return (j.deli || []).flatMap((d) => [d.id, d.ime, d.la].filter(Boolean));
-  } catch {
-    return [];
-  }
+    const m = /^organ-(.+)$/.exec(id || "");
+    if (m) {
+      const j = JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", "modeli", "organi-3d", `${m[1]}.json`), "utf8"));
+      out = (j.deli || []).map((d) => ({ id: d.id, ime: d.ime, la: d.la }));
+    } else {
+      const mapa = path.join(here, "..", "public", "3d", "modeli", "celice");
+      const re = new RegExp(`export const info = \\{\\s*id: "${String(id).replace(/[^a-z0-9-]/g, "")}"`);
+      const f = fs.readdirSync(mapa).find((x) => x.endsWith(".js") && re.test(fs.readFileSync(path.join(mapa, x), "utf8")));
+      if (f) {
+        const src = fs.readFileSync(path.join(mapa, f), "utf8");
+        out = [...src.matchAll(/del\("([a-z0-9-]+)", "([^"]+)"/g), ...src.matchAll(/\{ id: "([a-z0-9-]+)", ime: "([^"]+)"/g)].map((x) => ({ id: x[1], ime: x[2] }));
+      }
+    }
+  } catch {}
+  _imena.set(id, out);
+  return out;
 }
 export function delAliSkupina(modelId, del) {
   if (!del || !SKUPINE[modelId]) return del;
-  const f = fold(del);
-  if (imenaDelov(modelId).some((x) => fold(x) === f)) return del;
+  if (delPoImenu(imenaDelov(modelId), del)) return del;
   const g = najdiSkupino(modelId, del, imenaSkupin());
   return g ? `skupina-${g}` : del;
 }

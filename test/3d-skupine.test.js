@@ -43,8 +43,4 @@ test("skupine: mehko iskanje (sklanjatve, sinonimi), ne ujame imen delov", () =>
   assert.equal(najdiSkupino("virus-bakteriofag-t4", "rep faga"), "rep");
 });
 
-test("skupina skrije stene, ki zakrivajo člane (žarki od zunaj proti vsakemu članu)", () => {
-  const src = fs.readFileSync(new URL("../public/3d/pregledovalnik.js", import.meta.url), "utf8");
-  assert.match(src, /if \(d\.skupinaDelov && d\.clani\?\.length\)/);
-  assert.match(src, /for \(const clan of d\.clani\)/);
-});
+// Skrivanje sten ob izbiri skupine: vedenje v test/3d-ovoji.test.js (public/3d/ovoji.js).

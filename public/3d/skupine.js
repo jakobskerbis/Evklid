@@ -136,6 +136,22 @@ function ujemanje(q, ime) {
 }
 
 /**
+ * Del po imenu (ima prednost pred skupino): enak id, ime ali latinsko ime, ime brez oklepaja (»Akson (nevrit)«) ali
+ * beseda kratkega imena (največ dve besedi), če je tak del en sam (»membrana« → Celična membrana; »prekat« ni en del).
+ * deli = [{ id, ime, la }]; vrne id ali null.
+ */
+export function delPoImenu(deli, q) {
+  const w = (x) => fold(String(x || "").replace(/\([^)]*\)/g, " "));
+  const a = fold(q);
+  if (!a) return null;
+  const tocno = deli.find((d) => [d.id, d.ime, d.la].some((x) => x && (fold(x) === a || w(x) === a || x === q)));
+  if (tocno) return tocno.id;
+  // samo kratka imena (pridevnik + samostalnik), da »preddvora« ne zadene »Poševna vena levega preddvora«
+  const vsebuje = deli.filter((d) => [d.ime, d.la].some((x) => x && w(x).split(" ").length <= 2 && w(x).split(" ").includes(a)));
+  return vsebuje.length === 1 ? vsebuje[0].id : null;
+}
+
+/**
  * Skupina modela po besedah (id, sinonimi ali imena v jezikih: imena = { id: [ime, …] }); vrne id ali null.
  */
 export function najdiSkupino(modelId, q, imena = {}) {

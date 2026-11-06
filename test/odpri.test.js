@@ -1,7 +1,7 @@
 // Inštruktor odpre orodja aplikacije (server/odpri.js, public/odpri.js, docs/odpri.md).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseOpenBlocks, parseSet, parseSketch, resolveOpen } from "../server/odpri.js";
+import { parseOpenBlocks, parseSet, parseSketch, resolveOpen, _test } from "../server/odpri.js";
 import { stripMeta, createStreamFilter } from "../server/meta.js";
 import { buildSystemPrompt, SPLIT_MARKER } from "../server/prompt.js";
 import { normalizeSettings } from "../server/settings.js";
@@ -118,5 +118,32 @@ test("server: open list with done and on reload, never when flag is not none", a
     assert.deepEqual(asst.map((m) => !!m.open), [true, false], "ob ponovnem odprtju enako kot ob pošiljanju");
   } finally {
     server.close();
+  }
+});
+
+test("ODPRI 3d: ime posameznega dela celice ali virusa ostane del (ne postane skupina)", async () => {
+  const { SKUPINE } = await import("../public/3d/skupine.js");
+  const fsm = await import("node:fs");
+  const mapa = new URL("../public/3d/modeli/celice/", import.meta.url);
+  const { delAliSkupina } = _test;
+  assert.equal(delAliSkupina("celica-zivalska", "jedro"), "jedro");
+  assert.equal(delAliSkupina("celica-zivalska", "membrana"), "membrana");
+  assert.equal(delAliSkupina("celica-zivalska", "organeli"), "skupina-organeli");
+  assert.equal(delAliSkupina("organ-srce", "prekat"), "skupina-prekata");
+  assert.equal(delAliSkupina("organ-srce", "levi prekat"), "levi prekat");
+  // vsak član vsake skupine: id in ime dela ostaneta del
+  for (const [model, skupine] of Object.entries(SKUPINE)) {
+    let imena;
+    const o = /^organ-(.+)$/.exec(model);
+    if (o) imena = JSON.parse(fsm.readFileSync(new URL(`../public/3d/modeli/organi-3d/${o[1]}.json`, import.meta.url), "utf8")).deli.map((d) => [d.id, d.ime]);
+    else {
+      const f = fsm.readdirSync(mapa).find((x) => new RegExp(`export const info = \\{\\s*id: "${model}"`).test(fsm.readFileSync(new URL(x, mapa), "utf8")));
+      const src = fsm.readFileSync(new URL(f, mapa), "utf8");
+      imena = [...src.matchAll(/del\("([a-z0-9-]+)", "([^"]+)"/g), ...src.matchAll(/\{ id: "([a-z0-9-]+)", ime: "([^"]+)"/g)].map((x) => [x[1], x[2]]);
+    }
+    const clani = new Set(skupine.flatMap((g) => g.deli));
+    for (const [id, ime] of imena.filter(([id]) => clani.has(id))) {
+      for (const q of [id, ime]) assert.doesNotMatch(String(delAliSkupina(model, q)), /^skupina-/, `${model}: ${q}`);
+    }
   }
 });

@@ -39,3 +39,8 @@ test("atlas: učne barve po tkivu (arterije rdeče, vene modre, organi različni
   assert.notEqual(a, b);
   assert.equal(ucnaBarvaTkiva("vlazno", { sistem: "organi", ime: "Kidney.l" }), ucnaBarvaTkiva("vlazno", { sistem: "organi", ime: "Kidney.r" }));
 });
+
+test("preklop nadzora (Učne barve) med izbiro: sij izbranega dela se nanese na nove materiale", () => {
+  const src = fs.readFileSync(new URL("../public/3d/pregledovalnik.js", import.meta.url), "utf8");
+  assert.match(src, /c\.ob\?\.\(v\);[\s\S]{0,200}if \(izbran && !c\.ponastaviPogled\) obarvaj\(najdiDel\(izbran\)\)/);
+});
