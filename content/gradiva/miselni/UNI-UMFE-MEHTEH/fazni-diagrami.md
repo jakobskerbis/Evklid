@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ohlajevalne krivulje
+  - čista kovina: plato
+  - zlitina: interval strjevanja
+- Pravilo faz
+  - $F = K - P + 1$ pri stalnem tlaku
+  - $F = 0$ pomeni stalno temperaturo
+- Vezna premica
+  - krajišči dasta sestavi faz
+  - napaka: talina nima sestave $c_0$
+- Vzvodno pravilo
+  - $W_\mathrm{L} = \frac{c_\alpha - c_0}{c_\alpha - c_\mathrm{L}}$
+  - nasprotni krak, iz ohranitve mase
+  - velja le v dvofaznem področju
+- Evtektik
+  - $\mathrm{L} \to \alpha + \beta$ pri stalni temperaturi
+  - Ag-Cu: $71{,}9\,\%$ Ag, $779\,^\circ\mathrm{C}$
+  - primarni kristali in evtektik
+- Diagram Fe-Fe3C
+  - perlit: $727\,^\circ\mathrm{C}$ in $0{,}77\,\%$ C
+  - ledeburit: $1147\,^\circ\mathrm{C}$ in $4{,}30\,\%$ C
+  - jeklo do $2{,}11\,\%$ C
+- Faze ali sestavine
+  - faze: ferit, cementit
+  - sestavine: proevtektoidni ferit, perlit
