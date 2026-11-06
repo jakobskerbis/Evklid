@@ -107,7 +107,7 @@ $x = \dfrac{[\text{hidrat}]}{[\text{hidrat}] + [\text{aldehid}]} = \dfrac{K_\tex
 
 Imamo $3{,}61\,\text{g}$ butanona ($M = 72{,}11\,\text{g/mol}$). Kateri produkt nastane z NaBH$_4$ in koliko NaBH$_4$ ($M = 37{,}83\,\text{g/mol}$) najmanj potrebujemo, če vsak ion BH$_4^-$ odda štiri hidridne ione?
 
-**Podatki:** $m(\text{butanon}) = 3{,}61\,\text{g}$, $M(\text{butanon}) = 72{,}11\,\text{g/mol}$, $M(\text{NaBH}_4) = 37{,}83\,\text{g/mol}$, $1\,\text{mol BH}_4^- \to 4\,\text{mol H}^-$
+**Podatki:** $m(\text{butanon}) = 3{,}61\,\text{g}$; $M(\text{butanon}) = 72{,}11\,\text{g/mol}$; $M(\text{NaBH}_4) = 37{,}83\,\text{g/mol}$; $1\,\text{mol BH}_4^- \to 4\,\text{mol H}^-$
 **Iščemo:** produkt in najmanjšo maso NaBH$_4$
 
 :::formula

@@ -93,7 +93,7 @@ V formuli za $k$ se s $1000$ pomnoži le števec, zato je naklon $1000$-krat ve�
 
 ### Primer 1 (lažji)
 
-Študent je petkrat stehtal isto tableto in dobil $4{,}8\,\mathrm{g}$, $5{,}1\,\mathrm{g}$, $5{,}0\,\mathrm{g}$, $4{,}9\,\mathrm{g}$ in $5{,}2\,\mathrm{g}$. Izračunaj povprečje, vzorčni standardni odklon in standardno napako povprečja.
+Študent je petkrat stehtal isto tableto in dobil $4{,}8\,\mathrm{g}$; $5{,}1\,\mathrm{g}$; $5{,}0\,\mathrm{g}$; $4{,}9\,\mathrm{g}$ in $5{,}2\,\mathrm{g}$. Izračunaj povprečje, vzorčni standardni odklon in standardno napako povprečja.
 
 **Podatki:** $n = 5$; $x_1 = 4{,}8\,\mathrm{g}$, $x_2 = 5{,}1\,\mathrm{g}$, $x_3 = 5{,}0\,\mathrm{g}$, $x_4 = 4{,}9\,\mathrm{g}$, $x_5 = 5{,}2\,\mathrm{g}$
 **Iščemo:** povprečje $\bar x$, standardni odklon $s$ in standardno napako $s_{\bar x}$
@@ -275,7 +275,7 @@ zato je $E(S^2) = \sigma^2$ natanko pri deljenju z $n - 1$.
 + $1{,}63$
 - $2{,}67$
 - $4{,}00$
-> $\bar x = 4$, odmiki $-2, 0, 0, 2$, vsota kvadratov $8$, $s^2 = \frac{8}{3} = 2{,}67$, $s = 1{,}63$. Vrednost $1{,}41$ dobimo z deljenjem s $4$, $2{,}67$ je varianca, ne standardni odklon.
+> $\bar x = 4$, odmiki $-2, 0, 0, 2$, vsota kvadratov $8$, $s^2 = \frac{8}{3} = 2{,}67$, $s = 1{,}63$. Vrednost $1{,}41$ dobimo z deljenjem s $4$; $2{,}67$ je varianca, ne standardni odklon.
 
 ? Kolikšen delež vrednosti normalno porazdeljene spremenljivke leži približno na intervalu $\mu \pm 2\sigma$?
 - $68\,\%$

@@ -147,7 +147,7 @@ $\tan \alpha = \dfrac{\text{nasprotna kateta}}{\text{priležna kateta}}$; $\;\ta
 3. Iz daljšega mesta: $\tan 30^\circ = \dfrac{h}{d + 20}$, torej $h = \dfrac{d + 20}{\sqrt{3}}$.
 4. Vstavimo $d = h$ in pomnožimo s $\sqrt{3}$: $\sqrt{3}\,h = h + 20$, torej $h(\sqrt{3} - 1) = 20$ in $h = \dfrac{20}{\sqrt{3} - 1}\,\text{m}$.
 5. Racionaliziramo imenovalec: $h = \dfrac{20(\sqrt{3} + 1)}{3 - 1}\,\text{m} = 10(\sqrt{3} + 1)\,\text{m} \approx 27{,}32\,\text{m}$.
-6. Preverjanje: daljše opazovališče je od vznožja oddaljeno $47{,}32\,\text{m}$, $\;47{,}32 \cdot \tan 30^\circ \approx 47{,}32 \cdot 0{,}5774 \approx 27{,}32$. ✓
+6. Preverjanje: daljše opazovališče je od vznožja oddaljeno $47{,}32\,\text{m}$; $\;47{,}32 \cdot \tan 30^\circ \approx 47{,}32 \cdot 0{,}5774 \approx 27{,}32$. ✓
 7. Odgovor: stolp je visok $10(\sqrt{3} + 1)\,\text{m}$, to je približno $27{,}32\,\text{m}$.
 
 ### Primer 4 – zdaj ti: gora na Luni

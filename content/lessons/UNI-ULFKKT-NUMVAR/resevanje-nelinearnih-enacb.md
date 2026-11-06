@@ -30,7 +30,7 @@ Za škatlo je $f(x) = x(30-2x)^2 - 1000$. Število $r$, za katero je $f(r) = 0$,
 | 3 | $[1{,}25;\ 1{,}5]$ | $1{,}375$ | $-$ |
 | 4 | $[1{,}375;\ 1{,}5]$ | $1{,}4375$ | $+$ |
 
-Dolžine intervalov si sledijo $1$, $0{,}5$, $0{,}25$, $0{,}125$, po četrtem koraku pa $0{,}0625$. Vsaka je polovica prejšnje.
+Dolžine intervalov si sledijo $1$; $0{,}5$; $0{,}25$; $0{,}125$, po četrtem koraku pa $0{,}0625$. Vsaka je polovica prejšnje.
 
 Sklep »zvezna funkcija, ki zamenja predznak, ima vmes ničlo« je izrek, ki ga bisekcija potrebuje na vsakem koraku.
 
@@ -280,7 +280,7 @@ Visoko škatlo ($x = 10\,\mathrm{cm}$) poiščemo z Newtonovo metodo iz $x_0 = 9
 1. $f(9) = 9 \cdot 12^2 - 1000 = 296$, $f'(9) = 12 \cdot (-24) = -288$.
 2. $x_1 = 9 - \frac{296}{-288} \approx 10{,}0278$; napaka $0{,}028$.
 3. $x_2 = x_1 - \frac{f(x_1)}{f'(x_1)} \approx 9{,}9999994$; napaka $6 \cdot 10^{-7}$.
-4. Napake $1$, $0{,}028$, $0{,}0000006$: eksponent se še več kot podvoji. Tu je $f''(10) = 0$, zato je $C = 0$ in napaka pade celo hitreje kot kvadratno. Pri ploščici ($C \approx 0{,}35$) smo videli čisto kvadratično konvergenco.
+4. Napake $1$; $0{,}028$; $0{,}0000006$: eksponent se še več kot podvoji. Tu je $f''(10) = 0$, zato je $C = 0$ in napaka pade celo hitreje kot kvadratno. Pri ploščici ($C \approx 0{,}35$) smo videli čisto kvadratično konvergenco.
 
 V preglednici to narediš s tremi stolpci: $x_n$, $f(x_n)$ in $f'(x_n)$; v naslednji vrstici je $x_{n+1}$ formula, ki bere celice iz prejšnje vrstice. Formulo samo kopiraš navzdol.
 

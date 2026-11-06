@@ -510,11 +510,11 @@
      "ways": [
       {
        "title": "Po vrstah",
-       "text": "**Podatki:** tla $12{,}6\\,\\mathrm{m} \\times 8{,}4\\,\\mathrm{m}$, deska $21\\,\\mathrm{dm} \\times 35\\,\\mathrm{cm}$.\n\n**Iščemo:** število desk.\n\nVse mere izraziš v metrih: $21\\,\\mathrm{dm} = 2{,}1\\,\\mathrm{m}$, $35\\,\\mathrm{cm} = 0{,}35\\,\\mathrm{m}$.\n\nDeske položiš z dolžino vzdolž dolge stranice terase:\n\n- v eni vrsti vzdolž dolge stranice: $12{,}6 : 2{,}1 = 6$ desk,\n- takih vrst je vzdolž kratke stranice: $8{,}4 : 0{,}35 = 24$ (ker je $840 : 35 = 24$).\n\nSkupaj: $6 \\cdot 24 = 144$ desk."
+       "text": "**Podatki:** tla $12{,}6\\,\\mathrm{m} \\times 8{,}4\\,\\mathrm{m}$, deska $21\\,\\mathrm{dm} \\times 35\\,\\mathrm{cm}$.\n\n**Iščemo:** število desk.\n\nVse mere izraziš v metrih: $21\\,\\mathrm{dm} = 2{,}1\\,\\mathrm{m}$; $35\\,\\mathrm{cm} = 0{,}35\\,\\mathrm{m}$.\n\nDeske položiš z dolžino vzdolž dolge stranice terase:\n\n- v eni vrsti vzdolž dolge stranice: $12{,}6 : 2{,}1 = 6$ desk,\n- takih vrst je vzdolž kratke stranice: $8{,}4 : 0{,}35 = 24$ (ker je $840 : 35 = 24$).\n\nSkupaj: $6 \\cdot 24 = 144$ desk."
       },
       {
        "title": "Drugače: deske obrnjene drugače",
-       "text": "Deske lahko položiš tudi z dolžino vzdolž kratke stranice terase:\n\n- v eni vrsti vzdolž kratke stranice: $8{,}4 : 2{,}1 = 4$ deske,\n- takih vrst je vzdolž dolge stranice: $12{,}6 : 0{,}35 = 36$ (ker je $1\\,260 : 35 = 36$).\n\nSkupaj: $4 \\cdot 36 = 144$ desk – enako kot pri prvi legi.\n\n**Zakaj ne gre z manj deskami:** ena deska pokrije $2{,}1 \\cdot 0{,}35 = 0{,}735\\,\\mathrm{m^2}$, $144$ desk pa $144 \\cdot 0{,}735 = 105{,}84\\,\\mathrm{m^2}$, kar je ravno ploščina tal iz dela c). Deske se ne prekrivajo, zato bi $143$ desk pokrilo manj, kot merijo tla."
+       "text": "Deske lahko položiš tudi z dolžino vzdolž kratke stranice terase:\n\n- v eni vrsti vzdolž kratke stranice: $8{,}4 : 2{,}1 = 4$ deske,\n- takih vrst je vzdolž dolge stranice: $12{,}6 : 0{,}35 = 36$ (ker je $1\\,260 : 35 = 36$).\n\nSkupaj: $4 \\cdot 36 = 144$ desk – enako kot pri prvi legi.\n\n**Zakaj ne gre z manj deskami:** ena deska pokrije $2{,}1 \\cdot 0{,}35 = 0{,}735\\,\\mathrm{m^2}$; $144$ desk pa $144 \\cdot 0{,}735 = 105{,}84\\,\\mathrm{m^2}$, kar je ravno ploščina tal iz dela c). Deske se ne prekrivajo, zato bi $143$ desk pokrilo manj, kot merijo tla."
       }
      ],
      "mistake": "Kdor mer ne pretvori v isto enoto ($12{,}6 : 21$ ali $8{,}4 : 35$), dobi nesmiselne rezultate. Najprej vse mere zapiši v isti enoti."

@@ -39,7 +39,7 @@ $$\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}$$
 |---|---|---|
 | naravna | $\mathbb{N}$ | $1$, $7$, $\sqrt{9}$ |
 | cela | $\mathbb{Z}$ | $-3$, $0$, $7$ |
-| racionalna | $\mathbb{Q}$ | $\dfrac{2}{3}$, $-1{,}5$, $0{,}333\ldots$ |
+| racionalna | $\mathbb{Q}$ | $\dfrac{2}{3}$; $-1{,}5$; $0{,}333\ldots$ |
 | realna | $\mathbb{R}$ | vsa zgoraj ter $\sqrt{2}$, $\pi$, $-\sqrt{5}$ |
 
 Iracionalna števila so v $\mathbb{R}$, niso pa v $\mathbb{Q}$.
@@ -80,9 +80,9 @@ Torej $1{,}41 < \sqrt{2} < 1{,}42$. Postopek lahko nadaljuješ, a se nikoli ne k
 
 ### Primer 1: razvrščanje števil
 
-Katera od števil $7$, $-3$, $0{,}5$, $\sqrt{9}$, $\sqrt{7}$, $\pi$, $\sqrt{\dfrac{16}{25}}$ so racionalna in katera iracionalna?
+Katera od števil $7$; $-3$; $0{,}5$; $\sqrt{9}$; $\sqrt{7}$; $\pi$; $\sqrt{\dfrac{16}{25}}$ so racionalna in katera iracionalna?
 
-**Podatki:** števila $7$, $-3$, $0{,}5$, $\sqrt{9}$, $\sqrt{7}$, $\pi$, $\sqrt{\dfrac{16}{25}}$
+**Podatki:** števila $7$; $-3$; $0{,}5$; $\sqrt{9}$; $\sqrt{7}$; $\pi$; $\sqrt{\dfrac{16}{25}}$
 **Iščemo:** katera so racionalna in katera iracionalna
 
 :::formula

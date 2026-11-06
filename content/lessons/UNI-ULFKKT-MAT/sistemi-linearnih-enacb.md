@@ -78,7 +78,7 @@ Bilanca mase: $x + y = 600$; bilanca soli: $0{,}10\,x + 0{,}40\,y = 0{,}20 \cdot
 
 **Rešitev:**
 
-1. Masa soli v zmesi: $0{,}20 \cdot 600\,\mathrm{g} = 120\,\mathrm{g}$. Sistem: $x + y = 600$, $0{,}1x + 0{,}4y = 120$.
+1. Masa soli v zmesi: $0{,}20 \cdot 600\,\mathrm{g} = 120\,\mathrm{g}$. Sistem: $x + y = 600$; $0{,}1x + 0{,}4y = 120$.
 2. Razširjena matrika: $\left[\begin{array}{cc|c} 1 & 1 & 600 \\ 0{,}1 & 0{,}4 & 120 \end{array}\right]$.
 3. Drugo vrstico pomnožimo z $10$: $\left[\begin{array}{cc|c} 1 & 1 & 600 \\ 1 & 4 & 1200 \end{array}\right]$.
 4. Od druge vrstice odštejemo prvo: $\left[\begin{array}{cc|c} 1 & 1 & 600 \\ 0 & 3 & 600 \end{array}\right]$, torej $3y = 600$ in $y = 200$.

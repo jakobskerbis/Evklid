@@ -301,7 +301,7 @@ Natančno navedi, kdaj ima okrajšan ulomek $m/n$ končen dvojiški zapis, in tr
 1. Trditev: naj bo $m/n$ okrajšan ulomek, $n > 0$. Ima končen dvojiški zapis natanko tedaj, ko je $n = 2^k$ za neko celo število $k \ge 0$.
 2. Če je $n = 2^k$: deljenje z $2^k$ premakne dvojiško vejico v zapisu celega števila $m$ za $k$ mest v levo, zapis ostane končen.
 3. Obratno: naj ima $q = m/n$ v dvojiškem zapisu $k$ mest za vejico. Potem je $N = q \cdot 2^k$ celo število in $m/n = N/2^k$, torej $m \cdot 2^k = N n$. Ker sta $m$ in $n$ tuji, $n$ deli $2^k$, zato je $n$ potenca števila $2$. $\square$
-4. $0{,}5 = 1/2$, $0{,}25 = 1/4$ in $0{,}75 = 3/4$ imajo imenovalce $2$, $4$ in $4$ ter največ dve dvojiški mesti za vejico, kar je veliko manj od $53$, zato so v `float` shranjeni točno.
+4. $0{,}5 = 1/2$; $0{,}25 = 1/4$ in $0{,}75 = 3/4$ imajo imenovalce $2$, $4$ in $4$ ter največ dve dvojiški mesti za vejico, kar je veliko manj od $53$, zato so v `float` shranjeni točno.
 5. Pri seštevanju IEEE 754 vrne točen rezultat, zaokrožen na najbližji `float`. Točna vsota $3/4$ je sama predstavljiva, zato zaokroževanja ni.
 6. Odgovor: `0.5 + 0.25 == 0.75` vrne `True`, medtem ko `0.1 + 0.2 == 0.3` vrne `False`, ker $1/10$, $1/5$ in $3/10$ nimajo imenovalca, ki bi bil potenca števila $2$.
 
