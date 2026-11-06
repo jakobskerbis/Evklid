@@ -2,6 +2,7 @@
 // in računalnik (1280 × 800, miška → visoka, <o>.glb); pogledi celota, prerez in približan prerez (zaklopke, prekati …).
 // Meri prenos (bajti datotek organi-3d/) in čas do prvega prikaza pri omrežju 4G (telefon) in kabel (računalnik).
 // Zagon: node scripts/atlas/posnetki-organa.cjs <organ> <izhodna mapa> [oznaka, npr. staro|novo]
+// Okolje: KOTI=1 (8 kotov, zgoraj, spodaj), ZILE=1 (žile od blizu), RAVEN=1|2|3 (raven delov kot OŠ/SŠ/študij), SAMO=telefon|racunalnik.
 // Izhod: <mapa>/<oznaka>-<telefon|racunalnik>-<pogled>.png in <mapa>/<oznaka>-meritve.json.
 // Potrebuje Playwright s Chromiumom (swiftshader: čas risanja ni čas pravega telefona, primerjaj staro z novim).
 const { spawn } = require("node:child_process");
@@ -33,7 +34,7 @@ const NAPRAVE = {
   const b = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
   const meritve = {};
   try {
-    for (const [ime, n] of Object.entries(NAPRAVE)) {
+    for (const [ime, n] of Object.entries(NAPRAVE).filter(([k]) => !process.env.SAMO || process.env.SAMO === k)) {
       const ctx = await b.newContext({ ...n, omrezje: undefined, kakovost: undefined, reducedMotion: "reduce", locale: "sl-SI" });
       await ctx.addInitScript(() => {
         try {
@@ -54,7 +55,7 @@ const NAPRAVE = {
       });
       const cdp = await ctx.newCDPSession(p);
       // kakovost izrecno: peskovnik ima 2 jedri (samodejno bi bila »nizka« tudi na računalniku)
-      await p.goto(`${base}/3d?kakovost=${n.kakovost}`);
+      await p.goto(`${base}/3d?kakovost=${n.kakovost}${process.env.RAVEN ? `&raven=${process.env.RAVEN}` : ""}`); // RAVEN=1: profil OŠ (raven.js)
       await cdp.send("Network.enable");
       await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
       await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: n.omrezje.rtt, downloadThroughput: n.omrezje.down / 8, uploadThroughput: n.omrezje.down / 16 });

@@ -1,6 +1,7 @@
 // Raven prikaza 3D modelov po profilu učenca (j, 6. 11. »Prilagoditev starosti«): 1 OŠ, 2 SŠ, 3 študij. Deli modela
 // imajo lahko »raven«; zahtevnejši od ravni profila so v seznamu delov pod gumbom »Več delov« (nikoli zaklenjeni).
-// Aplikacija poda vir nastavitev profila (app.js: nastaviVirRavni(() => state.student?.settings)); brez profila SŠ.
+// Aplikacija poda vir nastavitev profila (app.js: nastaviVirRavni(() => state.student?.settings)); brez profila
+// »?raven=« v naslovu ali SŠ.
 import { stopnja } from "../stopnja.js";
 
 let vir = () => null;
@@ -12,7 +13,14 @@ export function ravenProfila() {
   try {
     s = vir();
   } catch {}
-  if (!s) return 2;
+  if (!s) {
+    // samostojna stran /3d (brez profila): »?raven=1|2|3« v naslovu, sicer SŠ
+    let q = null;
+    try {
+      q = Number(new URLSearchParams(globalThis.location?.search || "").get("raven"));
+    } catch {}
+    return [1, 2, 3].includes(q) ? q : 2;
+  }
   const st = stopnja(s);
   return st === "FAKS" ? 3 : st === "SS" ? 2 : 1;
 }
