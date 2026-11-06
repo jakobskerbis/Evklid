@@ -272,14 +272,8 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
     assert.deepEqual(modes, ["think", "mid", "mid"]);
 
     // 15 vprašanj na dan, brez ponudbe nakupa.
-    for (let i = 0; i < 12; i++)
-      store.addMessage(
-        conv.id,
-        "user",
-        [{ type: "text", text: "x" }],
-        "x",
-        false,
-      );
+    // Vprašanja za dnevno mejo šteje question_log (izbris pogovora jih ne zmanjša).
+    for (let i = 0; i < 12; i++) store.logQuestion(kid.id);
     const over = await call(`/api/conversations/${conv.id}/messages`, {
       method: "POST",
       body: { text: "Še eno?" },
@@ -329,6 +323,7 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
     store.db.prepare("UPDATE usage SET student_id = ? WHERE student_id = ? AND cost_usd = 6").run(mate.id, kid.id);
     createSchoolSource(store.db).clearCache();
     store.db.prepare("UPDATE messages SET created_at = datetime('now', '-2 day')").run();
+    store.db.prepare("DELETE FROM question_log").run(); // kot da so bila vprašanja predvčerajšnjim
     const prevPool = process.env.EVKLID_FREE_POOL_USD;
     process.env.EVKLID_FREE_POOL_USD = "100"; // skupni brezplačni sklad (10 $) bi sicer ustavil prej
     try {
@@ -336,7 +331,7 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
       for (let i = 0; i < 3; i++)
         { const x = await call(`/api/conversations/${c3.id}/messages`, { method: "POST", body: { text: "Pojasni še enkrat.", deep: true } }); assert.equal(x.status, 200, JSON.stringify(x.body)); }
       assert.deepEqual(modes.slice(-3), ["think", "think", "think"]);
-      for (let i = 0; i < 7; i++) store.addMessage(c3.id, "user", [{ type: "text", text: "x" }], "x", false);
+      for (let i = 0; i < 7; i++) store.logQuestion(kid.id);
       const out = await call(`/api/conversations/${c3.id}/messages`, { method: "POST", body: { text: "Še eno?" } });
       assert.equal(out.status, 429);
       assert.match(out.body.error, /brezplačna vprašanja .*\(10 na dan\)/);
@@ -349,6 +344,7 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
     // Brezplačni sklad za vse (10 $) velja tudi zanj: sošolčevih 6 $ šteje vanj, zdaj je sklad porabljen.
     store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 5)").run(mate.id);
     store.db.prepare("UPDATE messages SET created_at = datetime('now', '-2 day')").run();
+    store.db.prepare("DELETE FROM question_log").run(); // kot da so bila vprašanja predvčerajšnjim
     const c4 = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
     const capped = await call(`/api/conversations/${c4.id}/messages`, { method: "POST", body: { text: "Še eno?" } });
     assert.equal(capped.status, 429);

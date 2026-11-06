@@ -392,7 +392,7 @@ export async function scheduleSources({ fetchFn = fetch, settings = null } = {})
 
 // Natančnost je tu pomembnejša od cene (urnik se prebere enkrat na semester), zato zmogljivejši model.
 // capped: aktivacijska koda dovoli največ Sonnet (j 2026-10-30), zato tam MODEL_MID namesto Opusa.
-const photoModel = (capped = false) => (capped ? MODEL_MID : process.env.EVKLID_SCHEDULE_MODEL || MODEL_DEEP);
+export const photoModel = (capped = false) => (capped ? MODEL_MID : process.env.EVKLID_SCHEDULE_MODEL || MODEL_DEEP);
 
 export async function readTimetablePhoto({ imageBase64, mediaType = "image/jpeg", today = new Date().toISOString().slice(0, 10), capped = false }) {
   const model = photoModel(capped);
