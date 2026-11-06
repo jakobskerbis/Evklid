@@ -124,8 +124,9 @@ export function setLanguage(code, { reload = true } = {}) {
     localStorage.setItem(KEY, code);
   } catch {}
   if (stored() !== code) return false;
-  // Nov slovar najprej v predpomnilnik, da se stran po ponovnem nalaganju odpre hitro in v novem jeziku.
-  if (reload && code !== lang) fetchDict(code).finally(() => location.reload());
+  // Nov slovar najprej v predpomnilnik, da se stran po ponovnem nalaganju odpre hitro in v novem jeziku;
+  // na počasni povezavi čakamo največ 1,5 s.
+  if (reload && code !== lang) Promise.race([fetchDict(code), new Promise((ok) => setTimeout(ok, 1500))]).finally(() => location.reload());
   return true;
 }
 

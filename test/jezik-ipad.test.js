@@ -8,6 +8,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { createApp } from "../server/app.js";
@@ -117,6 +118,44 @@ for (const [kind, dev] of DEVICES) {
         await ctx.close();
       }
     });
+  });
+}
+
+// Neuspel modul (napaka ob izvajanju ali 404) ne ustavi naslednjih; napaka pride do window.onerror.
+const FIXTURES = {
+  "/t-zagon.html": `<!doctype html><meta charset="utf-8"><script type="module" src="/zagon.js" data-moduli="/t-slab.js /t-manjka.js /t-dober.js"></script>`,
+  "/t-slab.js": `window.vrstni = ["slab"]; throw new Error("namerna napaka");`,
+  "/t-dober.js": `import { t } from "/i18n.js"; window.vrstni.push("dober"); window.prevod = t("nav.path");`,
+};
+function serveFixtures() {
+  const server = http.createServer((req, res) => {
+    const url = req.url.split("?")[0];
+    if (FIXTURES[url]) return res.writeHead(200, { "content-type": url.endsWith(".html") ? "text/html; charset=utf-8" : "text/javascript" }).end(FIXTURES[url]);
+    const file = path.join(PUB, path.normalize(url));
+    if (!file.startsWith(PUB) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
+    const type = { ".js": "text/javascript", ".json": "application/json" }[path.extname(file)] || "application/octet-stream";
+    res.writeHead(200, { "content-type": type }).end(fs.readFileSync(file));
+  });
+  return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
+}
+for (const [kind, browser] of [["webkit", webkit], ["chromium", chromium]]) {
+  test(`zagon.js: a failing module does not stop the next ones (${kind})`, { skip: browser ? false : `Playwright ${kind} ni nameščen` }, async () => {
+    const server = await serveFixtures();
+    const ctx = await browser.newContext({ locale: "en-US", timezoneId: "America/New_York" });
+    try {
+      const p = await ctx.newPage();
+      const errors = [];
+      p.on("pageerror", (e) => errors.push(e.message));
+      await p.goto(`http://127.0.0.1:${server.address().port}/t-zagon.html`);
+      await p.waitForFunction(() => window.vrstni?.includes("dober"), null, { timeout: 10000 });
+      assert.deepEqual(await p.evaluate(() => window.vrstni), ["slab", "dober"]);
+      assert.equal(await p.evaluate(() => window.prevod), "Learning path"); // prevodi so naloženi pred moduli
+      await p.waitForTimeout(100);
+      assert.ok(errors.some((m) => m.includes("namerna napaka")), `napaka v window.onerror: ${errors}`);
+    } finally {
+      await ctx.close();
+      server.close();
+    }
   });
 }
 

@@ -4,17 +4,24 @@
 // (WebKit 242740): ko več modulov hkrati uvaža modul s top-level await, nekateri stečejo prezgodaj ali
 // sploh ne. V slovenščini ni bilo kaj čakati, v drugih jezikih pa se je aplikacija ustavila na pol
 // (prevedena besedila brez ikon, seznamov in vsebine). Zato čaka samo ta modul, ki ga nihče ne uvaža.
-import { ready } from "./i18n.js";
-
 const tag = document.querySelector("script[data-moduli]");
 const mods = (tag?.dataset.moduli || "").split(/\s+/).filter(Boolean).map((m) => new URL(m, document.baseURI).href);
-// Moduli se prenašajo hkrati s prevodi, izvedejo pa se šele, ko so prevodi naloženi.
+// Najprej prenos modulov strani (brez izvajanja), hkrati s prevodi: brez čakanja v vrsti.
 for (const href of mods) {
   const l = document.createElement("link");
   l.rel = "modulepreload";
   l.href = href;
   document.head.append(l);
 }
-mods
-  .reduce((p, href) => p.then(() => import(href)), ready.catch(() => null))
-  .catch((e) => console.error("zagon:", e));
+// Neuspel modul ne ustavi ostalih (prej je vsak <script> tekel zase); napaka gre še v window.onerror.
+const run = (href) =>
+  import(href).catch((e) => {
+    console.error("zagon:", href, e);
+    setTimeout(() => {
+      throw e;
+    });
+  });
+import("./i18n.js")
+  .then((m) => m.ready)
+  .catch(() => null)
+  .then(() => mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve()));
