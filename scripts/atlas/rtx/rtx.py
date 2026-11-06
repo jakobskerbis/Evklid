@@ -401,6 +401,25 @@ def cakaj(peka, st):
         time.sleep(PREMOR)
 
 
+_KLJUC = None
+
+
+def zakleni():
+    """Samo eno okno naenkrat (rtx.lock ostane zaklenjen, dokler proces teče; ob zaprtju okna ga sistem sprosti)."""
+    global _KLJUC
+    _KLJUC = open(os.path.join(KOREN, "rtx.lock"), "a+")
+    try:
+        if os.name == "nt":
+            import msvcrt
+            _KLJUC.seek(0); msvcrt.locking(_KLJUC.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(_KLJUC.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        print("\n  To okno se zapre: peka že teče v drugem oknu. Zapri staro okno (križec) in znova dvakrat klikni peci.\n", flush=True)
+        raise SystemExit(1)
+
+
 def main():
     with open(os.path.join(KODA, "viri.json"), encoding="utf-8") as f:
         viri = json.load(f)
@@ -414,6 +433,8 @@ def main():
     if os.name == "nt":  # računalnik ne zaspi, dokler je okno odprto (zaslon sme ugasniti): ES_CONTINUOUS | ES_SYSTEM_REQUIRED
         import ctypes
         ctypes.windll.kernel32.SetThreadExecutionState(0x80000000 | 0x00000001)
+    if not nadaljuj:
+        zakleni()
     peka = Peka()
     st = beri_stanje()
     if nadaljuj:  # po zamenjavi kode: naloga, zaradi katere je bila zamenjana
