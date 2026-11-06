@@ -5,14 +5,14 @@
 const KLJUC = "evklid.barve3d";
 let nacin = null;
 
-export function barvniNacin() {
+// privzeto: brez shranjene izbire (OŠ: učne barve, enako v celoti in prerezu; ostali: naravne)
+export function barvniNacin(privzeto = "naravne") {
   if (nacin) return nacin;
+  let v = null;
   try {
-    nacin = localStorage.getItem(KLJUC) === "ucne" ? "ucne" : "naravne";
-  } catch {
-    nacin = "naravne";
-  }
-  return nacin;
+    v = localStorage.getItem(KLJUC);
+  } catch {}
+  return v === "ucne" || v === "naravne" ? (nacin = v) : privzeto === "ucne" ? "ucne" : "naravne";
 }
 
 export function nastaviBarvniNacin(n) {

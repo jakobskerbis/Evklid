@@ -4,8 +4,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { barvniNacin, nastaviBarvniNacin, ucnaBarva } from "../public/3d/barve.js";
 
-test("barvni način brez localStorage: naravne, preklop ostane v seji", () => {
+test("barvni način brez localStorage: privzeto (OŠ učne), preklop ostane v seji", () => {
   assert.equal(barvniNacin(), "naravne");
+  assert.equal(barvniNacin("ucne"), "ucne");
   assert.equal(nastaviBarvniNacin("ucne"), "ucne");
   assert.equal(barvniNacin(), "ucne");
   assert.equal(nastaviBarvniNacin("karkoli"), "naravne");

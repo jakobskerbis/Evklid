@@ -720,7 +720,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       }));
   };
   uporabi();
-  barve(barvniNacin());
+  barve(barvniNacin(ctx.raven === 1 ? "ucne" : "naravne"));
   sestavi();
 
   const nadzor = [];

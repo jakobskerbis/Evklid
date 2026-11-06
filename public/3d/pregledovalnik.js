@@ -893,6 +893,7 @@ export function odpriModel(el, mod, opts = {}) {
       gibanje: kit.gibanje,
       zacetek: { ...zacetek },
       t,
+      raven: ravenZacetna, // raven profila (1 OŠ): organ.js privzeto vklopi učne barve (barve.js)
       // Modeli iz datotek (docs/3d.md): naloziGLB(pot glede na public/3d/modeli/) in organi iz modeli/organi-3d (organ.js).
       naloziGLB: (pot, napredek) => import("./organ.js").then((m) => m.naloziGLB(new URL(pot, new URL("./modeli/", import.meta.url)).href, napredek)),
       organ: (ime) => import("./organ.js").then((m) => m.zgradiOrgan(ime, ctx)),
