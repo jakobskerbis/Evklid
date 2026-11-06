@@ -291,6 +291,16 @@ $$W_v = a_vA - a_sA^{2/3} - a_c\frac{Z(Z-1)}{A^{1/3}} - a_a\frac{(A - 2Z)^2}{A} 
 
 **Zaporedni razpadi.** Za verigo $1 \to 2 \to 3$ splošna rešitev (Batemanove enačbe) vodi v tri primere: $\lambda_1 \ll \lambda_2$ (trajno ravnovesje, $R_2 = R_1$, npr. radij in radon), $\lambda_1 < \lambda_2$ (prehodno ravnovesje, generator tehnecija) in $\lambda_1 > \lambda_2$ (ni ravnovesja).
 
+## Drugače: Uporaba v stroki
+
+**Nuklearna medicina.** Pri PET bolnik dobi glukozi podobno molekulo z ${}^{18}\mathrm{F}$. Pozitron iz razpada $\beta^+$ se v tkivu po manj kot milimetru anihilira z elektronom v dva žarka $\gamma$ z energijo po $511\,\mathrm{keV}$, ki odletita v nasprotnih smereh; detektorji okoli bolnika iz parov zadetkov rekonstruirajo, kje se je sladkor nabral (tumorji, možgani, srce). Pri scintigrafiji in SPECT ${}^{99\mathrm{m}}\mathrm{Tc}$ oddaja žarke $\gamma$ z energijo $140\,\mathrm{keV}$, ki dobro prodrejo iz telesa; razpolovni čas $6\,\mathrm{h}$ je dovolj dolg za preiskavo in dovolj kratek, da bolnik ne ostane dolgo radioaktiven. Odmerke vedno preračunajo na čas aplikacije z zakonom razpada.
+
+**Dozimetrija in varstvo pred sevanji.** Aktivnost pove, koliko razpadov se zgodi, ne koliko škode naredijo. Za učinek na tkivo merimo absorbirano dozo v grejih ($1\,\mathrm{Gy} = 1\,\mathrm{J/kg}$), za tveganje pa efektivno dozo v sievertih, ki upošteva vrsto sevanja in občutljivost organov. Zaščita izkorišča razdaljo, čas in zaslon: pri sevanju $\beta$ pleksi steklo, pri $\gamma$ svinec ali beton, pri nevtronih snovi z vodikom.
+
+**Energetika.** Cepitev enega jedra ${}^{235}\mathrm{U}$ sprosti okoli $200\,\mathrm{MeV}$; popolna cepitev $1\,\mathrm{g}$ urana ${}^{235}\mathrm{U}$ bi dala okoli $8 \cdot 10^{10}\,\mathrm{J}$, približno toliko kot sežig nekaj ton premoga. Jedrske elektrarne del te energije pretvorijo v električno; izrabljeno gorivo vsebuje cepitvene produkte z različnimi razpolovnimi časi, zato se njegova aktivnost v prvih letih hitro zmanjša, dolgoživi izotopi pa zahtevajo dolgotrajno hrambo.
+
+**Datiranje in analitika.** Radiokarbonsko datiranje z ${}^{14}\mathrm{C}$ seže do okoli $50\,000$ let; danes ne štejejo razpadov, ampak z masnim spektrometrom neposredno preštejejo atome ${}^{14}\mathrm{C}$, kar zahteva miligrame namesto gramov vzorca. Za kamnine uporabljajo dolgožive izotope (kalij–argon, uran–svinec). Z nevtronsko aktivacijsko analizo vzorec obsevajo z nevtroni in iz energij in razpolovnih časov nastalih izotopov določijo sledove elementov.
+
 ## Preveri se
 
 ? Katera trditev o vezavni energiji na nukleon je pravilna?

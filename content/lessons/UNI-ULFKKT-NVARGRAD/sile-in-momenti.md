@@ -297,25 +297,24 @@ Pravokotna plošča ima oglišča $O(0; 0)$, $A(4; 0)$, $B(4; 3)$ in $C(0; 3)$, 
 
 ## Drugače: Na sliki
 
-Nosilec iz Primera 3, gledan od strani (puščice navzdol so sile, $q$ je enakomerna obtežba):
+Nosilec iz Primera 3, gledan od strani (merilo: štirje znaki na meter; puščice so sile, $q$ je enakomerna obtežba, sila $5\,\mathrm{kN}$ v $B$ kaže poševno navzdol in v levo, dvojica $+6\,\mathrm{kN\,m}$ ni narisana):
 
 ```
-          10 kN        q = 4 kN/m
-            |      | | | | | | | |
-            v      v v v v v v v v   5 kN
-  A=========*======*=============B  /
-  0        2,0    3,0           6,0 v (30° pod vodoravnico, v levo)
-   (+6 kN m, v nasprotni smeri urnega kazalca)
+      10 kN  q = 4 kN/m
+        |   |  |  |  |  |  /
+        v   v  v  v  v  v v
+A=======*===*===========B
+0      2,0 3,0        6,0
 ```
 
-Isti sistem po redukciji na $A$: ena sila $24{,}9\,\mathrm{kN}$ v točki $A$ in dvojica $-83\,\mathrm{kN\,m}$. Po premiku rezultante ostane ena sama puščica, ki seka os pri $3{,}39\,\mathrm{m}$, dvojice ni več:
+Isti sistem po redukciji na $A$: ena sila $24{,}9\,\mathrm{kN}$ v točki $A$ in dvojica $-83\,\mathrm{kN\,m}$. Po premiku rezultante ostane ena sama puščica pod kotom $80^\circ$ glede na vodoravnico, ki seka os pri $3{,}39\,\mathrm{m}$; dvojice ni več:
 
 ```
-                 24,9 kN (80° pod vodoravnico)
-                      /
-                     v
-  A==================*===========B
-  0                 3,39        6,0
+          24,9 kN
+               /
+              v
+A=============*=========B
+0           3,39      6,0
 ```
 
 Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev togega telesa**. Za notranje sile v nosilcu (kasneje: upogibni momenti) pa niso enake – redukcija velja le za učinek na telo kot celoto.
@@ -327,6 +326,16 @@ Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev t
 **Ortodontija.** Zob se pod točkovno silo nagne, ker sila nima nosilke skozi središče upora. Z dvojico, ki jo da upognjena ali zasukana žica, ortodont nadzira razmerje moment/sila in s tem, ali se zob nagne, premakne vzporedno ali zasuka koren.
 
 **Gradbišče.** Avtodvigalo ima omejevalnik bremenskega momenta: dovoljeno breme ni podano s silo, ampak z momentom glede na točko prevrnitve, zato je pri bolj iztegnjeni roki manjše. Momentni ključ za vijake jeklenih spojev zagotovi predpisani moment privijanja v $\mathrm{N\,m}$, iz katerega izhaja sila prednapetja vijaka. Projektant obtežbe po standardih za vplive na konstrukcije (lastna teža, sneg, veter) najprej zapiše kot porazdeljene obtežbe in jih za ravnotežne račune nadomesti z rezultantami.
+
+## Drugače: Z analogijo
+
+**Gugalnica.** Moment si predstavljaj z gugalnico na igrišču. Težji otrok sede bližje osi, lažji dlje, in gugalnica miruje, ko sta zmnožka »teža krat razdalja od osi« enaka. Ne šteje, kdo je težji, ampak kdo ima večji moment. To je ista enačba kot pri bicepsu iz uvoda, le da je pri roki mišica »lahek otrok« na zelo kratki ročici – zato mora vleči z veliko silo.
+
+**Volan kot dvojica.** Ko volan vrtiš z obema rokama, ena roka potiska navzgor, druga navzdol. Avto se zaradi tega ne premakne vstran (rezultanta je nič), volan pa se zavrti. Če roki primeš bliže skupaj, potrebuješ za isti zasuk večjo silo: moment dvojice je $F\,d$. In ne glede na to, kje na volanu sta roki – zgoraj, ob strani ali spodaj –, je učinek enak, če sta razmik in sila enaka. To je neodvisnost momenta dvojice od točke.
+
+**Premik sile kot nošnja nakupovalne vrečke.** Vrečko lahko nosiš v roki ob telesu ali na iztegnjeni roki. Sila na rame je obakrat enaka, na iztegnjeni roki pa čutiš še zasuk v ramenu. To je izrek o vzporednem premiku: sila, premaknjena stran od rame, je enaka sili v rami **in** dvojici z momentom »sila krat odmik«.
+
+**Kje analogija odpove.** Gugalnica in volan sta vrtljiva okoli stalne osi. Moment sile glede na točko pa definiramo za katero koli točko, tudi takšno, okoli katere se telo sploh ne more vrteti – je računsko orodje, ne le opis vrtenja.
 
 ## Preveri se
 

@@ -62,7 +62,7 @@ $$\Delta L = \frac{F L_0}{E A}.$$
 
 To je točno vzorec iz meritev; iz njih bi dobili $E = F L_0/(A\,\Delta L) = 200\,\mathrm{GPa}$. Zmnožek $EA$ je **osna togost** prereza. Če se sila ali prerez spreminjata vzdolž palice, palico razdelimo na kratke dele $\mathrm{d}x$ in seštejemo: $\Delta L = \int_0^{L_0} \frac{N(x)}{E A(x)}\,\mathrm{d}x$, kjer je $N(x)$ osna sila v prerezu $x$.
 
-**Toplotna deformacija.** Pri spremembi temperature za $\Delta T$ se prosta palica podaljša za $\varepsilon_T = \alpha\,\Delta T$ ($\alpha$ je temperaturni razteznostni koeficient), brez napetosti. Če ji podaljšanje preprečimo, pa nastane napetost $\sigma = -E\alpha\,\Delta T$ – neodvisno od dolžine in prereza.
+**Toplotna deformacija.** Deformacijo povzroči tudi sprememba temperature, $\varepsilon_T = \alpha\,\Delta T$ ($\alpha$ je temperaturni razteznostni koeficient); kaj se zgodi, ko je palica vpeta in se ne more raztegniti, obravnava lekcija o osni obremenitvi.
 
 :::premisli
 Žico iz istega jekla podaljšaš na dvakratno dolžino in obesiš isto utež. Ali se je pretrganje približalo? Kaj pa, če ji namesto tega razpoloviš prerez?
@@ -79,6 +79,19 @@ Snovne lastnosti merimo z **nateznim preizkusom**: standardni preizkušanec (okr
 3. **Meja tečenja** $R_e$: deformacija narašča pri skoraj stalni sili, material se plastično deformira. Pri materialih brez izrazite meje (aluminij, visokotrdna jekla) uporabljamo **dogovorno mejo** $R_{p0{,}2}$, napetost, pri kateri po razbremenitvi ostane $0{,}2\,\%$ trajne deformacije.
 4. **Utrjevanje** do **natezne trdnosti** $R_m$, največje inženirske napetosti.
 5. **Kontrakcija (vrat)**: prerez se na enem mestu zoži, inženirska napetost pade, nastopi pretrg.
+
+Skica diagrama za konstrukcijsko jeklo:
+
+```
+ σ
+ |            R_m
+ |         .-''''-.
+ |   R_e  /        '.
+ |  ___.-'           x pretrg
+ | /
+ |/  naklon E
+ +---------------------------> ε
+```
 
 Iz preizkušanca po pretrgu izmerimo še **raztezek po pretrgu** $A = (L_u - L_0)/L_0$ (oznaka iz standarda; ne zamenjaj je s prerezom) in **kontrakcijo** $Z = (A_0 - A_u)/A_0$; oba merita **duktilnost**, sposobnost plastične deformacije (žilavost je nekaj drugega: energija, ki jo material porabi do pretrga). Duktilni materiali (jeklo, aluminij) pred pretrgom opazno tečejo in »opozorijo«; krhki (litoželezo, steklo, beton v nategu) se pretrgajo skoraj brez plastične deformacije.
 
@@ -212,7 +225,7 @@ $\varepsilon = -6{,}76/17\,000 \approx -3{,}98 \cdot 10^{-4}$, $\Delta L \approx
 - Normalna napetost $\sigma = F/A$, strižna $\tau = F_t/A$; enota $\mathrm{MPa} = \mathrm{N/mm^2}$.
 - Specifična deformacija $\varepsilon = \Delta L/L_0$; prečna $\varepsilon_q = -\nu\varepsilon$.
 - Hookov zakon $\sigma = E\varepsilon$ (in $\tau = G\gamma$), velja do meje proporcionalnosti; podaljšek palice $\Delta L = FL_0/(EA)$.
-- Toplotno: $\varepsilon_T = \alpha\,\Delta T$; pri preprečenem raztezku $\sigma = -E\alpha\,\Delta T$.
+- Toplotna deformacija: $\varepsilon_T = \alpha\,\Delta T$.
 - Natezni preizkus da $E$, $R_e$ (ali $R_{p0{,}2}$), $R_m$, raztezek po pretrgu in kontrakcijo.
 - Dopustna napetost $\sigma_{dop} = R_e/n$ (duktilni) ali $R_m/n$ (krhki); kontrola $|\sigma| \leq \sigma_{dop}$, dimenzioniranje $A \geq F/\sigma_{dop}$.
 
@@ -221,38 +234,38 @@ $\varepsilon = -6{,}76/17\,000 \approx -3{,}98 \cdot 10^{-4}$, $\Delta L \approx
 Znati moraš povedati:
 
 - definicije normalne in strižne napetosti, specifične deformacije in Poissonovega števila z enotami;
-- Hookov zakon s pogojem veljavnosti in izpeljavo $\Delta L = FL_0/(EA)$ ter splošne oblike $\Delta L = \int N/(EA)\,\mathrm{d}x$;
+- Hookov zakon s pogojem veljavnosti in izpeljavo $\Delta L = FL_0/(EA)$;
 - potek nateznega preizkusa, značilne točke diagrama $\sigma$–$\varepsilon$ ter razliko med duktilnim in krhkim materialom;
-- definicijo dopustne napetosti in zakaj je merilo pri jeklu $R_e$, pri krhkih materialih pa $R_m$;
-- napetost pri preprečenem toplotnem raztezku.
+- kako iz meritev nateznega preizkusa izračunaš $E$, $R_e$, $R_m$, raztezek po pretrgu in kontrakcijo;
+- definicijo dopustne napetosti in zakaj je merilo pri jeklu $R_e$, pri krhkih materialih pa $R_m$.
 
 ### Naloga 1
 
-Jeklena palica dolžine $2{,}0\,\mathrm{m}$ s prerezom $500\,\mathrm{mm^2}$ je vpeta med dve togi steni ($E = 210\,\mathrm{GPa}$, $\alpha = 12 \cdot 10^{-6}\,\mathrm{K^{-1}}$). Pri montaži ni napeta. (a) Kolikšna napetost in sila nastaneta, ko se palica segreje za $40\,\mathrm{K}$? (b) Kolikšna je napetost, če je bila pri montaži med palico in eno steno reža $0{,}50\,\mathrm{mm}$? (c) Ali je pri (a) napetost dopustna, če je $R_e = 235\,\mathrm{MPa}$ in $n = 1{,}5$?
+Okrogel preizkušanec iz jekla ima začetni premer $d_0 = 10{,}0\,\mathrm{mm}$ in merilno dolžino $L_0 = 50{,}0\,\mathrm{mm}$. Pri sili $10{,}0\,\mathrm{kN}$ (še v linearnem področju) je podaljšek merilne dolžine $0{,}0303\,\mathrm{mm}$. Material izrazito steče pri sili $F_e = 18{,}5\,\mathrm{kN}$, največja sila med preizkusom je $F_m = 28{,}3\,\mathrm{kN}$. Po pretrgu je merilna dolžina $L_u = 63{,}5\,\mathrm{mm}$, najmanjši premer na mestu pretrga pa $d_u = 6{,}2\,\mathrm{mm}$. (a) Določi $E$, $R_e$, $R_m$, raztezek po pretrgu $A$ in kontrakcijo $Z$. (b) Ali je material duktilen? (c) Z varnostnim faktorjem $1{,}5$ dimenzioniraj okroglo natezno palico iz tega jekla za silo $50\,\mathrm{kN}$ (premer zaokroži na cel milimeter).
 
 **Rešitev:**
 
-1. Prosti toplotni raztezek bi bil $\Delta L_T = \alpha\,\Delta T\,L_0 = 12 \cdot 10^{-6} \cdot 40 \cdot 2000\,\mathrm{mm} = 0{,}96\,\mathrm{mm}$.
-2. (a) Steni podaljšek popolnoma preprečita, zato mora biti skupna deformacija nič: $\varepsilon = \sigma/E + \alpha\,\Delta T = 0$, torej $\sigma = -E\alpha\,\Delta T = -210\,000 \cdot 12 \cdot 10^{-6} \cdot 40\,\mathrm{MPa} = -100{,}8\,\mathrm{MPa}$ (tlak).
-3. Sila: $N = \sigma A = -100{,}8 \cdot 500\,\mathrm{N} = -50\,400\,\mathrm{N} \approx -50{,}4\,\mathrm{kN}$.
-4. (b) Palica se prvih $0{,}50\,\mathrm{mm}$ raztegne prosto, preprečenih je le $0{,}96 - 0{,}50 = 0{,}46\,\mathrm{mm}$. Torej $\sigma = -E \cdot 0{,}46/2000 = -210\,000 \cdot 0{,}46/2000\,\mathrm{MPa} = -48{,}3\,\mathrm{MPa}$.
-5. (c) $\sigma_{dop} = 235/1{,}5 \approx 156{,}7\,\mathrm{MPa} \geq 100{,}8\,\mathrm{MPa}$ ✓; tlačeno palico pa je treba preveriti še na uklon.
-6. Odgovor: (a) $-100{,}8\,\mathrm{MPa}$ in $-50{,}4\,\mathrm{kN}$, neodvisno od dolžine; (b) $-48{,}3\,\mathrm{MPa}$; (c) napetost je glede na tečenje dopustna. Zato imajo mostovi in cevovodi dilatacije.
+1. Začetni prerez: $A_0 = \pi \cdot 10{,}0^2/4\,\mathrm{mm^2} \approx 78{,}54\,\mathrm{mm^2}$.
+2. (a) Linearno področje: $\sigma = 10\,000/78{,}54\,\mathrm{MPa} \approx 127{,}3\,\mathrm{MPa}$, $\varepsilon = 0{,}0303/50{,}0 \approx 6{,}06 \cdot 10^{-4}$, zato $E = \sigma/\varepsilon \approx 127{,}3/6{,}06 \cdot 10^{-4}\,\mathrm{MPa} \approx 210\,000\,\mathrm{MPa} = 210\,\mathrm{GPa}$.
+3. Meja tečenja in natezna trdnost (inženirski napetosti, deljeno z $A_0$): $R_e = 18\,500/78{,}54 \approx 235{,}5\,\mathrm{MPa}$, $R_m = 28\,300/78{,}54 \approx 360{,}3\,\mathrm{MPa}$.
+4. Raztezek po pretrgu: $A = (63{,}5 - 50{,}0)/50{,}0 = 0{,}27$, torej $27\,\%$ (oznaka $A$ je tu standardna oznaka raztezka, ne prereza).
+5. Kontrakcija: $A_u = \pi \cdot 6{,}2^2/4\,\mathrm{mm^2} \approx 30{,}19\,\mathrm{mm^2}$, $Z = (78{,}54 - 30{,}19)/78{,}54 \approx 0{,}616$, torej okoli $62\,\%$.
+6. (b) Velik raztezek in velika kontrakcija pomenita izrazito plastično deformacijo pred pretrgom: material je duktilen (vrednosti ustrezajo konstrukcijskemu jeklu S235).
+7. (c) Za duktilen material je merilo meja tečenja: $\sigma_{dop} = 235{,}5/1{,}5\,\mathrm{MPa} \approx 157\,\mathrm{MPa}$.
+8. Potreben prerez: $A \geq 50\,000/157\,\mathrm{mm^2} \approx 318{,}5\,\mathrm{mm^2}$, premer $d \geq \sqrt{4 \cdot 318{,}5/\pi}\,\mathrm{mm} \approx 20{,}14\,\mathrm{mm}$; izberemo $d = 21\,\mathrm{mm}$ ($20\,\mathrm{mm}$ bi bil premalo).
+9. Odgovor: $E \approx 210\,\mathrm{GPa}$, $R_e \approx 236\,\mathrm{MPa}$, $R_m \approx 360\,\mathrm{MPa}$, $A = 27\,\%$, $Z \approx 62\,\%$; material je duktilen; natezna palica naj ima premer $21\,\mathrm{mm}$.
 
 ### Naloga 2
 
-Izpelji podaljšek navpične palice s stalnim prerezom $A$, dolžino $L$, gostoto $\rho$ in modulom $E$, ki visi pod lastno težo. Nato izračunaj, kako dolga bi lahko bila navpično viseča jeklena vrv ($\rho = 7850\,\mathrm{kg/m^3}$, $R_e = 235\,\mathrm{MPa}$, $E = 210\,\mathrm{GPa}$), preden bi na vrhu stekla, kakšna je ta dolžina pri varnostnem faktorju $1{,}5$ in kolikšen je tedaj podaljšek. Utemelji, zakaj rezultat ni odvisen od prereza.
+Opiši in skiciraj diagram napetost–deformacija za konstrukcijsko jeklo in za krhek material (npr. litoželezo). Natančno definiraj mejo proporcionalnosti, mejo tečenja $R_e$, dogovorno mejo $R_{p0{,}2}$ in natezno trdnost $R_m$. Razloži, zakaj inženirska napetost po doseženi $R_m$ pada, čeprav material ne postane šibkejši. Utemelji, zakaj dopustno napetost za jeklo računamo iz $R_e$, za krhke materiale iz $R_m$, in zakaj je pri krhkih varnostni faktor večji.
 
 **Rešitev:**
 
-1. Os $x$ merimo od spodnjega konca navzgor. Prerez na višini $x$ nosi težo dela pod njim: $N(x) = \rho g A x$.
-2. Napetost $\sigma(x) = N(x)/A = \rho g x$; največja je na vrhu, $\sigma_{max} = \rho g L$.
-3. Podaljšek: $\Delta L = \int_0^L \frac{N(x)}{EA}\,\mathrm{d}x = \frac{\rho g}{E}\int_0^L x\,\mathrm{d}x = \frac{\rho g L^2}{2E}$, polovica podaljška, ki bi ga dala vsa teža na koncu.
-4. Prerez se pokrajša, ker sta sila in prerez sorazmerna: dvakrat debelejša vrv je dvakrat težja.
-5. Mejna dolžina: $\rho g L = R_e$, torej $L = 235 \cdot 10^6/(7850 \cdot 9{,}81)\,\mathrm{m} \approx 3050\,\mathrm{m}$.
-6. Z varnostnim faktorjem: $L = 3050/1{,}5\,\mathrm{m} \approx 2030\,\mathrm{m}$.
-7. Podaljšek pri tej dolžini: $\Delta L = 7850 \cdot 9{,}81 \cdot 2030^2/(2 \cdot 210 \cdot 10^9)\,\mathrm{m} \approx 0{,}76\,\mathrm{m}$.
-8. Odgovor: $\Delta L = \rho g L^2/(2E)$; jeklena vrv lahko visi okoli $3\,\mathrm{km}$ do tečenja, z varnostjo okoli $2\,\mathrm{km}$, in se pri tem podaljša za približno $0{,}76\,\mathrm{m}$. Zato imajo zelo globoki rudniški jaški vrvi s spremenljivim prerezom ali vmesne postaje.
+1. Jeklo: premica do meje proporcionalnosti (naklon $E$); pri $R_e$ vodoravni del (tečenje pri skoraj stalni napetosti); nato utrjevanje do vrha $R_m$; nato padec do pretrga zaradi vratu. Krhek material: skoraj premica do pretrga, brez tečenja in vratu, pretrg pri $R_m$ in majhni deformaciji (pod okoli $1\,\%$).
+2. Meja proporcionalnosti je največja napetost, do katere velja $\sigma = E\varepsilon$. $R_e$ je napetost, pri kateri se deformacija povečuje brez povečanja sile. $R_{p0{,}2}$ je napetost, pri kateri po razbremenitvi ostane $0{,}2\,\%$ trajne deformacije (za materiale brez izrazite meje). $R_m = F_m/A_0$ je največja inženirska napetost.
+3. Po $R_m$ se plastična deformacija zbere na enem mestu, prerez se tam hitro zožuje (vrat). Sila, ki jo nosi zoženi prerez, pada, inženirska napetost $F/A_0$ pa je deljena z začetnim prerezom, zato pada tudi ona. Prava napetost $F/A$ na zoženem mestu do pretrga raste.
+4. Jeklo: trajna deformacija nad $R_e$ že pomeni odpoved (element se trajno zvije ali podaljša), čeprav se še ne pretrga; zato je merilo $R_e$. Krhek material nima tečenja: prva odpoved je pretrg, zato je merilo $R_m$.
+5. Krhek material ne »opozori« s plastično deformacijo, napake (pore, razpoke) pa močno zmanjšajo trdnost in povzročijo velik raztros. Zato je pri krhkih materialih varnostni faktor večji (npr. $3$ do $4$ namesto $1{,}5$).
 
 ### Naloga 3
 
@@ -290,6 +303,16 @@ Jeklena žica premera $2{,}0\,\mathrm{mm}$ in dolžine $3{,}0\,\mathrm{m}$ nosi 
 
 **Biološka tkiva.** Kite in vezi imajo diagram v obliki črke J: na začetku se ravnajo valovita kolagenska vlakna in je tkivo mehko, nato postane skoraj linearno. Zato $E$ za tkiva podajamo za linearni del, njihova trdnost pa je odvisna od hitrosti obremenjevanja (viskoelastičnost).
 
+## Drugače: Uporaba v stroki
+
+**Kontrola materiala.** Vsaka šarža konstrukcijskega jekla pride s potrdilom o kontroli, na katerem so iz nateznega preizkusa izmerjeni $R_e$, $R_m$ in raztezek $A$. Projektant jih primerja z zahtevami standarda za izbrano vrsto jekla (npr. S235: $R_e \geq 235\,\mathrm{MPa}$). Preizkuse izvajajo na trgalnih strojih po standardiziranem postopku (oblika preizkušanca, hitrost obremenjevanja), da so rezultati iz različnih laboratorijev primerljivi.
+
+**Dimenzioniranje.** Natezne palice, vijaki, vrvi dvigal in obešala imajo predpisane varnostne faktorje: vrvi za dvigala ljudi mnogo večje kot jeklene konstrukcije, ker obrabe in sunkov ni mogoče natančno predvideti. Pri vijakih se trdnostni razred (npr. $8.8$) neposredno nanaša na natezni preizkus: prva številka pomeni $R_m \approx 800\,\mathrm{MPa}$, zmnožek obeh števk krat deset pa mejo tečenja, okoli $640\,\mathrm{MPa}$.
+
+**Biomateriali in tkiva.** Implantati (kolčne proteze, vijaki za kosti) morajo biti dovolj trdni, a njihov $E$ naj bo čim bližje kosti; pretoga proteza prevzame obremenitev, kost okoli nje pa zaradi premajhne napetosti slabi. Natezne preizkuse izvajajo tudi na kitah, vezeh in šivalnih nitih; pri tkivih rezultat poročamo za določeno hitrost obremenjevanja, ker so viskoelastična.
+
+**Gradbena praksa.** Na gradbišču natezni preizkus armaturnih palic preveri, ali je dobavljeno jeklo ustrezno; beton pa preizkušajo s tlačnim preizkusom kock ali valjev, ker je v nategu krhek in ga v računih praviloma zanemarimo.
+
 ## Preveri se
 
 ? Katera trditev o diagramu napetost–deformacija konstrukcijskega jekla je pravilna?
@@ -316,13 +339,13 @@ Jeklena žica premera $2{,}0\,\mathrm{mm}$ in dolžine $3{,}0\,\mathrm{m}$ nosi 
 + v koraku 3
 > $2 \cdot 10^8\,\mathrm{Pa} = 200\,\mathrm{MPa}$, ne $2000\,\mathrm{MPa}$ ($1\,\mathrm{MPa} = 10^6\,\mathrm{Pa}$). Hitreje: $40\,000\,\mathrm{N}/200\,\mathrm{mm^2} = 200\,\mathrm{MPa}$.
 
-? Jeklena in aluminijasta palica enakih mer nosita enako natezno silo. Kako se primerjata?
-- Aluminij ima trikrat večjo napetost in enak podaljšek.
-~ Napetost je $F/A$ in ni odvisna od materiala. Material določi deformacijo.
-+ Napetosti sta enaki, aluminij se podaljša približno trikrat bolj.
-- Jeklo ima večjo napetost, ker je močnejše.
-~ Trdnost pove, koliko napetosti material prenese, ne kolikšna napetost v njem nastane.
-> $\sigma = F/A$ je pri obeh enaka. Ker je $E_{Al} \approx 70\,\mathrm{GPa}$ trikrat manjši od $E_{jeklo} \approx 210\,\mathrm{GPa}$, je $\varepsilon = \sigma/E$ pri aluminiju trikrat večja.
+? Aluminijasta palica ($E = 70\,\mathrm{GPa}$), dolga $2{,}0\,\mathrm{m}$, se pod obtežbo podaljša za $1{,}0\,\mathrm{mm}$. Kolikšna je napetost v njej?
++ $35\,\mathrm{MPa}$
+- $350\,\mathrm{MPa}$
+~ Dolžino si vzel v centimetrih ($200$), podaljšek pa v milimetrih; obe dolžini morata biti v isti enoti.
+- $0{,}035\,\mathrm{MPa}$
+~ Modul si vstavil v $\mathrm{GPa}$ ($70$) namesto v $\mathrm{MPa}$ ($70\,000$), rezultat pa zapisal v $\mathrm{MPa}$.
+> $\varepsilon = 1{,}0/2000 = 5{,}0 \cdot 10^{-4}$, $\sigma = E\varepsilon = 70\,000 \cdot 5{,}0 \cdot 10^{-4}\,\mathrm{MPa} = 35\,\mathrm{MPa}$.
 
 ? Natezna palica iz jekla je imela premer $16\,\mathrm{mm}$. Po letih v vlažnem prostoru jo je korozija stanjšala na $14\,\mathrm{mm}$. Za koliko se je pri isti obtežbi povečala napetost?
 - za okoli $14\,\%$

@@ -61,6 +61,23 @@ Podpora (vez) telesu prepreči določene premike. Kjer premik prepreči, deluje 
 
 Pomična podpora prepreči le premik pravokotno na podlago, nepomična členkasta oba premika, togo vpetje še zasuk. Nihajna palica prepreči premik v svoji smeri; vrv prenese le nateg.
 
+Na skicah podpore rišemo z dogovorjenimi znaki (spodaj nosilec iz Primera 3: členek v $A$ z reakcijama $A_x$ in $A_y$, valjček v $B$, prost konec $C$; pod njim togo vpetje z reakcijami $A_x$, $A_y$ in $M_A$):
+
+```
+  ^ A_y         ^ B
+  |             |
+->o=============o=====C
+ /\            /\
+////          o  o
+              ////
+
+togo vpetje:
+ |//|=========
+ |//|
+```
+
+Trikotnik s šrafirano podlago je nepomični členek (dve reakciji), trikotnik na valjčkih je pomična podpora (ena reakcija, pravokotna na podlago), šrafirana stena, v katero nosilec vstopa, je togo vpetje (dve sili in moment).
+
 **Diagram prostega telesa.** Telo »sprostimo«: podpore odstranimo in jih nadomestimo z reakcijami. Narišemo vse zunanje sile (teže, obtežbe, dvojice) in vse reakcije z izbranimi smermi. Če pride reakcija negativna, deluje v nasprotni smeri, kot smo jo narisali; računa ne popravljamo.
 
 **Statična določenost.** Naj ima telo v ravnini $n$ neznanih reakcij.
@@ -242,6 +259,22 @@ Natančno navedi pogoje ravnotežja togega telesa v ravnini in dokaži: če sta 
 
 ### Naloga 3
 
+Poševni nosilec $AB$ (stopniščna rama) ima v $A(0; 0)$ nepomični členek, v $B(4; 3)$ (v metrih) pa se z valjčkom naslanja na navpično steno, zato je reakcija v $B$ vodoravna in kaže v smeri $-x$. Sneg $q = 2{,}0\,\mathrm{kN/m}$ deluje navpično in je podan na **tlorisno** dolžino $4\,\mathrm{m}$. V točki $(3; 2{,}25)$ deluje točkovna sila $3{,}0\,\mathrm{kN}$ navzdol. Veter $0{,}50\,\mathrm{kN/m}$ deluje vodoravno v smeri $+x$ in je podan na **narisno** višino $3\,\mathrm{m}$. Določi reakcije, velikost in smer reakcije v $A$ ter rezultat preveri z $\sum M_B = 0$.
+
+**Rešitev:**
+
+1. Rezultanti porazdeljenih obtežb: sneg $F_s = 2{,}0 \cdot 4 = 8{,}0\,\mathrm{kN}$ navzdol, veter $F_w = 0{,}50 \cdot 3 = 1{,}5\,\mathrm{kN}$ v $+x$. Obe sta enakomerni vzdolž nosilca, zato prijemljeta na njegovi sredini, v točki $(2; 1{,}5)$.
+2. Neznanke: $A_x$, $A_y$ in $B$ (vodoravna, v $-x$). Tri neznanke, tri enačbe.
+3. $\sum M_A = 0$ z $M = xF_y - yF_x$: reakcija $B$ v $(4; 3)$ da $-3 \cdot (-B) = 3B$; sneg $2 \cdot (-8{,}0) = -16$; sila $3 \cdot (-3{,}0) = -9{,}0$; veter $-1{,}5 \cdot 1{,}5 = -2{,}25$ (v $\mathrm{kN\,m}$).
+4. $3B - 16 - 9{,}0 - 2{,}25 = 0$, torej $B = 27{,}25/3\,\mathrm{kN} \approx 9{,}08\,\mathrm{kN}$.
+5. $\sum F_x = 0$: $A_x - 9{,}08 + 1{,}5 = 0$, torej $A_x \approx 7{,}58\,\mathrm{kN}$ (v $+x$, proti steni).
+6. $\sum F_y = 0$: $A_y - 8{,}0 - 3{,}0 = 0$, torej $A_y = 11{,}0\,\mathrm{kN}$.
+7. Velikost: $A = \sqrt{7{,}58^2 + 11{,}0^2}\,\mathrm{kN} \approx 13{,}36\,\mathrm{kN}$, kot nad vodoravnico $\arctan(11{,}0/7{,}58) \approx 55{,}4^\circ$.
+8. Preizkus $\sum M_B = 0$ (relativni položaji glede na $B$): $A$ pri $(-4; -3)$ da $(-4)(11{,}0) - (-3)(7{,}58) \approx -44 + 22{,}75 = -21{,}25$; sneg pri $(-2; -1{,}5)$ da $16$; sila pri $(-1; -0{,}75)$ da $3{,}0$; veter da $-(-1{,}5)(1{,}5) = 2{,}25$. Vsota: $-21{,}25 + 16 + 3{,}0 + 2{,}25 = 0$. ✓
+9. Odgovor: $B \approx 9{,}08\,\mathrm{kN}$ (stena potiska ramo stran od sebe), $A_x \approx 7{,}58\,\mathrm{kN}$, $A_y = 11{,}0\,\mathrm{kN}$, $|A| \approx 13{,}4\,\mathrm{kN}$ pod $55{,}4^\circ$. Poševna rama potiska v steno, čeprav je obtežba skoraj vsa navpična: tega bi z »vsaka podpora nosi pol« nikoli ne dobili.
+
+### Naloga 4
+
 Prostoležeči nosilec dolžine $5{,}0\,\mathrm{m}$ ima v $A$ nepomično členkasto podporo, v $B$ pa pomično podporo na podlagi, nagnjeni za $30^\circ$, tako da reakcija v $B$ kaže navzgor in v levo pod kotom $30^\circ$ od navpičnice. Na nosilec deluje navpična sila $10\,\mathrm{kN}$ pri $x = 2{,}0\,\mathrm{m}$, v $B$ pa še vodoravna sila $3{,}0\,\mathrm{kN}$ v desno. Določi vse reakcije.
 
 **Rešitev:**
@@ -271,6 +304,16 @@ Prostoležeči nosilec razpona $8{,}0\,\mathrm{m}$ nosi dve sili: $12\,\mathrm{k
 4. **Momenti okoli $B$:** $8{,}0\,A_y = 12 \cdot 6{,}0 + 6{,}0 \cdot 2{,}0 = 72 + 12 = 84$, torej $A_y = 10{,}5\,\mathrm{kN}$.
 5. **Preizkus:** $10{,}5 + 7{,}5 = 18 = 12 + 6{,}0$. ✓
 6. **Superpozicija:** sama sila $12\,\mathrm{kN}$ bi dala $A_y = 9{,}0\,\mathrm{kN}$, $B = 3{,}0\,\mathrm{kN}$; sama sila $6{,}0\,\mathrm{kN}$ pa $A_y = 1{,}5\,\mathrm{kN}$, $B = 4{,}5\,\mathrm{kN}$. Vsoti sta enaki kot zgoraj.
+
+## Drugače: Bolj natančno
+
+**Ravnotežje v prostoru.** Togo telo v prostoru ima šest prostostnih stopenj (trije premiki in trije zasuki), zato je ravnotežnih enačb šest:
+
+$$\sum F_x = 0, \quad \sum F_y = 0, \quad \sum F_z = 0, \quad \sum M_x = 0, \quad \sum M_y = 0, \quad \sum M_z = 0.$$
+
+Momente računamo z vektorskim produktom $\vec{M} = \vec{r}\times\vec{F}$ glede na izbrano točko, momentne enačbe pa lahko zapišemo tudi glede na poljubne osi (ne nujno koordinatne), če so neodvisne. Prostorske podpore: kroglični členek (3 sile), cilindrični ležaj (2 sili pravokotno na os, lahko še 2 momenta), togo vpetje (3 sile in 3 momenti), vrv ali nihajna palica (1 sila v svoji smeri). Telo je statično določeno pri šestih pravilno razporejenih reakcijah. Primer: plošča na treh navpičnih nogah je pri navpični obtežbi določena (tri enačbe $\sum F_z$, $\sum M_x$, $\sum M_y$), miza s štirimi nogami pa je enkrat nedoločena – zato štirinoga miza na neravnih tleh majava.
+
+**Ravnotežje in stabilnost.** Ravnotežje je lahko **stabilno** (po majhnem odmiku se telo vrne), **labilno** (odmik se poveča) ali **indiferentno**. Pri telesu na podlagi je merilo lega težišča: prevrnitev nastopi, ko nosilka rezultante teže in zunanjih sil pade iz podporne ploskve. Varnost proti prevrnitvi izrazimo z razmerjem stabilizirajočega in prevračalnega momenta glede na rob prevrnitve.
 
 ## Preveri se
 

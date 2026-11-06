@@ -284,6 +284,14 @@ Razlika od mreže: vrvica prenese le nateg, palica pa tudi tlak. Zato so paličj
 
 **Prava vozlišča.** Zvarjena vozlišča prenesejo tudi momente, zato v palicah nastanejo sekundarni upogibni momenti. Pri vitkih palicah so majhni; standardi za jeklene konstrukcije povedo, kdaj jih smemo zanemariti.
 
+## Drugače: Uporaba v stroki
+
+**Mostovi in merjenje.** Na paličnih mostovih so na izbrane palice nalepljeni merilni lističi, ki merijo specifično deformacijo. Iz nje z Hookovim zakonom in prerezom palice izračunamo osno silo in jo primerjamo s silo, ki jo za znano obtežbo (npr. preizkusni tovornjak) da metoda prereza. Če se meritev in račun ne ujemata, je morda poškodovano vozlišče ali je palica popustila. Sistemi za stalni nadzor zbirajo take podatke ves čas in opozorijo na odstopanja.
+
+**Strehe in hale.** Strešna paličja iz lesa ali jekla so pogosto enostavna paličja iz trikotnikov. Projektant najprej določi sile v palicah za lastno težo, sneg in veter (tudi srk, ki obrne predznake), nato tlačene palice dimenzionira na uklon, natezne na nosilnost prereza in spojev. Ničelne palice pri eni kombinaciji obtežbe so pri drugi pogosto merodajne.
+
+**Daljnovodi, žerjavi, odri.** Stebri daljnovodov in roke žerjavov so prostorska paličja; računajo jih programi z matrično metodo, inženir pa ročno preveri izbrane palice z metodo prereza. Pri odrih in podpornih konstrukcijah na gradbišču diagonale zagotavljajo togost – oder brez diagonal je mehanizem in se lahko zamakne kot kvadrat brez diagonale iz Razlage.
+
 ## Preveri se
 
 ? Katera trditev ne sodi med predpostavke idealnega paličja?
