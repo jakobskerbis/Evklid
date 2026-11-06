@@ -8,7 +8,7 @@
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee } from "./plans.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
@@ -18,8 +18,19 @@ import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, customPack, CUSTOM_MIN_CENTS, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
 export const ADULT_TEXT = "Sem polnoleten/-na in plačujem za svoj profil ali kot starš oziroma skrbnik.";
+// Odstop v 14 dneh (j 2026-11-06): vrne se del plačila za neporabljeno storitev, sorazmerno PORABI: manjši od deleža
+// preostalega časa in deleža neporabljene meje AI (withdrawalRefundCents). Besedilo pred zagonom plačil preveri pravnik.
 export const WITHDRAWAL_TEXT =
-  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe in da v tem primeru dobim vrnjen sorazmerni del plačila.";
+  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat dobim vrnjen del plačila za storitev, ki je še nisem porabil: manjši od deleža preostalega časa in deleža še neporabljenih vprašanj za inštruktorja.";
+export const WITHDRAWAL_DAYS = 14;
+// Vračilo ob odstopu v centih: plačilo × min(delež preostalega časa, delež neporabljene meje AI), navzdol na cent.
+// Brez meje AI (aiCapUsd 0) velja le delež časa.
+export function withdrawalRefundCents({ paidCents, startMs, endMs, nowMs = Date.now(), aiCapUsd = 0, aiSpentUsd = 0 }) {
+  const clamp = (x) => Math.min(1, Math.max(0, Number.isFinite(x) ? x : 0));
+  const timeLeft = endMs > startMs ? clamp((endMs - nowMs) / (endMs - startMs)) : 0;
+  const aiLeft = aiCapUsd > 0 ? clamp(1 - aiSpentUsd / aiCapUsd) : 1;
+  return { cents: Math.max(0, Math.floor((Number(paidCents) || 0) * Math.min(timeLeft, aiLeft))), timeLeft, aiLeft };
+}
 const PAY_LINK_DAYS = 7;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -656,6 +667,37 @@ export function mountBilling(app, ctx) {
     res.status(403).json({ error: "Samo za skrbnika." });
     return false;
   };
+  // Izračun vračila ob odstopu v 14 dneh (samo prikaz za skrbnika; vračilo izvede skrbnik v Stripu).
+  // Naročnina: tekoče plačano obdobje, meja AI = vrednost paketa × mesecev obdobja, poraba vseh profilov računa.
+  // Paketi pred testom: ves paket, meja paketa, poraba profila.
+  app.get("/api/admin/withdrawal/:parentId", (req, res) => {
+    if (!admin(req, res)) return;
+    const p = getParent(Number(req.params.parentId));
+    if (!p) return res.status(404).json({ error: "Račun ne obstaja." });
+    const now = Date.now();
+    const sqlTime = (ms) => new Date(ms).toISOString().slice(0, 19).replace("T", " ");
+    const out = { subscription: null, passes: [] };
+    const plan = p.sub_plan ? planByKey(p.sub_plan) : null;
+    const end = Date.parse(p.sub_period_end || "");
+    if (plan && Number.isFinite(end)) {
+      const months = plan.interval === "year" ? 12 : 1;
+      const startD = new Date(end);
+      startD.setUTCMonth(startD.getUTCMonth() - months);
+      const start = startD.getTime();
+      const g = planGuarantee(plan);
+      const since = sqlTime(start);
+      const spent = [...childIds(p.id)].reduce((t, id) => t + (aiUsage?.spentSince?.(id, since) || 0), 0) + (aiUsage?.orphanSpent?.(p.id, since) || 0);
+      const r = withdrawalRefundCents({ paidCents: plan.amount, startMs: start, endMs: end, nowMs: now, aiCapUsd: (g?.total || 0) * months, aiSpentUsd: spent });
+      out.subscription = { plan: plan.key, paid_cents: plan.amount, currency: plan.currency || "EUR", refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, within_14_days: now - start <= WITHDRAWAL_DAYS * 86400000 };
+    }
+    for (const ps of db.prepare("SELECT * FROM passes WHERE parent_id = ? AND status = 'active'").all(p.id)) {
+      const start = Date.parse(ps.starts_at);
+      const r = withdrawalRefundCents({ paidCents: ps.amount, startMs: start, endMs: Date.parse(ps.ends_at), nowMs: now, aiCapUsd: passCapUsd(ps), aiSpentUsd: passes.spentUsd(ps) });
+      out.passes.push({ id: ps.id, paid_cents: ps.amount, refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, within_14_days: now - start <= WITHDRAWAL_DAYS * 86400000 });
+    }
+    audit(db, { req, parentId: req.parent?.id, actor: "admin", action: "withdrawal_view", target: `parent:${p.id}` });
+    res.json(out);
+  });
   app.get("/api/admin/promo-codes", (req, res) => {
     if (admin(req, res)) res.json({ codes: promo.list() });
   });

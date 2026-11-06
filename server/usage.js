@@ -268,7 +268,7 @@ export class Usage {
     return !!sb.guaranteed && sb.spent >= sb.ceiling - 1e-9 && sb.credit <= 0;
   }
   // Naročnik je nad mejo paketa porabil še brezplačni rep (kot brezplačni profil: freeStudentMonthlyUsd na profil,
-  // pri Družini za vse profile skupaj), brez kredita: inštruktor do 1. v mesecu ali do dokupa ne odgovarja.
+  // pri Družini za vse profile skupaj), brez kredita: inštruktor do novega obdobja paketa ali do dokupa ne odgovarja.
   overFreeTail(studentId, state = this.budgetState()) {
     const sb = this.studentBudget(studentId, state);
     return !!sb.guaranteed && sb.credit <= 0 && sb.spent >= sb.ceiling + freeStudentMonthlyUsd() * (sb.group?.length || 1) - 1e-9;

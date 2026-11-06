@@ -1084,3 +1084,28 @@ test("preizkus, koda in bonus: skupni bazen vseh računov brez plačila", async 
     delete process.env.EVKLID_NOPAY_POOL_USD;
   }
 });
+
+test("odstop v 14 dneh: vračilo sorazmerno porabi (manjše od deleža časa in neporabljene meje AI)", async () => {
+  const { withdrawalRefundCents, WITHDRAWAL_TEXT } = await import("../server/accounts/billing.js");
+  const day = 86400000;
+  // 2 dni od 30, AI porabljen ves: nič.
+  assert.equal(withdrawalRefundCents({ paidCents: 999, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 1.9, aiSpentUsd: 1.9 }).cents, 0);
+  // 2 dni od 30, AI 10 %: min(28/30 = 0,933; 0,9) = 0,9.
+  assert.equal(withdrawalRefundCents({ paidCents: 1000, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 2, aiSpentUsd: 0.2 }).cents, 900);
+  // Nič porabe AI: delež časa.
+  assert.equal(withdrawalRefundCents({ paidCents: 3000, startMs: 0, endMs: 30 * day, nowMs: 10 * day, aiCapUsd: 2, aiSpentUsd: 0 }).cents, 2000);
+  assert.match(WITHDRAWAL_TEXT, /14 dneh/);
+  assert.doesNotMatch(WITHDRAWAL_TEXT, /sorazmerni del plačila/);
+  await withAccounts(async ({ db, api, kid, subscribe, pid, call }) => {
+    const ana = kid("Ana", "OS", YEAR - 12);
+    subscribe("evklid_1_month", new Date(Date.now() + 28 * day).toISOString());
+    const g = planGuarantee(planByKey("evklid_1_month"));
+    db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-opus-5-5', 'chat', ?)").run(ana, g.total / 2);
+    assert.equal((await call(`/api/admin/withdrawal/${pid}`)).status, 403, "samo skrbnik");
+    db.prepare("UPDATE parents SET is_admin = 1 WHERE id = ?").run(pid);
+    const r = (await call(`/api/admin/withdrawal/${pid}`)).body.subscription;
+    assert.ok(Math.abs(r.ai_left - 0.5) < 0.01, JSON.stringify(r));
+    assert.equal(r.refund_cents, Math.floor(999 * Math.min(r.time_left, r.ai_left)));
+    assert.ok(r.refund_cents <= 500 && r.within_14_days);
+  });
+});
