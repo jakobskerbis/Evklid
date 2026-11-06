@@ -38,11 +38,26 @@ for (const organ of organi) {
     if (imaSlike) {
       const w = path.join(src, `${organ}${pripona}.w.glb`);
       const w2 = path.join(src, `${organ}${pripona}.w2.glb`);
-      gt("webp", q, w, "--slots", "baseColorTexture", "--quality", pripona ? "86" : "90", "--effort", "100");
-      // ORM (senca okolice, hrapavost) je gladek podatek: q82 je na zaslonu enak q90 in ~30 % manjši, telefon q70
-      gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", pripona ? "70" : "82", "--effort", "100");
-      // normalna mapa q95, telefon q84 (žile kot geometrija: več UV otokov)
-      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", pripona ? "84" : "95", "--effort", "100");
+      // kakovost [osnovna, ORM, normalna]: ORM (senca okolice, hrapavost) je gladek podatek, q82 je na zaslonu enak q90;
+      // normalna mapa visoko (brez blokov v odsevih). Če GLB preseže mejo (računalnik 6 MB, telefon 2 MiB s 5 % rezerve,
+      // test/3d-organi-glb.test.js), znižamo kakovost po korakih (najprej osnovna in normalna, ORM že nizko).
+      // Zadnji koraki telefona zmanjšajo slike (px), ker pri nizki kakovosti WebP nastanejo bloki (srce n8: CT stene).
+      const lestev = pripona
+        ? [[86, 70, 84], [80, 66, 78], [82, 66, 80, 896], [82, 66, 80, 832], [82, 66, 80, 768], [76, 60, 74, 768]]
+        : [[90, 82, 95], [84, 76, 90], [78, 72, 85], [72, 66, 80]];
+      const meja = (pripona ? 2 : 6) * 1024 * 1024 * (pripona ? 0.95 : 0.97);
+      const r = path.join(src, `${organ}${pripona}.r.glb`);
+      for (const [k, [qb, qo, qn, px]] of lestev.entries()) {
+        if (px) gt("resize", q, r, "--width", String(px), "--height", String(px));
+        gt("webp", px ? r : q, w, "--slots", "baseColorTexture", "--quality", String(qb), "--effort", "100");
+        gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", String(qo), "--effort", "100");
+        gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", String(qn), "--effort", "100");
+        if (fs.statSync(izhod).size <= meja || k === lestev.length - 1) {
+          if (k) console.log(`${organ}${pripona}: WebP q${qb}/${qo}/${qn}${px ? `, ${px} px` : ""} (meja ${(meja / 1048576).toFixed(2)} MiB)`);
+          break;
+        }
+      }
+      fs.rmSync(r, { force: true });
       for (const f of [q, w, w2]) fs.rmSync(f, { force: true });
     }
     fs.rmSync(tmp, { force: true });

@@ -5,9 +5,9 @@
   "miokard": {
    "barva": "#93362f",
    "hrap": 0.34,
-   "lak": 0.4,
+   "lak": 0.22,
    "lakHrap": 0.65,
-   "sijaj": 0.32,
+   "sijaj": 0.18,
    "sijajBarva": "#9a3a30",
    "rob": 0.1,
    "robBarva": "#ff6a5a",
@@ -19,7 +19,7 @@
    "liseBarva": "#ffb0a0",
    "masca": 0.6,
    "mascaBarva": "#e7c46e",
-   "rez": "#6b261d",
+   "rez": "#6e261d",
    "senca": 0.35,
    "sencaBarva": "#4a1512",
    "mascaZunaj": true,
@@ -27,7 +27,10 @@
    "rezVlakna": 350,
    "odtenek": "#d9c3be",
    "sijajHrap": 0.7,
-   "spekular": 0.7
+   "spekular": 0.7,
+   "rezVolumen": true,
+   "rezMasca": "#d6ae5c",
+   "rezVlaknaCt": 1400
   },
   "zaklopka": {
    "barva": "#eadfcc",
@@ -99,8 +102,8 @@
   },
   "pljucna": {
    "barva": "#4566b8",
-   "hrap": 0.5,
-   "lak": 0.18,
+   "hrap": 0.58,
+   "lak": 0.12,
    "lakHrap": 0.78,
    "sijaj": 0.14,
    "sijajBarva": "#a6bdff",
@@ -110,7 +113,7 @@
    "zrno": 0.05,
    "f": 80,
    "relief": 0.3,
-   "rez": "#36549c",
+   "rez": "#d2c2bc",
    "odtenek": "#d0d6ea",
    "sijajHrap": 0.75,
    "spekular": 0.55
@@ -134,10 +137,10 @@
   },
   "aorta": {
    "barva": "#b8453c",
-   "rez": "#a33a32",
+   "rez": "#d9c8b8",
    "robBarva": "#ff9a8a",
    "sijajBarva": "#f2b0a6",
-   "lak": 0.18,
+   "lak": 0.12,
    "lakHrap": 0.78,
    "sijaj": 0.14,
    "sijajHrap": 0.75,
@@ -147,14 +150,14 @@
    "f": 80,
    "zrno": 0.05,
    "relief": 0.3,
-   "hrap": 0.5
+   "hrap": 0.58
   },
   "vencna-arterija": {
    "barva": "#d3302a",
    "rez": "#b82a26",
    "robBarva": "#ff6a5a",
    "sijajBarva": "#ff9a90",
-   "lak": 0.3,
+   "lak": 0.15,
    "lakHrap": 0.62,
    "sijaj": 0.14,
    "sijajHrap": 0.75,
@@ -320,8 +323,7 @@
    "barva": "#0ea5e9",
    "opis": "Gladki iztočni del desnega prekata pod pljučno zaklopko; od dotočnega ga loči nadprekatni greben.",
    "vozlisca": [
-    "Conus arteriosus",
-    "Supraventricular crest"
+    "Conus arteriosus"
    ],
    "skupina": "desni-prekat",
    "opisOs": "Gladek začetek poti iz desnega prekata proti pljučem.",
@@ -375,7 +377,8 @@
    "barva": "#f43f5e",
    "opis": "Največja arterija; vodi s kisikom bogato kri iz levega prekata v telo.",
    "vozlisca": [
-    "Aorta"
+    "Aorta",
+    "Root of aorta"
    ],
    "ucnaBarva": "#e0242c",
    "opisOs": "Največja žila. Nese kri s kisikom iz srca v telo.",
@@ -433,7 +436,8 @@
    "barva": "#818cf8",
    "opis": "Iz desnega prekata nese kri brez kisika; pod aortnim lokom se razcepi, levo se nadaljuje v levo pljučno arterijo.",
    "vozlisca": [
-    "Pulmonary trunk and left pulmonary artery"
+    "Pulmonary trunk and left pulmonary artery",
+    "Root of pulmonary trunk"
    ],
    "ucnaBarva": "#2453c9",
    "opisOs": "Nese kri brez kisika iz srca proti pljučem.",
@@ -849,18 +853,17 @@
   "ravnine": [
    {
     "n": [
-     -0.2236,
-     -0.9387,
-     -0.2625
+     -0.1479,
+     -0.755,
+     -0.6388
     ],
-    "d": -0.0489
+    "d": -0.0346
    }
   ],
   "brezPokrova": [
    "prevodni-sistem",
    "mejni-greben",
-   "glavnicaste-misice",
-   "conus-arteriosus"
+   "glavnicaste-misice"
   ],
   "temnenje": {
    "razdalja": 0.03,
@@ -871,6 +874,25 @@
    "endokardTkiva": [
     "miokard"
    ]
+  },
+  "volumen": {
+   "slika": "srce-volumen.png",
+   "lo": [
+    -0.06714,
+    -0.09634,
+    -0.05624
+   ],
+   "korak": 0.00125,
+   "n": [
+    108,
+    104,
+    92
+   ],
+   "ploscice": [
+    10,
+    10
+   ],
+   "tkivo": "srce-tkivo.png"
   }
  },
  "pogledi": {
@@ -894,9 +916,9 @@
   },
   "prerez": {
    "pogled": [
-    0.22,
-    0.94,
-    0.26
+    0.1479,
+    0.755,
+    0.6388
    ],
    "tocke": [
     "levi-prekat",
@@ -954,10 +976,10 @@
    }
   ]
  },
- "velikost": 0.2833,
+ "velikost": 0.2608,
  "trikotniki": {
-  "racunalnik": 169996,
-  "telefon": 59478
+  "racunalnik": 213565,
+  "telefon": 52213
  },
  "luci": [
   {

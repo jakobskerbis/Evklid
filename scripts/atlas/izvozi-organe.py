@@ -96,7 +96,7 @@ ORGANI = {
                 r"Inferior vena cava \(thoracic part\)|(Left|Right) (superior|inferior) pulmonary vein|Brachiocephalic trunk|Left common carotid artery|Left subclavian artery|"
                 r"(Left|Right) pulmonary artery|Thoracic aorta)( |$)",
         izkljuci=r"Septal branches of anterior interventricular|\?\?\?|Posterior intercostal|Subcostal|Superior phrenic|Bronchial|Oesophageal|Mediastinal|Pericardial",
-        cilj=(210_000, 38_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP (telefon ≥ 5 % rezerve)
+        cilj=(185_000, 33_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP (telefon ≥ 5 % rezerve)
         # Prekata: odprti debeli lupini, predznak prostornine izbere notranjo stran (zunanja stena izgine, vidna notranjost);
         # preverjeno s posnetkom 2026-11-04 (stari izvoz iz 08:50 je imel prav to obrnjeno smer).
         obrni=r"^(Left|Right) ventricle$",
@@ -112,7 +112,7 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(100_000, 18_000)), nedotakni=r"\(CT\)",
+        pozno=["srce_ct"], ct=dict(cilj=(80_000, 14_000)), nedotakni=r"\(CT\)",
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
         # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
         stena={"Left ventricle": 0.0028, "Right ventricle": 0.0008},
