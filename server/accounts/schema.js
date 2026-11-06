@@ -106,6 +106,11 @@ export function migrateAccounts(db) {
   // Država starša (za ceno v lokalni valuti); ob registraciji iz naprave oziroma omrežja.
   const pcols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   if (!pcols.includes("country")) db.exec("ALTER TABLE parents ADD COLUMN country TEXT");
+  // Rok povezave za potrditev e-naslova (VERIFY_DAYS, index.js). Že poslane povezave dobijo rok od te migracije naprej.
+  if (!pcols.includes("verify_expires_at")) {
+    db.exec("ALTER TABLE parents ADD COLUMN verify_expires_at TEXT");
+    db.prepare("UPDATE parents SET verify_expires_at = ? WHERE verify_token_hash IS NOT NULL").run(new Date(Date.now() + 7 * 86400000).toISOString());
+  }
   // Poln dostop iz aktivacijske kode (glej promo.js).
   if (!pcols.includes("promo_until")) db.exec("ALTER TABLE parents ADD COLUMN promo_until TEXT");
   if (!pcols.includes("gift_until")) db.exec("ALTER TABLE parents ADD COLUMN gift_until TEXT"); // darilna koda (server/placila/darila.js)

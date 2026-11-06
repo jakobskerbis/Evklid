@@ -75,9 +75,9 @@ export function verifyEmail(url) {
     subject: "Potrdite e-naslov za Evklid",
     html: layout(
       "Potrdite svoj e-naslov",
-      `<p>Pozdravljeni! S klikom na gumb potrdite svoj e-naslov in izjavite, da ste zakoniti zastopnik otroka, ki bo uporabljal Evklid.</p>${button(url, "Potrdite e-naslov")}<p style="font-size:13px;color:#5f6779">Če se niste registrirali, to sporočilo prezrite.</p>`,
+      `<p>Pozdravljeni! S klikom na gumb potrdite svoj e-naslov in izjavite, da ste zakoniti zastopnik otroka, ki bo uporabljal Evklid.</p>${button(url, "Potrdite e-naslov")}<p style="font-size:13px;color:#5f6779">Povezava velja 7 dni. Če se niste registrirali, to sporočilo prezrite.</p>`,
     ),
-    text: `Potrdite e-naslov za Evklid: ${url}`,
+    text: `Potrdite e-naslov za Evklid: ${url}\nPovezava velja 7 dni.`,
   };
 }
 

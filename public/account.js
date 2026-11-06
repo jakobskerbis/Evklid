@@ -333,7 +333,7 @@ export async function initAccount({ onReady }) {
   const sessionId = q.get("session_id");
   if (q.toString()) history.replaceState(null, "", location.pathname);
   if (verified === "1") toast("E-naslov je potrjen ✓");
-  if (verified === "0") toast("Povezava za potrditev ni veljavna ali je že uporabljena.");
+  if (verified === "0") toast("Povezava za potrditev ni veljavna, je potekla ali je že uporabljena. Novo pošlješ v zavihku Račun.");
 
   if (reset) {
     renderReset(reset);
