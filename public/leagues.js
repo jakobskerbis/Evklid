@@ -207,7 +207,7 @@ export async function loadLeague(studentId) {
         <button class="primary" type="submit">${esc(t("lg.join"))}</button>
       </form>
       <form id="friends-form" class="row">
-        <input id="friends-name" placeholder="${esc(t("lg.groupPh"))}" aria-label="${esc(t("lg.groupPh"))}" maxlength="40">
+        <input id="friends-name" dir="auto" placeholder="${esc(t("lg.groupPh"))}" aria-label="${esc(t("lg.groupPh"))}" maxlength="40">
         <button type="submit" class="secondary">${icon("plus")}<span>${esc(t("lg.create"))}</span></button>
       </form>
       <p class="muted">${esc(t("lg.teacher"))} <a href="ucitelj.html" target="_blank">${esc(t("lg.teacherLink"))}</a></p>

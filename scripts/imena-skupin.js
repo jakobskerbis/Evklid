@@ -12,6 +12,8 @@ import { BRAND } from "../server/brand.js";
 import { nameHasContact } from "../public/ime-skupine.js";
 
 export function contactNames(db) {
+  // Baza brez tabel razredov (stara ali prazna): ni imen.
+  if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name IN ('classes', 'class_members')").all().length < 2) return [];
   return db
     .prepare("SELECT id, kind, code, name, (SELECT COUNT(*) FROM class_members m WHERE m.class_id = classes.id) AS members FROM classes ORDER BY id")
     .all()

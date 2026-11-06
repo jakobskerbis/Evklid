@@ -87,7 +87,7 @@ function schoolForms() {
   return `<details class="card" ${home.schools.length ? "" : "open"}>
     <summary class="h-icon"><b>${icon("plus")} ${esc(t(home.schools.length ? "tc.addSchool" : "tc.firstSchool"))}</b></summary>
     <form id="school-form" class="form">
-      <label>${esc(t("tc.schoolName"))}<input name="name" maxlength="80" required placeholder="${esc(t("tc.schoolNamePh"))}"></label>
+      <label>${esc(t("tc.schoolName"))}<input name="name" dir="auto" maxlength="80" required placeholder="${esc(t("tc.schoolNamePh"))}"></label>
       <label>${esc(t("tc.place"))}<input name="place" maxlength="60"></label>
       <label>${esc(t("tc.stage"))}<select name="stage"><option value="OS">${esc(t("tc.stageOS"))}</option><option value="SS">${esc(t("tc.stageSS"))}</option></select></label>
       <div class="form-actions"><button class="primary" type="submit">${esc(t("tc.createSchool"))}</button></div>
@@ -108,7 +108,7 @@ function classForm() {
   return `<form id="class-form" class="card form">
     <h2 class="h-icon">${icon("plus")} ${esc(t("tc.newClass"))}</h2>
     <p class="muted">${esc(t("tc.newClassHint"))}</p>
-    <label>${esc(t("tc.className"))}<input name="name" maxlength="40" required placeholder="${esc(t("tc.classNamePh"))}"></label>
+    <label>${esc(t("tc.className"))}<input name="name" dir="auto" maxlength="40" required placeholder="${esc(t("tc.classNamePh"))}"></label>
     ${home.accounts === false ? "" : `<label>${esc(t("tc.path"))}<select name="path">${pathOptions("")}</select></label>`}
     ${home.schools.length ? `<label>${esc(t("tc.school"))}<select name="schoolId">${schoolOptions(home.schools[0].id)}</select></label>` : ""}
     <div class="form-actions"><button class="primary" type="submit">${esc(t("tc.create"))}</button></div>
@@ -383,6 +383,7 @@ async function render() {
   $("#school-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target.elements;
+    if (nameHasContact(f.name.value)) return toast(t("lg.nameContact")); // ime šole vidijo učenci razredov
     try {
       await api("/api/schools", { method: "POST", body: { name: f.name.value, place: f.place.value, stage: f.stage.value } });
       toast(t("tc.schoolCreated"));

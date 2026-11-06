@@ -548,8 +548,10 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
   app.post("/api/schools", (req, res) => {
     const p = needVerified(req, res);
     if (!p) return;
-    const name = clean(req.body?.name, 80);
+    const name = clean(stripInvisible(req.body?.name ?? ""), 80);
     if (name.length < 3) return res.status(400).json({ error: "Vpišite ime šole." });
+    // Ime šole vidijo učenci njenih razredov (razredi učenca, s.name): brez kontaktov kot ime razreda.
+    if (nameHasContact(name)) return res.status(400).json({ error: NAME_CONTACT_ERROR, code: "lg.nameContact" });
     const out = schools.create(p.id, { name, place: clean(req.body?.place, 60), stage: req.body?.stage });
     if (out.error) return res.status(400).json(out);
     res.status(201).json(schools.schoolsOf(p.id).find((s) => s.id === out.id));
