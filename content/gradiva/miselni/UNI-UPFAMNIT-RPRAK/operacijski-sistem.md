@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Jedro in sistemski klici
+  - jedrni in uporabniški način
+  - lupina je navaden program
+- Proces
+  - program v izvajanju, PCB, PID
+  - stanja: pripravljen, teče, čaka
+  - napaka: iz čakanja takoj teče
+- Merila razporejanja
+  - $t_\mathrm{o} = t_\mathrm{k} - t_\mathrm{p}$
+  - $t_\mathrm{č} = t_\mathrm{o} - b$
+- Algoritmi
+  - FCFS: učinek konvoja
+  - SJF optimalen, dokaz z zamenjavo
+  - RR s kvantom $q$
+- Naprave
+  - gonilniki, prekinitve, DMA
+  - poizvedovanje zapravlja procesor
+- Datoteke
+  - drevo imenikov, absolutna pot
+  - bloki $n_\mathrm{b} = \lceil s/B \rceil$
+  - pravice rwx, osmiško $750$
