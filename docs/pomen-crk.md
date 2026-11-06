@@ -65,24 +65,35 @@ klikljivih črk manj (varna smer).
 | Črka | Pomen v slovarju | Velja, ko | Ni ta pomen (primeri) |
 |---|---|---|---|
 | x₁, x₂, x₁,₂ (MAT) | rešitev (ničla) kvadratne enačbe | formula rešitev / Vieta, tema kvadratna enačba/funkcija/neenačba, diskriminanta, Vieta | točke na intervalu (Lagrange, Rolle, Cauchy), člena zaporedja, povprečje, integral, odvod |
-| a, b, c (MAT) | koeficienti kvadratne enačbe | a x², b² − 4ac, formula rešitev; tema kvadratna | stranice trikotnika, poljubna števila, polosi elipse/hiperbole, y = c/x, zaporedje; b v a x² + b (prosti člen) |
+| a, b, c (MAT) | koeficienti kvadratne enačbe | a x² (ne a x³, ne log_a), b² − 4ac, −b ± √, Vieta ob x₁/x₂; tema kvadratna | stranice trikotnika, poljubna števila, polosi elipse/hiperbole, y = c/x, zaporedje; b v a x² + b (prosti člen) |
 | D (MAT) | diskriminanta | b² − 4ac, √D; tema kvadratna | oglišče D, definicijsko območje |
 | k (MAT) | smerni koeficient | y = k x + n; tema premica, linearna funkcija | indeks, celo število (kπ), binomski simbol, zaporedje, lekcija o linearnih enačbah ali sistemih (množitelj ±k) |
 | n (MAT) | začetna vrednost | y = k x + n v isti formuli ali povedi (j, pregled 463: ne vsak n v temi) | naravno število, n-ti koren, mnogokotnik, razmerje m : n |
-| p, q (MAT) | koordinati temena | y = a(x − p)² + q; tema teme/temenska oblika | verjetnost, praštevilo |
+| p, q (MAT) | koordinati temena / središča | (x − p)² + (y − q)² → središče S(p, q); y = a(x − p)² + q, tema teme/temenska oblika → teme | verjetnost, praštevilo, premik grafa f(x − p) + q, stožnice (y² = 2px) |
 | r, d (MAT) | polmer, premer | π v formuli ali tema krog/valj/stožec/krogla | `dx`, integral, vsota, limita, kotne funkcije, »okrog«; d kot razdalja (sekanta, tangenta) |
-| o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, verjetnost P (met kocke), hitrost v |
-| e (MAT) | Eulerjevo število | e^…, ln, exp, lim | – |
+| o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, S v stopinjah (vsota kotov), verjetnost P (met kocke), hitrost v |
+| e (MAT) | Eulerjevo število | e^…, ln, exp, lim | linearna ekscentričnost (e² = a² − b², ε = e/a) |
 | i (MAT) | imaginarna enota | Eulerjeva oblika (e^{iφ}, cos φ ± i sin φ, i² = −1) sama; i², 3 + 4i in tema kompleksna/kvadratna | indeks i, enotski vektor \vec i |
 | a_n, a_1, s_n (MAT) | zaporedje | tema zaporedje/vrsta | koeficienti polinoma |
-| α, β, γ (MAT) | kot | sin/cos/tan, °, ∠ ali geometrijska tema | »ravnina α«, stopnja tveganja α, parameter, skalar (α f + β g) |
+| α, β, γ (MAT) | kot | sin/cos/tan, °, ∠ ali geometrijska tema | »ravnina α«, stopnja tveganja α, parameter, skalar (α f + β g, α, β ∈ ℝ, vektorski prostor), e^{αt}, cos βt, λ = α ± iβ |
 | M (FIZ) | navor | M = r F (tudi r · F), tema navor/vzvod/ravnovesje | masa Zemlje ali Sonca (gravitacija), molska masa (KEM ima svoj M) |
 | k, x (FIZ) | konstanta vzmeti, raztezek | F = k x (tudi k · x, k × x, k Δx), tema vzmet/prožnost/nihanje | Boltzmannova konstanta, valovno število, lega x |
 | n (FIZ) | lomni količnik | n = c₀/c, sin, tema lom/leča/optika | množina snovi (p V = n R T), število nihajev ali meritev, red uklona |
 | e (FIZ) | naboj | privzeto | e^{−t/τ} (Eulerjevo število) |
-| A (FIZ) | delo | privzeto | amplituda pri nihanju in valovanju |
+| A (FIZ) | delo | privzeto | amplituda pri nihanju in valovanju; ploščina preseka (torzija, nosilci, $FL/(EA)$) |
+| F (FIZ) | sila | privzeto | gorišče pri lečah in zrcalih |
+| a (FIZ) | pospešek | F = m a, v = v₀ + a t, a = v²/r, F/m, enota m/s²; tema gibanje, sile, kroženje | razdalja predmeta (leče), rob kvadra, mrežni parameter, ročica (torzija), stranica preseka |
+| c (FIZ) | hitrost svetlobe (valovanja) | c = λν, mc², hc; tema svetloba, valovanje, zvok, optika | rob kvadra; c_p ne podeduje; specifična toplota ima svojo različico (Q =, ΔT) |
+| t (FIZ, KEM, BIO) | čas / temperatura v °C | °C: T = t + 273, število s °C za = ali ≈; sicer čas (BIO le z enoto časa) | Δt = 300 °C / hitrost je čas |
+| E, T (FIZ) | energija, temperatura | privzeto | modul elastičnosti in navor v mehaniki trdnin (torzija, upogib, nosilci) |
+| B, G (FIZ) | gostota magnetnega polja, gibalna količina | formula (Φ = B S, G = m v), enota T, tema magnetizem / trki | podpora nosilca, teža G, gravitacijska konstanta, Gibbsova energija ΔG |
+| S (FIZ) | ploščina | privzeto | ΔS (entropija) |
+| p, n (KEM) | tlak, množina snovi | p privzeto; n z enoto mol, n = m/M, m = n M ali privzeto | proton p⁺, nevtron n⁰, orbitala np², lupina n = 4, n = 10 meritev, n = 0, 1, 2, kromosomi |
+| Q (KEM) | reakcijski kvocient / toplota | Q < K, Q = K, Q = [ … ] → kvocient; sicer toplota | – |
+| R, S, w (KEM) | plinska konstanta, entropija, masni delež | R T, −ΔH/R; ΔS, T ΔS; w = m/…; ustrezna tema | R_f, R_s, natezna trdnost R_m; substrat [S]; širina vrha w |
+| črke iz kemije (BIO) | m, n, c, V, T, t, ΔG | le z enoto ali formulo; oznake z indeksom (K_a, N_A …) ostanejo | p = 0,05 (p-vrednost), Vv (alel), 4n (garnitura), w = W/W_max (fitnes), R = p/q |
 | H, F, G, ξ (MAT) | – (ni v slovarju) | samo definicija v besedilu ali oznake lekcije | primitivni funkciji F, G, vmesna točka ξ |
-| t, m, v, a, F, s … (FIZ) | čas, masa, hitrost … | privzeto v fiziki | – |
+| m, v, s … (FIZ) | masa, hitrost, pot … | privzeto v fiziki | – |
 
 Nov vnos v slovar: če ima črka v predmetu več kot en pogost pomen, mora imeti `ctx` ali `teme` (in po
 potrebi `ne`/`brez`); sicer bi bila klikljiva povsod. Pomene piše in pregleduje Opus (CLAUDE.md).

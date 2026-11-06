@@ -1,0 +1,130 @@
+// Pomen črk v fiziki, kemiji in biologiji (kontrolni pregled PR 463 §4): te napake so bile že na main.
+// Raje nič kot napačno: dvoumna črka velja le, ko jo potrdi formula, enota ali tema.
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import katex from "katex";
+import { Marked } from "marked";
+import { createRenderer } from "../public/rich.js";
+import { annotateTex, withFormulaSubject } from "../public/formula-data.js";
+import { cardFor, configureCard } from "../public/formula-card.js";
+import SL from "../public/i18n/sl.js";
+
+configureCard({ katex, t: (k, v = {}) => String(SL[k] || k).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "") });
+const fx = createRenderer({ marked: new Marked(), katex, sanitize: (h) => h, annotate: (tex, o) => annotateTex(tex, undefined, o) });
+const codes = (html) => [...html.matchAll(/data-fx="([^"]+)"/g)].map((m) => decodeURIComponent(m[1].replace(/\./g, "%")));
+// Imena vseh pomenov črke v besedilu (brez oznak lekcije: kartice, naloge, klepet).
+const names = (subject, topic, text, key) =>
+  codes(withFormulaSubject(subject, () => fx.renderRich(text), null, topic))
+    .filter((c) => c.split(":")[2] === key)
+    .map((c) => cardFor(c)?.label?.replace(/<[^>]+>/g, "") || "");
+const none = (s, t, x, k) => assert.deepEqual(names(s, t, x, k), [], `${k} v »${x}«`);
+const has = (s, t, x, k, re) => {
+  const n = names(s, t, x, k);
+  assert.ok(n.length && n.every((l) => re.test(l)), `${k} v »${x}«: ${n.join(" / ") || "–"}`);
+};
+
+test("fizika: F, a, c, t, E, A, T, B, G, S po kontekstu", () => {
+  none("FIZ", "Lom svetlobe", "Gorišče $F$ leče je $a_1 = 8\\,\\mathrm{cm}$ od nje, slika pa $a_2$.", "F");
+  none("FIZ", "Lom svetlobe", "Predmet je $a_1 = 8\\,\\mathrm{cm}$ od leče.", "a_1");
+  none("FIZ", "Gostota", "Kvader: $V = a \\cdot b \\cdot c$.", "c");
+  none("FIZ", "Gostota", "Kvader: $V = a \\cdot b \\cdot c$.", "a");
+  has("FIZ", "Temperatura in raztezanje", "Velja $T = t + 273\\,\\mathrm{K}$.", "t", /temperatura/);
+  has("FIZ", "Plinska enačba", "Pri $t_1 = 37\\,^\\circ\\mathrm{C}$ je plin topel.", "t", /temperatura/);
+  none("FIZ", "Torzija", "Ravnovesje: $T_A a = T_B b$.", "a");
+  none("FIZ", "Torzija", "Ravnovesje: $T_A a = T_B b$.", "T_A");
+  none("FIZ", "Torzija", "Raztezek palice je $FL/(EA)$.", "E");
+  none("FIZ", "Torzija", "Raztezek palice je $FL/(EA)$.", "A");
+  none("FIZ", "Vlažen zrak", "Velja $c_{p,z} = 1{,}0$.", "c_p,z");
+  none("FIZ", "Magnetni krogi", "Presek jedra je $a \\times b$.", "a");
+  none("FIZ", "Notranje sile v nosilcih", "Podpora $B$ nosi nosilec.", "B");
+  none("FIZ", "Drugi zakon termodinamike", "Velja $\\Delta G = \\Delta H - T \\Delta S$.", "G");
+  none("FIZ", "Drugi zakon termodinamike", "Velja $\\Delta G = \\Delta H - T \\Delta S$.", "S");
+  // Pravilni pomeni ostanejo.
+  has("FIZ", "Enakomerno pospešeno gibanje", "Pospešek $a = 2\\,\\mathrm{m/s^2}$ in $v = v_0 + a t$.", "a", /pospešek/);
+  has("FIZ", "Newtonovi zakoni", "Velja $F = m a$.", "a", /pospešek/);
+  has("FIZ", "Newtonovi zakoni", "Velja $F = m a$.", "F", /sila/);
+  has("FIZ", "Enakomerno gibanje", "Čas je $t = 5\\,\\mathrm{s}$.", "t", /čas/);
+  has("FIZ", "Svetloba", "Velja $c = \\lambda \\nu$.", "c", /svetlob/);
+  has("FIZ", "Specifična toplota", "Velja $Q = m c \\Delta T$.", "c", /specifična toplota/);
+  has("FIZ", "Magnetno polje", "Gostota je $B = 0{,}5\\,\\mathrm{T}$.", "B", /magnetnega/);
+  has("FIZ", "Gibalna količina", "Velja $G = m v$.", "G", /gibalna/);
+  has("FIZ", "Tlak", "Tlak je $p = F/S$.", "S", /ploščina/);
+});
+
+test("kemija: p⁺, n⁰, lupina, Q < K, R, S, w, t v °C", () => {
+  none("KEM", "Zgradba atoma", "Proton $p^+$ in nevtron $n^0$.", "p");
+  none("KEM", "Zgradba atoma", "Proton $p^+$ in nevtron $n^0$.", "n");
+  none("KEM", "Zgradba atoma", "Elektron je v lupini $n = 4$.", "n");
+  has("KEM", "Kemijsko ravnotežje", "Ker je $Q < K$, poteka reakcija v desno.", "Q", /reakcijski kvocient/);
+  has("KEM", "Termokemija", "Sprejeta toplota je $Q = m c \\Delta T$.", "Q", /toplota/);
+  has("KEM", "Plinska enačba", "Velja $pV = nRT$.", "R", /plinska konstanta/);
+  has("KEM", "Plinska enačba", "Velja $pV = nRT$.", "n", /množina/);
+  has("KEM", "Plinska enačba", "Velja $pV = nRT$.", "p", /tlak/);
+  has("KEM", "Plinska enačba", "Pri $t = 25\\,^\\circ\\mathrm{C}$.", "t", /temperatura/);
+  has("KEM", "Entropija", "Velja $\\Delta G = \\Delta H - T\\Delta S$.", "S", /entropija/);
+  has("KEM", "Raztopine", "Masni delež je $w = \\frac{m_1}{m}$.", "w", /masni delež/);
+});
+
+test("biologija: črke iz kemije le s formulo ali enoto", () => {
+  none("BIO", "Statistika v biologiji", "Ker je $p < 0{,}05$, je razlika značilna.", "p");
+  none("BIO", "Dedovanje", "Križanje $Vv \\times Vv$.", "V");
+  none("BIO", "Raziskovanje v biologiji", "Poskus ponovimo $n = 3$-krat.", "n");
+  none("BIO", "Evolucija", "Garnitura $4n$.", "n");
+  none("BIO", "Evolucija", "Relativni fitnes $w = W/W_{max}$.", "w");
+  none("BIO", "Evolucija", "Razmerje $R = p/q$.", "R");
+  none("BIO", "Mikrobna rast", "Substrat $S$ se porablja.", "S");
+  none("BIO", "Uravnavanje izražanja genov", "Gen $lacI$ in $c$.", "c");
+  has("BIO", "Celica", "Raztopina ima $c = 0{,}1\\,\\mathrm{mol/L}$.", "c", /koncentracija/);
+  has("BIO", "Celica", "Vzorec ima $V = 2\\,\\mathrm{mL}$.", "V", /prostornina/);
+  has("BIO", "Celica", "Masa je $m = 5\\,\\mathrm{g}$.", "m", /masa/);
+  has("BIO", "Fotosinteza", "Konstanta $K_a$ kisline.", "K_a", /kisline/);
+});
+
+test("pravilni pomeni ostanejo: n v kemiji, a z indeksom, čas v biologiji", () => {
+  has("KEM", "Statistična obdelava rezultatov", "Iz vzorca dobimo $n = 0{,}01\\,\\mathrm{mol}$ in $m = n \\cdot M$.", "n", /množina/);
+  none("KEM", "Statistična obdelava rezultatov", "Opravili smo $n=10$ meritev.", "n");
+  none("KEM", "Elementi p-bloka", "Konfiguracija $ns^2\\,np^2$.", "n");
+  none("KEM", "Elementi p-bloka", "Konfiguracija $ns^2\\,np^2$.", "p");
+  has("FIZ", "Enakomerno kroženje", "Velja $a_r = \\dfrac{v^2}{r}$.", "a", /pospešek/);
+  has("FIZ", "Newtonovi zakoni", "Velja $a_2 = F/m_2$.", "a", /pospešek/);
+  has("BIO", "Organski sistemi živali", "Čas je $t = 1\\,\\mathrm{dan}$.", "t", /čas/);
+});
+
+test("ΔG v biologiji, R v naklonu, hitrost zvoka", () => {
+  has("BIO", "Mikrobni metabolizem", "Velja $\\Delta G = -n F \\Delta E$.", "G", /Gibbs/);
+  has("KEM", "Kemijsko ravnotežje", "Naklon premice je $-\\Delta_\\mathrm{r}H^\\circ/R$.", "R", /plinska konstanta/);
+  has("FIZ", "Valovanje", "Pri specifični toploti … je hitrost zvoka $c = \\sqrt{\\kappa p/\\rho}$.", "c", /hitrost/);
+});
+
+// Drugi pregled PR 463 (§5): krožnica, a pri x³ in log_a, S v stopinjah, e pri stožnicah, α/β kot skalarja.
+test("pregled 463-2 §5: p, q, a, S, e, α, β po kontekstu", () => {
+  const kr = "Krožnica s središčem $S(0, 5)$ ima enačbo $(x - p)^2 + (y - q)^2 = r^2$.";
+  has("MAT", "Krožnica", kr, "p", /središča/);
+  has("MAT", "Krožnica", kr, "q", /središča/);
+  has("MAT", "Kvadratna funkcija", "Temenska oblika $f(x) = a(x - p)^2 + q$.", "p", /temena/);
+  none("MAT", "Transformacije grafov", "Premik grafa: $g(x) = f(x - p) + q$.", "q");
+  none("MAT", "Odvod", "Za funkcijo $f(x) = ax^3 + 3x^2$ velja $f'(2) = -36$.", "a");
+  none("MAT", "Logaritemska funkcija in enačbe", "Velja $\\log_a x^2 = 2\\log_a x$.", "a");
+  has("MAT", "Kvadratna enačba", "Reši $2ax^2 + bx + c = 0$.", "a", /vodilni/);
+  none("MAT", "Večkotniki", "Vsota kotov: $S = 5 \\cdot 180^\\circ = 900^\\circ$.", "S");
+  has("MAT", "Večkotniki", "Ploščina je $S = 12\\,\\mathrm{cm^2}$.", "S", /ploščina/);
+  none("MAT", "Elipsa, hiperbola in parabola", "Pri elipsi velja $e^2 = a^2 - b^2$.", "e");
+  none("MAT", "Elipsa, hiperbola in parabola", "Ekscentričnost je $\\varepsilon = \\frac{e}{a}$.", "e");
+  has("MAT", "Eksponentna funkcija", "Graf $y = e^x$.", "e", /Euler/);
+  for (const k of ["α", "β"]) {
+    none("MAT", "Vektorski prostori", "Za $\\alpha, \\beta \\in \\mathbb{R}$ velja $\\alpha u + \\beta v \\in U$.", k);
+    none("MAT", "Linearne diferencialne enačbe drugega reda", "Pri $\\lambda = \\alpha \\pm i\\beta$ je $x = e^{\\alpha t}(C_1\\cos\\beta t + C_2\\sin\\beta t)$.", k);
+    has("MAT", "Kotne funkcije", "Velja $\\sin\\alpha = \\frac{a}{c}$ in $\\cos\\beta = \\frac{b}{c}$.", k, /kot/);
+  }
+  has("MAT", "Vektorji", "Kot med vektorjema je $\\alpha = 30^\\circ$.", "α", /kot/);
+  // Mešana serija: P pri verjetnosti je »površina« le brez teme; z temo naloge (task.topicId) ni.
+  none("MAT", "Verjetnost · Kombinatorika in verjetnost", "Verjetnost je $P = P_1 \\cdot P_2$.", "P");
+});
+
+test("serija nalog iz več tem: vsaka naloga da svojo temo in predmet (app.js, §5.6)", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(src, /function renderTask\(task, ctx\) \{\n\s*setTaskFx\(task\);/);
+  assert.match(src, /taskFxNow\(\)\?\.scope/);
+  assert.match(src, /taskFxNow\(\)\?\.subject/);
+});
