@@ -344,7 +344,11 @@ def normale_navzven(me):
     obrnjeno = False
     # Kot obrni_ce_navznoter v izvozi-z-anatomy.py: tudi skoraj zaprte mreže (odprtine žil, zaklopk) obrnemo po
     # predznaku prostornine, preden zapečemo senco; tanke odprte plošče pusti recalc_face_normals.
-    if vol < 0 and odprtih <= 0.05 * max(len(bm.edges), 1):
+    if me.get("navzvenGlas"):  # odprta lupina z zaplato (srce_zile.zapri_luknjo): glas po ploščini od središča
+        c = sum((v.co for v in bm.verts), Vector()) / max(len(bm.verts), 1)
+        if sum(f.calc_area() * f.normal.dot(f.calc_center_median() - c) for f in bm.faces) < 0:
+            bmesh.ops.reverse_faces(bm, faces=bm.faces); obrnjeno = True
+    elif vol < 0 and odprtih <= 0.05 * max(len(bm.edges), 1):
         bmesh.ops.reverse_faces(bm, faces=bm.faces); obrnjeno = True
     bm.to_mesh(me); bm.free()
     return odprtih, obrnjeno

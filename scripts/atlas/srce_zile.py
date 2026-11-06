@@ -259,11 +259,11 @@ def zapri_luknjo(me, najmanj_tock=40, stena=0.003, obrocev=12, korakov=40):
             v.co = h[0] + d * stena
     gladi(12, 0.4)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-    # recalc na odprti mreži (ustje mitralne zaklopke, vene) lahko obrne vse normale navznoter (preddvor bi bil »votlina«:
-    # odprtost 0, temna senca, sijaj endokarda). Usmeritev izbere glas po ploščini: zunanja plast gleda stran od središča.
-    if sum(f.calc_area() * f.normal.dot(f.calc_center_median() - c_vse) for f in bm.faces) < 0:
-        bmesh.ops.reverse_faces(bm, faces=bm.faces)
     bm.to_mesh(me); bm.free()
+    # recalc na odprti mreži (ustje mitralne zaklopke, vene) lahko obrne vse normale navznoter (preddvor bi bil »votlina«:
+    # odprtost 0, temna senca, sijaj endokarda); normale_navzven (izvozi-organe.py) zato pri tej mreži usmeritev izbere
+    # z glasom po ploščini (zunanja plast gleda stran od središča), ne s predznakom prostornine.
+    me["navzvenGlas"] = True
     return len(notranje)
 
 
