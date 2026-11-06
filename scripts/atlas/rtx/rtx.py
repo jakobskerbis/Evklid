@@ -467,10 +467,12 @@ def cakaj(peka, st):
         try:
             nid, organi, koda = beri_nalogo()
             if nid is None and isinstance(organi, str):  # neveljavna naloga brez id
-                if organi != zadnja_napaka:
+                if organi != zadnja_napaka:  # stanje zadnje naloge ostane; napaka datoteke posebej
                     zadnja_napaka = organi
-                    st.update(stanje="zavrnjeno", napake=[organi]); pisi(f"NAPAKA: {organi}")
-            elif nid is not None and nid not in obdelane:
+                    st["naloga_napaka"] = organi; pisi(f"NAPAKA: {organi}")
+                continue
+            st.pop("naloga_napaka", None); zadnja_napaka = None
+            if nid is not None and nid not in obdelane:
                 obdelane.add(nid)
                 if isinstance(organi, str):
                     zavrni(st, nid, None, organi)
@@ -490,10 +492,12 @@ def cakaj(peka, st):
                     vrni_kodo(stara, f"rtx.py različice {koda} je končala z izhodom {r}")
                     st = beri_stanje()
                     obdelane = obdelane_naloge(st) | {nid}
-                    if st.get("naloga") == nid and st.get("stanje") == "teče":
-                        st.update(stanje="napaka", konec=cas()); st.setdefault("napake", []).append(f"nova koda je končala z izhodom {r}")
+                    if st.get("naloga") != nid or st.get("stanje") == "teče":  # nova koda naloge ni končala
+                        st.update(stanje="napaka", naloga=nid, organi=organi, konec=cas(),
+                                  napake=[f"nova koda {koda} je končala z izhodom {r}; vrnjena prejšnja koda"])
                         zgodovina(st)
-                    st.setdefault("napake", []).append(f"koda {koda} vrnjena na prejšnjo (izhod {r})")
+                    else:
+                        st.setdefault("napake", []).append(f"nova koda {koda} je kasneje končala z izhodom {r}; vrnjena prejšnja koda")
                     continue
                 znani = organi_v_kodi()
                 slabi = [o for o in organi if o not in znani]
