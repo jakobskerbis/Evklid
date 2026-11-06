@@ -56,6 +56,8 @@ export function withoutPilotPhotos(file) {
   try {
     if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) return 0;
     const n = Number(db.prepare("DELETE FROM pilot_photos").run().changes);
+    // Prepis naloge sodi k fotografiji (sprožilec pilot_photo_gone ga počisti tudi sam; tu še za stare kopije brez njega).
+    if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_scans'").get()) db.exec("UPDATE pilot_scans SET problems = NULL");
     if (n) db.exec("VACUUM"); // izbrisani bajti ne ostanejo v prostih straneh kopije
     return n;
   } finally {

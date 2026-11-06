@@ -101,6 +101,11 @@ export function migratePilotTasks(db) {
       PRIMARY KEY (student_id, item)
     );
   `);
+  // Prepis naloge velja skupaj s fotografijo (isto soglasje): ko fotografija izgine (izbris, rok, izstop, kopija),
+  // izgine tudi prepis. Sproži se ob vsakem DELETE, tudi v varnostni kopiji (kopije.js).
+  db.exec(`CREATE TRIGGER IF NOT EXISTS pilot_photo_gone AFTER DELETE ON pilot_photos BEGIN
+    UPDATE pilot_scans SET problems = NULL WHERE id = OLD.scan_id;
+  END`);
   // Migracije za baze iz prve različice (pred pregledom PR #474).
   if (!hasCol(db, "pilot_photos", "expires_at")) {
     db.exec("ALTER TABLE pilot_photos ADD COLUMN expires_at TEXT");
@@ -350,10 +355,11 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     try {
       let id;
       if (prev) {
-        db.prepare("UPDATE pilot_scans SET ok = ?, note = ?, problems = ?, created_at = datetime('now') WHERE id = ?").run(b.ok ? 1 : 0, n, problems.length ? seal(JSON.stringify(problems)) : null, prev.id);
         id = prev.id;
-        // Nova ocena istega pogoja: stara fotografija ne sodi več k njej.
+        // Nova ocena istega pogoja: stara fotografija (in z njo prepis, sprožilec) ne sodi več k njej. Najprej izbris,
+        // nato nova ocena, sicer bi sprožilec pobrisal novi prepis.
         db.prepare("DELETE FROM pilot_photos WHERE scan_id = ?").run(id);
+        db.prepare("UPDATE pilot_scans SET ok = ?, note = ?, problems = ?, created_at = datetime('now') WHERE id = ?").run(b.ok ? 1 : 0, n, problems.length ? seal(JSON.stringify(problems)) : null, id);
       } else {
         id = db
           .prepare("INSERT INTO pilot_scans (student_id, cond, ok, note, problems) VALUES (?, ?, ?, ?, ?)")

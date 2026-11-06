@@ -310,6 +310,12 @@ test("pilot: soglasje z jezikom in rokom, prepis samo s fotografijo, magični ba
     assert.equal(c.days, 30);
     assert.match(c.text, /ponudniku umetne inteligence/);
     assert.ok(Math.abs(ph.d - 30) < 0.01, `rok ${ph.d}`);
+    // Ponovna ocena s fotografijo obdrži novi prepis; izbris fotografije izbriše tudi prepis (sprožilec).
+    await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "board", ok: false, image: IMG, consent: true, problems: ["y=2x"] } });
+    assert.notEqual(store.db.prepare("SELECT problems FROM pilot_scans WHERE cond = 'board'").get().problems, null);
+    await a.call(`/api/students/${a.sid}/pilot/scan/board/photo`, { method: "DELETE" });
+    assert.equal(store.db.prepare("SELECT problems FROM pilot_scans WHERE cond = 'board'").get().problems, null);
+    await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "board", ok: true, image: IMG, consent: true, problems: ["x^2=4"], lang: "de" } });
     // Napačne slike: tip ne ustreza bajtom, ni niz, prevelika.
     for (const image of ["data:image/png;base64,/9j/4AAQSkZJRgABAQ==", { x: 1 }, `data:image/jpeg;base64,/9j/${"A".repeat(2 * 1024 * 1024)}`])
       assert.equal((await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "screen", ok: true, image, consent: true } })).status, 400);
