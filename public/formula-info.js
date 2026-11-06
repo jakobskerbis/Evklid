@@ -116,7 +116,13 @@ function refreshMarks() {
   // Najprej vsa branja (vidnost), nato pisanje, da brskalnik ne preračunava postavitve za vsak razdelek.
   const plans = [];
   for (const [root, els] of groups) {
-    const shown = els.filter(visible);
+    // Skrit razdelek (npr. skrit podzavihek kalkulatorja, ki ostane v pomnilniku): ena poizvedba namesto ene na
+    // oznako. Viden razdelek lista formul (.fm-sec, oznake nikoli skrite s CSS) brez zaprtih <details> in [hidden]:
+    // vse oznake so vidne (tisoč oznak v Formulah ob vsakem preklopu na telefonu; naloga hitrost, j 6. 11. 2026).
+    // Drugod (pogled, sporočilo, dialog) je oznaka lahko skrita s slogom, zato tam preverimo vsako posebej.
+    const whole = root === document.body ? null : visible(root);
+    const all = whole && root.classList.contains("fm-sec") && !root.querySelector("details:not([open]), [hidden]");
+    const shown = whole === false ? [] : all ? els : els.filter(visible);
     let page = pages.get(root);
     if (!page) pages.set(root, (page = createMarkPage()));
     page.owners.clear();
