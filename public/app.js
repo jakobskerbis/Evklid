@@ -1178,8 +1178,6 @@ async function send(text, { deep = false } = {}) {
     });
     await loadConversations();
   } catch (err) {
-    // Brez povezave ali prekinjen odgovor: lokalni zaznavalnik (strošek 0).
-    if (text) showNujno(lokalnoNujno(text), { meja: true });
     // Odgovor, prekinjen sredi izpisa: pokažemo, kar je prišlo, brez pike »piše« (prazen mehurček odstranimo).
     if (pacer) {
       pacer.finish();
@@ -1191,6 +1189,8 @@ async function send(text, { deep = false } = {}) {
       bubble.removeAttribute("title");
       if (!bubble.textContent.trim()) bubble.remove();
     }
+    // Brez povezave ali prekinjen odgovor: lokalni zaznavalnik (strošek 0).
+    if (text) showNujno(lokalnoNujno(text), { meja: true });
     // Izklopljen klepet: samo obvestilo nad poljem, vprašanje ostane v polju.
     if (err.chatOff) {
       userEl?.remove();

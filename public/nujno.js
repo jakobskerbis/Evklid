@@ -12,6 +12,7 @@
 // japonščina, tajščina) kot podniz. Znak z »=« na začetku se primerja z besedilom S šumniki (vietnamščina:
 // »tự tử« ni »từ từ«).
 import { SCHOOL_SYSTEMS, isRegional } from "./regions.js";
+import { jeFaks } from "./stopnja.js";
 
 const CYR = {
   а: "a", б: "b", в: "v", г: "g", ґ: "g", д: "d", ђ: "dj", ѓ: "gj", е: "e", ё: "e", є: "je", ж: "z", з: "z", ѕ: "dz",
@@ -418,7 +419,7 @@ export const VRSTE = ["zdravje", "stiska", "nasilje", "nevarnost"];
 // (vedno). Drugi šolski sistemi (public/regions.js »help«): številka za nujno pomoč iz besedila, sicer 112.
 export function stevilke(settings = {}) {
   const sys = settings?.school_system;
-  const faks = settings?.educational_track === "UNIVERZA";
+  const faks = jeFaks(settings);
   if (!isRegional(sys)) return { si: true, faks, sos: "112", policija: "113", otroci: "116 111", odrasli: "116 123" };
   const help = SCHOOL_SYSTEMS[sys]?.help || "";
   const num = (word) => help.match(new RegExp(`${word}\\s+([0-9][0-9 -]*[0-9]|[0-9]+)`, "i"))?.[1]?.trim();
