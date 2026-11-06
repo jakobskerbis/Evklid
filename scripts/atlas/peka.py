@@ -11,7 +11,9 @@
 # Recept tkiva (cfg tekstura.recepti[<tkivo>]): barva, barva2 (lise), lise (moč), maščoba po maski (masca moč,
 # mascaBarva/mascaBarva2, mascaNasip = blazinica, mascaPremik = višina režnja, mascaMera = velikost režnja, mascaZleb =
 # barva žleba med režnji, mascaHrap), gube (premik, merilo), vlakna (premik, merilo), zilice (moč, barva), hrap,
-# notranja/notranjaHrap (endokard), kletka (razdalja žarkov peke, sicer tekstura.kletka).
+# notranja/notranjaHrap (endokard), kletka (razdalja žarkov peke, sicer tekstura.kletka); žile z atributom OSI
+# (srce_zile.py: R = dolžina vzdolž žile, G/B = cos/sin kota okoli osi, A = polmer): vzdolz (višina vzdolžnih gub
+# adventicije v m), vzdolzRazmik (razmik gub v m), vasa/vasaBarva (vasa vasorum: drobne žilice, podolgovate vzdolž žile).
 # Maske na ogliščih (barvni atribut »PEKA«: R = maščoba 0–1, G = odprtost 0 votlina … 1 zunaj) izračuna klicatelj
 # (maske()) pred razdelitvijo; razdelitev jih gladko prenese na visoko mrežo.
 import bpy, bmesh, math, os, time
@@ -22,7 +24,7 @@ from mathutils.bvhtree import BVHTree
 PRIVZETO = dict(barva=(0.5, 0.2, 0.18), barva2=(0.42, 0.14, 0.13), lise=0.35, liseMera=0.025, hrap=0.35, gube=0.00012, gubeMera=0.003,
                 vlakna=0.0, vlaknaMera=0.0012, masca=None, mascaBarva=(0.86, 0.66, 0.30), mascaPremik=0.0012, mascaNasip=0.0, mascaMera=0.004,
                 mascaHrap=0.42, zilice=0.0, ziliceBarva=(0.36, 0.06, 0.07), ziliceMera=0.012, notranja=None, notranjaHrap=0.22,
-                razdeli=2, robSvetel=0.0)
+                razdeli=2, robSvetel=0.0, vzdolz=0.0, vzdolzRazmik=0.0025, vasa=0.0, vasaBarva=(0.42, 0.06, 0.06))
 
 
 def _r(tc, tkivo):
@@ -181,6 +183,30 @@ def material_peke(tkivo, r, velikost):
         z = mul(mul(rng(vo.outputs["Distance"], 0.0, 0.03, 1.0, 0.0), r["zilice"]), rng(odprt, 0.4, 0.7))
         z = mul(z, rng(sum_(0.05 * velikost, 2, 0.5, 7.7), 0.4, 0.6))  # žilice samo ponekod (ne mreža po vsem)
         c = mix(z, c, r["ziliceBarva"])
+    if r["vasa"] or r["vzdolz"]:  # žile (OSI): podolgovate lise in vasa vasorum vzdolž stene
+        oa = N("ShaderNodeAttribute"); oa.attribute_name = "OSI"
+        so = N("ShaderNodeSeparateColor"); L(oa.outputs["Color"], so.inputs[0])
+        def mm_(a, b):
+            x = N("ShaderNodeMath"); x.operation = "MULTIPLY"; L(a, x.inputs[0])
+            if isinstance(b, (int, float)): x.inputs[1].default_value = b
+            else: L(b, x.inputs[1])
+            return x.outputs[0]
+        # kot okoli osi brez omejitve na 0–1 (cos/sin sta lahko negativna): obseg v metrih × polmer
+        ox, oy = mm_(so.outputs[1], oa.outputs["Alpha"]), mm_(so.outputs[2], oa.outputs["Alpha"])
+        vec = N("ShaderNodeCombineXYZ"); L(ox, vec.inputs[0]); L(oy, vec.inputs[1]); L(mm_(so.outputs[0], 0.3), vec.inputs[2])
+        tl = N("ShaderNodeTexNoise"); tl.inputs["Scale"].default_value = 1 / 0.006; tl.inputs["Detail"].default_value = 3
+        L(vec.outputs[0], tl.inputs["Vector"])
+        c = mix(mul(rng(tl.outputs["Fac"], 0.35, 0.7), 0.5), c, r["barva2"])
+        if r["vasa"]:
+            tn = N("ShaderNodeTexNoise"); tn.inputs["Scale"].default_value = 1 / 0.01; L(vec.outputs[0], tn.inputs["Vector"])
+            mk = N("ShaderNodeMix"); mk.data_type = "VECTOR"; mk.inputs[0].default_value = 0.004
+            L(vec.outputs[0], mk.inputs[4]); L(tn.outputs["Color"], mk.inputs[5])
+            vo = N("ShaderNodeTexVoronoi"); vo.feature = "DISTANCE_TO_EDGE"; vo.inputs["Scale"].default_value = 1 / 0.005
+            L(mk.outputs[1], vo.inputs["Vector"])
+            z = mul(rng(vo.outputs["Distance"], 0.0, 0.035, 1.0, 0.0), r["vasa"])
+            ts = N("ShaderNodeTexNoise"); ts.inputs["Scale"].default_value = 1 / 0.02; L(vec.outputs[0], ts.inputs["Vector"])
+            z = mul(z, rng(ts.outputs["Fac"], 0.45, 0.62))  # samo ponekod (drobno drevo, ne mreža po vsem)
+            c = mix(z, c, r["vasaBarva"])
     hr = N("ShaderNodeValue"); hr.outputs[0].default_value = r["hrap"]
     hrap = hr.outputs[0]
     if r.get("notranja"):
@@ -222,6 +248,17 @@ def visoka(ime, me, tkivo, r, velikost, tmp):
         d = o.modifiers.new("vl", "DISPLACE"); d.texture = t; d.texture_coords = "GLOBAL"; d.strength = r["vlakna"] * velikost
     me2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
     o.modifiers.clear(); o.data = me2
+    osi = me2.color_attributes.get("OSI")
+    if r["vzdolz"] and osi is not None and osi.domain == "POINT":  # vzdolžne gube adventicije (mehke, nepravilne)
+        n = len(me2.vertices)
+        A = np.zeros(n * 4); osi.data.foreach_get("color", A); A = A.reshape(-1, 4)
+        f_ = np.arctan2(A[:, 2], A[:, 1]); s_ = A[:, 0]; rr = np.maximum(A[:, 3], 1e-4)
+        k = np.maximum(3, np.round(2 * np.pi * rr / r["vzdolzRazmik"]))
+        g = 0.6 * np.sin(k * f_ + 2.2 * np.sin(s_ * 90.0) + 1.3 * np.sin(s_ * 37.0 + f_)) + 0.4 * np.sin(1.7 * k * f_ + 1.1 + 3.0 * np.sin(s_ * 61.0 + 2.0))
+        g *= 0.6 + 0.4 * np.sin(s_ * 23.0 + 3 * f_)
+        P0 = np.empty(n * 3); me2.vertices.foreach_get("co", P0); P0 = P0.reshape(-1, 3)
+        N0 = np.empty(n * 3); me2.vertex_normals.foreach_get("vector", N0); N0 = N0.reshape(-1, 3)
+        me2.vertices.foreach_set("co", (P0 + N0 * (g * r["vzdolz"])[:, None]).ravel()); me2.update()
     at = me2.color_attributes.get("PEKA")
     if r["masca"] and at is not None and at.domain == "POINT":
         n = len(me2.vertices)
@@ -265,12 +302,20 @@ def uv_atlas(objekti, tc, px):
     """Skupni UV atlas vseh vozlišč (rob otokov ~ 3 px, da se mip stopnje ne mešajo s sosedi) in trikotniki
     (MikkTSpace tangente: izvoz in peka uporabita enake)."""
     t0 = time.time()
-    _izberi(objekti, objekti[0])
+    # cevi z lastnim valjastim UV (srce_zile: »uvLastni«) ne gredo skozi Smart UV (šiv čez žilo)
+    brez = [o for o in objekti if not o.data.get("uvLastni")] or objekti
+    _izberi(brez, brez[0])
     bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
     bpy.ops.uv.smart_project(angle_limit=math.radians(tc.get("uvKot", 66)), island_margin=0.0, area_weight=0.0, scale_to_bounds=False)
     bpy.ops.object.mode_set(mode="OBJECT")
     for o in objekti:
         bm = bmesh.new(); bm.from_mesh(o.data); bmesh.ops.triangulate(bm, faces=bm.faces); bm.to_mesh(o.data); bm.free()
+    _izberi(objekti, objekti[0])
+    if len(brez) < len(objekti):  # enaka gostota tekslov: lastni UV (v obsegih) in Smart UV na isto merilo
+        bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
+        bpy.context.scene.tool_settings.use_uv_select_sync = True
+        bpy.ops.uv.select_all(action="SELECT"); bpy.ops.uv.average_islands_scale()
+        bpy.ops.object.mode_set(mode="OBJECT")
     razrezi = _razrezi_dolge(objekti, tc.get("uvPolnost", 0.6), tc.get("uvDolzina", 0.2))
     bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
     bpy.context.scene.tool_settings.use_uv_select_sync = True
@@ -334,8 +379,9 @@ def shrani_delo(pot, objekti, vrstice, velikost, tc, px):
         if r is None: continue
         v = bpy.data.objects.new("_vir", r[1]); v["ime"] = o["ime"]; v["tkivo"] = r[2]; vir.append(v)
     for o in objekti:  # maske PEKA potrebujejo samo izvirne mreže (sicer gredo v GLB kot COLOR_1)
-        pk = o.data.color_attributes.get("PEKA")
-        if pk is not None: o.data.color_attributes.remove(pk)
+        for ime_ in ("PEKA", "OSI"):
+            pk = o.data.color_attributes.get(ime_)
+            if pk is not None: o.data.color_attributes.remove(pk)
     bpy.data.libraries.write(pot, set(objekti) | set(vir), fake_user=True, compress=True)
     for v in vir: bpy.data.objects.remove(v)
     ocena = {}

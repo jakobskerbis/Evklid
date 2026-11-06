@@ -29,6 +29,7 @@ from mathutils.bvhtree import BVHTree
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
 from srce_geometrija import srce_dodatki  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
+from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 out = args[0] if args else "/tmp/organi-raw"
@@ -99,7 +100,11 @@ ORGANI = {
         odprtost=True,  # G = odprtost: maščoba v žlebovih samo na zunanji ploskvi (mascaZunaj), ne v prekatih v prerezu
         # Lastna geometrija (srce_geometrija.py): sprednja lističa mitralne in trikuspidalne zaklopke s tetivami,
         # sprednja-stranska papilarna mišica levega prekata, septomarginalna trabekula, mesnate trabekule obeh prekatov.
-        dodaj=["srce_dodatki"],
+        dodaj=["srce_dodatki", "srce_zile"],
+        # srce_zile (srce_zile.py): velike in venčne žile iz krivulj Z-Anatomy kot prava geometrija (zaprte cevi s steno,
+        # veje aortnega loka, štiri pljučne vene, zaprta zadnja stena levega preddvora). Lastne cevi se ne poenostavijo
+        # na računalniku, na telefonu blažje kot ostalo (»ohrani«): poenostavljena cev bi bila oglata.
+        ohrani=r"\(lastno\)",
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
         # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
         stena={"Left ventricle": 0.0028, "Right ventricle": 0.0008},
@@ -118,13 +123,24 @@ ORGANI = {
                 "miokard": dict(barva=(0.26, 0.048, 0.036), barva2=(0.18, 0.034, 0.028), lise=0.45, hrap=0.38, gube=0.00016, gubeMera=0.004,
                                 vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.80, 0.56, 0.16), mascaBarva2=(0.86, 0.50, 0.14),
                                 mascaNasip=0.004, mascaPremik=0.0045, mascaMera=0.011, mascaZleb=0.58, mascaHrap=0.52, kletka=0.009,
-                                zilice=0.3, ziliceBarva=(0.17, 0.025, 0.035), notranja=(0.46, 0.14, 0.12), notranjaHrap=0.26),
+                                zilice=0.0, notranja=(0.46, 0.14, 0.12), notranjaHrap=0.42),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
-                # arterije svetlo rdeče, vene temno modrikaste (jasno ločene od miokarda in med seboj)
-                "arterija": dict(barva=(0.74, 0.085, 0.06), barva2=(0.62, 0.06, 0.05), lise=0.2, hrap=0.32, gube=0.00005, gubeMera=0.002, razdeli=1),
-                "vena": dict(barva=(0.065, 0.10, 0.34), barva2=(0.05, 0.075, 0.27), lise=0.25, hrap=0.32, gube=0.00005, gubeMera=0.002, razdeli=1),
-                "pljucna": dict(barva=(0.16, 0.26, 0.58), barva2=(0.12, 0.20, 0.48), lise=0.3, hrap=0.32, gube=0.00006, gubeMera=0.003, razdeli=1),
-                "pljucna-vena": dict(barva=(0.58, 0.09, 0.09), barva2=(0.45, 0.06, 0.07), lise=0.3, hrap=0.32, gube=0.00006, gubeMera=0.003, razdeli=1),
+                # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
+                # (drobne rdečkaste žilice vzdolž stene), mat-vlažna hrapavost. Aorta bledo rožnato-bela z rdečkastimi
+                # lisami; pljučno deblo v slogu atlasa modro (venska kri), a utišano; votli veni temnejši modrovijolični;
+                # pljučne vene (s kisikom bogata kri) rdečkasto-vijolične, jasno ločene od arterij in votlih ven.
+                "aorta": dict(barva=(0.62, 0.30, 0.27), barva2=(0.52, 0.17, 0.15), lise=0.45, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
+                              vzdolz=0.00009, vzdolzRazmik=0.0028, vasa=0.55, vasaBarva=(0.40, 0.05, 0.05)),
+                "pljucna": dict(barva=(0.17, 0.20, 0.44), barva2=(0.13, 0.13, 0.36), lise=0.4, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
+                                vzdolz=0.00008, vzdolzRazmik=0.0028, vasa=0.4, vasaBarva=(0.30, 0.06, 0.10)),
+                "vena": dict(barva=(0.085, 0.075, 0.22), barva2=(0.06, 0.05, 0.17), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                             vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.22, 0.05, 0.10)),
+                "pljucna-vena": dict(barva=(0.36, 0.06, 0.13), barva2=(0.27, 0.04, 0.11), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                                     vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
+                # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
+                "vencna-arterija": dict(barva=(0.72, 0.045, 0.035), barva2=(0.58, 0.03, 0.03), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
+                                        vzdolz=0.00002, vzdolzRazmik=0.0012),
+                "vencna-vena": dict(barva=(0.07, 0.055, 0.20), barva2=(0.05, 0.04, 0.15), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
             },
         ),
         jedro=r"^(Right atrium|Right ventricle|Left atrium|Left ventricle)$",
@@ -133,10 +149,12 @@ ORGANI = {
         tkiva=[
             (r"leaflet|valve", "zaklopka"),
             (r"papillary", "miokard"),
-            (r"aorta|Aortic|Brachiocephalic|carotid|subclavian|coronary artery|interventricular artery|Circumflex|branch of right coronary|Arteries of heart", "arterija"),
+            (r"coronary artery|interventricular artery|Circumflex|branch of right coronary|Arteries of heart", "vencna-arterija"),
+            (r"aorta|Aortic|Brachiocephalic|carotid|subclavian", "aorta"),
             (r"Pulmonary trunk|pulmonary artery|Bifurcation of pulmonary", "pljucna"),
             (r"pulmonary vein", "pljucna-vena"),
-            (r"vein|vena cava|sinus|Cardiac veins", "vena"),
+            (r"cardiac vein|Coronary sinus|Cardiac veins|vein of left ventricle", "vencna-vena"),
+            (r"vein|vena cava|sinus", "vena"),
             (r"", "miokard"),
         ],
         deli=[
@@ -149,7 +167,7 @@ ORGANI = {
             (r"Right ventricle", "desni-prekat"),
             (r"^Left atrium|Left auricle", "levi-preddvor"),
             (r"Left ventricle", "levi-prekat"),
-            (r"aorta|Aortic arch|Brachiocephalic|carotid|subclavian", "aorta"),
+            (r"^Aorta|aorta|Aortic arch|Brachiocephalic|carotid|subclavian", "aorta"),
             (r"Pulmonary trunk|pulmonary artery|Bifurcation of pulmonary", "pljucno-deblo"),
             (r"vena cava", "votli-veni"),
             (r"pulmonary vein", "pljucne-vene"),
@@ -954,6 +972,8 @@ def izvozi(organ, cfg):
             o.data.resolution_u = max(o.data.resolution_u, kr[0])
             o.data.bevel_resolution = max(o.data.bevel_resolution, kr[1])
     dg = bpy.context.evaluated_depsgraph_get()
+    cfg["_krivulje"] = {imena.get(o, o.name): krivulje_objekta(o.evaluated_get(dg), o.evaluated_get(dg).matrix_world)
+                        for o in src if o.type == "CURVE"}  # središčnice žil (srce_zile), pred obrezom na škatlo
     gladi = re.compile(cfg["gladi"]) if cfg.get("gladi") and os.environ.get("ORGANI_GLADI") != "0" else None
     tmp = bpy.data.collections.new("organ-" + organ)
     scene.collection.children.link(tmp)
@@ -1094,22 +1114,28 @@ def izvozi(organ, cfg):
     slike = None
     for i, (cilj, pripona) in enumerate(zip(cfg["cilj"], ("", "-telefon"))):
         ratio = min(1.0, cilj / max(skupaj, 1))
+        oh = re.compile(cfg["ohrani"]) if cfg.get("ohrani") else None
+        if oh:  # lastne cevi: blažja poenostavitev (oglata cev), ostalo dobi preostanek cilja
+            ex = sum(tris(r[1]) for r in osnovni if oh.search(r[4]))
+            r_cev = min(1.0, 1.8 * ratio)
+            ratio = min(1.0, max(0.05, (cilj - ex * r_cev) / max(skupaj - ex, 1)))
         # telefon=False: telefon brez tekstur (pri možganih je 1024-px peka na ~50k trikotnikih videti zmečkano)
         tk = tc if tc and (i == 0 or tc.get("telefon", True)) else None
         slike = None
         objekti = []
         for ime, me, tkivo, d, v, odprtih in osnovni:
             m = me.copy()
+            rat = r_cev if oh and oh.search(v) else ratio
             no = bpy.data.objects.new(ime, m)
             if no.name != ime:  # lokalni izvirnik z istim imenom (odprt Startup.blend): izvirnik preimenujemo
                 bpy.data.objects[ime, None].name = ime + "·src"; no.name = ime
             tmp.objects.link(no)
             n = tris(m)
-            if tk and not (ratio < 1 and n > 300):  # tangente MikkTSpace (normalna mapa) zahtevajo trikotnike
+            if tk and not (rat < 1 and n > 300):  # tangente MikkTSpace (normalna mapa) zahtevajo trikotnike
                 bm = bmesh.new(); bm.from_mesh(m); bmesh.ops.triangulate(bm, faces=bm.faces); bm.to_mesh(m); bm.free()
-            if ratio < 1 and n > 300:
+            if rat < 1 and n > 300:
                 bm = bmesh.new(); bm.from_mesh(m); bmesh.ops.triangulate(bm, faces=bm.faces); bm.to_mesh(m); bm.free()
-                mod = no.modifiers.new("dec", "DECIMATE"); mod.ratio = max(ratio, 150 / n); mod.use_collapse_triangulate = True
+                mod = no.modifiers.new("dec", "DECIMATE"); mod.ratio = max(rat, 150 / n); mod.use_collapse_triangulate = True
                 m2 = bpy.data.meshes.new_from_object(no.evaluated_get(bpy.context.evaluated_depsgraph_get()))
                 no.modifiers.clear(); no.data = m2
             for p in no.data.polygons:

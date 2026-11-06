@@ -13,7 +13,8 @@ bpy.ops.import_scene.gltf(filepath=pot)
 sc = bpy.context.scene
 obj = [o for o in sc.objects if o.type == "MESH"]
 BARVE = {"miokard": (0.55, 0.12, 0.1), "zaklopka": (0.9, 0.85, 0.72), "arterija": (0.85, 0.12, 0.1), "vena": (0.15, 0.25, 0.7),
-         "pljucna": (0.2, 0.35, 0.8), "pljucna-vena": (0.8, 0.15, 0.15)}
+         "pljucna": (0.2, 0.35, 0.8), "pljucna-vena": (0.62, 0.22, 0.38), "aorta": (0.85, 0.6, 0.55), "vencna-arterija": (0.95, 0.12, 0.1),
+         "vencna-vena": (0.25, 0.2, 0.55)}
 for o in obj:
     t = o.get("tkivo") or (o.parent.get("tkivo") if o.parent else None) or ""
     o.color = (*BARVE.get(t, (0.7, 0.7, 0.7)), 1)
@@ -40,6 +41,10 @@ def slikaj(ime, smer, r=1.0):
 
 # glTF Y gor, Z spredaj → Blender (uvoz): Z gor, -Y spredaj
 slikaj("spredaj", (0.2, -1, 0.15)); slikaj("zadaj", (-0.2, 1, 0.1))
+if os.environ.get("KOTI"):  # vrtenje okoli navpične osi (vsakih 45°) ter od zgoraj in spodaj
+    for k in range(8):
+        f = math.radians(45 * k); slikaj(f"kot{45 * k:03d}", (math.sin(f), -math.cos(f), 0.12))
+    slikaj("odzgoraj", (0.05, -0.15, 1)); slikaj("odspodaj", (0.05, -0.15, -1))
 n = Vector((rav[0], -rav[2], rav[1])); d = rav[3]
 for o in obj:  # prerez: obdrži n·p + d ≥ 0
     me = o.data; bm = bmesh.new(); bm.from_mesh(me); bm.transform(o.matrix_world)
