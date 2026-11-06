@@ -37,7 +37,7 @@ Izračunajmo $W_v$ in **vezavno energijo na nukleon** $W_v/A$ za nekaj jeder:
 | ${}^{56}\mathrm{Fe}$ | $492{,}3$ | $8{,}79$ |
 | ${}^{238}\mathrm{U}$ | $1802$ | $7{,}57$ |
 
-Masni defekti, iz katerih so izračunane vrednosti, so po vrsti $0{,}002388$; $0{,}030377$; $0{,}098940$; $0{,}528462$ in $1{,}934193\,\mathrm{u}$.
+Masni defekti, iz katerih so izračunane vrednosti, so po vrsti $0{,}002388$; $0{,}030377$; $0{,}098940$; $0{,}528463$ in $1{,}934202\,\mathrm{u}$.
 
 Kaj opaziš? Celotna vezavna energija raste z $A$, kar ni presenetljivo. Toda $W_v/A$ najprej strmo naraste, okoli $A \approx 56$ (železo, nikelj) doseže največjo vrednost okoli $8{,}8\,\mathrm{MeV}$, potem pa počasi pada. Za večino jeder je med $7{,}5$ in $8{,}8\,\mathrm{MeV}$, skoraj stalna.
 
@@ -55,7 +55,7 @@ Pri $Q > 0$ se energija sprosti (kot kinetična energija produktov in sevanje ga
 :::premisli
 Pri cepitvi ${}^{235}\mathrm{U}$ nastaneta dve jedri z $A$ okoli $95$ in $140$, kjer je $W_v/A$ okoli $8{,}5\,\mathrm{MeV}$, pri uranu pa okoli $7{,}6\,\mathrm{MeV}$. Oceni, koliko energije se sprosti pri eni cepitvi.
 ---
-Na nukleon se vezavna energija poveča za približno $0{,}9\,\mathrm{MeV}$, nukleonov je okoli $235$, torej se sprosti približno $235 \cdot 0{,}9 \approx 200\,\mathrm{MeV}$. To je res izmerjena energija cepitve, okoli stomilijonkrat več kot pri gorenju ene molekule.
+Na nukleon se vezavna energija poveča za približno $0{,}9\,\mathrm{MeV}$, nukleonov je okoli $235$, torej se sprosti približno $235 \cdot 0{,}9 \approx 200\,\mathrm{MeV}$. To je res izmerjena energija cepitve, nekaj deset milijonkrat več kot pri gorenju ene molekule (nekaj $\mathrm{eV}$).
 :::
 
 ### Radioaktivni razpad
@@ -70,6 +70,8 @@ Nestabilna jedra spontano razpadajo. Glavne vrste:
 | $\gamma$ | prehod v nižje stanje | $0$, $0$ |
 
 Enako spremembo kot $\beta^+$ da zajetje elektrona iz ovojnice ($p + e^- \to n + \nu_e$).
+
+Vrednost $Q$ računamo z atomskimi masami starševskega ($X$) in hčerinskega ($Y$) atoma. Pri $\beta^-$ in zajetju elektrona je $Q = [m(X) - m(Y)]c^2$, ker se elektroni ovojnic izenačijo. Pri $\beta^+$ ima hčerinski atom en elektron manj, iz jedra pa odleti še pozitron, zato $Q = [m(X) - m(Y) - 2m_e]c^2$ z $2m_ec^2 = 1{,}022\,\mathrm{MeV}$; razpad $\beta^+$ je mogoč le, če je atomska masa starša za več kot $2m_e$ večja od hčerinske.
 
 Pri vsakem razpadu se ohranjata nukleonsko število in naboj. Oznaka »m« (${}^{99\mathrm{m}}\mathrm{Tc}$) pomeni metastabilno vzbujeno stanje, ki razpade z izsevanjem žarka $\gamma$.
 
@@ -88,9 +90,9 @@ $$t_{1/2} = \frac{\ln 2}{\lambda}.$$
 Zakon lahko zapišemo kot $N = N_0 \cdot 2^{-t/t_{1/2}}$: po vsakem razpolovnem času ostane polovica tistega, kar je bilo. **Povprečni življenjski čas** jedra je $\tau = 1/\lambda = t_{1/2}/\ln 2 \approx 1{,}44\,t_{1/2}$.
 
 :::premisli
-Vzorec ima po dveh razpolovnih časih še četrtino jeder. Koliko jih bo po treh razpolovnih časih, in ali bo po dvakratnem času (štirih razpolovnih časih) razpadlo vse?
+Vzorec ima po dveh razpolovnih časih še četrtino jeder. Koliko jih bo po treh razpolovnih časih, in ali bo po dvakrat daljšem času (štirih razpolovnih časih) razpadlo vse?
 ---
-Po treh razpolovnih časih ostane osmina, po štirih šestnajstina. Nikoli ne razpade vse naenkrat: vsak razpolovni čas razpolovi ostanek, ne prvotne količine. Linearno sklepanje »v dveh polovicah vse« je napačno.
+Po treh razpolovnih časih ostane osmina, po štirih šestnajstina. Pričakovano število jeder nikoli ne pade na nič: vsak razpolovni čas razpolovi ostanek, ne prvotne količine. Linearno sklepanje »v dveh polovicah vse« je napačno.
 :::
 
 ### Aktivnost
@@ -152,7 +154,7 @@ $W_v = \left[Z\,m(^1\mathrm{H}) + N\,m_n - m(^A\mathrm{X})\right]c^2$; $Q = \lef
 3. Vezavna energija: $W_v = 0{,}137005 \cdot 931{,}494\,\mathrm{MeV} \approx 127{,}6\,\mathrm{MeV}$; na nukleon $127{,}6/16 \approx 7{,}98\,\mathrm{MeV}$.
 4. Vrednost $Q$: $4 \cdot 4{,}002603 - 15{,}994915 = 0{,}015497\,\mathrm{u}$, torej $Q \approx 0{,}015497 \cdot 931{,}494\,\mathrm{MeV} \approx 14{,}4\,\mathrm{MeV} > 0$.
 5. Preizkus z vezavnimi energijami: $127{,}6 - 4 \cdot 28{,}30 = 14{,}4\,\mathrm{MeV}$. ✓ Elektronske mase se pri obeh računih odštejejo.
-6. Odgovor: ${}^{16}\mathrm{O}$ ima $W_v \approx 127{,}6\,\mathrm{MeV}$ in $7{,}98\,\mathrm{MeV}$ na nukleon, kar je več kot helij ($7{,}07\,\mathrm{MeV}$). Pri nastanku kisika iz helija se sprosti okoli $14{,}4\,\mathrm{MeV}$ – tak proces poteka v zvezdah.
+6. Odgovor: ${}^{16}\mathrm{O}$ ima $W_v \approx 127{,}6\,\mathrm{MeV}$ in $7{,}98\,\mathrm{MeV}$ na nukleon, kar je več kot helij ($7{,}07\,\mathrm{MeV}$). Pri nastanku kisika iz helija se sprosti okoli $14{,}4\,\mathrm{MeV}$. V zvezdah kisik ne nastane naenkrat, ampak v korakih: $3\,{}^4\mathrm{He} \to {}^{12}\mathrm{C}$, nato ${}^{12}\mathrm{C} + {}^4\mathrm{He} \to {}^{16}\mathrm{O}$.
 
 ### Primer 3 (težji)
 
@@ -173,8 +175,8 @@ $\lambda = \dfrac{\ln 2}{t_{1/2}}$, $N = \dfrac{R}{\lambda}$, $R(t) = R_0\,e^{-\
 4. (b) $R = 37\,\mathrm{MBq} \cdot 2^{-30/14{,}27} \approx 37 \cdot 0{,}233\,\mathrm{MBq} \approx 8{,}6\,\mathrm{MBq}$.
 5. (c) Iz $R_m = R_0 \cdot 2^{-t_m/t_{1/2}}$: $t_m = t_{1/2}\log_2(R_0/R_m) = 14{,}27\,\mathrm{d} \cdot \log_2 3700 \approx 14{,}27 \cdot 11{,}85\,\mathrm{d} \approx 169\,\mathrm{d}$.
 6. (d) Pri razpadu $\beta^-$ ima hčerinski atom eno več elektronov v ovojnici, kar atomske mase že upoštevajo, zato $Q = (31{,}973907 - 31{,}972071) \cdot 931{,}494\,\mathrm{MeV} \approx 0{,}001836 \cdot 931{,}494\,\mathrm{MeV} \approx 1{,}71\,\mathrm{MeV}$.
-7. Energija se razdeli med elektron in antinevtrino (odboj jedra je zanemarljiv), zato je $1{,}71\,\mathrm{MeV}$ največja energija elektrona; povprečna je okoli tretjina tega.
-8. Odgovor: $\lambda \approx 5{,}62 \cdot 10^{-7}\,\mathrm{s^{-1}}$, $N_0 \approx 6{,}6 \cdot 10^{13}$ jeder z maso le okoli $3{,}5\,\mathrm{ng}$; po $30\,\mathrm{d}$ ostane $8{,}6\,\mathrm{MBq}$, pod $10\,\mathrm{kBq}$ pade po okoli $169$ dneh (skoraj $12$ razpolovnih časov); elektroni imajo največ $1{,}71\,\mathrm{MeV}$, zato za zaščito uporabljamo pleksi steklo in ne svinca, v katerem bi nastalo zavorno sevanje.
+7. Energija se razdeli med elektron in antinevtrino (odboj jedra je zanemarljiv), zato je $1{,}71\,\mathrm{MeV}$ največja energija elektrona; povprečna je okoli $0{,}7\,\mathrm{MeV}$, približno $40\,\%$ največje.
+8. Odgovor: $\lambda \approx 5{,}62 \cdot 10^{-7}\,\mathrm{s^{-1}}$, $N_0 \approx 6{,}6 \cdot 10^{13}$ jeder z maso le okoli $3{,}5\,\mathrm{ng}$; po $30\,\mathrm{d}$ ostane $8{,}6\,\mathrm{MBq}$, pod $10\,\mathrm{kBq}$ pade po okoli $169$ dneh (skoraj $12$ razpolovnih časov); elektroni imajo največ $1{,}71\,\mathrm{MeV}$, zato za zaščito uporabljamo pleksi steklo in ne svinec, v katerem bi nastalo zavorno sevanje.
 
 ### Primer 4 – zdaj ti
 
@@ -228,7 +230,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Generator tehnecija vsebuje ${}^{99}\mathrm{Mo}$ ($t_{1/2,1} = 65{,}94\,\mathrm{h}$), ki razpada v ${}^{99\mathrm{m}}\mathrm{Tc}$ ($t_{1/2,2} = 6{,}01\,\mathrm{h}$). Ob $t = 0$ tehnecij izperemo (ga je nič), aktivnost molibdena je $10{,}0\,\mathrm{GBq}$. Predpostavi, da vsak razpad ${}^{99}\mathrm{Mo}$ da ${}^{99\mathrm{m}}\mathrm{Tc}$ (v resnici okoli $88\,\%$). (a) Izpelji aktivnost tehnecija $R_2(t)$. (b) Kdaj je največja in kolikšna je? (c) Kolikšno je razmerje $R_2/R_1$ po $24\,\mathrm{h}$ in zakaj je skoraj stalno?
+Generator tehnecija vsebuje ${}^{99}\mathrm{Mo}$ ($t_{1/2,1} = 65{,}94\,\mathrm{h}$), ki razpada v ${}^{99\mathrm{m}}\mathrm{Tc}$ ($t_{1/2,2} = 6{,}01\,\mathrm{h}$). Ob $t = 0$ tehnecij izperemo (ga je nič), aktivnost molibdena je $10{,}0\,\mathrm{GBq}$. Predpostavi, da vsak razpad ${}^{99}\mathrm{Mo}$ da ${}^{99\mathrm{m}}\mathrm{Tc}$ (v resnici okoli $88\,\%$). (a) Izpelji aktivnost tehnecija $R_2(t)$. (b) Kdaj je največja in kolikšna je? (c) Kolikšno je razmerje $R_2/R_1$ po $24\,\mathrm{h}$ in po $72\,\mathrm{h}$, proti kateri vrednosti gre in zakaj?
 
 **Rešitev:**
 
@@ -238,8 +240,8 @@ Generator tehnecija vsebuje ${}^{99}\mathrm{Mo}$ ($t_{1/2,1} = 65{,}94\,\mathrm{
 4. Konstanti: $\lambda_1 = 0{,}6931/65{,}94\,\mathrm{h^{-1}} \approx 0{,}01051\,\mathrm{h^{-1}}$, $\lambda_2 = 0{,}6931/6{,}01\,\mathrm{h^{-1}} \approx 0{,}1153\,\mathrm{h^{-1}}$.
 5. (b) Maksimum: $\mathrm{d}R_2/\mathrm{d}t = 0$ da $\lambda_1e^{-\lambda_1t} = \lambda_2e^{-\lambda_2t}$, torej $t_{max} = \ln(\lambda_2/\lambda_1)/(\lambda_2 - \lambda_1) \approx \ln 10{,}97/0{,}1048\,\mathrm{h} \approx 22{,}9\,\mathrm{h}$.
 6. $R_2(t_{max}) \approx 10{,}0 \cdot 1{,}100 \cdot (e^{-0{,}2402} - e^{-2{,}636})\,\mathrm{GBq} \approx 10{,}0 \cdot 1{,}100 \cdot (0{,}7865 - 0{,}0716)\,\mathrm{GBq} \approx 7{,}86\,\mathrm{GBq}$.
-7. (c) Po $24\,\mathrm{h}$: $R_1 = 10{,}0\,e^{-0{,}2523}\,\mathrm{GBq} \approx 7{,}77\,\mathrm{GBq}$ in $R_2 \approx 7{,}86\,\mathrm{GBq}$, razmerje $\approx 1{,}10$.
-8. Ker je $\lambda_2 \gg \lambda_1$, po nekaj razpolovnih časih tehnecija člen $e^{-\lambda_2t}$ izgine in ostane $R_2/R_1 = \lambda_2/(\lambda_2 - \lambda_1) \approx 1{,}10$ – **prehodno ravnovesje**: tehnecij »sledi« molibdenu.
+7. (c) Po $24\,\mathrm{h}$: $R_1 = 10{,}0\,e^{-0{,}2523}\,\mathrm{GBq} \approx 7{,}77\,\mathrm{GBq}$ in $R_2 \approx 7{,}86\,\mathrm{GBq}$, razmerje $\approx 1{,}01$: smo tik za maksimumom, v katerem je $R_2 = R_1$ (iz $\lambda_1N_1 = \lambda_2N_2$). Po $72\,\mathrm{h}$: $R_1 \approx 4{,}69\,\mathrm{GBq}$, $R_2 \approx 5{,}16\,\mathrm{GBq}$, razmerje $\approx 1{,}10$.
+8. Splošno je $R_2/R_1 = \frac{\lambda_2}{\lambda_2 - \lambda_1}\left(1 - e^{-(\lambda_2 - \lambda_1)t}\right)$. Ker je $\lambda_2 \gg \lambda_1$, po nekaj razpolovnih časih tehnecija člen $e^{-(\lambda_2 - \lambda_1)t}$ izgine in ostane $R_2/R_1 = \lambda_2/(\lambda_2 - \lambda_1) \approx 1{,}10$ – **prehodno ravnovesje**: tehnecij »sledi« molibdenu.
 9. Odgovor: $R_2(t) = R_{10}\frac{\lambda_2}{\lambda_2 - \lambda_1}(e^{-\lambda_1t} - e^{-\lambda_2t})$; največja aktivnost okoli $7{,}9\,\mathrm{GBq}$ po približno $23\,\mathrm{h}$, zato bolnišnice generator izpirajo enkrat na dan.
 
 ### Naloga 2

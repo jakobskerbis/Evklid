@@ -72,7 +72,7 @@ Daljša žica se podaljša dvakrat bolj, napetost $\sigma = F/A$ pa ostane enaka
 
 ### Natezni preizkus
 
-Snovne lastnosti merimo z **nateznim preizkusom**: standardni preizkušanec (okrogel ali ploščat, z odebeljenima glavama za vpetje) v preizkuševališču enakomerno raztezamo do pretrga in sproti merimo silo in podaljšek. Iz njiju narišemo **diagram napetost–deformacija** z inženirsko napetostjo $\sigma = F/A_0$ (deljeno z začetnim prerezom). Za konstrukcijsko jeklo ima značilne točke:
+Snovne lastnosti merimo z **nateznim preizkusom**: standardni preizkušanec (okrogel ali ploščat, z odebeljenima glavama za vpetje) na trgalnem stroju enakomerno raztezamo do pretrga in sproti merimo silo in podaljšek. Iz njiju narišemo **diagram napetost–deformacija** z inženirsko napetostjo $\sigma = F/A_0$ (deljeno z začetnim prerezom). Za konstrukcijsko jeklo ima značilne točke:
 
 1. **Linearno področje** do meje proporcionalnosti: velja Hookov zakon, naklon je $E$.
 2. **Meja elastičnosti**: do nje se po razbremenitvi preizkušanec vrne na prvotno dolžino. Pri jeklu je skoraj enaka meji proporcionalnosti.
@@ -80,7 +80,7 @@ Snovne lastnosti merimo z **nateznim preizkusom**: standardni preizkušanec (okr
 4. **Utrjevanje** do **natezne trdnosti** $R_m$, največje inženirske napetosti.
 5. **Kontrakcija (vrat)**: prerez se na enem mestu zoži, inženirska napetost pade, nastopi pretrg.
 
-Iz preizkušanca po pretrgu izmerimo še **raztezek po pretrgu** $A = (L_u - L_0)/L_0$ in **kontrakcijo** $Z = (A_0 - A_u)/A_0$; oba merita **duktilnost** (žilavost v smislu sposobnosti plastične deformacije). Duktilni materiali (jeklo, aluminij) pred pretrgom opazno tečejo in »opozorijo«; krhki (litoželezo, steklo, beton v nategu) se pretrgajo skoraj brez plastične deformacije.
+Iz preizkušanca po pretrgu izmerimo še **raztezek po pretrgu** $A = (L_u - L_0)/L_0$ (oznaka iz standarda; ne zamenjaj je s prerezom) in **kontrakcijo** $Z = (A_0 - A_u)/A_0$; oba merita **duktilnost**, sposobnost plastične deformacije (žilavost je nekaj drugega: energija, ki jo material porabi do pretrga). Duktilni materiali (jeklo, aluminij) pred pretrgom opazno tečejo in »opozorijo«; krhki (litoželezo, steklo, beton v nategu) se pretrgajo skoraj brez plastične deformacije.
 
 Okvirne vrednosti:
 
@@ -91,9 +91,7 @@ Okvirne vrednosti:
 | kost | $17$ | – | $130$ |
 | kita | $1{,}2$ | – | $100$ |
 
-Pri aluminiju je v stolpcu $R_e$ dogovorna meja $R_{p0{,}2}$, pri kosti (kortikalna kost v nategu) in kiti meje tečenja ni.
-
-Kost in kita nimata izrazite meje tečenja: diagram je od začetka rahlo ukrivljen, pretrg nastopi brez vratu.
+Pri aluminiju je v stolpcu $R_e$ dogovorna meja $R_{p0{,}2}$, pri kosti (kortikalna kost v nategu) in kiti izrazite meje tečenja ni: diagram je od začetka rahlo ukrivljen, pretrg nastopi brez vratu.
 
 :::premisli
 Jeklena in aluminijasta palica enakih mer nosita enako silo. Katera ima večjo napetost, katera se bolj podaljša in zakaj?
@@ -133,7 +131,7 @@ $\sigma = \dfrac{F}{A}$, $\varepsilon = \dfrac{\sigma}{E}$, $\Delta L = \varepsi
 2. Deformacija iz Hookovega zakona (enoti se pokrajšata): $\varepsilon = 50/1200 \approx 0{,}0417$, torej okoli $4{,}2\,\%$.
 3. Podaljšek: $\Delta L = 0{,}0417 \cdot 200\,\mathrm{mm} \approx 8{,}3\,\mathrm{mm}$.
 4. Varnost glede na trdnost: $n = 100/50 = 2{,}0$.
-5. Odgovor: napetost je $50\,\mathrm{MPa}$, deformacija okoli $4\,\%$, tetiva se podaljša za približno $8\,\mathrm{mm}$, kar je dvakrat manj od napetosti pretrga. Ta raztezek ni izguba: tetiva kot vzmet shrani energijo in jo ob odrivu vrne.
+5. Odgovor: napetost je $50\,\mathrm{MPa}$, deformacija okoli $4\,\%$, tetiva se podaljša za približno $8\,\mathrm{mm}$, napetost pa je polovica natezne trdnosti. Ta raztezek ni izguba: tetiva kot vzmet shrani energijo in jo ob odrivu vrne.
 
 ### Primer 2
 

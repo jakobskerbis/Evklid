@@ -20,7 +20,7 @@ Preprosto streho nosi trikotnik $ABC$: $A(0; 0)$ je nepomična členkasta podpor
 3. **Ravnotežje vozlišča.** Navpično: $5 + 0{,}6\,S_{AC} = 0$, torej $S_{AC} \approx -8{,}33\,\mathrm{kN}$. Vodoravno: $S_{AB} + 0{,}8\,S_{AC} = 0$, torej $S_{AB} \approx 6{,}67\,\mathrm{kN}$.
 4. **Pomen predznakov.** $S_{AB} > 0$: spodnja palica je napeta (nateg), drži nogi trikotnika skupaj. $S_{AC} < 0$: poševna palica je stisnjena (tlak).
 
-V tem računu so štiri ideje, ki veljajo za vsako paličje. Poglejmo jih posebej.
+V tem računu so štiri ideje, ki veljajo za vsako paličje: model idealnega paličja, štetje enačb in neznank, ravnotežje vozlišča in pomen predznaka osne sile. Vsaka dobi svoj razdelek.
 
 ### Idealno paličje
 
@@ -85,7 +85,7 @@ Pri metodi vozlišč moramo do palice sredi paličja »prehoditi« vsa vozlišč
 4. Momentno enačbo zapiši okoli **Ritterjeve točke**: presečišča nosilk drugih dveh rezanih palic. Ti dve nimata momenta, zato v enačbi ostane le iskana sila.
 5. Če sta drugi dve palici vzporedni (ni presečišča), uporabi projekcijsko enačbo pravokotno nanju.
 
-Ritterjeva točka lahko leži zunaj paličja (Naloga 1 v razdelku Za izpit); računa to ne spremeni. Vsaka iskana sila pride iz svoje enačbe, zato se napaka ne prenaša naprej, kot se lahko pri metodi vozlišč.
+Ritterjeva točka lahko leži daleč od rezanega polja, tudi v podpori ali zunaj paličja (v Nalogi 1 razdelka Za izpit je v podpori $L_0$); računa to ne spremeni. Vsaka iskana sila pride iz svoje enačbe, zato se napaka ne prenaša naprej, kot se lahko pri metodi vozlišč.
 
 :::premisli
 Pri paličju z vodoravnim zgornjim in spodnjim pasom prerežeš zgornji pas, diagonalo in spodnji pas. Zakaj sile v diagonali ne moreš dobiti z eno samo momentno enačbo, in kaj narediš namesto tega?
@@ -97,7 +97,7 @@ Pasova sta vzporedna in se ne sekata, zato Ritterjeve točke za diagonalo ni. Up
 
 ### Primer 1 (lažji)
 
-Merilna kamera za štetje prometa visi na stenski konzoli iz dveh palic. Zgornja palica $AC$ je vodoravna, dolga $2{,}0\,\mathrm{m}$, spodnja $BC$ je poševna: $B$ je na steni $1{,}5\,\mathrm{m}$ pod $A$. Obe palici sta na steno in med seboj pritrjeni členkasto, v vozlišču $C$ visi kamera s težo $6{,}0\,\mathrm{kN}$ (skupaj z ohišjem). Kolikšni sta sili v palicah in ali sta natezni ali tlačni?
+Elektronska prometna tabla visi na stenski konzoli iz dveh palic. Zgornja palica $AC$ je vodoravna, dolga $2{,}0\,\mathrm{m}$, spodnja $BC$ je poševna: $B$ je na steni $1{,}5\,\mathrm{m}$ pod $A$. Obe palici sta na steno in med seboj pritrjeni členkasto, v vozlišču $C$ visi tabla s težo $6{,}0\,\mathrm{kN}$ (skupaj z nosilnim okvirjem). Kolikšni sta sili v palicah in ali sta natezni ali tlačni?
 
 **Podatki:** $A(0; 0)$, $B(0; -1{,}5)$, $C(2{,}0; 0)$ v metrih; $F = 6{,}0\,\mathrm{kN}$ navzdol v $C$
 **Iščemo:** $S_{AC}$, $S_{BC}$
@@ -112,11 +112,25 @@ vozlišče $C$: $\sum F_x = 0$, $\sum F_y = 0$; smer palice $(x_j - x_i;\ y_j - 
 2. Smeri od $C$ proti drugemu krajišču: proti $A$ je $(-1; 0)$; proti $B$ je $(-2{,}0; -1{,}5)/2{,}5 = (-0{,}8; -0{,}6)$, ker je $l_{BC} = \sqrt{2{,}0^2 + 1{,}5^2}\,\mathrm{m} = 2{,}5\,\mathrm{m}$.
 3. Navpično: $-6{,}0 - 0{,}6\,S_{BC} = 0$, torej $S_{BC} = -10\,\mathrm{kN}$.
 4. Vodoravno: $-S_{AC} - 0{,}8\,S_{BC} = 0$, torej $S_{AC} = -0{,}8 \cdot (-10)\,\mathrm{kN} = 8{,}0\,\mathrm{kN}$.
-5. Odgovor: zgornja palica je napeta s $8{,}0\,\mathrm{kN}$ (vleče vozlišče k steni), spodnja je stisnjena z $10\,\mathrm{kN}$ (potiska vozlišče stran od stene). Obe sili sta večji od teže kamere, ker je spodnja palica položna.
+5. Odgovor: zgornja palica je napeta s $8{,}0\,\mathrm{kN}$ (vleče vozlišče k steni), spodnja je stisnjena z $10\,\mathrm{kN}$ (potiska vozlišče stran od stene). Obe sili sta večji od teže table, ker je spodnja palica položna.
 
 ### Primer 2
 
 Prattovo paličje ima spodnja vozlišča $L_0(0; 0)$, $L_1(3; 0)$, $L_2(6; 0)$, $L_3(9; 0)$, $L_4(12; 0)$ in zgornja $U_1(3; 4)$, $U_2(6; 4)$, $U_3(9; 4)$ (v metrih). Palice: spodnji pas $L_0L_1$, $L_1L_2$, $L_2L_3$, $L_3L_4$; zgornji pas $U_1U_2$, $U_2U_3$; krajni palici $L_0U_1$ in $U_3L_4$; vertikale $U_1L_1$, $U_2L_2$, $U_3L_3$; diagonali $U_1L_2$ in $U_3L_2$. V $L_0$ je nepomična, v $L_4$ pomična podpora. V vozliščih $L_1$, $L_2$, $L_3$ visi po $12\,\mathrm{kN}$. Preveri statično določenost, poišči ničelno palico in izračunaj sile v levi polovici.
+
+```
+        U1      U2      U3
+        o-------o-------o
+      / | \     |     / | \
+    /   |   \   |   /   |   \
+  /     |     \ | /     |     \
+o-------o-------o-------o-------o
+L0      L1      L2      L3      L4
+/\      v       v       v       ()
+       12 kN   12 kN   12 kN
+```
+
+Polja so široka $3\,\mathrm{m}$, visoka $4\,\mathrm{m}$; $/\backslash$ je nepomična, $()$ pomična podpora, bremena visijo v spodnjih vozliščih.
 
 **Podatki:** koordinate vozlišč in palice zgoraj; $F = 12\,\mathrm{kN}$ navzdol v $L_1$, $L_2$, $L_3$; podpori $L_0$ (nepomična), $L_4$ (pomična)
 **Iščemo:** $2v = p + r$?, ničelne palice, $S_{L_0U_1}$, $S_{L_0L_1}$, $S_{U_1L_1}$, $S_{L_1L_2}$, $S_{U_1L_2}$, $S_{U_1U_2}$
@@ -252,7 +266,7 @@ Za Prattovo paličje iz Primera 2 utemelji brez računanja vseh sil: (a) katere 
 
 ## Drugače: Z analogijo
 
-Paličje si predstavljaj kot ekipo, ki prenaša težko omaro po stopnicah: vsak nosilec lahko le **vleče ali potiska vzdolž svoje roke**, ne more pa je upogniti. Breme se razdeli tako, da je vsak »par rok« (palica) v ravnotežju na obeh koncih.
+Paličje si predstavljaj kot ekipo, ki prenaša težko omaro po stopnicah: vsak nosilec lahko le **vleče ali potiska vzdolž svoje roke**, prečno na roko pa ne more prenašati sile. Breme se razdeli tako, da je vsak »par rok« (palica) v ravnotežju na obeh koncih.
 
 - Vozlišče je kot vozel v ribiški mreži: če potegneš za en vozel, se sila razdeli le po vrvicah, ki se stikajo v njem. Zato pri metodi vozlišč gledamo eno vozlišče naenkrat.
 - Prerez je kot da bi mrežo prerezal s škarjami in rezane vrvice držal z rokami: sila, ki jo čutiš v vsaki roki, je sila v tej vrvici.
@@ -264,7 +278,7 @@ Razlika od mreže: vrvica prenese le nateg, palica pa tudi tlak. Zato so paličj
 
 **Matrična oblika.** Enačbe vseh vozlišč zapišemo kot linearni sistem $\mathbf{A}\,\mathbf{s} = -\mathbf{f}$: vektor $\mathbf{s}$ vsebuje $p$ osnih sil in $r$ reakcij, $\mathbf{f}$ zunanje sile v vozliščih ($2v$ komponent), matrika $\mathbf{A}$ pa smerne kosinuse palic. Paličje je statično določeno natanko tedaj, ko je $\mathbf{A}$ kvadratna ($2v = p + r$) in obrnljiva ($\det\mathbf{A} \neq 0$). Geometrijska spremenljivost se pokaže kot $\det\mathbf{A} = 0$, čeprav je štetje pravilno. Tako paličja računajo programi za statiko; metoda vozlišč na roke je le zaporedno reševanje tega sistema.
 
-**Statično nedoločena paličja.** Pri $2v < p + r$ ima sistem neskončno rešitev, prava pa je tista, pri kateri se raztezki palic ($\Delta l = Sl/(EA)$, glej lekcijo o napetostih in deformacijah) ujemajo s skupnimi premiki vozlišč. To vodi v metodo pomikov, osnovo metode končnih elementov.
+**Statično nedoločena paličja.** Pri $2v < p + r$ ima sistem neskončno rešitev, prava pa je tista, pri kateri se raztezki palic ($\Delta l = Sl/(EA)$, Hookov zakon za palico) ujemajo s skupnimi premiki vozlišč. To vodi v metodo pomikov, osnovo metode končnih elementov.
 
 **Prostorska paličja.** Stolpi daljnovodov in strešne mreže so prostorska paličja: vsako vozlišče da tri enačbe, pogoj je $3v = p + r$, za togo podprto telo potrebujemo vsaj šest reakcij.
 

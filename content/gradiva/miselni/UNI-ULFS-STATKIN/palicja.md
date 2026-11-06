@@ -15,7 +15,7 @@ stanje: osnutek
   - začni pri dveh neznankah
   - $\sum F_x = 0$, $\sum F_y = 0$
 - Ničelne palice
-  - neobremenjeno vozlišče, dve kolinearni palici
+  - neobremenjeno vozlišče: ob dveh kolinearnih je tretja ničelna
   - pri drugi obtežbi lahko nosi
 - Metoda prereza
   - prereži največ tri palice

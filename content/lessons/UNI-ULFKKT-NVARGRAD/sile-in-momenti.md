@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-V roki držiš utež z maso $5\,\mathrm{kg}$, podlaht je vodoravna. Teža uteži je približno $49\,\mathrm{N}$. Meritve z elektromiografijo in modeli mišic pa pokažejo, da dvoglava nadlaktna mišica (biceps) pri tem vleče s silo okoli $400\,\mathrm{N}$ – osemkrat več, kot je teža uteži. Če bi o sili razmišljal le kot o »potegu, ki mora uravnotežiti drug poteg«, bi pričakoval približno $49\,\mathrm{N}$. Meritve tega ne potrdijo.
+V roki držiš utež z maso $5\,\mathrm{kg}$, podlaht je vodoravna. Teža uteži je približno $49\,\mathrm{N}$. Biomehanski modeli mišic, preverjeni z elektromiografijo, pa pokažejo, da dvoglava nadlaktna mišica (biceps) pri tem vleče s silo okoli $400\,\mathrm{N}$ – osemkrat več, kot je teža uteži. Če bi o sili razmišljal le kot o »potegu, ki mora uravnotežiti drug poteg«, bi pričakoval približno $49\,\mathrm{N}$. Meritve tega ne potrdijo.
 
 Razlaga je v tem, **kje** sila prijemlje. Kita bicepsa je pripeta na podlaket le okoli $4\,\mathrm{cm}$ od komolca, utež pa je od komolca oddaljena okoli $33\,\mathrm{cm}$. Za zasuk okoli komolca ne šteje sama sila, ampak sila, pomnožena z razdaljo od osi: $F_b \cdot 0{,}04\,\mathrm{m}$ mora biti enako $49\,\mathrm{N} \cdot 0{,}33\,\mathrm{m}$, od tod $F_b \approx 405\,\mathrm{N}$. Ta zmnožek je **moment sile**. Isto orodje določa silo v vijaku, ki drži konzolo, preobremenitev žerjava, sile v podporah nosilca in silo, s katero ortodontska žica premika zob. Vsa statika, od ravnotežja nosilcev do paličij, stoji na dveh pojmih te lekcije: na sili kot vektorju z nosilko in na momentu.
 
@@ -68,7 +68,7 @@ Najpogostejša uporaba: silo razstavimo na komponenti $F_x$ in $F_y$ in sešteje
 
 $$M_e = \vec{e}\cdot\left(\vec{r}\times\vec{F}\right).$$
 
-To je komponenta $\vec{M}_O$ v smeri osi. Sila, vzporedna z osjo ali s nosilko, ki os seka, ima glede na os moment nič.
+To je komponenta $\vec{M}_O$ v smeri osi. Sila, vzporedna z osjo ali z nosilko, ki os seka, ima glede na os moment nič.
 
 :::premisli
 Vijačni ključ zasučeš enkrat s silo pravokotno na ročaj, drugič z enako veliko silo pod kotom $30^\circ$ glede na ročaj, obakrat na koncu ročaja. Za koliko se moment razlikuje, in zakaj sila v smeri ročaja sploh ne zasuče matice?
@@ -149,7 +149,7 @@ $M = F\,d$, ročica $d = r\cos\beta$ (vodoravna razdalja od kolena do navpične 
 2. Vodoravna goleň: $d = 0{,}40\,\mathrm{m}$, $M = 30 \cdot 0{,}40\,\mathrm{N\,m} = 12\,\mathrm{N\,m}$.
 3. Pri $30^\circ$: $d = 0{,}40\,\mathrm{m}\cdot\cos 30^\circ \approx 0{,}346\,\mathrm{m}$, $M \approx 30\,\mathrm{N}\cdot 0{,}346\,\mathrm{m} \approx 10{,}4\,\mathrm{N\,m}$.
 4. Navpična goleň: nosilka teže gre skozi koleno, $d = 0$, zato $M = 0$.
-5. Smer: utež vleče goleň navzdol, torej proti iztegu; mišica mora dati nasprotno enak moment.
+5. Smer: utež vleče goleň navzdol, torej v smeri upogiba kolena; kolenske iztegovalke morajo dati nasprotno enak moment.
 6. Odgovor: moment je $12\,\mathrm{N\,m}$ pri vodoravni goleni, približno $10{,}4\,\mathrm{N\,m}$ pri $30^\circ$ in nič pri navpični. Sila je ves čas enaka, moment pa se spreminja z ročico – zato je vaja najtežja pri iztegnjeni nogi.
 
 ### Primer 2
@@ -312,13 +312,13 @@ Isti sistem po redukciji na $A$: ena sila $24{,}9\,\mathrm{kN}$ v točki $A$ in 
 
 ```
                  24,9 kN (80° pod vodoravnico)
-                     \
-                      v
+                      /
+                     v
   A==================*===========B
   0                 3,39        6,0
 ```
 
-Vse tri skice opisujejo **isto obremenitev togega telesa**. Za notranje sile v nosilcu (kasneje: upogibni momenti) pa niso enake – redukcija velja le za učinek na telo kot celoto.
+Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev togega telesa**. Za notranje sile v nosilcu (kasneje: upogibni momenti) pa niso enake – redukcija velja le za učinek na telo kot celoto.
 
 ## Drugače: Uporaba v stroki
 
@@ -330,7 +330,7 @@ Vse tri skice opisujejo **isto obremenitev togega telesa**. Za notranje sile v n
 
 ## Preveri se
 
-? Na isti točki konzole delujejo štiri enako velike sile v različnih smereh. Katera vrstica tabele ima glede na vpetje $O$ največji moment? Prijemališče je $1{,}0\,\mathrm{m}$ desno od $O$ na isti višini.
+? Na isti točki konzole delujejo tri enako velike sile v različnih smereh. Katera vrstica tabele ima glede na vpetje $O$ največji moment? Prijemališče je $1{,}0\,\mathrm{m}$ desno od $O$ na isti višini.
 
 | sila | smer |
 |---|---|

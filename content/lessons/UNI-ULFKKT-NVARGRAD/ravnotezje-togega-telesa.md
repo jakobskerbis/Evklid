@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na hidrološki postaji ob reki je na betonski zid pritrjena jeklena roka, ki nad vodo drži merilnik gladine. Po vsaki večji poplavi tehnik opazi isto: zgornji sidrni vijaki so razrahljani, spodnji pa nepoškodovani. Roka in merilnik skupaj tehtata le okoli $160\,\mathrm{kg}$, vijaki so dimenzionirani za več tonskih sil. Kako jih lahko razmeroma lahka roka iztrga?
+Na hidrološki postaji ob reki je na betonski zid pritrjena jeklena roka, ki nad vodo drži merilnik gladine. Po vsaki večji poplavi tehnik opazi isto: zgornji sidrni vijaki so razrahljani, spodnji pa nepoškodovani. Roka in merilnik skupaj tehtata le okoli $160\,\mathrm{kg}$, vijaki pa so dimenzionirani za sile več deset kilonewtonov. Kako jih lahko razmeroma lahka roka iztrga?
 
 Odgovor da ravnotežje togega telesa. Zid na roko ne deluje le z navpično silo, ki drži težo, ampak tudi z **momentom vpetja**: zgornji vijaki vlečejo, spodnji del plošče pritiska. Ko roko obteži še naplavljeno vejevje, ta moment hitro naraste, sila v zgornjih vijakih pa je zaradi kratke ročice med vijaki mnogo večja od teže. Enak račun potrebuješ za vsako konstrukcijo na gradbišču in v naravi: za brv čez potok, konzolni nadstrešek pod snegom, oder, nosilec sončnih panelov ali drog meteorološke postaje v vetru. Najprej določiš **reakcije podpor**, šele nato lahko presodiš, ali bo element zdržal.
 
@@ -19,9 +19,9 @@ Preizkusi prvo na brvi dolžine $5\,\mathrm{m}$, na kateri stoji človek $1\,\ma
 
 ### Pogoji ravnotežja
 
-**Definicija.** Togo telo je v **ravnotežju**, kadar miruje (ali se giblje enakomerno brez vrtenja), tj. kadar je rezultanta vseh zunanjih sil nič in je nič tudi rezultirajoči moment.
+**Definicija.** Togo telo je v **ravnotežju**, kadar glede na izbrani (inercialni) koordinatni sistem miruje in ostaja v mirovanju.
 
-**Izrek (pogoji ravnotežja).** Togo telo je v ravnotežju natanko tedaj, ko velja
+**Izrek (pogoji ravnotežja).** Togo telo, ki miruje, ostane v ravnotežju natanko tedaj, ko velja
 
 $$\sum\vec{F}_i = 0, \qquad \sum\vec{M}_{O,i} = 0$$
 
@@ -92,7 +92,7 @@ $$A_x = 0, \qquad A_y = F, \qquad M_A = F\,a.$$
 Reakcijski moment raste z ročico bremena. Ista sila na dvakrat daljši roki pomeni dvakrat večji moment vpetja, navpična reakcija pa ostane enaka. Prav moment vpetja trga sidrne vijake na hidrološki postaji iz uvoda.
 
 :::premisli
-Ali bi lahko konzolo namesto z vpetjem podprli le z eno nepomično členkasto podporo? Zakaj bi se zgodilo, kar bi se zgodilo?
+Ali bi lahko konzolo namesto z vpetjem podprli le z eno nepomično členkasto podporo? Kaj bi se zgodilo in zakaj?
 ---
 Ne. Členek ima le dve reakciji in ne more dati momenta. Teža ima glede na členek moment, ki ga nič ne uravnoteži, zato se konzola zasuče navzdol: je mehanizem ($n = 2 < 3$).
 :::
@@ -160,7 +160,7 @@ $F_q = \tfrac{1}{2}q_0\,l_{AB}$ pri $\tfrac{2}{3}l_{AB}$ od $A$; $\sum M_A = 0$,
 6. $\sum F_y = 0$: $A_y = 9{,}0 + 3{,}464 - 11{,}45 \approx 1{,}01\,\mathrm{kN}$.
 7. $\sum F_x = 0$: $A_x + 2{,}0 = 0$, torej $A_x = -2{,}0\,\mathrm{kN}$ (deluje v levo).
 8. Preizkus z $\sum M_B = 0$: $-1{,}012 \cdot 6{,}0 + 9{,}0 \cdot 2{,}0 - 3{,}464 \cdot 2{,}0 - 5{,}0 \approx -6{,}07 + 18 - 6{,}93 - 5{,}0 = 0$. ✓
-9. Odgovor: $A_x = -2{,}0\,\mathrm{kN}$, $A_y \approx 1{,}01\,\mathrm{kN}$, $B \approx 11{,}45\,\mathrm{kN}$. Previs s silo na koncu »dviga« levi del nosilca, zato je $A_y$ majhna, $B$ pa večja od celotne navpične obtežbe ($12{,}46\,\mathrm{kN}$ skupaj).
+9. Odgovor: $A_x = -2{,}0\,\mathrm{kN}$, $A_y \approx 1{,}01\,\mathrm{kN}$, $B \approx 11{,}45\,\mathrm{kN}$. Previs s silo na koncu »dviga« levi del nosilca, zato je $A_y$ majhna, $B$ pa nosi skoraj vso navpično obtežbo ($11{,}45$ od skupaj $12{,}46\,\mathrm{kN}$).
 
 ### Primer 4 – zdaj ti
 
@@ -259,7 +259,7 @@ Prostoležeči nosilec dolžine $5{,}0\,\mathrm{m}$ ima v $A$ nepomično členka
 
 **Podnebje in obtežbe.** Projektant po standardih za vplive na konstrukcije upošteva sneg in veter tudi nesimetrično: nanos snega na eni strani strehe (kot v Primeru 4) da večjo reakcijo v eni podpori, kot bi jo dala enakomerna obtežba. S podnebnimi spremembami se spreminjajo tudi karakteristične obtežbe s snegom in vetrom, zato se pri prenovah reakcije podpor preverjajo znova.
 
-**Varnost na gradbišču.** Pri odrih, opažih in podpiranju izkopov reakcije določijo, koliko sile prevzamejo podložke, sidra in tla. Konzolna zaščitna ograja ali lovilna mreža mora prevzeti moment vpetja, ki raste z ročico udarca. Avtodvigalo je v ravnotežju, dokler rezultanta teže in bremena pada znotraj podpornih nog; ko se breme oddalji, se reakcija na notranji nogi zmanjšuje proti nič – to je meja prevrnitve.
+**Varnost na gradbišču.** Pri odrih, opažih in podpiranju izkopov reakcije določijo, koliko sile prevzamejo podložke, sidra in tla. Konzolna zaščitna ograja ali lovilna mreža mora prevzeti moment vpetja, ki raste z ročico udarca. Avtodvigalo je v ravnotežju, dokler rezultanta teže in bremena pada znotraj podpornih nog; ko se breme oddalji, se reakcija na nogah na nasprotni strani od bremena zmanjšuje proti nič – to je meja prevrnitve.
 
 ## Drugače: Korak za korakom s številkami
 
