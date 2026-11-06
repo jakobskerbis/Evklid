@@ -3655,8 +3655,9 @@
   "pn.scanNotePh": "What did it read wrongly?",
   "pn.photoSave": "Save the photo to help us improve reading",
   "pn.photoRules": {
-    "other": "Only the problem should be in the photo, no faces or names. We save it together with the text Evklid read. Only the Evklid administrator sees them; we send them to no one, not even to an AI provider. We keep them for {n} days, then they are deleted automatically."
+    "other": "Only the problem should be in the photo, no faces or names. We save it together with the text Evklid read. Only the Evklid administrator sees them. We keep them for {n} days, then they are deleted automatically."
   },
+  "pn.photoAi": "As with every scan, an AI (Anthropic) reads the photo so Evklid understands the problem. We send the saved copy to no one.",
   "pn.photoSaved": "Photo saved",
   "pn.photoDelete": "Delete photo",
   "pn.photoDeleted": "The photo is deleted.",

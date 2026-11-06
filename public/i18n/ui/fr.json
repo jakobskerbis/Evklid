@@ -3656,8 +3656,9 @@
   "pn.scanNotePh": "Qu’a-t-il mal lu ?",
   "pn.photoSave": "Enregistrer la photo pour améliorer la lecture",
   "pn.photoRules": {
-    "other": "Sur la photo, il ne doit y avoir que l’exercice, sans visages ni noms. Nous l’enregistrons avec le texte lu par Evklid. Seul l’administrateur d’Evklid les voit ; nous ne les envoyons à personne, pas même à un fournisseur d’intelligence artificielle. Nous les gardons {n} jours, puis ils s’effacent tout seuls."
+    "other": "Sur la photo, il ne doit y avoir que l’exercice, sans visages ni noms. Nous l’enregistrons avec le texte lu par Evklid. Seul l’administrateur d’Evklid les voit. Nous les gardons {n} jours, puis ils s’effacent tout seuls."
   },
+  "pn.photoAi": "Comme pour chaque scan, une intelligence artificielle (Anthropic) lit la photo pour qu’Evklid comprenne l’exercice. Nous n’envoyons la copie enregistrée à personne.",
   "pn.photoSaved": "Photo enregistrée",
   "pn.photoDelete": "Supprimer la photo",
   "pn.photoDeleted": "La photo est supprimée.",

@@ -3627,8 +3627,9 @@
   "pn.scanNotePh": "哪裡讀錯了？",
   "pn.photoSave": "儲存照片，幫助我們改進辨識",
   "pn.photoRules": {
-    "other": "照片裡只應有題目，不要有人臉或姓名。我們會把它和 Evklid 辨識出的文字一起保存。只有 Evklid 管理員看得到；我們不會傳給任何人，也不會傳給人工智慧服務商。我們保存 {n} 天，之後會自動刪除。"
+    "other": "照片裡只應有題目，不要有人臉或姓名。我們會把它和 Evklid 辨識出的文字一起保存。只有 Evklid 管理員看得到。我們保存 {n} 天，之後會自動刪除。"
   },
+  "pn.photoAi": "和每次掃描一樣，人工智慧（Anthropic）會讀取照片，讓 Evklid 看懂題目。保存的副本我們不會傳給任何人。",
   "pn.photoSaved": "照片已儲存",
   "pn.photoDelete": "刪除照片",
   "pn.photoDeleted": "照片已刪除。",

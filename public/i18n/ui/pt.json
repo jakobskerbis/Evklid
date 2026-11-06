@@ -3660,8 +3660,9 @@
   "pn.scanNotePh": "O que leu mal?",
   "pn.photoSave": "Guardar a fotografia para melhorar a leitura",
   "pn.photoRules": {
-    "other": "Na foto deve estar só o exercício, sem rostos nem nomes. Guardamo-la juntamente com o texto que o Evklid leu. Só o administrador do Evklid os vê; não os enviamos a ninguém, nem a um fornecedor de inteligência artificial. Guardamo-los {n} dias e depois são apagados automaticamente."
+    "other": "Na foto deve estar só o exercício, sem rostos nem nomes. Guardamo-la juntamente com o texto que o Evklid leu. Só o administrador do Evklid os vê. Guardamo-los {n} dias e depois são apagados automaticamente."
   },
+  "pn.photoAi": "Como em cada digitalização, uma inteligência artificial (Anthropic) lê a foto para o Evklid perceber o exercício. A cópia guardada não a enviamos a ninguém.",
   "pn.photoSaved": "Fotografia guardada",
   "pn.photoDelete": "Apagar a fotografia",
   "pn.photoDeleted": "A fotografia foi apagada.",

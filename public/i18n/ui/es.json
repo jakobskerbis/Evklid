@@ -3656,8 +3656,9 @@
   "pn.scanNotePh": "¿Qué leyó mal?",
   "pn.photoSave": "Guardar la foto para mejorar la lectura",
   "pn.photoRules": {
-    "other": "En la foto solo debe aparecer el ejercicio, sin caras ni nombres. La guardamos junto con el texto que leyó Evklid. Solo los ve el administrador de Evklid; no se los enviamos a nadie, tampoco a un proveedor de inteligencia artificial. Los guardamos {n} días y luego se borran solos."
+    "other": "En la foto solo debe aparecer el ejercicio, sin caras ni nombres. La guardamos junto con el texto que leyó Evklid. Solo los ve el administrador de Evklid. Los guardamos {n} días y luego se borran solos."
   },
+  "pn.photoAi": "Como en cada escaneo, una inteligencia artificial (Anthropic) lee la foto para que Evklid entienda el ejercicio. La copia guardada no se la enviamos a nadie.",
   "pn.photoSaved": "Foto guardada",
   "pn.photoDelete": "Borrar la foto",
   "pn.photoDeleted": "La foto está borrada.",

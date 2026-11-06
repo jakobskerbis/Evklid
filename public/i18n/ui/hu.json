@@ -3653,8 +3653,9 @@
   "pn.scanNotePh": "Mit olvasott rosszul?",
   "pn.photoSave": "Fénykép mentése, hogy javítsuk az olvasást",
   "pn.photoRules": {
-    "other": "A fotón csak a feladat legyen, arcok és nevek nélkül. A szöveggel együtt mentjük, amit az Evklid felismert. Csak az Evklid adminisztrátora látja őket; senkinek nem küldjük el, mesterségesintelligencia-szolgáltatónak sem. {n} napig őrizzük, utána maguktól törlődnek."
+    "other": "A fotón csak a feladat legyen, arcok és nevek nélkül. A szöveggel együtt mentjük, amit az Evklid felismert. Csak az Evklid adminisztrátora látja őket. {n} napig őrizzük, utána maguktól törlődnek."
   },
+  "pn.photoAi": "Mint minden beolvasásnál, a fotót egy mesterséges intelligencia (Anthropic) olvassa el, hogy az Evklid megértse a feladatot. A mentett másolatot senkinek nem küldjük el.",
   "pn.photoSaved": "A fénykép mentve",
   "pn.photoDelete": "Fénykép törlése",
   "pn.photoDeleted": "A fénykép törölve.",

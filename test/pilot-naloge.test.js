@@ -229,7 +229,7 @@ test("pilot: skrbnik doda člana po e-naslovu, drugi ne", async () => {
 });
 
 test("pilot: besedila so v slovenskem katalogu (vsi jeziki: test/i18n.test.js)", () => {
-  for (const k of ["pn.title", "pn.ok", "pn.bad", "pn.photoSave", "pn.photoRules", "pn.later", "pilot.n.title"]) assert.ok(SL[k], k);
+  for (const k of ["pn.title", "pn.ok", "pn.bad", "pn.photoSave", "pn.photoRules", "pn.photoAi", "pn.later", "pilot.n.title"]) assert.ok(SL[k], k);
   for (const c of SCAN_CONDITIONS) assert.ok(SL[`pn.cond.${c}`], c);
 });
 
@@ -305,10 +305,11 @@ test("pilot: soglasje z jezikom in rokom, prepis samo s fotografijo, magični ba
     const ph = store.db.prepare("SELECT image, consent, expires_at, julianday(expires_at) - julianday(created_at) AS d FROM pilot_photos").get();
     assert.ok(!ph.image.startsWith("data:image/"));
     const c = JSON.parse(ph.consent);
-    assert.equal(c.v, 1);
+    assert.equal(c.v, 2);
     assert.equal(c.lang, "de");
     assert.equal(c.days, 30);
-    assert.match(c.text, /ponudniku umetne inteligence/);
+    assert.match(c.text, /prebere umetna inteligenca \(Anthropic\)/);
+    assert.match(c.text, /Shranjene kopije ne pošljemo nikomur/);
     assert.ok(Math.abs(ph.d - 30) < 0.01, `rok ${ph.d}`);
     // Ponovna ocena s fotografijo obdrži novi prepis; izbris fotografije izbriše tudi prepis (sprožilec).
     await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "board", ok: false, image: IMG, consent: true, problems: ["y=2x"] } });
@@ -384,4 +385,12 @@ test("pilot: XP iz nalog šteje na profilu, v ligah ne; varnostna kopija je brez
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("pilot: soglasje za fotografijo pove, da jo ob branju prebere ponudnik AI, shranjene kopije pa ne dobi", async () => {
+  const fs = await import("node:fs");
+  assert.match(SL["pn.photoAi"], /Anthropic/);
+  assert.doesNotMatch(JSON.stringify(SL["pn.photoRules"]), /ne pošljemo, tudi ne ponudniku/);
+  const scan = fs.readFileSync(new URL("../public/scan/scan.js", import.meta.url), "utf8");
+  assert.match(scan, /t\("pn\.photoAi"\)/);
 });

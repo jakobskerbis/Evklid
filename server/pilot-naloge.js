@@ -39,7 +39,7 @@ export const PHOTO_DAILY_MAX = 30;
 // Vsote in povprečja (anketa, deleži, opombe) pokažemo šele od toliko odgovorov naprej, da ne razkrijejo posameznika.
 export const MIN_GROUP = 3;
 export const PHOTO_MAX_DAYS = 30;
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2; // 2: jasno, da fotografijo ob branju prebere ponudnik AI (kot vsako skeniranje), shranjene kopije pa ne dobi
 const PROBLEMS_MAX = 5;
 export const photoDays = () => {
   const n = Number(process.env.EVKLID_PILOT_PHOTO_DAYS);
@@ -47,7 +47,7 @@ export const photoDays = () => {
 };
 // Besedilo soglasja, kot ga shranimo ob fotografiji (dokaz, kaj je učenec potrdil).
 export const PHOTO_CONSENT_TEXT = (n = photoDays()) =>
-  `Shrani fotografijo, da izboljšamo branje. Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida; nikomur ju ne pošljemo, tudi ne ponudniku umetne inteligence. Hranimo ju ${n} ${n === 1 ? "dan" : n === 2 ? "dneva" : "dni"}, nato se sama izbrišeta. Prej ju lahko izbrišeš pod »Pomagaj izboljšati Evklid«.`;
+  `Shrani fotografijo, da izboljšamo branje. Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida. Hranimo ju ${n} ${n === 1 ? "dan" : n === 2 ? "dneva" : "dni"}, nato se sama izbrišeta. Kot pri vsakem skeniranju fotografijo prebere umetna inteligenca (Anthropic), da Evklid razume nalogo. Shranjene kopije ne pošljemo nikomur. Prej ju lahko izbrišeš pod »Pomagaj izboljšati Evklid«.`;
 // Zapis soglasja: različica, jezik, v katerem ga je učenec videl, rok in slovensko besedilo te različice.
 export const consentRecord = (lang, n = photoDays()) => JSON.stringify({ v: CONSENT_VERSION, lang, days: n, text: PHOTO_CONSENT_TEXT(n) });
 

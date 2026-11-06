@@ -3655,8 +3655,9 @@
   "pn.scanNotePh": "Was wurde falsch gelesen?",
   "pn.photoSave": "Foto speichern, damit wir das Lesen verbessern",
   "pn.photoRules": {
-    "other": "Auf dem Foto soll nur die Aufgabe sein, keine Gesichter oder Namen. Wir speichern es zusammen mit dem Text, den Evklid gelesen hat. Nur der Administrator von Evklid sieht beides; wir schicken es niemandem, auch keinem KI-Anbieter. Wir bewahren es {n} Tage auf, dann wird es automatisch gelöscht."
+    "other": "Auf dem Foto soll nur die Aufgabe sein, keine Gesichter oder Namen. Wir speichern es zusammen mit dem Text, den Evklid gelesen hat. Nur der Administrator von Evklid sieht beides. Wir bewahren es {n} Tage auf, dann wird es automatisch gelöscht."
   },
+  "pn.photoAi": "Wie bei jedem Scan liest eine KI (Anthropic) das Foto, damit Evklid die Aufgabe versteht. Die gespeicherte Kopie schicken wir niemandem.",
   "pn.photoSaved": "Foto gespeichert",
   "pn.photoDelete": "Foto löschen",
   "pn.photoDeleted": "Das Foto ist gelöscht.",

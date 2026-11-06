@@ -3653,8 +3653,9 @@
   "pn.scanNotePh": "Nini kimesomwa vibaya?",
   "pn.photoSave": "Hifadhi picha ili tuboreshe usomaji",
   "pn.photoRules": {
-    "other": "Kwenye picha iwe swali tu, bila nyuso wala majina. Tunaihifadhi pamoja na maandishi ambayo Evklid ilisoma. Ni msimamizi wa Evklid pekee anayeviona; hatumtumii mtu yeyote, hata mtoa huduma wa akili bandia. Tunavihifadhi kwa siku {n}, kisha vinafutwa vyenyewe."
+    "other": "Kwenye picha iwe swali tu, bila nyuso wala majina. Tunaihifadhi pamoja na maandishi ambayo Evklid ilisoma. Ni msimamizi wa Evklid pekee anayeviona. Tunavihifadhi kwa siku {n}, kisha vinafutwa vyenyewe."
   },
+  "pn.photoAi": "Kama kila uchanganuzi, akili bandia (Anthropic) husoma picha ili Evklid ielewe swali. Nakala iliyohifadhiwa hatumtumii mtu yeyote.",
   "pn.photoSaved": "Picha imehifadhiwa",
   "pn.photoDelete": "Futa picha",
   "pn.photoDeleted": "Picha imefutwa.",

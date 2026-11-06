@@ -3723,8 +3723,9 @@
   "pn.scanNotePh": "Co przeczytał źle?",
   "pn.photoSave": "Zapisz zdjęcie, abyśmy poprawili odczytywanie",
   "pn.photoRules": {
-    "other": "Na zdjęciu ma być tylko zadanie, bez twarzy i imion. Zapisujemy je razem z tekstem, który odczytał Evklid. Widzi je tylko administrator Evklidu; nikomu ich nie wysyłamy, nawet dostawcy sztucznej inteligencji. Przechowujemy je {n} dni, potem same się usuwają."
+    "other": "Na zdjęciu ma być tylko zadanie, bez twarzy i imion. Zapisujemy je razem z tekstem, który odczytał Evklid. Widzi je tylko administrator Evklidu. Przechowujemy je {n} dni, potem same się usuwają."
   },
+  "pn.photoAi": "Jak przy każdym skanowaniu zdjęcie odczytuje sztuczna inteligencja (Anthropic), żeby Evklid zrozumiał zadanie. Zapisanej kopii nikomu nie wysyłamy.",
   "pn.photoSaved": "Zdjęcie zapisane",
   "pn.photoDelete": "Usuń zdjęcie",
   "pn.photoDeleted": "Zdjęcie jest usunięte.",

@@ -3717,8 +3717,9 @@
   "pn.scanNotePh": "Co přečetl špatně?",
   "pn.photoSave": "Uložit fotku, abychom zlepšili čtení",
   "pn.photoRules": {
-    "other": "Na fotce má být jen příklad, žádné obličeje ani jména. Uložíme ji spolu s textem, který Evklid přečetl. Vidí je jen správce Evklidu; nikomu je neposíláme, ani poskytovateli umělé inteligence. Uchováme je {n} dní, pak se samy smažou."
+    "other": "Na fotce má být jen příklad, žádné obličeje ani jména. Uložíme ji spolu s textem, který Evklid přečetl. Vidí je jen správce Evklidu. Uchováme je {n} dní, pak se samy smažou."
   },
+  "pn.photoAi": "Jako u každého skenování fotku přečte umělá inteligence (Anthropic), aby Evklid příkladu rozuměl. Uloženou kopii nikomu neposíláme.",
   "pn.photoSaved": "Fotka je uložená",
   "pn.photoDelete": "Smazat fotku",
   "pn.photoDeleted": "Fotka je smazaná.",

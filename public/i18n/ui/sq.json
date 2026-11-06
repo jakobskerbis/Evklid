@@ -3655,8 +3655,9 @@
   "pn.scanNotePh": "Çfarë lexoi gabim?",
   "pn.photoSave": "Ruaj fotografinë që të përmirësojmë leximin",
   "pn.photoRules": {
-    "other": "Në foto duhet të jetë vetëm detyra, pa fytyra dhe emra. E ruajmë bashkë me tekstin që lexoi Evklid. I sheh vetëm administratori i Evklid; nuk ia dërgojmë askujt, as një ofruesi të inteligjencës artificiale. I ruajmë {n} ditë, pastaj fshihen vetë."
+    "other": "Në foto duhet të jetë vetëm detyra, pa fytyra dhe emra. E ruajmë bashkë me tekstin që lexoi Evklid. I sheh vetëm administratori i Evklid. I ruajmë {n} ditë, pastaj fshihen vetë."
   },
+  "pn.photoAi": "Si në çdo skanim, foton e lexon një inteligjencë artificiale (Anthropic), që Evklid ta kuptojë detyrën. Kopjen e ruajtur nuk ia dërgojmë askujt.",
   "pn.photoSaved": "Fotografia u ruajt",
   "pn.photoDelete": "Fshi fotografinë",
   "pn.photoDeleted": "Fotografia u fshi.",

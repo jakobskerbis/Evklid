@@ -3627,8 +3627,9 @@
   "pn.scanNotePh": "Đọc sai chỗ nào?",
   "pn.photoSave": "Lưu ảnh để giúp cải thiện việc đọc",
   "pn.photoRules": {
-    "other": "Trong ảnh chỉ nên có bài tập, không có khuôn mặt hay tên. Chúng mình lưu ảnh cùng với văn bản mà Evklid đã đọc. Chỉ quản trị viên Evklid xem được; chúng mình không gửi cho ai, kể cả nhà cung cấp AI. Chúng mình giữ trong {n} ngày, sau đó tự động xóa."
+    "other": "Trong ảnh chỉ nên có bài tập, không có khuôn mặt hay tên. Chúng mình lưu ảnh cùng với văn bản mà Evklid đã đọc. Chỉ quản trị viên Evklid xem được. Chúng mình giữ trong {n} ngày, sau đó tự động xóa."
   },
+  "pn.photoAi": "Như mọi lần quét, một AI (Anthropic) đọc ảnh để Evklid hiểu bài tập. Bản đã lưu thì chúng mình không gửi cho ai.",
   "pn.photoSaved": "Đã lưu ảnh",
   "pn.photoDelete": "Xóa ảnh",
   "pn.photoDeleted": "Đã xóa ảnh.",

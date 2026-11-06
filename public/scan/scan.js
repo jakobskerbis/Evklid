@@ -648,7 +648,7 @@ function bindPilotRate(box) {
       <p>${esc(t("pn.rateQ"))}</p>
       <label class="scan-label" for="pn-rate-note">${esc(t("pn.note"))}</label>
       <input id="pn-rate-note" type="text" maxlength="300" autocomplete="off" placeholder="${esc(t("pn.scanNotePh"))}">
-      ${photo ? `<label class="pn-consent"><input type="checkbox" id="pn-rate-photo"><span><b>${esc(t("pn.photoSave"))}</b><small class="muted">${esc(t("pn.photoRules", { n: task.photo.days }))}</small></span></label>` : ""}
+      ${photo ? `<label class="pn-consent"><input type="checkbox" id="pn-rate-photo"><span><b>${esc(t("pn.photoSave"))}</b><small class="muted">${esc(t("pn.photoRules", { n: task.photo.days }))} ${esc(t("pn.photoAi"))}</small></span></label>` : ""}
       <div class="scan-actions pn-rate-btns">
         <button type="button" class="secondary" data-pn-rate="ok">${icon("circle-check")}${esc(t("pn.ok"))}</button>
         <button type="button" class="secondary" data-pn-rate="bad">${icon("circle-x")}${esc(t("pn.bad"))}</button>
