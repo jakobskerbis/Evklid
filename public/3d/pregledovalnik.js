@@ -4,6 +4,8 @@
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
 import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
+import { zgodovinaIzbire } from "./izbira.js";
+import { najdiIstiDel } from "./isti-del.js";
 import { ustvariPoudarek, povsemOdrezan, najboljsaSmer, kandidatiSmeri, oviraZarki, VRSTNI_RED } from "./poudarek.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
@@ -90,6 +92,8 @@ export function odpriModel(el, mod, opts = {}) {
   }
   // Esc prekliče izbiro dela (šele naslednji Esc gre na strani /3d nazaj na zbirko); kot × vrne fokus na del v
   // seznamu, če je bil v oknu, ki se zapre.
+  // Sistemski »nazaj« (stran /3d, opts.zgodovina) najprej zapre izbiro (public/3d/izbira.js).
+  const zgodovina = zgodovinaIzbire({ vklop: !!opts.zgodovina, zapri: () => izberi(null) });
   el.addEventListener("keydown", (e) => {
     if (e.key !== "Escape" || !izbran || e.defaultPrevented) return;
     e.preventDefault();
@@ -344,6 +348,8 @@ export function odpriModel(el, mod, opts = {}) {
     const d = (model?.deli || []).find((x) => x.id === cilj) || null;
     const prej = izbran;
     izbran = d ? d.id : null;
+    if (izbran && !prej) zgodovina.odprta();
+    else if (!izbran && prej) zgodovina.zaprta();
     ustaviNamigSij();
     poudari(d);
     deliEl.querySelectorAll("[data-del]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.del === izbran)));
@@ -506,6 +512,7 @@ export function odpriModel(el, mod, opts = {}) {
 
   function deli() {
     const seznam = Array.isArray(model?.deli) ? model.deli : [];
+    const prejDel = izbran ? zadnjiDeli.find((d) => d.id === izbran) || { id: izbran } : null;
     zadnjiDeli = [...seznam];
     deliEl.replaceChildren();
     for (const d of seznam) {
@@ -526,8 +533,17 @@ export function odpriModel(el, mod, opts = {}) {
       deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(seznam.length)));
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
-    if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
-    else if (izbran) poudari(seznam.find((d) => d.id === izbran)); // nova faza: nove mreže dobijo poudarek
+    // Nov nabor (faza, prerez, molekula, raven …): isti del (skupni ključ, isti-del.js) ostane izbran, sicer se izbira mehko zapre.
+    const ohranjen = prejDel && najdiIstiDel(seznam, prejDel);
+    if (prejDel && !ohranjen) izberi(null, { leti: false });
+    else if (ohranjen) {
+      if (ohranjen.id !== izbran) {
+        izbran = ohranjen.id;
+        deliEl.querySelectorAll("[data-del]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.del === izbran)));
+      }
+      poudari(ohranjen); // nove mreže dobijo poudarek
+      if (ohranjen !== prejDel) pokaziInfo(ohranjen);
+    }
     // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
@@ -596,8 +612,8 @@ export function odpriModel(el, mod, opts = {}) {
     for (const c of Array.isArray(model?.nadzor) ? model.nadzor : []) {
       const prej = nadzorEl.lastElementChild;
       const klic = (v) => {
-        // ponastaviPogled: preklop pogleda (npr. prerez organa) prekliče izbiro in kamero obrne v novo začetno smer.
-        if (c.ponastaviPogled && izbran) izberi(null, { leti: false });
+        // ponastaviPogled: preklop pogleda (npr. prerez organa) obrne kamero v novo začetno smer; izbrani del ostane
+        // izbran, če ga ima tudi novi pogled (deli(), najdiIstiDel), in kamera tedaj poleti nanj.
         const prej = c.tip === "izbira" && !c.ponastaviPogled ? kadrModela() : null;
         try {
           c.ob?.(v);
@@ -605,6 +621,13 @@ export function odpriModel(el, mod, opts = {}) {
           console.error("3D nadzor", c.id, err);
         }
         poSpremembi();
+        if (c.ponastaviPogled && izbran) {
+          const d = izbran && (model?.deli || []).find((x) => x.id === izbran);
+          if (d) {
+            kadrirajIzbiro(d);
+            return;
+          }
+        }
         if (c.ponastaviPogled) poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
         else if (prej) kadrirajPogled(prej);
       };
@@ -793,6 +816,7 @@ export function odpriModel(el, mod, opts = {}) {
   let gradnja = 0;
   let unicen = false;
   function zgradiVse(ponastavi) {
+    if (izbran) zgodovina.zaprta();
     izbran = null;
     ustaviNamigSij();
     if (kit) pokaziInfo(null);
@@ -1053,6 +1077,7 @@ export function odpriModel(el, mod, opts = {}) {
     unici() {
       for (const f of pocisti) f();
       unicen = true;
+      zgodovina.unici();
       ustaviNamigSij();
       narisiObris(null);
       poudarek.pocisti();

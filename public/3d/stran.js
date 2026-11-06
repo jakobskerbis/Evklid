@@ -36,6 +36,13 @@ function razberi() {
 // Nazaj na zbirko: če smo prišli z nje, z zgodovino (tipka Nazaj ostane naravna), sicer zamenjamo naslov.
 // V okvirju aplikacije (3D svet v »Uči se«) je zbirka aplikacija sama: okvir se zapre.
 function nazaj() {
+  // Odprta izbira dela ima svoj vnos v zgodovini (public/3d/izbira.js): gumb Nazaj ga najprej vzame (izbira se zapre),
+  // nato gre naprej na zbirko.
+  if (history.state?.k3Izbira) {
+    addEventListener("popstate", () => nazaj(), { once: true });
+    history.back();
+    return;
+  }
   if (history.state?.k3Iz) history.back(); // z zbirke ("hub") ali iz organa (»Poglej pod povečavo«, "povecava")
   else if (vgrajeno) starsu({ tip: "zapri3d" });
   else location.hash = "";
@@ -328,7 +335,7 @@ async function atlas(param, moj) {
   glavni.replaceChildren(host);
   const { odpriAtlas } = await import("./atlas.js");
   if (moj !== zaporedje) return null;
-  const a = await odpriAtlas(host, { zapri: nazaj });
+  const a = await odpriAtlas(host, { zapri: nazaj, zgodovina: true });
   if (moj !== zaporedje) {
     a.unici();
     return null;
@@ -415,10 +422,12 @@ async function model(id, param, moj) {
   if (moj !== zaporedje) return null;
   // »Poglej pod povečavo« (del s `povecava`): nov vnos v zgodovini, da Nazaj (gumb, tipka, Esc) vrne na organ.
   const povecava = (cilj) => {
-    history.pushState({ k3Iz: "povecava" }, "", `#${encodeURIComponent(cilj)}`);
+    // vnos odprte izbire dela zamenjamo: Nazaj s povečave vrne naravnost na organ (brez praznega koraka)
+    if (history.state?.k3Izbira) history.replaceState({ k3Iz: "povecava" }, "", `#${encodeURIComponent(cilj)}`);
+    else history.pushState({ k3Iz: "povecava" }, "", `#${encodeURIComponent(cilj)}`);
     usmeri();
   };
-  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava });
+  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, zgodovina: true });
 }
 
 async function usmeri() {

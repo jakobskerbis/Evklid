@@ -7,6 +7,7 @@ import { THREE, ustvariSceno, kakovostNaprave, poveziGumbVrtenja } from "./scena
 import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
+import { zgodovinaIzbire } from "./izbira.js";
 import { DUH_ALFA, DUH_SIVO, TRAJANJE as TRAJANJE_DUHA, najboljsaSmer, kandidatiSmeri } from "./poudarek.js";
 import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
@@ -116,7 +117,7 @@ export function imeStrukture(row, im, jezik = "sl") {
   return row.stran === "l" || row.stran === "r" ? `${base} (${t(row.stran === "l" ? "a3.left" : "a3.right")})` : base;
 }
 
-export async function odpriAtlas(el, { zapri = null } = {}) {
+export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = false } = {}) {
   const jezik = currentLang();
   const kakovost = kakovostNaprave();
   const mapa = mapaTelesaNaprave(kakovost); // telo-hd na računalniku, telo na telefonu (modeli.js)
@@ -868,9 +869,13 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     });
   }
 
+  // Sistemski »nazaj« najprej zapre izbiro (kot × in Esc; public/3d/izbira.js).
+  const zgodovinaDela = zgodovinaIzbire({ vklop: zZgodovino, zapri: () => zapriKartico() });
   function izberi(id, { leti = true, tiho = false } = {}) {
     const prej = izbran;
     izbran = id && deli.has(id) ? id : null;
+    if (izbran && !tiho) zgodovinaDela.odprta();
+    else if (!izbran && prej) zgodovinaDela.zaprta();
     if (prej && deli.has(prej)) {
       const d = deli.get(prej);
       d.batch.setVisibleAt(d.inst, viden(d));
@@ -1787,6 +1792,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       }
     },
     unici() {
+      zgodovinaDela.unici();
       roKartica.disconnect();
       moKartica.disconnect();
       document.removeEventListener("keydown", naTipko);
