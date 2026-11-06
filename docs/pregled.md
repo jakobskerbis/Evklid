@@ -14,10 +14,17 @@ commands below and the checklist of their lens.
 
 ## 1. Code and UI changes (every PR that touches `public/`, `server/`, `prompts/`, `scripts/`)
 
-**Pass 1 – automatic (author runs it, must be green before passes 2 and 3):**
-- `npm test`
-- `node scripts/preveri-aplikacijo.cjs` (clicks through every tab and main flow on desktop and phone in
-  test mode; fails on page errors, console errors, HTTP ≥ 400, horizontal scroll, raw i18n keys)
+**Pass 1 – automatic (must be green before passes 2 and 3):**
+- **Green CI on the PR** (j, 2026-11-06). `.github/workflows/testi.yml` runs two parallel jobs on every
+  PR and push to main: `testi` (`npm test`, Chromium + WebKit) and `preveri`
+  (`node scripts/preveri-aplikacijo.cjs`), in test mode with no secrets. Read the result with
+  `gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs -q '.check_runs[]|"\(.name) \(.status) \(.conclusion)"'`
+  (both `completed success`); on failure the run's artifacts hold the log and screenshots
+  (`gh api repos/jakobskerbis/evklid/actions/runs/<run>/artifacts`). A new push to the branch cancels the old run.
+- Locally (2-core server, under `flock /tmp/evklid-tezko.lock`) run only the affected test files
+  (`node --test test/x.test.js`) and screenshots; CI covers the full `npm test` and
+  `preveri-aplikacijo.cjs` (it clicks through every tab and main flow on desktop and phone in test mode;
+  fails on page errors, console errors, HTTP ≥ 400, horizontal scroll, raw i18n keys).
 - when touched: `node scripts/preveri-generatorje.js` (0 errors), `node scripts/kakovost-nalog.js <prefix>`,
   `node scripts/preveri-simulacije.cjs`, `node scripts/check-lesson.js -q <files>`,
   `node scripts/preveri-formule.cjs` (sims, `public/sirina.js` or KaTeX output: no formula may scroll at 360 px)
