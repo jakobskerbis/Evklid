@@ -135,10 +135,17 @@ const KEM = {
 // Pravila in seznam dvoumnih črk: docs/pomen-crk.md.
 const QUAD = "a\\s*x\\^|ax\\^|b\\^2\\s*-\\s*4\\s*a\\s*c";
 // Formula rešitev ali Vietovi formuli: v njej so x₁, x₂, a, b, c in D zanesljivo iz kvadratne enačbe.
-const QUADF = `${QUAD}|\\\\pm\\s*\\\\sqrt\\s*\\{?\\s*(?:D|b)|\\\\frac\\{\\s*-\\s*b\\s*\\}\\{\\s*a\\s*\\}|\\\\frac\\{\\s*c\\s*\\}\\{\\s*a\\s*\\}`;
+// −b ± √… in ± √D sta formula rešitev; (√a ± √b)² ni (pregled 463, N4). Vietovi formuli (c/a, −b/a) le skupaj z
+// x₁ ali x₂: c/a = a/c_a v Evklidovem izreku ni kvadratna enačba (N3).
+const VIETA = "^(?=[\\s\\S]*x_\\{?[12])[\\s\\S]*(?:\\\\frac\\{\\s*-\\s*b\\s*\\}\\{\\s*a\\s*\\}|-\\s*\\\\frac\\{\\s*b\\s*\\}\\{\\s*a\\s*\\}|\\\\frac\\{\\s*c\\s*\\}\\{\\s*a\\s*\\})";
+const QUADF = `${QUAD}|-\\s*b\\s*\\\\pm\\s*\\\\sqrt|\\\\pm\\s*\\\\sqrt\\s*\\{?\\s*D|${VIETA}`;
 // »kvadratni koren«, »kvadratni centimeter« niso kvadratna enačba: samo enačba, funkcija, neenačba, polinom.
 const KVAD = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskriminant|viet";
 // a, b, c niso koeficienti kvadratne enačbe pri elipsi/hiperboli (polosi, y = c/x) ali v zaporedju.
+// a, b, c: »Vietovo pravilo« pri razstavljanju (x² + (a+b)x + ab) ni kvadratna enačba (pregled 463, N5).
+const KVAD_K = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskriminant";
+// p, q pri paraboli kot stožnici (y² = 2px) nista teme T(p, q) (pregled 463, N6).
+const STOZNICE = "gorišč|vodnic|stožnic|elips|hiperbol|parabol\\w*\\s+y\\^";
 const KVAD_NE = "elips|hiperbol|zaporedj|\\bvrst[aeio]?\\b";
 // Po temi sami so a, b, c koeficienti le v formuli brez drugih črk (»a = 1«, »a \\neq 0«), ne v »x = 2a«.
 const KOEF = "^(?:\\\\[a-zA-Z]+|[^a-zA-Z]|[abcD])*$";
@@ -164,24 +171,24 @@ const MAT = {
     { ctx: "e\\^\\{\\s*-?\\s*i|(?:\\\\pm|[+-])\\s*i\\s*\\\\sin|\\\\pm\\s*i(?![\\w\\\\])|\\(\\s*x\\s*[-+]\\s*i\\s*\\)|i\\^\\{?2\\}?\\s*=\\s*-\\s*1", n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
     { ctx: "i\\^2|\\d\\s*i\\b|[+-]\\s*i\\b", teme: `kompleksn|imaginarn|${KVAD}`, oba: true, n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
   ],
-  a: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, samo: KOEF, n: "vodilni koeficient (pri x²)", en: "leading coefficient (of x²)", r: "a x^2 + b x + c = 0", note: "a ≠ 0, sicer enačba ni kvadratna.", noteEn: "a ≠ 0, otherwise the equation is not quadratic." },
+  a: { ctx: QUADF, teme: KVAD_K, ne: KVAD_NE, samo: KOEF, brez: "D\\s*=\\s*a\\^", n: "vodilni koeficient (pri x²)", en: "leading coefficient (of x²)", r: "a x^2 + b x + c = 0", note: "a ≠ 0, sicer enačba ni kvadratna.", noteEn: "a ≠ 0, otherwise the equation is not quadratic." },
   // f(x) = a x² + b: b je tam prosti člen, ne linearni koeficient (brez).
-  b: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, samo: KOEF, brez: "x\\^\\{?2\\}?\\s*[+-]\\s*b\\s*(?![a-zA-Z\\\\(])|b\\s*xy", n: "linearni koeficient (pri x)", en: "linear coefficient (of x)", r: "x_1 + x_2 = -\\frac{b}{a}" },
-  c: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, samo: KOEF, n: "prosti člen", en: "constant term", r: "x_1 \\cdot x_2 = \\frac{c}{a}" },
-  D: { ctx: "b\\^2\\s*-\\s*4\\s*a\\s*c|b\\^\\{2\\}\\s*-\\s*4|\\\\sqrt\\s*\\{?\\s*D", teme: KVAD, n: "diskriminanta", en: "discriminant", r: "D = b^2 - 4ac", note: "D > 0: dve realni rešitvi · D = 0: ena · D < 0: nobene realne.", noteEn: "D > 0: two real solutions · D = 0: one · D < 0: none." },
+  b: { ctx: QUADF, teme: KVAD_K, ne: KVAD_NE, samo: KOEF, brez: "x\\^\\{?2\\}?\\s*[+-]\\s*b\\s*(?![a-zA-Z\\\\(])|b\\s*xy|D\\s*=\\s*a\\^", n: "linearni koeficient (pri x)", en: "linear coefficient (of x)", r: "x_1 + x_2 = -\\frac{b}{a}" },
+  c: { ctx: QUADF, teme: KVAD_K, ne: KVAD_NE, samo: KOEF, n: "prosti člen", en: "constant term", r: "x_1 \\cdot x_2 = \\frac{c}{a}" },
+  D: { brez: "D\\s*\\(", ctx: "b\\^2\\s*-\\s*4\\s*a\\s*c|b\\^\\{2\\}\\s*-\\s*4|\\\\sqrt\\s*\\{?\\s*D", teme: KVAD, n: "diskriminanta", en: "discriminant", r: "D = b^2 - 4ac", note: "D > 0: dve realni rešitvi · D = 0: ena · D < 0: nobene realne.", noteEn: "D > 0: two real solutions · D = 0: one · D < 0: none." },
   // x₁, x₂ sta tudi točki na intervalu (Lagrange, Rolle), člena zaporedja ali abscisi dveh točk premice.
   x_1: { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "prva rešitev (ničla)", en: "first solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   x_2: { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "druga rešitev (ničla)", en: "second solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   "x_1,2": { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "rešitvi kvadratne enačbe", en: "solutions of the quadratic equation", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   // k je tudi indeks (k-ti člen), celo število (x = π/2 + kπ), konstanta vzmeti; n tudi naravno število.
-  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{\\s*y", teme: PREMICA, brez: "\\^\\s*\\{[^}]*k|\\^\\s*-?\\s*k", ne: `zaporedj|kombinator|binom|vsot|indukcij|period|trigonometr|${LIN_ENACBE}`, n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
+  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{\\s*y", teme: PREMICA, brez: "\\^\\s*\\{[^}]*k|\\^\\s*-?\\s*k|\\\\ln\\s*k|k\\s*t\\b", ne: `reakcij|hitrostn|arrhenius|razpad|števec|stopnj|zaporedj|kombinator|binom|vsot|indukcij|period|trigonometr|${LIN_ENACBE}`, n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
   // n je začetna vrednost le, če je y = k x + n v isti formuli ali povedi (pov), ne vsak n v temi o premici
   // (»za vsak naravni n«, razmerje m : n pri Talesovem izreku).
   n: { ctx: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n", pov: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n\\b", ne: "zaporedj|kombinator|binom|vsot|indukcij|mnogokotnik|potenc|koren", n: "začetna vrednost (presečišče z osjo y)", en: "y-intercept", r: "y = k x + n" },
-  p: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
-  q: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
+  p: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
+  q: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
   r: { ctx: CIRCLE, teme: KROG, brez: "\\\\int|\\\\sum|\\\\lim|\\\\sin|\\\\cos|\\\\tan", n: "polmer", en: "radius", r: "d = 2r" },
-  d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn", brez: "\\\\o?int|\\\\frac\\{\\s*d|\\bd\\s*[xyt]\\b|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
+  d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn|diagonal|stranic|štirikotnik|trapez|pravokotnik|romb|deltoid|paralelogram", brez: "\\\\(?:o|i{0,2})int|\\\\frac\\{\\s*d|(?<![A-Za-z\\\\])d\\s*(?:[A-Za-z]|\\\\(?:varphi|vartheta|theta|phi|rho|tau|omega|lambda))(?![a-z])|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
   o: { ctx: "o\\s*=", teme: GEOM, oba: true, n: "obseg", en: "perimeter (circumference)", r: "o = 2\\pi r" },
   S: { zan: `(?<![\\w\\\\])S${NUM_UNIT}(?:[kdcm]?m\\^\\{?2)`, ctx: "S\\s*=", teme: `${GEOM}|integral`, oba: true, ne: "zaporedj|vsot|statist|verjetn|množic", n: "ploščina", en: "area" },
   // »Mečemo kocko«: P je verjetnost, ne površina (docs/pomen-crk.md).
@@ -605,7 +612,13 @@ export function annotateTex(tex, subject = override || subjectFn(), o = null) {
 // »Za $H = G - F$ je …«, »Naj bo $x_0 = …$«, »kjer je $D = b^2 - 4ac$« → oznaka z zvezo iz besedila;
 // »kjer je $v$ hitrost, $t$ čas in $s$ pot« → oznake z imeni. Samo številska vrednost (»za $x = 2$«) ni definicija.
 const DEF_LEAD = /(?:^|[^\p{L}])(?:za|naj\s+bo(?:do|sta)?|označimo(?:\s+z)?|definiramo|vpeljemo|uvedemo|vzemimo|kjer\s+(?:je|sta|so)|pri\s+čemer\s+(?:je|sta|so))\s*$/iu;
-const NAMED_LEAD = /(?:^|[^\p{L}])(?:kjer|pri\s+čemer)\s+(?:je|sta|so|pomeni|pomenita|pomenijo|označuje|označujeta)\s+(?=\$)/giu;
+// Pred »za« je začetek besedila, vrstice ali alineje, ločilo ali oklepaj (za oznakami **, _ in presledki).
+function zaStartsClause(src, at) {
+  const from = Math.max(0, at - 60);
+  const head = (from === 0 ? "\n" : "") + src.slice(from, at);
+  return /(?:\n[ \t]*(?:[-*+][ \t]+|\d+[.)][ \t]*)?|[.:;,!?(…»«"])[\s*_]*za\s*$/iu.test(head);
+}
+const NAMED_LEAD =/(?:^|[^\p{L}])(?:kjer|pri\s+čemer)\s+(?:je|sta|so|pomeni|pomenita|pomenijo|označuje|označujeta)\s+(?=\$)/giu;
 // Na najvišji ravni (zunaj {…}) razdeli pri znaku.
 function splitAt(s, ch) {
   const out = [];
@@ -670,7 +683,10 @@ export function definitionsIn(text, { za = true } = {}) {
     const before = src.slice(Math.max(last, m.index - 40), m.index);
     last = m.index + m[0].length;
     const lead = DEF_LEAD.exec(before);
-    if (!lead || (!za && /za\s*$/iu.test(lead[0]))) continue;
+    const isZa = !!lead && /za\s*$/iu.test(lead[0]);
+    if (!lead || (!za && isZa)) continue;
+    // »Za $X = …$« le na začetku povedi ali stavka: »v stolpcu za $y = 2x$«, »dvigne za $h = …$« ni definicija (N10).
+    if (isZa && !zaStartsClause(src, m.index)) continue;
     const f = (m[1] ?? m[2]).trim();
     const parts = splitAt(f, "=");
     if (parts.length < 2) continue;

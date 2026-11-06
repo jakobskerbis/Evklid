@@ -208,3 +208,56 @@ test("pregled 463 (primerjava po popravkih): a ni koeficient v x = 2a; enota pov
   assert.equal(card(render("MAT", "Krožni tok", "Po krogu velja $\\oint \\vec H \\cdot \\mathrm d\\vec l = I$."), "d"), null);
   assert.equal(card(render("MAT", "Taylorjeve vrste", "Premica pade pod nič, krivulja $c_0 e^{-kt}$ pa ne."), "k"), null);
 });
+
+// Kontrolni pregled PR 463 (§3, N1–N10): brez oznak lekcije (kartice, naloge, klepet) ni novih napačnih pomenov.
+test("kontrolni pregled 463: diferencial, štirikotnik, Evklid, koreni, Vieta, stožnice, D(X), k, a, b in »za«", () => {
+  const lab = (s, t, x, k) => card(render(s, t, x), k)?.label?.replace(/<[^>]+>/g, "") || null;
+  // N1: d v diferencialu ni premer (dA, dV, dr, dφ, dϑ, dv, \iint, \iiint); d = 2r, πd in d : 2 ostanejo.
+  for (const f of ["$\\iint_D f\\,dA$", "$\\iiint_V \\rho\\,dV$", "$dA = r\\,dr\\,d\\varphi$", "$dV = r^2 \\sin\\vartheta\\,dr\\,d\\vartheta\\,d\\varphi$", "$\\int v\\,dv$"])
+    assert.equal(lab("MAT", "Večkratni integrali", `Ploščina kroga: ${f}.`, "d"), null, f);
+  assert.match(lab("MAT", "Krog", "Polmer je $r = d : 2$.", "d"), /premer/);
+  assert.match(lab("MAT", "Krog", "Obseg je $o = \\pi d$.", "d"), /premer/);
+  assert.match(lab("MAT", "Krog", "Velja $d = 2r$.", "d"), /premer/);
+  // N2: v lekciji o štirikotnikih je d diagonala ali stranica (raje nič); s π ostane premer.
+  for (const f of ["$o = a + b + c + d$", "$b = d = 5\\,\\mathrm{cm}$", "$d^2 = a^2 + b^2$"])
+    assert.equal(lab("MAT", "Štirikotniki in krog", `Diagonala pravokotnika: ${f}.`, "d"), null, f);
+  assert.match(lab("MAT", "Štirikotniki in krog", "Obseg kroga je $o = \\pi d$.", "d"), /premer/);
+  // N3: Evklidov izrek c/a = a/c_a ni Vieta; N4: (√a ± √b)² ni formula rešitev.
+  const ev = "V pravokotnem trikotniku velja $\\frac{c}{a} = \\frac{a}{c_a}$.";
+  assert.equal(lab("MAT", "Podobnost", ev, "a"), null);
+  assert.equal(lab("MAT", "Podobnost", ev, "c"), null);
+  const kor = "Velja $(\\sqrt a \\pm \\sqrt b)^2 = a + b \\pm 2\\sqrt{ab}$.";
+  assert.equal(lab("MAT", "Koreni", kor, "a"), null);
+  assert.equal(lab("MAT", "Koreni", kor, "b"), null);
+  // Vieta ob x₁, x₂ in formula rešitev ostaneta.
+  assert.match(lab("MAT", "Ponavljanje", "$x_1 + x_2 = -\\frac{b}{a}$", "b"), /linearni/);
+  assert.match(lab("MAT", "Ponavljanje", "$x_1 x_2 = \\frac{c}{a}$", "c"), /prosti/);
+  assert.match(lab("MAT", "Ponavljanje", "$x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}$", "a"), /vodilni/);
+  // N5: »Vietovo pravilo« pri razstavljanju: a, b sta števili, ki ju iščemo.
+  const vi = "Po Vietovem pravilu je $x^2 + (a+b)x + ab = (x+a)(x+b)$, kjer iščemo $a$ in $b$.";
+  assert.equal(lab("MAT", "Razstavljanje izrazov", vi, "a"), null);
+  assert.equal(lab("MAT", "Razstavljanje izrazov", vi, "b"), null);
+  // N6: p pri paraboli y² = 2px ni abscisa temena; temenska oblika ostane.
+  assert.equal(lab("MAT", "Elipsa, hiperbola in parabola", "Parabola $y^2 = 2px$ ima gorišče v $(p/2, 0)$; tu je $2p = 6$.", "p"), null);
+  assert.match(lab("MAT", "Kvadratna funkcija", "Temenska oblika $y = a(x - p)^2 + q$.", "p"), /abscisa temena/);
+  // N7: D(X) je varianca.
+  assert.equal(lab("MAT", "Verjetnost in statistika", "Varianca je $D(X) = \\sigma^2$.", "D"), null);
+  // N8, N9: k kot hitrostna konstanta in razlika stopenj ni smerni koeficient; premica ostane.
+  assert.equal(lab("MAT", "Diferencialne enačbe prvega reda", "Premica: $\\ln c = \\ln c_0 - kt$.", "k"), null);
+  assert.equal(lab("MAT", "Elementarne funkcije", "Iz naklona premice dobimo $\\ln k$.", "k"), null);
+  assert.equal(lab("MAT", "Racionalne funkcije", "Če je števec višji za $k$, ima graf poševno asimptoto (premica).", "k"), null);
+  assert.match(lab("MAT", "Premica", "Premica $y = kx + n$.", "k"), /smerni/);
+  // N9b: D = a² − 4b (λ² + aλ + b): a in b nista vodilni/linearni koeficient; D ostane diskriminanta.
+  const lde = "Glede na diskriminanto $D = a^2 - 4b$ ločimo tri primere.";
+  assert.equal(lab("MAT", "Linearne diferencialne enačbe drugega reda", lde, "a"), null);
+  assert.equal(lab("MAT", "Linearne diferencialne enačbe drugega reda", lde, "b"), null);
+  assert.match(lab("MAT", "Linearne diferencialne enačbe drugega reda", lde, "D"), /diskriminanta/);
+  // N10: »za« sredi stavka ne uvaja definicije; na začetku povedi ali stavka jo.
+  const sis = "V stolpcu za $x + y = 6$ vrednost $y$ pada, v stolpcu za $y = 2x$ raste.";
+  assert.equal(lab("MAT", "Sistemi linearnih enačb", sis, "y"), null);
+  assert.equal(definitionsIn(sis).length, 0);
+  assert.equal(definitionsIn("Telo dvignemo za $h = s - s_0$.").length, 0);
+  assert.equal(definitionsIn("Za $H = G - F$ je $H' = 0$.")[0]?.keys[0], "H");
+  assert.equal(definitionsIn("Odvod je 0, za $H = G - F$ pa velja $H' = 0$.")[0]?.keys[0], "H");
+  assert.equal(definitionsIn("- Za $u = x^2$ dobimo …")[0]?.keys[0], "u");
+});
