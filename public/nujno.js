@@ -450,6 +450,8 @@ const IZRAZI = {
     ),
   ],
   stiska: [
+    R(`(?:zaspal\\S*|zaspat\\S*|zaspim|zaspati)(?: \\S+){0,3} (?:se )?(?:nikoli )?(?:vec )?(?:ne|nikad|nikada) (?:vise )?(?:\\S+ )?(?:zbud\\S*|probud\\S*)`),
+    R(`(?:fall asleep|go to sleep|sleep)(?: \\S+){0,3} (?:and )?(?:never|not) (?:\\S+ )?wake up`),
     R(`(?:bom|bo|cu|hocem|zelim|moram) (?:\\S+ )?(?:koncal\\S*|koncat\\S*|koncati) (?:vse|s tem|z vsem|zivljenje|svoje zivljenje)`),
     R(`(?:vse|zivljenje|sve|zivot) (?:bom|cu|cu da) (?:\\S+ )?(?:koncal\\S*|zavrsi\\S*|okonca\\S*)`),
     R(`end (?:my|her|his|their|your) (?:own )?life`),

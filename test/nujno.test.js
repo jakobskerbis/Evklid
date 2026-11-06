@@ -576,6 +576,9 @@ test("zaznavalnik: nabor pregleda D in nove sonde", () => {
   assert.deepEqual(lazni, []);
   const sonde = ["ne vidim več izhoda, vse bom končal", "nočem več bit tu", "rad bi izginil za vedno", "brat je padel s kolesa in ne govori", "mami teče kri iz nosa in ne neha že pol ure", "ati je dobil infarkt", "prijatelja je pičila kača", "cela hiša je v dimu", "my friend said she wants to end her life", "my sister fell and is not waking up", "مي خواهم بميرم", "ubila se bom nocoj", "nekdo mi piše da bo poslal moje slike staršem če mu ne plačam", "sošolka mi grozi z nožem", "ne mogu više, želim umrijeti"];
   assert.deepEqual(sonde.filter((s) => !zaznajNujno(s)), []);
+  // »rada bi zaspala in se ne zbudila« je stiska, ne zdravje (pregled D, e17).
+  for (const s of ["ne vidim vec smisla v nicemer, rada bi samo zaspala in se ne zbudila", "rad bi zaspal in se nikoli več ne zbudil", "i just want to sleep and never wake up"]) assert.equal(zaznajNujno(s), "stiska", s);
+  for (const s of ["Zakaj se zjutraj težko zbudim?", "zaspal sem in se zbudil ob 7"]) assert.equal(zaznajNujno(s), null, s);
   const snov = ["Kako hitro gori sveča?", "Izračunaj, koliko plina porabi štedilnik", "skočil bom do trgovine po zvezek", "Napiši spis o požaru v Notre Dame", "Kako deluje gasilni aparat?", "Babica ima 41 let", "Dim nastane pri gorenju lesa, zakaj?", "Kdo bo streljal enajstmetrovko?", "Iz tega mi sledi, da je x = 2"];
   assert.deepEqual(snov.filter((s) => zaznajNujno(s)), []);
 });
