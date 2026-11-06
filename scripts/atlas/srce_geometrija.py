@@ -121,7 +121,15 @@ def listic(obroc_lok, konica, globina, sredisce, debelina=0.0008, vrstic=10, tre
     return bm, rob
 
 
-def tetive(bm, rob, vrhovi, polmer=0.0002, na_rob=2):
+def _tetiva_ok(a, b, os_=None, najvec=0.03):
+    """Tetiva ne sme biti daljša od 3 cm in (če je os prekata podana) ne vodoravno čez votlino (kot z osjo < 65°)."""
+    d = b - a
+    if d.length > najvec or d.length < 1e-4:
+        return False
+    return os_ is None or abs(d.normalized().dot(os_)) > 0.42
+
+
+def tetive(bm, rob, vrhovi, polmer=0.0002, na_rob=2, os_=None):
     """Tetive: tanke posamične niti (Ø ≈ 0,4 mm, debla ≈ 0,7 mm) iz vrha papilarne mišice (vrhovi: [(točka, delež loka
     od, do)]); vsako deblo se na ~55–70 % poti pahljačasto razveji v 3 niti do prostega roba lističa."""
     n = len(rob)
@@ -130,6 +138,9 @@ def tetive(bm, rob, vrhovi, polmer=0.0002, na_rob=2):
         izbor = [i for i in range(n) if od <= i / (n - 1) <= do][::na_rob]
         for j in range(0, len(izbor), 3):
             konci = [rob[i] for i in izbor[j:j + 3]]
+            konci = [k for k in konci if _tetiva_ok(vrh, k, os_)]
+            if not konci:
+                continue
             sred = sum(konci, Vector()) / len(konci)
             razcep = vrh.lerp(sred, rnd.uniform(0.55, 0.7))
             zac = vrh + (sred - vrh).normalized() * 0.0008 + Vector([rnd.uniform(-1, 1) * 0.0008 for _ in range(3)])
@@ -154,15 +165,16 @@ def papilarna(bm, dno, vrh, polmer, stena=None):
     deblo = [dno.lerp(vrh, 0.78 * i / (k - 1)) for i in range(k)]
     cev(bm, deblo, [polmer * (1.6 - 0.85 * (i / (k - 1)) ** 0.8) for i in range(k)], seg=14)
     glave = []
-    for zamik in (pravo, -pravo):
+    tretje = os_.cross(pravo).normalized() * polmer * 0.45
+    for zamik in (pravo, -pravo * 0.5 + tretje * 0.87, -pravo * 0.5 - tretje * 0.87):  # 3 glave (Netter: 2–3)
         a = dno.lerp(vrh, 0.62)
         tocke = [a.lerp(vrh, i / 7) + zamik * (i / 7) ** 1.3 for i in range(8)]
-        cev(bm, tocke, [polmer * (0.78 - 0.42 * i / 7) for i in range(8)], seg=10)
+        cev(bm, tocke, [polmer * (0.66 - 0.36 * i / 7) for i in range(8)], seg=10)
         glave.append(tocke[-1])
     return glave
 
 
-def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, do=1.0, odmik=0.45, epi=None):
+def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, do=1.0, odmik=0.05, epi=None, mosticki=0.12):
     """Mesnate trabekule: grebeni in mostički po notranji steni prekata (na steno pritisnjene cevi, ki sledijo površini).
     Začetke izberemo z žarki iz votline (prvi zadetek = notranja stena), smer je pretežno vzdolž dolge osi s šumom;
     od/do = delež razdalje od baze (0) do konice (1), kjer trabekule rastejo (gostejše proti konici)."""
@@ -190,11 +202,11 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
         dl = dolzina * rnd.uniform(0.6, 1.3)
         r = polmer * rnd.uniform(0.7, 1.35)
         k = max(6, int(dl / (r * 1.2)))
-        tocke = []
+        tocke = []; normale = []
         q = p.copy(); nn = n
         ok = True
         for i in range(k):
-            tocke.append(q + nn * r * odmik)
+            tocke.append(q + nn * r * odmik); normale.append(nn.copy())
             smer = (smer - nn * smer.dot(nn) + Vector([rnd.gauss(0, 0.18) for _ in range(3)])).normalized()
             q2 = q + smer * dl / k
             loc, nrm, _, dist = stena.find_nearest(q2)
@@ -210,12 +222,19 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
         if not ok or len(tocke) < 5:
             continue
         # mostiček: sredina dvignjena od stene (prava trabekula, pod njo prostor), sicer greben ob steni
-        if rnd.random() < 0.35:
+        if rnd.random() < mosticki:
             m = len(tocke)
             for i in range(m):
                 tocke[i] = tocke[i] + n * r * 1.6 * math.sin(math.pi * i / (m - 1))
         polm = [r * (0.75 + 0.25 * math.sin(math.pi * i / (len(tocke) - 1))) for i in range(len(tocke))]
+        # sploščen greben (širši ob steni kot visok): prerez elipsa 1 : 0,55 v smeri normale stene
+        zac = len(bm.verts)
         cev(bm, tocke, polm, seg=7)
+        bm.verts.ensure_lookup_table()
+        for v in bm.verts[zac:]:
+            i = min(range(len(tocke)), key=lambda j: (tocke[j] - v.co).length_squared)
+            q = v.co - tocke[i]
+            v.co = v.co - normale[i] * q.dot(normale[i]) * 0.45
         narejenih += 1
     return narejenih
 
@@ -393,7 +412,7 @@ def srce_dodatki(osnovni, cfg, tmp):
         bm, rob = listic(lok, konica_l, globina=0.018, sredisce=mitralni[0], trebuh=0.3)
         # vsaka mišica oskrbuje svojo polovico lističa (komisuri: sprednja-stranska in zadnja-sredinska)
         d0 = (rob[0] - vrh_n).length < (rob[0] - vrh_z).length
-        tetive(bm, rob, [(glave[0], 0.0, 0.55) if d0 else (vrh_z, 0.0, 0.55), (vrh_z, 0.45, 1.0) if d0 else (glave[0], 0.45, 1.0)])
+        tetive(bm, rob, [(glave[0], 0.0, 0.55) if d0 else (vrh_z, 0.0, 0.55), (vrh_z, 0.45, 1.0) if d0 else (glave[0], 0.45, 1.0)], os_=e)
         vrstice.append(["Anterior leaflet of left atrioventricular valve (lastno)", _novo(bm, "mitr-spr"), "zaklopka", "av-zaklopki",
                         "Anterior leaflet of left atrioventricular valve (lastno) / Left atrioventricular valve.g / Heart.g"])
         # zadnji listič dobi še tetive s sprednje-stranske mišice (Z-Anatomy ima samo tiste z zadnje-sredinske)
@@ -401,7 +420,7 @@ def srce_dodatki(osnovni, cfg, tmp):
         prosti = [Vector(p) for p in P[d > np.percentile(d, 93)]]
         prosti = sorted(prosti, key=lambda p: (p - vrh_n).length)[:24][::4]
         bm = bmesh.new()
-        for k in prosti:
+        for k in [k for k in prosti if _tetiva_ok(glave[1], k, e)]:
             raz = glave[1].lerp(k, 0.6)
             cev(bm, _krivulja(glave[1], raz, glave[1].lerp(raz, 0.5), 7), [0.00034] * 7, seg=5)
             cev(bm, _krivulja(raz, k, raz.lerp(k, 0.5), 6), [0.00021] * 6, seg=5)
@@ -418,7 +437,7 @@ def srce_dodatki(osnovni, cfg, tmp):
         vi = _vrh_papilarne(pap_i, trik[0])[0] if pap_i else vs
         bm, rob = listic(lok, konica_d, globina=0.022, sredisce=trik[0])
         a_blize = (rob[0] - vs).length < (rob[-1] - vs).length
-        tetive(bm, rob, [(vs, 0.0, 0.7) if a_blize else (vs, 0.3, 1.0), (vi, 0.7, 1.0) if a_blize else (vi, 0.0, 0.3)])
+        tetive(bm, rob, [(vs, 0.0, 0.7) if a_blize else (vs, 0.3, 1.0), (vi, 0.7, 1.0) if a_blize else (vi, 0.0, 0.3)], os_=(konica_d - trik[0]).normalized())
         vrstice.append(["Anterior leaflet of right atrioventricular valve (lastno)", _novo(bm, "trik-spr"), "zaklopka", "av-zaklopki",
                         "Anterior leaflet of right atrioventricular valve (lastno) / Right atrioventricular valve.g / Heart.g"])
         # septomarginalna trabekula: od pretina (spodnji del) do dna sprednje papilarne mišice
@@ -455,6 +474,9 @@ def srce_dodatki(osnovni, cfg, tmp):
             k1, k2 = prosti[j], prosti[j + 1]
             sred = (k1 + k2) / 2
             vrh = min(vrhovi_d, key=lambda q: (q - sred).length) if ime == "inferior" or pap_sep is None else _vrh_papilarne(pap_sep, trik[0])[0]
+            e_d = (konica_d - trik[0]).normalized()
+            if not (_tetiva_ok(vrh, k1, e_d) and _tetiva_ok(vrh, k2, e_d)):
+                continue
             raz = vrh.lerp(sred, 0.62)
             cev(bm, _krivulja(vrh, raz, vrh.lerp(raz, 0.5), 7), [0.00034] * 7, seg=5)
             for k in (k1, k2):
@@ -492,8 +514,8 @@ def srce_dodatki(osnovni, cfg, tmp):
     if ra is not None:
         P_ra = _tocke(ra); zg = P_ra[P_ra[:, 2] > np.percentile(P_ra[:, 2], 93)]
         sa = Vector(zg[zg[:, 0].argmin()]); c_ra = Vector(P_ra.mean(0))
-        sa = sa + (c_ra - sa).normalized() * 0.0012  # tik pod epikardom
-        cev(bm, [sa + Vector((0, 0, -0.012)) * (i / 7) for i in range(8)], [0.0012 + 0.0008 * math.sin(math.pi * i / 7) for i in range(8)], seg=10)
+        sa = sa + (c_ra - sa).normalized() * 0.0026  # v steni pod epikardom (ne kapsula na površini, pregled #461)
+        cev(bm, [sa + Vector((0, 0, -0.012)) * (i / 7) for i in range(8)], [0.0009 + 0.0006 * math.sin(math.pi * i / 7) for i in range(8)], seg=10)
         kosov += 1
     if kosov:
         vrstice.append(["Conducting system of heart (lastno)", _novo(bm, "prevodni"), "prevodni", "prevodni-sistem",
@@ -502,7 +524,8 @@ def srce_dodatki(osnovni, cfg, tmp):
     else:
         bm.free()
     # --- mesnate trabekule: levi prekat drobnejše (ob konici), desni grobe
-    for ime, me, obroc, konica, n, r, dl in (("left", lv, mitralni, konica_l, 100, 0.0013, 0.024), ("right", rv, trik, konica_d, 64, 0.0016, 0.028)):
+    # Netter/Sobotta: grebeni in mostički, zraščeni s steno; levi prekat finejši (gostejši proti konici), desni grobi
+    for ime, me, obroc, konica, n, r, dl in (("left", lv, mitralni, konica_l, 60, 0.0012, 0.022), ("right", rv, trik, konica_d, 36, 0.0017, 0.026)):
         bm = bmesh.new()
         st = trabekule(bm, _bvh(me), obroc[0] + (konica - obroc[0]) * 0.12, (konica - obroc[0]) * 0.92, rnd, n, r, dl, epi=epi)
         vrstice.append([f"Trabeculae carneae of {ime} ventricle (lastno)", _novo(bm, "trab-" + ime), "miokard", "trabekule",
@@ -581,3 +604,116 @@ def semilunarni(bm, sred, os_, R, debelina=0.00045, nt=26, nu=11):
             for j in range(nu - 1):
                 nove.append(bm.faces.new((mreza[i][j], mreza[i + 1][j], mreza[i + 1][j + 1], mreza[i][j + 1])))
         bmesh.ops.solidify(bm, geom=nove, thickness=debelina)
+
+
+# ---------- deli sten (raven Študij, pregled #461 B10): srčni ušesi, medprekatni pretin, conus arteriosus ----------
+def _razcepi(me, maska, ime):
+    """Ploskve z maska[i] = True prestavi v novo mrežo (ista oglišča, brez vrzeli); vrne novo mrežo ali None."""
+    import bpy
+    if not any(maska) or all(maska):
+        return None
+    bm = bmesh.new(); bm.from_mesh(me)
+    bm.faces.ensure_lookup_table()
+    novo = bm.copy()
+    novo.faces.ensure_lookup_table()
+    bmesh.ops.delete(novo, geom=[f for f in novo.faces if not maska[f.index]], context="FACES")
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if maska[f.index]], context="FACES")
+    bm.to_mesh(me); bm.free()
+    out = bpy.data.meshes.new(ime); novo.to_mesh(out); novo.free()
+    for p in out.polygons:
+        p.use_smooth = True
+    return out
+
+
+def _sredisca(me):
+    return np.array([tuple(p.center) for p in me.polygons])
+
+
+def srce_razdeli(osnovni, cfg, tmp):
+    """Srčni ušesi (auricula dextra/sinistra) kot dela: ploskve preddvora v krogli okoli konice ušesa (levo: najbolj
+    spredaj in levo, ovija levi rob pljučnega debla; desno: najbolj spredaj in zgoraj, ob korenu aorte), ki so na strani
+    ušesa (od središča preddvora). Medprekatni pretin: ploskve levega prekata na strani desnega prekata, ki niso epikard
+    (notranja septalna ploskev in skriti stik), s pars membranacea (tanka vezivna ploščica Ø ≈ 1 cm tik pod aortnim
+    obročem). Conus arteriosus: ploskve desnega prekata do 2,2 cm pod obročem pljučne zaklopke; crista
+    supraventricularis: mišični greben na notranji steni desnega prekata med trikuspidalnim in pljučnim ustjem."""
+    po = {r[0]: r for r in osnovni}
+    vrstice = []
+    lv, rv = po.get("Left ventricle"), po.get("Right ventricle")
+    la, ra = po.get("Left atrium"), po.get("Right atrium")
+    stene = [r[1] for r in (lv, rv, la, ra) if r]
+    if len(stene) < 4:
+        return []
+    epi_t, epi_n = epikard(stene)
+    # --- ušesi
+    for r, ime, del_, smer, R_ in ((la, "Left auricle", "levo-srcno-uho", np.array([0.35, -1.0, 0.1]), 0.021),
+                                   (ra, "Right auricle", "desno-srcno-uho", np.array([-0.1, -1.0, 0.55]), 0.024)):
+        P = _tocke(r[1]); c = P.mean(0)
+        tip = P[((P - c) @ (smer / np.linalg.norm(smer))).argmax()]
+        C = _sredisca(r[1])
+        os_ = (tip - c) / np.linalg.norm(tip - c)
+        maska = (np.linalg.norm(C - tip, axis=1) < R_) & (((C - c) @ os_) > 0.45 * np.linalg.norm(tip - c))
+        me = _razcepi(r[1], list(maska), ime)
+        if me is not None:
+            vrstice.append([ime, me, "miokard", del_, f"{ime} (lastno) / {r[0]} / Heart.g"])
+            print(f"[organi] srce: {ime}: {int(maska.sum())} ploskev")
+    # --- medprekatni pretin (iz levega prekata)
+    P_lv, P_rv = _tocke(lv[1]), _tocke(rv[1])
+    c_lv, c_rv = P_lv.mean(0), P_rv.mean(0)
+    smer = (c_rv - c_lv) / np.linalg.norm(c_rv - c_lv)
+    t_rv = _bvh(rv[1])
+    C = _sredisca(lv[1])
+    zun = np.zeros(len(C), bool)
+    for i, q in enumerate(C):
+        loc, _, fi, d = epi_t.find_nearest(Vector(q), 0.0012)
+        zun[i] = loc is not None and d < 0.0008
+    blizu = np.array([(t_rv.find_nearest(Vector(q), 0.016)[3] or 1) < 0.015 for q in C])
+    maska = blizu & (((C - c_lv) @ smer) > 0.004) & ~zun
+    me = _razcepi(lv[1], list(maska), "septum")
+    if me is not None:
+        vrstice.append(["Interventricular septum", me, "miokard", "medprekatni-pretin", "Interventricular septum (lastno) / Heart.g"])
+        print(f"[organi] srce: medprekatni pretin: {int(maska.sum())} ploskev")
+    zl = robne_zanke(lv[1]); zd = robne_zanke(rv[1])
+    aorta = po.get("Aorta")
+    if aorta and zl:
+        ac = Vector(_tocke(aorta[1]).mean(0))
+        aortni = min(zl[1:] or zl, key=lambda z: (z[0] - ac).length)
+        # pars membranacea: na septalni steni levega prekata tik pod aortnim obročem (proti desnemu prekatu)
+        d = Vector(smer)
+        h = _bvh(me if me is not None else lv[1]).ray_cast(aortni[0] - aortni[2] * 0.0 + Vector((0, 0, -0.006)), d, 0.04)
+        if h[0] is not None:
+            nn = -d; a = nn.orthogonal().normalized(); b = nn.cross(a)
+            bm = bmesh.new(); k = 24
+            rob = [bm.verts.new(h[0] + nn * 0.0004 + (a * math.cos(2 * math.pi * i / k) * 0.0055 + b * math.sin(2 * math.pi * i / k) * 0.0042)) for i in range(k)]
+            c_ = bm.verts.new(h[0] + nn * 0.0004)
+            for i in range(k):
+                bm.faces.new((rob[i], rob[(i + 1) % k], c_))
+            bmesh.ops.solidify(bm, geom=bm.faces[:], thickness=0.0006)
+            vrstice.append(["Membranous part of interventricular septum", _novo(bm, "pars-membr"), "vez", "medprekatni-pretin",
+                            "Membranous part of interventricular septum (lastno) / Heart.g"])
+    # --- conus arteriosus in crista supraventricularis (desni prekat)
+    pt = po.get("Pulmonary trunk and left pulmonary artery") or po.get("Pulmonary trunk")
+    trik = next((z for z in zd[1:] if 0.012 < z[1] < 0.024), None)
+    if pt and zd:
+        p0 = Vector(_tocke(pt[1])[_tocke(pt[1])[:, 2].argmin()])
+        pulm = min(zd, key=lambda z: (z[0] - p0).length)
+        C = _sredisca(rv[1])
+        n_ = pulm[2] if pulm[2].dot(Vector(c_rv) - pulm[0]) < 0 else -pulm[2]  # od prekata proti deblu
+        pod = (C - np.array(pulm[0])) @ np.array(n_)
+        maska = (pod < 0.002) & (pod > -0.022) & (np.linalg.norm(C - np.array(pulm[0]), axis=1) < 0.03)
+        me = _razcepi(rv[1], list(maska), "conus")
+        if me is not None:
+            vrstice.append(["Conus arteriosus", me, "miokard", "conus-arteriosus", "Conus arteriosus (lastno) / Right ventricle / Heart.g"])
+            print(f"[organi] srce: conus arteriosus: {int(maska.sum())} ploskev")
+        if trik is not None:
+            t_r = _bvh(rv[1]); cc = Vector(c_rv)
+            pot = []
+            for i in range(12):
+                q = trik[0].lerp(pulm[0], 0.15 + 0.7 * i / 11) + (Vector(c_lv) - cc).normalized() * 0.004
+                dd = (q - cc).normalized(); h = t_r.ray_cast(cc, dd, 0.06)
+                if h[0] is not None:
+                    pot.append(h[0] - dd * 0.0012)
+            if len(pot) > 5:
+                bm = bmesh.new(); cev(bm, pot, [0.0028 * (0.6 + 0.4 * math.sin(math.pi * i / (len(pot) - 1))) for i in range(len(pot))], seg=10)
+                vrstice.append(["Supraventricular crest", _novo(bm, "crista-sv"), "miokard", "conus-arteriosus",
+                                "Supraventricular crest (lastno) / Right ventricle / Heart.g"])
+    return vrstice

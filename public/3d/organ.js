@@ -600,7 +600,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
     group.add(mesh);
     meshi.push(mesh);
     const t = podatki.tkiva?.[k.tkivo] || {};
-    if (ravnine && !t.brezReza && !t.dvostransko && (t.prosojnost ?? 1) >= 1) {
+    // brez pokrova reza: notranje strukture, ki se sekajo s steno (trabekule, papilarne mišice …), sicer drobir na rezu
+    if (ravnine && !t.brezReza && !t.dvostransko && (t.prosojnost ?? 1) >= 1 && !(prerez.brezPokrova || []).includes(k.del)) {
       if (!pokrovi.has(k.tkivo)) pokrovi.set(k.tkivo, materialPokrova(t, ravnine));
       const p = new THREE.Mesh(k.geo, pokrovi.get(k.tkivo));
       p.raycast = () => {};

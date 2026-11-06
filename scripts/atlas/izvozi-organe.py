@@ -28,7 +28,7 @@ from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
-from srce_geometrija import srce_dodatki  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
+from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -93,7 +93,7 @@ ORGANI = {
                 r"Inferior vena cava \(thoracic part\)|(Left|Right) (superior|inferior) pulmonary vein|Brachiocephalic trunk|Left common carotid artery|Left subclavian artery|"
                 r"(Left|Right) pulmonary artery|Thoracic aorta)( |$)",
         izkljuci=r"Septal branches of anterior interventricular|\?\?\?|Posterior intercostal|Subcostal|Superior phrenic|Bronchial|Oesophageal|Mediastinal|Pericardial",
-        cilj=(170_000, 54_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP (telefon ≥ 5 % rezerve)
+        cilj=(170_000, 50_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP (telefon ≥ 5 % rezerve)
         # Prekata: odprti debeli lupini, predznak prostornine izbere notranjo stran (zunanja stena izgine, vidna notranjost);
         # preverjeno s posnetkom 2026-11-04 (stari izvoz iz 08:50 je imel prav to obrnjeno smer).
         obrni=r"^(Left|Right) ventricle$",
@@ -101,6 +101,7 @@ ORGANI = {
         # Lastna geometrija (srce_geometrija.py): sprednja lističa mitralne in trikuspidalne zaklopke s tetivami,
         # sprednja-stranska papilarna mišica levega prekata, septomarginalna trabekula, mesnate trabekule obeh prekatov.
         dodaj=["srce_dodatki", "srce_zile"],
+        razdeli=["srce_razdeli"],  # srce_geometrija.srce_razdeli: ušesi, medprekatni pretin, conus (po normalah)
         # srce_zile (srce_zile.py): velike in venčne žile iz krivulj Z-Anatomy kot prava geometrija (zaprte cevi s steno,
         # veje aortnega loka, štiri pljučne vene, zaprta zadnja stena levega preddvora). Lastne cevi se ne poenostavijo
         # na računalniku, na telefonu blažje kot ostalo (»ohrani«): poenostavljena cev bi bila oglata.
@@ -141,6 +142,8 @@ ORGANI = {
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
                 "vencna-arterija": dict(barva=(0.58, 0.06, 0.05), barva2=(0.48, 0.04, 0.04), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
                                         vzdolz=0.00002, vzdolzRazmik=0.0012),
+                # vezivo (arterijska vez, dno ovalne kotanje, pars membranacea): mat sivobelo, brez sijaja
+                "vez": dict(barva=(0.62, 0.58, 0.53), barva2=(0.55, 0.50, 0.46), lise=0.25, hrap=0.78, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 # prevodni sistem (shema): rumen kot v atlasih, rahlo svetleč
                 "prevodni": dict(barva=(0.78, 0.62, 0.10), barva2=(0.70, 0.52, 0.08), lise=0.15, hrap=0.4, gube=0.00002, gubeMera=0.0015, razdeli=1),
                 "vencna-vena": dict(barva=(0.14, 0.045, 0.14), barva2=(0.10, 0.035, 0.11), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
@@ -1064,6 +1067,11 @@ def izvozi(organ, cfg):
         row.append(odprtih)
         for p in row[1].polygons:
             p.use_smooth = True
+    # razdeli: deli sten kot samostojni deli (srčni ušesi, pretin …) po usmeritvi normal (kosi podedujejo usmeritev)
+    for ime_f in cfg.get("razdeli", []):
+        for r in globals()[ime_f](osnovni, cfg, tmp):
+            r.append(0)  # odprtih (podatek za poročilo)
+            osnovni.append(r)
     # napihni: (regex, faktor) okoli težišča mreže. Telesa s skupno mejo (režnji pljuč ob špranji, segmenti jeter) malo
     # pomanjšamo: pokrov reza je zadnja stena telesa in bi se sicer mešal s sprednjo steno soseda (svetle lise v prerezu).
     for rx, f, *dno in cfg.get("napihni", []):  # dno: središče na dnu (nadledvična žleza ostane na ledvici)
