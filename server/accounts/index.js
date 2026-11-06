@@ -1054,7 +1054,7 @@ export function mountAccounts(app, store, opts = {}) {
             return [];
           }
         })(),
-        // Naloge za člane pilota (server/pilot-naloge.js): ocene, opombe, anketa; fotografija samo kot podatek, da obstaja.
+        // Naloge za člane pilota (server/pilot-naloge.js): ocene, opombe, anketa; sama fotografija (če je shranjena) je v data.other.pilot_photos.
         pilot: (() => {
           try {
             return {
@@ -1137,6 +1137,8 @@ export function mountAccounts(app, store, opts = {}) {
     "consents", "conversations", "messages", "conversation_summaries", "events", "skill_results", "skill_seen", "topic_state", "tasks", "xp_events",
     "message_reports", "bug_reports", "flashcards", "game_scores", "game_ratings", "game_wishes", "game_unlocks", "game_days", "game_concept_days",
     "league_profiles", "league_members", "avatar_state", "avatar_items", "coin_events", "daily_puzzle", "schedules", "feedback",
+    // Naloge pilota: ocene, opombe in anketa zgoraj (data.children[].pilot); fotografija in nagrade v data.other.
+    "pilot_scans", "pilot_features", "pilot_survey",
   ];
 
   // Izbris računa z vsemi otroki in pogovori (GDPR čl. 17).

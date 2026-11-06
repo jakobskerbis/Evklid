@@ -164,7 +164,11 @@ test("pilot: fotografija samo ob soglasju, samo od 15 let, izbris in rok hrambe"
     assert.equal(photos(), 0);
     // Izvoz podatkov vsebuje ocene.
     const ex = await adult.call("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
-    if (ex.status === 200) assert.ok(JSON.stringify(ex.body).includes("pilot"));
+    assert.equal(ex.status, 200);
+    const kid = ex.body.children.find((c) => c.pilot);
+    assert.ok(kid && kid.pilot.scans.length >= 1);
+    // Ocene niso izvožene dvakrat (enkrat v children[].pilot, ne še v other).
+    assert.ok(!JSON.stringify(ex.body.other || {}).includes("pilot_scans"));
   });
 });
 
