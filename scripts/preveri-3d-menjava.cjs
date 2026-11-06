@@ -31,7 +31,7 @@ try {
 const arg = process.argv.slice(2);
 const posnetek = arg.find((a) => a.startsWith("--posnetek="))?.slice(11);
 const izbrani = arg.filter((a) => !a.startsWith("-"));
-const SPLOSNI = ["celica-zivalska", "celica-rastlinska", "celica-bakterija", "organ-srce", "molekule", "atom", "telesa", "graf-ploskev", "elektricno-polje", "mitoza", "soncni-sistem"];
+const SPLOSNI = ["celica-zivalska", "celica-rastlinska", "celica-bakterijska", "organ-srce", "molekule", "atom", "telesa", "graf-ploskev", "elektricno-polje", "mitoza", "soncni-sistem"];
 const VSI = ["kristali", ...SPLOSNI, "puscice", "lekcija", "atlas"];
 const NALOGE = izbrani.length ? izbrani : VSI;
 const NAPRAVE = [
@@ -54,7 +54,11 @@ const STANJE = `async () => {
   const THREE = await import("/vendor/three/build/three.module.js");
   const v = new THREE.Vector3(), mi = new THREE.Matrix4(), mw = new THREE.Matrix4();
   const vidna = (o) => { for (let x = o; x; x = x.parent) if (!x.visible) return false; return true; };
-  let n = 0, zunaj = 0;
+  const id = host.querySelector('[data-del][aria-pressed="true"]')?.dataset.del || null;
+  const d = (api.model.deli || []).find((x) => x.id === id) || null;
+  const izbrane = new Set();
+  for (const m of d?.meshes || []) m?.traverse?.((o) => izbrane.add(o));
+  let n = 0, zunaj = 0, nd = 0, zd = 0;
   api.model.group.updateWorldMatrix(true, true);
   api.model.group.traverse((o) => {
     if (!o.isMesh || o.userData?.k3Sij || !vidna(o) || !o.layers.test(kam.layers)) return;
@@ -70,14 +74,21 @@ const STANJE = `async () => {
       for (let i = (k * 7) % korak; i < pos.count; i += korak) {
         v.fromBufferAttribute(pos, i).applyMatrix4(mw).project(kam);
         n++;
-        if (Math.abs(v.x) > 1.0 || Math.abs(v.y) > 1.0 || v.z > 1) zunaj++;
+        const iz = Math.abs(v.x) > 1.0 || Math.abs(v.y) > 1.0 || v.z > 1;
+        if (iz) zunaj++;
+        if (izbrane.has(o)) { nd++; if (iz) zd++; }
       }
     }
   });
   const r = (b) => [b.left, b.top, b.right, b.bottom].map(Math.round);
+  // vidni del elementa: plošča (.k3-plosca) se drsi in odreže, kar je odrsano nad njen rob (to ni čez model)
+  const vidno = (e) => {
+    const b = e.getBoundingClientRect(), pl = e.closest(".k3-plosca")?.getBoundingClientRect();
+    if (!pl) return r(b);
+    const x = [Math.max(b.left, pl.left), Math.max(b.top, pl.top), Math.min(b.right, pl.right), Math.min(b.bottom, pl.bottom)];
+    return x[2] > x[0] && x[3] > x[1] ? x.map(Math.round) : null;
+  };
   const info = host.querySelector(".k3-info"), obv = host.querySelector(".k3-obvestilo");
-  const id = host.querySelector('[data-del][aria-pressed="true"]')?.dataset.del || null;
-  const d = (api.model.deli || []).find((x) => x.id === id) || null;
   // poudarek (public/3d/poudarek.js): vsaj ena mreža izbranega dela je v vrsti »spredaj« (renderOrder ≥ 1000), torej
   // narisana nad prosojnimi ostalimi; stare mreže prejšnjega stanja so iz modela odstranjene
   let sij = null;
@@ -87,10 +98,11 @@ const STANJE = `async () => {
   }
   return {
     izven: n ? zunaj / n : 0,
+    izvenDel: nd ? zd / nd : 0, // izbrani del: kamera ga po pogledu s ponastaviPogled pokaže od blizu (poudarek.js)
     canvas: r(host.querySelector("canvas").getBoundingClientRect()),
     id, ime: d?.ime ?? null, opis: d?.opis ?? null, sij,
-    okno: info && !info.hidden ? { ime: info.querySelector(".k3-info-ime")?.textContent, opis: info.querySelector(".k3-info-opis")?.textContent ?? null, r: r(info.getBoundingClientRect()) } : null,
-    obvestilo: obv && !obv.hidden ? { besedilo: obv.textContent, r: r(obv.getBoundingClientRect()) } : null,
+    okno: info && !info.hidden ? { ime: info.querySelector(".k3-info-ime")?.textContent, opis: info.querySelector(".k3-info-opis")?.textContent ?? null, r: vidno(info) } : null,
+    obvestilo: obv && !obv.hidden ? { besedilo: obv.textContent, r: vidno(obv) } : null,
     obvestiloBilo: window.__k3Obv || null, // besedilo obvestila od zadnjega klika (na počasnem swiftshaderju morda že skrito)
     leti: !!api.kit.leti,
   };
@@ -116,7 +128,7 @@ const SLEDI_OBVESTILU = () => {
 };
 
 /** Po menjavi: okno ustreza novemu stanju, poudarek na novih mrežah, model v kadru, nič čez platno. */
-function preveriStanje(kje, s, { prejId = null, pricakujObvestilo = true } = {}) {
+function preveriStanje(kje, s, { prejId = null, pricakujObvestilo = true, celModel = false } = {}) {
   if (!s || s.nalaga || s.napaka) return napake.push(`${kje}: stanje ni na voljo ${s?.napaka || ""}`);
   if (s.okno && !s.id) napake.push(`${kje}: okno »${s.okno.ime}« je odprto, a noben del ni izbran`);
   if (!s.okno && s.id) napake.push(`${kje}: del ${s.id} je izbran, okno pa zaprto`);
@@ -128,7 +140,8 @@ function preveriStanje(kje, s, { prejId = null, pricakujObvestilo = true } = {})
   }
   if (prejId && !s.id && pricakujObvestilo && !s.obvestilo && !s.obvestiloBilo) napake.push(`${kje}: okno dela ${prejId} se je zaprlo brez obvestila`);
   if (s.obvestilo && prekriva(s.obvestilo.r, s.canvas)) napake.push(`${kje}: obvestilo prekriva platno`);
-  if (s.izven > MEJA) napake.push(`${kje}: po menjavi ${(s.izven * 100).toFixed(1)} % modela izven kadra`);
+  // cel model v kadru; z izbranim delom (ne pri kristalih, celModel) zadošča, da je v kadru izbrani del
+  if (s.izven > MEJA && (celModel || !s.id || s.izvenDel > MEJA)) napake.push(`${kje}: po menjavi ${(s.izven * 100).toFixed(1)} % modela izven kadra`);
 }
 
 async function odpri(p, hash) {
@@ -159,7 +172,7 @@ async function kristali(p, nm) {
     if (!i) continue;
     await izberiMoznost(p, m);
     const s = await pocakaj(p, (x) => (x.opis || "").includes(PRICAKUJ[m]) && x.izven <= MEJA);
-    preveriStanje(`${nm} kristali ${MREZE[i - 1]}→${m}/celica`, s, { prejId: "celica" });
+    preveriStanje(`${nm} kristali ${MREZE[i - 1]}→${m}/celica`, s, { prejId: "celica", celModel: true });
     if (s?.id !== "celica") napake.push(`${nm} kristali ${m}: osnovna celica ni več izbrana`);
     if (!(s?.okno?.opis || "").includes(PRICAKUJ[m])) napake.push(`${nm} kristali ${m}: opis celice »${s?.okno?.opis}« ne omenja »${PRICAKUJ[m]}«`);
   }
@@ -174,7 +187,7 @@ async function kristali(p, nm) {
       if (!pred?.okno) { napake.push(`${nm} kristali bcc/${id}: okno se ni odprlo`); continue; }
       await izberiMoznost(p, "led");
       const s = await pocakaj(p, (x) => x.izven <= MEJA && (x.id !== id || (x.okno?.opis ?? "") === (x.opis ?? "")) && (x.id || x.obvestilo || x.obvestiloBilo));
-      preveriStanje(`${nm} kristali bcc→led/${id}${koord ? " (koordinacija)" : ""}`, s, { prejId: id });
+      preveriStanje(`${nm} kristali bcc→led/${id}${koord ? " (koordinacija)" : ""}`, s, { prejId: id, celModel: true });
     }
   }
 }
@@ -206,7 +219,7 @@ async function splosni(p, nm, id) {
       const ime = ((await g.textContent()) || vrsta).trim().slice(0, 30);
       await klikni(g);
       st++;
-      const s = await pocakaj(p, (x) => x.izven <= MEJA && (!x.id || (x.okno?.opis ?? "") === (x.opis ?? "")), 30000);
+      const s = await pocakaj(p, (x) => (x.izven <= MEJA || (x.id && x.izvenDel <= MEJA)) && (!x.id || (x.okno?.opis ?? "") === (x.opis ?? "")), 30000);
       preveriStanje(`${nm} ${id} »${ime}«`, s, { prejId: prej });
     }
   }
@@ -301,7 +314,7 @@ async function lekcija(p, nm) {
   await izberiDel(p, "celica");
   await izberiMoznost(p, "led");
   s = await pocakaj(p, (x) => (x.opis || "").includes("4 molekule H₂O") && x.izven <= MEJA);
-  preveriStanje(`${nm} lekcija kristali bcc→led/celica`, s, { prejId: "celica" });
+  preveriStanje(`${nm} lekcija kristali bcc→led/celica`, s, { prejId: "celica", celModel: true });
   if (!(s?.okno?.opis || "").includes("4 molekule H₂O")) napake.push(`${nm} lekcija: opis celice »${s?.okno?.opis}« ni za led`);
   await izberiMoznost(p, "bcc");
   await pocakaj(p, (x) => x.izven <= MEJA && (x.opis || "").includes("2 atoma Fe"));
@@ -310,7 +323,7 @@ async function lekcija(p, nm) {
   s = await pocakaj(p, (x) => x.izven <= MEJA && (x.obvestilo || x.obvestiloBilo));
   const b = s?.obvestilo?.besedilo || s?.obvestiloBilo || "";
   if (!/^Ta model nima dela ‘.+’\.$/.test(b)) napake.push(`${nm} lekcija: atomi Fe pri ledu brez obvestila »Ta model nima dela ‘…’.« (${b})`);
-  preveriStanje(`${nm} lekcija kristali bcc→led/fe`, s, { prejId: "fe" });
+  preveriStanje(`${nm} lekcija kristali bcc→led/fe`, s, { prejId: "fe", celModel: true });
 }
 
 async function slikaj(p, pot) {
