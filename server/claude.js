@@ -181,6 +181,14 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   let msgs = messages;
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
     if (round > 0 && canRound && !canRound(round)) break;
+    // Prekinjeno pred zahtevo (učenec je zaprl aplikacijo med pripravo, npr. povzetkom): klic ne odide in se ne
+    // šteje (pregled #462 S2: prej fantomski strošek vhoda in odgovor Opusa v dnevni meji).
+    if (signal?.aborted) {
+      const e = new Error("Request was aborted.");
+      e.name = "AbortError";
+      if (usage) Object.assign(e, { usage, model: finalModel });
+      throw e;
+    }
     const p = { ...params, messages: msgs };
     if (tools?.length && round === MAX_TOOL_ROUNDS) p.tool_choice = { type: "none" };
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
@@ -194,6 +202,8 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     let liveModel = model;
     let lastDelta = false;
     let deltaBytes = 0;
+    let thinkMs = 0;
+    let thinkAt = 0;
     let final;
     try {
       for await (const event of stream) {
@@ -203,6 +213,11 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         } else if (event.type === "message_delta" && event.usage && live) {
           for (const [k, v] of Object.entries(event.usage)) if (typeof v === "number") live[k] = v;
           lastDelta = true;
+        } else if (event.type === "content_block_start" && /thinking/.test(event.content_block?.type || "")) {
+          thinkAt = Date.now();
+        } else if (event.type === "content_block_stop" && thinkAt) {
+          thinkMs += Date.now() - thinkAt;
+          thinkAt = 0;
         } else if (event.type === "content_block_delta") {
           const d = event.delta || {};
           deltaBytes += Buffer.byteLength(String(d.text ?? d.thinking ?? d.partial_json ?? d.signature ?? ""), "utf8");
@@ -218,7 +233,17 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     } catch (err) {
       const roundMax = p.max_tokens || max_tokens;
       let partial = null;
-      if (live) partial = lastDelta ? live : { ...live, output_tokens: Math.max(roundMax, deltaBytes, live.output_tokens || 0) };
+      if (thinkAt) thinkMs += Date.now() - thinkAt;
+      // Izhod brez message_delta (j 2026-11-06 12:46): ob NAŠI prekinitvi (učenec zapre aplikacijo → res close →
+      // controller.abort, server/app.js; povezava z API se takoj zapre in API neha pisati) štejemo dejansko napisano:
+      // bajti vseh delt (žeton ≤ bajt) + 10 %; razmišljanje, ki ga tok ne pokaže v celoti (povzetek ali skrito), po
+      // času bloka razmišljanja × največja hitrost modela. Pri drugi napaki sredi toka (API, omrežje) ne vemo,
+      // koliko je API napisal: previdno ves max_tokens kroga. Pol sekunde pisanja po zaprtju povezave je rezerva.
+      const ours = !!signal?.aborted;
+      const outBound = ours
+        ? Math.min(roundMax, Math.ceil(1.1 * deltaBytes + (thinkMs / 1000 + ABORT_LAG_S) * maxTokensPerSec(liveModel)))
+        : roundMax;
+      if (live) partial = lastDelta ? live : { ...live, output_tokens: Math.max(outBound, live.output_tokens || 0) };
       else if (signal?.aborted) {
         const inBound = systemTokens(p.system) + messageTokens(p.messages) + (p.tools?.length ? Math.ceil(Buffer.byteLength(JSON.stringify(p.tools), "utf8") / 2) : 0);
         partial = { input_tokens: 0, cache_creation_input_tokens: inBound, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: inBound }, output_tokens: 0 };
@@ -248,6 +273,13 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
 }
 
 const MAX_TOOL_ROUNDS = 3;
+
+// Največja hitrost pisanja (žetonov na sekundo, zgornja meja z rezervo; pregled #462 S3): za razmišljanje, ki ga
+// prekinjen tok ne pokaže v celoti. Neznan model: najhitrejši.
+// ABORT_LAG_S: čas, ko API po zaprtju povezave še piše (rezerva).
+const ABORT_LAG_S = 0.5;
+const TOKENS_PER_SEC = { haiku: 400, sonnet: 250, opus: 200, fable: 200 };
+export const maxTokensPerSec = (model) => TOKENS_PER_SEC[Object.keys(TOKENS_PER_SEC).find((k) => String(model).includes(k))] || TOKENS_PER_SEC.haiku;
 
 // Seštevek porabe žetonov več klicev (krogi orodij).
 export function addUsage(a, b) {

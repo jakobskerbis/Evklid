@@ -51,14 +51,18 @@ test("preverjanje: dnevni znesek aplikacije je trd (rezervacije v teku in poraba
 });
 
 // Lažen odjemalec API: dogodki, nato napaka (prekinitev); streamReply brez ključa teče v načinu mock, zato lažen ključ.
-async function withFakeStream(events, fn, { abortFirst = false } = {}) {
+async function withFakeStream(events, fn, { abortFirst = false, abortMid = false } = {}) {
   const { setClient } = await import("../server/claude.js");
+  const ctrl = new AbortController();
+  let sent = 0;
   setClient({
     beta: {
       messages: {
         stream: () => ({
           async *[Symbol.asyncIterator]() {
+            sent++;
             for (const e of events) yield e;
+            if (abortMid) ctrl.abort(); // učenec zapre aplikacijo med tokom (server/app.js controller.abort)
             throw new Error("Request was aborted.");
           },
           finalMessage: async () => {
@@ -73,9 +77,8 @@ async function withFakeStream(events, fn, { abortFirst = false } = {}) {
   process.env.ANTHROPIC_API_KEY = "test-ni-pravi";
   delete process.env.EVKLID_MOCK;
   try {
-    const ctrl = new AbortController();
     if (abortFirst) ctrl.abort();
-    return await fn(ctrl.signal);
+    return await fn(ctrl.signal, () => sent);
   } finally {
     setClient(null);
     if (prevKey === undefined) delete process.env.ANTHROPIC_API_KEY;
@@ -106,7 +109,7 @@ test("KRITIČNO prekinjen tok: brez message_delta (pride šele na koncu) se zapi
   );
 });
 
-test("KRITIČNO prekinjen tok: prekinitev pred message_start zapiše vhod iz rezerve", async () => {
+test("KRITIČNO prekinjen tok: prekinitev po zahtevi, pred message_start, zapiše vhod iz rezerve", async () => {
   const { streamReply } = await import("../server/claude.js");
   const { systemTokens, messageTokens } = await import("../server/meje-ai.js");
   const messages = [{ role: "user", content: [{ type: "text", text: "Razloži ulomke. ".repeat(40) }] }];
@@ -120,9 +123,48 @@ test("KRITIČNO prekinjen tok: prekinitev pred message_start zapiše vhod iz rez
         assert.ok(systemTokens("Navodila.") > 0);
         return true;
       }),
+    { abortMid: true },
+  );
+});
+
+test("S2: prekinjeno pred zahtevo – klic ne odide in se ne šteje", async () => {
+  const { streamReply } = await import("../server/claude.js");
+  await withFakeStream(
+    [],
+    (signal, sent) =>
+      assert.rejects(streamReply({ system: "x", messages: [{ role: "user", content: "a" }], mode: "deep", onText: () => {}, signal }), (err) => {
+        assert.equal(err.usage, undefined, "brez porabe");
+        assert.equal(sent(), 0, "zahteva ni odšla");
+        return true;
+      }),
     { abortFirst: true },
   );
 });
+
+test("S3 (j 12:46): naša prekinitev sredi toka šteje napisano + 10 % (in čas razmišljanja), ne ves max_tokens", async () => {
+  const { streamReply, modeParams, maxTokensPerSec } = await import("../server/claude.js");
+  const text = "Začnimo z ulomki. ".repeat(10);
+  const events = [
+    { type: "message_start", message: { model: "claude-opus-5-5", usage: { input_tokens: 1200, output_tokens: 1 } } },
+    { type: "content_block_start", content_block: { type: "thinking" } },
+    { type: "content_block_delta", delta: { type: "thinking_delta", thinking: "Premislimo." } },
+    { type: "content_block_stop" },
+    { type: "content_block_delta", delta: { type: "text_delta", text } },
+  ];
+  await withFakeStream(
+    events,
+    (signal) =>
+      assert.rejects(streamReply({ system: "x", messages: [{ role: "user", content: "a" }], mode: "deep", onText: () => {}, signal }), (err) => {
+        const bytes = Buffer.byteLength(text + "Premislimo.");
+        assert.ok(err.usage.output_tokens >= Math.ceil(1.1 * bytes), `vsaj napisano + 10 %: ${err.usage.output_tokens}`);
+        assert.ok(err.usage.output_tokens <= Math.ceil(1.1 * bytes) + maxTokensPerSec("claude-opus-5-5") + 5, "+ največ pol sekunde pisanja in čas razmišljanja");
+        assert.ok(err.usage.output_tokens < modeParams("deep").max_tokens);
+        return true;
+      }),
+    { abortMid: true },
+  );
+});
+
 
 test("KRITIČNO prekinjen tok: prekinjeni odgovori zmogljivejšega modela štejejo v dnevno mejo (deepToday)", async () => {
   const { openDb } = await import("../server/db.js");
