@@ -3619,5 +3619,6 @@
   "birth.payMissing": "Shkruaj datën e lindjes te skeda Llogaria.",
   "birth.confirm": "Mosha sipas kësaj date: {age}. A është kjo data e lindjes së personit që krijoi llogarinë? Më vonë nuk mund ta ndryshosh vetë.",
   "birth.confirmYes": "Po, ruaje",
-  "birth.confirmNo": "Korrigjo"
+  "birth.confirmNo": "Korrigjo",
+  "a3.teachColors": "Ngjyra mësimore"
 }

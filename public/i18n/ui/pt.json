@@ -3624,5 +3624,6 @@
   "birth.payMissing": "Escreve a tua data de nascimento no separador Conta.",
   "birth.confirm": "Idade segundo esta data: {age}. É a data de nascimento da pessoa que criou a conta? Mais tarde não a podes mudar sozinho.",
   "birth.confirmYes": "Sim, guardar",
-  "birth.confirmNo": "Corrigir"
+  "birth.confirmNo": "Corrigir",
+  "a3.teachColors": "Cores didáticas"
 }

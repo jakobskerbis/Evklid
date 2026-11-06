@@ -3687,5 +3687,6 @@
   "birth.payMissing": "Wpisz datę urodzenia w karcie Konto.",
   "birth.confirm": "Wiek według tej daty: {age}. Czy to data urodzenia osoby, która założyła konto? Później nie możesz jej sam zmienić.",
   "birth.confirmYes": "Tak, zapisz",
-  "birth.confirmNo": "Popraw"
+  "birth.confirmNo": "Popraw",
+  "a3.teachColors": "Kolory do nauki"
 }

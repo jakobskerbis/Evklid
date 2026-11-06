@@ -126,23 +126,24 @@ ORGANI = {
                                 zilice=0.0, notranja=(0.46, 0.14, 0.12), notranjaHrap=0.42),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
-                # (drobne rdečkaste žilice vzdolž stene), mat-vlažna hrapavost. Aorta v rdečem odtenku (konvencija atlasa
-                # »arterija rdeča«, pregled #461), utišana, z rdečkastimi lisami; pljučno deblo v slogu atlasa modro (venska kri), a utišano; votli veni temnejši modrovijolični;
-                # pljučne vene (s kisikom bogata kri) rdečkasto-vijolične, jasno ločene od arterij in votlih ven.
-                "aorta": dict(barva=(0.58, 0.15, 0.13), barva2=(0.48, 0.10, 0.09), lise=0.45, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
+                # (drobne rdečkaste žilice vzdolž stene), mat-vlažna hrapavost. NARAVNE barve (j, 6. 11.; učne barve so
+                # v pregledovalniku, public/3d/barve.js): aorta in venčne arterije ista nasičena arterijska rdeča,
+                # pljučne vene rdeče-vijolične, žile z vensko krvjo (pljučno deblo in arteriji, votli veni, srčne vene)
+                # temno vijolično-rdeče kot skozi tanko steno, brez modre (modra samo v učnih barvah).
+                "aorta": dict(barva=(0.56, 0.07, 0.06), barva2=(0.46, 0.045, 0.04), lise=0.45, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
                               vzdolz=0.00009, vzdolzRazmik=0.0028, vasa=0.55, vasaBarva=(0.40, 0.05, 0.05)),
-                "pljucna": dict(barva=(0.17, 0.20, 0.44), barva2=(0.13, 0.13, 0.36), lise=0.4, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "pljucna": dict(barva=(0.27, 0.07, 0.17), barva2=(0.21, 0.05, 0.14), lise=0.4, hrap=0.5, gube=0.00004, gubeMera=0.002, razdeli=1,
                                 vzdolz=0.00008, vzdolzRazmik=0.0028, vasa=0.4, vasaBarva=(0.30, 0.06, 0.10)),
-                "vena": dict(barva=(0.085, 0.075, 0.22), barva2=(0.06, 0.05, 0.17), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "vena": dict(barva=(0.16, 0.055, 0.15), barva2=(0.12, 0.04, 0.12), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                              vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.22, 0.05, 0.10)),
-                "pljucna-vena": dict(barva=(0.44, 0.07, 0.15), barva2=(0.35, 0.05, 0.13), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "pljucna-vena": dict(barva=(0.42, 0.05, 0.17), barva2=(0.34, 0.035, 0.15), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                                      vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
-                "vencna-arterija": dict(barva=(0.72, 0.045, 0.035), barva2=(0.58, 0.03, 0.03), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
+                "vencna-arterija": dict(barva=(0.58, 0.06, 0.05), barva2=(0.48, 0.04, 0.04), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
                                         vzdolz=0.00002, vzdolzRazmik=0.0012),
                 # prevodni sistem (shema): rumen kot v atlasih, rahlo svetleč
                 "prevodni": dict(barva=(0.78, 0.62, 0.10), barva2=(0.70, 0.52, 0.08), lise=0.15, hrap=0.4, gube=0.00002, gubeMera=0.0015, razdeli=1),
-                "vencna-vena": dict(barva=(0.07, 0.055, 0.20), barva2=(0.05, 0.04, 0.15), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "vencna-vena": dict(barva=(0.14, 0.045, 0.14), barva2=(0.10, 0.035, 0.11), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
             },
         ),
         jedro=r"^(Right atrium|Right ventricle|Left atrium|Left ventricle)$",

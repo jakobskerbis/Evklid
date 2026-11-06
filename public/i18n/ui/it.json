@@ -3620,5 +3620,6 @@
   "birth.payMissing": "Inserisci la tua data di nascita nella scheda Account.",
   "birth.confirm": "Età secondo questa data: {age}. È la data di nascita della persona che ha creato l'account? Più tardi non potrai cambiarla da solo.",
   "birth.confirmYes": "Sì, salva",
-  "birth.confirmNo": "Correggi"
+  "birth.confirmNo": "Correggi",
+  "a3.teachColors": "Colori didattici"
 }

@@ -194,7 +194,8 @@
    "vozlisca": [
     "Right atrium"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#6b9cf0"
   },
   {
    "id": "desni-prekat",
@@ -206,7 +207,8 @@
    "vozlisca": [
     "Right ventricle"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#3f74d9"
   },
   {
    "id": "levi-preddvor",
@@ -217,7 +219,8 @@
    "vozlisca": [
     "Left atrium"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#f2836f"
   },
   {
    "id": "levi-prekat",
@@ -229,7 +232,8 @@
    "vozlisca": [
     "Left ventricle"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#d9483b"
   },
   {
    "id": "aorta",
@@ -240,7 +244,8 @@
    "vozlisca": [
     "Aorta"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#e0242c"
   },
   {
    "id": "brahiocefalicno-deblo",
@@ -289,7 +294,8 @@
    "vozlisca": [
     "Pulmonary trunk"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#2453c9"
   },
   {
    "id": "pljucne-arterije",
@@ -314,7 +320,8 @@
     "Inferior vena cava (thoracic part)",
     "Superior vena cava"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#1d3a8f"
   },
   {
    "id": "pljucne-vene",
@@ -328,7 +335,8 @@
     "Right inferior pulmonary vein",
     "Right superior pulmonary vein"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#ff5a6e"
   },
   {
    "id": "vencne-arterije",
@@ -337,7 +345,8 @@
    "barva": "#facc15",
    "opis": "Oskrbujejo srčno mišico s krvjo, ki ji prinaša kisik in hranila.",
    "vozlisca": [],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#ff2d2d"
   },
   {
    "id": "leva-vencna-arterija",
@@ -411,7 +420,8 @@
     "Inferior vein of left ventricle",
     "Inferior vein of left ventricle (//Posterior '')"
    ],
-   "raven": 2
+   "raven": 2,
+   "ucnaBarva": "#5b4ee6"
   },
   {
    "id": "vencni-sinus",
@@ -462,7 +472,8 @@
     "Inferior papillary muscle of right ventricle (lastno)",
     "Septal papillary muscle of right ventricle (lastno)"
    ],
-   "raven": 2
+   "raven": 2,
+   "ucnaBarva": "#f472b6"
   },
   {
    "id": "trabekule",
@@ -475,7 +486,8 @@
     "Trabeculae carneae of left ventricle (lastno)",
     "Trabeculae carneae of right ventricle (lastno)"
    ],
-   "raven": 3
+   "raven": 3,
+   "ucnaBarva": "#b07cf0"
   },
   {
    "id": "av-zaklopki",
@@ -493,7 +505,8 @@
     "Posterior leaflet of left atrioventricular valve",
     "Septal leaflet of right atrioventricular valve"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#f3ead2"
   },
   {
    "id": "aortna-zaklopka",
@@ -504,7 +517,8 @@
    "vozlisca": [
     "Semilunar cusps of aortic valve (lastno)"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#fde68a"
   },
   {
    "id": "pljucna-zaklopka",
@@ -515,7 +529,8 @@
    "vozlisca": [
     "Semilunar cusps of pulmonary valve (lastno)"
    ],
-   "raven": 1
+   "raven": 1,
+   "ucnaBarva": "#c7d2fe"
   },
   {
    "id": "arterijska-vez",
@@ -526,7 +541,8 @@
    "opis": "Vezivni trak med začetkom leve pljučne arterije in spodnjo stranjo aortnega loka; ostanek arterijskega voda.",
    "vozlisca": [
     "Ligamentum arteriosum"
-   ]
+   ],
+   "ucnaBarva": "#cbd5e1"
   },
   {
    "id": "prevodni-sistem",
@@ -537,7 +553,8 @@
    "opis": "Shema: sinusni vozel, AV-vozel, Hisov snop in kraka po pretinu vodijo električni signal za utrip.",
    "vozlisca": [
     "Conducting system of heart (lastno)"
-   ]
+   ],
+   "ucnaBarva": "#facc15"
   }
  ],
  "prerez": {

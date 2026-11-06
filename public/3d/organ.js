@@ -10,6 +10,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { mergeGeometries } from "/vendor/three/examples/jsm/utils/BufferGeometryUtils.js";
 import { THREE } from "./scena.js";
 import { seznamDatotek } from "./modeli.js";
+import { barvniNacin, nastaviBarvniNacin, ucnaBarva } from "./barve.js";
 
 const BAZA = new URL("./modeli/organi-3d/", import.meta.url).href;
 const scene = new Map(); // url → Promise<THREE.Group> (surova scena glTF)
@@ -563,6 +564,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
 
   const materiali = new Map();
   const pokrovi = new Map();
+  const ucni = new Map(); // id dela → { mat, pokrov }: »Učne barve« (barve.js)
   const mat = (tkivo) => {
     if (!materiali.has(tkivo)) materiali.set(tkivo, materialTkiva(podatki.tkiva?.[tkivo] || {}, visoka, ravnine || brezRavnin, teksture, s));
     return materiali.get(tkivo);
@@ -641,7 +643,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       }
     }
     if (ravnine) {
-      for (const mm of materiali.values()) {
+      for (const mm of [...materiali.values(), ...[...ucni.values()].flatMap((u) => [u.mat, u.pokrov])]) {
         if (!mm.clippingPlanes?.length && !mm.userData.rezan) continue;
         mm.userData.rezan = true;
         mm.clippingPlanes = rezi ? ravnine.seznam : [];
@@ -671,6 +673,32 @@ export async function zgradiOrgan(ime, ctx = {}) {
     return t ? t.map((v) => v * s) : x.privzeta;
   };
   let deliPogleda = [];
+  // Barvni način (barve.js): učne barve zamenjajo material vsake mreže z enobarvnim po delu (relief normalne mape
+  // ostane), pokrov reza dobi temnejšo barvo dela; naravne vrnejo pečene materiale tkiv.
+  const poId = new Map((podatki.deli || []).map((d) => [d.id, d]));
+  const imaUcne = (podatki.deli || []).length > 1;
+  let ucne = false;
+  const ucniZa = (id) => {
+    if (!ucni.has(id)) {
+      const c = new THREE.Color(ucnaBarva(poId.get(id), poId));
+      const rezi = vPrerezu() && !!ravnine;
+      const mat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: teksture?.normalMap || null, clippingPlanes: rezi ? ravnine.seznam : [] });
+      if (teksture?.normalScale) mat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6);
+      mat.userData.rezan = !!ravnine;
+      const pokrov = new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.BackSide, clippingPlanes: ravnine ? ravnine.seznam : [], clipIntersection: !!ravnine?.presek });
+      ucni.set(id, { mat, pokrov });
+    }
+    return ucni.get(id);
+  };
+  function barve(n) {
+    ucne = imaUcne && n === "ucne";
+    for (const m of meshi) {
+      const u = ucne ? ucniZa(m.userData.del) : null;
+      m.material = u ? u.mat : mat(m.userData.tkivo);
+      for (const c of m.children) if (c.userData.pokrov) c.material = u ? u.pokrov : pokrovi.get(m.userData.tkivo);
+    }
+    if (ravnine) uporabi();
+  }
   const sestavi = () => {
     const p = pogledi[pogled] || {};
     const tocke = new Set(p.tocke || []);
@@ -681,7 +709,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
         ime: x.d.ime,
         la: x.d.la,
         opis: x.d.opis,
-        barva: x.d.barva || "#6E9BFF",
+        barva: (ucne ? ucnaBarva(x.d, poId) : x.d.barva) || "#6E9BFF",
         meshes: x.moje.filter((m) => m.visible),
         tocka: tockaZa(x),
         skrijTocko: !tocke.has(x.d.id),
@@ -691,9 +719,22 @@ export async function zgradiOrgan(ime, ctx = {}) {
       }));
   };
   uporabi();
+  barve(barvniNacin());
   sestavi();
 
   const nadzor = [];
+  if (imaUcne) {
+    nadzor.push({
+      tip: "stikalo",
+      id: "ucne-barve",
+      oznaka: ctx.t?.("a3.teachColors") || "Učne barve",
+      vrednost: ucne,
+      ob: (v) => {
+        barve(nastaviBarvniNacin(v ? "ucne" : "naravne"));
+        sestavi();
+      },
+    });
+  }
   if (pogledi.prerez) {
     nadzor.push({
       tip: "stikalo",
@@ -733,6 +774,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     dispose() {
       for (const m of materiali.values()) m.dispose();
       for (const m of pokrovi.values()) m.dispose();
+      for (const u of ucni.values()) (u.mat.dispose(), u.pokrov.dispose());
       proxyMat.dispose();
       // Geometrija ostane v predpomnilniku (»Ponastavi« zgradi znova brez prenosa).
     },
