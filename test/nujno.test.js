@@ -501,3 +501,15 @@ test("številke po državi: preverjene linije, imena samo v svoji državi, drža
   // Linije v tabeli so brezplačne (opomba »klic je brezplačen«).
   for (const [d, x] of Object.entries(DRZAVE)) for (const l of [x.otroci, x.odrasli].filter(Boolean)) assert.match(l.st, /^(116 ?1(11|23)|080|0800|14[27])/, d);
 });
+
+test("mobilna aplikacija: varnostni odgovor iz dogodka, pri zavrnitvi, ob napaki in brez povezave (pregled A V2)", () => {
+  const chat = readFileSync(new URL("../mobile/src/app/chat/[id].tsx", import.meta.url), "utf8");
+  const card = readFileSync(new URL("../mobile/src/components/NujnoCard.tsx", import.meta.url), "utf8");
+  assert.match(chat, /e\.event === "nujno"\) showNujno\(e\.data\)/);
+  assert.match(chat, /showNujno\(e\.data\.nujno \|\| lokalnoNujno\(msgText\), true\)/);
+  assert.match(chat, /showNujno\(\(err instanceof ApiError && err\.body\?\.nujno\) \|\| lokalnoNujno\(msgText\), true\)/);
+  assert.match(chat, /const prvo = lokalnoNujno\(msgText\);/); // takoj, brez čakanja na strežnik
+  assert.match(card, /from "\.\.\/\.\.\/\.\.\/public\/nujno\.js"/); // isti zaznavalnik in iste številke kot splet
+  assert.match(card, /Linking\.openURL\(telHref\(c\)\)/);
+  assert.match(card, /drzavaNaprave\(getCalendars\(\)\[0\]\?\.timeZone/);
+});
