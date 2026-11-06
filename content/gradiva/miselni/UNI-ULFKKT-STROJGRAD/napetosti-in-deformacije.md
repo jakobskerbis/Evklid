@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Napetost
+  - $\sigma = F/A$, enota $\mathrm{MPa} = \mathrm{N/mm^2}$
+  - pajkova nit močnejša od jekla na mm²
+- Deformacija
+  - $\varepsilon = \Delta L/L_0$, brez enote
+  - prečno $\varepsilon_q = -\nu\varepsilon$
+- Hookov zakon
+  - $\sigma = E\varepsilon$ do meje proporcionalnosti
+  - $\Delta L = FL_0/(EA)$
+- Toplotna deformacija
+  - $\varepsilon_T = \alpha\,\Delta T$
+  - vpeta palica: $\sigma = -E\alpha\,\Delta T$
+- Natezni preizkus
+  - $E$, $R_e$ ali $R_{p0{,}2}$, $R_m$
+  - duktilno teče, krhko poči
+- Dopustna napetost
+  - $\sigma_{dop} = R_e/n$ za jeklo
+  - dimenzioniranje $A \geq F/\sigma_{dop}$
