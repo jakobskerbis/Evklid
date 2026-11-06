@@ -56,7 +56,7 @@ j: izbira modela naj porabi čim bližje 200 $ kredita na mesec (Claude Max), a 
 - **Kdo dobi nadgradnjo**: Osebno do Opusa, aktivacijska koda in šolska licenca največ Sonnet, brezplačni paket nikoli (ostanejo tudi njegove stare meje), lahki način nikoli. Nadgrajen odgovor ohrani celo okno pogovora; v porabi je vrsta `boost`.
 - **Delitev po profilih**: proračun se deli med učence, ki so v zadnjih 30 dneh uporabljali AI, po utežeh: naročnina po mesečni ceni na otroka v € (9,99), preizkus, koda, bonus in paket pred testom kot 9,99, šolska licenca 2 (`EVKLID_SHARE_SCHOOL`), brezplačni 1 (`EVKLID_SHARE_FREE`). Pri 80 % svojega dela učenec ne dobi več nadgradnje ne Opusa, pri 100 % inštruktor počaka do 1. v mesecu ali do dokupa. S proračunom stari meji na učenca (1 $ / 3 $) ne veljata.
 - **Zajamčeni AI naročnine** (j 2026-11-04, `server/accounts/plans.js`, »Cene z najmanj 75 % dobička«, Predlog A): na profil na mesec OŠ 1,9 $, SŠ 2,9 $, faks 4,5 $ (letni paket 1,7 / 2,6 / 3,8 $; od 2026-11-06 največ 25 % cene brez DDV: faks 4,452 $, SŠ letno 2,58 $, faks letno 3,693 $, glej »Trda meja AI«); Družina en skupen delež za ves račun 3,5 $ (letno 2,9 $), Družina s študentom 5,5 $ (letno 4,3 $); Osebno ob šolski licenci 0,9 $ (šolsko leto 0,6 $); regijski paketi po pravilu 75 % iz cene v € (fiksni tečaji `EUR_PER_UNIT`). Paketi pred testom: OŠ/SŠ 0,8 / 1,5 / 2,9 $, faks 1,1 / 2,3 / 4,5 $. Vrednosti so ves mesečni strošek AI paketa (trda meja): podrobne razlage do vrednosti / 1,15 (to vidi učenec kot »še N razlag«), nato hitri model (Haiku) do meje (`FAST_TAIL` 15 % podrobnega dela, `detailedShare`), nato dnevna meja brezplačnega paketa do 1. v mesecu ali do dokupa.
-- **Dokup** (`server/placila/krediti.js`, zavihek Račun): samo paketi 5 / 10 / 20 € (poljubnega zneska ni več, j 2026-11-04), kredit po pravilu 75 % (j 2026-11-04): (plačilo × 0,235 − 0,25 €) / 0,92 v $, npr. 5 / 10 / 20 € → 1,00 / 2,28 / 4,83 $ (`EVKLID_CREDIT_SHARE` ga lahko le zniža); učenec vidi samo ~število pogovorov, vezan na račun, velja za vse profile, ne poteče. Plača polnoleten imetnik računa z vpisanim datumom rojstva, preverjeno na strežniku (Stripe, obe potrditvi kot pri paketu pred testom). Poraba iz kredita ne šteje v skupni proračun, zato mora biti na API računu toliko dodatnega dobroimetja (samodejno polnjenje v konzoli Anthropic). Vračilo ali spor kredit odvzame.
+- **Dokup** (`server/placila/krediti.js`, zavihek Račun): samo paketi 5 / 10 / 20 € (poljubnega zneska ni več, j 2026-11-04), kredit po pravilu 75 % (j 2026-11-04): (plačilo × 0,235 − 0,25 €) / 0,92 v $, od 2026-11-06 največ 25 % plačila brez DDV po najvišji stopnji EU (27 %): 5 / 10 / 20 € → 1,00 / 2,13 / 4,27 $ (`EVKLID_CREDIT_SHARE` ga lahko le zniža); učenec vidi samo ~število pogovorov, vezan na račun, velja za vse profile, ne poteče. Plača polnoleten imetnik računa z vpisanim datumom rojstva, preverjeno na strežniku (Stripe, obe potrditvi kot pri paketu pred testom). Poraba iz kredita ne šteje v skupni proračun, zato mora biti na API računu toliko dodatnega dobroimetja (samodejno polnjenje v konzoli Anthropic). Vračilo ali spor kredit odvzame; skrbnik vrne največ neporabljeni del (izračun na `GET /api/admin/withdrawal/:parentId`, `credits`).
 - **Ni dobroimetja**: ob napaki »400 ni dobroimetja« inštruktor 10 minut ne kliče API-ja in pokaže jasno sporočilo; števec porabe to pokaže skrbniku.
 - Poraba zunaj aplikacije z istim ključem (npr. simulacije na j-jevem računalniku) se ne šteje: zanjo naj bo ločen ključ ali manjši znesek proračuna.
 
@@ -65,7 +65,7 @@ j: izbira modela naj porabi čim bližje 200 $ kredita na mesec (Claude Max), a 
 j: »privzeto VEDNO ≥ 75 %« – strošek AI (vhodni in izhodni žetoni, predpomnilnik, skener, slike, ponovni poskusi, prekinjeni odgovori) ne sme preseči 25 % tega, kar uporabnik plača, za vsak paket in način. Brezplačni paketi imajo nizko stalno mejo. Cene niso spremenjene (to odloča j), samo meje porabe.
 
 **Odločitve j (6. 11. ~9:00):**
-- 25 % se računa od cene **brez DDV** (22 % v Sloveniji, `VAT_RATE` v `server/accounts/plans.js`, ki ga uporabljata tudi `server/advice.js` in `server/schools.js`). Regijske cene in šolske licence štejemo enako (previdno, nižja meja; status DDV šolskih cen še ni potrjen, `server/sole.js`).
+- 25 % se računa od cene **brez DDV** države kupca (j 12:53; Slovenija 22 %, `VAT_RATES` v `server/accounts/plans.js`; neznana država 27 %), od **dejanskega plačila** obdobja (promocijske kode, proracije, vračila) in s **tečaji z rezervo** (glej »Krog 3« spodaj). Šolske licence: 22 % (status DDV šolskih cen še ni potrjen, `server/sole.js`).
 - Preverjanje odgovorov in kartic iz pogovora (`answer_cache`, dva modela, `server/verify.js`) plača **aplikacija** iz skupnega dnevnega zneska `EVKLID_VERIFY_DAILY_USD` (1 $), ne meja učenca. Rezervacija je trda tudi tu (`usage.appHold`). Brezplačni profili dobijo kartice.
 - **Odstop v 14 dneh**: vrne se del plačila za neporabljeno storitev, manjši od deleža preostalega časa in deleža neporabljene meje AI (`withdrawalRefundCents` v `server/accounts/billing.js`). Skrbnik vidi izračun na `GET /api/admin/withdrawal/:parentId` (samo prikaz; vračilo izvede v Stripu). Novo besedilo potrditve pred plačilom (`WITHDRAWAL_TEXT`, `pay.withdrawal` v 33 jezikih). **Besedilo pred zagonom plačil preveri pravnik (to ni pravni nasvet).**
 - **Šolska licenca s ceno 0** (podarjena, pilot brez plačila): meja kot brezplačni paket, 0,2 $ na učenca na mesec; skrbnik ob vnosu take licence dobi opozorilo (`warning` v odgovoru).
@@ -82,95 +82,109 @@ j: »privzeto VEDNO ≥ 75 %« – strošek AI (vhodni in izhodni žetoni, predp
 - **Sporočila (429)**: koda meje, ki je vezala (brezplačni paket z namigom za gosta ali starša); preizkus in bonus: poziv k naročnini; naročnina: »spet jih dobiš z novim obdobjem paketa«; če bi šel odgovor v novem pogovoru: »Ta pogovor je predolg za inštruktorja. Začni nov pogovor.« Najcenejši klic je dejanska rezerva »lite« (sistemski prompt, orodja, kratko vprašanje).
 - **Fotografije v dolgem pogovoru** (`staleImages` v `server/usage.js`): slika gre modelu v svojem in naslednjem sporočilu (»Razloži podrobneje«, takojšnje vprašanje o sliki); v starejših sporočilih jo zamenja kratko besedilo (nalogo je inštruktor prepisal: »Prebral sem: …«). Baza se ne spremeni; sporočilo se spremeni enkrat in nato ostane enako, zato predpomnilnik dela naprej. `EVKLID_HISTORY_IMAGE_TURNS` (privzeto 1; 0 = slika samo v svojem sporočilu). Prihranek na sliko (~1440 žetonov pri 1200 px) na vsako naslednje sporočilo: Haiku 0,00001 $ (predpomnilnik) do 0,0002 $ (premor > 5 min), Sonnet 0,0003–0,004 $, Opus 0,0003–0,012 $; rezerva meje AI na sliko manjša za 0,001 $ (Haiku), 0,019 $ (Sonnet), 0,038 $ (Opus). Enkraten strošek ob zamenjavi: ponoven zapis konca zgodovine (Haiku ~0,0003 $).
 - **Izbris profila ali pogovora ne ponastavi meje**: poraba ima lastnika računa (`usage.parent_id`), vprašanja so v `question_log`.
-- **Testi**: `test/marza-ai.test.js`, `test/stroski-ai-meje.test.js`, `test/stroski-ai-popravki.test.js`, `test/stopnje-cene.test.js` (trialing, obdobje, kredit, paket pred testom, bazen, odstop), `test/schools.test.js`, `test/accounts.test.js` (gost → registracija).
-- **Odprto (informativno)**: rezerva temelji na zahtevanem modelu; strežniški nadomestni model (`fallbacks: "default"`) bi moral biti enak ali cenejši. Skupni bazeni (`freePoolSpent`, `nopayPoolSpent`) seštejejo porabo vseh profilov ob vsakem klicu; pri velikem številu uporabnikov jih bo treba predpomniti.
+- **Krog 3 (pregleda A in B, j 6. 11. 12:46 in 12:53):**
+  - **DDV po državi kupca** (`VAT_RATES`, `vatRateFor` v `server/accounts/plans.js`; OSS, splošne stopnje 2026, **potrdi računovodja**): naročnina po državi računa (`parents.country`, iz Cloudflare ob registraciji) ali po davku na računu Stripe; neznana država in paketi, kjer kupec ni znan (darilo, paket pred testom, dokup): najvišja stopnja EU 27 % (HU). Zunaj EU stopnja DDV/GST na digitalne storitve, zaokroženo navzgor. Šolske licence: Slovenija 22 %.
+  - **Tečaji** (`server/tecaji.js`): tedensko iz odprtega vira brez ključa (fawazahmed0/exchange-api prek jsDelivr, `EVKLID_FX_URL`) z rezervo 10 %; brez svežih (starejši od 14 dni, vir ne deluje) stalni `EUR_PER_UNIT` z rezervo 20 %. Močnejša valuta od stalnega tečaja velja največ +50 % (napačen podatek), šibkejša vedno. XOF je vezan na evro. Rezerva tečaja ni za DDV. **Posledica:** paketi za 2 otroka letno v INR, BDT, IDR imajo mejo paketa 0 $ (ostane del brezplačnega repa) – odloči j (cena).
+  - **Dejansko plačilo** (`server/placila/placano.js`, j 12:53): promocijske kode ostanejo; ob `invoice.paid` se vsaka vrstica računa naročnine zapiše z obdobjem in zneskom brez popustov in DDV (`kv` `ai_paid_<račun>`). Meja okna je največ 25 % denarja, ki pade v okno (vrstice po času, proracije tudi negativne); okno, plačano z 0 € (kupon 100 %), ima mejo aktivacijske kode (0,5 $, skupni bazen). Brez zapisa (naročnine pred to spremembo, obnovitev še ni plačana) cenik. Vračilo naročnine (`charge.refunded`, tudi delno ob odstopu) takoj zniža denar obdobja; vračilo za odstop se računa iz dejanskega plačila.
+  - **Nadgradnja in preklop** (L1, L2): mešanje starega in novega paketa po oknu meje (obdobje naročnine), ne po koledarskem mesecu; preklop mesečno ↔ letno v portalu (Stripe premakne konec obdobja) ne odpre novega okna, dokler od začetka prejšnjega ni minil mesec (`kv` `ai_window_<račun>`). Denar iz plačila (zgoraj) mejo omeji tudi pri nadgradnji brez proracije.
+  - **Haiku nad 100k žetonov poziva** stane 5× za ves klic (cenik Anthropic): cena v `PRICES.long`, rezerva po dolgi ceni, zgodovina Haikuja se odreže pod ~95k žetonov (`fitLongPrompt`).
+  - **Strežniški nadomestni model** (`fallbacks: "default"`, Sonnet/Opus): zavrnjen poskus sredi toka je plačan posebej (`usage.iterations`, `fallbackExtraUsd`), zato rezerva dveh klicev; brez prostora zanju gre isti model brez nadomestnega (zavrnitev ostane zavrnitev), šele nato cenejši način.
+  - **Prekinjen tok** (j 12:46): ob naši prekinitvi (učenec zapre aplikacijo → `res close` → `controller.abort`, povezava z API se takoj zapre) šteje dejansko napisano: bajti vseh delt + 10 %, razmišljanje po času bloka × največja hitrost modela (Haiku 400, Sonnet 250, Opus 200 žetonov/s), + 0,5 s pisanja po zaprtju; največ `max_tokens`. Druga napaka sredi toka (API, omrežje): previdno ves `max_tokens`. Prekinjeno pred zahtevo: klic ne odide in se ne šteje.
+  - **Ponovni zagon strežnika med klicem**: rezervacija je v tabeli `ai_holds`; ob zagonu se ostanek zapiše kot poraba v višini rezerve (`recoverHolds`).
+  - **Šolska licenca z mejo 0 $** pomeni brez šolskega AI (prej neomejeno): profil nadaljuje v brezplačnem paketu.
+  - **Izčrpan skupni bazen preizkusov**: profil nadaljuje z mejami brezplačnega paketa (ne 429); poraba nad bazenom šteje v skupno mejo brezplačnih.
+  - **Drugo**: skener zapiše prvi klic, če ponovitev pade; rezerva branja po dolžini navodil; poraba izbrisanih profilov brez dela iz kredita; sodba kode o nalogi s fotografije ostane, ko je slika nadomeščena; vsoti skupnih bazenov v predpomnilniku do 30 s ali do zapisa porabe.
+- **Tveganje (odloči j pred vklopom plačil): garancija »Boljša ocena ali vrnemo denar«** (`server/placila/garancija.js`) vrne vsa plačila naročnine, porabljen AI pa ostane plačan: pri vračilu je strošek AI poljubno velik del plačila (izjema od pravila 75 %). Vedenje ni spremenjeno. Možnosti: odbiti porabljeni AI ali vrniti le neporabljeni del (kot pri odstopu).
+- **Pogoj delovanja**: rezervacije klicev v teku (`inflight`) so v pomnilniku procesa – pravilno samo z enim primerkom strežnika (SQLite, `render.yaml` brez `numInstances`).
+- **Testi**: `test/marza-ai.test.js`, `test/stroski-ai-meje.test.js`, `test/stroski-ai-popravki.test.js`, `test/stroski-ai-krog3.test.js`, `test/pregled-b-luknje.test.js` (L1–L4), `test/slike-zgodovina.test.js`, `test/stopnje-cene.test.js` (trialing, obdobje, kredit, paket pred testom, bazen, odstop, promocijska koda), `test/schools.test.js`, `test/accounts.test.js` (gost → registracija).
+- **Odprto (informativno)**: brezplačni profil šteje porabo vseh izbrisanih profilov računa, tudi plačljivih (napačno blokiran, ne uhajanje). Zgodovina deleža za izbrisane profile po paketu bi potrebovala stolpec v `usage`.
 
 Najslabši primer je vrednost paketa (meja + brezplačni rep), izračunana iz dejanskih cen modelov v `server/claude.js` (`PRICES`). Tabela: `node -e 'import("./server/meje-ai.js").then(m => console.table(m.aiCapRows()))'`.
 
-| Paket | Plačilo z DDV (€) | Brez DDV (€) | Obdobje | Najslabši strošek AI ($) | Delež plačila brez DDV |
-|---|---:|---:|---|---:|---:|
-| OŠ, mesečno | 9,99 | 8,19 | mesec | 1,900 | 21,3 % |
-| OŠ, šolsko leto | 8,25 | 6,76 | mesec | 1,700 | 23,1 % |
-| SŠ, mesečno | 13,99 | 11,47 | mesec | 2,900 | 23,3 % |
-| SŠ, šolsko leto | 11,58 | 9,49 | mesec | 2,580 | 25,0 % |
-| Faks, mesečno | 19,99 | 16,39 | mesec | 4,452 | 25,0 % |
-| Faks, študijsko leto | 16,58 | 13,59 | mesec | 3,693 | 25,0 % |
-| Družina, mesečno | 18,99 | 15,57 | mesec | 3,200 | 18,9 % |
-| Družina, šolsko leto | 15,75 | 12,91 | mesec | 2,600 | 18,5 % |
-| Družina s študentom, mesečno | 27,99 | 22,94 | mesec | 5,500 | 22,1 % |
-| Družina s študentom, šolsko leto | 22,42 | 18,37 | mesec | 4,300 | 21,5 % |
-| 2 otroka, mesečno | 15,99 | 13,11 | mesec | 3,100 | 21,8 % |
-| 2 otroka, šolsko leto | 11,58 | 9,49 | mesec | 2,200 | 21,3 % |
-| Osebno ob šolski licenci, mesečno | 5,99 | 4,91 | mesec | 0,900 | 16,9 % |
-| Osebno ob šolski licenci, šolsko leto | 4,08 | 3,35 | mesec | 0,600 | 16,5 % |
-| 1 otrok, mesečno (INR) | 3,91 | 3,21 | mesec | 0,400 | 11,5 % |
-| 1 otrok, šolsko leto (INR) | 2,86 | 2,34 | mesec | 0,300 | 11,8 % |
-| 2 otroka, mesečno (INR) | 6,36 | 5,21 | mesec | 0,700 | 12,4 % |
-| 2 otroka, šolsko leto (INR) | 4,65 | 3,81 | mesec | 0,500 | 12,1 % |
-| 1 otrok, mesečno (PKR) | 4,20 | 3,44 | mesec | 0,400 | 10,7 % |
-| 1 otrok, šolsko leto (PKR) | 3,00 | 2,46 | mesec | 0,400 | 15,0 % |
-| 2 otroka, mesečno (PKR) | 6,60 | 5,41 | mesec | 0,700 | 11,9 % |
-| 2 otroka, šolsko leto (PKR) | 4,75 | 3,89 | mesec | 0,500 | 11,8 % |
-| 1 otrok, mesečno (BDT) | 3,84 | 3,15 | mesec | 0,300 | 8,8 % |
-| 1 otrok, šolsko leto (BDT) | 2,80 | 2,29 | mesec | 0,300 | 12,0 % |
-| 2 otroka, mesečno (BDT) | 6,29 | 5,16 | mesec | 0,600 | 10,7 % |
-| 2 otroka, šolsko leto (BDT) | 4,67 | 3,82 | mesec | 0,500 | 12,0 % |
-| 1 otrok, mesečno (NGN) | 4,13 | 3,38 | mesec | 0,400 | 10,9 % |
-| 1 otrok, šolsko leto (NGN) | 2,93 | 2,40 | mesec | 0,400 | 15,3 % |
-| 2 otroka, mesečno (NGN) | 6,60 | 5,41 | mesec | 0,700 | 11,9 % |
-| 2 otroka, šolsko leto (NGN) | 4,72 | 3,87 | mesec | 0,500 | 11,9 % |
-| 1 otrok, mesečno (GHS) | 4,43 | 3,63 | mesec | 0,500 | 12,7 % |
-| 1 otrok, šolsko leto (GHS) | 3,12 | 2,56 | mesec | 0,400 | 14,4 % |
-| 2 otroka, mesečno (GHS) | 7,13 | 5,84 | mesec | 0,800 | 12,6 % |
-| 2 otroka, šolsko leto (GHS) | 4,99 | 4,09 | mesec | 0,600 | 13,5 % |
-| 1 otrok, mesečno (KES) | 4,22 | 3,46 | mesec | 0,400 | 10,6 % |
-| 1 otrok, šolsko leto (KES) | 3,03 | 2,49 | mesec | 0,400 | 14,8 % |
-| 2 otroka, mesečno (KES) | 6,82 | 5,59 | mesec | 0,800 | 13,2 % |
-| 2 otroka, šolsko leto (KES) | 4,87 | 4,00 | mesec | 0,500 | 11,5 % |
-| 1 otrok, mesečno (ZAR) | 4,27 | 3,50 | mesec | 0,400 | 10,5 % |
-| 1 otrok, šolsko leto (ZAR) | 3,12 | 2,55 | mesec | 0,400 | 14,4 % |
-| 2 otroka, mesečno (ZAR) | 7,15 | 5,86 | mesec | 0,900 | 14,1 % |
-| 2 otroka, šolsko leto (ZAR) | 5,00 | 4,10 | mesec | 0,600 | 13,5 % |
-| 1 otrok, mesečno (EGP) | 4,23 | 3,47 | mesec | 0,400 | 10,6 % |
-| 1 otrok, šolsko leto (EGP) | 3,12 | 2,55 | mesec | 0,400 | 14,4 % |
-| 2 otroka, mesečno (EGP) | 6,78 | 5,56 | mesec | 0,800 | 13,2 % |
-| 2 otroka, šolsko leto (EGP) | 4,96 | 4,06 | mesec | 0,500 | 11,3 % |
-| 1 otrok, mesečno (PHP) | 4,05 | 3,32 | mesec | 0,400 | 11,1 % |
-| 1 otrok, šolsko leto (PHP) | 2,90 | 2,38 | mesec | 0,300 | 11,6 % |
-| 2 otroka, mesečno (PHP) | 6,51 | 5,34 | mesec | 0,700 | 12,1 % |
-| 2 otroka, šolsko leto (PHP) | 4,71 | 3,86 | mesec | 0,500 | 11,9 % |
-| 1 otrok, mesečno (IDR) | 3,95 | 3,24 | mesec | 0,400 | 11,4 % |
-| 1 otrok, šolsko leto (IDR) | 2,91 | 2,39 | mesec | 0,300 | 11,6 % |
-| 2 otroka, mesečno (IDR) | 6,45 | 5,29 | mesec | 0,700 | 12,2 % |
-| 2 otroka, šolsko leto (IDR) | 4,79 | 3,92 | mesec | 0,500 | 11,7 % |
-| 1 otrok, mesečno (VND) | 4,13 | 3,38 | mesec | 0,400 | 10,9 % |
-| 1 otrok, šolsko leto (VND) | 2,93 | 2,40 | mesec | 0,300 | 11,5 % |
-| 2 otroka, mesečno (VND) | 6,37 | 5,22 | mesec | 0,700 | 12,3 % |
-| 2 otroka, šolsko leto (VND) | 4,80 | 3,93 | mesec | 0,500 | 11,7 % |
-| 1 otrok, mesečno (XOF) | 4,42 | 3,62 | mesec | 0,500 | 12,7 % |
-| 1 otrok, šolsko leto (XOF) | 3,18 | 2,60 | mesec | 0,400 | 14,1 % |
-| 2 otroka, mesečno (XOF) | 7,16 | 5,87 | mesec | 0,900 | 14,1 % |
-| 2 otroka, šolsko leto (XOF) | 5,08 | 4,17 | mesec | 0,600 | 13,3 % |
-| 1 otrok, mesečno (USD) | 4,24 | 3,48 | mesec | 0,400 | 10,6 % |
-| 1 otrok, šolsko leto (USD) | 3,05 | 2,50 | mesec | 0,400 | 14,7 % |
-| 2 otroka, mesečno (USD) | 6,79 | 5,57 | mesec | 0,800 | 13,2 % |
-| 2 otroka, šolsko leto (USD) | 4,89 | 4,01 | mesec | 0,500 | 11,5 % |
-| Paket pred testom 7 dni | 5,49 | 4,50 | 7 dni | 0,800 | 16,4 % |
-| Paket pred testom 14 dni | 8,49 | 6,96 | 14 dni | 1,500 | 19,8 % |
-| Paket pred testom 30 dni | 13,99 | 11,47 | 30 dni | 2,900 | 23,3 % |
-| Paket pred testom faks 7 dni | 6,99 | 5,73 | 7 dni | 1,100 | 17,7 % |
-| Paket pred testom faks 14 dni | 11,49 | 9,42 | 14 dni | 2,300 | 22,5 % |
-| Paket pred testom faks 30 dni | 19,99 | 16,39 | 30 dni | 4,452 | 25,0 % |
-| Darilna koda OS (1 leto, na mesec) | 8,25 | 6,76 | mesec | 1,700 | 23,1 % |
-| Darilna koda SS (1 leto, na mesec) | 11,58 | 9,49 | mesec | 2,580 | 25,0 % |
-| Darilna koda FAKS (1 leto, na mesec) | 16,58 | 13,59 | mesec | 3,693 | 25,0 % |
-| Darilna koda (stara, 49 €) | 4,08 | 3,35 | mesec | 0,600 | 16,5 % |
-| Šolska licenca class (na učenca) | 1,67 | 1,37 | mesec | 0,370 | 24,9 % |
-| Šolska licenca school (na učenca) | 1,17 | 0,96 | mesec | 0,250 | 24,1 % |
-| Šolska licenca pilot (na učenca) | 1,00 | 0,82 | mesec | 0,220 | 24,7 % |
-| Dokup 5 € | 5,00 | 4,10 | nakup | 1,000 | 22,4 % |
-| Dokup 10 € | 10,00 | 8,20 | nakup | 2,220 | 24,9 % |
-| Dokup 20 € | 20,00 | 16,39 | nakup | 4,450 | 25,0 % |
+| Paket | Plačilo z DDV (€) | Brez DDV (€) | DDV | Obdobje | Najslabši strošek AI ($) | Delež plačila brez DDV |
+|---|---:|---:|---:|---|---:|---:|
+| OŠ, mesečno | 9,99 | 8,19 | 22 % | mesec | 1,900 | 21,3 % |
+| OŠ, šolsko leto | 8,25 | 6,76 | 22 % | mesec | 1,700 | 23,1 % |
+| SŠ, mesečno | 13,99 | 11,47 | 22 % | mesec | 2,900 | 23,3 % |
+| SŠ, šolsko leto | 11,58 | 9,49 | 22 % | mesec | 2,580 | 25,0 % |
+| Faks, mesečno | 19,99 | 16,39 | 22 % | mesec | 4,452 | 25,0 % |
+| Faks, študijsko leto | 16,58 | 13,59 | 22 % | mesec | 3,693 | 25,0 % |
+| Družina, mesečno | 18,99 | 15,57 | 22 % | mesec | 3,200 | 18,9 % |
+| Družina, šolsko leto | 15,75 | 12,91 | 22 % | mesec | 2,600 | 18,5 % |
+| Družina s študentom, mesečno | 27,99 | 22,94 | 22 % | mesec | 5,500 | 22,1 % |
+| Družina s študentom, šolsko leto | 22,42 | 18,37 | 22 % | mesec | 4,300 | 21,5 % |
+| 2 otroka, mesečno | 15,99 | 13,11 | 22 % | mesec | 3,100 | 21,8 % |
+| 2 otroka, šolsko leto | 11,58 | 9,49 | 22 % | mesec | 2,200 | 21,3 % |
+| Osebno ob šolski licenci, mesečno | 5,99 | 4,91 | 22 % | mesec | 0,900 | 16,9 % |
+| Osebno ob šolski licenci, šolsko leto | 4,08 | 3,35 | 22 % | mesec | 0,600 | 16,5 % |
+| 1 otrok, mesečno (INR) | 3,13 | 2,65 | 18 % | mesec | 0,200 | 6,9 % |
+| 1 otrok, šolsko leto (INR) | 2,29 | 1,94 | 18 % | mesec | 0,200 | 9,5 % |
+| 2 otroka, mesečno (INR) | 5,09 | 4,31 | 18 % | mesec | 0,300 | 6,4 % |
+| 2 otroka, šolsko leto (INR) | 3,72 | 3,16 | 18 % | mesec | 0,200 | 5,8 % |
+| 1 otrok, mesečno (PKR) | 3,36 | 2,80 | 20 % | mesec | 0,200 | 6,6 % |
+| 1 otrok, šolsko leto (PKR) | 2,40 | 2,00 | 20 % | mesec | 0,200 | 9,2 % |
+| 2 otroka, mesečno (PKR) | 5,28 | 4,40 | 20 % | mesec | 0,400 | 8,4 % |
+| 2 otroka, šolsko leto (PKR) | 3,80 | 3,17 | 20 % | mesec | 0,200 | 5,8 % |
+| 1 otrok, mesečno (BDT) | 3,07 | 2,67 | 15 % | mesec | 0,100 | 3,4 % |
+| 1 otrok, šolsko leto (BDT) | 2,24 | 1,95 | 15 % | mesec | 0,200 | 9,4 % |
+| 2 otroka, mesečno (BDT) | 5,03 | 4,38 | 15 % | mesec | 0,300 | 6,3 % |
+| 2 otroka, šolsko leto (BDT) | 3,73 | 3,25 | 15 % | mesec | 0,200 | 5,7 % |
+| 1 otrok, mesečno (NGN) | 3,30 | 3,07 | 8 % | mesec | 0,200 | 6,0 % |
+| 1 otrok, šolsko leto (NGN) | 2,35 | 2,18 | 8 % | mesec | 0,200 | 8,4 % |
+| 2 otroka, mesečno (NGN) | 5,28 | 4,91 | 8 % | mesec | 0,400 | 7,5 % |
+| 2 otroka, šolsko leto (NGN) | 3,78 | 3,51 | 8 % | mesec | 0,200 | 5,2 % |
+| 1 otrok, mesečno (GHS) | 3,54 | 2,90 | 22 % | mesec | 0,300 | 9,5 % |
+| 1 otrok, šolsko leto (GHS) | 2,49 | 2,05 | 22 % | mesec | 0,200 | 9,0 % |
+| 2 otroka, mesečno (GHS) | 5,70 | 4,67 | 22 % | mesec | 0,500 | 9,8 % |
+| 2 otroka, šolsko leto (GHS) | 3,99 | 3,27 | 22 % | mesec | 0,300 | 8,4 % |
+| 1 otrok, mesečno (KES) | 3,37 | 2,91 | 16 % | mesec | 0,200 | 6,3 % |
+| 1 otrok, šolsko leto (KES) | 2,43 | 2,09 | 16 % | mesec | 0,200 | 8,8 % |
+| 2 otroka, mesečno (KES) | 5,45 | 4,70 | 16 % | mesec | 0,400 | 7,8 % |
+| 2 otroka, šolsko leto (KES) | 3,90 | 3,36 | 16 % | mesec | 0,300 | 8,2 % |
+| 1 otrok, mesečno (ZAR) | 3,42 | 2,97 | 15 % | mesec | 0,200 | 6,2 % |
+| 1 otrok, šolsko leto (ZAR) | 2,49 | 2,17 | 15 % | mesec | 0,200 | 8,5 % |
+| 2 otroka, mesečno (ZAR) | 5,72 | 4,98 | 15 % | mesec | 0,500 | 9,2 % |
+| 2 otroka, šolsko leto (ZAR) | 4,00 | 3,48 | 15 % | mesec | 0,300 | 7,9 % |
+| 1 otrok, mesečno (EGP) | 3,39 | 2,97 | 14 % | mesec | 0,200 | 6,2 % |
+| 1 otrok, šolsko leto (EGP) | 2,49 | 2,19 | 14 % | mesec | 0,200 | 8,4 % |
+| 2 otroka, mesečno (EGP) | 5,43 | 4,76 | 14 % | mesec | 0,400 | 7,7 % |
+| 2 otroka, šolsko leto (EGP) | 3,97 | 3,48 | 14 % | mesec | 0,300 | 7,9 % |
+| 1 otrok, mesečno (PHP) | 3,24 | 2,89 | 12 % | mesec | 0,200 | 6,4 % |
+| 1 otrok, šolsko leto (PHP) | 2,32 | 2,07 | 12 % | mesec | 0,200 | 8,9 % |
+| 2 otroka, mesečno (PHP) | 5,21 | 4,65 | 12 % | mesec | 0,400 | 7,9 % |
+| 2 otroka, šolsko leto (PHP) | 3,77 | 3,37 | 12 % | mesec | 0,200 | 5,5 % |
+| 1 otrok, mesečno (IDR) | 3,16 | 2,82 | 12 % | mesec | 0,200 | 6,5 % |
+| 1 otrok, šolsko leto (IDR) | 2,33 | 2,08 | 12 % | mesec | 0,200 | 8,8 % |
+| 2 otroka, mesečno (IDR) | 5,16 | 4,61 | 12 % | mesec | 0,300 | 6,0 % |
+| 2 otroka, šolsko leto (IDR) | 3,83 | 3,42 | 12 % | mesec | 0,300 | 8,1 % |
+| 1 otrok, mesečno (VND) | 3,30 | 3,00 | 10 % | mesec | 0,200 | 6,1 % |
+| 1 otrok, šolsko leto (VND) | 2,34 | 2,13 | 10 % | mesec | 0,200 | 8,6 % |
+| 2 otroka, mesečno (VND) | 5,09 | 4,63 | 10 % | mesec | 0,300 | 6,0 % |
+| 2 otroka, šolsko leto (VND) | 3,84 | 3,49 | 10 % | mesec | 0,300 | 7,9 % |
+| 1 otrok, mesečno (XOF) | 4,42 | 3,71 | 19 % | mesec | 0,500 | 12,4 % |
+| 1 otrok, šolsko leto (XOF) | 3,18 | 2,67 | 19 % | mesec | 0,400 | 13,8 % |
+| 2 otroka, mesečno (XOF) | 7,16 | 6,02 | 19 % | mesec | 0,900 | 13,8 % |
+| 2 otroka, šolsko leto (XOF) | 5,08 | 4,27 | 19 % | mesec | 0,600 | 12,9 % |
+| 1 otrok, mesečno (USD) | 3,39 | 2,67 | 27 % | mesec | 0,200 | 6,9 % |
+| 1 otrok, šolsko leto (USD) | 2,44 | 1,92 | 27 % | mesec | 0,200 | 9,6 % |
+| 2 otroka, mesečno (USD) | 5,43 | 4,28 | 27 % | mesec | 0,400 | 8,6 % |
+| 2 otroka, šolsko leto (USD) | 3,91 | 3,08 | 27 % | mesec | 0,300 | 9,0 % |
+| Paket pred testom 7 dni | 5,49 | 4,32 | 27 % | 7 dni | 0,800 | 17,0 % |
+| Paket pred testom 14 dni | 8,49 | 6,69 | 27 % | 14 dni | 1,500 | 20,6 % |
+| Paket pred testom faks 7 dni | 6,99 | 5,50 | 27 % | 7 dni | 1,100 | 18,4 % |
+| Paket pred testom faks 14 dni | 11,49 | 9,05 | 27 % | 14 dni | 2,300 | 23,4 % |
+| Darilna koda OS (1 leto, na mesec) | 8,25 | 6,50 | 27 % | mesec | 1,700 | 24,1 % |
+| Darilna koda SS (1 leto, na mesec) | 11,58 | 9,12 | 27 % | mesec | 2,478 | 25,0 % |
+| Darilna koda FAKS (1 leto, na mesec) | 16,58 | 13,06 | 27 % | mesec | 3,548 | 25,0 % |
+| Darilna koda (stara, 49 €) | 4,08 | 3,22 | 27 % | mesec | 0,600 | 17,2 % |
+| Šolska licenca class (na učenca) | 1,67 | 1,37 | 22 % | mesec | 0,370 | 24,9 % |
+| Šolska licenca school (na učenca) | 1,17 | 0,96 | 22 % | mesec | 0,250 | 24,1 % |
+| Šolska licenca pilot (na učenca) | 1,00 | 0,82 | 22 % | mesec | 0,220 | 24,7 % |
+| Dokup 5 € | 5,00 | 3,94 | 27 % | nakup | 1,000 | 23,4 % |
+| Dokup 10 € | 10,00 | 7,87 | 27 % | nakup | 2,130 | 24,9 % |
+| Dokup 20 € | 20,00 | 15,75 | 27 % | nakup | 4,270 | 24,9 % |
+
+Naročnine v evrih: kupec v Sloveniji (22 %); kupec drugje v EU dobi mejo po svoji stopnji (HU 27 % → do ~4 % nižja), neznana država 27 %. Regijske cene: € po stalnem tečaju z rezervo 20 % (s svežimi tečaji 10 %), DDV najvišji na trgu valute. Darilo, paket pred testom, dokup: 27 %. Dejanska meja naročnine je poleg tega največ 25 % dejanskega plačila obdobja (popusti, proracije, vračila).
 
 | Brez plačila | Meja ($) | Obdobje |
 |---|---:|---|
@@ -189,5 +203,5 @@ Rezerva odgovora pri sistemskem promptu 50 KB in zgodovini 20 sporočil po 2 KB 
 | lite | claude-haiku-5-5 | 1200 | 0,014 |
 | chat | claude-haiku-5-5 | 3000 | 0,015 |
 | think | claude-haiku-5-5 | 8000 | 0,017 |
-| mid | claude-sonnet-5-5 | 6000 | 0,209 |
-| deep | claude-opus-5-5 | 6000 | 0,418 |
+| mid | claude-sonnet-5-5 | 6000 | 0,418 (brez nadomestnega modela 0,209) |
+| deep | claude-opus-5-5 | 6000 | 0,836 (brez nadomestnega modela 0,418) |

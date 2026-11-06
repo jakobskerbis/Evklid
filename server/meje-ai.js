@@ -16,7 +16,7 @@ import { PRICES, modeParams, MODEL, MODEL_MID, supportsFallback } from "./claude
 import { SPLIT_MARKER } from "./prompt.js";
 import {
   PLANS, LEGACY_PLANS, SCHOOL_PLANS, REGIONAL_PRICES, plansFor, planGuarantee, planEurMonth, PASSES, FAKS_PASSES, passCapUsd,
-  giftFor, giftGuarantee, LEGACY_GIFT_CENTS, COST, freeStudentMonthlyUsd, freeMonthlyPoolUsd, TRIAL_DAYS, REFERRAL_DAYS, netOfVat,
+  giftFor, giftGuarantee, LEGACY_GIFT_CENTS, COST, freeStudentMonthlyUsd, freeMonthlyPoolUsd, TRIAL_DAYS, REFERRAL_DAYS, netOfVat, VAT_RATE, VAT_MAX, marketVat,
 } from "./accounts/plans.js";
 import { STOPNJE } from "../public/stopnja.js";
 import { CREDIT_PACKS, creditUsdFor } from "./placila/krediti.js";
@@ -125,28 +125,31 @@ const r2 = (x) => Math.round(x * 100) / 100;
 const eurOf = (cents) => cents / 100;
 // Vrstica: paket, plačilo v € z DDV in brez (na obdobje meje), meja AI v $ (najslabši primer), delež plačila brez DDV.
 // Delež je od plačila BREZ DDV (j 2026-11-06, plans.js VAT_RATE).
-const row = (name, paidEur, capUsd, period = "mesec") => ({
+// vat: stopnja DDV vrstice (naročnina v evrih: kupec v Sloveniji; regijska: najvišja na trgu; darilo, paket pred
+// testom in dokup: najvišja v EU, kupec ni znan).
+const row = (name, paidEur, capUsd, period = "mesec", vat = VAT_RATE) => ({
   name,
   period,
+  vat,
   paidEur: r2(paidEur),
-  netEur: r2(netOfVat(paidEur)),
+  netEur: r2(netOfVat(paidEur, vat)),
   capUsd: Math.round(capUsd * 1000) / 1000,
-  share: paidEur > 0 ? (capUsd * COST.eurPerUsd) / netOfVat(paidEur) : null,
+  share: paidEur > 0 ? (capUsd * COST.eurPerUsd) / netOfVat(paidEur, vat) : null,
 });
 export function aiCapRows() {
   const rows = [];
   for (const p of [...PLANS.map((x) => ({ ...x, currency: "EUR" })), ...LEGACY_PLANS.map((x) => ({ ...x, currency: "EUR" })), ...SCHOOL_PLANS]) {
-    rows.push(row(p.label, planEurMonth(p), planGuarantee(p).total));
+    rows.push(row(p.label, planEurMonth(p), planGuarantee(p, VAT_RATE).total));
   }
-  for (const cur of Object.keys(REGIONAL_PRICES)) for (const p of plansFor(cur)) rows.push(row(`${p.label} (${cur})`, planEurMonth(p), planGuarantee(p).total));
-  for (const p of [...PASSES, ...FAKS_PASSES]) rows.push(row(`Paket pred testom ${p.level === "FAKS" ? "faks " : ""}${p.days} dni`, eurOf(p.amount), passCapUsd({ ai_usd: p.aiUsd, amount: p.amount }), `${p.days} dni`));
+  for (const cur of Object.keys(REGIONAL_PRICES)) for (const p of plansFor(cur)) rows.push(row(`${p.label} (${cur})`, planEurMonth(p), planGuarantee(p).total, "mesec", marketVat(p)));
+  for (const p of [...PASSES, ...FAKS_PASSES]) rows.push(row(`Paket pred testom ${p.level === "FAKS" ? "faks " : ""}${p.days} dni`, eurOf(p.amount), passCapUsd({ ai_usd: p.aiUsd, amount: p.amount }), `${p.days} dni`, VAT_MAX));
   // Darilo velja za stopnjo darila ali nižjo; najvišji delež ima stopnja darila.
-  for (const l of STOPNJE) rows.push(row(`Darilna koda ${l} (1 leto, na mesec)`, giftFor(l).amount / 100 / 12, giftGuarantee(l, l).total));
-  rows.push(row("Darilna koda (stara, 49 €)", LEGACY_GIFT_CENTS / 100 / 12, giftGuarantee(null, "OS").total));
+  for (const l of STOPNJE) rows.push(row(`Darilna koda ${l} (1 leto, na mesec)`, giftFor(l).amount / 100 / 12, giftGuarantee(l, l).total, "mesec", VAT_MAX));
+  rows.push(row("Darilna koda (stara, 49 €)", LEGACY_GIFT_CENTS / 100 / 12, giftGuarantee(null, "OS").total, "mesec", VAT_MAX));
   for (const [plan, v] of Object.entries(SCHOOL_LICENCE_PRICES)) {
     rows.push(row(`Šolska licenca ${plan} (na učenca)`, v.eur / 12, maxAiCapUsd({ seats: 1, plan, price_eur: v.eur })));
   }
-  for (const p of CREDIT_PACKS) rows.push(row(`Dokup ${eurOf(p.amount)} €`, eurOf(p.amount), creditUsdFor(p.amount), "nakup"));
+  for (const p of CREDIT_PACKS) rows.push(row(`Dokup ${eurOf(p.amount)} €`, eurOf(p.amount), creditUsdFor(p.amount), "nakup", VAT_MAX));
   return rows;
 }
 // Stalne meje paketov brez plačila (v $).
