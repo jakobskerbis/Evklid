@@ -115,10 +115,13 @@ def bezier_pot(a, ta, b, tb, k=24):
 class _Osi:
     """Zbira vrednosti OSI (s, cos, sin, r) in UV po ogliščih/zankah med gradnjo v bmesh."""
     def __init__(self, bm):
-        self.bm = bm; self.osi = {}; self.uv = {}
+        self.bm = bm; self.osi = {}; self.uv = {}; self.os = {}
 
-    def v(self, p, s, f, r):
+    def v(self, p, s, f, r, os_=None):
+        """os_: točka na središčnici (samo zunanja ploskev): po njej v_mrezo usmeri normale navzven."""
         v = self.bm.verts.new(p); self.osi[v] = (s, math.cos(f), math.sin(f), r)
+        if os_ is not None:
+            self.os[v] = os_
         return v
 
     def f(self, verts, uvs):
@@ -148,7 +151,7 @@ def cev_stena(z, P, R, debelina, seg, zacetek_odprt=False, konec_odprt=False, s0
     zun, not_ = [], []
     for (t, a, b), p, r, si in zip(okv, P, R, s):
         ri = max(r - debelina, r * 0.55)
-        zun.append([z.v(p + (a * math.cos(2 * math.pi * k / seg) + b * math.sin(2 * math.pi * k / seg)) * r, si, 2 * math.pi * k / seg, r) for k in range(seg)])
+        zun.append([z.v(p + (a * math.cos(2 * math.pi * k / seg) + b * math.sin(2 * math.pi * k / seg)) * r, si, 2 * math.pi * k / seg, r, p) for k in range(seg)])
         not_.append([z.v(p + (a * math.cos(2 * math.pi * k / seg) + b * math.sin(2 * math.pi * k / seg)) * ri, si, 2 * math.pi * k / seg, ri) for k in range(seg)])
     for obroci, obrni, du in ((zun, False, 0.0), (not_, True, 0.0)):
         for i in range(len(obroci) - 1):
@@ -185,7 +188,7 @@ def cev_polna(z, P, R, seg, s0=0.0, zaobli=True):
     vrste = pred + [(p, r, si, o) for p, r, si, o in zip(P, R, s, okv)] + po
     obroci = []
     for p, r, si, (t, a, b) in vrste:
-        obroci.append([z.v(p + (a * math.cos(2 * math.pi * k / seg) + b * math.sin(2 * math.pi * k / seg)) * r, si, 2 * math.pi * k / seg, r) for k in range(seg)])
+        obroci.append([z.v(p + (a * math.cos(2 * math.pi * k / seg) + b * math.sin(2 * math.pi * k / seg)) * r, si, 2 * math.pi * k / seg, r, p) for k in range(seg)])
     for i in range(len(obroci) - 1):
         for k in range(seg):
             z.f([obroci[i][k], obroci[i][(k + 1) % seg], obroci[i + 1][(k + 1) % seg], obroci[i + 1][k]],
@@ -214,8 +217,19 @@ def v_mrezo(z, ime):
     for v, val in z.osi.items():
         if v.is_valid:
             v[osl] = val
+    # Normale: dosledne, nato navzven po zunanji ploskvi (glas ploščine: normala stran od središčnice). Cev z odprtim
+    # koncem ni zaprta, zato predznak prostornine (normale_navzven) ne velja: mreža dobi oznako »usmerjeno«.
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    glas = 0.0
+    for fa in bm.faces:
+        if fa.is_valid and all(v in z.os for v in fa.verts):
+            c = sum((z.os[v] for v in fa.verts), Vector()) / len(fa.verts)
+            glas += fa.calc_area() * fa.normal.dot(fa.calc_center_median() - c)
+    if glas < 0:
+        bmesh.ops.reverse_faces(bm, faces=bm.faces)
     me = bpy.data.meshes.new(ime); bm.to_mesh(me); bm.free()
     me["uvLastni"] = 1
+    me["usmerjeno"] = 1
     for p in me.polygons:
         p.use_smooth = True
     return me

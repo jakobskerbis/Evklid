@@ -62,6 +62,9 @@ function ploskaKopija(mesh) {
   mesh.updateWorldMatrix(true, false);
   o.applyMatrix4(mesh.matrixWorld);
   if (!g.attributes.normal) o.computeVertexNormals();
+  // Pečena normalna mapa brez tangent v GLB (izvoz brez tangent, manjša datoteka): tangente po ogliščih iz UV (kot
+  // MikkTSpace pri peki), sicer jih three računa iz odvodov in na šivih UV otokov (cevi žil) nastanejo črte (pregled #461).
+  else if (!g.attributes.tangent && g.attributes.uv && mesh.material?.normalMap) o.computeTangents();
   return o;
 }
 const stranImena = (ime) => (/\.l$/.test(ime) ? "l" : /\.r$/.test(ime) ? "r" : "s");

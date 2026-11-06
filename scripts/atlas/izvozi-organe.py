@@ -341,6 +341,10 @@ def normale_navzven(me):
     bm = bmesh.new(); bm.from_mesh(me)
     # Osamljena oglišča (brez ploskev) glTF izpusti, a bi pokvarila središče, velikost in dolžino žarkov AO.
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    if me.get("usmerjeno"):  # cevi srce_zile.v_mrezo: normale so že navzven po središčnici
+        odprtih = sum(1 for e in bm.edges if not e.is_manifold)
+        bm.to_mesh(me); bm.free()
+        return odprtih, False
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     odprtih = sum(1 for e in bm.edges if not e.is_manifold)
     vol = bm.calc_volume(signed=True)
