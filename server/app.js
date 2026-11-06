@@ -1063,6 +1063,7 @@ export function createApp(store, opts = {}) {
     const key = getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings);
     const pack = key && progress.offlinePack(s.id, key);
     if (!pack) return res.status(404).json({ error: "Za to raven še ni učne poti." });
+    if (pack.limited) return res.status(429).json({ error: "Danes je bilo prenesenih že dovolj paketov vaj. Poskusi jutri." });
     res.json({ ...pack, view: { ...pack.view, label: pathLabelFor(key, s.settings.school_system) } });
   });
   app.post("/api/students/:id/offline-sync", (req, res) => {

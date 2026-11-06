@@ -168,6 +168,12 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (student_id, topic_id, seed)
     );
+    -- Izdani paketi brez povezave (zadnji dan): omejitev izdaje na profil
+    CREATE TABLE IF NOT EXISTS offline_packs (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_offline_packs ON offline_packs(student_id, created_at);
     -- Kartice za ponavljanje (od inštruktorja ali lastne), ponavljanje z razmiki
     CREATE TABLE IF NOT EXISTS flashcards (
       id INTEGER PRIMARY KEY,

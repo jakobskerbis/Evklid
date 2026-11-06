@@ -40,8 +40,9 @@ export const RULES = {
   dailyNewShare: 0.7, // 70 % nove snovi, 30 % ponavljanja (obrne se, ko se ponavljanje nabere)
   unitTasks: 8,
   testTasks: 10,
-  offlinePerDay: 60, // nalog brez povezave, ki štejejo na dan (XP, napredek)
+  offlineXpPerDay: 10, // nalog brez povezave z XP na dan (kot dnevni sklop); ostale štejejo samo v napredek, ne v lige
   offlineIssuedDays: 14, // kako dolgo velja naloga iz paketa brez povezave
+  offlinePacksPerDay: 8, // paketov brez povezave na dan na profil (menjava poti, več naprav)
 };
 
 const XP = {
@@ -741,6 +742,11 @@ export class Progress {
     const path = getPath(pathKey);
     const tasks = {};
     const info = {};
+    // Omejitev izdaje: največ RULES.offlinePacksPerDay paketov na dan (tabela offline_issued ne raste neomejeno).
+    this.db.prepare("DELETE FROM offline_packs WHERE created_at < datetime('now','-1 day')").run();
+    const packsToday = this.db.prepare("SELECT COUNT(*) AS n FROM offline_packs WHERE student_id = ?").get(studentId).n;
+    if (packsToday >= RULES.offlinePacksPerDay) return { limited: true };
+    this.db.prepare("INSERT INTO offline_packs (student_id) VALUES (?)").run(studentId);
     // Izdane naloge (seme, raven): sinhronizacija sprejme samo te, ne poljubnih semen (P2: neomejen XP).
     const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level) VALUES (?, ?, ?, ?)");
     this.db.prepare(`DELETE FROM offline_issued WHERE created_at < datetime('now','-${RULES.offlineIssuedDays} days')`).run();
@@ -758,17 +764,19 @@ export class Progress {
   }
 
   // Odgovori brez povezave: [{ topic_id, level, seed, answer }]. Vsako nalogo štejemo enkrat.
-  // Šteje samo naloga, ki jo je strežnik izdal v paketu (offline_issued, z isto ravnjo), in največ
-  // RULES.offlinePerDay na dan: brez tega bi si kdo s kodo iz brskalnika nabral poljubno XP.
+  // Šteje samo naloga, ki jo je strežnik izdal v paketu (offline_issued, z isto ravnjo). V napredek štejejo vse,
+  // XP (in s tem lige) pa največ RULES.offlineXpPerDay nalog na dan, toliko kot dnevni sklop: paket ima rešitve,
+  // zato bi si kdo s skripto sicer »kupil« ligo (P2).
   offlineSync(studentId, results = []) {
     let synced = 0;
     let correct = 0;
     let skipped = 0;
+    let noXp = 0;
     const seen = this.db.prepare("INSERT OR IGNORE INTO offline_results (student_id, topic_id, seed) VALUES (?, ?, ?)");
     const issued = this.db.prepare(
       `SELECT 1 FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
     );
-    let left = RULES.offlinePerDay - this.db.prepare("SELECT COUNT(*) AS n FROM offline_results WHERE student_id = ? AND date(created_at) = date('now')").get(studentId).n;
+    let left = RULES.offlineXpPerDay - this.db.prepare("SELECT COUNT(*) AS n FROM offline_results WHERE student_id = ? AND date(created_at) = date('now')").get(studentId).n;
     for (const r of results.slice(0, 300)) {
       const level = Number(r?.level);
       const seed = Number(r?.seed);
@@ -777,23 +785,23 @@ export class Progress {
         skipped += 1;
         continue;
       }
-      if (left <= 0) {
-        skipped += 1;
-        continue;
-      }
       if (!seen.run(studentId, r.topic_id, seed).changes) continue;
+      const xp = left > 0;
       left -= 1;
+      if (!xp) noXp += 1;
       const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId));
       const id = this.saveTask(studentId, task, "practice");
-      const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200));
+      const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200), { xp });
       synced += 1;
       if (out.correct) correct += 1;
     }
-    return { synced, correct, ...(skipped ? { skipped } : {}) };
+    return { synced, correct, ...(skipped ? { skipped } : {}), ...(noXp ? { no_xp: noXp } : {}) };
   }
 
   // ---------- odgovor ----------
-  answer(studentId, taskId, input) {
+  // opts.xp === false: odgovor šteje v napredek, XP pa ne (vaje brez povezave nad dnevno mejo).
+  answer(studentId, taskId, input, opts = {}) {
+    const giveXp = opts.xp !== false;
     const row = this.getTask(taskId);
     if (!row || row.student_id !== studentId) return { error: "Naloga ne obstaja." };
     const oneShot = ONE_SHOT.includes(row.mode);
@@ -868,7 +876,7 @@ export class Progress {
       let xp = helped ? Math.max(XP.minWithHelp, Math.floor(XP.base(row.level) / 2)) : XP.base(row.level);
       const reasons = [[xp, helped ? "pravilno (s pomočjo)" : "pravilno"]];
       if (attempts > 1) reasons.push([XP.fixBonus, "popravljena napaka"]);
-      out.xp = this.award(studentId, reasons);
+      out.xp = giveXp ? this.award(studentId, reasons) : null;
 
       if (row.mode === "practice") {
         if (firstTry) {
@@ -883,7 +891,7 @@ export class Progress {
         if (s.status !== "mastered" && this.checkMastery(studentId, row.topic_id)) {
           this.markMastered(studentId, row.topic_id, "practice");
           out.mastered = true;
-          out.xp = this.award(studentId, [[XP.mastery, "obvladana tema"]], out.xp);
+          if (giveXp) out.xp = this.award(studentId, [[XP.mastery, "obvladana tema"]], out.xp);
         }
       }
       if (row.mode === "review" && firstTry) this.advanceReview(studentId, row.topic_id, true);

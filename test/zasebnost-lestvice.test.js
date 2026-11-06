@@ -1,4 +1,4 @@
-// P2: vaje brez povezave ne dajo neomejenega XP (samo izdane naloge, največ 60 na dan).
+// P2: vaje brez povezave ne dajo neomejenega XP (samo izdane naloge; XP največ za dnevni sklop, napredek za vse).
 // P3: ime učenca se v odgovoru za druge učence zamenja samo kot cela beseda.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -38,28 +38,34 @@ test("P2: offline-sync ne sprejme semen, ki jih strežnik ni izdal (brez kmetova
   assert.equal(progress.offlineSync(s.id, real).synced, 0, "ista naloga ne šteje dvakrat");
 });
 
-test("P2: največ 60 nalog brez povezave na dan, tudi z izdanimi semeni", async () => {
+test("P2: brez povezave vse izdane naloge štejejo v napredek, XP največ za dnevni sklop; omejena izdaja paketov", async () => {
   const store = openDb(":memory:");
   const app = createApp(store, { scheduler: false });
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
-  const j = (p, o = {}) => fetch(base + p, { method: o.method || "GET", headers: { "Content-Type": "application/json" }, body: o.body ? JSON.stringify(o.body) : undefined }).then((r) => r.json());
+  const raw = (p, o = {}) => fetch(base + p, { method: o.method || "GET", headers: { "Content-Type": "application/json" }, body: o.body ? JSON.stringify(o.body) : undefined });
+  const j = (p, o) => raw(p, o).then((r) => r.json());
   try {
     const s = await j("/api/students", { method: "POST", body: { name: "Ana", settings: { level: "OS", grade: 8 } } });
     // več paketov zapored (vsak izda nove naloge), vse odgovorjene pravilno
     const results = [];
-    for (let k = 0; k < 6 && results.length < 120; k++) {
+    for (let k = 0; k < 6; k++) {
       const pack = await j(`/api/students/${s.id}/offline-pack`);
       for (const [topic_id, list] of Object.entries(pack.tasks)) for (const t of list) results.push({ topic_id, level: t.level, seed: t.seed, answer: rightAnswer(t.answer) });
     }
-    assert.ok(results.length > 60, `izdanih nalog: ${results.length}`);
-    const first = await j(`/api/students/${s.id}/offline-sync`, { method: "POST", body: { results } });
-    assert.equal(first.synced, 60);
-    assert.equal(first.skipped, results.length - 60);
-    const again = await j(`/api/students/${s.id}/offline-sync`, { method: "POST", body: { results } });
-    assert.equal(again.synced, 0, "dnevna meja velja tudi za naslednji klic");
-    // XP ostane omejen: 60 nalog po največ 20 XP + bonusi teme
-    assert.ok(again.xp.total <= 60 * 20 + 25 * 20 + 40, `XP: ${again.xp.total}`);
+    const batch = results.slice(0, 120);
+    assert.ok(batch.length > 60, `izdanih nalog: ${batch.length}`);
+    const first = await j(`/api/students/${s.id}/offline-sync`, { method: "POST", body: { results: batch } });
+    assert.equal(first.synced, batch.length, "vse naloge štejejo v napredek (nič se ne izgubi)");
+    assert.equal(first.no_xp, batch.length - 10, "XP samo za prvih 10 (dnevni sklop)");
+    assert.equal(store.db.prepare("SELECT COUNT(*) n FROM tasks WHERE student_id = ? AND solved = 1").get(s.id).n, batch.length);
+    // XP: 10 nalog po največ 20 XP + bonusi za obvladane teme ob teh nalogah (lige ne dobijo več)
+    assert.ok(first.xp.total <= 10 * 20 + 10 * 25 + 40, `XP: ${first.xp.total}`);
+    const again = await j(`/api/students/${s.id}/offline-sync`, { method: "POST", body: { results: batch } });
+    assert.equal(again.synced, 0, "ista naloga ne šteje dvakrat");
+    // Izdaja paketov je omejena (8 na dan na profil).
+    for (let k = 6; k < 8; k++) assert.equal((await raw(`/api/students/${s.id}/offline-pack`)).status, 200);
+    assert.equal((await raw(`/api/students/${s.id}/offline-pack`)).status, 429);
   } finally {
     server.close();
   }
