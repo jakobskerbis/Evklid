@@ -100,22 +100,31 @@ ORGANI = {
         # Lastna geometrija (srce_geometrija.py): sprednja lističa mitralne in trikuspidalne zaklopke s tetivami,
         # sprednja-stranska papilarna mišica levega prekata, septomarginalna trabekula, mesnate trabekule obeh prekatov.
         dodaj=["srce_dodatki"],
+        # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
+        # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
+        stena={"Left ventricle": 0.0028, "Right ventricle": 0.0008},
         # Pečene PBR teksture (peka.py, Cycles): recept po tkivu. Maščoba sledi venčnim žilam v žlebovih (maska iz
         # razdalje do žil na zunanji ploskvi), miokard ima snope vlaken in drobne gube, notranjost votlin (endokard) je
         # bolj gladka in svetlejša, zaklopke so smetanaste. Peka 2048 px računalnik, 1024 px telefon (svoj atlas).
         tekstura=dict(
             pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
-            # maščoba samo ob venčnih žilah (ne ob aorti, pljučnem deblu in pljučnih venah), širina po debelini žile
-            maska=dict(zile=r"coronary|interventricular|Circumflex|cardiac vein|vein of left ventricle|Coronary sinus|branch of right coronary", tkiva=["miokard"]),
+            # maščoba v žlebovih: stik zunanjih ploskev votlin (venčni in oba medprekatna žleba), ob venčnih žilah širša;
+            # ob vejah na prosti steni prekatov le tanka sled (ne ob aorti, pljučnem deblu, pljučnih venah, lističih)
+            maska=dict(zile=r"coronary (artery|sinus)|Coronary sinus|interventricular artery|Circumflex|cardiac vein|vein of left ventricle|branch of right coronary",
+                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.3),
             recepti={
-                "miokard": dict(barva=(0.30, 0.045, 0.035), barva2=(0.20, 0.03, 0.028), lise=0.45, hrap=0.30, gube=0.00016, gubeMera=0.004,
-                                vlakna=0.00022, vlaknaMera=0.0016, masca=0.95, mascaBarva=(0.76, 0.52, 0.20), mascaPremik=0.0015,
-                                mascaMera=0.006, zilice=0.55, ziliceBarva=(0.22, 0.025, 0.04), notranja=(0.46, 0.14, 0.12), notranjaHrap=0.2),
-                "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.33, gube=0.00006, gubeMera=0.002, razdeli=1),
-                "arterija": dict(barva=(0.62, 0.07, 0.06), barva2=(0.48, 0.05, 0.05), lise=0.3, hrap=0.27, gube=0.00005, gubeMera=0.002, razdeli=1),
-                "vena": dict(barva=(0.10, 0.18, 0.48), barva2=(0.08, 0.12, 0.36), lise=0.3, hrap=0.27, gube=0.00005, gubeMera=0.002, razdeli=1),
-                "pljucna": dict(barva=(0.16, 0.26, 0.58), barva2=(0.12, 0.20, 0.48), lise=0.3, hrap=0.27, gube=0.00006, gubeMera=0.003, razdeli=1),
-                "pljucna-vena": dict(barva=(0.58, 0.09, 0.09), barva2=(0.45, 0.06, 0.07), lise=0.3, hrap=0.27, gube=0.00006, gubeMera=0.003, razdeli=1),
+                # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
+                # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
+                "miokard": dict(barva=(0.26, 0.048, 0.036), barva2=(0.18, 0.034, 0.028), lise=0.45, hrap=0.38, gube=0.00016, gubeMera=0.004,
+                                vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.80, 0.56, 0.16), mascaBarva2=(0.86, 0.50, 0.14),
+                                mascaNasip=0.004, mascaPremik=0.0045, mascaMera=0.011, mascaZleb=0.58, mascaHrap=0.52, kletka=0.009,
+                                zilice=0.3, ziliceBarva=(0.17, 0.025, 0.035), notranja=(0.46, 0.14, 0.12), notranjaHrap=0.26),
+                "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
+                # arterije svetlo rdeče, vene temno modrikaste (jasno ločene od miokarda in med seboj)
+                "arterija": dict(barva=(0.74, 0.085, 0.06), barva2=(0.62, 0.06, 0.05), lise=0.2, hrap=0.32, gube=0.00005, gubeMera=0.002, razdeli=1),
+                "vena": dict(barva=(0.065, 0.10, 0.34), barva2=(0.05, 0.075, 0.27), lise=0.25, hrap=0.32, gube=0.00005, gubeMera=0.002, razdeli=1),
+                "pljucna": dict(barva=(0.16, 0.26, 0.58), barva2=(0.12, 0.20, 0.48), lise=0.3, hrap=0.32, gube=0.00006, gubeMera=0.003, razdeli=1),
+                "pljucna-vena": dict(barva=(0.58, 0.09, 0.09), barva2=(0.45, 0.06, 0.07), lise=0.3, hrap=0.32, gube=0.00006, gubeMera=0.003, razdeli=1),
             },
         ),
         jedro=r"^(Right atrium|Right ventricle|Left atrium|Left ventricle)$",
@@ -1080,7 +1089,8 @@ def izvozi(organ, cfg):
     tc = None if os.environ.get("ORGANI_TEKSTURE") == "0" else cfg.get("tekstura")  # ORGANI_TEKSTURE=0: hiter preizkus oblike
     if tc and tc.get("pbr"):
         ms = tc.get("maska", {})
-        peka.maske(osnovni, velikost, ms.get("zile", "^$"), set(ms.get("tkiva", [])))
+        peka.maske(osnovni, velikost, ms.get("zile", "^$"), set(ms.get("tkiva", [])), votline_rx=ms.get("votline"),
+                   **{k: ms[k] for k in ("zleb", "zlebZila", "sled") if k in ms})
     slike = None
     for i, (cilj, pripona) in enumerate(zip(cfg["cilj"], ("", "-telefon"))):
         ratio = min(1.0, cilj / max(skupaj, 1))

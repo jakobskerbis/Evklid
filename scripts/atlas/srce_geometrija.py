@@ -198,11 +198,78 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
     return narejenih
 
 
+def odebeli_steno(me, dodatek, rob=(0.004, 0.014), korakov=6):
+    """Odebeli steno prekata (debela odprta lupina) navznoter: notranja ploskev (endokard) se premakne v votlino za
+    `dodatek` metrov; zunanja ploskev (in s tem obris srca, venčne žile, maščoba) ostane. Ob obročih zaklopk (odprti
+    robovi) se premik zmanjša na 0 (`rob` = od, do v metrih), da obroči in lističi ostanejo na mestu; v ozki votlini
+    (konica) je premik največ 35 % razdalje do nasprotne stene. Notranja ploskev = žarek po normali zadene isto mrežo
+    (votlina je zaprta), zunanja = žarek pobegne; razvrstitev zgladimo po sosedih (posamezni žarki skozi odprtine).
+    Vrne (premaknjenih oglišč, debelina prej v mm, mediana)."""
+    from mathutils.kdtree import KDTree
+    bm = bmesh.new(); bm.from_mesh(me)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.verts.ensure_lookup_table(); bm.normal_update()
+    tree = BVHTree.FromBMesh(bm)
+    n = len(bm.verts)
+    rob_v = [v.co.copy() for v in bm.verts if any(not e.is_manifold for e in v.link_edges)]
+    kd = KDTree(len(rob_v))
+    for i, p in enumerate(rob_v): kd.insert(p, i)
+    kd.balance()
+
+    def zadetek(p, d, dl):
+        h = tree.ray_cast(p + d * 2e-5, d, dl)
+        return h[3] if h[0] is not None else None
+
+    # usmerjenost lupine: normale navzven, če večina žarkov po normali pobegne (sicer obrnemo predznak)
+    vzorec = bm.verts[:][:: max(1, n // 800)]
+    s = 1.0 if sum(zadetek(v.co, v.normal, 0.2) is None for v in vzorec) >= len(vzorec) / 2 else -1.0
+    smeri = [Vector(d).normalized() for d in ((1, 1, 1), (1, 1, -1), (1, -1, 1), (1, -1, -1), (-1, 1, 1), (-1, 1, -1), (-1, -1, 1), (-1, -1, -1))]
+    notri = np.zeros(n); votlina = np.full(n, 1.0); debel = []
+    for v in bm.verts:
+        nn = v.normal * s
+        dv = zadetek(v.co, nn, 0.12)  # notranja: zadene nasprotno steno votline
+        dz = zadetek(v.co, -nn, 0.03)  # skozi steno: debelina
+        if dv is None or dz is None:
+            continue
+        # točka pred steno mora biti v zaprti votlini (ne v vbočenem delu zunanje ploskve): ≥ 6 od 8 žarkov zadene steno
+        p = v.co + nn * min(dv / 2, 0.005)
+        if sum(zadetek(p, d, 0.12) is not None for d in smeri) >= 6:
+            notri[v.index] = 1.0; votlina[v.index] = dv; debel.append(dz)
+    e = np.array([(ed.verts[0].index, ed.verts[1].index) for ed in bm.edges], dtype=np.int64).reshape(-1, 2)
+    st = np.maximum(np.bincount(e.ravel(), minlength=n), 1)
+
+    def gladi(A, k):
+        for _ in range(k):
+            A = 0.5 * A + 0.5 * (np.bincount(e[:, 0], weights=A[e[:, 1]], minlength=n) + np.bincount(e[:, 1], weights=A[e[:, 0]], minlength=n)) / st
+        return A
+    notri = (gladi(notri, 3) > 0.5).astype(float)
+    w = np.zeros(n)
+    for v in bm.verts:
+        if notri[v.index]:
+            d = kd.find(v.co)[2] if rob_v else 1.0
+            t = min(1.0, max(0.0, (d - rob[0]) / (rob[1] - rob[0])))
+            w[v.index] = min(dodatek * t * t * (3 - 2 * t), 0.35 * votlina[v.index])
+    w = gladi(w, korakov) * notri  # gladek prehod, zunanja ploskev ostane
+    for v in bm.verts:
+        if w[v.index] > 0:
+            v.co += v.normal * s * w[v.index]
+    bm.to_mesh(me); bm.free()
+    return int((w > 1e-5).sum()), float(np.median(debel) * 1000) if debel else 0.0
+
+
 def srce_dodatki(osnovni, cfg, tmp):
     rnd = random.Random(23)
     lv, rv = _mreza(osnovni, r"^Left ventricle$"), _mreza(osnovni, r"^Right ventricle$")
     if lv is None or rv is None:
         print("[organi] srce_dodatki: ni prekatov, preskočeno"); return []
+    # Debelina stene (cfg stena = {prekat: dodatek v m}): vir ima LV ≈ 9 mm, RV ≈ 3 mm; učbeniško LV 10–15 mm,
+    # RV 3–5 mm (≈ 3×). Najprej stena, nato lističi, mišice in trabekule (prilegajo se novi notranji ploskvi).
+    for rx, me in ((r"^Left", lv), (r"^Right", rv)):
+        dod = next((d for k, d in cfg.get("stena", {}).items() if re.search(rx, k)), 0)
+        if dod:
+            k, prej = odebeli_steno(me, dod)
+            print(f"[organi] srce: stena {rx[1:]} +{dod * 1000:.1f} mm ({k} oglišč, prej mediana {prej:.1f} mm)")
     zl, zd = robne_zanke(lv), robne_zanke(rv)
     # levi prekat: mitralni obroč = zanka, ki se ujema z odprtino levega preddvora; aortni = najbližje korenu aorte
     aorta = _mreza(osnovni, r"^Ascending aorta$")

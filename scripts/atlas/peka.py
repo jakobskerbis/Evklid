@@ -18,7 +18,7 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 PRIVZETO = dict(barva=(0.5, 0.2, 0.18), barva2=(0.42, 0.14, 0.13), lise=0.35, liseMera=0.025, hrap=0.35, gube=0.00012, gubeMera=0.003,
-                vlakna=0.0, vlaknaMera=0.0012, masca=None, mascaBarva=(0.86, 0.66, 0.30), mascaPremik=0.0012, mascaMera=0.004,
+                vlakna=0.0, vlaknaMera=0.0012, masca=None, mascaBarva=(0.86, 0.66, 0.30), mascaPremik=0.0012, mascaNasip=0.0, mascaMera=0.004,
                 mascaHrap=0.42, zilice=0.0, ziliceBarva=(0.36, 0.06, 0.07), ziliceMera=0.012, notranja=None, notranjaHrap=0.22,
                 razdeli=2, robSvetel=0.0)
 
@@ -55,16 +55,21 @@ def _polmeri_zil(zile):
     return np.array(out)
 
 
-def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=2.6, mascaNajmanj=0.0008, mascaNajvec=0.0065, zarkov=12):
+def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=3.4, mascaNajmanj=0.0008, mascaNajvec=0.0035, zarkov=12,
+          votline_rx=None, zleb=0.0055, zlebZila=0.004, sled=0.3):
     """Barvni atribut PEKA na izvirnih mrežah (vrstice = [ime, mesh, tkivo, …]): R maščoba, G odprtost (delež dolgih
-    žarkov, ki pobegnejo: zunanja ploskev 1, notranjost votlin 0). Anatomsko: epikardialna maščoba leži v žlebovih ob
-    venčnih žilah; širina pasu je sorazmerna debelini žile (mascaFaktor × polmer, med mascaNajmanj in mascaNajvec):
-    širok pas ob deblih v atrioventrikularnem in medprekatnih žlebovih, ozek ob tankih vejah, prosta stena brez nje."""
+    žarkov, ki pobegnejo: zunanja ploskev 1, notranjost votlin 0). Anatomsko: epikardialna maščoba polni žlebove
+    (venčni žleb med preddvoroma in prekatoma, sprednji in zadnji medprekatni žleb), po katerih tečejo debla venčnih žil;
+    prosta stena prekatov je brez nje. Žleb = stik zunanjih ploskev dveh srčnih votlin (votline_rx, npr. levi in desni
+    prekat): pas širine `zleb` (m) od stika, ob žili širši za `zlebZila` (m). Ob vejah zunaj žlebov ostane le tanka
+    sled (`sled` moči, širina mascaFaktor × polmer žile, mascaNajmanj … mascaNajvec)."""
     import re, random
     vse = _bvh_obj([r[1] for r in vrstice])
     zile = [r[1] for r in vrstice if re.search(zile_rx, r[0])]
     bz = _bvh_obj(zile) if zile else None
     polmeri = _polmeri_zil(zile) if zile else None
+    votline = [r for r in vrstice if votline_rx and re.search(votline_rx, r[0])]
+    druge = {r[0]: _bvh_obj([q[1] for q in votline if q is not r]) for r in votline} if len(votline) > 1 else {}
     rnd = random.Random(5)
     smeri = []
     for i in range(zarkov):
@@ -76,17 +81,26 @@ def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=2.6, mascaNajma
         n = len(me.vertices)
         G = np.ones(n); R = np.zeros(n)
         racunaj = tkivo in tkiva_z_masco
+        bd = druge.get(ime)
         for i, v in enumerate(me.vertices):
             if not racunaj:
                 break
             nn = v.normal; p = v.co + nn * velikost * 2e-4
             t = nn.orthogonal().normalized(); b = nn.cross(t)
             G[i] = sum(1 for d in smeri if vse.ray_cast(p, t * d.x + b * d.y + nn * d.z, velikost * 2)[0] is None) / zarkov
+            pas = 0.0
             if bz is not None:
                 _, _, fi, d = bz.find_nearest(v.co, mascaNajvec * 1.5)
                 if d is not None:
                     do = min(mascaNajvec, max(mascaNajmanj, mascaFaktor * polmeri[fi]))
-                    R[i] = min(1.0, max(0.0, (do - d) / (do * 0.65)))
+                    pas = min(1.0, max(0.0, (do - d) / (do * 0.65)))
+            zl = 0.0
+            if bd is not None:
+                sir = zleb + zlebZila * pas
+                d = bd.find_nearest(v.co, sir)[3]
+                if d is not None:
+                    zl = min(1.0, max(0.0, (sir - d) / (sir * 0.6)))
+            R[i] = max(zl, sled * pas)
         if racunaj:  # glajenje po robovih (2 koraka), maščoba samo zunaj
             e = np.array([tuple(ed.vertices) for ed in me.edges], dtype=np.int64).reshape(-1, 2)
             if len(e):
@@ -170,14 +184,15 @@ def material_peke(tkivo, r, velikost):
     if r.get("notranja"):
         hx = N("ShaderNodeMix"); hx.data_type = "FLOAT"; L(rng(odprt, 0.45, 0.2), hx.inputs[0])
         hx.inputs[2].default_value = r["hrap"]; hx.inputs[3].default_value = r["notranjaHrap"]; hrap = hx.outputs[0]
-    if r["masca"]:  # epikardialna maščoba: rumena, režnjičasta (Voronoi), bolj hrapava
-        vm = N("ShaderNodeTexVoronoi"); vm.inputs["Scale"].default_value = 1 / (r["mascaMera"] * velikost)
-        L(koord.outputs["Object"], vm.inputs["Vector"])
-        rez = rng(vm.outputs["Distance"], 0.0, 0.5, 1.0, 0.82)
+    if r["masca"]:  # epikardialna maščoba: rumena, režnjičasta (atribut LOB iz visoke mreže), bolj hrapava
+        lo = N("ShaderNodeAttribute"); lo.attribute_name = "LOB"
+        sl = N("ShaderNodeSeparateColor"); L(lo.outputs["Color"], sl.inputs[0])
+        # barva režnja: svetlejša sredina, temnejši žleb med režnji; velike lise rahlo bolj oranžne (mascaBarva2)
+        mc = mix(rng(sum_(0.03 * velikost, 2, 0.5, 9.1), 0.35, 0.7), r["mascaBarva"], r.get("mascaBarva2", r["mascaBarva"]))
         mb = N("ShaderNodeMix"); mb.data_type = "RGBA"; mb.blend_type = "MULTIPLY"; mb.inputs[0].default_value = 1.0
-        mb.inputs[6].default_value = (*r["mascaBarva"], 1); L(rez, mb.inputs[7])
-        mm = mul(rng(masca, 0.12, 0.6), r["masca"])
-        mm = mul(mm, rng(sum_(0.012 * velikost, 3, 0.6, 5.5), 0.25, 0.55, 0.55, 1.0))
+        L(mc, mb.inputs[6]); L(rng(sl.outputs[0], 0.0, 0.9, r.get("mascaZleb", 0.6), 1.0), mb.inputs[7])
+        mm = mul(rng(masca, 0.08, 0.5), r["masca"])
+        mm = mul(mm, rng(sum_(0.012 * velikost, 3, 0.6, 5.5), 0.25, 0.55, 0.6, 1.0))
         c = mix(mm, c, mb.outputs[2])
         hx = N("ShaderNodeMix"); hx.data_type = "FLOAT"; L(mm, hx.inputs[0]); L(hrap, hx.inputs[2]); hx.inputs[3].default_value = r["mascaHrap"]
         hrap = hx.outputs[0]
@@ -191,15 +206,10 @@ def material_peke(tkivo, r, velikost):
 
 
 def visoka(ime, me, tkivo, r, velikost, tmp):
-    """Visoka mreža za peko: kopija izvirnika, razdelitev in premik po receptu (maščoba po maski, gube, vlakna)."""
+    """Visoka mreža za peko: kopija izvirnika, razdelitev in premik po receptu (gube, vlakna), nato maščoba po maski:
+    blazinica (mascaNasip) z režnjiči (Voronoi, mascaPremik: sredina režnja izbočena, med režnji žleb). Višina režnja gre
+    v atribut »LOB« (material peke iz njega obarva režnje: barva in relief se ujemata)."""
     o = bpy.data.objects.new("_v:" + ime, me.copy()); tmp.objects.link(o)
-    at = o.data.color_attributes.get("PEKA")
-    if r["masca"] and at is not None:  # skupina oglišč iz maske maščobe (premik samo tam)
-        vg = o.vertex_groups.new(name="masca")
-        mas = np.zeros(len(o.data.vertices) * 4); at.data.foreach_get("color", mas)
-        mas = mas.reshape(-1, 4)[:, 0]
-        for i, w in enumerate(mas):
-            if w > 0.02: vg.add([i], float(w), "REPLACE")
     if r["razdeli"]:
         s = o.modifiers.new("s", "SUBSURF"); s.levels = s.render_levels = r["razdeli"]
     if r["gube"]:
@@ -208,13 +218,34 @@ def visoka(ime, me, tkivo, r, velikost, tmp):
     if r["vlakna"]:
         t = bpy.data.textures.new("_vl", "WOOD"); t.wood_type = "BANDNOISE"; t.noise_scale = r["vlaknaMera"] * velikost; t.turbulence = 4
         d = o.modifiers.new("vl", "DISPLACE"); d.texture = t; d.texture_coords = "GLOBAL"; d.strength = r["vlakna"] * velikost
-    if r["masca"] and o.vertex_groups:
-        t = bpy.data.textures.new("_m", "VORONOI"); t.noise_scale = r["mascaMera"] * velikost * 0.5; t.distance_metric = "DISTANCE"
-        t.color_mode = "INTENSITY"; t.noise_intensity = 1.0
-        d = o.modifiers.new("m", "DISPLACE"); d.texture = t; d.texture_coords = "GLOBAL"; d.strength = r["mascaPremik"] * velikost
-        d.vertex_group = "masca"; d.mid_level = 0.0
     me2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
     o.modifiers.clear(); o.data = me2
+    at = me2.color_attributes.get("PEKA")
+    if r["masca"] and at is not None and at.domain == "POINT":
+        n = len(me2.vertices)
+        w = np.zeros(n * 4); at.data.foreach_get("color", w); w = w.reshape(-1, 4)[:, 0]
+        if (w > 0.02).any():
+            P0 = np.empty(n * 3); me2.vertices.foreach_get("co", P0); P0 = P0.reshape(-1, 3)
+            N0 = np.empty(n * 3); me2.vertex_normals.foreach_get("vector", N0); N0 = N0.reshape(-1, 3)
+            # F1 (razdalja do središča režnja) iz teksture VORONOI: premik za 1 m po normali na kopiji
+            pom = bpy.data.objects.new("_lob", me2.copy()); tmp.objects.link(pom)
+            t = bpy.data.textures.new("_m", "VORONOI"); t.noise_scale = r["mascaMera"] * velikost; t.distance_metric = "DISTANCE"
+            t.color_mode = "INTENSITY"; t.noise_intensity = 1.0
+            d = pom.modifiers.new("m", "DISPLACE"); d.texture = t; d.texture_coords = "GLOBAL"; d.strength = 1.0; d.mid_level = 0.0
+            me3 = bpy.data.meshes.new_from_object(pom.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+            P1 = np.empty(n * 3); me3.vertices.foreach_get("co", P1); P1 = P1.reshape(-1, 3)
+            st = pom.data; bpy.data.objects.remove(pom); bpy.data.meshes.remove(st); bpy.data.meshes.remove(me3); bpy.data.textures.remove(t)
+            f1 = ((P1 - P0) * N0).sum(1)
+            f1 = np.clip(f1 / max(np.percentile(f1, 97), 1e-6), 0, 1)
+            lob = (1 - f1) ** 0.6  # zaobljen reženj: sredina 1, žleb med režnji 0
+            ww = np.clip((w - 0.08) / 0.6, 0, 1); ww = ww * ww * (3 - 2 * ww)
+            P = P0 + N0 * (ww * velikost * (r["mascaNasip"] + r["mascaPremik"] * lob))[:, None]
+            me2.vertices.foreach_set("co", P.ravel())
+            la = me2.color_attributes.new("LOB", "FLOAT_COLOR", "POINT")
+            c = np.zeros((n, 4)); c[:, 0] = lob; c[:, 3] = 1; la.data.foreach_set("color", c.ravel())
+            me2.update()
+    elif r["masca"]:
+        print(f"[peka] OPOZORILO {ime}: brez maske PEKA na visoki mreži (maščoba brez reliefa)", flush=True)
     for p in me2.polygons: p.use_smooth = True
     return o
 
@@ -390,7 +421,6 @@ def povrsina(pot, imena, niti=2):
     tc, velikost, px = meta["tekstura"], meta["velikost"], meta["px"]
     sl = _slike(pot, px)
     sc = bpy.context.scene
-    kletka = tc.get("kletka", 0.0025) * velikost
     mat_peke = {}
     tmp = bpy.data.collections.new("peka"); sc.collection.children.link(tmp)
     ploskev = 0
@@ -409,8 +439,9 @@ def povrsina(pot, imena, niti=2):
             sc.cycles.samples = vz
             mat_peke[o["tkivo"]].node_tree.nodes["preklop"].outputs[0].default_value = preklop
             _cilj([o], sl, kljuc)
-            bpy.ops.object.bake(type=vrsta, normal_space="TANGENT", use_selected_to_active=True, cage_extrusion=kletka,
-                                max_ray_distance=kletka * 2.2, margin=0, use_clear=False)
+            kl = rc.get("kletka", tc.get("kletka", 0.0025)) * velikost  # maščoba je izbočena: daljši žarki
+            bpy.ops.object.bake(type=vrsta, normal_space="TANGENT", use_selected_to_active=True, cage_extrusion=kl,
+                                max_ray_distance=kl * 2.2, margin=0, use_clear=False)
         me = vis.data; bpy.data.objects.remove(vis); bpy.data.meshes.remove(me)
         print(f"[peka] {o['ime']}: {time.time() - t0:.0f} s", flush=True)
     _shrani(sl, ("normala", "baza", "rr"))
