@@ -370,7 +370,13 @@ export function mountAccounts(app, store, opts = {}) {
         // Zajamčeni paketi: meja v server/usage.js capsFor. Brez plačila (preizkus, koda, bonus, tudi pod naročnino v
         // preizkusni dobi): še skupni bazen vseh takih računov (pregled #462: vsak nov e-naslov dobi preizkus).
         const out = [];
-        if (subGuarantee(studentId)?.nopay) out.push({ key: "nopaypool", usd: nopayPoolUsd(), spent: nopayPoolSpent(), code: "block.freePool" });
+        if (subGuarantee(studentId)?.nopay) {
+          const pool = { key: "nopaypool", usd: nopayPoolUsd(), spent: nopayPoolSpent(), code: "block.freePool" };
+          // Izčrpan bazen (pregled #462 L4): profil ni zaklenjen, nadaljuje z mejami brezplačnega paketa; poraba nad
+          // bazenom šteje v skupno mejo brezplačnih (freeCaps over), da bazen ne zraste brez meje.
+          if (aiUsage.headroom(studentId, [pool]) >= aiUsage.minCallUsd()) out.push(pool);
+          else out.push(...freeCaps(studentId, owner, Math.max(0, pool.spent - pool.usd)));
+        }
         // S kreditom še skupni ključ kredita (kredit + preostanek paketa).
         const sb = credit > 0 ? aiUsage.studentBudget(studentId) : null;
         if (sb?.guaranteed) {
@@ -390,18 +396,18 @@ export function mountAccounts(app, store, opts = {}) {
         const cap = { key: `school:${s.school_id}`, usd: s.ai_month_usd, spent: s.ai_spent_usd || 0, code: "block.monthLimit" };
         // Šola brez prostora za najcenejši klic velja kot porabljena: profil nadaljuje v brezplačnem paketu.
         if (aiUsage.headroom(studentId, [cap]) >= aiUsage.minCallUsd()) return [cap];
-      } else if (r.schools.some((x) => !(x.ai_month_usd > 0))) return [];
+      }
     }
     if (credit > 0) return [{ key: `credit:${owner}`, usd: credit, spent: 0, code: "block.freeMonth" }];
     return freeCaps(studentId, owner);
   }
-  function freeCaps(studentId, owner = ownerOf(studentId)) {
+  function freeCaps(studentId, owner = ownerOf(studentId), over = 0) {
     const caps = [];
     const scope = quotaScope(studentId);
     const per = freeStudentMonthlyUsd();
     if (per) caps.push({ key: scope.net ? `net:${scope.net}` : `s:${studentId}`, usd: per, spent: freeSpent(studentId, owner, scope), code: "block.freeMonth" });
     const pool = freeMonthlyPoolUsd();
-    if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent(), code: "block.freePool" });
+    if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent() + over, code: "block.freePool" });
     return caps;
   }
   // Besedilo zavrnitve: preizkus in bonus → poziv k naročnini (ne »spet jih dobiš«); brezplačni paket z namigom.

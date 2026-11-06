@@ -20,7 +20,7 @@ export async function withAccounts(env, fn, extra = {}) {
     return { ok: true, status: 200, json: async () => ({ id: "x" }) };
   };
   const members = [];
-  const licence = { schoolId: 1, schoolName: "OŠ Test", licenceId: 10, plan: "class", seats: 5, subjects: null, grades: null, validUntil: new Date(Date.now() + 60 * 86400000).toISOString(), aiCapUsdMonth: 0 };
+  const licence = { schoolId: 1, schoolName: "OŠ Test", licenceId: 10, plan: "class", seats: 5, subjects: null, grades: null, validUntil: new Date(Date.now() + 60 * 86400000).toISOString(), aiCapUsdMonth: 5 };
   const schoolSource = { access: (db, id) => (members.includes(id) ? licence : null), students: () => members };
   const app = createApp(store, {
     accounts: true,

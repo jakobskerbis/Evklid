@@ -50,7 +50,8 @@ export function schoolValid(s, now = Date.now()) {
   return !(s.valid_until && !later(s.valid_until, now));
 }
 // Ali je šola ta mesec porabila mejo AI (0 ali prazno = brez meje).
-export const schoolAiSpent = (s) => s.ai_month_usd > 0 && (s.ai_spent_usd || 0) >= s.ai_month_usd;
+// Meja 0 (ali neveljavna) = šola nima AI (pregled #462 A4: prej neomejeno), profil nadaljuje v brezplačnem paketu.
+export const schoolAiSpent = (s) => !(s.ai_month_usd > 0) || (s.ai_spent_usd || 0) >= s.ai_month_usd;
 
 // Seznam iz licence: tabela, besedilo JSON ali »MAT, FIZ«; napačna oblika ne sme podreti zahteve.
 const list = (v) => {
