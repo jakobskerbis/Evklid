@@ -50,7 +50,9 @@ export function modeParams(mode = "chat") {
 // zapis za 1 h stane 2× vhod).
 // Preveri na https://claude.com/pricing in po potrebi popravi.
 export const PRICES = {
-  "claude-haiku-5-5": { in: 0.1, out: 0.5, cacheRead: 0.01, cacheWrite: 0.125 },
+  // Haiku 5.5: klic s pozivom nad 100.000 žetonov (vhod + branje + zapis predpomnilnika) plača 5× za ves klic
+  // (platform.claude.com/docs/en/about-claude/pricing, pregled #462 A1).
+  "claude-haiku-5-5": { in: 0.1, out: 0.5, cacheRead: 0.01, cacheWrite: 0.125, long: { over: 100_000, in: 0.5, out: 2.5, cacheRead: 0.05, cacheWrite: 0.625 } },
   "claude-sonnet-5-5": { in: 2, out: 10, cacheRead: 0.2, cacheWrite: 2.5 },
   "claude-opus-5-5": { in: 4, out: 20, cacheRead: 0.2, cacheWrite: 5 },
   "claude-fable-5-1": { in: 10, out: 50, cacheRead: 0.25, cacheWrite: 12.5 },
@@ -60,7 +62,9 @@ export function costUsd(model, u) {
   // API lahko vrne ime z datumom (»claude-haiku-5-5-20261015«): cena po začetku imena, sicer bi Haiku štel po ceni Opusa.
   const id = String(model || "");
   const key = Object.keys(PRICES).filter((k) => id === k || id.startsWith(`${k}-`)).sort((a, b) => b.length - a.length)[0];
-  const p = PRICES[key] || PRICES["claude-opus-5-5"];
+  let p = PRICES[key] || PRICES["claude-opus-5-5"];
+  const prompt = (u.input_tokens || 0) + (u.cache_read_input_tokens || 0) + (u.cache_creation_input_tokens || 0);
+  if (p.long && prompt > p.long.over) p = p.long;
   // Zapis za 1 h (usage.cache_creation.ephemeral_1h_input_tokens) stane 2× vhod, ostali zapisi 1,25×.
   const write = u.cache_creation_input_tokens || 0;
   const write1h = Math.min(write, u.cache_creation?.ephemeral_1h_input_tokens || 0);

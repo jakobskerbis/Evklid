@@ -48,7 +48,7 @@ export const IMAGE_TOKENS = 4800;
 const MSG_OVERHEAD = 20; // oznake vlog in blokov
 const bytes = (s) => Buffer.byteLength(String(s ?? ""), "utf8");
 // Najdražji model (leno: claude.js se lahko naloži za tem modulom).
-const mostExpensive = () => Object.values(PRICES).reduce((a, p) => (p.out > a.out ? p : a));
+const mostExpensive = () => Object.values(PRICES).flatMap((p) => [p, p.long].filter(Boolean)).reduce((a, p) => (p.out > a.out ? p : a));
 export function priceOf(model) {
   const id = String(model || "");
   const key = Object.keys(PRICES).filter((k) => id === k || id.startsWith(`${k}-`)).sort((a, b) => b.length - a.length)[0];
@@ -82,7 +82,8 @@ export function systemTokens(system) {
 }
 // Najvišji strošek klica v $.
 export function callMaxUsd(model, inputTokens, outputTokens) {
-  const p = priceOf(model);
+  let p = priceOf(model);
+  if (p.long && inputTokens > p.long.over) p = p.long; // Haiku nad 100k žetonov: 5× (pregled #462 A1)
   return ((Math.max(0, inputTokens) * inMax(p)) + Math.max(0, outputTokens) * p.out) / 1e6;
 }
 // Rezerva klica inštruktorja (server/claude.js streamReply) za način mode; extraTokens: skrite opombe in povzetek.
@@ -91,6 +92,19 @@ export function replyReserveUsd({ mode = "chat", system = "", messages = [], too
   const out = quickMax ? Math.min(max_tokens, quickMax) : max_tokens;
   const input = systemTokens(system) + messageTokens(messages) + (tools?.length ? Math.ceil(bytes(JSON.stringify(tools)) / 2) : 0) + extraTokens;
   return callMaxUsd(model, input, out);
+}
+// Zgodovina pod pragom dolgega poziva (Haiku nad 100k žetonov 5×, pregled #462 A1): odreže najstarejše izmenjave,
+// dokler poziv (z rezervo za opombe) ne gre pod prag. Modeli brez dražjega dolgega poziva: nespremenjeno.
+export function fitLongPrompt({ mode = "chat", system = "", messages = [], tools = null, extraTokens = 2000, margin = 5000 } = {}) {
+  const p = priceOf(modeParams(mode).model);
+  if (!p.long) return messages;
+  const fixed = systemTokens(system) + (tools?.length ? Math.ceil(bytes(JSON.stringify(tools)) / 2) : 0) + extraTokens;
+  let out = messages;
+  while (out.length > 1 && fixed + messageTokens(out) > p.long.over - margin) {
+    out = out.slice(1);
+    while (out.length > 1 && out[0].role !== "user") out = out.slice(1);
+  }
+  return out;
 }
 // Rezerva za pregled s Sonnetom ali preverjevalca (server/verify.js askModel: max_tokens 8000, kratka navodila).
 export const CHECK_MAX_TOKENS = 8000;

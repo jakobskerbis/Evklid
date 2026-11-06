@@ -47,7 +47,7 @@ import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
-import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES } from "./meje-ai.js";
+import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity } from "./games.js";
@@ -663,7 +663,7 @@ export function createApp(store, opts = {}) {
       replyReserveUsd({
         mode: m,
         system,
-        messages: [...((m === "deep" || m === "mid") && !routed.boosted ? recentHistory(prior) : windowHistory(prior)), { role: "user", content: userContent }],
+        messages: fitLongPrompt({ mode: m, system, tools: SETTINGS_TOOLS, messages: [...((m === "deep" || m === "mid") && !routed.boosted ? recentHistory(prior) : windowHistory(prior)), { role: "user", content: userContent }] }),
         tools: SETTINGS_TOOLS,
         extraTokens: 2000, // skrite opombe (preverjen rezultat, sodba) in povzetek starejšega dela pogovora
       });
@@ -767,6 +767,8 @@ export function createApp(store, opts = {}) {
         });
         hold.settle(sumReserve);
       }
+      // Haiku: poziv pod 100k žetonov (nad pragom 5× cena za ves klic, pregled #462 A1); zelo dolg pogovor izgubi najstarejše.
+      history = fitLongPrompt({ mode, system, tools: SETTINGS_TOOLS, messages: history });
       // Učenčev rezultat ali trditev: sodbo inštruktorja preveri koda (naloga iz prvega sporočila) ali model,
       // preden učenec odgovor vidi (server/live-check.js, 4). Zato se tak odgovor ne pretaka sproti.
       const textOf = (m) => (Array.isArray(m.content) ? m.content : [{ text: m.content }]).map((b) => b.text || "").join("\n");

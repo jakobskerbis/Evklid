@@ -517,7 +517,9 @@ export class Usage {
   // Poraba izbrisanih profilov računa od since (privzeto ta mesec; student_id NULL, parent_id ostane).
   orphanSpent(owner, since = this.monthStart()) {
     if (owner == null) return 0;
-    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?").get(owner, since).s;
+    const s = this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?").get(owner, since).s;
+    // Brez dela, ki ga je plačal kredit (pregled #462 S5: sicer dvojno štetje kot pri spentSince).
+    return Math.max(0, s - (this.credits?.orphanUsedSince?.(owner, since) || 0));
   }
   // Začetek tega meseca v obliki stolpca created_at (UTC).
   monthStart() {

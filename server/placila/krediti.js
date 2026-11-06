@@ -90,6 +90,10 @@ export class Credits {
   usedSince(studentId, since) {
     return this.db.prepare("SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE student_id = ? AND created_at >= ?").get(studentId, since).s;
   }
+  // Kredit, ki so ga porabili izbrisani profili računa (student_id NULL) od since.
+  orphanUsedSince(parentId, since) {
+    return this.db.prepare("SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?").get(parentId, since).s;
+  }
   use(parentId, studentId, usd) {
     if (!parentId || !(usd > 0)) return;
     this.db.prepare("INSERT INTO ai_credit_use (parent_id, student_id, usd) VALUES (?, ?, ?)").run(parentId, studentId, usd);
