@@ -19,7 +19,7 @@ import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-remin
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
 import { cleanText } from "../settings.js";
 import { Usage, BLOCK_TEXT } from "../usage.js";
-import { NOPAY_USD } from "../meje-ai.js";
+import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
@@ -361,13 +361,17 @@ export function mountAccounts(app, store, opts = {}) {
     const creditCap = (room) => ({ key: `credit:${owner}`, usd: credit + Math.max(0, room), spent: 0, code: "block.freeMonth" });
     if (r.personal) {
       if (r.personalTier !== "pass") {
-        // Zajamčeni paketi: meja v server/usage.js capsFor; s kreditom še skupni ključ (kredit + preostanek paketa).
-        if (!(credit > 0)) return [];
-        const sb = aiUsage.studentBudget(studentId);
-        if (!sb.guaranteed) return [];
-        const n = sb.group?.length || 1;
-        const room = Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, guaranteeTotalFor(studentId) ?? Infinity) - sb.spent;
-        return [creditCap(room)];
+        // Zajamčeni paketi: meja v server/usage.js capsFor. Brez plačila (preizkus, koda, bonus, tudi pod naročnino v
+        // preizkusni dobi): še skupni bazen vseh takih računov (pregled #462: vsak nov e-naslov dobi preizkus).
+        const out = [];
+        if (subGuarantee(studentId)?.nopay) out.push({ key: "nopaypool", usd: nopayPoolUsd(), spent: nopayPoolSpent(), code: "block.freePool" });
+        // S kreditom še skupni ključ kredita (kredit + preostanek paketa).
+        const sb = credit > 0 ? aiUsage.studentBudget(studentId) : null;
+        if (sb?.guaranteed) {
+          const n = sb.group?.length || 1;
+          out.push(creditCap(Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, guaranteeTotalFor(studentId) ?? Infinity) - sb.spent));
+        }
+        return out;
       }
       // Paket pred testom: meja paketa brez kredita (kredit se porabi šele v brezplačnem paketu po koncu paketa),
       // poraba brez dela iz kredita (Passes.spentUsd).
@@ -501,6 +505,10 @@ export function mountAccounts(app, store, opts = {}) {
   // Poraba brezplačnega profila ta mesec (gost: vse omrežje) in poraba izbrisanih profilov istega računa.
   function freeSpent(studentId, owner = ownerOf(studentId), scope = quotaScope(studentId)) {
     return guests.monthUsd(scope.ids, scope.net) + (scope.net ? 0 : aiUsage.orphanSpent(owner));
+  }
+  // Poraba vseh profilov brez plačila (preizkus, koda, bonus) ta mesec, za skupni bazen (meje-ai.js nopayPoolUsd).
+  function nopayPoolSpent() {
+    return monthUsdByStudent().filter((r) => r.id != null && subGuarantee(r.id)?.nopay).reduce((t, r) => t + r.usd, 0);
   }
   function freePoolSpent() {
     const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
@@ -794,8 +802,11 @@ export function mountAccounts(app, store, opts = {}) {
     const token = String(req.query.token || "");
     const p = token && db.prepare("SELECT id FROM parents WHERE verify_token_hash = ?").get(sha256(token));
     if (!p) return res.redirect("/?verified=0");
+    // Nekdanji gost: s potrditvijo zapusti kvoto omrežja in dobi 7-dnevni preizkus. Poraba gosta ostane šteta za
+    // omrežje (guest_spent), zapisana, dokler je račun še na omrežju (pred potrditvijo; pregled #462).
+    const before = getParent(p.id);
+    if (before.guest_net && !before.is_guest && !before.email_verified_at) guests.snapshotParent(p.id);
     update(p.id, { email_verified_at: new Date().toISOString(), verify_token_hash: null });
-    // Nekdanji gost: s potrditvijo zapusti kvoto omrežja in dobi 7-dnevni preizkus.
     const full = getParent(p.id);
     if (full.guest_net && !full.is_guest) update(p.id, { guest_net: null, trial_ends_at: full.trial_ends_at || isoIn(TRIAL_DAYS) });
     // Skrbnik (potrjen e-naslov iz EVKLID_ADMIN_EMAILS) prevzame učence iz časa pred računi.

@@ -10,6 +10,7 @@
 import crypto from "node:crypto";
 import { getPath, getTopic, baseTopicIds } from "./curriculum.js";
 import { audit } from "./dnevnik-dostopov.js";
+import { VAT_RATE, freeStudentMonthlyUsd } from "./accounts/plans.js";
 
 export const SCHOOL = {
   maxSchoolsPerTeacher: 3,
@@ -34,9 +35,9 @@ export const PILOT_SCHOOLS_MAX = 10;
 // ai_cap_usd_month skrbnika) ne preseže 25 % cene, ki jo šola plača na učenca (price_eur licence, sicer cenik).
 const EUR_PER_USD = 0.92; // kot COST.eurPerUsd v server/accounts/plans.js
 const AI_SHARE = 0.25; // kot AI_MAX_SHARE v server/accounts/plans.js
-// 25 % od cene BREZ DDV (j 2026-11-06): kot VAT_RATE v server/accounts/plans.js. Status DDV šolskih cen še ni potrjen
+// 25 % od cene BREZ DDV (j 2026-11-06, server/accounts/plans.js VAT_RATE). Status DDV šolskih cen še ni potrjen
 // (server/sole.js TODO), zato previdno: cena licence se šteje kot cena z DDV.
-const VAT = 0.22;
+const VAT = VAT_RATE;
 // Cena na učenca na leto, ki jo šola plača: vpisana cena licence, sicer cena paketa iz cenika.
 export const licencePriceEur = (lic) => (Number(lic?.price_eur) > 0 ? Number(lic.price_eur) : SCHOOL_LICENCE_PRICES[lic?.plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur);
 export function schoolAiEurPerStudent(plan, priceEur = null) {
@@ -45,8 +46,12 @@ export function schoolAiEurPerStudent(plan, priceEur = null) {
   if (process.env.EVKLID_SCHOOL_AI_EUR && Number.isFinite(fixed) && fixed >= 0) return Math.min(fixed, max);
   return max;
 }
-// Največja mesečna meja AI licence v $ (25 % plačila za vsa mesta), navzdol na cent.
-export const maxAiCapUsd = (lic) => Math.floor(((Number(lic.seats) || 0) * (licencePriceEur(lic) / (1 + VAT) / 12) * AI_SHARE / EUR_PER_USD) * 100 + 1e-9) / 100;
+// Licenca s ceno 0 (podarjena, pilot brez plačila, j 2026-11-06): meja kot brezplačni paket, 0,2 $ na učenca na mesec
+// (EVKLID_FREE_STUDENT_USD). Ob vnosu take licence skrbnik dobi opozorilo.
+export const freeLicence = (lic) => !(Number(lic?.price_eur) > 0);
+export const freeLicenceCapUsd = (lic) => Math.floor((Number(lic.seats) || 0) * freeStudentMonthlyUsd() * 100 + 1e-9) / 100;
+// Največja mesečna meja AI licence v $ (25 % plačila brez DDV za vsa mesta), navzdol na cent.
+export const maxAiCapUsd = (lic) => freeLicence(lic) ? freeLicenceCapUsd(lic) : Math.floor(((Number(lic.seats) || 0) * (licencePriceEur(lic) / (1 + VAT) / 12) * AI_SHARE / EUR_PER_USD) * 100 + 1e-9) / 100;
 export const defaultAiCapUsd = (lic) => Math.min(maxAiCapUsd(lic), Math.round(((Number(lic.seats) || 0) * schoolAiEurPerStudent(lic.plan, licencePriceEur(lic)) / EUR_PER_USD) * 100) / 100);
 // Meja licence: meja skrbnika ali privzeta, nikoli nad 25 % plačila.
 export const licenceAiCapUsd = (lic) => Math.min(maxAiCapUsd(lic), lic.ai_cap_usd_month ?? defaultAiCapUsd(lic));
@@ -668,6 +673,8 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     if (cap !== null && !(cap >= 0 && cap <= 10000)) return res.status(400).json({ error: "Meja AI 0–10000 $ na mesec." });
     const price = b.priceEur == null || b.priceEur === "" ? 0 : num(b.priceEur);
     if (!(price >= 0 && price <= 1000)) return res.status(400).json({ error: "Cena 0–1000 € na učenca." });
+    // Cena 0: meja AI kot brezplačni paket (j 2026-11-06); skrbnik dobi opozorilo v odgovoru.
+    const warning = price > 0 ? null : `Cena licence je 0 €: meja AI je kot brezplačni paket (${freeStudentMonthlyUsd().toLocaleString("sl-SI")} $ na učenca na mesec). Če šola plača, vpiši ceno na učenca (priceEur).`;
     const r = db
       .prepare(
         `INSERT INTO school_licences (school_id, plan, seats, price_eur, subjects, grades, valid_from, valid_until, ai_cap_usd_month, invoice_ref, note)
@@ -687,7 +694,7 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
         clean(b.note, 200),
       );
     audit(db, { req, parentId: req.parent.id, actor: "admin", action: "licence_add", target: `school:${id}` });
-    res.status(201).json({ id: Number(r.lastInsertRowid), ...schools.licenceView(id) });
+    res.status(201).json({ id: Number(r.lastInsertRowid), ...schools.licenceView(id), ...(warning ? { warning } : {}) });
   });
   app.delete("/api/admin/licences/:lid", (req, res) => {
     if (!isAdmin(req, res)) return;

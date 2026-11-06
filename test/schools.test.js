@@ -253,8 +253,15 @@ test("invalid input is 4xx; only the owner moves a class into a school; transfer
     assert.match(eleventh.body.error, /prvih 10 šol/);
     assert.equal((await addLic(sb.id, { plan: "pilot", validFrom: "2099-09-01", validUntil: "2100-08-31" })).status, 201, "pilotna šola podaljša");
     // Brez meje AI v licenci velja privzeta (25 % mesečne cene na učenca); 0 = brez meje ostane 0.
-    const normal = await addLic(sch.id, { plan: "school" });
+    // Cena 0 (privzeto): meja kot brezplačni paket (0,2 $ na učenca) in opozorilo skrbniku (j 2026-11-06).
+    const gratis = await addLic(sch.id, { plan: "school" });
+    assert.equal(gratis.status, 201);
+    assert.match(gratis.body.warning, /Cena licence je 0 €/);
+    assert.equal(schoolAccess(db, id).aiCapUsdMonth, 6, "30 × 0,2 $");
+    db.prepare("DELETE FROM school_licences WHERE id = ?").run(gratis.body.id);
+    const normal = await addLic(sch.id, { plan: "school", priceEur: 14 });
     assert.equal(normal.status, 201);
+    assert.equal(normal.body.warning, undefined);
     assert.equal(normal.body.licence.aiCapUsdMonth, Math.floor(((30 * 14) / 1.22 / 12 * 0.25 / 0.92) * 100 + 1e-9) / 100);
     assert.equal(schoolAccess(db, id).aiCapUsdMonth, normal.body.licence.aiCapUsdMonth);
     assert.equal(db.prepare("SELECT ai_cap_usd_month AS c FROM school_licences WHERE id = ?").get(normal.body.id ?? 0)?.c ?? null, null, "v bazi ostane NULL");

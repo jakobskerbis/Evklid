@@ -16,7 +16,7 @@ import { PRICES, modeParams, MODEL, MODEL_MID } from "./claude.js";
 import { SPLIT_MARKER } from "./prompt.js";
 import {
   PLANS, LEGACY_PLANS, SCHOOL_PLANS, REGIONAL_PRICES, plansFor, planGuarantee, planEurMonth, PASSES, FAKS_PASSES, passCapUsd,
-  giftFor, giftGuarantee, LEGACY_GIFT_CENTS, COST, freeStudentMonthlyUsd, freeMonthlyPoolUsd, TRIAL_DAYS, netOfVat,
+  giftFor, giftGuarantee, LEGACY_GIFT_CENTS, COST, freeStudentMonthlyUsd, freeMonthlyPoolUsd, TRIAL_DAYS, REFERRAL_DAYS, netOfVat,
 } from "./accounts/plans.js";
 import { STOPNJE } from "../public/stopnja.js";
 import { CREDIT_PACKS, creditUsdFor } from "./placila/krediti.js";
@@ -37,6 +37,10 @@ export const NOPAY_USD = {
   // Stari profili brez računa staršev (pred računi): kot aktivacijska koda.
   legacy: () => num("EVKLID_LEGACY_AI_USD", 0.5),
 };
+
+// Skupni bazen vseh profilov brez plačila (preizkus, koda, bonus) na mesec, za vse račune skupaj (pregled #462: vsak nov
+// e-naslov dobi preizkus; bazen omeji zlorabo z mnogo računi). Privzeto 20 $ (potrdi j).
+export const nopayPoolUsd = () => num("EVKLID_NOPAY_POOL_USD", 20);
 
 // ---------- rezerva enega klica ----------
 // Modeli Claude 4.7 in novejši sprejmejo slike do 2576 px in največ 4784 žetonov (platform.claude.com, vision).
@@ -123,7 +127,7 @@ export function aiCapRows() {
   for (const l of STOPNJE) rows.push(row(`Darilna koda ${l} (1 leto, na mesec)`, giftFor(l).amount / 100 / 12, giftGuarantee(l, l).total));
   rows.push(row("Darilna koda (stara, 49 €)", LEGACY_GIFT_CENTS / 100 / 12, giftGuarantee(null, "OS").total));
   for (const [plan, v] of Object.entries(SCHOOL_LICENCE_PRICES)) {
-    rows.push(row(`Šolska licenca ${plan} (na učenca)`, v.eur / 12, maxAiCapUsd({ seats: 1, plan, price_eur: 0 })));
+    rows.push(row(`Šolska licenca ${plan} (na učenca)`, v.eur / 12, maxAiCapUsd({ seats: 1, plan, price_eur: v.eur })));
   }
   for (const p of CREDIT_PACKS) rows.push(row(`Dokup ${eurOf(p.amount)} €`, eurOf(p.amount), creditUsdFor(p.amount), "nakup"));
   return rows;
@@ -133,9 +137,11 @@ export function nopayRows() {
   return [
     { name: "Brezplačni paket / gost (na profil)", capUsd: freeStudentMonthlyUsd(), period: "mesec" },
     { name: "Brezplačni paket / gost (vsi skupaj)", capUsd: freeMonthlyPoolUsd(), period: "mesec" },
-    { name: `Preizkus (${TRIAL_DAYS} dni, ves račun)`, capUsd: NOPAY_USD.trial(), period: "mesec" },
+    { name: `Preizkus (${TRIAL_DAYS} dni, ves račun)`, capUsd: NOPAY_USD.trial(), period: `${TRIAL_DAYS} dni` },
     { name: "Aktivacijska koda (ves račun)", capUsd: NOPAY_USD.promo(), period: "mesec" },
-    { name: "Bonus za priporočilo (ves račun)", capUsd: NOPAY_USD.bonus(), period: "mesec" },
+    { name: "Bonus za priporočilo (ves račun)", capUsd: NOPAY_USD.bonus(), period: `${REFERRAL_DAYS} dni` },
+    { name: "Šolska licenca s ceno 0 (na učenca)", capUsd: freeStudentMonthlyUsd(), period: "mesec" },
+    { name: "Preizkus, koda in bonus (vsi računi skupaj)", capUsd: nopayPoolUsd(), period: "mesec" },
   ];
 }
 // Najvišje rezerve za tipične klice (za tabelo v docs): sistemski prompt ~50 KB, 10 izmenjav po 2 KB.

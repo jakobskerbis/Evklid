@@ -1102,7 +1102,7 @@ test("guest: limited number of new guests per network per day (deleted guests co
 });
 
 test("guest: upgrade to an account keeps the profile and progress", async () => {
-  await withGuests(async ({ client, calls }) => {
+  await withGuests(async ({ client, calls, store }) => {
     const a = client();
     await guestStart(a);
     const kid = await guestKid(a, "Nika");
@@ -1121,8 +1121,11 @@ test("guest: upgrade to an account keeps the profile and progress", async () => 
     assert.equal((await a("/api/account/promo", { method: "POST", body: { code: "EVKLID100" } })).status, 403);
     assert.equal((await a("/api/auth/upgrade", { method: "POST", body: { email: "x@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT } })).status, 400);
     // E-naslov potrdi kot pri registraciji: šele nato 7-dnevni preizkus; prijava z geslom deluje.
+    // Poraba gosta ostane šteta za omrežje (guest_spent), preden se račun odklopi od omrežja (pregled #462).
+    store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 0.05)").run(kid.id);
     await a(verifyLink(calls));
     assert.equal((await a("/api/account")).body.access.tier, "trial");
+    assert.ok(store.db.prepare("SELECT COALESCE(SUM(usd),0) AS u FROM guest_spent").get().u >= 0.05 - 1e-9, "poraba gosta v kvoti omrežja");
     const b = client();
     assert.equal((await b("/api/auth/login", { method: "POST", body: { email: "nika@primer.si", password: "geslo1234" } })).status, 200);
     assert.equal((await b("/api/students")).body.length, 1);

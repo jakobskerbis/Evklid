@@ -1068,3 +1068,19 @@ test("paket pred testom skoraj porabljen: profil preide v brezplačni paket; bes
     assert.match(fb.error, /brezplačna vprašanja/);
   });
 });
+
+test("preizkus, koda in bonus: skupni bazen vseh računov brez plačila", async () => {
+  process.env.EVKLID_NOPAY_POOL_USD = "0.25";
+  try {
+    await withAccounts(async ({ db, api, kid, pid }) => {
+      const ana = kid("Ana", "OS", YEAR - 12);
+      const bor = kid("Bor", "OS", YEAR - 11);
+      db.prepare("UPDATE parents SET trial_ends_at = ? WHERE id = ?").run(new Date(Date.now() + 3 * 86400000).toISOString(), pid);
+      assert.ok(api.aiUsage.capsFor(ana).some((c) => c.key === "nopaypool"));
+      db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 0.25)").run(bor);
+      assert.equal(api.aiUsage.hardBlock(ana), "block.freePool");
+    });
+  } finally {
+    delete process.env.EVKLID_NOPAY_POOL_USD;
+  }
+});

@@ -31,7 +31,7 @@ test("tabela meja: najslabši primer vsakega plačljivega paketa je ≤ 25 % pla
   // Vsak paket iz cenika (mesečni, letni, družinski) je v tabeli.
   for (const p of PLANS) assert.ok(rows.some((r) => r.name === p.label), p.label);
   // Brezplačni paketi: stalna nizka meja.
-  for (const r of nopayRows()) assert.ok(r.capUsd > 0 && r.capUsd <= 10, r.name);
+  for (const r of nopayRows()) assert.ok(r.capUsd > 0 && r.capUsd <= 20, r.name);
 });
 
 test("25 % se računa od cene brez DDV (22 %)", () => {
@@ -41,7 +41,7 @@ test("25 % se računa od cene brez DDV (22 %)", () => {
   assert.ok(aiCapFromEur(9.99) < (9.99 * 0.25) / 0.92 - 0.3, "nižje kot od cene z DDV");
   for (const r of aiCapRows()) assert.ok((r.capUsd * COST.eurPerUsd) / (r.paidEur / 1.22) <= 0.25 + 1e-3, r.name);
   // Šolska licenca (cena se šteje z DDV, previdno) in dokup kredita.
-  const lic = { seats: 30, plan: "school", price_eur: 0 };
+  const lic = { seats: 30, plan: "school", price_eur: 14 };
   assert.ok((maxAiCapUsd(lic) / 30) * COST.eurPerUsd <= (14 / 1.22 / 12) * 0.25 + 1e-9);
   assert.ok(creditUsdFor(1000) * COST.eurPerUsd <= (10 / 1.22) * 0.25 + 1e-9);
 });
@@ -52,14 +52,17 @@ test("nastavitve skrbnika ne morejo preseči 25 % plačila", () => {
     assert.equal(guaranteeUsd("OS", "year"), aiCapFromEur(99 / 12));
     const g = planGuarantee(planByKey(PLANS.find((p) => p.level === "OS" && p.interval === "month").key));
     assert.ok(g.total * COST.eurPerUsd <= 0.25 * 9.99 + 1e-9);
-    const lic = { seats: 30, plan: "pilot", price_eur: 0 };
+    const lic = { seats: 30, plan: "pilot", price_eur: 12 };
     assert.ok(defaultAiCapUsd(lic) <= maxAiCapUsd(lic));
   });
   // Meja licence skrbnika (do 10000 $) in nižja vpisana cena licence.
-  const lic = { seats: 30, plan: "school", price_eur: 0, ai_cap_usd_month: 10000 };
+  const lic = { seats: 30, plan: "school", price_eur: 14, ai_cap_usd_month: 10000 };
   assert.equal(licenceAiCapUsd(lic), maxAiCapUsd(lic));
   assert.ok(maxAiCapUsd({ ...lic, price_eur: 6 }) < maxAiCapUsd(lic), "vpisana (nižja) cena licence");
   assert.ok((maxAiCapUsd(lic) / 30) * COST.eurPerUsd <= (14 / 12) * 0.25 + 1e-9);
+  // Licenca s ceno 0 (podarjena, pilot brez plačila): meja kot brezplačni paket, 0,2 $ na učenca (j 2026-11-06).
+  assert.equal(maxAiCapUsd({ seats: 30, plan: "pilot", price_eur: 0 }), 6);
+  assert.equal(licenceAiCapUsd({ seats: 30, plan: "school", price_eur: 0, ai_cap_usd_month: 10000 }), 6);
   // Paket pred testom: shranjena meja nad 25 % plačila se omeji.
   assert.equal(passCapUsd({ ai_usd: 50, amount: 549 }), aiCapFromEur(5.49));
   // Darilna koda: največ 25 % letne cene / 12.
