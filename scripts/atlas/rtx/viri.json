@@ -1,0 +1,27 @@
+{
+  "_opis": "Vhodi za peko na j-jevem prenosniku (scripts/atlas/rtx/rtx.py): vsak se prenese iz izvora in preveri po SHA-256. »mapa« = podmapa vhodi/. Blender je ista različica kot strežnik (pip bpy 5.2.3); njegov URL in SHA-256 sta tudi v peci.bat (test/peka-rtx.test.js preveri, da se ujemata).",
+  "blender": {
+    "razlicica": "5.2.3",
+    "url": "https://download.blender.org/release/Blender5.2/blender-5.2.3-windows-x64.zip",
+    "sha256": "723f08a4401502561eb763cdeacf8745b31e5f3f154d287d3830d97cf75dc2fb",
+    "vir": "https://download.blender.org/release/Blender5.2/blender-5.2.3.sha256"
+  },
+  "vhodi": [
+    {
+      "ime": "Z-Anatomy.zip",
+      "mapa": "",
+      "url": "https://raw.githubusercontent.com/Z-Anatomy/Models-of-human-anatomy/d909eb1e89bf47180b575e4dfacce639c90044b8/Z-Anatomy.zip",
+      "sha256": "e029688545627bd0214b269e1063143abb580aad72b2c2445d6d8a9a0d9da736",
+      "licenca": "CC BY-SA 4.0",
+      "razpakiraj": { "datoteka": "Z-Anatomy/Startup.blend", "ime": "Startup.blend", "sha256": "9f08a17ea0115fed80b2a73ecdf0a1bc2ab2f6956f37c593ce23d513ea35afcd" }
+    },
+    { "ime": "sub-01-lh.pial", "mapa": "mri", "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/sourcedata/freesurfer/sub-01/surf/lh.pial", "sha256": "d58275fd10de408558a9886ccd87d94281fe220c1b85ed8f809b5d2601a1273b", "licenca": "CC0" },
+    { "ime": "sub-01-rh.pial", "mapa": "mri", "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/sourcedata/freesurfer/sub-01/surf/rh.pial", "sha256": "427331af87bdae497a5d6c93635fc405d2cc9a28ff8015284e90f7532c3a2845", "licenca": "CC0" },
+    { "ime": "sub-01-lh.sulc", "mapa": "mri", "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/sourcedata/freesurfer/sub-01/surf/lh.sulc", "sha256": "01ad11485550f85806f908edbfca4dced7c62d64c41182d8bf21d6c43cc4cdc6", "licenca": "CC0" },
+    { "ime": "sub-01-rh.sulc", "mapa": "mri", "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/sourcedata/freesurfer/sub-01/surf/rh.sulc", "sha256": "597e47001b6ba351df93d1877453eb320fcdd65893f96fe4de1044dfa50a41c0", "licenca": "CC0" },
+    { "ime": "sub-01-lh.aparc.annot", "mapa": "mri", "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/sourcedata/freesurfer/sub-01/label/lh.aparc.annot", "sha256": "463be8d5708061d40dd4eb9eec6e248569835b721f357ddd5b4b2e48cfe23d29", "licenca": "CC0" },
+    { "ime": "sub-01-rh.aparc.annot", "mapa": "mri", "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/sourcedata/freesurfer/sub-01/label/rh.aparc.annot", "sha256": "4086df760e3642996ace6411af0151451e1b1a20387262b0e22259254c62d3f6", "licenca": "CC0" },
+    { "ime": "3d-vh-m-eye-l.glb", "mapa": "hra", "url": "https://cdn.humanatlas.io/digital-objects/ref-organ/eye-male-left/v1.3/assets/3d-vh-m-eye-l.glb", "sha256": "a918173575ed1b6dbf3d90344a144940b7f055590f40e119de0ad43abee50c64", "licenca": "CC BY 4.0" },
+    { "ime": "3d-vh-m-kidney-l.glb", "mapa": "hra", "url": "https://cdn.humanatlas.io/digital-objects/ref-organ/kidney-male-left/v1.3/assets/3d-vh-m-kidney-l.glb", "sha256": "1e9f54281652d0b05c9ae54a06380a41a8d9c62c1036829180750995b1730fac", "licenca": "CC BY 4.0" }
+  ]
+}

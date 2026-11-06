@@ -1,0 +1,45 @@
+PEKA 3D ORGANOV NA TVOJEM PRENOSNIKU
+====================================
+
+Kaj je to?
+Ta mapa naredi realistične 3D organe za Evklid (barve, gube, sence).
+Tvoja grafična kartica Nvidia to naredi v minutah, strežnik v urah.
+
+Kaj potrebuješ
+- Prenosnik priklopljen na polnilec.
+- Internet (prvič se prenese okoli 0,6 GB).
+- Vsaj 6 GB prostora na disku C.
+- Ničesar ti ni treba nameščati. Program sam prenese Blender 5.2.3
+  (isti program kot na strežniku) in vse potrebne modele ter vsakega preveri.
+
+Kako začneš
+1. Odpri to mapo (Namizje > Evklid > peka-rtx).
+2. Dvakrat klikni datoteko »peci« (peci.bat).
+3. Če se pokaže modro okno »Windows je zaščitil vaš računalnik«:
+   klikni »Več informacij« in nato »Vseeno zaženi«.
+4. Odpre se črno okno. Pusti ga odprto in ne zapri pokrova prenosnika.
+   Računalnik med peko ne bo zaspal sam od sebe.
+5. Ko je prvi organ narejen, okno izpiše »ČAKAM NA NALOGO (to okno pusti
+   odprto)«. Okna ne zapiraj: Claude lahko nato sam zažene naslednje organe,
+   tudi ko te ni doma. Rezultat prenese sam (mapa »izhod«).
+6. Ko okna ne potrebuješ več, ga zapri s križcem.
+
+Če gre kaj narobe
+- Okno izpiše »KONČANO Z NAPAKO«: sporoči Claudu. Podrobnosti so v datoteki
+  »dnevnik.txt« v tej mapi.
+- »Blender ne vidi grafične kartice Nvidia«: posodobi gonilnik.
+  Odpri aplikacijo »NVIDIA App« > Gonilniki > Prenesi, ali pojdi na
+  www.nvidia.com/drivers. Nato ponovno zaženi računalnik in znova dvakrat
+  klikni »peci«.
+- Če se prenos prekine ali zmanjka elektrike: samo znova dvakrat klikni
+  »peci«. Nadaljuje tam, kjer je ostal.
+
+Če želiš Blender namestiti sam (ni nujno)
+- Pojdi na www.blender.org/download/lts/5-2/
+- Klikni »Windows Installer« za različico 5.2.3, odpri preneseno datoteko
+  in klikaj »Next« do konca (privzete nastavitve).
+- Program »peci« bo nato uporabil nameščeni Blender in ga ne bo prenašal.
+
+Viri modelov (vse odprte licence)
+- Z-Anatomy (CC BY-SA 4.0), MRI možganov OpenNeuro ds000001 (CC0),
+  HuBMAP Human Reference Atlas (CC BY 4.0).
