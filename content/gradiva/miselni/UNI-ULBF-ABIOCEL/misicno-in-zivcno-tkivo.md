@@ -9,7 +9,7 @@ stanje: osnutek
 - Sarkomera
   - od Z-plošče do Z-plošče, okoli $2{,}5\,\mathrm{\mu m}$
   - A-pas stalen, I-pas in H-cona krajša
-  - napaka: filamenti se ne skrajšajo
+  - filamenti se ne skrajšajo, le zdrsijo
 - Krčenje
   - acetilholin, T-cevke, $\mathrm{Ca^{2+}}$ iz SR
   - troponin C, prečni mostički

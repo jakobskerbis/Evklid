@@ -11,9 +11,9 @@ V obeh primerih pa strup zadene isto zgradbo: **kemično sinapso z acetilholinom
 
 ## Razlaga
 
-### 1. Napačna slika in popravek
+### 1. Tri zmote iz srednješolske slike
 
-Mamljiva predstava: »Mišica je kup navadnih celic, ki se krčijo tako, da se njihovi filamenti skrajšajo. Živčevje pa je predvsem iz nevronov.«
+Pogosta predstava: »Mišica je kup navadnih celic, ki se krčijo tako, da se njihovi filamenti skrajšajo. Živčevje pa je predvsem iz nevronov.«
 
 Vsak del te slike je napačen:
 
@@ -50,7 +50,7 @@ V polarizacijskem mikroskopu sarkomera pokaže pasove:
 
 **Sklopitev vzdraženja in krčenja.** (1) Akcijski potencial motoričnega nevrona sprosti acetilholin na **motorični ploščici**. (2) Nikotinski receptorji (ionotropni) odprejo kanale, sarkolema se depolarizira, akcijski potencial se razširi po T-cevkah. (3) Napetostno občutljivi dihidropiridinski receptorji v T-cevki mehansko odprejo rianodinske receptorje v SR. (4) $\mathrm{Ca^{2+}}$ se veže na troponin C, tropomiozin se premakne in odkrije vezavna mesta na aktinu. (5) Miozinske glave tvorijo prečne mostičke in s hidrolizo ATP vlečejo aktin. (6) Črpalka SERCA vrne $\mathrm{Ca^{2+}}$ v SR in mišica se sprosti. ATP je potreben tudi za **odcepitev** glave od aktina: brez ATP mostički ostanejo vezani, kar je mrtvaška otrplost.
 
-**Tipi vlaken.** Počasna oksidativna vlakna (tip I, rdeča: veliko mioglobina in mitohondrijev, ne utrujajo se hitro) in hitra (tip II, svetlejša, pretežno glikolitična, hitro se utrudijo).
+**Tipi vlaken.** Počasna oksidativna vlakna (tip I, rdeča: veliko mioglobina in mitohondrijev, ne utrujajo se hitro) in hitra (tip II, svetlejša; tip IIb oziroma IIx pretežno glikolitična in se hitro utrudijo, tip IIa vmesna, oksidativno-glikolitična).
 
 :::premisli
 Sarkomera se skrajša z $2{,}4$ na $2{,}0\,\mathrm{\mu m}$. Kateri pas se ne spremeni in za koliko se skrajša I-pas?
@@ -157,13 +157,13 @@ $t = \dfrac{s_1}{v_1} + \dfrac{s_2}{v_2} + 2t_s$; število zažemkov $\approx \d
 
 **Rešitev:**
 
-1. Čutilni akson: $0{,}80/70\,\mathrm{s} \approx 11{,}4\,\mathrm{ms}$.
-2. Motorični akson: $0{,}80/60\,\mathrm{s} \approx 13{,}3\,\mathrm{ms}$.
-3. (a) Skupaj s stikoma: $t \approx 11{,}4 + 13{,}3 + 1{,}0 = 25{,}7\,\mathrm{ms}$. Sinaptični zakasnitvi sta le okoli $4\,\%$ časa; večino porabi prevajanje.
+1. Čutilni akson: $0{,}80/70\,\mathrm{s} \approx 11{,}43\,\mathrm{ms}$.
+2. Motorični akson: $0{,}80/60\,\mathrm{s} \approx 13{,}33\,\mathrm{ms}$.
+3. (a) Skupaj s stikoma: $t = 11{,}43 + 13{,}33 + 1{,}00 = 25{,}76\,\mathrm{ms} \approx 25{,}8\,\mathrm{ms}$. Sinaptični zakasnitvi sta le okoli $4\,\%$ časa; večino porabi prevajanje.
 4. (b) Na $0{,}80\,\mathrm{m} = 800\,\mathrm{mm}$ je okoli $800$ internodijev in zato okoli $800$ zažemkov.
-5. (c) Motorični akson po demielinizaciji: $0{,}80/5{,}0\,\mathrm{s} = 160\,\mathrm{ms}$, novi čas $t' \approx 11{,}4 + 160 + 1{,}0 \approx 172\,\mathrm{ms}$, skoraj sedemkrat dlje. Refleks je viden kot zakasnjen in šibkejši.
+5. (c) Motorični akson po demielinizaciji: $0{,}80/5{,}0\,\mathrm{s} = 160\,\mathrm{ms}$, novi čas $t' \approx 11{,}43 + 160 + 1{,}0 \approx 172\,\mathrm{ms}$, skoraj sedemkrat dlje. Refleks je viden kot zakasnjen in šibkejši.
 6. (d) Po nemieliniziranem čutilnem aksonu bi signal potoval $0{,}80/1{,}0\,\mathrm{s} = 800\,\mathrm{ms}$. Zato so aksoni, ki morajo biti hitri, debeli in mielinizirani; tanki nemielinizirani (na primer za počasno bolečino) so varčni s prostorom in energijo.
-7. Odgovor: refleks traja okoli $25{,}7\,\mathrm{ms}$; motorični akson ima okoli $800$ zažemkov; po demielinizaciji čas naraste na okoli $172\,\mathrm{ms}$; nemieliniziran čutilni akson bi sam potreboval $800\,\mathrm{ms}$.
+7. Odgovor: refleks traja okoli $25{,}8\,\mathrm{ms}$; motorični akson ima okoli $800$ zažemkov; po demielinizaciji čas naraste na okoli $172\,\mathrm{ms}$; nemieliniziran čutilni akson bi sam potreboval $800\,\mathrm{ms}$.
 
 ### Primer 4 – zdaj ti
 
@@ -239,7 +239,7 @@ Natančno primerjaj sklopitev vzdraženja in krčenja v skeletni, srčni in glad
 2. Srčna: akcijski potencial po T-cevkah ob Z-ploščah (diade); $\mathrm{Ca^{2+}}$ skozi kanale tipa L iz zunajceličnine sproži sproščanje iz SR; tarča troponin C. Vzdraženje se med celicami širi skozi presledkovne stike v prečnih ploščah.
 3. Gladka: ni T-cevk (kaveole), $\mathrm{Ca^{2+}}$ pride iz zunajceličnine in SR, sprožijo ga tudi hormoni prek IP₃; tarča je kalmodulin, ki aktivira kinazo lahkih verig miozina (uravnavanje na miozinu, ne na aktinu).
 4. Obnova: skeletna mišica ima satelitne celice, ki se delijo in zlijejo v nova vlakna. Kardiomiociti odraslega se skoraj ne delijo in srce nima enakovrednih matičnih celic, zato odmrlo tkivo nadomestijo fibroblasti z vezivno brazgotino, ki se ne krči in ne prevaja.
-5. Odgovor: razlikujejo se v viru $\mathrm{Ca^{2+}}$ (SR, zunajceličnina + SR, predvsem zunajceličnina), tarči (troponin pri progastih, kalmodulin pri gladki) in zgradbi (triade, diade, kaveole); srce po infarktu zaceli brazgotina, ker nima satelitnih celic.
+5. Odgovor: razlikujejo se v viru $\mathrm{Ca^{2+}}$ (skeletna SR; srčna zunajceličnina, ki sproži SR; gladka zunajceličnina in SR, različno po organu), tarči (troponin pri progastih, kalmodulin pri gladki) in zgradbi (triade, diade, kaveole); srce po infarktu zaceli brazgotina, ker nima satelitnih celic.
 
 ### Naloga 3
 
@@ -247,7 +247,7 @@ Organofosfatni pesticidi zavrejo acetilholinesterazo, kurare (rastlinski strup) 
 
 **Rešitev:**
 
-1. Organofosfati: acetilholin se ne razgradi in ostane v špranji; receptorji so stalno vzdraženi, sarkolema ostane depolarizirana. Najprej nastanejo trzljaji, nato kanali za $\mathrm{Na^+}$ ob trajni depolarizaciji ostanejo neaktivni in mišica ohromi (spastično, nato mlahavo).
+1. Organofosfati: acetilholin se ne razgradi in ostane v špranji; receptorji so stalno vzdraženi, sarkolema ostane depolarizirana. Najprej nastanejo trzljaji, nato kanali za $\mathrm{Na^+}$ ob trajni depolarizaciji ostanejo neaktivni in mišica ohromi: najprej trzljaji (fascikulacije), nato mlahava ohromitev (depolarizacijski blok).
 2. Kurare: acetilholin se sprosti, a se ne more vezati; ploščica se ne depolarizira, mišica je mlahava. Zato se njegovi derivati uporabljajo kot mišični relaksanti pri operacijah.
 3. Botulinum: prenašalca ni, mišica je mlahava; v majhnih odmerkih se uporablja za sprostitev krčevitih mišic.
 4. Biomarker: acetilholinesteraza je v živčevju vseh vretenčarjev in mnogih nevretenčarjev zelo podobna. Organofosfati in karbamati jo zavrejo že v majhnih koncentracijah, zato zmanjšana aktivnost encima v možganih ali mišicah rib in školjk pokaže izpostavljenost, še preden ribe poginejo.
@@ -260,12 +260,12 @@ Sarkomera pri mirovanju (zgoraj) in skrčena (spodaj), en znak je $0{,}1\,\mathr
 ```
 mirovanje, 2,5 µm
 |----------     ----------|
-    ================
-    |<--- A 1,6 --->|
+     ================
+     |<-- A 1,6 --->|
 
 skrčena, 2,0 µm
 |--------------------|
-  ================
+   ================
 ```
 
 Debeli filamenti (A-pas) ostanejo enako dolgi, tanki zdrsijo proti sredini; svetla I-pasova ob Z-ploščah se zožita. Če bi se skrajšali filamenti, bi se moral skrajšati A-pas, česar pod mikroskopom ni.
@@ -273,10 +273,12 @@ Debeli filamenti (A-pas) ostanejo enako dolgi, tanki zdrsijo proti sredini; svet
 Akson z mielinom, signal skače med zažemki:
 
 ```
- ==[====]=[====]=[====]==>
-    ^   ^      ^
-   mielin  Ranvierjev zažemek
+ --[####]-[####]-[####]-->
+     ^   ^
+  mielin Ranvierjev zažemek
 ```
+
+`[####]` je mielinski ovoj (internodij), `-` med ovoji je goli akson v Ranvierjevem zažemku.
 
 ## Drugače: Uporaba v stroki
 
@@ -286,7 +288,7 @@ Akson z mielinom, signal skače med zažemki:
 
 **Elektromiografija in meritve prevodnosti živcev.** Nevrolog z elektrodami izmeri čas med dražljajem in odzivom mišice ter iz razdalje izračuna hitrost prevajanja (kot v Primeru 3). Zmanjšana hitrost kaže na demielinizacijo, zmanjšan odziv pri normalni hitrosti pa na izgubo aksonov.
 
-**Meso in kakovost.** Mrtvaška otrplost po zakolu je posledica pomanjkanja ATP; mesarji meso pustijo zoreti, da beljakovine razgradijo stike in se meso zmehča. Delež vlaken tipa I in II določa barvo mesa (rdeče proti belemu).
+**Meso in kakovost.** Mrtvaška otrplost po zakolu je posledica pomanjkanja ATP; mesarji meso pustijo zoreti, da lastni encimi mišice (kalpaini) razgradijo beljakovine, ki povezujejo miofibrile, in se meso zmehča. Delež vlaken tipa I in II določa barvo mesa (rdeče proti belemu).
 
 ## Drugače: Korak za korakom s številkami
 

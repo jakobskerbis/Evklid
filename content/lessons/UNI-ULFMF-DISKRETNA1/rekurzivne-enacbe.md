@@ -5,19 +5,19 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Dve vprašanji, ki na videz nimata nič skupnega. Klimatologinja dela preprost model: presežek ogljika v ozračju se vsako leto poveča za izpuste, ocean in rastlinje pa vsako leto vsrkata stalen delež presežka. Koliko bo presežka čez $20$ let? Vrtnar pa tlakuje ozko pot dolžine $n$ s ploščami dolžine $1$ in $2$. Na koliko načinov lahko to naredi?
+Klimatologinja dela preprost model: presežek ogljika v ozračju se vsako leto poveča za izpuste, ocean in rastlinje pa vsako leto vsrkata stalen delež presežka. Koliko bo presežka čez $20$ let? Vrtnar pa tlakuje ozko pot dolžine $n$ s ploščami dolžine $1$ in $2$. Na koliko načinov lahko to naredi?
 
 V obeh primerih ne poznamo neposredne formule, poznamo pa **pravilo, kako iz prejšnjih členov dobimo naslednjega**. Presežek letos je odvisen od lanskega, število tlakovanj poti dolžine $n$ od števila za $n - 1$ in $n - 2$. Taki zvezi pravimo rekurzivna enačba. Ko jo znaš rešiti, dobiš eksplicitno formulo, s katero izračunaš stoti člen brez sto korakov in vidiš, kako hitro zaporedje raste. Rekurzije so povsod, kjer se sistem spreminja v korakih: v štetju, v analizi algoritmov, v modelih populacij in v digitalnih filtrih.
 
 ## Razlaga
 
-### 1. Mamljiva napačna pot
+### 1. Poskus z enim samim $r^n$
 
 Pri tlakovanju naj bo $t_n$ število načinov za pot dolžine $n$. Zadnja plošča je dolžine $1$ (pred njo je pot dolžine $n - 1$) ali dolžine $2$ (pred njo pot dolžine $n - 2$), zato je $t_n = t_{n-1} + t_{n-2}$, $t_1 = 1$, $t_2 = 2$. Zaporedje je $1, 2, 3, 5, 8, 13, \ldots$
 
 Ker zaporedje raste približno geometrijsko, je mamljivo poskusiti z $t_n = r^n$ in poiskati »pravi« $r$. Vstavimo: $r^n = r^{n-1} + r^{n-2}$, po deljenju z $r^{n-2}$ dobimo $r^2 = r + 1$ in $r = \frac{1 \pm \sqrt5}{2}$. Toda nobeno od zaporedij $r^n$ ne da $t_1 = 1$ in $t_2 = 2$ hkrati, z dodatnim faktorjem $c\,r^n$ pa lahko izpolnimo le en začetni pogoj.
 
-Napaka je v predpostavki, da je rešitev **ena** geometrijska vrsta. Rešitve linearne rekurzije se dajo **seštevati**: vsota rešitev je spet rešitev. Pravilna rešitev je kombinacija obeh, $t_n = C_1 r_1^n + C_2 r_2^n$, in dve konstanti ravno zadoščata za dva začetna pogoja. To zdaj natančno utemeljimo.
+Napaka je v predpostavki, da je rešitev **eno samo** geometrijsko zaporedje. Rešitve linearne rekurzije se dajo **seštevati**: vsota rešitev je spet rešitev. Pravilna rešitev je kombinacija obeh, $t_n = C_1 r_1^n + C_2 r_2^n$, in dve konstanti ravno zadoščata za dva začetna pogoja. To zdaj natančno utemeljimo.
 
 ### 2. Definicije in enoličnost
 
@@ -33,7 +33,7 @@ s števili $c_1, \ldots, c_k$, $c_k \ne 0$. Če je $f(n) = 0$ za vse $n$, je **h
 
 **Izrek (prostor rešitev).** Rešitve homogene linearne rekurzije reda $k$ tvorijo vektorski prostor dimenzije $k$.
 
-**Dokaz.** Če sta $(a_n)$ in $(b_n)$ rešitvi, je zaradi linearnosti tudi $(\lambda a_n + \mu b_n)$ rešitev. Preslikava, ki rešitvi priredi njenih prvih $k$ členov, je linearna; po izreku o enoličnosti je bijektivna na $\mathbb{R}^k$, zato je dimenzija $k$.
+**Dokaz.** Če sta $(a_n)$ in $(b_n)$ rešitvi, je zaradi linearnosti tudi $(\lambda a_n + \mu b_n)$ rešitev. Preslikava, ki rešitvi priredi njenih prvih $k$ členov, je linearna. Je surjektivna na $\mathbb{R}^k$, ker vsake začetne vrednosti rekurzija nadaljuje v rešitev, in po izreku o enoličnosti injektivna; torej je izomorfizem in dimenzija je $k$.
 
 ### 3. Homogene rekurzije: karakteristični polinom
 
@@ -135,7 +135,7 @@ $p(r) = r^2 - r - 1$, $t_n = C_1r_1^n + C_2r_2^n$
 2. Korena: $r_{1,2} = \dfrac{1 \pm \sqrt5}{2}$, torej $\varphi \approx 1{,}618$ in $\psi \approx -0{,}618$; sta različna.
 3. Pogoja: $C_1 + C_2 = 1$ in $C_1\varphi + C_2\psi = 1$. Iz prve $C_2 = 1 - C_1$, vstavimo: $C_1(\varphi - \psi) = 1 - \psi$, $\varphi - \psi = \sqrt5$, $1 - \psi = \varphi$, zato $C_1 = \varphi/\sqrt5$ in $C_2 = -\psi/\sqrt5$.
 4. Formula: $t_n = \dfrac{\varphi^{n+1} - \psi^{n+1}}{\sqrt5}$ (to je Binetova formula, $t_n = F_{n+1}$).
-5. Preizkus z rekurzijo: $1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89$ za $n = 0, \ldots, 10$. Iz formule: $\varphi^{11}/\sqrt5 \approx 88{,}998$, $|\psi^{11}/\sqrt5| < 0{,}003$, vsota je $89$. ✓
+5. Preizkus z rekurzijo: $1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89$ za $n = 0, \ldots, 10$. Iz formule: $\varphi^{11}/\sqrt5 \approx 88{,}998$, $|\psi^{11}/\sqrt5| < 0{,}003$, razlika $(\varphi^{11} - \psi^{11})/\sqrt5$ je natanko $89$. ✓
 6. Odgovor: $t_n = (\varphi^{n+1} - \psi^{n+1})/\sqrt5$; ker je $|\psi| < 1$, je $t_n$ kar $\varphi^{n+1}/\sqrt5$, zaokroženo na celo število. Število tlakovanj raste kot $1{,}618^n$.
 
 ### Primer 3 (težji)
@@ -281,7 +281,7 @@ Razlika do $500$ se vsako leto pomnoži z $0{,}98$, zato se presežek negibni to
 
 **Digitalni filtri.** Filter z enačbo $y_n = 0{,}9\,y_{n-1} + 0{,}1\,x_n$ gladi meritve (na primer temperature s postaje): izhod je rekurzija prvega reda. Stabilnost filtra je pogoj, da so vsi koreni karakterističnega polinoma po absolutni vrednosti manjši od $1$.
 
-**Populacijski in podnebni modeli.** Modeli staroselnih skupin (Lesliejeve matrike) za ribe ali gozdove so sistemi linearnih rekurzij; prevladujoči koren pove dolgoročno rast ali upad populacije. Preprosti modeli ogljičnega kroga z več zalogovniki (ozračje, površinski in globoki ocean) so prav tako linearne rekurzije z več časovnimi konstantami.
+**Populacijski in podnebni modeli.** Modeli populacij po starostnih razredih (Lesliejeve matrike) za ribe ali gozdove so sistemi linearnih rekurzij; prevladujoči koren pove dolgoročno rast ali upad populacije. Preprosti modeli ogljičnega kroga z več zalogovniki (ozračje, površinski in globoki ocean) so prav tako linearne rekurzije z več časovnimi konstantami.
 
 **Finance.** Odplačilo posojila s stalnim obrokom je rekurzija $d_{n+1} = (1 + i)d_n - R$; negibna točka in eksplicitna formula dasta obrok, ki dolg odplača v danem številu let.
 

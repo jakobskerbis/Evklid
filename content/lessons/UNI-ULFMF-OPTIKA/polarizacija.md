@@ -17,7 +17,7 @@ Gradimo po delih. Za vsakim delom je vrstica **Preizkus**: kratko vprašanje z o
 
 Svetloba je prečno elektromagnetno valovanje: električno polje $\vec{E}$ niha pravokotno na smer širjenja, magnetno polje pa pravokotno na oboje. Za opis polarizacije zadošča $\vec{E}$.
 
-**Definicija.** Svetloba je **linearno polarizirana**, če $\vec{E}$ v dani točki ves čas niha vzdolž iste premice. Ravnino, v kateri ležita smer $\vec{E}$ in smer širjenja, imenujemo **ravnina polarizacije**.
+**Definicija.** Svetloba je **linearno polarizirana**, če $\vec{E}$ v dani točki ves čas niha vzdolž iste premice. Ravnino, v kateri ležita smer $\vec{E}$ in smer širjenja, imenujemo **ravnina polarizacije** (nekateri starejši učbeniki jo vežejo na smer $\vec{B}$, zato preveri dogovor v svojem viru).
 
 **Definicija.** **Nepolarizirana** (naravna) svetloba je zmes valovnih paketov z naključnimi in hitro spreminjajočimi se smermi $\vec{E}$; nobena smer pravokotno na žarek ni odlikovana. Takšna je svetloba Sonca, žarnice in sveče.
 
@@ -59,7 +59,7 @@ Ne. Srednji polarizator je vzporeden s prvim, zato prepusti vso svetlobo in ji s
 
 Bleščanje vodne gladine je delno polarizirano. Zakaj?
 
-Pri odboju razstavimo $\vec{E}$ na dve komponenti: **s** (pravokotno na vpadno ravnino, vzporedno z gladino) in **p** (v vpadni ravnini). Ti dve komponenti se odbijata različno močno. Za meji iz snovi z lomnim količnikom $n_1$ v snov z $n_2$ (vpadni kot $\theta_1$, lomni kot $\theta_2$, $n_1\sin\theta_1 = n_2\sin\theta_2$) dajo Fresnelove enačbe razmerji amplitud
+Pri odboju razstavimo $\vec{E}$ na dve komponenti: **s** (pravokotno na vpadno ravnino, vzporedno z gladino) in **p** (v vpadni ravnini). Ti dve komponenti se odbijata različno močno. Za mejo, na kateri svetloba iz snovi z lomnim količnikom $n_1$ vpada na snov z $n_2$ (vpadni kot $\theta_1$, lomni kot $\theta_2$, $n_1\sin\theta_1 = n_2\sin\theta_2$) dajo Fresnelove enačbe razmerji amplitud
 
 $$r_s = -\frac{\sin(\theta_1 - \theta_2)}{\sin(\theta_1 + \theta_2)},$$
 
@@ -82,7 +82,7 @@ Fizikalna slika brez Fresnelovih enačb: lomljena svetloba v drugi snovi zaniha 
 :::premisli
 Na mirno jezero gledaš skozi polarizacijska očala, ki imajo prepustno os navpično. Zakaj odsev Sonca skoraj izgine, ko je Sonce nizko, opoldne poleti pa veliko manj?
 ---
-Odbita svetloba je s-polarizirana, torej vodoravno, in jo navpični polarizator zaduši. V celoti pa je s-polarizirana le blizu Brewstrovega kota (za vodo okoli $53^\circ$ od navpičnice, Sonce okoli $37^\circ$ nad obzorjem). Ko je Sonce visoko, je vpadni kot majhen, obe komponenti se odbijeta skoraj enako in odsev je skoraj nepolariziran.
+Odbita svetloba je s-polarizirana, torej vodoravno, in jo navpični polarizator zaduši. V celoti pa je s-polarizirana le blizu Brewstrovega kota (za vodo okoli $53^\circ$ od navpičnice, Sonce okoli $37^\circ$ nad obzorjem). Ko je Sonce visoko, je vpadni kot majhen, obe komponenti se odbijeta skoraj enako in odsev je skoraj nepolariziran. Tudi tik ob obzorju (zelo poševen vpad) se obe komponenti odbijeta skoraj v celoti, zato očala odsev najbolj oslabijo okoli Brewstrovega kota, ne pri najnižjem Soncu.
 :::
 
 ### 4. Še dve poti do polarizirane svetlobe
@@ -204,7 +204,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Pravi polarizatorji niso idealni: vsak prepusti le $90\,\%$ komponente vzdolž prepustne osi (pravokotno pa nič). Nepolarizirana svetloba vpada na verigo prekrižanih polarizatorjev, med katere vstaviš $N - 1$ vmesnih, tako da se smer osi spreminja v $N$ enakih korakih (skupaj je $N + 1$ polarizatorjev). Zapiši prepuščeni delež $I/I_0$ kot funkcijo $N$, utemelji, zakaj ima optimum, in poišči $N$, pri katerem je prepuščeni delež največji.
+Pravi polarizatorji niso idealni: vsak prepusti le $90\,\%$ gostote toka komponente vzdolž prepustne osi (pravokotne komponente pa nič). Nepolarizirana svetloba vpada na verigo prekrižanih polarizatorjev, med katere vstaviš $N - 1$ vmesnih, tako da se smer osi spreminja v $N$ enakih korakih (skupaj je $N + 1$ polarizatorjev). Zapiši prepuščeni delež $I/I_0$ kot funkcijo $N$, utemelji, zakaj ima optimum, in poišči $N$, pri katerem je prepuščeni delež največji.
 
 **Rešitev:**
 
@@ -224,7 +224,7 @@ Natančno navedi in izpelji Malusov zakon. Nato dokaži Brewstrov zakon $\tan\th
 1. Malusov zakon: za linearno polarizirano svetlobo z gostoto toka $I_0$, katere smer polarizacije oklepa kot $\theta$ s prepustno osjo idealnega polarizatorja, je $I = I_0\cos^2\theta$. Izpeljava: prepuščena je komponenta $E_0\cos\theta$, $I \propto E^2$.
 2. Brewster: $r_p = \tan(\theta_1 - \theta_2)/\tan(\theta_1 + \theta_2)$ je nič, ko je $\theta_1 + \theta_2 = 90^\circ$ (in $\theta_1 \ne \theta_2$, torej $n_1 \ne n_2$).
 3. Lomni zakon z $\sin\theta_2 = \sin(90^\circ - \theta_1) = \cos\theta_1$ da $n_1\sin\theta_B = n_2\cos\theta_B$, torej $\tan\theta_B = n_2/n_1$.
-4. Pravokotnost: odbiti žarek oklepa z gladino kot $90^\circ - \theta_B$, lomljeni z njo kot $90^\circ - \theta_2 = \theta_B$; vsota kotov med žarkoma in ravnino gladine je $180^\circ - (\theta_B + \theta_2) = 90^\circ$, kar je kot med žarkoma.
+4. Pravokotnost: odbiti žarek oklepa z mejno ploskvijo kot $90^\circ - \theta_B$, lomljeni (na drugi strani pravokotnice) kot $90^\circ - \theta_2$. Kot med žarkoma je zato $180^\circ - (90^\circ - \theta_B) - (90^\circ - \theta_2) = \theta_B + \theta_2 = 90^\circ$.
 5. Voda–steklo: $\tan\theta_B = 1{,}52/1{,}33 \approx 1{,}143$, zato $\theta_B \approx 48{,}8^\circ$. Kot obstaja za vsak par $n_1 \ne n_2$, saj $\tan$ zavzame vse pozitivne vrednosti; ker je $n_2 > n_1$, totalnega odboja ni.
 6. Odgovor: $\theta_B \approx 48{,}8^\circ$; pri tem kotu je od vode na steklo odbita svetloba povsem s-polarizirana.
 
@@ -278,7 +278,7 @@ Navpična črta je vpadna pravokotnica, $B$ je Brewstrov kot. Lomljeni žarek je
 
 **Zasloni LCD.** Vsak slikovni element je tekoči kristal med prekrižanima polarizatorjema. Brez napetosti zasukane molekule zavrtijo polarizacijo za $90^\circ$ in svetloba gre skozi; z napetostjo se molekule poravnajo, zasuka ni in element je temen. Zato zaslon prenosnika skozi polarizacijska očala pri neki legi glave potemni.
 
-**Fotoelastičnost.** Prozorni model strojnega dela (na primer iz epoksida) pod obremenitvijo postane dvoleden; med prekrižanima polarizatorjema se pokažejo barvni pasovi, ki so gostejši tam, kjer je napetost večja. Inženirji tako najdejo kritična mesta pred izdelavo kovinskega dela.
+**Fotoelastičnost.** Prozorni model strojnega dela (na primer iz epoksida) pod obremenitvijo postane dvolomen; med prekrižanima polarizatorjema se pokažejo barvni pasovi, ki se zgostijo tam, kjer se napetost hitro spreminja (koncentracije napetosti ob luknjah in zarezah). Inženirji tako najdejo kritična mesta pred izdelavo kovinskega dela.
 
 **Optična aktivnost in saharimetrija.** Raztopine kiralnih molekul (sladkor) zavrtijo ravnino polarizacije za kot, sorazmeren s koncentracijo in dolžino kivete. V živilski in farmacevtski industriji iz zasuka med polarizatorjema določijo koncentracijo.
 

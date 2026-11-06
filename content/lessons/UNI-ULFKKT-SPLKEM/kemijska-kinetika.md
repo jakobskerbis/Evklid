@@ -50,7 +50,7 @@ $2^m = 1$, torej $m = 0$: hitrost od $[\mathrm{A}]$ ni odvisna. A ne nastopa v k
 
 ### 4. Integrirani zakoni in razpolovni čas
 
-Iz zakona hitrosti z integracijo dobimo, kako se koncentracija spreminja s časom. Spodaj je reakcija $\mathrm{A} \to$ produkti z $v = k[\mathrm{A}]^m$.
+Iz zakona hitrosti z integracijo dobimo, kako se koncentracija spreminja s časom. Spodaj je reakcija $\mathrm{A} \to$ produkti z $v = k[\mathrm{A}]^m$. Pri reakciji $a\mathrm{A} \to$ produkti je poraba A $-\mathrm{d}[\mathrm{A}]/\mathrm{d}t = a\,v$, zato v spodnjih zvezah namesto $k$ nastopa $ak$ (konstanta porabe snovi A). Pri podatkih vedno preveri, katero konstanto so podali.
 
 **Izpeljava za 1. red.** $-\dfrac{\mathrm{d}[\mathrm{A}]}{\mathrm{d}t} = k[\mathrm{A}]$. Ločimo spremenljivki in integriramo od $0$ do $t$: $\int \dfrac{\mathrm{d}[\mathrm{A}]}{[\mathrm{A}]} = -k\int\mathrm{d}t$, torej $\ln\dfrac{[\mathrm{A}]}{[\mathrm{A}]_0} = -kt$ in
 
@@ -60,7 +60,7 @@ $$[\mathrm{A}] = [\mathrm{A}]_0\,e^{-kt}.$$
 
 $$t_{1/2} = \frac{\ln 2}{k},$$
 
-kar je neodvisno od začetne koncentracije, točno kot pri $\mathrm{N_2O_5}$ v tabeli ($k = \ln 2/23\,\mathrm{min} \approx 0{,}030\,\mathrm{min^{-1}}$).
+kar je neodvisno od začetne koncentracije, točno kot pri $\mathrm{N_2O_5}$ v tabeli (konstanta porabe $\mathrm{N_2O_5}$ je $\ln 2/23\,\mathrm{min} \approx 0{,}030\,\mathrm{min^{-1}}$).
 
 Pregled treh redov, ki jih srečaš najpogosteje (linearni graf pove red):
 
@@ -72,7 +72,7 @@ Pri 2. redu je naslednji razpolovni čas dvakrat daljši od prejšnjega, ker se 
 
 ### 5. Mehanizem v enem odstavku
 
-Enačba reakcije pove le izhodne snovi in produkte. **Mehanizem** je zaporedje **elementarnih reakcij**, ki potečejo v enem trku ali razpadu. Za elementarno reakcijo (in le zanjo) je red enak **molekularnosti**: enomolekulska ($\mathrm{A} \to$) je 1. reda, dvomolekulska ($\mathrm{A} + \mathrm{B} \to$) 2. reda. Če je en korak mnogo počasnejši od ostalih, je to **korak, ki določa hitrost**; zakon hitrosti skupne reakcije je tedaj njegov zakon.
+Enačba reakcije pove le izhodne snovi in produkte. **Mehanizem** je zaporedje **elementarnih reakcij**, ki potečejo v enem trku ali razpadu. Za elementarno reakcijo je red zagotovo enak **molekularnosti** (pri sestavljeni se lahko ujemata le po naključju): enomolekulska ($\mathrm{A} \to$) je 1. reda, dvomolekulska ($\mathrm{A} + \mathrm{B} \to$) 2. reda. Če je en korak mnogo počasnejši od ostalih, je to **korak, ki določa hitrost**; zakon hitrosti skupne reakcije je tedaj njegov zakon.
 
 ### 6. Temperatura in aktivacijska energija
 
@@ -94,7 +94,7 @@ $$\ln\frac{k_2}{k_1} = \frac{E_a}{R}\left(\frac{1}{T_1} - \frac{1}{T_2}\right).$
 
 **Izrek.** Katalizator ne spremeni ne $\Delta H$ ne $\Delta G$ reakcije in zato ne ravnotežne konstante $K$; enako pospeši reakcijo v obe smeri, zato se ravnotežje le hitreje vzpostavi.
 
-**Utemeljitev.** $\Delta G^\circ = -RT\ln K$ je razlika med stanji izhodnih snovi in produktov, ki ju katalizator ne spremeni. Ker je $K = k_{\to}/k_{\leftarrow}$ in se obe poti spustita skozi isto nižje prehodno stanje, se obe konstanti povečata za enak faktor.
+**Utemeljitev.** $\Delta G^\circ = -RT\ln K$ je razlika med stanji izhodnih snovi in produktov, ki ju katalizator ne spremeni. Ker je za elementarni korak $K = k_{\to}/k_{\leftarrow}$ in se obe poti spustita skozi isto nižje prehodno stanje, se obe konstanti povečata za enak faktor.
 
 **Homogena kataliza:** katalizator je v isti fazi kot reaktanti. Primer: jodidni ioni pri razpadu vodikovega peroksida v vodi, kisline pri estrenju.
 
@@ -110,7 +110,7 @@ Znižana aktivacijska energija je še vedno večja od nič; konstanta hitrosti n
 
 ### Primer 1 (lažji)
 
-Pri razpadu $2\,\mathrm{N_2O_5} \to 4\,\mathrm{NO_2} + \mathrm{O_2}$ pade koncentracija $\mathrm{N_2O_5}$ v $100\,\mathrm{s}$ z $0{,}0200$ na $0{,}0169\,\mathrm{mol/L}$. Kolikšna je povprečna hitrost reakcije v tem intervalu in s kolikšno povprečno hitrostjo nastajata $\mathrm{NO_2}$ in $\mathrm{O_2}$?
+Pri razpadu $2\,\mathrm{N_2O_5} \to 4\,\mathrm{NO_2} + \mathrm{O_2}$ pri višji temperaturi kot v tabeli iz razlage pade koncentracija $\mathrm{N_2O_5}$ v $100\,\mathrm{s}$ z $0{,}0200$ na $0{,}0169\,\mathrm{mol/L}$. Kolikšna je povprečna hitrost reakcije v tem intervalu in s kolikšno povprečno hitrostjo nastajata $\mathrm{NO_2}$ in $\mathrm{O_2}$?
 
 **Podatki:** $[\mathrm{N_2O_5}]_0 = 0{,}0200\,\mathrm{mol/L}$, $[\mathrm{N_2O_5}] = 0{,}0169\,\mathrm{mol/L}$, $\Delta t = 100\,\mathrm{s}$, koeficienti $2$; $4$; $1$
 **Iščemo:** $v$, hitrost nastajanja $\mathrm{NO_2}$ in $\mathrm{O_2}$
@@ -204,7 +204,7 @@ $[\mathrm{A}] = 0{,}050 \cdot e^{-0{,}90}\,\mathrm{mol/L} \approx 0{,}050 \cdot 
 - **Red iz stehiometrijskih koeficientov.** »Reakcija je $2\,\mathrm{N_2O_5} \to \ldots$, torej 2. reda.« Red je eksperimentalen in odraža mehanizem; enak koeficientu je le pri elementarni reakciji.
 - **Razpolovni čas je pri vseh reakcijah stalen.** Stalen je le pri 1. redu. Pri 2. redu se z vsakim razpolovom podaljša, pri 0. redu skrajša.
 - **Temperatura v °C v Arrheniusovi enačbi.** Vstavi absolutno temperaturo v kelvinih; z °C dobiš napačen in pri $0\,^\circ\mathrm{C}$ celo nesmiseln rezultat.
-- **Katalizator premakne ravnotežje.** Katalizator ne spremeni $K$; ravnotežje se le hitreje vzpostavi. Izkoristek pri sintezi amoniaka povečajo tlak in temperatura, katalizator pa skrajša čas.
+- **Katalizator premakne ravnotežje.** Katalizator ne spremeni $K$; ravnotežje se le hitreje vzpostavi. Ravnotežni izkoristek pri sintezi amoniaka poveča visok tlak; višja temperatura ga celo zmanjša (reakcija je eksotermna) in je potrebna le zaradi hitrosti. Katalizator samo skrajša čas do ravnotežja.
 - **Večja $\Delta H$ pomeni počasnejšo reakcijo.** Hitrost določa višina hriba $E_a$, ne razlika med dolinama. Zelo eksotermna reakcija je lahko zelo počasna (gorenje lesa pri sobni temperaturi).
 
 ## Povzetek
@@ -227,11 +227,11 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Pri razpadu $2\,\mathrm{NO_2} \to 2\,\mathrm{NO} + \mathrm{O_2}$ pri $600\,\mathrm{K}$ so izmerili $[\mathrm{NO_2}]$: $t = 0$: $0{,}0100\,\mathrm{mol/L}$; $50\,\mathrm{s}$: $0{,}00787$; $100\,\mathrm{s}$: $0{,}00649$; $200\,\mathrm{s}$: $0{,}00481\,\mathrm{mol/L}$. (a) Ugotovi, ali je reakcija 1. ali 2. reda, in določi $k$ z enoto. (b) Izračunaj razpolovni čas pri tej začetni koncentraciji. (c) Katalizator zniža aktivacijsko energijo za $20\,\mathrm{kJ/mol}$ (predeksponentni faktor ostane enak). Kolikokrat se pri $600\,\mathrm{K}$ poveča hitrost in koliko časa s katalizatorjem traja, da koncentracija pade z $0{,}0100$ na $0{,}00481\,\mathrm{mol/L}$?
+Pri razpadu $2\,\mathrm{NO_2} \to 2\,\mathrm{NO} + \mathrm{O_2}$ pri $600\,\mathrm{K}$ so izmerili $[\mathrm{NO_2}]$: $t = 0$: $0{,}0100\,\mathrm{mol/L}$; $50\,\mathrm{s}$: $0{,}00787$; $100\,\mathrm{s}$: $0{,}00649$; $200\,\mathrm{s}$: $0{,}00481\,\mathrm{mol/L}$. (a) Ugotovi, ali je reakcija 1. ali 2. reda, in določi konstanto porabe $\mathrm{NO_2}$ ($-\mathrm{d}[\mathrm{NO_2}]/\mathrm{d}t = k[\mathrm{NO_2}]^m$) z enoto. (b) Izračunaj razpolovni čas pri tej začetni koncentraciji. (c) Katalizator zniža aktivacijsko energijo za $20\,\mathrm{kJ/mol}$ (predeksponentni faktor ostane enak). Kolikokrat se pri $600\,\mathrm{K}$ poveča hitrost in koliko časa s katalizatorjem traja, da koncentracija pade z $0{,}0100$ na $0{,}00481\,\mathrm{mol/L}$?
 
 **Rešitev:**
 
-1. Preizkus 1. reda: $\ln[\mathrm{NO_2}]$ je $-4{,}605$; $-4{,}844$; $-5{,}037$; $-5{,}338$. Nakloni po intervalih: $-0{,}239/50 \approx -0{,}0048$; $-0{,}193/50 \approx -0{,}0039$; $-0{,}301/100 \approx -0{,}0030\,\mathrm{s^{-1}}$. Ni premica, zato reakcija ni 1. reda.
+1. Preizkus 1. reda: $\ln[\mathrm{NO_2}]$ je $-4{,}605$; $-4{,}845$; $-5{,}037$; $-5{,}337$. Nakloni po intervalih: $-0{,}240/50 \approx -0{,}0048$; $-0{,}192/50 \approx -0{,}0038$; $-0{,}300/100 \approx -0{,}0030\,\mathrm{s^{-1}}$. Ni premica, zato reakcija ni 1. reda.
 2. Preizkus 2. reda: $1/[\mathrm{NO_2}]$ je $100$; $127$; $154$; $208\,\mathrm{L/mol}$. Prirastki na $50\,\mathrm{s}$: $27$, $27$, $27$ (zadnji interval $54$ na $100\,\mathrm{s}$). Premica, torej 2. red.
 3. (a) $k$ je naklon: $k = (208 - 100)/200\,\mathrm{L\,mol^{-1}\,s^{-1}} = 0{,}54\,\mathrm{L\,mol^{-1}\,s^{-1}}$.
 4. (b) $t_{1/2} = \dfrac{1}{k[\mathrm{NO_2}]_0} = \dfrac{1}{0{,}54 \cdot 0{,}0100}\,\mathrm{s} \approx 185\,\mathrm{s}$.
@@ -259,9 +259,9 @@ Predlagani mehanizem razpada $\mathrm{H_2O_2}$ z jodidom je: (1) $\mathrm{H_2O_2
 
 1. (a) Seštevek: $2\,\mathrm{H_2O_2} \to 2\,\mathrm{H_2O} + \mathrm{O_2}$. $\mathrm{I^-}$ se v koraku 1 porabi in v koraku 2 vrne: katalizator (homogen). $\mathrm{IO^-}$ nastane in se porabi: vmesni produkt. Oba koraka sta dvomolekulska.
 2. (b) Počasni korak določa hitrost, za elementarni korak je red enak molekularnosti: $v = k_1[\mathrm{H_2O_2}][\mathrm{I^-}]$, 1. red glede na vsako snov, skupno 2. red.
-3. (c) Ker je $[\mathrm{I^-}]$ stalna, je $v = k'[\mathrm{H_2O_2}]$ z $k' = k_1[\mathrm{I^-}] = 0{,}0115 \cdot 0{,}10\,\mathrm{s^{-1}} = 1{,}15 \cdot 10^{-3}\,\mathrm{s^{-1}}$: navidezno 1. red.
-4. $t_{1/2} = \ln 2/k' = 0{,}6931/(1{,}15 \cdot 10^{-3})\,\mathrm{s} \approx 603\,\mathrm{s} \approx 10\,\mathrm{min}$.
-5. Odgovor: jodid je katalizator, $\mathrm{IO^-}$ vmesni produkt; $v = k_1[\mathrm{H_2O_2}][\mathrm{I^-}]$; pri stalnem jodidu je reakcija navidezno 1. reda z razpolovnim časom okoli $10\,\mathrm{min}$. Podvojitev jodida bi ga razpolovila.
+3. (c) Vsakemu počasnemu koraku takoj sledi hitri, ki porabi še eno molekulo $\mathrm{H_2O_2}$, zato je poraba $-\mathrm{d}[\mathrm{H_2O_2}]/\mathrm{d}t = 2v = 2k_1[\mathrm{I^-}][\mathrm{H_2O_2}]$. Ker je $[\mathrm{I^-}]$ stalna, je to $k'[\mathrm{H_2O_2}]$ z $k' = 2k_1[\mathrm{I^-}] = 2 \cdot 0{,}0115 \cdot 0{,}10\,\mathrm{s^{-1}} = 2{,}30 \cdot 10^{-3}\,\mathrm{s^{-1}}$: navidezno 1. red.
+4. $t_{1/2} = \ln 2/k' = 0{,}6931/(2{,}30 \cdot 10^{-3})\,\mathrm{s} \approx 301\,\mathrm{s} \approx 5{,}0\,\mathrm{min}$.
+5. Odgovor: jodid je katalizator, $\mathrm{IO^-}$ vmesni produkt; $v = k_1[\mathrm{H_2O_2}][\mathrm{I^-}]$; pri stalnem jodidu $\mathrm{H_2O_2}$ razpada navidezno po 1. redu z razpolovnim časom okoli $5\,\mathrm{min}$. Podvojitev jodida bi ga razpolovila.
 
 ## Drugače: Na sliki
 

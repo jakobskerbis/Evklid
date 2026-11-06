@@ -25,7 +25,7 @@ Obe sliki sta napačni, a vsaka vsebuje polovico resnice. Posnetek lučke pokaž
 
 Ločimo tri vrste ravninskega gibanja:
 
-- **translacija** ($\omega = 0$): vse točke imajo v danem trenutku enako hitrost in enak pospešek; daljica v telesu ostaja vzporedna sama sebi (tudi kadar točke potujejo po krivuljah, kot sedež na vrtiljaku z vzporednimi drogovi);
+- **translacija** ($\omega = 0$): vse točke imajo v danem trenutku enako hitrost in enak pospešek; daljica v telesu ostaja vzporedna sama sebi (tudi kadar točke potujejo po krivuljah, kot gugalnica, obešena na dveh vzporednih enako dolgih drogovih, ali kabina panoramskega kolesa);
 - **vrtenje okoli nepremične osi**: točke krožijo, $v = \omega r$;
 - **splošno ravninsko gibanje**: kolo, ojnica v motorju, lestev, ki drsi ob steni.
 
@@ -149,7 +149,7 @@ $v_A = \omega_1 r$, $\omega_2 = \dfrac{v_A}{r_{PA}}$, $v_B = \omega_2 r_{PB}$; $
 6. **Enačba pospeškov.** Z $\vec{\alpha}_2 = \alpha_2\vec{k}$ je $\vec{\alpha}_2 \times \vec{r}_{AB} = (0{,}0866\,\alpha_2;\ 0{,}3905\,\alpha_2)$, $\omega_2^2 \approx 6{,}557\,\mathrm{s^{-2}}$ in $\omega_2^2\vec{r}_{AB} \approx (2{,}561;\ -0{,}568)\,\mathrm{m/s^2}$. Pospešek bata je vodoraven, $\vec{a}_B = (a_B;\ 0)$.
 7. Komponenta $y$: $0 = -34{,}64 + 0{,}3905\,\alpha_2 + 0{,}568$, zato $\alpha_2 = 34{,}07/0{,}3905\,\mathrm{s^{-2}} \approx 87{,}3\,\mathrm{s^{-2}}$ (pozitivna smer).
 8. Komponenta $x$: $a_B = -20 + 0{,}0866 \cdot 87{,}25 - 2{,}561\,\mathrm{m/s^2} \approx -20 + 7{,}56 - 2{,}56 = -15{,}0\,\mathrm{m/s^2}$.
-9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje s $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v nasprotni smeri, pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, bat ne giblje enakomerno.
+9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje s $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v pozitivni smeri (nasprotno od urinega kazalca, torej ojnica se vrti vse počasneje), pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, bat ne giblje enakomerno.
 
 ### Primer 4 – zdaj ti
 
@@ -239,7 +239,7 @@ Kolo s polmerom $0{,}50\,\mathrm{m}$ se brez spodrsavanja kotali v desno; v opaz
 1. $\omega = v_S/R = 4{,}0\,\mathrm{s^{-1}}$ v smeri urinega kazalca; ker velja $v_S = \omega R$ ves čas, je $\alpha = a_S/R = 2{,}0\,\mathrm{s^{-2}}$, prav tako v smeri urinega kazalca.
 2. Stična točka, $\vec{r}_{SB} = (0;\ -0{,}50)$: tangentni člen $\alpha R = 1{,}0\,\mathrm{m/s^2}$ kaže v levo in izniči $a_S$; centripetalni člen $\omega^2R = 16 \cdot 0{,}50\,\mathrm{m/s^2} = 8{,}0\,\mathrm{m/s^2}$ kaže proti osi, navzgor. Skupaj $\vec{a} = (0;\ 8{,}0)\,\mathrm{m/s^2}$.
 3. Vrh, $\vec{r}_{SB} = (0;\ 0{,}50)$: tangentni člen $1{,}0\,\mathrm{m/s^2}$ v desno, centripetalni $8{,}0\,\mathrm{m/s^2}$ navzdol: $\vec{a} = (2{,}0;\ -8{,}0)\,\mathrm{m/s^2}$, velikost $\sqrt{4 + 64} \approx 8{,}25\,\mathrm{m/s^2}$.
-4. Utemeljitev: stična točka je pol le v tem trenutku. Vsak hip je pol druga točka oboda; točka, ki je bila ob tleh, se dvigne po cikloidi s konico navzgor, zato ima pospešek navzgor, čeprav je hitrost nič.
+4. Utemeljitev: stična točka je pol le v tem trenutku. Vsak hip je pol druga točka oboda; točka, ki je bila ob tleh, je v konici cikloide in se iz nje dvigne navpično navzgor, zato ima pospešek navzgor, čeprav je hitrost nič.
 5. Odgovor: stična točka ima pospešek $8{,}0\,\mathrm{m/s^2}$ navzgor, vrh $(2{,}0;\ -8{,}0)\,\mathrm{m/s^2}$ oziroma $8{,}25\,\mathrm{m/s^2}$.
 
 ## Drugače: Na sliki
@@ -259,7 +259,7 @@ Lestev ob steni; $P$ je trenutni pol, pravokotnici na hitrosti se sekata v njem:
           -> vA
 ```
 
-Hitrost $B$ je navpična, zato je pravokotnica nanjo vodoravna (pikčasta črta skozi $B$). Hitrost $A$ je vodoravna, pravokotnica navpična (skozi $A$). Hitrost vsake točke lestve je pravokotna na zveznico s $P$ in sorazmerna z razdaljo do $P$. Sredina je od $P$ oddaljena $L/2$ (polovica diagonale), zato sredina lestve opisuje četrtinko kroga okoli vogala.
+Hitrost $B$ je navpična, zato je pravokotnica nanjo vodoravna (pikčasta črta skozi $B$). Hitrost $A$ je vodoravna, pravokotnica navpična (skozi $A$). Hitrost vsake točke lestve je pravokotna na zveznico s $P$ in sorazmerna z razdaljo do $P$. Sredina je presečišče diagonal pravokotnika, zato je od $P$ in od vogala oddaljena $L/2$. Ker je njena razdalja do vogala ves čas $L/2$, sredina lestve opiše četrtinko kroga okoli vogala; njena hitrost je pravokotna na zveznico s $P$.
 
 Kolo: hitrosti točk navpičnega premera rastejo linearno od pola navzgor:
 
@@ -273,7 +273,7 @@ Kolo: hitrosti točk navpičnega premera rastejo linearno od pola navzgor:
 
 **Krmiljenje avtomobila.** Pri počasni vožnji v ovinku se kolesa ne smejo drsati vstran, zato mora biti hitrost vsakega kolesa pravokotna na njegovo os. Osi vseh štirih koles se morajo sekati v isti točki, trenutnem polu karoserije. Krmilni mehanizem po Ackermannu zato notranje kolo zasuka bolj kot zunanje.
 
-**Načrtovanje mehanizmov.** Pri štirizgibnih mehanizmih (brisalci, mehanizmi vrat, sklopi podvozja) konstruktorji s poli določijo prenosno razmerje kotnih hitrosti v vsaki legi. Kjer se pol oddalji v neskončnost, je ojnica trenutno v translaciji; kjer pride v zgib, se mehanizem zaklene (mrtva lega).
+**Načrtovanje mehanizmov.** Pri štirizgibnih mehanizmih (brisalci, mehanizmi vrat, sklopi podvozja) konstruktorji s poli določijo prenosno razmerje kotnih hitrosti v vsaki legi. Kjer se pol oddalji v neskončnost, je ojnica trenutno v translaciji. Kjer pol pade v zgib ojnice z nihalko, ima ta zgib hitrost nič: nihalka je v skrajni legi in obrne smer. Če bi mehanizem gnali z nihalke, je to mrtva lega, iz katere ga sila na nihalko ne premakne.
 
 **Robotika in biomehanika.** Kolenski sklep nima stalne osi: stegnenica se po golenici kotali in drsi, zato se trenutni pol med upogibom premika. Ortopedi pri vsadkih kolena in proizvajalci opornic posnemajo pot tega pola; v robotiki se po istem načelu računajo hitrosti členov planarnih robotskih rok.
 
