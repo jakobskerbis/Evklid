@@ -359,11 +359,44 @@ export function odpriModel(el, mod, opts = {}) {
         return _rc.intersectObjects(mreze, false).length > 0;
       });
       if (!obdaja) continue;
-      for (const o of mreze) {
-        if (skrite.has(o)) continue;
-        skrite.set(o, o.layers.mask);
-        o.layers.set(SKRITA_PLAST);
+      skrij(mreze);
+    }
+    // Skupina (npr. Zaklopke, Organeli): člani so pogosto znotraj več sten, od katerih nobena sama ne obdaja vsega.
+    // Zato skrijemo še vsak večji nečlanski del, ki je prvi zadetek žarka od zunaj (±x, ±y, ±z) proti kateremu od
+    // članov – stene, ki zakrivajo skupino, postanejo nevidne, člani ostanejo osvetljeni.
+    if (d.skupinaDelov && d.clani?.length) {
+      const lastnik = new Map(); // mreža → del (posamezni deli pred skupinskimi, npr. venčna arterija pred skupino)
+      for (const p of [...model.deli].sort((x, y) => (x.skupina ? 0 : 1) - (y.skupina ? 0 : 1))) {
+        if (d.clani.includes(p)) continue;
+        for (const m of p.meshes || []) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) lastnik.set(o, p); });
       }
+      const vse = [...lastnik.keys()];
+      const bC = new THREE.Box3(), cC = new THREE.Vector3();
+      for (const clan of d.clani) {
+        if (okvirDela(clan, bC).isEmpty()) continue;
+        bC.getCenter(cC);
+        const vC = prostornina(bC);
+        for (const sm of SMERI) {
+          _rc.set(izvor.copy(cC).addScaledVector(sm, R), sm.clone().negate());
+          _rc.far = R;
+          for (const z of _rc.intersectObjects(vse, false)) {
+            if (z.distance >= R) break; // za središčem člana
+            if (skrite.has(z.object)) continue;
+            const p = lastnik.get(z.object);
+            if (!p || prostornina(okvirDela(p, bP)) < vC * 1.25) continue; // manjši del (žila na steni) ostane
+            const mreze = [];
+            for (const m of p.meshes) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) mreze.push(o); });
+            skrij(mreze);
+          }
+        }
+      }
+    }
+  }
+  function skrij(mreze) {
+    for (const o of mreze) {
+      if (skrite.has(o)) continue;
+      skrite.set(o, o.layers.mask);
+      o.layers.set(SKRITA_PLAST);
     }
   }
 
