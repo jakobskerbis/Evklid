@@ -20,6 +20,7 @@ const NM = path.resolve("node_modules");
 const TYPES = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html" };
 // Kartica, ki se ob kliku obrne (kot .fc-flip v Ponavljanju), razdelek <details> in vrstica s formulo.
 // Pred njimi je dovolj besedila, da je kartica na telefonu pri dnu zaslona (list bi jo prekril).
+// Distančnik na koncu (flex:none, ker je body v style.css flex stolpec) omogoči drsenje tudi na računalniku.
 const PAGE = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <link rel="stylesheet" href="/vendor/katex/katex.min.css"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css">
 <style>body{margin:0;padding:16px}.fc-flip{border:1px solid #888;padding:16px;cursor:pointer}.vrstica{padding:12px;border:1px solid #888}#drug-gumb{position:fixed;top:8px;right:8px;z-index:5}</style>
@@ -28,6 +29,7 @@ const PAGE = `<!doctype html><meta charset="utf-8"><meta name="viewport" content
 <details id="razdelek"><summary id="povzetek"></summary><p>Vsebina</p></details>
 <div class="vrstica" id="vrstica"></div>
 <p>${"Besedilo za kartico. ".repeat(80)}</p>
+<div style="height:120vh;flex:none"></div>
 <button id="drug-gumb" type="button">Drug gumb</button>
 <script src="/vendor/katex/katex.min.js"></script><script src="/vendor/marked/marked.umd.js"></script><script src="/vendor/dompurify/purify.min.js"></script>
 <script type="module">
