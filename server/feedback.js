@@ -65,6 +65,11 @@ export function ensureFeedbackTable(db) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `);
+  // Izbris profila ali računa (GDPR čl. 17): mnenja profila (ime, besedila, pogovor) se izbrišejo z njim,
+  // ne ostanejo brez lastnika (stolpec ima ON DELETE SET NULL iz starejših baz).
+  db.exec(`CREATE TRIGGER IF NOT EXISTS feedback_student_delete BEFORE DELETE ON students BEGIN
+    DELETE FROM feedback WHERE student_id = OLD.id;
+  END;`);
 }
 
 const longText = (v) => (typeof v === "string" ? v.replace(/\r\n/g, "\n").trim().slice(0, MAX_TEXT) : "");
