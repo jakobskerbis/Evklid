@@ -11,7 +11,9 @@ import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { exportOtherTables } from "../zasebnost.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
+import { createPaidPeriods } from "../placila/placano.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -20,6 +22,7 @@ import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-remin
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
 import { cleanText } from "../settings.js";
 import { Usage, BLOCK_TEXT } from "../usage.js";
+import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
@@ -82,6 +85,9 @@ export function mountAccounts(app, store, opts = {}) {
     get: (k) => db.prepare("SELECT value FROM kv WHERE key = ?").get(k)?.value ?? null,
     set: (k, v) => db.prepare("INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)").run(k, v),
   };
+  // Dejansko plačilo naročnine po obdobjih (meja AI in vračilo, server/placila/placano.js).
+  const paidPeriods = createPaidPeriods(kv);
+
   const env = process.env;
   const stripe = new Stripe({ secretKey: opts.stripeKey ?? env.STRIPE_SECRET_KEY, fetchFn: opts.fetchFn, kv });
   const mailer = new Mailer({ apiKey: opts.resendKey ?? env.RESEND_API_KEY, fetchFn: opts.fetchFn, log: opts.mailLog });
@@ -261,14 +267,137 @@ export function mountAccounts(app, store, opts = {}) {
     if (!r.personal) return null;
     const owner = ownerOf(studentId);
     if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
+    if (NOPAY_USD[r.personalTier]) return nopayGuarantee(r.personalTier, owner);
     if (r.personalTier !== "paid") return null;
-    const g = planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
+    // Naročnina v preizkusni dobi pri Stripu (trialing): plačila še ni bilo, zato do prvega plačanega računa velja meja
+    // paketa, ki dejansko teče (preizkus, koda, darilo ali bonus), ne meja plačanega paketa (pregled #462, KRITIČNO).
+    const under = unpaidTier(getParent(owner));
+    if (under === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
+    if (under) return nopayGuarantee(under, owner);
+    // DDV po državi kupca (j 2026-11-06 12:53); neznana: najvišja na trgu paketa.
+    const country = getParent(owner)?.country;
+    const subPlan = planByKey(getParent(owner)?.sub_plan);
+    const vat = country ? (!subPlan?.currency || subPlan.currency === "EUR" ? eurVatFor(country) : vatRateFor(country)) : undefined;
+    const g = (subPlan && planGuarantee(subPlan, vat)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
     // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
     // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
     const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");
     const was = up && up.sub && up.sub === getParent(owner)?.sub_id ? (up.usd ?? planGuarantee(planByKey(up.from))?.usd) : null;
-    return was != null ? { ...g, usd: upgradeMonthUsd(was || 0, g.usd || 0, up.at) } : g;
+    // Mešanje po oknu meje (obdobje naročnine), ne po koledarskem mesecu (pregled #462 L1).
+    const win = paidWindow(getParent(owner));
+    const usd = was != null ? upgradeMonthUsd(was || 0, g.usd || 0, up.at, Date.now(), win) : g.usd;
+    const out = usd !== g.usd ? { ...g, usd, total: Math.min(g.total ?? Infinity, usd + freeStudentMonthlyUsd() * (g.profiles || 1)) } : g;
+    return paidCap(out, owner, win);
   }
+  // Okno meje plačane naročnine { start, end } (ms) ali null. Sidrano na konec obdobja; neuspelo plačilo (past_due)
+  // ne odpre novega okna. Preklop mesečno ↔ letno (portal Stripe) premakne konec obdobja in bi odprl novo okno brez
+  // novega denarja (pregled #462 L2): okno iste naročnine se zato ne zamenja, dokler od začetka prejšnjega ni minil
+  // mesec (ai_window_<račun>); takrat se začne novo okno ob preteku meseca.
+  function paidWindow(p, now = Date.now()) {
+    if (!p) return null;
+    const failed = p.sub_status === "past_due" && Date.parse(p.past_due_since || "");
+    const iso = monthWindowStart(p.sub_period_end, failed ? failed - DAY : now);
+    if (!iso) return null;
+    let start = Date.parse(iso);
+    if (p.sub_id) {
+      const key = `ai_window_${p.id}`;
+      const prev = JSON.parse(kv.get(key) || "null");
+      if (prev && prev.sub === p.sub_id && start !== prev.start) {
+        const next = addMonthsUtc(prev.start, 1);
+        if (start < next) start = now < next ? prev.start : next;
+      }
+      if (!prev || prev.sub !== p.sub_id || prev.start !== start) kv.set(key, JSON.stringify({ sub: p.sub_id, start }));
+      // Obnovitev (ali konec preizkusa) pred invoice.paid: Stripe premakne konec obdobja takoj, račun pa je plačan šele
+      // čez uro (SEPA dneve, ali nikoli). Dokler za novo okno ni plačila, velja zadnje plačano okno (pregled #462
+      // H1/K3-1); naročnine brez kakršnega koli zapisa (pred to spremembo) ostanejo na ceniku.
+      if (paidPeriods.has(p.id, p.sub_id) && !paidPeriods.eurIn(p.id, p.sub_id, start, addMonthsUtc(start, 1)).rows) {
+        const last = paidPeriods.lastEnd(p.id, p.sub_id);
+        if (last > 0 && last <= start) {
+          for (let k = 0; k < 24 && start >= last; k++) start = addMonthsUtc(start, -1);
+        }
+      }
+    }
+    return { start, end: addMonthsUtc(start, 1) };
+  }
+  // Meja iz dejanskega plačila obdobja (j 2026-11-06 12:53, pregled #462 A2): promocijske kode Stripa, proracije in
+  // vračila znižajo plačilo, zato meja ni nikoli nad 25 % tega, kar je kupec za to okno res plačal brez DDV
+  // (server/placila/placano.js). Brez zapisa za okno (naročnina pred to spremembo, obnovitev še ni plačana): cenik.
+  // Okno, plačano z 0 € (popust 100 %): kot aktivacijska koda (meja brez plačila in skupni bazen).
+  function paidCap(g, owner, win) {
+    const p = getParent(owner);
+    if (!g || !p?.sub_id || !win) return g;
+    const m = paidPeriods.eurIn(owner, p.sub_id, win.start, win.end);
+    if (!m.rows) return g;
+    if (!(m.eur > 0.005)) return nopayGuarantee("promo", owner);
+    const max = aiCapFromNetEur(m.eur);
+    if ((g.total ?? Infinity) <= max) return g;
+    return { ...g, total: max, usd: Math.min(g.usd || 0, subscriptionCeiling(max, g.profiles || 1)), paidEur: m.eur };
+  }
+  // Brez plačila (j 2026-11-06: trda meja AI): preizkus, aktivacijska koda, bonus in stari profili brez računa imajo nizko
+  // stalno mejo za ves račun (server/meje-ai.js NOPAY_USD). Brezplačni rep je ZNOTRAJ te meje (total), tudi pri več
+  // sedežih (pregled #462: 3 sedeži so dali 0,001 $ + 3 × 0,2 $ namesto 0,5 $).
+  function nopayGuarantee(tier, owner) {
+    const n = owner ? Math.max(1, accessOf(getParent(owner)).seats || 1) : 1;
+    const total = NOPAY_USD[tier]();
+    return { usd: subscriptionCeiling(total, n), total, profiles: n, pool: !!owner, nopay: tier };
+  }
+  // Paket, ki teče pod naročnino v preizkusni dobi (trialing, še brez plačanega računa): promo, trial, gift ali bonus.
+  // Preizkus pri Stripu brez drugega paketa (npr. potekel) šteje kot preizkus. null = naročnina je plačana.
+  function unpaidTier(parent) {
+    if (parent?.sub_status !== "trialing") return null;
+    const t = accessFor({ ...parent, sub_status: null }).tier;
+    return t === "free" ? "trial" : t;
+  }
+  // Obdobje meje AI (pregled #462, VISOKO): meja velja za plačano obdobje, ne za koledarski mesec (sicer naročnina,
+  // sklenjena 28., dobi dve meji za eno plačilo). Naročnina, darilo in koda: mesečna okna, sidrana na konec obdobja
+  // (letni paket: 12 mesečnih oken); preizkus in bonus: ves paket eno okno. Neuspelo plačilo (past_due): Stripe že
+  // premakne konec obdobja, a novo okno se ne odpre (okno ob prvem neuspelem plačilu velja do plačila).
+  const DAY = 86400000;
+  function addMonthsUtc(t, k) {
+    const d = new Date(t);
+    const day = d.getUTCDate();
+    d.setUTCDate(1);
+    d.setUTCMonth(d.getUTCMonth() + k);
+    const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+    d.setUTCDate(Math.min(day, last));
+    return d.getTime();
+  }
+  // Začetek mesečnega okna, sidranega na endIso, ki vsebuje »now« (po koncu: zadnje okno, nikoli novo).
+  function monthWindowStart(endIso, now = Date.now()) {
+    const end = Date.parse(endIso || "");
+    if (!Number.isFinite(end)) return null;
+    for (let k = 1; k <= 240; k++) {
+      const start = addMonthsUtc(end, -k);
+      if (start <= now) return new Date(start).toISOString();
+    }
+    return null;
+  }
+  function aiPeriodStart(studentId) {
+    const r = rightsFor(studentId);
+    if (!r.personal) return null;
+    const p = getParent(ownerOf(studentId));
+    if (!p) return null;
+    const tier = r.personalTier === "paid" ? unpaidTier(p) || "paid" : r.personalTier;
+    const future = (iso) => Date.parse(iso || "") > Date.now();
+    switch (tier) {
+      case "paid": {
+        const w = paidWindow(p);
+        return w ? new Date(w.start).toISOString() : null;
+      }
+      case "gift":
+        return monthWindowStart(p.gift_until);
+      case "promo":
+        return monthWindowStart(p.promo_until);
+      case "trial":
+        return future(p.trial_ends_at) ? new Date(Date.parse(p.trial_ends_at) - TRIAL_DAYS * DAY).toISOString() : monthWindowStart(p.sub_period_end);
+      case "bonus":
+        return future(p.bonus_until) ? new Date(Date.parse(p.bonus_until) - REFERRAL_DAYS * DAY).toISOString() : null;
+      default:
+        return null;
+    }
+  }
+  // Vrednost paketa (meja + brezplačni rep) v $: trda meja (server/usage.js capsFor), največ to.
+  const guaranteeTotalFor = (studentId) => subGuarantee(studentId)?.total ?? null;
   // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
   const guaranteeFor = (studentId) => {
     const g = subGuarantee(studentId);
@@ -282,7 +411,94 @@ export function mountAccounts(app, store, opts = {}) {
     const ids = [...childIds(owner)].sort((a, b) => a - b).slice(0, access.seats || 1);
     return ids.includes(studentId) ? ids : null;
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, poolOf: poolFor });
+  // Trda meja AI (j 2026-11-06, server/meje-ai.js): meje profila brez zajamčenega paketa za server/usage.js hold.
+  // Paket pred testom: meja paketa (25 % plačila); šola: mesečna meja licence (25 % plačila); brezplačni paket in
+  // gost: meja na profil (omrežje) in skupna meja vseh brezplačnih; s kreditom brezplačni profil plača iz kredita.
+  function capsOf(studentId) {
+    const owner = ownerOf(studentId);
+    if (!owner) return [];
+    const r = rightsFor(studentId);
+    const credit = credits.balance(owner) || 0;
+    // Kredit računa si delijo vsi profili: kdor ga sme uporabiti, ima tudi skupni ključ credit:<račun>, da hkratni
+    // klici dveh profilov kredita ne presežejo (pregled #462).
+    const creditCap = (room) => ({ key: `credit:${owner}`, usd: credit + Math.max(0, room), spent: 0, code: "block.freeMonth" });
+    if (r.personal) {
+      if (r.personalTier !== "pass") {
+        // Zajamčeni paketi: meja v server/usage.js capsFor. Brez plačila (preizkus, koda, bonus, tudi pod naročnino v
+        // preizkusni dobi): še skupni bazen vseh takih računov (pregled #462: vsak nov e-naslov dobi preizkus).
+        const out = [];
+        if (subGuarantee(studentId)?.nopay) {
+          const pool = { key: "nopaypool", usd: nopayPoolUsd(), spent: nopayPoolSpent(), code: "block.freePool" };
+          // Izčrpan bazen (pregled #462 L4): profil ni zaklenjen, nadaljuje z mejami brezplačnega paketa; poraba nad
+          // bazenom šteje v skupno mejo brezplačnih (freeCaps over), da bazen ne zraste brez meje.
+          if (aiUsage.headroom(studentId, [pool]) >= aiUsage.minCallUsd()) out.push(pool);
+          else out.push(...freeCaps(studentId, owner, Math.max(0, pool.spent - pool.usd)));
+        }
+        // S kreditom še skupni ključ kredita (kredit + preostanek paketa).
+        const sb = credit > 0 ? aiUsage.studentBudget(studentId) : null;
+        if (sb?.guaranteed) {
+          const n = sb.group?.length || 1;
+          out.push(creditCap(Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, guaranteeTotalFor(studentId) ?? Infinity) - sb.spent));
+        }
+        return out;
+      }
+      // Paket pred testom: meja paketa brez kredita (kredit se porabi šele v brezplačnem paketu po koncu paketa),
+      // poraba brez dela iz kredita (Passes.spentUsd).
+      const p = billing?.passes.activeFor(studentId);
+      return p ? [{ key: `pass:${p.id}`, usd: passCapUsd(p), spent: billing.passes.spentUsd(p), code: "block.passOut" }] : [];
+    }
+    if (r.school && !r.schoolAiOut) {
+      const s = r.schools.find((x) => x.ai_month_usd > 0 && (x.ai_spent_usd || 0) < x.ai_month_usd);
+      if (s) {
+        const cap = { key: `school:${s.school_id}`, usd: s.ai_month_usd, spent: s.ai_spent_usd || 0, code: "block.monthLimit" };
+        // Šola brez prostora za najcenejši klic velja kot porabljena: profil nadaljuje v brezplačnem paketu.
+        if (aiUsage.headroom(studentId, [cap]) >= aiUsage.minCallUsd()) return [cap];
+      }
+    }
+    if (credit > 0) return [{ key: `credit:${owner}`, usd: credit, spent: 0, code: "block.freeMonth" }];
+    return freeCaps(studentId, owner);
+  }
+  function freeCaps(studentId, owner = ownerOf(studentId), over = 0) {
+    const caps = [];
+    const scope = quotaScope(studentId);
+    const per = freeStudentMonthlyUsd();
+    if (per) caps.push({ key: scope.net ? `net:${scope.net}` : `s:${studentId}`, usd: per, spent: freeSpent(studentId, owner, scope), code: "block.freeMonth" });
+    const pool = freeMonthlyPoolUsd();
+    if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent() + over, code: "block.freePool" });
+    return caps;
+  }
+  // Besedilo zavrnitve: preizkus in bonus → poziv k naročnini (ne »spet jih dobiš«); brezplačni paket z namigom.
+  function aiBlockFor(studentId, code) {
+    const g = subGuarantee(studentId);
+    if (/^block\.freeTail(Topup|Birth)?$/.test(code) && (g?.nopay === "trial" || g?.nopay === "bonus")) code = "block.trialOut";
+    if (code === "block.freeMonth" || code === "block.freePool") return freeBlock(studentId, code);
+    return { error: BLOCK_TEXT[code], code };
+  }
+  // Paket pred testom: poraba nad mejo paketa (brez dela iz kredita), ki jo plača kredit; null brez paketa.
+  function passCreditOver(studentId) {
+    const r = rightsFor(studentId);
+    if (!r.personal || r.personalTier !== "pass") return null;
+    const p = billing?.passes.activeFor(studentId);
+    return p ? billing.passes.spentUsd(p) - passCapUsd(p) : null;
+  }
+  aiUsage.configure({ blockFor: aiBlockFor, creditOverOf: passCreditOver });
+  // Zapis porabe: predpomnilnika (šola, bazena) in knjiga šole – poraba, ki je šla pod mejo šole, ostane v šoli tudi,
+  // ko učenec razred zapusti (pregled #462 H7). Šola, katere meja velja (capsOf), je prva z mejo.
+  function schoolOnLog(studentId, cost) {
+    poolMemo.clear();
+    try {
+      if (studentId != null && cost > 0) {
+        schools.clearCache();
+        const r = rightsFor(studentId);
+        // Ali je šola imela prostor PRED tem zapisom (poraba sedanjih učencev že vsebuje ta strošek).
+        const s = !r.personal && r.school ? r.schools.find((x) => x.ai_month_usd > 0 && (x.ai_spent_usd || 0) - cost < x.ai_month_usd) : null;
+        if (s) schools.recordUse(s.school_id, studentId, cost);
+      }
+    } finally {
+      schools.clearCache();
+    }
+  }
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: schoolOnLog });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
@@ -366,7 +582,10 @@ export function mountAccounts(app, store, opts = {}) {
     return o.show && o.prices && !schools.membership(studentId)?.inSchool;
   };
   // Namig, kako do več vprašanj: ključ i18n (block.hint*) ali null; odjemalec ga doda razlogu (public/app.js serverError).
-  const moreHintCode = (studentId) => (guests.netOf(studentId) ? "block.hintGuest" : upsell(studentId) ? "block.hintParent" : null);
+  // Mlajši od 18: naj starš izbere naročnino; polnoleten (npr. študent) jo izbere sam. Brez znane starosti ponudbe
+  // s ceno ni (ponudbe.js), zato tudi namiga ne.
+  const moreHintCode = (studentId) =>
+    guests.netOf(studentId) ? "block.hintGuest" : upsell(studentId) ? ((ageOfStudent(studentId) ?? 0) >= 18 ? "block.hintAdult" : "block.hintParent") : null;
   // Odgovor 429 za brezplačni paket: { error, code, params?, hint? }; error je slovenska rezerva (razlog + namig).
   function freeBlock(studentId, code, params) {
     const hint = moreHintCode(studentId);
@@ -374,14 +593,35 @@ export function mountAccounts(app, store, opts = {}) {
     return { error: hint ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}) };
   }
 
+  // Poraba brezplačnega profila ta mesec (gost: vse omrežje) in poraba izbrisanih profilov istega računa.
+  function freeSpent(studentId, owner = ownerOf(studentId), scope = quotaScope(studentId)) {
+    return guests.monthUsd(scope.ids, scope.net) + (scope.net ? 0 : aiUsage.orphanSpent(owner));
+  }
+  // Poraba vseh profilov brez plačila (preizkus, koda, bonus) ta mesec, za skupni bazen (meje-ai.js nopayPoolUsd).
+  // Skupna bazena seštejeta porabo vseh profilov (pregled #462 A10: pri tisočih profilih tisoče poizvedb na klic):
+  // vsota se hrani do 30 s ali do naslednjega zapisa porabe (onLog spodaj), zato ostane meja trda.
+  const poolMemo = new Map();
+  const memo = (key, fn) => {
+    const hit = poolMemo.get(key);
+    if (hit && Date.now() - hit.at < 30_000) return hit.v;
+    const v = fn();
+    poolMemo.set(key, { v, at: Date.now() });
+    return v;
+  };
+  function nopayPoolSpent() {
+    return memo("nopay", () => monthUsdByStudent().filter((r) => r.id != null && subGuarantee(r.id)?.nopay).reduce((t, r) => t + r.usd, 0));
+  }
+  function freePoolSpent() {
+    return memo("free", () => {
+      const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
+      return monthUsdByStudent().filter((r) => r.id != null && !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone);
+    });
+  }
+  // Meja velja že, ko ne ostane prostora niti za najcenejši klic (trda meja, server/meje-ai.js).
   function freeBudgetInfo(studentId) {
-    const rows = monthUsdByStudent();
-    const per = freeStudentMonthlyUsd();
-    const scope = quotaScope(studentId);
-    if (per && guests.monthUsd(scope.ids, scope.net) >= per) return freeBlock(studentId, "block.freeMonth");
-    const pool = freeMonthlyPoolUsd();
-    const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
-    if (pool && rows.filter((r) => !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) return freeBlock(studentId, "block.freePool");
+    const need = aiUsage.minCallUsd();
+    const room = (c) => c.usd - c.spent - (aiUsage.inflight.get(c.key) || 0);
+    for (const c of freeCaps(studentId)) if (room(c) < need) return freeBlock(studentId, c.code);
     return null;
   }
   function freeBudgetReason(studentId) {
@@ -667,8 +907,11 @@ export function mountAccounts(app, store, opts = {}) {
     const token = String(req.query.token || "");
     const p = token && db.prepare("SELECT id FROM parents WHERE verify_token_hash = ?").get(sha256(token));
     if (!p) return res.redirect("/?verified=0");
+    // Nekdanji gost: s potrditvijo zapusti kvoto omrežja in dobi 7-dnevni preizkus. Poraba gosta ostane šteta za
+    // omrežje (guest_spent), zapisana, dokler je račun še na omrežju (pred potrditvijo; pregled #462).
+    const before = getParent(p.id);
+    if (before.guest_net && !before.is_guest && !before.email_verified_at) guests.snapshotParent(p.id);
     update(p.id, { email_verified_at: new Date().toISOString(), verify_token_hash: null });
-    // Nekdanji gost: s potrditvijo zapusti kvoto omrežja in dobi 7-dnevni preizkus.
     const full = getParent(p.id);
     if (full.guest_net && !full.is_guest) update(p.id, { guest_net: null, trial_ends_at: full.trial_ends_at || isoIn(TRIAL_DAYS) });
     // Skrbnik (potrjen e-naslov iz EVKLID_ADMIN_EMAILS) prevzame učence iz časa pred računi.
@@ -1470,7 +1713,7 @@ export function mountAccounts(app, store, opts = {}) {
       // Druga zamenjava v istem mesecu: dnevi pred prvo ostanejo pri prvotnem deležu (plans.js upgradeFromUsd).
       const prev = JSON.parse(kv.get(`ai_upgrade_${parentId}`) || "null");
       const now = Date.now();
-      const usd = upgradeFromUsd(prev?.sub === sub.id ? prev : null, fromG.usd || 0, now);
+      const usd = upgradeFromUsd(prev?.sub === sub.id ? prev : null, fromG.usd || 0, now, paidWindow(before, now));
       kv.set(`ai_upgrade_${parentId}`, JSON.stringify({ from: before.sub_plan, usd, at: now, sub: sub.id }));
     }
     update(parentId, {
@@ -1543,6 +1786,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   billing = mountBilling(app, {
+    paidPeriods,
     credits,
     db,
     offersFor,
@@ -1634,6 +1878,9 @@ export function mountAccounts(app, store, opts = {}) {
       }
       case "invoice.paid": {
         const p = parentFor();
+        // Dejansko plačilo obdobja brez DDV in popustov (meja AI, vračilo; pregled #462 A2). Pred invoicePaid, da je
+        // dodatek »Podari« na tem računu še prepoznan.
+        if (p) paidPeriods.record(p.id, obj, { country: p.country, addonCents: podari.addonOf(obj).amount });
         podari.invoicePaid(obj); // stari dodatek »Podari Evklid« pri prvem plačilu naročnine (novih ni)
         // Nagrada za priporočilo šele ob plačilu naročnine (sam dodatek ob začetku preizkusa ne šteje).
         if (p && obj.amount_paid - podari.addonOf(obj).amount > 0) await maybeRewardReferral(p.id);
@@ -1648,6 +1895,13 @@ export function mountAccounts(app, store, opts = {}) {
       }
       // Vračilo ali spor pri paketu pred testom: paket se takoj konča.
       case "charge.refunded": {
+        // Vračilo plačila naročnine (tudi delno, npr. odstop): vrnjeni del ne šteje več v plačilo obdobja, meja AI
+        // se zniža takoj (pregled #462 S1). Naročnino prekliče skrbnik (ali kupec) posebej.
+        {
+          const inv = typeof obj.invoice === "string" ? obj.invoice : obj.invoice?.id;
+          const rp = inv && obj.amount > 0 ? parentByCustomer(obj.customer) : null;
+          if (rp && paidPeriods.refund(rp.id, inv, obj.amount_refunded / obj.amount)) log.info?.("[evklid] vračilo naročnine: meja AI znižana", rp.id);
+        }
         // Vračilo dokupa: kredit se odvzame (porabljeni del ostane porabljen).
         if (obj.amount_refunded > 0 && credits.refund(obj.payment_intent)) break;
         // »Podari«: samostojen nakup se konča tu; dodatek je na plačilu naročnine, zato obdelava teče naprej.
@@ -1792,6 +2046,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { credits, shareWeightFor, ownerOf, freeOver, guaranteeFor, poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 
