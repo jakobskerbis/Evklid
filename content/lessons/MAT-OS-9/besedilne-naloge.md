@@ -254,7 +254,7 @@ Rešitev enačbe še ni nujno rešitev naloge. Število tablet, dni ali ljudi mo
 + $1\,\mathrm{h}$
 - $1{,}5\,\mathrm{h}$
 ~ To je čas vožnje kurirja, $t + 0{,}5$. Vprašanje je, koliko vozi avto.
-> Avto vozi $t$ ur, kurir $t + 0{,}5$ ure. Prevozita enako pot: $60t = 40(t + 0{,}5)$, $20t = 20$, $t = 1\,\mathrm{h}$. Oba sta takrat $60\,\mathrm{km}$ od bolnišnice.
+> Avto vozi $t$ ur, kurir $t + 0{,}5$ ure. Prevozita enako pot: $60t = 40(t + 0{,}5)$; $20t = 20$; $t = 1\,\mathrm{h}$. Oba sta takrat $60\,\mathrm{km}$ od bolnišnice.
 
 :::simboli
 x | neznanka | | | zapiši, kaj pomeni in v kateri enoti

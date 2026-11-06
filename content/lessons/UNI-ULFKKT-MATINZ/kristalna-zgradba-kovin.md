@@ -177,7 +177,7 @@ $e^{-9{,}04} \approx 1{,}19\cdot10^{-4}$, torej približno ena vrzel na $8400$ a
 
 - Kristal je periodično urejena snov; osnovna celica z mrežnim parametrom $a$ z zlaganjem zapolni prostor.
 - BCC: $2$ atoma, KŠ $8$, zapolnjenost $0{,}68$, $a\sqrt3 = 4R$ (Fe-α, Cr, W).
-- FCC: $4$ atomi, KŠ $12$, zapolnjenost $0{,}74$, $a\sqrt2 = 4R$ (Al, Cu, Ni, Fe-γ). HCP: $6$ atomov, KŠ $12$, $0{,}74$ (Mg, Zn, Ti).
+- FCC: $4$ atomi; KŠ $12$; zapolnjenost $0{,}74$; $a\sqrt2 = 4R$ (Al, Cu, Ni, Fe-γ). HCP: $6$ atomov; KŠ $12$; zapolnjenost $0{,}74$ (Mg, Zn, Ti).
 - Teoretična gostota: $\rho = \dfrac{nM}{a^3 N_\mathrm{A}}$.
 - Železo je alotropno: pri $912\,^\circ\mathrm{C}$ preide iz BCC v FCC.
 - Napake: točkaste (vrzel, substitucijski in intersticijski atom), linijske (robna in vijačna dislokacija), ploskovne (kristalne meje), prostorske (pore, vključki).

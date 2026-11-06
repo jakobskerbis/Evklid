@@ -237,7 +237,7 @@ Z roba ravne strehe na višini $12\,\mathrm{m}$ vržemo žogo s hitrostjo $15\,\
 5. Kot pod vodoravnico: $\tan\beta = 17{,}08/12{,}99 \approx 1{,}315$, $\beta \approx 52{,}7^\circ$.
 6. V najvišji točki je $\vec{v}$ vodoraven, $\vec{g}$ pa pravokoten nanj: $a_t = 0$, $a_r = g = 9{,}81\,\mathrm{m/s^2}$.
 7. Iz $a_r = v^2/R$ sledi $R = v_x^2/g = 12{,}99^2/9{,}81\,\mathrm{m} \approx 17{,}2\,\mathrm{m}$.
-8. Odgovor: žoga pade po približno $2{,}51\,\mathrm{s}$, $32{,}5\,\mathrm{m}$ od stavbe, s hitrostjo $21{,}5\,\mathrm{m/s}$ pod kotom približno $53^\circ$ pod vodoravnico; v najvišji točki je ves pospešek radialen, krivinski polmer tira pa okoli $17\,\mathrm{m}$.
+8. Odgovor: žoga po približno $2{,}51\,\mathrm{s}$ pade $32{,}5\,\mathrm{m}$ od stavbe, in sicer s hitrostjo $21{,}5\,\mathrm{m/s}$ pod kotom približno $53^\circ$ pod vodoravnico; v najvišji točki je ves pospešek radialen, krivinski polmer tira pa okoli $17\,\mathrm{m}$.
 
 ### Naloga 2
 

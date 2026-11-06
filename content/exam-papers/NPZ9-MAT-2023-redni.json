@@ -27,7 +27,7 @@
        "text": "**(1)** Skupni imenovalec je lahko tudi zmnožek imenovalcev $12 \\cdot 18 = 216$; na koncu pa moramo krajšati:\n\n$\\frac{5}{12} + \\frac{7}{18} = \\frac{90}{216} + \\frac{84}{216} = \\frac{174}{216} = \\frac{29}{36}$ (števec in imenovalec delimo s $6$).\n\n**(2)** $3\\frac{3}{5} = \\frac{18}{5}$ in $0{,}9 = \\frac{9}{10}$. Deliti z ulomkom pomeni množiti z njegovo obratno vrednostjo:\n\n$\\frac{18}{5} : \\frac{9}{10} = \\frac{18}{5} \\cdot \\frac{10}{9} = \\frac{2 \\cdot 2}{1} = 4$.\n\nPreizkus: $4 \\cdot 0{,}9 = 3{,}6$ ✓.\n\n**(3)** Razčlenimo drugi faktor: $0{,}15 \\cdot 2{,}4 = 0{,}15 \\cdot 2 + 0{,}15 \\cdot 0{,}4 = 0{,}3 + 0{,}06 = 0{,}36$.\n\nOcena: $0{,}15$ je malo več kot desetina, desetina od $2{,}4$ pa je $0{,}24$; rezultat mora biti malo večji od $0{,}24$, a manjši od $2{,}4$ ✓.\n\n**(4)** $2{,}5 = \\frac{5}{2}$, zato je $2{,}5 \\cdot 1{,}8 = \\frac{5 \\cdot 1{,}8}{2} = \\frac{9}{2} = 4{,}5$ in $7 - 4{,}5 = 2{,}5$."
       }
      ],
-     "scoring": "Računi (1), (2) in (3): vsak po 1 t. za pravilen rezultat. Račun (4): 1 t. za pravilen vrstni red z zmnožkom $4{,}5$, 1 t. za rezultat $2{,}5$. Skupaj 5 t.",
+     "scoring": "Računi (1), (2) in (3): vsak po 1 t. za pravilen rezultat. Račun (4): 1 t. za pravilen vrstni red z zmnožkom $4{,}5$; 1 t. za rezultat $2{,}5$. Skupaj 5 t.",
      "mistake": "Pri (1) je napačno sešteti števca in imenovalca posebej ($\\frac{12}{30}$): seštevamo lahko le dele enake velikosti, zato potrebujemo skupni imenovalec. Pri (4) je napačno računati od leve proti desni, $(7 - 2{,}5) \\cdot 1{,}8$, kar da $8{,}1$: brez oklepaja ima množenje prednost. Pri (3) se pogosto izgubi decimalno mesto in nastane $3{,}6$."
     },
     {

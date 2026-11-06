@@ -642,7 +642,7 @@
       },
       {
        "title": "Drugače: pribitek obračunamo posebej",
-       "text": "Ker ima Ninin šopek $16$ cvetov, je pribitek $16 \\cdot 0{,}25 = 4{,}00$ €. Šopek iz $8$ lilij stane $8 \\cdot 4{,}35 + 8 \\cdot 0{,}25 = 34{,}80 + 2{,}00 = 36{,}80$ €.\n\nZa same cvetove je Nina torej plačala $36{,}80 - 4{,}00 = 32{,}80$ €. Sistem:\n$$x + y = 16, \\qquad 2{,}40x + 1{,}60y = 32{,}80$$\n\nPrvo enačbo pomnožimo z $1{,}60$ in jo odštejemo od druge: $2{,}40x - 1{,}60x = 32{,}80 - 25{,}60$, $0{,}80x = 7{,}20$, $x = 9$, $y = 7$."
+       "text": "Ker ima Ninin šopek $16$ cvetov, je pribitek $16 \\cdot 0{,}25 = 4{,}00$ €. Šopek iz $8$ lilij stane $8 \\cdot 4{,}35 + 8 \\cdot 0{,}25 = 34{,}80 + 2{,}00 = 36{,}80$ €.\n\nZa same cvetove je Nina torej plačala $36{,}80 - 4{,}00 = 32{,}80$ €. Sistem:\n$$x + y = 16; \\qquad 2{,}40x + 1{,}60y = 32{,}80$$\n\nPrvo enačbo pomnožimo z $1{,}60$ in jo odštejemo od druge: $2{,}40x - 1{,}60x = 32{,}80 - 25{,}60$; $0{,}80x = 7{,}20$; $x = 9$; $y = 7$."
       },
       {
        "title": "Drugače: z razmislekom (zamenjava cvetov)",

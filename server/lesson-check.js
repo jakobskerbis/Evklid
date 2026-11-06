@@ -5,6 +5,7 @@ import { parseLesson, expandFormulaBlocks } from "./textbook.js";
 import { getTopic } from "./curriculum.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { checkIdentities } from "./lesson-identity.js";
+import { najdiNastevanja } from "./nastevanje.js";
 import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn, SYMBOLS, SUBJECT_TABLES } from "../public/formula-data.js";
 
 const REQUIRED = [
@@ -125,6 +126,8 @@ export function checkLessonSource(src, topicId) {
   const ids = checkIdentities(body);
   for (const m of ids.mismatches) err(`vrstica ${m.line + fmOffset}: enakost ne velja za vse vrednosti: $${m.tex}$ (${m.left} ≠ ${m.right}); če je to enačba ali pogoj, to napiši v isti vrstici (»enačba«, »če je …«)`);
   checkSymbols(body, err, warn);
+  // Naštevanje z decimalno vejico ločimo s podpičjem: »1,5; 2 ali 2,99«, »(1,5; 2)« (j, 6. 11. 2026).
+  for (const h of najdiNastevanja(body)) err(`vrstica ${h.line + fmOffset}: naštevanje z decimalnim številom loči s podpičjem: »${h.after.trim()}« namesto »${h.before.trim()}« (node scripts/nastevanje.js --popravi)`);
   if (/\bPhET\b/.test(body)) err("v besedilu ne omenjaj PhET; napiši »interaktivna simulacija spodaj«");
   if (/\.{3}\s*$/m.test(body.replace(/\$[^$]*\$/g, ""))) warn("vrstica se konča s »...« (nedokončano besedilo?)");
 

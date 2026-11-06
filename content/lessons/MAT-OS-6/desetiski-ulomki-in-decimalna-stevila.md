@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Odpri kuhinjski predal in poišči merilni vrč. Ob črticah so napisi, na primer $0{,}1\,\text{l}$, $0{,}2\,\text{l}$, $0{,}3\,\text{l}$ in tako naprej do $1\,\text{l}$. Nalij vode do tretje črtice.
+Odpri kuhinjski predal in poišči merilni vrč. Ob črticah so napisi, na primer $0{,}1\,\text{l}$; $0{,}2\,\text{l}$; $0{,}3\,\text{l}$ in tako naprej do $1\,\text{l}$. Nalij vode do tretje črtice.
 
 Koliko vode je v vrču? Preštej razdelke: od dna do oznake $1\,\text{l}$ jih je deset, vsi so enako visoki. Voda sega do treh, torej imaš $\dfrac{3}{10}$ litra. Ob črtici pa piše $0{,}3\,\text{l}$. Isto vodo lahko torej zapišeš na dva načina.
 
@@ -106,9 +106,9 @@ Na kosu sira piše $0{,}35\,\text{kg}$, v loncu pa je $2{,}08\,\text{l}$ juhe. Z
 
 ### Primer 3: dovolj masla?
 
-Za pecivo potrebuješ vsaj $0{,}24\,\text{kg}$ masla. V hladilniku so štirje kosi z masami $0{,}3\,\text{kg}$, $0{,}125\,\text{kg}$, $0{,}2\,\text{kg}$ in $0{,}25\,\text{kg}$. Uredi kose od najlažjega do najtežjega. Kateri kosi zadoščajo vsak zase?
+Za pecivo potrebuješ vsaj $0{,}24\,\text{kg}$ masla. V hladilniku so štirje kosi z masami $0{,}3\,\text{kg}$; $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$ in $0{,}25\,\text{kg}$. Uredi kose od najlažjega do najtežjega. Kateri kosi zadoščajo vsak zase?
 
-**Podatki:** potrebno vsaj $0{,}24\,\text{kg}$; kosi $0{,}3\,\text{kg}$, $0{,}125\,\text{kg}$, $0{,}2\,\text{kg}$, $0{,}25\,\text{kg}$
+**Podatki:** potrebno vsaj $0{,}24\,\text{kg}$, kosi ($0{,}3\,\text{kg}$; $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$; $0{,}25\,\text{kg}$)
 **Iščemo:** vrstni red kosov in kose z vsaj $0{,}24\,\text{kg}$
 
 :::formula
@@ -118,11 +118,11 @@ Dopiši ničle do enakega števila decimalnih mest, nato primerjaj po mestih: ce
 **Rešitev:**
 
 1. Največ decimalnih mest (tri) ima $0{,}125$, zato vsem dopišemo ničle do treh mest: $0{,}300$; $0{,}125$; $0{,}200$; $0{,}250$. Potrebna masa je $0{,}240$.
-2. Cela dela so povsod $0$, zato odločajo desetinke: $1$ pri $0{,}125$, $2$ pri $0{,}200$ in $0{,}250$, $3$ pri $0{,}300$.
+2. Cela dela so povsod $0$, zato odločajo desetinke: $1$ pri $0{,}125$; $2$ pri $0{,}200$ in $0{,}250$; $3$ pri $0{,}300$.
 3. Med $0{,}200$ in $0{,}250$ odločijo stotinke. Ker je $0 < 5$, je lažji $0{,}2\,\text{kg}$.
 4. Vrstni red: $0{,}125 < 0{,}2 < 0{,}25 < 0{,}3$.
 5. Primerjamo s $0{,}240$. Kos $0{,}300$ ima več desetink, zadošča. Kos $0{,}250$ ima enako desetink, a več stotink ($5 > 4$), zadošča. Kos $0{,}200$ ima manj stotink ($0 < 4$), kos $0{,}125$ pa manj desetink, zato ne zadoščata.
-6. Odgovor: od najlažjega do najtežjega so kosi $0{,}125\,\text{kg}$, $0{,}2\,\text{kg}$, $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$. Vsak zase zadoščata kosa z $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$.
+6. Odgovor: od najlažjega do najtežjega so kosi $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$; $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$. Vsak zase zadoščata kosa z $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$.
 
 ### Primer 4: zdaj ti
 

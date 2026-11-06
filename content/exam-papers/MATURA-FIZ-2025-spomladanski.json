@@ -42,7 +42,7 @@
      "ways": [
       {
        "title": "Rešitev z razlago",
-       "text": "**Podatki:** $30\\,\\mathrm{m/s}$, $1{,}8\\,\\mathrm{km/min}$, $0{,}029\\,\\mathrm{mm/\\mu s}$, $110\\,\\mathrm{km/h}$.\n**Iščemo:** največjo hitrost – vse pretvorimo v $\\mathrm{m/s}$.\n\n- **A:** $30\\,\\mathrm{m/s}$ je že v osnovni enoti.\n- **B:** $1{,}8\\,\\mathrm{km/min} = \\frac{1800\\,\\mathrm{m}}{60\\,\\mathrm{s}} = 30\\,\\mathrm{m/s}$ – enako kot A, ne več.\n- **C:** $1\\,\\mathrm{mm} = 10^{-3}\\,\\mathrm{m}$ in $1\\,\\mathrm{\\mu s} = 10^{-6}\\,\\mathrm{s}$, zato je $0{,}029\\,\\mathrm{mm/\\mu s} = 0{,}029 \\cdot \\frac{10^{-3}}{10^{-6}}\\,\\mathrm{m/s} = 29\\,\\mathrm{m/s}$ – manj kot A.\n- **D:** $110\\,\\mathrm{km/h} = \\frac{110}{3{,}6}\\,\\mathrm{m/s} \\approx 30{,}6\\,\\mathrm{m/s}$ – to je največ.\n\nPravilen odgovor je **D**. Majhno število pred nenavadno enoto (C) ne pomeni majhne hitrosti: mikrosekunda je zelo kratek čas."
+       "text": "**Podatki:** $30\\,\\mathrm{m/s}$; $1{,}8\\,\\mathrm{km/min}$; $0{,}029\\,\\mathrm{mm/\\mu s}$; $110\\,\\mathrm{km/h}$.\n**Iščemo:** največjo hitrost – vse pretvorimo v $\\mathrm{m/s}$.\n\n- **A:** $30\\,\\mathrm{m/s}$ je že v osnovni enoti.\n- **B:** $1{,}8\\,\\mathrm{km/min} = \\frac{1800\\,\\mathrm{m}}{60\\,\\mathrm{s}} = 30\\,\\mathrm{m/s}$ – enako kot A, ne več.\n- **C:** $1\\,\\mathrm{mm} = 10^{-3}\\,\\mathrm{m}$ in $1\\,\\mathrm{\\mu s} = 10^{-6}\\,\\mathrm{s}$, zato je $0{,}029\\,\\mathrm{mm/\\mu s} = 0{,}029 \\cdot \\frac{10^{-3}}{10^{-6}}\\,\\mathrm{m/s} = 29\\,\\mathrm{m/s}$ – manj kot A.\n- **D:** $110\\,\\mathrm{km/h} = \\frac{110}{3{,}6}\\,\\mathrm{m/s} \\approx 30{,}6\\,\\mathrm{m/s}$ – to je največ.\n\nPravilen odgovor je **D**. Majhno število pred nenavadno enoto (C) ne pomeni majhne hitrosti: mikrosekunda je zelo kratek čas."
       }
      ],
      "mistake": "Pri $\\mathrm{mm/\\mu s}$ se hitro zmotiš v smeri pretvorbe ($10^{3}$ in $10^{6}$). Enoto v imenovalcu (čas) pretvarjamo tako, da se število poveča, ker je $1\\,\\mathrm{\\mu s}$ milijonkrat manj kot $1\\,\\mathrm{s}$."
@@ -214,7 +214,7 @@
      "ways": [
       {
        "title": "Rešitev z razlago",
-       "text": "**Podatki:** $m = 72\\,\\mathrm{kg}$, $S = 2 \\cdot 150\\,\\mathrm{cm^2} = 300\\,\\mathrm{cm^2} = 0{,}03\\,\\mathrm{m^2}$, $g = 9{,}81\\,\\mathrm{m/s^2}$, $1\\,\\mathrm{bar} = 10^{5}\\,\\mathrm{Pa}$.\n**Iščemo:** tlak $p$ v barih.\n\nSila na tla je teža: $F_g = mg = 72\\,\\mathrm{kg} \\cdot 9{,}81\\,\\mathrm{m/s^2} \\approx 706\\,\\mathrm{N}$.\n\nKer je $1\\,\\mathrm{cm^2} = 10^{-4}\\,\\mathrm{m^2}$, je $300\\,\\mathrm{cm^2} = 0{,}03\\,\\mathrm{m^2}$.\n\n$p = \\frac{F_g}{S} \\approx \\frac{706\\,\\mathrm{N}}{0{,}03\\,\\mathrm{m^2}} \\approx 23\\,500\\,\\mathrm{Pa} \\approx 0{,}24\\,\\mathrm{bar}$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če $\\mathrm{cm^2}$ v $\\mathrm{m^2}$ pretvorimo z $10^{-2}$ namesto z $10^{-4}$ (ploščina je stokrat prevelika).\n- **C** je tlak, ko človek stoji na eni nogi; v nalogi stoji na obeh.\n- **D** dobimo, če vzamemo, da je $1\\,\\mathrm{bar} = 1000\\,\\mathrm{Pa}$."
+       "text": "**Podatki:** $m = 72\\,\\mathrm{kg}$; $S = 2 \\cdot 150\\,\\mathrm{cm^2} = 300\\,\\mathrm{cm^2} = 0{,}03\\,\\mathrm{m^2}$; $g = 9{,}81\\,\\mathrm{m/s^2}$; $1\\,\\mathrm{bar} = 10^{5}\\,\\mathrm{Pa}$.\n**Iščemo:** tlak $p$ v barih.\n\nSila na tla je teža: $F_g = mg = 72\\,\\mathrm{kg} \\cdot 9{,}81\\,\\mathrm{m/s^2} \\approx 706\\,\\mathrm{N}$.\n\nKer je $1\\,\\mathrm{cm^2} = 10^{-4}\\,\\mathrm{m^2}$, je $300\\,\\mathrm{cm^2} = 0{,}03\\,\\mathrm{m^2}$.\n\n$p = \\frac{F_g}{S} \\approx \\frac{706\\,\\mathrm{N}}{0{,}03\\,\\mathrm{m^2}} \\approx 23\\,500\\,\\mathrm{Pa} \\approx 0{,}24\\,\\mathrm{bar}$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če $\\mathrm{cm^2}$ v $\\mathrm{m^2}$ pretvorimo z $10^{-2}$ namesto z $10^{-4}$ (ploščina je stokrat prevelika).\n- **C** je tlak, ko človek stoji na eni nogi; v nalogi stoji na obeh.\n- **D** dobimo, če vzamemo, da je $1\\,\\mathrm{bar} = 1000\\,\\mathrm{Pa}$."
       }
      ],
      "mistake": "Pri pretvorbi ploščine se pretvornik dolžine kvadrira: $1\\,\\mathrm{cm} = 10^{-2}\\,\\mathrm{m}$, zato je $1\\,\\mathrm{cm^2} = 10^{-4}\\,\\mathrm{m^2}$."
@@ -942,15 +942,15 @@
      "format": "choice",
      "text": "Slika kaže najnižja energijska stanja vodikovega atoma. Atom je v vzbujenem stanju $n = 3$ in se vrne v osnovno stanje – neposredno ali v več korakih. Fotone katerih energij lahko pri tem izseva?",
      "choices": [
-      "$12{,}1\\,\\mathrm{eV}$, $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
+      "$12{,}1\\,\\mathrm{eV}$; $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
       "samo $12{,}1\\,\\mathrm{eV}$",
       "samo $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
-      "$12{,}1\\,\\mathrm{eV}$, $1{,}9\\,\\mathrm{eV}$, $10{,}2\\,\\mathrm{eV}$ in $1{,}51\\,\\mathrm{eV}$"
+      "$12{,}1\\,\\mathrm{eV}$; $1{,}9\\,\\mathrm{eV}$; $10{,}2\\,\\mathrm{eV}$ in $1{,}51\\,\\mathrm{eV}$"
      ],
      "correct": [
       0
      ],
-     "answer": "A – $12{,}1\\,\\mathrm{eV}$, $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
+     "answer": "A – $12{,}1\\,\\mathrm{eV}$; $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
      "ways": [
       {
        "title": "Rešitev z razlago",
@@ -1130,7 +1130,7 @@
      "id": "g",
      "points": 2,
      "format": "open",
-     "text": "Pri masi $0{,}600\\,\\mathrm{kg}$ je Maja frekvenco izmerila trikrat: $43{,}7\\,\\mathrm{Hz}$, $44{,}0\\,\\mathrm{Hz}$ in $44{,}6\\,\\mathrm{Hz}$. Izračunaj povprečno vrednost in njeno absolutno napako ter zapiši rezultat meritve.",
+     "text": "Pri masi $0{,}600\\,\\mathrm{kg}$ je Maja frekvenco izmerila trikrat: $43{,}7\\,\\mathrm{Hz}$; $44{,}0\\,\\mathrm{Hz}$ in $44{,}6\\,\\mathrm{Hz}$. Izračunaj povprečno vrednost in njeno absolutno napako ter zapiši rezultat meritve.",
      "answer": "$\\bar\\nu = 44{,}1\\,\\mathrm{Hz}$, $\\Delta\\nu = 0{,}5\\,\\mathrm{Hz}$; $\\nu = (44{,}1 \\pm 0{,}5)\\,\\mathrm{Hz}$",
      "ways": [
       {

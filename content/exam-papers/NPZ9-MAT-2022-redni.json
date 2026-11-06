@@ -132,7 +132,7 @@
        "text": "$4{,}6 = 4 + 0{,}6$, zato je\n\n$7{,}5 \\cdot 4{,}6 = 7{,}5 \\cdot 4 + 7{,}5 \\cdot 0{,}6 = 30 + 4{,}5 = 34{,}5$.\n\n$63 - 34{,}5 = 28{,}5$.\n\n**Preizkus z oceno:** $7{,}5 \\cdot 4{,}6$ je malo manj kot $8 \\cdot 5 = 40$ in več kot $7 \\cdot 4 = 28$, zato je rezultat med $23$ in $35$; $28{,}5$ ustreza."
       }
      ],
-     "scoring": "1 t. za zmnožek $34{,}5$, 1 t. za končni rezultat $28{,}5$.",
+     "scoring": "1 t. za zmnožek $34{,}5$; 1 t. za končni rezultat $28{,}5$.",
      "mistake": "Kdor računa od leve proti desni, dobi $(63 - 7{,}5) \\cdot 4{,}6 = 55{,}5 \\cdot 4{,}6 = 255{,}3$. To je napačno, ker množenje opravimo pred odštevanjem."
     }
    ]
@@ -429,7 +429,7 @@
      "ways": [
       {
        "title": "Po korakih",
-       "text": "**Podatki:** tehtnica (posoda s semeni) – odčitamo s slike; posoda $35\\,\\mathrm{dag}$; loj $25\\,\\mathrm{dag}$; proso $0{,}4\\,\\mathrm{kg}$.\n\n**Iščemo:** maso zmesi brez posode v gramih.\n\n**Odčitamo tehtnico.** Med $0$ in $1\\,\\mathrm{kg}$ je $10$ razdelkov, en razdelek je torej $100\\,\\mathrm{g}$. Kazalec stoji na tretjem razdelku za oznako $1$ (to je $1\\,\\mathrm{kg} = 1\\,000\\,\\mathrm{g}$): $1\\,000 + 3 \\cdot 100 = 1\\,300$, torej tehtnica kaže $1\\,300\\,\\mathrm{g}$.\n\n**Pretvorimo v grame:** $35\\,\\mathrm{dag} = 350\\,\\mathrm{g}$, $25\\,\\mathrm{dag} = 250\\,\\mathrm{g}$, $0{,}4\\,\\mathrm{kg} = 400\\,\\mathrm{g}$ ($1\\,\\mathrm{dag} = 10\\,\\mathrm{g}$, $1\\,\\mathrm{kg} = 1\\,000\\,\\mathrm{g}$).\n\n**Semena:** $1\\,300 - 350 = 950$, torej $950\\,\\mathrm{g}$.\n\n**Zmes:** $950 + 250 + 400 = 1\\,600$, torej $1\\,600\\,\\mathrm{g}$."
+       "text": "**Podatki:** tehtnica (posoda s semeni) – odčitamo s slike; posoda $35\\,\\mathrm{dag}$; loj $25\\,\\mathrm{dag}$; proso $0{,}4\\,\\mathrm{kg}$.\n\n**Iščemo:** maso zmesi brez posode v gramih.\n\n**Odčitamo tehtnico.** Med $0$ in $1\\,\\mathrm{kg}$ je $10$ razdelkov, en razdelek je torej $100\\,\\mathrm{g}$. Kazalec stoji na tretjem razdelku za oznako $1$ (to je $1\\,\\mathrm{kg} = 1\\,000\\,\\mathrm{g}$): $1\\,000 + 3 \\cdot 100 = 1\\,300$, torej tehtnica kaže $1\\,300\\,\\mathrm{g}$.\n\n**Pretvorimo v grame:** $35\\,\\mathrm{dag} = 350\\,\\mathrm{g}$; $25\\,\\mathrm{dag} = 250\\,\\mathrm{g}$; $0{,}4\\,\\mathrm{kg} = 400\\,\\mathrm{g}$ ($1\\,\\mathrm{dag} = 10\\,\\mathrm{g}$, $1\\,\\mathrm{kg} = 1\\,000\\,\\mathrm{g}$).\n\n**Semena:** $1\\,300 - 350 = 950$, torej $950\\,\\mathrm{g}$.\n\n**Zmes:** $950 + 250 + 400 = 1\\,600$, torej $1\\,600\\,\\mathrm{g}$."
       },
       {
        "title": "Drugače: najprej vse na tehtnici",
@@ -456,7 +456,7 @@
        "text": "**Ura:** 9.45 je $9 \\cdot 60 + 45 = 585$ minut po polnoči, vožnja traja $2 \\cdot 60 + 35 = 155$ minut. Skupaj $585 + 155 = 740$ minut, $740 = 12 \\cdot 60 + 20$, torej ob 12.20 ✓.\n\nZakaj so drugi zapisi napačni: 11.80 nastane, če seštejemo $45 + 35 = 80$ in pozabimo, da ima ura le $60$ minut (pravilno je $80\\,\\mathrm{min} = 1\\,\\mathrm{h}\\ 20\\,\\mathrm{min}$); 12.80 je ista napaka, le da je ura že povečana; 11.20 nastane, če preneseno uro izpustimo.\n\n**Števec v metrih:** $48\\,736{,}2\\,\\mathrm{km} = 48\\,736\\,200\\,\\mathrm{m}$ in $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126\\,400\\,\\mathrm{m}$. Vsota: $48\\,862\\,600\\,\\mathrm{m} = 48\\,862{,}6\\,\\mathrm{km}$ ✓."
       }
      ],
-     "scoring": "1 t. za obkroženi pravilni zapis B (12.20), 1 t. za pretvorbo $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126{,}4\\,\\mathrm{km}$, 1 t. za stanje števca $48\\,862{,}6\\,\\mathrm{km}$.",
+     "scoring": "1 t. za obkroženi pravilni zapis B (12.20); 1 t. za pretvorbo $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126{,}4\\,\\mathrm{km}$; 1 t. za stanje števca $48\\,862{,}6\\,\\mathrm{km}$.",
      "mistake": "Pri števcu se pogosto pozabi, da je zadnja števka desetinka: kdor prebere $487\\,362\\,\\mathrm{km}$ in prišteje $126{,}4$, dobi nesmiseln rezultat. Tudi $400\\,\\mathrm{m} = 0{,}04\\,\\mathrm{km}$ je napačno: $400$ od $1\\,000$ je $0{,}4$."
     }
    ]
@@ -482,7 +482,7 @@
       }
      ],
      "scoring": "2 t. za vse tri pravilne dolžine; 1 t., če sta pravilni dve.",
-     "mistake": "Kdor opazi samo prvo razliko in vsakič prišteje $0{,}6$, dobi $25{,}8$, $26{,}4$ in $27{,}6$. Takšni podatki se ne ujemajo z dano dolžino $27{,}2$ za številko $43$ – dana vrednost je namig za preizkus."
+     "mistake": "Kdor opazi samo prvo razliko in vsakič prišteje $0{,}6$, dobi $25{,}8$; $26{,}4$ in $27{,}6$. Takšni podatki se ne ujemajo z dano dolžino $27{,}2$ za številko $43$ – dana vrednost je namig za preizkus."
     },
     {
      "id": "b",

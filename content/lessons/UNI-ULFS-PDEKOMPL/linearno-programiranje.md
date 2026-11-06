@@ -75,7 +75,7 @@ Ne. Pečica bi dopustila največ $5$ pic oziroma $10$ pit, moke pa bi porabil na
 
 Za dan na smučišču kupiš kosmiče in jogurt. Porcija kosmičev ima $4\,\mathrm{g}$ beljakovin in $200\,\mathrm{kcal}$ ter stane $0{,}50$ €. Porcija jogurta ima $12\,\mathrm{g}$ beljakovin in $100\,\mathrm{kcal}$ ter stane $1$ €. Potrebuješ vsaj $36\,\mathrm{g}$ beljakovin in vsaj $800\,\mathrm{kcal}$. Koliko česa kupiš, da plačaš najmanj?
 
-**Podatki:** kosmiči: $4\,\mathrm{g}$, $200\,\mathrm{kcal}$, $0{,}50$ €; jogurt: $12\,\mathrm{g}$, $100\,\mathrm{kcal}$, $1$ €; potreba: $\ge 36\,\mathrm{g}$, $\ge 800\,\mathrm{kcal}$
+**Podatki:** kosmiči ($4\,\mathrm{g}$; $200\,\mathrm{kcal}$; $0{,}50$ €), jogurt ($12\,\mathrm{g}$; $100\,\mathrm{kcal}$; $1$ €), potreba ($\ge 36\,\mathrm{g}$; $\ge 800\,\mathrm{kcal}$)
 **Iščemo:** število porcij $x$ (kosmiči), $y$ (jogurt) in najmanjšo ceno $c$
 
 :::formula

@@ -19,7 +19,7 @@ stanje: osnutek
   - napaka: letni časi zaradi razdalje
 - Razdalja določa leto
   - $T^2 = a^3$ v letih in a.e.
-  - Mars: $1{,}52\,\mathrm{a.e.}$, $1{,}87$ leta
+  - Mars: $1{,}52\,\mathrm{a.e.}$; $1{,}87$ leta
   - napaka: dvakrat dlje, dvakrat daljše leto
 - Gravitacija kot centripetalna sila
   - $F_\mathrm{g} = \dfrac{G m M}{r^2}$

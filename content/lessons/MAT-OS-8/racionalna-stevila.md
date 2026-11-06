@@ -11,13 +11,13 @@ Ima prav? Temperature v vremenski napovedi niso le cela števila. Pogosto imajo 
 
 ## Razlaga
 
-**1. Nova množica.** Iz prejšnjih razredov poznaš ulomke in decimalna števila, kot sta $\frac{3}{4}$ in $0{,}75$. Zdaj jim dodamo še nasprotna števila: $-\frac{3}{4}$, $-0{,}75$, $-2{,}8$. **Racionalno število** je vsako število, ki ga lahko zapišemo kot ulomek $\frac{a}{b}$, kjer sta $a$ in $b$ celi števili in $b \neq 0$. Množico racionalnih števil označimo z $\mathbb{Q}$.
+**1. Nova množica.** Iz prejšnjih razredov poznaš ulomke in decimalna števila, kot sta $\frac{3}{4}$ in $0{,}75$. Zdaj jim dodamo še nasprotna števila: $-\frac{3}{4}$; $-0{,}75$; $-2{,}8$. **Racionalno število** je vsako število, ki ga lahko zapišemo kot ulomek $\frac{a}{b}$, kjer sta $a$ in $b$ celi števili in $b \neq 0$. Množico racionalnih števil označimo z $\mathbb{Q}$.
 
 Racionalna so cela števila ($5 = \frac{5}{1}$, $-3 = \frac{-3}{1}$), ulomki, končna decimalna števila ($-0{,}4 = -\frac{2}{5}$) in tudi periodična ($\frac{1}{3} = 0{,}333\ldots$). Minus ulomka lahko stoji pred ulomkom ali v števcu: $-\frac{3}{4} = \frac{-3}{4}$.
 
 *Hiter preizkus:* ali je $-7$ racionalno število? *(Da, $-7 = \frac{-7}{1}$.)*
 
-**2. Na premici.** Racionalna števila zapolnijo prostor med celimi števili. Na številski premici leži $-2{,}5$ točno na sredini med $-3$ in $-2$, $-2{,}8$ pa je bližje $-3$:
+**2. Na premici.** Racionalna števila zapolnijo prostor med celimi števili. Na številski premici leži $-2{,}5$ točno na sredini med $-3$ in $-2$; $-2{,}8$ pa je bližje $-3$:
 
 ```
  -3   -2,8      -2,5          -2
@@ -69,9 +69,9 @@ Najprej množimo: $3 \cdot (-4) = -12$, nato $2 - (-12) = 14$. Če bi najprej od
 
 ### Primer 1 (lažji): odmik gladine od povprečja
 
-Hidrologi merijo, za koliko metrov je gladina reke nad povprečjem (pozitivno) ali pod njim (negativno). V štirih mesecih so zapisali: $-\frac{3}{4}\,\mathrm{m}$, $0{,}5\,\mathrm{m}$, $-0{,}8\,\mathrm{m}$ in $\frac{2}{3}\,\mathrm{m}$. Uredi odmike od najmanjšega do največjega.
+Hidrologi merijo, za koliko metrov je gladina reke nad povprečjem (pozitivno) ali pod njim (negativno). V štirih mesecih so zapisali: $-\frac{3}{4}\,\mathrm{m}$; $0{,}5\,\mathrm{m}$; $-0{,}8\,\mathrm{m}$ in $\frac{2}{3}\,\mathrm{m}$. Uredi odmike od najmanjšega do največjega.
 
-**Podatki:** odmiki $-\frac{3}{4}\,\mathrm{m}$, $0{,}5\,\mathrm{m}$, $-0{,}8\,\mathrm{m}$, $\frac{2}{3}\,\mathrm{m}$
+**Podatki:** odmiki $-\frac{3}{4}\,\mathrm{m}$; $0{,}5\,\mathrm{m}$; $-0{,}8\,\mathrm{m}$; $\frac{2}{3}\,\mathrm{m}$
 **Iščemo:** vrstni red od najmanjšega do največjega
 
 :::formula
@@ -106,7 +106,7 @@ $\frac{a}{c} + \frac{b}{c} = \frac{a + b}{c}$ (najprej skupni imenovalec)
 
 ### Primer 3 (težji): povprečna temperatura
 
-V treh zimskih dneh so ob sedmih zjutraj izmerili $-3{,}5\,^\circ\mathrm{C}$, $1{,}2\,^\circ\mathrm{C}$ in $-2{,}8\,^\circ\mathrm{C}$. Kolikšna je povprečna jutranja temperatura?
+V treh zimskih dneh so ob sedmih zjutraj izmerili $-3{,}5\,^\circ\mathrm{C}$; $1{,}2\,^\circ\mathrm{C}$ in $-2{,}8\,^\circ\mathrm{C}$. Kolikšna je povprečna jutranja temperatura?
 
 **Podatki:** $t_1 = -3{,}5\,^\circ\mathrm{C}$, $t_2 = 1{,}2\,^\circ\mathrm{C}$, $t_3 = -2{,}8\,^\circ\mathrm{C}$
 **Iščemo:** povprečno temperaturo $\bar{t}$

@@ -110,7 +110,7 @@ $n_1\sin\alpha = n_2\sin\beta$, $\sin\alpha_m = n_\mathrm{zrak}/n_\mathrm{voda}$
 
 ### Primer 2
 
-Na optični klopi v praktikumu postavimo predmet, visok $2{,}0\,\mathrm{cm}$, $15\,\mathrm{cm}$ pred zbiralno lečo z goriščno razdaljo $10\,\mathrm{cm}$. Kje nastane slika, kolikšna je povečava in kakšna je slika? Kaj se spremeni, če predmet premaknemo na razdaljo $6{,}0\,\mathrm{cm}$ pred lečo?
+Na optični klopi v praktikumu postavimo $15\,\mathrm{cm}$ pred zbiralno lečo predmet, visok $2{,}0\,\mathrm{cm}$. Leča ima goriščno razdaljo $10\,\mathrm{cm}$. Kje nastane slika, kolikšna je povečava in kakšna je slika? Kaj se spremeni, če predmet premaknemo na razdaljo $6{,}0\,\mathrm{cm}$ pred lečo?
 
 **Podatki:** $y = 2{,}0\,\mathrm{cm}$, $a_1 = 15\,\mathrm{cm}$, $a_2 = 6{,}0\,\mathrm{cm}$, $f = 10\,\mathrm{cm}$ (zbiralna leča)
 **Iščemo:** razdaljo slike $b$, povečavo $M$, velikost slike $y'$ in vrsto slike za obe legi predmeta
