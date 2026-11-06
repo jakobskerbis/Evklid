@@ -60,6 +60,7 @@ import { Schedules, scheduleView, schedulePrompt, syncTestPlan } from "./schedul
 import { mountSchedule } from "./schedule-api.js";
 import { mountScan } from "./scan.js";
 import { appVersion, vendorVersion, staticVersion } from "./razlicica.js";
+import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { mount3d } from "./tri-d.js";
@@ -261,6 +262,8 @@ export function createApp(store, opts = {}) {
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
+  // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov.
+  app.use(entryPage(publicDir));
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([
