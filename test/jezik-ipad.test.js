@@ -51,6 +51,19 @@ test("every page starts its modules through zagon.js, and the listed modules exi
   assert.match(i18n, /export const ready = /);
 });
 
+test("main page asks the browser to fetch all first-load modules at once (Link: modulepreload)", async () => {
+  const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, warn() {}, info() {} } });
+  const server = app.listen(0);
+  try {
+    const res = await fetch(`http://127.0.0.1:${server.address().port}/`);
+    const links = (res.headers.get("link") || "").split(", ");
+    for (const u of ["/zagon.js", "/app.js", "/i18n.js", "/i18n/sl.js", "/dropdown.js", "/appearance.js"]) assert.ok(links.includes(`<${u}>; rel=modulepreload`), u);
+    assert.ok(!links.some((l) => l.includes("/vendor/") || l.includes("/theme.js")), "klasične skripte niso moduli");
+  } finally {
+    server.close();
+  }
+});
+
 // ---------- pravi brskalnik ----------
 const require = createRequire(import.meta.url);
 let pw = null;
