@@ -419,14 +419,19 @@ function kemHtml() {
   const opis = new Map(GROUPS.kemija.keys.filter((k) => k.title).map((k) => [k.ins, k.title]));
   const PLAIN = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "−" };
   const one = (c) => {
-    const d = sl ? opis.get(c) || "" : "";
+    const d = sl ? opis.get(c.trim()) || "" : "";
     if (KEM_CHARGE.test(c)) {
       // naboj: nadpisan ob ◌, da ni videti kot » + « med snovmi
       const n = [...c].map((x) => PLAIN[x]).join("");
       return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup></span>` });
     }
+    if (/^[₀-₉]$/.test(c)) {
+      // indeks: ◌ z indeksom (kot naboj), da se vidi, da je indeks in ne številka
+      const n = String("₀₁₂₃₄₅₆₇₈₉".indexOf(c));
+      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sub>${n}</sub></span>` });
+    }
     const label = c.trim();
-    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${/^[₀-₉]/.test(c) ? "sub" : ""}${c === " + " ? "sym" : ""}`, aria: d && `${label} ${d}`, tip: d });
+    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${c === " + " ? "sym" : ""}`, aria: d && `${label} ${d}`, tip: d });
   };
   const row = (r) => `<div class="tk-row">${r.map(one).join("")}</div>`;
   return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg")}
@@ -528,7 +533,10 @@ function sel(f) {
 function insertText(f, ins, literal = false) {
   if (f.isContentEditable) {
     const at = literal ? -1 : ins.indexOf("@");
-    const text = literal ? ins : ins.replace("@", "");
+    let text = literal ? ins : ins.replace("@", "");
+    const g = getSelection();
+    const prev = g?.anchorNode?.nodeType === 3 ? g.anchorNode.data[g.anchorOffset - 1] : "";
+    if (!literal && /^ \S/.test(text) && (!prev || /\s/.test(prev))) text = text.slice(1); // brez dvojnega presledka
     document.execCommand("insertText", false, text);
     if (at >= 0) for (let i = 0; i < text.length - at; i++) getSelection()?.modify?.("move", "backward", "character");
     return;

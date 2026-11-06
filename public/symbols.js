@@ -86,7 +86,7 @@ function formulaPart(f) {
 }
 
 function chemWord(word) {
-  const m = /^(.*?)([?!.,;:]*)$/.exec(word);
+  const m = /^(.*?)([?!.,;:↑↓]*)$/.exec(word); // končni ↑ (plin) in ↓ (oborina) ostaneta: CO2↑ → CO₂↑
   let [, core, tail] = m;
   // naboj: Fe3+, Na+, Cl-
   let charge = "";

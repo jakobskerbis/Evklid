@@ -168,11 +168,12 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
   const alg = FX_GROUPS.find(([g]) => g === "alg")[2].map(([l]) => l);
   assert.ok(alg.includes("det") && alg.includes("inverse"));
   assert.equal(CAS_SL.inverse, "inverz");
-  assert.ok(KEM_ROWS.flat().includes("(aq)") && KEM_ROWS.flat().includes("₂") && KEM_ROWS.flat().includes("⇌"));
+  const trimmed = KEM_ROWS.flat().map((k) => k.trim());
+  assert.ok(trimmed.includes("(aq)") && trimmed.includes("₂") && trimmed.includes("⇌") && trimmed.includes("→"));
 });
 
 test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer je zavihek (j, 5. 11.)", () => {
-  const kem = KEM_ROWS.flat();
+  const kem = KEM_ROWS.flat().map((k) => k.trim());
   assert.equal(new Set(kem).size, kem.length, "tipka v Kem je dvakrat");
   for (const k of GROUPS.kemija.keys) assert.ok(kem.includes(k.ins), `»${k.label}« je bila samo v čipu Σ, v Kem je ni`);
   for (const [lvl, subj] of [["OS", "MAT"], ["SS", "KEM"], ["FAKS", "KEM"], ["FAKS", "MAT"], ["OS", "FIZ"]]) {
@@ -415,4 +416,22 @@ test("sentenceBack: troklik na ⌫ izbriše poved do konca prejšnje (presledek 
   assert.equal(sentenceBack("", 0), 0);
   const w = "Prva poved. Druga ";
   assert.equal(w.slice(0, sentenceBack(w, w.length)), "Prva poved. ");
+});
+
+test("pregled #460: puščici in » + « se vstavita s presledkoma, brez dvojnega presledka; ↑ ↓ brez; indeksi z ◌", async () => {
+  const rows = KEM_ROWS.flat();
+  for (const k of [" + ", " → ", " ⇌ "]) assert.ok(rows.includes(k), JSON.stringify(k));
+  assert.ok(rows.includes("↑") && rows.includes("↓"), "↑ ↓ brez presledkov");
+  assert.equal(applyTemplate("2H2", 3, 3, " → ").value, "2H2 → ");
+  assert.equal(applyTemplate("2H2 ", 4, 4, " → ").value, "2H2 → ");
+  assert.equal(applyTemplate("", 0, 0, " + ").value, "+ ");
+  assert.equal(applyTemplate("A ", 2, 2, " ⇌ ").value, "A ⇌ ");
+  assert.equal(applyTemplate("CO2", 3, 3, "↑").value, "CO2↑");
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /opis\.get\(c\.trim\(\)\)/, "opis tipke po obrezani vrednosti");
+  assert.match(tk, /tk-chg-b[^`]*◌<\/span><sub>/, "indeks je podpisan ob ◌");
+  const { chemFormat } = await import("../public/symbols.js");
+  assert.equal(chemFormat("2H2 + O2 → 2H2O"), "2H₂ + O₂ → 2H₂O");
+  assert.equal(chemFormat("CO2↑"), "CO₂↑");
+  assert.equal(chemFormat("AgCl↓ in H2↑"), "AgCl↓ in H₂↑");
 });
