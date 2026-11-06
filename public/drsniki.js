@@ -17,7 +17,7 @@ export const DRSNE = [
   ".scan-hist .lr-text b", ".scan-hist .lr-text small", ".scan-pick", ".scan-preview", ".scan-problem-tex",
   ".scan-answer-tex", ".scan-approx", ".scan-step-math", ".scan-why",
   // vrstice gumbov in čipov
-  ".gm-fresh-row", ".seg", ".chip-row", ".zb-track", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state",
+  ".gm-fresh-row", ".seg", ".chip-row", ".zb-track", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state", ".u3-cipi",
 ];
 // Zgornja vrstica zavihkov ima svoje bledenje (app.js, style.css), zato je tu ne označujemo.
 export const IZVZETO = [".topbar .tabs"];
@@ -29,7 +29,7 @@ export const IZVZETO = [".topbar .tabs"];
 // računalniku niso drsne (obrezali bi jim obrobo fokusa). ».katex-display« je drsna le v klepetu, učbeniku,
 // tekmovanju in karticah, kjer ima že »overflow-y: hidden«; drugje bi ji obrezali meje integrala.
 export const NAVPICNE = [".lab-table-wrap", ".tl-vt-wrap", ".lab-bench"];
-export const SKRITE = [".seg", ".chip-row", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state", ".katex-display"];
+export const SKRITE = [".seg", ".chip-row", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state", ".katex-display", ".u3-cipi"];
 export const BREZ_NAVPICNEGA = DRSNE.filter((s) => !NAVPICNE.includes(s) && !SKRITE.includes(s));
 
 const SEL = DRSNE.join(",");
