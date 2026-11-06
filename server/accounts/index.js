@@ -1089,10 +1089,12 @@ export function mountAccounts(app, store, opts = {}) {
     const p = req.parent;
     if (!lockable(p)) return res.json({ ok: true });
     const key = `${p.id}|${req.ip}`;
-    if (accountThrottle.blocked(key)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
+    // Tudi meja za ves račun (acct<id>, kot izvoz in geslo profila): z menjavo omrežja se gesla ne da ugibati brez konca.
+    if (accountThrottle.blocked(key) || acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
     const ok = await verifyPassword(String(req.body?.password || ""), p.password_hash);
     if (!ok) {
       accountThrottle.fail(key);
+      acrossThrottle.fail(`acct${p.id}`);
       audit(db, { req, parentId: p.id, action: "account_unlock", ok: false });
       return res.status(401).json({ error: "Napačno geslo." });
     }

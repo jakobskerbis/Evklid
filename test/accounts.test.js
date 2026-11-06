@@ -1436,3 +1436,19 @@ test("GDPR: izvoz vseh podatkov in izbris računa brez ostankov", async () => {
     }
   });
 });
+
+// Odklep računa z geslom računa: ista meja za ves račun kot izvoz in geslo profila (acct<id>, 30 na uro), da otrok na
+// starševi napravi z menjavo omrežja (mobilni podatki, Wi-Fi) ne ugiba gesla brez konca.
+test("account unlock: wrong passwords from many networks hit the account-wide limit", async () => {
+  await withServer(async ({ client, calls }) => {
+    const a = client();
+    await registerVerified(a, calls, "omejitev@primer.si");
+    assert.ok((await a("/api/students", { method: "POST", body: { name: "Tine", birth_year: YEAR - 10, consent: true, profile_password: "tine1" } })).body.id);
+    await a("/api/account/lock", { method: "POST" });
+    const tryFrom = (ip, password = "narobe12") => a("/api/account/unlock", { method: "POST", body: { password }, headers: { "X-Forwarded-For": ip } });
+    for (let i = 0; i < 30; i++) assert.equal((await tryFrom(`10.0.${Math.floor(i / 3)}.1`)).status, 401);
+    const r = await tryFrom("10.9.9.9");
+    assert.equal(r.status, 429, "po 30 napačnih poskusih z različnih omrežij odklep še ugiba");
+    assert.equal((await tryFrom("10.9.9.10", "geslo1234")).status, 429);
+  }, { accountLock: true });
+});
