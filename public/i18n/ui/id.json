@@ -2355,6 +2355,8 @@
   "mob.appleFailed": "Gagal masuk dengan Apple. Coba lagi.",
   "mob.appleNewTitle": "Akun baru",
   "mob.appleNewText": "Kamu belum punya akun dengan Apple ID ini. Masukkan tanggal lahirmu agar kami bisa membuatnya.",
+  "mob.appleExistingTitle": "Akun sudah ada",
+  "mob.appleExistingText": "Sudah ada akun dengan email ini, tetapi alamatnya belum pernah dikonfirmasi. Kami akan menautkannya ke Apple ID-mu dan mengamankannya: kata sandi lama dan login di perangkat lain tidak berlaku lagi. Masukkan tanggal lahirmu.",
   "mob.birthDate": "Tanggal lahir",
   "mob.birthWhy": "Kami perlu tanggal lahirmu untuk mengetahui apakah akun ini memerlukan persetujuan orang tua.",
   "mob.day": "Hari",

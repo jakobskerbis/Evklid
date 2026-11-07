@@ -246,7 +246,12 @@ export function createApp(store, opts = {}) {
     res.on("close", end);
     next();
   });
-  app.use(express.json({ limit: "10mb" }));
+  // Velika telesa (slike v pogovoru, skeniranje, urnik s fotografije) samo s prijavo. Brez prijave (z računi) pridejo
+  // sem le javne poti (/api/school-orders, /api/auth/<neznano> …): 5 MB JSON bi brez prijave porabil ~0,3 s procesorja
+  // (2 jedri) še pred omejitvijo na IP. Poti računov imajo svoj razčlenjevalnik (100 kb).
+  const bigJson = express.json({ limit: "10mb" });
+  const smallJson = express.json({ limit: "100kb" });
+  app.use((req, res, next) => (accounts && !req.parent ? smallJson : bigJson)(req, res, next));
   // Neuspele klice API zapišemo v dnevnik, da je napako na telefonu mogoče poiskati.
   app.use("/api", (req, res, next) => {
     res.on("finish", () => {

@@ -2389,6 +2389,8 @@
   "mob.appleFailed": "Conectarea cu Apple nu a reușit. Încearcă din nou.",
   "mob.appleNewTitle": "Cont nou",
   "mob.appleNewText": "Nu ai încă un cont cu acest Apple ID. Introdu data nașterii ca să îl creăm.",
+  "mob.appleExistingTitle": "Contul există deja",
+  "mob.appleExistingText": "Există deja un cont cu acest e-mail, dar adresa nu a fost confirmată niciodată. Îl legăm de ID-ul tău Apple și îl securizăm: parola veche și conectările de pe alte dispozitive nu vor mai fi valabile. Introdu data nașterii.",
   "mob.birthDate": "Data nașterii",
   "mob.birthWhy": "Avem nevoie de data nașterii ca să știm dacă pentru cont e nevoie de acordul părinților.",
   "mob.day": "Zi",

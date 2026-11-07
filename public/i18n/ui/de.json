@@ -2369,6 +2369,8 @@
   "mob.appleFailed": "Die Anmeldung mit Apple hat nicht geklappt. Versuch es nochmal.",
   "mob.appleNewTitle": "Neues Konto",
   "mob.appleNewText": "Mit dieser Apple ID hast du noch kein Konto. Gib dein Geburtsdatum ein, damit wir eines erstellen können.",
+  "mob.appleExistingTitle": "Konto existiert bereits",
+  "mob.appleExistingText": "Mit dieser E-Mail-Adresse gibt es bereits ein Konto, die Adresse wurde aber nie bestätigt. Wir verknüpfen es mit deiner Apple-ID und sichern es: Das alte Passwort und Anmeldungen auf anderen Geräten gelten nicht mehr. Gib dein Geburtsdatum ein.",
   "mob.birthDate": "Geburtsdatum",
   "mob.birthWhy": "Wir brauchen dein Geburtsdatum, um zu wissen, ob für das Konto die Zustimmung der Eltern nötig ist.",
   "mob.day": "Tag",

@@ -2370,6 +2370,8 @@
   "mob.appleFailed": "Não foi possível iniciar sessão com a Apple. Tenta outra vez.",
   "mob.appleNewTitle": "Nova conta",
   "mob.appleNewText": "Ainda não tens conta com este Apple ID. Indica a data de nascimento para a criarmos.",
+  "mob.appleExistingTitle": "A conta já existe",
+  "mob.appleExistingText": "Já existe uma conta com este e-mail, mas o endereço nunca foi confirmado. Vamos ligá-la ao teu ID Apple e protegê-la: a palavra-passe antiga e as sessões noutros dispositivos deixam de funcionar. Introduz a tua data de nascimento.",
   "mob.birthDate": "Data de nascimento",
   "mob.birthWhy": "Precisamos da data de nascimento para saber se a conta precisa do consentimento dos pais.",
   "mob.day": "Dia",

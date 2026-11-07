@@ -2389,6 +2389,8 @@
   "mob.appleFailed": "Prijava putem Applea nije uspjela. Pokušaj ponovo.",
   "mob.appleNewTitle": "Novi račun",
   "mob.appleNewText": "S ovim Apple ID-om još nemaš račun. Unesi datum rođenja da ga napravimo.",
+  "mob.appleExistingTitle": "Račun već postoji",
+  "mob.appleExistingText": "Račun s ovom e-adresom već postoji, ali adresa nikad nije potvrđena. Povezat ćemo ga s tvojim Apple ID-om i zaštititi: stara lozinka i prijave na drugim uređajima više neće važiti. Upiši datum rođenja.",
   "mob.birthDate": "Datum rođenja",
   "mob.birthWhy": "Datum rođenja nam treba da znamo da li je za račun potrebna saglasnost roditelja.",
   "mob.day": "Dan",

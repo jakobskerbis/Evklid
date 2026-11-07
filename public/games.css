@@ -328,7 +328,7 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 }
 /* Oznaka »Novo« (tedenske posodobitve; isNew/isNewDate v public/avatar.js). Tudi za nove vrste iger. */
 .gm-item, .zb-card, .gm-fresh-item { position: relative; }
-.gm-new { position: absolute; top: -8px; left: -8px; z-index: 1; padding: 1px 7px; border-radius: 99px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em; color: #fff; background: #16a34a; border: 2px solid var(--surface, #fff); pointer-events: none; }
+.gm-new { position: absolute; top: -8px; left: -8px; z-index: 1; padding: 1px 7px; border-radius: 99px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em; color: #fff; background: #15803d; border: 2px solid var(--surface, #fff); pointer-events: none; } /* #15803d: bel napis 5,0 : 1 (AA); #16a34a je bil 3,3 : 1 */
 .gm-new-dot { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; background: #16a34a; vertical-align: middle; }
 /* nova vrsta igre: ploščica ima overflow: hidden, zato oznaka znotraj, desno od ikone vrste igre */
 .gm-tile > .gm-new { top: 10px; left: auto; inset-inline-start: 46px; }
