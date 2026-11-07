@@ -675,6 +675,9 @@ def _vencne_cevi(vencne, bvh_povrsina, tel):
         me = r[1]
         nov = zbirka.mesh(r[0])
         me.clear_geometry()
+        for k in ("uvLastni", "usmerjeno"):  # nova cev: brez lastnega UV (Smart UV v peki), normale po prostornini
+            if k in me:
+                del me[k]
         me.from_pydata([tuple(v.co) for v in nov.vertices], [], [tuple(p.vertices) for p in nov.polygons]); me.update()
         for p_ in me.polygons:
             p_.use_smooth = True

@@ -312,7 +312,8 @@ def uv_atlas(objekti, tc, px):
     (MikkTSpace tangente: izvoz in peka uporabita enake)."""
     t0 = time.time()
     # cevi z lastnim valjastim UV (srce_zile: »uvLastni«) ne gredo skozi Smart UV (šiv čez žilo)
-    brez = [o for o in objekti if not o.data.get("uvLastni")] or objekti
+    # (mreža z oznako, a brez plasti UV – npr. na novo zgrajena cev – gre skozi Smart UV; peka srca n11 je padla)
+    brez = [o for o in objekti if not o.data.get("uvLastni") or not o.data.uv_layers] or objekti
     _izberi(brez, brez[0])
     bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
     bpy.ops.uv.smart_project(angle_limit=math.radians(tc.get("uvKot", 66)), island_margin=0.0, area_weight=0.0, scale_to_bounds=False)
@@ -337,7 +338,10 @@ def uv_atlas(objekti, tc, px):
 def _uv_ploscina(objekti):
     t = 0.0
     for o in objekti:
-        me = o.data; uv = np.empty(len(me.loops) * 2); me.uv_layers.active.data.foreach_get("uv", uv); uv = uv.reshape(-1, 2)
+        me = o.data
+        if me.uv_layers.active is None or not len(me.polygons):
+            continue
+        uv = np.empty(len(me.loops) * 2); me.uv_layers.active.data.foreach_get("uv", uv); uv = uv.reshape(-1, 2)
         li = np.array([p.loop_indices for p in me.polygons if p.loop_total == 3]).reshape(-1, 3)
         a, b, c = uv[li[:, 0]], uv[li[:, 1]], uv[li[:, 2]]
         t += float(np.abs((b - a)[:, 0] * (c - a)[:, 1] - (b - a)[:, 1] * (c - a)[:, 0]).sum() / 2)
@@ -354,6 +358,8 @@ def _razrezi_dolge(objekti, polnost, dolzina):
     n = 0
     for o in objekti:
         bm = bmesh.new(); bm.from_mesh(o.data); lay = bm.loops.layers.uv.active
+        if lay is None:
+            bm.free(); continue
         for otok in bmesh_utils.bmesh_linked_uv_islands(bm, lay):
             P = np.array([tuple(l[lay].uv) for f in otok for l in f.loops])
             c = P.mean(0); os_ = np.linalg.svd(P - c, full_matrices=False)[2][0]
