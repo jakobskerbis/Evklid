@@ -10,6 +10,11 @@ export const PILOT_DO_DEFAULT = "2026-12-15";
 // Največ profilov na računu člana pilota, dokler pilot traja (j 2026-11-06 18:3x). Po koncu pilota obstoječi profili
 // ostanejo (nič se ne izbriše), novih pa ni več kot po paketu.
 export const PILOT_PROFILES = 4;
+// ODLOČITEV j (pregled #477 A3-2, odprto do j): ali se ob začetku meseca zaklene tudi oblika meje (en profil ali
+// Družina). true (privzeto, varneje): oblika ob prvem pogledu v mesecu velja ves mesec – nov (tudi prazen) profil
+// sredi meseca meje ne dvigne na Družino; profili si delijo zaklenjeno mejo. false: oblika sproti po številu profilov
+// (drugi profil sredi meseca takoj da mejo Družine).
+export const PILOT_LOCK_PROFILES = true;
 
 // Seznam e-naslovov iz okolja (EVKLID_ADMIN_EMAILS, EVKLID_PILOT_EMAILS): ločila vejica, podpičje ali presledek,
 // male črke. Edini razčlenjevalnik za oba seznama (pregled #477 B3: skrbnik in »brez meje« se morata ujemati).
@@ -68,7 +73,7 @@ export function privilegedEmail(email, env = process.env) {
 // Ali je račun (vrstica parents) član pilota ob času now.
 export function isPilotParent(p, now = Date.now(), env = process.env) {
   const email = verifiedEmail(p);
-  return !!email && now < pilotEndMs(env) && list(env.EVKLID_PILOT_EMAILS).includes(email);
+  return !!email && now < pilotEndMs(env, now) && list(env.EVKLID_PILOT_EMAILS).includes(email);
 }
 
 // Ali je račun lastnik (skrbnik po EVKLID_ADMIN_EMAILS s potrjenim e-naslovom). Zastavica is_admin v bazi sama

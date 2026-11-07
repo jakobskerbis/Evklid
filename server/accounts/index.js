@@ -13,7 +13,7 @@ import { unseal, auditSecret } from "../crypto-polje.js";
 import { createHmac } from "node:crypto";
 import { exportOtherTables } from "../zasebnost.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
-import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES } from "./pilot-meja.js";
+import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
@@ -207,18 +207,32 @@ export function mountAccounts(app, store, opts = {}) {
   // Zapisi preteklih mesecev se brišejo ob zagonu in v opravilu na 30 min (purgePilotKv), po koncu pilota vsi.
   const monthKey = () => new Date().toISOString().slice(0, 7);
   const levelKeyPrefix = (parentId) => `pilot_stopnja_p${parentId}_`;
-  // Zaklenjena stopnja pilotnega RAČUNA v tem mesecu (pregled #477 B2/C1): najvišja stopnja profilov računa ob prvem
-  // pogledu v mesecu. Menjava stopnje, izbris profila in nov profil višje stopnje sredi meseca meje in stopenj ne
-  // dvignejo (profil dobi največ to stopnjo); naslednji mesec velja nova. Potrdil j 2026-11-06 19:5x.
-  function pilotLevel(parentId) {
+  // Zaklep pilotnega RAČUNA v tem mesecu (pregled #477 B2/C1, potrdil j 2026-11-06 19:5x): { level, family }.
+  // level = najvišja stopnja profilov ob prvem pogledu v mesecu; family = ali je imel račun takrat več profilov
+  // (uporabi se samo pri PILOT_LOCK_PROFILES, A3-2). Menjava stopnje, izbris profila in nov profil višje stopnje sredi
+  // meseca meje in stopenj ne dvignejo (profil dobi največ to stopnjo); naslednji mesec velja nova. Nov račun z istim
+  // naslovom v istem mesecu podeduje zaklep izbrisanega računa (zapis pilot_prej_*, pregled #477 A3-1).
+  const parseLock = (v) => {
+    if (!v) return null;
+    try {
+      const o = JSON.parse(v);
+      if (o && typeof o === "object" && STOPNJE.includes(o.level)) return { level: o.level, family: !!o.family };
+    } catch {}
+    return STOPNJE.includes(v) ? { level: v, family: false } : null; // stari zapis: samo stopnja
+  };
+  function pilotLock(parentId) {
     const key = `${levelKeyPrefix(parentId)}${monthKey()}`;
-    const saved = kv.get(key);
+    const saved = parseLock(kv.get(key));
     if (saved) return saved;
-    const levels = childIds(parentId).map((id) => stopnja(store.getStudent(id)?.settings));
-    const lvl = levels.reduce((top, l) => (rang(l) > rang(top) ? l : top), levels[0] || "OS");
-    db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(key, lvl);
-    return kv.get(key) || lvl;
+    const ids = childIds(parentId);
+    const levels = ids.map((id) => stopnja(store.getStudent(id)?.settings));
+    const top = levels.reduce((t, l) => (rang(l) > rang(t) ? l : t), levels[0] || "OS");
+    const prior = pilotPrior(getParent(parentId)); // izbrisan račun z istim naslovom ta mesec
+    const lock = prior?.level ? { level: prior.level, family: !!prior.family } : { level: top, family: ids.length > 1 };
+    db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(key, JSON.stringify(lock));
+    return parseLock(kv.get(key)) || lock;
   }
+  const pilotLevel = (parentId) => pilotLock(parentId).level;
   // Ob izbrisu računa (pregled #477 A2): ponovno uporabljen id računa ne podeduje zaklenjene stopnje.
   const clearPilotLevels = (parentId) => db.prepare("DELETE FROM kv WHERE substr(key, 1, length(?)) = ?").run(levelKeyPrefix(parentId), levelKeyPrefix(parentId));
   // Pilot po e-naslovu (pregled #477 B1): izbris računa in nov račun z istim naslovom meje ne ponastavita. Ob izbrisu
@@ -229,17 +243,34 @@ export function mountAccounts(app, store, opts = {}) {
   const pilotSecret = auditSecret(db);
   const pilotKey = (email, month = monthKey()) =>
     `pilot_prej_${createHmac("sha256", pilotSecret).update(`pilot:${String(email || "").trim().toLowerCase()}`).digest("hex")}_${month}`;
+  // Zapis izbrisanih pilotnih računov istega naslova v tem mesecu: { usd, level, family } (stari zapis: samo znesek).
+  function pilotPrior(p) {
+    const v = p?.email ? kv.get(pilotKey(p.email)) : null;
+    if (!v) return null;
+    try {
+      const o = JSON.parse(v);
+      if (o && typeof o === "object") return { usd: Number(o.usd) || 0, level: STOPNJE.includes(o.level) ? o.level : null, family: !!o.family };
+      return { usd: Number(o) || 0, level: null, family: false };
+    } catch {
+      return null;
+    }
+  }
   function pilotPriorSpent(studentId) {
     const owner = ownerOf(studentId);
     const p = owner ? getParent(owner) : null;
     if (!p || !isPilotParent(p) || rightsFor(studentId).personalTier !== "pilot") return 0;
-    return Number(kv.get(pilotKey(p.email))) || 0;
+    return pilotPrior(p)?.usd || 0;
   }
   function recordPilotDeletion(p) {
     if (!isPilotParent(p)) return;
     const since = db.prepare("SELECT datetime('now','start of month') AS d").get().d;
     const usd = db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND created_at >= ?").get(p.id, since).s;
-    if (usd > 0) kv.set(pilotKey(p.email), String((Number(kv.get(pilotKey(p.email))) || 0) + usd));
+    const lock = parseLock(kv.get(`${levelKeyPrefix(p.id)}${monthKey()}`));
+    if (!(usd > 0) && !lock) return;
+    const prev = pilotPrior(p);
+    // Zaklep: prvi v mesecu velja (prejšnji izbrisani račun ima prednost, ker ga je novi račun že podedoval).
+    const keep = prev?.level ? prev : lock || prev || {};
+    kv.set(pilotKey(p.email), JSON.stringify({ usd: (prev?.usd || 0) + usd, level: keep.level || null, family: !!keep.family }));
   }
   // Brisanje zapisov pilota: preteklih mesecev vedno, po koncu pilota vseh.
   function purgePilotKv(now = Date.now()) {
@@ -342,7 +373,16 @@ export function mountAccounts(app, store, opts = {}) {
     // ustrezne Družine s skupnim deležem (familyPlanFor po zaklenjeni stopnji računa, planGuarantee, pool), tako kot
     // plačujoča družina. Lastnik je brez meje (aiUnlimited).
     if (r.personalTier === "pilot") {
-      if (childIds(owner).length < 2) return levelGuarantee(r.useLevel);
+      const n = childIds(owner).length;
+      // A3-2 (PILOT_LOCK_PROFILES): oblika meje iz zaklepa ob začetku meseca, sicer sproti po številu profilov.
+      const family = PILOT_LOCK_PROFILES ? pilotLock(owner).family : n > 1;
+      if (!family) {
+        if (n < 2) return levelGuarantee(r.useLevel);
+        // Zaklenjen en profil, zdaj jih je več: delijo si mejo enega paketa zaklenjene stopnje (ne vsak svoje), z enim
+        // brezplačnim repom (total), kot en profil.
+        const one = levelGuarantee(r.openLevel);
+        return { ...one, pool: true, total: one.usd + freeStudentMonthlyUsd(), profiles: 1 };
+      }
       const fam = familyPlanFor(r.openLevel === "FAKS", "month");
       return fam ? { ...planGuarantee(fam), pool: true } : levelGuarantee(r.useLevel);
     }
