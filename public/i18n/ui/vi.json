@@ -2355,6 +2355,8 @@
   "mob.appleFailed": "Đăng nhập bằng Apple không thành công. Hãy thử lại.",
   "mob.appleNewTitle": "Tài khoản mới",
   "mob.appleNewText": "Bạn chưa có tài khoản với Apple ID này. Nhập ngày sinh để chúng tôi tạo tài khoản.",
+  "mob.appleExistingTitle": "Tài khoản đã tồn tại",
+  "mob.appleExistingText": "Đã có một tài khoản dùng email này, nhưng địa chỉ chưa bao giờ được xác nhận. Chúng tôi sẽ liên kết nó với Apple ID của bạn và bảo vệ nó: mật khẩu cũ và các phiên đăng nhập trên thiết bị khác sẽ không còn hiệu lực. Hãy nhập ngày sinh của bạn.",
   "mob.birthDate": "Ngày sinh",
   "mob.birthWhy": "Chúng tôi cần ngày sinh để biết tài khoản có cần sự đồng ý của phụ huynh hay không.",
   "mob.day": "Ngày",

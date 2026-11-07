@@ -2409,6 +2409,8 @@
   "mob.appleFailed": "Logowanie przez Apple nie powiodło się. Spróbuj ponownie.",
   "mob.appleNewTitle": "Nowe konto",
   "mob.appleNewText": "Z tym Apple ID nie masz jeszcze konta. Wpisz datę urodzenia, żebyśmy mogli je utworzyć.",
+  "mob.appleExistingTitle": "Konto już istnieje",
+  "mob.appleExistingText": "Konto z tym adresem e-mail już istnieje, ale adres nigdy nie został potwierdzony. Połączymy je z Twoim Apple ID i zabezpieczymy: stare hasło i logowania na innych urządzeniach przestaną działać. Wpisz datę urodzenia.",
   "mob.birthDate": "Data urodzenia",
   "mob.birthWhy": "Data urodzenia jest nam potrzebna, żeby wiedzieć, czy konto wymaga zgody rodziców.",
   "mob.day": "Dzień",

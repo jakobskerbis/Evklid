@@ -75,9 +75,9 @@ export function verifyEmail(url) {
     subject: "Potrdite e-naslov za Evklid",
     html: layout(
       "Potrdite svoj e-naslov",
-      `<p>Pozdravljeni! S klikom na gumb potrdite svoj e-naslov in izjavite, da ste zakoniti zastopnik otroka, ki bo uporabljal Evklid.</p>${button(url, "Potrdite e-naslov")}<p style="font-size:13px;color:#5f6779">Če se niste registrirali, to sporočilo prezrite.</p>`,
+      `<p>Pozdravljeni! S klikom na gumb potrdite svoj e-naslov in izjavite, da ste zakoniti zastopnik otroka, ki bo uporabljal Evklid.</p>${button(url, "Potrdite e-naslov")}<p style="font-size:13px;color:#5f6779">Povezava velja 7 dni. Če se niste registrirali, to sporočilo prezrite.</p>`,
     ),
-    text: `Potrdite e-naslov za Evklid: ${url}`,
+    text: `Potrdite e-naslov za Evklid: ${url}\nPovezava velja 7 dni.`,
   };
 }
 
@@ -100,6 +100,18 @@ export function resetEmail(url) {
     subject: "Novo geslo za Evklid",
     html: layout("Nastavite novo geslo", `<p>Za novo geslo kliknite spodnji gumb. Povezava velja 1 uro.</p>${button(url, "Nastavite novo geslo")}<p style="font-size:13px;color:#5f6779">Če niste zahtevali novega gesla, sporočilo prezrite.</p>`),
     text: `Novo geslo za Evklid (velja 1 uro): ${url}`,
+  };
+}
+
+// Na račun je bila dodana prijava z Apple (server/mobile/apple-signin.js): vse druge naprave so odjavljene.
+export function appleLinkedEmail() {
+  return {
+    subject: "Prijava z Apple za Evklid",
+    html: layout(
+      "Dodana je prijava z Apple",
+      "<p>Na vaš račun Evklid je bila pravkar dodana prijava z Apple.</p><p>Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo: s tem odstranimo prijavo z Apple in odjavimo vse naprave.</p>",
+    ),
+    text: "Na vaš račun Evklid je bila pravkar dodana prijava z Apple. Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo: s tem odstranimo prijavo z Apple in odjavimo vse naprave.",
   };
 }
 

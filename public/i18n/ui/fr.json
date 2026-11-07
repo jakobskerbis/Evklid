@@ -2370,6 +2370,8 @@
   "mob.appleFailed": "La connexion avec Apple a échoué. Réessaie.",
   "mob.appleNewTitle": "Nouveau compte",
   "mob.appleNewText": "Tu n’as pas encore de compte avec cet Apple ID. Indique ta date de naissance pour que nous le créions.",
+  "mob.appleExistingTitle": "Le compte existe déjà",
+  "mob.appleExistingText": "Un compte avec cette adresse e-mail existe déjà, mais l'adresse n'a jamais été confirmée. Nous le relions à ton identifiant Apple et le sécurisons : l'ancien mot de passe et les connexions sur d'autres appareils ne fonctionneront plus. Saisis ta date de naissance.",
   "mob.birthDate": "Date de naissance",
   "mob.birthWhy": "Nous avons besoin de ta date de naissance pour savoir si le compte nécessite l’accord des parents.",
   "mob.day": "Jour",

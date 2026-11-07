@@ -2369,6 +2369,8 @@
   "mob.appleFailed": "Kuingia kwa Apple hakukufaulu. Jaribu tena.",
   "mob.appleNewTitle": "Akaunti mpya",
   "mob.appleNewText": "Bado huna akaunti kwa Apple ID hii. Andika tarehe yako ya kuzaliwa ili tuifungue.",
+  "mob.appleExistingTitle": "Akaunti tayari ipo",
+  "mob.appleExistingText": "Tayari kuna akaunti yenye barua pepe hii, lakini anwani haijawahi kuthibitishwa. Tutaiunganisha na Apple ID yako na kuilinda: nenosiri la zamani na kuingia kwenye vifaa vingine havitafanya kazi tena. Weka tarehe yako ya kuzaliwa.",
   "mob.birthDate": "Tarehe ya kuzaliwa",
   "mob.birthWhy": "Tunahitaji tarehe ya kuzaliwa ili kujua kama akaunti inahitaji idhini ya wazazi.",
   "mob.day": "Siku",

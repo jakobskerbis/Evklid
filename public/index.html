@@ -227,7 +227,7 @@
             <i data-icon="camera"></i><input id="image-input" type="file" accept="image/*" capture="environment" hidden>
           </label>
           <button type="button" id="sym-btn" class="icon-btn" title="Simboli: √, π, ∫, H₂O …" aria-label="Simboli" aria-pressed="false" data-i18n-title="chat.symbolsTitle" data-i18n-aria="chat.symbols"><i data-icon="sigma"></i></button>
-          <textarea id="input" rows="1" placeholder="Napiši nalogo ali vprašanje …" data-i18n-ph="chat.placeholder"></textarea>
+          <textarea id="input" rows="1" placeholder="Napiši nalogo ali vprašanje …" aria-label="Napiši nalogo ali vprašanje …" data-i18n-ph="chat.placeholder" data-i18n-aria="chat.placeholder"></textarea>
           <button type="button" id="mic-btn" class="icon-btn mic-btn" title="Povej vprašanje" aria-label="Povej vprašanje" aria-pressed="false" data-i18n-title="chat.mic" data-i18n-aria="chat.mic"><i data-icon="mic"></i></button>
           <button id="send" class="primary send" type="submit" aria-label="Pošlji" data-i18n-aria="chat.send"><i data-icon="send"></i><span data-i18n="chat.send">Pošlji</span></button>
         </div>
@@ -372,7 +372,7 @@
       <h2 data-i18n="set.newStudent">Dodaj profil</h2>
       <p class="muted" data-i18n="set.newStudentText">Nov profil za drugega učenca: vsak ima svojo učno pot, napredek in pogovore.</p>
       <form id="new-student-form" class="inline">
-        <input name="name" maxlength="40" placeholder="Ime" required data-i18n-ph="set.namePh">
+        <input name="name" maxlength="40" placeholder="Ime" aria-label="Ime" required data-i18n-ph="set.namePh" data-i18n-aria="set.name">
         <button type="submit" data-i18n="common.add">Dodaj</button>
       </form>
     </div>

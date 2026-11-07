@@ -2355,6 +2355,8 @@
   "mob.appleFailed": "Apple でログインできませんでした。もう一度お試しください。",
   "mob.appleNewTitle": "新しいアカウント",
   "mob.appleNewText": "この Apple ID のアカウントはまだありません。アカウントを作成するため、生年月日を入力してください。",
+  "mob.appleExistingTitle": "アカウントはすでにあります",
+  "mob.appleExistingText": "このメールアドレスのアカウントはすでにありますが、アドレスは一度も確認されていません。Apple ID と連携して保護します。古いパスワードと他の端末でのログインは使えなくなります。生年月日を入力してください。",
   "mob.birthDate": "生年月日",
   "mob.birthWhy": "アカウントに保護者の同意が必要かどうかを確認するため、生年月日が必要です。",
   "mob.day": "日",

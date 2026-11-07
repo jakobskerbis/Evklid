@@ -2355,6 +2355,8 @@
   "mob.appleFailed": "Apple로 로그인하지 못했어요. 다시 시도하세요.",
   "mob.appleNewTitle": "새 계정",
   "mob.appleNewText": "이 Apple ID로 된 계정이 아직 없어요. 계정을 만들 수 있도록 생년월일을 입력하세요.",
+  "mob.appleExistingTitle": "계정이 이미 있습니다",
+  "mob.appleExistingText": "이 이메일로 된 계정이 이미 있지만 주소가 한 번도 확인되지 않았습니다. Apple ID와 연결해 보호합니다. 이전 비밀번호와 다른 기기의 로그인은 더 이상 작동하지 않습니다. 생년월일을 입력하세요.",
   "mob.birthDate": "생년월일",
   "mob.birthWhy": "계정에 보호자 동의가 필요한지 알기 위해 생년월일이 필요해요.",
   "mob.day": "일",

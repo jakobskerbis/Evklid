@@ -2369,6 +2369,8 @@
   "mob.appleFailed": "Signing in with Apple didn't work. Try again.",
   "mob.appleNewTitle": "New account",
   "mob.appleNewText": "You don't have an account with this Apple ID yet. Enter your date of birth so we can create one.",
+  "mob.appleExistingTitle": "Account already exists",
+  "mob.appleExistingText": "An account with this email already exists, but the email was never confirmed. We'll link it to your Apple ID and secure it: the old password and sign-ins on other devices will stop working. Enter your date of birth.",
   "mob.birthDate": "Date of birth",
   "mob.birthWhy": "We need your date of birth to know whether the account needs parental consent.",
   "mob.day": "Day",

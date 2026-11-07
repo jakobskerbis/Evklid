@@ -2369,6 +2369,8 @@
   "mob.appleFailed": "Apple ile giriş yapılamadı. Tekrar dene.",
   "mob.appleNewTitle": "Yeni hesap",
   "mob.appleNewText": "Bu Apple ID ile henüz hesabın yok. Hesabını oluşturmamız için doğum tarihini gir.",
+  "mob.appleExistingTitle": "Hesap zaten var",
+  "mob.appleExistingText": "Bu e-posta ile bir hesap zaten var, ancak adres hiç onaylanmadı. Hesabı Apple Kimliğine bağlayıp güvenceye alacağız: eski şifre ve diğer cihazlardaki oturumlar artık geçerli olmayacak. Doğum tarihini gir.",
   "mob.birthDate": "Doğum tarihi",
   "mob.birthWhy": "Hesap için ebeveyn onayı gerekip gerekmediğini bilmek için doğum tarihine ihtiyacımız var.",
   "mob.day": "Gün",

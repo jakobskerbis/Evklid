@@ -2355,6 +2355,8 @@
   "mob.appleFailed": "通过 Apple 登录失败，请再试一次。",
   "mob.appleNewTitle": "新账户",
   "mob.appleNewText": "你还没有使用此 Apple ID 的账户。请输入出生日期，我们来为你创建账户。",
+  "mob.appleExistingTitle": "账户已存在",
+  "mob.appleExistingText": "已有使用此邮箱的账户，但该地址从未确认。我们会将其关联到你的 Apple ID 并加以保护：旧密码和其他设备上的登录将失效。请输入你的出生日期。",
   "mob.birthDate": "出生日期",
   "mob.birthWhy": "我们需要出生日期来判断这个账户是否需要家长同意。",
   "mob.day": "日",

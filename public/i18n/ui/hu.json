@@ -2369,6 +2369,8 @@
   "mob.appleFailed": "Az Apple-bejelentkezés nem sikerült. Próbáld újra.",
   "mob.appleNewTitle": "Új fiók",
   "mob.appleNewText": "Ezzel az Apple ID-val még nincs fiókod. Add meg a születési dátumodat, hogy létrehozhassuk.",
+  "mob.appleExistingTitle": "A fiók már létezik",
+  "mob.appleExistingText": "Ezzel az e-mail-címmel már van fiók, de a címet soha nem erősítették meg. Összekapcsoljuk az Apple ID-ddal és biztonságossá tesszük: a régi jelszó és a más eszközökön lévő bejelentkezések megszűnnek. Add meg a születési dátumodat.",
   "mob.birthDate": "Születési dátum",
   "mob.birthWhy": "A születési dátumodra azért van szükség, hogy tudjuk, kell-e a fiókhoz szülői hozzájárulás.",
   "mob.day": "Nap",
