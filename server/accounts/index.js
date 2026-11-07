@@ -41,6 +41,7 @@ import { mountGuarantee, purgeOldGuarantees } from "../placila/garancija.js";
 import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
 import { setSource } from "../rast.js";
+import { parentFromMeta, unmatchedRecorder } from "./ponoven-id.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -1796,7 +1797,7 @@ export function mountAccounts(app, store, opts = {}) {
 
   async function ensureCustomer(p) {
     if (p.stripe_customer_id) return p.stripe_customer_id;
-    const c = await stripe.request("POST", "/customers", { email: p.email, name: p.name || undefined, metadata: { parent_id: p.id } });
+    const c = await stripe.request("POST", "/customers", { email: p.email, name: p.name || undefined, metadata: { parent_id: p.id, parent_uid: p.uid || undefined } });
     update(p.id, { stripe_customer_id: c.id });
     return c.id;
   }
@@ -1828,7 +1829,7 @@ export function mountAccounts(app, store, opts = {}) {
         Date.now() + 729 * 86400000,
         Math.max(Date.parse(p.trial_ends_at || 0) || 0, Date.parse(p.promo_until || 0) || 0, giftCarries ? Date.parse(p.gift_until || 0) || 0 : 0),
       );
-      const subscription_data = { metadata: { parent_id: p.id } };
+      const subscription_data = { metadata: { parent_id: p.id, parent_uid: p.uid || undefined } };
       if (trialEnd - Date.now() > 49 * 3600000) subscription_data.trial_end = Math.floor(trialEnd / 1000);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "subscription",
@@ -1841,7 +1842,7 @@ export function mountAccounts(app, store, opts = {}) {
         // Šolska cena je že znižana: brez dodatnih kod za popust.
         ...(school ? {} : { allow_promotion_codes: "true" }),
         subscription_data,
-        metadata: { parent_id: p.id },
+        metadata: { parent_id: p.id, parent_uid: p.uid || undefined },
       });
       const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
       db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'sub', ?)").run(p.id, p.email, `${ADULT_TEXT}\n${WITHDRAWAL_TEXT}\n[jezik: ${lang}]`);
@@ -2091,31 +2092,41 @@ export function mountAccounts(app, store, opts = {}) {
   // Vsak dogodek obdelamo enkrat; ob napaki odgovorimo 500, da ga Stripe pošlje znova.
   async function handleEvent(event) {
     const obj = event.data?.object || {};
-    const parentFor = () => parentByCustomer(obj.customer) || (obj.metadata?.parent_id && getParent(Number(obj.metadata.parent_id)));
+    // Plačilo, ki ga ni mogoče pripisati nobenemu računu (izbrisan račun, ponovno uporabljen id): zapis za ročno vračilo
+    // (kv stripe_unmatched:<id dogodka>, ponoven-id.js). Samo pri dogodkih plačila, ne pri vsaki posodobitvi.
+    const paying = /^checkout\.session\.(completed|async_payment_succeeded)$|^customer\.subscription\.created$/.test(event.type);
+    const record = paying ? unmatchedRecorder(kv, event) : null;
+    // Stara naročnina brez uid (prehod 24 h po namestitvi): ni pripisana, a tudi ni zapis »za vračilo«, ker jo
+    // checkout.session.completed iste seje pripiše pravemu lastniku (ponovni pregled #511 B, P3-B). Napad tam
+    // ujame preverjanje seje, ki ima svoj zapis.
+    const unmatched = record && (event.type === "customer.subscription.created" ? (why, n) => why !== "brez_uid" && record(why, n) : record);
+    // Po stranki; po id iz metapodatkov samo ob enakem parent_uid (ponovno uporabljen id, ponoven-id.js).
+    const parentFor = () =>
+      parentByCustomer(obj.customer) || (obj.metadata?.parent_id && parentFromMeta(getParent, obj.metadata.parent_id, obj, log, event.type, unmatched));
     switch (event.type) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded": {
         if (obj.metadata?.kind === "pass") {
-          billing.completePassSession(obj);
+          billing.completePassSession(obj, unmatched);
           break;
         }
         if (obj.metadata?.kind === "credit") {
-          billing.completeCreditSession(obj);
+          billing.completeCreditSession(obj, unmatched);
           break;
         }
         if (obj.metadata?.kind === "gift") {
-          gifts.complete(obj);
+          gifts.complete(obj, unmatched);
           break;
         }
         if (obj.metadata?.kind === "podari") {
-          podari.complete(obj);
+          podari.complete(obj, unmatched);
           break;
         }
         if (obj.metadata?.pay_link && obj.subscription && stripe.enabled) {
-          await billing.completeSubSession(obj);
+          await billing.completeSubSession(obj, unmatched);
           break;
         }
-        const p = parentFor() || getParent(Number(obj.client_reference_id));
+        const p = parentFor() || (!obj.metadata?.parent_id && parentFromMeta(getParent, obj.client_reference_id, obj, log, event.type, unmatched));
         if (!p) break;
         if (!p.stripe_customer_id && obj.customer) update(p.id, { stripe_customer_id: obj.customer });
         if (obj.subscription && stripe.enabled) await applySubscription(p.id, await stripe.request("GET", `/subscriptions/${obj.subscription}`));

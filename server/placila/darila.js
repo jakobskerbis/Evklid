@@ -73,10 +73,12 @@ export function mountGifts(app, ctx) {
     ) || null;
 
   // Plačilo je uspelo: ustvari kodo (enkrat). session = Stripe Checkout Session.
-  function complete(session) {
+  // unmatched(razlog): kupec je račun izbrisal pred plačilom (buyer_id SET NULL) – zapis za ročno vračilo (webhook).
+  function complete(session, unmatched = null) {
     if (session?.metadata?.kind !== "gift" || session.payment_status !== "paid")
       return false;
     const g = get(Number(session.metadata.gift_id));
+    if (g && g.buyer_id == null && g.status === "pending") unmatched?.("kupec_izbrisan");
     if (
       !g ||
       String(g.buyer_id) !== String(session.metadata.parent_id) ||
@@ -213,7 +215,7 @@ export function mountGifts(app, ctx) {
       );
       const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
       db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'gift', ?)").run(p.id, p.email, `${GIFT_ADULT_TEXT}\n${GIFT_WITHDRAWAL_TEXT}\n[jezik: ${lang}]`);
-      const meta = { kind: "gift", gift_id: id, parent_id: p.id };
+      const meta = { kind: "gift", gift_id: id, parent_id: p.id, parent_uid: p.uid || undefined };
       const base = baseUrl(req);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "payment",
