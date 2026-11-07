@@ -39,6 +39,7 @@ import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
+import { emailList } from "./accounts/pilot-meja.js";
 import { passwordGate, gateNeeded } from "./gate.js";
 import { levelUpSuggestion, nextLevel } from "./level-up.js";
 import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competition.js";
@@ -1567,7 +1568,7 @@ export function createApp(store, opts = {}) {
     },
   }); // naloge za člane pilota (Jaz → Pomagaj izboljšati Evklid)
   // Rast in vračanje (skrbnik): viri, prva naloga, vrnitev po 1 in 7 dneh; profili skrbnika se ne štejejo.
-  const adminEmails = (process.env.EVKLID_ADMIN_EMAILS || "").split(",").map((e) => e.trim()).filter(Boolean);
+  const adminEmails = emailList(process.env.EVKLID_ADMIN_EMAILS); // isti razčlenjevalnik kot meja lastnika
   mountRast(app, store, { accounts: !!accounts, isLocalRequest, adminEmails });
   mountSchoolOrders(app, store, { accounts: !!accounts, isLocalRequest }); // naročila šol in predračun (skrbnik)
   mountGradiva(app, store, { loadStudent, accounts, leagues }); // povzetek na eni strani, zvočni povzetek, delovni listi
@@ -1591,7 +1592,7 @@ export function createApp(store, opts = {}) {
     if (!accounts && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     const claim = !!accounts && isLocalRequest(req) && !req.parent?.is_admin;
     const sum = usage.summary();
-    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum) });
+    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum, { groupOf: (id) => accounts?.marginGroupOf?.(id) ?? null }) });
   });
   // Mesečni proračun API: skrbnik nastavi znesek ali doda kupljeni kredit za ta mesec (server/proracun.js).
   // Ni v nastavitvah iz klepeta (finančni podatek, public/settings-registry.js).

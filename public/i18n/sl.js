@@ -2833,6 +2833,8 @@ export default {
   "acct.renewsOn": "Naslednje obdobje se začne {date}.",
   "acct.endsOn": "Naročnina se konča {date}.",
   "acct.trial": "Brezplačni preizkus do {date}: vse funkcije za do 2 otroka.",
+  "acct.pilot": "Pilot: poln paket brezplačno do {date}, do {n} profilov.",
+  "acct.owner": "Skrbnik: poln paket, inštruktor brez meje (poraba se beleži).",
   "acct.promo": "Poln dostop z aktivacijsko kodo do {date}.",
   "acct.bonus": "Brezplačni mesec iz priporočila do {date}.",
   "acct.codeExample": "npr. {code}",

@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "Periode berikutnya dimulai {date}.",
   "acct.endsOn": "Langganan berakhir {date}.",
   "acct.trial": "Uji coba gratis sampai {date}: semua fitur untuk hingga 2 anak.",
+  "acct.pilot": "Pilot: paket lengkap gratis hingga {date}, hingga {n} profil.",
+  "acct.owner": "Administrator: paket lengkap, tutor tanpa batas (penggunaan dicatat).",
   "acct.promo": "Akses penuh dengan kode aktivasi sampai {date}.",
   "acct.bonus": "Bulan gratis dari rujukan sampai {date}.",
   "acct.codeExample": "mis. {code}",

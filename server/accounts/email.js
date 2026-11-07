@@ -186,7 +186,7 @@ export function planChangeEmail({ planText, amountText, dateText, up }, appUrl) 
 // Poraba podrobnih razlag pri profilu otroka, mlajšega od 15 let (j 2026-11-01): starš dobi e-pošto pri 80 % in
 // 100 %. Brez zneskov: samo, koliko razlag je še ostalo. Inštruktor odgovarja naprej v hitrem načinu.
 // Družina (pool): skupen delež vseh profilov, zato brez imena otroka.
-export function allowanceEmail({ childName, stage, left, untilText, pool = false }, appUrl) {
+export function allowanceEmail({ childName, stage, left, untilText, pool = false, topup = true }, appUrl) {
   const n = BRAND.name;
   if (pool) childName = "Skupni delež družine";
   const body =
@@ -195,8 +195,9 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
       : `${childName}: porabljenih je 80 % podrobnih razlag za ta mesec, ostalo jih je še približno ${left}. Ko jih zmanjka, inštruktor odgovarja naprej v hitrem načinu.`;
   return {
     subject: stage === "out" ? `${n}: podrobne razlage za ta mesec so porabljene` : `${n}: porabljenih 80 % podrobnih razlag`,
-    html: layout("Podrobne razlage ta mesec", `<p>${esc(body)}</p><p>Več razlag lahko dokupite v zavihku Račun.</p>${button(appUrl, `Odprite ${n}`)}`),
-    text: `${body} Več razlag dokupite v zavihku Račun: ${appUrl}`,
+    // topup false: pilot in lastnik (brez ponudbe dokupa, pregled #477 B3).
+    html: layout("Podrobne razlage ta mesec", `<p>${esc(body)}</p>${topup ? "<p>Več razlag lahko dokupite v zavihku Račun.</p>" : ""}${button(appUrl, `Odprite ${n}`)}`),
+    text: topup ? `${body} Več razlag dokupite v zavihku Račun: ${appUrl}` : `${body} ${appUrl}`,
   };
 }
 

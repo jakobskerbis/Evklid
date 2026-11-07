@@ -2238,6 +2238,8 @@
   "acct.renewsOn": "Următoarea perioadă începe pe {date}.",
   "acct.endsOn": "Abonamentul se încheie pe {date}.",
   "acct.trial": "Perioadă de probă gratuită până pe {date}: toate funcțiile pentru cel mult 2 copii.",
+  "acct.pilot": "Pilot: pachet complet gratuit până la {date}, până la {n} profiluri.",
+  "acct.owner": "Administrator: pachet complet, tutore fără limită (utilizarea este înregistrată).",
   "acct.promo": "Acces complet cu cod de activare până pe {date}.",
   "acct.bonus": "Lună gratuită dintr-o recomandare până pe {date}.",
   "acct.codeExample": "de ex. {code}",

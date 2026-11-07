@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "次の期間は{date}に始まります。",
   "acct.endsOn": "サブスクリプションは{date}に終了します。",
   "acct.trial": "{date}まで無料トライアル：子ども最大2人まですべての機能。",
+  "acct.pilot": "パイロット：{date}までフルプランが無料、プロフィールは最大{n}件。",
+  "acct.owner": "管理者：フルプラン、チューターは無制限（利用は記録されます）。",
   "acct.promo": "{date}まで有効化コードでフルアクセス。",
   "acct.bonus": "{date}まで紹介による無料の1か月。",
   "acct.codeExample": "例：{code}",

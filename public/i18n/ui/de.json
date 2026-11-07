@@ -2224,6 +2224,8 @@
   "acct.renewsOn": "Der nächste Zeitraum beginnt am {date}.",
   "acct.endsOn": "Das Abo endet am {date}.",
   "acct.trial": "Kostenloser Test bis {date}: alle Funktionen für bis zu 2 Kinder.",
+  "acct.pilot": "Pilot: volles Paket kostenlos bis {date}, bis zu {n} Profile.",
+  "acct.owner": "Administrator: volles Paket, Tutor ohne Limit (Nutzung wird erfasst).",
   "acct.promo": "Voller Zugang mit Aktivierungscode bis {date}.",
   "acct.bonus": "Kostenloser Monat aus einer Empfehlung bis {date}.",
   "acct.codeExample": "z. B. {code}",

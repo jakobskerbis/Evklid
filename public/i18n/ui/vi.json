@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "Kỳ tiếp theo bắt đầu ngày {date}.",
   "acct.endsOn": "Gói đăng ký kết thúc ngày {date}.",
   "acct.trial": "Dùng thử miễn phí đến {date}: mọi tính năng cho tối đa 2 con.",
+  "acct.pilot": "Thí điểm: gói đầy đủ miễn phí đến {date}, tối đa {n} hồ sơ.",
+  "acct.owner": "Quản trị viên: gói đầy đủ, gia sư không giới hạn (mức sử dụng được ghi lại).",
   "acct.promo": "Truy cập đầy đủ bằng mã kích hoạt đến {date}.",
   "acct.bonus": "Tháng miễn phí nhờ giới thiệu đến {date}.",
   "acct.codeExample": "vd. {code}",

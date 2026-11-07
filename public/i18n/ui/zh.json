@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "下一个周期从 {date} 开始。",
   "acct.endsOn": "订阅将于 {date} 结束。",
   "acct.trial": "免费试用至 {date}：最多 2 个孩子可使用全部功能。",
+  "acct.pilot": "试点：{date} 前完整套餐免费，最多 {n} 个档案。",
+  "acct.owner": "管理员：完整套餐，导师无限制（使用量会被记录）。",
   "acct.promo": "激活码完整权限至 {date}。",
   "acct.bonus": "推荐获得的免费月至 {date}。",
   "acct.codeExample": "例如 {code}",

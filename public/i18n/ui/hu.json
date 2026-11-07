@@ -2224,6 +2224,8 @@
   "acct.renewsOn": "A következő időszak kezdete: {date}.",
   "acct.endsOn": "Az előfizetés vége: {date}.",
   "acct.trial": "Ingyenes próbaidő eddig: {date}; minden funkció legfeljebb 2 gyereknek.",
+  "acct.pilot": "Pilot: teljes csomag ingyen {date}-ig, legfeljebb {n} profil.",
+  "acct.owner": "Adminisztrátor: teljes csomag, korlátlan oktató (a használatot rögzítjük).",
   "acct.promo": "Teljes hozzáférés aktiváló kóddal eddig: {date}.",
   "acct.bonus": "Ingyenes hónap ajánlásból eddig: {date}.",
   "acct.codeExample": "pl. {code}",
