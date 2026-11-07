@@ -1508,6 +1508,9 @@ const reloadOnceFor = () => reloadIfNewer(true);
 const tellPage = () => pageApp && navigator.serviceWorker?.controller?.postMessage({ type: "page-app", app: pageApp });
 tellPage();
 navigator.serviceWorker?.addEventListener?.("controllerchange", tellPage);
+// Service worker, ki te strani ni naložil (po menjavi ali ponovnem zagonu), vpraša, katero različico izvaja.
+navigator.serviceWorker?.addEventListener?.("message", (e) => e.data?.type === "which-app" && tellPage());
+navigator.serviceWorker?.startMessages?.();
 if (pageApp)
   serverVersion().then((v) => {
     if (v && v !== pageApp) reloadOnceFor();

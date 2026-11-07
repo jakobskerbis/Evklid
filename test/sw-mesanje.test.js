@@ -161,7 +161,11 @@ test("po objavi ob počasnem omrežju: stara stran iz predpomnilnika se sama osv
       await p.goto(base + "/");
       // do osvežitve stara stran dobiva lene module svoje različice (pregled B2 P2-1)
       const mixed = await p
-        .evaluate(() => (window.__evklidNova ? null : fetch("/graph/tools.js").then((r) => r.text()).then((t) => !window.__evklidNova && t.includes("//NOVA"))))
+        // samo na stari strani (meta stare različice; nova stran ima lahko app.js še nenaložen)
+        .evaluate((NEW) => {
+          const old = () => document.querySelector('meta[name="evklid-app"]')?.content !== NEW;
+          return old() ? fetch("/graph/tools.js").then((r) => r.text()).then((t) => old() && t.includes("//NOVA")) : null;
+        }, NEW)
         .catch(() => null); // stran se je medtem že osvežila
       assert.notEqual(mixed, true, "stara stran ne sme dobiti novega lenega modula");
       // stara stran ve, da je stara (meta), strežnik pove novo različico -> osvežitev, nato nova stran in app.js
