@@ -326,7 +326,7 @@ e_G, e_K | enota grupe $G$ oziroma $K$ | |
 a, b, c, x | elementi grupe | | | inverz elementa $a$ je $a^{-1}$
 h, h_1, h_2 | elementi podgrupe $H$ | |
 g | generator ali poljuben element | |
-k | število odsekov ali eksponent | |
+k | število odsekov, eksponent ali dolžina cikla | |
 p | praštevilo | |
 n | stopnja simetrične grupe | |
 S_n | simetrična grupa | | | $n!$ elementov

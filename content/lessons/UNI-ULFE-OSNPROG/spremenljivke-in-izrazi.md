@@ -77,7 +77,7 @@ Prvi dve vrstici sta kot v matematiki: množenje pred seštevanjem, odštevanje 
 8. `and`,
 9. `or`.
 
-Vse dvomestne operacije razen `**` se na isti ravni združujejo **od leve**. Kadar nisi prepričan, piši oklepaj.
+Vse dvomestne operacije razen `**` se na isti ravni združujejo **od leve**. Izjema so primerjave: te se ne združujejo, ampak **verižijo** (točka 5), zato je `3 > 2 > 1` enako `True`, `(3 > 2) > 1` pa `False`. Kadar nisi prepričan, piši oklepaj.
 
 :::premisli
 Napovej vrednost izraza `2 * -3 ** 2`. Kaj se zgodi najprej?
@@ -237,7 +237,7 @@ Kakšen je izraz in koliko kosov je treba prodati?
 - Izraz se izračuna v eno vrednost s tipom; prirejanje najprej izračuna desno stran.
 - Osnovni tipi: `int`, `float`, `str`, `bool`; tip pripada vrednosti in določa pomen operatorja.
 - `/` vrne `float`; `//` zaokroži navzdol; `a == b * (a // b) + a % b`; za $b > 0$ je $0 \le$ `a % b` $< b$.
-- Prednost: oklepaji, `**` (od desne), predznak, `* / // %`, `+ -`, primerjave, `not`, `and`, `or`; sicer od leve.
+- Prednost: oklepaji, `**` (od desne), predznak, `* / // %`, `+ -`, primerjave, `not`, `and`, `or`; sicer od leve, primerjave pa se verižijo.
 - `and` in `or` računata kratkostično; verižna primerjava `0 < x < 10`.
 - `input` vrne niz; `print` s `sep` in `end`; f-niz `f"{x:.2f}"`; `round` pri polovici k sodemu.
 

@@ -15,6 +15,7 @@ stanje: osnutek
   - `/` vedno `float`
   - `a == b * (a // b) + a % b`
   - napaka: `^` ni potenca
+  - navzgor: `(n + k - 1) // k`
 - Prednost operatorjev
   - `**` od desne: `2 ** 3 ** 2` je 512
   - `-3 ** 2` je `-9`
@@ -24,4 +25,3 @@ stanje: osnutek
 - Vhod in izhod
   - `input` vrne niz
   - f-niz `f"{x:.2f}"`
-  - navzgor: `(n + k - 1) // k`

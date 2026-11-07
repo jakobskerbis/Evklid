@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Keramični kuhinjski nož je trši od vsakega jeklenega in ostane oster leta. Ko pa pade na ploščice, se odkruši ali prelomi, jekleni nož pa se kvečjemu skrivi. Betonski steber nosi stavbo, betonska greda brez jeklenih palic pa poči že pod lastno težo. Na videz gre za kuhinjo in gradbišče, v resnici za isto strukturo: material, ki zelo dobro prenaša tlak, a ga v nategu uniči že drobna razpoka.
+Keramični kuhinjski nož je trši od vsakega jeklenega in ostane oster leta. Ko pa pade na ploščice, se odkruši ali prelomi, jekleni nož pa se kvečjemu skrivi. Betonski steber nosi stavbo, betonska greda brez jeklenih palic pa pri večjem razponu poči že pod majhno obremenitvijo. Na videz gre za kuhinjo in gradbišče, v resnici za isto strukturo: material, ki zelo dobro prenaša tlak, a ga v nategu uniči že drobna razpoka.
 
 Prvi del lekcije pojasni, zakaj je keramika taka: kakšna je njena zgradba in zakaj razpoka v njej ne obstane. Drugi del pokaže rešitev, ki jo inženirji uporabljajo povsod, od betona do letalskih kril: **kompozit**, v katerem drug material prevzame tisto, česar prvi ne zmore. Lastnosti kompozita se dajo izračunati iz podatkov o sestavinah, kar je vsakdanje delo pri izbiri materiala.
 
@@ -34,13 +34,13 @@ Okvirne meje:
 - $0{,}414$ do $0{,}732$: koordinacijsko število $6$ (oktaeder, kot NaCl),
 - $0{,}732$ do $1$: koordinacijsko število $8$ (kocka, kot CsCl).
 
-Pri **silikatih** je osnovna enota tetraeder $\mathrm{SiO_4^{4-}}$: ion silicija v sredini, štirje kisikovi ioni v ogliščih. Tetraedri se povezujejo prek skupnih kisikovih ionov v verige, plasti (glinenci, sljuda) ali tridimenzionalno mrežo (kremen). Steklo je enaka mreža brez reda dolgega dosega.
+Pri **silikatih** je osnovna enota tetraeder $\mathrm{SiO_4^{4-}}$: ion silicija v sredini, štirje kisikovi ioni v ogliščih. Tetraedri se povezujejo prek skupnih kisikovih ionov v verige, plasti (glinasti minerali, npr. kaolinit, in sljuda) ali tridimenzionalno mrežo (kremen, glinenci). Steklo je enaka mreža brez reda dolgega dosega.
 
 *Preveri v eni vrstici:* zakaj ima $\mathrm{Al_2O_3}$ ravno to formulo? (Dva iona $\mathrm{Al^{3+}}$ dasta $+6$, trije $\mathrm{O^{2-}}$ dajo $-6$.)
 
 **3. Zakaj je keramika krhka.** V kovini se plastična deformacija zgodi z drsenjem **dislokacij**; kovinska vez ni usmerjena in ne loči nabojev, zato drsenje ne stane veliko. V ionski keramiki drsenje približa enako nabite ione (slika zgoraj), v kovalentni (SiC, diamant) pa bi moralo pretrgati usmerjene vezi. Drsnih sistemov je zato zelo malo, dislokacije se pri sobni temperaturi skoraj ne gibljejo.
 
-Posledica: keramika se do loma deformira le elastično. Vsaka razpoka, por ali zrno nečistoče je mesto, kjer se napetost zbere, ne pa »razmaže« s plastično deformacijo.
+Posledica: keramika se do loma deformira le elastično. Vsaka razpoka, pora ali zrno nečistoče je mesto, kjer se napetost zbere, ne pa »razmaže« s plastično deformacijo.
 
 ```
    sigma
@@ -58,7 +58,7 @@ $$K_\mathrm{Ic} = Y\sigma_\mathrm{c}\sqrt{\pi a}.$$
 
 Pri tem je $\sigma_\mathrm{c}$ napetost, pri kateri se razpoka z dolžino $a$ nenadzorovano razširi, $Y \approx 1$ pa faktor oblike. Keramika ima $K_\mathrm{Ic} \approx 1$–$5\,\mathrm{MPa\,\sqrt{m}}$, jeklo $50$–$150\,\mathrm{MPa\,\sqrt{m}}$.
 
-V **tlaku** se razpoke zapirajo, zato je tlačna trdnost keramike okoli desetkrat večja od natezne. Na trdnost močno vpliva tudi **poroznost**: že $5\,\%$ por lahko zmanjša trdnost za tretjino. Keramiko zato oblikujemo iz prahu in **sintramo** (segrejemo pod tališčem, da se zrna zrastejo in pore zaprejo).
+V **tlaku** se razpoke zapirajo, zato je tlačna trdnost keramike okoli desetkrat večja od natezne. Na trdnost močno vpliva tudi **poroznost**: že $5\,\%$ por lahko zmanjša trdnost za tretjino. Keramiko zato oblikujemo iz prahu in **sintramo** (segrejemo pod tališčem, da se zrna z difuzijo zrastejo med seboj in se pore zaprejo).
 
 :::premisli
 Na dve enaki keramični palici naredimo zarezo: na prvo $0{,}1\,\mathrm{mm}$, na drugo $0{,}4\,\mathrm{mm}$ globoko. Kolikšna bo natezna trdnost druge palice v primerjavi s prvo?
@@ -241,7 +241,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 
 - **Elektronika.** Podlage tiskanih vezij za močnostno elektroniko so iz $\mathrm{Al_2O_3}$ ali AlN (izolator, dobro prevaja toploto). Piezoelektrična keramika PZT je v ultrazvočnih senzorjih, merilnikih tlaka in vbrizgalnih šobah.
 - **Merilna tehnika.** Senzor kisika v izpušnem sistemu avtomobila (lambda sonda) je iz $\mathrm{ZrO_2}$, ki pri visoki temperaturi prevaja kisikove ione.
-- **Medicina.** Zobne krone in umetni kolki so iz $\mathrm{ZrO_2}$ in $\mathrm{Al_2O_3}$: obstojni, biokompatibilni in trdi.
+- **Medicina.** Zobne krone in glave umetnih kolkov so iz $\mathrm{ZrO_2}$ in $\mathrm{Al_2O_3}$: obstojni, biokompatibilni in trdi.
 - **Letalstvo in promet.** Najnovejša potniška letala imajo okoli polovico strukturne mase iz ogljikovih kompozitov. Zavorni koluti športnih avtomobilov so iz ogljika, ojačenega s SiC (CMC). Lopatice vetrnih elektrarn so iz steklenih vlaken v smoli.
 - **Kontrola kakovosti.** Ker lom določa najdaljša razpoka, keramične in kompozitne dele pregledujejo z ultrazvokom in rentgensko tomografijo; razslojitev laminata je glavna napaka, ki jo iščejo.
 
@@ -301,7 +301,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 + $169\,\mathrm{GPa}$
 - $235\,\mathrm{GPa}$
 ~ To je navadno povprečje $\frac{400 + 70}{2}$; deleža faz nista enaka.
-- $331\,\mathrm{GPa}$
+- $301\,\mathrm{GPa}$
 ~ Deleža sta zamenjana: $400 \cdot 0{,}7 + 70 \cdot 0{,}3$.
 > $E_\parallel = 400 \cdot 0{,}3 + 70 \cdot 0{,}7 = 120 + 49 = 169\,\mathrm{GPa}$.
 

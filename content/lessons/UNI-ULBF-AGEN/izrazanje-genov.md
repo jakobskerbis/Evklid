@@ -117,7 +117,7 @@ kodirajoče zaporedje $= L_\mathrm{mRNA} - L_5 - L_3$; kodonov $= \frac{\text{ko
 
 ### Primer 3 (težji)
 
-Zrela mRNA ima na začetku zaporedje $5'$-CUGCC AUG GCU CAA UGG AAA UGC UAA GG-$3'$ (presledki le zaradi preglednosti). (a) Določi bralni okvir in peptid. (b) Napovej učinek mutacij: (i) GCU → GCC; (ii) C v CAA → U; (iii) G na tretjem mestu UGG → U; (iv) vstavitev G takoj za AUG. Razvrsti jih kot tihe, smiselne (*missense*), nesmiselne (*nonsense*) ali s premikom okvira. (c) V zaporedju je še en AUG (v »CAA UGG«). Zakaj ribosom ne začne tam?
+Zrela mRNA ima na začetku zaporedje $5'$-CUGCC AUG GCU CAA UGG AAA UGC UAA GG-$3'$ (presledki le zaradi preglednosti). (a) Določi bralni okvir in peptid. (b) Napovej učinek mutacij: (i) GCU → GCC; (ii) C v CAA → U; (iii) G na tretjem mestu UGG → U; (iv) vstavitev G takoj za AUG. Razvrsti jih kot tihe, smiselne (*missense*), nesmiselne (*nonsense*) ali s premikom okvira. (c) V zaporedju sta še dva AUG (v »CAA UGG« in »AAA UGC«). Zakaj ribosom ne začne tam?
 
 **Podatki:** mRNA $5'$-CUGCC AUG GCU CAA UGG AAA UGC UAA GG-$3'$; mutacije (i)–(iv)
 **Iščemo:** peptid, vrsta in učinek vsake mutacije, razlog za izbiro AUG
@@ -134,8 +134,8 @@ Kodoni: GCU in GCC Ala, CAA Gln, UAA stop, UGG Trp, UGU Cys, AAA Lys, UGC Cys, G
 4. (ii) CAA → UAA: stop kodon na tretjem mestu, **nesmiselna** mutacija; peptid se konča z Met–Ala.
 5. (iii) UGG → UGU: Trp → Cys, **smiselna** mutacija (ena aminokislina drugačna).
 6. (iv) Nov okvir: AUG GGC UCA AUG GAA AUG CUA AGG …: Met–Gly–Ser–Met–Glu–Met–Leu–Arg …; prvotni stop UAA ni več v okviru, branje teče naprej do prvega stop kodona v novem okviru. **Premik bralnega okvira**: vse za mestom vstavitve je drugače.
-7. (c) Drugi AUG (nukleotidi CA**AUG**G) leži v drugem bralnem okviru. Evkariontski ribosom skenira od kape in začne pri prvem ustreznem AUG; od tam je okvir določen.
-8. Odgovor: peptid Met–Ala–Gln–Trp–Lys–Cys; (i) tiha, (ii) nesmiselna (Met–Ala), (iii) smiselna (Trp → Cys), (iv) premik okvira, najhujša posledica. Notranji AUG je zunaj okvira in se ne uporabi.
+7. (c) Notranja AUG (CA**AUG**G in AA**AUG**C) ležita v drugem bralnem okviru; v (iv) sta zato postala Met. Evkariontski ribosom skenira od kape in začne pri prvem ustreznem AUG; od tam je okvir določen.
+8. Odgovor: peptid Met–Ala–Gln–Trp–Lys–Cys; (i) tiha, (ii) nesmiselna (Met–Ala), (iii) smiselna (Trp → Cys), (iv) premik okvira, najhujša posledica. Notranja AUG sta zunaj okvira in se ne uporabita.
 
 ### Primer 4 – zdaj ti
 
@@ -156,7 +156,7 @@ Neodvisne izbire se množijo: število $=$ produkt števil kodonov za vsako mest
 :::premisli
 Koliko je zaporedij?
 ---
-$1 \cdot 2 \cdot 2 \cdot 4 \cdot 3 = 48$. Zato iz zaporedja beljakovine ne moremo enolično rekonstruirati gena; obratno pa gen enolično določa beljakovino.
+$1 \cdot 2 \cdot 2 \cdot 4 \cdot 3 = 48$. Zato iz zaporedja beljakovine ne moremo enolično rekonstruirati gena; obratno pa mRNA v danem bralnem okviru enolično določa zaporedje aminokislin (kod je nedvoumen).
 :::
 
 ## Pogoste napake
@@ -198,7 +198,7 @@ Evkariontski gen ima tri eksone: ekson 1 ima $210\,\mathrm{nt}$, od tega prvih $
 2. Kodonov je $\frac{606}{3} = 202$, aminokislin $201$.
 3. (b) Brez eksona 2 manjka $145$ nukleotidov. Ker je $145 = 3 \cdot 48 + 1$, ostanek pri deljenju s $3$ ni nič.
 4. Ekson 3 se zato bere v premaknjenem okviru: od stika eksonov 1 in 3 naprej so kodoni drugačni, prvotni stop kodon ni v okviru. Beljakovina ima enakih le prvih okoli $53$ aminokislin iz eksona 1 ($160 = 3 \cdot 53 + 1$), nato drugačno zaporedje do naključnega stop kodona.
-5. (c) Pri $144 = 3 \cdot 48$ bi izpust eksona 2 okvir ohranil: beljakovina bi imela $48$ aminokislin manj, vse drugo enako.
+5. (c) Pri $144 = 3 \cdot 48$ bi se ekson 3 z eksonom 2 ali brez njega bral v istem okviru: beljakovina brez eksona 2 bi imela $48$ aminokislin manj, drugačna bi bila kvečjemu aminokislina na stiku eksonov 1 in 3 (kodon na stiku sestavljata en nukleotid eksona 1 in dva naslednjega eksona).
 6. Odgovor: (a) $201$ aminokislin; (b) izpust eksona s $145\,\mathrm{nt}$ premakne okvir za ekson 3, ker $145$ ni deljivo s $3$; (c) pri $144\,\mathrm{nt}$ bi nastala krajša beljakovina z ohranjenim koncem C. Zato so eksoni, ki se alternativno izrezujejo, pogosto dolgi večkratnik $3$.
 
 ### Naloga 2
@@ -235,7 +235,7 @@ Od gena do beljakovine iz Primera 2, števila po vrsti:
 6. Beljakovina: $399$ aminokislin, okoli $44\,\mathrm{kDa}$.
 7. Energija: okoli $4 \cdot 399 \approx 1600$ energijsko bogatih vezi.
 
-Na vsakem koraku se informacija »skrči«, razen pri zadnjem, kjer se zaporedje nukleotidov spremeni v zaporedje druge vrste gradnikov.
+Zaporedje se na poti krajša (izjema je dodani rep, ki ne nosi zapisa za beljakovino), razen pri zadnjem koraku, kjer se zaporedje nukleotidov spremeni v zaporedje druge vrste gradnikov.
 
 ## Drugače: Bolj natančno
 

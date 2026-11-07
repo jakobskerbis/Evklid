@@ -98,7 +98,7 @@ Pri izentropni ekspanziji je $s_4 = s_3$. Iz tega določimo **suhost** $x_4$ (ma
 :::premisli
 Zakaj parna elektrarna stiska vodo kot kapljevino in ne kot paro? Kaj bi se zgodilo z izkoristkom, če bi paro stiskali s kompresorjem kot plinska turbina?
 ---
-Delo stiskanja je $\int v\,dp$; kapljevina ima okoli tisočkrat manjšo specifično prostornino kot para, zato črpalka porabi le nekaj kJ/kg. Pri stiskanju pare bi kompresor požrl velik del dela turbine, kot pri Jouleovem procesu, in izkoristek bi močno padel.
+Delo stiskanja je $\int v\,dp$; kapljevina ima več tisočkrat manjšo specifično prostornino kot para (pri $0{,}1\,\mathrm{bar}$ okoli $14\,000$-krat), zato črpalka porabi le nekaj kJ/kg. Pri stiskanju pare bi kompresor požrl velik del dela turbine, kot pri Jouleovem procesu, in izkoristek bi močno padel.
 :::
 
 **8. Pregled štirih procesov.**
@@ -204,7 +204,7 @@ $T_4 = \frac{1300}{1{,}931} = 673{,}3\,\mathrm{K}$. Turbina: $1{,}005 \cdot (130
 - **Napačna specifična toplota.** Pri izohori je $q = c_v\Delta T$, pri izobari $q = c_p\Delta T$. Pri Dieslu je dovajanje izobarno, oddajanje izohorno; kdor obakrat vzame $c_v$, dobi napačen $\eta$.
 - **Zamenjana razmerja.** Pri Ottu je $\frac{T_2}{T_1} = \varepsilon^{\kappa-1}$ (razmerje prostornin), pri Jouleu $\frac{T_2}{T_1} = r_p^{(\kappa-1)/\kappa}$ (razmerje tlakov). Pri $r_p = 10$ je $10^{0{,}4} = 2{,}51$ napačno, pravilno je $1{,}93$.
 - **Stopinje Celzija.** V adiabatah in Carnotovi meji so temperature v kelvinih. $T_1 = 27\,\mathrm{°C}$ vstavi kot $300\,\mathrm{K}$.
-- **Carnotova meja kot dejanski izkoristek.** $1 - \frac{T_\mathrm{min}}{T_\mathrm{max}}$ velja le, če vso toploto dovajamo pri $T_\mathrm{max}$. Otto, Diesel in Joule dovajajo toploto pri naraščajoči temperaturi, zato so slabši.
+- **Carnotova meja kot dejanski izkoristek.** $1 - \frac{T_\mathrm{min}}{T_\mathrm{max}}$ velja le, če vso toploto dovajamo pri $T_\mathrm{max}$ in vso oddajamo pri $T_\mathrm{min}$. Otto, Diesel in Joule toploto dovajajo pri naraščajoči in oddajajo pri padajoči temperaturi, zato so slabši.
 - **Rankine brez entropije.** $h_4$ ni $h''$ pri tlaku kondenzatorja; para iz turbine je mokra. Suhost dobiš iz $s_4 = s_3$, ne iz entalpije.
 
 ## Povzetek
@@ -339,12 +339,12 @@ Opazi: $\frac{T_4}{T_1} = \frac{T_3}{T_2}$. To je razlog, da se temperature v fo
 
 ? V idealnem Rankinovem procesu je $h_1 = 200\,\mathrm{kJ/kg}$, $h_2 = 205\,\mathrm{kJ/kg}$, $h_3 = 3400\,\mathrm{kJ/kg}$ in $h_4 = 2300\,\mathrm{kJ/kg}$. Kolikšen je izkoristek?
 + $0{,}343$
-- $0{,}324$
+- $0{,}322$
 ~ Deljeno je s $h_3$ namesto z dovedeno toploto $h_3 - h_2$.
 - $0{,}657$
 ~ To je $\frac{h_4 - h_1}{h_3 - h_2}$, delež toplote, ki gre v kondenzator.
-- $0{,}500$
-~ Ni povezano z entalpijami; Rankinov proces je daleč pod tako vrednostjo pri teh podatkih.
+- $0{,}521$
+~ Delo je deljeno z oddano toploto $h_4 - h_1$; izkoristek je delo, deljeno z dovedeno toploto.
 > $w = (3400 - 2300) - (205 - 200) = 1095\,\mathrm{kJ/kg}$, $q_\mathrm{dov} = 3400 - 205 = 3195\,\mathrm{kJ/kg}$, $\eta = 0{,}343$.
 
 :::simboli
