@@ -124,7 +124,7 @@ Pravilo topologije: lumen ER $\leftrightarrow$ zunanjost celice; odcepljen signa
 
 ### Primer 2
 
-Oceni, koliko transportnih mešičkov s premerom $50\,\mathrm{nm}$ prinese toliko membrane, kot je ima na površini kroglasta celica s premerom $20\,\mu\mathrm{m}$. Fibroblast z endocitozo v okoli eni uri sprejme toliko membrane, kot je ima na površini. Koliko mešičkov na sekundo je to in kaj sledi iz tega?
+Oceni, koliko transportnih mešičkov s premerom $50\,\mathrm{nm}$ prinese toliko membrane, kot je ima na površini kroglasta celica s premerom $20\,\mu\mathrm{m}$. Makrofag z endocitozo v manj kot eni uri sprejme toliko membrane, kot je ima na površini; za oceno vzemimo eno uro. Koliko mešičkov na sekundo je to in kaj sledi iz tega?
 
 **Podatki:** $d_c = 20\,\mu\mathrm{m}$, $d_v = 50\,\mathrm{nm} = 0{,}050\,\mu\mathrm{m}$, $t = 1\,\mathrm{h} = 3600\,\mathrm{s}$
 **Iščemo:** število mešičkov $n$, mešičke na sekundo
