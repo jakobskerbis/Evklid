@@ -288,8 +288,8 @@ Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je
 > $10! = 3\,628\,800$.
 
 ? Zakaj grupa s $15$ elementi ne more imeti elementa reda $4$?
-- Ker je $15$ liho število, element reda $4$ pa sod.
-~ Liha grupa nima elementov sodega reda, a razlog je deljivost, ne parnost sama: $15$ nima delitelja $4$.
+- Ker element reda $4$ obstaja le v grupi s $4$ elementi.
+~ Grupa $\mathbb Z_8$ ima $8$ elementov in element $2$ reda $4$; red elementa mora red grupe le deliti.
 + Ker red elementa deli red grupe in $4$ ne deli $15$.
 - Ker ima vsaka grupa reda $15$ le elemente reda $1$ in $15$.
 ~ Grupa $\mathbb Z_{15}$ ima tudi elemente reda $3$ in $5$, npr. $5$ in $3$.
@@ -307,7 +307,7 @@ Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je
 ~ Red je $3$ in cikel je sod.
 > $\operatorname{nzv}(3, 2) = 6$, transpozicij je $2 + 1 = 3$, torej liha. To je edini tip z redom $6$ v $S_5$.
 
-? Plašč virusa ima simetrijo kocke oziroma oktaedra; grupa vrtenj ima $24$ elementov. Plašč je iz enakih podenot, vsaka na mestu brez simetrije. Koliko podenot je v najmanjšem takem plašču?
+? Beljakovinska kletka (plašč) ima simetrijo kocke oziroma oktaedra; grupa vrtenj ima $24$ elementov. Plašč je iz enakih podenot, vsaka na mestu brez simetrije. Koliko podenot je v najmanjšem takem plašču?
 - $8$
 ~ To je število oglišč kocke, ne število elementov grupe.
 - $48$
@@ -315,7 +315,7 @@ Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je
 + $24$
 - $12$
 ~ To je število robov kocke.
-> Vsako vrtenje premakne podenoto na drugo mesto, zato je mest toliko kot elementov grupe: $24$ (tako je pri feritinu).
+> Vsako vrtenje premakne podenoto na drugo mesto, zato je mest toliko kot elementov grupe: $24$ (tako je pri feritinu, ki shranjuje železo).
 
 :::simboli
 G | grupa | | | množica z operacijo

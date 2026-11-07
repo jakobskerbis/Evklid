@@ -11,7 +11,7 @@ Ko so leta 2001 objavili prvo različico človeškega genoma, je presenetila št
 
 ## Razlaga
 
-**1. Mamljiva napačna slika.** »Gen je odsek DNA, ki se prebere kot besedilo; vsakemu genu ustreza ena beljakovina, mRNA pa je kopija gena.« Vsak del te povedi je pri evkariontih napačen ali nepopoln. Prepiše se le ena veriga in to v obratni smeri; iz prepisa se izrežejo deli; prevaja se le srednji del mRNA in to v trojkah; isti gen lahko da več beljakovin. Spodaj gremo korak za korakom.
+**1. Kje preprosta slika odpove.** »Gen je odsek DNA, ki se prebere kot besedilo; vsakemu genu ustreza ena beljakovina, mRNA pa je kopija gena.« Vsak del te povedi je pri evkariontih napačen ali nepopoln. Prepiše se le ena veriga in to v obratni smeri; iz prepisa se izrežejo deli; prevaja se le srednji del mRNA in to v trojkah; isti gen lahko da več beljakovin. Spodaj gremo korak za korakom.
 
 **2. Centralna dogma in verigi gena.** Informacija teče DNA → RNA → beljakovina. **Gen** je odsek DNA, ki se prepiše v funkcionalno RNA (mRNA, tRNA, rRNA in druge); pri genih za beljakovine ta mRNA nato določa zaporedje aminokislin.
 
@@ -58,7 +58,7 @@ Zakaj kod ne more biti dvojiški (po dva nukleotida na aminokislino)? Kaj pove r
 Dvojic je le $4^2 = 16$, kar je manj kot $20$ aminokislin. Trojk je $64$, več kot potrebnih $21$, zato je kod izrojen. Presežek ni odveč: zaradi njega mnoge točkovne mutacije na tretjem mestu ne spremenijo beljakovine.
 :::
 
-**6. Translacija.** Prevod poteka na **ribosomu** (bakterije $70\mathrm{S}$ iz podenot $30\mathrm{S}$ in $50\mathrm{S}$; evkarionti $80\mathrm{S}$ iz $40\mathrm{S}$ in $60\mathrm{S}$). **tRNA** ima na eni strani **antikodon**, ki se antiparalelno pari s kodonom, na drugi pripeto aminokislino. Pravo aminokislino na tRNA pripne **aminoacil-tRNA-sintetaza**: za vsako aminokislino je ena, zato so ravno sintetaze »prevajalci« koda.
+**6. Translacija.** Prevod poteka na **ribosomu** (bakterije $70\mathrm{S}$ iz podenot $30\mathrm{S}$ in $50\mathrm{S}$; evkarionti $80\mathrm{S}$ iz $40\mathrm{S}$ in $60\mathrm{S}$). **tRNA** ima na eni strani **antikodon**, ki se antiparalelno pari s kodonom, na drugi pripeto aminokislino. Pravo aminokislino na tRNA pripne **aminoacil-tRNA-sintetaza**: za vsako aminokislino je navadno ena, zato so ravno sintetaze »prevajalci« koda.
 
 - **Iniciacija:** pri bakterijah se mala podenota veže na **Shine-Dalgarnovo zaporedje** pred AUG, prva tRNA nosi formilmetionin. Pri evkariontih se mala podenota veže na kapo in **skenira** mRNA do prvega AUG v ugodnem okolju. Iniciatorska tRNA sedi na mestu P.
 - **Elongacija:** aminoacil-tRNA vstopi na mesto **A**; **peptidil-transferaza** (aktivno mesto je rRNA, ribosom je ribocim) prenese rastočo verigo na aminokislino na mestu A; ribosom se pomakne za en kodon, prazna tRNA preide na mesto **E** in odide. Veriga raste od konca N proti koncu C.
@@ -131,10 +131,10 @@ Kodoni: GCU in GCC Ala, CAA Gln, UAA stop, UGG Trp, UGU Cys, AAA Lys, UGC Cys, G
 1. (a) Prvi AUG je za CUGCC; od tam po trojkah: AUG Met, GCU Ala, CAA Gln, UGG Trp, AAA Lys, UGC Cys, UAA stop.
 2. Peptid: Met–Ala–Gln–Trp–Lys–Cys (šest aminokislin).
 3. (b)(i) GCC je prav tako Ala: **tiha** mutacija, peptid enak.
-4. (ii) CAA → UAA: stop kodon na tretjem mestu, **nesmiselna** mutacija; peptid se konča z Met–Ala.
+4. (ii) CAA → UAA: tretji kodon postane stop kodon, **nesmiselna** mutacija; peptid se konča z Met–Ala.
 5. (iii) UGG → UGU: Trp → Cys, **smiselna** mutacija (ena aminokislina drugačna).
 6. (iv) Nov okvir: AUG GGC UCA AUG GAA AUG CUA AGG …: Met–Gly–Ser–Met–Glu–Met–Leu–Arg …; prvotni stop UAA ni več v okviru, branje teče naprej do prvega stop kodona v novem okviru. **Premik bralnega okvira**: vse za mestom vstavitve je drugače.
-7. (c) Notranja AUG (CA**AUG**G in AA**AUG**C) ležita v drugem bralnem okviru; v (iv) sta zato postala Met. Evkariontski ribosom skenira od kape in začne pri prvem ustreznem AUG; od tam je okvir določen.
+7. (c) Notranja AUG (drugi in tretji, CA**AUG**G in AA**AUG**C) ležita v drugem bralnem okviru, zamaknjenem za en nukleotid; v (iv) sta zato postala Met. Evkariontski ribosom skenira od kape in začne pri prvem ustreznem AUG; od tam je okvir določen.
 8. Odgovor: peptid Met–Ala–Gln–Trp–Lys–Cys; (i) tiha, (ii) nesmiselna (Met–Ala), (iii) smiselna (Trp → Cys), (iv) premik okvira, najhujša posledica. Notranja AUG sta zunaj okvira in se ne uporabita.
 
 ### Primer 4 – zdaj ti
@@ -190,7 +190,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Evkariontski gen ima tri eksone: ekson 1 ima $210\,\mathrm{nt}$, od tega prvih $50$ v 5'-UTR; ekson 2 ima $145\,\mathrm{nt}$; v eksonu 3 je kodirajočih prvih $301\,\mathrm{nt}$ (vključno s stop kodonom), ostalo je 3'-UTR. (a) Koliko aminokislin ima beljakovina iz mRNA z vsemi tremi eksoni? (b) V nekem tkivu se ekson 2 izreže skupaj z introni. Utemelji, ali ostane okvir za ekson 3 enak. (c) Kaj bi se zgodilo, če bi imel ekson 2 namesto $145$ nukleotidov $144$?
+Evkariontski gen ima tri eksone: ekson 1 ima $210\,\mathrm{nt}$, od tega prvih $50$ v 5'-UTR; ekson 2 ima $145\,\mathrm{nt}$; v eksonu 3 je kodirajočih prvih $301\,\mathrm{nt}$ (vključno s stop kodonom), ostalo je 3'-UTR. (a) Koliko aminokislin ima beljakovina iz mRNA z vsemi tremi eksoni? (b) V nekem tkivu se ekson 2 izreže skupaj z introni. Utemelji, ali ostane okvir za ekson 3 enak. (c) Kaj bi se pri izpustu eksona 2 zgodilo, če bi imel ekson 2 namesto $145$ nukleotidov $144$, kodirajoči del eksona 3 pa $302$ (spet s stop kodonom na koncu)?
 
 **Rešitev:**
 
@@ -198,7 +198,7 @@ Evkariontski gen ima tri eksone: ekson 1 ima $210\,\mathrm{nt}$, od tega prvih $
 2. Kodonov je $\frac{606}{3} = 202$, aminokislin $201$.
 3. (b) Brez eksona 2 manjka $145$ nukleotidov. Ker je $145 = 3 \cdot 48 + 1$, ostanek pri deljenju s $3$ ni nič.
 4. Ekson 3 se zato bere v premaknjenem okviru: od stika eksonov 1 in 3 naprej so kodoni drugačni, prvotni stop kodon ni v okviru. Beljakovina ima enakih le prvih okoli $53$ aminokislin iz eksona 1 ($160 = 3 \cdot 53 + 1$), nato drugačno zaporedje do naključnega stop kodona.
-5. (c) Pri $144 = 3 \cdot 48$ bi se ekson 3 z eksonom 2 ali brez njega bral v istem okviru: beljakovina brez eksona 2 bi imela $48$ aminokislin manj, drugačna bi bila kvečjemu aminokislina na stiku eksonov 1 in 3 (kodon na stiku sestavljata en nukleotid eksona 1 in dva naslednjega eksona).
+5. (c) Celotna mRNA ima tedaj $160 + 144 + 302 = 606\,\mathrm{nt}$, spet $201$ aminokislin. Ker je $144 = 3 \cdot 48$, izpust eksona 2 okvir ohrani: ostane $160 + 302 = 462\,\mathrm{nt}$, torej $154$ kodonov in $153$ aminokisline, $48$ manj. Konec C je enak; spremeni se lahko le aminokislina na stiku eksonov 1 in 3 (kodon na stiku sestavljata en nukleotid eksona 1 in dva nukleotida eksona 3).
 6. Odgovor: (a) $201$ aminokislin; (b) izpust eksona s $145\,\mathrm{nt}$ premakne okvir za ekson 3, ker $145$ ni deljivo s $3$; (c) pri $144\,\mathrm{nt}$ bi nastala krajša beljakovina z ohranjenim koncem C. Zato so eksoni, ki se alternativno izrezujejo, pogosto dolgi večkratnik $3$.
 
 ### Naloga 2

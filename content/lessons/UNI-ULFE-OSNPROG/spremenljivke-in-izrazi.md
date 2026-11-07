@@ -172,7 +172,7 @@ Za $k > 0$: $n = k \cdot q + r$ z $q =$ `n // k`, $r =$ `n % k`, $0 \le r < k$. 
 
 ### Primer 3 (težji)
 
-Program naj prebere glavnico, letno obrestno mero v odstotkih in število let ter izpiše končni znesek z obrestnimi obresti in obresti, oboje na dve decimalki. Študent je napisal:
+Program naj prebere glavnico, letno obrestno mero v odstotkih in število let ter izpiše končni znesek z obrestnimi obrestmi in obresti, oboje na dve decimalki. Študent je napisal:
 
 ```python
 G = input("Glavnica: ")

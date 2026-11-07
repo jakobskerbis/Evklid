@@ -13,7 +13,7 @@ Potrebuješ prvi zakon termodinamike, adiabatne spremembe idealnega plina in Car
 
 ## Razlaga
 
-**1. Mamljiva napačna zamisel.** Zdi se samoumevno: več toplote dovedemo in bolj vroče gorivo zgori, večji je izkoristek motorja. Ta lekcija pokaže, da to pri idealnem Ottovem motorju **ne drži**: izkoristek je odvisen le od tega, kolikokrat zrak stisnemo. Več toplote da več dela, ne pa boljšega razmerja. Temperatura je pomembna drugje, pri plinski turbini, in tam jo omejuje material.
+**1. Kje preprosta slika odpove.** Zdi se samoumevno: več toplote dovedemo in bolj vroče gorivo zgori, večji je izkoristek motorja. Ta lekcija pokaže, da to pri idealnem Ottovem motorju **ne drži**: izkoristek je odvisen le od tega, kolikokrat zrak stisnemo. Več toplote da več dela, ne pa boljšega razmerja. Temperatura je pomembna drugje, pri plinski turbini, in tam jo omejuje material.
 
 **2. Definicija.** **Krožni proces** je zaporedje sprememb stanja, po katerem se delovna snov vrne v začetno stanje. Ker je notranja energija funkcija stanja, je po enem obhodu $\Delta U = 0$. Iz prvega zakona sledi, da je opravljeno delo enako razliki toplot:
 
@@ -98,7 +98,7 @@ Pri izentropni ekspanziji je $s_4 = s_3$. Iz tega določimo **suhost** $x_4$ (ma
 :::premisli
 Zakaj parna elektrarna stiska vodo kot kapljevino in ne kot paro? Kaj bi se zgodilo z izkoristkom, če bi paro stiskali s kompresorjem kot plinska turbina?
 ---
-Delo stiskanja je $\int v\,dp$; kapljevina ima več tisočkrat manjšo specifično prostornino kot para (pri $0{,}1\,\mathrm{bar}$ okoli $14\,000$-krat), zato črpalka porabi le nekaj kJ/kg. Pri stiskanju pare bi kompresor požrl velik del dela turbine, kot pri Jouleovem procesu, in izkoristek bi močno padel.
+Delo stiskanja je $\int v\,dp$; kapljevina ima sto- do več tisočkrat manjšo specifično prostornino kot para (pri $0{,}1\,\mathrm{bar}$ okoli $14\,000$-krat), zato črpalka porabi le nekaj kJ/kg. Pri stiskanju pare bi kompresor požrl velik del dela turbine, kot pri Jouleovem procesu, in izkoristek bi močno padel.
 :::
 
 **8. Pregled štirih procesov.**

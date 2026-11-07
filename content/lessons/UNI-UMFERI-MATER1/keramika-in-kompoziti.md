@@ -36,7 +36,7 @@ Okvirne meje:
 
 Pri **silikatih** je osnovna enota tetraeder $\mathrm{SiO_4^{4-}}$: ion silicija v sredini, štirje kisikovi ioni v ogliščih. Tetraedri se povezujejo prek skupnih kisikovih ionov v verige, plasti (glinasti minerali, npr. kaolinit, in sljuda) ali tridimenzionalno mrežo (kremen, glinenci). Steklo je enaka mreža brez reda dolgega dosega.
 
-*Preveri v eni vrstici:* zakaj ima $\mathrm{Al_2O_3}$ ravno to formulo? (Dva iona $\mathrm{Al^{3+}}$ dasta $+6$, trije $\mathrm{O^{2-}}$ dajo $-6$.)
+*Hiter preizkus:* zakaj ima $\mathrm{Al_2O_3}$ ravno to formulo? (Dva iona $\mathrm{Al^{3+}}$ dasta $+6$, trije $\mathrm{O^{2-}}$ dajo $-6$.)
 
 **3. Zakaj je keramika krhka.** V kovini se plastična deformacija zgodi z drsenjem **dislokacij**; kovinska vez ni usmerjena in ne loči nabojev, zato drsenje ne stane veliko. V ionski keramiki drsenje približa enako nabite ione (slika zgoraj), v kovalentni (SiC, diamant) pa bi moralo pretrgati usmerjene vezi. Drsnih sistemov je zato zelo malo, dislokacije se pri sobni temperaturi skoraj ne gibljejo.
 
@@ -315,7 +315,7 @@ K_\mathrm{Ic} | lomna žilavost | K_\mathrm{Ic} = Y\sigma_\mathrm{c}\sqrt{\pi a}
 Y | faktor oblike razpoke | | – | približno 1
 a | dolžina razpoke | | m
 a_\mathrm{c} | največja dopustna dolžina razpoke | | m
-\rho | polmer konice razpoke; gostota kompozita | | g/cm^3 | pomen iz zveze
+\rho | gostota kompozita | \rho = \rho_\mathrm{v}V_\mathrm{v} + \rho_\mathrm{m}V_\mathrm{m} | g/cm^3 | v $\sigma_\mathrm{max}$ pa polmer konice razpoke (m)
 E_\parallel | modul vzdolž vlaken | E_\parallel = E_\mathrm{v}V_\mathrm{v} + E_\mathrm{m}V_\mathrm{m} | GPa
 E_\perp | modul prečno na vlakna | | GPa
 E_\mathrm{v} | elastični modul vlaken | | GPa
