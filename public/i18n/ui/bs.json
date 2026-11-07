@@ -2238,6 +2238,8 @@
   "acct.renewsOn": "Sljedeći period počinje {date}.",
   "acct.endsOn": "Pretplata završava {date}.",
   "acct.trial": "Besplatni probni period do {date}: sve funkcije za najviše 2 djece.",
+  "acct.pilot": "Pilot: puni paket besplatno do {date}, do {n} profila.",
+  "acct.owner": "Administrator: puni paket, instruktor bez ograničenja (potrošnja se bilježi).",
   "acct.promo": "Puni pristup s aktivacijskim kodom do {date}.",
   "acct.bonus": "Besplatan mjesec iz preporuke do {date}.",
   "acct.codeExample": "npr. {code}",

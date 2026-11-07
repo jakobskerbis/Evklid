@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "다음 기간은 {date}에 시작됩니다.",
   "acct.endsOn": "구독은 {date}에 끝납니다.",
   "acct.trial": "{date}까지 무료 체험: 자녀 최대 2명까지 모든 기능.",
+  "acct.pilot": "파일럿: {date}까지 전체 요금제 무료, 프로필 최대 {n}개.",
+  "acct.owner": "관리자: 전체 요금제, 튜터 무제한(사용량은 기록됨).",
   "acct.promo": "{date}까지 활성화 코드로 전체 이용.",
   "acct.bonus": "{date}까지 추천으로 받은 무료 한 달.",
   "acct.codeExample": "예: {code}",

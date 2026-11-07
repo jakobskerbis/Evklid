@@ -2224,6 +2224,8 @@
   "acct.renewsOn": "Kipindi kijacho kinaanza {date}.",
   "acct.endsOn": "Usajili unaisha {date}.",
   "acct.trial": "Jaribio la bure hadi {date}: vipengele vyote kwa watoto hadi 2.",
+  "acct.pilot": "Majaribio: kifurushi kamili bure hadi {date}, hadi wasifu {n}.",
+  "acct.owner": "Msimamizi: kifurushi kamili, mkufunzi bila kikomo (matumizi yanarekodiwa).",
   "acct.promo": "Ufikiaji kamili kwa msimbo wa kuwezesha hadi {date}.",
   "acct.bonus": "Mwezi wa bure kutokana na mwaliko hadi {date}.",
   "acct.codeExample": "k.m. {code}",

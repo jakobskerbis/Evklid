@@ -2252,6 +2252,8 @@
   "acct.renewsOn": "Ďalšie obdobie sa začína {date}.",
   "acct.endsOn": "Predplatné sa končí {date}.",
   "acct.trial": "Skúšobná verzia zadarmo do {date}: všetky funkcie pre najviac 2 deti.",
+  "acct.pilot": "Pilot: plný balík zadarmo do {date}, až {n} profily.",
+  "acct.owner": "Správca: plný balík, lektor bez limitu (spotreba sa zaznamenáva).",
   "acct.promo": "Plný prístup s aktivačným kódom do {date}.",
   "acct.bonus": "Mesiac zadarmo z odporúčania do {date}.",
   "acct.codeExample": "napr. {code}",

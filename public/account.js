@@ -930,6 +930,9 @@ function planText(acc) {
   const { access, parent } = acc;
   const sub = parent.subscription;
   const plan = sub && acc.plans.find((p) => p.key === sub.plan);
+  // Pilot in lastnik (server accountView, pregled #477 B3): poln paket brezplačno, brez ponudb za nakup.
+  if (acc.pilot?.kind === "owner") return `<p>${esc(t("acct.owner"))}</p>`;
+  if (acc.pilot?.kind === "pilot") return `<p>${esc(t("acct.pilot", { date: date(`${acc.pilot.last_day}T12:00:00Z`), n: acc.pilot.profiles }))}</p>`;
   if (access.tier === "paid") {
     const pend = acc.pending_change;
     // Ime paketa iz jezika vmesnika (stopnja ali Družina); regijski paketi in stari paketi brez stopnje z imenom s strežnika.
@@ -1456,7 +1459,7 @@ export async function renderAccount() {
     <div class="card">
       <h2>${esc(t("mob.subscription"))}</h2>
       ${planText(acc)}
-      ${!acc.billing ? `<p class="muted">${esc(t("credit.off"))}</p>` : paid ? "" : plansPicker(acc)}
+      ${!acc.billing ? `<p class="muted">${esc(t("credit.off"))}</p>` : paid || acc.pilot ? "" : plansPicker(acc)}
       ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
       ${promoBox(acc, paid)}
     </div>

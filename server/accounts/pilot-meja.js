@@ -48,6 +48,11 @@ const warned = new Set();
 // Neobstoječ dan (2026-11-31), napačen zapis ali datum več kot eno leto naprej (tipkarska napaka v letu): privzeti
 // datum in opozorilo v dnevniku (pregled #477 B5), nikoli pilot brez konca.
 export function pilotEndMs(env = process.env, now = Date.now()) {
+  const next = new Date(Date.parse(`${pilotLastDay(env, now)}T00:00:00Z`) + 86400000).toISOString().slice(0, 10);
+  return ljubljanaMidnight(next);
+}
+// Zadnji dan pilota "LLLL-MM-DD" (veljaven EVKLID_PILOT_DO ali privzeti), za prikaz v zavihku Račun.
+export function pilotLastDay(env = process.env, now = Date.now()) {
   const raw = String(env.EVKLID_PILOT_DO || "").trim();
   let day = PILOT_DO_DEFAULT;
   if (raw) {
@@ -59,8 +64,7 @@ export function pilotEndMs(env = process.env, now = Date.now()) {
       console.warn(`[evklid] EVKLID_PILOT_DO="${raw}" ni veljaven datum (ali je več kot eno leto naprej); velja ${PILOT_DO_DEFAULT}.`);
     }
   }
-  const next = new Date(Date.parse(`${day}T00:00:00Z`) + 86400000).toISOString().slice(0, 10);
-  return ljubljanaMidnight(next);
+  return day;
 }
 
 // Ali je e-naslov na seznamu pilota ali skrbnikov (ne glede na potrditev ali datum): za takšne naslove strežnik

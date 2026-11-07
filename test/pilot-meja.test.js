@@ -272,3 +272,38 @@ test("pilot in lastnik: neposreden nakup paketa pred testom zavrnjen (pregled B2
     }, { stripeKey: "sk_test_x" });
   }
 });
+
+test("pilot in lastnik v zavihku Račun: pilot namesto preizkusa, brez naročnine in dokupa (pregled #477 B3 P1-1)", async () => {
+  const { allowanceEmail } = await import("../server/accounts/email.js");
+  for (const [env, kind] of [[{ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, "pilot"], [{ EVKLID_ADMIN_EMAILS: "meja@x.si" }, "owner"], [{}, null]]) {
+    await withAccounts(env, async ({ call, kid }) => {
+      const acc = (await call("/api/account")).body;
+      if (!kind) {
+        assert.equal(acc.pilot, null);
+        assert.ok((await call("/api/billing/credit")).body.packs.length > 0, "ne-pilot: dokup ponujen");
+        return;
+      }
+      assert.equal(acc.pilot?.kind, kind, JSON.stringify(acc.pilot));
+      if (kind === "pilot") assert.deepEqual([acc.pilot.last_day, acc.pilot.profiles], [dayIso(10), 4], "zadnji dan pilota in do 4 profili");
+      assert.deepEqual((await call("/api/billing/credit")).body.packs, [], "brez dokupa");
+      const credit = await call("/api/billing/credit", { method: "POST", body: { pack: "p5" } });
+      assert.equal(credit.status, 409, JSON.stringify(credit.body));
+      const sub = await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month" } });
+      assert.equal(sub.status, 409, JSON.stringify(sub.body));
+      assert.ok(kid.id);
+    }, { stripeKey: "sk_test_x" });
+  }
+  const m = allowanceEmail({ childName: "Lan", stage: "out", left: 0, untilText: "1. 12.", topup: false }, "https://x/");
+  assert.doesNotMatch(m.html + m.text, /dokup/i, "e-pošta pilotu brez dokupa");
+  assert.match(allowanceEmail({ childName: "Lan", stage: "out", left: 0, untilText: "1. 12." }, "https://x/").html, /dokupite/);
+});
+
+test("pilot ob meji: besedilo brez »obdobja paketa« (block.shareOut, pregled #477 B3 P3-1)", async () => {
+  await withAccounts({ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, async ({ call, store, kid }) => {
+    spend(store, kid, 500);
+    const conv = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+    const r = await call(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: "v" } });
+    assert.equal(r.status, 429);
+    assert.equal(r.body.code, "block.shareOut", JSON.stringify(r.body));
+  });
+});

@@ -2224,6 +2224,8 @@
   "acct.renewsOn": "Sonraki dönem {date} tarihinde başlar.",
   "acct.endsOn": "Abonelik {date} tarihinde sona erer.",
   "acct.trial": "{date} tarihine kadar ücretsiz deneme: en fazla 2 çocuk için tüm özellikler.",
+  "acct.pilot": "Pilot: {date} tarihine kadar tam paket ücretsiz, en fazla {n} profil.",
+  "acct.owner": "Yönetici: tam paket, sınırsız eğitmen (kullanım kaydedilir).",
   "acct.promo": "{date} tarihine kadar etkinleştirme koduyla tam erişim.",
   "acct.bonus": "{date} tarihine kadar tavsiyeden gelen ücretsiz ay.",
   "acct.codeExample": "örn. {code}",

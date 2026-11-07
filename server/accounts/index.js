@@ -13,7 +13,7 @@ import { unseal, auditSecret } from "../crypto-polje.js";
 import { createHmac } from "node:crypto";
 import { exportOtherTables } from "../zasebnost.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
-import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES } from "./pilot-meja.js";
+import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES, pilotLastDay } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
@@ -283,6 +283,13 @@ export function mountAccounts(app, store, opts = {}) {
   } catch (e) {
     log.error?.("[evklid] brisanje zapisov pilota:", e.message);
   }
+  // Račun pilota ali lastnika (pregled #477 B3 P1-1): "pilot", "owner" ali null. Ta računa ne vidita ponudb za nakup
+  // (naročnina, dokup, paket pred testom) in strežnik nakupa ne sprejme; zavihek Račun pokaže pilot (accountView).
+  const specialOf = (p) => {
+    if (!p || p.is_guest) return null;
+    if (isOwnerParent(p)) return "owner";
+    return isPilotParent(p) && (accessOf(p).tier !== "paid" || unpaidTier(p)) ? "pilot" : null;
+  };
   // Koliko profilov sme imeti račun: po paketu (preizkus 2, brezplačno 1, družina do MAX_CHILDREN); član pilota med
   // pilotom PILOT_PROFILES (j 2026-11-06 18:3x), a ne manj kot paket. Po pilotu obstoječi profili ostanejo.
   const profileSeats = (p) => {
@@ -633,7 +640,7 @@ export function mountAccounts(app, store, opts = {}) {
       schools.clearCache();
     }
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, onLog: schoolOnLog });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, pilotOf: (id) => rightsFor(id).personalTier === "pilot", onLog: schoolOnLog });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
@@ -1281,9 +1288,12 @@ export function mountAccounts(app, store, opts = {}) {
   function accountView(req, p) {
     const access = accessOf(p);
     const rewards = db.prepare("SELECT COUNT(*) AS n FROM referral_rewards WHERE referrer_id = ?").get(p.id).n;
+    const special = specialOf(p);
     return {
       parent: publicParent(p),
       access,
+      // Pilot: poln paket brezplačno do zadnjega dne pilota (LLLL-MM-DD); lastnik: brez meje (public/account.js planText).
+      pilot: special ? { kind: special, last_day: special === "pilot" ? pilotLastDay() : null, profiles: profileSeats(p) } : null,
       free_daily_questions: freeDailyQuestions(),
       // Osebno ob šolski licenci: ponudi se, ko ima vsaj en otrok šolsko licenco (samo v evrih).
       school_plans: childIds(p.id).some((id) => schools.hasLicence(id)) && currencyOf(req, p) === "EUR" ? SCHOOL_PLANS : [],
@@ -1532,10 +1542,18 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
     guests.snapshotParent(p.id); // poraba gosta ostane šteta za omrežje
-    recordPilotDeletion(p);
-    clearPilotLevels(p.id);
-    db.prepare("DELETE FROM students WHERE parent_id = ?").run(p.id);
-    db.prepare("DELETE FROM parents WHERE id = ?").run(p.id);
+    // Zapis pilota in izbris v eni transakciji (pregled #477 B3 P3-3): če izbris pade, zapis pilot_prej_* ne ostane.
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      recordPilotDeletion(p);
+      clearPilotLevels(p.id);
+      db.prepare("DELETE FROM students WHERE parent_id = ?").run(p.id);
+      db.prepare("DELETE FROM parents WHERE id = ?").run(p.id);
+      db.exec("COMMIT");
+    } catch (err) {
+      db.exec("ROLLBACK");
+      throw err;
+    }
     // Dnevnik dostopov ostane brez povezave na izbrisani račun (brez e-naslova).
     audit(db, { req, parentId: p.id, action: "account_delete" });
     detachAudit(db, p.id);
@@ -1733,6 +1751,7 @@ export function mountAccounts(app, store, opts = {}) {
   app.post("/api/billing/checkout", json, async (req, res) => {
     if (needStripe(res)) return;
     const p = req.parent;
+    if (specialOf(p)) return res.status(409).json({ error: "Ta račun ima v pilotu poln paket brezplačno, zato naročnina ni potrebna.", pilot: true });
     const currency = currencyOf(req, p);
     const school = req.body?.school === true;
     const plan = school ? schoolPlanFor(req.body?.interval) : planForAccount(p.id, Number(req.body?.seats), req.body?.interval, currency);
@@ -1926,6 +1945,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   billing = mountBilling(app, {
+    specialOf,
     paidPeriods,
     credits,
     db,

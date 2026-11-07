@@ -127,6 +127,8 @@ export class Usage {
     this.unlimitedOf = () => false;
     // Poraba prejšnjih računov istega člana pilota (accounts/index.js pilotPriorSpent, pregled #477 B1).
     this.priorSpentOf = () => 0;
+    // Član pilota (accounts/index.js): ob meji besedilo brez »obdobja paketa« (block.shareOut, pregled #477 B3 P3-1).
+    this.pilotOf = () => false;
     this.onLog = null;
     this.inflight = new Map();
   }
@@ -135,9 +137,10 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf } = {}) {
     if (unlimitedOf) this.unlimitedOf = unlimitedOf;
     if (priorSpentOf) this.priorSpentOf = priorSpentOf;
+    if (pilotOf) this.pilotOf = pilotOf;
     if (minCall) this.minCall = minCall;
     if (blockFor) this.blockFor = blockFor;
     if (creditOverOf) this.creditOverOf = creditOverOf;
@@ -497,6 +500,10 @@ export class Usage {
   }
   // Razlog za odgovor 429: { error, code, params? }. code je ključ i18n (public/i18n/sl.js »block.*«), da ga
   // odjemalec pokaže v jeziku vmesnika; error ostane slovensko besedilo (rezerva, če ključa ni).
+  // Koda ob porabljeni meji paketa: pilot »Ta mesec … 1. v mesecu« (nima obdobja paketa), sicer block.freeTail*.
+  tailCode(studentId) {
+    return this.pilotOf(studentId) ? "block.shareOut" : `block.freeTail${tpSuffix(this.topupPrompt(studentId))}`;
+  }
   blockInfo(studentId) {
     // Lastnik: ustavi ga le prazno dobroimetje API (takrat ne odgovori nihče).
     if (this.unlimitedOf(studentId)) return this.creditOut() ? this.blockFor(studentId, "block.creditOut") : null;
@@ -510,7 +517,7 @@ export class Usage {
     const state = this.budgetState();
     // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false.
     const tail = tpSuffix;
-    if (this.overFreeTail(studentId, state)) return out(`block.freeTail${tail(this.topupPrompt(studentId))}`);
+    if (this.overFreeTail(studentId, state)) return out(this.tailCode(studentId));
     if (state.cap) {
       if (!this.overShare(studentId, state)) {
         const hard = this.hardBlock(studentId);
@@ -563,7 +570,7 @@ export class Usage {
         key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
         usd: Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) + Math.max(0, sb.credit || 0),
         spent: sb.spent,
-        code: `block.freeTail${tpSuffix(this.topupPrompt(studentId))}`,
+        code: this.tailCode(studentId),
       });
     }
     for (const c of [].concat(this.capsOf(studentId) || [])) if (c && Number.isFinite(c.usd)) caps.push(c);
