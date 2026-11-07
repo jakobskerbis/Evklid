@@ -13,7 +13,7 @@ stanje: osnutek
   - enaka ali disjunktna
 - Faktorska množica
   - $A/{\sim}$ je množica razredov
-  - projekcija $\pi(a) = [a]$
+  - projekcija $\pi \colon a \mapsto [a]$
 - Razbitja
   - bijekcija z ekvivalencami
   - Bellova števila $1, 2, 5, 15, 52$

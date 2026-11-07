@@ -211,7 +211,7 @@ Utemelji, zakaj so aktinski filamenti in mikrotubuli polarni, intermediarni fila
 
 ## Drugače: Uporaba v stroki
 
-- **Zdravila proti raku.** Paklitaksel stabilizira mikrotubule, vinka alkaloidi (vinkristin, vinblastin) preprečijo polimerizacijo. Oboje ustavi mitozo, zato bolj prizadene hitro deleče se celice. Kolhicin, ki veže tubulin, se uporablja pri protinu, ker zavre gibanje nevtrofilcev.
+- **Zdravila proti raku.** Paklitaksel stabilizira mikrotubule, vinka alkaloidi (vinkristin, vinblastin) preprečijo polimerizacijo. Oboje ustavi mitozo, zato bolj prizadene hitro se deleče celice. Kolhicin, ki veže tubulin, se uporablja pri protinu, ker zavre gibanje nevtrofilcev.
 - **Fluorescenčno barvanje.** Faloidin iz zelene mušnice se veže na F-aktin; z barvilom označen faloidin pokaže aktinsko mrežo v fluorescenčnem mikroskopu. Protitelesa proti tubulinu pokažejo mikrotubule.
 - **Diagnostika tumorjev.** Tumorske celice obdržijo intermediarne filamente svojega tkiva. Imunohistokemijsko barvanje na citokeratine pokaže karcinom (epitelni izvor), na vimentin sarkom, na dezmin mišični izvor.
 - **Dedne bolezni.** Primarna ciliarna diskinezija (pri delu bolnikov s situs inversus kot Kartagenerjev sindrom): manjkajoče dineinske ročice, nepremične migetalke, kronična vnetja dihal in neplodnost. Mutacije keratinov 5 in 14 povzročijo krhko kožo z mehurji (epidermolysis bullosa simplex).
@@ -252,9 +252,9 @@ Bazalno telesce na dnu migetalke je enaka ura, le da je na vsaki številki troj�
 ~ To je $650 \cdot 8\,\mathrm{nm}$: dimeri so razporejeni po $13$ protofilamentih, ne v enem.
 + $0{,}4\,\mu\mathrm m$
 - $0{,}031\,\mu\mathrm m$
-~ Tu je $650$ deljeno s $13 \cdot 8$; dimere deliš s $13$, dolžino pomnožiš z $8$.
-- $8{,}1\,\mu\mathrm m$
-~ To je $650 / 8 \cdot 0{,}1\,\mu\mathrm m$, mešanje enot brez pomena.
+~ To je $650 \cdot 8 / 13^2\,\mathrm{nm} \approx 31\,\mathrm{nm}$: s $13$ je deljeno dvakrat. Dimere razdeliš na $13$ protofilamentov enkrat, nato število na protofilament pomnožiš z $8\,\mathrm{nm}$.
+- $67{,}6\,\mu\mathrm m$
+~ To je $650 \cdot 8 \cdot 13\,\mathrm{nm}$: s $13$ je pomnoženo namesto deljeno. Vsak dimer podaljša le en protofilament.
 > $650 / 13 = 50$ dimerov na protofilament, $50 \cdot 8\,\mathrm{nm} = 400\,\mathrm{nm} = 0{,}4\,\mu\mathrm m$.
 
 ? Paklitaksel stabilizira mikrotubule, da ne razpadajo. Kaj je posledica v rakavih celicah?

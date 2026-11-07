@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na starem izpitu stoji naloga: »Vir z efektivno napetostjo $12\,\mathrm V$ ima notranjo impedanco $\underline Z_g = (6 + \mathrm{j} 8)\,\Omega$. Kakšno breme mu priključimo, da prejme največjo delovno moč, in kolikšna je ta moč?«
+Tipična izpitna naloga se glasi: »Vir z efektivno napetostjo $12\,\mathrm V$ ima notranjo impedanco $\underline Z_g = (6 + \mathrm{j} 8)\,\Omega$. Kakšno breme mu priključimo, da prejme največjo delovno moč, in kolikšna je ta moč?«
 
 Pri enosmernem toku odgovor poznaš: bremenski upor mora biti enak notranjemu. Ali naj bo breme zdaj $6\,\Omega$, ker je to realni del? Ali $10\,\Omega$, ker je to velikost impedance? Oboje je napačno, in do konca razlage boš vedel, zakaj.
 
@@ -273,7 +273,7 @@ kjer je $I_\mathrm{o}$ efektivna vrednost osnovnega harmonika toka in $\varphi_\
 - $5\,\mathrm{kW}$, $4\,\mathrm{kvar}$, $3\,\mathrm{kVA}$
 ~ Navidezna moč je hipotenuza trikotnika moči in ne more biti manjša od delovne.
 - $3\,\mathrm{kW}$, $-4\,\mathrm{kvar}$, $1\,\mathrm{kVA}$
-~ Negativen $Q$ je mogoč (kapacitivno breme), a $S$ je tudi tedaj $\sqrt{3^2 + 4^2} = 5\,\mathrm{kVA}$.
+~ To je $\lvert P + Q \rvert = \lvert 3 - 4 \rvert$. Negativen $Q$ je mogoč (kapacitivno breme), a $S$ je tudi tedaj $\sqrt{3^2 + 4^2} = 5\,\mathrm{kVA}$.
 > $\sqrt{3^2 + 4^2} = 5$; trojica tvori pravokotni trikotnik moči s $\cos\varphi = 0{,}6$.
 
 ? Motor na $230\,\mathrm V$ vleče $10\,\mathrm A$ pri $\cos\varphi = 0{,}8$. Približno kolikšna je njegova delovna moč?
@@ -331,7 +331,7 @@ S | navidezna moč | S = U I | VA | kompleksna $\underline S = P + \mathrm{j} Q$
 \lambda | faktor moči | \lambda = \frac{P}{S} | –
 R | upornost bremena | | \Omega
 X | reaktanca bremena | | \Omega
-Z | impedanca bremena | | \Omega | kazalec $\underline Z = R + \mathrm{j} X$
+Z | impedanca bremena | | \Omega | kompleksno število $\underline Z = R + \mathrm{j} X$
 Q_C | jalova moč kondenzatorja | Q_C = -\omega C U^2 | var
 C | kapacitivnost | | F
 U_g | napetost vira | | V

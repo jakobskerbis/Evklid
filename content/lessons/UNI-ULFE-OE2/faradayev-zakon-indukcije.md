@@ -67,7 +67,7 @@ Tuljava z $N$ ovoji in ploščino $A$ se v homogenem polju $B$ vrti s kotno hitr
 
 $$u_i = N B A \omega \sin\omega t$$
 
-To je izmenična napetost z amplitudo $\hat u = N B A \omega$ in efektivno vrednostjo $\hat u / \sqrt 2$. Tako deluje vsak sinhronski generator.
+To je izmenična napetost z amplitudo $\hat u = N B A \omega$ in efektivno vrednostjo $\hat u / \sqrt 2$. Na tem načelu delujejo generatorji izmenične napetosti.
 
 :::premisli
 Pri katerem kotu med normalo tuljave in poljem je inducirana napetost največja: ko je pretok največji ali ko je nič? Zakaj?
@@ -305,12 +305,12 @@ Za gibajoče se zanke velja splošneje, da je inducirana napetost vsota dveh del
 
 ? Elektromagnetni merilnik pretoka ima cev s premerom $0{,}10\,\mathrm m$ in polje $0{,}010\,\mathrm T$. Voda teče s povprečno hitrostjo $2\,\mathrm{m/s}$. Kolikšno napetost izmerita elektrodi?
 - $0{,}2\,\mathrm V$
-~ Pozabljen je premer cevi: $u = Bdv$, ne $u = Bv \cdot 10$.
+~ Premer je vstavljen v centimetrih: $0{,}010 \cdot 10 \cdot 2 = 0{,}2$. Pred računom pretvori $d = 0{,}10\,\mathrm m$.
 + $2\,\mathrm{mV}$
 - $0$, ker voda ni kovina.
 ~ Voda iz vodovoda vsebuje ione in je dovolj prevodna. Napetost se inducira zaradi gibanja nabojev v polju.
 - $20\,\mathrm{mV}$
-~ Uporabljen je polmer namesto premera in še napačna enota; dolžina »palice« med elektrodama je ves premer.
+~ To je $Bv = 0{,}010 \cdot 2 = 0{,}02\,\mathrm V$: pozabljen je premer. Dolžina »palice« med elektrodama je ves premer $d$.
 > Tekočina med elektrodama je kot palica dolžine $d$: $u = Bdv = 0{,}010 \cdot 0{,}10 \cdot 2 = 0{,}002\,\mathrm V$.
 
 :::simboli

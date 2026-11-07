@@ -45,7 +45,7 @@ Pri jeklu kaljenje ujame ogljik v prenasičeni martenzit. Ta nastane brez difuzi
 
 **Postopek (zlitina Al-$4\,\%$ Cu):**
 
-1. **Raztopno žarjenje** nad solvusom, a pod evtektično temperaturo $548\,^\circ\mathrm C$, okoli $500\,^\circ\mathrm C$: ves baker se raztopi v $\alpha$.
+1. **Raztopno žarjenje** nad solvusom (okoli $500\,^\circ\mathrm C$), a pod evtektično temperaturo $548\,^\circ\mathrm C$, v praksi pri $510$ do $520\,^\circ\mathrm C$: ves baker se raztopi v $\alpha$.
 2. **Gašenje** v vodi: difuzija nima časa, nastane **prenasičena trdna raztopina**. Ob tem ostane v mreži veliko praznih mest, ki kasneje pospešijo difuzijo.
 3. **Staranje**: pri sobni temperaturi (naravno) ali pri $120$ do $200\,^\circ\mathrm C$ (umetno). Baker se zbira v izločke v zaporedju: Guinier-Prestonove cone (ploščice debeline nekaj atomov) $\to$ $\theta''$ $\to$ $\theta'$ $\to$ ravnotežna faza $\theta$ ($\mathrm{Al_2Cu}$).
 
@@ -78,7 +78,7 @@ Magnezij je najlažja konstrukcijska kovina. Ima heksagonalno mrežo z malo drsn
 
 ### Titanove zlitine
 
-Titan je dvakrat lažji od jekla, ima zelo veliko specifično trdnost, ohrani jo do okoli $500\,^\circ\mathrm C$ in je izredno odporen proti koroziji zaradi goste plasti $\mathrm{TiO_2}$. Je drag, ker ga pridobivamo v zapletenem postopku prek $\mathrm{TiCl_4}$. Legirni elementi stabilizirajo eno od obeh modifikacij:
+Titan je skoraj dvakrat lažji od jekla, ima zelo veliko specifično trdnost, ohrani jo do okoli $500\,^\circ\mathrm C$ in je izredno odporen proti koroziji zaradi goste plasti $\mathrm{TiO_2}$. Je drag, ker ga pridobivamo v zapletenem postopku prek $\mathrm{TiCl_4}$. Legirni elementi stabilizirajo eno od obeh modifikacij:
 
 - **stabilizatorji $\alpha$** (Al, O, N) dvignejo temperaturo prehoda;
 - **stabilizatorji $\beta$** (V, Mo, Nb, Fe) jo znižajo.
@@ -246,8 +246,8 @@ Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje
 
 ## Drugače: Uporaba v stroki
 
-- **Letalstvo.** Spodnja stran kril je pogosto iz 2024-T3 (odpornost proti utrujanju), zgornja iz 7075-T6 ali novejših zlitin 7xxx (tlačna trdnost). Pri vrtanju zakovic se pazi na prestaranje zaradi toplote.
-- **Varjenje toplotno utrjevalnih zlitin.** Toplotno vplivno področje zvara se pri 6061-T6 delno prestara in razstara; trdnost ob zvaru pade za tretjino ali več, kar mora konstrukter upoštevati ali zvar ponovno toplotno obdelati.
+- **Letalstvo.** Spodnja stran kril je pogosto iz 2024-T3 (odpornost proti utrujanju), zgornja iz 7075-T6 ali novejših zlitin 7xxx (tlačna trdnost).
+- **Varjenje toplotno utrjevalnih zlitin.** V toplotno vplivnem področju zvara pri 6061-T6 se izločki delno raztopijo, malo dlje od zvara pa prestarajo; trdnost ob zvaru pade za tretjino ali več, kar mora konstrukter upoštevati ali zvar ponovno toplotno obdelati.
 - **Avtomobilska industrija.** Aluminijeve pločevine 6xxx dobavijo v stanju T4. Med sušenjem laka (okoli $180\,^\circ\mathrm C$, $20$ do $30\,\mathrm{min}$) se karoserija delno umetno postara, kar je izkoristek ene toplotne obdelave za dve nalogi.
 - **Medicina.** Ti-6Al-4V in čisti titan sta standard za kolčne endoproteze, zobne vsadke in plošče za kosti. Kost se na titanov oksid neposredno veže (oseointegracija). Modul titana ($110\,\mathrm{GPa}$) je še vedno večkrat večji od modula kortikalne kosti (okoli $10$ do $30\,\mathrm{GPa}$), zato vsadek prevzame del obremenitve in kost okoli njega se lahko tanjša. Razgradljivi magnezijevi vijaki se uporabljajo pri manjših zlomih.
 
@@ -270,7 +270,7 @@ Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje
 - okoli $10\,\mathrm{kg}$
 ~ Enaka masa bi veljala za enako togost v nategu; pri upogibu debelina raste le s tretjim korenom.
 - okoli $15\,\mathrm{kg}$
-~ Debelina se poveča za okoli $44\,\%$, gostota pa pade na okoli tretjino, zato masa pade.
+~ To je $10 \cdot 1{,}44 \approx 14{,}4\,\mathrm{kg}$: upoštevana je le večja debelina, ne pa trikrat manjša gostota.
 > Debelina $\times 1{,}44$, gostota $\times 0{,}344$, masa $\times 0{,}50$, torej okoli $5\,\mathrm{kg}$.
 
 ? Zakaj trdnost aluminijeve zlitine pri predolgem staranju pade?
@@ -280,7 +280,7 @@ Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje
 ~ Martenzit nastane pri kaljenju jekla; v aluminijevih zlitinah ga ni.
 + Ker izločki zrastejo, postanejo redkejši in nekoherentni, zato jih dislokacije obidejo.
 - Ker se zrna stalijo ob mejah.
-~ To se zgodi pri pregretju nad evtektiko pri raztopnem žarjenju, ne pri staranju.
+~ To se zgodi pri pregretju nad evtektično temperaturo med raztopnim žarjenjem, ne pri staranju.
 > Prestaranje: grobi, redki izločki so šibkejša ovira kot gosti drobni, ker jih dislokacije obidejo po Orowanovem mehanizmu.
 
 ? Na risbi piše EN AW-6082-T6. Kaj je bilo storjeno z materialom?
