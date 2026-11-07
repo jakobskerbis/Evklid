@@ -70,6 +70,9 @@ export class GraphView {
 
   resize() {
     const r = this.host.getBoundingClientRect();
+    // Platno, ki še ni na strani ali je skrito (kalkulator, pripravljen ob nedejavnosti; PR #481): nič ne merimo
+    // in ne rišemo. ResizeObserver pokliče resize() znova, ko dobi pravo velikost (prvi prikaz).
+    if (!this.host.isConnected || !r.width || !r.height) return;
     const W = Math.max(50, Math.round(r.width));
     const H = Math.max(50, Math.round(r.height));
     const dpr = Math.min(3, window.devicePixelRatio || 1);
@@ -130,6 +133,7 @@ export class GraphView {
     this.dirty = true;
     requestAnimationFrame(() => {
       this.dirty = false;
+      if (!this.host.isConnected || !this.sized) return; // brez prave velikosti in barv slogov ne rišemo
       const ctx = this.canvas.getContext("2d");
       ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       this.render(ctx, this.W, this.H);
@@ -140,6 +144,8 @@ export class GraphView {
     const root = document.documentElement;
     const key = `${root.className}|${root.getAttribute("style") || ""}`;
     if (this.cKey === key && this.cCache) return this.cCache;
+    // Sonda zunaj strani nima slogov (prazna barva → črna mreža): takih barv ne shranimo.
+    const live = this.host.isConnected;
     if (!this.probe) {
       this.probe = document.createElement("span");
       this.probe.style.display = "none";
@@ -158,7 +164,7 @@ export class GraphView {
     const bg = read("--surface", "#ffffff");
     const text = read("--text", "#14213d");
     const muted = read("--muted", "#5d6b86");
-    this.cKey = key;
+    this.cKey = live ? key : null;
     this.cCache = {
       bg,
       text,
