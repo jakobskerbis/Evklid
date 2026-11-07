@@ -55,6 +55,20 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit
+      # Sistemski paketi za brskalnike (.deb) iz prejšnjih zagonov: Azurjevo ogledalo Ubuntuja jih občasno pošilja
+      # s ~30–60 KB/s (paketi za WebKit, ~100 datotek; 7. 11. 2026 en 9 MB paket 3 min), zato se je namestitev
+      # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime in kontrolna vsota, in prenese samo
+      # nove različice. Ključ po mesecu: enkrat na mesec nova mapa (iz prejšnje), da ne raste v nedogled.
+      - id: mesec
+        run: |
+          echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+          echo "img=${ImageOS:-ubuntu}" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
+        with:
+          path: ~/apt-arhiv
+          key: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-${{ steps.mesec.outputs.m }}
+          restore-keys: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
       # sredi prenosa z ogledala in požrl 40 min; uspešne, a počasne namestitve pa trajajo do ~12 min, zato 13 min na poskus.
       # Brskalniki so v predpomnilniku, apt ostane vedno.
@@ -65,14 +79,24 @@ jobs:
           Acquire::Retries "3";
           Acquire::http::Timeout "30";
           Acquire::https::Timeout "30";
+          Dir::Cache::Archives "/home/runner/apt-arhiv/";
+          APT::Keep-Downloaded-Packages "true";
+          Binary::apt::APT::Keep-Downloaded-Packages "true";
           APT
+          sudo mkdir -p ~/apt-arhiv/partial
+          sudo chown _apt:root ~/apt-arhiv/partial
+          echo "Paketov v predpomnilniku: $(find ~/apt-arhiv -maxdepth 1 -name '*.deb' | wc -l)"
           for poskus in 1 2 3; do
-            if timeout -k 10 13m npx playwright install --with-deps chromium webkit; then exit 0; fi
+            if timeout -k 10 13m npx playwright install --with-deps chromium webkit; then
+              # actions/cache shrani mapo kot uporabnik runner: brez zaklepa in mape partial (_apt, 0700).
+              sudo rm -rf ~/apt-arhiv/partial ~/apt-arhiv/lock; sudo chmod -R a+rX ~/apt-arhiv
+              exit 0
+            fi
             echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (13 min)"
             # timeout ubije npx, apt pa teče naprej in drži zaklep: ubij ga, prenesene pakete obdrži (naslednji poskus nadaljuje).
             sudo pkill -9 -f '[a]pt-get|[a]pt |[d]pkg' || true
             sleep 2
-            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
+            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock ~/apt-arhiv/lock
             sudo DEBIAN_FRONTEND=noninteractive timeout 3m dpkg --configure -a --force-confdef --force-confold || true
             sudo DEBIAN_FRONTEND=noninteractive timeout 3m apt-get -f install -y || true
             sleep 5
@@ -133,6 +157,20 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium
+      # Sistemski paketi za brskalnike (.deb) iz prejšnjih zagonov: Azurjevo ogledalo Ubuntuja jih občasno pošilja
+      # s ~30–60 KB/s (paketi za WebKit, ~100 datotek; 7. 11. 2026 en 9 MB paket 3 min), zato se je namestitev
+      # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime in kontrolna vsota, in prenese samo
+      # nove različice. Ključ po mesecu: enkrat na mesec nova mapa (iz prejšnje), da ne raste v nedogled.
+      - id: mesec
+        run: |
+          echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+          echo "img=${ImageOS:-ubuntu}" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
+        with:
+          path: ~/apt-arhiv
+          key: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-${{ steps.mesec.outputs.m }}
+          restore-keys: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
       # sredi prenosa z ogledala in požrl 40 min; uspešne, a počasne namestitve pa trajajo do ~12 min, zato 13 min na poskus.
       # Brskalniki so v predpomnilniku, apt ostane vedno.
@@ -143,14 +181,23 @@ jobs:
           Acquire::Retries "3";
           Acquire::http::Timeout "30";
           Acquire::https::Timeout "30";
+          Dir::Cache::Archives "/home/runner/apt-arhiv/";
+          APT::Keep-Downloaded-Packages "true";
+          Binary::apt::APT::Keep-Downloaded-Packages "true";
           APT
+          sudo mkdir -p ~/apt-arhiv/partial
+          sudo chown _apt:root ~/apt-arhiv/partial
+          echo "Paketov v predpomnilniku: $(find ~/apt-arhiv -maxdepth 1 -name '*.deb' | wc -l)"
           for poskus in 1 2 3; do
-            if timeout -k 10 13m npx playwright install --with-deps chromium; then exit 0; fi
+            if timeout -k 10 13m npx playwright install --with-deps chromium; then
+              sudo rm -rf ~/apt-arhiv/partial ~/apt-arhiv/lock; sudo chmod -R a+rX ~/apt-arhiv
+              exit 0
+            fi
             echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (13 min)"
             # timeout ubije npx, apt pa teče naprej in drži zaklep: ubij ga, prenesene pakete obdrži (naslednji poskus nadaljuje).
             sudo pkill -9 -f '[a]pt-get|[a]pt |[d]pkg' || true
             sleep 2
-            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
+            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock ~/apt-arhiv/lock
             sudo DEBIAN_FRONTEND=noninteractive timeout 3m dpkg --configure -a --force-confdef --force-confold || true
             sudo DEBIAN_FRONTEND=noninteractive timeout 3m apt-get -f install -y || true
             sleep 5
