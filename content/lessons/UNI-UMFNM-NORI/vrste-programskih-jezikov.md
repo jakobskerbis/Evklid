@@ -111,9 +111,9 @@ Inženirka mora na mikrokrmilniku v merilni celici $10\,000$-krat na sekundo pre
 Prva naloga potrebuje popoln nadzor nad časom in strojno opremo: C, ki se prevede v strojno kodo, in pri najbolj kritičnem delu celo zbirni jezik. Druga je poizvedba po podatkih, ki jo SQL opiše v eni vrstici, sistem baze pa jo izvede učinkovito; pisanje zanke v nižjem jeziku bi bilo počasnejše za pisanje in bolj podvrženo napakam.
 :::
 
-**Kaj pridobimo in izgubimo.** Primerjava po stopnjah (»+« pomeni prednost):
+**Kaj pridobimo in izgubimo.** Primerjava po stopnjah (»+« pomeni prednost; »hitrost« pomeni hitrost programa in nadzor nad strojem, »pisanje« lahkost pisanja in prenosljivost):
 
-| stopnja | hitrost, nadzor | pisanje, prenos |
+| stopnja | hitrost | pisanje |
 |---|---|---|
 | strojni | $+ + +$ | $-$ |
 | zbirni | $+ + +$ | $-$ |

@@ -15,14 +15,12 @@ Preden bereš naprej, napovej. Na kljuko obesiš utež na tanki jekleni žici, n
 
 Pri kovinah poznaš kristalno mrežo, dislokacije, natezni preizkus in fazne diagrame. Polimer je drugačen že v osnovni gradnji:
 
-| lastnost | kovina | polimer |
-|---|---|---|
-| gradnik | atom | veriga molekul |
-| vez v gradniku | kovinska | kovalentna |
-| med gradniki | kovinska | šibke sile |
-| urejenost | kristal | amorfno ali delno |
-| $E$ | $45$–$400\,\mathrm{GPa}$ | $0{,}001$–$4\,\mathrm{GPa}$ |
-| gostota | $1{,}7$–$20\,\mathrm{g/cm^3}$ | $0{,}9$–$2{,}2\,\mathrm{g/cm^3}$ |
+- **gradnik:** kovina atom, polimer dolga veriga (makromolekula);
+- **vez v gradniku:** kovina kovinska, polimer kovalentna vzdolž verige;
+- **vez med gradniki:** kovina ista kovinska vez, polimer šibke sile in prepletanje;
+- **urejenost:** kovina kristal, polimer amorfen ali delno kristaliničen;
+- **modul $E$:** kovina $45$ do $400\,\mathrm{GPa}$, polimer $0{,}001$ do $4\,\mathrm{GPa}$;
+- **gostota:** kovina $1{,}7$ do $20\,\mathrm{g/cm^3}$, polimer $0{,}9$ do $2{,}2\,\mathrm{g/cm^3}$.
 
 Vse razlike v lastnostih izhajajo iz ene: vzdolž verige so atomi povezani z močnimi kovalentnimi vezmi, sosednje verige pa držijo skupaj le van der Waalsove sile, ponekod vodikove vezi, in to, da so verige prepletene kot špageti v loncu.
 

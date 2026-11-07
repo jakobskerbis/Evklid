@@ -238,8 +238,8 @@ Inkubator za celične kulture ima notranjo površino sten pri $37\,^\circ\mathrm
 
 **Rešitev:**
 
-1. Stena (zaporedne plasti): $R_s = \dfrac{2 \cdot 0{,}0010/16 + 0{,}040/0{,}030}{1{,}30}\,\mathrm{K/W} = \dfrac{1{,}3334}{1{,}30}\,\mathrm{K/W} \approx 1{,}026\,\mathrm{K/W}$.
-2. Vrata: $R_v = \dfrac{2 \cdot 0{,}0040/1{,}0 + 0{,}010/0{,}026}{0{,}20}\,\mathrm{K/W} = \dfrac{0{,}3926}{0{,}20}\,\mathrm{K/W} \approx 1{,}963\,\mathrm{K/W}$.
+1. Stena (zaporedne plasti), najprej ploskovni upor: $R_A = 2 \cdot 0{,}0010/16 + 0{,}040/0{,}030 \approx 1{,}3334\,\mathrm{m^2\,K/W}$, nato $R_s = 1{,}3334/1{,}30\,\mathrm{K/W} \approx 1{,}026\,\mathrm{K/W}$.
+2. Vrata: $R_A = 2 \cdot 0{,}0040/1{,}0 + 0{,}010/0{,}026 \approx 0{,}3926\,\mathrm{m^2\,K/W}$, nato $R_v = 0{,}3926/0{,}20\,\mathrm{K/W} \approx 1{,}963\,\mathrm{K/W}$.
 3. Steni in vrata so vzporedne poti med istima temperaturama: $\Phi_s = 15/1{,}026\,\mathrm{W} \approx 14{,}62\,\mathrm{W}$, $\Phi_v = 15/1{,}963\,\mathrm{W} \approx 7{,}64\,\mathrm{W}$.
 4. Moč grelnika: $\Phi = 14{,}62\,\mathrm{W} + 7{,}64\,\mathrm{W} \approx 22{,}3\,\mathrm{W}$.
 5. Nadomestni upor: $R = 15/22{,}26\,\mathrm{K/W} \approx 0{,}674\,\mathrm{K/W}$ (manjši od obeh, kot pri vzporednih električnih uporih).
