@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Knjižničar iz številke ISBN razbere državo in založnika, ne da bi odprl knjigo. Farmacevt iz oznake zdravila razbere učinkovino in odmerek. Strojnik dobi risbo, na kateri ob gredi piše samo **42CrMo4**, ob ohišju črpalke pa **EN-GJL-250**. Ti dve kratki oznaki sta enaki vrsti zapisa kot ISBN: vsak znak na svojem mestu nekaj pomeni. Iz prve razbereš, da je to jeklo z $0{,}42\,\%$ ogljika, kroma okoli $1\,\%$ in nekaj molibdena, primerno za poboljšanje. Iz druge, da je ohišje iz sive litine z lamelnim grafitom in natezno trdnostjo vsaj $250\,\mathrm{MPa}$.
+Knjižničar iz številke ISBN razbere državo in založnika, ne da bi odprl knjigo. Farmacevt iz oznake zdravila razbere učinkovino in odmerek. Strojnik dobi risbo, na kateri ob gredi piše samo **42CrMo4**, ob ohišju črpalke pa **EN-GJL-250**. Obe kratki oznaki sta zapisani po istem načelu kot ISBN: vsak znak na svojem mestu nekaj pomeni. Iz prve razbereš, da je to jeklo z $0{,}42\,\%$ ogljika, kroma okoli $1\,\%$ in nekaj molibdena, primerno za poboljšanje. Iz druge, da je ohišje iz sive litine z lamelnim grafitom in natezno trdnostjo vsaj $250\,\mathrm{MPa}$.
 
 Jekel je več tisoč. Kdor zna brati oznake, iz risbe razbere lastnosti, iz kataloga izbere zamenjavo in v skladišču ne zamenja nerjavnega jekla z navadnim. Kdor ne zna, naroči napačen material, ki se zvari slabo, zarjavi ali poči.
 
@@ -34,7 +34,7 @@ Dodatni znaki pri S pomenijo udarno žilavost: **JR** je $27\,\mathrm{J}$ pri $2
 
 *Skupina 2: po kemični sestavi.*
 - **Nelegirana** (manj kot $1\,\%$ Mn): **C** + stokratnik deleža ogljika. C45 ima $0{,}45\,\%$ C.
-- **Nizkolegirana** (vsak element pod $5\,\%$): stokratnik C, simboli elementov, nato deleži, pomnoženi s faktorji: $4$ za Cr, Co, Mn, Ni, Si, W; $10$ za Al, Cu, Mo, Nb, Ti, V (in druge); $100$ za N, P, S; $1000$ za B.
+- **Nizkolegirana** (vsak element pod $5\,\%$; enako se označujejo tudi nelegirana z vsaj $1\,\%$ Mn, na primer 28Mn6): stokratnik C, simboli elementov, nato deleži, pomnoženi s faktorji: $4$ za Cr, Co, Mn, Ni, Si, W; $10$ za Al, Cu, Mo, Nb, Ti, V (in druge); $100$ za N, P, S; $1000$ za B.
 - **Visokolegirana** (vsaj en element $5\,\%$ ali več): **X** + stokratnik C, simboli, nato *dejanski* deleži, ločeni s črticami. X5CrNi18-10 ima $0{,}05\,\%$ C, $18\,\%$ Cr in $10\,\%$ Ni.
 - **Hitrorezna**: **HS** + deleži W, Mo, V, Co v tem vrstnem redu. HS6-5-2 ima $6\,\%$ W, $5\,\%$ Mo, $2\,\%$ V.
 
@@ -165,7 +165,7 @@ $\mathrm{CE}_\mathrm{L} = C + \dfrac{\mathrm{Si} + \mathrm{P}}{3}$
 :::premisli
 Kolikšen je $\mathrm{CE}_\mathrm{L}$ in kaj to pomeni za strjevanje?
 ---
-$\mathrm{CE}_\mathrm{L} \approx 3{,}4 + 0{,}733 = 4{,}13\,\%$, kar je pod $4{,}3\,\%$: litina je rahlo podevtektična. Najprej se izločajo dendriti avstenita, nato strdi evtektik z grafitom. Blizu evtektika ima litina dobro livnost, zato se tak sestav izbira za tankostenske ulitke.
+$\mathrm{CE}_\mathrm{L} \approx 3{,}4 + 0{,}733 = 4{,}13\,\%$, kar je pod $4{,}3\,\%$: litina je rahlo podevtektična. Najprej se izločajo dendriti avstenita, nato se strdi evtektik z grafitom. Blizu evtektika ima litina dobro livnost, zato se taka sestava izbira za tankostenske ulitke.
 :::
 
 ## Pogoste napake
@@ -174,7 +174,7 @@ $\mathrm{CE}_\mathrm{L} \approx 3{,}4 + 0{,}733 = 4{,}13\,\%$, kar je pod $4{,}3
 - **Faktor pozabljen.** Kdor iz 42CrMo4 prebere »$4\,\%$ kroma«, pozabi deliti s faktorjem $4$; prav je $1\,\%$. Pri X-oznakah faktorjev ni.
 - **»Nerjavno jeklo ne rjavi nikoli.«** Pasivna plast se poškoduje v kloridih (morska voda, sol za posipanje) ali v rezah in špranjah. Za morje izberemo jeklo z molibdenom (X2CrNiMo17-12-2) ali dupleks.
 - **»Siva litina je trdna, ker je trda.«** Trdota ni trdnost v nategu. Lamelni grafit dela zareze, zato je siva litina v nategu krhka; za udarne obremenitve izberemo nodularno litino.
-- **Meja tečenja ne glede na debelino.** Pri debelejših izdelkih je $R_\mathrm{e}$ manjša od števila v oznaki (S235 nad $16\,\mathrm{mm}$ le $225\,\mathrm{MPa}$). Spregledano zmanjšanje vodi v prekratko dimenzioniranje (Naloga 1).
+- **Meja tečenja ne glede na debelino.** Pri debelejših izdelkih je $R_\mathrm{e}$ manjša od števila v oznaki (S235 nad $16\,\mathrm{mm}$ le $225\,\mathrm{MPa}$). Spregledano zmanjšanje vodi v premajhen prerez (Naloga 1).
 
 ## Povzetek
 
@@ -291,7 +291,7 @@ Siva in nodularna litina sta kot steklo z razpokami in steklo z mehurčki. Razpo
 - $0{,}20$, dobro varivo
 ~ Pozabil si mangan; ta prispeva $\frac{1{,}2}{6} = 0{,}2$.
 - $0{,}60$, potrebno predgrevanje
-~ $0{,}20 + 0{,}20 = 0{,}40$, ne $0{,}60$.
+~ Mangan si delil s $3$ (kot silicij pri litinah): $\frac{1{,}2}{3} = 0{,}4$. Pri jeklu je $\frac{1{,}2}{6} = 0{,}2$, zato $\mathrm{CE} = 0{,}40$.
 > $\mathrm{CE} = 0{,}20 + \frac{1{,}2}{6} = 0{,}40 \le 0{,}45$.
 
 :::simboli

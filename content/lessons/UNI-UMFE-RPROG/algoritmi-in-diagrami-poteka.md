@@ -298,7 +298,7 @@ Navigacija v avtu dela enako. Na vsakem križišču preveri pogoj (»sem že na 
 
 ## Drugače: Bolj natančno
 
-**Število korakov.** Algoritma za isti problem se lahko zelo razlikujeta v hitrosti. Iskanje največjega skupnega delitelja s preizkušanjem vseh števil od $\min(a, b)$ navzdol potrebuje za $252$ in $198$ kar $181$ preizkusov (od $198$ navzdol do $18$), Evklidov algoritem pa le $4$ prehode. Število prehodov Evklidovega algoritma raste sorazmerno s številom števk, ne z velikostjo števil.
+**Število korakov.** Algoritma za isti problem se lahko zelo razlikujeta v hitrosti. Iskanje največjega skupnega delitelja s preizkušanjem vseh števil od $\min(a, b)$ navzdol potrebuje za $252$ in $198$ kar $181$ preizkusov (od $198$ navzdol do $18$), Evklidov algoritem pa le $4$ prehode. Število prehodov Evklidovega algoritma raste največ sorazmerno s številom števk (Laméjev izrek), ne z velikostjo števil.
 
 **Meje algoritmov.** Alan Turing je leta 1936 dokazal, da ne obstaja algoritem, ki bi za vsak program in vhod odločil, ali se program ustavi (problem ustavitve). Zato končnosti ne moremo vedno preveriti samodejno; pri Collatzovem postopku je niti ročno še ne znamo dokazati.
 
@@ -306,14 +306,14 @@ Navigacija v avtu dela enako. Na vsakem križišču preveri pogoj (»sem že na 
 
 ## Preveri se
 
-? Kateri element ne sodi med simbole diagrama poteka?
-- romb
-~ Romb je odločitev z dvema izhodoma.
-- paralelogram
-~ Paralelogram pomeni vhod ali izhod podatkov.
-+ krog z napisom »po občutku«
-- zaobljen pravokotnik
-~ Ta označi začetek ali konec.
+? Kateri element ne sodi v pravilno narisan diagram poteka?
+- romb z izhodoma »da« in »ne«
+~ To je pravilno narisana odločitev.
+- paralelogram »beri $U$«
+~ Paralelogram pomeni vhod ali izhod podatkov; tak korak je pravilen.
++ pravokotnik z napisom »dodaj po občutku«
+- zaobljen pravokotnik »začetek«
+~ Ta pravilno označi začetek.
 > Korak »po občutku« krši določenost; vsak korak algoritma mora biti enoumen.
 
 ? Algoritem: $s = 0$; za $k$ od $1$ do $4$: $s \leftarrow s + k^2$; izpiši $s$. Kaj izpiše?

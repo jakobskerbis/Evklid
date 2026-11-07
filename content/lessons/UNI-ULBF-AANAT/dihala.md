@@ -22,7 +22,7 @@ Anatomsko pa ločimo **zgornjo dihalno pot** (nosna votlina, žrelo, grlo) in **
 
 **Žrelo** (*pharynx*) je skupna pot zraka in hrane. Ima tri dele: **nosni** (z odprtino slušne cevi in žrelnico), **ustni** in **grlni** del. V grlnem delu se poti križata: zrak gre naprej v grlo, hrana nazaj v požiralnik.
 
-**Grlo** (*larynx*) leži v višini vretenc $\mathrm{C3}$–$\mathrm{C6}$. Ogrodje so hrustanci: **ščitasti** (pri moških izbočen kot »Adamovo jabolko«), pod njim **prstanasti** (edini sklenjen obroč), na njem dva **ročičasta** hrustanca, ki napenjata glasilki, in prožni **poklopec** (*epiglottis*). Ob požiranju se grlo dvigne pod poklopec in vhod v grlo se zapre. Med glasilkama je **glasilna špranja**, najožje mesto dihalne poti pri odraslem. Med ščitastim in prstanastim hrustancem je vez, ki jo otipaš pod kožo vratu (krikotiroidna vez).
+**Grlo** (*larynx*) leži v višini vretenc $\mathrm{C3}$–$\mathrm{C6}$. Ogrodje so hrustanci: **ščitasti** (pri moških izbočen kot »Adamovo jabolko«), pod njim **prstanasti** (edini sklenjen obroč), na njem dva **ročičasta** hrustanca, na katera se pripenjata glasilki in ki ju premikata (odpirata in zapirata glasilno špranjo), in prožni **poklopec** (*epiglottis*). Ob požiranju se grlo dvigne pod poklopec in vhod v grlo se zapre. Med glasilkama je **glasilna špranja**, najožje mesto dihalne poti pri odraslem. Med ščitastim in prstanastim hrustancem je vez, ki jo otipaš pod kožo vratu (krikotiroidna vez).
 
 :::premisli
 Zakaj je ravno grlo, ne sapnik, mesto, kjer se tujek najpogosteje zatakne in ogrozi življenje?
@@ -47,7 +47,7 @@ Glasilna špranja je najožje mesto poti pri odraslem. Tujek, ki gre skozi njo, 
 
 Desni glavni bronh je dolg okoli $2{,}5\,\mathrm{cm}$, širši in od navpičnice odklonjen le okoli $25°$. Levi je dolg okoli $5\,\mathrm{cm}$, ožji in odklonjen okoli $45°$, ker mora pod aortnim lokom mimo srca.
 
-**Bronhialno drevo.** Glavni bronh se razcepi v **režnjeve** bronhe (desno trije, levo dva), ti v **segmentne**. Segmentni bronh s svojo vejo pljučne arterije prehranjuje **bronhopulmonalni segment**. To je piramidast del pljuč s konico proti hilusu, ki ga kirurg lahko odstrani posebej. Desno je segmentov $10$, levo $8$–$10$. Ob nadaljnjem deljenju hrustanec izgine. Cevke s premerom pod okoli $1\,\mathrm{mm}$ so **bronhioli**: nimajo hrustanca, imajo pa gladko mišičje (pri astmi se skrči). Od sapnika do alveol se pot razcepi okoli $23$-krat. Prvih okoli $16$ razcepov sodi v prevodni del, ostali v respiracijskega.
+**Bronhialno drevo.** Glavni bronh se razcepi v **režnjeve** bronhe (desno trije, levo dva), ti v **segmentne**. Segmentni bronh s svojo vejo pljučne arterije oskrbuje **bronhopulmonalni segment**. To je piramidast del pljuč s konico proti hilusu, ki ga kirurg lahko odstrani posebej. Desno je segmentov $10$, levo $8$–$10$. Ob nadaljnjem deljenju hrustanec izgine. Cevke s premerom pod okoli $1\,\mathrm{mm}$ so **bronhioli**: nimajo hrustanca, imajo pa gladko mišičje (pri astmi se skrči). Od sapnika do alveol se pot razcepi okoli $23$-krat. Prvih okoli $16$ razcepov sodi v prevodni del, ostali v respiracijskega.
 
 **Pljučni krili.** Vsako krilo ima **vrh** (sega okoli $2$–$3\,\mathrm{cm}$ nad ključnico), **bazo** na preponi in **hilus** na medialni strani. Skozi hilus gredo bronh, pljučna arterija, dve pljučni veni, bronhialne žile, mezgovnice in živci; skupaj tvorijo **koren pljuč**.
 
@@ -66,7 +66,7 @@ Pljuča hranita dva obtoka. Pljučne arterije prinesejo vso kri za izmenjavo pli
 - **plevra:** $8.$, $10.$ in $12.$ rebro v istih črtah;
 - razlika dveh reber je rebrno-prepončni recesus.
 
-**Dihalne mišice.** Glavna je **prepona**; živec preponec izhaja iz vratnih segmentov $\mathrm{C3}$–$\mathrm{C5}$. Ko se skrči, kupola se spusti in prsni koš poveča. Zunanje medrebrne mišice dvigajo rebra pri vdihu, notranje jih spuščajo pri aktivnem izdihu. Ob vsakem rebru, v žlebu na njegovem **spodnjem** robu, teče medrebrni snop: vena, arterija in živec, od zgoraj navzdol.
+**Dihalne mišice.** Glavna je **prepona**; živec preponec izhaja iz vratnih segmentov $\mathrm{C3}$–$\mathrm{C5}$. Ko se skrči, se kupola spusti in prsna votlina se poveča. Zunanje medrebrne mišice dvigajo rebra pri vdihu, notranje jih spuščajo pri aktivnem izdihu. Ob vsakem rebru, v žlebu na njegovem **spodnjem** robu, teče medrebrni snop: vena, arterija in živec, od zgoraj navzdol.
 
 :::premisli
 Rana z nožem v spodnjem delu vratu, tik nad ključnico, lahko povzroči pnevmotoraks (zrak v plevralni votlini). Zakaj, če so pljuča vendar v prsnem košu?
@@ -116,7 +116,7 @@ Tujek sledi najširši in najbolj navpični poti; pri pokončni drži težnost v
 
 Odgovori na izpitno vprašanje iz uvoda. Bolnik ima tekočino v desni plevralni votlini; zdravnik bo vbodel v srednji aksilarni črti.
 
-**Podatki:** srednja aksilarna črta; spodnji rob pljuč pri mirnem dihanju ob $8.$ rebru, spodnji rob plevre ob $10.$ rebru; medrebrni snop teče ob spodnjem robu vsakega rebra; pod prepono desno leži jetra
+**Podatki:** srednja aksilarna črta; spodnji rob pljuč pri mirnem dihanju ob $8.$ rebru, spodnji rob plevre ob $10.$ rebru; medrebrni snop teče ob spodnjem robu vsakega rebra; pod prepono desno ležijo jetra
 **Iščemo:** medrebrni prostor, rob rebra in plasti, skozi katere gre igla
 
 :::formula
@@ -194,7 +194,7 @@ Bolnik po operaciji zaradi bolečine diha plitvo: $V_\mathrm{T} = 300\,\mathrm{m
 3. Z dihalko je mrtvi prostor $150 + 94 = 244\,\mathrm{mL}$.
 4. Delež vdiha brez izmenjave: plitvo $\frac{244}{300} \approx 0{,}81$, globoko $\frac{244}{600} \approx 0{,}41$.
 5. Alveolarna ventilacija z dihalko: plitvo $(300 - 244) \cdot 20 = 1120\,\mathrm{mL/min}$, globoko $(600 - 244) \cdot 10 = 3560\,\mathrm{mL/min}$.
-6. Odgovor: pri enaki minutni ventilaciji ima plitvo dihanje $3$ namesto $4{,}5\,\mathrm{L/min}$ alveolarne ventilacije; z dihalko ostane do alveol le okoli petina vdiha. Bolniku je treba zmanjšati bolečino in ga spodbujati h globokemu dihanju; vsaka cev (maska, dihalka) poveča mrtvi prostor.
+6. Odgovor: pri enaki minutni ventilaciji ima plitvo dihanje $3$ namesto $4{,}5\,\mathrm{L/min}$ alveolarne ventilacije; z dihalko pri plitvem dihanju pride do alveol le okoli petina vdiha. Bolniku je treba zmanjšati bolečino in ga spodbujati h globokemu dihanju; vsaka cev (maska, dihalka) poveča mrtvi prostor.
 
 ### Naloga 2
 
@@ -218,7 +218,7 @@ Drevo je posajeno v dve vreči z mokro notranjostjo: to sta plevralni votlini. V
 
 ## Drugače: Uporaba v stroki
 
-**Intubacija.** Anesteziolog cev vstavi skozi glasilno špranjo v sapnik. Če jo potisne pregloboko, zdrsne v desni glavni bronh in predihava le desno krilo. Zato po vstavitvi posluša oba prsna koša in na rentgenu preveri, da je konica nad karino.
+**Intubacija.** Anesteziolog cev vstavi skozi glasilno špranjo v sapnik. Če jo potisne pregloboko, zdrsne v desni glavni bronh in predihava le desno krilo. Zato po vstavitvi posluša nad obema stranema prsnega koša in na rentgenu preveri, da je konica nad karino.
 
 **Krikotiroidotomija.** Ko zgornje dihalne poti ni mogoče odpreti, zdravnik prereže krikotiroidno vez med ščitastim in prstanastim hrustancem. Tu je pod kožo malo žil in dihalna pot je najbliže površini.
 

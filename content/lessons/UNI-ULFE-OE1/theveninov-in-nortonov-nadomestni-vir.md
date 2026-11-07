@@ -35,7 +35,7 @@ Superpozicija velja za tokove in napetosti, *ne pa za moč*, ker je moč kvadrat
 
 **3. Theveninov izrek.**
 
-**Izrek (Thevenin).** Linearno vezje, gledano s sponk A in B, lahko nadomestimo z idealnim napetostnim virom $U_\mathrm{Th}$ in zaporednim uporom $R_\mathrm{Th}$, tako da je za vsako breme tok in napetost na bremenu enaka kot v prvotnem vezju. Pri tem je:
+**Izrek (Thevenin).** Linearno vezje, gledano s sponk A in B, lahko nadomestimo z idealnim napetostnim virom $U_\mathrm{Th}$ in zaporednim uporom $R_\mathrm{Th}$, tako da sta za vsako breme tok in napetost na bremenu enaka kot v prvotnem vezju. Pri tem je:
 - $U_\mathrm{Th}$ napetost odprtih sponk (brez bremena);
 - $R_\mathrm{Th}$ upornost med sponkama, ko so vsi neodvisni viri izklopljeni.
 
@@ -281,10 +281,10 @@ Theveninova in Nortonova shema sta torej dva načina, kako narisati isto premico
 > $U_\mathrm{Th} = 20 \cdot 0{,}5 = 10\,\mathrm{V}$.
 
 ? Mikrobna gorivna celica ima pri odprtih sponkah $0{,}8\,\mathrm{V}$, tok kratkega stika pa je $4\,\mathrm{mA}$. Pri katerem bremenu odda največjo moč?
-- $50\,\Omega$
-~ To je $\frac{0{,}2}{0{,}004}$, deljena je polovica napetosti; $R_\mathrm{Th}$ je $\frac{U_\mathrm{Th}}{I_\mathrm{N}}$.
-- $3{,}2\,\mathrm{k\Omega}$
-~ Tu si napetost in tok pomnožil; upornost je količnik.
+- $100\,\Omega$
+~ To je $\frac{0{,}4}{0{,}004}$: deliš polovico napetosti odprtih sponk. Polovica velja za napetost na prilagojenem bremenu, $R_\mathrm{Th}$ pa je $\frac{U_\mathrm{Th}}{I_\mathrm{N}}$.
+- $0{,}2\,\Omega$
+~ To je $\frac{0{,}8}{4}$: miliampere pretvori v ampere, $4\,\mathrm{mA} = 0{,}004\,\mathrm{A}$.
 + $200\,\Omega$, moč je tedaj $0{,}8\,\mathrm{mW}$
 - pri čim manjšem bremenu, ker je tok največji
 ~ Pri kratkem stiku je napetost nič in je moč tudi nič.

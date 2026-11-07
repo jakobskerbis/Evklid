@@ -141,10 +141,11 @@ $\operatorname{rang} A$ = število neničelnih vrstic v stopničasti obliki; $A$
 4. Primer $a = 1$: druga in tretja vrstica sta ničelni, zato je rang $1$ (vse vrstice so enake $(1, 1, 1)$).
 5. Primer $a = -2$: druga vrstica je $(0, -3, 3)$, tretja ničelna, zato je rang $2$.
 6. Sicer sta $a - 1 \neq 0$ in $(1 - a)(a + 2) \neq 0$, pivoti so trije in rang je $3$. Matrika je obrnljiva natanko za $a \neq 1$ in $a \neq -2$. (Za preizkus: $\det A = -(a - 1)^2(a + 2)$.)
-7. Pri $a = 0$ shemo začnemo z $V_1 \leftrightarrow V_2$, ker je zgoraj levo $0$: $\left(\begin{array}{ccc|ccc} 1 & 0 & 1 & 0 & 1 & 0 \\ 0 & 1 & 1 & 1 & 0 & 0 \\ 1 & 1 & 0 & 0 & 0 & 1 \end{array}\right)$.
-8. $V_3 \leftarrow V_3 - V_1 - V_2$: $(0, 0, -2 \mid -1, -1, 1)$, nato $V_3 \leftarrow -\frac{1}{2}V_3$: $(0, 0, 1 \mid \frac{1}{2}, \frac{1}{2}, -\frac{1}{2})$.
-9. $V_1 \leftarrow V_1 - V_3$ in $V_2 \leftarrow V_2 - V_3$ dasta $(1, 0, 0 \mid -\frac{1}{2}, \frac{1}{2}, \frac{1}{2})$ in $(0, 1, 0 \mid \frac{1}{2}, -\frac{1}{2}, \frac{1}{2})$.
-10. Odgovor: $\operatorname{rang} A = 1$ pri $a = 1$, $2$ pri $a = -2$ in $3$ sicer; obrnljiva je za $a \notin \{1, -2\}$. Pri $a = 0$ je $A^{-1} = \dfrac{1}{2}\begin{pmatrix} -1 & 1 & 1 \\ 1 & -1 & 1 \\ 1 & 1 & -1 \end{pmatrix}$.
+7. Pri $a = 0$ je pivot zgoraj levo še vedno $1$, zato na shemi ponovimo korake 2 in 3: $\left(\begin{array}{ccc|ccc} 1 & 1 & 0 & 1 & 0 & 0 \\ 1 & 0 & 1 & 0 & 1 & 0 \\ 0 & 1 & 1 & 0 & 0 & 1 \end{array}\right)$.
+8. $V_2 \leftarrow V_2 - V_1$: $(0, -1, 1 \mid -1, 1, 0)$. $V_3 \leftarrow V_3 + V_2$: $(0, 0, 2 \mid -1, 1, 1)$, nato $V_3 \leftarrow \frac{1}{2}V_3$: $(0, 0, 1 \mid -\frac{1}{2}, \frac{1}{2}, \frac{1}{2})$.
+9. $V_2 \leftarrow -(V_2 - V_3)$: $(0, 1, 0 \mid \frac{1}{2}, -\frac{1}{2}, \frac{1}{2})$. $V_1 \leftarrow V_1 - V_2$: $(1, 0, 0 \mid \frac{1}{2}, \frac{1}{2}, -\frac{1}{2})$.
+10. Preizkus prve vrstice produkta: $(1, 1, 0)$ krat prvi stolpec $(\frac{1}{2}, \frac{1}{2}, -\frac{1}{2})$ da $\frac{1}{2} + \frac{1}{2} = 1$, krat drugi stolpec $(\frac{1}{2}, -\frac{1}{2}, \frac{1}{2})$ pa $0$. Drži.
+11. Odgovor: $\operatorname{rang} A = 1$ pri $a = 1$, $2$ pri $a = -2$ in $3$ sicer; obrnljiva je za $a \notin \{1, -2\}$. Pri $a = 0$ je $A^{-1} = \dfrac{1}{2}\begin{pmatrix} 1 & 1 & -1 \\ 1 & -1 & 1 \\ -1 & 1 & 1 \end{pmatrix}$.
 
 ### Primer 4 – zdaj ti: napetosti vozlišč
 
@@ -229,7 +230,7 @@ Naj bo $A$ kvadratna matrika reda $n$ in naj zaporedje elementarnih transformaci
 Vrstice matrike $3 \times 3$ si predstavljaj kot tri puščice iz izhodišča v prostoru.
 
 - Rang $3$: puščice napenjajo ves prostor, kot tri robovi škatle.
-- Rang $2$: vse tri ležijo v isti ravnini, škatla je sploščena v list papirja. Tako je pri sošolčevi matriki: tretja puščica je diagonala paralelograma prvih dveh.
+- Rang $2$: vse tri ležijo v isti ravnini, škatla je sploščena v list papirja. Tako je pri sošolčevi matriki (tam so puščice v štirirazsežnem prostoru, slika pa je enaka): tretja puščica je diagonala paralelograma prvih dveh.
 - Rang $1$: vse leže na isti premici, kot pri $a = 1$ v Primeru 3.
 
 Elementarne transformacije puščice premikajo, raztezajo ali zamenjajo, ne da bi jih spravile iz njihove ravnine ali premice. Zato se rang ne spremeni. Inverz obstaja le za neploščato »škatlo«: ploščate ni mogoče spet napihniti, ker ne veš, v katero smer.
@@ -238,7 +239,7 @@ Elementarne transformacije puščice premikajo, raztezajo ali zamenjajo, ne da b
 
 **Elektroenergetska omrežja.** Pri analizi pretokov moči sestavimo matriko admitanc vozlišč. Če nobeno vozlišče ni povezano z referenco (maso), so vsote vrstic enake nič in je rang $n - 1$. Matrike tedaj ni mogoče obrniti. Fizikalno to pomeni, da so potenciali določeni le do konstante natančno. Zato inženirji vedno izberejo eno vozlišče za referenco in ga izločijo.
 
-**Opazljivost in vodljivost.** V teoriji vodenja (na primer pri regulaciji pretvornika v sončni elektrarni) sistem lahko pripeljemo v vsako stanje, če ima posebna matrika iz parametrov sistema poln rang. Inženir to preveri z rangom, ne z determinanto, ker matrika ni kvadratna.
+**Vodljivost in spoznavnost.** V teoriji vodenja (na primer pri regulaciji pretvornika v sončni elektrarni) sistem lahko pripeljemo v vsako stanje, če ima posebna matrika iz parametrov sistema (matrika vodljivosti) poln rang; podobno pogoj ranga pove, ali stanja lahko razberemo iz meritev. Inženir to preveri z rangom, ne z determinanto, ker matrika v splošnem ni kvadratna.
 
 **Numerika.** Programi, kot je Octave, inverza ne računajo s prirejenko. Uporabljajo eliminacijo z delnim pivotiranjem: za pivot izberejo največji element v stolpcu, da zaokrožitvene napake ne narastejo. Ukaz `A \ b` reši sistem brez računanja $A^{-1}$, kar je hitreje in natančneje.
 
