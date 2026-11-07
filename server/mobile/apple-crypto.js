@@ -61,7 +61,12 @@ const APPLE_ISS = "https://appleid.apple.com";
 const KEYS_URL = "https://appleid.apple.com/auth/keys";
 let keyCache = { at: 0, keys: [] };
 let lastTry = 0; // zadnji poskus prenosa (tudi neuspel)
+// Neuspel prenos ključev ni napačen žeton: navadna napaka (prijava odgovori 502 »Apple se ne odziva«, ne 401).
 let inflight = null; // prenos v teku, ki si ga delijo hkratne zahteve
+// Ko Apple ne odgovarja, zadnji znani ključi veljajo še največ 7 dni (prijava deluje med izpadom), potem ne več:
+// ključ, ki ga je Apple medtem umaknil, ne sme veljati brez roka (pregled #506 A, P3-6).
+const STALE_MAX = 7 * 24 * 3600000;
+const staleKeys = () => (keyCache.keys.length && Date.now() - keyCache.at < STALE_MAX ? keyCache.keys : null);
 
 // Za teste: začetno stanje predpomnilnika.
 export function resetAppleKeyCache() {
@@ -79,17 +84,25 @@ async function appleKeys(fetchFn, force = false) {
   if (inflight) return inflight;
   if (Date.now() - lastTry < 60000) {
     // Prenos je bil pred manj kot minuto: zadnji znani ključi (tudi starejši od dneva) ali napaka brez novega zahtevka.
-    if (keyCache.keys.length) return keyCache.keys;
-    throw new AppleSignatureError("Ključev Apple ni mogoče prenesti.");
+    const old = staleKeys();
+    if (old) return old;
+    throw new Error("Ključev Apple ni mogoče prenesti.");
   }
   lastTry = Date.now();
   inflight = (async () => {
-    const r = await fetchFn(KEYS_URL, { signal: AbortSignal.timeout(8000) });
-    if (!r.ok) throw new AppleSignatureError("Ključev Apple ni mogoče prenesti.");
-    const { keys } = await r.json();
-    // Prazen ali pokvarjen odgovor ne izbriše zadnjih znanih ključev.
-    if (Array.isArray(keys) && keys.length) keyCache = { at: Date.now(), keys };
-    return keyCache.keys;
+    try {
+      const r = await fetchFn(KEYS_URL, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) throw new Error("Ključev Apple ni mogoče prenesti.");
+      const { keys } = await r.json();
+      // Prazen ali pokvarjen odgovor ne izbriše zadnjih znanih ključev.
+      if (Array.isArray(keys) && keys.length) keyCache = { at: Date.now(), keys };
+      return keyCache.keys;
+    } catch (err) {
+      // Neuspel prenos: tudi prvi klic (in kdor čaka nanj) dobi zadnje znane ključe, kot klici v naslednji minuti (P3-4).
+      const old = staleKeys();
+      if (old) return old;
+      throw err;
+    }
   })().finally(() => {
     inflight = null;
   });
