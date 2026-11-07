@@ -42,3 +42,16 @@ Ukaz samo bere bazo (razen `--odstrani`). Pregleda se samo pogovor, ki je poveza
 
 Druga stikala za nujne primere: `EVKLID_ANSWER_CACHE=0` (brez ponovne uporabe odgovorov),
 `EVKLID_FREE_POOL_USD=0` (brez AI za brezplačne učence), `EVKLID_MODEL` (večji model inštruktorja).
+
+## Kršitev varstva osebnih podatkov (čl. 33 in 34 GDPR)
+
+Kršitev je tudi nenamerno razkritje ali dostop (npr. API vrne podatke drugega računa), ne glede na to, ali je kdo pogledal.
+1. **Ustavi uhajanje** (popravek ali stikalo) in zavaruj dokaze (commit, od kdaj, dnevniki Renderja).
+2. **Ugotovi dejstva:** kateri podatki, čigavi (otroci?), koliko oseb, od kdaj, kdo je lahko videl, kopije na napravah.
+3. **Oceni tveganje in odloči (j, upravljavec), rok 72 ur od seznanitve:**
+   - verjetno tveganje → prijava Informacijskemu pooblaščencu (čl. 33(1)); kar še ni znano, se dopolni pozneje;
+   - visoko tveganje → še obvestilo prizadetim (staršem) v preprostem jeziku (čl. 34);
+   - ni verjetnega tveganja → brez prijave.
+4. **Vedno zapiši evidenco** (čl. 33(5)) v `docs/krsitve/LLLL-MM-DD-<kratko>.md`: kaj, od kdaj, kdo je lahko videl,
+   ocena in odločitev z razlogom, ukrepi. Primer: `docs/krsitve/2026-11-06-lestvica.md`.
+5. **Prepreči ponovitev:** test, ki pade na stari kodi (npr. `test/zasebnost-vse-poti.test.js`).

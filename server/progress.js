@@ -1066,16 +1066,6 @@ export class Progress {
     return { total, week, today, goal, streak: this.dayStreak(studentId), level: lp.level, levelFrom: lp.from, levelTo: lp.to };
   }
 
-  // Tedenska lestvica med učenci te namestitve (samo vzdevki).
-  leaderboard() {
-    return this.db
-      .prepare(
-        `SELECT s.id, s.name, COALESCE(SUM(x.amount), 0) AS xp
-         FROM students s LEFT JOIN xp_events x ON x.student_id = s.id AND x.created_at >= ?
-         GROUP BY s.id ORDER BY xp DESC, s.name LIMIT 30`,
-      )
-      .all(weekStart());
-  }
 }
 
 // Ponedeljek tega tedna, 00:00 (UTC)
