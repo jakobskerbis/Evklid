@@ -12,13 +12,21 @@ const KEYS = ["exportData", "exportTitle", "exportText", "exportPrivate", "expor
 
 test("zaslon za prenos: geslo ali Apple, datoteka v predpomnilnik in meni za deljenje, 401 kot pri izbrisu", () => {
   const src = read("mobile/src/app/export-data.tsx");
-  assert.match(src, /api\("\/api\/account\/export", \{ method: "POST", body \}\)/);
+  assert.match(src, /api\("\/api\/account\/export", \{ method: "POST", body, signal: request\.current\.signal \}\)/);
   assert.match(src, /new File\(Paths\.cache, EXPORT_FILE\)/);
   assert.match(src, /Sharing\.shareAsync\(file\.uri, \{ mimeType: "application\/json"/);
   assert.match(src, /const denied = err instanceof ApiError && err\.status === 401 && !err\.body\?\.login;/);
   assert.match(src, /body\.apple_identity_token \? "mob\.appleFailed" : "mob\.wrongPassword"/);
   assert.match(src, /apple_identity_token: cred\.identityToken, apple_nonce: nonce/);
-  assert.match(src, /useEffect\(\(\) => removeCopy, \[\]\)/, "kopija se izbriše ob zapustitvi zaslona");
+  // Pregled #525 B: write() je v expo-file-system 58 asinhron; zapuščen zaslon prekliče zahtevo in nič ne zapiše.
+  assert.match(src, /await file\.write\(/, "deli šele celo datoteko");
+  assert.doesNotMatch(src, /[^t] file\.write\(/, "brez neawaitanega write()");
+  assert.match(src, /signal: request\.current\.signal/);
+  assert.match(src, /mounted\.current = false;\s*request\.current\?\.abort\(\);\s*removeCopy\(\);/, "ob zapustitvi: preklic in izbris");
+  assert.match(src, /mounted\.current = true;\s*removeCopy\(\);/, "ob odprtju: izbris ostanka");
+  assert.match(src, /if \(!mounted\.current\) return;\s*const file = new File/, "po zapustitvi ne pišemo");
+  assert.match(src, /if \(!mounted\.current\) return removeCopy\(\);\s*await Sharing\.shareAsync/, "meni za deljenje ne čez drug zaslon");
+  assert.match(src, /catch \(err\) \{\s*request\.current = null;\s*removeCopy\(\);/, "ob napaki izbris");
   assert.match(src, /api\("\/api\/auth\/forgot", \{ body: \{ email: parent\.email \} \}\)/, "Android brez gesla: povezava za geslo");
   for (const k of src.match(/t\("mob\.[A-Za-z]+"/g)) assert.ok(SL[k.slice(3, -1)], `${k} manjka v sl.js`);
   assert.match(read("mobile/src/app/_layout.tsx"), /<Stack\.Screen name="export-data"/);

@@ -2,7 +2,7 @@
 // POST /api/account/export z geslom računa ali s ponovno prijavo z Apple (server/accounts/index.js). Gost gesla nima.
 // Račun brez gesla na Androidu (prijava z Apple na iPhonu) dobi povezavo za nastavitev gesla na e-naslov računa.
 // Datoteka gre v predpomnilnik telefona, sistemski meni za deljenje jo shrani v Datoteke ali pošlje naprej.
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import { router, Stack } from "expo-router";
 import * as AppleAuthentication from "expo-apple-authentication";
@@ -17,8 +17,9 @@ import { failure, success } from "@/lib/haptics";
 import { Banner, Body, Button, Card, Field, Screen, Title } from "@/components/ui";
 
 const EXPORT_FILE = `${brand.slug}-podatki.json`;
-// Kopija z osebnimi podatki ne ostane v predpomnilniku: izbrišemo jo, ko učenec zapusti zaslon (ne takoj po meniju za
-// deljenje, ker jo aplikacija, ki ji jo je poslal, na Androidu morda še bere).
+// Kopija z osebnimi podatki ne ostane v predpomnilniku: izbrišemo jo ob odprtju zaslona (ostanek po sesutju), ob napaki
+// in ko učenec zaslon zapusti (ne takoj po meniju za deljenje, ker jo aplikacija, ki ji jo je poslal, na Androidu morda
+// še bere).
 const removeCopy = () => {
   try {
     const f = new File(Paths.cache, EXPORT_FILE);
@@ -34,7 +35,18 @@ export default function ExportData() {
   const [note, setNote] = useState<string | null>(null);
   const guest = !!parent?.guest;
   const noPassword = !guest && parent?.has_password === false;
-  useEffect(() => removeCopy, []);
+  // Zapuščen zaslon: zahtevo prekličemo, po njej ničesar ne zapišemo in menija za deljenje ne odpremo čez drug zaslon.
+  const mounted = useRef(true);
+  const request = useRef<AbortController | null>(null);
+  useEffect(() => {
+    mounted.current = true;
+    removeCopy();
+    return () => {
+      mounted.current = false;
+      request.current?.abort();
+      removeCopy();
+    };
+  }, []);
 
   const exportData = async (body: Record<string, string>) => {
     setBusy(true);
@@ -42,22 +54,30 @@ export default function ExportData() {
     setNote(null);
     try {
       if (!(await Sharing.isAvailableAsync())) throw new Error(t("mob.exportUnavailable"));
-      const data = await api("/api/account/export", { method: "POST", body });
+      request.current = new AbortController();
+      const data = await api("/api/account/export", { method: "POST", body, signal: request.current.signal });
+      request.current = null;
+      if (!mounted.current) return;
       const file = new File(Paths.cache, EXPORT_FILE);
       file.create({ overwrite: true });
-      file.write(JSON.stringify(data, null, 2));
+      // expo-file-system 58: write() je asinhron; meni za deljenje šele, ko je datoteka cela.
+      await file.write(JSON.stringify(data, null, 2));
+      if (!mounted.current) return removeCopy();
       await Sharing.shareAsync(file.uri, { mimeType: "application/json", UTI: "public.json", dialogTitle: t("mob.exportTitle") });
       setPassword("");
       success();
       setNote(t("mob.exportDone"));
     } catch (err) {
+      request.current = null;
+      removeCopy();
+      if (!mounted.current || (err as Error)?.name === "AbortError") return;
       failure();
       // Kot izbris (delete-account.tsx): 401 z login: true je potekla seja (api.ts jo že počisti), sicer napačno geslo
       // ali neuspela ponovna prijava z Apple.
       const denied = err instanceof ApiError && err.status === 401 && !err.body?.login;
       setError(denied ? t(body.apple_identity_token ? "mob.appleFailed" : "mob.wrongPassword") : (err as Error).message);
     } finally {
-      setBusy(false);
+      if (mounted.current) setBusy(false);
     }
   };
   const withApple = async () => {
