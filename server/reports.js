@@ -71,7 +71,30 @@ export function ensureReportsTable(db) {
 const NAME_EDGE_L = "(?<![\\p{L}\\p{N}_])";
 const NAME_EDGE_R = "(?![\\p{L}\\p{N}_])";
 const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Brez naglasov in strešic (Žiga → Ziga, Zoë → Zoe), za primerjavo imena.
+const plainLetters = (s) => String(s).normalize("NFD").replace(/\p{M}+/gu, "");
+
 export function genericAnswer(text, name = "") {
+  const out = genericExact(text, name);
+  if (out === null) return null;
+  // Ime brez strešic ali z drugimi naglasi (pregled #484 B P2-2): če ga primerjava brez naglasov še najde, odgovor ni skupen.
+  const n = String(name || "").trim();
+  if (n.length >= 2) {
+    const flat = plainLetters(out);
+    const again = genericExact(flat, plainLetters(n));
+    if (again === null || again !== flat) return null;
+    // Pomanjševalnice in vzdevki (Jakob → Jaka, Jakec; Matevž → Mato): beseda z veliko začetnico, ki se začne s
+    // prvimi tremi črkami imena in je kratka, pomeni, da odgovor ni skupen (pregled #484 A P3-3). Ob dvomu se ne shrani.
+    for (const w of plainLetters(n).split(/\s+/)) {
+      if (w.length < 4) continue;
+      const pre = w[0].toUpperCase() + w.slice(1, 3).toLowerCase();
+      if (new RegExp(`${NAME_EDGE_L}${escRe(pre)}\\p{Ll}{0,4}${NAME_EDGE_R}`, "u").test(flat)) return null;
+    }
+  }
+  return out;
+}
+
+function genericExact(text, name = "") {
   const n = String(name || "").trim();
   if (n.length < 2) return text;
   // Celo ime in posamezne besede imena (»Ana Marija« → tudi »Ana«, »Marija«).

@@ -57,6 +57,7 @@ import { Avatars, mountAvatar } from "./avatar.js";
 import { Knowledge, mountKnowledge } from "./zbirke.js";
 import { mountCorner } from "./corner.js";
 import { mountWebApp } from "./webapp.js";
+import { DEFAULT_GOAL } from "../public/goal-data.js";
 import { Schedules, scheduleView, schedulePrompt, syncTestPlan } from "./schedule.js";
 import { mountSchedule } from "./schedule-api.js";
 import { mountScan } from "./scan.js";
@@ -75,6 +76,14 @@ const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_IMAGE_B64 = 7 * 1024 * 1024; // ~5 MB slike
 const MAX_TEXT = 6000;
 const ANSWER_CACHE = process.env.EVKLID_ANSWER_CACHE !== "0";
+// Jezik pogovora v nelatinični pisavi (ru, uk, ar, el, hi, zh …); neznano ali prazno = slovenščina (latinica).
+function nonLatinScript(code) {
+  try {
+    return !!code && new Intl.Locale(code).maximize().script !== "Latn";
+  } catch {
+    return false;
+  }
+}
 
 // Ključ za ponovno uporabo odgovora: isto prvo vprašanje pri istih nastavitvah.
 // mode: način klica (chat/lite/think/deep); pathTopic: tema učne poti (npr. »Začniva s temo …«).
@@ -373,6 +382,25 @@ export function createApp(store, opts = {}) {
   // Urnik učenca (server/schedule.js): ure, testi; gre v prompt in v Pripravo na test.
   const schedules = new Schedules(store.db);
   const scheduleText = (s) => schedulePrompt(scheduleView(schedules.get(s.id), s.settings));
+  // Ali prompt učenca nosi osebne podatke, ki jih ključ predpomnilnika ne pozna (pregled #484 B). Šibke točke pri temi
+  // učne poti so v ključu (cacheKey), v prostem pogovoru ne. Jezik z nelatinično pisavo: model ime prečrka (»Зала«),
+  // genericAnswer ga ne najde, zato tak odgovor ni skupen.
+  const hasPersonalPrompt = (s, pathTopic, weak, results) => {
+    const st = s.settings || {};
+    const d = schedules.get(s.id);
+    return (
+      !!(d && (d.lessons?.length || d.events?.length)) ||
+      !!(st.interests || []).length ||
+      !!String(st.interest_custom || "").trim() ||
+      (!!st.goal && st.goal !== DEFAULT_GOAL) ||
+      !!st.goal_date ||
+      (!pathTopic && weak.length > 0) ||
+      !!results.personal ||
+      nonLatinScript(st.language) ||
+      // Ime v nelatinični pisavi (»Иван«): model ga v latinici prečrka (»Ivan«), genericAnswer ga ne najde (pregled #484 B P2-4).
+      /\p{L}/u.test(String(s.name || "").replace(/\p{Script=Latin}/gu, ""))
+    );
+  };
 
   const intParam = (v) => (/^\d+$/.test(v) ? Number(v) : NaN);
   const loadStudent = (req, res) => {
@@ -719,7 +747,10 @@ export function createApp(store, opts = {}) {
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
     // Prošnja za spremembo nastavitev mora poklicati orodje, zato ne iz predpomnilnika odgovorov.
-    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
+    // Skupni predpomnilnik samo za odgovor brez osebnih podatkov v promptu (test/zasebnost-predpomnilnik*.test.js):
+    // inštruktor primere vzame iz zanimanj, pozna cilj, urnik s testi, šibke točke in rezultate. Kdor jih ima, odgovora
+    // ne shrani za druge (tudi brez dvojnega preverjanja, ki ga plača aplikacija) in ne vzame shranjenega.
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
     if (conv.title === "Nov pogovor") {
       store.renameConversation(conv.id, cleanText(text, 50) || "Naloga s fotografije");
     }
