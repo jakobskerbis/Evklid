@@ -74,7 +74,7 @@ Iz glavnih osi takoj sledi: $q$ je pozitivno definitna natanko tedaj, ko so **vs
 
 **Izrek (Sylvestrov kriterij).** Simetrična matrika $A$ je pozitivno definitna natanko tedaj, ko so vse **vodilne glavne poddeterminante** pozitivne: $\Delta_1 = a_{11} > 0$, $\Delta_2 = \det\begin{bmatrix} a_{11} & a_{12} \\ a_{12} & a_{22} \end{bmatrix} > 0$, …, $\Delta_n = \det A > 0$. Negativno definitna je, ko predznaki izmenično začnejo z minusom: $\Delta_1 < 0$, $\Delta_2 > 0$, $\Delta_3 < 0$, …
 
-*Dokaz za $n = 2$.* Naj bo $q = ax^2 + 2bxy + cy^2$ in $a > 0$. Dopolnimo do popolnega kvadrata: $q = a\left(x + \tfrac{b}{a}y\right)^2 + \tfrac{ac - b^2}{a}y^2$. Oba člena sta nenegativna in nista hkrati nič (razen za $x = y = 0$) natanko tedaj, ko je $ac - b^2 > 0$, to je $\Delta_2 > 0$: pri $ac - b^2 \le 0$ je namreč $q(-b/a, 1) = \tfrac{ac - b^2}{a} \le 0$. Če je $a \le 0$, je $q(1, 0) = a \le 0$ in forma ni pozitivno definitna.
+*Dokaz za $n = 2$.* Naj bo $q = ax^2 + 2bxy + cy^2$. Za $a \ne 0$ dopolnimo do popolnega kvadrata: $q = a\left(x + \tfrac{b}{a}y\right)^2 + \tfrac{ac - b^2}{a}y^2$. (⇐) Naj bosta $a > 0$ in $ac - b^2 > 0$. Oba člena sta nenegativna, vsota je nič le pri $y = 0$ in $x + \tfrac{b}{a}y = 0$, torej pri $x = y = 0$; forma je pozitivno definitna. (⇒) Če je $a \le 0$, je $q(1, 0) = a \le 0$. Če je $a > 0$ in $ac - b^2 \le 0$, vstavimo neničelni vektor $(-b, a)$: $q(-b, a) = ab^2 - 2ab^2 + ca^2 = a(ac - b^2) \le 0$. V obeh primerih forma ni pozitivno definitna, zato pozitivna definitnost zahteva $\Delta_1 = a > 0$ in $\Delta_2 = ac - b^2 > 0$.
 
 :::premisli
 Matrika ima $\Delta_1 = 2$ in $\Delta_2 = -3$. Je forma pozitivno definitna, negativno definitna ali nedefinitna? Kaj pove $\Delta_2 < 0$ o predznakih lastnih vrednosti?

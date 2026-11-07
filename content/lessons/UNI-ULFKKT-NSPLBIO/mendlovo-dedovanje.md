@@ -21,7 +21,7 @@ Organizem z enakima aleloma ($RR$ ali $rr$) je **homozigot**, z različnima ($Rr
 
 **Izrek (Mendlov prvi zakon, zakon segregacije).** Naj bo gen avtosomen (ne na spolnem kromosomu) in naj imajo vse spolne celice in vsi potomci enake možnosti za preživetje. Potem gresta alela starša pri nastanku spolnih celic (gamet) narazen: vsaka gameta dobi natanko enega, vsakega z verjetnostjo $\tfrac{1}{2}$. Ob oploditvi se gameti združujeta naključno.
 
-Danes vemo, zakaj: alela ležita na istoležnih kromosomih, ki se pri mejozi razporedita v različni celici. Podrobneje mejozo spoznaš v lekciji o celičnem ciklu.
+Danes vemo, zakaj: alela ležita na homolognih kromosomih, ki se pri mejozi razporedita v različni celici. Podrobneje mejozo spoznaš v lekciji o celičnem ciklu.
 
 **Punnettova shema** je tabela, v kateri so v vrstici gamete enega starša, v stolpcu gamete drugega, v celicah pa genotipi potomcev. Križanje $Rr \times Rr$:
 

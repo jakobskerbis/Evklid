@@ -61,7 +61,7 @@ kjer je $n$ varnostni faktor. Pri $n = 1$ ležijo na premici mejna stanja. Tlač
 
 $$D = \sum_i \frac{n_i}{N_i},$$
 
-lom pa pričakujemo pri $D = 1$. Pravilo ne upošteva vrstnega reda obremenitev in je zato približno; v praksi so zanesljive vrednosti $D$ ob lomu med okoli $0{,}3$ in $3$.
+lom pa pričakujemo pri $D = 1$. Pravilo ne upošteva vrstnega reda obremenitev in je zato približno; v preizkusih so izmerjene vrednosti $D$ ob lomu med okoli $0{,}3$ in $3$.
 
 ### Lezenje
 
@@ -125,7 +125,7 @@ $\sigma_m = \dfrac{\sigma_{max} + \sigma_{min}}{2}$, $\sigma_a = \dfrac{\sigma_{
 1. $\sigma_m = (250 + 50)/2\,\mathrm{MPa} = 150\,\mathrm{MPa}$; $\sigma_a = (250 - 50)/2\,\mathrm{MPa} = 100\,\mathrm{MPa}$.
 2. $\frac{1}{n} = 100/270 + 150/600 \approx 0{,}370 + 0{,}250 = 0{,}620$.
 3. $n = 1/0{,}620 \approx 1{,}61$.
-4. Drug pogled: če srednja napetost ostane $150\,\mathrm{MPa}$ (kot jo določa prednapetost), je mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske. Faktor $1{,}61$ velja za sorazmerno povečanje obeh napetosti, zato se vrednosti razlikujeta.
+4. Drug zorni kot: če bi $\sigma_m = 150\,\mathrm{MPa}$ ostala stalna (kot jo določa prednapetost), bi bila mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske. Faktor $1{,}61$ je manjši, ker Goodmanova enačba z $1/n$ predpostavi, da z istim faktorom narasteta $\sigma_a$ in $\sigma_m$. Kateri preizkus je pravi, je odvisno od tega, kako se obremenitev v resnici poveča.
 5. Odgovor: varnostni faktor je okoli $1{,}6$. Brez upoštevanja srednje napetosti bi dobili napačno $270/100 = 2{,}7$.
 
 ### Primer 3 (težji)
@@ -222,7 +222,7 @@ Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga
 **Rešitev:**
 
 1. Nastanek: ob ponavljanju se v ugodno usmerjenih zrnih na površini pojavijo drsni pasovi; na izstopnih stopnicah ali na napaki (vključek, praska) nastane mikrorazpoka.
-2. Rast: razpoka raste pravokotno na največjo natezno napetost, ob vsakem ciklu za majhen korak. Na prelomni ploskvi je zato gladko območje s **progami** (vidnimi s prostim očesom, ob spremembah obremenitve) in mikroskopskimi **striacijami**.
+2. Rast: razpoka raste pravokotno na največjo natezno napetost, ob vsakem ciklu za majhen korak. Na prelomni ploskvi je zato gladko območje, prekrito s **progami** (vidnimi s prostim očesom, ob spremembah obremenitve) in z mikroskopskimi **striacijami**.
 3. Končni lom: ko preostali presek ne zdrži več največje sile, se zlomi naenkrat; to območje je grobo, zrnato ali žilavo potrgano.
 4. Zareze: koncentracija napetosti poveča lokalno amplitudo nad nazivno. Hrapava površina ima veliko mikrozarez; korozija ustvarja jamice in razpoka nastane prej. Zato $\sigma_D$ dela vedno zmanjšamo s faktorji površine, velikosti in oblike.
 5. Minerjeve predpostavke: poškodba se sešteva linearno, neodvisno od amplitude in vrstnega reda, cikli pod $\sigma_D$ ne škodijo.

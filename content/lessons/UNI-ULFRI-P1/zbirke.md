@@ -34,11 +34,11 @@ System.out.println(st);
 //  NaCl=3, glukoza=2}
 ```
 
-V nekaj vrsticah smo uporabili tri vrste zbirk:
+V tem kratkem programu smo uporabili tri vrste zbirk:
 
 - **seznam** `List` hrani vnose po vrsti, s ponovitvami;
 - **množica** `Set` vsako snov hrani le enkrat, zato je njena velikost število različnih snovi;
-- **slovar** `Map` vsaki snovi (ključu) priredi število (vrednost). Klic `merge(s, 1, Integer::sum)` vstavi $1$, če ključa še ni, sicer staro vrednost poveča za $1$.
+- **slovar** `Map` vsaki snovi (ključu) priredi število (vrednost). Klic `merge(s, 1, Integer::sum)` vstavi $1$, če ključa še ni, sicer staro vrednost poveča za $1$. Zapis `Integer::sum` je sklic na metodo, ki sešteje dve števili (staro vrednost in $1$).
 
 `TreeMap` je izpisal ključe urejeno. Velike črke so v Javi pred malimi, zato je `glukoza` zadnja.
 
@@ -260,7 +260,7 @@ static Map<String, Integer> poOmarah(
 ```
 
 5. Rezultat: `{A=2, B=1, C=1}` (NaCl in KCl v A, aceton v B, etanol v C).
-6. d) Pri `ArrayList` vsak `it.remove()` zamakne preostale elemente, kar je do $n$ korakov. Če odstranimo veliko elementov, je skupaj do okoli $n^2$ korakov. `s.removeIf(r -> r.rok < leto)` naredi isto v enem prehodu, okoli $n$ korakov.
+6. d) Pri `ArrayList` vsak `it.remove()` zamakne preostale elemente, kar je do $n$ korakov. Če odstranimo veliko elementov, je skupaj do okoli $n^2$ korakov. `s.removeIf(r -> r.rok < leto)` naredi isto v enem prehodu, okoli $n$ korakov; zapis `r -> r.rok < leto` (lambda) je pogoj, ki za vsak `r` vrne `true` ali `false`.
 7. Odgovor: izvirna metoda vrže `ConcurrentModificationException`; popravljena odstrani HCl in CuSO4; po omarah je `{A=2, B=1, C=1}`; zahtevnost je v najslabšem primeru kvadratna, z `removeIf` linearna.
 
 ### Primer 4 – zdaj ti
@@ -444,8 +444,8 @@ Laboratorij ima tri načine shranjevanja:
 > Po dodajanju je $\{\mathrm{Fe}, \mathrm{Cu}, \mathrm{Zn}\}$, po odstranitvi ostaneta Fe in Zn.
 
 ? Seznam `[4, 7, 2, 7, 9]` prehodimo z iteratorjem in z `it.remove()` odstranimo vse elemente, večje od $5$. Kolikšna je vsota preostalih?
-- $22$
-~ Odstranil si le prvo $7$; iterator prehodi vse elemente, zato odstrani obe sedmici in devetico.
+- $13$
+~ To je $4 + 2 + 7$: ena sedmica ti je ostala. Iterator prehodi vse elemente, zato odstrani obe sedmici in devetico.
 + $6$
 - $29$
 ~ To je vsota celotnega seznama; `it.remove()` elemente res odstrani.

@@ -195,7 +195,7 @@ znotraj $B = \dfrac{\mu_0 I r}{2\pi R^2}$, zunaj $B = \dfrac{\mu_0 I}{2\pi r}$
 :::premisli
 Kolikšni sta $B(r_1)$ in $B(r_3)$?
 ---
-$r_1$ je znotraj, krožnica objame tretjino polmera, torej $1/9$ toka: $B(r_1) = 2 \cdot 10^{-7} \cdot 900 \cdot 0{,}0050/0{,}015^2\,\mathrm{T} = 4{,}0\,\mathrm{mT}$ (tretjina vrednosti na površini, ker polje znotraj raste linearno). $r_3$ je zunaj, dvakrat dlje od osi kot površina: $B(r_3) = 12\,\mathrm{mT}/2 = 6{,}0\,\mathrm{mT}$.
+$r_1$ je znotraj, krožnica objame tretjino polmera, torej $1/9$ toka: $B(r_1) = 2 \cdot 10^{-7} \cdot 900 \cdot 0{,}0050/0{,}015^2\,\mathrm{T} = 4{,}0\,\mathrm{mT}$ (tretjina vrednosti na površini, ker polje znotraj raste linearno). $r_3$ je zunaj, od osi dvakrat dlje kot površina ($r_3 = 2R$), zato je polje pol manjše kot na površini: $B(r_3) = 12\,\mathrm{mT}/2 = 6{,}0\,\mathrm{mT}$.
 :::
 
 ## Pogoste napake
