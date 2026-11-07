@@ -3,6 +3,7 @@
 // Naloge najde besedilna plast (public/paper-tasks.js); »Pomoč pri tej nalogi« izreže le to nalogo (JPEG, največ
 // 1600 px) in jo z besedilom pošlje inštruktorju. Strani brez zaznanih nalog: učenec povleče okvir (prst ali miška).
 import { t } from "./i18n.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { icon } from "./icons.js";
 import { splitTasks, textInBox } from "./paper-tasks.js";
 
@@ -72,12 +73,13 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     observer?.disconnect();
     for (const p of pages) p.task?.cancel?.();
     doc?.destroy();
+    sprosti({ vrni: false });
     el.remove();
     document.documentElement.classList.remove("pv-open");
     back?.focus?.();
   };
   current = { close };
-  $("[data-pv-close]").focus();
+  const sprosti = zadrziFokus(el, { zacetni: $("[data-pv-close]"), prej: back });
   $("[data-pv-close]").onclick = () => close(); // že med nalaganjem in ob napaki
 
   el.addEventListener("keydown", (e) => {
