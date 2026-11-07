@@ -60,17 +60,40 @@ export function verifyAppleJws(jws, { rootFingerprint = APPLE_ROOT_G3, now = new
 const APPLE_ISS = "https://appleid.apple.com";
 const KEYS_URL = "https://appleid.apple.com/auth/keys";
 let keyCache = { at: 0, keys: [] };
+let lastTry = 0; // zadnji poskus prenosa (tudi neuspel)
+let inflight = null; // prenos v teku, ki si ga delijo hkratne zahteve
+
+// Za teste: začetno stanje predpomnilnika.
+export function resetAppleKeyCache() {
+  keyCache = { at: 0, keys: [] };
+  lastTry = 0;
+  inflight = null;
+}
 
 // force (neznan kid): znova prenesemo največ enkrat na minuto za ves strežnik, da ponarejeni žetoni z izmišljenim kid
-// ne pošiljajo zahtevkov Applu (namesto meje na omrežje v apple-signin.js).
+// ne pošiljajo zahtevkov Applu (namesto meje na omrežje v apple-signin.js). Meja velja tudi za neuspel prenos (Apple ne
+// odgovarja: sicer vsak ponarejen žeton čaka 8 s na nov poskus), hkratne zahteve počakajo na isti prenos (pregled #492 B).
 async function appleKeys(fetchFn, force = false) {
   const fresh = Date.now() - keyCache.at < (force ? 60000 : 24 * 3600000);
   if (fresh && keyCache.keys.length) return keyCache.keys;
-  const r = await fetchFn(KEYS_URL, { signal: AbortSignal.timeout(8000) });
-  if (!r.ok) throw new AppleSignatureError("Ključev Apple ni mogoče prenesti.");
-  const { keys } = await r.json();
-  keyCache = { at: Date.now(), keys: Array.isArray(keys) ? keys : [] };
-  return keyCache.keys;
+  if (inflight) return inflight;
+  if (Date.now() - lastTry < 60000) {
+    // Prenos je bil pred manj kot minuto: zadnji znani ključi (tudi starejši od dneva) ali napaka brez novega zahtevka.
+    if (keyCache.keys.length) return keyCache.keys;
+    throw new AppleSignatureError("Ključev Apple ni mogoče prenesti.");
+  }
+  lastTry = Date.now();
+  inflight = (async () => {
+    const r = await fetchFn(KEYS_URL, { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw new AppleSignatureError("Ključev Apple ni mogoče prenesti.");
+    const { keys } = await r.json();
+    // Prazen ali pokvarjen odgovor ne izbriše zadnjih znanih ključev.
+    if (Array.isArray(keys) && keys.length) keyCache = { at: Date.now(), keys };
+    return keyCache.keys;
+  })().finally(() => {
+    inflight = null;
+  });
+  return inflight;
 }
 
 // Preveri identity token (JWT RS256). audiences: dovoljeni bundle id-ji aplikacije.
