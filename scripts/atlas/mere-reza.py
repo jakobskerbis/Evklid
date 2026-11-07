@@ -44,7 +44,9 @@ def notri(p):
     return c % 2 == 1
 
 
-def odseki(c, smer, do=0.08, korak=0.00025):
+def odseki(c, smer, do=0.08, korak=0.00025, najmanj=0.001):
+    """Odseki žarka v steni. Krajši od 1 mm niso stena: liho število presečišč z odprto mrežo (ustje, rob ploskve) ali
+    trabekula, ki se dotika stene (ocena n11: »RV 65 % = 0,3 mm«, točki 0,24 mm narazen; prava stena tam meri ≈ 4 mm)."""
     t = np.arange(0, do, korak); ins = [notri(c + smer * x) for x in t]
     out, st = [], None
     for i, x in enumerate(ins + [False]):
@@ -52,7 +54,7 @@ def odseki(c, smer, do=0.08, korak=0.00025):
             st = i
         if not x and st is not None:
             out.append((t[st], t[i - 1] + korak)); st = None
-    return out
+    return [o for o in out if o[1] - o[0] >= najmanj]
 
 
 mere = []

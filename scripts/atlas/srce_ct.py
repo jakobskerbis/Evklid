@@ -513,6 +513,17 @@ def relief(V, F, oz, epi, dl, L, h_masca, stran=None):
         w = np.clip((t - 0.04) / 0.22, 0, 1) * np.clip((0.93 - t) / 0.2, 0, 1)
         w *= np.clip((np.linalg.norm(V - L["aortna"], axis=1) - 0.013) / 0.012, 0, 1)
         deb = _gladi(deb * w, e, st, 4) * samo_endo
+        # n12 (ocena n11: »RV povsod natanko 5,0 mm = odmik lupine«): CT povprečje ima prosto steno RV enakomerno ≈ 5 mm;
+        # preparat in učbenik: ≈ 4 mm ob bazi, 3 mm na sredini, 2–3 mm ob konici in v iztoku (conus). Endokard proste stene
+        # RV in conusa premaknemo proti epikardu (negativni odmik); trikuspidalni obroč in pljučni koren ostaneta.
+        kol = np.zeros(len(F)); kol[((dl == 2) | (dl == 3)) & ~epi] = 1.0
+        mn = np.full(nV, 1.0)
+        for k in range(3):
+            np.minimum.at(mn, F[:, k], kol)
+        tanj = np.where(mn > 0, 1.0e-3 + 1.5e-3 * np.clip((0.9 - t) / 0.8, 0, 1), 0.0)
+        tanj *= np.clip((0.97 - t) / 0.12, 0, 1)
+        tanj *= np.clip((np.linalg.norm(V - L["pljucna"], axis=1) - 0.008) / 0.012, 0, 1)
+        deb -= _gladi(tanj, e, st, 4) * samo_endo
     V2 = V + N * (h + tr + deb)[:, None]
     # pod ~0,45 mm brez barve maščobe (mišica se vidi skozi); ostra meja (ocena n9: »zabrisan trak«)
     return V2, np.clip((h - 0.45e-3) / 0.35e-3, 0, 1), tr
