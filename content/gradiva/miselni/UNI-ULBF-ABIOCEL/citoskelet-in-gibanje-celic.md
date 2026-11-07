@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dinamična mreža
+  - ne stalno okostje
+  - gradnja in razgradnja v minutah
+- Aktinski filamenti
+  - okoli $7\,\mathrm{nm}$, G-aktin z ATP
+  - polarni, tekoči trak
+  - mikrovili, skorja, krčenje z miozinom
+- Mikrotubuli
+  - okoli $25\,\mathrm{nm}$, $13$ protofilamentov
+  - kapa GTP, katastrofa, reševanje
+- Intermediarni filamenti
+  - okoli $10\,\mathrm{nm}$, nepolarni
+  - keratini, vimentin, dezmin, lamini
+- Motorne beljakovine
+  - miozin po aktinu
+  - kinezin proti plus, dinein proti minus
+  - kinezin: $8\,\mathrm{nm}$ na ATP
+- Migetalke
+  - aksonema $9 \times 2 + 2$
+  - bazalno telesce $9 \times 3$
+- Plazenje celice
+  - izboklina, pritrditev, krčenje, odpenjanje
+  - lamelipodij, fokalni stiki

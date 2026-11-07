@@ -2,12 +2,13 @@
 // kode po področjih (public/3d/modeli/<podrocje>/index.js, docs/3d.md). Strežnik pove, katera področja že obstajajo
 // (server/tri-d.js), zato uvozimo samo ta; področje, ki ga ni ali se ne naloži, tiho preskočimo.
 import { PODROCJA } from "./pogodba.js";
+import { jsonAliNic } from "../odgovor.js";
 
 // Seznam datotek in področij (server/tri-d.js); brez povezave zadnja shranjena kopija (service worker).
 let seznamObljuba = null;
 export function seznamDatotek() {
   seznamObljuba ||= fetch(new URL("./modeli/seznam.json", import.meta.url).href)
-    .then((r) => (r.ok ? r.json() : null))
+    .then((r) => jsonAliNic(r))
     .catch(() => null)
     .then((j) => j || { datoteke: {}, podrocja: [] });
   return seznamObljuba;
