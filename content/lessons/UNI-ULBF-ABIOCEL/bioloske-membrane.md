@@ -96,9 +96,9 @@ Pomembno je ločiti dva pojma. **Osmolarnost** je lastnost raztopine same. **Ton
 
 | raztopina | voda | celica |
 |---|---|---|
-| hipotonična | vstopa | nabrekne |
-| izotonična | ni neto toka | ostane enaka |
-| hipertonična | izstopa | se skrči |
+| hipotonična | noter | nabrekne |
+| izotonična | ravnotežje | enaka |
+| hipertonična | ven | se skrči |
 
 Živalska celica v hipotonični raztopini nabreka, dokler ne poči (pri eritrocitih **hemoliza**). Rastlinska celica ima celično steno, zato v hipotonični raztopini nastane **turgor**. V hipertonični raztopini pa se protoplast odmakne od stene, kar imenujemo **plazmoliza**.
 

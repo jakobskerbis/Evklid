@@ -15,11 +15,13 @@ Na prvi pogled za to potrebuješ mikroskop in veliko potrpljenja. Metalurg pa od
 
 Iz prejšnje lekcije veš, da kovina pri strjevanju zgradi kristalno mrežo. Kaj pa se zgodi, ko zmešamo dve kovini? Opravimo miselni poskus. Talino segrejemo, vanjo potopimo termočlen in med počasnim ohlajanjem beležimo temperaturo. Dobimo **ohlajevalno krivuljo**. Tri meritve na sistemu baker-nikelj (vrednosti so zaokrožene):
 
-| vzorec | potek ohlajanja | strjevanje |
+| vzorec | krivulja | strjevanje |
 |---|---|---|
-| čisti Cu | vodoraven plato | pri $1085\,^\circ\mathrm{C}$ |
-| Cu z $35\,\%$ Ni | le zlom krivulje | od $\approx 1270$ do $\approx 1230\,^\circ\mathrm{C}$ |
-| čisti Ni | vodoraven plato | pri $1455\,^\circ\mathrm{C}$ |
+| čisti Cu | plato | $1085\,^\circ\mathrm{C}$ |
+| Cu + $35\,\%$ Ni | zlom | $1270$–$1230\,^\circ\mathrm{C}$ |
+| čisti Ni | plato | $1455\,^\circ\mathrm{C}$ |
+
+»Plato« pomeni vodoraven del krivulje, »zlom« le spremembo naklona; temperature zlitine so približne.
 
 Čista kovina se strdi pri eni sami temperaturi: dokler se talina strjuje, sproščena talilna toplota drži temperaturo na mestu. Zlitina pa se strjuje v **temperaturnem intervalu**. Krivulja ne obstane, le upočasni se. Ko poskus ponovimo pri več sestavah in na graf temperatura-sestava vnesemo začetke in konce strjevanja, se točke uredijo v dve krivulji. Zgornja povezuje začetke, spodnja konce. Med njima je področje, kjer talina in kristali obstajajo hkrati.
 

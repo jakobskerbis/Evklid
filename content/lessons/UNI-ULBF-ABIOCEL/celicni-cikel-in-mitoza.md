@@ -19,12 +19,12 @@ Predstavljaj si cikel kot številčnico ure. Za tipično človeško celico v kul
 
 | faza | kaj se zgodi | trajanje |
 |---|---|---|
-| G1 | rast, beljakovine, organeli | okoli $11\,\mathrm{h}$ |
-| S | podvojevanje DNA | okoli $8\,\mathrm{h}$ |
-| G2 | rast, priprava na delitev | okoli $4\,\mathrm{h}$ |
-| M | mitoza in citokineza | okoli $1\,\mathrm{h}$ |
+| G1 | rast celice | $\approx 11\,\mathrm{h}$ |
+| S | podvojitev DNA | $\approx 8\,\mathrm{h}$ |
+| G2 | priprava | $\approx 4\,\mathrm{h}$ |
+| M | delitev | $\approx 1\,\mathrm{h}$ |
 
-Mitoza je na uri le kratek izsek, interfaza pa skoraj ves krog. Zato je v vsakem preparatu večina celic v interfazi. Celice, ki se ne delijo več (nevroni, večina mišičnih celic), izstopijo iz G1 v mirovno fazo **G0**. Jetrne celice so v G0, a se ob poškodbi jeter vrnejo v cikel.
+V G1 celica raste in izdeluje beljakovine ter organele, v G2 se pripravlja na delitev, faza M obsega mitozo in citokinezo. Mitoza je na uri le kratek izsek, interfaza pa skoraj ves krog. Zato je v vsakem preparatu večina celic v interfazi. Celice, ki se ne delijo več (nevroni, večina mišičnih celic), izstopijo iz G1 v mirovno fazo **G0**. Jetrne celice so v G0, a se ob poškodbi jeter vrnejo v cikel.
 
 Kaj se zgodi z DNA? Količino DNA v jedru diploidne celice v G1 označimo z $2C$. V fazi S se vsaka molekula DNA podvoji, zato ima celica v G2 količino $4C$. Število kromosomov se pri tem **ne spremeni**: kromosom ima po fazi S dve **sestrski kromatidi**, ki ju skupaj drži beljakovinski kompleks **kohezin**. Človeška celica ima v G1 in v G2 po $46$ kromosomov, kromatid pa v G1 $46$ in v G2 $92$.
 
