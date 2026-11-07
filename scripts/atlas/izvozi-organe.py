@@ -112,7 +112,7 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(80_000, 14_000)), nedotakni=r"\(CT\)",
+        pozno=["srce_ct"], ct=dict(cilj=(72_000, 12_000)), nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
         # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
         stena={"Left ventricle": 0.0028, "Right ventricle": 0.0008},
@@ -149,13 +149,14 @@ ORGANI = {
                 "pljucna-vena": dict(barva=(0.46, 0.28, 0.27), barva2=(0.40, 0.23, 0.23), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                                      vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
-                "vencna-arterija": dict(barva=(0.62, 0.36, 0.30), barva2=(0.54, 0.28, 0.24), lise=0.25, hrap=0.5, gube=0.00003, gubeMera=0.0015, razdeli=1,
+                # n10: arterije bledo rožnato bele (debela stena), vene temne modro vijolične (kri skozi tanko steno)
+                "vencna-arterija": dict(barva=(0.70, 0.50, 0.44), barva2=(0.62, 0.42, 0.38), lise=0.25, hrap=0.5, gube=0.00003, gubeMera=0.0015, razdeli=1,
                                         vzdolz=0.00002, vzdolzRazmik=0.0012),
                 # vezivo (arterijska vez, dno ovalne kotanje, pars membranacea): mat sivobelo, brez sijaja
                 "vez": dict(barva=(0.62, 0.58, 0.53), barva2=(0.55, 0.50, 0.46), lise=0.25, hrap=0.78, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 # prevodni sistem (shema): rumen kot v atlasih, rahlo svetleč
                 "prevodni": dict(barva=(0.78, 0.62, 0.10), barva2=(0.70, 0.52, 0.08), lise=0.15, hrap=0.4, gube=0.00002, gubeMera=0.0015, razdeli=1),
-                "vencna-vena": dict(barva=(0.36, 0.20, 0.22), barva2=(0.30, 0.16, 0.18), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "vencna-vena": dict(barva=(0.25, 0.16, 0.26), barva2=(0.20, 0.12, 0.21), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
             },
         ),
         jedro=r"^(Right atrium|Right ventricle|Left atrium|Left ventricle)$",

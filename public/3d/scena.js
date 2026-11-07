@@ -216,6 +216,8 @@ export function ustvariSceno(el, opts = {}) {
   const camera = new THREE.PerspectiveCamera(opts.fov ?? 35, 1, 0.01, 200);
   camera.position.set(0, 0, 3.6);
   const controls = new OrbitControls(camera, canvas);
+  // Preizkusi (scripts/atlas/posnetki-organa.cjs MERE=1: merilne črte čez prerez): kamera in scena, samo s ?preizkus=1
+  if (typeof location !== "undefined" && /[?&]preizkus=1(&|$)/.test(location.search)) globalThis.__scena = { camera, scene, canvas };
   controls.enableDamping = gib;
   controls.dampingFactor = 0.09;
   controls.rotateSpeed = 0.85;

@@ -1040,7 +1040,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (model.postavitev === "organ") oder.append(nadzorEl);
     else if (nadzorEl.parentNode !== spodaj) spodaj.insertBefore(nadzorEl, deliGlava || deliEl);
     // telefon pokonci: stikala organa (Učne barve, Prerez) pod gumbi; model nižje, da ga ne prekrijejo (3d.css ≤ 480 px)
-    kit.zamikZgoraj?.(model.postavitev === "organ" && opts.stran && matchMedia("(max-width: 480px)").matches ? 36 : 0);
+    kit.zamikZgoraj?.(model.postavitev === "organ" && opts.stran && matchMedia("(max-width: 480px)").matches ? 48 : 0);
     if (model.group) kit.scene.add(model.group);
     kit.nastaviLuci(model.luci !== false);
     // Skupni studijski HDR (model.okolje = { ime, jakost, zasuk }), sicer privzeto okolje kompleta.

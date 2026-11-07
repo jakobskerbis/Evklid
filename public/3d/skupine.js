@@ -6,7 +6,8 @@
 // Samo podatki (brez uvozov): uvozi jih tudi Node.
 export const SKUPINE = {
   "organ-srce": [
-    { id: "zaklopke", deli: ["av-zaklopki", "aortna-zaklopka", "pljucna-zaklopka"], smer: [0.12, 0.82, 0.56], // od zgoraj spredaj: vse štiri zaklopke (osnova srca)
+    { id: "zaklopke", deli: ["av-zaklopki", "aortna-zaklopka", "pljucna-zaklopka", "papilarne-misice"], // n10: tetive vidno pripete na papilarne mišice
+      smer: [0.12, 0.82, 0.56], // od zgoraj spredaj: vse štiri zaklopke (osnova srca)
       sinonimi: ["srčne zaklopke", "zaklopke srca", "valvule", "jadrasti in žepasti zaklopki"],
       opisOs: "Štiri zaklopke so kot vratca: kri spustijo samo naprej, nazaj ne.",
       opis: "Jadrasti zaklopki (mitralna in trikuspidalna) ločita preddvora od prekatov, žepasti (aortna in pljučna) sta na izhodu v aorto in pljučno deblo. Zapiranje zaklopk slišimo kot srčna tona.",

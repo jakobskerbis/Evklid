@@ -584,7 +584,9 @@ ${
         diffuseColor.rgb *= 0.88 + 0.24 * orgSum( orgQ * 60.0 ) * orgSum( orgQ * 13.0 );
         diffuseColor.rgb *= 1.0 - 0.09 * ( orgSum( orgQ * 7.0 ) - 0.5 ) * 2.0; // večje lise (prekrvavitev)
         ${t.rezVlakna && !vol ? "diffuseColor.rgb *= 0.9 + 0.2 * orgH;" : ""}${
-          vol
+          vol && t.rezRavna
+            ? "" // učne barve: enobarven pokrov (globina ravnine ostane)
+            : vol
             ? `
         { // pravo tkivo (Visible Woman) in smer vlaken iz CT: miokard rdeče rjav z vlakni, maščoba rumena z režnjiči
           vec3 orgF = orgV4.rgb * 2.0 - 1.0; float orgFl = length( orgF ); orgF = orgFl > 0.2 ? orgF / orgFl : vec3( 0.0, 1.0, 0.0 );
@@ -627,7 +629,7 @@ ${
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov2-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${vlCt}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov2-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${vlCt}${t.rezRavna ? "r" : ""}` : ""}`;
   return m;
 }
 
@@ -690,31 +692,26 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const pv = podatki.prerez?.volumen;
   let vol = null;
   if (pv) {
-    const nalozi = (ime) =>
-      new Promise((ok, ne) => new THREE.TextureLoader().load(`${BAZA}${ime}`, ok, undefined, ne)).then((tx) => {
-        tx.flipY = false;
-        tx.generateMipmaps = false;
-        tx.minFilter = THREE.LinearFilter;
-        tx.magFilter = THREE.LinearFilter;
-        tx.colorSpace = THREE.NoColorSpace;
-        tx.needsUpdate = true;
-        return tx;
-      });
-    try {
-      const [tex, tkivo] = await Promise.all([nalozi(pv.slika), nalozi(pv.tkivo || `${ime}-tkivo.png`)]);
-      tkivo.colorSpace = THREE.SRGBColorSpace; // fotografija: vzorčenje vrne linearne vrednosti (kot barve iz JSON)
-      const s0 = 1 / polmer;
-      vol = { tex, tkivo, meta: pv, lo: pv.lo.map((x, i) => (x - sredisce.getComponent(i)) * s0), k: pv.korak * s0, tkK: (pv.tkivoMera ?? 0.016) * s0 };
-    } catch (e) {
-      console.warn("organ: prostorska tekstura reza ni naložena", e);
-      vol = null; // brez teksture: postopkovni rez (kot prej)
-    }
+    // Ne čakamo: teksturi reza (≈ 0,8 MB) se naložita v ozadju po GLB, prvi prikaz (celota) je zato hitrejši (telefon
+    // 4G: ocena n9 4,8 s). Do naložitve vzorčenje vrne 0 (pokrov kot brez stene, nekaj sto ms, samo če je prerez že vklopljen).
+    const nalozi = (ime, srgb = false) => {
+      const tx = new THREE.TextureLoader().load(`${BAZA}${ime}`, undefined, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
+      tx.flipY = false;
+      tx.generateMipmaps = false;
+      tx.minFilter = THREE.LinearFilter;
+      tx.magFilter = THREE.LinearFilter;
+      tx.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; // tkivo: fotografija (linearne vrednosti kot barve iz JSON)
+      return tx;
+    };
+    const s0 = 1 / polmer;
+    vol = { tex: nalozi(pv.slika), tkivo: nalozi(pv.tkivo || `${ime}-tkivo.png`, true), meta: pv, lo: pv.lo.map((x, i) => (x - sredisce.getComponent(i)) * s0), k: pv.korak * s0, tkK: (pv.tkivoMera ?? 0.016) * s0 };
   }
   const teksture = pripravljeno.teksture ? { ...pripravljeno.teksture, pbr: !!podatki.pbr } : null;
   if (teksture?.orm) teksture.orm.channel = 0; // aoMap bere isti UV kot ostale mape (three privzeto: uv1 za aoMap v starejših)
   const s = 1 / polmer; // metri organa → enote modela
   const group = new THREE.Group();
   group.name = ime;
+  group.userData.merilo = s; // metri organa → enote modela (preizkusi: merilne črte, posnetki-organa.cjs MERE=1)
   // Luči organa (poleg studijske svetlobe kompleta): topla glavna luč za ostre vlažne odseve in zadnja luč za obris.
   for (const l of podatki.luci || [{ smer: [0.5, 1, 0.8], moc: 1.1, barva: "#fff1e6" }, { smer: [-0.7, 0.4, -1], moc: 0.6, barva: "#ffd8d0" }]) {
     const d = new THREE.DirectionalLight(new THREE.Color(l.barva || "#ffffff"), (l.moc ?? 1) * (visoka ? 1 : 1.1));
@@ -848,22 +845,29 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const poId = new Map((podatki.deli || []).map((d) => [d.id, d]));
   const imaUcne = (podatki.deli || []).length > 1;
   let ucne = false;
-  const ucniZa = (id) => {
-    if (!ucni.has(id)) {
+  const ucniZa = (id, tkivo) => {
+    const kljuc = `${id}|${tkivo}`;
+    if (!ucni.has(kljuc)) {
       const c = new THREE.Color(ucnaBarva(poId.get(id), poId));
       const rezi = vPrerezu() && !!ravnine;
       const mat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: teksture?.normalMap || null, clippingPlanes: rezi ? ravnine.seznam : [] });
       if (teksture?.normalScale) mat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6);
       mat.userData.rezan = !!ravnine;
-      const pokrov = new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.BackSide, clippingPlanes: ravnine ? ravnine.seznam : [], clipIntersection: !!ravnine?.presek });
-      ucni.set(id, { mat, pokrov });
+      // Stene s prostorsko teksturo reza (srce): pokrov na globini ravnine kot v naravnih barvah, sicer bi notranji deli
+      // (prevodni sistem, dno papilarnih mišic, venčne veje) v pretinu silili skozi rez kot raznobarvni drobci (ocena n9).
+      const tk = podatki.tkiva?.[tkivo] || {};
+      const pokrov =
+        ravnine && vol && tk.rezVolumen
+          ? materialPokrova({ ...tk, rez: `#${c.clone().multiplyScalar(0.62).getHexString()}`, rezVlakna: 0, rezRavna: true }, ravnine, s, vol)
+          : new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.BackSide, clippingPlanes: ravnine ? ravnine.seznam : [], clipIntersection: !!ravnine?.presek });
+      ucni.set(kljuc, { mat, pokrov });
     }
-    return ucni.get(id);
+    return ucni.get(kljuc);
   };
   function barve(n) {
     ucne = imaUcne && n === "ucne";
     for (const m of meshi) {
-      const u = ucne ? ucniZa(m.userData.del) : null;
+      const u = ucne ? ucniZa(m.userData.del, m.userData.tkivo) : null;
       m.material = u ? u.mat : mat(m.userData.tkivo);
       for (const c of m.children) if (c.userData.pokrov) c.material = u ? u.pokrov : pokrovi.get(m.userData.tkivo);
     }
@@ -926,7 +930,16 @@ export async function zgradiOrgan(ime, ctx = {}) {
   // Okvir pogleda: središče (metri organa) in polmer (1 = cel organ), npr. zrklo brez mišic večje in na sredini.
   const okvir = (p) => {
     const o = pogledi[p]?.okvir || podatki.okvir || {};
-    return { sredisce: (o.sredisce || [0, 0, 0]).map((x) => x * s), polmer: o.polmer ?? 1 };
+    let c = (o.sredisce || [0, 0, 0]).slice();
+    // Prerez z eno ravnino: središče kadra na ravnini reza, da merilo (na globini cilja) velja za rezno ploskev. Prej je
+    // bilo srce 3,5 cm pred rezom in stena na sliki ~20 % tanjša od merila (ocena srca n9: »LV 5–7 mm«).
+    const rv = prerez?.ravnine;
+    if (p !== "celota" && !pogledi[p]?.okvir?.sredisce && rv?.length === 1 && !prerez.presek) {
+      const n = new THREE.Vector3(...rv[0].n).normalize();
+      const k = n.dot(new THREE.Vector3(...c)) + (rv[0].d || 0);
+      c = c.map((x, i) => x - n.getComponent(i) * k);
+    }
+    return { sredisce: c.map((x) => x * s), polmer: o.polmer ?? 1 };
   };
   return {
     group,

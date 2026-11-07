@@ -33,14 +33,14 @@
    "rezVlaknaCt": 1400
   },
   "zaklopka": {
-   "barva": "#e6dccb",
+   "barva": "#e8d6bc",
    "hrap": 0.36,
-   "lak": 0.45,
-   "lakHrap": 0.6,
-   "sijaj": 0.35,
+   "lak": 0.5,
+   "lakHrap": 0.45,
+   "sijaj": 0.3,
    "sijajBarva": "#ffffff",
-   "rob": 0.1,
-   "robBarva": "#fff2e0",
+   "rob": 0.28,
+   "robBarva": "#fff6e8",
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
@@ -48,24 +48,27 @@
    "sijajHrap": 0.6,
    "spekular": 0.75,
    "tekstura": false,
-   "prosojnost": 1
+   "prosojnost": 0.8,
+   "globina": true
   },
   "zep": {
-   "barva": "#e6dccb",
+   "barva": "#e8d6bc",
    "hrap": 0.36,
-   "lak": 0.45,
-   "lakHrap": 0.6,
-   "sijaj": 0.35,
+   "lak": 0.5,
+   "lakHrap": 0.45,
+   "sijaj": 0.3,
    "sijajBarva": "#ffffff",
-   "rob": 0.1,
-   "robBarva": "#fff2e0",
+   "rob": 0.28,
+   "robBarva": "#fff6e8",
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
    "dvostransko": true,
    "sijajHrap": 0.6,
    "spekular": 0.75,
-   "tekstura": false
+   "tekstura": false,
+   "prosojnost": 0.8,
+   "globina": true
   },
   "arterija": {
    "barva": "#c4312e",
@@ -97,7 +100,7 @@
    "zrno": 0.05,
    "f": 80,
    "relief": 0.3,
-   "rez": "#2f4b8c",
+   "rez": "#5a2e34",
    "odtenek": "#ffffff",
    "sijajHrap": 0.75,
    "spekular": 0.55
@@ -175,7 +178,7 @@
   },
   "vencna-vena": {
    "barva": "#3e3a8c",
-   "rez": "#33307a",
+   "rez": "#4a2632",
    "robBarva": "#7a78e0",
    "sijajBarva": "#a8a4ff",
    "lak": 0.25,
@@ -579,10 +582,7 @@
    "barva": "#ca8a04",
    "opis": "Iz desnega aortnega sinusa po desnem venčnem žlebu; oskrbuje desni preddvor in desni prekat.",
    "vozlisca": [
-    "Conus branch of right coronary artery",
-    "Right coronary artery",
-    "Right inferolateral branch of right coronary artery",
-    "Sinoatrial nodal branch of right coronary artery"
+    "Right coronary artery"
    ],
    "opisOs": "Žila po desni strani srca.",
    "opisStudij": "A. coronaria dextra: veja za conus, arterija sinusnega (~60 %) in AV-vozla (~80–90 %), desna obrobna veja, pri desni dominanci zadnja medprekatna."
@@ -620,9 +620,7 @@
    "la": "Venae cordis",
    "barva": "#a78bfa",
    "opis": "Odvajajo kri iz srčne mišice in se zberejo v venčnem sinusu.",
-   "vozlisca": [
-    "Inferior vein of left ventricle"
-   ],
+   "vozlisca": [],
    "ucnaBarva": "#5b4ee6",
    "opisOs": "Vene, ki odvajajo kri iz srčne mišice.",
    "opisStudij": "Večina se zbere v sinus coronarius (v. cordis magna, media, parva in v. ventriculi sinistri posterior – zadnja vena levega prekata); vv. cordis anteriores in drobne vv. cordis minimae (Tebezijeve) se izlivajo neposredno v votline."
@@ -683,32 +681,6 @@
    "opisStudij": "V. cordis parva spremlja desno obrobno vejo in desno venčno arterijo; ni stalna."
   },
   {
-   "id": "sprednje-srcne-vene",
-   "ime": "Sprednje srčne vene",
-   "la": "Venae cordis anteriores",
-   "barva": "#3730a3",
-   "opis": "Kratke vene s sprednje stene desnega prekata; čez desno venčno arterijo gredo naravnost v desni preddvor.",
-   "vozlisca": [
-    "Anterior cardiac veins"
-   ],
-   "skupina": "vencne-vene",
-   "opisOs": "Drobne vene, ki gredo naravnost v desni preddvor.",
-   "opisStudij": "Vv. cordis anteriores (2–4) odvajajo sprednjo steno desnega prekata mimo venčnega sinusa."
-  },
-  {
-   "id": "posevna-vena-preddvora",
-   "ime": "Poševna vena levega preddvora",
-   "la": "Vena obliqua atrii sinistri",
-   "barva": "#312e81",
-   "opis": "Drobna vena po zadnji steni levega preddvora do venčnega sinusa; ostanek leve zgornje votle vene.",
-   "vozlisca": [
-    "Oblique vein of left atrium"
-   ],
-   "skupina": "vencne-vene",
-   "opisOs": "Drobna vena na zadnji strani levega preddvora.",
-   "opisStudij": "V. obliqua atrii sinistri (Marshallova): ostanek leve zgornje votle vene; z vezjo Marshalla vir aritmij."
-  },
-  {
    "id": "papilarne-misice",
    "ime": "Papilarne mišice",
    "la": "Musculi papillares",
@@ -761,6 +733,8 @@
     "Anterior leaflet of right atrioventricular valve",
     "Chordae tendineae of mitral valve",
     "Chordae tendineae of tricuspid valve",
+    "Fibrous ring of mitral valve",
+    "Fibrous ring of tricuspid valve",
     "Inferior leaflet of right atrioventricular valve",
     "Posterior leaflet of left atrioventricular valve",
     "Septal leaflet of right atrioventricular valve"
@@ -861,7 +835,7 @@
      -0.755,
      -0.6388
     ],
-    "d": -0.0345
+    "d": -0.0379
    }
   ],
   "brezPokrova": [
@@ -873,8 +847,8 @@
    "razdalja": 0.03,
    "moc": 0.6,
    "odprtost": true,
-   "endokard": "#b86a5c",
-   "endokardMoc": 0.32,
+   "endokard": "#a8463c",
+   "endokardMoc": 0.42,
    "endokardTkiva": [
     "miokard"
    ]
@@ -882,9 +856,9 @@
   "volumen": {
    "slika": "srce-volumen.png",
    "lo": [
-    -0.06714,
-    -0.09636,
-    -0.05624
+    -0.06702,
+    -0.10302,
+    -0.0539
    ],
    "korak": 0.00125,
    "n": [
@@ -944,7 +918,7 @@
    ],
    "tkiva": {
     "miokard": {
-     "lak": 0.7
+     "lak": 0.45
     },
     "zaklopka": {
      "svetlost": 1.05
@@ -980,10 +954,10 @@
    }
   ]
  },
- "velikost": 0.261,
+ "velikost": 0.2647,
  "trikotniki": {
-  "racunalnik": 184982,
-  "telefon": 43202
+  "racunalnik": 202566,
+  "telefon": 47333
  },
  "luci": [
   {

@@ -3,7 +3,8 @@
 // Meri prenos (bajti datotek organi-3d/) in čas do prvega prikaza pri omrežju 4G (telefon) in kabel (računalnik).
 // Zagon: node scripts/atlas/posnetki-organa.cjs <organ> <izhodna mapa> [oznaka, npr. staro|novo]
 // Okolje: KOTI=1 (8 kotov, zgoraj, spodaj), ZILE=1 (žile od blizu), RAVEN=1|2|3 (raven razlage OŠ/SŠ/študij),
-// SAMO=telefon|racunalnik, UCNE=1 (učne barve), SKUPINA=<ime skupine> (npr. Zaklopke).
+// SAMO=telefon|racunalnik, UCNE=1 (učne barve), SKUPINA=<ime skupine> (npr. Zaklopke), MERE=<mere.json iz
+// scripts/atlas/mere-reza.py> (dodatna posnetka prerez-mere, prerez-blizu-mere: merilne črte debeline sten v mm čez sliko).
 // Izhod: <mapa>/<oznaka>-<telefon|racunalnik>-<pogled>.png in <mapa>/<oznaka>-meritve.json.
 // Potrebuje Playwright s Chromiumom (swiftshader: čas risanja ni čas pravega telefona, primerjaj staro z novim).
 const { spawn } = require("node:child_process");
@@ -56,7 +57,7 @@ const NAPRAVE = {
       });
       const cdp = await ctx.newCDPSession(p);
       // kakovost izrecno: peskovnik ima 2 jedri (samodejno bi bila »nizka« tudi na računalniku)
-      await p.goto(`${base}/3d?kakovost=${n.kakovost}${process.env.RAVEN ? `&raven=${process.env.RAVEN}` : ""}`); // RAVEN=1: profil OŠ (raven.js)
+      await p.goto(`${base}/3d?kakovost=${n.kakovost}${process.env.RAVEN ? `&raven=${process.env.RAVEN}` : ""}${process.env.MERE ? "&preizkus=1" : ""}`); // RAVEN=1: profil OŠ (raven.js)
       await cdp.send("Network.enable");
       await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
       await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: n.omrezje.rtt, downloadThroughput: n.omrezje.down / 8, uploadThroughput: n.omrezje.down / 16 });
@@ -139,14 +140,50 @@ const NAPRAVE = {
         await p.locator(".k3-stikalo", { hasText: "Učne barve" }).locator(".switch").first().click().catch(() => {});
         await p.waitForTimeout(800);
       }
+      // MERE: črte iz točk v metrih organa (glTF) → zaslon (kamera iz globalThis.__scena, merilo skupine organa)
+      const mere = process.env.MERE ? JSON.parse(fs.readFileSync(process.env.MERE, "utf8")) : null;
+      const slikajMere = async (pogled) => {
+        if (!mere) return;
+        await p.evaluate((mere) => {
+          const sc = globalThis.__scena;
+          let grp = null;
+          sc.scene.traverse((o) => { if (o.userData?.merilo) grp = o; });
+          const V3 = sc.camera.position.constructor;
+          const r = sc.canvas.getBoundingClientRect();
+          const zaslon = (x) => { const v = grp.localToWorld(new V3(...x).multiplyScalar(grp.userData.merilo)).project(sc.camera); return [r.left + ((v.x + 1) / 2) * r.width, r.top + ((1 - v.y) / 2) * r.height]; };
+          const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          svg.id = "k3-mere";
+          svg.setAttribute("style", "position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:99999");
+          for (const m of mere.filter((m) => m.ime.includes("50"))) {
+            const [a, b] = [zaslon(m.a), zaslon(m.b)];
+            const l = document.createElementNS(svg.namespaceURI, "line");
+            Object.entries({ x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: "#00e5ff", "stroke-width": 2.5 }).forEach(([k, v]) => l.setAttribute(k, v));
+            svg.append(l);
+            for (const q of [a, b]) {
+              const c = document.createElementNS(svg.namespaceURI, "circle");
+              Object.entries({ cx: q[0], cy: q[1], r: 3.5, fill: "#00e5ff" }).forEach(([k, v]) => c.setAttribute(k, v));
+              svg.append(c);
+            }
+            const t = document.createElementNS(svg.namespaceURI, "text");
+            Object.entries({ x: (a[0] + b[0]) / 2 + 8, y: (a[1] + b[1]) / 2 - 10, fill: "#ffffff", "font-size": 15, "font-family": "sans-serif", "font-weight": 700, stroke: "#000", "stroke-width": 3, "paint-order": "stroke" }).forEach(([k, v]) => t.setAttribute(k, v));
+            t.textContent = `${m.ime.replace(/ \d+ %/, "")} ${String(m.mm).replace(".", ",")} mm`;
+            svg.append(t);
+          }
+          document.body.append(svg);
+        }, mere);
+        await p.screenshot({ path: path.join(izhod, `${oznaka}-${ime}-${pogled}-mere.png`), timeout: 180000 });
+        await p.evaluate(() => document.getElementById("k3-mere")?.remove());
+      };
       const stikalo = p.locator(".k3-stikalo", { hasText: "Prerez" }).locator(".switch").first();
       if (await stikalo.count()) {
         await stikalo.click();
         await ugasniNamig();
         await slikaj("prerez");
+        await slikajMere("prerez");
         const blizje = p.locator('[aria-label="Približaj"]').first();
         for (let i = 0; i < 2; i++) await blizje.click().catch(() => {});
         await slikaj("prerez-blizu");
+        await slikajMere("prerez-blizu");
       }
       const skupaj = Object.values(datoteke).reduce((s, x) => s + x, 0);
       meritve[ime] = { prenosBajtov: skupaj, datoteke, nalaganjeS: +nalaganje.toFixed(2), omrezje: n.omrezje, napake: [...new Set(napake)] };

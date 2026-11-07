@@ -274,6 +274,10 @@ def stene(P, C, T, korakov=8):
 UJEMANJE = {"Left ventricle": (1,), "Interventricular septum": (1,), "Right ventricle": (1, 2), "Conus arteriosus": (2,),
             "Left atrium": (3, 19, 20, 21, 22), "Right atrium": (4, 23, 24), "Right auricle": (4,)}
 IZPUSTI_OSL = ("uho",)
+# n10 (ocena n9: »preštevilne veje, gost splet po vseh stenah«): ostanejo glavna debla in večje veje v žlebovih
+IZPUSTI_ZILE = {"Anterior cardiac veins", "Inferior vein of left ventricle", "Oblique vein of left atrium",
+                "Sinoatrial nodal branch of right coronary artery", "Conus branch of right coronary artery",
+                "Right inferolateral branch of right coronary artery"}
 
 
 class Poravnava:
@@ -431,6 +435,7 @@ def razdeli_stene(V, F, oz, epi, L):
     z2 = _zarek_zadene(bvh, c[i1], -n[i1], 0.022)
     sl = i1[[zz in sr for zz in z2]]
     d[list(sr)] = 1; d[sl] = 1
+    stran = np.zeros(len(F), int); stran[list(sr)] = 1; stran[sl] = -1  # pretin: 1 desna (RV) stran, -1 leva (LV)
     # conus: RV pod pljučno zaklopko (do 2,2 cm)
     os_ = L["pljucna"] - L["trikuspidalna"]; os_ /= np.linalg.norm(os_)
     pod = (c - L["pljucna"]) @ os_
@@ -440,7 +445,7 @@ def razdeli_stene(V, F, oz, epi, L):
     cr = c[ra].mean(0); tip = c[ra][((c[ra] - cr) @ smer).argmax()]
     os2 = (tip - cr) / np.linalg.norm(tip - cr)
     d[ra & (np.linalg.norm(c - tip, axis=1) < 0.026) & (((c - cr) @ os2) > 0.4 * np.linalg.norm(tip - cr))] = 6
-    return d
+    return d, stran
 
 
 DELI_CT = [  # (ime vozlišča, tkivo, del)
@@ -451,7 +456,7 @@ DELI_CT = [  # (ime vozlišča, tkivo, del)
     ("Root of pulmonary trunk", "pljucna", "pljucno-deblo")]
 
 
-def relief(V, F, oz, epi, dl, L, h_masca):
+def relief(V, F, oz, epi, dl, L, h_masca, stran=None):
     """Odmik oglišč sten: epikard navzven za debelino maščobe, endokard v votlino za trabekule (RV povsod razen conusa,
     LV v konici in ob papilarnih mišicah, glavničaste mišice v desnem ušesu). Vrne nove lege in masko maščobe (0–1)."""
     nV = len(V)
@@ -495,8 +500,22 @@ def relief(V, F, oz, epi, dl, L, h_masca):
     lob = _sumi(V, 0.003, 7)
     h = np.where(h > 2e-4, h + 4e-4 * (lob - 0.5) * np.clip(h / 1.5e-3, 0, 1), h)
     h = _gladi(h, e, st, 3)
-    V2 = V + N * (h - 0 * tr)[:, None] + N * tr[:, None]
-    return V2, np.clip((h - 0.35e-3) / 1.0e-3, 0, 1), tr  # pod ~0,4 mm brez barve maščobe (mišica se vidi skozi)
+    # n10 (ocena n9: »stena LV 5–7 mm«): CT povprečje (živo srce v diastoli) ima LV ≈ 10 mm; preparat (mrtvaško
+    # skrčenje, fiksacija) in učbenik kažeta 12–15 mm. Endokard LV (prosta stena +3,2 mm, leva stran pretina +2,2 mm)
+    # premaknemo v votlino; konica (tanjša) in pas ob mitralnem obroču ter iztoku v aorto ostaneta (zaklopke se ne premaknejo).
+    deb = np.zeros(nV)
+    if stran is not None:
+        kol = np.zeros(len(F)); kol[(dl == 0) & ~epi] = 3.2e-3; kol[(dl == 1) & (stran == -1) & ~epi] = 2.2e-3
+        mn = np.full(nV, 1.0); mx = np.zeros(nV)
+        for k in range(3):
+            np.minimum.at(mn, F[:, k], kol); np.maximum.at(mx, F[:, k], kol)
+        deb = np.where(mn > 0, mx, 0.0)
+        w = np.clip((t - 0.04) / 0.22, 0, 1) * np.clip((0.93 - t) / 0.2, 0, 1)
+        w *= np.clip((np.linalg.norm(V - L["aortna"], axis=1) - 0.013) / 0.012, 0, 1)
+        deb = _gladi(deb * w, e, st, 4) * samo_endo
+    V2 = V + N * (h + tr + deb)[:, None]
+    # pod ~0,45 mm brez barve maščobe (mišica se vidi skozi); ostra meja (ocena n9: »zabrisan trak«)
+    return V2, np.clip((h - 0.45e-3) / 0.35e-3, 0, 1), tr
 
 
 def debelina_mascobe(V, F, oz, epi, X_zile):
@@ -518,8 +537,21 @@ def debelina_mascobe(V, F, oz, epi, X_zile):
     d_z = _razdalja(_kd(X_zile), V, 0.03) if len(X_zile) else np.full(nV, 0.03)
     g = lambda d, s: np.exp(-(d / s) ** 2)
     zleb = np.maximum.reduce([g(d_av, 0.012), g(d_iv, 0.009)])
-    h = np.maximum.reduce([6.0e-3 * g(d_av, 0.0075), 3.4e-3 * g(d_iv, 0.0055), 2.5e-3 * g(d_ar, 0.006),
-                           2.6e-3 * zleb ** 1.5 * np.clip(1 - d_z / 0.004, 0, 1)])  # ob vejah na prosti steni le malo (n8: »reke« maščobe)
+    # n10: venčne žile v žlebovih pogreznjene v maščobo (ocena n9: »rezanci na epikardu«): ob žili v žlebu ≥ 3 mm
+    h = np.maximum.reduce([6.0e-3 * g(d_av, 0.0075), 3.8e-3 * g(d_iv, 0.006), 2.5e-3 * g(d_ar, 0.006),
+                           3.0e-3 * np.clip(zleb * 1.5, 0, 1) * np.clip(1 - d_z / 0.0045, 0, 1) ** 0.7])  # ob vejah na prosti steni le malo (n8: »reke« maščobe)
+    # n10: medpreddvorni žleb (Waterston) zapolni maščoba: epikard LA in RA, ki sta bližje kot 8 mm, se razširi do stika
+    # (ocena n9: »nazobčana črna vrzel med preddvoroma nad pretinom«, crux)
+    # enako zadnji venčni žleb (preddvor – prekat, ocena n9: »črna razpoka ob venčnem sinusu«)
+    la = np.zeros(nV, bool); ra = np.zeros(nV, bool); ve = np.zeros(nV, bool)
+    la[F[np.isin(oz, (3, 18, 19, 20, 21, 22)) & epi].ravel()] = True; ra[F[np.isin(oz, (4, 23, 24)) & epi].ravel()] = True
+    ve[F[np.isin(oz, (1, 2)) & epi].ravel()] = True
+    for A_, B_, do in ((la, ra, 0.008), (ra, la, 0.008), (la, ve, 0.009), (ve, la, 0.009), (ra, ve, 0.008), (ve, ra, 0.008)):
+        ia = np.nonzero(A_ & ~B_)[0]
+        if len(ia) and B_.any():
+            dd = _razdalja(_kd(V[B_]), V[ia], 0.01)
+            m = dd < do
+            h[ia[m]] = np.maximum(h[ia[m]], dd[m] * 0.62 + 0.0004)
     vrv = np.zeros(nV); vrv[F[oz == 2].ravel()] = 1
     lise = np.clip((_sumi(V, 0.018, 11) - 0.62) / 0.2, 0, 1) * 1.0e-3 * vrv * np.clip(zleb * 2.5, 0, 1)
     h = np.maximum(h, lise)
@@ -613,7 +645,8 @@ def srce_ct(osnovni, cfg, tmp):
     ]
     for r in osnovni:
         # n9: zaklopke, tetive in papilarne mišice na novo na obročih CT (zaklopke_ct); pljučne vene kot krni iz ustij CT
-        if r[0] in odstrani or re.search(r"leaflet|Chordae|Semilunar|papillary muscle|pulmonary vein", r[0]):
+        # n10: mesnate trabekule na novo na steni CT (trabekule_ct); manj venčnih vej (ocena n9: »gost splet špagetov«)
+        if r[0] in odstrani or re.search(r"leaflet|Chordae|Semilunar|papillary muscle|pulmonary vein|^Trabeculae carneae", r[0]) or r[0] in IZPUSTI_ZILE:
             continue
         Z = _tocke(r[1]); X = por(Z)
         for rx, stran, dos in PRENOS:
@@ -621,31 +654,40 @@ def srce_ct(osnovni, cfg, tmp):
                 X, _ = prenesi_na_steno(X, Z, bvh_z, bvh_epi, bvh_endo, stran, dos)
                 break
         if r[2] == "vencna-arterija" or r[2] == "vencna-vena":
-            X = _odebeli_cev(r[1], X, 1.5 if r[2] == "vencna-arterija" else 1.3)  # n8: »tanke niti«; preparat 2–4 mm
+            X = _odebeli_cev(r[1], X, 1.2 if r[2] == "vencna-arterija" else 1.15)  # n8: »tanke niti«; n9: »debele cevi« → 1,2
+            for i, x in enumerate(X):  # n10: 0,7 mm globlje (napol v maščobi, ne na epikardu)
+                q, nn, _, _ = bvh_epi.find_nearest(Vector(x))
+                if q is not None:
+                    X[i] = x - np.array(nn) * 0.0007
         _nastavi(r[1], X)
         if r[2].startswith("vencna-"):
             zile.append(X)
         nove.append(r)
-    nove += zaklopke_ct(P, C, T, premik, Lc, bvh_endo)
-    nove += pljucne_vene_ct(P, C, T, premik, Lc)
+    popravi_zile(nove)
+    print(f"[organi] srce_ct: {len(nove)} delov Z-Anatomy poravnanih na CT, {len(osnovni) - len(nove)} sten zamenjanih", flush=True)
+    dl, stran_p = razdeli_stene(V, F, oz, epi, Lc)
+    h = debelina_mascobe(V, F, oz, epi, np.concatenate(zile) if zile else np.zeros((0, 3)))
+    V2, masca, tr = relief(V, F, oz, epi, dl, Lc, h, stran_p)
+    cfg["_ct"] = dict(P=P, C=C, T=T, Fv=Fv, premik=premik, V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, masca=masca, L=Lc)
+    # votline po reliefu (odebeljena stena LV): zaklopke, papilarne mišice in trabekule na novem endokardu
+    lvF = F[((dl == 0) | ((dl == 1) & (stran_p == -1))) & ~epi]
+    rvF = F[((dl == 2) | ((dl == 1) & (stran_p == 1))) & ~epi]
+    bvh_lv = _bvh(V2, lvF); bvh_rv = _bvh(V2, rvF)
+    tel = cfg.setdefault("_telefon", {})
+    nove += zaklopke_ct(P, C, T, premik, Lc, bvh_lv, bvh_rv, tel)
+    nove += pljucne_vene_ct(P, C, T, premik, Lc, tel, _bvh(V2, F[epi]))
+    nove += trabekule_ct(V2, lvF, rvF, Lc, nove, tel, tmp)
     smr = next((r for r in nove if r[0].startswith("Septomarginal trabecula")), None)
     pap = next((r for r in nove if r[0].startswith("Anterior papillary muscle of right ventricle")), None)
     if smr is not None and pap is not None:
-        smr[1] = moderatorni_trak(_tocke(smr[1]), pap[1], bvh_endo, smr)
-    print(f"[organi] srce_ct: {len(nove)} delov Z-Anatomy poravnanih na CT, {len(osnovni) - len(nove)} sten zamenjanih", flush=True)
-    dl = razdeli_stene(V, F, oz, epi, Lc)
-    h = debelina_mascobe(V, F, oz, epi, np.concatenate(zile) if zile else np.zeros((0, 3)))
-    V2, masca, tr = relief(V, F, oz, epi, dl, Lc, h)
-    cfg["_ct"] = dict(P=P, C=C, T=T, Fv=Fv, premik=premik, V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, masca=masca, L=Lc)
+        smr[1] = moderatorni_trak(_tocke(smr[1]), pap[1], bvh_rv, smr)
     # en zaprt volumen: poenostavimo skupaj (računalnik, telefon), nato razdelimo po delih (brez razpok med deli)
     vrstice = _deli_iz_unije(V2, F, dl, epi, masca, cfg, tmp, ohrani=np.clip(tr / 1.2e-3, 0, 1))
     nove += vrstice
     Vu, Fu = levo_uho(P, C, T, premik, bvh_epi, Lc["mitralna"])
     me = _mesh("Left auricle", Vu, Fu)
-    o = bpy.data.objects.new("lu", me); tmp.objects.link(o)  # telefon: 40 % trikotnikov (brez poenostavitve je oglato)
-    mod = o.modifiers.new("dec", "DECIMATE"); mod.ratio = 0.4; mod.use_collapse_triangulate = True
-    cfg.setdefault("_telefon", {})["Left auricle"] = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
-    bpy.data.objects.remove(o)
+    cfg.setdefault("_telefon", {})["Left auricle"] = _poenostavi(me, 0.3, tmp)  # telefon 30 %, računalnik 65 % (n10: proračun trikotnikov)
+    me = _poenostavi(me, 0.65, tmp, "Left auricle")
     nove.append(["Left auricle", me, "miokard", "levo-srcno-uho", "Left auricle (lastno, CT) / Heart.g", 0])  # brez poenostavitve (oglato)
     cfg["_tocke4"] = [Vector(Lc["konica"]), Vector(Lc["mitralna"]), Vector(Lc["trikuspidalna"])]
     if cfg.get("_out"):
@@ -696,7 +738,7 @@ def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None):
             izhod.setdefault(ime, [None, None])[i] = mm
         bm.free()
         print(f"[organi] srce_ct: stene {'računalnik' if i == 0 else 'telefon'} {len(m2.polygons)} trikotnikov", flush=True)
-    cfg["_telefon"] = {ime: m[1] for ime, m in izhod.items() if m[1] is not None}
+    cfg.setdefault("_telefon", {}).update({ime: m[1] for ime, m in izhod.items() if m[1] is not None})
     return [[ime, izhod[ime][0], tkivo, del_, f"{ime} (CT) / Heart.g", 0] for ime, tkivo, del_ in DELI_CT if ime in izhod]
 
 
@@ -868,100 +910,178 @@ def _obroc(P, C, T, oznaka, premik, proti):
     return c, n, a, b, kot, R
 
 
-def _r_kot(kot, R, f):
-    f = (f + np.pi) % (2 * np.pi) - np.pi
-    return float(np.interp(f, np.r_[kot, kot[0] + 2 * np.pi], np.r_[R, R[0]]))
+def _zasuk(me, pivot, os_, kot):
+    R = Matrix.Rotation(kot, 3, Vector(os_))
+    for v in me.vertices:
+        v.co = Vector(pivot) + R @ (v.co - Vector(pivot))
+    me.update()
 
 
-def _listic(bm, c, n, a, b, kot, R, f0, f1, globina, notranji=0.38, debelina=0.0005, nt=26, ns=10, valovi=1):
-    """Jadrast listič: pritrjen na obroč od kota f0 do f1, visi proti konici (n), prosti rob na `notranji` × R; ob
-    komisurah plitvejši (zareza), `valovi` = število pokrovčkov (zadnji mitralni: 3). Vrne točke prostega roba."""
-    mreza, rob = [], []
-    for i in range(nt):
-        u = i / (nt - 1); f = f0 + (f1 - f0) * u
-        rad = a * math.cos(f) + b * math.sin(f); Rf = _r_kot(kot, R, f)
-        A = c + rad * Rf
-        g = globina * (0.32 + 0.68 * math.sin(math.pi * u) ** 0.6) * (1 - 0.18 * (1 - abs(math.cos(math.pi * valovi * u))) * (valovi > 1))
-        vrsta = []
-        for j in range(ns):
-            s = j / (ns - 1)
-            p = A + n * g * s ** 0.85 - rad * Rf * (1 - notranji) * s ** 1.15 + n * 0.0018 * math.sin(math.pi * s) * math.sin(math.pi * u)
-            vrsta.append(bm.verts.new(p))
-        mreza.append(vrsta); rob.append(np.array(vrsta[-1].co))
-    nove = [bm.faces.new((mreza[i][j], mreza[i + 1][j], mreza[i + 1][j + 1], mreza[i][j + 1])) for i in range(nt - 1) for j in range(ns - 1)]
-    bmesh.ops.solidify(bm, geom=nove, thickness=debelina)
-    return rob
+def popravi_zile(vrstice):
+    """Popravki velikih žil po poravnavi na CT (ocena n9): zgornja votla vena skoraj navpična (poravnava jo je nagnila
+    ≈ 29° naprej; pravo ≈ 10°, vzporedno s padajočo aorto) – skupaj z brahiocefalnima venama in v. azygos okoli ustja v
+    desni preddvor; padajoča aorta odrezana 32 mm pod vrhom loka (izoliran preparat: vidita se levi preddvor in pljučne
+    vene), odrezan konec zaprt z obročem stene."""
+    po = {r[0]: r[1] for r in vrstice}
+    svc = po.get("Superior vena cava")
+    if svc is not None:
+        X = _tocke(svc)
+        lo = X[X[:, 2] < np.percentile(X[:, 2], 5)].mean(0); hi = X[X[:, 2] > np.percentile(X[:, 2], 95)].mean(0)
+        d = (hi - lo) / np.linalg.norm(hi - lo)
+        kot = math.acos(min(1.0, d[2])); cilj = math.radians(10)
+        if kot > cilj + 0.02:
+            os_ = np.cross(d, [0, 0, 1.0]); os_ /= np.linalg.norm(os_)
+            for ime in ("Superior vena cava", "Right brachiocephalic vein", "Left brachiocephalic vein", "Azygos vein"):
+                if ime in po:
+                    _zasuk(po[ime], lo, os_, kot - cilj)
+            print(f"[organi] srce_ct: zgornja votla vena {math.degrees(kot):.0f}° → {math.degrees(cilj):.0f}° od navpičnice", flush=True)
+    ao = po.get("Aorta")
+    if ao is not None:
+        bm = bmesh.new(); bm.from_mesh(ao)
+        X = np.array([v.co for v in bm.verts]); zt = X[:, 2].max(); vrh = X[X[:, 2] > zt - 0.004].mean(0)
+        zc = zt - 0.032  # n10: tik za lokom (pri 45 mm je odrezan konec ležal na levem preddvoru kot »okence«)
+        bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, zc), plane_no=(0, 0, 1))
+        dele = [f for f in bm.faces if f.calc_center_median().z < zc and f.calc_center_median().y > vrh[1] + 0.008]
+        bmesh.ops.delete(bm, geom=dele, context="FACES")
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+        rob = [e for e in bm.edges if e.is_boundary and all(abs(v.co.z - zc) < 2e-5 for v in e.verts)]
+        try:
+            bmesh.ops.bridge_loops(bm, edges=rob)
+        except Exception:
+            bmesh.ops.holes_fill(bm, edges=rob)
+        bm.to_mesh(ao); bm.free(); ao.update()
+        for p_ in ao.polygons:
+            p_.use_smooth = True
+        print(f"[organi] srce_ct: padajoča aorta odrezana pri z = {zc:.3f} ({len(dele)} ploskev)", flush=True)
 
 
-def _tetive(bm, glava, tocke, r0=0.00045, r1=0.00022):
-    """Tetive: od glave papilarne mišice deblo do razcepišča (≈ 70 %), tam 2–3 veje do prostega roba lističa."""
-    from srce_geometrija import cev
-    for k in range(0, len(tocke), 3):
-        sk = tocke[k:k + 3]
-        cilj = np.mean(sk, 0); B = glava + (cilj - glava) * 0.7
-        cev(bm, [Vector(glava + (B - glava) * t) for t in np.linspace(0, 1, 6)], [r0] * 6, seg=6)
-        for p in sk:
-            cev(bm, [Vector(B + (p - B) * t) for t in np.linspace(0, 1, 4)], [r1 * 1.2, r1, r1, r1 * 0.9], seg=5)
+def _poenostavi(me, ratio, tmp, ime=None):
+    o = bpy.data.objects.new("_p", me); tmp.objects.link(o)
+    mod = o.modifiers.new("dec", "DECIMATE"); mod.ratio = ratio; mod.use_collapse_triangulate = True
+    m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+    bpy.data.objects.remove(o)
+    if ime:
+        m2.name = ime
+    for p_ in m2.polygons:
+        p_.use_smooth = True
+    return m2
 
 
-def zaklopke_ct(P, C, T, premik, L, bvh_endo):
-    """Mitralna (2 lističa), trikuspidalna (3), aortna in pljučna (po 3 žepki z noduli), papilarne mišice (stožci iz stene
-    pod komisurami) in razvejane tetive do prostih robov. Vrne vrstice [ime, mesh, tkivo, del, pot, 0]."""
-    from srce_geometrija import papilarna, semilunarni
+def trabekule_ct(V2, lvF, rvF, L, vrstice, tel, tmp):
+    """Mesnate trabekule kot geometrija na endokardu CT (ocena n9: »plitki valovi, stopljen vosek«): LV v konici in
+    spodnjih dveh tretjinah (pretin zgoraj gladek), RV povsod razen iztoka; tretjina je mostičkov (pod njimi prostor)."""
+    import random
+    from srce_geometrija import trabekule
+    out = []
+    lv_c = V2[np.unique(lvF)].mean(0); rv_v = V2[np.unique(rvF)]
+    tri = np.asarray(L["trikuspidalna"]); kon = np.asarray(L["konica"]); mit = np.asarray(L["mitralna"])
+    u = (kon - tri) / np.linalg.norm(kon - tri)
+    rv_kon = rv_v[((rv_v - tri) @ u).argmax()]
+    for ime, Fv, baza, vrh, n_, r_, dl_, od, pretin in (
+            ("Trabeculae carneae of left ventricle (lastno)", lvF, mit, kon, 80, 0.0013, 0.018, 0.38, rv_v.mean(0)),
+            ("Trabeculae carneae of right ventricle (lastno)", rvF, tri, rv_kon, 100, 0.00115, 0.016, 0.22, None)):
+        bvh = _bvh(V2, Fv)
+        bm = bmesh.new()
+        k = trabekule(bm, bvh, Vector(baza), Vector(vrh - baza), random.Random(sum(map(ord, ime))), n_, r_, dl_,
+                      od=od, do=0.96, odmik=-0.3, mosticki=0.33, pretin=Vector(pretin) if pretin is not None else None)
+        me = bpy.data.meshes.new(ime + " vir"); bm.to_mesh(me); bm.free()
+        # trabekule so grčaste vrvi: poenostavitev ne škodi (računalnik 60 %, telefon 22 %)
+        tel[ime] = _poenostavi(me, 0.22, tmp, ime + " tel")
+        out.append([ime, _poenostavi(me, 0.6, tmp, ime), "miokard", "trabekule", f"{ime} (CT) / Heart.g", 0])
+        print(f"[organi] srce_ct: {ime}: {k}", flush=True)
+    return out
+
+
+def zaklopke_ct(P, C, T, premik, L, bvh_lv, bvh_rv, tel):
+    """n10 (ocena n9: »origami«, napihnjeni žepki, ena prosta papilarna mišica): mitralna (sprednji + zadnji listič s
+    tremi pokrovčki), trikuspidalna (3 lističi), fibrozni obroči vseh štirih zaklopk, aortna in pljučna (3 tanki žepki z
+    noduli in lunulami), papilarne mišice iz PROSTE stene prekata pod komisurami (LV: sprednja-stranska in zadnja-srednja;
+    RV: sprednja velika, spodnja, pretinska majhna), razvejane tetive do prostega roba in hrapave cone. Vsaka mreža dobi
+    tudi telefonsko različico (tel[ime], manj vrstic, enako gladko). Vrne vrstice [ime, mesh, tkivo, del, pot, 0]."""
+    import srce_zaklopke as sz
     vrstice = []
-    def mesh(ime, bm):
-        me = bpy.data.meshes.new(ime); bm.to_mesh(me); bm.free()
-        for p in me.polygons:
-            p.use_smooth = True
-        return me
     konica = np.asarray(L["konica"])
-    for ime, oz, listici, R_pap, glob in (
-            ("mitral", 7, [("Anterior leaflet of left atrioventricular valve", -1.05, 1.05, 0.017, 1), ("Posterior leaflet of left atrioventricular valve", 1.05, 2 * math.pi - 1.05, 0.012, 3)], 0.0034, 0.030),
-            ("tricuspid", 8, [("Septal leaflet of right atrioventricular valve", -1.05, 1.05, 0.013, 1), ("Anterior leaflet of right atrioventricular valve", 1.05, 3.14, 0.015, 1), ("Inferior leaflet of right atrioventricular valve", 3.14, 2 * math.pi - 1.05, 0.013, 1)], 0.0021, 0.026)):
+    rnd = np.random.default_rng(10)
+    def dodaj(ime, tkivo, del_, gradi):
+        me = gradi(1.0)
+        if isinstance(me, sz.Zbirka):
+            me = me.mesh(ime)
+        mt = gradi(0.5)
+        tel[ime] = mt.mesh(ime + " tel") if isinstance(mt, sz.Zbirka) else mt
+        vrstice.append([ime, me, tkivo, del_, f"{ime} (lastno, CT obroč) / Heart.g", 0])
+    def leaflet_z(c, n, a, b, kot, R, f0, f1, g, val, q):
+        z = sz.Zbirka(); V, F, _, _ = sz.listic(c, n, a, b, kot, R, f0, f1, g, q=q, valovi=val); z.dodaj(V, F); return z
+    for ime, oz, listici, R_pap, glob, bvh in (
+            ("mitral", 7, [("Anterior leaflet of left atrioventricular valve", -1.05, 1.05, 0.021, 1), ("Posterior leaflet of left atrioventricular valve", 1.05, 2 * math.pi - 1.05, 0.013, 3)], 0.0034, 0.022, bvh_lv),
+            ("tricuspid", 8, [("Septal leaflet of right atrioventricular valve", -1.05, 1.05, 0.014, 1), ("Anterior leaflet of right atrioventricular valve", 1.05, 3.14, 0.017, 1), ("Inferior leaflet of right atrioventricular valve", 3.14, 2 * math.pi - 1.05, 0.014, 1)], 0.0024, 0.018, bvh_rv)):
         c, n, a, b, kot, R = _obroc(P, C, T, oz, premik, konica)
         # kot 0: pri mitralni proti aortni zaklopki (sprednji listič ob aorti), pri trikuspidalni proti pretinu (LV)
         ref = np.asarray(L["aortna"] if ime == "mitral" else L["mitralna"]) - c; ref -= n * (ref @ n)
         a = ref / np.linalg.norm(ref); b = np.cross(n, a)
         robovi = []
         for ime_l, f0, f1, g, val in listici:
-            bm = bmesh.new()
-            robovi.append((f0, f1, _listic(bm, c, n, a, b, kot, R, f0, f1, g, valovi=val)))
-            vrstice.append([ime_l, mesh(ime_l, bm), "zaklopka", "av-zaklopki", f"{ime_l} (lastno, CT obroč) / Heart.g", 0])
-        # papilarne mišice pod komisurami, tetive do sosednjih lističev
-        komisure = [robovi[i][0] for i in range(len(robovi))]
-        imena_p = (["Anterolateral papillary muscle of left ventricle", "Inferior papillary muscle of left ventricle"] if ime == "mitral"
-                   else ["Septal papillary muscle of right ventricle", "Anterior papillary muscle of right ventricle", "Inferior papillary muscle of right ventricle"])
+            _, _, rob, hrap = sz.listic(c, n, a, b, kot, R, f0, f1, g, q=1.0, valovi=val)
+            robovi.append((f0, f1, rob, hrap))
+            dodaj(ime_l, "zaklopka", "av-zaklopki", lambda q, f0=f0, f1=f1, g=g, val=val: leaflet_z(c, n, a, b, kot, R, f0, f1, g, val, q))
+        def obr(q):
+            z = sz.Zbirka(); z.dodaj(*sz.obroc(c, n, a, b, kot, R, q=q)); return z
+        dodaj(f"Fibrous ring of {ime} valve", "zaklopka", "av-zaklopki", obr)
+        # papilarne mišice: dno na prosti steni (žarek iz osi prekata v smeri komisure), glava pod komisuro
         if ime == "mitral":
-            komisure = [1.05, -1.05]
+            pap = [("Anterolateral papillary muscle of left ventricle", 1.05, 1.0), ("Inferior papillary muscle of left ventricle", -1.05, 1.0)]
         else:
-            komisure = [-1.05, 1.05, 3.14]
-        bm_t = bmesh.new()
-        for ime_p, fk in zip(imena_p, komisure):
-            rad = a * math.cos(fk) + b * math.sin(fk); Rf = _r_kot(kot, R, fk)
-            H = c + rad * Rf * 0.5 + n * glob
-            dno = H + n * 0.014 + rad * 0.006
-            bm = bmesh.new()
-            glave = papilarna(bm, Vector(dno), Vector(H), R_pap * (0.6 if "Septal" in ime_p else 1.0), stena=bvh_endo)
-            vrstice.append([ime_p, mesh(ime_p, bm), "miokard", "papilarne-misice", f"{ime_p} (lastno, CT) / Heart.g", 0])
-            glave = [np.array(g_) for g_ in glave]
-            for f0, f1, rob in robovi:
+            pap = [("Anterior papillary muscle of right ventricle", 3.14, 1.0), ("Inferior papillary muscle of right ventricle", -1.05, 0.75),
+                   ("Septal papillary muscle of right ventricle", 1.05, 0.45)]
+        Dax = float((konica - c) @ n)
+        glave_vse = []
+        for ime_p, fk, vel in pap:
+            rad = a * math.cos(fk) + b * math.sin(fk); Rf = sz.r_kot(kot, R, fk)
+            H = c + rad * Rf * 0.42 + n * glob
+            Pax = c + n * max(Dax * 0.5, glob + 0.012)
+            dno = None
+            for smer in (rad - n * 0.15, rad, rad + n * 0.3):
+                smer = smer / np.linalg.norm(smer)
+                h = bvh.ray_cast(Vector(Pax), Vector(smer), 0.06)
+                if h[0] is not None:
+                    dno = np.array(h[0]); break
+            if dno is None:
+                dno = H + n * 0.02 + rad * 0.008
+            if np.linalg.norm(H - dno) < 0.012:
+                H = dno + (H - dno) / (np.linalg.norm(H - dno) + 1e-9) * 0.014
+            def pap_m(q, dno=dno, H=H, vel=vel, ime_p=ime_p):
+                bm = bmesh.new(); gl = sz.papilarna(bm, Vector(dno), Vector(H), R_pap * vel, q=q)
+                return (sz._bm_mesh(ime_p, bm), gl)
+            me, gl = pap_m(1.0); mt, _ = pap_m(0.55)
+            tel[ime_p] = mt
+            vrstice.append([ime_p, me, "miokard", "papilarne-misice", f"{ime_p} (lastno, CT) / Heart.g", 0])
+            glave_vse.append((fk, gl))
+        # tetive: vsak listič do dveh najbližjih papilarnih mišic (polovica lističa ob vsaki komisuri)
+        def tet(q):
+            z = sz.Zbirka(); r = np.random.default_rng(7)
+            for f0, f1, rob, hrap in robovi:
                 us = np.linspace(f0, f1, len(rob))
-                d = np.abs(((us - fk + np.pi) % (2 * np.pi)) - np.pi)
-                izbor = [rob[i] for i in range(len(rob)) if d[i] < 1.0 and i % 2 == 0]
-                if izbor:
-                    _tetive(bm_t, glave[len(izbor) % len(glave)], izbor)
-        vrstice.append([f"Chordae tendineae of {ime} valve", mesh(f"tetive-{ime}", bm_t), "zaklopka", "av-zaklopki",
-                        f"Chordae tendineae of {ime} valve (lastno, CT) / Heart.g", 0])
+                for fk, gl in glave_vse:
+                    d = np.abs(((us - fk + np.pi) % (2 * np.pi)) - np.pi)
+                    izb = np.nonzero(d < min(1.15, (f1 - f0) * 0.55))[0]
+                    if not len(izb):
+                        continue
+                    korak = 1 if q >= 1 else 2
+                    izb = izb[::korak]
+                    glava = gl[int(np.argmin([np.linalg.norm(g_ - rob[izb].mean(0)) for g_ in gl]))]
+                    sz.tetive(z, glava, rob[izb], hrap[izb], q=q, rnd=r)
+            return z
+        dodaj(f"Chordae tendineae of {ime} valve", "zaklopka", "av-zaklopki", tet)
     for ime, oz, del_, proti in (("aortic", 9, "aortna-zaklopka", L["mitralna"]), ("pulmonary", 10, "pljucna-zaklopka", L["trikuspidalna"])):
         c, n, a, b, kot, R = _obroc(P, C, T, oz, premik, proti)
-        os_ = Vector(-n)  # od prekata proti žili
-        bm = bmesh.new(); Rm = float(np.median(R))
-        semilunarni(bm, Vector(c), os_, Rm * 0.98)
-        for k in range(3):  # noduli (Arantius) na sredini prostega roba vsakega žepka
-            f = 2 * math.pi * k / 3 + 0.3 + math.pi / 3
-            pt = Vector(c) + (Vector(a) * math.cos(f) + Vector(b) * math.sin(f)) * Rm * 0.16 + os_ * Rm * 0.36
-            bmesh.ops.create_icosphere(bm, subdivisions=1, radius=0.0009, matrix=Matrix.Translation(pt))
-        vrstice.append([f"Semilunar cusps of {ime} valve", mesh(f"zepki-{ime}", bm), "zep", del_, f"Semilunar cusps of {ime} valve (lastno, CT) / Heart.g", 0])
+        os_ = -n  # od prekata proti žili
+        Rm = float(np.median(R))
+        def zep(q, c=c, os_=os_, Rm=Rm):
+            z, krona = sz.zepki(c, os_, Rm * 0.97, q=q)
+            # obroč v obliki krone (pritrditev žepkov, fibrozni skelet)
+            k = krona[:: (1 if q >= 1 else 2)]
+            V, F = sz.cev_np(k, [0.0008] * len(k), 6 if q >= 1 else 4, zaprta=True); z.dodaj(V, F)
+            return z
+        dodaj(f"Semilunar cusps of {ime} valve", "zep", del_, zep)
     return vrstice
 
 
@@ -978,35 +1098,44 @@ def _odebeli_cev(me, X, f):
     return S + (X - S) * f
 
 
-def pljucne_vene_ct(P, C, T, premik, L):
+def pljucne_vene_ct(P, C, T, premik, L, tel=None, bvh_epi=None):
     """Štiri pljučne vene kot zaprti krni (stena 1 mm, svetlina) iz ustij CT (oznake 12–15), dolgi 14 mm, z ustjem 2 mm v
     steni preddvora (n8: odprti trakovi in raztrganine ob ustjih)."""
     vrstice = []
-    c_la = np.asarray(L["mitralna"])
+    c_la = P[np.unique(C[T == 3])].mean(0) * MM + premik  # središče stene levega preddvora (n9: mitralni obroč je ob enem ustju obrnil krn v preddvor, »okence«)
     for oz, ime in ((12, "Left superior pulmonary vein"), (13, "Left inferior pulmonary vein"), (14, "Right inferior pulmonary vein"), (15, "Right superior pulmonary vein")):
         q = P[np.unique(C[T == oz])] * MM + premik
         c = q.mean(0); _, _, vt = np.linalg.svd(q - c); n = vt[2]
-        if (c - c_la) @ n < 0:
+        h_ = bvh_epi.find_nearest(Vector(c)) if bvh_epi is not None else (None,)
+        if h_[0] is not None:  # krn gre navzven: smer zunanje normale epikarda ob ustju
+            if n @ np.array(h_[1]) < 0:
+                n = -n
+        elif (c - c_la) @ n < 0:
             n = -n
         r = float(np.percentile(np.linalg.norm((q - c) - np.outer((q - c) @ n, n), axis=1), 85)) + 0.0008
         a = np.cross(n, [0, 0, 1.0]); a /= np.linalg.norm(a); b = np.cross(n, a)
-        seg, k = 28, 10
-        th = np.linspace(0, 2 * np.pi, seg, endpoint=False)
-        zun, notr = [], []
-        for i in range(k):
-            t = i / (k - 1); o = c + n * (-0.002 + 0.016 * t)
-            rr = r * (1.12 - 0.12 * t)
-            zun.append(o + rr * (np.outer(np.cos(th), a) + np.outer(np.sin(th), b)))
-            notr.append(o + (rr - 0.001) * (np.outer(np.cos(th), a) + np.outer(np.sin(th), b)))
-        V = np.r_[np.concatenate(zun), np.concatenate(notr)]; o = seg * k
-        F = []
-        for i in range(k - 1):
-            for j in range(seg):
-                a_, b_ = i * seg + j, i * seg + (j + 1) % seg
-                F += [(a_, b_, b_ + seg), (a_, b_ + seg, a_ + seg), (o + a_, o + b_ + seg, o + b_), (o + a_, o + a_ + seg, o + b_ + seg)]
-        for i in (0, k - 1):  # odrezana konca: obroč stene (debelina vidna)
-            for j in range(seg):
-                a_, b_ = i * seg + j, i * seg + (j + 1) % seg
-                F += [(a_, o + b_, b_), (a_, o + a_, o + b_)] if i else [(a_, b_, o + b_), (a_, o + b_, o + a_)]
-        vrstice.append([ime, _mesh(ime, V, np.array(F)), "pljucna-vena", "pljucne-vene", f"{ime} (lastno, CT ustje) / Heart.g", 0])
+        vrstice.append([ime, _krn_vene(ime, c, n, a, b, r, 28, 10), "pljucna-vena", "pljucne-vene", f"{ime} (lastno, CT ustje) / Heart.g", 0])
+        if tel is not None:  # telefon: 14 × 6 (ista oblika)
+            tel[ime] = _krn_vene(ime + " tel", c, n, a, b, r, 14, 6)
     return vrstice
+
+
+def _krn_vene(ime, c, n, a, b, r, seg, k):
+    th = np.linspace(0, 2 * np.pi, seg, endpoint=False)
+    zun, notr = [], []
+    for i in range(k):
+        t = i / (k - 1); o = c + n * (-0.002 + 0.018 * t)
+        rr = r * (1.28 - 0.28 * t ** 0.5)  # n10: ustje lijakasto razširjeno v preddvor (ne »okence«)
+        zun.append(o + rr * (np.outer(np.cos(th), a) + np.outer(np.sin(th), b)))
+        notr.append(o + (rr - 0.0006) * (np.outer(np.cos(th), a) + np.outer(np.sin(th), b)))  # tanka venska stena 0,6 mm
+    V = np.r_[np.concatenate(zun), np.concatenate(notr)]; o = seg * k
+    F = []
+    for i in range(k - 1):
+        for j in range(seg):
+            a_, b_ = i * seg + j, i * seg + (j + 1) % seg
+            F += [(a_, b_, b_ + seg), (a_, b_ + seg, a_ + seg), (o + a_, o + b_ + seg, o + b_), (o + a_, o + a_ + seg, o + b_ + seg)]
+    for i in (0, k - 1):  # odrezana konca: obroč stene (debelina vidna)
+        for j in range(seg):
+            a_, b_ = i * seg + j, i * seg + (j + 1) % seg
+            F += [(a_, o + b_, b_), (a_, o + a_, o + b_)] if i else [(a_, b_, o + b_), (a_, o + b_, o + a_)]
+    return _mesh(ime, V, np.array(F))
