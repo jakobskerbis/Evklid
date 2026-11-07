@@ -105,3 +105,10 @@ test("RE-4 mobilni izbris: 401 po Apple → mob.appleFailed (ne trdi, da je prij
   assert.doesNotMatch(src, /appleExpired/);
   assert.doesNotMatch(fs.readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8"), /mob\.appleExpired/, "ključa ni več");
 });
+
+// Ponovni pregled A: 401 z login: true (potekla seja) ni »Prijava z Apple ni uspela« ali »napačno geslo«.
+test("RE-5 mobilni izbris: 401 s potečeno sejo pokaže sporočilo strežnika", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(new URL("../mobile/src/app/delete-account.tsx", import.meta.url), "utf8");
+  assert.match(src, /const denied = err instanceof ApiError && err\.status === 401 && !err\.body\?\.login;/);
+});
