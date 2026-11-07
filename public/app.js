@@ -1450,7 +1450,11 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
 // Samodejna posodobitev (docs/posodobitve.md): ko strežnik teče z novejšo različico, se stran
 // tiho osveži, a samo, ko to učenca ne zmoti: ob vrnitvi v aplikacijo (vsaj 1 minuto v ozadju)
 // ali po 10 minutah brez dotika, nikoli med tekmovanjem ali z napisanim, a neposlanim besedilom.
-let appVersion = null;
+// Različica, ki jo stran res izvaja: iz vstopne strani (<meta name="evklid-app">, server/vstopna-stran.js), ne s
+// strežnika ob zagonu – stran je lahko prišla iz predpomnilnika, strežnik pa že teče z novo (PR #481, pregled 1).
+// Brez oznake (stara stran) kot prej: različica strežnika ob zagonu.
+const pageApp = document.querySelector('meta[name="evklid-app"]')?.content || null;
+let appVersion = pageApp;
 let hiddenAt = 0;
 let lastInput = Date.now();
 for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
@@ -1459,21 +1463,55 @@ for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
 const serverVersion = () =>
   fetch("/healthz/stanje", { cache: "no-store" })
     .then((r) => (r.ok ? r.json() : null))
-    .then((s) => s?.razlicica || null)
+    .then((s) => (pageApp ? s?.datoteke : s?.razlicica) || null)
     .catch(() => null);
 const unsentText = () =>
   [...document.querySelectorAll("textarea, input[type=text], input[type=search], input:not([type])")].some(
     (el) => el.offsetParent !== null && !el.readOnly && el.value.trim() && el.value !== el.defaultValue,
   );
+// Service worker pobriše kopije stare različice (public/sw.js »app-stale«), da osvežitev ne dobi znova stare strani.
+function dropStaleCopies(v) {
+  const sw = navigator.serviceWorker?.controller;
+  if (!sw) return Promise.resolve();
+  return new Promise((done) => {
+    const ch = new MessageChannel();
+    ch.port1.onmessage = () => done();
+    setTimeout(done, 1500);
+    sw.postMessage({ type: "app-stale", app: v }, [ch.port2]);
+  });
+}
 async function reloadIfNewer() {
   if (!appVersion || state.contestTimer || unsentText()) return;
   const v = await serverVersion();
   if (!v || v === appVersion) return;
   const reg = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
+  if (pageApp) await dropStaleCopies(v);
   await reg?.update?.().catch(() => null); // nov service worker (nove knjižnice) pred osvežitvijo
   location.reload();
 }
-serverVersion().then((v) => (appVersion = v));
+// Stara stran iz predpomnilnika (npr. počasno omrežje), strežnik pa že ima novo različico: osvežimo takoj, preden
+// učenec odpre zaslon, ki bi naložil modul nove različice. Enkrat na različico (brez zanke osveževanja).
+const RELOADED = "evklid.osvezeno";
+function reloadOnceFor(v) {
+  try {
+    if (sessionStorage.getItem(RELOADED) === v) return;
+    sessionStorage.setItem(RELOADED, v);
+  } catch {
+    return; // brez sessionStorage ne tvegamo zanke
+  }
+  reloadIfNewer();
+}
+if (pageApp)
+  serverVersion().then((v) => {
+    if (v && v !== pageApp) reloadOnceFor(v);
+  });
+else serverVersion().then((v) => (appVersion = v));
+// Nov service worker sporoči svojo različico (public/sw.js ob activate): stara stran se osveži takoj, če je
+// komaj odprta ali učenec že minuto miruje; sicer ob običajni priložnosti spodaj (vrnitev, 10 minut miru).
+navigator.serviceWorker?.addEventListener?.("message", (e) => {
+  if (e.data?.type !== "app-version" || !pageApp || !e.data.app || e.data.app === pageApp) return;
+  if (performance.now() < 30 * 1000 || Date.now() - lastInput >= 60 * 1000) reloadOnceFor(e.data.app);
+});
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {
     hiddenAt = Date.now();
