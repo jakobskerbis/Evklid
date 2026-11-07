@@ -14,12 +14,14 @@ const createdMs = (p) => {
   return Date.parse(/[zZ]$|[+-]\d\d:?\d\d$/.test(s) ? s : `${s.replace(" ", "T")}Z`);
 };
 
-// Zamik ure med strežnikom in Stripom (napad zahteva izbris in nov račun, kar traja dlje; pregled #511 A, P3-2).
-const CLOCK_SKEW_MS = 5 * 60 * 1000;
+// Brez zamika ure (ponovni pregled #511 B, P3-A): seja pravega lastnika je vedno odprta po registraciji in potrditvi
+// e-naslova, zato zadošča ista sekunda (created_at in obj.created sta na sekundo natančna). 5 min bi B-ju, ustvarjenemu
+// tik po A-jevi seji, dalo A-jevo plačilo.
+const CLOCK_SKEW_MS = 999;
 // Najdaljša veljavnost seje Checkout (Stripe: 24 h).
 const SESSION_MAX_S = 24 * 3600;
 
-// true: račun je lahko lastnik predmeta (ustvarjen najkasneje ob njem, z zamikom ure). Brez obj.created ali brez
+// true: račun je lahko lastnik predmeta (ustvarjen najkasneje v isti sekundi). Brez obj.created ali brez
 // berljivega created_at ostane kot prej.
 export function ownsStripeObject(p, obj) {
   if (!p) return false;

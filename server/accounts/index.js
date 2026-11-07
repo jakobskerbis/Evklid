@@ -1842,7 +1842,11 @@ export function mountAccounts(app, store, opts = {}) {
     // Plačilo, ki ga ni mogoče pripisati nobenemu računu (izbrisan račun, ponovno uporabljen id): zapis za ročno vračilo
     // (kv stripe_unmatched:<id dogodka>, ponoven-id.js). Samo pri dogodkih plačila, ne pri vsaki posodobitvi.
     const paying = /^checkout\.session\.(completed|async_payment_succeeded)$|^customer\.subscription\.created$/.test(event.type);
-    const unmatched = paying ? unmatchedRecorder(kv, event) : null;
+    const record = paying ? unmatchedRecorder(kv, event) : null;
+    // Stara naročnina brez uid (prehod 24 h po namestitvi): ni pripisana, a tudi ni zapis »za vračilo«, ker jo
+    // checkout.session.completed iste seje pripiše pravemu lastniku (ponovni pregled #511 B, P3-B). Napad tam
+    // ujame preverjanje seje, ki ima svoj zapis.
+    const unmatched = record && (event.type === "customer.subscription.created" ? (why, n) => why !== "brez_uid" && record(why, n) : record);
     // Po stranki; po id iz metapodatkov samo ob enakem parent_uid (ponovno uporabljen id, ponoven-id.js).
     const parentFor = () =>
       parentByCustomer(obj.customer) || (obj.metadata?.parent_id && parentFromMeta(getParent, obj.metadata.parent_id, obj, log, event.type, unmatched));

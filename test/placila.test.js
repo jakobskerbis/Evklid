@@ -568,8 +568,8 @@ test("Stripe: plačilo izbrisanega računa ne gre novemu računu z istim id (rea
       const rows = unmatchedRows(store);
       assert.deepEqual(
         rows.map((r) => [r.id, r.reason]),
-        [["evt_ra0", "racun_ne_obstaja"], ["evt_ra1", "drug_racun"], ["evt_ra2", "drug_racun"], ["evt_ra4", "drug_racun"], ["evt_ra5", "drug_racun"], ["evt_ra6", "brez_uid"]],
-        "zapis za vsako plačilo (posodobitev naročnine ni plačilo)",
+        [["evt_ra0", "racun_ne_obstaja"], ["evt_ra1", "drug_racun"], ["evt_ra2", "drug_racun"], ["evt_ra4", "drug_racun"], ["evt_ra5", "drug_racun"]],
+        "zapis za vsako plačilo (posodobitev naročnine ni plačilo; stara naročnina brez uid nima zapisa, sejo zapiše cs)",
       );
       assert.equal(rows[1].subscription, "sub_a");
       assert.ok(!JSON.stringify(rows).includes("ponoven.si"), "brez e-naslova v zapisu");
@@ -678,17 +678,17 @@ test("Stripe: zapis neujemanja ne uspe → dogodek ni označen kot obdelan (Stri
 test("ponoven-id: račun je lastnik predmeta Stripa samo ob enakem uid (stara seja: ni mlajši od nje)", () => {
   const t = Date.parse("2026-11-07T10:00:00Z") / 1000;
   assert.equal(ownsStripeObject({ created_at: "2026-11-07 09:59:59" }, { created: t }), true);
-  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:04:59" }, { created: t }), true, "zamik ure do 5 min");
-  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:05:01" }, { created: t }), false);
-  assert.equal(ownsStripeObject({ created_at: "2026-11-07T10:05:01.000Z" }, { created: t }), false, "ISO zapis");
-  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:05:01" }, {}), true, "brez created kot prej");
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:00:00" }, { created: t }), true, "ista sekunda");
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:00:01" }, { created: t }), false, "brez zamika ure (P3-A)");
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07T10:00:01.000Z" }, { created: t }), false, "ISO zapis");
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:00:01" }, {}), true, "brez created kot prej");
   assert.equal(ownsStripeObject(null, { created: t }), false);
   const p = { id: 5, uid: "a".repeat(32), created_at: "2026-11-08 00:00:00" };
   assert.equal(ownerMismatch(p, { object: "subscription", created: t + 99999, metadata: { parent_uid: "a".repeat(32) } }), null);
   assert.equal(ownerMismatch(p, { object: "subscription", created: t + 99999, metadata: { parent_uid: "b".repeat(32) } }), "drug_racun");
   assert.equal(ownerMismatch(p, { object: "subscription", created: t + 99999, metadata: {} }), "brez_uid");
-  assert.equal(ownerMismatch(p, { object: "subscription", created: Date.parse("2026-11-09T00:04:00Z") / 1000, metadata: {} }), null, "stara naročnina: račun starejši od sub.created − 24 h");
-  assert.equal(ownerMismatch(p, { object: "subscription", created: Date.parse("2026-11-08T23:50:00Z") / 1000, metadata: {} }), "brez_uid");
+  assert.equal(ownerMismatch(p, { object: "subscription", created: Date.parse("2026-11-09T00:00:00Z") / 1000, metadata: {} }), null, "stara naročnina: račun starejši od sub.created − 24 h");
+  assert.equal(ownerMismatch(p, { object: "subscription", created: Date.parse("2026-11-08T23:59:58Z") / 1000, metadata: {} }), "brez_uid");
   assert.equal(ownerMismatch({ id: 5 }, { object: "subscription", metadata: { parent_uid: "" } }), null, "brez created kot prej");
   assert.equal(ownerMismatch(null, {}), "racun_ne_obstaja");
   const errs = [];
@@ -707,7 +707,7 @@ test("ponoven-id: račun je lastnik predmeta Stripa samo ob enakem uid (stara se
   assert.equal(purchaseMismatch(row, p, s({ parent_uid: "c".repeat(32) })), "drug_racun");
   assert.equal(purchaseMismatch(row, p, s()), null, "stara seja: ista seja");
   assert.equal(purchaseMismatch({ ...row, checkout_id: "cs_8" }, p, s()), null, "stara seja: ponoven klik, vrstica starejša");
-  assert.equal(purchaseMismatch({ ...row, checkout_id: "cs_8", created_at: "2026-11-07 10:06:00" }, p, s()), "drug_racun");
+  assert.equal(purchaseMismatch({ ...row, checkout_id: "cs_8", created_at: "2026-11-07 10:00:01" }, p, s()), "drug_racun");
 });
 
 test("parents.uid: obstoječi računi ga dobijo ob migraciji, vsak drugačen", () => {
