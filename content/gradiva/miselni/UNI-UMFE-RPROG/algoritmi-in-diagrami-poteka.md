@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Algoritem
+  - končnost, določenost, vhod in izhod, izvedljivost
+  - napaka: »sol po okusu«
+- Zapisi
+  - naravni jezik, psevdokoda, diagram, program
+- Simboli diagrama
+  - oval: začetek in konec
+  - pravokotnik: obdelava; paralelogram: vhod/izhod
+  - romb: odločitev z dvema izhodoma
+- Tri strukture
+  - zaporedje, odločitev, ponavljanje
+  - izrek Böhma in Jacopinija
+- Zanka
+  - pogoj na začetku ali na koncu
+  - mejnik: beri pred zanko in na koncu telesa
+  - telo mora spremeniti pogoj
+- Preverjanje
+  - sledilna tabela
+  - mejni vhod: $207\,\mathrm{V}$ pri $\le$
+  - prazen vhod: brez deljenja z nič
+- Primeri algoritmov
+  - Evklid: $D(252, 198) = 18$
+  - bisekcija: interval se razpolavlja

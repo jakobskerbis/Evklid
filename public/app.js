@@ -1,5 +1,6 @@
 // Evklid – odjemalec (brez ogrodja).
 import { fetchThroughRestart as fetchRetry } from "./restart-retry.js";
+import { jsonAliNic } from "./odgovor.js";
 import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
@@ -71,7 +72,8 @@ import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
 import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
-import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
+import { initScan, showScan, leaveScan, scanBack, startPilotScan } from "./scan/scan.js";
+import { initPilot, loadPilot, showPilot, scanTask, isPilotMember } from "./pilot-naloge.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -147,7 +149,7 @@ const api = async (url, opts = {}) => {
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
     if (local !== undefined) return local;
-    throw new Error(t("off.noConnection"));
+    throw Object.assign(new Error(t("off.noConnection")), { offline: true });
   }
   const res = await fetchThroughRestart(url, {
     ...opts,
@@ -158,7 +160,8 @@ const api = async (url, opts = {}) => {
     const local = fromPack(url, opts);
     if (local !== undefined) return local;
     // Gostitelj odgovori, naš strežnik pa ne (npr. med objavo nove različice): ne pišemo »Ni povezave z internetom«.
-    throw new Error(!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy"));
+    // offline: sporočilo je že prevedeno in pove, ali manjka povezava ali odgovor strežnika (npr. 502 med objavo).
+    throw Object.assign(new Error(!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")), { offline: true });
   }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -286,6 +289,7 @@ function initView(name) {
   if (name === "competition") (regionalExams() ? loadExams() : loadCompetition());
   if (name === "exams") loadExams();
   if (name === "feedback") showFeedback();
+  if (name === "pilot") showPilot();
   if (name === "games") showGames();
   if (name === "zbirke") {
     showZbirke(zbOpen.item, zbOpen.from);
@@ -465,7 +469,7 @@ window.addEventListener("popstate", () => {
   }
 });
 
-const ME_VIEWS = ["me", "progress", "league", "settings", "account", "feedback", "graph", "games", "corner", "schedule", "zbirke", "scan"];
+const ME_VIEWS = ["me", "progress", "league", "settings", "account", "feedback", "graph", "games", "corner", "schedule", "zbirke", "scan", "pilot"];
 // Četrto mesto spodnje vrstice: Laboratorij ali »NPZ in matura« (ko je cilj NPZ/matura); kar ni tam, je pod »Jaz«.
 const meView = (name) => ME_VIEWS.includes(name) || (!!name && offTabbarViews().includes(name));
 // Zbirke in učni pass: odpre pogled, po želji s predmetom v pogledu »preglej« (from = pogled za Nazaj).
@@ -744,6 +748,7 @@ async function selectStudent(id) {
   for (const v of floatingViews()) if (!["settings", "progress", "league", "scan", "path", "exams", "competition", "games"].includes(v)) v === "account" ? renderAccount() : initView(v);
   refreshProfileButton();
   refreshXp();
+  loadPilot(); // naloge za člane pilota (vrstica v Jaz, obvestilo ob prvi prijavi)
   // Vprašalnik kotička zanimanj: profil, ki ga še ni izpolnil, ga dobi ob zagonu (enkrat).
   state.interestsAsk = maybeAskInterests();
 }
@@ -967,6 +972,10 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && $(".sidebar").classList.contains("open")) setSidebar(false);
 });
 
+let bugAdmin = false;
+function syncBugButton() {
+  $("#chat-bug").hidden = !(bugAdmin || isPilotMember());
+}
 $("#chat-bug").addEventListener("click", (e) => {
   const btn = e.currentTarget;
   const open = $("#view-chat .bug-box");
@@ -978,6 +987,8 @@ $("#chat-bug").addEventListener("click", (e) => {
     conversationId: () => state.conversationId,
     view: "chat",
     toast,
+    thanks: bugAdmin ? null : t("pn.bugThanks"), // »najdeš jo v Računu« velja samo za skrbnika
+    ask: bugAdmin ? null : t("pn.bugAsk"), // član pilota: kdo vidi sporočila, ki gredo zraven
     onClose: () => {
       btn.setAttribute("aria-expanded", "false");
       btn.focus();
@@ -1454,7 +1465,7 @@ for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
 }
 const serverVersion = () =>
   fetch("/healthz/stanje", { cache: "no-store" })
-    .then((r) => (r.ok ? r.json() : null))
+    .then((r) => jsonAliNic(r))
     .then((s) => s?.razlicica || null)
     .catch(() => null);
 const unsentText = () =>
@@ -4330,6 +4341,23 @@ initScan({
   },
   openGraph: (exprs) => openGraphOverlay(exprs, t("scan.nav")),
 });
+// Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid«.
+initPilot({
+  api,
+  toast,
+  refreshXp,
+  getStudent: () => state.student,
+  showView,
+  hasExams: () => siExams(),
+  startScan: (cond) => {
+    startPilotScan(scanTask(cond));
+    showView("scan");
+  },
+  onMember: () => syncBugButton(),
+  // Preizkus znanja v pilotu: besedilo naloge in izbire kot v vadnici (brez klikljivih formul).
+  renderRich: (text) => renderRich(text),
+  choiceHtml: (task, o) => choiceHtml(task, o, false),
+});
 // Laboratorij (public/laboratorij.js): vsi virtualni poskusi; »Odpri temo v učbeniku« odpre lekcijo.
 initLab({ api, escapeHtml, getStudent: () => state.student, openLesson });
 // Uči se (public/uci-se.js): Učbenik, Laboratorij in 3D svet v enem pogledu; »Vprašaj inštruktorja« iz 3D atlasa.
@@ -4402,7 +4430,9 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   initTestNotice(cfg.test_notice, { showView });
   $("#chat-off").hidden = !cfg.chat_off;
   // Skrbnik: »Prijavi napako« v glavi klepeta (napaka v aplikaciji ali pri inštruktorju, public/prijave.js).
-  $("#chat-bug").hidden = !cfg.admin;
+  // Člani pilota jo vidijo tudi (public/pilot-naloge.js).
+  bugAdmin = !!cfg.admin;
+  syncBugButton();
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
   // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju s podatki.
@@ -4430,7 +4460,13 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   let first = true;
   const start = async (o) => {
     // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik.
-    if (!cfg.admin) api("/api/config").then((c) => ($("#chat-bug").hidden = !c.admin)).catch(() => {});
+    if (!cfg.admin)
+      api("/api/config")
+        .then((c) => {
+          bugAdmin = !!c.admin;
+          syncBugButton();
+        })
+        .catch(() => {});
     await loadStudents();
     if (first) initUsageMeter({ escapeHtml, showView, toast });
     else refreshUsageMeter();

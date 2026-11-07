@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sistem Cu-Ni
+  - neomejena trdna raztopina, oba FCC
+  - Hume-Rotheryjeva pravila
+  - strjevanje med likvidusom in solidusom
+- Vzvodno pravilo
+  - $W_\mathrm{L} = \frac{C_\alpha - C_0}{C_\alpha - C_\mathrm{L}}$
+  - napaka: obrnjen vzvod
+- Baker
+  - $100\,\%$ IACS $= 58{,}0\,\mathrm{MS/m}$
+  - legiranje zmanjša prevodnost
+- Medenine
+  - $\alpha$ hladno, $\alpha + \beta$ vroče preoblikovanje
+  - svinec za struženje
+  - razcinkanje, pokanje v amoniaku
+- Broni
+  - kositrov: vzmeti, ležaji, zvonovi
+  - aluminijev: propelerji
+  - berilijev: staranje do $1300\,\mathrm{MPa}$
+- Superzlitine
+  - osnova $\gamma$, izločki $\gamma'$ $\mathrm{Ni_3(Al,Ti)}$
+  - monokristalne lopatice
+- Lezenje
+  - $P = T\,(C + \log_{10} t_\mathrm{r})$
+  - $T$ v kelvinih
+  - $50\,\mathrm K$ več, desetkrat krajša doba
