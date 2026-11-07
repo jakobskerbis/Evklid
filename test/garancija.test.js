@@ -40,6 +40,7 @@ function fakeStripe() {
     const sub = /^\/subscriptions\/(\w+)$/.exec(p);
     if (sub && init.method === "DELETE") return ok({ id: sub[1], status: "canceled", customer: "cus_x", items: { data: [] } });
     if (sub) return ok({});
+    if (p === "/subscriptions") return ok({ data: state.subList || [] }); // garancija prekliče vse naročnine kupca
     return { ok: false, status: 404, json: async () => ({ error: { message: "ni" } }) };
   };
   return { calls, state, fetchFn };
