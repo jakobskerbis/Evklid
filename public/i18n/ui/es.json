@@ -2474,6 +2474,7 @@
   "mob.confirmApple": "Confirmar con Apple",
   "mob.deleted": "La cuenta se ha eliminado.",
   "mob.wrongPassword": "Contraseña incorrecta.",
+  "mob.appleExpired": "El inicio de sesión con Apple ha caducado. Inténtalo de nuevo.",
   "mob.subscription": "Suscripción",
   "mob.subActive": "Suscripción activa",
   "mob.subFree": "Versión gratuita",

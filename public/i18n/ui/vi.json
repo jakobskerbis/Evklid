@@ -2455,6 +2455,7 @@
   "mob.confirmApple": "Xác nhận bằng Apple",
   "mob.deleted": "Đã xóa tài khoản.",
   "mob.wrongPassword": "Sai mật khẩu.",
+  "mob.appleExpired": "Phiên đăng nhập bằng Apple đã hết hạn. Hãy thử lại.",
   "mob.subscription": "Gói đăng ký",
   "mob.subActive": "Gói đăng ký đang hoạt động",
   "mob.subFree": "Phiên bản miễn phí",

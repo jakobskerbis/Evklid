@@ -2473,6 +2473,7 @@
   "mob.confirmApple": "Confirm with Apple",
   "mob.deleted": "The account has been deleted.",
   "mob.wrongPassword": "Wrong password.",
+  "mob.appleExpired": "Sign in with Apple has expired. Please try again.",
   "mob.subscription": "Subscription",
   "mob.subActive": "Subscription is active",
   "mob.subFree": "Free version",

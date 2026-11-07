@@ -2455,6 +2455,7 @@
   "mob.confirmApple": "Konfirmasi dengan Apple",
   "mob.deleted": "Akun sudah dihapus.",
   "mob.wrongPassword": "Kata sandi salah.",
+  "mob.appleExpired": "Masuk dengan Apple sudah kedaluwarsa. Coba lagi.",
   "mob.subscription": "Langganan",
   "mob.subActive": "Langganan aktif",
   "mob.subFree": "Versi gratis",

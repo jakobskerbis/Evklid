@@ -2521,6 +2521,7 @@
   "mob.confirmApple": "Potvrdit přes Apple",
   "mob.deleted": "Účet je smazaný.",
   "mob.wrongPassword": "Špatné heslo.",
+  "mob.appleExpired": "Přihlášení přes Apple vypršelo. Zkus to znovu.",
   "mob.subscription": "Předplatné",
   "mob.subActive": "Předplatné je aktivní",
   "mob.subFree": "Bezplatná verze",

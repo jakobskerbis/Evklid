@@ -2569,6 +2569,7 @@
   "mob.confirmApple": "التأكيد باستخدام Apple",
   "mob.deleted": "تم حذف الحساب.",
   "mob.wrongPassword": "كلمة المرور غير صحيحة.",
+  "mob.appleExpired": "انتهت صلاحية تسجيل الدخول باستخدام Apple. حاول مرة أخرى.",
   "mob.subscription": "الاشتراك",
   "mob.subActive": "الاشتراك فعّال",
   "mob.subFree": "النسخة المجانية",

@@ -2497,6 +2497,7 @@
   "mob.confirmApple": "Potvrdi putem Applea",
   "mob.deleted": "Račun je izbrisan.",
   "mob.wrongPassword": "Pogrešna lozinka.",
+  "mob.appleExpired": "Prijava putem Applea je istekla. Pokušaj ponovo.",
   "mob.subscription": "Pretplata",
   "mob.subActive": "Pretplata je aktivna",
   "mob.subFree": "Besplatna verzija",

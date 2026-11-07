@@ -2474,6 +2474,7 @@
   "mob.confirmApple": "Confirmer avec Apple",
   "mob.deleted": "Le compte a été supprimé.",
   "mob.wrongPassword": "Mot de passe incorrect.",
+  "mob.appleExpired": "La connexion avec Apple a expiré. Réessaie.",
   "mob.subscription": "Abonnement",
   "mob.subActive": "Abonnement actif",
   "mob.subFree": "Version gratuite",

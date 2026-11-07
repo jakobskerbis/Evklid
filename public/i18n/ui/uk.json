@@ -2521,6 +2521,7 @@
   "mob.confirmApple": "Підтвердити через Apple",
   "mob.deleted": "Обліковий запис видалено.",
   "mob.wrongPassword": "Неправильний пароль.",
+  "mob.appleExpired": "Термін входу через Apple минув. Спробуй ще раз.",
   "mob.subscription": "Підписка",
   "mob.subActive": "Підписка активна",
   "mob.subFree": "Безкоштовна версія",

@@ -2455,6 +2455,7 @@
   "mob.confirmApple": "ยืนยันด้วย Apple",
   "mob.deleted": "ลบบัญชีแล้ว",
   "mob.wrongPassword": "รหัสผ่านไม่ถูกต้อง",
+  "mob.appleExpired": "การลงชื่อเข้าใช้ด้วย Apple หมดอายุแล้ว ลองอีกครั้ง",
   "mob.subscription": "การสมัครสมาชิก",
   "mob.subActive": "การสมัครสมาชิกใช้งานอยู่",
   "mob.subFree": "เวอร์ชันฟรี",

@@ -2473,6 +2473,7 @@
   "mob.confirmApple": "Apple দিয়ে নিশ্চিত করো",
   "mob.deleted": "অ্যাকাউন্ট মুছে ফেলা হয়েছে।",
   "mob.wrongPassword": "ভুল পাসওয়ার্ড।",
+  "mob.appleExpired": "Apple দিয়ে সাইন ইনের মেয়াদ শেষ হয়েছে। আবার চেষ্টা করো।",
   "mob.subscription": "সাবস্ক্রিপশন",
   "mob.subActive": "সাবস্ক্রিপশন চালু আছে",
   "mob.subFree": "বিনামূল্যের সংস্করণ",

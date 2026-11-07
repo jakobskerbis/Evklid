@@ -2455,6 +2455,7 @@
   "mob.confirmApple": "Apple で確認",
   "mob.deleted": "アカウントを削除しました。",
   "mob.wrongPassword": "パスワードが違います。",
+  "mob.appleExpired": "Appleでのサインインの有効期限が切れました。もう一度お試しください。",
   "mob.subscription": "サブスクリプション",
   "mob.subActive": "サブスクリプションは有効です",
   "mob.subFree": "無料版",

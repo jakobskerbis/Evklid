@@ -27,7 +27,9 @@ export default function DeleteAccount() {
       Alert.alert(t("mob.deleted"));
     } catch (err) {
       failure();
-      setError(err instanceof ApiError && err.status === 401 ? t("mob.wrongPassword") : (err as Error).message);
+      // Applov žeton velja 5 min (strežnik: REAUTH_MAX_AGE_MS); 401 po prijavi z Apple ni napačno geslo (pregled #500 A).
+      const denied = err instanceof ApiError && err.status === 401;
+      setError(denied ? t(body.apple_identity_token ? "mob.appleExpired" : "mob.wrongPassword") : (err as Error).message);
     } finally {
       setBusy(false);
     }

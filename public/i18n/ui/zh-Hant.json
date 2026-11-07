@@ -2455,6 +2455,7 @@
   "mob.confirmApple": "用 Apple 確認",
   "mob.deleted": "帳戶已刪除。",
   "mob.wrongPassword": "密碼錯誤。",
+  "mob.appleExpired": "使用 Apple 登入已逾期，請再試一次。",
   "mob.subscription": "訂閱",
   "mob.subActive": "訂閱有效",
   "mob.subFree": "免費版",

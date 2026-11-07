@@ -2455,6 +2455,7 @@
   "mob.confirmApple": "Apple로 확인",
   "mob.deleted": "계정이 삭제됐어요.",
   "mob.wrongPassword": "비밀번호가 틀렸어요.",
+  "mob.appleExpired": "Apple 로그인이 만료되었어요. 다시 시도해 주세요.",
   "mob.subscription": "구독",
   "mob.subActive": "구독 중",
   "mob.subFree": "무료 버전",

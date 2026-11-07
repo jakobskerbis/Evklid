@@ -2473,6 +2473,7 @@
   "mob.confirmApple": "Apple से पुष्टि करो",
   "mob.deleted": "खाता मिटा दिया गया।",
   "mob.wrongPassword": "गलत पासवर्ड।",
+  "mob.appleExpired": "Apple से साइन इन की अवधि समाप्त हो गई। फिर से कोशिश करो।",
   "mob.subscription": "सदस्यता",
   "mob.subActive": "सदस्यता चालू है",
   "mob.subFree": "मुफ़्त संस्करण",
