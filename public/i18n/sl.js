@@ -2456,7 +2456,6 @@ export default {
   "mob.confirmApple": "Potrdi z Apple",
   "mob.deleted": "Račun je izbrisan.",
   "mob.wrongPassword": "Napačno geslo.",
-  "mob.appleExpired": "Prijava z Apple je potekla. Poskusi znova.",
   "mob.subscription": "Naročnina",
   "mob.subActive": "Naročnina je aktivna",
   "mob.subFree": "Brezplačna različica",

@@ -95,3 +95,13 @@ test("RE-3 guest export still works without password", async () => {
     store.db.close?.();
   }
 });
+
+// Pregled B (#505–#508): 401 pri izbrisu z Apple ni samo potekel žeton (tudi drug Apple ID, Apple nedosegljiv,
+// ponovljen niz; apple-signin.js reauth vrne false za vse), zato splošno sporočilo, ne »prijava je potekla«.
+test("RE-4 mobilni izbris: 401 po Apple → mob.appleFailed (ne trdi, da je prijava potekla)", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(new URL("../mobile/src/app/delete-account.tsx", import.meta.url), "utf8");
+  assert.match(src, /body\.apple_identity_token \? "mob\.appleFailed" : "mob\.wrongPassword"/);
+  assert.doesNotMatch(src, /appleExpired/);
+  assert.doesNotMatch(fs.readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8"), /mob\.appleExpired/, "ključa ni več");
+});

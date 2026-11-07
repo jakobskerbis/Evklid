@@ -27,9 +27,10 @@ export default function DeleteAccount() {
       Alert.alert(t("mob.deleted"));
     } catch (err) {
       failure();
-      // Applov žeton velja 5 min (strežnik: REAUTH_MAX_AGE_MS); 401 po prijavi z Apple ni napačno geslo (pregled #500 A).
+      // 401 po prijavi z Apple ni napačno geslo (pregled #500 A): žeton star > 5 min (REAUTH_MAX_AGE_MS), drug Apple ID,
+      // Apple nedosegljiv ali ponovljen enkratni niz. Strežnik jih ne loči, zato splošno »Prijava z Apple ni uspela« (pregled B).
       const denied = err instanceof ApiError && err.status === 401;
-      setError(denied ? t(body.apple_identity_token ? "mob.appleExpired" : "mob.wrongPassword") : (err as Error).message);
+      setError(denied ? t(body.apple_identity_token ? "mob.appleFailed" : "mob.wrongPassword") : (err as Error).message);
     } finally {
       setBusy(false);
     }
