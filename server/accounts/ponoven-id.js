@@ -14,8 +14,8 @@ const createdMs = (p) => {
   return Date.parse(/[zZ]$|[+-]\d\d:?\d\d$/.test(s) ? s : `${s.replace(" ", "T")}Z`);
 };
 
-// Brez zamika ure (ponovni pregled #511 B, P3-A): seja pravega lastnika je vedno odprta po registraciji in potrditvi
-// e-naslova, zato zadošča ista sekunda (created_at in obj.created sta na sekundo natančna). 5 min bi B-ju, ustvarjenemu
+// Brez zamika ure (ponovni pregled #511 B, P3-A): seja pravega lastnika je vedno odprta po registraciji (nakup ne
+// zahteva potrditve e-naslova, a račun obstaja pred sejo), zato zadošča ista sekunda (created_at in obj.created sta na sekundo natančna). 5 min bi B-ju, ustvarjenemu
 // tik po A-jevi seji, dalo A-jevo plačilo.
 const CLOCK_SKEW_MS = 999;
 // Najdaljša veljavnost seje Checkout (Stripe: 24 h).

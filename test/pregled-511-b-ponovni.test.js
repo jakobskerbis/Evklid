@@ -154,14 +154,14 @@ test("RR1: uid, realen čas (sub.created = zdaj), B 1 h po seji: B nič, zapis v
   });
 });
 
-test("RR2: uid, B registriran 1 min po seji (znotraj 5-min zamika ure): B nič", async () => {
+test("RR2: uid, B registriran 1 min po seji: B nič", async () => {
   await withServer(async (ctx) => {
     const { B } = await attack(ctx, { bAfterS: 60, order: ["cs", "sc"] });
     assert.deepEqual(row(ctx.store, B.id), EMPTY);
   });
 });
 
-test("RR3: stara seja brez uid, B 1 min po seji (znotraj zamika): kaj dobi B? (prehodno okno)", async () => {
+test("RR3: stara seja brez uid, B 1 min po seji (brez zamika ure): B nič (prehodno okno)", async () => {
   await withServer(async (ctx) => {
     const { B } = await attack(ctx, { legacy: true, bAfterS: 60, order: ["cs"] });
     const r = row(ctx.store, B.id);
@@ -211,7 +211,7 @@ test("RR6: pravi račun < 24 h, STARA povezava brez uid (prehod): naročnina pri
     const sess = { id: "cs_l", object: "checkout.session", created: now() - 3600, customer: "cus_mama2", subscription: "sub_l", payment_status: "paid", metadata: { ...meta, pay_link: "x" } };
     assert.equal((await hook({ id: "evt_l2", type: "checkout.session.completed", data: { object: sess } })).status, 200);
     assert.equal(row(store, P.id).sub_id, "sub_l");
-    console.log("RR6 kv:", JSON.stringify(unmatchedKeys(store).map((r) => r.key)));
+    assert.deepEqual(unmatchedKeys(store), [], "pravo plačilo prek stare povezave: brez zapisa za vračilo");
   });
 });
 
