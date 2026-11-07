@@ -138,10 +138,11 @@ export function migrateAccounts(db) {
     DELETE FROM kv WHERE key IN ('ai_paid_' || OLD.id, 'ai_paid_bal_' || OLD.id, 'ai_paid_refunds_' || OLD.id, 'ai_window_' || OLD.id, 'ai_upgrade_' || OLD.id, 'school_sub_end:' || OLD.id);
   END;`);
   // Enkratno: zapisi računov, izbrisanih pred sprožilcem (sicer jih podeduje naslednji račun z istim id).
-  // GLOB z [0-9], ker je ai_paid_ predpona ai_paid_bal_; id = števke na koncu ključa.
+  // Ključ = predpona + samo števke (id): rtrim odreže števke na koncu, ostati mora natanko predpona (ai_paid_ je
+  // predpona ai_paid_bal_; ključ z repom za id, npr. ai_paid_12:pool, ni ključ računa in ostane).
   if (!db.prepare("SELECT 1 FROM kv WHERE key = 'kv_parent_orphans_cleaned'").get()) {
-    db.exec(`DELETE FROM kv WHERE (key GLOB 'ai_paid_[0-9]*' OR key GLOB 'ai_paid_bal_[0-9]*' OR key GLOB 'ai_paid_refunds_[0-9]*'
-        OR key GLOB 'ai_window_[0-9]*' OR key GLOB 'ai_upgrade_[0-9]*' OR key GLOB 'school_sub_end:[0-9]*')
+    db.exec(`DELETE FROM kv WHERE rtrim(key, '0123456789') IN ('ai_paid_', 'ai_paid_bal_', 'ai_paid_refunds_', 'ai_window_', 'ai_upgrade_', 'school_sub_end:')
+      AND length(key) > length(rtrim(key, '0123456789'))
       AND CAST(substr(key, length(rtrim(key, '0123456789')) + 1) AS INTEGER) NOT IN (SELECT id FROM parents);
     INSERT INTO kv (key, value) VALUES ('kv_parent_orphans_cleaned', datetime('now'));`);
   }

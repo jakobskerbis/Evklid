@@ -70,12 +70,16 @@ test("migracija enkrat počisti zapise računov, izbrisanih pred sprožilcem; no
   for (const k of KEYS(gone)) put.run(k, '{"credit":5000}');
   for (const k of KEYS(live)) put.run(k, "{}");
   put.run("ai_school_ledger_start", "x"); // ključ brez id računa ostane
+  put.run(`ai_paid_${gone}:pool`, "x"); // ključ z repom za id ni ključ računa (GLOB 'ai_paid_[0-9]*' bi ga zajel)
+  put.run("ai_paid_", "x"); // sama predpona brez id
   db.prepare("DELETE FROM parents WHERE id = ?").run(gone); // star sprožilec pobriše samo ai_paid_
   migrateAccounts(db);
   const has = (k) => !!db.prepare("SELECT 1 FROM kv WHERE key = ?").get(k);
   assert.deepEqual(KEYS(gone).filter(has), [], "sirote izbrisanega računa");
   assert.deepEqual(KEYS(live).filter((k) => !has(k)), [], "zapisi živega računa ostanejo");
   assert.ok(has("ai_school_ledger_start"));
+  assert.ok(has(`ai_paid_${gone}:pool`), "ključ z repom ostane");
+  assert.ok(has("ai_paid_"), "sama predpona ostane");
   assert.equal(addParent(db), gone, "nov račun dobi isti id");
   assert.deepEqual(KEYS(gone).filter(has), []);
   // Drugi zagon ne briše več (enkratno) – zapis brez računa, ki bi ga dodal kdo drug, ostane.
