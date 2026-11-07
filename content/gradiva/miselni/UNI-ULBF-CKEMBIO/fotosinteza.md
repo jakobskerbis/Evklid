@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kloroplast
+  - tilakoidi: svetlobne reakcije
+  - stroma: Calvinov cikel
+  - kisik izvira iz vode
+- Energija fotona
+  - $E = \frac{h c}{\lambda}$
+  - $680\,\mathrm{nm}$: $176\,\mathrm{kJ/mol}$
+- Z-shema
+  - PSII, PQ, citokrom $b_6f$, PC, PSI, Fd
+  - dva fotona na elektron
+- ATP sintaza
+  - lumen kisel, protoni v stromo
+  - $14/3$ protona na ATP
+  - ciklični tok da le ATP
+- Calvinov cikel
+  - RuBisCO veže $\mathrm{CO_2}$ na RuBP
+  - 3 ATP in 2 NADPH na $\mathrm{CO_2}$
+  - regeneracija RuBP
+- Fotorespiracija
+  - RuBisCO veže kisik
+  - narašča z vročino in zaprtimi režami
+- Rastline C4
+  - PEP-karboksilaza v mezofilu
+  - 5 ATP na $\mathrm{CO_2}$
+  - prednost v vročini
