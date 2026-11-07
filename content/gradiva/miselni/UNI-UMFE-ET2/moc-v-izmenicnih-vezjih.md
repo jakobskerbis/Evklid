@@ -13,7 +13,7 @@ stanje: osnutek
   - napaka: pozabljena konjugacija
 - Boucherotov izrek
   - $P$ in $Q$ seštevaš ločeno
-  - $S$ in toki bremen se ne seštevajo
+  - $S$ in tokovi bremen se ne seštevajo
 - Kompenzacija
   - vzporedni kondenzator, $P$ ostane
   - $\lvert Q_C\rvert = P(\tan\varphi_1 - \tan\varphi_2)$

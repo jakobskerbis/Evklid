@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tri lastnosti
+  - refleksivna, simetrična, tranzitivna
+  - napaka: refleksivnost ne sledi iz drugih
+- Proti urejenosti
+  - simetrična namesto antisimetrična
+  - obe hkrati: samo enakost
+- Ekvivalenčni razredi
+  - $[a] = \{x ;\ x \sim a\}$
+  - enaka ali disjunktna
+- Faktorska množica
+  - $A/{\sim}$ je množica razredov
+  - projekcija $\pi(a) = [a]$
+- Razbitja
+  - bijekcija z ekvivalencami
+  - Bellova števila $1, 2, 5, 15, 52$
+- Jedro preslikave
+  - $f(a) = f(b)$
+  - $A/{\sim_f}$ ustreza $f(A)$
+- Dobra definiranost
+  - izid neodvisen od predstavnika
+  - $[x]_6 \mapsto [x]_4$ ni funkcija
