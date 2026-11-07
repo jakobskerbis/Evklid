@@ -1491,7 +1491,9 @@ export function createApp(store, opts = {}) {
   // --- XP in lestvica ---
   app.get("/api/students/:id/xp", (req, res) => {
     const s = loadStudent(req, res);
-    if (s) res.json({ ...progress.xpSummary(s.id), leaderboard: progress.leaderboard() });
+    // Samo XP tega profila. Lestvice z drugimi učenci so v ligah, razredih in skupinah (server/leagues.js),
+    // in tam samo z vzdevki; imen in id-jev drugih profilov ta pot nikoli ne vrne (test/zasebnost-imena.test.js).
+    if (s) res.json(progress.xpSummary(s.id));
   });
 
   // --- tedenske lige, razredi in skupine prijateljev ---

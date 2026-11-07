@@ -2263,7 +2263,6 @@ async function refreshXp() {
   const card = $("#xp-card .xp-stats");
   if (card) card.innerHTML = xpStatsHtml(x, prev);
   if (!$("#view-me").hidden) paintMeLevel();
-  state.leaderboard = x.leaderboard;
   refreshModes();
   return x;
 }
