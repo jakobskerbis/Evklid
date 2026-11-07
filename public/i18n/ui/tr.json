@@ -3798,5 +3798,15 @@
   "starsi.codeSend": "Kodu e-postayla gönder",
   "starsi.codeLabel": "E-postadaki kod",
   "starsi.codeSent": "Kodu hesabın e-posta adresine gönderdik.",
-  "pilot.n.realOnly": "Pilota yalnızca gerçek üyeler ekleyin, kendi test hesaplarınızı değil: aksi hâlde toplamlardan bir kişinin yanıtı hesaplanabilir."
+  "pilot.n.realOnly": "Pilota yalnızca gerçek üyeler ekleyin, kendi test hesaplarınızı değil: aksi hâlde toplamlardan bir kişinin yanıtı hesaplanabilir.",
+  "ginv.title": "E-postasız davet",
+  "ginv.help": "En fazla {n} arkadaş için bir bağlantı: Evklid'i e-posta adresi olmadan, ücretsiz planla kullanırlar. {days} gün geçerlidir.",
+  "ginv.create": "Bağlantı oluştur",
+  "ginv.once": "Bağlantı yalnızca şimdi gösterilir. Kopyala ve arkadaşlarına gönder.",
+  "ginv.until": "{date} tarihine kadar geçerli.",
+  "ginv.copy": "Kopyala",
+  "ginv.joinTitle": "Evklid'e davet edildin",
+  "ginv.joinIntro": "Evklid'i e-posta adresi olmadan, ücretsiz planla kullanabilirsin. İlerlemen yalnızca bu cihazda kalır; istediğin zaman hesap oluşturabilirsin.",
+  "ginv.start": "E-postasız başla",
+  "ginv.invalid": "Bu davet artık geçerli değil (süresi doldu ya da kullanıldı). Bir hesap oluştur veya yeni bir bağlantı iste."
 }

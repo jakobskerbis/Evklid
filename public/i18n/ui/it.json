@@ -3801,5 +3801,15 @@
   "starsi.codeSend": "Invia codice via e-mail",
   "starsi.codeLabel": "Codice dall’e-mail",
   "starsi.codeSent": "Abbiamo inviato il codice all’e-mail dell’account.",
-  "pilot.n.realOnly": "Aggiungete al pilota solo membri reali, non i vostri account di prova: altrimenti dai totali si potrebbe calcolare la risposta di una persona."
+  "pilot.n.realOnly": "Aggiungete al pilota solo membri reali, non i vostri account di prova: altrimenti dai totali si potrebbe calcolare la risposta di una persona.",
+  "ginv.title": "Invito senza email",
+  "ginv.help": "Un link per al massimo {n} amici: usano Evklid senza indirizzo email, con il piano gratuito. Valido per {days} giorni.",
+  "ginv.create": "Crea link",
+  "ginv.once": "Il link viene mostrato solo ora. Copialo e invialo ai tuoi amici.",
+  "ginv.until": "Valido fino al {date}.",
+  "ginv.copy": "Copia",
+  "ginv.joinTitle": "Sei invitato/a su Evklid",
+  "ginv.joinIntro": "Puoi usare Evklid senza indirizzo email, con il piano gratuito. I progressi restano solo su questo dispositivo; puoi creare un account in qualsiasi momento.",
+  "ginv.start": "Inizia senza email",
+  "ginv.invalid": "Questo invito non è più valido (è scaduto o esaurito). Crea un account o chiedi un nuovo link."
 }

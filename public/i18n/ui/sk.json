@@ -3866,5 +3866,15 @@
   "starsi.codeSend": "Poslať kód e-mailom",
   "starsi.codeLabel": "Kód z e-mailu",
   "starsi.codeSent": "Kód sme poslali na e-mail účtu.",
-  "pilot.n.realOnly": "Do pilotu pridávajte len skutočných členov, nie vlastné testovacie účty: inak by sa zo súčtov dala vypočítať odpoveď jednotlivca."
+  "pilot.n.realOnly": "Do pilotu pridávajte len skutočných členov, nie vlastné testovacie účty: inak by sa zo súčtov dala vypočítať odpoveď jednotlivca.",
+  "ginv.title": "Pozvánka bez e-mailu",
+  "ginv.help": "Odkaz najviac pre {n} priateľov: používajú Evklid bez e-mailovej adresy, s bezplatným balíkom. Platí {days} dní.",
+  "ginv.create": "Vytvoriť odkaz",
+  "ginv.once": "Odkaz sa zobrazí len teraz. Skopíruj ho a pošli priateľom.",
+  "ginv.until": "Platí do {date}.",
+  "ginv.copy": "Kopírovať",
+  "ginv.joinTitle": "Si pozvaný/á do Evklidu",
+  "ginv.joinIntro": "Evklid môžeš používať bez e-mailovej adresy, s bezplatným balíkom. Pokrok zostáva len na tomto zariadení; účet si môžeš vytvoriť kedykoľvek.",
+  "ginv.start": "Začať bez e-mailu",
+  "ginv.invalid": "Táto pozvánka už neplatí (vypršala alebo je vyčerpaná). Vytvor si účet alebo požiadaj o nový odkaz."
 }

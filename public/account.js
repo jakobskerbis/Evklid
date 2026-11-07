@@ -28,6 +28,7 @@ const money = (minor, currency = "EUR") => {
   return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
 const date = (iso) => (iso ? new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }) : "");
+const GUEST_INVITE = "evklid_gost";
 const store = {
   get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
@@ -322,6 +323,14 @@ export async function initAccount({ onReady }) {
   const q = new URLSearchParams(location.search);
   if (q.get("ref")) store.set("evklid_ref", q.get("ref"));
   if (q.get("koda")) store.set("evklid_koda", q.get("koda"));
+  // Povabilo lastnika brez e-naslova (/?gost=…, server/accounts/guest.js GuestInvites): žeton iz naslova umaknemo,
+  // da ga ni v zgodovini ali v povezavi, ki bi jo kdo delil naprej.
+  if (q.get("gost")) {
+    store.set(GUEST_INVITE, q.get("gost").slice(0, 100));
+    const u = new URL(location.href);
+    u.searchParams.delete("gost");
+    history.replaceState(null, "", u.pathname + u.search + u.hash);
+  }
   // Povezava s strani za starše (starsi.html): starš ustvari račun, otrokovo ime je že vpisano.
   const parentInvite = q.get("starsi") === "1";
   if (parentInvite) {
@@ -447,6 +456,7 @@ async function route() {
   if (status.logged_in) await checkOwner(status.parent?.id ?? null);
   else await endedSession(); // vsi načini konca seje (tudi med uporabo)
   if (!status.logged_in) {
+    if (store.get(GUEST_INVITE) && !route.firstMode && !hashMode()) return renderGuestInvite(), false;
     const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
     // Prijava dobi svoj zapis (#prijava), da »Kaj je Evklid?« in nato Nazaj vrneta na prijavo.
     if (mode && !hashMode()) history.replaceState(null, "", location.pathname + location.search + hashOf(mode));
@@ -1330,6 +1340,7 @@ async function loadSchoolOrders() {
 }
 
 function bindAdminCodes(acc) {
+  bindGuestInvite();
   if (!acc.promo?.codes) return;
   loadPilot();
   renderPilotAdmin($("#pilot-tasks-out"), { api, toast }); // naloge članov pilota: vsote brez imen
@@ -1484,6 +1495,77 @@ function renderGuestAccount(view, acc) {
 }
 
 // Uporaba brez računa je bila izklopljena: gost ustvari račun ali se prijavi, napredek ostane.
+// Povabilo brez e-naslova: prijatelj z lastnikovo povezavo začne kot gost (brezplačni paket, brez osebnih podatkov).
+function renderGuestInvite() {
+  shell(`
+    <h1>${esc(t("ginv.joinTitle"))}</h1>
+    <p>${esc(t("ginv.joinIntro"))}</p>
+    <form id="guest-invite-form" class="form">
+      <label class="check"><input type="checkbox" name="accept_privacy" required>
+        <span>${esc(t("guest.accept"))} <a href="/zasebnost.html" target="_blank">${esc(t("guest.privacy"))}</a></span></label>
+      <p class="form-error" role="alert" hidden></p>
+      <button class="primary" type="submit">${esc(t("ginv.start"))}</button>
+    </form>
+    <p class="muted"><a href="#" id="guest-invite-login">${esc(t("guest.haveAccount"))}</a></p>`);
+  $("#guest-invite-login").addEventListener("click", (e) => {
+    e.preventDefault();
+    store.set(GUEST_INVITE, null);
+    goAuth("login");
+  });
+  $("#guest-invite-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const btn = $("button[type=submit]", f);
+    btn.disabled = true;
+    try {
+      await api("/api/auth/guest", { method: "POST", body: { accept_privacy: f.accept_privacy.checked, invite: store.get(GUEST_INVITE), country: deviceRegion() } });
+      store.set(GUEST_INVITE, null);
+      await continueFlow();
+    } catch (err) {
+      if (err.data?.invite_invalid) {
+        store.set(GUEST_INVITE, null);
+        err.message = t("ginv.invalid");
+      }
+      showError(f, err);
+      btn.disabled = false;
+    }
+  });
+}
+
+// Lastnik: povezava za nekaj prijateljev brez e-naslova (POST /api/admin/guest-invite); prikazana je samo enkrat.
+function guestInviteCard() {
+  return `
+    <div class="card" id="guest-invite-card">
+      <h2>${esc(t("ginv.title"))}</h2>
+      <p class="muted">${esc(t("ginv.help", { n: 10, days: 14 }))}</p>
+      <div id="ginv-out" aria-live="polite"></div>
+      <button id="ginv-create" type="button">${esc(t("ginv.create"))}</button>
+    </div>`;
+}
+function bindGuestInvite() {
+  $("#ginv-create")?.addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    try {
+      const r = await api("/api/admin/guest-invite", { method: "POST" });
+      $("#ginv-out").innerHTML = `<p>${esc(t("ginv.once"))} ${esc(t("ginv.until", { date: date(r.expires_at) }))}</p>
+        <div class="inline"><input id="ginv-url" readonly value="${esc(r.url)}" aria-label="${esc(t("ginv.title"))}"><button id="ginv-copy" type="button">${esc(t("ginv.copy"))}</button></div>`;
+      $("#ginv-copy").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText($("#ginv-url").value);
+          toast(t("pay.copied"));
+        } catch {
+          $("#ginv-url").select();
+        }
+      });
+    } catch (err) {
+      toast(err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
 function renderGuestOff() {
   shell(`
     <h1>${esc(t("guest.upgradeTitle"))}</h1>
@@ -1563,6 +1645,7 @@ export async function renderAccount() {
     </div>
     <div class="card" id="pn-wtp" hidden></div>
     ${acc.promo?.codes ? adminCodes(acc) : ""}
+    ${acc.guest_invite ? guestInviteCard() : ""}
     ${guaranteeBox(acc)}
     ${giftBox(acc)}
     ${podariBox(acc)}

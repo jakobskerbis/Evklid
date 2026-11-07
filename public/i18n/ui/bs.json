@@ -3832,5 +3832,15 @@
   "starsi.codeSend": "Pošalji kod e-poštom",
   "starsi.codeLabel": "Kod iz e-pošte",
   "starsi.codeSent": "Kod smo poslali na e-adresu računa.",
-  "pilot.n.realOnly": "U pilot dodajte samo prave članove, ne svoje testne račune: inače bi se iz zbirova mogao izračunati odgovor pojedinca."
+  "pilot.n.realOnly": "U pilot dodajte samo prave članove, ne svoje testne račune: inače bi se iz zbirova mogao izračunati odgovor pojedinca.",
+  "ginv.title": "Pozivnica bez e-maila",
+  "ginv.help": "Link za najviše {n} prijatelja: Evklid koriste bez e-mail adrese, s besplatnim paketom. Važi {days} dana.",
+  "ginv.create": "Napravi link",
+  "ginv.once": "Link se prikazuje samo sada. Kopiraj ga i pošalji prijateljima.",
+  "ginv.until": "Važi do {date}.",
+  "ginv.copy": "Kopiraj",
+  "ginv.joinTitle": "Pozvan(a) si u Evklid",
+  "ginv.joinIntro": "Evklid možeš koristiti bez e-mail adrese, s besplatnim paketom. Napredak ostaje samo na ovom uređaju; račun možeš napraviti bilo kada.",
+  "ginv.start": "Počni bez e-maila",
+  "ginv.invalid": "Pozivnica više ne važi (istekla je ili je iskorištena). Napravi račun ili zatraži novi link."
 }

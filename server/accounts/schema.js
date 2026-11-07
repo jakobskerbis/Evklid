@@ -126,6 +126,8 @@ export function migrateAccounts(db) {
   // guest_net = zgoščeni IP omrežja, da brisanje piškotkov ne da nove brezplačne kvote.
   if (!pcols.includes("is_guest")) db.exec("ALTER TABLE parents ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0");
   if (!pcols.includes("guest_net")) db.exec("ALTER TABLE parents ADD COLUMN guest_net TEXT");
+  // Gost iz lastnikovega povabila (/?gost=…, server/accounts/guest.js GuestInvites): uporablja Evklid, čeprav je uporaba brez računa sicer izklopljena.
+  if (!pcols.includes("guest_invite_id")) db.exec("ALTER TABLE parents ADD COLUMN guest_invite_id INTEGER");
   const cols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
   if (!cols.includes("parent_id")) db.exec("ALTER TABLE students ADD COLUMN parent_id INTEGER REFERENCES parents(id) ON DELETE CASCADE");
   if (!cols.includes("birth_year")) db.exec("ALTER TABLE students ADD COLUMN birth_year INTEGER");
