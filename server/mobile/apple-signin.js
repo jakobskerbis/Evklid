@@ -89,7 +89,8 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
   // Izbris računa brez gesla: nova prijava z Apple potrdi, da je to lastnik. Ob tem prekličemo
   // Applove žetone (če je nastavljen ključ .p8), kot to zahteva App Store (smernica 5.1.1(v)).
   const revoke = revokeConfig(env);
-  ctx.addReauth(async (req, p) => {
+  // opts.revoke: ob izbrisu računa prekličemo Applove žetone (izvoz jih ne prekliče).
+  ctx.addReauth(async (req, p, opts = {}) => {
     const nonce = text(req.body?.apple_nonce);
     if (!p.apple_sub || !req.body?.apple_identity_token || nonce.length < 16) return false;
     try {
@@ -99,7 +100,7 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
       return false;
     }
     const code = text(req.body?.apple_authorization_code);
-    if (revoke && code) revokeAppleTokens(code, revoke, fetchFn).catch((e) => log.error?.("[evklid] preklic žetona Apple:", e.message));
+    if (opts.revoke && revoke && code) revokeAppleTokens(code, revoke, fetchFn).catch((e) => log.error?.("[evklid] preklic žetona Apple:", e.message));
     return true;
   });
 }

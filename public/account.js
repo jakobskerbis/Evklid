@@ -1691,7 +1691,20 @@ export async function renderAccount() {
     await api("/api/account/logout-others", { method: "POST" });
     toast("Vse druge naprave so odjavljene.");
   });
+  // Račun brez gesla (prijava z Apple): namesto vpisa gesla ponudi povezavo za nastavitev gesla na naslov računa.
+  const noPassword = async (what) => {
+    if (acc.parent.has_password !== false) return false;
+    if (!confirm(`Tvoj račun nima gesla (prijavljaš se z Apple). Za ${what} potrebuješ geslo. Pošljemo povezavo za nastavitev gesla na ${acc.parent.email}?`)) return true;
+    try {
+      await api("/api/auth/forgot", { method: "POST", body: { email: acc.parent.email } });
+      toast(`Povezavo smo poslali na ${acc.parent.email}. Ko nastaviš geslo, poskusi znova.`);
+    } catch (err) {
+      toast(err.message);
+    }
+    return true;
+  };
   $("#export-btn").addEventListener("click", async () => {
+    if (await noPassword("prenos podatkov")) return;
     const password = prompt("Za prenos vseh podatkov (tudi pogovorov vseh profilov) vpiši geslo računa.");
     if (!password) return;
     try {
@@ -1710,6 +1723,7 @@ export async function renderAccount() {
     }
   });
   $("#delete-account").addEventListener("click", async () => {
+    if (await noPassword("izbris računa na spletu")) return;
     const password = prompt("Za izbris računa, vseh otrokovih profilov in pogovorov vpiši geslo. Tega ni mogoče razveljaviti.");
     if (!password) return;
     try {
