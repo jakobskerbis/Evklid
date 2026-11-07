@@ -748,8 +748,10 @@ function wireSteps(box, lessonId, n) {
     const lost = (document.activeElement === prev && cur === 0) || (document.activeElement === next && cur === n - 1);
     prev.disabled = cur === 0;
     next.disabled = cur === n - 1;
-    if (lost) (cur === 0 ? next : prev).focus({ preventScroll: true });
     end.hidden = cur !== n - 1;
+    // Zadnji korak: »Kaj zdaj?« (vaje, inštruktor) je v DOM pred gumbi, zato tja; prvi korak: »Naprej«.
+    const kajZdaj = cur === n - 1 && end.querySelector("button:not(:disabled), a[href]");
+    if (lost) (cur === 0 ? next : kajZdaj || prev).focus({ preventScroll: cur === 0 || !kajZdaj });
     try {
       sessionStorage.setItem(key, String(cur));
     } catch {}

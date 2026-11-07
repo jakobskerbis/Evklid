@@ -29,7 +29,7 @@ test("polje odgovora in vmesni koraki imata aria-label", () => {
 
 test("lekcija: onemogočen gumb (zadnji korak, pravilen odgovor) fokusa ne odnese na začetek strani", () => {
   const tb = src("textbook.js");
-  assert.match(tb, /if \(lost\) \(cur === 0 \? next : prev\)\.focus\(/);
+  assert.match(tb, /if \(lost\) \(cur === 0 \? next : kajZdaj \|\| prev\)\.focus\(/, "zadnji korak: »Kaj zdaj?«");
   assert.match(tb, /why\.tabIndex = -1;[^\n]*\n\s*why\.focus\(/);
 });
 
@@ -49,6 +49,58 @@ try {
   if (playwright) browser = await playwright.chromium.launch();
 } catch {}
 const skip = browser ? false : "Playwright/Chromium ni nameščen";
+
+const PAGE2 = `<!doctype html><meta charset="utf-8"><button id="zunaj">Zunaj</button>
+<div id="o" role="dialog" aria-modal="true"><button id="o1">1</button><details><summary id="sum">Več</summary>x</details><p id="razlaga" tabindex="-1">Razlaga</p></div>
+<div id="pop" role="dialog" hidden><button id="p1">P1</button><button id="p2">P2</button></div>
+<div id="zaklep" hidden><input id="geslo"><button id="pozabil">Pozabil</button></div>
+<button id="odpA">A</button>
+<script type="module">
+import { zadrziFokus } from "/fokus-okna.js";
+window.z = zadrziFokus;
+window.ready = true;
+</script>`;
+
+test("zadrziFokus: tuja okna, inert, summary, tabindex=-1, zapiranje v napačnem vrstnem redu", { skip }, async (t) => {
+  const server = http.createServer((req, res) => {
+    if (req.url === "/t2.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE2);
+    if (req.url === "/fokus-okna.js") return res.writeHead(200, { "content-type": "text/javascript" }).end(src("fokus-okna.js"));
+    res.writeHead(404).end();
+  });
+  await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
+  const page = await browser.newPage();
+  t.after(() => page.close().then(() => server.close()));
+  await page.goto(`http://127.0.0.1:${server.address().port}/t2.html`);
+  await page.waitForFunction(() => window.ready);
+  const act = () => page.evaluate(() => document.activeElement.id || document.activeElement.tagName);
+  await page.focus("#zunaj");
+  await page.evaluate(() => { window.s = window.z(document.getElementById("o")); });
+  assert.equal(await act(), "o1");
+  await page.keyboard.press("Tab");
+  assert.equal(await act(), "sum", "summary je v vrsti");
+  // element s tabindex="-1" na koncu okna: Tab ne uide na stran, gre na začetek okna
+  await page.evaluate(() => document.getElementById("razlaga").focus());
+  await page.keyboard.press("Tab");
+  assert.equal(await act(), "o1");
+  await page.evaluate(() => document.getElementById("razlaga").focus());
+  await page.keyboard.press("Shift+Tab");
+  assert.equal(await act(), "sum", "Shift+Tab s tabindex=-1 na prejšnji element po DOM");
+  // tuje okno zunaj sklada (oznaka formule #fx-pop): Tab ostane v njem
+  await page.evaluate(() => { const p = document.getElementById("pop"); p.hidden = false; document.getElementById("p1").focus(); });
+  await page.keyboard.press("Tab");
+  assert.equal(await act(), "p2", "Tab v tujem oknu ni prestrežen");
+  await page.evaluate(() => { document.getElementById("pop").hidden = true; });
+  // zaklep profila: vse ostalo inert, Tab po zaklepu deluje
+  await page.evaluate(() => { const z = document.getElementById("zaklep"); z.hidden = false; for (const el of document.body.children) if (el !== z && el.tagName !== "SCRIPT") el.inert = true; document.getElementById("geslo").focus(); });
+  await page.keyboard.press("Tab");
+  assert.equal(await act(), "pozabil", "Tab na zaklepnem zaslonu ni mrtev");
+  await page.evaluate(() => { for (const el of document.body.children) el.inert = false; document.getElementById("zaklep").hidden = true; });
+  // A spodaj, B nad njim; A se zapre prvi, B nato vrne fokus tja, kamor bi ga A (gumb #zunaj)
+  await page.evaluate(() => { document.getElementById("o1").focus(); const p = document.getElementById("pop"); p.hidden = false; window.s2 = window.z(p); });
+  assert.equal(await act(), "p1");
+  await page.evaluate(() => { document.getElementById("o").hidden = true; window.s(); document.getElementById("pop").hidden = true; window.s2(); });
+  assert.equal(await act(), "zunaj");
+});
 
 test("zadrziFokus v brskalniku", { skip }, async (t) => {
   const server = http.createServer((req, res) => {

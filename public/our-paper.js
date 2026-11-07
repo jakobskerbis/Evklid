@@ -154,6 +154,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
       close();
     }
   });
+  let sprosti = () => {}; // zadrziFokus spodaj; close() je varen tudi, če izris prej vrže napako
   const close = () => {
     if (!current) return;
     current = null;
@@ -169,6 +170,6 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
   // Predolga formula se zloži pri enačajih, preširoka formula ali tabela se najprej pomanjša (public/sirina.js);
   // skrite rešitve se prilagodijo, ko se pokažejo.
   prilagodiSirino(el, { vrstice: false });
-  const sprosti = zadrziFokus(el, { zacetni: el.querySelector("[data-op-close]"), prej: back });
+  sprosti = zadrziFokus(el, { zacetni: el.querySelector("[data-op-close]"), prej: back });
   return el;
 }
