@@ -33,6 +33,7 @@ const api = async (url) => {
   if (u.pathname === "/api/textbook/search") {
     const q = u.searchParams.get("q");
     await wait(window.delay[q] || 0);
+    if (window.fail?.[q] === "busy") throw Object.assign(new Error("STREZNIK ZASEDEN"), { offline: true });
     if (window.fail?.[q]) throw Object.assign(new Error("Napaka"), { status: 500 });
     return [{ id: "MAT-OS-9/" + q, name: "ZADETEK " + q, unit: "u", pathLabel: "p", snippet: "" }];
   }
@@ -113,6 +114,16 @@ test("Učbenik: starejši odgovor ne prepiše novejšega", { skip }, async (t) =
     await page.fill("#tb-q", "kotiz");
     await page.waitForSelector("#tb-body [role=alert]");
     assert.doesNotMatch(await body(), /ZADETEK/);
+    await page.evaluate(() => (window.fail = {}));
+    await page.fill("#tb-q", "");
+    await page.waitForFunction(() => document.querySelector("#tb-body").textContent.includes("KAZALO"));
+  });
+
+  await t.test("502 gostitelja (strežnik se ne odziva): to sporočilo, ne »Ni povezave«", async () => {
+    await page.evaluate(() => (window.fail = { kotiy: "busy" }));
+    await page.fill("#tb-q", "kotiy");
+    await page.waitForSelector("#tb-body [role=alert]");
+    assert.match(await body(), /STREZNIK ZASEDEN/);
     await page.evaluate(() => (window.fail = {}));
     await page.fill("#tb-q", "");
     await page.waitForFunction(() => document.querySelector("#tb-body").textContent.includes("KAZALO"));

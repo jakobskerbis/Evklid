@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Idealno paličje
+  - členkasta vozlišča, sile le v vozliščih
+  - palica je dvosilni element
+- Osna sila
+  - $S > 0$ nateg, $S < 0$ tlak
+  - riši jo stran od vozlišča
+- Statična določenost
+  - $2v = p + r$ je le potreben pogoj
+  - paličje iz trikotnikov je togo
+- Metoda vozlišč
+  - začni pri dveh neznankah
+  - $\sum F_x = 0$, $\sum F_y = 0$
+- Ničelne palice
+  - neobremenjeno vozlišče: ob dveh kolinearnih je tretja ničelna
+  - pri drugi obtežbi lahko nosi
+- Metoda prereza
+  - prereži največ tri palice
+  - moment okoli Ritterjeve točke
+  - vzporedna pasova: $\sum F_y = 0$

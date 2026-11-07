@@ -1,0 +1,21 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sledilna tabela
+  - stanje spremenljivk po vsakem obhodu
+  - žogica: 11 odbojev nad 1 cm
+- Zanka while
+  - pogoj pred vsakim obhodom
+  - mera napredka, sicer neskončna zanka
+- Zanka for
+  - `range(a, b, k)` brez $b$
+  - obhodov $\lceil (b - a)/k\rceil$
+- Štetje in seštevanje
+  - `s = 0` pred zanko
+  - `s += x`, `n += 1` v telesu
+- Invarianta zanke
+  - dokaz pravilnosti z indukcijo
+- break in continue
+  - `break` konča najbližjo zanko
+  - `while True` s stražarjem
