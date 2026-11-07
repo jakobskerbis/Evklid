@@ -30,7 +30,8 @@ for (String s : dnevnik) {
   st.merge(s, 1, Integer::sum);
 }
 System.out.println(st);
-// {CuSO4=1, KMnO4=1, NaCl=3, glukoza=2}
+// {CuSO4=1, KMnO4=1,
+//  NaCl=3, glukoza=2}
 ```
 
 V treh vrsticah smo uporabili tri vrste zbirk:
@@ -70,11 +71,9 @@ Pozor pri `List<Integer>`: `remove(1)` odstrani element na **indeksu** $1$, `rem
 
 ### Množice
 
-| Izvedba | Vrstni red | `contains` |
-|---|---|---|
-| `HashSet` | brez reda | takoj |
-| `LinkedHashSet` | vstavljanja | takoj |
-| `TreeSet` | urejen | $\log n$ korakov |
+- `HashSet`: brez vrstnega reda, `contains` takoj;
+- `LinkedHashSet`: vrstni red vstavljanja, `contains` takoj;
+- `TreeSet`: urejen, `contains` v okoli $\log_2 n$ korakih.
 
 `add` vrne `true`, če je element nov, in `false`, če je že bil v množici. Množične operacije spremenijo množico, na kateri jih kličemo:
 
@@ -204,7 +203,7 @@ System.out.println(zaloga + " " + g);
 3. `merge` za KCl: ključa ni, vstavi $100{,}0$.
 4. `put` za CuSO4 staro vrednost prepiše z $200{,}0$.
 5. `getOrDefault` za HCl vrne $0{,}0$ in slovarja ne spremeni.
-6. Odgovor: izpis je `{CuSO4=200.0, KCl=100.0, NaCl=380.0} 0.0`; slovar ima $3$ pare.
+6. Odgovor: izpis je `{CuSO4=200.0, KCl=100.0,` `NaCl=380.0} 0.0`; slovar ima $3$ pare.
 
 ### Primer 3 (težji)
 
@@ -355,7 +354,7 @@ static Map<String, Set<String>>
 ```
 
 3. `NaCl` da simbola `Na` in `Cl`; `CuSO4` da `Cu`, `S`, `O`; števki v `H2O` in `CuSO4` preskočimo. `NaOH` dodamo k `H` le enkrat, ker je vrednost množica.
-4. Rezultat: `{Cl=[HCl, NaCl], Cu=[CuSO4], H=[H2O, HCl, NaOH], Na=[NaCl, NaOH], O=[CuSO4, H2O, NaOH], S=[CuSO4]}`. V nizih je števka pred velikimi črkami, zato je `H2O` pred `HCl`.
+4. Rezultat (ključ → množica): Cl → `[HCl, NaCl]`; Cu → `[CuSO4]`; H → `[H2O, HCl, NaOH]`; Na → `[NaCl, NaOH]`; O → `[CuSO4, H2O, NaOH]`; S → `[CuSO4]`. V nizih je števka pred velikimi črkami, zato je `H2O` pred `HCl`.
 5. Izpis elementov v vsaj dveh formulah:
 
 ```java
