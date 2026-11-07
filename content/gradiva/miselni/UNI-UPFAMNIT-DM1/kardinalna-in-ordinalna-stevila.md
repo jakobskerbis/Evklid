@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dobra urejenost
+  - vsaka neprazna podmnožica ima minimum
+  - ni neskončnih padajočih zaporedij
+  - $[0, 1]$ ni dobro urejen
+- Ključna lema
+  - naraščajoča $f$ da $f(x) \ge x$
+  - ni izomorfna začetnemu odseku
+  - izomorfizem je en sam
+- Ordinali
+  - tranzitivna množica, urejena z $\in$
+  - naslednik $\alpha \cup \{\alpha\}$, limitni $\omega$
+- Transfinitna indukcija
+  - začetni korak, naslednik, limita
+  - napaka: pozabljen limitni korak
+- Ordinalna aritmetika
+  - vrstni red je pomemben
+  - $1 + \omega$ je $\omega$, $\omega + 1$ večji
+  - $2 \cdot \omega$ je $\omega$
+- Kardinali
+  - začetni ordinal, $\aleph_0$ in $\aleph_1$
+  - vsota, produkt, potenca prek množic
+- Kardinalna aritmetika
+  - neskončni: vsota in produkt sta maksimum
+  - $2^\kappa > \kappa$
