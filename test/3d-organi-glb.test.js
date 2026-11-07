@@ -77,8 +77,8 @@ for (const { e, mod } of organi) {
     const jt = glb(tel);
     // Brez meshopt/draco: organ se odpre tudi v lekciji (CSP glavne aplikacije ne dovoli WebAssembly).
     for (const j of [jp, jt]) assert.ok(!(j.extensionsRequired || []).some((x) => /meshopt|draco|basisu|ktx/i.test(x)), `${ime}: stiskanje, ki potrebuje WebAssembly`);
-    // Teksture (zapečene, WebP): največ dve sliki (osnovna barva, normalna mapa); telefon jih sme imeti ali ne.
-    for (const j of [jp, jt]) assert.ok((j.images || []).length <= 2 && (j.images || []).every((i) => /webp|jpeg|png/.test(i.mimeType)), `${ime}: slike`);
+    // Teksture (zapečene, WebP): največ tri slike (osnovna barva, normalna mapa, ORM); telefon jih sme imeti ali ne.
+    for (const j of [jp, jt]) assert.ok((j.images || []).length <= 3 && (j.images || []).every((i) => /webp|jpeg|png/.test(i.mimeType)), `${ime}: slike`);
     const tp = trikotniki(jp);
     const tt = trikotniki(jt);
     assert.ok(tp <= 320000 && tp >= 60000, `${ime}.glb: ${tp} trikotnikov`);
@@ -93,6 +93,20 @@ for (const { e, mod } of organi) {
     for (const n of jp.nodes) if (n.mesh != null) assert.ok(n.extras?.tkivo && "del" in n.extras, `${ime}: vozlišče ${n.name} brez tkiva/dela`);
 
     const p = JSON.parse(fs.readFileSync(path.join(MAPA, `${ime}.json`), "utf8"));
+    // PBR (peka.py): oba GLB imata vse tri mape v WebP in UV, ORM je ista slika za AO in hrapavost. Brez tangent (manjši
+    // prenos): organ.js jih ob nalaganju izračuna po ogliščih (computeTangents).
+    // pečeni PBR model telefona: ≥ 5 % rezerve pod mejo (naslednja peka ne sme podreti testa, pregled #461)
+    if (p.pbr) assert.ok(fs.statSync(tel).size <= 0.95 * 2 * MB, `${ime}-telefon.glb: manj kot 5 % rezerve pod 2 MB`);
+    if (p.pbr) {
+      for (const [j, f] of [[jp, "računalnik"], [jt, "telefon"]]) {
+        assert.equal((j.images || []).length, 3, `${ime} (${f}): PBR potrebuje 3 slike`);
+        assert.ok(j.images.every((i) => i.mimeType === "image/webp"), `${ime} (${f}): slike niso WebP`);
+        const m = j.materials.find((x) => x.normalTexture);
+        assert.ok(m?.pbrMetallicRoughness?.baseColorTexture && m.occlusionTexture && m.pbrMetallicRoughness.metallicRoughnessTexture, `${ime} (${f}): manjka mapa`);
+        assert.equal(j.textures[m.occlusionTexture.index].source, j.textures[m.pbrMetallicRoughness.metallicRoughnessTexture.index].source, `${ime} (${f}): ORM ni ena slika`);
+        assert.ok(j.meshes.every((me) => me.primitives.every((pr) => pr.attributes.TEXCOORD_0 != null && pr.attributes.COLOR_1 == null)), `${ime} (${f}): UV / odvečne barve oglišč`);
+      }
+    }
     assert.ok(Array.isArray(p.deli) && p.deli.length >= 3, `${ime}.json: deli`);
     const ids = new Set();
     let pokrito = 0;
@@ -103,7 +117,14 @@ for (const { e, mod } of organi) {
       assert.ok(typeof d.la === "string" && d.la.length > 1, `${ime}/${d.id}: latinsko ime`);
       assert.ok(typeof d.opis === "string" && d.opis.length > 20 && d.opis.length < 140, `${ime}/${d.id}: opis (en kratek stavek)`);
       assert.match(d.barva || "", /^#[0-9a-f]{6}$/i, `${ime}/${d.id}: barva`);
-      assert.ok(Array.isArray(d.vozlisca) && d.vozlisca.length > 0, `${ime}/${d.id}: vozlisca`);
+      // skupinski del (npr. venčne arterije) je lahko brez lastnih vozlišč, če ima posamezne dele (»skupina«)
+      const imaOtroke = p.deli.some((x) => x.skupina === d.id && x.vozlisca?.length);
+      assert.ok(Array.isArray(d.vozlisca) && (d.vozlisca.length > 0 || imaOtroke), `${ime}/${d.id}: vozlisca`);
+      // razlaga po ravni (raven.js): OŠ kratko in preprosto, študij podrobneje; vsi deli so vidni na vseh ravneh
+      assert.equal(d.raven, undefined, `${ime}/${d.id}: deli se po ravni ne skrivajo (samo razlage)`);
+      if (d.opisOs != null) assert.ok(typeof d.opisOs === "string" && d.opisOs.length > 10 && d.opisOs.length <= 120, `${ime}/${d.id}: opisOs`);
+      if (d.opisStudij != null) assert.ok(typeof d.opisStudij === "string" && d.opisStudij.length > 20 && d.opisStudij.length <= 300, `${ime}/${d.id}: opisStudij`);
+      if (d.skupina != null) assert.ok(p.deli.some((x) => x.id === d.skupina && !x.skupina), `${ime}/${d.id}: skupina ${d.skupina} ni del`);
       for (const v of d.vozlisca) {
         assert.ok(vozlisca.has(v), `${ime}/${d.id}: vozlišče ${v} ni v ${ime}.glb`);
         assert.ok(vozliscaT.has(v), `${ime}/${d.id}: vozlišče ${v} ni v ${ime}-telefon.glb`);
@@ -130,3 +151,23 @@ for (const { e, mod } of organi) {
     for (const b of besedila) assert.ok(!/\bmodel/i.test(b || ""), `${ime}: »model« v besedilu: ${b}`);
   });
 }
+
+test("srce: stene iz CT (Rodero 2021) in prostorska tekstura reza z virom (Visible Woman, NLM)", () => {
+  const j = JSON.parse(fs.readFileSync(path.join(MAPA, "srce.json"), "utf8"));
+  assert.ok(fs.existsSync(path.join(MAPA, "srce-tkivo.png")), "manjka srce-tkivo.png");
+  const viri = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "3d", "viri.json"), "utf8")).viri;
+  const nlm = viri.find((x) => x.id === "nlm-visible-human");
+  assert.ok(nlm && /Courtesy of the U\.S\. National Library of Medicine/.test(nlm.avtor) && nlm.datoteke.includes("organi-3d/srce-tkivo.png"));
+  assert.ok(/ne podpira|not endorse/i.test(nlm.opis), "NLM: brez namiga o podpori");
+  const ct = viri.find((x) => x.id === "rodero-2021-povprecno-srce");
+  assert.ok(ct && ct.licenca === "CC BY 4.0" && ct.datoteke.includes("organi-3d/srce*.glb"));
+  assert.match(fs.readFileSync(path.join(MAPA, "CREDITS.txt"), "utf8"), /Courtesy of the U\.S\. National Library of Medicine/);
+  // po peki s srce_ct (prerez.volumen v srce.json): tekstura reza ob GLB, stene CT kot svoji deli (en zaprt volumen)
+  const v = j.prerez?.volumen;
+  if (!v) return;
+  assert.ok(v.n.length === 3 && v.ploscice.length === 2 && v.korak > 0 && v.korak <= 0.002, "srce.json: prerez.volumen");
+  assert.ok(fs.existsSync(path.join(MAPA, v.slika)), `manjka ${v.slika}`);
+  assert.ok(j.tkiva.miokard.rezVolumen, "miokard: rezVolumen");
+  const imena = glb(path.join(MAPA, "srce.glb")).nodes.map((n) => n.name);
+  for (const ime of ["Left ventricle", "Interventricular septum", "Right ventricle", "Left atrium", "Right atrium", "Left auricle"]) assert.ok(imena.includes(ime), `srce.glb: ${ime}`);
+});

@@ -166,6 +166,7 @@ export function ustvariSceno(el, opts = {}) {
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   const okolje = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  let okoljeModela = null; // skupni studijski HDR (nastaviOkolje), za modele s pečenimi teksturami
   scene.environment = okolje;
   scene.environmentIntensity = opts.okolje ?? 0.72;
   // Rahla usmerjena luč od zgoraj spredaj: oblika dobi globino tudi brez senc.
@@ -175,15 +176,48 @@ export function ustvariSceno(el, opts = {}) {
   luc2.position.set(-1, 0.4, -1);
   scene.add(luc, luc2);
   // Model s svojo osvetlitvijo (zgradi vrne luci: false, npr. Sonce v vesolju): brez okolja in lastnih luči kompleta.
+  let luciVklop = true;
   function nastaviLuci(vklop) {
-    scene.environment = vklop ? okolje : null;
+    luciVklop = !!vklop;
+    scene.environment = vklop ? okoljeModela?.tex || okolje : null;
     luc.visible = luc2.visible = !!vklop;
+    narisi();
+  }
+  // Skupni studijski HDR za realistične modele (docs/3d.md »Pečene teksture«): public/3d/okolje/studio-<px>.hdr
+  // (Poly Haven, CC0), telefon 256 px, računalnik 512 px; PMREM enkrat na kit. ime null = nazaj na RoomEnvironment.
+  let okoljeZahteva = 0; // zadnja zahteva zmaga (hitro preklapljanje modelov med nalaganjem HDR)
+  async function nastaviOkolje(ime, { jakost = null, zasuk = 0 } = {}) {
+    const moja = ++okoljeZahteva;
+    if (!ime) {
+      // tekstura HDR ostane v predpomnilniku kita (sprosti jo unici): ob vrnitvi na model brez nove PMREM in brez
+      // osirotelega cilja risanja v pomnilniku GPU (pregled #461)
+      scene.environment = luciVklop ? okolje : null;
+      scene.environmentIntensity = opts.okolje ?? 0.72;
+      scene.environmentRotation.set(0, 0, 0);
+      return narisi();
+    }
+    if (okoljeModela?.ime !== ime) {
+      const { HDRLoader } = await import("/vendor/three/examples/jsm/loaders/HDRLoader.js");
+      const url = new URL(`./okolje/${ime}-${visoka ? 512 : 256}.hdr`, import.meta.url).href;
+      const hdr = await new HDRLoader().loadAsync(url);
+      if (moja !== okoljeZahteva || unicen) return hdr.dispose();
+      hdr.mapping = THREE.EquirectangularReflectionMapping;
+      const tex = pmrem.fromEquirectangular(hdr).texture;
+      hdr.dispose();
+      okoljeModela?.tex.dispose();
+      okoljeModela = { ime, tex };
+    }
+    if (luciVklop) scene.environment = okoljeModela.tex;
+    scene.environmentIntensity = jakost ?? opts.okolje ?? 0.72;
+    scene.environmentRotation.set(0, zasuk, 0);
     narisi();
   }
 
   const camera = new THREE.PerspectiveCamera(opts.fov ?? 35, 1, 0.01, 200);
   camera.position.set(0, 0, 3.6);
   const controls = new OrbitControls(camera, canvas);
+  // Preizkusi (scripts/atlas/posnetki-organa.cjs MERE=1: merilne črte čez prerez): kamera in scena, samo s ?preizkus=1
+  if (typeof location !== "undefined" && /[?&]preizkus=1(&|$)/.test(location.search)) globalThis.__scena = { camera, scene, canvas };
   controls.enableDamping = gib;
   controls.dampingFactor = 0.09;
   controls.rotateSpeed = 0.85;
@@ -471,6 +505,7 @@ export function ustvariSceno(el, opts = {}) {
 
   let w = 0;
   let h = 1;
+  let zamikZg = 0;
   // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
   function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
@@ -481,6 +516,10 @@ export function ustvariSceno(el, opts = {}) {
     h = nh;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
+    // zamik slike navzdol (px): na telefonu lebdijo gumbi in stikala organa levo zgoraj čez oder; model narišemo nižje in
+    // malo manjšega (zgornji del navidezno višje slike), da jih ne prekrije (ocena srca n7). Žarki izbire to upoštevajo.
+    if (zamikZg > 0 && h > 200) camera.setViewOffset(w, h + 2 * zamikZg, 0, 0, w, h);
+    else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     composer?.setPixelRatio(locljivost);
     composer?.setSize(w, h);
@@ -809,7 +848,10 @@ export function ustvariSceno(el, opts = {}) {
   function posodobiMerilo() {
     if (!merilo || !meriloEl) return;
     const d = camera.position.distanceTo(controls.target);
-    const pxNaEnoto = h / 2 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d);
+    // zamik slike (telefon, setViewOffset): zorni kot zajame navidezno višino h + 2·zamik, na zaslonu je izrez 1 : 1, zato
+    // piksli na enoto sledijo navidezni višini (ocena srca n10: merilo na telefonu ≈ 1,3× prekratko)
+    const hv = camera.view?.enabled ? camera.view.fullHeight : h;
+    const pxNaEnoto = hv / 2 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d);
     const mNaEnoto = merilo.m / merilo.enota;
     const maksPx = Math.min(140, w * 0.3);
     const l = lepaDolzina((maksPx / pxNaEnoto) * mNaEnoto);
@@ -887,6 +929,7 @@ export function ustvariSceno(el, opts = {}) {
     ro.disconnect();
     controls.dispose();
     okolje.dispose();
+    okoljeModela?.tex.dispose();
     pmrem.dispose();
     composer?.dispose?.();
     renderer.dispose();
@@ -899,6 +942,7 @@ export function ustvariSceno(el, opts = {}) {
   return {
     THREE,
     nastaviLuci,
+    nastaviOkolje,
     luci: [luc, luc2], // ključna in zadnja luč kompleta (atlas jima prilagodi smer in moč)
     kakovost,
     gibanje: gib,
@@ -913,6 +957,10 @@ export function ustvariSceno(el, opts = {}) {
     nacinVrtenja,
     hodi: (n) => (gumbHoje = Math.sign(n) || 0),
     fitRazdalja,
+    zamikZgoraj(px) {
+      zamikZg = Math.max(0, px | 0);
+      velikost(true);
+    },
     obrni,
     priblizaj,
     naTap,

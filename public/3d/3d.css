@@ -60,6 +60,12 @@
 .k3-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .k3-info-zapri svg.i { width: 18px; height: 18px; }
 .k3-info-opis { margin: 0; color: var(--k3-besedilo); line-height: 1.5; font-size: 0.95rem; unicode-bidi: plaintext; }
+.k3-mere { margin-top: 12px; }
+.k3-mere-glava { margin: 0 0 6px; font-size: 0.85rem; font-weight: 600; color: var(--k3-muted); }
+.k3-mere-seznam { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; font-size: 0.88rem; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.k3-mere-seznam dt { color: var(--k3-muted); }
+.k3-mere-seznam dd { margin: 0; color: var(--k3-besedilo); unicode-bidi: plaintext; }
+.k3-info-clani { margin: 6px 0 0; color: var(--k3-besedilo); opacity: 0.75; line-height: 1.45; font-size: 0.85rem; unicode-bidi: plaintext; }
 .k3 .k3-info .k3-povecava-gumb { align-self: flex-start; min-height: 40px; padding: 0 14px; font-size: 0.9rem; }
 .k3-info .k3-povecava-gumb svg { width: 18px; height: 18px; flex: none; }
 @media (prefers-reduced-motion: reduce) { .k3-info { animation: none; } }
@@ -155,6 +161,14 @@
   border: 1px solid var(--k3-rob); background: var(--k3-povrsina); cursor: pointer; font-size: 0.92rem; text-align: start;
 }
 .k3-del[aria-pressed="true"] { border-color: var(--k3-accent); background: var(--k3-accent-soft); }
+/* Raven razlage »OŠ / SŠ / Študij« nad seznamom delov (public/3d/raven.js); »Več o tem« v oknu dela */
+.k3-del-skupina { font-weight: 600; border-color: var(--k3-accent); }
+.k3-info-vec summary { min-height: 40px; display: flex; align-items: center; cursor: pointer; color: var(--k3-accent); font-weight: 600; }
+.k3-info-vec .k3-info-opis { margin-top: 4px; }
+.k3-raven { display: inline-flex; gap: 4px; padding: 3px; margin: 0 0 8px; border: 1px solid var(--k3-rob); border-radius: 999px; background: var(--k3-povrsina); }
+.k3-raven[hidden] { display: none; }
+.k3-raven-gumb { min-height: 40px; min-width: 52px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: inherit; font-size: 0.9rem; cursor: pointer; }
+.k3-raven-gumb[aria-pressed="true"] { background: var(--k3-accent-soft); color: var(--k3-accent); font-weight: 600; }
 .k3-pika { width: 10px; height: 10px; border-radius: 50%; background: var(--barva); flex: none; }
 
 /* ---------- stran /3d ---------- */
@@ -352,6 +366,9 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .a3-oznaka { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; padding: 3px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); }
 .a3-oznaka::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--barva); }
 .a3-opis { margin: 10px 0 0; line-height: 1.5; }
+.a3-vec { margin: 6px 0 0; }
+.a3-vec summary { min-height: 40px; display: flex; align-items: center; cursor: pointer; color: var(--k3-accent); font-weight: 600; }
+.a3-vec p { margin: 4px 0 0; line-height: 1.5; }
 .a3-akcije { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 
 .a3-nalaganje { position: absolute; z-index: 4; left: 50%; top: 52%; translate: -50% -50%; width: min(420px, calc(100% - 48px)); padding: 22px 24px; border-radius: 22px; border: 1px solid var(--k3-rob); background: var(--k3-steklo); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-align: center; }
@@ -564,6 +581,8 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 @media (max-width: 480px) {
   .k3-stran-pregled .k3-orodja { gap: 6px; top: 10px; right: 10px; }
   .k3-stran-pregled .k3-orodja .k3-krog { width: 40px; height: 40px; min-height: 40px; }
+  /* telefon: stikala (Učne barve, Prerez) pod vrsto gumbov, sicer prekrijejo »Oddalji« in »Vrti« */
+  .k3-organ.k3-stran-pregled .k3-nadzor { top: 58px; left: 10px; }
   .k3-namig { max-width: calc(100% - 32px); bottom: 10px; }
   .k3-namig-viden .k3-merilo { bottom: 62px; }
 }

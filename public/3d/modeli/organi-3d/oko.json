@@ -233,7 +233,9 @@
    "ime": "Beločnica",
    "la": "Sclera",
    "barva": "#e8ecf3",
+   "opisOs": "Bela, trda plast okoli očesa. Varuje ga.",
    "opis": "Čvrsta bela zunanja plast, ki varuje zrklo in mu daje obliko.",
+   "opisStudij": "Debela 0,3 mm (za narastišči mišic) do 1 mm (zadaj); kolagen I v neurejenih snopih, zato je neprozorna. Zadaj lamina cribrosa, skozi katero izstopa vidni živec; spredaj preide v roženico na limbusu, tam Schlemmov kanal odvaja prekatno vodko.",
    "vozlisca": [
     "sclera_L (HRA)"
    ],
@@ -255,7 +257,9 @@
    "ime": "Roženica",
    "la": "Cornea",
    "barva": "#7dd3fc",
+   "opisOs": "Prozorno okence na sprednji strani očesa.",
    "opis": "Prozorno okence na sprednji strani očesa, ki najmočneje lomi svetlobo.",
+   "opisStudij": "Pet plasti (epitel, Bowmanova plast, stroma, Descemetova membrana, endotel); debela okoli 0,55 mm v sredini, brez žil. Lomnost okoli 43 D od skupnih 60 D. Endotel črpa vodo iz strome in se ne obnavlja.",
    "vozlisca": [
     "cornea_L (HRA)"
    ],
@@ -277,7 +281,9 @@
    "ime": "Šarenica",
    "la": "Iris",
    "barva": "#f2b84b",
+   "opisOs": "Obarvani obroček v očesu. Zoži ali razširi zenico.",
    "opis": "Obarvan obroč z mišicami, ki zoži ali razširi zenico in tako uravna svetlobo.",
+   "opisStudij": "M. sphincter pupillae (parasimpatik, n. III prek ganglion ciliare) zoži, m. dilatator pupillae (simpatik) razširi zenico, premer 2–8 mm. Barva je od melanina v sprednji stromi in zadnjem pigmentnem epitelu. Med njo in roženico je sprednji prekat.",
    "vozlisca": [
     "iris_L (HRA)"
    ],
@@ -294,7 +300,9 @@
    "ime": "Leča",
    "la": "Lens",
    "barva": "#fde68a",
+   "opisOs": "Prozorna leča v očesu. Spremeni obliko, da vidimo ostro.",
    "opis": "Prozorna in prožna; spreminja debelino, da vidimo ostro blizu in daleč.",
+   "opisStudij": "Bikonveksna, okoli 9 × 4 mm, 15–20 D; kapsula, epitel in vlakna brez jeder. Akomodacija: krčenje m. ciliaris sprosti zonularna vlakna, leča se zaobli. S starostjo izgubi prožnost (presbiopija), zamotnitev je siva mrena (katarakta).",
    "vozlisca": [
     "lens_L (HRA)",
     "suspensory_ligament_of_lens_L (HRA)"
@@ -312,7 +320,9 @@
    "ime": "Steklovina",
    "la": "Corpus vitreum",
    "barva": "#a5f3fc",
+   "opisOs": "Prozoren žele, ki napolni oko.",
    "opis": "Prozoren žele, ki napolni notranjost zrkla in ohranja njegovo okroglo obliko.",
+   "opisStudij": "Okoli 4 ml, 99 % vode s kolagenom II in hialuronsko kislino; pritrjena na vitreusni bazi in ob papili. Z leti se utekočini in odstopi (zadnji odstop steklovine, »mušice«), kar lahko natrga mrežnico.",
    "vozlisca": [
     "vitreous_humor_L (HRA)"
    ],
@@ -330,7 +340,9 @@
    "la": "Retina",
    "povecava": "organ-mreznica",
    "barva": "#ff7a6b",
+   "opisOs": "Plast na zadnji strani očesa, ki zazna svetlobo.",
    "opis": "Notranja plast s čutnicami (paličnicami in čepnicami), ki svetlobo spremenijo v živčne signale.",
+   "opisStudij": "Deset plasti; okoli 120 milijonov paličnic in 6 milijonov čepnic; fovea centralis v makuli ima samo čepnice (najostrejši vid). Svetloba gre skozi vse plasti do čutnic, signal nazaj prek bipolarnih celic do ganglijskih, katerih aksoni tvorijo vidni živec (slepa pega).",
    "vozlisca": [
     "optic_disc_L (HRA)",
     "ora_serrata_of_retina_L (HRA)",
@@ -349,7 +361,9 @@
    "ime": "Žilnica",
    "la": "Choroidea",
    "barva": "#c084fc",
+   "opisOs": "Temna plast z žilami, ki hrani oko od znotraj.",
    "opis": "Temna plast s krvnimi žilami, ki hrani mrežnico in vpija odvečno svetlobo.",
+   "opisStudij": "Del srednje žilne ovojnice (uvee) s šarenico in ciliarnikom; choriocapillaris hrani zunanjo tretjino mrežnice (čutnice), ločuje ju Bruchova membrana. Ima enega največjih pretokov krvi na gram tkiva v telesu.",
    "vozlisca": [
     "ciliary_body_L (HRA)",
     "ciliary_processes_L (HRA)",
@@ -368,7 +382,9 @@
    "ime": "Vidni živec",
    "la": "Nervus opticus",
    "barva": "#facc15",
+   "opisOs": "Živec, ki pelje sliko iz očesa v možgane.",
    "opis": "Prenaša signale z mrežnice v možgane, kjer nastane slika.",
+   "opisStudij": "Okoli 1,2 milijona aksonov ganglijskih celic; dolg okoli 5 cm, deli: intraokularni, orbitni, kanalni, intrakranialni. Obdan z možganskimi ovojnicami, zato se zvišan intrakranialni tlak vidi kot edem papile. Ni pravi periferni živec (mielin oligodendrocitov).",
    "vozlisca": [
     "Optic nerve (II).l"
    ],
@@ -385,7 +401,9 @@
    "ime": "Očesne mišice",
    "la": "Musculi bulbi",
    "barva": "#5ccb91",
+   "opisOs": "Šest mišic, ki premikajo oko.",
    "opis": "Šest mišic, ki vrtijo zrklo, da lahko pogledamo gor, dol in vstran.",
+   "opisStudij": "Štiri preme (superior, inferior, medialis, lateralis) iz anulus tendineus communis, dve poševni. Oživčenje: LR6 SO4, ostale n. oculomotorius (III). M. obliquus superior gre prek trohleje: oko obrne navzdol in navzven ter ga zavrti navznoter (intorzija).",
    "vozlisca": [
     "Common tendinous ring.l",
     "Inferior oblique muscle.l",
@@ -548,6 +566,32 @@
    ],
    "moc": 0.5,
    "barva": "#ffe0d8"
+  }
+ ],
+ "mere": [
+  {
+   "ime": "Premer zrkla",
+   "vrednost": "≈ 24 mm"
+  },
+  {
+   "ime": "Masa zrkla",
+   "vrednost": "≈ 7,5 g"
+  },
+  {
+   "ime": "Premer roženice",
+   "vrednost": "≈ 11,5 mm"
+  },
+  {
+   "ime": "Debelina roženice",
+   "vrednost": "≈ 0,55 mm sredi"
+  },
+  {
+   "ime": "Leča",
+   "vrednost": "≈ 9–10 mm premera, ≈ 4 mm debela"
+  },
+  {
+   "ime": "Lomnost očesa",
+   "vrednost": "≈ 60 dioptrij (roženica ≈ 43)"
   }
  ]
 }

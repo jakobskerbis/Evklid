@@ -89,6 +89,7 @@ import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
 import { initSirina, prilagodiZdaj } from "./sirina.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
+import { nastaviVirRavni } from "./3d/raven.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
 import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
@@ -1374,6 +1375,8 @@ initKeyboard();
 initSirina();
 initDrsniki();
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
+// 3D modeli: deli nad ravnijo profila (OŠ/SŠ/študij) so pod »Več delov« (public/3d/raven.js).
+nastaviVirRavni(() => state.student?.settings);
 mountKeyboardSettings($("#tipkovnica-card"));
 configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS });
 $("#sym-btn").addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));

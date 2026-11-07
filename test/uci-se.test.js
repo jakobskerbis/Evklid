@@ -156,7 +156,7 @@ test("3D world: the /3d page in a frame closes itself and asks the tutor through
   assert.match(read("public/3d/atlas.js"), /if \(vgrajeno\) \{\s*starsu\(\{ tip: "vprasaj", besedilo \}\)/);
   const uci = read("public/uci-se.js");
   assert.match(uci, /e\.origin !== location\.origin \|\| e\.source !== full\.frame\.contentWindow/);
-  assert.match(uci, /frame\.src = `\/3d\?vgrajeno=1#/);
+  assert.match(uci, /frame\.src = `\/3d\?vgrajeno=1&raven=\$\{ravenProfila\(\)\}#/);
   assert.match(read("public/3d/vgrajeno.js"), /window\.parent\.location\.origin === location\.origin/);
 });
 

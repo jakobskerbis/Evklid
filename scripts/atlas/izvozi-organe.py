@@ -26,13 +26,20 @@
 import bpy, bmesh, json, os, re, sys, math, random
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
+from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
+from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
+from srce_ct import srce_ct  # stene srca iz CT (Rodero 2021), poravnava ostalih delov nanje, maščoba, trabekule
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 out = args[0] if args else "/tmp/organi-raw"
 BLEND = args[args.index("--blend") + 1] if "--blend" in args else None
 MRI = args[args.index("--mri") + 1] if "--mri" in args else None
 HRA = args[args.index("--hra") + 1] if "--hra" in args else None  # mapa z GLB HuBMAP HRA (CC BY 4.0), npr. 3d-vh-m-eye-l.glb
-_ZASTAVE = ("--blend", "--mri", "--hra")
+# mapa s povprečnim CT srcem (Rodero 2021, Zenodo 4593739, CC BY 4.0; srce_ct.py ga po potrebi prenese): privzeto <mapa Startup.blend>/ct
+CT = args[args.index("--ct") + 1] if "--ct" in args else (os.path.join(os.path.dirname(os.path.abspath(BLEND)), "ct") if BLEND else None)
+_ZASTAVE = ("--blend", "--mri", "--hra", "--ct")
 izbrani = [a for i, a in enumerate(args[1:], 1) if a not in _ZASTAVE and args[i - 1] not in _ZASTAVE] or ["mozgani", "srce", "oko", "pljuca", "ledvica", "jetra"]
 os.makedirs(out, exist_ok=True)
 
@@ -89,28 +96,89 @@ ORGANI = {
                 r"Inferior vena cava \(thoracic part\)|(Left|Right) (superior|inferior) pulmonary vein|Brachiocephalic trunk|Left common carotid artery|Left subclavian artery|"
                 r"(Left|Right) pulmonary artery|Thoracic aorta)( |$)",
         izkljuci=r"Septal branches of anterior interventricular|\?\?\?|Posterior intercostal|Subcostal|Superior phrenic|Bronchial|Oesophageal|Mediastinal|Pericardial",
-        cilj=(260_000, 80_000),
+        cilj=(185_000, 33_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP (telefon ≥ 5 % rezerve)
         # Prekata: odprti debeli lupini, predznak prostornine izbere notranjo stran (zunanja stena izgine, vidna notranjost);
         # preverjeno s posnetkom 2026-11-04 (stari izvoz iz 08:50 je imel prav to obrnjeno smer).
         obrni=r"^(Left|Right) ventricle$",
         odprtost=True,  # G = odprtost: maščoba v žlebovih samo na zunanji ploskvi (mascaZunaj), ne v prekatih v prerezu
-        # Preizkušeno 2026-11-04 (ni v rabi, srce ostane brez tekstur):
-        # tekstura=dict(px=(2048, 1024), telefon=False, po_vozliscih=True, relief=0.0009, reliefMera=0.004, relief2=0.0005,
-        # reliefMera2=0.0015, …): peka po vozliščih deluje (~8 min), a združena oglišča in decimacija sta spremenili obliko
-        # (vdrt iztočni del desnega prekata, vidne zaklopke), miokard je bil pretemen; senčilnik (relief, zrno) je lepši.
+        # Lastna geometrija (srce_geometrija.py): sprednja lističa mitralne in trikuspidalne zaklopke s tetivami,
+        # sprednja-stranska papilarna mišica levega prekata, septomarginalna trabekula, mesnate trabekule obeh prekatov.
+        dodaj=["srce_dodatki", "srce_zile"],
+        razdeli=["srce_razdeli"],  # srce_geometrija.srce_razdeli: ušesi, medprekatni pretin, conus (po normalah)
+        # srce_zile (srce_zile.py): velike in venčne žile iz krivulj Z-Anatomy kot prava geometrija (zaprte cevi s steno,
+        # veje aortnega loka, štiri pljučne vene, zaprta zadnja stena levega preddvora). Lastne cevi se ne poenostavijo
+        # na računalniku, na telefonu blažje kot ostalo (»ohrani«): poenostavljena cev bi bila oglata.
+        ohrani=r"\(lastno\)",
+        # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
+        # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
+        # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
+        pozno=["srce_ct"], ct=dict(cilj=(78_000, 11_000)), nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
+        # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
+        # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
+        stena={"Left ventricle": 0.0028, "Right ventricle": 0.0008},
+        # Pečene PBR teksture (peka.py, Cycles): recept po tkivu. Maščoba sledi venčnim žilam v žlebovih (maska iz
+        # razdalje do žil na zunanji ploskvi), miokard ima snope vlaken in drobne gube, notranjost votlin (endokard) je
+        # bolj gladka in svetlejša, zaklopke so smetanaste. Peka 2048 px računalnik, 1024 px telefon (svoj atlas).
+        tekstura=dict(
+            pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
+            # maščoba v žlebovih: stik zunanjih ploskev votlin (venčni in oba medprekatna žleba), ob venčnih žilah širša;
+            # ob vejah na prosti steni prekatov le tanka sled (ne ob aorti, pljučnem deblu, pljučnih venah, lističih)
+            maska=dict(zile=r"coronary (artery|sinus)|Coronary sinus|interventricular artery|Circumflex|cardiac vein|vein of left ventricle|branch of right coronary",
+                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.2),
+            recepti={
+                # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
+                # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
+                "miokard": dict(barva=(0.24, 0.07, 0.05), barva2=(0.17, 0.05, 0.036), lise=0.45, hrap=0.56, gube=0.00016, gubeMera=0.004,
+                                vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.90, 0.66, 0.24), mascaBarva2=(0.92, 0.56, 0.17),
+                                # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
+                                mascaNasip=0.0010, mascaPremik=0.0022, mascaMera=0.010, mascaZleb=0.5, mascaHrap=0.36, kletka=0.009,
+                                zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
+                "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
+                # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
+                # (drobne rdečkaste žilice vzdolž stene), mat-vlažna hrapavost. NARAVNE barve (j, 6. 11.; učne barve so
+                # v pregledovalniku, public/3d/barve.js): aorta in venčne arterije ista nasičena arterijska rdeča,
+                # pljučne vene rdeče-vijolične, žile z vensko krvjo (pljučno deblo in arteriji, votli veni, srčne vene)
+                # temno vijolično-rdeče kot skozi tanko steno, brez modre (modra samo v učnih barvah).
+                # aorta in pljučno deblo: debela elastična stena, na preparatu smetanasto bela do rožnato siva (ne rdeča)
+                "aorta": dict(barva=(0.74, 0.58, 0.50), barva2=(0.66, 0.50, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
+                              vzdolz=0.00009, vzdolzRazmik=0.0028, vasa=0.45, vasaBarva=(0.55, 0.22, 0.20)),
+                "pljucna": dict(barva=(0.74, 0.58, 0.50), barva2=(0.66, 0.50, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
+                                vzdolz=0.00008, vzdolzRazmik=0.0028, vasa=0.4, vasaBarva=(0.50, 0.20, 0.22)),
+                "vena": dict(barva=(0.42, 0.27, 0.28), barva2=(0.36, 0.22, 0.24), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                             vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.22, 0.05, 0.10)),
+                # pljučne vene: tanka stena, temno rdeče rjave (kri skozi steno), ne magenta (ocena n8)
+                "pljucna-vena": dict(barva=(0.46, 0.28, 0.27), barva2=(0.40, 0.23, 0.23), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                                     vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
+                # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
+                # n10: arterije bledo rožnato bele (debela stena), vene temne modro vijolične (kri skozi tanko steno)
+                # n11 (ocena n10: »bele/kremaste nalepke«): bledo rožnato rjave (sveža arterija s krvjo za debelo steno)
+                "vencna-arterija": dict(barva=(0.60, 0.33, 0.29), barva2=(0.54, 0.28, 0.25), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
+                                        vzdolz=0.00002, vzdolzRazmik=0.0012),
+                # vezivo (arterijska vez, dno ovalne kotanje, pars membranacea): mat sivobelo, brez sijaja
+                "vez": dict(barva=(0.62, 0.58, 0.53), barva2=(0.55, 0.50, 0.46), lise=0.25, hrap=0.78, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                # prevodni sistem (shema): rumen kot v atlasih, rahlo svetleč
+                "prevodni": dict(barva=(0.78, 0.62, 0.10), barva2=(0.70, 0.52, 0.08), lise=0.15, hrap=0.4, gube=0.00002, gubeMera=0.0015, razdeli=1),
+                "vencna-vena": dict(barva=(0.25, 0.16, 0.26), barva2=(0.20, 0.12, 0.21), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+            },
+        ),
         jedro=r"^(Right atrium|Right ventricle|Left atrium|Left ventricle)$",
         skatla=[0.004, 0.004, 0.02, 0.006, 0.006, 0.030],
         krivulja=(4, 3),
         tkiva=[
             (r"leaflet|valve", "zaklopka"),
             (r"papillary", "miokard"),
-            (r"aorta|Aortic|Brachiocephalic|carotid|subclavian|coronary artery|interventricular artery|Circumflex|branch of right coronary|Arteries of heart", "arterija"),
+            (r"coronary artery|interventricular artery|Circumflex|branch of right coronary|Arteries of heart", "vencna-arterija"),
+            (r"aorta|Aortic|Brachiocephalic|carotid|subclavian", "aorta"),
             (r"Pulmonary trunk|pulmonary artery|Bifurcation of pulmonary", "pljucna"),
             (r"pulmonary vein", "pljucna-vena"),
-            (r"vein|vena cava|sinus|Cardiac veins", "vena"),
+            (r"cardiac vein|Coronary sinus|Cardiac veins|vein of left ventricle", "vencna-vena"),
+            (r"vein|vena cava|sinus", "vena"),
             (r"", "miokard"),
         ],
         deli=[
+            (r"papillary muscle", "papilarne-misice"),
+            (r"Trabeculae carneae of left", "trabekule-levega-prekata"),
+            (r"Trabecula|trabecula", "trabekule-desnega-prekata"),
             (r"atrioventricular valve|Right atrioventricular", "av-zaklopki"),
             (r"Aortic valve|Root of aorta|coronary leaflet|Non-coronary", "aortna-zaklopka"),
             (r"Pulmonary valve|pulmonary valve", "pljucna-zaklopka"),
@@ -118,8 +186,9 @@ ORGANI = {
             (r"Right ventricle", "desni-prekat"),
             (r"^Left atrium|Left auricle", "levi-preddvor"),
             (r"Left ventricle", "levi-prekat"),
-            (r"aorta|Aortic arch|Brachiocephalic|carotid|subclavian", "aorta"),
-            (r"Pulmonary trunk|pulmonary artery|Bifurcation of pulmonary", "pljucno-deblo"),
+            (r"^Aorta|aorta|Aortic arch|Brachiocephalic|carotid|subclavian", "aorta"),
+            (r"Pulmonary trunk|Bifurcation of pulmonary", "pljucno-deblo"),
+            (r"pulmonary artery", "pljucne-arterije"),
             (r"vena cava", "votli-veni"),
             (r"pulmonary vein", "pljucne-vene"),
             (r"Arteries of heart|coronary artery|interventricular artery|Circumflex", "vencne-arterije"),
@@ -289,13 +358,21 @@ def normale_navzven(me):
     bm = bmesh.new(); bm.from_mesh(me)
     # Osamljena oglišča (brez ploskev) glTF izpusti, a bi pokvarila središče, velikost in dolžino žarkov AO.
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    if me.get("usmerjeno"):  # cevi srce_zile.v_mrezo: normale so že navzven po središčnici
+        odprtih = sum(1 for e in bm.edges if not e.is_manifold)
+        bm.to_mesh(me); bm.free()
+        return odprtih, False
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     odprtih = sum(1 for e in bm.edges if not e.is_manifold)
     vol = bm.calc_volume(signed=True)
     obrnjeno = False
     # Kot obrni_ce_navznoter v izvozi-z-anatomy.py: tudi skoraj zaprte mreže (odprtine žil, zaklopk) obrnemo po
     # predznaku prostornine, preden zapečemo senco; tanke odprte plošče pusti recalc_face_normals.
-    if vol < 0 and odprtih <= 0.05 * max(len(bm.edges), 1):
+    if me.get("navzvenGlas"):  # odprta lupina z zaplato (srce_zile.zapri_luknjo): glas po ploščini od središča
+        c = sum((v.co for v in bm.verts), Vector()) / max(len(bm.verts), 1)
+        if sum(f.calc_area() * f.normal.dot(f.calc_center_median() - c) for f in bm.faces) < 0:
+            bmesh.ops.reverse_faces(bm, faces=bm.faces); obrnjeno = True
+    elif vol < 0 and odprtih <= 0.05 * max(len(bm.edges), 1):
         bmesh.ops.reverse_faces(bm, faces=bm.faces); obrnjeno = True
     bm.to_mesh(me); bm.free()
     return odprtih, obrnjeno
@@ -923,6 +1000,8 @@ def izvozi(organ, cfg):
             o.data.resolution_u = max(o.data.resolution_u, kr[0])
             o.data.bevel_resolution = max(o.data.bevel_resolution, kr[1])
     dg = bpy.context.evaluated_depsgraph_get()
+    cfg["_krivulje"] = {imena.get(o, o.name): krivulje_objekta(o.evaluated_get(dg), o.evaluated_get(dg).matrix_world)
+                        for o in src if o.type == "CURVE"}  # središčnice žil (srce_zile), pred obrezom na škatlo
     gladi = re.compile(cfg["gladi"]) if cfg.get("gladi") and os.environ.get("ORGANI_GLADI") != "0" else None
     tmp = bpy.data.collections.new("organ-" + organ)
     scene.collection.children.link(tmp)
@@ -955,7 +1034,7 @@ def izvozi(organ, cfg):
     if hra and HRA:
         osnovni = [r for r in osnovni if not re.search(hra["zamenjaj"], r[0])] + zrklo_hra(os.path.join(HRA, hra["datoteka"]), hra, osnovni, tmp)
     # Z-Anatomy ima pogosto ločena oglišča po ploskvah; za UV otoke in razdelitev visoke mreže jih združimo.
-    if cfg.get("tekstura"):
+    if cfg.get("tekstura") and not cfg["tekstura"].get("pbr"):
         for row in osnovni:
             bm = bmesh.new(); bm.from_mesh(row[1])
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
@@ -1001,6 +1080,40 @@ def izvozi(organ, cfg):
         row.append(odprtih)
         for p in row[1].polygons:
             p.use_smooth = True
+    # razdeli: deli sten kot samostojni deli (srčni ušesi, pretin …) po usmeritvi normal (kosi podedujejo usmeritev)
+    for ime_f in cfg.get("razdeli", []):
+        for r in globals()[ime_f](osnovni, cfg, tmp):
+            r.append(0)  # odprtih (podatek za poročilo)
+            osnovni.append(r)
+    if os.environ.get("ORGANI_ODLOZI"):  # razvoj: stanje po lastni geometriji; ORGANI_NADALJUJ=<isto> nadaljuje od tu
+        odlozi_stanje(os.environ["ORGANI_ODLOZI"], osnovni, cfg)
+    izvozi_naprej(organ, cfg, osnovni, tmp)
+
+
+def odlozi_stanje(pot, osnovni, cfg):
+    meta = {"vrstice": [[r[0], r[1].name, r[2], r[3], r[4], r[5]] for r in osnovni],
+            "tocke4": [list(q) for q in cfg.get("_tocke4", [])]}
+    bpy.data.libraries.write(pot, {r[1] for r in osnovni}, fake_user=True)
+    with open(pot + ".json", "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False)
+    print(f"[organi] stanje odloženo: {pot} ({len(osnovni)} vrstic)", flush=True)
+
+
+def nalozi_stanje(pot, cfg):
+    with open(pot + ".json", encoding="utf-8") as f:
+        meta = json.load(f)
+    with bpy.data.libraries.load(pot, link=False) as (vir_, cilj_):
+        cilj_.meshes = list(vir_.meshes)
+    po = {m.name: m for m in cilj_.meshes}
+    cfg["_tocke4"] = [Vector(q) for q in meta["tocke4"]]
+    return [[r[0], po[r[1]], r[2], r[3], r[4], r[5]] for r in meta["vrstice"]]
+
+
+def izvozi_naprej(organ, cfg, osnovni, tmp):
+    cfg["_ct_mapa"] = CT; cfg["_out"] = out
+    # pozno: koraki na celotnem stanju (srce_ct: stene iz CT, poravnava ostalih delov nanje, pokrov reza)
+    for ime_f in cfg.get("pozno", []):
+        osnovni = globals()[ime_f](osnovni, cfg, tmp)
     # napihni: (regex, faktor) okoli težišča mreže. Telesa s skupno mejo (režnji pljuč ob špranji, segmenti jeter) malo
     # pomanjšamo: pokrov reza je zadnja stena telesa in bi se sicer mešal s sprednjo steno soseda (svetle lise v prerezu).
     for rx, f, *dno in cfg.get("napihni", []):  # dno: središče na dnu (nadledvična žleza ostane na ledvici)
@@ -1038,6 +1151,8 @@ def izvozi(organ, cfg):
     velikost = (hi - lo).length
     for _, me, *_ in osnovni:
         me.transform(Matrix.Translation(-ctr))
+    for me in cfg.get("_telefon", {}).values():  # telefonske mreže sten CT (srce_ct): isti premik
+        me.transform(Matrix.Translation(-ctr))
     # del brez zadetka: najbližji del iz »blizina« (po središčih)
     def sred(me):
         n = len(me.vertices); s = Vector((0, 0, 0))
@@ -1055,26 +1170,43 @@ def izvozi(organ, cfg):
     skupaj = sum(tris(me) for _, me, *_ in osnovni)
     print(f"[organi] {organ}: surovo {skupaj} trikotnikov, velikost {velikost:.3f} m")
     porocilo = {}
-    tc = cfg.get("tekstura")
+    tc = None if os.environ.get("ORGANI_TEKSTURE") == "0" else cfg.get("tekstura")  # ORGANI_TEKSTURE=0: hiter preizkus oblike
+    if tc and tc.get("pbr"):
+        ms = tc.get("maska", {})
+        peka.maske(osnovni, velikost, ms.get("zile", "^$"), set(ms.get("tkiva", [])), votline_rx=ms.get("votline"),
+                   **{k: ms[k] for k in ("zleb", "zlebZila", "sled") if k in ms})
     slike = None
     for i, (cilj, pripona) in enumerate(zip(cfg["cilj"], ("", "-telefon"))):
         ratio = min(1.0, cilj / max(skupaj, 1))
+        oh = re.compile(cfg["ohrani"]) if cfg.get("ohrani") else None
+        ned = re.compile(cfg["nedotakni"]) if cfg.get("nedotakni") else None  # že poenostavljeno (stene CT): ratio 1
+        tel = cfg.get("_telefon", {}) if i == 1 else {}
+        nedot = lambda r: ned is not None and ned.search(r[4])
+        ex_n = sum(tris(tel.get(r[0], r[1])) for r in osnovni if nedot(r))
+        cilj_ = max(cilj - ex_n, cilj * 0.2); skupaj_ = max(skupaj - sum(tris(r[1]) for r in osnovni if nedot(r)), 1)
+        ratio = min(1.0, cilj_ / skupaj_)
+        r_cev = 1.0
+        if oh:  # lastne cevi: blažja poenostavitev (oglata cev), ostalo dobi preostanek cilja
+            ex = sum(tris(r[1]) for r in osnovni if oh.search(r[4]) and not nedot(r))
+            r_cev = min(1.0, 1.8 * ratio)
+            ratio = min(1.0, max(0.05, (cilj_ - ex * r_cev) / max(skupaj_ - ex, 1)))
         # telefon=False: telefon brez tekstur (pri možganih je 1024-px peka na ~50k trikotnikih videti zmečkano)
         tk = tc if tc and (i == 0 or tc.get("telefon", True)) else None
         slike = None
         objekti = []
         for ime, me, tkivo, d, v, odprtih in osnovni:
-            m = me.copy()
+            m = tel[ime].copy() if ime in tel else me.copy()
+            rat = 1.0 if ned is not None and ned.search(v) else r_cev if oh and oh.search(v) else ratio
             no = bpy.data.objects.new(ime, m)
             if no.name != ime:  # lokalni izvirnik z istim imenom (odprt Startup.blend): izvirnik preimenujemo
                 bpy.data.objects[ime, None].name = ime + "·src"; no.name = ime
             tmp.objects.link(no)
             n = tris(m)
-            if tk and not (ratio < 1 and n > 300):  # tangente MikkTSpace (normalna mapa) zahtevajo trikotnike
+            if tk and not (rat < 1 and n > 300):  # tangente MikkTSpace (normalna mapa) zahtevajo trikotnike
                 bm = bmesh.new(); bm.from_mesh(m); bmesh.ops.triangulate(bm, faces=bm.faces); bm.to_mesh(m); bm.free()
-            if ratio < 1 and n > 300:
+            if rat < 1 and n > 300:
                 bm = bmesh.new(); bm.from_mesh(m); bmesh.ops.triangulate(bm, faces=bm.faces); bm.to_mesh(m); bm.free()
-                mod = no.modifiers.new("dec", "DECIMATE"); mod.ratio = max(ratio, 150 / n); mod.use_collapse_triangulate = True
+                mod = no.modifiers.new("dec", "DECIMATE"); mod.ratio = max(rat, 150 / n); mod.use_collapse_triangulate = True
                 m2 = bpy.data.meshes.new_from_object(no.evaluated_get(bpy.context.evaluated_depsgraph_get()))
                 no.modifiers.clear(); no.data = m2
             for p in no.data.polygons:
@@ -1082,18 +1214,23 @@ def izvozi(organ, cfg):
             no.data.materials.clear(); no.data.materials.append(material(tkivo, slike))
             no["tkivo"] = tkivo; no["del"] = d or ""
             objekti.append(no)
-        if tk:  # vsaka mreža (računalnik, telefon) dobi svoj UV atlas in svojo peko
+        if tk and tk.get("pbr"):  # skupna pot (peka.py): vsaka mreža svoj UV atlas; peka po delih v ločenih procesih
+            for o in objekti: o["ime"] = o.name
+            peka.uv_atlas(objekti, tc, tc.get("px", (2048, 1024))[i])
+        elif tk:  # vsaka mreža (računalnik, telefon) dobi svoj UV atlas in svojo peko
             slike = zapeci_teksture(objekti, [r[1] for r in osnovni], velikost, tc, tmp, organ + pripona, tc.get("px", (2048, 1024))[i])
         odp = zapeci_odprtost(objekti, velikost) if cfg.get("odprtost") else None
         zapeci_ao(objekti, velikost, po_straneh=cfg.get("ao_po_straneh", False), odprtost=odp)
+        if tk and tk.get("pbr"):  # GLB izvozi peka.py zakljuci (scripts/atlas/peci.py vodi korake in pazi na pomnilnik)
+            peka.shrani_delo(os.path.join(out, f"{organ}{pripona}.delo.blend"), objekti, osnovni, velikost, tc, tc.get("px", (2048, 1024))[i])
         for c in scene.collection.children:
             lc = bpy.context.view_layer.layer_collection.children.get(c.name)
             if lc: lc.exclude = (c != tmp)
-        bpy.ops.export_scene.gltf(
+        if not (tk and tk.get("pbr")): bpy.ops.export_scene.gltf(
             filepath=os.path.join(out, organ + pripona + ".glb"), export_format="GLB",
             use_active_collection=False, use_visible=True, export_apply=True,
             export_materials="EXPORT", export_normals=True, export_vertex_color="ACTIVE", export_texcoords=bool(tk), export_tangents=bool(tk),
-            export_image_format="WEBP" if tk else "AUTO", export_image_quality=tk.get("kakovost", 82) if tk else 75,
+            export_image_format="WEBP" if tk and not tk.get("pbr") else "AUTO", export_image_quality=tk.get("kakovost", 82) if tk else 75,
             export_yup=True, export_extras=True, export_animations=False, export_skins=False,
             export_morph=False, export_lights=False, export_cameras=False)
         for c in scene.collection.children:
@@ -1117,9 +1254,25 @@ def izvozi(organ, cfg):
             src_ = bpy.data.objects.get((o.name + "·src", None))
             bpy.data.objects.remove(o)
             if src_: src_.name = src_.name[:-4]
+    if cfg.get("_tocke4"):  # ravnina prereza v koordinatah glTF (središče organa 0): ohrani zadnji del (n·p + d ≥ 0)
+        g = [Vector((q.x, q.z, -q.y)) - Vector((ctr.x, ctr.z, -ctr.y)) for q in cfg["_tocke4"]]
+        n = (g[1] - g[0]).cross(g[2] - g[0]).normalized()
+        if n.z > 0:
+            n = -n
+        porocilo["ravnina4"] = {"n": [round(x, 4) for x in n], "d": round(-n.dot(sum(g, Vector()) / 3), 4)}
+    if cfg.get("_volumen"):  # prostorska tekstura reza (srce_ct.volumen): lo v koordinatah glTF s središčem organa 0
+        vm = dict(cfg["_volumen"]); c_ = (ctr.x, ctr.z, -ctr.y)
+        vm["lo"] = [round(vm["lo"][k] - c_[k], 5) for k in range(3)]
+        porocilo["volumen"] = vm
+    if cfg.get("_ct"):  # oslonilne točke CT (glTF, središče organa 0): preverjanje debelin in reza
+        porocilo["ctTocke"] = {k: [round(float(v[0]) - ctr.x, 5), round(float(v[2]) - ctr.z, 5), round(-float(v[1]) + ctr.y, 5)] for k, v in cfg["_ct"]["L"].items()}
     with open(os.path.join(out, organ + ".vozlisca.json"), "w", encoding="utf-8") as f:
         json.dump(porocilo, f, ensure_ascii=False, indent=1)
 
 
 for organ in izbrani:
-    izvozi(organ, ORGANI[organ])
+    if os.environ.get("ORGANI_NADALJUJ"):
+        tmp_ = bpy.data.collections.new("organ-" + organ); scene.collection.children.link(tmp_)
+        izvozi_naprej(organ, ORGANI[organ], nalozi_stanje(os.environ["ORGANI_NADALJUJ"], ORGANI[organ]), tmp_)
+    else:
+        izvozi(organ, ORGANI[organ])
