@@ -234,10 +234,12 @@ async function renderHome() {
   const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
   if (!tb.books.length || tb.program !== program || tb.system !== system) {
+    const books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
+    // Stanje šele po preverjanju: zavržen odgovor ne sme pustiti novih knjig brez ponastavitve predmeta in poti.
+    if (my !== navSeq) return;
     tb.program = program;
     tb.system = system;
-    tb.books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
-    if (my !== navSeq) return;
+    tb.books = books;
     tb.subject = null;
     tb.book = null;
     tb.group = null;
@@ -337,8 +339,18 @@ async function renderBody() {
   if (!body) return;
   const my = ++bodySeq;
   const stale = () => my !== bodySeq || !body.isConnected;
+  // Napaka iskanja ali kazala: sporočilo namesto zadetkov starejše poizvedbe (in brez neobravnavane zavrnitve).
+  const failed = (err) => {
+    if (stale()) return;
+    body.innerHTML = `<div class="card" role="alert"><p>${esc(err?.status ? t("common.error", { status: err.status }) : t("off.noConnection"))}</p></div>`;
+  };
   if (tb.query.length >= 2) {
-    const hits = await ctx.api(`/api/textbook/search?q=${encodeURIComponent(tb.query)}&system=${encodeURIComponent(tb.system || "SI")}`);
+    let hits;
+    try {
+      hits = await ctx.api(`/api/textbook/search?q=${encodeURIComponent(tb.query)}&system=${encodeURIComponent(tb.system || "SI")}`);
+    } catch (err) {
+      return failed(err);
+    }
     if (stale()) return;
     body.innerHTML = hits.length
       ? `<p class="muted">${esc(t("tbk.hits", { q: tb.query }))}</p><ul class="tb-list">${hits
@@ -357,7 +369,12 @@ async function renderBody() {
     body.innerHTML = `<div class="card"><p>${esc(t("tbk.noBook"))}</p></div>`;
     return;
   }
-  const book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
+  let book;
+  try {
+    book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
+  } catch (err) {
+    return failed(err);
+  }
   if (stale()) return;
   if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book, stale);
   const unitHtml = (u, i) => `<section class="card tb-unit">
