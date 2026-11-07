@@ -123,7 +123,7 @@ export function mindMapHtml(center, branches) {
 const SUMMARY_CSS = `
   .one { font: 10pt/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   .one h1 { font-size: 1.45rem; margin: 2px 0 0; }
-  .one h2 { font-size: 1rem; margin: 10px 0 4px; color: #2f6fed; border-bottom: 2px solid #dde2ec; padding-bottom: 2px; }
+  .one h2 { font-size: 1rem; margin: 10px 0 4px; color: #2353d1; border-bottom: 2px solid #dde2ec; padding-bottom: 2px; }
   .one ul { margin: 4px 0; padding-left: 18px; } .one li { margin: 2px 0; }
   .mm { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(64px, auto); gap: 10px; margin: 8px 0 4px; }
   .mm-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
@@ -131,7 +131,7 @@ const SUMMARY_CSS = `
   .mm-cell { display: flex; align-items: center; justify-content: center; z-index: 1; min-width: 0; }
   .mm-node { background: #fff; border: 2px solid #c9d3ea; border-radius: 12px; padding: 6px 9px; font-size: 0.86rem; line-height: 1.3; text-align: center; max-width: 100%; overflow-wrap: anywhere; }
   .mm-node b { display: block; color: #1c2233; } .mm-node span { color: #3a4257; }
-  .mm-center { background: #2f6fed; border-color: #2f6fed; color: #fff; font-weight: 800; font-size: 1.05rem; padding: 12px 14px; }
+  .mm-center { background: #2f6fed; border-color: #2353d1; color: #fff; font-weight: 800; font-size: 1.05rem; padding: 12px 14px; }
   .one .cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
   .one .fbox { border: 1px solid #c9d3ea; background: #f3f6fc; border-radius: 8px; padding: 2px 10px 6px; }
   .one .fbox p { margin: 6px 0; }

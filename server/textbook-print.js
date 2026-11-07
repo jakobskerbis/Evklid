@@ -181,9 +181,9 @@ export function shell(title, content, css = "") {
   main { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
   h1, h2, h3, h4, .brand, .bar, .crumb, .toc { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   .bar { position: sticky; top: 0; background: #2f6fed; color: #fff; padding: 10px 16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-  .bar button { font: inherit; font-weight: 700; border: 0; border-radius: 10px; padding: 8px 14px; background: #fff; color: #2f6fed; cursor: pointer; }
+  .bar button { font: inherit; font-weight: 700; border: 0; border-radius: 10px; padding: 8px 14px; background: #fff; color: #2353d1; cursor: pointer; }
   .cover { page-break-after: always; break-after: page; }
-  .brand { font-weight: 800; font-size: 1.4rem; margin: 0; } .brand span { color: #2f6fed; }
+  .brand { font-weight: 800; font-size: 1.4rem; margin: 0; } .brand span { color: #2353d1; }
   .cover h1 { font-size: 2.2rem; margin: 40px 0 6px; }
   .sub { font-size: 1.15rem; }
   .muted { color: #667089; } .small { font-size: 0.9em; }
@@ -191,7 +191,7 @@ export function shell(title, content, css = "") {
   .lesson, .part { break-before: page; page-break-before: always; }
   .sheet { font: 9.5pt/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   .sheet h1 { font-size: 1.5rem; margin: 2px 0; }
-  .sheet h2 { font-size: 1.02rem; margin: 12px 0 4px; color: #2f6fed; border-bottom: 2px solid #dde2ec; padding-bottom: 2px; break-after: avoid; }
+  .sheet h2 { font-size: 1.02rem; margin: 12px 0 4px; color: #2353d1; border-bottom: 2px solid #dde2ec; padding-bottom: 2px; break-after: avoid; }
   .sheet table { width: 100%; margin: 0 0 4px; break-inside: auto; }
   .sheet th:empty, .sheet thead:has(th:empty) { display: none; }
   .sheet td, .sheet th { padding: 2px 6px; vertical-align: middle; }
@@ -209,12 +209,12 @@ export function shell(title, content, css = "") {
   table { border-collapse: collapse; margin: 8px 0; font-variant-numeric: tabular-nums; } th, td { border: 1px solid #ccd3e0; padding: 4px 10px; text-align: left; vertical-align: middle; }
   th { background: #eef2f9; font-weight: 700; } tr { break-inside: avoid; } th[align="center"], td[align="center"] { text-align: center; } th[align="right"], td[align="right"] { text-align: right; }
   pre { background: #f3f5f9; padding: 8px; border-radius: 6px; }
-  .demo-note { border: 1px dashed #2f6fed; border-radius: 8px; padding: 6px 10px; color: #2f6fed; font-family: system-ui, sans-serif; font-size: 0.9rem; margin: 10px 0; }
+  .demo-note { border: 1px dashed #2f6fed; border-radius: 8px; padding: 6px 10px; color: #2353d1; font-family: system-ui, sans-serif; font-size: 0.9rem; margin: 10px 0; }
   .alt { border-left: 3px solid #7b61d1; padding-left: 12px; margin: 10px 0; }
   .think { border-left: 4px solid #e0a100; background: #fbf7ea; padding: 4px 12px; margin: 8px 0; }
   .think-label { margin: 2px 0 0; font: 700 0.78rem system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.04em; color: #8a6a00; }
   .formula { border: 1px solid #c9d3ea; background: #f3f6fc; border-radius: 8px; padding: 4px 12px; margin: 8px 0; }
-  .formula-label { margin: 2px 0 0; font: 700 0.78rem system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.04em; color: #2f6fed; }
+  .formula-label { margin: 2px 0 0; font: 700 0.78rem system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.04em; color: #2353d1; }
   .checks .opts { list-style: lower-alpha; }
   .checks p { margin: 2px 0; }
   .key { margin-top: 10px; font-size: 0.92em; } .key summary { font-weight: 700; font-family: system-ui, sans-serif; }
