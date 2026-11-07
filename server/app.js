@@ -27,7 +27,8 @@ import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
-import { printPage } from "./textbook-print.js";
+import { printPage, printSignature } from "./textbook-print.js";
+import { createPageCache } from "./tisk-predpomnilnik.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, firstTime, mountSkillChecks } from "./weaknesses.js";
@@ -326,10 +327,14 @@ export function createApp(store, opts = {}) {
   app.use("/vendor/three/build", express.static(path.join(modules, "three", "build"))); // 3D (server/tri-d.js)
 
   // Učbenik za tiskanje / PDF: brezplačno in brez prijave.
-  app.get("/ucbenik/:path{/:topic}", (req, res) => {
-    const html = printPage(req.params.path, req.params.topic || null);
-    if (!html) return res.status(404).send("Ta del učbenika ne obstaja.");
-    res.type("html").send(html);
+  // Javno, brez prijave: izris celotnega učbenika traja do ~0,8 s, zato predpomnjeno po različicah lekcij
+  // (spremenjena lekcija takoj da nov izris) in poslano stisnjeno (server/tisk-predpomnilnik.js).
+  const printCache = createPageCache();
+  app.get("/ucbenik/:path{/:topic}", (req, res, next) => {
+    const { path: key, topic = null } = req.params;
+    const page = printCache.get(`${key}/${topic || ""}`, printSignature(key, topic), () => printPage(key, topic));
+    if (!page) return res.status(404).send("Ta del učbenika ne obstaja.");
+    printCache.send(req, res, page).catch(next);
   });
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor
