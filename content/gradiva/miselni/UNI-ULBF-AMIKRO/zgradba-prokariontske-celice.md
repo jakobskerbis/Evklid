@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Peptidoglikan
+  - verige NAG–NAM, prečni peptidni mostovi
+  - penicilin zavre transpeptidaze, lizocim cepi verige
+  - nosi turgorski tlak do 2 MPa
+- Gram-pozitivna ovojnica
+  - debel peptidoglikan 20–80 nm
+  - teihojske kisline, ena membrana
+- Gram-negativna ovojnica
+  - tanek peptidoglikan v periplazmi
+  - zunanja membrana z LPS in porini
+  - lipid A je endotoksin
+- Barvanje po Gramu
+  - kristal vijolično, jod, alkohol, safranin
+  - odloči zadrževanje kompleksa, ne sprejem
+  - izjeme: mikobakterije, mikoplazme, arheje
+- Membrana
+  - dvosloj s hopanoidi; arheje etrski lipidi
+  - $\Delta p = \Delta\psi - Z\,\Delta\mathrm{pH}$
+- Biček
+  - filament, kavelj, obroči L, P, MS, C
+  - rotacijski motor na protone
+  - tek in prekucnitev, kemotaksa
+- Endospora
+  - sredica z malo vode, Ca-DPA, SASP
+  - korteks in plašč
+  - preživi vrenje; ni razmnoževanje
