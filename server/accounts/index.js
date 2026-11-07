@@ -243,6 +243,8 @@ export function mountAccounts(app, store, opts = {}) {
     // Politika zasebnosti se je spremenila po registraciji: aplikacija enkrat pokaže kratko obvestilo s povezavo.
     privacy_notice: !p.is_guest && (p.privacy_seen || p.privacy_version || "") < PRIVACY_VERSION ? PRIVACY_VERSION : null,
     verified: !!p.email_verified_at,
+    // Račun s prijavo z Apple nima gesla: splet za izvoz in izbris namesto gesla ponudi nastavitev gesla.
+    has_password: !p.is_guest && !String(p.password_hash || "").startsWith("none$"),
     is_admin: !!p.is_admin || isAdminEmail(p),
     weekly_email: !!p.weekly_email,
     referral_code: p.referral_code,
@@ -1449,13 +1451,18 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Izvoz vseh podatkov (GDPR čl. 15 in 20).
   // Prenos vseh podatkov: s seje računa, ki si jo delijo profili na napravi, zato z geslom računa
-  // (sicer bi brat prebral pogovore zaklenjenega sestrinega profila). Gost gesla nima.
+  // (sicer bi brat prebral pogovore zaklenjenega sestrinega profila). Gost gesla nima. Račun brez gesla (prijava
+  // z Apple) se potrdi z novo prijavo pri Applu (reauthHooks, kot izbris), sicer izvoza nikoli ne bi mogel.
   app.post("/api/account/export", json, async (req, res) => {
     const p = req.parent;
     const key = `export${p.id}|${req.ip}`;
     if (throttle.blocked(key)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
     if (acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: ACCT_BLOCKED });
-    if (!p.is_guest && !(await verifyPassword(String(req.body?.password || ""), p.password_hash))) {
+    const reauth = async () => {
+      for (const fn of reauthHooks) if (await fn(req, p, { revoke: false })) return true;
+      return false;
+    };
+    if (!p.is_guest && !(await verifyPassword(String(req.body?.password || ""), p.password_hash)) && !(await reauth())) {
       throttle.fail(key);
       acrossThrottle.fail(`acct${p.id}`);
       audit(db, { req, parentId: p.id, action: "export", ok: false });
@@ -1597,7 +1604,7 @@ export function mountAccounts(app, store, opts = {}) {
     const p = req.parent;
     // Brez gesla (račun s prijavo z Apple): potrditev z novo prijavo pri Applu (server/mobile).
     const reauth = async () => {
-      for (const fn of reauthHooks) if (await fn(req, p)) return true;
+      for (const fn of reauthHooks) if (await fn(req, p, { revoke: true })) return true;
       return false;
     };
     const delKey = `delete${p.id}`;
