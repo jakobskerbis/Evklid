@@ -1,5 +1,6 @@
 // Evklid – odjemalec (brez ogrodja).
 import { fetchThroughRestart as fetchRetry } from "./restart-retry.js";
+import { jsonAliNic } from "./odgovor.js";
 import { zadrziFokus } from "./fokus-okna.js";
 import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
@@ -1456,7 +1457,7 @@ for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
 }
 const serverVersion = () =>
   fetch("/healthz/stanje", { cache: "no-store" })
-    .then((r) => (r.ok ? r.json() : null))
+    .then((r) => jsonAliNic(r))
     .then((s) => s?.razlicica || null)
     .catch(() => null);
 const unsentText = () =>
