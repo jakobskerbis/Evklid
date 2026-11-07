@@ -342,7 +342,9 @@ async function renderBody() {
   // Napaka iskanja ali kazala: sporočilo namesto zadetkov starejše poizvedbe (in brez neobravnavane zavrnitve).
   const failed = (err) => {
     if (stale()) return;
-    body.innerHTML = `<div class="card" role="alert"><p>${esc(err?.status ? t("common.error", { status: err.status }) : t("off.noConnection"))}</p></div>`;
+    // 502/503 od gostitelja (objava nove različice): »Strežnik se ne odziva«, ne »Ni povezave« (app.js api, offline).
+    const msg = err?.status ? t("common.error", { status: err.status }) : err?.offline && err.message ? err.message : t("off.noConnection");
+    body.innerHTML = `<div class="card" role="alert"><p>${esc(msg)}</p></div>`;
   };
   if (tb.query.length >= 2) {
     let hits;

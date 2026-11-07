@@ -6,7 +6,9 @@ import { STOPNJE, rang } from "../../public/stopnja.js";
 export const TRIAL_DAYS = 7;
 export const REFERRAL_DAYS = 30;
 export const MAX_CHILDREN = 4;
-export const PRIVACY_VERSION = "2026-10-29";
+// Ob spremembi politike (public/zasebnost.html) novo različico: obstoječi računi ob prijavi enkrat vidijo kratko obvestilo
+// (publicParent.privacy_notice, public/account.js). 2026-11-06: izvoz in izbris brez ostankov (#464), naloge in merjenje v pilotu (#474).
+export const PRIVACY_VERSION = "2026-11-06";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi

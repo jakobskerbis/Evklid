@@ -297,6 +297,8 @@ export function mountBilling(app, ctx) {
     const pass = passes.get(session.metadata.pass_id);
     const why = purchaseMismatch(pass, pass && getParent(pass.parent_id), session);
     if (why) {
+      // Profil je bil izbrisan med plačilom (passes ON DELETE CASCADE): plačilo je prejeto, paketa ni – skrbnik ga vrne v Stripu.
+      if (!pass) log.error?.("[evklid] plačan paket pred testom za izbrisan profil; vrni plačilo v Stripu", session.metadata.parent_id, session.payment_intent?.id || session.payment_intent || session.id);
       log.error?.(`[evklid] Stripe paket: plačilo ni pripisano (${why}), preveri v Stripu`, session.id || "");
       unmatched?.(why);
       return false;

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Napačna ideja
+  - »vsaka podpora nosi pol« velja le simetrično
+- Pogoji ravnotežja
+  - $\sum F_x = 0$, $\sum F_y = 0$, $\sum M_A = 0$
+  - momenti nič glede na vsako točko
+- Diagram prostega telesa
+  - podpore nadomesti z reakcijami
+  - negativna reakcija: smer je obratna
+- Vrste podpor
+  - pomična 1, členkasta 2, vpetje 3
+  - vpetje da tudi moment
+- Statična določenost
+  - $n = 3$ določeno, $n < 3$ mehanizem
+  - vzporedne ali sočasne reakcije: labilno
+- Prostoležeči nosilec
+  - $A_y = F\,b/l$, $B = F\,a/l$
+  - bližja podpora nosi več
+- Konzola
+  - $A_y = F$, $M_A = F\,a$
+  - moment vpetja trga zgornje vijake

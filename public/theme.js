@@ -504,7 +504,7 @@
     const era = ERAS[id];
     if (!era || !era.icons || typeof fetch !== "function") return Promise.resolve(null);
     return (iconSets[id] ||= fetch(`/eras/${id}/${era.icons}.json`)
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => import("/odgovor.js").then((m) => m.jsonAliNic(r)))
       .catch(() => null)
       .then((j) => (j && j.map && j.svg ? j : (delete iconSets[id], null))));
   }
