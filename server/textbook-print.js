@@ -64,6 +64,10 @@ const NOTE = `<p class="muted small">Interaktivni poskusi, simulacije, sprotno p
 
 // Celoten učbenik predmeta (npr. MAT-OS): deli so razredi oziroma letniki.
 export function printBook(bookKey) {
+  const parts = printBookParts(bookKey);
+  return parts && joinParts(parts);
+}
+function printBookParts(bookKey) {
   const book = getBook(bookKey);
   if (!book) return null;
   let n = 0;
@@ -89,17 +93,16 @@ export function printBook(bookKey) {
           .join("")}
         ${NOTE}
       </section>`;
-  const body = have
-    ? parts
-        .filter((x) => x.ready.length)
-        .map(({ p, ready }) => {
-          n = 0;
-          return `<section class="part"><p class="brand small">${esc(book.subjectName)}</p><h1>${esc(p.label)}</h1>
-            <p class="muted">${ready.length} lekcij</p></section>${ready.map(({ t, lesson }) => lessonHtml(t, lesson, ++n)).join("")}`;
-        })
-        .join("")
-    : `<p>Za ta učbenik lekcije še nastajajo.</p>`;
-  return shell(`${book.subjectName} · ${book.schoolName} · učbenik`, cover + body);
+  function* body() {
+    if (!have) return yield `<p>Za ta učbenik lekcije še nastajajo.</p>`;
+    for (const { p, ready } of parts.filter((x) => x.ready.length)) {
+      n = 0;
+      yield `<section class="part"><p class="brand small">${esc(book.subjectName)}</p><h1>${esc(p.label)}</h1>
+            <p class="muted">${ready.length} lekcij</p></section>`;
+      for (const { t, lesson } of ready) yield lessonHtml(t, lesson, ++n);
+    }
+  }
+  return shellParts(`${book.subjectName} · ${book.schoolName} · učbenik`, cover, body());
 }
 
 // List s formulami in konstantami predmeta (/ucbenik/MAT-OS/formule ali /ucbenik/MAT-OS-8/formule).
@@ -120,9 +123,20 @@ export function printFormulas(key) {
 
 // pathKey: cela pot; topicSlug (neobvezno): samo ena lekcija.
 export function printPage(pathKey, topicSlug = null) {
-  if (topicSlug === "formule") return printFormulas(pathKey);
+  const parts = printPageParts(pathKey, topicSlug);
+  return parts && joinParts(parts);
+}
+
+// Isto kot printPage, a kot zaporedje kosov HTML (lupina, kazalo, nato lekcija za lekcijo) ali null.
+// Velik učbenik programa (P-UL-FKKT-KEM: 67 MB) kot en niz dvigne proces na ~700 MB, kar zruši strežnik
+// s 512 MB; pot /ucbenik zato pošilja kos za kosom in naenkrat drži v pomnilniku le eno lekcijo.
+export function printPageParts(pathKey, topicSlug = null) {
+  if (topicSlug === "formule") {
+    const html = printFormulas(pathKey);
+    return html && [html];
+  }
   const p = getPath(pathKey);
-  if (!p) return topicSlug ? null : printBook(pathKey);
+  if (!p) return topicSlug ? null : printBookParts(pathKey);
   let topics = topicOrder(pathKey);
   if (topicSlug) {
     const t = getTopic(`${pathKey}/${topicSlug}`);
@@ -145,10 +159,43 @@ export function printPage(pathKey, topicSlug = null) {
         ${NOTE}
       </section>`;
 
-  const body = ready.length
-    ? ready.map(({ t, lesson }, i) => lessonHtml(t, lesson, topicSlug ? 0 : i + 1)).join("")
-    : `<p>Za to pot lekcije še nastajajo.</p>`;
-  return shell(title, toc + body);
+  function* body() {
+    if (!ready.length) return yield `<p>Za to pot lekcije še nastajajo.</p>`;
+    for (const [i, { t, lesson }] of ready.entries()) yield lessonHtml(t, lesson, topicSlug ? 0 : i + 1);
+  }
+  return shellParts(title, toc, body());
+}
+
+// Pošlje kose v odgovor in počaka, ko je medpomnilnik poln (počasen odjemalec ne kopiči celega učbenika
+// v pomnilniku). Ob prekinjeni povezavi neha izrisovati.
+export async function streamParts(res, parts) {
+  const it = parts[Symbol.iterator]();
+  try {
+    for (let r = it.next(); !r.done; r = it.next()) {
+      if (res.destroyed) return;
+      if (!res.write(r.value)) await new Promise((ok) => { const done = () => { res.off("drain", done); res.off("close", done); ok(); }; res.on("drain", done); res.on("close", done); });
+    }
+    res.end();
+  } finally {
+    it.return?.();
+  }
+}
+
+const joinParts = (parts) => {
+  let html = "";
+  for (const part of parts) html += part;
+  return html;
+};
+
+// Lupina okoli kosov vsebine: začetek, kosi (iterator), konec.
+function* shellParts(title, head, body) {
+  const mark = "<\u0000>"; // esc() v naslovu spremeni »<« v &lt;, zato se oznaka pojavi samo v <main>
+  const page = shell(title, mark);
+  const at = page.indexOf(mark);
+  const [start, end] = [page.slice(0, at), page.slice(at + mark.length)];
+  yield start + head;
+  yield* body;
+  yield end;
 }
 
 // Skupna lupina strani za tisk (tudi gradiva: povzetek na eni strani, delovni list); css: dodatna pravila.

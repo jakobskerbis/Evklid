@@ -26,7 +26,7 @@ import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
-import { printPage } from "./textbook-print.js";
+import { printPageParts, streamParts } from "./textbook-print.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, firstTime, mountSkillChecks } from "./weaknesses.js";
@@ -316,10 +316,14 @@ export function createApp(store, opts = {}) {
   app.use("/vendor/three/build", express.static(path.join(modules, "three", "build"))); // 3D (server/tri-d.js)
 
   // Učbenik za tiskanje / PDF: brezplačno in brez prijave.
-  app.get("/ucbenik/:path{/:topic}", (req, res) => {
-    const html = printPage(req.params.path, req.params.topic || null);
-    if (!html) return res.status(404).send("Ta del učbenika ne obstaja.");
-    res.type("html").send(html);
+  // Pošlje kos za kosom (server/textbook-print.js printPageParts): učbenik programa ima lahko čez 60 MB.
+  app.get("/ucbenik/:path{/:topic}", (req, res, next) => {
+    const parts = printPageParts(req.params.path, req.params.topic || null);
+    if (!parts) return res.status(404).send("Ta del učbenika ne obstaja.");
+    res.type("html");
+    // Ena lekcija ali formule: majhno, pošljemo v celoti (z ETag kot prej).
+    if (req.params.topic) return res.send([...parts].join(""));
+    streamParts(res, parts).catch(next);
   });
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor
