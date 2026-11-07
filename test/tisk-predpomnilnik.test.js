@@ -100,4 +100,60 @@ test("/ucbenik in /gradiva/povzetek: stisnjeno, ETag, sveže po spremembi lekcij
   }
 });
 
+// Ponoven zagon (posodobitev z novo lekcijo): zaporedne številke lekcij se v novem procesu ponovijo, zato ETag ne sme
+// biti iz podpisa (pregled #516, P1). Vsak zagon je svoj proces.
+const { spawnSync } = await import("node:child_process");
+const SERVE_ONCE = `
+const http = await import("node:http");
+const { openDb } = await import(${JSON.stringify(new URL("../server/db.js", import.meta.url).href)});
+const { createApp } = await import(${JSON.stringify(new URL("../server/app.js", import.meta.url).href)});
+const s = createApp(openDb(":memory:"), { scheduler: false }).listen(0);
+const out = {};
+for (const u of ["/ucbenik/FIZ-OS-9/newtonovi-zakoni", "/ucbenik/FIZ-OS-9"]) {
+  out[u] = await new Promise((ok) => http.get("http://127.0.0.1:" + s.address().port + u, { headers: JSON.parse(process.env.INM || "{}")[u] ? { "if-none-match": JSON.parse(process.env.INM)[u] } : {} }, (r) => { r.resume(); r.on("end", () => ok({ status: r.statusCode, etag: r.headers.etag })); }));
+}
+console.log(JSON.stringify(out));
+s.close(); process.exit(0);`;
+const runOnce = (inm = {}) => {
+  const r = spawnSync(process.execPath, ["--input-type=module", "-e", SERVE_ONCE], { env: { ...process.env, EVKLID_LESSONS: tmp, INM: JSON.stringify(inm) }, encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  return JSON.parse(r.stdout.trim().split("\n").at(-1));
+};
+
+test("ETag po ponovnem zagonu: spremenjena lekcija ne da 304 (drug proces, isti vrstni red lekcij)", () => {
+  const first = runOnce();
+  const same = runOnce(Object.fromEntries(Object.entries(first).map(([u, r]) => [u, r.etag])));
+  for (const [u, r] of Object.entries(same)) assert.equal(r.status, 304, `${u}: nespremenjena vsebina po zagonu → 304`);
+  const file = path.join(tmp, "FIZ-OS-9", "newtonovi-zakoni.md");
+  fs.writeFileSync(file, fs.readFileSync(file, "utf8").replace(/^## Povzetek\n+/m, "## Povzetek\n\n- Po zagonu: OZNAKA-ZAGON\n"));
+  const after = runOnce(Object.fromEntries(Object.entries(first).map(([u, r]) => [u, r.etag])));
+  for (const [u, r] of Object.entries(after)) {
+    assert.equal(r.status, 200, `${u}: star ETag po zagonu ne velja`);
+    assert.notEqual(r.etag, first[u].etag);
+  }
+});
+
+test("send: šibka primerjava, If-None-Match *, EVKLID_COMPRESS=0 brez stiskanja", async () => {
+  const fake = (headers) => {
+    const res = { code: 200, h: {}, body: null, setHeader: (k, v) => (res.h[k.toLowerCase()] = v), status: (c) => ((res.code = c), res), end: (b) => (res.body = b ?? null) };
+    return [{ headers }, res];
+  };
+  const c = createPageCache();
+  const e = c.get("k", "s", () => "x".repeat(5000));
+  const strong = e.etag.replace(/^W\//, "");
+  for (const inm of [strong, e.etag, `"drug", ${e.etag}`, "*"]) {
+    const [req, res] = fake({ "if-none-match": inm });
+    await c.send(req, res, e);
+    assert.equal(res.code, 304, inm);
+  }
+  const plain = createPageCache({ compress: false });
+  const e2 = plain.get("k", "s", () => "x".repeat(5000));
+  const [req, res] = fake({ "accept-encoding": "br, gzip" });
+  await plain.send(req, res, e2);
+  assert.equal(res.h["content-encoding"], undefined);
+  assert.equal(res.body.length, 5000);
+  const other = createPageCache().get("k", "s", () => "y".repeat(5000));
+  assert.notEqual(other.etag, e.etag, "isti ključ in podpis, druga vsebina → drug ETag");
+});
+
 test.after(() => fs.rmSync(tmp, { recursive: true, force: true }));

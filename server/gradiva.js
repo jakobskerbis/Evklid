@@ -335,7 +335,7 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
 
   // Povzetek na eni strani je besedilo učbenika: za vse, brez prijave (kot /ucbenik).
   // Predpomnjen po različici lekcije in miselnega vzorca (server/tisk-predpomnilnik.js).
-  const summaries = createPageCache({ maxBytes: 16 * 1024 * 1024 });
+  const summaries = createPageCache({ maxBytes: 8 * 1024 * 1024 });
   app.get("/gradiva/povzetek/:path/:topic", (req, res, next) => {
     const id = `${req.params.path}/${req.params.topic}`;
     const page = summaries.get(id, summarySignature(id), () => summaryPage(id));

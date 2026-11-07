@@ -5,14 +5,18 @@
 // Vnos velja, dokler se ne spremeni njegov podpis (sig): datum izdaje + različica vsake lekcije (nov predmet lekcije
 // ob spremembi datoteke, server/textbook.js readLesson) oziroma vsebina lista formul. Spremenjena datoteka lekcije
 // torej takoj da nov izris, nikoli star rezultat. Stisnjeni različici (br, gzip) nastaneta enkrat na vnos, zunaj
-// glavne niti (zlib v ozadju).
+// glavne niti (zlib v ozadju). ETag je iz vsebine (sha1 HTML, enkrat na vnos), ne iz podpisa: zaporedne številke
+// lekcij se ob ponovnem zagonu ponovijo, zato bi po posodobitvi isti ETag dal 304 in staro lekcijo (pregled #516).
 import zlib from "node:zlib";
 import crypto from "node:crypto";
 import { pickEncoding } from "./compress.js";
 
 const MIN_SIZE = 1024;
 
-export function createPageCache({ maxBytes = 96 * 1024 * 1024 } = {}) {
+// Privzeta meja: EVKLID_TISK_MB (strežnik ima 512 MB), sicer 40 MB.
+const defaultMax = () => (Number(process.env.EVKLID_TISK_MB) > 0 ? Number(process.env.EVKLID_TISK_MB) : 40) * 1024 * 1024;
+
+export function createPageCache({ maxBytes = defaultMax(), compress = process.env.EVKLID_COMPRESS !== "0" } = {}) {
   const map = new Map(); // ključ -> vnos (vrstni red = nazadnje uporabljen na koncu)
   let bytes = 0;
   const sizeOf = (e) => e.html.length + (e.br?.length || 0) + (e.gzip?.length || 0);
@@ -43,10 +47,11 @@ export function createPageCache({ maxBytes = 96 * 1024 * 1024 } = {}) {
     drop(key);
     const html = render();
     if (html == null) return null;
+    const buf = Buffer.from(html);
     const e = {
       sig,
-      html: Buffer.from(html),
-      etag: `W/"${crypto.createHash("sha1").update(key).update("\0").update(sig).digest("base64url").slice(0, 27)}"`,
+      html: buf,
+      etag: `W/"${crypto.createHash("sha1").update(buf).digest("base64url").slice(0, 27)}"`,
       pending: {},
       cached: false,
     };
@@ -90,9 +95,11 @@ export function createPageCache({ maxBytes = 96 * 1024 * 1024 } = {}) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Vary", "Accept-Encoding");
     res.setHeader("ETag", e.etag);
-    const inm = String(req.headers["if-none-match"] || "");
-    if (inm && inm.split(/\s*,\s*/).includes(e.etag)) return res.status(304).end();
-    const enc = e.html.length >= MIN_SIZE ? pickEncoding(req.headers["accept-encoding"]) : null;
+    // Šibka primerjava (RFC 9110 §13.1.2): W/"x" in "x" sta enaka; * ustreza vsaki obstoječi strani.
+    const bare = (t) => t.trim().replace(/^W\//, "");
+    const inm = String(req.headers["if-none-match"] || "").split(",").map(bare).filter(Boolean);
+    if (inm.includes("*") || inm.includes(bare(e.etag))) return res.status(304).end();
+    const enc = compress && e.html.length >= MIN_SIZE ? pickEncoding(req.headers["accept-encoding"]) : null;
     let body = e.html;
     if (enc) {
       try {
