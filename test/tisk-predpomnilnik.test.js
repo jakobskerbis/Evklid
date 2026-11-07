@@ -55,6 +55,67 @@ test("createPageCache: izris enkrat na podpis, nov podpis = nov izris, meja veli
   assert.equal(big.stats().entries, 1, "stran med polovico meje in mejo se shrani (pregled #516: MAT-SS 23 MB pri meji 40 MB)");
 });
 
+// Pregled #516 B, P1: stran nad mejo se ne stisne vnaprej v br + gzip (rezultat bi se zavrgel; 549 MB RSS pri 2 zahtevkih).
+test("createPageCache: stran nad mejo brez vnaprejšnjega stiskanja; stisne se le zahtevano kodiranje", async () => {
+  const c = createPageCache({ maxBytes: 4000, compress: true });
+  const e = c.get("p", "v1", () => "<p>velik učbenik</p>".repeat(400)); // ~8 KB > 4 KB
+  assert.equal(e.cached, false);
+  assert.equal(e.slim, undefined, "brez br + gzip vnaprej");
+  assert.equal(e.pending.br, undefined);
+  assert.equal(e.pending.gzip, undefined);
+  assert.deepEqual(c.stats(), { entries: 0, bytes: 0, inflight: 0 });
+  const res = fakeRes();
+  await c.send({ headers: { "accept-encoding": "gzip" } }, res, e);
+  assert.equal(res.headers["Content-Encoding"], "gzip");
+  assert.equal(e.br, undefined, "br se ni izračunal");
+  assert.equal(zlib.gunzipSync(res.body).toString(), e.html.toString());
+});
+
+// Pregled #516 B, P2: velika stran tik pod mejo ne izrine ostalih vnosov (in ne sebe): vstavi se stisnjena.
+test("createPageCache: velika stran se vstavi šele stisnjena in ne izrine ostalih", async () => {
+  const c = createPageCache({ maxBytes: 40_000, compress: true });
+  let n = 0;
+  for (const k of ["a", "b", "c"]) c.get(k, "v1", () => `<p>${k}</p>`.repeat(1000)); // 3 × 8 KB surovo
+  const before = c.stats();
+  assert.equal(before.entries, 3);
+  const page = () => (n++, Array.from({ length: 1000 }, (_, i) => `<li>Lekcija ${i}: ${"razlaga ".repeat(1 + (i % 3))}</li>`).join("")); // ~38 KB
+  const e = c.get("big", "v1", page);
+  assert.ok(e.size > 30_000 && e.size <= 40_000, String(e.size));
+  assert.equal(c.get("big", "v1", page), e, "med stiskanjem isti vnos, brez drugega izrisa");
+  assert.equal(n, 1);
+  assert.equal(c.stats().entries, 3, "med stiskanjem ostali vnosi ostanejo");
+  await e.slim;
+  const after = c.stats();
+  assert.equal(after.entries, 4, JSON.stringify(after));
+  assert.equal(e.cached, true);
+  assert.equal(e.html, null);
+  assert.equal(after.bytes, before.bytes + e.br.length + e.gzip.length);
+  assert.equal(c.get("big", "v1", page), e);
+  assert.equal(n, 1);
+  // Brez stiskanja (EVKLID_COMPRESS=0) se taka stran shrani surova kot prej.
+  const raw = createPageCache({ maxBytes: 40_000, compress: false });
+  assert.equal(raw.get("big", "v1", page).cached, true);
+});
+
+test("pickEncoding: q=0 pomeni, da odjemalec kodiranja ne sprejme", async () => {
+  const { pickEncoding } = await import("../server/compress.js");
+  assert.equal(pickEncoding("gzip, deflate, br"), "br");
+  assert.equal(pickEncoding("br;q=0, gzip"), "gzip");
+  assert.equal(pickEncoding("br;q=0.0, gzip;q=0"), null);
+  assert.equal(pickEncoding("br;q=0.5"), "br");
+  assert.equal(pickEncoding("gzip"), "gzip");
+  assert.equal(pickEncoding(""), null);
+  assert.equal(pickEncoding("identity"), null);
+});
+
+function fakeRes() {
+  const res = { headers: {}, statusCode: 200, body: null };
+  res.setHeader = (k, v) => (res.headers[k] = v);
+  res.status = (s) => ((res.statusCode = s), res);
+  res.end = (b) => (res.body = b);
+  return res;
+}
+
 test("/ucbenik in /gradiva/povzetek: stisnjeno, ETag, sveže po spremembi lekcije", async () => {
   const app = createApp(openDb(":memory:"), { scheduler: false });
   const server = app.listen(0);

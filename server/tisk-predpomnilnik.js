@@ -18,6 +18,7 @@ const defaultMax = () => (Number(process.env.EVKLID_TISK_MB) > 0 ? Number(proces
 
 export function createPageCache({ maxBytes = defaultMax(), compress = process.env.EVKLID_COMPRESS !== "0" } = {}) {
   const map = new Map(); // ključ -> vnos (vrstni red = nazadnje uporabljen na koncu)
+  const inflight = new Map(); // ključ -> velik vnos, ki se stiska pred vstavitvijo
   let bytes = 0;
   const sizeOf = (e) => (e.html?.length || 0) + (e.br?.length || 0) + (e.gzip?.length || 0);
 
@@ -44,7 +45,11 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
       map.set(key, hit);
       return hit;
     }
+    // Velika stran, ki se ravno stiska pred vstavitvijo: isti vnos (brez drugega izrisa).
+    const fly = inflight.get(key);
+    if (fly && fly.sig === sig) return fly;
     drop(key);
+    inflight.delete(key);
     const html = render();
     if (html == null) return null;
     const buf = Buffer.from(html);
@@ -56,23 +61,35 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
       pending: {},
       cached: false,
     };
-    // Shrani se vsaka stran do meje (MAT-SS ima 23 MB; pregled #516: polovica meje je bila premalo). Velika stran
-    // (> 1/4 meje) se takoj stisne v br in gzip, nato se surov HTML zavrže: MAT-SS v pomnilniku ~2 MB namesto 23 MB.
-    if (e.size <= maxBytes) {
-      map.set(key, e);
-      e.cached = true;
-      bytes += e.size;
-      trim();
-    }
+    // Shrani se vsaka stran do meje (MAT-SS ima 23 MB; pregled #516: polovica meje je bila premalo).
+    // Stran nad mejo se ne shrani in se ne stisne vnaprej: stisne se le kodiranje, ki ga zahtevek želi
+    // (pregled #516 B, P1: br + gzip 67 MB strani, ki se nato zavržeta, je pri 2 zahtevkih dal 549 MB RSS).
+    if (e.size > maxBytes) return e;
+    // Velika stran (> 1/4 meje) se najprej stisne v br in gzip in šele nato vstavi s stisnjeno velikostjo
+    // (pregled #516 B, P2: vstavljen surov HTML tik pod mejo je izrinil cel predpomnilnik in nato še sebe).
     if (compress && e.size * 4 > maxBytes) {
+      inflight.set(key, e);
       e.slim = Promise.all([compressed(e, "br"), compressed(e, "gzip")]).then(
         () => {
-          if (e.cached) bytes -= e.html.length;
+          if (inflight.get(key) !== e) return;
+          inflight.delete(key);
           e.html = null;
+          drop(key);
+          map.set(key, e);
+          e.cached = true;
+          bytes += sizeOf(e);
+          trim();
         },
-        () => {},
+        () => {
+          if (inflight.get(key) === e) inflight.delete(key);
+        },
       );
+      return e;
     }
+    map.set(key, e);
+    e.cached = true;
+    bytes += e.size;
+    trim();
     return e;
   }
 
@@ -127,7 +144,7 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
     res.end(body);
   }
 
-  return { get, send, stats: () => ({ entries: map.size, bytes }) };
+  return { get, send, stats: () => ({ entries: map.size, bytes, inflight: inflight.size }) };
 }
 
 // Različica lekcije: zaporedna številka predmeta, ki ga vrne loadLesson (isti predmet, dokler se datoteka ne spremeni).
