@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Med drugo svetovno vojno so v Veliki Britaniji gradili prve reaktivne motorje. Plinska turbina je delovala, a lopatice turbine so se v vročem plinu pod veliko centrifugalno silo počasi raztezale in pokale. Jekla in lahke kovine pri teh temperaturah niso zdržala. Metalurgi so zato razvili nikljevo zlitino s kromom ter malo titana in aluminija, imenovano Nimonic 80. Njena trdnost je izvirala iz drobnih izločkov, ki ostanejo stabilni tudi pri temperaturah, kjer se aluminijeva zlitina T6 prestara v nekaj minutah.
+Med drugo svetovno vojno so v Veliki Britaniji gradili prve reaktivne motorje. Plinska turbina je delovala, a lopatice turbine so se v vročem plinu pod veliko centrifugalno silo počasi raztezale in pokale. Jekla in lahke kovine pri teh temperaturah niso zdržala. Metalurgi so zato razvili nikljevo zlitino s kromom ter malo titana in aluminija, imenovano Nimonic 80. Njena trdnost je izvirala iz drobnih izločkov, ki ostanejo stabilni tudi pri okoli $750\,^\circ\mathrm C$. Aluminijeva zlitina T6 se prestara že nad okoli $200\,^\circ\mathrm C$, pri tej temperaturi pa bi se celo stalila.
 
 Iz bakra in niklja so vodniki, izmenjevalniki, ventili, propelerji, kovanci, vzmeti in lopatice motorjev. Lekcija gre od enega konkretnega primera (zakaj se baker in nikelj mešata v vsakem razmerju) do splošnih pravil za medenine, brone in superzlitine.
 
@@ -282,7 +282,7 @@ Superzlitina je kot avtocesta z zidaki: osnova $\gamma$ je pas, kocke $\gamma'$ 
 
 ## Drugače: Bolj natančno
 
-**Izcejanje.** Vzvodno pravilo velja v ravnotežju, ko difuzija izenači sestavo trdne faze. Pri realnem litju je difuzija v trdnem prepočasna: prva jedra zrn so bogata z nikljem, zadnja plast bogata z bakrom. To je **izcejanje** (koringov pojav). Odpravimo ga s **homogenizacijskim žarjenjem** pod solidusom.
+**Izcejanje.** Vzvodno pravilo velja v ravnotežju, ko difuzija izenači sestavo trdne faze. Pri realnem litju je difuzija v trdnem prepočasna: prva jedra zrn so bogata z nikljem, zadnja plast bogata z bakrom. To je **izcejanje** (angl. *coring*). Odpravimo ga s **homogenizacijskim žarjenjem** pod solidusom.
 
 **Faze v medenini.** Z naraščajočim deležem cinka si sledijo faze $\alpha$ (FCC), $\beta$ (BCC), $\gamma$ (kompleksna kubična, krhka) in druge. Pojavijo se pri značilnem številu valenčnih elektronov na atom ($3/2$ za $\beta$, $21/13$ za $\gamma$). Takšne faze imenujemo elektronske faze; podobne nastopijo tudi pri Cu-Sn in Cu-Al.
 

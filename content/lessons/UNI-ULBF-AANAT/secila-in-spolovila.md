@@ -13,7 +13,7 @@ Odgovor je v zgradbi. Ledvica ni sito, ki pobere le odpadke, temveč filter z ve
 
 ### Blok 1: lega in zunanja zgradba ledvic
 
-Ledvici ležita **retroperitonealno**: za potrebušnico, ob hrbtenici, približno od 12. prsnega do 3. ledvenega vretenca. Desna je nekoliko nižje, ker je nad njo jetra. Vsaka je velika okoli $11 \times 6 \times 3\,\mathrm{cm}$ in tehta okoli $150\,\mathrm g$. Obdaja jo vezivna ovojnica, zunaj nje maščobna blazina in ledvična fascija.
+Ledvici ležita **retroperitonealno**: za potrebušnico, ob hrbtenici, približno od 12. prsnega do 3. ledvenega vretenca. Desna je nekoliko nižje, ker so nad njo jetra. Vsaka je velika okoli $11 \times 6 \times 3\,\mathrm{cm}$ in tehta okoli $150\,\mathrm g$. Obdaja jo vezivna ovojnica, zunaj nje maščobna blazina in ledvična fascija.
 
 Na medialnem robu je **hilus**: vanj vstopa ledvična arterija, izstopata ledvična vena in **ledvični meh** (pelvis), ki se nadaljuje v sečevod. Na čelnem prerezu vidimo:
 
@@ -50,7 +50,7 @@ arteriola   arteriola
 
 1. **Glomerul**, klobčič kapilar, obdaja **Bowmanova kapsula**. Skupaj tvorita ledvično telesce, ki leži v skorji.
 2. **Proksimalni zviti tubul** vrne večino vode, natrija, vso glukozo in aminokisline. Celice imajo krtačast obrobek (mikrovile) in veliko mitohondrijev.
-3. **Henlejeva zanka** se spusti v sredico in vrne. Ustvari visoko koncentracijo soli v sredici.
+3. **Henlejeva zanka** se spusti v sredico in se vrne proti skorji. Ustvari visoko koncentracijo soli v sredici.
 4. **Distalni zviti tubul** se vrne k lastnemu glomerulu. Tam, kjer se dotika aferentne arteriole, je **jukstaglomerularni aparat**, ki izloča renin in uravnava krvni tlak.
 5. Več nefronov se izliva v **zbiralco**, ta pa na papili v malo čašo.
 
@@ -259,7 +259,7 @@ Natančno opiši pot krvi od ledvične arterije do ledvične vene in pot tekoči
 2. Tekočina: kapilare glomerula → Bowmanova kapsula → proksimalni zviti tubul → Henlejeva zanka (spust, vzpon) → distalni zviti tubul → zbiralca → papila → mala čaša → velika čaša → ledvični meh.
 3. Lega: ledvično telesce, proksimalni in distalni tubul v skorji; Henlejeva zanka (pri nefronih ob sredici dolga) in zbiralce v sredici, v piramidah.
 4. Filtracija: tlak v kapilarah glomerula je visok, ker upor eferentne arteriole zadrži kri. Ožanje eferentne arteriole poveča filtracijo, ožanje aferentne jo zmanjša. Navadne kapilare na venski strani tega upora nimajo, zato bi tlak hitro padel.
-5. Za glomerulom kri nima več veliko vode (filtracijska frakcija okoli $0{,}2$), zato je onkotski tlak v peritubularnih kapilarah visok in pospeši vračanje vode iz tubulov.
+5. Za glomerulom je kri izgubila okoli petino plazemske vode (filtracijska frakcija okoli $0{,}2$), beljakovine pa so ostale v njej, zato je onkotski tlak v peritubularnih kapilarah visok in pospeši vračanje vode iz tubulov.
 
 ## Drugače: Na sliki
 
@@ -301,9 +301,9 @@ Spolovila v mediani ravnini: pri ženski od spredaj nazaj mehur, maternica, dank
 ~ To je $U \cdot Q_\mathrm{u}$ v $\mathrm{mg/min}$, ne očistek; deliti moraš še s $P$.
 > $C = \frac{25 \cdot 1{,}2}{0{,}20} = 150\,\mathrm{mL/min}$.
 
-? Študent je zapisal pot krvi: (1) ledvična arterija → interlobarne; (2) interlobarne → arkuatne → interlobularne; (3) interlobularne → aferentna arteriola → glomerul; (4) glomerul → ledvična vena. Kateri korak je napačen?
+? Študent je zapisal pot krvi: (1) ledvična arterija → segmentne → interlobarne; (2) interlobarne → arkuatne → interlobularne; (3) interlobularne → aferentna arteriola → glomerul; (4) glomerul → ledvična vena. Kateri korak je napačen?
 - korak 1
-~ Med njima so segmentne arterije, a vrstni red je pravilen.
+~ Ledvična arterija se res razveji v segmentne, te v interlobarne.
 - korak 2
 ~ Tako žile res tečejo: med piramidami, ob bazi, v skorjo.
 - korak 3

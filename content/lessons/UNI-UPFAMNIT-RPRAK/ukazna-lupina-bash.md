@@ -35,6 +35,8 @@ echo '*.csv'
 
 Enojni narekovaji preprečijo vse razširitve. Če se vzorec ne ujema z nobeno datoteko, ga bash pusti nespremenjenega (`echo nič*.xyz` izpiše `nič*.xyz`).
 
+Datoteke tvorijo drevo imenikov s korenom `/`. **Absolutna pot** se začne s `/` (`/home/ana/podatki/meritve.csv`), **relativna** se bere od trenutnega imenika, ki ga izpiše `pwd`; `.` je trenutni imenik, `..` nadrejeni, `~` domači. `cd ../arhiv` gre torej en imenik višje in nato v `arhiv`.
+
 Osnovni ukazi, ki jih potrebujemo: `pwd`, `cd`, `ls`, `cp`, `mv`, `rm`, `mkdir`, `cat`, `man` (navodila za vsak ukaz) in filtri `head`, `tail`, `grep`, `cut`, `sort`, `uniq`, `wc`.
 
 ### Napačna misel 2: »pravice so lastnost uporabnika«
@@ -306,7 +308,7 @@ Natančno opiši, kako bash obdela vrstico `ls -l ~/podatki/*.csv > seznam.txt 2
 3. Preusmeritve od leve proti desni: opisnik $1$ se odpre na `seznam.txt` (datoteka se izprazni); `2>&1` naredi opisnik $2$ kopijo opisnika $1$, torej tudi `seznam.txt`.
 4. Lupina zažene `ls` z argumenti `-l` in razširjenimi imeni. `ls` sam ne vidi ne `~`, ne `*`, ne preusmeritev.
 5. Pri `2>&1 > seznam.txt` se najprej $2$ kopira na trenutni cilj $1$, to je zaslon; šele nato $1$ kaže na datoteko. Napake gredo na zaslon, seznam v datoteko.
-6. Brisanje: `rm` spremeni imenik `podatki` (odstrani vnos), zato je potreben `w` in `x` na `~/podatki` ter `x` na vseh imenikih nad njim. Pravice datoteke same niso pomembne (`rm` le vpraša, če datoteka nima `w`).
+6. Brisanje: `rm` spremeni imenik `podatki` (odstrani vnos), zato je potreben `w` in `x` na `~/podatki` ter `x` na vseh imenikih nad njim. Pravice datoteke same niso pomembne (`rm` le vpraša, če datoteka nima `w`). Izjema je imenik z lepljivim bitom (`t`, npr. `/tmp`): tam sme datoteko izbrisati le njen lastnik ali lastnik imenika.
 
 ## Drugače: Na sliki
 
@@ -358,8 +360,8 @@ Opazi, da umask ni odštevanje: `666` z umaskom `027` da `640`. Osmiško odštev
 + `754`
 - `764`
 ~ Srednja trojka `r-x` je $4 + 1 = 5$, ne $6$.
-- `742`
-~ Vrednosti si dodelil narobe: $r = 4$, $w = 2$, $x = 1$.
+- `732`
+~ Zamenjal si vrednosti `r` in `w` ($r = 2$, $w = 4$): tako bi bil `r-x` $3$ in `r--` $2$; prav je $r = 4$, $w = 2$.
 > `rwx` $= 7$, `r-x` $= 5$, `r--` $= 4$.
 
 ? Skripta vsak dan zapiše povzetek meritev z <code>echo "&#36;povzetek" &gt; dnevnik.txt</code>. Kaj je posledica?

@@ -140,7 +140,7 @@ dobra urejenost: vsaka neprazna podmnožica ima najmanjši element; ekvivalentno
 1. (a) Zaporedje $0, 1, 2, \dots$ je v tej urejenosti strogo padajoče in neskončno, zato to ni dobra urejenost. (Celotna množica nima najmanjšega elementa.)
 2. (b) Elementi $0 < \frac12 < \frac23 < \dots$ tvorijo kopijo $\omega$, $1$ je večji od vseh. Neprazna podmnožica, ki vsebuje kak $1 - \frac1n$, ima najmanjšega med njimi; podmnožica $\{1\}$ ima $1$. Tip je $\omega + 1$.
 3. (c) Za fiksen $a$ so pari $(a, 0) < (a, 1) < \dots$ kopija $\omega$; kopije si sledijo po $a = 0, 1, 2, \dots$, torej $\omega$-krat. Najmanjši element neprazne $S$: vzamemo najmanjši $a$, ki nastopa v $S$, in med pari s tem $a$ najmanjši $b$. Tip je $\omega \cdot \omega$.
-4. Odgovor: (a) ni dobra urejenost; (b) je, tipa $\omega + 1$; (c) je, tipa $\omega \cdot \omega$. Pri (c) potrošnik nikoli ne »zamenja« ene enote prve dobrine za poljubno veliko druge, zato je pred vsakim paketom le končno mnogo »stopnic« navzdol.
+4. Odgovor: (a) ni dobra urejenost; (b) je, tipa $\omega + 1$; (c) je, tipa $\omega \cdot \omega$. Pri (c) potrošnik nikoli ne »zamenja« ene enote prve dobrine za poljubno veliko druge. Pod paketom $(1, 0)$ je sicer neskončno mnogo paketov $(0, n)$, a vsako zaporedje vse slabših paketov je končno.
 
 ### Primer 2: računanje z ordinali
 
@@ -167,7 +167,7 @@ $\alpha \cdot (\beta + 1) = \alpha \cdot \beta + \alpha$; za limitni $\lambda$ j
 
 Ekonomist modelira: (a) **cenovno pot** kot zaporedje realnih cen $(p_0, p_1, p_2, \dots)$; (b) **zvezno funkcijo povpraševanja** $D\colon \mathbb R \to \mathbb R$; (c) poljubno funkcijo $\mathbb R \to \mathbb R$. Določi moč vsake množice z $2^{\aleph_0}$ (moč $\mathbb R$) in uredi moči po velikosti.
 
-**Podatki:** $\lvert \mathbb R \rvert = 2^{\aleph_0}$, $\lvert \mathbb N \rvert = \lvert \mathbb Q \rvert = \aleph_0$; zvezna funkcija je določena z vrednostmi na $\mathbb Q$; pravila potenciranja iz Bloka 6
+**Podatki:** $\lvert \mathbb R \rvert = 2^{\aleph_0}$ (kontinuum $\mathfrak c$ iz lekcije Moč množic), $\lvert \mathbb N \rvert = \lvert \mathbb Q \rvert = \aleph_0$; zvezna funkcija je določena z vrednostmi na $\mathbb Q$; pravila potenciranja iz Bloka 6
 **Iščemo:** $\lvert \mathbb R^{\mathbb N} \rvert$, $\lvert C(\mathbb R) \rvert$, $\lvert \mathbb R^{\mathbb R} \rvert$
 
 :::formula
@@ -211,7 +211,7 @@ Naj bo $\lambda$ limitni in $0 + \beta = \beta$ za vse $\beta < \lambda$. Tedaj 
 
 - **»Ordinalna in kardinalna vsota sta isto.«** Kardinalno je $1 + \aleph_0 = \aleph_0 + 1 = \aleph_0$; ordinalno je $1 + \omega = \omega$, $\omega + 1$ pa je večji ordinal. Pri ordinalih je vrstni red pomemben.
 - **»Vsaka linearna urejenost z najmanjšim elementom je dobra.«** Interval $[0, 1]$ ima najmanjši element $0$, a podmnožica $(0, 1]$ ga nima. Najmanjši element mora imeti *vsaka* neprazna podmnožica.
-- **Indukcija brez limitnega koraka.** Začetni korak in korak naslednika dokažeta trditev le za končne ordinale in naslednike; brez limitnega koraka ne dosežemo niti $\omega$.
+- **Indukcija brez limitnega koraka.** Začetni korak in korak naslednika dokažeta trditev le za končne ordinale $0, 1, 2, \dots$; brez limitnega koraka ne dosežemo niti $\omega$ in zato tudi ne $\omega + 1$.
 - **»$\omega \cdot 2$ in $2 \cdot \omega$ sta enaka.«** $2 \cdot \omega = \omega$ (neskončno parov), $\omega \cdot 2 = \omega + \omega$ (dve vrsti). Produkt $\alpha \cdot \beta$ pomeni $\beta$ kopij $\alpha$.
 - **»Neskončno krat neskončno je več.«** Za neskončen kardinal je $\kappa \cdot \kappa = \kappa$; večjo moč da šele potenciranje, $2^\kappa > \kappa$.
 
@@ -321,7 +321,7 @@ Kardinalno števec vidi le, koliko je črtic; vse štiri slike imajo $\aleph_0$ 
 ~ Načelo velja za vsak ordinal; prav na njem temelji dokaz indukcije.
 - Ker so limitni ordinali neštevni.
 ~ $\omega$ in $\omega \cdot 2$ sta limitna in števna.
-> Začetni korak in naslednik dosežeta le $0, 1, 2, \dots$ in naslednike; do $\omega$, $\omega \cdot 2$ in drugih pripelje šele limitni korak.
+> Začetni korak in naslednik dosežeta le $0, 1, 2, \dots$; do $\omega$ (in s tem do $\omega + 1$, $\omega \cdot 2$ in naprej) pripelje šele limitni korak.
 
 ? Za katera kardinala $\kappa$ in $\lambda$ velja $\kappa + \lambda = 2^{\aleph_0}$ in $\kappa \cdot \lambda = 2^{\aleph_0}$?
 - $\kappa = \lambda = \aleph_0$
