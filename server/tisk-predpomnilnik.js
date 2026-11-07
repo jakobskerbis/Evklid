@@ -36,8 +36,8 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
     }
   }
 
-  // Vnos za ključ: iz predpomnilnika, če je podpis enak, sicer nov izris (render vrne HTML ali null).
-  function get(key, sig, render) {
+  // Vnos iz predpomnilnika, če je podpis enak (ali velika stran, ki se ravno stiska pred vstavitvijo), sicer null.
+  function peek(key, sig) {
     if (sig == null) return null;
     const hit = map.get(key);
     if (hit && hit.sig === sig) {
@@ -45,14 +45,23 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
       map.set(key, hit);
       return hit;
     }
-    // Velika stran, ki se ravno stiska pred vstavitvijo: isti vnos (brez drugega izrisa).
     const fly = inflight.get(key);
-    if (fly && fly.sig === sig) return fly;
+    return fly && fly.sig === sig ? fly : null;
+  }
+
+  // Vnos za ključ: iz predpomnilnika, če je podpis enak, sicer nov izris (render vrne HTML ali null).
+  function get(key, sig, render) {
+    if (sig == null) return null;
+    const hit = peek(key, sig);
+    if (hit) return hit;
+    const html = render();
+    return html == null ? null : put(key, sig, Buffer.from(html));
+  }
+
+  // Vstavi že izrisano stran (Buffer) pod ključ in podpis.
+  function put(key, sig, buf) {
     drop(key);
     inflight.delete(key);
-    const html = render();
-    if (html == null) return null;
-    const buf = Buffer.from(html);
     const e = {
       sig,
       html: buf, // pri veliki strani po stiskanju null (ostaneta br in gzip)
@@ -144,7 +153,7 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
     res.end(body);
   }
 
-  return { get, send, stats: () => ({ entries: map.size, bytes, inflight: inflight.size }) };
+  return { get, peek, put, send, maxBytes, stats: () => ({ entries: map.size, bytes, inflight: inflight.size }) };
 }
 
 // Različica lekcije: zaporedna številka predmeta, ki ga vrne loadLesson (isti predmet, dokler se datoteka ne spremeni).

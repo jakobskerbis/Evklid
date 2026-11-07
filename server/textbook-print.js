@@ -1,5 +1,6 @@
 // Učbenik za tiskanje oziroma shranjevanje kot PDF (brezplačno, brez prijave).
 // Strežnik izriše HTML z že izrisanimi formulami; brskalnik ga shrani kot PDF.
+import zlib from "node:zlib";
 import katex from "katex";
 import { marked } from "marked";
 import { getPath, getTopic, topicOrder } from "./curriculum.js";
@@ -65,6 +66,10 @@ const NOTE = `<p class="muted small">Interaktivni poskusi, simulacije, sprotno p
 
 // Celoten učbenik predmeta (npr. MAT-OS): deli so razredi oziroma letniki.
 export function printBook(bookKey) {
+  const parts = printBookParts(bookKey);
+  return parts && joinParts(parts);
+}
+function printBookParts(bookKey) {
   const book = getBook(bookKey);
   if (!book) return null;
   let n = 0;
@@ -90,17 +95,16 @@ export function printBook(bookKey) {
           .join("")}
         ${NOTE}
       </section>`;
-  const body = have
-    ? parts
-        .filter((x) => x.ready.length)
-        .map(({ p, ready }) => {
-          n = 0;
-          return `<section class="part"><p class="brand small">${esc(book.subjectName)}</p><h1>${esc(p.label)}</h1>
-            <p class="muted">${ready.length} lekcij</p></section>${ready.map(({ t, lesson }) => lessonHtml(t, lesson, ++n)).join("")}`;
-        })
-        .join("")
-    : `<p>Za ta učbenik lekcije še nastajajo.</p>`;
-  return shell(`${book.subjectName} · ${book.schoolName} · učbenik`, cover + body);
+  function* body() {
+    if (!have) return yield `<p>Za ta učbenik lekcije še nastajajo.</p>`;
+    for (const { p, ready } of parts.filter((x) => x.ready.length)) {
+      n = 0;
+      yield `<section class="part"><p class="brand small">${esc(book.subjectName)}</p><h1>${esc(p.label)}</h1>
+            <p class="muted">${ready.length} lekcij</p></section>`;
+      for (const { t, lesson } of ready) yield lessonHtml(t, lesson, ++n);
+    }
+  }
+  return shellParts(`${book.subjectName} · ${book.schoolName} · učbenik`, cover, body());
 }
 
 // List s formulami in konstantami predmeta (/ucbenik/MAT-OS/formule ali /ucbenik/MAT-OS-8/formule).
@@ -138,9 +142,20 @@ export function printSignature(pathKey, topicSlug = null) {
 
 // pathKey: cela pot; topicSlug (neobvezno): samo ena lekcija.
 export function printPage(pathKey, topicSlug = null) {
-  if (topicSlug === "formule") return printFormulas(pathKey);
+  const parts = printPageParts(pathKey, topicSlug);
+  return parts && joinParts(parts);
+}
+
+// Isto kot printPage, a kot zaporedje kosov HTML (lupina, kazalo, nato lekcija za lekcijo) ali null.
+// Velik učbenik programa (P-UL-FKKT-KEM: 67 MB) kot en niz dvigne proces na ~700 MB, kar zruši strežnik
+// s 512 MB; pot /ucbenik zato pošilja kos za kosom in naenkrat drži v pomnilniku le eno lekcijo.
+export function printPageParts(pathKey, topicSlug = null) {
+  if (topicSlug === "formule") {
+    const html = printFormulas(pathKey);
+    return html && [html];
+  }
   const p = getPath(pathKey);
-  if (!p) return topicSlug ? null : printBook(pathKey);
+  if (!p) return topicSlug ? null : printBookParts(pathKey);
   let topics = topicOrder(pathKey);
   if (topicSlug) {
     const t = getTopic(`${pathKey}/${topicSlug}`);
@@ -163,10 +178,134 @@ export function printPage(pathKey, topicSlug = null) {
         ${NOTE}
       </section>`;
 
-  const body = ready.length
-    ? ready.map(({ t, lesson }, i) => lessonHtml(t, lesson, topicSlug ? 0 : i + 1)).join("")
-    : `<p>Za to pot lekcije še nastajajo.</p>`;
-  return shell(title, toc + body);
+  function* body() {
+    if (!ready.length) return yield `<p>Za to pot lekcije še nastajajo.</p>`;
+    for (const [i, { t, lesson }] of ready.entries()) yield lessonHtml(t, lesson, topicSlug ? 0 : i + 1);
+  }
+  return shellParts(title, toc, body());
+}
+
+// Groba ocena velikosti izrisa cele poti ali predmeta (bajti HTML) brez izrisa: Markdown lekcij × 27.
+// Izmerjeno 7. 11.: HTML/Markdown = 19 (MAT-OS) do 27 (MAT-SS); P-UL-FKKT-KEM 2,8 MB → 67 MB.
+export const HTML_PER_MD = 27;
+export function printSizeHint(pathKey) {
+  const book = getPath(pathKey) ? null : getBook(pathKey);
+  const keys = book ? book.paths.map((p) => p.key) : getPath(pathKey) ? [pathKey] : [];
+  let md = 0;
+  for (const k of keys)
+    for (const t of topicOrder(k)) {
+      const l = loadLesson(t.id);
+      if (!l) continue;
+      for (const x of l.sections) md += x.md.length;
+      for (const a of l.alternatives) md += a.md.length;
+      for (const c of l.checks) md += c.q.length + c.options.reduce((n, o) => n + o.length, 0) + (c.why?.length || 0);
+    }
+  return md * HTML_PER_MD;
+}
+
+// Pošlje kose v odgovor in počaka, ko je medpomnilnik poln (počasen odjemalec ne kopiči celega učbenika
+// v pomnilniku). Ob prekinjeni povezavi neha izrisovati. Med kosi sprosti glavno nit (setImmediate), da drugi
+// zahtevki (/healthz, klepet) ne čakajo na izris 67 MB učbenika (pregled #519 B, P2-2).
+// encoding: "br" | "gzip" | null – stiskanje sproti (zlib v toku). collect: do toliko bajtov zbira surovo stran in
+// jo vrne kot Buffer (za predpomnilnik), sicer (večja stran, prekinitev, napaka) null.
+// Napaka med izrisom po že poslanih glavah: na konec strani vidno opozorilo, nato prekinjena povezava (brez
+// zaključnega kosa), da brskalnik ne misli, da je stran cela (pregled #519 B, P2-1).
+export const STREAM_FAILED_HTML = `<div role="alert" style="margin:24px 0;padding:12px 16px;border:2px solid #b42318;border-radius:10px;background:#fef3f2;color:#7a271a;font:600 1rem system-ui,sans-serif">Učbenika ni bilo mogoče izrisati do konca. Osveži stran ali poskusi pozneje.</div>`;
+export async function streamParts(res, parts, { collect = 0, encoding = null } = {}) {
+  const it = parts[Symbol.iterator]();
+  let kept = collect > 0 ? [] : null;
+  let size = 0;
+  let out = res;
+  if (encoding) {
+    res.setHeader("Content-Encoding", encoding);
+    // Okno 2^19 (512 KB) namesto privzetih 4 MB: manj pomnilnika na tok (pregled #519 A, P2), stiskanje skoraj enako.
+    out = encoding === "br"
+      ? zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4, [zlib.constants.BROTLI_PARAM_LGWIN]: 19 } })
+      : zlib.createGzip({ level: 6, windowBits: 15, memLevel: 8 });
+    out.pipe(res, { end: false });
+    out.on("error", () => res.destroy());
+  }
+  const gone = () => res.destroyed || res.writableEnded;
+  // Odjemalec je odšel: takoj sprosti zlib (domorodni pomnilnik), ne šele ob GC.
+  const release = () => {
+    if (out !== res && !out.destroyed) out.destroy();
+  };
+  res.once("close", () => {
+    if (!res.writableFinished) release();
+  });
+  const waitDrain = (s) => new Promise((ok) => { const done = () => { s.off("drain", done); res.off("close", done); ok(); }; s.on("drain", done); res.on("close", done); });
+  const finish = (s) => new Promise((ok) => (s === res ? ok() : s.once("end", ok)));
+  let pending = ""; // kosi se združijo do ~256 KB na zapis (manj klicev write in čakanja na drain)
+  let wrote = false;
+  const flush = async () => {
+    if (!pending) return;
+    const chunk = Buffer.from(pending);
+    pending = "";
+    wrote = true;
+    if (kept) {
+      size += chunk.length;
+      if (size > collect) kept = null;
+      else kept.push(chunk);
+    }
+    if (!out.write(chunk)) await waitDrain(out);
+  };
+  try {
+    for (let r = it.next(); !r.done; r = it.next()) {
+      if (gone()) return release(), null;
+      pending += r.value;
+      if (pending.length >= 256 * 1024) await flush();
+      await new Promise((ok) => setImmediate(ok));
+    }
+    if (gone()) return release(), null;
+    await flush();
+    if (gone()) return release(), null;
+    if (out !== res) {
+      out.end();
+      await finish(out);
+    }
+    res.end();
+    return kept && Buffer.concat(kept);
+  } catch (err) {
+    console.error("[evklid] izris učbenika po kosih:", err?.message || err);
+    if (gone()) return release(), null;
+    // Napaka še pred prvim poslanim bajtom: navadna napaka (500), ne 200 z opozorilom.
+    if (!res.headersSent && !wrote && !pending) {
+      release();
+      res.removeHeader("Content-Encoding");
+      throw err;
+    }
+    pending += STREAM_FAILED_HTML;
+    try {
+      await flush();
+      if (out !== res) {
+        out.end();
+        await finish(out);
+      }
+    } catch {}
+    // Brez zaključnega kosa: odjemalec vidi prekinjen prenos (ne cele strani).
+    if (res.socket?.destroySoon) res.socket.destroySoon();
+    else res.destroy();
+    return null;
+  } finally {
+    it.return?.();
+  }
+}
+
+const joinParts = (parts) => {
+  let html = "";
+  for (const part of parts) html += part;
+  return html;
+};
+
+// Lupina okoli kosov vsebine: začetek, kosi (iterator), konec.
+function* shellParts(title, head, body) {
+  const mark = "<\u0000>"; // esc() v naslovu spremeni »<« v &lt;, zato se oznaka pojavi samo v <main>
+  const page = shell(title, mark);
+  const at = page.indexOf(mark);
+  const [start, end] = [page.slice(0, at), page.slice(at + mark.length)];
+  yield start + head;
+  yield* body;
+  yield end;
 }
 
 // Skupna lupina strani za tisk (tudi gradiva: povzetek na eni strani, delovni list); css: dodatna pravila.
