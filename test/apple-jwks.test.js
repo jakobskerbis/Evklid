@@ -96,3 +96,16 @@ test("RB-J5 JWKS download failure is not a signature error (502, not 401), also 
     assert.ok(err instanceof Error && !(err instanceof AppleSignatureError), `klic ${i + 1}: ${err?.constructor?.name}`);
   }
 });
+
+// Ponovni pregled A: prazen odgovor 200 ne sme obiti roka 7 dni (prej je vrnil stare ključe ne glede na starost).
+test("RB-J6 empty JWKS answer does not extend old keys past 7 days", async (t) => {
+  const c = clock(t);
+  resetAppleKeyCache();
+  let answer = { keys: [mk("pravi")] };
+  const fetchFn = async () => ({ ok: true, json: async () => answer });
+  await msg(verifyAppleIdentityToken(junk("pravi"), { audiences: ["a"], fetchFn }));
+  answer = { keys: [] };
+  c.t += 8 * 24 * 3600000;
+  const out = await msg(verifyAppleIdentityToken(junk("pravi"), { audiences: ["a"], fetchFn }));
+  assert.doesNotMatch(out, /Podpis/, out);
+});

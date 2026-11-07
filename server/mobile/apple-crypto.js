@@ -94,8 +94,9 @@ async function appleKeys(fetchFn, force = false) {
       const r = await fetchFn(KEYS_URL, { signal: AbortSignal.timeout(8000) });
       if (!r.ok) throw new Error("Ključev Apple ni mogoče prenesti.");
       const { keys } = await r.json();
-      // Prazen ali pokvarjen odgovor ne izbriše zadnjih znanih ključev.
-      if (Array.isArray(keys) && keys.length) keyCache = { at: Date.now(), keys };
+      // Prazen ali pokvarjen odgovor je napaka (ne izbriše zadnjih znanih ključev in ne podaljša njihovega roka 7 dni).
+      if (!Array.isArray(keys) || !keys.length) throw new Error("Apple je vrnil prazen seznam ključev.");
+      keyCache = { at: Date.now(), keys };
       return keyCache.keys;
     } catch (err) {
       // Neuspel prenos: tudi prvi klic (in kdor čaka nanj) dobi zadnje znane ključe, kot klici v naslednji minuti (P3-4).
