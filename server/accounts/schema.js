@@ -118,6 +118,10 @@ export function migrateAccounts(db) {
   if (!pcols.includes("birth_date")) db.exec("ALTER TABLE parents ADD COLUMN birth_date TEXT");
   // Star račun brez datuma rojstva: kdaj smo ga ob prijavi vprašali (vprašamo samo enkrat, j 2026-11-06).
   if (!pcols.includes("birth_asked_at")) db.exec("ALTER TABLE parents ADD COLUMN birth_asked_at TEXT");
+  // Član pilota (server/pilot-naloge.js): skrbnik označi račun v zavihku Račun; vsi profili računa vidijo naloge.
+  // Različica politike zasebnosti, o kateri je imetnik videl obvestilo (privacy_version ostane različica ob registraciji).
+  if (!pcols.includes("privacy_seen")) db.exec("ALTER TABLE parents ADD COLUMN privacy_seen TEXT");
+  if (!pcols.includes("pilot_at")) db.exec("ALTER TABLE parents ADD COLUMN pilot_at TEXT");
   // Gost (uporaba brez registracije, odstranjena 2026-10-29; stari gostje ostanejo): račun brez e-naslova, vezan na piškotek naprave.
   // guest_net = zgoščeni IP omrežja, da brisanje piškotkov ne da nove brezplačne kvote.
   if (!pcols.includes("is_guest")) db.exec("ALTER TABLE parents ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0");

@@ -437,6 +437,8 @@
       <div class="card"><span class="stat-ic streak"><i data-icon="flame"></i></span><b id="me-streak">0</b><span data-i18n="me.streak">dni zapored</span></div>
     </div>
     <button type="button" class="card list-row zb-me-card" id="me-zbirke" data-go="zbirke" hidden></button>
+    <!-- Naloge za člane pilota (public/pilot-naloge.js); vidno samo članom pilota -->
+    <div class="card list-card pn-me" hidden><button type="button" class="list-row" data-go="pilot" id="me-pilot" hidden></button></div>
     <div class="card list-card">
       <button type="button" class="list-row" data-go="exams" id="me-exams" hidden><span class="ic"><i data-icon="clipboard-check"></i></span><span class="lr-text"><b data-i18n="nav.examsSi">NPZ in matura</b><small data-i18n="exam.meSub">Pripravljenost, poskusni izpit in pretekle pole</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="competition" id="me-competition"><span class="ic"><i data-icon="medal"></i></span><span class="lr-text"><b data-i18n="nav.competition">Tekmovanja</b><small data-i18n="comp.meSub">Tekmovalni trening in poskusno tekmovanje</small></span><i data-icon="chevron-right"></i></button>
@@ -461,6 +463,13 @@
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 class="with-icon"><i data-icon="scan-line"></i> <span data-i18n="scan.title">Skeniraj nalogo</span></h1>
     <div class="scan-body"></div>
+  </main>
+
+  <!-- POMAGAJ IZBOLJŠATI EVKLID (public/pilot-naloge.js): naloge za člane pilota -->
+  <main id="view-pilot" class="view narrow" hidden>
+    <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
+    <h1 class="with-icon"><i data-icon="sparkles"></i> <span data-i18n="pn.title">Pomagaj izboljšati Evklid</span></h1>
+    <div class="pn-body"></div>
   </main>
 
   <!-- URNIK (public/schedule.js) -->

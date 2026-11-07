@@ -7,6 +7,7 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
+import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
@@ -1331,6 +1332,7 @@ async function loadSchoolOrders() {
 function bindAdminCodes(acc) {
   if (!acc.promo?.codes) return;
   loadPilot();
+  renderPilotAdmin($("#pilot-tasks-out"), { api, toast }); // naloge članov pilota: vsote brez imen
   renderAdminReports($("#reports-out"), { api, toast });
   bindApk();
   loadSchoolOrders();
@@ -1490,6 +1492,47 @@ function renderGuestOff() {
   bindGuestForms(continueFlow);
 }
 
+// Politika zasebnosti se je spremenila po registraciji: pasica v zavihku Račun, dokler je imetnik ne skrije z geslom
+// računa (zaklep računa je privzeto izklopljen, zato je ne sme skriti otrok na starševi napravi; pregled B3).
+function privacyBanner(acc) {
+  if (!acc.parent.privacy_notice) return "";
+  return `<div class="card priv-banner" id="priv-banner" role="region" aria-labelledby="priv-title">
+    <h2 id="priv-title" class="with-icon">${icon("lock")}${esc(t("starsi.privTitle"))}</h2>
+    <p>${esc(t("starsi.privText"))}</p>
+    <p><a class="btn-secondary" href="/zasebnost.html" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("starsi.privRead"))}</span></a></p>
+    <form class="form priv-form" novalidate>
+      ${acc.parent.has_password !== false ? `<p class="muted small">${esc(t("starsi.privPwNote"))}</p>` : ""}
+      ${proofHtml("priv-pw", acc.parent.has_password !== false)}
+      <p class="form-error" role="alert" hidden></p>
+      <button type="submit" class="secondary">${esc(t("starsi.privHide"))}</button>
+    </form>
+  </div>`;
+}
+
+function wirePrivacyBanner(hasPassword = true) {
+  const box = $("#priv-banner");
+  const form = box?.querySelector(".priv-form");
+  if (!form) return;
+  wireProof(box, { api, toast });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const err = form.querySelector(".form-error");
+    const btn = form.querySelector("button");
+    btn.disabled = true;
+    try {
+      await api("/api/account/privacy-seen", { method: "POST", body: proofBody(form, "priv-pw", hasPassword) });
+      if (status?.parent) status.parent.privacy_notice = null;
+      box.remove();
+      toast(t("starsi.privHidden"), "check");
+    } catch (ex) {
+      err.textContent = ex.message;
+      err.hidden = false;
+      btn.disabled = false;
+      $("#priv-pw").focus();
+    }
+  });
+}
+
 export async function renderAccount() {
   const view = $("#view-account");
   let acc;
@@ -1509,6 +1552,7 @@ export async function renderAccount() {
   view.innerHTML = `
     <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
     <h1>${esc(t("nav.account"))}</h1>
+    ${privacyBanner(acc)}
     <div class="kolone">
     <div class="card">
       <h2>${esc(t("mob.subscription"))}</h2>
@@ -1517,12 +1561,14 @@ export async function renderAccount() {
       ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
       ${promoBox(acc, paid)}
     </div>
+    <div class="card" id="pn-wtp" hidden></div>
     ${acc.promo?.codes ? adminCodes(acc) : ""}
     ${guaranteeBox(acc)}
     ${giftBox(acc)}
     ${podariBox(acc)}
     ${adminCards(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
+    ${acc.promo?.codes ? `<div class="card" id="pilot-tasks-card"><h2>${esc(t("pilot.n.title"))}</h2><div id="pilot-tasks-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="reports-card"><h2>${esc(t("adm.rep.title"))}</h2><div id="reports-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="orders-card"><h2>${esc(t("orders.title"))}</h2><div id="orders-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
 
@@ -1531,7 +1577,7 @@ export async function renderAccount() {
       <ul class="child-list">${acc.children
         .map((c) => `<li><b>${esc(c.name)}</b> <span class="muted">(${c.birth_year || "–"})</span> ${
           c.premium ? `<span class="pill ok">${esc(t("acct.fullAccess"))}</span>` : `<span class="pill">${esc(t("acct.freeToday", { used: c.questions_today, max: acc.free_daily_questions }))}</span>`
-        }${c.pass ? ` <span class="pill">${esc(t("acct.passPill", { date: date(c.pass.ends_at) }))}</span>` : ""}${c.level_locked ? ` <span class="pill warn">${esc(levelName(c.level))}: ${esc(t("up.locked"))}</span>` : ""} ${aiPill(c.ai_month)}${c.has_password || acc.children.length < 2 ? "" : ` <span class="pill">${esc(t("lock.none"))}</span>`}</li>`)
+        }${c.pass ? ` <span class="pill">${esc(t("acct.passPill", { date: date(c.pass.ends_at) }))}</span>` : ""}${c.level_locked ? ` <span class="pill warn">${esc(levelName(c.level))}: ${esc(t("up.locked"))}</span>` : ""} ${aiPill(c.ai_month)}${c.has_password || acc.children.length < 2 ? "" : ` <span class="pill">${esc(t("lock.none"))}</span>`}<div class="pn-acc" data-pn-acc="${c.id}" hidden></div></li>`)
         .join("")}</ul>
       ${acc.children.length ? `<details class="profile-pw"><summary>${esc(t("lock.change"))}</summary>
         <form id="profile-pw-form" class="form" novalidate>
@@ -1626,6 +1672,10 @@ export async function renderAccount() {
     }
   });
   bindAdminCodes(acc);
+  const hasPassword = acc.parent.has_password !== false;
+  paintAccountPilot($(".child-list"), acc.children, { api, toast, hasPassword });
+  paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast, hasPassword }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
+  wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
   $("#gift-form")?.addEventListener("submit", async (e) => {
