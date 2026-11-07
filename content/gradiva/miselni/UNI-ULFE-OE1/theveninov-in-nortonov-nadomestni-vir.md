@@ -13,6 +13,7 @@ stanje: osnutek
   - $U_\mathrm{Th}$: napetost odprtih sponk
   - $R_\mathrm{Th}$: upornost pri izklopljenih virih
   - $U = U_\mathrm{Th} - R_\mathrm{Th} I$
+  - krmiljeni viri ostanejo: testni vir ali $\frac{U_\mathrm{Th}}{I_\mathrm{N}}$
 - Nortonov vir
   - $I_\mathrm{N}$: tok kratkega stika
   - $U_\mathrm{Th} = R_\mathrm{Th} I_\mathrm{N}$

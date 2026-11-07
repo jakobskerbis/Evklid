@@ -39,7 +39,7 @@ Superpozicija velja za tokove in napetosti, *ne pa za moč*, ker je moč kvadrat
 - $U_\mathrm{Th}$ napetost odprtih sponk (brez bremena);
 - $R_\mathrm{Th}$ upornost med sponkama, ko so vsi neodvisni viri izklopljeni.
 
-**Izpeljava.** Breme nadomestimo s tokovnim virom $I$, ki vleče isti tok iz sponk. Vezje je zdaj linearno z viri vezja in virom $I$. Po superpoziciji je napetost sponk $U = U' + U''$. Del $U'$ prispevajo notranji viri pri $I = 0$; to je napetost odprtih sponk, $U' = U_\mathrm{Th}$. Del $U''$ prispeva le $I$ pri izklopljenih notranjih virih; takrat je vezje samo mreža uporov z upornostjo $R_\mathrm{Th}$, zato $U'' = -R_\mathrm{Th} I$. Skupaj:
+**Izpeljava.** Breme nadomestimo s tokovnim virom $I$, ki vleče isti tok iz sponk. Vezje je zdaj linearno z viri vezja in virom $I$. Po superpoziciji je napetost sponk $U = U' + U''$. Del $U'$ prispevajo notranji viri pri $I = 0$; to je napetost odprtih sponk, $U' = U_\mathrm{Th}$. Del $U''$ prispeva le $I$ pri izklopljenih notranjih virih; takrat je vezje pasivno (upori in morebitni krmiljeni viri) in se s sponk vidi kot upornost $R_\mathrm{Th}$, zato $U'' = -R_\mathrm{Th} I$. Skupaj:
 
 $$U = U_\mathrm{Th} - R_\mathrm{Th} I.$$
 
@@ -56,6 +56,10 @@ Izklopljen vir mora dajati nič svoje količine. Tokovni vir daje tok, zato izkl
 $$U_\mathrm{Th} = R_\mathrm{Th} \cdot I_\mathrm{N}.$$
 
 Zato zadostujeta katerikoli dve od treh meritev: napetost odprtih sponk, tok kratkega stika, upornost izklopljenega vezja. V laboratoriju $R_\mathrm{Th}$ pogosto dobimo kot $\frac{U_\mathrm{Th}}{I_\mathrm{N}}$, ker virov iz naprave ne moremo »izklopiti«.
+
+**Krmiljeni viri.** Krmiljen vir ni vir energije, temveč del vezja: njegova vrednost je odvisna od toka ali napetosti drugje v vezju. Zato ga pri računanju $R_\mathrm{Th}$ *ne izklopimo*. Upornosti tedaj ne moremo sešteti kot zaporedne in vzporedne vezave. Uporabimo eno od dveh poti: $R_\mathrm{Th} = \frac{U_\mathrm{Th}}{I_\mathrm{N}}$, ali pa izklopimo le neodvisne vire, na sponke priključimo testni vir $U_\mathrm{t}$ in izračunamo tok $I_\mathrm{t}$, ki ga ta požene v vezje; tedaj je $R_\mathrm{Th} = \frac{U_\mathrm{t}}{I_\mathrm{t}}$.
+
+Primer: vir $12\,\mathrm{V}$ z uporom $4\,\Omega$ do sponke A, od A proti masi upor $4\,\Omega$ in napetostno krmiljen tokovni vir, ki iz A odvaja tok $g U_\mathrm{A}$ z $g = 0{,}25\,\mathrm{S}$. Odprte sponke: $\frac{12 - U_\mathrm{A}}{4} = \frac{U_\mathrm{A}}{4} + 0{,}25\,U_\mathrm{A}$ da $U_\mathrm{Th} = 4\,\mathrm{V}$. Kratek stik: $U_\mathrm{A} = 0$, krmiljeni vir ne vodi, $I_\mathrm{N} = \frac{12}{4} = 3\,\mathrm{A}$. Torej $R_\mathrm{Th} = \frac{4}{3}\,\Omega$. Testni vir da isto: $I_\mathrm{t} = \frac{U_\mathrm{t}}{4} + \frac{U_\mathrm{t}}{4} + 0{,}25\,U_\mathrm{t} = 0{,}75\,U_\mathrm{t}$. Kdor bi krmiljeni vir »izklopil«, bi dobil napačnih $2\,\Omega$.
 
 **5. Prilagoditev bremena.** Breme $R_\mathrm{L}$ na viru $U_\mathrm{Th}$, $R_\mathrm{Th}$ prejme tok $I = \frac{U_\mathrm{Th}}{R_\mathrm{Th} + R_\mathrm{L}}$ in moč
 
@@ -160,7 +164,8 @@ $R_\mathrm{L} = 5\,\Omega$ in $P_\mathrm{max} = \frac{9^2}{4 \cdot 5} = 4{,}05\,
 
 ## Pogoste napake
 
-- **Viri ostanejo vklopljeni pri $R_\mathrm{Th}$.** Kdor pri računanju upornosti pusti vir v vezju, ne dobi upornosti, temveč razmerje, ki je odvisno od vira. Izklopi vse neodvisne vire: napetostne kratko skleni, tokovne odpri. (Krmiljenih virov ne izklapljaš.)
+- **Viri ostanejo vklopljeni pri $R_\mathrm{Th}$.** Kdor pri računanju upornosti pusti vir v vezju, ne dobi upornosti, temveč razmerje, ki je odvisno od vira. Izklopi vse neodvisne vire: napetostne kratko skleni, tokovne odpri.
+- **Izklopljen krmiljen vir.** Krmiljen vir ostane v vezju; $R_\mathrm{Th}$ dobiš s testnim virom ali kot $\frac{U_\mathrm{Th}}{I_\mathrm{N}}$, sicer upornost pride napačna (v primeru iz razlage $2\,\Omega$ namesto $\frac{4}{3}\,\Omega$).
 - **Tokovni vir kratko sklenjen.** To je obratno pravilo. Izklopljen tokovni vir daje tok nič, to so odprte sponke.
 - **Superpozicija moči.** Moč ni linearna v toku. Najprej seštej tokove ali napetosti, šele nato izračunaj moč.
 - **»Prilagojeno breme pomeni $50\,\%$ izkoristek naprave.«** Izkoristek $50\,\%$ velja le za nadomestni vir. Prvotno vezje ima lahko kakršenkoli izkoristek, kot v Primeru 3. V elektroenergetiki se bremena zato *ne* prilagajajo: želimo velik izkoristek, ne največje moči.
@@ -179,6 +184,7 @@ Znati moraš povedati:
 - kdaj je vezje linearno in kako se glasi izrek o superpoziciji (s pravilom za izklop virov);
 - Theveninov in Nortonov izrek z natančnim pomenom $U_\mathrm{Th}$, $I_\mathrm{N}$ in $R_\mathrm{Th}$;
 - izpeljavo $U = U_\mathrm{Th} - R_\mathrm{Th} I$ iz superpozicije;
+- kako dobiš $R_\mathrm{Th}$, če vezje vsebuje krmiljene vire (testni vir ali $\frac{U_\mathrm{Th}}{I_\mathrm{N}}$);
 - pogoj za največjo moč z dokazom in zakaj izkoristek $50\,\%$ ne velja za prvotno vezje.
 
 ### Naloga 1
@@ -282,9 +288,9 @@ Theveninova in Nortonova shema sta torej dva načina, kako narisati isto premico
 
 ? Mikrobna gorivna celica ima pri odprtih sponkah $0{,}8\,\mathrm{V}$, tok kratkega stika pa je $4\,\mathrm{mA}$. Pri katerem bremenu odda največjo moč?
 - $100\,\Omega$
-~ To je $\frac{0{,}4}{0{,}004}$: deliš polovico napetosti odprtih sponk. Polovica velja za napetost na prilagojenem bremenu, $R_\mathrm{Th}$ pa je $\frac{U_\mathrm{Th}}{I_\mathrm{N}}$.
+~ To je $\frac{0{,}4}{0{,}004}$: pri prilagojenem bremenu je napetost res polovica $U_\mathrm{Th}$, a tudi tok je le polovica $I_\mathrm{N}$, zato $R_\mathrm{L} = \frac{0{,}4}{0{,}002} = 200\,\Omega$.
 - $0{,}2\,\Omega$
-~ To je $\frac{0{,}8}{4}$: miliampere pretvori v ampere, $4\,\mathrm{mA} = 0{,}004\,\mathrm{A}$.
+~ Tok si vstavil v miliamperih: $\frac{0{,}8}{4} = 0{,}2$. V amperih je $\frac{0{,}8}{0{,}004} = 200\,\Omega$.
 + $200\,\Omega$, moč je tedaj $0{,}8\,\mathrm{mW}$
 - pri čim manjšem bremenu, ker je tok največji
 ~ Pri kratkem stiku je napetost nič in je moč tudi nič.
@@ -308,4 +314,7 @@ I_0 | tok tokovnega vira | | A
 R_1, R_2, R_3 | upori vezja | | \Omega
 U_\mathrm{A} | potencial vozlišča A | U_\mathrm{A} = U_\mathrm{A}' + U_\mathrm{A}'' | V
 U_\mathrm{A}', U_\mathrm{A}'' | prispevka posameznih virov k potencialu A | | V
+U_\mathrm{t} | napetost testnega vira | | V
+I_\mathrm{t} | tok testnega vira v vezje | | A
+g | prevodnost krmiljenega vira | | S | krmiljeni tok je $g U_\mathrm{A}$
 :::

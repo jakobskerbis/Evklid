@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Knjižničar iz številke ISBN razbere državo in založnika, ne da bi odprl knjigo. Farmacevt iz oznake zdravila razbere učinkovino in odmerek. Strojnik dobi risbo, na kateri ob gredi piše samo **42CrMo4**, ob ohišju črpalke pa **EN-GJL-250**. Obe kratki oznaki sta zapisani po istem načelu kot ISBN: vsak znak na svojem mestu nekaj pomeni. Iz prve razbereš, da je to jeklo z $0{,}42\,\%$ ogljika, kroma okoli $1\,\%$ in nekaj molibdena, primerno za poboljšanje. Iz druge, da je ohišje iz sive litine z lamelnim grafitom in natezno trdnostjo vsaj $250\,\mathrm{MPa}$.
+Knjižničar iz številke ISBN razbere državo in založnika, ne da bi odprl knjigo. Farmacevt iz oznake zdravila razbere učinkovino in odmerek. Strojnik dobi risbo, na kateri ob gredi piše samo **42CrMo4**, ob ohišju črpalke pa **EN-GJL-250**. Ti dve kratki oznaki delujeta kot ISBN: vsak znak na svojem mestu nekaj pomeni. Iz prve razbereš, da je to jeklo z $0{,}42\,\%$ ogljika, kroma okoli $1\,\%$ in nekaj molibdena, primerno za poboljšanje. Iz druge, da je ohišje iz sive litine z lamelnim grafitom in natezno trdnostjo vsaj $250\,\mathrm{MPa}$.
 
 Jekel je več tisoč. Kdor zna brati oznake, iz risbe razbere lastnosti, iz kataloga izbere zamenjavo in v skladišču ne zamenja nerjavnega jekla z navadnim. Kdor ne zna, naroči napačen material, ki se zvari slabo, zarjavi ali poči.
 
@@ -13,7 +13,7 @@ Jekel je več tisoč. Kdor zna brati oznake, iz risbe razbere lastnosti, iz kata
 
 **Najprej ena oznaka do konca.** Vzemimo **42CrMo4**.
 
-1. Oznaka se začne s številko, ne s črko S ali X. Zato je to **nizkolegirano** jeklo, označeno po kemični sestavi (noben legirni element ne doseže $5\,\%$).
+1. Oznaka se začne s številko, ne s črko (S, E, C, X ali HS). Zato je to **nizkolegirano** jeklo, označeno po kemični sestavi (noben legirni element ne doseže $5\,\%$).
 2. Prvo število je stokratnik masnega deleža ogljika: $\frac{42}{100} = 0{,}42\,\%\ \mathrm{C}$.
 3. Sledijo legirni elementi po padajočem deležu: krom, nato molibden.
 4. Število za simboli je delež prvega elementa, pomnožen s faktorjem. Za krom je faktor $4$, zato $\frac{4}{4} = 1\,\%\ \mathrm{Cr}$. Molibden nima števila: njegov delež je majhen in v oznaki ni podan.
@@ -21,7 +21,7 @@ Jekel je več tisoč. Kdor zna brati oznake, iz risbe razbere lastnosti, iz kata
 
 Ogljik $0{,}42\,\%$ omogoča kaljenje, krom in molibden povečata prekaljivost. Tako jeklo kalimo in popuščamo (**poboljšamo**) za gredi, vijake in zobnike. Iz petih znakov smo dobili sestavo in uporabo. Zdaj pravila posplošimo.
 
-**Definicija.** **Jeklo** je zlitina železa z ogljikom, ki ima manj kot okoli $2\,\%$ ogljika (natančneje $2{,}06\,\%$ po diagramu železo–cementit) in je preoblikovalna. **Litina** ima več ogljika, običajno $2{,}5$ do $4\,\%$; ne kujemo je, temveč ulivamo.
+**Definicija.** **Jeklo** je zlitina železa z ogljikom, ki ima manj kot okoli $2\,\%$ ogljika (natančneje $2{,}06\,\%$ po diagramu železo–cementit; v anglosaških virih $2{,}11\,\%$) in je preoblikovalna. **Litina** ima več ogljika, običajno $2{,}5$ do $4\,\%$; ne kujemo je, temveč ulivamo.
 
 **Označevanje jekel po standardu SIST EN 10027.** Del 1 določa simbolne oznake v dveh skupinah, del 2 številske.
 
@@ -174,7 +174,7 @@ $\mathrm{CE}_\mathrm{L} \approx 3{,}4 + 0{,}733 = 4{,}13\,\%$, kar je pod $4{,}3
 - **Faktor pozabljen.** Kdor iz 42CrMo4 prebere »$4\,\%$ kroma«, pozabi deliti s faktorjem $4$; prav je $1\,\%$. Pri X-oznakah faktorjev ni.
 - **»Nerjavno jeklo ne rjavi nikoli.«** Pasivna plast se poškoduje v kloridih (morska voda, sol za posipanje) ali v rezah in špranjah. Za morje izberemo jeklo z molibdenom (X2CrNiMo17-12-2) ali dupleks.
 - **»Siva litina je trdna, ker je trda.«** Trdota ni trdnost v nategu. Lamelni grafit dela zareze, zato je siva litina v nategu krhka; za udarne obremenitve izberemo nodularno litino.
-- **Meja tečenja ne glede na debelino.** Pri debelejših izdelkih je $R_\mathrm{e}$ manjša od števila v oznaki (S235 nad $16\,\mathrm{mm}$ le $225\,\mathrm{MPa}$). Spregledano zmanjšanje vodi v premajhen prerez (Naloga 1).
+- **Meja tečenja ne glede na debelino.** Pri debelejših izdelkih je $R_\mathrm{e}$ manjša od števila v oznaki (S235 nad $16\,\mathrm{mm}$ le $225\,\mathrm{MPa}$). Spregledano zmanjšanje vodi v premajhen prerez (poddimenzioniranje, Naloga 1).
 
 ## Povzetek
 

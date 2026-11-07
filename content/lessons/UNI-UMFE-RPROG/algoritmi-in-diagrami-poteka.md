@@ -69,7 +69,7 @@ Le na mejah, pri $U = 207\,\mathrm{V}$ in $U = 253\,\mathrm{V}$: prej »v redu«
 **Sledilna tabela.** Algoritem preverimo tako, da ga »izvedemo na papirju«: za vsak korak zapišemo vrednosti vseh spremenljivk. Tabeli rečemo **sledilna tabela**. Program je pravilen šele, ko deluje za običajne vhode, mejne vhode in posebne primere (prazen vhod, ničla).
 
 :::premisli
-Zakaj zanka s pogojem na začetku ni primerna, če moramo podatek vsaj enkrat prebrati, preden ga lahko preverimo, in kako se tega rešimo brez zanke s pogojem na koncu?
+Zakaj zanka s pogojem na začetku ni primerna, če moramo podatek vsaj enkrat prebrati, preden ga lahko preverimo, in kako to težavo rešimo brez zanke s pogojem na koncu?
 ---
 Pogoja ni mogoče preveriti, preden obstaja podatek. Prvi podatek zato preberemo enkrat pred zanko, nato pa na koncu vsake ponovitve preberemo naslednjega. Tako je v Primeru 3.
 :::
@@ -306,15 +306,15 @@ Navigacija v avtu dela enako. Na vsakem križišču preveri pogoj (»sem že na 
 
 ## Preveri se
 
-? Kateri element ne sodi v pravilno narisan diagram poteka?
-- romb z izhodoma »da« in »ne«
-~ To je pravilno narisana odločitev.
-- paralelogram »beri $U$«
-~ Paralelogram pomeni vhod ali izhod podatkov; tak korak je pravilen.
-+ pravokotnik z napisom »dodaj po občutku«
-- zaobljen pravokotnik »začetek«
-~ Ta pravilno označi začetek.
-> Korak »po občutku« krši določenost; vsak korak algoritma mora biti enoumen.
+? Kateri element je v diagramu poteka narisan narobe?
+- romb »$x \ge 0$?« z izhodoma »da« in »ne«
+~ To je pravilna odločitev: romb z dvema izhodoma.
+- paralelogram »beri $x$«
+~ Paralelogram pomeni vhod ali izhod podatkov, zato je pravilen.
++ romb »$n = 0$?« z eno samo izhodno puščico
+- zaobljen pravokotnik »konec«
+~ Zaobljen pravokotnik označi začetek ali konec, zato je pravilen.
+> Odločitev ima vedno dva izhoda. Z enim samim diagram za del vhodov ne pove, kaj storiti, kar krši določenost.
 
 ? Algoritem: $s = 0$; za $k$ od $1$ do $4$: $s \leftarrow s + k^2$; izpiši $s$. Kaj izpiše?
 - $10$
