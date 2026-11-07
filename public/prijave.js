@@ -142,14 +142,14 @@ export function wireLessonReport(btn, { api, studentId, topic, step, toast }) {
 }
 
 /** Skrbnik v klepetu: opis napake, zraven gredo zadnja sporočila pogovora. */
-export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose }) {
+export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose, thanks = null, ask = null }) {
   const box = reportBox({
-    ask: t("bug.ask"),
+    ask: ask || t("bug.ask"),
     notePh: t("bug.notePh"),
     needNote: true,
     onSend: async ({ note }) => {
       await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: (typeof conversationId === "function" ? conversationId() : conversationId) || undefined, view, ...deviceInfo() } });
-      toast(t("bug.thanks"), "check");
+      toast(thanks || t("bug.thanks"), "check");
       onClose?.();
     },
     onClose,

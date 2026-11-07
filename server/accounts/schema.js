@@ -106,6 +106,11 @@ export function migrateAccounts(db) {
   // Država starša (za ceno v lokalni valuti); ob registraciji iz naprave oziroma omrežja.
   const pcols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   if (!pcols.includes("country")) db.exec("ALTER TABLE parents ADD COLUMN country TEXT");
+  // Rok povezave za potrditev e-naslova (VERIFY_DAYS, index.js). Že poslane povezave dobijo rok od te migracije naprej.
+  if (!pcols.includes("verify_expires_at")) {
+    db.exec("ALTER TABLE parents ADD COLUMN verify_expires_at TEXT");
+    db.prepare("UPDATE parents SET verify_expires_at = ? WHERE verify_token_hash IS NOT NULL").run(new Date(Date.now() + 7 * 86400000).toISOString());
+  }
   // Poln dostop iz aktivacijske kode (glej promo.js).
   if (!pcols.includes("promo_until")) db.exec("ALTER TABLE parents ADD COLUMN promo_until TEXT");
   if (!pcols.includes("gift_until")) db.exec("ALTER TABLE parents ADD COLUMN gift_until TEXT"); // darilna koda (server/placila/darila.js)
@@ -113,6 +118,10 @@ export function migrateAccounts(db) {
   if (!pcols.includes("birth_date")) db.exec("ALTER TABLE parents ADD COLUMN birth_date TEXT");
   // Star račun brez datuma rojstva: kdaj smo ga ob prijavi vprašali (vprašamo samo enkrat, j 2026-11-06).
   if (!pcols.includes("birth_asked_at")) db.exec("ALTER TABLE parents ADD COLUMN birth_asked_at TEXT");
+  // Član pilota (server/pilot-naloge.js): skrbnik označi račun v zavihku Račun; vsi profili računa vidijo naloge.
+  // Različica politike zasebnosti, o kateri je imetnik videl obvestilo (privacy_version ostane različica ob registraciji).
+  if (!pcols.includes("privacy_seen")) db.exec("ALTER TABLE parents ADD COLUMN privacy_seen TEXT");
+  if (!pcols.includes("pilot_at")) db.exec("ALTER TABLE parents ADD COLUMN pilot_at TEXT");
   // Gost (uporaba brez registracije, odstranjena 2026-10-29; stari gostje ostanejo): račun brez e-naslova, vezan na piškotek naprave.
   // guest_net = zgoščeni IP omrežja, da brisanje piškotkov ne da nove brezplačne kvote.
   if (!pcols.includes("is_guest")) db.exec("ALTER TABLE parents ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0");
@@ -126,6 +135,25 @@ export function migrateAccounts(db) {
     db.exec(`CREATE TRIGGER IF NOT EXISTS usage_parent_detach AFTER DELETE ON parents BEGIN
       UPDATE usage SET parent_id = NULL WHERE parent_id = OLD.id;
     END;`);
+  }
+  // Izbris računa (vse poti: račun, gost, čiščenje neaktivnih): zapisi meje AI v kv z id računa (server/placila/placano.js
+  // plačana obdobja, dobroimetje, vračila; okno meje in nadgradnja v accounts/index.js). id dobi naslednji nov račun, ki bi
+  // sicer podedoval tuje dobroimetje (šteje kot pravi denar za mejo AI) in podatke o plačilih (GDPR čl. 17).
+  db.exec("CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
+  // DROP + CREATE: sprožilec v obstoječi bazi se posodobi, ko se seznam ključev spremeni (IF NOT EXISTS bi ostal star).
+  // school_sub_end:<id> (accounts/billing.js) hrani Stripe id naročnine računa.
+  db.exec(`DROP TRIGGER IF EXISTS kv_parent_delete;
+  CREATE TRIGGER kv_parent_delete AFTER DELETE ON parents BEGIN
+    DELETE FROM kv WHERE key IN ('ai_paid_' || OLD.id, 'ai_paid_bal_' || OLD.id, 'ai_paid_refunds_' || OLD.id, 'ai_window_' || OLD.id, 'ai_upgrade_' || OLD.id, 'school_sub_end:' || OLD.id);
+  END;`);
+  // Enkratno: zapisi računov, izbrisanih pred sprožilcem (sicer jih podeduje naslednji račun z istim id).
+  // Ključ = predpona + samo števke (id): rtrim odreže števke na koncu, ostati mora natanko predpona (ai_paid_ je
+  // predpona ai_paid_bal_; ključ z repom za id, npr. ai_paid_12:pool, ni ključ računa in ostane).
+  if (!db.prepare("SELECT 1 FROM kv WHERE key = 'kv_parent_orphans_cleaned'").get()) {
+    db.exec(`DELETE FROM kv WHERE rtrim(key, '0123456789') IN ('ai_paid_', 'ai_paid_bal_', 'ai_paid_refunds_', 'ai_window_', 'ai_upgrade_', 'school_sub_end:')
+      AND length(key) > length(rtrim(key, '0123456789'))
+      AND CAST(substr(key, length(rtrim(key, '0123456789')) + 1) AS INTEGER) NOT IN (SELECT id FROM parents);
+    INSERT INTO kv (key, value) VALUES ('kv_parent_orphans_cleaned', datetime('now'));`);
   }
   db.exec("CREATE INDEX IF NOT EXISTS idx_parents_guest_net ON parents(guest_net) WHERE is_guest = 1");
 }

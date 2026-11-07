@@ -49,6 +49,22 @@ export function checkFile(file) {
   }
 }
 
+// Fotografije iz nalog pilota ne gredo v kopije (lokalne ne in zato tudi ne v oblak): služijo le izboljšavi branja,
+// zato po izbrisu ali roku ne smejo živeti naprej v kopijah (server/pilot-naloge.js, zasebnost.html).
+export function withoutPilotPhotos(file) {
+  const db = new DatabaseSync(file);
+  try {
+    if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) return 0;
+    const n = Number(db.prepare("DELETE FROM pilot_photos").run().changes);
+    // Prepis naloge sodi k fotografiji (sprožilec pilot_photo_gone ga počisti tudi sam; tu še za stare kopije brez njega).
+    if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_scans'").get()) db.exec("UPDATE pilot_scans SET problems = NULL");
+    if (n) db.exec("VACUUM"); // izbrisani bajti ne ostanejo v prostih straneh kopije
+    return n;
+  } finally {
+    db.close();
+  }
+}
+
 // Pobriše dnevne kopije nad keepDaily in ročne nad keepManual (najstarejše najprej) ter ostanke .tmp.
 function prune(dbFile, keepDaily, keepManual) {
   const list = listBackups(dbFile);
@@ -87,6 +103,7 @@ export function makeBackup(db, dbFile, { now = new Date(), keep = KEEP_DAYS, man
   const tmp = `${file}.tmp`;
   try {
     db.exec(`VACUUM INTO '${tmp.replace(/'/g, "''")}'`); // dosledna slika tudi med pisanjem (WAL)
+    withoutPilotPhotos(tmp);
     const ok = checkFile(tmp);
     if (ok !== "ok") return { made: false, reason: `kopija ni cela: ${ok}` };
     fs.renameSync(tmp, file);
@@ -171,6 +188,12 @@ export function applyPendingRestore(dbFile, { log = console, now = new Date() } 
   }
   const saved = `${dbFile}.pred-obnovo-${now.toISOString().replace(/[:.]/g, "-")}`;
   moveDb(dbFile, saved);
+  // Shranjena baza (za razveljavitev obnove) brez fotografij pilota: »ne gredo v naše varnostne kopije« (B4 P2-3).
+  try {
+    withoutPilotPhotos(saved);
+  } catch (err) {
+    log.error?.(`[evklid] fotografij pilota iz shranjene baze ni bilo mogoče odstraniti: ${err.message}`);
+  }
   fs.renameSync(src, dbFile);
   log.info?.(`[evklid] baza obnovljena iz kopije; prejšnja je v ${path.basename(saved)}`);
   return { restored: true, saved };

@@ -1011,11 +1011,14 @@ export class Progress {
   // ---------- XP ----------
   award(studentId, items, prev = null) {
     const insert = this.db.prepare("INSERT INTO xp_events (student_id, amount, reason) VALUES (?, ?, ?)");
+    // XP iz nalog pilota (razlog »pilot: …«) ne začne niza dni in ne prinese bonusa za niz (ta bi štel v ligah, B4).
+    const notPilot = "COALESCE(reason, '') NOT LIKE 'pilot:%'";
     const firstToday = !this.db
-      .prepare("SELECT 1 FROM xp_events WHERE student_id = ? AND date(created_at) = date('now') LIMIT 1")
+      .prepare(`SELECT 1 FROM xp_events WHERE student_id = ? AND date(created_at) = date('now') AND ${notPilot} LIMIT 1`)
       .get(studentId);
     const all = [...items];
-    if (firstToday) {
+    const onlyPilot = items.every(([, reason]) => String(reason || "").startsWith("pilot:"));
+    if (firstToday && !onlyPilot) {
       const streak = this.dayStreak(studentId) + 1;
       if (streak > 1) all.push([XP.dailyStreak(streak), `${streak} dni zapored`]);
     }
@@ -1028,7 +1031,7 @@ export class Progress {
   // en zamujen dan na teden pa ga tudi ne (samodejna zamrznitev, kot pri Duolingu); zamrznjen dan ne šteje.
   dayStreak(studentId) {
     const days = this.db
-      .prepare("SELECT DISTINCT date(created_at) AS d FROM xp_events WHERE student_id = ? ORDER BY d DESC LIMIT 400")
+      .prepare("SELECT DISTINCT date(created_at) AS d FROM xp_events WHERE student_id = ? AND COALESCE(reason, '') NOT LIKE 'pilot:%' ORDER BY d DESC LIMIT 400")
       .all(studentId)
       .map((r) => r.d);
     const set = new Set(days);
@@ -1066,16 +1069,6 @@ export class Progress {
     return { total, week, today, goal, streak: this.dayStreak(studentId), level: lp.level, levelFrom: lp.from, levelTo: lp.to };
   }
 
-  // Tedenska lestvica med učenci te namestitve (samo vzdevki).
-  leaderboard() {
-    return this.db
-      .prepare(
-        `SELECT s.id, s.name, COALESCE(SUM(x.amount), 0) AS xp
-         FROM students s LEFT JOIN xp_events x ON x.student_id = s.id AND x.created_at >= ?
-         GROUP BY s.id ORDER BY xp DESC, s.name LIMIT 30`,
-      )
-      .all(weekStart());
-  }
 }
 
 // Ponedeljek tega tedna, 00:00 (UTC)

@@ -296,6 +296,8 @@ export function mountBilling(app, ctx) {
   function completePassSession(session) {
     if (session?.metadata?.kind !== "pass" || session.payment_status !== "paid") return false;
     const pass = passes.get(session.metadata.pass_id);
+    // Profil je bil izbrisan med plačilom (passes ON DELETE CASCADE): plačilo je prejeto, paketa ni – skrbnik ga vrne v Stripu.
+    if (!pass) log.error?.("[evklid] plačan paket pred testom za izbrisan profil; vrni plačilo v Stripu", session.metadata.parent_id, session.payment_intent?.id || session.payment_intent || session.id);
     if (!pass || String(pass.parent_id) !== String(session.metadata.parent_id)) return false;
     if (pass.status === "expired") log.error?.("[evklid] zamudno plačilo paketa po izteku čakanja; paket vklopljen", pass.id);
     const ok = passes.activate(pass.id, typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id);

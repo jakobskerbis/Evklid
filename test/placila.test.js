@@ -19,7 +19,7 @@ const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10
 // Lažni Stripe + Resend. stripe.sessions / stripe.subs: kar vrneta GET /checkout/sessions/:id in /subscriptions/:id.
 function fakeStripe() {
   const calls = [];
-  const state = { sessions: {}, subs: {}, charges: {} };
+  const state = { sessions: {}, subs: {}, charges: {}, invoices: {} };
   let n = 0;
   const fetchFn = async (url, init = {}) => {
     const body = init.body ? (init.headers["Content-Type"]?.includes("json") ? JSON.parse(init.body) : Object.fromEntries(new URLSearchParams(init.body))) : null;
@@ -41,6 +41,8 @@ function fakeStripe() {
     if (p === "/subscriptions") return ok({ data: Object.values(state.subs) });
     const ch = /^\/charges\/(\w+)$/.exec(p);
     if (ch) return ok(state.charges[ch[1]] || {});
+    const inv = /^\/invoices\/(\w+)$/.exec(p);
+    if (inv) return ok(state.invoices[inv[1]] || {});
     return { ok: false, status: 404, json: async () => ({ error: { message: "ni" } }) };
   };
   return { calls, state, fetchFn };
@@ -502,5 +504,103 @@ test("brez mikrotransakcij (j 2026-11-04): dokup samo paketi in samo polnoleten;
     r = await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", ...consent } });
     assert.equal(r.status, 410);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM passes WHERE days = 30").get().n, 1, "nov 30-dnevni paket ne nastane");
+  });
+});
+
+// Dve naročnini istega kupca (pregled B #490, M8): dogodek stare ne vzame dostopa, ki ga daje druga.
+const subState = (id, status) => ({ id, status, customer: "cus_k", items: { data: [{ price: { lookup_key: "evklid_1_month" } }] } });
+const subRow = (store, pid) => ({ ...store.db.prepare("SELECT sub_id, sub_status FROM parents WHERE id = ?").get(pid) });
+const setSub = (store, stripe, pid, id) => {
+  store.db.prepare("UPDATE parents SET sub_id = ?, sub_status = 'active', sub_plan = 'evklid_1_month', stripe_customer_id = 'cus_k' WHERE id = ?").run(id, pid);
+  stripe.state.subs[id] = subState(id, "active");
+};
+
+test("dogodek stare naročnine (preklic) ne prepiše trenutne veljavne naročnine", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const a = client();
+    const p = await registerVerified(a, stripe, "stara@x.si");
+    setSub(store, stripe, p.id, "sub_new");
+    stripe.state.subs.sub_old = subState("sub_old", "canceled");
+    for (const type of ["customer.subscription.deleted", "customer.subscription.updated"]) {
+      const r = await hook({ id: "e_" + type, type, data: { object: { id: "sub_old", customer: "cus_k", status: "canceled" } } });
+      assert.equal(r.status, 200);
+      assert.deepEqual(subRow(store, p.id), { sub_id: "sub_new", sub_status: "active" }, type);
+    }
+    // Druga aktivna istega paketa (dvojni nakup, obnova) ne preklaplja; nakup višjega paketa trenutno zamenja.
+    stripe.state.subs.sub_2 = subState("sub_2", "active");
+    await hook({ id: "e2", type: "customer.subscription.updated", data: { object: { id: "sub_2", customer: "cus_k", status: "active" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_new", sub_status: "active" });
+    stripe.state.subs.sub_3 = { ...subState("sub_3", "active"), items: { data: [{ price: { lookup_key: "evklid_faks_month" } }] } };
+    await hook({ id: "e3", type: "customer.subscription.created", data: { object: { id: "sub_3", customer: "cus_k", status: "active" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_3", sub_status: "active" });
+  });
+});
+
+test("konec trenutne naročnine ob drugi plačani naročnini istega kupca: velja druga", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const a = client();
+    const p = await registerVerified(a, stripe, "dve@x.si");
+    setSub(store, stripe, p.id, "sub_new");
+    stripe.state.subs.sub_old = subState("sub_old", "active");
+    stripe.state.subs.sub_new.status = "canceled";
+    await hook({ id: "d1", type: "customer.subscription.deleted", data: { object: { id: "sub_new", customer: "cus_k", status: "canceled" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_old", sub_status: "active" });
+    // Ko se konča še ta, dostopa ni več.
+    stripe.state.subs.sub_old.status = "canceled";
+    await hook({ id: "d2", type: "customer.subscription.deleted", data: { object: { id: "sub_old", customer: "cus_k", status: "canceled" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_old", sub_status: "canceled" });
+  });
+});
+
+// Pregled A #497 (R1): stara naročnina past_due ob trenutni aktivni ne prevzame računa.
+test("stara naročnina past_due ob trenutni aktivni ne prevzame računa", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const p = await registerVerified(client(), stripe, "pd@x.si");
+    setSub(store, stripe, p.id, "sub_new");
+    stripe.state.subs.sub_old = subState("sub_old", "past_due");
+    await hook({ id: "pd1", type: "customer.subscription.updated", data: { object: { id: "sub_old", customer: "cus_k", status: "past_due" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_new", sub_status: "active" });
+  });
+});
+
+test("trenutna preide v past_due, kupec ima drugo aktivno: velja druga", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const p = await registerVerified(client(), stripe, "pd2@x.si");
+    setSub(store, stripe, p.id, "sub_new");
+    stripe.state.subs.sub_old = subState("sub_old", "active");
+    stripe.state.subs.sub_new.status = "past_due";
+    await hook({ id: "pd2", type: "customer.subscription.updated", data: { object: { id: "sub_new", customer: "cus_k", status: "past_due" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_old", sub_status: "active" });
+  });
+});
+
+// Spor pri enkratnem plačilu (dokup, paket, ki ga ni več v bazi, ker je bil profil izbrisan) ni spor pri naročnini:
+// naročnine, ki jo starš plačuje, ne prekličemo. Spor pri računu naročnine jo prekliče kot doslej.
+test("spor pri enkratnem plačilu ne prekliče naročnine; spor pri računu naročnine jo", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const a = client();
+    const parent = await registerVerified(a, stripe, "spor@enkratno.si");
+    store.db.prepare("UPDATE parents SET sub_id = 'sub_k', sub_status = 'active', sub_plan = 'evklid_1_month', stripe_customer_id = 'cus_k' WHERE id = ?").run(parent.id);
+    stripe.state.subs.sub_k = { id: "sub_k", status: "active", customer: "cus_k", items: { data: [{ price: { lookup_key: "evklid_1_month" } }] } };
+    const deleted = () => stripe.calls.filter((c) => c.method === "DELETE" && c.path.startsWith("/v1/subscriptions")).length;
+
+    // 1) Dokup, ki je bil že vrnjen (delno ali v celoti), nato spor pri istem plačilu.
+    store.db.prepare("INSERT INTO ai_credit_buys (parent_id, pack, amount, currency, credit_usd, status, payment_id) VALUES (?, 'k5', 500, 'EUR', 1, 'refunded', 'pi_c')").run(parent.id);
+    stripe.state.charges.ch_c = { id: "ch_c", customer: "cus_k", payment_intent: "pi_c", invoice: null };
+    assert.equal((await hook({ id: "evt_dc", type: "charge.dispute.created", data: { object: { payment_intent: "pi_c", charge: "ch_c" } } })).status, 200);
+    assert.equal(deleted(), 0, "spor pri dokupu je preklical naročnino");
+
+    // 2) Enkratno plačilo, ki ga v bazi ni več (paket izbrisanega profila: passes ON DELETE CASCADE).
+    stripe.state.charges.ch_p = { id: "ch_p", customer: "cus_k", payment_intent: "pi_p", invoice: null };
+    assert.equal((await hook({ id: "evt_dp", type: "charge.dispute.created", data: { object: { payment_intent: "pi_p", charge: "ch_p" } } })).status, 200);
+    assert.equal(deleted(), 0, "spor pri paketu izbrisanega profila je preklical naročnino");
+    assert.equal(store.db.prepare("SELECT sub_status FROM parents WHERE id = ?").get(parent.id).sub_status, "active");
+
+    // 3) Spor pri računu te naročnine: naročnina se prekliče.
+    stripe.state.charges.ch_s = { id: "ch_s", customer: "cus_k", payment_intent: "pi_s", invoice: "in_s" };
+    stripe.state.invoices.in_s = { id: "in_s", subscription: "sub_k" };
+    assert.equal((await hook({ id: "evt_ds", type: "charge.dispute.created", data: { object: { payment_intent: "pi_s", charge: "ch_s" } } })).status, 200);
+    assert.equal(deleted(), 1);
+    assert.equal(store.db.prepare("SELECT sub_status FROM parents WHERE id = ?").get(parent.id).sub_status, "canceled");
   });
 });

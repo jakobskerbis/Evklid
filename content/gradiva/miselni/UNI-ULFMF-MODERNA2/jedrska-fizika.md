@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Masni defekt
+  - jedro je lažje od svojih nukleonov
+  - $1\,\mathrm{u}\,c^2 = 931{,}494\,\mathrm{MeV}$
+- Vezavna energija
+  - $W_v = [Z\,m(^1\mathrm{H}) + N\,m_n - m]c^2$
+  - vrh $W_v/A$ pri železu
+- Zlivanje in cepitev
+  - premik proti vrhu sprosti energijo
+  - cepitev urana okoli $200\,\mathrm{MeV}$
+- Vrste razpadov
+  - $\alpha$, $\beta^-$, $\beta^+$, $\gamma$
+  - ohranita se $A$ in naboj
+- Zakon razpada
+  - $N = N_0e^{-\lambda t}$
+  - napaka: po dveh razpolovnih časih ni nič
+- Razpolovni čas
+  - $t_{1/2} = \ln 2/\lambda$
+  - $\tau = 1/\lambda$
+- Aktivnost
+  - $R = \lambda N$, enota $\mathrm{Bq}$
+  - daljši $t_{1/2}$: več jeder pri isti $R$

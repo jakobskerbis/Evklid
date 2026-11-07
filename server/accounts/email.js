@@ -75,9 +75,9 @@ export function verifyEmail(url) {
     subject: "Potrdite e-naslov za Evklid",
     html: layout(
       "Potrdite svoj e-naslov",
-      `<p>Pozdravljeni! S klikom na gumb potrdite svoj e-naslov in izjavite, da ste zakoniti zastopnik otroka, ki bo uporabljal Evklid.</p>${button(url, "Potrdite e-naslov")}<p style="font-size:13px;color:#5f6779">Če se niste registrirali, to sporočilo prezrite.</p>`,
+      `<p>Pozdravljeni! S klikom na gumb potrdite svoj e-naslov in izjavite, da ste zakoniti zastopnik otroka, ki bo uporabljal Evklid.</p>${button(url, "Potrdite e-naslov")}<p style="font-size:13px;color:#5f6779">Povezava velja 7 dni. Če se niste registrirali, to sporočilo prezrite.</p>`,
     ),
-    text: `Potrdite e-naslov za Evklid: ${url}`,
+    text: `Potrdite e-naslov za Evklid: ${url}\nPovezava velja 7 dni.`,
   };
 }
 
@@ -100,6 +100,18 @@ export function resetEmail(url) {
     subject: "Novo geslo za Evklid",
     html: layout("Nastavite novo geslo", `<p>Za novo geslo kliknite spodnji gumb. Povezava velja 1 uro.</p>${button(url, "Nastavite novo geslo")}<p style="font-size:13px;color:#5f6779">Če niste zahtevali novega gesla, sporočilo prezrite.</p>`),
     text: `Novo geslo za Evklid (velja 1 uro): ${url}`,
+  };
+}
+
+// Na račun je bila dodana prijava z Apple (server/mobile/apple-signin.js): vse druge naprave so odjavljene.
+export function appleLinkedEmail() {
+  return {
+    subject: "Prijava z Apple za Evklid",
+    html: layout(
+      "Dodana je prijava z Apple",
+      "<p>Na vaš račun Evklid je bila pravkar dodana prijava z Apple.</p><p>Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo: s tem odstranimo prijavo z Apple in odjavimo vse naprave.</p>",
+    ),
+    text: "Na vaš račun Evklid je bila pravkar dodana prijava z Apple. Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo: s tem odstranimo prijavo z Apple in odjavimo vse naprave.",
   };
 }
 
@@ -186,5 +198,36 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
     // topup false: pilot in lastnik (brez ponudbe dokupa, pregled #477 B3).
     html: layout("Podrobne razlage ta mesec", `<p>${esc(body)}</p>${topup ? "<p>Več razlag lahko dokupite v zavihku Račun.</p>" : ""}${button(appUrl, `Odprite ${n}`)}`),
     text: topup ? `${body} Več razlag dokupite v zavihku Račun: ${appUrl}` : `${body} ${appUrl}`,
+  };
+}
+
+// Enkratno obvestilo o spremenjeni politiki zasebnosti (scripts/obvestilo-zasebnost.js). Besedilo potrdi j, preden
+// se pošlje; skripta brez --poslji ničesar ne pošlje.
+export function privacyChangeEmail(policyUrl, dateText = "6. novembra 2026") {
+  const points = [
+    "Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo.",
+    "Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, oceno delov aplikacije, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge in prebrano besedilo shranimo samo, če ju otrok, star vsaj 15 let, posebej označi, in ju hranimo največ 30 dni.",
+    "Skrbnik Evklida vidi skupna števila brez imen, šele ko so odgovori vsaj trije (pri vprašanju o plačilu pet). Vidi tudi kratke opombe brez imena, e-naslove računov v pilotu in fotografije, ki jih je otrok sam označil za shranjevanje.",
+    "Član pilota lahko prijavi napako z zastavico; prijavi se priložita opis in zadnjih 10 sporočil pogovora.",
+  ];
+
+  const text = `Pozdravljeni,\n\n${dateText} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:\n\n${points.map((p) => `- ${p}`).join("\n")}\n\nNič vam ni treba narediti. Celotna pravila: ${policyUrl}\n\nEkipa Evklid`;
+  return {
+    subject: "Evklid: posodobili smo pravila zasebnosti",
+    text,
+    html: layout(
+      "Posodobili smo pravila zasebnosti",
+      `<p>${esc(dateText)} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:</p><ul>${points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul><p>Nič vam ni treba narediti.</p>${button(policyUrl, "Preberite pravila")}`,
+    ),
+  };
+}
+
+// Enkratna koda za potrditev imetnika računa brez gesla (prijava z Apple): skrivanje obvestila o zasebnosti,
+// odgovor o plačilu, izbris fotografij pilota.
+export function ownerCodeEmail(code) {
+  return {
+    subject: "Evklid: koda za potrditev",
+    text: `Vaša koda za potrditev v Evklidu: ${code}\n\nVelja 10 minut. Če je niste zahtevali, sporočilo prezrite.`,
+    html: layout("Koda za potrditev", `<p>Vaša koda za potrditev v Evklidu:</p><p style="font-size:28px;font-weight:bold;letter-spacing:4px">${esc(code)}</p><p style="font-size:13px;color:#5f6779">Velja 10 minut. Če je niste zahtevali, sporočilo prezrite.</p>`),
   };
 }

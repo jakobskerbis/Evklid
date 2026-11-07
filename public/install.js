@@ -8,6 +8,7 @@
 // Kartica je na Učni poti (dokler je ne skriješ), vrstica v »Jaz« in kartica v Nastavitvah ostaneta.
 import { icon } from "./icons.js";
 import { t, currentLang } from "./i18n.js";
+import { jsonAliNic } from "./odgovor.js";
 
 const KEY = "evklid.install"; // čas, ko je bila kartica na Učni poti skrita
 const HIDE_DAYS = 21;
@@ -244,7 +245,7 @@ export function initInstall(opts = {}) {
   refresh();
   // Ali je za telefon na voljo prava aplikacija (APK, trgovini, TestFlight).
   fetch("/api/app-links", { credentials: "same-origin" })
-    .then((r) => (r.ok ? r.json() : {}))
+    .then((r) => jsonAliNic(r, {}))
     .then((l) => {
       links = l && typeof l === "object" ? l : {};
       refresh();
