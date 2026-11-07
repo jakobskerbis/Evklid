@@ -33,6 +33,7 @@ const api = async (url) => {
   if (u.pathname === "/api/textbook/search") {
     const q = u.searchParams.get("q");
     await wait(window.delay[q] || 0);
+    if (window.fail?.[q]) throw Object.assign(new Error("Napaka"), { status: 500 });
     return [{ id: "MAT-OS-9/" + q, name: "ZADETEK " + q, unit: "u", pathLabel: "p", snippet: "" }];
   }
   if (u.pathname.endsWith("/lesson")) {
@@ -103,6 +104,18 @@ test("Učbenik: starejši odgovor ne prepiše novejšega", { skip }, async (t) =
     const text = await body();
     assert.match(text, /KAZALO/);
     assert.doesNotMatch(text, /ZADETEK/);
+  });
+
+  await t.test("napaka iskanja: sporočilo namesto zadetkov starejše poizvedbe", async () => {
+    await page.fill("#tb-q", "koti");
+    await page.waitForFunction(() => document.querySelector("#tb-body").textContent.includes("ZADETEK koti"));
+    await page.evaluate(() => (window.fail = { kotiz: true }));
+    await page.fill("#tb-q", "kotiz");
+    await page.waitForSelector("#tb-body [role=alert]");
+    assert.doesNotMatch(await body(), /ZADETEK/);
+    await page.evaluate(() => (window.fail = {}));
+    await page.fill("#tb-q", "");
+    await page.waitForFunction(() => document.querySelector("#tb-body").textContent.includes("KAZALO"));
   });
 
   await t.test("lekcija, ki se nalaga, ne prekrije pozneje odprte strani", async () => {

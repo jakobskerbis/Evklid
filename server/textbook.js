@@ -216,7 +216,15 @@ function readLesson(file) {
   }
   const hit = cache.get(file);
   if (hit && hit.mtime === st.mtimeMs) return hit.lesson;
-  const lesson = parseLesson(fs.readFileSync(file, "utf8"));
+  // Datoteka lahko izgine med stat in branjem (posodobitev, git checkout) ali ni berljiva: brez lekcije, ne 500.
+  let src;
+  try {
+    src = fs.readFileSync(file, "utf8");
+  } catch {
+    cache.delete(file);
+    return null;
+  }
+  const lesson = parseLesson(src);
   cache.set(file, { mtime: st.mtimeMs, lesson });
   return lesson;
 }
