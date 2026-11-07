@@ -1487,17 +1487,17 @@ async function reloadIfNewer(once = false) {
   if (!appVersion || state.contestTimer || unsentText()) return;
   const v = await serverVersion();
   if (!v || v === appVersion) return;
-  if (once) {
-    try {
-      if (sessionStorage.getItem(RELOADED) === v) return;
-      sessionStorage.setItem(RELOADED, v);
-    } catch {
-      return; // brez sessionStorage ne tvegamo zanke
-    }
+  try {
+    if (once && sessionStorage.getItem(RELOADED) === v) return;
+  } catch {
+    return; // brez sessionStorage ne tvegamo zanke
   }
-  const reg = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
   if (pageApp) await dropStaleCopies(v);
-  await reg?.update?.().catch(() => null); // nov service worker (nove knjižnice) pred osvežitvijo
+  // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
+  // service worker ali izgubil osvežitev (pregled B2 P2-4).
+  try {
+    if (once) sessionStorage.setItem(RELOADED, v); // šele tik pred osvežitvijo
+  } catch {}
   location.reload();
 }
 // Stara stran iz predpomnilnika (npr. počasno omrežje), strežnik pa že ima novo različico: osvežimo takoj, preden
