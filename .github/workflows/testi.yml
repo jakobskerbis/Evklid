@@ -57,9 +57,11 @@ jobs:
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit
       # Sistemski paketi za brskalnike (.deb) iz prejšnjih zagonov: Azurjevo ogledalo Ubuntuja jih občasno pošilja
       # s ~30–60 KB/s (paketi za WebKit, ~100 datotek; 7. 11. 2026 en 9 MB paket 3 min), zato se je namestitev
-      # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime in kontrolna vsota, in prenese samo
-      # nove različice. Ključ po mesecu: enkrat na mesec nova mapa (iz prejšnje), da ne raste v nedogled.
+      # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime datoteke (paket_različica_arh) in velikost
+      # (kontrolno vsoto preveri šele ob namestitvi), in prenese samo nove različice. Ključ po mesecu: enkrat na mesec
+      # nov zapis (obnovljen iz prejšnjega); da mapa ne raste, apt-get autoclean po namestitvi odstrani stare različice.
       - id: mesec
+        timeout-minutes: 1
         run: |
           echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
           echo "img=${ImageOS:-ubuntu}" >> "$GITHUB_OUTPUT"
@@ -83,12 +85,14 @@ jobs:
           APT::Keep-Downloaded-Packages "true";
           Binary::apt::APT::Keep-Downloaded-Packages "true";
           APT
+          # apt prenaša kot uporabnik _apt v podmapo partial; brez lastništva opozori »unsandboxed as root« in prenaša kot root.
           sudo mkdir -p ~/apt-arhiv/partial
           sudo chown _apt:root ~/apt-arhiv/partial
           echo "Paketov v predpomnilniku: $(find ~/apt-arhiv -maxdepth 1 -name '*.deb' | wc -l)"
           for poskus in 1 2 3; do
             if timeout -k 10 13m npx playwright install --with-deps chromium webkit; then
               # actions/cache shrani mapo kot uporabnik runner: brez zaklepa in mape partial (_apt, 0700).
+              sudo timeout 2m apt-get autoclean -q || true # stare različice iz mape: predpomnilnik ne raste iz meseca v mesec
               sudo rm -rf ~/apt-arhiv/partial ~/apt-arhiv/lock; sudo chmod -R a+rX ~/apt-arhiv
               exit 0
             fi
@@ -159,9 +163,11 @@ jobs:
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium
       # Sistemski paketi za brskalnike (.deb) iz prejšnjih zagonov: Azurjevo ogledalo Ubuntuja jih občasno pošilja
       # s ~30–60 KB/s (paketi za WebKit, ~100 datotek; 7. 11. 2026 en 9 MB paket 3 min), zato se je namestitev
-      # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime in kontrolna vsota, in prenese samo
-      # nove različice. Ključ po mesecu: enkrat na mesec nova mapa (iz prejšnje), da ne raste v nedogled.
+      # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime datoteke (paket_različica_arh) in velikost
+      # (kontrolno vsoto preveri šele ob namestitvi), in prenese samo nove različice. Ključ po mesecu: enkrat na mesec
+      # nov zapis (obnovljen iz prejšnjega); da mapa ne raste, apt-get autoclean po namestitvi odstrani stare različice.
       - id: mesec
+        timeout-minutes: 1
         run: |
           echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
           echo "img=${ImageOS:-ubuntu}" >> "$GITHUB_OUTPUT"
@@ -185,11 +191,13 @@ jobs:
           APT::Keep-Downloaded-Packages "true";
           Binary::apt::APT::Keep-Downloaded-Packages "true";
           APT
+          # apt prenaša kot uporabnik _apt v podmapo partial; brez lastništva opozori »unsandboxed as root« in prenaša kot root.
           sudo mkdir -p ~/apt-arhiv/partial
           sudo chown _apt:root ~/apt-arhiv/partial
           echo "Paketov v predpomnilniku: $(find ~/apt-arhiv -maxdepth 1 -name '*.deb' | wc -l)"
           for poskus in 1 2 3; do
             if timeout -k 10 13m npx playwright install --with-deps chromium; then
+              sudo timeout 2m apt-get autoclean -q || true # stare različice iz mape: predpomnilnik ne raste iz meseca v mesec
               sudo rm -rf ~/apt-arhiv/partial ~/apt-arhiv/lock; sudo chmod -R a+rX ~/apt-arhiv
               exit 0
             fi
