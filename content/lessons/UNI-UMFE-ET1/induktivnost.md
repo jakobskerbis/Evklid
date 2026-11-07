@@ -22,7 +22,7 @@ Vsak od $500$ ovojev objame ta pretok. Če tok spremenimo, se inducira napetost 
 
 ### Lastna induktivnost
 
-**Definicija.** **Spreženi magnetni pretok** tuljave je vsota pretokov skozi vse ovoje, $\Psi = N\Phi$, če vsi ovoji objemajo enak pretok. **Lastna induktivnost** je razmerje
+**Definicija.** **Spreženi magnetni pretok** (magnetni sklep) tuljave je vsota pretokov skozi vse ovoje, $\Psi = N\Phi$, če vsi ovoji objemajo enak pretok. **Lastna induktivnost** je razmerje
 
 $$L = \frac{\Psi}{I}.$$
 
@@ -63,7 +63,7 @@ Postavimo na isto jedro še drugo navitje z $N_2$ ovoji. Tok $i_1$ v prvem navit
 
 $$M_{21} = \frac{\Psi_{21}}{I_1}.$$
 
-Ko se $i_1$ spreminja, se v drugi tuljavi inducira napetost $u_2 = M\,\mathrm{d}i_1/\mathrm{d}t$. Predznak je odvisen od smeri navijanja; v shemah ga označujeta **piki**: tok, ki teče v pikasto sponko ene tuljave, inducira v drugi tuljavi napetost s pozitivnim polom na pikasti sponki.
+Ko se $i_1$ spreminja, se v drugi tuljavi inducira napetost $u_2 = M\,\mathrm{d}i_1/\mathrm{d}t$. Predznak je odvisen od smeri navijanja; v shemah ga označujeta **piki**: naraščajoč tok, ki teče v pikasto sponko ene tuljave, inducira v drugi tuljavi napetost s pozitivnim polom na pikasti sponki.
 
 **Izrek (vzajemnost).** V linearnem okolju je $M_{21} = M_{12} = M$.
 
@@ -73,7 +73,7 @@ Za tuljavi na skupnem jedru brez stresanja je $M = N_1N_2/R_m$. V splošnem pa d
 
 $$k = \frac{M}{\sqrt{L_1 L_2}}, \qquad 0 \le k \le 1.$$
 
-Pri $k = 1$ vsa silnica ene tuljave objame drugo (idealni transformator), pri $k = 0$ tuljavi ne vplivata druga na drugo.
+Pri $k = 1$ ves pretok ene tuljave objame tudi drugo (idealni transformator), pri $k = 0$ tuljavi ne vplivata druga na drugo.
 
 **Zaporedna vezava sklopljenih tuljav.** Če toka v obeh tuljavah krepita skupni pretok (**sopojna** vezava), je $L_{s} = L_1 + L_2 + 2M$; če se pretoka odštevata (**protipojna**), je $L_{p} = L_1 + L_2 - 2M$. Razlika obeh meritev da $M = (L_s - L_p)/4$; tako $M$ izmerimo z navadnim merilnikom induktivnosti.
 

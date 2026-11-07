@@ -51,7 +51,7 @@ Ne. SRP signal prepozna, ko izstopi iz ribosoma; C-konec izstopi šele ob koncu 
 - **N-glikozilacija:** encim oligosahariltransferaza prenese vnaprej sestavljen oligosaharid (iz $14$ sladkornih enot, pripet na lipid dolihol) na asparagin v zaporedju **Asn–X–Ser/Thr**, kjer X ni prolin. Prenos poteka med vnosom.
 - **Nadzor kakovosti:** kalneksin in kalretikulin zadržita napol zvite glikoproteine. Trajno napačno zviti proteini se vrnejo v citosol in razgradijo v proteasomu (z ER povezana razgradnja, ERAD). Če se nezviti proteini kopičijo, celica sproži **odziv na nezvite proteine**: manj prevajanja, več šaperonov.
 
-**Gladki ER** (brez ribosomov) sintetizira lipide (fosfolipide v citosolni plasti, ki jih flipaze in skramblaze razporedijo), steroidne hormone, v jetrih razstruplja zdravila (citokromi P450), v mišicah pa kot **sarkoplazemski retikulum** hrani ione $\mathrm{Ca^{2+}}$.
+**Gladki ER** (brez ribosomov) sintetizira lipide (fosfolipide v citosolni plasti, ki jih skramblaze razporedijo med obe plasti), steroidne hormone, v jetrih razstruplja zdravila (citokromi P450), v mišicah pa kot **sarkoplazemski retikulum** hrani ione $\mathrm{Ca^{2+}}$.
 
 ### Golgijev aparat: sortirnica in obdelava
 
@@ -190,8 +190,8 @@ Mesto $10$: N–V–T ustreza. Mesto $14$: N–G–E, na tretjem mestu je glutam
 
 ## Pogoste napake
 
-- **Lizosomski in membranski proteini se delajo v citosolu.** Ne: vsi proteini endomembranskega sistema in plazmaleme ter izločeni proteini začnejo na ribosomih, ki jih SRP pripne na ER. »Prosti« in »vezani« ribosomi so isti ribosomi; odloči signal na proteinu.
-- **Sladkorji so na citosolni strani.** Glikozilacija poteka v lumnu ER in Golgija, zato so sladkorji glikoproteinov in glikolipidov na zunanji strani celice. Citosolni del membranskega proteina sladkorjev nima.
+- **Lizosomski in membranski proteini se delajo v citosolu.** Ne: skoraj vsi proteini endomembranskega sistema in plazmaleme ter izločeni proteini začnejo na ribosomih, ki jih SRP pripne na ER (izjema so redki proteini s hidrofobnim sidrom na C-koncu, ki v membrano ER vstopijo po prevajanju). »Prosti« in »vezani« ribosomi so isti ribosomi; odloči signal na proteinu.
+- **Sladkorji so na citosolni strani.** Glikozilacija poteka v lumnu ER in Golgija, zato so sladkorji glikoproteinov in glikolipidov na zunanji strani celice. Citosolni del membranskega proteina nima N-vezanih ali kompleksnih oligosaharidov (v citosolu lahko protein dobi le posamezen N-acetilglukozamin, modifikacijo O-GlcNAc).
 - **Mitohondriji so del endomembranskega sistema.** Imajo membrane, a proteine sprejemajo posttranslacijsko iz citosola in z ostalimi predelki ne izmenjujejo mešičkov.
 - **Proteini ER v ER preprosto ostanejo.** Mnogi uidejo v cis Golgi in se vrnejo s COPI po zaslugi signala KDEL. Brez signala bi jih tok odnesel iz celice.
 - **COPI in COPII sta zamenljiva.** COPII vodi iz ER naprej, COPI nazaj in med cisternami; klatrin pa iz TGN in plazmaleme.
@@ -290,8 +290,8 @@ Paket z nalepko KDEL (protein ER) v pakirnici vrnejo v halo.
 - $60\,\mathrm{kDa}$
 ~ To je masa verige brez sladkorjev; encim gre skozi ER in dobi oligosaharide.
 + okoli $66\,\mathrm{kDa}$
-- okoli $120\,\mathrm{kDa}$
-~ Oligosaharid je majhen v primerjavi z verigo; masa se ne podvoji.
+- okoli $62\,\mathrm{kDa}$
+~ Upošteval si le en oligosaharid ($60 + 2$); zasedena so vsa tri mesta.
 > $60 + 3 \cdot 2 = 66\,\mathrm{kDa}$.
 
 ? Zakaj je disulfidnih vezi v izločenih proteinih veliko, v citosolnih pa skoraj nič?

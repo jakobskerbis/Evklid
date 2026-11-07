@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ob sončni elektrarni na strehi industrijske hale so namestili baterijo kondenzatorjev, da bi izboljšali faktor moči. Kmalu zatem so se v hali začeli pregrevati kondenzatorji in nenadoma izklapljati razsmerniki. Meritev je pokazala, da je na zbiralkah napetost pete harmonske komponente ($250\,\mathrm{Hz}$) narasla z okoli $1\,\%$ na več kot $20\,\%$ osnovne napetosti. Razsmerniki pa harmonskih tokov niso proizvajali nič več kot prej. Kako lahko dodan pasiven element, ki moči sploh ne troši, signal desetkrat poveča?
+Ob sončni elektrarni na strehi industrijske hale so namestili baterijo kondenzatorjev, da bi izboljšali faktor moči. Kmalu zatem so se v hali začeli pregrevati kondenzatorji in nenadoma izklapljati razsmerniki. Meritev je pokazala, da je na zbiralkah napetost pete harmonske komponente ($250\,\mathrm{Hz}$) narasla z okoli $1\,\%$ na več kot $20\,\%$ osnovne napetosti. Razsmerniki pa harmonskih tokov niso proizvajali nič več kot prej. Kako lahko dodan pasiven element, ki moči sploh ne troši, signal več kot dvajsetkrat poveča?
 
 Pojav se imenuje **resonanca**. Isti pojav izbere eno radijsko postajo izmed sto, omogoča ultrazvočne merilnike vetra na vremenskih postajah in brezžično polnjenje. Ko ga razumemo, ga znamo uporabiti ali se mu izogniti.
 
@@ -149,7 +149,7 @@ $C = \dfrac{1}{\omega_0^2 L}$, $Q = \dfrac{\omega_0 L}{R}$, $\omega_{1,2} = \mp\
 
 ### Primer 3 (težji)
 
-V omrežju hale iz uvoda je induktivnost omrežja (transformator in vodi), preračunana na fazo, $L = 0{,}50\,\mathrm{mH}$, njena upornost $R = 0{,}020\,\Omega$. Baterija kondenzatorjev ima na fazo $C = 0{,}81\,\mathrm{mF}$. Razsmerniki injicirajo peto harmonsko komponento toka z amplitudo $2{,}0\,\mathrm{A}$ na fazo; fazna napetost omrežja je $230\,\mathrm{V}$. a) Pri kateri frekvenci nastopi vzporedna resonanca omrežja s kondenzatorji? b) Kolikšna je harmonska napetost na zbiralkah s kondenzatorji in brez njih? c) Kolikšna je kvaliteta in kaj to pomeni?
+V omrežju hale iz uvoda je induktivnost omrežja (transformator in vodi), preračunana na fazo, $L = 0{,}50\,\mathrm{mH}$, njena upornost $R = 0{,}020\,\Omega$. Baterija kondenzatorjev ima na fazo $C = 0{,}81\,\mathrm{mF}$. Razsmerniki injicirajo peto harmonsko komponento toka z efektivno vrednostjo $2{,}0\,\mathrm{A}$ na fazo; fazna napetost omrežja je $230\,\mathrm{V}$. a) Pri kateri frekvenci nastopi vzporedna resonanca omrežja s kondenzatorji? b) Kolikšna je harmonska napetost na zbiralkah s kondenzatorji in brez njih? c) Kolikšna je kvaliteta in kaj to pomeni?
 
 **Podatki:** $L = 5{,}0 \cdot 10^{-4}\,\mathrm{H}$, $R = 0{,}020\,\Omega$, $C = 8{,}1 \cdot 10^{-4}\,\mathrm{F}$, $I_5 = 2{,}0\,\mathrm{A}$ pri $250\,\mathrm{Hz}$, $U_f = 230\,\mathrm{V}$
 **Iščemo:** $f_0$, $U_5$ z baterijo in brez nje, $Q$

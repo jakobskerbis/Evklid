@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Leta 1897 je Ferdinand Braun v stekleno cev usmeril curek elektronov in ga odklonil z merjeno napetostjo. Svetla pika na zaslonu je prvič pokazala, kako se napetost spreminja s časom. Taka pika pa je hitro ušla: pri vsakem preletu zaslona je krivulja začela na drugem mestu in slika je drsela. Pravi preboj so prinesli šele osciloskopi s **proženjem**, ki prelet začnejo vedno v isti točki signala. Od takrat se na zaslonu ponavljajoč signal ustavi, kot bi ga fotografirali.
+Leta 1897 je Ferdinand Braun v stekleno cev usmeril curek elektronov in ga odklonil z merjeno napetostjo. Svetla pika na zaslonu je prvič pokazala, kako se napetost spreminja s časom. Prvi osciloskopi s prostotekočim časovnim odklonom pa niso dali mirne slike: pri vsakem preletu zaslona je krivulja začela na drugem mestu in slika je drsela. Pravi preboj so prinesli šele osciloskopi s **proženjem**, ki prelet začnejo vedno v isti točki signala. Od takrat se na zaslonu ponavljajoč signal ustavi, kot bi ga fotografirali.
 
 V kemijskem laboratoriju osciloskop odgovori na vprašanja, ki jih voltmeter ne more: ali ultrazvočna kopel res niha s $40\,\mathrm{kHz}$, zakaj pH-meter kaže nemirno vrednost, kako hitro naraste svetlobni impulz pri meritvi fluorescence. Voltmeter da eno število, osciloskop pa celo obliko signala in, če ga preklopimo v **frekvenčni prikaz**, tudi iz katerih frekvenc je signal sestavljen.
 
@@ -64,7 +64,7 @@ Signal nivoja nikoli ne doseže, zato pogoj ni izpolnjen. V samodejnem načinu o
 
 **Sklopitev** DC pokaže celoten signal. Sklopitev AC doda zaporedni kondenzator, ki odreže enosmerno komponento: tako lahko majhno valovitost ($50\,\mathrm{mV}$) na napajalni napetosti $12\,\mathrm{V}$ povečamo čez ves zaslon. AC sklopitev je visokoprepustni filter z mejno frekvenco nekaj hercev; počasne spremembe zato popači.
 
-Vhod osciloskopa je upornost $1\,\mathrm{M\Omega}$, vzporedno pa okoli $15$ do $20\,\mathrm{pF}$. Merjenca zato obremeni, podobno kot voltmeter pri U-I metodi. **Sonda 10:1** ima v konici upor $9\,\mathrm{M\Omega}$; z vhodom tvori delilnik, ki signal zmanjša desetkrat, obremenitev pa desetkrat zmanjša. Vzporedno uporu v konici je nastavljiv kondenzator.
+Vhod osciloskopa ima upornost $1\,\mathrm{M\Omega}$ in vzporedno okoli $15$ do $20\,\mathrm{pF}$ kapacitivnosti. Merjenca zato obremeni, podobno kot voltmeter pri U-I metodi. **Sonda 10:1** ima v konici upor $9\,\mathrm{M\Omega}$; z vhodom tvori delilnik, ki signal zmanjša desetkrat, obremenitev pa desetkrat zmanjša. Vzporedno uporu v konici je nastavljiv kondenzator.
 
 **Izrek (kompenzirani delilnik).** Delilnik iz $R_1 \parallel C_1$ (konica) in $R_2 \parallel C_2$ (vhod) ima za vse frekvence enako razmerje $R_2/(R_1 + R_2)$ natanko tedaj, ko velja
 
@@ -165,7 +165,7 @@ $\varphi = 360^\circ \cdot \dfrac{\Delta t}{T}$, $I = \dfrac{U_2}{R_s}$, $Z = \d
 6. Delovni del: $Z\cos 18^\circ \approx 456{,}5\,\Omega$; od tega odštejemo merilni upor: $R_c \approx 456{,}5\,\Omega - 100\,\Omega = 356{,}5\,\Omega$.
 7. Jalovi del: $X_C = Z\sin 18^\circ \approx 148{,}3\,\Omega$, zato $C = 1/(2\pi \cdot 1000 \cdot 148{,}3)\,\mathrm{F} \approx 1{,}07\,\mu\mathrm{F}$.
 8. Negotovost: $\pm 0{,}1$ razdelka je $\pm 10\,\mu\mathrm{s}$ oziroma $\pm 3{,}6^\circ$. Za $\varphi = 14{,}4^\circ$ dobimo $C \approx 1{,}33\,\mu\mathrm{F}$, za $21{,}6^\circ$ pa $C \approx 0{,}90\,\mu\mathrm{F}$.
-9. Odgovor: celica ima $R_c \approx 357\,\Omega$ in $C \approx 1{,}07\,\mu\mathrm{F}$, a z odčitkom na pol razdelka je $C$ negotov za okoli $\pm 20\,\%$. Bolje je raztegniti časovno os ali uporabiti samodejno merjenje faze.
+9. Odgovor: celica ima $R_c \approx 357\,\Omega$ in $C \approx 1{,}07\,\mu\mathrm{F}$, a z odčitkom na pol razdelka je $C$ negotov za okoli $+24\,\%$ oziroma $-16\,\%$ (približno $\pm 20\,\%$). Bolje je raztegniti časovno os ali uporabiti samodejno merjenje faze.
 
 ### Primer 4 – zdaj ti
 
@@ -231,7 +231,7 @@ Sonda 10:1 ima v konici upor $R_1 = 9\,\mathrm{M\Omega}$ z nastavljivim kondenza
 5. V ustaljenem stanju odloča uporovni delilnik: $5\,\mathrm{V} \cdot 1/10 = 0{,}50\,\mathrm{V}$.
 6. Prenihaj: $0{,}65/0{,}50 - 1 \approx 0{,}30$, torej okoli $30\,\%$ (točno $30{,}4\,\%$).
 7. Napetost se umiri s časovno konstanto, ki jo določata vzporedni upornosti in vsota kapacitivnosti (Theveninova upornost z vidika kondenzatorjev): $\tau = (R_1 \parallel R_2)(C_1 + C_2) = 0{,}9\,\mathrm{M\Omega} \cdot 23\,\mathrm{pF} \approx 20{,}7\,\mu\mathrm{s}$.
-8. Odgovor: $C_1 \approx 2{,}22\,\mathrm{pF}$; pri $10\,\mathrm{MHz}$ je obremenitev okoli $8\,\mathrm{k\Omega}$; pri $3\,\mathrm{pF}$ rob skoči na $0{,}65\,\mathrm{V}$ ($30\,\%$ prenihaja) in se v nekaj $20\,\mu\mathrm{s}$ spusti na $0{,}50\,\mathrm{V}$ – na zaslonu vidimo konice na začetku vsakega vrha.
+8. Odgovor: $C_1 \approx 2{,}22\,\mathrm{pF}$; pri $10\,\mathrm{MHz}$ je obremenitev okoli $8\,\mathrm{k\Omega}$; pri $3\,\mathrm{pF}$ rob skoči na $0{,}65\,\mathrm{V}$ ($30\,\%$ prenihaja) in se v nekaj deset mikrosekundah ($\tau \approx 21\,\mu\mathrm{s}$) spusti na $0{,}50\,\mathrm{V}$ – na zaslonu vidimo konice na začetku vsakega vrha.
 
 ### Naloga 2
 
@@ -287,7 +287,7 @@ Pasovna širina je kot vztrajnost kazalca: težak kazalec ne sledi hitrim sunkom
 
 ? Na zaslonu je pri $0{,}2\,\mathrm{ms/razdelek}$ ena perioda dolga $4{,}0$ razdelka. Kolikšna je frekvenca?
 - $800\,\mathrm{Hz}$
-~ Pomnožil si $0{,}2\,\mathrm{ms}$ s $4$ in rezultat obravnaval kot frekvenco; to je perioda, frekvenca je njena obratna vrednost.
+~ Izračunal si periodo $0{,}8\,\mathrm{ms}$ in jo prebral kot $0{,}8\,\mathrm{kHz}$; frekvenca je obratna vrednost periode.
 + $1{,}25\,\mathrm{kHz}$
 - $5\,\mathrm{kHz}$
 ~ Uporabil si le en razdelek kot periodo; perioda traja štiri razdelke.

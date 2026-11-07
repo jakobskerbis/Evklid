@@ -83,7 +83,7 @@ Enota je $\mathrm{N/m}$ (ali $\mathrm{N/mm}$). Če spoj tvorijo vijaki ali žebl
 :::premisli
 Zakaj je pri I-profilu strižna napetost v pasu tik ob stojini mnogo manjša kot v stojini tik pod pasom, čeprav je statični moment na obeh mestih skoraj enak?
 ---
-V formuli $\tau = T S_y/(I_y b)$ je $b$ širina reza. V pasu je širina celotnega pasu (na primer $120\,\mathrm{mm}$), v stojini le debelina stojine ($6\,\mathrm{mm}$). Pri skoraj enakem $S_y$ je napetost v stojini zato okoli $20$-krat večja.
+V formuli $\tau = T S_y/(I_y b)$ je $b$ širina reza. V pasu je širina celotnega pasu (na primer $120\,\mathrm{mm}$), v stojini le debelina stojine ($6\,\mathrm{mm}$). Pri skoraj enakem $S_y$ je napetost v stojini zato okoli $20$-krat večja. (V pasu je to le navpična komponenta, povprečena po širini pasu; tam prevladuje vodoravni strižni tok.)
 :::
 
 ## Rešeni primeri
@@ -214,7 +214,7 @@ Lepljen lesen T-nosilec ima pas $200\,\mathrm{mm} \times 40\,\mathrm{mm}$ in sto
 6. Nevtralna os leži $52\,\mathrm{mm}$ pod stikom, v stojini. Statični moment nad njo: $S_{max} = 576\,000 + 60 \cdot 52^2/2 = 657\,120\,\mathrm{mm^3}$ (preverba od spodaj: $60 \cdot 148^2/2 = 657\,120\,\mathrm{mm^3}$).
 7. $\tau_{max} = 15\,000 \cdot 657\,120/(1{,}102 \cdot 10^8 \cdot 60)\,\mathrm{MPa} \approx 1{,}49\,\mathrm{MPa}$.
 8. c) $1{,}31\,\mathrm{MPa} > 1{,}0\,\mathrm{MPa}$: lepilo ne zdrži. Napetost je sorazmerna s $T$, zato $T_{dop} = 15\,\mathrm{kN} \cdot 1{,}0/1{,}307 \approx 11{,}5\,\mathrm{kN}$.
-9. Odgovor: nevtralna os je $92\,\mathrm{mm}$ pod vrhom, $I_y \approx 1{,}10 \cdot 10^8\,\mathrm{mm^4}$; v lepilu je $1{,}31\,\mathrm{MPa}$, največja napetost $1{,}49\,\mathrm{MPa}$ v stojini na nevtralni osi; lepilo ne zdrži, dopustna sila je okoli $11{,}5\,\mathrm{kN}$ (ali širši stik). Opazi, da povprečje $T/A_s$ po stojini ($1{,}04\,\mathrm{MPa}$) nevarnost podceni.
+9. Odgovor: nevtralna os je $92\,\mathrm{mm}$ pod vrhom, $I_y \approx 1{,}10 \cdot 10^8\,\mathrm{mm^4}$; v lepilu je $1{,}31\,\mathrm{MPa}$, največja napetost $1{,}49\,\mathrm{MPa}$ v stojini na nevtralni osi; lepilo ne zdrži, dopustna sila je okoli $11{,}5\,\mathrm{kN}$ (ali širši stik). Opazi, da povprečje $T/A_s$ po stojini ($15\,000/12\,000 = 1{,}25\,\mathrm{MPa}$) nevarnost podceni.
 
 ### Naloga 2
 

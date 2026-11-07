@@ -10,7 +10,7 @@ stanje: osnutek
 - Proženje
   - nivo in naklon določita začetek zajema
   - samodejni, normalni, enkratni način
-  - nivo zunaj signala: slika drsi
+  - nivo zunaj signala: samodejni drsi, normalni zamrzne
 - Sonda in sklopitev
   - kompenzacija: $R_1 C_1 = R_2 C_2$
   - AC sklopitev odreže enosmerno komponento
