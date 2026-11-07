@@ -39,22 +39,32 @@ function loadSw(app, net = {}) {
     calls.push(url);
     if (net.hang) return new Promise(() => {});
     const headers = { "content-type": "text/plain" };
-    if (net.served && new URL(url).pathname === "/") headers["X-Evklid-App"] = net.served;
+    // strežnik pošlje različico datotek na vsakem odgovoru zunaj API (server/app.js)
+    if (net.served && !new URL(url).pathname.startsWith("/api/")) headers["X-Evklid-App"] = net.served;
+    if (net.slowEntry && new URL(url).pathname === "/") await new Promise((r) => setTimeout(r, net.slowEntry));
     const res = new Response(`net:${url}`, { status: 200, headers });
     Object.defineProperty(res, "type", { value: "basic" });
     return res;
   };
   const listeners = {};
   const updates = [];
-  const self = { addEventListener: (t, f) => (listeners[t] = f), location: { origin: ORIGIN }, skipWaiting() {}, clients: { claim: async () => {} }, registration: { update: async () => void updates.push(1) } };
+  const open = new Set(net.open || []); // odprte strani (id)
+  const clients = { claim: async () => {}, matchAll: async () => [...open].map((id) => ({ id, postMessage() {} })), get: async (id) => (open.has(id) ? { id } : undefined) };
+  const self = { addEventListener: (t, f) => (listeners[t] ||= []).push(f), location: { origin: ORIGIN }, skipWaiting() {}, clients, registration: { update: async () => void updates.push(1) } };
   const src = fs.readFileSync(new URL("../public/sw.js", import.meta.url), "utf8").replace('const APP = "";', `const APP = "${app}";`);
   vm.runInNewContext(src, { self, caches, fetch: fetchFn, Response, Headers, URL, setTimeout, clearTimeout, Promise, JSON, Error });
-  const get = async (path, mode = "no-cors") => {
+  // ids: { clientId, resultingClientId } (stran, ki zahteva / stran, ki bo nastala z navigacijo)
+  const get = async (path, mode = "no-cors", ids = {}) => {
     let p = null;
-    listeners.fetch({ request: { method: "GET", url: new URL(path, ORIGIN).href, mode }, respondWith: (x) => (p = x), waitUntil() {} });
+    for (const f of listeners.fetch) f({ request: { method: "GET", url: new URL(path, ORIGIN).href, mode }, respondWith: (x) => (p = x), waitUntil() {}, ...ids });
     return p ? (await p).text() : null; // null: SW se ne vmeša (brskalnik gre sam na omrežje)
   };
-  return { get, calls, caches, cacheFor, updates };
+  const message = (data, source) => {
+    const waits = [];
+    for (const f of listeners.message) f({ data, source, ports: [], waitUntil: (x) => waits.push(x) });
+    return Promise.all(waits);
+  };
+  return { get, message, calls, caches, cacheFor, updates, open };
 }
 
 test("datoteka aplikacije iste različice: takoj iz predpomnilnika, brez omrežja", async () => {
@@ -79,11 +89,44 @@ test("po objavi nove različice: nova vstopna stran in nobena stara kopija modul
   const st = await sw.caches.open("evklid-v1-static");
   for (const f of ["/", "/app.js", "/graph/tools.js"]) await st.put(`${ORIGIN}${f}`, new Response(`staro:${f}`, { headers: { "X-Evklid-App": "stara" } }));
   assert.equal(await sw.get("/", "navigate"), `net:${ORIGIN}/`, "prvo odprtje po objavi: nova vstopna stran");
-  assert.equal(sw.updates.length, 1, "zastarel service worker takoj zahteva posodobitev");
+  assert.equal(sw.updates.length, 0, "brez registration.update() iz fetch (nov SW bi obvisel v »waiting«, pregled B2 P1-2)");
   for (const f of ["/app.js", "/graph/tools.js"]) assert.equal(await sw.get(f), `net:${ORIGIN}${f}`, `${f}: nova različica, ne stara kopija`);
   await new Promise((r) => setTimeout(r, 10));
-  // stare kopije so pobrisane (tudi če brskalnik service worker vmes znova zažene), nove pod staro oznako ne shrani
-  for (const f of ["/", "/app.js", "/graph/tools.js"]) assert.equal(await st.match(`${ORIGIN}${f}`), undefined, f);
+  // stare kopije so pobrisane (tudi če brskalnik service worker vmes znova zažene), nove imajo oznako nove različice
+  for (const f of ["/", "/app.js", "/graph/tools.js"]) assert.notEqual((await st.match(`${ORIGIN}${f}`))?.headers.get("X-Evklid-App"), "stara", f);
+});
+
+// Pregled A2 P1-1: vstop s poizvedbo (bližnjice ikone, koda razreda, vir) mora iti skozi isto preverjanje.
+for (const q of ["/?pogled=chat", "/?koda=ABC123", "/index.html?ref=x"]) {
+  test(`vstop s poizvedbo ${q}: po objavi nobena stara kopija modula`, async () => {
+    const sw = loadSw("stara", { served: "nova" });
+    const st = await sw.caches.open("evklid-v1-static");
+    for (const f of ["/", "/app.js"]) await st.put(`${ORIGIN}${f}`, new Response(`staro:${f}`, { headers: { "X-Evklid-App": "stara" } }));
+    assert.equal(await sw.get(q, "navigate"), `net:${ORIGIN}${q}`);
+    assert.equal(await sw.get("/app.js"), `net:${ORIGIN}/app.js`, "app.js nove različice");
+    await new Promise((r) => setTimeout(r, 10));
+    assert.equal(await st.match(`${ORIGIN}${q}`), undefined, "kopija s poizvedbo se ne shrani posebej (samo »/«)");
+  });
+}
+
+test("kopija dobi oznako različice, ki jo je poslal strežnik (ne APP service workerja); no-store se ne shrani", async () => {
+  const sw = loadSw("stara", { served: "nova" });
+  await sw.get("/graph/calc.js");
+  await new Promise((r) => setTimeout(r, 10));
+  const hit = await (await sw.caches.open("evklid-v1-static")).match(`${ORIGIN}/graph/calc.js`);
+  assert.equal(hit.headers.get("X-Evklid-App"), "nova");
+  assert.equal(hit.headers.get("content-encoding"), null);
+});
+
+// Pregled B2 P2-1: stara stran iz predpomnilnika (vstopna stran zamuja) do osvežitve dobiva svoje lene module.
+test("počasna vstopna stran ob objavi: stara stran dobi lene module svoje različice, nova stran nove", async () => {
+  const sw = loadSw("stara", { served: "nova", slowEntry: 3000, open: ["stara-stran"] });
+  const st = await sw.caches.open("evklid-v1-static");
+  for (const f of ["/", "/app.js", "/graph/tools.js"]) await st.put(`${ORIGIN}${f}`, new Response(`staro:${f}`, { headers: { "X-Evklid-App": "stara" } }));
+  assert.equal(await sw.get("/", "navigate", { resultingClientId: "stara-stran" }), "staro:/", "v roku 2,5 s shranjena stran");
+  await new Promise((r) => setTimeout(r, 700)); // odgovor nove različice pride, kopije za odprto staro stran ostanejo
+  assert.equal(await sw.get("/graph/tools.js", "no-cors", { clientId: "stara-stran" }), "staro:/graph/tools.js");
+  assert.equal(await sw.get("/graph/tools.js", "no-cors", { clientId: "nova-stran" }), `net:${ORIGIN}/graph/tools.js`);
 });
 
 test("ista različica na strežniku: kopije modulov ostanejo takojšnje", async () => {

@@ -1480,37 +1480,46 @@ function dropStaleCopies(v) {
     sw.postMessage({ type: "app-stale", app: v }, [ch.port2]);
   });
 }
-async function reloadIfNewer() {
+// once: osveži samo, če ta zavihek za to različico še ni bil osvežen (brez zanke osveževanja). Oznaka se zapiše
+// šele tik pred osvežitvijo, ko so tekmovanje in neposlano besedilo že preverjeni (pregled B2 P2-1).
+const RELOADED = "evklid.osvezeno";
+async function reloadIfNewer(once = false) {
   if (!appVersion || state.contestTimer || unsentText()) return;
   const v = await serverVersion();
   if (!v || v === appVersion) return;
+  if (once) {
+    try {
+      if (sessionStorage.getItem(RELOADED) === v) return;
+      sessionStorage.setItem(RELOADED, v);
+    } catch {
+      return; // brez sessionStorage ne tvegamo zanke
+    }
+  }
   const reg = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
   if (pageApp) await dropStaleCopies(v);
   await reg?.update?.().catch(() => null); // nov service worker (nove knjižnice) pred osvežitvijo
   location.reload();
 }
 // Stara stran iz predpomnilnika (npr. počasno omrežje), strežnik pa že ima novo različico: osvežimo takoj, preden
-// učenec odpre zaslon, ki bi naložil modul nove različice. Enkrat na različico (brez zanke osveževanja).
-const RELOADED = "evklid.osvezeno";
-function reloadOnceFor(v) {
-  try {
-    if (sessionStorage.getItem(RELOADED) === v) return;
-    sessionStorage.setItem(RELOADED, v);
-  } catch {
-    return; // brez sessionStorage ne tvegamo zanke
-  }
-  reloadIfNewer();
-}
+// učenec odpre zaslon, ki bi naložil modul nove različice. Do osvežitve service worker tej strani daje lene module
+// njene različice (sporočilo »page-app«, public/sw.js).
+const reloadOnceFor = () => reloadIfNewer(true);
+// Service worker izve, katero različico izvaja ta stran (ob zagonu in ob vsaki menjavi service workerja).
+const tellPage = () => pageApp && navigator.serviceWorker?.controller?.postMessage({ type: "page-app", app: pageApp });
+tellPage();
+navigator.serviceWorker?.addEventListener?.("controllerchange", tellPage);
 if (pageApp)
   serverVersion().then((v) => {
-    if (v && v !== pageApp) reloadOnceFor(v);
+    if (v && v !== pageApp) reloadOnceFor();
   });
 else serverVersion().then((v) => (appVersion = v));
-// Nov service worker sporoči svojo različico (public/sw.js ob activate): stara stran se osveži takoj, če je
-// komaj odprta ali učenec že minuto miruje; sicer ob običajni priložnosti spodaj (vrnitev, 10 minut miru).
+// Nov service worker sporoči svojo različico (public/sw.js ob activate): stara stran se osveži takoj samo, če je
+// komaj odprta (prvih 30 s); sicer ob običajni priložnosti spodaj (vrnitev po ≥ 1 min, 10 minut miru), da se
+// stanje (graf, izbira, branje) ne izgubi med delom (pregled A2 P2-2). Do takrat ji SW daje module njene različice.
 navigator.serviceWorker?.addEventListener?.("message", (e) => {
   if (e.data?.type !== "app-version" || !pageApp || !e.data.app || e.data.app === pageApp) return;
-  if (performance.now() < 30 * 1000 || Date.now() - lastInput >= 60 * 1000) reloadOnceFor(e.data.app);
+  tellPage();
+  if (performance.now() < 30 * 1000) reloadOnceFor();
 });
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {

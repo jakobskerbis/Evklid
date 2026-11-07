@@ -1,9 +1,12 @@
 // Service worker: aplikacija se odpre tudi brez povezave in ponovno ne prenaša knjižnic.
 // - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
-// - vstopna stran (/): najprej omrežje s kratkim rokom (stran je majhna, ob nespremenjeni samo 304), ob izpadu
-//   shranjena kopija. Stran pove različico datotek (glava X-Evklid-App, server/vstopna-stran.js). Če je novejša
-//   od APP tega service workerja, ta do zamenjave ne postreže nobene shranjene kopije več (outdated): nova stran
-//   tako nikoli ne dobi starih modulov, leni moduli pa pozneje ne pridejo iz druge različice kot app.js,
+// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): najprej omrežje s kratkim rokom (stran je
+//   majhna, ob nespremenjeni samo 304), ob izpadu shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
+//   različico datotek (glava X-Evklid-App, server/app.js). Če je drugačna od APP tega service workerja, ta do
+//   zamenjave ne postreže nobene shranjene kopije več (outdated): nova stran tako nikoli ne dobi starih modulov,
+// - stran, ki ji je bila postrežena shranjena (starejša) vstopna stran, ker je omrežje zamujalo, pove svojo
+//   različico (sporočilo »page-app«, public/app.js): leni moduli zanjo pridejo iz kopij iste različice, dokler se
+//   ne osveži, nikoli iz druge različice kot njen app.js,
 // - datoteke aplikacije (.js, .css, slike …): takoj iz predpomnilnika, če jih je shranila ista različica
 //   aplikacije (APP spodaj, strežnik jo dopolni ob zagonu); sicer najprej omrežje. Tako se odprtje in vsak
 //   zaslon odpreta brez čakanja na omrežje, nova različica pa pride takoj, ko jo strežnik objavi,
@@ -30,7 +33,8 @@ const VENDOR = `${VERSION}-vendor`;
 const API = `${VERSION}-api-javni`;
 const OLD_API = `${VERSION}-api`;
 const MODELS = "evklid-3d-v1"; // nova številka samo ob spremembi oblike shranjenih modelov
-const SHELL = ["/", "/index.html"];
+const SHELL = ["/"];
+const ENTRY = "/"; // ključ shranjene vstopne strani (tudi za /index.html in /?…)
 // API, ki ga ne shranjujemo (prijava, plačila, osebni podatki računa). /api/mobile/web (vstop v splet iz
 // aplikacije, server/mobile/web-session.js) gre mimo, da ostanejo glave aplikacije in brez povezave aplikacija
 // pokaže svoj zaslon »Ni povezave« (sicer: 400 brez glav ali kopija »/« na tem naslovu).
@@ -52,6 +56,9 @@ const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-cont
 const TIMEOUT = { entry: 2500, static: 4000, api: 7000 };
 // Strežnik je objavil novo različico datotek (vstopna stran z drugačno X-Evklid-App): stare kopije niso več sveže.
 let outdated = false;
+// Odprte strani in različica, ki jo izvajajo (clientId → APP strani; sporočilo »page-app«). Ob ponovnem zagonu
+// service workerja se izgubi; strani ga pošljejo znova ob vsaki menjavi service workerja.
+const pages = new Map();
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(STATIC).then((c) => Promise.all(SHELL.map((u) => fetch(u).then((res) => put(c, u, res))))).catch(() => null));
@@ -63,6 +70,9 @@ self.addEventListener("activate", (e) => {
     caches
       .keys()
       .then((keys) => Promise.all(keys.filter((k) => (!k.startsWith(VERSION) && k !== MODELS) || k === OLD_API).map((k) => caches.delete(k))))
+      // kopije drugih različic pobrišemo samo, ko ni odprte strani (stara stran še potrebuje svoje lene module)
+      .then(() => self.clients.matchAll({ type: "window" }))
+      .then((open) => (open.length ? null : pruneStatic()))
       .then(() => self.clients.claim())
       // Odprte strani izvedo različico novega service workerja; stara stran se osveži (public/app.js).
       .then(() => self.clients.matchAll({ type: "window" }))
@@ -75,6 +85,12 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("message", (e) => {
   if (e.data?.type !== "clear-private") return;
   e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => /-api(-|$)/.test(k)).map((k) => caches.delete(k)))));
+});
+
+// Stran pove, katero različico izvaja (public/app.js ob zagonu in ob menjavi service workerja).
+self.addEventListener("message", (e) => {
+  if (e.data?.type !== "page-app" || typeof e.data.app !== "string" || !e.source?.id) return;
+  pages.set(e.source.id, e.data.app);
 });
 
 // Stran ve, da strežnik že ima novo različico (public/app.js, pred osvežitvijo): pobriši stare kopije, da
@@ -139,53 +155,96 @@ function withTimeout(promise, ms) {
 // Shranjena kopija datoteke aplikacije z oznako različice, ki jo je shranila (glava STAMP).
 // Odgovor, ki je nastal s preusmeritvijo, shranimo kot nov odgovor (brskalnik sicer zavrne preusmerjen
 // odgovor za navigacijo).
+// Oznaka je različica, ki jo je poslal strežnik (glava X-Evklid-App na vsakem odgovoru), ne APP tega service
+// workerja: datoteka nove različice nikoli ne dobi stare oznake (tudi ko se zastarel SW vmes znova zažene).
+// Odgovor brez oznake strežnika (stari strežnik) dobi APP. Zasebnega odgovora (no-store) ne shranimo. Glavi
+// stiskanja odstranimo, ker je telo že razpakirano (Safari bi sicer lahko zavrnil kopijo).
 async function put(cache, req, res) {
-  if (!res?.ok || outdated) return; // zastarel SW: nove vsebine ne označi s staro različico
+  if (!res?.ok || privateRes(res)) return;
   const headers = new Headers(res.headers);
-  headers.set(STAMP, APP);
+  headers.set(STAMP, res.headers.get(STAMP) || APP);
+  headers.delete("content-encoding");
+  headers.delete("content-length");
   await cache.put(req, new Response(await res.blob(), { status: res.status, statusText: res.statusText, headers }));
 }
-const fresh = (hit) => !!APP && !outdated && hit?.headers.get(STAMP) === APP;
-// Odgovor vstopne strani z omrežja: ali je strežnik že na drugi različici datotek?
-// Zastarele kopije tudi pobrišemo: brskalnik lahko ta service worker vmes ustavi in znova zažene (oznaka v
-// pomnilniku se izgubi), stare kopije pa ne smejo več priti na novo stran. Kopije nove različice ostanejo.
-function checkVersion(res) {
-  return dropStale(res.headers.get(STAMP));
+// Različica, ki jo izvaja stran, iz katere je zahteva (prazno: neznana, npr. stran brez oznake).
+const pageApp = (id) => (id && pages.get(id)) || "";
+// Kopija je sveža za to stran: iste različice kot stran (stara stran iz predpomnilnika dobi svoje stare module),
+// sicer iste različice kot ta service worker, dokler strežnik ne objavi nove.
+function fresh(hit, clientId) {
+  const stamp = hit?.headers.get(STAMP);
+  if (!APP || !stamp) return false;
+  const page = pageApp(clientId);
+  if (page) return stamp === page;
+  return !outdated && stamp === APP;
+}
+// Odgovor z omrežja: ali je strežnik že na drugi različici datotek? (ne kličemo registration.update(): brskalnik
+// novi service worker poišče sam ob navigaciji, klic iz fetch pa ga je pustil čakati 20–30 s; pregled B2 P1-2)
+function noteVersion(res) {
+  const v = res.headers.get(STAMP);
+  if (APP && v && v !== APP) outdated = true;
+  return v;
+}
+// Pobriše kopije, ki jih ne izvaja nobena odprta stran in niso različice keep (ali APP). Brskalnik lahko service
+// worker vmes ustavi in znova zažene (outdated se izgubi), zato stare kopije res pobrišemo.
+async function pruneStatic(keep = APP) {
+  try {
+    // (ne clients.get: za stran, ki se šele nalaga, čaka na konec njene navigacije – zastoj, če jo čaka ta odgovor)
+    const live = await self.clients.matchAll({ type: "window" });
+    const open = new Set(live.map((c) => pages.get(c.id)).filter(Boolean));
+    if (pages.size > 50) for (const id of pages.keys()) if (!live.some((c) => c.id === id)) pages.delete(id);
+    const c = await caches.open(STATIC);
+    for (const req of await c.keys()) {
+      const stamp = (await c.match(req))?.headers.get(STAMP);
+      if (stamp !== keep && !open.has(stamp)) await c.delete(req);
+    }
+  } catch {}
 }
 function dropStale(v) {
   if (!APP || !v || v === APP) return;
-  if (!outdated) self.registration?.update?.().catch?.(() => null); // nov service worker čim prej
   outdated = true;
-  return caches
-    .open(STATIC)
-    .then(async (c) => {
-      for (const req of await c.keys()) {
-        const hit = await c.match(req);
-        if (hit?.headers.get(STAMP) !== v) await c.delete(req);
-      }
-    })
-    .catch(() => null);
+  return pruneStatic(v);
 }
 
 // Najprej omrežje; uspešen odgovor shranimo, ob napaki ali izteku časa vrnemo shranjenega.
-async function networkFirst(req, cacheName, ms, entry = false) {
+// Shranjena kopija ob počasnem omrežju ali izpadu: samo različice, ki jo izvaja stran (oziroma APP, dokler strežnik
+// ne objavi nove). Vstopne strani zastarel service worker ne postreže iz predpomnilnika (počaka omrežje).
+function usable(hit, entry, clientId, cacheName) {
+  const stamp = hit.headers.get(STAMP);
+  if (cacheName !== STATIC || !APP || !stamp) return true;
+  if (entry) return !outdated;
+  const want = pageApp(clientId) || (outdated ? "" : APP);
+  return stamp === want;
+}
+// entry: vstopna stran (shranjena pod ENTRY, ne glede na poizvedbo); clientId: stran, ki je zahtevala datoteko;
+// onPage(v): različica vstopne strani, ki je bila postrežena (z omrežja ali shranjena kopija).
+async function networkFirst(req, cacheName, ms, { entry = false, clientId = "", onPage = null } = {}) {
   const cache = await caches.open(cacheName);
+  const key = entry ? ENTRY : req;
   const net = fetch(req).then((res) => {
     if (tunnelDown(res)) throw new Error("tunnel down");
-    const stale = entry ? checkVersion(res) : null;
-    if (stale) return stale.then(() => res); // nova različica: najprej pobriše stare kopije, nove ne shrani
-    if (res.ok && res.type === "basic" && !privateRes(res)) (cacheName === STATIC ? put(cache, req, res.clone()) : cache.put(req, res.clone())).catch(() => null);
+    const v = cacheName === STATIC ? noteVersion(res) : null;
+    if (entry) onPage?.(v || APP);
+    // nova različica vstopne strani: najprej pobriše kopije, ki jih nobena odprta stran ne izvaja
+    if (entry && APP && v && v !== APP) return Promise.resolve(dropStale(v)).then(() => (put(cache, key, res.clone()).catch(() => null), res));
+    if (res.ok && res.type === "basic" && !privateRes(res)) (cacheName === STATIC ? put(cache, key, res.clone()) : cache.put(req, res.clone())).catch(() => null);
     return res;
   });
   try {
     return await withTimeout(net, ms);
   } catch {
-    const hit = await cache.match(req);
-    if (hit) return hit;
+    const hit = await cache.match(key);
+    if (hit && usable(hit, entry, clientId, cacheName)) {
+      if (entry) onPage?.(hit.headers.get(STAMP) || APP);
+      // Odgovor z omrežja, ki ga ne bomo uporabili, prekinemo: neprebrano telo bi service worker držalo »zasedenega«
+      // in novi service worker bi čakal (waiting). Kopija za predpomnilnik (clone) se prebere neodvisno.
+      net.then((r) => r?.body?.cancel?.().catch(() => null)).catch(() => null);
+      return hit;
+    }
     try {
       return await net; // počasna povezava brez kopije: vseeno počakamo na omrežje
     } catch {
-      if (req.mode === "navigate") return (await caches.match("/")) || Response.error();
+      if (req.mode === "navigate") return (await caches.match(ENTRY)) || Response.error();
       return new Response(JSON.stringify({ error: "offline", offline: true }), {
         status: 503,
         headers: { "Content-Type": "application/json", "X-Offline": "1" },
@@ -195,11 +254,11 @@ async function networkFirst(req, cacheName, ms, entry = false) {
 }
 
 // Datoteka aplikacije: kopija iste različice takoj (brez omrežja), sicer najprej omrežje.
-async function appFile(req) {
+async function appFile(req, clientId) {
   const cache = await caches.open(STATIC);
   const hit = await cache.match(req);
-  if (fresh(hit)) return hit;
-  return networkFirst(req, STATIC, TIMEOUT.static);
+  if (fresh(hit, clientId)) return hit;
+  return networkFirst(req, STATIC, TIMEOUT.static, { clientId });
 }
 
 async function cacheFirst(req) {
@@ -251,15 +310,27 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(cacheFirst(req));
     return;
   }
-  // Takoj iz predpomnilnika samo statične datoteke aplikacije in vstopna stran brez poizvedbe; strani, ki
-  // jih sestavi strežnik (/sole, /ucbenik/…, /prenesi, seznami .json, manifest), ostanejo najprej omrežje.
-  const entry = (url.pathname === "/" || url.pathname === "/index.html") && !url.search;
+  // Vstopna stran: vsaka navigacija na / ali /index.html, tudi s poizvedbo (bližnjice ikone /?pogled=, koda
+  // razreda /?koda=, /?ref=, /?vir= …; pregled A2 P1-1). Takoj iz predpomnilnika samo statične datoteke
+  // aplikacije; strani, ki jih sestavi strežnik (/sole, /ucbenik/…, /3d, /kalkulator.html, manifest), ostanejo
+  // najprej omrežje, tudi te pa preverijo različico (noteVersion v networkFirst).
+  const entry = (url.pathname === "/" || url.pathname === "/index.html") && (req.mode === "navigate" || !url.search);
   if (entry) {
-    e.respondWith(networkFirst(req, STATIC, TIMEOUT.entry, true));
+    // Zahteve nove strani dobijo kopije različice vstopne strani, ki jo je dobila (fresh): shranjena (starejša) stran
+    // svoje stare module, nova stran nove. Zapis velja za novo stran (brskalnik lahko ob osvežitvi isti id uporabi znova).
+    const id = e.resultingClientId || "";
+    let served = false;
+    const onPage = (v) => {
+      if (served || !id) return;
+      served = true;
+      if (v) pages.set(id, v);
+      else pages.delete(id);
+    };
+    e.respondWith(networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage }));
     return;
   }
   if (APP_FILE.test(url.pathname) && req.mode !== "navigate") {
-    e.respondWith(appFile(req));
+    e.respondWith(appFile(req, e.clientId));
     return;
   }
   e.respondWith(networkFirst(req, STATIC, TIMEOUT.static));

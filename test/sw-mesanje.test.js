@@ -52,7 +52,6 @@ async function withDeploy(fn) {
       if (url.pathname === "/" || url.pathname === "/index.html") text = text.replace("</body>", "<!--NOVA-->\n</body>");
       if (url.pathname === "/app.js") text += "\n;window.__evklidNova = 1;\n";
       if (url.pathname === "/graph/tools.js") text += "\n//NOVA\n";
-      if (out["x-evklid-app"]) out["x-evklid-app"] = NEW;
       body = Buffer.from(text);
       out["cache-control"] = "no-store";
       // fetch() je že razpakiral telo
@@ -62,6 +61,8 @@ async function withDeploy(fn) {
       delete out["content-length"];
       delete out["transfer-encoding"];
     }
+    // nova različica: vsak odgovor strežnika pove novo različico datotek (server/app.js X-Evklid-App)
+    if (state.mode === "nova" && out["x-evklid-app"]) out["x-evklid-app"] = NEW;
     res.writeHead(r.status, out);
     res.end(req.method === "HEAD" ? undefined : body);
   });
@@ -108,6 +109,48 @@ test("po objavi: prvo odprtje je nova vstopna stran z novim app.js, leni modul t
   });
 });
 
+// Pregled A2 P1-1: bližnjice ikone (/?pogled=), koda razreda (/?koda=), vir (/?ref=) po objavi.
+for (const q of ["/?pogled=chat", "/?koda=ABC123"]) {
+  test(`po objavi, vstop s poizvedbo ${q}: nova stran z novim app.js (brez mešanja)`, opts, async () => {
+    await withDeploy(async (base, state) => {
+      const ctx = await chromium.newContext({ serviceWorkers: "allow" });
+      try {
+        const p = await installOld(ctx, base);
+        state.mode = "nova";
+        await p.goto(base + q);
+        assert.equal(await p.evaluate(() => document.documentElement.outerHTML.includes("NOVA")), true, "nova vstopna stran");
+        await p.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 15000 });
+      } finally {
+        await ctx.close();
+      }
+    });
+  });
+}
+
+// Pregled B2 P1-2: nov service worker ne sme obviseti v »waiting« – nov zavihek po objavi se odpre takoj.
+test("po objavi: nov zavihek in osvežitev se odpreta takoj (nov service worker ne obvisi)", opts, async () => {
+  await withDeploy(async (base, state) => {
+    const ctx = await chromium.newContext({ serviceWorkers: "allow" });
+    try {
+      const p = await installOld(ctx, base);
+      state.mode = "nova";
+      await p.goto(base + "/");
+      await p.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 15000 });
+      const p2 = await ctx.newPage();
+      const t0 = Date.now();
+      await p2.goto(base + "/", { timeout: 10000 });
+      await p2.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 10000 });
+      await p.reload({ timeout: 10000 });
+      await p.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 10000 });
+      assert.ok(Date.now() - t0 < 15000, `nov zavihek in osvežitev: ${Date.now() - t0} ms`);
+      // nov service worker je aktiven (ne čaka)
+      await p.waitForFunction(() => navigator.serviceWorker.getRegistration().then((r) => !r.waiting && !r.installing), null, { timeout: 10000, polling: 500 });
+    } finally {
+      await ctx.close();
+    }
+  });
+});
+
 test("po objavi ob počasnem omrežju: stara stran iz predpomnilnika se sama osveži v novo", opts, async () => {
   await withDeploy(async (base, state) => {
     const ctx = await chromium.newContext({ serviceWorkers: "allow" });
@@ -116,6 +159,11 @@ test("po objavi ob počasnem omrežju: stara stran iz predpomnilnika se sama osv
       state.mode = "nova";
       state.delayEntry = 6000; // daljše od roka vstopne strani v sw.js: postreže se shranjena (stara) stran
       await p.goto(base + "/");
+      // do osvežitve stara stran dobiva lene module svoje različice (pregled B2 P2-1)
+      const mixed = await p
+        .evaluate(() => (window.__evklidNova ? null : fetch("/graph/tools.js").then((r) => r.text()).then((t) => !window.__evklidNova && t.includes("//NOVA"))))
+        .catch(() => null); // stran se je medtem že osvežila
+      assert.notEqual(mixed, true, "stara stran ne sme dobiti novega lenega modula");
       // stara stran ve, da je stara (meta), strežnik pove novo različico -> osvežitev, nato nova stran in app.js
       await p.waitForFunction(() => window.__evklidNova === 1 && document.documentElement.outerHTML.includes("NOVA"), null, { timeout: 30000 });
     } finally {

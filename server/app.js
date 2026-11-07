@@ -60,7 +60,7 @@ import { mountWebApp } from "./webapp.js";
 import { Schedules, scheduleView, schedulePrompt, syncTestPlan } from "./schedule.js";
 import { mountSchedule } from "./schedule-api.js";
 import { mountScan } from "./scan.js";
-import { appVersion, vendorVersion, staticVersion } from "./razlicica.js";
+import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
@@ -217,7 +217,7 @@ export function createApp(store, opts = {}) {
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -266,14 +266,27 @@ export function createApp(store, opts = {}) {
   const publicDir = path.join(here, "..", "public");
   // Service worker z različico knjižnic v imenu predpomnilnika (glej server/razlicica.js).
   // in z različico datotek aplikacije (APP): kopije iste različice se odprejo takoj, brez omrežja.
-  const filesVersion = staticVersion(publicDir); // tudi v vstopni strani in /healthz/stanje (datoteke)
-  const swSource = fs
-    .readFileSync(path.join(publicDir, "sw.js"), "utf8")
-    .replace('"evklid-v1"', `"evklid-v1-${vendorVersion()}"`)
-    .replace('const APP = "";', `const APP = "${filesVersion}";`);
+  // Različica datotek se ponovno izračuna, ko se public/ spremeni (domači strežnik po posodobitvi, razvoj).
+  const filesVersion = liveStaticVersion(publicDir); // tudi v vstopni strani, glavi X-Evklid-App in /healthz/stanje
+  const vendor = vendorVersion();
+  let sw = { app: null, src: "" };
+  const swSource = () => {
+    const v = filesVersion();
+    if (sw.app !== v) {
+      const src = fs.readFileSync(path.join(publicDir, "sw.js"), "utf8").replace('"evklid-v1"', `"evklid-v1-${vendor}"`).replace('const APP = "";', `const APP = "${v}";`);
+      sw = { app: v, src };
+    }
+    return sw.src;
+  };
   app.get("/sw.js", (_req, res) => {
     res.set("Cache-Control", "no-cache");
-    res.type("text/javascript").send(swSource);
+    res.type("text/javascript").send(swSource());
+  });
+  // Vsak odgovor zunaj API pove različico datotek: service worker po njej ve, da je strežnik na novi različici
+  // (tudi ob vstopu s poizvedbo, /kalkulator.html, /3d), in kopijo označi z različico, ki jo je res prejel.
+  app.use((req, res, next) => {
+    if (!req.path.startsWith("/api/")) res.setHeader("X-Evklid-App", filesVersion());
+    next();
   });
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));

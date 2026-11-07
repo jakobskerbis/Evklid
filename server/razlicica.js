@@ -57,3 +57,19 @@ export function staticVersion(dir = path.join(root, "public")) {
   walk(dir);
   return h.digest("hex").slice(0, 12);
 }
+
+// Trenutna različica datotek (za /sw.js, vstopno stran, glavo X-Evklid-App in /healthz/stanje). Ni stalnica
+// ob zagonu: domači strežnik (scripts/nadzor.js) nove datoteke zapiše takoj, znova pa se zažene šele v mirnem
+// trenutku (do 20 min), razvoj (--watch) pa ob spremembi public/ sploh ne. Izračun je poceni (nekaj ms), zato
+// ga ponovimo največ vsakih ms milisekund ob zahtevi (pregled PR #481 A2, P2-1).
+export function liveStaticVersion(dir = path.join(root, "public"), ms = 5000) {
+  let value = staticVersion(dir);
+  let at = Date.now();
+  return () => {
+    if (Date.now() - at >= ms) {
+      value = staticVersion(dir);
+      at = Date.now();
+    }
+    return value;
+  };
+}

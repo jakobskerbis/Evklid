@@ -31,15 +31,18 @@ export function entryHtml(publicDir, { version = "", preload = true } = {}) {
 
 // version: različica datotek aplikacije (server/razlicica.js staticVersion); preload=false: brez seznama
 // modulov (EVKLID_MODULEPRELOAD=0, za primerjavo hitrosti), različica pa ostane.
+// version: različica datotek (niz ali funkcija, ki jo vrne trenutno; server/razlicica.js liveStaticVersion).
 export function entryPage(publicDir, { version = "", preload = true } = {}) {
+  const ver = typeof version === "function" ? version : () => version;
   const file = path.join(publicDir, "index.html");
   let built = null; // { mtime, raw, br, gz, etag }
   const build = () => {
     const mtime = fs.statSync(file).mtimeMs;
-    if (built?.mtime === mtime) return built;
-    const raw = Buffer.from(entryHtml(publicDir, { version, preload }).html);
+    const v = ver();
+    if (built?.mtime === mtime && built.v === v) return built;
+    const raw = Buffer.from(entryHtml(publicDir, { version: v, preload }).html);
     const etag = `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}"`;
-    built = { mtime, raw, etag, enc: {} };
+    built = { mtime, v, raw, etag, enc: {} };
     return built;
   };
   return (req, res, next) => {
@@ -54,7 +57,7 @@ export function entryPage(publicDir, { version = "", preload = true } = {}) {
     const etag = enc ? page.etag.replace(/"$/, `-${enc}"`) : page.etag;
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Vary", "Accept-Encoding");
-    if (version) res.setHeader("X-Evklid-App", version); // tudi ob 304: service worker primerja z APP
+    if (page.v) res.setHeader("X-Evklid-App", page.v); // tudi ob 304: service worker primerja z APP
     res.setHeader("ETag", etag);
     if (req.headers["if-none-match"] === etag) return res.status(304).end();
     let body = page.raw;
