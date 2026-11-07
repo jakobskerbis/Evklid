@@ -44,7 +44,7 @@ for (const organ of organi) {
       // Zadnji koraki telefona zmanjšajo slike (px), ker pri nizki kakovosti WebP nastanejo bloki (srce n8: CT stene).
       const lestev = pripona
         ? [[86, 70, 84], [80, 66, 78], [82, 66, 80, 896], [82, 66, 80, 832], [82, 66, 80, 768], [76, 60, 74, 768]]
-        : [[90, 82, 95], [84, 76, 90], [78, 72, 85], [72, 66, 80]];
+        : [[90, 82, 95], [84, 76, 90], [78, 72, 85], [72, 66, 80], [78, 72, 85, 1792], [78, 72, 85, 1536]]; // zadnja: manjše slike (srce n11: geometrija 207k ≈ 5,2 MiB)
       const meja = (pripona ? 2 : 6) * 1024 * 1024 * (pripona ? 0.95 : 0.97);
       const r = path.join(src, `${organ}${pripona}.r.glb`);
       for (const [k, [qb, qo, qn, px]] of lestev.entries()) {
