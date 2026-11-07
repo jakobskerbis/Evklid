@@ -12,7 +12,6 @@ import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
-import { jsonAliNic, zavrzi } from "../odgovor.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -214,7 +213,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const [strukture, imena, seznam] = await Promise.all([
     fetch(new URL("./atlas-strukture.json", import.meta.url)).then((r) => r.json()),
     fetch(new URL("./atlas-imena.json", import.meta.url))
-      .then((r) => jsonAliNic(r, {}))
+      .then((r) => (r.ok ? r.json() : {}))
       .catch(() => ({})),
     seznamDatotek(),
   ]);
@@ -222,7 +221,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   // se v načinu Žensko skrijejo. Ženski organi so v plasti organov (notranje: sloj »zenski«), moški način jih skrije.
   const zenskiPodatki = seznam.datoteke?.["telo/zenski.glb"]
     ? await fetch(new URL("./atlas-zenski.json", import.meta.url))
-        .then((r) => jsonAliNic(r))
+        .then((r) => (r.ok ? r.json() : null))
         .catch(() => null)
     : null;
   const skrijZensko = zenskiPodatki ? new Set(zenskiPodatki.skrij || []) : null;
@@ -1389,7 +1388,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   // Viri in licence: public/3d/viri.json in viri.json vsakega področja, ki ga ima (seznam.json → viri).
   async function viri() {
     const box = mk("div", "a3-viri");
-    const beri = (u) => fetch(new URL(u, import.meta.url)).then((r) => jsonAliNic(r)).catch(() => null);
+    const beri = (u) => fetch(new URL(u, import.meta.url)).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const vsebine = await Promise.all([
       beri("./viri.json").then((d) => normalizirajViri(d)),
       ...(seznam.viri || []).map((p) => beri(`./modeli/${p}/viri.json`).then((d) => normalizirajViri(d, p))),
@@ -1589,7 +1588,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ game: `atlas:telo_${k.nacin}`, score: k.prav * 10, correct: k.prav, wrong: k.narobe, tier: raven }),
       });
-      if (!r.ok) return zavrzi(r), 0;
+      if (!r.ok) return 0;
       return (await r.json()).xp || 0;
     } catch {
       return 0;
