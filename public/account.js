@@ -299,9 +299,17 @@ function showError(form, err) {
 // ---------- zagon ----------
 
 // Vrne true, ko lahko aplikacija naloži učence. Sicer prikaže prijavo in pozneje pokliče onReady.
+// Stanje računa že ob zagonu, vzporedno z /api/config (app.js): na počasni povezavi en krog manj čakanja
+// pred Učno potjo (naloga hitrost, j 6. 11. 2026). Samo branje; initAccount ga porabi enkrat.
+let statusEarly = null;
+export function prefetchAccountStatus() {
+  statusEarly ||= api("/api/account/status").catch(() => ({ enabled: false }));
+}
+
 export async function initAccount({ onReady }) {
   onReadyCb = onReady;
-  status = await api("/api/account/status").catch(() => ({ enabled: false }));
+  status = await (statusEarly || api("/api/account/status").catch(() => ({ enabled: false })));
+  statusEarly = null;
   enabled = !!status.enabled;
   if (!enabled) return true;
   // Seja je končana (odjava drugje, iztek, »odjavi druge naprave«): osebni podatki prejšnjega lastnika naprave

@@ -64,7 +64,8 @@ import { DEFAULT_GOAL } from "../public/goal-data.js";
 import { Schedules, scheduleView, schedulePrompt, syncTestPlan } from "./schedule.js";
 import { mountSchedule } from "./schedule-api.js";
 import { mountScan } from "./scan.js";
-import { appVersion, vendorVersion } from "./razlicica.js";
+import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
+import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { mount3d } from "./tri-d.js";
@@ -228,7 +229,7 @@ export function createApp(store, opts = {}) {
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -276,29 +277,37 @@ export function createApp(store, opts = {}) {
   const modules = path.join(here, "..", "node_modules");
   const publicDir = path.join(here, "..", "public");
   // Service worker z različico knjižnic v imenu predpomnilnika (glej server/razlicica.js).
-  const swSource = fs.readFileSync(path.join(publicDir, "sw.js"), "utf8").replace('"evklid-v1"', `"evklid-v1-${vendorVersion()}"`);
+  // in z različico datotek aplikacije (APP): kopije iste različice se odprejo takoj, brez omrežja.
+  // Različica datotek se ponovno izračuna, ko se public/ spremeni (domači strežnik po posodobitvi, razvoj).
+  const filesVersion = liveStaticVersion(publicDir); // tudi v vstopni strani, glavi X-Evklid-App in /healthz/stanje
+  const vendor = vendorVersion();
+  let sw = { app: null, src: "" };
+  const swSource = () => {
+    const v = filesVersion();
+    if (sw.app !== v) {
+      const src = fs.readFileSync(path.join(publicDir, "sw.js"), "utf8").replace('"evklid-v1"', `"evklid-v1-${vendor}"`).replace('const APP = "";', `const APP = "${v}";`);
+      sw = { app: v, src };
+    }
+    return sw.src;
+  };
   app.get("/sw.js", (_req, res) => {
     res.set("Cache-Control", "no-cache");
-    res.type("text/javascript").send(swSource);
+    res.type("text/javascript").send(swSource());
+  });
+  // Vsak odgovor zunaj API pove različico datotek: service worker po njej ve, da je strežnik na novi različici
+  // (tudi ob vstopu s poizvedbo, /kalkulator.html, /3d), in kopijo označi z različico, ki jo je res prejel.
+  app.use((req, res, next) => {
+    if (!req.path.startsWith("/api/")) res.setHeader("X-Evklid-App", filesVersion());
+    next();
   });
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
-  // Glavna stran: brskalnik naj takoj prenese vse module prvega odprtja (Link: modulepreload). public/zagon.js
-  // jih izvede šele po prevodih; brez tega bi jih odkrival po plasteh šele potem (počasnejši prvi zagon).
-  let preload = null;
-  app.use((req, res, next) => {
-    if (req.method === "GET" && (req.path === "/" || req.path === "/index.html")) {
-      preload ??= startupFiles(publicDir)
-        .filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && u !== "/theme.js")
-        .map((u) => `<${u}>; rel=modulepreload`)
-        .join(", ");
-      if (preload) res.set("Link", preload);
-    }
-    next();
-  });
+  // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
+  // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
+  app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0" })); // =0: brez seznama (primerjava)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([

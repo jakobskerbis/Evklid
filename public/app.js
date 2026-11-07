@@ -10,7 +10,7 @@ import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
-import { initAccount, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
@@ -96,6 +96,10 @@ import { GUIDE } from "./vodic.js";
 import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
 
 const $ = (sel) => document.querySelector(sel);
+// Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
+const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestIdleCallback(() => fn(), { timeout }) : setTimeout(fn, 200));
+// Gradnja vnaprej (kalkulator, orodja) samo, ko se učenec ni dotaknil zaslona vsaj 0,8 s: dolga naloga ne zakasni tapa.
+const whenQuiet = (fn) => whenIdle(() => (Date.now() - lastInput < 800 ? setTimeout(() => whenQuiet(fn), 400) : fn()));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
 // Za zagon brez povezave še seznam profilov (osebni odgovori API niso v predpomnilniku, P7).
 const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
@@ -1457,7 +1461,11 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
 // Samodejna posodobitev (docs/posodobitve.md): ko strežnik teče z novejšo različico, se stran
 // tiho osveži, a samo, ko to učenca ne zmoti: ob vrnitvi v aplikacijo (vsaj 1 minuto v ozadju)
 // ali po 10 minutah brez dotika, nikoli med tekmovanjem ali z napisanim, a neposlanim besedilom.
-let appVersion = null;
+// Različica, ki jo stran res izvaja: iz vstopne strani (<meta name="evklid-app">, server/vstopna-stran.js), ne s
+// strežnika ob zagonu – stran je lahko prišla iz predpomnilnika, strežnik pa že teče z novo (PR #481, pregled 1).
+// Brez oznake (stara stran) kot prej: različica strežnika ob zagonu.
+const pageApp = document.querySelector('meta[name="evklid-app"]')?.content || null;
+let appVersion = pageApp;
 let hiddenAt = 0;
 let lastInput = Date.now();
 for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
@@ -1466,21 +1474,67 @@ for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
 const serverVersion = () =>
   fetch("/healthz/stanje", { cache: "no-store" })
     .then((r) => jsonAliNic(r))
-    .then((s) => s?.razlicica || null)
+    .then((s) => (pageApp ? s?.datoteke : s?.razlicica) || null)
     .catch(() => null);
 const unsentText = () =>
   [...document.querySelectorAll("textarea, input[type=text], input[type=search], input:not([type])")].some(
     (el) => el.offsetParent !== null && !el.readOnly && el.value.trim() && el.value !== el.defaultValue,
   );
-async function reloadIfNewer() {
+// Service worker pobriše kopije stare različice (public/sw.js »app-stale«), da osvežitev ne dobi znova stare strani.
+function dropStaleCopies(v) {
+  const sw = navigator.serviceWorker?.controller;
+  if (!sw) return Promise.resolve();
+  return new Promise((done) => {
+    const ch = new MessageChannel();
+    ch.port1.onmessage = () => done();
+    setTimeout(done, 1500);
+    sw.postMessage({ type: "app-stale", app: v }, [ch.port2]);
+  });
+}
+// once: osveži samo, če ta zavihek za to različico še ni bil osvežen (brez zanke osveževanja). Oznaka se zapiše
+// šele tik pred osvežitvijo, ko so tekmovanje in neposlano besedilo že preverjeni (pregled B2 P2-1).
+const RELOADED = "evklid.osvezeno";
+async function reloadIfNewer(once = false) {
   if (!appVersion || state.contestTimer || unsentText()) return;
   const v = await serverVersion();
   if (!v || v === appVersion) return;
-  const reg = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
-  await reg?.update?.().catch(() => null); // nov service worker (nove knjižnice) pred osvežitvijo
+  try {
+    if (once && sessionStorage.getItem(RELOADED) === v) return;
+  } catch {
+    return; // brez sessionStorage ne tvegamo zanke
+  }
+  if (pageApp) await dropStaleCopies(v);
+  // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
+  // service worker ali izgubil osvežitev (pregled B2 P2-4).
+  try {
+    if (once) sessionStorage.setItem(RELOADED, v); // šele tik pred osvežitvijo
+  } catch {}
   location.reload();
 }
-serverVersion().then((v) => (appVersion = v));
+// Stara stran iz predpomnilnika (npr. počasno omrežje), strežnik pa že ima novo različico: osvežimo takoj, preden
+// učenec odpre zaslon, ki bi naložil modul nove različice. Do osvežitve service worker tej strani daje lene module
+// njene različice (sporočilo »page-app«, public/sw.js).
+const reloadOnceFor = () => reloadIfNewer(true);
+// Service worker izve, katero različico izvaja ta stran (ob zagonu in ob vsaki menjavi service workerja).
+const tellPage = () => pageApp && navigator.serviceWorker?.controller?.postMessage({ type: "page-app", app: pageApp });
+tellPage();
+navigator.serviceWorker?.addEventListener?.("controllerchange", tellPage);
+// Service worker, ki te strani ni naložil (po menjavi ali ponovnem zagonu), vpraša, katero različico izvaja.
+navigator.serviceWorker?.addEventListener?.("message", (e) => e.data?.type === "which-app" && tellPage());
+navigator.serviceWorker?.startMessages?.();
+if (pageApp)
+  serverVersion().then((v) => {
+    if (v && v !== pageApp) reloadOnceFor();
+  });
+else serverVersion().then((v) => (appVersion = v));
+// Nov service worker sporoči svojo različico (public/sw.js ob activate): stara stran se osveži takoj samo, če je
+// komaj odprta (prvih 30 s); sicer ob običajni priložnosti spodaj (vrnitev po ≥ 1 min, 10 minut miru), da se
+// stanje (graf, izbira, branje) ne izgubi med delom (pregled A2 P2-2). Do takrat ji SW daje module njene različice.
+navigator.serviceWorker?.addEventListener?.("message", (e) => {
+  if (e.data?.type !== "app-version" || !pageApp || !e.data.app || e.data.app === pageApp) return;
+  tellPage();
+  if (performance.now() < 30 * 1000) reloadOnceFor();
+});
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {
     hiddenAt = Date.now();
@@ -1577,16 +1631,30 @@ async function subjectChoices() {
 async function pickSubject(item) {
   const uni = isUni(state.student.settings);
   const settings = uni ? { study_course: item.id, subject: item.subject || state.student.settings.subject } : { subject: item.id, study_course: "" };
-  const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
-  studentUpdated(updated);
+  // Optimistično (j 6. 11. 2026: odziven Evklid): izbira, glava in obvestilo takoj, shranjevanje na strežnik
+  // v ozadju (meni se zapre brez čakanja). Podatke zaslona naložimo po shranjevanju (strežnik jih bere po
+  // shranjenem predmetu); ob napaki se vrne prejšnji predmet in pokaže napaka.
+  const prev = state.student;
+  const save = api(`/api/students/${prev.id}`, { method: "PUT", body: { settings } });
+  studentUpdated({ ...prev, settings: { ...prev.settings, ...settings } });
   toast(`${t("set.subject")}: ${item.label}`, "check");
-  // Odprt zaslon pokaže novi predmet takoj.
-  if (currentView === "path") loadPath();
-  else if (currentView === "uci") showUci(); // učbenik, poskusi in 3D svet po novem predmetu
-  else if (currentView === "me") renderMe();
-  else if (currentView === "exams") loadExams();
-  else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
-  else if (currentView === "cards") showFlashcards();
+  save.then(
+    (updated) => {
+      studentUpdated(updated);
+      if (state.student?.id !== prev.id) return;
+      // Odprt zaslon pokaže novi predmet.
+      if (currentView === "path") loadPath();
+      else if (currentView === "uci") showUci(); // učbenik, poskusi in 3D svet po novem predmetu
+      else if (currentView === "me") renderMe();
+      else if (currentView === "exams") loadExams();
+      else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
+      else if (currentView === "cards") showFlashcards();
+    },
+    (err) => {
+      if (state.student?.id === prev.id) studentUpdated({ ...state.student, settings: prev.settings });
+      toast(err?.message || String(err));
+    },
+  );
 }
 
 async function fillCourseOptions() {
@@ -4012,7 +4080,10 @@ function calcSlot() {
 }
 
 function graphCalc() {
-  calcP ||= import("./graph/calc.js").then(({ createCalculator }) => {
+  calcP ||= import("./graph/calc.js").catch((e) => {
+    calcP = null; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
+    throw e;
+  }).then(({ createCalculator }) => {
     const host = document.createElement("div");
     host.id = "graph-host";
     queueMicrotask(() => makeSplitter(host, splitOpts("gc")));
@@ -4055,7 +4126,10 @@ async function insertIntoCalc(text, o) {
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
-  calcTools[mode] ||= (mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js")).then((m) => {
+  calcTools[mode] ||= (mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js")).catch((e) => {
+    delete calcTools[mode]; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
+    throw e;
+  }).then((m) => {
     const host = document.createElement("div");
     if (mode === "sci") queueMicrotask(() => makeSplitter(host, splitOpts("sc")));
     const base = { t, icon, locale, onInsert: insertIntoCalc };
@@ -4104,10 +4178,65 @@ async function setCalcMode(mode) {
   }
   if (mode === "formulas" || mode === "tools") tool.reload();
   if (mode === "sci") tool.adapt?.();
-  const slot = calcSlot();
-  if (tool.root.parentElement !== slot) slot.replaceChildren(tool.root);
+  // Velik razdelek (pripravljen list formul ima ~6000 elementov), ki še ni bil prikazan: najprej slika z izbranim
+  // gumbom (takojšen odziv na tap), razdelek v naslednji sliki (prva postavitev lista sicer zadrži odziv).
+  if (!calcShown.has(tool.root) && tool.root.getElementsByTagName("*").length > 2000) {
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+    if (calcMode !== mode) return;
+  }
+  calcShown.add(tool.root);
+  showCalcRoot(calcSlot(), tool.root);
   tool.resize?.();
+  prebuildCalc();
   return tool;
+}
+function prefetchNext() {
+  if (navigator.connection?.saveData || document.documentElement.classList.contains("lite") || !state.student) return;
+  const steps = [
+    () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
+    () => import("./graph/sci.js"),
+    () => import("./graph/tools.js"),
+    () => import("./graph/calc.js"),
+    () => import("./3d/modeli.js"),
+    // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
+    // da se prvi model odpre brez čakanja na omrežje.
+    () =>
+      navigator.serviceWorker?.controller?.postMessage({
+        type: "precache",
+        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
+      }),
+  ];
+  const next = () => {
+    const f = steps.shift();
+    if (f) Promise.resolve().then(f).catch(() => null).then(() => whenQuiet(next));
+  };
+  next();
+}
+// Vsa odprta orodja ostanejo v pomnilniku in na strani (skrita): preklop Znanstveni/Grafični/Orodja/PSE/Formule
+// je takojšen in ohrani vnos, graf in izbiro (j 6. 11. 2026). Prikažemo izbrano, ostala skrijemo.
+const calcShown = new WeakSet(); // razdelki kalkulatorja, ki so bili že prikazani
+function showCalcRoot(slot, root) {
+  if (root.parentElement !== slot) slot.append(root);
+  for (const el of slot.children) el.hidden = el !== root;
+}
+// Ko je kalkulator odprt, se ob nedejavnosti pripravijo še ostala orodja (eno za drugim), da je tudi prvi preklop takojšen.
+let calcPrebuilt = false;
+function prebuildCalc() {
+  if (calcPrebuilt) return;
+  calcPrebuilt = true;
+  const rest = CALC_MODES.filter((m) => !calcTools[m] && !(m === "graph" && calcP));
+  const next = () => {
+    const m = rest.shift();
+    if (!m) return;
+    // Formule potrebujejo strežnik: v lahkem načinu jih naložimo šele ob tapu.
+    if (m === "formulas" && document.documentElement.classList.contains("lite")) return next();
+    // Formule: ob nedejavnosti še prenos in izris učenčevega lista v skrito orodje (ne ob varčevanju s podatki
+    // in ne na telefonu z malo pomnilnika, ≤ 2 GB: skrit list doda ~8000 vozlišč DOM; pregled PR #481).
+    const lowMem = navigator.deviceMemory > 0 && navigator.deviceMemory <= 2;
+    const prep = (tool) => (m === "formulas" && tool && !navigator.connection?.saveData && !lowMem ? new Promise((r) => whenQuiet(() => Promise.resolve(tool.prepare?.()).catch(() => null).then(r))) : null);
+    whenQuiet(() => Promise.resolve(calcTool(m)).then(prep).catch(() => null).then(() => whenQuiet(next)));
+  };
+  whenQuiet(next);
 }
 document.querySelectorAll(".calc-modes").forEach((seg) =>
   seg.addEventListener("click", (e) => {
@@ -4424,6 +4553,7 @@ initFullscreen();
 initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
 
 (async () => {
+  prefetchAccountStatus(); // vzporedno s config (account.js)
   const cfg = await api("/api/config");
   saveConfig(cfg); // za zagon brez povezave (brez skrbniških zastavic, public/offline.js)
   $("#mock-banner").hidden = !cfg.mock;
@@ -4441,6 +4571,9 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
     loadGames().catch(() => {});
   }), 3000);
+  // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.
+  // Kalkulator (zadnje uporabljeno orodje) se zgradi v pomnilniku, moduli ostalih orodij in 3D sveta se le prenesejo.
+  setTimeout(() => whenQuiet(prefetchNext), 2500);
   // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
   document.addEventListener("pointerdown", (e) => {
     if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
