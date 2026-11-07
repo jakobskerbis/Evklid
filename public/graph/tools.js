@@ -809,8 +809,10 @@ export function createFormulas(root, opts) {
   // Formulo, širšo od zaslona, sirina.js (initSirina) zloži pri enačajih in malo pomanjša; šele potem se pomika.
 
   // čip poglavja, ki je trenutno na vrhu, je označen
+  // List, ki ni prikazan (pripravljen ob nedejavnosti, skrit podzavihek), nima postavitve: vse kartice bi imele vrh 0
+  // in označen bi bil zadnji čip. Takrat ne označujemo; ob prikazu pokliče resize() (pregled B2 P2-2).
   function spy() {
-    if (toc.hidden) return;
+    if (toc.hidden || !root.getClientRects().length) return;
     const top = toc.getBoundingClientRect().bottom + 8;
     let cur = null;
     for (const x of body.querySelectorAll(".fm-sec[id]")) if (x.getBoundingClientRect().top <= top + 1) cur = x.id;
@@ -865,6 +867,7 @@ export function createFormulas(root, opts) {
     let calm = 0;
     const step = () => {
       if (done) return;
+      if (!root.getClientRects().length) return stop(); // učenec je zamenjal podzavihek: skritega lista ne pomikamo
       const d = goal() - root.scrollTop;
       if (Math.abs(d) > 2) {
         root.scrollTo({ top: root.scrollTop + d });
@@ -884,7 +887,7 @@ export function createFormulas(root, opts) {
   });
   return {
     root,
-    resize() {}, // širino formul ob spremembi okna ureja sirina.js
+    resize: () => spy(), // ob prikazu: čip kazala po mestu branja; širino formul ureja sirina.js
     // Ob vsakem odprtju: list za trenutni predmet in stopnjo. Če se ta nista spremenila, list ostane, kakor ga je
     // učenec pustil (izbran list, mesto branja), in se ne izriše znova (takojšen preklop, j 6. 11. 2026).
     reload() {

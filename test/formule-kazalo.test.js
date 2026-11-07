@@ -1,4 +1,5 @@
-// Formule v pravem brskalniku (pregled PR #481): kazalo zanesljivo skoči tudi na daljno kartico (kartice daleč od
+// Kalkulator v pravem brskalniku (pregled PR #481): Grafični, pripravljen ob nedejavnosti, se nariše v barvah sloga;
+// kazalo zanesljivo skoči tudi na daljno kartico (kartice daleč od
 // zaslona imajo zaradi content-visibility le ocenjeno višino), na telefonu z malo pomnilnika (deviceMemory ≤ 2)
 // se list ob nedejavnosti ne pripravi vnaprej. Playwright Chromium (če je nameščen), telefon 360 × 740.
 import test from "node:test";
@@ -28,10 +29,11 @@ async function withApp(fn) {
 // Profil ustvari stran sama (piškotek naprave), nato ga app.js odpre namesto obrazca za nov profil.
 async function phone(base, init, onPage) {
   const ctx = await chromium.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, locale: "sl-SI", serviceWorkers: "block" });
-  await ctx.addInitScript((mem) => {
+  await ctx.addInitScript(([mem, mode]) => {
     localStorage.setItem("evklid.tour", "1");
+    if (mode) localStorage.setItem("evklid.theme", JSON.stringify({ style: "cist", mode }));
     if (mem) Object.defineProperty(Navigator.prototype, "deviceMemory", { get: () => mem });
-  }, init?.mem || 0);
+  }, [init?.mem || 0, init?.mode || ""]);
   const p = await ctx.newPage();
   onPage?.(p);
   await p.goto(base + "/healthz");
@@ -90,13 +92,56 @@ test("kazalo Formul: vsak čip (tudi daljna zadnja kartica FIZ-UNI) pripelje kar
 });
 
 // Priprava = prenos lista (/api/formulas) ob nedejavnosti po odprtju kalkulatorja (list se izriše v nepriklopljeno orodje).
-test("telefon z malo pomnilnika (deviceMemory 2): list Formul se ob nedejavnosti ne pripravi vnaprej", opts, async () => {
+test("telefon z malo pomnilnika (deviceMemory 2): list Formul se ob nedejavnosti ne pripravi vnaprej; pripravljen list ob prikazu označi prvi čip", opts, async () => {
   await withApp(async (base) => {
     for (const [mem, want] of [[2, false], [8, true]]) {
       const { ctx, p } = await phone(base, { mem }, (page) => page.on("request", (r) => r.url().includes("/api/formulas") && (page.__formule = true)));
       try {
         for (let w = 0; w < 25 && !p.__formule; w++) await p.waitForTimeout(1000);
         assert.equal(!!p.__formule, want, `deviceMemory ${mem}`);
+        if (want) {
+          // Pregled B2 P2-2: v pripravljenem (skritem) listu je bil ob prikazu označen zadnji čip kazala, ne prvi.
+          await p.waitForTimeout(4000);
+          await p.evaluate(() => document.querySelector('#view-graph [data-calc-mode="formulas"]').click());
+          await p.waitForFunction(() => document.querySelectorAll("#view-graph .fm-toc [data-sec]").length > 1, null, { timeout: 30000 });
+          await p.waitForTimeout(500);
+          const active = await p.evaluate(() => [...document.querySelectorAll("#view-graph .fm-toc [data-sec]")].findIndex((c) => c.classList.contains("active")));
+          assert.equal(active, 0, "ob prvem prikazu je označen prvi čip");
+        }
+      } finally {
+        await ctx.close();
+      }
+    }
+  });
+});
+
+// Pregled B2 P1-1: Grafični, zgrajen ob nedejavnosti zunaj strani, je imel prazne barve (bela podlaga, črna mreža)
+// in platno 0 × 0 (napačno merilo). Po pripravi in tapu mora biti platno pravih mer v barvah sloga (svetlo in temno).
+test("Grafični po pripravi ob nedejavnosti: platno pravih mer in v barvah sloga (svetlo in temno)", opts, async () => {
+  await withApp(async (base) => {
+    for (const mode of ["light", "dark"]) {
+      const { ctx, p } = await phone(base, { mode }, (page) => page.on("request", (r) => r.url().includes("/graph/calc.js") && (page.__graf = true)));
+      try {
+        for (let w = 0; w < 25 && !p.__graf; w++) await p.waitForTimeout(1000);
+        assert.ok(p.__graf, "Grafični se pripravi ob nedejavnosti");
+        await p.waitForTimeout(3000);
+        await p.evaluate(() => document.querySelector('#view-graph [data-calc-mode="graph"]').click());
+        await p.waitForFunction(() => [...document.querySelectorAll("#graph-slot canvas")].some((c) => c.getClientRects().length && c.width > 100), null, { timeout: 30000 });
+        await p.waitForTimeout(800);
+        const r = await p.evaluate(() => {
+          const c = [...document.querySelectorAll("#graph-slot canvas")].find((x) => x.getClientRects().length && x.width > 100);
+          const box = c.getBoundingClientRect();
+          const probe = document.createElement("span");
+          probe.style.color = "var(--surface)";
+          document.body.append(probe);
+          const want = getComputedStyle(probe).color.match(/\d+/g).slice(0, 3).map(Number);
+          probe.remove();
+          // vogal platna (brez mreže in osi): barva podlage
+          const px = [...c.getContext("2d").getImageData(3, 3, 1, 1).data].slice(0, 3);
+          return { w: Math.round(box.width), cw: c.width, want, px, dpr: devicePixelRatio };
+        });
+        assert.ok(r.w > 200 && Math.abs(r.cw - r.w * r.dpr) <= 2, `platno pravih mer (${mode}): ${JSON.stringify(r)}`);
+        assert.ok(r.px.every((v, i) => Math.abs(v - r.want[i]) <= 12), `podlaga v barvi sloga (${mode}): ${JSON.stringify(r)}`);
       } finally {
         await ctx.close();
       }

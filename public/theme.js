@@ -653,6 +653,9 @@
   try {
     const r = document.documentElement;
     if (r.classList.contains("lite") || !document.head || !/^\/(index\.html)?$/.test(location.pathname)) return; // samo aplikacija
+    // Pod service workerjem pisava pride iz predpomnilnika takoj; preload bi jo le prenesel dvakrat in Chromium
+    // javi »preloaded but not used« (pregled PR #481 B2 P3-1).
+    if (navigator.serviceWorker?.controller) return;
     const pkg = { igriv: "nunito", temen: "ibm-plex-sans" }[r.dataset.style] || "instrument-sans";
     for (const sub of ["latin", "latin-ext"]) {
       const l = document.createElement("link");
