@@ -687,7 +687,9 @@ test("ponoven-id: račun je lastnik predmeta Stripa samo ob enakem uid (stara se
   assert.equal(ownerMismatch(p, { object: "subscription", created: t + 99999, metadata: { parent_uid: "a".repeat(32) } }), null);
   assert.equal(ownerMismatch(p, { object: "subscription", created: t + 99999, metadata: { parent_uid: "b".repeat(32) } }), "drug_racun");
   assert.equal(ownerMismatch(p, { object: "subscription", created: t + 99999, metadata: {} }), "brez_uid");
-  assert.equal(ownerMismatch({ id: 5 }, { object: "subscription", metadata: { parent_uid: "" } }), "brez_uid");
+  assert.equal(ownerMismatch(p, { object: "subscription", created: Date.parse("2026-11-09T00:04:00Z") / 1000, metadata: {} }), null, "stara naročnina: račun starejši od sub.created − 24 h");
+  assert.equal(ownerMismatch(p, { object: "subscription", created: Date.parse("2026-11-08T23:50:00Z") / 1000, metadata: {} }), "brez_uid");
+  assert.equal(ownerMismatch({ id: 5 }, { object: "subscription", metadata: { parent_uid: "" } }), null, "brez created kot prej");
   assert.equal(ownerMismatch(null, {}), "racun_ne_obstaja");
   const errs = [];
   const why = [];

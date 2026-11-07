@@ -4,8 +4,9 @@
 //
 // Zato vsako plačilo nosi tudi metadata.parent_uid (parents.uid: naključen, se ne ponovi; pregled #511 A, P1-1) in
 // velja samo ob enakem uid. Stari predmeti brez uid (seje, odprte pred namestitvijo; potečejo v 24 h): samo seja
-// Checkout in samo, če je račun starejši od nje. Naročnina brez uid po metapodatkih ne velja nikoli, ker jo Stripe
-// ustvari šele ob plačilu (sub.created je po računu B); prava naročnina se najde po stranki (parentByCustomer).
+// Checkout in samo, če je račun starejši od nje. Naročnino Stripe ustvari šele ob plačilu (sub.created je po računu B),
+// zato stara naročnina brez uid velja samo za račun, starejši od sub.created − 24 h (rok seje). Prava naročnina se
+// sicer najde po stranki (parentByCustomer).
 
 const createdMs = (p) => {
   const s = String(p?.created_at || "");
@@ -15,6 +16,8 @@ const createdMs = (p) => {
 
 // Zamik ure med strežnikom in Stripom (napad zahteva izbris in nov račun, kar traja dlje; pregled #511 A, P3-2).
 const CLOCK_SKEW_MS = 5 * 60 * 1000;
+// Najdaljša veljavnost seje Checkout (Stripe: 24 h).
+const SESSION_MAX_S = 24 * 3600;
 
 // true: račun je lahko lastnik predmeta (ustvarjen najkasneje ob njem, z zamikom ure). Brez obj.created ali brez
 // berljivega created_at ostane kot prej.
@@ -33,8 +36,11 @@ export function ownerMismatch(p, obj) {
   const uid = obj?.metadata?.parent_uid;
   if (uid) return p.uid && String(uid) === String(p.uid) ? null : "drug_racun";
   // Stripe vedno pošlje object; seja brez njega je le v starih testih in ročnih klicih.
-  if (obj?.object && obj.object !== "checkout.session") return "brez_uid";
-  return ownsStripeObject(p, obj) ? null : "drug_racun";
+  if (!obj?.object || obj.object === "checkout.session") return ownsStripeObject(p, obj) ? null : "drug_racun";
+  // Stara naročnina brez uid: nastane ob plačilu seje, ki je bila odprta največ 24 h prej (rok seje Checkout).
+  // Račun, starejši od tega roka, je obstajal že ob odprtju seje; mlajši (morda B z istim id) ne velja.
+  const created = Number(obj.created);
+  return ownsStripeObject(p, Number.isFinite(created) && created > 0 ? { created: created - SESSION_MAX_S } : obj) ? null : "brez_uid";
 }
 
 // Enkratni nakup (paket pred testom, dokup): vrstica (passes, ai_credit_buys) ima id INTEGER PRIMARY KEY in se ob
