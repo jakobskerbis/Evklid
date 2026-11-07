@@ -11,7 +11,7 @@
   }
   var region = ((navigator.language || "").split("-")[1] || "").toUpperCase();
   fetch("/api/account/prices" + (region ? "?country=" + region : ""))
-    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (r) { return import("/odgovor.js").then(function (m) { return m.jsonAliNic(r); }); })
     .then(function (d) {
       if (!d) return;
       var zero = ["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"].indexOf(d.currency) >= 0;

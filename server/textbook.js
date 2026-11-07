@@ -202,16 +202,29 @@ export function loadLesson(topicId) {
 
 function readLesson(file) {
   if (!file) return null;
+  // Brez izjeme za manjkajočo lekcijo: iskanje preveri vse teme (~200 jih lekcije še nima), izjema s skladom
+  // klicev pa je ~4-krat dražja od samega stat (iskanje brez prijave, 2 jedri).
   let st;
   try {
-    st = fs.statSync(file);
+    st = fs.statSync(file, { throwIfNoEntry: false });
   } catch {
+    st = undefined;
+  }
+  if (!st) {
     cache.delete(file);
     return null;
   }
   const hit = cache.get(file);
   if (hit && hit.mtime === st.mtimeMs) return hit.lesson;
-  const lesson = parseLesson(fs.readFileSync(file, "utf8"));
+  // Datoteka lahko izgine med stat in branjem (posodobitev, git checkout) ali ni berljiva: brez lekcije, ne 500.
+  let src;
+  try {
+    src = fs.readFileSync(file, "utf8");
+  } catch {
+    cache.delete(file);
+    return null;
+  }
+  const lesson = parseLesson(src);
   cache.set(file, { mtime: st.mtimeMs, lesson });
   return lesson;
 }
@@ -405,6 +418,28 @@ const fold = (s) =>
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "");
 
+// Poenoteno besedilo lekcije za iskanje, enkrat na lekcijo: brez tega je vsako iskanje znova poenotilo vse lekcije
+// (20–100 ms procesorja na zahtevo brez prijave). Ključ je predmet lekcije (readLesson ga zamenja ob spremembi datoteke).
+const foldedLessons = new WeakMap();
+function foldedText(lesson) {
+  let text = foldedLessons.get(lesson);
+  if (text === undefined) {
+    text = fold([...lesson.sections, ...lesson.alternatives].map((s) => `${s.title} ${s.md}`).join(" "));
+    foldedLessons.set(lesson, text);
+  }
+  return text;
+}
+
+// Naslov in opis teme (cilji, poglavje, demonstracije) za iskanje; znova le, ko se lekcija teme zamenja.
+const foldedTopics = new Map();
+function foldedMeta(t, lesson) {
+  const hit = foldedTopics.get(t.id);
+  if (hit && hit.lesson === lesson && hit.t === t) return hit;
+  const row = { t, lesson, title: fold(t.name), meta: fold(`${t.goals} ${t.unit} ${simsFor(t.id, lesson).map((d) => d.title).join(" ")}`) };
+  foldedTopics.set(t.id, row);
+  return row;
+}
+
 // Iskanje po naslovih, ciljih in besedilu lekcij. Brez stroškov, brez indeksa:
 // tem je nekaj sto, zato preprosto preletimo vse.
 export function searchTextbook(q, { subject, limit = 30, system = "SI" } = {}) {
@@ -414,9 +449,8 @@ export function searchTextbook(q, { subject, limit = 30, system = "SI" } = {}) {
   for (const p of listPaths(subject, system)) {
     for (const t of topicOrder(p.key)) {
       const lesson = loadLesson(t.id);
-      const title = fold(t.name);
-      const meta = fold(`${t.goals} ${t.unit} ${simsFor(t.id, lesson).map((d) => d.title).join(" ")}`);
-      const text = lesson ? fold([...lesson.sections, ...lesson.alternatives].map((s) => `${s.title} ${s.md}`).join(" ")) : "";
+      const { title, meta } = foldedMeta(t, lesson);
+      const text = lesson ? foldedText(lesson) : "";
       let score = 0;
       for (const w of words) {
         const s = (title.includes(w) ? 10 : 0) + (meta.includes(w) ? 4 : 0) + (text.includes(w) ? 1 : 0);
@@ -428,21 +462,31 @@ export function searchTextbook(q, { subject, limit = 30, system = "SI" } = {}) {
       }
       if (!score) continue;
       if (lesson) score += 1;
-      hits.push({ id: t.id, name: t.name, unit: t.unit, path: p.key, pathLabel: p.label, subject: p.subject, lesson: !!lesson, snippet: snippet(lesson, words), score });
+      hits.push({ id: t.id, name: t.name, unit: t.unit, path: p.key, pathLabel: p.label, subject: p.subject, lesson: !!lesson, score, _lesson: lesson });
     }
   }
-  return hits.sort((a, b) => b.score - a.score).slice(0, limit).map(({ score, ...h }) => h);
+  // Odlomek samo za prikazane zadetke (prej za vse: kratka beseda je zadela sto lekcij).
+  return hits
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(({ score, _lesson, ...h }) => ({ ...h, snippet: snippet(_lesson, words) }));
 }
 
+const plainLessons = new WeakMap();
 function snippet(lesson, words) {
   if (!lesson) return "";
-  const plain = lesson.sections
-    .map((s) => s.md)
-    .join(" ")
-    .replace(/\$([^$]*)\$/g, (_, t) => t.replace(/\\(mathrm|text|,)/g, "").replace(/[{}\\]/g, ""))
-    .replace(/[#*_>`|]/g, "")
-    .replace(/\s+/g, " ");
-  const f = fold(plain);
+  let cached = plainLessons.get(lesson);
+  if (!cached) {
+    const plain = lesson.sections
+      .map((s) => s.md)
+      .join(" ")
+      .replace(/\$([^$]*)\$/g, (_, t) => t.replace(/\\(mathrm|text|,)/g, "").replace(/[{}\\]/g, ""))
+      .replace(/[#*_>`|]/g, "")
+      .replace(/\s+/g, " ");
+    cached = { plain, f: fold(plain) };
+    plainLessons.set(lesson, cached);
+  }
+  const { plain, f } = cached;
   const at = Math.min(...words.map((w) => f.indexOf(w)).filter((i) => i >= 0));
   if (!Number.isFinite(at)) return "";
   const start = Math.max(0, at - 50);
