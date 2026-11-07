@@ -68,7 +68,7 @@ Zapis $\Phi = \lambda A\Delta T/d$ ima enako obliko kot Ohmov zakon $I = U/R$: t
 
 $$R_t = \frac{d}{\lambda A}.$$
 
-**Ploskovni toplotni upor** $R_A = d/\lambda$ (enota $\mathrm{m^2\,K/W}$) je upor enega kvadratnega metra; z njim je $q = \Delta T/R_A$. V gradbeništvu ga imenujejo kar $R$, obratno vrednost celotne stene pa toplotna prehodnost $U$.
+**Ploskovni toplotni upor** $R_A = d/\lambda$ (enota $\mathrm{m^2\,K/W}$) je upor enega kvadratnega metra; z njim je $q = \Delta T/R_A$. V gradbeništvu ga imenujejo kar $R$, obratno vrednost celotnega upora stene pa toplotno prehodnost $U$.
 
 **Izrek (zaporedna vezava).** Naj toplota v stacionarnem stanju prehaja skozi $n$ plasti, ki se tesno stikajo in skozi katere teče isti toplotni tok $\Phi$. Potem je skupni upor vsota uporov plasti:
 
@@ -210,8 +210,7 @@ $q = 34\,\mathrm{K}/0{,}0833\,\mathrm{m^2\,K/W} \approx 408\,\mathrm{W/m^2}$, $T
 - **Enak padec temperature na vsaki plasti.** Pri zaporednih plasteh je enak *tok*, ne padec. Padec je sorazmeren z uporom plasti, zato je pri kovini in izolaciji skoraj ves na izolaciji.
 - **Seštevanje prevodnosti namesto uporov.** Zaporedne plasti imajo skupni upor $\sum d_i/\lambda_i$, ne skupne prevodnosti $\sum\lambda_i$ ali povprečne $\lambda$, deljene s skupno debelino. Povprečje prevodnosti da napačen, skoraj vedno prevelik tok.
 - **Valjasta izolacija kot ravna stena.** Pri debeli izolaciji cevi se ploščina od notranjega do zunanjega roba močno spremeni. Uporabi $R_c = \ln(r_2/r_1)/(2\pi\lambda L)$; ravninski model z notranjo ploščino tok podceni, z zunanjo preceni.
-- **Kovinska plast kot izolacija.** »Dvojna jeklena stena bolje izolira.« Jeklo prevaja tisočkrat bolje od pene; njegov upor je zanemarljiv. Izolira mirujoč zrak v porah, ne kovina.
-- **Fourierov zakon v nestacionarnem stanju.** $\Phi = \lambda A\Delta T/d$ velja le, ko se temperatura s časom ne spreminja več. Tik po vklopu grelnika toplota segreva steno in tok ni enak na obeh straneh.
+- **Formula za ravno steno v nestacionarnem stanju.** Fourierov zakon $q_x = -\lambda\,\mathrm{d}T/\mathrm{d}x$ velja tudi med segrevanjem, formula $\Phi = \lambda A\Delta T/d$ pa le, ko se temperatura s časom ne spreminja več. Tik po vklopu grelnika toplota segreva steno in tok ni enak na obeh straneh.
 
 ## Povzetek
 
@@ -315,8 +314,6 @@ Upori so zaporedni, isti »tok« $q$ teče skozi vse tri, »napetost« (padec te
 **Liofilizacija.** Pri sušenju z zamrzovanjem viale stojijo na ogrevanih policah. Toplota mora skozi dno viale, tanko plast zraka pod njim in zamrznjeni produkt do fronte sublimacije. Kontaktni upor med polico in ukrivljenim dnom viale je pogosto največji člen v verigi uporov; zato proizvajalci opreme določajo koeficient prenosa toplote za vsak tip viale posebej.
 
 **Toplotna izolacija telesa.** Podkožno maščevje ima $\lambda$ okoli $0{,}2\,\mathrm{W/(m\,K)}$, mišica okoli $0{,}5\,\mathrm{W/(m\,K)}$. Pri mrazu telo zoži žile v koži, s čimer zmanjša prenos s krvjo in plast kože deluje kot čisti prevodnik z večjim uporom. Pri terapevtski hipotermiji po zastoju srca blazine z ohlajeno vodo odvajajo toploto skozi kožo; hitrost hlajenja omejuje prav upor kože in maščevja.
-
-**Merjenje prevodnosti.** Prevodnost materialov merijo z zaščiteno vročo ploščo (standard ISO 8302), kjer grelni obroč okoli merilne plošče prepreči tok vstran, da velja enorazsežni model, ali z metodo vroče žice, ki iz hitrosti segrevanja žice v snovi določi $\lambda$ v nekaj sekundah.
 
 ## Drugače: Korak za korakom s številkami
 

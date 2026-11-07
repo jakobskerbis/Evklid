@@ -44,7 +44,7 @@ $$M_n = \sum_i x_iM_i, \qquad M_w = \sum_i w_iM_i.$$
 
 **Dokaz.** Iz definicij je $M_w = \dfrac{\sum N_iM_i^2}{\sum N_iM_i} = \dfrac{\sum x_iM_i^2}{M_n}$. Varianca porazdelitve števila verig je $s^2 = \sum x_i(M_i - M_n)^2 = \sum x_iM_i^2 - M_n^2 \ge 0$. Torej je $M_wM_n = M_n^2 + s^2 \ge M_n^2$ in $M_w = M_n + s^2/M_n \ge M_n$. Enakost velja le pri $s^2 = 0$, ko so vse $M_i$ enake. ∎
 
-Industrijski polimeri imajo $\mathrm{PDI}$ od okoli $1{,}5$ (stopenjska polimerizacija) do $10$ ali več (nekateri polietileni).
+Industrijski polimeri imajo $\mathrm{PDI}$ od okoli $2$ (stopenjska polimerizacija pri visoki pretvorbi, npr. PET in poliamidi) do $10$ ali več (nekateri polietileni); vrednosti blizu $1$ dajo le posebni postopki, kot je živa anionska polimerizacija.
 
 **Oblika verige** (od preprostega do zapletenega):
 
@@ -334,7 +334,7 @@ Zamrežen polimer (elastomer) ostane na vodoravnem gumijastem delu, termoplast s
 ~ Molsko maso si pomnožil z maso enote namesto delil. Stopnja polimerizacije je število enot: $M_n/M_0$.
 + okoli $5000$
 - okoli $2500$
-~ Delil si še z $2$, kot da bi šteli atome ogljika v glavni verigi namesto enot. Vsaka enota propena prispeva dva ogljika.
+~ Delil si še z $2$, kot da bi bila ponavljajoča enota dve molekuli propena ($84\,\mathrm{g/mol}$). Ponavljajoča enota PP je ena enota propena, $-\mathrm{CH_2{-}CH(CH_3)}-$ z $42{,}08\,\mathrm{g/mol}$.
 > $n = M_n/M_0 = 210\,000/42{,}08 \approx 4990$, torej okoli $5000$ enot.
 
 ? Študent izračuna kristaliničnost PE z gostoto $0{,}940\,\mathrm{g/cm^3}$ ($\rho_c = 1{,}00$, $\rho_a = 0{,}855\,\mathrm{g/cm^3}$): (1) $\rho - \rho_a = 0{,}085$; (2) $\rho_c - \rho_a = 0{,}145$; (3) $\chi = 0{,}085/0{,}145 = 0{,}586$; (4) kristaliničnost je $58{,}6\,\%$. Kje je napaka?

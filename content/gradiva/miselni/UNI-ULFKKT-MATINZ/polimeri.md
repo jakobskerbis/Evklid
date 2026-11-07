@@ -4,7 +4,7 @@ stanje: osnutek
 ---
 - Veriga namesto kristala
   - kovalentno vzdolž, šibke sile med verigami
-  - modul tisočkrat manjši od jekla
+  - modul $0{,}001$ do $4\,\mathrm{GPa}$, pri kovinah $45$ do $400\,\mathrm{GPa}$
 - Molska masa
   - $n = \frac{M_n}{M_0}$
   - $M_w \ge M_n$, $\mathrm{PDI} = \frac{M_w}{M_n}$

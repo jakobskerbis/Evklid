@@ -91,7 +91,7 @@ Zakaj prevedeni program v C pri dolgi zanki z milijoni ponovitev praviloma teče
 Prevajalnik delo prevajanja opravi enkrat, vnaprej, in pri tem kodo še optimizira. Tolmač mora vsak stavek v zanki pri vsaki ponovitvi znova prebrati in razčleniti, kar je dodatno delo ob samem računu. Pri milijon ponovitvah se ta režija nabere.
 :::
 
-Višje jezike delimo še po **slogu** (paradigmi): **proceduralni** (zaporedje ukazov in funkcij, C), **objektni** (podatki in postopki skupaj v objektih, Java), **funkcijski** (računanje kot sestavljanje funkcij, Haskell). Vsi pa so **imperativni**: programer opiše, *kako* priti do rezultata.
+Višje jezike delimo še po **slogu** (paradigmi): **proceduralni** (zaporedje ukazov in funkcij, C), **objektni** (podatki in postopki skupaj v objektih, Java), **funkcijski** (računanje kot sestavljanje funkcij, Haskell). Proceduralni in objektni slog sta **imperativna**: programer opiše, *kako* priti do rezultata, z zaporedjem ukazov, ki spreminjajo vrednosti spremenljivk. Funkcijski slog pa je že **deklarativen**: program je sestav funkcij brez spreminjanja spremenljivk, vrstni red računanja izbere prevajalnik. Najbolj razširjeni višji jeziki (C, Java, Python) so pretežno imperativni, zato jih bomo spodaj primerjali s 4GL.
 
 **4. Jeziki četrte generacije.** **Definicija.** Jeziki 4. generacije (4GL) so namenjeni določenemu področju in so **deklarativni**: opišeš, *kaj* želiš, sistem sam izbere *kako*. Najbolj znan je SQL za podatkovne baze:
 
@@ -163,7 +163,7 @@ Prva šestnajstiška števka je operacijska koda, druga naslov; `1` LOAD, `2` AD
 3. Po drugem ADD $240 + 80 = 320$, po tretjem $320 + 80 = 400$.
 4. STORE zapiše $400$ v celico $15$; HALT ustavi procesor.
 5. Program računa $2a + 2b$, torej obseg pravokotnika s stranicama $a$ in $b$.
-6. Odgovor: obseg pločevine je $400\,\mathrm{mm}$, zapisan v celici $15$. V višjem jeziku bi bila to ena vrstica `obseg = 2*a + 2*b`; učni procesor nima množenja, zato je zbirnik dvakrat prištel isto celico.
+6. Odgovor: obseg pločevine je $400\,\mathrm{mm}$, zapisan v celici $15$. V višjem jeziku bi bila to ena vrstica `obseg = 2*a + 2*b`; učni procesor nima množenja, zato program dvakrat prišteje isto celico.
 
 ### Primer 3 (težji)
 
@@ -234,7 +234,7 @@ Kakšen je popravljeni program?
 
 - Strojni jezik (1. gen.): dvojiški ukazi, ki jih procesor izvaja neposredno; vsaka družina procesorjev ima svoj nabor ukazov.
 - Zbirni jezik (2. gen.): mnemoniki, ena vrstica = en strojni ukaz; prevede ga zbirnik; neprenosljiv, popoln nadzor.
-- Višji jeziki (3. gen.): neodvisni od procesorja, en stavek = več ukazov; imperativni (kako); prevajalnik (vnaprej, izvršljiva datoteka) ali tolmač (sproti); vmesna pot bajtna koda in JIT.
+- Višji jeziki (3. gen.): neodvisni od procesorja, en stavek = več ukazov; večinoma imperativni (kako), funkcijski slog je deklarativen; prevajalnik (vnaprej, izvršljiva datoteka) ali tolmač (sproti); vmesna pot bajtna koda in JIT.
 - 4GL: deklarativni (kaj), za eno področje, npr. SQL; 5. gen.: logično programiranje (Prolog).
 - Navzgor raste abstrakcija in hitrost pisanja, navzdol nadzor in hitrost izvajanja.
 
@@ -281,23 +281,12 @@ Natančno opiši, kako pride program do procesorja (a) v zbirnem jeziku, (b) v C
 **Rešitev:**
 
 1. (a) Zbirnik prevede vsako vrstico v natanko en strojni ukaz izbranega procesorja; nastane strojna koda za to družino.
-2. (b) Prevajalnik za C prebere ves program, ga analizira, optimizira in prevede v strojno kodo izbranega procesorja; povezovalnik doda knjižnice. Nastane izvršljiva datoteka, ki teče brez prevajalnika.
+2. (b) Prevajalnik za C prebere ves program, ga analizira, optimizira in prevede v strojno kodo izbranega procesorja; **povezovalnik** (angl. *linker*) prevedene dele in knjižnice združi v eno datoteko. Nastane izvršljiva datoteka, ki teče brez prevajalnika.
 3. (c) Tolmač Pythona bere izvorno kodo (navadno jo najprej pretvori v svojo bajtno kodo) in jo sproti izvaja; na računalniku mora biti nameščen tolmač.
 4. (d) Prevajalnik za Javo prevede izvorno kodo v bajtno kodo navideznega stroja (JVM). Na vsakem računalniku jo JVM izvaja in vroče dele sproti prevaja v strojno kodo (JIT).
 5. Prenosljivost: C ne vsebuje ukazov nobenega procesorja. Za x86 in za ARM obstaja prevajalnik, ki isto izvorno kodo prevede v strojno kodo vsakega posebej.
 6. Izvršljiva datoteka pa že vsebuje strojne ukaze x86; procesor ARM ima drug nabor ukazov in jih ne zna izvesti.
 7. Odgovor: prenosljiva je izvorna koda (in pri Javi bajtna koda), ne strojna koda; prenosljivost višjega jezika pomeni, da za vsak procesor obstaja prevajalnik ali tolmač.
-
-### Naloga 3
-
-Utemelji, ali velja: (a) »SQL je imperativni jezik, ker poizvedba `SELECT` vsebuje vrstni red besed.« (b) »Python je tolmačen jezik, zato program v Pythonu nikoli ne more teči tako hitro kot v C.« (c) »Vsak program v višjem jeziku je mogoče zapisati tudi v zbirnem jeziku.«
-
-**Rešitev:**
-
-1. (a) Ne velja. Vrstni red besed je le skladnja. Poizvedba ne določa postopka (zank, vrstnega reda pregledovanja, uporabe kazala); to izbere sistem baze. SQL je deklarativen.
-2. (b) Ne velja v tej obliki. »Tolmačen« je lastnost običajne izvedbe, ne jezika. Prevajalniki JIT (npr. PyPy) in knjižnice, napisane v C (numerične knjižnice za delo s tabelami), dosežejo hitrost blizu C. Običajni tolmač je pri zankah res počasnejši, ker sproti razčlenjuje.
-3. (c) Velja. Vsak višji program se na koncu izvaja kot strojna koda, ki jo prevajalnik ali tolmač ustvari; ta strojna koda ima ekvivalent v zbirnem jeziku ena proti ena. Program bi bil le veliko daljši in vezan na en procesor.
-4. Odgovor: (a) ne, (b) ne, (c) da.
 
 ## Drugače: Z analogijo
 
@@ -314,21 +303,15 @@ Predstavljaj si gradnjo jeklene konstrukcije.
 
 **Krmiljenje strojev.** CNC-stroji in 3D-tiskalniki izvajajo G-kodo, ki je po zgradbi blizu zbirnemu jeziku: vsaka vrstica je en premik ali ukaz stroju. Datoteko G-kode navadno ustvari program CAM iz 3D-modela; inženir dela na višji stopnji in le preveri ali popravi posamezne vrstice.
 
-**Mikrokrmilniki v senzorjih.** Merilni lističi (uporovni lističi) na mostovih pošiljajo podatke prek mikrokrmilnika s nekaj kilobajti pomnilnika. Programiramo ga v C; časovno kritične prekinitve včasih v zbirniku. Python bi tu potreboval preveč pomnilnika.
+**Obdelava meritev.** Za izračun napetosti iz tisočev meritev, prileganje krivulj in grafe uporabljamo Python (3. generacija) ali MATLAB, ki ga zaradi ukazov na visoki ravni pogosto štejejo med 4GL. Numerične knjižnice so napisane v C in Fortranu, zato je račun hiter, čeprav program pišemo v tolmačenem jeziku.
 
-**Obdelava meritev.** Za izračun napetosti iz tisočev meritev, prileganje krivulj in grafe uporabljamo Python ali MATLAB (3. generacija z izrazito visokimi funkcijami). Numerične knjižnice so napisane v C in Fortranu, zato je račun hiter, čeprav program pišemo v tolmačenem jeziku.
-
-**Baze materialov in preizkusov.** Laboratoriji hranijo rezultate natezanih preizkusov v podatkovnih bazah in jih iščejo s SQL; poročila iz baze sestavi generator poročil. Tu se 4GL najbolj izplača: poizvedba je kratka, sistem jo izvede učinkovito tudi pri milijonih vrstic.
+**Baze materialov in preizkusov.** Laboratoriji hranijo rezultate nateznih preizkusov v podatkovnih bazah in jih iščejo s SQL; poročila iz baze sestavi generator poročil. Tu se 4GL najbolj izplača: poizvedba je kratka, sistem jo izvede učinkovito tudi pri milijonih vrstic.
 
 ## Drugače: Bolj natančno
 
 **Faze prevajalnika.** Prevajalnik dela v zaporednih fazah: **leksikalna analiza** razreže besedilo na osnovne enote (imena, števila, operatorje); **sintaksna analiza** iz njih zgradi drevo po pravilih slovnice jezika; **semantična analiza** preveri pomen (tipe, deklaracije); sledi **vmesna koda**, **optimizacija** (npr. izračun konstantnih izrazov že med prevajanjem) in **generiranje strojne kode** za izbrani procesor. Zato isti prevajalnik z drugim zadnjim delom prevaja za različne procesorje.
 
-**Povezovalnik.** Program je pogosto v več datotekah in uporablja knjižnice. Prevajalnik vsako datoteko prevede posebej v **objektno datoteko**, **povezovalnik** (angl. *linker*) pa jih združi v izvršljivo datoteko in razreši klice funkcij med njimi.
-
 **Turingova polnost.** Jezik je **Turingovo poln**, če lahko izrazi vsak izračun, ki ga zmore računalnik (dovolj je pogojni skok in neomejen pomnilnik). Naš učni procesor z JZ ali JN in s pomnilnikom bi bil to pri neomejenem pomnilniku. Vsi običajni višji jeziki so Turingovo polni; zato so si enakovredni po tem, *kaj* lahko izračunajo, razlikujejo pa se po tem, kako udobno in hitro.
-
-**Navidezni stroji.** Bajtna koda je strojni jezik namišljenega procesorja. Navidezni stroj (JVM za Javo, CLR za C#) je program, ki ta procesor posnema. Prevajalnik JIT med izvajanjem opazuje, kateri deli kode se izvajajo največkrat, in prav te prevede v pravo strojno kodo z optimizacijami, ki upoštevajo dejanske podatke.
 
 ## Preveri se
 

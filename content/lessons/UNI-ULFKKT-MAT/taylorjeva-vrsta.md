@@ -176,7 +176,7 @@ Binomska vrsta: $(1 + x)^\alpha = 1 + \alpha x + \dfrac{\alpha(\alpha - 1)}{2!}x
 4. Odštejemo $1$ in pomnožimo z $mc^2$: $E_\mathrm{k} = \frac12 mc^2\beta^2 + \frac38 mc^2\beta^4 + \dots = \frac12 mv^2 + \frac38 \frac{mv^4}{c^2} + \dots$
 5. Prvi člen je klasična kinetična energija. Relativni popravek je razmerje drugega in prvega člena: $\frac{3/8\,\beta^4}{1/2\,\beta^2} = \frac34\beta^2$.
 6. Pri $\beta = 0{,}1$: $\frac34 \cdot 0{,}01 = 0{,}0075$.
-7. Preizkus: natančno je $\frac{1}{\sqrt{0{,}99}} - 1 \approx 0{,}0050378$, približek $0{,}005 + 0{,}0000375 = 0{,}0050375$ se ujema na sedem decimalk.
+7. Preizkus: natančno je $\frac{1}{\sqrt{0{,}99}} - 1 \approx 0{,}0050378$, približek $0{,}005 + 0{,}0000375 = 0{,}0050375$ se ujema na šest decimalk; razliko $3 \cdot 10^{-7}$ pojasni naslednji člen $\frac{5}{16}\beta^6$.
 8. Odgovor: $E_\mathrm{k} = \frac12 mv^2 + \frac38\frac{mv^4}{c^2} + \dots$; pri $v = 0{,}1\,c$ je relativistični popravek $0{,}75\,\%$ klasične energije.
 
 ### Primer 3 (težji)
@@ -417,7 +417,7 @@ I_0 | tok v delovni točki | | A
 I_\mathrm{S} | nasičeni zaporni tok | | A
 \Delta U | sprememba napetosti | | V
 E_\mathrm{k} | kinetična energija | | J
-m | masa telesa (Primer 2); v Primeru 3 število upoštevanih členov | | kg
+m | masa telesa (v Primeru 3 število upoštevanih členov) | | kg | v Primeru 3 brez enote
 v | hitrost | | m/s
 c | hitrost svetlobe | | m/s
 \beta | razmerje hitrosti | \beta = \frac{v}{c} | –

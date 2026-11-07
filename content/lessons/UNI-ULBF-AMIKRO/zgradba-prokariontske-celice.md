@@ -7,7 +7,7 @@ avtor: AI
 
 Ponoči pripeljejo na urgenco otroka z vročino in trdim tilnikom. Kultura likvorja bo znana šele čez dan ali dva, antibiotik pa mora dobiti v eni uri. Laborantka kapljico likvorja razmaže na stekelce, ga v desetih minutah obarva po Gramu in pod mikroskopom vidi rožnate dvojne koke. To je dovolj, da zdravnik izbere zdravilo. Barvanje ne prepozna vrste, prepozna pa **zgradbo ovojnice** bakterije, od katere je odvisno, kateri antibiotik pride do tarče.
 
-Podobno je zgradba pojasnila fizikalni poskus. Leta 1974 so bakterijo *E. coli* z enim bičkom prilepili na stekelce. Če bi biček deloval kot bič, bi celica le trzala. Celica pa se je enakomerno vrtela, enkrat v eno, drugič v drugo smer. Biček je torej vijak, ki ga v ovojnici poganja vrtljiv motor. Za razumevanje bakterij v kliniki, industriji in okolju moraš poznati njihove štiri ključne zgradbe: **celično steno**, **membrano**, **bičke** in **endospore**.
+Podobno je zgradba pojasnila fizikalni poskus. Leta 1974 so bakterijo *E. coli* za en sam biček prilepili na stekelce. Če bi biček deloval kot bič, bi celica le trzala. Celica pa se je enakomerno vrtela, enkrat v eno, drugič v drugo smer. Biček je torej vijak, ki ga v ovojnici poganja vrtljiv motor. Za razumevanje bakterij v kliniki, industriji in okolju moraš poznati njihove štiri ključne zgradbe: **celično steno**, **membrano**, **bičke** in **endospore**.
 
 ## Razlaga
 
@@ -72,7 +72,7 @@ Peptidoglikan je tanek, $2$ do $7\,\mathrm{nm}$, v eni ali dveh plasteh. Leži v
 - **sredica** iz sladkorjev;
 - **O-antigen**, dolga veriga sladkorjev, ki se med sevi razlikuje (serotipi, npr. *E. coli* O157).
 
-Zunanja membrana je pregrada za velike in hidrofobne molekule. Majhne hidrofilne snovi (pod okoli $600\,\mathrm{Da}$) prehajajo skozi **porine**, kanalčke v zunanji membrani. Zato je penicilin G proti gram-negativnim slabo učinkovit, lizocim pa brez pomoči (npr. EDTA, ki odstrani $\mathrm{Mg^{2+}}$ iz LPS) sploh ne pride do peptidoglikana.
+Zunanja membrana je pregrada za velike in hidrofobne molekule. Majhne hidrofilne snovi (pod okoli $600\,\mathrm{Da}$) prehajajo skozi **porine**, kanalčke v zunanji membrani. Penicilin G je sicer majhen, a razmeroma hidrofoben, zato skozi porine prehaja počasi, v periplazmi pa ga pogosto razgradijo $\beta$-laktamaze; zato je proti gram-negativnim slabo učinkovit. Lizocim (beljakovina, okoli $14\,\mathrm{kDa}$) je za porine prevelik in brez pomoči (npr. EDTA, ki odstrani $\mathrm{Mg^{2+}}$ iz LPS) sploh ne pride do peptidoglikana.
 
 **Mehanizem barvanja po Gramu.** Postopek ima štiri korake:
 
@@ -221,7 +221,7 @@ $\mathrm{Re} = \dfrac{\rho v l}{\eta}$, $F_\mathrm{u} = 6\pi\eta r v$, $m = \rho
 5. c) Sila upora: $F_\mathrm{u} = 1{,}885 \cdot 10^{-8}\,\mathrm{kg/s} \cdot 3{,}0 \cdot 10^{-5}\,\mathrm{m/s} \approx 5{,}65 \cdot 10^{-13}\,\mathrm{N}$, moč $P_\mathrm{u} = F_\mathrm{u}v \approx 1{,}7 \cdot 10^{-17}\,\mathrm{W}$.
 6. Protoni na sekundo: $1200 \cdot 100\,\mathrm{s^{-1}} = 1{,}2 \cdot 10^5\,\mathrm{s^{-1}}$; moč $P_\mathrm{H} = 1{,}2 \cdot 10^5 \cdot 1{,}602 \cdot 10^{-19} \cdot 0{,}166\,\mathrm{W} \approx 3{,}2 \cdot 10^{-15}\,\mathrm{W}$.
 7. Razmerje: $P_\mathrm{u}/P_\mathrm{H} \approx 1{,}7 \cdot 10^{-17}/3{,}2 \cdot 10^{-15} \approx 0{,}005$.
-8. Odgovor: $\mathrm{Re} \approx 6 \cdot 10^{-5}$, po ustavitvi celica odplava le okoli $7 \cdot 10^{-12}\,\mathrm{m}$, za plavanje pa porabi le okoli pol odstotka moči, ki jo protoni dajo motorju. Večina energije gre v vrtenje vijaka v viskozni vodi; tak pogon je pri majhnem $\mathrm{Re}$ edini, ki sploh deluje, in bakterija si ga lahko privošči, ker motor porabi le majhen del njene celotne energije.
+8. Odgovor: $\mathrm{Re} \approx 6 \cdot 10^{-5}$, po ustavitvi celica odplava le okoli $7 \cdot 10^{-12}\,\mathrm{m}$, za plavanje pa porabi le okoli pol odstotka moči, ki jo protoni dajo motorju. Večina energije gre v vrtenje vijaka v viskozni vodi. Pri majhnem $\mathrm{Re}$ recipročno mahanje (naprej in nazaj po isti poti) celice ne premakne, vrtenje vijaka pa jo; bakterija si tak potratni pogon lahko privošči, ker motor porabi le majhen del njene celotne energije.
 
 ### Primer 4 – zdaj ti
 
@@ -323,23 +323,13 @@ Bakterijo si predstavljaj kot **balon v mreži**. Membrana je balon: tanek, nape
 
 ## Drugače: Uporaba v stroki
 
-**Klinična mikrobiologija.** Barvanje po Gramu iz krvne kulture, likvorja ali izpljunka je prvi laboratorijski izvid in vodi začetno zdravljenje. Gram-negativne bakterije so pogosto odpornejše, ker zunanja membrana z ozkimi porini in izčrpalnimi črpalkami zmanjša vstop zdravila; mutacije porinov so eden od mehanizmov odpornosti pri *Pseudomonas aeruginosa*.
+**Klinična mikrobiologija.** Barvanje po Gramu iz krvne kulture, likvorja ali izpljunka je prvi laboratorijski izvid in vodi začetno zdravljenje. Gram-negativne bakterije so pogosto odpornejše, ker zunanja membrana z ozkimi porini in izlivnimi črpalkami (angl. *efflux*) zmanjša vstop zdravila; mutacije porinov so eden od mehanizmov odpornosti pri *Pseudomonas aeruginosa*.
 
-**Farmacija in proizvodnja zdravil.** Endotoksin (LPS) preživi sterilizacijo s paro, zato morajo biti raztopine za injiciranje in dializo **apirogene**. Endotoksin merijo s testom LAL (lizat amebocitov ostvarjevega raka), ki se z lipidom A strdi; meja za parenteralna zdravila je izražena v enotah endotoksina na kilogram telesne mase.
+**Farmacija in proizvodnja zdravil.** Endotoksin (LPS) preživi sterilizacijo s paro, zato morajo biti raztopine za injiciranje in dializo **apirogene**. Endotoksin merijo s testom LAL (lizat amebocitov ostvarja *Limulus polyphemus*), ki se z lipidom A strdi; meja za parenteralna zdravila je izražena v enotah endotoksina na kilogram telesne mase.
 
 **Sterilizacija in validacija.** Za preverjanje avtoklavov uporabljajo **biološke indikatorje**: trakove s sporami *Geobacillus stearothermophilus*, ki so med najodpornejšimi proti vlažni toploti. Če po ciklu nobena spora ne vzkali, je cikel uspešen. Spore *C. difficile* razkužila na alkoholni osnovi ne uničijo, zato v bolnišnicah po stiku s takim bolnikom roke umijemo z milom in vodo.
 
 **Biofizika in biotehnologija.** Motor bička je model za nanostroje; z optičnimi pincetami merijo njegov navor in število korakov na obrat. Flagelin prepozna receptor TLR5 prirojene imunosti, zato ga preizkušajo kot dodatek cepivom.
-
-## Drugače: Korak za korakom s številkami
-
-Kako velika je teža celice v primerjavi s silo, ki jo razvije biček?
-
-1. **Masa:** krogla s polmerom $1{,}0\,\mu\mathrm{m}$ in gostoto $1100\,\mathrm{kg/m^3}$ ima $m = 1100 \cdot 4{,}19 \cdot 10^{-18}\,\mathrm{kg} \approx 4{,}6 \cdot 10^{-15}\,\mathrm{kg}$.
-2. **Teža:** $mg = 4{,}6 \cdot 10^{-15} \cdot 9{,}81\,\mathrm{N} \approx 4{,}5 \cdot 10^{-14}\,\mathrm{N}$.
-3. **Vzgon** v vodi odšteje $1000/1100$ teže; ostane okoli $4 \cdot 10^{-15}\,\mathrm{N}$.
-4. **Potisk bička** pri $30\,\mu\mathrm{m/s}$ je enak uporu, okoli $5{,}7 \cdot 10^{-13}\,\mathrm{N}$ (Primer 3).
-5. **Pomen:** potisk je več kot stokrat večji od teže v vodi; celica plava navzgor enako lahko kot navzdol, usedanje pa je skoraj zanemarljivo. Zato se bakterije v mirujočem gojišču usedajo ure in dneve, v centrifugi pa minute.
 
 ## Drugače: Bolj natančno
 
