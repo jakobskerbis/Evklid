@@ -89,8 +89,8 @@ Skica (pogled od zgoraj, tok teče navzgor):
    |   |  x  |  B v zanko
    |   |  x  |
    |   +-----+
-   |<r1>  
-   |<--- r2 --->|
+   |<r1>
+   |<- r2 -->|
 ```
 
 Ko se tok $i$ spreminja, se v zanki inducira napetost, sorazmerna z $\mathrm{d}i/\mathrm{d}t$. To je osnova presluha med kabli in merilnih tuljav za tok.
@@ -336,4 +336,6 @@ r_1, r_2 | razdalji stranic od vodnika | | m
 E | jakost električnega polja | | V/m
 t | čas | | s
 h | časovni korak meritve | | s
+u_0, u_1, u_{n-1}, u_n | izmerjeni vzorci napetosti | | V | vsakih $h$ sekund
+C | sklenjena pot (rob ploskve $A$) | | | obhod po pravilu desne roke
 :::
