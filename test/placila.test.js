@@ -9,6 +9,7 @@ import { mountAccounts } from "../server/accounts/index.js";
 import { signWebhook } from "../server/accounts/stripe.js";
 import { PASSES, passForDaysLeft, paidActive, GRACE_DAYS } from "../server/accounts/plans.js";
 import { parseCode } from "../server/accounts/promo.js";
+import { ownsStripeObject, parentFromMeta } from "../server/accounts/ponoven-id.js";
 
 const SECRET = "whsec_test";
 const YEAR = new Date().getFullYear();
@@ -503,4 +504,61 @@ test("brez mikrotransakcij (j 2026-11-04): dokup samo paketi in samo polnoleten;
     assert.equal(r.status, 410);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM passes WHERE days = 30").get().n, 1, "nov 30-dnevni paket ne nastane");
   });
+});
+
+// Pregled #505 A, P2-2: id računa se po izbrisu ponovno uporabi. A odpre plačilo naročnine in izbriše račun, B dobi
+// isti id, A plača → dogodek najde račun samo po id (stranke A ni več) in B bi dobil A-jevo naročnino.
+test("Stripe: plačilo izbrisanega računa ne gre novemu računu z istim id (client_reference_id, metadata.parent_id)", async () => {
+  const errors = [];
+  await withServer(
+    async ({ client, store, stripe, hook }) => {
+      const a = client();
+      const A = await registerVerified(a, stripe, "a@ponoven.si");
+      store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(A.id);
+      const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
+      assert.equal(co.status, 200, JSON.stringify(co.body));
+      const customerA = store.db.prepare("SELECT stripe_customer_id AS c FROM parents WHERE id = ?").get(A.id).c;
+      assert.ok(customerA);
+      assert.equal((await a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+
+      const b = client();
+      const B = await registerVerified(b, stripe, "b@ponoven.si");
+      assert.equal(B.id, A.id, "id se ponovno uporabi");
+      // Seja in naročnina A sta nastali pred računom B (A je plačilo odprl prej; B je star šele sekundo).
+      const created = Math.floor(Date.now() / 1000) - 3600;
+      store.db.prepare("UPDATE parents SET created_at = datetime('now') WHERE id = ?").run(B.id);
+      stripe.state.subs.sub_a = { id: "sub_a", customer: customerA, created, status: "active", metadata: { parent_id: String(A.id) }, items: { data: [{ price: { lookup_key: "evklid_1_month" }, current_period_end: 1893456000 }] } };
+      const session = { id: "cs_a", object: "checkout.session", created, customer: customerA, client_reference_id: String(A.id), subscription: "sub_a", payment_status: "paid", metadata: { parent_id: String(A.id) } };
+      assert.equal((await hook({ id: "evt_ra1", type: "checkout.session.completed", data: { object: session } })).status, 200);
+      assert.equal((await hook({ id: "evt_ra2", type: "customer.subscription.updated", data: { object: stripe.state.subs.sub_a } })).status, 200);
+      // Samo client_reference_id (brez metadata).
+      assert.equal((await hook({ id: "evt_ra3", type: "checkout.session.completed", data: { object: { ...session, id: "cs_a2", metadata: {} } } })).status, 200);
+      const row = store.db.prepare("SELECT stripe_customer_id, sub_id, sub_status FROM parents WHERE id = ?").get(B.id);
+      assert.deepEqual({ ...row }, { stripe_customer_id: null, sub_id: null, sub_status: null }, "B ne dobi A-jeve stranke in naročnine");
+      assert.ok(errors.some((e) => /izbrisan račun/.test(e)), "zapis v dnevnik za ročno vračilo");
+
+      // Pravi lastnik (račun starejši od seje) po id iz metapodatkov še vedno dobi naročnino (npr. dogodek pred povezavo stranke).
+      store.db.prepare("UPDATE parents SET created_at = datetime('now', '-2 hours') WHERE id = ?").run(B.id);
+      stripe.state.subs.sub_b = { ...stripe.state.subs.sub_a, id: "sub_b", customer: "cus_drug", metadata: { parent_id: String(B.id) } };
+      assert.equal((await hook({ id: "evt_rb1", type: "customer.subscription.updated", data: { object: stripe.state.subs.sub_b } })).status, 200);
+      assert.equal(store.db.prepare("SELECT sub_id FROM parents WHERE id = ?").get(B.id).sub_id, "sub_b");
+    },
+    { log: { error: (...a) => errors.push(a.join(" ")) } },
+  );
+});
+
+test("ponoven-id: račun je lastnik predmeta Stripa samo, če ni mlajši od njega", () => {
+  const t = Date.parse("2026-11-07T10:00:00Z") / 1000;
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07 09:59:59" }, { created: t }), true);
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:00:00" }, { created: t }), true, "ista sekunda");
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:00:01" }, { created: t }), false);
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07T10:00:01.000Z" }, { created: t }), false, "ISO zapis");
+  assert.equal(ownsStripeObject({ created_at: "2026-11-07 10:00:01" }, {}), true, "brez created kot prej");
+  assert.equal(ownsStripeObject(null, { created: t }), false);
+  const errs = [];
+  const getParent = (id) => (id === 5 ? { id: 5, created_at: "2026-11-08 00:00:00" } : null);
+  assert.equal(parentFromMeta(getParent, "5", { id: "cs_1", created: t }, { error: (...a) => errs.push(a.join(" ")) }), null);
+  assert.equal(errs.length, 1);
+  assert.equal(parentFromMeta(getParent, "x", { created: t }), null);
+  assert.equal(parentFromMeta(getParent, "5", {})?.id, 5);
 });

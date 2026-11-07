@@ -40,6 +40,7 @@ import { mountGuarantee, purgeOldGuarantees } from "../placila/garancija.js";
 import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
 import { setSource } from "../rast.js";
+import { parentFromMeta } from "./ponoven-id.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -1838,7 +1839,8 @@ export function mountAccounts(app, store, opts = {}) {
   // Vsak dogodek obdelamo enkrat; ob napaki odgovorimo 500, da ga Stripe pošlje znova.
   async function handleEvent(event) {
     const obj = event.data?.object || {};
-    const parentFor = () => parentByCustomer(obj.customer) || (obj.metadata?.parent_id && getParent(Number(obj.metadata.parent_id)));
+    // Po stranki; po id iz metapodatkov samo, če id ne pripada novejšemu računu (ponovno uporabljen id, ponoven-id.js).
+    const parentFor = () => parentByCustomer(obj.customer) || (obj.metadata?.parent_id && parentFromMeta(getParent, obj.metadata.parent_id, obj, log, event.type));
     switch (event.type) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded": {
@@ -1862,7 +1864,7 @@ export function mountAccounts(app, store, opts = {}) {
           await billing.completeSubSession(obj);
           break;
         }
-        const p = parentFor() || getParent(Number(obj.client_reference_id));
+        const p = parentFor() || parentFromMeta(getParent, obj.client_reference_id, obj, log, event.type);
         if (!p) break;
         if (!p.stripe_customer_id && obj.customer) update(p.id, { stripe_customer_id: obj.customer });
         if (obj.subscription && stripe.enabled) await applySubscription(p.id, await stripe.request("GET", `/subscriptions/${obj.subscription}`));

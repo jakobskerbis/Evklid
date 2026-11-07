@@ -15,6 +15,7 @@ import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
 import { promoEndingEmail, renewalEmail, schoolSubEndEmail, planChangeEmail, allowanceEmail } from "./email.js";
 import { audit } from "../dnevnik-dostopov.js";
+import { parentFromMeta } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
@@ -305,7 +306,7 @@ export function mountBilling(app, ctx) {
 
   // Naročnina, plačana prek povezave za starše: plačnikova stranka v Stripu postane stranka računa.
   async function completeSubSession(session) {
-    const parent = getParent(Number(session?.metadata?.parent_id));
+    const parent = parentFromMeta(getParent, session?.metadata?.parent_id, session, log, "povezava za plačilo");
     if (!parent || !session.subscription) return false;
     const subId0 = typeof session.subscription === "string" ? session.subscription : session.subscription.id;
     if (paidActive(parent) && parent.sub_id && parent.sub_id !== subId0)
