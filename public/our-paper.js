@@ -6,6 +6,7 @@
 import { t, locale } from "./i18n.js";
 import { prilagodiSirino } from "./sirina.js";
 import { icon } from "./icons.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { partKey } from "./our-paper-key.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -153,10 +154,12 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
       close();
     }
   });
+  let sprosti = () => {}; // zadrziFokus spodaj; close() je varen tudi, če izris prej vrže napako
   const close = () => {
     if (!current) return;
     current = null;
     if (touched.size && onChecked) onChecked([...touched].map((key) => ({ key, ok: !!got[key] })));
+    sprosti({ vrni: false });
     el.remove();
     document.documentElement.classList.remove("pv-open");
     back?.focus?.();
@@ -167,6 +170,6 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
   // Predolga formula se zloži pri enačajih, preširoka formula ali tabela se najprej pomanjša (public/sirina.js);
   // skrite rešitve se prilagodijo, ko se pokažejo.
   prilagodiSirino(el, { vrstice: false });
-  el.querySelector("[data-op-close]").focus();
+  sprosti = zadrziFokus(el, { zacetni: el.querySelector("[data-op-close]"), prej: back });
   return el;
 }

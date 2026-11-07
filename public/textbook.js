@@ -689,7 +689,11 @@ async function renderLesson(topicId) {
           ? `Ni čisto tako. ${R(wrongWhy)} Poskusi še enkrat.`
           : "Ni čisto tako. Premisli še enkrat ali preberi razlago zgoraj.";
         prilagodiSirino(why);
-        if (ok) el.querySelectorAll(".tb-opt").forEach((x) => (x.disabled = true));
+        if (ok) {
+          el.querySelectorAll(".tb-opt").forEach((x) => (x.disabled = true));
+          why.tabIndex = -1; // onemogočen gumb ne obdrži fokusa: fokus (in bralnik zaslona) gre na razlago
+          why.focus({ preventScroll: true });
+        }
       }),
     );
   });
@@ -740,9 +744,14 @@ function wireSteps(box, lessonId, n) {
     count.setAttribute("aria-label", t("tb.steps.count", { n: cur + 1, m: n }));
     bar.setAttribute("aria-valuenow", String(cur + 1));
     bar.firstElementChild.style.width = `${((cur + 1) / n) * 100}%`;
+    // Gumb, ki postane onemogočen, ne sme vzeti fokusa s seboj (tipkovnica bi skočila na začetek strani).
+    const lost = (document.activeElement === prev && cur === 0) || (document.activeElement === next && cur === n - 1);
     prev.disabled = cur === 0;
     next.disabled = cur === n - 1;
     end.hidden = cur !== n - 1;
+    // Zadnji korak: »Kaj zdaj?« (vaje, inštruktor) je v DOM pred gumbi, zato tja; prvi korak: »Naprej«.
+    const kajZdaj = cur === n - 1 && end.querySelector("button:not(:disabled), a[href]");
+    if (lost) (cur === 0 ? next : kajZdaj || prev).focus({ preventScroll: cur === 0 || !kajZdaj });
     try {
       sessionStorage.setItem(key, String(cur));
     } catch {}

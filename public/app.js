@@ -1,6 +1,7 @@
 // Evklid – odjemalec (brez ogrodja).
 import { fetchThroughRestart as fetchRetry } from "./restart-retry.js";
 import { jsonAliNic } from "./odgovor.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
@@ -2913,7 +2914,7 @@ function renderTask(task, ctx) {
     const ph =
       task.inputHint ||
       (task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit", { unit: task.unit }) : t("task.phResult"));
-    input = `<form class="answer-row"><input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
+    input = `<form class="answer-row"><input id="answer" aria-label="${escapeHtml(t("games.yourAnswer"))}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
   const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span></div>` : "";
@@ -3034,7 +3035,7 @@ function workHtml() {
   return `<div class="work">
     <button type="button" class="work-toggle" aria-expanded="false">${icon("notebook-pen")}<span>${t("task.work")}</span>${icon("chevron-down")}</button>
     <div class="work-body" hidden>
-      <textarea class="work-text" rows="3" spellcheck="false" placeholder="${escapeHtml(t("task.workPh"))}"></textarea>
+      <textarea class="work-text" rows="3" spellcheck="false" aria-label="${escapeHtml(t("task.work"))}" placeholder="${escapeHtml(t("task.workPh"))}"></textarea>
       <button type="button" class="ghost small icon-only work-sym" aria-pressed="false" title="${escapeHtml(t("chat.symbols"))}" aria-label="${escapeHtml(t("chat.symbols"))}">${icon("sigma")}</button>
     </div>
   </div>`;
@@ -3915,8 +3916,10 @@ function startTour() {
     box.querySelector('[data-tour="back"]').hidden = i === 0;
     box.querySelector('[data-tour="next"]').focus({ preventScroll: true });
   };
+  let sprosti = null;
   const end = () => {
     box.hidden = true;
+    sprosti?.();
     startTour.end = null;
     document.removeEventListener("keydown", onKey);
     try {
@@ -3943,6 +3946,7 @@ function startTour() {
   document.addEventListener("keydown", onKey);
   startTour.end = end;
   box.hidden = false;
+  sprosti = zadrziFokus(box, { zacetni: box.querySelector('[data-tour="next"]') });
   show();
 }
 // Vsak profil vidi vodič enkrat, ob prvi uporabi (tudi star profil, ki je videl le kratek ogled).
@@ -4110,11 +4114,14 @@ function showGraph() {
   return setCalcMode(calcMode);
 }
 /** Odpre kalkulator čez cel zaslon. mode: "sci" | "graph" | "units"; exprs: izrazi za graf. */
+let calcFokus = null; // sprosti() fokusa v oknu kalkulatorja (fokus-okna.js)
 async function openCalcOverlay({ mode = calcMode, exprs = [], backLabel = t("nav.back") } = {}) {
   $("#graph-close-label").textContent = backLabel;
   $("#graph-close").setAttribute("aria-label", backLabel);
-  if ($("#graph-overlay").hidden) overlayOpened();
+  const zaprt = $("#graph-overlay").hidden;
+  if (zaprt) overlayOpened();
   $("#graph-overlay").hidden = false;
+  if (zaprt) calcFokus = zadrziFokus($("#graph-overlay"), { zacetni: $("#graph-close") });
   document.body.classList.add("graph-open");
   const tool = await setCalcMode(mode);
   if (mode === "graph" && exprs.length) tool.show(exprs);
@@ -4126,6 +4133,8 @@ function closeCalcOverlay({ fromBack = false } = {}) {
   if (!calcOverlayOpen()) return;
   if (!fromBack) overlayClosed();
   $("#graph-overlay").hidden = true;
+  calcFokus?.();
+  calcFokus = null;
   document.body.classList.remove("graph-open");
   hideKeyboard();
   $("#graph-overlay-body").replaceChildren();

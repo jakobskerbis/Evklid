@@ -3,6 +3,7 @@
 // Novice da strežnik (server/corner.js), seznam področij je v public/interests.js.
 import { t, locale, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { jeOs } from "./stopnja.js";
 import { INTERESTS, MAX_INTERESTS } from "./interests.js";
 
@@ -252,13 +253,14 @@ export function openBoard() {
     root.requestFullscreen({ navigationUI: "hide" }).then(() => board && (board.ownFullscreen = true)).catch(() => {});
   }
   renderBoard();
-  $("[data-board-close]", el)?.focus();
+  board.sprosti = zadrziFokus(el, { zacetni: $("[data-board-close]", el), prej: board.prevFocus });
 }
 
 export function closeBoard({ keepFullscreen = false } = {}) {
   if (!board) return;
-  const { el, ownFullscreen, prevFocus } = board;
+  const { el, ownFullscreen, prevFocus, sprosti } = board;
   board = null;
+  sprosti?.({ vrni: false });
   el.remove();
   document.body.classList.remove("corner-board-open");
   if (ownFullscreen && !keepFullscreen && document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
