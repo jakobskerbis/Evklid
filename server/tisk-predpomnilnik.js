@@ -19,7 +19,7 @@ const defaultMax = () => (Number(process.env.EVKLID_TISK_MB) > 0 ? Number(proces
 export function createPageCache({ maxBytes = defaultMax(), compress = process.env.EVKLID_COMPRESS !== "0" } = {}) {
   const map = new Map(); // ključ -> vnos (vrstni red = nazadnje uporabljen na koncu)
   let bytes = 0;
-  const sizeOf = (e) => e.html.length + (e.br?.length || 0) + (e.gzip?.length || 0);
+  const sizeOf = (e) => (e.html?.length || 0) + (e.br?.length || 0) + (e.gzip?.length || 0);
 
   function drop(key) {
     const e = map.get(key);
@@ -50,16 +50,28 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
     const buf = Buffer.from(html);
     const e = {
       sig,
-      html: buf,
+      html: buf, // pri veliki strani po stiskanju null (ostaneta br in gzip)
+      size: buf.length,
       etag: `W/"${crypto.createHash("sha1").update(buf).digest("base64url").slice(0, 27)}"`,
       pending: {},
       cached: false,
     };
-    if (e.html.length * 2 <= maxBytes) {
+    // Shrani se vsaka stran do meje (MAT-SS ima 23 MB; pregled #516: polovica meje je bila premalo). Velika stran
+    // (> 1/4 meje) se takoj stisne v br in gzip, nato se surov HTML zavrže: MAT-SS v pomnilniku ~2 MB namesto 23 MB.
+    if (e.size <= maxBytes) {
       map.set(key, e);
       e.cached = true;
-      bytes += e.html.length;
+      bytes += e.size;
       trim();
+    }
+    if (compress && e.size * 4 > maxBytes) {
+      e.slim = Promise.all([compressed(e, "br"), compressed(e, "gzip")]).then(
+        () => {
+          if (e.cached) bytes -= e.html.length;
+          e.html = null;
+        },
+        () => {},
+      );
     }
     return e;
   }
@@ -67,10 +79,12 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
   function compressed(e, enc) {
     if (e[enc]) return Promise.resolve(e[enc]);
     if (!e.pending[enc]) {
+      const src = e.html;
+      if (!src) return Promise.reject(new Error("brez izvirnika"));
       e.pending[enc] = new Promise((resolve, reject) => {
         const done = (err, out) => (err ? reject(err) : resolve(out));
-        if (enc === "br") zlib.brotliCompress(e.html, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 6, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: e.html.length } }, done);
-        else zlib.gzip(e.html, { level: 6 }, done);
+        if (enc === "br") zlib.brotliCompress(src, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 6, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: src.length } }, done);
+        else zlib.gzip(src, { level: 6 }, done);
       }).then(
         (out) => {
           e[enc] = out;
@@ -99,16 +113,16 @@ export function createPageCache({ maxBytes = defaultMax(), compress = process.en
     const bare = (t) => t.trim().replace(/^W\//, "");
     const inm = String(req.headers["if-none-match"] || "").split(",").map(bare).filter(Boolean);
     if (inm.includes("*") || inm.includes(bare(e.etag))) return res.status(304).end();
-    const enc = compress && e.html.length >= MIN_SIZE ? pickEncoding(req.headers["accept-encoding"]) : null;
-    let body = e.html;
+    const enc = compress && e.size >= MIN_SIZE ? pickEncoding(req.headers["accept-encoding"]) : null;
+    let body = null;
     if (enc) {
       try {
         body = await compressed(e, enc);
         res.setHeader("Content-Encoding", enc);
-      } catch {
-        body = e.html;
-      }
+      } catch {}
     }
+    // Odjemalec brez stiskanja (redko): pri veliki strani iz gzip (zlib v ozadju).
+    if (!body) body = e.html ?? (await new Promise((ok, no) => zlib.gunzip(e.gzip, (err, out) => (err ? no(err) : ok(out)))));
     res.setHeader("Content-Length", body.length);
     res.end(body);
   }

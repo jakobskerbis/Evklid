@@ -48,9 +48,11 @@ test("createPageCache: izris enkrat na podpis, nov podpis = nov izris, meja veli
   for (const k of ["b", "c", "d", "e", "f", "g"]) c.get(k, "v1", render(k));
   assert.ok(c.stats().bytes <= 3000, JSON.stringify(c.stats()));
   assert.ok(c.stats().entries < 7);
-  const big = createPageCache({ maxBytes: 600 });
-  big.get("z", "v1", render("z"));
-  assert.equal(big.stats().entries, 0, "prevelika stran se ne shrani");
+  const big = createPageCache({ maxBytes: 600, compress: false });
+  big.get("z", "v1", () => "z".repeat(700));
+  assert.equal(big.stats().entries, 0, "stran nad mejo se ne shrani");
+  big.get("w", "v1", () => "w".repeat(450));
+  assert.equal(big.stats().entries, 1, "stran med polovico meje in mejo se shrani (pregled #516: MAT-SS 23 MB pri meji 40 MB)");
 });
 
 test("/ucbenik in /gradiva/povzetek: stisnjeno, ETag, sveže po spremembi lekcije", async () => {
@@ -131,6 +133,24 @@ test("ETag po ponovnem zagonu: spremenjena lekcija ne da 304 (drug proces, isti 
     assert.equal(r.status, 200, `${u}: star ETag po zagonu ne velja`);
     assert.notEqual(r.etag, first[u].etag);
   }
+});
+
+test("velika stran: shranjena kot br + gzip brez surovega HTML, odjemalec brez stiskanja dobi celo stran", async () => {
+  const c = createPageCache({ maxBytes: 400000 });
+  const html = Array.from({ length: 8000 }, (_, i) => `<p>Odstavek ${i} z nekaj besedila.</p>`).join("");
+  assert.ok(html.length > 400000 / 2 && html.length <= 400000, String(html.length));
+  let n = 0;
+  const e = c.get("velika", "v1", () => (n++, html));
+  await e.slim;
+  assert.equal(e.html, null, "surov HTML zavržen");
+  assert.ok(e.br && e.gzip);
+  assert.equal(c.stats().bytes, e.br.length + e.gzip.length);
+  assert.equal(c.get("velika", "v1", () => (n++, html)), e, "drugi zahtevek iz predpomnilnika");
+  assert.equal(n, 1);
+  const res = { h: {}, code: 200, setHeader: (k, v) => (res.h[k.toLowerCase()] = v), status: (x) => ((res.code = x), res), end: (b) => (res.body = b) };
+  await c.send({ headers: {} }, res, e);
+  assert.equal(res.body.toString("utf8"), html);
+  assert.equal(res.h["content-length"], Buffer.byteLength(html));
 });
 
 test("send: šibka primerjava, If-None-Match *, EVKLID_COMPRESS=0 brez stiskanja", async () => {
