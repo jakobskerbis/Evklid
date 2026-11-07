@@ -3,7 +3,8 @@
 import katex from "katex";
 import { marked } from "marked";
 import { getPath, getTopic, topicOrder } from "./curriculum.js";
-import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheetSections } from "./textbook.js";
+import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheet, formulaSheetSections } from "./textbook.js";
+import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { splitFormulaCells } from "../public/rich.js";
 
 const esc = (s) =>
@@ -116,6 +117,23 @@ export function printFormulas(key) {
       ${renderMd(md)}
     </section>`;
   return shell(`${book.subjectName} · ${book.schoolName} · formule in konstante`, content);
+}
+
+// Podpis strani printPage(pathKey, topicSlug) za predpomnilnik (server/tisk-predpomnilnik.js): datum izdaje in
+// različica vsake lekcije, ki jo stran vsebuje (list formul: njegovo besedilo). null: stran ne obstaja.
+export function printSignature(pathKey, topicSlug = null) {
+  const day = today();
+  if (topicSlug === "formule") {
+    const p = getPath(pathKey);
+    const sheet = formulaSheet(p ? `${p.subject}-${p.school}` : pathKey);
+    return sheet == null ? null : `${day}|f|${sheet}`;
+  }
+  let topics;
+  if (getPath(pathKey)) topics = topicSlug ? [getTopic(`${pathKey}/${topicSlug}`)].filter(Boolean) : topicOrder(pathKey);
+  else if (topicSlug) return null;
+  else topics = getBook(pathKey)?.paths.flatMap((p) => topicOrder(p.key)) ?? null;
+  if (!topics || (topicSlug && !topics.length)) return null;
+  return `${day}|${topics.map((t) => lessonVersion(loadLesson(t.id))).join(",")}`;
 }
 
 // pathKey: cela pot; topicSlug (neobvezno): samo ena lekcija.

@@ -8,6 +8,7 @@ import path from "node:path";
 import { getTopic, getPath } from "./curriculum.js";
 import { loadLesson } from "./textbook.js";
 import { renderMd, shell } from "./textbook-print.js";
+import { createPageCache, lessonVersion } from "./tisk-predpomnilnik.js";
 import { generateTask, hasGenerator, optionsAreTex } from "./practice/index.js";
 import { speakMarkdown } from "./govor.js";
 import { GRADIVA_DIR, hasGradivo, gradivoPage, videoFor } from "./gradiva-vsebina.js";
@@ -142,6 +143,20 @@ const SUMMARY_CSS = `
   }
   @media print { .one { font-size: 9.5pt; } .one, .mm { break-inside: avoid; } }
 `;
+
+// Podpis povzetka za predpomnilnik: datum, različica lekcije in čas spremembe napisanega miselnega vzorca.
+export function summarySignature(topicId) {
+  const t = getTopic(topicId);
+  const lesson = t && loadLesson(topicId);
+  if (!lesson) return null;
+  let mapMtime = 0;
+  if (/^[A-Z0-9-]+\/[a-z0-9-]+$/.test(topicId)) {
+    try {
+      mapMtime = fs.statSync(path.join(GRADIVA_DIR, "miselni", `${topicId}.md`), { throwIfNoEntry: false })?.mtimeMs || 0;
+    } catch {}
+  }
+  return `${today()}|${lessonVersion(lesson)}|${mapMtime}`;
+}
 
 export function summaryPage(topicId) {
   const p = summaryParts(topicId);
@@ -319,10 +334,13 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
   };
 
   // Povzetek na eni strani je besedilo učbenika: za vse, brez prijave (kot /ucbenik).
-  app.get("/gradiva/povzetek/:path/:topic", (req, res) => {
-    const html = summaryPage(`${req.params.path}/${req.params.topic}`);
-    if (!html) return res.status(404).send("Za to temo povzetka še ni.");
-    res.type("html").send(html);
+  // Predpomnjen po različici lekcije in miselnega vzorca (server/tisk-predpomnilnik.js).
+  const summaries = createPageCache({ maxBytes: 16 * 1024 * 1024 });
+  app.get("/gradiva/povzetek/:path/:topic", (req, res, next) => {
+    const id = `${req.params.path}/${req.params.topic}`;
+    const page = summaries.get(id, summarySignature(id), () => summaryPage(id));
+    if (!page) return res.status(404).send("Za to temo povzetka še ni.");
+    summaries.send(req, res, page).catch(next);
   });
 
   // Katera gradiva ima tema in katera so učencu odklenjena.
