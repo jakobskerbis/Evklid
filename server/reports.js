@@ -71,7 +71,30 @@ export function ensureReportsTable(db) {
 const NAME_EDGE_L = "(?<![\\p{L}\\p{N}_])";
 const NAME_EDGE_R = "(?![\\p{L}\\p{N}_])";
 const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Brez naglasov in strešic (Žiga → Ziga, Zoë → Zoe), za primerjavo imena.
+const plainLetters = (s) => String(s).normalize("NFD").replace(/\p{M}+/gu, "");
+
 export function genericAnswer(text, name = "") {
+  const out = genericExact(text, name);
+  if (out === null) return null;
+  // Ime brez strešic ali z drugimi naglasi (pregled #484 B P2-2): če ga primerjava brez naglasov še najde, odgovor ni skupen.
+  const n = String(name || "").trim();
+  if (n.length >= 2) {
+    const flat = plainLetters(out);
+    const again = genericExact(flat, plainLetters(n));
+    if (again === null || again !== flat) return null;
+    // Pomanjševalnice in vzdevki (Jakob → Jaka, Jakec; Matevž → Mato): beseda z veliko začetnico, ki se začne s
+    // prvimi tremi črkami imena in je kratka, pomeni, da odgovor ni skupen (pregled #484 A P3-3). Ob dvomu se ne shrani.
+    for (const w of plainLetters(n).split(/\s+/)) {
+      if (w.length < 4) continue;
+      const pre = w[0].toUpperCase() + w.slice(1, 3).toLowerCase();
+      if (new RegExp(`${NAME_EDGE_L}${escRe(pre)}\\p{Ll}{0,4}${NAME_EDGE_R}`, "u").test(flat)) return null;
+    }
+  }
+  return out;
+}
+
+function genericExact(text, name = "") {
   const n = String(name || "").trim();
   if (n.length < 2) return text;
   // Celo ime in posamezne besede imena (»Ana Marija« → tudi »Ana«, »Marija«).
@@ -162,7 +185,7 @@ export function reportsMarkdown({ reports }, topicName = () => null) {
   return lines.join("\n");
 }
 
-export function mountReports(app, store, { loadConversation, loadStudent, localOnly, isAdmin = () => false, topicName = () => null }) {
+export function mountReports(app, store, { loadConversation, loadStudent, localOnly, isAdmin = () => false, isPilot = null, topicName = () => null }) {
   ensureReportsTable(store.db);
 
   const deviceOf = (d) => cleanText([d?.device, d?.screen].filter((x) => typeof x === "string").join(" "), 40) || null;
@@ -235,10 +258,14 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
   });
 
   // Skrbnik v klepetu: »Prijavi napako« (v aplikaciji ali pri inštruktorju) z zadnjimi sporočili pogovora.
+  // Člani pilota (isPilot, server/pilot-naloge.js) tudi, z dnevno mejo prijav kot drugje.
   app.post("/api/students/:id/bug", (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
+    const admin = isAdmin(req);
+    if (!admin && !isPilot) return res.status(403).json({ error: "Samo za skrbnika." });
     const s = loadStudent(req, res);
     if (!s) return;
+    if (!admin && !isPilot(s.id)) return res.status(403).json({ error: "Samo za skrbnika." });
+    if (!admin && perDay(s.id) >= MAX_PER_DAY) return res.status(429).json({ error: "Danes si poslal že veliko prijav. Hvala!" });
     const note = String(req.body?.note || "").trim().slice(0, 2000);
     if (!note) return res.status(400).json({ error: "Opiši napako." });
     let convId = null;
@@ -256,7 +283,7 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     const id = store.db
       .prepare("INSERT INTO bug_reports (student_id, kind, conversation_id, reason, note, context, device) VALUES (?, 'app', ?, ?, ?, ?, ?)")
       .run(s.id, convId, view || "chat", seal(note), context ? seal(context) : null, deviceOf(req.body)).lastInsertRowid;
-    console.warn(`[evklid] skrbnik je prijavil napako #${id}`);
+    console.warn(`[evklid] ${admin ? "skrbnik" : "član pilota"} je prijavil napako #${id}`);
     res.status(201).json({ ok: true, id: Number(id) });
   });
 

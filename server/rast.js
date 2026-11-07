@@ -118,7 +118,7 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
       `SELECT student_id AS s, substr(created_at, 1, 10) AS d FROM events WHERE created_at >= ?
        UNION SELECT c.student_id, substr(m.created_at, 1, 10) FROM conversations c CROSS JOIN messages m ON m.conversation_id = c.id
          WHERE c.updated_at >= ? AND m.role = 'user' AND m.created_at >= ?
-       UNION SELECT student_id, substr(created_at, 1, 10) FROM xp_events WHERE created_at >= ?`,
+       UNION SELECT student_id, substr(created_at, 1, 10) FROM xp_events WHERE created_at >= ? AND COALESCE(reason, '') NOT LIKE 'pilot:%'`,
     )
     .all(floor, floor, floor, floor);
   for (const { s, d } of acts) {
