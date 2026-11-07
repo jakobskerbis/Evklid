@@ -46,7 +46,7 @@ V delno urejeni množici je natanko en maksimalen element. Ali mora biti ta elem
 Končna: da. Za vsak $x$ veriga navzgor iz $x$ konča pri maksimalnem elementu, ki je edini, zato je $x \preceq m$. Neskončna: ne nujno. Primer: $\mathbb N \cup \{m\}$, kjer je $m$ neprimerljiv z vsemi števili; $m$ je edini maksimalen, a ni nad $1$.
 :::
 
-**4. Supremum in infimum.** Element $u$ je **zgornja meja** množice $S \subseteq P$, če je $s \preceq u$ za vse $s \in S$. **Supremum** $\sup S$ je **najmanjša** zgornja meja (zgornja meja, ki je pod vsemi drugimi zgornjimi mejami). Dualno sta definirana spodnja meja in **infimum** $\inf S$. Po izreku (a) sta enolična, če obstajata.
+**4. Supremum in infimum.** Element $u$ je **zgornja meja** množice $S \subseteq P$, če je $s \preceq u$ za vse $s \in S$. **Supremum** $\sup S$ je **najmanjša** zgornja meja (zgornja meja, ki je pod vsemi drugimi zgornjimi mejami). Dualno sta definirana spodnja meja in **infimum** $\inf S$. Supremum je najmanjši element množice zgornjih mej, zato je po dualni obliki izreka (a) enoličen, če obstaja; enako infimum.
 
 Pri deljivosti je $\sup\{a, b\} = \operatorname{v}(a, b)$ (najmanjši skupni večkratnik), $\inf\{a, b\} = \operatorname{D}(a, b)$; pri $\subseteq$ sta to unija in presek.
 
@@ -111,7 +111,7 @@ Najkrajši čas = število elementov najdaljše verige; hkrati lahko tečejo le 
 1. Zahteva C < F sledi iz C < D < E < F, zato v diagramu ni povezave C–F (ni pokritje). Pokritja: A–B, A–C, A–G, B–D, C–D, D–E, E–F, G–F.
 2. Diagram: spodaj A; nad njim B, C in G; nad B in C je D, nad D je E; na vrhu F, ki pokrije E in G.
 3. Najdaljša veriga je A < B < D < E < F (ali z C namesto B): $5$ elementov, torej $t = 5\,\mathrm{h}$.
-4. Antiveriga: B, C, G so paroma neprimerljivi; večje antiverige ni, ker so A, D, E, F vsi primerljivi z B ali C. Torej $w = 3$ stroji hkrati.
+4. Antiveriga: B, C, G so paroma neprimerljivi; večje antiverige ni: vse elemente pokrijejo tri verige (A < B < D < E < F, C in G), antiveriga pa ima iz vsake verige največ en element. Torej $w = 3$ stroji hkrati.
 5. En stroj: A je prvi, F zadnji. Med njima B, C, D, E v vrstnem redu $\{B, C\}$, D, E; to sta $2$ možnosti. G gre kamorkoli med A in F, na eno od $5$ mest v zaporedju štirih operacij: $N = 2 \cdot 5 = 10$.
 6. Odgovor: $t = 5\,\mathrm{h}$, hkrati največ $3$ operacije (B, C, G), na enem stroju $10$ vrstnih redov.
 

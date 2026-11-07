@@ -21,7 +21,7 @@ stanje: osnutek
 - Boolova algebra
   - omejena, distributivna, s komplementi
   - komplement je enoličen
-  - $D_n$ Boolova, če $n$ brez kvadratov
+  - $D_n$ Boolova natanko pri $n$ brez kvadratnih faktorjev
 - Uporaba
   - veriga: kritična pot
   - antiveriga: vzporedne operacije

@@ -32,19 +32,20 @@ Razrede, objekte, konstruktorje in metode že poznaš. Zdaj jih bomo povezali v 
 
 **1. Razred proti podrazredu.** Doslej je vsak razred stal sam zase: polja, konstruktor, metode. Pri **dedovanju** novi razred ne začne iz nič, ampak iz obstoječega.
 
-**Definicija.** Z `class B extends A` je `B` **podrazred** (izpeljani razred), `A` pa **nadrazred** razreda `B`. `B` podeduje vsa polja in metode razreda `A` (do zasebnih nima neposrednega dostopa) in lahko doda nove ali spremeni podedovane. Java dovoli natanko en neposredni nadrazred; vsak razred brez `extends` deduje od `Object`.
+**Definicija.** Z `class B extends A` je `B` **podrazred** (izpeljani razred), `A` pa **nadrazred** razreda `B`. `B` podeduje polja in metode razreda `A`, razen zasebnih (`private`): ta so v objektu sicer prisotna, a jih `B` ne vidi in se po specifikaciji Jave ne dedujejo. `B` lahko doda nove člane ali prekrije podedovane metode. Java dovoli natanko en neposredni nadrazred; vsak razred brez `extends` deduje od `Object`.
 
-Dedovanje opisuje razmerje **»je«**: akcijski izdelek *je* izdelek. Če razmerje ni »je« (košarica *ima* izdelke), uporabimo polje, ne dedovanja.
+Dedovanje opisuje razmerje **»je«**: akcijski izdelek *je* izdelek. Če razmerje ni »je« (košarica *ima* izdelke), uporabimo polje, ne dedovanje.
 
 Razlike glede na navaden razred:
 
 - **Konstruktorji se ne dedujejo.** Prvi stavek konstruktorja podrazreda je `super(...)`, klic konstruktorja nadrazreda. Če ga ne napišemo, Java vstavi `super()` brez argumentov; če nadrazred takega nima, se program ne prevede.
+- **Vrstni red ob `new B(...)`:** vsa polja dobijo privzete vrednosti ($0$, `false`, `null`); nato se izvede konstruktor nadrazreda; šele po vrnitvi iz `super(...)` se izvedejo inicializacije polj podrazreda (`double x = 0.02;`), nazadnje preostanek konstruktorja `B`.
 - **`super.metoda()`** pokliče različico iz nadrazreda, tudi če jo podrazred spremeni.
 - **`protected`** dostop dovoli uporabo v podrazredih (in v istem paketu).
 
 **2. Prekrivanje metod.**
 
-**Definicija.** Podrazred **prekrije** (*override*) metodo nadrazreda, če definira metodo z **enakim imenom in enakimi tipi parametrov**. Vrnjeni tip mora biti enak ali podtip, dostop ne sme biti ožji (javne ne moremo narediti zasebne). Oznaka `@Override` prevajalniku naroči, naj preveri, ali res prekrivamo.
+**Definicija.** Podrazred **prekrije** (*override*) metodo nadrazreda, če definira metodo z **enakim imenom in enakimi tipi parametrov**. Vrnjeni tip mora biti enak ali podtip, dostop ne sme biti ožji (javne ne moremo narediti zasebne). Metode, ki je v nadrazredu `private`, `static` ali `final`, ni mogoče prekriti. Oznaka `@Override` prevajalniku naroči, naj preveri, ali res prekrivamo.
 
 Prekrivanje primerjajmo s **preobteževanjem** (*overload*), ki ga že poznaš: ista imena, a **različni** tipi ali število parametrov.
 
@@ -74,7 +75,7 @@ Ne. Prevajalnik išče metodo v statičnem tipu `Izdelek`, ki je nima. Pomaga pr
 
 **6. Vmesniki.**
 
-**Definicija.** **Vmesnik** (`interface`) našteje metode, ki jih mora imeti razred, ki ga **implementira** (`class C implements I`). Metode vmesnika so javne in abstraktne, razen tistih z oznako `default` (imajo telo) ali `static`. Vmesnik nima konstruktorjev in nima polj objektov (le konstante). Razred lahko implementira **več** vmesnikov, deduje pa le od enega razreda.
+**Definicija.** **Vmesnik** (`interface`) našteje metode, ki jih mora imeti razred, ki ga **implementira** (`class C implements I`). Metode vmesnika so javne in abstraktne, razen tistih z oznako `default` (imajo telo) ali `static`; od Jave 9 so dovoljene še zasebne pomožne metode s telesom. Vmesnik nima konstruktorjev in nima polj objektov (le konstante). Razred lahko implementira **več** vmesnikov, deduje pa le od enega razreda.
 
 Kdaj kaj? Abstraktni razred, ko podrazredi delijo stanje in del kode (vse naložbe imajo `znesek`). Vmesnik, ko nepovezanim razredom damo skupno zmožnost (izdelek in storitev sta obdavčljiva, nista pa ista vrsta stvari).
 
@@ -249,7 +250,7 @@ Storitev: $200 \cdot 0{,}095 = 19$ €; skupaj $11 + 19 = 30$ €.
 - Konstruktor podrazreda najprej pokliče `super(...)`; `super.m()` kliče različico nadrazreda.
 - Prekrivanje: enak podpis, izbira ob izvajanju po dinamičnem tipu. Preobteževanje: drugačni parametri, izbira pri prevajanju po statičnih tipih.
 - Klic `x.m(a)`: podpis po statičnih tipih `x` in `a`, različica po dinamičnem tipu `x`.
-- Abstraktni razred: ni ga mogoče instancirati, lahko ima stanje in abstraktne metode. Vmesnik: le javne metode (abstraktne, `default`, `static`) in konstante; razred jih implementira več.
+- Abstraktni razred: ni ga mogoče instancirati, lahko ima stanje in abstraktne metode. Vmesnik: brez stanja, le konstante in metode (javne abstraktne, `default`, `static`, od Jave 9 še zasebne pomožne); razred jih implementira več.
 
 ## Za izpit
 
@@ -370,13 +371,13 @@ Klic `n.donos(5)` si predstavljaj kot iskanje od spodaj navzgor: začni pri razr
 - **Finančna programska oprema.** Banke vrednotijo tisoče vrst instrumentov (obveznice, opcije, posojila) z enim vmesnikom, na primer `vrednost(datum)`. Izračun tveganja portfelja je ena zanka; novi instrument doda le razred.
 - **Optimizacija.** Knjižnice za optimizacijo zahtevajo, da ciljna funkcija implementira vmesnik (na primer metodo `vrednost(double[] x)`). Isti algoritem tako optimizira stroške proizvodnje ali dobiček portfelja.
 - **Vzorec »strategija«.** Pravilo popusta (količinski, sezonski, za stalne stranke) je objekt vmesnika `Popust`; trgovina ga zamenja brez spreminjanja kode blagajne.
-- **Javanske zbirke.** `List`, `Set` in `Map` so vmesniki; `ArrayList` in `LinkedList` ju implementirata. Koda, napisana za `List`, deluje z obema (zbirke so naslednja tema).
+- **Javanske zbirke.** `List`, `Set` in `Map` so vmesniki; `ArrayList` in `LinkedList` implementirata `List`. Koda, napisana za `List`, deluje z obema (zbirke so naslednja tema).
 
 ## Drugače: Bolj natančno
 
 **Liskovino načelo zamenljivosti.** Podrazred je pravilen, če lahko objekt podrazreda nadomesti objekt nadrazreda, ne da bi se pravilnost programa pokvarila. Prekrita metoda ne sme zahtevati več (strožji pogoji na vhod) in ne sme obljubiti manj (šibkejši izid). Klasičen protiprimer: `Kvadrat extends Pravokotnik` z metodo `nastaviSirino`, ki spremeni tudi višino.
 
-**Tabela navideznih metod.** Prevajalnik za vsak razred pripravi tabelo naslovov metod; prekrita metoda zasede isto mesto kot v nadrazredu. Klic se ob izvajanju prevede v en skok prek tabele objekta, zato je dinamično povezovanje skoraj tako hitro kot navaden klic.
+**Tabela navideznih metod.** Javanski navidezni stroj (JVM) ob nalaganju razreda pripravi tabelo naslovov njegovih metod; prekrita metoda zasede isto mesto kot v nadrazredu. Klic se ob izvajanju prevede v en skok prek tabele objekta, zato je dinamično povezovanje skoraj tako hitro kot navaden klic.
 
 **`final` in zapečateni razredi.** Metode `final` ni mogoče prekriti, razreda `final` ni mogoče razširiti (`String`). Od Jave 17 razred `sealed ... permits A, B` dovoli dedovanje le naštetim razredom.
 
@@ -399,7 +400,7 @@ Klic `n.donos(5)` si predstavljaj kot iskanje od spodaj navzgor: začni pri razr
 - $160$
 ~ Popust je uporabljen tudi pri navadnem izdelku.
 - $140$
-~ Popust $20\,\%$ je odštet od vsote dvakrat; akcijska izdelka staneta $40$ in $80$.
+~ Pri akcijskih izdelkih je popust odštet dvakrat ($40\,\%$ namesto $20\,\%$: $30$ in $60$); pravilno staneta $40$ in $80$.
 > $50 + 0{,}8 \cdot 50 + 0{,}8 \cdot 100 = 50 + 40 + 80 = 170$.
 
 ? Študent želi v `Akcijski` prekriti `double cena()` in napiše `double cena(double popust) { return osnova * (1 - popust); }`. Nato `Izdelek i = new Akcijski(100); i.cena()` izpiše `100.0`. Kje je napaka?

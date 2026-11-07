@@ -16,7 +16,7 @@ stanje: osnutek
 - Divergenca
   - $\operatorname{div}\vec F = P_x + Q_y + R_z$
   - izvir ali ponor, rezultat je skalar
-  - $\operatorname{div}\vec u$ je sprememba prostornine
+  - $\operatorname{div}\vec u$ je relativna sprememba prostornine
 - Rotor
   - $(R_y - Q_z,\; P_z - R_x,\; Q_x - P_y)$
   - togo vrtenje: $\operatorname{rot}\vec v = 2\vec\omega$

@@ -74,7 +74,7 @@ Odvajanje se v sliki spremeni v množenje s $s$, začetne vrednosti pa se odšte
 :::premisli
 Preveri izrek na $f = e^{at}$: kaj dobiš na levi in kaj na desni? Zakaj je pomembno, da odštejemo $f(0)$?
 ---
-Leva stran: $\mathcal{L}\{ae^{at}\} = \frac{a}{s - a}$. Desna: $\frac{s}{s - a} - 1 = \frac{a}{s - a}$. Brez člena $f(0)$ bi imeli funkciji $e^{at}$ in $e^{at} + 5$ enak »odvod« v sliki, čeprav sta njuna odvoda enaka, slike pa različne.
+Leva stran: $\mathcal{L}\{ae^{at}\} = \frac{a}{s - a}$. Desna: $\frac{s}{s - a} - 1 = \frac{a}{s - a}$. Funkciji $e^{at}$ in $e^{at} + 5$ imata isti odvod, torej isto sliko odvoda, njuna $sF(s)$ pa se razlikujeta za $5$. Člen $-f(0)$ to razliko ravno odšteje; brez njega bi isti odvod dobil dve različni sliki.
 :::
 
 **5. Inverzna transformacija.** Da je vrnitev k originalu smiselna, zagotavlja:
@@ -165,7 +165,7 @@ $\mathcal{L}\{y''\} = s^2Y - sy(0) - y'(0)$; $\mathcal{L}\{e^{at}f(t)\} = F(s - 
 5. Torej $Y = \frac{2}{u} - \frac{2u}{u^2 + 4} + \frac{2}{u^2 + 4}$ z $u = s + 1$.
 6. Originali v $u$: $\frac2u \mapsto 2$; $\frac{2u}{u^2+4} \mapsto 2\cos 2t$; $\frac{2}{u^2+4} \mapsto \sin 2t$.
 7. Premik v $s$ za $-1$ pomnoži z $e^{-t}$: $y = e^{-t}(2 - 2\cos 2t + \sin 2t)$.
-8. Preizkus: $y(0) = 2 - 2 + 0 = 0$; $y' = e^{-t}(-2 + 2\cos 2t + 3\sin 2t)$, torej $y'(0) = 2$.
+8. Preizkus: $y(0) = 2 - 2 + 0 = 0$; $y' = e^{-t}(-2 + 4\cos 2t + 3\sin 2t)$, torej $y'(0) = -2 + 4 = 2$.
 9. Odgovor: $y = e^{-t}(2 - 2\cos 2t + \sin 2t)$. Desna stran $8e^{-t}$ da »nenihajoči« del $2e^{-t}$, lastno dušeno nihanje pa del s kosinusom in sinusom.
 
 ### Primer 4 – zdaj ti
@@ -245,7 +245,7 @@ Reši $y'' - 2y' + y = 2e^{t}$, $y(0) = 1$, $y'(0) = 0$.
 4. Iz $\mathcal{L}\{t^ne^{t}\} = \frac{n!}{(s - 1)^{n+1}}$: $\frac{1}{(s-1)^2} \mapsto te^t$, $\frac{2}{(s-1)^3} \mapsto t^2e^t$.
 5. $y = e^t(1 - t + t^2)$.
 6. Preizkus: $y' = e^t(t^2 + t)$, $y'' = e^t(t^2 + 3t + 1)$; $y'' - 2y' + y = 2e^t$, $y(0) = 1$, $y'(0) = 0$.
-7. Odgovor: $y = (1 - t + t^2)e^t$. Trojni pol $1$ (dva iz enačbe, eden iz desne strani) da faktor $t^2$; to je resonanca, ki jo pri nastavku rešuje faktor $x^k$.
+7. Odgovor: $y = (1 - t + t^2)e^t$. Trojni pol $1$ (dva iz enačbe, eden iz desne strani) da faktor $t^2$; to je resonanca, ki jo pri nastavku rešuje faktor $t^k$.
 
 ### Naloga 3
 
@@ -262,12 +262,12 @@ Natančno navedi in dokaži izrek o obstoju Laplaceove transformiranke. Nato ute
 
 ## Drugače: Z analogijo
 
-Pred kalkulatorji so inženirji množili z logaritmi: števili sta »prevedli« v logaritma, ju sešteli (lažje kot množenje) in z antilogaritmom prevedli nazaj. Laplaceova transformacija dela enako na višji ravni. Prevod $f \mapsto F$ spremeni odvajanje v množenje s $s$, diferencialno enačbo pa v algebrsko. V »svetu slik« jo rešiš z ulomki, nato z inverzom (»antilogaritmom«) prebereš rešitev. Tabela slik je tvoja logaritemska tablica. Tako kot logaritem deluje le za pozitivna števila, ima tudi transformacija pogoj: deluje za funkcije eksponentnega reda.
+Pred kalkulatorji so inženirji množili z logaritmi: števili sta »prevedli« v logaritma, ju sešteli (lažje kot množenje) in z antilogaritmom prevedli nazaj. Laplaceova transformacija dela enako na višji ravni. Prevod $f \mapsto F$ spremeni odvajanje v množenje s $s$, diferencialno enačbo pa v algebrsko. V »svetu slik« jo rešiš z ulomki, nato z inverzom (»antilogaritmom«) prebereš rešitev. Tabela slik je tvoja logaritemska tablica. Tako kot logaritem deluje le za pozitivna števila, ima tudi transformacija pogoj: zagotovo deluje za odsekoma zvezne funkcije eksponentnega reda (zadosten pogoj).
 
 ## Drugače: Uporaba v stroki
 
 - **Okoljsko inženirstvo.** Jezera, ribniki in reaktorji čistilnih naprav so »škatle« z vtokom in iztokom; razlitje ali izpust je stopnica ali kratek sunek na desni strani. Z $e^{-Ts}$ hkrati obravnavajo začetek in konec izpusta, kot v Nalogi 1.
-- **Hidrologija.** Odziv porečja na nalivček je enotski hidrogram; odtok ob poljubnem dežju je konvolucija padavin s tem odzivom, v sliki pa le produkt.
+- **Hidrologija.** Odziv porečja na kratek naliv enotske višine je enotski hidrogram; odtok ob poljubnem dežju je konvolucija padavin s tem odzivom, v sliki pa le produkt.
 - **Podnebni modeli s škatlami.** Temperatura oceanske plasti zadošča $C\,T' + \lambda T = F(t)$ s sevalnim vsiljevanjem $F$. Slika pokaže časovno konstanto $\frac{C}{\lambda}$ in odziv na nenaden dvig $\mathrm{CO_2}$.
 - **Regulacija.** Razmerje slik izhoda in vhoda je **prenosna funkcija** (naslednja tema); po njenih polih inženirji presodijo, ali bo sistem stabilen in ali bo nihal.
 
@@ -295,7 +295,7 @@ Pred kalkulatorji so inženirji množili z logaritmi: števili sta »prevedli« 
 
 ? Kolikšna je vrednost $f(0)$ originala slike $F(s) = \frac{4}{s + 2} - \frac{1}{s - 3}$?
 - $5$
-~ Slike ne vstavljaš v original; $f(0)$ je vsota koeficientov $4$ in $-1$, ne $4 + 1$.
+~ Izgubljen je predznak drugega člena: $f(0) = 4 + (-1)$, ne $4 + 1$.
 + $3$
 - $-1$
 ~ Pozabljen je prvi člen $4e^{-2t}$, ki ob $t = 0$ prispeva $4$.

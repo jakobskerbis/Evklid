@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ko je Maxwell zapisal enačbe elektromagnetnega polja, jih je bilo v komponentah dvajset, polnih istih kombinacij parcialnih odvodov. Ponavljale so se tri: sprememba skalarne količine po prostoru, »izviranje« polja iz točke in njegovo »vrtinčenje«. Maxwell je za zadnji dve uvedel imeni *convergence* in *curl*. Hamilton je pred tem predlagal znak $\nabla$, Gibbs in Heaviside pa sta v osemdesetih letih 19. stoletja iz tega naredila vektorsko analizo, kot jo uporabljamo danes. Dvajset enačb se je skrčilo na štiri.
+Ko je Maxwell zapisal enačbe elektromagnetnega polja, jih je bilo v komponentah dvajset, polnih istih kombinacij parcialnih odvodov. Ponavljale so se tri: sprememba skalarne količine po prostoru, »izviranje« polja iz točke in njegovo »vrtinčenje«. Maxwell je za zadnji dve uvedel imeni *convergence* (nasprotna vrednost današnje divergence) in *curl*; ime *divergence* je kmalu nato predlagal Clifford. Hamilton je pred tem predlagal znak $\nabla$, Gibbs in Heaviside pa sta v osemdesetih letih 19. stoletja iz tega naredila vektorsko analizo, kot jo uporabljamo danes. Dvajset enačb se je skrčilo na štiri.
 
 Iste tri operacije potrebuje inženir materialov in konstrukcij. Kam teče toplota v vroči jekleni plošči? Ali se košček nosilca pri obremenitvi raztegne ali le zasuka? Odgovore dajo **gradient**, **divergenca** in **rotor**. Potrebuješ parcialne odvode, verižno pravilo, skalarni in vektorski produkt ter determinante $3 \times 3$.
 
@@ -13,7 +13,7 @@ Iste tri operacije potrebuje inženir materialov in konstrukcij. Kam teče toplo
 
 **1. Primer: vroča plošča.** Temperatura tanke plošče je $T(x, y) = 100 - x^2 - 2y^2$ (v $^\circ\mathrm{C}$, koordinate v metrih). V točki $(1, 1)$ stoji senzor. V kateri smeri temperatura najhitreje raste in kako hitro se spreminja, če senzor premaknemo v smeri vektorja $(3, 4)$?
 
-Parcialna odvoda sta $T_x = -2x$, $T_y = -4y$; v točki $(1, 1)$ dobimo vektor $(-2, -4)$. Smer $(3, 4)$ normiramo v $\vec e = \left(\frac35, \frac45\right)$ in vzamemo skalarni produkt: $(-2) \cdot \frac35 + (-4) \cdot \frac45 = -4{,}4\,\mathrm{^\circ C/m}$. Temperatura v tej smeri pada. Najhitreje raste v smeri $(-2, -4)$, proti središču plošče, s hitrostjo $\sqrt{4 + 16} = 4{,}47\,\mathrm{^\circ C/m}$. Vektor parcialnih odvodov je gradient; zdaj ga posplošimo.
+Parcialna odvoda sta $T_x = -2x$, $T_y = -4y$; v točki $(1, 1)$ dobimo vektor $(-2, -4)$. Smer $(3, 4)$ normiramo v $\vec e = \left(\frac35, \frac45\right)$ in vzamemo skalarni produkt: $(-2) \cdot \frac35 + (-4) \cdot \frac45 = -4{,}4\,\mathrm{^\circ C/m}$. Temperatura v tej smeri pada. Najhitreje raste v smeri $(-2, -4)$, proti toplejšemu delu plošče okoli izhodišča, s hitrostjo $\sqrt{4 + 16} = 4{,}47\,\mathrm{^\circ C/m}$. Vektor parcialnih odvodov je gradient; zdaj ga posplošimo.
 
 **2. Polja.** **Skalarno polje** je funkcija $f\colon D \to \mathbb R$, $D \subseteq \mathbb R^3$ (temperatura, tlak, gostota). **Vektorsko polje** je preslikava $\vec F\colon D \to \mathbb R^3$, $\vec F = (P, Q, R)$ (hitrost tekočine, sila, pomik točk telesa). Polje je razreda $C^k$, če imajo vse komponente zvezne parcialne odvode do reda $k$.
 
@@ -258,7 +258,7 @@ Predstavljaj si pokrajino in reko.
 
 **Helmholtzov razcep.** Dovolj lepo polje, ki dovolj hitro pojema v neskončnosti, je vsota brezvrtinčnega in brezizvirnega dela, $\vec F = \nabla\varphi + \operatorname{rot}\vec A$. Prvi del določa divergenca, drugega rotor.
 
-**Neodvisnost od koordinat.** Gradient, divergenca in rotor so definirani brez koordinat (gradient prek smernega odvoda, divergenca kot meja pretoka skozi majhno ploskev na enoto prostornine). Zato ostanejo enaki pri vrtenju koordinatnega sistema, v krivočrtnih koordinatah pa dobijo drugačne obrazce; v valjnih koordinatah je na primer $\nabla f = \left(f_\rho,\; \frac1\rho f_\phi,\; f_z\right)$.
+**Neodvisnost od koordinat.** Gradient, divergenca in rotor so definirani brez koordinat (gradient prek smernega odvoda, divergenca kot limita pretoka skozi majhno zaprto ploskev, deljenega s prostornino, ki jo ploskev objema). Zato ostanejo enaki pri vrtenju koordinatnega sistema, v krivočrtnih koordinatah pa dobijo drugačne obrazce; v valjnih koordinatah je na primer $\nabla f = \left(f_\rho,\; \frac1\rho f_\phi,\; f_z\right)$.
 
 ## Preveri se
 
@@ -285,20 +285,20 @@ Predstavljaj si pokrajino in reko.
 ? Za gladko funkcijo $f$ je $\operatorname{rot}(\nabla f) = \vec 0$. Zakaj?
 - Ker je gradient vedno konstanten vektor.
 ~ Gradient se od točke do točke spreminja, na primer $\nabla(x^2) = (2x, 0, 0)$.
-+ Ker so mešani parcialni odvodi razreda $C^2$ enaki (Schwarzov izrek).
++ Ker so pri funkciji razreda $C^2$ mešani parcialni odvodi enaki (Schwarzov izrek).
 - Ker je divergenca gradienta nič.
 ~ $\operatorname{div}\nabla f = \Delta f$ v splošnem ni nič, na primer $\Delta(x^2) = 2$.
 > Komponente rotorja gradienta so razlike $f_{zy} - f_{yz}$ ipd., ki so po Schwarzovem izreku nič.
 
-? Študent računa smerni odvod $f = xy$ v $(2, 3)$ v smeri $\vec a = (3, 4)$: (1) $\nabla f = (y, x) = (3, 2)$; (2) $\nabla f \cdot \vec a = 9 + 8 = 17$; (3) odgovor: smerni odvod je $17$. Kateri korak je napačen?
-- korak (1)
-~ $f_x = y = 3$, $f_y = x = 2$; korak je pravilen.
-- korak (2)
-~ Skalarni produkt je izračunan pravilno, $3 \cdot 3 + 2 \cdot 4 = 17$.
-+ korak (3)
-- noben korak
-~ Smer ni enotska, $|\vec a| = 5$, zato $17$ ni smerni odvod.
-> Deliti je treba z $|\vec a| = 5$: smerni odvod je $\frac{17}{5} = 3{,}4$.
+? Kolikšen je smerni odvod funkcije $f = xy$ v točki $(2, 3)$ v smeri vektorja $\vec a = (3, 4)$?
+- $17$
+~ To je $\nabla f \cdot \vec a$; smer ni enotska ($|\vec a| = 5$), zato je treba še deliti z $5$.
++ $3{,}4$
+- $85$
+~ Z dolžino $|\vec a| = 5$ je treba deliti, ne množiti.
+- $3{,}6$
+~ Zamenjana sta $f_x$ in $f_y$: $f_x = y = 3$, $f_y = x = 2$, torej $\nabla f = (3, 2)$, ne $(2, 3)$.
+> $\nabla f = (y, x) = (3, 2)$, $\vec e = \left(\frac35, \frac45\right)$, $D_{\vec e}f = \frac{9 + 8}{5} = 3{,}4$.
 
 ? Pri preizkusu gumijaste tesnilke izmerijo polje pomikov z $\operatorname{div}\vec u = 0$ povsod. Kaj to pomeni za material?
 - Tesnilka se ne deformira.

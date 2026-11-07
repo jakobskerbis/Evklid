@@ -35,7 +35,9 @@ Stena cevi ima od požiralnika do danke štiri plasti (od svetline navzven):
 3. **mišična plast** (notranja krožna in zunanja vzdolžna gladka mišičnina, med njima mienterični živčni pletež),
 4. **seroza** (visceralni list potrebušnice) ali, kjer potrebušnice ni, **adventicija** (vezivo).
 
-Odstopanja so funkcionalna. V zgornji tretjini požiralnika je mišičnina prečnoprogasta (požiranje začnemo zavestno), požiralnik v prsni votlini ima adventicijo. Želodec ima tri mišične plasti (dodana poševna) za mešanje. Debelo črevo ima vzdolžno mišičnino zbrano v tri trakove, **tenije**.
+Odstopanja so funkcionalna. V zgornji tretjini požiralnika je mišičnina prečnoprogasta (nadaljuje mišičnino žrela; kljub temu je ne krčimo zavestno, vodi jo refleks požiranja), v srednji mešana, v spodnji gladka; požiralnik v prsni votlini ima adventicijo. Želodec ima tri mišične plasti (dodana poševna) za mešanje. Debelo črevo ima vzdolžno mišičnino zbrano v tri trakove, **tenije**.
+
+**Želodec** ima vhod (kardija), dno (fundus) pod levo kupolo prepone, telo in pilorični del, ki se konča z **vratarjem** (pilorusom); malo krivino ima obrnjeno desno navzgor, veliko levo navzdol. **Dvanajstnik** v obliki črke C objema glavo trebušne slinavke in ima štiri dele: zgornji, spuščajoči (z veliko dvanajstnikovo papilo), vodoravni in vzpenjajoči.
 
 | del | dolžina (pribl.) |
 |---|---|
@@ -46,7 +48,7 @@ Odstopanja so funkcionalna. V zgornji tretjini požiralnika je mišičnina preč
 
 **Lega glede na potrebušnico.** **Intraperitonealni** organi so skoraj v celoti obdani s potrebušnico in visijo na mezenteriju (želodec, tešče in vito črevo, prečno in sigmoidno debelo črevo, jetra večinoma). **Retroperitonealni** ležijo za potrebušnico na zadnji trebušni steni (večina dvanajstnika, trebušna slinavka, vzpenjajoče in spuščajoče debelo črevo, ledvici).
 
-**Arterije** vseh treh delov prebavne cevi v trebuhu izhajajo iz trebušne aorte: **celiakalno deblo** (želodec, dvanajstnik do papile, jetra, trebušna slinavka deloma, vranica), **zgornja mezenterična arterija** (od papile do dveh tretjin prečnega debelega črevesa) in **spodnja mezenterična arterija** (ostanek do zgornje danke).
+**Arterije** prebavne cevi v trebuhu so tri neparne veje trebušne aorte: **celiakalno deblo** (želodec, dvanajstnik do papile, jetra, trebušna slinavka deloma, vranica), **zgornja mezenterična arterija** (od papile do dveh tretjin prečnega debelega črevesa) in **spodnja mezenterična arterija** (ostanek do zgornje danke).
 
 :::premisli
 Zakaj lahko kirurg tešče in vito črevo izvleče iz trebuha in ga pregleda, dvanajstnika pa ne?
@@ -56,7 +58,7 @@ Tešče in vito črevo sta intraperitonealna in visita na gibljivem mezenteriju.
 
 **3. Jetra.** **Jetra** so največja žleza v telesu (pri odraslem okoli $1{,}5\,\mathrm{kg}$). Ležijo v desnem zgornjem delu trebuha pod prepono. Na sprednji strani **srpasta vez** loči večji desni in manjši levi reženj; na spodnji strani sta med njima še **kvadratni** in **repati** reženj.
 
-**Jetrna vrata** so žleb na spodnji strani jeter. Skozi njih vstopata **portalna vena** in **lastna jetrna arterija**, izstopa pa **skupni jetrni vod**. Te tri strukture potekajo v **hepatoduodenalni vezi** (del malega omentuma).
+**Jetrna vrata** so žleb na spodnji strani jeter. Skozi njih vstopata **portalna vena** in **lastna jetrna arterija** (z desno in levo vejo), izstopata pa desni in levi jetrni vod, ki se tik pod vrati združita v **skupni jetrni vod**. Portalna vena, lastna jetrna arterija in žolčni vod (zgoraj skupni jetrni vod, pod pritokom voda žolčnika skupni žolčevod) potekajo v **hepatoduodenalni vezi** (desni rob malega omentuma).
 
 **Dvojni dotok krvi.** Jetra dobijo okoli $75\,\%$ krvi po portalni veni (bogata s hranili, revna s kisikom) in okoli $25\,\%$ po jetrni arteriji (bogata s kisikom). Obe se pomešata v **sinusoidih** in odtečeta v **centralno veno** jetrnega režnjiča, od tam po **jetrnih venah** naravnost v spodnjo votlo veno. Jetrne vene torej **ne** gredo skozi jetrna vrata.
 
@@ -91,7 +93,7 @@ $S_0 = \pi d L$; $S = S_0 \cdot k_1 \cdot k_2 \cdot k_3$
 2. Gube in resice: $0{,}236 \cdot 3 \cdot 10 = 7{,}07\,\mathrm{m^2}$.
 3. Mikrovili: $7{,}07 \cdot 20 = 141\,\mathrm{m^2}$.
 4. Primerjava: ocena je skoraj petkrat večja od meritve. Faktorji iz starejših učbenikov so zgornje meje (resice niso povsod enako goste, mikrovili niso enako dolgi).
-5. Odgovor: groba ocena da okoli $141\,\mathrm{m^2}$, meritev okoli $30\,\mathrm{m^2}$; v obeh primerih je vpojna površina več stokrat večja od gladke cevi.
+5. Odgovor: groba ocena da okoli $141\,\mathrm{m^2}$, meritev okoli $30\,\mathrm{m^2}$; v obeh primerih je vpojna površina več kot stokrat večja od gladke cevi ($\frac{30}{0{,}236} \approx 127$).
 
 ### Primer 2
 
@@ -120,7 +122,7 @@ Ultrazvok pokaže žolčni kamen. Za vsako lego napovej, ali bo bolnik zlatenast
 **Iščemo:** za vsako lego: zlatenica da/ne, vnetje trebušne slinavke da/ne
 
 :::formula
-Pot žolča: jetrna voda → skupni jetrni vod → (+ vod žolčnika) → skupni žolčevod → (+ glavni vod trebušne slinavke) → velika dvanajstnikova papila.
+Pot žolča: desni in levi jetrni vod → skupni jetrni vod → (+ vod žolčnika) → skupni žolčevod → (+ glavni vod trebušne slinavke) → velika dvanajstnikova papila.
 :::
 
 **Rešitev:**
@@ -150,14 +152,14 @@ Vene črevesja → portalni sistem → jetra → spodnja votla vena → srce →
 :::premisli
 Kako gre pot naprej?
 ---
-Desni prekat → pljučno deblo → pljuča → pljučne vene → levi preddvor → levi prekat → aorta → aortni lok (ramenoglavično deblo oziroma leva skupna karotidna arterija) → notranji karotidni arteriji (in vretenčni arteriji iz podključničnih).
+Desni prekat → pljučno deblo → pljuča → pljučne vene → levi preddvor → levi prekat → aorta → aortni lok → ramenoglavično deblo in iz njega desna skupna karotidna arterija oziroma leva skupna karotidna arterija → notranji karotidni arteriji (in vretenčni arteriji iz podključničnih).
 :::
 
 ## Pogoste napake
 
-- **Jetrne vene skozi jetrna vrata.** Napačna slika »vse žile jeter gredo skozi vrata«. Skozi vrata vstopata portalna vena in jetrna arterija, izstopa skupni jetrni vod; jetrne vene izstopijo na zadnji strani naravnost v spodnjo votlo veno.
+- **Jetrne vene skozi jetrna vrata.** Napačna slika »vse žile jeter gredo skozi vrata«. Skozi vrata vstopata portalna vena in jetrna arterija, izstopata desni in levi jetrni vod; jetrne vene izstopijo na zadnji strani naravnost v spodnjo votlo veno.
 - **Žolčnik izdeluje žolč.** Žolč nastaja v jetrih; žolčnik ga shranjuje in zgošča. Po odstranitvi žolčnika žolč še vedno teče v dvanajstnik.
-- **Portalna vena je arterija, ker gre v organ.** Ime določa zgradba in to, da žila vodi kri iz kapilar enega organa v kapilare drugega (portalni sistem), ne smer glede na jetra.
+- **Portalna vena je arterija, ker gre v organ.** Vena je, ker zbira kri iz kapilar črevesja in vranice in jo vodi proti srcu; »portalna« pomeni le, da je na tej poti še druga kapilarna mreža (sinusoidi jeter). Arterija bi vodila kri od srca.
 - **Vsi organi v trebuhu so intraperitonealni.** Trebušna slinavka, večina dvanajstnika, vzpenjajoče in spuščajoče debelo črevo so retroperitonealni; zato so pri operaciji drugače dostopni.
 - **Trebušna slinavka je le prebavna žleza.** Je mešana žleza: Langerhansovi otočki so endokrini in izločajo hormone v kri, ne v vod.
 
@@ -166,7 +168,7 @@ Desni prekat → pljučno deblo → pljuča → pljučne vene → levi preddvor 
 - Prebavna cev: požiralnik, želodec, tanko črevo (dvanajstnik, tešče, vito), debelo črevo do danke; stena: sluznica, podsluznica, mišična plast, seroza ali adventicija.
 - Intraperitonealni (želodec, tešče, vito, prečno in sigmoidno debelo črevo) proti retroperitonealnim organom (večina dvanajstnika, trebušna slinavka, vzpenjajoče in spuščajoče debelo črevo).
 - Arterije: celiakalno deblo, zgornja in spodnja mezenterična arterija.
-- Jetra: štirje režnji, jetrna vrata (portalna vena, jetrna arterija, skupni jetrni vod), dvojni dotok $75 : 25$, odtok po jetrnih venah v spodnjo votlo veno.
+- Jetra: štirje režnji, jetrna vrata (portalna vena, jetrna arterija, desni in levi jetrni vod), dvojni dotok $75 : 25$, odtok po jetrnih venah v spodnjo votlo veno.
 - Žolč: skupni jetrni vod + vod žolčnika = skupni žolčevod → velika dvanajstnikova papila skupaj z vodom trebušne slinavke.
 - Trebušna slinavka: glava, vrat, telo, rep; retroperitonealna, mešana žleza (acinusi in Langerhansovi otočki).
 
@@ -200,7 +202,7 @@ Natančno opiši zgradbo stene prebavne cevi od požiralnika do danke in utemelj
 **Rešitev:**
 
 1. Osnovna zgradba od svetline navzven: sluznica (epitel, lamina propria, mišična plast sluznice), podsluznica (vezivo, žile, podsluznični pletež), mišična plast (notranja krožna, zunanja vzdolžna, vmes mienterični pletež), seroza ali adventicija.
-2. Požiralnik: večplastni ploščati epitel (odpornost na trenje); v zgornji tretjini prečnoprogasta mišičnina (zavestni začetek požiranja); v prsni votlini adventicija, ker tam ni potrebušnice.
+2. Požiralnik: večplastni ploščati epitel (odpornost na trenje); v zgornji tretjini prečnoprogasta mišičnina (nadaljevanje mišičnine žrela, krči se refleksno, ne zavestno); v prsni votlini adventicija, ker tam ni potrebušnice.
 3. Želodec: tretja, poševna mišična plast, ki omogoča mešanje in gnetenje vsebine; sluznica z žlezami za kislino in encime.
 4. Debelo črevo: vzdolžna mišičnina zbrana v tri tenije, ki z napetostjo naredijo vrečaste izbokline; brez resic, veliko vrčastih celic za sluz.
 5. Odgovor: štiri plasti s skupnim načrtom; odstopanja (epitel in mišičnina požiralnika, tri plasti v želodcu, tenije debelega črevesa) sledijo nalogi posameznega dela.

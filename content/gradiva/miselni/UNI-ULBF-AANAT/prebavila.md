@@ -11,7 +11,7 @@ stanje: osnutek
   - želodec tri mišične plasti, debelo črevo tenije
 - Lega
   - intraperitonealno: želodec, tešče, vito
-  - retroperitonealno: dvanajstnik, trebušna slinavka
+  - retroperitonealno: večina dvanajstnika, trebušna slinavka
 - Arterije
   - celiakalno deblo
   - zgornja in spodnja mezenterična arterija
