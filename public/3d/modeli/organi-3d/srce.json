@@ -33,7 +33,7 @@
    "rezVlaknaCt": 1400
   },
   "zaklopka": {
-   "barva": "#eadfcc",
+   "barva": "#e6dccb",
    "hrap": 0.36,
    "lak": 0.45,
    "lakHrap": 0.6,
@@ -46,10 +46,12 @@
    "f": 90,
    "dvostransko": true,
    "sijajHrap": 0.6,
-   "spekular": 0.75
+   "spekular": 0.75,
+   "tekstura": false,
+   "prosojnost": 1
   },
   "zep": {
-   "barva": "#eadfcc",
+   "barva": "#e6dccb",
    "hrap": 0.36,
    "lak": 0.45,
    "lakHrap": 0.6,
@@ -713,11 +715,11 @@
    "barva": "#f472b6",
    "opis": "Mišični stebrički v prekatih; prek tetiv držijo lističe jadrastih zaklopk, da se ne obrnejo v preddvor.",
    "vozlisca": [
-    "Anterior papillary muscle of right ventricle (lastno)",
-    "Anterolateral papillary muscle of left ventricle (lastno)",
-    "Inferior papillary muscle of left ventricle (lastno)",
-    "Inferior papillary muscle of right ventricle (lastno)",
-    "Septal papillary muscle of right ventricle (lastno)"
+    "Anterior papillary muscle of right ventricle",
+    "Anterolateral papillary muscle of left ventricle",
+    "Inferior papillary muscle of left ventricle",
+    "Inferior papillary muscle of right ventricle",
+    "Septal papillary muscle of right ventricle"
    ],
    "ucnaBarva": "#f472b6",
    "opisOs": "Mišični stebrički v prekatih, ki držijo zaklopke.",
@@ -755,11 +757,10 @@
    "barva": "#e8ecf3",
    "opis": "Trolistna na desni in dvolistna (mitralna) na levi; tetive jih držijo, ko se prekata stisneta.",
    "vozlisca": [
-    "Anterior leaflet of left atrioventricular valve (lastno)",
-    "Anterior leaflet of right atrioventricular valve (lastno)",
-    "Chordae tendineae of inferior tricuspid leaflet (lastno)",
-    "Chordae tendineae of posterior mitral leaflet (lastno)",
-    "Chordae tendineae of septal tricuspid leaflet (lastno)",
+    "Anterior leaflet of left atrioventricular valve",
+    "Anterior leaflet of right atrioventricular valve",
+    "Chordae tendineae of mitral valve",
+    "Chordae tendineae of tricuspid valve",
     "Inferior leaflet of right atrioventricular valve",
     "Posterior leaflet of left atrioventricular valve",
     "Septal leaflet of right atrioventricular valve"
@@ -778,7 +779,7 @@
    "barva": "#fde68a",
    "opis": "Žepasta zaklopka na izhodu levega prekata; kri ne more nazaj iz aorte.",
    "vozlisca": [
-    "Semilunar cusps of aortic valve (lastno)"
+    "Semilunar cusps of aortic valve"
    ],
    "ucnaBarva": "#fde68a",
    "opisOs": "Zaklopka med levim prekatom in aorto. Kri ne more nazaj.",
@@ -794,7 +795,7 @@
    "barva": "#c4b5fd",
    "opis": "Žepasta zaklopka na izhodu desnega prekata; kri ne more nazaj iz pljučnega debla.",
    "vozlisca": [
-    "Semilunar cusps of pulmonary valve (lastno)"
+    "Semilunar cusps of pulmonary valve"
    ],
    "ucnaBarva": "#c7d2fe",
    "opisOs": "Zaklopka med desnim prekatom in pljučnim deblom. Kri ne more nazaj.",
@@ -860,7 +861,7 @@
      -0.755,
      -0.6388
     ],
-    "d": -0.0346
+    "d": -0.0345
    }
   ],
   "brezPokrova": [
@@ -882,14 +883,14 @@
    "slika": "srce-volumen.png",
    "lo": [
     -0.06714,
-    -0.09634,
+    -0.09636,
     -0.05624
    ],
    "korak": 0.00125,
    "n": [
     108,
     104,
-    92
+    91
    ],
    "ploscice": [
     10,
@@ -979,10 +980,10 @@
    }
   ]
  },
- "velikost": 0.2608,
+ "velikost": 0.261,
  "trikotniki": {
-  "racunalnik": 213565,
-  "telefon": 52213
+  "racunalnik": 184982,
+  "telefon": 43202
  },
  "luci": [
   {
