@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Veriga namesto kristala
+  - kovalentno vzdolž, šibke sile med verigami
+  - modul tisočkrat manjši od jekla
+- Molska masa
+  - $n = \frac{M_n}{M_0}$
+  - $M_w \ge M_n$, $\mathrm{PDI} = \frac{M_w}{M_n}$
+  - napaka: masno povprečje namesto številskega
+- Arhitektura verig
+  - linearne, razvejene, zamrežene, mrežaste
+  - taktičnost določa kristalizacijo
+- Kristaliničnost
+  - lamele in sferoliti
+  - $\chi$ iz gostote, masni delež
+- Steklasti prehod in tališče
+  - pod $T_g$ krhko, nad njim žilavo
+  - amorfni polimer nima tališča
+- Tri skupine
+  - termoplasti: pretaljivi, reciklirni
+  - duromeri: gosta mreža, razkroj
+  - elastomeri: redka vozlišča nad $T_g$
+- Viskoelastičnost
+  - lezenje že pri sobni temperaturi
+  - guma: $G = \frac{\rho RT}{M_c}$, entropijska sila
