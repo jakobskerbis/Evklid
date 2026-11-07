@@ -30,17 +30,22 @@
    "spekular": 0.7,
    "rezVolumen": true,
    "rezMasca": "#d6ae5c",
-   "rezVlaknaCt": 1400
+   "rezVlaknaCt": 1400,
+   "rezTkivoMoc": 0.3,
+   "rezVlaknaMoc": 0.55,
+   "rezSum": 0.4,
+   "rezHrap": 0.55,
+   "rezLak": 0.24
   },
   "zaklopka": {
-   "barva": "#e8d6bc",
+   "barva": "#efd3c3",
    "hrap": 0.36,
-   "lak": 0.5,
-   "lakHrap": 0.45,
-   "sijaj": 0.3,
+   "lak": 0.55,
+   "lakHrap": 0.3,
+   "sijaj": 0.35,
    "sijajBarva": "#ffffff",
    "rob": 0.28,
-   "robBarva": "#fff6e8",
+   "robBarva": "#fff0e6",
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
@@ -48,18 +53,18 @@
    "sijajHrap": 0.6,
    "spekular": 0.75,
    "tekstura": false,
-   "prosojnost": 0.8,
+   "prosojnost": 0.74,
    "globina": true
   },
   "zep": {
-   "barva": "#e8d6bc",
+   "barva": "#f0dacb",
    "hrap": 0.36,
-   "lak": 0.5,
-   "lakHrap": 0.45,
+   "lak": 0.55,
+   "lakHrap": 0.3,
    "sijaj": 0.3,
    "sijajBarva": "#ffffff",
    "rob": 0.28,
-   "robBarva": "#fff6e8",
+   "robBarva": "#fff3ea",
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
@@ -67,7 +72,7 @@
    "sijajHrap": 0.6,
    "spekular": 0.75,
    "tekstura": false,
-   "prosojnost": 0.8,
+   "prosojnost": 0.62,
    "globina": true
   },
   "arterija": {
@@ -303,7 +308,8 @@
    "barva": "#60a5fa",
    "opis": "Izboklina desnega preddvora, ki prekriva koren aorte; od znotraj z glavničastimi mišicami.",
    "vozlisca": [
-    "Right auricle"
+    "Right auricle",
+    "Right auricle (lastno)"
    ],
    "skupina": "desni-preddvor",
    "ucnaBarva": "#93b8f5",
@@ -704,13 +710,39 @@
    "barva": "#c084fc",
    "opis": "Mišični grebeni na notranji steni prekatov; v desnem prekatu je med njimi tudi septomarginalna trabekula.",
    "vozlisca": [
-    "Septomarginal trabecula (lastno)",
-    "Trabeculae carneae of left ventricle (lastno)",
-    "Trabeculae carneae of right ventricle (lastno)"
+    "Septomarginal trabecula (lastno)"
    ],
    "ucnaBarva": "#b07cf0",
    "opisOs": "Mišične gubice na notranji steni prekatov.",
    "opisStudij": "Trabeculae carneae: grebeni, mostički in papilarne mišice; septomarginalna trabekula nese desni krak prevodnega sistema do sprednje papilarne mišice."
+  },
+  {
+   "id": "trabekule-levega-prekata",
+   "ime": "Trabekule levega prekata",
+   "la": "Trabeculae carneae ventriculi sinistri",
+   "barva": "#c084fc",
+   "opis": "Drobni mišični grebeni v spodnjem delu in konici levega prekata.",
+   "vozlisca": [
+    "Trabeculae carneae of left ventricle (lastno)"
+   ],
+   "skupina": "trabekule",
+   "ucnaBarva": "#b5372d",
+   "opisOs": "Mišične gubice v levem prekatu.",
+   "opisStudij": "V levem prekatu so trabekule finejše in omejene na konico in spodnji dve tretjini; pretin ob iztoku v aorto je gladek."
+  },
+  {
+   "id": "trabekule-desnega-prekata",
+   "ime": "Trabekule desnega prekata",
+   "la": "Trabeculae carneae ventriculi dextri",
+   "barva": "#a78bfa",
+   "opis": "Grobi mišični grebeni desnega prekata; med njimi je septomarginalna trabekula.",
+   "vozlisca": [
+    "Trabeculae carneae of right ventricle (lastno)"
+   ],
+   "skupina": "trabekule",
+   "ucnaBarva": "#2c5fc4",
+   "opisOs": "Mišične gubice v desnem prekatu.",
+   "opisStudij": "V desnem prekatu so trabekule grobe (razen gladkega iztoka, conus arteriosus); septomarginalna trabekula (moderatorni trak) nese desni krak do sprednje papilarne mišice."
   },
   {
    "id": "av-zaklopki",
@@ -835,7 +867,7 @@
      -0.755,
      -0.6388
     ],
-    "d": -0.0379
+    "d": -0.0398
    }
   ],
   "brezPokrova": [
@@ -856,15 +888,15 @@
   "volumen": {
    "slika": "srce-volumen.png",
    "lo": [
-    -0.06702,
-    -0.10302,
-    -0.0539
+    -0.06775,
+    -0.1029,
+    -0.05889
    ],
    "korak": 0.00125,
    "n": [
-    108,
+    109,
     104,
-    91
+    93
    ],
    "ploscice": [
     10,
@@ -918,7 +950,7 @@
    ],
    "tkiva": {
     "miokard": {
-     "lak": 0.45
+     "lak": 0.2
     },
     "zaklopka": {
      "svetlost": 1.05
@@ -956,8 +988,8 @@
  },
  "velikost": 0.2647,
  "trikotniki": {
-  "racunalnik": 202566,
-  "telefon": 47333
+  "racunalnik": 242023,
+  "telefon": 67515
  },
  "luci": [
   {

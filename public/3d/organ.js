@@ -523,6 +523,7 @@ function materialPokrova(t, ravnine, merilo = 1, vol = null) {
   });
   const relief = (t.rezRelief ?? 0.00012) * merilo;
   const vlCt = t.rezVlaknaCt ?? 1400; // gostota vlaken (1/m) v teksturi CT
+  const sumMoc = t.rezSum ?? 1; // moč lis in zrnatosti pokrova (srce n11: enakomeren vlažen miokard, ne »šmirgl«)
   m.onBeforeCompile = (sh) => {
     sh.uniforms.orgRav = { value: ravnine.seznam.map((p) => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, p.constant)) };
     if (vol) {
@@ -561,11 +562,12 @@ ${
           orgQm = vOrgCm + ( vOrgM - vOrgCm ) * orgT; // ista točka v enotah modela (afina preslikava ohrani razmerje)
           orgV4 = orgVolumen( orgQm );
           #ifndef USE_LOGDEPTHBUF
-          // Točka ravnine je v steni (|vlakno| > 0,5): pokrov na globini ravnine, ne zadnje ploskve, zato so žile v maščobi
+          // Točka ravnine je v steni (|vlakno| > 0,5) ali v maščobi (A > 0,15; n11: »luske maščobe zunaj obrisa« – maščoba
+          // brez vlaken je bila narisana na globini zadnje ploskve): pokrov na globini ravnine, zato so žile v maščobi
           // in dno papilarnih mišic za ravnino skriti (kot pri pravem rezu). Sicer (votlina; A ≈ 1 = venčna žila v maščobi,
           // katere prerez nariše njen pokrov) ostane globina zadnje ploskve.
           { vec4 orgC = projectionMatrix * viewMatrix * vec4( orgQ, 1.0 );
-            gl_FragDepth = length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 && orgV4.a < 0.8 ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
+            gl_FragDepth = ( length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 || orgV4.a > 0.15 ) && orgV4.a < 0.8 ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
           #endif`
               : ""
           }
@@ -581,8 +583,8 @@ ${
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        diffuseColor.rgb *= 0.88 + 0.24 * orgSum( orgQ * 60.0 ) * orgSum( orgQ * 13.0 );
-        diffuseColor.rgb *= 1.0 - 0.09 * ( orgSum( orgQ * 7.0 ) - 0.5 ) * 2.0; // večje lise (prekrvavitev)
+        diffuseColor.rgb *= 1.0 - ${fl(0.12 * sumMoc)} + ${fl(0.24 * sumMoc)} * orgSum( orgQ * 60.0 ) * orgSum( orgQ * 13.0 );
+        diffuseColor.rgb *= 1.0 - ${fl(0.09 * sumMoc)} * ( orgSum( orgQ * 7.0 ) - 0.5 ) * 2.0; // večje lise (prekrvavitev)
         ${t.rezVlakna && !vol ? "diffuseColor.rgb *= 0.9 + 0.2 * orgH;" : ""}${
           vol && t.rezRavna
             ? "" // učne barve: enobarven pokrov (globina ravnine ostane)
@@ -595,10 +597,10 @@ ${
           float orgS1 = orgSum( orgPq * ${fl(+(vlCt / merilo).toPrecision(4))} ), orgS2 = orgSum( orgPq * ${fl(+((vlCt * 3.2) / merilo).toPrecision(4))} );
           float orgL1 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 3) / merilo).toPrecision(4))}, 0.0, 1.0 ), orgL2 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 9.6) / merilo).toPrecision(4))}, 0.0, 1.0 );
           float orgVl = mix( 0.5, orgS1, orgL1 ) * 0.6 + mix( 0.5, orgS2, orgL2 ) * 0.4;
-          vec3 orgMi = ${vec3(t.rez || "#7a2a20")} * orgTkivo( orgQm, 0.0 ) / ${vec3(t.rezTkivoMio || "#5d3125")};
+          vec3 orgMi = ${vec3(t.rez || "#7a2a20")} * mix( vec3( 1.0 ), orgTkivo( orgQm, 0.0 ) / ${vec3(t.rezTkivoMio || "#5d3125")}, ${fl(t.rezTkivoMoc ?? 1)} );
           vec3 orgMaT = orgTkivo( orgQm, 1.0 );
           vec3 orgMa = ${vec3(t.rezMasca || "#d8b060")} * orgMaT / ${vec3(t.rezTkivoMasca || "#af9361")};
-          orgMi *= 0.86 + 0.28 * orgVl;
+          orgMi *= ${fl(1 - 0.14 * (t.rezVlaknaMoc ?? 1))} + ${fl(0.28 * (t.rezVlaknaMoc ?? 1))} * orgVl;
           float orgFa = smoothstep( 0.17, 0.37, orgV4.a ); // A: maščoba 0–0,6, venčna žila 1
           diffuseColor.rgb = mix( orgMi, orgMa, orgFa );
           orgH = mix( orgVl, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgFa );
@@ -629,7 +631,7 @@ ${
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov2-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${vlCt}${t.rezRavna ? "r" : ""}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov2-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}`;
   return m;
 }
 

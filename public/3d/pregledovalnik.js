@@ -201,6 +201,9 @@ export function odpriModel(el, mod, opts = {}) {
     }
     sij.clear();
     if (!d) return;
+    // Skupina delov organa iz GLB (zaklopke, velike žile …): okolica je skrita (skrijObdajajoce), zato ostanejo prave
+    // barve tkiv brez sija in obrisa (ocena srca n10: zaklopke »mlečno bele/lila«, papilarne mišice z modrim obrisom).
+    if (d.naravno) return;
     const barva = new THREE.Color(d.barva || "#6E9BFF");
     for (const m of d.meshes || []) {
       if (!m?.material || sij.has(m)) continue;
@@ -341,7 +344,7 @@ export function odpriModel(el, mod, opts = {}) {
         const ime = t(`a3.grp.${g.id}`);
         // razlaga skupine po ravni (skupine.js opisOs/opis/opisStudij, pregled #461 C P2-2), pod njo seznam članov
         const seznam = clani.map((d) => d.ime).join(", ");
-        return { id: PRED + g.id, skupinaDelov: true, ime, barva: "#6E9BFF", meshes, opis: g.opis || seznam, opisOs: g.opisOs, opisStudij: g.opisStudij, seznam: g.opis ? seznam : "", smer: g.smer, clani };
+        return { id: PRED + g.id, skupinaDelov: true, naravno: model?.postavitev === "organ", ime, barva: "#6E9BFF", meshes, opis: g.opis || seznam, opisOs: g.opisOs, opisStudij: g.opisStudij, seznam: g.opis ? seznam : "", smer: g.smer, clani };
       })
       .filter((g) => g.clani.length > 1 && g.meshes.length);
   }

@@ -112,7 +112,7 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(72_000, 12_000)), nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
+        pozno=["srce_ct"], ct=dict(cilj=(90_000, 15_000)), nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
         # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
         stena={"Left ventricle": 0.0028, "Right ventricle": 0.0008},
@@ -129,8 +129,9 @@ ORGANI = {
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
                 "miokard": dict(barva=(0.24, 0.07, 0.05), barva2=(0.17, 0.05, 0.036), lise=0.45, hrap=0.56, gube=0.00016, gubeMera=0.004,
-                                vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.80, 0.64, 0.32), mascaBarva2=(0.84, 0.60, 0.28),
-                                mascaNasip=0.0010, mascaPremik=0.0016, mascaMera=0.011, mascaZleb=0.58, mascaHrap=0.52, kletka=0.009,
+                                vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.90, 0.66, 0.24), mascaBarva2=(0.92, 0.56, 0.17),
+                                # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
+                                mascaNasip=0.0010, mascaPremik=0.0022, mascaMera=0.010, mascaZleb=0.5, mascaHrap=0.36, kletka=0.009,
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
@@ -150,7 +151,8 @@ ORGANI = {
                                      vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
                 # n10: arterije bledo rožnato bele (debela stena), vene temne modro vijolične (kri skozi tanko steno)
-                "vencna-arterija": dict(barva=(0.70, 0.50, 0.44), barva2=(0.62, 0.42, 0.38), lise=0.25, hrap=0.5, gube=0.00003, gubeMera=0.0015, razdeli=1,
+                # n11 (ocena n10: »bele/kremaste nalepke«): bledo rožnato rjave (sveža arterija s krvjo za debelo steno)
+                "vencna-arterija": dict(barva=(0.60, 0.33, 0.29), barva2=(0.54, 0.28, 0.25), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
                                         vzdolz=0.00002, vzdolzRazmik=0.0012),
                 # vezivo (arterijska vez, dno ovalne kotanje, pars membranacea): mat sivobelo, brez sijaja
                 "vez": dict(barva=(0.62, 0.58, 0.53), barva2=(0.55, 0.50, 0.46), lise=0.25, hrap=0.78, gube=0.00003, gubeMera=0.0015, razdeli=1),
@@ -175,7 +177,8 @@ ORGANI = {
         ],
         deli=[
             (r"papillary muscle", "papilarne-misice"),
-            (r"Trabecula|trabecula", "trabekule"),
+            (r"Trabeculae carneae of left", "trabekule-levega-prekata"),
+            (r"Trabecula|trabecula", "trabekule-desnega-prekata"),
             (r"atrioventricular valve|Right atrioventricular", "av-zaklopki"),
             (r"Aortic valve|Root of aorta|coronary leaflet|Non-coronary", "aortna-zaklopka"),
             (r"Pulmonary valve|pulmonary valve", "pljucna-zaklopka"),

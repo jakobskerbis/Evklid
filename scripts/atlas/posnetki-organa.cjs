@@ -113,7 +113,10 @@ const NAPRAVE = {
         await ponastavi();
       }
       if (!samoPrerez) {
+        // zadaj: od zadaj IN spodaj (diafragmalna ploskev, zadnji žlebovi; kot fotografija preparata od zadaj spodaj), ne
+        // ponovitev kot180 (ocena srca n10: »zadaj« je bil enak kot180)
         await tipke("ArrowLeft", 18);
+        await tipke("ArrowDown", 4);
         await slikaj("zadaj");
         await ponastavi();
       }
@@ -165,7 +168,11 @@ const NAPRAVE = {
               svg.append(c);
             }
             const t = document.createElementNS(svg.namespaceURI, "text");
-            Object.entries({ x: (a[0] + b[0]) / 2 + 8, y: (a[1] + b[1]) / 2 - 10, fill: "#ffffff", "font-size": 15, "font-family": "sans-serif", "font-weight": 700, stroke: "#000", "stroke-width": 3, "paint-order": "stroke" }).forEach(([k, v]) => t.setAttribute(k, v));
+            // napis znotraj platna (ocena n10: »RV 5,3 mm« čez seznam delov, »LV …« odrezan desno)
+            const sir = 15 * 0.6 * (m.ime.length + 8);
+            const tx = Math.min(Math.max((a[0] + b[0]) / 2 + 8, r.left + 4), r.right - sir - 4);
+            const ty = Math.min(Math.max((a[1] + b[1]) / 2 - 10, r.top + 20), r.bottom - 6);
+            Object.entries({ x: tx, y: ty, fill: "#ffffff", "font-size": 15, "font-family": "sans-serif", "font-weight": 700, stroke: "#000", "stroke-width": 3, "paint-order": "stroke" }).forEach(([k, v]) => t.setAttribute(k, v));
             t.textContent = `${m.ime.replace(/ \d+ %/, "")} ${String(m.mm).replace(".", ",")} mm`;
             svg.append(t);
           }

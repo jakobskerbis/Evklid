@@ -848,7 +848,10 @@ export function ustvariSceno(el, opts = {}) {
   function posodobiMerilo() {
     if (!merilo || !meriloEl) return;
     const d = camera.position.distanceTo(controls.target);
-    const pxNaEnoto = h / 2 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d);
+    // zamik slike (telefon, setViewOffset): zorni kot zajame navidezno višino h + 2·zamik, na zaslonu je izrez 1 : 1, zato
+    // piksli na enoto sledijo navidezni višini (ocena srca n10: merilo na telefonu ≈ 1,3× prekratko)
+    const hv = camera.view?.enabled ? camera.view.fullHeight : h;
+    const pxNaEnoto = hv / 2 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d);
     const mNaEnoto = merilo.m / merilo.enota;
     const maksPx = Math.min(140, w * 0.3);
     const l = lepaDolzina((maksPx / pxNaEnoto) * mNaEnoto);
