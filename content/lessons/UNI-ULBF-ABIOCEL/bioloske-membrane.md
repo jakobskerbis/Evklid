@@ -277,6 +277,18 @@ Analogija ima mejo: ljudje vedo, kam gredo, molekule pa se gibljejo naključno. 
 - *Hipotonična liza.* Za izolacijo organelov celice nalašč nabreknejo v hipotonični raztopini, da membrana poči, organeli pa ostanejo celi.
 - *Shranjevanje živil.* Soljenje in sladkanje odvzameta vodo mikroorganizmom s plazmolizo, zato se marmelada in suho meso ne pokvarita.
 
+## Drugače: Bolj natančno
+
+Zakaj je prepustnost za različne molekule tako različna? Pri enostavni difuziji se molekula najprej raztopi v nepolarni notranjosti dvosloja, nato difundira skoznjo. Prepustnost iz Fickovega zakona zato zapišemo kot
+
+$$P = \frac{K D}{d}$$
+
+kjer je $K$ porazdelitveni koeficient (koliko bolje se snov raztaplja v olju kot v vodi), $D$ difuzijski koeficient v dvosloju in $d$ debelina hidrofobnega sloja. Že ob koncu 19. stoletja je Charles Overton opazil, da snovi, ki se dobro topijo v olju, hitro vstopajo v celice. To je bil eden prvih namigov, da je membrana iz lipidov.
+
+Za ione je $K$ izjemno majhen, ker bi moral ion v nepolarnem okolju izgubiti ovoj molekul vode, kar stane veliko energije. Zato se prepustnost dvosloja za $\mathrm{K^+}$ in za vodo razlikuje za okoli devet velikostnih redov, približno milijardokrat. Kanali to oviro obidejo: ion gre skozi vodno pot v beljakovini, ki mu delno nadomesti vodni ovoj.
+
+Pri ionih šteje poleg koncentracije še električni potencial membrane. Ravnotežje za en ion opiše Nernstova enačba, osnova za razumevanje mirovnega membranskega potenciala.
+
 ## Preveri se
 
 ? Katera snov se ne ujema s skupino, ker skozi čisti lipidni dvosloj praktično ne gre?
@@ -343,6 +355,9 @@ m | masa topljenca | m = \gamma V_\mathrm{r} | g
 V_\mathrm{r} | prostornina raztopine | | L
 \gamma | masna koncentracija | | g/L
 M | molska masa | | g/mol
+K | porazdelitveni koeficient olje/voda | | –
+D | difuzijski koeficient v dvosloju | | m^2/s
+d | debelina hidrofobnega sloja | | m
 A | površina eritrocita | | \mu m^2
 r | polmer krogle | r = \sqrt{\frac{A}{4\pi}} | \mu m
 V_\mathrm{k} | kritična prostornina | V_\mathrm{k} = \frac{4}{3}\pi r^3 | fL

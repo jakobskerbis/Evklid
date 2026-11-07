@@ -272,6 +272,16 @@ Rezultat: sedem števil na risbi ($90$, $50$, $20$, $45$, $70$, $25$, $3 \times 
 - *CNC in CAD.* Koordinatno kotiranje se neposredno prevede v program stroja. Sodobni modelirniki prenesejo mere iz 3D modela na risbo, a izbira baz in funkcijskih mer ostane konstruktorjeva odločitev.
 - *Laboratorijska oprema.* Brušeni spoji, zamaški in pipe imajo standardiziran konus $1 : 10$, zato se deli različnih proizvajalcev prilegajo. Risba novega dela mora konus kotirati enako, kot ga določa standard.
 
+## Drugače: Bolj natančno
+
+Vsota $\Delta_1 + \ldots + \Delta_n$ je **najslabši primer**: vse mere bi morale hkrati odstopati do skrajne meje v isto smer. Pri serijski izdelavi so odstopanja naključna in se delno izničijo. Če so med seboj neodvisna, je verjetno odstopanje vsote približno
+
+$$\Delta_\mathrm{s} = \sqrt{\Delta_1^2 + \Delta_2^2 + \ldots + \Delta_n^2}$$
+
+Za šest mer s po $\pm 0{,}1\,\mathrm{mm}$ iz Naloge 1 je najslabši primer $\pm 0{,}6\,\mathrm{mm}$, statistična ocena pa $0{,}1 \cdot \sqrt{6} \approx 0{,}245\,\mathrm{mm}$. Ocena raste s korenom iz števila mer, ne linearno.
+
+Statistični račun dovoli širša odstopanja posameznih mer in s tem cenejšo izdelavo, a le pri velikih serijah in ob nadzorovanem postopku; posamezen kos lahko še vedno pade zunaj ocene. Kjer bi napaka ogrozila varnost, konstruktorji računajo z najslabšim primerom. Kako se odstopanja zapišejo s tolerancami in kako dva dela skupaj tvorita ujem, je tema naslednje lekcije.
+
 ## Preveri se
 
 ? Kateri element ne sodi med dele kote?
@@ -321,6 +331,7 @@ Rezultat: sedem števil na risbi ($90$, $50$, $20$, $45$, $70$, $25$, $3 \times 
 :::simboli
 \Delta_\Sigma | največje odstopanje na koncu verige | \Delta_\Sigma = \Delta_1 + \Delta_2 + \ldots + \Delta_n | mm
 \Delta_1, \Delta_2, \Delta_n | odstopanja posameznih mer | | mm
+\Delta_\mathrm{s} | statistična ocena odstopanja verige | | mm
 C | konus (koniciteta) | C = \frac{D - d}{L} | – | zapis $1 : x$
 D | večji premer konusa | | mm
 d | manjši premer konusa | d = D - C L | mm
