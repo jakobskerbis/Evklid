@@ -67,7 +67,7 @@ Tuljava z $N$ ovoji in ploščino $A$ se v homogenem polju $B$ vrti s kotno hitr
 
 $$u_i = N B A \omega \sin\omega t$$
 
-To je izmenična napetost z amplitudo $\hat u = N B A \omega$ in efektivno vrednostjo $\hat u / \sqrt 2$. Na tem načelu delujejo generatorji izmenične napetosti.
+To je izmenična napetost z amplitudo $\hat u = N B A \omega$ in efektivno vrednostjo $\hat u / \sqrt 2$. Na tem načelu delujejo generatorji izmenične napetosti (pri velikih se vrti magnetno polje, tuljave mirujejo, a sprememba pretoka je ista).
 
 :::premisli
 Pri katerem kotu med normalo tuljave in poljem je inducirana napetost največja: ko je pretok največji ali ko je nič? Zakaj?
@@ -303,7 +303,7 @@ Za gibajoče se zanke velja splošneje, da je inducirana napetost vsota dveh del
 ~ Ploščina kroga je $\pi r^2$ ali $\pi d^2/4$, ne $\pi d^2$; napaka da štirikrat preveliko napetost.
 > $A = \pi \cdot 0{,}02^2 \approx 1{,}257 \cdot 10^{-3}\,\mathrm{m^2}$, $u_i = 100 \cdot 1{,}257 \cdot 10^{-3} \cdot 0{,}2 / 0{,}01 \approx 2{,}51\,\mathrm V$.
 
-? Elektromagnetni merilnik pretoka ima cev s premerom $0{,}10\,\mathrm m$ in polje $0{,}010\,\mathrm T$. Voda teče s povprečno hitrostjo $2\,\mathrm{m/s}$. Kolikšno napetost izmerita elektrodi?
+? Elektromagnetni merilnik pretoka ima cev s premerom $10\,\mathrm{cm}$ in polje $0{,}010\,\mathrm T$. Voda teče s povprečno hitrostjo $2\,\mathrm{m/s}$. Kolikšno napetost izmerita elektrodi?
 - $0{,}2\,\mathrm V$
 ~ Premer je vstavljen v centimetrih: $0{,}010 \cdot 10 \cdot 2 = 0{,}2$. Pred računom pretvori $d = 0{,}10\,\mathrm m$.
 + $2\,\mathrm{mV}$
@@ -311,7 +311,7 @@ Za gibajoče se zanke velja splošneje, da je inducirana napetost vsota dveh del
 ~ Voda iz vodovoda vsebuje ione in je dovolj prevodna. Napetost se inducira zaradi gibanja nabojev v polju.
 - $20\,\mathrm{mV}$
 ~ To je $Bv = 0{,}010 \cdot 2 = 0{,}02\,\mathrm V$: pozabljen je premer. Dolžina »palice« med elektrodama je ves premer $d$.
-> Tekočina med elektrodama je kot palica dolžine $d$: $u = Bdv = 0{,}010 \cdot 0{,}10 \cdot 2 = 0{,}002\,\mathrm V$.
+> Tekočina med elektrodama je kot palica dolžine $d = 0{,}10\,\mathrm m$: $u = Bdv = 0{,}010 \cdot 0{,}10 \cdot 2 = 0{,}002\,\mathrm V$.
 
 :::simboli
 \Phi | magnetni pretok | \Phi = B A \cos\alpha | Wb | v homogenem polju

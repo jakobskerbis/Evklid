@@ -40,7 +40,7 @@ Pazi na tip: razred je *podmnožica* $A$, faktorska množica pa je množica podm
 :::premisli
 V dokazu točke (2) smo uporabili simetričnost. Kje točno? Kaj bi šlo narobe pri relaciji, ki je le refleksivna in tranzitivna, na primer pri $\le$?
 ---
-Za vsebovanost $[b] \subseteq [a]$: iz $x \sim b$ in $a \sim b$ potrebujemo $b \sim a$, da dobimo $x \sim a$. Pri $\le$ je »razred« $\{x ;\ x \le a\}$, in za $a \le b$ sta ta »razreda« različna, a se prekrivata. Brez simetričnosti razredi niso disjunktni.
+Za vsebovanost $[b] \subseteq [a]$: iz $x \sim b$ in $a \sim b$ potrebujemo $b \sim a$, da dobimo $x \sim a$. Pri $\le$ je »razred« $\{x ;\ x \le a\}$, in za $a < b$ sta ta »razreda« različna, a se prekrivata. Brez simetričnosti razredi niso disjunktni.
 :::
 
 ### Razbitja
@@ -117,7 +117,7 @@ ekvivalenca: refleksivna, simetrična, tranzitivna; delna urejenost: refleksivna
 2. Skupin je $4 \cdot 2 = 8$, zato ima $\approx$ največ $8$ razredov (manj, če kakšne skupine med bolniki ni).
 3. $\to$ je refleksivna ($S \subseteq S$) in tranzitivna (vsebovanost je tranzitivna).
 4. Ni simetrična: darovalec $0$ Rh$-$ nima antigenov, zato lahko daruje bolniku $\mathrm A$ Rh$+$, obratno pa ne.
-5. Ni tudi antisimetrična: dva *različna* bolnika z isto skupino sta drug z drugim v relaciji v obe smeri. Refleksivni in tranzitivni relaciji rečemo **predurejenost** (tudi kvaziurejenost).
+5. Ni tudi antisimetrična: dva *različna* bolnika z isto skupino sta drug z drugim v relaciji v obe smeri. Refleksivni in tranzitivni relaciji rečemo **predurejenost** (kvaziurejenost).
 6. Povezava: $x \to y$ in $y \to x$ hkrati velja natanko tedaj, ko $x \approx y$. Ko bolnike »združimo« po $\approx$, postane $\to$ na $8$ skupinah prava delna urejenost, vsebovanost množic antigenov.
 7. Odgovor: $\approx$ je ekvivalenca z največ $8$ razredi; $\to$ je predurejenost, ki na faktorski množici postane delna urejenost.
 
@@ -173,7 +173,7 @@ Dva kosa: $4 + 3 = 7$. Skupaj $1 + 7 + 6 + 1 = 15$. To je Bellovo število $B_4 
 - **Faktorska množica kot podmnožica $A$.** Elementi $A/{\sim}$ so razredi, torej podmnožice $A$. $\mathbb Z_3$ ni $\{0, 1, 2\} \subseteq \mathbb Z$, ampak $\{[0], [1], [2]\}$.
 - **Funkcija na razredih brez preverjanja predstavnikov.** Predpis $[x]_6 \mapsto [x]_4$ je videti nedolžen, a ni funkcija. Vedno pokaži, da izid ni odvisen od izbire predstavnika.
 - **Unija ekvivalenc je ekvivalenca.** Presek ekvivalenc je ekvivalenca, unija pa v splošnem ni tranzitivna: na $\{1, 2, 3\}$ sta $\{1, 2\} \mid \{3\}$ in $\{1\} \mid \{2, 3\}$ ekvivalenci, v uniji sta $1 \sim 2$ in $2 \sim 3$, a $1 \not\sim 3$.
-- **Simetričnost zamenjana z antisimetričnostjo.** »Antisimetrična« ne pomeni »ni simetrična«. Enakost je oboje, predurejenost $\to$ iz Primera 2 ni nobeno.
+- **Simetričnost zamenjana z antisimetričnostjo.** »Antisimetrična« ne pomeni »ni simetrična«. Enakost je oboje, predurejenost iz Primera 2 ni nobeno.
 
 ## Povzetek
 

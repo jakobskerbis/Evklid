@@ -282,8 +282,8 @@ kjer je $I_\mathrm{o}$ efektivna vrednost osnovnega harmonika toka in $\varphi_\
 + $1{,}8\,\mathrm{kW}$
 - $1{,}4\,\mathrm{kW}$
 ~ Uporabljen je $\sin\varphi = 0{,}6$; tako dobiš jalovo moč v $\mathrm{kvar}$.
-- $18\,\mathrm{kW}$
-~ Napaka v redu velikosti: $230 \cdot 10 = 2300$, ne $23\,000$.
+- $2{,}9\,\mathrm{kW}$
+~ Deljeno s faktorjem moči namesto pomnoženo: $2300 / 0{,}8 \approx 2875\,\mathrm W$. Delovna moč ne more biti večja od navidezne.
 > $P = 230 \cdot 10 \cdot 0{,}8 = 1840\,\mathrm W \approx 1{,}8\,\mathrm{kW}$.
 
 ? Zakaj kompenzacijski kondenzator vežemo vzporedno z bremenom, ne zaporedno?

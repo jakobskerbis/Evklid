@@ -53,7 +53,7 @@ Motor mora »vedeti«, v katero smer gre. To mu omogoči polarnost tira: vsak ko
 - **Kinezini** hodijo po mikrotubulih večinoma proti koncu plus, torej od centrosoma proti obrobju celice. V aksonu nosijo tovor od telesa nevrona proti sinapsi.
 - **Dineini** hodijo po mikrotubulih proti koncu minus. Nosijo tovor nazaj proti telesu nevrona in poganjajo migetalke.
 
-Kinezin ima dve glavi in hodi »z roko v roki«: z vsako hidrolizo ATP naredi korak $8\,\mathrm{nm}$, kolikor je dolg en dimer tubulina.
+Kinezin ima dve glavi in hodi tako, da se glavi izmenično prestavljata druga čez drugo (»roka čez roko«): z vsako hidrolizo ATP naredi korak $8\,\mathrm{nm}$, kolikor je dolg en dimer tubulina.
 
 :::premisli
 Celico obdelamo z zdravilom, ki prepreči razpad mikrotubulov, tako da lahko le rastejo. Bi se mitoza ustavila ali pospešila? Zakaj?
@@ -251,10 +251,10 @@ Bazalno telesce na dnu migetalke je enaka ura, le da je na vsaki številki troj�
 - $5{,}2\,\mu\mathrm m$
 ~ To je $650 \cdot 8\,\mathrm{nm}$: dimeri so razporejeni po $13$ protofilamentih, ne v enem.
 + $0{,}4\,\mu\mathrm m$
-- $0{,}031\,\mu\mathrm m$
-~ To je $650 \cdot 8 / 13^2\,\mathrm{nm} \approx 31\,\mathrm{nm}$: s $13$ je deljeno dvakrat. Dimere razdeliš na $13$ protofilamentov enkrat, nato število na protofilament pomnožiš z $8\,\mathrm{nm}$.
 - $67{,}6\,\mu\mathrm m$
-~ To je $650 \cdot 8 \cdot 13\,\mathrm{nm}$: s $13$ je pomnoženo namesto deljeno. Vsak dimer podaljša le en protofilament.
+~ To je $650 \cdot 13 \cdot 8\,\mathrm{nm}$: s $13$ je množeno namesto deljeno. Protofilamenti rastejo vzporedno, zato si $650$ dimerov razdeli $13$ protofilamentov.
+- $4\,\mu\mathrm m$
+~ Pretvorba enot je napačna: $400\,\mathrm{nm}$ je deljeno s $100$. Ker je $1\,\mu\mathrm m = 1000\,\mathrm{nm}$, je $400\,\mathrm{nm} = 0{,}4\,\mu\mathrm m$.
 > $650 / 13 = 50$ dimerov na protofilament, $50 \cdot 8\,\mathrm{nm} = 400\,\mathrm{nm} = 0{,}4\,\mu\mathrm m$.
 
 ? Paklitaksel stabilizira mikrotubule, da ne razpadajo. Kaj je posledica v rakavih celicah?

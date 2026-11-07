@@ -108,7 +108,7 @@ specifična togost $\dfrac{E}{\rho}$, specifična trdnost $\dfrac{R_\mathrm{p0,2
 
 1. Specifična togost v $\mathrm{GPa\,cm^3/g}$: jeklo $210 / 7{,}85 \approx 26{,}8$; 6061 $68{,}9 / 2{,}70 \approx 25{,}5$; AZ91 $45 / 1{,}81 \approx 24{,}9$; titan $114 / 4{,}43 \approx 25{,}7$.
 2. Specifična trdnost v $\mathrm{MPa\,cm^3/g}$: jeklo $355 / 7{,}85 \approx 45{,}2$; 6061 $276 / 2{,}70 \approx 102$; AZ91 $150 / 1{,}81 \approx 82{,}9$; titan $880 / 4{,}43 \approx 199$.
-3. Sklep o togosti: vrednosti se razlikujejo le za nekaj odstotkov, ker sta $E$ in $\rho$ obe odvisni od moči kovinske vezi in gostote zložbe atomov.
+3. Sklep o togosti: vrednosti se razlikujejo le za nekaj odstotkov. To je izkustveno pravilo za skoraj vse konstrukcijske kovine (izjema je berilij z $E/\rho \approx 155\,\mathrm{GPa\,cm^3/g}$); večjo specifično togost dobimo šele s kompoziti.
 4. Sklep o trdnosti: titanova zlitina je več kot štirikrat boljša od S355, aluminijeva več kot dvakrat.
 5. Odgovor: pri togosti v nategu so vse štiri kovine skoraj enake; pri trdnosti na enoto mase vodi Ti-6Al-4V, sledita 6061-T6 in AZ91, jeklo S355 je zadnje.
 
@@ -270,7 +270,7 @@ Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje
 - okoli $10\,\mathrm{kg}$
 ~ Enaka masa bi veljala za enako togost v nategu; pri upogibu debelina raste le s tretjim korenom.
 - okoli $15\,\mathrm{kg}$
-~ To je $10 \cdot 1{,}44 \approx 14{,}4\,\mathrm{kg}$: upoštevana je le večja debelina, ne pa trikrat manjša gostota.
+~ Upoštevana je le večja debelina: $10 \cdot 1{,}44 \approx 14{,}4\,\mathrm{kg}$. Pozabljeno je, da ima aluminij le okoli tretjino gostote jekla.
 > Debelina $\times 1{,}44$, gostota $\times 0{,}344$, masa $\times 0{,}50$, torej okoli $5\,\mathrm{kg}$.
 
 ? Zakaj trdnost aluminijeve zlitine pri predolgem staranju pade?

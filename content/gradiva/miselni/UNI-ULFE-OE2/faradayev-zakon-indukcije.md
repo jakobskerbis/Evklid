@@ -22,4 +22,5 @@ stanje: osnutek
   - napaka: $B$ iz sredine zanke
 - Meritev pretoka
   - pretok je ploščina pod $u(t)$
-  - fluksmeter, Rogowskijeva tuljava
+  - fluksmeter integrira napetost tuljave
+  - Rogowskijeva tuljava meri tok
