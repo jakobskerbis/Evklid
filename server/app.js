@@ -321,15 +321,22 @@ export function createApp(store, opts = {}) {
   // (spremenjena lekcija takoj da nov izris) in poslano stisnjeno (server/tisk-predpomnilnik.js).
   // Velik cel učbenik (ocena > pol meje, printSizeHint), ki ga še ni v predpomnilniku, gre kos za kosom
   // (printPageParts): učbenik programa ima do 67 MB in je kot en niz proces dvignil na ~900 MB (strežnik ima
-  // 512 MB). Med pošiljanjem se zbira za predpomnilnik, dokler je pod mejo; večji se nikoli ne shrani.
+  // 512 MB). Med pošiljanjem ga zbira največ en tok na stran in le, če je ocena do 1,25 × meje (ocena preceni
+  // za 14–20 %); večji se nikoli ne shrani. Hkrati teče največ EVKLID_TISK_TOKOV (privzeto 3) velikih tokov,
+  // ostali dobijo 503 z Retry-After (pregled #519 A: mirujoče povezave so držale po 40 MB + medpomnilnik br).
   const printCache = createPageCache();
+  const maxStreams = Number(process.env.EVKLID_TISK_TOKOV) > 0 ? Number(process.env.EVKLID_TISK_TOKOV) : 3;
+  let streams = 0;
+  const collecting = new Set(); // ključi, za katere en tok že zbira stran za predpomnilnik
+  app.locals.tiskTokovi = () => ({ streams, collecting: [...collecting] }); // testi
   app.get("/ucbenik/:path{/:topic}", (req, res, next) => {
     const { path: key, topic = null } = req.params;
     const cacheKey = `${key}/${topic || ""}`;
     const sig = printSignature(key, topic);
     if (sig == null) return res.status(404).send("Ta del učbenika ne obstaja.");
     const hit = printCache.peek(cacheKey, sig);
-    if (hit || topic || printSizeHint(key) <= printCache.maxBytes / 2) {
+    const hint = hit || topic ? 0 : printSizeHint(key);
+    if (hit || topic || hint <= printCache.maxBytes / 2) {
       const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic));
       if (!page) return res.status(404).send("Ta del učbenika ne obstaja.");
       return printCache.send(req, res, page).catch(next);
@@ -338,12 +345,25 @@ export function createApp(store, opts = {}) {
     res.setHeader("Vary", "Accept-Encoding");
     // HEAD: glave brez izrisa (prej je HEAD izrisal cel učbenik in ga zavrgel).
     if (req.method === "HEAD") return res.end();
+    if (streams >= maxStreams) {
+      res.setHeader("Retry-After", "20");
+      return res.status(503).send("Učbenik se ravno pripravlja za druge bralce. Poskusi čez pol minute.");
+    }
     const parts = printPageParts(key, null);
     if (!parts) return res.status(404).send("Ta del učbenika ne obstaja.");
     const encoding = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
-    streamParts(res, parts, { collect: printCache.maxBytes, encoding })
+    const collect = hint <= printCache.maxBytes * 1.25 && !collecting.has(cacheKey) ? printCache.maxBytes : 0;
+    if (collect) collecting.add(cacheKey);
+    streams++;
+    // Odjemalec, ki ne bere (ali bere prepočasi), ne drži toka v nedogled.
+    res.setTimeout(Number(process.env.EVKLID_TISK_ROK_MS) || 60_000, () => res.destroy());
+    streamParts(res, parts, { collect, encoding })
       .then((buf) => buf && printCache.put(cacheKey, sig, buf))
-      .catch(next);
+      .catch(next)
+      .finally(() => {
+        streams--;
+        if (collect) collecting.delete(cacheKey);
+      });
   });
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor

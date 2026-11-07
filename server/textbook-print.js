@@ -218,18 +218,30 @@ export async function streamParts(res, parts, { collect = 0, encoding = null } =
   let out = res;
   if (encoding) {
     res.setHeader("Content-Encoding", encoding);
-    out = encoding === "br" ? zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }) : zlib.createGzip({ level: 6 });
+    // Okno 2^19 (512 KB) namesto privzetih 4 MB: manj pomnilnika na tok (pregled #519 A, P2), stiskanje skoraj enako.
+    out = encoding === "br"
+      ? zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4, [zlib.constants.BROTLI_PARAM_LGWIN]: 19 } })
+      : zlib.createGzip({ level: 6, windowBits: 15, memLevel: 8 });
     out.pipe(res, { end: false });
     out.on("error", () => res.destroy());
   }
   const gone = () => res.destroyed || res.writableEnded;
+  // Odjemalec je odšel: takoj sprosti zlib (domorodni pomnilnik), ne šele ob GC.
+  const release = () => {
+    if (out !== res && !out.destroyed) out.destroy();
+  };
+  res.once("close", () => {
+    if (!res.writableFinished) release();
+  });
   const waitDrain = (s) => new Promise((ok) => { const done = () => { s.off("drain", done); res.off("close", done); ok(); }; s.on("drain", done); res.on("close", done); });
   const finish = (s) => new Promise((ok) => (s === res ? ok() : s.once("end", ok)));
   let pending = ""; // kosi se združijo do ~256 KB na zapis (manj klicev write in čakanja na drain)
+  let wrote = false;
   const flush = async () => {
     if (!pending) return;
     const chunk = Buffer.from(pending);
     pending = "";
+    wrote = true;
     if (kept) {
       size += chunk.length;
       if (size > collect) kept = null;
@@ -239,14 +251,14 @@ export async function streamParts(res, parts, { collect = 0, encoding = null } =
   };
   try {
     for (let r = it.next(); !r.done; r = it.next()) {
-      if (gone()) return null;
+      if (gone()) return release(), null;
       pending += r.value;
       if (pending.length >= 256 * 1024) await flush();
       await new Promise((ok) => setImmediate(ok));
     }
-    if (gone()) return null;
+    if (gone()) return release(), null;
     await flush();
-    if (gone()) return null;
+    if (gone()) return release(), null;
     if (out !== res) {
       out.end();
       await finish(out);
@@ -255,7 +267,13 @@ export async function streamParts(res, parts, { collect = 0, encoding = null } =
     return kept && Buffer.concat(kept);
   } catch (err) {
     console.error("[evklid] izris učbenika po kosih:", err?.message || err);
-    if (gone()) return null;
+    if (gone()) return release(), null;
+    // Napaka še pred prvim poslanim bajtom: navadna napaka (500), ne 200 z opozorilom.
+    if (!res.headersSent && !wrote && !pending) {
+      release();
+      res.removeHeader("Content-Encoding");
+      throw err;
+    }
     pending += STREAM_FAILED_HTML;
     try {
       await flush();

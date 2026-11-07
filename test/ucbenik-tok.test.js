@@ -61,7 +61,7 @@ test("printPageParts izrisuje sproti: prvi kos brez izrisa vseh lekcij", () => {
 test("streamParts: zbere stran za predpomnilnik do meje, večje ali prekinjene ne", async () => {
   const fake = () => {
     const out = [];
-    return { out, destroyed: false, write: (c) => (out.push(c), true), end() { this.ended = true; }, on() {}, off() {} };
+    return { out, destroyed: false, write: (c) => (out.push(c), true), end() { this.ended = true; }, on() {}, once() {}, off() {} };
   };
   const a = fake();
   const buf = await streamParts(a, ["<p>", "šola", "</p>"], { collect: 100 });
@@ -124,7 +124,7 @@ test("streamParts: napaka med izrisom → opozorilo na strani in prekinjen preno
 test("streamParts: med kosi tečejo drugi zahtevki (glavna nit ni zasedena do konca)", async () => {
   let ticks = 0;
   const iv = setInterval(() => ticks++, 0);
-  const res = { destroyed: false, writableEnded: false, write: () => true, end() { this.writableEnded = true; }, on() {}, off() {} };
+  const res = { destroyed: false, writableEnded: false, write: () => true, end() { this.writableEnded = true; }, on() {}, once() {}, off() {} };
   function* parts() {
     for (let i = 0; i < 20; i++) {
       const t = Date.now();
@@ -132,8 +132,11 @@ test("streamParts: med kosi tečejo drugi zahtevki (glavna nit ni zasedena do ko
       yield "<article></article>";
     }
   }
-  await streamParts(res, parts());
-  clearInterval(iv);
+  try {
+    await streamParts(res, parts());
+  } finally {
+    clearInterval(iv);
+  }
   assert.ok(ticks >= 10, `med 20 kosi je časovnik tekel ${ticks}-krat`);
 });
 
@@ -182,6 +185,93 @@ test("HEAD velikega učbenika ne izriše strani", { timeout: 60_000 }, async (t)
     assert.match(r.headers["content-type"], /text\/html/);
     assert.ok(Date.now() - t0 < 1500, `HEAD ${Date.now() - t0} ms (izris traja ~4 s)`);
   } finally {
+    srv.close();
+  }
+});
+
+// Pregled #519 A: mirujoče povezave (odjemalec ne bere) ne smejo vsaka držati do 40 MB zbrane strani in medpomnilnika br.
+async function withApp(env, fn) {
+  const saved = {};
+  for (const [k, v] of Object.entries(env)) (saved[k] = process.env[k]), (process.env[k] = v);
+  const app = createApp(openDb(":memory:"), { scheduler: false });
+  const srv = app.listen(0);
+  const base = `http://127.0.0.1:${srv.address().port}`;
+  const open = [];
+  // Odjemalec, ki prejme glave in nato ne bere.
+  const idle = (p) =>
+    new Promise((resolve) => {
+      const req = http.get(base + p, { headers: { "accept-encoding": "identity" } }, (res) => {
+        res.pause();
+        resolve({ status: res.statusCode, headers: res.headers, res, req });
+      });
+      req.on("error", () => {});
+      open.push(req);
+    });
+  try {
+    await fn({ app, base, idle });
+  } finally {
+    for (const r of open) r.destroy();
+    srv.closeAllConnections?.();
+    srv.close();
+    for (const [k, v] of Object.entries(saved)) (v === undefined ? delete process.env[k] : (process.env[k] = v));
+  }
+}
+const until = async (cond, ms = 5000) => {
+  const t = Date.now();
+  while (!cond()) {
+    if (Date.now() - t > ms) return false;
+    await new Promise((r) => setTimeout(r, 20));
+  }
+  return true;
+};
+
+test("veliki tokovi: zbira največ en tok na stran in le do 1,25 × meje; največ N hkrati (503)", async () => {
+  // Meja 5 MB: MAT-OS-8 (ocena ~5,7 MB) je v (pol meje, 1,25 × meje] → zbira se; FIZ-OS (~11 MB) ne.
+  await withApp({ EVKLID_TISK_MB: "5", EVKLID_TISK_TOKOV: "3" }, async ({ app, idle }) => {
+    const a = await idle("/ucbenik/MAT-OS-8");
+    const b = await idle("/ucbenik/MAT-OS-8");
+    const c = await idle("/ucbenik/FIZ-OS");
+    assert.deepEqual([a.status, b.status, c.status], [200, 200, 200]);
+    assert.ok(await until(() => app.locals.tiskTokovi().streams === 3), JSON.stringify(app.locals.tiskTokovi()));
+    assert.deepEqual(app.locals.tiskTokovi().collecting, ["MAT-OS-8/"], "en zbirajoč tok za MAT-OS-8, nobeden za FIZ-OS");
+    const d = await idle("/ucbenik/FIZ-OS");
+    assert.equal(d.status, 503, "četrti velik tok počaka");
+    assert.ok(Number(d.headers["retry-after"]) > 0);
+    for (const x of [a, b, c]) x.req.destroy();
+    assert.ok(await until(() => app.locals.tiskTokovi().streams === 0), "ob prekinitvi se mesta sprostijo");
+    assert.deepEqual(app.locals.tiskTokovi().collecting, []);
+  });
+});
+
+test("veliki tokovi: odjemalec, ki ne bere, ima časovno omejitev", async () => {
+  await withApp({ EVKLID_TISK_MB: "1", EVKLID_TISK_ROK_MS: "300" }, async ({ app, idle }) => {
+    const a = await idle("/ucbenik/FIZ-OS");
+    assert.equal(a.status, 200);
+    assert.ok(await until(() => app.locals.tiskTokovi().streams === 1, 3000), "tok teče (odjemalec ne bere)");
+    assert.ok(await until(() => app.locals.tiskTokovi().streams === 0, 5000), "tok po roku zaprt");
+  });
+});
+
+test("streamParts: napaka že v prvem kosu (pred glavami) je navadna napaka (500), ne 200 z opozorilom", async () => {
+  const srv = http.createServer((req, res) => {
+    function* parts() {
+      throw new Error("kazalo se ni izrisalo");
+    }
+    streamParts(res, parts(), { encoding: "gzip" }).catch(() => {
+      assert.equal(res.headersSent, false);
+      assert.equal(res.getHeader("content-encoding"), undefined);
+      res.statusCode = 500;
+      res.end("napaka");
+    });
+  }).listen(0);
+  const origErr = console.error;
+  console.error = () => {};
+  try {
+    const r = await rawGet(`http://127.0.0.1:${srv.address().port}`, "/");
+    assert.equal(r.status, 500);
+    assert.equal(r.body.toString(), "napaka");
+  } finally {
+    console.error = origErr;
     srv.close();
   }
 });
