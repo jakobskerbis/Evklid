@@ -109,9 +109,9 @@ export function appleLinkedEmail() {
     subject: "Prijava z Apple za Evklid",
     html: layout(
       "Dodana je prijava z Apple",
-      "<p>Na vaš račun Evklid je bila pravkar dodana prijava z Apple. Zaradi varnosti smo odjavili vse druge naprave.</p><p>Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo.</p>",
+      "<p>Na vaš račun Evklid je bila pravkar dodana prijava z Apple.</p><p>Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo: s tem odstranimo prijavo z Apple in odjavimo vse naprave.</p>",
     ),
-    text: "Na vaš račun Evklid je bila pravkar dodana prijava z Apple. Zaradi varnosti smo odjavili vse druge naprave. Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo.",
+    text: "Na vaš račun Evklid je bila pravkar dodana prijava z Apple. Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo: s tem odstranimo prijavo z Apple in odjavimo vse naprave.",
   };
 }
 

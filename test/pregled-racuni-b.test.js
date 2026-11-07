@@ -192,3 +192,81 @@ test("B-5 own-session verify keeps other devices of the owner signed in", async 
     assert.equal((await phone("/api/account")).status, 200);
   });
 });
+
+// B-7 (koordinator 7. 11.): POST iz seje istega računa potrdi brez gesla; geslo ugibanja omejuje meja za ves račun (acct<id>).
+test("B-7 own-session POST verifies without a password; password guesses hit the account-wide limit", async () => {
+  await withServer(async ({ appClient, webClient, register, db }) => {
+    const web = webClient();
+    const reg = await register(web, "sedem@primer.si", "lastnik12345");
+    const token = new URL(reg.body.dev_verify_url).searchParams.get("token");
+    assert.equal((await web("/api/auth/verify", { body: { token } })).status, 200);
+    assert.ok(db.prepare("SELECT email_verified_at FROM parents WHERE id = ?").get(reg.body.parent.id).email_verified_at);
+
+    const app = appClient();
+    const r2 = await register(app, "osem@primer.si", "lastnik12345");
+    const t2 = new URL(r2.body.dev_verify_url).searchParams.get("token");
+    const guess = webClient();
+    let last;
+    for (let i = 0; i < 31; i++) last = await guess("/api/auth/verify", { body: { token: t2, password: `ugibam-${i}` } });
+    assert.equal(last.status, 429);
+    assert.match(last.body.error, /eno uro/);
+    // Meja velja za račun, ne samo za omrežje ali brskalnik: tudi pravo geslo do konca okna ne gre (izhod je not_mine).
+    assert.equal((await webClient()("/api/auth/verify", { body: { token: t2, password: "lastnik12345" } })).status, 429);
+    assert.equal((await webClient()("/api/auth/verify", { body: { token: t2, not_mine: true } })).status, 200);
+  });
+});
+
+// B-8 (A P2-2, P3-6): Apple na potrjen račun z geslom samo obvesti po e-pošti, naprav ne odjavi in obvestil ne pobriše;
+// račun brez gesla in drug Apple ID z istim naslovom dobi sporočilo brez »prijavi se z geslom«.
+test("B-8 Apple on a verified password account keeps other devices; passwordless account gets a useful 409", async () => {
+  await withServer(async ({ appClient, webClient, register, db }) => {
+    const web = webClient();
+    const reg = await register(web, VICTIM, "lastnik12345");
+    const t = new URL(reg.body.dev_verify_url).searchParams.get("token");
+    assert.equal((await web("/api/auth/verify", { body: { token: t } })).status, 200);
+    const tablet = appClient();
+    assert.equal((await tablet("/api/auth/login", { body: { email: VICTIM, password: "lastnik12345" } })).status, 200);
+    assert.equal((await tablet("/api/push/register", { body: { token: "ExponentPushToken[tablica1234567890]", platform: "ios" } })).status, 200);
+    const iphone = appClient();
+    assert.equal((await iphone("/api/auth/apple", apple({ sub: "apple.lastnik", email: VICTIM, email_verified: true }))).status, 200);
+    assert.equal((await tablet("/api/account")).status, 200, "tablica je odjavljena");
+    assert.equal((await web("/api/account")).status, 200, "splet je odjavljen");
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM push_tokens WHERE parent_id = ?").get(reg.body.parent.id).n, 1);
+
+    const own = await appClient()("/api/auth/apple", apple({ sub: "apple.prvi", email: "samoapple@primer.si", email_verified: true }));
+    assert.equal(own.status, 201, JSON.stringify(own.body));
+    const other = await appClient()("/api/auth/apple", apple({ sub: "apple.drugi", email: "samoapple@primer.si", email_verified: true }));
+    assert.equal(other.status, 409);
+    assert.match(other.body.error, /Apple ID, s katerim si ga ustvaril/);
+  });
+});
+
+// B-9 (A P2-4, P3-7): ponastavitev gesla potrjenega računa ohrani ključe razredov in odstrani povezan Apple ID;
+// »tega računa nisem ustvaril« ključe zamenja.
+test("B-9 reset of a verified account keeps class keys and drops a linked Apple ID; not_mine rotates class keys", async () => {
+  await withServer(async ({ appClient, webClient, register, db }) => {
+    const web = webClient();
+    const reg = await register(web, "ucitelj@primer.si", "lastnik12345");
+    const t = new URL(reg.body.dev_verify_url).searchParams.get("token");
+    assert.equal((await web("/api/auth/verify", { body: { token: t } })).status, 200);
+    const cls = await web("/api/classes", { body: { name: "7.a" } });
+    assert.equal(cls.status, 201, JSON.stringify(cls.body));
+    db.prepare("UPDATE parents SET apple_sub = 'apple.nekdo' WHERE id = ?").run(reg.body.parent.id);
+    const keyHash = (id) => db.prepare("SELECT teacher_key_hash FROM classes WHERE owner_parent_id = ?").get(id).teacher_key_hash;
+    const mine = keyHash(reg.body.parent.id);
+    const f = await webClient()("/api/auth/forgot", { body: { email: "ucitelj@primer.si" } });
+    const reset = new URL(f.body.dev_reset_url).searchParams.get("reset");
+    assert.equal((await webClient()("/api/auth/reset", { body: { token: reset, password: "novo-geslo12" } })).status, 200);
+    assert.equal(keyHash(reg.body.parent.id), mine, "ključ razreda po lastnikovi ponastavitvi gesla ne deluje več");
+    assert.equal(db.prepare("SELECT apple_sub FROM parents WHERE id = ?").get(reg.body.parent.id).apple_sub, null);
+
+    const foreign = appClient();
+    const r2 = await register(foreign, "tuj@primer.si", "tujcevo-geslo1");
+    const c2 = await foreign("/api/classes", { body: { name: "8.b" } });
+    assert.equal(c2.status, 201, JSON.stringify(c2.body));
+    const before = keyHash(r2.body.parent.id);
+    const t2 = new URL(r2.body.dev_verify_url).searchParams.get("token");
+    assert.equal((await webClient()("/api/auth/verify", { body: { token: t2, not_mine: true } })).status, 200);
+    assert.notEqual(keyHash(r2.body.parent.id), before, "tujčev ključ razreda velja po »nisem ustvaril«");
+  });
+});

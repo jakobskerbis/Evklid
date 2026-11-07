@@ -681,7 +681,11 @@ function renderVerify(token) {
     e.target.disabled = true;
     try {
       const r = await api("/api/auth/verify", { method: "POST", body: { token, not_mine: true } });
-      if (r.reset) renderReset(r.reset);
+      if (r.reset)
+        renderReset(
+          r.reset,
+          "Račun s tvojim e-naslovom je ustvaril nekdo drug ali pa si geslo pozabil. Dosedanje geslo ne velja več in vse naprave smo odjavili. Nastavi svoje geslo (povezava velja 1 uro).",
+        );
       else {
         toast("E-naslov je potrjen ✓");
         await continueFlow();
@@ -693,10 +697,11 @@ function renderVerify(token) {
   });
 }
 
-function renderReset(token) {
+function renderReset(token, note = "") {
   shell(`
     <h1>Novo geslo</h1>
     <form id="auth-form" class="card form">
+      ${note ? `<p>${esc(note)}</p>` : ""}
       <label>Novo geslo <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
       <p class="form-error" hidden></p>
       <button class="primary" type="submit">Shrani geslo</button>

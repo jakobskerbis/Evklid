@@ -155,7 +155,9 @@ export function mountAccounts(app, store, opts = {}) {
   // Dostop, ki ga ima lahko nekdo drug kot lastnik e-naslova (prevzem pred registracijo, pregled #492): vse seje,
   // zaklep računa na napravah, žetoni potisnih obvestil (ime otroka na tujem telefonu), ključi razredov, ki jih je
   // dobil ob ustvarjanju razreda, in zasedenost profilov na napravah. Tabele drugih modulov morda ne obstajajo.
-  function dropForeignAccess(parentId) {
+  // classKeys: false pri ponastavitvi gesla potrjenega računa – ključe razredov je dobil lastnik sam (učitelj na šolskem
+  // računalniku bi sicer brez obvestila izgubil pregled razreda; pregled #492 A P2-4). Ob prevzemu (nepotrjen račun) da.
+  function dropForeignAccess(parentId, { classKeys = true } = {}) {
     sessions.destroyAll(parentId);
     accountLocks.lockAll(parentId);
     const run = (sql, ...args) => {
@@ -167,6 +169,7 @@ export function mountAccounts(app, store, opts = {}) {
     };
     run("DELETE FROM push_tokens WHERE parent_id = ?", parentId);
     run("DELETE FROM profile_devices WHERE student_id IN (SELECT id FROM students WHERE parent_id = ?)", parentId);
+    if (!classKeys) return;
     try {
       for (const c of db.prepare("SELECT id FROM classes WHERE owner_parent_id = ? AND kind = 'class'").all(parentId))
         db.prepare("UPDATE classes SET teacher_key_hash = ? WHERE id = ?").run(sha256(randomToken()), c.id);
@@ -972,21 +975,30 @@ export function mountAccounts(app, store, opts = {}) {
       update(p.id, { verify_token_hash: null });
       return res.json({ ok: true });
     }
+    // Seja istega računa (povezava odprta v brskalniku, kjer je lastnik prijavljen): potrdi brez gesla.
+    if (req.parent?.id === p.id && req.body?.not_mine !== true) {
+      confirmEmail(p.id);
+      return res.json({ ok: true });
+    }
     if (req.body?.not_mine === true) {
       confirmEmail(p.id);
       const reset = randomToken();
+      // Tujčev Apple ID (če ga je povezal) odpade z njegovim geslom (pregled #492 A P3-7).
       update(p.id, { password_hash: unusablePasswordHash(), reset_token_hash: sha256(reset), reset_expires_at: isoIn(1 / 24) });
+      if (p.apple_sub) update(p.id, { apple_sub: null });
       dropForeignAccess(p.id);
       audit(db, { req, parentId: p.id, action: "verify_foreign_session" });
       return res.json({ ok: true, reset });
     }
-    const email = String(p.email).toLowerCase();
-    if (emailThrottle.blocked(email) || ipThrottle.blocked(req.ip)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
+    // Meja za ves račun (ugibanje z menjavo omrežja, kot odklep in izvoz; pregled #492 A P1-1) in za omrežje.
+    const acct = `acct${p.id}`;
+    if (acrossThrottle.blocked(acct) || ipThrottle.blocked(req.ip))
+      return res.status(429).json({ error: "Preveč poskusov. Poskusi čez eno uro ali izberi »Tega računa nisem ustvaril / ne poznam gesla«." });
     const ok = await verifyPassword(String(req.body?.password || ""), p.password_hash);
     // Med čakanjem na scrypt se je geslo ali žeton lahko zamenjal.
     const same = ok && db.prepare("SELECT 1 FROM parents WHERE id = ? AND password_hash = ? AND verify_token_hash = ?").get(p.id, p.password_hash, p.verify_token_hash);
     if (!same) {
-      emailThrottle.fail(email);
+      acrossThrottle.fail(acct);
       ipThrottle.fail(req.ip);
       audit(db, { req, parentId: p.id, action: "verify_password_fail", ok: false });
       return res.status(401).json({ error: "Napačno geslo." });
@@ -1111,10 +1123,14 @@ export function mountAccounts(app, store, opts = {}) {
       email_verified_at: p.email_verified_at || new Date().toISOString(),
       verify_token_hash: null, // stara povezava za potrditev po ponastavitvi ne velja več (pregled #492 B, P2-2)
     });
-    // Apple ID, povezan z računom, ko naslov še ni bil potrjen, ni nujno lastnikov (pregled #492 B, P2-1). Stolpec
-    // obstaja samo s prijavo z Apple (server/mobile/apple-signin.js).
-    if (!p.email_verified_at && p.apple_sub) update(p.id, { apple_sub: null });
-    dropForeignAccess(p.id); // vse seje (tudi napadalčeve), obvestila na telefon in ključi razredov po novem geslu ne veljajo
+    // Povezan Apple ID ni nujno lastnikov: povezan pred potrditvijo naslova (pregled #492 B, P2-1) ali dodan na potrjen
+    // račun, o čemer je lastnik dobil e-pošto »če niste vi, nastavite novo geslo« (A P3-7). Ostane samo pri računu,
+    // ustvarjenem s prijavo z Apple (brez gesla). Lastnik ga znova poveže s prijavo z Apple. Stolpec obstaja samo s
+    // prijavo z Apple (server/mobile/apple-signin.js).
+    if (p.apple_sub && (!p.email_verified_at || !String(p.password_hash || "").startsWith("none$"))) update(p.id, { apple_sub: null });
+    // Vse seje (tudi napadalčeve) in obvestila na telefon po novem geslu ne veljajo; ključi razredov samo, če naslov še ni
+    // bil potrjen (prevzem pred registracijo), sicer jih je dobil lastnik sam (pregled #492 A P2-4).
+    dropForeignAccess(p.id, { classKeys: !p.email_verified_at });
     audit(db, { req, parentId: p.id, action: "password_reset" });
     accountLocks.unlock(p.id, req.deviceId);
     setSessionCookie(req, res, sessions.create(p.id));

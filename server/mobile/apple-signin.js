@@ -107,8 +107,9 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
           dropForeignAccess(byEmail.id);
           audit(db, { req, parentId: byEmail.id, action: "apple_link_unverified" });
         } else if (hasPassword) {
-          // Potrjen račun z geslom: vse druge naprave odjavimo in lastniku pošljemo obvestilo (če povezave ni naredil sam).
-          dropForeignAccess(byEmail.id);
+          // Potrjen račun z geslom: sem pride samo, kdor ima Apple ID s potrjenim istim naslovom (v praksi lastnik
+          // nabiralnika), zato naprav ne odjavimo (otrokove tablice, obvestila; pregled #492 A P2-2). Lastnik dobi
+          // e-pošto; če povezave ni naredil sam, »Pozabljeno geslo« odjavi vse naprave in odstrani Apple ID.
           if (ctx.sendMail && ctx.appleLinkedEmail) Promise.resolve(ctx.sendMail(byEmail.email, ctx.appleLinkedEmail())).catch(() => {});
           audit(db, { req, parentId: byEmail.id, action: "apple_link" });
         }
@@ -121,7 +122,15 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
       // Naslova, ki ga Apple ni potrdil, ne vzamemo: račun s tujim naslovom in napadalčevim Apple ID (pregled #492 B P2-1).
       if (!who.emailVerified) return res.status(400).json({ error: "Apple ni potrdil e-naslova. Ustvari račun z e-naslovom in geslom.", no_email: true });
       // Naslov je že zaseden (npr. Apple ga ni potrdil, zato računa nismo povezali): prijava z geslom.
-      if (parentByEmail(who.email)) return res.status(409).json({ error: "Račun s tem e-naslovom že obstaja. Prijavi se z e-naslovom in geslom.", exists: true });
+      // Račun brez gesla (ustvarjen z drugim Apple ID): »prijavi se z geslom« ne pomaga (pregled #492 A P3-6).
+      const taken = parentByEmail(who.email);
+      if (taken)
+        return res.status(409).json({
+          error: String(taken.password_hash || "").startsWith("none$")
+            ? "Račun s tem e-naslovom že obstaja. Prijavi se z Apple ID, s katerim si ga ustvaril, ali nastavi geslo s »Pozabljeno geslo«."
+            : "Račun s tem e-naslovom že obstaja. Prijavi se z e-naslovom in geslom.",
+          exists: true,
+        });
       const birthIso = signup();
       if (!birthIso) return;
       // Apple je naslov potrdil (zgoraj).
