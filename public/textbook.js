@@ -10,6 +10,10 @@ import { wireLessonReport } from "./prijave.js";
 
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
 const $ = (sel) => document.querySelector(sel);
+// Zaporedni številki prikaza: odgovor starejše zahteve (prejšnja poizvedba iskanja, prej kliknjena lekcija,
+// domača stran po »Nazaj«) ne sme prepisati novejšega, ki je prišel prej.
+let navSeq = 0; // celoten pogled Učbenika (domača stran ali lekcija)
+let bodySeq = 0; // spodnji del domače strani (iskanje, kazalo, viri)
 const tb = { browse: false, subject: null, book: null, group: null, query: "", topicId: null, books: [], myPath: null, program: null, profile: null, mode: "lessons", refType: "", refSl: false, refs: null, refOpen: new Set() };
 
 // Kar iz Nastavitev določa učbenik: smer, program, predmet in razred/letnik.
@@ -220,6 +224,7 @@ export async function openLesson(topicId) {
 }
 
 async function renderHome() {
+  const my = ++navSeq;
   stopReading();
   current = null;
   const box = $("#view-textbook");
@@ -229,15 +234,22 @@ async function renderHome() {
   const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
   if (!tb.books.length || tb.program !== program || tb.system !== system) {
+    const books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
+    // Stanje šele po preverjanju: zavržen odgovor ne sme pustiti novih knjig brez ponastavitve predmeta in poti.
+    if (my !== navSeq) return;
     tb.program = program;
     tb.system = system;
-    tb.books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
+    tb.books = books;
     tb.subject = null;
     tb.book = null;
     tb.group = null;
     tb.myPath = null;
   }
-  if (tb.myPath === null) tb.myPath = (await ctx.api(`/api/students/${student.id}/path`).catch(() => null))?.key || "";
+  if (tb.myPath === null) {
+    const key = (await ctx.api(`/api/students/${student.id}/path`).catch(() => null))?.key || "";
+    if (my !== navSeq) return;
+    tb.myPath = key;
+  }
   // Privzeto: učbenik predmeta in ravni, ki ju učenec ima v učni poti.
   if (!tb.subject) tb.subject = program ? "PROG" : (tb.myPath || student?.settings?.subject || "MAT").split("-")[0];
   const subjects = [...new Map(tb.books.map((b) => [b.subject, b.subject === "PROG" ? t("tbk.myStudy") : b.subjectName])).entries()];
@@ -325,8 +337,21 @@ async function renderHome() {
 async function renderBody() {
   const body = $("#tb-body");
   if (!body) return;
+  const my = ++bodySeq;
+  const stale = () => my !== bodySeq || !body.isConnected;
+  // Napaka iskanja ali kazala: sporočilo namesto zadetkov starejše poizvedbe (in brez neobravnavane zavrnitve).
+  const failed = (err) => {
+    if (stale()) return;
+    body.innerHTML = `<div class="card" role="alert"><p>${esc(err?.status ? t("common.error", { status: err.status }) : t("off.noConnection"))}</p></div>`;
+  };
   if (tb.query.length >= 2) {
-    const hits = await ctx.api(`/api/textbook/search?q=${encodeURIComponent(tb.query)}&system=${encodeURIComponent(tb.system || "SI")}`);
+    let hits;
+    try {
+      hits = await ctx.api(`/api/textbook/search?q=${encodeURIComponent(tb.query)}&system=${encodeURIComponent(tb.system || "SI")}`);
+    } catch (err) {
+      return failed(err);
+    }
+    if (stale()) return;
     body.innerHTML = hits.length
       ? `<p class="muted">${esc(t("tbk.hits", { q: tb.query }))}</p><ul class="tb-list">${hits
           .map(
@@ -344,8 +369,14 @@ async function renderBody() {
     body.innerHTML = `<div class="card"><p>${esc(t("tbk.noBook"))}</p></div>`;
     return;
   }
-  const book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
-  if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book);
+  let book;
+  try {
+    book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
+  } catch (err) {
+    return failed(err);
+  }
+  if (stale()) return;
+  if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book, stale);
   const unitHtml = (u, i) => `<section class="card tb-unit">
         <h2><span class="tb-num">${i + 1}</span>${esc(u.title)}</h2>
         <ul class="tb-list">${u.topics
@@ -420,6 +451,7 @@ function wireFormulas(root) {
 }
 
 async function renderLesson(topicId) {
+  const my = ++navSeq;
   stopReading();
   const box = $("#view-textbook");
   let L;
@@ -428,11 +460,13 @@ async function renderLesson(topicId) {
   } catch (err) {
     // Brez povezave: javna kopija že obiskane lekcije iz predpomnilnika (public/sw.js, samo besedilo).
     L = err?.status ? null : await ctx.api(`/api/lesson?id=${encodeURIComponent(topicId)}`).catch(() => null);
+    if (my !== navSeq) return;
     if (!L) {
       tb.topicId = null;
       return renderHome();
     }
   }
+  if (my !== navSeq) return;
   current = { id: L.id, name: L.name };
   // Simboli v formulah po predmetu lekcije (FIZ-OS-9 → fizika, fakultetna tema → njen predmet), ne po
   // predmetu v nastavitvah. Oznake lekcije (:::simboli) imajo prednost: T v T = I/I₀ je prepustnost.
@@ -755,12 +789,15 @@ const refRow = (it) => `<a class="list-row ref-row" href="${esc(it.url)}" target
     ${ic("external-link")}<span class="sr-only">${esc(t("refs.newTab"))}</span>
   </a>`;
 
-async function renderRefs(body, book) {
+async function renderRefs(body, book, stale) {
   if (tb.refs?.program !== tb.program) {
     body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
     try {
-      tb.refs = await ctx.api(`/api/references?program=${encodeURIComponent(tb.program)}`);
+      const refs = await ctx.api(`/api/references?program=${encodeURIComponent(tb.program)}`);
+      if (stale()) return;
+      tb.refs = refs;
     } catch {
+      if (stale()) return;
       tb.refs = null;
       body.innerHTML = `<div class="card"><p>${esc(t("refs.none"))}</p></div>`;
       return;
