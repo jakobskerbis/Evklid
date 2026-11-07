@@ -60,13 +60,15 @@ jobs:
       # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime in kontrolna vsota, in prenese samo
       # nove različice. Ključ po mesecu: enkrat na mesec nova mapa (iz prejšnje), da ne raste v nedogled.
       - id: mesec
-        run: echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+          echo "img=${ImageOS:-ubuntu}" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         timeout-minutes: 5
         with:
           path: ~/apt-arhiv
-          key: apt-${{ runner.os }}-${{ env.ImageOS }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-${{ steps.mesec.outputs.m }}
-          restore-keys: apt-${{ runner.os }}-${{ env.ImageOS }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-
+          key: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-${{ steps.mesec.outputs.m }}
+          restore-keys: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
       # sredi prenosa z ogledala in požrl 40 min; uspešne, a počasne namestitve pa trajajo do ~12 min, zato 13 min na poskus.
       # Brskalniki so v predpomnilniku, apt ostane vedno.
@@ -83,7 +85,7 @@ jobs:
           APT
           sudo mkdir -p ~/apt-arhiv/partial
           sudo chown _apt:root ~/apt-arhiv/partial
-          ls ~/apt-arhiv/*.deb 2>/dev/null | wc -l | xargs echo "Paketov v predpomnilniku:"
+          echo "Paketov v predpomnilniku: $(find ~/apt-arhiv -maxdepth 1 -name '*.deb' | wc -l)"
           for poskus in 1 2 3; do
             if timeout -k 10 13m npx playwright install --with-deps chromium webkit; then
               # actions/cache shrani mapo kot uporabnik runner: brez zaklepa in mape partial (_apt, 0700).
@@ -160,13 +162,15 @@ jobs:
       # zatikala po 13 min × 3. apt vzame paket iz te mape, če se ujemata ime in kontrolna vsota, in prenese samo
       # nove različice. Ključ po mesecu: enkrat na mesec nova mapa (iz prejšnje), da ne raste v nedogled.
       - id: mesec
-        run: echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+          echo "img=${ImageOS:-ubuntu}" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         timeout-minutes: 5
         with:
           path: ~/apt-arhiv
-          key: apt-${{ runner.os }}-${{ env.ImageOS }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-${{ steps.mesec.outputs.m }}
-          restore-keys: apt-${{ runner.os }}-${{ env.ImageOS }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-
+          key: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-${{ steps.mesec.outputs.m }}
+          restore-keys: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
       # sredi prenosa z ogledala in požrl 40 min; uspešne, a počasne namestitve pa trajajo do ~12 min, zato 13 min na poskus.
       # Brskalniki so v predpomnilniku, apt ostane vedno.
@@ -183,7 +187,7 @@ jobs:
           APT
           sudo mkdir -p ~/apt-arhiv/partial
           sudo chown _apt:root ~/apt-arhiv/partial
-          ls ~/apt-arhiv/*.deb 2>/dev/null | wc -l | xargs echo "Paketov v predpomnilniku:"
+          echo "Paketov v predpomnilniku: $(find ~/apt-arhiv -maxdepth 1 -name '*.deb' | wc -l)"
           for poskus in 1 2 3; do
             if timeout -k 10 13m npx playwright install --with-deps chromium; then
               sudo rm -rf ~/apt-arhiv/partial ~/apt-arhiv/lock; sudo chmod -R a+rX ~/apt-arhiv
