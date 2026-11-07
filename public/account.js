@@ -341,7 +341,7 @@ export async function initAccount({ onReady }) {
     return false;
   }
   if (verifyToken) {
-    renderVerify(verifyToken);
+    renderVerifyLink(verifyToken);
     return false;
   }
   if (billing && status.logged_in) {
@@ -654,7 +654,7 @@ function renderForgot() {
 
 // Povezava za potrditev e-naslova, odprta brez seje tega računa (drug brskalnik, Safari po registraciji v aplikaciji):
 // strežnik ničesar ne spremeni, dokler lastnik ne vpiše gesla ali pove, da računa ni ustvaril (pregled #492 B).
-function renderVerify(token) {
+function renderVerifyLink(token) {
   shell(`
     <h1>Potrdi e-naslov</h1>
     <form id="auth-form" class="card form">
