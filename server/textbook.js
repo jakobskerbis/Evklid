@@ -202,10 +202,15 @@ export function loadLesson(topicId) {
 
 function readLesson(file) {
   if (!file) return null;
+  // Brez izjeme za manjkajočo lekcijo: iskanje preveri vse teme (~200 jih lekcije še nima), izjema s skladom
+  // klicev pa je ~4-krat dražja od samega stat (iskanje brez prijave, 2 jedri).
   let st;
   try {
-    st = fs.statSync(file);
+    st = fs.statSync(file, { throwIfNoEntry: false });
   } catch {
+    st = undefined;
+  }
+  if (!st) {
     cache.delete(file);
     return null;
   }
