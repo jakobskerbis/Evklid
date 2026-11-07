@@ -130,10 +130,11 @@ export default function ExportData() {
               <Button title={t("mob.exportButton")} icon={{ ios: "square.and.arrow.up", android: "download" }} loading={busy} disabled={!password} onPress={() => exportData({ password })} />
             </>
           )}
-          {Platform.OS === "ios" ? (
+          {/* j 7. 11.: račun z geslom potrdi z geslom; Apple samo za račun brez gesla (iPhone). */}
+          {Platform.OS === "ios" && noPassword ? (
             <View style={{ gap: 8 }}>
               <Body muted small center>{t("mob.exportAppleHint")}</Body>
-              <Button title={t("mob.confirmApple")} kind={noPassword ? "primary" : "secondary"} icon={{ ios: "apple.logo", android: "lock" }} disabled={busy} onPress={withApple} />
+              <Button title={t("mob.confirmApple")} kind="primary" icon={{ ios: "apple.logo", android: "lock" }} disabled={busy} onPress={withApple} />
             </View>
           ) : null}
         </>

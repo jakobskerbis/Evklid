@@ -20,6 +20,7 @@ test("zaslon za prenos: geslo ali Apple, datoteka v predpomnilnik in meni za del
   assert.match(src, /apple_identity_token: cred\.identityToken, apple_nonce: nonce/);
   // Pregled #525 B: write() je v expo-file-system 58 asinhron; zapuščen zaslon prekliče zahtevo in nič ne zapiše.
   assert.match(src, /await file\.write\(/, "deli šele celo datoteko");
+  assert.match(src, /Platform\.OS === "ios" && noPassword \? \(/, "Apple samo za račun brez gesla (j 7. 11.)");
   assert.doesNotMatch(src, /[^t] file\.write\(/, "brez neawaitanega write()");
   assert.match(src, /signal: request\.current\.signal/);
   assert.match(src, /mounted\.current = false;\s*request\.current\?\.abort\(\);\s*removeCopy\(\);/, "ob zapustitvi: preklic in izbris");
