@@ -103,14 +103,12 @@ Delo stiskanja je $\int v\,dp$; kapljevina ima okoli tisočkrat manjšo specifi�
 
 **8. Pregled štirih procesov.**
 
-| Proces | Dovajanje | Oddajanje |
-|---|---|---|
-| Otto | izohorno | izohorno |
-| Diesel | izobarno | izohorno |
-| Joule | izobarno | izobarno |
-| Rankine | izobarno, z uparjanjem | izobarno, s kondenzacijo |
+- **Otto:** dovajanje izohorno, oddajanje izohorno.
+- **Diesel:** dovajanje izobarno, oddajanje izohorno.
+- **Joule:** dovajanje izobarno, oddajanje izobarno.
+- **Rankine:** dovajanje izobarno z uparjanjem, oddajanje izobarno s kondenzacijo.
 
-Pri vseh je kompresija in ekspanzija idealno adiabatna.
+Pri vseh sta kompresija in ekspanzija idealno adiabatni.
 
 ## Rešeni primeri
 

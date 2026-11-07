@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Spremenljivka in prirejanje
+  - najprej desna stran, nato ime
+  - `n = n + 1` poveča `n`
+- Izraz
+  - izračuna se v eno vrednost
+  - stavek ne da vrednosti
+- Podatkovni tipi
+  - `int`, `float`, `str`, `bool`
+  - tip določa pomen `+`
+- Aritmetika
+  - `/` vedno `float`
+  - `a == b * (a // b) + a % b`
+  - napaka: `^` ni potenca
+- Prednost operatorjev
+  - `**` od desne: `2 ** 3 ** 2` je 512
+  - `-3 ** 2` je `-9`
+  - `not`, nato `and`, nato `or`
+- Kratkostično vrednotenje
+  - `y != 0 and x / y > 1` je varen
+- Vhod in izhod
+  - `input` vrne niz
+  - f-niz `f"{x:.2f}"`
+  - navzgor: `(n + k - 1) // k`
