@@ -670,8 +670,8 @@ def _vencne_cevi(vencne, bvh_povrsina, tel):
                             v_ = v_ / (np.linalg.norm(v_) + 1e-12) if np.linalg.norm(v_) > 1e-6 else np.cross(nn, [0, 0, 1.0])
                             C[i] = np.array(a_) + v_ * (R[i] + Ra[j_] + 0.0004)
                 C = _gladi_pot(C, 2)
-            V_, F_ = sz.cev_np(C, R, 9); zbirka.dodaj(V_, F_)
-            V_, F_ = sz.cev_np(C[::3] if len(C) > 9 else C, R[::3] if len(C) > 9 else R, 6); zbirka_t.dodaj(V_, F_)
+            V_, F_ = sz.cev_np(C, R, 7); zbirka.dodaj(V_, F_)
+            V_, F_ = sz.cev_np(C[::3] if len(C) > 9 else C, R[::3] if len(C) > 9 else R, 5); zbirka_t.dodaj(V_, F_)
         me = r[1]
         nov = zbirka.mesh(r[0])
         me.clear_geometry()
@@ -916,8 +916,8 @@ def srce_ct(osnovni, cfg, tmp):
     nove += vrstice
     Vu, Fu = levo_uho(P, C, T, premik, bvh_epi, Lc["mitralna"])
     me = _mesh("Left auricle", Vu, Fu)
-    cfg.setdefault("_telefon", {})["Left auricle"] = _poenostavi(me, 0.3, tmp)  # telefon 30 %, računalnik 65 % (n10: proračun trikotnikov)
-    me = _poenostavi(me, 0.65, tmp, "Left auricle")
+    cfg.setdefault("_telefon", {})["Left auricle"] = _poenostavi(me, 0.25, tmp)  # telefon 25 %, računalnik 50 % (n11: meja 6 / 2 MB)
+    me = _poenostavi(me, 0.5, tmp, "Left auricle")
     nove.append(["Left auricle", me, "miokard", "levo-srcno-uho", "Left auricle (lastno, CT) / Heart.g", 0])  # brez poenostavitve (oglato)
     # n11 (ocena n10: »desnega ušesa ni, koren aorte je spredaj gol«): desno uho kot širok trikoten nazobčan reženj iz
     # sprednje-zgornjega dela desnega preddvora čez desno stran korena aorte (Netter, Gray), sploščen ob koren
@@ -931,8 +931,8 @@ def srce_ct(osnovni, cfg, tmp):
         cilj = np.asarray(Lc["aortna"]) - tip; cilj = cilj / np.linalg.norm(cilj) + np.array([0, -0.55, 0.35])
         Vr, Fr = levo_uho(P, C, T, premik, bvh_epi2, None, osnova=(tip - nt * 0.002, nt, 0.0105, cilj, 0.036, 1.8))
         me = _mesh("Right auricle (lastno)", Vr, Fr)
-        cfg["_telefon"]["Right auricle (lastno)"] = _poenostavi(me, 0.3, tmp)
-        me = _poenostavi(me, 0.65, tmp, "Right auricle (lastno)")
+        cfg["_telefon"]["Right auricle (lastno)"] = _poenostavi(me, 0.25, tmp)
+        me = _poenostavi(me, 0.5, tmp, "Right auricle (lastno)")
         nove.append(["Right auricle (lastno)", me, "miokard", "desno-srcno-uho", "Right auricle (lastno, CT) / Heart.g", 0])
     cfg["_tocke4"] = [Vector(Lc["konica"]), Vector(Lc["mitralna"]), Vector(Lc["trikuspidalna"])]
     if cfg.get("_out"):
@@ -1374,7 +1374,7 @@ def zaklopke_ct(P, C, T, premik, L, bvh_lv, bvh_rv, tel):
             def pap_m(q, dno=dno, H=H, vel=vel, ime_p=ime_p):
                 z, gl = sz.papilarna(dno, H, R_pap * vel, q=q, glav=2 if vel < 0.6 else 3, seme=len(ime_p))
                 return (z.mesh(ime_p), gl)
-            me, gl = pap_m(1.0); mt, _ = pap_m(0.55)
+            me, gl = pap_m(1.0); mt, _ = pap_m(0.45)
             _brez_mascobe(me); _brez_mascobe(mt)
             tel[ime_p] = mt
             vrstice.append([ime_p, me, "miokard", "papilarne-misice", f"{ime_p} (lastno, CT) / Heart.g", 0])

@@ -106,7 +106,7 @@ def listic(c, n, a, b, kot, R, f0, f1, globina, q=1.0, notranji=0.58, valovi=1, 
     cona). n11 (ocena n10: »togi beli lijaki, martini kozarci, ravni zgornji rob«): ob komisurah skoraj nič globine (lističi
     so ločeni z zarezami, ne zvezen lijak), visijo skoraj vzporedno z osjo (prosti rob pri ~60 % polmera), tanki (0,35 mm,
     hrapava cona 0,7 mm), prosti rob nagubano valovit (drobne gube in nepravilni zobci), trebuh rahlo izbočen."""
-    nu, nv = max(14, int(52 * q)), max(7, int(18 * q))
+    nu, nv = max(14, int(44 * q)), max(7, int(15 * q))
     rng = np.random.default_rng(seme)
     ph = rng.uniform(0, 2 * np.pi, 4)
     S = np.zeros((nu, nv, 3)); D = np.zeros((nu, nv))
@@ -188,7 +188,7 @@ def zepki(c, os_, R, q=1.0, debelina=0.00032):
     0,3 R, vidna kotanja sinusa), zadebeljen prosti rob (vrvica 0,35 mm), tanjša lunula ob njem in jasen nodul (Arantius,
     Ø 2,4 mm) na sredini prostega roba. Vrne (zbirka žepkov, krona za obroč)."""
     a = np.cross(os_, [0.3, 0.5, 0.8]); a /= np.linalg.norm(a); b = np.cross(os_, a)
-    nt, nu = max(12, int(26 * q)), max(6, int(12 * q))
+    nt, nu = max(12, int(22 * q)), max(6, int(10 * q))
     z = Zbirka(); krona = []
     for k in range(3):
         f0 = 2 * math.pi * k / 3 + 0.3
@@ -210,11 +210,11 @@ def zepki(c, os_, R, q=1.0, debelina=0.00032):
         z.dodaj(V, F)
         # zadebeljen prosti rob (brez skrajnih komisur)
         rob = S[1:-1, -1]
-        Vr, Fr_ = cev_np(rob, [0.00035] * len(rob), 5 if q >= 1 else 4); z.dodaj(Vr, Fr_)
+        Vr, Fr_ = cev_np(rob, [0.00035] * len(rob), 4); z.dodaj(Vr, Fr_)
         # nodul: kapljica na sredini prostega roba (ob središču)
         m = S[nt // 2, -1]
         tg = S[nt // 2 + 1, -1] - S[nt // 2 - 1, -1]; tg /= np.linalg.norm(tg) + 1e-12
-        Vn, Fn = cev_np([m - tg * 0.0005, m + tg * 0.0005], [0.0011, 0.0011], 8 if q >= 1 else 6); z.dodaj(Vn, Fn)
+        Vn, Fn = cev_np([m - tg * 0.0005, m + tg * 0.0005], [0.0011, 0.0011], 6); z.dodaj(Vn, Fn)
     return z, np.array(krona)
 
 
@@ -223,7 +223,7 @@ def tetive(z, glava, rob, hrap, q=1.0, rnd=None):
     mišici) gre na vsakih ~6 točk prostega roba eno deblo (Ø 1 mm) do ≈ 40 %, ki se razcepi v 2 sekundarni (Ø 0,6 mm) in
     vsaka v 3 terciarne (Ø 0,35 mm) do prostega roba; vsako drugo deblo še opornica do hrapave cone (3–4 mm od roba)."""
     rnd = rnd or np.random.default_rng(1)
-    seg = (6, 5, 3) if q >= 1 else (4, 3, 3)
+    seg = (5, 4, 3) if q >= 1 else (4, 3, 3)
     pot = lambda A, B, k, ukriv: [A + (B - A) * t + ukriv * math.sin(math.pi * t) for t in np.linspace(0, 1, k)]
     gs = 6 if q >= 1 else 4
     for g0 in range(0, len(rob) - 1, gs):
