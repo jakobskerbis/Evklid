@@ -49,7 +49,7 @@ Prostostne stopnje so spremenljivke (temperatura, sestave faz), ki jih lahko spr
 :::premisli
 V binarnem sistemu sta na neki točki hkrati v ravnotežju talina in dve trdni fazi. Napovej, kako bo videti ohlajevalna krivulja pri tej sestavi.
 ---
-$K = 2$ in $P = 3$, zato $F = 2 - 3 + 1 = 0$. Temperatura je določena, kot pri čisti kovini, zato krivulja pokaže vodoraven plato. Takšna točka je evtektik, ki ga spoznamo spodaj.
+$K = 2$ in $P = 3$, zato $F = 2 - 3 + 1 = 0$. Temperatura je določena, kot pri čisti kovini, zato krivulja pokaže vodoraven plato. Takšna točka je na primer evtektik, ki ga spoznamo spodaj, ali peritektik (razdelek »Bolj natančno«).
 :::
 
 ### Vezna premica in vzvodno pravilo
@@ -262,7 +262,7 @@ Natančno navedi Gibbsovo pravilo faz pri stalnem tlaku. Utemelji z njim, zakaj 
 
 ### Naloga 3
 
-Metalograf na posnetku počasi ohlajenega podevtektoidnega jekla s slikovno analizo izmeri, da je masni delež cementita kot faze $10\,\%$. Kolikšna je vsebnost ogljika v jeklu in kolikšen je delež perlita?
+Metalograf na posnetku počasi ohlajenega podevtektoidnega jekla s slikovno analizo posnetka z elektronskim mikroskopom izmeri, da je delež cementita kot faze $10\,\%$. Gostoti ferita in cementita sta skoraj enaki, zato je to tudi masni delež. Kolikšna je vsebnost ogljika v jeklu in kolikšen je delež perlita?
 
 **Rešitev:**
 
@@ -289,14 +289,14 @@ Diagram $\mathrm{Fe}$-$\mathrm{Fe_3C}$ je **metastabilen**. Cementit sčasoma ra
 
 Na zgornjem levem robu diagrama je še **peritektična reakcija** pri okoli $1495\,^\circ\mathrm{C}$: $\delta + \mathrm{L} \to \gamma$. Trdna faza in talina skupaj dasta novo trdno fazo. Pri počasnem ohlajanju ima reakcija težavo: novi avstenit obda kristale $\delta$ in loči talino od njih, zato se pretvorba konča le z difuzijo skozi to plast.
 
-Ravnotežni diagram predpostavlja, da ima difuzija dovolj časa. Pri hitrem strjevanju se sestava kristalov ne izenači: jedro kristala ima drugo sestavo kot rob (**izcejanje**, koringa). Pri hitrem ohlajanju jekla pa nastanejo strukture, ki jih v ravnotežnem diagramu ni. To je vsebina naslednje lekcije o toplotni obdelavi.
+Ravnotežni diagram predpostavlja, da ima difuzija dovolj časa. Pri hitrem strjevanju se sestava kristalov ne izenači: jedro kristala ima drugo sestavo kot rob (**kristalno izcejanje**, angl. *coring*). Pri hitrem ohlajanju jekla pa nastanejo strukture, ki jih v ravnotežnem diagramu ni. To je vsebina naslednje lekcije o toplotni obdelavi.
 
 ## Drugače: Uporaba v stroki
 
 - *Kirurška orodja.* Martenzitna nerjavna jekla (okoli $13\,\%$ Cr in $0{,}2$ do $0{,}4\,\%$ C) za skalpele in klešče izberejo tako, da so pri temperaturi kaljenja v področju avstenita. Brez faznega diagrama ne bi vedeli, do kod jih segreti.
 - *Vsadki.* Titanova zlitina Ti-6Al-4V za kolčne proteze je dvofazna ($\alpha + \beta$). Razmerje faz, ki ga določa temperatura obdelave, nastavi trdnost in odpornost proti utrujanju.
 - *Zobotehnika in spajke.* Spajke izbirajo blizu evtektične sestave, ker se strdijo pri eni, nizki temperaturi in lepo tečejo v režo.
-- *Laboratorij.* Likvidus in solidus merijo z diferenčno dinamično kalorimetrijo; metalografi na obrusih s slikovno analizo izmerijo delež perlita in iz njega z vzvodnim pravilom preverijo vsebnost ogljika, kot v Nalogi 3.
+- *Laboratorij.* Likvidus in solidus merijo z diferenčno dinamično kalorimetrijo; metalografi na obrusih s slikovno analizo izmerijo delež perlita ali cementita in iz njega z vzvodnim pravilom preverijo vsebnost ogljika, kot v Nalogi 3. Slikovna analiza da ploščinski (prostorninski) delež; ker imata ferit in cementit skoraj enako gostoto, je ta blizu masnega.
 
 ## Preveri se
 

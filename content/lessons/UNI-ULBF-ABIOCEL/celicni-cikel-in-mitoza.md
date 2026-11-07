@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Laboratorij za celične kulture testira novo zdravilo proti raku. Rakave celice gojijo v dveh posodah: v eni z zdravilom, v drugi brez. Po enem dnevu ima posoda z zdravilom skoraj enako število celic kot na začetku, a pod mikroskopom je v njej skoraj tretjina celic okroglih, s kromosomi, zbranimi v sredini. V posodi brez zdravila je takih celic le nekaj odstotkov. Kaj je zdravilo naredilo? In kako iz preštetih celic sploh ugotoviš, koliko časa celica preživi v posamezni fazi?
+Laboratorij za celične kulture testira novo zdravilo proti raku. Rakave celice gojijo v dveh posodah: v eni z zdravilom, v drugi brez. Po šestih urah ima posoda z zdravilom skoraj enako število celic kot na začetku, a pod mikroskopom je v njej skoraj tretjina celic okroglih, s kromosomi, zbranimi v sredini. V posodi brez zdravila je takih celic le nekaj odstotkov. Kaj je zdravilo naredilo? In kako iz preštetih celic sploh ugotoviš, koliko časa celica preživi v posamezni fazi?
 
 Odgovor da celični cikel. Ko poznaš njegove faze in kontrolne točke, iz enega mikroskopskega preparata in ene meritve s pretočnim citometrom izračunaš trajanje faz, iz deleža celic v mitozi pa prepoznaš, kje zdravilo cikel ustavi.
 
@@ -111,7 +111,7 @@ $I_\mathrm{M} = \dfrac{N_\mathrm{M}}{N}$ in $t_\mathrm{M} = I_\mathrm{M} \cdot T
 
 1. $I_\mathrm{M} = \dfrac{42}{1000} = 0{,}042$, torej $4{,}2\,\%$.
 2. $t_\mathrm{M} = 0{,}042 \cdot 24\,\mathrm{h} \approx 1{,}0\,\mathrm{h}$.
-3. Odgovor: mitotski indeks je $4{,}2\,\%$, mitoza traja okoli eno uro. Zato moraš za zanesljiv indeks prešteti veliko celic: med stotimi jih je v mitozi le kakšnih pet.
+3. Odgovor: mitotski indeks je $4{,}2\,\%$, mitoza traja okoli eno uro. Zato moraš za zanesljiv indeks prešteti veliko celic: med stotimi jih je v mitozi le kakšne štiri.
 
 ### Primer 2: generacijski čas iz štetja celic
 
@@ -265,15 +265,13 @@ Za zadnjo fazo ($a_2 = T$, $a_1 = T - t_\mathrm{M}$) sledi $f = 2^{t_\mathrm{M}/
 
 ## Preveri se
 
-? Katera beljakovina se ne ujema s skupino, ker ne sodeluje neposredno pri prehodu iz metafaze v anafazo?
-- separaza
-~ Separaza razcepi kohezin in s tem sproži anafazo.
-- sekurin
-~ Sekurin zavira separazo; njegova razgradnja je pogoj za anafazo.
-+ Rb
-- APC/C
-~ APC/C označi sekurin za razgradnjo, zato je osrednji del prehoda.
-> Rb deluje na točki G1/S: dokler ni fosforiliran, zadržuje E2F in s tem vstop v fazo S.
+? Oceni brez kalkulatorja: v nesinhroni kulturi z generacijskim časom $30\,\mathrm{h}$ je v mitozi $2\,\%$ celic. Koliko časa približno traja mitoza?
+- Okoli $2\,\mathrm{h}$.
+~ Odstotek ni čas: delež celic moraš pomnožiti z generacijskim časom.
++ Okoli $0{,}6\,\mathrm{h}$, torej dobrih pol ure.
+- Okoli $15\,\mathrm{h}$.
+~ To je $30/2$: generacijski čas je deljen z odstotkom, namesto da bi ga pomnožil z deležem $0{,}02$.
+> $t_\mathrm{M} \approx 0{,}02 \cdot 30\,\mathrm{h} = 0{,}6\,\mathrm{h}$. Natančnejša zveza iz razdelka »Bolj natančno« da $30\,\mathrm{h} \cdot \log_2 1{,}02 \approx 0{,}86\,\mathrm{h}$.
 
 ? Človeška celica ima v G1 $46$ kromosomov. Koliko kromatid ima ista celica v metafazi mitoze?
 - $46$
@@ -289,17 +287,15 @@ Za zadnjo fazo ($a_2 = T$, $a_1 = T - t_\mathrm{M}$) sledi $f = 2^{t_\mathrm{M}/
 + Celica nadaljuje cikel in poškodovano DNA prenese na hčerinske celice.
 - Celica takoj vstopi v anafazo, ker se kontrolna točka vretena izklopi.
 ~ Kontrolna točka vretena preverja pripetje kinetohorov, ne poškodb DNA, in ni odvisna od p53.
-> Brez p53 se ne vklopi p21, CDK niso zavrte in celica gre v fazo S kljub poškodbi. Zato so okvare p53 pogoste pri raku.
+> Brez p53 se ne vklopi p21, CDK niso zavrte in celica gre v fazo S kljub poškodbi. Kontrolna točka G2/M jo lahko še za kratek čas zadrži, a brez p53 ta zaustavitev ne traja dovolj dolgo. Zato so okvare p53 pogoste pri raku.
 
-? Študent opiše anafazo: »1) Vsi kinetohori so pripeti. 2) APC/C razgradi sekurin. 3) Vreteno raztrga kohezin. 4) Kromatidi gresta k nasprotnima poloma.« Kateri korak je napačen?
-- Korak 1.
-~ Pripetje vseh kinetohorov je res pogoj za začetek anafaze.
-- Korak 2.
-~ APC/C sekurin označi z ubikvitinom, razgradi ga proteasom; korak je v bistvu pravilen.
-+ Korak 3.
-- Korak 4.
-~ Sestrski kromatidi res odideta k nasprotnima poloma.
-> Kohezin razcepi encim separaza, ko se razgradi sekurin. Vreteno samo kromatid ne more ločiti.
+? Kulturi z generacijskim časom $24\,\mathrm{h}$ dodaš zdravilo, ki ustavi celice v mitozi, in jo po $24\,\mathrm{h}$ izmeriš s pretočnim citometrom. Kateri izid (deleži celic z $2C$, vmes in s $4C$) ustreza tej kulturi?
+- $2C$: $55\,\%$; vmes: $30\,\%$; $4C$: $15\,\%$
+~ To je običajna nesinhrona kultura brez zdravila, kot v Primeru 3.
+- $2C$: $90\,\%$; vmes: $5\,\%$; $4C$: $5\,\%$
+~ Kopičenje pri $2C$ pomeni zaustavitev v G1, na primer z zaviralcem CDK4/6.
++ $2C$: $5\,\%$; vmes: $5\,\%$; $4C$: $90\,\%$
+> Celice, ustavljene v mitozi, imajo podvojeno DNA ($4C$). V enem generacijskem času pride do mitoze skoraj vsaka celica in tam obstane.
 
 ? Bolnik med kemoterapijo s taksanom izgubi lase, koža na rokah pa se mu ne spremeni opazno. Zakaj prav lasje?
 - Taksan se veže na keratin v laseh.

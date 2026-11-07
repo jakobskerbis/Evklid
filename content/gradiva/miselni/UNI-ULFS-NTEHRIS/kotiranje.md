@@ -7,7 +7,7 @@ stanje: osnutek
   - odvečna mera pomožna, v oklepaju
 - Elementi kote
   - pomožna kotirna črta, kotirna črta
-  - omejilo, kotno število
+  - omejilo, kotirno število
   - napaka: kotiranje do nevidnega roba
 - Simboli
   - $\varnothing$, $R$, $S\varnothing$, $\square$

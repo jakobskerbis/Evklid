@@ -35,7 +35,7 @@ Proces v življenju menja **stanja**:
 - *čaka* (blokiran): čaka na dogodek, na primer konec branja z diska;
 - *končan*.
 
-Prehodi so le štirje vrste: razporejevalnik izbere pripravljen proces (pripravljen → teče); proces porabi svoj čas ali ga prekine pomembnejši (teče → pripravljen); proces zahteva vhod ali izhod (teče → čaka); dogodek se zgodi (čaka → pripravljen). Iz stanja »čaka« proces nikoli ne skoči neposredno v »teče«.
+Poleg prehodov nov → pripravljen in teče → končan so med ostalimi stanji le štirje prehodi: razporejevalnik izbere pripravljen proces (pripravljen → teče); proces porabi svoj čas ali ga prekine pomembnejši (teče → pripravljen); proces zahteva vhod ali izhod (teče → čaka); dogodek se zgodi (čaka → pripravljen). Iz stanja »čaka« proces nikoli ne skoči neposredno v »teče«.
 
 Ko jedro zamenja proces na procesorju, shrani registre starega v njegov PCB in naloži registre novega. To je **preklop konteksta**. Traja nekaj mikrosekund, v tem času pa noben uporabniški program ne napreduje.
 
@@ -69,7 +69,7 @@ Glavni algoritmi:
 
 **Izrek (optimalnost SJF).** Če so vsi procesi pripravljeni ob istem času in jih izvajamo do konca brez prekinjanja, ima razpored po naraščajočem trajanju najmanjši povprečni čas čakanja med vsemi razporedi.
 
-**Dokaz.** Vzemimo poljuben razpored, v katerem neposredno zaporedna procesa $X$ in $Y$ tečeta v vrstnem redu $X$, $Y$, čeprav je $b_X > b_Y$. Zamenjajmo ju. Procesi pred njima in za njima čakajo enako dolgo, saj se skupni čas $b_X + b_Y$ ne spremeni. Proces $Y$ zdaj čaka $b_X$ manj, proces $X$ pa $b_Y$ več. Skupni čas čakanja se spremeni za $b_Y - b_X < 0$, torej se zmanjša. Dokler je v razporedu kakšen tak par, ga lahko z zamenjavo izboljšamo, zato je optimalen razpored tisti brez takih parov: urejen po naraščajočem trajanju. ∎
+**Dokaz.** Vzemimo poljuben razpored, v katerem neposredno zaporedna procesa $X$ in $Y$ tečeta v vrstnem redu $X$, $Y$, čeprav je $b_X > b_Y$. Zamenjajmo ju. Procesi pred njima in za njima čakajo enako dolgo, saj se skupni čas $b_X + b_Y$ ne spremeni. Proces $Y$ zdaj čaka $b_X$ manj, proces $X$ pa $b_Y$ več. Skupni čas čakanja se spremeni za $b_Y - b_X < 0$, torej se zmanjša. Razporedov je končno mnogo, zato optimalen obstaja. Ta ne more imeti takega para, sicer bi ga zamenjava še izboljšala. Zaporedje brez sosednjega para z $b_X > b_Y$ pa je urejeno po naraščajočem trajanju. Vsi taki razporedi se razlikujejo le v vrstnem redu procesov z enakim trajanjem in imajo enak skupni čas čakanja. ∎
 
 V praksi trajanja ne poznamo vnaprej. Sistemi ga ocenjujejo iz preteklih izvajanj, sodobni Linux pa uporablja razporejanje, ki procesom pravično deli čas in daje prednost tistim, ki so malo porabili.
 

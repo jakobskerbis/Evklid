@@ -14,7 +14,7 @@ stanje: osnutek
   - $t_\mathrm{č} = t_\mathrm{o} - b$
 - Algoritmi
   - FCFS: učinek konvoja
-  - SJF optimalen, dokaz z zamenjavo
+  - SJF optimalen ob skupnem prihodu, dokaz z zamenjavo
   - RR s kvantom $q$
 - Naprave
   - gonilniki, prekinitve, DMA

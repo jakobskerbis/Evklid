@@ -7,7 +7,7 @@ avtor: AI
 
 Leta 1925 sta nizozemska raziskovalca Evert Gorter in François Grendel iz eritrocitov izločila lipide z acetonom in jih razlila po vodni gladini v posebni kadi. Lipidi so na vodi tvorili tanko plast, debelo eno molekulo. Ko sta plast stisnila do konca in izmerila njeno površino, sta dobila približno dvakratno površino vseh eritrocitov, iz katerih so lipidi izvirali. Sklepala sta: membrana je **dvojna plast** lipidov. Njune meritve so imele napake, ki pa so se slučajno izničile, zato je bil sklep pravilen.
 
-Naslednjih petdeset let so se biologi prepirali, kje so v tej dvoplasti beljakovine. Ali ležijo kot plast na obeh površinah, kot v modelu »sendviča« Davsona in Daniellija iz leta 1935? Šele leta 1972 sta Seymour Singer in Garth Nicolson predlagala model, ki ga uporabljamo danes. V kemijskem laboratoriju ga srečaš vsak dan, čeprav ga morda ne opaziš: ko pripraviš fiziološko raztopino, ko eritrociti v epruveti z destilirano vodo počijo ali ko iz celic z detergentom izločiš membranske beljakovine.
+Naslednjih petdeset let so se biologi prepirali, kje so v tej dvoplasti beljakovine. Ali ležijo kot plast na obeh površinah, kot v modelu »sendviča« Davsona in Daniellija iz leta 1935? Šele leta 1972 sta Seymour Singer in Garth Nicolson predlagala model, ki ga uporabljamo danes. V laboratoriju ga srečaš vsak dan, čeprav ga morda ne opaziš: ko pripraviš fiziološko raztopino, ko eritrociti v epruveti z destilirano vodo počijo ali ko iz celic z detergentom izločiš membranske beljakovine.
 
 ## Razlaga
 
@@ -27,7 +27,7 @@ Začnimo s prerezom membrane, kot bi ga videli v elektronskem mikroskopu pri zel
 
 Oznake: `o` so polarne glave fosfolipidov, `|` njihovi nepolarni repi, `###` integralna beljakovina, ki prečka vso membrano, `Y` verige sladkorjev na zunanji strani.
 
-Vsak **fosfolipid** je **amfipatična** molekula: ima polarno, hidrofilno glavo (fosfat in npr. holin) in dva nepolarna, hidrofobna repa iz maščobnih kislin. V vodi se taki lipidi sami uredijo tako, da so repi skriti pred vodo, glave pa obrnjene k njej. Nastane **lipidni dvosloj**, debel okoli $5\,\mathrm{nm}$. Pri tem ne nastanejo kemijske vezi med lipidi. Dvosloj drži skupaj **hidrofobni učinek**: voda okoli izpostavljenih repov bi bila bolj urejena, zato je skupek energijsko ugodnejši.
+Vsak **fosfolipid** je **amfipatična** molekula: ima polarno, hidrofilno glavo (fosfat in npr. holin) in dva nepolarna, hidrofobna repa iz maščobnih kislin. V vodi se taki lipidi sami uredijo tako, da so repi skriti pred vodo, glave pa obrnjene k njej. Nastane **lipidni dvosloj**, debel okoli $5\,\mathrm{nm}$. Pri tem ne nastanejo kovalentne vezi med lipidi, repi se privlačijo le s šibkimi van der Waalsovimi silami. Dvosloj drži skupaj **hidrofobni učinek**: voda okoli izpostavljenih repov bi bila bolj urejena, zato skupek poveča entropijo vode in je ugodnejši.
 
 **Definicija.** *Model tekočega mozaika* (Singer in Nicolson, 1972) opiše membrano kot dvodimenzionalno tekočino iz lipidov, v kateri so beljakovine razporejene kot kamenčki mozaika in se lahko bočno gibljejo.
 
@@ -100,7 +100,7 @@ Pomembno je ločiti dva pojma. **Osmolarnost** je lastnost raztopine same. **Ton
 | izotonična | ravnotežje | enaka |
 | hipertonična | ven | se skrči |
 
-Živalska celica v hipotonični raztopini nabreka, dokler ne poči (pri eritrocitih **hemoliza**). Rastlinska celica ima celično steno, zato v hipotonični raztopini nastane **turgor**. V hipertonični raztopini pa se protoplast odmakne od stene, kar imenujemo **plazmoliza**.
+Živalska celica v hipotonični raztopini nabrekne do nove ravnotežne prostornine; če je raztopina dovolj razredčena, pa poči (pri eritrocitih **hemoliza**, glej Primer 3). Rastlinska celica ima celično steno, zato v hipotonični raztopini nastane **turgor**. V hipertonični raztopini pa se protoplast odmakne od stene, kar imenujemo **plazmoliza**.
 
 **Izpeljava (Boyle-van 't Hoffova zveza).** Celica naj ima prostornino $V_0$ v raztopini z osmolarnostjo $c_0$. Del prostornine $b$ zavzemajo beljakovine in druge snovi, ki z vodo ne izmenjujejo prostornine. Ostanek $V_0 - b$ je voda s topljenci. Ko celico prenesemo v raztopino z osmolarnostjo $c$, voda teče, dokler se osmolarnosti ne izenačita. Število osmotsko aktivnih delcev v celici $n$ pri tem ostane enako, ker membrana delcev ne prepušča. Zato je $n = c_0\,(V_0 - b) = c\,(V - b)$ in
 
@@ -111,7 +111,7 @@ Zveza velja le za delce, ki membrane ne prehajajo. Delci, ki prehajajo (sečnina
 :::premisli
 Raztopina sečnine s $300\,\mathrm{mOsm/L}$ ima enako osmolarnost kot citosol. Kaj se zgodi z eritrocitom, ki ga potopiš vanjo?
 ---
-Sečnina počasi prehaja membrano in vstopa v celico, za njo pa voda. Na koncu je sečnina na obeh straneh enako koncentrirana in ne šteje, v celici pa ostanejo še njeni lastni delci. Raztopina je izoosmotska, a hipotonična: eritrocit nabrekne in poči.
+Sečnina prehaja membrano in vstopa v celico, za njo pa voda. Na koncu je sečnina na obeh straneh enako koncentrirana in ne šteje, v celici pa ostanejo še njeni lastni delci. Raztopina je izoosmotska, a hipotonična: eritrocit nabrekne in poči.
 :::
 
 ## Rešeni primeri
@@ -248,14 +248,14 @@ Natančno opiši model tekočega mozaika. Opiši en poskus, ki dokazuje bočno g
 
 ### Naloga 3
 
-Bolniku v bolnišnici dajejo infuzijo $5\,\%$ glukoze ($50\,\mathrm{g/L}$, $M = 180{,}16\,\mathrm{g/mol}$). Izračunaj osmolarnost in utemelji, zakaj je ta raztopina v epruveti izoosmotska s krvjo, v telesu pa deluje kot hipotonična.
+Bolniku v bolnišnici dajejo infuzijo $5\,\%$ glukoze ($50\,\mathrm{g/L}$, $M = 180{,}16\,\mathrm{g/mol}$). Izračunaj osmolarnost in utemelji, zakaj je ta raztopina izoosmotska s krvjo, za celice pa deluje kot hipotonična. Ali smemo z njo redčiti kri za transfuzijo?
 
 **Rešitev:**
 
 1. Osmolarnost: $c = \dfrac{50}{180{,}16} \approx 0{,}278\,\mathrm{mol/L}$; glukoza ne razpada, $i = 1$, zato okoli $278\,\mathrm{mOsm/L}$.
-2. To je blizu $300\,\mathrm{mOsm/L}$, zato eritrociti v epruveti s to raztopino ne počijo.
-3. V telesu celice glukozo s prenašalci GLUT sprejmejo in jo presnovijo do $\mathrm{CO_2}$ in vode. Glukoza tako izgine iz raztopine, ostane voda.
-4. Odgovor: raztopina ima okoli $278\,\mathrm{mOsm/L}$ in je izoosmotska, a ker se glukoza porabi, v telesu doda predvsem vodo, ki se porazdeli tudi v celice. Učinkovito je hipotonična, zato je pri velikih količinah nevarna za otekanje celic.
+2. To je blizu $300\,\mathrm{mOsm/L}$, zato je raztopina izoosmotska s krvjo: osmometer bi pokazal skoraj enako vrednost.
+3. Glukoza pa membrano prehaja. Eritrociti jo s prenašalcem GLUT1 sprejmejo v nekaj minutah (Primer 4), druge celice v telesu jo sprejmejo in presnovijo do $\mathrm{CO_2}$ in vode. Ko se glukoza porazdeli v celice ali porabi, osmotsko ne šteje več; ostane voda.
+4. Odgovor: raztopina ima okoli $278\,\mathrm{mOsm/L}$ in je izoosmotska, a hipotonična, ker glukoza ne ostane zunaj celic. V telesu doda predvsem vodo, ki se porazdeli tudi v celice, zato je pri velikih količinah nevarna za otekanje celic. Krvi za transfuzijo z njo ne redčimo, temveč s fiziološko raztopino: eritrociti bi v $5\,\%$ glukozi nabrekli in hemolizirali, kot v sečnini.
 
 ## Drugače: Z analogijo
 
@@ -273,7 +273,7 @@ Analogija ima mejo: ljudje vedo, kam gredo, molekule pa se gibljejo naključno. 
 
 - *Celične kulture in shranjevanje krvi.* Gojišča in raztopine za shranjevanje eritrocitov morajo biti izotonične; osmolarnost merijo z osmometrom, ki meri znižanje zmrzišča.
 - *Izolacija membranskih beljakovin.* Integralne beljakovine iz membrane izločijo z detergentom (npr. SDS ali blažji Triton X-100), periferne pa že s solno raztopino. To je hkrati dokaz za razdelitev beljakovin.
-- *Liposomi.* Umetni lipidni dvosloji se uporabljajo kot nosilci zdravil in cepiv mRNA. Sestava lipidov in holesterola določa, kako stabilni so in kdaj sprostijo vsebino.
+- *Liposomi.* Umetni mehurčki z lipidnim dvoslojem se uporabljajo kot nosilci zdravil; sorodni lipidni nanodelci prenašajo cepiva mRNA. Sestava lipidov in holesterola določa, kako stabilni so in kdaj sprostijo vsebino.
 - *Hipotonična liza.* Za izolacijo organelov celice nalašč nabreknejo v hipotonični raztopini, da membrana poči, organeli pa ostanejo celi.
 - *Shranjevanje živil.* Soljenje in sladkanje odvzameta vodo mikroorganizmom s plazmolizo, zato se marmelada in suho meso ne pokvarita.
 

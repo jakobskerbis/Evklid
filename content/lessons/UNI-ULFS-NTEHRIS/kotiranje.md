@@ -11,7 +11,7 @@ Kotiranje je jezik, s katerim risba pove izdelovalcu, kakšen mora biti kos. Pra
 
 ## Razlaga
 
-### 1. Mamljiva ideja: čim več mer
+### 1. Zakaj odvečna mera škodi
 
 Začetnik pogosto misli: »Bolje, da je na risbi preveč mer kot premalo. Če kotiram vsak odsek in še skupno dolžino, se izdelovalec ne more zmotiti.« Poglejmo, zakaj to ne drži.
 
@@ -47,11 +47,11 @@ Vsaka kota ima štiri dele. Skica (ni v merilu):
 - **Pomožni kotirni črti** (navpični črti levo in desno) podaljšata rob predmeta. Narišemo ju s tanko neprekinjeno črto, pravokotno na merjeno dolžino, in ju potegnemo nekoliko čez kotirno črto (okoli $2\,\mathrm{mm}$).
 - **Kotirna črta** je tanka neprekinjena črta, vzporedna z merjeno dolžino. Od roba predmeta je v praksi oddaljena okoli $10\,\mathrm{mm}$, vzporedne kotirne črte med seboj okoli $7\,\mathrm{mm}$.
 - **Omejilo** konča kotirno črto: puščica (na strojniških risbah polna, z vrhom okoli $15^\circ$), poševna črtica pod $45^\circ$ (gradbene risbe) ali pika (v tesni verigi).
-- **Kotno število** je zapisano nad kotirno črto, na sredini, in se bere od spodaj ali z desne strani risbe.
+- **Kotirno število** (tudi kotirna številka) je zapisano nad kotirno črto, na sredini, in se bere od spodaj ali z desne strani risbe.
 
-Česa ne smemo: robov, osi ali središčnic ne uporabljamo kot kotirne črte; kotirne črte se ne smejo sekati s pomožnimi, če se temu lahko izognemo; ne kotiramo do nevidnih (črtkanih) robov, ker je mera tam nejasna. Kjer je prostora malo, puščice obrnemo navzven ali kotno število zapišemo ob podaljšani kotirni črti.
+Česa ne smemo: robov, osi ali središčnic ne uporabljamo kot kotirne črte; kotirne črte se ne smejo sekati s pomožnimi, če se temu lahko izognemo; ne kotiramo do nevidnih (črtkanih) robov, ker je mera tam nejasna. Kjer je prostora malo, puščice obrnemo navzven ali kotirno število zapišemo ob podaljšani kotirni črti.
 
-Pred kotno število pišemo simbole, ki povedo vrsto oblike:
+Pred kotirno število pišemo simbole, ki povedo vrsto oblike:
 
 - $\varnothing$ premer (tudi v pogledu, kjer krog ni viden kot krog);
 - $R$ polmer; kotirna črta gre iz središča in ima eno puščico;
@@ -91,7 +91,7 @@ Pri vzporednem kotiranju pa je lega vsake točke podana z eno mero, zato je njen
 
 ### 4. Kotiranje kotov
 
-Kotirna črta za kot je **krožni lok** s središčem v temenu kota, pomožni kotirni črti pa sta podaljška krakov. Kotno število zapišemo z enoto: stopinje, minute in sekunde ($5^\circ 43'$) ali decimalno ($5{,}72^\circ$). Pretvorba: $1^\circ = 60'$ in $1' = 60''$.
+Kotirna črta za kot je **krožni lok** s središčem v temenu kota, pomožni kotirni črti pa sta podaljška krakov. Kotirno število zapišemo z enoto: stopinje, minute in sekunde ($5^\circ 43'$) ali decimalno ($5{,}72^\circ$). Pretvorba: $1^\circ = 60'$ in $1' = 60''$.
 
 **Konus** je del stožca. Podamo ga z dvema premeroma in dolžino ali s premerom, dolžino in kotom. Razmerje
 
@@ -165,7 +165,7 @@ $d = D - C L$; dolžina, ki je razlika dveh mer, ima odstopanje $\Delta_1 + \Del
 1. (a) $d = 29{,}2 - 0{,}1 \cdot 32 = 26{,}0\,\mathrm{mm}$.
 2. (b) Konus je razlika mer: $L = 40 - 8 = 32\,\mathrm{mm}$. Najdaljši je, ko je kos najdaljši in glava najkrajša: $40{,}1 - 7{,}9 = 32{,}2\,\mathrm{mm}$.
 3. Najkrajši je, ko je kos najkrajši in glava najdaljša: $39{,}9 - 8{,}1 = 31{,}8\,\mathrm{mm}$. Dolžina konusa je v mejah $32 \pm 0{,}2\,\mathrm{mm}$, dvakrat širših od drugih mer.
-4. Manjši premer pri konusu $1 : 10$ določata $D$ in $L$. Če ga strugar izračuna sam in zaokroži, se spremeni naklon konusa; vsakih $0{,}1\,\mathrm{mm}$ razlike v premeru premakne lego zamaška v grlu za $1\,\mathrm{mm}$. Zato konus podamo z razmerjem in ga strugar ne računa.
+4. Manjši premer pri konusu $1 : 10$ določata $D$ in $L$. Če ga strugar izračuna sam in zaokroži, se spremeni koniciteta: zamašek z drugačnim konusom se grla dotika le na enem obroču in ne tesni. Tudi pri pravi koniciteti je konus občutljiv: ker je $\Delta l = \Delta D / C$, vsakih $0{,}1\,\mathrm{mm}$ odstopanja premera premakne lego zamaška v grlu za $1\,\mathrm{mm}$. Zato konus podamo z razmerjem in ga strugar ne računa.
 5. (c) Funkcijski meri sta konus in večji premer, zato ju kotiramo neposredno: $L = 32$, $\varnothing 29{,}2$ in konus $1 : 10$ s simbolom (ali $\varnothing 26$, ne obojega). Glavo kotiramo z $8$ od naležne ploskve, skupno dolžino zapišemo kot pomožno mero $(40)$.
 6. Odgovor: manjši premer je $26{,}0\,\mathrm{mm}$; prvotna risba je dopuščala konus od $31{,}8$ do $32{,}2\,\mathrm{mm}$. Pravilno kotiranje poda konus neposredno in skupno dolžino le kot pomožno mero.
 
@@ -188,7 +188,7 @@ $x = r\cos\varphi$, $y = r\sin\varphi$
 :::premisli
 Kolikšne so koordinate?
 ---
-$y = 40 \cdot \sin 60^\circ \approx 34{,}64\,\mathrm{mm}$, torej vrtina pri $(20; 34{,}64)$. Pri $120^\circ$ je $\cos 120^\circ = -0{,}5$, zato $(-20; 34{,}64)$. Na risbi bi zadostovali delilni krog $\varnothing 80$, oznaka $6 \times \varnothing$ vrtine in kot $60^\circ$; tabela koordinat je dodatek za program stroja.
+$y = 40 \cdot \sin 60^\circ \approx 34{,}64\,\mathrm{mm}$, torej vrtina pri $(20; 34{,}64)$. Pri $120^\circ$ je $\cos 120^\circ = -0{,}5$, zato $(-20; 34{,}64)$. Na risbi bi zadostovali delilni krog $\varnothing 80$, oznaka $6 \times \varnothing$ s premerom vrtin in kot $60^\circ$; tabela koordinat je dodatek za program stroja.
 :::
 
 ## Pogoste napake
@@ -197,12 +197,12 @@ $y = 40 \cdot \sin 60^\circ \approx 34{,}64\,\mathrm{mm}$, torej vrtina pri $(20
 - **Funkcijska mera kot rezultat.** Mera, ki šteje, je izračunana iz dveh drugih, zato ima seštevek njunih odstopanj. Popravek: funkcijsko mero kotiraj neposredno, nefunkcijsko pusti kot ostanek.
 - **Kotiranje do nevidnega roba.** Mera do črtkane črte je nejasna. Popravek: izberi pogled ali prerez, kjer je rob viden.
 - **Kot konusa in naklon zamenjana.** Študent pri konusu $1 : 10$ vzame kot $\arctan 0{,}1$. Popravek: pri konusu je $\tan\frac{\alpha}{2} = \frac{C}{2}$, pri naklonu pa ni deljenja z $2$.
-- **Mera po merilu risbe.** Pri merilu $1 : 2$ nekdo napiše $30$ za rob, ki je v resnici $60\,\mathrm{mm}$. Kotno število je vedno prava mera izdelka.
+- **Mera po merilu risbe.** Pri merilu $1 : 2$ nekdo napiše $30$ za rob, ki je v resnici $60\,\mathrm{mm}$. Kotirno število je vedno prava mera izdelka.
 
 ## Povzetek
 
 - Kotiranje ureja SIST EN ISO 129-1. Vsaka mera je natanko enkrat, v mm brez enote, kot prava mera izdelka; veriga ne sme biti zaprta, odvečna mera je pomožna v oklepaju.
-- Kota: pomožne kotirne črte, kotirna črta, omejila, kotno število (bere se od spodaj ali z desne). Simboli: $\varnothing$, $R$, $S\varnothing$, $SR$, $\square$, posnetje $1 \times 45^\circ$.
+- Kota: pomožne kotirne črte, kotirna črta, omejila, kotirno število (bere se od spodaj ali z desne). Simboli: $\varnothing$, $R$, $S\varnothing$, $SR$, $\square$, posnetje $1 \times 45^\circ$.
 - Sistemi: zaporedno (odstopanja se seštevajo), vzporedno od baze, z naraščajočimi merami, koordinatno. Funkcijske mere kotiramo neposredno od funkcijske baze.
 - V verigi je najslabše odstopanje $\Delta_\Sigma = \Delta_1 + \ldots + \Delta_n$.
 - Kot: kotirna črta je lok s središčem v temenu; $1^\circ = 60'$, $1' = 60''$. Konus $C = \frac{D - d}{L}$, $\tan\frac{\alpha}{2} = \frac{D - d}{2L}$; naklon brez deljenja z $2$.
@@ -254,7 +254,7 @@ Vreteno ima konus $1 : 5$ z večjim premerom $30\,\mathrm{mm}$ in dolžino $25\,
 
 ## Drugače: Korak za korakom s številkami
 
-Kotirajmo ploščico $90 \times 50$ s tremi vrtinami $\varnothing 8$ po vrsti, od zadnjega koraka nazaj proti začetku.
+Kotirajmo ploščico $90 \times 50$ s tremi vrtinami $\varnothing 8$ po vrsti, od funkcije kosa do številk na risbi.
 
 1. *Funkcija.* Ploščica se privije na stojalo, kjer so trije zatiči na razdaljah $20$, $45$ in $70\,\mathrm{mm}$ od levega naslona. Funkcijske mere so torej lege vrtin od levega roba.
 2. *Baza.* Levi rob, ker naleže na naslon.
@@ -290,8 +290,8 @@ Statistični račun dovoli širša odstopanja posameznih mer in s tem cenejšo i
 - omejilo
 ~ Omejilo (puščica, črtica ali pika) konča kotirno črto.
 + središčnica
-- kotno število
-~ Kotno število je bistveni del kote: pove velikost mere.
+- kotirno število
+~ Kotirno število je bistveni del kote: pove velikost mere.
 > Središčnica je os simetrije predmeta; kot kotirna črta je ne smemo uporabiti.
 
 ? Pet vrtin je kotiranih verižno, vsaka mera na $\pm 0{,}05\,\mathrm{mm}$, prva od roba. Kolikšno je največje odstopanje lege pete vrtine od roba?
@@ -320,9 +320,9 @@ Statistični račun dovoli širša odstopanja posameznih mer in s tem cenejšo i
 ~ Pretvorba $2{,}86^\circ$ v $2^\circ 52'$ je pravilna; napaka je prej.
 > Pri konusu je $\tan\frac{\alpha}{2} = \frac{C}{2} = 0{,}025$, torej $\frac{\alpha}{2} \approx 1{,}43^\circ = 1^\circ 26'$. Študent je konus zamenjal z naklonom.
 
-? Risba ohišja je v merilu $1 : 2$. Rob, ki je na papirju dolg $35\,\mathrm{mm}$, je treba kotirati. Katero kotno število napišeš?
+? Risba ohišja je v merilu $1 : 2$. Rob, ki je na papirju dolg $35\,\mathrm{mm}$, je treba kotirati. Katero kotirno število napišeš?
 - $35$
-~ Kotno število ni dolžina na papirju; je prava mera izdelka.
+~ Kotirno število ni dolžina na papirju; je prava mera izdelka.
 - $17{,}5$
 ~ Merilo $1 : 2$ pomeni pomanjšano risbo, zato je pravi rob daljši, ne krajši.
 + $70$
