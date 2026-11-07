@@ -19,14 +19,10 @@ $$\sigma_x = \frac{M\,z}{I_y},$$
 
 kjer je $z$ razdalja od nevtralne osi, $I_y$ pa vztrajnostni moment prereza. Na nevtralni osi so nič, na robu največje. Če se moment vzdolž nosilca spreminja, pa nosilec prenaša tudi **prečno silo** $T = \mathrm{d}M/\mathrm{d}x$. Kje v prerezu so strižne napetosti, ki jo prenašajo?
 
-| | normalne $\sigma_x$ | strižne $\tau_{xz}$ |
-|---|---|---|
-| vzrok | moment $M$ | prečna sila $T$ |
-| potek po višini | linearen | paraboličen |
-| na robu | največje | nič |
-| na nevtralni osi | nič | največje |
+- **Normalne napetosti $\sigma_x$:** vzrok je moment $M$; po višini so linearne, največje na robu, nič na nevtralni osi.
+- **Strižne napetosti $\tau_{xz}$:** vzrok je prečna sila $T$; po višini so parabolične, nič na robu, največje na nevtralni osi.
 
-Tabelo zdaj utemeljimo.
+Primerjavo zdaj utemeljimo.
 
 ### Zakaj na robu ni striga
 

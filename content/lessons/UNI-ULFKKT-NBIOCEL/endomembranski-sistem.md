@@ -15,12 +15,8 @@ Odgovor skriva sistem notranjih membran evkariontske celice: pot, na kateri prot
 
 Primerjajmo dva proteina iste celice trebušne slinavke: encim glikolize v citosolu in prebavni encim, ki ga celica izloči. Oba nastaneta na ribosomih iz istih aminokislin. Kje se njuni poti razideta?
 
-| | citosolni encim | izločeni encim |
-|---|---|---|
-| začetek proteina | brez signala | signalno zaporedje |
-| kje dokonča | prosti ribosom | ribosom na ER |
-| sladkorji | ne | da |
-| cilj | citosol | zunaj celice |
+- **Citosolni encim:** brez signala na začetku, nastane do konca na prostem ribosomu, brez sladkorjev, ostane v citosolu.
+- **Izločeni encim:** na začetku ima signalno zaporedje, dokonča ga ribosom na ER, dobi sladkorje, konča zunaj celice.
 
 Razlika je v prvih dvajsetih ali tridesetih aminokislinah. Iz te majhne razlike sledi vse ostalo.
 

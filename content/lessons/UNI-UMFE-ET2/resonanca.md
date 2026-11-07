@@ -164,7 +164,7 @@ $\omega_0 = \sqrt{\dfrac{1}{LC} - \dfrac{R^2}{L^2}}$, $Z_0 = \dfrac{L}{RC}$, $Q 
 2. $1/(LC) \approx 2{,}47 \cdot 10^6\,\mathrm{s^{-2}}$, $R^2/L^2 = 1600\,\mathrm{s^{-2}}$; drugi člen je zanemarljiv. $\omega_0 \approx 1571\,\mathrm{s^{-1}}$, $f_0 \approx 250\,\mathrm{Hz}$: resonanca je točno na peti harmonski komponenti.
 3. Impedanca pri resonanci: $Z_0 = 5{,}0 \cdot 10^{-4}/(0{,}020 \cdot 8{,}1 \cdot 10^{-4})\,\Omega \approx 30{,}9\,\Omega$.
 4. Harmonska napetost z baterijo: $U_5 = 2{,}0 \cdot 30{,}9\,\mathrm{V} \approx 62\,\mathrm{V}$, to je $62/230 \approx 27\,\%$ fazne napetosti.
-5. Brez baterije teče harmonski tok le skozi omrežje: $Z_L = \sqrt{0{,}020^2 + (1571 \cdot 5{,}0 \cdot 10^{-4})^2}\,\Omega \approx 0{,}786\,\Omega$, zato $U_5 \approx 1{,}57\,\mathrm{V}$, okoli $0{,}7\,\%$.
+5. Brez baterije teče harmonski tok le skozi omrežje: reaktanca $\omega L = 1571 \cdot 5{,}0 \cdot 10^{-4}\,\Omega \approx 0{,}785\,\Omega$ in $Z_L = \sqrt{0{,}020^2 + 0{,}785^2}\,\Omega \approx 0{,}786\,\Omega$, zato $U_5 \approx 1{,}57\,\mathrm{V}$, okoli $0{,}7\,\%$.
 6. Kvaliteta: $Q = 1571 \cdot 5{,}0 \cdot 10^{-4}/0{,}020 \approx 39$. Razmerje obeh napetosti, $62/1{,}57 \approx 39$, je enako $Q$.
 7. Odgovor: resonanca je pri $250\,\mathrm{Hz}$; baterija harmonsko napetost poveča s $1{,}6\,\mathrm{V}$ na okoli $62\,\mathrm{V}$, kar je okoli $39$-kratno povečanje (kvaliteta kroga). Standard kakovosti napetosti dovoljuje za peto harmonsko komponento okoli $6\,\%$; zato baterijam dodajo dušilke, ki resonanco premaknejo pod $250\,\mathrm{Hz}$.
 
