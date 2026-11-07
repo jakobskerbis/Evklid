@@ -26,7 +26,8 @@ import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
-import { printPageParts, streamParts } from "./textbook-print.js";
+import { printPage, printPageParts, printSignature, printSizeHint, streamParts } from "./textbook-print.js";
+import { createPageCache } from "./tisk-predpomnilnik.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, firstTime, mountSkillChecks } from "./weaknesses.js";
@@ -42,7 +43,7 @@ import { levelUpSuggestion, nextLevel } from "./level-up.js";
 import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competition.js";
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic } from "./exams.js";
-import { compressedStatic, compressedJson } from "./compress.js";
+import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
@@ -316,14 +317,33 @@ export function createApp(store, opts = {}) {
   app.use("/vendor/three/build", express.static(path.join(modules, "three", "build"))); // 3D (server/tri-d.js)
 
   // Učbenik za tiskanje / PDF: brezplačno in brez prijave.
-  // Pošlje kos za kosom (server/textbook-print.js printPageParts): učbenik programa ima lahko čez 60 MB.
+  // Javno, brez prijave: izris celotnega učbenika traja do ~0,8 s, zato predpomnjeno po različicah lekcij
+  // (spremenjena lekcija takoj da nov izris) in poslano stisnjeno (server/tisk-predpomnilnik.js).
+  // Velik cel učbenik (ocena > pol meje, printSizeHint), ki ga še ni v predpomnilniku, gre kos za kosom
+  // (printPageParts): učbenik programa ima do 67 MB in je kot en niz proces dvignil na ~900 MB (strežnik ima
+  // 512 MB). Med pošiljanjem se zbira za predpomnilnik, dokler je pod mejo; večji se nikoli ne shrani.
+  const printCache = createPageCache();
   app.get("/ucbenik/:path{/:topic}", (req, res, next) => {
-    const parts = printPageParts(req.params.path, req.params.topic || null);
-    if (!parts) return res.status(404).send("Ta del učbenika ne obstaja.");
+    const { path: key, topic = null } = req.params;
+    const cacheKey = `${key}/${topic || ""}`;
+    const sig = printSignature(key, topic);
+    if (sig == null) return res.status(404).send("Ta del učbenika ne obstaja.");
+    const hit = printCache.peek(cacheKey, sig);
+    if (hit || topic || printSizeHint(key) <= printCache.maxBytes / 2) {
+      const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic));
+      if (!page) return res.status(404).send("Ta del učbenika ne obstaja.");
+      return printCache.send(req, res, page).catch(next);
+    }
     res.type("html");
-    // Ena lekcija ali formule: majhno, pošljemo v celoti (z ETag kot prej).
-    if (req.params.topic) return res.send([...parts].join(""));
-    streamParts(res, parts).catch(next);
+    res.setHeader("Vary", "Accept-Encoding");
+    // HEAD: glave brez izrisa (prej je HEAD izrisal cel učbenik in ga zavrgel).
+    if (req.method === "HEAD") return res.end();
+    const parts = printPageParts(key, null);
+    if (!parts) return res.status(404).send("Ta del učbenika ne obstaja.");
+    const encoding = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
+    streamParts(res, parts, { collect: printCache.maxBytes, encoding })
+      .then((buf) => buf && printCache.put(cacheKey, sig, buf))
+      .catch(next);
   });
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor

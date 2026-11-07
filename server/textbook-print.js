@@ -1,9 +1,11 @@
 // Učbenik za tiskanje oziroma shranjevanje kot PDF (brezplačno, brez prijave).
 // Strežnik izriše HTML z že izrisanimi formulami; brskalnik ga shrani kot PDF.
+import zlib from "node:zlib";
 import katex from "katex";
 import { marked } from "marked";
 import { getPath, getTopic, topicOrder } from "./curriculum.js";
-import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheetSections } from "./textbook.js";
+import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheet, formulaSheetSections } from "./textbook.js";
+import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { splitFormulaCells } from "../public/rich.js";
 
 const esc = (s) =>
@@ -121,6 +123,23 @@ export function printFormulas(key) {
   return shell(`${book.subjectName} · ${book.schoolName} · formule in konstante`, content);
 }
 
+// Podpis strani printPage(pathKey, topicSlug) za predpomnilnik (server/tisk-predpomnilnik.js): datum izdaje in
+// različica vsake lekcije, ki jo stran vsebuje (list formul: njegovo besedilo). null: stran ne obstaja.
+export function printSignature(pathKey, topicSlug = null) {
+  const day = today();
+  if (topicSlug === "formule") {
+    const p = getPath(pathKey);
+    const sheet = formulaSheet(p ? `${p.subject}-${p.school}` : pathKey);
+    return sheet == null ? null : `${day}|f|${sheet}`;
+  }
+  let topics;
+  if (getPath(pathKey)) topics = topicSlug ? [getTopic(`${pathKey}/${topicSlug}`)].filter(Boolean) : topicOrder(pathKey);
+  else if (topicSlug) return null;
+  else topics = getBook(pathKey)?.paths.flatMap((p) => topicOrder(p.key)) ?? null;
+  if (!topics || (topicSlug && !topics.length)) return null;
+  return `${day}|${topics.map((t) => lessonVersion(loadLesson(t.id))).join(",")}`;
+}
+
 // pathKey: cela pot; topicSlug (neobvezno): samo ena lekcija.
 export function printPage(pathKey, topicSlug = null) {
   const parts = printPageParts(pathKey, topicSlug);
@@ -166,16 +185,89 @@ export function printPageParts(pathKey, topicSlug = null) {
   return shellParts(title, toc, body());
 }
 
+// Groba ocena velikosti izrisa cele poti ali predmeta (bajti HTML) brez izrisa: Markdown lekcij × 27.
+// Izmerjeno 7. 11.: HTML/Markdown = 19 (MAT-OS) do 27 (MAT-SS); P-UL-FKKT-KEM 2,8 MB → 67 MB.
+export const HTML_PER_MD = 27;
+export function printSizeHint(pathKey) {
+  const book = getPath(pathKey) ? null : getBook(pathKey);
+  const keys = book ? book.paths.map((p) => p.key) : getPath(pathKey) ? [pathKey] : [];
+  let md = 0;
+  for (const k of keys)
+    for (const t of topicOrder(k)) {
+      const l = loadLesson(t.id);
+      if (!l) continue;
+      for (const x of l.sections) md += x.md.length;
+      for (const a of l.alternatives) md += a.md.length;
+      for (const c of l.checks) md += c.q.length + c.options.reduce((n, o) => n + o.length, 0) + (c.why?.length || 0);
+    }
+  return md * HTML_PER_MD;
+}
+
 // Pošlje kose v odgovor in počaka, ko je medpomnilnik poln (počasen odjemalec ne kopiči celega učbenika
-// v pomnilniku). Ob prekinjeni povezavi neha izrisovati.
-export async function streamParts(res, parts) {
+// v pomnilniku). Ob prekinjeni povezavi neha izrisovati. Med kosi sprosti glavno nit (setImmediate), da drugi
+// zahtevki (/healthz, klepet) ne čakajo na izris 67 MB učbenika (pregled #519 B, P2-2).
+// encoding: "br" | "gzip" | null – stiskanje sproti (zlib v toku). collect: do toliko bajtov zbira surovo stran in
+// jo vrne kot Buffer (za predpomnilnik), sicer (večja stran, prekinitev, napaka) null.
+// Napaka med izrisom po že poslanih glavah: na konec strani vidno opozorilo, nato prekinjena povezava (brez
+// zaključnega kosa), da brskalnik ne misli, da je stran cela (pregled #519 B, P2-1).
+export const STREAM_FAILED_HTML = `<div role="alert" style="margin:24px 0;padding:12px 16px;border:2px solid #b42318;border-radius:10px;background:#fef3f2;color:#7a271a;font:600 1rem system-ui,sans-serif">Učbenika ni bilo mogoče izrisati do konca. Osveži stran ali poskusi pozneje.</div>`;
+export async function streamParts(res, parts, { collect = 0, encoding = null } = {}) {
   const it = parts[Symbol.iterator]();
+  let kept = collect > 0 ? [] : null;
+  let size = 0;
+  let out = res;
+  if (encoding) {
+    res.setHeader("Content-Encoding", encoding);
+    out = encoding === "br" ? zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }) : zlib.createGzip({ level: 6 });
+    out.pipe(res, { end: false });
+    out.on("error", () => res.destroy());
+  }
+  const gone = () => res.destroyed || res.writableEnded;
+  const waitDrain = (s) => new Promise((ok) => { const done = () => { s.off("drain", done); res.off("close", done); ok(); }; s.on("drain", done); res.on("close", done); });
+  const finish = (s) => new Promise((ok) => (s === res ? ok() : s.once("end", ok)));
+  let pending = ""; // kosi se združijo do ~256 KB na zapis (manj klicev write in čakanja na drain)
+  const flush = async () => {
+    if (!pending) return;
+    const chunk = Buffer.from(pending);
+    pending = "";
+    if (kept) {
+      size += chunk.length;
+      if (size > collect) kept = null;
+      else kept.push(chunk);
+    }
+    if (!out.write(chunk)) await waitDrain(out);
+  };
   try {
     for (let r = it.next(); !r.done; r = it.next()) {
-      if (res.destroyed) return;
-      if (!res.write(r.value)) await new Promise((ok) => { const done = () => { res.off("drain", done); res.off("close", done); ok(); }; res.on("drain", done); res.on("close", done); });
+      if (gone()) return null;
+      pending += r.value;
+      if (pending.length >= 256 * 1024) await flush();
+      await new Promise((ok) => setImmediate(ok));
+    }
+    if (gone()) return null;
+    await flush();
+    if (gone()) return null;
+    if (out !== res) {
+      out.end();
+      await finish(out);
     }
     res.end();
+    return kept && Buffer.concat(kept);
+  } catch (err) {
+    console.error("[evklid] izris učbenika po kosih:", err?.message || err);
+    if (gone()) return null;
+    pending += STREAM_FAILED_HTML;
+    try {
+      await flush();
+      if (out !== res) {
+        out.end();
+        await finish(out);
+      }
+    } catch {}
+    // Brez zaključnega kosa: odjemalec vidi prekinjen prenos (ne cele strani).
+    if (res.socket?.destroySoon) res.socket.destroySoon();
+    else res.destroy();
+    return null;
   } finally {
     it.return?.();
   }
