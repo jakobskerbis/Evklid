@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Linearno vezje
+  - upori, neodvisni in linearno krmiljeni viri
+  - odziv je linearen v virih
+- Superpozicija
+  - vsak vir posebej, drugi izklopljeni
+  - napetostni vir: kratek stik; tokovni: odprte sponke
+  - napaka: seštevanje moči
+- Theveninov vir
+  - $U_\mathrm{Th}$: napetost odprtih sponk
+  - $R_\mathrm{Th}$: upornost pri izklopljenih virih
+  - $U = U_\mathrm{Th} - R_\mathrm{Th} I$
+- Nortonov vir
+  - $I_\mathrm{N}$: tok kratkega stika
+  - $U_\mathrm{Th} = R_\mathrm{Th} I_\mathrm{N}$
+- Prilagoditev bremena
+  - $R_\mathrm{L} = R_\mathrm{Th}$
+  - $P_\mathrm{max} = \frac{U_\mathrm{Th}^2}{4R_\mathrm{Th}}$
+- Izkoristek
+  - nadomestni vir: $50\,\%$
+  - prvotno vezje: lahko precej manj
+- Uporaba
+  - mikroelektroda in vhodna upornost ojačevalnika
+  - mostič s senzorjem
