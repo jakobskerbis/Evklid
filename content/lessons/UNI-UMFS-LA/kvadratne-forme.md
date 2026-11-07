@@ -74,7 +74,7 @@ Iz glavnih osi takoj sledi: $q$ je pozitivno definitna natanko tedaj, ko so **vs
 
 **Izrek (Sylvestrov kriterij).** Simetrična matrika $A$ je pozitivno definitna natanko tedaj, ko so vse **vodilne glavne poddeterminante** pozitivne: $\Delta_1 = a_{11} > 0$, $\Delta_2 = \det\begin{bmatrix} a_{11} & a_{12} \\ a_{12} & a_{22} \end{bmatrix} > 0$, …, $\Delta_n = \det A > 0$. Negativno definitna je, ko predznaki izmenično začnejo z minusom: $\Delta_1 < 0$, $\Delta_2 > 0$, $\Delta_3 < 0$, …
 
-*Dokaz za $n = 2$.* Naj bo $q = ax^2 + 2bxy + cy^2$ in $a > 0$. Dopolnimo do popolnega kvadrata: $q = a\left(x + \tfrac{b}{a}y\right)^2 + \tfrac{ac - b^2}{a}y^2$. Oba člena sta nenegativna in nista hkrati nič (razen za $x = y = 0$) natanko tedaj, ko je $ac - b^2 > 0$, to je $\Delta_2 > 0$. Če je $a \le 0$, je $q(1, 0) = a \le 0$ in forma ni pozitivno definitna.
+*Dokaz za $n = 2$.* Naj bo $q = ax^2 + 2bxy + cy^2$ in $a > 0$. Dopolnimo do popolnega kvadrata: $q = a\left(x + \tfrac{b}{a}y\right)^2 + \tfrac{ac - b^2}{a}y^2$. Oba člena sta nenegativna in nista hkrati nič (razen za $x = y = 0$) natanko tedaj, ko je $ac - b^2 > 0$, to je $\Delta_2 > 0$: pri $ac - b^2 \le 0$ je namreč $q(-b/a, 1) = \tfrac{ac - b^2}{a} \le 0$. Če je $a \le 0$, je $q(1, 0) = a \le 0$ in forma ni pozitivno definitna.
 
 :::premisli
 Matrika ima $\Delta_1 = 2$ in $\Delta_2 = -3$. Je forma pozitivno definitna, negativno definitna ali nedefinitna? Kaj pove $\Delta_2 < 0$ o predznakih lastnih vrednosti?
@@ -232,7 +232,7 @@ Glavne osi so smeri, v katerih bi planinec šel najstrmeje in najpoložneje navz
 
 ## Drugače: Uporaba v stroki
 
-**Glavne napetosti.** Napetostno stanje v točki nosilca opisuje simetričen napetostni tenzor $3 \times 3$. Njegove lastne vrednosti so glavne napetosti, lastni vektorji ravnine, v katerih ni strižnih napetosti; po njih se krhka gradiva lomijo.
+**Glavne napetosti.** Napetostno stanje v točki nosilca opisuje simetričen napetostni tenzor $3 \times 3$. Njegove lastne vrednosti so glavne napetosti, lastni vektorji pa normale ravnin, v katerih ni strižnih napetosti; po njih se krhka gradiva lomijo.
 
 **Vztrajnostni tenzor.** Kinetična energija vrtenja togega telesa je kvadratna forma kotne hitrosti. Glavne vztrajnostne osi so lastni vektorji; okoli njih se telo vrti brez opletanja, kar je ključno pri uravnoteženju gredi in koles.
 
@@ -264,8 +264,8 @@ Glavne osi so smeri, v katerih bi planinec šel najstrmeje in najpoložneje navz
 + Je elipsa z osmi v smereh lastnih vektorjev.
 - Je hiperbola.
 ~ Hiperbola nastane, ko sta lastni vrednosti nasprotnih predznakov.
-- Je premica skozi izhodišče.
-~ Pri pozitivno definitni formi ima vsaka smer točko z vrednostjo $1$ na končni razdalji, zato je krivulja sklenjena.
+- Je par vzporednih premic.
+~ Par premic nastane, ko je ena lastna vrednost $0$ (semidefinitna forma); tu sta obe pozitivni, zato je krivulja sklenjena.
 > V glavnih oseh $\lambda_1 u_1^2 + \lambda_2 u_2^2 = 1$ z $\lambda_i > 0$, torej elipsa s polosema $1/\sqrt{\lambda_i}$.
 
 ? Študent preverja, ali je $A = \begin{bmatrix} -2 & 1 \\ 1 & -3 \end{bmatrix}$ negativno definitna. Kateri korak je napačen? (1) $\Delta_1 = -2 < 0$. (2) $\Delta_2 = 6 - 1 = 5$. (3) Za negativno definitnost potrebujemo $\Delta_2 < 0$, zato $A$ ni negativno definitna.

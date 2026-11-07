@@ -11,7 +11,7 @@ Vetrne elektrarne na odprtem morju pošiljajo energijo na kopno po podmorskih en
 
 ### Slika polja okoli vodnika
 
-Postavimo nekaj kompasov na karton, skozi katerega navpično teče tok. Igle se ne obrnejo k vodniku, ampak se postavijo **tangentno** na krožnice okoli njega. Bližje vodniku se obrnejo hitreje, ko tok vklopimo; daleč stran jih zemeljsko polje komaj kaj zmoti.
+Postavimo nekaj kompasov na karton, skozi katerega navpično teče tok. Igle se ne obrnejo k vodniku, ampak se postavijo **tangentno** na krožnice okoli njega. Bližje vodniku se igle ob vklopu toka odklonijo močneje; daleč stran jih polje toka komaj premakne in kažejo skoraj po zemeljskem polju.
 
 ```
        .---------.
@@ -173,7 +173,7 @@ $B_1 = \dfrac{\mu_0 I}{2\pi r}$ za vsak kabel; vektorska vsota; od daleč $B \ap
 6. b) En kabel na razdalji $1{,}0\,\mathrm{m}$ (Primer 1) da $240\,\mu\mathrm{T}$; razmerje je $240/23{,}9 \approx 10$.
 7. c) Pri $h_2 = 6{,}0\,\mathrm{m}$ je $d/2$ zanemarljiv: $B \approx 2 \cdot 10^{-7} \cdot 1200 \cdot 0{,}10/36\,\mathrm{T} \approx 6{,}7 \cdot 10^{-7}\,\mathrm{T} = 0{,}67\,\mu\mathrm{T}$.
 8. En kabel: $2 \cdot 10^{-7} \cdot 1200/6{,}0\,\mathrm{T} = 4{,}0 \cdot 10^{-5}\,\mathrm{T} = 40\,\mu\mathrm{T}$; razmerje $40/0{,}67 \approx 60$.
-9. Odgovor: par kablov da na dnu navpično polje okoli $24\,\mu\mathrm{T}$, desetkrat manj kot en kabel. Polje para pada z $1/h^2$, polje enega kabla z $1/h$, zato je $5\,\mathrm{m}$ nad dnom razlika že šestdesetkratna, polje para pa stokrat šibkejše od zemeljskega.
+9. Odgovor: par kablov da na dnu navpično polje okoli $24\,\mu\mathrm{T}$, desetkrat manj kot en kabel. Polje para pada z $1/h^2$, polje enega kabla z $1/h$, zato je $5\,\mathrm{m}$ nad dnom razlika že šestdesetkratna, polje para pa okoli $75$-krat šibkejše od zemeljskega.
 
 ### Primer 4 – zdaj ti
 
@@ -195,7 +195,7 @@ znotraj $B = \dfrac{\mu_0 I r}{2\pi R^2}$, zunaj $B = \dfrac{\mu_0 I}{2\pi r}$
 :::premisli
 Kolikšni sta $B(r_1)$ in $B(r_3)$?
 ---
-$r_1$ je znotraj, krožnica objame tretjino polmera, torej $1/9$ toka: $B(r_1) = 2 \cdot 10^{-7} \cdot 900 \cdot 0{,}0050/0{,}015^2\,\mathrm{T} = 4{,}0\,\mathrm{mT}$ (tretjina vrednosti na površini, ker polje znotraj raste linearno). $r_3$ je zunaj, na dvojni razdalji od površine: $B(r_3) = 12\,\mathrm{mT}/2 = 6{,}0\,\mathrm{mT}$.
+$r_1$ je znotraj, krožnica objame tretjino polmera, torej $1/9$ toka: $B(r_1) = 2 \cdot 10^{-7} \cdot 900 \cdot 0{,}0050/0{,}015^2\,\mathrm{T} = 4{,}0\,\mathrm{mT}$ (tretjina vrednosti na površini, ker polje znotraj raste linearno). $r_3$ je zunaj, dvakrat dlje od osi kot površina: $B(r_3) = 12\,\mathrm{mT}/2 = 6{,}0\,\mathrm{mT}$.
 :::
 
 ## Pogoste napake

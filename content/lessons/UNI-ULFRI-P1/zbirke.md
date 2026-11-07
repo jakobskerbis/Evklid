@@ -34,7 +34,7 @@ System.out.println(st);
 //  NaCl=3, glukoza=2}
 ```
 
-V treh vrsticah smo uporabili tri vrste zbirk:
+V nekaj vrsticah smo uporabili tri vrste zbirk:
 
 - **seznam** `List` hrani vnose po vrsti, s ponovitvami;
 - **množica** `Set` vsako snov hrani le enkrat, zato je njena velikost število različnih snovi;
@@ -353,7 +353,7 @@ static Map<String, Set<String>>
 }
 ```
 
-3. `NaCl` da simbola `Na` in `Cl`; `CuSO4` da `Cu`, `S`, `O`; števki v `H2O` in `CuSO4` preskočimo. `NaOH` dodamo k `H` le enkrat, ker je vrednost množica.
+3. `NaCl` da simbola `Na` in `Cl`; `CuSO4` da `Cu`, `S`, `O`; števki v `H2O` in `CuSO4` preskočimo. Formula, v kateri se element pojavi dvakrat (npr. `CH3COOH`), je v njegovi množici le enkrat.
 4. Rezultat (ključ → množica): Cl → `[HCl, NaCl]`; Cu → `[CuSO4]`; H → `[H2O, HCl, NaOH]`; Na → `[NaCl, NaOH]`; O → `[CuSO4, H2O, NaOH]`; S → `[CuSO4]`. V nizih je števka pred velikimi črkami, zato je `H2O` pred `HCl`.
 5. Izpis elementov v vsaj dveh formulah:
 
@@ -444,7 +444,7 @@ Laboratorij ima tri načine shranjevanja:
 > Po dodajanju je $\{\mathrm{Fe}, \mathrm{Cu}, \mathrm{Zn}\}$, po odstranitvi ostaneta Fe in Zn.
 
 ? Seznam `[4, 7, 2, 7, 9]` prehodimo z iteratorjem in z `it.remove()` odstranimo vse elemente, večje od $5$. Kolikšna je vsota preostalih?
-- $13$
+- $22$
 ~ Odstranil si le prvo $7$; iterator prehodi vse elemente, zato odstrani obe sedmici in devetico.
 + $6$
 - $29$

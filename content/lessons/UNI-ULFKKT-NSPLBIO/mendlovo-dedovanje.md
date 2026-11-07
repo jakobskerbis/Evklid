@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Gregor Mendel je med letoma $1856$ in $1863$ v samostanskem vrtu v Brnu vzgojil več deset tisoč rastlin graha. Ko je križal rastline z okroglimi in z nagubanimi semeni, so bila vsa semena potomcev okrogla. Ko je te potomce oplodil med seboj, je dobil $5474$ okroglih in $1850$ nagubanih semen. Takrat razširjena razlaga, da se lastnosti staršev zmešajo kot barve, tega ne pojasni na dva načina: v prvi generaciji ni bilo »napol nagubanih« semen, v drugi pa so se nagubana semena vrnila nespremenjena, in to v razmerju skoraj natanko $3 : 1$. Mendel je iz teh števil sklepal na dedne »delce«, ki se ne mešajo. Na istem sklepanju danes temelji žlahtnjenje v semenarskih podjetjih, ki prodajajo hibridno seme koruze, paradižnika in sončnic, in genetsko svetovanje.
+Gregor Mendel je med letoma $1856$ in $1863$ v samostanskem vrtu v Brnu vzgojil več deset tisoč rastlin graha. Ko je križal rastline z okroglimi in z nagubanimi semeni, so bila vsa semena potomcev okrogla. Ko so se te rastline samooprašile, je dobil $5474$ okroglih in $1850$ nagubanih semen. Takrat razširjena razlaga, da se lastnosti staršev zmešajo kot barve, ne pojasni dveh stvari: v prvi generaciji ni bilo »napol nagubanih« semen, v drugi pa so se nagubana semena vrnila nespremenjena, in to v razmerju skoraj natanko $3 : 1$. Mendel je iz teh števil sklepal na dedne »delce«, ki se ne mešajo. Na istem sklepanju danes temelji žlahtnjenje v semenarskih podjetjih, ki prodajajo hibridno seme koruze, paradižnika in sončnic, in genetsko svetovanje.
 
 ## Razlaga
 
@@ -325,5 +325,6 @@ E | pričakovano število potomcev v razredu | | – | skupno število krat dele
 P | verjetnost | | – | število med 0 in 1
 n | število potomcev | | –
 R, r | alela za obliko semena (okroglo, nagubano) oz. barvo ploda | | | velika črka: dominanten alel
+Y, y | alela za barvo semena (rumeno, zeleno) | | | $Y$ dominanten
 A, a | dominantni in recesivni alel | | | pri albinizmu $a$ recesiven
 :::

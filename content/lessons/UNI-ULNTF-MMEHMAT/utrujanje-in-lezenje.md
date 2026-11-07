@@ -48,7 +48,7 @@ Eksponent $k$ (naklon) je za jekla okoli $5$ do $15$. Ker je velik, že majhno p
 :::premisli
 Pri $k = 8$ amplitudo povečamo za $10\,\%$. Ali se življenjska doba skrajša za $10\,\%$, za polovico ali še bolj? Zakaj?
 ---
-Skoraj za polovico: $N$ se pomnoži z $1{,}1^{-8} \approx 0{,}47$. Število ciklov je odvisno od amplitude na osmo potenco, zato je napetost v utrujanju »draga«; zato inženirji tako skrbno odpravljajo zareze, ki napetost lokalno povečajo.
+Za več kot polovico: $N$ se pomnoži z $1{,}1^{-8} \approx 0{,}47$. Število ciklov je odvisno od amplitude na osmo potenco, zato je napetost v utrujanju »draga«; zato inženirji tako skrbno odpravljajo zareze, ki napetost lokalno povečajo.
 :::
 
 **Vpliv srednje napetosti.** Natezna srednja napetost razpoko odpira in zmanjša dopustno amplitudo. **Goodmanova premica** poveže $\sigma_N$ (trajna trdnost pri $R = -1$) in natezno trdnost $R_m$:
@@ -125,7 +125,7 @@ $\sigma_m = \dfrac{\sigma_{max} + \sigma_{min}}{2}$, $\sigma_a = \dfrac{\sigma_{
 1. $\sigma_m = (250 + 50)/2\,\mathrm{MPa} = 150\,\mathrm{MPa}$; $\sigma_a = (250 - 50)/2\,\mathrm{MPa} = 100\,\mathrm{MPa}$.
 2. $\frac{1}{n} = 100/270 + 150/600 \approx 0{,}370 + 0{,}250 = 0{,}620$.
 3. $n = 1/0{,}620 \approx 1{,}61$.
-4. Preizkus z drugega zornega kota: pri $\sigma_m = 150\,\mathrm{MPa}$ je mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske.
+4. Drug pogled: če srednja napetost ostane $150\,\mathrm{MPa}$ (kot jo določa prednapetost), je mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske. Faktor $1{,}61$ velja za sorazmerno povečanje obeh napetosti, zato se vrednosti razlikujeta.
 5. Odgovor: varnostni faktor je okoli $1{,}6$. Brez upoštevanja srednje napetosti bi dobili napačno $270/100 = 2{,}7$.
 
 ### Primer 3 (težji)
@@ -222,7 +222,7 @@ Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga
 **Rešitev:**
 
 1. Nastanek: ob ponavljanju se v ugodno usmerjenih zrnih na površini pojavijo drsni pasovi; na izstopnih stopnicah ali na napaki (vključek, praska) nastane mikrorazpoka.
-2. Rast: razpoka raste pravokotno na največjo natezno napetost, ob vsakem ciklu za majhen korak. Na prelomni ploskvi so zato gladko, s **progami** (vidnimi s prostim očesom, ob spremembah obremenitve) in mikroskopskimi **striacijami** prekrito območje.
+2. Rast: razpoka raste pravokotno na največjo natezno napetost, ob vsakem ciklu za majhen korak. Na prelomni ploskvi je zato gladko območje s **progami** (vidnimi s prostim očesom, ob spremembah obremenitve) in mikroskopskimi **striacijami**.
 3. Končni lom: ko preostali presek ne zdrži več največje sile, se zlomi naenkrat; to območje je grobo, zrnato ali žilavo potrgano.
 4. Zareze: koncentracija napetosti poveča lokalno amplitudo nad nazivno. Hrapava površina ima veliko mikrozarez; korozija ustvarja jamice in razpoka nastane prej. Zato $\sigma_D$ dela vedno zmanjšamo s faktorji površine, velikosti in oblike.
 5. Minerjeve predpostavke: poškodba se sešteva linearno, neodvisno od amplitude in vrstnega reda, cikli pod $\sigma_D$ ne škodijo.
@@ -304,7 +304,7 @@ R | napetostno razmerje | R = \frac{\sigma_{min}}{\sigma_{max}} | –
 \sigma_D | trajna dinamična trdnost | | MPa | pri $N_D$ ciklih
 \sigma_N | trajna trdnost pri izmenični obremenitvi | | MPa | $R = -1$
 N | število ciklov do loma | N = N_D\left(\frac{\sigma_D}{\sigma_a}\right)^k | –
-N_D | število ciklov na koleni Wöhlerjeve krivulje | | –
+N_D | število ciklov na kolenu Wöhlerjeve krivulje | | –
 N_i | cikli do loma pri amplitudi bloka i | | –
 N_1, N_2 | cikli do loma v Primeru 1 | | –
 k | naklon Wöhlerjeve premice | | – | za jekla 5 do 15
@@ -320,7 +320,7 @@ Q | aktivacijska energija | | J/mol
 R_p | splošna plinska konstanta | | J/(mol\,K) | 8,314 J/(mol K)
 T | absolutna temperatura | | K
 T_t | tališče | | K
-P_{LM} | Larson-Millerjev parameter | P_{LM} = T(C + \log t_r) | K\,h | T v K, t v urah
+P_{LM} | Larson-Millerjev parameter | P_{LM} = T(C + \log t_r) | K | T v K, t v urah
 C | Larson-Millerjeva konstanta | | – | okoli 20
 t_r | čas do loma | | h
 t_{r1}, t_{r2} | časa do loma pri dveh temperaturah | | h
