@@ -1694,7 +1694,7 @@ export async function renderAccount() {
   // Račun brez gesla (prijava z Apple): namesto vpisa gesla ponudi povezavo za nastavitev gesla na naslov računa.
   const noPassword = async (what) => {
     if (acc.parent.has_password !== false) return false;
-    if (!confirm(`Tvoj račun nima gesla (prijavljaš se z Apple). Za ${what} potrebuješ geslo. Pošljemo povezavo za nastavitev gesla na ${acc.parent.email}?`)) return true;
+    if (!confirm(`Tvoj račun nima gesla (prijavljaš se z Apple). Za ${what} potrebuješ geslo. Pošljemo povezavo za nastavitev gesla na ${acc.parent.email}? Ko geslo nastaviš, bodo vse naprave (tudi otrokove) odjavljene.`)) return true;
     try {
       await api("/api/auth/forgot", { method: "POST", body: { email: acc.parent.email } });
       toast(`Povezavo smo poslali na ${acc.parent.email}. Ko nastaviš geslo, poskusi znova.`);

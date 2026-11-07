@@ -19,7 +19,13 @@ export function migrateAppleSignIn(db) {
   const cols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   if (!cols.includes("apple_sub")) db.exec("ALTER TABLE parents ADD COLUMN apple_sub TEXT");
   db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_parents_apple_sub ON parents(apple_sub) WHERE apple_sub IS NOT NULL");
+  // Porabljeni enkratni nizi (sha256) Applovih žetonov: žeton prijave ali prejšnje potrditve ne odpre izvoza ali izbrisa
+  // (pregled #492/#500 B P3-1). Žeton velja ~10 min, zapis 20 min.
+  db.exec("CREATE TABLE IF NOT EXISTS apple_nonces (hash TEXT PRIMARY KEY, expires_at INTEGER NOT NULL)");
 }
+
+// Ponovna potrditev (izvoz, izbris) zahteva svež žeton: izdan v zadnjih 5 minutah.
+export const REAUTH_MAX_AGE_MS = 5 * 60000;
 
 // Ključ .p8 za preklic žetonov ob izbrisu računa (Apple to zahteva od aplikacij s prijavo z Apple).
 function revokeConfig(env) {
@@ -41,6 +47,12 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
   const log = opts.log || console;
   const fetchFn = opts.fetchFn || fetch;
   migrateAppleSignIn(db);
+  // true samo ob prvi uporabi enkratnega niza (v zadnjih 20 minutah).
+  const useNonce = (raw) => {
+    const now = Date.now();
+    db.prepare("DELETE FROM apple_nonces WHERE expires_at < ?").run(now);
+    return db.prepare("INSERT OR IGNORE INTO apple_nonces (hash, expires_at) VALUES (?, ?)").run(sha256hex(raw), now + 20 * 60000).changes === 1;
+  };
   const json = express.json({ limit: "32kb" });
   const audiences = [BUNDLE_ID, ...String(env.EVKLID_APPLE_AUDIENCES || "").split(",").map((s) => s.trim()).filter(Boolean)];
   const verify = (token, rawNonce) =>
@@ -52,6 +64,7 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
     let who;
     try {
       who = await verify(req.body?.identity_token, rawNonce);
+      useNonce(rawNonce); // prijava ga zapiše (drugi korak need_signup ga sme ponoviti), ponovna potrditev pa ne sprejme
     } catch (err) {
       if (err instanceof AppleSignatureError) return res.status(401).json({ error: "Prijava z Apple ni uspela. Poskusi znova." });
       log.error?.("[evklid] prijava z Apple:", err.message);
@@ -96,9 +109,11 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
     try {
       const who = await verify(req.body.apple_identity_token, nonce);
       if (who.sub !== p.apple_sub) return false;
+      if (!(who.iat * 1000 > Date.now() - REAUTH_MAX_AGE_MS)) return false;
     } catch {
       return false;
     }
+    if (!useNonce(nonce)) return false; // isti žeton drugič ali žeton prijave
     const code = text(req.body?.apple_authorization_code);
     if (opts.revoke && revoke && code) revokeAppleTokens(code, revoke, fetchFn).catch((e) => log.error?.("[evklid] preklic žetona Apple:", e.message));
     return true;

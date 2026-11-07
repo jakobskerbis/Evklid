@@ -352,7 +352,11 @@ test("Sign in with Apple: new account needs age and consent, then logs in by App
     // Izbris brez gesla: potrditev z novo prijavo z Apple (tuj sub ne zadošča).
     const wrong = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.999" }, NONCE), apple_nonce: NONCE } });
     assert.equal(wrong.status, 401);
-    const del = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, NONCE), apple_nonce: NONCE } });
+    // Žeton prijave (isti enkratni niz) izbrisa ne odpre; potreben je svež žeton z novim nizom.
+    const replay = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, NONCE), apple_nonce: NONCE } });
+    assert.equal(replay.status, 401);
+    const DEL_NONCE = "svez-niz-za-izbris-1234";
+    const del = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, DEL_NONCE), apple_nonce: DEL_NONCE } });
     assert.equal(del.status, 200);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents").get().n, 0);
   });

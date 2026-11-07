@@ -99,7 +99,7 @@ export async function verifyAppleIdentityToken(token, { audiences, nonce = null,
   if (nonce !== null && claims.nonce !== nonce) throw new AppleSignatureError("Napačen enkratni niz.");
   if (!claims.sub) throw new AppleSignatureError("Manjka uporabnik.");
   const flag = (v) => v === true || v === "true";
-  return { sub: String(claims.sub), email: claims.email ? String(claims.email).toLowerCase() : null, emailVerified: flag(claims.email_verified), isPrivateEmail: flag(claims.is_private_email) };
+  return { sub: String(claims.sub), iat: Number(claims.iat) || 0, email: claims.email ? String(claims.email).toLowerCase() : null, emailVerified: flag(claims.email_verified), isPrivateEmail: flag(claims.is_private_email) };
 }
 
 // Podpisan JWT (ES256) s ključem .p8 iz App Store Connect: client_secret za Sign in with Apple REST API.
