@@ -50,11 +50,23 @@ async function withServer(fn) {
   }
 }
 
-// Brez Resenda strežnik vrne dev_verify_url, zato e-naslov potrdimo neposredno.
+// Brez Resenda strežnik e-pošto izpiše v dnevnik. Za naslove skrbnikov (#477) dev_verify_url ni vrnjen,
+// zato povezavo za potrditev preberemo iz izpisane e-pošte.
 async function verified(call, email) {
-  const r = await call("/api/auth/register", { method: "POST", body: { email, password: "geslo1234", accept_privacy: true, birth_date: ADULT } });
+  const seen = [];
+  const orig = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (chunk, ...rest) => { seen.push(String(chunk)); return orig(chunk, ...rest); };
+  let r;
+  try {
+    r = await call("/api/auth/register", { method: "POST", body: { email, password: "geslo1234", accept_privacy: true, birth_date: ADULT } });
+    for (let i = 0; i < 20 && !r.body.dev_verify_url && !/api\/auth\/verify\?token=/.test(seen.join("")); i++) await new Promise((ok) => setTimeout(ok, 25));
+  } finally {
+    process.stdout.write = orig;
+  }
   assert.equal(r.status, 201, JSON.stringify(r.body));
-  const v = await call(new URL(r.body.dev_verify_url).pathname + new URL(r.body.dev_verify_url).search);
+  const link = r.body.dev_verify_url || seen.join("\n").match(/https?:\/\/\S+\/api\/auth\/verify\?token=[\w-]+/)?.[0];
+  assert.ok(link, "povezava za potrditev ni najdena");
+  const v = await call(new URL(link).pathname + new URL(link).search);
   assert.equal(v.status, 302);
 }
 
