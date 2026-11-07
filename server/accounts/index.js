@@ -28,7 +28,6 @@ import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSI
 import { guestModeOn, guestNet, guestPerDay, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
 import { AccountLocks, ownerOnly } from "./account-lock.js";
 import { ProfileLocks, checkProfilePassword } from "./profile-lock.js";
-import { gateNeeded } from "../gate.js";
 import { rights as rightsOf, lessonInteractive as lessonOpen } from "../placila/pravice.js";
 import { createSchoolSource } from "../placila/sola-vir.js";
 import { offerPolicy, oneOffer } from "../placila/ponudbe.js";
@@ -106,7 +105,11 @@ export function mountAccounts(app, store, opts = {}) {
   const inviteToThrottle = new Throttle(2, 24 * 3600000);
   // Skupaj največ 30 na dan za ves strežnik, da prošnje ne porabijo kvote Resend za potrditve in gesla.
   const inviteAllThrottle = new Throttle(30, 24 * 3600000);
-  const devLinks = (req) => !mailer.enabled && (isLocalRequest(req) || gateNeeded(env));
+  // Povezave za potrditev in novo geslo v odgovoru (brez e-pošte) samo na računalniku, kjer teče strežnik, in nikoli
+  // v produkciji: s skupnim geslom (EVKLID_GATE) bi jih sicer dobil vsak tester za tuj e-naslov in prevzel račun
+  // (ponastavitev gesla) ali postal skrbnik (EVKLID_ADMIN_EMAILS), če Resend ne deluje (pregled #492 B, P2-4).
+  const production = env.NODE_ENV === "production" || /^https:/i.test(env.EVKLID_BASE_URL || "");
+  const devLinks = (req) => !mailer.enabled && !production && isLocalRequest(req);
   const locks = new ProfileLocks(db);
   // Geslo profila ločuje profile na istem računu (brat ne odpre sestrinega). Račun z enim profilom ga ne
   // potrebuje, prijava v račun zadošča (j, 2026-10-30: »nočem, da se ta zaslon prikazuje«).
