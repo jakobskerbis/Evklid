@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lega ledvic
+  - retroperitonealno, Th12 do L3
+  - desna nižje zaradi jeter
+- Zgradba ledvice
+  - skorja, piramide, papile
+  - čaše, ledvični meh, hilus
+- Nefron
+  - glomerul in Bowmanova kapsula
+  - proksimalni tubul vrne glukozo
+  - Henlejeva zanka, distalni tubul, zbiralca
+- Dve arterioli
+  - aferentna, glomerul, eferentna
+  - visok tlak žene filtracijo
+- Očistek
+  - $C = \frac{U\,Q_\mathrm{u}}{P}$
+  - inulin: $C = G \approx 125\,\mathrm{mL/min}$
+  - glukoza v urinu nad $T_\mathrm{m}$
+- Odvodna sečila
+  - sečevod s tremi zožitvami
+  - mehur z detruzorjem
+  - sečnica: ženska $4\,\mathrm{cm}$, moški $20\,\mathrm{cm}$
+- Moška spolovila
+  - modi, nadmodek, semenovod
+  - semenska mešička, prostata
+- Ženska spolovila
+  - jajčnik, jajcevod (oploditev v ampuli)
+  - maternica: endometrij, miometrij, perimetrij
