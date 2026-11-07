@@ -4207,8 +4207,10 @@ function prebuildCalc() {
     if (!m) return;
     // Formule potrebujejo strežnik: v lahkem načinu jih naložimo šele ob tapu.
     if (m === "formulas" && document.documentElement.classList.contains("lite")) return next();
-    // Formule: ob nedejavnosti še prenos in izris učenčevega lista v skrito orodje (ne ob varčevanju s podatki).
-    const prep = (tool) => (m === "formulas" && tool && !navigator.connection?.saveData ? new Promise((r) => whenQuiet(() => Promise.resolve(tool.prepare?.()).catch(() => null).then(r))) : null);
+    // Formule: ob nedejavnosti še prenos in izris učenčevega lista v skrito orodje (ne ob varčevanju s podatki
+    // in ne na telefonu z malo pomnilnika, ≤ 2 GB: skrit list doda ~8000 vozlišč DOM; pregled PR #481).
+    const lowMem = navigator.deviceMemory > 0 && navigator.deviceMemory <= 2;
+    const prep = (tool) => (m === "formulas" && tool && !navigator.connection?.saveData && !lowMem ? new Promise((r) => whenQuiet(() => Promise.resolve(tool.prepare?.()).catch(() => null).then(r))) : null);
     whenQuiet(() => Promise.resolve(calcTool(m)).then(prep).catch(() => null).then(() => whenQuiet(next)));
   };
   whenQuiet(next);

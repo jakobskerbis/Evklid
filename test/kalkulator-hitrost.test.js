@@ -42,6 +42,7 @@ test("Formule: list se pripravi ob nedejavnosti in izriše po kosih (brez dolge 
   const fn = app.slice(app.indexOf("function prebuildCalc("), app.indexOf("document.querySelectorAll(\".calc-modes\")"));
   assert.match(fn, /tool\.prepare\?\.\(\)/, "prebuildCalc pripravi list formul");
   assert.match(fn, /saveData/, "ne ob varčevanju s podatki");
+  assert.match(fn, /navigator\.deviceMemory <= 2/, "ne na telefonu z malo pomnilnika (≤ 2 GB)");
 });
 
 test("drsne vrstice: najprej vse mere, nato zapisi (brez ponavljanja postavitve strani za vsako vrstico)", () => {

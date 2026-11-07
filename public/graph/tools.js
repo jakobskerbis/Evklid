@@ -844,24 +844,42 @@ export function createFormulas(root, opts) {
     const sec = c && body.querySelector(`#${c.dataset.sec}`);
     if (!sec) return;
     // kazalo je prilepljeno na vrh pomičnega okna, zato ciljamo tik podenj
-    const goal = () => root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - toc.offsetHeight - 8;
+    // (do dna lista, če je ciljna kartica zadnja in nižja od zaslona)
+    const goal = () => Math.min(root.scrollHeight - root.clientHeight, root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - toc.offsetHeight - 8);
     if (Math.abs(goal() - root.scrollTop) < 2) return;
-    root.scrollTo({ top: goal(), behavior: "smooth" });
-    // Kartice daleč od zaslona imajo do izrisa le ocenjeno višino (content-visibility v graph.css): po pomiku
-    // se ciljna kartica izriše s pravo višino, zato cilj po potrebi še popravimo (brez gladkega pomika).
+    // Kartice daleč od zaslona imajo do izrisa le ocenjeno višino (content-visibility v graph.css). Med pomikom
+    // in po njem se kartice ob poti izrišejo s pravo višino (tudi skice, sirina.js), zato se cilj premakne.
+    // Daljni skok (več kot 2 zaslona) je zato takojšen, nato cilj popravljamo vsako sliko, dokler ni 6 slik
+    // zapored mirno (največ ~1,5 s). Bližnji skok ostane gladek in se popravi po koncu pomika (pregled PR #481).
+    const far = Math.abs(goal() - root.scrollTop) > 2 * root.clientHeight;
+    root.scrollTo({ top: goal(), behavior: far ? "auto" : "smooth" });
     const USER = ["wheel", "touchstart", "pointerdown", "keydown"];
+    let done = false;
     const stop = () => {
+      done = true;
       clearTimeout(timer);
-      root.removeEventListener("scrollend", fix);
+      root.removeEventListener("scrollend", settle);
       for (const e of USER) root.removeEventListener(e, stop);
     };
-    const fix = () => {
-      stop();
+    let frames = 0;
+    let calm = 0;
+    const step = () => {
+      if (done) return;
       const d = goal() - root.scrollTop;
-      if (Math.abs(d) > 2) root.scrollTo({ top: root.scrollTop + d });
+      if (Math.abs(d) > 2) {
+        root.scrollTo({ top: root.scrollTop + d });
+        calm = 0;
+      } else calm++;
+      if (calm >= 6 || ++frames > 90) stop();
+      else requestAnimationFrame(step);
     };
-    const timer = setTimeout(fix, 1200); // brskalnik brez scrollend
-    root.addEventListener("scrollend", fix);
+    const settle = () => {
+      clearTimeout(timer);
+      root.removeEventListener("scrollend", settle);
+      if (!done && !frames) requestAnimationFrame(step);
+    };
+    const timer = setTimeout(settle, far ? 0 : 1200); // brskalnik brez scrollend
+    if (!far) root.addEventListener("scrollend", settle);
     for (const e of USER) root.addEventListener(e, stop, { passive: true }); // učenec se sam pomika: ne popravljamo
   });
   return {
