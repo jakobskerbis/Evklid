@@ -677,3 +677,15 @@ test("Sign in with Apple on a verified account keeps its password", async () => 
     assert.equal((await appClient()("/api/auth/login", { body: { email: "potrjen@primer.si", password: "geslo12345" } })).status, 200);
   });
 });
+
+// Pregled #506 A/B: Apple ključev ni mogoče prenesti → pot prijave odgovori 502 »Apple se ne odziva«, ne 401.
+test("Sign in with Apple: JWKS download failure answers 502, not 401", async () => {
+  const { resetAppleKeyCache } = await import("../server/mobile/apple-crypto.js");
+  resetAppleKeyCache();
+  const fetchFn = async () => ({ ok: false, status: 503, json: async () => ({}) });
+  await withServer(async ({ appClient }) => {
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.502" }, NONCE), nonce: NONCE } });
+    assert.equal(r.status, 502, JSON.stringify(r.body));
+  }, { appleKeys: null, fetchFn });
+  resetAppleKeyCache();
+});
