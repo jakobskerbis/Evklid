@@ -337,7 +337,7 @@ export function pilotTasksMarkdown(r) {
   const q = r.impact?.quiz;
   const w = r.impact?.wtp;
   if (q) {
-    lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkus (brez stropa): ${q.nPre}, povprečje ${pc(q.pre)}`, `- oba preizkusa (isti učenci, brez stropa): ${q.nPaired}, prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
+    lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkusi skupaj: ${q.nPre}; povprečje brez stropa ${pc(q.pre)}`, `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; brez stropa prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
     const c = q.ceiling;
     if (q.allSkip) lines.push(`- preizkusi samo z »Ne vem« (niso v povprečjih): ${q.allSkip}`);
     if (c) lines.push(`- strop (prvič 6/6, dodatne težje naloge; posebej): ${c.nPre}, oba preizkusa ${c.nPaired}, prej ${pc(c.pairedPre)}, po 14 dneh ${pc(c.pairedPost)}, razlika ${c.diff == null ? "–" : `${c.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(c.diff) * 100)} odstotnih točk`}`);

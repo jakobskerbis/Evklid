@@ -50,9 +50,16 @@ const main = async () => {
   const db = new DatabaseSync(file);
   const i = process.argv.indexOf("--poslji");
   const n = recipients(db).length;
-  const msg = privacyChangeEmail(`${(process.env.EVKLID_BASE_URL || "").replace(/\/$/, "")}/zasebnost.html`);
+  const link = `${(process.env.EVKLID_BASE_URL || "").replace(/\/$/, "")}/zasebnost.html`;
+  const msg = privacyChangeEmail(link);
   if (i < 0) {
-    console.log(`Zadeva: ${msg.subject}\n\n${msg.text}\n\nPrejemnikov: ${n}. Nič ni poslano (za pošiljanje: --poslji ${PRIVACY_VERSION}).`);
+    console.log(`Zadeva: ${msg.subject}\n\n${msg.text}\n\nPovezava: ${link}\nPrejemnikov: ${n}. Nič ni poslano (za pošiljanje: --poslji ${PRIVACY_VERSION}).`);
+    return;
+  }
+  // Brez EVKLID_BASE_URL s https bi bila povezava v e-pošti relativna ali nezaščitena (pregled #474 A5, P3-5).
+  if (!/^https:\/\/[^/]+/.test(link)) {
+    console.log(`EVKLID_BASE_URL mora biti naslov s https (zdaj: »${process.env.EVKLID_BASE_URL || ""}«); nič ni poslano.`);
+    process.exitCode = 1;
     return;
   }
   if (process.argv[i + 1] !== PRIVACY_VERSION) {

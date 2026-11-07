@@ -1117,7 +1117,6 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ parent: publicParent(getParent(p.id)), ...(age < minAge ? { under_age: true, min_age: minAge } : {}) });
   });
 
-  // Obvestilo o spremenjeni politiki zasebnosti zaprto (»V redu« ali ×): ne pokaže se več do naslednje spremembe.
   // Enkratna koda za račun brez gesla (Apple): 6 števk na potrjeni e-naslov, velja 10 minut, največ 3 na uro.
   db.exec(`CREATE TABLE IF NOT EXISTS owner_codes (
     parent_id INTEGER PRIMARY KEY REFERENCES parents(id) ON DELETE CASCADE,
@@ -1130,18 +1129,19 @@ export function mountAccounts(app, store, opts = {}) {
     if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
     if (!noPassword(p)) return res.status(400).json({ error: "Račun ima geslo." });
     if (!p.email_verified_at || p.is_guest) return res.status(400).json({ error: "E-naslov ni potrjen." });
-    if (codeThrottle.blocked(`code${p.id}`)) return res.status(429).json({ error: "Preveč kod. Poskusite čez eno uro." });
+    if (codeThrottle.blocked(`code${p.id}`)) return res.status(429).json({ error: "Preveč kod. Poskusi čez eno uro." });
     codeThrottle.fail(`code${p.id}`);
     const code = String(crypto.randomInt(0, 1000000)).padStart(6, "0");
     db.prepare("INSERT INTO owner_codes (parent_id, code_hash, expires_at) VALUES (?, ?, ?) ON CONFLICT(parent_id) DO UPDATE SET code_hash = excluded.code_hash, expires_at = excluded.expires_at").run(p.id, sha256(`${p.id}:${code}`), Date.now() + 10 * 60000);
     try {
       await mailer.send({ to: p.email, ...ownerCodeEmail(code) });
     } catch {
-      return res.status(502).json({ error: "Kode ni bilo mogoče poslati. Poskusite znova." });
+      return res.status(502).json({ error: "Kode ni bilo mogoče poslati. Poskusi znova." });
     }
     res.json({ ok: true, ...(devLinks(req) ? { dev_code: code } : {}) });
   });
 
+  // Obvestilo o spremenjeni politiki zasebnosti zaprto (»V redu« ali ×): ne pokaže se več do naslednje spremembe.
   // Samo z geslom računa (pasica v zavihku Račun), da obvestila ne zapre otrok na starševi napravi.
   app.post("/api/account/privacy-seen", json, async (req, res) => {
     const p = req.parent;
