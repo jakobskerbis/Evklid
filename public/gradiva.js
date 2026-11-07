@@ -2,6 +2,7 @@
 // in delovni list za tisk z rešitvami (strežnik: server/gradiva.js).
 import { t } from "./i18n.js";
 import { icon } from "./icons.js";
+import { zavrzi } from "./odgovor.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -12,7 +13,7 @@ export async function gradivaHtml(studentId, topicId) {
   let d;
   try {
     const r = await fetch(`/api/students/${studentId}/gradiva?topic=${encodeURIComponent(topicId)}`);
-    if (!r.ok) return "";
+    if (!r.ok) return zavrzi(r), "";
     d = await r.json();
   } catch {
     return "";
