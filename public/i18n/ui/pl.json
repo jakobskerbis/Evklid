@@ -3868,5 +3868,15 @@
   "starsi.codeSend": "Wyślij kod e-mailem",
   "starsi.codeLabel": "Kod z e-maila",
   "starsi.codeSent": "Wysłaliśmy kod na adres e-mail konta.",
-  "pilot.n.realOnly": "Do pilotażu dodawaj tylko prawdziwych członków, nie własne konta testowe: inaczej z sum dałoby się obliczyć odpowiedź jednej osoby."
+  "pilot.n.realOnly": "Do pilotażu dodawaj tylko prawdziwych członków, nie własne konta testowe: inaczej z sum dałoby się obliczyć odpowiedź jednej osoby.",
+  "ginv.title": "Zaproszenie bez e-maila",
+  "ginv.help": "Link dla maksymalnie {n} znajomych: korzystają z Evklid bez adresu e-mail, w darmowym planie. Ważny przez {days} dni.",
+  "ginv.create": "Utwórz link",
+  "ginv.once": "Link jest widoczny tylko teraz. Skopiuj go i wyślij znajomym.",
+  "ginv.until": "Ważny do {date}.",
+  "ginv.copy": "Kopiuj",
+  "ginv.joinTitle": "Masz zaproszenie do Evklid",
+  "ginv.joinIntro": "Możesz korzystać z Evklid bez adresu e-mail, w darmowym planie. Postępy zostają tylko na tym urządzeniu; konto możesz założyć w każdej chwili.",
+  "ginv.start": "Zacznij bez e-maila",
+  "ginv.invalid": "To zaproszenie jest już nieważne (wygasło lub zostało wykorzystane). Załóż konto lub poproś o nowy link."
 }

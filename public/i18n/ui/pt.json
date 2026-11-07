@@ -3805,5 +3805,15 @@
   "starsi.codeSend": "Enviar código por e-mail",
   "starsi.codeLabel": "Código do e-mail",
   "starsi.codeSent": "Enviámos o código para o e-mail da conta.",
-  "pilot.n.realOnly": "Adicione ao piloto apenas membros reais, não as suas contas de teste: caso contrário, dos totais poder-se-ia calcular a resposta de uma pessoa."
+  "pilot.n.realOnly": "Adicione ao piloto apenas membros reais, não as suas contas de teste: caso contrário, dos totais poder-se-ia calcular a resposta de uma pessoa.",
+  "ginv.title": "Convite sem e-mail",
+  "ginv.help": "Uma ligação para até {n} amigos: usam o Evklid sem endereço de e-mail, com o plano gratuito. Válida durante {days} dias.",
+  "ginv.create": "Criar ligação",
+  "ginv.once": "A ligação só é mostrada agora. Copia-a e envia-a aos teus amigos.",
+  "ginv.until": "Válida até {date}.",
+  "ginv.copy": "Copiar",
+  "ginv.joinTitle": "Foste convidado(a) para o Evklid",
+  "ginv.joinIntro": "Podes usar o Evklid sem endereço de e-mail, com o plano gratuito. O teu progresso fica apenas neste dispositivo; podes criar uma conta a qualquer momento.",
+  "ginv.start": "Começar sem e-mail",
+  "ginv.invalid": "Este convite já não é válido (expirou ou esgotou). Cria uma conta ou pede uma nova ligação."
 }

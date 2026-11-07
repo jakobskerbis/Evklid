@@ -3772,5 +3772,15 @@
   "starsi.codeSend": "Kirim kode lewat email",
   "starsi.codeLabel": "Kode dari email",
   "starsi.codeSent": "Kami telah mengirim kode ke email akun.",
-  "pilot.n.realOnly": "Tambahkan hanya anggota sungguhan ke pilot, bukan akun uji Anda sendiri: jika tidak, jawaban seseorang bisa dihitung dari jumlahnya."
+  "pilot.n.realOnly": "Tambahkan hanya anggota sungguhan ke pilot, bukan akun uji Anda sendiri: jika tidak, jawaban seseorang bisa dihitung dari jumlahnya.",
+  "ginv.title": "Undangan tanpa email",
+  "ginv.help": "Tautan untuk paling banyak {n} teman: mereka memakai Evklid tanpa alamat email, dengan paket gratis. Berlaku {days} hari.",
+  "ginv.create": "Buat tautan",
+  "ginv.once": "Tautan hanya ditampilkan sekarang. Salin dan kirim ke teman-temanmu.",
+  "ginv.until": "Berlaku sampai {date}.",
+  "ginv.copy": "Salin",
+  "ginv.joinTitle": "Kamu diundang ke Evklid",
+  "ginv.joinIntro": "Kamu bisa memakai Evklid tanpa alamat email, dengan paket gratis. Kemajuanmu hanya tersimpan di perangkat ini; kamu bisa membuat akun kapan saja.",
+  "ginv.start": "Mulai tanpa email",
+  "ginv.invalid": "Undangan ini sudah tidak berlaku (kedaluwarsa atau sudah habis). Buat akun atau minta tautan baru."
 }

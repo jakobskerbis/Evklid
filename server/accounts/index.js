@@ -27,7 +27,7 @@ import { Usage, BLOCK_TEXT } from "../usage.js";
 import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
-import { guestModeOn, guestNet, guestPerDay, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
+import { guestModeOn, guestNet, guestPerDay, GuestInvites, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
 import { AccountLocks, ownerOnly } from "./account-lock.js";
 import { ProfileLocks, checkProfilePassword } from "./profile-lock.js";
 import { rights as rightsOf, lessonInteractive as lessonOpen } from "../placila/pravice.js";
@@ -82,6 +82,9 @@ export function mountAccounts(app, store, opts = {}) {
   // Uporaba brez registracije je odstranjena: vedno izklopljena, vklopijo jo le testi (opts.guest).
   const guestOn = opts.guest ?? guestModeOn(process.env);
   const guests = new GuestQuota(db);
+  const invites = new GuestInvites(db);
+  // Gost sme naprej, če je uporaba brez računa vklopljena (testi) ali če je prišel z lastnikovim povabilom.
+  const guestAllowed = (p) => guestOn || !!p?.guest_invite_id;
   app.set("trust proxy", 1);
 
   const kv = {
@@ -727,7 +730,7 @@ export function mountAccounts(app, store, opts = {}) {
       return res.status(403).json({ error: "Za to vpiši geslo računa.", account_locked: true });
     }
     if (p.is_guest && /^\/billing\//.test(req.path)) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
-    if (p.is_guest && !guestOn) return res.status(401).json({ error: "Uporaba brez računa ni več mogoča. Ustvari račun, da obdržiš napredek.", login: true, guest_off: true });
+    if (p.is_guest && !guestAllowed(p)) return res.status(401).json({ error: "Uporaba brez računa ni več mogoča. Ustvari račun, da obdržiš napredek.", login: true, guest_off: true });
     // Porabo AI vidi samo skrbnik ali kdor aplikacijo odpre na računalniku, kjer teče strežnik.
     if (/^\/usage(\/|$)/i.test(req.path) && !p.is_admin && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
 
@@ -903,7 +906,9 @@ export function mountAccounts(app, store, opts = {}) {
 
   // --- uporaba brez registracije (gost) ---
   app.post("/api/auth/guest", json, (req, res) => {
-    if (!guestOn) return res.status(404).json({ error: "Uporaba brez računa ni vklopljena." });
+    // Brez vklopljene uporabe brez računa samo z veljavnim povabilom lastnika (/?gost=…).
+    const invite = guestOn ? null : invites.find(req.body?.invite);
+    if (!guestOn && !invite) return res.status(404).json({ error: "Povabilo ne velja več (poteklo je ali je porabljeno). Ustvari račun ali prosi za novo povezavo.", invite_invalid: true });
     if (req.parent) return res.json({ parent: publicParent(req.parent) });
     if (req.body?.accept_privacy !== true) return res.status(400).json({ error: "Označi, da si prebral(a) obvestilo o varstvu podatkov." });
     // Naprava, ki je bila zavrnjena pri registraciji zaradi starosti, tudi brez računa ne more naprej.
@@ -914,14 +919,15 @@ export function mountAccounts(app, store, opts = {}) {
     if (guests.createdToday(net) >= guestPerDay()) {
       return res.status(429).json({ error: "S tega omrežja je danes nastalo že preveč profilov brez računa. Ustvari račun ali poskusi jutri.", guest_limit: true });
     }
+    if (invite && !invites.use(invite.id)) return res.status(404).json({ error: "Povabilo ne velja več (poteklo je ali je porabljeno). Ustvari račun ali prosi za novo povezavo.", invite_invalid: true });
     let code = referralCode();
     while (db.prepare("SELECT 1 FROM parents WHERE referral_code = ?").get(code)) code = referralCode();
     const r = db
       .prepare(
-        `INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code, weekly_email, is_guest, guest_net)
-         VALUES (?, ?, ?, ?, ?, 0, 1, ?)`,
+        `INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code, weekly_email, is_guest, guest_net, guest_invite_id)
+         VALUES (?, ?, ?, ?, ?, 0, 1, ?, ?)`,
       )
-      .run(`gost-${randomToken(12)}@gost.invalid`, unusablePasswordHash(), PRIVACY_VERSION, randomToken(18), code, net);
+      .run(`gost-${randomToken(12)}@gost.invalid`, unusablePasswordHash(), PRIVACY_VERSION, randomToken(18), code, net, invite?.id ?? null);
     const id = Number(r.lastInsertRowid);
     guests.logCreated(net);
     const country = String(req.headers["cf-ipcountry"] || req.body?.country || "").toUpperCase();
@@ -1193,7 +1199,7 @@ export function mountAccounts(app, store, opts = {}) {
     const p = req.parent;
     res.json({
       enabled: true,
-      guest_mode: guestOn,
+      guest_mode: guestAllowed(p),
       logged_in: !!p,
       parent: p ? publicParent(p) : null,
       children: p ? childIds(p.id).length : 0,
@@ -1382,6 +1388,7 @@ export function mountAccounts(app, store, opts = {}) {
         ...(p.is_admin && promoCfg.code ? { admin: { ...promo.stats(), url: `${baseUrl(req)}/?koda=${promoCfg.code}` } } : {}),
         ...(p.is_admin ? { codes: promo.list(), base_url: `${baseUrl(req)}/?koda=` } : {}),
       },
+      ...(isAdminEmail(p) ? { guest_invite: true } : {}),
       ...(p.is_admin
         ? { billing_events: db.prepare("SELECT id, type, received_at, processed_at, error FROM billing_events ORDER BY received_at DESC, rowid DESC LIMIT 10").all() }
         : {}),
@@ -1393,6 +1400,14 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   app.get("/api/account", (req, res) => res.json(accountView(req, req.parent)));
+
+  // Lastnik (EVKLID_ADMIN_EMAILS s potrjenim e-naslovom) ustvari povezavo za uporabo brez e-naslova.
+  // Žeton je v odgovoru samo enkrat; v bazi je le njegov sha256.
+  app.post("/api/admin/guest-invite", (req, res) => {
+    if (!isAdminEmail(req.parent)) return res.status(403).json({ error: "Samo za lastnika." });
+    const inv = invites.create(req.parent.id);
+    res.status(201).json({ url: `${baseUrl(req)}/?gost=${inv.token}`, expires_at: inv.expires_at, max_uses: inv.max_uses });
+  });
 
   // Cene in preizkus za stran za starše (starsi.html), brez prijave.
   app.get("/api/account/prices", (req, res) => {

@@ -3798,5 +3798,15 @@
   "starsi.codeSend": "Kód küldése e-mailben",
   "starsi.codeLabel": "Kód az e-mailből",
   "starsi.codeSent": "A kódot elküldtük a fiók e-mail-címére.",
-  "pilot.n.realOnly": "A pilotba csak valódi tagokat vegyen fel, saját tesztfiókot ne: különben az összesítésekből kiszámítható lenne egy személy válasza."
+  "pilot.n.realOnly": "A pilotba csak valódi tagokat vegyen fel, saját tesztfiókot ne: különben az összesítésekből kiszámítható lenne egy személy válasza.",
+  "ginv.title": "Meghívó e-mail nélkül",
+  "ginv.help": "Link legfeljebb {n} barátnak: e-mail-cím nélkül, az ingyenes csomaggal használják az Evklidet. {days} napig érvényes.",
+  "ginv.create": "Link létrehozása",
+  "ginv.once": "A link csak most látható. Másold ki, és küldd el a barátaidnak.",
+  "ginv.until": "Érvényes eddig: {date}.",
+  "ginv.copy": "Másolás",
+  "ginv.joinTitle": "Meghívtak az Evklidbe",
+  "ginv.joinIntro": "Az Evklidet e-mail-cím nélkül, az ingyenes csomaggal használhatod. A haladásod csak ezen az eszközön marad; fiókot bármikor létrehozhatsz.",
+  "ginv.start": "Kezdés e-mail nélkül",
+  "ginv.invalid": "Ez a meghívó már nem érvényes (lejárt vagy elfogyott). Hozz létre fiókot, vagy kérj új linket."
 }

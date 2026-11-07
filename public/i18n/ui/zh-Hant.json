@@ -3772,5 +3772,15 @@
   "starsi.codeSend": "透過電子郵件寄送驗證碼",
   "starsi.codeLabel": "電子郵件中的驗證碼",
   "starsi.codeSent": "驗證碼已寄到帳戶信箱。",
-  "pilot.n.realOnly": "試點中只加入真實成員，不要加入自己的測試帳戶，否則可以從總數算出某個人的回答。"
+  "pilot.n.realOnly": "試點中只加入真實成員，不要加入自己的測試帳戶，否則可以從總數算出某個人的回答。",
+  "ginv.title": "無需電子郵件的邀請",
+  "ginv.help": "最多可供 {n} 位朋友使用的連結：他們無需電子郵件地址，使用免費方案即可使用 Evklid。有效期 {days} 天。",
+  "ginv.create": "建立連結",
+  "ginv.once": "連結只會在此時顯示一次。請複製並傳給朋友。",
+  "ginv.until": "有效期至 {date}。",
+  "ginv.copy": "複製",
+  "ginv.joinTitle": "你受邀使用 Evklid",
+  "ginv.joinIntro": "你可以無需電子郵件地址、使用免費方案來使用 Evklid。學習進度只會保存在這台裝置上；你隨時可以建立帳戶。",
+  "ginv.start": "無需電子郵件開始",
+  "ginv.invalid": "此邀請已失效（已過期或名額已滿）。請建立帳戶或索取新連結。"
 }

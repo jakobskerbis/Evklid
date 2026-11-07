@@ -3798,5 +3798,15 @@
   "starsi.codeSend": "Tuma msimbo kwa barua pepe",
   "starsi.codeLabel": "Msimbo kutoka barua pepe",
   "starsi.codeSent": "Tumetuma msimbo kwa barua pepe ya akaunti.",
-  "pilot.n.realOnly": "Ongezeni wanachama halisi tu kwenye majaribio, si akaunti zenu za majaribio: vinginevyo jibu la mtu mmoja lingeweza kuhesabiwa kutoka kwa jumla."
+  "pilot.n.realOnly": "Ongezeni wanachama halisi tu kwenye majaribio, si akaunti zenu za majaribio: vinginevyo jibu la mtu mmoja lingeweza kuhesabiwa kutoka kwa jumla.",
+  "ginv.title": "Mwaliko bila barua pepe",
+  "ginv.help": "Kiungo kwa marafiki hadi {n}: wanatumia Evklid bila anwani ya barua pepe, kwa mpango wa bure. Kinafaa kwa siku {days}.",
+  "ginv.create": "Unda kiungo",
+  "ginv.once": "Kiungo kinaonyeshwa sasa tu. Kinakili na uwatumie marafiki zako.",
+  "ginv.until": "Kinafaa hadi {date}.",
+  "ginv.copy": "Nakili",
+  "ginv.joinTitle": "Umealikwa kwenye Evklid",
+  "ginv.joinIntro": "Unaweza kutumia Evklid bila anwani ya barua pepe, kwa mpango wa bure. Maendeleo yako yanabaki kwenye kifaa hiki tu; unaweza kuunda akaunti wakati wowote.",
+  "ginv.start": "Anza bila barua pepe",
+  "ginv.invalid": "Mwaliko huu haufai tena (umeisha muda au umetumika wote). Unda akaunti au omba kiungo kipya."
 }

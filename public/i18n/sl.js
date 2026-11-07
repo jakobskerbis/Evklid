@@ -3795,4 +3795,15 @@ export default {
   "birth.confirm": "Starost po tem datumu: {age}. Je to datum rojstva osebe, ki je ustvarila račun? Sam ga pozneje ne moreš spremeniti.",
   "birth.confirmYes": "Da, shrani",
   "birth.confirmNo": "Popravi",
+  // Povabilo brez e-naslova (lastnik, /?gost=…)
+  "ginv.title": "Povabilo brez e-naslova",
+  "ginv.help": "Povezava za največ {n} prijateljev: Evklid uporabljajo brez e-naslova, z brezplačnim paketom. Velja {days} dni.",
+  "ginv.create": "Ustvari povezavo",
+  "ginv.once": "Povezava je prikazana samo zdaj. Kopiraj jo in jo pošlji prijateljem.",
+  "ginv.until": "Velja do {date}.",
+  "ginv.copy": "Kopiraj",
+  "ginv.joinTitle": "Povabljen(a) si v Evklid",
+  "ginv.joinIntro": "Evklid lahko uporabljaš brez e-naslova, z brezplačnim paketom. Napredek ostane samo na tej napravi; račun lahko ustvariš kadar koli.",
+  "ginv.start": "Začni brez e-naslova",
+  "ginv.invalid": "Povabilo ne velja več (poteklo je ali je porabljeno). Ustvari račun ali prosi za novo povezavo.",
 };

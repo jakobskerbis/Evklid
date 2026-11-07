@@ -3834,5 +3834,15 @@
   "starsi.codeSend": "Trimite codul pe e-mail",
   "starsi.codeLabel": "Codul din e-mail",
   "starsi.codeSent": "Am trimis codul la adresa de e-mail a contului.",
-  "pilot.n.realOnly": "Adăugați în pilot doar membri reali, nu propriile conturi de test: altfel din totaluri s-ar putea calcula răspunsul unei persoane."
+  "pilot.n.realOnly": "Adăugați în pilot doar membri reali, nu propriile conturi de test: altfel din totaluri s-ar putea calcula răspunsul unei persoane.",
+  "ginv.title": "Invitație fără e-mail",
+  "ginv.help": "Un link pentru cel mult {n} prieteni: folosesc Evklid fără adresă de e-mail, cu planul gratuit. Valabil {days} zile.",
+  "ginv.create": "Creează link",
+  "ginv.once": "Linkul este afișat doar acum. Copiază-l și trimite-l prietenilor.",
+  "ginv.until": "Valabil până la {date}.",
+  "ginv.copy": "Copiază",
+  "ginv.joinTitle": "Ești invitat(ă) în Evklid",
+  "ginv.joinIntro": "Poți folosi Evklid fără adresă de e-mail, cu planul gratuit. Progresul rămâne doar pe acest dispozitiv; poți crea un cont oricând.",
+  "ginv.start": "Începe fără e-mail",
+  "ginv.invalid": "Această invitație nu mai este valabilă (a expirat sau a fost folosită). Creează un cont sau cere un link nou."
 }
