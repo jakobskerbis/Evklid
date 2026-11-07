@@ -2364,6 +2364,8 @@ export default {
   "mob.appleFailed": "Prijava z Apple ni uspela. Poskusi znova.",
   "mob.appleNewTitle": "Nov račun",
   "mob.appleNewText": "S tem Apple ID še nimaš računa. Vpiši datum rojstva, da ga ustvarimo.",
+  "mob.appleExistingTitle": "Račun že obstaja",
+  "mob.appleExistingText": "Račun s tem e-naslovom že obstaja, e-naslov pa ni bil potrjen. Povežemo ga s tvojim Apple ID in ga zaščitimo: staro geslo in prijave na drugih napravah ne bodo več veljale. Vpiši datum rojstva.",
   "mob.birthDate": "Datum rojstva",
   "mob.birthWhy": "Po datumu rojstva vemo, ali za račun potrebujemo soglasje staršev.",
   "mob.day": "Dan",
