@@ -131,8 +131,19 @@ export function migrateAccounts(db) {
   // plačana obdobja, dobroimetje, vračila; okno meje in nadgradnja v accounts/index.js). id dobi naslednji nov račun, ki bi
   // sicer podedoval tuje dobroimetje (šteje kot pravi denar za mejo AI) in podatke o plačilih (GDPR čl. 17).
   db.exec("CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
-  db.exec(`CREATE TRIGGER IF NOT EXISTS kv_parent_delete AFTER DELETE ON parents BEGIN
-    DELETE FROM kv WHERE key IN ('ai_paid_' || OLD.id, 'ai_paid_bal_' || OLD.id, 'ai_paid_refunds_' || OLD.id, 'ai_window_' || OLD.id, 'ai_upgrade_' || OLD.id);
+  // DROP + CREATE: sprožilec v obstoječi bazi se posodobi, ko se seznam ključev spremeni (IF NOT EXISTS bi ostal star).
+  // school_sub_end:<id> (accounts/billing.js) hrani Stripe id naročnine računa.
+  db.exec(`DROP TRIGGER IF EXISTS kv_parent_delete;
+  CREATE TRIGGER kv_parent_delete AFTER DELETE ON parents BEGIN
+    DELETE FROM kv WHERE key IN ('ai_paid_' || OLD.id, 'ai_paid_bal_' || OLD.id, 'ai_paid_refunds_' || OLD.id, 'ai_window_' || OLD.id, 'ai_upgrade_' || OLD.id, 'school_sub_end:' || OLD.id);
   END;`);
+  // Enkratno: zapisi računov, izbrisanih pred sprožilcem (sicer jih podeduje naslednji račun z istim id).
+  // GLOB z [0-9], ker je ai_paid_ predpona ai_paid_bal_; id = števke na koncu ključa.
+  if (!db.prepare("SELECT 1 FROM kv WHERE key = 'kv_parent_orphans_cleaned'").get()) {
+    db.exec(`DELETE FROM kv WHERE (key GLOB 'ai_paid_[0-9]*' OR key GLOB 'ai_paid_bal_[0-9]*' OR key GLOB 'ai_paid_refunds_[0-9]*'
+        OR key GLOB 'ai_window_[0-9]*' OR key GLOB 'ai_upgrade_[0-9]*' OR key GLOB 'school_sub_end:[0-9]*')
+      AND CAST(substr(key, length(rtrim(key, '0123456789')) + 1) AS INTEGER) NOT IN (SELECT id FROM parents);
+    INSERT INTO kv (key, value) VALUES ('kv_parent_orphans_cleaned', datetime('now'));`);
+  }
   db.exec("CREATE INDEX IF NOT EXISTS idx_parents_guest_net ON parents(guest_net) WHERE is_guest = 1");
 }
