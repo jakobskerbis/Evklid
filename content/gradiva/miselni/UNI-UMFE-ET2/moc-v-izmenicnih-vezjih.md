@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Trenutna moč
+  - $p = ui$ niha z dvojno frekvenco
+  - pri tuljavi in kondenzatorju tudi negativna
+- Tri moči
+  - $P = UI\cos\varphi$ v W, $Q = UI\sin\varphi$ v var
+  - $S = UI$ v VA, $S^2 = P^2 + Q^2$
+- Kompleksna moč
+  - $\underline S = \underline U\,\underline I^{*} = P + \mathrm{j}Q$
+  - napaka: pozabljena konjugacija
+- Boucherotov izrek
+  - $P$ in $Q$ seštevaš ločeno
+  - $S$ in toki bremen se ne seštevajo
+- Kompenzacija
+  - vzporedni kondenzator, $P$ ostane
+  - $\lvert Q_C\rvert = P(\tan\varphi_1 - \tan\varphi_2)$
+  - manjši tok, manjše izgube $I^2R$
+- Prilagoditev bremena
+  - $\underline Z_\mathrm{L} = \underline Z_g^{*}$, $P_\mathrm{max} = U_g^2/(4R_g)$
+  - samo upor: $R_\mathrm{L} = \lvert\underline Z_g\rvert$
+  - izkoristek le $50\,\%$
