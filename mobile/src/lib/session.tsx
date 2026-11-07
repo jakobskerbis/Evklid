@@ -13,6 +13,9 @@ export type Parent = {
   minor: boolean;
   verified: boolean;
   is_admin?: boolean;
+  guest?: boolean;
+  // false: račun s prijavo z Apple brez gesla (server/accounts/index.js publicParent); izvoz in izbris ga potrdita z Apple.
+  has_password?: boolean;
   trial_ends_at: string | null;
   subscription: { status: string; plan: string; seats: number; period_end: string | null; cancel_at_period_end: boolean } | null;
 };
