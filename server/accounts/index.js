@@ -1451,7 +1451,9 @@ export function mountAccounts(app, store, opts = {}) {
       return res.json({ ok: true });
     }
     const key = `${id}|${req.ip}`;
-    if (profileThrottle.blocked(key) || acrossThrottle.blocked(`profile${id}`)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
+    if (profileThrottle.blocked(key)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
+    // Meja za profil na vseh omrežjih ima okno 1 ure (acrossThrottle).
+    if (acrossThrottle.blocked(`profile${id}`)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez eno uro." });
     if (!(await locks.verify(id, pw))) {
       profileThrottle.fail(key);
       acrossThrottle.fail(`profile${id}`);
