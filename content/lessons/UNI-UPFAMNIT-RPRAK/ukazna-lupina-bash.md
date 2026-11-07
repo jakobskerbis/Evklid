@@ -201,7 +201,7 @@ tail -n +2 meritve.csv |
   head -n 3
 ```
 
-   Izpis: Ljubljana $33{,}5$ (2. 7.), Maribor $32{,}0$ (1. 7.), Maribor $31{,}4$ (4. 7.).
+   Izpis: `2025-07-02,Ljubljana,33.5,0.0`, `2025-07-01,Maribor,32.0,0.0`, `2025-07-04,Maribor,31.4,0.0`, torej Ljubljana $33{,}5$ (2. 7.), Maribor $32{,}0$ (1. 7.) in Maribor $31{,}4$ (4. 7.).
 
 3. (c) Vroč dan je vrstica, kjer se tretje polje začne s `3` in ima dve števki pred piko. Ker so vse vrednosti pod $40$, zadošča vzorec `,3[0-9]\.[0-9],`:
 
@@ -356,12 +356,12 @@ Opazi, da umask ni odštevanje: `666` z umaskom `027` da `640`. Osmiško odštev
 
 ? Kolikšen je osmiški zapis pravic `rwxr-xr--`?
 - `751`
-~ Zadnja trojka `r--` je $4$, ne $1$: $r$ ima vrednost $4$.
+~ Vrednosti si zamenjal ($r = 1$, $x = 4$): `r-x` da slučajno spet $5$, a `r--` je $4$, ne $1$.
 + `754`
 - `764`
 ~ Srednja trojka `r-x` je $4 + 1 = 5$, ne $6$.
-- `732`
-~ Zamenjal si vrednosti `r` in `w` ($r = 2$, $w = 4$): tako bi bil `r-x` $3$ in `r--` $2$; prav je $r = 4$, $w = 2$.
+- `457`
+~ Trojke si bral v obratnem vrstnem redu: prva je lastnik (u), nato skupina (g), zadnja ostali (o).
 > `rwx` $= 7$, `r-x` $= 5$, `r--` $= 4$.
 
 ? Skripta vsak dan zapiše povzetek meritev z <code>echo "&#36;povzetek" &gt; dnevnik.txt</code>. Kaj je posledica?

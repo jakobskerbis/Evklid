@@ -296,7 +296,7 @@ Spolovila v mediani ravnini: pri ženski od spredaj nazaj mehur, maternica, dank
 ~ S pretokom urina si delil, namesto da bi z njim množil.
 + $150\,\mathrm{mL/min}$
 - $6\,\mathrm{mL/min}$
-~ Pomnožil si $P$ in $U$ namesto da bi delil z $P$.
+~ S $P$ si pomnožil ($25 \cdot 1{,}2 \cdot 0{,}20 = 6$), namesto da bi z njim delil.
 - $30\,\mathrm{mL/min}$
 ~ To je $U \cdot Q_\mathrm{u}$ v $\mathrm{mg/min}$, ne očistek; deliti moraš še s $P$.
 > $C = \frac{25 \cdot 1{,}2}{0{,}20} = 150\,\mathrm{mL/min}$.
@@ -307,7 +307,7 @@ Spolovila v mediani ravnini: pri ženski od spredaj nazaj mehur, maternica, dank
 - korak 2
 ~ Tako žile res tečejo: med piramidami, ob bazi, v skorjo.
 - korak 3
-~ To je pravilno.
+~ Interlobularne arterije res dajo aferentne arteriole, te pa vodijo v glomerul: pravilno.
 + korak 4
 > Za glomerulom je eferentna arteriola in nato peritubularne kapilare ali vasa recta; šele nato vene.
 

@@ -47,7 +47,7 @@ Kar smo videli pri Cu-Ni, je splošno. **Hume-Rotheryjeva pravila** povedo, kdaj
 1. razlika atomskih polmerov je manjša od okoli $15\,\%$;
 2. enaka kristalna mreža;
 3. podobna elektronegativnost;
-4. enaka valenca.
+4. enaka ali podobna valenca.
 
 Če kateri pogoj ni izpolnjen, je topnost omejena in pri večjih deležih nastanejo nove faze. To se zgodi pri medeninah in bronih.
 
@@ -69,7 +69,7 @@ Vsak tuj atom v mreži siplje elektrone in zmanjša prevodnost, že majhni dele�
 
 - **Medenina $\alpha$** (do okoli $37\,\%$ Zn): trdna raztopina z mrežo bakra, zelo dobro se hladno preoblikuje. CuZn30 se uporablja za globoko vlečenje (tulci, cevi). Do okoli $30\,\%$ Zn cink poveča *hkrati* trdnost in raztezek, kar je pri zlitinah redko.
 - **Medenina $\alpha + \beta$** ($37$ do $45\,\%$ Zn): vsebuje fazo $\beta$ s kubično telesno centrirano mrežo. Pri sobni temperaturi je $\beta$ urejena ($\beta'$), trša in krhkejša. Nad okoli $450\,^\circ\mathrm C$ postane neurejena in duktilna, zato te medenine **vroče** preoblikujemo (kovanje, iztiskanje). Primer je CuZn40.
-- **Automatna medenina** CuZn39Pb3: svinec se v bakru ne raztaplja in ostane v drobnih kroglicah. Odrezki se lomijo na kratko, struženje je hitro. Za pitno vodo so nove medenine s silicijem ali bizmutom.
+- **Avtomatna medenina** CuZn39Pb3: svinec se v bakru ne raztaplja in ostane v drobnih kroglicah. Ostružki se lomijo na kratko, struženje je hitro. Za pitno vodo so nove medenine s silicijem ali bizmutom.
 
 Dve slabosti medenine:
 
@@ -105,7 +105,7 @@ Zgradba:
 - izločki **$\gamma'$**: urejena faza $\mathrm{Ni_3(Al,Ti)}$, kocke velikosti okoli $0{,}3$ do $0{,}5\,\mu\mathrm m$, koherentne z osnovo, pri lopaticah do okoli $60$ do $70\,\%$ prostornine;
 - na mejah zrn karbidi ter malo bora in cirkonija, ki zavirajo drsenje po mejah.
 
-Faza $\gamma'$ je posebna: njena meja tečenja z naraščajočo temperaturo do okoli $800\,^\circ\mathrm C$ *narašča*. Dislokacija, ki vstopi v urejeno mrežo, pusti za seboj napačno razporejene atome (protifazno mejo), zato se dislokacije gibljejo v parih.
+Faza $\gamma'$ je posebna: njena meja plastičnosti z naraščajočo temperaturo do okoli $800\,^\circ\mathrm C$ *narašča*. Dislokacija, ki vstopi v urejeno mrežo, pusti za seboj napačno razporejene atome (protifazno mejo), zato se dislokacije gibljejo v parih.
 
 **Razvoj lopatic** sledi ideji, da lezenje pri visoki temperaturi poteka ob mejah zrn:
 
@@ -260,11 +260,11 @@ Navedi Hume-Rotheryjeva pravila in z njimi utemelji, zakaj je diagram Cu-Ni izom
 
 **Rešitev:**
 
-1. Pravila: razlika polmerov pod okoli $15\,\%$, enaka mreža, podobna elektronegativnost, enaka valenca. Pri Cu-Ni so izpolnjena vsa (FCC, $128$ in $125\,\mathrm{pm}$, valenci podobni), zato je raztopina neomejena. Cink ima heksagonalno mrežo in valenco $2$, zato je topnost omejena; z večjim deležem elektronov na atom postanejo stabilne faze $\beta$, $\gamma$ in druge.
+1. Pravila: razlika polmerov pod okoli $15\,\%$, enaka mreža, podobna elektronegativnost, enaka ali podobna valenca. Pri Cu-Ni so izpolnjena vsa (FCC, $128$ in $125\,\mathrm{pm}$, valenci podobni), zato je raztopina neomejena. Cink ima heksagonalno mrežo in valenco $2$, zato je topnost omejena; z večjim deležem elektronov na atom postanejo stabilne faze $\beta$, $\gamma$ in druge.
 2. Izpeljava: masa zlitine $m = m_\mathrm{L} + m_\alpha$, masa niklja $m\,C_0 = m_\mathrm{L} C_\mathrm{L} + m_\alpha C_\alpha$.
 3. Delimo z $m$: $C_0 = W_\mathrm{L} C_\mathrm{L} + (1 - W_\mathrm{L}) C_\alpha$, torej $W_\mathrm{L} (C_\alpha - C_\mathrm{L}) = C_\alpha - C_0$.
 4. Sledi $W_\mathrm{L} = \dfrac{C_\alpha - C_0}{C_\alpha - C_\mathrm{L}}$ in $W_\alpha = 1 - W_\mathrm{L} = \dfrac{C_0 - C_\mathrm{L}}{C_\alpha - C_\mathrm{L}}$.
-5. $\gamma'$: urejena faza $\mathrm{Ni_3(Al,Ti)}$, koherentna z $\gamma$, z velikim deležem prostornine. Dislokacija, ki vstopi vanjo, ustvari protifazno mejo, zato morajo dislokacije potovati v parih, kar zahteva večjo napetost. Pri višji temperaturi se dislokacije prečno zdrsnejo v lege, kjer se težje gibljejo, zato meja tečenja raste do okoli $800\,^\circ\mathrm C$.
+5. $\gamma'$: urejena faza $\mathrm{Ni_3(Al,Ti)}$, koherentna z $\gamma$, z velikim deležem prostornine. Dislokacija, ki vstopi vanjo, ustvari protifazno mejo, zato morajo dislokacije potovati v parih, kar zahteva večjo napetost. Pri višji temperaturi se dislokacije prečno zdrsnejo v lege, kjer se težje gibljejo, zato meja plastičnosti raste do okoli $800\,^\circ\mathrm C$.
 6. Ker je $\gamma'$ stabilna skoraj do $1200\,^\circ\mathrm C$, izločki rastejo počasi in zlitina se ne prestara hitro.
 
 ## Drugače: Z analogijo
@@ -282,7 +282,7 @@ Superzlitina je kot avtocesta z zidaki: osnova $\gamma$ je pas, kocke $\gamma'$ 
 
 ## Drugače: Bolj natančno
 
-**Izcejanje.** Vzvodno pravilo velja v ravnotežju, ko difuzija izenači sestavo trdne faze. Pri realnem litju je difuzija v trdnem prepočasna: prva jedra zrn so bogata z nikljem, zadnja plast bogata z bakrom. To je **izcejanje** (angl. *coring*). Odpravimo ga s **homogenizacijskim žarjenjem** pod solidusom.
+**Izcejanje.** Vzvodno pravilo velja v ravnotežju, ko difuzija izenači sestavo trdne faze. Pri realnem litju je difuzija v trdnem prepočasna: prva jedra zrn so bogata z nikljem, zadnja plast bogata z bakrom. To je **kristalno izcejanje** (angl. *coring*). Odpravimo ga s **homogenizacijskim žarjenjem** pod solidusom.
 
 **Faze v medenini.** Z naraščajočim deležem cinka si sledijo faze $\alpha$ (FCC), $\beta$ (BCC), $\gamma$ (kompleksna kubična, krhka) in druge. Pojavijo se pri značilnem številu valenčnih elektronov na atom ($3/2$ za $\beta$, $21/13$ za $\gamma$). Takšne faze imenujemo elektronske faze; podobne nastopijo tudi pri Cu-Sn in Cu-Al.
 

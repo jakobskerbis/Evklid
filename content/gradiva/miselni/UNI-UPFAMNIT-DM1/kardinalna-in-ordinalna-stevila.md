@@ -7,7 +7,7 @@ stanje: osnutek
   - ni neskončnih padajočih zaporedij
   - $[0, 1]$ ni dobro urejen
 - Ključna lema
-  - naraščajoča $f$ da $f(x) \ge x$
+  - strogo naraščajoča $f$ da $f(x) \ge x$
   - ni izomorfna začetnemu odseku
   - izomorfizem je en sam
 - Ordinali
