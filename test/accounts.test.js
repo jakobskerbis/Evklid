@@ -1457,3 +1457,59 @@ test("povezava za potrditev e-naslova ima rok veljavnosti", async () => {
     assert.equal(row().verify_expires_at, null);
   });
 });
+
+// Odklep računa z geslom računa: ista meja za ves račun kot izvoz in geslo profila (acct<id>, 30 na uro), da otrok na
+// starševi napravi z menjavo omrežja (mobilni podatki, Wi-Fi) ne ugiba gesla brez konca.
+test("account unlock: wrong passwords from many networks hit the account-wide limit", async () => {
+  await withServer(async ({ client, calls }) => {
+    const a = client();
+    await registerVerified(a, calls, "omejitev@primer.si");
+    assert.ok((await a("/api/students", { method: "POST", body: { name: "Tine", birth_year: YEAR - 10, consent: true, profile_password: "tine1" } })).body.id);
+    await a("/api/account/lock", { method: "POST" });
+    const tryFrom = (ip, password = "narobe12") => a("/api/account/unlock", { method: "POST", body: { password }, headers: { "X-Forwarded-For": ip } });
+    for (let i = 0; i < 30; i++) assert.equal((await tryFrom(`10.0.${Math.floor(i / 3)}.1`)).status, 401);
+    const r = await tryFrom("10.9.9.9");
+    assert.equal(r.status, 429, "po 30 napačnih poskusih z različnih omrežij odklep še ugiba");
+    assert.match(r.body.error, /eno uro ali se odjavi in znova prijavi/, "sporočilo pove pravo okno in izhod");
+    assert.equal((await tryFrom("10.9.9.10", "geslo1234")).status, 429);
+  }, { accountLock: true });
+});
+
+// Brez e-pošte in s skupnim geslom (EVKLID_GATE=1) povezave za novo geslo ali potrditev nikoli ne gredo v odgovor
+// oddaljenemu odjemalcu (sicer prevzem tujega računa ali skrbnika, pregled #492 B, P2-4); v produkciji sploh ne.
+test("dev links: never to a remote client with the shared gate, never in production", async () => {
+  const saved = { EVKLID_PASSWORD: process.env.EVKLID_PASSWORD, EVKLID_GATE: process.env.EVKLID_GATE, EVKLID_BASE_URL: process.env.EVKLID_BASE_URL };
+  const restore = () => {
+    for (const [k, v] of Object.entries(saved)) if (v === undefined) delete process.env[k];
+    else process.env[k] = v;
+  };
+  try {
+    await withServer(
+      async ({ client }) => {
+        const body = { email: "zrtev-gate@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT };
+        assert.equal((await client()("/api/auth/register", { method: "POST", body })).status, 201);
+        // Skupno geslo vklopljeno po zagonu (prehod skozi vrata ni del tega testa): vsak tester z geslom je »oddaljen«.
+        process.env.EVKLID_PASSWORD = "skupno";
+        process.env.EVKLID_GATE = "1";
+        const remote = { "X-Forwarded-For": "198.51.100.7" };
+        const forgot = await client()("/api/auth/forgot", { method: "POST", body: { email: "zrtev-gate@primer.si" }, headers: remote });
+        assert.equal(forgot.body.dev_reset_url, undefined, "oddaljen tester dobi povezavo za novo geslo tujega računa");
+        const reg = await client()("/api/auth/register", { method: "POST", body: { ...body, email: "admin-gate@primer.si" }, headers: remote });
+        assert.equal(reg.body.dev_verify_url, undefined);
+      },
+      { resendKey: "" },
+    );
+    restore();
+    process.env.EVKLID_BASE_URL = "https://evklid.test";
+    await withServer(
+      async ({ client }) => {
+        const r = await client()("/api/auth/register", { method: "POST", body: { email: "prod@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT } });
+        assert.equal(r.status, 201);
+        assert.equal(r.body.dev_verify_url, undefined, "v produkciji povezava v odgovoru");
+      },
+      { resendKey: "" },
+    );
+  } finally {
+    restore();
+  }
+});
