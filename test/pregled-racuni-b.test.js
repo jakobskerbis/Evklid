@@ -159,10 +159,11 @@ test("B-6 verify without the account's session: GET asks, POST with password con
     const owner = webClient();
     const nm = await owner("/api/auth/verify", { body: { token: t2, not_mine: true } });
     assert.equal(nm.status, 200);
-    assert.ok(nm.body.reset);
+    assert.equal(nm.body.reset, undefined, "žeton za novo geslo gre samo po e-pošti");
+    const resetToken = new URL(nm.body.dev_reset_url).searchParams.get("reset"); // lokalno brez e-pošte: povezava v odgovoru
     assert.equal((await foreign("/api/account")).status, 401, "tujčeva seja ne velja več");
     assert.equal((await webClient()("/api/auth/login", { body: { email: "lastnik@primer.si", password: "tujcevo-geslo1" } })).status, 401);
-    assert.equal((await owner("/api/auth/reset", { body: { token: nm.body.reset, password: "lastnikovo-geslo" } })).status, 200);
+    assert.equal((await owner("/api/auth/reset", { body: { token: resetToken, password: "lastnikovo-geslo" } })).status, 200);
     assert.equal((await owner("/api/auth/verify", { body: { token: t2, not_mine: true } })).status, 400, "žeton velja enkrat");
   });
 });
@@ -268,5 +269,25 @@ test("B-9 reset of a verified account keeps class keys and drops a linked Apple 
     const t2 = new URL(r2.body.dev_verify_url).searchParams.get("token");
     assert.equal((await webClient()("/api/auth/verify", { body: { token: t2, not_mine: true } })).status, 200);
     assert.notEqual(keyHash(r2.body.parent.id), before, "tujčev ključ razreda velja po »nisem ustvaril«");
+  });
+});
+
+// B-10 (pregled #492/#500 A P2-2, P3-1): potekla povezava (#493) ne velja ne za GET ne za POST (geslo, not_mine);
+// GET brez seje ne potrdi niti računa brez gesla (pregledovalnik pošte).
+test("B-10 expired verify link: GET and both POST variants refuse; GET never auto-confirms a passwordless account", async () => {
+  await withServer(async ({ webClient, register, db }) => {
+    const reg = await register(webClient(), "potekla@primer.si", "lastnik12345");
+    const token = new URL(reg.body.dev_verify_url).searchParams.get("token");
+    db.prepare("UPDATE parents SET verify_expires_at = ? WHERE id = ?").run(new Date(Date.now() - 1000).toISOString(), reg.body.parent.id);
+    assert.equal((await webClient()(link(reg.body.dev_verify_url))).headers.get("location"), "/?verified=0");
+    assert.equal((await webClient()("/api/auth/verify", { body: { token, password: "lastnik12345" } })).status, 400);
+    assert.equal((await webClient()("/api/auth/verify", { body: { token, not_mine: true } })).status, 400);
+    assert.equal((await webClient()("/api/auth/login", { body: { email: "potekla@primer.si", password: "lastnik12345" } })).status, 200, "potekla povezava je spremenila geslo");
+
+    const r2 = await register(webClient(), "brezgesla@primer.si", "lastnik12345");
+    db.prepare("UPDATE parents SET password_hash = 'none$x' WHERE id = ?").run(r2.body.parent.id);
+    const g = await webClient()(link(r2.body.dev_verify_url));
+    assert.match(g.headers.get("location"), /^\/\?verify=/);
+    assert.equal(db.prepare("SELECT email_verified_at FROM parents WHERE id = ?").get(r2.body.parent.id).email_verified_at, null);
   });
 });

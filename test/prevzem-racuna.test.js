@@ -275,7 +275,7 @@ test("verify link: without the account session GET changes nothing and not_mine 
     const nm = await victim("/api/auth/verify", { body: { token: u2.searchParams.get("token"), not_mine: true } });
     assert.equal((await attacker("/api/account")).status, 401);
     assert.equal((await webClient()("/api/auth/login", { body: { email: VICTIM, password: "napadalec1" } })).status, 401);
-    const token = nm.body.reset;
+    const token = new URL(nm.body.dev_reset_url).searchParams.get("reset"); // po e-pošti; lokalno v odgovoru
     assert.equal((await webClient()("/api/auth/reset", { body: { token, password: "zrtvino-geslo" } })).status, 200);
   });
 });

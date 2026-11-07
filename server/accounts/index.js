@@ -54,6 +54,8 @@ export const SELF_CONSENT_TEXT =
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PAID = new Set(["active", "trialing", "past_due"]);
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+// Povezava za potrditev e-naslova velja 7 dni (nato »Pošlji znova« v Računu); migracija v schema.js.
+export const VERIFY_DAYS = 7;
 // Piškotek po zavrnjeni registraciji zaradi starosti: 24 ur je na tej napravi mogoča samo
 // registracija polnoletnega (starša), da otrok ne poskusi znova z drugim datumom.
 const AGE_COOKIE = `${BRAND.slug}_age`;
@@ -827,6 +829,7 @@ export function mountAccounts(app, store, opts = {}) {
     const id = Number(r.lastInsertRowid);
     db.prepare("UPDATE parents SET birth_date = ? WHERE id = ?").run(birthIso, id);
     if (verified) update(id, { email_verified_at: new Date().toISOString() });
+    else update(id, { verify_expires_at: isoIn(VERIFY_DAYS) });
     const country = String(req.headers["cf-ipcountry"] || req.body?.country || "").toUpperCase();
     if (/^[A-Z]{2}$/.test(country)) db.prepare("UPDATE parents SET country = ? WHERE id = ?").run(country, id);
     return { id, verifyToken: token };
@@ -901,8 +904,8 @@ export function mountAccounts(app, store, opts = {}) {
     const hash = await hashPassword(v.password);
     db.prepare(
       `UPDATE parents SET email = ?, password_hash = ?, name = ?, is_admin = ?, verify_token_hash = ?, privacy_version = ?,
-         privacy_accepted_at = datetime('now'), birth_date = ?, weekly_email = 1, is_guest = 0 WHERE id = ?`,
-    ).run(v.email, hash, cleanText(req.body?.name, 60), 0, sha256(token), PRIVACY_VERSION, v.birthIso, p.id);
+         privacy_accepted_at = datetime('now'), birth_date = ?, weekly_email = 1, is_guest = 0, verify_expires_at = ? WHERE id = ?`,
+    ).run(v.email, hash, cleanText(req.body?.name, 60), 0, sha256(token), PRIVACY_VERSION, v.birthIso, isoIn(VERIFY_DAYS), p.id);
     db.prepare("UPDATE consents SET parent_email = ? WHERE parent_id = ?").run(v.email, p.id);
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
     await sendMail(v.email, verifyEmail(url));
@@ -933,7 +936,7 @@ export function mountAccounts(app, store, opts = {}) {
     // omrežje (guest_spent), zapisana, dokler je račun še na omrežju (pred potrditvijo; pregled #462).
     const before = getParent(parentId);
     if (before.guest_net && !before.is_guest && !before.email_verified_at) guests.snapshotParent(parentId);
-    update(parentId, { email_verified_at: new Date().toISOString(), verify_token_hash: null });
+    update(parentId, { email_verified_at: new Date().toISOString(), verify_token_hash: null, verify_expires_at: null });
     const full = getParent(parentId);
     if (full.guest_net && !full.is_guest) update(parentId, { guest_net: null, trial_ends_at: full.trial_ends_at || isoIn(TRIAL_DAYS) });
     // Skrbnik (potrjen e-naslov iz EVKLID_ADMIN_EMAILS) prevzame učence iz časa pred računi.
@@ -942,7 +945,11 @@ export function mountAccounts(app, store, opts = {}) {
       db.prepare("UPDATE students SET parent_id = ? WHERE parent_id IS NULL").run(parentId);
     }
   }
-  const byVerifyToken = (token) => (token ? db.prepare("SELECT * FROM parents WHERE verify_token_hash = ?").get(sha256(token)) : null);
+  // Povezava velja VERIFY_DAYS dni (#493), za GET in POST: potekla se ne more več uporabiti (nova: »Pošlji znova« v Računu).
+  const byVerifyToken = (token) => {
+    const p = token ? db.prepare("SELECT * FROM parents WHERE verify_token_hash = ?").get(sha256(token)) : null;
+    return p && Date.parse(p.verify_expires_at || "") > Date.now() ? p : null;
+  };
 
   // GET (povezava iz e-pošte) ne spremeni ničesar, razen iz seje tega računa: povezavo odprejo tudi pregledovalniki
   // povezav v e-pošti (Microsoft Safe Links, Mimecast) in Safari brez seje mobilne aplikacije (pregled #492 B, P1-1).
@@ -953,10 +960,12 @@ export function mountAccounts(app, store, opts = {}) {
     if (!p) return res.redirect("/?verified=0");
     // Že potrjen račun (npr. s ponastavitvijo gesla): stara povezava samo počisti žeton.
     if (p.email_verified_at) {
-      update(p.id, { verify_token_hash: null });
+      update(p.id, { verify_token_hash: null, verify_expires_at: null });
       return res.redirect("/?verified=1");
     }
-    if (req.parent?.id === p.id || p.is_guest || String(p.password_hash || "").startsWith("none$")) {
+    // Samo seja tega računa potrdi takoj; brez nje (tudi račun brez gesla) GET ne potrdi ničesar, ker povezavo odprejo
+    // tudi pregledovalniki pošte (pregled #492/#500 A P3-1).
+    if (req.parent?.id === p.id) {
       confirmEmail(p.id);
       return res.redirect("/?verified=1");
     }
@@ -965,14 +974,15 @@ export function mountAccounts(app, store, opts = {}) {
 
   // { token, password }: geslo računa dokaže, da je račun ustvaril lastnik naslova; seje ostanejo.
   // { token, not_mine: true }: lastnik naslova računa ni ustvaril ali gesla ne pozna. Geslo je lahko tujčevo (prevzem
-  // pred registracijo, pregled #492 B), zato ga zamenjamo z neuporabnim, odjavimo vse naprave in vrnemo žeton za novo
-  // geslo (kot ponastavitev, velja 1 uro).
+  // pred registracijo, pregled #492 B), zato ga zamenjamo z neuporabnim in odjavimo vse naprave. Povezavo za novo geslo
+  // pošljemo na naslov računa (velja 1 uro), ne v odgovor: kdor ima samo povezavo za potrditev (zgodovina brskalnika,
+  // posredovana pošta), brez nabiralnika računa ne dobi (pregled #492/#500 A in B, P2-1).
   app.post("/api/auth/verify", json, async (req, res) => {
     const token = String(req.body?.token || "");
     const p = byVerifyToken(token);
     if (!p) return res.status(400).json({ error: "Povezava za potrditev ni veljavna ali je že uporabljena." });
     if (p.email_verified_at) {
-      update(p.id, { verify_token_hash: null });
+      update(p.id, { verify_token_hash: null, verify_expires_at: null });
       return res.json({ ok: true });
     }
     // Seja istega računa (povezava odprta v brskalniku, kjer je lastnik prijavljen): potrdi brez gesla.
@@ -988,12 +998,14 @@ export function mountAccounts(app, store, opts = {}) {
       if (p.apple_sub) update(p.id, { apple_sub: null });
       dropForeignAccess(p.id);
       audit(db, { req, parentId: p.id, action: "verify_foreign_session" });
-      return res.json({ ok: true, reset });
+      const url = `${baseUrl(req)}/?reset=${reset}`;
+      const sent = await sendMail(p.email, resetEmail(url));
+      return res.json({ ok: true, mail: sent !== false, ...(devLinks(req) ? { dev_reset_url: url } : {}) });
     }
     // Meja za ves račun (ugibanje z menjavo omrežja, kot odklep in izvoz; pregled #492 A P1-1) in za omrežje.
     const acct = `acct${p.id}`;
     if (acrossThrottle.blocked(acct) || ipThrottle.blocked(req.ip))
-      return res.status(429).json({ error: "Preveč poskusov. Poskusi čez eno uro ali izberi »Tega računa nisem ustvaril / ne poznam gesla«." });
+      return res.status(429).json({ error: "Preveč poskusov. Poskusi čez eno uro ali izberi »Računa nisem ustvaril jaz / ne poznam gesla«." });
     const ok = await verifyPassword(String(req.body?.password || ""), p.password_hash);
     // Med čakanjem na scrypt se je geslo ali žeton lahko zamenjal.
     const same = ok && db.prepare("SELECT 1 FROM parents WHERE id = ? AND password_hash = ? AND verify_token_hash = ?").get(p.id, p.password_hash, p.verify_token_hash);
@@ -1019,7 +1031,7 @@ export function mountAccounts(app, store, opts = {}) {
     if (p.is_guest) return res.status(400).json({ error: "Najprej ustvari račun." });
     if (p.email_verified_at) return res.json({ ok: true, verified: true });
     const token = randomToken();
-    update(p.id, { verify_token_hash: sha256(token) });
+    update(p.id, { verify_token_hash: sha256(token), verify_expires_at: isoIn(VERIFY_DAYS) });
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
     await sendMail(p.email, verifyEmail(url));
     res.json({ ok: true, ...(devLinks(req) ? { dev_verify_url: url } : {}) });
@@ -1122,6 +1134,7 @@ export function mountAccounts(app, store, opts = {}) {
       reset_expires_at: null,
       email_verified_at: p.email_verified_at || new Date().toISOString(),
       verify_token_hash: null, // stara povezava za potrditev po ponastavitvi ne velja več (pregled #492 B, P2-2)
+      verify_expires_at: null,
     });
     // Povezan Apple ID ni nujno lastnikov: povezan pred potrditvijo naslova (pregled #492 B, P2-1) ali dodan na potrjen
     // račun, o čemer je lastnik dobil e-pošto »če niste vi, nastavite novo geslo« (A P3-7). Ostane samo pri računu,
@@ -1354,7 +1367,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     audit(db, { req, parentId: p.id, action: "export" });
     const parent = { ...p };
-    for (const k of ["password_hash", "verify_token_hash", "reset_token_hash", "reset_expires_at", "unsubscribe_token", "store_account_token"]) delete parent[k];
+    for (const k of ["password_hash", "verify_token_hash", "verify_expires_at", "reset_token_hash", "reset_expires_at", "unsubscribe_token", "store_account_token"]) delete parent[k];
     const q = (sql, ...a) => db.prepare(sql).all(...a);
     const data = {
       exported_at: new Date().toISOString(),
@@ -2143,7 +2156,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
-  const mobile = { dropForeignAccess, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
+  const mobile = { dropForeignAccess, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
   return { credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

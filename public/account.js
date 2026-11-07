@@ -334,7 +334,7 @@ export async function initAccount({ onReady }) {
   const sessionId = q.get("session_id");
   if (q.toString()) history.replaceState(null, "", location.pathname);
   if (verified === "1") toast("E-naslov je potrjen ✓");
-  if (verified === "0") toast("Povezava za potrditev ni veljavna ali je že uporabljena.");
+  if (verified === "0") toast("Povezava za potrditev ni veljavna, je potekla ali je že uporabljena. Novo pošlješ v zavihku Račun.");
 
   if (reset) {
     renderReset(reset);
@@ -655,22 +655,25 @@ function renderForgot() {
 // Povezava za potrditev e-naslova, odprta brez seje tega računa (drug brskalnik, Safari po registraciji v aplikaciji):
 // strežnik ničesar ne spremeni, dokler lastnik ne vpiše gesla ali pove, da računa ni ustvaril (pregled #492 B).
 function renderVerifyLink(token) {
+  // Žeton ne ostane v naslovni vrstici in zgodovini, ko je porabljen (pregled #492/#500 A P3-2).
+  const forget = () => history.replaceState(null, "", "/");
   shell(`
     <h1>Potrdi e-naslov</h1>
     <form id="auth-form" class="card form">
-      <p>Za potrditev vpiši geslo, ki si ga izbral ob registraciji.</p>
+      <p>Za potrditev vpiši geslo svojega računa.</p>
       <label>Geslo <input name="password" type="password" required autocomplete="current-password"></label>
       <p class="form-error" role="alert" hidden></p>
       <button class="primary" type="submit">Potrdi e-naslov</button>
     </form>
     <div class="card">
-      <p>Tega računa nisi ustvaril ali ne poznaš gesla? Račun zaščitimo: dosedanje geslo in prijave na vseh napravah ne bodo več veljale, ti pa nastaviš novo geslo.</p>
-      <button id="verify-not-mine" type="button">Tega računa nisem ustvaril / ne poznam gesla</button>
+      <p>Računa nisi ustvaril ti ali ne poznaš gesla? Račun zaščitimo: dosedanje geslo in prijave na vseh napravah ne bodo več veljale. Na e-naslov računa ti pošljemo povezavo za novo geslo.</p>
+      <button id="verify-not-mine" class="danger" type="button">Računa nisem ustvaril jaz / ne poznam gesla</button>
     </div>`);
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     try {
       await api("/api/auth/verify", { method: "POST", body: { token, password: e.target.password.value } });
+      forget();
       toast("E-naslov je potrjen ✓");
       await continueFlow();
     } catch (err) {
@@ -678,18 +681,22 @@ function renderVerifyLink(token) {
     }
   });
   $("#verify-not-mine").addEventListener("click", async (e) => {
+    if (!confirm("Dosedanje geslo ne bo več veljalo in vse naprave (tudi otrokove) bodo odjavljene. Novo geslo nastaviš s povezavo, ki ti jo pošljemo po e-pošti. Nadaljujem?")) return;
     e.target.disabled = true;
     try {
       const r = await api("/api/auth/verify", { method: "POST", body: { token, not_mine: true } });
-      if (r.reset)
-        renderReset(
-          r.reset,
-          "Račun s tvojim e-naslovom je ustvaril nekdo drug ali pa si geslo pozabil. Dosedanje geslo ne velja več in vse naprave smo odjavili. Nastavi svoje geslo (povezava velja 1 uro).",
-        );
-      else {
-        toast("E-naslov je potrjen ✓");
-        await continueFlow();
-      }
+      forget();
+      shell(`
+        <h1>Račun je zaščiten</h1>
+        <div class="card">
+          <p>Dosedanje geslo ne velja več in vse naprave smo odjavili.</p>
+          <p>${
+            r.mail === false
+              ? "Sporočila ni bilo mogoče poslati. Novo geslo nastaviš s »Pozabljeno geslo« na strani za prijavo."
+              : "Na e-naslov računa smo poslali povezavo za novo geslo. Nastaviš ga lahko v 1 uri."
+          }</p>
+          ${r.dev_reset_url ? `<p><a href="${esc(r.dev_reset_url)}">Nastavi novo geslo (razvoj)</a></p>` : ""}
+        </div>`);
     } catch (err) {
       e.target.disabled = false;
       showError($("#auth-form"), err);
@@ -697,11 +704,10 @@ function renderVerifyLink(token) {
   });
 }
 
-function renderReset(token, note = "") {
+function renderReset(token) {
   shell(`
     <h1>Novo geslo</h1>
     <form id="auth-form" class="card form">
-      ${note ? `<p>${esc(note)}</p>` : ""}
       <label>Novo geslo <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
       <p class="form-error" hidden></p>
       <button class="primary" type="submit">Shrani geslo</button>

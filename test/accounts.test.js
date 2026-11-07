@@ -1436,3 +1436,24 @@ test("GDPR: izvoz vseh podatkov in izbris računa brez ostankov", async () => {
     }
   });
 });
+
+// Povezava za potrditev e-naslova velja VERIFY_DAYS dni; potekla ne potrdi računa, nova (»Pošlji znova«) ga.
+test("povezava za potrditev e-naslova ima rok veljavnosti", async () => {
+  await withServer(async ({ client, store, calls }) => {
+    const a = client();
+    const reg = await a("/api/auth/register", { method: "POST", body: { email: "rok@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT } });
+    assert.equal(reg.status, 201);
+    const row = () => store.db.prepare("SELECT email_verified_at, verify_expires_at FROM parents WHERE id = ?").get(reg.body.parent.id);
+    const left = (Date.parse(row().verify_expires_at) - Date.now()) / 86400000;
+    assert.ok(left > 6.9 && left <= 7, String(left));
+    const old = verifyLink(calls);
+    store.db.prepare("UPDATE parents SET verify_expires_at = ? WHERE id = ?").run(new Date(Date.now() - 1000).toISOString(), reg.body.parent.id);
+    const r = await a(old);
+    assert.equal(r.status, 302);
+    assert.equal(row().email_verified_at, null, "potekla povezava je potrdila račun");
+    assert.equal((await a("/api/auth/resend-verification", { method: "POST" })).status, 200);
+    await a(verifyLink(calls));
+    assert.ok(row().email_verified_at);
+    assert.equal(row().verify_expires_at, null);
+  });
+});

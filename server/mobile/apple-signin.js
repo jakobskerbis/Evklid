@@ -5,7 +5,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import express from "express";
-import { unusablePasswordHash, setSessionCookie, Throttle } from "../accounts/auth.js";
+import { unusablePasswordHash, setSessionCookie } from "../accounts/auth.js";
 import { netKey } from "../accounts/guest.js";
 import { isLocalRequest } from "../feedback.js";
 import { verifyAppleIdentityToken, appleClientSecret, AppleSignatureError } from "./apple-crypto.js";
@@ -39,9 +39,9 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
   const { db, sessions, getParent, parentByEmail, publicParent, createParent, checkAge, signupThrottle } = ctx;
   const dropForeignAccess = ctx.dropForeignAccess || ((id) => sessions.destroyAll(id));
   const audit = ctx.audit || (() => {});
-  // Omejitev neuspelih poskusov na omrežje (netKey: IPv6 /64; neveljaven žeton lahko sproži prenos Applovih ključev,
-  // pregled #492 A P3-5). Uspešne prijave in drugi korak (need_signup) se ne štejejo (CGNAT mobilnih operaterjev, B P3-3).
-  const appleThrottle = new Throttle(30, 15 * 60000);
+  // Brez meje na omrežje: neveljaven žeton stane eno preverjanje RSA, prenos Applovih ključev ob neznanem kid je omejen
+  // v apple-crypto.js (največ enkrat na minuto za ves strežnik). Meja na omrežje bi učencu za šolskim NAT dovolila, da z
+  // nesmiselnimi zahtevki zaklene prijavo z Apple vsem na šoli (pregled #492/#500 B P3-1).
   const env = opts.env || process.env;
   const log = opts.log || console;
   const fetchFn = opts.fetchFn || fetch;
@@ -52,18 +52,12 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
     verifyAppleIdentityToken(token, { audiences, nonce: rawNonce ? sha256hex(rawNonce) : null, fetchFn, keys: opts.appleKeys || null });
 
   app.post("/api/auth/apple", json, async (req, res) => {
-    const net = netKey(req.ip);
-    if (!isLocalRequest(req) && appleThrottle.blocked(net)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
     const rawNonce = text(req.body?.nonce);
-    if (rawNonce.length < 16) {
-      appleThrottle.fail(net);
-      return res.status(400).json({ error: "Manjka enkratni niz." });
-    }
+    if (rawNonce.length < 16) return res.status(400).json({ error: "Manjka enkratni niz." });
     let who;
     try {
       who = await verify(req.body?.identity_token, rawNonce);
     } catch (err) {
-      appleThrottle.fail(net);
       if (err instanceof AppleSignatureError) return res.status(401).json({ error: "Prijava z Apple ni uspela. Poskusi znova." });
       log.error?.("[evklid] prijava z Apple:", err.message);
       return res.status(502).json({ error: "Apple se ne odziva. Poskusi znova čez nekaj minut." });
@@ -113,7 +107,13 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
           if (ctx.sendMail && ctx.appleLinkedEmail) Promise.resolve(ctx.sendMail(byEmail.email, ctx.appleLinkedEmail())).catch(() => {});
           audit(db, { req, parentId: byEmail.id, action: "apple_link" });
         }
-        db.prepare("UPDATE parents SET apple_sub = ?, email_verified_at = COALESCE(email_verified_at, ?), verify_token_hash = NULL WHERE id = ?").run(who.sub, new Date().toISOString(), byEmail.id);
+        db.prepare("UPDATE parents SET apple_sub = ?, verify_token_hash = NULL, verify_expires_at = NULL WHERE id = ?").run(who.sub, byEmail.id);
+        // Apple je naslov potrdil: kot povezava za potrditev (nekdanji gost zapusti kvoto omrežja in dobi preizkus,
+        // skrbnik iz EVKLID_ADMIN_EMAILS; pregled #492/#500 B P3-2).
+        if (!byEmail.email_verified_at) {
+          if (ctx.confirmEmail) ctx.confirmEmail(byEmail.id);
+          else db.prepare("UPDATE parents SET email_verified_at = ? WHERE id = ?").run(new Date().toISOString(), byEmail.id);
+        }
         p = getParent(byEmail.id);
       }
     }

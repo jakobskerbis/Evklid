@@ -61,8 +61,11 @@ const APPLE_ISS = "https://appleid.apple.com";
 const KEYS_URL = "https://appleid.apple.com/auth/keys";
 let keyCache = { at: 0, keys: [] };
 
+// force (neznan kid): znova prenesemo največ enkrat na minuto za ves strežnik, da ponarejeni žetoni z izmišljenim kid
+// ne pošiljajo zahtevkov Applu (namesto meje na omrežje v apple-signin.js).
 async function appleKeys(fetchFn, force = false) {
-  if (!force && Date.now() - keyCache.at < 24 * 3600000 && keyCache.keys.length) return keyCache.keys;
+  const fresh = Date.now() - keyCache.at < (force ? 60000 : 24 * 3600000);
+  if (fresh && keyCache.keys.length) return keyCache.keys;
   const r = await fetchFn(KEYS_URL, { signal: AbortSignal.timeout(8000) });
   if (!r.ok) throw new AppleSignatureError("Ključev Apple ni mogoče prenesti.");
   const { keys } = await r.json();
