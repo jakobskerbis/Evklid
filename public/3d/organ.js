@@ -189,14 +189,22 @@ function ohraniSencilnik(m) {
 // zileSirina (polovična širina v metrih), zileRaven (globina, ob kateri tečejo): tanke žilice mehke možganske ovojnice, ki
 // sledijo brazdam (izočrta globine) in redke veje čez vijuge (izočrta zvitega šuma), ostre pri vsaki povečavi, brez tekstur.
 // vrstni (renderOrder), brezGlobine (ne piše globine), brezIzbire (dotik gre skozi): ozadje v prerezu.
-function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
+// studio (pregledovalnik: studioNaprave, ne na šibkih napravah): moker lak na svežem neprosojnem tkivu (lak ≥ 0,45, ne
+// »suho«) poenoten na 0,6–0,8 s hrapavostjo 0,15–0,3 (mehki dolgi odsevi softboksov namesto ostrih belih pik), in poceni
+// presevnost brez prepustnosti (transmission): maščoba v brazdah in tanki dvostranski listi (zaklopke) dobijo svetlobo
+// okolja z zadnje strani (presevnost, privzeto 0,45 maščoba in 0,35 listi; 0 = brez). Pokrov reza ostane MeshBasic.
+function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = false) {
   const prosojno = (t.prosojnost ?? 1) < 1;
+  const mokro = studio && !prosojno && (t.lak ?? 0) >= 0.45 && !t.suho;
+  const omeji = (v, a, b) => Math.min(b, Math.max(a, v));
+  const presevnoList = studio && !prosojno && t.dvostransko ? t.presevnost ?? 0.35 : 0;
+  const presevnoMasca = studio && t.masca ? t.mascaPresevnost ?? 0.45 : 0;
   const m = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(t.barva || "#cccccc"),
     roughness: t.hrap ?? 0.45,
     metalness: 0,
-    clearcoat: t.lak ?? 0,
-    clearcoatRoughness: t.lakHrap ?? 0.25,
+    clearcoat: mokro ? omeji(t.lak, 0.6, 0.8) : t.lak ?? 0,
+    clearcoatRoughness: mokro ? omeji(t.lakHrap ?? 0.25, 0.15, 0.3) : t.lakHrap ?? 0.25,
     sheen: visoka ? t.sijaj ?? 0 : (t.sijaj ?? 0) * 0.6,
     sheenColor: new THREE.Color(t.sijajBarva || t.barva || "#ffffff"),
     sheenRoughness: t.sijajHrap ?? 0.45,
@@ -208,6 +216,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
     depthWrite: (!prosojno || !!t.globina) && !t.brezGlobine,
     side: t.dvostransko ? THREE.DoubleSide : THREE.FrontSide,
   });
+  m.userData.mokro = mokro;
   if (visoka && t.prepustnost) {
     m.transmission = t.prepustnost;
     m.thickness = t.debelina ?? 0.05;
@@ -311,11 +320,21 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
         "#include <opaque_fragment>",
         `float orgFr = 1.0 - saturate( abs( dot( normalize( normal ), normalize( vViewPosition ) ) ) );
         outgoingLight += ${vec3(t.robBarva || t.barva || "#ffffff")} * ${fl(rob)} * pow( orgFr, 1.8 ) * mix( 1.0, vOrgAO, ${fl(t.aoOkolje ?? 1)} );
+        ${
+          presevnoList || presevnoMasca
+            ? `#ifdef USE_ENVMAP
+        { vec3 orgZadaj = getIBLIrradiance( -normal ) * RECIPROCAL_PI; // svetloba okolja z zadnje strani (presevnost)
+          ${presevnoList ? `outgoingLight += diffuseColor.rgb * ${vec3(t.robBarva || "#fff2e8")} * ${fl(presevnoList)} * orgZadaj * mix( 0.6, 1.0, vOrgAO );` : ""}
+          ${presevnoMasca ? `outgoingLight += ${vec3(t.mascaBarva || "#e7c46e")} * ${fl(presevnoMasca)} * clamp( orgMas, 0.0, 1.0 ) * ( orgZadaj * 0.7 + 0.3 * pow( orgFr, 1.5 ) );` : ""}
+        }
+        #endif`
+            : ""
+        }
         ${t.fresnel ? `diffuseColor.a = mix( diffuseColor.a, 1.0, ${fl(t.fresnel)} * pow( orgFr, 2.5 ) );` : ""}
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${m.map ? "t" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}`;
+  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}`;
   return ohraniSencilnik(m);
 }
 
@@ -491,6 +510,8 @@ function privzetaTocka(kosi) {
 // postavitev: "organ" in podrobnosti: { naslov, odseki: [{ naslov, besedilo }] }.
 export async function zgradiOrgan(ime, ctx = {}) {
   const visoka = ctx.kakovost === "visoka";
+  const studio = !!ctx.studio && !!ctx.okolje;
+  const okolje = studio ? ctx.okolje("studio").catch(() => null) : null; // HDRI se nalaga hkrati z modelom
   const podatki = await fetch(`${BAZA}${ime}.json`).then((r) => {
     if (!r.ok) throw new Error(`${ime}.json: ${r.status}`);
     return r.json();
@@ -505,6 +526,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     vir = await naslov(`${ime}-telefon.glb`); // podrobnega ni: telefonski model
     pripravljeno = await pripravi(vir.url, napredek);
   }
+  await okolje; // brez preskoka sobe → studio po prvem prikazu
   const { kosi, polmer, teksture } = pripravljeno;
   const s = 1 / polmer; // metri organa → enote modela
   const group = new THREE.Group();
@@ -527,7 +549,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const materiali = new Map();
   const pokrovi = new Map();
   const mat = (tkivo) => {
-    if (!materiali.has(tkivo)) materiali.set(tkivo, materialTkiva(podatki.tkiva?.[tkivo] || {}, visoka, ravnine || brezRavnin, teksture, s));
+    if (!materiali.has(tkivo)) materiali.set(tkivo, materialTkiva(podatki.tkiva?.[tkivo] || {}, visoka, ravnine || brezRavnin, teksture, s, studio));
     return materiali.get(tkivo);
   };
   const proxyMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
@@ -678,6 +700,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     },
     nadzor,
     postavitev: "organ",
+    okolje: studio ? "studio" : undefined,
     podrobnosti: podatki.podrobnosti || null,
     merilo: { m: 2 * polmer, oznaka: "" },
     pogled: () => smer(pogled),
