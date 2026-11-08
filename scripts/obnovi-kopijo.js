@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 import { BRAND } from "../server/brand.js";
 import { listBackups, checkFile, makeBackup, restoreFile, savedBeforeRestore } from "../server/kopije.js";
-import { verifyBackup } from "../server/kopije-preveri.js";
+import { verifyBackup } from "../server/kopije-preizkus.js";
 import { cloudConfig, listCloud, uploadBackup, downloadBackup } from "../server/kopije-oblak.js";
 
 const HELP = `Uporaba:
@@ -32,7 +32,7 @@ const HELP = `Uporaba:
   node scripts/obnovi-kopijo.js --oblak-zdaj  takoj naloži najnovejšo kopijo v shrambo zunaj strežnika
   node scripts/obnovi-kopijo.js --oblak-prenesi LLLL-MM-DD   prenese kopijo od zunaj (nato obnova z LLLL-MM-DD-0000)`;
 
-// Preizkus obnove je v server/kopije-preveri.js (isti ga strežnik požene vsako noč); izvoz ostane za teste.
+// Preizkus obnove je v server/kopije-preizkus.js (isti strežnik požene vsako noč, server/kopije-preveri.js); izvoz ostane za teste.
 export { verifyBackup };
 
 /** Pripravi obnovo: kopijo prekopira v obnovi.db (strežnik jo uporabi ob zagonu v naslednji uri). */
