@@ -41,16 +41,16 @@
 .uci-3d-card.mine { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
 .uci-3d-card.mine .uci-3d-subj { color: var(--accent); }
 
-/* Atlas telesa: temna kartica kot 3D oder (barve strani /3d, public/3d/3d.css), modra ikona. */
-.uci-3d-atlas { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; margin-top: 8px; padding: 18px; text-decoration: none; color: #e8ecf3; background: radial-gradient(120% 160% at 90% 10%, #22335a 0%, #141a25 60%); border: 1px solid #273142; }
-.uci-3d-atlas:hover { border-color: #6e9bff; }
-.uci-3d-atlas-ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(145deg, #6e9bff, #3b5fc4); color: #0b0f16; }
+/* Atlas telesa: kartica v barvah teme (--surface z rahlim odtenkom poudarka), ikona in gumb v --accent. */
+.uci-3d-atlas { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; margin-top: 8px; padding: 18px; text-decoration: none; color: var(--text); background: color-mix(in srgb, var(--accent) 9%, var(--surface)); }
+.uci-3d-atlas:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.uci-3d-atlas-ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--accent); color: var(--accent-text); }
 .uci-3d-atlas-ic svg.i { width: 28px; height: 28px; }
 .uci-3d-atlas-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.uci-3d-atlas-txt .eyebrow { color: #9aa6ba; }
+.uci-3d-atlas-txt .eyebrow { color: var(--muted); }
 .uci-3d-atlas-txt b { font-size: 1.15rem; }
-.uci-3d-atlas-txt span { color: #9aa6ba; line-height: 1.45; }
-.uci-3d-open { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px; background: #6e9bff; color: #0b0f16; font-weight: 800; white-space: nowrap; }
+.uci-3d-atlas-txt span { color: var(--muted); line-height: 1.45; }
+.uci-3d-open { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px; background: var(--accent); color: var(--accent-text); font-weight: 800; white-space: nowrap; }
 @media (max-width: 640px) {
   .uci-3d-atlas { grid-template-columns: auto minmax(0, 1fr); }
   .uci-3d-open { grid-column: 1 / -1; justify-content: center; }
