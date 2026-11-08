@@ -2,7 +2,7 @@
 // gumbov (tipkovnica: Tab do seznama, Enter izbere) in oknom izbranega dela ob odru (nikoli čez model), nadzor iz `nadzor` (drsnik, izbira, gumb,
 // stikalo, izpis), merilo iz `merilo`, »Ponastavi«, predvajaj/ustavi, ko ima model `korak`. Uporabljata ga stran /3d
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
-import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
+import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
@@ -207,6 +207,7 @@ export function odpriModel(el, mod, opts = {}) {
           c.emissive = barva.clone();
           c.emissiveIntensity = 0.85;
         }
+        if (c.userData?.mokro) c.clearcoat = Math.min(c.clearcoat, 0.1); // učna barva brez mokrega laka (ostane > 0: isti program)
         return c;
       });
       const kopija = Array.isArray(m.material) ? kopije : kopije[0];
@@ -857,6 +858,8 @@ export function odpriModel(el, mod, opts = {}) {
     const moj = ++gradnja;
     const ctx = {
       kakovost: kit.kakovost,
+      studio: studioNaprave(), // studijski videz organov (IBL, moker lak, presevnost); šibke naprave ne
+      okolje: (vrsta) => kit.nastaviOkolje(vrsta),
       gibanje: kit.gibanje,
       zacetek: { ...zacetek },
       t,
@@ -982,6 +985,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (model.postavitev === "organ") oder.append(nadzorEl);
     else if (nadzorEl.parentNode !== spodaj) spodaj.insertBefore(nadzorEl, deliGlava || deliEl);
     if (model.group) kit.scene.add(model.group);
+    kit.nastaviOkolje(model.okolje === "studio" ? "studio" : "soba");
     kit.nastaviLuci(model.luci !== false);
     // Začetne vrednosti kontrol (katalog ali naslov): nastavimo in pokličemo ob().
     for (const c of Array.isArray(model.nadzor) ? model.nadzor : []) {
