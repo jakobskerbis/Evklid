@@ -220,7 +220,7 @@ export function ustvariSceno(el, opts = {}) {
           hdr.mapping = THREE.EquirectangularReflectionMapping;
           const tex = unicen ? null : pmrem.fromEquirectangular(hdr).texture;
           hdr.dispose();
-          return (studio = { tex, jakost: opts.okoljeStudio ?? 0.62 });
+          return (studio = { tex, jakost: opts.okoljeStudio ?? 0.7 });
         })
         .catch((err) => {
           console.warn("studijsko okolje:", err);
