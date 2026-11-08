@@ -182,6 +182,7 @@ function ohraniSencilnik(m) {
 // t = nastavitve tkiva iz JSON: barva, hrap (hrapavost), lak, lakHrap, sijaj (sheen), sijajBarva, rob (presevnost ob
 // robu), robBarva, ao (moč zapečene sence 0–1), aoExp (kontrast sence, privzeto 1,6), zrno (barvna zrnatost), relief, f (frekvenca šuma v enotah organa),
 // lise (velike tople lise), prosojnost (1 = neprozorno), fresnel (prozorno spredaj, mlečno ob robu), dvostransko,
+// znotraj (iz dela v »deli«, ne iz tkiva: cev z enojno steno, npr. aorta; vidna z obeh strani, notranjost pomnožena s tem faktorjem, brez pokrova reza in presevnosti),
 // prepustnost (transmission, samo visoka), masca/mascaBarva (rumena maščoba v brazdah, kjer je zapečena senca globoka), senca/sencaBarva (topel temnejši
 // odtenek v gubah, kot prekrvljeno tkivo v globini).
 // Skorja iz MRI (COLOR_0.g = globina brazde 0 vrh … 1 dno, COLOR_0.b = krajevna globina, 0,5 = rob brazde): brazde/brazdeBarva (globoke brazde temnejše in bolj rdeče),
@@ -214,7 +215,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
     transparent: prosojno,
     opacity: t.prosojnost ?? 1,
     depthWrite: (!prosojno || !!t.globina) && !t.brezGlobine,
-    side: t.dvostransko ? THREE.DoubleSide : THREE.FrontSide,
+    side: t.dvostransko || t.znotraj ? THREE.DoubleSide : THREE.FrontSide,
   });
   m.userData.mokro = mokro;
   if (visoka && t.prepustnost) {
@@ -261,7 +262,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       .replace(
         "#include <color_fragment>",
         `float orgAO = mix( 1.0, pow( vOrgAO, ${fl(t.aoExp ?? 1.6)} ), ${fl(ao)} );
-        diffuseColor.rgb *= orgAO; // barve oglišč so podatki (R senca okolice, G globina brazde), ne množilnik barve
+        diffuseColor.rgb *= orgAO;${t.znotraj ? ` if ( !gl_FrontFacing ) diffuseColor.rgb *= ${fl(t.znotraj)}; // notranjost cevi (žile) temnejša` : ""} // barve oglišč so podatki (R senca okolice, G globina brazde), ne množilnik barve
         float orgFw = length( fwidth( vOrgPos ) );
         float orgLod = clamp( 1.5 - orgFw * ${fl(f)} * 2.0, 0.0, 1.0 );
         float orgZ = mix( 0.5, orgSum( vOrgPos * ${fl(f)} ), orgLod ) * 0.6 + mix( 0.5, orgSum( vOrgPos * ${fl(f * 3.7)} ), clamp( 1.5 - orgFw * ${fl(f * 3.7)} * 2.0, 0.0, 1.0 ) ) * 0.4;
@@ -334,7 +335,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}`;
+  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}`;
   return ohraniSencilnik(m);
 }
 
@@ -548,15 +549,19 @@ export async function zgradiOrgan(ime, ctx = {}) {
 
   const materiali = new Map();
   const pokrovi = new Map();
-  const mat = (tkivo) => {
-    if (!materiali.has(tkivo)) materiali.set(tkivo, materialTkiva(podatki.tkiva?.[tkivo] || {}, visoka, ravnine || brezRavnin, teksture, s, studio));
-    return materiali.get(tkivo);
+  // Del z »znotraj« (žila z enojno steno, npr. aorta) dobi svoj material tkiva: venčne žile istega tkiva so zaprte cevi.
+  const znotrajDela = new Map((podatki.deli || []).filter((d) => d.znotraj).map((d) => [d.id, d.znotraj]));
+  const mat = (tkivo, del) => {
+    const zn = znotrajDela.get(del);
+    const kljuc = zn ? `${tkivo}#z` : tkivo;
+    if (!materiali.has(kljuc)) materiali.set(kljuc, materialTkiva({ ...(podatki.tkiva?.[tkivo] || {}), ...(zn ? { znotraj: zn } : {}) }, visoka, ravnine || brezRavnin, teksture, s, studio));
+    return materiali.get(kljuc);
   };
   const proxyMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
   const meshi = [];
   for (const k of kosi) {
     const tk = podatki.tkiva?.[k.tkivo] || {};
-    const mesh = new THREE.Mesh(k.geo, mat(k.tkivo));
+    const mesh = new THREE.Mesh(k.geo, mat(k.tkivo, k.del));
     mesh.renderOrder = tk.vrstni ?? 0;
     mesh.name = `${k.del}|${k.tkivo}|${k.stran}`;
     mesh.userData = { del: k.del, tkivo: k.tkivo, stran: k.stran };
@@ -583,7 +588,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     group.add(mesh);
     meshi.push(mesh);
     const t = podatki.tkiva?.[k.tkivo] || {};
-    if (ravnine && !t.brezReza && !t.dvostransko && (t.prosojnost ?? 1) >= 1) {
+    if (ravnine && !t.brezReza && !t.dvostransko && !znotrajDela.has(k.del) && (t.prosojnost ?? 1) >= 1) {
       if (!pokrovi.has(k.tkivo)) pokrovi.set(k.tkivo, materialPokrova(t, ravnine));
       const p = new THREE.Mesh(k.geo, pokrovi.get(k.tkivo));
       p.raycast = () => {};
@@ -609,7 +614,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
     }
     // Nastavitve tkiv za ta pogled (npr. temna zenica: žilnica dvostransko in temnejša, leča skrita).
     const nast = p.tkiva || {};
-    for (const [tk, mm] of materiali) {
+    for (const [kljuc, mm] of materiali) {
+      const tk = kljuc.replace(/#z$/, "");
       const t = podatki.tkiva?.[tk] || {};
       const o = nast[tk] || {};
       mm.color.set(o.barva || t.barva || "#cccccc");
@@ -617,7 +623,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       mm.sheen = o.sijaj ?? mm.userData.osnova.sheen;
       mm.clearcoat = o.lak ?? mm.userData.osnova.clearcoat;
       const op = o.prosojnost ?? t.prosojnost ?? 1;
-      const side = o.dvostransko ?? t.dvostransko ? THREE.DoubleSide : THREE.FrontSide;
+      const side = o.dvostransko ?? (t.dvostransko || kljuc !== tk) ? THREE.DoubleSide : THREE.FrontSide;
       if (mm.opacity !== op || mm.side !== side) {
         if (!mm.transmission) mm.transparent = op < 1;
         mm.opacity = op;
