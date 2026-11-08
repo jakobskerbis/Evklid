@@ -7,6 +7,10 @@
 // Od 4. 11. 2026 (j: »To naj velja za vse enačbe«) velja isto za vsako enačbo v aplikaciji: initSirina()
 // opazuje vso stran in prilagodi vsako novo formulo (simulacije ob vsakem premiku drsnika, laboratorij,
 // klepet, naloge, kartice, skeniranje). Preverja še scripts/preveri-formule.cjs.
+// Od 8. 11. 2026 (j) se formula sredi besedila nikjer v aplikaciji ne prelomi sredi izraza (ui.css), ne le v
+// učbeniku: naloge, kvizi, igre, kartice, skeniranje, laboratorij in klepet. Ne gre v vrstico → cela v naslednjo;
+// širša od vrstice → zložena pri enačajih, nato pomanjšana (80 %) ali drsna. Mesto formule zunaj učbenika je
+// najbližji blokovni starš (mestoFormule), ne polj za vnos in SVG.
 
 export const MIN = 0.8;
 const BOX = ".katex-display, .md-table-wrap";
@@ -16,6 +20,7 @@ export const OKVIRI = ".demo-eq, .graf-eq, .formula-body, .fm-f";
 // Odstavki učbenika, v katerih formula sredi besedila ostane v eni vrstici (textbook.css).
 const VRSTE = "p, li, h2, h3, dd, blockquote";
 let sirine = new WeakMap(); // zadnja širina, pri kateri smo element že prilagodili
+let prilagojene = new WeakMap(); // formula sredi besedila → širina, pri kateri je že prilagojena (klepet: odgovor se izrisuje sproti, ne prilagajaj vseh znova)
 const opazovani = new Set();
 let ro = null;
 
@@ -428,12 +433,15 @@ function vrstica(el) {
   const w = cw - 8; // prostor za ločilo za formulo (vejica, pika), ki ostane v isti vrstici
   for (let k of el.querySelectorAll(":scope .katex")) {
     if (k.parentElement?.closest(".katex-display, table, .katex")) continue;
+    if (prilagojene.get(k) === w && k.isConnected) continue;
+    if (!el.closest(".textbook") && blok(k) !== el) continue; // formula v gnezdenem odstavku ima svoje mesto
     k.classList.remove("tb-dolga");
     // Formula se ne prelomi sredi izraza (textbook.css), zato šteje njena cela širina.
     // Zložena formula je blok z max-width 100 %, zato štejemo tudi njeno vsebino (scrollWidth).
     const sirina = (x) => Math.max(x.getBoundingClientRect().width, x.scrollWidth);
     k = prilagodiFormulo(k, w, sirina, visina(el) * VISOKA);
     if (sirina(k) > w + 1) k.classList.add("tb-dolga");
+    prilagojene.set(k, w);
   }
 }
 
@@ -466,16 +474,25 @@ function opazuj(el) {
   opazovani.add(el);
 }
 
-// Kje se prilagodi formula k: njena prikazana formula, okvir s formulo ali odstavek učbenika (ali nikjer:
-// formula sredi besedila v klepetu se prelomi sama, kot vedno).
+// Najbližji blokovni starš formule sredi besedila (naloga, klepetov mehurček, odgovor kviza …): vrstica, v kateri
+// se meri. Vmesni vrstični elementi (span, b, a) se preskočijo, saj nimajo svoje širine.
+function blok(k) {
+  let e = k.parentElement;
+  while (e && e !== document.body && getComputedStyle(e).display === "inline") e = e.parentElement;
+  return e && e !== document.body ? e : null;
+}
+
+// Kje se prilagodi formula k: njena prikazana formula, okvir s formulo ali vrstica z besedilom (v učbeniku
+// odstavek, drugje najbližji blokovni starš; ne v poljih za vnos, SVG in tabelah).
 function mestoFormule(k) {
   if (k.parentElement?.closest(".katex")) return null;
   const d = k.closest(".katex-display");
   if (d) return d.parentElement?.closest(".katex-display, table") ? null : d;
   const o = k.closest(OKVIRI);
   if (o) return o.parentElement?.closest(".katex-display") ? null : o;
-  if (k.closest("table") || !k.closest(".textbook")) return null;
-  return k.parentElement?.closest(VRSTE) || null;
+  if (k.closest("table, svg, math-field, textarea, input, [contenteditable]")) return null;
+  if (k.closest(".textbook")) return k.parentElement?.closest(VRSTE) || null;
+  return blok(k);
 }
 
 let mo = null;
@@ -524,6 +541,7 @@ function zazeni() {
   // Ko se naložijo pisave KaTeX, so formule drugače široke: prilagodi znova.
   const znova = () => {
     sirine = new WeakMap();
+    prilagojene = new WeakMap();
     resitve.clear(); // rešitve, izmerjene z nadomestno pisavo, ne veljajo več
     opazovani.forEach(prilagodi);
   };

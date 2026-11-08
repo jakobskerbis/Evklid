@@ -123,14 +123,34 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     return drsne(el);
   });
+  // Formula sredi besedila (naloga, klepet) se ne prelomi sredi izraza (j 2026-11-08): pri 390 px in vseh legah v
+  // vrstici so vsi .base izraza (−4 − 1i)(2 − 5i) v isti vrstici (ali pa je zložen pri enačajih).
+  await p.setViewportSize({ width: 390, height: 740 });
+  const prelom = await p.evaluate(async () => {
+    const { createRenderer } = await import("/rich.js");
+    const { renderRich } = createRenderer({});
+    const el = document.getElementById("drugo");
+    const slabe = [];
+    for (const [kje, ovoj] of [["naloga", (h) => `<div class="task" style="padding:16px"><div class="task-text">${h}</div></div>`], ["klepet", (h) => `<div class="messages" style="padding:12px"><div class="msg assistant"><div class="bubble">${h}</div></div></div>`]])
+      for (let n = 0; n < 40; n += 3) {
+        el.innerHTML = ovoj(renderRich(`${"beseda ".repeat(n / 6 | 0)}${"ab".repeat(n % 6)} Izračunaj realni del produkta $(-4 - 1i)(2 - 5i)$.`));
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        for (const k of el.querySelectorAll(".katex")) {
+          const tops = new Set([...k.querySelectorAll(".katex-html .katex-base")].map((b) => Math.round(b.getBoundingClientRect().top)));
+          if (tops.size > 1 && !k.querySelector(".mtable")) slabe.push(`${kje} n=${n}: formula na ${tops.size} vrstic`);
+        }
+      }
+    return slabe;
+  });
   const vej = VEJICE ? await p.evaluate(() => [...VEJ.entries()].sort((a, b) => b[1] - a[1])) : [];
   await b.close();
   srv.kill();
   fs.rmSync(dir, { recursive: true, force: true });
   slabe.forEach((x) => console.log(x));
   if (drugo.length) console.log(`Klepet, naloga, namig, kartica:\n${drugo.map((x) => `   ${x.cls} +${x.over} px  ${x.tex}`).join("\n")}`);
+  if (prelom.length) console.log(`Formula sredi besedila se prelomi:\n${prelom.map((x) => `   ${x}`).join("\n")}`);
   if (VEJICE) console.log(`Števila z vejico v formulah (${vej.length}):\n${vej.map(([t, c]) => `   ${c}× ${t}`).join("\n")}`);
   errs.forEach((x) => console.log("NAPAKA " + x));
-  console.log(`Simulacij: ${n} pri ${W} px, s pomikajočo se formulo: ${slabe.length} (dovoljeno ${ZNANE}); drugje: ${drugo.length}; napak: ${errs.length}`);
-  process.exit(slabe.length > ZNANE || drugo.length || errs.length ? 1 : 0);
+  console.log(`Simulacij: ${n} pri ${W} px, s pomikajočo se formulo: ${slabe.length} (dovoljeno ${ZNANE}); drugje: ${drugo.length}; prelomov: ${prelom.length}; napak: ${errs.length}`);
+  process.exit(slabe.length > ZNANE || drugo.length || prelom.length || errs.length ? 1 : 0);
 })();
