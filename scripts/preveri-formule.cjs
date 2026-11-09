@@ -123,23 +123,45 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     return drsne(el);
   });
-  // Formula sredi besedila (naloga, klepet) se ne prelomi sredi izraza (j 2026-11-08): pri 390 px in vseh legah v
-  // vrstici so vsi .base izraza (−4 − 1i)(2 − 5i) v isti vrstici (ali pa je zložen pri enačajih).
+  // Formula sredi besedila se nikjer ne prelomi sredi izraza (j 2026-11-08): pri 390 px je v nalogi, v klepetu
+  // (odstavek in neposredno v mehurčku, kjer ima mehurček svoj notranji rob) in v gumbu odgovora cela formula
+  // (−4 − 1i)(2 − 5i) v isti vrstici, dolga veriga z enačaji je zložena pri enačajih, dolga vsota brez enačaja
+  // ostane cela (pomanjšana ali drsna); stran se nikoli ne razširi.
   await p.setViewportSize({ width: 390, height: 740 });
   const prelom = await p.evaluate(async () => {
     const { createRenderer } = await import("/rich.js");
     const { renderRich } = createRenderer({});
     const el = document.getElementById("drugo");
     const slabe = [];
-    for (const [kje, ovoj] of [["naloga", (h) => `<div class="task" style="padding:16px"><div class="task-text">${h}</div></div>`], ["klepet", (h) => `<div class="messages" style="padding:12px"><div class="msg assistant"><div class="bubble">${h}</div></div></div>`]])
-      for (let n = 0; n < 40; n += 3) {
-        el.innerHTML = ovoj(renderRich(`${"beseda ".repeat(n / 6 | 0)}${"ab".repeat(n % 6)} Izračunaj realni del produkta $(-4 - 1i)(2 - 5i)$.`));
-        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-        for (const k of el.querySelectorAll(".katex")) {
-          const tops = new Set([...k.querySelectorAll(".katex-html .katex-base")].map((b) => Math.round(b.getBoundingClientRect().top)));
-          if (tops.size > 1 && !k.querySelector(".mtable")) slabe.push(`${kje} n=${n}: formula na ${tops.size} vrstic`);
+    const vsotaN = (m) => Array.from({ length: m }, (_, i) => String(11 + i * 7)).join(" + ");
+    const frames = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const gostitelji = {
+      naloga: (h) => `<div class="task" style="padding:16px"><div class="task-text">${h}</div></div>`,
+      "klepet (odstavek)": (h) => `<div class="messages" style="padding:12px"><div class="msg assistant">${h}</div></div>`,
+      "klepet (neposredno v mehurčku)": (h) => `<div class="messages" style="padding:12px"><div class="msg assistant">${h.replace(/<\/?p>/g, "")}</div></div>`,
+      "gumb odgovora": (h) => `<div class="choices" style="padding:12px"><button type="button" class="choice">${h.replace(/<\/?p>/g, "")}</button><button type="button" class="choice">2</button></div>`,
+    };
+    const primeri = [["(−4 − 1i)(2 − 5i)", (pre) => `${pre}Izračunaj realni del produkta $(-4 - 1i)(2 - 5i)$.`, "cela", 40]];
+    for (const m of [9, 11, 13, 15, 18, 24, 40]) primeri.push([`vsota ${m} členov brez =`, (pre) => `${pre}Seštej $${vsotaN(m)}$.`, "cela", 1]);
+    for (const m of [4, 6, 9, 12]) primeri.push([`veriga ${m} členov z =`, (pre) => `${pre}Izračunaj $A = ${vsotaN(m).replace(/ \+ /g, " \\cdot ")} = ${vsotaN(m)}$.`, "zlozena", 1]);
+    for (const [kje, ovoj] of Object.entries(gostitelji))
+      for (const [ime, besedilo, kako, korakov] of primeri)
+        for (let n = 0; n < korakov; n += 3) {
+          const pre = "beseda ".repeat((n / 6) | 0) + "ab".repeat(n % 6) + " ";
+          el.innerHTML = ovoj(renderRich(besedilo(pre)));
+          await frames();
+          const k = el.querySelector(".katex");
+          if (!k) { slabe.push(`${kje} / ${ime}: formule ni`); continue; }
+          const bazni = [...k.querySelectorAll(".katex-html .katex-base")].map((b) => Math.round(b.getBoundingClientRect().top));
+          const vrstice = new Set(bazni).size;
+          if (kako === "cela" && vrstice > 1) slabe.push(`${kje} / ${ime} n=${n}: formula na ${vrstice} vrsticah`);
+          if (kako === "zlozena" && !(k.classList.contains("tb-zlozena") || vrstice === 1)) slabe.push(`${kje} / ${ime} n=${n}: veriga ni zložena pri enačajih`);
+          const gost = k.closest(".task-text, .msg, .choice");
+          if (k.getBoundingClientRect().right > gost.getBoundingClientRect().right + 1 && !k.classList.contains("tb-dolga") && k.scrollWidth <= k.clientWidth + 1)
+            slabe.push(`${kje} / ${ime} n=${n}: formula štrli iz bloka`);
+          if (document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)
+            slabe.push(`${kje} / ${ime} n=${n}: stran se je razširila (${document.documentElement.scrollWidth} > ${document.documentElement.clientWidth})`);
         }
-      }
     return slabe;
   });
   const vej = VEJICE ? await p.evaluate(() => [...VEJ.entries()].sort((a, b) => b[1] - a[1])) : [];

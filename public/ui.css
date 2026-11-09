@@ -777,8 +777,11 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
    (naloge, kvizi, igre, kartice, skeniranje, laboratorij, klepet), ne le v učbeniku. Polja za vnos (math-field,
    tipkovnica) in SVG so zunaj tega: njihove formule se ne izrisujejo kot besedilo. */
 .katex:not(svg .katex) { white-space: nowrap; }
-:is(p, li, dd, dt, blockquote, h1, h2, h3, h4, td, th, label, .task-text, .msg, .bubble, .choice, .tb-opt, .tb-q) .katex:not(.katex-display > .katex, svg .katex, .katex .katex) { display: inline-block; text-indent: 0; margin-block: -0.15em; }
-:is(p, li, dd, blockquote, h2, h3, td, th, .task-text, .msg, .bubble) .katex.tb-zlozena:not(.katex-display > .katex) { display: block; width: fit-content; max-width: 100%; margin: 6px 0; }
+:is(p, li, dd, dt, blockquote, h1, h2, h3, h4, label, .task-text, .msg, .bubble, .choice, .tb-opt, .tb-q) .katex:not(.katex-display > .katex, svg .katex, .katex .katex) { display: inline-block; text-indent: 0; margin-block: -0.15em; }
+/* Visoka ali zložena formula (sirina.js) je blok v svoji vrstici, v vsakem bloku z besedilom enako kot v učbeniku;
+   v okvirjih s formulo (simulacija, zbirka) ostane, kot je. V gumbu odgovora ostane znotraj gumba, na sredini. */
+.katex.tb-zlozena:not(.katex-display > .katex, :is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex, svg .katex) { display: block; width: fit-content; max-width: 100%; margin: 6px 0; }
+.choice .katex.tb-zlozena { margin-inline: auto; }
 .katex.tb-dolga { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; padding: 2px 0 4px; }
 :is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex { white-space: nowrap; }
 /* Zložena formula: KaTeX-ov stolpec »aligned« seže 2 px čez desni rob (.vlist-s), kar bi okvir naredilo drsen. */
