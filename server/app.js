@@ -73,7 +73,7 @@ import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnos
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
-import { nujnoPredZavrnitvijo, nujnoZa } from "./nujno.js";
+import { nujnoPredZavrnitvijo, nujnoZa, varnostniPregled, vsakoVklopljeno, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
 import { zaznajNujno } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
@@ -835,6 +835,36 @@ export function createApp(store, opts = {}) {
     // Pod mejo: lokalni zaznavalnik (strošek 0); varnostni odgovor se pokaže nad odgovorom inštruktorja (j 6. 11.).
     const nujnoLokalno = nujnoZa(zaznajNujno(text), student.settings);
     if (nujnoLokalno) send("nujno", nujnoLokalno);
+    // Največ en varnostni odgovor na sporočilo (lokalno, Haiku ali META flag=distress).
+    let nujnoPoslano = !!nujnoLokalno;
+    const posljiNujno = (n) => {
+      if (!n || nujnoPoslano || res.writableEnded || res.destroyed) return;
+      nujnoPoslano = true;
+      send("nujno", n);
+    };
+    // Možnost B (j 10. 11.): kratek pregled s Haikujem vzporedno z odgovorom inštruktorja, na strošek aplikacije.
+    // Ne ob »Razloži podrobneje« (isto sporočilo je bilo pregledano že prej). EVKLID_VARNOST_VSAKO=0 izklopi.
+    const nujnoZacetek = Date.now();
+    const pregledB =
+      !nujnoLokalno && text && !again && vsakoVklopljeno()
+        ? varnostniPregled({ text, usage, studentId: student.id, createFn: opts.varnostFn, varovalka: false })
+            .then((vrsta) => {
+              if (vrsta) posljiNujno({ ...nujnoZa(vrsta, student.settings), ai: true });
+              return vrsta;
+            })
+            .catch(() => null)
+        : null;
+    // Pred koncem odgovora počakamo na pregled, a največ do NUJNO_ROK_MS od začetka (običajno je že končan).
+    const pocakajNujno = async () => {
+      if (!pregledB) return null;
+      let timer;
+      const rok = new Promise((r) => (timer = setTimeout(() => r(null), Math.max(0, NUJNO_ROK_MS - (Date.now() - nujnoZacetek)))));
+      try {
+        return await Promise.race([pregledB, rok]);
+      } finally {
+        clearTimeout(timer);
+      }
+    };
 
     const controller = new AbortController();
     let finished = false;
@@ -1151,6 +1181,10 @@ export function createApp(store, opts = {}) {
       } else if (!win) {
         console.warn(`[evklid] odgovor brez META (pogovor ${conv.id})`);
       }
+      // Možnost A (j 10. 11.): inštruktor je označil stisko (flag=distress) → varnostni odgovor, če ga še ni.
+      // Vrsta iz pregleda B, če ga je našel, sicer »stiska« (besedilo ima tudi 112).
+      const vrstaB = await pocakajNujno();
+      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || "stiska", student.settings));
       finished = true;
       send("done", {
         id: assistantId,
@@ -1194,7 +1228,9 @@ export function createApp(store, opts = {}) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
         // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
-        send("error", { error: errorText(err), nujno: nujnoLokalno ? undefined : nujnoZa(zaznajNujno(text), student.settings) || undefined });
+        // Pregled B (če teče) ima še do NUJNO_ROK_MS od začetka; njegov zadetek gre kot dogodek »nujno« pred napako.
+        await pocakajNujno();
+        send("error", { error: errorText(err), nujno: nujnoPoslano ? undefined : nujnoZa(zaznajNujno(text), student.settings) || undefined });
       }
       res.end();
     } finally {

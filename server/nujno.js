@@ -4,6 +4,9 @@
 //    varnostni pregled s Haikujem: model vrne samo vrsto (ZDRAVJE/STISKA/NASILJE/NEVARNOST/NE), besedilo
 //    odgovora je vedno potrjeno besedilo iz i18n (AI ne piše nasveta). Največ VAROVALKA pregledov na profil
 //    na dan; strošek se zapiše z student_id NULL in kind »varnost«: šteje v porabo aplikacije, ne v mejo učenca.
+// 3. Pod mejo (j 10. 11., možnost B): isti kratek pregled vzporedno z odgovorom inštruktorja za vsako sporočilo,
+//    ki ga lokalni zaznavalnik ne ujame (brez dnevne varovalke; meja je že dnevna meja vprašanj učenca).
+//    EVKLID_VARNOST_VSAKO=0 izklopi.
 import { getClient, isMockMode, quickParams } from "./claude.js";
 import { zaznajNujno, stevilke } from "../public/nujno.js";
 
@@ -13,12 +16,17 @@ export const VAROVALKA = Number(env("EVKLID_VARNOST_NA_DAN", 10));
 export const MODEL_VARNOST = env("EVKLID_VARNOST_MODEL", "claude-haiku-5-5");
 // Učenec ob zavrnitvi ne sme čakati: kratek rok, brez ponovitev (pregled A V4).
 export const ROK_MS = 5000;
+// Odgovor je ena beseda (najdaljša NEVARNOST ~4 žetone), zato nizka meja izhoda: krajše čakanje, nižja rezerva.
+export const MAX_TOKENS = 16;
+// Pregled vsakega sporočila pod mejo (možnost B); stikalo se bere ob klicu, da ga je mogoče preklopiti brez ponovnega zagona testov.
+export const vsakoVklopljeno = () => env("EVKLID_VARNOST_VSAKO", "1") !== "0";
 
 export const NAVODILO =
   "Si varnostni filter aplikacije za učenje (otroci in mladi). Preberi sporočilo učenca. Odgovori samo z eno besedo: " +
   "ZDRAVJE, STISKA, NASILJE, NEVARNOST ali NE. ZDRAVJE = nekdo je zdaj resno bolan ali poškodovan; STISKA = samopoškodovanje, " +
   "samomor, huda stiska; NASILJE = nasilje, zloraba, izsiljevanje ali ustrahovanje (tudi s slikami ali na spletu); NEVARNOST = požar, plin, druga nevarnost zdaj. Šolska naloga, zgodba ali " +
-  "vprašanje o snovi brez prave nevarnosti = NE. Če nisi prepričan, izberi kategorijo, ne NE.";
+  "vprašanje o snovi brez prave nevarnosti = NE. Pretiravanje iz jeze ali naveličanosti ob učenju (»umrl bom od te matematike«, " +
+  "»ta naloga me bo ubila«, »fizika me ubija«) = NE. Če nisi prepričan, izberi kategorijo, ne NE.";
 
 const BESEDA = { ZDRAVJE: "zdravje", STISKA: "stiska", NASILJE: "nasilje", NEVARNOST: "nevarnost" };
 
@@ -50,21 +58,24 @@ export function pregledovDanes(usage, studentId) {
 
 /**
  * Kratek varnostni pregled z AI. Vrne vrsto ali null (tudi ob napaki, porabljeni varovalki ali brez API).
- * @param {{ text: string, usage: object, studentId: number, createFn?: Function }} a
+ * varovalka=false (pregled vsakega sporočila pod mejo): brez dnevne varovalke in brez štetja vanjo.
+ * @param {{ text: string, usage: object, studentId: number, createFn?: Function, varovalka?: boolean }} a
  */
-export async function varnostniPregled({ text, usage, studentId, createFn = null }) {
+export async function varnostniPregled({ text, usage, studentId, createFn = null, varovalka = true }) {
   if (!text || !usage || studentId == null) return null;
   if (!createFn && isMockMode()) return null;
   // Dobroimetje za AI porabljeno: klic bi zagotovo padel (pregled A V4).
   if (usage.creditOut?.()) return null;
-  if (pregledovDanes(usage, studentId) >= VAROVALKA) return null;
-  pocisti(usage);
-  usage.kvSet(kljuc(studentId), pregledovDanes(usage, studentId) + 1);
+  if (varovalka) {
+    if (pregledovDanes(usage, studentId) >= VAROVALKA) return null;
+    pocisti(usage);
+    usage.kvSet(kljuc(studentId), pregledovDanes(usage, studentId) + 1);
+  }
   try {
     const create = createFn || ((body) => getClient().messages.create(body, { timeout: ROK_MS, maxRetries: 0 }));
     const out = await create({
       model: MODEL_VARNOST,
-      max_tokens: 150,
+      max_tokens: MAX_TOKENS,
       ...quickParams(MODEL_VARNOST),
       system: NAVODILO,
       messages: [{ role: "user", content: String(text).slice(0, 2000) }],

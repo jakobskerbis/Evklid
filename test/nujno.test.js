@@ -156,7 +156,7 @@ test("varnostni pregled: kratek klic, strošek aplikacije, varovalka na dan", as
   const bodies = [];
   const createFn = async (b) => (bodies.push(b), { content: [{ type: "text", text: "ZDRAVJE" }], usage: { input_tokens: 200, output_tokens: 2 }, model: b.model });
   assert.equal(await varnostniPregled({ text: "brat je čuden in bled", usage, studentId: 7, createFn }), "zdravje");
-  assert.equal(bodies[0].max_tokens, 150);
+  assert.equal(bodies[0].max_tokens, 16);
   assert.match(bodies[0].model, /haiku/);
   assert.equal(usage.logs[0][0], null); // ne šteje v mejo učenca
   assert.equal(usage.logs[0][3], "varnost");
@@ -198,6 +198,8 @@ const META = "\n<<META subject=MAT topic=\"x\" error=0 mode=A flag=none>>";
 test("strežnik: čez mejo vrne varnostni odgovor (lokalno brez AI, sicer kratek pregled)", async () => {
   const prev = process.env.EVKLID_DAILY_QUESTIONS;
   process.env.EVKLID_DAILY_QUESTIONS = "1";
+  // Ta test šteje samo preglede čez mejo; pregled vsakega sporočila pod mejo (B) je v svojem testu.
+  process.env.EVKLID_VARNOST_VSAKO = "0";
   const calls = [];
   const varnostFn = async (b) => (calls.push(b), { content: [{ type: "text", text: "NASILJE" }], usage: { input_tokens: 150, output_tokens: 2 }, model: b.model });
   try {
@@ -224,7 +226,145 @@ test("strežnik: čez mejo vrne varnostni odgovor (lokalno brez AI, sicer kratek
   } finally {
     if (prev === undefined) delete process.env.EVKLID_DAILY_QUESTIONS;
     else process.env.EVKLID_DAILY_QUESTIONS = prev;
+    delete process.env.EVKLID_VARNOST_VSAKO;
   }
+});
+
+// Možnost B (j 10. 11.): Haiku vzporedno pregleda vsako sporočilo pod mejo; A: META flag=distress odpre okno.
+const metaFlag = (flag) => `\n<<META subject=MAT topic="x" error=0 mode=A flag=${flag}>>`;
+test("strežnik B: vsako sporočilo pod mejo dobi vzporeden pregled; zadetek pred koncem odgovora, strošek aplikacije", async () => {
+  const calls = [];
+  const odgovor = (t) => (/stric|sam doma/.test(t) ? "NASILJE" : "NE");
+  const varnostFn = async (b) => (calls.push(b), { content: [{ type: "text", text: odgovor(b.messages[0].content) }], usage: { input_tokens: 220, output_tokens: 2 }, model: b.model });
+  await withServer({ streamFn: fakeStream("Razumem." + META), varnostFn }, async ({ call, store }) => {
+    const s = (await call("/api/students", { name: "Bine" })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    const navadno = events((await call(`/api/conversations/${c.id}/messages`, { text: "koliko je 3x + 2 = 11" })).body);
+    assert.ok(!navadno.some((e) => e.event === "nujno"));
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].max_tokens, 16);
+    assert.match(calls[0].model, /haiku/);
+    const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "stric me je zaklenil v sobo" })).body);
+    const i = ev.findIndex((e) => e.event === "nujno");
+    assert.ok(i >= 0 && i < ev.findIndex((e) => e.event === "done"), "okno pred koncem odgovora");
+    assert.equal(ev[i].data.vrsta, "nasilje");
+    assert.equal(ev[i].data.ai, true);
+    assert.equal(ev.filter((e) => e.event === "nujno").length, 1);
+    // Lokalni zaznavalnik je že našel: brez klica AI (strošek 0).
+    const n = calls.length;
+    events((await call(`/api/conversations/${c.id}/messages`, { text: "oče me tepe" })).body);
+    assert.equal(calls.length, n);
+    // Strošek: student_id NULL, vrsta »varnost« (ne v mejo učenca), brez dnevne varovalke.
+    const rows = store.db.prepare("SELECT student_id, kind FROM usage WHERE kind = 'varnost'").all();
+    assert.equal(rows.length, 2);
+    assert.ok(rows.every((r) => r.student_id === null));
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM kv WHERE key LIKE 'varnost\\_%' ESCAPE '\\'").get().n, 0);
+  });
+});
+
+test("strežnik B: stikalo EVKLID_VARNOST_VSAKO=0, napaka in počasen Haiku ne ustavijo odgovora", async () => {
+  process.env.EVKLID_VARNOST_VSAKO = "0";
+  let klicev = 0;
+  try {
+    await withServer({ streamFn: fakeStream("Razumem." + META), varnostFn: async () => (klicev++, { content: [{ type: "text", text: "NASILJE" }] }) }, async ({ call }) => {
+      const s = (await call("/api/students", { name: "Cene" })).body;
+      const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+      const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "stric me je zaklenil v sobo" })).body);
+      assert.ok(!ev.some((e) => e.event === "nujno"));
+      assert.equal(klicev, 0);
+    });
+  } finally {
+    delete process.env.EVKLID_VARNOST_VSAKO;
+  }
+  await withServer({ streamFn: fakeStream("Razumem." + META), varnostFn: async () => { throw new Error("529"); } }, async ({ call }) => {
+    const s = (await call("/api/students", { name: "Dora" })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "stric me je zaklenil v sobo" })).body);
+    assert.equal(ev.at(-1).event, "done");
+    assert.ok(!ev.some((e) => e.event === "nujno"));
+  });
+  // Haiku, ki ne odgovori: odgovor inštruktorja pride najpozneje ob roku (5 s), brez okna.
+  await withServer({ streamFn: fakeStream("Razumem." + META), varnostFn: () => new Promise(() => {}) }, async ({ call }) => {
+    const s = (await call("/api/students", { name: "Ema" })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    const t0 = Date.now();
+    const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "koliko je 2 + 2" })).body);
+    assert.equal(ev.at(-1).event, "done");
+    assert.ok(Date.now() - t0 < 7000);
+  });
+});
+
+test("strežnik B: ob napaki AI gre zadetek pregleda pred napako", async () => {
+  const varnostFn = async () => ({ content: [{ type: "text", text: "ZDRAVJE" }], usage: { input_tokens: 220, output_tokens: 2 } });
+  await withServer({ streamFn: fakeStream("", true), varnostFn }, async ({ call }) => {
+    const s = (await call("/api/students", { name: "Fani" })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "dedek čudno govori in mu visi ustnica" })).body);
+    const i = ev.findIndex((e) => e.event === "nujno");
+    assert.ok(i >= 0 && i < ev.findIndex((e) => e.event === "error"));
+    assert.equal(ev.at(-1).event, "error");
+    assert.equal(ev.at(-1).data.nujno, undefined); // ne dvakrat
+  });
+});
+
+test("strežnik A: META flag=distress odpre varnostni odgovor (stiska), ne dvakrat", async () => {
+  process.env.EVKLID_VARNOST_VSAKO = "0";
+  try {
+    await withServer({ streamFn: fakeStream("Slišim te. Je zdaj kdo pri tebi?" + metaFlag("distress")) }, async ({ call }) => {
+      const s = (await call("/api/students", { name: "Gal" })).body;
+      const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+      const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "nič več nima smisla" })).body);
+      const nujno = ev.filter((e) => e.event === "nujno");
+      assert.equal(nujno.length, 1);
+      assert.ok(ev.indexOf(nujno[0]) < ev.findIndex((e) => e.event === "done"));
+      // Lokalni je že našel (mama me tepe): META distress ne doda drugega okna.
+      const ev2 = events((await call(`/api/conversations/${c.id}/messages`, { text: "mama me spet tepe" })).body);
+      assert.equal(ev2.filter((e) => e.event === "nujno").length, 1);
+    });
+  } finally {
+    delete process.env.EVKLID_VARNOST_VSAKO;
+  }
+  // META flag=none (tudi offtopic, unsafe): brez okna.
+  await withServer({ streamFn: fakeStream("Dajva skupaj." + metaFlag("offtopic")) }, async ({ call }) => {
+    const s = (await call("/api/students", { name: "Hana" })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "kdo je zmagal na tekmi" })).body);
+    assert.ok(!ev.some((e) => e.event === "nujno"));
+  });
+});
+
+// Lažni alarmi (način mock): frustracija ob nalogi ne odpre okna – ne lokalno, ne v navodilu za Haiku, ne na strežniku.
+const FRUSTRACIJA = [
+  "umrl bom od te matematike",
+  "umrla bom od te matematike",
+  "ta naloga me bo ubila",
+  "fizika me ubija",
+  "ubijte me, spet ulomki",
+  "kemija je smrt",
+  "zgorel bom od teh enačb",
+  "ta test me bo pokopal",
+  "znorel bom od teh nalog",
+  "obupam nad to fiziko",
+  "ne prenesem več teh ulomkov",
+  "ta matematika me bo spravila v grob",
+  "this math is killing me",
+  "I'm going to die from this homework",
+];
+test("lažni alarmi: frustracija ob nalogi ne sproži okna", async () => {
+  const lazni = FRUSTRACIJA.filter((t) => zaznajNujno(t));
+  assert.deepEqual(lazni, []);
+  assert.match(NAVODILO, /umrl bom od te matematike/);
+  assert.match(NAVODILO, /= NE\./);
+  // Strežnik: Haiku (mock) po navodilu vrne NE, inštruktor flag=none → nobenega dogodka »nujno«.
+  const varnostFn = async () => ({ content: [{ type: "text", text: "NE" }], usage: { input_tokens: 220, output_tokens: 1 } });
+  await withServer({ streamFn: fakeStream("Razumem, dajva korak za korakom." + META), varnostFn }, async ({ call }) => {
+    const s = (await call("/api/students", { name: "Iza" })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    for (const t of FRUSTRACIJA.slice(0, 4)) {
+      const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: t })).body);
+      assert.ok(!ev.some((e) => e.event === "nujno"), t);
+    }
+  });
 });
 
 test("strežnik: pod mejo varnostni odgovor pred odgovorom inštruktorja, ob napaki AI lokalno", async () => {
