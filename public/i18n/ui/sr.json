@@ -3171,6 +3171,8 @@
   "pp.viewerLoading": "Отварам испит …",
   "pp.notPdf": "Ова датотека није PDF. Изабери испит преузет са ric.si.",
   "pp.loadFail": "Испит није могуће отворити ({msg}).",
+  "pp.fallbackMsg": "Preglednik ispita ne radi na ovom uređaju. Otvori PDF u pregledniku uređaja; označavanje zadataka ovde nije dostupno.",
+  "pp.fallbackOpen": "Otvori PDF",
   "pp.found": "Пронађени задаци: {n}. Код задатка притисни „Помоћ са овим задатком“.",
   "pp.foundNone": "Задатке није могуће пронаћи аутоматски. Са „Означи задатак“ повуци оквир око задатка.",
   "pp.pageOf": "{n} / {total}",

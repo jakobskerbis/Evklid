@@ -3142,6 +3142,8 @@
   "pp.viewerLoading": "Ouverture de l'épreuve …",
   "pp.notPdf": "Ce fichier n'est pas un PDF. Choisis l'épreuve téléchargée sur ric.si.",
   "pp.loadFail": "Impossible d'ouvrir l'épreuve ({msg}).",
+  "pp.fallbackMsg": "Le lecteur d'épreuves ne fonctionne pas sur cet appareil. Ouvre le PDF dans la visionneuse de ton appareil ; le marquage des exercices n'y est pas disponible.",
+  "pp.fallbackOpen": "Ouvrir le PDF",
   "pp.found": "Exercices trouvés : {n}. Appuie sur « Aide pour cet exercice » à côté d'un exercice.",
   "pp.foundNone": "Aucun exercice trouvé automatiquement. Avec « Marquer l'exercice », trace un cadre autour d'un exercice.",
   "pp.pageOf": "{n} / {total}",

@@ -21,6 +21,13 @@ async function pdfjs() {
   return lib;
 }
 
+// Rezerva (j, 10. 11.): pdf.js 6 zahteva novejši brskalnik (Safari 18+, Chrome 125+). Če se ne naloži ali prvi izris ne uspe
+// (zaznano po dejanski napaki ali po časovni omejitvi, ne po UA), učenec dobi gumb »Odpri PDF« v pregledovalniku naprave.
+const FALLBACK_MS = 8000;
+const FILE_ERRORS = /^(InvalidPDFException|MissingPDFException|PasswordException|FormatError)$/; // težava datoteke, ne naprave
+const withTimeout = (promise, ms) =>
+  Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { fallback: true })), ms))]);
+
 let current = null;
 export const paperViewerOpen = () => !!current;
 // Zapre pregledovalnik (gumb, Esc, tipka Nazaj v app.js). Vrne true, če je bil odprt.
@@ -63,7 +70,19 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   let observer = null;
   let pages = []; // { width, height, items, el, canvas, rendered, task }
   let sel = null; // ročni okvir { page, x0, y0, x1, y1 } v enotah PDF
-  const state = { closed: false };
+  const state = { closed: false, fell: false, drawn: false };
+  let blobUrl = null;
+  // Brez pdf.js: sporočilo in povezava na PDF (nov zavihek / sistemski pregledovalnik).
+  const fallback = () => {
+    if (state.closed || state.fell) return;
+    state.fell = true;
+    observer?.disconnect();
+    for (const p of pages) p.task?.cancel?.();
+    blobUrl = URL.createObjectURL(file);
+    status(t("pp.fallbackMsg"));
+    $("[data-pv-mark]").hidden = true;
+    $(".pv-pages").innerHTML = `<div class="pv-fallback" dir="auto"><p>${esc(t("pp.fallbackMsg"))}</p><a class="btn-primary pv-fb-open" href="${blobUrl}" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("pp.fallbackOpen"))}</span></a></div>`;
+  };
 
   const close = (forHelp) => {
     if (state.closed) return;
@@ -73,6 +92,7 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     observer?.disconnect();
     for (const p of pages) p.task?.cancel?.();
     loading?.destroy();
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
     el.remove();
     document.documentElement.classList.remove("pv-open");
     back?.focus?.();
@@ -92,7 +112,7 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   try {
     const data = new Uint8Array(await file.arrayBuffer());
     if (String.fromCharCode(...data.slice(0, 5)) !== "%PDF-") throw new Error(t("pp.notPdf"));
-    const pdf = await pdfjs();
+    const pdf = await withTimeout(pdfjs(), FALLBACK_MS);
     if (state.closed) return;
     // useWasm: false: CSP nima 'wasm-unsafe-eval' (JPX/JBIG2 gresta čez JS nadomestek v wasm/, brez opozorila v konzoli).
     loading = pdf.getDocument({ data, isEvalSupported: false, cMapUrl: `${LIB}cmaps/`, cMapPacked: true, standardFontDataUrl: `${LIB}standard_fonts/`, useWasm: false, wasmUrl: `${LIB}wasm/`, iccUrl: `${LIB}iccs/` });
@@ -106,7 +126,9 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     }
   } catch (err) {
     if (state.closed) return;
-    status(err.message === t("pp.notPdf") ? err.message : t("pp.loadFail", { msg: err.message }));
+    if (err.message === t("pp.notPdf")) return status(err.message);
+    if (!FILE_ERRORS.test(err.name || "")) return fallback(); // uvoz ali delovanje pdf.js ne uspe v tej napravi
+    status(t("pp.loadFail", { msg: err.message }));
     return;
   }
   const tasks = splitTasks(pages);
@@ -148,10 +170,12 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
       p.task = p.page.render({ canvasContext: c.getContext("2d"), viewport: vp });
       try {
         await p.task.promise;
-      } catch {
+      } catch (err) {
+        if (!state.drawn && err?.name !== "RenderingCancelledException") fallback(); // prvi izris ne uspe: pdf.js ni uporaben
         return;
       }
       if (state.closed || !p.near) return;
+      state.drawn = true;
       p.canvas.replaceWith(c);
       p.canvas = c;
       p.rendered = true;
@@ -171,6 +195,7 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     { root: scroller, rootMargin: "150% 0px" },
   );
   pages.forEach((p) => observer.observe(p.el));
+  setTimeout(() => !state.drawn && fallback(), FALLBACK_MS); // nič izrisanega v 8 s
   // Naslovnica in navodila nimajo nalog: začnemo pri prvi najdeni nalogi.
   // Ponovno odprta pola (po pomoči pri nalogi) se odpre pri zadnji nalogi.
   const start = startPage ? startPage - 1 : tasks.length ? tasks[0].regions[0].page : -1;

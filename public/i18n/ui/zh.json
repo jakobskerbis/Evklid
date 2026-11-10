@@ -3115,6 +3115,8 @@
   "pp.viewerLoading": "正在打开试卷…",
   "pp.notPdf": "此文件不是 PDF。请选择从 ric.si 下载的试卷。",
   "pp.loadFail": "无法打开试卷（{msg}）。",
+  "pp.fallbackMsg": "此设备无法运行试卷查看器。请用设备自带的查看器打开 PDF；这里无法标记题目。",
+  "pp.fallbackOpen": "打开 PDF",
   "pp.found": "找到 {n} 道题。在题目旁点按“这道题求助”。",
   "pp.foundNone": "未能自动找到题目。用“框选题目”在题目周围拖出一个框。",
   "pp.pageOf": "{n} / {total}",

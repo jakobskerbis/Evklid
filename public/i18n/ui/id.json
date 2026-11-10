@@ -3115,6 +3115,8 @@
   "pp.viewerLoading": "Membuka soal …",
   "pp.notPdf": "File ini bukan PDF. Pilih soal yang diunduh dari ric.si.",
   "pp.loadFail": "Soal tidak dapat dibuka ({msg}).",
+  "pp.fallbackMsg": "Penampil soal tidak berjalan di perangkat ini. Buka PDF di penampil perangkatmu; menandai soal tidak tersedia di sini.",
+  "pp.fallbackOpen": "Buka PDF",
   "pp.found": "Soal ditemukan: {n}. Tekan «Bantuan untuk soal ini» di samping soal.",
   "pp.foundNone": "Soal tidak dapat ditemukan otomatis. Dengan «Tandai soal», tarik kotak di sekitar soal.",
   "pp.pageOf": "{n} / {total}",

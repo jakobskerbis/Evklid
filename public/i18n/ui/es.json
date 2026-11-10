@@ -3142,6 +3142,8 @@
   "pp.viewerLoading": "Abriendo examen …",
   "pp.notPdf": "Este archivo no es un PDF. Elige el examen descargado de ric.si.",
   "pp.loadFail": "No se pudo abrir el examen ({msg}).",
+  "pp.fallbackMsg": "El visor de exámenes no funciona en este dispositivo. Abre el PDF en el visor de tu dispositivo; aquí no se pueden marcar tareas.",
+  "pp.fallbackOpen": "Abrir PDF",
   "pp.found": "Ejercicios encontrados: {n}. Pulsa «Ayuda con este ejercicio» junto a un ejercicio.",
   "pp.foundNone": "No se encontraron ejercicios automáticamente. Con «Marcar ejercicio» arrastra un recuadro alrededor de un ejercicio.",
   "pp.pageOf": "{n} / {total}",

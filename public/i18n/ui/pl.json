@@ -3205,6 +3205,8 @@
   "pp.viewerLoading": "Otwieranie arkusza …",
   "pp.notPdf": "Ten plik nie jest plikiem PDF. Wybierz arkusz pobrany z ric.si.",
   "pp.loadFail": "Nie udało się otworzyć arkusza ({msg}).",
+  "pp.fallbackMsg": "Przeglądarka arkuszy nie działa na tym urządzeniu. Otwórz PDF w przeglądarce plików urządzenia; zaznaczanie zadań nie jest tu dostępne.",
+  "pp.fallbackOpen": "Otwórz PDF",
   "pp.found": "Znalezione zadania: {n}. Przy zadaniu naciśnij „Pomoc przy tym zadaniu”.",
   "pp.foundNone": "Nie udało się automatycznie znaleźć zadań. Przyciskiem „Zaznacz zadanie” przeciągnij ramkę wokół zadania.",
   "pp.pageOf": "{n} / {total}",

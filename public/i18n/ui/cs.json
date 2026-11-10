@@ -3199,6 +3199,8 @@
   "pp.viewerLoading": "Otevírám písemku …",
   "pp.notPdf": "Tento soubor není PDF. Vyber písemku staženou z ric.si.",
   "pp.loadFail": "Písemku se nepodařilo otevřít ({msg}).",
+  "pp.fallbackMsg": "Prohlížeč písemek na tomto zařízení nefunguje. Otevři PDF v prohlížeči zařízení; označování úloh tu není k dispozici.",
+  "pp.fallbackOpen": "Otevřít PDF",
   "pp.found": "Nalezené úlohy: {n}. U úlohy stiskni „Pomoc s touto úlohou“.",
   "pp.foundNone": "Úlohy se nepodařilo najít automaticky. Pomocí „Označit úlohu“ táhni rámeček kolem úlohy.",
   "pp.pageOf": "{n} / {total}",

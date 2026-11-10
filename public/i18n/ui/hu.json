@@ -3139,6 +3139,8 @@
   "pp.viewerLoading": "Feladatlap megnyitása …",
   "pp.notPdf": "Ez a fájl nem PDF. Válaszd a ric.si oldalról letöltött feladatlapot.",
   "pp.loadFail": "A feladatlapot nem sikerült megnyitni ({msg}).",
+  "pp.fallbackMsg": "A dolgozatnéző nem működik ezen az eszközön. Nyisd meg a PDF-et az eszközöd megjelenítőjében; a feladatok jelölése itt nem érhető el.",
+  "pp.fallbackOpen": "PDF megnyitása",
   "pp.found": "Talált feladatok: {n}. Egy feladatnál nyomd meg a „Segítség ehhez a feladathoz” gombot.",
   "pp.foundNone": "A feladatokat nem sikerült automatikusan megtalálni. A „Feladat kijelölése” gombbal húzz keretet egy feladat köré.",
   "pp.pageOf": "{n} / {total}",
