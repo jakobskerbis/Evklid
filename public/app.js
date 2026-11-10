@@ -311,9 +311,7 @@ const startDone = () => {
   if (ZACETEK?.konec) return ZACETEK.konec();
   document.documentElement.removeAttribute("data-zacetek");
 };
-// Posnetek (ali okostje) je do prvega showView v toku strani. Ko se pravi pogled odkrije, posnetek pripnemo na
-// isto mesto (position: absolute z izmerjenim okvirjem), pravi pogled pa dobi isti prostor, a je neviden
-// (style.css, html[data-zacetek-pod]): izriše se v pravi velikosti (drsenje klepeta, širine formul), brez utripa.
+// Posnetek pripnemo na njegovo mesto, pravi pogled se pod njim izriše neviden (style.css html[data-zacetek-pod]).
 function pinSnapshot() {
   const shot = startShot();
   const root = document.documentElement;
@@ -322,10 +320,8 @@ function pinSnapshot() {
   Object.assign(shot.style, { top: `${r.top + scrollY}px`, left: `${r.left + scrollX}px`, width: `${r.width}px`, height: `${r.height}px` });
   root.setAttribute("data-zacetek-pod", "");
 }
-// Zagon je končan: posnetek zamenjamo, ko je pravi pogled napolnjen: klici, ki jih je sprožil njegov prikaz, so
-// končani in pogled se 120 ms ni več spremenil; najpozneje po 2,5 s. mark: številka zadnjega klica pred prikazom
-// zadnjega zaslona (Učna pot se takrat še polni pod njim in je ne čakamo); null: Učna pot, čakamo vse klice.
-// Dotik zavihka med čakanjem posnetek zamenja takoj (showView → startDone).
+// Posnetek zamenjamo, ko so klici pogleda končani in se 120 ms ni spremenil, najpozneje po 2,5 s (dotik zavihka takoj).
+// mark: zadnji klic pred zadnjim zaslonom (Učne poti pod njim ne čakamo); null: čakamo vse.
 function finishStart(mark = null) {
   startHold = false;
   if (!startShot()) return startDone();
@@ -345,8 +341,10 @@ function finishStart(mark = null) {
   };
   setTimeout(check, 40);
 }
+// Po clearPrivate (odjava, 401) in med zaklepom do naslednje izbire profila (znova) brez zapisa (pregled #560 A2, A3).
+const shotClosed = () => ZACETEK?.lahkoShrani?.() === false;
 function rememberScreen() {
-  if (!ZACETEK || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
+  if (!ZACETEK || shotClosed() || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
   const rec = { v: currentView, t: Date.now(), s: state.student.id };
   if (currentView === "uci" && uciTab() === "textbook" && openLessonId()) rec.l = openLessonId();
   if (currentView === "topic" && state.topicFx && state.topic?.id) rec.p = state.topic.id;
@@ -356,19 +354,21 @@ function rememberScreen() {
 // Posnetek zadnjega zaslona za hiter zagon (public/posnetek.js, naložen po zagonu; zacetek.js ga pokaže ob odprtju).
 let shotMod = null;
 const loadShot = () => import("./posnetek.js").then((m) => (shotMod = m)).catch(() => null);
-// Zasebnost (pregled #560): a = lastnik naprave (račun, public/offline.js) ob shranjevanju; z = profil ima geslo (zaklep
-// se lahko spremeni na drugi napravi, zacetek.js zato počaka na strežnik). Zaklenjen profil ali profil brez gesla, ki
-// ga mora nastaviti, posnetka nima (meta null → posnetek se izbriše).
+// a = lastnik naprave, z = profil z geslom (zacetek.js počaka strežnik); zaklenjen ali brez gesla: null (izbris).
 function shotMeta() {
   const s = state.student;
   if (!s || s.locked || (accountsOn() && s.needs_password)) return null;
   return { a: localStorageGet(ZACETEK.OWNER || "evklid.offline.owner"), z: s.needs_password === false ? 1 : 0 };
 }
+// Tudi ne ob oknu zaklepa (423) ali ko na napravi ni več izbran ta profil.
+const shotAllowed = () =>
+  !shotClosed() && !document.getElementById("lock-overlay") && !!state.student && localStorageGet("studentId") === String(state.student.id) && !startHold && !startShot();
 function saveSnapshot() {
+  if (shotClosed()) return;
   const rec = rememberScreen();
-  if (!ZACETEK?.POSNETEK || startHold || startShot()) return;
+  if (!ZACETEK?.POSNETEK || !shotAllowed()) return;
   if (shotMod) shotMod.shrani(ZACETEK.POSNETEK, rec, shotMeta());
-  else loadShot().then((m) => m && !startHold && !startShot() && m.shrani(ZACETEK.POSNETEK, rememberScreen(), shotMeta()));
+  else loadShot().then((m) => m && shotAllowed() && m.shrani(ZACETEK.POSNETEK, rememberScreen(), shotMeta()));
 }
 function dropOtherShot(id) {
   if (!ZACETEK?.POSNETEK) return;
@@ -932,6 +932,7 @@ async function selectStudent(id) {
     return selectStudent(open.id);
   }
   dropOtherShot(target?.id); // menjava profila: posnetek zaslona prejšnjega profila izgine takoj
+  if (target) ZACETEK?.znova?.(); // izbran odklenjen profil: zapis zadnjega zaslona in posnetka spet velja
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
@@ -1814,15 +1815,18 @@ function dropStaleCopies(v) {
 // šele tik pred osvežitvijo, ko so tekmovanje in neposlano besedilo že preverjeni (pregled B2 P2-1).
 const RELOADED = "evklid.osvezeno";
 async function reloadIfNewer(once = false) {
-  if (!appVersion || state.contestTimer || unsentText()) return;
+  const busy = () => state.contestTimer || unsentText();
+  if (!appVersion || busy()) return;
   const v = await serverVersion();
-  if (!v || v === appVersion) return;
+  // Med klicem je lahko začel pisati (B4).
+  if (!v || v === appVersion || busy()) return;
   try {
     if (once && sessionStorage.getItem(RELOADED) === v) return;
   } catch {
     return; // brez sessionStorage ne tvegamo zanke
   }
   if (pageApp) await dropStaleCopies(v);
+  if (busy()) return;
   // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
   // service worker ali izgubil osvežitev (pregled B2 P2-4).
   try {
@@ -4939,6 +4943,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
       const box = $("#input");
       box.value = START_ASK;
       autoGrow();
+      startDone(); // viden pogled, sicer fokus ne gre v polje (B1)
       box.focus();
     }
     if (first) restoreWindows();

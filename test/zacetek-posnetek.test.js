@@ -18,7 +18,8 @@ const PUB = path.resolve("public");
 const DOMPURIFY = path.resolve("node_modules/dompurify/dist"); // kot server/app.js /vendor/dompurify/
 const TYPES = { ".js": "text/javascript", ".html": "text/html" };
 const PAGE = `<!doctype html><meta charset="utf-8"><script src="/zacetek.js"></script>
-<script src="/vendor/dompurify/purify.min.js"></script><body><main id="view-chat" class="view chat-view"></main><nav id="tabbar"></nav></body>`;
+<meta name="evklid-app" content="a1"><script src="/vendor/dompurify/purify.min.js"></script><body><main id="view-settings" class="view narrow"></main>
+<main id="view-chat" class="view chat-view" hidden></main><nav id="tabbar"></nav></body>`;
 
 function serve() {
   const server = http.createServer((req, res) => {
@@ -88,10 +89,11 @@ test("posnetek ob shranjevanju: DOMPurify; zaklenjen profil (meta null) ali brez
     await page.goto(`http://127.0.0.1:${server.address().port}/t.html`);
     const r = await page.evaluate(async (h) => {
       const { shrani } = await import("/posnetek.js");
-      document.getElementById("view-chat").innerHTML = h.replace(/<script[\s\S]*?<\/script>/, ""); // brez izvajanja v testu
-      document.getElementById("view-chat").insertAdjacentHTML("beforeend", '<p onclick="window.__zlo=6">klik</p>');
+      document.getElementById("view-settings").innerHTML = h.replace(/<script[\s\S]*?<\/script>/, ""); // brez izvajanja v testu
+      document.getElementById("view-settings").insertAdjacentHTML("beforeend", '<p onclick="window.__zlo=6">klik</p>');
       const KEY = "evklid.zadnji-posnetek";
-      const rec = { v: "chat", t: Date.now(), s: 7 };
+      const rec = { v: "settings", t: Date.now(), s: 7 };
+      localStorage.setItem("evklid.lang", "en");
       shrani(KEY, rec, { a: "12", z: 1 });
       const shot = JSON.parse(localStorage.getItem(KEY));
       shrani(KEY, rec, null);
@@ -102,7 +104,18 @@ test("posnetek ob shranjevanju: DOMPurify; zaklenjen profil (meta null) ali brez
       shrani(KEY, rec, { a: null, z: 0 });
       const brez = localStorage.getItem(KEY);
       window.DOMPurify = dp;
-      return { shot, zaklenjen, brez };
+      // Klepet (j 10. 11. 2026): ne pogled »chat« ne pogled z oknom nujne pomoči ali sporočili ne gresta v posnetek.
+      shrani(KEY, rec, { a: null, z: 0 });
+      const chat = document.getElementById("view-chat");
+      chat.hidden = false;
+      chat.innerHTML = '<div id="messages"><p class="msg">skrivnost</p></div>';
+      shrani(KEY, { v: "chat", t: Date.now(), s: 7 }, { a: null, z: 0 });
+      const klepet = localStorage.getItem(KEY);
+      shrani(KEY, rec, { a: null, z: 0 });
+      document.getElementById("view-settings").insertAdjacentHTML("beforeend", '<section class="msg nujno-card">112</section>');
+      shrani(KEY, rec, { a: null, z: 0 });
+      const nujno = localStorage.getItem(KEY);
+      return { shot, zaklenjen, brez, klepet, nujno };
     }, ZLO);
     assert.equal(r.shot.a, "12");
     assert.equal(r.shot.z, 1);
@@ -110,6 +123,10 @@ test("posnetek ob shranjevanju: DOMPurify; zaklenjen profil (meta null) ali brez
     assert.doesNotMatch(r.shot.h, /\son[a-z]+=|javascript:|<iframe|<object|<embed/i);
     assert.equal(r.zaklenjen, null, "zaklenjen profil posnetka nima");
     assert.equal(r.brez, null, "brez DOMPurify posnetka ni");
+    assert.equal(r.shot.g, "en", "jezik vmesnika (pregled #560 B3)");
+    assert.equal(r.shot.r, "a1", "različica aplikacije");
+    assert.equal(r.klepet, null, "klepet posnetka nima");
+    assert.equal(r.nujno, null, "okno nujne pomoči ne gre v posnetek");
   } finally {
     await page.close();
     server.close();

@@ -5,6 +5,8 @@
 const SHOT_MAX = 250000; // znakov; večji pogled dobi ob odprtju okostje
 // Pred zapisom gre HTML skozi DOMPurify (kot ostala vsebina); brez knjižnice posnetka ni. Ob odprtju ga zacetek.js
 // očisti še enkrat (ociscen) in razčleni v <template>.
+// Klepet (pogled »chat«) in okno nujne pomoči posnetka nimata (j 10. 11. 2026): pogovori z inštruktorjem ne ostanejo na
+// napravi (public/zasebnost.html). Zapis ima jezik vmesnika (g) in različico aplikacije (r): drugačna ob odprtju → okostje.
 // key: ključ v localStorage; rec: zapis zadnjega zaslona { v, t, s, l, p } (app.js rememberScreen) ali nič;
 // meta: { a: lastnik naprave, z: profil z geslom } ali null (zaklenjen profil, profil brez gesla: posnetka ni).
 export function shrani(key, rec, meta) {
@@ -14,9 +16,9 @@ export function shrani(key, rec, meta) {
     } catch {}
   };
   const purify = globalThis.DOMPurify;
-  if (!meta || !purify?.sanitize) return drop();
+  if (!meta || !purify?.sanitize || !rec || rec.v === "chat") return drop();
   const el = rec && document.getElementById(`view-${rec.v}`);
-  if (!el || el.hidden || el.parentElement !== document.body || el.classList.contains("in-okno") || document.body.classList.contains("onboarding")) return drop();
+  if (!el || el.querySelector(".nujno-card, #messages") || el.hidden || el.parentElement !== document.body || el.classList.contains("in-okno") || document.body.classList.contains("onboarding")) return drop();
   const live = el.querySelectorAll("*");
   if (live.length > 6000) return drop();
   const copy = el.cloneNode(true);
@@ -37,7 +39,12 @@ export function shrani(key, rec, meta) {
   const h = String(purify.sanitize(copy.innerHTML));
   if (!h.trim() || h.length > SHOT_MAX) return drop();
   const b = ["mock-banner", "test-notice"].filter((id) => document.getElementById(id)?.hidden === false);
-  const shot = { ...rec, a: meta.a ?? null, z: meta.z ? 1 : 0, c: el.className, tb: document.querySelector("#tabbar .tab.active")?.dataset.view || "", b, h };
+  let g = "";
+  try {
+    g = localStorage.getItem("evklid.lang") || ""; // public/i18n.js; enako bere public/zacetek.js
+  } catch {}
+  const r = document.querySelector('meta[name="evklid-app"]')?.content || "";
+  const shot = { ...rec, g, r, a: meta.a ?? null, z: meta.z ? 1 : 0, c: el.className, tb: document.querySelector("#tabbar .tab.active")?.dataset.view || "", b, h };
   try {
     localStorage.setItem(key, JSON.stringify(shot));
   } catch {

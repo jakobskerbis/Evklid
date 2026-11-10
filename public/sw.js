@@ -1,6 +1,6 @@
 // Service worker: aplikacija se odpre tudi brez povezave in ponovno ne prenaša knjižnic.
 // - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
-// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): najprej omrežje s kratkim rokom (0,4 s; stran
+// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): najprej omrežje s kratkim rokom (1 s; stran
 //   je majhna, ob nespremenjeni samo 304), ob izpadu ali počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
 //   različico datotek (glava X-Evklid-App, server/app.js). Če je drugačna od APP tega service workerja, ta do
 //   zamenjave ne postreže nobene shranjene kopije več (outdated): nova stran tako nikoli ne dobi starih modulov,
@@ -53,10 +53,11 @@ async function storePublicLesson(id) {
 }
 // Odgovor, ki ga strežnik označi kot zaseben, se ne shrani (tudi na javni poti).
 const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-control") || "");
-// Vstopna stran čaka omrežje največ 0,4 s (prej 2,5 s; j 2026-11-10, hiter zagon): ob počasni ali šele vzpostavljeni
+// Vstopna stran čaka omrežje največ 1 s (prej 2,5 s; j 2026-11-10, hiter zagon; 0,4 s je pri počasni povezavi
+// po objavi preveč pogosto dala staro kopijo in samodejno osvežitev; pregled #560): ob počasni ali šele vzpostavljeni
 // povezavi telefona se takoj odpre shranjena stran iste različice. Če strežnik medtem že ima novo različico, jo
 // odgovor v ozadju shrani, stran pa se sama osveži (public/app.js reloadOnceFor), kot prej po 2,5 s.
-const TIMEOUT = { entry: 400, static: 4000, api: 7000 };
+const TIMEOUT = { entry: 1000, static: 4000, api: 7000 };
 // Strežnik je objavil novo različico datotek (vstopna stran z drugačno X-Evklid-App): stare kopije niso več sveže.
 let outdated = false;
 // Odprte strani in različica, ki jo izvajajo (clientId → APP strani; sporočilo »page-app«). Ob ponovnem zagonu

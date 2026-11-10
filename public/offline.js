@@ -28,9 +28,20 @@ const read = (key, fallback) => {
     return fallback;
   }
 };
+// Poln pomnilnik naprave: posnetek zadnjega zaslona (do ~0,5 MB, public/posnetek.js) je najmanj pomemben, zato ga
+// najprej pobrišemo in poskusimo znova (vrsta neposlanih odgovorov in paketi vaj imajo prednost; pregled #560 A5).
+const SHOT = "evklid.zadnji-posnetek";
 const write = (key, value) => {
+  let s;
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    s = JSON.stringify(value);
+    localStorage.setItem(key, s);
+    return true;
+  } catch {}
+  try {
+    if (s === undefined || localStorage.getItem(SHOT) == null) return false;
+    localStorage.removeItem(SHOT);
+    localStorage.setItem(key, s);
     return true;
   } catch {
     return false;
@@ -191,6 +202,10 @@ export function deviceData(ids = []) {
 // Pobriše osebne podatke na napravi (PRIVATE_KEYS, PRIVATE_EXACT) in predpomnilnik API (service worker).
 // Ob odjavi, koncu seje, izbrisu računa in prijavi v drug račun.
 export async function clearPrivate() {
+  // Stran, ki se zapira (odjava, 401), posnetka in zadnjega zaslona ne zapiše znova (pagehide; pregled #560 A2).
+  try {
+    globalThis.evklidZacetek?.pozabi?.();
+  } catch {}
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));

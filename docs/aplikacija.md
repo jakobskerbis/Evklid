@@ -36,19 +36,22 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   zapis `evklid.zadnji-zaslon`), zato Učna pot ne utripne.
 - Hiter zagon (j 10. 11. 2026): ob odprtju se takoj pokaže posnetek zadnjega zaslona (`evklid.zadnji-posnetek`:
   HTML pogleda istega profila, star največ 12 ur; `public/posnetek.js` ob skritju strani), brez
-  posnetka okostje. Posnetek je samo slika (`main[data-posnetek]`, inert, za pravimi pogledi); pravi pogled se
+  posnetka okostje. Klepet (in okno nujne pomoči) posnetka nima, ob odprtju v klepetu je okostje (j 10. 11. 2026,
+  `public/zasebnost.html` §5). Posnetek drugega jezika (`g`) ali druge različice aplikacije (`r`, `meta evklid-app`)
+  ne velja. Posnetek je samo slika (`main[data-posnetek]`, inert, za pravimi pogledi); pravi pogled se
   pripravi neviden pod njim in ga zamenja v istem izrisu (`pinSnapshot`, `finishStart`). Klici zagona (nastavitve,
-  stanje računa, profili, pogovori) stečejo že v `<head>` (`evklidZacetek.vnaprej`, rok 5 s). Zasebnost (pregled
+  stanje računa, profili, pogovori) stečejo že v `<head>` (`evklidZacetek.vnaprej`; klic, ki še teče, app.js prevzame, brez prekinitve). Zasebnost (pregled
   #560): posnetek se pokaže takoj le, če lokalno stanje potrjuje isti račun (`evklid.offline.owner` kot ob
   shranjevanju) in isti odklenjen profil (seznam profilov na napravi brez `locked`). `locked` je stanje strežnika
   (geslo profila, odklep na napravo, `server/accounts/profile-lock.js`); ločenega PIN-a staršev ni. Ker zaklep
   profila z geslom lahko spremeni druga naprava (novo geslo, »Odjavi vse druge naprave«), ima tak profil (z: 1)
   najprej okostje, posnetek šele po odgovoru `/api/students` (brez povezave po seznamu na napravi). Zaklenjen
   profil in profil, ki mora nastaviti geslo, posnetka nimata. Posnetek izgine ob odjavi, menjavi računa
-  (osebni ključ), menjavi profila (`dropOtherShot`), zaklepu (`openProfileLock`, tudi 423) in izbrisu profila. HTML
+  (osebni ključ), menjavi profila (`dropOtherShot`), zaklepu (`openProfileLock`, tudi 423) in izbrisu profila; po odjavi ali med zaklepom se do naslednje izbire
+  profila ne zapiše znova (`lahkoShrani`/`znova`). Ob polnem pomnilniku `offline.js write` najprej pobriše posnetek. HTML
   gre ob shranjevanju skozi DOMPurify, ob odprtju skozi `ociscen()` (`<template>`, brez skriptov, dogodkov in
   naslovov drugih izvorov). Vstopna stran čaka
-  omrežje največ 0,4 s (`public/sw.js`), nato shranjena kopija iste različice. APK drži zagonski zaslon do sporočila
+  omrežje največ 1 s (`public/sw.js`), nato shranjena kopija iste različice. APK drži zagonski zaslon do sporočila
   »izris« (`mobile/src/app/web.tsx`). Meri korak `tel-zagon` v `scripts/preveri-aplikacijo.cjs` (nad 1,5 s opozorilo, napaka nad 5 s ali če posnetek ni
   prva vsebina).
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
