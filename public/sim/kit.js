@@ -2,6 +2,8 @@
 // Vsaka simulacija je funkcija (el, opts) => void, ki vse nariše v el.
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
+import { okrasi, vstavi } from "./materiali.js";
+
 export const NS = "http://www.w3.org/2000/svg";
 
 // Število s slovensko decimalno vejico.
@@ -50,6 +52,8 @@ export function s(tag, attrs = {}, parent, text) {
     }
   } else if (text != null) el.textContent = text;
   if (parent) parent.append(el);
+  // materiali laboratorija (steklo, tekočina, kovina, miza …): okras po razredu, glej materiali.js
+  if (parent && attrs?.class) okrasi(el, attrs.class);
   return el;
 }
 
@@ -57,6 +61,7 @@ let uid = 0;
 export function svgBox(w, hgt, cls = "") {
   const svg = s("svg", { viewBox: `0 0 ${w} ${hgt}`, class: `demo-svg ${cls}`, role: "img" });
   svg.uid = `s${++uid}`;
+  if (cls.includes("lab-")) vstavi(); // ozadje in materiali laboratorija (slog in <defs> enkrat na stran)
   return svg;
 }
 
