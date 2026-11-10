@@ -62,6 +62,12 @@
 .k3-info-opis { margin: 0; color: var(--k3-besedilo); line-height: 1.5; font-size: 0.95rem; unicode-bidi: plaintext; }
 .k3 .k3-info .k3-povecava-gumb { align-self: flex-start; min-height: 40px; padding: 0 14px; font-size: 0.9rem; }
 .k3-info .k3-povecava-gumb svg { width: 18px; height: 18px; flex: none; }
+/* del celote (»Del: Srce«) in dejanja dela (»Pokaži v telesu«, »Odpri v 3D atlasu«) */
+.k3-info .k3-info-nad { display: inline-block; margin-top: 4px; padding: 1px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+  color: var(--k3-besedilo); background: color-mix(in srgb, var(--barva, #6E9BFF) 22%, transparent); }
+.k3-info-gumbi { display: flex; flex-wrap: wrap; gap: 8px; }
+.k3 .k3-info .k3-info-gumb { min-height: 40px; padding: 0 14px; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.k3-info .k3-info-gumb svg { width: 18px; height: 18px; flex: none; }
 @media (prefers-reduced-motion: reduce) { .k3-info { animation: none; } }
 /* model.povzetek() (npr. V in P pri telesih): levo zgoraj na odru, ostane viden tudi med vlečenjem drsnika */
 .k3-povzetek { position: absolute; top: 12px; left: 12px; z-index: 2; max-width: calc(100% - 210px); padding: 6px 12px; border-radius: 14px;

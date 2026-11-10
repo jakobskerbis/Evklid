@@ -11,6 +11,7 @@
 // ob povečavi še ploščice 0,33 mm samo za vidni del.
 // Vir fotografij: Courtesy of the U.S. National Library of Medicine (pogoji v public/3d/modeli/organi/viri.json).
 import * as R from "../../rezine.js";
+import * as V from "../../telo-vh.js";
 
 export const info = {
   id: "organ-pravi-prerez",
@@ -100,7 +101,8 @@ export async function zgradi(THREE, ctx) {
   group.add(notranja);
   const ravnina = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
   const ravenZ = Number(ctx.zacetek?.raven);
-  const stanje = { raven: [1, 2, 3].includes(ravenZ) ? ravenZ : 1, spol: ctx.zacetek?.telo && spoli.includes(ctx.zacetek.telo) ? ctx.zacetek.telo : spoli[0], smer: ctx.zacetek?.smer || "a", i: { a: 0, k: 0, s: 0 }, telo: true, pogled: "3d", izbrana: 0, premaknjeno: { a: false, k: false, s: false } };
+  const stanje = { raven: [1, 2, 3].includes(ravenZ) ? ravenZ : 1, spol: ctx.zacetek?.telo && spoli.includes(ctx.zacetek.telo) ? ctx.zacetek.telo : spoli[0], smer: ctx.zacetek?.smer || "a", i: { a: 0, k: 0, s: 0 }, telo: true, pogled: "3d", izbrana: 0, premaknjeno: { a: false, k: false, s: false }, nacin: V.privzetNacin(ravenZ || 1), razmik: 0, rentgen: true, slog: "" };
+  stanje.slog = ctx.zacetek?.videz && ["s1", "s2", "s3", "foto"].includes(ctx.zacetek.videz) ? ctx.zacetek.videz : (stanje.raven >= 3 ? "s3" : stanje.raven === 2 ? "s2" : "s1");
   if (stanje.raven === 1) Object.assign(stanje, { ...R.pogledZaRaven(1), smer: stanje.smer });
   let T = null; // naloženo telo: { meta, url, mali, ozn, dim }
   let napakaNalaganja = "", ponovi = "", napakePloscic = 0;
@@ -124,8 +126,38 @@ export async function zgradi(THREE, ctx) {
   geoRezine.setAttribute("position", new THREE.BufferAttribute(new Float32Array(12), 3));
   geoRezine.setAttribute("uv", new THREE.BufferAttribute(new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]), 2));
   geoRezine.setIndex([0, 2, 1, 1, 2, 3]);
+  // Fotografija rezine: barvna korekcija (V.GLSL_KOREKCIJA: posvetli srednje tone, dvigne sence) in ostrenje brez halojev
+  // (unsharp samo na svetlosti, omejen na min/max sosedov – nič izmišljenega; sosedje na razdalji enega zaslonskega
+  // piksla, fwidth). uFoto = 0 izklopi oboje (izvirnik).
+  const popravek = { uPopravi: { value: 1 } };
   const mat = (map, red) => {
     const m = new THREE.MeshBasicMaterial({ map, transparent: true, side: THREE.DoubleSide, toneMapped: false, depthWrite: red === 0, alphaTest: red === 0 ? 0.35 : 0, polygonOffset: red > 0, polygonOffsetFactor: -red, polygonOffsetUnits: -red * 2 });
+    if (red !== 3) {
+      m.onBeforeCompile = (sh) => {
+        Object.assign(sh.uniforms, popravek);
+        sh.fragmentShader = sh.fragmentShader
+          .replace("#include <common>", `#include <common>\nuniform float uPopravi;\n${V.GLSL_KOREKCIJA}
+vec3 k3Srgb(vec3 c) { return pow(max(c, vec3(0.0)), vec3(1.0 / 2.2)); }
+float k3Y(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }`)
+          .replace("#include <map_fragment>", `
+#ifdef USE_MAP
+  vec4 k3c = texture2D(map, vMapUv);
+  if (uPopravi > 0.5) {
+    vec2 d = clamp(fwidth(vMapUv), vec2(1e-5), vec2(0.01));
+    vec3 c0 = k3Srgb(k3c.rgb);
+    float y0 = k3Y(c0);
+    float y1 = k3Y(k3Srgb(texture2D(map, vMapUv + vec2(d.x, 0.0)).rgb)), y2 = k3Y(k3Srgb(texture2D(map, vMapUv - vec2(d.x, 0.0)).rgb));
+    float y3 = k3Y(k3Srgb(texture2D(map, vMapUv + vec2(0.0, d.y)).rgb)), y4 = k3Y(k3Srgb(texture2D(map, vMapUv - vec2(0.0, d.y)).rgb));
+    float ys = y0 + 0.8 * (y0 - 0.25 * (y1 + y2 + y3 + y4));
+    ys = clamp(ys, min(min(y1, y2), min(min(y3, y4), y0)), max(max(y1, y2), max(max(y3, y4), y0)));
+    c0 = clamp(c0 + (ys - y0), 0.0, 1.0);
+    k3c.rgb = pow(k3Popravi(c0), vec3(2.2));
+  }
+  diffuseColor *= k3c;
+#endif`);
+      };
+      m.customProgramCacheKey = () => "k3-rezina-foto";
+    }
     return m;
   };
   // rob fotografije pri podlakteh (roka sega čez rob kadra NLM, ravno odrezana): prosojnost zbledi v zadnjih 25 mm ob
@@ -292,6 +324,29 @@ export async function zgradi(THREE, ctx) {
   // --- telo okoli rezine
   const matTelesa = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0, clippingPlanes: [ravnina], side: THREE.FrontSide });
   let telo = null, vsebina = { u0: 0, v0: 0, u1: 1, v1: 1 };
+  // »Pravo telo 3D« (telo-vh.js): organi iz mreže oznak istih rezin; ko je naloženo, nadomesti površje telesa
+  let organi3d = null;
+  const vMreziRezine = () => stanje.razmik === 0; // razmik in police: rezina se ne bi ujemala, je skrita
+  function uskladiTelo() {
+    const vidno = stanje.telo && stanje.pogled !== "ravno";
+    if (telo) telo.visible = vidno && !organi3d;
+    if (organi3d) {
+      const izbor = stanje.izbrana ? new Set(kljuciIzbire(stanje.izbrana)) : null;
+      organi3d.nastavi({ foto: stanje.raven >= 3, nacin: stanje.nacin, razmik: stanje.razmik, izbor, rentgen: stanje.rentgen, vidno: vidno || stanje.razmik > 0 });
+    }
+    const r = vMreziRezine();
+    ploskev.visible = r; skupinaPloscic.visible = r; skupinaSmeri.visible = r;
+    if (!r) { ostra.visible = false; poudarek.visible = false; }
+  }
+  // ključi oznak izbire (celota »srce« → vsi deli srca na mreži)
+  function kljuciIzbire(kl) {
+    if (!organi3d) return [kl];
+    const vsi = [...organi3d.mreze.keys()];
+    if (organi3d.mreze.has(kl)) return [kl];
+    const deli = V.deliCelote(kl, vsi);
+    if (deli.length) return deli;
+    return vsi.filter((k) => R.kljucZaRaven(imena, k, os()) === kl || k.startsWith(kl + "-"));
+  }
 
   const vMm = (x, y, z, v = new THREE.Vector3()) => v.set(x, -z, -y); // mm volumna → krajevne koordinate (Y gor, +Z spredaj)
 
@@ -332,7 +387,7 @@ export async function zgradi(THREE, ctx) {
     notranja.updateMatrixWorld(true);
     ravnina.setFromNormalAndCoplanarPoint(n, tocka).applyMatrix4(notranja.matrixWorld);
     postaviOznakeSmeri();
-    if (telo) telo.visible = stanje.telo && stanje.pogled !== "ravno"; // pogled naravnost je čista rezina kot v atlasu
+    uskladiTelo(); // pogled naravnost je čista rezina kot v atlasu
     ostra.visible = ostraZa === kljuc();
     pocistiPloscice();
     clearTimeout(uraOstre); clearTimeout(uraPloscic);
@@ -342,9 +397,22 @@ export async function zgradi(THREE, ctx) {
     narisiPoudarek();
     narisi();
   }
+  // Videz rezine (j, 10. 11. 22:30): OŠ šolski (s1, barve po organih), SŠ realističen (s2), fakulteta prava fotografija
+  // (s3: popravljena fotografija z barvnimi obrisi). Slogi so vnaprej izrisane slike iste ločljivosti v <telo>/<slog>/;
+  // kjer jih za rezino ni (meta.slogi.rezine), ostane fotografija s korekcijo v senčilniku.
+  const SLOGI = ["s1", "s2", "s3"];
+  const privzetSlog = (raven) => (raven >= 3 ? "s3" : raven === 2 ? "s2" : "s1");
+  const slogZdaj = () => {
+    const sl = T?.meta?.slogi;
+    if (!sl || !stanje.slog || !sl.imena?.includes(stanje.slog)) return "";
+    if (sl.smeri && !sl.smeri.includes(stanje.smer)) return "";
+    if (Array.isArray(sl.rezine) && !sl.rezine.includes(stanje.i[stanje.smer])) return "";
+    return stanje.slog;
+  };
+  const bazaSlik = () => { const sl = slogZdaj(); popravek.uPopravi.value = sl ? 0 : 1; return T.url + (sl ? `${sl}/` : ""); };
   const os = () => stanje.raven === 1; // raven OŠ: preprostejša imena, privzeto pogled naravnost na rezino
   const pripni = (sm, v) => Math.max(0, Math.min(R.steviloRezin(T.dim, sm) - 1, Math.round(v)));
-  const kljuc = () => `${stanje.spol}/${stanje.smer}/${stanje.i[stanje.smer]}`;
+  const kljuc = () => `${stanje.spol}/${slogZdaj()}/${stanje.smer}/${stanje.i[stanje.smer]}`;
 
   function tekstura(url) {
     if (predpomnilnik.has(url)) return Promise.resolve(predpomnilnik.get(url));
@@ -369,7 +437,7 @@ export async function zgradi(THREE, ctx) {
   function naloziOstro() {
     if (T.meta.ostro === false) return;
     const k = kljuc(), s = stanje.smer;
-    tekstura(`${T.url}${s}/${stanje.i[s]}.webp`).then(
+    tekstura(`${bazaSlik()}${s}/${stanje.i[s]}.webp`).then(
       (tx) => {
         if (k !== kljuc()) return;
         ostra.material.map = tx;
@@ -419,7 +487,8 @@ export async function zgradi(THREE, ctx) {
       const raven = R.ravenPloscice(naZaslonu, { telefon, dpr: globalThis.devicePixelRatio || 1 });
       // manjkajoča ploščica (404): tiho raven nižje (R.nizjaPloscica)
       const zdaj = Date.now();
-      const rv = R.nizjaPloscica(raven, (r) => manjkajoce.has(`${s}/${i}/${r}/${pl.ime}`) || (zacasnoDo.get(`${s}/${i}/${r}/${pl.ime}`) || 0) > zdaj);
+      const sl = slogZdaj();
+      const rv = R.nizjaPloscica(raven, (r) => manjkajoce.has(`${sl}/${s}/${i}/${r}/${pl.ime}`) || (zacasnoDo.get(`${sl}/${s}/${i}/${r}/${pl.ime}`) || 0) > zdaj);
       if (rv >= 0) potrebne.set(`${rv}/${pl.ime}`, { pl, lok, u1, v1 });
     }
     for (const c of [...skupinaPloscic.children])
@@ -431,7 +500,7 @@ export async function zgradi(THREE, ctx) {
     for (const [kl, { pl, lok, u1, v1 }] of potrebne) {
       // ploščica je vedno cela (512 px), slika rezine pa se lahko konča prej: uv do dejanskega roba
       const du = (u1 - pl.u0) / (pl.u1 - pl.u0), dv = (v1 - pl.v0) / (pl.v1 - pl.v0);
-      tekstura(`${T.url}p/${s}/${kl}.webp`).then(
+      tekstura(`${bazaSlik()}p/${s}/${kl}.webp`).then(
         (tx) => {
           if (k !== kljuc() || skupinaPloscic.children.some((c) => c.userData.kljuc === kl)) return;
           const g = new THREE.BufferGeometry();
@@ -451,7 +520,7 @@ export async function zgradi(THREE, ctx) {
           // vidna; brez sporočila o napaki (ocena A, krog 6: okno »ni bilo mogoče naložiti« ob vidni sliki).
           // Samo 404 je »manjka« za vedno; začasna napaka (omrežje, 5xx) se ponovi čez 1, 4 in 15 s (ocena B, krog 7).
           if (k !== kljuc()) return;
-          const pot = `${s}/${stanje.i[s]}/${kl}`, url = `${T.url}p/${s}/${kl}.webp`;
+          const pot = `${slogZdaj()}/${s}/${stanje.i[s]}/${kl}`, url = `${bazaSlik()}p/${s}/${kl}.webp`;
           if (++napakePloscic === 1) console.warn("3D rezine: ploščica ni na voljo", kl, err?.message || err);
           R.statusSlike(url).then((st) => {
             if (k !== kljuc()) return;
@@ -482,7 +551,12 @@ export async function zgradi(THREE, ctx) {
     if (deliPoId.has(kl)) return deliPoId.get(kl);
     const o = R.opisOznake(imena, kl);
     if (!o) return null;
-    const d = { id: `o-${kl}`, ime: o.sl, la: o.la, opis: o.opis, barva: o.barva, meshes: [], tocka: [0, 0, 0], kljuc: kl };
+    // latinsko ime ne na OŠ (j, 10. 11.); kartica kot v atlasu: »Del: Srce«, »Odpri v 3D atlasu«, na polici »Pokaži v telesu«
+    const d = { id: `o-${kl}`, ime: o.sl, la: os() ? "" : o.la, opis: o.opis, barva: o.barva, meshes: [], tocka: [0, 0, 0], kljuc: kl };
+    Object.defineProperty(d, "gumbi", { enumerable: false, get: () => [
+      ...(stanje.razmik > 0 ? [{ besedilo: t("a3.rez.showInBody", "Pokaži v telesu"), ikona: "undo-2", ponastaviPogled: true, ob: () => { bilePolice = false; nastaviRazmik(0); } }] : []),
+      { besedilo: t("a3.rez.openAtlas", "Odpri v 3D atlasu"), ikona: "external-link", href: "/3d#atlas" },
+    ] });
     deliPoId.set(kl, d);
     return d;
   }
@@ -700,6 +774,8 @@ export async function zgradi(THREE, ctx) {
     const [W, H, Z] = dim, sk = 2 / Math.hypot(W, H, Z);
     notranja.scale.setScalar(sk);
     T = { meta, url, mali, ozn, dim, vzorec: !!meta.vzorec || meta.od > 1001 };
+    await naloziOrgane3D(url, meta, moja);
+    if (moja !== zahteva) return false;
     stanje.spol = spol;
     deliPoId.clear();
     stanje.izbrana = "";
@@ -711,13 +787,63 @@ export async function zgradi(THREE, ctx) {
       stanje.premaknjeno[sm] = false;
     }
     if (T.vzorec) stanje.smer = "a"; // vzorec je le nekaj cm prsnega koša: frontalni in sagitalni prerez bi bil ozek trak
-    telo.visible = stanje.telo && stanje.pogled !== "ravno";
+    uskladiTelo();
     ostraZa = "";
     napakaNalaganja = "";
     postaviRezino();
     ctx.napredek?.(1);
     return true;
   }
+  // 3D organi (meta.telo3d iz rezine_telo3d.py): telefon dobi lažjo različico. Napaka ne podre rezin (ostane površje).
+  async function naloziOrgane3D(url, meta, moja) {
+    if (organi3d) { notranja.remove(organi3d.skupina); organi3d.dispose(); organi3d = null; }
+    const t3 = meta.telo3d;
+    if (!t3) return;
+    try {
+      const [inf, koren] = await Promise.all([
+        json(url + (t3.json || "telo3d.json")),
+        ctx.naloziGLB(url + (telefon ? t3.telefon || "telo3d-telefon.glb" : t3.racunalnik || "telo3d.glb"), (a, b) => b && ctx.napredek?.(0.6 + (0.35 * a) / b)),
+      ]);
+      if (moja !== zahteva) return;
+      const { tkivo } = await import("../../tkiva.js"); // atlasove barve organov (tkiva.js uvozi sceno: šele tu, ne v Node)
+      const barve = new Map();
+      organi3d = V.zgradiTelo3D(THREE, koren, inf, {
+        ravnina, telefon,
+        barvaZa: (kl) => barve.get(kl) || barve.set(kl, kl === "koza" ? new THREE.Color("#e5b79e") : tkivo(V.vrsticaAtlasa(kl)).barva).get(kl),
+        imeZa: (kl) => R.opisOznake(imena, kl)?.sl || kl,
+        imeSistema: (id) => t(`a3.rez.sys.${id}`, V.SISTEMI.find((x) => x.id === id)?.os || id),
+      });
+      notranja.add(organi3d.skupina);
+      // preizkusi (Playwright, DOM): zaslonska točka strukture, da tap zadene 3D organ; le z localStorage evklid.3d.test
+      try {
+        if (globalThis.localStorage?.getItem(R.KLJUC_KAZALA.replace(/rezine$/, "test"))) globalThis.__k3test = { tocka: tockaStrukture, stanje };
+      } catch {}
+    } catch (err) {
+      console.warn("3D rezine: 3D organov ni bilo mogoče naložiti", err?.message || err);
+      organi3d = null;
+    }
+  }
+
+  // Zaslonska točka (px CSS na platnu) vidnega dela strukture: najbližje oglišče središču okvirja, ki ni odrezano.
+  function tockaStrukture(kl) {
+    const m = organi3d?.mreze.get(kl);
+    if (!m || !zadnjaKamera) return null;
+    m.updateMatrixWorld(true);
+    const pos = m.geometry.attributes.position, v = new THREE.Vector3();
+    m.geometry.computeBoundingBox();
+    const c = m.geometry.boundingBox.getCenter(new THREE.Vector3()).applyMatrix4(m.matrixWorld);
+    let best = null, bd = Infinity;
+    for (let k = 0; k < pos.count; k += 7) {
+      v.fromBufferAttribute(pos, k).applyMatrix4(m.matrixWorld);
+      if (ravnina.distanceToPoint(v) < 2 * notranja.scale.x && !(stanje.razmik > 0)) continue;
+      const d = v.distanceToSquared(c);
+      if (d < bd) { bd = d; best = v.clone(); }
+    }
+    if (!best) return null;
+    const p = best.project(zadnjaKamera);
+    return [((p.x + 1) / 2) * sirinaPlatna, ((1 - p.y) / 2) * visinaPlatna];
+  }
+
   // telo z napako podatkov (npr. mali.webp ženske) → najprej drugo telo, šele nato vzorec
   const opozori = (s, err) => console.warn(`3D rezine: telesa ${s} ni bilo mogoče naložiti`, err?.message || err);
   const izpusti = (ne) => {
@@ -755,6 +881,10 @@ export async function zgradi(THREE, ctx) {
   const nRaven = { tip: "izbira", id: "raven", oznaka: t("a3.detail", "Podrobnost"), moznosti: [[1, t("a3.levelOS", "OŠ")], [2, t("a3.levelSS", "SŠ")], [3, t("a3.levelAll", "Vse")]], vrednost: stanje.raven, ponastaviPogled: true,
     ob: (v) => {
       stanje.raven = Number(v) || 1;
+      stanje.nacin = V.privzetNacin(stanje.raven);
+      nNacin.vrednost = stanje.nacin;
+      stanje.slog = privzetSlog(stanje.raven);
+      nVidez.vrednost = stanje.slog;
       deliPoId.clear();
       stanje.izbrana = "";
       if (os()) {
@@ -797,13 +927,46 @@ export async function zgradi(THREE, ctx) {
   const nTelo = { tip: "stikalo", id: "telo3d", oznaka: t("a3.rez.showBody", "Telo okoli rezine"), vrednost: stanje.telo, vidno: () => stanje.pogled !== "ravno",
     ob: (v) => {
       stanje.telo = !!v;
-      if (telo) telo.visible = stanje.telo && stanje.pogled !== "ravno";
+      uskladiTelo();
       narisi();
     } };
+
+  // »Jasen prikaz« / »Prava razmerja« (OŠ, SŠ: jasno; fakulteta: prava). Odstopanje je vedno označeno (izpis pod izbiro).
+  const nNacin = { tip: "izbira", id: "velikosti", oznaka: t("a3.rez.display", "Velikosti"), moznosti: [["jasno", t("a3.rez.clear", "Jasen prikaz")], ["prava", t("a3.rez.exact", "Prava razmerja")]], vrednost: stanje.nacin,
+    vidno: () => !!organi3d,
+    ob: (v) => { stanje.nacin = v === "prava" ? "prava" : "jasno"; uskladiTelo(); narisi(); } };
+  const nVidez = { tip: "izbira", id: "videz", oznaka: t("a3.rez.slice", "Rezina"), vrednost: stanje.slog,
+    moznosti: [["s1", t("a3.rez.sliceOrgans", "Barve po organih")], ["s2", t("a3.rez.sliceReal", "Realistično")], ["s3", t("a3.rez.slicePhoto", "Prava fotografija")]],
+    vidno: () => !!T?.meta?.slogi,
+    ob: (v) => { stanje.slog = SLOGI.includes(v) ? v : ""; ostraZa = ""; pocistiPloscice(); postaviRezino(); } };
+  const nOpomba = { tip: "izpis", id: "jasno", oznaka: "", vidno: () => !!organi3d && stanje.nacin === "jasno", vrednost: () => t("a3.rez.clearNote", "Prikaz poenostavljen za jasnost") };
+  // »Razmakni strukture« (j, 21:59): 0–0,5 razmik na mestu, 0,5–1 police po sistemih in velikosti. Kamera se premakne le,
+  // ko se spremeni vrsta pogleda (telo ↔ police), ne ob vsakem premiku drsnika.
+  let bilePolice = false;
+  const nastaviRazmik = (v) => {
+    stanje.razmik = Math.max(0, Math.min(1, Number(v) || 0));
+    nRazmik.vrednost = stanje.razmik;
+    if (stanje.razmik > 0 && stanje.izbrana && !organi3d?.mreze.has(stanje.izbrana) && !kljuciIzbire(stanje.izbrana).length) stanje.izbrana = "";
+    uskladiTelo();
+    narisi();
+  };
+  const nRazmik = { tip: "drsnik", id: "razmik", oznaka: t("a3.explode", "Razmakni strukture"), min: 0, max: 1, korak: 0.01, vrednost: 0,
+    izpis: (v) => `${Math.round(v * 100)} %`, vidno: () => !!organi3d,
+    ponastaviPogled: (v) => { const p = V.fazaRazmika(v).police > 0.5; const sprememba = p !== bilePolice; bilePolice = p; return sprememba; },
+    ob: (v) => nastaviRazmik(v) };
+  const nRentgen = { tip: "stikalo", id: "rentgen", oznaka: t("a3.xray", "Rentgen"), vrednost: stanje.rentgen, vidno: () => !!organi3d && stanje.pogled !== "ravno",
+    ob: (v) => { stanje.rentgen = !!v; uskladiTelo(); narisi(); } };
 
   return {
     group,
     get deli() { return seznamDelov; },
+    odizberi() {
+      stanje.izbrana = "";
+      tapUV = null;
+      narisiPoudarek();
+      uskladiTelo();
+      narisi();
+    },
     nadzor: [
       nRaven,
       ...(nSpol ? [nSpol] : []),
@@ -811,6 +974,11 @@ export async function zgradi(THREE, ctx) {
       drsnik("a"), drsnik("k"), drsnik("s"),
       nPogled,
       nTelo,
+      nVidez,
+      nRentgen,
+      nNacin,
+      nOpomba,
+      nRazmik,
       { tip: "izpis", id: "stanje", oznaka: t("a3.rez.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
       { tip: "gumb", id: "znova", oznaka: t("task.retry", "Poskusi znova"), vidno: () => !!napakaNalaganja,
         ob: () => {
@@ -830,12 +998,20 @@ export async function zgradi(THREE, ctx) {
       return { m, oznaka: `${m.toFixed(1).replace(".", ",")} m` };
     },
     pogled: () => {
+      if (organi3d?.meje()) return [0, 0, 1];
       const s = stanje.smer, r = stanje.pogled === "ravno";
-      if (s === "a") return r ? [0, -1, 0.06] : [0.35, 0.8, 1];
+      if (s === "a") return r ? [0, -1, 0.06] : organi3d ? [0.5, 0.42, 1] : [0.35, 0.8, 1]; // z organi: bolj od spredaj, da se vidijo pod ravnino
       if (s === "k") return r ? [0, 0.02, 1] : [0.3, 0.12, 1];
       return r ? [1, 0.02, 0] : [1, 0.12, 0.45];
     },
     okvir: () => {
+      const pm = organi3d?.meje();
+      if (pm) {
+        // police: središče v mm okvirja → lokalne koordinate rezin (x, −z, −y) → svet
+        notranja.updateMatrixWorld(true);
+        const c = notranja.localToWorld(new THREE.Vector3(pm.sredisce[0], -pm.sredisce[2], -pm.sredisce[1]));
+        return { sredisce: c.toArray(), polmer: pm.polmer * notranja.scale.x };
+      }
       const s = stanje.smer, [w, h] = R.velikostRezine(T.dim, s), sc = notranja.scale.x;
       if (s !== "a" && stanje.pogled !== "ravno") return { sredisce: [0, 0, 0], polmer: 1 };
       // polmer iz vsebine rezine (glava je manjša od trupa), da rezina zapolni okno; oznake smeri se pripnejo na rob odra
@@ -843,6 +1019,12 @@ export async function zgradi(THREE, ctx) {
       // naravnost: pravokotnik vsebine (postaviRezino jo postavi na sredino), ki zapolni 90 % odra (ocena B: ≥ 85 % pri 360 px)
       if (stanje.pogled === "ravno") {
         return { sredisce: [0, 0, 0], polmer: (Math.max(ew, eh) / 2) * 1.12, pravokotnik: [ew, eh], zapolni: 0.9 };
+      }
+      if (organi3d && T.meta.telo3d?.z) {
+        // izrez (prsni koš): kader okoli izreza, ne okoli celega volumna
+        const [z0, z1] = T.meta.telo3d.z, s0 = notranja.scale.x, iz = stanje.i.a;
+        const cy = ((iz - (z0 + z1) / 2) * s0);
+        return { sredisce: [0, cy, 0], polmer: Math.max(ew, eh, (z1 - z0) * s0) * 0.72 };
       }
       return { sredisce: [0, 0, 0], polmer: (Math.hypot(ew, eh) / 2) * 1.9 };
     },
@@ -855,6 +1037,26 @@ export async function zgradi(THREE, ctx) {
     },
     ao: () => false,
     izberi(id, hit) {
+      if (hit?.object?.userData?.kljuc) {
+        // dotik 3D strukture: prvi dotik dela (levi prekat) → del z napisom »Del: Srce«, drugi dotik istega dela → celo srce
+        const surov = hit.object.userData.kljuc;
+        const kl = surov === "koza" ? "" : R.kljucZaRaven(imena, surov, os());
+        if (!kl) return null;
+        const cel = V.celotaZa(kl), celD = cel ? delKljuca(cel) : null;
+        let izb = kl;
+        if (celD && stanje.izbrana === kl) izb = cel;
+        else if (celD && stanje.izbrana === cel) izb = cel; // tretji dotik: pregledovalnik izbiro prekliče
+        const d = delKljuca(izb);
+        if (!d) return null;
+        d.nad = izb === kl && celD ? t("a3.rez.partOf", "Del: {ime}").replace("{ime}", celD.ime) : "";
+        stanje.izbrana = d.kljuc;
+        tapUV = null;
+        osveziDele();
+        narisiPoudarek();
+        uskladiTelo();
+        narisi();
+        return d.id;
+      }
       if (hit) {
         if (hit.object !== ploskev) return null;
         const p = notranja.worldToLocal(hit.point.clone());
@@ -865,9 +1067,11 @@ export async function zgradi(THREE, ctx) {
         const rv = v && !v.raven ? R.ravenPri(T.meta.oznake.ravni, -p.y, VRSTA_VRETENCA[v.osnova]) : "";
         const d = oz ? delKljuca(kl, rv) : null;
         stanje.izbrana = d ? d.kljuc : "";
+        if (d) { const cel = V.celotaZa(d.kljuc), celD = cel ? delKljuca(cel) : null; d.nad = celD ? t("a3.rez.partOf", "Del: {ime}").replace("{ime}", celD.ime) : ""; }
         tapUV = d ? R.uvTocke(T.dim, stanje.smer, [p.x, -p.z, -p.y]) : null;
         osveziDele();
         narisiPoudarek();
+        uskladiTelo();
         narisi();
         return d ? d.id : null;
       }
@@ -875,6 +1079,7 @@ export async function zgradi(THREE, ctx) {
       stanje.izbrana = d ? d.kljuc : "";
       tapUV = null;
       narisiPoudarek();
+      uskladiTelo();
       narisi();
       return id;
     },
@@ -884,6 +1089,7 @@ export async function zgradi(THREE, ctx) {
       pocistiPloscice();
       for (const tx of predpomnilnik.values()) tx.dispose();
       texMala.dispose(); texPoudarka.dispose(); texRoba.dispose(); geoRezine.dispose(); matTelesa.dispose();
+      organi3d?.dispose();
       telo?.geometry.dispose();
     },
   };

@@ -564,6 +564,13 @@
    "la": "Encephalon",
    "opis": "Vodijo vse, kar telo dela, in z njimi mislimo in čutimo.",
    "barva": "#e0b9a6"
+  },
+  "misice-prsnega-kosa": {
+   "sl": "Mišice prsnega koša in hrbta",
+   "la": "Musculi thoracis et dorsi",
+   "opis": "Skeletne mišice stene prsnega koša in hrbta; premikajo roke, ramena in hrbtenico ter pomagajo pri dihanju. Meje posameznih mišic tu niso označene.",
+   "barva": "#c0463c",
+   "samodejno": true
   }
  },
  "vzorci": [
@@ -985,6 +992,7 @@
   "jajcnik": "jajcnik",
   "jajcevod": "jajcevod",
   "semenovod": "semenovod",
-  "prostata": "prostata"
+  "prostata": "prostata",
+  "misice-prsnega-kosa": "misice-prsnega-kosa"
  }
 }

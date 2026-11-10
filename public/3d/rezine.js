@@ -599,7 +599,7 @@ export const BESEDILA_EN = {
   "a3.rez.showInBody": "Show in the body", "a3.rez.sys.srce": "Heart and vessels",
   "a3.rez.sys.dihala": "Respiratory system", "a3.rez.sys.prebavila": "Digestive system",
   "a3.rez.sys.secila": "Urinary and reproductive organs", "a3.rez.sys.zivcevje": "Brain, nerves and senses",
-  "a3.rez.sys.kosti": "Bones", "a3.rez.sys.misice": "Muscles", "a3.rez.sys.ostalo": "Skin and other",
+  "a3.rez.sys.kosti": "Bones", "a3.rez.sys.misice": "Muscles", "a3.rez.sys.ostalo": "Skin and other", "a3.rez.sliceReal": "Realistic",
 };
 
 // Slovar besedil pogleda: vse = vsebina rezine-besedila.json ali null (ni se naložila), veriga = uiChain(jezik),

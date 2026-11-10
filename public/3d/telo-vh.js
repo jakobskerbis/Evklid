@@ -147,24 +147,174 @@ export function materialStrukture(THREE, { barva, ravnina, skupno, q = 0.05, koz
     color: barva, vertexColors: true, roughness: koza ? 0.7 : 0.55, metalness: 0, clippingPlanes: ravnina ? [ravnina] : null,
     transparent: koza, opacity: 1, depthWrite: !koza, side: koza ? THREE.FrontSide : THREE.DoubleSide,
   });
+  // Vrednosti na mrežo (napih, svetlost) in skupna (foto) so konstante v senčilniku, ključ programa jih vsebuje: lastne
+  // uniforme v programu, ki si ga deli več materialov z istim ključem, so se v three r187 brale le iz enega materiala
+  // (zbledi ni delal). Različic je malo (svetlost 2 × napih 3 × foto 2 × koža), zato prevajanje ni drago.
   const lastno = { uNapih: { value: 0 }, uSvetlost: { value: 1 } };
   m.userData.k3 = lastno;
+  const f = (x) => Number(x).toFixed(3);
   m.onBeforeCompile = (sh) => {
-    Object.assign(sh.uniforms, skupno, lastno, { uQ: { value: q } });
     sh.vertexShader = sh.vertexShader
-      .replace("#include <common>", "#include <common>\nuniform float uNapih; uniform float uQ;")
-      .replace("#include <begin_vertex>", "#include <begin_vertex>\ntransformed += objectNormal * (uNapih / uQ);");
+      .replace("#include <begin_vertex>", `#include <begin_vertex>\ntransformed += objectNormal * (${f(lastno.uNapih.value / q)});`);
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", `#include <common>\nuniform float uFoto; uniform float uSvetlost;\n${GLSL_KOREKCIJA}`)
-      // vColor = surova barva tkiva iz volumna (sRGB 0–1); uFoto 1 = pravo tkivo (popravljena barva), 0 = barva po organih
+      .replace("#include <common>", `#include <common>\n${GLSL_KOREKCIJA}`)
+      // vColor = surova barva tkiva iz volumna (sRGB 0–1); foto 1 = pravo tkivo (popravljena barva), 0 = barva po organih
       .replace("#include <color_fragment>", `
         #if defined( USE_COLOR ) || defined( USE_COLOR_ALPHA )
-          vec3 k3t = k3Popravi(vColor.rgb);
-          k3t = pow(k3t, vec3(2.2));
-          diffuseColor.rgb = mix(diffuseColor.rgb, k3t, uFoto);
-        #endif
-        diffuseColor.rgb *= uSvetlost;`);
+          vec3 k3t = pow(k3Popravi(vColor.rgb), vec3(2.2));
+          diffuseColor.rgb = mix(diffuseColor.rgb, k3t * diffuseColor.rgb, ${f(skupno.uFoto.value)});
+        #endif`);
   };
-  m.customProgramCacheKey = () => (koza ? "k3-vh-koza" : "k3-vh");
+  m.customProgramCacheKey = () => `k3-vh|${koza ? 1 : 0}|${f(lastno.uNapih.value)}|${f(skupno.uFoto.value)}`;
+  // zbledenje (uSvetlost) prek vgrajene barve materiala (osveži se ob vsakem izrisu): barva po organih × svetlost,
+  // pri pravem tkivu siva svetlost × barva tkiva
+  m.userData.osveziBarvo = () => {
+    const sv = lastno.uSvetlost.value;
+    if (skupno.uFoto.value > 0.5) m.color.setScalar(sv);
+    else m.color.copy(barva).multiplyScalar(sv);
+  };
   return m;
+}
+
+// Napis (ime na polici, naslov vrste): sprite s platnom, velikost v mm sveta (raste s povečavo kot telo).
+function napisPolice(THREE, besedilo, { visina = 14, krepko = false, barva = "#e8eef8" } = {}) {
+  const c = document.createElement("canvas");
+  const g0 = c.getContext("2d");
+  const pis = `${krepko ? 700 : 600} 44px 'Instrument Sans', system-ui, sans-serif`;
+  g0.font = pis;
+  const w = Math.ceil(g0.measureText(besedilo).width + 36);
+  c.width = Math.min(2048, w); c.height = 72;
+  const g = c.getContext("2d");
+  g.font = pis; g.textBaseline = "middle"; g.textAlign = "center";
+  g.fillStyle = "rgba(12,17,28,0.78)";
+  g.beginPath(); g.roundRect ? g.roundRect(2, 6, c.width - 4, 60, 30) : g.rect(2, 6, c.width - 4, 60); g.fill();
+  g.fillStyle = barva; g.fillText(besedilo, c.width / 2, 37);
+  const tx = new THREE.CanvasTexture(c);
+  tx.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tx, transparent: true, depthTest: false, toneMapped: false }));
+  sp.scale.set((visina * c.width) / c.height, visina, 1);
+  sp.renderOrder = 8;
+  sp.raycast = () => {};
+  return sp;
+}
+
+// 3D telo iz telo3d.glb: { skupina, mreze: Map(ključ → Mesh), nastavi({…}), dispose }. koren = surova scena glTF (vozlišče
+// = ključ oznake, položaji v mm okvirja rezin, kvantizirani). info = telo3d.json (prostornina, središče, polmer v mm).
+// barvaZa(kl) → THREE.Color (atlasova barva), imeZa(kl) → ime za napis na polici, sistemi → { id: ime vrste }.
+export function zgradiTelo3D(THREE, koren, info, { ravnina, barvaZa, imeZa, imeSistema, telefon = false }) {
+  const skupina = new THREE.Group();
+  // mm okvirja (x desno→levo, y spredaj→zadaj, z glava→noge) → lokalne koordinate rezin (x, −z, −y) kot vMm v modelu
+  const ovoj = new THREE.Group();
+  ovoj.matrixAutoUpdate = false;
+  ovoj.matrix.set(1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
+  skupina.add(ovoj);
+  const skupno = { uFoto: { value: 0 } };
+  const mreze = new Map();
+  const vozlisca = [];
+  koren.updateMatrixWorld(true);
+  koren.traverse((o) => { if (o.isMesh) vozlisca.push(o); });
+  for (const o of vozlisca) {
+    const v = o.parent && o.parent !== koren && !o.name ? o.parent : o;
+    const kl = (v.name || o.name || "").replace(/_\d+$/, "");
+    const m = new THREE.Mesh(o.geometry, materialStrukture(THREE, { barva: barvaZa(kl), ravnina, skupno, koza: kl === "koza" }));
+    m.name = kl;
+    m.scale.copy(o.getWorldScale(new THREE.Vector3()));
+    m.userData.kljuc = kl;
+    m.userData.izhodisce = new THREE.Vector3(); // premik razmika/polic (mm okvirja)
+    if (kl === "koza") m.renderOrder = 2;
+    // tap: samo del, ki ni odrezan z ravnino (raycaster ne upošteva clippingPlanes)
+    const izvirni = THREE.Mesh.prototype.raycast;
+    m.raycast = function (rc, out) {
+      if (!this.visible || this.userData.k3Skrit) return;
+      const zac = out.length;
+      izvirni.call(this, rc, out);
+      const plo = this.material.clippingPlanes?.[0];
+      if (plo) for (let k = out.length - 1; k >= zac; k--) if (plo.distanceToPoint(out[k].point) < 0) out.splice(k, 1);
+    };
+    ovoj.add(m);
+    mreze.set(kl, m);
+  }
+  const strukture = info?.strukture || {};
+  // središče telesa (mm) za razmik
+  const c0 = [0, 0, 0];
+  let n0 = 0;
+  for (const [kl, s] of Object.entries(strukture)) if (s.sredisce && kl !== "koza") { for (let k = 0; k < 3; k++) c0[k] += s.sredisce[k]; n0++; }
+  if (n0) for (let k = 0; k < 3; k++) c0[k] /= n0;
+  // police (izračunane enkrat; telefon ožje, več vrst)
+  const seznam = [...mreze.keys()].filter((k) => k !== "koza" && strukture[k]?.sredisce).map((k) => ({ kljuc: k, prostornina: strukture[k].prostornina_cm3 || 0, polmer: strukture[k].polmer || 10 }));
+  const pol = razvrstiPolice(seznam, { sirina: telefon ? 520 : 1500, razmak: 22, naslov: 44 });
+  const napisi = new THREE.Group();
+  napisi.visible = false;
+  ovoj.add(napisi);
+  const x0 = c0[0] - (telefon ? 260 : 750), zVrh = c0[2] - pol.visina / 2;
+  const cilj = (kl) => {
+    const m = pol.mesta.get(kl), s = strukture[kl];
+    return m ? [x0 + m[0] - s.sredisce[0], c0[1] - s.sredisce[1], zVrh + m[1] - s.sredisce[2]] : [0, 0, 0];
+  };
+  // napisi v ravnini polic (y = spredaj, malo pred strukturami); sprite je v ovoju, ki je zrcaljen (det < 0): velikost
+  // ostane, smer pogleda kamere ni pomembna
+  for (const v of pol.vrste) {
+    const sp = napisPolice(THREE, imeSistema(v.sistem), { visina: 22, krepko: true, barva: "#9fc2ff" });
+    sp.position.set(x0 + (sp.scale.x / 2), c0[1] - 200, zVrh + v.y - 26);
+    napisi.add(sp);
+  }
+  for (const [kl, [mx, my]] of pol.mesta) {
+    const s = strukture[kl];
+    const sp = napisPolice(THREE, imeZa(kl), { visina: 11 });
+    sp.position.set(x0 + mx, c0[1] - 200, zVrh + my + Math.max(4, s.polmer) + 9);
+    napisi.add(sp);
+  }
+  let faza = { razmik: 0, police: 0 }, izbrani = null, rentgen = true, klip = true;
+  function nastavi({ foto, nacin, razmik, izbor, rentgen: rg, klip: kp, vidno } = {}) {
+    if (foto != null) skupno.uFoto.value = foto ? 1 : 0;
+    if (nacin) for (const [kl, m] of mreze) m.material.userData.k3.uNapih.value = napihZa(kl, nacin);
+    if (razmik != null) faza = fazaRazmika(razmik);
+    if (izbor !== undefined) izbrani = izbor && izbor.size ? izbor : null;
+    if (rg != null) rentgen = rg;
+    const brezKlipa = faza.razmik > 0 || faza.police > 0;
+    const k = kp != null ? kp : klip;
+    klip = k;
+    for (const [kl, m] of mreze) {
+      // razmik na mestu, nato police
+      const s = strukture[kl];
+      if (s?.sredisce && kl !== "koza") {
+        const o = odmikRazmika(s.sredisce, c0, faza.razmik), c = cilj(kl), t = faza.police;
+        m.position.set(o[0] * (1 - t) + c[0] * t, o[1] * (1 - t) + c[1] * t, o[2] * (1 - t) + c[2] * t);
+      }
+      const jeKoza = kl === "koza";
+      m.visible = vidno !== false && !(jeKoza && (brezKlipa || izbrani));
+      const plo = !brezKlipa && klip && ravnina ? [ravnina] : [];
+      if ((m.material.clippingPlanes?.length || 0) !== plo.length) {
+        m.material.clippingPlanes = plo;
+        m.material.needsUpdate = true;
+      }
+      const u = m.material.userData.k3;
+      const izbran = !izbrani || izbrani.has(kl);
+      const sv = izbran ? 1 : 0.07, // linearno (≈ 30 % svetlosti na zaslonu)
+        kljucU = `${u.uNapih.value}|${skupno.uFoto.value}`;
+      u.uSvetlost.value = sv;
+      m.material.userData.osveziBarvo();
+      // lastne uniforme se v skupnem programu (isti customProgramCacheKey) naložijo zanesljivo le ob osvežitvi materiala
+      if (u.zadnje !== kljucU) { u.zadnje = kljucU; m.material.needsUpdate = true; }
+      m.material.emissive?.set(izbrani && izbrani.has(kl) ? barvaZa(kl) : 0x000000);
+      m.material.emissiveIntensity = 0.35;
+      if (jeKoza) m.material.opacity = rentgen ? 0.16 : 1;
+    }
+    napisi.visible = faza.police > 0.98;
+  }
+  const meje = () => {
+    if (faza.police > 0.5) {
+      const w = telefon ? 520 : 1500;
+      return { sredisce: [c0[0] - (telefon ? 260 : 750) + w / 2, c0[1], c0[2]], polmer: Math.max(w, pol.visina) * 0.62, police: true };
+    }
+    return null;
+  };
+  return {
+    skupina, mreze, nastavi, meje, police: pol, sredisce: c0,
+    get faza() { return faza; },
+    dispose() {
+      for (const m of mreze.values()) m.material.dispose();
+      napisi.traverse((o) => { if (o.material) { o.material.map?.dispose(); o.material.dispose(); } });
+    },
+  };
 }

@@ -34,6 +34,10 @@ def _z(ime, priv):
 CILJ_TEL = _z("--telefon", 110000)
 CILJ_RAC = _z("--racunalnik", 420000)
 SAMO = _z("--samo", "")  # za preizkus: ključi, ločeni z vejico
+Z0 = _z("--z0", 0)      # izrez po višini (mm od vrha), npr. prsni koš 236–540 (vmesni pregled j, 10. 11.)
+Z1 = _z("--z1", 0)
+IZHOD_IME = _z("--ime", "telo3d")
+DODATNE = _z("--dodatne", "")  # npz {oznake: uint8 (Z2, H2, W2), kljuc: str}: npr. mišičnina iz fotografije (za/poravnaj.py)
 delo, izhod = a[0], a[1]
 meta = json.load(open(os.path.join(izhod, "meta.json"), encoding="utf-8"))
 Wc, Hc, Z = meta["dim"]
@@ -47,6 +51,32 @@ def beri_oznake():
 
 
 ozn = beri_oznake()
+if DODATNE:
+    # dodatna oznaka (samodejno iz fotografije) le tam, kjer HRA nima ničesar; ključ dobi novo številko in gre v meta +
+    # oznake.bin, da jo pozna tudi dotik na rezini (»samodejno« v meta.oznake.samodejno)
+    d_ = np.load(DODATNE)
+    kl_ = str(d_["kljuc"]) if "kljuc" in d_ else "misice-prsnega-kosa"
+    if kl_ not in kljuci:
+        kljuci.append(kl_)
+    sel = (d_["oznake"] > 0) & (ozn == 0)
+    ozn[sel] = kljuci.index(kl_) + 1
+    oz["kljuci"] = kljuci
+    oz.setdefault("samodejno", [])
+    if kl_ not in oz["samodejno"]:
+        oz["samodejno"].append(kl_)
+    ploski = ozn.ravel(); meje = np.flatnonzero(np.diff(ploski)) + 1
+    zac = np.concatenate([[0], meje]); dol = np.diff(np.concatenate([zac, [len(ploski)]]))
+    pari = []
+    for s0, dd in zip(zac, dol):
+        v0 = int(ploski[s0])
+        while dd > 65535:
+            pari.append((65535, v0)); dd -= 65535
+        pari.append((int(dd), v0))
+    np.array(pari, "<u2").tofile(os.path.join(izhod, oz["datoteka"]))
+    oz["prisotne"] = sorted(set(oz.get("prisotne", [])) | {kl_})
+    print(f"dodatna oznaka {kl_}: {int(sel.sum())} vokslov", flush=True)
+if Z1 > Z0:  # samo izrez: zunaj ga ni (koža in organi so na robu izreza odprti)
+    ozn[: Z0 // MM] = 0; ozn[-(-Z1 // MM):] = 0
 konc = np.memmap(os.path.join(delo, "konc.u8"), np.uint8, "r", shape=(Z, Hc, Wc, 4))
 print(f"oznake {ozn.shape}, prisotnih {len(np.unique(ozn)) - 1}", flush=True)
 
@@ -65,6 +95,8 @@ for z in range(Z2):
     s = np.pad(s, ((0, MM - s.shape[0]), (0, H2 * MM - Hc), (0, W2 * MM - Wc)))
     telo[z] = s.reshape(MM, H2, MM, W2, MM).mean((0, 2, 4))
 telo_b = ndi.binary_fill_holes(telo > 0.5)
+if Z1 > Z0:
+    telo_b[: Z0 // MM] = False; telo_b[-(-Z1 // MM):] = False
 print("telo:", int(telo_b.sum()), "vokslov", flush=True)
 
 
@@ -161,6 +193,61 @@ def gladi_barve(C, A, deg, n):
     return np.clip(C, 0, 255).astype(np.uint8)
 
 
+# ---- votli organi (j, 10. 11.: prekati in druge votline prazni): na mreži 1 mm je votlina temna kri na fotografiji znotraj
+# oznake (svetlost < PRAG_KRVI po glajenju 1 mm, ≥ 1,5 mm od roba oznake); mreža organa je le stena (oznaka brez votline),
+# zato rez pokaže steno s prazno notranjostjo. Velja za srčne votline, aorto, votlo veno in pljučne žile.
+VOTLI = ["levi-prekat", "desni-prekat", "levi-preddvor", "desni-preddvor", "aorta", "votla-vena", "pljucna-arterija", "pljucna-vena"]
+PRAG_KRVI = 36.0
+stene = {}  # ključ → (maska 1 mm, izhodišče [z, y, x] v mm)
+
+
+def votli_organi():
+    idx = [kljuci.index(k) + 1 for k in VOTLI if k in kljuci]
+    if not idx:
+        return
+    vse = np.isin(ozn, idx)
+    if not vse.any():
+        return
+    zz, yy, xx = np.where(vse)
+    lo2 = np.maximum([zz.min() - 2, yy.min() - 2, xx.min() - 2], 0); hi2 = np.minimum([zz.max() + 3, yy.max() + 3, xx.max() + 3], [Z2, H2, W2])
+    sub = ozn[lo2[0]:hi2[0], lo2[1]:hi2[1], lo2[2]:hi2[2]]
+    lo = lo2 * MM; hi = np.minimum(hi2 * MM, [Z, Hc, Wc])
+    up = np.repeat(np.repeat(np.repeat(sub, MM, 0), MM, 1), MM, 2)[: hi[0] - lo[0], : hi[1] - lo[1], : hi[2] - lo[2]]
+    Y = np.empty(up.shape, np.float32)
+    for k in range(up.shape[0]):
+        c = np.asarray(konc[lo[0] + k, lo[1]:hi[1], lo[2]:hi[2], :3], np.float32)
+        Y[k] = c @ np.array([0.2126, 0.7152, 0.0722], np.float32)
+    Y = ndi.gaussian_filter(Y, 1.0)
+    for kl in VOTLI:
+        if kl not in kljuci:
+            continue
+        m = up == kljuci.index(kl) + 1
+        if m.sum() < 50:
+            continue
+        m = ndi.gaussian_filter(m.astype(np.float32), 1.0) > 0.5   # gladko iz 2 mm
+        notri = ndi.binary_erosion(m, iterations=2)
+        vot = ndi.binary_opening(notri & (Y < PRAG_KRVI), iterations=1)
+        lbl, n = ndi.label(vot)
+        if n:
+            vel = ndi.sum(vot, lbl, range(1, n + 1)); vot = np.isin(lbl, 1 + np.flatnonzero(vel >= 30))
+        stena = m & ~vot
+        stene[kl] = (stena, lo)
+        print(f"  {kl}: votlina {int(vot.sum()) / 1000:.1f} cm3, stena {int(stena.sum()) / 1000:.1f} cm3", flush=True)
+
+
+votli_organi()
+
+
+def mreza1(maska, lo, sigma=0.7):
+    """Kot mreza(), a na mreži 1 mm z izhodiščem lo (z, y, x mm)."""
+    g = ndi.gaussian_filter(np.pad(maska, 2).astype(np.float32), sigma)
+    if g.max() < 0.5:
+        return None
+    v, f, _, _ = marching_cubes(g, 0.5)
+    v = v - 2 + lo
+    return np.stack([v[:, 2] + 0.5, v[:, 1] + 0.5, v[:, 0] + 0.5], 1), f.astype(np.int64)
+
+
 # ---- surove mreže vseh oznak
 izbor = set(SAMO.split(",")) if SAMO else None
 surove = []
@@ -171,11 +258,11 @@ for i, kl in enumerate(kljuci, 1):
     n = int(m.sum())
     if n < 6:
         continue
-    r = mreza(m, 0.7 if n > 400 else 0.55)
+    r = mreza1(*stene[kl]) if kl in stene else mreza(m, 0.7 if n > 400 else 0.55)
     if r is None:
         continue
     V, F = r
-    V, A, deg = taubin(V, F, 4)
+    V, A, deg = taubin(V, F, 3 if kl in stene else 4)
     F, vol = obrni_navzven(V, F)
     surove.append((kl, i, V, F, n * MM ** 3))
     print(f"  {kl}: {len(F)} trikotnikov, {n * MM ** 3 / 1000:.1f} cm3", flush=True)
@@ -265,8 +352,15 @@ def pisi_glb(pot, meshes):
     print(f"{pot}: {os.path.getsize(pot) / 1e6:.2f} MB, {sum(len(m[4]) for m in meshes)} trikotnikov", flush=True)
 
 
-info_t = izvozi(CILJ_TEL, "telo3d-telefon.glb", 16000)
-info_r = izvozi(CILJ_RAC, "telo3d.glb", 60000)
-with open(os.path.join(izhod, "telo3d.json"), "w", encoding="utf-8") as f:
+info_t = izvozi(CILJ_TEL, f"{IZHOD_IME}-telefon.glb", 16000)
+info_r = izvozi(CILJ_RAC, f"{IZHOD_IME}.glb", 60000)
+with open(os.path.join(izhod, f"{IZHOD_IME}.json"), "w", encoding="utf-8") as f:
     json.dump({"mm": MM, "q": Q, "strukture": info_r, "telefon": {k: v["trikotniki"] for k, v in info_t.items()},
                "vir": "oznake.bin (HuBMAP HRA, CC BY 4.0) + kriorezine NLM"}, f, ensure_ascii=False, indent=1)
+# meta.json → telo3d (model ga naloži, če je naveden); oznake/poravnava ostanejo
+meta = json.load(open(os.path.join(izhod, "meta.json"), encoding="utf-8"))
+meta["oznake"] = oz
+meta["telo3d"] = {"racunalnik": f"{IZHOD_IME}.glb", "telefon": f"{IZHOD_IME}-telefon.glb", "json": f"{IZHOD_IME}.json", "mm": MM, "vir": "oznake.bin",
+                  **({"z": [Z0, Z1]} if Z1 > Z0 else {}), "votli": sorted(stene)}
+with open(os.path.join(izhod, "meta.json"), "w", encoding="utf-8") as f:
+    json.dump(meta, f, ensure_ascii=False, indent=1)

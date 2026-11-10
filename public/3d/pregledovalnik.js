@@ -390,6 +390,10 @@ export function odpriModel(el, mod, opts = {}) {
       }
     }
     if (preklopi && cilj && cilj === izbran) cilj = null;
+    // preklic izbire (×, tap v prazno, ponoven tap): model, ki riše poudarek sam (npr. rezina in 3D), ga pobriše
+    if (!cilj && izbran && typeof model?.odizberi === "function") {
+      try { model.odizberi(); } catch (err) { console.error("3D odizberi", err); }
+    }
     const d = (model?.deli || []).find((x) => x.id === cilj) || null;
     // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
     const prej = leti && model?.group ? kadrModela() : null;
@@ -419,6 +423,7 @@ export function odpriModel(el, mod, opts = {}) {
     // stran /3d: h1 ime modela, h2 okno dela in »Deli«; v lekciji je okno pod naslovi lekcije (h3)
     naslov.append(mk(opts.stran ? "h2" : "h3", "k3-info-ime", d.ime));
     if (d.la) naslov.append(mk("i", "k3-la", d.la)); // latinsko ime (organi, prerezi tkiv)
+    if (d.nad) naslov.append(mk("span", "k3-info-nad", d.nad)); // del celote (»Del: Srce«; drugi dotik izbere celoto)
     const x = mk("button", "k3-krog k3-info-zapri");
     x.type = "button";
     x.innerHTML = icon("x");
@@ -428,6 +433,26 @@ export function odpriModel(el, mod, opts = {}) {
     glava.append(mk("i", "k3-pika"), naslov, x);
     infoEl.append(glava);
     if (d.opis) infoEl.append(mk("p", "k3-info-opis", d.opis));
+    // d.gumbi = [{ besedilo, ikona?, ob? | href? }]: dejanja dela (npr. »Pokaži v telesu«, »Odpri v 3D atlasu«)
+    const gumbiDela = Array.isArray(d.gumbi) ? d.gumbi : [];
+    if (gumbiDela.length) {
+      const vrsta = mk("div", "k3-info-gumbi");
+      for (const g of gumbiDela) {
+        const b = mk(g.href ? "a" : "button", "k3-pill k3-info-gumb");
+        if (g.href) b.href = g.href;
+        else b.type = "button";
+        b.innerHTML = `${g.ikona ? icon(g.ikona) : ""}<span></span>`;
+        b.lastChild.textContent = g.besedilo;
+        if (g.ob) b.addEventListener("click", () => {
+          try { g.ob(); } catch (err) { console.error("3D gumb dela", err); }
+          poSpremembi();
+          if (g.zapri !== false) zapriInfo();
+          if (g.ponastaviPogled) poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
+        });
+        vrsta.append(b);
+      }
+      infoEl.append(vrsta);
+    }
     // Del s `povecava: "<id modela>"` (docs/3d.md): gumb odpre povečan prikaz (stran /3d da opts.povecava).
     if (d.povecava && typeof opts.povecava === "function") {
       const b = mk("button", "k3-pill k3-povecava-gumb");
@@ -627,15 +652,20 @@ export function odpriModel(el, mod, opts = {}) {
       const prej = nadzorEl.lastElementChild;
       const klic = (v) => {
         // ponastaviPogled: preklop pogleda (npr. prerez organa) prekliče izbiro in kamero obrne v novo začetno smer.
-        if (c.ponastaviPogled && izbran) izberi(null, { leti: false });
-        const prej = c.tip === "izbira" && !c.ponastaviPogled ? kadrModela() : null;
+        // Funkcija (v) → bool: le ob spremembi vrste pogleda (npr. drsnik »Razmakni strukture« ob prehodu na police).
+        let ponastavi = c.ponastaviPogled;
+        if (typeof ponastavi === "function") {
+          try { ponastavi = !!ponastavi(v); } catch { ponastavi = false; }
+        }
+        if (ponastavi && izbran) izberi(null, { leti: false });
+        const prej = c.tip === "izbira" && !ponastavi ? kadrModela() : null;
         try {
           c.ob?.(v);
         } catch (err) {
           console.error("3D nadzor", c.id, err);
         }
         poSpremembi();
-        if (c.ponastaviPogled) poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
+        if (ponastavi) poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
         else if (prej) kadrirajPogled(prej);
       };
       if (c.tip === "drsnik") {

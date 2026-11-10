@@ -96,3 +96,24 @@ test("barvna korekcija posvetli srednje tone in ostane v mejah", () => {
   assert.deepEqual(V.popraviBarvo([0, 0, 0]), [0, 0, 0]);
   assert.match(V.GLSL_KOREKCIJA, /k3Popravi/);
 });
+
+test("ploščice: le 404/410 pomeni »manjka«, začasne napake se ponovijo 1, 4, 15 s", async () => {
+  const R = await import("../public/3d/rezine.js");
+  assert.equal(R.vrstaNapake(404), "manjka");
+  assert.equal(R.vrstaNapake(410), "manjka");
+  for (const s of [0, 500, 503, 429]) assert.equal(R.vrstaNapake(s), "zacasno");
+  assert.deepEqual([0, 1, 2, 3].map(R.zamikPonovitve), [1000, 4000, 15000, null]);
+  assert.equal(await R.statusSlike("x", () => Promise.resolve({ status: 404 })), 404);
+  assert.equal(await R.statusSlike("x", () => Promise.reject(new Error("omrežje"))), 0);
+});
+
+test("model: votli organi, slogi po stopnjah, NLM navedba in brez imena projekta v novih besedilih", () => {
+  const src = fs.readFileSync(new URL("../public/3d/modeli/organi/pravi-prerez.js", import.meta.url), "utf8");
+  assert.match(src, /privzetSlog = \(raven\) => \(raven >= 3 \? "s3" : raven === 2 \? "s2" : "s1"\)/);
+  assert.match(src, /Courtesy of the U\.S\. National Library of Medicine/);
+  const py = fs.readFileSync(new URL("../scripts/atlas/rezine_telo3d.py", import.meta.url), "utf8");
+  assert.match(py, /VOTLI = \["levi-prekat", "desni-prekat", "levi-preddvor", "desni-preddvor", "aorta"/);
+  const bes = JSON.parse(fs.readFileSync(new URL("../public/3d/rezine-besedila.json", import.meta.url), "utf8"));
+  for (const [jez, b] of Object.entries(bes)) for (const [k, v] of Object.entries(b)) assert.doesNotMatch(v, /Visible Human/i, `${jez} ${k}`);
+  assert.ok(bes.sl["a3.rez.partOf"].includes("{ime}"));
+});

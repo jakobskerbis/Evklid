@@ -50,7 +50,8 @@
   "a3.rez.sys.zivcevje": "Možgani, živci in čutila",
   "a3.rez.sys.kosti": "Kosti",
   "a3.rez.sys.misice": "Mišice",
-  "a3.rez.sys.ostalo": "Koža in ostalo"
+  "a3.rez.sys.ostalo": "Koža in ostalo",
+  "a3.rez.sliceReal": "Realistično"
  },
  "ar": {
   "a3.rez.fromTop": "تحت القمة",
@@ -103,7 +104,8 @@
   "a3.rez.sys.zivcevje": "الدماغ والأعصاب والحواس",
   "a3.rez.sys.kosti": "العظام",
   "a3.rez.sys.misice": "العضلات",
-  "a3.rez.sys.ostalo": "الجلد وغيره"
+  "a3.rez.sys.ostalo": "الجلد وغيره",
+  "a3.rez.sliceReal": "واقعي"
  },
  "bn": {
   "a3.rez.fromTop": "শীর্ষের নিচে",
@@ -156,7 +158,8 @@
   "a3.rez.sys.zivcevje": "মস্তিষ্ক, স্নায়ু ও ইন্দ্রিয়",
   "a3.rez.sys.kosti": "হাড়",
   "a3.rez.sys.misice": "পেশি",
-  "a3.rez.sys.ostalo": "ত্বক ও অন্যান্য"
+  "a3.rez.sys.ostalo": "ত্বক ও অন্যান্য",
+  "a3.rez.sliceReal": "বাস্তবসম্মত"
  },
  "bs": {
   "a3.rez.fromTop": "ispod vrha",
@@ -209,7 +212,8 @@
   "a3.rez.sys.zivcevje": "Mozak, živci i čula",
   "a3.rez.sys.kosti": "Kosti",
   "a3.rez.sys.misice": "Mišići",
-  "a3.rez.sys.ostalo": "Koža i ostalo"
+  "a3.rez.sys.ostalo": "Koža i ostalo",
+  "a3.rez.sliceReal": "Realistično"
  },
  "cs": {
   "a3.rez.fromTop": "pod vrcholem",
@@ -262,7 +266,8 @@
   "a3.rez.sys.zivcevje": "Mozek, nervy a smysly",
   "a3.rez.sys.kosti": "Kosti",
   "a3.rez.sys.misice": "Svaly",
-  "a3.rez.sys.ostalo": "Kůže a ostatní"
+  "a3.rez.sys.ostalo": "Kůže a ostatní",
+  "a3.rez.sliceReal": "Realisticky"
  },
  "de": {
   "a3.rez.fromTop": "unter dem Scheitel",
@@ -315,7 +320,8 @@
   "a3.rez.sys.zivcevje": "Gehirn, Nerven und Sinne",
   "a3.rez.sys.kosti": "Knochen",
   "a3.rez.sys.misice": "Muskeln",
-  "a3.rez.sys.ostalo": "Haut und Sonstiges"
+  "a3.rez.sys.ostalo": "Haut und Sonstiges",
+  "a3.rez.sliceReal": "Realistisch"
  },
  "en": {
   "a3.rez.fromTop": "below the top",
@@ -368,7 +374,8 @@
   "a3.rez.sys.zivcevje": "Brain, nerves and senses",
   "a3.rez.sys.kosti": "Bones",
   "a3.rez.sys.misice": "Muscles",
-  "a3.rez.sys.ostalo": "Skin and other"
+  "a3.rez.sys.ostalo": "Skin and other",
+  "a3.rez.sliceReal": "Realistic"
  },
  "es": {
   "a3.rez.fromTop": "bajo la parte superior",
@@ -421,7 +428,8 @@
   "a3.rez.sys.zivcevje": "Cerebro, nervios y sentidos",
   "a3.rez.sys.kosti": "Huesos",
   "a3.rez.sys.misice": "Músculos",
-  "a3.rez.sys.ostalo": "Piel y otros"
+  "a3.rez.sys.ostalo": "Piel y otros",
+  "a3.rez.sliceReal": "Realista"
  },
  "fa": {
   "a3.rez.fromTop": "زیر بالاترین نقطه",
@@ -474,7 +482,8 @@
   "a3.rez.sys.zivcevje": "مغز، اعصاب و حواس",
   "a3.rez.sys.kosti": "استخوان‌ها",
   "a3.rez.sys.misice": "ماهیچه‌ها",
-  "a3.rez.sys.ostalo": "پوست و سایر"
+  "a3.rez.sys.ostalo": "پوست و سایر",
+  "a3.rez.sliceReal": "واقع‌گرایانه"
  },
  "fr": {
   "a3.rez.fromTop": "sous le sommet",
@@ -527,7 +536,8 @@
   "a3.rez.sys.zivcevje": "Cerveau, nerfs et sens",
   "a3.rez.sys.kosti": "Os",
   "a3.rez.sys.misice": "Muscles",
-  "a3.rez.sys.ostalo": "Peau et autres"
+  "a3.rez.sys.ostalo": "Peau et autres",
+  "a3.rez.sliceReal": "Réaliste"
  },
  "hi": {
   "a3.rez.fromTop": "शीर्ष के नीचे",
@@ -580,7 +590,8 @@
   "a3.rez.sys.zivcevje": "मस्तिष्क, तंत्रिकाएँ और इंद्रियाँ",
   "a3.rez.sys.kosti": "हड्डियाँ",
   "a3.rez.sys.misice": "मांसपेशियाँ",
-  "a3.rez.sys.ostalo": "त्वचा और अन्य"
+  "a3.rez.sys.ostalo": "त्वचा और अन्य",
+  "a3.rez.sliceReal": "यथार्थवादी"
  },
  "hr": {
   "a3.rez.fromTop": "ispod vrha",
@@ -633,7 +644,8 @@
   "a3.rez.sys.zivcevje": "Mozak, živci i osjetila",
   "a3.rez.sys.kosti": "Kosti",
   "a3.rez.sys.misice": "Mišići",
-  "a3.rez.sys.ostalo": "Koža i ostalo"
+  "a3.rez.sys.ostalo": "Koža i ostalo",
+  "a3.rez.sliceReal": "Realistično"
  },
  "hu": {
   "a3.rez.fromTop": "a tető alatt",
@@ -686,7 +698,8 @@
   "a3.rez.sys.zivcevje": "Agy, idegek és érzékszervek",
   "a3.rez.sys.kosti": "Csontok",
   "a3.rez.sys.misice": "Izmok",
-  "a3.rez.sys.ostalo": "Bőr és egyéb"
+  "a3.rez.sys.ostalo": "Bőr és egyéb",
+  "a3.rez.sliceReal": "Valószerű"
  },
  "id": {
   "a3.rez.fromTop": "di bawah puncak",
@@ -739,7 +752,8 @@
   "a3.rez.sys.zivcevje": "Otak, saraf, dan indra",
   "a3.rez.sys.kosti": "Tulang",
   "a3.rez.sys.misice": "Otot",
-  "a3.rez.sys.ostalo": "Kulit dan lainnya"
+  "a3.rez.sys.ostalo": "Kulit dan lainnya",
+  "a3.rez.sliceReal": "Realistis"
  },
  "it": {
   "a3.rez.fromTop": "sotto la sommità",
@@ -792,7 +806,8 @@
   "a3.rez.sys.zivcevje": "Cervello, nervi e sensi",
   "a3.rez.sys.kosti": "Ossa",
   "a3.rez.sys.misice": "Muscoli",
-  "a3.rez.sys.ostalo": "Pelle e altro"
+  "a3.rez.sys.ostalo": "Pelle e altro",
+  "a3.rez.sliceReal": "Realistico"
  },
  "ja": {
   "a3.rez.fromTop": "頭頂から下",
@@ -845,7 +860,8 @@
   "a3.rez.sys.zivcevje": "脳・神経・感覚器",
   "a3.rez.sys.kosti": "骨",
   "a3.rez.sys.misice": "筋肉",
-  "a3.rez.sys.ostalo": "皮膚・その他"
+  "a3.rez.sys.ostalo": "皮膚・その他",
+  "a3.rez.sliceReal": "リアル"
  },
  "ko": {
   "a3.rez.fromTop": "꼭대기 아래",
@@ -898,7 +914,8 @@
   "a3.rez.sys.zivcevje": "뇌, 신경, 감각기",
   "a3.rez.sys.kosti": "뼈",
   "a3.rez.sys.misice": "근육",
-  "a3.rez.sys.ostalo": "피부 및 기타"
+  "a3.rez.sys.ostalo": "피부 및 기타",
+  "a3.rez.sliceReal": "사실적"
  },
  "mk": {
   "a3.rez.fromTop": "под врвот",
@@ -951,7 +968,8 @@
   "a3.rez.sys.zivcevje": "Мозок, нерви и сетила",
   "a3.rez.sys.kosti": "Коски",
   "a3.rez.sys.misice": "Мускули",
-  "a3.rez.sys.ostalo": "Кожа и друго"
+  "a3.rez.sys.ostalo": "Кожа и друго",
+  "a3.rez.sliceReal": "Реалистично"
  },
  "pl": {
   "a3.rez.fromTop": "poniżej szczytu",
@@ -1004,7 +1022,8 @@
   "a3.rez.sys.zivcevje": "Mózg, nerwy i zmysły",
   "a3.rez.sys.kosti": "Kości",
   "a3.rez.sys.misice": "Mięśnie",
-  "a3.rez.sys.ostalo": "Skóra i inne"
+  "a3.rez.sys.ostalo": "Skóra i inne",
+  "a3.rez.sliceReal": "Realistycznie"
  },
  "pt": {
   "a3.rez.fromTop": "abaixo do topo",
@@ -1057,7 +1076,8 @@
   "a3.rez.sys.zivcevje": "Cérebro, nervos e sentidos",
   "a3.rez.sys.kosti": "Ossos",
   "a3.rez.sys.misice": "Músculos",
-  "a3.rez.sys.ostalo": "Pele e outros"
+  "a3.rez.sys.ostalo": "Pele e outros",
+  "a3.rez.sliceReal": "Realista"
  },
  "ro": {
   "a3.rez.fromTop": "sub vârf",
@@ -1110,7 +1130,8 @@
   "a3.rez.sys.zivcevje": "Creier, nervi și simțuri",
   "a3.rez.sys.kosti": "Oase",
   "a3.rez.sys.misice": "Mușchi",
-  "a3.rez.sys.ostalo": "Piele și altele"
+  "a3.rez.sys.ostalo": "Piele și altele",
+  "a3.rez.sliceReal": "Realist"
  },
  "ru": {
   "a3.rez.fromTop": "ниже макушки",
@@ -1163,7 +1184,8 @@
   "a3.rez.sys.zivcevje": "Мозг, нервы и органы чувств",
   "a3.rez.sys.kosti": "Кости",
   "a3.rez.sys.misice": "Мышцы",
-  "a3.rez.sys.ostalo": "Кожа и прочее"
+  "a3.rez.sys.ostalo": "Кожа и прочее",
+  "a3.rez.sliceReal": "Реалистично"
  },
  "sk": {
   "a3.rez.fromTop": "pod vrcholom",
@@ -1216,7 +1238,8 @@
   "a3.rez.sys.zivcevje": "Mozog, nervy a zmysly",
   "a3.rez.sys.kosti": "Kosti",
   "a3.rez.sys.misice": "Svaly",
-  "a3.rez.sys.ostalo": "Koža a ostatné"
+  "a3.rez.sys.ostalo": "Koža a ostatné",
+  "a3.rez.sliceReal": "Realisticky"
  },
  "sq": {
   "a3.rez.fromTop": "nën majë",
@@ -1269,7 +1292,8 @@
   "a3.rez.sys.zivcevje": "Truri, nervat dhe shqisat",
   "a3.rez.sys.kosti": "Kockat",
   "a3.rez.sys.misice": "Muskujt",
-  "a3.rez.sys.ostalo": "Lëkura dhe të tjera"
+  "a3.rez.sys.ostalo": "Lëkura dhe të tjera",
+  "a3.rez.sliceReal": "Realiste"
  },
  "sr": {
   "a3.rez.fromTop": "испод врха",
@@ -1322,7 +1346,8 @@
   "a3.rez.sys.zivcevje": "Мозак, живци и чула",
   "a3.rez.sys.kosti": "Кости",
   "a3.rez.sys.misice": "Мишићи",
-  "a3.rez.sys.ostalo": "Кожа и остало"
+  "a3.rez.sys.ostalo": "Кожа и остало",
+  "a3.rez.sliceReal": "Реалистично"
  },
  "sw": {
   "a3.rez.fromTop": "chini ya kilele",
@@ -1375,7 +1400,8 @@
   "a3.rez.sys.zivcevje": "Ubongo, neva na hisia",
   "a3.rez.sys.kosti": "Mifupa",
   "a3.rez.sys.misice": "Misuli",
-  "a3.rez.sys.ostalo": "Ngozi na vinginevyo"
+  "a3.rez.sys.ostalo": "Ngozi na vinginevyo",
+  "a3.rez.sliceReal": "Halisi"
  },
  "th": {
   "a3.rez.fromTop": "ใต้จุดบนสุด",
@@ -1428,7 +1454,8 @@
   "a3.rez.sys.zivcevje": "สมอง เส้นประสาท และประสาทสัมผัส",
   "a3.rez.sys.kosti": "กระดูก",
   "a3.rez.sys.misice": "กล้ามเนื้อ",
-  "a3.rez.sys.ostalo": "ผิวหนังและอื่น ๆ"
+  "a3.rez.sys.ostalo": "ผิวหนังและอื่น ๆ",
+  "a3.rez.sliceReal": "สมจริง"
  },
  "tr": {
   "a3.rez.fromTop": "tepenin altında",
@@ -1481,7 +1508,8 @@
   "a3.rez.sys.zivcevje": "Beyin, sinirler ve duyular",
   "a3.rez.sys.kosti": "Kemikler",
   "a3.rez.sys.misice": "Kaslar",
-  "a3.rez.sys.ostalo": "Deri ve diğerleri"
+  "a3.rez.sys.ostalo": "Deri ve diğerleri",
+  "a3.rez.sliceReal": "Gerçekçi"
  },
  "uk": {
   "a3.rez.fromTop": "нижче маківки",
@@ -1534,7 +1562,8 @@
   "a3.rez.sys.zivcevje": "Мозок, нерви й органи чуття",
   "a3.rez.sys.kosti": "Кістки",
   "a3.rez.sys.misice": "М'язи",
-  "a3.rez.sys.ostalo": "Шкіра та інше"
+  "a3.rez.sys.ostalo": "Шкіра та інше",
+  "a3.rez.sliceReal": "Реалістично"
  },
  "ur": {
   "a3.rez.fromTop": "چوٹی کے نیچے",
@@ -1587,7 +1616,8 @@
   "a3.rez.sys.zivcevje": "دماغ، اعصاب اور حواس",
   "a3.rez.sys.kosti": "ہڈیاں",
   "a3.rez.sys.misice": "پٹھے",
-  "a3.rez.sys.ostalo": "جلد اور دیگر"
+  "a3.rez.sys.ostalo": "جلد اور دیگر",
+  "a3.rez.sliceReal": "حقیقت پسندانہ"
  },
  "vi": {
   "a3.rez.fromTop": "dưới đỉnh",
@@ -1640,7 +1670,8 @@
   "a3.rez.sys.zivcevje": "Não, dây thần kinh và giác quan",
   "a3.rez.sys.kosti": "Xương",
   "a3.rez.sys.misice": "Cơ",
-  "a3.rez.sys.ostalo": "Da và khác"
+  "a3.rez.sys.ostalo": "Da và khác",
+  "a3.rez.sliceReal": "Chân thực"
  },
  "zh-Hant": {
   "a3.rez.fromTop": "距頂部以下",
@@ -1693,7 +1724,8 @@
   "a3.rez.sys.zivcevje": "腦、神經和感官",
   "a3.rez.sys.kosti": "骨骼",
   "a3.rez.sys.misice": "肌肉",
-  "a3.rez.sys.ostalo": "皮膚及其他"
+  "a3.rez.sys.ostalo": "皮膚及其他",
+  "a3.rez.sliceReal": "寫實"
  },
  "zh": {
   "a3.rez.fromTop": "距顶部以下",
@@ -1746,6 +1778,7 @@
   "a3.rez.sys.zivcevje": "脑、神经和感官",
   "a3.rez.sys.kosti": "骨骼",
   "a3.rez.sys.misice": "肌肉",
-  "a3.rez.sys.ostalo": "皮肤及其他"
+  "a3.rez.sys.ostalo": "皮肤及其他",
+  "a3.rez.sliceReal": "写实"
  }
 }
