@@ -218,15 +218,25 @@ Izpelji, pri katerem uporu bremena $R_\mathrm{L} > 0$ prejme breme na viru $U_\m
 
 Vsak linearen vir na sponkah opiše ena premica v ravnini $(I, U)$:
 
-```
-U
-|\
-| \  U = UTh - RTh*I
-|  \
-|   \
-+----\---- I
-     IN
-```
+:::risba graf
+opis: Premica vira v ravnini (I, U). Os U seka pri Theveninovi napetosti (napetost odprtih sponk), os I pri Nortonovem toku (tok kratkega stika); njen naklon je minus Theveninova upornost. Črtkana premica bremena gre skozi izhodišče. Narisana je za breme z upornostjo, enako Theveninovi: delovna točka je na sredini premice vira, pri polovici Nortonovega toka in polovici Theveninove napetosti, pravokotnik pod njo pa predstavlja moč.
+x: 0 .. 1,25 | 0,5 | I
+y: 0 .. 1,25 | 0,5 | U
+enako: da
+oznake: ne
+oznakax: 0,5 | I_N/2
+oznakax: 1 | I_N
+oznakay: 0,5 | U_{Th}/2
+oznakay: 1 | U_{Th}
+pravokotnik: 0; 0 .. 0,5; 0,5 | oranžna
+črta: 0; 1 -> 1; 0 | debelo modra
+črta: 0; 0 -> 1,15; 1,15 | črtkano zelena
+točka: 0,5; 0,5 | delovna točka | desno | oranžna
+napis: 0,04; 1,18 | U = U_{Th} − R_{Th}·I | desno | modra
+napis: 0,95; 1,05 | U = R_L·I | levo | zelena
+napis: 0,36; 0,13 | P | sredina | oranžna debelo
+podnapis: Narisan je primer, ko je upornost bremena enaka Theveninovi upornosti.
+:::
 
 Premica seka os $U$ pri $U_\mathrm{Th}$ (odprte sponke, $I = 0$) in os $I$ pri $I_\mathrm{N}$ (kratek stik, $U = 0$). Njen naklon je $-R_\mathrm{Th}$. Breme je premica $U = R_\mathrm{L} I$ skozi izhodišče; delovna točka je presečišče. Moč je ploščina pravokotnika pod delovno točko. Ta je največja, ko je delovna točka na sredini premice vira: tam je $U = \frac{U_\mathrm{Th}}{2}$ in $I = \frac{I_\mathrm{N}}{2}$.
 
