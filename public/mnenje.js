@@ -236,13 +236,15 @@ export async function renderOpinionsAdmin(box, { api }) {
   const consent = (o) =>
     o.consent === "withdrawn"
       ? `<p class="mn-warn">${icon("info")}<span>Dovoljenje preklicano ${esc(o.withdrawn_day)}: umakni objavo.</span></p>`
-      : "";
+      : o.publish && o.consent_old
+        ? `<p class="mn-warn">${icon("info")}<span>Dovoljenje v${esc(o.consent_v ?? "?")}: staro besedilo – ne objavljaj.</span></p>`
+        : "";
   const endedHtml = ended.length
     ? `<ul class="mn-admin">${ended.map((e) => `<li><p class="mn-warn">${icon("info")}<span>Oznaka <b>${esc(e.label)}</b>: dovoljenje prenehalo (izbris, ${esc(e.day)}). Umakni objavo.</span></p></li>`).join("")}</ul>`
     : "";
   box.innerHTML = `${endedHtml}<ul class="mn-admin">${r.opinions
     .map(
-      (o) => `<li><b>${"★".repeat(o.stars)}${"☆".repeat(5 - o.stars)}</b> <small class="muted">${esc([o.label, `${o.stars}/5`, o.grade, o.month, t(o.publish ? "pilot.mn.pub" : "pilot.mn.team")].filter(Boolean).join(" · "))}</small>
+      (o) => `<li><b>${"★".repeat(o.stars)}${"☆".repeat(5 - o.stars)}</b> <small class="muted">${esc([o.label, `${o.stars}/5`, o.grade, o.month, t(o.publish ? "pilot.mn.pub" : "pilot.mn.team"), o.consent_v ? `dovoljenje v${o.consent_v}` : ""].filter(Boolean).join(" · "))}</small>
         ${consent(o)}${row(t("mn.liked"), o.liked)}${row(t("mn.bothers"), o.bothers)}</li>`,
     )
     .join("")}</ul>`;

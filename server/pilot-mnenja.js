@@ -52,23 +52,32 @@ async function knownConsent(text) {
 const LABEL_CHARS = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 const newLabel = () => "M-" + Array.from(crypto.randomBytes(4), (b) => LABEL_CHARS[b % LABEL_CHARS.length]).join("");
 
-// Ime profila v besedilu zamenja »[ime]«: vsaka beseda imena posebej, brez ločevanja velikih črk in samo kot cela
-// beseda. Besede s 3 ali več črkami tudi v sklonih (Maja, Maji, Majo, Majin; Jan, Jana, Janu, Janov), druge besede
-// ostanejo (»Jan« ne pokvari »januar«). Krajše besede (»Al«) samo v natanko tej obliki.
+// Ime profila v besedilu zamenja »[ime]« (osebni podatek mladoletnih: raje preveč kot premalo; skrbnik vsako mnenje
+// pred objavo prebere ročno). Vsaka beseda imena posebej, brez ločevanja velikih črk:
+// - osnova = beseda brez končnega samoglasnika (Maja → Maj, Zalika → Zalik) in, pri besedi na soglasnik, tudi brez
+//   neobstojnega e pred zadnjim soglasnikom (Peter → Petr, Pavel → Pavl; obe obliki, Aleš → Aleš ali Alš);
+// - osnova s 3 ali več črkami: zamenja se VSAKA beseda, ki se začne z osnovo (Petra, Petru, Petrom; Maji; Brezovnika).
+//   Dosledno tudi navadne besede: »Jan« zamenja »januar«, »Lana« zamenja »lani«, »Rok« zamenja »roka«;
+// - osnova z 2 črkama (Ana, Eva): samo osnova s sklonsko končnico kot cela beseda (Ana, Ani, Anin; »analiza« ostane);
+// - ime krajše od 3 črk (Al): samo kot cela beseda.
 const ENDINGS = "a|e|i|o|u|ja|je|ju|jem|jev|jeva|jevo|jevi|jeve|jevega|jevem|ovem|evem|inem|em|om|ama|ami|ah|ih|ev|ov|eva|ova|evo|ovo|evi|ovi|eve|ove|in|ina|ine|ino|ini|eta|etu|etom|ega|emu|ovega|evega|inega";
 const reEsc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const VOWEL = /[aeiou]$/i;
 export function withoutName(text, name) {
   let out = String(text || "");
+  const L = "\\p{L}\\p{N}";
   for (const w of String(name || "").split(/[^\p{L}\p{N}]+/u).filter((x) => [...x].length >= 2)) {
     const letters = [...w];
     let body;
-    if (letters.length >= 3) {
-      const vowel = /[aeiou]$/i.test(w);
-      const stem = vowel ? letters.slice(0, -1).join("") : w;
-      // Ime na samoglasnik (Maja): koren + končnica; ime na soglasnik (Jan): ime, lahko s končnico.
-      body = `${reEsc(stem)}(?:${ENDINGS})${vowel ? "" : "?"}`;
-    } else body = reEsc(w);
-    out = out.replace(new RegExp(`(?<![\\p{L}\\p{N}])${body}(?![\\p{L}\\p{N}])`, "giu"), "[ime]");
+    if (letters.length < 3) body = reEsc(w);
+    else {
+      const stems = new Set([VOWEL.test(w) ? letters.slice(0, -1).join("") : w]);
+      // Neobstojni e: soglasnik + e + zadnji soglasnik (Peter → Petr).
+      if (!VOWEL.test(w) && letters.length >= 4 && /[^aeiou]e[^aeiou]$/iu.test(w)) stems.add([...letters.slice(0, -2), letters.at(-1)].join(""));
+      const long = [...stems].filter((x) => [...x].length >= 3);
+      body = long.length ? `(?:${long.map(reEsc).join("|")})[${L}]*` : `${reEsc([...stems][0])}(?:${ENDINGS})?`;
+    }
+    out = out.replace(new RegExp(`(?<![${L}])${body}(?![${L}])`, "giu"), "[ime]");
   }
   return out;
 }
@@ -168,7 +177,8 @@ const text = (v, name) => {
 };
 
 // Seznam za skrbnika: brez imena, brez številke profila, brez ure (samo mesec); najnovejša najprej. Dovoljenje:
-// "none" (ni dano), "given" ali "withdrawn" z dnem preklica (skrbnik mora morebitno objavo umakniti).
+// "none" (ni dano), "given" ali "withdrawn" z dnem preklica (skrbnik mora morebitno objavo umakniti); consent_v je
+// različica potrjenega besedila, consent_old = starejše besedilo od trenutnega (»staro besedilo – ne objavljaj«).
 // `ended`: oznake izbrisanih mnenj, za katera je bilo dovoljenje kdaj dano (brez vsebine).
 export function opinionsReport(db) {
   migrateOpinions(db);
@@ -189,6 +199,9 @@ export function opinionsReport(db) {
         grade: r.grade || "",
         publish: !!r.publish,
         consent: r.publish ? "given" : withdrawn ? "withdrawn" : "none",
+        // Različica potrjenega besedila dovoljenja; starejša od CONSENT_VERSION = staro besedilo, ne objavljaj.
+        consent_v: Number.isInteger(c?.v) ? c.v : null,
+        consent_old: !!c && !(Number.isInteger(c.v) && c.v >= CONSENT_VERSION),
         ...(withdrawn ? { withdrawn_day: withdrawn } : {}),
         month: r.month,
       };

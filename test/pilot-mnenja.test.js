@@ -7,6 +7,7 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { opinionState, opinionsReport, publishAllowed, withoutName, MIN_DAYS, MIN_SOLVED, ASK_EVERY_DAYS, AFTER_OPINION_DAYS, DAILY_MAX, TEXT_MAX, CONSENT_VERSION } from "../server/pilot-mnenja.js";
 import { SEALED } from "../server/crypto-polje.js";
+import { PRIVACY_VERSION } from "../server/accounts/plans.js";
 import SL from "../public/i18n/sl.js";
 import crypto from "node:crypto";
 
@@ -195,13 +196,53 @@ test("mnenje: bivši član pilota vidi stanje dovoljenja in ga lahko prekliče, 
   });
 });
 
-test("mnenje: ime profila izgine v vseh sklonih in brez ločevanja velikih črk, druge besede ostanejo", () => {
-  assert.equal(withoutName("Maja pravi, Maji je všeč, maja in MAJO; majhen maj", "Maja"), "[ime] pravi, [ime] je všeč, [ime] in [ime]; majhen maj");
-  assert.equal(withoutName("Jan in Janu, januar, Janov zvezek, jantar", "Jan"), "[ime] in [ime], januar, [ime] zvezek, jantar");
-  assert.equal(withoutName("Zaliki Brezovnikovi pomaga; zalika, BREZOVNIK", "Zalika Brezovnik"), "[ime] [ime] pomaga; [ime], [ime]");
-  assert.equal(withoutName("Al je tu, ali Ala ne", "Al"), "[ime] je tu, ali Ala ne"); // kratko ime samo kot cela beseda
-  assert.equal(withoutName("a + b (c)", "A. B"), "a + b (c)"); // posamezne črke niso ime
+// Pot v aplikaciji: /pilot pove bivšemu članu z danim dovoljenjem `opinion: true`, pilot-naloge.js to preda app.js,
+// ta pa naloži mnenje.js (vrstica za preklic) tudi po osvežitvi strani, ko modul še ni naložen.
+test("mnenje: bivši član z dovoljenjem po osvežitvi dobi mnenje.js (app.js syncOpinion), brez dovoljenja ne", async () => {
+  await withServer(async ({ client, store }) => {
+    const { call, sid } = await account(client, store, "osvezi@mnenje.si", 17);
+    setPilot(store, "osvezi@mnenje.si");
+    await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 4, publish: true, consent_text: CONSENT } });
+    store.db.prepare("UPDATE parents SET pilot_at = NULL WHERE email = 'osvezi@mnenje.si'").run();
+    assert.deepEqual((await call(`/api/students/${sid}/pilot`)).body, { member: false, opinion: true });
+    await call(`/api/students/${sid}/pilot/mnenje/objava`, { method: "POST", body: { publish: false } });
+    assert.deepEqual((await call(`/api/students/${sid}/pilot`)).body, { member: false });
+  });
+  const pn = fs.readFileSync(new URL("../public/pilot-naloge.js", import.meta.url), "utf8");
+  assert.match(pn, /D\.onMember\?\.\(!!st\.member, !!st\.opinion\)/);
+  const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(app, /onMember: \(member, published\) => \{[^}]*syncOpinion\(member, published\)/);
+  // syncOpinion iz app.js zaženemo z nadomestnim modulom (import → stub) in preverimo, kdaj se modul naloži.
+  const src = app.match(/let opinionP = null;\nfunction syncOpinion[\s\S]*?\n\}\n/)[0].replace('import("./mnenje.js")', "load()");
+  const run = (calls) => {
+    const log = [];
+    const mod = { initOpinion: () => log.push("init"), loadOpinion: () => log.push("load") };
+    const f = new Function("load", "api", "toast", "state", `${src}; return syncOpinion;`)(() => (log.push("import"), Promise.resolve(mod)), null, null, { student: { id: 1 } });
+    for (const a of calls) f(...a);
+    return new Promise((r) => setTimeout(() => r(log), 0));
+  };
+  assert.deepEqual(await run([[false, false]]), [], "nečlan brez dovoljenja: modul se ne naloži");
+  assert.deepEqual(await run([[false, true]]), ["import", "init", "load"], "bivši član z dovoljenjem: modul z vrstico za preklic");
+  assert.deepEqual(await run([[true, false]]), ["import", "init", "load"]);
+  assert.deepEqual(await run([[true, false], [false, false]]), ["import", "init", "load", "load"], "že naložen: ob menjavi profila vrstico skrije");
+});
+
+test("mnenje: ime profila izgine v vseh sklonih in brez ločevanja velikih črk (raje preveč kot premalo)", () => {
+  // Neobstojni e: Peter → osnova Petr.
+  assert.equal(withoutName("Peter, Petra, Petru, s Petrom, PETROVA", "Peter"), "[ime], [ime], [ime], s [ime], [ime]");
+  assert.equal(withoutName("Pavla in Pavel", "Pavel"), "[ime] in [ime]");
+  assert.equal(withoutName("Maja pravi, Maji je všeč, maja in MAJO; Majin zvezek", "Maja"), "[ime] pravi, [ime] je všeč, [ime] in [ime]; [ime] zvezek");
+  assert.equal(withoutName("Zaliki Brezovnikovi pomaga; zalika, BREZOVNIK, Brezovnika", "Zalika Brezovnik"), "[ime] [ime] pomaga; [ime], [ime], [ime]");
   assert.equal(withoutName("Žana, Žano; Čufarjeva", "Žana Čufar"), "[ime], [ime]; [ime]");
+  // Dosledno: vsaka beseda, ki se začne z osnovo (≥ 3 črke), tudi navadna (»januar«, »lani«, »roka«); skrbnik bere ročno.
+  assert.equal(withoutName("Jan in Janu, januar, Janov zvezek", "Jan"), "[ime] in [ime], [ime], [ime] zvezek");
+  assert.equal(withoutName("Lana je lani rekla", "Lana"), "[ime] je [ime] rekla");
+  assert.equal(withoutName("Rok ima roko", "Rok"), "[ime] ima [ime]");
+  assert.equal(withoutName("pravi, da", "Peter"), "pravi, da"); // druge besede ostanejo
+  // Osnova z 2 črkama (Ana): samo sklonske oblike kot cela beseda.
+  assert.equal(withoutName("Ana, Ani in Anin zvezek; analiza", "Ana"), "[ime], [ime] in [ime] zvezek; analiza");
+  assert.equal(withoutName("Al je tu, ali Ala ne", "Al"), "[ime] je tu, ali Ala ne"); // ime krajše od 3 črk samo kot cela beseda
+  assert.equal(withoutName("a + b (c)", "A. B"), "a + b (c)"); // posamezne črke niso ime
   assert.equal(withoutName("1+1 (x)", "x (1+1) [a]"), "1+1 (x)"); // znaki izraza v imenu ne pokvarijo vzorca
   assert.equal(withoutName("besedilo", ""), "besedilo");
 });
@@ -267,7 +308,9 @@ test("mnenje: skrbnik vidi seznam brez imena, številke profila, e-naslova in ur
     assert.equal(r.body.n, 1);
     assert.equal(r.body.avg, 4);
     const o = r.body.opinions[0];
-    assert.deepEqual(Object.keys(o).sort(), ["bothers", "consent", "grade", "label", "liked", "month", "publish", "stars"]);
+    assert.deepEqual(Object.keys(o).sort(), ["bothers", "consent", "consent_old", "consent_v", "grade", "label", "liked", "month", "publish", "stars"]);
+    assert.equal(o.consent_v, CONSENT_VERSION);
+    assert.equal(o.consent_old, false);
     assert.match(o.label, /^M-[2-9A-HJ-NP-Z]{4}$/);
     assert.equal(o.consent, "given");
     assert.deepEqual(r.body.ended, []);
@@ -282,6 +325,16 @@ test("mnenje: skrbnik vidi seznam brez imena, številke profila, e-naslova in ur
     assert.equal(o2.consent, "withdrawn");
     assert.match(o2.withdrawn_day, /^\d{4}-\d{2}-\d{2}$/);
     assert.equal(o2.publish, false);
+    // Dovoljenje s staro različico besedila (v1): skrbnik vidi različico in opozorilo »ne objavljaj«.
+    await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 5, publish: true, consent_text: CONSENT } });
+    const row = store.db.prepare("SELECT id, consent FROM pilot_mnenja ORDER BY id DESC LIMIT 1").get();
+    store.db.prepare("UPDATE pilot_mnenja SET consent = ? WHERE id = ?").run(JSON.stringify({ ...JSON.parse(row.consent), v: 1 }), row.id);
+    const o3 = (await call("/api/admin/pilot-mnenja")).body.opinions[0];
+    assert.equal(o3.consent_v, 1);
+    assert.equal(o3.consent_old, true);
+    const js = fs.readFileSync(new URL("../public/mnenje.js", import.meta.url), "utf8");
+    assert.match(js, /o\.publish && o\.consent_old[\s\S]{0,120}staro besedilo – ne objavljaj/);
+    assert.match(js, /dovoljenje v\$\{o\.consent_v\}/);
   });
 });
 
@@ -377,4 +430,6 @@ test("mnenje: besedilo dovoljenja pove, kaj in kje objavimo (vsi jeziki, zasebno
   const z = fs.readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
   assert.ok(z.includes("zvezdice in mnenje objavimo na strani evklid.app brez imena"));
   assert.ok(z.includes("Besedili shranimo šifrirani; če šifriranje ni na voljo, besedil ne shranimo."));
+  // Različica obvestila na strani se ujema s PRIVACY_VERSION (kar potrdi imetnik računa).
+  assert.equal(z.match(/Različica (\d{4}-\d{2}-\d{2})/)?.[1], PRIVACY_VERSION);
 });
