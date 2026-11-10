@@ -97,7 +97,9 @@ export function ustvariSlog(G, canvas, engine, host) {
   const svet = svetIgre(engine);
   const temenSvet = svetlost(engine.colors?.[0] || "#1e1b4b") < 0.32;
   let T = barveTeme(host, g), plast = null, zrnoPl = null, obla = null, cvet = null, cq = null;
-  let zadnji = 0, pocasne = 0, raven = 2; // raven učinkov: 2 = vse, 1 = brez žarenja (počasna naprava)
+  let zadnji = 0, pocasne = 0, raven = 2; // raven učinkov: 2 = vse, 1 = brez žarenja in druge plasti ozadja, 0 = samo tekstura in svetloba
+  let plasti = [], ozadjeNarisano = false, sencenih = 0, gPloskev = null, gKrog = null;
+  const svetlosti = new Map();
   const sijaji = new Map(), prelivi = new Map();
   const barva = (c) => (POMEN[String(c).toLowerCase()] ? mesaj(T[POMEN[String(c).toLowerCase()]], c, 0.35) : c);
 
@@ -117,6 +119,106 @@ export function ustvariSlog(G, canvas, engine, host) {
     }
     return s;
   }
+  // Ozadje v globino (paralaksa): dve vnaprej narisani plasti na svet, ki se premikata različno hitro.
+  // Narišeta se takoj za ozadjem igre (prvi lik čez ves prizor), zato so liki in številke vedno nad njima.
+  function narediPlasti() {
+    const w = Math.max(60, Math.round(G.W / 2)), h = Math.max(60, Math.round(G.H / 2)), m = Math.min(w, h);
+    let s = 91;
+    const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+    const a = engine.colors?.[1] || "#6d28d9";
+    // [število, polmer (delež krajše stranice), prekrivnost, barva] za daljno in bližnjo plast
+    const opis = {
+      vesolje: [[[3, 0.55, 0.22, a], [70, 0.006, 0.7, "#ffffff"]], [[2, 0.4, 0.16, mesaj(a, "#38bdf8", 0.5)], [18, 0.016, 0.9, "#e0e7ff"]]],
+      voda: [[[3, 0.5, 0.1, "#ffffff"]], [[5, 0.2, 0.09, "#ffffff"]]],
+      narava: [[[3, 0.5, 0.09, "#fef9c3"]], [[6, 0.18, 0.08, "#ffffff"]]],
+      platno: [[[2, 0.6, 0.07, "#ffffff"]], [[3, 0.28, 0.06, mesaj("#ffffff", a, 0.3)]]],
+    }[svet];
+    return opis.map((skupine, i) => {
+      const c = platno(w, h), q = c.getContext("2d");
+      for (const [n, r, al, col] of skupine) {
+        q.globalAlpha = al;
+        for (let k = 0; k < n; k++) {
+          const x = rnd() * w, y = rnd() * h, R = Math.max(1.2, r * m * (0.7 + rnd() * 0.6));
+          // čez rob se ponovi, da se plast pri premikanju neopazno stika
+          for (const dx of [-w, 0, w]) for (const dy of [-h, 0, h]) if (x + dx > -R && x + dx < w + R && y + dy > -R && y + dy < h + R) q.drawImage(pika(col), x + dx - R, y + dy - R, R * 2, R * 2);
+        }
+      }
+      // vesolje teče navzdol (let naprej), drugi svetovi vodoravno (veter, tok)
+      return { c, v: (i ? 16 : 6) * (svet === "vesolje" ? 1 : 0.6), dol: svet === "vesolje" };
+    });
+  }
+  function ozadje() {
+    ozadjeNarisano = true;
+    if (raven < 1) return;
+    const pa = g.globalAlpha, po = g.globalCompositeOperation;
+    g.globalAlpha = 1;
+    if (temenSvet) g.globalCompositeOperation = "lighter";
+    for (let i = 0; i < (raven > 1 ? plasti.length : 1); i++) {
+      const p = plasti[i], d = G.reduced ? 0 : (G.time * p.v) % (p.dol ? G.H : G.W);
+      if (p.dol) (g.drawImage(p.c, 0, d - G.H, G.W, G.H), g.drawImage(p.c, 0, d, G.W, G.H));
+      else (g.drawImage(p.c, d - G.W, 0, G.W, G.H), g.drawImage(p.c, d, 0, G.W, G.H));
+    }
+    g.globalAlpha = pa;
+    g.globalCompositeOperation = po;
+  }
+
+  // Volumen likov: vsak enobarven lik srednje velikosti dobi svetlobo zgoraj levo in senco spodaj desno.
+  // Platno si med gradnjo poti zapomni njen okvir; po fill() isto pot zapolni še s prelivom v tem okvirju.
+  function ovij() {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, loki = 0, crte = 0;
+    const tocka = (x, y) => ((x0 = Math.min(x0, x)), (y0 = Math.min(y0, y)), (x1 = Math.max(x1, x)), (y1 = Math.max(y1, y)));
+    const izv = {};
+    for (const k of ["beginPath", "moveTo", "lineTo", "arc", "arcTo", "ellipse", "rect", "roundRect", "quadraticCurveTo", "bezierCurveTo", "fill", "fillRect"]) izv[k] = g[k]?.bind(g);
+    gPloskev = g.createLinearGradient(0, 0, 1, 1);
+    for (const [o, c] of [[0, "rgba(255,255,255,0.32)"], [0.42, "rgba(255,255,255,0)"], [0.58, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0.26)"]]) gPloskev.addColorStop(o, c);
+    gKrog = g.createRadialGradient(0.36, 0.3, 0.02, 0.5, 0.5, 0.5);
+    for (const [o, c] of [[0, "rgba(255,255,255,0.55)"], [0.45, "rgba(255,255,255,0)"], [0.62, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0.32)"]]) gKrog.addColorStop(o, c);
+    const primeren = (w, h) => {
+      const f = g.fillStyle;
+      if (raven < 1 || sencenih > 500 || typeof f !== "string" || f[0] !== "#" || g.globalAlpha < 0.4) return 0;
+      if (w < 9 || h < 9 || w > G.W * 0.62 || h > G.H * 0.5) return 0; // drobnarije in ozadja ostanejo ravna
+      let l = svetlosti.get(f);
+      if (l == null) svetlosti.set(f, (l = svetlost(f)));
+      return l > 0.92 ? 0 : l < 0.14 ? 0.5 : 1; // bele tablice s številkami ostanejo čiste; na črnem je odsev šibkejši
+    };
+    const sencaj = (x, y, w, h, moc, preliv, narisi) => {
+      sencenih++;
+      g.save();
+      g.globalAlpha *= moc;
+      g.translate(x, y);
+      g.scale(w, h);
+      g.fillStyle = preliv;
+      narisi();
+      g.restore();
+    };
+    g.beginPath = () => ((x0 = y0 = 1e9), (x1 = y1 = -1e9), (loki = crte = 0), izv.beginPath());
+    g.moveTo = (x, y) => (tocka(x, y), izv.moveTo(x, y));
+    g.lineTo = (x, y) => (tocka(x, y), crte++, izv.lineTo(x, y));
+    g.arc = (x, y, r, ...a) => (tocka(x - r, y - r), tocka(x + r, y + r), loki++, izv.arc(x, y, r, ...a));
+    g.ellipse = (x, y, rx, ry, rot, ...a) => {
+      const ex = rot ? Math.max(rx, ry) : rx, ey = rot ? Math.max(rx, ry) : ry;
+      return tocka(x - ex, y - ey), tocka(x + ex, y + ey), loki++, izv.ellipse(x, y, rx, ry, rot, ...a);
+    };
+    g.arcTo = (ax, ay, bx, by, r) => (tocka(ax, ay), tocka(bx, by), crte++, izv.arcTo(ax, ay, bx, by, r));
+    g.rect = (x, y, w, h) => (tocka(x, y), tocka(x + w, y + h), crte++, izv.rect(x, y, w, h));
+    if (izv.roundRect) g.roundRect = (x, y, w, h, r) => (tocka(x, y), tocka(x + w, y + h), crte++, izv.roundRect(x, y, w, h, r));
+    g.quadraticCurveTo = (cx, cy, x, y) => (tocka(cx, cy), tocka(x, y), crte++, izv.quadraticCurveTo(cx, cy, x, y));
+    g.bezierCurveTo = (ax, ay, bx, by, x, y) => (tocka(ax, ay), tocka(bx, by), tocka(x, y), crte++, izv.bezierCurveTo(ax, ay, bx, by, x, y));
+    g.fill = (...a) => {
+      izv.fill(...a);
+      if (a.length && typeof a[0] !== "string") return; // Path2D: okvir ni znan
+      const w = x1 - x0, h = y1 - y0, moc = primeren(w, h);
+      if (moc) sencaj(x0, y0, w, h, moc, loki && !crte ? gKrog : gPloskev, () => izv.fill(...a));
+    };
+    g.fillRect = (x, y, w, h) => {
+      izv.fillRect(x, y, w, h);
+      if (!ozadjeNarisano && w >= G.W - 2 && h >= G.H - 2) return ozadje();
+      const moc = primeren(w, h);
+      if (moc) sencaj(x, y, w, h, moc, gPloskev, () => izv.fillRect(0, 0, 1, 1));
+    };
+  }
+  ovij();
+
   function pripravi() {
     T = barveTeme(host, g);
     // svetloba in vinjeta: majhno platno, raztegnjeno čez prizor
@@ -124,7 +226,7 @@ export function ustvariSlog(G, canvas, engine, host) {
     const luc = platno(w, h), q = luc.getContext("2d");
     const rob = mesaj(mesaj(engine.colors?.[0] || "#111827", "#000", 0.65), T.accent, 0.12);
     // vinjeta v enotskem kvadratu (elipsa po obliki prizora): sredina robov ostane skoraj čista, vogali potemnijo
-    const v = q.createRadialGradient(0.5, 0.5, 0.45, 0.5, 0.5, 0.75);
+    const v = q.createRadialGradient(0.5, 0.5, 0.5, 0.5, 0.5, 0.76);
     v.addColorStop(0, alfa(rob, 0));
     v.addColorStop(1, alfa(rob, T.temna ? 0.42 : 0.3));
     q.save();
@@ -134,7 +236,7 @@ export function ustvariSlog(G, canvas, engine, host) {
     q.restore();
     const s = q.createRadialGradient(w * 0.28, 0, 0, w * 0.28, 0, Math.max(w, h) * 0.85);
     const sv = mesaj("#ffffff", T.accent, 0.18);
-    s.addColorStop(0, alfa(sv, temenSvet ? 0.07 : 0.17));
+    s.addColorStop(0, alfa(sv, temenSvet ? 0.07 : 0.12));
     s.addColorStop(1, alfa(sv, 0));
     q.fillStyle = s;
     q.fillRect(0, 0, w, h);
@@ -147,6 +249,7 @@ export function ustvariSlog(G, canvas, engine, host) {
       im.data.set(zrno(svet, 96));
       tq.putImageData(im, 0, 0);
     }
+    plasti = narediPlasti();
     // tekstura, svetloba in vinjeta v eni plasti velikosti platna: v sličici ena sama kopija brez raztegovanja
     plast = platno(canvas.width, canvas.height);
     const pq = plast.getContext("2d");
@@ -167,12 +270,14 @@ export function ustvariSlog(G, canvas, engine, host) {
     resize: pripravi,
     // Po risanju igre: tekstura sveta, svetloba od zgoraj levo in vinjeta v barvah teme.
     po() {
+      ozadjeNarisano = false;
+      sencenih = 0;
       if (!plast) return;
       // Telefon mora ostati tekoč: če sličice trajajo predolgo (pod ~45 na sekundo), se žarenje izklopi.
       const zdaj = performance.now(), d = zdaj - zadnji;
       zadnji = zdaj;
       if (d > 22 && d < 200) {
-        if (++pocasne > 30) raven = 1;
+        if (++pocasne > 30 && raven > 0) (raven--, (pocasne = 0));
       } else if (pocasne > 0) pocasne--;
       g.save();
       g.setTransform(1, 0, 0, 1, 0, 0);

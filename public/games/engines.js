@@ -152,7 +152,6 @@ export const meteor = {
         g.arc(0, 0, pr, 0, 7);
         g.fill();
         ink(g, 4);
-        G.slog.volumen(0, 0, pr - 2);
         g.beginPath();
         g.ellipse(0, 0, pr * 1.6, pr * 0.35, -0.35, 0.2, Math.PI - 0.2);
         ink(g, 4);
@@ -186,9 +185,11 @@ export const meteor = {
             g[i ? "lineTo" : "moveTo"](Math.cos(a) * r.r * k, Math.sin(a) * r.r * k);
           });
           g.closePath();
+          g.rotate(-r.rot); // svetloba vedno od zgoraj levo, tudi ko se meteor vrti
           g.fillStyle = "#c08457";
           g.fill();
           ink(g, 4);
+          g.rotate(r.rot);
           g.fillStyle = "rgba(92,52,22,0.4)";
           [[-0.4, -0.35, 0.18], [0.35, 0.3, 0.14], [0.3, -0.45, 0.1]].forEach(([cx, cy, cr]) => {
             g.beginPath();
@@ -196,7 +197,6 @@ export const meteor = {
             g.fill();
           });
           g.rotate(-r.rot);
-          G.slog.volumen(0, 0, r.r * 0.8); // svetloba vedno od zgoraj levo, tudi ko se meteor vrti
           g.fillStyle = "#fffbeb";
           G.rr(-r.r * 0.86, -13, r.r * 1.72, 26, 9);
           g.fill();
@@ -371,7 +371,6 @@ export const balloons = {
           g.ellipse(x, b.y, b.r, b.r * 1.15, 0, 0, Math.PI * 2);
           g.fill();
           ink(g, 3);
-          G.slog.volumen(x, b.y, b.r - 1.5, b.r * 1.15 - 1.5);
           g.fillStyle = b.color;
           g.beginPath();
           g.moveTo(x - 6, b.y + b.r * 1.15 + 6);
