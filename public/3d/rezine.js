@@ -100,7 +100,7 @@ export function tkivoPoBarvi(r, g, b) {
 }
 
 // Površje telesa iz alfe malega volumna (naivne »surface nets«): { pos, col, idx } v mm; korak 2 = pol manj podrobno.
-export function povrsje(m, korak = 1, gladi = 4) {
+export function povrsje(m, korak = 1, gladi = 8) {
   const [W0, H0, Z0] = m.dim, d = m.data, mm = m.mm * korak;
   const W = Math.ceil(W0 / korak), H = Math.ceil(H0 / korak), Z = Math.ceil(Z0 / korak);
   const ix = (x, y, z) => ((Math.min(z * korak, Z0 - 1) * H0 + Math.min(y * korak, H0 - 1)) * W0 + Math.min(x * korak, W0 - 1)) * 4;
@@ -167,7 +167,22 @@ export function povrsje(m, korak = 1, gladi = 4) {
       for (let k = 0; k < 3; k++) P[a * 3 + k] += l * (vs[a * 3 + k] / st[a] - P[a * 3 + k]);
     }
   }
-  return { pos: P, col: new Float32Array(col), idx: I };
+  // barva: koža v vokslih 4 mm je mešanica kože, maščobe in ledu → zgladimo jo in približamo povprečnemu tonu,
+  // da površje ni lisasto (prava barva tkiva je na rezini, ne na telesu)
+  const C = new Float32Array(col);
+  for (let krog = 0; krog < 6; krog++) {
+    const vs = new Float32Array(C.length), st = new Uint16Array(n);
+    for (let i = 0; i < I.length; i += 3)
+      for (let k = 0; k < 3; k++) {
+        const a = I[i + k], b = I[i + ((k + 1) % 3)];
+        vs[a * 3] += C[b * 3]; vs[a * 3 + 1] += C[b * 3 + 1]; vs[a * 3 + 2] += C[b * 3 + 2]; st[a]++;
+      }
+    for (let a = 0; a < n; a++) if (st[a]) for (let k = 0; k < 3; k++) C[a * 3 + k] = 0.5 * C[a * 3 + k] + 0.5 * (vs[a * 3 + k] / st[a]);
+  }
+  const sr = [0, 0, 0];
+  for (let a = 0; a < n; a++) for (let k = 0; k < 3; k++) sr[k] += C[a * 3 + k] / Math.max(n, 1);
+  for (let a = 0; a < n; a++) for (let k = 0; k < 3; k++) C[a * 3 + k] = 0.45 * C[a * 3 + k] + 0.55 * sr[k];
+  return { pos: P, col: C, idx: I };
 }
 
 // Ploščice podrobne ravni, ki pokrivajo sliko rezine: [{ ime, u0, v0, u1, v1 }] (u, v 0–1 v sliki rezine).

@@ -110,7 +110,7 @@ export async function zgradi(THREE, ctx) {
   };
 
   // --- telo okoli rezine
-  const matTelesa = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.62, metalness: 0, clippingPlanes: [ravnina], side: THREE.FrontSide });
+  const matTelesa = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0, clippingPlanes: [ravnina], side: THREE.FrontSide });
   let telo = null;
 
   const vMm = (x, y, z, v = new THREE.Vector3()) => v.set(x, -z, -y); // mm volumna → krajevne koordinate (Y gor, +Z spredaj)
