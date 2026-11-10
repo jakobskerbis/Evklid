@@ -31,12 +31,14 @@ const server = app.listen(port, () => {
       .then((n) => n && console.log(`[evklid] učbenik za tisk: ${n} strani v predpomnilniku v ${Date.now() - t1} ms`))
       .catch((e) => console.warn(`[evklid] predgrevanje učbenika: ${e?.message || e}`));
   }, 15_000).unref();
-  // Vnaprej izdelani PDF-ji učbenika (server/ucbenik-pdf.js): 20 s po zagonu in nato vsake pol ure prenese nove
+  // Vnaprej izdelani PDF-ji učbenika (server/ucbenik-pdf.js): 20 s po zagonu in nato vsake pol ure (dokler niso vsi, vsakih 5 min) prenese nove
   // z GitHuba na disk ob bazi. EVKLID_PDF=0 izklopi; v preizkusnem načinu samo z izrecnim EVKLID_PDF_URL.
   if (process.env.EVKLID_PDF !== "0" && (!isMockMode() || process.env.EVKLID_PDF_URL)) {
-    const pdfSync = () => app.locals.pdfStore?.sync().catch(() => {});
+    const pdfSync = async () => {
+      await app.locals.pdfStore?.sync().catch(() => {});
+      setTimeout(pdfSync, app.locals.pdfStore?.nextDelayMs(process.uptime() * 1000) ?? 30 * 60_000).unref();
+    };
     setTimeout(pdfSync, 20_000).unref();
-    setInterval(pdfSync, 30 * 60_000).unref();
   }
 });
 

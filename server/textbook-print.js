@@ -7,6 +7,7 @@ import { getPath, getTopic, topicOrder } from "./curriculum.js";
 import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheet, formulaSheetSections } from "./textbook.js";
 import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { splitFormulaCells } from "../public/rich.js";
+import { BRAND } from "./brand.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -15,6 +16,19 @@ const esc = (s) =>
 // Vsebina prihaja iz datotek v repozitoriju, zato je ne čistimo dodatno.
 // output: "html" = samo vidni del formul (brez MathML, ki ga tisk ne potrebuje: PDF učbenika MAT-OS-8 v Chromu
 // 28 s → 6 s, enak izpis); privzeto htmlAndMathml (aplikacija, bralniki zaslona).
+// Absolutna vrednost negativnega števila: v »|-11|« TeX (in KaTeX) minus za navpičnico razume kot odštevanje in
+// izpiše »| − 11|«. Za tisk minus tik za ODPIRALNO navpičnico (soda po vrsti v formuli) zapišemo kot predznak
+// »|{-}11|«; »|a|-|b|« ostane odštevanje. Spremeni se samo razmik.
+export function absMinus(tex) {
+  let open = true;
+  return tex.replace(/\\[a-zA-Z]+|\\.|\|(\s*)-|\|/g, (m, sp) => {
+    if (m[0] === "\\") return m;
+    const wasOpen = open;
+    open = !open;
+    return m.length > 1 && wasOpen ? `|${sp}{-}` : m;
+  });
+}
+
 export function renderMd(text, output = "htmlAndMathml") {
   const math = [];
   const stash = (tex, display) => `@@MATH${math.push({ tex, display }) - 1}@@`;
@@ -23,37 +37,49 @@ export function renderMd(text, output = "htmlAndMathml") {
     .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
   return marked
     .parse(splitFormulaCells(src, math), { breaks: true })
-    .replace(/@@MATH(\d+)@@/g, (_, i) => katex.renderToString(math[i].tex, { displayMode: math[i].display, throwOnError: false, strict: "ignore", output }));
+    // Formula v svoji vrstici sredi odstavka: prelom vrstice pred in za njo bi dodal prazno vrstico.
+    .replace(/(?:<br\s*\/?>\s*)*@@MATH(\d+)@@(?:\s*<br\s*\/?>)*/g, (m, i) => (math[i].display ? `@@MATH${i}@@` : m))
+    .replace(/@@MATH(\d+)@@/g, (_, i) => katex.renderToString(output === "html" ? absMinus(math[i].tex) : math[i].tex, { displayMode: math[i].display, throwOnError: false, strict: "ignore", output }));
 }
 
 const demoFor = (topicId, lesson) => simsFor(topicId, lesson)[0] || null;
 
 const md = (text) => renderMd(text, "html");
 
+// Opomba namesto simulacije, ki je v tisku ni. Neposredne povezave do lekcije aplikacija nima; povezava odpre Učbenik.
+const APP_LINK = `https://${BRAND.domain}/?pogled=textbook`;
+const simNote = (text) =>
+  `<aside class="demo-note">${text} <a href="${APP_LINK}">${esc(BRAND.domain)}</a> → Učbenik → ta lekcija.</aside>`;
+// Odstavek, ki bralca pošlje k simulaciji »spodaj« (v aplikaciji je pod besedilom): za njim jasna opomba.
+const SIM_REF = /(<p>(?:(?!<\/p>)[\s\S])*?simulacij[a-zčšž]* spodaj(?:(?!<\/p>)[\s\S])*?<\/p>)/gi;
+
 export function lessonHtml(t, lesson, n) {
   const demo = demoFor(t.id, lesson);
   const sections = lesson.sections
     .map((s) => {
-      const body = `<section>${s.title ? `<h3>${esc(s.title)}</h3>` : ""}${md(s.md)}</section>`;
-      const note =
-        demo && /rešen/i.test(s.title)
-          ? `<aside class="demo-note">Interaktivni poskus »${esc(demo.title)}« je na voljo v aplikaciji Evklid.</aside>`
-          : "";
+      const html = md(s.md).replace(SIM_REF, (m) => `${m}\n${simNote("Simulacija je v aplikaciji Evklid:")}`);
+      const body = `<section>${s.title ? `<h3>${esc(s.title)}</h3>` : ""}${html}</section>`;
+      const note = demo && /rešen/i.test(s.title) ? simNote(`Interaktivni poskus »${esc(demo.title)}« je v aplikaciji Evklid:`) : "";
       return body + note;
     })
     .join("");
   const alts = lesson.alternatives.length
     ? `<section class="alts"><h3>Razloži drugače</h3>${lesson.alternatives
-        .map((a) => `<div class="alt"><h4>${esc(a.title)}</h4>${md(a.md)}</div>`)
+        .map((a) => `<div class="alt"><h4>${esc(a.title)}</h4>${md(a.md).replace(SIM_REF, (m) => `${m}\n${simNote("Simulacija je v aplikaciji Evklid:")}`)}</div>`)
         .join("")}</section>`
     : "";
   const letters = "abcdefgh";
+  // Rešitve: pravilna možnost z razlago in pri napačnih možnostih, zakaj so napačne (vrstice »~« v lekciji).
+  const whyNot = (c) => {
+    const rows = c.options.map((_, i) => (i !== c.correct && c.optionWhy?.[i] ? `<li>${md(`*Zakaj ne ${letters[i]})?* ${c.optionWhy[i]}`)}</li>` : "")).join("");
+    return rows ? `<ul class="zakaj-ne">${rows}</ul>` : "";
+  };
   const checks = lesson.checks.length
     ? `<section class="checks"><h3>Preveri se</h3><ol>${lesson.checks
         .map((c) => `<li>${md(c.q)}<ol class="opts">${c.options.map((o) => `<li>${md(o)}</li>`).join("")}</ol></li>`)
         .join("")}</ol>
         <details open class="key"><summary>Rešitve</summary><ol>${lesson.checks
-          .map((c) => `<li><b>${letters[c.correct]})</b> ${c.why ? md(c.why) : ""}</li>`)
+          .map((c) => `<li><b>${letters[c.correct]})</b> ${c.why ? md(c.why) : ""}${whyNot(c)}</li>`)
           .join("")}</ol></details></section>`
     : "";
   return `<article class="lesson" id="${esc(t.id)}">
@@ -393,6 +419,10 @@ export function shell(title, content, css = "", total = 0) {
   .checks .opts { list-style: lower-alpha; }
   .checks p { margin: 2px 0; }
   .key { margin-top: 10px; font-size: 0.92em; } .key summary { font-weight: 700; font-family: system-ui, sans-serif; }
+  .key li > p { display: inline; } .key li { margin: 3px 0; }
+  .zakaj-ne { list-style: none; padding-left: 0; margin: 1px 0 5px; color: #4a5468; } .zakaj-ne li { margin: 1px 0; }
+  .demo-note a { color: inherit; font-weight: 600; }
+  .checks .opts li { margin: 3px 0; } .checks .opts li:has(.mfrac) { margin: 8px 0; }
   .katex-display { overflow-x: auto; overflow-y: hidden; }
   section, .alt, li { break-inside: avoid-page; }
   /* Med pripravo (prenos + izris) in v brskalnikih brez tiskanja: pregrada čez vso širino (public/ucbenik-priprava.js). */

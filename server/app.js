@@ -423,7 +423,7 @@ export function createApp(store, opts = {}) {
     res.set({
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(name)}`,
-      ETag: `"${hit.hash}"`,
+      ETag: `"${hit.etag}"`,
       "Cache-Control": "no-cache", // vedno preveri ETag (304 brez prenosa); nova izdaja lekcij pride takoj
     });
     req.url = `/${hit.name}`; // ime iz kazala (samo črke, številke, pika, vezaj; server/ucbenik-pdf.js FILE_RE)

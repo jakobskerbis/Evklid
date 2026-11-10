@@ -179,6 +179,56 @@ function optimizePdf(buf) {
   }
 }
 
+// Začetna stran vsake lekcije (iz zaznamkov PDF, ki nastanejo iz naslovov h2); null, če zaznamka ni.
+async function lessonStarts(doc, dom) {
+  const flat = [];
+  const walk = (items) => {
+    for (const it of items || []) {
+      flat.push(it);
+      walk(it.items);
+    }
+  };
+  walk(await doc.getOutline());
+  const starts = [];
+  let from = 0;
+  for (const l of dom.lessons) {
+    const at = flat.findIndex((o, k) => k >= from && norm(o.title) === norm(l.title));
+    if (at < 0) {
+      starts.push(null);
+      continue;
+    }
+    from = at + 1;
+    starts.push(await destPage(doc, flat[at].dest));
+  }
+  return starts;
+}
+
+// Lekcije, ki se končajo s skoraj prazno stranjo (zadnja stran zapolnjena manj kot »pod«): [{ k, page, fill }].
+// Zapolnjenost = kako nizko seže besedilo na strani (brez noge), kot delež višine vsebine.
+async function sparseEndings(buf, dom, pod = 0.25) {
+  const doc = await openPdf(buf);
+  try {
+    const starts = await lessonStarts(doc, dom);
+    const out = [];
+    for (let k = 0; k < starts.length; k++) {
+      if (!starts[k]) continue;
+      const next = starts.slice(k + 1).find(Boolean);
+      const last = (next || doc.numPages + 1) - 1;
+      if (last <= starts[k]) continue;
+      const page = await doc.getPage(last);
+      const [, , , H] = page.view;
+      const margin = (18 / 25.4) * 72;
+      let low = H;
+      for (const it of (await page.getTextContent()).items) if (it.str.trim() && it.transform[5] > margin - 4) low = Math.min(low, it.transform[5]);
+      const fill = (H - margin - low) / (H - 2 * margin);
+      if (fill < pod) out.push({ k, page: last, fill: Math.round(fill * 100) / 100 });
+    }
+    return out;
+  } finally {
+    await doc.loadingTask.destroy();
+  }
+}
+
 // Samodejni pregled PDF-ja. dom = READ_DOM pred izdelavo; tocPages = številke strani, vpisane v kazalo.
 async function checkPdf(buf, dom, { domain, maxBytes, tocPages = null, fontNames = null, requiredFonts = null, strict = false }) {
   const errors = [];
@@ -232,26 +282,8 @@ async function checkPdf(buf, dom, { domain, maxBytes, tocPages = null, fontNames
   for (const ch of "čšž") if (dom.lessons.some((l) => l.text.includes(ch)) && !all.includes(ch)) errors.push(`v besedilu PDF ni znaka »${ch}« (pisava ali kodiranje)`);
 
   // Lekcije: zaznamki (iz naslovov h2) po vrsti, vsaka na svoji strani.
-  const flat = [];
-  const walk = (items) => {
-    for (const it of items || []) {
-      flat.push(it);
-      walk(it.items);
-    }
-  };
-  walk(await doc.getOutline());
-  const starts = [];
-  let from = 0;
-  for (const l of dom.lessons) {
-    const at = flat.findIndex((o, k) => k >= from && norm(o.title) === norm(l.title));
-    if (at < 0) {
-      errors.push(`lekcija »${l.title}« nima zaznamka v PDF`);
-      starts.push(null);
-      continue;
-    }
-    from = at + 1;
-    starts.push(await destPage(doc, flat[at].dest));
-  }
+  const starts = await lessonStarts(doc, dom);
+  starts.forEach((p, k) => p == null && errors.push(`lekcija »${dom.lessons[k].title}« nima zaznamka v PDF`));
   info.lessons = starts.filter(Boolean).length;
   if (info.lessons !== dom.lessons.length) errors.push(`lekcij v PDF ${info.lessons}, pričakovanih ${dom.lessons.length}`);
   for (let k = 1; k < starts.length; k++) if (starts[k] && starts[k - 1] && starts[k] <= starts[k - 1]) errors.push(`lekcija »${dom.lessons[k].title}« se ne začne na novi strani`);
@@ -291,9 +323,15 @@ async function checkPdf(buf, dom, { domain, maxBytes, tocPages = null, fontNames
     info.toc = dom.toc.length;
   }
   info.starts = starts;
+  // Skoraj prazne zadnje strani lekcij (podatek za poročilo, ni napaka: prelom je odvisen od dolžine lekcije).
+  info.redke = (await sparseEndings(buf, dom).catch(() => [])).map((x) => x.page);
   await doc.loadingTask.destroy();
   return { errors, info };
 }
+
+// Vsebina lista A4 z robovi 16 mm / 18 mm v slikovnih pikah CSS (96 na palec).
+const PAGE_W = Math.round(((210 - 32) / 25.4) * 96);
+const PAGE_H = Math.round(((297 - 36) / 25.4) * 96);
 
 // Izdela en PDF: prvi prehod določi strani lekcij, drugi jih vpiše v kazalo (ponovi, če se strani premaknejo).
 async function renderPdf(context, base, target, cfg) {
@@ -331,8 +369,23 @@ async function renderPdf(context, base, target, cfg) {
       await document.fonts.ready;
     }, { css: cfg.PDF_CSS, fonts: cfg.PDF_FONTS });
     await page.emulateMedia({ media: "print" });
+    // Okno je široko kot vsebina lista A4 (178 mm), da izmerjene višine ustrezajo tisku.
+    await page.evaluate((pageH) => {
+      // Okvir ali vprašanje, višje od tretjine strani, se sme prelomiti (sicer pred njim ostane velika praznina).
+      for (const el of document.querySelectorAll("main .think, main .formula, main table, main .checks > ol > li")) if (el.getBoundingClientRect().height > pageH / 3) el.classList.add("dolg");
+      // Skica iz znakov, širša od strani: manjša pisava, da se ne odreže.
+      for (const pre of document.querySelectorAll("main pre")) {
+        for (let size = 9; pre.scrollWidth > pre.clientWidth + 1 && size >= 6; size -= 0.5) pre.style.fontSize = `${size}pt`;
+      }
+    }, PAGE_H);
     const dom = await page.evaluate(READ_DOM);
     let buf = await page.pdf(cfg.PDF_OPTIONS);
+    // Lekcije, ki bi se končale z nekaj vrsticami na novi strani: bolj strnjeno preverjanje, nato znova.
+    const sparse = await sparseEndings(buf, dom).catch(() => []);
+    if (sparse.length) {
+      await page.evaluate((ids) => ids.forEach((id) => document.getElementById(id)?.classList.add("tesno")), sparse.map((x) => dom.lessons[x.k].id));
+      buf = await page.pdf(cfg.PDF_OPTIONS);
+    }
     let tocPages = null;
     if (dom.toc.length) {
       for (let round = 0; round < 4; round++) {
@@ -397,7 +450,7 @@ async function main() {
   const { chromium } = require("playwright");
   const server = await startServer();
   const browser = await chromium.launch();
-  const context = await browser.newContext();
+  const context = await browser.newContext({ viewport: { width: PAGE_W, height: PAGE_H } });
   await servePdfFonts(context, cfg);
   const files = {};
   const report = [];
@@ -422,7 +475,7 @@ async function main() {
         if (!small && strict) errors.push("qpdf ni nameščen ali ni uspel (stiskanje in linearizacija)");
         if (dom.lessons.length !== t.lessons) errors.push(`stran za tisk ima ${dom.lessons.length} lekcij, razred jih ima ${t.lessons}`);
         const file = `${t.base}.${hash}.pdf`;
-        res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages: info.pages, lessons: info.lessons, formulas: info.formulas, fonts: info.fonts, images: dom.images, ms: Date.now() - t0, errors };
+        res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages: info.pages, lessons: info.lessons, formulas: info.formulas, fonts: info.fonts, images: dom.images, redke: info.redke, ms: Date.now() - t0, errors };
         fs.writeFileSync(path.join(out, (errors.length ? "NAPAKA-" : "") + file), buf);
         if (!errors.length) files[t.id] = { file, hash, bytes: buf.length, sha256: crypto.createHash("sha256").update(buf).digest("hex"), pages: info.pages, lessons: info.lessons, title: dom.title };
       } catch (e) {
@@ -431,7 +484,7 @@ async function main() {
       res.stanje = res.errors.length ? "NAPAKA" : "izdelan";
       if (res.errors.length) failed++;
       report.push(res);
-      console.log(`${res.stanje.padEnd(8)} ${t.id} · ${res.pages ?? "?"} strani · ${res.bytes ? (res.bytes / 1e6).toFixed(2) : "?"} MB · ${(res.ms / 1000).toFixed(1)} s${res.errors.length ? `\n   - ${res.errors.slice(0, 12).join("\n   - ")}` : ""}`);
+      console.log(`${res.stanje.padEnd(8)} ${t.id} · ${res.pages ?? "?"} strani${res.redke?.length ? ` (skoraj prazne: ${res.redke.join(", ")})` : ""} · ${res.bytes ? (res.bytes / 1e6).toFixed(2) : "?"} MB · ${(res.ms / 1000).toFixed(1)} s${res.errors.length ? `\n   - ${res.errors.slice(0, 12).join("\n   - ")}` : ""}`);
     }
   } finally {
     await browser.close();
@@ -446,5 +499,5 @@ async function main() {
   process.exitCode = failed ? 1 : 0;
 }
 
-module.exports = { findSlivers, optimizePdf, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
+module.exports = { PAGE_W, PAGE_H, sparseEndings, findSlivers, optimizePdf, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
 if (require.main === module) main().catch((e) => (console.error(e), process.exit(1)));

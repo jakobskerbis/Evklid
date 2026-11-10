@@ -12,8 +12,9 @@ import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { createPdfStore, pdfTargets, pdfHash, pdfTemplateHash, pdfDownloadName, PDF_MANIFEST, PDF_MAX_BYTES, PDF_FONT_NAMES } from "../server/ucbenik-pdf.js";
+import { createPdfStore, pdfTargets, pdfHash, pdfTemplateHash, pdfDownloadName, PDF_MANIFEST, PDF_PROOF, PDF_MAX_BYTES, PDF_FONT_NAMES } from "../server/ucbenik-pdf.js";
 import { getPath, topicOrder } from "../server/curriculum.js";
+import { verifyAttestation } from "../server/pdf-potrdilo.js";
 import { loadLesson } from "../server/textbook.js";
 
 const require = createRequire(import.meta.url);
@@ -31,6 +32,10 @@ function fakeRelease(files, manifest) {
   const fetchFn = async (url, init = {}) => {
     const name = decodeURIComponent(String(url).split("/").pop());
     calls.push(name);
+    if (name === PDF_PROOF) {
+      if (manifest.proof === null) return new Response("ni", { status: 404 });
+      return new Response(JSON.stringify(manifest.proof || { sha: sha(JSON.stringify(manifest.value)) }), { status: 200 });
+    }
     if (name === PDF_MANIFEST) {
       if (!manifest.value) return new Response("ni", { status: 404 });
       const etag = `"${sha(JSON.stringify(manifest.value)).slice(0, 8)}"`;
@@ -41,6 +46,10 @@ function fakeRelease(files, manifest) {
   };
   return { fetchFn, calls };
 }
+// Lažno potrdilo: velja, če navaja SHA-256 prejetega kazala (pravo preverjanje: test spodaj s pravim potrdilom).
+const verify = (bundle, sha256) => {
+  if (bundle?.sha !== sha256) throw new Error("potrdilo o izvoru: ne velja za to kazalo");
+};
 const entry = (file, buf, hash) => ({ file, hash, bytes: buf.length, sha256: sha(buf), pages: 3, lessons: 1 });
 
 test("seznam PDF-jev: predmeti, razredi in poglavja šolskih učbenikov; zgoščena vrednost sledi vsebini", () => {
@@ -78,7 +87,7 @@ test("shramba: prenese veljavne PDF-je, zavrne napačno vsoto, zastarelega ne po
   const fileB = `poglavje.${pdfHash(KEY, UNIT)}.pdf`;
   const manifest = { value: null };
   const rel = fakeRelease({ [fileA]: a, [fileB]: Buffer.from("%PDF-pokvarjen prenos") }, manifest);
-  const store = createPdfStore({ dir, url: "https://primer.test/izdaja", fetchFn: rel.fetchFn, log: quiet });
+  const store = createPdfStore({ dir, url: "https://primer.test/izdaja", fetchFn: rel.fetchFn, verify, log: quiet });
   try {
     assert.equal(store.find(KEY), null, "prazna shramba");
     assert.equal(await store.sync(), 0);
@@ -107,6 +116,9 @@ test("shramba: prenese veljavne PDF-je, zavrne napačno vsoto, zastarelega ne po
     assert.deepEqual(fs.readdirSync(dir).sort(), [fileA, PDF_MANIFEST].sort(), "brez ostankov prekinjenih prenosov");
     assert.match(store.status().napaka, /kontrolna vsota/);
     assert.equal(store.status().datotek, 1);
+    assert.equal(hit.etag, `${pdfHash(KEY)}-${sha(a).slice(0, 12)}`);
+    assert.equal(store.nextDelayMs(60_000), 5 * 60_000, "niso še vsi PDF-ji: po zagonu preverja na 5 minut");
+    assert.equal(store.nextDelayMs(4 * 3600_000), 30 * 60_000, "po treh urah na pol ure");
 
     // Ponovna sinhronizacija: kazalo 304, datoteka A se ne prenese znova.
     const before = rel.calls.filter((c) => c === fileA).length;
@@ -120,9 +132,44 @@ test("shramba: prenese veljavne PDF-je, zavrne napačno vsoto, zastarelega ne po
     assert.match(again.status().napaka, /ni omrežja/);
     assert.ok(again.find(KEY), "napaka omrežja ne odstrani že prenesenih");
 
+    // Novo kazalo brez veljavnega potrdila se ne sprejme: prejšnje datoteke ostanejo, nič se ne prenese ali briše.
+    const before2 = rel.calls.length;
+    manifest.value = { v: 1, files: { [KEY]: entry("zlonamerna.pdf", fakePdf("podtaknjena"), pdfHash(KEY)) } };
+    manifest.proof = { sha: "napačna" };
+    assert.equal(await store.sync(), 0);
+    assert.match(store.status().napaka, /potrdilo o izvoru/);
+    assert.equal(store.find(KEY)?.name, fileA, "ostane prejšnji potrjeni PDF");
+    assert.ok(!rel.calls.slice(before2).includes("zlonamerna.pdf"));
+    manifest.proof = null; // potrdila sploh ni
+    assert.equal(await store.sync(), 0);
+    assert.match(store.status().napaka, /potrdilo o izvoru: HTTP 404/);
+    assert.equal(store.find(KEY)?.name, fileA);
+
+    // Novo (potrjeno) kazalo je že za novejše lekcije, strežnik pa ima še stare: prejšnji vnos in datoteka ostaneta.
+    manifest.proof = undefined;
+    manifest.value = { v: 1, files: { [KEY]: entry(`${KEY}.11111111111111111111.pdf`, a, "11111111111111111111") } };
+    assert.equal(await store.sync(), 0);
+    assert.equal(store.find(KEY)?.name, fileA, "vnos za sedanjo vsebino ni izrinjen");
+    assert.ok(fs.existsSync(path.join(dir, fileA)));
+
+    // Ista vsebina lekcij, PDF izdelan znova (druga SHA-256, isto ime in velikost): prenese se znova, ETag je drug.
+    const a2 = Buffer.from(a);
+    a2[20] ^= 1;
+    const rel2 = fakeRelease({ [fileA]: a2 }, { value: { v: 1, files: { [KEY]: entry(fileA, a2, pdfHash(KEY)) } } });
+    const store2 = createPdfStore({ dir, url: "x", fetchFn: rel2.fetchFn, verify, log: quiet });
+    assert.equal(await store2.sync(), 1);
+    assert.deepEqual(fs.readFileSync(path.join(dir, fileA)), a2);
+    assert.notEqual(store2.find(KEY).etag, hit.etag);
+
     // Okrnjena datoteka na disku (velikost se ne ujema) se ne postreže.
     fs.writeFileSync(path.join(dir, fileA), a.subarray(0, 100));
     assert.equal(createPdfStore({ dir, url: "x", log: quiet }).find(KEY), null);
+
+    // Preveliko kazalo se zavrne.
+    const huge = createPdfStore({ dir: tmp(), url: "x", verify: () => {}, log: quiet, fetchFn: async () => new Response("x".repeat(3 * 1024 * 1024), { status: 200 }) });
+    await huge.sync();
+    assert.match(huge.status().napaka, /prevelik/);
+    fs.rmSync(huge.dir, { recursive: true, force: true });
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -134,15 +181,17 @@ test("shramba: meja velikosti in prostor na disku", async () => {
   const fileA = `${KEY}.${pdfHash(KEY)}.pdf`;
   const manifest = { value: { v: 1, files: { [KEY]: entry(fileA, a, pdfHash(KEY)) } } };
   try {
-    const small = createPdfStore({ dir, url: "x", fetchFn: fakeRelease({ [fileA]: a }, manifest).fetchFn, maxBytes: 100, log: quiet });
+    const small = createPdfStore({ dir, url: "x", fetchFn: fakeRelease({ [fileA]: a }, manifest).fetchFn, maxBytes: 100, verify, log: quiet });
     assert.equal(await small.sync(), 0, "čez skupno mejo se ne prenese");
     assert.equal(small.find(KEY), null);
-    const full = createPdfStore({ dir, url: "x", fetchFn: fakeRelease({ [fileA]: a }, manifest).fetchFn, minFree: Number.MAX_SAFE_INTEGER, log: quiet });
+    const full = createPdfStore({ dir, url: "x", fetchFn: fakeRelease({ [fileA]: a }, manifest).fetchFn, minFree: Number.MAX_SAFE_INTEGER, verify, log: quiet });
     assert.equal(await full.sync(), 0);
     assert.match(full.status().napaka, /premalo prostora/);
     const big = { value: { v: 1, files: { [KEY]: { ...entry(fileA, a, pdfHash(KEY)), bytes: PDF_MAX_BYTES + 1 } } } };
-    const store = createPdfStore({ dir, url: "x", fetchFn: fakeRelease({ [fileA]: a }, big).fetchFn, log: quiet });
+    const dir2 = tmp();
+    const store = createPdfStore({ dir: dir2, url: "x", fetchFn: fakeRelease({ [fileA]: a }, big).fetchFn, verify, log: quiet });
     assert.equal(await store.sync(), 0, "prevelik PDF se ne prenese");
+    fs.rmSync(dir2, { recursive: true, force: true });
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -165,7 +214,8 @@ test("pot /ucbenik-pdf: PDF z diska (glave, Range, ETag), sicer preusmeritev na 
     assert.equal(r.headers.get("content-type"), "application/pdf");
     assert.equal(r.headers.get("content-length"), String(a.length));
     assert.equal(r.headers.get("accept-ranges"), "bytes");
-    assert.equal(r.headers.get("etag"), `"${pdfHash(KEY)}"`);
+    const ETAG = `"${pdfHash(KEY)}-${sha(a).slice(0, 12)}"`;
+    assert.equal(r.headers.get("etag"), ETAG);
     assert.equal(r.headers.get("cache-control"), "no-cache");
     const cd = r.headers.get("content-disposition");
     assert.match(cd, /^inline; filename="Evklid - Matematika, 8\. razred\.pdf"; filename\*=UTF-8''Evklid%20-%20Matematika%2C%208\.%20razred\.pdf$/);
@@ -182,10 +232,10 @@ test("pot /ucbenik-pdf: PDF z diska (glave, Range, ETag), sicer preusmeritev na 
 
     // fetch ob If-None-Match sam doda »Cache-Control: no-cache« (strežnik potem ne sme vrniti 304), zato node:http.
     const get = (headers) => new Promise((ok, no) => http.get(`${base}/ucbenik-pdf/${KEY}`, { headers }, (res) => { let n = 0; res.on("data", (c) => (n += c.length)).on("end", () => ok({ status: res.statusCode, bytes: n })); }).on("error", no));
-    assert.deepEqual(await get({ "If-None-Match": `"${pdfHash(KEY)}"` }), { status: 304, bytes: 0 });
+    assert.deepEqual(await get({ "If-None-Match": ETAG }), { status: 304, bytes: 0 });
     assert.deepEqual(await get({ "If-None-Match": '"stara"' }), { status: 200, bytes: a.length });
     assert.deepEqual(await get({ "If-Range": '"stara"', Range: "bytes=0-7" }), { status: 200, bytes: a.length }, "delni prenos stare različice se začne znova");
-    assert.deepEqual(await get({ "If-Range": `"${pdfHash(KEY)}"`, Range: "bytes=0-7" }), { status: 206, bytes: 8 });
+    assert.deepEqual(await get({ "If-Range": ETAG, Range: "bytes=0-7" }), { status: 206, bytes: 8 });
     const head = await fetch(`${base}/ucbenik-pdf/${KEY}`, { method: "HEAD" });
     assert.equal(head.status, 200);
     assert.equal(head.headers.get("content-length"), String(a.length));
@@ -249,6 +299,34 @@ test("skupno geslo velja tudi za vnaprej izdelane PDF-je", async () => {
   }
 });
 
+test("potrdilo o izvoru: pravo potrdilo GitHub Actions velja samo za svoj delovni tok, vejo, repozitorij in kazalo", () => {
+  // Potrdilo iz preizkusnega zagona delovnega toka na veji claude/pdf-vnaprej (10. 11. 2026) za kazalo s to SHA-256.
+  const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "test/fixtures/pdf-potrdilo-veja.json"), "utf8"));
+  const SHA = "086d9088f931586a329d044db5123b31d619747d8f5c9e10c820b9dd0db56b11";
+  const ok = { sha256: SHA, repo: "jakobskerbis/evklid", ref: "refs/heads/claude/pdf-vnaprej" };
+  const out = verifyAttestation(bundle, ok);
+  assert.match(out.san, /\/\.github\/workflows\/ucbenik-pdf\.yml@refs\/heads\/claude\/pdf-vnaprej$/);
+  assert.throws(() => verifyAttestation(bundle, { ...ok, ref: "refs/heads/main" }), /drug delovni tok ali veja/, "strežnik zahteva vejo main");
+  assert.throws(() => verifyAttestation(bundle, { ...ok, repo: "nekdo/evklid" }), /drug delovni tok ali veja/);
+  assert.throws(() => verifyAttestation(bundle, { ...ok, workflow: ".github/workflows/apk.yml" }), /drug delovni tok ali veja/);
+  assert.throws(() => verifyAttestation(bundle, { ...ok, sha256: "0".repeat(64) }), /SHA-256 se ne ujema/);
+  // Spremenjena izjava (drug SHA) s starim podpisom.
+  const forged = structuredClone(bundle);
+  const st = JSON.parse(Buffer.from(forged.dsseEnvelope.payload, "base64").toString("utf8"));
+  st.subject[0].digest.sha256 = "0".repeat(64);
+  forged.dsseEnvelope.payload = Buffer.from(JSON.stringify(st)).toString("base64");
+  assert.throws(() => verifyAttestation(forged, { ...ok, sha256: "0".repeat(64) }), /podpis ne ustreza/);
+  // Potrdilo, ki ga ni izdal Sigstore (samopodpisano ali pokvarjeno), in prazen zapis.
+  const other = structuredClone(bundle);
+  const der = Buffer.from(other.verificationMaterial.certificate.rawBytes, "base64");
+  der[der.length - 10] ^= 0xff;
+  other.verificationMaterial.certificate.rawBytes = der.toString("base64");
+  assert.throws(() => verifyAttestation(other, ok), /potrdilo o izvoru/);
+  assert.throws(() => verifyAttestation({}, ok), /manjka potrdilo ali podpis/);
+  assert.throws(() => verifyAttestation(null, ok), /ni veljaven zapis/);
+  // Privzeta shramba (brez podanega preverjanja) uporablja pravo preverjanje in vejo main.
+});
+
 test("odjemalec: gumbi PDF razreda, poglavja in predmeta vodijo na /ucbenik-pdf, lekcija in formule na tisk", () => {
   const src = fs.readFileSync(path.join(ROOT, "public/textbook.js"), "utf8");
   const body = src.slice(src.indexOf("const pdfHref"), src.indexOf("};", src.indexOf("const pdfHref")) + 2);
@@ -269,6 +347,16 @@ test("delovni tok: izdela, pregleda in objavi PDF-je brez pisanja v zgodovino gi
   assert.match(wf, /gh release upload/);
   assert.doesNotMatch(wf, /git (push|commit)/);
   assert.doesNotMatch(wf, /pull_request_target/);
+  // Posel, ki poganja kodo repozitorija, ima samo pravico branja; pisanje in potrdilo o izvoru ima le objava.
+  const [build, publish] = wf.split(/^  objava:$/m);
+  assert.match(wf, /^permissions:\n  contents: read$/m);
+  assert.doesNotMatch(build, /contents: write|id-token|attestations/);
+  assert.match(build.slice(build.indexOf("Izdelava in pregled")), /node scripts\/ucbenik-pdf\.cjs/);
+  assert.doesNotMatch(build.slice(build.indexOf("Izdelava in pregled"), build.indexOf("Poročilo in zavrnjeni")), /GH_TOKEN|github\.token/);
+  assert.match(publish, /contents: write[\s\S]*id-token: write[\s\S]*attestations: write/);
+  assert.match(publish, /attest-build-provenance@[0-9a-f]{40}[\s\S]*subject-path: out\/kazalo\.json/);
+  assert.doesNotMatch(publish, /actions\/checkout|npm |scripts\//);
+  assert.ok(publish.indexOf("kazalo.potrdilo.json") < publish.indexOf("--clobber out/kazalo.json"), "potrdilo je objavljeno pred kazalom");
 });
 
 // Izdelava enega majhnega PDF-ja (poglavje in majhen razred s kazalom) in pregled; potrebuje Chromium.
