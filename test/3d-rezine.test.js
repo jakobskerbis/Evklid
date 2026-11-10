@@ -71,7 +71,7 @@ test("rezine: rezine malega volumna, točke in ploščice", () => {
   assert.deepEqual(R.ploscice({ ...p, ravnine: ["a"] }, [530, 260, 1700], "k", 7), []);
 });
 
-test("rezine: mreža oznak (RLE), strukture rezine in tkivo po barvi", () => {
+test("rezine: mreža oznak (RLE), strukture rezine, brez ugibanja po barvi", () => {
   const pari = new Uint16Array([5, 0, 3, 7, 4, 0, 2, 9, 10, 0]);
   const data = R.razpakirajOznake(pari.buffer, 24);
   assert.deepEqual([...data], [0, 0, 0, 0, 0, 7, 7, 7, 0, 0, 0, 0, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -81,9 +81,8 @@ test("rezine: mreža oznak (RLE), strukture rezine in tkivo po barvi", () => {
   assert.equal(R.oznakaV(o, -1, 0, 0), 0);
   assert.deepEqual(R.struktureRezine(R.rezinaOznak(o, "a", 0), 1), [[7, 3]]);
   assert.deepEqual(R.struktureRezine(R.rezinaOznak(o, "a", 3), 1), [[9, 2]]);
-  assert.equal(R.tkivoPoBarvi(225, 200, 130), "t-mascoba");
-  assert.equal(R.tkivoPoBarvi(120, 40, 35), "t-misica");
-  assert.equal(R.tkivoPoBarvi(10, 10, 10), null);
+  assert.equal(R.tkivoPoBarvi, undefined, "imen ne ugibamo po barvi (bolje brez imena kot napačno)");
+  assert.deepEqual(R.okvirVsebine({ w: 4, h: 2, data: new Uint8Array([0,0,0,0, 9,9,9,255, 9,9,9,255, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0]) }), { u0: 0.25, v0: 0, u1: 0.75, v1: 0.5 });
 });
 
 test("rezine: imena struktur so popolna in vzorci kažejo na obstoječe oznake", () => {
@@ -98,7 +97,8 @@ test("rezine: imena struktur so popolna in vzorci kažejo na obstoječe oznake",
     assert.doesNotThrow(() => new RegExp(vz));
     assert.ok(k === "-" || t.oznake[k], `vzorec ${vz}: neznana oznaka ${k}`);
   }
-  for (const k of ["t-mascoba", "t-misica"]) assert.ok(t.oznake[k], k);
+  assert.ok(!Object.keys(t.oznake).some((k) => k.startsWith("t-")), "brez tkiv po barvi");
+  for (const [k, v] of Object.entries(t.os)) assert.ok(t.oznake[k] && t.oznake[v], `os: ${k} → ${v}`);
 });
 
 test("rezine: pogoji NLM (navedba vira, brez namiga na podporo, ime projekta ni ime funkcije, darovalec ni imenovan)", async () => {
@@ -150,6 +150,19 @@ test("rezine: v repozitoriju je samo majhen vzorec (≤ 1 MB), veliki podatki ne
     assert.ok(fs.existsSync(path.join(mapa, pot, meta.mali.datoteka)));
     assert.equal(meta.dim.length, 3);
   }
+});
+
+test("rezine: gostovanje podatkov je za stikalom (izvor v connect-src samo, ko je nastavljen in veljaven)", async () => {
+  const { cspFor3d, rezineIzvor } = await import("../server/tri-d.js");
+  const { BRAND } = await import("../server/brand.js");
+  const base = { "script-src": ["'self'"], "connect-src": ["'self'"] };
+  assert.equal(rezineIzvor({}), null);
+  assert.equal(rezineIzvor({ [`${BRAND.env}_REZINE_IZVOR`]: "http://x.si" }), null, "samo https");
+  assert.equal(rezineIzvor({ [`${BRAND.env}_REZINE_IZVOR`]: "https://x.si/pot" }), null, "samo izvor, brez poti");
+  const r = rezineIzvor({ [`${BRAND.env}_REZINE_IZVOR`]: "https://rezine.example.org/" });
+  assert.deepEqual(r, { izvor: "https://rezine.example.org", osnova: "https://rezine.example.org/v1/" });
+  assert.match(cspFor3d(base, r), /connect-src 'self' https:\/\/rezine\.example\.org/);
+  assert.match(cspFor3d(base, null), /connect-src 'self'$/);
 });
 
 const python = ["python3", "python"].find((p) => spawnSync(p, ["-c", "import json"]).status === 0);

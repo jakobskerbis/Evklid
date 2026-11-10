@@ -9,6 +9,7 @@ import crypto from "node:crypto";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { pickEncoding } from "./compress.js";
+import { BRAND } from "./brand.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
@@ -62,8 +63,19 @@ export function modelList() {
 
 // CSP strani /3d: osnovna politika + WebAssembly za dekodirnik meshopt. Okvir je dovoljen samo strani istega izvora
 // (»Uči se« → 3D svet odpre atlas ali model čez cel zaslon v okvirju, public/uci-se.js); drugi izvori ne.
-export function cspFor3d(base) {
+// Gostovanje podatkov »Pravi prerez telesa« (docs/3d.md): <IME>_REZINE_IZVOR = izvor vedra (https://…, brez poti),
+// <IME>_REZINE_POT = mapa različice v njem (privzeto v1/). Brez nastavitve velja vzorec iz repozitorija.
+export function rezineIzvor(env = process.env) {
+  const izvor = String(env[`${BRAND.env}_REZINE_IZVOR`] || "").trim().replace(/\/+$/, "");
+  if (!/^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(izvor)) return null;
+  const pot = String(env[`${BRAND.env}_REZINE_POT`] || "v1/").replace(/^\/+/, "");
+  return { izvor, osnova: `${izvor}/${/^[\w.-]+\/$/.test(pot) ? pot : "v1/"}` };
+}
+
+export function cspFor3d(base, rezine = rezineIzvor()) {
   const d = { ...base, "script-src": [...base["script-src"], "'wasm-unsafe-eval'"] };
+  // meta.json in mreža oznak z drugega izvora (slike dovoli že img-src https:)
+  if (rezine && d["connect-src"]) d["connect-src"] = [...d["connect-src"], rezine.izvor];
   if (d["frame-ancestors"]) d["frame-ancestors"] = ["'self'"];
   return Object.entries(d)
     .map(([k, v]) => `${k} ${v.join(" ")}`)
@@ -125,6 +137,12 @@ export function mount3d(app, { csp, modules }) {
   };
   app.get("/3d", send);
   app.get("/3d.html", send);
+  // Kazalo podatkov »Pravi prerez telesa«: z nastavljenim gostovanjem kaže na vedro, sicer statični vzorec iz repozitorija.
+  app.get("/3d/rezine/kazalo.json", (_req, res, next) => {
+    const r = rezineIzvor();
+    if (!r) return next();
+    res.set("Cache-Control", "public, max-age=300").json({ osnova: r.osnova, telesa: { z: "z/", m: "m/" } });
+  });
   app.get("/3d/modeli/seznam.json", (_req, res) => {
     res.set("Cache-Control", "no-cache").json(modelList());
   });

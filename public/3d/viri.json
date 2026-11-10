@@ -44,7 +44,7 @@
     {
       "id": "hubmap-hra-oko",
       "ime": "HuBMAP Human Reference Atlas: 3D referenčni organ Oko (VH moški, levo)",
-      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po podatkih Visible Human",
+      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po odprtih anatomskih podatkih",
       "opis": "Zrklo v Organih v 3D: oko (beločnica, roženica, šarenica, leča, mrežnica z vidnim diskom, žilnica, ciliarnik, zonularna vlakna, steklovina). Mišice, kite in vidni živec so iz Z-Anatomy; zrklo smo poravnali nanje.",
       "url": "https://lod.humanatlas.io/ref-organ/eye-male-left",
       "licenca": "CC BY 4.0",
@@ -56,7 +56,7 @@
     {
       "id": "hubmap-hra-ledvica",
       "ime": "HuBMAP Human Reference Atlas: 3D referenčni organ Ledvica (VH moški, leva)",
-      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po podatkih Visible Human",
+      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po odprtih anatomskih podatkih",
       "opis": "Ledvica v Organih v 3D: ovojnica, skorja, ledvični stebrički, piramide in papile. Sečevod, ledvični žili in nadledvična žleza so iz Z-Anatomy; ledvico smo poravnali nanje. Ledvični meh s čašicami smo oblikovali sami, ker ga HRA nima, različice iz Z-Anatomy pa ne uporabljamo (morda licenca NC).",
       "url": "https://lod.humanatlas.io/ref-organ/kidney-male-left",
       "licenca": "CC BY 4.0",

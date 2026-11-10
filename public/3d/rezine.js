@@ -50,10 +50,10 @@ export function rezinaMalega(m, smer, i) {
   return { w, h, data: out };
 }
 
-// oznake.bin: pari uint16 (dolžina, oznaka), mali endian → Uint16Array(n) (z, y, x).
+// oznake.bin: pari uint16 (dolžina, oznaka), mali endian → Uint8Array(n) (z, y, x).
 export function razpakirajOznake(buf, n) {
   const dv = new DataView(buf instanceof ArrayBuffer ? buf : buf.buffer, buf.byteOffset || 0, buf.byteLength);
-  const out = new Uint16Array(n);
+  const out = new Uint8Array(n); // oznak je manj kot 256: pol manj pomnilnika kot Uint16 (telefon)
   let p = 0;
   for (let o = 0; o + 3 < dv.byteLength && p < n; o += 4) {
     const d = dv.getUint16(o, true), v = dv.getUint16(o + 2, true);
@@ -71,12 +71,12 @@ export function oznakaV(o, x, y, z) {
   return o.data[(k * H + j) * W + i];
 }
 
-// Rezina mreže oznak: { w, h, data: Uint16Array } za rezino i (mm) v dani smeri.
+// Rezina mreže oznak: { w, h, data: Uint8Array } za rezino i (mm) v dani smeri.
 export function rezinaOznak(o, smer, iMm) {
   const [W, H, Z] = o.dim;
   const [w, h] = velikostRezine(o.dim, smer);
   const i = Math.max(0, Math.min(steviloRezin(o.dim, smer) - 1, Math.floor(iMm / o.mm)));
-  const data = new Uint16Array(w * h);
+  const data = new Uint8Array(w * h);
   if (smer === "a") data.set(o.data.subarray(i * H * W, (i + 1) * H * W));
   else if (smer === "k") for (let z = 0; z < Z; z++) data.set(o.data.subarray((z * H + i) * W, (z * H + i) * W + W), z * W);
   else for (let z = 0; z < Z; z++) for (let y = 0; y < H; y++) data[z * H + y] = o.data[(z * H + y) * W + i];
@@ -90,13 +90,18 @@ export function struktureRezine(r, najmanj = 4) {
   return [...st].filter(([, n]) => n >= najmanj).sort((a, b) => b[1] - a[1]);
 }
 
-// Tkivo po barvi, kjer mreže HRA ni: rumenkasto = maščoba, temno rdeče = mišica; drugače null.
-export function tkivoPoBarvi(r, g, b) {
-  const mx = Math.max(r, g, b);
-  if (mx < 40) return null;
-  if (r > 150 && g > 120 && b < g - 25 && r - g < 70) return "t-mascoba";
-  if (r > 70 && r < 190 && g < r * 0.55 && b < r * 0.5) return "t-misica";
-  return null;
+// Okvir vsebine rezine malega volumna (alfa > 0): { u0, v0, u1, v1 } v deležih slike ali null, če je prazna.
+export function okvirVsebine(r) {
+  let x0 = r.w, y0 = r.h, x1 = -1, y1 = -1;
+  for (let y = 0; y < r.h; y++)
+    for (let x = 0; x < r.w; x++)
+      if (r.data[(y * r.w + x) * 4 + 3] > 40) {
+        if (x < x0) x0 = x;
+        if (x > x1) x1 = x;
+        if (y < y0) y0 = y;
+        if (y > y1) y1 = y;
+      }
+  return x1 < 0 ? null : { u0: x0 / r.w, v0: y0 / r.h, u1: (x1 + 1) / r.w, v1: (y1 + 1) / r.h };
 }
 
 // Površje telesa iz alfe malega volumna (naivne »surface nets«): { pos, col, idx } v mm; korak 2 = pol manj podrobno.

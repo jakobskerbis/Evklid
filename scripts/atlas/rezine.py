@@ -9,8 +9,8 @@
 #   2 maska     telo = toplo obarvana jedra, razlita po ne-modrem in ne-črnem, če jih obdaja modri gel (listek in
 #               sivinsko lestvico obdaja črn okvir); drobni deli (prsti) prek sosednje rezine; izpadle rezine po
 #               sosednji, rezine brez podatkov s prelivom sosednjih; izrez na okvir telesa
-#   3 barve     razlika med zaporednima rezinama na skupnih celicah (mediana log razmerja) → nihanje osvetlitve okoli
-#               drsečega povprečja se odstrani (ojačanje na rezino in kanal)
+#   3 barve     razlika med zaporednima rezinama na skupnih celicah (mediana log razmerja); kar presega 1 % na mm, je
+#               osvetlitev (nihanje, skok med bloki) in se odstrani (ojačanje na rezino in kanal)
 #   4 izhod     a/<z>.webp, k/<y>.webp (frontalno), s/<x>.webp (sagitalno) na 1 mm, mali.webp (volumen 4 mm kot
 #               list prečnih rezin), predogled.webp, meta.json
 #   5 podrobno  (--podrobno) ploščice 512 px v polni ločljivosti 0,33 mm (raven 0) in 0,66 mm (raven 1, 256 px):
@@ -32,7 +32,7 @@ except ImportError:
 
 TU = os.path.dirname(os.path.abspath(__file__))
 T = 512      # ploščica
-RAZL = 5     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
+RAZL = 6     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
 MALI = 4     # mm voksla malega volumna
 ROB = 6      # mm roba okoli telesa
 
@@ -84,7 +84,7 @@ def robovi(n_mm, px_mm, n_px):
 def je_modro(f):
     """Modri gel po barvi (float32 H, W, 3): modra prevladuje nad rdečo in ni manjša od zelene."""
     r, g, b = f[..., 0], f[..., 1], f[..., 2]
-    return (b > r + 12) & (b > 0.8 * g)
+    return ((b > r + 12) & (b > 0.8 * g)) | ((b > r + 5) & (b > g) & (b > 60))   # tudi svetel moder odsev gela v žilah
 
 
 def skrci_min(m, k):
@@ -251,7 +251,7 @@ def main(arg):
 
         for zi in range(Z):
             nb, temno, toplo, gr = razredi(zi)
-            kand[zi] = nb & ~temno
+            kand[zi] = nb & ~temno & (gr <= 8)     # zelenkast led na ploskvah blokov ni tkivo
             odprto = skrci_min(kand[zi], 1)
             semena = skrci_min(kand[zi] & toplo, 7) & odprto
             while semena.any():
@@ -345,10 +345,12 @@ def main(arg):
         elif i:
             L[i] = L[i - 1]
         prej = zdaj or prej
-    okno = int(15 * len(pod)) | 1
-    Lp = np.pad(L, ((okno // 2, okno // 2), (0, 0)), mode="reflect" if N > okno else "edge")
-    gladko = np.stack([np.convolve(Lp[:, c], np.ones(okno) / okno, "valid") for c in range(3)], 1)
-    ojac = np.clip(np.exp(gladko - L), 0.75, 1.33).astype(np.float32)  # na datoteko
+    d = np.diff(L, axis=0, prepend=L[:1])
+    meja = 0.01 / len(pod)
+    prava = np.cumsum(np.clip(d, -meja, meja), 0)          # počasna, anatomska sprememba barve
+    raz = prava - L
+    raz = raz - np.median(raz, 0)
+    ojac = np.clip(np.exp(raz), 0.6, 1.6).astype(np.float32)  # na datoteko
     ojac_z = ojac.reshape(Z, len(pod), 3).mean(1)
     dnevnik(f"barve: ojačanje {ojac.min():.3f}–{ojac.max():.3f}, std {ojac.std():.4f}")
 
@@ -360,7 +362,7 @@ def main(arg):
         for zi in range(Z):
             def rezina1(q):
                 v = vol[q, y0:y1, x0:x1]
-                a = np.where(razsiri(telo[q], 1)[y0:y1, x0:x1], v[..., 3], 0).astype(np.float32)
+                a = np.where(telo[q][y0:y1, x0:x1], v[..., 3], 0).astype(np.float32)
                 a[a < 24] = 0
                 return razlij(v[..., :3].astype(np.float32) * ojac_z[q], a), a
             if zi in nadomesti:
@@ -463,7 +465,7 @@ def main(arg):
                 f = nalozi(pot)
                 if f is not None:
                     f = f[Y0:Y1, X0:X1]
-                    m = razsiri(telo[zi], 1)[iy][:, ix] & ~je_modro(f)
+                    m = skrci_min(telo[zi][iy][:, ix] & ~je_modro(f), 1)   # 1 piksel (0,33 mm) noter: brez svetlega ledenega roba
                     a = m.astype(np.float32)
                     a = (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) * (255 / 5)
                     a = np.where(razsiri(m, 1), a, 0).astype(np.uint8)

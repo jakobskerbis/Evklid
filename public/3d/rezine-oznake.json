@@ -1,5 +1,5 @@
 {
- "_opis": "Imena struktur za »Pravi prerez« (public/3d/modeli/organi/pravi-prerez.js). »oznake«: ključ → slovensko ime, latinsko ime, en stavek za 13-letnika, barva poudarka. »vzorci«: [regex, ključ] na poti vozlišča HRA (male črke, brez VH_M_/VH_F_, z / na začetku in koncu), prvi zadetek velja, »-« = brez oznake; uporablja jih scripts/atlas/rezine_oznake.py pri vokselizaciji mrež HuBMAP HRA (CC BY 4.0). t-*: tkivo po barvi, kjer mreže ni.",
+ "_opis": "Imena struktur za »Pravi prerez« (public/3d/modeli/organi/pravi-prerez.js). »oznake«: ključ → slovensko ime, latinsko ime, en stavek za 13-letnika, barva poudarka. »vzorci«: [regex, ključ] na poti vozlišča HRA (male črke, brez VH_M_/VH_F_, z / na začetku in koncu), prvi zadetek velja, »-« = brez oznake; uporablja jih scripts/atlas/rezine_oznake.py pri vokselizaciji mrež HuBMAP HRA (CC BY 4.0). »os«: prilagoditev za osnovno šolo (ključ → preprostejše skupno ime; strukture brez vnosa se na tej ravni ne imenujejo). Kjer mreže ni, pogled imena ne ugiba.",
  "oznake": {
   "veliki-mozgani": {
    "sl": "Veliki možgani",
@@ -523,17 +523,35 @@
    "opis": "Kita, ki stegensko mišico pripenja na pogačico.",
    "barva": "#e3d6b0"
   },
-  "t-mascoba": {
-   "sl": "Maščobno tkivo",
-   "la": "Textus adiposus",
-   "opis": "Rumenkasto tkivo pod kožo in med organi; shranjuje energijo in blaži udarce. Določeno po barvi, brez imena posamezne strukture.",
-   "barva": "#ead58a"
+  "srce": {
+   "sl": "Srce",
+   "la": "Cor",
+   "opis": "Mišična črpalka, ki poganja kri po vsem telesu.",
+   "barva": "#c8322f"
   },
-  "t-misica": {
-   "sl": "Mišično tkivo",
-   "la": "Textus muscularis",
-   "opis": "Rdeče tkivo, ki se krči in premika telo. Določeno po barvi, brez imena posamezne mišice.",
-   "barva": "#a8483f"
+  "pljuca": {
+   "sl": "Pljuča",
+   "la": "Pulmones",
+   "opis": "V pljučih kri sprejme kisik iz zraka in odda ogljikov dioksid.",
+   "barva": "#e59aa6"
+  },
+  "hrbtenica": {
+   "sl": "Hrbtenica",
+   "la": "Columna vertebralis",
+   "opis": "Steber iz vretenc, ki nosi telo in varuje hrbtenjačo.",
+   "barva": "#ece2c6"
+  },
+  "tanko-crevo": {
+   "sl": "Tanko črevo",
+   "la": "Intestinum tenue",
+   "opis": "Dolga cev, v kateri se hrana prebavi in se hranila vsrkajo v kri.",
+   "barva": "#e3a98a"
+  },
+  "mozgani": {
+   "sl": "Možgani",
+   "la": "Encephalon",
+   "opis": "Vodijo vse, kar telo dela, in z njimi mislimo in čutimo.",
+   "barva": "#e0b9a6"
   }
  },
  "vzorci": [
@@ -893,5 +911,41 @@
    "vertebral_column",
    "-"
   ]
- ]
+ ],
+ "os": {
+  "levi-prekat": "srce",
+  "desni-prekat": "srce",
+  "levi-preddvor": "srce",
+  "desni-preddvor": "srce",
+  "medprekatni-pretin": "srce",
+  "srcne-zaklopke": "srce",
+  "papilarne-misice": "srce",
+  "desna-pljuca": "pljuca",
+  "leva-pljuca": "pljuca",
+  "sapnik": "sapnik",
+  "sapnice": "sapnice",
+  "jetra": "jetra",
+  "zolcnik": "zolcnik",
+  "vranica": "vranica",
+  "trebusna-slinavka": "trebusna-slinavka",
+  "ledvica": "ledvica",
+  "ledvicni-meh": "ledvica",
+  "dvanajstnik": "tanko-crevo",
+  "tesce-crevo": "tanko-crevo",
+  "vito-crevo": "tanko-crevo",
+  "debelo-crevo": "debelo-crevo",
+  "slepo-crevo": "debelo-crevo",
+  "aorta": "aorta",
+  "vratno-vretence": "hrbtenica",
+  "prsno-vretence": "hrbtenica",
+  "ledveno-vretence": "hrbtenica",
+  "medvretencna-plosca": "hrbtenica",
+  "hrbtenjaca": "hrbtenjaca",
+  "prsnica": "prsnica",
+  "veliki-mozgani": "mozgani",
+  "mali-mozgani": "mozgani",
+  "mozgansko-deblo": "mozgani",
+  "talamus": "mozgani",
+  "mozganski-prekat": "mozgani"
+ }
 }

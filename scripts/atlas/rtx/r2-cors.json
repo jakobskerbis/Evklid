@@ -1,0 +1,8 @@
+[
+  {
+    "AllowedOrigins": ["https://evklid.app"],
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "MaxAgeSeconds": 86400
+  }
+]
