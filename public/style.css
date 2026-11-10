@@ -1070,8 +1070,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 /* Okvir »Zapomni si« v odgovorih inštruktorja (Markdown citat) */
 .msg.assistant blockquote { margin: 10px 0; padding: 8px 12px; border-inline-start: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0; border-start-end-radius: 10px; border-end-end-radius: 10px; }
 .msg.assistant blockquote p { margin: 0.2em 0; }
-.fx-nb { white-space: nowrap; } /* formula in ločilo za njo se ne ločita (rich.js); znotraj formule se vrstica še sme prelomiti */
-.fx-nb .katex-html { white-space: normal; }
+.fx-nb { white-space: nowrap; } /* formula in ločilo za njo se ne ločita (rich.js); tudi znotraj formule se vrstica ne prelomi (j 2026-11-08) */
 
 /* ---------- spodnja vrstica (telefon in tablica na dotik) ---------- */
 .tabbar { display: none; }

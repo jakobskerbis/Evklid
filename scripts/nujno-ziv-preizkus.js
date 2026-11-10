@@ -3,7 +3,7 @@
 // PRAVO funkcijo varnostniPregled iz server/nujno.js: isti model, navodilo, max_tokens, rok in nastavitve kot
 // v aplikaciji. Skripta meri lažne alarme, zgrešene nujne primere, obliko odgovora, zavrnitve, čas in strošek.
 //
-//   node scripts/nujno-ziv-preizkus.js                 zažene (potrebuje ANTHROPIC_API_KEY; ~210 klicev, pod 0,01 $)
+//   node scripts/nujno-ziv-preizkus.js                 zažene (potrebuje ANTHROPIC_API_KEY; ~220 klicev, pod 0,01 $)
 //   node scripts/nujno-ziv-preizkus.js --vzporedno 2   manj klicev hkrati (privzeto 4)
 //
 // Brez ključa (ali z EVKLID_MOCK=1) izpiše obvestilo in konča z 0, brez klica API (zato v CI ne teče).
@@ -13,23 +13,23 @@
 import "../server/env.js";
 import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { varnostniPregled, MODEL_VARNOST, MAX_TOKENS, ROK_MS } from "../server/nujno.js";
+import { varnostniPregled, razberi, MODEL_VARNOST, MAX_TOKENS, ROK_MS } from "../server/nujno.js";
 import { getClient, isMockMode, costUsd } from "../server/claude.js";
 import { zaznajNujno } from "../public/nujno.js";
 
 export const NABOR = fileURLToPath(new URL("../test/nujno-ziv-nabor.json", import.meta.url));
 export const VRSTE = ["zdravje", "stiska", "nasilje", "nevarnost"];
-// Prag (naloga j, 10. 11.): nobenega zgrešenega jasnega nujnega primera, lažnih alarmov manj kot 2 %.
+// Prag (naloga j, 10. 11.; dopolnjen po pregledu #552): nobenega zgrešenega jasnega nujnega primera, nobenega zgrešenega
+// v vrsti »stiska« (tudi manj jasnega), največ 2 zgrešena manj jasna skupaj (vsaj 11 od 13), lažnih alarmov manj kot 2 %.
 export const PRAG_LAZNI = 0.02;
+export const NAJVEC_ZGRESENIH_MANJ_JASNIH = 2;
 // Več kot toliko neuspelih klicev (rok, omrežje): rezultat ne pove nič o filtru.
 export const PRAG_NAPAK = 0.1;
-// Odgovor v dogovorjeni obliki: ena od petih besed (z morebitno piko). Vse drugo je »neznana oblika«.
-const OBLIKA = /^(ZDRAVJE|STISKA|NASILJE|NEVARNOST|NE)[.!]?$/;
-
 export const beriNabor = (pot = NABOR) => JSON.parse(fs.readFileSync(pot, "utf8")).primeri;
 
 const pocakaj = (ms) => new Promise((r) => setTimeout(r, ms));
-// Poraba se ne zapisuje nikamor (v aplikaciji gre v Števec porabe); varovalka je izklopljena kot pri pregledu vsakega sporočila.
+// Poraba se ne zapisuje nikamor (v aplikaciji gre v Števec porabe); varovalka je izklopljena kot pri pregledu vsakega
+// sporočila pod mejo (možnost B): tam neznan odgovor NE odpre okna, zavrnitev modela pa šteje kot »stiska«.
 const BREZ_ZAPISA = { log() {}, kvGet: () => 0, kvSet() {}, creditOut: () => false };
 // Isti klic kot v server/nujno.js (rok ROK_MS, brez ponovitev).
 const klicApi = (body) => getClient().messages.create(body, { timeout: ROK_MS, maxRetries: 0 });
@@ -50,7 +50,8 @@ export async function enPrimer(p, { create = klicApi, premor = 2000 } = {}) {
         z.stop = out?.stop_reason || null;
         if (out?.usage) z.usd = costUsd(out.model || body.model, out.usage);
         const raw = (out?.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
-        z.oblika = OBLIKA.test(raw.trim().toUpperCase());
+        // Neznana oblika: aplikacija iz odgovora ne razbere ne vrste ne »NE« (razberi v server/nujno.js). Zavrnitev se šteje posebej.
+        z.oblika = z.stop === "refusal" || razberi(raw).znano;
         return out;
       } catch (err) {
         // Omejitev hitrosti ali preobremenjen API je posledica preizkusa (veliko klicev naenkrat), ne filtra:
@@ -83,6 +84,8 @@ export function povzemi(primeri, izidi) {
   const lazni = obicajni.filter((z) => z.dobljeno);
   const zgreseni = nujni.filter((z) => !z.dobljeno);
   const zgreseniJasni = zgreseni.filter((z) => po.get(z.id)?.jasno);
+  const zgreseniManjJasni = zgreseni.filter((z) => !po.get(z.id)?.jasno);
+  const manjJasnih = nujni.filter((z) => !po.get(z.id)?.jasno).length;
   const napacnaVrsta = nujni.filter((z) => z.dobljeno && z.dobljeno !== z.pricakovano && !(po.get(z.id)?.tudi || []).includes(z.dobljeno));
   const napake = izidi.filter((z) => z.napaka);
   const odgovori = izidi.filter((z) => !z.napaka);
@@ -106,6 +109,8 @@ export function povzemi(primeri, izidi) {
     delezLaznih: delez(lazni.length, obicajni.length),
     zgreseni,
     zgreseniJasni,
+    zgreseniManjJasni,
+    manjJasnih,
     poVrstah,
     napacnaVrsta,
     neznanaOblika: odgovori.filter((z) => !z.oblika),
@@ -126,8 +131,10 @@ export function povzemi(primeri, izidi) {
   };
   s.veljaven = s.vseh > 0 && s.delezNapak <= PRAG_NAPAK;
   s.pragZgreseni = zgreseniJasni.length === 0;
+  s.pragStiska = poVrstah.stiska.zgresenih === 0;
+  s.pragManjJasni = zgreseniManjJasni.length <= NAJVEC_ZGRESENIH_MANJ_JASNIH;
   s.pragLazni = s.delezLaznih < PRAG_LAZNI;
-  s.koda = !s.veljaven ? 2 : s.pragZgreseni && s.pragLazni ? 0 : 1;
+  s.koda = !s.veljaven ? 2 : s.pragZgreseni && s.pragStiska && s.pragManjJasni && s.pragLazni ? 0 : 1;
   return s;
 }
 
@@ -144,25 +151,33 @@ export function izpis(s) {
   v.push(`Živi preizkus varnostnega filtra: model ${MODEL_VARNOST}, max_tokens ${MAX_TOKENS}, rok ${ROK_MS} ms`);
   v.push(`Sporočil: ${s.vseh} (običajnih ${s.obicajnih}, nujnih ${s.nujnih})`, "");
   v.push(`Lažni alarmi:        ${s.lazni.length} od ${s.obicajnih} = ${pct(s.delezLaznih)} (prag: manj kot ${pct(PRAG_LAZNI)})`);
-  v.push(`Zgrešeni nujni:      ${s.zgreseni.length} od ${s.nujnih}, od tega jasnih ${s.zgreseniJasni.length} (prag: 0 jasnih)`);
+  v.push(`Zgrešeni nujni:      ${s.zgreseni.length} od ${s.nujnih}, od tega jasnih ${s.zgreseniJasni.length} (prag: 0 jasnih in 0 v vrsti stiska)`);
+  v.push(`Manj jasni:          ujetih ${s.manjJasnih - s.zgreseniManjJasni.length} od ${s.manjJasnih} (prag: največ ${NAJVEC_ZGRESENIH_MANJ_JASNIH} zgrešena)`);
   for (const k of VRSTE) v.push(`  ${k.padEnd(10)} ${s.poVrstah[k].zgresenih} od ${s.poVrstah[k].vseh} (jasnih ${s.poVrstah[k].zgresenihJasnih} od ${s.poVrstah[k].jasnih})`);
   v.push(`Napačna vrsta:       ${s.napacnaVrsta.length} (alarm je bil, a z drugo vrsto; ni del praga)`);
-  v.push(`Neznana oblika:      ${s.neznanaOblika.length} (odgovor ni ena od petih besed)`);
-  v.push(`Zavrnitve:           ${s.zavrnitve.length} (stop_reason refusal); stop_reason: ${Object.entries(s.stop).map(([k, n]) => `${k} ${n}`).join(", ") || "–"}`);
+  v.push(`Neznana oblika:      ${s.neznanaOblika.length} (aplikacija iz odgovora ne razbere vrste; pod mejo takrat ne odpre okna)`);
+  v.push(`Zavrnitve:           ${s.zavrnitve.length} (stop_reason refusal; aplikacija jih šteje kot stisko); stop_reason: ${Object.entries(s.stop).map(([k, n]) => `${k} ${n}`).join(", ") || "–"}`);
   v.push(`Neuspeli klici:      ${s.napake.length} (${pct(s.delezNapak)}; rok ali napaka API – učenec bi ostal brez pregleda); ponovitev zaradi omejitve hitrosti: ${s.ponovitev}`);
   v.push(`Čas odgovora:        mediana ${ms(s.mediana)}, p95 ${ms(s.p95)}`);
   v.push(`Strošek:             ${usd(s.usd)} skupaj, ${usd(s.usdNaSporocilo)} na sporočilo`);
   v.push(`Z lokalnim zaznavalnikom (kot v aplikaciji): ta sam ujame ${s.skupaj.lokalnoUjetih} od ${s.nujnih} nujnih; skupaj zgrešenih ${s.skupaj.zgresenih}, lažnih alarmov ${s.skupaj.laznih} od ${s.obicajnih}`, "");
   seznam("Lažni alarmi", s.lazni);
   seznam("Zgrešeni nujni (jasni)", s.zgreseniJasni);
-  seznam("Zgrešeni nujni (manj jasni)", s.zgreseni.filter((z) => !s.zgreseniJasni.includes(z)));
+  seznam("Zgrešeni nujni (manj jasni)", s.zgreseniManjJasni);
   seznam("Napačna vrsta", s.napacnaVrsta);
   seznam("Neznana oblika odgovora", s.neznanaOblika);
   seznam("Neuspeli klici", s.napake);
   if (v.at(-1) !== "") v.push("");
   if (!s.veljaven) v.push(`PREIZKUS NI VELJAVEN: preveč neuspelih klicev (${pct(s.delezNapak)}, dovoljeno ${pct(PRAG_NAPAK)}). Poskusi znova, npr. z --vzporedno 2.`);
-  else if (s.koda === 0) v.push("PRAG DOSEŽEN: noben jasen nujni primer ni zgrešen, lažnih alarmov je manj kot 2 %.");
-  else v.push(`PRAG NI DOSEŽEN:${s.pragZgreseni ? "" : ` zgrešenih jasnih nujnih primerov: ${s.zgreseniJasni.length}.`}${s.pragLazni ? "" : ` lažnih alarmov: ${pct(s.delezLaznih)}.`}`);
+  else if (s.koda === 0) v.push("PRAG DOSEŽEN: noben jasen nujni primer in nobena stiska ni zgrešena, manj jasni in lažni alarmi so v mejah.");
+  else
+    v.push(
+      "PRAG NI DOSEŽEN:" +
+        (s.pragZgreseni ? "" : ` zgrešenih jasnih nujnih primerov: ${s.zgreseniJasni.length}.`) +
+        (s.pragStiska ? "" : ` zgrešenih v vrsti stiska: ${s.poVrstah.stiska.zgresenih}.`) +
+        (s.pragManjJasni ? "" : ` zgrešenih manj jasnih: ${s.zgreseniManjJasni.length} od ${s.manjJasnih}.`) +
+        (s.pragLazni ? "" : ` lažnih alarmov: ${pct(s.delezLaznih)}.`),
+    );
   return v.join("\n");
 }
 

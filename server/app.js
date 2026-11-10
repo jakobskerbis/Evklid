@@ -73,8 +73,8 @@ import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnos
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
-import { nujnoPredZavrnitvijo, nujnoZa, varnostniPregled, vsakoVklopljeno, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
-import { zaznajNujno } from "../public/nujno.js";
+import { nujnoPredZavrnitvijo, nujnoZa, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
+import { zaznajNujno, stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 
@@ -803,7 +803,9 @@ export function createApp(store, opts = {}) {
         if (againStreak !== (conv.deep || 0)) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
         // Koda meje, ki je vezala (z namigom); če bi šel najcenejši odgovor v novem pogovoru, je kriv dolg pogovor.
         const fresh = replyReserveUsd({ mode: "lite", system, messages: [{ role: "user", content: userContent }], tools: SETTINGS_TOOLS, extraTokens: 2000 });
-        return res.status(429).json(usage.guardBlock(student.id, fresh));
+        // Tudi ta zavrnitev (trda meja AI) nosi varnostni odgovor, če je sporočilo nujno.
+        const nujno = await nujnoPred();
+        return res.status(429).json({ ...usage.guardBlock(student.id, fresh), nujno: nujno || undefined });
       }
       mode = alt;
       deep = mode === "deep" || mode === "mid";
@@ -1182,9 +1184,10 @@ export function createApp(store, opts = {}) {
         console.warn(`[evklid] odgovor brez META (pogovor ${conv.id})`);
       }
       // Možnost A (j 10. 11.): inštruktor je označil stisko (flag=distress) → varnostni odgovor, če ga še ni.
-      // Vrsta iz pregleda B, če ga je našel, sicer »stiska« (besedilo ima tudi 112).
+      // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
+      // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
-      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || "stiska", student.settings));
+      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
       finished = true;
       send("done", {
         id: assistantId,

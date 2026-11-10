@@ -741,6 +741,12 @@ function vrsticeOsnova(vrsta, st) {
   const L = (k, extra = {}) => [`nujno.${k}`, { ...p, ...extra }];
   const lin = (k, l) => L(l.ure ? k : `${k}BrezUr`, { ime: l.ime, stevilka: l.st, ure: ure(l.ure) });
   if (vrsta === "zdravje") return [L("zdravje.naslov"), L("zdravje.1"), L("zdravje.2"), L("zdravje.3"), L("zdravje.4")];
+  // Blažje okno (možnost b, j potrdil 10. 11.; EVKLID_NUJNO_BLAGO=0 izklopi): brez številke za nujno pomoč, ena linija za pogovor (če jo poznamo).
+  if (vrsta === "pogovor") {
+    const l = st.linije ? (st.faks ? st.linije.odrasli : st.linije.otroci || st.linije.odrasli) : null;
+    const pomoc = st.linije ? (l ? [lin("linija", l)] : []) : st.tuje ? st.tuje.slice(0, 1).map((x) => L("linijaNeznano", { ime: x.ime, stevilka: x.st })) : [L(st.faks ? "stiska.faks" : "stiska.tom")];
+    return [L("pogovor.naslov"), L("pogovor.1"), ...(pomoc.length ? [L("pogovor.uvod"), ...pomoc] : [])];
+  }
   if (st.linije) {
     // Država iz tabele DRZAVE: študent najprej linija za odrasle (če obstaja), sicer otroška linija.
     const { otroci, odrasli } = st.linije;
@@ -776,6 +782,11 @@ function vrsticeOsnova(vrsta, st) {
 // Gumbi za klic po vrsti (vrstni red kot v kartici).
 export function klici(vrsta, st) {
   const sos = st.sosZa?.[vrsta] || st.sos;
+  if (vrsta === "pogovor") {
+    if (st.linije) return [(st.faks ? st.linije.odrasli : st.linije.otroci || st.linije.odrasli)?.st].filter(Boolean);
+    if (st.tuje) return st.tuje.slice(0, 1).map((l) => l.st);
+    return [st.faks ? st.odrasli : st.otroci].filter(Boolean);
+  }
   if (st.linije) {
     const { otroci, odrasli } = st.linije;
     const prva = st.faks ? odrasli : otroci || odrasli;
