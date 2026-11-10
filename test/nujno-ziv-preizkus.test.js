@@ -107,8 +107,8 @@ test("povzetek: zgrešen jasen primer, lažni alarmi, zavrnitev, neznana oblika 
   assert.equal(s.poVrstah.nasilje.zgresenihJasnih, 1);
   assert.deepEqual([s.pragZgreseni, s.pragStiska, s.pragManjJasni, s.pragLazni, s.koda], [false, true, true, true, 1]);
   assert.match(izpis(s), /PRAG NI DOSEŽEN/);
-  // 3 lažni alarmi od 144 so že nad 2 %.
-  const trije = povzemi(primeri, izidi.map((z) => (z.id === obicajni[4].id ? { ...z, dobljeno: "zdravje" } : z.id === jasen.id ? { ...z, dobljeno: "nasilje" } : z)));
+  // 4 lažni alarmi od 154 so že nad 2 % (#561: 154 običajnih, 3 bi bili 1,95 %).
+  const trije = povzemi(primeri, izidi.map((z) => ([obicajni[4].id, obicajni[6].id].includes(z.id) ? { ...z, dobljeno: "zdravje" } : z.id === jasen.id ? { ...z, dobljeno: "nasilje" } : z)));
   assert.deepEqual([trije.pragZgreseni, trije.pragLazni, trije.koda], [true, false, 1]);
   // Dopolnjeni prag: ena zgrešena manj jasna stiska ali trije zgrešeni manj jasni primeri (dva sta še dovoljena).
   const popolni = izidi.map((z) => ({ ...z, napaka: null, dobljeno: z.pricakovano }));

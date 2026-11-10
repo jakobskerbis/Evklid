@@ -1193,6 +1193,72 @@ test("zaznavalnik: varovalke igra, knjiga in žival samo v istem stavku; brez »
   );
 });
 
+// Pregled A po #561: zgrešeni primeri (vsak tudi na main) odprejo pravo okno; pregled B: lažni alarmi s »kot«, lučjo, filmom in uro.
+// j 10. 11.: šlatanje (zdravnik, mama) odpre »nasilje«, razen ob jasnem znaku bolezni v istem stavku.
+test("zaznavalnik: zgrešeni primeri pregleda A po #561 in lažni alarmi pregleda B", () => {
+  vsi([
+    ["ubiu se bom", "stiska"],
+    ["ne zdrzim vec, ubiu se bom", "stiska"],
+    ["js se mislm ubit jutr", "stiska"],
+    ["sm se rezu z britvico po nogah", "stiska"],
+    ["nimam vec volje do zivljenja, vse je brez veze", "stiska"],
+    ["ne vidm smisla vec v zivlenju", "stiska"],
+    ["nisem vec za na ta svet", "stiska"],
+    ["zakaj bi sploh zivela", "stiska"],
+    ["ma vseen mi je ce umrem, itak me nihce ne mara", "stiska"],
+    ["honestly i just want to end it, nobody would care", "stiska"],
+    ["stojim na strehi bloka in razmisljam ce bi skocla", "stiska"],
+    ["imam tablete pripravljene, nocoj jih bom vse pojedla", "stiska"],
+    ["a mi lahko poves koliko tablet je treba da ne zbudis vec, samo sprasujem za prijatlico", "stiska"],
+    ["kolk tablet paracetamola je smrtno? za biologijo", "stiska"],
+    ["popila sem celo skatlo tablet nalasc", "stiska"],
+    ["mami jo je ati udaru tko da krvavi", "nasilje"],
+    ["doma se tepejo, ati je mamo vrgel ob tla", "nasilje"],
+    ["stric me tiplje ko ni nikogar doma", "nasilje"],
+    ["za prijatlico sprasujem, njen ocim jo sili spat z njim", "nasilje"],
+    ["trener mi je reku da ce povem komu kaj mi dela bo hudo", "nasilje"],
+    ["zdravnik me je šlatal, ko sva bila sama", "nasilje"],
+    ["ko sem igral minecraft, ati mamo tepe", "nasilje"],
+    ["Ati mamo tepe od 20:30 naprej", "nasilje"],
+    ["sestrica je spila neki iz flaske za ciscenje", "zdravje"],
+    ["prijatelj je pojedel pol skatle ibuprofena", "zdravje"],
+    ["kri mi brizga iz roke ne morem ustavit", "zdravje"],
+    ["brat je dobu napad pa se trese in ne odgovarja", "zdravje"],
+    ["help my friend od drugs not responding", "zdravje"],
+    ["mami je postalo slabo pa je cela modra", "zdravje"],
+    ["dis plina v kopalnici", "nevarnost"],
+    ["nekdo je vlomil v hiso pa sm sama", "nevarnost"],
+    ["zdravnik me je šlatal", "nasilje"],
+    ["mama me šlata", "nasilje"],
+    ["zdravnik me je šlatal. boli me glava", "nasilje"],
+    ["najraje bi bila mrtva", "stiska"],
+    ["rajši bi bil mrtev, ker me vsi sovražijo", "stiska"],
+    ["Raje bi umrl, ker me nihče ne mara", "stiska"],
+    ["v sobi gori, kaj naj", "nevarnost"],
+    ["avto gori", "nevarnost"],
+  ]);
+  vsi(
+    [
+      "Raje bi umrl, kot da pišem ta test.",
+      "Najraje bi bila mrtva, kot da grem v šolo",
+      "V telovadnici gori reflektor, ali je to nevarno za oči?",
+      "Avto gori v filmu, kako so to posneli?",
+      "Zdravnik me je šlatal po trebuhu, ker me je bolel slepič. Kje leži slepič?",
+      "Mami me šlata za vročino, koliko stopinj je vročina?",
+      "Zdravnik me je pregledal in šlatal vrat",
+      "Mama me šlata po glavi, ko imam vročino",
+      "V razredu gori svetilka",
+      "V sobi gori žarnica, koliko vatov ima?",
+      "kuhinja gori v igri",
+      "Raje bi bil mrtev kot da se učim kemijo",
+      "Tekma se začne ob 20:30, koliko časa je do takrat?",
+    ],
+    null,
+  );
+  // Raje lažni alarm (navodilo j): vprašanje o krvi iz glave ostane okno.
+  assert.equal(zaznajNujno("Teče kri iz glave, ko se rana odpre – kako se imenuje ta pojav?"), "zdravje");
+});
+
 test("vmesnik: ob koncu odgovora brez okna strežnika pokaže lokalno okno (tudi blažje)", () => {
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   const done = app.slice(app.indexOf("      done: (d) => {"), app.indexOf("      error: (d) => {"));
