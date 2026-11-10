@@ -121,7 +121,13 @@ function parseChecks(md) {
       const i = cur.options.length - 1;
       cur.optionWhy[i] += (cur.optionWhy[i] ? " " : "") + text;
     } else if (kind === ">") cur.why += (cur.why ? " " : "") + text;
-    else if (!cur.options.length) cur.q += " " + line;
+    else if (!cur.options.length) {
+      // Nadaljevanje vprašanja. Vrstice tabele ostanejo vsaka v svoji vrstici (prej zlite v eno: tabela se je
+      // v vprašanju izpisala kot surov zapis »| A | 50 | … |«).
+      const table = line.startsWith("|");
+      const afterTable = cur.q.split("\n").pop().startsWith("|");
+      cur.q += (table ? (afterTable ? "\n" : "\n\n") : afterTable ? "\n\n" : " ") + line;
+    }
   }
   return out.filter((c) => c.options.length >= 2 && c.correct >= 0);
 }
