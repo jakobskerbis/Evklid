@@ -334,6 +334,12 @@ export function gladekObris(r, je, f = 4, tap = null) {
     }
   }
   if (!ima) return null;
+  // drobne luknje (do 2,5 celice mreže: ostanek praga na poševnih vrzelih ali 2 mm žilica, ki se ne bere kot žila) zapolnimo
+  // (ocena A, krog 4: 2 px luknji v levem prekatu in jetrih)
+  zapolniDrobne(out, W2, H2, Math.round(2.5 * f * f));
+  // veliki organi: še glajenje v povečani sliki (dvakratno okno 2f+1, prag 1/2), ki odstrani zobce mreže ob vratih in
+  // žilah (resast notranji rob jeter), ne da bi organ skrčilo
+  if (naj > 300) for (let p = 0; p < 2; p++) gladiMasko(out, W2, H2, f);
   // rob: notranja točka z zunanjim sosedom (do 2 px daleč pri f ≥ 3, da je črta vidna)
   const rob = f >= 3 ? 2 : 1;
   const o2 = out.slice();
@@ -347,6 +353,54 @@ export function gladekObris(r, je, f = 4, tap = null) {
   }
   return { w: W2, h: H2, data: o2 };
 }
+
+// Zapolni zaprte luknje (0, 4-sosednost, ne dotikajo se roba) do `najvec` celic v maski m (w × h), na mestu.
+function zapolniDrobne(m, w, h, najvec) {
+  const n = w * h, vid = new Uint8Array(n), sklad = new Int32Array(n), clani = [];
+  for (let k = 0; k < n; k++) {
+    if (m[k] || vid[k]) continue;
+    let sp = 0, odprta = false;
+    clani.length = 0;
+    sklad[sp++] = k; vid[k] = 1;
+    while (sp) {
+      const q = sklad[--sp], x = q % w;
+      if (clani.length <= najvec) clani.push(q);
+      if (x === 0 || x === w - 1 || q < w || q >= n - w) odprta = true;
+      for (const j of [x > 0 ? q - 1 : -1, x < w - 1 ? q + 1 : -1, q >= w ? q - w : -1, q < n - w ? q + w : -1])
+        if (j >= 0 && !m[j] && !vid[j]) { vid[j] = 1; sklad[sp++] = j; }
+    }
+    if (!odprta && clani.length <= najvec) for (const q of clani) m[q] = 1;
+  }
+}
+
+// Glajenje binarne maske m (w × h) na mestu: ločljivo povprečje v oknu 2r+1, nato prag 1/2.
+function gladiMasko(m, w, h, r) {
+  const a = new Float32Array(w * h), b = new Float32Array(w * h), d = 2 * r + 1;
+  for (let y = 0; y < h; y++) {
+    let s = 0;
+    for (let x = -r; x <= r; x++) s += x >= 0 && x < w ? m[y * w + x] : 0;
+    for (let x = 0; x < w; x++) {
+      a[y * w + x] = s / d;
+      const iz = x - r, v = x + r + 1;
+      if (iz >= 0) s -= m[y * w + iz];
+      if (v < w) s += m[y * w + v];
+    }
+  }
+  for (let x = 0; x < w; x++) {
+    let s = 0;
+    for (let y = -r; y <= r; y++) s += y >= 0 && y < h ? a[y * w + x] : 0;
+    for (let y = 0; y < h; y++) {
+      b[y * w + x] = s / d;
+      const iz = y - r, v = y + r + 1;
+      if (iz >= 0) s -= a[iz * w + x];
+      if (v < h) s += a[v * w + x];
+    }
+  }
+  for (let k = 0; k < w * h; k++) m[k] = b[k] >= 0.5 ? 1 : 0;
+}
+
+// Deli, ki so anatomsko znotraj strukture in je na rezini ne preluknjajo (papilarne mišice so del prekata).
+export const NOTRANJI = { "levi-prekat": ["papilarne-misice"], "desni-prekat": ["papilarne-misice"], srce: ["papilarne-misice", "srcne-zaklopke", "medprekatni-pretin"] };
 
 // Ključ shrambe za krajevno kazalo razvijalca (<slug>.* iz brand.json; scripts/preimenuj.js ga zamenja, test preveri).
 export const KLJUC_KAZALA = "evklid.3d.rezine";
@@ -363,6 +417,24 @@ export async function telesaKazala(k, koren, beriJson) {
   });
   if (!spoli.length) throw r.find((x) => x.status === "rejected")?.reason || new Error("kazalo brez teles");
   return { osnova, spoli, mete };
+}
+
+// Prvo telo, ki se res naloži: najprej `prvi`, nato druga telesa iz kazala (napaka podatkov enega telesa, npr. ženske, ki
+// se še peče, ne pokaže takoj vzorca). nalozi(spol) → Promise. → { spol, neuspela: [spoli z napako] } ali zadnja napaka.
+export async function prvoTelo(spoli, prvi, nalozi, obNapaki = () => {}) {
+  const neuspela = [];
+  let napaka = null;
+  for (const s of [prvi, ...spoli.filter((x) => x !== prvi)]) {
+    try {
+      await nalozi(s);
+      return { spol: s, neuspela };
+    } catch (err) {
+      neuspela.push(s);
+      napaka = err;
+      obNapaki(s, err);
+    }
+  }
+  throw napaka || new Error("ni teles");
 }
 
 // Anatomska raven prečne rezine i (mm od vrha volumna): vretence, katerega sredina je najbližja (vretenca se po višini
@@ -413,9 +485,30 @@ export function opisOznake(tab, kl, raven = "") {
   return { ...o, sl: `${o.sl} ${v.raven}`, la: `${o.la} ${v.rim}` };
 }
 
-// Lega rezine z besedilom: { smer, i, vzorec, ravni }; t(kljuc, privzeto), jezik za decimalno vejico. Na vzorcu
+// Lega rezine z besedilom: { smer, i, vzorec, ravni, os, n }; t(kljuc, privzeto), jezik za decimalno vejico; os = OŠ (samo
+// predel telesa, n = število rezin v smeri). Na vzorcu
 // (lega od temena ni znana) samo anatomska raven ali, če je ni, razdalja od vrha vzorca.
-export function besediloLege({ smer, i, vzorec, ravni }, t, jezik = "sl") {
+// OŠ: predel telesa namesto vretenca in milimetrov (ocena B, krog 4): smer a po vretencu (C vrat, Th1–Th10 prsni koš,
+// Th11–L5 trebuh), zunaj hrbtenice po deležu višine telesa; k in s po deležu globine oz. širine. → ključ (»prsi«, …).
+export function predelRezine({ smer, i, n, ravni, vzorec }) {
+  const f = n > 0 ? i / n : 0.5;
+  if (smer === "k") return f < 0.4 ? "spredaj" : f <= 0.6 ? "sredina" : "zadaj";
+  if (smer === "s") return f < 0.4 ? "desno" : f <= 0.6 ? "sredina" : "levo";
+  const rv = ravenPri(ravni, i);
+  if (rv) return rv[0] === "C" ? "vrat" : rv[0] === "L" || Number(rv.slice(2)) >= 11 ? "trebuh" : "prsi";
+  if (vzorec) return "prsi"; // vzorec je izrez prsnega koša
+  const meje = [[0.12, "glava"], [0.165, "vrat"], [0.3, "prsi"], [0.45, "trebuh"], [0.53, "medenica"], [0.72, "stegna"], [0.78, "kolena"], [0.94, "goleni"]];
+  return (meje.find(([m]) => f < m) || [0, "stopala"])[1];
+}
+export const PREDELI = { glava: "v višini glave", vrat: "v višini vratu", prsi: "v višini prsnega koša", trebuh: "v višini trebuha", medenica: "v višini medenice",
+  stegna: "v višini stegen", kolena: "v višini kolen", goleni: "v višini goleni", stopala: "v višini stopal", spredaj: "bliže sprednji strani telesa",
+  sredina: "skozi sredino telesa", zadaj: "bliže hrbtu", desno: "bliže desni strani telesa", levo: "bliže levi strani telesa" };
+
+export function besediloLege({ smer, i, vzorec, ravni, os = false, n = 0 }, t, jezik = "sl") {
+  if (os) {
+    const p = predelRezine({ smer, i, n, ravni, vzorec });
+    return t(`a3.rez.os.${p}`, PREDELI[p]);
+  }
   const cm = (i / 10).toLocaleString(jezik, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const rv = smer === "a" ? ravenPri(ravni, i) : "";
   const vVisini = rv ? t("a3.rez.atLevel", "v višini {r}").replace("{r}", rv) : "";
@@ -427,28 +520,31 @@ export function besediloLege({ smer, i, vzorec, ravni }, t, jezik = "sl") {
 // Zapolni majhne luknje znotraj izbrane strukture na rezini oznak (celice brez oznake, ki jih struktura povsem obdaja,
 // do `najvec` celic): mreža oznak ima ob robu organov drobne vrzeli. Luknje z drugo oznako (žile v jetrih) ostanejo.
 // Vrne nov je (Uint8Array dolžine w·h, 1 = del strukture) za gladekObris z je = [0, 1].
-export function zapolniObris(r, je, najvec = 40) {
+// notranje = Uint8Array(256) oznak, ki so del strukture (R.NOTRANJI, npr. papilarne mišice v prekatu): štejejo k njej.
+export function zapolniObris(r, je, najvec = 40, notranje = null) {
   const { w, h, data } = r, n = w * h;
   const v = new Uint8Array(n);
   for (let k = 0; k < n; k++) if (je[data[k]]) v[k] = 1;
+  const tuja = (d) => d && !notranje?.[d]; // celica druge strukture (žila): luknja z njo ostane
   const vid = new Int32Array(n).fill(-1), sklad = new Int32Array(n);
   for (let k = 0; k < n; k++) {
-    if (v[k] || vid[k] >= 0 || data[k]) continue;
+    if (v[k] || vid[k] >= 0 || tuja(data[k])) continue;
     // ena prazna luknja (4-sosednost); če se dotakne roba slike ali celice z drugo oznako, ni luknja
-    let sp = 0, st = 0, odprta = false;
+    let sp = 0, st = 0, odprta = false, notri = false;
     const clani = [];
     sklad[sp++] = k; vid[k] = k;
     while (sp) {
       const q = sklad[--sp], x = q % w;
       clani.push(q); st++;
+      if (data[q]) notri = true;
       if (x === 0 || x === w - 1 || q < w || q >= n - w) odprta = true;
       for (const j of [x > 0 ? q - 1 : -1, x < w - 1 ? q + 1 : -1, q >= w ? q - w : -1, q < n - w ? q + w : -1]) {
         if (j < 0 || v[j] || vid[j] >= 0) continue;
-        if (data[j]) { odprta = true; continue; }
+        if (tuja(data[j])) { odprta = true; continue; }
         vid[j] = k; sklad[sp++] = j;
       }
     }
-    if (!odprta && st <= najvec) for (const q of clani) v[q] = 1;
+    if (!odprta && st <= (notri ? najvec * 15 : najvec)) for (const q of clani) v[q] = 1;
   }
   return { w, h, data: v };
 }

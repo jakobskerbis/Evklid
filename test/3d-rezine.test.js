@@ -346,6 +346,112 @@ test("rezine: obris zapolni drobne luknje brez oznake, žile z lastno oznako ost
   assert.equal(z.data[0], 0, "zunanjost ostane zunaj");
 });
 
+test("rezine: napaka podatkov enega telesa najprej poskusi drugo telo, šele nato vzorec", async () => {
+  const klici = [];
+  const nalozi = (ok) => async (s) => { klici.push(s); if (!ok.includes(s)) throw new Error(`ni ${s}`); };
+  const r = await R.prvoTelo(["z", "m"], "z", nalozi(["m"]));
+  assert.deepEqual(r, { spol: "m", neuspela: ["z"] }, "ženska odpove (npr. mali.webp) → moški");
+  assert.deepEqual(klici, ["z", "m"]);
+  assert.deepEqual(await R.prvoTelo(["z", "m"], "m", nalozi(["m", "z"])), { spol: "m", neuspela: [] }, "izbrano telo prvo");
+  await assert.rejects(R.prvoTelo(["z", "m"], "z", nalozi([])), /ni m/, "nobeno telo → napaka (model nato pokaže vzorec)");
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /R\.prvoTelo\(spoli, stanje\.spol, nalozi[^)]*\)\.then\([^,]+, async \(err\) => \{\s*await naRezervo\(err\)/, "vzorec šele, ko odpovejo vsa telesa");
+});
+
+test("rezine: OŠ – lega brez vretenca in milimetrov, namig skladen z imenom »Hrbtenica«", () => {
+  const t = (_k, d) => d;
+  const ravni = [[2, 30, "C6"], [300, 340, "Th6"], [520, 556, "Th11"], [700, 740, "L4"]];
+  const lega = (smer, i, n, vzorec = false) => R.besediloLege({ smer, i, n, ravni, vzorec, os: true }, t);
+  assert.equal(lega("a", 320, 1878), "v višini prsnega koša");
+  assert.equal(lega("a", 540, 1878), "v višini trebuha");
+  assert.equal(lega("a", 10, 1878), "v višini vratu", "vretence ima prednost pred deležem višine");
+  assert.equal(lega("a", 100, 1878), "v višini glave");
+  assert.equal(lega("a", 1100, 1878), "v višini stegen");
+  assert.equal(lega("a", 1800, 1878), "v višini stopal");
+  assert.equal(lega("a", 200, 400, true), "v višini prsnega koša", "vzorec je izrez prsnega koša");
+  assert.equal(lega("k", 50, 336), "bliže sprednji strani telesa");
+  assert.equal(lega("k", 168, 336), "skozi sredino telesa");
+  assert.equal(lega("s", 100, 581), "bliže desni strani telesa");
+  assert.equal(lega("s", 500, 581), "bliže levi strani telesa");
+  for (const [smer, n] of [["a", 1878], ["k", 336], ["s", 581]]) for (let i = 0; i < n; i += 37) {
+    const b = lega(smer, i, n);
+    assert.doesNotMatch(b, /\d|Th|mm|cm/, `${smer} ${i}: ${b}`);
+    assert.ok(SL[`a3.rez.os.${R.predelRezine({ smer, i, n, ravni })}`], b);
+  }
+  assert.equal(R.besediloLege({ smer: "a", i: 320, ravni }, t), "v višini Th6 · 32,0 cm pod vrhom", "SŠ ostane natančno");
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /os\(\) \? t\("a3\.rez\.sliceOS", "Rezina"\)/, "OŠ: drsnik brez »(mm)«");
+  assert.match(mod, /izpis: \(v\) => \(os\(\) \? lega\(sm, pripni\(sm, v\)\) : ""\)/, "OŠ: drsnik pokaže predel, ne številke");
+  assert.match(mod, /id: "lega"[^\n]*vidno: \(\) => !os\(\)/, "OŠ: brez podvojene lege");
+  assert.match(mod, /poskusi: "[^"]*hrbtenice[^"]*"/, "namig: hrbtenica (OŠ ime) namesto vretenca");
+  assert.equal(SL["a3.rez.sliceOS"], "Rezina");
+});
+
+test("rezine: poudarek je vedno prosojen z obrobo; okvir rezine zapolni oder", () => {
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  const m = /Math\.max\((\d+), Math\.min\((\d+), 100 - 110 \* svetlost\)\)/.exec(mod);
+  assert.ok(m, "polnilo poudarka iz svetlosti barve");
+  assert.ok(Number(m[2]) <= 64 && Number(m[1]) >= 20, "polnilo ≤ 25 % prekrivnosti");
+  assert.match(mod, /px\[k \* 4 \+ 3\] = rob \? 240 : polnilo/, "obroba neprosojna, polnilo prosojno");
+  assert.match(mod, /pravokotnik: \[ew, eh\], zapolni: 0\.9/, "pogled naravnost: rezina čez 90 % odra");
+  const pr = beri("public", "3d", "pregledovalnik.js");
+  assert.match(pr, /const p = o\?\.pravokotnik;/);
+  // obrat fitRazdalja: pri pokončnem telefonu (360 × 380 px oder) mora rezina 2 : 1 zasesti ≥ 85 % širine
+  const fov = 45, aspekt = 360 / 380, navp = (fov / 2) * Math.PI / 180, vodo = Math.atan(Math.tan(navp) * aspekt);
+  const [sw, sh] = [1, 0.5], d = Math.max(sw / 2 / Math.tan(vodo), sh / 2 / Math.tan(navp)) / 0.9;
+  const r = (d * Math.sin(Math.min(navp, vodo))) / 1.08, dd = (r / Math.sin(Math.min(navp, vodo))) * 1.08;
+  assert.ok(sw / (2 * dd * Math.tan(vodo)) >= 0.85, "delež širine");
+});
+
+test("rezine: lepljivi drsnik (samo v plošči strani, pas pod njim pokrit) in dolg pritisk brez dodatnega koraka", () => {
+  const pr = beri("public", "3d", "pregledovalnik.js");
+  assert.match(pr, /if \(c\.lepljiv && opts\.stran && el && el !== prej\)/, "lepljivo samo v načinu strani");
+  assert.match(pr, /const dolg = ponavljal && performance\.now\(\) - ponavljal < 800;[\s\S]{0,60}if \(!dolg\) korak\(\);/, "klik ob koncu dolgega pritiska ne doda koraka");
+  assert.match(pr, /ponovi\(450\)/, "ponavljanje se začne šele po zamiku");
+  assert.match(pr, /for \(const t of \["pointerup", "pointerleave", "pointercancel", "blur"\]\) b\.addEventListener\(t, stop\)/, "spust ustavi ponavljanje");
+  const css = beri("public", "3d", "3d.css");
+  const pravilo = /\.k3-plosca > \.k3-lepljivo \{([^}]*)\}/.exec(css)?.[1] || "";
+  assert.match(pravilo, /position: sticky/);
+  assert.match(pravilo, /background: var\(--k3-bg\)/, "neprosojno ozadje");
+  assert.match(pravilo, /box-shadow/, "senca loči drsnik od vsebine pod njim");
+  assert.match(css, /\.k3-plosca > \.k3-lepljivo::after \{[^}]*linear-gradient\(var\(--k3-bg\) 30%, transparent\)/, "pas pod drsnikom zbledi");
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /lepljiv: true/);
+  assert.match(mod, /gumba: \{ korak: 1/);
+});
+
+test("rezine: obris – papilarne mišice so del prekata, drobne luknje povečave zapolnjene, velik organ zglajen", () => {
+  // prekat (1) s papilarno mišico (3) in žilo (2) v notranjosti (žilica 4 × 4 mm se v povečavi zapolni kot drobna luknja)
+  const w = 14, h = 14, data = new Uint8Array(w * h);
+  for (let y = 1; y < 13; y++) for (let x = 1; x < 13; x++) data[y * w + x] = 1;
+  for (const [x, y] of [[4, 4], [5, 4], [4, 5], [5, 5]]) data[y * w + x] = 3;
+  for (let y = 8; y < 11; y++) for (let x = 8; x < 11; x++) data[y * w + x] = 2; // žila 6 × 6 mm
+  const je = new Uint8Array(256); je[1] = 1;
+  const nt = new Uint8Array(256); nt[3] = 1;
+  const brez = R.zapolniObris({ w, h, data }, je);
+  assert.equal(brez.data[4 * w + 4], 0, "brez notranjih: mišica je luknja");
+  const z = R.zapolniObris({ w, h, data }, je, 40, nt);
+  assert.equal(z.data[4 * w + 4], 1, "papilarna mišica zapolnjena");
+  assert.equal(z.data[9 * w + 9], 0, "žila ostane luknja");
+  assert.deepEqual(R.NOTRANJI["levi-prekat"], ["papilarne-misice"]);
+  // po povečavi ni zaprtih lukenj, manjših od 2,5 celice
+  const o = R.gladekObris(z, Uint8Array.of(0, 1), 4);
+  const n = o.w * o.h, vid = new Uint8Array(n);
+  const luknje = [];
+  for (let k = 0; k < n; k++) {
+    if (o.data[k] || vid[k]) continue;
+    const st = [k]; vid[k] = 1; let c = 0, odp = false;
+    while (st.length) {
+      const q = st.pop(), x = q % o.w; c++;
+      if (x === 0 || x === o.w - 1 || q < o.w || q >= n - o.w) odp = true;
+      for (const j of [x > 0 ? q - 1 : -1, x < o.w - 1 ? q + 1 : -1, q - o.w, q + o.w]) if (j >= 0 && j < n && !o.data[j] && !vid[j]) { vid[j] = 1; st.push(j); }
+    }
+    if (!odp) luknje.push(c);
+  }
+  assert.equal(luknje.length, 1, "ostane samo žila");
+  assert.ok(luknje[0] > 2.5 * 16, "žila ni drobna luknja");
+});
+
 test("rezine: ključ shrambe iz imena aplikacije (brand.json)", () => {
   const brand = JSON.parse(beri("brand.json"));
   assert.equal(R.KLJUC_KAZALA, `${brand.slug}.3d.rezine`);

@@ -39,6 +39,7 @@ export function odpriModel(el, mod, opts = {}) {
   let izbran = null;
   let tece = true;
   let izpisi = [];
+  let drsIzpisi = []; // osvežitev izpisa in napisa drsnikov (c.izpis, c.oznaka kot funkcija) po vsakem ob()
   let sinh = []; // drsnik/stikalo/izbira: { c, zadnja, nastavi } – gradnik sledi c.vrednost, ko jo spremeni model
   let zadnjiDeli = []; // deli ob zadnji gradnji seznama (primerjava po predmetih)
   let vidni = []; // [nadzor, element] za nadzore z vidno()
@@ -568,9 +569,19 @@ export function odpriModel(el, mod, opts = {}) {
       o = typeof model?.okvir === "function" ? model.okvir() : model?.okvir;
     } catch {}
     const c = Array.isArray(o?.sredisce) && o.sredisce.length === 3 && o.sredisce.every(Number.isFinite) ? new THREE.Vector3(...o.sredisce) : new THREE.Vector3();
+    // o.pravokotnik = [š, v] ravne slike, gledane naravnost (rezina): polmer, pri katerem slika zapolni delež o.zapolni
+    // (privzeto 0,9) širine ali višine odra, ne krogle okoli nje (telefon: rezina čez ≥ 85 % širine)
+    const p = o?.pravokotnik;
+    if (kit && Array.isArray(p) && p[0] > 0 && p[1] > 0) {
+      const navp = THREE.MathUtils.degToRad(kit.camera.fov / 2), vodo = Math.atan(Math.tan(navp) * kit.camera.aspect);
+      const z = o.zapolni > 0 && o.zapolni <= 1 ? o.zapolni : 0.9;
+      const d = Math.max(p[0] / 2 / Math.tan(vodo), p[1] / 2 / Math.tan(navp)) / z;
+      return [c, (d * Math.sin(Math.min(navp, vodo))) / 1.08]; // obrat kit.fitRazdalja
+    }
     return [c, o?.polmer > 0 ? o.polmer : 1];
   };
   const osveziIzpise = () => {
+    for (const f of drsIzpisi) f();
     for (const [c, out] of izpisi) {
       try {
         out.textContent = String(c.vrednost?.() ?? "");
@@ -602,6 +613,7 @@ export function odpriModel(el, mod, opts = {}) {
     nadzorEl.replaceChildren();
     lepljivoEl.replaceChildren();
     izpisi = [];
+    drsIzpisi = [];
     vidni = [];
     sinh = [];
     for (const c of Array.isArray(model?.nadzor) ? model.nadzor : []) {
@@ -622,16 +634,33 @@ export function odpriModel(el, mod, opts = {}) {
       if (c.tip === "drsnik") {
         const lab = mk(c.gumba ? "div" : "label", "k3-drsnik"); // z gumboma ne label: klik na napis bi sprožil gumb −
         const vrh = mk("span", "k3-drsnik-vrh");
-        const out = mk("output", "", stevilo(c.vrednost, c.korak));
-        vrh.append(mk("span", "", c.oznaka), out);
+        // c.oznaka je lahko funkcija, c.izpis(v) → besedilo namesto števila (npr. »v višini prsnega koša« na OŠ); prazno = število
+        const oznakaC = () => String((typeof c.oznaka === "function" ? c.oznaka() : c.oznaka) ?? "");
+        const izpisC = (v) => {
+          let s = null;
+          try { s = typeof c.izpis === "function" ? c.izpis(v) : null; } catch {}
+          return s == null || s === "" ? stevilo(v, c.korak) : String(s);
+        };
+        const out = mk("output", "", izpisC(c.vrednost));
+        const napis = mk("span", "", oznakaC());
+        vrh.append(napis, out);
         const inp = document.createElement("input");
         inp.type = "range";
         inp.min = c.min;
         inp.max = c.max;
         inp.step = c.korak ?? "any";
         inp.value = c.vrednost;
-        inp.setAttribute("aria-label", c.oznaka);
-        const sd = { c, zadnja: c.vrednost, nastavi: (v) => ((inp.value = v), (out.textContent = stevilo(v, c.korak))) };
+        inp.setAttribute("aria-label", oznakaC());
+        const izpisi1 = (v) => {
+          const b = izpisC(v);
+          if (out.textContent !== b) out.textContent = b;
+          if (c.izpis) inp.setAttribute("aria-valuetext", b);
+          const o = oznakaC();
+          if (napis.textContent !== o) { napis.textContent = o; inp.setAttribute("aria-label", o); }
+        };
+        if (c.izpis) inp.setAttribute("aria-valuetext", izpisC(c.vrednost));
+        const sd = { c, zadnja: c.vrednost, nastavi: (v) => ((inp.value = v), izpisi1(v)) };
+        drsIzpisi.push(() => izpisi1(c.vrednost));
         sinh.push(sd);
         // Med vlečenjem drsnika ostaneta vidna le njegov gumb in tirnica (j, 4. 11.: »da vidiš, kje ustaviti«): plošča,
         // orodja, točke in napisi postanejo prosojni, ob spustu se vrnejo.
@@ -658,8 +687,8 @@ export function odpriModel(el, mod, opts = {}) {
         inp.addEventListener("input", () => {
           const v = Number(inp.value);
           c.vrednost = sd.zadnja = v;
-          out.textContent = stevilo(v, c.korak);
           klic(v);
+          izpisi1(v);
         });
         // c.gumba = { korak, manj, vec }: v isti vrstici [−] drsnik [+]; dolg pritisk ponavlja korak (natančen premik na telefonu)
         if (c.gumba) {
@@ -675,8 +704,8 @@ export function odpriModel(el, mod, opts = {}) {
               if (v === Number(c.vrednost)) return;
               inp.value = v;
               c.vrednost = sd.zadnja = v;
-              out.textContent = stevilo(v, c.korak);
               klic(v);
+              izpisi1(v);
             };
             const stop = () => clearTimeout(ura);
             b.addEventListener("pointerdown", (e) => {
@@ -832,7 +861,7 @@ export function odpriModel(el, mod, opts = {}) {
       }
       const el = nadzorEl.lastElementChild;
       if (typeof c.vidno === "function" && el && el !== prej) vidni.push([c, el]);
-      if (c.lepljiv && el && el !== prej) {
+      if (c.lepljiv && opts.stran && el && el !== prej) { // lepljivo samo v plošči strani /3d (v lekciji ni drsne plošče)
         if (lepljivoEl.parentNode !== spodaj) spodaj.prepend(lepljivoEl);
         lepljivoEl.append(el);
       }

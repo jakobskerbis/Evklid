@@ -18,7 +18,7 @@ export const info = {
   podrocje: "organi",
   predmet: "BIO",
   opis: "Fotografije pravih prerezov človeškega telesa. Podatki NLM niso nujno najnovejši ali najnatančnejši; NLM Evklida ne podpira in ne priporoča.",
-  poskusi: "Premakni drsnik skozi prsni koš in se dotakni srca, pljuč ali vretenca na rezini.",
+  poskusi: "Premakni drsnik skozi prsni koš in se dotakni srca, pljuč ali hrbtenice na rezini.",
   merilo: { m: 1.8, oznaka: "1,8 m" },
 };
 
@@ -100,8 +100,27 @@ export async function zgradi(THREE, ctx) {
     const m = new THREE.MeshBasicMaterial({ map, transparent: true, side: THREE.DoubleSide, toneMapped: false, depthWrite: red === 0, alphaTest: red === 0 ? 0.35 : 0, polygonOffset: red > 0, polygonOffsetFactor: -red, polygonOffsetUnits: -red * 2 });
     return m;
   };
+  // rob fotografije pri podlakteh (roka sega čez rob kadra NLM, ravno odrezana): prosojnost zbledi v zadnjih 25 mm ob
+  // desnem in levem robu volumna (smer a in k, kjer je u os od desne proti levi strani telesa)
+  const robPodatki = new Uint8Array(256 * 4).fill(255);
+  const texRoba = new THREE.DataTexture(robPodatki, 256, 1);
+  texRoba.minFilter = texRoba.magFilter = THREE.LinearFilter;
+  let robZa = "";
+  const nastaviRob = (s, Wd) => {
+    const k = s === "s" ? "s" : `${s}${Wd}`;
+    if (robZa === k) return;
+    robZa = k;
+    const pas = s === "s" ? 0 : Math.min(0.08, 25 / Wd);
+    for (let x = 0; x < 256; x++) {
+      const u = (x + 0.5) / 256, d = Math.min(u, 1 - u);
+      const a = pas ? Math.min(1, d / pas) : 1;
+      robPodatki.fill(Math.round(255 * a * a * (3 - 2 * a)), x * 4, x * 4 + 4);
+    }
+    texRoba.needsUpdate = true;
+  };
   const ploskev = new THREE.Mesh(geoRezine, mat(texMala, 0));
   const ostra = new THREE.Mesh(geoRezine, mat(null, 1));
+  ploskev.material.alphaMap = texRoba; ostra.material.alphaMap = texRoba;
   ostra.visible = false;
   ostra.raycast = () => {};
   const platnoPoudarka = document.createElement("canvas");
@@ -210,6 +229,7 @@ export async function zgradi(THREE, ctx) {
     const { dim } = T, s = stanje.smer, i = stanje.i[s];
     // prečna rezina ostane na sredini odra: telo drsi skozi ravnino (kamera miruje, rezina je velika)
     const [Wd, Hd, Zd] = dim, sc = notranja.scale.x;
+    nastaviRob(s, Wd);
     const m = R.zapolniLuknje(R.rezinaMalega(T.mali, s, Math.floor(i / T.mali.mm)));
     vsebina = R.okvirVsebine(m) || { u0: 0, v0: 0, u1: 1, v1: 1 };
     // vsebina rezine (npr. glava ali stran telesa) na sredini odra, da zapolni okno; »V telesu« pri frontalni in sagitalni
@@ -420,18 +440,25 @@ export async function zgradi(THREE, ctx) {
     }
     const f = r.w * r.h > 120000 ? 3 : 4;
     // drobne luknje brez oznake znotraj strukture zapolnjene (žile z lastno oznako ostanejo luknje)
-    const o = R.gladekObris(R.zapolniObris(r, je), Uint8Array.of(0, 1), f, tapUV);
+    // papilarne mišice ipd. (R.NOTRANJI) so del prekata: luknja iz njih se zapolni
+    const notranje = new Uint8Array(256);
+    for (const x of R.NOTRANJI[kl] || []) { const k = T.meta.oznake.kljuci.indexOf(x); if (k >= 0) notranje[k + 1] = 1; }
+    const o = R.gladekObris(R.zapolniObris(r, je, 40, notranje), Uint8Array.of(0, 1), f, tapUV);
     if (!o) {
       poudarek.visible = false;
       return;
     }
     const c = new THREE.Color(deliPoId.get(kl)?.barva || "#6E9BFF");
+    // vsi poudarki prosojni z obrobo (ocena B, krog 4: svetlo modri desni preddvor je na temni krvi prekril tkivo):
+    // svetlejša barva → manj prekrivna (svetlost sRGB 0,33 → 25 %, 0,58 → 14 %), da se tkivo pod njo vedno vidi
+    const hx = c.getHex(), svetlost = (0.2126 * (hx >> 16) + 0.7152 * ((hx >> 8) & 255) + 0.0722 * (hx & 255)) / 255;
+    const polnilo = Math.round(Math.max(28, Math.min(64, 100 - 110 * svetlost)));
     const px = new Uint8ClampedArray(o.w * o.h * 4);
     for (let k = 0; k < o.data.length; k++) {
       const v = o.data[k];
       if (!v) continue;
       const rob = v === 2;
-      px[k * 4] = rob ? 255 : c.r * 255; px[k * 4 + 1] = rob ? 255 : c.g * 255; px[k * 4 + 2] = rob ? 255 : c.b * 255; px[k * 4 + 3] = rob ? 240 : 90;
+      px[k * 4] = rob ? 255 : c.r * 255; px[k * 4 + 1] = rob ? 255 : c.g * 255; px[k * 4 + 2] = rob ? 255 : c.b * 255; px[k * 4 + 3] = rob ? 240 : polnilo;
     }
     platnoPoudarka.width = o.w; platnoPoudarka.height = o.h;
     platnoPoudarka.getContext("2d").putImageData(new ImageData(px, o.w, o.h), 0, 0);
@@ -526,7 +553,13 @@ export async function zgradi(THREE, ctx) {
     ctx.napredek?.(1);
     return true;
   }
-  await nalozi(stanje.spol).catch(async (err) => {
+  // telo z napako podatkov (npr. mali.webp ženske) → najprej drugo telo, šele nato vzorec
+  const opozori = (s, err) => console.warn(`3D rezine: telesa ${s} ni bilo mogoče naložiti`, err?.message || err);
+  const izpusti = (ne) => {
+    mete = mete.filter((_, j) => !ne.includes(spoli[j]));
+    spoli = spoli.filter((s) => !ne.includes(s));
+  };
+  await R.prvoTelo(spoli, stanje.spol, nalozi, opozori).then(({ neuspela }) => izpusti(neuspela), async (err) => {
     await naRezervo(err);
     if (!spoli.includes(stanje.spol)) stanje.spol = spoli[0];
     await nalozi(stanje.spol);
@@ -534,7 +567,8 @@ export async function zgradi(THREE, ctx) {
 
   const drsniki = {};
   const drsnik = (sm) => (drsniki[sm] = {
-    tip: "drsnik", id: `rezina-${sm}`, oznaka: t("a3.rez.slice", "Rezina (mm)"), min: 0, max: Math.max(1, najvec(sm)), korak: 1,
+    tip: "drsnik", id: `rezina-${sm}`, oznaka: () => (os() ? t("a3.rez.sliceOS", "Rezina") : t("a3.rez.slice", "Rezina (mm)")),
+    izpis: (v) => (os() ? lega(sm, pripni(sm, v)) : ""), min: 0, max: Math.max(1, najvec(sm)), korak: 1,
     vrednost: stanje.i[sm], gumba: { korak: 1, manj: "−1 mm", vec: "+1 mm" }, lepljiv: true,
     vidno: () => stanje.smer === sm,
     ob: (v) => {
@@ -550,7 +584,8 @@ export async function zgradi(THREE, ctx) {
     if (nSpol) nSpol.vrednost = stanje.spol;
   };
   // anatomska raven prečne rezine: vretence v tej višini (meta.oznake.ravni iz mrež HRA, npr. »Th8«)
-  const lega = () => R.besediloLege({ smer: stanje.smer, i: stanje.i[stanje.smer], vzorec: T.vzorec, ravni: T.meta.oznake?.ravni }, t, document.documentElement.lang || "sl");
+  // OŠ: samo predel telesa (»v višini prsnega koša«), brez vretenca in milimetrov; drsnik ga pokaže namesto števila
+  const lega = (smer = stanje.smer, i = stanje.i[smer]) => R.besediloLege({ smer, i, vzorec: T.vzorec, ravni: T.meta.oznake?.ravni, os: os(), n: R.steviloRezin(T.dim, smer) }, t, document.documentElement.lang || "sl");
 
   const nRaven = { tip: "izbira", id: "raven", oznaka: t("a3.detail", "Podrobnost"), moznosti: [[1, t("a3.levelOS", "OŠ")], [2, t("a3.levelSS", "SŠ")], [3, t("a3.levelAll", "Vse")]], vrednost: stanje.raven, ponastaviPogled: true,
     ob: (v) => {
@@ -605,7 +640,7 @@ export async function zgradi(THREE, ctx) {
       ...(nSpol ? [nSpol] : []),
       nSmer,
       drsnik("a"), drsnik("k"), drsnik("s"),
-      { tip: "izpis", id: "lega", oznaka: t("a3.rez.position", "Lega rezine"), vrednost: lega },
+      { tip: "izpis", id: "lega", oznaka: t("a3.rez.position", "Lega rezine"), vrednost: () => lega(), vidno: () => !os() }, // OŠ: lega je v drsniku
       nPogled,
       nTelo,
       { tip: "izpis", id: "stanje", oznaka: t("a3.rez.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
@@ -635,7 +670,10 @@ export async function zgradi(THREE, ctx) {
       if (s !== "a" && stanje.pogled !== "ravno") return { sredisce: [0, 0, 0], polmer: 1 };
       // polmer iz vsebine rezine (glava je manjša od trupa), da rezina zapolni okno; oznake smeri se pripnejo na rob odra
       const ew = (vsebina.u1 - vsebina.u0) * w * sc, eh = (vsebina.v1 - vsebina.v0) * h * sc;
-      if (stanje.pogled === "ravno") return { sredisce: [0, 0, 0], polmer: (Math.max(ew, eh) / 2) * 1.12 };
+      // naravnost: pravokotnik vsebine (postaviRezino jo postavi na sredino), ki zapolni 90 % odra (ocena B: ≥ 85 % pri 360 px)
+      if (stanje.pogled === "ravno") {
+        return { sredisce: [0, 0, 0], polmer: (Math.max(ew, eh) / 2) * 1.12, pravokotnik: [ew, eh], zapolni: 0.9 };
+      }
       return { sredisce: [0, 0, 0], polmer: (Math.hypot(ew, eh) / 2) * 1.9 };
     },
     najblizje: 0.1, // povečava do ploščic 0,33 mm
@@ -669,7 +707,7 @@ export async function zgradi(THREE, ctx) {
       zahteva++;
       pocistiPloscice();
       for (const tx of predpomnilnik.values()) tx.dispose();
-      texMala.dispose(); texPoudarka.dispose(); geoRezine.dispose(); matTelesa.dispose();
+      texMala.dispose(); texPoudarka.dispose(); texRoba.dispose(); geoRezine.dispose(); matTelesa.dispose();
       telo?.geometry.dispose();
     },
   };
