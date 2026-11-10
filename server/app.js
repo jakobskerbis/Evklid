@@ -22,6 +22,7 @@ import { mountKviz } from "./kviz.js";
 import { mountSchools } from "./schools.js";
 import { visitCounter, mountPilot } from "./pilot.js";
 import { mountPilotTasks, pilotMember } from "./pilot-naloge.js";
+import { mountOpinions } from "./pilot-mnenja.js";
 import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { mountVidnost } from "./vidnost.js";
@@ -1655,6 +1656,7 @@ export function createApp(store, opts = {}) {
   const leagues = mountLeagues(app, store, { loadStudent });
   mountSchools(app, store, { loadStudent, leagues, accounts: !!accounts }); // šole, učitelji, licence, razredne naloge
   mountPilot(app, store, { accounts: !!accounts, isLocalRequest }); // merjenje v pilotu (skrbnik)
+  mountOpinions(app, store, { loadStudent, accounts: !!accounts, isLocalRequest }); // mnenja članov pilota (zvezdice, objava samo z dovoljenjem)
   // Teme poti učenca z vajami, po vrsti (ahead: sklop še ni na vrsti).
   const pilotPathTopics = (s) => {
     const v = progress.pathView(s.id, pathKeyFor(s.settings));

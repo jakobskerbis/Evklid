@@ -168,3 +168,22 @@
 .pn-acc .pill { display: inline-flex; align-items: center; gap: 4px; }
 .pn-acc .pill .i { width: 14px; height: 14px; }
 .pn-rate-btns > button { flex: 1 1 140px; justify-content: center; }
+
+/* Mnenje člana pilota (public/mnenje.js) */
+.mn-okno .is-box { max-height: 100dvh; overflow-y: auto; }
+.mn-okno label { display: block; margin: 12px 0 4px; font-weight: 600; }
+.mn-okno textarea { width: 100%; min-height: 60px; resize: vertical; }
+.mn-stars { display: flex; gap: 4px; margin-top: 12px; }
+.mn-stars > button { width: 48px; height: 48px; min-height: 48px; padding: 0; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); border-radius: 12px; }
+.mn-stars > button svg { width: 32px; height: 32px; }
+.mn-stars > button.on { color: #b45309; }
+.mn-stars > button.on svg { fill: #f59e0b; }
+.mn-stars > button[aria-checked="true"] { background: var(--accent-soft); }
+.mn-err { color: var(--danger, #b91c1c); margin: 6px 0 0; }
+.mn-publish { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.mn-publish + p { margin: 6px 0 0; }
+.mn-allowed { margin: 10px 0 0; }
+.mn-allowed button { min-height: 40px; }
+.mn-admin { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.mn-admin li { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; overflow-wrap: anywhere; }
+.mn-admin p { margin: 4px 0 0; }
