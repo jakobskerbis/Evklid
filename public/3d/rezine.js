@@ -543,6 +543,17 @@ export function nizjaPloscica(raven, manjka) {
   return -1;
 }
 
+// Napaka ploščice (ocena B, krog 7): samo 404/410 (ni datoteke) pomeni »manjka« za vedno; vse drugo (prekinjena
+// povezava, 5xx, 0 = brez odgovora) je začasno: nov poskus čez 1 s, 4 s, 15 s, nato do ponovnega odprtja nižja raven.
+export const vrstaNapake = (status) => (status === 404 || status === 410 ? "manjka" : "zacasno");
+export const ZAMIKI_PONOVITVE = [1000, 4000, 15000];
+export const zamikPonovitve = (n) => (n >= 0 && n < ZAMIKI_PONOVITVE.length ? ZAMIKI_PONOVITVE[n] : null);
+// Status za URL, ki ga <img> ni naložil (slika ne pove statusa): HEAD; brez odgovora 0.
+export function statusSlike(url, f = globalThis.fetch) {
+  if (typeof f !== "function") return Promise.resolve(0);
+  return f(url, { method: "HEAD", cache: "no-store" }).then((r) => r.status, () => 0);
+}
+
 // Najmanjša razdalja kamere (najblizje) tako, da najboljši podatki (mm na piksel slike) na zaslonu niso povečani več kot
 // `najvec`-krat (telefon po pikslih naprave). sk = merilo volumna (enot na mm), visina = višina odra v px CSS, fov v °.
 export function najblizjeZa({ sk, mm, visina, fov = 35, telefon = false, dpr = 1 }) {
@@ -581,6 +592,14 @@ export const BESEDILA_EN = {
   "a3.rez.os.kolena": "at the level of the knees", "a3.rez.os.goleni": "at the level of the shins",
   "a3.rez.os.stopala": "at the level of the feet", "a3.rez.os.sredina": "through the middle of the body",
   "a3.rez.status": "Status", "a3.rez.prev": "Previous slice", "a3.rez.next": "Next slice",
+  "a3.rez.title": "Real body section", "a3.rez.slice": "Slice", "a3.rez.sliceOrgans": "Organ colours",
+  "a3.rez.slicePhoto": "Real photograph", "a3.rez.sliceHalf": "Half and half", "a3.rez.display": "Sizes",
+  "a3.rez.clear": "Clear view", "a3.rez.exact": "True proportions", "a3.rez.clearNote": "Simplified for clarity",
+  "a3.rez.partOf": "Part of: {ime}", "a3.rez.openAtlas": "Open in the 3D atlas",
+  "a3.rez.showInBody": "Show in the body", "a3.rez.sys.srce": "Heart and vessels",
+  "a3.rez.sys.dihala": "Respiratory system", "a3.rez.sys.prebavila": "Digestive system",
+  "a3.rez.sys.secila": "Urinary and reproductive organs", "a3.rez.sys.zivcevje": "Brain, nerves and senses",
+  "a3.rez.sys.kosti": "Bones", "a3.rez.sys.misice": "Muscles", "a3.rez.sys.ostalo": "Skin and other",
 };
 
 // Slovar besedil pogleda: vse = vsebina rezine-besedila.json ali null (ni se naložila), veriga = uiChain(jezik),

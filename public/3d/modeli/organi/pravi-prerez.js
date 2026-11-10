@@ -104,7 +104,9 @@ export async function zgradi(THREE, ctx) {
   if (stanje.raven === 1) Object.assign(stanje, { ...R.pogledZaRaven(1), smer: stanje.smer });
   let T = null; // naloženo telo: { meta, url, mali, ozn, dim }
   let napakaNalaganja = "", ponovi = "", napakePloscic = 0;
-  const manjkajoce = new Set(); // ploščice, ki jih ni (smer/rezina/raven/ime): ne zahtevamo jih znova
+  const manjkajoce = new Set(); // ploščice, ki jih ni (404; smer/rezina/raven/ime): ne zahtevamo jih znova
+  const poskusiPloscic = new Map(), zacasnoDo = new Map(); // začasne napake: število poskusov, do kdaj nižja raven
+  let uraPonovitve = 0;
   let ostraZa = "", zadnjaKamera = null, visinaPlatna = 800, kljucKamere = "";
   let uraOstre = 0, uraPloscic = 0, uraKamere = 0;
   const narisi = () => ctx.narisi?.(); // slike pridejo kasneje, tudi ko animacija ne teče (zmanjšano gibanje)
@@ -416,7 +418,8 @@ export async function zgradi(THREE, ctx) {
       const naZaslonu = ((Math.hypot(ndc[0].x - ndc[3].x, ndc[0].y - ndc[3].y) / 2) * visinaPlatna) / Math.SQRT2 / Math.max(delez, 0.05);
       const raven = R.ravenPloscice(naZaslonu, { telefon, dpr: globalThis.devicePixelRatio || 1 });
       // manjkajoča ploščica (404): tiho raven nižje (R.nizjaPloscica)
-      const rv = R.nizjaPloscica(raven, (r) => manjkajoce.has(`${s}/${i}/${r}/${pl.ime}`));
+      const zdaj = Date.now();
+      const rv = R.nizjaPloscica(raven, (r) => manjkajoce.has(`${s}/${i}/${r}/${pl.ime}`) || (zacasnoDo.get(`${s}/${i}/${r}/${pl.ime}`) || 0) > zdaj);
       if (rv >= 0) potrebne.set(`${rv}/${pl.ime}`, { pl, lok, u1, v1 });
     }
     for (const c of [...skupinaPloscic.children])
@@ -445,11 +448,22 @@ export async function zgradi(THREE, ctx) {
         },
         (err) => {
           // ploščica ni prišla: tiho ostane nižja ločljivost (0,66 mm namesto 0,33 mm, sicer ostra slika 1 mm), ki je že
-          // vidna; brez sporočila o napaki (ocena A, krog 6: okno »ni bilo mogoče naložiti« ob vidni sliki)
+          // vidna; brez sporočila o napaki (ocena A, krog 6: okno »ni bilo mogoče naložiti« ob vidni sliki).
+          // Samo 404 je »manjka« za vedno; začasna napaka (omrežje, 5xx) se ponovi čez 1, 4 in 15 s (ocena B, krog 7).
           if (k !== kljuc()) return;
+          const pot = `${s}/${stanje.i[s]}/${kl}`, url = `${T.url}p/${s}/${kl}.webp`;
           if (++napakePloscic === 1) console.warn("3D rezine: ploščica ni na voljo", kl, err?.message || err);
-          manjkajoce.add(`${s}/${stanje.i[s]}/${kl}`);
-          if (kl.startsWith("0/")) naloziPloscice();
+          R.statusSlike(url).then((st) => {
+            if (k !== kljuc()) return;
+            const n = poskusiPloscic.get(pot) || 0, zamik = R.vrstaNapake(st) === "zacasno" ? R.zamikPonovitve(n) : null;
+            if (zamik != null) {
+              poskusiPloscic.set(pot, n + 1);
+              zacasnoDo.set(pot, Date.now() + zamik - 50);
+              clearTimeout(uraPonovitve);
+              uraPonovitve = setTimeout(naloziPloscice, zamik);
+            } else manjkajoce.add(pot);
+            if (kl.startsWith("0/")) naloziPloscice(); // medtem nižja raven
+          });
         },
       );
     }
@@ -800,7 +814,7 @@ export async function zgradi(THREE, ctx) {
       { tip: "izpis", id: "stanje", oznaka: t("a3.rez.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
       { tip: "gumb", id: "znova", oznaka: t("task.retry", "Poskusi znova"), vidno: () => !!napakaNalaganja,
         ob: () => {
-          napakaNalaganja = ""; ponovi = ""; napakePloscic = 0; manjkajoce.clear();
+          napakaNalaganja = ""; ponovi = ""; napakePloscic = 0; manjkajoce.clear(); poskusiPloscic.clear(); zacasnoDo.clear();
           if (zadnjeTelo && zadnjeTelo !== stanje.spol) return nSpol?.ob(zadnjeTelo);
           naloziOstro();
           naloziPloscice();
@@ -865,7 +879,7 @@ export async function zgradi(THREE, ctx) {
       return id;
     },
     dispose() {
-      clearTimeout(uraOstre); clearTimeout(uraPloscic); clearTimeout(uraKamere);
+      clearTimeout(uraOstre); clearTimeout(uraPloscic); clearTimeout(uraKamere); clearTimeout(uraPonovitve);
       zahteva++;
       pocistiPloscice();
       for (const tx of predpomnilnik.values()) tx.dispose();
