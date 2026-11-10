@@ -1259,19 +1259,35 @@ let downN = 0;
  * Izguba fokusa (blur) tipkovnice NE zapre (#247); tu štejeta le tap in stanje po njem: če je tap kaj
  * naredil s tipkovnico (Σ preklopi plast, drugo polje jo prevzame, gumb jo zapre), se ne dotikamo.
  */
-function closeOnOutsideTap(e) {
+let ptr = { down: null, pending: false };
+function closeOnOutsideTap(e, delay = 0) {
   if (!S.open || !touch()) return;
   const t = e.target;
   if (!(t instanceof Element) || board?.contains(t)) return;
   const field = S.field;
   if (field && (field === t || field.contains?.(t))) return;
+  if (t.closest("label")?.control === field) return; // oznaka odprtega polja: tap jo samo fokusira
   if (textField(t)) return; // drugo polje: focusin ga prevzame
   const n = downN;
   setTimeout(() => {
     // vsi klik-poslušalci so že tekli; če so tipkovnico spremenili, jo pustimo
     if (!S.open || emitN !== n) return;
     hideKeyboard({ blur: true });
-  }, 0);
+  }, delay);
+}
+/**
+ * iPhone Safari ob tapu na »neklikljiv« element (prazno ozadje) ne sproži click: zato tudi pointerup
+ * (isti cilj, premik < 10 px, < 500 ms). Zapre z zamikom, da click-poslušalci (Σ, ⌄) pridejo prej;
+ * click, ki pride v tem času, ne zapira še enkrat.
+ */
+function closeOnPointerUp(e) {
+  const d = ptr.down;
+  ptr.down = null;
+  if (!d || e.pointerType === "mouse" || e.target !== d.el) return;
+  if (Math.hypot(e.clientX - d.x, e.clientY - d.y) >= 10 || Date.now() - d.t >= 500) return;
+  ptr.pending = true;
+  setTimeout(() => (ptr.pending = false), 120);
+  closeOnOutsideTap(e, 80);
 }
 /** Poveže tipkovnico z vsemi polji (enkrat; kličejo app.js, kalkulator in plošča). */
 export function initKeyboard() {
@@ -1327,6 +1343,7 @@ export function initKeyboard() {
       if (f && autoEligible(f)) prepare(f); // pred fokusom: telefonova tipkovnica se ne odpre
       lastTap = { t: Date.now(), el: e.target };
       downN = emitN;
+      ptr.down = { x: e.clientX, y: e.clientY, t: Date.now(), el: e.target };
       setTimeout(checkGone, 0);
     },
     true,
@@ -1336,10 +1353,12 @@ export function initKeyboard() {
     (e) => {
       const f = textField(e.target);
       if (f && !S.open && autoEligible(f)) openKeyboard(f);
-      closeOnOutsideTap(e);
+      if (!ptr.pending) closeOnOutsideTap(e);
     },
     true,
   );
+  document.addEventListener("pointerup", closeOnPointerUp, true);
+  document.addEventListener("pointercancel", () => (ptr.down = null), true);
   document.addEventListener("focusin", (e) => {
     const f = textField(e.target);
     if (!f || f === S.sys) return;

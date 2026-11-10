@@ -171,6 +171,35 @@ test("touch-browser checks", { skip }, async (t) => {
     await page.waitForSelector(`${kb}:not([hidden])`);
     await page.tap("#ven");
     await page.waitForSelector(kb, { state: "hidden" });
+    // tap na oznako odprtega polja je ne zapre
+    await page.tap(".gc-input");
+    await page.waitForSelector(`${kb}:not([hidden])`);
+    await page.evaluate(() => {
+      const f = document.querySelector(".gc-input");
+      f.id ||= "gc-in-test";
+      const l = document.createElement("label");
+      l.htmlFor = f.id;
+      l.id = "oznaka";
+      l.textContent = "oznaka";
+      l.style.cssText = "position:fixed;top:60px;left:0;z-index:9999;width:80px;height:44px;background:#eee";
+      document.body.append(l);
+    });
+    await page.tap("#oznaka");
+    await page.waitForTimeout(250);
+    assert.equal(await hidden(), false, "tap na oznako polja ne zapre");
+    // iPhone: tap na neklikljiv element brez click-a (le pointerdown + pointerup) zapre; premik ne
+    const ptrTap = (dx) =>
+      page.evaluate((dx) => {
+        const el = document.querySelector("#g");
+        const o = { bubbles: true, composed: true, pointerType: "touch", pointerId: 7, isPrimary: true, clientX: 200, clientY: 300 };
+        el.dispatchEvent(new PointerEvent("pointerdown", o));
+        el.dispatchEvent(new PointerEvent("pointerup", { ...o, clientX: 200 + dx }));
+      }, dx);
+    await ptrTap(40);
+    await page.waitForTimeout(250);
+    assert.equal(await hidden(), false, "pointerup po premiku (drsenje) ne zapre");
+    await ptrTap(2);
+    await page.waitForSelector(kb, { state: "hidden" });
     assert.deepEqual(errors, []);
     await page.close();
   });
