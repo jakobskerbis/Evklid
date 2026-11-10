@@ -59,7 +59,7 @@ export const PDF_CSS = `
   /* Lekcija, ki bi se končala z nekaj vrsticami na novi strani: malo bolj strnjeno preverjanje (skripta doda .tesno). */
   .tesno .checks, .tesno .alts { font-size: 0.94em; line-height: 1.42; }
   .tesno .checks h3, .tesno .alts h3 { margin-top: 14px; }
-  .tesno .checks .opts li { margin: 1px 0; } .tesno .key li { margin: 1px 0; }
+  .tesno .checks .opts li { margin: 1px 0; } .tesno .key li { padding: 2px 0; }
   /* Skice iz znakov: napis »Skica«, bel okvir s tanko črto, na sredini; znaki poravnani (pre), vrstice skupaj. */
   pre { background: #fff; border: 0.75pt solid #9aa3b8; border-radius: 6px; padding: 16px 14px 8px; margin: 12px auto; width: fit-content; max-width: 100%; box-sizing: border-box; line-height: 1.2; white-space: pre; position: relative; font-size: 9.5pt; }
   pre::before { content: "Skica"; position: absolute; top: 3px; left: 8px; font: 700 6.5pt "Inter", sans-serif; text-transform: uppercase; letter-spacing: 0.05em; color: #667089; }

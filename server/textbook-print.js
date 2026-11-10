@@ -419,8 +419,10 @@ export function shell(title, content, css = "", total = 0) {
   .checks .opts { list-style: lower-alpha; }
   .checks p { margin: 2px 0; }
   .key { margin-top: 10px; font-size: 0.92em; } .key summary { font-weight: 700; font-family: system-ui, sans-serif; }
-  .key li > p { display: inline; } .key li { margin: 3px 0; }
-  .zakaj-ne { list-style: none; padding-left: 0; margin: 1px 0 5px; color: #4a5468; } .zakaj-ne li { margin: 1px 0; }
+  /* Razmiki z notranjim robom (padding), ne z zunanjim: zunanji rob se na prelomu strani odreže in vrh prve vrstice
+     (strešica velike črke) se je izrisal na dnu prejšnje strani. */
+  .key li > p { display: inline; } .key li { margin: 0; padding: 3px 0; }
+  .zakaj-ne { list-style: none; margin: 0; padding: 1px 0 3px; color: #4a5468; } .zakaj-ne li { margin: 0; padding: 2px 0 0; }
   .demo-note a { color: inherit; font-weight: 600; }
   .checks .opts li { margin: 3px 0; } .checks .opts li:has(.mfrac) { margin: 8px 0; }
   .katex-display { overflow-x: auto; overflow-y: hidden; }
