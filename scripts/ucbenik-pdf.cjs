@@ -7,8 +7,9 @@
 //        [--prejsnje <kazalo.json>]   že objavljeni PDF-ji z enako zgoščeno vrednostjo se ne izdelajo znova
 //        [--obstojece <seznam.txt>]   imena datotek, ki so še objavljena (vnos brez datoteke se izdela znova)
 //        [--vse]                      izdelaj vse, tudi nespremenjene
+//        [--strogo]                   manjkajoče orodje (pdftoppm, qpdf) je napaka (CI); sicer se korak preskoči
 // Izhod: <mapa>/<ime>.<zgoščena vrednost>.pdf, <mapa>/kazalo.json, <mapa>/porocilo.json. Koda 1, če kateri PDF pade.
-// Potrebuje Playwright s Chromiumom. V CI: .github/workflows/ucbenik-pdf.yml.
+// Potrebuje Playwright s Chromiumom, pdftoppm (poppler-utils) in qpdf. V CI: .github/workflows/ucbenik-pdf.yml.
 const { spawn } = require("node:child_process");
 const crypto = require("node:crypto");
 const fs = require("node:fs");
@@ -160,20 +161,36 @@ function findSlivers(buf, { dpi = 100, marginMm = 18, sideMm = 16 } = {}) {
   }
 }
 
+// Manjša datoteka in hitrejše odpiranje: qpdf zloži predmete v stisnjene tokove (označen PDF z zaznamki je tako
+// ~40 % manjši) in PDF linearizira (»fast web view«: bralnik pokaže prvo stran, preden se prenese vse).
+// Vrne nov Buffer; null, če qpdf ni nameščen ali ne uspe.
+function optimizePdf(buf) {
+  const { spawnSync } = require("node:child_process");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-qpdf-"));
+  try {
+    const [a, b] = [path.join(dir, "a.pdf"), path.join(dir, "b.pdf")];
+    fs.writeFileSync(a, buf);
+    const r = spawnSync("qpdf", ["--object-streams=generate", "--linearize", a, b], { stdio: "ignore" });
+    if (r.error || r.status !== 0 || !fs.existsSync(b)) return null;
+    if (spawnSync("qpdf", ["--check", b], { stdio: "ignore" }).status !== 0) return null;
+    return fs.readFileSync(b);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 // Samodejni pregled PDF-ja. dom = READ_DOM pred izdelavo; tocPages = številke strani, vpisane v kazalo.
-async function checkPdf(buf, dom, { domain, maxBytes, tocPages = null, fontNames = null, requiredFonts = null }) {
+async function checkPdf(buf, dom, { domain, maxBytes, tocPages = null, fontNames = null, requiredFonts = null, strict = false }) {
   const errors = [];
   const info = { pages: 0, bytes: buf.length, lessons: 0, fonts: 0, formulas: dom.formulas };
   if (buf.length > maxBytes) errors.push(`velikost ${(buf.length / 1e6).toFixed(1)} MB presega mejo ${(maxBytes / 1e6).toFixed(0)} MB`);
   if (buf.subarray(0, 5).toString("latin1") !== "%PDF-") return { errors: ["ni PDF"], info };
   if (dom.errors) errors.push(`${dom.errors} formul z napako (katex-error)`);
   for (const x of dom.rawMd || []) errors.push(`neizrisan zapis v besedilu: »${x.trim().slice(0, 40)}«`);
-  // Prelomi strani ne režejo formul (EVKLID_PDF_BREZ_REZIN=1 preskoči pregled, kjer pdftoppm ni nameščen).
-  if (process.env.EVKLID_PDF_BREZ_REZIN !== "1") {
-    const cut = findSlivers(buf);
-    if (cut == null) errors.push("pregled prelomov strani ni mogoč: pdftoppm (poppler-utils) ni nameščen");
-    else errors.push(...cut);
-  }
+  // Prelomi strani ne režejo formul. Brez pdftoppm: napaka v strogem načinu (CI), sicer se pregled preskoči.
+  const cut = findSlivers(buf);
+  if (cut == null) strict && errors.push("pregled prelomov strani ni mogoč: pdftoppm (poppler-utils) ni nameščen");
+  else errors.push(...cut);
   let doc;
   try {
     doc = await openPdf(buf);
@@ -367,6 +384,7 @@ async function main() {
     if (arg("--prejsnje")) prev = JSON.parse(fs.readFileSync(arg("--prejsnje"), "utf8")).files || {};
   } catch {}
   const all = args.includes("--vse");
+  const strict = args.includes("--strogo");
   // Imena datotek, ki so še objavljena: prejšnji vnos velja le, če njegova datoteka še obstaja.
   let existing = null;
   try {
@@ -396,8 +414,12 @@ async function main() {
       const t0 = Date.now();
       let res;
       try {
-        const { buf, dom, tocPages } = await renderPdf(context, server.base, t, cfg);
-        const { errors, info } = await checkPdf(buf, dom, { domain: BRAND.domain, maxBytes: cfg.PDF_MAX_BYTES, tocPages, fontNames: cfg.PDF_FONT_NAMES, requiredFonts: cfg.PDF_FONT_REQUIRED });
+        const made = await renderPdf(context, server.base, t, cfg);
+        const { dom, tocPages } = made;
+        const small = optimizePdf(made.buf);
+        const buf = small || made.buf;
+        const { errors, info } = await checkPdf(buf, dom, { domain: BRAND.domain, maxBytes: cfg.PDF_MAX_BYTES, tocPages, fontNames: cfg.PDF_FONT_NAMES, requiredFonts: cfg.PDF_FONT_REQUIRED, strict });
+        if (!small && strict) errors.push("qpdf ni nameščen ali ni uspel (stiskanje in linearizacija)");
         if (dom.lessons.length !== t.lessons) errors.push(`stran za tisk ima ${dom.lessons.length} lekcij, razred jih ima ${t.lessons}`);
         const file = `${t.base}.${hash}.pdf`;
         res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages: info.pages, lessons: info.lessons, formulas: info.formulas, fonts: info.fonts, images: dom.images, ms: Date.now() - t0, errors };
@@ -424,5 +446,5 @@ async function main() {
   process.exitCode = failed ? 1 : 0;
 }
 
-module.exports = { findSlivers, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
+module.exports = { findSlivers, optimizePdf, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
 if (require.main === module) main().catch((e) => (console.error(e), process.exit(1)));

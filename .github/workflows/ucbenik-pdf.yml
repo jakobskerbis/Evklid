@@ -9,7 +9,7 @@
 name: PDF učbenika
 on:
   push:
-    branches: [main]
+    branches: [main, claude/pdf-vnaprej] # ZAČASNO: preizkus delovnega toka na veji, pred združitvijo odstrani
     paths:
       - "content/lessons/**"
       - "server/textbook-print.js"
@@ -71,12 +71,12 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-pdf
-      - name: Chromium in poppler-utils (pdftoppm za pregled prelomov strani)
+      - name: Chromium, poppler-utils (pdftoppm za pregled prelomov strani) in qpdf (stiskanje, linearizacija)
         timeout-minutes: 30
         run: |
           for poskus in 1 2 3; do
-            if timeout -k 10 9m npx playwright install --with-deps chromium && sudo timeout 4m apt-get install -y -q poppler-utils; then
-              pdftoppm -v 2>&1 | head -1
+            if timeout -k 10 9m npx playwright install --with-deps chromium && sudo timeout 4m apt-get install -y -q poppler-utils qpdf; then
+              pdftoppm -v 2>&1 | head -1; qpdf --version | head -1
               exit 0
             fi
             echo "::warning::Namestitev: poskus $poskus ni uspel"
@@ -106,7 +106,7 @@ jobs:
           VSE: ${{ inputs.vse }}
         run: |
           set +e
-          args=(--out out --obstojece obstojece.txt)
+          args=(--out out --strogo --obstojece obstojece.txt)
           if [ "$VSE" = "true" ]; then args+=(--vse); fi
           args+=(--prejsnje prejsnje.json)
           if [ -n "$SAMO" ]; then args+=(--samo "$SAMO"); fi

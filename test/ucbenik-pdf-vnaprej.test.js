@@ -47,7 +47,9 @@ test("seznam PDF-jev: predmeti, razredi in poglavja šolskih učbenikov; zgošč
   const targets = pdfTargets();
   const ids = new Set(targets.map((t) => t.id));
   assert.equal(ids.size, targets.length, "vsak PDF enkrat");
-  for (const id of [KEY, `${KEY}?${UNIT}`, "MAT-OS"]) assert.ok(ids.has(id), id);
+  for (const id of [KEY, `${KEY}?${UNIT}`, "FIZ-OS"]) assert.ok(ids.has(id), id);
+  assert.ok(!ids.has("MAT-OS"), "prevelik predmet (79 lekcij) ostane pri tisku v brskalniku");
+  assert.equal(pdfHash("MAT-OS"), null);
   assert.ok(!targets.some((t) => t.key.startsWith("UNI-") || t.key.startsWith("P-")), "fakultetni učbeniki ostanejo pri tisku v brskalniku");
   const razred = targets.find((t) => t.id === KEY);
   assert.equal(razred.lessons, topicOrder(KEY).filter((t) => loadLesson(t.id)).length);
@@ -58,7 +60,7 @@ test("seznam PDF-jev: predmeti, razredi in poglavja šolskih učbenikov; zgošč
   assert.match(h, /^[0-9a-f]{20}$/);
   assert.equal(pdfHash(KEY), h, "stabilna");
   assert.notEqual(pdfHash(KEY, UNIT), h);
-  assert.notEqual(pdfHash("MAT-OS"), h);
+  assert.notEqual(pdfHash("FIZ-OS"), h);
   assert.equal(pdfHash("NI-TAKE-POTI"), null);
   assert.equal(pdfHash(KEY, "Ni takega sklopa"), null);
   assert.equal(pdfHash("P-UL-FKKT-KEM"), null);
@@ -271,9 +273,8 @@ try {
 const hasPdftoppm = spawnSync("pdftoppm", ["-v"]).status === 0;
 
 test("skripta izdela pravi PDF majhnega razreda in poglavja; pregled ujame napake", { skip: chromium ? false : "Playwright/Chromium ni nameščen", timeout: 240_000 }, async () => {
-  const { renderPdf, checkPdf, startServer, servePdfFonts, findSlivers } = require("../scripts/ucbenik-pdf.cjs");
+  const { renderPdf, checkPdf, startServer, servePdfFonts, findSlivers, optimizePdf } = require("../scripts/ucbenik-pdf.cjs");
   const cfg = await import("../server/ucbenik-pdf.js");
-  if (!hasPdftoppm) process.env.EVKLID_PDF_BREZ_REZIN = "1";
   const targets = pdfTargets();
   // Najmanjši razred z vsaj dvema lekcijama (kazalo) in najmanjše poglavje.
   const razred = targets.filter((t) => t.kind === "razred" && t.lessons >= 2).sort((x, y) => x.lessons - y.lessons)[0];
@@ -297,6 +298,13 @@ test("skripta izdela pravi PDF majhnega razreda in poglavja; pregled ujame napak
     assert.ok(ok.info.pages >= razred.lessons + 1);
     assert.ok(a.buf.length < PDF_MAX_BYTES);
     if (hasPdftoppm) assert.deepEqual(findSlivers(a.buf), []);
+    else assert.match((await checkPdf(a.buf, a.dom, { ...opts, tocPages: a.tocPages, strict: true })).errors.join("\n"), /pdftoppm/, "strogi način zahteva orodje");
+    // Stisnjen in lineariziran PDF (qpdf) prestane isti pregled in je manjši.
+    const small = optimizePdf(a.buf);
+    if (small) {
+      assert.ok(small.length < a.buf.length * 0.9, `qpdf: ${a.buf.length} -> ${small.length}`);
+      assert.deepEqual((await checkPdf(small, a.dom, { ...opts, tocPages: a.tocPages })).errors, []);
+    }
 
     // Pregled ujame: manjkajočo lekcijo, napačno številko strani v kazalu, manjkajoče besedilo, preveliko datoteko.
     const extra = { ...a.dom, lessons: [...a.dom.lessons, { id: "x", title: "99. Lekcija, ki je v PDF ni", sections: [], text: "", formulas: 0 }] };

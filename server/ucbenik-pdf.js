@@ -37,6 +37,8 @@ export const PDF_CSS = `
   h1, h2, h3, h4, .brand, .crumb, .toc, .toc-part, .demo-note, .think-label, .formula-label, .key summary, .sheet { font-family: "Inter", "PDF Znaki", sans-serif; }
   pre, code, kbd, samp, tt { font-family: "PDF Mono", monospace; }
   .katex { font-family: KaTeX_Main, "Gelasio", "PDF Znaki", serif; }
+  /* Naslov v dveh vrsticah: brez tega Chromium v zaznamku PDF izpusti presledek na prelomu (»skupnivečkratnik«). */
+  .lesson h2, .lesson h3, .lesson h4, .part h1, .cover h1 { white-space: pre-wrap; }
   .lesson h3, .lesson h4, .toc-part, .formula-label, .think-label { break-after: avoid; }
   .formula, .think, .demo-note, .katex-display, table, pre, .checks > ol > li, .key li { break-inside: avoid; }
   section { break-inside: auto; }
@@ -95,6 +97,10 @@ export function pdfTemplateHash() {
   ).slice(0, 16));
 }
 
+// Cel predmet z več lekcijami (matematika OŠ: 79, SŠ: 60) Chromium ne zmore izrisati v en PDF (zmanjka mu
+// pomnilnika: »Printing failed«), zato zanj ostane rezerva; razredi in poglavja teh predmetov so izdelani.
+export const PDF_BOOK_MAX_LESSONS = 45;
+
 const unitFile = (key, unit) => `${key}--${slugify(unit).slice(0, 40) || "sklop"}-${sha(unit).slice(0, 6)}`;
 
 // Vsi PDF-ji, ki se izdelajo vnaprej: šolski učbeniki (OŠ, SŠ, tekmovanja) po predmetih, razredih in poglavjih.
@@ -104,7 +110,7 @@ export function pdfTargets() {
   const out = [];
   for (const book of listBooks()) {
     const parts = book.paths.map((p) => ({ p, ready: topicOrder(p.key).filter((t) => loadLesson(t.id)) })).filter((x) => x.ready.length);
-    if (parts.length > 1) out.push({ id: book.key, key: book.key, unit: null, kind: "predmet", base: book.key, lessons: parts.reduce((n, x) => n + x.ready.length, 0), parts: parts.length });
+    if (parts.length > 1 && parts.reduce((n, x) => n + x.ready.length, 0) <= PDF_BOOK_MAX_LESSONS) out.push({ id: book.key, key: book.key, unit: null, kind: "predmet", base: book.key, lessons: parts.reduce((n, x) => n + x.ready.length, 0), parts: parts.length });
     for (const { p, ready } of parts) {
       out.push({ id: p.key, key: p.key, unit: null, kind: "razred", base: p.key, lessons: ready.length });
       for (const unit of [...new Set(ready.map((t) => t.unit))].filter(Boolean))
@@ -131,7 +137,7 @@ function targetTopics(key, unit) {
   if (!book) return null;
   const all = book.paths.flatMap((x) => topicOrder(x.key));
   const topics = all.filter((t) => loadLesson(t.id));
-  if (!topics.length || book.paths.filter((x) => topicOrder(x.key).some((t) => loadLesson(t.id))).length < 2) return null;
+  if (!topics.length || topics.length > PDF_BOOK_MAX_LESSONS || book.paths.filter((x) => topicOrder(x.key).some((t) => loadLesson(t.id))).length < 2) return null;
   return { topics, label: [book.subjectName, book.schoolName, all.length, book.paths.map((x) => x.label)] };
 }
 
