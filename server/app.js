@@ -530,6 +530,7 @@ export function createApp(store, opts = {}) {
     const s = loadStudent(req, res);
     if (!s) return;
     const name = req.body?.name !== undefined ? cleanText(req.body.name, 40) || s.name : undefined;
+    if (req.body?.settings) accounts?.pilotBeforeLevelChange(s.id);
     res.json(
       store.updateStudent(s.id, {
         name,
