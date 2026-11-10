@@ -314,3 +314,34 @@ test("RR11: selitev stare baze brez stolpca uid: vsak račun dobi edinstven uid,
   const id = db.prepare("INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code) VALUES ('n@rr.si', 'x', '1', 'tn', 'rn')").run().lastInsertRowid;
   assert.match(db.prepare("SELECT uid FROM parents WHERE id = ?").get(id).uid, /^[0-9a-f]{32}$/);
 });
+
+test("K1: zapis neujemanja nima parents.id (ima parent_uid) in se izbriše po 365 dneh", async () => {
+  const { runRetention, UNMATCHED_DAYS } = await import("../server/zasebnost.js");
+  await withServer(async ({ client, store, stripe, hook }) => {
+    const A = await registerVerified(client(), stripe, "k1@rr.si");
+    const s = { id: "cs_k1", object: "checkout.session", created: now(), payment_status: "paid", amount_total: 999, currency: "eur", subscription: "sub_k1", metadata: { parent_id: String(A.id), parent_uid: "tuj\r\nuid" } };
+    assert.equal((await hook({ id: "evt_k1", type: "checkout.session.completed", data: { object: s } })).status, 200);
+    const rec = JSON.parse(store.db.prepare("SELECT value FROM kv WHERE key = 'stripe_unmatched:evt_k1'").get().value);
+    assert.equal("parent_id" in rec, false, "ponovno uporabljen id ni v zapisu");
+    assert.equal(rec.parent_uid, "tuj\r\nuid");
+    assert.equal(rec.reason, "drug_racun");
+    assert.equal(UNMATCHED_DAYS, 365);
+    const quiet = { log() {}, info() {}, warn() {}, error() {} };
+    const at = Date.parse(rec.at);
+    runRetention(store.db, { now: at + 364 * 86400000, log: quiet });
+    assert.equal(unmatchedKeys(store).length, 1, "po 364 dneh ostane");
+    store.db.prepare("INSERT INTO kv (key, value) VALUES ('stripe_unmatched:pokvarjen', 'x')").run();
+    assert.equal(runRetention(store.db, { now: at + 366 * 86400000, log: quiet }).unmatched, 2);
+    assert.deepEqual(unmatchedKeys(store), [], "po 365 dneh izbrisano (tudi neberljiv zapis)");
+  });
+});
+
+test("K2: vrednosti iz dogodka gredo v dnevnik brez prelomov vrstic in skrajšane", async () => {
+  const { logSafe, parentFromMeta } = await import("../server/accounts/ponoven-id.js");
+  assert.equal(logSafe("a\r\nLAŽNA VRSTICA\u0000" + "x".repeat(200)).length, 80);
+  assert.doesNotMatch(logSafe("a\r\nb\u0007c"), /[\r\n\u0000-\u001f]/);
+  const lines = [];
+  parentFromMeta(() => null, 7, { id: "cs_1\n[evklid] lažno" }, { error: (...a) => lines.push(a.join(" ")) }, "dogodek\nx");
+  assert.equal(lines.length, 1);
+  assert.doesNotMatch(lines[0], /\n/);
+});

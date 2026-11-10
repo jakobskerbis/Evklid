@@ -58,6 +58,9 @@ export function purchaseMismatch(row, owner, session) {
   return ownsStripeObject(row, session) ? null : "drug_racun";
 }
 
+// Vrednost iz dogodka Stripa za dnevnik: brez prelomov vrstic in krmilnih znakov, največ 80 znakov (CodeQL: log injection).
+export const logSafe = (x) => String(x ?? "").replace(/[\r\n\u0000-\u001f]/g, " ").slice(0, 80);
+
 // Račun po id iz metapodatkov ali null. Ob neujemanju zapis v dnevnik in (če je podan) unmatched(razlog, id):
 // plačilo izbrisanega računa, ki ga je treba vrniti ročno v Stripu.
 export function parentFromMeta(getParent, id, obj, log, what = "dogodek", unmatched = null) {
@@ -66,16 +69,16 @@ export function parentFromMeta(getParent, id, obj, log, what = "dogodek", unmatc
   const p = getParent(n);
   const why = ownerMismatch(p, obj);
   if (!why) return p;
-  log?.error?.(`[evklid] Stripe ${what}: račun ${n} ni lastnik (${why}); ni pripisano, preveri v Stripu`, obj?.id || "");
+  log?.error?.(`[evklid] Stripe ${logSafe(what)}: račun ${n} ni lastnik (${logSafe(why)}); ni pripisano, preveri v Stripu`, logSafe(obj?.id));
   unmatched?.(why, n);
   return null;
 }
 
 // Minimalen zapis neujemajočega se plačila v kv (stripe_unmatched:<id dogodka>), za ročno vračilo. Brez podatkov kartice
-// in brez e-naslova: samo id-ji Stripa, znesek, vrsta in razlog. Napaka pri zapisu gre naprej (webhook odgovori 500,
+// in brez e-naslova: samo id-ji Stripa, znesek, vrsta in razlog. Hramba 365 dni (zasebnost.js runRetention). Napaka pri zapisu gre naprej (webhook odgovori 500,
 // Stripe pošlje znova), zato dogodek ni označen kot obdelan brez zapisa.
 export function unmatchedRecorder(kv, event) {
-  return (reason, parentId = null) => {
+  return (reason) => {
     const o = event?.data?.object || {};
     const id = (typeof event?.id === "string" && event.id) || o.id || `brez-id-${Date.now()}`;
     const ref = (x) => (typeof x === "string" ? x : x?.id || null);
@@ -90,7 +93,8 @@ export function unmatchedRecorder(kv, event) {
         amount: o.amount_total ?? o.amount_paid ?? null,
         currency: o.currency || null,
         kind: o.metadata?.kind || null,
-        parent_id: parentId ?? (o.metadata?.parent_id || o.client_reference_id || null),
+        // Ne parents.id: po izbrisu ga dobi drug račun, zato bi zapis kazal na napačnega. uid se ne ponovi.
+        parent_uid: typeof o.metadata?.parent_uid === "string" ? o.metadata.parent_uid.slice(0, 64) : null,
         reason: String(reason),
         at: new Date().toISOString(),
       }),

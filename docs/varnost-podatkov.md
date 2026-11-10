@@ -57,6 +57,7 @@ Vse vrednosti so v `server/zasebnost.js` (`RETENTION`); čiščenje teče ob zag
 | Dnevnik e-pošte (preprečuje dvojna sporočila) | 1 leto |
 | Dnevnik obvestil na telefon | 90 dni |
 | Dnevnik dostopov | 1 leto |
+| Plačilo Stripa, ki ga ni mogoče pripisati računu (`kv` `stripe_unmatched:*`: id-ji Stripa, znesek, razlog, `parent_uid`; brez e-naslova) | 365 dni, nato izbris (`server/zasebnost.js` `runRetention`) |
 | Račun brez potrjenega e-naslova, brez profilov, plačil in seje | 30 dni |
 | Gostje brez seje | 30 dni (`server/accounts/guest.js`) |
 | Pogovori, napredek | dokler jih uporabnik ne izbriše ali izbriše računa |

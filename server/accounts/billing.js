@@ -15,7 +15,7 @@ import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
 import { promoEndingEmail, renewalEmail, schoolSubEndEmail, planChangeEmail, allowanceEmail } from "./email.js";
 import { audit } from "../dnevnik-dostopov.js";
-import { parentFromMeta, purchaseMismatch } from "./ponoven-id.js";
+import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
@@ -301,8 +301,8 @@ export function mountBilling(app, ctx) {
     const why = purchaseMismatch(pass, pass && getParent(pass.parent_id), session);
     if (why) {
       // Profil je bil izbrisan med plačilom (passes ON DELETE CASCADE): plačilo je prejeto, paketa ni – skrbnik ga vrne v Stripu.
-      if (!pass) log.error?.("[evklid] plačan paket pred testom za izbrisan profil; vrni plačilo v Stripu", session.metadata.parent_id, session.payment_intent?.id || session.payment_intent || session.id);
-      log.error?.(`[evklid] Stripe paket: plačilo ni pripisano (${why}), preveri v Stripu`, session.id || "");
+      if (!pass) log.error?.("[evklid] plačan paket pred testom za izbrisan profil; vrni plačilo v Stripu", logSafe(session.metadata.parent_id), logSafe(session.payment_intent?.id || session.payment_intent || session.id));
+      log.error?.(`[evklid] Stripe paket: plačilo ni pripisano (${logSafe(why)}), preveri v Stripu`, logSafe(session.id));
       unmatched?.(why);
       return false;
     }
@@ -490,7 +490,7 @@ export function mountBilling(app, ctx) {
     const c = credits.get(session.metadata.credit_id);
     const why = purchaseMismatch(c, c && getParent(c.parent_id), session);
     if (why) {
-      log.error?.(`[evklid] Stripe dokup: plačilo ni pripisano (${why}), preveri v Stripu`, session.id || "");
+      log.error?.(`[evklid] Stripe dokup: plačilo ni pripisano (${logSafe(why)}), preveri v Stripu`, logSafe(session.id));
       unmatched?.(why);
       return false;
     }
