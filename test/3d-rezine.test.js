@@ -333,13 +333,19 @@ test("rezine: raven vretenca, lega rezine in posamezna vretenca", () => {
   for (const v of ["prsno-vretence-th7", "prsno-vretence-th8"]) assert.ok(vm.oznake.kljuci.includes(v), v);
 });
 
-test("rezine: pravila OŠ (preprostejša imena, spolni organi brez imena, prečni pogled brez telesa)", () => {
+test("rezine: pravila OŠ (preprostejša imena, notranji spolni organi da, zunanji ne, prečni pogled brez telesa)", () => {
   const tab = JSON.parse(beri("public", "3d", "rezine-oznake.json"));
   assert.equal(R.kljucZaRaven(tab, "prsno-vretence-th8", true), "hrbtenica", "posamezno vretence je na OŠ hrbtenica");
   assert.equal(R.kljucZaRaven(tab, "prsno-vretence-th8", false), "prsno-vretence-th8");
   assert.equal(R.kljucZaRaven(tab, "levi-prekat", true), "srce");
-  for (const k of ["prostata", "semenjak", "semenovod", "maternica", "jajcnik", "jajcevod", "noznica", "maternicne-vezi"])
-    assert.equal(R.kljucZaRaven(tab, k, true), "", `${k}: OŠ ne imenuje (j odloči kasneje)`);
+  // j, 10. 11.: notranji spolni organi iz učnega načrta biologije 8. razreda se na OŠ imenujejo, zunanja spolovila ne
+  for (const k of ["maternica", "jajcnik", "jajcevod", "semenovod", "prostata"]) {
+    assert.equal(R.kljucZaRaven(tab, k, true), k, `${k}: OŠ imenuje`);
+    const o = R.opisOznake(tab, k);
+    assert.ok(o.sl && /^[^.]+\.$/.test(o.opis), `${k}: ime in en stvaren stavek`);
+  }
+  for (const k of ["semenjak", "noznica", "maternicne-vezi"]) assert.equal(R.kljucZaRaven(tab, k, true), "", `${k}: OŠ ne imenuje`);
+  for (const k of Object.keys(tab.os)) assert.doesNotMatch(k, /penis|spolovil|vulv|sramn|mod[ao]$|skrotum|mošnj/, `${k}: zunanja spolovila na OŠ brez imena`);
   assert.equal(R.kljucZaRaven(tab, "", true), "");
   assert.deepEqual(R.pogledZaRaven(1), { smer: "a", pogled: "ravno", telo: false });
   assert.deepEqual(R.pogledZaRaven(2), {});
@@ -663,6 +669,7 @@ sys.path.insert(0, ${JSON.stringify(path.join(ROOT, "scripts", "atlas"))})
 sys.dont_write_bytecode = True
 import rezine_maska as RM
 RM.ROKA_NAJMANJ = 50
+RM.KONEC_ROK = 1
 Z, H, W = 90, 60, 100
 yy, xx = np.mgrid[:H, :W]
 def maska(q):

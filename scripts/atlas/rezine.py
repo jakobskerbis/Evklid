@@ -408,7 +408,7 @@ def main(arg):
 
     def koncna_alfa(a, q):
         """Alfa izhoda po maski izhoda: zunaj 0, dodano ob koži (preliv čez stik) polno."""
-        mq = m3[q] == 1
+        mq = (m3[q] == 1) | (m3[q] == 3)   # 3: meja roke ob dolgem stiku je na fotografiji tkivo
         return np.where(mq, np.where(a > 0, a, 255), 0)
 
     # ---- 4 izhod 1 mm
@@ -538,7 +538,7 @@ def main(arg):
                 if f is not None:
                     f = SV.premakni(f[Y0:Y1, X0:X1], *np.rint(P[zg] / px).astype(int))
                     tm = SV.premakni(telo[zg], *P[zg]).copy()
-                    tm[y0:y1, x0:x1] = m3[zi] == 1   # maska izhoda (ločene dlani, rob kože čez stike)
+                    tm[y0:y1, x0:x1] = (m3[zi] == 1) | (m3[zi] == 3)   # maska izhoda (ločene dlani, rob kože čez stike)
                     m = skrci_min(tm[iy][:, ix] & ~je_modro(f), 1)   # 1 piksel (0,33 mm) noter: brez svetlega ledenega roba
                     a = m.astype(np.float32)
                     a = (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) * (255 / 5)

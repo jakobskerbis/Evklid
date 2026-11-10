@@ -1,5 +1,5 @@
 {
- "_opis": "Imena struktur za »Pravi prerez« (public/3d/modeli/organi/pravi-prerez.js). »oznake«: ključ → slovensko ime, latinsko ime, en stavek za 13-letnika, barva poudarka. »vzorci«: [regex, ključ] na poti vozlišča HRA (male črke, brez VH_M_/VH_F_, z / na začetku in koncu), prvi zadetek velja, »-« = brez oznake; uporablja jih scripts/atlas/rezine_oznake.py pri vokselizaciji mrež HuBMAP HRA (CC BY 4.0). »os«: prilagoditev za osnovno šolo (ključ → preprostejše skupno ime; strukture brez vnosa se na tej ravni ne imenujejo). Kjer mreže ni, pogled imena ne ugiba.",
+ "_opis": "Imena struktur za »Pravi prerez« (public/3d/modeli/organi/pravi-prerez.js). »oznake«: ključ → slovensko ime, latinsko ime, en stavek za 13-letnika, barva poudarka. »vzorci«: [regex, ključ] na poti vozlišča HRA (male črke, brez VH_M_/VH_F_, z / na začetku in koncu), prvi zadetek velja, »-« = brez oznake; uporablja jih scripts/atlas/rezine_oznake.py pri vokselizaciji mrež HuBMAP HRA (CC BY 4.0). »os«: prilagoditev za osnovno šolo (ključ → preprostejše skupno ime; strukture brez vnosa se na tej ravni ne imenujejo; notranji spolni organi iz učnega načrta biologije 8. razreda – maternica, jajčnik, jajcevod, semenovod, prostata – se imenujejo, zunanja spolovila ne; j, 10. 11.). Kjer mreže ni, pogled imena ne ugiba.",
  "oznake": {
   "veliki-mozgani": {
    "sl": "Veliki možgani",
@@ -968,6 +968,11 @@
   "mali-mozgani": "mozgani",
   "mozgansko-deblo": "mozgani",
   "talamus": "mozgani",
-  "mozganski-prekat": "mozgani"
+  "mozganski-prekat": "mozgani",
+  "maternica": "maternica",
+  "jajcnik": "jajcnik",
+  "jajcevod": "jajcevod",
+  "semenovod": "semenovod",
+  "prostata": "prostata"
  }
 }
