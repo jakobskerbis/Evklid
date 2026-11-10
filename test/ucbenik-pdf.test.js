@@ -89,6 +89,19 @@ test("zaznava brskalnikov, ki ne znajo tiskati", () => {
   const tiktok = "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 Chrome/100.0 Mobile Safari/537.36 musical_ly_2022";
   for (const ua of [fbAndroid, instaIos, iosWebView, androidWv, tiktok]) assert.equal(ne(ua), true, ua);
   assert.equal(ne(desktop, false), true, "brez window.print");
+  assert.equal(ne(androidWv + " EvklidApp/1.4.0"), false, "APK Evklid: /ucbenik/ odpre sistemski brskalnik, brez navodila");
+});
+
+test("pregrada je privzeto skrita (CSS), skripta jo prikaže; varnostni čas z gumbom »Vseeno prikaži«", () => {
+  const html = printPage(KEY, null, UNIT);
+  assert.match(html, /\.priprava \{ display: none;/);
+  assert.match(html, /\.priprava\.p-on \{ display: flex; \}/);
+  assert.match(html, /class="p-prikazi"/);
+  const src = fs.readFileSync(path.join(ROOT, "public", "ucbenik-priprava.js"), "utf8");
+  assert.match(src, /classList\.add\("p-on"\)/);
+  assert.match(src, /45_000/);
+  assert.doesNotMatch(src, /r\.ok \? r\.json\(\)/);
+  assert.match(src, /const url = location\.href;/);
 });
 
 test("navodilo v brskalniku brez tiskanja: besedila in gumbi v pregradi, samodejni tisk se ne sproži", () => {
@@ -113,7 +126,7 @@ test("predgrevanje po zagonu: strani razredov pridejo v predpomnilnik (brez pred
 });
 
 test("ključi za jezike so v vseh jezikih (sl.js in 31 prevodov), povezave v učbeniku nosijo jezik", async () => {
-  const keys = ["tbk.pdfUnit", "tbk.pdfLesson", "tbk.pdfPrep", "tbk.pdfProgress", "tbk.pdfNoPrint", "tbk.pdfCopy", "tbk.pdfCopied", "tbk.pdfTry", "tbk.pdfSave"];
+  const keys = ["tbk.pdfUnit", "tbk.pdfLesson", "tbk.pdfPrep", "tbk.pdfProgress", "tbk.pdfNoPrint", "tbk.pdfCopy", "tbk.pdfCopied", "tbk.pdfTry", "tbk.pdfShow", "tbk.pdfSave"];
   const dir = path.join(ROOT, "public", "i18n", "ui");
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
   assert.ok(files.length >= 31);
