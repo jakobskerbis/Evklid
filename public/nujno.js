@@ -434,6 +434,14 @@ const brezPolnil = (norm) => norm.replace(POLNILA, " ").replace(/\s+/g, " ").tri
 // Vprašanje o snovi (»Kaj je srčni napad?«, »Kako se je Sokrat zastrupil?«): šibki znaki ne štejejo.
 const SNOV =
   /^(?:kaj (?:je|so|pomeni|pomenijo)|kdaj (?:je|so)|kdo je|ko je|sta je|zasto|kako|koliko|izracunaj|resi|naloga|kako (?:se je|je|so|deluje|nastane)|zakaj|razlozi|opisi|napisi|what (?:is|are|was|were)|why|how (?:does|do|did)|explain|describe)(?=[ ,.]|$)/;
+// Šolsko besedilo kjerkoli v sporočilu (»Pišem spis o gasilcih, ki so pogasili požar«, »Za domače branje …, zakaj se je
+// Romeo zastrupil«, »Na gasilskem krožku smo se učili, kaj narediti ob požaru«): šibki znaki ne štejejo, močni ostanejo.
+const SOLA =
+  /(?:^| )(?:spis\S*|zgodb\S*|pravljic\S*|domace branje|domacem branju|domacega branja|referat\S*|seminarsk\S*|esej\S*|plakat\S*|ucbenik\S*|krozk\S*|v nalogi)(?=[ ,.]|$)/;
+// Pretiravanje v prihodnjiku (»zadušil se bom v teh domačih nalogah«): izraz se pred iskanjem znakov izpusti.
+// Preteklik in sedanjik (»zadušil se je«, »se duši«) ostaneta močna znaka.
+const PRETIRANO =
+  /(?:zadusil\S* se bom|se bom zadusil\S*)(?: \S+){0,3} (?:v|od|pod) (?:\S+ ){0,2}(?:nalog\S*|ucenj\S*|snov\S*|delu|dela|test\S*|kontrolk\S*|zvezk\S*|papirj\S*|smeh\S*|dolgcas\S*)/g;
 
 // Opisi z več deli (oseba … stanje, padec … se ne odziva, izsiljevanje s slikami) kot izrazi nad normalize().
 const OS =
@@ -465,6 +473,11 @@ const IZRAZI = {
     ),
   ],
   stiska: [
+    // (živi nabor, #552) »razmišljam, da bi si nekaj naredila«, »želim si, da me sploh ne bi bilo več«, »sem se namenoma poškodovala«
+    R(`(?:razmisljam|premisljujem|mislim|razmisljal\\S*),?(?: \\S+){0,2},? da bi si (?:nekaj|kaj) (?:naredil\\S*|nardil\\S*|storil\\S*)(?! za )(?=[ ,.]|$)`),
+    R(`(?:zelim|zelel\\S*|zeljo|zeli),?(?: \\S+){0,2},? da me (?:sploh )?(?:ne bi|nebi) (?:vec )?(?:bilo|blo)(?: vec)?(?=[,.]|$)`),
+    R(`sem se (?:namenoma|namerno|nalasc) (?:poskodoval\\S*|porezal\\S*|urezal\\S*|opekl\\S*)`),
+    R(`(?:namenoma|namerno|nalasc) sem se (?:poskodoval\\S*|porezal\\S*|urezal\\S*|opekl\\S*)`),
     // (pregled E) namen/načrt, razmišljanje o skoku, samopoškodba z udarci
     R(`(?:namen|nacrt\\S*|plan\\S*|nameravam|namerava)(?: \\S+){0,2} (?:se )?ubi(?:t|ti|l|la)(?=[ ,.]|$)`),
     R(`(?:razmisljam|mislim|premisljujem|razmisljal\\S*|razmisljam o tem) (?:\\S+ ){0,2}da (?:bi|se) (?:\\S+ )?(?:(?:skoc\\S*|vrg\\S*)(?: \\S+){0,2} (?:z |s |sa |pod |iz )?(?:most\\S*|okn\\S*|streh\\S*|blok\\S*|vlak\\S*|nebotic\\S*)|ubi\\S*)`),
@@ -487,6 +500,10 @@ const IZRAZI = {
     R(`(?:zelim|hocu|hoću|zelio bih|zeljela bih)(?: da)? (?:umr|umre|umrem)\\S*`),
     R(`(?:kms|kys myself)(?=[ ,.]|$)`), R(`se (?:bo|bom|bos|bi|bodo|ce|cu) (?:\\S+ )?ubi(?:l|la|li|jem|jes|t|ti)?(?=[ ,.]|$)`)],
   nasilje: [
+    // (živi nabor, #552) slike brez oblačil … poslal vsem; »me skoz otipava«; »jo zdajle tepe«
+    IZS(`slik\\S*(?: \\S+){0,3} brez (?:oblacil|oblek\\S*|cunj)(?: \\S+){0,8} (?:poslal\\S*|razposlal\\S*|objavil\\S*)(?=[ ,.]|$)`),
+    R(`me (?:\\S+ ){0,2}(?:otipava\\S*|otipaval\\S*|slata\\S*|slatal\\S*)(?=[ ,.]|$)`),
+    R(`(?:jo|ga|ju|jih|nas) (?:zdajle|zdej|zdele|ravnokar|pravkar|trenutno|glih zdej|doma|vsak vecer) (?:tepe|pretepa|tepejo|pretepajo)(?=[ ,.]|$)`),
     // (pregled E) grožnja z orožjem v obratnem redu, otipavanje, zalezovanje z drugim osebkom
     R(`${OS} (?:ima|drzi|ma|has|is holding|ima u ruci) (?:\\S+ ){0,2}(?:noz\\S*|pistol\\S*|pistolj\\S*|orozj\\S*|oruzj\\S*|knife|gun)(?: \\S+){0,3} (?:in |and |i )?(?:grozi|groz\\S*|prijeti|preti|threaten\\S*)`),
     R(`me (?:\\S+ )?(?:dotika|dotikal\\S*|otipava|otipaval\\S*|potipal\\S*|tipa)(?: \\S+){0,3} (?:tam|pod|med nog\\S*|kjer)`),
@@ -584,9 +601,9 @@ const SAMOMOR = /(?:samomor|samoubi|ubi[tlj]\S* se|se ubi|umr|umre|zivet|ziveti|
 export function zaznajNujno(text) {
   const low = lower(text);
   if (!low.trim()) return null;
-  const norm = normalize(text);
+  const norm = normalize(text).replace(PRETIRANO, " ");
   const norms = [norm, brezPolnil(norm)];
-  const snov = SNOV.test(norm);
+  const snov = SNOV.test(norm) || SOLA.test(norm);
   if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms)) {
     // Nesreča (»porezal sem se z nožem in kri teče«): zdravje, razen če sporočilo omenja samomor ali smrt.
     if (NESRECA.test(norm) && !SAMOMOR.test(norm)) return "zdravje";
