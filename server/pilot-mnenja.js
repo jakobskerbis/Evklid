@@ -28,7 +28,7 @@ export const TEXT_MAX = 600;
 export const DAILY_MAX = 3; // oddanih mnenj na profil na dan
 export const PUBLISH_MIN_AGE = 15;
 // Različica besedila dovoljenja (public/i18n mn.publish): ob spremembi pomena povečaj.
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2; // 2 (j, 10. 11. 2026): besedilo pove, da objavimo tudi zvezdice, in kje (stran evklid.app)
 export const TOMBSTONE_DAYS = 365; // koliko časa ostane zapis »dovoljenje prenehalo (izbris)«
 
 // Besedilo dovoljenja (ključ mn.publish) v vseh jezikih vmesnika: strežnik sprejme dovoljenje samo, če je učenec

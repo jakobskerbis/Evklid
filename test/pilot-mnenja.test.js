@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { opinionState, opinionsReport, publishAllowed, withoutName, MIN_DAYS, MIN_SOLVED, ASK_EVERY_DAYS, AFTER_OPINION_DAYS, DAILY_MAX, TEXT_MAX } from "../server/pilot-mnenja.js";
+import { opinionState, opinionsReport, publishAllowed, withoutName, MIN_DAYS, MIN_SOLVED, ASK_EVERY_DAYS, AFTER_OPINION_DAYS, DAILY_MAX, TEXT_MAX, CONSENT_VERSION } from "../server/pilot-mnenja.js";
 import { SEALED } from "../server/crypto-polje.js";
 import SL from "../public/i18n/sl.js";
 import crypto from "node:crypto";
@@ -145,7 +145,9 @@ test("mnenje: objava samo z izrecnim dovoljenjem (true + besedilo), preklic kada
     const post = (body) => call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body });
     const pub = () => store.db.prepare("SELECT publish, consent FROM pilot_mnenja ORDER BY id DESC").get();
     // Neznano besedilo dovoljenja: 400, nič se ne shrani.
-    for (const consent_text of ["Dovolim vse.", CONSENT + " ", "x"]) assert.equal((await post({ stars: 5, publish: true, consent_text })).status, 400);
+    // Tudi prejšnje besedilo (brez zvezdic in brez kraja objave) ne velja več.
+    const OLD = "Dovolim, da Evklid moje mnenje objavi brez imena (samo razred ali letnik).";
+    for (const consent_text of ["Dovolim vse.", CONSENT + " ", "x", OLD]) assert.equal((await post({ stars: 5, publish: true, consent_text })).status, 400);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM pilot_mnenja").get().n, 0);
     // Privzeto izklopljeno; "true", 1 ali manjkajoče besedilo dovoljenja ne štejejo.
     for (const body of [{ stars: 5 }, { stars: 5, publish: "true", consent_text: CONSENT }, { stars: 5, publish: 1, consent_text: CONSENT }]) {
@@ -167,7 +169,7 @@ test("mnenje: objava samo z izrecnim dovoljenjem (true + besedilo), preklic kada
     const c = JSON.parse(pub().consent);
     assert.equal(c.text, CONSENT);
     assert.equal(c.lang, "sl");
-    assert.ok(c.v >= 1 && c.at);
+    assert.ok(c.v === CONSENT_VERSION && CONSENT_VERSION >= 2 && c.at);
     // Preklic: velja za vsa mnenja profila; zapis o preklicu ostane.
     assert.equal((await call(`/api/students/${sid}/pilot/mnenje/objava`, { method: "POST", body: { publish: true } })).status, 400);
     const w = await call(`/api/students/${sid}/pilot/mnenje/objava`, { method: "POST", body: { publish: false } });
@@ -361,4 +363,18 @@ test("mnenje: aplikacija nič ne objavi sama, vpraša samo na mirnem zaslonu, st
   assert.match(html, /id="me-mnenje-card" hidden/);
   const priv = fs.readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
   assert.match(priv, /Mnenje o aplikaciji/);
+});
+
+test("mnenje: besedilo dovoljenja pove, kaj in kje objavimo (vsi jeziki, zasebnost.html)", () => {
+  assert.equal(CONSENT, "Dovolim, da Evklid moje zvezdice in mnenje objavi na strani evklid.app brez imena (samo razred ali letnik).");
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
+  assert.ok(files.length >= 32);
+  for (const f of files) {
+    const v = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"))["mn.publish"];
+    assert.ok(typeof v === "string" && v.includes("evklid.app") && v !== CONSENT, `${f}: mn.publish brez evklid.app ali nepreveden`);
+  }
+  const z = fs.readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
+  assert.ok(z.includes("zvezdice in mnenje objavimo na strani evklid.app brez imena"));
+  assert.ok(z.includes("Besedili shranimo šifrirani; če šifriranje ni na voljo, besedil ne shranimo."));
 });

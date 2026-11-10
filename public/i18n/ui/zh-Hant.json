@@ -508,7 +508,7 @@
   "mn.liked": "你最喜歡什麼？",
   "mn.bothers": "什麼最讓你困擾？",
   "mn.optional": "選填",
-  "mn.publish": "我允許 Evklid 匿名發布我的意見（只顯示年級）。",
+  "mn.publish": "我允許 Evklid 在 evklid.app 網站上匿名發布我的星級評分和意見（只顯示年級）。",
   "mn.publishHint": "未經允許，只有 Evklid 團隊會閱讀你的意見。你可以隨時在這裡撤回許可。",
   "mn.send": "傳送意見",
   "mn.needStars": "請先選擇評分。",

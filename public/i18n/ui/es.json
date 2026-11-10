@@ -514,7 +514,7 @@
   "mn.liked": "¿Qué es lo que más te gusta?",
   "mn.bothers": "¿Qué es lo que más te molesta?",
   "mn.optional": "Opcional",
-  "mn.publish": "Permito que Evklid publique mi opinión sin mi nombre (solo mi curso o año).",
+  "mn.publish": "Permito que Evklid publique mis estrellas y mi opinión en la página evklid.app sin mi nombre (solo mi curso o año).",
   "mn.publishHint": "Sin permiso, solo el equipo de Evklid lee tu opinión. Puedes retirar el permiso aquí en cualquier momento.",
   "mn.send": "Enviar opinión",
   "mn.needStars": "Primero elige una valoración.",

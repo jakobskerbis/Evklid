@@ -514,7 +514,7 @@
   "mn.liked": "Qu'est-ce qui te plaît le plus ?",
   "mn.bothers": "Qu'est-ce qui te gêne le plus ?",
   "mn.optional": "Facultatif",
-  "mn.publish": "J'autorise Evklid à publier mon avis sans mon nom (seulement ma classe ou mon année).",
+  "mn.publish": "J'autorise Evklid à publier mes étoiles et mon avis sur le site evklid.app sans mon nom (seulement ma classe ou mon année).",
   "mn.publishHint": "Sans autorisation, seule l'équipe d'Evklid lit ton avis. Tu peux retirer l'autorisation ici à tout moment.",
   "mn.send": "Envoyer l'avis",
   "mn.needStars": "Choisis d'abord une note.",

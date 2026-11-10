@@ -514,7 +514,7 @@
   "mn.liked": "Çfarë të pëlqen më shumë?",
   "mn.bothers": "Çfarë të shqetëson më shumë?",
   "mn.optional": "Jo e detyrueshme",
-  "mn.publish": "Lejoj që Evklid ta publikojë mendimin tim pa emër (vetëm klasa ose viti).",
+  "mn.publish": "Lejoj që Evklid t'i publikojë yjet dhe mendimin tim në faqen evklid.app pa emër (vetëm klasa ose viti).",
   "mn.publishHint": "Pa leje, mendimin tënd e lexon vetëm ekipi i Evklid. Lejen mund ta tërheqësh këtu në çdo kohë.",
   "mn.send": "Dërgo mendimin",
   "mn.needStars": "Së pari zgjidh një vlerësim.",

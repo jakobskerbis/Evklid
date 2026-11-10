@@ -800,7 +800,7 @@ export default {
   "mn.liked": "Kaj ti je najbolj všeč?",
   "mn.bothers": "Kaj te najbolj moti?",
   "mn.optional": "Neobvezno",
-  "mn.publish": "Dovolim, da Evklid moje mnenje objavi brez imena (samo razred ali letnik).",
+  "mn.publish": "Dovolim, da Evklid moje zvezdice in mnenje objavi na strani evklid.app brez imena (samo razred ali letnik).",
   "mn.publishHint": "Brez dovoljenja tvoje mnenje prebere samo ekipa Evklida. Dovoljenje lahko kadar koli prekličeš tukaj.",
   "mn.send": "Pošlji mnenje",
   "mn.needStars": "Najprej izberi oceno.",

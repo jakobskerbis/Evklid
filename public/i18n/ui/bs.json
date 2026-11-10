@@ -520,7 +520,7 @@
   "mn.liked": "Šta ti se najviše sviđa?",
   "mn.bothers": "Šta ti najviše smeta?",
   "mn.optional": "Neobavezno",
-  "mn.publish": "Dozvoljavam da Evklid objavi moje mišljenje bez imena (samo razred ili godina).",
+  "mn.publish": "Dozvoljavam da Evklid moje zvjezdice i mišljenje objavi na stranici evklid.app bez imena (samo razred ili godina).",
   "mn.publishHint": "Bez dozvole tvoje mišljenje čita samo tim Evklida. Dozvolu možeš ovdje povući u bilo kojem trenutku.",
   "mn.send": "Pošalji mišljenje",
   "mn.needStars": "Prvo odaberi ocjenu.",

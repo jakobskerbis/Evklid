@@ -526,7 +526,7 @@
   "mn.liked": "Čo sa ti páči najviac?",
   "mn.bothers": "Čo ti najviac prekáža?",
   "mn.optional": "Nepovinné",
-  "mn.publish": "Súhlasím, aby Evklid zverejnil môj názor bez mena (iba trieda alebo ročník).",
+  "mn.publish": "Súhlasím, aby Evklid zverejnil moje hviezdičky a názor na stránke evklid.app bez mena (iba trieda alebo ročník).",
   "mn.publishHint": "Bez súhlasu číta tvoj názor iba tím Evklidu. Súhlas tu môžeš kedykoľvek odvolať.",
   "mn.send": "Odoslať názor",
   "mn.needStars": "Najprv vyber hodnotenie.",

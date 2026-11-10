@@ -514,7 +514,7 @@
   "mn.liked": "Mi tetszik a legjobban?",
   "mn.bothers": "Mi zavar a legjobban?",
   "mn.optional": "Nem kötelező",
-  "mn.publish": "Engedélyezem, hogy az Evklid név nélkül közzétegye a véleményemet (csak az osztályt vagy évfolyamot).",
+  "mn.publish": "Engedélyezem, hogy az Evklid név nélkül közzétegye a csillagaimat és a véleményemet az evklid.app oldalon (csak az osztályt vagy évfolyamot).",
   "mn.publishHint": "Engedély nélkül a véleményedet csak az Evklid csapata olvassa. Az engedélyt itt bármikor visszavonhatod.",
   "mn.send": "Vélemény küldése",
   "mn.needStars": "Előbb válassz értékelést.",

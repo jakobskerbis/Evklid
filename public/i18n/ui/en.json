@@ -514,7 +514,7 @@
   "mn.liked": "What do you like most?",
   "mn.bothers": "What bothers you most?",
   "mn.optional": "Optional",
-  "mn.publish": "I allow Evklid to publish my opinion without my name (only my class or year).",
+  "mn.publish": "I allow Evklid to publish my stars and opinion on the evklid.app website without my name (only my class or year).",
   "mn.publishHint": "Without permission, only the Evklid team reads your opinion. You can withdraw the permission here at any time.",
   "mn.send": "Send opinion",
   "mn.needStars": "Choose a rating first.",

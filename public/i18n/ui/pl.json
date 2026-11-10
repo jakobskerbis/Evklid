@@ -526,7 +526,7 @@
   "mn.liked": "Co podoba ci się najbardziej?",
   "mn.bothers": "Co najbardziej ci przeszkadza?",
   "mn.optional": "Nieobowiązkowe",
-  "mn.publish": "Pozwalam, aby Evklid opublikował moją opinię bez imienia (tylko klasa lub rok).",
+  "mn.publish": "Pozwalam, aby Evklid opublikował moje gwiazdki i opinię na stronie evklid.app bez imienia (tylko klasa lub rok).",
   "mn.publishHint": "Bez zgody twoją opinię czyta tylko zespół Evklid. Zgodę możesz tutaj wycofać w każdej chwili.",
   "mn.send": "Wyślij opinię",
   "mn.needStars": "Najpierw wybierz ocenę.",
