@@ -3767,6 +3767,7 @@ export default {
   "land.ctaTitle": "Prva naloga te že čaka.",
   "land.privacy": "Zasebnost",
   "land.what": "Kaj je Evklid?",
+  "land.why": "Zakaj Evklid?",
   "open.group": "Odpri v aplikaciji",
   "open.sim": "Poskus",
   "open.3d": "3D",
