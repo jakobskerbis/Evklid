@@ -12,6 +12,7 @@
   "nav.me": "Я",
   "nav.main": "Главное меню",
   "nav.back": "Назад",
+  "nav.exitAgain": "Нажми «Назад» ещё раз, чтобы выйти.",
   "xp.title": "Очки опыта (XP)",
   "xp.streakTitle": "Дней подряд",
   "xp.level": "Уровень {n}",
