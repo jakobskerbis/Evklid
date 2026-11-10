@@ -814,6 +814,12 @@ float k3Y(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }`)
         imeSistema: (id) => t(`a3.rez.sys.${id}`, V.SISTEMI.find((x) => x.id === id)?.os || id),
       });
       notranja.add(organi3d.skupina);
+      // kamera in velikost platna tudi, ko je rezina skrita (razmik, police): za ploščice ob vrnitvi in za tockaStrukture
+      for (const m of organi3d.mreze.values()) m.onBeforeRender = (renderer, _s, kamera) => {
+        zadnjaKamera = kamera;
+        visinaPlatna = renderer.domElement.clientHeight || visinaPlatna;
+        sirinaPlatna = renderer.domElement.clientWidth || sirinaPlatna;
+      };
       // preizkusi (Playwright, DOM): zaslonska točka strukture, da tap zadene 3D organ; le z localStorage evklid.3d.test
       try {
         if (globalThis.localStorage?.getItem(R.KLJUC_KAZALA.replace(/rezine$/, "test"))) globalThis.__k3test = { tocka: tockaStrukture, stanje };
@@ -832,16 +838,23 @@ float k3Y(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }`)
     const pos = m.geometry.attributes.position, v = new THREE.Vector3();
     m.geometry.computeBoundingBox();
     const c = m.geometry.boundingBox.getCenter(new THREE.Vector3()).applyMatrix4(m.matrixWorld);
-    let best = null, bd = Infinity;
-    for (let k = 0; k < pos.count; k += 7) {
+    const kand = [];
+    for (let k = 0; k < pos.count; k += 5) {
       v.fromBufferAttribute(pos, k).applyMatrix4(m.matrixWorld);
-      if (ravnina.distanceToPoint(v) < 2 * notranja.scale.x && !(stanje.razmik > 0)) continue;
-      const d = v.distanceToSquared(c);
-      if (d < bd) { bd = d; best = v.clone(); }
+      if (!(stanje.razmik > 0) && ravnina.distanceToPoint(v) < 2 * notranja.scale.x) continue;
+      kand.push([v.distanceToSquared(c), v.clone()]);
     }
-    if (!best) return null;
-    const p = best.project(zadnjaKamera);
-    return [((p.x + 1) / 2) * sirinaPlatna, ((1 - p.y) / 2) * visinaPlatna];
+    kand.sort((a, b) => a[0] - b[0]);
+    // prva točka, kjer žarek iz kamere najprej zadene to strukturo (ni zakrita z drugo, npr. dojko)
+    const rc = new THREE.Raycaster();
+    const vse = [...organi3d.mreze.values()].filter((x) => x.visible && x.userData.kljuc !== "koza");
+    for (const [, p] of kand.slice(0, 400).filter((_, i) => i % 4 === 0)) {
+      const ndc = p.clone().project(zadnjaKamera);
+      rc.setFromCamera(new THREE.Vector2(ndc.x, ndc.y), zadnjaKamera);
+      const h = rc.intersectObjects(vse, false)[0];
+      if (h?.object === m) return [((ndc.x + 1) / 2) * sirinaPlatna, ((1 - ndc.y) / 2) * visinaPlatna];
+    }
+    return null;
   }
 
   // telo z napako podatkov (npr. mali.webp ženske) → najprej drugo telo, šele nato vzorec

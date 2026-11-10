@@ -79,7 +79,7 @@ export function razvrstiPolice(strukture, { sirina = 1400, razmak = 18, naslov =
     .map((x) => ({ ...x, sistem: x.sistem || sistemKljuca(x.kljuc) }))
     .sort((a, b) => red.get(a.sistem) - red.get(b.sistem) || b.prostornina - a.prostornina || (a.kljuc < b.kljuc ? -1 : 1));
   const vrste = [], mesta = new Map();
-  let y = 0, trenutni = null, x = 0, visina = 0;
+  let y = 0, trenutni = null, x = 0, visina = 0, najvecX = 0;
   const novaVrsta = (sistem, zNaslovom) => {
     if (trenutni) y += visina + razmak;
     if (zNaslovom) y += naslov;
@@ -94,8 +94,9 @@ export function razvrstiPolice(strukture, { sirina = 1400, razmak = 18, naslov =
     mesta.set(d.kljuc, [x + w / 2, y + w / 2]);
     x += w + razmak;
     visina = Math.max(visina, w);
+    najvecX = Math.max(najvecX, x - razmak);
   }
-  return { vrste, mesta, visina: y + visina, vrstniRed: s.map((d) => d.kljuc) };
+  return { vrste, mesta, visina: y + visina, sirina: najvecX, vrstniRed: s.map((d) => d.kljuc) };
 }
 
 // Barve po organih (rezina in 3D, OŠ/SŠ privzeto): iste kot v atlasu (tkiva.js: srce rdeče, pljuča roza, kosti bele …).
@@ -241,12 +242,17 @@ export function zgradiTelo3D(THREE, koren, info, { ravnina, barvaZa, imeZa, imeS
   for (const [kl, s] of Object.entries(strukture)) if (s.sredisce && kl !== "koza") { for (let k = 0; k < 3; k++) c0[k] += s.sredisce[k]; n0++; }
   if (n0) for (let k = 0; k < 3; k++) c0[k] /= n0;
   // police (izračunane enkrat; telefon ožje, več vrst)
-  const seznam = [...mreze.keys()].filter((k) => k !== "koza" && strukture[k]?.sredisce).map((k) => ({ kljuc: k, prostornina: strukture[k].prostornina_cm3 || 0, polmer: strukture[k].polmer || 10 }));
-  const pol = razvrstiPolice(seznam, { sirina: telefon ? 520 : 1500, razmak: 22, naslov: 44 });
+  // polmer v json je pol diagonale okvirja: za polico 0,75 tega (struktura ne leži po diagonali)
+  const seznam = [...mreze.keys()].filter((k) => k !== "koza" && strukture[k]?.sredisce).map((k) => ({ kljuc: k, prostornina: strukture[k].prostornina_cm3 || 0, polmer: 0.75 * (strukture[k].polmer || 10) }));
+  // širina polic iz skupne površine (računalnik ≈ 16 : 10, telefon pokončno ≈ 9 : 16)
+  const ploscina = seznam.reduce((a, d) => a + (2 * Math.max(4, d.polmer) + 22) ** 2, 0);
+  const sirinaCilj = Math.sqrt(ploscina) * (telefon ? 0.75 : 1.5);
+  const pol = razvrstiPolice(seznam, { sirina: sirinaCilj, razmak: 22, naslov: 44 });
+  const visNapisa = Math.max(10, Math.max(pol.sirina, pol.visina) / 70);
   const napisi = new THREE.Group();
   napisi.visible = false;
   ovoj.add(napisi);
-  const x0 = c0[0] - (telefon ? 260 : 750), zVrh = c0[2] - pol.visina / 2;
+  const x0 = c0[0] - pol.sirina / 2, zVrh = c0[2] - pol.visina / 2;
   const cilj = (kl) => {
     const m = pol.mesta.get(kl), s = strukture[kl];
     return m ? [x0 + m[0] - s.sredisce[0], c0[1] - s.sredisce[1], zVrh + m[1] - s.sredisce[2]] : [0, 0, 0];
@@ -254,14 +260,14 @@ export function zgradiTelo3D(THREE, koren, info, { ravnina, barvaZa, imeZa, imeS
   // napisi v ravnini polic (y = spredaj, malo pred strukturami); sprite je v ovoju, ki je zrcaljen (det < 0): velikost
   // ostane, smer pogleda kamere ni pomembna
   for (const v of pol.vrste) {
-    const sp = napisPolice(THREE, imeSistema(v.sistem), { visina: 22, krepko: true, barva: "#9fc2ff" });
-    sp.position.set(x0 + (sp.scale.x / 2), c0[1] - 200, zVrh + v.y - 26);
+    const sp = napisPolice(THREE, imeSistema(v.sistem), { visina: visNapisa * 1.6, krepko: true, barva: "#9fc2ff" });
+    sp.position.set(x0 + (sp.scale.x / 2), c0[1] - 200, zVrh + v.y - visNapisa * 1.2);
     napisi.add(sp);
   }
   for (const [kl, [mx, my]] of pol.mesta) {
     const s = strukture[kl];
-    const sp = napisPolice(THREE, imeZa(kl), { visina: 11 });
-    sp.position.set(x0 + mx, c0[1] - 200, zVrh + my + Math.max(4, s.polmer) + 9);
+    const sp = napisPolice(THREE, imeZa(kl), { visina: visNapisa });
+    sp.position.set(x0 + mx, c0[1] - 200, zVrh + my + Math.max(4, 0.75 * s.polmer) + visNapisa * 0.8);
     napisi.add(sp);
   }
   let faza = { razmik: 0, police: 0 }, izbrani = null, rentgen = true, klip = true;
@@ -303,10 +309,7 @@ export function zgradiTelo3D(THREE, koren, info, { ravnina, barvaZa, imeZa, imeS
     napisi.visible = faza.police > 0.98;
   }
   const meje = () => {
-    if (faza.police > 0.5) {
-      const w = telefon ? 520 : 1500;
-      return { sredisce: [c0[0] - (telefon ? 260 : 750) + w / 2, c0[1], c0[2]], polmer: Math.max(w, pol.visina) * 0.62, police: true };
-    }
+    if (faza.police > 0.5) return { sredisce: [c0[0], c0[1], c0[2]], polmer: Math.hypot(pol.sirina, pol.visina) * 0.5, police: true };
     return null;
   };
   return {
