@@ -5,11 +5,19 @@
 //   naredi človek. Dovoljenje se da kadar koli preklicati (POST …/mnenje/objava).
 // - Mlajši od 15 let (ali brez letnice rojstva): stikala ne vidi in strežnik dovoljenja ne sprejme (GDPR čl. 8,
 //   brez soglasja starša objava ni mogoča).
-// - Brez imena: v tabeli ni imena, ime profila v besedilu zamenja »[ime]«; skrbnik vidi seznam brez imena, brez
-//   številke profila in brez ure (samo mesec). Besedili sta šifrirani (server/crypto-polje.js SEALED).
+// - Brez imena: v tabeli ni imena, besede imena profila (tudi sklonjene) v besedilu zamenja »[ime]«; skrbnik vidi
+//   seznam brez imena, brez številke profila in brez ure (samo mesec), z naključno oznako mnenja (»M-7K2Q«).
+// - Šifriranje besedil je odvisno od ključa EVKLID_DATA_KEY (server/crypto-polje.js SEALED). Brez ključa se besedili
+//   NE shranita (kot fotografije pilota): shrani se samo ocena, aplikacija polj za besedilo ne pokaže.
 // - Izbris profila ali računa izbriše mnenja (ON DELETE CASCADE); izvoz podatkov jih vsebuje (accounts/index.js).
+//   Če je bilo za mnenje kdaj dano dovoljenje za objavo, ob izbrisu ostane samo zapis brez vsebine in brez povezave
+//   z računom (pilot_mnenja_prenehalo: oznaka, razlog, dan), da skrbnik ve, da mora morebitno objavo umakniti.
+//   Zapis se izbriše po TOMBSTONE_DAYS dneh.
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { cleanText } from "./settings.js";
-import { seal, unseal } from "./crypto-polje.js";
+import { seal, unseal, encryptionOn } from "./crypto-polje.js";
 import { pilotMember } from "./pilot-naloge.js";
 
 export const MIN_DAYS = 3; // dni uporabe (dnevi z vsaj eno točko XP)
@@ -21,6 +29,49 @@ export const DAILY_MAX = 3; // oddanih mnenj na profil na dan
 export const PUBLISH_MIN_AGE = 15;
 // Različica besedila dovoljenja (public/i18n mn.publish): ob spremembi pomena povečaj.
 export const CONSENT_VERSION = 1;
+export const TOMBSTONE_DAYS = 365; // koliko časa ostane zapis »dovoljenje prenehalo (izbris)«
+
+// Besedilo dovoljenja (ključ mn.publish) v vseh jezikih vmesnika: strežnik sprejme dovoljenje samo, če je učenec
+// potrdil natanko eno od teh besedil (ne poljubnega niza).
+const I18N = path.join(import.meta.dirname, "..", "public", "i18n");
+let consentTexts = null; // Map besedilo → jezik
+async function knownConsent(text) {
+  if (!consentTexts) {
+    const m = new Map();
+    m.set((await import("../public/i18n/sl.js")).default["mn.publish"], "sl");
+    for (const f of fs.readdirSync(path.join(I18N, "ui")).filter((x) => x.endsWith(".json"))) {
+      const v = JSON.parse(fs.readFileSync(path.join(I18N, "ui", f), "utf8"))["mn.publish"];
+      if (typeof v === "string" && !m.has(v)) m.set(v, f.slice(0, -5));
+    }
+    consentTexts = m;
+  }
+  return consentTexts.get(text) || null;
+}
+
+// Naključna oznaka mnenja za skrbnika (brez osebnih podatkov): »M-« in 4 znaki brez podobnih (0/O, 1/I).
+const LABEL_CHARS = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+const newLabel = () => "M-" + Array.from(crypto.randomBytes(4), (b) => LABEL_CHARS[b % LABEL_CHARS.length]).join("");
+
+// Ime profila v besedilu zamenja »[ime]«: vsaka beseda imena posebej, brez ločevanja velikih črk in samo kot cela
+// beseda. Besede s 3 ali več črkami tudi v sklonih (Maja, Maji, Majo, Majin; Jan, Jana, Janu, Janov), druge besede
+// ostanejo (»Jan« ne pokvari »januar«). Krajše besede (»Al«) samo v natanko tej obliki.
+const ENDINGS = "a|e|i|o|u|ja|je|ju|jem|jev|jeva|jevo|jevi|jeve|jevega|jevem|ovem|evem|inem|em|om|ama|ami|ah|ih|ev|ov|eva|ova|evo|ovo|evi|ovi|eve|ove|in|ina|ine|ino|ini|eta|etu|etom|ega|emu|ovega|evega|inega";
+const reEsc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+export function withoutName(text, name) {
+  let out = String(text || "");
+  for (const w of String(name || "").split(/[^\p{L}\p{N}]+/u).filter((x) => [...x].length >= 2)) {
+    const letters = [...w];
+    let body;
+    if (letters.length >= 3) {
+      const vowel = /[aeiou]$/i.test(w);
+      const stem = vowel ? letters.slice(0, -1).join("") : w;
+      // Ime na samoglasnik (Maja): koren + končnica; ime na soglasnik (Jan): ime, lahko s končnico.
+      body = `${reEsc(stem)}(?:${ENDINGS})${vowel ? "" : "?"}`;
+    } else body = reEsc(w);
+    out = out.replace(new RegExp(`(?<![\\p{L}\\p{N}])${body}(?![\\p{L}\\p{N}])`, "giu"), "[ime]");
+  }
+  return out;
+}
 
 const hasCol = (db, t, c) => db.prepare(`PRAGMA table_info(${t})`).all().some((x) => x.name === c);
 
@@ -36,7 +87,8 @@ export function migrateOpinions(db) {
       publish INTEGER NOT NULL DEFAULT 0, -- 1 = dovoli objavo brez imena
       consent TEXT,                    -- JSON {v, lang, text, at}: kaj je potrdil; ob preklicu dobi še withdrawn_at
       lang TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      label TEXT                       -- naključna oznaka za skrbnika (»M-7K2Q«), brez osebnih podatkov
     );
     CREATE INDEX IF NOT EXISTS idx_pilot_mnenja_student ON pilot_mnenja(student_id, created_at);
     -- Kdaj je aplikacija nazadnje sama vprašala (največ enkrat na teden).
@@ -44,14 +96,29 @@ export function migrateOpinions(db) {
       student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
       asked_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+    -- Mnenje z (kdaj) danim dovoljenjem za objavo je izbrisano (izbris profila ali računa): samo oznaka, razlog in dan,
+    -- brez vsebine in brez povezave z računom. Skrbnik po oznaki umakne morebitno objavo.
+    CREATE TABLE IF NOT EXISTS pilot_mnenja_prenehalo (
+      label TEXT PRIMARY KEY,
+      reason TEXT NOT NULL DEFAULT 'izbris',
+      day TEXT NOT NULL DEFAULT (date('now'))
+    );
   `);
+  if (!hasCol(db, "pilot_mnenja", "label")) db.exec("ALTER TABLE pilot_mnenja ADD COLUMN label TEXT");
+  // Sproži se tudi ob kaskadnem izbrisu (izbris profila ali računa).
+  db.exec(`CREATE TRIGGER IF NOT EXISTS pilot_mnenja_izbris BEFORE DELETE ON pilot_mnenja
+    WHEN OLD.consent IS NOT NULL AND OLD.label IS NOT NULL BEGIN
+      INSERT OR IGNORE INTO pilot_mnenja_prenehalo (label, reason) VALUES (OLD.label, 'izbris');
+    END`);
+  db.prepare("DELETE FROM pilot_mnenja_prenehalo WHERE day < date('now', ?)").run(`-${TOMBSTONE_DAYS} days`);
 }
 
 const ms = (sqlTime) => Date.parse(`${String(sqlTime).replace(" ", "T")}Z`);
 const sqlTime = (d) => new Date(d).toISOString().slice(0, 19).replace("T", " ");
 
-// Objavo sme dovoliti samo profil z znano letnico rojstva, ki ni mlajši od 15 (previdno kot pri fotografijah v
-// pilotu: v letu 15. rojstnega dne še šteje kot mlajši).
+// Objavo sme dovoliti samo profil z znano letnico rojstva, ki je 15 let zagotovo že dopolnil. Poznamo samo letnico,
+// zato velja: tekoče leto − letnica rojstva > 15 (v letu 15. rojstnega dne še šteje kot mlajši, tudi po rojstnem
+// dnevu; enako kot pri fotografijah v pilotu). Brez letnice objava ni mogoča.
 export function publishAllowed(db, studentId, now = new Date()) {
   try {
     if (!hasCol(db, "students", "birth_year")) return false;
@@ -70,8 +137,11 @@ export function usageOf(db, studentId) {
 }
 
 export function opinionState(db, studentId, { now = new Date() } = {}) {
-  if (!pilotMember(db, studentId)) return { member: false };
   migrateOpinions(db);
+  // Ali ima katero od oddanih mnenj dovoljenje za objavo (za gumb »Prekliči dovoljenje«).
+  const published = !!db.prepare("SELECT 1 FROM pilot_mnenja WHERE student_id = ? AND publish = 1 LIMIT 1").get(studentId);
+  // Bivši član pilota: mnenja ne odda več, dano dovoljenje pa še lahko prekliče (vrstica v Jaz ostane).
+  if (!pilotMember(db, studentId)) return published ? { member: false, published: true } : { member: false };
   const last = db.prepare("SELECT created_at FROM pilot_mnenja WHERE student_id = ? ORDER BY id DESC LIMIT 1").get(studentId);
   const asked = db.prepare("SELECT asked_at FROM pilot_mnenja_vprasano WHERE student_id = ?").get(studentId);
   const { days, solved } = usageOf(db, studentId);
@@ -84,27 +154,48 @@ export function opinionState(db, studentId, { now = new Date() } = {}) {
     member: true,
     due,
     canPublish: publishAllowed(db, studentId, now),
+    // Besedili shranimo samo šifrirani: brez ključa aplikacija polj ne pokaže in strežnik besedila ne shrani.
+    canText: encryptionOn(),
     sent: db.prepare("SELECT COUNT(*) AS n FROM pilot_mnenja WHERE student_id = ?").get(studentId).n,
-    // Ali ima katero od oddanih mnenj dovoljenje za objavo (za gumb »Prekliči dovoljenje za objavo«).
-    published: !!db.prepare("SELECT 1 FROM pilot_mnenja WHERE student_id = ? AND publish = 1 LIMIT 1").get(studentId),
+    published,
   };
 }
 
 const text = (v, name) => {
-  const s = typeof v === "string" ? cleanText(v.replace(/\s+/g, " "), TEXT_MAX) : "";
-  if (!s) return null;
-  return seal(name && name.length > 1 ? s.replaceAll(name, "[ime]") : s);
+  if (!encryptionOn()) return null; // brez ključa bi bilo besedilo v bazi in kopijah nešifrirano
+  const s = typeof v === "string" ? cleanText(withoutName(v, name), TEXT_MAX) : "";
+  return s ? seal(s) : null;
 };
 
-// Seznam za skrbnika: brez imena, brez številke profila, brez ure (samo mesec); najnovejša najprej.
+// Seznam za skrbnika: brez imena, brez številke profila, brez ure (samo mesec); najnovejša najprej. Dovoljenje:
+// "none" (ni dano), "given" ali "withdrawn" z dnem preklica (skrbnik mora morebitno objavo umakniti).
+// `ended`: oznake izbrisanih mnenj, za katera je bilo dovoljenje kdaj dano (brez vsebine).
 export function opinionsReport(db) {
   migrateOpinions(db);
   const rows = db
-    .prepare("SELECT stars, liked, bothers, grade, publish, substr(created_at, 1, 7) AS month FROM pilot_mnenja ORDER BY id DESC LIMIT 500")
+    .prepare("SELECT label, stars, liked, bothers, grade, publish, consent, substr(created_at, 1, 7) AS month FROM pilot_mnenja ORDER BY id DESC LIMIT 500")
     .all()
-    .map((r) => ({ stars: r.stars, liked: unseal(r.liked, null) || "", bothers: unseal(r.bothers, null) || "", grade: r.grade || "", publish: !!r.publish, month: r.month }));
+    .map((r) => {
+      let c = null;
+      try {
+        c = r.consent ? JSON.parse(r.consent) : null;
+      } catch {}
+      const withdrawn = !r.publish && typeof c?.withdrawn_at === "string" ? c.withdrawn_at.slice(0, 10) : null;
+      return {
+        label: r.label || "",
+        stars: r.stars,
+        liked: unseal(r.liked, null) || "",
+        bothers: unseal(r.bothers, null) || "",
+        grade: r.grade || "",
+        publish: !!r.publish,
+        consent: r.publish ? "given" : withdrawn ? "withdrawn" : "none",
+        ...(withdrawn ? { withdrawn_day: withdrawn } : {}),
+        month: r.month,
+      };
+    });
   const n = rows.length;
-  return { n, avg: n ? Math.round((rows.reduce((a, r) => a + r.stars, 0) / n) * 10) / 10 : null, opinions: rows };
+  const ended = db.prepare("SELECT label, reason, day FROM pilot_mnenja_prenehalo ORDER BY day DESC, label").all();
+  return { n, avg: n ? Math.round((rows.reduce((a, r) => a + r.stars, 0) / n) * 10) / 10 : null, opinions: rows, ended };
 }
 
 export function mountOpinions(app, store, { loadStudent, accounts = false, isLocalRequest = () => false }) {
@@ -135,21 +226,25 @@ export function mountOpinions(app, store, { loadStudent, accounts = false, isLoc
     res.json(opinionState(db, s.id));
   });
 
-  app.post("/api/students/:id/pilot/mnenje", (req, res) => {
+  app.post("/api/students/:id/pilot/mnenje", async (req, res) => {
     const s = member(req, res);
     if (!s) return;
     const b = req.body || {};
-    const stars = Number(b.stars);
-    if (!Number.isInteger(stars) || stars < 1 || stars > 5) return res.status(400).json({ error: "Izberi oceno od 1 do 5." });
+    const stars = b.stars;
+    if (typeof stars !== "number" || !Number.isInteger(stars) || stars < 1 || stars > 5) return res.status(400).json({ error: "Izberi oceno od 1 do 5." });
+    // Dovoljenje za objavo: samo izrecna vrednost true in samo z besedilom dovoljenja, kot ga pokaže aplikacija
+    // (mn.publish v enem od jezikov vmesnika); drugačno besedilo ni dokaz privolitve.
+    const consentLang = b.publish === true && typeof b.consent_text === "string" ? await knownConsent(b.consent_text) : null;
+    if (b.publish === true && typeof b.consent_text === "string" && b.consent_text && !consentLang) return res.status(400).json({ error: "Besedilo dovoljenja ni veljavno. Osveži stran in poskusi znova." });
     if (db.prepare("SELECT COUNT(*) AS n FROM pilot_mnenja WHERE student_id = ? AND created_at >= ?").get(s.id, sqlTime(Date.now() - 864e5)).n >= DAILY_MAX)
       return res.status(429).json({ error: "Za danes je mnenj dovolj. Hvala!" });
-    // Dovoljenje za objavo: samo izrecna vrednost true, samo za profil, ki ni mlajši od 15 let, in samo z besedilom,
-    // ki ga je učenec videl ob stikalu (dokaz privolitve).
-    const consentText = cleanText(b.consent_text, 400);
-    const publish = b.publish === true && publishAllowed(db, s.id) && !!consentText;
+    // Samo za profil, ki je 15 let zagotovo dopolnil (publishAllowed); shrani se besedilo, ki ga je učenec potrdil.
+    const publish = !!consentLang && publishAllowed(db, s.id);
     const lang = cleanText(b.lang, 12) || s.settings?.language || "sl";
-    const consent = publish ? JSON.stringify({ v: CONSENT_VERSION, lang, text: consentText, at: new Date().toISOString() }) : null;
-    db.prepare("INSERT INTO pilot_mnenja (student_id, stars, liked, bothers, grade, publish, consent, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)").run(
+    const consent = publish ? JSON.stringify({ v: CONSENT_VERSION, lang: consentLang, text: b.consent_text, at: new Date().toISOString() }) : null;
+    let label = newLabel();
+    while (db.prepare("SELECT 1 FROM pilot_mnenja WHERE label = ? UNION SELECT 1 FROM pilot_mnenja_prenehalo WHERE label = ?").get(label, label)) label = newLabel();
+    db.prepare("INSERT INTO pilot_mnenja (student_id, stars, liked, bothers, grade, publish, consent, lang, label) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)").run(
       s.id,
       stars,
       text(b.liked, s.name),
@@ -158,6 +253,7 @@ export function mountOpinions(app, store, { loadStudent, accounts = false, isLoc
       publish ? 1 : 0,
       consent,
       lang,
+      label,
     );
     db.prepare("INSERT INTO pilot_mnenja_vprasano (student_id, asked_at) VALUES (?, datetime('now')) ON CONFLICT(student_id) DO UPDATE SET asked_at = excluded.asked_at").run(s.id);
     res.status(201).json({ ...opinionState(db, s.id), publish });

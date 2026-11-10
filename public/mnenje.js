@@ -21,9 +21,16 @@ export function initOpinion(deps) {
   $("#me-mnenje")?.addEventListener("click", () => openOpinion());
 }
 
-// Samodejno vprašanje samo na mirnem zaslonu: Učna pot ali Jaz, brez odprtega okna, vodiča ali uvodnih vprašanj.
+// Samodejno vprašanje samo na mirnem zaslonu: Učna pot ali Jaz, brez odprtega okna, kalkulatorja, vodiča ali uvodnih
+// vprašanj in ne med tipkanjem v katero koli polje.
+const typing = () => {
+  const el = document.activeElement;
+  return !!el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable || !!el.closest?.("math-field, .mq-editable-field"));
+};
 const calm = () =>
   (!$("#view-path")?.hidden || !$("#view-me")?.hidden) &&
+  $("#graph-overlay")?.hidden !== false &&
+  !typing() &&
   !document.body.classList.contains("onboarding") &&
   $("#tour")?.hidden !== false &&
   !document.querySelector("dialog[open]") &&
@@ -53,7 +60,8 @@ export async function loadOpinion({ ask = true } = {}) {
 
 function paintRow() {
   const card = $("#me-mnenje-card");
-  if (card) card.hidden = !st?.member;
+  // Bivši član pilota vrstico vidi, dokler ima dano dovoljenje za objavo (da ga lahko prekliče).
+  if (card) card.hidden = !st?.member && !st?.published;
 }
 
 function maybeAsk(studentId, tries = 0) {
@@ -72,7 +80,7 @@ function maybeAsk(studentId, tries = 0) {
 
 export function openOpinion() {
   const s = D?.getStudent();
-  if (!s || !st?.member || owner !== s.id) return;
+  if (!s || (!st?.member && !st?.published) || owner !== s.id) return;
   let dlg = $("#mnenje-okno");
   if (!dlg) {
     dlg = document.createElement("dialog");
@@ -81,8 +89,36 @@ export function openOpinion() {
     dlg.setAttribute("aria-labelledby", "mn-title");
     document.body.append(dlg);
     dlg.addEventListener("click", (e) => {
-      if (e.target === dlg) dlg.close(); // dotik ob okvirju
+      // Dotik ob okvirju zapre samo prazno okno: izbrane ocene ali napisanega besedila ne zavrže.
+      if (e.target === dlg && !dlg.dataset.dirty) dlg.close();
     });
+    dlg.addEventListener("input", () => (dlg.dataset.dirty = "1"));
+  }
+  delete dlg.dataset.dirty;
+  const withdrawRow = st.published ? `<p class="mn-allowed muted small"><span>${esc(t("mn.allowed"))}</span> <button type="button" class="ghost" data-mn="withdraw">${esc(t("mn.withdraw"))}</button></p>` : "";
+  const wireCommon = () => {
+    dlg.querySelectorAll('[data-mn="x"]').forEach((b) => b.addEventListener("click", () => dlg.close()));
+    $('[data-mn="withdraw"]', dlg)?.addEventListener("click", async (e) => {
+      try {
+        st = await D.api(`/api/students/${s.id}/pilot/mnenje/objava`, { method: "POST", body: { publish: false } });
+        e.target.closest(".mn-allowed").textContent = t("mn.withdrawn");
+        paintRow();
+      } catch (ex) {
+        D.toast(ex?.message || t("off.noConnection"));
+      }
+    });
+  };
+  if (!st.member) {
+    // Bivši član pilota: samo preklic dovoljenja.
+    dlg.innerHTML = `<div class="is-box" role="document">
+      <div class="is-head"><span class="pn-notice-ic">${icon("message-square-heart")}</span><h2 id="mn-title">${esc(t("fb.cardBtn"))}</h2>
+        <button type="button" class="ghost icon-only" data-mn="x" aria-label="${esc(t("full.close"))}" title="${esc(t("full.close"))}">${icon("x")}</button></div>
+      ${withdrawRow}
+    </div>`;
+    wireCommon();
+    dlg.showModal();
+    $('[data-mn="withdraw"]', dlg)?.focus();
+    return;
   }
   const form = { stars: 0, publish: false };
   const stars = [1, 2, 3, 4, 5]
@@ -94,17 +130,21 @@ export function openOpinion() {
     <p>${esc(t("mn.intro"))}</p>
     <div class="mn-stars" role="radiogroup" aria-label="${esc(t("mn.stars"))}">${stars}</div>
     <p class="mn-err" role="alert" hidden>${esc(t("mn.needStars"))}</p>
-    <label for="mn-liked">${esc(t("mn.liked"))}</label>
+    ${
+      st.canText
+        ? `<label for="mn-liked">${esc(t("mn.liked"))}</label>
     <textarea id="mn-liked" rows="2" maxlength="${TEXT_MAX}" placeholder="${esc(t("mn.optional"))}"></textarea>
     <label for="mn-bothers">${esc(t("mn.bothers"))}</label>
-    <textarea id="mn-bothers" rows="2" maxlength="${TEXT_MAX}" placeholder="${esc(t("mn.optional"))}"></textarea>
+    <textarea id="mn-bothers" rows="2" maxlength="${TEXT_MAX}" placeholder="${esc(t("mn.optional"))}"></textarea>`
+        : ""
+    }
     ${
       st.canPublish
         ? `<div class="mn-publish"><button type="button" class="switch" role="switch" aria-checked="false" id="mn-publish" aria-labelledby="mn-publish-text"></button><span id="mn-publish-text">${esc(t("mn.publish"))}</span></div>
     <p class="muted small">${esc(t("mn.publishHint"))}</p>`
         : ""
     }
-    ${st.published ? `<p class="mn-allowed muted small"><span>${esc(t("mn.allowed"))}</span> <button type="button" class="ghost" data-mn="withdraw">${esc(t("mn.withdraw"))}</button></p>` : ""}
+    ${withdrawRow}
     <div class="pn-notice-actions">
       <button type="button" class="secondary" data-mn="x">${esc(t("pn.later"))}</button>
       <button type="submit" class="primary">${esc(t("mn.send"))}</button>
@@ -114,6 +154,7 @@ export function openOpinion() {
   const err = $(".mn-err", dlg);
   const setStars = (n, focus = false) => {
     form.stars = n;
+    dlg.dataset.dirty = "1";
     err.hidden = true;
     group.querySelectorAll("[data-star]").forEach((b) => {
       const v = Number(b.dataset.star);
@@ -136,18 +177,10 @@ export function openOpinion() {
   });
   $("#mn-publish", dlg)?.addEventListener("click", (e) => {
     form.publish = !form.publish;
+    dlg.dataset.dirty = "1";
     e.currentTarget.setAttribute("aria-checked", String(form.publish));
   });
-  dlg.querySelectorAll('[data-mn="x"]').forEach((b) => b.addEventListener("click", () => dlg.close()));
-  $('[data-mn="withdraw"]', dlg)?.addEventListener("click", async (e) => {
-    try {
-      st = await D.api(`/api/students/${s.id}/pilot/mnenje/objava`, { method: "POST", body: { publish: false } });
-      e.target.closest(".mn-allowed").textContent = t("mn.withdrawn");
-      paintRow();
-    } catch (ex) {
-      D.toast(ex?.message || t("off.noConnection"));
-    }
-  });
+  wireCommon();
   const formEl = $("form", dlg);
   formEl.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -163,8 +196,8 @@ export function openOpinion() {
         method: "POST",
         body: {
           stars: form.stars,
-          liked: $("#mn-liked", dlg).value,
-          bothers: $("#mn-bothers", dlg).value,
+          liked: $("#mn-liked", dlg)?.value || "",
+          bothers: $("#mn-bothers", dlg)?.value || "",
           publish: form.publish === true,
           // Besedilo, ki ga je učenec videl ob stikalu (strežnik ga shrani kot dokaz dovoljenja).
           consent_text: form.publish ? t("mn.publish") : "",
@@ -193,15 +226,24 @@ export async function renderOpinionsAdmin(box, { api }) {
     box.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
     return;
   }
-  if (!r.n) {
+  const ended = r.ended || [];
+  if (!r.n && !ended.length) {
     box.innerHTML = `<p class="muted">${esc(t("pilot.mn.none"))}</p>`;
     return;
   }
+  // Opozorila o dovoljenju vidi samo skrbnik (j), zato so v slovenščini (kot skrbniški kartici v garancija-ui.js).
   const row = (label, text) => (text ? `<p><small class="muted">${esc(label)}</small><br>${esc(text)}</p>` : "");
-  box.innerHTML = `<ul class="mn-admin">${r.opinions
+  const consent = (o) =>
+    o.consent === "withdrawn"
+      ? `<p class="mn-warn">${icon("info")}<span>Dovoljenje preklicano ${esc(o.withdrawn_day)}: umakni objavo.</span></p>`
+      : "";
+  const endedHtml = ended.length
+    ? `<ul class="mn-admin">${ended.map((e) => `<li><p class="mn-warn">${icon("info")}<span>Oznaka <b>${esc(e.label)}</b>: dovoljenje prenehalo (izbris, ${esc(e.day)}). Umakni objavo.</span></p></li>`).join("")}</ul>`
+    : "";
+  box.innerHTML = `${endedHtml}<ul class="mn-admin">${r.opinions
     .map(
-      (o) => `<li><b>${"★".repeat(o.stars)}${"☆".repeat(5 - o.stars)}</b> <small class="muted">${esc([`${o.stars}/5`, o.grade, o.month, t(o.publish ? "pilot.mn.pub" : "pilot.mn.team")].filter(Boolean).join(" · "))}</small>
-        ${row(t("mn.liked"), o.liked)}${row(t("mn.bothers"), o.bothers)}</li>`,
+      (o) => `<li><b>${"★".repeat(o.stars)}${"☆".repeat(5 - o.stars)}</b> <small class="muted">${esc([o.label, `${o.stars}/5`, o.grade, o.month, t(o.publish ? "pilot.mn.pub" : "pilot.mn.team")].filter(Boolean).join(" · "))}</small>
+        ${consent(o)}${row(t("mn.liked"), o.liked)}${row(t("mn.bothers"), o.bothers)}</li>`,
     )
     .join("")}</ul>`;
 }

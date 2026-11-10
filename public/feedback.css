@@ -172,7 +172,9 @@
 /* Mnenje člana pilota (public/mnenje.js) */
 .mn-okno .is-box { max-height: 100dvh; overflow-y: auto; }
 .mn-okno label { display: block; margin: 12px 0 4px; font-weight: 600; }
-.mn-okno textarea { width: 100%; min-height: 60px; resize: vertical; }
+.mn-okno textarea { width: 100%; min-height: 64px; resize: vertical; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; }
+.mn-okno textarea::placeholder { color: var(--muted); }
+.mn-okno textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .mn-stars { display: flex; gap: 4px; margin-top: 12px; }
 .mn-stars > button { width: 48px; height: 48px; min-height: 48px; padding: 0; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); border-radius: 12px; }
 .mn-stars > button svg { width: 32px; height: 32px; }
@@ -187,3 +189,6 @@
 .mn-admin { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .mn-admin li { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; overflow-wrap: anywhere; }
 .mn-admin p { margin: 4px 0 0; }
+.mn-admin + .mn-admin { margin-top: 10px; }
+.mn-warn { display: flex; align-items: flex-start; gap: 8px; color: var(--danger); font-weight: 700; }
+.mn-warn svg { flex: none; width: 18px; height: 18px; margin-top: 2px; }

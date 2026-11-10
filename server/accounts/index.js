@@ -1702,7 +1702,7 @@ export function mountAccounts(app, store, opts = {}) {
         // Mnenja člana pilota (server/pilot-mnenja.js): ocena, besedili, razred ali letnik in dovoljenje za objavo.
         pilot_opinions: (() => {
           try {
-            return q("SELECT stars, liked, bothers, grade, publish, consent, lang, created_at FROM pilot_mnenja WHERE student_id = ?", c.id).map((r) => ({ ...r, liked: unseal(r.liked), bothers: unseal(r.bothers) }));
+            return q("SELECT label, stars, liked, bothers, grade, publish, consent, lang, created_at FROM pilot_mnenja WHERE student_id = ?", c.id).map((r) => ({ ...r, liked: unseal(r.liked), bothers: unseal(r.bothers) }));
           } catch {
             return [];
           }
