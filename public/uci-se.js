@@ -4,6 +4,7 @@
 // (showView("textbook"), ?pogled=lab, ukaz inštruktorju »odpri laboratorij«) izberejo pravi zavihek v app.js.
 // Atlas ali model iz 3D sveta se odpre čez cel zaslon: stran /3d v okvirju (isti izvor), Nazaj ali Esc ga zapreta.
 import { t } from "./i18n.js";
+import { ravenProfila } from "./3d/raven.js";
 import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
 
@@ -212,7 +213,8 @@ export function open3d(id, title = "", param = null) {
   const frame = document.createElement("iframe");
   frame.title = title || t("a3.hubTitle");
   frame.allow = "fullscreen";
-  frame.src = `/3d?vgrajeno=1#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
+  // raven delov iz profila (OŠ/SŠ/študij): okvir je ločen dokument brez profila (public/3d/raven.js)
+  frame.src = `/3d?vgrajeno=1&raven=${ravenProfila()}#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
   el.append(frame);
   document.body.append(el);
   document.body.classList.add("uci-3d-odprto");

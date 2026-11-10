@@ -169,9 +169,12 @@ test("selecting a part hides the parts around it (wall, membrane, envelope) and 
   const src = fs.readFileSync(path.join(D3, "pregledovalnik.js"), "utf8");
   assert.match(src, /obarvaj\(d\);\s*skrijObdajajoce\(d\);/);
   assert.match(src, /for \(const \[o, maska\] of skrite\) o\.layers\.mask = maska;/, "restore first");
-  assert.match(src, /SMERI\.every\(/, "all six rays from outside must hit the shell");
-  assert.match(src, /prostornina\(okvirDela\(p, bP\)\) < vS \* 1\.25/, "the shell is bigger than the selected part");
-  assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"\) return;/, "biology only");
+  // izračun ovojev je v ovoji.js (vedenje: test/3d-ovoji.test.js)
+  const ovoji = fs.readFileSync(path.join(D3, "ovoji.js"), "utf8");
+  assert.match(src, /najdiOvoje\(THREE, d, model\.deli, model\.group\)/);
+  assert.match(ovoji, /smeri\.every\(/, "all six rays from outside must hit the shell");
+  assert.match(ovoji, /velikost\(p\) < vS \* 1\.25/, "the shell is bigger than the selected part");
+  assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"/, "biology only");
   assert.match(src, /obarvaj\(null\);[^\n]*\n\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
   assert.match(src, /o\.layers\.set\(SKRITA_PLAST\)/);
 });

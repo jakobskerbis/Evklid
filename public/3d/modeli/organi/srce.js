@@ -6,7 +6,7 @@ export const info = {
   podrocje: "organi",
   predmet: "BIO",
   opis: "Štirje srčni prostori, zaklopke, aorta in venčne žile; prerez odpre srce in pokaže prekate in preddvora.",
-  merilo: { m: 0.13, oznaka: "13 cm" },
+  merilo: { m: 0.22, oznaka: "22 cm" }, // obseg modela z velikimi žilami (organ.js ga povozi z izmerjenim)
 };
 export const organ = "srce";
 export const zgradi = (THREE, ctx) => ctx.organ(organ);
