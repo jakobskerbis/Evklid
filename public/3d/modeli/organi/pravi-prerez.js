@@ -235,14 +235,16 @@ export async function zgradi(THREE, ctx) {
       // je »spredaj« zdrsnil pod gumbe, »zadaj« na navedbo)
       const mx = 1 - ((sp.userData.slike.pripeto.siroka * VISINA_NAPISA * 4) / 2 + 10) / (sirinaPlatna / 2);
       const myGor = 1 - (VISINA_NAPISA / 2 + 8 + ROB_ORODIJ) / (visinaPlatna / 2), myDol = 1 - (VISINA_NAPISA / 2 + 6 + ROB_NAVEDBE) / (visinaPlatna / 2);
-      const izven = (q) => Math.abs(q.x) > mx || q.y > myGor || q.y < -myDol;
+      // za koliko px CSS bi pripenjanje premaknilo napis (majhen premik je le poravnava ob robu, ne »pripeto«)
+      const odmik = (q) => Math.max(0, (Math.abs(q.x) - mx) * sirinaPlatna / 2, (q.y - myGor) * visinaPlatna / 2, (-myDol - q.y) * visinaPlatna / 2);
+      const MALO = 18;
       _v.copy(sp.userData.sidro).applyMatrix4(notranja.matrixWorld).project(kamera);
       // ob strani ni prostora (ozek telefon: »desno/levo« bi padla na nadlahti): drugo sidro v zgornjem kotu nad telesom
-      if (izven(_v) && sp.userData.sidro2) {
+      if (odmik(_v) > MALO && sp.userData.sidro2) {
         const v2 = sp.userData.sidro2.clone().applyMatrix4(notranja.matrixWorld).project(kamera);
-        if (!izven(v2)) _v.copy(v2);
+        if (odmik(v2) <= MALO) _v.copy(v2);
       }
-      const pripeto = izven(_v);
+      const pripeto = odmik(_v) > MALO;
       const sl = sp.userData.slike[pripeto ? "pripeto" : "prosto"];
       if (sp.material.map !== sl.tx) { sp.material.map = sl.tx; sp.material.needsUpdate = true; }
       _v.x = Math.max(-mx, Math.min(mx, _v.x));
@@ -751,10 +753,14 @@ export async function zgradi(THREE, ctx) {
     } };
   const nSpol = spoli.length > 1 ? { tip: "izbira", id: "telo", oznaka: t("a3.body", "Telo"), moznosti: spoli.map((s) => [s, s === "z" ? t("a3.rez.female", "Ženska") : t("a3.rez.male", "Moški")]), vrednost: stanje.spol, ponastaviPogled: true,
     ob: (v) => {
+      // isto telo (npr. začetna vrednost »telo« iz naslova, ki jo pregledovalnik nastavi po gradnji): brez ponovnega nalaganja
+      if (v === stanje.spol && T && !napakaNalaganja) return;
       nalozi(v).then((ok) => {
         if (ok) sinhroniziraj();
+        ctx.napredek?.(null); // plast »Nalagam« po menjavi telesa izgine (sicer bi ostala na 100 %)
         narisi();
       }, (err) => {
+        ctx.napredek?.(null);
         console.error("3D rezine", err);
         napakaNalaganja = t("a3.loadError", "Tega dela ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
         zadnjeTelo = v;
