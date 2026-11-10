@@ -25,10 +25,11 @@ $$\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}$$
 
 **2. Številska premica.** Na premici izberemo točko za $0$ in dolžino enega koraka, **enoto**. Pozitivna števila nanašamo desno od $0$, negativna levo. Korak med sosednjima številoma je povsod enak.
 
-```
- -6  -5  -4  -3  -2  -1   0   1   2   3
-  |---|---|---|---|---|---|---|---|---|
-```
+:::risba premica
+opis: Številska premica s celimi števili od −6 do 3. Črtice so enako narazen; negativna števila so levo od 0, pozitivna desno.
+od: -6
+do: 3
+:::
 
 Gradbeni načrt je ista premica, le postavljena pokonci: desno pomeni gor, levo pomeni dol. Od dveh števil je **večje tisto, ki leži bolj desno**. Zato je $-2 > -5$.
 
@@ -160,13 +161,32 @@ $6 + 9 = 15$, torej $15\,\text{m}$. Preveriš lahko s štetjem korakov po $1\,\t
 
 Prerez hiše, kot ga kaže gradbeni načrt (desno so višine v metrih):
 
-```
-  streha        ----  +9
-  1. nadstropje ----  +3
-  pritličje     ====   0
-  klet          ----  -3
-  garaža        ----  -6
-```
+:::risba skica
+opis: Prerez hiše z višinami v metrih. Tla garaže so na −6, tla kleti na −3, tla pritličja na 0 (ob njih je teren), tla prvega nadstropja na +3, vrh strehe na +9. Garaža in klet sta pod zemljo.
+območje: 0; -7 .. 17; 10
+pravokotnik: 0; -7 .. 11,5; 0 | siva
+pravokotnik: 1; -6 .. 9; 6 | ozadje
+lik: 0,4; 6 -> 5; 9 -> 9,6; 6 | oranžna
+črta: 1; 3 -> 9; 3
+črta: 1; -3 -> 9; -3
+črta: 0; 0 -> 11,5; 0 | debelo
+napis: 5; 6,9 | streha
+napis: 5; 4,5 | 1. nadstropje
+napis: 5; 1,5 | pritličje
+napis: 5; -1,5 | klet
+napis: 5; -4,5 | garaža
+črta: 13; -7 -> 13; 10 | puščica
+črta: 5; 9 -> 13,3; 9 | črtkano siva
+črta: 9; 3 -> 13,3; 3 | črtkano siva
+črta: 11,5; 0 -> 13,3; 0 | črtkano siva
+črta: 9; -3 -> 13,3; -3 | črtkano siva
+črta: 9; -6 -> 13,3; -6 | črtkano siva
+napis: 13,3; 9 | +9 m | desno
+napis: 13,3; 3 | +3 m | desno
+napis: 13,3; 0 | 0 m | desno | debelo
+napis: 13,3; -3 | −3 m | desno
+napis: 13,3; -6 | −6 m | desno
+:::
 
 - Višje pomeni večje število. Garaža je najnižje, zato je $-6$ najmanjše od teh števil.
 - Prvo nadstropje ($+3$) in klet ($-3$) sta zrcalni sliki čez črto pritličja: to sta nasprotni števili.

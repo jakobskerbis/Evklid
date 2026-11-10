@@ -206,13 +206,15 @@ Postopek za Lewisovo formulo na primeru metana $\mathrm{CH_4}$ (glavne sestavine
 5. Preverba ogljika: $4 \cdot 2 = 8$. Vsak vodik: $2$.
 6. Vseh zunanjih elektronov v molekuli je $4 + 4 \cdot 1 = 8$, to so ravno štirje vezni pari.
 
-```
+:::risba molekula
+opis: Strukturna formula metana: atom ogljika C v sredini, nanj so s po eno črtico (enojno vezjo) vezani štirje atomi vodika H, zgoraj, spodaj, levo in desno.
+---
       H
       |
   H – C – H
       |
       H
-```
+:::
 
 ## Preveri se
 
