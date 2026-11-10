@@ -24,7 +24,8 @@ const src = fs.readFileSync(path.join(import.meta.dirname, "..", "content", "les
 
 test("vprašanja so iz lekcije (premisli, pogoste napake, povzetek), nič izmišljenega", () => {
   const qs = lessonQuestions(OHM, lesson, "Upor in Ohmov zakon");
-  assert.ok(qs.some((q) => q.vrsta === "razlozi") && qs.some((q) => q.vrsta === "izracunaj"), "»Koliko je R = …?« oceni koda");
+  // »Koliko je $R = …$?« je gol izraz (pregled vzorca, pravilo 2): račun da Vadnica
+  assert.ok(qs.some((q) => q.vrsta === "razlozi") && !qs.some((q) => q.vrsta === "izracunaj"));
   assert.ok(qs.some((q) => q.vrsta === "napaka") && qs.some((q) => q.vrsta === "povzetek"));
   const flat = src.replace(/\*\*/g, "").replace(/\s+/g, " ");
   for (const q of qs.filter((x) => x.vrsta !== "izracunaj")) {
@@ -127,7 +128,8 @@ test("odločitev 2: slaba vprašanja so izločena, računska vprašanja iz lekci
       }
     }
   }
-  assert.ok(n > 3000 && calc > 40, `${n} vprašanj, ${calc} računskih`);
+  // po pregledu vzorca (pravila 1–3) ostane le malo računov iz lekcij; račune da predvsem Vadnica
+  assert.ok(n > 3000 && calc >= 2, `${n} vprašanj, ${calc} računskih`);
 });
 
 test("pregled A5: vzorčni odgovor ne gre k odjemalcu pred oddajo (razen pri samooceni)", () => {

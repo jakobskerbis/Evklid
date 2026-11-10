@@ -356,7 +356,7 @@ export const UNI_GENERATORS = [
       for (let i = 0; i < k; i++) C = (C * (n - i)) / (i + 1);
       const v = C * p ** k * (1 - p) ** (n - k);
       return {
-        text: `Izdelek je pokvarjen z verjetnostjo $${tx(p)}$, neodvisno od drugih. Kolikšna je verjetnost, da je med $${n}$ izdelki natanko $${k}$ pokvarjenih? Zaokroži ${decWord(4)}.`,
+        text: `Izdelek je pokvarjen z verjetnostjo $${tx(p)}$, neodvisno od drugih. Kolikšna je verjetnost, da je med $${n}$ izdelki natanko $${k}$ ${k === 1 ? "pokvarjen" : k === 2 ? "pokvarjena" : k <= 4 ? "pokvarjeni" : "pokvarjenih"}? Zaokroži ${decWord(4)}.`,
         answer: num(v, null, 4),
         hint: "Binomska porazdelitev: $P(X = k) = \\binom{n}{k}p^k(1 - p)^{n-k}$.",
         solution: `$\\binom{${n}}{${k}}\\cdot ${tx(p)}^{${k}}\\cdot ${tx(1 - p)}^{${n - k}} \\approx ${r2(v, 4)}$`,

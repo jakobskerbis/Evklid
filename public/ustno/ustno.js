@@ -82,7 +82,8 @@ function speak(text, onNoVoice) {
   const go = () => {
     const v = voiceFor(currentLang());
     if (!v) return onNoVoice?.();
-    const u = new SpeechSynthesisUtterance(text);
+    // brez ostankov markdowna (»**«, »_«, »$«), da jih glas ne bere
+    const u = new SpeechSynthesisUtterance(String(text).replace(/[*_`$]+/g, ""));
     u.voice = v;
     u.lang = v.lang;
     synth.speak(u);
