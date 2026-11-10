@@ -3696,7 +3696,7 @@
   "nujno.nevarnost.3": "If it smells of gas: do not turn lights on or off, do not light anything, and do not press any switches. Only call once you are outside.",
   "nujno.pogovor.naslov": "I hear you. You are not alone.",
   "nujno.pogovor.1": "Tell an adult you trust.",
-  "nujno.pogovor.uvod": "If you would like to talk to someone:",
+  "nujno.pogovor.uvod": "If you want to talk to someone:",
   "nujno.linija": "Call {ime} {stevilka} (free, {ure}).",
   "nujno.linijaBrezUr": "Call {ime} {stevilka} (free).",
   "nujno.linijaDrugic": "At other times: {stevilka} ({ime}, {ure}).",
