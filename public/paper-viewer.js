@@ -1,5 +1,5 @@
 // Prenesena pola v Evklidu: učenec polo prenese z ric.si (Izpitna pola) in jo izbere tukaj. PDF ostane v napravi:
-// izriše ga pdf.js (/vendor/pdfjs/, naložen šele ob odprtju), strežnik ga ne dobi in ne shrani (pole so last RIC).
+// izriše ga pdf.js 6 (/vendor/pdfjs/, naložen šele ob odprtju), strežnik ga ne dobi in ne shrani (pole so last RIC).
 // Naloge najde besedilna plast (public/paper-tasks.js); »Pomoč pri tej nalogi« izreže le to nalogo (JPEG, največ
 // 1600 px) in jo z besedilom pošlje inštruktorju. Strani brez zaznanih nalog: učenec povleče okvir (prst ali miška).
 import { t } from "./i18n.js";
@@ -59,6 +59,7 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   const status = (msg) => ($(".pv-status").textContent = msg);
   const scroller = $(".pv-scroll");
   let doc = null;
+  let loading = null; // pdf.js 6: PDFDocumentProxy nima več destroy(); sprosti ga loadingTask
   let observer = null;
   let pages = []; // { width, height, items, el, canvas, rendered, task }
   let sel = null; // ročni okvir { page, x0, y0, x1, y1 } v enotah PDF
@@ -71,7 +72,7 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     current = null;
     observer?.disconnect();
     for (const p of pages) p.task?.cancel?.();
-    doc?.destroy();
+    loading?.destroy();
     el.remove();
     document.documentElement.classList.remove("pv-open");
     back?.focus?.();
@@ -93,12 +94,14 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     if (String.fromCharCode(...data.slice(0, 5)) !== "%PDF-") throw new Error(t("pp.notPdf"));
     const pdf = await pdfjs();
     if (state.closed) return;
-    doc = await pdf.getDocument({ data, isEvalSupported: false, cMapUrl: `${LIB}cmaps/`, cMapPacked: true, standardFontDataUrl: `${LIB}standard_fonts/` }).promise;
+    // useWasm: false: CSP nima 'wasm-unsafe-eval' (JPX/JBIG2 gresta čez JS nadomestek v wasm/, brez opozorila v konzoli).
+    loading = pdf.getDocument({ data, isEvalSupported: false, cMapUrl: `${LIB}cmaps/`, cMapPacked: true, standardFontDataUrl: `${LIB}standard_fonts/`, useWasm: false, wasmUrl: `${LIB}wasm/`, iccUrl: `${LIB}iccs/` });
+    doc = await loading.promise;
     for (let n = 1; n <= doc.numPages; n++) {
       const page = await doc.getPage(n);
       const vp = page.getViewport({ scale: 1 });
       const tc = await page.getTextContent();
-      if (state.closed) return doc.destroy();
+      if (state.closed) return loading.destroy();
       pages.push({ page, width: vp.width, height: vp.height, items: tc.items });
     }
   } catch (err) {
