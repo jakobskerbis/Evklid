@@ -31,6 +31,7 @@ except ImportError:
 
 TU = os.path.dirname(os.path.abspath(__file__))
 T = 512      # ploščica
+RAZL = 2     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
 MALI = 4     # mm voksla malega volumna
 ROB = 6      # mm roba okoli telesa
 
@@ -226,31 +227,64 @@ def main(arg):
             nap(sili=True, korak="pregled", delez=round((zi + 1) / Z, 3), pregled=zi + 1, manjka=manjka)
             dnevnik(f"pregled {zi + 1}/{Z}")
 
+    if nap.d.get("razl") != RAZL:
+        for k_ in ("maska", "izhod1", "podrobno"):
+            nap.d.pop(k_, None)
+        nap(sili=True, razl=RAZL)
     # ---- 2 maska
     mpot = os.path.join(delo, "maska.npz")
     if os.path.exists(mpot) and nap.d.get("maska") == Z:
         g = np.load(mpot); telo = np.unpackbits(g["telo"]).reshape(-1)[:Z * H1 * W1].reshape(Z, H1, W1).astype(bool)
     else:
         nap(sili=True, korak="maska", delez=0)
-        telo = np.zeros((Z, H1, W1), bool); kand = np.zeros((Z, H1, W1), bool); topli = np.zeros((Z, H1, W1), bool)
+        telo = np.zeros((Z, H1, W1), bool); kand = np.zeros((Z, H1, W1), bool)
         rob = np.zeros((H1, W1), bool); rob[0] = rob[-1] = True; rob[:, 0] = rob[:, -1] = True
-        for zi in range(Z):
+
+        def razredi(zi):
             v = vol[zi]; r, g_, b = (v[..., c].astype(np.int16) for c in range(3))
-            nb = v[..., 3] > 127
+            return v[..., 3] > 127, (np.maximum(np.maximum(r, g_), b) < 40) & (r <= b + 6), (r > b + 20) & (r > 50)
+
+        def razlij_odprto(seme, dov):
+            """Razlitje po dovoljenem, skrčenem za 1 mm (mostički 1–2 mm do oznak ob telesu se pretrgajo), rob nazaj."""
+            o = skrci_min(dov, 1)
+            return razsiri(poplavi(seme & o, o), 1) & dov
+
+        for zi in range(Z):
+            nb, temno, toplo = razredi(zi)
             ozko = skrci_min(nb, 2)
             zun = razsiri(poplavi(rob & ozko, ozko), 3)
-            temno = (np.maximum(np.maximum(r, g_), b) < 40) & (r <= b + 6)
             kand[zi] = nb & ~zun & ~temno
-            toplo = (r > b + 20) & (r > 50)
-            topli[zi] = toplo
-            telo[zi] = poplavi(skrci_min(kand[zi] & toplo, 7), kand[zi])
-        for smer in (range(1, Z), range(Z - 2, -1, -1)):   # drobni deli (prsti, teme) prek sosednje rezine
+            telo[zi] = razlij_odprto(skrci_min(kand[zi] & toplo, 7), kand[zi])
+            nap(korak="maska", delez=round(zi / Z / 2, 3))
+        for smer in (range(1, Z), range(Z - 2, -1, -1)):   # drobni deli (prsti, teme) prek sosednje rezine; sive oznake ob telesu ne
             for zi in smer:
                 prej = telo[zi - 1] if smer.start == 1 else telo[zi + 1]
-                dod = razsiri(prej, 2) & kand[zi] & topli[zi] & ~telo[zi]  # sive oznake ob telesu ne
+                dod = razsiri(prej, 2) & kand[zi] & ~telo[zi]
                 if dod.any():
-                    telo[zi] |= poplavi(dod | telo[zi], kand[zi])
-        del kand, topli
+                    dod &= razredi(zi)[2]
+                    if dod.any():
+                        telo[zi] |= razlij_odprto(dod | telo[zi], kand[zi])
+        # rezine, kjer se je telo stikalo z zunanjostjo (led ob robu gela) in je maska izpadla: površina pade glede na
+        # sosede na obeh straneh → masko vzamemo iz najbližje dobre rezine (telo se med rezinama spremeni za največ ~3 mm)
+        pov = telo.reshape(Z, -1).sum(1).astype(np.int64); slabe = []
+        dobre = np.ones(Z, bool)
+        for smer in (range(1, Z), range(Z - 2, -1, -1)):   # nenaden padec (> 40 % v 1 mm) glede na zadnjo dobro rezino
+            zadnja = None
+            for zi in smer:
+                if not dobre[zi]:
+                    continue
+                if zadnja is not None and pov[zadnja] > 3000 and pov[zi] < 0.6 * pov[zadnja]:
+                    dobre[zi] = False; slabe.append(zi)
+                else:
+                    zadnja = zi
+        for zi in sorted(slabe, key=lambda z: min(abs(z - g) for g in np.where(dobre)[0])):
+            g = min(np.where(dobre)[0], key=lambda q: (abs(q - zi), q))
+            nb, temno, _ = razredi(zi)
+            telo[zi] = nb & ~temno & razsiri(telo[g], min(3 * abs(g - zi), 9))
+            dobre[zi] = True
+        if slabe:
+            dnevnik(f"maska: {len(slabe)} rezin popravljenih po sosednji ({slabe[:12]}…)")
+        del kand
         np.savez(mpot, telo=np.packbits(telo))
         nap(sili=True, maska=Z)
         dnevnik(f"maska: telo {telo.mean() * 100:.1f} % volumna")
@@ -353,18 +387,19 @@ def main(arg):
             for r in (0, 1):
                 os.makedirs(os.path.join(izhod, "p", d, str(r)), exist_ok=True)
 
-        def ploscice(sl, mapa, ime):
-            """sl (h, w, 4) → ploščice ravni 0 (512) in 1 (256, povprečje 2 × 2 s predmnoženo alfo)."""
+        def ploscice(sl, mapa, ime, vrsta=None):
+            """sl (h, w, 4) → ploščice <ime>_<vrstica>_<stolpec> ravni 0 (512) in 1 (256, povprečje 2 × 2 s predmnoženo alfo);
+            vrsta: pas rezin (sl je ena vrstica ploščic)."""
             h, w = sl.shape[:2]
             for ty in range(-(-h // T)):
                 for tx in range(-(-w // T)):
                     p = np.zeros((T, T, 4), np.uint8)
                     kos = sl[ty * T:(ty + 1) * T, tx * T:(tx + 1) * T]; p[:kos.shape[0], :kos.shape[1]] = kos
-                    pisi(p, os.path.join(izhod, "p", mapa, "0", f"{ime}_{ty}_{tx}.webp"), 84)
+                    pisi(p, os.path.join(izhod, "p", mapa, "0", f"{ime}_{ty if vrsta is None else vrsta}_{tx}.webp"), 84)
                     f = p.astype(np.float32).reshape(T // 2, 2, T // 2, 2, 4)
                     al = f[..., 3:]; sa = al.sum((1, 3))
                     q = np.concatenate([(f[..., :3] * al).sum((1, 3)) / np.maximum(sa, 1e-3), sa / 4], 2)
-                    pisi(np.clip(q + 0.5, 0, 255).astype(np.uint8), os.path.join(izhod, "p", mapa, "1", f"{ime}_{ty}_{tx}.webp"), 86)
+                    pisi(np.clip(q + 0.5, 0, 255).astype(np.uint8), os.path.join(izhod, "p", mapa, "1", f"{ime}_{ty if vrsta is None else vrsta}_{tx}.webp"), 86)
 
         pasov = -(-N // T) if vzdolzno else 0
         if vzdolzno:
@@ -394,9 +429,9 @@ def main(arg):
             if vzdolzno and (i % T == T - 1 or i == N - 1):
                 vrstic = i % T + 1; pas = i // T
                 for j in range(Hc):
-                    ploscice(np.asarray(kor[:vrstic, j]), "k", f"{j}_{pas}")
+                    ploscice(np.asarray(kor[:vrstic, j]), "k", str(j), pas)
                 for j in range(Wc):
-                    ploscice(np.asarray(sag[:vrstic, j]), "s", f"{j}_{pas}")
+                    ploscice(np.asarray(sag[:vrstic, j]), "s", str(j), pas)
                 nap(sili=True, podrobno=i + 1)
                 dnevnik(f"podrobno: pas {pas + 1}/{pasov}")
             if not vzdolzno and i % 20 == 19:
