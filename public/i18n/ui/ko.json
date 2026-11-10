@@ -12,6 +12,7 @@
   "nav.me": "나",
   "nav.main": "메인 메뉴",
   "nav.back": "뒤로",
+  "nav.exitAgain": "종료하려면 '뒤로'를 한 번 더 누르세요.",
   "xp.title": "경험치 (XP)",
   "xp.streakTitle": "연속 학습일",
   "xp.level": "레벨 {n}",

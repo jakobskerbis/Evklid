@@ -3,7 +3,7 @@
 // Navaden skript v <head> (kot theme.js): odločitev pade pred prvim izrisom, zato Učna pot iz index.html ne utripne,
 // preden app.js odpre zadnji zaslon. Zapis »evklid.zadnji-zaslon« = { v: pogled, t: čas (ms), s: id profila,
 // l: odprta lekcija Učbenika, p: odprta tema }; piše ga app.js (rememberScreen) ob vsaki menjavi in ob skritju strani.
-// html[data-zacetek] skrije Učno pot (style.css), dokler app.js ne pokaže prvega pogleda (showView ga odstrani).
+// html[data-zacetek] skrije Učno pot (style.css), dokler app.js ne pokaže prvega pogleda (startDone ga odstrani).
 (function () {
   var KEY = "evklid.zadnji-zaslon";
   var MAX = 12 * 60 * 60 * 1000;
@@ -25,7 +25,10 @@
   window.evklidZacetek = { KEY: KEY, MAX: MAX, izberi: izberi, beri: beri };
   try {
     // Bližnjica z ikone (/?pogled=chat …) odpre drug pogled: tudi takrat Učna pot ne utripne.
-    var v = new URLSearchParams(location.search).get("pogled") || izberi(beri(), Date.now());
+    // Zapis drugega profila (»studentId« je izbrani profil na tej napravi) ne velja: app.js odpre Učno pot.
+    var z = beri();
+    var moj = z && String(z.s) === localStorage.getItem("studentId");
+    var v = new URLSearchParams(location.search).get("pogled") || (moj ? izberi(z, Date.now()) : "path");
     if (v && v !== "path" && IME.test(v)) document.documentElement.setAttribute("data-zacetek", v);
   } catch (e) {}
 })();

@@ -12,6 +12,7 @@
   "nav.me": "Moi",
   "nav.main": "Menu principal",
   "nav.back": "Retour",
+  "nav.exitAgain": "Appuie encore sur Retour pour quitter.",
   "xp.title": "Points d'expérience (XP)",
   "xp.streakTitle": "Jours d'affilée",
   "xp.level": "Niveau {n}",

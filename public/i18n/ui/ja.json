@@ -12,6 +12,7 @@
   "nav.me": "マイページ",
   "nav.main": "メインメニュー",
   "nav.back": "戻る",
+  "nav.exitAgain": "もう一度「戻る」を押すと終了します。",
   "xp.title": "経験値（XP）",
   "xp.streakTitle": "連続日数",
   "xp.level": "レベル{n}",

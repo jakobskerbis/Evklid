@@ -19,7 +19,7 @@ import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profi
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
 import { openPrintable, stopReading } from "./gradiva.js";
 import { initSubjectSwitch } from "./subject-switch.js";
-import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower } from "./textbook.js";
+import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower, openLessonId } from "./textbook.js";
 import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createRenderer, streamSafe } from "./rich.js";
@@ -275,7 +275,50 @@ function showView(name) {
   refreshBubble();
   peekBar(false);
   window.scrollTo(0, 0);
+  if (!startHold) startDone();
+  rememberScreen();
 }
+// Zadnji zaslon (j 2026-11-10, public/zacetek.js): ob naslednjem odprtju aplikacije se odpre ta pogled (z odprto
+// lekcijo Učbenika ali temo), če od zadnjega obiska ni minilo več kot 12 ur. Zapis se osveži ob vsaki menjavi
+// pogleda in ko stran izgine z zaslona (čas zadnjega obiska, lekcija, odprta med branjem kazala).
+const ZACETEK = window.evklidZacetek || null;
+const START_REC = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
+let startHold = false; // tema se še nalaga: Učna pot ostane skrita, da ne utripne
+const startDone = () => document.documentElement.removeAttribute("data-zacetek");
+function rememberScreen() {
+  if (!ZACETEK || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
+  const rec = { v: currentView, t: Date.now(), s: state.student.id };
+  if (currentView === "uci" && uciTab() === "textbook" && openLessonId()) rec.l = openLessonId();
+  if (currentView === "topic" && state.topicFx && state.topic?.id) rec.p = state.topic.id;
+  localStorageSet(ZACETEK.KEY, JSON.stringify(rec));
+}
+// Zaslon za odprtje: zapis istega profila, mlajši od 12 ur, in pogled, ki ga ta profil ima; sicer null (Učna pot).
+function startScreen() {
+  const rec = START_REC;
+  const v = ZACETEK?.izberi(rec, Date.now());
+  if (!v || v === "path" || !state.student || Number(rec.s) !== state.student.id) return null;
+  if (v === "topic") return typeof rec.p === "string" && rec.p ? { v, p: rec.p } : null;
+  if (!document.querySelector(`.tab[data-view="${v}"]:not([hidden]), #view-me [data-go="${v}"]:not([hidden])`) || !document.getElementById(`view-${v}`)) return null;
+  return { v, l: v === "uci" && uciTab() === "textbook" && typeof rec.l === "string" ? rec.l : null };
+}
+async function openStartScreen(z) {
+  if (z.v === "topic") {
+    try {
+      await openTopic(z.p);
+    } catch {} // brez povezave ali tema ne obstaja več: ostane Učna pot
+    startHold = false;
+    return startDone();
+  }
+  if (z.l) openLesson(z.l);
+  else showView(z.v);
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") return rememberScreen();
+  // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
+  const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
+  if (installed && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
+});
+window.addEventListener("pagehide", rememberScreen);
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
   if (name === "me") renderMe();
@@ -380,16 +423,29 @@ $("#chat-back").addEventListener("click", () => showView(!["chat", "onboard", "a
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).
 document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => (isFloating(t.dataset.view) ? focusWindow(t.dataset.view) : showView(t.dataset.view))));
 
-// Tipka Nazaj (Android, aplikacija na začetnem zaslonu, brskalnik): brez tega bi tipka Nazaj
-// v nameščeni aplikaciji takoj zaprla Evklid. Zgodovina ima dve ravni: Učna pot (0) in
-// trenutni pogled (1). Nazaj najprej zapre odprto okno (kalkulator, navodila) ali lekcijo,
-// s podstrani »Jaz« (Nastavitve, Napredek …) vodi na »Jaz«, sicer na Učno pot.
+// Tipka Nazaj (Android, aplikacija na začetnem zaslonu, APK, brskalnik) gre po plasteh (j 2026-11-10):
+// okno ali tipkovnica → podstran (lekcija, poskus, igra) → seznam → … → Učna pot; na Učni poti sta za izhod
+// potrebna dva pritiska (ob prvem obvestilo). Zgodovina ima tri ravni in se ne nabira:
+//   0  vstop (zapis brskalnika, history.state brez »stm«); od tu Nazaj zapusti aplikacijo,
+//   1  Učna pot ({ stm: 2 }, »varovalo«): Nazaj z nje pride na raven 0, kjer pokažemo obvestilo,
+//   2  trenutni pogled ali okno na Učni poti ({ stm: 1, v }).
+// Vsak pritisk Nazaj je popstate; po njem zapis, s katerega smo prišli, postavimo nazaj (keep / ensureGuard).
+// APK (mobile/src/app/web.tsx) gre nazaj po isti zgodovini (goBack), zato tam ni treba ničesar spreminjati.
 let currentView = "path";
 let prevView = "path"; // za gumb Nazaj v glavi klepeta (telefon)
 let fromBack = false;
 let skipPop = 0;
 let overlayEntry = false; // zapis v zgodovini samo za okno, odprto na Učni poti
+let exitTimer = 0; // teče po prvem pritisku Nazaj na Učni poti: drugi pritisk v tem času zapre aplikacijo
+const EXIT_MS = 3500; // toliko je vidno tudi obvestilo (toast)
 const atTop = () => history.state?.stm !== 1;
+const atEntry = () => history.state?.stm == null; // raven 0
+// Varovalo pod Učno potjo: brez njega bi prvi pritisk Nazaj na Učni poti zaprl aplikacijo brez obvestila.
+function ensureGuard() {
+  clearTimeout(exitTimer);
+  exitTimer = 0;
+  if (atEntry()) history.pushState({ stm: 2 }, "");
+}
 function syncHistory(name) {
   if (fromBack) return;
   if (name === "path") {
@@ -399,9 +455,10 @@ function syncHistory(name) {
       skipPop++;
       overlayEntry = false;
       history.back();
-    }
+    } else if (!skipPop) ensureGuard();
     return;
   }
+  ensureGuard();
   const entry = { stm: 1, v: name };
   if (atTop()) history.pushState(entry, "");
   else history.replaceState(entry, "");
@@ -409,6 +466,7 @@ function syncHistory(name) {
 // Okno se je odprlo: na Učni poti dodamo zapis, da ga tipka Nazaj zapre namesto aplikacije.
 function overlayOpened() {
   if (currentView === "path" && atTop()) {
+    ensureGuard();
     history.pushState({ stm: 1, v: "path" }, "");
     overlayEntry = true;
   }
@@ -421,56 +479,121 @@ function overlayClosed() {
   }
   overlayEntry = false;
 }
-window.addEventListener("popstate", () => {
-  // Pred prijavo (pristajalna stran, prijava, registracija) Nazaj ureja account.js.
-  if (document.body.classList.contains("auth-mode")) return;
-  if (skipPop) {
-    skipPop--;
-    // Medtem odprt drug pogled (npr. takoj po zagonu) dobi svoj zapis, da Nazaj ne zapre aplikacije.
-    if (!skipPop && currentView !== "path" && atTop()) history.pushState({ stm: 1, v: currentView }, "");
-    return;
-  }
-  const wasOverlay = overlayEntry;
-  overlayEntry = false;
-  const keep = () => currentView !== "path" && history.pushState({ stm: 1, v: currentView }, "");
-  // Odprt meni (klobuk ali profil) Nazaj le zapre, pogled ostane.
-  // Okno pomena črke (formula-info.js) Nazaj le zapre.
-  if (closeFormulaPop() || closePaperViewer() || closeOurPaper() || closeQuickStart() || closeProfileMenu()) return keep();
+// Odprto okno <dialog> (kviz, video, namestitev …): kot Esc. Okno, ki zaprtje ureja samo (cancel), odloči samo.
+function closeTopDialog() {
+  const dlg = [...document.querySelectorAll("dialog[open]")].pop();
+  if (!dlg) return false;
+  if (dlg.dispatchEvent(new Event("cancel", { cancelable: true }))) dlg.close();
+  return true;
+}
+// Majhna okna, ki jih zapre Esc (meni porabe, izbira predmeta, spustni seznam, ogled predmeta zbirke …): Nazaj
+// pošlje Esc in pogleda, ali se je na strani kaj zaprlo. Polja za pisanje ga ne dobijo (tam Esc briše vnos).
+function closeByEsc() {
+  const sig = () => [document.querySelectorAll("[hidden]").length, document.querySelectorAll("body *").length, document.querySelectorAll(".open, [open], [aria-expanded='true']").length].join();
+  const before = sig();
+  const ev = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+  document.body.dispatchEvent(ev);
+  return ev.defaultPrevented || sig() !== before;
+}
+// En korak Nazaj: zapre najvišjo plast ali odpre pogled nad trenutnim. Vrne false, ko na Učni poti ni česa zapreti.
+function backStep(wasOverlay) {
+  // Okna in meniji: Nazaj jih le zapre, pogled ostane.
+  if (closeTopDialog()) return true;
+  // Okno pomena črke (formula-info.js), pola, meni pod klobukom ali profilom.
+  if (closeFormulaPop() || closePaperViewer() || closeOurPaper() || closeQuickStart() || closeProfileMenu()) return true;
   if (installSheetOpen()) {
     closeInstallSheet({ fromBack: true });
-    return keep();
+    return true;
+  }
+  if (document.querySelector(".razpri")) {
+    closeFull({ dismiss: true }); // okno s celim besedilom (public/razpri.js)
+    return true;
+  }
+  // Evklidova tipkovnica (public/tipkovnica.js) in plošča za risanje čez cel zaslon (public/pad.js).
+  if (keyboardOpenFor()) {
+    hideKeyboard({ blur: true });
+    return true;
+  }
+  if (padIsSheet()) {
+    closePad();
+    return true;
   }
   if (calcOverlayOpen()) {
     closeCalcOverlay({ fromBack: true });
-    return keep();
+    return true;
   }
-  if (cornerBack()) return keep();
+  if (cornerBack()) return true;
   // Poskus, ki ga je odprl inštruktor (okno nad pogovorom, public/odpri.js).
   if (simOverlayOpen()) {
     closeSimOverlay();
-    return keep();
+    return true;
   }
   // 3D čez cel zaslon (»Uči se« → 3D svet ali povezava iz lekcije) tudi, ko je »Uči se« v premičnem oknu nad drugim pogledom.
   if (isOpen3d()) {
     leaveUci();
-    return keep();
+    return true;
   }
-  if (wasOverlay && currentView === "path") return;
+  if (wasOverlay && currentView === "path") return true;
   if ($("#tour") && !$("#tour").hidden) {
     startTour.end?.(); // Nazaj zapre vodič (kot Esc ali »Preskoči«)
-    return keep();
+    return true;
   }
-  if (currentView === "uci" && uciBack({ textbookBack, labBack })) return keep();
-  if (currentView === "games" && gamesBack()) return keep();
-  if (currentView === "scan" && scanBack()) return keep();
+  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent) {
+    setSidebar(false); // seznam pogovorov na telefonu
+    return true;
+  }
+  // Podstran pogleda: lekcija → kazalo, poskus → seznam, igra → seznam iger …
+  if (currentView === "uci" && uciBack({ textbookBack, labBack })) return true;
+  if (currentView === "games" && gamesBack()) return true;
+  if (currentView === "scan" && scanBack()) return true;
+  if (closeByEsc()) return true;
+  if (currentView === "path") return false;
   const subMe = meView(currentView) && !["me", "graph"].includes(currentView);
-  if (subMe && $("#tabbar").offsetParent) return showView("me"); // telefon: nazaj na »Jaz«
+  // Telefon: s podstrani »Jaz« nazaj na »Jaz«. Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
+  const up = subMe && $("#tabbar").offsetParent ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  if (up !== "path") {
+    showView(up); // zapis v zgodovini doda showView (syncHistory)
+    return true;
+  }
   fromBack = true;
   try {
     showView("path");
   } finally {
     fromBack = false;
   }
+  return true;
+}
+window.addEventListener("popstate", () => {
+  // Pred prijavo (pristajalna stran, prijava, registracija) Nazaj ureja account.js.
+  if (document.body.classList.contains("auth-mode")) return;
+  if (skipPop) {
+    skipPop--;
+    if (skipPop) return;
+    ensureGuard();
+    // Medtem odprt drug pogled (npr. takoj po zagonu) dobi svoj zapis, da Nazaj ne zapre aplikacije.
+    if (currentView !== "path" && atTop()) history.pushState({ stm: 1, v: currentView }, "");
+    return;
+  }
+  // Naprej (brskalnik) na zapis pogleda: pogledov ne obnavljamo iz zgodovine, zato se vrnemo.
+  if (!atTop()) {
+    skipPop++;
+    history.back();
+    return;
+  }
+  const wasOverlay = overlayEntry;
+  overlayEntry = false;
+  const entry = atEntry(); // Nazaj z ravni Učne poti (sicer z ravni pogleda)
+  if (backStep(wasOverlay)) {
+    ensureGuard();
+    if (currentView !== "path" && atTop()) history.pushState({ stm: 1, v: currentView }, "");
+    return;
+  }
+  // Učna pot, nič odprtega. Z ravni pogleda (zastarel zapis) samo ostanemo; z ravni Učne poti je to prvi pritisk
+  // za izhod: zapis varovala vrnemo šele čez EXIT_MS, zato drugi pritisk do takrat zapusti aplikacijo.
+  if (!entry) return;
+  toast(t("nav.exitAgain"), "log-out");
+  clearTimeout(exitTimer);
+  exitTimer = setTimeout(ensureGuard, EXIT_MS);
 });
 
 const ME_VIEWS = ["me", "progress", "league", "settings", "account", "feedback", "graph", "games", "corner", "schedule", "zbirke", "scan", "pilot"];
@@ -4603,8 +4726,13 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     await loadStudents();
     if (first) initUsageMeter({ escapeHtml, showView, toast });
     else refreshUsageMeter();
+    // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
+    const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
+    startHold = z?.v === "topic";
     if (!o?.keepView) showView("path");
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
+    if (z) await openStartScreen(z);
+    startDone();
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
       box.value = START_ASK;
@@ -4616,6 +4744,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
   if (await initAccount({ onReady: start })) await start();
+  else startDone(); // prijava ali pristajalna stran
 })().catch(bootFailed);
 
 // Strežnik ni dosegljiv ob odprtju (računalnik ugasnjen, stara povezava): namesto prazne strani
@@ -4628,6 +4757,7 @@ const serverReach = () =>
     .catch(() => "down");
 async function bootFailed(err) {
   console.error(err);
+  startDone();
   if (document.getElementById("boot-down") || (await serverReach()) === "ok") return;
   const box = document.createElement("div");
   box.id = "boot-down";
