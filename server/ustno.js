@@ -365,7 +365,9 @@ function mockReply({ system, user, model, max_tokens }) {
     const ratio = words.length ? hit.length / words.length : 0;
     const status = ratio >= 0.5 ? "povedal" : ratio >= 0.25 ? "delno" : "manjka";
     const at = hit.length ? aw.findIndex((w) => stem(w) === stem(hit[0])) : -1;
-    return { kp, status, quote: status === "manjka" || at < 0 ? "" : aw.slice(at, at + 6).join(" ") };
+    // navedek iz izvirnih besed odgovora (z naglasi in ločili)
+    const orig = ans.split(/\s+/).filter((w) => norm(w));
+    return { kp, status, quote: status === "manjka" || at < 0 ? "" : orig.slice(at, at + 6).join(" ") };
   });
   const followups = /Followups allowed: yes/.test(user);
   const out = system === REVIEW_SYSTEM ? { points } : { points, followup: followups && points.some((p) => p.status !== "povedal") ? "Kaj bi še dodal k svojemu odgovoru?" : "", feedback: "Preizkusni način: ocena je samo približna (po ujemanju besed)." };

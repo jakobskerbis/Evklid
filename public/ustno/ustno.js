@@ -304,7 +304,8 @@ function question(follow = null) {
   );
   const area = d.querySelector("textarea");
   const result = d.querySelector('input[name="rezultat"]');
-  const sayIt = () => speak(q.govor && !follow ? q.govor : String(text).replace(/\$/g, ""), () => live(tt("u.niGlasu")));
+  const qEl = d.querySelector(".us-q");
+  const sayIt = () => speak(q.govor && !follow ? q.govor : String(text).replace(/\$/g, ""), () => qEl.isConnected && live(tt("u.niGlasu")));
   if (run.beri) sayIt();
   d.querySelector('[data-us="read"]').addEventListener("click", sayIt);
   const mic = d.querySelector('[data-us="mic"]');
@@ -520,7 +521,8 @@ function selfQuestion(q, note = "") {
       <div class="us-actions" role="group"><button type="button" class="secondary" data-v="znam">${esc(tt("u.znam"))}</button><button type="button" class="secondary" data-v="delno">${esc(tt("u.delno"))}</button><button type="button" class="secondary" data-v="neznam">${esc(tt("u.neZnam"))}</button></div></div>`,
     { focus: ".us-q" },
   );
-  const say = () => speak(q.govor, () => live(tt("u.niGlasu")));
+  const qEl = d.querySelector(".us-q");
+  const say = () => speak(q.govor, () => qEl.isConnected && live(tt("u.niGlasu")));
   if (run.beri) say();
   d.querySelector('[data-us="read"]').addEventListener("click", say);
   d.querySelector('[data-us="show"]').addEventListener("click", (e) => {

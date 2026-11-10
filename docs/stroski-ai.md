@@ -71,6 +71,18 @@ Zadnja meritev: 4. 11. 2026, 50 rešenih primerov iz lekcij, ocenjevalec Opus (m
 - **Brez ključa** (ali z `EVKLID_MOCK=1`) skripta konča brez klica in brez zapisa; `--dry` izpiše izbor in oceno stroška.
 - **Zagon na Renderju:** Render → evklid → **Shell**, vpiši `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` in počakaj do konca (med zagonom ne združuj ničesar v main, nova objava prekine Shell; po prekinitvi isti ukaz nadaljuje, če je `data/` na trajnem disku). Skripta teče ob aplikaciji kot drug proces (približno 200 do 250 MB pomnilnika: v preizkusnem načinu izmerjeno 203 MB za zagon skozi klepet in 158 MB za izbor primerov; s pravim API ni izmerjeno). Na strežniku ne piše v `docs/`: na koncu izpiše blok »POVZETEK ZA REPOZITORIJ«. Kopiraj ga in pošlji Claudu; ta ga shrani v datoteko in požene `node scripts/primerjava-modelov.js --iz-json <datoteka>`, ki preveri obliko in zapiše `docs/meritve/natancnost-<datum>.json` ter zgornjo tabelo (brez klicev).
 
+## Ustno spraševanje »Vprašaj me« (j, 2026-11-10)
+
+`server/ustno.js`, `server/ustno-api.js`. Ocena enega odgovora je ločen klic Haikuja (effort `medium`, `EVKLID_USTNO_EFFORT`,
+največ 4000 izhodnih žetonov) s kratkim navodilom in točkovnikom iz lekcije; prompt inštruktorja se ne spremeni. Sodbo »napačno«
+in ugovor »Ne strinjam se« (največ 2× na spraševanje) pregleda Sonnet. Vsak klic gre skozi trdo mejo AI (`usage.hold`, rezerva
+po `callMaxUsd`) in se zapiše pod učenca (vrsti `ustno`, `ustno-pregled`). Spraševanje šteje kot 3 dnevna vprašanja
+(brezplačni paket: 3 od 10). »Ne vem«, »Preskoči« in samoocena ne kličejo modela.
+
+Meritev z `EVKLID_MOCK` (5 simuliranih spraševanj po 5 vprašanj in 2 dodatni vprašanji, poraba ocenjena iz velikosti pozivov,
+razmislek Haikuja ocenjen na 1200 žetonov): **0,0050 $ na spraševanje** (7 klicev, ~5 500 vhodnih in ~9 000 izhodnih žetonov);
+en pregled s Sonnetom ~0,009 $. Pravi strošek izmerimo na pravih spraševanjih pred javno objavo.
+
 ## Števec porabe za skrbnika (2026-10-29)
 
 - V zgornji vrstici je števec porabe AI (€ danes) za vse profile. Vidi ga samo skrbnik: na računalniku, kjer teče Evklid, ali račun z e-naslovom v `EVKLID_ADMIN_EMAILS`. Na računalniku lahko v števcu z gumbom »Pokaži števec tudi na mojem telefonu« svoj račun označiš kot skrbniški.
