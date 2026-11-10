@@ -12,6 +12,14 @@ export const GUARANTEE = { enrollDays: 14, weeks: 8, minDays: 3, claimDays: 60 }
 export const GUARANTEE_SUBJECTS = ["MAT", "FIZ", "KEM", "BIO", "NAR"];
 const DAY = 86400000;
 
+// Oglas garancije na pristajalni strani (pas pri vrhu, public/pristajalna.js; j 2026-11-10). Privzeto IZKLOPLJEN:
+// pogoji (public/garancija.html) so osnutek do pregleda pravnika, vračila pa do s.p. delujejo samo v testnem načinu
+// Stripa. Pas se pokaže šele, ko velja vse troje: EVKLID_GARANCIJA_OGLAS=1, Stripe s pravim (ne testnim) ključem in
+// vklopljena prava vračila (EVKLID_GUARANTEE_LIVE=1). Tako stran nikoli ne obljubi vračila, ki ga ni mogoče izvesti.
+export function guaranteeAdvertised(stripe, env = process.env) {
+  return env.EVKLID_GARANCIJA_OGLAS === "1" && !!stripe?.enabled && !stripe.testMode && env.EVKLID_GUARANTEE_LIVE === "1";
+}
+
 const emailHash = (email) => createHash("sha256").update(String(email || "").trim().toLowerCase()).digest("hex");
 // Čas za SQLite (UTC, »YYYY-MM-DD HH:MM:SS«), da se ujema z xp_events.created_at.
 const sqlTime = (ms) => new Date(ms).toISOString().slice(0, 19).replace("T", " ");

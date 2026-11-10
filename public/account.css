@@ -161,6 +161,23 @@ details .card { margin-top: 8px; }
 .land-cta .land-actions a:focus-visible { outline-color: var(--accent); }
 .land-trial { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; font-weight: 600; }
 .land-trial svg { width: 18px; height: 18px; flex: none; }
+/* Pas pri vrhu: garancija (samo ko jo strežnik oglašuje) in tri dejstva; čez vso širino, na telefonu v stolpcu */
+.land-top { display: flex; flex-direction: column; gap: 10px; margin-bottom: calc(-1 * clamp(16px, 3.5vw, 44px)); }
+.land-gar { display: flex; align-items: center; gap: 14px; margin: 0; padding: 14px 18px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--accent); line-height: 1.45; }
+.land-gar-ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent); color: var(--accent-text); }
+.land-gar-ic svg { width: 24px; height: 24px; }
+.land-gar-text { min-width: 0; overflow-wrap: anywhere; }
+.land-gar b { display: block; font-size: 1.1rem; }
+.land-gar a { font-weight: 700; white-space: nowrap; display: inline-block; padding: 8px 0; margin: -8px 0; }
+.land-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px 16px; grid-template-columns: minmax(0, 1fr); font-weight: 700; }
+.land-facts li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.land-facts svg { flex: none; width: 18px; height: 18px; color: var(--accent); }
+@media (min-width: 700px) {
+  .land-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0 4px; }
+  .land-facts li { justify-content: center; text-align: center; }
+  .land-facts li:first-child { justify-content: flex-start; }
+  .land-facts li:last-child { justify-content: flex-end; }
+}
 /* Zgled pogovora: učenec desno, inštruktor levo (v RTL zrcaljeno) */
 .land-demo { margin: 0; padding: 16px; border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: 0 20px 50px rgb(0 0 0 / 0.25); min-width: 0; }
 .land-demo figcaption { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); }
