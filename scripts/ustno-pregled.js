@@ -17,7 +17,12 @@ const root = path.join(import.meta.dirname, "..");
 const file = path.join(root, "server", "ustno-pregled.json");
 const args = process.argv.slice(2);
 const opt = (k, d) => (args.includes(k) ? args[args.indexOf(k) + 1] : d);
-const data = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : { opis: "", vprasanja: {} };
+let data = { opis: "", vprasanja: {} };
+try {
+  data = JSON.parse(fs.readFileSync(file, "utf8"));
+} catch (e) {
+  if (e.code !== "ENOENT") throw e;
+}
 
 const all = [];
 const dir = path.join(root, "content", "lessons");
