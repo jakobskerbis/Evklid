@@ -28,9 +28,20 @@ const read = (key, fallback) => {
     return fallback;
   }
 };
+// Poln pomnilnik naprave: posnetek zadnjega zaslona (do ~0,5 MB, public/posnetek.js) je najmanj pomemben, zato ga
+// najprej pobrišemo in poskusimo znova (vrsta neposlanih odgovorov in paketi vaj imajo prednost; pregled #560 A5).
+const SHOT = "evklid.zadnji-posnetek";
 const write = (key, value) => {
+  let s;
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    s = JSON.stringify(value);
+    localStorage.setItem(key, s);
+    return true;
+  } catch {}
+  try {
+    if (s === undefined || localStorage.getItem(SHOT) == null) return false;
+    localStorage.removeItem(SHOT);
+    localStorage.setItem(key, s);
     return true;
   } catch {
     return false;
@@ -135,8 +146,8 @@ const CONFIG = "evklid.config";
 // Osebni podatki na napravi: paketi vaj, vrsta odgovorov, seznam profilov, lastnik naprave (offline.),
 // zgodovina skenerja (scan.), zapis postopka (work.), kalkulatorja (graph., sci.), ogledani cilji (goalSeen.),
 // opomniki urnika (schedule…), točke na lastnih polah (ours.), pozdrav ob novem letniku (levelup.),
-// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon, public/zacetek.js).
-const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$)/;
+// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js).
+const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$|zadnji-posnetek$)/;
 // Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
 // priporočilna koda iz povezave, izbrani profil.
 const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref"]);
@@ -191,6 +202,10 @@ export function deviceData(ids = []) {
 // Pobriše osebne podatke na napravi (PRIVATE_KEYS, PRIVATE_EXACT) in predpomnilnik API (service worker).
 // Ob odjavi, koncu seje, izbrisu računa in prijavi v drug račun.
 export async function clearPrivate() {
+  // Stran, ki se zapira (odjava, 401), posnetka in zadnjega zaslona ne zapiše znova (pagehide; pregled #560 A2).
+  try {
+    globalThis.evklidZacetek?.pozabi?.();
+  } catch {}
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
@@ -217,6 +232,8 @@ export function clearProfile(sid) {
     for (const k of keys) if (own.test(k)) localStorage.removeItem(k);
     const list = read(STUDENTS, null);
     if (Array.isArray(list)) write(STUDENTS, list.filter((s) => String(s.id) !== id));
+    // Zadnji zaslon in njegov posnetek (public/zacetek.js), če sta od tega profila.
+    for (const k of ["evklid.zadnji-zaslon", "evklid.zadnji-posnetek"]) if (String(read(k, null)?.s) === id) localStorage.removeItem(k);
   } catch {}
 }
 
