@@ -11,6 +11,11 @@ set "RZIP=rclone-%RV%-windows-amd64.zip"
 set "RSHA=812bf76cc02c04cf6327f3683f3d5a88e47d36c39db84c1a745777496be7d993"
 set "RC=%~dp0rclone\rclone-%RV%-windows-amd64\rclone.exe"
 if not exist "izhod\rezine" echo  V mapi izhod\rezine ni podatkov (obdelava se ni koncana). & pause & exit /b 1
+rem Med peko rezin (stanje.json »teče«) se datoteke še pišejo: naloži šele, ko je dnevnik »vse končano« (immutable predpomnilnik).
+powershell -NoProfile -Command "if (-not (Test-Path 'stanje.json')) { exit 0 }; $s = Get-Content -Raw -Encoding UTF8 'stanje.json' | ConvertFrom-Json; if ($s.stanje -eq ('te' + [char]0x10D + 'e') -and $s.organi -contains 'rezine') { exit 1 }"
+if errorlevel 1 echo  Peka rezin se se izvaja. Pocakaj, da dnevnik.txt izpise »vse koncano«, nato zazeni znova. & pause & exit /b 1
+rem Brez delnih teles: telo brez meta.json ali mali.webp se ne naloži
+for %%T in (m z) do if exist "izhod\rezine\%%T" if not exist "izhod\rezine\%%T\meta.json" echo  izhod\rezine\%%T ni koncan (ni meta.json). & pause & exit /b 1
 if exist "%RC%" goto imam
 if not exist rclone mkdir rclone
 echo  Prenasam rclone %RV% z downloads.rclone.org ...
@@ -32,6 +37,10 @@ set "RCLONE_CONFIG_R2_PROVIDER=Cloudflare"
 set "RCLONE_CONFIG_R2_ENDPOINT=https://%R2_RACUN%.eu.r2.cloudflarestorage.com"
 set "RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true"
 set "RAZL=v1"
+echo.
+echo  Seznam datotek z velikostmi: izhod\seznam-r2.txt (skupaj spodaj)
+"%RC%" lsl "izhod\rezine" --exclude "predogled.webp" --exclude "poravnava.webp" > "izhod\seznam-r2.txt"
+"%RC%" size "izhod\rezine" --exclude "predogled.webp" --exclude "poravnava.webp"
 echo.
 echo  Nalagam izhod\rezine v %R2_VEDRO%/%RAZL%/ (lahko traja vec ur; ob prekinitvi zazeni znova, nadaljuje) ...
 "%RC%" copy "izhod\rezine" "r2:%R2_VEDRO%/%RAZL%" --exclude "predogled.webp" --exclude "poravnava.webp" --transfers 16 --checkers 32 --s3-upload-concurrency 4 --header-upload "Cache-Control: public, max-age=31536000, immutable" --progress --stats 30s
