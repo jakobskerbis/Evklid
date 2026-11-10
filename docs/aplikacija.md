@@ -34,6 +34,15 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
 - Aplikacija se odpre na zadnjem zaslonu (tudi odprta tema ali lekcija Učbenika); na Učno pot samo, če je od
   zadnjega obiska minilo več kot 12 ur. Odločitev pade pred prvim izrisom (`public/zacetek.js` v `<head>`,
   zapis `evklid.zadnji-zaslon`), zato Učna pot ne utripne.
+- Hiter zagon (j 10. 11. 2026): ob odprtju se takoj pokaže posnetek zadnjega zaslona (`evklid.zadnji-posnetek`:
+  HTML pogleda istega profila, star največ 12 ur; `public/app.js` → `saveSnapshot` ob skritju strani), brez
+  posnetka okostje. Posnetek je samo slika (`main[data-posnetek]`, inert, za pravimi pogledi); pravi pogled se
+  pripravi neviden pod njim in ga zamenja v istem izrisu (`pinSnapshot`, `finishStart`). Klici zagona (nastavitve,
+  stanje računa, profili, pogovori) stečejo že v `<head>` (`evklidZacetek.vnaprej`). Zasebnost: ključ je med osebnimi
+  (odjava, izbris profila ga pobrišeta); ob zaklenjenem profilu ali končani seji posnetek izgine takoj, ko strežnik
+  to pove (do takrat, največ en odgovor strežnika, je lahko viden zadnji zaslon te naprave). Vstopna stran čaka
+  omrežje največ 0,4 s (`public/sw.js`), nato shranjena kopija iste različice. APK drži zagonski zaslon do sporočila
+  »izris« (`mobile/src/app/web.tsx`). Meri korak `tel-zagon` v `scripts/preveri-aplikacijo.cjs` (prag 1,5 s).
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).

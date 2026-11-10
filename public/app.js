@@ -150,14 +150,17 @@ const serverError = (err, status) => {
   return hint && hint !== err.hint ? `${own} ${hint}` : own;
 };
 
-// Klici v teku: konec zagona počaka, da se prvi pogled napolni, preden zamenja posnetek zadnjega zaslona (finishStart).
-let apiBusy = 0;
+// Klici v teku (zaporedna številka): konec zagona počaka, da se prvi pogled napolni, preden zamenja posnetek
+// zadnjega zaslona (finishStart).
+let apiSeq = 0;
+const apiOpen = new Set();
 const api = async (url, opts = {}) => {
-  apiBusy++;
+  const id = ++apiSeq;
+  apiOpen.add(id);
   try {
     return await apiCall(url, opts);
   } finally {
-    apiBusy--;
+    apiOpen.delete(id);
   }
 };
 const apiCall = async (url, opts = {}) => {
@@ -319,16 +322,26 @@ function pinSnapshot() {
   Object.assign(shot.style, { top: `${r.top + scrollY}px`, left: `${r.left + scrollX}px`, width: `${r.width}px`, height: `${r.height}px` });
   root.setAttribute("data-zacetek-pod", "");
 }
-// Zagon je končan: posnetek zamenjamo, ko je pravi pogled napolnjen (noben klic ni več v teku), najpozneje po 2,5 s.
-// Dotik zavihka med čakanjem ga zamenja takoj (showView → startDone).
-function finishStart() {
+// Zagon je končan: posnetek zamenjamo, ko je pravi pogled napolnjen: klici, ki jih je sprožil njegov prikaz, so
+// končani in pogled se 120 ms ni več spremenil; najpozneje po 2,5 s. mark: številka zadnjega klica pred prikazom
+// zadnjega zaslona (Učna pot se takrat še polni pod njim in je ne čakamo); null: Učna pot, čakamo vse klice.
+// Dotik zavihka med čakanjem posnetek zamenja takoj (showView → startDone).
+function finishStart(mark = null) {
   startHold = false;
   if (!startShot()) return startDone();
+  const last = apiSeq;
+  const mine = (id) => mark == null || (id > mark && id <= last);
+  const view = document.getElementById(`view-${currentView}`);
   const t0 = performance.now();
+  let changed = t0;
+  const mo = view && new MutationObserver(() => (changed = performance.now()));
+  mo?.observe(view, { childList: true, subtree: true, characterData: true });
   const check = () => {
-    if (!startShot()) return;
-    if (!apiBusy || performance.now() - t0 > 2500) return startDone();
-    setTimeout(check, 40);
+    if (!startShot()) return mo?.disconnect();
+    const now = performance.now();
+    if (now - t0 <= 2500 && ([...apiOpen].some(mine) || now - changed < 120)) return setTimeout(check, 40);
+    mo?.disconnect();
+    startDone();
   };
   setTimeout(check, 40);
 }
@@ -4919,9 +4932,11 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
     const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
     if (!o?.keepView) showView("path");
+    const mark = apiSeq; // klici do sem so od profila in Učne poti
+    const other = z || (first && START_VIEW && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
     if (z) await openStartScreen(z);
-    finishStart();
+    finishStart(other ? mark : null);
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
       box.value = START_ASK;

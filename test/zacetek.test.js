@@ -10,25 +10,69 @@ import SL from "../public/i18n/sl.js";
 const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 const H = 60 * 60 * 1000;
 
-// public/zacetek.js je navaden skript v <head>: zaženemo ga z lažnim oknom.
-function zacetek({ zapis, studentId = "7", search = "", raw } = {}) {
+// public/zacetek.js je navaden skript v <head>: zaženemo ga z lažnim oknom in majhno lažno stranjo (spodnja
+// vrstica, prvi pogled, pasici), da vidimo, kaj vstavi in katere klice začne.
+function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori = {}, brezVrstice = false } = {}) {
   const store = new Map();
   if (zapis) store.set("evklid.zadnji-zaslon", JSON.stringify(zapis));
   if (raw != null) store.set("evklid.zadnji-zaslon", raw);
+  if (posnetek) store.set("evklid.zadnji-posnetek", typeof posnetek === "string" ? posnetek : JSON.stringify(posnetek));
   if (studentId != null) store.set("studentId", studentId);
   const attrs = {};
   const timers = [];
   const window = {};
+  const vstavljeno = []; // { el, pred }
+  const klici = [];
+  const sporocila = [];
+  const el = (tag) => {
+    const e = { tag, attrs: {}, className: "", innerHTML: "", hidden: true, removed: false };
+    e.setAttribute = (k, v) => (e.attrs[k] = v);
+    e.removeAttribute = (k) => delete e.attrs[k];
+    e.querySelectorAll = () => [];
+    e.remove = () => (e.removed = true);
+    return e;
+  };
+  const tabs = ["path", "uci", "chat", "me"].map((v) => {
+    const t = el("button");
+    t.attrs["data-view"] = v;
+    t.active = v === "path";
+    t.getAttribute = (k) => t.attrs[k];
+    t.classList = { toggle: (_c, on) => (t.active = on) };
+    return t;
+  });
+  const parent = { insertBefore: (e, pred) => vstavljeno.push({ el: e, pred: pred.id || pred.tag }) };
+  const bar = Object.assign(el("nav"), { id: "tabbar", parentNode: parent, querySelectorAll: () => tabs });
+  const prvi = Object.assign(el("main"), { id: "view-auth", parentNode: parent });
+  const pasici = { "mock-banner": el("div"), "test-notice": el("div") };
+  const zadnji = () => vstavljeno.at(-1)?.el;
+  const document = {
+    documentElement: { setAttribute: (k, v) => (attrs[k] = v), removeAttribute: (k) => delete attrs[k], hasAttribute: (k) => k in attrs },
+    getElementById: (id) => (id === "tabbar" ? (brezVrstice ? null : bar) : pasici[id] || null),
+    createElement: el,
+    querySelector: (q) => (q === "body > main" ? prvi : /data-posnetek/.test(q) ? (zadnji() && !zadnji().removed && !(q.includes(":not(.zagon-okostje)") && /zagon-okostje/.test(zadnji().className)) ? zadnji() : null) : null),
+    querySelectorAll: (q) => (/data-posnetek/.test(q) && zadnji() ? [zadnji()] : []),
+    addEventListener: () => {},
+    readyState: "loading",
+  };
+  const fetch = (url) => {
+    klici.push(url);
+    const o = odgovori[url];
+    return Promise.resolve(o === undefined ? { ok: false } : { ok: true, json: () => Promise.resolve(o) });
+  };
+  window.ReactNativeWebView = { postMessage: (m) => sporocila.push(JSON.parse(m)) };
   const ctx = {
     window,
-    localStorage: { getItem: (k) => store.get(k) ?? null },
+    localStorage: { getItem: (k) => store.get(k) ?? null, removeItem: (k) => store.delete(k) },
     location: { search },
     URLSearchParams,
-    document: { documentElement: { setAttribute: (k, v) => (attrs[k] = v), removeAttribute: (k) => delete attrs[k] } },
+    document,
+    fetch,
+    Date,
+    requestAnimationFrame: (fn) => fn(),
     setTimeout: (fn, ms) => timers.push({ fn, ms }),
   };
   vm.runInNewContext(read("public/zacetek.js"), ctx);
-  return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers };
+  return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers, vstavljeno, zadnji, klici, sporocila, store, tabs, pasici };
 }
 
 test("zadnji zaslon velja do 12 ur; pozneje, ob pokvarjenem zapisu ali uri iz prihodnosti se odpre Učna pot", () => {
@@ -58,16 +102,17 @@ test("odločitev pade pred prvim izrisom: html[data-zacetek] skrije Učno pot, d
   const html = read("public/index.html");
   const head = html.slice(0, html.indexOf("</head>"));
   assert.ok(head.indexOf('<script src="zacetek.js"></script>') > 0 && head.indexOf('<script src="zacetek.js"></script>') < head.indexOf('rel="stylesheet"'));
-  assert.match(read("public/style.css"), /html\[data-zacetek\] #view-path \{ display: none; \}/);
+  assert.match(read("public/style.css"), /html\[data-zacetek\]:not\(\[data-zacetek-pod\]\) #view-path:not\(\[data-posnetek\]\) \{ display: none; \}/);
   const app = read("public/app.js");
-  assert.match(app, /const startDone = \(\) => document\.documentElement\.removeAttribute\("data-zacetek"\);/);
+  assert.match(app, /const startDone = \(\) => \{\n\s*if \(ZACETEK\?\.konec\) return ZACETEK\.konec\(\);/);
   assert.match(app, /let startRec = ZACETEK\?\.beri\(\) \?\? null;/, "zapis se prebere pred prvim showView");
   assert.match(app, /let startHold = true;/, "vmesni showView med zagonom Učne poti ne pokaže");
   assert.match(app, /startRec = null;\n\s*startHold = false;\n\s*startDone\(\);/, "po prijavi Učna pot, ne zaslon pred odjavo");
   // Zapis nosi profil; tema in lekcija se odpreta znova; ob skritju strani se čas zadnjega obiska osveži.
   assert.match(app, /Number\(rec\.s\) !== state\.student\.id\) return null;/);
-  assert.match(app, /if \(document\.visibilityState === "hidden"\) return rememberScreen\(\);/);
-  assert.match(app, /window\.addEventListener\("pagehide", rememberScreen\);/);
+  assert.match(app, /if \(document\.visibilityState === "hidden"\) return saveSnapshot\(\);/);
+  assert.match(app, /window\.addEventListener\("pagehide", saveSnapshot\);/);
+  assert.match(app, /function saveSnapshot\(\) \{\n\s*const rec = rememberScreen\(\);/, "zapis zadnjega zaslona se osveži tudi, ko posnetka ni");
 });
 
 test("varovalo in zasebnost: oznaka izgine po 8 s tudi brez app.js; zapis se ob odjavi ali izbrisu profila pobriše", () => {
@@ -84,6 +129,127 @@ test("varovalo in zasebnost: oznaka izgine po 8 s tudi brez app.js; zapis se ob 
   assert.equal(PRIVATE_KEYS.test("evklid.offline.students"), true);
   // Po več kot 12 urah v ozadju: tekmovanje z uro ali neposlano besedilo ostaneta na zaslonu.
   assert.match(read("public/app.js"), /const busy = state\.contestTimer \|\| unsentText\(\);\n\s*if \(installed && !busy && /);
+});
+
+// ---------- hiter zagon: posnetek zadnjega zaslona, okostje, klici vnaprej (j 2026-11-10) ----------
+
+const POS = (o = {}) => ({ v: "chat", s: 7, t: Date.now() - H, c: "view chat-view", tb: "chat", b: ["mock-banner", "tabbar"], h: "<p>zdravo</p>", ...o });
+const CHAT = { v: "chat", t: Date.now() - H, s: 7 };
+
+test("hiter zagon: posnetek zadnjega zaslona se pokaže takoj, za pravimi pogledi, kot slika (inert)", () => {
+  const z = zacetek({ zapis: CHAT, posnetek: POS() });
+  assert.equal(z.attr, "chat");
+  const { el, pred } = z.vstavljeno.at(-1);
+  assert.equal(pred, "tabbar", "za pravimi pogledi: $('#…') v app.js najde prave elemente");
+  assert.equal(el.id, "view-chat");
+  assert.equal(el.className, "view chat-view");
+  assert.equal(el.innerHTML, "<p>zdravo</p>");
+  assert.equal(el.inert, true);
+  assert.equal(el.attrs["aria-hidden"], "true");
+  assert.ok("data-posnetek" in el.attrs);
+  assert.deepEqual(z.tabs.filter((t) => t.active).map((t) => t.attrs["data-view"]), ["chat"], "označen zavihek spodnje vrstice kot ob odhodu");
+  assert.equal(z.pasici["mock-banner"].hidden, false, "pasica, ki je bila vidna, je vidna takoj (vsebina se ne premakne)");
+  assert.equal(z.pasici["test-notice"].hidden, true);
+  // Brskalnik lahko izriše napol razčlenjeno stran: posnetek je takrat že pred prvim pogledom.
+  assert.equal(zacetek({ zapis: CHAT, posnetek: POS(), brezVrstice: true }).vstavljeno.at(-1).pred, "view-auth");
+  // Konec zagona (app.js startDone) in varovalo po 8 s: oznaki in posnetek izginejo skupaj.
+  z.attrs["data-zacetek-pod"] = "";
+  z.timers.find((x) => x.ms === 8000).fn();
+  assert.deepEqual(Object.keys(z.attrs), []);
+  assert.equal(el.removed, true);
+  // Učna pot: s posnetkom se pokaže zadnja vsebina poti, brez njega kot prej statična stran.
+  const pot = zacetek({ zapis: { v: "path", t: Date.now() - H, s: 7 }, posnetek: POS({ v: "path", c: "view narrow", tb: "path" }) });
+  assert.equal(pot.attr, "path");
+  assert.equal(pot.zadnji().id, "view-path");
+});
+
+test("hiter zagon: brez veljavnega posnetka okostje (ne prazen zaslon); posnetek drugega profila, zaslona ali starejši od 12 ur ne velja", () => {
+  const okostje = (z, kaj) => {
+    assert.equal(z.attr, "chat", kaj);
+    assert.match(z.zadnji().className, /zagon-okostje/, kaj);
+    assert.equal(z.zadnji().id, undefined, kaj);
+    assert.doesNotMatch(z.zadnji().innerHTML, /zdravo/, kaj);
+  };
+  okostje(zacetek({ zapis: CHAT }), "brez posnetka");
+  okostje(zacetek({ zapis: CHAT, posnetek: POS({ s: 8 }) }), "drug profil");
+  okostje(zacetek({ zapis: CHAT, posnetek: POS({ v: "settings" }) }), "drug zaslon");
+  okostje(zacetek({ zapis: CHAT, posnetek: POS({ t: Date.now() - 13 * H }) }), "starejši od 12 ur");
+  okostje(zacetek({ zapis: CHAT, posnetek: POS({ t: Date.now() + H }) }), "ura iz prihodnosti");
+  okostje(zacetek({ zapis: CHAT, posnetek: POS({ c: 'view" onload="x' }) }), "razredi niso ime razreda");
+  okostje(zacetek({ zapis: CHAT, posnetek: POS({ h: "" }) }), "prazen");
+  okostje(zacetek({ zapis: CHAT, posnetek: "{pokvarjeno" }), "pokvarjen zapis");
+  okostje(zacetek({ zapis: CHAT, posnetek: POS(), search: "?pogled=chat" }), "bližnjica z ikone odpre svež zaslon");
+  // Lekcija ali tema: posnetek druge lekcije ne velja.
+  const uci = { v: "uci", t: Date.now() - H, s: 7, l: "lekcija-a" };
+  assert.match(zacetek({ zapis: uci, posnetek: POS({ v: "uci", l: "lekcija-b" }) }).zadnji().className, /zagon-okostje/);
+  assert.equal(zacetek({ zapis: uci, posnetek: POS({ v: "uci", l: "lekcija-a" }) }).zadnji().id, "view-uci");
+  // Po več kot 12 urah Učna pot kot prej: brez oznake, nič vstavljenega (posnetek klepeta ne velja za pot).
+  const star = zacetek({ zapis: { ...CHAT, t: Date.now() - 13 * H }, posnetek: POS() });
+  assert.equal(star.attr, undefined);
+  assert.equal(star.vstavljeno.length, 0);
+  // Brez izbranega profila (po odjavi je »studentId« pobrisan) posnetka ni.
+  assert.equal(zacetek({ zapis: CHAT, posnetek: POS(), studentId: null }).vstavljeno.length, 0);
+});
+
+test("hiter zagon, zasebnost: seja ne velja več ali profil je zaklenjen → posnetek izgine, še preden se app.js zažene", async () => {
+  const tick = () => new Promise((r) => setImmediate(r));
+  const odjavljen = zacetek({ zapis: CHAT, posnetek: POS(), odgovori: { "/api/account/status": { enabled: true, logged_in: false } } });
+  assert.equal(odjavljen.zadnji().innerHTML, "<p>zdravo</p>");
+  await tick();
+  assert.match(odjavljen.zadnji().className, /zagon-okostje/);
+  assert.doesNotMatch(odjavljen.zadnji().innerHTML, /zdravo/);
+  assert.equal(odjavljen.zadnji().attrs.id, undefined);
+  assert.equal(odjavljen.store.has("evklid.zadnji-posnetek"), false, "pobrisan tudi z naprave");
+  for (const list of [[{ id: 7, name: "A", locked: true }], [{ id: 8, name: "B" }], []]) {
+    const z = zacetek({ zapis: CHAT, posnetek: POS(), odgovori: { "/api/account/status": { enabled: true, logged_in: true }, "/api/students": list } });
+    await tick();
+    assert.match(z.zadnji().className, /zagon-okostje/, JSON.stringify(list));
+    assert.equal(z.store.has("evklid.zadnji-posnetek"), false);
+  }
+  const odprt = zacetek({ zapis: CHAT, posnetek: POS(), odgovori: { "/api/account/status": { enabled: true, logged_in: true }, "/api/students": [{ id: 7, name: "A", settings: {} }] } });
+  await tick();
+  assert.equal(odprt.zadnji().innerHTML, "<p>zdravo</p>");
+  // Brez povezave (klic ne uspe) posnetek ostane: aplikacija se odpre iz shranjenih podatkov.
+  const brez = zacetek({ zapis: CHAT, posnetek: POS() });
+  await tick();
+  assert.equal(brez.zadnji().innerHTML, "<p>zdravo</p>");
+  // Ključ je med osebnimi (odjava, konec seje, menjava računa ga pobrišejo); izbris profila in zaklep tudi.
+  const off = read("public/offline.js");
+  const PRIVATE_KEYS = new RegExp(off.match(/const PRIVATE_KEYS = \/(.+)\/;/)[1]);
+  assert.equal(PRIVATE_KEYS.test(odprt.api.POSNETEK), true);
+  assert.equal(PRIVATE_KEYS.test("evklid.zadnji-posnetek-x"), false);
+  assert.match(off, /for \(const k of \["evklid\.zadnji-zaslon", "evklid\.zadnji-posnetek"\]\) if \(String\(read\(k, null\)\?\.s\) === id\) localStorage\.removeItem\(k\);/);
+  const app = read("public/app.js");
+  assert.match(app, /if \(target\?\.locked \|\| \(target && accountsOn\(\) && target\.needs_password\)\) ZACETEK\?\.pozabi\?\.\(\);/);
+  // Pravi pogled se pripravi neviden pod posnetkom in ga zamenja v istem izrisu; najpozneje po 2,5 s.
+  assert.match(app, /if \(!v\.classList\.contains\("in-okno"\) && !v\.hasAttribute\("data-posnetek"\)\) v\.hidden = /, "posnetek ni pogled aplikacije");
+  assert.match(app, /if \(now - t0 <= 2500 && \(\[\.\.\.apiOpen\]\.some\(mine\) \|\| now - changed < 120\)\) return setTimeout\(check, 40\);/);
+  assert.match(read("public/style.css"), /html\[data-zacetek-pod\] body > main\.view:not\(\[data-posnetek\]\) \{ visibility: hidden; \}/);
+  // V posnetek ne gredo skriti deli, skripti, slike iz pomnilnika, napisano besedilo in gesla; ne med prijavo ali uvodom.
+  assert.match(app, /copy\.querySelectorAll\('script, iframe, video, audio, object, embed, \[hidden\], img\[src\^="blob:"\], dialog:not\(\[open\]\)'\)/);
+  assert.match(app, /rec\.v === "settings" && !\["password", "file", "hidden"\]\.includes\(a\.type\)/);
+  assert.match(app, /if \(!h\.trim\(\) \|\| h\.length > SHOT_MAX\) return drop\(\);/);
+});
+
+test("hiter zagon: klici zagona stečejo že v <head>, app.js jih prevzame enkrat; aplikacija izve za prvi izris", async () => {
+  const z = zacetek({ zapis: CHAT, odgovori: { "/api/config": { mock: true } } });
+  assert.deepEqual(z.klici, ["/api/account/status", "/api/config", "/api/students", "/api/students/7/conversations"]);
+  assert.deepEqual(await z.api.vnaprej("/api/config"), { mock: true });
+  assert.equal(z.api.vnaprej("/api/config"), null, "samo enkrat (naslednji klic gre na strežnik)");
+  assert.equal(await z.api.vnaprej("/api/students"), null, "neuspel odgovor ne velja: app.js pokliče sam");
+  assert.equal(z.api.vnaprej("/api/students/7/path"), null);
+  // Brez izbranega profila (prvi obisk, po odjavi) samo javna klica: brez 401 na pristajalni strani.
+  assert.deepEqual(zacetek({ studentId: null }).klici, ["/api/account/status", "/api/config"]);
+  assert.deepEqual(zacetek({ studentId: "7;x" }).klici, ["/api/account/status", "/api/config"]);
+  assert.deepEqual(z.sporocila, [{ t: "izris" }], "APK drži zagonski zaslon do tega sporočila");
+  assert.match(read("public/app.js"), /const early = await window\.evklidZacetek\?\.vnaprej\?\.\(url\);\n\s*if \(early != null\) return early;/);
+  assert.match(read("public/account.js"), /window\.evklidZacetek\?\.vnaprej\?\.\("\/api\/account\/status"\)/);
+  const web = read("mobile/src/app/web.tsx");
+  assert.match(web, /m\?\.t === "izris" && !waitTimer\.current && \(e\.nativeEvent\.url === ORIGIN \|\| e\.nativeEvent\.url\?\.startsWith\(ORIGIN \+ "\/"\)\)\) setLoading\(false\);/);
+  assert.match(web, /onLoadEnd=\{\(\) => !waitTimer\.current && setLoading\(false\)\}/, "rezerva brez sporočila");
+  // Vstopna stran čaka omrežje največ 0,4 s; knjižnice ne ustavijo razčlenjevanja strani.
+  assert.match(read("public/sw.js"), /const TIMEOUT = \{ entry: 400, /);
+  assert.equal((read("public/index.html").match(/<script defer src="vendor\//g) || []).length, 3);
 });
 
 // ---------- tipka Nazaj: del app.js z lažno zgodovino ----------
