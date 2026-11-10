@@ -156,7 +156,9 @@ export async function zgradi(THREE, ctx) {
   poudarek.raycast = () => {};
   poudarek.userData.k3Sij = true;
   const skupinaPloscic = new THREE.Group();
-  ploskev.renderOrder = 1; ostra.renderOrder = 2; skupinaPloscic.renderOrder = 3; poudarek.renderOrder = 5;
+  // vrstni red izrisa: mala → ostra → ploščice (3, 4) → poudarek (5). Skupina ploščic NIMA svojega renderOrder: three.js
+  // bi jo kot skupino izrisal za vsemi predmeti brez skupine in ploščice 0,33 mm bi prekrile poudarek (krog 6).
+  ploskev.renderOrder = 1; ostra.renderOrder = 2; poudarek.renderOrder = 5;
   notranja.add(ploskev, ostra, skupinaPloscic, poudarek);
   ploskev.onBeforeRender = (renderer, _s, kamera) => {
     zadnjaKamera = kamera;

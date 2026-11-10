@@ -429,6 +429,10 @@ test("rezine: lepljivi drsnik (samo v plošči strani, pas pod njim pokrit) in d
   assert.match(css, /\.k3-plosca > \.k3-lepljivo::after \{[^}]*height: calc\(var\(--k3-razmik\) - 2px\)[^}]*linear-gradient\(var\(--k3-bg\) 45%, transparent\)/, "pas pod drsnikom zbledi samo v razmiku");
   const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
   assert.match(mod, /lepljiv: true/);
+  // ploščice 0,33 mm ne smejo prekriti poudarka: skupina ploščic brez lastnega renderOrder (three.js jo sicer riše zadnjo)
+  assert.doesNotMatch(mod, /skupinaPloscic\.renderOrder\s*=/, "skupina ploščic brez renderOrder");
+  assert.match(mod, /poudarek\.renderOrder = 5/);
+  assert.match(mod, /m\.renderOrder = kl\.startsWith\("0\/"\) \? 4 : 3/);
   assert.match(mod, /gumba: \{ korak: 1/);
 });
 
