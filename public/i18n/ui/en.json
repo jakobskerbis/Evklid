@@ -12,6 +12,7 @@
   "nav.me": "Me",
   "nav.main": "Main menu",
   "nav.back": "Back",
+  "nav.exitAgain": "Press Back again to exit.",
   "xp.title": "Experience points (XP)",
   "xp.streakTitle": "Days in a row",
   "xp.level": "Level {n}",

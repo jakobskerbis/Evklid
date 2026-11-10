@@ -119,6 +119,7 @@ export function landingHtml({ name, prices = null, money = (x) => String(x) } = 
       ${trial}
     </section>
     <footer class="land-foot">
+      <a href="/o-evklidu">${esc(t("land.what"))}</a>
       <a href="/zasebnost.html">${esc(t("land.privacy"))}</a>
       <a href="/starsi.html">${esc(t("land.par.t"))}</a>
       <a href="/sole.html">${esc(t("land.sch.t"))}</a>
