@@ -1036,6 +1036,27 @@ async function lab(p, label) {
   await click(p, "#view-lab .lab-card [data-lab-open]", { wait: 300 });
   await expectVisible(p, opened, "odprt poskus");
   await screen(p, `poskus-${label}`);
+  // »Povečaj risbo« (ozek zaslon): tipka Nazaj zapre le povečavo, poskus ostane odprt; ozadje ni več neodzivno (inert).
+  const zoom = p.locator("#view-lab .lab-mount .lab-zoom");
+  if ((await zoom.count()) && (await zoom.isVisible())) {
+    await zoom.click();
+    await expectVisible(p, "#view-lab .demo-stage.lab-povecano", "povečana risba");
+    await screen(p, `poskus-povecan-${label}`);
+    await p.goBack();
+    await settle(p, 300);
+    if (await p.locator(".lab-povecano").count()) throw new Error("Nazaj ne zapre povečave risbe");
+    if (!(await p.locator(opened).first().isVisible())) throw new Error("Nazaj je s povečavo zaprl tudi poskus");
+    if (await p.locator("[inert]").count()) throw new Error("po zaprti povečavi je del strani ostal neodziven (inert)");
+    // poskus se zapre med odprto povečavo (drug pogled): inert mora izginiti
+    await zoom.click();
+    await expectVisible(p, "#view-lab .demo-stage.lab-povecano", "povečana risba");
+    await p.evaluate(() => document.querySelector("#view-lab .lab-mount").replaceChildren());
+    await p.waitForFunction(() => !document.querySelector("[inert]"), null, { timeout: 3000 }).catch(() => { throw new Error("odstranjen poskus med povečavo: stran je ostala neodzivna (inert)"); });
+    await p.goBack();
+    await settle(p, 300);
+    await click(p, "#view-lab .lab-card [data-lab-open]", { wait: 300 });
+    await expectVisible(p, opened, "odprt poskus");
+  }
   await p.goBack();
   await settle(p, 300);
   if ((await currentView(p)) !== "view-lab") throw new Error("Nazaj v poskusu ne vodi na seznam laboratorija");

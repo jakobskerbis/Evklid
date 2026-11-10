@@ -111,7 +111,7 @@ Zavihek **Učbenik** ima za vsako temo učne poti lekcijo: zakaj se tega učimo,
 
 - Lekcije so datoteke Markdown v `content/lessons/<pot>/<tema>.md` (oblika v `content/lessons/README.md`), da jih učitelj lahko pregleda in popravi. Branje ne stane nič; tutor dobi v kontekst samo povzetek lekcije.
 - Interaktivne simulacije so vse lastne (`public/sim/`, brez zunanjih strani): vsaka tema učnih načrtov in tekmovanj ima vsaj eno. Katera simulacija sodi h kateri temi, določa `public/sim/katalog.js`; skupna orodja (drsniki, osi, vlečenje, animacija) so v `public/sim/kit.js`.
-- **PDF**: celoten učbenik razreda je na `/ucbenik/<pot>` (npr. `/ucbenik/MAT-OS-8`), ena lekcija na `/ucbenik/<pot>/<tema>`. Strani so brezplačne in brez prijave; gumb »Shrani kot PDF« odpre tiskanje brskalnika.
+- **PDF**: celoten učbenik razreda je na `/ucbenik/<pot>` (npr. `/ucbenik/MAT-OS-8`), ena lekcija na `/ucbenik/<pot>/<tema>`. Strani so brezplačne in brez prijave; gumb »Shrani kot PDF« odpre tiskanje brskalnika. PDF razreda, poglavja in predmeta je izdelan vnaprej (`/ucbenik-pdf/<pot>`, [docs/objava.md](docs/objava.md) »PDF učbenika«); če ga strežnik še nima, pot sama preusmeri na tisk v brskalniku.
 - **Paketi**: ko so računi vklopljeni (`EVKLID_ACCOUNTS=1`), so poskusi, simulacije in sprotno preverjanje na voljo samo s plačljivim paketom ali med preizkusom. Brezplačni paket vidi besedilo lekcije in vprašanja z rešitvami.
 - Lekcije za preostale teme ustvari skripta (Batch API, osnutki za pregled):
 

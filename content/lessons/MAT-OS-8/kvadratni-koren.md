@@ -15,12 +15,13 @@ Sosednji rezervat meri $50\,\text{km}^2$. Tu štetje odpove: noben kvadrat iz ce
 
 **1. Kvadrat iz kvadratkov.** Iz $16$ enakih kvadratkov lahko zložiš kvadrat le na en način: $4$ vrste po $4$.
 
-```
-■ ■ ■ ■
-■ ■ ■ ■
-■ ■ ■ ■
-■ ■ ■ ■
-```
+:::risba mreža
+opis: Kvadrat iz 16 enakih kvadratkov: 4 vrste, v vsaki 4 kvadratki. Stranica kvadrata je dolga 4 kvadratke.
+vrstic: 4
+stolpcev: 4
+spodaj: 4 kvadratki
+desno: 4 vrste
+:::
 
 Stranica je dolga $4$ kvadratke, ker je $4 \cdot 4 = 16$. Iz ploščine smo dobili stranico. Pri tem nismo delili z $2$ ali s $4$. Iskali smo število, ki **pomnoženo samo s seboj** da ploščino.
 

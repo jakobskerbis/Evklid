@@ -7,13 +7,29 @@ import { getPath, getTopic, topicOrder } from "./curriculum.js";
 import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheet, formulaSheetSections } from "./textbook.js";
 import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { splitFormulaCells } from "../public/rich.js";
+import { BRAND } from "./brand.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 // Enako kot renderRich v brskalniku: formule umaknemo, izrišemo Markdown, vrnemo formule.
 // Vsebina prihaja iz datotek v repozitoriju, zato je ne čistimo dodatno.
-export function renderMd(text) {
+// output: "html" = samo vidni del formul (brez MathML, ki ga tisk ne potrebuje: PDF učbenika MAT-OS-8 v Chromu
+// 28 s → 6 s, enak izpis); privzeto htmlAndMathml (aplikacija, bralniki zaslona).
+// Absolutna vrednost negativnega števila: v »|-11|« TeX (in KaTeX) minus za navpičnico razume kot odštevanje in
+// izpiše »| − 11|«. Za tisk minus tik za ODPIRALNO navpičnico (soda po vrsti v formuli) zapišemo kot predznak
+// »|{-}11|«; »|a|-|b|« ostane odštevanje. Spremeni se samo razmik.
+export function absMinus(tex) {
+  let open = true;
+  return tex.replace(/\\[a-zA-Z]+|\\.|\|(\s*)-|\|/g, (m, sp) => {
+    if (m[0] === "\\") return m;
+    const wasOpen = open;
+    open = !open;
+    return m.length > 1 && wasOpen ? `|${sp}{-}` : m;
+  });
+}
+
+export function renderMd(text, output = "htmlAndMathml") {
   const math = [];
   const stash = (tex, display) => `@@MATH${math.push({ tex, display }) - 1}@@`;
   const src = expandFormulaBlocks(text, "print")
@@ -21,35 +37,49 @@ export function renderMd(text) {
     .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
   return marked
     .parse(splitFormulaCells(src, math), { breaks: true })
-    .replace(/@@MATH(\d+)@@/g, (_, i) => katex.renderToString(math[i].tex, { displayMode: math[i].display, throwOnError: false, strict: "ignore" }));
+    // Formula v svoji vrstici sredi odstavka: prelom vrstice pred in za njo bi dodal prazno vrstico.
+    .replace(/(?:<br\s*\/?>\s*)*@@MATH(\d+)@@(?:\s*<br\s*\/?>)*/g, (m, i) => (math[i].display ? `@@MATH${i}@@` : m))
+    .replace(/@@MATH(\d+)@@/g, (_, i) => katex.renderToString(output === "html" ? absMinus(math[i].tex) : math[i].tex, { displayMode: math[i].display, throwOnError: false, strict: "ignore", output }));
 }
 
 const demoFor = (topicId, lesson) => simsFor(topicId, lesson)[0] || null;
 
-function lessonHtml(t, lesson, n) {
+const md = (text) => renderMd(text, "html");
+
+// Opomba namesto simulacije, ki je v tisku ni. Neposredne povezave do lekcije aplikacija nima; povezava odpre Učbenik.
+const APP_LINK = `https://${BRAND.domain}/?pogled=textbook`;
+const simNote = (text) =>
+  `<aside class="demo-note">${text} <a href="${APP_LINK}">${esc(BRAND.domain)}</a> → Učbenik → ta lekcija.</aside>`;
+// Odstavek, ki bralca pošlje k simulaciji »spodaj« (v aplikaciji je pod besedilom): za njim jasna opomba.
+const SIM_REF = /(<p>(?:(?!<\/p>)[\s\S])*?simulacij[a-zčšž]* spodaj(?:(?!<\/p>)[\s\S])*?<\/p>)/gi;
+
+export function lessonHtml(t, lesson, n) {
   const demo = demoFor(t.id, lesson);
   const sections = lesson.sections
     .map((s) => {
-      const body = `<section>${s.title ? `<h3>${esc(s.title)}</h3>` : ""}${renderMd(s.md)}</section>`;
-      const note =
-        demo && /rešen/i.test(s.title)
-          ? `<aside class="demo-note">Interaktivni poskus »${esc(demo.title)}« je na voljo v aplikaciji Evklid.</aside>`
-          : "";
+      const html = md(s.md).replace(SIM_REF, (m) => `${m}\n${simNote("Simulacija je v aplikaciji Evklid:")}`);
+      const body = `<section>${s.title ? `<h3>${esc(s.title)}</h3>` : ""}${html}</section>`;
+      const note = demo && /rešen/i.test(s.title) ? simNote(`Interaktivni poskus »${esc(demo.title)}« je v aplikaciji Evklid:`) : "";
       return body + note;
     })
     .join("");
   const alts = lesson.alternatives.length
     ? `<section class="alts"><h3>Razloži drugače</h3>${lesson.alternatives
-        .map((a) => `<div class="alt"><h4>${esc(a.title)}</h4>${renderMd(a.md)}</div>`)
+        .map((a) => `<div class="alt"><h4>${esc(a.title)}</h4>${md(a.md).replace(SIM_REF, (m) => `${m}\n${simNote("Simulacija je v aplikaciji Evklid:")}`)}</div>`)
         .join("")}</section>`
     : "";
   const letters = "abcdefgh";
+  // Rešitve: pravilna možnost z razlago in pri napačnih možnostih, zakaj so napačne (vrstice »~« v lekciji).
+  const whyNot = (c) => {
+    const rows = c.options.map((_, i) => (i !== c.correct && c.optionWhy?.[i] ? `<li>${md(`*Zakaj ne ${letters[i]})?* ${c.optionWhy[i]}`)}</li>` : "")).join("");
+    return rows ? `<ul class="zakaj-ne">${rows}</ul>` : "";
+  };
   const checks = lesson.checks.length
     ? `<section class="checks"><h3>Preveri se</h3><ol>${lesson.checks
-        .map((c) => `<li>${renderMd(c.q)}<ol class="opts">${c.options.map((o) => `<li>${renderMd(o)}</li>`).join("")}</ol></li>`)
+        .map((c) => `<li>${md(c.q)}<ol class="opts">${c.options.map((o) => `<li>${md(o)}</li>`).join("")}</ol></li>`)
         .join("")}</ol>
         <details open class="key"><summary>Rešitve</summary><ol>${lesson.checks
-          .map((c) => `<li><b>${letters[c.correct]})</b> ${c.why ? renderMd(c.why) : ""}</li>`)
+          .map((c) => `<li><b>${letters[c.correct]})</b> ${c.why ? md(c.why) : ""}${whyNot(c)}</li>`)
           .join("")}</ol></details></section>`
     : "";
   return `<article class="lesson" id="${esc(t.id)}">
@@ -104,7 +134,7 @@ function printBookParts(bookKey) {
       for (const { t, lesson } of ready) yield lessonHtml(t, lesson, ++n);
     }
   }
-  return shellParts(`${book.subjectName} · ${book.schoolName} · učbenik`, cover, body());
+  return shellParts(`${book.subjectName} · ${book.schoolName} · učbenik`, cover, body(), have);
 }
 
 // List s formulami in konstantami predmeta (/ucbenik/MAT-OS/formule ali /ucbenik/MAT-OS-8/formule).
@@ -118,15 +148,25 @@ export function printFormulas(key) {
       <p class="brand small">Evkli<span>d</span></p>
       <h1>${esc(book.subjectName)}: formule in konstante</h1>
       <p class="muted">${esc(book.schoolName.charAt(0).toUpperCase() + book.schoolName.slice(1))} · izdaja ${esc(today())}</p>
-      ${renderMd(md)}
+      ${renderMd(md, "html")}
     </section>`;
   return shell(`${book.subjectName} · ${book.schoolName} · formule in konstante`, content);
 }
 
+// Teme enega poglavja (sklopa) poti; unit = naslov sklopa (točno kot v kazalu). Prazno: ni take poti ali poglavja.
+export function unitTopics(pathKey, unit) {
+  if (!getPath(pathKey) || typeof unit !== "string" || !unit) return [];
+  return topicOrder(pathKey).filter((t) => t.unit === unit && loadLesson(t.id));
+}
+
 // Podpis strani printPage(pathKey, topicSlug) za predpomnilnik (server/tisk-predpomnilnik.js): datum izdaje in
 // različica vsake lekcije, ki jo stran vsebuje (list formul: njegovo besedilo). null: stran ne obstaja.
-export function printSignature(pathKey, topicSlug = null) {
+export function printSignature(pathKey, topicSlug = null, unit = null) {
   const day = today();
+  if (unit != null) {
+    const topics = unitTopics(pathKey, unit);
+    return topics.length ? `${day}|u|${topics.map((t) => lessonVersion(loadLesson(t.id))).join(",")}` : null;
+  }
   if (topicSlug === "formule") {
     const p = getPath(pathKey);
     const sheet = formulaSheet(p ? `${p.subject}-${p.school}` : pathKey);
@@ -141,15 +181,24 @@ export function printSignature(pathKey, topicSlug = null) {
 }
 
 // pathKey: cela pot; topicSlug (neobvezno): samo ena lekcija.
-export function printPage(pathKey, topicSlug = null) {
-  const parts = printPageParts(pathKey, topicSlug);
+export function printPage(pathKey, topicSlug = null, unit = null) {
+  const parts = printPageParts(pathKey, topicSlug, unit);
   return parts && joinParts(parts);
 }
 
 // Isto kot printPage, a kot zaporedje kosov HTML (lupina, kazalo, nato lekcija za lekcijo) ali null.
 // Velik učbenik programa (P-UL-FKKT-KEM: 67 MB) kot en niz dvigne proces na ~700 MB, kar zruši strežnik
 // s 512 MB; pot /ucbenik zato pošilja kos za kosom in naenkrat drži v pomnilniku le eno lekcijo.
-export function printPageParts(pathKey, topicSlug = null) {
+export function printPageParts(pathKey, topicSlug = null, unit = null) {
+  if (unit != null && !topicSlug) {
+    // »PDF poglavja«: samo sklop, brez kazala (manjši in hitrejši izris v brskalniku).
+    const ready = unitTopics(pathKey, unit).map((t) => ({ t, lesson: loadLesson(t.id) }));
+    if (!ready.length) return null;
+    function* only() {
+      for (const [i, { t, lesson }] of ready.entries()) yield lessonHtml(t, lesson, i + 1);
+    }
+    return shellParts(`${unit} · ${getPath(pathKey).label}`, "", only(), ready.length);
+  }
   if (topicSlug === "formule") {
     const html = printFormulas(pathKey);
     return html && [html];
@@ -182,7 +231,7 @@ export function printPageParts(pathKey, topicSlug = null) {
     if (!ready.length) return yield `<p>Za to pot lekcije še nastajajo.</p>`;
     for (const [i, { t, lesson }] of ready.entries()) yield lessonHtml(t, lesson, topicSlug ? 0 : i + 1);
   }
-  return shellParts(title, toc, body());
+  return shellParts(title, toc, body(), ready.length);
 }
 
 // Groba ocena velikosti izrisa cele poti ali predmeta (bajti HTML) brez izrisa: Markdown lekcij × 27.
@@ -298,9 +347,9 @@ const joinParts = (parts) => {
 };
 
 // Lupina okoli kosov vsebine: začetek, kosi (iterator), konec.
-function* shellParts(title, head, body) {
+function* shellParts(title, head, body, total = 0) {
   const mark = "<\u0000>"; // esc() v naslovu spremeni »<« v &lt;, zato se oznaka pojavi samo v <main>
-  const page = shell(title, mark);
+  const page = shell(title, mark, "", total);
   const at = page.indexOf(mark);
   const [start, end] = [page.slice(0, at), page.slice(at + mark.length)];
   yield start + head;
@@ -308,19 +357,33 @@ function* shellParts(title, head, body) {
   yield end;
 }
 
+// Pregrada »Pripravljam učbenik …« (besedila slovensko; druge jezike vstavi public/ucbenik-priprava.js iz
+// public/i18n/ui/<jezik>.json, jezik je v ?l=). total = število lekcij na strani (za napredek).
+const PRIPRAVA = (total) => `
+<div class="priprava" id="priprava" role="status" aria-live="polite" data-skupaj="${total}">
+  <h1 class="p-naslov">Pripravljam učbenik …</h1>
+  <div class="p-trak" aria-hidden="true"><i></i></div>
+  <p class="p-stanje">0 od ${total} lekcij</p>
+  <p class="p-navodilo" hidden>Ta brskalnik ne zna shraniti PDF-ja. Odpri povezavo v Chromu ali Safariju.</p>
+  <div class="p-akcije" hidden><button type="button" class="p-kopiraj">Kopiraj povezavo</button><button type="button" class="p-drugo p-vseeno">Vseeno poskusi</button></div>
+  <div class="p-akcije p-varnost" hidden><button type="button" class="p-prikazi">Vseeno prikaži</button></div>
+</div>
+<script src="/ucbenik-priprava.js"></script>`;
+
 // Skupna lupina strani za tisk (tudi gradiva: povzetek na eni strani, delovni list); css: dodatna pravila.
-export function shell(title, content, css = "") {
+export function shell(title, content, css = "", total = 0) {
   return `<!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="/risbe.css">
 <style>
   :root { color-scheme: light; }
   body { font: 11.5pt/1.55 Georgia, "Times New Roman", serif; color: #1c2233; background: #fff; margin: 0; }
   main { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
   h1, h2, h3, h4, .brand, .bar, .crumb, .toc { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   .bar { position: sticky; top: 0; background: #2f6fed; color: #fff; padding: 10px 16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-  .bar button { font: inherit; font-weight: 700; border: 0; border-radius: 10px; padding: 8px 14px; background: #fff; color: #2353d1; cursor: pointer; }
+  .bar button { font: inherit; font-weight: 700; border: 0; border-radius: 10px; min-height: 44px; padding: 8px 16px; background: #fff; color: #2353d1; cursor: pointer; }
   .cover { page-break-after: always; break-after: page; }
   .brand { font-weight: 800; font-size: 1.4rem; margin: 0; } .brand span { color: #2353d1; }
   .cover h1 { font-size: 2.2rem; margin: 40px 0 6px; }
@@ -357,9 +420,28 @@ export function shell(title, content, css = "") {
   .checks .opts { list-style: lower-alpha; }
   .checks p { margin: 2px 0; }
   .key { margin-top: 10px; font-size: 0.92em; } .key summary { font-weight: 700; font-family: system-ui, sans-serif; }
+  /* Razmiki z notranjim robom (padding), ne z zunanjim: zunanji rob se na prelomu strani odreže in vrh prve vrstice
+     (strešica velike črke) se je izrisal na dnu prejšnje strani. */
+  .key li > p { display: inline; } .key li { margin: 0; padding: 3px 0; }
+  .zakaj-ne { list-style: none; margin: 0; padding: 1px 0 3px; color: #4a5468; } .zakaj-ne li { margin: 0; padding: 2px 0 0; }
+  .demo-note a { color: inherit; font-weight: 600; }
+  .checks .opts li { margin: 3px 0; } .checks .opts li:has(.mfrac) { margin: 8px 0; }
   .katex-display { overflow-x: auto; overflow-y: hidden; }
   section, .alt, li { break-inside: avoid-page; }
+  /* Med pripravo (prenos + izris) in v brskalnikih brez tiskanja: pregrada čez vso širino (public/ucbenik-priprava.js). */
+  .priprava { display: none; position: fixed; inset: 0; z-index: 10; background: #fff; flex-direction: column; justify-content: center; gap: 12px; padding: 24px 20px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .priprava.p-on { display: flex; }
+  .priprava[hidden] { display: none; }
+  html:has(.priprava.p-on:not([hidden])) { overflow: hidden; }
+  .priprava h1 { font-size: 1.4rem; margin: 0; } .priprava p { margin: 0; }
+  .priprava .p-trak { height: 12px; border-radius: 6px; background: #dde2ec; overflow: hidden; }
+  .priprava .p-trak i { display: block; height: 100%; width: 3%; background: #2353d1; transition: width .25s; }
+  .priprava .p-stanje { color: #667089; }
+  .priprava .p-akcije { display: flex; flex-wrap: wrap; gap: 10px; }
+  .priprava .p-akcije button { font: inherit; font-weight: 700; min-height: 44px; padding: 8px 18px; border-radius: 10px; border: 2px solid #2353d1; background: #2353d1; color: #fff; cursor: pointer; }
+  .priprava .p-akcije button.p-drugo { background: #fff; color: #2353d1; }
   @media print {
+    .priprava { display: none; }
     .bar { display: none; }
     main { max-width: none; padding: 0; }
     a { color: inherit; }
@@ -367,7 +449,7 @@ export function shell(title, content, css = "") {
   }
 ${css}
 </style></head>
-<body>
+<body>${total ? PRIPRAVA(total) : ""}
 <div class="bar"><span>${esc(title)}</span><button type="button">Shrani kot PDF</button></div>
 <main>${content}</main>
 <script src="/ucbenik-tisk.js"></script>
