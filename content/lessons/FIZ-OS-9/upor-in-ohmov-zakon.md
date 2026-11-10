@@ -166,11 +166,15 @@ Graf $I(U)$ je "prstni odtis" upornika: strmejša premica pomeni manjši upor.
 
 Trikotnik za Ohmov zakon:
 
-```
-    U
-  -----
-  R · I
-```
+:::risba skica
+opis: Trikotnik za Ohmov zakon. Vodoravna črta ga deli na dva dela: zgoraj je U, spodaj R · I.
+območje: 0; 0 .. 6; 4
+enota: 40
+lik: 0,5; 0,3 -> 5,5; 0,3 -> 3; 3,8 | modra
+črta: 1,5; 1,7 -> 4,5; 1,7 | modra
+napis: 3; 2,5 | U | sredina | debelo
+napis: 3; 1 | R · I | sredina | debelo
+:::
 
 1. Izpiši podatke z enotami.
 2. Pretvori v osnovne enote (A, V, Ω).

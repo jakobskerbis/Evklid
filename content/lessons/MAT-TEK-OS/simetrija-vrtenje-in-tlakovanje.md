@@ -160,20 +160,35 @@ Ostane $16$ črnih in $18$ belih polj. $17$ domin bi pokrilo $17$ črnih in $17$
 
 ## Drugače: Na sliki
 
-Kosa S in Z narišemo s kvadratki (■):
+Kosa S in Z narišemo s kvadratki:
 
-```
- S:  . ■ ■      Z:  ■ ■ .
-     ■ ■ .          . ■ ■
-```
+:::risba skica
+opis: Kosa S in Z iz štirih kvadratkov. Pri S sta zgoraj dva kvadratka zamaknjena v desno, spodaj dva v levo. Z je zrcalna slika S čez navpično ogledalo (črtkana črta) med njima.
+območje: 0; -0,2 .. 9; 2,4
+napis: 0,4; 1 | S | sredina | debelo
+pravokotnik: 2; 1 .. 3; 2
+pravokotnik: 3; 1 .. 4; 2
+pravokotnik: 1; 0 .. 2; 1
+pravokotnik: 2; 0 .. 3; 1
+črta: 4,75; -0,1 -> 4,75; 2,3 | siva črtkano
+napis: 5,1; 1 | Z | sredina | debelo
+pravokotnik: 5,5; 1 .. 6,5; 2 | oranžna
+pravokotnik: 6,5; 1 .. 7,5; 2 | oranžna
+pravokotnik: 6,5; 0 .. 7,5; 1 | oranžna
+pravokotnik: 7,5; 0 .. 8,5; 1 | oranžna
+:::
 
 Med njima si predstavljaj navpično ogledalo: Z je zrcalna slika S. Zasukaj S za $90^\circ$:
 
-```
-     ■ .
-     ■ ■
-     . ■
-```
+:::risba skica
+opis: Kos S, zasukan za 90°: navpično tri vrste. Zgoraj kvadratek levo, v sredini dva kvadratka, spodaj kvadratek desno.
+območje: -0,2; -0,2 .. 2,2; 3,2
+enota: 40
+pravokotnik: 0; 2 .. 1; 3
+pravokotnik: 0; 1 .. 1; 2
+pravokotnik: 1; 1 .. 2; 2
+pravokotnik: 1; 0 .. 2; 1
+:::
 
 Zgornji kvadratek je še vedno levo, spodnji desno. Tudi po zasuku za $180^\circ$ je spet S. Z vrtenjem se te »smeri stopnice« ne da zamenjati.
 

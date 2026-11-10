@@ -25,11 +25,13 @@ Pri kvadratu greš štirikrat po $a$, zato $o = 4 \cdot a$. Obseg je dolžina, z
 
 **Zakaj množimo.** Pravokotnik $4\,\text{cm} \times 3\,\text{cm}$ si predstavljaj na kvadratni mreži:
 
-```
-■ ■ ■ ■   ← 1. vrsta: 4 kvadratki
-■ ■ ■ ■   ← 2. vrsta: 4 kvadratki
-■ ■ ■ ■   ← 3. vrsta: 4 kvadratki
-```
+:::risba mreža
+opis: Pravokotnik 4 cm krat 3 cm na kvadratni mreži: 3 vrste po 4 kvadratke, skupaj 12 kvadratkov po 1 cm².
+vrstic: 3
+stolpcev: 4
+spodaj: 4 cm
+desno: 3 cm
+:::
 
 Vrste so $3$, v vsaki so $4$ kvadratki. Skupaj $3 \cdot 4 = 12$ kvadratkov, torej $12\,\text{cm}^2$. Na splošno je v pravokotniku $b$ vrst po $a$ kvadratkov:
 
@@ -168,13 +170,24 @@ $15 \cdot 3 = 45$ ploščic. Enako dobiš s ploščinami, ker vsaka ploščica p
 
 Nariši na karirast papir dva pekača, en kvadratek naj pomeni $1\,\text{cm}$ (pomanjšano):
 
-```
-pekač A: 6 × 2          pekač B: 4 × 4
-■ ■ ■ ■ ■ ■             ■ ■ ■ ■
-■ ■ ■ ■ ■ ■             ■ ■ ■ ■
-                        ■ ■ ■ ■
-                        ■ ■ ■ ■
-```
+:::risba mreža
+opis: Pekač A na karirastem papirju: pravokotnik 6 krat 2 kvadratka, skupaj 12 kvadratkov.
+vrstic: 2
+stolpcev: 6
+spodaj: 6 cm
+desno: 2 cm
+podnapis: pekač A: 6 × 2
+:::
+
+:::risba mreža
+opis: Pekač B na karirastem papirju: kvadrat 4 krat 4 kvadratke, skupaj 16 kvadratkov.
+vrstic: 4
+stolpcev: 4
+spodaj: 4 cm
+desno: 4 cm
+barva: oranžna
+podnapis: pekač B: 4 × 4
+:::
 
 S prstom obkroži rob vsakega. Pri A narediš $6 + 2 + 6 + 2 = 16$ korakov, pri B $4 + 4 + 4 + 4 = 16$ korakov. Robova sta enako dolga.
 

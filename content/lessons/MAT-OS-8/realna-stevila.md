@@ -48,12 +48,15 @@ Iracionalna števila so v $\mathbb{R}$, niso pa v $\mathbb{Q}$.
 
 **5. Številska premica.** Vsakemu realnemu številu ustreza natanko ena točka na številski premici in vsaki točki natanko eno realno število. Iracionalna števila zapolnijo vse »luknje« med ulomki. Lego najprej ocenimo s celima številoma: ker je $1^2 = 1 < 2 < 4 = 2^2$, je $1 < \sqrt{2} < 2$.
 
-```
-−3   −2   −1    0    1    2    3    4
- +----+----+----+----+----+----+----+
-     ▲             ▲   ▲        ▲
-     −√5           0,5 √2       π
-```
+:::risba premica
+opis: Številska premica od −3 do 4 s točkami −√5 (približno −2,24, malo levo od −2), 0,5, √2 (približno 1,41) in π (približno 3,14).
+od: -3
+do: 4
+točka: -2,2361 | −√5
+točka: 0,5 | 0,5
+točka: 1,4142 | √2
+točka: 3,1416 | π
+:::
 
 :::premisli
 Napovej: leži $-\sqrt{5}$ levo ali desno od $-2$?

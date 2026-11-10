@@ -60,10 +60,20 @@ Ne. Zdaj je pogoj $x + 2 < 9$. Pri $x = 7$ dobimo $9 < 9$, kar ne drži. Rešitv
 
 Na številski premici to vidiš takole. Za $x + 2 \le 9$ poln krožec (●) pomeni rešitev, prazen (○) pa število, ki ni rešitev:
 
-```
- 1  2  3  4  5  6  7  8  9
- ●  ●  ●  ●  ●  ●  ●  ○  ○
-```
+:::risba premica
+opis: Številska premica od 1 do 9 za neenačbo x + 2 ≤ 9. Števila od 1 do 7 imajo poln krožec (so rešitve), 8 in 9 prazen krožec (nista rešitvi).
+od: 1
+do: 9
+točka: 1
+točka: 2
+točka: 3
+točka: 4
+točka: 5
+točka: 6
+točka: 7
+točka: 8 | | prazna
+točka: 9 | | prazna
+:::
 
 V simulaciji spodaj »Neenačba na številski premici« nastavi $a = 1$, $b = 2$, znak $\le$ in $c = 9$. Premikaj »preizkusi x« od $6$ do $8$ in beri, kdaj se izpis zamenja iz »je rešitev« v »ni rešitev«. Premica pokaže tudi števila med celimi, mi beremo le naravna.
 

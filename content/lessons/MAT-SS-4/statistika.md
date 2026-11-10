@@ -49,11 +49,47 @@ Količini $\sigma^2$ rečemo **varianca**. Večji $\sigma$ pomeni bolj razpršen
 
 **Škatla z brki** te podatke nariše na številsko premico:
 
-```
- 20   30  40   60                        400
-  |---[====|====]-------- ... -----------|
- min  Q1  Me   Q3                        max
-```
+:::risba skica
+opis: Škatla z brki nad številsko premico. Levi brk se začne pri najmanjši vrednosti 20, škatla sega od prvega kvartila 30 do tretjega kvartila 60, mediana 40 je črta v škatli, desni brk sega do največje vrednosti 400. Premica je med 70 in 400 prekinjena.
+območje: 0; -0,9 .. 9; 2,4
+črta: 0,3; 0 -> 6,65; 0
+črta: 6,6; -0,2 -> 6,8; 0,2
+črta: 6,9; -0,2 -> 7,1; 0,2
+črta: 6,85; 0 -> 8,8; 0 | puščica
+črta: 0,5; -0,1 -> 0,5; 0,1
+črta: 1,5; -0,1 -> 1,5; 0,1
+črta: 2,5; -0,1 -> 2,5; 0,1
+črta: 3,5; -0,1 -> 3,5; 0,1
+črta: 4,5; -0,1 -> 4,5; 0,1
+črta: 5,5; -0,1 -> 5,5; 0,1
+črta: 6,5; -0,1 -> 6,5; 0,1
+črta: 8,3; -0,1 -> 8,3; 0,1
+napis: 1,5; -0,1 | 20 | pod
+napis: 2,5; -0,1 | 30 | pod
+napis: 3,5; -0,1 | 40 | pod
+napis: 5,5; -0,1 | 60 | pod
+napis: 8,3; -0,1 | 400 | pod
+črta: 1,5; 0 -> 1,5; 0,85 | siva črtkano
+črta: 2,5; 0 -> 2,5; 0,6 | siva črtkano
+črta: 3,5; 0 -> 3,5; 0,6 | siva črtkano
+črta: 5,5; 0 -> 5,5; 0,6 | siva črtkano
+črta: 8,3; 0 -> 8,3; 0,85 | siva črtkano
+pravokotnik: 2,5; 0,6 .. 5,5; 1,6
+črta: 3,5; 0,6 -> 3,5; 1,6 | debelo
+črta: 1,5; 1,1 -> 2,5; 1,1
+črta: 5,5; 1,1 -> 6,65; 1,1
+črta: 6,6; 0,9 -> 6,8; 1,3
+črta: 6,9; 0,9 -> 7,1; 1,3
+črta: 6,85; 1,1 -> 8,3; 1,1
+črta: 1,5; 0,85 -> 1,5; 1,35
+črta: 8,3; 0,85 -> 8,3; 1,35
+napis: 1,5; 1,35 | min | nad
+napis: 2,5; 1,6 | Q_1 | nad
+napis: 3,5; 1,6 | Me | nad
+napis: 5,5; 1,6 | Q_3 | nad
+napis: 8,3; 1,35 | max | nad
+podnapis: Premica je med 70 in 400 prekinjena.
+:::
 
 V škatli je srednja polovica podatkov. Njena širina $Q_3 - Q_1 = 30$ je **medkvartilni razmik**. Podatek, ki je od škatle oddaljen več kot $1{,}5$ te širine (tu nad $60 + 45 = 105$), označimo kot **osamelec**. Igralec s $400$ minutami je osamelec.
 
