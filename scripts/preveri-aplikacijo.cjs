@@ -170,6 +170,13 @@ async function newPage(browser, phone, label, base) {
 // V strani: id zadnje prikazane naloge (za pravilen/napačen odgovor iz baze) in pospešena ura iger
 // (window.__fastGames: vsak okvir izriše 10 korakov po 50 ms, core.js pa čas igre še pospeši 8×, da se igra konča tudi na počasnem stroju).
 function PAGE_HOOKS() {
+  try {
+    const patch = sessionStorage.getItem("__zadnjiZaslon");
+    if (patch) {
+      sessionStorage.removeItem("__zadnjiZaslon");
+      localStorage.setItem("evklid.zadnji-zaslon", JSON.stringify({ ...JSON.parse(localStorage.getItem("evklid.zadnji-zaslon")), ...JSON.parse(patch) }));
+    }
+  } catch {}
   // Odprtje na zadnjem zaslonu (public/zacetek.js): štejemo, kolikokrat je bila v prvih sekundah vidna Učna pot.
   window.__potVidna = 0;
   const potT0 = Date.now();
@@ -1535,10 +1542,8 @@ async function phone(browser, app) {
       await expectVisible(p, "#view-topic .topic-head", "tema po ponovnem odprtju", 8000);
       if (await p.evaluate(() => window.__potVidna)) throw new Error("Učna pot je utripnila pred temo");
     }
-    const old = (patch) => p.evaluate((patch) => {
-      const r = { ...JSON.parse(localStorage.getItem("evklid.zadnji-zaslon")), ...patch };
-      addEventListener("pagehide", () => localStorage.setItem("evklid.zadnji-zaslon", JSON.stringify(r))); // za zapisom aplikacije
-    }, patch);
+    // Popravek zapisa (starost, profil) se uporabi ob naslednjem nalaganju, pred skripti strani (PAGE_HOOKS).
+    const old = (patch) => p.evaluate((patch) => sessionStorage.setItem("__zadnjiZaslon", JSON.stringify(patch)), patch);
     await barTab(p, "chat", { wait: 300 });
     await old({ t: Date.now() - 12 * 3600 * 1000 - 60 * 1000 });
     await p.reload();
