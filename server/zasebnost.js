@@ -101,8 +101,22 @@ export function migrateEncryption(db, batch = 200) {
 
 
 // --- dnevno čiščenje ---
+// Hramba zapisa neujemajočega se plačila Stripa (dni).
+export const UNMATCHED_DAYS = 365;
 export function runRetention(db, { now = Date.now(), log = console } = {}) {
   const out = { images: 0, sessions: 0, unlocks: 0, emailLog: 0, pushLog: 0, audit: 0, unverified: 0 };
+  // Zapisi plačil, ki jih ni bilo mogoče pripisati računu (kv stripe_unmatched:*, accounts/ponoven-id.js): 365 dni
+  // po zapisu (polje at), dovolj za ročno vračilo; neberljiv zapis brez časa se izbriše.
+  if (hasTable(db, "kv")) {
+    const cut = new Date(now - UNMATCHED_DAYS * 86400000).toISOString();
+    for (const r of db.prepare("SELECT key, value FROM kv WHERE key LIKE 'stripe\\_unmatched:%' ESCAPE '\\'").all()) {
+      let at = null;
+      try {
+        at = JSON.parse(r.value)?.at;
+      } catch {}
+      if (typeof at !== "string" || !(at >= cut)) out.unmatched = (out.unmatched || 0) + db.prepare("DELETE FROM kv WHERE key = ?").run(r.key).changes;
+    }
+  }
   const n = RETENTION.imageDays();
   // Fotografije: sporočila s sliko, starejša od n dni (has_image = 2 pomeni, da je slika že odstranjena).
   if (hasTable(db, "messages")) {

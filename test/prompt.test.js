@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildSystemPrompt, systemBlocks, SPLIT_MARKER } from "../server/prompt.js";
+import { readFileSync } from "node:fs";
 import { normalizeSettings } from "../server/settings.js";
 
 test("static part of the prompt is identical for every student and goes first", () => {
@@ -109,4 +110,12 @@ test("disengaged student: own situation in the cached part, with choices, small 
     assert.match(row, re);
   }
   assert.ok(row.length < 1100, `točka naj ostane kratka (${row.length} znakov)`);
+});
+
+test("Meje: zdravstvena nuja, požar in plin → takoj 112, frustracija ni nujen primer (#479)", () => {
+  const stat = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const meje = stat.slice(stat.indexOf("## Meje"), stat.indexOf("## Varnostni ščit"));
+  const row = meje.split("\n").find((l) => l.startsWith("- Če učenec opisuje nujen primer"));
+  assert.ok(row, "alineja o nujnem primeru je v Mejah");
+  for (const re of [/takoj pokliče 112/, /požar ali vonj po plinu/, /ne prižiga luči in ne pritiska stikal/, /»Šolski sistem«/, /`flag=distress`/, /umrl bom od te matematike/, /brez pridige/, /ne svetuj zdravil/, /ravnaj, kot da je/]) assert.match(row, re);
 });
