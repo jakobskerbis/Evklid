@@ -467,15 +467,22 @@ async function main() {
       const t0 = Date.now();
       let res;
       try {
-        const made = await renderPdf(context, server.base, t, cfg);
-        const { dom, tocPages } = made;
-        const small = optimizePdf(made.buf);
-        const buf = small || made.buf;
-        const { errors, info } = await checkPdf(buf, dom, { domain: BRAND.domain, maxBytes: cfg.PDF_MAX_BYTES, tocPages, fontNames: cfg.PDF_FONT_NAMES, requiredFonts: cfg.PDF_FONT_REQUIRED, strict });
+        // Če prelom strani odreže košček vrstice (redko: vrh črke ali formule iz prve vrstice naslednje strani),
+        // poskusi znova z vsebino lekcij, zamaknjeno za nekaj pik, da prelomi padejo drugam.
+        let made, small, buf, errors, info, zamik = 0;
+        for (const px of [0, 3, 6, 9]) {
+          zamik = px;
+          made = await renderPdf(context, server.base, t, px ? { ...cfg, PDF_CSS: `${cfg.PDF_CSS}\n.lesson > .crumb { padding-top: ${px}px; }` } : cfg);
+          small = optimizePdf(made.buf);
+          buf = small || made.buf;
+          ({ errors, info } = await checkPdf(buf, made.dom, { domain: BRAND.domain, maxBytes: cfg.PDF_MAX_BYTES, tocPages: made.tocPages, fontNames: cfg.PDF_FONT_NAMES, requiredFonts: cfg.PDF_FONT_REQUIRED, strict }));
+          if (!errors.some((e) => e.includes("odrezan košček"))) break;
+        }
+        const { dom } = made;
         if (!small && strict) errors.push("qpdf ni nameščen ali ni uspel (stiskanje in linearizacija)");
         if (dom.lessons.length !== t.lessons) errors.push(`stran za tisk ima ${dom.lessons.length} lekcij, razred jih ima ${t.lessons}`);
         const file = `${t.base}.${hash}.pdf`;
-        res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages: info.pages, lessons: info.lessons, formulas: info.formulas, fonts: info.fonts, images: dom.images, redke: info.redke, ms: Date.now() - t0, errors };
+        res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages: info.pages, lessons: info.lessons, formulas: info.formulas, fonts: info.fonts, images: dom.images, redke: info.redke, zamik, ms: Date.now() - t0, errors };
         fs.writeFileSync(path.join(out, (errors.length ? "NAPAKA-" : "") + file), buf);
         if (!errors.length) files[t.id] = { file, hash, bytes: buf.length, sha256: crypto.createHash("sha256").update(buf).digest("hex"), pages: info.pages, lessons: info.lessons, title: dom.title };
       } catch (e) {
