@@ -25,11 +25,40 @@ export const CONDITIONS = [
 ];
 
 // ---------- zadnja meritev (docs/meritve/natancnost-<datum>.json) ----------
+export const MIN_PRIMERI = 40; // najmanjši vzorec meritve s preverjanjem za zapis in objavo
+// Oblika, ki jo stran sme pokazati; vrne razlog napake ali null.
+export function measurementError(m) {
+  if (!m || typeof m !== "object" || Array.isArray(m)) return "ni objekt";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(m.datum)) || Number.isNaN(Date.parse(m.datum))) return "datum";
+  if (!["model", "aplikacija"].includes(m.vrsta)) return "vrsta";
+  if (!Number.isInteger(m.primeri) || m.primeri <= 0) return "primeri";
+  if (!Array.isArray(m.vrstice) || !m.vrstice.length) return "vrstice";
+  for (const r of m.vrstice) {
+    if (!r || typeof r.ime !== "string" || !r.ime.trim() || !Number.isInteger(r.primeri) || r.primeri <= 0) return "vrstica";
+    const counted = r.napake !== undefined;
+    if (counted ? !(Number.isInteger(r.napake) && r.napake >= 0 && r.napake <= r.primeri) : !(Number.isFinite(r.napake_pct) && r.napake_pct >= 0 && r.napake_pct <= 100)) return `napake (${r.ime})`;
+  }
+  if (m.vrsta === "aplikacija") {
+    if (m.primeri < MIN_PRIMERI) return `manj kot ${MIN_PRIMERI} primerov`;
+    if (m.vrstice.length !== CONDITIONS.length || CONDITIONS.some((c, i) => m.vrstice[i].kljuc !== c.kljuc || m.vrstice[i].napake === undefined || m.vrstice[i].primeri !== m.primeri)) return "pogoja";
+    if (!["brez", "resnicna"].includes(m.meja_pregledov)) return "meja_pregledov";
+  }
+  return null;
+}
+// Pokvarjena ali napačno oblikovana zadnja datoteka → null (stran razdelek skrije, nikoli 500).
 export function latestMeasurement(dir = MERITVE_DIR) {
-  const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^natancnost-\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort() : [];
-  if (!files.length) return null;
-  const file = files.at(-1);
-  return { ...JSON.parse(fs.readFileSync(path.join(dir, file), "utf8")), datoteka: `docs/meritve/${file}` };
+  try {
+    const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^natancnost-\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort() : [];
+    if (!files.length) return null;
+    const file = files.at(-1);
+    const m = JSON.parse(fs.readFileSync(path.join(dir, file), "utf8"));
+    const err = measurementError(m);
+    if (err) throw new Error(`${file}: ${err}`);
+    return { ...m, datoteka: `docs/meritve/${file}` };
+  } catch (e) {
+    console.warn(`[evklid] meritev natančnosti ni berljiva: ${e?.message || e}`);
+    return null;
+  }
 }
 
 // Delež napak vrstice: iz števila napak, če je zapisano, sicer zapisani odstotek (stara meritev ima le odstotke).
@@ -94,6 +123,7 @@ export function summarize(rows, meta) {
       manjse_napake: r.filter((x) => x.ocena === "manjsa_napaka").length,
       pravilno: r.filter((x) => x.ocena === "pravilno").length,
       rezultat_podan: r.filter((x) => x.rezultat_podan === true).length,
+      rezultat_podan_pct: r.length ? Math.round((100 * r.filter((x) => x.rezultat_podan === true).length) / r.length) : 0,
       po_stopnjah: po,
       vrste_napak: count(err, "vrsta"),
       // Koda: končno število iz lekcije manjka v odgovoru, čeprav je ocenjevalec odgovor ocenil kot pravilen (ročni pregled).
@@ -104,10 +134,16 @@ export function summarize(rows, meta) {
       usd_na_odgovor: r.length ? Number((r.reduce((s, x) => s + (x.usd || 0), 0) / r.length).toFixed(5)) : 0,
     };
   });
+  // Pari: kaj se je pri istem primeru spremenilo med pogojema (napaka ↔ brez napake).
+  const err = (id, k) => byId[id].find((r) => r.pogoj === k && graded(r)).ocena === "napaka";
+  const pari = { bolje: 0, slabse: 0, napaka_v_obeh: 0, brez_napake_v_obeh: 0 };
+  for (const id of ids) pari[err(id, "brez") ? (err(id, "s") ? "napaka_v_obeh" : "bolje") : err(id, "s") ? "slabse" : "brez_napake_v_obeh"]++;
   return {
     shema: 1,
     datum: meta.datum,
     vrsta: "aplikacija",
+    meja_pregledov: meta.meja_pregledov === "resnicna" ? "resnicna" : "brez",
+    pari,
     primeri: ids.length,
     izpusceni: Object.keys(byId).length - ids.length,
     ocenjevalec: meta.ocenjevalec,
@@ -116,9 +152,12 @@ export function summarize(rows, meta) {
     strosek_usd: meta.strosek_usd,
     trajanje_min: meta.trajanje_min,
     opombe: [
-      "Isti primeri v obeh pogojih, isti zagon; vsak odgovor je nastal s svojim klicem modela, zato je del razlike lahko naključen.",
+      "Isti primeri v obeh pogojih; vsak odgovor je nastal s svojim klicem modela, zato je del razlike šum: isti model na isto nalogo ne odgovori vedno enako. Polje »pari« pove, pri koliko primerih se je ocena spremenila v vsako smer (bolje: napaka samo brez preverjanja; slabše: napaka samo s preverjanjem).",
+      "Napaka = ocena »napaka« (napačen rezultat, formula ali trditev). Manjše napake so štete posebej. Odgovor, ki učenca samo vodi z vprašanji in rezultata ne pove, šteje brez napake (delež odgovorov s podanim rezultatom: rezultat_podan_pct).",
       "Pot: POST /api/conversations/:id/messages (pravi klepet), nov učenec in pogovor s temo lekcije za vsak primer, model po stopnji kot pri plačljivem paketu.",
-      "Brez predpomnilnika odgovorov, brez nadgradenj po mesečnem proračunu in brez dnevne meje za pregled z zmogljivejšim modelom (v aplikaciji 0,30 $ na dan za vse učence skupaj).",
+      meta.meja_pregledov === "resnicna"
+        ? "Brez predpomnilnika odgovorov in brez nadgradenj po mesečnem proračunu; pregled z zmogljivejšim modelom z dnevno mejo aplikacije (0,30 $ na dan za vse učence skupaj), zato ga dobi le prvi del primerov."
+        : "Brez predpomnilnika odgovorov, brez nadgradenj po mesečnem proračunu in BREZ dnevne meje za pregled z zmogljivejšim modelom (v aplikaciji 0,30 $ na dan za vse učence skupaj; ko je porabljena, pregleda ni).",
       "Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek.",
       ...(meta.opombe || []),
     ],
@@ -145,6 +184,7 @@ export function tableMd(m) {
     const vrste = Object.entries(s?.vrste_napak || {}).map(([k, v]) => `${k} ${v}`).join(", ");
     lines.push(
       ``,
+      `Pari (isti primer v obeh pogojih): bolje ${m.pari?.bolje ?? "?"}, slabše ${m.pari?.slabse ?? "?"}, napaka v obeh ${m.pari?.napaka_v_obeh ?? "?"}, brez napake v obeh ${m.pari?.brez_napake_v_obeh ?? "?"}. Rezultat podan: ${m.vrstice.map((r) => `${r.ime} ${r.rezultat_podan_pct ?? "?"} %`).join(", ")}. Dnevna meja pregledov: ${m.meja_pregledov === "resnicna" ? "resnična (kot v aplikaciji)" : "izklopljena"}.`,
       `S preverjanjem: popravek v ${s?.popravki ?? 0} odgovorih, pregled z zmogljivejšim modelom v ${s?.pregledi ?? 0}; preostale napake po vrstah: ${vrste || "ni napak"}; koda našla neujemanje končnega števila pri ${s?.koda_neujemanje ?? 0} odgovorih brez ocene »napaka« (ročni pregled).`,
       `Strošek zagona: ${Number(m.strosek_usd?.skupaj || 0).toFixed(2).replace(".", ",")} $ (aplikacija ${Number(m.strosek_usd?.aplikacija || 0).toFixed(2).replace(".", ",")} $, ocenjevalec ${Number(m.strosek_usd?.ocenjevalec || 0).toFixed(2).replace(".", ",")} $), ${m.trajanje_min ?? "?"} min.`,
     );
@@ -162,6 +202,8 @@ export function updateDoc(text, m) {
 }
 
 export function writeMeasurement(m, { dir = MERITVE_DIR, doc = DOC } = {}) {
+  const bad = measurementError(m);
+  if (bad) throw new Error(`Meritev ni v pravi obliki (${bad}); nič ni zapisano.`);
   fs.mkdirSync(dir, { recursive: true });
   const file = path.join(dir, `natancnost-${m.datum}.json`);
   const { datoteka: _d, ...clean } = m;
@@ -170,67 +212,120 @@ export function writeMeasurement(m, { dir = MERITVE_DIR, doc = DOC } = {}) {
   return file;
 }
 
+// ---------- priprava odgovora za ocenjevalca ----------
+// Popravek aplikacije je na koncu odgovora kot citat »> **Popravek:** …« (server/live-check.js fixBlock). Ocenjevalec
+// ne sme iz oznake uganiti pogoja: oznako in znak citata odstranimo, besedilo popravka ostane kot zadnji odstavek.
+export function neutralize(answer) {
+  const s = String(answer || "");
+  const i = s.lastIndexOf("\n\n> **");
+  if (i < 0) return s;
+  const block = s.slice(i + 2);
+  if (!/^> \*\*[^*\n]{2,45}:\*\* /.test(block) || !block.split("\n").every((l) => l.startsWith(">"))) return s;
+  return `${s.slice(0, i)}\n\n${block.replace(/^> \*\*[^*\n]{2,45}:\*\* /, "").split("\n").map((l) => l.replace(/^> ?/, "")).join("\n")}`;
+}
+export const GRADER_FINAL_RULE = "Če odgovor svojo trditev ali rezultat pozneje sam popravi, šteje končno stanje odgovora po popravku.";
+
 // ---------- zagon skozi pravo pot klepeta ----------
-// Najdražji možni korak para (dva odgovora, pregled, popravek, dve oceni): pred vsakim primerom preverimo mejo.
-export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, modelDeep, log = console.log }) {
+const isGraded = (r) => ["pravilno", "manjsa_napaka", "napaka"].includes(r?.ocena);
+const rowCost = (r) => (r.usd || 0) + (r.grade_usd || 0);
+
+// Vmesne vrstice (data/, ni v repozitoriju): po prekinitvi isti ukaz nadaljuje, že ocenjeni odgovori se ne plačajo znova.
+export function loadProgress(file) {
+  try {
+    const rows = JSON.parse(fs.readFileSync(file, "utf8"));
+    return Array.isArray(rows) ? rows.filter((r) => r && typeof r.id === "string" && typeof r.pogoj === "string") : [];
+  } catch {
+    return [];
+  }
+}
+function saveProgress(file, rows) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(`${file}.tmp`, JSON.stringify(rows, null, 1));
+  fs.renameSync(`${file}.tmp`, file);
+}
+
+// maxUsd velja za VES strošek meritve (tudi že shranjene vrstice prejšnjega zagona). worstPair: najdražji možni par
+// (dva odgovora, pregled, popravek, dve oceni); pred vsakim primerom mora biti zanj še prostor pod mejo.
+// createOpts: samo za teste (vstavljeni streamFn in reviewCreateFn namesto API).
+export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, progressFile, realCap = false, createOpts = {}, log = console.log }) {
+  if (!(Number.isFinite(maxUsd) && maxUsd > 0) || !(Number.isFinite(worstPair) && worstPair > 0)) throw new Error("runChecked: neveljavna meja stroška");
   // Nastavitve morajo biti pred uvozom aplikacije (server/app.js jih delno prebere ob uvozu).
   process.env.EVKLID_ANSWER_CACHE = "0"; // vsak odgovor res pripravi model
   process.env.EVKLID_VARNOST_VSAKO = "0"; // varnostni pregled sporočila ni del meritve pravilnosti
-  process.env.EVKLID_LIVE_CHECK_DAILY_USD = "1000"; // dnevna meja pregledov ne sme prekiniti meritve sredi zagona
+  // Dnevna meja pregledov z zmogljivejšim modelom: privzeto izklopljena (meri plačljivi paket, dokler je meja prosta);
+  // --resnicna-meja pusti mejo aplikacije (privzeto 0,30 $ na dan), zato pregled dobi le prvi del primerov.
+  if (realCap) delete process.env.EVKLID_LIVE_CHECK_DAILY_USD;
+  else process.env.EVKLID_LIVE_CHECK_DAILY_USD = "1000";
   for (const k of ["EVKLID_PASSWORD", "EVKLID_TESTNA_VERZIJA", "EVKLID_MONTHLY_BUDGET_USD", "EVKLID_SS_THINK", "EVKLID_UNI_MID", "EVKLID_COMPETITION_DEEP"]) delete process.env[k];
   const { openDb } = await import("../server/db.js");
   const { createApp } = await import("../server/app.js");
   const store = openDb(":memory:"); // produkcijske baze se ne dotakne
-  const app = createApp(store, { accounts: false, scheduler: false, backups: false });
+  const app = createApp(store, { accounts: false, scheduler: false, backups: false, ...createOpts });
   const server = app.listen(0, "127.0.0.1");
   await new Promise((r) => server.once("listening", r));
   const base = `http://127.0.0.1:${server.address().port}`;
-  const appCost = () => store.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage").get().s;
   const started = Date.now();
-  const rows = [];
-  let gradeUsd = 0;
+  const old = progressFile ? loadProgress(progressFile) : [];
+  // Že ocenjeni odgovori izbranih primerov se ne ponovijo; spodleteli (plačani, a neocenjeni) se ponovijo, njihov strošek ostane v vsoti.
+  const rows = old.filter((r) => isGraded(r) && tasks.some((t) => t.id === r.id));
+  const dead = old.filter((r) => !rows.includes(r)).map((r) => ({ id: r.id, pogoj: r.pogoj, ocena: "neocenjeno", usd: r.usd || 0, grade_usd: r.grade_usd || 0, razlog: r.razlog }));
+  const resumed = rows.length;
+  const spent = () => [...rows, ...dead].reduce((s, r) => s + rowCost(r), 0);
+  if (old.length) log(`Nadaljujem: ${resumed} že ocenjenih odgovorov iz ${path.relative(root, progressFile)} (${spent().toFixed(2)} $ že porabljenih; --znova za nov začetek).`);
   let stopped = false;
-  let appUsd = 0;
   try {
     for (const [i, t] of tasks.entries()) {
-      if (appCost() + gradeUsd + worstPair > maxUsd) {
+      const todo = CONDITIONS.filter((c) => !rows.some((r) => r.id === t.id && r.pogoj === c.kljuc));
+      if (!todo.length) continue;
+      if (spent() + worstPair > maxUsd) {
         stopped = true;
         log(`Naslednji primer bi lahko presegel mejo ${maxUsd} $, ustavljam pri ${i} od ${tasks.length}.`);
         break;
       }
-      for (const c of CONDITIONS) {
+      for (const c of todo) {
         process.env.EVKLID_LIVE_CHECK = c.liveCheck;
-        const row = { id: t.id, stopnja: group(t.path), pogoj: c.kljuc, title: t.title };
+        const row = { id: t.id, stopnja: group(t.path), pogoj: c.kljuc, title: t.title, usd: 0, grade_usd: 0 };
+        let student = null;
         try {
-          const student = store.createStudent(`Ana ${i + 1}${c.kljuc}`, settingsFor(t.path));
+          student = store.createStudent(`Ana ${i + 1}${c.kljuc}`, settingsFor(t.path));
           const conv = store.createConversation(student.id, { pathTopic: t.id, title: "Meritev" });
           const res = await fetch(`${base}/api/conversations/${conv.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: question(t.task) }) });
           const sse = await res.text();
           const done = [...sse.matchAll(/^event: done\ndata: (.*)$/gm)].at(-1);
           if (!res.ok || !done) throw new Error(`klepet ${res.status}: ${sse.slice(0, 160)}`);
           row.answer = String(JSON.parse(done[1]).text || "");
-          const used = store.db.prepare("SELECT kind, model, cost_usd FROM usage WHERE student_id = ?").all(student.id);
-          row.usd = used.reduce((s, u) => s + u.cost_usd, 0);
-          row.model = used.find((u) => u.kind === "chat")?.model || "?";
-          row.popravek = used.some((u) => u.kind === "popravek");
-          row.pregled = used.some((u) => u.kind === "preverjanje");
           row.koda = codeResult(t.solution, row.answer);
-          const { usd = 0, ...verdict } = await grade(t, row.answer);
-          gradeUsd += usd;
+          // Ocenjevalec dobi besedilo brez oznake popravka in ne izve, kateri pogoj ocenjuje.
+          const { usd = 0, ...verdict } = await grade(t, neutralize(row.answer));
+          row.grade_usd = usd;
           Object.assign(row, verdict);
         } catch (err) {
           Object.assign(row, { ocena: "neocenjeno", razlog: `napaka klica: ${String(err?.message || err).slice(0, 200)}` });
         }
-        rows.push(row);
-        log(`[${i + 1}/${tasks.length}] ${c.kljuc.padEnd(4)} ${String(row.ocena).padEnd(13)} ${row.popravek ? "popravek " : ""}${row.pregled ? "pregled " : ""}${t.id}  (skupaj ${(appCost() + gradeUsd).toFixed(2)} $)`);
+        // Strošek aplikacije za ta odgovor (tudi, če je ocena spodletela: odgovor je plačan).
+        const used = student ? store.db.prepare("SELECT kind, model, cost_usd FROM usage WHERE student_id = ?").all(student.id) : [];
+        row.usd = used.reduce((s, u) => s + u.cost_usd, 0);
+        row.model = used.find((u) => u.kind === "chat")?.model || "?";
+        row.popravek = used.some((u) => u.kind === "popravek");
+        row.pregled = used.some((u) => u.kind === "preverjanje");
+        (isGraded(row) ? rows : dead).push(row);
+        if (progressFile) saveProgress(progressFile, [...rows, ...dead]);
+        log(`[${i + 1}/${tasks.length}] ${c.kljuc.padEnd(4)} ${String(row.ocena).padEnd(13)} ${row.popravek ? "popravek " : ""}${row.pregled ? "pregled " : ""}${t.id}  (skupaj ${spent().toFixed(2)} $)`);
       }
     }
   } finally {
     process.env.EVKLID_LIVE_CHECK = "1";
-    appUsd = appCost(); // ves strošek aplikacije (odgovori, popravki, pregledi), prebran pred zaprtjem baze
     await new Promise((r) => server.close(r));
     server.closeAllConnections?.();
     store.db.close();
   }
-  return { rows, stopped, appUsd, gradeUsd, modelDeep, trajanje_min: Math.round((Date.now() - started) / 60000) };
+  return {
+    rows,
+    stopped,
+    resumed,
+    failed: dead.length,
+    appUsd: [...rows, ...dead].reduce((s, r) => s + (r.usd || 0), 0),
+    gradeUsd: [...rows, ...dead].reduce((s, r) => s + (r.grade_usd || 0), 0),
+    trajanje_min: Math.round((Date.now() - started) / 60000),
+  };
 }

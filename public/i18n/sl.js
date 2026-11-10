@@ -3723,7 +3723,7 @@ export default {
   "land.f1.t": "Inštruktor po korakih",
   "land.f1.d": "Rešitve ne izda. Najprej ugotovi, kaj že znaš, nato te z namigi vodi do konca. Vprašaš ga lahko tudi z glasom.",
   "land.f2.t": "Pravilni izračuni",
-  "land.f2.d": "Številke in rezultate izračuna program, ne umetna inteligenca. Program sproti preveri tudi odgovore inštruktorja.",
+  "land.f2.d": "Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah odgovor pregleda še zmogljivejši model.",
   "land.f3.t": "Učna pot po učnem načrtu",
   "land.f3.d": "Snov za tvoj razred in šolo, po sklopih. Sklop, ki ga že znaš, preskočiš s preizkusom znanja.",
   "land.f4.t": "Vaje, ki ne zmanjkajo",

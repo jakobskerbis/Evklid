@@ -17,8 +17,11 @@
 // pot klepeta dvakrat (brez preverjanja s programom in z njim), oceni besedilo, ki ga vidi učenec, in zapiše
 // docs/meritve/natancnost-<datum>.json ter tabelo v docs/stroski-ai.md (bere ju stran /zakaj-evklid).
 // Privzeto 100 primerov, razvrščenih izmenično po stopnjah: ob meji --max-usd se ustavi z uravnoteženim vzorcem.
+// Zagon s ključem NE piše v docs/ (na strežniku to ni repozitorij): izpiše blok »POVZETEK ZA REPOZITORIJ«. Vmesne
+// vrstice sproti shranjuje v data/natancnost-napredek.json; po prekinitvi isti ukaz nadaljuje (--znova začne na novo).
 // Brez ključa ali z EVKLID_MOCK=1 konča z 0 brez klica in brez zapisa (izmišljene številke ne smejo na stran).
-//   --iz-json <datoteka>   zapiše že narejeno meritev (povzetek, ki ga skripta izpiše na koncu) v docs/, brez klicev.
+//   --resnicna-meja        pusti dnevno mejo pregledov z zmogljivejšim modelom, kot je v aplikaciji (privzeto izklopljena)
+//   --iz-json <datoteka>   preveri obliko in zapiše povzetek v docs/meritve + tabelo v docs/stroski-ai.md, brez klicev.
 import "../server/env.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -31,7 +34,7 @@ import { getTopic, getPath, learningPathPrompt } from "../server/curriculum.js";
 import { lessonSummaryForPrompt } from "../server/textbook.js";
 import { EUR_PER_USD } from "../server/usage.js";
 import { PROGRAMS } from "../server/university-data.js";
-import { runChecked, summarize, writeMeasurement, CONDITIONS } from "./meritev-natancnosti.js";
+import { runChecked, summarize, writeMeasurement, measurementError, CONDITIONS, MIN_PRIMERI, GRADER_FINAL_RULE } from "./meritev-natancnosti.js";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const arg = (name, d) => {
@@ -43,15 +46,26 @@ const CHECK = process.argv.includes("--s-preverjanjem");
 const FROM_JSON = arg("iz-json", "");
 const N = Number(arg("n", CHECK ? 100 : 50));
 const MODES = arg("modes", "chat,mid").split(",").filter((m) => ["chat", "think", "mid", "deep"].includes(m));
-const MAX_USD = Number(arg("max-usd", 5));
+// Meja stroška mora biti pozitivno število s piko (»5« ali »7.5«): »5,5«, »0«, »-1« ali prazno ustavi skripto pred klici.
+const MAX_USD_RAW = arg("max-usd", process.argv.includes("--max-usd") ? "" : "5");
+const MAX_USD = /^\d+(\.\d+)?$/.test(MAX_USD_RAW) ? Number(MAX_USD_RAW) : NaN;
+if (!(MAX_USD > 0)) {
+  console.error(`Neveljavna meja --max-usd »${MAX_USD_RAW}«: vpiši pozitivno število s piko, na primer --max-usd 5. Nič ni bilo poklicano.`);
+  process.exit(1);
+}
 const OUT = path.resolve(root, arg("out", "data/primerjava-modelov.md"));
 const PROMPT = arg("prompt", "");
 const TEMPLATE = PROMPT ? fs.readFileSync(path.resolve(root, PROMPT), "utf8") : undefined;
 const MOCK = isMockMode();
 if (FROM_JSON) {
-  const file = writeMeasurement(JSON.parse(fs.readFileSync(path.resolve(root, FROM_JSON), "utf8")));
-  console.log(`Zapisano: ${path.relative(root, file)} in tabela v docs/stroski-ai.md.`);
-  process.exit(0);
+  try {
+    const file = writeMeasurement(JSON.parse(fs.readFileSync(path.resolve(root, FROM_JSON), "utf8")));
+    console.log(`Zapisano: ${path.relative(root, file)} in tabela v docs/stroski-ai.md.`);
+    process.exit(0);
+  } catch (e) {
+    console.error(`--iz-json: ${e?.message || e}`);
+    process.exit(1);
+  }
 }
 if (CHECK && MOCK && !DRY) {
   console.log("Meritev s preverjanjem potrebuje ANTHROPIC_API_KEY (in ne EVKLID_MOCK=1). Brez ključa ni klica in ni zapisa. Izbor in oceno stroška pokaže --dry.");
@@ -175,7 +189,8 @@ učbenika in odgovor AI inštruktorja učencu. Oceni samo STROKOVNO PRAVILNOST o
 
 Uradna rešitev je pravilna; drugačna pravilna pot je dovoljena. Odgovori samo z JSON:
 {"ocena":"pravilno|manjsa_napaka|napaka","rezultat_podan":true|false,"vrsta":"ni|koncni_rezultat|racun_vmes|formula|trditev|dodatna_vaja|drugo","razlog":"en stavek v slovenščini"}
-"vrsta" pove, kje je napaka (pri "pravilno" je "ni"); "dodatna_vaja" je napaka v nalogi, ki jo je inštruktor dodal sam.`;
+"vrsta" pove, kje je napaka (pri "pravilno" je "ni"); "dodatna_vaja" je napaka v nalogi, ki jo je inštruktor dodal sam.
+${GRADER_FINAL_RULE}`;
 
 const GRADER_MAX_TOKENS = 4000;
 // Najdražji možni korak (poln izhod inštruktorja in ocenjevalca, hladen predpomnilnik): pred vsakim
@@ -231,11 +246,16 @@ const pairEstimate = (t) =>
   (reviewed(t) ? costUsd(modeParams("mid").model, { input_tokens: 2500, output_tokens: 1500 }) : 0) +
   0.15 * costUsd(modeParams("think").model, { input_tokens: 3000, output_tokens: 2000 }) +
   2 * costUsd(MODEL_DEEP, { input_tokens: 3000, output_tokens: 1500 });
+// Najdražji možni par: dva odgovora (poln izhod, hladen predpomnilnik), pregled z zmogljivejšim modelom (do 8000
+// izhodnih žetonov), popravek in dve oceni, kjer gre ocenjevalcu ves dolg odgovor (do max_tokens) z nalogo in rešitvijo.
+const thinkP = modeParams("think");
 const worstPair =
-  2 * costUsd(modeParams("think").model, { input_tokens: 3000, cache_creation_input_tokens: 14000, output_tokens: modeParams("think").max_tokens }) +
-  costUsd(modeParams("mid").model, { input_tokens: 12000, output_tokens: 4000 }) +
-  costUsd(modeParams("think").model, { input_tokens: 12000, output_tokens: modeParams("think").max_tokens }) +
-  2 * costUsd(MODEL_DEEP, { input_tokens: 10000, output_tokens: GRADER_MAX_TOKENS });
+  2 * costUsd(thinkP.model, { input_tokens: 3000, cache_creation_input_tokens: 14000, output_tokens: thinkP.max_tokens }) +
+  costUsd(modeParams("mid").model, { input_tokens: thinkP.max_tokens + 4000, output_tokens: 8000 }) +
+  costUsd(thinkP.model, { input_tokens: thinkP.max_tokens + 4000, output_tokens: thinkP.max_tokens }) +
+  2 * costUsd(MODEL_DEEP, { input_tokens: thinkP.max_tokens + 6000, output_tokens: GRADER_MAX_TOKENS });
+const REAL_CAP = process.argv.includes("--resnicna-meja");
+const PROGRESS = path.join(root, "data", "natancnost-napredek.json");
 if (CHECK) {
   const estC = tasks.reduce((s, t) => s + pairEstimate(t), 0);
   const perUsd = estC / Math.max(1, tasks.length);
@@ -247,27 +267,27 @@ if (DRY) {
   process.exit(0);
 }
 if (CHECK) {
-  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, modelDeep: MODEL_DEEP });
-  const datum = new Date().toISOString().slice(0, 10);
+  if (process.argv.includes("--znova")) fs.rmSync(PROGRESS, { force: true });
+  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP });
   const summary = summarize(r.rows, {
-    datum,
+    datum: new Date().toISOString().slice(0, 10),
     ocenjevalec: `${MODEL_DEEP} (model AI)`,
     vprasanje: question("<naloga>"),
+    meja_pregledov: REAL_CAP ? "resnicna" : "brez",
     strosek_usd: { aplikacija: Number(r.appUsd.toFixed(2)), ocenjevalec: Number(r.gradeUsd.toFixed(2)), skupaj: Number((r.appUsd + r.gradeUsd).toFixed(2)) },
     trajanje_min: r.trajanje_min,
-    opombe: r.stopped ? [`Zagon se je ustavil ob meji stroška ${MAX_USD} $ (izbranih ${tasks.length} primerov).`] : [],
+    opombe: [
+      ...(r.stopped ? [`Zagon se je ustavil ob meji stroška ${MAX_USD} $ (izbranih ${tasks.length} primerov).`] : []),
+      ...(r.resumed ? ["Meritev je nastala v več zagonih (nadaljevanje po prekinitvi); trajanje velja za zadnji zagon."] : []),
+    ],
   });
-  // Vsi odgovori ostanejo lokalno (data/ ni v repozitoriju); v docs/ gre samo povzetek z napakami.
-  fs.mkdirSync(path.join(root, "data"), { recursive: true });
-  fs.writeFileSync(path.join(root, "data", `natancnost-${datum}-odgovori.json`), JSON.stringify(r.rows, null, 1));
-  if (summary.primeri < 20) {
-    console.error(`Ocenjenih je samo ${summary.primeri} primerov: premalo za objavo, meritev NI zapisana v docs/.`);
+  for (const v of summary.vrstice) console.log(`${v.ime}: ${v.napake} napak od ${v.primeri} (manjših ${v.manjse_napake}; rezultat podan ${v.rezultat_podan_pct} %; popravki ${v.popravki}, pregledi ${v.pregledi}; vrste: ${JSON.stringify(v.vrste_napak)})`);
+  console.log(`Pari: ${JSON.stringify(summary.pari)}. Strošek skupaj: ${summary.strosek_usd.skupaj} $. Vmesne vrstice z odgovori: ${path.relative(root, PROGRESS)}.`);
+  // Na strežniku ne pišemo v docs/ (ni repozitorij): povzetek gre Claudu, ki ga zapiše z --iz-json.
+  if (measurementError(summary)) {
+    console.error(`Meritev še ni za objavo (${measurementError(summary)}; najmanj ${MIN_PRIMERI} primerov v obeh pogojih). Isti ukaz z višjo --max-usd nadaljuje brez ponovnega plačila že ocenjenih.`);
     process.exit(1);
   }
-  const file = writeMeasurement(summary);
-  for (const v of summary.vrstice) console.log(`${v.ime}: ${v.napake} napak od ${v.primeri} (manjših ${v.manjse_napake}; popravki ${v.popravki}, pregledi ${v.pregledi}; vrste: ${JSON.stringify(v.vrste_napak)})`);
-  console.log(`Strošek: ${summary.strosek_usd.skupaj} $, ${summary.trajanje_min} min. Zapisano: ${path.relative(root, file)} in docs/stroski-ai.md.`);
-  // Na Renderju (Shell) datoteke niso v repozitoriju: ta blok kopiraj in pošlji Claudu, ki ga shrani z --iz-json.
   console.log(`\n===== POVZETEK ZA REPOZITORIJ (kopiraj vse med črtama) =====\n${JSON.stringify(summary)}\n===== KONEC =====`);
   process.exit(0);
 }

@@ -32,7 +32,7 @@
  ],
  "opombe": [
   "Merjen je sam model (skripta mu naroči, naj nalogo reši po korakih), brez sprotnega preverjanja s programom (server/live-check.js).",
-  "Meritev je bila pred izboljšavo navodil inštruktorja (docs/spremembe-prompta.md, 4. 11.).",
+  "Meritev je bila pred spremembo navodil inštruktorja (docs/spremembe-prompta.md, 4. 11.).",
   "Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek.",
   "Meritve celega odgovora s preverjanjem še ni: node scripts/primerjava-modelov.js --s-preverjanjem."
  ]

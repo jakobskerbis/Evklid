@@ -11,7 +11,7 @@ import { BRAND } from "../server/brand.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
 import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
 import { presolve, claimNote } from "../server/live-check.js";
-import { latestMeasurement, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
+import { latestMeasurement, measurementError, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 
 const index = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
 const meta = (html, attr, name) => html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`))?.[1];
@@ -150,7 +150,9 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   for (const r of m.vrstice) {
     assert.ok(Number.isFinite(r.napake) ? r.napake <= r.primeri : Number.isFinite(r.napake_pct), r.kljuc);
     const cell = Number.isFinite(r.napake) ? `<td>${pctText(r)} % <small>${r.napake} od ${r.primeri}</small></td>` : `<td>${pctText(r)} %</td>`;
-    assert.ok(html.includes(`${cell}<td>${r.primeri}</td></tr>`), `vrstica ${r.kljuc}`);
+    // Celica je vezana na ime svoje vrstice (ne samo »nekje na strani«).
+    const head = `<tr><th scope="row">${r.ime}${r.opomba ? `<small>${r.opomba}</small>` : ""}</th>`;
+    assert.ok(html.includes(`${head}${cell}<td>${r.primeri}</td></tr>`), `vrstica ${r.kljuc}`);
   }
   const allowed = m.vrstice.map(pctText);
   const pcts = [...text.matchAll(/(\d+(?:,\d+)?) %/g)].map((x) => x[1]);
@@ -159,7 +161,7 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   const counts = [...text.matchAll(/(\d+) od (\d+)/g)].map((x) => `${x[1]}/${x[2]}`);
   assert.deepEqual(counts.sort(), m.vrstice.filter((r) => Number.isFinite(r.napake)).map((r) => `${r.napake}/${r.primeri}`).sort());
   assert.ok(text.includes(`${slDate(m.datum)} smo`) && text.includes(`${m.primeri} rešenih primerov`));
-  for (const s of ["Vzorec je majhen", "Ocenjeval jih ni človek", "Natančnosti drugih orodij nismo merili"]) assert.ok(text.includes(s), s);
+  for (const s of ["Vzorec je majhen", "Ocenjeval jih ni človek", "Natančnosti drugih orodij nismo merili", "Manjših nenatančnosti, na primer pri zaokroževanju, nismo šteli kot napako", "samo vodi z vprašanji in rezultata ne pove, šteje kot odgovor brez napake"]) assert.ok(text.includes(s), s);
   // Tabela v docs/stroski-ai.md je zapis iste meritve.
   const doc = readFileSync(new URL("../docs/stroski-ai.md", import.meta.url), "utf8");
   assert.equal(updateDoc(doc, m), doc, "docs/stroski-ai.md: node scripts/primerjava-modelov.js --iz-json <zadnja meritev>");
@@ -172,7 +174,7 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.match(claimNote("x = 5", pre), /CORRECT/);
   // Trditev o preverjanju je omejena na to, kar program res preveri (pregled #555).
   assert.ok(text.includes("Račune v enačbah, odvodih in daljših izračunih preveri program") && !/Račune preveri program|račune in rezultate/i.test(text));
-  assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor pregleda še zmogljivejši model."));
+  assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor v plačljivih paketih, do dnevne meje, pregleda še zmogljivejši model."));
 
   // Kaj dobite: cene, preizkus, brezplačni paket in jeziki iz kode.
   for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina]) {
@@ -185,9 +187,8 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   // Pošteno: česa Evklid še ne zna.
   for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Umetna inteligenca se lahko zmoti pri razlagi", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
   // Primerjalno oglaševanje (j 10. 11.: brez imen tekmecev): brez imen, cen in slabosti tekmecev. Edino tuje ime je
-  // »ChatGPT« kot primer splošnega klepetalnika, enkrat, brez trditve o njem; imen modelov na strani ni.
-  assert.ok(!/Photomath|Khan|Gemini|Copilot|Astra|Duolingo|Brainly|Mathway|Wolfram|Socratic|Claude|Haiku|Sonnet|Opus|GPT-\d/i.test(text), "brez imen tekmecev in modelov");
-  assert.equal(text.match(/ChatGPT/g).length, 1);
+  // Tudi splošni klepetalniki niso imenovani; imen modelov na strani ni.
+  assert.ok(!/Photomath|Khan|Gemini|Copilot|Astra|Duolingo|Brainly|Mathway|Wolfram|Socratic|Claude|Haiku|Sonnet|Opus|ChatGPT|OpenAI|GPT|Grok|Perplexity|DeepSeek|Mistral/i.test(text + html.split("<body>")[0]), "brez imen tekmecev in modelov");
   assert.ok(!/\b(boljši|boljša|boljše|najboljš\w*|natančnejš\w*|cenejš\w*|slabš\w*)\b/i.test(text), "brez primerjalnih trditev");
 
   const faq = ldBlocks(html)[0];
@@ -218,11 +219,11 @@ test("meritev 4. 11. 2026 (sam model): samo zapisani odstotki, z opozorili; meri
   assert.ok(doc.includes(`na ${row("hitri").primeri} rešenih primerih iz lekcij je imel navadni Haiku ${row("hitri").napake_pct} % napak`));
   assert.ok(doc.includes(`Sonnet ${row("zmogljivejsi").napake_pct} % (SŠ 0 %)`));
   assert.ok(doc.includes(`na istih ${row("razmislek").primeri} nalogah SŠ in tekmovanj imel ${row("razmislek").napake_pct} % napak`));
-  assert.ok(doc.includes("Večina napak navadnega Haikuja je bila v stranskih trditvah in izmišljenih dodatnih vajah, ne v končnem rezultatu."));
   assert.ok(readFileSync(new URL("../docs/spremembe-prompta.md", import.meta.url), "utf8").includes("v primerjavi modelov (4. 11., ocenjevalec Opus)"));
   assert.ok(m.vrsta === "model" && m.vrstice.every((r) => r.napake === undefined), "brez rekonstruiranih števil napak");
   const text = textOf(whyPage(m));
-  for (const s of ["4. 11. 2026 smo modelu naročili, naj reši 50 rešenih primerov", "Merili smo sam model, brez sprotnega preverjanja s programom", "Meritev celega odgovora s preverjanjem še pripravljamo", "Meritev je bila pred izboljšavo navodil inštruktorja", "ne na vseh 50"]) assert.ok(text.includes(s), s);
+  for (const s of ["4. 11. 2026 smo modelu naročili, naj reši 50 rešenih primerov", "Merili smo sam model, brez sprotnega preverjanja s programom", "Meritev celega odgovora s preverjanjem še pripravljamo", "Meritev je bila pred spremembo navodil inštruktorja", "ne na vseh 50"]) assert.ok(text.includes(s), s);
+  assert.ok(!/pred izboljšavo|stranskih trditvah|plačljivi paket (brez|z) dnevn/.test(text));
   assert.ok(!/\d+ od \d+/.test(text) && !text.includes("skozi Evklidov klepet") && !text.includes("s preverjanjem ,"), "brez številk meritve, ki je še ni");
   assert.deepEqual([...text.matchAll(/(\d+) %/g)].map((x) => x[1]).filter((p, i, a) => a.indexOf(p) === i).sort(), ["12", "2", "4"]);
 });
@@ -233,28 +234,38 @@ test("meritev s preverjanjem: povzetek, tabela in stran iz istih številk; skrip
   for (let i = 0; i < 40; i++) {
     for (const pogoj of ["brez", "s"]) {
       const napaka = pogoj === "brez" ? i < 5 : i < 1;
-      rows.push({ id: `L/${i}`, stopnja: i % 2 ? "srednja šola" : "osnovna šola", pogoj, ocena: napaka ? "napaka" : "pravilno", vrsta: napaka ? "trditev" : "ni", rezultat_podan: true, koda: i === 7 ? false : true, usd: 0.01, model: "m", popravek: pogoj === "s" && i === 3, pregled: false, razlog: "r" });
+      rows.push({ id: `L/${i}`, grade_usd: 0.02, stopnja: i % 2 ? "srednja šola" : "osnovna šola", pogoj, ocena: napaka ? "napaka" : "pravilno", vrsta: napaka ? "trditev" : "ni", rezultat_podan: true, koda: i === 7 ? false : true, usd: 0.01, model: "m", popravek: pogoj === "s" && i === 3, pregled: false, razlog: "r" });
     }
   }
   rows.push({ id: "L/x", stopnja: "osnovna šola", pogoj: "brez", ocena: "napaka" }, { id: "L/x", stopnja: "osnovna šola", pogoj: "s", ocena: "neocenjeno" });
-  const sum = summarize(rows, { datum: "2026-12-01", ocenjevalec: "Opus (model AI)", vprasanje: "q", strosek_usd: { aplikacija: 1, ocenjevalec: 3, skupaj: 4 }, trajanje_min: 50 });
+  const sum = summarize(rows, { datum: "2026-12-01", ocenjevalec: "Opus (model AI)", vprasanje: "q", meja_pregledov: "brez", strosek_usd: { aplikacija: 1, ocenjevalec: 3, skupaj: 4 }, trajanje_min: 50 });
   assert.equal(sum.primeri, 40);
   assert.equal(sum.izpusceni, 1);
   assert.deepEqual(sum.vrstice.map((r) => [r.kljuc, r.napake, r.primeri, r.popravki]), [["brez", 5, 40, 0], ["s", 1, 40, 1]]);
   assert.deepEqual(sum.vrstice[0].po_stopnjah["osnovna šola"], { primeri: 20, napake: 3 });
   assert.equal(sum.vrstice[1].koda_neujemanje, 1);
+  assert.deepEqual(sum.pari, { bolje: 4, slabse: 0, napaka_v_obeh: 1, brez_napake_v_obeh: 35 });
+  assert.equal(measurementError(sum), null);
   assert.ok(sum.napake.length === 8 && sum.napake.every((n) => !("answer" in n)));
   // Tabela za dokument in stran pokažeta ista števila; 1 od 40 je 2,5 %.
   const md = tableMd(sum);
+  assert.ok(md.includes("Pari (isti primer v obeh pogojih): bolje 4, slabše 0, napaka v obeh 1, brez napake v obeh 35.") && md.includes("Rezultat podan: Sam model, brez preverjanja 100 %"));
   assert.ok(md.includes("| Sam model, brez preverjanja | 12,5 % (5 od 40) | 40 |") && md.includes("| Cel Evklidov odgovor, s preverjanjem | 2,5 % (1 od 40) | 40 |") && md.includes("| osnovna šola | 3 od 20 | 1 od 20 |"));
   const doc = `a\n${DOC_START}\nstaro\n${DOC_END}\nb`;
   assert.equal(updateDoc(doc, sum), `a\n${DOC_START}\n${md}\n${DOC_END}\nb`);
   assert.equal(updateDoc(updateDoc(doc, sum), sum), updateDoc(doc, sum));
   const html = whyPage(sum);
   const text = textOf(html);
-  assert.ok(html.includes("<td>12,5 % <small>5 od 40</small></td><td>40</td>") && html.includes("<td>2,5 % <small>1 od 40</small></td><td>40</td>"));
+  assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40</small></td><td>40</td></tr>'));
+  assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40</small></td><td>40</td></tr>'));
+  // Viden pripis, kaj je bilo merjeno: plačljivi paket brez dnevne meje pregledov; z --resnicna-meja drugo besedilo.
+  assert.ok(text.includes("enkrat z vklopljenim, z nastavitvami plačljivega paketa") && !text.includes("kot odgovor vidi učenec"));
+  assert.ok(text.includes("Merili smo plačljivi paket brez dnevne meje pregledov z zmogljivejšim modelom.") && !text.includes("z dnevno mejo pregledov z zmogljivejšim modelom, kot velja"));
+  const real = textOf(whyPage({ ...sum, meja_pregledov: "resnicna" }));
+  assert.ok(real.includes("Merili smo plačljivi paket z dnevno mejo pregledov z zmogljivejšim modelom, kot velja v aplikaciji.") && !real.includes("brez dnevne meje pregledov"));
+  assert.ok(llmsTxt(sum).includes("brez dnevne meje pregledov z zmogljivejšim modelom") && llmsTxt({ ...sum, meja_pregledov: "resnicna" }).includes("in z dnevno mejo pregledov"));
   assert.ok(text.includes("1. 12. 2026 smo skozi Evklidov klepet poslali 40 rešenih primerov") && text.includes("Vsak odgovor je nastal posebej"));
-  assert.ok(!text.includes("še pripravljamo") && !text.includes("pred izboljšavo navodil") && !/12 %|4 %/.test(text), "stara meritev ni več na strani");
+  assert.ok(!text.includes("še pripravljamo") && !text.includes("pred spremembo navodil") && !/12 %|4 %/.test(text), "stara meritev ni več na strani");
   assert.ok(!/\{\{|<!--\/?ce:/.test(html));
   // Koda kot drugi ocenjevalec: končna števila iz vrstice »Odgovor« lekcije.
   assert.deepEqual(finalNumbers("1. $I = 0{,}15$\n2. Odgovor: teče tok $0{,}150\\,\\text{A}$ na $2\\,\\text{m}^2$."), ["0,15", "2"]);
@@ -276,6 +287,33 @@ test("meritev s preverjanjem: povzetek, tabela in stran iz istih številk; skrip
     assert.ok(!/\[\d+\/\d+\]|POVZETEK ZA REPOZITORIJ/.test(r.stdout), "noben primer ni bil poslan");
   }
   assert.equal(readdirSync(new URL("../docs/meritve/", import.meta.url)).join(), before);
+});
+
+test("brez uporabne meritve strani delujejo: razdelek z meritvijo se skrije, nič ne vrne napake", () => {
+  const warn = console.warn;
+  console.warn = () => {};
+  try {
+    for (const bad of [null, {}, { vrsta: "model", datum: "2026-11-04", primeri: 50, vrstice: [{ ime: "A", primeri: 0 }] }, { vrsta: "aplikacija", datum: "x" }, "niz", [1, 2]]) {
+      assert.equal(accuracy(bad), null);
+      const html = whyPage(bad);
+      const text = textOf(html);
+      assert.ok(html.includes("<h1>Zakaj Evklid</h1>") && !/\{\{|<!--\/?ce:/.test(html), "stran se sestavi");
+      assert.ok(!text.includes("Kaj smo izmerili") && !/\d %/.test(text) && !text.includes("Kako natančen je Evklid?") && !text.includes("Meritev natančnosti je majhna"), "brez razdelka in brez številk");
+      for (const [, id] of html.matchAll(/href="#([\w-]+)"/g)) assert.ok(html.includes(`id="${id}"`), id);
+      const faq = ldBlocks(html)[0];
+      assert.equal(faq.mainEntity.length, (html.match(/<details/g) || []).length);
+      const llms = llmsTxt(bad);
+      assert.ok(llms.includes("[Zakaj Evklid]") && !/Izmerjena natančnost|Measured accuracy|undefined|null/.test(llms));
+    }
+    assert.ok(aboutPage().includes("<h1>Evklid je slovenski AI inštruktor za šolo</h1>"));
+  } finally {
+    console.warn = warn;
+  }
+  // /o-evklidu in pristajalna stran: ista zožena trditev o preverjanju kot na /zakaj-evklid (pregled #555).
+  const about = textOf(aboutPage());
+  assert.ok(about.includes("Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah odgovor pregleda še zmogljivejši model."));
+  assert.ok(!/Številke (torej )?(in rezultate )?izračuna program|ne umetna inteligenca/.test(about));
+  assert.ok(readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8").includes('"land.f2.d": "Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah odgovor pregleda še zmogljivejši model."'));
 });
 
 test("strežnik: prave vrste vsebine, stran /o-evklidu in povezava s pristajalne strani", async () => {

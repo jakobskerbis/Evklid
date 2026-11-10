@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
 import { icon } from "../public/icons.js";
-import { latestMeasurement, pctText, slDate } from "../scripts/meritev-natancnosti.js";
+import { latestMeasurement, measurementError, pctText, slDate } from "../scripts/meritev-natancnosti.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
@@ -44,18 +44,28 @@ export function uiLanguages() {
 // scripts/primerjava-modelov.js, glej docs/stroski-ai.md »Natančnost inštruktorja: meritve«). Na stran gredo samo
 // zapisana števila: stara meritev (vrsta "model", 4. 11. 2026) ima le odstotke in število nalog, zato brez »X od N«.
 // vrsta "aplikacija" = isti primeri brez preverjanja s programom in z njim (cel odgovor, kot ga vidi učenec).
+// Napačna oblika ali pokvarjena datoteka → null: razdelek z meritvijo se skrije, strani ne vrnejo napake 500.
 export function accuracy(m = latestMeasurement()) {
-  if (!m) return null;
+  try {
+    return m && !measurementError(m) ? accuracyOf(m) : null;
+  } catch (e) {
+    console.warn(`[evklid] meritev natančnosti ni uporabna: ${e?.message || e}`);
+    return null;
+  }
+}
+function accuracyOf(m) {
   const rows = m.vrstice.map((r) => ({ ...r, pct: pctText(r), counted: Number.isFinite(r.napake) }));
   const part = (r, en) =>
     en
       ? `${r.ime_en || r.ime}: ${r.pct.replace(",", ".")}% of answers had an error (${r.primeri} tasks${r.opomba_en ? `, ${r.opomba_en}` : ""})`
       : `${r.ime}: ${r.pct} % odgovorov z napako (${r.primeri} nalog${r.opomba ? `, ${r.opomba}` : ""})`;
   const app = m.vrsta === "aplikacija";
+  const realCap = m.meja_pregledov === "resnicna";
   const date = slDate(m.datum);
   return {
     ...m,
     app,
+    realCap,
     date,
     rows,
     rowsHtml: rows
@@ -64,13 +74,13 @@ export function accuracy(m = latestMeasurement()) {
     sentence:
       `Meritev ${date}, ${m.primeri} rešenih primerov iz lekcij. ${rows.map((r) => part(r, false)).join(". ")}. ` +
       (app
-        ? "Isti primeri so šli skozi Evklidov klepet dvakrat: brez preverjanja s programom in z njim. Odgovore je ocenil model umetne inteligence. Vzorec je majhen."
-        : "Merili smo sam model, brez preverjanja s programom in pred izboljšavo navodil inštruktorja. Odgovore je ocenil model umetne inteligence. Vzorec je majhen. Meritev celega odgovora s preverjanjem še pripravljamo."),
+        ? `Isti primeri so šli skozi Evklidov klepet dvakrat: brez preverjanja s programom in z njim, z nastavitvami plačljivega paketa ${realCap ? "in z dnevno mejo pregledov z zmogljivejšim modelom, kot velja v aplikaciji" : "brez dnevne meje pregledov z zmogljivejšim modelom"}. Odgovore je ocenil model umetne inteligence. Vzorec je majhen.`
+        : "Merili smo sam model, brez preverjanja s programom in pred spremembo navodil inštruktorja. Odgovore je ocenil model umetne inteligence. Vzorec je majhen. Meritev celega odgovora s preverjanjem še pripravljamo."),
     sentenceEn:
       `Measurement of ${m.datum}, ${m.primeri} worked examples from the app's lessons. ${rows.map((r) => part(r, true)).join(". ")}. ` +
       (app
-        ? "The same examples went through Evklid's chat twice: without the program check and with it. Graded by an AI model. The sample is small."
-        : "This measured the model alone, without the program check and before the tutor's instructions were improved. Graded by an AI model. The sample is small. A measurement of the full answer with the program check is in preparation."),
+        ? `The same examples went through Evklid's chat twice: without the program check and with it, using paid-plan settings ${realCap ? "and the app's daily limit on reviews by the stronger model" : "without the daily limit on reviews by the stronger model"}. Graded by an AI model. The sample is small.`
+        : "This measured the model alone, without the program check and before the tutor's instructions were changed. Graded by an AI model. The sample is small. A measurement of the full answer with the program check is in preparation."),
   };
 }
 
@@ -85,6 +95,8 @@ export function facts(measurement) {
     accAny: !!acc,
     accApp: !!acc?.app,
     accModel: !!acc && !acc.app,
+    accNoCap: !!acc?.app && !acc.realCap,
+    accRealCap: !!acc?.app && !!acc.realCap,
     accThinkTasks: acc?.rows.find((r) => r.kljuc === "razmislek")?.primeri ?? "",
     name: BRAND.name,
     domain: BRAND.domain,
@@ -114,8 +126,8 @@ export function sitemapXml() {
 }
 
 // llms.txt (https://llmstxt.org): kratka dejstva za pomočnike AI, slovensko in angleško.
-export function llmsTxt() {
-  const f = facts();
+export function llmsTxt(measurement) {
+  const f = facts(measurement);
   return `# ${f.name} (${f.domain})
 
 > ${f.name} (${f.domain}) je slovenska aplikacija: AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu, od 1. razreda osnovne šole do fakultete. Ni povezana s projekti z imenom »Euclid« (na primer »Euclid AI Math Tutor«) in ni članek o matematiku Evklidu.
@@ -263,7 +275,7 @@ export function mountVidnost(app) {
   };
   app.get("/robots.txt", text("text/plain; charset=utf-8", robotsTxt));
   app.get("/sitemap.xml", text("application/xml; charset=utf-8", sitemapXml));
-  app.get("/llms.txt", text("text/plain; charset=utf-8", llmsTxt));
+  app.get("/llms.txt", text("text/plain; charset=utf-8", () => llmsTxt()));
   for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, () => whyPage()]]) {
     let page = null;
     app.get(route, (_req, res) => {

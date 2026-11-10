@@ -3591,7 +3591,7 @@
   "land.f1.t": "Tútor krok za krokom",
   "land.f1.d": "Riešenie neprezradí. Najprv zistí, čo už vieš, a potom ťa nápoveďami dovedie až do konca. Opýtať sa ho môžeš aj hlasom.",
   "land.f2.t": "Správne výpočty",
-  "land.f2.d": "Čísla a výsledky počíta program, nie umelá inteligencia. Program priebežne kontroluje aj odpovede tútora.",
+  "land.f2.d": "Číselné výpočty v rovniciach, deriváciách a dlhších výpočtoch prepočítava program. Pri niektorých úlohách odpoveď skontroluje aj výkonnejší model.",
   "land.f3.t": "Vzdelávacia cesta podľa osnov",
   "land.f3.d": "Učivo pre tvoj ročník a školu, celok po celku. Celok, ktorý už vieš, preskočíš krátkym testom.",
   "land.f4.t": "Cvičenia, ktoré sa neminú",
