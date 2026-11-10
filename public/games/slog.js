@@ -101,7 +101,9 @@ const platno = (w, h) => {
 export function ustvariSlog(G, canvas, engine, host) {
   const g = canvas.getContext("2d");
   const svet = svetIgre(engine);
-  const temenSvet = svetlost(engine.colors?.[0] || "#1e1b4b") < 0.32;
+  // Temen prizor (seštevanje svetlobe, žarenje) je le vesolje ali igra, ki to pove sama (engine.temno); barvi glave
+  // igre tega ne povesta: Baloni imajo temno modro glavo in svetlo nebo.
+  const temenSvet = svet === "vesolje" || engine.temno === true;
   let T = barveTeme(host, g), plast = null, zrnoPl = null, zrnoPlast = null, obla = null, cvet = null, cq = null;
   let zadnji = 0, pocasne = 0, raven = 2; // raven učinkov: 2 = vse, 1 = brez žarenja in druge plasti ozadja, 0 = samo tekstura in svetloba
   let plasti = [], ozadjeNarisano = false, sencenih = 0, gPloskev = null, gKrog = null;

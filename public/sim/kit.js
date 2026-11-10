@@ -53,7 +53,7 @@ export function s(tag, attrs = {}, parent, text) {
   } else if (text != null) el.textContent = text;
   if (parent) parent.append(el);
   // materiali laboratorija (steklo, tekočina, kovina, miza …): okras po razredu, glej materiali.js
-  if (parent && attrs?.class) okrasi(el, attrs.class);
+  if (parent && (attrs?.class || attrs?.fill)) okrasi(el, attrs.class, attrs.fill);
   return el;
 }
 

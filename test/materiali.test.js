@@ -23,6 +23,16 @@ test("materiali: razredi poskusov dobijo pravi material", () => {
   assert.equal(material("lab-gib-alu"), "kovina");
   assert.equal(material("lab-mag-kabel"), "kabel");
   assert.equal(material("lab-top-coil burnt"), "lom");
+  assert.equal(material("lab-flame"), "plamen");
+  // liki brez razreda s svojim prelivom: material po imenu preliva
+  assert.equal(material(undefined, "url(#s3-jeklo)"), "lesk");
+  assert.equal(material("", "url(#s12-m-Cu)"), "lesk");
+  assert.equal(material(undefined, "url(#s3-les)"), "les");
+  assert.equal(material(undefined, "url(#s3-ohisje)"), "ohisje");
+  assert.equal(material(undefined, "url(#s3-rdeca)"), "ohisje");
+  assert.equal(material(undefined, "#ff0000"), null);
+  assert.equal(material(undefined, "url(#s3-steklo)"), null);
+  assert.equal(material("lab-gib-alu", "url(#s3-alu)"), "kovina", "razred ima prednost pred prelivom");
   assert.equal(material("lab-sil-ruler"), "les");
   // luža in prazna cev nimata odseva; drugi razredi in ne-laboratorijski elementi ostanejo nedotaknjeni
   assert.equal(material("lab-liq lab-liq-voda lab-puddle"), null);

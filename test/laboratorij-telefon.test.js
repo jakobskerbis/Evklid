@@ -180,9 +180,18 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
     await o.p.locator(".lab-zoom").tap();
     const lezi = await o.p.evaluate(() => {
       const st = document.querySelector(".demo-stage"), r = st.querySelector(".lab-slika").getBoundingClientRect();
-      return { lezi: st.classList.contains("lab-lezi"), cela: r.left >= -1 && r.right <= 361 && r.top >= -1 && r.bottom <= 741, visja: r.height > r.width, drsi: st.scrollWidth > st.clientWidth + 1 };
+      // napisi v obrnjeni shemi stojijo pokonci (širši kot visoki), merilniki pod risbo tudi
+      const napis = [...st.querySelectorAll("svg text")].filter((x) => x.textContent.trim().length >= 4).map((x) => x.getBoundingClientRect()), mer = st.querySelector(".lab-lcd-val").getBoundingClientRect();
+      return { lezi: st.classList.contains("lab-lezi"), cela: r.left >= -1 && r.right <= 361 && r.top >= -1 && r.bottom <= 741, visja: r.height > r.width, drsi: st.scrollWidth > st.clientWidth + 1, napisi: napis.length > 0 && napis.every((b) => b.width > b.height), merilnik: mer.width > mer.height };
     });
-    assert.deepEqual(lezi, { lezi: true, cela: true, visja: true, drsi: false });
+    assert.deepEqual(lezi, { lezi: true, cela: true, visja: true, drsi: false, napisi: true, merilnik: true });
+    // prizor na mizi (epruvete) se ne obrne: steklovina ostane pokonci in cela na zaslonu
+    const d = await run(ctx, "lab-dokaz");
+    await d.p.locator(".lab-zoom").tap();
+    assert.deepEqual(await d.p.evaluate(() => {
+      const st = document.querySelector(".demo-stage"), r = st.querySelector(".lab-slika").getBoundingClientRect();
+      return [st.classList.contains("lab-lezi"), r.left >= -1 && r.right <= 361, r.width > r.height];
+    }), [false, true, true]);
     await ctx.close();
   });
 

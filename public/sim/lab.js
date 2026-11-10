@@ -200,12 +200,13 @@ export function pripni(el) {
   });
   stage.prepend(btn);
   set(pinRead());
-  // »Povečaj risbo«: risba z merilniki čez ves zaslon (vrhnja plast brskalnika), cela vidna; ležeča risba se na pokončnem
-  // telefonu obrne za 90° (telefon se zasuka), da izkoristi daljšo stranico. Zapre jo isti gumb, Esc ali tipka Nazaj
+  // »Povečaj risbo«: risba z merilniki čez ves zaslon (vrhnja plast brskalnika), cela vidna; ležeča električna shema se na pokončnem
+  // telefonu obrne za 90°, njeni napisi ostanejo pokonci. Zapre jo isti gumb, Esc ali tipka Nazaj
   // (app.js → backStep klikne gumb). Odprta je pogovorno okno (role=dialog), ostala stran je medtem neodzivna (inert).
+  let zapriPovecavo = () => {};
   if (typeof stage.showPopover === "function") {
     const zoom = h("button", { type: "button", class: "lab-zoom", "aria-label": t("sim.lab.zoom"), title: t("sim.lab.zoom"), "aria-pressed": "false", html: icon("maximize-2") });
-    let mirni = [], prejFokus = null;
+    let mirni = [], prejFokus = null, straza = 0;
     const ozadje = (on) => {
       for (const x of mirni) x.inert = false;
       mirni = [];
@@ -222,15 +223,25 @@ export function pripni(el) {
         on = false;
       }
       stage.classList.toggle("lab-povecano", on);
-      stage.classList.toggle("lab-lezi", on && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
+      // Obrne se le električna shema (napisi se zavrtijo nazaj pokonci); prizor na mizi (steklovina, tekočine) ostane
+      // pokonci in cel na zaslonu, ker bi bil na boku fizikalno napačen. Večji je, ko učenec telefon obrne ležeče.
+      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
       for (const [k, v] of [["role", "dialog"], ["aria-modal", "true"], ["aria-label", t("sim.lab.zoom")]]) on ? stage.setAttribute(k, v) : stage.removeAttribute(k);
       ozadje(on);
+      // Poskus lahko izgine med odprto povečavo (drug pogled, »Ponastavi«, ukaz inštruktorja): ozadje ne sme ostati neodzivno.
+      clearInterval(straza);
+      if (on) straza = setInterval(() => (el.isConnected && stage.isConnected && el._labPin === gen) || zapriPovecavo(), 300);
       zoom.setAttribute("aria-pressed", String(on));
       zoom.innerHTML = icon(on ? "minimize-2" : "maximize-2");
       if (on) (prejFokus = document.activeElement), zoom.focus({ preventScroll: true });
       else if (prejFokus?.isConnected && prejFokus !== document.body) prejFokus.focus({ preventScroll: true });
       else zoom.focus({ preventScroll: true });
       upd();
+    };
+    zapriPovecavo = () => {
+      clearInterval(straza);
+      ozadje(false);
+      if (stage.isConnected) povecaj(false);
     };
     zoom.addEventListener("click", () => povecaj(!stage.classList.contains("lab-povecano")));
     stage.addEventListener("keydown", (e) => {
@@ -302,6 +313,7 @@ export function pripni(el) {
   const onResize = () => (later(), setTimeout(() => reveal(focused()), 60));
   const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(later) : null;
   function off() {
+    zapriPovecavo();
     if (el._labOff === off) el._labOff = null;
     cancelAnimationFrame(raf);
     raf = 0;

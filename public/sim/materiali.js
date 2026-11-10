@@ -35,6 +35,8 @@ export const DEFS = [
   lin("dno", [stop(0, "#bfe3dc", 0), stop(0.45, "#bfe3dc", 0.5), stop(1, "#7fb3b0", 0.72)], 0, 1),
   // mehurček ali kapljica: prozorna sredina, temnejši rob (lom na meji), bel odsev zgoraj levo
   rad("kaplja", [stop(0, "#fff", 0.95), stop(0.28, "#fff", 0.3), stop(0.72, "#e6eef4", 0.14), stop(0.9, "#6d8aa3", 0.55), stop(1, "#4a6780", 0.85)], 'cx="0.5" cy="0.5" r="0.5" fx="0.36" fy="0.32"'),
+  // plamen: modro jedro ob dnu, svetlo rumena sredina, prosojen oranžen zunanji stožec
+  rad("plamen", [stop(0, "#6fb7ff", 0.95), stop(0.2, "#bfe1ff", 0.75), stop(0.38, "#fff8cf", 0.95), stop(0.68, "#ffcf55", 0.8), stop(1, "#ff8a1f", 0.28)], 'cx="0.5" cy="0.92" r="0.95"'),
   // zrnata trdna snov (prašek, oborina, sol, kamen)
   `<pattern id="mat-zrna" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1.2" cy="1.5" r="0.55" fill="#000" fill-opacity="0.2"/><circle cx="4.6" cy="0.9" r="0.4" fill="#fff" fill-opacity="0.6"/><circle cx="3.1" cy="3.9" r="0.6" fill="#000" fill-opacity="0.16"/><circle cx="6" cy="5.2" r="0.45" fill="#000" fill-opacity="0.22"/><circle cx="1.4" cy="5.6" r="0.4" fill="#fff" fill-opacity="0.55"/></pattern>`,
   // les: letnice kot vzorec čez osnovno barvo
@@ -70,8 +72,13 @@ svg.demo-svg .mat-dno{fill:url(#mat-dno) transparent}
 svg.demo-svg .mat-ustje{fill:rgb(255 255 255 / 0.2);stroke:var(--mat-st-crta);stroke-width:0.9;pointer-events:none}
 svg.demo-svg .mat-kavstika{fill:url(#mat-sij) transparent;opacity:0.8;pointer-events:none}
 svg.demo-svg .mat-gladina-el{fill:rgb(255 255 255 / 0.3);stroke:rgb(255 255 255 / 0.75);stroke-width:0.7;pointer-events:none}
+svg.demo-svg .mat-pol{opacity:0.55}
 svg.demo-svg .mat-valj-x{fill:url(#mat-valj-x) transparent}
 svg.demo-svg .mat-valj-y{fill:url(#mat-valj-y) transparent}
+svg.demo-svg :is(.lab-flame,.lab-ek-flame){fill:url(#mat-plamen) #ff9b2f;stroke:#ffb347;stroke-opacity:0.35;stroke-width:0.8}
+svg.demo-svg .mat-plamen-sij{fill:url(#mat-sij) transparent;opacity:0.45;pointer-events:none}
+svg.demo-svg :is(.lab-tit-rod,.lab-sil-rod,.lab-sil-stand){fill:#77818d}
+svg.demo-svg .lab-tit-clamp{fill:#4c545e}
 svg.demo-svg .mat-zrna{fill:url(#mat-zrna) transparent}
 svg.demo-svg :is(.lab-bubble,.lab-top-bubble,.lab-tit-air){fill:url(#mat-kaplja) rgb(255 255 255 / 0.6);stroke:none}
 svg.demo-svg .lab-mark{stroke:var(--mat-st-rob);stroke-opacity:0.9}
@@ -93,6 +100,7 @@ svg.demo-svg .mat-zica{fill:none;stroke:#fff;stroke-opacity:0.32;stroke-width:0.
 .lab-povecano .lab-zoom{display:grid}
 .demo.lab .lab-tit-top>.demo-stage.lab-povecano{position:fixed!important;inset:0!important;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;border:0;border-radius:0;z-index:50;display:flex;flex-direction:column;align-items:center;gap:10px;overflow:auto;padding:10px 10px 16px!important;box-sizing:border-box;color:var(--text)}
 .demo.lab .lab-tit-top>.demo-stage.lab-povecano>.lab-slika{flex:none;width:min(100%,calc((100dvh - 150px) * var(--lab-ar,1.4)))!important;max-width:none!important;max-height:none!important;height:auto}
+@media (orientation:portrait){.demo.lab .lab-tit-top>.demo-stage.lab-povecano.lab-lezi>.lab-slika text:not([transform]){transform-box:fill-box;transform-origin:center;transform:rotate(-90deg)}}
 @media (orientation:portrait){.demo.lab .lab-tit-top>.demo-stage.lab-povecano.lab-lezi>.lab-slika{--zw:min(calc(100dvh - 170px),calc((100vw - 20px) * var(--lab-ar,1.4)));width:var(--zw)!important;transform:rotate(90deg);margin:calc((var(--zw) - var(--zw) / var(--lab-ar,1.4)) / 2) calc((var(--zw) / var(--lab-ar,1.4) - var(--zw)) / 2)}}
 .demo.lab .lab-tit-top>.demo-stage.lab-povecano .lab-ek-risba>svg.demo-svg{width:100%!important}
 .demo.lab .lab-tit-top>.demo-stage.lab-povecano .lab-pin{display:none!important}
@@ -115,6 +123,8 @@ const VRSTE = [
   ["oznaka", ["lab-mark"]],
   ["prozorno", ["lab-opt-block", "lab-opt-lens", "lab-top-ice"]],
   ["lom", ["lab-top-probe", "lab-top-rod", "lab-top-coil"]],
+  ["plamen", ["lab-flame", "lab-ek-flame"]],
+  ["sijaj", ["lab-mag-magnet", "lab-mag-npol", "lab-gib-telo", "lab-gib-kvader", "lab-mag-pcb", "lab-mag-klada"]],
   ["merilnik", ["lab-meter-body"]],
   ["naprava", ["lab-box", "lab-sil-balance", "lab-opt-laser", "lab-sil-meter", "lab-top-thermos", "lab-top-enamel", "lab-top-porc", "lab-batt", "lab-sil-foot", "lab-gib-ohisje", "lab-gib-voz", "lab-mag-kompas-ohisje"]],
   ["kovina", ["lab-tit-rod", "lab-tit-clamp", "lab-sil-rod", "lab-sil-stand", "lab-sil-mass", "lab-sil-aluminij", "lab-sil-jeklo", "lab-sil-medenina", "lab-sil-baker", "lab-top-plate", "lab-top-plate-top", "lab-opt-rail", "lab-opt-rider", "lab-plate", "lab-res", "lab-sil-plate", "lab-tit-electrode", "lab-top-handle", "lab-ek-sonda", "lab-mag-nosilec", "lab-mag-jedro", "lab-mag-lamela", "lab-gib-alu", "lab-gib-drog", "lab-gib-utez", "lab-gib-palica", "lab-gib-os"]],
@@ -125,15 +135,25 @@ const LIKI = new Set(["rect", "path", "circle", "ellipse", "polygon"]);
 // Električna shema (svg.lab-circuit) ostane čista shema: brez senc, leska in debelih vodnikov (j, 10. 11. 2026: ne mešanica).
 const NE_V_SHEMI = new Set(["naprava", "zica", "kabel", "merilnik", "kovina"]);
 // Lahki način (počasna naprava): odpadejo okrasi z največ vozlišči.
-const NE_LAHKO = new Set(["oznaka", "zica", "kabel", "merilnik", "zrna", "gladina", "stekloP"]);
+const NE_LAHKO = new Set(["oznaka", "zica", "kabel", "merilnik", "zrna", "gladina", "stekloP", "sijaj", "plamen"]);
+// Novejši poskusi (gibanje, magnetizem, elektrokemija, reakcije) barvajo like s svojimi prelivi brez razreda:
+// material se prepozna po imenu preliva v fill="url(#s12-jeklo)".
+const PO_PRELIVU = [
+  [/-(alu|jeklov?|zelezov?|nikelj|palica|sonda|med|bakerv?|lamelev?|m-[A-Za-z]+)\)$/, "lesk"],
+  [/-les\)$/, "les"],
+  [/-(ohisje|modro|rumena|plosca|crno|voz|tuljavnica|rdeca|zelena|tiskanina)\)$/, "ohisje"],
+];
 
 // Material elementa po razredih (niz razredov) ali null.
-export function material(cls) {
-  if (!cls || cls.indexOf("lab-") < 0 || BREZ.test(cls)) return null;
-  for (const c of cls.split(/\s+/)) {
-    const m = MAPA.get(c);
-    if (m) return m;
+export function material(cls, fill) {
+  if (cls && cls.indexOf("lab-") >= 0) {
+    if (BREZ.test(cls)) return null;
+    for (const c of cls.split(/\s+/)) {
+      const m = MAPA.get(c);
+      if (m) return m;
+    }
   }
+  if (typeof fill === "string" && fill.charCodeAt(0) === 117 && fill.startsWith("url(#")) for (const [re, m] of PO_PRELIVU) if (re.test(fill)) return m;
   return null;
 }
 
@@ -212,8 +232,8 @@ const PODPIS = ["class", "d", "points", "x", "y", "width", "height", "rx", "x1",
 // kit.js → s(): element z razredom materiala gre v vrsto; okras nastane po koncu sinhronega risanja.
 // Poskusi rišejo vse znova večkrat na sekundo, zato se okras hrani po obliki elementa (svg._mat): ob naslednjem
 // risanju se ista vozlišča le znova vstavijo, nova nastanejo samo za spremenjene like.
-export function okrasi(el, cls) {
-  const m = material(cls);
+export function okrasi(el, cls, fill) {
+  const m = material(cls, fill);
   if (!m) return;
   cakajo.push([el, m]);
   if (naroceno) return;
@@ -455,6 +475,32 @@ const NAREDI = {
     c.setAttribute("transform", `translate(${xc},0) scale(${LOM_VODA},1) translate(${-xc},0) ${el.getAttribute("transform") || ""}`.trim());
     g.append(c);
     return { pred: [nad, pod], po: [g], atr: { "clip-path": `url(#${idA})` } };
+  },
+  // Plamen: preliv (modro jedro, prosojen zunanji stožec) da CSS; tukaj še mehak sij okoli njega.
+  plamen(el) {
+    const b = okvir(el);
+    if (!b) return null;
+    const rx = (b[2] - b[0]) * 1.5, ry = (b[3] - b[1]) * 0.9;
+    return { pred: [nov("ellipse", { cx: (b[0] + b[2]) / 2, cy: (b[1] + b[3]) / 2, rx, ry, class: "mat-plamen-sij", ...(el.hasAttribute("transform") ? { transform: el.getAttribute("transform") } : {}) })] };
+  },
+  // Lik s svojim kovinskim prelivom (novejši poskusi): ostrejši odsev po legi valja čez obstoječi preliv.
+  lesk(el) {
+    if (el.localName !== "rect" && el.localName !== "circle" && el.localName !== "ellipse") return null;
+    if (el.localName !== "rect") return { po: [kopija(el, "mat-ov mat-kovina mat-pol")] };
+    const w = st(el, "width"), hh = st(el, "height");
+    if (Math.min(w, hh) < 2.5) return null;
+    return { po: [kopija(el, `mat-ov mat-pol ${hh >= w ? "mat-valj-x" : "mat-valj-y"}`)] };
+  },
+  // Plastika, lak, magnet: svetloba od zgoraj in ozek sijaj; večji kos dobi še senco na podlagi.
+  sijaj(el) {
+    if (!LIKI.has(el.localName)) return null;
+    return { po: [kopija(el, "mat-ov mat-naprava")] };
+  },
+  ohisje(el) {
+    if (el.localName !== "rect") return LIKI.has(el.localName) ? { po: [kopija(el, "mat-ov mat-naprava mat-pol")] } : null;
+    const x = st(el, "x"), y = st(el, "y"), w = st(el, "width"), hh = st(el, "height"), pred = [];
+    if (w >= 26 && hh >= 14 && !el.hasAttribute("transform")) pred.push(nov("rect", { x: x - 1, y: y + 2.2, width: w + 2, height: hh, rx: st(el, "rx") + 1.5, class: "mat-senca-p" }));
+    return { pred, po: [kopija(el, "mat-ov mat-naprava")] };
   },
   merilnik(el) {
     if (el.localName !== "circle") return null;
