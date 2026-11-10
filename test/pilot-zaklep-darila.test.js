@@ -47,15 +47,45 @@ test("zaklep stopnje: po prvi porabi AI menjava na višjo stopnjo meje ne dvigne
   });
 });
 
-test("zaklep stopnje: poraba, zapisana brez rezervacije (npr. ob ponovnem zagonu), tudi zaklene", async () => {
+test("zaklep stopnje: poraba, zapisana brez rezervacije (npr. ob ponovnem zagonu), zaklene sedanjo stopnjo pred menjavo", async () => {
   await withAccounts(ENV, async ({ call, store, kid }) => {
     const pid = store.db.prepare("SELECT parent_id FROM students WHERE id = ?").get(kid.id).parent_id;
     store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd, parent_id) VALUES (?, 'rezerva', 'prekinjeno', 0.01, ?)").run(kid.id, pid);
+    // Menjava stopnje po zapisani porabi: najprej se zaklene sedanja (OŠ), nova meje ne dvigne.
     await setTrack(call, kid.id, "UNIVERZA");
-    // Prvi pogled po zapisani porabi zaklene sedanjo stopnjo; naslednja menjava je ne spremeni.
-    assert.equal((await call(`/api/students/${kid.id}/usage`)).body.explanations_month, expl("FAKS"));
-    assert.equal(JSON.parse(lockRows(store)[0].value).level, "FAKS");
+    assert.equal(JSON.parse(lockRows(store)[0].value).level, "OS");
+    assert.equal((await call(`/api/students/${kid.id}/usage`)).body.explanations_month, expl("OS"));
   });
+});
+
+test("pilot: brez povezave za plačilo staršev (nova in že izdana povezava)", async () => {
+  let token;
+  const body = () => ({ kind: "sub", seats: 1, interval: "month" });
+  // povezava, izdana pred pilotom
+  await withAccounts(
+    { EVKLID_PILOT_EMAILS: "drug@x.si" },
+    async ({ call, store, kid }) => {
+      const r = await call("/api/billing/pay-link", { method: "POST", body: body() });
+      assert.equal(r.status, 201, JSON.stringify(r.body));
+      token = /[?&]t=([^&]+)/.exec(r.body.url)[1];
+      // račun postane član pilota: že izdana povezava ne odpre plačila
+      process.env.EVKLID_PILOT_EMAILS = "meja@x.si";
+      process.env.EVKLID_PILOT_DO = dayIso(10);
+      try {
+        const c = await call(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "stars@x.si", adult: true, withdrawal: true } });
+        assert.equal(c.status, 409, JSON.stringify(c.body));
+        assert.equal(c.body.pilot, true);
+        assert.equal(c.body.error, "Med pilotom nakup ni mogoč. Po koncu pilota bo spet na voljo.");
+        const n = await call("/api/billing/pay-link", { method: "POST", body: body() });
+        assert.equal(n.status, 409, JSON.stringify(n.body));
+        assert.equal(n.body.pilot, true);
+        assert.equal(store.db.prepare("SELECT COUNT(*) n FROM pay_links").get().n, 1, "nova povezava ni nastala");
+      } finally {
+        delete process.env.EVKLID_PILOT_DO;
+      }
+    },
+    { stripeKey: "sk_test_x" },
+  );
 });
 
 test("pilot: brez nakupa darilne kode in »Podari Evklid« (prikaz in strežnik)", async () => {

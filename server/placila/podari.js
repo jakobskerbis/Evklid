@@ -122,7 +122,7 @@ export function mountPodari(app, ctx) {
 
   app.post("/api/billing/podari", json, async (req, res) => {
     const p = req.parent;
-    if (pilotOf(p)) return res.status(409).json({ error: "V pilotu nakup ni mogoč.", pilot: true });
+    if (pilotOf(p)) return res.status(409).json({ error: "Med pilotom nakup ni mogoč. Po koncu pilota bo spet na voljo.", pilot: true });
     if (!stripe.enabled) return res.status(503).json({ error: "Plačila še niso nastavljena (manjka STRIPE_SECRET_KEY)." });
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
