@@ -11,6 +11,7 @@
 // ob povečavi še ploščice 0,33 mm samo za vidni del.
 // Vir fotografij: Courtesy of the U.S. National Library of Medicine (pogoji v public/3d/modeli/organi/viri.json).
 import * as R from "../../rezine.js";
+import * as CTMR from "../../rezine-ctmr.js"; // CT in MR ob fotografiji (docs/3d.md »CT in MR«)
 
 export const info = {
   id: "organ-pravi-prerez",
@@ -67,10 +68,11 @@ export async function zgradi(THREE, ctx) {
   try {
     kazalo = JSON.parse(globalThis.localStorage?.getItem(R.KLJUC_KAZALA) || "null");
   } catch {}
-  const [besedila, kazaloOmrezje, imena] = await Promise.all([
+  const [besedila, kazaloOmrezje, imena, besedilaCtmr] = await Promise.all([
     naloziBesedila(),
     kazalo ? null : json(koren + "kazalo.json"),
     json(new URL("../../rezine-oznake.json", import.meta.url).href),
+    CTMR.naloziBesedila(json),
   ]);
   kazalo ||= kazaloOmrezje;
   const t = (k, sl) => {
@@ -79,6 +81,7 @@ export async function zgradi(THREE, ctx) {
     return besedila(k) ?? sl;
   };
   const telefon = ctx.kakovost !== "visoka";
+  const CM = CTMR.ustvari({ t: (k, sl) => besedilaCtmr(k) ?? sl, slika, rezinaMalega: R.rezinaMalega, ob: () => T && postaviRezino() });
   // Gostovanje (vedro R2): vsako telo posebej (manjkajoče telo ne podre drugega); če ni nobenega, kazalo.rezerva
   // pokaže vzorec iz repozitorija (model ne pade)
   let osnova, spoli, mete;
@@ -319,7 +322,8 @@ export async function zgradi(THREE, ctx) {
       platno.width = m.w; platno.height = m.h;
       texMala.dispose();
     }
-    platno.getContext("2d").putImageData(new ImageData(m.data, m.w, m.h), 0, 0);
+    CM.lega(os(), s, i);
+    platno.getContext("2d").putImageData(new ImageData((CM.mali(s, Math.floor(i / T.mali.mm), m) || m).data, m.w, m.h), 0, 0);
     texMala.needsUpdate = true;
     // ravnina reza v svetovnih koordinatah: del telesa pred rezino (proti kameri) odrežemo
     const ravno = stanje.pogled === "ravno";
@@ -340,17 +344,17 @@ export async function zgradi(THREE, ctx) {
   }
   const os = () => stanje.raven === 1; // raven OŠ: preprostejša imena, privzeto pogled naravnost na rezino
   const pripni = (sm, v) => Math.max(0, Math.min(R.steviloRezin(T.dim, sm) - 1, Math.round(v)));
-  const kljuc = () => `${stanje.spol}/${stanje.smer}/${stanje.i[stanje.smer]}`;
+  const kljuc = () => `${stanje.spol}/${stanje.smer}/${stanje.i[stanje.smer]}/${CM.kljuc()}`;
 
-  function tekstura(url) {
-    if (predpomnilnik.has(url)) return Promise.resolve(predpomnilnik.get(url));
+  function tekstura(url, pretvori = null, kl = url) {
+    if (predpomnilnik.has(kl)) return Promise.resolve(predpomnilnik.get(kl));
     return slika(url).then((im) => {
-      const tx = new THREE.Texture(im);
+      const tx = new THREE.Texture(pretvori ? pretvori(im) : im); // CT: okno s tabelo (CTMR)
       tx.colorSpace = THREE.SRGBColorSpace;
       tx.minFilter = THREE.LinearFilter;
       tx.generateMipmaps = false;
       tx.needsUpdate = true;
-      predpomnilnik.set(url, tx);
+      predpomnilnik.set(kl, tx);
       if (predpomnilnik.size > (telefon ? 10 : 28)) {
         const [prvi, stara] = predpomnilnik.entries().next().value;
         if (stara !== ostra.material.map && !skupinaPloscic.children.some((c) => c.material.map === stara)) {
@@ -364,8 +368,8 @@ export async function zgradi(THREE, ctx) {
 
   function naloziOstro() {
     if (T.meta.ostro === false) return;
-    const k = kljuc(), s = stanje.smer;
-    tekstura(`${T.url}${s}/${stanje.i[s]}.webp`).then(
+    const k = kljuc(), s = stanje.smer, o = CM.ostra();
+    tekstura(o ? o.url : `${T.url}${s}/${stanje.i[s]}.webp`, o?.pretvori, o?.kljuc).then(
       (tx) => {
         if (k !== kljuc()) return;
         ostra.material.map = tx;
@@ -401,7 +405,7 @@ export async function zgradi(THREE, ctx) {
   function naloziPloscice() {
     if (!T) return;
     const p = T.meta.podrobno, s = stanje.smer, i = stanje.i[s];
-    if (!p || !p.ravnine.includes(s) || !zadnjaKamera || T.meta.ostro === false) return;
+    if (!p || !p.ravnine.includes(s) || !zadnjaKamera || T.meta.ostro === false || !CM.jeFoto()) return;
     const k = kljuc();
     const potrebne = new Map();
     for (const pl of R.ploscice(p, T.dim, s, i)) {
@@ -582,7 +586,7 @@ export async function zgradi(THREE, ctx) {
   // Fotografija rezine (ostra slika 1 mm) v velikosti povečane mreže oznak: (X, Y) → false, če je tam maščoba.
   // Brez ostre slike (še se nalaga, napaka CORS) null: obris ostane po mreži oznak.
   function vzorecTkiva(w, h) {
-    const im = ostraZa === kljuc() ? ostra.material.map?.image : null;
+    const im = ostraZa === kljuc() && CM.jeFoto() ? ostra.material.map?.image : null;
     if (!im) return null;
     try {
       const c = document.createElement("canvas");
@@ -601,7 +605,7 @@ export async function zgradi(THREE, ctx) {
 
   // Svetlost fotografije (ostra slika) po celicah mreže oznak: (x, y) → 0–255; brez ostre slike null.
   function svetlostCelic(w, h) {
-    const im = ostraZa === kljuc() ? ostra.material.map?.image : null;
+    const im = ostraZa === kljuc() && CM.jeFoto() ? ostra.material.map?.image : null;
     if (!im) return null;
     try {
       const c = document.createElement("canvas");
@@ -636,6 +640,7 @@ export async function zgradi(THREE, ctx) {
     const moja = ++zahteva;
     const url = new URL(kazalo.telesa[spol], osnova).href;
     const meta = await json(url + "meta.json");
+    const ctmr = CM.preberi(url, json); // vzporedno z malim volumnom; brez ctmr.json ni gumbov CT/MR
     ctx.napredek?.(0.2);
     const list = await slika(url + meta.mali.datoteka);
     const c = document.createElement("canvas");
@@ -654,6 +659,7 @@ export async function zgradi(THREE, ctx) {
         console.warn("3D rezine: oznake niso na voljo", err);
       }
     }
+    const podatkiCtmr = await ctmr;
     if (moja !== zahteva) return false; // medtem je bilo izbrano drugo telo
     const dim = meta.dim;
     // površje telesa (zaprto, brez lukenj v koži in z ločenimi prsti: R.povrsje pripravi polje iz alfe)
@@ -684,6 +690,7 @@ export async function zgradi(THREE, ctx) {
     const [W, H, Z] = dim, sk = 2 / Math.hypot(W, H, Z);
     notranja.scale.setScalar(sk);
     T = { meta, url, mali, ozn, dim, vzorec: !!meta.vzorec || meta.od > 1001 };
+    CM.nastavi(url, podatkiCtmr);
     stanje.spol = spol;
     deliPoId.clear();
     stanje.izbrana = "";
@@ -731,6 +738,7 @@ export async function zgradi(THREE, ctx) {
     for (const sm of R.SMERI) drsniki[sm].vrednost = stanje.i[sm];
     nSmer.vrednost = stanje.smer; nPogled.vrednost = stanje.pogled; nTelo.vrednost = stanje.telo; nRaven.vrednost = stanje.raven;
     if (nSpol) nSpol.vrednost = stanje.spol;
+    CM.sinh();
   };
   // anatomska raven prečne rezine: vretence v tej višini (meta.oznake.ravni iz mrež HRA, npr. »Th8«)
   // OŠ: samo predel telesa (»v višini prsnega koša«), brez vretenca in milimetrov; drsnik ga pokaže namesto števila
@@ -787,6 +795,7 @@ export async function zgradi(THREE, ctx) {
     nadzor: [
       nRaven,
       ...(nSpol ? [nSpol] : []),
+      ...CM.nadzor,
       nSmer,
       drsnik("a"), drsnik("k"), drsnik("s"),
       nPogled,
