@@ -24,10 +24,12 @@ import { visitCounter, mountPilot } from "./pilot.js";
 import { mountPilotTasks, pilotMember } from "./pilot-naloge.js";
 import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
+import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
 import { printPage, printPageParts, printSignature, printSizeHint, streamParts } from "./textbook-print.js";
+import { createPdfStore, pdfDownloadName, printFallbackExists } from "./ucbenik-pdf.js";
 import { createPageCache } from "./tisk-predpomnilnik.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
@@ -73,6 +75,8 @@ import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnos
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
+import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
+import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 
@@ -231,7 +235,7 @@ export function createApp(store, opts = {}) {
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -306,6 +310,7 @@ export function createApp(store, opts = {}) {
   app.use(visitCounter(store.db));
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mountVidnost(app); // robots.txt, sitemap.xml, llms.txt in stran /o-evklidu za iskalnike (server/vidnost.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
@@ -353,13 +358,15 @@ export function createApp(store, opts = {}) {
   app.locals.tiskTokovi = () => ({ streams, collecting: [...collecting] }); // testi
   app.get("/ucbenik/:path{/:topic}", (req, res, next) => {
     const { path: key, topic = null } = req.params;
-    const cacheKey = `${key}/${topic || ""}`;
-    const sig = printSignature(key, topic);
+    // ?poglavje=<naslov sklopa>: »PDF poglavja« (samo en sklop poti, brez kazala). Pri lekciji in listu formul ga ni.
+    const unit = !topic && typeof req.query.poglavje === "string" && req.query.poglavje && req.query.poglavje.length <= 200 ? req.query.poglavje : null;
+    const cacheKey = `${key}/${topic || ""}${unit ? `?${unit}` : ""}`;
+    const sig = printSignature(key, topic, unit);
     if (sig == null) return res.status(404).send("Ta del učbenika ne obstaja.");
     const hit = printCache.peek(cacheKey, sig);
-    const hint = hit || topic ? 0 : printSizeHint(key);
-    if (hit || topic || hint <= printCache.maxBytes / 2) {
-      const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic));
+    const hint = hit || topic || unit ? 0 : printSizeHint(key);
+    if (hit || topic || unit || hint <= printCache.maxBytes / 2) {
+      const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic, unit));
       if (!page) return res.status(404).send("Ta del učbenika ne obstaja.");
       return printCache.send(req, res, page).catch(next);
     }
@@ -387,6 +394,70 @@ export function createApp(store, opts = {}) {
         if (collect) collecting.delete(cacheKey);
       });
   });
+
+  // Vnaprej izdelan PDF razreda, poglavja ali predmeta (server/ucbenik-pdf.js): prava datoteka z diska, ki jo
+  // telefon samo prenese (delni zahtevki Range, ETag iz zgoščene vrednosti vsebine). Če PDF-ja (še) ni ali ne
+  // ustreza sedanjim lekcijam, preusmeri na tisk v brskalniku (/ucbenik/…#natisni). Enaka pravila dostopa kot
+  // /ucbenik (besedilo lekcij je za vse; za skupnim geslom, kadar je vklopljeno).
+  const pdfStore = opts.pdfStore || createPdfStore();
+  app.locals.pdfStore = pdfStore;
+  // Datoteko pošlje express.static (Range, If-Range, 304, HEAD); ETag spodaj je iz vsebine lekcij, ne iz časa datoteke.
+  const pdfFiles = express.static(pdfStore.dir, { index: false, etag: false, cacheControl: false, dotfiles: "ignore", redirect: false });
+  app.get("/ucbenik-pdf/:path", (req, res, next) => {
+    const key = req.params.path;
+    const unit = typeof req.query.poglavje === "string" && req.query.poglavje && req.query.poglavje.length <= 200 ? req.query.poglavje : null;
+    const lang = typeof req.query.l === "string" && /^[A-Za-z-]{2,12}$/.test(req.query.l) ? req.query.l : "";
+    const fallback = () => {
+      if (!printFallbackExists(key, unit)) return res.status(404).send("Ta del učbenika ne obstaja.");
+      const q = new URLSearchParams();
+      if (unit) q.set("poglavje", unit);
+      if (lang) q.set("l", lang);
+      for (const h of ["Content-Type", "Content-Disposition", "ETag"]) res.removeHeader(h);
+      res.set("Cache-Control", "no-store");
+      res.redirect(302, `/ucbenik/${encodeURIComponent(key)}${q.size ? `?${q}` : ""}#natisni`);
+    };
+    const hit = pdfStore.find(key, unit);
+    if (!hit) return fallback();
+    const name = pdfDownloadName(key, unit) || hit.name;
+    const ascii = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\x20-\x7e]/g, "_").replace(/["\\]/g, "_");
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `inline; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(name)}`,
+      ETag: `"${hit.etag}"`,
+      "Cache-Control": "no-cache", // vedno preveri ETag (304 brez prenosa); nova izdaja lekcij pride takoj
+    });
+    req.url = `/${hit.name}`; // ime iz kazala (samo črke, številke, pika, vezaj; server/ucbenik-pdf.js FILE_RE)
+    pdfFiles(req, res, (err) => (err ? next(err) : fallback())); // datoteka je med tem izginila: rezerva
+  });
+
+  // Po zagonu (server/index.js) v ozadju izriše strani razredov v predpomnilnik, da prvi bralec ne čaka na izris
+  // (hladen izris razreda 0,3–2 s procesorja, na Renderju počasneje). Lekcijo za lekcijo s predahom med njimi
+  // (glavna nit ostane prosta), le strani do 1/8 meje, skupaj do polovice meje predpomnilnika in brez velikih
+  // programskih učbenikov (ti gredo kos za kosom). EVKLID_TISK_PREDGREJ=0 ga izklopi. Predpomnilnik je v pomnilniku
+  // (podpis vsebuje različice lekcij, ki se ob zagonu štejejo na novo): disk bi prihranil le izris, ne 28 s izrisa v brskalniku.
+  app.locals.tiskPredgrej = async () => {
+    if (process.env.EVKLID_TISK_PREDGREJ === "0") return 0;
+    let n = 0;
+    for (const book of listBooks()) {
+      for (const p of book.paths) {
+        const cacheKey = `${p.key}/`;
+        const sig = printSignature(p.key, null);
+        if (sig == null || printSizeHint(p.key) > printCache.maxBytes / 8) continue;
+        if (printCache.stats().bytes > printCache.maxBytes / 2) return n;
+        if (printCache.peek(cacheKey, sig)) continue;
+        const parts = printPageParts(p.key, null);
+        if (!parts) continue;
+        let html = "";
+        for (const part of parts) {
+          html += part;
+          await new Promise((ok) => setTimeout(ok, Number(process.env.EVKLID_TISK_PREDAH_MS ?? 20))); // predah: zahtevki in klepet ne čakajo na izris
+        }
+        printCache.put(cacheKey, sig, Buffer.from(html));
+        n++;
+      }
+    }
+    return n;
+  };
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor
   const pendingSettings = new Map(); // pogovor → predlog spremembe šole/letnika, ki čaka na potrditev
@@ -528,6 +599,7 @@ export function createApp(store, opts = {}) {
     const s = loadStudent(req, res);
     if (!s) return;
     const name = req.body?.name !== undefined ? cleanText(req.body.name, 40) || s.name : undefined;
+    if (req.body?.settings) accounts?.pilotBeforeLevelChange(s.id);
     res.json(
       store.updateStudent(s.id, {
         name,
@@ -666,10 +738,19 @@ export function createApp(store, opts = {}) {
     }
     if (!text && !image) return res.status(400).json({ error: "Sporočilo je prazno." });
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
-    if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
+    // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
+    // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
+    const nujnoPred = () => nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn });
+    if (chatOff()) {
+      const nujno = await nujnoPred();
+      return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true, nujno: nujno || undefined });
+    }
     if (busy.has(conv.id)) return res.status(409).json({ error: "Počakaj, da Evklid odgovori." });
     const blocked = usage.blockInfo(student.id);
-    if (blocked) return res.status(429).json({ ...blocked, limit: true });
+    if (blocked) {
+      const nujno = await nujnoPred();
+      return res.status(429).json({ ...blocked, limit: true, nujno: nujno || undefined });
+    }
     busy.add(conv.id);
     // Napaka pred pretakanjem (npr. SQLITE_BUSY pri zapisu sporočila): Express 5 jo preda obdelovalcu napak (500).
     // Ob zaprtju takega odgovora sprostimo pogovor (busy) in rezervacijo, sicer bi ostala zasedena do ponovnega
@@ -792,7 +873,9 @@ export function createApp(store, opts = {}) {
         if (againStreak !== (conv.deep || 0)) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
         // Koda meje, ki je vezala (z namigom); če bi šel najcenejši odgovor v novem pogovoru, je kriv dolg pogovor.
         const fresh = replyReserveUsd({ mode: "lite", system, messages: [{ role: "user", content: userContent }], tools: SETTINGS_TOOLS, extraTokens: 2000 });
-        return res.status(429).json(usage.guardBlock(student.id, fresh));
+        // Tudi ta zavrnitev (trda meja AI) nosi varnostni odgovor, če je sporočilo nujno.
+        const nujno = await nujnoPred();
+        return res.status(429).json({ ...usage.guardBlock(student.id, fresh), nujno: nujno || undefined });
       }
       mode = alt;
       deep = mode === "deep" || mode === "mid";
@@ -821,6 +904,43 @@ export function createApp(store, opts = {}) {
       "X-Accel-Buffering": "no",
     });
     const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    // Pod mejo: lokalni zaznavalnik (strošek 0); varnostni odgovor se pokaže nad odgovorom inštruktorja (j 6. 11.).
+    // Posredna stiska (lokalno »pogovor«, blažje okno): ne gre takoj, da pregled B ali inštruktor (META) lahko odpreta
+    // močnejše okno; če ga ne, se blažje okno pošlje pred koncem odgovora (j 10. 11.).
+    const vrstaLokalno = lokalnaVrsta(text);
+    const blagoLokalno = vrstaLokalno === "pogovor" ? nujnoZa("pogovor", student.settings) : null;
+    const nujnoLokalno = blagoLokalno ? null : nujnoZa(vrstaLokalno, student.settings);
+    if (nujnoLokalno) send("nujno", nujnoLokalno);
+    // Največ en varnostni odgovor na sporočilo (lokalno, Haiku ali META flag=distress).
+    let nujnoPoslano = !!nujnoLokalno;
+    const posljiNujno = (n) => {
+      if (!n || nujnoPoslano || res.writableEnded || res.destroyed) return;
+      nujnoPoslano = true;
+      send("nujno", n);
+    };
+    // Možnost B (j 10. 11.): kratek pregled s Haikujem vzporedno z odgovorom inštruktorja, na strošek aplikacije.
+    // Ne ob »Razloži podrobneje« (isto sporočilo je bilo pregledano že prej). EVKLID_VARNOST_VSAKO=0 izklopi.
+    const nujnoZacetek = Date.now();
+    const pregledB =
+      !nujnoLokalno && text && !again && vsakoVklopljeno()
+        ? varnostniPregled({ text, usage, studentId: student.id, createFn: opts.varnostFn, varovalka: false })
+            .then((vrsta) => {
+              if (vrsta) posljiNujno({ ...nujnoZa(vrsta, student.settings), ai: true });
+              return vrsta;
+            })
+            .catch(() => null)
+        : null;
+    // Pred koncem odgovora počakamo na pregled, a največ do NUJNO_ROK_MS od začetka (običajno je že končan).
+    const pocakajNujno = async () => {
+      if (!pregledB) return null;
+      let timer;
+      const rok = new Promise((r) => (timer = setTimeout(() => r(null), Math.max(0, NUJNO_ROK_MS - (Date.now() - nujnoZacetek)))));
+      try {
+        return await Promise.race([pregledB, rok]);
+      } finally {
+        clearTimeout(timer);
+      }
+    };
 
     const controller = new AbortController();
     let finished = false;
@@ -1137,6 +1257,12 @@ export function createApp(store, opts = {}) {
       } else if (!win) {
         console.warn(`[evklid] odgovor brez META (pogovor ${conv.id})`);
       }
+      // Možnost A (j 10. 11.): inštruktor je označil stisko (flag=distress) → varnostni odgovor, če ga še ni.
+      // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
+      // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
+      const vrstaB = await pocakajNujno();
+      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
+      posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
         id: assistantId,
@@ -1179,7 +1305,10 @@ export function createApp(store, opts = {}) {
       if (!controller.signal.aborted) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
-        send("error", { error: errorText(err) });
+        // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
+        // Pregled B (če teče) ima še do NUJNO_ROK_MS od začetka; njegov zadetek gre kot dogodek »nujno« pred napako.
+        await pocakajNujno();
+        send("error", { error: errorText(err), nujno: nujnoPoslano ? undefined : nujnoZa(lokalnaVrsta(text), student.settings) || undefined });
       }
       res.end();
     } finally {

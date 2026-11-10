@@ -1,12 +1,25 @@
 // Učbenik: kazalo, iskanje in lekcije z interaktivnimi demonstracijami.
 import { mountSim } from "./sim/index.js";
-import { t, locale } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n.js";
+import { uiLanguage } from "./i18n/languages.js";
 import { withFormulaSubject, plainTex } from "./formula-data.js";
 import { lessonSteps, demoSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
 import { jeFaks } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
+
+// Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
+// učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
+const pdfHref = (path, { topic = "", unit = "" } = {}) => {
+  const q = new URLSearchParams();
+  if (unit) q.set("poglavje", unit);
+  q.set("l", uiLanguage(currentLang()));
+  // Razred, poglavje in cel predmet: vnaprej izdelana datoteka PDF (server/ucbenik-pdf.js), telefon jo samo prenese;
+  // če je strežnik (še) nima, sam preusmeri na tisk v brskalniku. Lekcija in list formul: tisk v brskalniku.
+  if (!topic) return `/ucbenik-pdf/${path}?${q}`;
+  return `/ucbenik/${path}/${topic}?${q}#natisni`;
+};
 
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
 const $ = (sel) => document.querySelector(sel);
@@ -179,6 +192,9 @@ export function textbookBack() {
   return true;
 }
 
+/** Lekcija, odprta v Učbeniku (ali null na kazalu); za zadnji zaslon ob naslednjem odprtju (app.js). */
+export const openLessonId = () => tb.topicId || null;
+
 // Z Učne poti (»Nižji razredi so v Učbeniku«): odpre izbiro vseh učbenikov in razredov.
 export function openTextbookLower() {
   syncProfile();
@@ -282,8 +298,8 @@ async function renderHome() {
         <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)} · ${esc(book.schoolName)}</h2>
         <p class="muted">${esc(t(book.lessons < book.topics ? "tbk.countMore" : "tbk.count", { done: book.lessons, total: book.topics }))}</p></div>
         <div class="tb-book-actions">
-          <a class="btn-primary tb-book-pdf" href="/ucbenik/${esc(book.key)}#natisni" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
-          ${book.formulas ? `<a class="btn-secondary tb-book-pdf" href="/ucbenik/${esc(book.key)}/formule#natisni" target="_blank" rel="noopener">${ic("sigma")}${esc(t("tbk.pdfFormulas"))}</a>` : ""}
+          <a class="btn-primary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
+          ${book.formulas ? `<a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key, { topic: "formule" }))}" target="_blank" rel="noopener">${ic("sigma")}${esc(t("tbk.pdfFormulas"))}</a>` : ""}
         </div>
         ${book.subject === "PROG" ? `<div class="seg tb-mode" role="tablist" aria-label="${esc(t("refs.title"))}">
           <button type="button" role="tab" data-mode="lessons" class="${tb.mode !== "refs" ? "active" : ""}" aria-selected="${tb.mode !== "refs"}">${ic("book-open")}${esc(t("refs.tabLessons"))}</button>
@@ -379,7 +395,7 @@ async function renderBody() {
   }
   if (stale()) return;
   if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book, stale);
-  const unitHtml = (u, i) => `<section class="card tb-unit">
+  const unitHtml = (u, i, pathKey) => `<section class="card tb-unit">
         <h2><span class="tb-num">${i + 1}</span>${esc(u.title)}</h2>
         <ul class="tb-list">${u.topics
           .map(
@@ -393,6 +409,7 @@ async function renderBody() {
             </button></li>`,
           )
           .join("")}</ul>
+        ${u.topics.some((tp) => tp.lesson) ? `<p class="tb-unit-pdf"><a class="tb-pdf" href="${esc(pdfHref(pathKey, { unit: u.title }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a></p>` : ""}
       </section>`;
   // Prikažemo razred/letnik iz Nastavitev; druge lahko izbereš zgoraj (ali »Vse«).
   const groups = groupsOf(book);
@@ -408,8 +425,8 @@ async function renderBody() {
       .map(
         (p) => `<section class="tb-part" id="tb-part-${esc(p.key)}">
         <div class="tb-part-head"><h2>${esc(p.label)}</h2>
-          <a class="tb-pdf" href="/ucbenik/${esc(p.key)}#natisni" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfPart"))}</a></div>
-        ${p.units.map(unitHtml).join("")}
+          <a class="tb-pdf" href="${esc(pdfHref(p.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfPart"))}</a></div>
+        ${p.units.map((u, i) => unitHtml(u, i, p.key)).join("")}
       </section>`,
       )
       .join("")}`;
@@ -602,7 +619,7 @@ async function renderLesson(topicId) {
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
     <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
-    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="/ucbenik/${L.path}/${L.id.split("/")[1]}#natisni" target="_blank" rel="noopener">${ic("download")}PDF lekcije</a>${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
+    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
     ${linkHtml}
     ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
