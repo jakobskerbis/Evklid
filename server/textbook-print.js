@@ -314,6 +314,7 @@ export function shell(title, content, css = "") {
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="/risbe.css">
 <style>
   :root { color-scheme: light; }
   body { font: 11.5pt/1.55 Georgia, "Times New Roman", serif; color: #1c2233; background: #fff; margin: 0; }

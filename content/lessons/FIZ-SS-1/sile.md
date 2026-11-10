@@ -172,14 +172,17 @@ Nariši silo kot puščico v merilu $1\,\mathrm{cm} \Rightarrow 1\,\mathrm{N}$.
 
 **Sestavljanje (»rep na glavo«).** Nariši $F_1 = 3\,\mathrm{N}$ kot puščico dolžine $3\,\mathrm{cm}$ v desno. Na njeno konico prestavi rep puščice $F_2 = 4\,\mathrm{N}$ (dolžine $4\,\mathrm{cm}$) navzgor. Rezultanta je puščica od repa prve do konice druge. Izmeri jo z ravnilom: $5\,\mathrm{cm}$, torej $5\,\mathrm{N}$.
 
-```
-          ^ 
-         /|
-   F_r  / | F_2 = 4 N
-       /  |
-      o-->+
-      F_1 = 3 N
-```
+:::risba skica
+opis: Sestavljanje dveh pravokotnih sil na mreži, kjer en kvadratek pomeni 1 N. Puščica F₁ = 3 N kaže tri kvadratke v desno. Na njeni konici se začne puščica F₂ = 4 N, ki kaže štiri kvadratke navzgor. Rezultanta F_r je puščica od začetka prve do konice druge.
+območje: -1; -1 .. 5; 5
+enota: 44
+mreža: da
+puščica: 0; 0 -> 3; 0 | F_1 = 3 N | pod | modra
+puščica: 3; 0 -> 3; 4 | F_2 = 4 N | desno | zelena
+puščica: 0; 0 -> 3; 4 | F_r | nad levo | oranžna
+pravikot: 3; 0 | 0; 0 | 3; 4
+točka: 0; 0
+:::
 
 **Razstavljanje (»senci«).** Predstavljaj si, da silo osvetliš od zgoraj: njena senca na tleh je vodoravna komponenta. Če jo osvetliš od strani, je senca na steni navpična komponenta. Bolj kot je puščica položna, daljša je senca na tleh in krajša na steni.
 

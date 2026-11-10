@@ -4,7 +4,7 @@
 .dark .textbook, .dark .lab-view, .dark .gr-video { --demo-a: #f2a061; --demo-b: #4cc3b2; --demo-c: #a58ff0; }
 
 /* Ikone v učbeniku. Ne KaTeX: njegovi SVG-ji (znak korena s črto, puščice, oklepaji) imajo svojo širino (j 2026-10-31). */
-.textbook svg:not(.demo-svg):not(.katex svg) { width: 1.1em; height: 1.1em; vertical-align: -0.15em; margin-right: 6px; }
+.textbook svg:not(.demo-svg):not(.rs):not(.katex svg) { width: 1.1em; height: 1.1em; vertical-align: -0.15em; margin-right: 6px; }
 .tb-head h1 { display: flex; align-items: center; }
 .tb-search input {
   width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); font-size: 1rem;

@@ -251,6 +251,7 @@ function expr(s) {
 /** Markdown z $…$ → besedilo za branje (brez oznak, formule izgovorjene). */
 export function speakMarkdown(md) {
   return String(md || "")
+    .replace(/^[ \t]*:::[ \t]*risba[^\n]*\n([\s\S]*?)\n[ \t]*:::[ \t]*$/gm, (_, b) => /^\s*opis\s*:\s*(.+)$/im.exec(b)?.[1] || "")
     .replace(/^[ \t]*:::[ \t]*(formula|premisli)[ \t]*\n([\s\S]*?)\n[ \t]*:::[ \t]*$/gm, "$2")
     .replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => ` ${speakTex(t)}. `)
     .replace(/\$([^$\n]+?)\$/g, (_, t) => speakTex(t))
