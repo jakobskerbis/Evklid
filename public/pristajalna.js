@@ -89,7 +89,7 @@ export function landingHtml({ name, prices = null, money = (x) => String(x) } = 
     : "";
   const facts = [1, 2, 3].map((n) => `<li>${icon("check")}<span>${esc(t(`land.fact${n}`))}</span></li>`).join("");
   return `<div class="land">
-    <section class="land-top${gar ? " has-gar" : ""}">
+    <section class="land-top">
       ${gar}
       <ul class="land-facts">${facts}</ul>
     </section>
