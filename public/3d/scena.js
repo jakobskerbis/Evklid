@@ -7,6 +7,7 @@ import * as THREE from "/vendor/three/build/three.module.js";
 import { OrbitControls } from "/vendor/three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "/vendor/three/examples/jsm/environments/RoomEnvironment.js";
 import { zavrtiOkoli } from "./vrtenje.js";
+import { razdaljaZaPolmer } from "./kader.js";
 
 export { THREE };
 
@@ -544,11 +545,7 @@ export function ustvariSceno(el, opts = {}) {
   // Prelet kamere: cilj in položaj se mehko premakneta (ease in-out); pri manj gibanja takoj.
   let let_ = null;
   // Razdalja, pri kateri krogla s polmerom `polmer` cela pade v ožji od obeh zornih kotov (pokončen telefon: vodoravni).
-  const fitRazdalja = (polmer) => {
-    const navp = THREE.MathUtils.degToRad(camera.fov / 2);
-    const vodo = Math.atan(Math.tan(navp) * camera.aspect);
-    return (polmer / Math.sin(Math.min(navp, vodo))) * 1.08;
-  };
+  const fitRazdalja = (polmer) => razdaljaZaPolmer(camera.fov, camera.aspect, polmer);
   function poleti(sredisce, polmer, { smer = null, trajanje = 0.85, razdalja = null, pokonci = false } = {}) {
     const cilj = new THREE.Vector3().copy(sredisce);
     vztr.x = vztr.y = 0;

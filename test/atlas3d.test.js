@@ -299,7 +299,9 @@ test("prevodi: vsak ključ a3.* iz public/3d je v sl.js", () => {
     for (const [, k] of src.matchAll(/\bt\(\s*["'`]((?:a3|lab)\.[A-Za-z0-9_.]+)["'`]/g)) kljuci.add(k);
   }
   assert.ok(kljuci.size > 40, `najdenih le ${kljuci.size} ključev`);
-  const manjka = [...kljuci].filter((k) => !(k in sl));
+  // a3.rez.*: slovar pogleda »Pravi prerez telesa« (public/3d/rezine-besedila.json, naloži se šele v modelu)
+  const rez = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "3d", "rezine-besedila.json"), "utf8")).sl;
+  const manjka = [...kljuci].filter((k) => !(k in sl) && !(k.startsWith("a3.rez.") && k in rez));
   assert.deepEqual(manjka, []);
   // Ključi, sestavljeni v kodi (a3.l.<sloj>, a3.area.<področje>), obstajajo za vse vrednosti.
   for (const p of PODROCJA) assert.ok(`a3.area.${p}` in sl, `a3.area.${p}`);

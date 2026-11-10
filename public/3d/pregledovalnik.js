@@ -3,7 +3,7 @@
 // stikalo, izpis), merilo iz `merilo`, »Ponastavi«, predvajaj/ustavi, ko ima model `korak`. Uporabljata ga stran /3d
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
-import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
+import { obsegVidnega, vKadru, vidnaKrogla, polmerZaPravokotnik } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -39,7 +39,8 @@ export function odpriModel(el, mod, opts = {}) {
   let izbran = null;
   let tece = true;
   let izpisi = [];
-  let drsIzpisi = []; // osvežitev izpisa in napisa drsnikov (c.izpis, c.oznaka kot funkcija) po vsakem ob()
+  let drsIzpisi = [];
+  let skrijNamig = null; // odstrani namig na odru (model.namigOder === false) // osvežitev izpisa in napisa drsnikov (c.izpis, c.oznaka kot funkcija) po vsakem ob()
   let sinh = []; // drsnik/stikalo/izbira: { c, zadnja, nastavi } – gradnik sledi c.vrednost, ko jo spremeni model
   let zadnjiDeli = []; // deli ob zadnji gradnji seznama (primerjava po predmetih)
   let vidni = []; // [nadzor, element] za nadzore z vidno()
@@ -540,6 +541,9 @@ export function odpriModel(el, mod, opts = {}) {
     } catch {}
     povzetekEl.textContent = p;
     povzetekEl.hidden = !p;
+    // model.namigOder === false: brez namiga na odru (pravi prerez: rezina, oznake smeri in merilo zapolnijo oder,
+    // namig bi jih na telefonu prekril; kaj poskusiti, pove opis modela)
+    if (model?.namigOder === false) skrijNamig?.();
     const nv = model?.navedba?.besedilo || "";
     if (navedbaEl.textContent !== nv) navedbaEl.textContent = nv;
     navedbaEl.title = model?.navedba?.opomba || "";
@@ -572,12 +576,7 @@ export function odpriModel(el, mod, opts = {}) {
     // o.pravokotnik = [š, v] ravne slike, gledane naravnost (rezina): polmer, pri katerem slika zapolni delež o.zapolni
     // (privzeto 0,9) širine ali višine odra, ne krogle okoli nje (telefon: rezina čez ≥ 85 % širine)
     const p = o?.pravokotnik;
-    if (kit && Array.isArray(p) && p[0] > 0 && p[1] > 0) {
-      const navp = THREE.MathUtils.degToRad(kit.camera.fov / 2), vodo = Math.atan(Math.tan(navp) * kit.camera.aspect);
-      const z = o.zapolni > 0 && o.zapolni <= 1 ? o.zapolni : 0.9;
-      const d = Math.max(p[0] / 2 / Math.tan(vodo), p[1] / 2 / Math.tan(navp)) / z;
-      return [c, (d * Math.sin(Math.min(navp, vodo))) / 1.08]; // obrat kit.fitRazdalja
-    }
+    if (kit && Array.isArray(p) && p[0] > 0 && p[1] > 0) return [c, polmerZaPravokotnik(kit.camera.fov, kit.camera.aspect, p, o.zapolni)]; // obrat kit.fitRazdalja
     return [c, o?.polmer > 0 ? o.polmer : 1];
   };
   const osveziIzpise = () => {
@@ -693,11 +692,17 @@ export function odpriModel(el, mod, opts = {}) {
         // c.gumba = { korak, manj, vec }: v isti vrstici [−] drsnik [+]; dolg pritisk ponavlja korak (natančen premik na telefonu)
         if (c.gumba) {
           const vrsta = mk("span", "k3-drsnik-vrsta");
+          // ime gumba je lahko funkcija (npr. OŠ brez »mm«): osveži se z izpisom drsnika
           const gumb = (smer, ime) => {
             const b = mk("button", "k3-krog k3-drsnik-gumb", smer < 0 ? "−" : "+");
             b.type = "button";
-            b.setAttribute("aria-label", ime);
-            b.title = ime;
+            const imeG = () => String((typeof ime === "function" ? ime() : ime) || (smer < 0 ? "−" : "+"));
+            const osveziIme = () => {
+              const x = imeG();
+              if (b.title !== x) { b.setAttribute("aria-label", x); b.title = x; }
+            };
+            osveziIme();
+            drsIzpisi.push(osveziIme);
             let ura = 0, ponavljal = 0; // čas zadnjega ponovljenega koraka
             const korak = () => {
               const v = Math.max(Number(c.min), Math.min(Number(c.max), Number(c.vrednost) + smer * (c.gumba.korak || 1)));
@@ -724,7 +729,7 @@ export function odpriModel(el, mod, opts = {}) {
             });
             return b;
           };
-          vrsta.append(gumb(-1, c.gumba.manj || "−"), inp, gumb(1, c.gumba.vec || "+"));
+          vrsta.append(gumb(-1, c.gumba.manj), inp, gumb(1, c.gumba.vec));
           lab.append(vrh, vrsta);
         } else lab.append(vrh, inp);
         nadzorEl.append(lab);
@@ -933,12 +938,14 @@ export function odpriModel(el, mod, opts = {}) {
         oder.append(namig);
         oder.classList.add("k3-namig-viden"); // telefon: merilo nad namigom, dokler je ta viden
         let skrit = false;
-        const skrij = () => {
+        const skrij = (takoj) => {
           if (skrit) return;
           skrit = true;
           namig.classList.add("skrit");
+          if (takoj === true) namig.remove();
           oder.classList.remove("k3-namig-viden");
         };
+        skrijNamig = () => skrij(true);
         setTimeout(skrij, 9000);
         kit.canvas.addEventListener("pointerdown", skrij, { once: true });
         kit.canvas.addEventListener("wheel", skrij, { once: true, passive: true });

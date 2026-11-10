@@ -1,6 +1,24 @@
 // Kadriranje 3D modelov (docs/3d.md »Okno dela in kader«): obseg vidnih mrež in preverba, ali je krogla cela v kadru.
 // Brez DOM-a, zato ga preverja tudi test/3d-kader.test.js v Node.
 
+// Rob kadra: krogla modela zasede 1 / ROB_KADRA ožjega zornega kota (scena.js fitRazdalja).
+export const ROB_KADRA = 1.08;
+const rad = (st) => (st * Math.PI) / 180;
+// Razdalja kamere (navpični zorni kot fov v stopinjah, razmerje aspect), pri kateri krogla s polmerom `polmer` cela pade
+// v ožji od obeh zornih kotov (pokončen telefon: vodoravni), z robom ROB_KADRA.
+export function razdaljaZaPolmer(fov, aspect, polmer) {
+  const navp = rad(fov / 2), vodo = Math.atan(Math.tan(navp) * aspect);
+  return (polmer / Math.sin(Math.min(navp, vodo))) * ROB_KADRA;
+}
+// Obrat razdaljaZaPolmer za ravno sliko [š, v], gledano naravnost: polmer, pri katerem slika zapolni delež `zapolni`
+// širine ali višine odra (rezina pri 360 px čez ≥ 85 % širine).
+export function polmerZaPravokotnik(fov, aspect, [s, v], zapolni = 0.9) {
+  const navp = rad(fov / 2), vodo = Math.atan(Math.tan(navp) * aspect);
+  const z = zapolni > 0 && zapolni <= 1 ? zapolni : 0.9;
+  const d = Math.max(s / 2 / Math.tan(vodo), v / 2 / Math.tan(navp)) / z;
+  return (d * Math.sin(Math.min(navp, vodo))) / ROB_KADRA;
+}
+
 // Obseg (Box3) vsega, kar kamera res vidi: mreže in točke v vidnih vejah, v plasteh kamere, z vsaj enim vidnim
 // materialom. Črte (silnice, osi) in napisi (sprite) ne štejejo, ker segajo čez rob modela. Prekrivni sij (userData.k3Sij)
 // ne šteje. Mreže iz `izpusti` (Set) ne štejejo.

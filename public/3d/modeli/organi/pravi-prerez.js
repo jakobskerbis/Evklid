@@ -38,13 +38,37 @@ function slika(url) {
 }
 const json = (url) => fetch(url).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status} ${url}`))));
 
+// Besedila pogleda v izbranem jeziku (veriga i18n/languages.js uiChain; srbska latinica iz cirilice kot v i18n.js).
+async function naloziBesedila() {
+  try {
+    const [vse, jez, i18n] = await Promise.all([
+      json(new URL("../../rezine-besedila.json", import.meta.url).href),
+      import(new URL("../../../i18n/languages.js", import.meta.url).href),
+      import(new URL("../../../i18n.js", import.meta.url).href),
+    ]);
+    const lang = i18n.currentLang?.() || document.documentElement.lang || "sl";
+    const slovarji = jez.uiChain(lang).map((c) => {
+      if (c === "sr-Latn" && vse.sr) return Object.fromEntries(Object.entries(vse.sr).map(([k, v]) => [k, i18n.srToLatin(v)]));
+      return vse[c];
+    }).filter(Boolean);
+    return (k) => slovarji.find((d) => d[k] != null)?.[k];
+  } catch (err) {
+    console.warn("3D rezine: besedil ni bilo mogoče naložiti", err?.message || err);
+    return () => undefined; // ostanejo slovenska besedila iz kode
+  }
+}
+
 // Model bere podatke iz datotek (canvas, slike): testi pogodbe v Node ga ne gradijo (test/3d-rezine.test.js preveri pomožne funkcije).
 export const izDatotek = true;
 
 export async function zgradi(THREE, ctx) {
+  // besedila pogleda (a3.rez.*) niso v sl.js in ui/*.json (proračun prvega odprtja): public/3d/rezine-besedila.json
+  // { jezik: { ključ: besedilo } } se naloži šele tukaj; veriga jezikov kot v i18n.js (npr. bho → hi → en → sl)
+  const besedila = await naloziBesedila();
   const t = (k, sl) => {
     const v = ctx.t ? ctx.t(k) : k;
-    return !v || v === k ? sl : v;
+    if (v && v !== k) return v;
+    return besedila(k) ?? sl;
   };
   const koren = new URL("../../rezine/", import.meta.url).href;
   let kazalo;
@@ -567,9 +591,9 @@ export async function zgradi(THREE, ctx) {
 
   const drsniki = {};
   const drsnik = (sm) => (drsniki[sm] = {
-    tip: "drsnik", id: `rezina-${sm}`, oznaka: () => (os() ? t("a3.rez.position", "Lega rezine") : t("a3.rez.slice", "Rezina (mm)")),
-    izpis: (v) => (os() ? lega(sm, pripni(sm, v)) : ""), min: 0, max: Math.max(1, najvec(sm)), korak: 1,
-    vrednost: stanje.i[sm], gumba: { korak: 1, manj: "−1 mm", vec: "+1 mm" }, lepljiv: true,
+    tip: "drsnik", id: `rezina-${sm}`, oznaka: t("a3.rez.position", "Lega rezine"), // en napis za vse ravni in vzorec (ocena A, krog 5)
+    izpis: (v) => lega(sm, pripni(sm, v)), min: 0, max: Math.max(1, najvec(sm)), korak: 1,
+    vrednost: stanje.i[sm], gumba: { korak: 1, manj: () => (os() ? t("a3.rez.prev", "Prejšnja rezina") : "−1 mm"), vec: () => (os() ? t("a3.rez.next", "Naslednja rezina") : "+1 mm") }, lepljiv: true,
     vidno: () => stanje.smer === sm,
     ob: (v) => {
       stanje.i[sm] = pripni(sm, v);
@@ -640,10 +664,9 @@ export async function zgradi(THREE, ctx) {
       ...(nSpol ? [nSpol] : []),
       nSmer,
       drsnik("a"), drsnik("k"), drsnik("s"),
-      { tip: "izpis", id: "lega", oznaka: t("a3.rez.position", "Lega rezine"), vrednost: () => lega(), vidno: () => !os() }, // OŠ: lega je v drsniku
       nPogled,
       nTelo,
-      { tip: "izpis", id: "stanje", oznaka: t("orders.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
+      { tip: "izpis", id: "stanje", oznaka: t("a3.rez.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
       { tip: "gumb", id: "znova", oznaka: t("task.retry", "Poskusi znova"), vidno: () => !!napakaNalaganja,
         ob: () => {
           napakaNalaganja = ""; ponovi = ""; napakePloscic = 0;
@@ -676,6 +699,7 @@ export async function zgradi(THREE, ctx) {
       }
       return { sredisce: [0, 0, 0], polmer: (Math.hypot(ew, eh) / 2) * 1.9 };
     },
+    namigOder: false, // namig »Povleci za vrtenje …« bi na telefonu prekril rezino, oznako smeri in merilo (ocena A in B, krog 5)
     najblizje: 0.1, // povečava do ploščic 0,33 mm
     ao: () => false,
     izberi(id, hit) {

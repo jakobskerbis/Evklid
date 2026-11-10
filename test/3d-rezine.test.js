@@ -5,11 +5,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync, spawnSync } from "node:child_process";
 import * as R from "../public/3d/rezine.js";
-import SL from "../public/i18n/sl.js";
+import SLVSE from "../public/i18n/sl.js";
+import { ROB_KADRA, razdaljaZaPolmer, polmerZaPravokotnik } from "../public/3d/kader.js";
+import { UI_LANGUAGES } from "../public/i18n/languages.js";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const beri = (...p) => fs.readFileSync(path.join(ROOT, ...p), "utf8");
 const NAVEDBA = "Courtesy of the U.S. National Library of Medicine";
+// besedila pogleda: public/3d/rezine-besedila.json (naložijo se šele v modelu, ne ob prvem odprtju aplikacije)
+const BESEDILA = JSON.parse(beri("public", "3d", "rezine-besedila.json"));
+const SL = { ...SLVSE, ...BESEDILA.sl };
 
 function krogla(W = 20, H = 16, Z = 24, r0 = 6) {
   const data = new Uint8Array(W * H * Z * 4);
@@ -157,10 +162,9 @@ test("rezine: pogoji NLM (navedba vira, brez namiga na podporo, ime projekta ni 
     assert.doesNotMatch(b, /visible\s+(human|man|woman)/i, "ime projekta ni ime funkcije in ni v besedilih");
     assert.doesNotMatch(b, /jernigan|\b(texas|maryland)\b/i, "darovalca ne imenujemo in ne opisujemo");
   }
-  for (const f of fs.readdirSync(path.join(ROOT, "public", "i18n", "ui"))) {
-    const j = JSON.parse(beri("public", "i18n", "ui", f));
+  for (const [f, j] of Object.entries(BESEDILA)) {
     assert.ok(j["a3.rez.notCurrent"].includes("NLM"), `${f}: opomba omenja NLM`);
-    assert.doesNotMatch(Object.entries(j).filter(([k]) => k.startsWith("a3.rez.")).map(([, v]) => v).join(" "), /visible human/i, f);
+    assert.doesNotMatch(Object.values(j).join(" "), /visible human/i, f);
   }
   const src = JSON.parse(beri("scripts", "atlas", "rezine_viri.json"));
   assert.equal(src.navedba, NAVEDBA);
@@ -381,9 +385,12 @@ test("rezine: OŠ – lega brez vretenca in milimetrov, namig skladen z imenom �
   }
   assert.equal(R.besediloLege({ smer: "a", i: 320, ravni }, t), "v višini Th6 · 32,0 cm pod vrhom", "SŠ ostane natančno");
   const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
-  assert.match(mod, /os\(\) \? t\("a3\.rez\.position", "Lega rezine"\)/, "OŠ: drsnik »Lega rezine« brez »(mm)«");
-  assert.match(mod, /izpis: \(v\) => \(os\(\) \? lega\(sm, pripni\(sm, v\)\) : ""\)/, "OŠ: drsnik pokaže predel, ne številke");
-  assert.match(mod, /id: "lega"[^\n]*vidno: \(\) => !os\(\)/, "OŠ: brez podvojene lege");
+  assert.match(mod, /oznaka: t\("a3\.rez\.position", "Lega rezine"\), \/\/ en napis/, "en napis »Lega rezine« za vse ravni in vzorec");
+  assert.match(mod, /izpis: \(v\) => lega\(sm, pripni\(sm, v\)\)/, "drsnik pokaže lego (OŠ predel, ne številke)");
+  assert.doesNotMatch(mod, /id: "lega"/, "brez podvojene vrstice z lego");
+  assert.match(mod, /manj: \(\) => \(os\(\) \? t\("a3\.rez\.prev"/, "OŠ: gumb − brez »mm«");
+  assert.match(mod, /vec: \(\) => \(os\(\) \? t\("a3\.rez\.next"/, "OŠ: gumb + brez »mm«");
+  assert.doesNotMatch(mod, /orders\.status/, "lasten ključ stanja");
   assert.match(mod, /poskusi: "[^"]*hrbtenice[^"]*"/, "namig: hrbtenica (OŠ ime) namesto vretenca");
 });
 
@@ -396,11 +403,16 @@ test("rezine: poudarek je vedno prosojen z obrobo; okvir rezine zapolni oder", (
   assert.match(mod, /pravokotnik: \[ew, eh\], zapolni: 0\.9/, "pogled naravnost: rezina čez 90 % odra");
   const pr = beri("public", "3d", "pregledovalnik.js");
   assert.match(pr, /const p = o\?\.pravokotnik;/);
-  // obrat fitRazdalja: pri pokončnem telefonu (360 × 380 px oder) mora rezina 2 : 1 zasesti ≥ 85 % širine
-  const fov = 45, aspekt = 360 / 380, navp = (fov / 2) * Math.PI / 180, vodo = Math.atan(Math.tan(navp) * aspekt);
-  const [sw, sh] = [1, 0.5], d = Math.max(sw / 2 / Math.tan(vodo), sh / 2 / Math.tan(navp)) / 0.9;
-  const r = (d * Math.sin(Math.min(navp, vodo))) / 1.08, dd = (r / Math.sin(Math.min(navp, vodo))) * 1.08;
-  assert.ok(sw / (2 * dd * Math.tan(vodo)) >= 0.85, "delež širine");
+  assert.match(pr, /polmerZaPravokotnik\(kit\.camera\.fov, kit\.camera\.aspect, p, o\.zapolni\)/, "pregledovalnik uporabi obrat iz kader.js");
+  assert.match(beri("public", "3d", "scena.js"), /const fitRazdalja = \(polmer\) => razdaljaZaPolmer\(camera\.fov, camera\.aspect, polmer\)/, "scena.js kadrira z isto konstanto");
+  assert.ok(ROB_KADRA > 1 && ROB_KADRA < 1.3);
+  // pri pokončnem telefonu (360 × 380 px oder) mora rezina 2 : 1 zasesti ≥ 85 % širine; ležeč zaslon: 90 % višine
+  for (const [aspekt, sl, os] of [[360 / 380, [1, 0.5], "š"], [390 / 420, [1.7, 1], "š"], [1280 / 700, [1, 1.2], "v"]]) {
+    const fov = 45, navp = (fov / 2) * Math.PI / 180, vodo = Math.atan(Math.tan(navp) * aspekt);
+    const d = razdaljaZaPolmer(fov, aspekt, polmerZaPravokotnik(fov, aspekt, sl, 0.9));
+    const delez = os === "š" ? sl[0] / (2 * d * Math.tan(vodo)) : sl[1] / (2 * d * Math.tan(navp));
+    assert.ok(delez >= 0.85 && delez <= 0.91, `${aspekt.toFixed(2)}: delež ${delez.toFixed(3)}`);
+  }
 });
 
 test("rezine: lepljivi drsnik (samo v plošči strani, pas pod njim pokrit) in dolg pritisk brez dodatnega koraka", () => {
@@ -414,7 +426,7 @@ test("rezine: lepljivi drsnik (samo v plošči strani, pas pod njim pokrit) in d
   assert.match(pravilo, /position: sticky/);
   assert.match(pravilo, /background: var\(--k3-bg\)/, "neprosojno ozadje");
   assert.match(pravilo, /box-shadow/, "senca loči drsnik od vsebine pod njim");
-  assert.match(css, /\.k3-plosca > \.k3-lepljivo::after \{[^}]*linear-gradient\(var\(--k3-bg\) 30%, transparent\)/, "pas pod drsnikom zbledi");
+  assert.match(css, /\.k3-plosca > \.k3-lepljivo::after \{[^}]*height: calc\(var\(--k3-razmik\) - 2px\)[^}]*linear-gradient\(var\(--k3-bg\) 45%, transparent\)/, "pas pod drsnikom zbledi samo v razmiku");
   const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
   assert.match(mod, /lepljiv: true/);
   assert.match(mod, /gumba: \{ korak: 1/);
@@ -497,4 +509,26 @@ print(json.dumps({"st": st, "p59": P[59].tolist(), "p60": P[60].tolist(), "izpad
   assert.ok(r.stiki.some(([z, v]) => v === "skok" && Math.abs(z - 90) <= 1), "skok osvetlitve najden");
   assert.ok(r.skok_prej < 0.85 && r.skok_po > 0.93, `skok izravnan: ${r.skok_prej.toFixed(3)} → ${r.skok_po.toFixed(3)}`);
   assert.ok(r.dalec < 1e-6, "daleč od stikov ni popravka (napaka se ne kopiči)");
+});
+
+test("rezine: besedila pogleda so v vseh jezikih vmesnika in niso v sl.js (proračun prvega odprtja)", () => {
+  const kljuci = Object.keys(BESEDILA.sl).sort();
+  assert.ok(kljuci.length >= 30 && kljuci.every((k) => k.startsWith("a3.rez.")));
+  assert.deepEqual(Object.keys(SLVSE).filter((k) => k.startsWith("a3.rez.")), [], "a3.rez.* ni v sl.js");
+  const vars = (s) => [...String(s).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join();
+  assert.deepEqual(Object.keys(BESEDILA).sort(), [...UI_LANGUAGES].sort(), "en slovar na jezik vmesnika");
+  for (const [jez, d] of Object.entries(BESEDILA)) {
+    assert.deepEqual(Object.keys(d).sort(), kljuci, `${jez}: ključi`);
+    for (const k of kljuci) {
+      assert.ok(typeof d[k] === "string" && d[k].trim(), `${jez} ${k}`);
+      assert.equal(vars(d[k]), vars(BESEDILA.sl[k]), `${jez} ${k}: spremenljivke`);
+      if (jez === "en") assert.notEqual(d[k], BESEDILA.sl[k], `en ${k}: ostal v slovenščini`);
+    }
+    assert.doesNotMatch(`${d["a3.rez.prev"]} ${d["a3.rez.next"]}`, /mm|мм|مم|毫米/, `${jez}: gumba brez »mm«`);
+  }
+  // model naloži slovar šele ob gradnji (ne sl.js), z verigo jezikov in srbsko latinico
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /json\(new URL\("\.\.\/\.\.\/rezine-besedila\.json", import\.meta\.url\)\.href\)/);
+  assert.match(mod, /jez\.uiChain\(lang\)/);
+  assert.match(mod, /srToLatin/);
 });
