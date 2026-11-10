@@ -74,6 +74,51 @@ The »Laboratorij« tab (`public/laboratorij.js`, `server/laboratorij.js`, `GET 
 once (deduped by engine + opts) with the topics it belongs to; a new experiment needs an entry in `LAB_INFO` in `katalog.js`
 (subject, title, one-line description), which `test/laboratorij-pogled.test.js` checks. Lock = the textbook's lesson lock.
 
+## Fotografski prikaz (photo view; j, 2026-11-10: »fotorealističen videz in fizikalna točnost«)
+
+Sample for three experiments (`lab-titracija`, `lab-dokaz`, `lab-ohm`), **off by default**, not yet shown to students.
+The experiment models (`lab-model*.js`) are untouched: level, colour, wiring and readings still come from the model and
+are laid over pre-rendered layers. Switch: `localStorage` `evklid.lab.foto` = `"1"`; the camera button (`sim.lab.foto`)
+appears in the stage only when the key exists (`?labfoto=1` creates and turns it on, `?labfoto=0` removes it). The drawn
+version stays as the fallback: while images load, offline (the fetch of `meta.json` fails), with »manj podatkov«
+(`navigator.connection.saveData`, 2g, `.lite`) and whenever the switch is off.
+
+| File | What |
+|---|---|
+| `scripts/lab-foto/lab_modeli.py` | Blender (Python) procedural models in real dimensions, materials, meniscus solver |
+| `scripts/lab-foto/lab_prizori.py` | the three scenes, orthographic cameras (`Pogled`), layer list, anchors (`meta.sidra`) |
+| `scripts/lab-foto/lab_izris.py` | `blender -b --factory-startup --python scripts/lab-foto/lab_izris.py -- <poskus> <dir> [--vzorci 512] [--merilo 3] [--naprava OPTIX\|CUDA\|CPU]` → one PNG per layer + `meta.json`; a rerun skips finished layers |
+| `scripts/lab-foto/optimiziraj.py` | PNG → `public/sim/foto/<poskus>/<layer>@{1,2,3}x.{webp,avif}` + trimmed `meta.json` (Pillow ≥ 11.3). Source PNGs never go into the repo |
+| `scripts/lab-foto/lab_naloga.py`, `paket.py` | job »lab« for the RTX window on j's laptop (`peka-rtx`, `koda/rtx.py`): `paket.py <copy of koda/> <out>` builds `lab/` (own `manifest.json`) and a patched `koda-nova/rtx.py` (dispatch of `"organi": ["lab"]`, nothing else changes; the manifest lists the version it was made from under `zdruzljivo`, so jobs of the other queue users do not trigger a code swap). `naloga.txt`: `{"id": "lab1", "organi": ["lab"], "koda": "<version>", "lab": {"poskusi": [...], "vzorci": 512, "merilo": 4}}` → `izhod/lab-<id>/<poskus>/` |
+| `public/sim/foto.js` | loader (lazy, AVIF if supported else WebP, density 1×/2×/3× by screen), `Oder` (layers as SVG `<image>` inside the experiment's own SVG, so pinning and layout are unchanged), `risiTitracijo`, `risiDokaz`, `risiKrog`, `vodnikiKroga` |
+| `test/lab-foto.test.js` | switch off by default, anchors vs. models, meniscus (independent Young–Laplace integration), flask volume table, Beer–Lambert exponent, wiring graph and polarity for all 27 configurations, colour codes, files and size budget |
+
+How a layer set works (all cameras are orthographic with a fixed scale, so model mm → drawing units is linear and exact):
+- **Opaque layers** (`slika`): the scene with empty vessels, plus crops of the same view with the vessels full of clear
+  water (three optical interfaces: air–glass n = 1,474, glass–liquid ratio 1,474/1,333, liquid–air n = 1,333 with the
+  meniscus surface). The app clips the »full« crop at the level from the model; in cylinders (burette) the band with the
+  meniscus is moved to that level, so the reading is on the lower edge of the meniscus.
+- **Thickness layer** (`debelina`, lossless): `t = exp(−L/Lref)` per pixel (pure absorption, straight rays). Colour of the
+  solution per pixel by Beer–Lambert: an SVG `feComponentTransfer` raises `t` to `−ln c` per channel, which is
+  `c^(L/Lref)` (c = the model's colour at the reference thickness), and the result multiplies the photo
+  (`mix-blend-mode: multiply`). Turbid results (Cu₂O with Fehling) add the colour through a mask from the same layer.
+- **Transparent layers** (`prosojno`): one object with its shadow on a transparent film (everything else is a shadow
+  catcher): each lead, each load, each dial position of the circuit. `vodnikiKroga(amPos, vmPos, range)` picks the leads.
+- **Meniscus window**: camera at the height of the meniscus (0°, no parallax); the scale is drawn by the app (0,1 mL
+  lines and numbers from the model) over the rendered tube, the meniscus is the render.
+
+Real dimensions and data (sources in `lab_modeli.py`): burette 50 mL class A ISO 385 (0,1 mL, 10,5 mm/mL as in the model,
+bore 11 mm); Erlenmeyer 100 mL DIN ISO 1773 (Ø 64, neck Ø 22, h 105 mm; 250 mL: 85/34/145); bulb pipette 25 mL ISO 648
+with the blue ISO 1769 code band; test tube 16 × 160 mm; low beaker 250 mL ISO 3819 (Ø 70 × 95 mm); carbon-film resistor
+0,5 W 9,0 × Ø 3,3 mm (the model's `UPOR.P`; 0,25 W 6,3 × Ø 2,4 mm is in the table) with IEC 60062 bands computed from
+the resistance; borosilicate glass 3.3 n = 1,474, water 1,333; meniscus from the axisymmetric Young–Laplace equation
+(capillary length 2,73 mm, contact angle 0°): 2,9 mm rise in the 11 mm burette bore.
+Simplifications: the flask level uses the true inner shape of the rendered flask (wall 1,3 mm; table `bucka.VodH`), so it
+is ~6 % higher than `flaskLevel` of the drawing, which treats the outer size as the inner one; the liquid surface in the
+flask is a drawn ellipse, not a render; test-tube contents are one fixed level (6 mL); the thickness layer ignores
+refraction; indicator colour is the model's colour at the vessel's reference thickness (flask 40 mm, tube 13,8 mm);
+the burette is 706 mm long (catalogue burettes ~820 mm).
+
 ## Experiments
 
 ### `lab-ohm` – Ohm's law (FIZ-OS-9 tok in napetost, upor in Ohmov zakon; FIZ-SS-2 električni tok)

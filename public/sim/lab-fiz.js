@@ -1,6 +1,7 @@
 // Virtualni laboratorij, fizika. Učenec sam sestavi poskus, meri in vidi posledice napak.
 import { h, s, fmt, svgBox, slider, select, segmented, button, layout, label } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { fotoPoskus, risiKrog, OKNA_KROG } from "./foto.js";
 import { OhmBench, LOADS, AM_RANGES, VM_RANGES, NAPAJALNIK, UPOR, POENOSTAVITVE, fitOrigin } from "./lab-model.js";
 
 // Barvne oznake uporov (4 obročki: dve števki, množitelj, toleranca ±5 % = zlata).
@@ -148,6 +149,13 @@ export function labOhm(el, { load = "R100" } = {}) {
   const meter = (x, y, letter, kind) => drawMeter(svg, x, y, letter, kind === "A" && B.fuseOf().blown);
   function draw() {
     svg.replaceChildren();
+    const L = LOADS[B.load], p = B.part;
+    fuseBtn.hidden = !B.fuseOf().blown;
+    partBtn.hidden = !p.burnt;
+    partBtn.textContent = L.type === "R" ? "Vzemi nov upornik" : "Vzemi novo žarnico";
+    // Fotografski prikaz (foto.js, privzeto izklopljen): vezava, območja in odčitki iz modela na izrisanih slojih.
+    if (foto.risi((o, meta) => risiKrog(o, meta, { breme: B.load, tip: L.type, nom: L.nom, zgorel: p.burnt, T: p.T, svetlost: L.type === "L" ? B.brightness() : 0, amPos: B.amPos, vmPos: B.vmPos,
+      obmocjeA: B.amRange, obmocjeV: B.vmRange, varovalka: B.fuseOf().blown, cc: B.state.cc, U: Math.max(0, B.state.Usup).toFixed(1), I: last.I ? last.I.text : "", V: last.U ? last.U.text : "", dim: drawSmoke }))) return;
     const wire = (d) => s("path", { d, class: "lab-wire" }, svg);
     const dot = (x, y) => s("circle", { cx: x, cy: y, r: 3.5, class: "lab-node" }, svg);
     // zanka
@@ -171,7 +179,6 @@ export function labOhm(el, { load = "R100" } = {}) {
       meter(x, YC, k, k);
     });
     // porabnik
-    const L = LOADS[B.load], p = B.part;
     if (L.type === "R") {
       drawResistor(svg, X1, YC, B.load, p);
       label(svg, X1 - 18, YC, `${L.nom} Ω`, "lbl small", "end");
@@ -182,12 +189,10 @@ export function labOhm(el, { load = "R100" } = {}) {
       label(svg, X1 - 22, YC, "6 V", "lbl small", "end");
       if (p.burnt) label(svg, X1, YC + 36, "pregorela", "lbl small");
     }
-    fuseBtn.hidden = !B.fuseOf().blown;
-    partBtn.hidden = !p.burnt;
-    partBtn.textContent = L.type === "R" ? "Vzemi nov upornik" : "Vzemi novo žarnico";
   }
 
 
+  const foto = fotoPoskus("krog", svg, el, () => draw(), OKNA_KROG);
   graph.setAxes({ y: [0, YMAX[B.load]] });
   redrawGraph();
   readMeters();
