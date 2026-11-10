@@ -1,4 +1,5 @@
-# Skupna peka realističnih PBR tekstur za vse 3D modele Evklida (organi, mikro prerezi, celice), Blender Cycles na CPU.
+# Skupna peka realističnih PBR tekstur za vse 3D modele Evklida (organi, mikro prerezi, celice), Blender Cycles na CPU
+# (privzeto) ali Nvidia GPU (PEKA_NAPRAVA=OPTIX|CUDA, scripts/atlas/rtx/ za j-jev prenosnik).
 # Uporablja jo izvozi-organe.py (cfg »tekstura«); docs/3d.md »Pečene teksture (PBR)«. Ena skupna pot za vse modele:
 #   1. nizka mreža (to, kar gre v GLB) dobi skupni UV atlas vseh vozlišč;
 #   2. visoka mreža = izvirnik + razdelitev + premik po RECEPTU tkiva (maščobni režnjiči, gubice, vlakna …);
@@ -435,13 +436,44 @@ def _odpri(pot, niti):
             vir[o["ime"]] = o  # izvirnik ostane zunaj prizora (ne zakriva žarkov)
         else:
             sc.collection.objects.link(o); nizko.append(o)
-    sc.render.engine = "CYCLES"; sc.cycles.device = "CPU"; sc.cycles.use_denoising = False
+    sc.render.engine = "CYCLES"; sc.cycles.use_denoising = False
+    gpu = naprava(sc)
     sc.render.threads_mode = "FIXED"; sc.render.threads = niti
     try:
-        sc.cycles.use_auto_tile = True; sc.cycles.tile_size = 256  # manjši vmesni pomnilnik
+        sc.cycles.use_auto_tile = True; sc.cycles.tile_size = 2048 if gpu else 256  # CPU: manjši vmesni pomnilnik
     except AttributeError:
         pass
     return meta, nizko, vir
+
+
+NAPRAVE = ("CPU", "OPTIX", "CUDA")
+
+
+def naprava(sc):
+    """Naprava za Cycles iz okolja PEKA_NAPRAVA: CPU (privzeto) | OPTIX | CUDA (Nvidia RTX, scripts/atlas/rtx/).
+    Pri GPU vklopi vse naprave te vrste (CPU ne, da je rezultat čisto GPU); če je ni, ustavi z jasno napako – nikoli
+    tiho na CPU (peka bi tekla ure, ne minute). Vrne True pri GPU. Klic po read_factory_settings (ta ponastavi nastavitve)."""
+    ime = os.environ.get("PEKA_NAPRAVA", "CPU").strip().upper() or "CPU"
+    if ime not in NAPRAVE:
+        raise SystemExit(f"[peka] PEKA_NAPRAVA={ime}: dovoljeno {', '.join(NAPRAVE)}")
+    if ime == "CPU":
+        sc.cycles.device = "CPU"
+        return False
+    try:
+        cp = bpy.context.preferences.addons["cycles"].preferences
+        cp.compute_device_type = ime
+        cp.get_devices()  # osveži seznam naprav
+    except (KeyError, TypeError, AttributeError) as e:
+        raise SystemExit(f"[peka] PEKA_NAPRAVA={ime}: ta Blender ne podpira {ime} ({e}); peka ustavljena (ne preklopim na CPU)")
+    gpu = [d for d in cp.devices if d.type == ime]
+    if not gpu:
+        raise SystemExit(f"[peka] PEKA_NAPRAVA={ime}: ni grafične kartice {ime} (gonilnik Nvidia nameščen in posodobljen?); "
+                         "peka ustavljena (ne preklopim na CPU)")
+    for d in cp.devices:
+        d.use = d.type == ime
+    sc.cycles.device = "GPU"
+    print(f"[peka] naprava {ime}: {', '.join(d.name for d in gpu)}", flush=True)
+    return True
 
 
 def _slike(pot, px):

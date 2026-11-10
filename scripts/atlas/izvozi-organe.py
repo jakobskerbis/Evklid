@@ -12,7 +12,7 @@
 # poenostavitev na cilj trikotnikov, zapečena senca okolice (AO z žarki po vsem organu) v COLOR_0, središče v izhodišču.
 # Ime vozlišča = ime objekta v Z-Anatomy; dodatki vozlišča (extras): tkivo (material v pregledovalniku) in del.
 #
-# Zapečene teksture (cfg »tekstura«, zaenkrat možgani; tako naj gredo vsi novi organi):
+# Zapečene teksture (cfg »tekstura«; PBR »pbr=True« za srce, možgane, pljuča, jetra, ledvico in oko, videz j 10. 11.):
 #  1. združena oglišča (Z-Anatomy jih ima pogosto ločena), brez dodatnega glajenja nizke mreže (ostre brazde);
 #  2. nizka mreža = poenostavitev na cilj; skupni UV atlas vseh vozlišč (Smart UV Project, kot 89°, pack_islands);
 #  3. visoka mreža = izvirnik + SUBSURF (razdeli) + DISPLACE s šumom CLOUDS (relief, reliefMera v deležih velikosti);
@@ -60,7 +60,23 @@ ORGANI = {
                  r"Amygdal|Hippocamp|Claustrum|Internal capsule|External capsule|Extreme capsule|Basal forebrain|Septal|Indusium|"
                  r"tract\b(?!.*Optic)|fasciculus|Grey matter of|Tegmentum of pons|Reticular|Substantia nigra|Red nucleus|Medial longitudinal|"
                  r"Central canal|Central grey|Area postrema|Locus|Raphe|Vestibular|Cochlear|Solitary|Trigeminal|Olivary",
-        cilj=(280_000, 85_000),
+        cilj=(240_000, 70_000),
+        # Pečene PBR teksture (videz, j 10. 11.): sveži možgani rožnato sivi, pialne žilice, vlažna pia mater. Telefon ima
+        # svojo peko 1024 px (rtx.py in peci.py zahtevata delovno datoteko za obe mreži); 70k trikotnikov za mejo 2 MB.
+        tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
+            recepti={
+                "skorja": dict(barva=(0.56, 0.40, 0.36), barva2=(0.47, 0.30, 0.28), lise=0.35, liseMera=0.03, hrap=0.38,
+                               gube=0.00004, gubeMera=0.002, zilice=0.22, ziliceBarva=(0.42, 0.06, 0.06), ziliceMera=0.012, razdeli=0),
+                # skorja in sredina iz MRI sta že goste (pialna površina): brez razdelitve (pomnilnik prenosnika)
+                "sredina": dict(barva=(0.58, 0.44, 0.40), barva2=(0.50, 0.36, 0.33), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
+                "mali": dict(barva=(0.50, 0.34, 0.31), barva2=(0.42, 0.26, 0.24), lise=0.30, hrap=0.40, gube=0.00003, gubeMera=0.0015,
+                             zilice=0.15, ziliceBarva=(0.40, 0.06, 0.06), ziliceMera=0.010, razdeli=1),
+                "deblo": dict(barva=(0.64, 0.52, 0.45), barva2=(0.56, 0.44, 0.39), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002,
+                              zilice=0.12, ziliceBarva=(0.45, 0.08, 0.07), razdeli=1),
+                "bela": dict(barva=(0.80, 0.75, 0.66), barva2=(0.73, 0.67, 0.58), lise=0.2, hrap=0.46, gube=0.00002, gubeMera=0.002, razdeli=1),
+                "medmozgani": dict(barva=(0.62, 0.48, 0.43), barva2=(0.54, 0.40, 0.36), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
+            },
+        ),
         # Skorja iz MRI (OpenNeuro ds000001 fMRIPrep/FreeSurfer, CC0): Z-Anatomy vijuge (tkivo »skorja«) zamenjamo s
         # pialno površino ene anonimne prostovoljke/prostovoljca (lh/rh.pial), režnji iz parcelacije aparc, globina brazd
         # (sulc) potemni senco okolice. Mapa z datotekami: --mri <mapa> (sub-01-lh.pial, …-lh.sulc, …-lh.aparc.annot).
@@ -216,7 +232,25 @@ ORGANI = {
         vkljuci=r"^(Sclera|Cornea|Iris|Lens|Retina|Vitreous body|Posterior segment of eyeball|Anterior segment of eyeball|Zonular fibres|Optic nerve \(II\)|"
                 r"(Superior|Inferior|Medial|Lateral) rectus muscle|(Superior|Inferior) oblique muscle|Trochlea of superior oblique muscle|Common tendinous ring)\.l( /|$)",
         izkljuci=r"Anterior chamber",
-        cilj=(220_000, 70_000),
+        cilj=(180_000, 40_000),
+        # Pečene PBR teksture (videz): beločnica porcelanasto bela z drobnimi episkleralnimi žilicami, mišice rdeče z vlakni,
+        # kite in živec sijoče bele; prozorna in s senčilnikom risana tkiva (roženica, leča, steklovina, šarenica, mrežnica)
+        # dobijo nevtralen recept, pregledovalnik jih izključi s »tekstura: false« v oko.json.
+        tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
+            recepti={
+                "*": dict(barva=(0.80, 0.80, 0.80), barva2=(0.78, 0.78, 0.78), lise=0.0, hrap=0.2, gube=0.0, razdeli=0),
+                "beločnica": dict(barva=(0.82, 0.79, 0.73), barva2=(0.76, 0.66, 0.60), lise=0.25, liseMera=0.04, hrap=0.28,
+                                  gube=0.00002, gubeMera=0.002, zilice=0.30, ziliceBarva=(0.58, 0.10, 0.08), ziliceMera=0.03, razdeli=1),
+                "mišica": dict(barva=(0.38, 0.09, 0.07), barva2=(0.29, 0.07, 0.05), lise=0.35, hrap=0.42, vlakna=0.00025, vlaknaMera=0.002, razdeli=1),
+                "kita": dict(barva=(0.84, 0.80, 0.72), barva2=(0.76, 0.71, 0.63), lise=0.2, hrap=0.30, vlakna=0.00008, vlaknaMera=0.0015, razdeli=1),
+                "živec": dict(barva=(0.80, 0.72, 0.58), barva2=(0.72, 0.64, 0.50), lise=0.25, hrap=0.36, vlakna=0.00006, vlaknaMera=0.0015,
+                              zilice=0.15, ziliceBarva=(0.55, 0.12, 0.10), ziliceMera=0.02, razdeli=1),
+                "žilnica": dict(barva=(0.10, 0.04, 0.03), barva2=(0.16, 0.05, 0.04), lise=0.4, hrap=0.45, razdeli=1),
+                "ciliarnik": dict(barva=(0.09, 0.04, 0.03), barva2=(0.14, 0.05, 0.04), lise=0.35, hrap=0.45, razdeli=1),
+                "papila": dict(barva=(0.86, 0.66, 0.48), barva2=(0.80, 0.56, 0.42), lise=0.3, hrap=0.35, razdeli=1),
+                "vlakna": dict(barva=(0.86, 0.84, 0.80), barva2=(0.82, 0.80, 0.76), lise=0.1, hrap=0.35, razdeli=0),
+            },
+        ),
         gladi=r".",
         # Krivulja vidnega živca se v Z-Anatomy začne pri leči: del znotraj zrkla odstranimo (sicer štrli v prerezu).
         znotraj=[(r"^Optic nerve", r"(?i)^sclera", 0.97)],
@@ -240,7 +274,21 @@ ORGANI = {
         vkljuci=r"/ Lungs\.g( |$)|^Trachea( /|$)|/ Bronchi\.g( |$)|^(Left|Right) pulmonary artery( /|$)|/ (Left|Right) pulmonary artery( |$)|"
                 r"/ Pulmonary veins\.g( |$)",
         izkljuci=r"\?\?\?",
-        cilj=(240_000, 80_000),
+        cilj=(185_000, 42_000),
+        # Pečene PBR teksture (videz): plevra vlažna in sijoča, pljučno tkivo rožnato sivo z mrežo režnjičev (interlobularni
+        # pretini kot drobne temnejše meje) in ponekod sivimi pegami; hrustanec sapnika in bronhijev smetanasto rožnat.
+        tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
+            recepti={
+                "pljuca": dict(barva=(0.58, 0.33, 0.33), barva2=(0.40, 0.24, 0.26), lise=0.45, liseMera=0.04, hrap=0.30,
+                               gube=0.00003, gubeMera=0.003, zilice=0.30, ziliceBarva=(0.22, 0.15, 0.17), ziliceMera=0.05, razdeli=1),
+                "dihalna": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.3, hrap=0.44, gube=0.00004, gubeMera=0.002, razdeli=1),
+                "dihalna-v": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.2, hrap=0.44, gube=0.0, razdeli=0),
+                "pljucna-arterija": dict(barva=(0.44, 0.28, 0.30), barva2=(0.38, 0.23, 0.26), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
+                "pljucna-vena": dict(barva=(0.50, 0.26, 0.25), barva2=(0.43, 0.21, 0.21), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
+                "pljucna-arterija-v": dict(barva=(0.44, 0.28, 0.30), barva2=(0.38, 0.23, 0.26), lise=0.2, hrap=0.42, gube=0.0, razdeli=0),
+                "pljucna-vena-v": dict(barva=(0.50, 0.26, 0.25), barva2=(0.43, 0.21, 0.21), lise=0.2, hrap=0.42, gube=0.0, razdeli=0),
+            },
+        ),
         jedro=r"lobe of (left|right) lung",
         skrci=[(r"lobe of", 0.0018)],
         skatla=[0.0, 0.0, 0.0, 0.0, 0.0, 0.045],
@@ -284,7 +332,23 @@ ORGANI = {
         # Z-Anatomy nadledvična žleza je ob HRA ledvici (merilo 0,77) predebela (4,9 × 4,5 × 2,1 cm): 0,72× z dnom na ledvici.
         napihni=[(r"^Suprarenal", 0.72, "dno")],
         vkljuci=r"^(Kidney\.l|Ureter\.l|Suprarenal gland\.l|Left renal artery|Left renal vein|(Anterior|Posterior) branch of renal artery\.l)( /|$)",
-        cilj=(200_000, 75_000),
+        cilj=(170_000, 40_000),
+        # Pečene PBR teksture (videz): ovojnica gladka, sijoča, rdeče rjava; skorja zrnata (glomeruli), piramide temnejše
+        # s progami, papile svetlejše; maščoba sinusa in nadledvična žleza rumeni; sečevod bledo rožnat.
+        tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
+            recepti={
+                "ovojnica": dict(barva=(0.34, 0.11, 0.09), barva2=(0.27, 0.08, 0.07), lise=0.35, hrap=0.26, gube=0.00002, gubeMera=0.002, razdeli=1),
+                "skorja": dict(barva=(0.36, 0.12, 0.10), barva2=(0.28, 0.09, 0.08), lise=0.35, hrap=0.40, gube=0.00004, gubeMera=0.0012, razdeli=1),
+                "piramida": dict(barva=(0.25, 0.07, 0.07), barva2=(0.19, 0.05, 0.05), lise=0.4, hrap=0.40, vlakna=0.00008, vlaknaMera=0.002, razdeli=1),
+                "papila": dict(barva=(0.50, 0.24, 0.21), barva2=(0.42, 0.19, 0.17), lise=0.3, hrap=0.36, razdeli=1),
+                "sinus": dict(barva=(0.86, 0.64, 0.28), barva2=(0.80, 0.55, 0.22), lise=0.3, hrap=0.40, gube=0.00006, gubeMera=0.004, razdeli=1),
+                "meh": dict(barva=(0.78, 0.64, 0.58), barva2=(0.70, 0.55, 0.50), lise=0.25, hrap=0.36, gube=0.00003, gubeMera=0.002, razdeli=1),
+                "secevod": dict(barva=(0.74, 0.58, 0.52), barva2=(0.66, 0.50, 0.46), lise=0.25, hrap=0.40, gube=0.00003, gubeMera=0.002, razdeli=1),
+                "arterija": dict(barva=(0.62, 0.34, 0.30), barva2=(0.55, 0.29, 0.26), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "vena": dict(barva=(0.36, 0.22, 0.26), barva2=(0.30, 0.18, 0.22), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "nadledvicna": dict(barva=(0.78, 0.50, 0.16), barva2=(0.66, 0.40, 0.12), lise=0.4, hrap=0.46, gube=0.00006, gubeMera=0.003, razdeli=1),
+            },
+        ),
         jedro=r"kidney_capsule",
         skatla=[0.03, 0.005, 0.01, 0.01, 0.035, 0.03],
         krivulja=(6, 5),
@@ -297,7 +361,20 @@ ORGANI = {
         # (liver-male) ima gostejšo ovojnico, a nima žolčnika, portalne vene in jetrnih ven (samo vtisnine in vezi).
         vkljuci=r"/ Liver( /|$)|^(Gallbladder|Bile duct|Hepatic portal vein|Hepatic veins|Proper hepatic artery|Common hepatic artery)( /|$)|/ Extrahepatic bile ducts\.g( |$)",
         izkljuci=r"^Liver( /|$)|Tributaries|Gastroduodenal",
-        cilj=(220_000, 75_000),
+        cilj=(180_000, 42_000),
+        # Pečene PBR teksture (videz): jetra temno rdeče rjava z gladko, sijočo Glissonovo ovojnico in komaj vidnim vzorcem
+        # režnjičev; žolčnik temno zelen, žolčevod zelenkasto rumen, žile kot pri srcu (naravne barve).
+        tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
+            recepti={
+                "jetra": dict(barva=(0.22, 0.06, 0.04), barva2=(0.16, 0.045, 0.032), lise=0.35, liseMera=0.035, hrap=0.26,
+                              gube=0.00002, gubeMera=0.002, zilice=0.12, ziliceBarva=(0.13, 0.035, 0.025), ziliceMera=0.008, razdeli=1),
+                "zolcnik": dict(barva=(0.16, 0.26, 0.12), barva2=(0.10, 0.18, 0.09), lise=0.35, hrap=0.28, gube=0.00004, gubeMera=0.003, razdeli=1),
+                "zolcevod": dict(barva=(0.50, 0.50, 0.22), barva2=(0.42, 0.42, 0.18), lise=0.25, hrap=0.40, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "portalna": dict(barva=(0.38, 0.23, 0.27), barva2=(0.32, 0.19, 0.23), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "arterija": dict(barva=(0.62, 0.34, 0.30), barva2=(0.55, 0.29, 0.26), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "vena": dict(barva=(0.36, 0.22, 0.26), barva2=(0.30, 0.18, 0.22), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+            },
+        ),
         jedro=r"segment of liver|^Gallbladder",
         skatla=[0.005, 0.005, 0.005, 0.005, 0.03, 0.005],
         krivulja=(6, 5),
