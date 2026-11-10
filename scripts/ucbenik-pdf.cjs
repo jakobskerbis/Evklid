@@ -53,7 +53,7 @@ async function startServer() {
 let pdfjsLib;
 async function openPdf(buf) {
   pdfjsLib ||= await import("pdfjs-dist/legacy/build/pdf.mjs");
-  return pdfjsLib.getDocument({ data: new Uint8Array(buf), useSystemFonts: false, disableFontFace: true, verbosity: 0, standardFontDataUrl: path.join(ROOT, "node_modules/pdfjs-dist/standard_fonts/") }).promise;
+  return pdfjsLib.getDocument({ data: new Uint8Array(buf), useSystemFonts: false, disableFontFace: true, fontExtraProperties: true, verbosity: 0, standardFontDataUrl: path.join(ROOT, "node_modules/pdfjs-dist/standard_fonts/") }).promise;
 }
 const norm = (s) => String(s).normalize("NFKC").replace(/[­​]/g, "").replace(/\s+/g, " ").trim();
 async function pageText(page) {
@@ -291,7 +291,7 @@ async function checkPdf(buf, dom, { domain, maxBytes, tocPages = null, fontNames
     info.toc = dom.toc.length;
   }
   info.starts = starts;
-  await doc.destroy();
+  await doc.loadingTask.destroy();
   return { errors, info };
 }
 
@@ -339,7 +339,7 @@ async function renderPdf(context, base, target, cfg) {
         const doc = await openPdf(buf);
         // Kazalo je pred prvo lekcijo; povezave po vrsti ustrezajo vnosom kazala.
         const links = (await internalLinks(doc, Math.min(doc.numPages, 12))).filter((x) => x.to).slice(0, dom.toc.length);
-        await doc.destroy();
+        await doc.loadingTask.destroy();
         if (links.length !== dom.toc.length) throw new Error(`kazalo: ${links.length} povezav za ${dom.toc.length} lekcij`);
         const pages = links.map((x) => x.to);
         if (tocPages && pages.every((p, i) => p === tocPages[i])) break;

@@ -96,9 +96,9 @@ test("shramba: prenese veljavne PDF-je, zavrne napačno vsoto, zastarelega ne po
     fs.writeFileSync(path.join(dir, "star.1234.pdf"), "stara različica");
     assert.equal(await store.sync(), 1);
     const hit = store.find(KEY);
-    assert.equal(hit.file, path.join(dir, fileA));
+    assert.equal(hit.name, fileA);
     assert.equal(hit.hash, pdfHash(KEY));
-    assert.deepEqual(fs.readFileSync(hit.file), a);
+    assert.deepEqual(fs.readFileSync(path.join(dir, fileA)), a);
     assert.equal(store.find(KEY, UNIT), null, "napačna kontrolna vsota se ne shrani");
     assert.equal(store.find("MAT-OS-9"), null, "zastarel PDF se ne prenese in ne postreže");
     assert.equal(store.find("MAT-OS-7"), null);
@@ -121,8 +121,8 @@ test("shramba: prenese veljavne PDF-je, zavrne napačno vsoto, zastarelega ne po
     assert.ok(again.find(KEY), "napaka omrežja ne odstrani že prenesenih");
 
     // Okrnjena datoteka na disku (velikost se ne ujema) se ne postreže.
-    fs.writeFileSync(hit.file, a.subarray(0, 100));
-    assert.equal(store.find(KEY), null);
+    fs.writeFileSync(path.join(dir, fileA), a.subarray(0, 100));
+    assert.equal(createPdfStore({ dir, url: "x", log: quiet }).find(KEY), null);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -205,6 +205,13 @@ test("pot /ucbenik-pdf: PDF z diska (glave, Range, ETag), sicer preusmeritev na 
     const bad = await fetch(`${base}/ucbenik-pdf/MAT-OS-9?l=${encodeURIComponent('"><script>')}`, { redirect: "manual" });
     assert.equal(bad.headers.get("location"), "/ucbenik/MAT-OS-9#natisni", "neveljaven jezik se ne prenese v preusmeritev");
 
+    // Datoteka izgine z diska po zagonu: rezerva namesto napake.
+    fs.rmSync(path.join(dir, fileA));
+    const gone = await fetch(`${base}/ucbenik-pdf/${KEY}?l=sl`, { redirect: "manual" });
+    assert.equal(gone.status, 302);
+    assert.equal(gone.headers.get("location"), `/ucbenik/${KEY}?l=sl#natisni`);
+    assert.equal(gone.headers.get("content-disposition"), null);
+    assert.equal(gone.headers.get("etag"), null);
     assert.equal((await fetch(`${base}/ucbenik-pdf/NI-TAKE-POTI`, { redirect: "manual" })).status, 404);
     assert.equal((await fetch(`${base}/ucbenik-pdf/${KEY}?poglavje=Ni%20takega`, { redirect: "manual" })).status, 404);
     assert.equal((await fetch(`${base}/ucbenik-pdf/..%2F..%2Fpackage.json`, { redirect: "manual" })).status, 404);

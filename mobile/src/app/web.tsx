@@ -198,9 +198,9 @@ export default function Web() {
             }}
             onShouldStartLoadWithRequest={(req: { url: string; isTopFrame?: boolean }) => {
               if (req.isTopFrame === false) return true;
-              if ((req.url.startsWith(ORIGIN + "/") && !req.url.startsWith(ORIGIN + "/ucbenik/")) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
-              // Učbenik za tisk/PDF (/ucbenik/…): WebView ne zna shraniti PDF-ja, zato ga odpre sistemski brskalnik.
-              if (req.url.startsWith(ORIGIN + "/ucbenik/")) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              if ((req.url.startsWith(ORIGIN + "/") && !(req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
+              // Učbenik za tisk/PDF (/ucbenik/… in vnaprej izdelan /ucbenik-pdf/…): WebView ne zna shraniti PDF-ja, zato ga odpre sistemski brskalnik.
+              if ((req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) WebBrowser.openBrowserAsync(req.url).catch(() => {});
               else if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
               // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});

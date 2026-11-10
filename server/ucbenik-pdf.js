@@ -158,6 +158,12 @@ export function pdfHash(key, unit = null) {
   return hash;
 }
 
+// Ali za ta ključ obstaja stran za tisk v brskalniku (rezerva): pot, poglavje poti ali učbenik predmeta/programa.
+export function printFallbackExists(key, unit = null) {
+  if (unit != null) return unitTopics(key, unit).length > 0;
+  return !!(getPath(key) || getBook(key));
+}
+
 // Ime datoteke za prenos (Content-Disposition): »Evklid - Matematika, 8. razred.pdf«.
 export function pdfDownloadName(key, unit = null) {
   const x = targetTopics(key, unit);
@@ -190,14 +196,21 @@ export function createPdfStore({ dir = defaultDir(), url = defaultUrl(), fetchFn
     return hash && e.hash === hash ? e : null;
   };
 
-  // PDF za sedanjo vsebino ali null (ni izdelan, zastarel ali še ni prenesen).
+  // Datoteke na disku (ime -> velikost): prebrane ob zagonu in po vsakem prenosu, da zahtevek ne bere diska.
+  const onDisk = new Map();
+  function scan() {
+    onDisk.clear();
+    try {
+      for (const f of fs.readdirSync(dir)) if (FILE_RE.test(f)) onDisk.set(f, fs.statSync(path.join(dir, f)).size);
+    } catch {}
+  }
+  scan();
+
+  // PDF za sedanjo vsebino ali null (ni izdelan, zastarel, še ni prenesen ali okrnjen).
   function find(key, unit = null) {
     const e = entryFor(key, unit);
-    if (!e) return null;
-    const file = path.join(dir, e.file);
-    const st = fs.statSync(file, { throwIfNoEntry: false });
-    if (!st || st.size !== e.bytes) return null;
-    return { file, name: e.file, hash: e.hash, bytes: e.bytes, pages: e.pages || null };
+    if (!e || onDisk.get(e.file) !== e.bytes) return null;
+    return { name: e.file, hash: e.hash, bytes: e.bytes, pages: e.pages || null };
   }
 
   const freeBytes = () => {
@@ -235,6 +248,7 @@ export function createPdfStore({ dir = defaultDir(), url = defaultUrl(), fetchFn
       fs.closeSync(fd);
       if (head.toString("latin1") !== "%PDF-") throw new Error("ni PDF");
       fs.renameSync(tmp, path.join(dir, e.file));
+      onDisk.set(e.file, e.bytes);
     } catch (err) {
       fs.rmSync(tmp, { force: true });
       throw err;
@@ -287,6 +301,7 @@ export function createPdfStore({ dir = defaultDir(), url = defaultUrl(), fetchFn
     }
     // Stare različice in ostanki prekinjenih prenosov.
     for (const f of fs.readdirSync(dir)) if (!keep.has(f) && (f.endsWith(".pdf") || f.endsWith(".del"))) fs.rmSync(path.join(dir, f), { force: true });
+    scan();
     Object.assign(state, { zadnjic: new Date().toISOString(), napaka: failed, datotek: keep.size - 1, bajtov: total, veljavnih: valid, predvidenih: targets.length });
     if (got) log.log(`[evklid] PDF učbenika: prenesenih ${got}, na disku ${keep.size - 1} (${Math.round(total / 1e6)} MB)`);
     if (failed) log.warn(`[evklid] PDF učbenika: ${failed}`);
@@ -303,5 +318,5 @@ export function createPdfStore({ dir = defaultDir(), url = defaultUrl(), fetchFn
       .finally(() => (running = null)));
   }
 
-  return { dir, url, find, sync, status: () => ({ ...state }) };
+  return { dir, url, find, sync, scan, status: () => ({ ...state }) };
 }
