@@ -29,6 +29,12 @@
     var z = beri();
     var moj = z && String(z.s) === localStorage.getItem("studentId");
     var v = new URLSearchParams(location.search).get("pogled") || (moj ? izberi(z, Date.now()) : "path");
-    if (v && v !== "path" && IME.test(v)) document.documentElement.setAttribute("data-zacetek", v);
+    if (v && v !== "path" && IME.test(v)) {
+      document.documentElement.setAttribute("data-zacetek", v);
+      // Varovalo: če se app.js ne naloži ali zagon obvisi, stran ne ostane prazna.
+      setTimeout(function () {
+        document.documentElement.removeAttribute("data-zacetek");
+      }, 8000);
+    }
   } catch (e) {}
 })();

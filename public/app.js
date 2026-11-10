@@ -315,7 +315,9 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") return rememberScreen();
   // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
   const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
-  if (installed && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
+  // Tekmovanje z uro ali neposlano besedilo (klepet, odgovor) ostaneta na zaslonu.
+  const busy = state.contestTimer || unsentText();
+  if (installed && !busy && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
 });
 window.addEventListener("pagehide", rememberScreen);
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.

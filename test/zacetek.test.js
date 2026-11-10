@@ -17,16 +17,18 @@ function zacetek({ zapis, studentId = "7", search = "", raw } = {}) {
   if (raw != null) store.set("evklid.zadnji-zaslon", raw);
   if (studentId != null) store.set("studentId", studentId);
   const attrs = {};
+  const timers = [];
   const window = {};
   const ctx = {
     window,
     localStorage: { getItem: (k) => store.get(k) ?? null },
     location: { search },
     URLSearchParams,
-    document: { documentElement: { setAttribute: (k, v) => (attrs[k] = v) } },
+    document: { documentElement: { setAttribute: (k, v) => (attrs[k] = v), removeAttribute: (k) => delete attrs[k] } },
+    setTimeout: (fn, ms) => timers.push({ fn, ms }),
   };
   vm.runInNewContext(read("public/zacetek.js"), ctx);
-  return { api: window.evklidZacetek, attr: attrs["data-zacetek"] };
+  return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers };
 }
 
 test("zadnji zaslon velja do 12 ur; pozneje, ob pokvarjenem zapisu ali uri iz prihodnosti se odpre Učna pot", () => {
@@ -66,6 +68,22 @@ test("odločitev pade pred prvim izrisom: html[data-zacetek] skrije Učno pot, d
   assert.match(app, /Number\(rec\.s\) !== state\.student\.id\) return null;/);
   assert.match(app, /if \(document\.visibilityState === "hidden"\) return rememberScreen\(\);/);
   assert.match(app, /window\.addEventListener\("pagehide", rememberScreen\);/);
+});
+
+test("varovalo in zasebnost: oznaka izgine po 8 s tudi brez app.js; zapis se ob odjavi ali izbrisu profila pobriše", () => {
+  const z = zacetek({ zapis: { v: "chat", t: Date.now() - H, s: 7 } });
+  assert.deepEqual(z.timers.map((x) => x.ms), [8000]);
+  z.timers[0].fn();
+  assert.equal(z.attrs["data-zacetek"], undefined, "stran ne ostane prazna");
+  assert.equal(zacetek().timers.length, 0, "brez oznake ni časovnika");
+  // public/offline.js (uvaža modul strežnika, zato v Node ni uvozljiv): izraz PRIVATE_KEYS iz izvorne kode.
+  const m = read("public/offline.js").match(/const PRIVATE_KEYS = \/(.+)\/;/);
+  const PRIVATE_KEYS = new RegExp(m[1]);
+  assert.equal(PRIVATE_KEYS.test(z.api.KEY), true, "zadnji zaslon (tema, lekcija, profil) je oseben podatek naprave");
+  assert.equal(PRIVATE_KEYS.test("evklid.zadnji-zaslon-x"), false);
+  assert.equal(PRIVATE_KEYS.test("evklid.offline.students"), true);
+  // Po več kot 12 urah v ozadju: tekmovanje z uro ali neposlano besedilo ostaneta na zaslonu.
+  assert.match(read("public/app.js"), /const busy = state\.contestTimer \|\| unsentText\(\);\n\s*if \(installed && !busy && /);
 });
 
 // ---------- tipka Nazaj: del app.js z lažno zgodovino ----------
