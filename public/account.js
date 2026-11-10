@@ -1072,7 +1072,7 @@ function plansPicker(acc) {
       ${schoolRow(acc)}
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
-      ${acc.guarantee ? guaranteeLine() : ""}
+      ${acc.guarantee?.offered ? guaranteeLine() : ""}
       ${acc.prices_draft ? `<p class="muted">${esc(t("pay.pricesDraft"))}</p>` : ""}
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
