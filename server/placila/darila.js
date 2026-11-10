@@ -61,6 +61,7 @@ export function mountGifts(app, ctx) {
     birthMissing = () => false,
     recordConsent,
     paidActive,
+    pilotOf = () => false, // član pilota: brez nakupa darilne kode (j 2026-11-10)
   } = ctx;
   migrateGifts(db);
   const get = (id) =>
@@ -171,6 +172,7 @@ export function mountGifts(app, ctx) {
 
   app.post("/api/billing/gift", json, async (req, res) => {
     const p = req.parent;
+    if (pilotOf(p)) return res.status(409).json({ error: "Med pilotom nakup ni mogoč. Po koncu pilota bo spet na voljo.", pilot: true });
     if (!stripe.enabled)
       return res
         .status(503)
