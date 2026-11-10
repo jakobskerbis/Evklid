@@ -3141,7 +3141,7 @@
   "pp.viewerLoading": "Prüfung wird geöffnet …",
   "pp.notPdf": "Diese Datei ist kein PDF. Wähle die von ric.si heruntergeladene Prüfung.",
   "pp.loadFail": "Die Prüfung konnte nicht geöffnet werden ({msg}).",
-  "pp.fallbackMsg": "Der Prüfungs-Viewer läuft auf diesem Gerät nicht. Öffne das PDF im Viewer deines Geräts; Aufgaben markieren geht hier nicht.",
+  "pp.fallbackMsg": "Der Prüfungs-Viewer läuft auf diesem Gerät nicht, deshalb ist die Hilfe bei Aufgaben hier nicht verfügbar.",
   "pp.fallbackOpen": "PDF öffnen",
   "pp.found": "Gefundene Aufgaben: {n}. Tippe bei einer Aufgabe auf „Hilfe zu dieser Aufgabe“.",
   "pp.foundNone": "Aufgaben wurden nicht automatisch erkannt. Ziehe mit „Aufgabe markieren“ einen Rahmen um eine Aufgabe.",

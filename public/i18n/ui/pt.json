@@ -3146,7 +3146,7 @@
   "pp.viewerLoading": "Abrindo a prova …",
   "pp.notPdf": "Este arquivo não é um PDF. Escolha a prova baixada de ric.si.",
   "pp.loadFail": "Não foi possível abrir a prova ({msg}).",
-  "pp.fallbackMsg": "O visualizador de provas não funciona neste dispositivo. Abre o PDF no visualizador do teu dispositivo; aqui não é possível marcar exercícios.",
+  "pp.fallbackMsg": "O visualizador de provas não funciona neste dispositivo, por isso a ajuda com os exercícios não está disponível aqui.",
   "pp.fallbackOpen": "Abrir PDF",
   "pp.found": "Questões encontradas: {n}. Toque em «Ajuda com esta questão» ao lado de uma questão.",
   "pp.foundNone": "Não foi possível encontrar questões automaticamente. Com «Marcar questão», arraste um retângulo em volta de uma questão.",

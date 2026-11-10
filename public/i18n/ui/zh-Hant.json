@@ -3115,7 +3115,7 @@
   "pp.viewerLoading": "正在開啟試卷…",
   "pp.notPdf": "此檔案不是 PDF。請選擇從 ric.si 下載的試卷。",
   "pp.loadFail": "無法開啟試卷（{msg}）。",
-  "pp.fallbackMsg": "此裝置無法執行試卷檢視器。請用裝置內建的檢視器開啟 PDF；這裡無法標記題目。",
+  "pp.fallbackMsg": "此裝置無法執行試卷檢視器，因此這裡無法使用題目協助。",
   "pp.fallbackOpen": "開啟 PDF",
   "pp.found": "找到 {n} 道題。在題目旁點按「這道題求助」。",
   "pp.foundNone": "未能自動找到題目。用「框選題目」在題目周圍拖出一個框。",

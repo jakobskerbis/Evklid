@@ -23,7 +23,7 @@ async function pdfjs() {
 
 // Rezerva (j, 10. 11.): pdf.js 6 zahteva novejši brskalnik (Safari 18+, Chrome 125+). Če se ne naloži ali prvi izris ne uspe
 // (zaznano po dejanski napaki ali po časovni omejitvi, ne po UA), učenec dobi gumb »Odpri PDF« v pregledovalniku naprave.
-const FALLBACK_MS = 8000;
+const FALLBACK_MS = 20000; // uvoz modula (počasna povezava ne sme sprožiti rezerve)
 const FILE_ERRORS = /^(InvalidPDFException|MissingPDFException|PasswordException|FormatError)$/; // težava datoteke, ne naprave
 const withTimeout = (promise, ms) =>
   Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { fallback: true })), ms))]);
@@ -72,16 +72,22 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   let sel = null; // ročni okvir { page, x0, y0, x1, y1 } v enotah PDF
   const state = { closed: false, fell: false, drawn: false };
   let blobUrl = null;
+  let onScroll = null;
+  // Evklidova aplikacija (WebView): blob: PDF bi odprl prazen zaslon, zato tam samo sporočilo brez gumba.
+  const inApp = / EvklidApp\//.test(navigator.userAgent || "");
   // Brez pdf.js: sporočilo in povezava na PDF (nov zavihek / sistemski pregledovalnik).
   const fallback = () => {
     if (state.closed || state.fell) return;
     state.fell = true;
     observer?.disconnect();
     for (const p of pages) p.task?.cancel?.();
-    blobUrl = URL.createObjectURL(file);
-    status(t("pp.fallbackMsg"));
+    if (onScroll) scroller.removeEventListener("scroll", onScroll);
+    status(""); // sporočilo je samo v odstavku spodaj
+    $(".pv-nav").hidden = true;
     $("[data-pv-mark]").hidden = true;
-    $(".pv-pages").innerHTML = `<div class="pv-fallback" dir="auto"><p>${esc(t("pp.fallbackMsg"))}</p><a class="btn-primary pv-fb-open" href="${blobUrl}" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("pp.fallbackOpen"))}</span></a></div>`;
+    if (!inApp) blobUrl = URL.createObjectURL(file);
+    const open = blobUrl ? `<a class="btn-primary pv-fb-open" href="${blobUrl}" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("pp.fallbackOpen"))}</span></a>` : "";
+    $(".pv-pages").innerHTML = `<div class="pv-fallback" dir="auto" role="status"><p>${esc(t("pp.fallbackMsg"))}</p>${open}</div>`;
   };
 
   const close = (forHelp) => {
@@ -195,7 +201,6 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     { root: scroller, rootMargin: "150% 0px" },
   );
   pages.forEach((p) => observer.observe(p.el));
-  setTimeout(() => !state.drawn && fallback(), FALLBACK_MS); // nič izrisanega v 8 s
   // Naslovnica in navodila nimajo nalog: začnemo pri prvi najdeni nalogi.
   // Ponovno odprta pola (po pomoči pri nalogi) se odpre pri zadnji nalogi.
   const start = startPage ? startPage - 1 : tasks.length ? tasks[0].regions[0].page : -1;
@@ -212,7 +217,8 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   };
   const showNo = () => ($(".pv-no").textContent = t("pp.pageOf", { n: pageAt() + 1, total: pages.length }));
   let raf = 0;
-  scroller.addEventListener("scroll", () => raf || (raf = requestAnimationFrame(() => ((raf = 0), showNo()))), { passive: true });
+  onScroll = () => raf || (raf = requestAnimationFrame(() => ((raf = 0), state.fell || showNo())));
+  scroller.addEventListener("scroll", onScroll, { passive: true });
   showNo();
 
   // Izrez območij (enote PDF, y od zgoraj) v en JPEG: vsako stran izrišemo posebej v ločljivosti izreza.

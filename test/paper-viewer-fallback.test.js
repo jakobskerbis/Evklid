@@ -68,6 +68,17 @@ test("pdf.js se ne naloži: sporočilo in povezava »Odpri PDF« na isto datotek
   assert.equal(await bad.locator(".pv .pv-page canvas").count(), 0);
   const head = await bad.evaluate(async (h) => (await (await fetch(h)).text()).slice(0, 5), href);
   assert.equal(head, "%PDF-", "povezava vodi na izbrano datoteko");
+  assert.equal(await bad.locator(".pv-status").innerText(), "", "sporočilo ni podvojeno v statusni vrstici");
+  assert.equal(await bad.locator(".pv-fallback p").count(), 1);
+  // 1b) Evklidova aplikacija (WebView): samo sporočilo, brez gumba (blob: PDF bi odprl prazen zaslon)
+  const appCtx = await browser.newContext({ viewport: { width: 360, height: 740 }, userAgent: "Mozilla/5.0 (Linux; Android 13) EvklidApp/1.0 Chrome/120" });
+  const app = await appCtx.newPage();
+  await app.route("**/vendor/pdfjs/legacy/build/pdf.min.mjs", (r) => r.abort());
+  await app.goto(`${base}/t.html`);
+  await app.waitForFunction(() => window.ready);
+  await app.evaluate((d) => window.odpri(d), b64);
+  await app.locator(".pv .pv-fallback p").waitFor({ timeout: 15000 });
+  assert.equal(await app.locator(".pv-fb-open").count(), 0, "v aplikaciji ni gumba »Odpri PDF«");
   // 2) običajna pot: izris, brez rezerve
   const good = await ctx.newPage();
   await good.goto(`${base}/t.html`);

@@ -3141,7 +3141,7 @@
   "pp.viewerLoading": "Opening paper …",
   "pp.notPdf": "This file is not a PDF. Choose the paper downloaded from ric.si.",
   "pp.loadFail": "The paper could not be opened ({msg}).",
-  "pp.fallbackMsg": "The paper viewer cannot run on this device. Open the PDF in your device's viewer; marking tasks is not available here.",
+  "pp.fallbackMsg": "The paper viewer cannot run on this device, so help with tasks is not available here.",
   "pp.fallbackOpen": "Open PDF",
   "pp.found": "Tasks found: {n}. Press “Help with this task” next to a task.",
   "pp.foundNone": "Tasks could not be found automatically. Use “Mark task” to drag a box around a task.",

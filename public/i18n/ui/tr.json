@@ -3139,7 +3139,7 @@
   "pp.viewerLoading": "Sınav açılıyor …",
   "pp.notPdf": "Bu dosya PDF değil. ric.si'den indirilen sınavı seç.",
   "pp.loadFail": "Sınav açılamadı ({msg}).",
-  "pp.fallbackMsg": "Sınav görüntüleyici bu cihazda çalışmıyor. PDF'yi cihazının görüntüleyicisinde aç; görev işaretleme burada kullanılamaz.",
+  "pp.fallbackMsg": "Sınav görüntüleyici bu cihazda çalışmıyor, bu yüzden görev yardımı burada kullanılamaz.",
   "pp.fallbackOpen": "PDF'yi aç",
   "pp.found": "Bulunan sorular: {n}. Bir sorunun yanında «Bu soruda yardım» düğmesine bas.",
   "pp.foundNone": "Sorular otomatik olarak bulunamadı. «Soruyu işaretle» ile bir sorunun çevresine çerçeve çiz.",
