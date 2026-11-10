@@ -61,10 +61,26 @@ Dve omejitvi:
 
 **5. Med dvema kvadratoma.** Števila $50$ ni v tabeli. Postavi ploščine in stranice na dve vzporedni številski premici:
 
-```
-ploščina:  49 · 50 ··········· 64
-stranica:   7 · ?  ···········  8
-```
+:::risba skica
+opis: Dve vzporedni številski premici. Zgoraj ploščina od 49 do 64 s točko 50 tik desno od 49. Spodaj stranica od 7 do 8 s točko vprašaj tik desno od 7, pod točko 50. Črtkani črti povezujeta 49 s 7 in 64 z 8.
+območje: 0; -0,9 .. 10; 2,9
+napis: 0,1; 2 | ploščina | desno
+napis: 0,1; 0 | stranica | desno
+črta: 2,7; 2 -> 9,7; 2
+črta: 2,7; 0 -> 9,7; 0
+črta: 3; 2 -> 3; 0 | siva črtkano
+črta: 9,4; 2 -> 9,4; 0 | siva črtkano
+črta: 3; 1,85 -> 3; 2,15
+črta: 9,4; 1,85 -> 9,4; 2,15
+črta: 3; -0,15 -> 3; 0,15
+črta: 9,4; -0,15 -> 9,4; 0,15
+napis: 3; 2,1 | 49 | nad
+napis: 9,4; 2,1 | 64 | nad
+napis: 3; -0,1 | 7 | pod
+napis: 9,4; -0,1 | 8 | pod
+točka: 3,4267; 2 | 50 | pod | oranžna
+točka: 3,4548; 0 | ? | nad | oranžna
+:::
 
 Ker je $49 < 50 < 64$, je stranica med $7$ in $8$. Ker je $50$ tik ob $49$, je stranica le malo nad $7$. Splošno: če je $n^2 < a < (n+1)^2$, je $n < \sqrt{a} < n + 1$. To je **ocena brez računala**.
 

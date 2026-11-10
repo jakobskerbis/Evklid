@@ -19,11 +19,20 @@ Racionalna so cela števila ($5 = \frac{5}{1}$, $-3 = \frac{-3}{1}$), ulomki, ko
 
 **2. Na premici.** Racionalna števila zapolnijo prostor med celimi števili. Na številski premici leži $-2{,}5$ točno na sredini med $-3$ in $-2$; $-2{,}8$ pa je bližje $-3$:
 
-```
- -3   -2,8      -2,5          -2
-  |----*---------*-------------|
-  bolj levo = manjše
-```
+:::risba premica
+opis: Številska premica od −3 do −2 s črtico na vsako desetinko. Točki sta pri −2,8, bližje −3, in pri −2,5, na sredini med −3 in −2. Bolj levo pomeni manjše.
+od: -3
+do: -2
+korak: 0,1
+oznake: ne
+oznaka: -3 | −3
+oznaka: -2,8 | −2,8
+oznaka: -2,5 | −2,5
+oznaka: -2 | −2
+točka: -2,8
+točka: -2,5
+podnapis: Bolj levo pomeni manjše.
+:::
 
 Še vedno velja: večje število je bolj desno. Zato ima od dveh negativnih števil večjo vrednost tisto z manjšo absolutno vrednostjo. Absolutna vrednost $|{-2{,}8}| = 2{,}8$ je večja od $|{-2{,}5}| = 2{,}5$, torej je $-2{,}8 < -2{,}5$.
 
@@ -166,10 +175,16 @@ Negativno, ker je $3 \cdot \frac{5}{6}$ več kot $2$. $3 \cdot \frac{5}{6} = \fr
 
 Nariši premico z enoto $4$ kvadratke. Vsak kvadratek je potem $\frac{1}{4}$ ali $0{,}25$:
 
-```
- -2    -1,5  -1 -0,75     0     0,5   1
-  |-----|-----|--|--------|-----|-----|
-```
+:::risba premica
+opis: Številska premica od −2 do 1 z enoto 4 kvadratke, črtica na vsako četrtino. Točke so pri −1,5, pri −0,75 in pri 0,5.
+od: -2
+do: 1
+korak: 0,25
+oznake: 1
+točka: -1,5 | −1,5
+točka: -0,75 | −0,75
+točka: 0,5 | 0,5
+:::
 
 - $-\frac{3}{4} = -0{,}75$ leži tri kvadratke levo od $0$.
 - $-1{,}5$ leži na sredini med $-2$ in $-1$.

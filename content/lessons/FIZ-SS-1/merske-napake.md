@@ -17,19 +17,30 @@ Nobena meritev ni popolnoma točna. Zdravnik, ki izmeri vročino, mora vedeti, a
 
 **Meritve na številski premici.** Pet izmerjenih višin narišemo kot pike na številsko premico:
 
-```
- 172,0   172,2   172,4   172,6   172,8   173,0  cm
-   |-------|-------|-------|-------|-------|
-       •       •       •   •       •
-       [=============▲=============]
-                  172,46
-```
+:::risba premica
+opis: Številska premica višine v centimetrih od 172,0 do 173,0. Pike so pet meritev: 172,1; 172,3; 172,5; 172,6 in 172,8 cm. Povprečje 172,46 cm je označeno s praznim krožcem. Odebeljeni pas sega od 172,10 do 172,82 cm in zajame vse pike.
+od: 172
+do: 173
+korak: 0,1
+oznake: ne
+oznaka: 172 | 172,0
+oznaka: 173 | 173,0
+oznaka: 172,46 | povprečje 172,46
+točka: 172,46 | | oranžna prazna
+interval: 172,1 .. 172,82 | | siva
+točka: 172,1
+točka: 172,3
+točka: 172,5
+točka: 172,6
+točka: 172,8
+podnapis: Višina v centimetrih.
+:::
 
 Pike stojijo pri $172{,}1$; $172{,}3$; $172{,}5$; $172{,}6$ in $172{,}8\,\text{cm}$.
 
-Pike so razsute okrog sredine. Sredino označuje trikotnik: to je **povprečje** $\bar{x}$, vsota vseh meritev, deljena z njihovim številom. Povprečje je naša najboljša ocena prave vrednosti.
+Pike so razsute okrog sredine. Sredino označuje prazen krožec z napisom »povprečje«: to je **povprečje** $\bar{x}$, vsota vseh meritev, deljena z njihovim številom. Povprečje je naša najboljša ocena prave vrednosti.
 
-**Širina pasu.** Pas z oglatimi oklepaji zajame vse pike. Od povprečja sega na vsako stran toliko, kolikor znaša največje odstopanje kake meritve od povprečja. To odstopanje je **absolutna napaka** $\Delta x$. Ima isto enoto kot merjena količina, tu centimetre. Prava višina leži najverjetneje znotraj tega pasu.
+**Širina pasu.** Odebeljeni sivi pas zajame vse pike. Od povprečja sega na vsako stran toliko, kolikor znaša največje odstopanje kake meritve od povprečja. To odstopanje je **absolutna napaka** $\Delta x$. Ima isto enoto kot merjena količina, tu centimetre. Prava višina leži najverjetneje znotraj tega pasu.
 
 Kaj pa, če dobimo petkrat isto število ali merimo samo enkrat? Potem pasu ne moremo izmeriti iz razsutosti pik. Za absolutno napako vzamemo **najmanjši razdelek merila**: pri termometru z razdelki po $0{,}1\,^\circ\text{C}$ je to $0{,}1\,^\circ\text{C}$.
 

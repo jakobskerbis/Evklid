@@ -2,7 +2,7 @@
 // Uporabljata ga scripts/check-lesson.js in testi.
 import katex from "katex";
 import { parseLesson, expandFormulaBlocks } from "./textbook.js";
-import { drawingErrors } from "./risbe.js";
+import { drawingErrors, DRAW_RE } from "./risbe.js";
 import { getTopic } from "./curriculum.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { checkIdentities } from "./lesson-identity.js";
@@ -136,7 +136,8 @@ export function checkLessonSource(src, topicId) {
   if (/\bPhET\b/.test(body)) err("v besedilu ne omenjaj PhET; napiši »interaktivna simulacija spodaj«");
   if (/\.{3}\s*$/m.test(body.replace(/\$[^$]*\$/g, ""))) warn("vrstica se konča s »...« (nedokončano besedilo?)");
 
-  const words = body.replace(SYMBOLS_BLOCK_RE, "").replace(/\$[^$]*\$/g, " ").split(/\s+/).filter(Boolean).length;
+  // Vrstice risb (:::risba) niso besedilo lekcije.
+  const words = body.replace(SYMBOLS_BLOCK_RE, "").replace(DRAW_RE, " ").replace(/\$[^$]*\$/g, " ").split(/\s+/).filter(Boolean).length;
   // Šablonski stavki naredijo lekcije enolične (j, 29. 10. 2026: lekcije ne smejo biti monotone).
   const stock = STOCK_PHRASES.filter((re) => re.test(body)).map((re) => `»${re.source.replace(/\\b|\\s\+/g, " ").trim()}«`);
   if (stock.length) warn(`šablonski stavek ${stock.join(", ")}: začni s situacijo, vprašanjem ali poskusom`);

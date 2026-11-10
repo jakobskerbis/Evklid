@@ -35,12 +35,38 @@ Lestvica je logaritemska. Ko se pH zniža za $1$, je oksonijevih ionov **desetkr
 
 Številska premica s primeri iz narave:
 
-```
-pH:  2     4      5,6    7    8,1      
-     |-----|-------|-----|-----|------>
-   limona  kisli  čist  nev-  morje
-           dež    dež   tralno
-```
+:::risba skica
+opis: Številska premica pH od 1 do 9 s primeri: limona pH 2, kisli dež pH 4, čist dež pH 5,6, nevtralno pH 7, morje pH 8,1. Bolj levo je bolj kislo.
+območje: 0,3; -1,1 .. 9,9; 1,8
+črta: 0,6; 0 -> 9,7; 0 | puščica
+črta: 1; -0,12 -> 1; 0,12
+črta: 2; -0,12 -> 2; 0,12
+črta: 3; -0,12 -> 3; 0,12
+črta: 4; -0,12 -> 4; 0,12
+črta: 5; -0,12 -> 5; 0,12
+črta: 6; -0,12 -> 6; 0,12
+črta: 7; -0,12 -> 7; 0,12
+črta: 8; -0,12 -> 8; 0,12
+črta: 9; -0,12 -> 9; 0,12
+napis: 2; -0,1 | 2 | pod
+napis: 4; -0,1 | 4 | pod
+napis: 5,6; -0,1 | 5,6 | pod
+napis: 7; -0,1 | 7 | pod
+napis: 8,1; -0,1 | 8,1 | pod
+napis: 9,6; -0,1 | pH | pod
+črta: 4; 0 -> 4; 1,05 | siva
+črta: 7; 0 -> 7; 1,05 | siva
+točka: 2; 0 | | | oranžna
+točka: 4; 0 | | | oranžna
+točka: 5,6; 0 | | | oranžna
+točka: 7; 0 | | | zelena
+točka: 8,1; 0 | | | modra
+napis: 2; 0,55 | limona
+napis: 4; 1,35 | kisli dež
+napis: 5,6; 0,55 | čist dež
+napis: 7; 1,35 | nevtralno
+napis: 8,1; 0,55 | morje
+:::
 
 :::premisli
 Kisli dež ima pH $4{,}0$, čist dež $5{,}6$. Napovej: ali je v kislem dežju oksonijevih ionov $1{,}4$-krat, okoli $16$-krat ali okoli $40$-krat več?

@@ -41,6 +41,8 @@ export const PDF_CSS = `
   h1, h2, h3, h4, .brand, .crumb, .toc, .toc-part, .demo-note, .think-label, .formula-label, .key summary, .sheet { font-family: "Inter", "PDF Znaki", sans-serif; }
   pre, code, kbd, samp, tt { font-family: "PDF Mono", monospace; }
   .katex { font-family: KaTeX_Main, "Gelasio", "PDF Znaki", serif; }
+  /* Obroba napisov v risbah (paint-order: stroke) bi Chromium vdelal kot Type 3; na belem papirju je ne rabimo. */
+  .rs .rs-h { stroke: none; }
   /* Naslov v dveh vrsticah: brez tega Chromium v zaznamku PDF izpusti presledek na prelomu (»skupnivečkratnik«). */
   .lesson h2, .lesson h3, .lesson h4, .part h1, .cover h1 { white-space: pre-wrap; }
   .lesson h3, .lesson h4, .toc-part, .formula-label, .think-label, .key summary { break-after: avoid; }

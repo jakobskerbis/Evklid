@@ -17,17 +17,15 @@ Pri vsakem gibanju v ravnini boš potreboval dve ideji. Prva: hitrost ima smer, 
 
 **Novo: veter s strani.** Zdaj naj veter piha pravokotno na smer leta. Dron se zdaj ne giblje niti z $11$ niti s $5\,\text{m/s}$, pa tudi ne naravnost naprej, ampak poševno. V eni sekundi preleti $8\,\text{m}$ naprej in hkrati ga veter odnese $3\,\text{m}$ vstran. Narišimo to:
 
-```
-         3 m
-    ·——————→
-    ↑     ↗
-8 m |    /
-    |   /  dejanska pot
-    |  /
-    | /
-    |/
-    •
-```
+:::risba skica
+opis: Sestavljanje premikov drona v eni sekundi. Navpična puščica 8 m je let naprej, z njenega konca gre vodoravna puščica 3 m, premik zaradi vetra. Poševna puščica od začetka do konca je dejanska pot. Puščice tvorijo pravokotni trikotnik.
+območje: -3; -0,8 .. 6; 9
+enota: 30
+puščica: 0; 0 -> 0; 8 | 8 m | levo | modra
+puščica: 0; 8 -> 3; 8 | 3 m | nad | modra
+puščica: 0; 0 -> 3; 8 | dejanska pot | desno | oranžna
+točka: 0; 0
+:::
 
 Navpična puščica je let drona. Na njen konec smo narisali vodoravno puščico, premik zaradi vetra. Poševna puščica od začetka do konca je dejanski premik. Trije premiki sestavljajo pravokotni trikotnik. Za poševno stranico velja Pitagorov izrek:
 

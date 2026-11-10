@@ -367,6 +367,25 @@ try {
 } catch {}
 const hasPdftoppm = spawnSync("pdftoppm", ["-v"]).status === 0;
 
+// Opis risbe (<title> v SVG) se v PDF ne izpiše, zato ga pregled PDF-ja ne sme pričakovati med besedami.
+test("READ_DOM: besedilo lekcije ne vsebuje opisov risb (svg title) in formul", { skip: chromium ? false : "Playwright/Chromium ni nameščen", timeout: 60_000 }, async () => {
+  const { READ_DOM } = require("../scripts/ucbenik-pdf.cjs");
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    await page.setContent(`<main><article class="lesson" id="a"><h2>1. Lekcija</h2><h3>Razdelek</h3>
+      <p>Vidno besedilo.</p><figure><svg role="img"><title>Skriti opis risbe</title><text>napis</text></svg></figure>
+      <span class="katex">x2</span></article></main>`);
+    const dom = await page.evaluate(READ_DOM);
+    assert.equal(dom.lessons.length, 1);
+    assert.match(dom.lessons[0].text, /Vidno besedilo/);
+    assert.match(dom.lessons[0].text, /napis/);
+    assert.doesNotMatch(dom.lessons[0].text, /Skriti opis|x2/);
+  } finally {
+    await browser.close();
+  }
+});
+
 test("skripta izdela pravi PDF majhnega razreda in poglavja; pregled ujame napake", { skip: chromium ? false : "Playwright/Chromium ni nameščen", timeout: 240_000 }, async () => {
   const { renderPdf, checkPdf, startServer, servePdfFonts, findSlivers, optimizePdf } = require("../scripts/ucbenik-pdf.cjs");
   const cfg = await import("../server/ucbenik-pdf.js");

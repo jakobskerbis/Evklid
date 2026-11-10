@@ -48,11 +48,19 @@ Za rogljičke je prihodek $R(x) = 500x - 200x^2$ in $R'(x) = 500 - 400x$. Pri ce
 
 Za rogljičke narišemo številsko premico za ceno in nad njo predznake $R'$:
 
-```
-R'(x):   +  +  +  +  0  −  −  −  −
-x:  1,00 ────────── 1,25 ────────── 1,50
-R(x):   narašča  ↗  vrh  ↘  pada
-```
+:::risba premica
+opis: Številska premica za ceno x od 1,00 do 1,50 €. Od 1,00 do 1,25 je R′(x) > 0 in prihodek narašča, pri 1,25 je R′(x) = 0 in vrh, od 1,25 do 1,50 je R′(x) < 0 in prihodek pada.
+od: 1
+do: 1,5
+korak: 0,05
+oznake: 0,25
+oznaka: 1 | 1,00
+oznaka: 1,5 | 1,50
+interval: 1 .. 1,25 | R′ > 0 | zelena
+interval: 1,25 .. 1,5 | R′ < 0 | rdeča
+točka: 1,25 | vrh | oranžna
+podnapis: Cena x v evrih. Levo od 1,25 prihodek R narašča, desno pada; pri 1,25 je R′(x) = 0 in vrh.
+:::
 
 **Ekstremi.** Točko, v kateri je $f'(a) = 0$, imenujemo **stacionarna točka**. Če odvod v njej spremeni predznak iz $+$ v $-$, ima funkcija tam **lokalni maksimum**; če iz $-$ v $+$, **lokalni minimum**. Skupno ime je **ekstrem**. Lokalni pomeni »največji (oziroma najmanjši) v okolici«, ne nujno največji ali najmanjši sploh.
 

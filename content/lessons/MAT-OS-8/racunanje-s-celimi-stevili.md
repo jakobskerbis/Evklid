@@ -25,11 +25,16 @@ Zdaj video in polnjenje. Padec za $6$ in porast za $12$: porast je večji, zato 
 
 Na številski premici je to vidno kot skoki. Seštevanje pozitivnega števila je skok v desno, seštevanje negativnega skok v levo:
 
-```
- -15             -6         0
-  |<--------------|         |
-   skok za 9 v levo
-```
+:::risba premica
+opis: Številska premica od −15 do 0. Lok je skok za 9 v levo, od −6 do −15.
+od: -15
+do: 0
+oznake: ne
+oznaka: -15 | −15
+oznaka: -6 | −6
+oznaka: 0 | 0
+skok: -6 -> -15 | skok za 9 v levo
+:::
 
 Iz teh primerov sledi pravilo. Pri **enakih predznakih** absolutni vrednosti seštejemo in predznak obdržimo. Pri **različnih predznakih** manjšo absolutno vrednost odštejemo od večje, rezultat pa dobi predznak števila z večjo absolutno vrednostjo. Vseh 45 minut skupaj: $(-6) + 12 + (-9) = -3$. Res, iz $83\,\%$ smo prišli na $80\,\%$.
 
