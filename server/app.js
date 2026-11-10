@@ -24,6 +24,7 @@ import { visitCounter, mountPilot } from "./pilot.js";
 import { mountPilotTasks, pilotMember } from "./pilot-naloge.js";
 import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
+import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
@@ -308,6 +309,7 @@ export function createApp(store, opts = {}) {
   app.use(visitCounter(store.db));
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mountVidnost(app); // robots.txt, sitemap.xml, llms.txt in stran /o-evklidu za iskalnike (server/vidnost.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
