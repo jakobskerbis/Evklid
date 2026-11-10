@@ -538,7 +538,7 @@ function backStep(wasOverlay) {
     startTour.end?.(); // Nazaj zapre vodič (kot Esc ali »Preskoči«)
     return true;
   }
-  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent) {
+  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent && $("#tabbar").offsetParent) {
     setSidebar(false); // seznam pogovorov na telefonu
     return true;
   }

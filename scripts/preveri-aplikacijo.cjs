@@ -175,7 +175,8 @@ function PAGE_HOOKS() {
   const potT0 = Date.now();
   const potTimer = setInterval(() => {
     const el = document.getElementById("view-path");
-    if (el && el.offsetParent !== null) window.__potVidna++;
+    // Šteje šele z naloženim style.css (do takrat brskalnik ne riše, slog pa Učno pot skrije).
+    if (el && el.offsetParent !== null && [...document.styleSheets].some((x) => /\/style\.css/.test(x.href || ""))) window.__potVidna++;
     if (Date.now() - potT0 > 6000) clearInterval(potTimer);
   }, 10);
   // Neobravnavane zavrnitve aplikacija pokaže le kot obvestilo; tukaj jih zabeležimo kot napako.
@@ -1487,6 +1488,14 @@ async function phone(browser, app) {
     if (await p.locator("#t-practice").isVisible()) await click(p, "#t-practice", { wait: 400 });
     if (await p.locator("#ex-next").isVisible()) await click(p, "#ex-next", { wait: 400 });
     await screen(p, "naloga");
+    // Plasti: odprta plošča za vnos ali tipkovnica se zapre prva (pogled ostane), naslednji Nazaj vodi na Učno pot.
+    const layer = () => p.evaluate(() => document.body.classList.contains("tk-open") || document.body.classList.contains("pad-open"));
+    if (await layer()) {
+      await p.goBack();
+      await settle(p, 300);
+      if ((await currentView(p)) !== "view-topic") throw new Error("tipka Nazaj ob odprti tipkovnici zapre temo namesto tipkovnice");
+      if (await layer()) throw new Error("tipka Nazaj ne zapre tipkovnice ali plošče za vnos");
+    }
     await p.goBack();
     await settle(p, 300);
     if ((await currentView(p)) !== "view-path") throw new Error("tipka Nazaj s teme ne vodi na učno pot");
