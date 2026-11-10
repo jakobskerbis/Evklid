@@ -219,7 +219,7 @@ Izpelji, pri katerem uporu bremena $R_\mathrm{L} > 0$ prejme breme na viru $U_\m
 Vsak linearen vir na sponkah opiše ena premica v ravnini $(I, U)$:
 
 :::risba graf
-opis: Premica vira v ravnini (I, U). Os U seka pri napetosti odprtih sponk U_Th, os I pri toku kratkega stika I_N; njena enačba je U = U_Th − R_Th·I. Črtkana premica bremena U = R_L·I gre skozi izhodišče. Narisana je za R_L = R_Th: delovna točka je na sredini premice vira, pri I_N/2 in U_Th/2, pravokotnik pod njo pa predstavlja moč.
+opis: Premica vira v ravnini (I, U). Os U seka pri Theveninovi napetosti (napetost odprtih sponk), os I pri Nortonovem toku (tok kratkega stika); njen naklon je minus Theveninova upornost. Črtkana premica bremena gre skozi izhodišče. Narisana je za breme, enako Theveninovi upornosti: delovna točka je na sredini premice vira, pri polovici Nortonovega toka in polovici Theveninove napetosti, pravokotnik pod njo pa predstavlja moč.
 x: 0 .. 1,25 | 0,5 | I
 y: 0 .. 1,25 | 0,5 | U
 enako: da
@@ -232,9 +232,10 @@ pravokotnik: 0; 0 .. 0,5; 0,5 | oranžna
 črta: 0; 1 -> 1; 0 | debelo modra
 črta: 0; 0 -> 1,15; 1,15 | črtkano zelena
 točka: 0,5; 0,5 | delovna točka | desno | oranžna
-napis: 0,3; 0,85 | U = U_{Th} − R_{Th}·I | desno | modra
+napis: 0,04; 1,18 | U = U_{Th} − R_{Th}·I | desno | modra
 napis: 0,95; 1,05 | U = R_L·I | levo | zelena
-napis: 0,25; 0,25 | P | sredina | oranžna debelo
+napis: 0,36; 0,13 | P | sredina | oranžna debelo
+podnapis: Narisan je primer, ko je upornost bremena enaka Theveninovi upornosti.
 :::
 
 Premica seka os $U$ pri $U_\mathrm{Th}$ (odprte sponke, $I = 0$) in os $I$ pri $I_\mathrm{N}$ (kratek stik, $U = 0$). Njen naklon je $-R_\mathrm{Th}$. Breme je premica $U = R_\mathrm{L} I$ skozi izhodišče; delovna točka je presečišče. Moč je ploščina pravokotnika pod delovno točko. Ta je največja, ko je delovna točka na sredini premice vira: tam je $U = \frac{U_\mathrm{Th}}{2}$ in $I = \frac{I_\mathrm{N}}{2}$.

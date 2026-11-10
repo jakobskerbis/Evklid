@@ -426,7 +426,8 @@ const foldedLessons = new WeakMap();
 function foldedText(lesson) {
   let text = foldedLessons.get(lesson);
   if (text === undefined) {
-    text = fold([...lesson.sections, ...lesson.alternatives].map((s) => `${s.title} ${s.md}`).join(" "));
+    // Risbe iščemo po opisu »[Slika: …]«, ne po surovem bloku (ključi in slogi bi dali lažne zadetke).
+    text = fold([...lesson.sections, ...lesson.alternatives].map((s) => `${s.title} ${expandDrawings(s.md, "plain")}`).join(" "));
     foldedLessons.set(lesson, text);
   }
   return text;
@@ -480,7 +481,7 @@ function snippet(lesson, words) {
   let cached = plainLessons.get(lesson);
   if (!cached) {
     const plain = lesson.sections
-      .map((s) => s.md)
+      .map((s) => expandDrawings(s.md, "plain"))
       .join(" ")
       .replace(/\$([^$]*)\$/g, (_, t) => t.replace(/\\(mathrm|text|,)/g, "").replace(/[{}\\]/g, ""))
       .replace(/[#*_>`|]/g, "")

@@ -1,5 +1,6 @@
 /* Risbe v lekcijah (server/risbe.js). Barve so vloge iz teme; vrednost za vejico velja v tisku in PDF,
-   kjer spremenljivk teme ni. Isto datoteko vključi tudi stran za tisk (server/textbook-print.js). */
+   kjer spremenljivk teme ni. Isto datoteko vključi tudi stran za tisk (server/textbook-print.js).
+   Napisi podedujejo pisavo besedila lekcije (v PDF vgrajeno pisavo), zato tu ni sistemske pisave. */
 .risba { margin: 14px 0; text-align: center; break-inside: avoid; page-break-inside: avoid; }
 .risba figcaption { margin-top: 4px; font-size: 0.9em; color: var(--muted, #566070); }
 .risba-opis { font-style: italic; color: var(--muted, #566070); }
@@ -9,7 +10,7 @@
 .rs .c { --c: var(--ok, #1e7a4c); }
 .rs .d { --c: var(--danger, #d33a3f); }
 .rs .m { --c: var(--muted, #566070); }
-.rs text { font: 14px var(--font, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif); fill: var(--c, currentColor); }
+.rs text { font-family: inherit; font-size: 14px; fill: var(--c, currentColor); }
 .rs .rs-i { font-size: 12px; }
 .rs .rs-s { font-size: 13px; }
 .rs .rs-tb { font-weight: 700; }

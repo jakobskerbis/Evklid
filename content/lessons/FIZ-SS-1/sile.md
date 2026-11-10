@@ -173,7 +173,7 @@ Nariši silo kot puščico v merilu $1\,\mathrm{cm} \Rightarrow 1\,\mathrm{N}$.
 **Sestavljanje (»rep na glavo«).** Nariši $F_1 = 3\,\mathrm{N}$ kot puščico dolžine $3\,\mathrm{cm}$ v desno. Na njeno konico prestavi rep puščice $F_2 = 4\,\mathrm{N}$ (dolžine $4\,\mathrm{cm}$) navzgor. Rezultanta je puščica od repa prve do konice druge. Izmeri jo z ravnilom: $5\,\mathrm{cm}$, torej $5\,\mathrm{N}$.
 
 :::risba skica
-opis: Sestavljanje dveh pravokotnih sil na mreži, kjer en kvadratek pomeni 1 N. Puščica F₁ = 3 N kaže tri kvadratke v desno. Na njeni konici se začne puščica F₂ = 4 N, ki kaže štiri kvadratke navzgor. Rezultanta F_r je puščica od začetka prve do konice druge.
+opis: Sestavljanje dveh pravokotnih sil na mreži, kjer en kvadratek pomeni 1 N. Puščica F₁ = 3 N kaže tri kvadratke v desno. Na njeni konici se začne puščica F₂ = 4 N, ki kaže štiri kvadratke navzgor. Rezultanta Fᵣ je puščica od začetka prve do konice druge.
 območje: -1; -1 .. 5; 5
 enota: 44
 mreža: da

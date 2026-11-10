@@ -24,12 +24,11 @@ function num(s, what = "število") {
   if (!Number.isFinite(v) || String(s ?? "").trim() === "") fail(`${what}: »${s}« ni število`);
   return v;
 }
-const pt = (s) => {
+const ptRaw = (s) => {
   const p = String(s).split(";");
   if (p.length !== 2) fail(`točka »${String(s).trim()}« mora biti zapisana kot »x; y«`);
   return [num(p[0], "koordinata"), num(p[1], "koordinata")];
 };
-const path = (s) => String(s).split("->").map(pt);
 const fields = (s) => String(s).split("|").map((x) => x.trim());
 function span(s, what) {
   const p = String(s).split("..");
@@ -57,14 +56,18 @@ function style(s = "") {
 }
 const lineCls = (st) => `rs-l${st.c}${st.dash ? " rs-d" : ""}${st.bold ? " rs-b" : ""}`;
 
-// Napis: F_1, x^2, U_{Th} postanejo indeksi in eksponenti (tspan), ostalo je navadno besedilo.
+// Napis: F_1, x^2, U_{Th}, 10^-3, a_12 postanejo indeksi in eksponenti (tspan), ostalo je navadno besedilo.
+// Za _ ali ^ gre celo število s predznakom (10^-3, x^10) ali en znak; več črk brez zavitih oklepajev
+// (»U_Th«) je napaka, ker bi se tiho izrisalo kot U s T in navadnim h.
 function rich(str) {
-  const parts = String(str).split(/([_^](?:\{[^}]*\}|[^\s{}_^]))/);
+  const bad = /[_^]([A-Za-zčšžČŠŽ]{2,})/.exec(String(str));
+  if (bad) fail(`napis »${str}«: indeks ali eksponent iz več znakov zapiši v zavitih oklepajih, npr. »${bad[0][0]}{${bad[1]}}«`);
+  const parts = String(str).split(/([_^](?:\{[^}]*\}|[−-]?\d+(?:,\d+)?|[^\s{}_^]))/);
   let shift = 0;
   let out = "";
   for (const p of parts) {
     if (!p) continue;
-    const m = /^([_^])\{?([^}]*)\}?$/.exec(p);
+    const m = /^([_^])\{?([^}]*)\}?$/.exec(p.replace(/^([_^])-/, "$1−"));
     if (m && /^[_^]/.test(p)) {
       const dy = (m[1] === "_" ? 4 : -6) - shift;
       shift += dy;
@@ -123,9 +126,18 @@ function known(b, keys) {
 
 // ---------- skupni liki (skica in graf): koordinate lekcije → risba ----------
 const SHAPES = ["črta", "lik", "pravokotnik", "krog", "točka", "napis", "puščica", "pravikot"];
-function shapes(items, m, unit) {
+// box = [x0, y0, x1, y1] v koordinatah lekcije: lik zunaj območja bi se zaradi overflow: visible narisal čez besedilo.
+function shapes(items, m, unit, box) {
   let out = "";
   let top = "";
+  const tol = 1e-9 * Math.max(box[2] - box[0], box[3] - box[1]);
+  const inBox = (q, r = 0) => {
+    if (q[0] - r < box[0] - tol || q[0] + r > box[2] + tol || q[1] - r < box[1] - tol || q[1] + r > box[3] + tol)
+      fail(`točka ${fmt(q[0])}; ${fmt(q[1])}${r ? ` s polmerom ${fmt(r)}` : ""} je zunaj območja risbe (${fmt(box[0])}; ${fmt(box[1])} .. ${fmt(box[2])}; ${fmt(box[3])})`);
+    return q;
+  };
+  const pt = (s) => inBox(ptRaw(s));
+  const path = (s) => String(s).split("->").map(pt);
   for (const [k, v] of items) {
     const f = fields(v);
     if (k === "črta") {
@@ -149,8 +161,11 @@ function shapes(items, m, unit) {
       out += `<polygon class="${st.bg ? "rs-bg" : st.fill ? `rs-f${st.c}` : `rs-p${st.c}`}${st.dash ? " rs-d" : ""}" points="${p.map((q) => m(...q).map(r2).join(",")).join(" ")}"/>`;
     } else if (k === "krog") {
       const st = style(f[2]);
-      const [x, y] = m(...pt(f[0]));
-      out += `<circle class="${st.fill ? `rs-f${st.c}` : st.bg ? "rs-bg" : `rs-p${st.c}`}" cx="${r2(x)}" cy="${r2(y)}" r="${r2(num(f[1], "polmer") * unit)}"/>`;
+      const c = ptRaw(f[0]);
+      const r = num(f[1], "polmer");
+      if (!(r > 0)) fail("krog: polmer mora biti pozitiven");
+      const [x, y] = m(...inBox(c, r));
+      out += `<circle class="${st.fill ? `rs-f${st.c}` : st.bg ? "rs-bg" : `rs-p${st.c}`}" cx="${r2(x)}" cy="${r2(y)}" r="${r2(r * unit)}"/>`;
     } else if (k === "točka") {
       const st = style(f[3]);
       const [x, y] = m(...pt(f[0]));
@@ -202,6 +217,7 @@ function premica(b) {
   let every = b.one("oznake");
   if (every !== "ne") {
     every = every ? num(every, "oznake") : step;
+    if (!(every > 0)) fail("premica: »oznake« mora biti pozitivno število ali »ne«");
     while ((hi - lo) / every > 14) every *= 2;
   }
   for (let i = 0; i <= ticks; i++) {
@@ -278,7 +294,7 @@ function stolpci(b) {
   if (bars.some((x) => x[1] < 0)) fail("stolpci: vrednosti ne smejo biti negativne");
   const max = Math.max(...bars.map((x) => x[1]));
   let step = b.one("korak") ? num(b.one("korak"), "korak") : [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000].find((k) => max / k <= 6) || Math.ceil(max / 5);
-  if (!(step > 0)) fail("stolpci: korak mora biti pozitiven");
+  if (!(step > 0) || max / step > 20) fail("stolpci: korak mora biti pozitiven in dati največ 20 črt na osi");
   const top = Math.ceil(max / step - 1e-9) * step || step;
   const axis = b.one("os");
   const [L, T, H] = [34, axis ? 30 : 14, 150];
@@ -384,7 +400,7 @@ function graf(b) {
     curves += `<path class="${lineCls({ ...st, bold: true })}" d="${d}"/>`;
   }
   const own = b.items.filter(([k]) => SHAPES.includes(k));
-  return { w: W, h: T + ph + B, svg: grid + axes + marks + curves + shapes(own, (px, py) => [X(px), Y(py)], pw / (x.hi - x.lo)) };
+  return { w: W, h: T + ph + B, svg: grid + axes + marks + curves + shapes(own, (px, py) => [X(px), Y(py)], pw / (x.hi - x.lo), [x.lo, y.lo, x.hi, y.hi]) };
 }
 
 // ---------- prosta skica v koordinatah lekcije ----------
@@ -392,7 +408,7 @@ function graf(b) {
 // mreža: da (črte na vsako enoto), nato skupni liki v vrstnem redu risanja.
 function skica(b) {
   known(b, ["območje", "enota", "mreža", ...SHAPES]);
-  const [a, c] = span(b.one("območje") || fail("skica: manjka »območje: x0; y0 .. x1; y1«"), "območje").map(pt);
+  const [a, c] = span(b.one("območje") || fail("skica: manjka »območje: x0; y0 .. x1; y1«"), "območje").map(ptRaw);
   const [dx, dy] = [c[0] - a[0], c[1] - a[1]];
   if (!(dx > 0 && dy > 0)) fail("skica: območje gre od leve spodaj do desne zgoraj");
   const P = 6;
@@ -403,10 +419,11 @@ function skica(b) {
   const m = (x, y) => [P + (x - a[0]) * u, P + (c[1] - y) * u];
   let s = "";
   if (b.one("mreža") === "da") {
+    if (dx > 60 || dy > 60) fail("skica: mreža na vsako enoto bi imela več kot 60 črt (povečaj enoto ali izpusti »mreža: da«)");
     for (let v = Math.ceil(a[0]); v <= c[0]; v++) s += `<line class="rs-g" x1="${r2(m(v, 0)[0])}" y1="${P}" x2="${r2(m(v, 0)[0])}" y2="${r2(P + u * dy)}"/>`;
     for (let v = Math.ceil(a[1]); v <= c[1]; v++) s += `<line class="rs-g" x1="${P}" y1="${r2(m(0, v)[1])}" x2="${r2(P + u * dx)}" y2="${r2(m(0, v)[1])}"/>`;
   }
-  return { w, h: u * dy + 2 * P, svg: s + shapes(b.items.filter(([k]) => SHAPES.includes(k)), m, u) };
+  return { w, h: u * dy + 2 * P, svg: s + shapes(b.items.filter(([k]) => SHAPES.includes(k)), m, u, [a[0], a[1], c[0], c[1]]) };
 }
 
 // ---------- atom z lupinami (Bohrov model) ----------
@@ -504,23 +521,34 @@ export function renderDrawing(kind, body) {
   const fn = KINDS[String(kind || "").trim().toLowerCase()] || fail(`neznana vrsta risbe »${kind || ""}« (vrste: ${DRAW_KINDS.join(", ")})`);
   const b = parseBody(body);
   const opis = b.one("opis");
+  if (/[_^]/.test(opis)) fail("opis bere bralnik zaslona: indekse in eksponente zapiši z besedami ali znaki Unicode (F₁, x², U Th), ne z _ ali ^");
   if (opis.length < 20) fail("risba potrebuje »opis:« (vsaj 20 znakov): besedilo, ki sliko nadomesti slepemu učencu in inštruktorju");
   const { w, h, svg } = fn(b);
   const cap = b.one("podnapis");
-  const html = `<figure class="risba"><svg class="rs" viewBox="0 0 ${r2(w)} ${r2(h)}" width="${r2(w)}" height="${r2(h)}" style="max-width:${Math.round(w * ZOOM)}px" role="img" aria-label="${esc(opis)}"><title>${esc(opis)}</title>${svg}</svg>${cap ? `<figcaption>${esc(cap)}</figcaption>` : ""}</figure>`;
+  // Barve brez risbe.css (zavihek, odprt med objavo): liki prazni, črte in napisi v barvi besedila. CSS to povozi.
+  const bare = svg
+    .replace(/<text\b/g, '<text fill="currentColor" stroke="none"')
+    .replace(/ class="(rs-f\b[^"]*)"/g, ' class="$1" fill="currentColor" stroke="none"')
+    .replace(/ class="rs-g"/g, ' class="rs-g" stroke-opacity="0.14"');
+  const html = `<figure class="risba"><svg class="rs" fill="none" stroke="currentColor" viewBox="0 0 ${r2(w)} ${r2(h)}" width="${r2(w)}" height="${r2(h)}" style="max-width:${Math.round(w * ZOOM)}px" role="img" aria-label="${esc(opis)}"><title>${esc(opis)}</title>${bare}</svg>${cap ? `<figcaption>${esc(cap)}</figcaption>` : ""}</figure>`;
   return { html, opis };
 }
+
+/** Opis risbe iz telesa bloka (za branje na glas in nadomestni prikaz). */
+export const drawingText = (body) => (/^\s*opis\s*:\s*(.+)$/im.exec(String(body ?? ""))?.[1] || "").trim();
 
 /** Bloke »:::risba« v besedilu zamenja z risbo (html, print) ali z opisom (plain: inštruktor, branje, iskanje). */
 export function expandDrawings(md, mode = "html") {
   return String(md ?? "").replace(DRAW_RE, (_, kind, body) => {
     try {
       const { html, opis } = renderDrawing(kind, body);
-      return mode === "plain" ? `[Slika: ${opis}]` : html;
+      // Prazni vrstici: HTML je samostojen blok, besedilo tik pod »:::« ostane odstavek Markdowna.
+      return mode === "plain" ? `[Slika: ${opis}]` : `\n\n${html}\n\n`;
     } catch {
-      // Napako v zapisu javi check-lesson.js; učenec vidi vsaj opis.
-      const opis = /^\s*opis\s*:\s*(.+)$/im.exec(body)?.[1] || "";
-      return mode === "plain" ? `[Slika: ${opis}]` : `<p class="risba-opis">${esc(opis)}</p>`;
+      // Napako v zapisu javi check-lesson.js; učenec vidi vsaj opis (brez opisa nič, ne prazen odstavek).
+      const opis = drawingText(body);
+      if (!opis) return "";
+      return mode === "plain" ? `[Slika: ${opis}]` : `\n\n<p class="risba-opis">${esc(opis)}</p>\n\n`;
     }
   });
 }

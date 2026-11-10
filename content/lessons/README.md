@@ -92,8 +92,8 @@ do: 3
 :::
 ```
 
-- `opis:` je obvezen: besedilo, ki sliko nadomesti slepemu učencu, inštruktorju in branju na glas (kaj je na sliki, s števili). `podnapis:` je neobvezen napis pod sliko.
-- Števila piši z decimalno vejico, točko kot `x; y`, polja loči z `|`. Indeks in eksponent: `F_1`, `x^2`, `U_{Th}`.
+- `opis:` je obvezen: besedilo, ki sliko nadomesti slepemu učencu, inštruktorju in branju na glas (kaj je na sliki, s števili). Opis bere bralnik zaslona dobesedno, zato indekse in eksponente piši z besedami ali znaki Unicode (F₁, x², »Theveninova napetost«), nikoli z `_` ali `^` (check-lesson to javi). Prav tako `podnapis:`, ki je neobvezen napis pod sliko. je neobvezen napis pod sliko.
+- Števila piši z decimalno vejico, točko kot `x; y`, polja loči z `|`. Indeks in eksponent v napisih: `F_1`, `x^2`, `a_12`, `10^-3` (celo število s predznakom), več črk v zavitih oklepajih `U_{Th}` (`U_Th` je napaka).
 - Slog (zadnje polje): barve `modra`, `oranžna`, `zelena`, `rdeča`, `siva` (pomenijo vlogo, ne odtenka; pomen naj nikoli ne bo samo v barvi), `črtkano`, `debelo`, `puščica`, `polno`, `ozadje`, `zaprto`. Lega napisa: `nad`, `pod`, `levo`, `desno`, `sredina` (tudi `nad levo`).
 
 | Vrsta | Ključi |
@@ -110,6 +110,7 @@ Liki (v `graf` in `skica`, v koordinatah lekcije, rišejo se po vrsti): `črta: 
 `lik: x; y -> … | slog`, `pravokotnik: x; y .. x; y | slog`, `krog: x; y | polmer | slog`, `točka: x; y | napis | lega | slog`,
 `napis: x; y | besedilo | lega | slog`, `puščica: x; y -> x; y | napis | lega | slog`, `pravikot: oglišče | točka | točka`.
 
+Vsi liki (tudi napisi in točke) morajo biti znotraj `območje` oziroma osi `x`, `y`, sicer check-lesson javi napako.
 Risba mora kazati točno to, kar pove besedilo (ista števila in oznake). Koordinate izračunaj, ne ocenjuj na oko:
 funkcijo nariše `f:` iz izraza, lik iz koordinat oglišč. `check-lesson.js` javi napako v zapisu risbe in opozori na
 slike iz znakov, ki so še ostale. Vzorci: `MAT-OS-8/cela-stevila.md` (premica, skica), `MAT-SS-3/graf-polinoma.md` (graf),

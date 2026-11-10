@@ -88,7 +88,7 @@ test("v lekciji: aplikacija in tisk dobita SVG, inštruktor in branje opis; Mark
   assert.equal(expandFormulaBlocks(md, "plain"), "Besedilo pred sliko.\n\n[Slika: Številska premica od −6 do 3 z enakimi koraki.]\n\nBesedilo za sliko.");
   const print = renderMd(md);
   assert.match(print, /<p>Besedilo pred sliko\.<\/p>\s*<figure class="risba"><svg[^]*<\/svg><\/figure>\s*<p>Besedilo za sliko\.<\/p>/);
-  assert.equal(expandDrawings(blok("premica", "opis: Premica z napako v zapisu, ki se ne izriše.\nod: 3\ndo: 1")), '<p class="risba-opis">Premica z napako v zapisu, ki se ne izriše.</p>');
+  assert.equal(expandDrawings(blok("premica", "opis: Premica z napako v zapisu, ki se ne izriše.\nod: 3\ndo: 1")), '\n\n<p class="risba-opis">Premica z napako v zapisu, ki se ne izriše.</p>\n\n');
 });
 
 test("vse risbe v lekcijah se izrišejo in preverjevalnik jih sprejme", () => {
@@ -104,4 +104,75 @@ test("vse risbe v lekcijah se izrišejo in preverjevalnik jih sprejme", () => {
     n += src.match(/^:::risba/gm).length;
   }
   assert.ok(n >= 10, `vzorec ima vsaj 10 risb (${n})`);
+});
+
+// Pregled PR #559: popravki 2–9 in manjkajoči testi.
+test("prazni vrstici: odstavek tik pod »:::« ostane odstavek (aplikacija in tisk)", () => {
+  const md = `Pred sliko.\n${blok("premica", `${OPIS}\nod: 0\ndo: 2`)}\nZa sliko **krepko**.`;
+  const html = renderMd(md);
+  assert.match(html, /<\/figure>\s*<p>Za sliko <strong>krepko<\/strong>\.<\/p>/);
+  assert.match(html, /<p>Pred sliko\.<\/p>\s*<figure/);
+  assert.equal(expandFormulaBlocks(md, "plain"), "Pred sliko.\n[Slika: Številska premica od −6 do 3 z enakimi koraki.]\nZa sliko **krepko**.");
+});
+
+test("indeksi in eksponenti z več znaki in predznakom; več črk brez oklepajev je napaka", () => {
+  const tsp = (s) => [...renderDrawing("skica", `${OPIS}\nobmočje: 0; 0 .. 4; 2\nnapis: 2; 1 | ${s}`).html.matchAll(/<tspan class="rs-i"[^>]*>([^<]*)<\/tspan>/g)].map((m) => m[1]);
+  assert.deepEqual(tsp("10^-3 m"), ["−3"]);
+  assert.deepEqual(tsp("x^10"), ["10"]);
+  assert.deepEqual(tsp("a_12 + a_1"), ["12", "1"]);
+  assert.deepEqual(tsp("U_{Th} in F_r"), ["Th", "r"]);
+  assert.throws(() => tsp("U_Th"), /_\{Th\}/);
+  assert.throws(() => tsp("e^ix"), /zavitih oklepajih/);
+});
+
+test("liki zunaj območja (skica, graf) so napaka v check-lesson; robovi so dovoljeni", () => {
+  const sk = (l) => renderDrawing("skica", `${OPIS}\nobmočje: 0; 0 .. 4; 3\n${l}`);
+  assert.throws(() => sk("točka: 100; 1"), /zunaj območja/);
+  assert.throws(() => sk("črta: 0; 0 -> 4; 3,5"), /zunaj območja/);
+  assert.throws(() => sk("krog: 3,5; 1 | 1"), /polmerom/);
+  assert.throws(() => sk("pravokotnik: 0; 0 .. 5; 1"), /zunaj območja/);
+  assert.throws(() => sk("napis: -1; 1 | A"), /zunaj območja/);
+  assert.doesNotThrow(() => sk("črta: 0; 0 -> 4; 3\nkrog: 2; 1,5 | 1,5\npravikot: 4; 0 | 0; 0 | 4; 3"));
+  assert.throws(() => renderDrawing("graf", `${OPIS}\nx: -2 .. 2\ny: 0 .. 4\ntočka: 3; 1 | T`), /zunaj območja/);
+  const src = blok("skica", `${OPIS}\nobmočje: 0; 0 .. 4; 3\ntočka: 100; 1`);
+  assert.ok(checkLessonSource(src, "x").errors.some((e) => /risba »skica«.*zunaj območja/.test(e)));
+});
+
+test("meja zank: drobni korak ali enota je napaka, ne obesi izrisa", () => {
+  const t0 = Date.now();
+  assert.throws(() => renderDrawing("stolpci", `${OPIS}\nstolpec: a | 9\nstolpec: b | 2\nkorak: 0,000001`), /največ 20/);
+  assert.throws(() => renderDrawing("skica", `${OPIS}\nobmočje: 0; 0 .. 30000; 1\nenota: 0,01\nmreža: da`), /več kot 60 črt/);
+  assert.throws(() => renderDrawing("premica", `${OPIS}\nod: 0\ndo: 5\noznake: 0`), /oznake/);
+  assert.throws(() => renderDrawing("premica", `${OPIS}\nod: 0\ndo: 5\nkorak: 0,000001`), /60/);
+  assert.ok(Date.now() - t0 < 1000);
+});
+
+test("brez risbe.css: svg ima fill=none, polni liki in napisi barvo besedila", () => {
+  const { html } = renderDrawing("graf", "opis: Graf kvadratne funkcije s točko.\nx: -2 .. 2\ny: -1 .. 4\nf: x^2\ntočka: 1; 1 | T");
+  assert.match(html, /<svg class="rs" fill="none" stroke="currentColor"/);
+  assert.ok([...html.matchAll(/<text\b[^>]*>/g)].every((m) => /fill="currentColor" stroke="none"/.test(m[0])));
+  assert.ok([...html.matchAll(/<[a-z]+ [^>]*class="rs-f[^>]*>/g)].every((m) => /fill="currentColor"/.test(m[0])));
+  assert.match(html, /class="rs-g" stroke-opacity="0.14"/);
+  const css = fs.readFileSync(path.join(import.meta.dirname, "..", "public", "risbe.css"), "utf8");
+  assert.doesNotMatch(css, /system-ui|sans-serif|font:/, "napisi podedujejo pisavo lekcije (PDF pregled pisav)");
+});
+
+test("opis: brez opisa ni praznega odstavka in check-lesson javi napako; _ in ^ v opisu sta napaka", () => {
+  assert.equal(expandDrawings(blok("premica", "od: 0\ndo: 5")), "");
+  assert.equal(expandDrawings(blok("premica", "od: 0\ndo: 5"), "plain"), "");
+  assert.ok(checkLessonSource(`Uvod.\n\n${blok("premica", "od: 0\ndo: 5")}\n`, "x").errors.some((e) => /risba »premica«.*opis/.test(e)));
+  assert.throws(() => renderDrawing("premica", "opis: Premica s točko x_1 na sredini dolžine.\nod: 0\ndo: 5"), /Unicode/);
+  assert.throws(() => renderDrawing("premica", "opis: Premica z dolžino 10^3 metrov na vsako stran.\nod: 0\ndo: 5"), /Unicode/);
+});
+
+test("iskanje in branje na glas uporabljata opis, ne surovega bloka", async () => {
+  const { speakMarkdown } = await import("../server/govor.js");
+  const md = `Uvod.\n\n${blok("skica", "opis: Krog s središčem na sredini risbe.\nobmočje: 0; 0 .. 4; 3\nkrog: 2; 1,5 | 1 | modra")}\n\nKonec.`;
+  const said = speakMarkdown(md);
+  assert.match(said, /Krog s središčem na sredini risbe\./);
+  assert.doesNotMatch(said, /območje|modra|risba/);
+  const src = fs.readFileSync(path.join(import.meta.dirname, "..", "server", "textbook.js"), "utf8");
+  assert.ok((src.match(/expandDrawings\(s\.md, "plain"\)/g) || []).length >= 2, "iskanje in odlomek gresta skozi opis");
+  const govor = fs.readFileSync(path.join(import.meta.dirname, "..", "server", "govor.js"), "utf8");
+  assert.match(govor, /import \{ DRAW_RE/);
 });
