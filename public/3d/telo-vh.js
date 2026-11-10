@@ -248,8 +248,8 @@ export function zgradiTelo3D(THREE, koren, info, { ravnina, barvaZa, imeZa, imeS
   const seznam = [...mreze.keys()].filter((k) => k !== "koza" && strukture[k]?.sredisce).map((k) => ({ kljuc: k, prostornina: strukture[k].prostornina_cm3 || 0, polmer: 0.75 * (strukture[k].polmer || 10) }));
   // širina polic iz skupne površine (računalnik ≈ 16 : 10, telefon pokončno ≈ 9 : 16)
   const ploscina = seznam.reduce((a, d) => a + (2 * Math.max(4, d.polmer) + 22) ** 2, 0);
-  const sirinaCilj = Math.sqrt(ploscina) * (telefon ? 0.9 : 2.4);
-  const visNapisa = Math.max(10, sirinaCilj / (telefon ? 30 : 75));
+  const sirinaCilj = Math.sqrt(ploscina) * (telefon ? 0.9 : 2.0);
+  const visNapisa = Math.max(10, sirinaCilj / (telefon ? 22 : 42));
   const dolzina = (kl) => visNapisa * 0.56 * String(imeZa(kl)).length + visNapisa;
   const pol = razvrstiPolice(seznam, { sirina: sirinaCilj, razmak: 22, naslov: visNapisa * 3, napis: dolzina, visinaNapisa: visNapisa });
   const napisi = new THREE.Group();
