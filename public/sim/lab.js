@@ -200,10 +200,18 @@ export function pripni(el) {
   });
   stage.prepend(btn);
   set(pinRead());
-  // »Povečaj risbo«: risba z merilniki čez ves zaslon (vrhnja plast brskalnika), visoka kot zaslon; široko risbo se premika s prstom.
-  // Na telefonu je pripeta risba majhna, steklovina in skale so tako berljive. Esc ali isti gumb zapre.
+  // »Povečaj risbo«: risba z merilniki čez ves zaslon (vrhnja plast brskalnika), cela vidna; ležeča risba se na pokončnem
+  // telefonu obrne za 90° (telefon se zasuka), da izkoristi daljšo stranico. Zapre jo isti gumb, Esc ali tipka Nazaj
+  // (app.js → backStep klikne gumb). Odprta je pogovorno okno (role=dialog), ostala stran je medtem neodzivna (inert).
   if (typeof stage.showPopover === "function") {
     const zoom = h("button", { type: "button", class: "lab-zoom", "aria-label": t("sim.lab.zoom"), title: t("sim.lab.zoom"), "aria-pressed": "false", html: icon("maximize-2") });
+    let mirni = [], prejFokus = null;
+    const ozadje = (on) => {
+      for (const x of mirni) x.inert = false;
+      mirni = [];
+      if (!on) return;
+      for (let a = stage; a.parentElement; a = a.parentElement) for (const b of a.parentElement.children) if (b !== a && !b.inert && b.localName !== "script" && b.localName !== "style") (b.inert = true), mirni.push(b);
+    };
     const povecaj = (on) => {
       if (on === stage.classList.contains("lab-povecano")) return;
       try {
@@ -214,12 +222,15 @@ export function pripni(el) {
         on = false;
       }
       stage.classList.toggle("lab-povecano", on);
+      stage.classList.toggle("lab-lezi", on && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
+      for (const [k, v] of [["role", "dialog"], ["aria-modal", "true"], ["aria-label", t("sim.lab.zoom")]]) on ? stage.setAttribute(k, v) : stage.removeAttribute(k);
+      ozadje(on);
       zoom.setAttribute("aria-pressed", String(on));
       zoom.innerHTML = icon(on ? "minimize-2" : "maximize-2");
-      if (on) {
-        zoom.focus({ preventScroll: true });
-        stage.scrollLeft = (stage.scrollWidth - stage.clientWidth) / 2; // široka risba: začni na sredini
-      }
+      if (on) (prejFokus = document.activeElement), zoom.focus({ preventScroll: true });
+      else if (prejFokus?.isConnected && prejFokus !== document.body) prejFokus.focus({ preventScroll: true });
+      else zoom.focus({ preventScroll: true });
+      upd();
     };
     zoom.addEventListener("click", () => povecaj(!stage.classList.contains("lab-povecano")));
     stage.addEventListener("keydown", (e) => {

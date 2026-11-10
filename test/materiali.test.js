@@ -3,7 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { DEFS, CSS, material, okvirPoti } from "../public/sim/materiali.js";
+import { DEFS, CSS, material, okvirPoti, debelinaStekla, STEKLO_MM, LOM_VODA } from "../public/sim/materiali.js";
 import { rgb, mesaj, svetlost, zrno, svetIgre } from "../public/games/slog.js";
 import { ENGINES } from "../public/games/engines.js";
 
@@ -17,6 +17,12 @@ test("materiali: razredi poskusov dobijo pravi material", () => {
   assert.equal(material("lab-tit-rod"), "kovina");
   assert.equal(material("lab-box"), "naprava");
   assert.equal(material("lab-wire"), "zica");
+  // novejši poskusi (elektrokemija, reakcije, gibanje, magnetizem) imajo svoje razrede
+  assert.equal(material("lab-ek-glass"), "stekloP");
+  assert.equal(material("lab-ek-liq"), "gladina");
+  assert.equal(material("lab-gib-alu"), "kovina");
+  assert.equal(material("lab-mag-kabel"), "kabel");
+  assert.equal(material("lab-top-coil burnt"), "lom");
   assert.equal(material("lab-sil-ruler"), "les");
   // luža in prazna cev nimata odseva; drugi razredi in ne-laboratorijski elementi ostanejo nedotaknjeni
   assert.equal(material("lab-liq lab-liq-voda lab-puddle"), null);
@@ -48,6 +54,23 @@ test("materiali: okvir poti, ravno dno in telo cevi iz dveh sten", () => {
   const rel = okvirPoti("M10,10 v20 h30 l4,-3");
   assert.deepEqual([rel.x0, rel.x1, rel.y0, rel.y1], [10, 44, 10, 30]);
   assert.equal(okvirPoti(""), null);
+});
+
+test("materiali: debelina stekla sledi merilu risbe (prava stena ≈ 1–2 mm), rezerva ne prekrije vsebine", () => {
+  // erlenmajerica 100 mL (zunanji premer 64 mm) v dveh merilih, epruveta 16 mm, čaša 400 mL (77 mm)
+  for (const [mm, premer, visina, cev] of [[0.9, 64, 105, false], [3, 64, 105, false], [1, 16, 160, true], [0.8, 77, 110, false], [2.2, 16, 160, true]]) {
+    const w = premer * mm, { stena, dno } = debelinaStekla(w, visina * mm, mm);
+    const prava = cev ? STEKLO_MM.cev : STEKLO_MM.posoda;
+    assert.ok(Math.abs(stena / mm - prava) <= prava * 0.35, `merilo ${mm}: stena ${(stena / mm).toFixed(2)} mm namesto ${prava} mm`);
+    assert.ok(stena / mm <= 2.4 && dno / mm <= 3.6, `merilo ${mm}: stena ${(stena / mm).toFixed(2)} mm, dno ${(dno / mm).toFixed(2)} mm`);
+    assert.ok(dno >= stena);
+  }
+  // majhno merilo (cel pribor na risbi, 1 mm = 0,3 enote): prava stena bi bila nevidna, rezerva je največ 0,6 enote in ≤ 9 % širine
+  const majhna = debelinaStekla(64 * 0.3, 105 * 0.3, 0.3);
+  assert.ok(majhna.stena <= 0.6 + 1e-9 && majhna.stena <= 64 * 0.3 * 0.09 + 1e-9);
+  // brez merila: tanka stena po širini, nikoli čez 9 % širine
+  for (const w of [8, 20, 60, 120]) assert.ok(debelinaStekla(w, w * 2, 0).stena <= Math.max(0.6, w * 0.09));
+  assert.ok(LOM_VODA > 1.32 && LOM_VODA < 1.34);
 });
 
 test("materiali: vsak preliv iz sloga obstaja v <defs>; brez slik in filtrov", () => {
@@ -101,16 +124,17 @@ test("slog iger: barve", () => {
 test("slog iger: tekstura sveta je rahla in določena za vsako igro", () => {
   let s = 7;
   const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
-  for (const svet of ["vesolje", "narava", "voda", "platno"]) {
+  for (const svet of ["vesolje", "narava", "voda", "nebo", "platno"]) {
     const d = zrno(svet, 64, rnd);
     assert.equal(d.length, 64 * 64 * 4);
     let vsota = 0, max = 0;
     for (let i = 3; i < d.length; i += 4) (vsota += d[i]), (max = Math.max(max, d[i]));
     const povp = vsota / (64 * 64);
-    assert.ok(povp > 2 && povp < 16, `${svet}: povprečna prekrivnost ${povp.toFixed(1)}/255`);
+    assert.ok(povp > 0.2 && povp < 16, `${svet}: povprečna prekrivnost ${povp.toFixed(1)}/255`);
     assert.ok(max <= (svet === "vesolje" ? 120 : 45), `${svet}: največ ${max}`);
   }
-  const sveti = new Set(["vesolje", "narava", "voda", "platno"]);
+  const sveti = new Set(["vesolje", "narava", "voda", "nebo", "platno"]);
+  assert.equal(svetIgre({ id: "balloons" }), "nebo");
   for (const e of ENGINES) assert.ok(sveti.has(svetIgre(e)), e.id);
   assert.equal(svetIgre({ id: "meteor" }), "vesolje");
   assert.equal(svetIgre({ id: "nekaj-novega" }), "platno");

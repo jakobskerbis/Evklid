@@ -164,17 +164,36 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
     await p.locator(".lab-zoom").tap();
     const odprto = await p.evaluate(() => {
       const st = document.querySelector(".demo-stage"), r = st.getBoundingClientRect();
-      return { cls: st.classList.contains("lab-povecano"), pritisnjen: document.querySelector(".lab-zoom").getAttribute("aria-pressed"), w: Math.round(r.width), h: Math.round(r.height), top: Math.round(r.top), meriniki: !!st.querySelector(".lab-meters") };
+      const sl = st.querySelector(".lab-slika").getBoundingClientRect();
+      return { cls: st.classList.contains("lab-povecano"), pritisnjen: document.querySelector(".lab-zoom").getAttribute("aria-pressed"), w: Math.round(r.width), h: Math.round(r.height), top: Math.round(r.top), meriniki: !!st.querySelector(".lab-meters"), vloga: st.getAttribute("role") + st.getAttribute("aria-modal"), ozadje: document.querySelector(".demo-controls").closest("[inert]") !== null || document.querySelector(".demo-controls").inert, cela: sl.left >= -1 && sl.right <= 361 && sl.top >= -1 && sl.bottom <= 741 };
     });
-    assert.deepEqual(odprto, { cls: true, pritisnjen: "true", w: 360, h: 740, top: 0, meriniki: true });
-    assert.ok((await visina()) >= prej * 1.7, `risba ${prej} → ${await visina()} px`);
+    assert.deepEqual(odprto, { cls: true, pritisnjen: "true", w: 360, h: 740, top: 0, meriniki: true, vloga: "dialogtrue", ozadje: true, cela: true });
+    assert.ok((await visina()) >= prej * 1.5, `risba ${prej} → ${await visina()} px`);
     await p.locator(".lab-zoom").tap();
     assert.equal(await p.evaluate(() => document.querySelector(".demo-stage").classList.contains("lab-povecano") || document.querySelector(".demo-stage").hasAttribute("popover")), false);
     assert.equal(await visina(), prej);
     await p.locator(".lab-zoom").tap();
     await p.keyboard.press("Escape");
-    assert.equal(await p.evaluate(() => document.querySelector(".demo-stage").classList.contains("lab-povecano")), false);
+    assert.deepEqual(await p.evaluate(() => [document.querySelector(".demo-stage").classList.contains("lab-povecano"), document.querySelector(".demo-stage").getAttribute("role"), document.querySelectorAll("[inert]").length]), [false, null, 0]);
+    // ležeča risba (Ohmov zakon) je v povečavi cela na zaslonu: na pokončnem telefonu se obrne
+    const o = await run(ctx, "lab-ohm");
+    await o.p.locator(".lab-zoom").tap();
+    const lezi = await o.p.evaluate(() => {
+      const st = document.querySelector(".demo-stage"), r = st.querySelector(".lab-slika").getBoundingClientRect();
+      return { lezi: st.classList.contains("lab-lezi"), cela: r.left >= -1 && r.right <= 361 && r.top >= -1 && r.bottom <= 741, visja: r.height > r.width, drsi: st.scrollWidth > st.clientWidth + 1 };
+    });
+    assert.deepEqual(lezi, { lezi: true, cela: true, visja: true, drsi: false });
     await ctx.close();
+  });
+
+  // Tipka Nazaj (app.js → backStep) zapre povečavo pred vsem drugim razen odprtih oken <dialog>; poskus ostane odprt.
+  await t.test("Back closes »Povečaj risbo« first (backStep clicks the zoom button)", () => {
+    const app = fs.readFileSync("public/app.js", "utf8"), b = app.slice(app.indexOf("function backStep("), app.indexOf("window.addEventListener(\"popstate\""));
+    const zoom = b.indexOf('document.querySelector(".demo-stage.lab-povecano .lab-zoom")');
+    assert.ok(zoom > 0, "backStep ne pozna povečave");
+    assert.match(b.slice(zoom, zoom + 160), /povecava\.click\(\);\s*return true;/);
+    for (const kasneje of ["simOverlayOpen()", "uciBack(", "closeByEsc()", "closeFormulaPop()"]) assert.ok(b.indexOf(kasneje) > zoom, `${kasneje} mora priti za povečavo`);
+    assert.ok(b.indexOf("closeTopDialog()") < zoom);
   });
 
   await t.test("desktop 1280 × 800: a wide drawing is pinned full width on top, controls below it in two columns", async () => {

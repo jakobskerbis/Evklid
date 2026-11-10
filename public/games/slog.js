@@ -31,8 +31,9 @@ export const alfa = (c, a) => `rgba(${rgb(c).join(",")},${a})`;
 // Svet igre določa teksturo ozadja. Igra lahko poda engine.svet, sicer velja seznam.
 const SVETOVI = {
   vesolje: ["meteor", "invaders", "lander", "impostor", "orb", "bricks", "maze"],
-  narava: ["runner", "hills", "frog", "moles", "snake", "jumper", "pet", "slicer"],
-  voda: ["balloons", "water", "bubbles", "heli", "catcher", "blocks"],
+  narava: ["runner", "hills", "frog", "moles", "snake", "pet", "slicer"],
+  voda: ["water", "bubbles", "blocks"],
+  nebo: ["balloons", "heli", "jumper", "catcher"],
 };
 export const svetIgre = (engine) => engine?.svet || Object.keys(SVETOVI).find((k) => SVETOVI[k].includes(engine?.id)) || "platno";
 
@@ -45,7 +46,8 @@ export function zrno(svet, n = 96, rnd = Math.random) {
     d[i] = d[i + 1] = d[i + 2] = v;
     d[i + 3] = a;
   };
-  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) px(x, y, rnd() < 0.5 ? 0 : 255, Math.floor(rnd() * 13)); // filmsko zrno povsod
+  // filmsko zrno (v vesolju ne: na črnem deluje umazano, tam je samo zvezdni prah)
+  if (svet !== "vesolje") for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) px(x, y, rnd() < 0.5 ? 0 : 255, Math.floor(rnd() * (svet === "nebo" ? 8 : 13)));
   if (svet === "vesolje") {
     for (let i = 0; i < n * n * 0.006; i++) px(Math.floor(rnd() * n), Math.floor(rnd() * n), 255, 40 + Math.floor(rnd() * 80));
   } else if (svet === "narava") {
@@ -58,8 +60,12 @@ export function zrno(svet, n = 96, rnd = Math.random) {
       const f = rnd() * 6.28, a = 5 + rnd() * 9;
       for (let x = 0; x < n; x++) px(x, y + Math.round(Math.sin((x / n) * 6.28 * 2 + f) * 1.5), 255, Math.floor(a * (0.5 + 0.5 * Math.sin((x / n) * 6.28 * 3 + f * 2))));
     }
-  } else {
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (x % 4 === 0 || y % 4 === 0) px(x, y, (x + y) % 8 ? 0 : 255, 9 + Math.floor(rnd() * 9));
+  } else if (svet === "platno") {
+    // tkanina: kratke nitke v obeh smereh (brez ravnih vrstic čez ves prizor)
+    for (let i = 0; i < n * n * 0.05; i++) {
+      const x = Math.floor(rnd() * n), y = Math.floor(rnd() * n), v = rnd() < 0.5 ? 0 : 255, a = 8 + Math.floor(rnd() * 10), vod = rnd() < 0.5;
+      for (let k = 0; k < 5; k++) px(x + (vod ? k : 0), y + (vod ? 0 : k), v, a);
+    }
   }
   return d;
 }
@@ -96,7 +102,7 @@ export function ustvariSlog(G, canvas, engine, host) {
   const g = canvas.getContext("2d");
   const svet = svetIgre(engine);
   const temenSvet = svetlost(engine.colors?.[0] || "#1e1b4b") < 0.32;
-  let T = barveTeme(host, g), plast = null, zrnoPl = null, obla = null, cvet = null, cq = null;
+  let T = barveTeme(host, g), plast = null, zrnoPl = null, zrnoPlast = null, obla = null, cvet = null, cq = null;
   let zadnji = 0, pocasne = 0, raven = 2; // raven učinkov: 2 = vse, 1 = brez žarenja in druge plasti ozadja, 0 = samo tekstura in svetloba
   let plasti = [], ozadjeNarisano = false, sencenih = 0, gPloskev = null, gKrog = null;
   const svetlosti = new Map();
@@ -128,7 +134,8 @@ export function ustvariSlog(G, canvas, engine, host) {
     const a = engine.colors?.[1] || "#6d28d9";
     // [število, polmer (delež krajše stranice), prekrivnost, barva] za daljno in bližnjo plast
     const opis = {
-      vesolje: [[[3, 0.55, 0.22, a], [70, 0.006, 0.7, "#ffffff"]], [[2, 0.4, 0.16, mesaj(a, "#38bdf8", 0.5)], [18, 0.016, 0.9, "#e0e7ff"]]],
+      vesolje: [[[3, 0.55, 0.13, a], [70, 0.006, 0.7, "#ffffff"]], [[2, 0.4, 0.1, mesaj(a, "#38bdf8", 0.5)], [18, 0.016, 0.9, "#e0e7ff"]]],
+      nebo: [[[3, 0.4, 0.07, "#ffffff"]]],
       voda: [[[3, 0.5, 0.1, "#ffffff"]], [[5, 0.2, 0.09, "#ffffff"]]],
       narava: [[[3, 0.5, 0.09, "#fef9c3"]], [[6, 0.18, 0.08, "#ffffff"]]],
       platno: [[[2, 0.6, 0.07, "#ffffff"]], [[3, 0.28, 0.06, mesaj("#ffffff", a, 0.3)]]],
@@ -138,7 +145,7 @@ export function ustvariSlog(G, canvas, engine, host) {
       for (const [n, r, al, col] of skupine) {
         q.globalAlpha = al;
         for (let k = 0; k < n; k++) {
-          const x = rnd() * w, y = rnd() * h, R = Math.max(1.2, r * m * (0.7 + rnd() * 0.6));
+          const x = rnd() * w, y = rnd() * h * (svet === "nebo" ? 0.5 : 1), R = Math.max(1.2, r * m * (0.7 + rnd() * 0.6));
           // čez rob se ponovi, da se plast pri premikanju neopazno stika
           for (const dx of [-w, 0, w]) for (const dy of [-h, 0, h]) if (x + dx > -R && x + dx < w + R && y + dy > -R && y + dy < h + R) q.drawImage(pika(col), x + dx - R, y + dy - R, R * 2, R * 2);
         }
@@ -149,6 +156,7 @@ export function ustvariSlog(G, canvas, engine, host) {
   }
   function ozadje() {
     ozadjeNarisano = true;
+    if (zrnoPlast) g.drawImage(zrnoPlast, 0, 0, G.W, G.H);
     if (raven < 1) return;
     const pa = g.globalAlpha, po = g.globalCompositeOperation;
     g.globalAlpha = 1;
@@ -251,11 +259,14 @@ export function ustvariSlog(G, canvas, engine, host) {
     }
     plasti = narediPlasti();
     // tekstura, svetloba in vinjeta v eni plasti velikosti platna: v sličici ena sama kopija brez raztegovanja
+    // Tekstura sveta je svoja plast, ki se nariše takoj za ozadjem igre: liki in tablice s številkami ostanejo čisti.
+    zrnoPlast = platno(canvas.width, canvas.height);
+    const zq = zrnoPlast.getContext("2d");
+    zq.fillStyle = zq.createPattern(zrnoPl, "repeat");
+    zq.fillRect(0, 0, zrnoPlast.width, zrnoPlast.height);
+    // svetloba in vinjeta (brez teksture) čez prizor: v sličici ena sama kopija brez raztegovanja
     plast = platno(canvas.width, canvas.height);
-    const pq = plast.getContext("2d");
-    pq.fillStyle = pq.createPattern(zrnoPl, "repeat");
-    pq.fillRect(0, 0, plast.width, plast.height);
-    pq.drawImage(luc, 0, 0, plast.width, plast.height);
+    plast.getContext("2d").drawImage(luc, 0, 0, plast.width, plast.height);
   }
 
   const S = {
