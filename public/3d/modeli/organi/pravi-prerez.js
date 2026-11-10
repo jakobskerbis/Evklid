@@ -135,15 +135,15 @@ export async function zgradi(THREE, ctx) {
   skupinaSmeri.add(...Object.values(smeri));
   notranja.add(skupinaSmeri);
   function postaviOznakeSmeri() {
-    const s = stanje.smer, i = stanje.i[s], { dim } = T, sc = notranja.scale.x;
+    const s = stanje.smer, i = stanje.i[s], { dim } = T;
     skupinaSmeri.visible = stanje.pogled === "ravno";
-    const vel = 0.16 / sc; // širina napisa v mm volumna (0,16 enote odra)
+    const [wr, hr] = R.velikostRezine(dim, s);
+    const vel = Math.max(60, Math.min((vsebina.u1 - vsebina.u0) * wr, (vsebina.v1 - vsebina.v0) * hr) * 0.34); // širina napisa v mm volumna
     for (const sp of Object.values(smeri)) sp.scale.set(vel, vel / 4, 1);
     const { u0, v0, u1, v1 } = vsebina, rob = vel * 0.42;
     const na = (sp, u, v, du, dv) => {
       const q = R.tockaRezine(dim, s, i, u, v);
-      const [w, h] = R.velikostRezine(dim, s);
-      const p = R.tockaRezine(dim, s, i, u + du / w, v + dv / h);
+      const p = R.tockaRezine(dim, s, i, u + du / wr, v + dv / hr);
       vMm(p[0], p[1], p[2], sp.position);
       sp.visible = true;
       return q;

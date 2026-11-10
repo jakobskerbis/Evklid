@@ -9,8 +9,8 @@
 #   2 maska     telo = toplo obarvana jedra, razlita po ne-modrem in ne-črnem, če jih obdaja modri gel (listek in
 #               sivinsko lestvico obdaja črn okvir); drobni deli (prsti) prek sosednje rezine; izpadle rezine po
 #               sosednji, rezine brez podatkov s prelivom sosednjih; izrez na okvir telesa
-#   3 barve     razlika med zaporednima rezinama na skupnih celicah (mediana log razmerja); kar presega 1 % na mm, je
-#               osvetlitev (nihanje, skok med bloki) in se odstrani (ojačanje na rezino in kanal)
+#   3 barve     razlika med zaporednima rezinama na skupnih celicah (mediana log razmerja) → nihanje osvetlitve okoli
+#               drsečega povprečja se odstrani (ojačanje na rezino in kanal)
 #   4 izhod     a/<z>.webp, k/<y>.webp (frontalno), s/<x>.webp (sagitalno) na 1 mm, mali.webp (volumen 4 mm kot
 #               list prečnih rezin), predogled.webp, meta.json
 #   5 podrobno  (--podrobno) ploščice 512 px v polni ločljivosti 0,33 mm (raven 0) in 0,66 mm (raven 1, 256 px):
@@ -32,7 +32,7 @@ except ImportError:
 
 TU = os.path.dirname(os.path.abspath(__file__))
 T = 512      # ploščica
-RAZL = 6     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
+RAZL = 7     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
 MALI = 4     # mm voksla malega volumna
 ROB = 6      # mm roba okoli telesa
 
@@ -345,12 +345,12 @@ def main(arg):
         elif i:
             L[i] = L[i - 1]
         prej = zdaj or prej
-    d = np.diff(L, axis=0, prepend=L[:1])
-    meja = 0.01 / len(pod)
-    prava = np.cumsum(np.clip(d, -meja, meja), 0)          # počasna, anatomska sprememba barve
-    raz = prava - L
-    raz = raz - np.median(raz, 0)
-    ojac = np.clip(np.exp(raz), 0.6, 1.6).astype(np.float32)  # na datoteko
+    # nihanje osvetlitve okoli drsečega povprečja (15 mm). Skokov svetlosti med bloki telesa ne odštevamo: poskus
+    # (10. 11.) je pokazal, da se pri tem napaka kopiči vzdolž telesa (glava zelenkasta, noge presvetle).
+    okno = int(15 * len(pod)) | 1
+    Lp = np.pad(L, ((okno // 2, okno // 2), (0, 0)), mode="reflect" if N > okno else "edge")
+    gladko = np.stack([np.convolve(Lp[:, c], np.ones(okno) / okno, "valid") for c in range(3)], 1)
+    ojac = np.clip(np.exp(gladko - L), 0.75, 1.33).astype(np.float32)  # na datoteko
     ojac_z = ojac.reshape(Z, len(pod), 3).mean(1)
     dnevnik(f"barve: ojačanje {ojac.min():.3f}–{ojac.max():.3f}, std {ojac.std():.4f}")
 
