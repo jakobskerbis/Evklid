@@ -1185,7 +1185,7 @@ export function createApp(store, opts = {}) {
       }
       // Možnost A (j 10. 11.): inštruktor je označil stisko (flag=distress) → varnostni odgovor, če ga še ni.
       // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
-      // zdravje ali nevarnost, sicer stiska; z EVKLID_NUJNO_BLAGO=1 brez vsake številke blažje okno »pogovor«).
+      // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
       if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
       finished = true;

@@ -20,9 +20,10 @@ export const ROK_MS = 5000;
 export const MAX_TOKENS = 16;
 // Pregled vsakega sporočila pod mejo (možnost B); stikalo se bere ob klicu, da ga je mogoče preklopiti brez ponovnega zagona testov.
 export const vsakoVklopljeno = () => env("EVKLID_VARNOST_VSAKO", "1") !== "0";
-// Možnost (b) za j (privzeto izklopljeno): inštruktor označi stisko (META distress), a ne navede nobene številke pomoči
-// in pregled B ne najde ničesar → blažje okno »pogovor« (brez 112) namesto okna »stiska«.
-export const blagoVklopljeno = () => env("EVKLID_NUJNO_BLAGO", "0") === "1";
+// Možnost (b), j potrdil 10. 11. (privzeto vklopljeno): inštruktor označi stisko (META distress), a ne navede nobene
+// številke pomoči in pregled B ne najde ničesar → blažje okno »pogovor« (brez 112) namesto okna »stiska«.
+// EVKLID_NUJNO_BLAGO=0 vrne polno okno »stiska«.
+export const blagoVklopljeno = () => env("EVKLID_NUJNO_BLAGO", "1") !== "0";
 
 export const NAVODILO =
   "Si varnostni filter aplikacije za učenje (otroci in mladi). Preberi sporočilo učenca med oznakama <sporocilo> in </sporocilo>. " +
@@ -127,7 +128,7 @@ export async function varnostniPregled({ text, usage, studentId, createFn = null
 
 // Možnost A: inštruktor je označil stisko (META flag=distress), pregled B pa ni našel vrste. Vrsta okna iz odgovora:
 // samo številka za nujno pomoč (112 …) brez linije za pogovor → zdravje (ali nevarnost pri požaru, plinu);
-// brez vsake številke in z vklopljenim EVKLID_NUJNO_BLAGO → blažje okno »pogovor«; sicer stiska.
+// brez vsake številke → blažje okno »pogovor«; sicer stiska.
 const stRe = (n) => new RegExp(`(?<![0-9])${String(n).replace(/\D/g, "").split("").join("[\\s\\u00a0\\u202f.-]?")}(?![0-9])`);
 export function vrstaIzOdgovora(odgovor, st, blago = blagoVklopljeno()) {
   const t = String(odgovor || "");

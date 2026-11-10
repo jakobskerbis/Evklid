@@ -741,7 +741,7 @@ function vrsticeOsnova(vrsta, st) {
   const L = (k, extra = {}) => [`nujno.${k}`, { ...p, ...extra }];
   const lin = (k, l) => L(l.ure ? k : `${k}BrezUr`, { ime: l.ime, stevilka: l.st, ure: ure(l.ure) });
   if (vrsta === "zdravje") return [L("zdravje.naslov"), L("zdravje.1"), L("zdravje.2"), L("zdravje.3"), L("zdravje.4")];
-  // Blažje okno (možnost b, EVKLID_NUJNO_BLAGO): brez številke za nujno pomoč, ena linija za pogovor (če jo poznamo).
+  // Blažje okno (možnost b, j potrdil 10. 11.; EVKLID_NUJNO_BLAGO=0 izklopi): brez številke za nujno pomoč, ena linija za pogovor (če jo poznamo).
   if (vrsta === "pogovor") {
     const l = st.linije ? (st.faks ? st.linije.odrasli : st.linije.otroci || st.linije.odrasli) : null;
     const pomoc = st.linije ? (l ? [lin("linija", l)] : []) : st.tuje ? st.tuje.slice(0, 1).map((x) => L("linijaNeznano", { ime: x.ime, stevilka: x.st })) : [L(st.faks ? "stiska.faks" : "stiska.tom")];

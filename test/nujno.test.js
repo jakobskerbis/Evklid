@@ -333,7 +333,7 @@ test("strežnik A: META flag=distress odpre varnostni odgovor (stiska), ne dvakr
       const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "nič več nima smisla" })).body);
       const nujno = ev.filter((e) => e.event === "nujno");
       assert.equal(nujno.length, 1);
-      assert.equal(nujno[0].data.vrsta, "stiska"); // brez EVKLID_NUJNO_BLAGO: kot doslej
+      assert.equal(nujno[0].data.vrsta, "pogovor"); // brez številke pomoči v odgovoru: blažje okno (j 10. 11.)
       assert.ok(ev.indexOf(nujno[0]) < ev.findIndex((e) => e.event === "done"));
       // Lokalni je že našel (mama me tepe): META distress ne doda drugega okna.
       const ev2 = events((await call(`/api/conversations/${c.id}/messages`, { text: "mama me spet tepe" })).body);
@@ -834,10 +834,11 @@ test("strežnik A: vrsta okna iz odgovora inštruktorja (samo 112 → zdravje, p
       return vrsta;
     };
     assert.equal(await okno("Takoj pokliči 112 ali prosi odraslega v bližini, naj pokliče."), "zdravje");
-    assert.equal(await okno("Slišim te. Je zdaj kdo pri tebi?"), "stiska");
-    process.env.EVKLID_NUJNO_BLAGO = "1";
+    // Privzeto (j 10. 11.): blažje okno, če odgovor nima številke pomoči; stikalo 0 vrne polno okno.
     assert.equal(await okno("Slišim te. Je zdaj kdo pri tebi?"), "pogovor");
     assert.equal(await okno("Slišim te. Pokliči TOM telefon 116 111."), "stiska");
+    process.env.EVKLID_NUJNO_BLAGO = "0";
+    assert.equal(await okno("Slišim te. Je zdaj kdo pri tebi?"), "stiska");
   } finally {
     delete process.env.EVKLID_VARNOST_VSAKO;
     delete process.env.EVKLID_NUJNO_BLAGO;

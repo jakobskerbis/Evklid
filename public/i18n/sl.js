@@ -3841,7 +3841,7 @@ export default {
   "nujno.nevarnost.1": "Takoj pojdi ven in vzemi druge s seboj, če lahko. Ne vračaj se po stvari.",
   "nujno.nevarnost.2": "Ko si zunaj, pokliči {sos} ali povej odraslemu, naj pokliče.",
   "nujno.nevarnost.3": "Če diši po plinu: ne prižigaj luči in ognja in ne pritiskaj stikal. Pokliči šele zunaj.",
-  // Blažje okno (možnost b, EVKLID_NUJNO_BLAGO=1; čaka izbiro j): brez številke za nujno pomoč
+  // Blažje okno ob blažji stiski (možnost b, j potrdil 10. 11.): brez številke za nujno pomoč
   "nujno.pogovor.naslov": "Slišim te. Nisi sam.",
   "nujno.pogovor.1": "Povej odraslemu, ki mu zaupaš.",
   "nujno.pogovor.uvod": "Če se želiš s kom pogovoriti:",
