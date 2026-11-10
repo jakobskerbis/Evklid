@@ -353,13 +353,15 @@ export function createApp(store, opts = {}) {
   app.locals.tiskTokovi = () => ({ streams, collecting: [...collecting] }); // testi
   app.get("/ucbenik/:path{/:topic}", (req, res, next) => {
     const { path: key, topic = null } = req.params;
-    const cacheKey = `${key}/${topic || ""}`;
-    const sig = printSignature(key, topic);
+    // ?poglavje=<naslov sklopa>: »PDF poglavja« (samo en sklop poti, brez kazala). Pri lekciji in listu formul ga ni.
+    const unit = !topic && typeof req.query.poglavje === "string" && req.query.poglavje && req.query.poglavje.length <= 200 ? req.query.poglavje : null;
+    const cacheKey = `${key}/${topic || ""}${unit ? `?${unit}` : ""}`;
+    const sig = printSignature(key, topic, unit);
     if (sig == null) return res.status(404).send("Ta del učbenika ne obstaja.");
     const hit = printCache.peek(cacheKey, sig);
-    const hint = hit || topic ? 0 : printSizeHint(key);
-    if (hit || topic || hint <= printCache.maxBytes / 2) {
-      const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic));
+    const hint = hit || topic || unit ? 0 : printSizeHint(key);
+    if (hit || topic || unit || hint <= printCache.maxBytes / 2) {
+      const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic, unit));
       if (!page) return res.status(404).send("Ta del učbenika ne obstaja.");
       return printCache.send(req, res, page).catch(next);
     }
@@ -387,6 +389,35 @@ export function createApp(store, opts = {}) {
         if (collect) collecting.delete(cacheKey);
       });
   });
+
+  // Po zagonu (server/index.js) v ozadju izriše strani razredov v predpomnilnik, da prvi bralec ne čaka na izris
+  // (hladen izris razreda 0,3–2 s procesorja, na Renderju počasneje). Lekcijo za lekcijo s predahom med njimi
+  // (glavna nit ostane prosta), le strani do 1/8 meje, skupaj do polovice meje predpomnilnika in brez velikih
+  // programskih učbenikov (ti gredo kos za kosom). EVKLID_TISK_PREDGREJ=0 ga izklopi. Predpomnilnik je v pomnilniku
+  // (podpis vsebuje različice lekcij, ki se ob zagonu štejejo na novo): disk bi prihranil le izris, ne 28 s izrisa v brskalniku.
+  app.locals.tiskPredgrej = async () => {
+    if (process.env.EVKLID_TISK_PREDGREJ === "0") return 0;
+    let n = 0;
+    for (const book of listBooks()) {
+      for (const p of book.paths) {
+        const cacheKey = `${p.key}/`;
+        const sig = printSignature(p.key, null);
+        if (sig == null || printSizeHint(p.key) > printCache.maxBytes / 8) continue;
+        if (printCache.stats().bytes > printCache.maxBytes / 2) return n;
+        if (printCache.peek(cacheKey, sig)) continue;
+        const parts = printPageParts(p.key, null);
+        if (!parts) continue;
+        let html = "";
+        for (const part of parts) {
+          html += part;
+          await new Promise((ok) => setTimeout(ok, Number(process.env.EVKLID_TISK_PREDAH_MS ?? 20))); // predah: zahtevki in klepet ne čakajo na izris
+        }
+        printCache.put(cacheKey, sig, Buffer.from(html));
+        n++;
+      }
+    }
+    return n;
+  };
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor
   const pendingSettings = new Map(); // pogovor → predlog spremembe šole/letnika, ki čaka na potrditev
