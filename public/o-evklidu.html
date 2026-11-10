@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Stran brez JavaScripta za obiskovalce, iskalnike in pomočnike AI. Sestavi jo server/vidnost.js:
+       spremenljivke v dvojnih zavitih oklepajih so dejstva iz kode (cene, dnevi preizkusa, število jezikov), z »i:« ikone iz public/icons.js.
+       Besedila: docs/besedila.md (vikanje, ker stran berejo starši in obiskovalci). -->
+  <title>O Evklidu – slovenski AI inštruktor za šolo | evklid.app</title>
+  <meta name="description" content="Evklid (evklid.app) je slovenski AI inštruktor za matematiko, fiziko, kemijo in biologijo po slovenskem učnem načrtu. Kaj zna, za koga je, cene in pogosta vprašanja.">
+  <link rel="canonical" href="https://evklid.app/o-evklidu">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Evklid">
+  <meta property="og:locale" content="sl_SI">
+  <meta property="og:url" content="https://evklid.app/o-evklidu">
+  <meta property="og:title" content="O Evklidu – slovenski AI inštruktor za šolo | evklid.app">
+  <meta property="og:description" content="Kaj je Evklid, za koga je, kaj zna, koliko stane in kako varuje podatke.">
+  <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <link rel="stylesheet" href="/vendor/instrument-sans/index.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/ui.css">
+  <link rel="stylesheet" href="/account.css">
+  <style>
+    html, body { height: auto; }
+    body { display: block; }
+    .about { max-width: 1440px; margin: 0 auto; padding: 16px var(--rob-strani) 48px; }
+    .about-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .about-top a.brand { text-decoration: none; }
+    .about-top .brand-name { display: inline; }
+    .about-top .btn-primary { min-height: 44px; padding: 10px 18px; display: inline-flex; align-items: center; text-decoration: none; }
+    .about .land-hero { grid-template-columns: minmax(0, 1fr); }
+    .about .land-hero h1 { font-size: clamp(1.9rem, 3.6vw, 3rem); }
+    .about .land-lead { max-width: 75ch; }
+    .about-facts { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .about-facts li { padding: 6px 12px; border-radius: 999px; background: rgb(0 0 0 / 0.2); font-weight: 600; font-size: 0.95rem; }
+    .about-text { max-width: 80ch; margin: 0 0 12px; line-height: 1.6; }
+    .about-prices { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .about-prices th, .about-prices td { padding: 12px 16px; text-align: start; border-bottom: 1px solid var(--border); }
+    .about-prices tr:last-child th, .about-prices tr:last-child td { border-bottom: 0; }
+    .about-prices thead th { background: var(--surface-2); font-size: 0.92rem; }
+    .about-prices td { white-space: nowrap; font-weight: 700; }
+    .about-prices tbody th { font-weight: 600; }
+    .about-prices small { display: block; font-weight: 400; color: var(--muted); }
+    .about-faq { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+    .about-faq details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0 16px; }
+    .about-faq summary { cursor: pointer; font-weight: 700; padding: 14px 0; min-height: 24px; }
+    .about-faq details p { margin: 0 0 14px; line-height: 1.6; color: var(--muted); }
+    .about-list { margin: 0; padding-inline-start: 20px; line-height: 1.6; max-width: 80ch; }
+    .about-list li { margin-bottom: 6px; }
+    @media (min-width: 900px) {
+      .about-faq { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+      .about-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 4vw, 64px); align-items: start; }
+    }
+    @media (min-width: 860px) { .about-who { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (min-width: 560px) and (max-width: 859px) { .about-who { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 559px) {
+      .about-prices th, .about-prices td { padding: 10px 10px; }
+      .about-prices { font-size: 0.93rem; }
+    }
+    /* Videz samodejno po napravi (j 2026-11-10), brez JavaScripta: privzeto svetel, v temnem načinu naprave temna
+       tema Evklida. Barve so prepis :root.dark iz public/style.css (test/vidnost.test.js preveri, da se ujemajo);
+       uvodna kartica je v temnem načinu brez modre podlage. */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --surface: #151b23;
+        --surface-2: #1e2631;
+        --text: #e6eaf0;
+        --muted: #9da7b6;
+        --border: #2a3340;
+        --accent: #6e9bff;
+        --fx-tone-1: #f2a35f; --fx-tone-2: #f25fc1; --fx-tone-3: #5ff29c;
+        --accent-2: #8fb2ff;
+        --accent-grad: #5b8cf5;
+        --accent-soft: #1a2a4a;
+        --accent-text: #0d1117;
+        --hero-a: #2353d1;
+        --hero-b: #2f5fd8;
+        --user-bubble: var(--accent);
+        --user-text: #0d1117;
+        --ok: #4cd38c;
+        --ok-bg: #12301f;
+        --danger: #ff6b6e;
+        --danger-bg: #3a1a1f;
+        --warm: #f5a35c;
+        --shadow: none;
+        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+        color-scheme: dark;
+      }
+      .about .land-hero { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+      .about .land-hero h1 { color: var(--text); }
+      .about .land-eyebrow { color: var(--accent); opacity: 1; }
+      .about .land-hero .land-actions a.btn-primary { background: var(--accent); color: var(--accent-text); box-shadow: none; }
+      .about .land-hero .land-actions a.btn-secondary { background: transparent; color: var(--text); border-color: var(--border); }
+      .about .land-hero .land-actions a:focus-visible { outline-color: var(--accent); }
+      .about-facts li { background: var(--accent-soft); color: var(--accent); }
+    }
+  </style>
+</head>
+<body>
+<div class="about">
+  <header class="about-top">
+    <a class="brand" href="/" aria-label="Evklid – na začetno stran">
+      <span class="logo" aria-hidden="true">{{i:kristal}}</span>
+      <span class="brand-name">Evkli<span>d</span></span>
+    </a>
+    <a class="btn-primary" href="/">Odpri Evklid</a>
+  </header>
+
+  <main class="land">
+    <section class="land-hero">
+      <div class="land-hero-text">
+        <p class="land-eyebrow">Matematika · Fizika · Kemija · Biologija</p>
+        <h1>Evklid je slovenski AI inštruktor za šolo</h1>
+        <p class="land-lead">Evklid (evklid.app) je slovenska aplikacija za učenje matematike, fizike, kemije, biologije in naravoslovja. Snov je urejena po slovenskem učnem načrtu, od 1. razreda osnovne šole do fakultete. Inštruktor naloge ne reši namesto učenca, ampak ga z namigi in vprašanji vodi korak za korakom.</p>
+        <div class="land-actions">
+          <a class="btn-primary" href="/">Začnite brezplačno</a>
+          <a class="btn-secondary" href="#cene">Cene</a>
+        </div>
+        <ul class="about-facts">
+          <li>V slovenščini</li>
+          <li>Po slovenskem učnem načrtu</li>
+          <li>{{trialDays}} dni brezplačno, brez kartice</li>
+          <li>Brez oglasov</li>
+          <li>Brskalnik in Android</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="land-sec" aria-labelledby="h-kaj">
+      <h2 id="h-kaj">Kaj je Evklid</h2>
+      <p class="about-text">Evklid je učna aplikacija, narejena v Sloveniji za slovenske učence, dijake in študente. Združuje inštruktorja, učbenik, vaje, simulacije in pripravo na preizkuse znanja. Deluje v spletnem brskalniku na naslovu <a href="/">evklid.app</a> in kot aplikacija za Android.</p>
+      <p class="about-text">Evklid ni povezan s projekti z imenom »Euclid« (na primer »Euclid AI Math Tutor«), ki jih najdete na spletu. Ime aplikacije se vedno piše Evklid, z naslovom evklid.app.</p>
+    </section>
+
+    <section class="land-sec" aria-labelledby="h-koga">
+      <h2 id="h-koga">Za koga je</h2>
+      <ul class="land-grid land-levels about-who">
+        <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:pencil}}</span><h3>Osnovna šola</h3><p>Od 1. do 9. razreda: inštruktor in igre, od 6. razreda tudi učna pot po razredih in priprava na NPZ.</p></li>
+        <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:notebook-pen}}</span><h3>Srednja šola</h3><p>Vsi letniki: urnik s testi, priprava nanje in na maturo.</p></li>
+        <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:graduation-cap}}</span><h3>Fakulteta</h3><p>Več kot 70 slovenskih študijskih programov: predmeti po uradnih predmetnikih, urnik s kolokviji in izpiti.</p></li>
+        <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:heart}}</span><h3>Starši in učitelji</h3><p>Starš vidi, kaj otrok dela in kje potrebuje pomoč. Učitelj odpre razred in dodeli teme; učiteljski račun je brezplačen.</p></li>
+      </ul>
+    </section>
+
+    <section class="land-sec" aria-labelledby="h-zna">
+      <h2 id="h-zna">Kaj zna Evklid</h2>
+      <ul class="land-grid land-feats">
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:message-circle}}</span><h3>Inštruktor korak za korakom</h3><p>Rešitve ne izda. Najprej ugotovi, kaj učenec že zna, nato ga z namigi vodi do konca. Vprašati ga je mogoče tudi z glasom.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:camera}}</span><h3>Skener nalog s kamero</h3><p>Učenec nalogo iz zvezka fotografira ali jo napiše z roko. Evklid jo prebere in pomaga po korakih.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:badge-check}}</span><h3>Rezultate preveri program</h3><p>Številke in rezultate izračuna program, ne umetna inteligenca. Program sproti preveri tudi odgovore inštruktorja.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:book-open}}</span><h3>Učbenik in učna pot</h3><p>Kratke lekcije in formule z razlago vsakega simbola. Snov je razvrščena po razredih in sklopih slovenskega učnega načrta.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:infinity}}</span><h3>Vaje, ki ne zmanjkajo</h3><p>Vsakič nove številke in težavnost po meri učenca. Evklid pokaže, v katerem koraku je napaka.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:flask-conical}}</span><h3>Laboratorij in simulacije</h3><p>Poskuse učenec sestavi in izvede sam: pribor, meritve, tabela, graf in zaključek.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:box}}</span><h3>3D atlas</h3><p>3D modeli človeškega telesa, organov in celic ter modeli iz kemije, fizike in matematike.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:gamepad-2}}</span><h3>Igre, točke in lige</h3><p>Več kot 30 iger, v katerih igranje pomeni računanje. Učenci zbirajo točke in tekmujejo s prijatelji ali razredom.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:clipboard-check}}</span><h3>NPZ in matura</h3><p>Pretekle izpitne pole, razdeljene na posamezne naloge. Vsako je mogoče reševati skupaj z inštruktorjem.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:medal}}</span><h3>Tekmovanja</h3><p>Težje naloge v slogu tekmovanj. Naloge sestavi aplikacija, zato niso kopije preteklih tekmovanj.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:globe}}</span><h3>{{languages}} jezikov</h3><p>Aplikacija je napisana v slovenščini. Vmesnik je preveden v {{languages}} jezikov.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:smartphone}}</span><h3>Telefon in računalnik</h3><p>Evklid deluje v brskalniku in kot aplikacija za Android. Napredek je povsod enak. <a href="/prenesi">Prenesite aplikacijo</a></p></li>
+      </ul>
+    </section>
+
+    <div class="about-two">
+      <section class="land-sec" aria-labelledby="cene">
+        <h2 id="cene">Cene</h2>
+        <p class="about-text">Prvih {{trialDays}} dni je brezplačnih, brez kartice. Potem izberete naročnino ali ostanete na brezplačnem paketu.</p>
+        <table class="about-prices">
+          <thead><tr><th scope="col">Paket</th><th scope="col">Na mesec</th><th scope="col">Na leto</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Brezplačni paket<small>{{freeDaily}} vprašanj inštruktorju na dan</small></th><td>0 €</td><td>0 €</td></tr>
+            <tr><th scope="row">Osnovna šola</th><td>{{osM}}</td><td>{{osY}}</td></tr>
+            <tr><th scope="row">Srednja šola</th><td>{{ssM}}</td><td>{{ssY}}</td></tr>
+            <tr><th scope="row">Fakulteta</th><td>{{faksM}}</td><td>{{faksY}}</td></tr>
+            <tr><th scope="row">Družina<small>2–4 profili</small></th><td>{{famM}}</td><td>{{famY}}</td></tr>
+            <tr><th scope="row">Družina s študentom<small>2–4 profili</small></th><td>{{famsM}}</td><td>{{famsY}}</td></tr>
+          </tbody>
+        </table>
+        <p class="land-note">Naročnino lahko kadar koli prekličete. Učiteljski račun je brezplačen; ponudba za šole je na strani <a href="/sole">Za učitelje in šole</a>.</p>
+      </section>
+
+      <section class="land-sec" aria-labelledby="h-zasebnost">
+        <h2 id="h-zasebnost">Zasebnost in varnost</h2>
+        <ul class="about-list">
+          <li>V Evklidu ni oglasov. Podatkov ne prodajamo in jih ne uporabljamo za oglaševanje.</li>
+          <li>Strežnik in baza podatkov sta v EU (Frankfurt).</li>
+          <li>Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; izračune in rezultate preveri Evklidov program. Anthropic (ZDA) teh podatkov ne uporablja za učenje modelov.</li>
+          <li>Profil otroka ustvari starš. Podatke otroka vidijo samo njegov starš in, če je otrok v razredu, učitelj razreda.</li>
+          <li>Inštruktor govori samo o učenju. Ni klepeta z drugimi uporabniki, na lestvicah so vidni samo vzdevki.</li>
+          <li>Vse podatke lahko kadar koli prenesete ali izbrišete.</li>
+        </ul>
+        <p class="land-note">Podrobno: <a href="/zasebnost.html">Obvestilo o varstvu osebnih podatkov</a> in <a href="/starsi.html">Evklid za starše</a>.</p>
+      </section>
+    </div>
+
+    <section class="land-sec" aria-labelledby="h-vprasanja">
+      <h2 id="h-vprasanja">Pogosta vprašanja</h2>
+      <div class="about-faq">
+        <details>
+          <summary>Kaj je Evklid?</summary>
+          <p>Evklid (evklid.app) je slovenski AI inštruktor in učna aplikacija za matematiko, fiziko, kemijo, biologijo in naravoslovje, od 1. razreda osnovne šole do fakultete.</p>
+        </details>
+        <details>
+          <summary>Ali je Evklid isto kot »Euclid AI Math Tutor«?</summary>
+          <p>Ne. Evklid na naslovu evklid.app je samostojna slovenska aplikacija. Ni povezan s projekti z imenom »Euclid«.</p>
+        </details>
+        <details>
+          <summary>Ali Evklid deluje v slovenščini?</summary>
+          <p>Da. Evklid je napisan v slovenščini in sledi slovenskemu učnemu načrtu. Inštruktor odgovarja v slovenščini, vmesnik pa je na voljo v {{languages}} jezikih.</p>
+        </details>
+        <details>
+          <summary>Ali je Evklid samo za matematiko?</summary>
+          <p>Ne. Poleg matematike so v Evklidu fizika, kemija, biologija in naravoslovje.</p>
+        </details>
+        <details>
+          <summary>Ali lahko nalogo fotografiram?</summary>
+          <p>Da. Nalogo iz zvezka ali učbenika fotografirate s kamero ali jo napišete z roko. Evklid jo prebere in pomaga po korakih.</p>
+        </details>
+        <details>
+          <summary>Ali Evklid reši nalogo namesto otroka?</summary>
+          <p>Ne. Inštruktor rešitve ne izda, ampak otroka z namigi in vprašanji vodi do nje. Tako otrok snov res razume.</p>
+        </details>
+        <details>
+          <summary>Kateri model AI uporablja Evklid?</summary>
+          <p>Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; izračune in rezultate preveri Evklidov program. Številke torej izračuna program, ne umetna inteligenca. Anthropic podatkov ne uporablja za učenje modelov.</p>
+        </details>
+        <details>
+          <summary>Ali je Evklid brezplačen?</summary>
+          <p>Prvih {{trialDays}} dni je brezplačnih, brez kartice. Potem lahko ostanete na brezplačnem paketu z {{freeDaily}} vprašanji inštruktorju na dan ali izberete naročnino.</p>
+        </details>
+        <details>
+          <summary>Koliko stane naročnina?</summary>
+          <p>Na mesec {{osM}} za osnovno šolo, {{ssM}} za srednjo šolo in {{faksM}} za fakulteto. Družina z 2–4 profili plača {{famM}} na mesec. Letna naročnina je cenejša.</p>
+        </details>
+        <details>
+          <summary>Na katerih napravah deluje?</summary>
+          <p>V spletnem brskalniku na računalniku, tablici in telefonu ter kot aplikacija za Android. Napredek je na vseh napravah enak.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="land-cta">
+      <h2>Preizkusite Evklid {{trialDays}} dni brezplačno</h2>
+      <div class="land-actions">
+        <a class="btn-primary" href="/">Odpri Evklid</a>
+        <a class="btn-secondary" href="/starsi.html">Več za starše</a>
+      </div>
+    </section>
+
+    <footer class="land-foot">
+      <a href="/">Evklid</a>
+      <a href="/starsi.html">Za starše</a>
+      <a href="/sole">Za učitelje in šole</a>
+      <a href="/prenesi">Prenesi aplikacijo</a>
+      <a href="/zasebnost.html">Zasebnost</a>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

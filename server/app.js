@@ -24,6 +24,7 @@ import { visitCounter, mountPilot } from "./pilot.js";
 import { mountPilotTasks, pilotMember } from "./pilot-naloge.js";
 import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
+import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
@@ -74,6 +75,8 @@ import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnos
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
+import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
+import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 
@@ -307,6 +310,7 @@ export function createApp(store, opts = {}) {
   app.use(visitCounter(store.db));
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mountVidnost(app); // robots.txt, sitemap.xml, llms.txt in stran /o-evklidu za iskalnike (server/vidnost.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
@@ -596,6 +600,7 @@ export function createApp(store, opts = {}) {
     const s = loadStudent(req, res);
     if (!s) return;
     const name = req.body?.name !== undefined ? cleanText(req.body.name, 40) || s.name : undefined;
+    if (req.body?.settings) accounts?.pilotBeforeLevelChange(s.id);
     res.json(
       store.updateStudent(s.id, {
         name,
@@ -734,10 +739,19 @@ export function createApp(store, opts = {}) {
     }
     if (!text && !image) return res.status(400).json({ error: "Sporočilo je prazno." });
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
-    if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
+    // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
+    // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
+    const nujnoPred = () => nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn });
+    if (chatOff()) {
+      const nujno = await nujnoPred();
+      return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true, nujno: nujno || undefined });
+    }
     if (busy.has(conv.id)) return res.status(409).json({ error: "Počakaj, da Evklid odgovori." });
     const blocked = usage.blockInfo(student.id);
-    if (blocked) return res.status(429).json({ ...blocked, limit: true });
+    if (blocked) {
+      const nujno = await nujnoPred();
+      return res.status(429).json({ ...blocked, limit: true, nujno: nujno || undefined });
+    }
     busy.add(conv.id);
     // Napaka pred pretakanjem (npr. SQLITE_BUSY pri zapisu sporočila): Express 5 jo preda obdelovalcu napak (500).
     // Ob zaprtju takega odgovora sprostimo pogovor (busy) in rezervacijo, sicer bi ostala zasedena do ponovnega
@@ -860,7 +874,9 @@ export function createApp(store, opts = {}) {
         if (againStreak !== (conv.deep || 0)) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
         // Koda meje, ki je vezala (z namigom); če bi šel najcenejši odgovor v novem pogovoru, je kriv dolg pogovor.
         const fresh = replyReserveUsd({ mode: "lite", system, messages: [{ role: "user", content: userContent }], tools: SETTINGS_TOOLS, extraTokens: 2000 });
-        return res.status(429).json(usage.guardBlock(student.id, fresh));
+        // Tudi ta zavrnitev (trda meja AI) nosi varnostni odgovor, če je sporočilo nujno.
+        const nujno = await nujnoPred();
+        return res.status(429).json({ ...usage.guardBlock(student.id, fresh), nujno: nujno || undefined });
       }
       mode = alt;
       deep = mode === "deep" || mode === "mid";
@@ -889,6 +905,43 @@ export function createApp(store, opts = {}) {
       "X-Accel-Buffering": "no",
     });
     const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    // Pod mejo: lokalni zaznavalnik (strošek 0); varnostni odgovor se pokaže nad odgovorom inštruktorja (j 6. 11.).
+    // Posredna stiska (lokalno »pogovor«, blažje okno): ne gre takoj, da pregled B ali inštruktor (META) lahko odpreta
+    // močnejše okno; če ga ne, se blažje okno pošlje pred koncem odgovora (j 10. 11.).
+    const vrstaLokalno = lokalnaVrsta(text);
+    const blagoLokalno = vrstaLokalno === "pogovor" ? nujnoZa("pogovor", student.settings) : null;
+    const nujnoLokalno = blagoLokalno ? null : nujnoZa(vrstaLokalno, student.settings);
+    if (nujnoLokalno) send("nujno", nujnoLokalno);
+    // Največ en varnostni odgovor na sporočilo (lokalno, Haiku ali META flag=distress).
+    let nujnoPoslano = !!nujnoLokalno;
+    const posljiNujno = (n) => {
+      if (!n || nujnoPoslano || res.writableEnded || res.destroyed) return;
+      nujnoPoslano = true;
+      send("nujno", n);
+    };
+    // Možnost B (j 10. 11.): kratek pregled s Haikujem vzporedno z odgovorom inštruktorja, na strošek aplikacije.
+    // Ne ob »Razloži podrobneje« (isto sporočilo je bilo pregledano že prej). EVKLID_VARNOST_VSAKO=0 izklopi.
+    const nujnoZacetek = Date.now();
+    const pregledB =
+      !nujnoLokalno && text && !again && vsakoVklopljeno()
+        ? varnostniPregled({ text, usage, studentId: student.id, createFn: opts.varnostFn, varovalka: false })
+            .then((vrsta) => {
+              if (vrsta) posljiNujno({ ...nujnoZa(vrsta, student.settings), ai: true });
+              return vrsta;
+            })
+            .catch(() => null)
+        : null;
+    // Pred koncem odgovora počakamo na pregled, a največ do NUJNO_ROK_MS od začetka (običajno je že končan).
+    const pocakajNujno = async () => {
+      if (!pregledB) return null;
+      let timer;
+      const rok = new Promise((r) => (timer = setTimeout(() => r(null), Math.max(0, NUJNO_ROK_MS - (Date.now() - nujnoZacetek)))));
+      try {
+        return await Promise.race([pregledB, rok]);
+      } finally {
+        clearTimeout(timer);
+      }
+    };
 
     const controller = new AbortController();
     let finished = false;
@@ -1205,6 +1258,12 @@ export function createApp(store, opts = {}) {
       } else if (!win) {
         console.warn(`[evklid] odgovor brez META (pogovor ${conv.id})`);
       }
+      // Možnost A (j 10. 11.): inštruktor je označil stisko (flag=distress) → varnostni odgovor, če ga še ni.
+      // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
+      // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
+      const vrstaB = await pocakajNujno();
+      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
+      posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
         id: assistantId,
@@ -1247,7 +1306,10 @@ export function createApp(store, opts = {}) {
       if (!controller.signal.aborted) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
-        send("error", { error: errorText(err) });
+        // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
+        // Pregled B (če teče) ima še do NUJNO_ROK_MS od začetka; njegov zadetek gre kot dogodek »nujno« pred napako.
+        await pocakajNujno();
+        send("error", { error: errorText(err), nujno: nujnoPoslano ? undefined : nujnoZa(lokalnaVrsta(text), student.settings) || undefined });
       }
       res.end();
     } finally {

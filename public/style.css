@@ -157,6 +157,10 @@ button.danger { background: none; border: 1.5px solid var(--danger); color: var(
 }
 .tab:hover { color: var(--text); background: var(--surface-2); }
 .tab.active { background: var(--accent-soft); color: var(--accent); }
+/* Odprtje na zadnjem zaslonu (public/zacetek.js): dokler app.js ne pokaže prvega pogleda, Učna pot iz index.html in
+   njen označeni zavihek ne utripneta. */
+html[data-zacetek] #view-path { display: none; }
+html[data-zacetek] .tabs .tab.active { background: none; color: var(--muted); }
 .xp-badge { display: flex; gap: 8px; }
 .stat { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px; background: var(--surface-2); font-weight: 800; font-size: 0.92rem; white-space: nowrap; }
 .stat .xp-unit { color: var(--muted); font-weight: 700; font-size: 0.8rem; }
@@ -428,6 +432,17 @@ html[data-tutor-ic] .msg.assistant::after {
 .msg .katex-display:has(.mfrac [data-fx]) { padding-top: 9px; margin-top: calc(1em - 5px); }
 .msg .photo-note { display: flex; align-items: center; gap: 6px; font-size: 0.85em; opacity: 0.9; margin-bottom: 4px; }
 .msg.error { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+/* Varnostni odgovor (public/nujno.js): miren, ne kot napaka; velike številke za klic, zapre se z ×. */
+.msg.nujno-card { align-self: stretch; max-width: 100%; width: auto; position: relative; background: var(--surface); color: var(--text); border: 2px solid var(--warm); border-radius: var(--radius); padding-block: 14px 12px; padding-inline: 16px 52px; box-shadow: var(--shadow); }
+.nujno-card h3 { margin: 0 0 6px; font-size: 1.1rem; line-height: 1.4; }
+.nujno-card p { margin: 4px 0; }
+.nujno-card .nujno-zapri { position: absolute; inset-inline-end: 6px; top: 6px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); border-radius: var(--radius-sm); cursor: pointer; }
+.nujno-card .nujno-zapri:focus-visible, .nujno-klic:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.nujno-card .nujno-zapri svg { width: 20px; height: 20px; }
+.nujno-klici { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 6px; }
+.nujno-klic { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: var(--radius-sm); background: var(--accent); color: var(--accent-text); font-weight: 700; font-size: 1.05rem; text-decoration: none; }
+.nujno-klic svg { width: 18px; height: 18px; }
+.nujno-card .nujno-opomba { color: var(--muted); font-size: 0.85rem; }
 /* Pika »piše …« na koncu zadnjega odstavka; ::before in ::after mehurčka sta avatar inštruktorja in ju ne smemo zadeti
    (prej je .typing::after avatarju dodal zamik 4 px, utripanje in modro ozadje, zato je bil znak izven sredine). */
 /* Pri seznamu za besedilom zadnje točke, ne v novi vrstici; prazen mehurček dobi <p></p> (app.js, paint). */

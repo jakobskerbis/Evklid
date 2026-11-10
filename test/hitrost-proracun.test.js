@@ -15,7 +15,10 @@ const own = startupFiles(pub, "index.html").filter((u) => u !== "/" && !u.starts
 const br = (u) => zlib.brotliCompressSync(fs.readFileSync(path.join(pub, u)), { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 9 } }).length;
 
 // Ob nastanku (6. 11. 2026): 128 datotek, ~690 KB stisnjeno, največja ~60 KB (i18n/sl.js, app.js).
-const BUDGET = { files: 140, totalKB: 780, fileKB: 75 };
+// 10. 11. 2026 (#479, j potrdil 10. 11.): +30 KB za public/nujno.js (lokalni zaznavalnik nujnih primerov, ~24 KB stisnjeno).
+// Ostane del prvega odprtja namenoma: okno z nujno pomočjo mora delovati takoj ob pošiljanju in brez povezave.
+// 10. 11. 2026 (#553, čaka potrditev j): +5 KB za nove znake lokalnega zaznavalnika (public/nujno.js +3 KB stisnjeno; prvo odprtje 811,4 KB).
+const BUDGET = { files: 140, totalKB: 815, fileKB: 75 };
 
 test("prvo odprtje: velikost stisnjenih datotek v proračunu", () => {
   assert.ok(own.length <= BUDGET.files, `${own.length} datotek ob prvem odprtju (proračun ${BUDGET.files}); novo veliko kodo naloži z import() ob uporabi`);

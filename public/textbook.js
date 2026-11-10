@@ -192,6 +192,9 @@ export function textbookBack() {
   return true;
 }
 
+/** Lekcija, odprta v Učbeniku (ali null na kazalu); za zadnji zaslon ob naslednjem odprtju (app.js). */
+export const openLessonId = () => tb.topicId || null;
+
 // Z Učne poti (»Nižji razredi so v Učbeniku«): odpre izbiro vseh učbenikov in razredov.
 export function openTextbookLower() {
   syncProfile();
