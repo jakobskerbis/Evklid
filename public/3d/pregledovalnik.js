@@ -1011,7 +1011,7 @@ export function odpriModel(el, mod, opts = {}) {
     podrobnostiGumb();
     if (typeof model.ao === "function") kit.nastaviAO(model.ao() !== false);
     if (ponastavi || !opts.ohraniPogled) {
-      kit.controls.minDistance = 0.4;
+      kit.controls.minDistance = model.najblizje > 0 ? model.najblizje : 0.4; // model s podrobnimi slikami (rezine) dovoli večjo povečavo
       kit.controls.maxDistance = 12;
       // Model cel in na sredini (kadrModela: vidni obseg, organ svoj okvir).
       const leti = () => poleti(...kadrModela(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0, pokonci: true });

@@ -143,6 +143,7 @@ export async function zgradi(THREE, ctx) {
     const tocka = vMm(...R.tockaRezine(dim, s, i, 0.5, 0.5));
     notranja.updateMatrixWorld(true);
     ravnina.setFromNormalAndCoplanarPoint(n, tocka).applyMatrix4(notranja.matrixWorld);
+    if (telo) telo.visible = stanje.telo && stanje.pogled !== "ravno"; // pogled naravnost je čista rezina kot v atlasu
     ostra.visible = ostraZa === kljuc();
     pocistiPloscice();
     clearTimeout(uraOstre); clearTimeout(uraPloscic);
@@ -330,7 +331,7 @@ export async function zgradi(THREE, ctx) {
     }
     telo = new THREE.Mesh(geo, matTelesa);
     telo.raycast = () => {}; // tap vedno zadene rezino, ne (odrezanega) telesa
-    telo.visible = stanje.telo;
+    telo.visible = stanje.telo && stanje.pogled !== "ravno";
     notranja.add(telo);
     // postavitev v kroglo s polmerom 1 (središče volumna v izhodišču)
     const [W, H, Z] = dim, s = 2 / Math.hypot(W, H, Z);
@@ -391,10 +392,10 @@ export async function zgradi(THREE, ctx) {
           stanje.pogled = v;
           postaviRezino();
         } },
-      { tip: "stikalo", id: "telo3d", oznaka: t("a3.rez.showBody", "Telo okoli rezine"), vrednost: stanje.telo,
+      { tip: "stikalo", id: "telo3d", oznaka: t("a3.rez.showBody", "Telo okoli rezine"), vrednost: stanje.telo, vidno: () => stanje.pogled !== "ravno",
         ob: (v) => {
           stanje.telo = !!v;
-          if (telo) telo.visible = stanje.telo;
+          if (telo) telo.visible = stanje.telo && stanje.pogled !== "ravno";
           narisi();
         } },
       { tip: "izpis", id: "vir", oznaka: t("a3.rez.source", "Vir fotografij"), vrednost: () => `${NAVEDBA}. ${t("a3.rez.notCurrent", "Podatki niso nujno najnovejši; NLM Evklida ne podpira in ne priporoča.")}` },
@@ -416,6 +417,7 @@ export async function zgradi(THREE, ctx) {
       const rr = (Math.hypot(W, H) / 2) * sc;
       return { sredisce: [0, 0, 0], polmer: stanje.pogled === "ravno" ? rr * 1.08 : rr * 1.9 };
     },
+    najblizje: 0.1, // povečava do ploščic 0,33 mm
     ao: () => false,
     izberi(id, hit) {
       if (hit) {

@@ -354,7 +354,7 @@ def main(arg):
 
     # ---- 4 izhod 1 mm
     konc, _ = mm("konc.u8", (Z, Hc, Wc, 4))
-    if nap.d.get("izhod1") != [Z, Hc, Wc]:
+    if nap.d.get("izhod1") != [Z, Hc, Wc] or not os.path.exists(os.path.join(izhod, "s", f"{Wc - 1}.webp")):
         for d in ("a", "k", "s"):
             os.makedirs(os.path.join(izhod, d), exist_ok=True)
         for zi in range(Z):
@@ -450,7 +450,7 @@ def main(arg):
         pasov = -(-N // T) if vzdolzno else 0
         if vzdolzno:
             kor, _ = mm("pas-k.u8", (T, Hc, Wp, 4)); sag, _ = mm("pas-s.u8", (T, Wc, Hp, 4))
-        i0 = int(nap.d.get("podrobno", 0))
+        i0 = int(nap.d.get("podrobno", 0)) if os.listdir(os.path.join(izhod, "p", "a", "0")) else 0
         i0 = (i0 // T) * T if vzdolzno else i0
         zadnja = None
         for i in range(i0, N):
