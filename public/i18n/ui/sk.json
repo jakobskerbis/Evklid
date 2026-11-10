@@ -3100,6 +3100,7 @@
   "sim.layers.show": "Zobraziť:",
   "sim.layer.grid": "Mriežka",
   "sim.lab.pin": "Pripnúť obrázok",
+  "sim.lab.zoom": "Zväčšiť obrázok",
   "sim.layer.marks": "Značky",
   "sim.layer.fit": "{name}: priamka",
   "sim.color.accent": "Modrá",

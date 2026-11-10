@@ -3012,6 +3012,7 @@
   "sim.layers.show": "Tampilkan:",
   "sim.layer.grid": "Kisi",
   "sim.lab.pin": "Sematkan gambar",
+  "sim.lab.zoom": "Perbesar gambar",
   "sim.layer.marks": "Penanda",
   "sim.layer.fit": "{name}: garis lurus",
   "sim.color.accent": "Biru",
