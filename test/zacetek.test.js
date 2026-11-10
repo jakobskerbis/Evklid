@@ -226,9 +226,12 @@ test("hiter zagon, zasebnost: seja ne velja več ali profil je zaklenjen → pos
   assert.match(app, /if \(now - t0 <= 2500 && \(\[\.\.\.apiOpen\]\.some\(mine\) \|\| now - changed < 120\)\) return setTimeout\(check, 40\);/);
   assert.match(read("public/style.css"), /html\[data-zacetek-pod\] body > main\.view:not\(\[data-posnetek\]\) \{ visibility: hidden; \}/);
   // V posnetek ne gredo skriti deli, skripti, slike iz pomnilnika, napisano besedilo in gesla; ne med prijavo ali uvodom.
-  assert.match(app, /copy\.querySelectorAll\('script, iframe, video, audio, object, embed, \[hidden\], img\[src\^="blob:"\], dialog:not\(\[open\]\)'\)/);
-  assert.match(app, /rec\.v === "settings" && !\["password", "file", "hidden"\]\.includes\(a\.type\)/);
-  assert.match(app, /if \(!h\.trim\(\) \|\| h\.length > SHOT_MAX\) return drop\(\);/);
+  const shot = read("public/posnetek.js");
+  assert.match(shot, /copy\.querySelectorAll\('script, iframe, video, audio, object, embed, \[hidden\], img\[src\^="blob:"\], dialog:not\(\[open\]\)'\)/);
+  assert.match(shot, /rec\.v === "settings" && !\["password", "file", "hidden"\]\.includes\(a\.type\)/);
+  assert.match(shot, /if \(!h\.trim\(\) \|\| h\.length > SHOT_MAX\) return drop\(\);/);
+  assert.match(shot, /el\.parentElement !== document\.body \|\| el\.classList\.contains\("in-okno"\) \|\| document\.body\.classList\.contains\("onboarding"\)\) return drop\(\);/);
+  assert.match(app, /import\("\.\/posnetek\.js"\)/, "shranjevanje posnetka ni del prvega odprtja");
 });
 
 test("hiter zagon: klici zagona stečejo že v <head>, app.js jih prevzame enkrat; aplikacija izve za prvi izris", async () => {

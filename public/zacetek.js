@@ -4,15 +4,11 @@
 // preden app.js odpre zadnji zaslon. Zapis »evklid.zadnji-zaslon« = { v: pogled, t: čas (ms), s: id profila,
 // l: odprta lekcija Učbenika, p: odprta tema }; piše ga app.js (rememberScreen) ob vsaki menjavi in ob skritju strani.
 // html[data-zacetek] skrije Učno pot (style.css), dokler app.js ne pokaže prvega pogleda (startDone ga odstrani).
-// Hiter zagon (j 2026-11-10: po zgornjem je bil zaslon 2–3 s prazen): namesto praznega prostora se takoj pokaže
-// POSNETEK zadnjega zaslona (»evklid.zadnji-posnetek« = { v, s, t, l, p, c: razredi pogleda, tb: zavihek spodnje
-// vrstice, b: vidni pasici nad pogledom, h: HTML pogleda }, piše ga app.js ob skritju strani), brez posnetka pa okostje. Posnetek je samo slika
-// (inert, aria-hidden): vstavi se za prave poglede (pred #tabbar), zato $("#…") v app.js še vedno najde prave
-// elemente. app.js pravi pogled pripravi pod njim in ju zamenja v istem izrisu (startDone). Posnetek velja samo za
-// isti profil, isti zaslon (lekcijo, temo) in največ 12 ur; ob odjavi in zaklepu profila se pobriše (PRIVATE_KEYS v
-// public/offline.js). Če strežnik pove, da seja ne velja več ali da je profil zaklenjen, izgine takoj (spodaj).
-// Klici, ki jih zagon potrebuje (nastavitve, stanje računa, profili, pogovori), stečejo že tukaj, vzporedno z
-// nalaganjem modulov; app.js jih prevzame z evklidZacetek.vnaprej(url) (enkrat, samo uspešne in sveže).
+// Hiter zagon (j 2026-11-10, docs/aplikacija.md): namesto praznega zaslona se takoj pokaže POSNETEK zadnjega zaslona
+// (»evklid.zadnji-posnetek« = { v, s, t, l, p, c, tb, b, h: HTML pogleda }, piše ga public/posnetek.js), sicer okostje.
+// Posnetek je samo slika (inert), vstavljena ZA prave poglede, da $("#…") v app.js najde prave elemente; app.js ju
+// zamenja v istem izrisu (startDone). Velja za isti profil in zaslon, največ 12 ur; osebni ključ (PRIVATE_KEYS).
+// Klici zagona stečejo že tukaj, vzporedno z moduli; app.js jih prevzame z evklidZacetek.vnaprej(url).
 (function () {
   var KEY = "evklid.zadnji-zaslon";
   var MAX = 12 * 60 * 60 * 1000;
@@ -136,7 +132,12 @@
     try {
       pred[url] = fetch(url, { headers: { "Content-Type": "application/json" } })
         .then(function (r) {
-          return r.ok ? r.json() : null;
+          if (r.ok) return r.json();
+          // telo napake zavržemo (neprebrano bi zahtevo držalo odprto, public/odgovor.js)
+          try {
+            r.body.cancel().catch(function () {});
+          } catch (e) {}
+          return null;
         })
         .catch(function () {
           return null;

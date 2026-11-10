@@ -35,7 +35,7 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   zadnjega obiska minilo več kot 12 ur. Odločitev pade pred prvim izrisom (`public/zacetek.js` v `<head>`,
   zapis `evklid.zadnji-zaslon`), zato Učna pot ne utripne.
 - Hiter zagon (j 10. 11. 2026): ob odprtju se takoj pokaže posnetek zadnjega zaslona (`evklid.zadnji-posnetek`:
-  HTML pogleda istega profila, star največ 12 ur; `public/app.js` → `saveSnapshot` ob skritju strani), brez
+  HTML pogleda istega profila, star največ 12 ur; `public/posnetek.js` ob skritju strani), brez
   posnetka okostje. Posnetek je samo slika (`main[data-posnetek]`, inert, za pravimi pogledi); pravi pogled se
   pripravi neviden pod njim in ga zamenja v istem izrisu (`pinSnapshot`, `finishStart`). Klici zagona (nastavitve,
   stanje računa, profili, pogovori) stečejo že v `<head>` (`evklidZacetek.vnaprej`). Zasebnost: ključ je med osebnimi
