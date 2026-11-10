@@ -476,7 +476,10 @@ export async function zgradi(THREE, ctx) {
     for (const x of R.NOTRANJI[kl] || []) { const k = T.meta.oznake.kljuci.indexOf(x); if (k >= 0) notranje[k + 1] = 1; }
     // žile do ~5 mm niso luknje (na fotografiji jih ni videti); obris srca in organov ne sega v maščobo ob njih
     const mm = T.ozn.mm, zile = R.ZILA_CELIC(mm);
-    const o = R.gladekObris(R.zapolniObris(r, je, 40, notranje, zile), Uint8Array.of(0, 1), f, tapUV,
+    const zapolnjen = R.zapolniObris(r, je, 40, notranje, zile);
+    const sv = svetlostCelic(r.w, r.h);
+    if (sv) R.zapolniNevidneZile(zapolnjen, sv);
+    const o = R.gladekObris(zapolnjen, Uint8Array.of(0, 1), f, tapUV,
       { celica: mm, tkivo: R.BREZ_MASCOBE.has(kl) ? vzorecTkiva(r.w * f, r.h * f) : null });
     if (!o) {
       poudarek.visible = false;
@@ -515,6 +518,22 @@ export async function zgradi(THREE, ctx) {
         const k = (Y * w + X) * 4;
         return d[k + 3] < 128 || !R.jeMascoba(d[k], d[k + 1], d[k + 2]);
       };
+    } catch {
+      return null;
+    }
+  }
+
+  // Svetlost fotografije (ostra slika) po celicah mreže oznak: (x, y) → 0–255; brez ostre slike null.
+  function svetlostCelic(w, h) {
+    const im = ostraZa === kljuc() ? ostra.material.map?.image : null;
+    if (!im) return null;
+    try {
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      const g = c.getContext("2d", { willReadFrequently: true });
+      g.drawImage(im, 0, 0, w, h);
+      const d = g.getImageData(0, 0, w, h).data;
+      return (x, y) => { const k = (y * w + x) * 4; return 0.2126 * d[k] + 0.7152 * d[k + 1] + 0.0722 * d[k + 2]; };
     } catch {
       return null;
     }

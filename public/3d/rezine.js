@@ -629,6 +629,42 @@ export function zapolniObris(r, je, najvec = 40, notranje = null, zile = 0) {
   return { w, h, data: v };
 }
 
+// Luknje žil v obrisu z = zapolniObris(...) (celice mreže r), ki jih na fotografiji ni videti: svetlost fotografije v
+// luknji (svetlost(x, y) → 0–255 za celico) se od pasu organa okoli nje razlikuje za manj kot `prag` → luknja se zapolni
+// (ocena A, krog 5: krožec »jetrne vene« brez vidne žile). Vidne žile (temna kri, svetel prazen lumen) ostanejo.
+export function zapolniNevidneZile(z, svetlost, prag = 22) {
+  const { w, h, data } = z, n = w * h, vid = new Uint8Array(n), clani = [];
+  for (let k0 = 0; k0 < n; k0++) {
+    if (data[k0] || vid[k0]) continue;
+    clani.length = 0;
+    const st = [k0]; vid[k0] = 1;
+    let odprta = false;
+    while (st.length) {
+      const q = st.pop(), x = q % w;
+      clani.push(q);
+      if (x === 0 || x === w - 1 || q < w || q >= n - w) odprta = true;
+      for (const j of [x > 0 ? q - 1 : -1, x < w - 1 ? q + 1 : -1, q >= w ? q - w : -1, q < n - w ? q + w : -1])
+        if (j >= 0 && !data[j] && !vid[j]) { vid[j] = 1; st.push(j); }
+    }
+    if (odprta || clani.length > 400) continue;
+    // pas organa okoli luknje: celice obrisa, ki se luknje dotikajo (do 2 celici daleč)
+    const v = new Set(clani);
+    let sl = 0, sn = 0, ol = 0, on = 0;
+    const pas = new Set();
+    for (const q of clani) {
+      const x = q % w, y = (q / w) | 0;
+      sl += svetlost(x, y); sn++;
+      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+        const xx = x + dx, yy = y + dy, j = yy * w + xx;
+        if (xx >= 0 && yy >= 0 && xx < w && yy < h && data[j] && !v.has(j)) pas.add(j);
+      }
+    }
+    for (const j of pas) { ol += svetlost(j % w, (j / w) | 0); on++; }
+    if (on && Math.abs(sl / sn - ol / on) < prag) for (const q of clani) data[q] = 1;
+  }
+  return z;
+}
+
 // Ključ oznake za raven: na OŠ preprostejše skupno ime (rezine-oznake.json »os«; posamezno vretence → ime skupine
 // njegove vrste), strukture brez vnosa (npr. spolni organi) OŠ ne imenuje (""); sicer ključ sam.
 export function kljucZaRaven(tab, k, os) {

@@ -575,4 +575,10 @@ test("rezine: obris – žile pod 5 mm niso luknje, ozke zareze velikega organa 
   assert.ok(t.data[Math.round(20 * f) * t.w + Math.round(15 * f)], "notranjost ostane");
   assert.ok(R.jeMascoba(225, 200, 150) && !R.jeMascoba(120, 50, 50) && !R.jeMascoba(90, 20, 25), "barva maščobe in mišice");
   for (const k of ["desni-preddvor", "jetra"]) assert.ok(R.BREZ_MASCOBE.has(k));
+  // žila 10 mm: na fotografiji enako svetla kot organ → zapolnjena; temna (kri) → ostane
+  const zz = R.zapolniObris({ w, h, data }, je, 40, null, zile);
+  const enako = R.zapolniNevidneZile({ ...zz, data: zz.data.slice() }, () => 90);
+  assert.equal(enako.data[22 * w + 22], 1, "žile ni videti → brez obrisa");
+  const temna = R.zapolniNevidneZile({ ...zz, data: zz.data.slice() }, (x, y) => (x >= 20 && x < 25 && y >= 20 && y < 25 ? 25 : 90));
+  assert.equal(temna.data[22 * w + 22], 0, "vidna (temna) žila ostane luknja");
 });
