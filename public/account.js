@@ -8,7 +8,6 @@ import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
-import { renderOpinionsAdmin } from "./mnenje.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
@@ -1358,7 +1357,7 @@ function bindAdminCodes(acc) {
   if (!acc.promo?.codes) return;
   loadPilot();
   renderPilotAdmin($("#pilot-tasks-out"), { api, toast }); // naloge članov pilota: vsote brez imen
-  renderOpinionsAdmin($("#pilot-mnenja-out"), { api }); // mnenja članov pilota: seznam brez imen
+  import("./mnenje.js").then((m) => m.renderOpinionsAdmin($("#pilot-mnenja-out"), { api })).catch(() => {}); // mnenja članov pilota: seznam brez imen
   renderAdminReports($("#reports-out"), { api, toast });
   bindApk();
   loadSchoolOrders();

@@ -75,7 +75,6 @@ import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack, startPilotScan } from "./scan/scan.js";
 import { initPilot, loadPilot, showPilot, scanTask, isPilotMember } from "./pilot-naloge.js";
-import { initOpinion, loadOpinion } from "./mnenje.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -879,7 +878,6 @@ async function selectStudent(id) {
   refreshProfileButton();
   refreshXp();
   loadPilot(); // naloge za člane pilota (vrstica v Jaz, obvestilo ob prvi prijavi)
-  loadOpinion(); // mnenje člana pilota (vrstica v Jaz, vprašanje največ enkrat na teden)
   // Vprašalnik kotička zanimanj: profil, ki ga še ni izpolnil, ga dobi ob zagonu (enkrat).
   state.interestsAsk = maybeAskInterests();
 }
@@ -4692,6 +4690,17 @@ initScan({
   },
   openGraph: (exprs) => openGraphOverlay(exprs, t("scan.nav")),
 });
+// Mnenje člana pilota (public/mnenje.js): Jaz → »Povej mnenje«, vprašanje največ enkrat na teden. Modul se naloži
+// šele, ko je profil član pilota (ne ob prvem odprtju); ob menjavi na profil brez pilota vrstico skrije.
+let opinionP = null;
+function syncOpinion(member) {
+  if (!member && !opinionP) return;
+  opinionP ||= import("./mnenje.js").then((m) => {
+    m.initOpinion({ api, toast, getStudent: () => state.student });
+    return m;
+  });
+  opinionP.then((m) => m.loadOpinion()).catch(() => (opinionP = null));
+}
 // Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid«.
 initPilot({
   api,
@@ -4704,13 +4713,14 @@ initPilot({
     startPilotScan(scanTask(cond));
     showView("scan");
   },
-  onMember: () => syncBugButton(),
+  onMember: (member) => {
+    syncBugButton();
+    syncOpinion(member);
+  },
   // Preizkus znanja v pilotu: besedilo naloge in izbire kot v vadnici (brez klikljivih formul).
   renderRich: (text) => renderRich(text),
   choiceHtml: (task, o) => choiceHtml(task, o, false),
 });
-// Mnenje člana pilota (public/mnenje.js): Jaz → »Povej mnenje«.
-initOpinion({ api, toast, getStudent: () => state.student });
 // Laboratorij (public/laboratorij.js): vsi virtualni poskusi; »Odpri temo v učbeniku« odpre lekcijo.
 initLab({ api, escapeHtml, getStudent: () => state.student, openLesson });
 // Uči se (public/uci-se.js): Učbenik, Laboratorij in 3D svet v enem pogledu; »Vprašaj inštruktorja« iz 3D atlasa.
