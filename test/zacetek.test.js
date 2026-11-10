@@ -59,7 +59,9 @@ test("odločitev pade pred prvim izrisom: html[data-zacetek] skrije Učno pot, d
   assert.match(read("public/style.css"), /html\[data-zacetek\] #view-path \{ display: none; \}/);
   const app = read("public/app.js");
   assert.match(app, /const startDone = \(\) => document\.documentElement\.removeAttribute\("data-zacetek"\);/);
-  assert.match(app, /const START_REC = ZACETEK\?\.beri\(\) \?\? null;/, "zapis se prebere pred prvim showView");
+  assert.match(app, /let startRec = ZACETEK\?\.beri\(\) \?\? null;/, "zapis se prebere pred prvim showView");
+  assert.match(app, /let startHold = true;/, "vmesni showView med zagonom Učne poti ne pokaže");
+  assert.match(app, /startRec = null;\n\s*startHold = false;\n\s*startDone\(\);/, "po prijavi Učna pot, ne zaslon pred odjavo");
   // Zapis nosi profil; tema in lekcija se odpreta znova; ob skritju strani se čas zadnjega obiska osveži.
   assert.match(app, /Number\(rec\.s\) !== state\.student\.id\) return null;/);
   assert.match(app, /if \(document\.visibilityState === "hidden"\) return rememberScreen\(\);/);

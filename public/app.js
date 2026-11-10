@@ -282,8 +282,8 @@ function showView(name) {
 // lekcijo Učbenika ali temo), če od zadnjega obiska ni minilo več kot 12 ur. Zapis se osveži ob vsaki menjavi
 // pogleda in ko stran izgine z zaslona (čas zadnjega obiska, lekcija, odprta med branjem kazala).
 const ZACETEK = window.evklidZacetek || null;
-const START_REC = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
-let startHold = false; // tema se še nalaga: Učna pot ostane skrita, da ne utripne
+let startRec = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
+let startHold = true; // do konca zagona (start) Učna pot ostane skrita: vmesni showView("path") ne sme utripniti
 const startDone = () => document.documentElement.removeAttribute("data-zacetek");
 function rememberScreen() {
   if (!ZACETEK || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
@@ -294,7 +294,7 @@ function rememberScreen() {
 }
 // Zaslon za odprtje: zapis istega profila, mlajši od 12 ur, in pogled, ki ga ta profil ima; sicer null (Učna pot).
 function startScreen() {
-  const rec = START_REC;
+  const rec = startRec;
   const v = ZACETEK?.izberi(rec, Date.now());
   if (!v || v === "path" || !state.student || Number(rec.s) !== state.student.id) return null;
   if (v === "topic") return typeof rec.p === "string" && rec.p ? { v, p: rec.p } : null;
@@ -306,8 +306,7 @@ async function openStartScreen(z) {
     try {
       await openTopic(z.p);
     } catch {} // brez povezave ali tema ne obstaja več: ostane Učna pot
-    startHold = false;
-    return startDone();
+    return;
   }
   if (z.l) openLesson(z.l);
   else showView(z.v);
@@ -4728,10 +4727,10 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     else refreshUsageMeter();
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
     const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
-    startHold = z?.v === "topic";
     if (!o?.keepView) showView("path");
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
     if (z) await openStartScreen(z);
+    startHold = false;
     startDone();
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
@@ -4744,7 +4743,12 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
   if (await initAccount({ onReady: start })) await start();
-  else startDone(); // prijava ali pristajalna stran
+  else {
+    // Prijava ali pristajalna stran: po prijavi se odpre Učna pot, ne zadnji zaslon pred odjavo.
+    startRec = null;
+    startHold = false;
+    startDone();
+  }
 })().catch(bootFailed);
 
 // Strežnik ni dosegljiv ob odprtju (računalnik ugasnjen, stara povezava): namesto prazne strani
@@ -4757,6 +4761,7 @@ const serverReach = () =>
     .catch(() => "down");
 async function bootFailed(err) {
   console.error(err);
+  startHold = false;
   startDone();
   if (document.getElementById("boot-down") || (await serverReach()) === "ok") return;
   const box = document.createElement("div");
