@@ -318,6 +318,9 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname === "/sw.js" || url.pathname.startsWith("/healthz")) return;
+  // Vnaprej izdelan PDF učbenika (server/ucbenik-pdf.js): velik prenos z delnimi zahtevki (Range), ki ga brskalnik
+  // opravi sam (predpomnilnik HTTP z ETag); kopija v predpomnilniku aplikacije bi le podvojila prostor.
+  if (url.pathname.startsWith("/ucbenik-pdf/")) return;
   if (url.pathname.startsWith("/api/")) {
     if (STUDENT_LESSON.test(url.pathname) && url.searchParams.get("id")) {
       e.waitUntil(storePublicLesson(url.searchParams.get("id")).catch(() => null));

@@ -592,6 +592,12 @@ function closeByEsc() {
 function backStep(wasOverlay) {
   // Okna in meniji: Nazaj jih le zapre, pogled ostane.
   if (closeTopDialog()) return true;
+  // »Povečaj risbo« v poskusu (public/sim/lab.js): vrhnja plast nad vsem, Nazaj jo zapre in poskus ostane odprt.
+  const povecava = document.querySelector(".demo-stage.lab-povecano .lab-zoom");
+  if (povecava) {
+    povecava.click();
+    return true;
+  }
   // Okno pomena črke (formula-info.js), pola, meni pod klobukom ali profilom.
   if (closeFormulaPop() || closePaperViewer() || closeOurPaper() || closeQuickStart() || closeProfileMenu()) return true;
   if (installSheetOpen()) {
