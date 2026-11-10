@@ -822,7 +822,7 @@ float k3Y(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }`)
       };
       // preizkusi (Playwright, DOM): zaslonska točka strukture, da tap zadene 3D organ; le z localStorage evklid.3d.test
       try {
-        if (globalThis.localStorage?.getItem(R.KLJUC_KAZALA.replace(/rezine$/, "test"))) globalThis.__k3test = { tocka: tockaStrukture, stanje };
+        if (globalThis.localStorage?.getItem(R.KLJUC_KAZALA.replace(/rezine$/, "test"))) globalThis.__k3test = { tocka: tockaStrukture, stanje, organi3d };
       } catch {}
     } catch (err) {
       console.warn("3D rezine: 3D organov ni bilo mogoče naložiti", err?.message || err);
