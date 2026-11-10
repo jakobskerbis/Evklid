@@ -144,3 +144,35 @@ test("P7: izbris profila pobriše njegove podatke na napravi", () => {
   assert.ok(ls.getItem("evklid.scan.70"), "profil 70 ostane");
   assert.deepEqual(JSON.parse(ls.getItem("evklid.offline.students")), []);
 });
+
+test("hiter zagon (pregled #560 A5, A2): poln pomnilnik najprej pobriše posnetek zaslona; clearPrivate ustavi nov zapis", async () => {
+  ls.clear();
+  ls.setItem("evklid.zadnji-posnetek", "x".repeat(1000));
+  // Pomnilnik je poln, dokler je posnetek na napravi.
+  ls.setItem = function (k, v) {
+    if (this.m.has("evklid.zadnji-posnetek")) throw new Error("QuotaExceededError");
+    MemoryStorage.prototype.setItem.call(this, k, v);
+  };
+  try {
+    off.saveStudents([{ id: 7, name: "A", settings: {} }]);
+    assert.equal(ls.getItem("evklid.zadnji-posnetek"), null, "posnetek se umakne");
+    assert.deepEqual(JSON.parse(ls.getItem("evklid.offline.students")), [{ id: 7, name: "A", settings: {} }], "zapis uspe v drugem poskusu");
+    // Brez posnetka ni česa umakniti: neuspel zapis ostane neuspel (brez zanke).
+    ls.setItem = () => {
+      throw new Error("QuotaExceededError");
+    };
+    off.saveStudents([{ id: 8, name: "B", settings: {} }]);
+    assert.deepEqual(JSON.parse(ls.getItem("evklid.offline.students")), [{ id: 7, name: "A", settings: {} }]);
+  } finally {
+    delete ls.setItem;
+  }
+  // Odjava, konec seje, menjava računa: zagon (public/zacetek.js) izve, da app.js posnetka ne sme zapisati znova.
+  let n = 0;
+  globalThis.evklidZacetek = { pozabi: () => n++ };
+  try {
+    await off.clearPrivate();
+  } finally {
+    delete globalThis.evklidZacetek;
+  }
+  assert.equal(n, 1);
+});

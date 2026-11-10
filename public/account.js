@@ -177,6 +177,7 @@ const lockError = (err) => (unreachable(err) ? t("lock.offline") : err.status ==
 
 export function openProfileLock(student, students = []) {
   $("#lock-overlay")?.remove();
+  window.evklidZacetek?.pozabi?.(); // zaklep (tudi med uporabo, 423): posnetek zadnjega zaslona izgine (public/zacetek.js)
   const set = !student.locked;
   const others = students.filter((s) => s.id !== student.id);
   const pw = (name, auto, label) =>
@@ -303,7 +304,10 @@ function showError(form, err) {
 // pred Učno potjo (naloga hitrost, j 6. 11. 2026). Samo branje; initAccount ga porabi enkrat.
 let statusEarly = null;
 export function prefetchAccountStatus() {
-  statusEarly ||= api("/api/account/status").catch(() => ({ enabled: false }));
+  // Klic je zagon že začel v <head> (public/zacetek.js); neuspel ali star odgovor ne velja, takrat običajni klic.
+  statusEarly ||= Promise.resolve(window.evklidZacetek?.vnaprej?.("/api/account/status"))
+    .then((early) => early ?? api("/api/account/status"))
+    .catch(() => ({ enabled: false }));
 }
 
 export async function initAccount({ onReady }) {

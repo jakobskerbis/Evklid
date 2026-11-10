@@ -171,6 +171,10 @@ async function newPage(browser, phone, label, base) {
 // (window.__fastGames: vsak okvir izriše 10 korakov po 50 ms, core.js pa čas igre še pospeši 8×, da se igra konča tudi na počasnem stroju).
 function PAGE_HOOKS() {
   try {
+    if (sessionStorage.getItem("__brezPosnetka")) {
+      sessionStorage.removeItem("__brezPosnetka");
+      localStorage.removeItem("evklid.zadnji-posnetek");
+    }
     const patch = sessionStorage.getItem("__zadnjiZaslon");
     if (patch) {
       sessionStorage.removeItem("__zadnjiZaslon");
@@ -183,9 +187,26 @@ function PAGE_HOOKS() {
   const potTimer = setInterval(() => {
     const el = document.getElementById("view-path");
     // Šteje šele z naloženim style.css (do takrat brskalnik ne riše, slog pa Učno pot skrije).
-    if (el && el.offsetParent !== null && [...document.styleSheets].some((x) => /\/style\.css/.test(x.href || ""))) window.__potVidna++;
+    // Med zagonom se pravi pogled pripravi neviden pod posnetkom zadnjega zaslona (visibility: hidden): to ni utrip.
+    if (el && !el.hasAttribute("data-posnetek") && el.offsetParent !== null && getComputedStyle(el).visibility !== "hidden" && [...document.styleSheets].some((x) => /\/style\.css/.test(x.href || ""))) window.__potVidna++;
     if (Date.now() - potT0 > 6000) clearInterval(potTimer);
   }, 10);
+  // Hiter zagon (public/zacetek.js): čas od začetka nalaganja do prvega izrisa z vsebino pogleda (posnetek zadnjega
+  // zaslona ali pravi pogled; okostje ne šteje), in število izrisov z lupino brez vsebine.
+  const zagon = (window.__zagon = { vsebina: null, posnetek: null, okostje: null, prazno: 0 });
+  const zagonTick = () => {
+    const now = performance.now();
+    if (document.body && [...document.styleSheets].some((x) => /\/style\.css/.test(x.href || ""))) {
+      const shot = document.querySelector("main[data-posnetek]");
+      if (shot && zagon.posnetek == null && !shot.classList.contains("zagon-okostje")) zagon.posnetek = now;
+      if (shot && zagon.okostje == null && shot.classList.contains("zagon-okostje")) zagon.okostje = now;
+      const full = [...document.querySelectorAll("main.view")].some((v) => !v.hidden && v.offsetHeight > 40 && getComputedStyle(v).visibility !== "hidden" && (v.innerText || "").trim().length > 20);
+      if (full && zagon.vsebina == null) zagon.vsebina = now;
+      if (!full && document.querySelector(".topbar, #tabbar")?.offsetHeight) zagon.prazno++;
+    }
+    if (now < 8000) requestAnimationFrame(zagonTick);
+  };
+  requestAnimationFrame(zagonTick);
   // Neobravnavane zavrnitve aplikacija pokaže le kot obvestilo; tukaj jih zabeležimo kot napako.
   addEventListener("unhandledrejection", (e) => console.error(`neobravnavana zavrnitev: ${e.reason?.message || e.reason}`));
   const f = window.fetch;
@@ -1583,6 +1604,56 @@ async function phone(browser, app) {
     await p.reload();
     await settle(p, 600);
     await expectVisible(p, "#view-chat", "Inštruktor po 11 urah", 8000);
+    await barTab(p, "path", { wait: 300 });
+  });
+  await step(p, "tel-zagon", async () => {
+    // Hiter zagon (j 10. 11. 2026: po odprtju je bil zaslon 2–3 s prazen): ob ponovnem odprtju se takoj pokaže posnetek
+    // zadnjega zaslona, pravi pogled ga zamenja brez praznega vmesnega izrisa. Meri čas do prve vsebine (mediana treh
+    // odprtij). Čas je odvisen od stroja: nad EVKLID_PRAG_ZAGON (privzeto 1500 ms) le opozorilo (CI je lahko počasen),
+    // napaka šele nad EVKLID_PRAG_ZAGON_NAPAKA (privzeto 5000 ms, blizu varovala 8 s v zacetek.js) ali če posnetek
+    // ni bil prva vsebina (zanesljivo, ne glede na hitrost stroja). Lokalno je ~0,3 s.
+    const PRAG = Number(process.env.EVKLID_PRAG_ZAGON) || 1500;
+    const NAPAKA = Number(process.env.EVKLID_PRAG_ZAGON_NAPAKA) || 5000;
+    await barTab(p, "me", { wait: 200 });
+    await click(p, '#view-me [data-go="settings"]', { wait: 600 });
+    await settle(p, 2500); // modul posnetka se naloži 1,5 s po zagonu (ob mirovanju); brez tega na počasnem CI ob prvem odprtju posnetka še ni
+    const casi = [];
+    for (let i = 0; i < 3; i++) {
+      await p.reload();
+      await settle(p, 1200);
+      await expectVisible(p, "#view-settings:not([data-posnetek])", "Nastavitve po ponovnem odprtju", 8000);
+      const z = await p.evaluate(() => ({ ...window.__zagon, ostal: !!document.querySelector("main[data-posnetek]") || document.documentElement.hasAttribute("data-zacetek") || document.documentElement.hasAttribute("data-zacetek-pod"), pot: window.__potVidna }));
+      if (z.posnetek == null) throw new Error(`ob odprtju ni posnetka zadnjega zaslona (${JSON.stringify(z)})`);
+      if (z.vsebina == null) throw new Error("čas do prve vsebine ni izmerjen");
+      if (z.ostal) throw new Error("posnetek ali oznaka zagona je ostala po zagonu");
+      if (z.pot) throw new Error(`Učna pot je ob odprtju utripnila (${z.pot}×)`);
+      if (z.prazno > 3) throw new Error(`med lupino in vsebino je bilo ${z.prazno} praznih izrisov`);
+      // Relativno (neodvisno od hitrosti stroja): prva vsebina je posnetek, ne šele pravi pogled.
+      if (z.posnetek > z.vsebina + 50) throw new Error(`posnetek se je pokazal šele po pravem pogledu (${Math.round(z.posnetek)} > ${Math.round(z.vsebina)} ms)`);
+      casi.push(Math.round(z.vsebina));
+    }
+    const med = [...casi].sort((a, b) => a - b)[1];
+    notes.push(`zagon na telefonu: prva vsebina po ${casi.join(", ")} ms (mediana ${med} ms, opozorilo nad ${PRAG} ms, napaka nad ${NAPAKA} ms)`);
+    if (med > NAPAKA) throw new Error(`prva vsebina ob odprtju šele po ${med} ms (meja ${NAPAKA} ms; meritve ${casi.join(", ")})`);
+    if (med > PRAG) {
+      notes.push(`OPOZORILO tel-zagon: prva vsebina po ${med} ms (nad ${PRAG} ms; počasen stroj ali počasnejši zagon)`);
+      if (process.env.GITHUB_ACTIONS) console.log(`::warning title=tel-zagon::prva vsebina ob odprtju po ${med} ms (nad ${PRAG} ms)`);
+    }
+    // Zasebnost: posnetek drugega profila se ne pokaže (zapis zadnjega zaslona drugega profila → Učna pot kot prej).
+    await p.evaluate(() => sessionStorage.setItem("__zadnjiZaslon", JSON.stringify({ s: -1 })));
+    await p.reload();
+    await settle(p, 800);
+    await expectVisible(p, "#view-path #xp-card .hero", "Učna pot ob zapisu drugega profila", 8000);
+    if (await p.evaluate(() => window.__zagon.posnetek != null)) throw new Error("pokazal se je posnetek zaslona drugega profila");
+    // Brez posnetka (npr. prvič po posodobitvi): okostje namesto praznega zaslona.
+    await barTab(p, "me", { wait: 200 });
+    await click(p, '#view-me [data-go="settings"]', { wait: 400 });
+    await p.evaluate(() => sessionStorage.setItem("__brezPosnetka", "1"));
+    await p.reload();
+    await settle(p, 800);
+    await expectVisible(p, "#view-settings:not([data-posnetek])", "Nastavitve brez posnetka", 8000);
+    const o = await p.evaluate(() => window.__zagon);
+    if (o.okostje == null || o.posnetek != null) throw new Error(`brez posnetka ni okostja (${JSON.stringify(o)})`);
     await barTab(p, "path", { wait: 300 });
   });
   await step(p, "tel-nazaj", async () => {

@@ -159,8 +159,17 @@ button.danger { background: none; border: 1.5px solid var(--danger); color: var(
 .tab.active { background: var(--accent-soft); color: var(--accent); }
 /* Odprtje na zadnjem zaslonu (public/zacetek.js): dokler app.js ne pokaže prvega pogleda, Učna pot iz index.html in
    njen označeni zavihek ne utripneta. */
-html[data-zacetek] #view-path { display: none; }
+html[data-zacetek]:not([data-zacetek-pod]) #view-path:not([data-posnetek]) { display: none; }
 html[data-zacetek] .tabs .tab.active { background: none; color: var(--muted); }
+/* Hiter zagon: posnetek zadnjega zaslona ali okostje (main[data-posnetek], vstavi ga zacetek.js) je samo slika. Ko
+   app.js odkrije pravi pogled, je ta do zamenjave neviden na svojem mestu, posnetek pa pripet čezenj (app.js pinSnapshot). */
+main[data-posnetek] { pointer-events: none; user-select: none; }
+html[data-zacetek-pod] main[data-posnetek] { position: absolute; z-index: 1; margin: 0; flex: none; box-sizing: border-box; }
+html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidden; }
+.zagon-okostje .card { box-shadow: none; border-color: transparent; background: var(--surface-2); min-height: 96px; animation: zagon-okostje 1.4s ease-in-out infinite; }
+.zagon-okostje .zo-a { min-height: 150px; }
+@keyframes zagon-okostje { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .zagon-okostje .card { animation: none; } }
 .xp-badge { display: flex; gap: 8px; }
 .stat { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px; background: var(--surface-2); font-weight: 800; font-size: 0.92rem; white-space: nowrap; }
 .stat .xp-unit { color: var(--muted); font-weight: 700; font-size: 0.8rem; }
