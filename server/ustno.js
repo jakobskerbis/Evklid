@@ -10,6 +10,9 @@
 // Ob dvomu v korist učenca. Zvok nikoli ne pride na strežnik: brskalnik ga spremeni v besedilo.
 // Ocenjevanje je ločen klic s svojim kratkim navodilom; prompt inštruktorja (prompts/) ostane nespremenjen.
 import "./env.js";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { getClient, isMockMode, MODEL, MODEL_MID } from "./claude.js";
 import { generateTask } from "./practice/index.js";
 import { checkAnswer, parseNumberWithUnit } from "./practice/check.js";
@@ -49,7 +52,8 @@ const ABBR_RE = /(?<![\p{L}])(?:npr|itd|ipd|idr|tj|oz|pribl|prim|t\. i|t\. j|gl|
 const SEMI_JOIN = 40;
 // Vzorčni odgovor → 2–4 ključni pojmi (stavki ali deli stavkov). Formule $…$ se ne režejo.
 export function keyPoints(sample, max = 4) {
-  const text = clean(sample).replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
+  // »**« v kodi (`3 ** 2`) ostane, drugje je krepki tisk (vzorec 2: #353).
+  const text = clean(sample).replace(/(`[^`]*`)|\*\*/g, (m, code) => code || "").replace(/\s+/g, " ").trim();
   if (!text) return [];
   // Zaščita formul pred rezanjem.
   const math = [];
@@ -65,7 +69,8 @@ export function keyPoints(sample, max = 4) {
     return t.replace(/\u0000(\d+)\u0000/g, (_, i) => math[Number(i)]).replace(/\u0002/g, ".");
   };
   // Za okrajšavami (»npr.«, »itd.«, »tj.«) ne režemo (pregled vzorca #46: »Tako mrzlo je npr« / »pozimi v Sibiriji«).
-  m2 = m2.replace(ABBR_RE, (m) => m.replace(/\./g, "\u0002")).replace(/(?<![\d.,])(\d{1,2})\.(?=\s+\p{Ll})/gu, "$1\u0002"); // »po 2. Newtonovem zakonu«
+  m2 = m2.replace(ABBR_RE, (m) => m.replace(/\./g, "\u0002")).replace(/(?<![\d.,])(\d{1,2})\.(?=\s+(?:\p{Ll}|\p{Lu}\p{Ll}*ov\p{Ll}*\s+\p{Ll}))/gu, "$1\u0002") // »po 2. Newtonovem zakonu«
+    .replace(/(?<![\p{L}])(\p{Lu})\.(?=\s+\*?\p{Ll})/gu, "$1\u0002"); // »*E. coli*«, »S. aureus« (vzorec 2: #317)
   // Dvopičje loči pojma le, če sta obe strani dolgi; kratek uvod (»Pri navadnem uporniku ne: …«) ostane s stavkom.
   let parts = m2
     .split(/(?<=[.;!?])\s+(?=\S)/)
@@ -99,7 +104,8 @@ export function keyPoints(sample, max = 4) {
     const last = out.pop();
     out[out.length - 1] += " " + last;
   }
-  return out.map((s) => unmask(s).replace(/[.;:,]\s*$/, "").trim()).filter(Boolean);
+  // »(Primer 3)« je sklic na lekcijo, ne snov.
+  return out.map((s) => unmask(s).replace(/\s*\((?:gl\.\s*)?Primer\s*\d+\)/gu, "").replace(/[.;:,]\s*$/, "").trim()).filter(Boolean);
 }
 
 const bullets = (md) =>
@@ -113,10 +119,11 @@ function section(lesson, re) {
 }
 
 /**
- * Vsa možna vprašanja ene teme (brez računov iz Vadnice), brez slabih (questionProblem; raw: tudi slaba).
+ * Vsa možna vprašanja ene teme (brez računov iz Vadnice), brez slabih (questionProblem; raw: tudi slaba) in brez
+ * vprašanj iz :::premisli, ki niso ročno pregledana (pregled: false le za teste in skript za pregled).
  * @returns {Array<{id, topicId, vrsta, besedilo, vzorec, pojmi}>}
  */
-export function lessonQuestions(topicId, lesson, name = "", { raw = false } = {}) {
+export function lessonQuestions(topicId, lesson, name = "", { raw = false, pregled = true } = {}) {
   if (!lesson) return [];
   const out = [];
   const all = (lesson.sections || []).map((s) => s.md).join("\n\n");
@@ -127,9 +134,14 @@ export function lessonQuestions(topicId, lesson, name = "", { raw = false } = {}
     const vzorec = clean(rest.join("\n"));
     if (besedilo && vzorec) {
       const id = `${topicId}#p${i}`;
+      // Zgoščena vrednost besedila iz lekcije (za ročni pregled, pravilo 6 vzorca 2): ob spremembi lekcije pregled ne velja več.
+      const h = textHash(besedilo, vzorec);
+      // »Napovej, preden bereš naprej.« na koncu je navodilo za branje lekcije; pri ustnem ga izpustimo (vzorec 2: #23, #41).
+      const b = besedilo.replace(READ_ON, "").trim() || besedilo;
+      const v = dropNamedSentences(vzorec, b);
       // Računsko vprašanje (»Koliko je …?«) oceni koda kot račun iz Vadnice; brez jasnega rezultata ga izločimo.
-      const q = CALC_RE.test(besedilo) ? lessonCalc(id, topicId, besedilo, vzorec) : { id, topicId, vrsta: "razlozi", besedilo, vzorec, pojmi: keyPoints(vzorec) };
-      if (q) out.push(q);
+      const q = CALC_RE.test(b) ? lessonCalc(id, topicId, b, v) : { id, topicId, vrsta: "razlozi", besedilo: b, vzorec: v, pojmi: keyPoints(v) };
+      if (q) out.push({ ...q, h });
     }
     i++;
   }
@@ -150,9 +162,13 @@ export function lessonQuestions(topicId, lesson, name = "", { raw = false } = {}
       naslov = m[1].replace(/[.:]\s*$/, "").trim();
       quoted = /^»/.test(naslov) ? naslov : `»${naslov}«`;
     }
-    const pojmi = keyPoints(m[2], 3);
+    // »Kdo napiše …« (zgled napake) je v lekcijah mišljen kot »Kdor napiše …« (vzorec 2: #26).
+    const pojmi = keyPoints(m[2], 3).map((p) => p.replace(/^Kdo (?=napiše|zapiše|reče|vzame|pozabi|misli)/u, "Kdor "));
     if (!pojmi.length) return;
-    out.push({ id: `${topicId}#n${j}`, topicId, vrsta: "napaka", naslov, besedilo: `Pogosta napaka pri tej snovi: ${quoted} Pojasni, kaj je tu narobe in kako je prav.`, vzorec: clean(m[2]), pojmi });
+    // Pojem o izvoru napake (»Ker … se zdi«, »Učenec misli«, »Kdor napiše«): vprašanje vpraša tudi po vzroku, sicer bi
+    // točkovnik zahteval nevprašano (vzorec 2: #8, #11, #21, #24, #26). Med naslovom in navodilom je ločilo (premor).
+    const ask = pojmi.some((p) => ORIGIN_RE.test(p)) ? "Zakaj se ljudje tako zmotijo, kaj je narobe in kako je prav?" : "Pojasni, kaj je tu narobe in kako je prav.";
+    out.push({ id: `${topicId}#n${j}`, topicId, vrsta: "napaka", naslov, besedilo: `Pogosta napaka pri tej snovi: ${quoted}. ${ask}`, vzorec: clean(m[2]), pojmi, hn: textHash(b, "") });
   });
   const sum = bullets(section(lesson, /^povzetek$/i));
   if (sum.length >= 2) {
@@ -160,14 +176,77 @@ export function lessonQuestions(topicId, lesson, name = "", { raw = false } = {}
     out.push({ id: `${topicId}#s`, topicId, vrsta: "povzetek", naslov: name, besedilo: `Povej, kaj veš o temi »${name || "te lekcije"}«. Omeni glavne stvari.`, vzorec: sum.join("\n"), pojmi });
   }
   if (raw) return out;
-  return out.map(pruneNumbers).filter((q) => !questionProblem(q));
+  const auto = out.map((q) => pruneNames(pruneNumbers(q))).filter((q) => !questionProblem(q));
+  return pregled ? auto.map((q) => reviewed(q)).filter(Boolean) : auto;
 }
+
+// ---------------------------------------------------------------------------
+// Ročni pregled vprašanj iz :::premisli (vzorec 2, pravilo 6): vsako vprašanje »razloži« in vsak račun iz lekcije je
+// pregledal Opus (merilo: smiselno samostojno na glas, brez sklica na zgodbo, sliko, poskus ali prejšnji korak lekcije;
+// pojmi zahtevajo le vprašano). server/ustno-pregled.json: { "<id>": { h, o: "D" | "I", r?: razlog, k?: [pojmi, ki ostanejo] } }.
+// Vprašanje brez vnosa ali s staro zgoščeno vrednostjo (lekcija spremenjena) ni ponujeno do novega pregleda
+// (node scripts/ustno-pregled.js).
+export const textHash = (besedilo, vzorec) => crypto.createHash("sha256").update(`${besedilo}\n---\n${vzorec}`).digest("hex").slice(0, 12);
+let REVIEW = null;
+export function reviewFile() {
+  if (!REVIEW) {
+    try {
+      REVIEW = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, "ustno-pregled.json"), "utf8")).vprasanja || {};
+    } catch {
+      REVIEW = {};
+    }
+  }
+  return REVIEW;
+}
+/** Vprašanje po ročnem pregledu (ali null). Vprašanja brez »h« (napaka, povzetek) ročnega pregleda ne potrebujejo (napaka ima neobvezen vnos po »hn«). */
+export function reviewed(q, file = reviewFile()) {
+  if (!q?.h && !q?.hn) return q;
+  const e = file[q.id];
+  // Pogosta napaka: pregled ni obvezen, vnos (npr. »k« pri #32 vzorca 2) velja, dokler se besedilo v lekciji ne spremeni.
+  if (!q.h && (!e || e.h !== q.hn)) return q;
+  if (!e || e.h !== (q.h || q.hn) || e.o !== "D") return null;
+  if (!Array.isArray(e.k)) return q;
+  const pojmi = q.pojmi.filter((p) => e.k.includes(p));
+  // Pojmi so se spremenili (nova pravila v kodi): na varno stran, do novega pregleda.
+  return pojmi.length === e.k.length && pojmi.length >= 2 ? { ...q, pojmi } : null;
+}
+
+// »Napovej, preden bereš naprej.« (vzorec 2: #23, #41).
+const READ_ON = /\s*Napovej,? (?:preden (?:pre)?(?:bereš|nadaljuješ)(?: naprej)?|nato preberi)\s*[.!]?\s*$/u;
+// Izvor napake v pojmu (vzorec 2, pravilo 1).
+export const ORIGIN_RE = /^(?:ker\b[^.]*\b(?:se (?:zdi|zdijo)|zamenja\p{L}*|misli\p{L}*|pomeša\p{L}*)|(?:učen\p{L}*|dijak\p{L}*|študent\p{L}*|mnogi|ljudje|nekateri|veliko (?:ljudi|učencev)) (?:misli\p{L}*|meni\p{L}*|zamenja\p{L}*|pozabi\p{L}*)|kdor? (?:napiše|zapiše|reče|vzame|pozabi|misli)|tako je označeno|zdi se)/iu;
+
+// Imena oseb iz zgodb lekcij (vzorec 2, pravilo 7: »Lara ima $22$ točk.«). Velika začetnica je obvezna.
+export const NAME_RE = /(?<![\p{L}])(?:An[aeio]|Anin\p{L}*|Bor(?:a|u|om)?|Luk[aeiou]|Lukov\p{L}*|Maj[aeio]|Majin\p{L}*|Tim(?:a|u|om)?|Timov\p{L}*|Nik[aeio]?|Nikin\p{L}*|Matic\p{L}*|Žan\p{L}*|Jure(?:ta|tu|tom)?|Juretov\p{L}*|Tin[aeio]|Tinin\p{L}*|Tinet\p{L}*|Jan(?:a|u|om)?|Janov\p{L}*|Mih[aeio]|Mihov\p{L}*|Lar[aeio]|Nin[aeio]|Em[aeio]|Til(?:en|na|nu|nom)|Tilnov\p{L}*|Mark[ao]|Jak[aei]|Ev[aeio]|Lana|Nejc\p{L}*|Než[aeio]|Nežin\p{L}*|Klemen\p{L}*|Mojc[aeio]|Mojčin\p{L}*|Bojan\p{L}*|Petr[aeio]|Lin[aeio]|Sar[aeio]|Tjaš[aeio]|Filip\p{L}*|Boris\p{L}*)(?![\p{L}])/u;
+// Osnova imena brez sklonske končnice in svojilne pripone (»Ana«, »Ani«, »Aninega« → »An«; »Žanova« → »Žan«).
+const nameBase = (n) => n.replace(/č/g, "c").replace(/(?:in\p{L}*|ov\p{L}*|et\p{L}*|[aeiou])$/u, "").replace(/c$/u, "");
+const nameIn = (text) => new Set((noMath(text).match(new RegExp(NAME_RE.source, "gu")) || []).map(nameBase));
+/** Ime iz pojma ali vzorca, ki ga vprašanje ne omeni (v kateri koli obliki), ali null. */
+export function foreignName(text, besedilo) {
+  const have = nameIn(besedilo);
+  for (const n of nameIn(text)) if (!have.has(n)) return n;
+  return null;
+}
+// Stavki vzorca (razen prvega, kjer je odgovor) z imenom, ki ga vprašanje ne omeni, odpadejo.
+function dropNamedSentences(vzorec, besedilo) {
+  const parts = String(vzorec).split(/(?<=[.!?])\s+(?=[\p{Lu}$])/u);
+  if (parts.length < 2) return vzorec;
+  const keep = [parts[0], ...parts.slice(1).filter((x) => !foreignName(x, besedilo))];
+  return keep.join(" ");
+}
+/** Pojme z imenom, ki ga vprašanje ne omeni, odstranimo, če ostaneta vsaj dva (sicer questionProblem: »ime«). */
+export function pruneNames(q) {
+  if (q.vrsta === "povzetek" || q.vrsta === "izracunaj" || !q.pojmi.some((p) => foreignName(p, q.besedilo))) return q;
+  const keep = q.pojmi.filter((p) => !foreignName(p, q.besedilo));
+  return keep.length >= 2 && !BACK_RE.test(keep[0]) ? { ...q, pojmi: keep } : q;
+}
+
 
 // ---------------------------------------------------------------------------
 // Slaba vprašanja (j 10. 11., odločitev 2): izločimo jih, preden pridejo do učenca.
 
 // Sklic na lekcijo, ki je pri ustnem ni (slika, simulacija, »preden pogledaš«, drsnik …).
-export const REF_RE = /preden pogleda|preden (?:odpreš|klikneš|preveriš|zavrtiš|zaženeš)|\b(?:na|s|z|iz) (?:slik[ie]|risb[ie]|animacij[ie]|simulacij[ie]|posnetk[ua]|videu?)\b|\bsimulacij|\banimacij|\bdrsnik|\bzgoraj\b|\bspodaj\b|\bv (?:tej )?lekciji\b|\b(?:premakni|klikni|povleci|poglej)\b/i;
+export const REF_RE = /preden pogleda|preden (?:pre)?bereš|bereš naprej|napovej,? preden|preden (?:odpreš|klikneš|preveriš|zavrtiš|zaženeš)|\b(?:na|s|z|iz) (?:slik[ie]|risb[ie]|animacij[ie]|simulacij[ie]|posnetk[ua]|videu?)\b|\bsimulacij|\banimacij|\bdrsnik|\bzgoraj\b|\bspodaj\b|\bv (?:tej )?lekciji\b|\b(?:premakni|klikni|povleci|poglej)\b/i;
 // V vzorčnem odgovoru le izrecni sklici (»zgoraj« in »spodaj« sta tam pogosto snov, npr. pri binomskem simbolu).
 const REF_V = /preden pogleda|\b(?:na|s|z|iz) (?:slik[ie]|risb[ie]|animacij[ie]|simulacij[ie])\b|\bsimulacij|\banimacij|\bdrsnik|\bv (?:tej )?lekciji\b|\bv razdelku\b/i;
 // Računsko vprašanje; »… in kaj to pomeni?« (dve vprašanji) ni za oceno s kodo.
@@ -305,8 +384,19 @@ export function pruneNumbers(q) {
   if (numbersOk(q)) return q;
   const bad = (p) => foreignNumbers(p, q.besedilo).length > 0;
   if (bad(q.pojmi[0]) || /(?<![\p{L}])kolik\p{L}*/iu.test(noMath(q.besedilo))) return q;
-  const keep = q.pojmi.filter((p) => !bad(p));
+  // Pojem z razlogom (»ker«, »zato«, »manjšo«, »večjo«) ne odpade, le števila izgubi (vzorec 2: #71).
+  const fixed = q.pojmi.map((p) => (bad(p) && REASON_RE.test(noMath(p)) ? stripNumbers(p, q.besedilo) : p));
+  const keep = fixed.filter((p) => !bad(p));
   return keep.length >= 2 && !BACK_RE.test(keep[0]) ? { ...q, pojmi: keep } : q;
+}
+const REASON_RE = /(?<![\p{L}])(?:ker|zato|saj|manjš\p{L}*|večj\p{L}*)(?![\p{L}])/iu;
+// Iz pojma odstrani oklepaje s števili, ki jih vprašanje ne pove.
+function stripNumbers(p, besedilo) {
+  const foreign = (x) => foreignNumbers(x, besedilo).length > 0;
+  // Le oklepaji: števila sredi stavka bi pustila okrnjen stavek (»Klet na … zato višje kot garaža na«); tak pojem odpade.
+  // Oklepaji v formuli ($a_{(1,2)}$) ostanejo: formula se ujame prej kot oklepaj.
+  const s = p.replace(/(\$[^$]*\$)|\s*\([^()]*\)/g, (m, math) => (math || !foreign(m) ? m : ""));
+  return s.replace(/\s+([,.;:])/g, "$1").replace(/\s{2,}/g, " ").trim();
 }
 
 /** Zakaj vprašanje ni primerno za ustno (ali null). */
@@ -328,6 +418,7 @@ export function questionProblem(q) {
   if ((q.vrsta === "izracunaj" || q.vrsta === "razlozi") && undefinedSymbol(q.besedilo)) return "simbol";
   if (q.vrsta === "izracunaj" && missingData(q.besedilo, q.vzorec, q.odgovor?.value).length) return "podatki";
   if (!numbersOk(q)) return "stevilo";
+  if (q.vrsta !== "povzetek" && q.vrsta !== "izracunaj" && q.pojmi.some((p) => foreignName(p, q.besedilo))) return "ime";
   return null;
 }
 
@@ -424,8 +515,11 @@ export function finalResult(vzorec, besedilo = "") {
     }
   }
   const { value, unit, dec } = res;
-  // Sprejmemo zaokrožen rezultat: pol zadnjega mesta vzorca ali 1 %.
-  const tolerance = Math.max(0.5 * 10 ** -dec, 0.01 * Math.abs(value)) / Math.max(1, Math.abs(value)) + 1e-9;
+  // Celo število brez »≈«/»približno« mora biti točno (vzorec 2, pravilo 8: #61 99 in 101 nista 100); sicer zaokrožen
+  // rezultat na mesta vzorca (pol zadnjega mesta). Toleranca je relativna, kot v checkAnswer.
+  const approx = /≈|približno|okoli|pribl\./iu.test(first);
+  const abs = dec === 0 && Number.isInteger(value) && !approx ? 0 : 0.5 * 10 ** -dec;
+  const tolerance = abs / Math.max(1, Math.abs(value)) + 1e-9;
   return { type: "number", value, unit, tolerance };
 }
 function lessonCalc(id, topicId, besedilo, vzorec) {
@@ -446,7 +540,9 @@ export function practiceQuestion(topicId, seed) {
   }
   if (!task || task.answer?.type !== "number") return null;
   const formula = [].concat(task.formula || []).filter(Boolean);
-  const pot = formula.length ? `Pravilna pot do rezultata: $${formula[0]}$` : "Pravilna pot do rezultata";
+  // Formula generatorja ni nujno pot te naloge (vzorec 2: #77 »$a^{-n} = 1/a^n$« pri $f(1)$, #79 razcep tričlena pri
+  // izpostavljanju $x$): pot presodi model po rešitvi.
+  const pot = "Pravilna pot do rezultata";
   return {
     id: `${topicId}#r${seed}`,
     topicId,

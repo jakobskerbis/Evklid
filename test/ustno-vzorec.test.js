@@ -11,7 +11,7 @@ import { generateTask } from "../server/practice/index.js";
 const premisli = (q, a) => ({ sections: [{ title: "Razlaga", md: `:::premisli\n${q}\n---\n${a}\n:::` }] });
 const napaka = (naslov, text) => ({ sections: [{ title: "Pogoste napake", md: `- **${naslov}.** ${text}` }] });
 const one = (lesson) => lessonQuestions("T/x", lesson, "x", { raw: true })[0];
-const kept = (lesson) => lessonQuestions("T/x", lesson, "x");
+const kept = (lesson) => lessonQuestions("T/x", lesson, "x", { pregled: false });
 const why = (lesson) => questionProblem(pruneNumbers(one(lesson)));
 
 test("pravilo 1: vsa števila iz računa v vzorcu morajo biti v vprašanju (#1, #30, #35, #42, #47, #58)", () => {
