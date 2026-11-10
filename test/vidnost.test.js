@@ -117,6 +117,12 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
   assert.ok(n >= 6 && n <= 10, `${n} vprašanj`);
   assert.equal(faq.mainEntity.length, n);
   for (const q of faq.mainEntity) assert.ok(q.name.endsWith("?") && q.acceptedAnswer.text.length > 20 && !/[<>{&]/.test(q.name + q.acceptedAnswer.text));
+  // Videz samodejno po napravi, brez JavaScripta in brez razreda na <html>: temne barve so prepis :root.dark iz style.css.
+  assert.ok(html.includes('<meta name="color-scheme" content="light dark">'));
+  const decls = (block) => block.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("/*"));
+  const appDark = readFileSync(new URL("../public/style.css", import.meta.url), "utf8").match(/:root\.dark \{\n([\s\S]*?)\n\}/)[1];
+  const pageDark = html.match(/@media \(prefers-color-scheme: dark\) \{\s*:root \{\n([\s\S]*?)\n\s*\}/)[1];
+  assert.deepEqual(decls(pageDark), decls(appDark), "temne barve strani = :root.dark v public/style.css");
   // Vikanje (docs/besedila.md): na strani za obiskovalce ni tikanja.
   const text = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ");
   assert.ok(!/\b(tvoj\w*|tebe|moraš|lahko\s+(fotografiraš|izbereš)|vprašaš)\b/i.test(text), "brez tikanja");

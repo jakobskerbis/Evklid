@@ -17,7 +17,9 @@
   <meta property="og:description" content="Kaj je Evklid, za koga je, kaj zna, koliko stane in kako varuje podatke.">
   <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
   <meta name="twitter:card" content="summary">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
   <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
@@ -37,7 +39,7 @@
     .about .land-hero h1 { font-size: clamp(1.9rem, 3.6vw, 3rem); }
     .about .land-lead { max-width: 75ch; }
     .about-facts { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-    .about-facts li { padding: 6px 12px; border-radius: 999px; background: rgb(255 255 255 / 0.16); font-weight: 600; font-size: 0.95rem; }
+    .about-facts li { padding: 6px 12px; border-radius: 999px; background: rgb(0 0 0 / 0.2); font-weight: 600; font-size: 0.95rem; }
     .about-text { max-width: 80ch; margin: 0 0 12px; line-height: 1.6; }
     .about-prices { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     .about-prices th, .about-prices td { padding: 12px 16px; text-align: start; border-bottom: 1px solid var(--border); }
@@ -61,6 +63,44 @@
     @media (max-width: 559px) {
       .about-prices th, .about-prices td { padding: 10px 10px; }
       .about-prices { font-size: 0.93rem; }
+    }
+    /* Videz samodejno po napravi (j 2026-11-10), brez JavaScripta: privzeto svetel, v temnem načinu naprave temna
+       tema Evklida. Barve so prepis :root.dark iz public/style.css (test/vidnost.test.js preveri, da se ujemajo);
+       uvodna kartica je v temnem načinu brez modre podlage. */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --surface: #151b23;
+        --surface-2: #1e2631;
+        --text: #e6eaf0;
+        --muted: #9da7b6;
+        --border: #2a3340;
+        --accent: #6e9bff;
+        --fx-tone-1: #f2a35f; --fx-tone-2: #f25fc1; --fx-tone-3: #5ff29c;
+        --accent-2: #8fb2ff;
+        --accent-grad: #5b8cf5;
+        --accent-soft: #1a2a4a;
+        --accent-text: #0d1117;
+        --hero-a: #2353d1;
+        --hero-b: #2f5fd8;
+        --user-bubble: var(--accent);
+        --user-text: #0d1117;
+        --ok: #4cd38c;
+        --ok-bg: #12301f;
+        --danger: #ff6b6e;
+        --danger-bg: #3a1a1f;
+        --warm: #f5a35c;
+        --shadow: none;
+        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+        color-scheme: dark;
+      }
+      .about .land-hero { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+      .about .land-hero h1 { color: var(--text); }
+      .about .land-eyebrow { color: var(--accent); opacity: 1; }
+      .about .land-hero .land-actions a.btn-primary { background: var(--accent); color: var(--accent-text); box-shadow: none; }
+      .about .land-hero .land-actions a.btn-secondary { background: transparent; color: var(--text); border-color: var(--border); }
+      .about .land-hero .land-actions a:focus-visible { outline-color: var(--accent); }
+      .about-facts li { background: var(--accent-soft); color: var(--accent); }
     }
   </style>
 </head>
