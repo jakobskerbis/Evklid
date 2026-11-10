@@ -126,6 +126,14 @@ export function migrateAccounts(db) {
   // guest_net = zgoščeni IP omrežja, da brisanje piškotkov ne da nove brezplačne kvote.
   if (!pcols.includes("is_guest")) db.exec("ALTER TABLE parents ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0");
   if (!pcols.includes("guest_net")) db.exec("ALTER TABLE parents ADD COLUMN guest_net TEXT");
+  // Naključna identiteta računa, ki se nikoli ne ponovi (parents.id se po izbrisu ponovno uporabi). Gre v metapodatke
+  // plačil Stripa; webhook pripiše plačilo računu samo ob enakem uid (server/accounts/ponoven-id.js, pregled #511 A).
+  if (!pcols.includes("uid")) db.exec("ALTER TABLE parents ADD COLUMN uid TEXT");
+  db.exec("UPDATE parents SET uid = lower(hex(randomblob(16))) WHERE uid IS NULL");
+  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_parents_uid ON parents(uid)");
+  db.exec(`CREATE TRIGGER IF NOT EXISTS parents_uid AFTER INSERT ON parents WHEN NEW.uid IS NULL BEGIN
+    UPDATE parents SET uid = lower(hex(randomblob(16))) WHERE id = NEW.id;
+  END;`);
   // Gost iz lastnikovega povabila (/?gost=…, server/accounts/guest.js GuestInvites): uporablja Evklid, čeprav je uporaba brez računa sicer izklopljena.
   if (!pcols.includes("guest_invite_id")) db.exec("ALTER TABLE parents ADD COLUMN guest_invite_id INTEGER");
   const cols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
