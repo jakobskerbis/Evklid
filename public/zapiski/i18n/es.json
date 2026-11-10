@@ -5,7 +5,7 @@
   "zap.paste": "Pegar texto",
   "zap.privacy": "En la foto solo apuntes – sin caras ni nombres. No guardamos la foto.",
   "zap.max": "Como máximo 5 páginas a la vez.",
-  "zap.pagesLeft": "Fotos este mes: quedan {left} de {limit}. El texto pegado no cuenta.",
+  "zap.pagesLeft": "Páginas este mes: quedan {left} de {limit}. Cuenta cada foto y cada texto pegado.",
   "zap.reading": "Leyendo la página {i} de {n} …",
   "zap.check": "¿Lo he leído bien? Corrige lo que no esté bien.",
   "zap.page": "Página {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "No puedo leerlo. Haz la foto más cerca y con mejor luz.",
   "zap.errUnrelated": "Estos no son apuntes de clase.",
   "zap.errSubject": "Evklid sabe matemáticas, física, química y biología. Esta asignatura aún no la sabe.",
-  "zap.errPages": "Este mes has usado todas las fotos. Tendrás nuevas el {date}. Aún puedes pegar texto.",
+  "zap.errPages": "Este mes has usado todas las páginas. Tendrás nuevas el {date}.",
   "zap.errEmpty": "No encontré nada en los apuntes para un cuestionario o tarjetas.",
   "zap.errNoPhoto": "Aquí no se pueden leer fotos. Pega el texto.",
-  "zap.aiOff": "Ahora no puedo hacer tarjetas (límite de uso). El cuestionario de práctica funciona."
+  "zap.aiOff": "Ahora no puedo hacer tarjetas (límite de uso). El cuestionario de práctica funciona.",
+  "zap.keep": "Son mis apuntes – guardar",
+  "zap.keepHint": "Sin la marca no guardamos el texto. El quiz y las tarjetas se quedan.",
+  "zap.notKept": "No guardamos el texto pegado – solo los temas y las tarjetas.",
+  "zap.correctMark": "Respuesta correcta",
+  "zap.yourMark": "Tu respuesta"
 }

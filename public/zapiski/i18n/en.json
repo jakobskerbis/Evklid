@@ -5,7 +5,7 @@
   "zap.paste": "Paste text",
   "zap.privacy": "Only notes in the photo – no faces or names. We don't keep the photo.",
   "zap.max": "At most 5 pages at a time.",
-  "zap.pagesLeft": "Photos this month: {left} of {limit} left. Pasted text doesn't count.",
+  "zap.pagesLeft": "Pages this month: {left} of {limit} left. Every photo and every pasted text counts.",
   "zap.reading": "Reading page {i} of {n} …",
   "zap.check": "Did I read it right? Fix anything that's wrong.",
   "zap.page": "Page {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "I can't read this. Take the photo closer and in better light.",
   "zap.errUnrelated": "These aren't school notes.",
   "zap.errSubject": "Evklid knows maths, physics, chemistry and biology. It doesn't know this subject yet.",
-  "zap.errPages": "You've used all photos this month. You get new ones on {date}. You can still paste text.",
+  "zap.errPages": "You've used all pages this month. You get new ones on {date}.",
   "zap.errEmpty": "I didn't find anything in the notes for a quiz or flashcards.",
   "zap.errNoPhoto": "Reading photos isn't available here. Paste the text.",
-  "zap.aiOff": "I can't make flashcards right now (usage limit). The practice quiz still works."
+  "zap.aiOff": "I can't make flashcards right now (usage limit). The practice quiz still works.",
+  "zap.keep": "These are my notes – save",
+  "zap.keepHint": "Without the tick we don't save the text. The quiz and cards stay.",
+  "zap.notKept": "We didn't save the pasted text – only the topics and cards.",
+  "zap.correctMark": "Correct answer",
+  "zap.yourMark": "Your answer"
 }

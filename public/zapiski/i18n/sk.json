@@ -5,7 +5,7 @@
   "zap.paste": "Vložiť text",
   "zap.privacy": "Na fotke len poznámky – bez tvárí a mien. Fotku neukladáme.",
   "zap.max": "Najviac 5 strán naraz.",
-  "zap.pagesLeft": "Fotky tento mesiac: zostáva {left} z {limit}. Vložený text sa nepočíta.",
+  "zap.pagesLeft": "Strany tento mesiac: zostáva {left} z {limit}. Počíta sa každá fotka aj každý vložený text.",
   "zap.reading": "Čítam {i}. stranu z {n} …",
   "zap.check": "Prečítal som to dobre? Oprav, čo nesedí.",
   "zap.page": "{i}. strana",
@@ -37,8 +37,13 @@
   "zap.errRead": "Toto neprečítam. Odfoť to zblízka a pri lepšom svetle.",
   "zap.errUnrelated": "Toto nie sú školské poznámky.",
   "zap.errSubject": "Evklid vie matematiku, fyziku, chémiu a biológiu. Tento predmet zatiaľ nevie.",
-  "zap.errPages": "Tento mesiac si minul všetky fotky. Nové dostaneš {date}. Text môžeš vkladať ďalej.",
+  "zap.errPages": "Tento mesiac si minul všetky strany. Nové dostaneš {date}.",
   "zap.errEmpty": "V poznámkach som nenašiel nič na kvíz ani kartičky.",
   "zap.errNoPhoto": "Čítanie fotiek tu nie je k dispozícii. Vlož text.",
-  "zap.aiOff": "Kartičky teraz urobiť nemôžem (limit využitia). Kvíz z precvičovania funguje."
+  "zap.aiOff": "Kartičky teraz urobiť nemôžem (limit využitia). Kvíz z precvičovania funguje.",
+  "zap.keep": "Toto sú moje poznámky – uložiť",
+  "zap.keepHint": "Bez zaškrtnutia text neukladáme. Kvíz a kartičky zostanú.",
+  "zap.notKept": "Vložený text sme neuložili – len učivo a kartičky.",
+  "zap.correctMark": "Správna odpoveď",
+  "zap.yourMark": "Tvoja odpoveď"
 }

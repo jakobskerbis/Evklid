@@ -5,7 +5,7 @@
   "zap.paste": "Lipește text",
   "zap.privacy": "În poză doar notițe – fără fețe sau nume. Nu păstrăm poza.",
   "zap.max": "Cel mult 5 pagini o dată.",
-  "zap.pagesLeft": "Poze luna aceasta: mai ai {left} din {limit}. Textul lipit nu se numără.",
+  "zap.pagesLeft": "Pagini luna aceasta: mai ai {left} din {limit}. Se numără fiecare poză și fiecare text lipit.",
   "zap.reading": "Citesc pagina {i} din {n} …",
   "zap.check": "Am citit bine? Corectează ce nu e bine.",
   "zap.page": "Pagina {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Nu pot citi asta. Fă poza mai de aproape și cu lumină mai bună.",
   "zap.errUnrelated": "Acestea nu sunt notițe de școală.",
   "zap.errSubject": "Evklid știe matematică, fizică, chimie și biologie. Această materie încă nu o știe.",
-  "zap.errPages": "Luna aceasta ai folosit toate pozele. Primești altele pe {date}. Poți încă lipi text.",
+  "zap.errPages": "Luna aceasta ai folosit toate paginile. Primești altele pe {date}.",
   "zap.errEmpty": "Nu am găsit nimic în notițe pentru un test sau cartonașe.",
   "zap.errNoPhoto": "Citirea pozelor nu este disponibilă aici. Lipește textul.",
-  "zap.aiOff": "Acum nu pot face cartonașe (limită de utilizare). Testul de exersare funcționează."
+  "zap.aiOff": "Acum nu pot face cartonașe (limită de utilizare). Testul de exersare funcționează.",
+  "zap.keep": "Acestea sunt notițele mele – salvează",
+  "zap.keepHint": "Fără bifă nu salvăm textul. Testul și cartonașele rămân.",
+  "zap.notKept": "Nu am salvat textul lipit – doar temele și cartonașele.",
+  "zap.correctMark": "Răspunsul corect",
+  "zap.yourMark": "Răspunsul tău"
 }

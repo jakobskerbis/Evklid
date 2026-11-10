@@ -1683,7 +1683,7 @@ export function mountAccounts(app, store, opts = {}) {
         })(),
         flashcards: (() => {
           try {
-            return q("SELECT front, back, subject, topic, source, box, due, reviews, verified, created_at FROM flashcards WHERE student_id = ?", c.id).map((f) => ({ ...f, front: unseal(f.front), back: unseal(f.back) }));
+            return q("SELECT front, back, subject, topic, source, box, due, reviews, verified, zapisek_id, checked, created_at FROM flashcards WHERE student_id = ?", c.id).map((f) => ({ ...f, front: unseal(f.front), back: unseal(f.back) }));
           } catch {
             return [];
           }

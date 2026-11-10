@@ -206,15 +206,22 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       vrsta TEXT NOT NULL,                       -- rokopis | tiskano | besedilo
       strani INTEGER NOT NULL DEFAULT 0,         -- prebrane fotografije
       vsebina_hash TEXT,                         -- ista vsebina dvakrat: shranjeni rezultat brez novega klica
+      ai_off INTEGER NOT NULL DEFAULT 0,         -- 1 = shranjen brez kartic (meja AI); ob ponovni oddaji poskusi znova
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_zapiski_student ON zapiski(student_id, id);
-    -- Prebrane strani zapiskov v mesecu (meja strani po paketih); izbris zapiska strani ne vrne.
+    -- Ista vsebina pri istem učencu samo enkrat (tudi ob hkratnih zahtevkih).
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_zapiski_hash ON zapiski(student_id, vsebina_hash);
+    -- Porabljene strani zapiskov v mesecu (meja strani po paketih: fotografija ali prilepljeno besedilo). Izbris zapiska
+    -- strani ne vrne. Izbris profila tudi ne: vrstica ostane z računom (student_id NULL, parent_id) in šteje v mejo
+    -- drugih profilov računa ta mesec, kot poraba AI (server/usage.js orphanSpent); ob izbrisu računa se izbriše.
     CREATE TABLE IF NOT EXISTS zapiski_strani (
-      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      student_id INTEGER REFERENCES students(id) ON DELETE SET NULL,
+      parent_id INTEGER,
       mesec TEXT NOT NULL,
       strani INTEGER NOT NULL DEFAULT 0,
-      PRIMARY KEY (student_id, mesec)
+      branja INTEGER NOT NULL DEFAULT 0,         -- prebrane fotografije, ki še niso v zapisku (stran je že porabljena)
+      UNIQUE (student_id, mesec)
     );
     -- Šibke točke iz iger, učbenika, pol, kartic in kviza (server/weaknesses.js): samo dnevne vsote po temi,
     -- brez odgovorov in časov posameznih nalog. Klepet in Vadnica sta v events.

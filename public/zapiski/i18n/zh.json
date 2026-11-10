@@ -5,7 +5,7 @@
   "zap.paste": "粘贴文字",
   "zap.privacy": "照片里只放笔记——不要有人脸或姓名。我们不保存照片。",
   "zap.max": "一次最多 5 页。",
-  "zap.pagesLeft": "本月照片：还剩 {left}/{limit}。粘贴的文字不计入。",
+  "zap.pagesLeft": "本月页数：还剩 {left}/{limit}。每张照片和每次粘贴的文字都算一页。",
   "zap.reading": "正在读第 {i} 页，共 {n} 页 …",
   "zap.check": "我读对了吗？请改正不对的地方。",
   "zap.page": "第 {i} 页",
@@ -37,8 +37,13 @@
   "zap.errRead": "我读不出来。请靠近一点、在更亮的地方拍。",
   "zap.errUnrelated": "这不是学习笔记。",
   "zap.errSubject": "Evklid 会数学、物理、化学和生物。这门学科还不会。",
-  "zap.errPages": "本月照片已用完。{date} 会有新的。你仍然可以粘贴文字。",
+  "zap.errPages": "本月页数已用完。{date} 会有新的。",
   "zap.errEmpty": "笔记里没有找到可做测验或记忆卡的内容。",
   "zap.errNoPhoto": "这里无法读取照片。请粘贴文字。",
-  "zap.aiOff": "现在无法做记忆卡（用量上限）。练习测验仍可用。"
+  "zap.aiOff": "现在无法做记忆卡（用量上限）。练习测验仍可用。",
+  "zap.keep": "这是我的笔记 – 保存",
+  "zap.keepHint": "不勾选就不保存文字。测验和卡片会保留。",
+  "zap.notKept": "我们没有保存粘贴的文字 – 只有主题和卡片。",
+  "zap.correctMark": "正确答案",
+  "zap.yourMark": "你的答案"
 }

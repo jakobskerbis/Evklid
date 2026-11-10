@@ -5,7 +5,7 @@
   "zap.paste": "Wklej tekst",
   "zap.privacy": "Na zdjęciu tylko notatki – bez twarzy i imion. Nie zapisujemy zdjęcia.",
   "zap.max": "Najwyżej 5 stron naraz.",
-  "zap.pagesLeft": "Zdjęcia w tym miesiącu: zostało {left} z {limit}. Wklejony tekst się nie liczy.",
+  "zap.pagesLeft": "Strony w tym miesiącu: zostało {left} z {limit}. Liczy się każde zdjęcie i każdy wklejony tekst.",
   "zap.reading": "Czytam stronę {i} z {n} …",
   "zap.check": "Dobrze przeczytałem? Popraw, co jest źle.",
   "zap.page": "Strona {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Nie mogę tego odczytać. Zrób zdjęcie bliżej i przy lepszym świetle.",
   "zap.errUnrelated": "To nie są notatki szkolne.",
   "zap.errSubject": "Evklid zna matematykę, fizykę, chemię i biologię. Tego przedmiotu jeszcze nie zna.",
-  "zap.errPages": "W tym miesiącu wykorzystałeś wszystkie zdjęcia. Nowe dostaniesz {date}. Tekst możesz nadal wkleić.",
+  "zap.errPages": "W tym miesiącu wykorzystałeś wszystkie strony. Nowe dostaniesz {date}.",
   "zap.errEmpty": "W notatkach nie znalazłem nic na quiz ani fiszki.",
   "zap.errNoPhoto": "Czytanie zdjęć nie jest tu dostępne. Wklej tekst.",
-  "zap.aiOff": "Teraz nie mogę zrobić fiszek (limit użycia). Quiz z ćwiczeń działa."
+  "zap.aiOff": "Teraz nie mogę zrobić fiszek (limit użycia). Quiz z ćwiczeń działa.",
+  "zap.keep": "To moje notatki – zapisz",
+  "zap.keepHint": "Bez zaznaczenia nie zapisujemy tekstu. Quiz i fiszki zostają.",
+  "zap.notKept": "Nie zapisaliśmy wklejonego tekstu – tylko tematy i fiszki.",
+  "zap.correctMark": "Poprawna odpowiedź",
+  "zap.yourMark": "Twoja odpowiedź"
 }

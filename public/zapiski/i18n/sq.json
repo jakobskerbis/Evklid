@@ -5,7 +5,7 @@
   "zap.paste": "Ngjit tekst",
   "zap.privacy": "Në foto vetëm shënime – pa fytyra apo emra. Foton nuk e ruajmë.",
   "zap.max": "Më së shumti 5 faqe njëherësh.",
-  "zap.pagesLeft": "Foto këtë muaj: edhe {left} nga {limit}. Teksti i ngjitur nuk llogaritet.",
+  "zap.pagesLeft": "Faqe këtë muaj: edhe {left} nga {limit}. Llogaritet çdo foto dhe çdo tekst i ngjitur.",
   "zap.reading": "Po lexoj faqen {i} nga {n} …",
   "zap.check": "A lexova mirë? Korrigjo atë që nuk është e saktë.",
   "zap.page": "Faqja {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Nuk mund ta lexoj. Fotografo më afër dhe me dritë më të mirë.",
   "zap.errUnrelated": "Këto nuk janë shënime shkollore.",
   "zap.errSubject": "Evklid di matematikë, fizikë, kimi dhe biologji. Këtë lëndë ende nuk e di.",
-  "zap.errPages": "Këtë muaj i ke përdorur të gjitha fotot. Të reja merr më {date}. Tekst mund të ngjitësh ende.",
+  "zap.errPages": "Këtë muaj i ke përdorur të gjitha faqet. Të reja merr më {date}.",
   "zap.errEmpty": "Në shënime nuk gjeta asgjë për kuiz apo karta.",
   "zap.errNoPhoto": "Leximi i fotove këtu nuk është i disponueshëm. Ngjit tekstin.",
-  "zap.aiOff": "Tani nuk mund të bëj karta (kufiri i përdorimit). Kuizi i ushtrimeve funksionon."
+  "zap.aiOff": "Tani nuk mund të bëj karta (kufiri i përdorimit). Kuizi i ushtrimeve funksionon.",
+  "zap.keep": "Këto janë shënimet e mia – ruaji",
+  "zap.keepHint": "Pa shenjë nuk e ruajmë tekstin. Kuizi dhe kartat mbeten.",
+  "zap.notKept": "Tekstin e ngjitur nuk e ruajtëm – vetëm temat dhe kartat.",
+  "zap.correctMark": "Përgjigjja e saktë",
+  "zap.yourMark": "Përgjigjja jote"
 }

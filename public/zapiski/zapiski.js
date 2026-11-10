@@ -75,7 +75,7 @@ export async function showZapiski(deps) {
 }
 
 // --- začetek: dodaj zapiske, seznam shranjenih ---
-async function renderHome(msg = "") {
+async function renderHome(msg = "", nujno = null) {
   const el = v();
   el.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
   let data = { notes: [], pages: null };
@@ -87,6 +87,7 @@ async function renderHome(msg = "") {
   const p = data.pages;
   el.innerHTML = `
     <button type="button" class="ghost back zap-back">${icon("arrow-left")}<span>${esc(t("zap.back"))}</span></button>
+    ${nujno ? nujnoHtml(nujno) : ""}
     <h1 class="with-icon">${icon("notebook-pen")} ${esc(t("cards.notes"))}</h1>
     <p class="muted">${esc(t("zap.intro"))}</p>
     <section class="card zap-add">
@@ -178,12 +179,14 @@ async function readPhotos(files) {
   if (!files.length) return;
   const pages = [];
   let msg = "";
+  let nujno = null; // okno nujne pomoči iz branja (zastavica modela, tudi ob zavrnjeni fotografiji)
   for (let i = 0; i < files.length; i++) {
     v().innerHTML = `<div class="card zap-wait" aria-live="polite"><p>${icon("scan-text")} ${esc(t("zap.reading", { i: i + 1, n: files.length }))}</p></div>`;
     try {
       let image = await shrink(files[i]);
       const r = await D.api(`${base()}/preberi`, { method: "POST", body: { image } });
       image = null; // slika ostane samo v tem klicu
+      nujno ||= r.nujno || null;
       if (r.mock) {
         msg = t("zap.errNoPhoto");
         break;
@@ -192,11 +195,12 @@ async function readPhotos(files) {
       else msg = t("zap.errRead");
     } catch (err) {
       msg = errText(err);
+      nujno ||= err?.body?.nujno || null;
       if (err?.body?.code === "zapiski_strani" || err?.status === 429) break;
     }
   }
-  if (!pages.length) return renderHome(msg);
-  S = { mode: "check", pages, photos: pages.length, msg };
+  if (!pages.length) return renderHome(msg, nujno);
+  S = { mode: "check", pages, photos: pages.length, msg, nujno };
   renderCheck();
 }
 
@@ -215,7 +219,9 @@ function renderCheck() {
         <textarea name="p${i}" rows="${paste ? 12 : 8}" maxlength="6000" dir="auto" ${paste ? `placeholder="${esc(t("zap.pastePh"))}"` : ""}>${esc(p.text)}</textarea></label>`,
         )
         .join("")}
-      <div class="nujno-slot"></div>
+      ${paste ? `<label class="zap-keep"><input type="checkbox" name="keep"${S.keep ? " checked" : ""}> <span>${esc(t("zap.keep"))}</span></label>
+      <p class="muted zap-note">${esc(t("zap.keepHint"))}</p>` : ""}
+      <div class="nujno-slot">${S.nujno ? nujnoHtml(S.nujno) : ""}</div>
       <p class="zap-msg" role="alert"></p>
       <div class="actions zap-actions">
         <button type="button" class="secondary" data-cancel>${esc(t("zap.cancel"))}</button>
@@ -227,6 +233,7 @@ function renderCheck() {
   el.querySelector("form").addEventListener("submit", (e) => {
     e.preventDefault();
     S.pages = S.pages.map((p, i) => ({ ...p, text: el.querySelector(`[name=p${i}]`).value })).filter((p) => p.text.trim());
+    S.keep = !!el.querySelector("[name=keep]")?.checked;
     if (S.pages.length) save();
   });
   if (paste) el.querySelector("textarea").focus();
@@ -250,24 +257,25 @@ function localNujno(text) {
 
 async function save() {
   const all = S.pages.map((p) => p.text).join("\n\n");
-  const nujno = localNujno(all);
+  const local = localNujno(all);
+  const nujno = S.nujno || (local?.vrsta !== "pogovor" ? local : null);
   const el = v();
-  el.innerHTML = `${nujno && nujno.vrsta !== "pogovor" ? nujnoHtml(nujno) : ""}<div class="card zap-wait" aria-live="polite"><p>${icon("sparkles")} ${esc(t("zap.making"))}</p></div>`;
+  el.innerHTML = `${nujno ? nujnoHtml(nujno) : ""}<div class="card zap-wait" aria-live="polite"><p>${icon("sparkles")} ${esc(t("zap.making"))}</p></div>`;
   try {
-    const r = await D.api(base(), { method: "POST", body: { pages: S.pages, photos: S.photos } });
-    S = { mode: "result", result: r, nujno: r.nujno || (nujno?.vrsta !== "pogovor" ? nujno : null) };
+    // keep: prilepljeno besedilo se shrani samo z izbiro »To so moji zapiski – shrani« (privzeto ne).
+    const r = await D.api(base(), { method: "POST", body: { pages: S.pages, photos: S.photos, keep: !!S.keep } });
+    S = { mode: "result", result: r, nujno: r.nujno || nujno };
     renderResult();
   } catch (err) {
-    const n = err?.body?.nujno || (nujno?.vrsta !== "pogovor" ? nujno : null);
+    S.nujno = err?.body?.nujno || nujno;
     S.msg = errText(err);
     renderCheck();
-    if (n) v().querySelector(".nujno-slot").innerHTML = nujnoHtml(n);
   }
 }
 
 // --- rezultat: snov, kviz, kartice ---
 function renderResult() {
-  const { note, quiz = [], cards, printed, ai_off: aiOff } = S.result;
+  const { note, quiz = [], cards, printed, not_kept: notKept, ai_off: aiOff } = S.result;
   const el = v();
   const rich = (s) => D.renderRich(s);
   const opt = (o, tex) => (tex ? rich(`$${o}$`) : rich(o));
@@ -277,6 +285,7 @@ function renderResult() {
     <h1 class="with-icon" dir="auto">${icon("notebook-pen")} ${esc(note.title)}</h1>
     ${note.topics.length ? `<p>${esc(t("zap.topics"))}</p><ul class="zap-topics">${note.topics.map((x) => `<li dir="auto">${icon("book-open")} ${esc(x.name)}</li>`).join("")}</ul>` : `<p class="muted">${esc(t("zap.noTopics"))}</p>`}
     ${printed ? `<p class="muted zap-note">${esc(t("zap.printed"))}</p>` : ""}
+    ${notKept ? `<p class="muted zap-note">${esc(t("zap.notKept"))}</p>` : ""}
     ${quiz.length ? `<section class="zap-quiz"><h2>${icon("list-checks")} ${esc(t("zap.quiz"))} <small class="muted">${quiz.length}</small></h2><p class="muted">${esc(t("zap.quizHint"))}</p>
       <ol>${quiz
         .map(
@@ -325,8 +334,10 @@ function renderResult() {
     btns.forEach((x) => (x.disabled = true));
     try {
       const r = await D.api(`${base()}/kviz`, { method: "POST", body: { task: q.id, choice: Number(b.dataset.j) } });
-      btns[r.correct]?.classList.add("zap-right");
-      if (!r.ok) b.classList.add("zap-bad");
+      // Pravilni odgovor ni označen samo z barvo (pregled B6): ikona in besedilo za bralnik zaslona.
+      const mark = (x, cls, ic, label) => x && (x.classList.add(cls), x.insertAdjacentHTML("afterbegin", `${icon(ic)}<span class="sr-only">${esc(label)}: </span>`));
+      mark(btns[r.correct], "zap-right", "check", t("zap.correctMark"));
+      if (!r.ok) mark(b, "zap-bad", "x", t("zap.yourMark"));
       li.querySelector(".zap-fb").textContent = r.ok ? t("zap.right") : t("zap.wrong");
       score.done++;
       if (r.ok) score.ok++;
@@ -342,8 +353,8 @@ function renderResult() {
 function cardsHtml(cards, note, aiOff) {
   if (aiOff) return `<p class="muted">${esc(t("zap.aiOff"))}</p>`;
   if (cards && !cards.length) return `<p class="muted">${esc(t("zap.noCards"))}</p>`;
-  if (!cards) return note.cards ? `<p class="muted">${esc(t("zap.cardsAdded", { title: note.title }))}</p>` : `<p class="muted">${esc(t("zap.noCards"))}</p>`;
-  return `<p class="muted">${esc(t("zap.cardsAdded", { title: note.title }))}</p>
+  if (!cards) return note.cards ? `<p class="muted">${esc(t("zap.cardsAdded", { title: note.set }))}</p>` : `<p class="muted">${esc(t("zap.noCards"))}</p>`;
+  return `<p class="muted">${esc(t("zap.cardsAdded", { title: note.set }))}</p>
     <ul class="zap-card-list">${cards
       .map((c) => `<li class="card"><div class="zap-q-top">${tag(c.checked)}</div><div class="zap-front" dir="auto">${D.renderRich(c.front)}</div><div class="muted" dir="auto">${D.renderRich(c.back)}</div></li>`)
       .join("")}</ul>`;

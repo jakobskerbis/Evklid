@@ -5,7 +5,7 @@
   "zap.paste": "Bandika maandishi",
   "zap.privacy": "Kwenye picha kuwe na maelezo tu – bila nyuso wala majina. Hatuhifadhi picha.",
   "zap.max": "Kurasa 5 kwa wakati mmoja zaidi.",
-  "zap.pagesLeft": "Picha za mwezi huu: zimebaki {left} kati ya {limit}. Maandishi yaliyobandikwa hayahesabiwi.",
+  "zap.pagesLeft": "Kurasa za mwezi huu: zimebaki {left} kati ya {limit}. Kila picha na kila maandishi yaliyobandikwa yanahesabiwa.",
   "zap.reading": "Nasoma ukurasa {i} kati ya {n} …",
   "zap.check": "Nimesoma sawa? Rekebisha kisicho sahihi.",
   "zap.page": "Ukurasa {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Siwezi kusoma hii. Piga picha karibu zaidi na kwenye mwanga mzuri.",
   "zap.errUnrelated": "Haya si maelezo ya shule.",
   "zap.errSubject": "Evklid anajua hisabati, fizikia, kemia na biolojia. Somo hili bado halijui.",
-  "zap.errPages": "Mwezi huu umetumia picha zote. Utapata mpya tarehe {date}. Bado unaweza kubandika maandishi.",
+  "zap.errPages": "Mwezi huu umetumia kurasa zote. Utapata mpya tarehe {date}.",
   "zap.errEmpty": "Sikupata kitu kwenye maelezo kwa jaribio au kadi.",
   "zap.errNoPhoto": "Kusoma picha hakupatikani hapa. Bandika maandishi.",
-  "zap.aiOff": "Siwezi kutengeneza kadi sasa (kikomo cha matumizi). Jaribio la mazoezi linafanya kazi."
+  "zap.aiOff": "Siwezi kutengeneza kadi sasa (kikomo cha matumizi). Jaribio la mazoezi linafanya kazi.",
+  "zap.keep": "Haya ni maelezo yangu – hifadhi",
+  "zap.keepHint": "Bila alama ya tiki hatuhifadhi maandishi. Jaribio na kadi zinabaki.",
+  "zap.notKept": "Hatukuhifadhi maandishi uliyobandika – mada na kadi tu.",
+  "zap.correctMark": "Jibu sahihi",
+  "zap.yourMark": "Jibu lako"
 }

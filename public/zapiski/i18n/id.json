@@ -5,7 +5,7 @@
   "zap.paste": "Tempel teks",
   "zap.privacy": "Di foto hanya catatan – tanpa wajah atau nama. Kami tidak menyimpan foto.",
   "zap.max": "Paling banyak 5 halaman sekaligus.",
-  "zap.pagesLeft": "Foto bulan ini: sisa {left} dari {limit}. Teks yang ditempel tidak dihitung.",
+  "zap.pagesLeft": "Halaman bulan ini: sisa {left} dari {limit}. Setiap foto dan setiap teks yang ditempel dihitung.",
   "zap.reading": "Membaca halaman {i} dari {n} …",
   "zap.check": "Apakah bacaanku benar? Perbaiki yang salah.",
   "zap.page": "Halaman {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Aku tidak bisa membacanya. Foto lebih dekat dan dengan cahaya lebih baik.",
   "zap.errUnrelated": "Ini bukan catatan sekolah.",
   "zap.errSubject": "Evklid menguasai matematika, fisika, kimia, dan biologi. Mata pelajaran ini belum.",
-  "zap.errPages": "Bulan ini semua foto sudah terpakai. Yang baru tersedia {date}. Kamu masih bisa menempel teks.",
+  "zap.errPages": "Bulan ini semua halaman sudah terpakai. Yang baru tersedia {date}.",
   "zap.errEmpty": "Di catatan tidak ada yang bisa dijadikan kuis atau kartu.",
   "zap.errNoPhoto": "Membaca foto tidak tersedia di sini. Tempel teksnya.",
-  "zap.aiOff": "Sekarang aku belum bisa membuat kartu (batas pemakaian). Kuis latihan tetap jalan."
+  "zap.aiOff": "Sekarang aku belum bisa membuat kartu (batas pemakaian). Kuis latihan tetap jalan.",
+  "zap.keep": "Ini catatanku – simpan",
+  "zap.keepHint": "Tanpa centang, teksnya tidak kami simpan. Kuis dan kartu tetap ada.",
+  "zap.notKept": "Teks yang ditempel tidak kami simpan – hanya topik dan kartu.",
+  "zap.correctMark": "Jawaban benar",
+  "zap.yourMark": "Jawabanmu"
 }

@@ -28,6 +28,9 @@
 .zap-opt.zap-right { border: 2px solid var(--ok); background: var(--ok-bg); color: var(--ok); }
 .zap-opt.zap-bad { border: 2px solid var(--danger); background: var(--danger-bg); color: var(--danger); }
 .zap-opt:disabled { opacity: 1; }
+.zap-opt svg { width: 18px; height: 18px; flex: none; }
+.zap-keep { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 600; }
+.zap-keep input { width: 22px; height: 22px; margin: 0; }
 .zap-fb { margin: 8px 0 0; font-weight: 600; }
 .zap-fb:empty, .zap-score:empty { display: none; }
 .zap-front { font-weight: 600; margin-bottom: 4px; }

@@ -5,7 +5,7 @@
   "zap.paste": "글 붙여 넣기",
   "zap.privacy": "사진에는 필기만 – 얼굴이나 이름은 안 돼. 사진은 저장하지 않아.",
   "zap.max": "한 번에 최대 5쪽.",
-  "zap.pagesLeft": "이번 달 사진: {limit}장 중 {left}장 남음. 붙여 넣은 글은 세지 않아.",
+  "zap.pagesLeft": "이번 달 페이지: {limit}장 중 {left}장 남음. 사진 한 장, 붙여 넣은 글 하나가 각각 한 장이야.",
   "zap.reading": "{n}쪽 중 {i}쪽 읽는 중 …",
   "zap.check": "제대로 읽었어? 틀린 곳을 고쳐 줘.",
   "zap.page": "{i}쪽",
@@ -37,8 +37,13 @@
   "zap.errRead": "읽을 수 없어. 더 가까이, 더 밝은 곳에서 찍어 줘.",
   "zap.errUnrelated": "학교 필기가 아니야.",
   "zap.errSubject": "Evklid는 수학, 물리, 화학, 생물을 알아. 이 과목은 아직 몰라.",
-  "zap.errPages": "이번 달 사진을 다 썼어. {date}에 새로 생겨. 글은 계속 붙여 넣을 수 있어.",
+  "zap.errPages": "이번 달 페이지를 다 썼어. {date}에 새로 생겨.",
   "zap.errEmpty": "필기에서 퀴즈나 카드로 만들 내용을 찾지 못했어.",
   "zap.errNoPhoto": "여기서는 사진을 읽을 수 없어. 글을 붙여 넣어.",
-  "zap.aiOff": "지금은 카드를 만들 수 없어(사용 한도). 연습 퀴즈는 돼."
+  "zap.aiOff": "지금은 카드를 만들 수 없어(사용 한도). 연습 퀴즈는 돼.",
+  "zap.keep": "내 노트야 – 저장",
+  "zap.keepHint": "체크하지 않으면 글은 저장하지 않아. 퀴즈와 카드는 남아.",
+  "zap.notKept": "붙여 넣은 글은 저장하지 않았어 – 단원과 카드만.",
+  "zap.correctMark": "정답",
+  "zap.yourMark": "네 답"
 }

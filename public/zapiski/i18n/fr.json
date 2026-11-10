@@ -5,7 +5,7 @@
   "zap.paste": "Coller du texte",
   "zap.privacy": "Uniquement des notes sur la photo – pas de visages ni de noms. Nous ne gardons pas la photo.",
   "zap.max": "5 pages au maximum à la fois.",
-  "zap.pagesLeft": "Photos ce mois-ci : il en reste {left} sur {limit}. Le texte collé ne compte pas.",
+  "zap.pagesLeft": "Pages ce mois-ci : il en reste {left} sur {limit}. Chaque photo et chaque texte collé comptent.",
   "zap.reading": "Je lis la page {i} sur {n} …",
   "zap.check": "Ai-je bien lu ? Corrige ce qui est faux.",
   "zap.page": "Page {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Je n'arrive pas à lire. Prends la photo de plus près et avec plus de lumière.",
   "zap.errUnrelated": "Ce ne sont pas des notes de cours.",
   "zap.errSubject": "Evklid connaît les maths, la physique, la chimie et la biologie. Il ne connaît pas encore cette matière.",
-  "zap.errPages": "Tu as utilisé toutes les photos ce mois-ci. Tu en auras de nouvelles le {date}. Tu peux encore coller du texte.",
+  "zap.errPages": "Tu as utilisé toutes les pages ce mois-ci. Tu en auras de nouvelles le {date}.",
   "zap.errEmpty": "Je n'ai rien trouvé dans les notes pour un quiz ou des fiches.",
   "zap.errNoPhoto": "La lecture de photos n'est pas disponible ici. Colle le texte.",
-  "zap.aiOff": "Je ne peux pas faire de fiches pour l'instant (limite d'utilisation). Le quiz d'entraînement fonctionne."
+  "zap.aiOff": "Je ne peux pas faire de fiches pour l'instant (limite d'utilisation). Le quiz d'entraînement fonctionne.",
+  "zap.keep": "Ce sont mes notes – enregistrer",
+  "zap.keepHint": "Sans la coche, nous n'enregistrons pas le texte. Le quiz et les cartes restent.",
+  "zap.notKept": "Nous n'avons pas enregistré le texte collé – seulement les thèmes et les cartes.",
+  "zap.correctMark": "Bonne réponse",
+  "zap.yourMark": "Ta réponse"
 }

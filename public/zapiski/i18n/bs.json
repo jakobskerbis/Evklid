@@ -5,7 +5,7 @@
   "zap.paste": "Zalijepi tekst",
   "zap.privacy": "Na slici neka budu samo bilješke – bez lica i imena. Sliku ne čuvamo.",
   "zap.max": "Najviše 5 stranica odjednom.",
-  "zap.pagesLeft": "Fotografije ovaj mjesec: još {left} od {limit}. Zalijepljeni tekst se ne broji.",
+  "zap.pagesLeft": "Stranice ovaj mjesec: još {left} od {limit}. Broji se svaka fotografija i svaki zalijepljeni tekst.",
   "zap.reading": "Čitam {i}. stranicu od {n} …",
   "zap.check": "Jesam li dobro pročitao? Ispravi šta nije tačno.",
   "zap.page": "{i}. stranica",
@@ -37,8 +37,13 @@
   "zap.errRead": "Ovo ne mogu pročitati. Fotografiši bliže i uz bolje svjetlo.",
   "zap.errUnrelated": "Ovo nisu školske bilješke.",
   "zap.errSubject": "Evklid zna matematiku, fiziku, hemiju i biologiju. Ovaj predmet još ne zna.",
-  "zap.errPages": "Ovaj mjesec si potrošio sve fotografije. Nove dobijaš {date}. Tekst još možeš zalijepiti.",
+  "zap.errPages": "Ovaj mjesec si potrošio sve stranice. Nove dobijaš {date}.",
   "zap.errEmpty": "U bilješkama nisam pronašao gradivo za kviz ili kartice.",
   "zap.errNoPhoto": "Čitanje fotografija ovdje nije dostupno. Zalijepi tekst.",
-  "zap.aiOff": "Kartice sada ne mogu napraviti (granica potrošnje). Kviz iz vježbaonice radi."
+  "zap.aiOff": "Kartice sada ne mogu napraviti (granica potrošnje). Kviz iz vježbaonice radi.",
+  "zap.keep": "Ovo su moje bilješke – sačuvaj",
+  "zap.keepHint": "Bez kvačice tekst ne čuvamo. Kviz i kartice ostaju.",
+  "zap.notKept": "Zalijepljeni tekst nismo sačuvali – samo gradivo i kartice.",
+  "zap.correctMark": "Tačan odgovor",
+  "zap.yourMark": "Tvoj odgovor"
 }

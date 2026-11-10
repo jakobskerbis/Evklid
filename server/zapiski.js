@@ -11,16 +11,18 @@
 // koda preračuna vsak račun (server/verify.js codeCheck), en pregled naredi Sonnet. Obe OK → »Preverjeno«, sicer
 // »Iz tvojih zapiskov – nepreverjeno«; kartica, ki jo pregled označi za napačno, se ne shrani.
 //
-// Zasebnost: slike strežnik nikoli ne shrani; shrani prepis rokopisa in vpisanega besedila (šifrirano kot pogovori),
-// tiskanih strani ne (samo teme in kartice). Prepis je pri vsakem klicu modela podatek v oznakah, nikoli navodilo;
+// Zasebnost: slike strežnik nikoli ne shrani; shrani prepis rokopisa (šifrirano kot pogovori), prilepljeno besedilo
+// samo, če učenec izbere »To so moji zapiski – shrani« (odločitev j 10. 11.), tiskanih strani nikoli (samo teme in
+// kartice). Brez ključa EVKLID_DATA_KEY se prepis ne shrani. Prepis je pri vsakem klicu modela podatek v oznakah, nikoli navodilo;
 // klici nimajo orodij in vrnejo samo JSON z omejeno dolžino.
 //
-// Strošek: vsak klic gre skozi trdo mejo AI (server/meje-ai.js, usage.guard). Prebrane fotografije imajo še ločeno
-// mesečno mejo strani po paketu (STRANI), da zapiski ne porabijo meje za vprašanja inštruktorju.
+// Strošek: vsak klic gre skozi trdo mejo AI (server/meje-ai.js, usage.guard). Zapiski imajo še ločeno mesečno mejo
+// strani po paketu (STRANI), da ne porabijo meje za vprašanja inštruktorju: stran je prebrana fotografija ali
+// prilepljeno besedilo (odločitev j 10. 11., pri vseh paketih enako).
 import crypto from "node:crypto";
 import { getClient, isMockMode, MODEL, MODEL_MID, quickParams, errorText } from "./claude.js";
 import { imageCallReserveUsd, callMaxUsd } from "./meje-ai.js";
-import { seal, unseal, blindIndex } from "./crypto-polje.js";
+import { seal, unseal, blindIndex, encryptionOn } from "./crypto-polje.js";
 import { codeCheck } from "./verify.js";
 import { rankLessons, topicForName } from "./lekcija-za-vprasanje.js";
 import { getTopic } from "./curriculum.js";
@@ -48,6 +50,7 @@ const MAX_TOPICS = 4;
 const KINDS = ["rokopis", "tiskano", "test", "besedilo"];
 
 // Strani na mesec (odločitvi j 3 in 4): brezplačni 2, preizkus 6, plačniki 25 / 40 / 60 (OŠ / SŠ / faks).
+// Stran = prebrana fotografija ali eno prilepljeno besedilo (do 6000 znakov).
 export const STRANI = { free: 2, trial: 6, OS: 25, SS: 40, FAKS: 60 };
 // rights: server/placila/pravice.js (ali null brez računov: aplikacija na lastnem računalniku, meja po stopnji profila).
 export function pageLimit(rights, settings) {
@@ -59,17 +62,47 @@ export function pageLimit(rights, settings) {
 }
 
 const month = (now = new Date()) => now.toISOString().slice(0, 7);
+// Strani izbrisanih profilov istega računa ta mesec (student_id NULL, parent_id ostane): izbris profila in nov profil
+// meje ne ponastavita (pregled B5, kot poraba AI v server/usage.js orphanSpent).
+const ORPHANS = "(SELECT COALESCE(SUM(o.strani), 0) FROM zapiski_strani o WHERE o.student_id IS NULL AND o.parent_id IS NOT NULL AND o.parent_id = zapiski_strani.parent_id AND o.mesec = zapiski_strani.mesec)";
+const parentOf = (db, studentId) => {
+  try {
+    return db.prepare("SELECT parent_id FROM students WHERE id = ?").get(studentId)?.parent_id ?? null;
+  } catch {
+    return null; // brez računov (lastni računalnik) ni stolpca parent_id
+  }
+};
+function rowFor(db, studentId, m) {
+  db.prepare("INSERT OR IGNORE INTO zapiski_strani (student_id, parent_id, mesec) VALUES (?, ?, ?)").run(studentId, parentOf(db, studentId), m);
+}
 export function pagesUsed(db, studentId, now = new Date()) {
-  return db.prepare("SELECT strani FROM zapiski_strani WHERE student_id = ? AND mesec = ?").get(studentId, month(now))?.strani ?? 0;
-}
-// Rezervira eno stran pod mejo (atomarno, tudi ob hkratnih zahtevkih); false, če je meja dosežena.
-export function takePage(db, studentId, limit, now = new Date()) {
   const m = month(now);
-  db.prepare("INSERT OR IGNORE INTO zapiski_strani (student_id, mesec, strani) VALUES (?, ?, 0)").run(studentId, m);
-  return db.prepare("UPDATE zapiski_strani SET strani = strani + 1 WHERE student_id = ? AND mesec = ? AND strani < ?").run(studentId, m, limit).changes > 0;
+  const own = db.prepare("SELECT strani FROM zapiski_strani WHERE student_id = ? AND mesec = ?").get(studentId, m)?.strani ?? 0;
+  const parent = parentOf(db, studentId);
+  const orphans = parent == null ? 0 : db.prepare("SELECT COALESCE(SUM(strani), 0) AS n FROM zapiski_strani WHERE student_id IS NULL AND parent_id = ? AND mesec = ?").get(parent, m).n;
+  return own + orphans;
 }
-const givePage = (db, studentId, now = new Date()) =>
-  db.prepare("UPDATE zapiski_strani SET strani = MAX(0, strani - 1) WHERE student_id = ? AND mesec = ?").run(studentId, month(now));
+// Rezervira n strani pod mejo (atomarno, tudi ob hkratnih zahtevkih); false (nič rezervirano), če bi šla čez mejo.
+export function takePage(db, studentId, limit, now = new Date(), n = 1) {
+  const m = month(now);
+  rowFor(db, studentId, m);
+  return db.prepare(`UPDATE zapiski_strani SET strani = strani + ? WHERE student_id = ? AND mesec = ? AND strani + ${ORPHANS} + ? <= ?`).run(n, studentId, m, n, limit).changes > 0;
+}
+const givePage = (db, studentId, n = 1, now = new Date()) =>
+  db.prepare("UPDATE zapiski_strani SET strani = MAX(0, strani - ?) WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
+// Prebrana fotografija: stran je porabljena ob branju, v zapisku je ne štejemo še enkrat (branja = dobropis).
+const addRead = (db, studentId, now = new Date()) => db.prepare("UPDATE zapiski_strani SET branja = branja + 1 WHERE student_id = ? AND mesec = ?").run(studentId, month(now));
+function useReads(db, studentId, want, now = new Date()) {
+  if (want <= 0) return 0;
+  const m = month(now);
+  rowFor(db, studentId, m);
+  // Vzame do want dobropisov, kolikor jih je (sinhrono, brez prepletanja z drugimi zahtevki).
+  const before = db.prepare("SELECT branja FROM zapiski_strani WHERE student_id = ? AND mesec = ?").get(studentId, m)?.branja ?? 0;
+  const n = Math.min(want, before);
+  if (n && !db.prepare("UPDATE zapiski_strani SET branja = branja - ? WHERE student_id = ? AND mesec = ? AND branja >= ?").run(n, studentId, m, n).changes) return 0;
+  return n;
+}
+const giveReads = (db, studentId, n, now = new Date()) => n > 0 && db.prepare("UPDATE zapiski_strani SET branja = branja + ? WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
 // Prvi dan naslednjega meseca (za besedilo »Nove dobiš …«).
 const nextMonth = (now = new Date()) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
 
@@ -81,7 +114,8 @@ export function cleanNoteText(text, max = MAX_PAGE_TEXT) {
     .replace(/\r/g, "")
     .replace(/[​-‏‪-‮⁠-⁩﻿]/g, "")
     .replace(/<<|>>/g, "")
-    .replace(/<\/?\s*(notes|zapiski|card|cards|system|instructions?)\b[^>]*>/gi, " ")
+    // Tudi različice: »< /notes>«, »</ notes >«, brez »>« ali z znaki, podobnimi < in > (pregled A5).
+    .replace(/[<＜‹〈﹤]\s*[\/／]?\s*(notes|zapiski|card|cards|system|instructions?)\b[^>＞›〉﹥\n]{0,200}[>＞›〉﹥]?/gi, " ")
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{4,}/g, "\n\n\n")
     .trim()
@@ -108,12 +142,18 @@ export const READ_PROMPT =
   'Return only JSON: {"text":"the transcript","kind":"rokopis|tiskano|test"} (rokopis = mostly handwritten notes, tiskano = printed textbook or worksheet, test = a test or exam). ' +
   'If nothing is legible: {"text":"","kind":"rokopis"}. ' +
   // Isto pravilo kot skener (server/scan.js): fotografije, ki niso učno gradivo, zavrnemo, nič se ne shrani.
-  'Accept school material even if hands or book illustrations appear. Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message, diary) or it is a random scene, do not describe it and return only {"text":"","unrelated":true}. If unsure, read it.';
+  'Accept school material even if hands or book illustrations appear. Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message, diary) or it is a random scene, do not describe it and return only {"text":"","unrelated":true}. If unsure, read it.\n' +
+  // Pregled B2: tudi zavrnjena stran (dnevnik) lahko kaže, da je pisec v nevarnosti; takrat odjemalec pokaže okno nujne pomoči.
+  'In every answer (also with "unrelated"), if anything on the page shows that the writer may be in danger now, add "distress": "self_harm" (self-harm, suicide, wish not to live), "violence" (abuse, violence, threats, blackmail), "health" (serious illness, poisoning, overdose) or "danger" (fire, gas, other danger). School content about these topics is not distress.';
+const DISTRESS = { self_harm: "stiska", violence: "nasilje", health: "zdravje", danger: "nevarnost" };
+// Zastavica modela → vrsta okna nujne pomoči (server/nujno.js); neznana vrednost, ki ni false, šteje kot stiska.
+const distressOf = (v) => (v === undefined || v === null || v === false || v === "" || v === "none" ? null : DISTRESS[v] || "stiska");
 
 export function cleanRead(data) {
-  if (!data || typeof data !== "object") return { text: "", kind: "rokopis", unrelated: false };
-  if (data.unrelated === true) return { text: "", kind: "rokopis", unrelated: true };
-  return { text: cleanNoteText(typeof data.text === "string" ? data.text : ""), kind: ["rokopis", "tiskano", "test"].includes(data.kind) ? data.kind : "rokopis", unrelated: false };
+  if (!data || typeof data !== "object") return { text: "", kind: "rokopis", unrelated: false, distress: null };
+  const distress = distressOf(data.distress);
+  if (data.unrelated === true) return { text: "", kind: "rokopis", unrelated: true, distress };
+  return { text: cleanNoteText(typeof data.text === "string" ? data.text : ""), kind: ["rokopis", "tiskano", "test"].includes(data.kind) ? data.kind : "rokopis", unrelated: false, distress };
 }
 
 export async function readNotePhoto({ imageBase64, mediaType = "image/jpeg" }) {
@@ -166,7 +206,9 @@ export function cleanReview(data, n) {
 }
 
 // Kartice in pregled; vrne { unrelated, outside, title, cards: [{ front, back, checked }], usage: [{ model, usage }] }.
-export async function makeCards({ pages, createFn = null }) {
+// reserve(cards): rezerva trde meje AI za pregled, izračunana iz dejanskih kartic (pregled A2); null = pregleda ni
+// (kartice ostanejo nepreverjene).
+export async function makeCards({ pages, createFn = null, reserve = null }) {
   if (isMockMode() && !createFn) return { mock: true, unrelated: false, outside: false, title: "", cards: [], usage: [] };
   const create = createFn || ((p) => getClient().messages.create(p));
   const used = [];
@@ -183,6 +225,8 @@ export async function makeCards({ pages, createFn = null }) {
   if (!out.cards.length) return { ...out, usage: used };
   // Koda preračuna vsak čisto številski račun; pregled Sonnet. Napaka pregleda: kartice ostanejo nepreverjene.
   let review = { ok: new Set(), wrong: new Set() };
+  const hold = reserve ? reserve(out.cards) : null;
+  if (reserve && !hold) return { ...out, cards: out.cards.map((c) => ({ ...c, checked: false })), usage: used };
   try {
     const r = await create({
       model: REVIEW_MODEL(),
@@ -196,6 +240,8 @@ export async function makeCards({ pages, createFn = null }) {
     if (!cut) review = cleanReview(jsonFrom(textOf(r)), out.cards.length);
   } catch (err) {
     console.warn(`[evklid] zapiski: pregled kartic ni uspel (${err?.message || err}), kartice ostanejo nepreverjene`);
+  } finally {
+    hold?.release?.();
   }
   const cards = out.cards
     .map((c, i) => ({ ...c, checked: review.ok.has(i + 1) && !codeCheck(`${c.front}\n${c.back}`) }))
@@ -271,6 +317,7 @@ function noteView(db, studentId, r, { full = false } = {}) {
     kind: r.vrsta,
     pages: r.strani,
     topics: parseTopics(r.teme).map(topicView).filter(Boolean),
+    set: topicView(parseTopics(r.teme)[0])?.name || "Zapiski", // sklop kartic (flashcards.topic)
     cards: cards.n,
     cards_checked: cards.ok,
     saved_text: r.prepis != null,
@@ -297,12 +344,11 @@ export function parsePages(raw) {
 
 const firstLine = (text) => (String(text).split("\n").map((l) => l.replace(/[#*_$\\{}]/g, "").trim()).find((l) => l.length >= 3) || "").slice(0, 60);
 
-// Prompt za rezervo: navodila v bajtih + prepis (žeton ≤ bajt) + ovoj.
+// Prompt za rezervo: navodila v bajtih + prepis (žeton ≤ bajt) + ovoj. Pregled ima svojo rezervo iz dejanskih bajtov
+// kartic (pregled A2: kartica do 900 znakov je v cirilici ali CJK lahko ~2700 bajtov).
 const bytes = (s) => Buffer.byteLength(String(s ?? ""), "utf8");
-export function cardsReserveUsd(pages) {
-  const notes = bytes(wrapNotes(pages));
-  return callMaxUsd(CARDS_MODEL(), bytes(CARDS_SYSTEM) + notes + 200, CARDS_MAX_TOKENS) + callMaxUsd(REVIEW_MODEL(), bytes(REVIEW_SYSTEM) + MAX_FROM_NOTES * 1200 + 200, REVIEW_MAX_TOKENS);
-}
+export const cardsReserveUsd = (pages) => callMaxUsd(CARDS_MODEL(), bytes(CARDS_SYSTEM) + bytes(wrapNotes(pages)) + 200, CARDS_MAX_TOKENS);
+export const reviewReserveUsd = (cards) => callMaxUsd(REVIEW_MODEL(), bytes(REVIEW_SYSTEM) + bytes(cardsForReview(cards)) + 200, REVIEW_MAX_TOKENS);
 const READ_PROMPT_TOKENS = bytes(READ_PROMPT) + 500;
 
 export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null, readFn = readNotePhoto, cardsFn = makeCards }) {
@@ -314,6 +360,8 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
     return { used, limit, left: Math.max(0, limit - used), renews: nextMonth() };
   };
   const noteId = (req) => (/^\d{1,12}$/.test(String(req.params.noteId)) ? Number(req.params.noteId) : 0);
+  // Ista vsebina hkrati (pregled A3): drugi zahtevek počaka prvega in dobi njegov rezultat, brez drugega klica.
+  const inFlight = new Map();
 
   app.get("/api/students/:id/zapiski", (req, res) => {
     const s = loadStudent(req, res);
@@ -347,8 +395,11 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
         paid = true;
         usage?.log(s.id, out.model, out.usage, "zapiski");
       }
-      if (out.unrelated) return res.status(422).json({ error: "To niso zapiski za šolo.", code: "zapiski_neucno", pages: pagesInfo(s) });
-      res.json({ text: out.text, kind: out.kind, pages: pagesInfo(s) });
+      // Pregled B2: zastavica modela (tudi ob zavrnjeni fotografiji dnevnika) odpre okno nujne pomoči.
+      const nujno = out.distress ? nujnoZa(out.distress, s.settings) : null;
+      if (out.unrelated) return res.status(422).json({ error: "To niso zapiski za šolo.", code: "zapiski_neucno", pages: pagesInfo(s), ...(nujno ? { nujno } : {}) });
+      if (out.text) addRead(db, s.id); // stran je plačana z branjem; v zapisku se ne šteje še enkrat
+      res.json({ text: out.text, kind: out.kind, pages: pagesInfo(s), ...(nujno ? { nujno } : {}) });
     } catch (err) {
       if (!paid) givePage(db, s.id); // neuspelo branje strani ne porabi
       console.error("[evklid] zapiski branje:", err?.message || err);
@@ -358,60 +409,124 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
     }
   });
 
+  // Kartice za strani: strani (dobropisi branj, ostalo nove strani), trda meja AI, klic. Vrne { made, aiOff } ali
+  // { pagesOut: true }. Strani se porabijo samo, če je klic modela tekel (brez klica je kviz brezplačen).
+  async function cardsFor(s, pages, photos) {
+    const off = { made: { unrelated: false, outside: false, title: "", cards: [], usage: [] }, aiOff: true };
+    if (usage?.blockInfo(s.id)) return off;
+    const credit = useReads(db, s.id, Math.min(photos, pages.length));
+    const fresh = pages.length - credit;
+    if (fresh > 0 && !takePage(db, s.id, limitFor(s), new Date(), fresh)) {
+      giveReads(db, s.id, credit);
+      return { pagesOut: true };
+    }
+    const refund = () => {
+      if (fresh > 0) givePage(db, s.id, fresh);
+      giveReads(db, s.id, credit);
+    };
+    const hold = usage?.guard ? usage.guard(s.id, cardsReserveUsd(pages)) : null;
+    if (usage?.guard && !hold) return refund(), off; // meja AI: kviz iz naših nalog vseeno (strošek 0), kartic ni
+    try {
+      const reserve = usage?.guard ? (cards) => usage.guard(s.id, reviewReserveUsd(cards)) : null;
+      const made = await cardsFn({ pages, reserve });
+      for (const u of made.usage || []) if (u?.usage) usage?.log(s.id, u.model, u.usage, "zapiski");
+      if (!(made.usage || []).some((u) => u?.usage)) refund(); // preizkusni način brez klica
+      return { made, aiOff: false };
+    } catch (err) {
+      console.error("[evklid] zapiski kartice:", err?.message || err);
+      refund();
+      return off;
+    } finally {
+      hold?.release();
+    }
+  }
+
+  async function saveNotes(req, res, s) {
+    const pages = parsePages(req.body?.pages);
+    if (!pages) return res.status(400).json({ error: "Zapiski manjkajo ali so predolgi." });
+    const photos = Math.max(0, Math.min(MAX_PAGES, Number(req.body?.photos) || 0));
+    // Odločitev j 10. 11.: prilepljeno besedilo shranimo samo, če učenec izbere »To so moji zapiski – shrani«.
+    const keep = req.body?.keep === true;
+    const all = pages.map((p) => p.text).join("\n\n");
+    // Stiska v besedilu (npr. dnevnik): lokalni zaznavalnik brez AI (server/nujno.js, isti kot v klepetu).
+    const nujno = nujnoZa(lokalnaVrsta(all), s.settings);
+    const withNujno = (o) => (nujno ? { ...o, nujno } : o);
+    // Prepis, ki ga shranimo: rokopis, prilepljeno besedilo z izbiro »shrani«; tiskanih strani nikoli. Brez ključa za
+    // šifriranje nič (pregled B4).
+    const own = pages.filter((p) => p.kind === "rokopis" || (p.kind === "besedilo" && keep));
+    const printed = pages.some((p) => p.kind === "tiskano" || p.kind === "test");
+    const dropped = pages.some((p) => p.kind === "besedilo" && !keep);
+    const prepis = own.length && encryptionOn() ? seal(own.map((p) => p.text).join("\n\n")) : null;
+    const hash = hashOf(pages);
+    const topics = topicsForNotes(all, s.settings);
+    const setName = topicView(topics[0])?.name || "Zapiski";
+    let same = db.prepare("SELECT * FROM zapiski WHERE student_id = ? AND vsebina_hash = ?").get(s.id, hash);
+    // Ista vsebina: shranjeni rezultat brez novega klica. Če je bil shranjen brez kartic zaradi meje AI, poskusi znova (A4).
+    if (same && !same.ai_off) {
+      if (prepis && same.prepis == null) db.prepare("UPDATE zapiski SET prepis = ? WHERE id = ?").run(prepis, same.id);
+      same = db.prepare("SELECT * FROM zapiski WHERE id = ?").get(same.id);
+      return res.json(withNujno({ note: noteView(db, s.id, same), quiz: quizFor(parseTopics(same.teme)), reused: true }));
+    }
+    if (!same && db.prepare("SELECT COUNT(*) AS n FROM zapiski WHERE student_id = ?").get(s.id).n >= MAX_NOTES)
+      return res.status(409).json({ error: "Imaš že 200 zapiskov. Izbriši stare, da dodaš nove.", code: "zapiski_polno" });
+    const got = await cardsFor(s, pages, photos);
+    if (got.pagesOut) return res.status(429).json(withNujno({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: pagesInfo(s) }));
+    const { made, aiOff } = got;
+    if (made.unrelated && !topics.length) return res.status(422).json(withNujno({ error: "To niso zapiski za šolo.", code: "zapiski_neucno" }));
+    if (made.outside && !topics.length) return res.status(422).json(withNujno({ error: "Evklid zna matematiko, fiziko, kemijo in biologijo. Te snovi še ne zna.", code: "zapiski_snov" }));
+    if (!same && !topics.length && !made.cards.length) {
+      return res.status(aiOff ? 429 : 422).json(withNujno({ error: aiOff ? "Kartic zdaj ne morem narediti in v zapiskih nisem našel snovi iz učne poti." : "V zapiskih nisem našel snovi, iz katere bi naredil kartice.", code: aiOff ? "zapiski_ai" : "zapiski_prazno" }));
+    }
+    const kind = printed ? "tiskano" : pages.some((p) => p.kind === "rokopis") ? "rokopis" : "besedilo";
+    let id = same?.id;
+    if (same) {
+      db.prepare("UPDATE zapiski SET ai_off = ?, prepis = COALESCE(prepis, ?) WHERE id = ?").run(aiOff ? 1 : 0, prepis, id);
+    } else {
+      const title = cleanNoteText(String(req.body?.title || "") || made.title || topicView(topics[0])?.name || firstLine(all) || "Zapiski", MAX_TITLE).replace(/\s+/g, " ");
+      const r = db
+        .prepare("INSERT OR IGNORE INTO zapiski (student_id, naslov, teme, prepis, vrsta, strani, vsebina_hash, ai_off) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+        .run(s.id, seal(title), JSON.stringify(topics), prepis, kind, photos, hash, aiOff ? 1 : 0);
+      if (!r.changes) {
+        // Hkratni zahtevek z isto vsebino je bil hitrejši (UNIQUE): njegov rezultat.
+        const won = db.prepare("SELECT * FROM zapiski WHERE student_id = ? AND vsebina_hash = ?").get(s.id, hash);
+        return res.json(withNujno({ note: noteView(db, s.id, won), quiz: quizFor(parseTopics(won.teme)), reused: true }));
+      }
+      id = Number(r.lastInsertRowid);
+    }
+    const t0 = topics[0] ? getTopic(topics[0]) : null;
+    // Sklop kartic = ime teme ali »Zapiski«, nikoli naslov (pregled B1: flashcards.topic ni šifriran).
+    const added = store.cards.add(s.id, made.cards, { source: "zapiski", noteId: id, topic: setName, topicId: topics[0] || null, subject: t0?.subject || s.settings?.subject || null });
+    const note = noteView(db, s.id, db.prepare("SELECT * FROM zapiski WHERE id = ?").get(id));
+    res.status(same ? 200 : 201).json(
+      withNujno({
+        note,
+        quiz: quizFor(topics),
+        cards: added.map((c) => ({ id: c.id, front: c.front, back: c.back, checked: c.checked })),
+        printed,
+        ...(dropped ? { not_kept: true } : {}),
+        ...(aiOff ? { ai_off: true } : {}),
+        ...(same ? { retried: true } : {}),
+      }),
+    );
+  }
+
   app.post("/api/students/:id/zapiski", async (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
     const pages = parsePages(req.body?.pages);
-    if (!pages) return res.status(400).json({ error: "Zapiski manjkajo ali so predolgi." });
-    const photoPages = Math.max(0, Math.min(MAX_PAGES, Number(req.body?.photos) || 0));
-    const all = pages.map((p) => p.text).join("\n\n");
-    // Stiska v besedilu (npr. dnevnik): lokalni zaznavalnik brez AI (server/nujno.js, isti kot v klepetu).
-    const nujno = nujnoZa(lokalnaVrsta(all), s.settings);
-    // Ista vsebina dvakrat: shranjeni rezultat, brez novega klica modela.
-    const hash = hashOf(pages);
-    const same = db.prepare("SELECT * FROM zapiski WHERE student_id = ? AND vsebina_hash = ?").get(s.id, hash);
-    const topics = topicsForNotes(all, s.settings);
-    if (same) return res.json({ note: noteView(db, s.id, same), quiz: quizFor(parseTopics(same.teme)), reused: true, ...(nujno ? { nujno } : {}) });
-    if (db.prepare("SELECT COUNT(*) AS n FROM zapiski WHERE student_id = ?").get(s.id).n >= MAX_NOTES)
-      return res.status(409).json({ error: "Imaš že 200 zapiskov. Izbriši stare, da dodaš nove.", code: "zapiski_polno" });
-    const blocked = usage?.blockInfo(s.id);
-    let made = { unrelated: false, outside: false, title: "", cards: [], usage: [] };
-    let aiOff = !!blocked;
-    if (!blocked) {
-      const hold = usage?.guard ? usage.guard(s.id, cardsReserveUsd(pages)) : null;
-      if (usage?.guard && !hold) aiOff = true; // meja AI: kviz iz naših nalog vseeno (strošek 0), kartic ni
-      else {
-        try {
-          made = await cardsFn({ pages });
-          for (const u of made.usage || []) if (u?.usage) usage?.log(s.id, u.model, u.usage, "zapiski");
-        } catch (err) {
-          console.error("[evklid] zapiski kartice:", err?.message || err);
-          aiOff = true;
-        } finally {
-          hold?.release();
-        }
-      }
+    const key = pages ? `${s.id}:${hashOf(pages)}` : null;
+    const prev = key && inFlight.get(key);
+    if (prev) await prev.catch(() => {});
+    let done;
+    const p = new Promise((r) => (done = r));
+    if (key) inFlight.set(key, p);
+    try {
+      await saveNotes(req, res, s);
+    } finally {
+      done();
+      if (key && inFlight.get(key) === p) inFlight.delete(key);
     }
-    if (made.unrelated && !topics.length) return res.status(422).json({ error: "To niso zapiski za šolo.", code: "zapiski_neucno", ...(nujno ? { nujno } : {}) });
-    if (made.outside && !topics.length) return res.status(422).json({ error: "Evklid zna matematiko, fiziko, kemijo in biologijo. Te snovi še ne zna.", code: "zapiski_snov", ...(nujno ? { nujno } : {}) });
-    if (!topics.length && !made.cards.length) {
-      return res.status(aiOff ? 429 : 422).json({ error: aiOff ? "Kartic zdaj ne morem narediti in v zapiskih nisem našel snovi iz učne poti." : "V zapiskih nisem našel snovi, iz katere bi naredil kartice.", code: aiOff ? "zapiski_ai" : "zapiski_prazno", ...(nujno ? { nujno } : {}) });
-    }
-    // Odločitev j 5: prepis rokopisa in vpisanega besedila shranimo, tiskanih strani (učbenik, test) ne.
-    const own = pages.filter((p) => p.kind === "rokopis" || p.kind === "besedilo");
-    const printed = own.length < pages.length;
-    const kind = own.length === pages.length ? (pages.some((p) => p.kind === "rokopis") ? "rokopis" : "besedilo") : "tiskano";
-    const title = cleanNoteText(String(req.body?.title || "") || made.title || topicView(topics[0])?.name || firstLine(all) || "Zapiski", MAX_TITLE).replace(/\s+/g, " ");
-    const r = db
-      .prepare("INSERT INTO zapiski (student_id, naslov, teme, prepis, vrsta, strani, vsebina_hash) VALUES (?, ?, ?, ?, ?, ?, ?)")
-      .run(s.id, seal(title), JSON.stringify(topics), own.length ? seal(own.map((p) => p.text).join("\n\n")) : null, kind, photoPages, hash);
-    const id = Number(r.lastInsertRowid);
-    const t0 = topics[0] ? getTopic(topics[0]) : null;
-    const added = store.cards.add(s.id, made.cards, { source: "zapiski", noteId: id, topic: `${title}`.slice(0, 80), topicId: topics[0] || null, subject: t0?.subject || s.settings?.subject || null });
-    const note = noteView(db, s.id, db.prepare("SELECT * FROM zapiski WHERE id = ?").get(id));
-    res.status(201).json({ note, quiz: quizFor(topics), cards: added.map((c) => ({ id: c.id, front: c.front, back: c.back, checked: c.checked })), printed, ...(aiOff ? { ai_off: true } : {}), ...(nujno ? { nujno } : {}) });
   });
-
   app.get("/api/students/:id/zapiski/:noteId", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;

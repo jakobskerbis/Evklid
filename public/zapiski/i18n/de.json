@@ -5,7 +5,7 @@
   "zap.paste": "Text einfügen",
   "zap.privacy": "Auf dem Foto nur Notizen – keine Gesichter oder Namen. Das Foto speichern wir nicht.",
   "zap.max": "Höchstens 5 Seiten auf einmal.",
-  "zap.pagesLeft": "Fotos diesen Monat: noch {left} von {limit}. Eingefügter Text zählt nicht.",
+  "zap.pagesLeft": "Seiten diesen Monat: noch {left} von {limit}. Jedes Foto und jeder eingefügte Text zählt.",
   "zap.reading": "Ich lese Seite {i} von {n} …",
   "zap.check": "Habe ich richtig gelesen? Korrigiere, was nicht stimmt.",
   "zap.page": "Seite {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Das kann ich nicht lesen. Fotografiere näher und bei besserem Licht.",
   "zap.errUnrelated": "Das sind keine Schulnotizen.",
   "zap.errSubject": "Evklid kann Mathe, Physik, Chemie und Biologie. Dieses Fach kann er noch nicht.",
-  "zap.errPages": "Du hast diesen Monat alle Fotos verbraucht. Neue bekommst du am {date}. Text kannst du weiter einfügen.",
+  "zap.errPages": "Du hast diesen Monat alle Seiten verbraucht. Neue bekommst du am {date}.",
   "zap.errEmpty": "In den Notizen habe ich nichts für ein Quiz oder Karteikarten gefunden.",
   "zap.errNoPhoto": "Fotos lesen ist hier nicht verfügbar. Füge den Text ein.",
-  "zap.aiOff": "Karteikarten kann ich gerade nicht machen (Nutzungsgrenze). Das Übungsquiz funktioniert."
+  "zap.aiOff": "Karteikarten kann ich gerade nicht machen (Nutzungsgrenze). Das Übungsquiz funktioniert.",
+  "zap.keep": "Das sind meine Notizen – speichern",
+  "zap.keepHint": "Ohne Häkchen speichern wir den Text nicht. Quiz und Karten bleiben.",
+  "zap.notKept": "Den eingefügten Text haben wir nicht gespeichert – nur Themen und Karten.",
+  "zap.correctMark": "Richtige Antwort",
+  "zap.yourMark": "Deine Antwort"
 }

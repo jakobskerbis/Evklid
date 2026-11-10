@@ -5,7 +5,7 @@
   "zap.paste": "Dán văn bản",
   "zap.privacy": "Trong ảnh chỉ có ghi chép – không có khuôn mặt hay tên. Chúng tôi không lưu ảnh.",
   "zap.max": "Tối đa 5 trang mỗi lần.",
-  "zap.pagesLeft": "Ảnh tháng này: còn {left} trên {limit}. Văn bản dán vào không tính.",
+  "zap.pagesLeft": "Trang tháng này: còn {left} trên {limit}. Mỗi ảnh và mỗi lần dán văn bản đều được tính.",
   "zap.reading": "Đang đọc trang {i} trên {n} …",
   "zap.check": "Mình đọc đúng chưa? Hãy sửa chỗ chưa đúng.",
   "zap.page": "Trang {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Mình không đọc được. Hãy chụp gần hơn và đủ sáng hơn.",
   "zap.errUnrelated": "Đây không phải ghi chép học tập.",
   "zap.errSubject": "Evklid biết toán, vật lý, hóa học và sinh học. Môn này Evklid chưa biết.",
-  "zap.errPages": "Tháng này bạn đã dùng hết ảnh. Ảnh mới có vào {date}. Bạn vẫn có thể dán văn bản.",
+  "zap.errPages": "Tháng này bạn đã dùng hết trang. Trang mới có vào {date}.",
   "zap.errEmpty": "Mình không tìm thấy gì trong ghi chép để làm bài kiểm tra hay thẻ.",
   "zap.errNoPhoto": "Ở đây không đọc được ảnh. Hãy dán văn bản.",
-  "zap.aiOff": "Hiện chưa thể làm thẻ (giới hạn sử dụng). Bài kiểm tra luyện tập vẫn dùng được."
+  "zap.aiOff": "Hiện chưa thể làm thẻ (giới hạn sử dụng). Bài kiểm tra luyện tập vẫn dùng được.",
+  "zap.keep": "Đây là ghi chép của tôi – lưu",
+  "zap.keepHint": "Nếu không đánh dấu, chúng tôi không lưu văn bản. Bài kiểm tra và thẻ vẫn còn.",
+  "zap.notKept": "Chúng tôi không lưu văn bản đã dán – chỉ chủ đề và thẻ.",
+  "zap.correctMark": "Đáp án đúng",
+  "zap.yourMark": "Câu trả lời của bạn"
 }

@@ -5,7 +5,7 @@
   "zap.paste": "Szöveg beillesztése",
   "zap.privacy": "A képen csak jegyzet legyen – arcok és nevek nélkül. A képet nem tároljuk.",
   "zap.max": "Egyszerre legfeljebb 5 oldal.",
-  "zap.pagesLeft": "Fényképek ebben a hónapban: még {left} / {limit}. A beillesztett szöveg nem számít.",
+  "zap.pagesLeft": "Oldalak ebben a hónapban: még {left} / {limit}. Minden fénykép és minden beillesztett szöveg számít.",
   "zap.reading": "Olvasom a(z) {i}. oldalt ({n} közül) …",
   "zap.check": "Jól olvastam? Javítsd, ami nem stimmel.",
   "zap.page": "{i}. oldal",
@@ -37,8 +37,13 @@
   "zap.errRead": "Ezt nem tudom elolvasni. Fényképezd közelebbről és jobb fényben.",
   "zap.errUnrelated": "Ez nem iskolai jegyzet.",
   "zap.errSubject": "Evklid matekot, fizikát, kémiát és biológiát tud. Ezt a tárgyat még nem tudja.",
-  "zap.errPages": "Ebben a hónapban minden fényképet felhasználtál. Újakat {date} kapsz. Szöveget még beilleszthetsz.",
+  "zap.errPages": "Ebben a hónapban minden oldalt felhasználtál. Újakat {date} kapsz.",
   "zap.errEmpty": "A jegyzetben nem találtam semmit kvízhez vagy kártyákhoz.",
   "zap.errNoPhoto": "Itt nem lehet fényképet olvasni. Illeszd be a szöveget.",
-  "zap.aiOff": "Most nem tudok kártyákat készíteni (használati korlát). A gyakorló kvíz működik."
+  "zap.aiOff": "Most nem tudok kártyákat készíteni (használati korlát). A gyakorló kvíz működik.",
+  "zap.keep": "Ezek az én jegyzeteim – mentés",
+  "zap.keepHint": "Pipa nélkül nem mentjük a szöveget. A kvíz és a kártyák megmaradnak.",
+  "zap.notKept": "A beillesztett szöveget nem mentettük – csak a témákat és a kártyákat.",
+  "zap.correctMark": "Helyes válasz",
+  "zap.yourMark": "A te válaszod"
 }

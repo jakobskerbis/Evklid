@@ -5,7 +5,7 @@
   "zap.paste": "Colar texto",
   "zap.privacy": "Na foto só apontamentos – sem rostos nem nomes. Não guardamos a foto.",
   "zap.max": "No máximo 5 páginas de cada vez.",
-  "zap.pagesLeft": "Fotos este mês: restam {left} de {limit}. Texto colado não conta.",
+  "zap.pagesLeft": "Páginas este mês: restam {left} de {limit}. Conta cada foto e cada texto colado.",
   "zap.reading": "A ler a página {i} de {n} …",
   "zap.check": "Li bem? Corrige o que estiver errado.",
   "zap.page": "Página {i}",
@@ -37,8 +37,13 @@
   "zap.errRead": "Não consigo ler. Tira a foto mais perto e com melhor luz.",
   "zap.errUnrelated": "Isto não são apontamentos escolares.",
   "zap.errSubject": "O Evklid sabe matemática, física, química e biologia. Esta disciplina ainda não sabe.",
-  "zap.errPages": "Este mês usaste todas as fotos. Recebes novas a {date}. Ainda podes colar texto.",
+  "zap.errPages": "Este mês usaste todas as páginas. Recebes novas a {date}.",
   "zap.errEmpty": "Não encontrei nada nos apontamentos para um quiz ou cartões.",
   "zap.errNoPhoto": "Aqui não é possível ler fotos. Cola o texto.",
-  "zap.aiOff": "Agora não consigo fazer cartões (limite de uso). O quiz de prática funciona."
+  "zap.aiOff": "Agora não consigo fazer cartões (limite de uso). O quiz de prática funciona.",
+  "zap.keep": "São os meus apontamentos – guardar",
+  "zap.keepHint": "Sem o visto não guardamos o texto. O quiz e os cartões ficam.",
+  "zap.notKept": "Não guardámos o texto colado – só os temas e os cartões.",
+  "zap.correctMark": "Resposta certa",
+  "zap.yourMark": "A tua resposta"
 }
