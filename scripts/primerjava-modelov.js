@@ -11,6 +11,14 @@
 //           --prompt /tmp/novi-prompt.md (drug sistemski prompt za preizkus spremembe, aplikacija ga ne uporablja),
 //           --from data/primerjava-modelov.json (iste naloge kot prejšnji zagon, npr. za primerjavo z drugim načinom)
 // Brez ključa (ali z EVKLID_MOCK=1) teče v preizkusnem načinu: odgovori in ocene so izmišljeni, strošek 0.
+//
+//   node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5
+// Meritev CELEGA Evklidovega odgovora (j 2026-11-10, scripts/meritev-natancnosti.js): iste primere pošlje skozi pravo
+// pot klepeta dvakrat (brez preverjanja s programom in z njim), oceni besedilo, ki ga vidi učenec, in zapiše
+// docs/meritve/natancnost-<datum>.json ter tabelo v docs/stroski-ai.md (bere ju stran /zakaj-evklid).
+// Privzeto 100 primerov, razvrščenih izmenično po stopnjah: ob meji --max-usd se ustavi z uravnoteženim vzorcem.
+// Brez ključa ali z EVKLID_MOCK=1 konča z 0 brez klica in brez zapisa (izmišljene številke ne smejo na stran).
+//   --iz-json <datoteka>   zapiše že narejeno meritev (povzetek, ki ga skripta izpiše na koncu) v docs/, brez klicev.
 import "../server/env.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -23,6 +31,7 @@ import { getTopic, getPath, learningPathPrompt } from "../server/curriculum.js";
 import { lessonSummaryForPrompt } from "../server/textbook.js";
 import { EUR_PER_USD } from "../server/usage.js";
 import { PROGRAMS } from "../server/university-data.js";
+import { runChecked, summarize, writeMeasurement, CONDITIONS } from "./meritev-natancnosti.js";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const arg = (name, d) => {
@@ -30,13 +39,24 @@ const arg = (name, d) => {
   return i > 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith("--") ? process.argv[i + 1] : d;
 };
 const DRY = process.argv.includes("--dry");
-const N = Number(arg("n", 50));
+const CHECK = process.argv.includes("--s-preverjanjem");
+const FROM_JSON = arg("iz-json", "");
+const N = Number(arg("n", CHECK ? 100 : 50));
 const MODES = arg("modes", "chat,mid").split(",").filter((m) => ["chat", "think", "mid", "deep"].includes(m));
 const MAX_USD = Number(arg("max-usd", 5));
 const OUT = path.resolve(root, arg("out", "data/primerjava-modelov.md"));
 const PROMPT = arg("prompt", "");
 const TEMPLATE = PROMPT ? fs.readFileSync(path.resolve(root, PROMPT), "utf8") : undefined;
 const MOCK = isMockMode();
+if (FROM_JSON) {
+  const file = writeMeasurement(JSON.parse(fs.readFileSync(path.resolve(root, FROM_JSON), "utf8")));
+  console.log(`Zapisano: ${path.relative(root, file)} in tabela v docs/stroski-ai.md.`);
+  process.exit(0);
+}
+if (CHECK && MOCK && !DRY) {
+  console.log("Meritev s preverjanjem potrebuje ANTHROPIC_API_KEY (in ne EVKLID_MOCK=1). Brez ključa ni klica in ni zapisa. Izbor in oceno stroška pokaže --dry.");
+  process.exit(0);
+}
 const GROUP_KEYS = { os: "osnovna šola", ss: "srednja šola", tek: "tekmovanja", uni: "fakulteta" };
 const GROUPS = arg("groups", "")
   .split(",")
@@ -102,7 +122,13 @@ function pick() {
     while (order.length < list.length) for (const k of Object.keys(bySubj)) if (bySubj[k].length) order.push(bySubj[k].shift());
     out.push(...order.slice(0, Math.round(N * share)));
   }
-  return out.slice(0, N);
+  const all = out.slice(0, N);
+  if (!CHECK) return all;
+  // Izmenično po stopnjah: če se zagon ustavi ob meji stroška, je narejeni del še vedno uravnotežen.
+  return Object.keys(SHARE)
+    .flatMap((g) => all.filter((x) => group(x.path) === g).map((x, j, list) => [(j + 0.5) / list.length, x]))
+    .sort((p, q) => p[0] - q[0])
+    .map((p) => p[1]);
 }
 
 // Nastavitve učenca iz poti (kot bi jih imel učenec, ki odpre to temo).
@@ -148,7 +174,8 @@ učbenika in odgovor AI inštruktorja učencu. Oceni samo STROKOVNO PRAVILNOST o
 - "napaka": napačen rezultat, napačna formula ali trditev, ki bi učenca naučila nekaj narobe.
 
 Uradna rešitev je pravilna; drugačna pravilna pot je dovoljena. Odgovori samo z JSON:
-{"ocena":"pravilno|manjsa_napaka|napaka","rezultat_podan":true|false,"razlog":"en stavek v slovenščini"}`;
+{"ocena":"pravilno|manjsa_napaka|napaka","rezultat_podan":true|false,"vrsta":"ni|koncni_rezultat|racun_vmes|formula|trditev|dodatna_vaja|drugo","razlog":"en stavek v slovenščini"}
+"vrsta" pove, kje je napaka (pri "pravilno" je "ni"); "dodatna_vaja" je napaka v nalogi, ki jo je inštruktor dodal sam.`;
 
 const GRADER_MAX_TOKENS = 4000;
 // Najdražji možni korak (poln izhod inštruktorja in ocenjevalca, hladen predpomnilnik): pred vsakim
@@ -193,13 +220,58 @@ const tasks = (FROM ? fromRows() : pick()).filter((t) => !GROUPS.length || GROUP
 const est = estimate(tasks.length);
 const eur = EUR_PER_USD();
 console.log(`Naloge: ${tasks.length} (${Object.entries(tasks.reduce((a, t) => ((a[group(t.path)] = (a[group(t.path)] || 0) + 1), a), {})).map(([k, v]) => `${k} ${v}`).join(", ")})`);
-console.log(`Modeli: ${MODES.map((m) => LABEL[m]).join(", ")}; ocenjevalec ${MODEL_DEEP}`);
-console.log(`Ocena stroška: ~${est.toFixed(2)} $ (meja --max-usd ${MAX_USD} $)${MOCK ? " — preizkusni način, dejanski strošek 0" : ""}`);
+if (!CHECK) console.log(`Modeli: ${MODES.map((m) => LABEL[m]).join(", ")}; ocenjevalec ${MODEL_DEEP}`);
+if (!CHECK) console.log(`Ocena stroška: ~${est.toFixed(2)} $ (meja --max-usd ${MAX_USD} $)${MOCK ? " — preizkusni način, dejanski strošek 0" : ""}`);
+// Meritev s preverjanjem: na primer dva odgovora po poti klepeta (model po stopnji: OŠ hitri, drugje z več razmisleka),
+// pri tekmovanjih in fakulteti pregled z zmogljivejšim modelom, občasen popravek, in dve oceni.
+const pairModes = (t) => (group(t.path) === "osnovna šola" ? "chat" : "think");
+const reviewed = (t) => ["tekmovanja", "fakulteta"].includes(group(t.path));
+const pairEstimate = (t) =>
+  2 * costUsd(modeParams(pairModes(t)).model, { input_tokens: 1500, output_tokens: OUT_TOK[pairModes(t)], cache_read_input_tokens: 11000 }) +
+  (reviewed(t) ? costUsd(modeParams("mid").model, { input_tokens: 2500, output_tokens: 1500 }) : 0) +
+  0.15 * costUsd(modeParams("think").model, { input_tokens: 3000, output_tokens: 2000 }) +
+  2 * costUsd(MODEL_DEEP, { input_tokens: 3000, output_tokens: 1500 });
+const worstPair =
+  2 * costUsd(modeParams("think").model, { input_tokens: 3000, cache_creation_input_tokens: 14000, output_tokens: modeParams("think").max_tokens }) +
+  costUsd(modeParams("mid").model, { input_tokens: 12000, output_tokens: 4000 }) +
+  costUsd(modeParams("think").model, { input_tokens: 12000, output_tokens: modeParams("think").max_tokens }) +
+  2 * costUsd(MODEL_DEEP, { input_tokens: 10000, output_tokens: GRADER_MAX_TOKENS });
+if (CHECK) {
+  const estC = tasks.reduce((s, t) => s + pairEstimate(t), 0);
+  const perUsd = estC / Math.max(1, tasks.length);
+  console.log(`Meritev s preverjanjem: vsak primer dvakrat (${CONDITIONS.map((c) => c.ime).join(" / ")}).`);
+  console.log(`Ocena stroška za vse primere: ~${estC.toFixed(2)} $ (~${perUsd.toFixed(3)} $ na primer); meja --max-usd ${MAX_USD} $ zadošča za ~${Math.min(tasks.length, Math.max(0, Math.floor((MAX_USD - worstPair) / perUsd)))} primerov. Trajanje ~${Math.round((tasks.length * 1.2))} min za vse.`);
+}
 if (DRY) {
   for (const t of tasks) console.log(`- ${t.id} · ${t.title}`);
   process.exit(0);
 }
-if (!MOCK && est > MAX_USD) {
+if (CHECK) {
+  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, modelDeep: MODEL_DEEP });
+  const datum = new Date().toISOString().slice(0, 10);
+  const summary = summarize(r.rows, {
+    datum,
+    ocenjevalec: `${MODEL_DEEP} (model AI)`,
+    vprasanje: question("<naloga>"),
+    strosek_usd: { aplikacija: Number(r.appUsd.toFixed(2)), ocenjevalec: Number(r.gradeUsd.toFixed(2)), skupaj: Number((r.appUsd + r.gradeUsd).toFixed(2)) },
+    trajanje_min: r.trajanje_min,
+    opombe: r.stopped ? [`Zagon se je ustavil ob meji stroška ${MAX_USD} $ (izbranih ${tasks.length} primerov).`] : [],
+  });
+  // Vsi odgovori ostanejo lokalno (data/ ni v repozitoriju); v docs/ gre samo povzetek z napakami.
+  fs.mkdirSync(path.join(root, "data"), { recursive: true });
+  fs.writeFileSync(path.join(root, "data", `natancnost-${datum}-odgovori.json`), JSON.stringify(r.rows, null, 1));
+  if (summary.primeri < 20) {
+    console.error(`Ocenjenih je samo ${summary.primeri} primerov: premalo za objavo, meritev NI zapisana v docs/.`);
+    process.exit(1);
+  }
+  const file = writeMeasurement(summary);
+  for (const v of summary.vrstice) console.log(`${v.ime}: ${v.napake} napak od ${v.primeri} (manjših ${v.manjse_napake}; popravki ${v.popravki}, pregledi ${v.pregledi}; vrste: ${JSON.stringify(v.vrste_napak)})`);
+  console.log(`Strošek: ${summary.strosek_usd.skupaj} $, ${summary.trajanje_min} min. Zapisano: ${path.relative(root, file)} in docs/stroski-ai.md.`);
+  // Na Renderju (Shell) datoteke niso v repozitoriju: ta blok kopiraj in pošlji Claudu, ki ga shrani z --iz-json.
+  console.log(`\n===== POVZETEK ZA REPOZITORIJ (kopiraj vse med črtama) =====\n${JSON.stringify(summary)}\n===== KONEC =====`);
+  process.exit(0);
+}
+if (!CHECK && !MOCK && est > MAX_USD) {
   console.error(`Ocena presega mejo ${MAX_USD} $. Zmanjšaj --n ali povečaj --max-usd.`);
   process.exit(1);
 }

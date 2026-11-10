@@ -41,6 +41,33 @@ j: »Kako vemo, da Haiku najprej ne da napačnega rezultata?« Koda (`server/liv
 
 j (2026-11-01, digitalni razred): »Naj se nikoli ne zgodi«, da inštruktor potrdi napačen ali zavrne pravilen odgovor. Zato `server/live-check.js` 4: ko učenec pošlje rezultat ali trditev (število, »=« ali odgovor na inštruktorjevo vprašanje), se odgovor ne pretaka, dokler sodba ni preverjena. Če je naloga iz prvega sporočila rešljiva z reševalnikom, koda učenčevo vrednost primerja z rešitvijo in model dobi sodbo v skriti opombi (brez stroška). Sicer, kadar odgovor izreče sodbo (»točno«, »ni prav« …), jo pregleda Sonnet (vrsta `sodba`, ločen dnevni števec od vrste `preverjanje`, ~0,005–0,01 $, vsi modeli in paketi, ne v lahkem načinu, največ `EVKLID_VERDICT_DAILY_USD` = 2 $ na dan, ~200–400 pregledov); ob napačni sodbi isti model odgovori še enkrat z ugotovitvijo v skriti opombi (vrsta `popravek`). Učenec vidi šele končni odgovor (zamik nekaj sekund).
 
+## Natančnost inštruktorja: meritve (j, 2026-11-10)
+
+Stran evklid.app/zakaj-evklid pokaže zadnjo meritev iz `docs/meritve/natancnost-<datum>.json` (server/vidnost.js; test/vidnost.test.js preveri, da se stran ujema z datoteko). Na stran gredo samo izmerjene številke.
+
+<!-- NATANCNOST:ZACETEK (piše scripts/primerjava-modelov.js, ne urejaj ročno) -->
+Zadnja meritev: 4. 11. 2026, 50 rešenih primerov iz lekcij, ocenjevalec Opus (model AI) (`docs/meritve/natancnost-2026-11-04.json`).
+
+| Kaj je merjeno | Odgovori z napako | Primeri |
+|---|---|---|
+| Hitri model | 12 % | 50 |
+| Hitri model z več razmisleka (samo naloge srednje šole in tekmovanj) | 4 % | 23 |
+| Zmogljivejši model | 2 % | 50 |
+
+- Merjen je sam model (skripta mu naroči, naj nalogo reši po korakih), brez sprotnega preverjanja s programom (server/live-check.js).
+- Meritev je bila pred izboljšavo navodil inštruktorja (docs/spremembe-prompta.md, 4. 11.).
+- Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek.
+- Meritve celega odgovora s preverjanjem še ni: node scripts/primerjava-modelov.js --s-preverjanjem.
+<!-- NATANCNOST:KONEC -->
+
+**Meritev celega odgovora (s preverjanjem s programom).** `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` pošlje rešene primere iz lekcij skozi pravo pot klepeta (isti prompt, model po stopnji kot pri plačljivem paketu, `server/live-check.js`), vsakega dvakrat v istem zagonu: z izklopljenim preverjanjem (`EVKLID_LIVE_CHECK=0`, sam model) in z vklopljenim (odgovor, kot ga vidi učenec: skrita opomba s preverjenim rezultatom, preračun računov, »Popravek:«, pregled z zmogljivejšim modelom pri tekmovanjih in fakulteti). Besedilo, ki ga vidi učenec, oceni Opus proti rešitvi iz lekcije; koda dodatno preveri, ali so končna števila iz vrstice »Odgovor« v odgovoru (neujemanja so izpisana za ročni pregled, ne štejejo samodejno kot napaka). V povzetku so samo primeri, ocenjeni v obeh pogojih.
+
+- **Vzorec:** privzeto 100 primerov (OŠ 30, SŠ 30, tekmovanja 15, fakulteta 25; en primer na lekcijo, težji imajo prednost, seme 1), razvrščenih izmenično po stopnjah. Pri 50 primerih pomeni ena napaka 2 odstotni točki, pri 100 eno; več kot 100 bi stalo več kot 10 $.
+- **Strošek:** ocena ~0,095 $ na primer (večino stane ocenjevalec Opus), vseh 100 primerov ~9,5 $ in ~2 uri. Z `--max-usd 5` se zagon ustavi, preden bi presegel 5 $ (ocena: približno 50 do 60 primerov, ~1 ura), in zapiše uravnotežen del. Za vseh 100: `--max-usd 10`.
+- **Kaj meritev izklopi:** predpomnilnik odgovorov, nadgradnje po mesečnem proračunu, varnostni pregled sporočil in dnevno mejo pregledov z zmogljivejšim modelom (v aplikaciji 0,30 $ na dan za vse učence; ko je porabljena, pregleda ni). Uporabi bazo v pomnilniku, prave baze se ne dotakne.
+- **Brez ključa** (ali z `EVKLID_MOCK=1`) skripta konča brez klica in brez zapisa; `--dry` izpiše izbor in oceno stroška.
+- **Zagon na Renderju:** Render → evklid → **Shell**, vpiši `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` in počakaj do konca (med zagonom ne združuj ničesar v main, nova objava prekine Shell). Na koncu skripta izpiše blok »POVZETEK ZA REPOZITORIJ«: kopiraj ga in pošlji Claudu. Claude ga shrani v datoteko in požene `node scripts/primerjava-modelov.js --iz-json <datoteka>`, ki zapiše `docs/meritve/natancnost-<datum>.json` in zgornjo tabelo (brez klicev). Datoteke, ki jih skripta zapiše na Renderju, niso v repozitoriju.
+
 ## Števec porabe za skrbnika (2026-10-29)
 
 - V zgornji vrstici je števec porabe AI (€ danes) za vse profile. Vidi ga samo skrbnik: na računalniku, kjer teče Evklid, ali račun z e-naslovom v `EVKLID_ADMIN_EMAILS`. Na računalniku lahko v števcu z gumbom »Pokaži števec tudi na mojem telefonu« svoj račun označiš kot skrbniški.

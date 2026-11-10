@@ -3,7 +3,7 @@
 // - /robots.txt, /sitemap.xml, /llms.txt (pravi Content-Type; pred statičnimi datotekami),
 // - /o-evklidu: statična stran brez JavaScripta (public/o-evklidu.html, spremenljivke {{…}} in ikone {{i:ime}}),
 // - /zakaj-evklid: enaka tehnika (public/zakaj-evklid.html): kako Evklid preverja rezultate, izmerjena natančnost
-//   (ACCURACY, iz docs/stroski-ai.md) in primerjava pristopa s splošnimi klepetalniki, brez imen in cen tekmecev,
+//   (zadnja meritev iz docs/meritve/, accuracy()) in primerjava pristopa s splošnimi klepetalniki, brez imen in cen tekmecev,
 // - structuredData(): schema.org za vstopno stran; public/index.html ga nosi zapisanega, test/vidnost.test.js
 //   preveri, da se ujema s cenikom (server/accounts/plans.js) in jeziki vmesnika.
 // Cene, dnevi preizkusa in število jezikov pridejo iz kode, da se strani ne razidejo s cenikom.
@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
 import { icon } from "../public/icons.js";
+import { latestMeasurement, pctText, slDate } from "../scripts/meritev-natancnosti.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
@@ -39,25 +40,52 @@ export function uiLanguages() {
   return ["sl", ...codes];
 }
 
-// Izmerjena natančnost inštruktorja (docs/stroski-ai.md »Srednja šola: Haiku z več razmisleka«, meritev 4. 11. 2026,
-// scripts/primerjava-modelov.js): rešeni primeri iz lekcij, odgovori modela BREZ sprotnega preverjanja s programom,
-// ocenil jih je model Opus proti rešitvi iz lekcije. Delež odgovorov z napako. Način z več razmisleka je bil izmerjen
-// samo na nalogah srednje šole in tekmovanj (thinkTasks), ne na vseh. Ob novi meritvi popravi tu in v dokumentu;
-// test/vidnost.test.js preveri, da se številke ujemajo z dokumentom.
-export const ACCURACY = { date: "4. 11. 2026", tasks: 50, plainPct: 12, strongPct: 2, thinkTasks: 23, thinkPct: 4 };
-const count = (pct, n) => Math.round((pct * n) / 100);
-
-export function facts() {
+// Izmerjena natančnost inštruktorja: zadnja meritev iz docs/meritve/natancnost-<datum>.json (piše jo
+// scripts/primerjava-modelov.js, glej docs/stroski-ai.md »Natančnost inštruktorja: meritve«). Na stran gredo samo
+// zapisana števila: stara meritev (vrsta "model", 4. 11. 2026) ima le odstotke in število nalog, zato brez »X od N«.
+// vrsta "aplikacija" = isti primeri brez preverjanja s programom in z njim (cel odgovor, kot ga vidi učenec).
+export function accuracy(m = latestMeasurement()) {
+  if (!m) return null;
+  const rows = m.vrstice.map((r) => ({ ...r, pct: pctText(r), counted: Number.isFinite(r.napake) }));
+  const part = (r, en) =>
+    en
+      ? `${r.ime_en || r.ime}: ${r.pct.replace(",", ".")}% of answers had an error (${r.primeri} tasks${r.opomba_en ? `, ${r.opomba_en}` : ""})`
+      : `${r.ime}: ${r.pct} % odgovorov z napako (${r.primeri} nalog${r.opomba ? `, ${r.opomba}` : ""})`;
+  const app = m.vrsta === "aplikacija";
+  const date = slDate(m.datum);
   return {
-    accDate: ACCURACY.date,
-    accTasks: ACCURACY.tasks,
-    accPlain: ACCURACY.plainPct,
-    accPlainN: count(ACCURACY.plainPct, ACCURACY.tasks),
-    accStrong: ACCURACY.strongPct,
-    accStrongN: count(ACCURACY.strongPct, ACCURACY.tasks),
-    accThinkTasks: ACCURACY.thinkTasks,
-    accThink: ACCURACY.thinkPct,
-    accThinkN: count(ACCURACY.thinkPct, ACCURACY.thinkTasks),
+    ...m,
+    app,
+    date,
+    rows,
+    rowsHtml: rows
+      .map((r) => `<tr><th scope="row">${esc(r.ime)}${r.opomba ? `<small>${esc(r.opomba)}</small>` : ""}</th><td>${r.pct} %${r.counted ? ` <small>${r.napake} od ${r.primeri}</small>` : ""}</td><td>${r.primeri}</td></tr>`)
+      .join("\n          "),
+    sentence:
+      `Meritev ${date}, ${m.primeri} rešenih primerov iz lekcij. ${rows.map((r) => part(r, false)).join(". ")}. ` +
+      (app
+        ? "Isti primeri so šli skozi Evklidov klepet dvakrat: brez preverjanja s programom in z njim. Odgovore je ocenil model umetne inteligence. Vzorec je majhen."
+        : "Merili smo sam model, brez preverjanja s programom in pred izboljšavo navodil inštruktorja. Odgovore je ocenil model umetne inteligence. Vzorec je majhen. Meritev celega odgovora s preverjanjem še pripravljamo."),
+    sentenceEn:
+      `Measurement of ${m.datum}, ${m.primeri} worked examples from the app's lessons. ${rows.map((r) => part(r, true)).join(". ")}. ` +
+      (app
+        ? "The same examples went through Evklid's chat twice: without the program check and with it. Graded by an AI model. The sample is small."
+        : "This measured the model alone, without the program check and before the tutor's instructions were improved. Graded by an AI model. The sample is small. A measurement of the full answer with the program check is in preparation."),
+  };
+}
+
+export function facts(measurement) {
+  const acc = accuracy(measurement);
+  return {
+    accDate: acc?.date ?? "",
+    accTasks: acc?.primeri ?? "",
+    accSentence: acc?.sentence ?? "",
+    accSentenceEn: acc?.sentenceEn ?? "",
+    accRows: acc?.rowsHtml ?? "", // že ubežan HTML, v predlogi {{{accRows}}}
+    accAny: !!acc,
+    accApp: !!acc?.app,
+    accModel: !!acc && !acc.app,
+    accThinkTasks: acc?.rows.find((r) => r.kljuc === "razmislek")?.primeri ?? "",
     name: BRAND.name,
     domain: BRAND.domain,
     trialDays: TRIAL_DAYS,
@@ -99,9 +127,8 @@ export function llmsTxt() {
 - Predmeti: matematika, fizika, kemija, biologija in naravoslovje. Ni samo matematika.
 - Inštruktor naloge ne reši namesto učenca: z namigi in vprašanji ga vodi korak za korakom.
 - Skener nalog: učenec nalogo fotografira s kamero ali jo napiše z roko, ${f.name} jo prebere.
-- Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; izračune in rezultate preveri Evklidov program (številke izračuna program, ne umetna inteligenca).
-- Izmerjena natančnost (${f.accDate}, ${f.accTasks} rešenih primerov iz lekcij, odgovori modela brez preverjanja s programom, ocenjevalec je bil model AI): hitri model ${f.accPlain} % odgovorov z napako, zmogljivejši model ${f.accStrong} %; hitri model z več razmisleka ${f.accThink} % na ${f.accThinkTasks} nalogah srednje šole in tekmovanj. Vzorec je majhen. Natančnosti drugih orodij nismo merili. Podrobno: ${ORIGIN}${WHY_PATH}
-- Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
+- Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; račune v enačbah, odvodih in daljših izračunih preveri Evklidov program.
+${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orodij nismo merili. Podrobno: ${ORIGIN}${WHY_PATH}\n` : ""}- Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
 - Priprava na NPZ in maturo s preteklimi izpitnimi polami ter naloge v slogu tekmovanj.
 - Naprave: spletni brskalnik in aplikacija za Android.
 - Cena: ${f.trialDays} dni brezplačno brez kartice; nato brezplačni paket (${f.freeDaily} vprašanj inštruktorju na dan) ali naročnina: osnovna šola ${f.osM} na mesec (${f.osY} na leto), srednja šola ${f.ssM} (${f.ssY}), fakulteta ${f.faksM} (${f.faksY}), družina (2–4 profili) ${f.famM} (${f.famY}). Učiteljski račun je brezplačen. ${f.name} je plačljiva aplikacija z brezplačnim paketom; ni odprtokodni ali študentski projekt.
@@ -114,9 +141,8 @@ export function llmsTxt() {
 - The app is written in Slovenian; the interface is available in ${f.languages} languages.
 - The tutor does not hand out the solution: it guides the student step by step with hints and questions.
 - Students can photograph a task with the camera or write it by hand.
-- The tutor's answers are written by Anthropic's Claude models; calculations and results are checked by Evklid's own program code (numbers are computed by code, not by the AI model).
-- Measured accuracy (${f.accDate}, ${f.accTasks} worked examples from the app's lessons, model answers without the program check, graded by an AI model): the fast model had an error in ${f.accPlain}% of answers, the stronger model in ${f.accStrong}%; the fast model with extended thinking in ${f.accThink}% on ${f.accThinkTasks} secondary-school and competition tasks. The sample is small. Other tools were not measured.
-- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, past national exam papers (NPZ, matura) and competition-style tasks.
+- The tutor's answers are written by Anthropic's Claude models; calculations in equations, derivatives and longer computations are checked by Evklid's own program code.
+${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measured.\n` : ""}- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, past national exam papers (NPZ, matura) and competition-style tasks.
 - Platforms: web browser and an Android app.
 - Pricing: ${f.trialDays}-day free trial without a card; then a free plan (${f.freeDaily} tutor questions per day) or a subscription from ${dec(LEVEL_PRICES.OS.month)} EUR per month (primary school), ${dec(LEVEL_PRICES.SS.month)} EUR (secondary school), ${dec(LEVEL_PRICES.FAKS.month)} EUR (university). Teacher accounts are free. It is a commercial app with a free plan, not an open-source or student project.
 - Privacy: no ads, data is not sold; the server and database are in the EU (Frankfurt). Anthropic (USA) does not use the data to train models.
@@ -204,16 +230,27 @@ export function faqData(html) {
 // JSON v <script type="application/ld+json">: »<« kot \u003c, da besedilo ne more zapreti oznake.
 export const ldScript = (data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`;
 
-function staticPage(file) {
-  const vars = facts();
-  const html = fs
-    .readFileSync(file, "utf8")
+// Pogojni deli predloge: <!--ce:kljuc-->…<!--/ce:kljuc--> ostane, če je dejstvo resnično (<!--ce:!kljuc-->, če ni).
+// Deli so lahko vgnezdeni, zato ponavljamo, dokler se besedilo spreminja.
+function conditionals(html, vars) {
+  let prev;
+  do {
+    prev = html;
+    html = html.replace(/<!--ce:(!?)(\w+)-->\n?([\s\S]*?)<!--\/ce:\1\2-->\n?/g, (_m, not, k, body) => (!!vars[k] === !not ? body : ""));
+  } while (html !== prev);
+  return html;
+}
+function staticPage(file, measurement) {
+  const vars = facts(measurement);
+  const html = conditionals(fs.readFileSync(file, "utf8"), vars)
     .replace(/\{\{i:([\w-]+)\}\}/g, (_m, name) => icon(name))
+    .replace(/\{\{\{(\w+)\}\}\}/g, (m, k) => (k in vars ? String(vars[k]) : m))
     .replace(/\{\{(\w+)\}\}/g, (m, k) => (k in vars ? esc(vars[k]) : m));
   return html.replace("</head>", `  ${ldScript(faqData(html))}\n</head>`);
 }
 export const aboutPage = () => staticPage(PAGE);
-export const whyPage = () => staticPage(WHY_PAGE);
+// measurement: samo za teste (stran z drugo meritvijo); strežnik vedno pokaže zadnjo iz docs/meritve/.
+export const whyPage = (measurement) => staticPage(WHY_PAGE, measurement);
 
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.
 export function mountVidnost(app) {
@@ -227,7 +264,7 @@ export function mountVidnost(app) {
   app.get("/robots.txt", text("text/plain; charset=utf-8", robotsTxt));
   app.get("/sitemap.xml", text("application/xml; charset=utf-8", sitemapXml));
   app.get("/llms.txt", text("text/plain; charset=utf-8", llmsTxt));
-  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, whyPage]]) {
+  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, () => whyPage()]]) {
     let page = null;
     app.get(route, (_req, res) => {
       const html = page || make();

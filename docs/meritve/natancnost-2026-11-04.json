@@ -1,0 +1,39 @@
+{
+ "shema": 1,
+ "datum": "2026-11-04",
+ "vrsta": "model",
+ "primeri": 50,
+ "ocenjevalec": "Opus (model AI)",
+ "vir": "docs/stroski-ai.md »Srednja šola: Haiku z več razmisleka«; scripts/primerjava-modelov.js. Zapisani so samo odstotki in število nalog iz dokumenta, števila napak niso bila shranjena.",
+ "vrstice": [
+  {
+   "kljuc": "hitri",
+   "ime": "Hitri model",
+   "ime_en": "Fast model",
+   "primeri": 50,
+   "napake_pct": 12
+  },
+  {
+   "kljuc": "razmislek",
+   "ime": "Hitri model z več razmisleka",
+   "ime_en": "Fast model with extended thinking",
+   "primeri": 23,
+   "napake_pct": 4,
+   "opomba": "samo naloge srednje šole in tekmovanj",
+   "opomba_en": "secondary-school and competition tasks only"
+  },
+  {
+   "kljuc": "zmogljivejsi",
+   "ime": "Zmogljivejši model",
+   "ime_en": "Stronger model",
+   "primeri": 50,
+   "napake_pct": 2
+  }
+ ],
+ "opombe": [
+  "Merjen je sam model (skripta mu naroči, naj nalogo reši po korakih), brez sprotnega preverjanja s programom (server/live-check.js).",
+  "Meritev je bila pred izboljšavo navodil inštruktorja (docs/spremembe-prompta.md, 4. 11.).",
+  "Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek.",
+  "Meritve celega odgovora s preverjanjem še ni: node scripts/primerjava-modelov.js --s-preverjanjem."
+ ]
+}
