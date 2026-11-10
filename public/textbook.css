@@ -44,10 +44,9 @@
 .tb-badge.vaje { background: color-mix(in srgb, var(--ok) 16%, transparent); color: color-mix(in srgb, var(--ok) 72%, var(--text)); }
 
 /* PDF in zaklenjen interaktivni del */
-.tb-pdf { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 600; text-decoration: none; font-size: 0.92rem; }
+.tb-pdf { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; color: var(--accent); font-weight: 600; text-decoration: none; font-size: 0.92rem; }
 .tb-pdf:hover { text-decoration: underline; }
-/* Na dotik je povezava visoka le 23 px: površino za dotik povečamo na 44 px, videz ostane enak. */
-@media (hover: none) and (pointer: coarse) { .tb-pdf { padding-block: 11px; margin-block: -11px; } }
+.tb-unit-pdf { margin: 6px 0 0; }
 .tb-locked { border: 1px dashed var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
 .tb-checks ol { padding-inline-start: 1.3em; }
 .tb-checks > ol > li { margin-bottom: 12px; }

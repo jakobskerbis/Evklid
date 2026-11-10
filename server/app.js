@@ -29,6 +29,7 @@ import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPro
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
 import { printPage, printPageParts, printSignature, printSizeHint, streamParts } from "./textbook-print.js";
+import { createPdfStore, pdfDownloadName, printFallbackExists } from "./ucbenik-pdf.js";
 import { createPageCache } from "./tisk-predpomnilnik.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
@@ -234,7 +235,7 @@ export function createApp(store, opts = {}) {
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -357,13 +358,15 @@ export function createApp(store, opts = {}) {
   app.locals.tiskTokovi = () => ({ streams, collecting: [...collecting] }); // testi
   app.get("/ucbenik/:path{/:topic}", (req, res, next) => {
     const { path: key, topic = null } = req.params;
-    const cacheKey = `${key}/${topic || ""}`;
-    const sig = printSignature(key, topic);
+    // ?poglavje=<naslov sklopa>: »PDF poglavja« (samo en sklop poti, brez kazala). Pri lekciji in listu formul ga ni.
+    const unit = !topic && typeof req.query.poglavje === "string" && req.query.poglavje && req.query.poglavje.length <= 200 ? req.query.poglavje : null;
+    const cacheKey = `${key}/${topic || ""}${unit ? `?${unit}` : ""}`;
+    const sig = printSignature(key, topic, unit);
     if (sig == null) return res.status(404).send("Ta del učbenika ne obstaja.");
     const hit = printCache.peek(cacheKey, sig);
-    const hint = hit || topic ? 0 : printSizeHint(key);
-    if (hit || topic || hint <= printCache.maxBytes / 2) {
-      const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic));
+    const hint = hit || topic || unit ? 0 : printSizeHint(key);
+    if (hit || topic || unit || hint <= printCache.maxBytes / 2) {
+      const page = hit || printCache.get(cacheKey, sig, () => printPage(key, topic, unit));
       if (!page) return res.status(404).send("Ta del učbenika ne obstaja.");
       return printCache.send(req, res, page).catch(next);
     }
@@ -391,6 +394,70 @@ export function createApp(store, opts = {}) {
         if (collect) collecting.delete(cacheKey);
       });
   });
+
+  // Vnaprej izdelan PDF razreda, poglavja ali predmeta (server/ucbenik-pdf.js): prava datoteka z diska, ki jo
+  // telefon samo prenese (delni zahtevki Range, ETag iz zgoščene vrednosti vsebine). Če PDF-ja (še) ni ali ne
+  // ustreza sedanjim lekcijam, preusmeri na tisk v brskalniku (/ucbenik/…#natisni). Enaka pravila dostopa kot
+  // /ucbenik (besedilo lekcij je za vse; za skupnim geslom, kadar je vklopljeno).
+  const pdfStore = opts.pdfStore || createPdfStore();
+  app.locals.pdfStore = pdfStore;
+  // Datoteko pošlje express.static (Range, If-Range, 304, HEAD); ETag spodaj je iz vsebine lekcij, ne iz časa datoteke.
+  const pdfFiles = express.static(pdfStore.dir, { index: false, etag: false, cacheControl: false, dotfiles: "ignore", redirect: false });
+  app.get("/ucbenik-pdf/:path", (req, res, next) => {
+    const key = req.params.path;
+    const unit = typeof req.query.poglavje === "string" && req.query.poglavje && req.query.poglavje.length <= 200 ? req.query.poglavje : null;
+    const lang = typeof req.query.l === "string" && /^[A-Za-z-]{2,12}$/.test(req.query.l) ? req.query.l : "";
+    const fallback = () => {
+      if (!printFallbackExists(key, unit)) return res.status(404).send("Ta del učbenika ne obstaja.");
+      const q = new URLSearchParams();
+      if (unit) q.set("poglavje", unit);
+      if (lang) q.set("l", lang);
+      for (const h of ["Content-Type", "Content-Disposition", "ETag"]) res.removeHeader(h);
+      res.set("Cache-Control", "no-store");
+      res.redirect(302, `/ucbenik/${encodeURIComponent(key)}${q.size ? `?${q}` : ""}#natisni`);
+    };
+    const hit = pdfStore.find(key, unit);
+    if (!hit) return fallback();
+    const name = pdfDownloadName(key, unit) || hit.name;
+    const ascii = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\x20-\x7e]/g, "_").replace(/["\\]/g, "_");
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `inline; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(name)}`,
+      ETag: `"${hit.etag}"`,
+      "Cache-Control": "no-cache", // vedno preveri ETag (304 brez prenosa); nova izdaja lekcij pride takoj
+    });
+    req.url = `/${hit.name}`; // ime iz kazala (samo črke, številke, pika, vezaj; server/ucbenik-pdf.js FILE_RE)
+    pdfFiles(req, res, (err) => (err ? next(err) : fallback())); // datoteka je med tem izginila: rezerva
+  });
+
+  // Po zagonu (server/index.js) v ozadju izriše strani razredov v predpomnilnik, da prvi bralec ne čaka na izris
+  // (hladen izris razreda 0,3–2 s procesorja, na Renderju počasneje). Lekcijo za lekcijo s predahom med njimi
+  // (glavna nit ostane prosta), le strani do 1/8 meje, skupaj do polovice meje predpomnilnika in brez velikih
+  // programskih učbenikov (ti gredo kos za kosom). EVKLID_TISK_PREDGREJ=0 ga izklopi. Predpomnilnik je v pomnilniku
+  // (podpis vsebuje različice lekcij, ki se ob zagonu štejejo na novo): disk bi prihranil le izris, ne 28 s izrisa v brskalniku.
+  app.locals.tiskPredgrej = async () => {
+    if (process.env.EVKLID_TISK_PREDGREJ === "0") return 0;
+    let n = 0;
+    for (const book of listBooks()) {
+      for (const p of book.paths) {
+        const cacheKey = `${p.key}/`;
+        const sig = printSignature(p.key, null);
+        if (sig == null || printSizeHint(p.key) > printCache.maxBytes / 8) continue;
+        if (printCache.stats().bytes > printCache.maxBytes / 2) return n;
+        if (printCache.peek(cacheKey, sig)) continue;
+        const parts = printPageParts(p.key, null);
+        if (!parts) continue;
+        let html = "";
+        for (const part of parts) {
+          html += part;
+          await new Promise((ok) => setTimeout(ok, Number(process.env.EVKLID_TISK_PREDAH_MS ?? 20))); // predah: zahtevki in klepet ne čakajo na izris
+        }
+        printCache.put(cacheKey, sig, Buffer.from(html));
+        n++;
+      }
+    }
+    return n;
+  };
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor
   const pendingSettings = new Map(); // pogovor → predlog spremembe šole/letnika, ki čaka na potrditev
