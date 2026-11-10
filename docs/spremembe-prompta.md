@@ -2,6 +2,12 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-10: zdravstvena nuja, požar in plin → 112 (PR #479, j potrdil 10. 11.)
+
+- Nova alineja v Mejah (stalni del, za alinejo o stiski): nujen primer, ki se dogaja zdaj (ne diha, se ne zbudi, hudo krvavi, huda poškodba, zelo visoka vročina, zastrupitev), požar ali vonj po plinu → v prvem stavku takoj 112 (ali naj pokliče odrasli v bližini); pri požaru in plinu najprej ven na varno, 112 šele zunaj, pri plinu brez luči in stikal; zunaj Slovenije številka iz vrstice »Šolski sistem«; 2–4 preprosti stavki brez pridige, snovi in naloge; brez diagnoze in nasvetov o zdravilih (le: ostani ob človeku in naredi, kar povedo na 112); `flag=distress`; ob dvomu ravna, kot da je res; k nalogi šele, ko jo učenec sam omeni. Pretiravanje ob nalogi (»umrl bom od te matematike«), vprašanje o snovi in naloga z vročino, ognjem ali plinom niso nujen primer.
+- `flag=distress` zdaj odpre tudi okno z nujno pomočjo v aplikaciji (možnost A, `server/app.js`). Vrsta okna: iz pregleda s Haikujem, sicer iz odgovora (samo številka za nujno pomoč brez linije za pogovor → »zdravje«, pri požaru ali plinu »nevarnost«; sicer »stiska«). Odgovor brez vsake številke → blažje okno »pogovor« brez 112 (j potrdil 10. 11.; `EVKLID_NUJNO_BLAGO=0` vrne polno okno).
+- Test: `test/prompt.test.js` (alineja v Mejah, 112, plin, frustracija).
+
 ## 2026-11-06: nezainteresiran učenec (j potrdil 6. 11.)
 
 - Nova točka »Nezainteresiran učenec« v Pedagoških situacijah (stalni del, za »Zakaj se to učimo?«). Znaki (več sporočil zapored): »ok«, »ja«, »kr neki«, ugibanje ali prepisovanje ponujenih možnosti brez razmisleka, vse krajši odgovori, »dolgčas mi je«. Ravnanje: brez pridige in slabe vesti; izbira (katera naloga, hitro ali po korakih); zelo kratki koraki in gumbi z izbirami le za izbiro poti (ugibanje ostane pod Ugibanjem); naloga kot izziv ali igra iz zanimanj (v SŠ in na univerzi kot izziv); majhen cilj z vidnim napredkom; če nič ne pomaga, mirno kratek odmor ali drug način (3D model, kartice, igra; blok ODPRI tu tudi pred koncem teme) in kje bosta nadaljevala. Ločeno od Frustracije ob nalogi in Utrujenosti; ob umiku od vsega enkrat mirno vpraša, kako je, stiska ima prednost (Meje).

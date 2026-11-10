@@ -49,7 +49,7 @@ export function migratePodari(db) {
 
 // ctx: { db, stripe, json, log, ensureCustomer, baseUrl, isMinor }
 export function mountPodari(app, ctx) {
-  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing = () => false } = ctx;
+  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing = () => false, pilotOf = () => false } = ctx; // pilotOf: član pilota brez »Podari Evklid« (j 2026-11-10)
   migratePodari(db);
 
   const paidSum = () => db.prepare("SELECT COALESCE(SUM(amount), 0) AS c FROM podari_fund WHERE status = 'paid'").get().c;
@@ -124,6 +124,7 @@ export function mountPodari(app, ctx) {
 
   app.post("/api/billing/podari", json, async (req, res) => {
     const p = req.parent;
+    if (pilotOf(p)) return res.status(409).json({ error: "Med pilotom nakup ni mogoč. Po koncu pilota bo spet na voljo.", pilot: true });
     if (!stripe.enabled) return res.status(503).json({ error: "Plačila še niso nastavljena (manjka STRIPE_SECRET_KEY)." });
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);

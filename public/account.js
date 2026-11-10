@@ -1114,6 +1114,8 @@ function giftBox(acc) {
     .join("");
   // Cena v obliki jezika vmesnika (sl: 49,00 €, en: €49.00), ker je kartica v celoti prevedena.
   const fmt = (c) => (c / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
+  // V pilotu brez nakupa (j 2026-11-10): samo že kupljene kode, če obstajajo.
+  if (acc.gift_buy === false) return list ? `<div class="card gift-card"><h2>${icon("gift")} ${esc(t("gift.title"))}</h2><ul class="gift-list">${list}</ul></div>` : "";
   const prices = acc.gift_prices || { OS: acc.gift_price || 9900 };
   const vals = Object.values(prices);
   const price = vals.length > 1 ? `${fmt(Math.min(...vals))} – ${fmt(Math.max(...vals))}` : fmt(vals[0]);

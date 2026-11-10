@@ -129,6 +129,8 @@ export class Usage {
     this.priorSpentOf = () => 0;
     // Član pilota (accounts/index.js): ob meji besedilo brez »obdobja paketa« (block.shareOut, pregled #477 B3 P3-1).
     this.pilotOf = () => false;
+    // Ob prvi rezervaciji klica AI za profil (accounts/index.js: zaklep stopnje pilota ob prvi porabi v mesecu, #477).
+    this.onUse = null;
     this.onLog = null;
     this.inflight = new Map();
   }
@@ -137,7 +139,8 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf, onUse } = {}) {
+    if (onUse) this.onUse = onUse;
     if (unlimitedOf) this.unlimitedOf = unlimitedOf;
     if (priorSpentOf) this.priorSpentOf = priorSpentOf;
     if (pilotOf) this.pilotOf = pilotOf;
@@ -647,6 +650,12 @@ export class Usage {
       take(usd) {
         if (!(usd >= 0)) return false;
         if (self.headroom(studentId, capsFn()) < usd) return false;
+        // Klic AI gre naprej: zaklep stopnje pilota nastopi zdaj, ob prvi porabi v mesecu (j 2026-11-10), ne ob pogledu.
+        if (studentId != null && usd > 0 && self.onUse) {
+          try {
+            self.onUse(studentId);
+          } catch {}
+        }
         add(usd);
         return true;
       },

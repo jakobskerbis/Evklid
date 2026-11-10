@@ -279,7 +279,10 @@ export function mountAccounts(app, store, opts = {}) {
   const monthKey = () => new Date().toISOString().slice(0, 7);
   const levelKeyPrefix = (parentId) => `pilot_stopnja_p${parentId}_`;
   // Zaklep pilotnega RAČUNA v tem mesecu (pregled #477 B2/C1, potrdil j 2026-11-06 19:5x): { level, family }.
-  // level = najvišja stopnja profilov ob prvem pogledu v mesecu; family = ali je imel račun takrat več profilov
+  // Zaklep nastopi ob PRVI porabi AI v mesecu (j 2026-11-10), ne ob pogledu: dokler račun ta mesec ni porabil AI,
+  // velja sprotna stopnja (učenec jo lahko še zamenja) in nič se ne zapiše. Zapiše se ob prvi rezervaciji klica AI
+  // (usage.js onUse → commit), ob že zapisani porabi v tem mesecu ali ob podedovanem zaklepu izbrisanega računa.
+  // level = najvišja stopnja profilov ob prvi porabi AI v mesecu; family = ali je imel račun takrat več profilov
   // (uporabi se samo pri PILOT_LOCK_PROFILES, A3-2). Menjava stopnje, izbris profila in nov profil višje stopnje sredi
   // meseca meje in stopenj ne dvignejo (profil dobi največ to stopnjo); naslednji mesec velja nova. Nov račun z istim
   // naslovom v istem mesecu podeduje zaklep izbrisanega računa (zapis pilot_prej_*, pregled #477 A3-1).
@@ -291,7 +294,10 @@ export function mountAccounts(app, store, opts = {}) {
     } catch {}
     return STOPNJE.includes(v) ? { level: v, family: false } : null; // stari zapis: samo stopnja
   };
-  function pilotLock(parentId) {
+  // Ali je račun ta mesec (UTC, kot monthKey) že porabil AI (zapis v usage, tudi prekinjen klic ali rezerva).
+  const usedAiThisMonth = (parentId) =>
+    !!db.prepare("SELECT 1 FROM usage WHERE parent_id = ? AND cost_usd > 0 AND created_at >= datetime('now','start of month') LIMIT 1").get(parentId);
+  function pilotLock(parentId, { commit = false } = {}) {
     const key = `${levelKeyPrefix(parentId)}${monthKey()}`;
     const saved = parseLock(kv.get(key));
     if (saved) return saved;
@@ -300,6 +306,8 @@ export function mountAccounts(app, store, opts = {}) {
     const top = levels.reduce((t, l) => (rang(l) > rang(t) ? l : t), levels[0] || "OS");
     const prior = pilotPrior(getParent(parentId)); // izbrisan račun z istim naslovom ta mesec
     const lock = prior?.level ? { level: prior.level, family: !!prior.family } : { level: top, family: ids.length > 1 };
+    // Pred prvo porabo AI v mesecu: sprotna stopnja, brez zapisa (j 2026-11-10).
+    if (!commit && !prior && !usedAiThisMonth(parentId)) return lock;
     db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(key, JSON.stringify(lock));
     return parseLock(kv.get(key)) || lock;
   }
@@ -697,6 +705,17 @@ export function mountAccounts(app, store, opts = {}) {
   aiUsage.configure({ blockFor: aiBlockFor, creditOverOf: passCreditOver });
   // Zapis porabe: predpomnilnika (šola, bazena) in knjiga šole – poraba, ki je šla pod mejo šole, ostane v šoli tudi,
   // ko učenec razred zapusti (pregled #462 H7). Šola, katere meja velja (capsOf), je prva z mejo.
+  // Prvi klic AI profila pilota v mesecu zaklene stopnjo računa za ta mesec (j 2026-11-10, usage.js hold.take).
+  function pilotOnUse(studentId) {
+    const owner = ownerOf(studentId);
+    if (owner && rightsFor(studentId).personalTier === "pilot") pilotLock(owner, { commit: true });
+  }
+  // Pred menjavo stopnje profila (PUT /api/students/:id, app.js): če je račun ta mesec že porabil AI brez rezervacije
+  // (zaklepa še ni), se zaklene sedanja stopnja, ne nova (pregled #545).
+  function pilotBeforeLevelChange(studentId) {
+    const owner = ownerOf(studentId);
+    if (owner && rightsFor(studentId).personalTier === "pilot") pilotLevel(owner);
+  }
   function schoolOnLog(studentId, cost) {
     poolMemo.clear();
     try {
@@ -711,7 +730,7 @@ export function mountAccounts(app, store, opts = {}) {
       schools.clearCache();
     }
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, pilotOf: (id) => rightsFor(id).personalTier === "pilot", onLog: schoolOnLog });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, pilotOf: (id) => rightsFor(id).personalTier === "pilot", onLog: schoolOnLog, onUse: pilotOnUse });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
@@ -746,8 +765,9 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   // Poraba AI brezplačnih učencev v tem mesecu (učenci brez naročnine, preizkusa, bonusa ali kode).
+  // Varnostni pregledi (server/nujno.js) plača aplikacija, zato ne jemljejo brezplačnega bazena.
   const monthUsdByStudent = () =>
-    db.prepare("SELECT student_id AS id, COALESCE(SUM(cost_usd),0) AS usd FROM usage WHERE created_at >= date('now','start of month') GROUP BY student_id").all();
+    db.prepare("SELECT student_id AS id, COALESCE(SUM(cost_usd),0) AS usd FROM usage WHERE created_at >= date('now','start of month') AND kind != 'varnost' GROUP BY student_id").all();
   // Gostje: kvota velja za omrežje (vsi gostje z istega omrežja skupaj, tudi izbrisani), ne za profil.
   const quotaScope = (studentId) => {
     const net = guests.netOf(studentId);
@@ -1496,8 +1516,10 @@ export function mountAccounts(app, store, opts = {}) {
       // Osebno ob šolski licenci: ponudi se, ko ima vsaj en otrok šolsko licenco (samo v evrih).
       school_plans: childIds(p.id).some((id) => schools.hasLicence(id)) && currencyOf(req, p) === "EUR" ? SCHOOL_PLANS : [],
       gifts: gifts ? gifts.listFor(p.id) : [],
+      // V pilotu brez nakupa darilne kode in brez »Podari Evklid« (j 2026-11-10); strežnik nakup zavrne (409).
+      gift_buy: !isPilotParent(p),
       guarantee: guarantee ? guarantee.viewFor(p) : null,
-      podari: podari ? podari.stats() : null,
+      podari: podari && !isPilotParent(p) ? podari.stats() : null,
       // Darilna koda po letni ceni stopnje (99 / 139 / 199 €).
       gift_prices: GIFT_PRICES,
       gift_price: GIFT_PRICES.OS,
@@ -1512,7 +1534,8 @@ export function mountAccounts(app, store, opts = {}) {
         name: c.name,
         birth_year: c.birth_year,
         level: levelOf(c.id),
-        level_locked: rightsFor(c.id).levelLocked,
+        // V pilotu brez oznake »stopnja zaklenjena« (j 2026-11-10); zaklep stopnje pilota še velja (pilotLock).
+        level_locked: rightsFor(c.id).personalTier !== "pilot" && rightsFor(c.id).levelLocked,
         premium: premiumFor(c.id),
         school: rightsFor(c.id).school,
         pass: publicPass(billing?.passes.latestFor(c.id)),
@@ -2245,8 +2268,8 @@ export function mountAccounts(app, store, opts = {}) {
     aiUsage,
     ageOf: ageOfStudent,
   });
-  gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, birthMissing, recordConsent: billing.recordConsent, paidActive });
-  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing });
+  gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, birthMissing, recordConsent: billing.recordConsent, paidActive, pilotOf: (p) => isPilotParent(p) });
+  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing, pilotOf: (p) => isPilotParent(p) });
   // Garancija: ob vračilu se naročnina takoj prekliče (profili preidejo na brezplačni paket).
   // Vračilo zajame vsa plačila naročnin kupca (garancija.js refundAll), zato prekličemo vse njegove veljavne naročnine
   // (dvojni nakup) in ne preidemo na drugo (pregled #497 B, N8). Napaka seznama ustavi vračilo (skrbnik poskusi znova).
@@ -2503,6 +2526,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { dropForeignAccess, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 
