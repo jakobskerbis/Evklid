@@ -181,6 +181,21 @@ test("linearna funkcija: k = tan α, ničla x₀ = −n/k", async () => {
   assert.equal(linearna(0, 0).vsakX, true);
 });
 
+test("linearna funkcija: premica je izrisana pri vsakem k (tudi strmem, k = 3 pri n = −1,8)", async () => {
+  const { linearna, potPremice } = await import("../public/skice/linearna.js");
+  const { fnPath } = await import("../public/sim/kit.js");
+  const A = { x0: -5, x1: 5, y0: -3.94, y1: 3.94, X: (x) => 150 + 28.4 * x, Y: (y) => 120 - 28.4 * y };
+  for (const k of [-100, -3, -1, 0, 0.5, 1.94, 2.44, 3, 50])
+    for (const n of [-3, -1.8, 0, 3]) {
+      const d = potPremice(linearna(k, n).f, A);
+      assert.match(d, /^M-?[\d.]+,-?[\d.]+L-?[\d.]+,-?[\d.]+$/, `k=${k} n=${n}`);
+      // Ni skrajšana: začne na levem in konča na desnem robu okna.
+      assert.ok(d.startsWith(`M${A.X(-5).toFixed(1)},`) && d.includes(`L${A.X(5).toFixed(1)},`));
+    }
+  // Redko vzorčenje (n = 2) ne sme zaradi »preskoka« izgubiti črte (preskok k·5 > 1,5 · razpon pri k > 2,36).
+  assert.ok(fnPath((x) => 3 * x - 1.8, A, { n: 2 }).includes("L"));
+});
+
 test("točke: razdalja, razpolovišče, ploščina in orientacija", async () => {
   const { tocke } = await import("../public/skice/tocke.js");
   const q = tocke([0, 0], [3, 4], [0, 2]);

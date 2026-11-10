@@ -416,7 +416,7 @@ export function fnPath(f, A, { from = A.x0, to = A.x1, n = 240 } = {}) {
     const x = from + ((to - from) * i) / n;
     const y = f(x);
     const ok = Number.isFinite(y) && y > A.y0 - span * 2 && y < A.y1 + span * 2;
-    if (ok && pen && prevY != null && Math.abs(y - prevY) > span * 1.5) pen = false;
+    if (n >= 20 && ok && pen && prevY != null && Math.abs(y - prevY) > span * 1.5) pen = false; // pri redkem vzorčenju (premica, n = 2) preskok ni nezveznost
     if (ok) d += `${pen ? "L" : "M"}${A.X(x).toFixed(1)},${A.Y(y).toFixed(1)}`;
     pen = ok;
     prevY = ok ? y : null;
