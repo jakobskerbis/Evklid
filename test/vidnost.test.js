@@ -42,6 +42,8 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   // Brez JavaScripta (pomočniki AI strani ne izrišejo) ostane kratek opis in povezava na /o-evklidu.
   const noscript = index.match(/<noscript>([\s\S]*?)<\/noscript>/)[1];
   assert.ok(noscript.includes('href="/o-evklidu"') && noscript.includes(BRAND.domain));
+  // Povezave v <noscript> ne smejo kazati na datoteke v public/: server/startup-files.js bi jih štel k prvemu odprtju.
+  for (const [, href] of noscript.matchAll(/href="([^"]+)"/g)) assert.ok(!existsSync(new URL(`../public${href}`, import.meta.url)), href);
 });
 
 test("schema.org v vstopni strani se ujema s cenikom in jeziki vmesnika", () => {
@@ -112,7 +114,7 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
   const n = (html.match(/<details/g) || []).length;
   assert.ok(n >= 6 && n <= 10, `${n} vprašanj`);
   assert.equal(faq.mainEntity.length, n);
-  for (const q of faq.mainEntity) assert.ok(q.name.endsWith("?") && q.acceptedAnswer.text.length > 20 && !/[<{]/.test(q.acceptedAnswer.text));
+  for (const q of faq.mainEntity) assert.ok(q.name.endsWith("?") && q.acceptedAnswer.text.length > 20 && !/[<>{&]/.test(q.name + q.acceptedAnswer.text));
   // Vikanje (docs/besedila.md): na strani za obiskovalce ni tikanja.
   const text = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ");
   assert.ok(!/\b(tvoj\w*|tebe|moraš|lahko\s+(fotografiraš|izbereš)|vprašaš)\b/i.test(text), "brez tikanja");

@@ -156,7 +156,17 @@ export function structuredData() {
 }
 
 // Vprašanja in odgovori strani »O Evklidu« kot schema.org FAQPage (isto besedilo, kot ga vidi obiskovalec).
-const strip = (html) => html.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, " ").trim();
+// Besedilo brez oznak. Oznake odstranjujemo, dokler se niz spreminja, in na koncu še vsak »<« ali »>«
+// (predloga v odgovorih ne uporablja entitet HTML; test/vidnost.test.js to preveri).
+const strip = (html) => {
+  let s = String(html);
+  let prev;
+  do {
+    prev = s;
+    s = s.replace(/<[^>]*>/g, "");
+  } while (s !== prev);
+  return s.replace(/[<>]/g, "").replace(/\s+/g, " ").trim();
+};
 export function faqData(html) {
   const items = [...html.matchAll(/<details[^>]*>\s*<summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g)];
   return {
