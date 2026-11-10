@@ -1036,7 +1036,6 @@ test("zaznavalnik: novi vzorci ne sprožijo alarma pri igri, športu, hrani in u
       "dež jih zdajle tepe na izletu",
       "vročina jih pravkar tepe",
       "mačka me šlata s tačko",
-      "zdravnik me je šlatal po trebuhu",
       "ta postopek nima več smisla",
       "ta stavek nima več smisla",
       "moja dieta nima več smisla",
@@ -1113,4 +1112,105 @@ test("strežnik: lokalna posredna stiska → eno blažje okno pred koncem; pregl
   const pred = (createFn) => nujnoPredZavrnitvijo({ text: "ne zdržim več", student: { id: 1, settings: {} }, usage, createFn });
   assert.equal((await pred(ne)).vrsta, "pogovor");
   assert.deepEqual([(await pred(stiska)).vrsta, (await pred(stiska)).ai], ["stiska", true]);
+});
+
+// Popravki po #553: močne izjave stiske (tudi narečno, brez šumnikov) dobijo polno okno, ne le blažjega; varovalke
+// (igra, knjiga, žival) veljajo samo v istem stavku; štirje stari zgrešeni primeri; šolsko besedilo brez 112.
+test("zaznavalnik: močna stiska narečno in brez šumnikov → polno okno (ne »pogovor«)", () => {
+  vsi(
+    [
+      "ne zdržim več, hočem umret",
+      "ne zdrzim vec hocm umret",
+      "ne zdržim več, ocem umrt",
+      "ne zdržim več, najrajši bi umrl",
+      "ne zdržim več, raje bi umrla",
+      "ne zdržim več, rajš bi bla mrtva",
+      "hočem crknt",
+      "ne zdržim več, želim si smrti",
+      "nočem več živet",
+      "nocem vec zivt",
+      "nočem več bit na tem svetu",
+      "ne zdržim več, ne bi več živel",
+      "ne zdržim več, nimam več zakaj živet",
+      "hočem se ubit",
+      "hočm se ubit",
+      "hocem se ubt",
+      "ne zdržim več, se bom ubu",
+      "da se hočem ubit",
+      "bolje bi bilo, da me ni",
+      "bolje bi blo da me ni več",
+      "bolš bi blo, da me ni",
+      "bolje da me ni",
+      "boljše bi bilo, da se nisem rodil",
+      "ne zdržim več, hočem se obesit",
+      "ne zdržim več, hočem skočit z bloka",
+      "hočem izginit za vedno",
+      "spis pišem o tem da se hočem ubit", // pisanje spisa ne utiša prve osebe
+    ],
+    "stiska",
+  );
+  // Pretiravanje in tretja oseba ne odpreta polnega okna.
+  vsi(["rajši bi umrl kot pisal ta test", "najraje bi umrla od smeha", "bolje da me ni doma, ko pride teta", "junak se hoče obesit", "obesil bom sliko", "v knjigi se junak hoče ubiti"], null);
+});
+
+test("zaznavalnik: štirje stari zgrešeni primeri in šolsko besedilo brez 112", () => {
+  vsi([
+    ["na krožku gori", "nevarnost"],
+    ["spis pišem o tem da se hočem ubit", "stiska"],
+    ["plakat gori, cela soba gori", "nevarnost"],
+    ["sošolcu teče kri iz glave", "zdravje"],
+    ["iz glave mu teče kri", "zdravje"],
+    ["v telovadnici se kadi", "nevarnost"],
+    ["kuhinja že gori", "nevarnost"],
+  ]);
+  // Ne sme sprožiti 112 (blažje okno bi bilo sprejemljivo, a ga tu ni).
+  for (const t of ["ogenj gori pri 300 °C", "kri teče po žilah", "v knjigi se junak hoče ubiti", "na hodniku gori luč", "v razredu gori lučka", "magnezij gori v razredu z belim plamenom"]) {
+    assert.ok(!["zdravje", "stiska", "nasilje", "nevarnost"].includes(zaznajNujno(t)), `${t} → ${zaznajNujno(t)}`);
+  }
+});
+
+test("zaznavalnik: varovalke igra, knjiga in žival samo v istem stavku; brez »at«, mame in zdravnika", () => {
+  vsi([
+    ["igrali smo igrico, ati mamo zdajle tepe", "nasilje"],
+    ["igrali smo igrico. zdaj ati mamo tepe", "nasilje"],
+    ["berem knjigo. oči je spet pijan in razbija", "nasilje"],
+    ["v Minecraftu je lepo, ampak sem se namenoma porezala", "stiska"],
+    ["my dad is hitting my mom at home", "nasilje"],
+    ["dad is beating mom at night", "nasilje"],
+    ["mama ni doma in stric me šlata", "nasilje"],
+    ["zdravnik me šlata, ko sva sama", "nasilje"],
+  ]);
+  vsi(
+    [
+      "v knjigi, ki jo beremo, je oče pijan in razbija",
+      "ko igramo igrico, ga brat zdajle tepe",
+      "brat ga tepe v šahu",
+      "dad beat mom at scrabble",
+      "Olimpija jih pravkar pretepa 3:0",
+      "mačka me šlata s tačko",
+    ],
+    null,
+  );
+});
+
+test("vmesnik: ob koncu odgovora brez okna strežnika pokaže lokalno okno (tudi blažje)", () => {
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const done = app.slice(app.indexOf("      done: (d) => {"), app.indexOf("      error: (d) => {"));
+  assert.match(done, /if \(!nujnoEl && takoj\) showNujno\(takoj, \{ before: bubble \}\);/);
+});
+
+test("prevod »Če se želiš s kom pogovoriti:« v vseh jezikih (pregled po #553)", () => {
+  const P = {
+    en: "If you want to talk to someone:",
+    hi: "अगर तुम किसी से बात करना चाहो:",
+    ur: "اگر تم کسی سے بات کرنا چاہو:",
+    sr: "Ако желиш да разговараш с неким:",
+    bs: "Ako želiš razgovarati s nekim:",
+  };
+  for (const f of readdirSync(new URL("../public/i18n/ui/", import.meta.url)).filter((x) => x.endsWith(".json"))) {
+    const v = JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"))["nujno.pogovor.uvod"];
+    assert.ok(v && v !== SL["nujno.pogovor.uvod"] && /[:：]\s*$/.test(v), f);
+    const l = f.replace(".json", "");
+    if (P[l]) assert.equal(v, P[l], f);
+  }
 });
