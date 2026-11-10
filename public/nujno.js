@@ -46,33 +46,33 @@ export function normalize(text) {
 const ZDRAVJE = [
   // (pregled E) odprt zlom, oteklo grlo, močna krvavitev narečno, zastrupitev (bs srednji spol, it, uk)
   "kost gleda ven", "kost štrli", "kost moli ven", "odprt zlom", "bone sticking out", "zateklo grlo", "oteklo grlo", "zateka grlo", "oteka grlo",
-  "otekel jezik", "zatekel jezik", "ful krvavim", "ful krvavi", "fest krvavi", "hudo krvavi", "zelo krvavim", "močno krvavim", "otrovalo", "otrovali se",
-  "bevuto la candeggina", "bevuto candeggina", "ha bevuto il detersivo", "випив отрут", "випила отрут", "отруївся", "отруїлася", "отруїлась",
+  "otekel jezik", "zatekel jezik", "ful krvavi", "fest krvavi", "hudo krvavi", "otrovalo", "otrovali se",
+  "bevuto la candeggina", "bevuto candeggina", "ha bevuto il detersivo", "випив отрут", "випила отрут", "отруївся", "отруїлась",
   // sl
-  "nezavesten", "nezavestna", "v nezavesti", "?nezavest", "ne morem dihat", "ne mogu disati", "ne mogu da disem", "napad astme", "napadu astme", "astmatični napad", "pol obraza", "povešen obraz", "onesvestil", "onesvestila", "ne diha ", "ne more dihat", "težko diha", "se duši", "zadušil", "zadušila",
+  "nezavesten", "nezavestna", "v nezavesti", "?nezavest", "ne morem dihat", "ne mogu disati", "ne mogu da disem", "napad astme", "napadu astme", "astmatični napad", "pol obraza", "povešen obraz", "ne diha ", "ne more dihat", "težko diha", "se duši", "zadušil",
   "se ne odziva", "močno krvavi", "zelo krvavi", "ne neha krvavet", "veliko krvi", "kri mu teče", "kri ji teče", "teče mu kri", "teče ji kri",
-  "kri ne neha", "kri kar teče", "?zastrupil", "?zastrupila", "?zastrupljen", "popil čistil", "popila čistil", "pojedel tablet", "pojedla tablet",
+  "kri ne neha", "kri kar teče", "?zastrupil", "?zastrupljen", "popil čistil", "popila čistil", "pojedel tablet", "pojedla tablet",
   "popil tablet", "popila tablet", "preveč tablet", "preveč zdravil", "too many pills", "lot of pills", "alergijsko reakcijo", "oteka mu", "oteka ji",
   "zatekel cel", "zatekla cel", "zateklo cel", "udaril v glavo", "udarila v glavo", "udarec v glavo", "padel na glavo", "padla na glavo",
-  "ima pretres možganov", "ima krče", "dobil krče", "dobila krče", "krči ga", "krči jo", "ima epileptični napad", "dobil epileptični",
+  "ima pretres možganov", "krči ga", "krči jo", "ima epileptični napad", "dobil epileptični",
   "dobila epileptični", "?srčni napad", "ima infarkt", "bolečine v prsih", "boli ga v prsih", "boli jo v prsih", "ima kap", "dobil kap", "dobila kap",
   "se utaplja", "utopil", "stresla elektrika", "elektrika ga je", "elektrika jo je", "kača ga je", "kača jo je", "se ne zbudi", "ne morem ga zbudit",
-  "ne morem je zbudit", "dobil infarkt", "dobila infarkt", "ima srčni napad", "dobil srčni napad", "dobila srčni napad", "pičila kača", "ugriznila kača", "isnt waking up", "not waking up", "se je zgrudil", "se zgrudil", "se je zgrudila", "se zgrudila", "zgrudil se je", "ne odpre oči", "se ne premakne",
-  "krvavi iz glave", "padel po stopnicah", "padla po stopnicah", "modre ustnice", "pomodrel", "pomodrela", "rešilca", "rešilec", "reševalce",
+  "ne morem je zbudit", "dobil infarkt", "dobila infarkt", "ima srčni napad", "dobil srčni napad", "dobila srčni napad", "pičila kača", "ugriznila kača", "isnt waking up", "not waking up", "se je zgrudil", "se zgrudil", "zgrudil se je", "ne odpre oči", "se ne premakne",
+  "krvavi iz glave", "padel po stopnicah", "padla po stopnicah", "modre ustnice", "pomodrel", "rešilca", "rešilec", "reševalce",
   "reševalci",
   // hr, sr, bs
-  "bez svijesti", "bez svesti", "onesvijest", "onesvest", "izgubio svijest", "izgubila svijest", "izgubio svest", "izgubila svest", "ne diše",
+  "bez svijesti", "onesvijest", "onesvest", "izgubio svijest", "izgubila svijest", "izgubio svest", "izgubila svest", "ne diše",
   "ne može disat", "ne moze da dise", "ne može da diše", "guši se", "jako krvari", "puno krvi", "mnogo krvi", "krvari jako", "otrovao", "otrovala",
-  "?otrovan", "popio tablete", "popila tablete", "progutao tablet", "progutala tablet", "alergijsku reakciju", "otiče", "otice mu", "udario glavom",
+  "?otrovan", "popio tablete", "progutao tablet", "progutala tablet", "alergijsku reakciju", "otiče", "udario glavom",
   "udarila glavom", "pao na glavu", "pala na glavu", "ima potres mozga", "ima grčeve", "dobio grčeve", "ima napad epilepsije", "ima srčani udar",
   "dobio srčani udar", "dobila srčani udar", "bol u prsima", "utapa se", "udarila ga struja", "udarila ju struja", "ne mogu ga probudit",
-  "ne budi se", "se ne budi", "ne reaguje", "pao je i ne", "pala je i ne", "plave usne", "hitna pomoć", "hitnu pomoć", "hitnu", "zovi hitnu",
+  "ne budi se", "se ne budi", "ne reaguje", "pao je i ne", "pala je i ne", "plave usne", "hitna pomoć", "hitnu",
   // en
-  "unconscious", "isnt breathing", "wasnt breathing", "is not breathing", "asthma attack", "face is drooping", "face drooping", "passed out", "fainted", "not breathing", "cant breathe", "can not breathe", "cannot breathe", "stopped breathing",
+  "unconscious", "isnt breathing", "wasnt breathing", "asthma attack", "face is drooping", "face drooping", "passed out", "fainted", "not breathing", "cant breathe", "can not breathe", "cannot breathe", "stopped breathing",
   "struggling to breathe", "choking", "bleeding a lot", "bleeding heavily", "bleeding badly", "wont stop bleeding", "lots of blood", "so much blood",
-  "poisoned", "swallowed pills", "took pills", "took a lot of pills", "drank bleach", "overdosed", "took an overdose", "having an allergic reaction",
+  "poisoned", "swallowed pills", "took pills", "drank bleach", "overdosed", "took an overdose", "having an allergic reaction",
   "had an allergic reaction", "throat is swelling", "going into anaphyla", "hit his head", "hit her head", "hit my head", "hit their head",
-  "has a concussion", "having a seizure", "had a seizure", "having convulsions", "having a heart attack", "had a heart attack", "chest hurts",
+  "has a concussion", "having a seizure", "had a seizure", "having a heart attack", "had a heart attack", "chest hurts",
   "chest pain", "having a stroke", "drowning", "electrocuted", "snake bit", "wont wake up", "lips are blue", "call an ambulance", "need an ambulance",
   "get an ambulance", "collapsed", "turning blue",
   // de
@@ -81,29 +81,29 @@ const ZDRAVJE = [
   "gehirnerschütterung", "krampfanfall", "herzinfarkt", "ertrinkt", "wacht nicht auf", "blaue lippen", "krankenwagen", "notarzt",
   // fr
   "inconscient", "évanoui", "ne respire pas", "ne respire plus", "étouffe", "saigne beaucoup", "beaucoup de sang", "empoisonné", "intoxiqué",
-  "avalé des médicaments", "réaction allergique", "cogné la tête", "commotion", "convulsion", "crise d'épilepsie", "crise cardiaque", "se noie",
+  "avalé des médicaments", "réaction allergique", "cogné la tête", "commotion", "crise d'épilepsie", "crise cardiaque", "se noie",
   "ne se réveille pas", "lèvres bleues", "appelle une ambulance", "le samu",
   // es
-  "inconsciente", "se desmayó", "no respira", "no puede respirar", "se ahoga", "sangra mucho", "mucha sangre", "envenenad", "intoxicad",
-  "tomó pastillas", "reacción alérgica", "golpe en la cabeza", "golpeó la cabeza", "convulsi", "ataque al corazón", "infarto", "no despierta",
+  "se desmayó", "no respira", "no puede respirar", "se ahoga", "sangra mucho", "mucha sangre", "envenenad", "intoxicad",
+  "tomó pastillas", "reacción alérgica", "golpe en la cabeza", "golpeó la cabeza", "ataque al corazón", "infarto", "no despierta",
   "labios azules", "ambulancia",
   // it
   "svenut", "privo di sensi", "priva di sensi", "incosciente", "non respira", "soffoca", "sanguina molto", "tanto sangue", "avvelenat", "intossicat",
-  "preso pastiglie", "reazione allergica", "battuto la testa", "convulsion", "attacco di cuore", "annega", "non si sveglia", "labbra blu",
+  "preso pastiglie", "reazione allergica", "battuto la testa", "attacco di cuore", "annega", "non si sveglia", "labbra blu",
   "ambulanza",
   // pt
-  "desmaiou", "não respira", "não consegue respirar", "engasgad", "sangrando muito", "muito sangue", "envenenad", "tomou comprimidos",
+  "desmaiou", "não respira", "não consegue respirar", "engasgad", "sangrando muito", "muito sangue", "tomou comprimidos",
   "reação alérgica", "bateu a cabeça", "convuls", "ataque cardíaco", "afogando", "não acorda", "lábios roxos", "ambulância",
   // pl
-  "nieprzytomn", "zemdlał", "zemdlała", "nie oddycha", "nie może oddychać", "dusi się", "mocno krwawi", "dużo krwi", "zatruł", "zatruła", "zatrucie",
+  "nieprzytomn", "zemdlał", "nie oddycha", "nie może oddychać", "dusi się", "mocno krwawi", "dużo krwi", "zatruł", "zatrucie",
   "połknął tabletki", "połknęła tabletki", "reakcja alergiczna", "uderzył się w głowę", "uderzyła się w głowę", "wstrząśnienie mózgu", "drgawki",
   "atak padaczki", "zawał", "topi się", "nie mogę go obudzić", "sine usta", "karetk", "pogotowie",
   // cs, sk
-  "v bezvědomí", "omdlel", "omdlela", "nedýchá", "nemůže dýchat", "dusí se", "silně krvácí", "hodně krve", "otrávil", "otrava jídlem", "má otravu",
+  "v bezvědomí", "omdlel", "nedýchá", "nemůže dýchat", "dusí se", "silně krvácí", "hodně krve", "otrávil", "otrava jídlem", "má otravu",
   "spolkl prášky", "alergická reakce", "uhodil se do hlavy", "otřes mozku", "křeče", "má infarkt", "topí se", "nemůžu ho probudit", "modré rty",
-  "záchranku", "záchranka", "v bezvedomí", "odpadol", "odpadla", "nedýcha", "nemôže dýchať", "dusí sa", "silno krvácia", "veľa krvi", "otrávil sa",
-  "otrava jedlom", "má otravu", "prehltol tabletky", "alergická reakcia", "udrel sa do hlavy", "otras mozgu", "kŕče", "topí sa", "neviem ho zobudiť",
-  "modré pery", "záchranku",
+  "záchranku", "záchranka", "v bezvedomí", "odpadol", "odpadla", "nedýcha", "nemôže dýchať", "dusí sa", "silno krvácia", "veľa krvi",
+  "otrava jedlom", "prehltol tabletky", "alergická reakcia", "udrel sa do hlavy", "otras mozgu", "kŕče", "topí sa", "neviem ho zobudiť",
+  "modré pery",
   // hu
   "eszméletlen", "elájult", "nem lélegzik", "nem kap levegőt", "fullad", "erősen vérzik", "sok vér", "megmérgez", "mérgezés", "gyógyszert vett be",
   "allergiás reakció", "beverte a fejét", "agyrázkódás", "görcsöl", "rohama van", "szívroham", "infarktus", "nem ébred", "kék az ajka", "mentőt",
@@ -116,18 +116,18 @@ const ZDRAVJE = [
   "piu tableta", "reaksion alergjik", "goditi kokën", "kriza epileptike", "sulm në zemër", "nuk zgjohet", "buzët blu", "thirr ambulancë",
   "thirrni ambulancë", "urgjencën",
   // mk
-  "без свест", "се онесвести", "не дише", "не може да дише", "се гуши", "многу крвари", "отруен", "труење", "испи таблети", "алергиска реакција",
+  "без свест", "не дише", "не може да дише", "се гуши", "многу крвари", "отруен", "труење", "испи таблети", "алергиска реакција",
   "удри во глава", "потрес на мозок", "грчеви", "епилептичен напад", "срцев удар", "се дави", "не се буди", "сини усни", "брза помош",
   // ru, uk
   "без сознания", "потерял сознание", "потеряла сознание", "не дышит", "не может дышать", "задыхается", "сильно кровоточит", "много крови",
-  "кровь не останавливается", "отравился", "отравилась", "отравление", "выпил таблетки", "выпила таблетки", "наглотался", "наглоталась",
+  "кровь не останавливается", "отравление", "выпил таблетки", "выпила таблетки", "наглотался", "наглоталась",
   "аллергическая реакция", "ударился головой", "ударилась головой", "сотрясение мозга", "судороги", "эпилептический приступ", "сердечный приступ",
-  "тонет в реке", "тонет в море", "тонет в бассейне", "человек тонет", "он тонет", "она тонет", "не просыпается", "синие губы", "вызови скорую",
+  "тонет в реке", "тонет в море", "тонет в бассейне", "человек тонет", "он тонет", "она тонет", "не просыпается", "синие губы",
   "скорую", "без свідомості", "знепритомнів", "знепритомніла", "не дихає", "не може дихати", "задихається", "сильно кровить", "багато крові",
-  "отруївся", "отруїлася", "отруєння", "випив таблетки", "випила таблетки", "алергічна реакція", "вдарився головою", "вдарилася головою",
+  "отруєння", "випив таблетки", "випила таблетки", "алергічна реакція", "вдарився головою", "вдарилася головою",
   "струс мозку", "судоми", "серцевий напад", "не прокидається", "сині губи", "швидку",
   // tr
-  "bilinci kapalı", "bayıldı", "nefes almıyor", "nefes alamıyor", "boğuluyor", "çok kanıyor", "kan durmuyor", "çok kan", "zehirlendi", "zehirlenme",
+  "bilinci kapalı", "bayıldı", "nefes almıyor", "nefes alamıyor", "boğuluyor", "kan durmuyor", "çok kan", "zehirlendi", "zehirlenme",
   "hap içti", "çok ilaç içti", "alerjik reaksiyon", "kafasını çarptı", "kafasını vurdu", "beyin sarsıntısı", "nöbet geçiriyor", "kalp krizi",
   "uyanmıyor", "dudakları mor", "ambulans",
   // id
@@ -153,7 +153,7 @@ const ZDRAVJE = [
   "غرق شد", "آمبولانس", "اورژانس",
   // ar
   "فاقد الوعي", "فقد الوعي", "مغمى عليه", "أغمي عليه", "لا يتنفس", "لا تتنفس", "لا يستطيع التنفس", "يختنق", "تختنق", "ينزف كثيرا", "نزيف", "دم كثير",
-  "تسمم", "ابتلع حبوب", "حساسية شديدة", "ضرب رأسه", "ارتجاج", "تشنج", "نوبة قلبية", "يغرق الآن", "أخي يغرق", "طفل يغرق", "لا يستيقظ", "شفاه زرقاء",
+  "تسمم", "ابتلع حبوب", "حساسية شديدة", "ضرب رأسه", "ارتجاج", "نوبة قلبية", "يغرق الآن", "أخي يغرق", "طفل يغرق", "لا يستيقظ", "شفاه زرقاء",
   "إسعاف",
   // zh, zh-Hant
   "昏迷", "晕倒", "暈倒", "昏倒", "没有呼吸", "沒有呼吸", "不能呼吸", "喘不过气", "喘不過氣", "窒息", "流血不止", "大量出血", "很多血", "中毒", "吞了药", "吞了藥", "吃了很多药", "吃了很多藥", "过敏反应", "過敏反應",
@@ -171,33 +171,36 @@ const ZDRAVJE = [
 
 const STISKA = [
   // (pregled E) narečno »sm«, »been cutting«, »nočem se zbudit«, »nimam razloga«, bs »da nestanem«
-  "sm se rezal", "sm se porezal", "se rezala po", "se rezal po", "se režem po", "been cutting again", "cutting myself again", "started cutting myself", "i cut myself",
+  // (pregled A po #561) narečno »ubiu«, »rezu«, volja/smisel življenja, »za na ta svet«, »ne zbudiš več«
+  "ubiu se", "se bom ubiu", "bi se ubiu", "sm se rezu", "sem se rezu", "se rezu po", "z britvico po", "volje do življenja", "volje do živlenja",
+  "za na ta svet", "ne zbudiš več", "da se ne zbudim več", "want to end it", "wanna end it",
+  "sm se rezal", "sm se porezal", "se rezala po", "se rezal po", "been cutting again",
   "nočem se zbudit", "ne bi se rad zbudil", "ne bi se rada zbudila", "dont want to wake up", "nimam razloga da sem", "nimam več razloga da sem", "nimam več razloga za živet", "nimam razloga da živim",
   "no one would miss me", "nobody would miss me", "noone would miss me", "bolje bi bilo da me nema", "bolje da me nema", "bolje bi bilo da me nije",
   "ne da se mi več živet", "ne da se mi živet", "neda se mi več živet",
   "nimam razloga za živet", "no reason to live", "nemam razloga da živim", "nemam razloga za život", "da nestanem", "želim nestati", "hoću nestati",
   // sl (tudi brez šumnikov in narečno: normalize)
-  "samomor", "ubil bi se", "ubila bi se", "ubu bi se", "ubijem se", "se bom ubil", "se bom ubila", "nočem več živet", "ne želim več živet",
-  "nočem živet", "ne želim živet", "nočem bit živ", "rajši bi bil mrtev", "rajši bi bila mrtva", "raje bi bil mrtev", "raje bi bila mrtva",
-  "rajši bi izginil", "rajši bi izginila", "ni vredno živet", "nima smisla živet", "končati vse", "končal bom vse",
+  "samomor", "ubil bi se", "ubila bi se", "ubu bi se", "ubijem se", "se bom ubil", "nočem več živet", "ne želim več živet",
+  "nočem živet", "ne želim živet", "nočem bit živ",
+  "rajši bi izginil", "ni vredno živet", "nima smisla živet", "končati vse", "končal bom vse",
   "končala bom vse", "si kaj naredim", "si nekaj naredim", "naredil si bom nekaj", "naredila si bom nekaj", "režem se", "se režem", "porezal sem se",
-  "porezala sem se", "sem se rezal", "sem se porezal", "se bi ubil", "se bi ubila", "bi se ubil", "bi se ubila", "končat vse", "lažje brez mene",
+  "porezala sem se", "sem se rezal", "sem se porezal", "se bi ubil", "bi se ubil", "končat vse", "lažje brez mene",
   "boljše brez mene", "bolje brez mene", "pod vlak", "nocm zivt", "nocm zivet", "nočem živt", "ne bi rad živel", "ne bi rada živela", "samopoškod",
-  "hočem umret", "želim umret", "nočem več bit tu", "nočem več biti tu", "ne želim več bit tu", "izginil za vedno", "izginila za vedno", "izginiti za vedno", "disappear forever", "not waking up", "poslovilno pismo", "poslovilni list", "suicide note", "goodbye letter", "zaspala in se ne zbudila", "zaspal in se ne zbudil", "se ne zbudim več", "nikoli več zbudil", "nikoli več zbudila", "sleep and never wake up", "ne bom več dolgo tu", "wont be here much longer", "nema smisla živjet", "nema smisla živet", "sječem se", "siječem se", "režem si", "sečem si", "siječem si", "rad bi umrl", "rada bi umrla", "nihče me ne bi pogrešal",
+  "hočem umret", "želim umret", "nočem več bit tu", "nočem več biti tu", "ne želim več bit tu", "izginil za vedno", "izginila za vedno", "izginiti za vedno", "disappear forever", "not waking up", "poslovilno pismo", "poslovilni list", "goodbye letter", "zaspala in se ne zbudila", "zaspal in se ne zbudil", "se ne zbudim več", "nikoli več zbudil", "sleep and never wake up", "ne bom več dolgo tu", "wont be here much longer", "nema smisla živjet", "nema smisla živet", "sječem se", "siječem se", "režem si", "sečem si", "siječem si", "rad bi umrl", "rada bi umrla", "nihče me ne bi pogrešal",
   // hr, sr, bs
   "samoubist", "ubit ću se", "ubiću se", "ubio bih se", "ubila bih se", "ne želim živjet", "ne želim više živjet", "ne želim da živim",
   "ne želim više da živim", "neću da živim", "necu da zivim", "da se ubijem", "bolje bez mene", "neću više živjeti", "neću više da živim",
-  "želim umrijeti", "želim da umrem", "hoću da umrem", "bolje da sam mrtav", "bolje da sam mrtva", "bolje da me nema", "režem se", "sečem se",
+  "želim umrijeti", "želim da umrem", "hoću da umrem", "bolje da sam mrtav", "bolje da sam mrtva", "sečem se",
   "samoozljeđ", "samopovređ",
   // en
-  "kill myself", "killing myself", "suicide", "suicidal", "want to die", "wanna die", "dont want to live", "dont want to be alive", "better off dead",
-  "end my life", "end it all", "hurt myself", "hurting myself", "cut myself", "cutting myself", "self harm", "unalive", "no reason to live",
+  "kill myself", "killing myself", "want to die", "wanna die", "dont want to live", "dont want to be alive", "better off dead",
+  "end my life", "end it all", "hurt myself", "hurting myself", "cut myself", "cutting myself", "self harm", "unalive",
   "better off without me", "want to disappear", "kms ", "wish i was dead", "wish i were dead", "wish i wasnt here", "wish i didnt exist",
   // de
   "mich umbringen", "bring mich um", "selbstmord", "suizid", "will nicht mehr leben", "will sterben", "ritze mich", "mich ritzen", "mir was antun",
   "mir etwas antun", "wäre lieber tot",
   // fr
-  "me suicider", "me tuer", "envie de mourir", "veux mourir", "veux plus vivre", "me faire du mal", "me scarifie", "mieux mort",
+  "me tuer", "envie de mourir", "veux mourir", "veux plus vivre", "me faire du mal", "me scarifie", "mieux mort",
   // es, it, pt
   "suicid", "matarme", "quiero morir", "no quiero vivir", "hacerme daño", "me corto", "mejor muerto", "mejor muerta", "acabar con todo", "uccidermi",
   "ammazzarmi", "voglio morire", "non voglio più vivere", "farmi del male", "mi taglio", "farla finita", "me matar", "matar me", "quero morrer",
@@ -211,9 +214,9 @@ const STISKA = [
   "nu vreau să trăiesc", "să mi fac rău", "mă tai", "vetëvras", "të vras veten", "dua të vdes", "nuk dua të jetoj", "nuk dua më të jetoj",
   "të dëmtoj veten", "pres veten",
   // mk, ru, uk
-  "самоубиств", "ќе се убијам", "сакам да умрам", "не сакам да живеам", "се сечам", "самоповред", "суицид", "самоубийств", "покончить с собой",
-  "убить себя", "убью себя", "хочу умереть", "не хочу жить", "режу себя", "селфхарм", "лучше бы меня не было", "суїцид", "самогубств", "вбити себе",
-  "вб'ю себе", "хочу померти", "не хочу жити", "ріжу себе", "краще б мене не було",
+  "ќе се убијам", "сакам да умрам", "не сакам да живеам", "се сечам", "самоповред", "суицид", "самоубийств", "покончить с собой",
+  "убить себя", "убью себя", "хочу умереть", "не хочу жить", "селфхарм", "лучше бы меня не было", "суїцид", "самогубств", "вбити себе",
+  "вб'ю себе", "хочу померти", "ріжу себе", "краще б мене не було",
   // tr, id, sw
   "intihar", "kendimi öldür", "ölmek istiyorum", "yaşamak istemiyorum", "kendime zarar", "kendimi kes", "keşke ölsem", "bunuh diri", "ingin mati",
   "pengen mati", "mau mati", "tidak ingin hidup", "gak mau hidup", "melukai diri", "menyakiti diri", "kujiua", "nataka kufa", "sitaki kuishi",
@@ -236,12 +239,12 @@ const NASILJE = [
   "valaki követ", "követ engem", "يلاحقني", "يتبعني", "переслідує мене", "стежить за мною",
   "мене б'є", "мене б'ють", "мене побив", "prati me od", "me prati od", "prati me do", "me prati do",
   // sl
-  "me tepe", "me tepejo", "me pretepa", "me pretepajo", "me udari", "me udarja", "me udarjajo", "me brca", "me zlorablja", "me je posilil",
-  "me nadleguje", "me izsiljuje", "me ustrahuje", "me zalezuje", "me tuče", "me tuku", "me udara", "me maltretira", "me zlostavlja", "me dira",
-  "me bije", "me tipa", "tipa me", "me otipava", "tipal me je", "me je tipal", "me ucjenjuje", "me ucenjuje", "me proganja", "is hitting me", "keeps hitting me", "tepe me", "tepejo me", "pretepa me", "pretepajo me",
-  "udari me", "udarja me", "udarjajo me", "brca me", "zlorablja", "spolno zlorab", "posilil", "posiljen", "posiljena", "se me dotika", "dotika se me",
+  "me tepe", "me pretepa", "me udari", "me udarja", "me brca",
+  "me nadleguje", "me izsiljuje", "me ustrahuje", "me zalezuje", "me tuče", "me tuku", "me udara", "me maltretira", "me dira",
+  "me bije", "me tipa", "tipa me", "me tiplje", "tiplje me", "doma se tepejo", "me otipava", "tipal me je", "me je tipal", "me ucjenjuje", "me ucenjuje", "me proganja", "is hitting me", "keeps hitting me", "tepe me", "tepejo me", "pretepa me", "pretepajo me",
+  "udari me", "udarja me", "udarjajo me", "brca me", "zlorablja", "spolno zlorab", "posilil", "posiljen", "se me dotika", "dotika se me",
   "dotikal me je", "dotikal se me je", "grozi mi da", "mi grozi da", "grozi mi z", "grozi mi s ", "grozijo mi da", "grozi da me bo", "da me bo ubil",
-  "da me bo ubila", "da me bodo ubili", "tepel mamo", "tepe mamo", "tepel brata", "tepe brata", "tepe sestro", "ustrahuje me", "ustrahujejo me",
+  "da me bodo ubili", "tepel mamo", "tepe mamo", "tepel brata", "tepe brata", "tepe sestro", "ustrahuje me", "ustrahujejo me",
   "nasilje doma", "zaprli so me", "zaklenil me je", "ne smem nikomur povedat", "gole slike", "golo sliko", "pošlji gol", "nadleguje me",
   "zalezuje me", "izsiljuje me", "izsiljujejo me",
   // hr, sr, bs
@@ -250,44 +253,44 @@ const NASILJE = [
   "ucenjuje me", "proganja me", "zaključao me",
   // en
   "hits me", "beats me", "beat me up", "abuses me", "abused me", "abusing me", "sexually abus", "molest", "raped", "rape me", "touches me",
-  "touched me", "touching me", "hit me", "hits me again", "threatens me", "threatened to kill", "domestic violence", "bullying me", "being bullied",
+  "touched me", "touching me", "hit me", "threatens me", "threatened to kill", "domestic violence", "bullying me", "being bullied",
   "send nudes", "nude pics", "blackmailing me", "stalking me", "locked me in", "kicks me",
   // de
-  "schlägt mich", "schlagen mich", "missbraucht mich", "missbrauch", "vergewaltig", "fasst mich an", "bedroht mich", "häusliche gewalt",
+  "schlägt mich", "schlagen mich", "missbrauch", "vergewaltig", "fasst mich an", "bedroht mich", "häusliche gewalt",
   "werde gemobbt", "erpresst mich", "nacktbilder",
   // fr
   "me frappe", "me bat", "m'a violé", "violée", "abus sexuel", "me touche", "me menace", "violence conjugale", "violences familiales", "me harcèle",
   "harcèlement", "me fait chanter", "photos nues",
   // es, it, pt
   "me pega", "me golpea", "abusa de mí", "abuso sexual", "me violó", "violación", "me toca sin permiso", "me toca las partes", "me manosea",
-  "me amenaza", "violencia doméstica", "me acosa", "fotos desnud", "mi picchia", "mi picchiano", "abusa di me", "abuso sessuale", "violentat",
-  "mi tocca le parti intime", "mi tocca senza permesso", "mi palpa", "mi minaccia", "violenza domestica", "mi ricatta", "foto nud", "me bate",
-  "batem em mim", "abusa de mim", "estupr", "me ameaça", "violência doméstica", "me chantageia", "fotos nuas",
+  "me amenaza", "violencia doméstica", "me acosa", "fotos desnud", "mi picchia", "abusa di me", "abuso sessuale", "violentat",
+  "mi tocca le parti intime", "mi tocca senza permesso", "mi palpa", "mi minaccia", "violenza domestica", "mi ricatta", "foto nud",
+  "batem em mim", "estupr", "me ameaça", "violência doméstica", "me chantageia", "fotos nuas",
   // pl, cs, sk
-  "bije mnie", "biją mnie", "molestuj", "wykorzystuje mnie", "zgwałcił", "dotyka mnie", "przemoc domowa", "znęca się", "szantażuje", "nagie zdjęcia",
-  "bije mě", "bijí mě", "zneužív", "znásil", "osahává", "sahá na mě", "vyhrožuje mi", "domácí násilí", "šikan", "vydírá", "bije ma", "bijú ma",
+  "bije mnie", "biją mnie", "wykorzystuje mnie", "zgwałcił", "dotyka mnie", "przemoc domowa", "znęca się", "szantażuje", "nagie zdjęcia",
+  "bije mě", "bijí mě", "znásil", "osahává", "sahá na mě", "vyhrožuje mi", "domácí násilí", "šikan", "vydírá", "bije ma", "bijú ma",
   "zneuží", "osahováva", "siaha na mňa", "vyhráža sa mi", "domáce násilie", "vydiera",
   // hu, ro, sq
   "megver", "ver engem", "bántalmaz", "molesztál", "megerőszak", "fogdos", "fenyeget", "családon belüli erőszak", "zaklat", "zsarol", "meztelen kép",
-  "mă bate tata", "mă bate mama", "mă bate tatăl", "mă bate mereu", "abuzează de mine", "abuz sexual", "m a violat", "mă atinge", "mă amenință",
-  "violență domestică", "mă șantajează", "më rreh", "abuzon me mua", "përdhun", "më prek", "më kërcënon", "dhunë në familje", "më shantazhon",
+  "mă bate tata", "mă bate mama", "mă bate mereu", "abuzează de mine", "abuz sexual", "m a violat", "mă atinge", "mă amenință",
+  "violență domestică", "më rreh", "abuzon me mua", "përdhun", "më prek", "më kërcënon", "dhunë në familje", "më shantazhon",
   // mk, ru, uk
   "ме тепа", "ме удира", "сексуално злоставува", "силува", "ме допира", "ми се заканува", "семејно насилство", "ме уценува", "бьёт меня",
   "избивает меня", "домогается", "изнасил", "трогает меня", "угрожает мне", "домашнее насилие", "травят меня", "шантажирует", "б'є мене", "згвалт",
   "чіпляється до мене", "торкається мене", "погрожує мені", "домашнє насильство", "цькують", "шантажує",
   // tr, id, sw
-  "beni dövüyor", "dövüyor", "taciz", "tecavüz", "bana dokunuyor", "beni tehdit", "aile içi şiddet", "zorbalık", "şantaj", "memukul saya",
+  "dövüyor", "taciz", "tecavüz", "bana dokunuyor", "beni tehdit", "aile içi şiddet", "zorbalık", "şantaj", "memukul saya",
   "memukulku", "dipukul", "pelecehan", "diperkosa", "memperkosa", "menyentuh saya", "mengancam saya", "kekerasan dalam rumah tangga", "kdrt",
   "dibully", "diperas", "ananipiga", "wananipiga", "unyanyasaji", "amenibaka", "ubakaji", "ananigusa", "ananitishia",
   // vi, hi, bn, ur, fa, ar
   "=đánh tôi", "=đánh em", "=bạo hành", "=lạm dụng", "=xâm hại", "=hiếp dâm", "=đe dọa", "=bắt nạt", "=tống tiền", "मुझे मारता", "मुझे मारती",
   "पीटता", "पीटते", "यौन शोषण", "बलात्कार", "धमकी", "घरेलू हिंसा", "mujhe maarta", "mujhe marta", "dhamki", "আমাকে মারে", "মারধর", "যৌন নির্যাতন",
-  "ধর্ষণ", "হুমকি", "পারিবারিক সহিংসতা", "مجھے مارتا", "مجھے مارتی", "پٹائی", "جنسی زیادتی", "زیادتی", "دھمکی", "گھریلو تشدد", "مرا می‌زند",
+  "ধর্ষণ", "হুমকি", "পারিবারিক সহিংসতা", "مجھے مارتا", "مجھے مارتی", "پٹائی", "زیادتی", "دھمکی", "گھریلو تشدد", "مرا می‌زند",
   "منو میزنه", "کتک", "آزار جنسی", "تجاوز", "تهدید", "خشونت خانگی", "اخاذی", "يضربني", "تضربني", "يضربونني", "تحرش", "اغتصاب", "يلمسني", "يهددني",
   "عنف أسري", "تنمر", "ابتزاز", "صور عارية",
   // zh, ja, ko, th
   "他打我", "她打我", "打我了", "总是打我", "總是打我", "打骂我", "打罵我", "家暴", "性侵", "强奸", "強姦", "猥亵", "猥褻", "摸我", "威胁我", "威脅我", "霸凌", "欺负我", "欺負我", "勒索", "裸照", "殴られ",
-  "叩かれ", "暴力を振る", "虐待", "性的虐待", "レイプ", "触られ", "脅され", "いじめ", "裸の写真", "때려", "폭력", "학대", "성폭행", "성추행", "협박", "괴롭힘", "왕따", "나체 사진", "ตีฉัน",
+  "叩かれ", "暴力を振る", "虐待", "レイプ", "触られ", "脅され", "いじめ", "裸の写真", "때려", "폭력", "학대", "성폭행", "성추행", "협박", "괴롭힘", "왕따", "나체 사진", "ตีฉัน",
   "ทำร้ายร่างกาย", "ล่วงละเมิด", "ข่มขืน", "ลวนลาม", "ความรุนแรงในครอบครัว", "กลั่นแกล้ง", "แบล็กเมล", "รูปโป๊",
 ];
 
@@ -297,15 +300,15 @@ const NEVARNOST = [
   "zapalila se kuhinja", "البيت يحترق", "بيتنا يحترق", "المنزل يحترق", "الشقة تحترق", "المطبخ يحترق", "iz vtičnice gre dim", "vtičnica se kadi", "vtičnica iskri", "iz vtičnice iskri",
   // sl
   "?požar ", "?požaru", "gori hiša", "gori v hiši", "gori v stanovanju", "gori v sobi", "gori v kuhinji", "gori v bloku", "polno dima", "puno dima",
-  "hiša gori", "gori stanovanje", "stanovanje gori", "gori soba", "gori kuhinja", "dim v sobi", "dim v hiši", "dim v stanovanju", "veliko dima",
+  "hiša gori", "stanovanje gori", "gori soba", "gori kuhinja", "dim v sobi", "dim v hiši", "dim v stanovanju", "veliko dima",
   "diši po plinu", "smrdi po plinu", "vonj po plinu", "vonja po plinu", "uhaja plin", "puščanje plina", "imamo poplavo", "poplavlja nam",
-  "poplavilo nam", "voda nam teče v", "voda vdira", "nekdo je vdrl", "vlomilec",
+  "poplavilo nam", "voda nam teče v", "voda vdira", "nekdo je vdrl", "vlomilec", "vlomil v", "vlomila v", "vlomili v", "vlamlja", "dis plin", "smrdi plin",
   // hr, sr, bs
   "gori kuća", "kuća gori", "gori stan", "dim u kući", "dim u sobi", "miriše na plin", "smrdi na plin", "miris plina", "curi plin", "provalnik",
   "netko je provalio", "neko je provalio",
   // en
-  "house is on fire", "is on fire", "fire in the", "fire in my", "fire in our", "smell gas", "smells like gas", "smells of gas", "?gas leak",
-  "smoke everywhere", "lots of smoke", "flooding", "someone broke in", "broke in", "breaking in", "broke into", "intruder", "carbon monoxide alarm",
+  "is on fire", "fire in the", "fire in my", "fire in our", "smell gas", "smells like gas", "smells of gas", "?gas leak",
+  "smoke everywhere", "lots of smoke", "flooding", "broke in", "breaking in", "intruder", "carbon monoxide alarm",
   // de, fr, es, it, pt
   "es brennt", "haus brennt", "wohnung brennt", "feuer in der", "riecht nach gas", "gasgeruch", "gasleck", "überschwemmung", "einbrecher", "au feu",
   "il y a le feu", "incendie", "la maison brûle", "odeur de gaz", "ça sent le gaz", "fuite de gaz", "inondation", "cambrioleur", "incendio",
@@ -446,7 +449,9 @@ const SOLA = new RegExp(
   "(?:^|[ .,])(?:(?:spis\\S*|referat\\S*|plakat\\S*|seminarsk\\S*(?: nalog\\S*)?|esej\\S*|zgodb\\S*|pravljic\\S*) (?:[^ .,]+ ){0,2}o|domace branje|domacem branju|domacega branja|krozk\\S* smo (?:se )?(?:ucili|pogovarjali|vadili|spoznali|naucili))" +
     `(?:${SOLA_SEP}(?!(?:in|pa|ampak|vendar|toda) )[^ .,]+)*?${SOLA_SEP}(?:pozar|zastrup|nezavest|srcn\\S* napad|otrov)`,
 );
-const stavki = (text) => normalize(String(text || "").replace(/[?!;:\n]+/g, ". "));
+// Ura (»20:30«) ni rezultat igre (IGRA »\d+ \d+«): postane »20h30«.
+// Pika brez presledka med črkama (»šlata.Boli«) je tudi meja stavka.
+const stavki = (text) => normalize(String(text || "").replace(/(?<=\p{L})\.(?=\p{L})/gu, ". ").replace(/(?<![\d:])([01]?\d|2[0-4]):([0-5]\d)(?![\d:])/g, "$1h$2").replace(/[?!;\n]+|(?<!\d):|:(?!\d)/g, ". "));
 // Pretiravanje v prihodnjiku (»zadušil se bom v teh domačih nalogah«, »od smeha«): izraz se pred iskanjem znakov izpusti,
 // razen če sporočilo omenja še kaj nevarnega (dim, plin, astma, dihanje, ogenj, ubi-). Preteklik in sedanjik
 // (»zadušil se je«, »se duši«) ostaneta močna znaka.
@@ -473,43 +478,62 @@ const OS =
 const ZIVO = new RegExp(
   `(?:^| )(?:ampak|vendar|toda|ker|pa je|pa se je|pomagaj\\S*|pomoc|na pomoc|kaj naj|zdaj|zdej|zdajle|ravnokar|pravkar|res|sem se|si se|mi je|pri nas|pri sosed\\S*|doma|v (?:bloku|kuhinji|sobi|hisi|soli|razredu|stanovanju)|je pozar|pozar je|je zastrupljen\\S*|lezi nezavest\\S*|padl?\\S* v nezavest|${OS}|ata|ate|foter|fotr\\S*|mater|mati|stric\\S*|tet[aeio]|sosed\\S*|bratran\\S*|sestricn\\S*|ucitelj\\S*|trener\\S*|moj\\S*|nas|nasa|nase|nasi|nasem|nasemu|mislim da|po moje|bruha\\S*|klici|klicite|je (?:\\S+ )?pozar|se je vnel\\S*|za hiso|na strehi|na balkonu|v garazi)(?=[ ,.]|$)`,
 );
-// Vzorec z varovalko: ne velja, če sporočilo kjerkoli vsebuje besedo iz varovalke (igra, šport, lasje …).
-const RB = (brez, src) => ({ re: new RegExp(`^(?!.*(?:^| )(?:${brez}))(?:.* )?${src}`) });
+// Vzorec z varovalko (igra, knjiga, žival …), ki velja le v istem stavku kot znak (vejica loči, razen ob ki/ko/da …).
+const RB = (brez, src) => ({ re: new RegExp(`(?:^| )${src}`, "g"), brez: new RegExp(`(?:^|[ ,.])(?:${brez})`) });
+const ODV = /^(?:ki|ko|ker|da|ce|kjer|kot|kar|ceprav|kadar|which|that|who|when|because|where|while|if)(?= |$)/;
+// Vejica med samostojnima stavkoma postane pika (ne ob odvisnem stavku). »Ko/ker …« na začetku sporočila ne zlepi
+// naslednjega stavka (»ko sem igral minecraft, ati mamo tepe«).
+const loci = (n) =>
+  n.split(", ").reduce((a, d, i, v) => a + (i ? (ODV.test(d) || (ODV.test(v[i - 1]) && !(i === 1 && /^(?:ko|ker) /.test(v[0]))) ? ", " : ". ") : "") + d, "");
+// Konec stavka išče od zadnjega znaka ujemanja (»\S*« lahko poje piko: »me je šlatal. boli me glava«).
+const ujame = (r, n) =>
+  r.brez ? [...n.matchAll(r.re)].some((m) => !r.brez.test(n.slice(n.lastIndexOf(". ", m.index) + 1, (n + ". ").indexOf(". ", m.index + m[0].length - 1)))) : r.re.test(n);
 const KONEC = "(?=[,.]|$| ker | ce | ko | sam\\S* | sebi| hudega| slabega| pa ne | in ne )";
-const ZIVAL = "mack\\S*|muc\\S*|pes|psa|psic\\S*|kuza\\S*|zdravnik\\S*|zdravnic\\S*|fizioterapevt\\S*|mama|mami|masaz\\S*";
+const ZIVAL = "mack\\S*|muc\\S*|pes|psa|psic\\S*|kuza\\S*|fizioterapevt\\S*|masaz\\S*";
+const OGENJ = "film\\S*|igri|igric\\S*|igra|igro|serij\\S*";
+// Zahteva po molku ali intimen del telesa kjerkoli v sporočilu: izjema za bolezen ne velja (pregled kroga 2, #561).
+const MOLK =
+  "(?:naj|da) (?:nikomur|nikomer|ne) (?:\\S+ )?pov|ne (?:smem|smes) (?:\\S+ )?pov|ne povej|skrivnost|med nog|tam spodaj|mednozj|spolovil|(?:^| )(?:rit|joske|prsi\\S*|lulek|pipi)(?=[ ,.]|$)";
+const BOLEZEN = "boli\\S*|bolel\\S*|bolec\\S*|vrocin\\S*|vrocic\\S*|slepic\\S*|temperatur\\S*";
 const KNJIGA = "knjig\\S*|zgodb\\S*|film\\S*|roman\\S*|domac\\S* bran\\S*|opis\\S*|junak\\S*|pisatelj\\S*|cankar\\S*|pravljic\\S*|serij\\S*";
-const IGRA_EN = "chess|scrabble|game\\S*|race|fifa|mario\\S*|tennis|match|score\\S*|monopoly|cards|uno|at";
+const IGRA_EN = "chess|scrabble|game\\S*|race|fifa|mario\\S*|tennis|match|score\\S*|monopoly|cards|uno";
 const IGRA = "dez|vrocina|veter|toca|sonce|mraz|minecraft\\S*|fortnit\\S*|roblox\\S*|igric\\S*|igri|igro|igra|level\\S*|las|lase|lasmi|frizur\\S*|sah\\S*|kosark\\S*|nogomet\\S*|rokomet\\S*|odbojk\\S*|tekm\\S*|lig[aeio]|rezultat\\S*|srce|olimpij\\S*|\\d+ \\d+";
 const R = (src) => ({ re: new RegExp(`(?:^| )${src}`) });
+const TK = "(?:tece|curi|lije|brizga)(?: mu| ji| mi)? kri", IZG = "iz (?:glav|ust|uses|vrat|rok|zapestj)\\S*";
 const IZS = (src) => ({ ...R(src), izs: true });
 const IZRAZI = {
   zdravje: [
     R(
-      `${OS}(?: \\S+){0,2} (?:je|so|postaja|postal\\S*|ratal\\S*|is|turned)(?: (?:cist\\S*|cel\\S*|ves|vsa|potpuno|sav|sva|all))? (?:modr[aeio]?|moder|pomodr\\S*|plav[aeio]?|poplavi[o]?|poplavila|blue)(?=[,.]|$| in | v obraz| ne | i | and )`,
+      `${OS}(?: \\S+){0,5} (?:je|so|postaja|postal\\S*|ratal\\S*|is|turned)(?: (?:cist\\S*|cel\\S*|ves|vsa|potpuno|sav|sva|all))? (?:modr[aeio]?|moder|pomodr\\S*|plav[aeio]?|poplavi[o]?|poplavila|blue)(?=[,.]|$| in | v obraz| ne | i | and )`,
     ),
     R(
       `(?:pad(?:el|la|lo|li|e|a)?|pal[ao]?|zgrud\\S*|collapsed|fell)(?: \\S+){0,4} (?:ne odgovarja|ne odziva|ne reagira|ne reaguje|ne odgovara|se ne premakne|wont respond|not responding)`,
     ),
     R(
-      `(?:pojedl?\\S*|popil\\S*|spil\\S*|pogoltnil\\S*|progutao|progutala|popio|popila|swallowed|ate|drank)(?: \\S+){0,3} (?:tablet\\S*|cistil\\S*|zdravil\\S*|pilul\\S*|bleach|pills|lijek\\S*|lek\\S*)`,
+      `(?:pojedl?\\S*|popil\\S*|spil\\S*|pogoltnil\\S*|progutao|progutala|popio|popila|swallowed|ate|drank)(?: \\S+){0,3} (?:tablet\\S*|cistil\\S*|zdravil\\S*|pilul\\S*|bleach|pills|lijek\\S*|lek\\S*|ibuprofen\\S*|paracetamol\\S*|aspirin\\S*|lekadol\\S*|nalgesin\\S*)`,
     ),
     R(`pen[aei]?(?: \\S+){0,3} iz ust`),
     R(`(?:pad(?:el|la|lo|li|e|a)?|pal[ao]?|zgrud\\S*|fell)(?: \\S+){0,5} (?:ne govori|ne diha|ne odpre oci|ne govori nic|not waking up|isnt waking up|wont wake up)`),
-    R(`kri\\S*(?: \\S+){0,8} (?:ne neha|ne preneha|ne prestane|ne stane|wont stop|ne prestaje)`),
+    R(`kri\\S*(?: \\S+){0,8} (?:ne neha|ne preneha|ne prestane|ne stane|wont stop|ne prestaje|ne (?:morem|moremo) (?:\\S+ )?(?:ustavit\\S*|zaustavit\\S*))`),
+    // (pregled A po #561) čistilo, napad s tresenjem, »not responding«
+    R(`(?:spil\\S*|popil\\S*|pil|pila|pojedl?\\S*)(?: \\S+){0,5} (?:za cisc\\S*|cistil\\S*|varekin\\S*|belil\\S*)`),
+    R(`(?:(?:dobu|dobil\\S*|ima|ma) (?:\\S+ )?napad\\S*(?: \\S+){0,4} (?:se trese|trese|ne odgovarja|ne odziva|pena)|(?:se trese|trese)(?: \\S+){0,2} (?:in |pa )?ne (?:odgovarja|odziva|reagira))`),
+    R(`${OS}(?: \\S+){0,4} (?:not responding|isnt responding|unresponsive)`),
     // (pregled D) »ga ne morem zbuditi«; zaužitje z daljšim oknom in »took«
     R(`(?:ga|je|jo|ju|jih) ne (?:morem|moremo|moreva|mogu|mozemo) (?:\\S+ )?(?:zbudit\\S*|prebudit\\S*|probudit\\S*|zbudim|zbudimo)`),
     R(`(?:took|taken|swallowed|popil\\S*|pojedl\\S*|spil\\S*|popio|popila)(?: \\S+){0,5} (?:pills|tablet\\S*|tableta|zdravil|lekov|lijekova|sredstv\\S* za cisc\\S*|varekin\\S*|bleach)`),
     R(`${OS}(?: \\S+){0,4} pod vodo`),
     R(`porez\\S*(?: \\S+){0,3} kri`),
+    R(`(?:${OS}(?: \\S+){0,2} ${TK}|${TK}(?: \\S+){0,2} ${IZG}|${IZG} (?:\\S+ )?${TK})(?=[ ,.]|$)`),
     R(`${OS} (?:ima|ma|has) (?:39|4[0-3])[.,]\\d`),
     R(
       `(?:pogolt\\S*|pojedl?\\S*|spil\\S*|progutao|progutala|swallowed)(?: \\S+){0,4} (?:baterij\\S*|magnet\\S*|cistil\\S*|steklenic\\S* za cisc\\S*|battery|magnet)`,
     ),
   ],
   stiska: [
-    // (živi nabor, #552) »razmišljam, da bi si nekaj naredila«, »želim si, da me sploh ne bi bilo več«, »sem se namenoma poškodovala«
+    // (živi nabor, #552) »da bi si nekaj naredila«, »da me ne bi bilo«, »sem se namenoma poškodovala«
     R(`(?:razmisljam|premisljujem|mislim|razmisljal\\S*),?(?: \\S+){0,2},? da bi si (?:nekaj|neki|kaj|kej) (?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*)(?!,? mogoce)${KONEC}`),
-    // »nardil si bom nekaj«, »nekaj si bom naredila«, »hočem si nekaj narediti« (konec stavka: ne »… za jest«)
+    // »nardil si bom nekaj« (konec stavka: ne »… za jest«)
     R(`(?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*) si bom (?:nekaj|neki|kaj|kej)(?!,? mogoce)${KONEC}`),
     R(`(?:nekaj|neki|kaj|kej) si bom (?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*)(?!,? mogoce)${KONEC}`),
     R(`(?:hocem|ocem|zelim|moram) si (?:nekaj|neki|kaj|kej) (?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*)(?!,? mogoce)${KONEC}`),
@@ -520,6 +544,16 @@ const IZRAZI = {
     RB(IGRA, `(?:namenoma|namerno|nalasc) sem se (?:poskodoval\\S*|porezal\\S*|urezal\\S*|opekl\\S*)(?=[ ,.]|$)`),
     // (pregled E) namen/načrt, razmišljanje o skoku, samopoškodba z udarci
     R(`(?:namen|nacrt\\S*|plan\\S*|nameravam|namerava)(?: \\S+){0,2} (?:se )?ubi(?:t|ti|l|la)(?=[ ,.]|$)`),
+    // (pregled A po #561) »se mislim ubit«, »na strehi … razmišljam, če bi skočila«, tablete »nocoj vse pojem«, smrtna doza,
+    // »vseeno mi je, če umrem«, »zakaj bi sploh živela«, »ne vidim smisla v življenju«
+    R(`(?:se (?:mislim|mislm|nameravam)|(?:mislim|mislm|nameravam) se) ubi(?:t|ti)(?=[ ,.]|$)`),
+    R(`(?:na|on) (?:\\S+ )?(?:most\\S*|streh\\S*|okn\\S*|blok\\S*|nebotic\\S*)(?: \\S+){0,4} (?:razmisljam|mislim|premisljujem),? (?:\\S+ )?(?:da|ce) bi (?:\\S+ )?skoc\\S*`),
+    R(`tablet\\S*(?: \\S+){0,5} (?:bom|cu) (?:\\S+ )?(?:vse (?:\\S+ )?(?:pojedl|popil|spil|pogoltnil)\\S*|(?:pojedl|popil|spil|pogoltnil)\\S* vse)`),
+    R(`(?:pojedl|popil|spil|pogoltnil)\\S*(?: \\S+){0,5} (?:tablet|zdravil|pilul)\\S*(?: \\S+){0,3} (?:nalasc|namenoma|namerno)(?=[ ,.]|$)`),
+    R(`(?:koliko|kolk|kolko)(?: \\S+){0,3} (?:tablet|zdravil|pilul|paracetamol|lekadol|aspirin|ibuprofen)\\S*(?: \\S+){0,4} (?:smrtn\\S*|ubije\\S*|da umr\\S*)`),
+    R(`(?:vseeno|vseen) mi je,? (?:ce|da) (?:bi )?umr(?:em|jem|l|la|u)(?=[ ,.]|$)`),
+    R(`zakaj bi (?:sploh |se )?(?:vec )?ziv(?:el|ela|u|eti|et)(?=[,.]|$| (?:vec|naprej|sploh)(?=[ ,.]|$))`),
+    R(`(?:ne vid\\S*|nimam|ni) (?:vec )?smisla (?:vec )?v (?:mojem |svojem )?zivl?j?enj?u`),
     R(`(?:razmisljam|mislim|premisljujem|razmisljal\\S*|razmisljam o tem) (?:\\S+ ){0,2}da (?:bi|se) (?:\\S+ )?(?:(?:skoc\\S*|vrg\\S*)(?: \\S+){0,2} (?:z |s |sa |pod |iz )?(?:most\\S*|okn\\S*|streh\\S*|blok\\S*|vlak\\S*|nebotic\\S*)|ubi\\S*)`),
     R(`(?:se )?(?:udarim|udarjam|tepem|grizem|pecem|zazigam) (?:\\S+ ){0,4}dokler ne (?:krvav\\S*|zacne krvav\\S*)`),
     R(`(?:srecn\\S*|bolj\\S*|lazje|bolse) (?:\\S+ )?(?:ce|ko) me (?:ne bi|nebi) (?:blo|bilo|bil|bla|bila)`),
@@ -529,30 +563,44 @@ const IZRAZI = {
     R(`(?:vse|zivljenje|sve|zivot) (?:bom|cu|cu da) (?:\\S+ )?(?:koncal\\S*|zavrsi\\S*|okonca\\S*)`),
     R(`end (?:my|her|his|their|your) (?:own )?life`),
     R(`(?:مي ?خواهم|ميخوام|مي ?خوام) بمير`),
-    // (pregled D) »bom se ubil«, »želim se ubiti«, »ubil se bom«, narečno »se ubu«; skok samo v 1. osebi ali »stojim na mostu«
-    R(`(?:bom|bos|bo|bi|cu|cem|hocem|hoces|hoce|zelim|zelis|zeli|hocu|moram|ocem) (?:\\S+ )?se (?:\\S+ )?ubi(?:l|la|li|t|ti|jem|jes)?(?=[ ,.]|$)`),
+    // (pregled D) »bom se ubil«, »se ubu«; skok samo v 1. osebi ali »stojim na mostu«
+    R(`(?:bom|bos|bo|bi|cu|cem|hocem|hocm|hoces|hoce|zelim|zelm|zelis|zeli|hocu|moram|ocem|ocm) (?:\\S+ )?se (?:\\S+ )?ub(?:i(?:l|la|li|t|ti|jem|jes)?|t|u)(?=[ ,.]|$)`),
     R(`ub(?:il|ila|u|it|iti) se (?:bom|bo|cu|bi)(?=[ ,.]|$)`),
     R(`se ubu(?=[ ,.]|$)`),
-    R(`(?:skocim|bom skocil\\S*|skocil\\S* bom|bom se vrgel|bom se vrgla|cu skociti|skocicu|i will jump|im going to jump|gonna jump|i want to jump)(?: \\S+){0,3} (?:z |s |sa |off |from )?(?:\\S+ )?(?:most\\S*|okn\\S*|streh\\S*|blok\\S*|bridge|roof|window|nebotic\\S*)`),
+    R(`(?:skocim|(?:hocem|hocm|ocem|zelim) skoc\\S*|bom skocil\\S*|skocil\\S* bom|bom se vrgel|bom se vrgla|cu skociti|skocicu|i will jump|im going to jump|gonna jump|i want to jump)(?: \\S+){0,3} (?:z |s |sa |off |from )?(?:\\S+ )?(?:most\\S*|okn\\S*|streh\\S*|blok\\S*|bridge|roof|window|nebotic\\S*)`),
     R(`(?:stojim|sem|sedim|i am|im) (?:na|on|at|on the) (?:\\S+ )?(?:most\\S*|streh\\S*|okn\\S*|bridge|roof|ledge)(?: \\S+){0,3} (?:bom|in bom|and|i) (?:\\S+ )?(?:skoc\\S*|jump\\S*|ubil|ubila)`),
     R(`zadnji dan\\S*(?: \\S+){0,4} (?:adijo|zbogom|adio|bye|goodbye|pa pa|lp vsem)`),
-    R(`(?:zelim|hocem|hoces|hoce|bi rad|bi rada|rad bi|rada bi|zelel bi|zelela bi)(?: si)?(?: da bi)? (?:umr|umre|umrl)\\S*`),
+    R(`(?:zelim|zelm|hocem|hocm|ocem|ocm|hoces|hoce|bi rad|bi rada|rad bi|rada bi|zelel bi|zelela bi|(?:naj)?raj\\S* bi)(?: si)?(?: da bi)? (?:umr|umre|umrl|crkn)\\S*(?=[ ,.]|$)(?!,? (?:kot|kakor|od) )`),
+    // »bolje bi blo, da me ni«, »se hočem obesit« …
+    R(`(?:bolj\\S*|bols\\S*|lazj\\S*|lepse) (?:\\S+ ){0,3}(?:da|ce|ko) me (?:sploh )?ni(?: vec)?(?=[,.]|$| ker | in )`),
+    R(`(?:bolj\\S*|bols\\S*|lazj\\S*|zelim\\S*|zelel\\S*) (?:\\S+ ){0,3}da se (?:sploh |nikoli )?(?:nisem|ne bi|nebi) (?:bil |bila )?rodil\\S*`),
+    R(`(?:nocem|nocm|necem|ne zelim)(?: vec)? (?:bit|biti|bt|zivet\\S*|zivt) (?:vec )?na (?:tem |temu )?svet\\S*`),
+    R(`nimam (?:vec )?(?:zakaj|za kaj|za koga) (?:zivet\\S*|zivt)|ne bi vec ziv(?:el|ela|u|la)(?=[,.]|$)|(?:zelim|hocem) si smrt\\S*|si zelim smrt\\S*`),
+    R(`(?:naj)?raj\\S* bi (?:bil|bila|bla|bl|bu) mrt(?:ev|va|u|vi)(?=[ ,.]|$)(?!,? (?:kot|kakor) )`),
+    R(`(?:zelim|hocem|hocm|bi rad|rad bi|rada bi|bi rada) (?:\\S+ )?(?:izginit\\S*|zaspat\\S*) za (?:vedno|zmeraj)`),
+    R(`(?:(?:hocem|hocm|ocem|zelim|zelm|bom|cu|bi) (?:\\S+ )?se|se (?:hocem|hocm|ocem|zelim|zelm|bom|cu|bi)) (?:\\S+ )?obes(?:it|iti|im|il|ila|u)(?=[ ,.]|$)`),
     R(`(?:zelim|hocu|hoću|zelio bih|zeljela bih)(?: da)? (?:umr|umre|umrem)\\S*`),
-    R(`(?:kms|kys myself)(?=[ ,.]|$)`), R(`se (?:bo|bom|bos|bi|bodo|ce|cu) (?:\\S+ )?ubi(?:l|la|li|jem|jes|t|ti)?(?=[ ,.]|$)`)],
+    R(`(?:kms|kys myself)(?=[ ,.]|$)`), R(`se (?:bo|bom|bos|bi|bodo|ce|cu|hocem|hocm|ocem|zelim|zelm|moram) (?:\\S+ )?ub(?:i(?:l|la|li|jem|jes|t|ti)?|t|u)(?=[ ,.]|$)`)],
   nasilje: [
     // (živi nabor, #552) slike brez oblačil … poslal vsem; »me skoz otipava«; »jo zdajle tepe«
     IZS(`(?:moj\\S*|mene|me) (?:\\S+ )?(?:slik\\S*|fotk\\S*)(?: \\S+){0,3} brez (?:oblacil|oblek\\S*|cunj)(?=[ ,.]|$)`),
     R(`me (?:\\S+ ){0,2}(?:otipava\\S*|otipaval\\S*)(?=[ ,.]|$)`),
-    // šlatanje, prijemanje (varovalka: žival, zdravnik, mama)
-    RB(ZIVAL, `me (?:\\S+ ){0,2}(?:slata\\S*|slatal\\S*)(?=[ ,.]|$)`),
+    // šlatanje, prijemanje (varovalka: žival; znak bolezni v istem stavku, j 10. 11.: »zdravnik me je šlatal, ker me je bolel slepič«)
+    RB(`${ZIVAL}|${BOLEZEN}`, `me (?:\\S+ ){0,2}(?:slata\\S*|slatal\\S*)(?=[ ,.]|$)`),
+    R(`(?=.*(?:${MOLK}))(?:.* )?me (?:\\S+ ){0,2}(?:slata\\S*|slatal\\S*)(?=[ ,.]|$)`),
     R(`(?:prijel\\S*|prijemal\\S*|zgrabil\\S*|prime|prijema) me (?:je )?(?:\\S+ )?za (?:rit|zadnjico|joske|mednozje)(?=[ ,.]|$)`),
     R(`me (?:je )?(?:prijel\\S*|prijemal\\S*|zgrabil\\S*|prime|prijema) (?:\\S+ )?za (?:rit|zadnjico|joske|mednozje)(?=[ ,.]|$)`),
     RB(IGRA, `(?:jo|ga|ju|jih|nas) (?:zdajle|zdej|zdele|ravnokar|pravkar|trenutno) (?:tepe|pretepa|tepejo|pretepajo)(?=[ ,.]|$)`),
-    // (pregled B, #553) nasilje nad drugim brez zaimka: »ati mamo zdajle tepe«, »ata tolče mamo«, »foter mlati mater«
+    // (pregled B, #553) nasilje nad drugim brez zaimka: »ata tolče mamo«
     RB(IGRA, `(?:mamo|mater|majku|brata|bratca|sestro|sestrico) (?:\\S+ )?(?:tepe|pretepa|tolce|mlati|tuce)(?=[ ,.]|$)`),
     RB(IGRA, `(?:tolce|mlati|premlati\\S*|premlatu) (?:\\S+ )?(?:mamo|mami|mater|majku|brata|bratca|sestro|sestrico)(?=[ ,.]|$)`),
     RB(IGRA_EN, `(?:dad|father|stepdad|he|boyfriend|uncle|grandpa) (?:is |keeps |always |just )*(?:beating|hitting|beats|hits|beat|hit|kicking|punching) (?:up )?(?:my |our )?(?:mom|mum|mother|sister|brother|us)(?=[ ,.]|$)`),
     RB(KNJIGA, `(?:${OS}|ata|foter|fotr\\S*|ocim\\S*) (?:je |bo )?(?:\\S+ )?(?:pijan\\S*|pjan\\S*)(?: \\S+){0,3} (?:razbija\\S*|tepe|krici|se dere|grozi|nori|mlati|tolce)(?=[ ,.]|$)`),
+    // (pregled A po #561) »jo je ati udaru«, »mamo vrgel ob tla«, »jo sili spat z njim«, »če povem komu … bo hudo«
+    RB(IGRA, `(?:jo|ga|mamo|mami|mater|brata|bratca|sestro|sestrico) (?:je )?(?:\\S+ )?(?:udaru|udaril\\S*|pretepu|pretepel\\S*|(?:vrgel|vrgu|vrgla) ob (?:tla|steno|zid))(?=[ ,.]|$)`),
+    RB(IGRA, `(?:udaru|udaril\\S*|pretepu|pretepel\\S*) (?:\\S+ )?(?:mamo|mami|mater|brata|bratca|sestro|sestrico)(?=[ ,.]|$)`),
+    R(`(?:me|jo|ga) (?:\\S+ )?sil[ie]\\S* (?:\\S+ )?(?:spat z|v sex|v seks|seks|da (?:spi|spim) z)`),
+    R(`(?:ce|ako) (?:povem|poves|pove) (?:komu|komurkoli|nekomu|starsem|mami|atiju)\\S*(?: \\S+){0,6} (?:bo hudo|bo konec|me bo|te bo|bos videl\\S*|bos obzaloval\\S*)`),
     R(`(?:bojim se|strah me je|ne upam si?|ne upam) (?:\\S+ )?(?:it|iti|ici|prit|priti) (?:domov|kuci|home)(?=[ ,.]|$)`),
     R(`(?:afraid|scared) to go home`),
     // slike brez oblek, nage slike: grožnja ali siljenje
@@ -599,15 +647,17 @@ const IZRAZI = {
     R(`izgubil\\S* (?:sem|sm) se (?:\\S+ ){0,2}(?:v gozdu|v gorah|v hribih|na planini|v jami)|(?:im|i am|i got) lost in the (?:woods|forest|mountains)|izgubio sam se u sumi|izgubila sam se u sumi`),
     R(`(?:dim|iskr\\S*|plamen\\S*) (?:\\S+ ){0,3}(?:iz )?(?:vticnic\\S*|polniln\\S*|polnilc\\S*|kabl\\S*|stedilnik\\S*|pecic\\S*)|iz (?:vticnic\\S*|polnilc\\S*|stedilnik\\S*) (?:\\S+ ){0,2}(?:gre dim|se kadi|iskri|gori)`),
     R(`(?:zapali[olia]+ se|gori) (?:\\S+ )?(?:sporet|stednjak|zavjes\\S*|zaves\\S*|ulje u tavi|olje v ponvi)`),
-    R(`(?:smrdi|disi|vonja|mirise|smrdi) (?:\\S+ )?(?:po|na|kot) pl[aiu]?n`),
-    R(`(?:v (?:kuhinji|hisi|sobi|stanovanju|bloku|garazi|kleti|kuci|stanu|sobi|soli)|doma|pri nas|kod kuce|u kuci|u stanu|kod nas) (?:\\S+ )?(?:gori|se kadi|je dim|ima dima)(?=[ ,.]|$)`),
+    R(`(?:smrdi|disi|dis|vonja|mirise) (?:\\S+ )?(?:(?:po|na|kot) )?pl[aiu]?n`),
+    RB(OGENJ, `(?:v (?:kuhinji|hisi|sobi|stanovanju|bloku|garazi|kleti|kuci|stanu|soli|razredu|ucilnici|telovadnici|avtu)|na (?:krozku|hodniku|balkonu|strehi|stopniscu)|doma|pri nas|kod kuce|u kuci|u stanu|kod nas) (?:\\S+ )?(?:gori|se kadi|je dim|ima dima)(?=[ ,.]|$)(?! (?:luc|svec|lamp|svetilk|reflektor|zarnic)\\S*)`),
+    RB(OGENJ, `(?:soba|kuhinja|blok|garaza|sola|ucilnica|razred|hodnik|streha|avto|omara|zaves[ae]|postelja) (?:\\S+ )?(?:gori|je v plamenih)(?=[ ,.]|$)(?! (?:luc|svec|lamp|svetilk|reflektor|zarnic)\\S*)`),
     R(`gori (?:\\S+ )?(?:doma|pri nas|kod kuce|kod nas)(?=[ ,.]|$)`),
     R(`gori (?:nam|nan|mi|nm|vam|pri nas) (?:\\S+ )?(?:stan|stanovanje|hisa|kuca|kuhinja|soba|kucu|blok|garaza|house|kuhinj\\S*)(?=[ ,.]|$)`),
     R(`(?:hisa|stanovanje|soba|kuhinja|blok|house|kuca|stan|kucu) (?:\\S+ ){0,2}(?:v dimu|polna dima|polno dima|full of smoke|u dimu|puna dima|pun dima)`),
     R(`(?:osjeti|osjetim|osjecam|osecam|oseti|osetim|cutim|cuti|vonjam|smells? like|smell) (?:se )?(?:\\S+ )?(?:plin|gas)(?=[ ,.]|$)`),
   ],
 };
-const izraz = (vrsta, norms) => norms.some((n) => IZRAZI[vrsta].some((r) => r.re.test(n)));
+// sn: z mejami stavkov (za RB)
+const izraz = (vrsta, norms, sn = norms) => norms.some((n, i) => IZRAZI[vrsta].some((r) => ujame(r, r.brez ? sn[i] : n)));
 
 // Število 40–45 (°C, tudi 40,5) ali 104–113 (°F) v oknu okoli besede za vročino.
 function feverNumber(norm, at) {
@@ -658,16 +708,18 @@ export function zaznajNujno(text) {
   const norm0 = normalize(text);
   const norm = DIHANJE.test(norm0) ? norm0 : norm0.replace(PRETIRANO, " ");
   const norms = [norm, brezPolnil(norm)];
-  const snov = SNOV.test(norm) || (!ZIVO.test(norm) && SOLA.test(stavki(text)));
-  if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms)) {
+  const st = stavki(text);
+  const sn = [loci(st), loci(brezPolnil(st))];
+  const snov = SNOV.test(norm) || (!ZIVO.test(norm) && SOLA.test(st));
+  if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms, sn)) {
     // Nesreča (»porezal sem se z nožem in kri teče«): zdravje, razen če sporočilo omenja samomor ali smrt.
     if (NESRECA.test(norm) && !SAMOMOR.test(norm)) return "zdravje";
     return "stiska";
   }
-  if (any(PATTERNS.nasilje, norms, low, snov) || izraz("nasilje", norms) || izsiljevanje(text)) return "nasilje";
+  if (any(PATTERNS.nasilje, norms, low, snov) || izraz("nasilje", norms, sn) || izsiljevanje(text)) return "nasilje";
   if (any(PATTERNS.zdravje, norms, low, snov) || izraz("zdravje", norms) || fever(norm, low)) return "zdravje";
   if (any(P_DOJENCEK, norm, low) && any(P_DOJENCEK_ZNAK, norm, low)) return "zdravje";
-  if (any(PATTERNS.nevarnost, norms, low, snov) || izraz("nevarnost", norms)) return "nevarnost";
+  if (any(PATTERNS.nevarnost, norms, low, snov) || izraz("nevarnost", norms, sn)) return "nevarnost";
   // Posredna stiska: blažje okno »pogovor« (brez 112), j potrdil 10. 11.
   if (BLAGA.test(norm)) return "pogovor";
   return null;

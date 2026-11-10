@@ -3757,7 +3757,7 @@
   "nujno.nevarnost.3": "Ako miriše na plin: ne pali svjetla ni vatru i ne pritiskaj prekidače. Pozovi tek kad si napolju.",
   "nujno.pogovor.naslov": "Čujem te. Nisi sam.",
   "nujno.pogovor.1": "Reci odrasloj osobi kojoj vjeruješ.",
-  "nujno.pogovor.uvod": "Ako želiš s nekim razgovarati:",
+  "nujno.pogovor.uvod": "Ako želiš razgovarati s nekim:",
   "nujno.linija": "Pozovi {ime} {stevilka} (besplatno, {ure}).",
   "nujno.linijaBrezUr": "Pozovi {ime} {stevilka} (besplatno).",
   "nujno.linijaDrugic": "U drugo vrijeme: {stevilka} ({ime}, {ure}).",
