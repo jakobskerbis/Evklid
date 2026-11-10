@@ -13,6 +13,7 @@
 import { h, s, label } from "./kit.js";
 import SL from "../i18n/sl.js";
 import { icon } from "../icons.js";
+import { jsonAliNic } from "../odgovor.js";
 
 let t = (k) => String(SL[k] ?? k);
 if (typeof document !== "undefined") import("../i18n.js").then((m) => (t = m.t)).catch(() => {});
@@ -55,7 +56,7 @@ export function gostota(na_voljo = [1, 2], dpr = typeof window !== "undefined" ?
 function nalozi(poskus) {
   if (paketi.has(poskus)) return paketi.get(poskus);
   const p = (async () => {
-    const [meta, av] = await Promise.all([fetch(new URL(`${poskus}/meta.json`, OSNOVA)).then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status)))), podpiraAvif()]);
+    const [meta, av] = await Promise.all([fetch(new URL(`${poskus}/meta.json`, OSNOVA)).then((r) => jsonAliNic(r, null)).then((m) => m || Promise.reject(new Error("meta"))), podpiraAvif()]);
     const g = gostota(meta.gostote), kon = av && meta.formati.includes("avif") ? "avif" : "webp";
     const url = (ime) => new URL(`${poskus}/${ime}@${g}x.${meta.sloji[ime].brezIzgub ? "webp" : kon}`, OSNOVA).href;
     const pred = (ime) => new Promise((res, rej) => { const i = new Image(); i.onload = res; i.onerror = rej; i.src = url(ime); });
