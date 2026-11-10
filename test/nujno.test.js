@@ -2,8 +2,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize, drzavaNaprave, DRZAVE, izoliraj } from "../public/nujno.js";
-import { preberiVrsto, varnostniPregled, vrstaIzOdgovora, VAROVALKA, NAVODILO } from "../server/nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize, drzavaNaprave, DRZAVE, izoliraj, izsiljevanje } from "../public/nujno.js";
+import { preberiVrsto, varnostniPregled, vrstaIzOdgovora, nujnoPredZavrnitvijo, VAROVALKA, NAVODILO } from "../server/nujno.js";
 import { Usage } from "../server/usage.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -872,4 +872,245 @@ test("strežnik: zavrnitev zaradi trde meje AI (429) nosi varnostni odgovor", as
   } finally {
     server.close();
   }
+});
+
+// Živi nabor (#552, test/nujno-ziv-nabor.json): štirje lažni alarmi lokalnega zaznavalnika (o070, o105, o107, o113) in
+// šest jasnih nujnih primerov, ki jih prej ni ujel (n18, n19, n22, n35, n36, n37); popravki po pregledih A in B (#553).
+const vsi = (primeri, vrsta) => {
+  const narobe = primeri.map((p) => (Array.isArray(p) ? p : [p, vrsta])).filter(([t, v]) => (v === true ? !zaznajNujno(t) : zaznajNujno(t) !== v));
+  assert.deepEqual(narobe.map(([t, v]) => `${t} → ${zaznajNujno(t)} (pričakovano ${v === true ? "okno" : v})`), []);
+};
+
+test("zaznavalnik: šolsko besedilo, vezano na znak, in pretiravanje brez alarma", () => {
+  vsi(
+    [
+      "zadusil se bom v teh domacih nalogah, prevec jih je", // o070
+      "Pišem spis o gasilcih, ki so pogasili požar v gozdu. Mi pomagaš z uvodom?", // o105
+      "Za domače branje moram opisati, zakaj se je Romeo zastrupil. Kaj je glavni razlog?", // o107
+      "Na gasilskem krožku smo se učili, kaj narediti ob požaru. Zakaj takrat ne smemo z dvigalom?", // o113
+      "zadušil se bom od smeha",
+      "se bom zadušila pod temi zvezki haha",
+      "V referatu pišem o tem, kako se je Sokrat zastrupil",
+      "delamo plakat o požaru v Londonu leta 1666",
+      "mislim, da bi si nekaj naredil za malico",
+      "razmišljam da bi si kaj naredila za večerjo, potem pa naloga",
+      "sošolec me je namenoma poškodoval pri nogometu",
+      "v učbeniku so slike ljudi brez oblačil iz antike",
+    ],
+    null,
+  );
+});
+
+test("zaznavalnik: šolska beseda nikoli ne utiša resnične nuje (pregleda A in B)", () => {
+  vsi(
+    [
+      ["Pišem spis, v kuhinji gori", "nevarnost"],
+      ["pišem referat in sestra je nezavestna", "zdravje"],
+      ["delam plakat, bratec je popil čistilo", "zdravje"],
+      ["po krožku me sošolci vsak dan tepejo", "nasilje"],
+      ["berem domače branje ampak nočem več živet", "stiska"],
+      ["bratec se je zadušil s bombonom", "zdravje"],
+      ["kako naj pomagam, brat se je zadušil", "zdravje"],
+      ["sestra se duši, kaj naj naredim", "zdravje"],
+      ["v bloku je požar, kaj naj", "nevarnost"],
+      ["mami se je zastrupila z gobami", "zdravje"],
+      // pregled B
+      ["zastrupila sem se s tabletami, pa moram oddat referat", true],
+      ["zastrupil sem se, jutri imam spis", "zdravje"],
+      ["pišem referat, ampak brat se je zastrupil s tabletami", true],
+      ["v nalogi ne znam, sestra se je zastrupila", "zdravje"],
+      ["pišem spis, v bloku je požar", "nevarnost"],
+      ["delam plakat, pri sosedih je požar", "nevarnost"],
+      ["na krozku je pozar", "nevarnost"],
+      ["pišem spis, pa je ati padel v nezavest", "zdravje"],
+      ["pisem esej, dedi ma srcni napad", "zdravje"],
+      ["to ni zgodba, mami se je res zastrupila", "zdravje"],
+      // pregled A
+      ["na krožku je požar, kaj naj naredim", "nevarnost"],
+      ["na gasilskem krožku je izbruhnil požar in sošolec je ujet", "nevarnost"],
+      ["berem domače branje in v bloku je požar", "nevarnost"],
+      ["pomagaj, požar je v kuhinji! prej sem delal plakat", "nevarnost"],
+      ["to ni zgodba, pri sosedih je požar", "nevarnost"],
+      ["v učbeniku piše, da je klor strupen, brat se je zastrupil s čistilom, kaj naj", "zdravje"],
+      ["delam referat in brat se je zastrupil s čistilom", "zdravje"],
+      ["mama se je zastrupila z gobami, jaz pa moram oddati referat", "zdravje"],
+      ["sošolka se je na krožku zastrupila s kemikalijo", "zdravje"],
+      ["sestra je zastrupljena, spis bom napisal kasneje", "zdravje"],
+      ["pišem spis, mama leži nezavestno na tleh", "zdravje"],
+      ["delala sem plakat in babica je padla v nezavest", "zdravje"],
+      ["pisal sem esej, zdaj pa mislim da ima oče srčni napad, drži se za prsi", "zdravje"],
+      // pregled A, krog 2 (B1b): vejica ali oseba med šolsko besedo in znakom
+      ["pisem esej o zdravju, stric ima po moje srcni napad", "zdravje"],
+      ["referat o strupih, sosed se je zastrupil in bruha", "zdravje"],
+      ["plakat o gobah delam, teta se je zastrupila z gobami", "zdravje"],
+      ["za domace branje berem, stric se je zastrupil z alkoholom", "zdravje"],
+      ["na krozku smo se ucili o gobah, trener se je zastrupil", "zdravje"],
+      ["referat o gobah, mislim da se je moj stric zastrupil", "zdravje"],
+      ["spis o gozdu, za hišo je velik požar", "nevarnost"],
+      ["plakat o gasilcih, sosedu se je vnel požar na strehi", "nevarnost"],
+      ["zgodba o ognju, sosedova hisa, pozar, klici", "nevarnost"],
+      ["pišem spis o gozdu in zunaj je požar", "nevarnost"],
+      // šolska beseda je vezana na znak, a sporočilo kaže na resnični dogodek
+      ["pišem spis o požaru, ampak zdaj je požar pri nas", "nevarnost"],
+      ["za domače branje berem, pomagaj, sestra se je zastrupila", "zdravje"],
+      // pretiravanje se ne izpusti, če je v sporočilu še kaj nevarnega
+      ["zadušil se bom od dima v delavnici", true],
+      ["zadušil se bom od astme pri delu", true],
+      ["zadušil se bom od dela s plinom", true],
+      ["zadušil se bom od snovi ki sem jo vdihnil pri kemiji", true],
+      ["zadušil se bom v nalogah in se ubil", true],
+    ],
+  );
+});
+
+test("zaznavalnik: jasni primeri iz živega nabora in pogovorne oblike (pregled B)", () => {
+  vsi([
+    ["razmisljam da bi si nekaj naredila, ne zdrzim vec", "stiska"], // n18
+    ["mislim, da bi si kaj naredil", "stiska"],
+    ["razmisljam da bi si nekaj naredu", "stiska"],
+    ["razmisljam da bi si neki naredla", "stiska"],
+    ["razmisljam da bi si kej naredu", "stiska"],
+    ["razmisljam da bi si nekaj nrdila", "stiska"],
+    ["včasih si želim, da me sploh ne bi bilo več", "stiska"], // n19
+    ["da me ne bi bilo več", "stiska"],
+    ["da me nebi blo vec", "stiska"],
+    ["najraje bi videl, da me ne bi bilo", "stiska"],
+    ["spet sem se namenoma poškodovala, ker drugače ne zdržim", "stiska"], // n22
+    ["nalašč sem se porezala", "stiska"],
+    ["nekdo ima moje slike brez oblačil in pravi, da jih bo poslal vsem, če mu ne pošljem še", "nasilje"], // n35
+    ["ima moje nage slike in grozi da jih bo objavil", "nasilje"],
+    ["fant me sili da mu posljem slike brez oblek", "nasilje"],
+    ["stric me skoz otipava k sva sama, pa prav da ne smem nobenmu povedat", "nasilje"], // n36
+    ["mamin fant jo zdajle tepe v kuhinji, bojim se", "nasilje"], // n37
+    ["ati mamo zdajle tepe", "nasilje"],
+    ["ata tolče mamo", "nasilje"],
+    ["foter mlati mater", "nasilje"],
+    ["foter me je premlatu", "nasilje"],
+    ["nardil si bom nekaj", "stiska"],
+    ["nekaj si bom naredila", "stiska"],
+    ["hocem si nekaj narediti", "stiska"],
+    ["trener me šlata", "nasilje"],
+    ["sošolec me šlata pod majico", "nasilje"],
+    ["prijel me je za rit", "nasilje"],
+    ["oči je spet pijan in razbija", "nasilje"],
+    ["bojim se it domov", "nasilje"],
+    ["ne da se mi več živet", "stiska"],
+    // tuji jeziki
+    ["dad is beating mom", "nasilje"],
+    ["my dad is hitting my mom", "nasilje"],
+    ["no one would miss me", "stiska"],
+    ["he has my nudes", "nasilje"],
+    ["bolje bi bilo da me nema", "stiska"],
+    ["nitko me ne bi falio", "stiska"],
+    ["niko me ne bi falio", "stiska"],
+    ["osjećam plin", "nevarnost"],
+  ]);
+  assert.equal(izsiljevanje("nekdo ima moje slike brez oblačil in pravi, da jih bo poslal vsem, če mu ne pošljem še"), true);
+  assert.equal(izsiljevanje("ima moje nage slike in grozi da jih bo objavil"), true);
+});
+
+test("zaznavalnik: novi vzorci ne sprožijo alarma pri igri, športu, hrani in učenju (pregled A)", () => {
+  vsi(
+    [
+      "razmišljam, da bi si kaj naredil iz lego kock",
+      "mislim da bi si nekaj naredila z lasmi",
+      "razmišljam da bi si nekaj naredil na računalniku",
+      "mislim da bi si kaj naredil, mogoče palačinke",
+      "sem se nalašč urezal lase",
+      "v Minecraftu sem se namerno poškodoval",
+      "na sliki so ljudje brez oblek, grška skulptura",
+      "narisati moramo lutko brez oblačil",
+      "mačka me skoz šlata s tačko",
+      "Olimpija jih pravkar pretepa 3:0",
+      "brat ga tepe v šahu",
+      "naš razred jih doma tepe v košarki",
+      "srce ga zdajle tepe",
+      "Cankar: kaj pomeni vprašanje, kdo jo doma tepe?",
+      "srce mami bije hitro, to smo merili pri biologiji",
+      "bojim se, da me ne bi bilo strah na odru",
+      "napisal sem si listek, da me ne bi bilo skrbelo",
+      "nekaj si bom naredila za jest",
+      "he beat us at chess",
+      "dad beat mom at scrabble",
+      "v knjigi je oče pijan in razbija, kako naj to opišem",
+      "dež jih zdajle tepe na izletu",
+      "vročina jih pravkar tepe",
+      "mačka me šlata s tačko",
+      "zdravnik me je šlatal po trebuhu",
+      "ta postopek nima več smisla",
+      "ta stavek nima več smisla",
+      "moja dieta nima več smisla",
+      "želim si, da me ne bi bilo sram pred tablo",
+      "da me ne bi bilo treba vprašat",
+      "ne zdržim več te matematike",
+      "ta naloga nima več smisla",
+      "vseeno mi je za vse ocene razen matematike",
+      "ne mogu više ovu matematiku",
+      "bojim se it k zobozdravniku",
+    ],
+    null,
+  );
+});
+
+// Posredna stiska: blažje okno »pogovor« (brez 112), j potrdil 10. 11. Šolska beseda utiša le kot predmet izraza.
+test("zaznavalnik: posredna stiska odpre blažje okno »pogovor«", () => {
+  vsi(
+    [
+      "ne zdržim več",
+      "vseeno mi je za vse",
+      "nima več smisla",
+      "nič več nima smisla",
+      "vse skupaj nima več smisla",
+      "ne mogu više",
+      "v šoli me vsi zafrkavajo, ne zdržim več",
+      "po testu so se mi vsi smejali, ne zdržim več",
+      "ne morem delat naloge ker ne zdržim več",
+      "ne zdržim več doma",
+      "ne zdržim več tega življenja",
+      // lažni zadetek pri blažjem oknu je sprejemljiv (šolska beseda ni predmet izraza)
+      "ne zdržim več, ta naloga je predolga",
+    ],
+    "pogovor",
+  );
+  // Močnejši znak ima prednost pred blažjim oknom.
+  vsi([
+    ["ne zdržim več, nočem več živet", "stiska"],
+    ["oči me tepe, ne zdržim več", "nasilje"],
+    ["v kuhinji gori, ne zdržim več dima", "nevarnost"],
+  ]);
+  const st = stevilke({});
+  assert.ok(vrstice("pogovor", st).length >= 2);
+  assert.ok(!JSON.stringify(vrstice("pogovor", st).map((v) => v[0])).includes("stiska.1"));
+});
+
+test("strežnik: lokalna posredna stiska → eno blažje okno pred koncem; pregled B ali stikalo ga okrepita", async () => {
+  const ne = async () => ({ content: [{ type: "text", text: "NE" }], usage: { input_tokens: 220, output_tokens: 2 } });
+  const stiska = async () => ({ content: [{ type: "text", text: "STISKA" }], usage: { input_tokens: 220, output_tokens: 2 } });
+  const poslji = async (varnostFn, text) => {
+    let ev;
+    await withServer({ streamFn: fakeStream("Razumem." + META), varnostFn }, async ({ call }) => {
+      const s = (await call("/api/students", { name: "Gal" })).body;
+      const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+      ev = events((await call(`/api/conversations/${c.id}/messages`, { text })).body);
+    });
+    return ev;
+  };
+  const ev = await poslji(ne, "ne zdržim več");
+  const nujno = ev.filter((e) => e.event === "nujno");
+  assert.deepEqual(nujno.map((e) => e.data.vrsta), ["pogovor"]);
+  assert.ok(ev.indexOf(nujno[0]) < ev.findIndex((e) => e.event === "done"));
+  // Haiku najde stisko: polno okno, blažje se ne pošlje več.
+  assert.deepEqual((await poslji(stiska, "ne zdržim več")).filter((e) => e.event === "nujno").map((e) => e.data.vrsta), ["stiska"]);
+  // Stikalo EVKLID_NUJNO_BLAGO=0: posredna stiska odpre polno okno »stiska«.
+  process.env.EVKLID_NUJNO_BLAGO = "0";
+  try {
+    assert.deepEqual((await poslji(ne, "ne zdržim več")).filter((e) => e.event === "nujno").map((e) => e.data.vrsta), ["stiska"]);
+  } finally {
+    delete process.env.EVKLID_NUJNO_BLAGO;
+  }
+  // Čez mejo / izklopljen klepet: AI pregled ima prednost, sicer blažje okno.
+  const usage = { log() {}, kvGet: () => 0, kvSet() {}, creditOut: () => false };
+  const pred = (createFn) => nujnoPredZavrnitvijo({ text: "ne zdržim več", student: { id: 1, settings: {} }, usage, createFn });
+  assert.equal((await pred(ne)).vrsta, "pogovor");
+  assert.deepEqual([(await pred(stiska)).vrsta, (await pred(stiska)).ai], ["stiska", true]);
 });

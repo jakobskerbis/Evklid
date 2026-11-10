@@ -1297,7 +1297,9 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
     // Takoj, brez čakanja na strežnik (objava nove različice, počasen AI pregled): pregled A V4.
-    showNujno(lokalnoNujno(text), { before: bubble });
+    // Blažje okno »pogovor« (posredna stiska) počaka na strežnik, ki lahko pošlje močnejšo vrsto.
+    const takoj = lokalnoNujno(text);
+    if (takoj?.vrsta !== "pogovor") showNujno(takoj, { before: bubble });
     const box = $("#messages");
     const paint = (shown) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;

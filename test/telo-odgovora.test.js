@@ -26,8 +26,8 @@ test("jsonAliNic: uspeh vrne JSON, napaka zavrže telo in vrne privzeto", async 
 
 test("v public/ ni več »r.ok ? r.json() : …« (telo napake bi ostalo neprebrano)", () => {
   const najdbe = [];
-  // sole.js: popravljeno v PR #520; 3d/atlas.js: spreminja ga veja claude/srce-teksture (popravi po njeni združitvi).
-  const izpusti = new Set(["sole.js", path.join("3d", "atlas.js")]);
+  // 3d/atlas.js: spreminja ga veja claude/srce-teksture (popravi po njeni združitvi).
+  const izpusti = new Set([path.join("3d", "atlas.js")]);
   const hodi = (dir) => {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, e.name);
@@ -35,12 +35,28 @@ test("v public/ ni več »r.ok ? r.json() : …« (telo napake bi ostalo neprebr
       if (e.isDirectory()) {
         if (!["vendor", "i18n", path.join("3d", "modeli")].includes(rel)) hodi(p);
       } else if (e.name.endsWith(".js") && !izpusti.has(rel)) {
-        fs.readFileSync(p, "utf8").split("\n").forEach((l, i) => {
-          if (/\.ok \? \w+\.json\(\) :/.test(l)) najdbe.push(`${rel}:${i + 1}`);
+        const vrstice = fs.readFileSync(p, "utf8").split("\n");
+        vrstice.forEach((l, i) => {
+          // »r.ok ? r.json() : …« in »res.ok ? await res.json()… : …« (pregled #524 A: oblika z await)
+          if (/\.ok \? (await )?\w+\.json\(\)/.test(l) && !/zavrzi\(/.test(l)) najdbe.push(`${rel}:${i + 1}`);
+          // »if (!r.ok) return …« tik za fetch() brez zavrzi(r), razen če je telo že prebrano (rezultati poskusov v sim/ niso Response)
+          else if (/if \(!\w+\.ok\) return(?! zavrzi)/.test(l)) {
+            const prej = vrstice.slice(Math.max(0, i - 3), i).join("\n");
+            if (/fetch\(/.test(prej) && !/\.(json|text)\(/.test(prej)) najdbe.push(`${rel}:${i + 1}`);
+          }
         });
       }
     }
   };
   hodi(pub);
   assert.deepEqual(najdbe, []);
+});
+
+test("napake na poteh /api zavržejo telo (gradiva, lige, učitelj, števec porabe, prevodi)", () => {
+  const src = (f) => fs.readFileSync(path.join(pub, f), "utf8");
+  assert.match(src("gradiva.js"), /if \(!r\.ok\) return zavrzi\(r\), "";/);
+  assert.match(src("leagues.js"), /if \(!r\.ok\) return zavrzi\(r\), toast\(/);
+  assert.match(src("ucitelj.js"), /if \(!r\.ok\) return zavrzi\(r\), toast\(/);
+  assert.match(src("usage-meter.js"), /: \(zavrzi\(res\), null\)/);
+  assert.match(src("i18n.js"), /if \(!res\.ok\) return zavrzi\(res\), null;/);
 });
