@@ -162,6 +162,7 @@ def vokseli(V, F, odprta, dim):
     return m | lupina(V, F, dim) if odprta else m
 
 
+KOMORE = {"levi-prekat", "desni-prekat", "levi-preddvor", "desni-preddvor"}
 SRCE = {"levi-prekat", "desni-prekat", "levi-preddvor", "desni-preddvor", "medprekatni-pretin", "srcne-zaklopke", "papilarne-misice"}
 MOZGANI = {"veliki-mozgani", "mali-mozgani", "mozgansko-deblo", "talamus", "mozganski-prekat"}
 BREZ_LOKALNE = {"arterija", "vena", "vencne-zile", "aorta", "votla-vena", "hrbtenjaca", "sapnice", "zolcni-vodi", "secevod", "sapnik",
@@ -183,6 +184,33 @@ def enota(kl, pot):
     if kl in ("ledvica", "ledvicni-meh", "leva-ledvica", "desna-ledvica"):
         return "ledvica-" + ("l" if re.search(r"(_l/|left_)", pot) else "d")
     return kl
+
+
+def zapolni_votline(idx, dim):
+    """Srce: HRA ima stene votlin kot lupine (levi prekat brez pretina je v prečni rezini odprt »C«). Votline (kri) v
+    celem srcu zapolnimo po prečnih rezinah in vsak voksel damo najbližji votlini, da dotik sredi prekata pove ime."""
+    from scipy import ndimage
+    vse = [v for v in idx.values() if len(v)]
+    if not vse:
+        return
+    V = np.concatenate(vse); lo = np.maximum(V.min(0) - 3, 0); hi = np.minimum(V.max(0) + 4, dim)
+    L = np.zeros(hi - lo, np.uint8); kom = [k for k in KOMORE if k in idx and len(idx[k])]
+    for kl, v in idx.items():
+        if len(v):
+            L[tuple((v - lo).T)] = (kom.index(kl) + 1) if kl in kom else 255
+    S = L > 0
+    c = ndimage.binary_closing(S, iterations=2)
+    for i in range(c.shape[0]):
+        c[i] = ndimage.binary_fill_holes(c[i])
+    vot = c & ~S
+    if not vot.any() or not kom:
+        return
+    jeKom = (L > 0) & (L < 255)
+    _, ind = ndimage.distance_transform_edt(~jeKom, return_indices=True)
+    naj = L[ind[0], ind[1], ind[2]]
+    for j, kl in enumerate(kom):
+        dod = np.argwhere(vot & (naj == j + 1)).astype(np.int32) + lo.astype(np.int32)
+        idx[kl] = np.concatenate([idx[kl], dod])
 
 
 def lokalni_premik(v, konc, dim, doseg=6):
@@ -338,7 +366,7 @@ def main():
     W2, H2, Z2 = -(-Wc // MM), -(-Hc // MM), -(-Z // MM)
     ozn = np.zeros((Z2, H2, W2), np.uint8); plasti = []
 
-    def maska(g):
+    def maska(g, kl=""):
         """Mreže → indeksi vokslov (z, y, x) mreže 2 mm, kot int32 [n, 3]."""
         m = np.zeros((Z2, H2, W2), bool)
         for V, F, odp in zdruzi(g):
@@ -359,12 +387,14 @@ def main():
     lokalno = "--brez-lokalne" not in a
     vse_enote = []
     for en, po in enote_mrez.items():
-        idx = {kl: maska(g) for kl, g in po.items()}
+        idx = {kl: maska(g, kl) for kl, g in po.items()}
         t = np.zeros(3, int)
         # majhne strukture (oko, slinavke …) imajo premalo vokslov za zanesljivo oceno: ostanejo pri globalni poravnavi
         if lokalno and en is not None and sum(len(v) for v in idx.values()) >= 300:
             t, c0, c1 = lokalni_premik(np.concatenate([v for v in idx.values() if len(v)]), konc, (Z2, H2, W2))
             premiki[en] = {"mm": (t[::-1] * MM).tolist(), "cena": [round(c0), round(c1)]}
+        if en == "srce":
+            zapolni_votline(idx, (Z2, H2, W2))
         vse_enote.append([en, idx, np.array(t)])
     # hrbtenica: premik vretenca ne sme skočiti od sosedov (mediana treh zaporednih vretenc; ploščica = povprečje sosednjih)
     red = [f"{d}_vertebra_{i}" for d, n in (("cervical", 7), ("thoracic", 12), ("lumbar", 5)) for i in range(1, n + 1)]
