@@ -76,7 +76,7 @@ test("pravi PDF: pdf.js prebere besedilno plast majhne pole in najde dve nalogi"
     const vp = pg.getViewport({ scale: 1 });
     pages.push({ width: vp.width, height: vp.height, items: (await pg.getTextContent()).items });
   }
-  await doc.destroy();
+  await doc.loadingTask.destroy();
   const tasks = splitTasks(pages);
   assert.deepEqual(tasks.map((t) => t.label), ["1", "2"]);
   assert.match(tasks[0].text, /a\) 12 \+ 30 =/);

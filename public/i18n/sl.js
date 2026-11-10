@@ -1035,6 +1035,8 @@ export default {
   "pp.viewerLoading": "Odpiram polo …",
   "pp.notPdf": "Ta datoteka ni PDF. Izberi polo, preneseno z ric.si.",
   "pp.loadFail": "Pole ni bilo mogoče odpreti ({msg}).",
+  "pp.fallbackMsg": "Pregledovalnika pole ni mogoče zagnati v tej napravi, zato pomoč pri nalogi tu ni na voljo.",
+  "pp.fallbackOpen": "Odpri PDF",
   "pp.found": "Najdene naloge: {n}. Pri nalogi pritisni »Pomoč pri tej nalogi«.",
   "pp.foundNone": "Nalog ni bilo mogoče najti samodejno. Z »Označi nalogo« povleci okvir okoli naloge.",
   "pp.pageOf": "{n} / {total}",

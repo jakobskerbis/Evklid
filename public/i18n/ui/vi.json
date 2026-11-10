@@ -3116,6 +3116,8 @@
   "pp.viewerLoading": "Đang mở đề …",
   "pp.notPdf": "Tệp này không phải PDF. Hãy chọn đề đã tải từ ric.si.",
   "pp.loadFail": "Không mở được đề ({msg}).",
+  "pp.fallbackMsg": "Trình xem đề không chạy trên thiết bị này, nên không có trợ giúp làm bài ở đây.",
+  "pp.fallbackOpen": "Mở PDF",
   "pp.found": "Đã tìm thấy {n} câu. Nhấn «Giúp câu này» bên cạnh một câu.",
   "pp.foundNone": "Không tự động tìm được câu nào. Dùng «Đánh dấu câu» để kéo khung quanh một câu.",
   "pp.pageOf": "{n} / {total}",

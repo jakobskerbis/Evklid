@@ -3140,6 +3140,8 @@
   "pp.viewerLoading": "Inafungua mtihani …",
   "pp.notPdf": "Faili hili si PDF. Chagua mtihani uliopakuliwa kutoka ric.si.",
   "pp.loadFail": "Mtihani haukuweza kufunguliwa ({msg}).",
+  "pp.fallbackMsg": "Kionyeshi cha mtihani hakifanyi kazi kwenye kifaa hiki, kwa hiyo msaada wa maswali haupatikani hapa.",
+  "pp.fallbackOpen": "Fungua PDF",
   "pp.found": "Maswali yaliyopatikana: {n}. Bonyeza «Msaada kwa swali hili» kando ya swali.",
   "pp.foundNone": "Maswali hayakupatikana kiotomatiki. Kwa «Weka alama swali», buruta kisanduku kuzunguka swali.",
   "pp.pageOf": "{n} / {total}",
