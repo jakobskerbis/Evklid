@@ -92,7 +92,8 @@ test("robots.txt, sitemap.xml in llms.txt: vsebina", () => {
   assert.match(llms, /Ni povezana s projekti z imenom »Euclid«/);
   assert.match(llms, /is not related to projects named "Euclid"/);
   assert.ok(llms.includes(eur(LEVEL_PRICES.OS.month)) && llms.includes("9.99 EUR") && llms.includes(`${TRIAL_DAYS} dni brezplačno`));
-  assert.ok(!/Anthropic|Claude/.test(llms), "ime ponudnika modela je odločitev j");
+  // Ime ponudnika modela (j, 10. 11. 2026): slovensko in angleško.
+  assert.ok(llms.includes("pripravijo modeli Claude podjetja Anthropic") && llms.includes("Anthropic's Claude models"));
 });
 
 test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", () => {
@@ -108,7 +109,8 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
   assert.ok(html.includes("9,99 €") && html.includes("99 €"));
   assert.ok(html.includes("33 jezikov") && html.includes(`${TRIAL_DAYS} dni brezplačno`));
   assert.match(html, /Ni povezan s projekti z imenom »Euclid«/);
-  assert.ok(!/Anthropic|Claude/.test(html), "ime ponudnika modela je odločitev j");
+  assert.ok(html.includes("Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; izračune in rezultate preveri Evklidov program."));
+  assert.ok(html.includes("vidijo samo njegov starš in, če je otrok v razredu, učitelj razreda") && !html.includes("Ime je dobil"));
   const faq = ldBlocks(html)[0];
   assert.equal(faq["@type"], "FAQPage");
   const n = (html.match(/<details/g) || []).length;

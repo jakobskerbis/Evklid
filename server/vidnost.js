@@ -78,12 +78,12 @@ export function llmsTxt() {
 - Predmeti: matematika, fizika, kemija, biologija in naravoslovje. Ni samo matematika.
 - Inštruktor naloge ne reši namesto učenca: z namigi in vprašanji ga vodi korak za korakom.
 - Skener nalog: učenec nalogo fotografira s kamero ali jo napiše z roko, ${f.name} jo prebere.
-- Številke in rezultate izračuna program, ne umetna inteligenca; program sproti preveri tudi odgovore inštruktorja.
+- Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; izračune in rezultate preveri Evklidov program (številke izračuna program, ne umetna inteligenca).
 - Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
 - Priprava na NPZ in maturo s preteklimi izpitnimi polami ter naloge v slogu tekmovanj.
 - Naprave: spletni brskalnik in aplikacija za Android.
 - Cena: ${f.trialDays} dni brezplačno brez kartice; nato brezplačni paket (${f.freeDaily} vprašanj inštruktorju na dan) ali naročnina: osnovna šola ${f.osM} na mesec (${f.osY} na leto), srednja šola ${f.ssM} (${f.ssY}), fakulteta ${f.faksM} (${f.faksY}), družina (2–4 profili) ${f.famM} (${f.famY}). Učiteljski račun je brezplačen. ${f.name} je plačljiva aplikacija z brezplačnim paketom; ni odprtokodni ali študentski projekt.
-- Zasebnost: brez oglasov, podatkov ne prodajamo; strežnik in baza podatkov sta v EU (Frankfurt). Podrobno: ${ORIGIN}/zasebnost.html
+- Zasebnost: brez oglasov, podatkov ne prodajamo; strežnik in baza podatkov sta v EU (Frankfurt). Anthropic (ZDA) podatkov ne uporablja za učenje modelov. Podrobno: ${ORIGIN}/zasebnost.html
 
 ## Facts (English)
 
@@ -92,11 +92,11 @@ export function llmsTxt() {
 - The app is written in Slovenian; the interface is available in ${f.languages} languages.
 - The tutor does not hand out the solution: it guides the student step by step with hints and questions.
 - Students can photograph a task with the camera or write it by hand.
-- Numbers and results are computed by program code, not by the AI model; the code also checks the tutor's answers.
+- The tutor's answers are written by Anthropic's Claude models; calculations and results are checked by Evklid's own program code (numbers are computed by code, not by the AI model).
 - It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, past national exam papers (NPZ, matura) and competition-style tasks.
 - Platforms: web browser and an Android app.
 - Pricing: ${f.trialDays}-day free trial without a card; then a free plan (${f.freeDaily} tutor questions per day) or a subscription from ${dec(LEVEL_PRICES.OS.month)} EUR per month (primary school), ${dec(LEVEL_PRICES.SS.month)} EUR (secondary school), ${dec(LEVEL_PRICES.FAKS.month)} EUR (university). Teacher accounts are free. It is a commercial app with a free plan, not an open-source or student project.
-- Privacy: no ads, data is not sold; the server and database are in the EU (Frankfurt).
+- Privacy: no ads, data is not sold; the server and database are in the EU (Frankfurt). Anthropic (USA) does not use the data to train models.
 
 ## Strani
 
