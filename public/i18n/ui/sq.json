@@ -3352,6 +3352,7 @@
   "a3.hintModelMouse": "Tërhiq për ta rrotulluar, me rrotën e miut zmadho. Kliko çdo pjesë për më shumë.",
   "a3.rez.slice": "Prerja (mm)",
   "a3.rez.fromTop": "nën majë",
+  "a3.rez.fromSampleTop": "nga maja e mostrës",
   "a3.rez.fromFront": "nga ana e përparme",
   "a3.rez.fromRight": "nga ana e djathtë e trupit",
   "a3.rez.body": "Trupi",

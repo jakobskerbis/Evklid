@@ -24,6 +24,7 @@ export const info = {
 
 const NAVEDBA = "Courtesy of the U.S. National Library of Medicine";
 const IMENA_SMERI = { a: "Prečno", k: "Frontalno", s: "Sagitalno" };
+const VRSTA_VRETENCA = { "vratno-vretence": "C", "prsno-vretence": "Th", "ledveno-vretence": "L" };
 
 function slika(url) {
   return new Promise((res, rej) => {
@@ -48,18 +49,18 @@ export async function zgradi(THREE, ctx) {
   const koren = new URL("../../rezine/", import.meta.url).href;
   let kazalo;
   try {
-    kazalo = JSON.parse(globalThis.localStorage?.getItem("evklid.3d.rezine") || "null");
+    kazalo = JSON.parse(globalThis.localStorage?.getItem(R.KLJUC_KAZALA) || "null");
   } catch {}
   kazalo ||= await json(koren + "kazalo.json");
   const imena = await json(new URL("../../rezine-oznake.json", import.meta.url).href);
   const telefon = ctx.kakovost !== "visoka";
-  // Gostovanje (vedro R2): če vedro ali CORS odpove, kazalo.rezerva pokaže vzorec iz repozitorija (model ne pade)
+  // Gostovanje (vedro R2): vsako telo posebej (manjkajoče telo ne podre drugega); če ni nobenega, kazalo.rezerva
+  // pokaže vzorec iz repozitorija (model ne pade)
   let osnova, spoli, mete;
   const pripravi = async (k) => {
-    const o = new URL(k.osnova || "./", koren).href, sp = Object.keys(k.telesa);
     // največje število rezin po smereh čez vsa telesa (drsnik ima eno območje; vrednost se pripne na izbrano telo)
-    const me = await Promise.all(sp.map((s) => json(new URL(k.telesa[s], o).href + "meta.json")));
-    [osnova, spoli, mete, kazalo] = [o, sp, me, k];
+    ({ osnova, spoli, mete } = await R.telesaKazala(k, koren, json));
+    kazalo = k;
   };
   const naRezervo = async (err) => {
     if (!kazalo.rezerva) throw err;
@@ -75,7 +76,7 @@ export async function zgradi(THREE, ctx) {
   const ravnina = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
   const ravenZ = Number(ctx.zacetek?.raven);
   const stanje = { raven: [1, 2, 3].includes(ravenZ) ? ravenZ : 1, spol: ctx.zacetek?.telo && spoli.includes(ctx.zacetek.telo) ? ctx.zacetek.telo : spoli[0], smer: ctx.zacetek?.smer || "a", i: { a: 0, k: 0, s: 0 }, telo: true, pogled: "3d", izbrana: 0, premaknjeno: { a: false, k: false, s: false } };
-  if (stanje.raven === 1) Object.assign(stanje, { pogled: "ravno", telo: false });
+  if (stanje.raven === 1) Object.assign(stanje, { ...R.pogledZaRaven(1), smer: stanje.smer });
   let T = null; // naloženo telo: { meta, url, mali, ozn, dim }
   let napakaNalaganja = "", ponovi = "", napakePloscic = 0;
   let ostraZa = "", zadnjaKamera = null, visinaPlatna = 800, kljucKamere = "";
@@ -366,12 +367,16 @@ export async function zgradi(THREE, ctx) {
 
   // --- deli: strukture na trenutni rezini (seznam ob modelu) in poudarek izbrane
   // del za oznako mreže; na ravni OŠ preprostejše skupno ime (ali nič, če ga za to raven ni)
-  const kljucOznake = (id) => (id ? (os() ? imena.os[T.meta.oznake.kljuci[id - 1]] : T.meta.oznake.kljuci[id - 1]) || "" : "");
-  function del(id) {
-    const kl = kljucOznake(id);
+  // posamezno vretence (»prsno-vretence-th8«) ima na OŠ ime skupine svoje vrste (hrbtenica)
+  const kljucOznake = (id) => {
+    return R.kljucZaRaven(imena, id ? T.meta.oznake.kljuci[id - 1] : "", os());
+  };
+  const del = (id) => delKljuca(kljucOznake(id));
+  function delKljuca(kl, raven = "") {
     if (!kl) return null;
+    if (raven) kl = `${kl}-${raven.toLowerCase()}`;
     if (deliPoId.has(kl)) return deliPoId.get(kl);
-    const o = imena.oznake[kl];
+    const o = R.opisOznake(imena, kl);
     if (!o) return null;
     const d = { id: `o-${kl}`, ime: o.sl, la: o.la, opis: o.opis, barva: o.barva, meshes: [], tocka: [0, 0, 0], kljuc: kl };
     deliPoId.set(kl, d);
@@ -399,9 +404,23 @@ export async function zgradi(THREE, ctx) {
       return;
     }
     const je = new Uint8Array(256);
-    T.meta.oznake.kljuci.forEach((_, k) => { if (kljucOznake(k + 1) === kl) je[k + 1] = 1; });
-    const f = rezOznak.w * rezOznak.h > 120000 ? 3 : 4;
-    const o = R.gladekObris(rezOznak, je, f, tapUV);
+    // vretence iz starejših oznak (vsa prsna vretenca ena oznaka): samo celice v višini izbranega vretenca
+    const v = R.vretence(kl), staro = v?.raven && !T.meta.oznake.kljuci.includes(kl);
+    T.meta.oznake.kljuci.forEach((_, k) => { const kk = kljucOznake(k + 1); if (kk === kl || (staro && kk === v.osnova)) je[k + 1] = 1; });
+    let r = rezOznak;
+    const meje = staro && stanje.smer !== "a" ? R.mejeVretenca(T.meta.oznake.ravni, v.raven) : null;
+    if (meje) {
+      const d = r.data.slice(), mm = T.ozn.mm;
+      for (let y = 0; y < r.h; y++) {
+        const z = (y + 0.5) * mm;
+        if (z >= meje[0] && z < meje[1]) continue;
+        for (let x = 0; x < r.w; x++) if (je[d[y * r.w + x]]) d[y * r.w + x] = 0;
+      }
+      r = { ...r, data: d };
+    }
+    const f = r.w * r.h > 120000 ? 3 : 4;
+    // drobne luknje brez oznake znotraj strukture zapolnjene (žile z lastno oznako ostanejo luknje)
+    const o = R.gladekObris(R.zapolniObris(r, je), Uint8Array.of(0, 1), f, tapUV);
     if (!o) {
       poudarek.visible = false;
       return;
@@ -421,9 +440,9 @@ export async function zgradi(THREE, ctx) {
   }
 
   // --- začetne lege: prečno skozi srce; na OŠ frontalno in sagitalno skozi desno ledvico (ne skozi sredino telesa)
-  function zacetneLege(dim, ozn, meta) {
+  function zacetneLege(dim, ozn, meta, mali) {
     const n = (sm) => R.steviloRezin(dim, sm);
-    const lege = { a: Math.round(dim[2] < 400 ? dim[2] / 2 : n("a") * 0.24), k: Math.round(n("k") * 0.5), s: Math.round(n("s") * 0.5) };
+    const lege = { a: Math.round(dim[2] < 400 ? dim[2] / 2 : n("a") * 0.24), k: R.najpolnejsaRezina(mali, "k") ?? Math.round(n("k") * 0.5), s: Math.round(n("s") * 0.5) };
     const os = { k: Math.round(n("k") * 0.62), s: Math.round(n("s") * 0.36) };
     if (ozn) {
       const kl = meta.oznake.kljuci;
@@ -493,7 +512,7 @@ export async function zgradi(THREE, ctx) {
     deliPoId.clear();
     stanje.izbrana = "";
     tapUV = null;
-    zacetne = zacetneLege(dim, ozn, meta);
+    zacetne = zacetneLege(dim, ozn, meta, mali);
     for (const sm of R.SMERI) {
       const z = Number(ctx.zacetek?.[`rezina-${sm}`]);
       stanje.i[sm] = pripni(sm, Number.isFinite(z) && ctx.zacetek?.[`rezina-${sm}`] != null ? z : sm !== "a" && os() ? zacetne.os[sm] : zacetne.lege[sm]);
@@ -516,7 +535,7 @@ export async function zgradi(THREE, ctx) {
   const drsniki = {};
   const drsnik = (sm) => (drsniki[sm] = {
     tip: "drsnik", id: `rezina-${sm}`, oznaka: t("a3.rez.slice", "Rezina (mm)"), min: 0, max: Math.max(1, najvec(sm)), korak: 1,
-    vrednost: stanje.i[sm], gumba: { korak: 1, manj: "−1 mm", vec: "+1 mm" },
+    vrednost: stanje.i[sm], gumba: { korak: 1, manj: "−1 mm", vec: "+1 mm" }, lepljiv: true,
     vidno: () => stanje.smer === sm,
     ob: (v) => {
       stanje.i[sm] = pripni(sm, v);
@@ -531,28 +550,7 @@ export async function zgradi(THREE, ctx) {
     if (nSpol) nSpol.vrednost = stanje.spol;
   };
   // anatomska raven prečne rezine: vretence v tej višini (meta.oznake.ravni iz mrež HRA, npr. »Th8«)
-  const raven = (i) => {
-    const r = T.meta.oznake?.ravni;
-    if (!r?.length) return "";
-    // vretenca se po višini prekrivajo (nagib, odrastki): velja tisto, katerega sredina je najbližja
-    let naj = "", d = 1e9;
-    for (const [z0, z1, ime] of r) {
-      if (i < z0 - 12 || i > z1 + 12) continue;
-      const dd = Math.abs(i - (z0 + z1) / 2);
-      if (dd < d) { d = dd; naj = ime; }
-    }
-    return naj;
-  };
-  const lega = () => {
-    const s = stanje.smer, i = stanje.i[s];
-    const cm = (i / 10).toLocaleString(document.documentElement.lang || "sl", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-    const rv = s === "a" ? raven(i) : "";
-    const vVisini = rv ? t("a3.rez.atLevel", "v višini {r}").replace("{r}", rv) : "";
-    // vzorec ali del telesa: lega od temena ni znana, zato le anatomska raven (ali številka izvorne rezine, če ravni ni)
-    if (T.vzorec) return vVisini || `${T.meta.od + (s === "a" ? i : 0)}`;
-    const od = s === "a" ? `${cm} cm ${t("a3.rez.fromTop", "pod vrhom")}` : s === "k" ? `${cm} cm ${t("a3.rez.fromFront", "od sprednje strani")}` : `${cm} cm ${t("a3.rez.fromRight", "od desne strani telesa")}`;
-    return vVisini ? `${vVisini} · ${od}` : od;
-  };
+  const lega = () => R.besediloLege({ smer: stanje.smer, i: stanje.i[stanje.smer], vzorec: T.vzorec, ravni: T.meta.oznake?.ravni }, t, document.documentElement.lang || "sl");
 
   const nRaven = { tip: "izbira", id: "raven", oznaka: t("a3.detail", "Podrobnost"), moznosti: [[1, t("a3.levelOS", "OŠ")], [2, t("a3.levelSS", "SŠ")], [3, t("a3.levelAll", "Vse")]], vrednost: stanje.raven, ponastaviPogled: true,
     ob: (v) => {
@@ -561,7 +559,7 @@ export async function zgradi(THREE, ctx) {
       stanje.izbrana = "";
       if (os()) {
         // OŠ: nazaj na prečni prerez naravnost, brez telesa okoli rezine; frontalni in sagitalni izven sredine (če ju ni premaknil)
-        Object.assign(stanje, { smer: "a", pogled: "ravno", telo: false });
+        Object.assign(stanje, R.pogledZaRaven(1));
         for (const sm of ["k", "s"]) if (!stanje.premaknjeno[sm] && zacetne) stanje.i[sm] = pripni(sm, zacetne.os[sm]);
       }
       sinhroniziraj();
@@ -648,7 +646,10 @@ export async function zgradi(THREE, ctx) {
         const p = notranja.worldToLocal(hit.point.clone());
         // ime samo tam, kjer ga mreža oznak res pozna: brez ugibanja po barvi (bolje brez imena kot napačno)
         const oz = T.ozn ? R.oznakaV(T.ozn, p.x, -p.z, -p.y) : 0;
-        const d = oz ? del(oz) : null;
+        // starejše oznake brez posameznih vretenc: raven iz višine dotika (meta.oznake.ravni)
+        const kl = oz ? kljucOznake(oz) : "", v = R.vretence(kl);
+        const rv = v && !v.raven ? R.ravenPri(T.meta.oznake.ravni, -p.y, VRSTA_VRETENCA[v.osnova]) : "";
+        const d = oz ? delKljuca(kl, rv) : null;
         stanje.izbrana = d ? d.kljuc : "";
         tapUV = d ? R.uvTocke(T.dim, stanje.smer, [p.x, -p.z, -p.y]) : null;
         osveziDele();

@@ -57,6 +57,9 @@ export function odpriModel(el, mod, opts = {}) {
   const orodja = mk("div", "k3-orodja");
   const spodaj = mk("div", "k3-spodaj");
   const nadzorEl = mk("div", "k3-nadzor");
+  // c.lepljiv: glavni drsnik modela na vrhu plošče, ki ostane viden, ko se plošča drsi (telefon: okno z imenom pod njim)
+  const lepljivoEl = mk("div", "k3-lepljivo");
+  lepljivoEl.hidden = true;
   const deliEl = mk("div", "k3-deli");
   deliEl.setAttribute("role", "group");
   deliEl.setAttribute("aria-label", t("a3.parts"));
@@ -584,6 +587,7 @@ export function odpriModel(el, mod, opts = {}) {
       el.hidden = !v;
     }
     nadzorEl.hidden = ![...nadzorEl.children].some((e) => !e.hidden);
+    lepljivoEl.hidden = ![...lepljivoEl.children].some((e) => !e.hidden);
   };
   const poSpremembi = () => {
     if (typeof model?.ao === "function") kit.nastaviAO(model.ao() !== false);
@@ -596,6 +600,7 @@ export function odpriModel(el, mod, opts = {}) {
 
   function nadzor() {
     nadzorEl.replaceChildren();
+    lepljivoEl.replaceChildren();
     izpisi = [];
     vidni = [];
     sinh = [];
@@ -664,7 +669,7 @@ export function odpriModel(el, mod, opts = {}) {
             b.type = "button";
             b.setAttribute("aria-label", ime);
             b.title = ime;
-            let ura = 0;
+            let ura = 0, ponavljal = 0; // čas zadnjega ponovljenega koraka
             const korak = () => {
               const v = Math.max(Number(c.min), Math.min(Number(c.max), Number(c.vrednost) + smer * (c.gumba.korak || 1)));
               if (v === Number(c.vrednost)) return;
@@ -677,11 +682,17 @@ export function odpriModel(el, mod, opts = {}) {
             b.addEventListener("pointerdown", (e) => {
               if (e.button !== 0) return;
               stop();
-              const ponovi = (zamik) => (ura = setTimeout(() => (korak(), ponovi(70)), zamik));
+              ponavljal = 0;
+              const ponovi = (zamik) => (ura = setTimeout(() => ((ponavljal = performance.now()), korak(), ponovi(70)), zamik));
               ponovi(450);
             });
             for (const t of ["pointerup", "pointerleave", "pointercancel", "blur"]) b.addEventListener(t, stop);
-            b.addEventListener("click", korak); // klik ali tipkovnica: en korak
+            // klik ali tipkovnica: en korak; klik, ki konča dolg pritisk, ne doda še enega koraka
+            b.addEventListener("click", () => {
+              const dolg = ponavljal && performance.now() - ponavljal < 800;
+              ponavljal = 0;
+              if (!dolg) korak();
+            });
             return b;
           };
           vrsta.append(gumb(-1, c.gumba.manj || "−"), inp, gumb(1, c.gumba.vec || "+"));
@@ -821,6 +832,10 @@ export function odpriModel(el, mod, opts = {}) {
       }
       const el = nadzorEl.lastElementChild;
       if (typeof c.vidno === "function" && el && el !== prej) vidni.push([c, el]);
+      if (c.lepljiv && el && el !== prej) {
+        if (lepljivoEl.parentNode !== spodaj) spodaj.prepend(lepljivoEl);
+        lepljivoEl.append(el);
+      }
     }
     osveziVidnost();
     osveziIzpise();

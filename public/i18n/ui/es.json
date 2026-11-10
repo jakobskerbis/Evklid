@@ -3353,6 +3353,7 @@
   "a3.hintModelMouse": "Arrastra para girar, usa la rueda del ratón para ampliar. Haz clic en cualquier parte para saber más.",
   "a3.rez.slice": "Corte (mm)",
   "a3.rez.fromTop": "bajo la parte superior",
+  "a3.rez.fromSampleTop": "desde la parte superior de la muestra",
   "a3.rez.fromFront": "desde la parte frontal",
   "a3.rez.fromRight": "desde el lado derecho del cuerpo",
   "a3.rez.body": "Cuerpo",

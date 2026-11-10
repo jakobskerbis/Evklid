@@ -3383,6 +3383,7 @@
   "a3.hintModelMouse": "Povuci za okretanje, kotačićem miša povećaj ili smanji. Klikni bilo koji dio za više.",
   "a3.rez.slice": "Presjek (mm)",
   "a3.rez.fromTop": "ispod vrha",
+  "a3.rez.fromSampleTop": "od vrha isječka",
   "a3.rez.fromFront": "od prednje strane",
   "a3.rez.fromRight": "od desne strane tijela",
   "a3.rez.body": "Tijelo",

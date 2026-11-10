@@ -3350,6 +3350,7 @@
   "a3.hintModelMouse": "Döndürmek için sürükle, fare tekerleğiyle yakınlaştır. Daha fazlası için herhangi bir parçaya tıkla.",
   "a3.rez.slice": "Kesit (mm)",
   "a3.rez.fromTop": "tepenin altında",
+  "a3.rez.fromSampleTop": "örneğin üstünden",
   "a3.rez.fromFront": "ön taraftan",
   "a3.rez.fromRight": "vücudun sağ tarafından",
   "a3.rez.body": "Vücut",

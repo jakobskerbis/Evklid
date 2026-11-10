@@ -3385,6 +3385,7 @@
   "a3.hintModelMouse": "Trage pentru a roti, folosește rotița mouse-ului pentru zoom. Fă clic pe orice parte pentru detalii.",
   "a3.rez.slice": "Secțiune (mm)",
   "a3.rez.fromTop": "sub vârf",
+  "a3.rez.fromSampleTop": "de la marginea de sus a eșantionului",
   "a3.rez.fromFront": "din față",
   "a3.rez.fromRight": "dinspre partea dreaptă a corpului",
   "a3.rez.body": "Corp",

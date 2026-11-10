@@ -3325,6 +3325,7 @@
   "a3.hintModelMouse": "Seret untuk memutar, gunakan roda tetikus untuk memperbesar. Klik bagian mana pun untuk tahu lebih banyak.",
   "a3.rez.slice": "Irisan (mm)",
   "a3.rez.fromTop": "di bawah puncak",
+  "a3.rez.fromSampleTop": "dari atas sampel",
   "a3.rez.fromFront": "dari sisi depan",
   "a3.rez.fromRight": "dari sisi kanan tubuh",
   "a3.rez.body": "Tubuh",

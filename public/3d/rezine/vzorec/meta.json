@@ -127,7 +127,31 @@
    "pljuca",
    "hrbtenica",
    "tanko-crevo",
-   "mozgani"
+   "mozgani",
+   "vratno-vretence-c1",
+   "vratno-vretence-c2",
+   "vratno-vretence-c3",
+   "vratno-vretence-c4",
+   "vratno-vretence-c5",
+   "vratno-vretence-c6",
+   "vratno-vretence-c7",
+   "prsno-vretence-th1",
+   "prsno-vretence-th2",
+   "prsno-vretence-th3",
+   "prsno-vretence-th4",
+   "prsno-vretence-th5",
+   "prsno-vretence-th6",
+   "prsno-vretence-th7",
+   "prsno-vretence-th8",
+   "prsno-vretence-th9",
+   "prsno-vretence-th10",
+   "prsno-vretence-th11",
+   "prsno-vretence-th12",
+   "ledveno-vretence-l5",
+   "ledveno-vretence-l4",
+   "ledveno-vretence-l3",
+   "ledveno-vretence-l2",
+   "ledveno-vretence-l1"
   ],
   "prisotne": [
    "aorta",
@@ -145,7 +169,11 @@
    "pljucna-arterija",
    "pljucna-vena",
    "prizeljc",
-   "prsno-vretence",
+   "prsno-vretence-th5",
+   "prsno-vretence-th6",
+   "prsno-vretence-th7",
+   "prsno-vretence-th8",
+   "prsno-vretence-th9",
    "sapnice",
    "srcne-zaklopke",
    "vencne-zile",
@@ -237,90 +265,90 @@
   "lokalno": {
    "mozgani": {
     "mm": [
-     -2,
-     -8,
+     0,
+     -10,
      0
     ],
     "cena": [
-     2282,
-     1898
+     2650,
+     2035
     ]
    },
    "vidni-zivec": {
     "mm": [
-     0,
-     4,
+     2,
+     2,
      -8
     ],
     "cena": [
-     1972,
-     699
+     1426,
+     708
     ]
    },
    "zrklo": {
     "mm": [
-     -2,
-     -12,
-     4
+     2,
+     4,
+     -12
     ],
     "cena": [
-     6978,
-     146
+     6550,
+     2652
     ]
    },
    "steklovina": {
     "mm": [
-     -2,
+     0,
      -12,
      4
     ],
     "cena": [
-     6867,
-     -1015
+     6072,
+     292
     ]
    },
    "ocesne-misice": {
     "mm": [
-     -2,
+     0,
      12,
-     -2
+     -4
     ],
     "cena": [
-     3404,
-     2873
+     3213,
+     2725
     ]
    },
    "misice-grla": {
     "mm": [
-     -6,
+     8,
      4,
      -4
     ],
     "cena": [
-     5710,
-     4326
+     4791,
+     4248
     ]
    },
    "semenovod": {
     "mm": [
      4,
-     0,
-     -4
+     10,
+     0
     ],
     "cena": [
-     3864,
-     2503
+     4039,
+     1969
     ]
    },
    "semenjak": {
     "mm": [
      2,
-     0,
+     -2,
      -2
     ],
     "cena": [
-     1804,
-     1254
+     2207,
+     1322
     ]
    },
    "prostata": {
@@ -330,96 +358,96 @@
      -2
     ],
     "cena": [
-     2145,
-     226
+     1523,
+     -64
     ]
    },
    "podceljustna-slinavka": {
     "mm": [
-     -6,
      -4,
+     -6,
      -2
     ],
     "cena": [
-     2440,
-     1434
+     2766,
+     1421
     ]
    },
    "obusesna-slinavka": {
     "mm": [
-     -2,
-     0,
-     2
+     -4,
+     -4,
+     6
     ],
     "cena": [
-     3168,
-     3114
+     3183,
+     3107
     ]
    },
    "podjezicna-slinavka": {
     "mm": [
-     -8,
-     -2,
+     -6,
+     -4,
      12
     ],
     "cena": [
-     4116,
-     1300
+     3241,
+     1301
     ]
    },
    "ustna-votlina": {
     "mm": [
-     -2,
-     0,
-     -4
+     -6,
+     -6,
+     -2
     ],
     "cena": [
-     4736,
-     4627
+     4749,
+     4670
     ]
    },
    "jezik": {
     "mm": [
-     -8,
-     -10,
+     -6,
+     -12,
      -4
     ],
     "cena": [
-     2837,
-     1460
+     2474,
+     1390
     ]
    },
    "trdo-nebo": {
     "mm": [
-     -8,
-     -4,
-     10
+     -6,
+     -2,
+     12
     ],
     "cena": [
-     6132,
-     2388
+     6080,
+     2358
     ]
    },
    "mehko-nebo": {
     "mm": [
-     -2,
-     8,
+     0,
+     6,
      -2
     ],
     "cena": [
-     3165,
-     2365
+     2962,
+     2225
     ]
    },
    "zobje": {
     "mm": [
-     4,
-     -10,
-     4
+     6,
+     -12,
+     6
     ],
     "cena": [
-     4015,
-     2530
+     4549,
+     2792
     ]
    },
    "jetra": {
@@ -429,52 +457,52 @@
      0
     ],
     "cena": [
-     261,
-     145
+     292,
+     136
     ]
    },
    "trebusna-slinavka": {
     "mm": [
-     0,
-     -4,
+     -2,
+     -6,
      0
     ],
     "cena": [
-     3176,
-     2008
+     3608,
+     2063
     ]
    },
    "nebnica": {
     "mm": [
      -4,
      -4,
-     -4
+     2
     ],
     "cena": [
-     2228,
-     529
+     3436,
+     635
     ]
    },
    "danka": {
     "mm": [
-     2,
+     0,
      -8,
      -2
     ],
     "cena": [
-     5707,
-     4678
+     5605,
+     4712
     ]
    },
    "slepo-crevo": {
     "mm": [
-     10,
+     8,
      2,
-     -12
+     -10
     ],
     "cena": [
-     9931,
-     8176
+     9568,
+     7988
     ]
    },
    "zolcnik": {
@@ -484,8 +512,8 @@
      -2
     ],
     "cena": [
-     2129,
-     80
+     2271,
+     146
     ]
    },
    "ledvica-d": {
@@ -495,41 +523,41 @@
      2
     ],
     "cena": [
-     -129,
-     -754
+     -334,
+     -495
     ]
    },
    "ledvica-l": {
     "mm": [
-     0,
+     2,
      0,
      2
     ],
     "cena": [
-     -610,
-     -1576
+     -979,
+     -1334
     ]
    },
    "secni-mehur": {
     "mm": [
-     4,
-     0,
+     2,
+     -2,
      0
     ],
     "cena": [
-     2779,
-     1864
+     2364,
+     1928
     ]
    },
    "secnica": {
     "mm": [
-     2,
-     -2,
+     4,
+     0,
      4
     ],
     "cena": [
-     2542,
-     1888
+     2235,
+     1934
     ]
    },
    "srce": {
@@ -539,261 +567,261 @@
      2
     ],
     "cena": [
-     2588,
-     2407
+     2355,
+     2120
     ]
    },
    "leva-pljuca": {
     "mm": [
-     -2,
+     0,
      -2,
      0
     ],
     "cena": [
-     -1256,
-     -1994
+     -1559,
+     -2332
     ]
    },
    "desna-pljuca": {
     "mm": [
      -2,
-     0,
+     -2,
      -2
     ],
     "cena": [
-     -288,
-     -845
+     -683,
+     -1241
     ]
    },
    "hrustanci-grla": {
     "mm": [
-     8,
+     -2,
      8,
      -6
     ],
     "cena": [
-     7373,
-     1582
+     6039,
+     1023
     ]
    },
    "poklopec": {
     "mm": [
      -2,
-     2,
-     2
+     0,
+     4
     ],
     "cena": [
-     10441,
-     -654
+     3541,
+     -1420
     ]
    },
    "obrocasti-hrustanec": {
     "mm": [
-     4,
-     10,
-     10
+     -2,
+     -4,
+     0
     ],
     "cena": [
-     9279,
-     2600
+     8938,
+     -5332
     ]
    },
    "scitasti-hrustanec": {
     "mm": [
-     -6,
-     -6,
+     -2,
+     -8,
      10
     ],
     "cena": [
-     6586,
-     1026
+     5330,
+     1223
     ]
    },
    "vranica": {
     "mm": [
      0,
-     2,
+     0,
      2
     ],
     "cena": [
-     -3484,
-     -6549
+     -4733,
+     -6158
     ]
    },
    "prizeljc": {
     "mm": [
-     -2,
-     -4,
-     2
+     2,
+     -6,
+     4
     ],
     "cena": [
-     4202,
-     2149
+     4611,
+     1676
     ]
    },
    "krizinca": {
     "mm": [
-     0,
+     -2,
      -4,
      0
     ],
     "cena": [
-     2463,
-     1832
+     2785,
+     1812
     ]
    },
    "kolcnica": {
     "mm": [
-     2,
+     0,
      -6,
      0
     ],
     "cena": [
-     3997,
-     2514
+     3921,
+     2484
     ]
    },
    "cervical_vertebra_1": {
     "mm": [
-     -4,
-     -8,
-     -4
+     -2,
+     -6,
+     6
     ],
     "cena": [
-     3603,
-     3146
+     3749,
+     3125
     ]
    },
    "cervical_vertebra_2": {
     "mm": [
-     -4,
-     -8,
-     -2
+     -2,
+     0,
+     6
     ],
     "cena": [
-     4316,
-     2983
+     4450,
+     3000
     ]
    },
    "cervical_vertebra_3": {
     "mm": [
-     10,
      12,
-     0
+     12,
+     2
     ],
     "cena": [
-     5193,
-     3585
+     4965,
+     3248
     ]
    },
    "cervical_vertebra_4": {
     "mm": [
-     10,
      12,
-     0
+     12,
+     2
     ],
     "cena": [
-     5856,
-     3486
+     5739,
+     2945
     ]
    },
    "cervical_vertebra_5": {
     "mm": [
-     10,
      12,
-     -8
+     12,
+     -6
     ],
     "cena": [
-     5352,
-     3233
+     5254,
+     2785
     ]
    },
    "cervical_vertebra_6": {
     "mm": [
-     10,
+     8,
      12,
-     -8
+     -6
     ],
     "cena": [
-     5238,
-     3562
+     5267,
+     3256
     ]
    },
    "cervical_vertebra_7": {
     "mm": [
-     -2,
-     -6,
+     0,
+     -8,
      -2
     ],
     "cena": [
-     5072,
-     3598
+     4965,
+     3636
     ]
    },
    "thoracic_vertebra_1": {
     "mm": [
-     -2,
-     -6,
+     0,
+     -8,
      0
     ],
     "cena": [
-     4313,
-     3139
+     4399,
+     3199
     ]
    },
    "thoracic_vertebra_2": {
     "mm": [
-     -2,
-     -6,
+     2,
+     -8,
      0
     ],
     "cena": [
-     3986,
-     2980
+     4283,
+     3064
     ]
    },
    "thoracic_vertebra_3": {
     "mm": [
-     0,
+     4,
      -6,
      0
     ],
     "cena": [
-     3845,
-     3096
+     4267,
+     3211
     ]
    },
    "thoracic_vertebra_4": {
     "mm": [
-     0,
-     -4,
+     4,
+     -6,
      0
     ],
     "cena": [
-     3710,
-     3304
+     4115,
+     3151
     ]
    },
    "thoracic_vertebra_5": {
     "mm": [
-     2,
+     4,
      -4,
      0
     ],
     "cena": [
-     3240,
-     2645
+     3429,
+     2712
     ]
    },
    "thoracic_vertebra_6": {
     "mm": [
      4,
-     -2,
+     -4,
      0
     ],
     "cena": [
-     3277,
-     3136
+     3629,
+     3022
     ]
    },
    "thoracic_vertebra_7": {
@@ -803,30 +831,30 @@
      0
     ],
     "cena": [
-     3178,
-     2795
+     3402,
+     2891
     ]
    },
    "thoracic_vertebra_8": {
     "mm": [
      4,
-     0,
+     -2,
      0
     ],
     "cena": [
-     2983,
-     2537
+     3091,
+     2624
     ]
    },
    "thoracic_vertebra_9": {
     "mm": [
      4,
-     0,
+     -2,
      0
     ],
     "cena": [
-     3282,
-     2970
+     3284,
+     2958
     ]
    },
    "thoracic_vertebra_10": {
@@ -836,8 +864,8 @@
      2
     ],
     "cena": [
-     3402,
-     3068
+     3444,
+     3001
     ]
    },
    "thoracic_vertebra_11": {
@@ -847,8 +875,8 @@
      2
     ],
     "cena": [
-     3631,
-     2951
+     3911,
+     2991
     ]
    },
    "thoracic_vertebra_12": {
@@ -858,8 +886,8 @@
      2
     ],
     "cena": [
-     3800,
-     2849
+     3953,
+     2835
     ]
    },
    "lumbar_vertebra_5": {
@@ -869,8 +897,8 @@
      4
     ],
     "cena": [
-     4947,
-     2892
+     5200,
+     2980
     ]
    },
    "lumbar_vertebra_4": {
@@ -880,107 +908,107 @@
      4
     ],
     "cena": [
-     5244,
-     4092
+     5328,
+     4096
     ]
    },
    "lumbar_vertebra_3": {
     "mm": [
      0,
      -6,
-     2
+     4
     ],
     "cena": [
-     5781,
-     4191
+     5938,
+     4263
     ]
    },
    "lumbar_vertebra_2": {
     "mm": [
      0,
-     -4,
-     2
+     -2,
+     4
     ],
     "cena": [
-     5192,
-     4037
+     5361,
+     4057
     ]
    },
    "lumbar_vertebra_1": {
     "mm": [
      2,
-     -2,
+     0,
      2
     ],
     "cena": [
-     4408,
-     4068
+     4524,
+     4021
     ]
    },
    "intervertebral_disk_of_third_cervical_vertebra": {
-    "mm": [
-     -6,
-     -10,
-     0
-    ],
-    "cena": [
-     4971,
-     -2619
-    ]
-   },
-   "intervertebral_disk_of_fourth_cervical_vertebra": {
-    "mm": [
-     -4,
-     -10,
-     0
-    ],
-    "cena": [
-     4690,
-     -2602
-    ]
-   },
-   "intervertebral_disk_of_fifth_cervical_vertebra": {
     "mm": [
      -4,
      -12,
      0
     ],
     "cena": [
-     4808,
-     627
+     4471,
+     -2297
+    ]
+   },
+   "intervertebral_disk_of_fourth_cervical_vertebra": {
+    "mm": [
+     -2,
+     -12,
+     0
+    ],
+    "cena": [
+     4408,
+     -3546
+    ]
+   },
+   "intervertebral_disk_of_fifth_cervical_vertebra": {
+    "mm": [
+     -2,
+     -12,
+     0
+    ],
+    "cena": [
+     4864,
+     742
     ]
    },
    "intervertebral_disk_of_sixth_cervical_vertebra": {
     "mm": [
-     -6,
-     -6,
-     6
+     -4,
+     -12,
+     0
     ],
     "cena": [
-     4929,
-     890
+     4842,
+     286
     ]
    },
    "intervertebral_disk_of_seventh_cervical_vertebra": {
     "mm": [
-     -6,
-     -8,
+     -2,
+     -10,
      8
     ],
     "cena": [
-     4517,
-     729
+     4326,
+     741
     ]
    },
    "intervertebral_disk_of_twelfth_thoracic_vertebra": {
     "mm": [
      0,
-     -2,
-     2
+     0,
+     4
     ],
     "cena": [
-     6923,
-     -1422
+     7310,
+     -1270
     ]
    },
    "intervertebral_disk_of_eleventh_thoracic_vertebra": {
@@ -990,19 +1018,19 @@
      12
     ],
     "cena": [
-     5590,
-     759
+     6331,
+     700
     ]
    },
    "intervertebral_disk_of_tenth_thoracic_vertebra": {
     "mm": [
-     2,
      0,
-     -6
+     -2,
+     10
     ],
     "cena": [
-     4765,
-     266
+     5473,
+     444
     ]
    },
    "intervertebral_disk_of_ninth_thoracic_vertebra": {
@@ -1012,8 +1040,8 @@
      8
     ],
     "cena": [
-     3590,
-     424
+     4013,
+     352
     ]
    },
    "intervertebral_disk_of_eighth_thoracic_vertebra": {
@@ -1023,8 +1051,8 @@
      8
     ],
     "cena": [
-     4504,
-     202
+     4716,
+     253
     ]
    },
    "intervertebral_disk_of_seventh_thoracic_vertebra": {
@@ -1034,85 +1062,85 @@
      8
     ],
     "cena": [
-     3043,
-     292
+     3137,
+     361
     ]
    },
    "intervertebral_disk_of_sixth_thoracic_vertebra": {
     "mm": [
-     0,
-     -4,
+     2,
+     -6,
      0
     ],
     "cena": [
-     675,
-     -1959
+     2094,
+     -2270
     ]
    },
    "intervertebral_disk_of_fifth_thoracic_vertebra": {
     "mm": [
-     0,
+     2,
      -6,
      0
     ],
     "cena": [
-     4769,
-     -225
+     5673,
+     -824
     ]
    },
    "intervertebral_disk_of_fourth_thoracic_vertebra": {
     "mm": [
-     0,
+     4,
      -6,
      -8
     ],
     "cena": [
-     4325,
-     403
+     4976,
+     404
     ]
    },
    "intervertebral_disk_of_third_thoracic_vertebra": {
     "mm": [
-     -2,
-     -2,
-     6
+     2,
+     -8,
+     0
     ],
     "cena": [
-     6728,
-     -191
+     7117,
+     17
     ]
    },
    "intervertebral_disk_of_second_thoracic_vertebra": {
     "mm": [
-     -2,
-     -6,
+     2,
+     -8,
      0
     ],
     "cena": [
-     6229,
-     -1287
+     5560,
+     -1203
     ]
    },
    "intervertebral_disk_of_first_thoracic_vertebra": {
     "mm": [
-     -2,
-     -2,
-     6
+     0,
+     0,
+     12
     ],
     "cena": [
-     5982,
-     310
+     5024,
+     475
     ]
    },
    "intervertebral_disk_of_fourth_lumbar_vertebra": {
     "mm": [
      -2,
-     -4,
+     -6,
      2
     ],
     "cena": [
-     3656,
-     -3506
+     4002,
+     -3375
     ]
    },
    "intervertebral_disk_of_third_lumbar_vertebra": {
@@ -1122,8 +1150,8 @@
      4
     ],
     "cena": [
-     7998,
-     -1673
+     8117,
+     -1638
     ]
    },
    "intervertebral_disk_of_second_lumbar_vertebra": {
@@ -1133,19 +1161,19 @@
      4
     ],
     "cena": [
-     7615,
-     -1407
+     7775,
+     -1501
     ]
    },
    "intervertebral_disk_of_first_lumbar_vertebra": {
     "mm": [
      -2,
-     -2,
-     4
+     -6,
+     2
     ],
     "cena": [
-     6918,
-     -3746
+     7402,
+     -6232
     ]
    }
   }

@@ -125,6 +125,12 @@
 .k3-drsnik-vrsta input[type="range"] { flex: 1 1 auto; min-width: 0; }
 .k3 .k3-drsnik-gumb { flex: none; width: 40px; height: 40px; font-size: 1.25rem; font-weight: 600; line-height: 1; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
 .k3-drsnik-vrh output { color: var(--k3-besedilo); font-variant-numeric: tabular-nums; font-weight: 600; }
+/* Glavni drsnik (c.lepljiv) na vrhu plošče: ostane viden, ko se plošča drsi (okno z imenom in drugi nadzor pod njim). */
+.k3-lepljivo { display: flex; flex-direction: column; gap: 8px; }
+.k3-plosca > .k3-lepljivo { order: -9; position: sticky; top: -14px; z-index: 3; margin: -14px 0 0; padding: 12px 0 8px; background: var(--k3-bg);
+  border-bottom: 1px solid var(--k3-rob); }
+.k3-lepljivo[hidden] { display: none; }
+.k3-lepljivo .k3-drsnik { flex: none; }
 .k3-izbira { flex: 1 1 260px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .k3 .k3-izbor {
   width: 100%; min-height: 44px; padding: 0 40px 0 16px; border-radius: 999px; border: 1px solid var(--k3-rob); color: var(--k3-besedilo); font: inherit; font-weight: 600; cursor: pointer;
@@ -577,6 +583,15 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   .k3-ima-navedbo .k3-navedba { left: 12px; right: 12px; text-align: center; }
   .k3-ima-navedbo .k3-namig { bottom: 30px; }
   .k3-ima-navedbo.k3-namig-viden .k3-merilo { bottom: 82px; }
+  /* model z glavnim drsnikom (pravi prerez): oder nižji (rezina je široka), plošča z drsnikom višja */
+  .k3-stran-pregled:has(.k3-lepljivo:not([hidden])) .k3-oder-ovoj { flex-basis: 52%; }
+  .k3-stran-pregled:has(.k3-lepljivo:not([hidden])) > .k3-plosca { max-height: 50%; }
+}
+/* Ozek telefon: navedba vira v dveh vrsticah (cela, ne odrezana), merilo nad njo */
+@media (max-width: 379px) {
+  .k3-ima-navedbo .k3-navedba { white-space: normal; overflow: visible; text-overflow: clip; text-wrap: balance; }
+  .k3-ima-navedbo .k3-merilo { bottom: 44px; }
+  .k3-ima-navedbo .k3-namig { bottom: 44px; }
 }
 @media (min-width: 900px), (orientation: landscape) and (max-height: 560px) {
   .k3-model-telo > .k3-stran-pregled { flex-direction: row; }

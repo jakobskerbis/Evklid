@@ -3353,6 +3353,7 @@
   "a3.hintModelMouse": "Trascina per ruotare, usa la rotellina per ingrandire. Fai clic su una parte qualsiasi per saperne di più.",
   "a3.rez.slice": "Sezione (mm)",
   "a3.rez.fromTop": "sotto la sommità",
+  "a3.rez.fromSampleTop": "dalla parte superiore del campione",
   "a3.rez.fromFront": "dalla parte anteriore",
   "a3.rez.fromRight": "dal lato destro del corpo",
   "a3.rez.body": "Corpo",

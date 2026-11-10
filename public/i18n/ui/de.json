@@ -3352,6 +3352,7 @@
   "a3.hintModelMouse": "Ziehen zum Drehen, mit dem Mausrad zoomen. Klicke auf einen beliebigen Teil für mehr.",
   "a3.rez.slice": "Schnitt (mm)",
   "a3.rez.fromTop": "unter dem Scheitel",
+  "a3.rez.fromSampleTop": "vom oberen Rand des Ausschnitts",
   "a3.rez.fromFront": "von der Vorderseite",
   "a3.rez.fromRight": "von der rechten Körperseite",
   "a3.rez.body": "Körper",

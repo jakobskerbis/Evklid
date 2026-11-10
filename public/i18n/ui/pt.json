@@ -3357,6 +3357,7 @@
   "a3.hintModelMouse": "Arrasta para rodar, usa a roda do rato para ampliar. Clica em qualquer parte para saber mais.",
   "a3.rez.slice": "Corte (mm)",
   "a3.rez.fromTop": "abaixo do topo",
+  "a3.rez.fromSampleTop": "a partir do topo da amostra",
   "a3.rez.fromFront": "a partir da frente",
   "a3.rez.fromRight": "a partir do lado direito do corpo",
   "a3.rez.body": "Corpo",

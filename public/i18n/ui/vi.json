@@ -3325,6 +3325,7 @@
   "a3.hintModelMouse": "Kéo để xoay, dùng con lăn chuột để phóng to. Nhấp vào một phần bất kỳ để tìm hiểu thêm.",
   "a3.rez.slice": "Lát cắt (mm)",
   "a3.rez.fromTop": "dưới đỉnh",
+  "a3.rez.fromSampleTop": "từ mép trên của mẫu",
   "a3.rez.fromFront": "tính từ phía trước",
   "a3.rez.fromRight": "tính từ bên phải cơ thể",
   "a3.rez.body": "Cơ thể",

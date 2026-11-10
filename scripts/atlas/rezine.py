@@ -11,6 +11,8 @@
 #               sosednji, rezine brez podatkov s prelivom sosednjih; izrez na okvir telesa
 #   3 barve     razlika med zaporednima rezinama na skupnih celicah (mediana log razmerja) → nihanje osvetlitve okoli
 #               drsečega povprečja se odstrani (ojačanje na rezino in kanal)
+#   3b šivi     stiki blokov (rezine_sivi.py): pomik rezin za stikom, motne/okrnjene rezine nadomesti preliv sosednjih,
+#               skok osvetlitve se izravna krajevno v prekrivnem pasu ±30 mm (polje celic 12 mm, ne cel blok)
 #   4 izhod     a/<z>.webp, k/<y>.webp (frontalno), s/<x>.webp (sagitalno) na 1 mm, mali.webp (volumen 4 mm kot
 #               list prečnih rezin), predogled.webp, meta.json
 #   5 podrobno  (--podrobno) ploščice 512 px v polni ločljivosti 0,33 mm (raven 0) in 0,66 mm (raven 1, 256 px):
@@ -25,6 +27,9 @@ for _s in (sys.stdout, sys.stderr):  # Windows: izpis v UTF-8 (cp1252 bi se usta
         pass
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import rezine_sivi as SV  # noqa: E402
+
 try:
     import bpy
 except ImportError:
@@ -33,6 +38,7 @@ except ImportError:
 TU = os.path.dirname(os.path.abspath(__file__))
 T = 512      # ploščica
 RAZL = 7     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
+RAZL_IZHOD = 2   # različica izhoda (2: šivi med bloki): ob spremembi se ponovita izhod in podrobno, maska ostane
 MALI = 4     # mm voksla malega volumna
 ROB = 6      # mm roba okoli telesa
 
@@ -229,9 +235,13 @@ def main(arg):
             dnevnik(f"pregled {zi + 1}/{Z}")
 
     if nap.d.get("razl") != RAZL:
-        for k_ in ("maska", "izhod1", "podrobno"):
+        for k_ in ("maska", "izhod1", "podrobno", "sivi"):
             nap.d.pop(k_, None)
         nap(sili=True, razl=RAZL)
+    if nap.d.get("razl_izhod") != RAZL_IZHOD:
+        for k_ in ("izhod1", "podrobno", "sivi", "prenos"):
+            nap.d.pop(k_, None)
+        nap(sili=True, razl_izhod=RAZL_IZHOD)
     # ---- 2 maska
     mpot = os.path.join(delo, "maska.npz")
     if os.path.exists(mpot) and nap.d.get("maska") == Z:
@@ -354,6 +364,38 @@ def main(arg):
     ojac_z = ojac.reshape(Z, len(pod), 3).mean(1)
     dnevnik(f"barve: ojačanje {ojac.min():.3f}–{ojac.max():.3f}, std {ojac.std():.4f}")
 
+    # ---- 3b šivi med bloki (pomik, izpad, skok osvetlitve v pasu ob stiku)
+    spot = os.path.join(delo, "sivi.npz")
+    if nap.d.get("sivi") == [Z, Hc, Wc] and os.path.exists(spot):
+        g = np.load(spot); P, G = g["P"], g["G"]
+    else:
+        nap(sili=True, korak="šivi", delez=0)
+
+        def rez_sv(q):
+            v = vol[q, y0:y1, x0:x1]
+            a = np.where(telo[q][y0:y1, x0:x1], v[..., 3], 0).astype(np.float32) / 255
+            return SV.premakni(v[..., :3].astype(np.float32) * ojac_z[q], *P[q]), SV.premakni(a, *P[q])
+        P = np.zeros((Z, 2), np.int64)
+        P, st_p = SV.pomiki(rez_sv, Z, Hc, Wc)
+        F, pov = SV.polje(rez_sv, Z, Hc, Wc)
+        izpad, G, st_s = SV.izravnava(F, pov, nadomesti)
+        np.savez(spot, P=P, G=G)
+        nap(sili=True, sivi=[Z, Hc, Wc], sivi_izpad={str(k_): v_ for k_, v_ in izpad.items()},
+            sivi_stiki=[list(t) for t in st_p] + [list(t) for t in st_s])
+        dnevnik(f"šivi: {len(st_p)} pomikov, {sum(1 for t in st_s if t[1] == 'izpad')} izpadov, "
+                f"{sum(1 for t in st_s if t[1] == 'skok')} skokov osvetlitve")
+    nadomesti.update({int(k_): tuple(v_) for k_, v_ in nap.d.get("sivi_izpad", {}).items()})
+    _ojac_polje = {}
+
+    def polje_ojac(q, h, w, px_=1.0):
+        """Množilnik barve (h, w, 3) iz polja šivov za rezino q (zadnjih nekaj v predpomnilniku)."""
+        k_ = (q, h, w, px_)
+        if k_ not in _ojac_polje:
+            if len(_ojac_polje) > 8:
+                _ojac_polje.clear()
+            _ojac_polje[k_] = SV.razsiri(G[q], h, w, SV.CELICA, px_)
+        return _ojac_polje[k_]
+
     # ---- 4 izhod 1 mm
     konc, _ = mm("konc.u8", (Z, Hc, Wc, 4))
     if nap.d.get("izhod1") != [Z, Hc, Wc] or not os.path.exists(os.path.join(izhod, "s", f"{Wc - 1}.webp")):
@@ -364,7 +406,8 @@ def main(arg):
                 v = vol[q, y0:y1, x0:x1]
                 a = np.where(telo[q][y0:y1, x0:x1], v[..., 3], 0).astype(np.float32)
                 a[a < 24] = 0
-                return razlij(v[..., :3].astype(np.float32) * ojac_z[q], a), a
+                rgb = SV.premakni(razlij(v[..., :3].astype(np.float32) * ojac_z[q], a), *P[q]) * polje_ojac(q, Hc, Wc)
+                return rgb, SV.premakni(a, *P[q])
             if zi in nadomesti:
                 za, zb, w = nadomesti[zi]
                 (ra, aa), (rb, ab) = rezina1(za), rezina1(zb)
@@ -419,7 +462,18 @@ def main(arg):
             "px_mm": px, "osi": "x: od desne proti levi strani telesa; y: od spredaj nazaj; z: od glave proti nogam",
             "mali": {"mm": MALI, "dim": [W4, H4, Z4], "stolpcev": stolp, "datoteka": "mali.webp"},
             "navedba": viri["navedba"], "pogoji": viri["pogoji"], "manjka": nap.d.get("manjka", []), "nadomescene": sorted(nadomesti),
-            "ustvarjeno": time.strftime("%Y-%m-%d")}
+            "ustvarjeno": time.strftime("%Y-%m-%d"),
+            "sivi": {"opis": "stiki blokov: pomik [z, dy, dx, vrh], izpad [z, 'izpad', rezin], skok [z, 'skok', velikost]",
+                     "stiki": nap.d.get("sivi_stiki", [])}}
+    # oznake in poravnava (rezine_oznake.py) ostanejo do ponovnega izračuna (--matrika-iz-mete, docs/3d.md)
+    try:
+        with open(os.path.join(izhod, "meta.json"), encoding="utf-8") as f:
+            stara = json.load(f)
+        for k_ in ("oznake", "poravnava"):
+            if k_ in stara:
+                meta[k_] = stara[k_]
+    except (OSError, ValueError):
+        pass
 
     # ---- 5 podrobno
     if podrobno:
@@ -457,19 +511,20 @@ def main(arg):
         zadnja = None
         for i in range(i0, N):
             zi, s, pot = dat[i]
+            zg = zi   # rezina, katere pomik in polje šivov veljata za to datoteko
             if zi in nadomesti:
                 zv = nadomesti[zi][0] if nadomesti[zi][2] < 0.5 else nadomesti[zi][1]
-                pot = dat[zv * len(pod) + pod.index(s)][2]
+                pot = dat[zv * len(pod) + pod.index(s)][2]; zg = zv
             potrebna = vzdolzno or s == pod[sred]
             if potrebna:
                 f = nalozi(pot)
                 if f is not None:
-                    f = f[Y0:Y1, X0:X1]
-                    m = skrci_min(telo[zi][iy][:, ix] & ~je_modro(f), 1)   # 1 piksel (0,33 mm) noter: brez svetlega ledenega roba
+                    f = SV.premakni(f[Y0:Y1, X0:X1], *np.rint(P[zg] / px).astype(int))
+                    m = skrci_min(SV.premakni(telo[zg], *P[zg])[iy][:, ix] & ~je_modro(f), 1)   # 1 piksel (0,33 mm) noter: brez svetlega ledenega roba
                     a = m.astype(np.float32)
                     a = (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) * (255 / 5)
                     a = np.where(razsiri(m, 1), a, 0).astype(np.uint8)
-                    rgb = np.clip(razlij(f * ojac[i], m, 2) + 0.5, 0, 255).astype(np.uint8)
+                    rgb = np.clip(razlij(f * ojac[i], m, 2) * polje_ojac(zg, Hp, Wp, px) + 0.5, 0, 255).astype(np.uint8)
                     zadnja = np.concatenate([rgb, a[..., None]], 2)
                 if zadnja is None:
                     zadnja = np.zeros((Hp, Wp, 4), np.uint8)
@@ -492,6 +547,31 @@ def main(arg):
                             "ravnine": ["a", "k", "s"] if vzdolzno else ["a"], "pasov": pasov, "rezin_na_mm": len(pod)}
     with open(os.path.join(izhod, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=1)
+    # ---- 6 prenos za oznake (rezine_oznake.py teče na strežniku): vol4.npz (4 mm) in konc.u8 v kosih ≤ 300 MB, ker
+    # prenos z j-jevega računalnika sprejme datoteke do 400 MB (maska.npz je manjša); docs/3d.md »Oznake po peki«
+    if nap.d.get("prenos") != [Z, Hc, Wc]:
+        nap(sili=True, korak="prenos za oznake", delez=0)
+        k4 = 4; Zk, Hk, Wk = Z // k4, H1 // k4, W1 // k4
+        v4 = np.zeros((Zk, Hk, Wk, 3), np.float16); t4 = np.zeros((Zk, Hk, Wk), np.float16)
+        for q in range(Zk):
+            v4[q] = np.asarray(vol[q * k4:(q + 1) * k4, :Hk * k4, :Wk * k4, :3], np.float32).reshape(k4, Hk, k4, Wk, k4, 3).mean((0, 2, 4))
+            t4[q] = telo[q * k4:(q + 1) * k4, :Hk * k4, :Wk * k4].reshape(k4, Hk, k4, Wk, k4).mean((0, 2, 4))
+        np.savez(os.path.join(delo, "vol4.npz"), v4=v4, t4=t4)
+        pm = os.path.join(delo, "prenos"); os.makedirs(pm, exist_ok=True)
+        for f_ in os.listdir(pm):
+            os.remove(os.path.join(pm, f_))
+        KOS = 300 * 1024 * 1024
+        with open(os.path.join(delo, "konc.u8"), "rb") as f:
+            n_ = 0
+            while True:
+                b_ = f.read(KOS)
+                if not b_:
+                    break
+                with open(os.path.join(pm, f"konc.u8.{n_:03d}"), "wb") as g_:
+                    g_.write(b_)
+                n_ += 1
+        nap(sili=True, prenos=[Z, Hc, Wc], prenos_kosov=n_)
+        dnevnik(f"prenos za oznake: vol4.npz in {n_} kosov konc.u8 v {pm}")
     nap(sili=True, korak="končano", delez=1)
     dnevnik("končano")
 

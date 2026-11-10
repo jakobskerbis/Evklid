@@ -3325,6 +3325,7 @@
   "a3.hintModelMouse": "드래그해서 돌리고, 마우스 휠로 확대·축소하세요. 아무 부분이나 클릭하면 자세히 볼 수 있어요.",
   "a3.rez.slice": "단면 (mm)",
   "a3.rez.fromTop": "꼭대기 아래",
+  "a3.rez.fromSampleTop": "표본 위쪽에서",
   "a3.rez.fromFront": "앞쪽에서",
   "a3.rez.fromRight": "몸의 오른쪽에서",
   "a3.rez.body": "몸",

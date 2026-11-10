@@ -3325,6 +3325,7 @@
   "a3.hintModelMouse": "ドラッグで回転、マウスホイールで拡大・縮小。好きな部分をクリックすると詳しく見られます。",
   "a3.rez.slice": "断面 (mm)",
   "a3.rez.fromTop": "頭頂から下",
+  "a3.rez.fromSampleTop": "サンプル上端から",
   "a3.rez.fromFront": "前面から",
   "a3.rez.fromRight": "体の右側から",
   "a3.rez.body": "体",

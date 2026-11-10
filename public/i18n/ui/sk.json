@@ -3416,6 +3416,7 @@
   "a3.hintModelMouse": "Ťahaním otáčaj, kolieskom myši priblíž alebo oddiaľ. Klikni na ľubovoľnú časť pre viac.",
   "a3.rez.slice": "Rez (mm)",
   "a3.rez.fromTop": "pod vrcholom",
+  "a3.rez.fromSampleTop": "od horného okraja výrezu",
   "a3.rez.fromFront": "od prednej strany",
   "a3.rez.fromRight": "od pravej strany tela",
   "a3.rez.body": "Telo",

@@ -3353,6 +3353,7 @@
   "a3.hintModelMouse": "Fais glisser pour tourner, utilise la molette pour zoomer. Clique sur n'importe quelle partie pour en savoir plus.",
   "a3.rez.slice": "Coupe (mm)",
   "a3.rez.fromTop": "sous le sommet",
+  "a3.rez.fromSampleTop": "depuis le haut de l’échantillon",
   "a3.rez.fromFront": "depuis l'avant",
   "a3.rez.fromRight": "depuis le côté droit du corps",
   "a3.rez.body": "Corps",

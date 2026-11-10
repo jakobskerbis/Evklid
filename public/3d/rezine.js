@@ -317,6 +317,11 @@ export function gladekObris(r, je, f = 4, tap = null) {
   const B = new Float32Array(n);
   const m = (x, y) => (x < 0 || y < 0 || x >= w || y >= h ? 0 : M[y * w + x] >= 0 && obdrzi[M[y * w + x]] ? 1 : 0);
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) B[y * w + x] = 0.5 * m(x, y) + 0.125 * (m(x - 1, y) + m(x + 1, y) + m(x, y - 1) + m(x, y + 1));
+  // veliki organi (jetra, pljuča): še en prehod glajenja, da rob ob žilah in vratih ni resast
+  if (naj > 300) {
+    const C = B.slice(), c = (x, y) => (x < 0 || y < 0 || x >= w || y >= h ? 0 : C[y * w + x]);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) B[y * w + x] = 0.5 * c(x, y) + 0.125 * (c(x - 1, y) + c(x + 1, y) + c(x, y - 1) + c(x, y + 1));
+  }
   const W2 = w * f, H2 = h * f, out = new Uint8Array(W2 * H2);
   const b = (x, y) => (x < 0 || y < 0 || x >= w || y >= h ? 0 : B[y * w + x]);
   let ima = false;
@@ -341,4 +346,140 @@ export function gladekObris(r, je, f = 4, tap = null) {
     if (r2) o2[k] = 2;
   }
   return { w: W2, h: H2, data: o2 };
+}
+
+// Ključ shrambe za krajevno kazalo razvijalca (<slug>.* iz brand.json; scripts/preimenuj.js ga zamenja, test preveri).
+export const KLJUC_KAZALA = "evklid.3d.rezine";
+
+// Kazalo podatkov → telesa, ki res obstajajo: vsak meta.json se bere posebej, zato manjkajoče telo (npr. ženska, ki se
+// še peče) ne podre drugih. → { osnova, spoli, mete } ali napaka, če ni nobenega. beriJson(url) → Promise<objekt>.
+export async function telesaKazala(k, koren, beriJson) {
+  const osnova = new URL(k.osnova || "./", koren).href;
+  const sp = Object.keys(k.telesa || {}).filter((s) => /^[mz]$/.test(s));
+  const r = await Promise.allSettled(sp.map((s) => beriJson(new URL(k.telesa[s], osnova).href + "meta.json")));
+  const spoli = [], mete = [];
+  r.forEach((x, j) => {
+    if (x.status === "fulfilled" && x.value?.dim?.length === 3) { spoli.push(sp[j]); mete.push(x.value); }
+  });
+  if (!spoli.length) throw r.find((x) => x.status === "rejected")?.reason || new Error("kazalo brez teles");
+  return { osnova, spoli, mete };
+}
+
+// Anatomska raven prečne rezine i (mm od vrha volumna): vretence, katerega sredina je najbližja (vretenca se po višini
+// prekrivajo zaradi nagiba in odrastkov); ravni = meta.oznake.ravni [[z0, z1, "Th8"], …]; vrsta = "C" | "Th" | "L"
+// omeji izbiro na eno vrsto. "" zunaj hrbtenice (±12 mm) ali brez podatkov.
+export function ravenPri(ravni, i, vrsta = "") {
+  if (!ravni?.length) return "";
+  let naj = "", d = 1e9;
+  for (const [z0, z1, ime] of ravni) {
+    if (i < z0 - 12 || i > z1 + 12 || (vrsta && ime.replace(/\d+$/, "") !== vrsta)) continue;
+    const dd = Math.abs(i - (z0 + z1) / 2);
+    if (dd < d) { d = dd; naj = ime; }
+  }
+  return naj;
+}
+
+// Meje posameznega vretenca po višini (mm): od polovice do prejšnjega do polovice do naslednjega vretenca iste vrste
+// (za starejše oznake, kjer imajo vsa prsna vretenca eno oznako). → [z0, z1] ali null.
+export function mejeVretenca(ravni, ime) {
+  const vrsta = ime.replace(/\d+$/, "");
+  const ista = (ravni || []).filter((r) => r[2].replace(/\d+$/, "") === vrsta).map((r) => [(r[0] + r[1]) / 2, r]).sort((a, b) => a[0] - b[0]);
+  const k = ista.findIndex(([, r]) => r[2] === ime);
+  if (k < 0) return null;
+  const c = ista[k][0];
+  return [k ? (ista[k - 1][0] + c) / 2 : ista[k][1][0] - 4, k < ista.length - 1 ? (ista[k + 1][0] + c) / 2 : ista[k][1][1] + 4];
+}
+
+const VRSTE_VRETENC = { "vratno-vretence": "C", "prsno-vretence": "Th", "ledveno-vretence": "L" };
+const RIM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+// Oznaka posameznega vretenca: »prsno-vretence-th8« → { osnova: "prsno-vretence", raven: "Th8", rim: "VIII" }; tudi
+// osnova + raven (starejše oznake: raven iz višine dotika). null, če ni vretence.
+export function vretence(kl, raven = "") {
+  const m = /^((?:vratno|prsno|ledveno)-vretence)(?:-(c|th|l)(\d{1,2}))?$/.exec(kl || "");
+  if (!m) return null;
+  const vrsta = VRSTE_VRETENC[m[1]];
+  const st = m[2] ? Number(m[3]) : Number((/^(?:C|Th|L)(\d+)$/.exec(raven) || [])[1]);
+  if (m[2] && vrsta.toLowerCase() !== m[2]) return null;
+  return st >= 1 && st <= 12 ? { osnova: m[1], raven: `${vrsta}${st}`, rim: RIM[st] } : { osnova: m[1], raven: "", rim: "" };
+}
+
+// Ime, latinsko ime, opis in barva oznake iz rezine-oznake.json; posamezno vretence dobi raven (»Prsno vretence Th8«,
+// »Vertebra thoracica VIII«). null, če oznake ni v preglednici.
+export function opisOznake(tab, kl, raven = "") {
+  const v = vretence(kl, raven);
+  const o = tab.oznake[v ? v.osnova : kl];
+  if (!o) return null;
+  if (!v?.raven) return o;
+  return { ...o, sl: `${o.sl} ${v.raven}`, la: `${o.la} ${v.rim}` };
+}
+
+// Lega rezine z besedilom: { smer, i, vzorec, ravni }; t(kljuc, privzeto), jezik za decimalno vejico. Na vzorcu
+// (lega od temena ni znana) samo anatomska raven ali, če je ni, razdalja od vrha vzorca.
+export function besediloLege({ smer, i, vzorec, ravni }, t, jezik = "sl") {
+  const cm = (i / 10).toLocaleString(jezik, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const rv = smer === "a" ? ravenPri(ravni, i) : "";
+  const vVisini = rv ? t("a3.rez.atLevel", "v višini {r}").replace("{r}", rv) : "";
+  if (vzorec) return vVisini || `${cm} cm ${t("a3.rez.fromSampleTop", "od vrha izreza")}`;
+  const od = smer === "a" ? `${cm} cm ${t("a3.rez.fromTop", "pod vrhom")}` : smer === "k" ? `${cm} cm ${t("a3.rez.fromFront", "od sprednje strani")}` : `${cm} cm ${t("a3.rez.fromRight", "od desne strani telesa")}`;
+  return vVisini ? `${vVisini} · ${od}` : od;
+}
+
+// Zapolni majhne luknje znotraj izbrane strukture na rezini oznak (celice brez oznake, ki jih struktura povsem obdaja,
+// do `najvec` celic): mreža oznak ima ob robu organov drobne vrzeli. Luknje z drugo oznako (žile v jetrih) ostanejo.
+// Vrne nov je (Uint8Array dolžine w·h, 1 = del strukture) za gladekObris z je = [0, 1].
+export function zapolniObris(r, je, najvec = 40) {
+  const { w, h, data } = r, n = w * h;
+  const v = new Uint8Array(n);
+  for (let k = 0; k < n; k++) if (je[data[k]]) v[k] = 1;
+  const vid = new Int32Array(n).fill(-1), sklad = new Int32Array(n);
+  for (let k = 0; k < n; k++) {
+    if (v[k] || vid[k] >= 0 || data[k]) continue;
+    // ena prazna luknja (4-sosednost); če se dotakne roba slike ali celice z drugo oznako, ni luknja
+    let sp = 0, st = 0, odprta = false;
+    const clani = [];
+    sklad[sp++] = k; vid[k] = k;
+    while (sp) {
+      const q = sklad[--sp], x = q % w;
+      clani.push(q); st++;
+      if (x === 0 || x === w - 1 || q < w || q >= n - w) odprta = true;
+      for (const j of [x > 0 ? q - 1 : -1, x < w - 1 ? q + 1 : -1, q >= w ? q - w : -1, q < n - w ? q + w : -1]) {
+        if (j < 0 || v[j] || vid[j] >= 0) continue;
+        if (data[j]) { odprta = true; continue; }
+        vid[j] = k; sklad[sp++] = j;
+      }
+    }
+    if (!odprta && st <= najvec) for (const q of clani) v[q] = 1;
+  }
+  return { w, h, data: v };
+}
+
+// Ključ oznake za raven: na OŠ preprostejše skupno ime (rezine-oznake.json »os«; posamezno vretence → ime skupine
+// njegove vrste), strukture brez vnosa (npr. spolni organi) OŠ ne imenuje (""); sicer ključ sam.
+export function kljucZaRaven(tab, k, os) {
+  if (!k) return "";
+  if (!os) return k;
+  return tab.os[k] ?? tab.os[vretence(k)?.osnova] ?? "";
+}
+
+// Začetni pogled za raven: OŠ = prečni prerez naravnost na rezino, brez telesa okoli rezine (j, 10. 11.; ocena B).
+export const pogledZaRaven = (raven) => (raven === 1 ? { smer: "a", pogled: "ravno", telo: false } : {});
+
+// Rezina smeri (k ali s) blizu sredine, v kateri je telo najbolj sklenjeno od glave do stopal (največ vrstic s tkivom),
+// da frontalni prerez zapolni okno in noge niso prekinjene. → indeks v mm ali null (mali volumen brez telesa).
+export function najpolnejsaRezina(m, smer) {
+  if (!m) return null;
+  const n = smer === "k" ? m.dim[1] : m.dim[0];
+  let naj = -1, kje = null;
+  for (let j = Math.floor(n * 0.3); j <= Math.ceil(n * 0.7) && j < n; j++) {
+    const r = rezinaMalega(m, smer, j);
+    let vrst = 0;
+    for (let y = 0; y < r.h; y++) {
+      let ima = 0;
+      for (let x = 0; x < r.w && ima < 3; x++) if (r.data[(y * r.w + x) * 4 + 3] > 100) ima++;
+      if (ima >= 3) vrst++;
+    }
+    const ocena = vrst - Math.abs(j - n / 2) * 0.05; // ob enaki pokritosti bližje sredini
+    if (ocena > naj) { naj = ocena; kje = j; }
+  }
+  return kje === null ? null : Math.round((kje + 0.5) * m.mm);
 }

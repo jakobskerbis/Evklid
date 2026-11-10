@@ -3325,6 +3325,7 @@
   "a3.hintModelMouse": "拖曳旋轉，用滑鼠滾輪縮放。點擊任一部分了解更多。",
   "a3.rez.slice": "切面（毫米）",
   "a3.rez.fromTop": "距頂部以下",
+  "a3.rez.fromSampleTop": "距樣本頂部",
   "a3.rez.fromFront": "距前側",
   "a3.rez.fromRight": "距身體右側",
   "a3.rez.body": "身體",

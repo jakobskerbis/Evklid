@@ -3325,6 +3325,7 @@
   "a3.hintModelMouse": "拖动旋转，用鼠标滚轮缩放。点击任一部分了解更多。",
   "a3.rez.slice": "切面（毫米）",
   "a3.rez.fromTop": "距顶部以下",
+  "a3.rez.fromSampleTop": "距样本顶部",
   "a3.rez.fromFront": "距前侧",
   "a3.rez.fromRight": "距身体右侧",
   "a3.rez.body": "身体",

@@ -69,7 +69,14 @@ export function rezineIzvor(env = process.env) {
   const izvor = String(env[`${BRAND.env}_REZINE_IZVOR`] || "").trim().replace(/\/+$/, "");
   if (!/^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(izvor)) return null;
   const pot = String(env[`${BRAND.env}_REZINE_POT`] || "v1/").replace(/^\/+/, "");
-  return { izvor, osnova: `${izvor}/${/^[\w.-]+\/$/.test(pot) ? pot : "v1/"}` };
+  // telesa, ki so v vedru (npr. »m«, dokler se ženska še peče); privzeto obe, odjemalec manjkajoče izpusti
+  const telesa = [...new Set(String(env[`${BRAND.env}_REZINE_TELESA`] || "z,m").split(",").map((x) => x.trim()).filter((x) => /^[mz]$/.test(x)))];
+  return { izvor, osnova: `${izvor}/${/^[\w.-]+\/$/.test(pot) ? pot : "v1/"}`, telesa: telesa.length ? telesa : ["z", "m"] };
+}
+
+// Kazalo za odjemalca: telesa v vedru in rezerva (vzorec iz repozitorija), če vedro ali CORS odpove.
+export function kazaloRezin(r) {
+  return { osnova: r.osnova, telesa: Object.fromEntries(r.telesa.map((s) => [s, `${s}/`])), rezerva: { osnova: "", telesa: { m: "vzorec/" } } };
 }
 
 export function cspFor3d(base, rezine = rezineIzvor()) {
@@ -142,7 +149,7 @@ export function mount3d(app, { csp, modules }) {
     const r = rezineIzvor();
     if (!r) return next();
     // rezerva: če vedro ali CORS odpove, odjemalec pokaže vzorec iz repozitorija (public/3d/modeli/organi/pravi-prerez.js)
-    res.set("Cache-Control", "public, max-age=300").json({ osnova: r.osnova, telesa: { z: "z/", m: "m/" }, rezerva: { osnova: "", telesa: { m: "vzorec/" } } });
+    res.set("Cache-Control", "public, max-age=300").json(kazaloRezin(r));
   });
   app.get("/3d/modeli/seznam.json", (_req, res) => {
     res.set("Cache-Control", "no-cache").json(modelList());

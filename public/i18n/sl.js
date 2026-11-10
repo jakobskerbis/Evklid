@@ -3576,6 +3576,7 @@ export default {
   "a3.hintModelMouse": "Povleci za vrtenje, s koleščkom miške povečaj ali pomanjšaj. Klikni kateri koli del, da izveš več.",
   "a3.rez.slice": "Rezina (mm)",
   "a3.rez.fromTop": "pod vrhom",
+  "a3.rez.fromSampleTop": "od vrha izreza",
   "a3.rez.fromFront": "od sprednje strani",
   "a3.rez.fromRight": "od desne strani telesa",
   "a3.rez.body": "Telo",

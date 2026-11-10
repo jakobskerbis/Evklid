@@ -198,7 +198,7 @@ test("rezine: gostovanje podatkov je za stikalom (izvor v connect-src samo, ko j
   assert.equal(rezineIzvor({ [`${BRAND.env}_REZINE_IZVOR`]: "http://x.si" }), null, "samo https");
   assert.equal(rezineIzvor({ [`${BRAND.env}_REZINE_IZVOR`]: "https://x.si/pot" }), null, "samo izvor, brez poti");
   const r = rezineIzvor({ [`${BRAND.env}_REZINE_IZVOR`]: "https://rezine.example.org/" });
-  assert.deepEqual(r, { izvor: "https://rezine.example.org", osnova: "https://rezine.example.org/v1/" });
+  assert.deepEqual(r, { izvor: "https://rezine.example.org", osnova: "https://rezine.example.org/v1/", telesa: ["z", "m"] });
   assert.match(cspFor3d(base, r), /connect-src 'self' https:\/\/rezine\.example\.org/);
   assert.match(cspFor3d(base, null), /connect-src 'self'$/);
 });
@@ -225,4 +225,170 @@ print(json.dumps(out))`;
   const rtx = beri("scripts", "atlas", "rtx", "rtx.py");
   assert.match(rtx, /if organi == \["rezine"\]:/);
   assert.match(rtx, /rezine_prenos\.naloga\(KOREN, BLENDER, st, pisi, pisi_stanje, napaka\)/);
+});
+
+test("rezine: strežnik našteje samo telesa v vedru in vedno doda rezervo (vzorec iz repozitorija)", async () => {
+  const { rezineIzvor, kazaloRezin, mount3d } = await import("../server/tri-d.js");
+  const { BRAND } = await import("../server/brand.js");
+  const env = (t) => ({ [`${BRAND.env}_REZINE_IZVOR`]: "https://r.example.org", ...(t == null ? {} : { [`${BRAND.env}_REZINE_TELESA`]: t }) });
+  assert.deepEqual(rezineIzvor(env("m")).telesa, ["m"], "ženska se še peče: samo moški");
+  assert.deepEqual(rezineIzvor(env(" m , x,z,m")).telesa, ["m", "z"], "neznana telesa izpuščena, brez podvajanja");
+  assert.deepEqual(rezineIzvor(env("x")).telesa, ["z", "m"], "neveljavno → privzeto obe");
+  const k = kazaloRezin(rezineIzvor(env("m")));
+  assert.deepEqual(k, { osnova: "https://r.example.org/v1/", telesa: { m: "m/" }, rezerva: { osnova: "", telesa: { m: "vzorec/" } } });
+  const rez = JSON.parse(beri("public", "3d", "rezine", "kazalo.json"));
+  assert.deepEqual(k.rezerva.telesa, rez.telesa, "rezerva je vzorec iz repozitorija");
+  // pot /3d/rezine/kazalo.json: z nastavljenim izvorom kazalo z rezervo, brez njega statični vzorec (next)
+  const express = (await import("express")).default;
+  const app = express();
+  mount3d(app, { csp: { "script-src": ["'self'"], "connect-src": ["'self'"] }, modules: path.join(ROOT, "node_modules") });
+  app.use((_q, res) => res.status(204).end());
+  const srv = app.listen(0);
+  const vrata = srv.address().port;
+  const prej = { izvor: process.env[`${BRAND.env}_REZINE_IZVOR`], telesa: process.env[`${BRAND.env}_REZINE_TELESA`] };
+  try {
+    process.env[`${BRAND.env}_REZINE_IZVOR`] = "https://r.example.org";
+    process.env[`${BRAND.env}_REZINE_TELESA`] = "m";
+    const r1 = await fetch(`http://127.0.0.1:${vrata}/3d/rezine/kazalo.json`);
+    assert.equal(r1.status, 200);
+    assert.deepEqual(await r1.json(), k);
+    delete process.env[`${BRAND.env}_REZINE_IZVOR`];
+    const r2 = await fetch(`http://127.0.0.1:${vrata}/3d/rezine/kazalo.json`);
+    assert.equal(r2.status, 204, "brez gostovanja: naprej na statični vzorec");
+  } finally {
+    srv.close();
+    for (const [k2, v] of [["IZVOR", prej.izvor], ["TELESA", prej.telesa]]) {
+      if (v == null) delete process.env[`${BRAND.env}_REZINE_${k2}`];
+      else process.env[`${BRAND.env}_REZINE_${k2}`] = v;
+    }
+  }
+});
+
+test("rezine: odjemalec – manjkajoče telo ne podre drugega, brez teles rezerva", async () => {
+  const meta = { dim: [10, 10, 10] };
+  const beriJson = (obstaja) => async (url) => {
+    if (obstaja.some((p) => url.endsWith(p))) return meta;
+    throw new Error(`404 ${url}`);
+  };
+  const k = { osnova: "https://r.example.org/v1/", telesa: { z: "z/", m: "m/" } };
+  const a = await R.telesaKazala(k, "https://evklid.app/3d/rezine/", beriJson(["/m/meta.json"]));
+  assert.deepEqual(a.spoli, ["m"], "ženska manjka, moški ostane");
+  assert.equal(a.osnova, "https://r.example.org/v1/");
+  const b = await R.telesaKazala(k, "https://evklid.app/3d/rezine/", beriJson(["/z/meta.json", "/m/meta.json"]));
+  assert.deepEqual(b.spoli, ["z", "m"]);
+  await assert.rejects(R.telesaKazala(k, "https://evklid.app/3d/rezine/", beriJson([])), /404/, "brez teles napaka → model preklopi na rezervo");
+  const rez = await R.telesaKazala({ osnova: "", telesa: { m: "vzorec/" } }, "https://evklid.app/3d/rezine/", beriJson(["/3d/rezine/vzorec/meta.json"]));
+  assert.deepEqual(rez.spoli, ["m"]);
+  assert.equal(rez.osnova, "https://evklid.app/3d/rezine/", "rezerva je na istem izvoru");
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /R\.telesaKazala\(k, koren, json\)/);
+  assert.match(mod, /await pripravi\(kazalo\)\.catch\(naRezervo\)/, "kazalo, ki odpove, preklopi na rezervo");
+  assert.match(mod, /await naRezervo\(err\);\s*if \(!spoli\.includes\(stanje\.spol\)\)/, "telo, ki se ne naloži, preklopi na rezervo");
+});
+
+test("rezine: raven vretenca, lega rezine in posamezna vretenca", () => {
+  const ravni = [[-12, 20, "Th6"], [14, 50, "Th7"], [42, 80, "Th8"], [68, 104, "Th9"], [300, 340, "L1"]];
+  assert.equal(R.ravenPri(ravni, 46), "Th7", "prekrivanje: najbližja sredina");
+  assert.equal(R.ravenPri(ravni, 62), "Th8");
+  assert.equal(R.ravenPri(ravni, 200), "", "zunaj hrbtenice ni ravni");
+  assert.equal(R.ravenPri([], 46), "");
+  assert.equal(R.ravenPri(undefined, 46), "");
+  assert.equal(R.ravenPri(ravni, 310, "Th"), "", "samo vretenca iste vrste");
+  assert.equal(R.ravenPri(ravni, 310, "L"), "L1");
+  const t = (_k, d) => d;
+  assert.equal(R.besediloLege({ smer: "a", i: 62, vzorec: true, ravni }, t), "v višini Th8");
+  assert.equal(R.besediloLege({ smer: "a", i: 200, vzorec: true, ravni }, t), "20,0 cm od vrha izreza", "brez gole številke");
+  assert.equal(R.besediloLege({ smer: "a", i: 62, vzorec: false, ravni }, t), "v višini Th8 · 6,2 cm pod vrhom");
+  assert.equal(R.besediloLege({ smer: "k", i: 168, vzorec: false, ravni }, t), "16,8 cm od sprednje strani");
+  assert.equal(R.besediloLege({ smer: "s", i: 290, vzorec: false, ravni }, t), "29,0 cm od desne strani telesa");
+  assert.deepEqual(R.mejeVretenca(ravni, "Th7"), [18, 46.5]);
+  assert.deepEqual(R.mejeVretenca(ravni, "Th6"), [-16, 18]);
+  assert.equal(R.mejeVretenca(ravni, "Th12"), null);
+  const tab = JSON.parse(beri("public", "3d", "rezine-oznake.json"));
+  assert.deepEqual(R.vretence("prsno-vretence-th8"), { osnova: "prsno-vretence", raven: "Th8", rim: "VIII" });
+  assert.deepEqual(R.vretence("prsno-vretence", "Th3"), { osnova: "prsno-vretence", raven: "Th3", rim: "III" });
+  assert.equal(R.vretence("prsno-vretence-l3"), null, "vrsta in raven se ujemata");
+  assert.equal(R.vretence("jetra"), null);
+  const o = R.opisOznake(tab, "ledveno-vretence-l4");
+  assert.equal(o.sl, "Ledveno vretence L4");
+  assert.equal(o.la, "Vertebra lumbalis IV");
+  assert.equal(R.opisOznake(tab, "prsno-vretence", "Th8").sl, "Prsno vretence Th8", "starejše oznake: raven iz višine dotika");
+  assert.equal(R.opisOznake(tab, "prsno-vretence").sl, "Prsno vretence");
+  assert.equal(R.opisOznake(tab, "ni-taka"), null);
+  // vzorec v repozitoriju ima posamezna vretenca (rezine_oznake.py)
+  const vm = JSON.parse(beri("public", "3d", "rezine", "vzorec", "meta.json"));
+  for (const v of ["prsno-vretence-th7", "prsno-vretence-th8"]) assert.ok(vm.oznake.kljuci.includes(v), v);
+});
+
+test("rezine: pravila OŠ (preprostejša imena, spolni organi brez imena, prečni pogled brez telesa)", () => {
+  const tab = JSON.parse(beri("public", "3d", "rezine-oznake.json"));
+  assert.equal(R.kljucZaRaven(tab, "prsno-vretence-th8", true), "hrbtenica", "posamezno vretence je na OŠ hrbtenica");
+  assert.equal(R.kljucZaRaven(tab, "prsno-vretence-th8", false), "prsno-vretence-th8");
+  assert.equal(R.kljucZaRaven(tab, "levi-prekat", true), "srce");
+  for (const k of ["prostata", "semenjak", "semenovod", "maternica", "jajcnik", "jajcevod", "noznica", "maternicne-vezi"])
+    assert.equal(R.kljucZaRaven(tab, k, true), "", `${k}: OŠ ne imenuje (j odloči kasneje)`);
+  assert.equal(R.kljucZaRaven(tab, "", true), "");
+  assert.deepEqual(R.pogledZaRaven(1), { smer: "a", pogled: "ravno", telo: false });
+  assert.deepEqual(R.pogledZaRaven(2), {});
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /Object\.assign\(stanje, R\.pogledZaRaven\(1\)\)/, "preklop na OŠ vrne prečni pogled naravnost");
+});
+
+test("rezine: obris zapolni drobne luknje brez oznake, žile z lastno oznako ostanejo", () => {
+  // 9 × 9: struktura 1 z luknjo 0 (zapolni) in luknjo 2 (žila, ostane)
+  const w = 9, h = 9, data = new Uint8Array(w * h);
+  for (let y = 1; y < 8; y++) for (let x = 1; x < 8; x++) data[y * w + x] = 1;
+  data[2 * w + 2] = 0; data[6 * w + 6] = 2;
+  const je = new Uint8Array(256); je[1] = 1;
+  const z = R.zapolniObris({ w, h, data }, je);
+  assert.equal(z.data[2 * w + 2], 1, "luknja brez oznake zapolnjena");
+  assert.equal(z.data[6 * w + 6], 0, "žila ostane luknja");
+  assert.equal(z.data[0], 0, "zunanjost ostane zunaj");
+});
+
+test("rezine: ključ shrambe iz imena aplikacije (brand.json)", () => {
+  const brand = JSON.parse(beri("brand.json"));
+  assert.equal(R.KLJUC_KAZALA, `${brand.slug}.3d.rezine`);
+  assert.doesNotMatch(beri("public", "3d", "modeli", "organi", "pravi-prerez.js"), /getItem\("/, "ključ ni trdo vpisan v modelu");
+});
+
+test("rezine: šivi med bloki – pomik, izpad in skok osvetlitve se izravnajo krajevno", { skip: !python && "ni Pythona" }, () => {
+  let np = spawnSync(python, ["-c", "import numpy"]).status === 0;
+  if (!np) return;
+  const koda = `
+import json, sys
+import numpy as np
+sys.path.insert(0, ${JSON.stringify(path.join(ROOT, "scripts", "atlas"))})
+sys.dont_write_bytecode = True
+import rezine_sivi as S
+rng = np.random.default_rng(1)
+Z, H, W = 120, 72, 96
+yy, xx = np.mgrid[0:H, 0:W]
+telo = ((yy - 36) / 30) ** 2 + ((xx - 48) / 40) ** 2 < 1
+tkivo = 120 + 40 * np.sin(np.arange(W) / 5.0)[None, :] * np.cos(np.arange(H) / 7.0)[:, None]
+def rez0(z):
+    rgb = np.repeat(tkivo[..., None], 3, 2) * (1 + 0.002 * z)
+    if z >= 60: rgb = np.roll(rgb, 4, 1)                       # pomik 4 mm od rezine 60
+    if z >= 90: rgb = rgb * (0.75 + 0.25 * xx / W)[..., None]   # skok osvetlitve, močnejši na desni strani telesa
+    if z == 40: rgb = rgb * 0.5 + 100                          # motna rezina
+    a = (np.roll(telo, 4, 1) if z >= 60 else telo).astype(np.float32)
+    return rgb.astype(np.float32), a
+P, st = S.pomiki(rez0, Z, H, W)
+def rez(z):
+    rgb, a = rez0(z); return S.premakni(rgb, *P[z]), S.premakni(a, *P[z])
+F, pov = S.polje(rez, Z, H, W)
+izpad, G, stiki = S.izravnava(F, pov, {})
+g = lambda z: S.razsiri(G[z], H, W)
+r89, r90 = rez(89)[0] * g(89), rez(90)[0] * g(90)
+m = telo & (xx < 30)
+print(json.dumps({"st": st, "p59": P[59].tolist(), "p60": P[60].tolist(), "izpad": sorted(izpad), "stiki": [s[:2] for s in stiki],
+  "skok_prej": float(np.median(rez(90)[0][m] / rez(89)[0][m])), "skok_po": float(np.median(r90[m] / r89[m])),
+  "dalec": float(np.abs(G[10]).max())}))`;
+  const r = JSON.parse(execFileSync(python, ["-c", koda], { encoding: "utf8" }));
+  assert.deepEqual(r.st.map((s) => s.slice(0, 3)), [[60, 0, -4]], "en stik s pomikom 4 mm");
+  assert.equal(r.p59[1] - r.p60[1], 4, "rezine za stikom so premaknjene nazaj");
+  assert.deepEqual(r.izpad, [40], "motna rezina nadomeščena s prelivom");
+  assert.ok(r.stiki.some(([z, v]) => v === "skok" && Math.abs(z - 90) <= 1), "skok osvetlitve najden");
+  assert.ok(r.skok_prej < 0.85 && r.skok_po > 0.93, `skok izravnan: ${r.skok_prej.toFixed(3)} → ${r.skok_po.toFixed(3)}`);
+  assert.ok(r.dalec < 1e-6, "daleč od stikov ni popravka (napaka se ne kopiči)");
 });

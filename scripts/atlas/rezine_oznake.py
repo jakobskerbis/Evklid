@@ -1,7 +1,7 @@
 # Poravnava mrež HuBMAP HRA (3d-vh-m-united.glb / 3d-vh-f-united.glb, CC BY 4.0; narejene po istih telesih kot
 # kriorezine) z volumnom kriorezin in vokselizacija v mrežo oznak za »Pravi prerez« (dotik na rezini → ime strukture).
 # Teče na strežniku (numpy, scipy, Pillow), ne na j-jevem računalniku:
-#   python3 scripts/atlas/rezine_oznake.py <united.glb> <delo (rezine.py: vol.u8, maska.npz)> <izhod (meta.json)> [--brez-optimizacije]
+#   python3 scripts/atlas/rezine_oznake.py <united.glb> <delo (rezine.py: vol.u8 ali vol4.npz, maska.npz, konc.u8)> <izhod (meta.json)> [--matrika-iz-mete]
 # Poravnava (afina, HRA v metrih → mm okvirja rezin): začetek iz mejnikov (teme, sredina in globina glave), nato
 # optimizacija 9 parametrov (merila po oseh, premik, majhni zasuki), ki zmanjša razpršenost barve kriorezin znotraj
 # vsakega organa (pljuča, jetra, možgani, kosti … so vsak zase barvno enotni) in kaznuje točke zunaj telesa. Koža HRA
@@ -275,13 +275,18 @@ def main():
         tab = json.load(f)
     kljuci = list(tab["oznake"]); vz = [(re.compile(r), k) for r, k in tab["vzorci"]]
     W1, H1 = meta["okvir"]; Wc, Hc, Z = meta["dim"]; x0, y0 = meta["izrez"]
-    vol = np.memmap(os.path.join(delo, "vol.u8"), np.uint8, "r", shape=(Z, H1, W1, 4))
     telo = np.unpackbits(np.load(os.path.join(delo, "maska.npz"))["telo"])[:Z * H1 * W1].reshape(Z, H1, W1).astype(bool)
     iz_mete = "--matrika-iz-mete" in a and "poravnava" in meta   # ponovna vokselizacija z že najdeno globalno poravnavo
-    # volumen 4 mm za optimizacijo (barva, telo)
+    # volumen 4 mm za optimizacijo (barva, telo); s prenosnika pride kot vol4.npz (rezine.py), ker je vol.u8 prevelik
     k = 4 if not iz_mete else 0
     Zk, Hk, Wk = (Z // k, H1 // k, W1 // k) if k else (0, 0, 0)
-    v4 = np.zeros((Zk, Hk, Wk, 3), np.float32); t4 = np.zeros((Zk, Hk, Wk), np.float32)
+    p4 = os.path.join(delo, "vol4.npz")
+    if k and not os.path.exists(os.path.join(delo, "vol.u8")) and os.path.exists(p4):
+        g4 = np.load(p4); v4 = g4["v4"].astype(np.float32)[:Zk, :Hk, :Wk]; t4 = g4["t4"].astype(np.float32)[:Zk, :Hk, :Wk]
+        Zk = 0
+    else:
+        vol = np.memmap(os.path.join(delo, "vol.u8"), np.uint8, "r", shape=(Z, H1, W1, 4)) if k else None
+        v4 = np.zeros((Zk, Hk, Wk, 3), np.float32); t4 = np.zeros((Zk, Hk, Wk), np.float32)
     for z in range(Zk):
         b = np.asarray(vol[z * k:(z + 1) * k, :Hk * k, :Wk * k, :3], np.float32).reshape(k, Hk, k, Wk, k, 3).mean((0, 2, 4))
         v4[z] = b; t4[z] = telo[z * k:(z + 1) * k, :Hk * k, :Wk * k].reshape(k, Hk, k, Wk, k).mean((0, 2, 4))
@@ -408,11 +413,18 @@ def main():
     for e in vse_enote:
         if e[0] and e[0].startswith("intervertebral_disk"):
             e[2] = np.zeros(3, int) if not imena_v else np.median(np.array([po_imenu[v][2] for v in imena_v]), 0).round().astype(int)
+    # vsako vretence ima svojo oznako (»prsno-vretence-th8«), da dotik obarva in imenuje samo dotaknjeno vretence
+    KRV = {"cervical": "c", "thoracic": "th", "lumbar": "l"}
     for en, idx, t in vse_enote:
+        mv = re.fullmatch(r"(cervical|thoracic|lumbar)_vertebra_(\d+)", en or "")
         for kl, v in idx.items():
             if len(v):
                 v = v + t
                 v = v[((v >= 0) & (v < [Z2, H2, W2])).all(1)]
+            if mv and kl.endswith("-vretence"):
+                kl = f"{kl}-{KRV[mv.group(1)]}{int(mv.group(2))}"
+                if kl not in kljuci:
+                    kljuci.append(kl)
             plasti.append((len(v), kl, v))
     # anatomske ravni: višina vsakega vretenca (mm od vrha volumna), da pogled pri prečni rezini pove »v višini Th8«
     KR = {"cervical": "C", "thoracic": "Th", "lumbar": "L"}

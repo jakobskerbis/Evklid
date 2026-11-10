@@ -3418,6 +3418,7 @@
   "a3.hintModelMouse": "Przeciągnij, aby obrócić, kółkiem myszy przybliż lub oddal. Kliknij dowolną część, aby dowiedzieć się więcej.",
   "a3.rez.slice": "Przekrój (mm)",
   "a3.rez.fromTop": "poniżej szczytu",
+  "a3.rez.fromSampleTop": "od górnej krawędzi próbki",
   "a3.rez.fromFront": "od przodu",
   "a3.rez.fromRight": "od prawej strony ciała",
   "a3.rez.body": "Ciało",

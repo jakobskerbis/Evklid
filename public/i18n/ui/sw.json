@@ -3350,6 +3350,7 @@
   "a3.hintModelMouse": "Buruta kuzungusha, tumia gurudumu la kipanya kukuza. Bofya sehemu yoyote kujua zaidi.",
   "a3.rez.slice": "Kipande (mm)",
   "a3.rez.fromTop": "chini ya kilele",
+  "a3.rez.fromSampleTop": "kutoka juu ya sampuli",
   "a3.rez.fromFront": "kutoka upande wa mbele",
   "a3.rez.fromRight": "kutoka upande wa kulia wa mwili",
   "a3.rez.body": "Mwili",

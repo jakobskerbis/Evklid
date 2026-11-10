@@ -3350,6 +3350,7 @@
   "a3.hintModelMouse": "Húzd a forgatáshoz, az egérgörgővel nagyíts. Kattints bármelyik részre a részletekért.",
   "a3.rez.slice": "Metszet (mm)",
   "a3.rez.fromTop": "a tető alatt",
+  "a3.rez.fromSampleTop": "a minta tetejétől",
   "a3.rez.fromFront": "elölről",
   "a3.rez.fromRight": "a test jobb oldalától",
   "a3.rez.body": "Test",
