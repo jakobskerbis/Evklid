@@ -181,8 +181,8 @@ test("lesson → 3D link reads its id (data-tb-3d is not dataset.tb3d), Back clo
   assert.doesNotMatch(tb, /dataset\.tb3d/);
   assert.match(tb, /getAttribute\("data-tb-3d"\)/);
   const app = read("public/app.js");
-  const pop = app.slice(app.indexOf('window.addEventListener("popstate"'));
-  assert.ok(pop.indexOf("if (isOpen3d())") > 0 && pop.indexOf("if (isOpen3d())") < pop.indexOf('if (wasOverlay && currentView === "path") return;'), "3D se mora zapreti, preden se Nazaj na Učni poti ustavi");
+  const pop = app.slice(app.indexOf("function backStep("), app.indexOf('window.addEventListener("popstate"'));
+  assert.ok(pop.indexOf("if (isOpen3d())") > 0 && pop.indexOf("if (isOpen3d())") < pop.indexOf('if (wasOverlay && currentView === "path") return true;'), "3D se mora zapreti, preden se Nazaj na Učni poti ustavi");
   assert.match(app, /openLabExperiment\(key\);\s*showView\("lab"\);\s*labFromLesson\(\);/);
 });
 
