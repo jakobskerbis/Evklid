@@ -12,7 +12,7 @@
 name: PDF učbenika
 on:
   push:
-    branches: [main, claude/pdf-vnaprej] # ZAČASNO: preizkus delovnega toka na veji, pred združitvijo odstrani
+    branches: [main]
     paths:
       - "content/lessons/**"
       - "server/textbook-print.js"
