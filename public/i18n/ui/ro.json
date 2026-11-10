@@ -3559,7 +3559,7 @@
   "land.f1.t": "Tutor pas cu pas",
   "land.f1.d": "Nu-ți dă soluția. Mai întâi află ce știi deja, apoi te duce până la capăt cu indicii. Îl poți întreba și cu vocea.",
   "land.f2.t": "Calcule corecte",
-  "land.f2.d": "Calculele numerice din ecuații, derivate și calcule mai lungi sunt refăcute de un program. La unele exerciții, răspunsul este verificat și de un model mai puternic.",
+  "land.f2.d": "Calculele numerice din ecuații, derivate și calcule mai lungi sunt refăcute de un program. La unele exerciții, răspunsul trece și printr-o verificare suplimentară.",
   "land.f3.t": "Traseu după programa școlară",
   "land.f3.d": "Materia pentru clasa și școala ta, unitate cu unitate. O unitate pe care o știi deja o sari cu un test scurt.",
   "land.f4.t": "Exerciții care nu se termină",

@@ -3587,7 +3587,7 @@
   "land.f1.t": "Doučovatel krok za krokem",
   "land.f1.d": "Řešení neprozradí. Nejdřív zjistí, co už umíš, a pak tě nápovědami dovede až do konce. Zeptat se ho můžeš i hlasem.",
   "land.f2.t": "Správné výpočty",
-  "land.f2.d": "Číselné výpočty v rovnicích, derivacích a delších výpočtech přepočítává program. U některých úloh odpověď zkontroluje ještě výkonnější model.",
+  "land.f2.d": "Číselné výpočty v rovnicích, derivacích a delších výpočtech přepočítává program. U některých úloh projde odpověď ještě další kontrolou.",
   "land.f3.t": "Cesta učení podle osnov",
   "land.f3.d": "Učivo pro tvůj ročník a školu, celek po celku. Celek, který už umíš, přeskočíš krátkým testem.",
   "land.f4.t": "Cvičení, která nedojdou",

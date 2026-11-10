@@ -3523,7 +3523,7 @@
   "land.f1.t": "Oktató lépésről lépésre",
   "land.f1.d": "Nem árulja el a megoldást. Először kideríti, mit tudsz már, aztán tippekkel végigvezet. Hanggal is kérdezheted.",
   "land.f2.t": "Pontos számítások",
-  "land.f2.d": "Az egyenletekben, deriváltakban és hosszabb számításokban szereplő számolást egy program újraszámolja. Egyes feladatoknál a választ egy erősebb modell is átnézi.",
+  "land.f2.d": "Az egyenletekben, deriváltakban és hosszabb számításokban szereplő számolást egy program újraszámolja. Egyes feladatoknál a válasz még egy további ellenőrzésen is átmegy.",
   "land.f3.t": "Tanulási út a tanterv szerint",
   "land.f3.d": "A tananyag a te osztályodnak és iskoládnak, témakörről témakörre. Amit már tudsz, azt egy rövid teszttel átugorhatod.",
   "land.f4.t": "Feladatok, amelyek nem fogynak el",

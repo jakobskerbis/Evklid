@@ -3497,7 +3497,7 @@
   "land.f1.t": "Tutor langkah demi langkah",
   "land.f1.d": "Tidak membocorkan jawaban. Pertama mencari tahu apa yang sudah kamu kuasai, lalu membimbingmu sampai selesai dengan petunjuk. Kamu juga bisa bertanya dengan suara.",
   "land.f2.t": "Perhitungan yang benar",
-  "land.f2.d": "Hitungan angka dalam persamaan, turunan, dan perhitungan panjang dihitung ulang oleh program. Pada sebagian soal, jawaban juga ditinjau oleh model yang lebih kuat.",
+  "land.f2.d": "Hitungan angka dalam persamaan, turunan, dan perhitungan panjang dihitung ulang oleh program. Pada sebagian soal, jawaban juga melewati pemeriksaan tambahan.",
   "land.f3.t": "Jalur belajar sesuai kurikulum",
   "land.f3.d": "Materi untuk kelas dan sekolahmu, unit demi unit. Unit yang sudah kamu kuasai bisa kamu lewati dengan tes singkat.",
   "land.f4.t": "Latihan yang tak pernah habis",
