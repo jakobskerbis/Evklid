@@ -140,6 +140,12 @@ export function vrstaIzOdgovora(odgovor, st, blago = blagoVklopljeno()) {
   return "stiska";
 }
 
+// Vrsta lokalnega zaznavalnika. Posredna stiska je blažje okno »pogovor« (j 10. 11.); z EVKLID_NUJNO_BLAGO=0 polno okno »stiska«.
+export function lokalnaVrsta(text) {
+  const v = zaznajNujno(text);
+  return v === "pogovor" && !blagoVklopljeno() ? "stiska" : v;
+}
+
 // Podatki za odjemalca: { vrsta, st } (st = številke po državi in stopnji) ali null.
 export const nujnoZa = (vrsta, settings) => (vrsta ? { vrsta, st: stevilke(settings) } : null);
 
@@ -148,9 +154,10 @@ export const nujnoZa = (vrsta, settings) => (vrsta ? { vrsta, st: stevilke(setti
  * @returns {Promise<{vrsta, st, ai?: boolean} | null>}
  */
 export async function nujnoPredZavrnitvijo({ text, student, usage, createFn = null, ai = true }) {
-  const local = zaznajNujno(text);
-  if (local) return nujnoZa(local, student?.settings);
-  if (!ai) return null;
-  const vrsta = await varnostniPregled({ text, usage, studentId: student?.id, createFn });
-  return vrsta ? { ...nujnoZa(vrsta, student?.settings), ai: true } : null;
+  const local = lokalnaVrsta(text);
+  // Posredna stiska (»pogovor«) ne ustavi AI pregleda: ta lahko najde močnejšo vrsto; sicer ostane blažje okno.
+  if (local && local !== "pogovor") return nujnoZa(local, student?.settings);
+  const vrsta = ai ? await varnostniPregled({ text, usage, studentId: student?.id, createFn }) : null;
+  if (vrsta) return { ...nujnoZa(vrsta, student?.settings), ai: true };
+  return nujnoZa(local, student?.settings);
 }

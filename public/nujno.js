@@ -438,10 +438,14 @@ const SNOV =
   /^(?:kaj (?:je|so|pomeni|pomenijo)|kdaj (?:je|so)|kdo je|ko je|sta je|zasto|kako|koliko|izracunaj|resi|naloga|kako (?:se je|je|so|deluje|nastane)|zakaj|razlozi|opisi|napisi|what (?:is|are|was|were)|why|how (?:does|do|did)|explain|describe)(?=[ ,.]|$)/;
 // Šolsko besedilo: šibki znak ne šteje samo, če je šolska beseda v ISTEM stavku PRED njim in vezana nanj (»spis/referat/
 // plakat o …«, »za domače branje … zakaj se je Romeo zastrupil«, »na krožku smo se učili … ob požaru«) in sporočilo ne kaže
-// na resnični dogodek (ZIVO spodaj). Šolska beseda drugje v sporočilu ne utiša ničesar: ob dvomu raje okno.
+// na resnični dogodek (ZIVO spodaj). Med šolsko besedo in znakom ne sme biti vejice (razen pred zakaj/kako/kaj/ki/da) ali
+// »in/pa/ampak«: »spis o gozdu, za hišo je velik požar« odpre okno. Šolska beseda drugje v sporočilu ne utiša ničesar.
 // Teče nad besedilom, kjer so ? ! ; : in nova vrstica pika (meja stavka).
-const SOLA =
-  /(?:^|[ .,])(?:(?:spis\S*|referat\S*|plakat\S*|seminarsk\S*(?: nalog\S*)?|esej\S*|zgodb\S*|pravljic\S*) (?:[^ .]+ ){0,2}o |(?:domace branje|domacem branju|domacega branja)(?=[ ,])|krozk\S* smo (?:se )?(?:ucili|pogovarjali|vadili|spoznali|naucili)(?=[ ,]))[^.]*?(?:pozar|zastrup|nezavest|srcn\S* napad|otrov)/;
+const SOLA_SEP = "(?: |, (?=(?:zakaj|kako|kaj|ki|da|kdo|kje|kdaj) ))";
+const SOLA = new RegExp(
+  "(?:^|[ .,])(?:(?:spis\\S*|referat\\S*|plakat\\S*|seminarsk\\S*(?: nalog\\S*)?|esej\\S*|zgodb\\S*|pravljic\\S*) (?:[^ .,]+ ){0,2}o|domace branje|domacem branju|domacega branja|krozk\\S* smo (?:se )?(?:ucili|pogovarjali|vadili|spoznali|naucili))" +
+    `(?:${SOLA_SEP}(?!(?:in|pa|ampak|vendar|toda) )[^ .,]+)*?${SOLA_SEP}(?:pozar|zastrup|nezavest|srcn\\S* napad|otrov)`,
+);
 const stavki = (text) => normalize(String(text || "").replace(/[?!;:\n]+/g, ". "));
 // Pretiravanje v prihodnjiku (»zadušil se bom v teh domačih nalogah«, »od smeha«): izraz se pred iskanjem znakov izpusti,
 // razen če sporočilo omenja še kaj nevarnega (dim, plin, astma, dihanje, ogenj, ubi-). Preteklik in sedanjik
@@ -449,12 +453,17 @@ const stavki = (text) => normalize(String(text || "").replace(/[?!;:\n]+/g, ". "
 const PRETIRANO =
   /(?:zadusil\S* se bom|se bom zadusil\S*)(?: \S+){0,3} (?:v|od|pod) (?:\S+ ){0,2}(?:nalog\S*|ucenj\S*|test\S*|kontrolk\S*|zvezk\S*|papirj\S*|smeh\S*|dolgcas\S*)(?=[ ,.]|$)/g;
 const DIHANJE = /(?:^| )(?:dim\S*|plin\S*|astm\S*|dihat\S*|diham|vdih\S*|gori|ogenj|ognj\S*|\S*ubi[lt]\S*|ubij\S*|umr\S*)(?=[ ,.]|$)/;
-// Posredna stiska (»ne zdržim več«, »vseeno mi je za vse«, »nima več smisla«, »ne mogu više«): šteje samo na koncu stavka
-// in če sporočilo ne omenja učenja (»ne zdržim več te matematike« je naveličanost).
-const BLAGA =
-  /(?:^| )(?:ne zdrzim(?: vec)?|ne mogu vise|vseeno mi je za vse|nima vec smisla)(?=[,.]|$| ker | in | pa )/;
-const UCENJE =
-  /(?:^| )(?:nalog|matemati|matem|fizik|kemij|hemij|biologij|test|kontroln|kontrolk|izpit|ispit|matur|ucenj|ucit|ucim|ucbenik|sol[aeiou]|skol|domac|zadac|zadat|snov|enacb|ulomk|razlomk|formul|racun|spis|referat|predmet|ocen|cvek|vaj[aeo]|poglavj|lekcij|trening|tekm|igr)/;
+// Posredna stiska (»ne zdržim več«, »vseeno mi je za vse«, »nič nima več smisla«, »ne mogu više«): BLAŽJE okno »pogovor«
+// (brez 112; j potrdil 10. 11.), in samo, če zaznavalnik ne najde nič močnejšega. Šolska beseda utiša le kot predmet izraza
+// (»ne zdržim več te matematike«), ne drugje v sporočilu (»v šoli me vsi zafrkavajo, ne zdržim več« odpre okno).
+// »nima več smisla« šteje brez osebka (samostojno ali »nič/vse nima več smisla«), ne »ta postopek nima več smisla«.
+const UC =
+  "(?:nalog|matemati|matem|fizik|kemij|hemij|biologij|test|kontroln|kontrolk|izpit|ispit|matur|ucenj|ucit|ucim|ucbenik|sol[aeiou]|skol|domac|zadac|zadat|snov|enacb|ulomk|razlomk|formul|racun|spis|referat|predmet|ocen|cvek|vaj[aeo]|poglavj|lekcij|trening|tekm|igr)";
+const BREZ_UC = `(?! (?:vec )?(?:(?:te|tega|teh|tej|to|ta|ti|tok|tolk|toliko|vseh|vse|ove|ovu|ovo|ovog|ovih|od|pri|z|s) ){0,2}${UC})`;
+const BLAGA = new RegExp(
+  `(?:^| )(?:ne zdrzim${BREZ_UC}(?: vec)?(?=[ ,.]|$)|vseeno mi je za vse${BREZ_UC}(?=[ ,.]|$)|ne mogu vise(?=[,.]|$| jer | i | a ))` +
+    "|(?:^|[.,] |(?:^| )(?:nic|vse|vse skupaj|itak|sploh|nic vec) )nima (?:vec )?smisla(?=[ ,.]|$)(?<=vec nima smisla|nima vec smisla)",
+);
 
 // Opisi z več deli (oseba … stanje, padec … se ne odziva, izsiljevanje s slikami) kot izrazi nad normalize().
 const OS =
@@ -462,11 +471,15 @@ const OS =
 // Znaki resničnega dogodka ali klica na pomoč: z njimi šolsko besedilo (SOLA) nikoli ne utiša šibkih znakov
 // (»berem domače branje in v bloku je požar«, »spis o tem, kako se je brat zastrupil, kaj naj«).
 const ZIVO = new RegExp(
-  `(?:^| )(?:ampak|vendar|toda|ker|pa je|pa se je|pomagaj\\S*|pomoc|na pomoc|kaj naj|zdaj|zdej|zdajle|ravnokar|pravkar|res|sem se|si se|mi je|pri nas|pri sosed\\S*|doma|v (?:bloku|kuhinji|sobi|hisi|soli|razredu|stanovanju)|je pozar|pozar je|je zastrupljen\\S*|lezi nezavest\\S*|padl?\\S* v nezavest|${OS}|ata|ate|foter|fotr\\S*|mater|mati)(?=[ ,.]|$)`,
+  `(?:^| )(?:ampak|vendar|toda|ker|pa je|pa se je|pomagaj\\S*|pomoc|na pomoc|kaj naj|zdaj|zdej|zdajle|ravnokar|pravkar|res|sem se|si se|mi je|pri nas|pri sosed\\S*|doma|v (?:bloku|kuhinji|sobi|hisi|soli|razredu|stanovanju)|je pozar|pozar je|je zastrupljen\\S*|lezi nezavest\\S*|padl?\\S* v nezavest|${OS}|ata|ate|foter|fotr\\S*|mater|mati|stric\\S*|tet[aeio]|sosed\\S*|bratran\\S*|sestricn\\S*|ucitelj\\S*|trener\\S*|moj\\S*|nas|nasa|nase|nasi|nasem|nasemu|mislim da|po moje|bruha\\S*|klici|klicite|je (?:\\S+ )?pozar|se je vnel\\S*|za hiso|na strehi|na balkonu|v garazi)(?=[ ,.]|$)`,
 );
 // Vzorec z varovalko: ne velja, če sporočilo kjerkoli vsebuje besedo iz varovalke (igra, šport, lasje …).
 const RB = (brez, src) => ({ re: new RegExp(`^(?!.*(?:^| )(?:${brez}))(?:.* )?${src}`) });
-const IGRA = "minecraft\\S*|fortnit\\S*|roblox\\S*|igric\\S*|igri|igro|igra|level\\S*|las|lase|lasmi|frizur\\S*|sah\\S*|kosark\\S*|nogomet\\S*|rokomet\\S*|odbojk\\S*|tekm\\S*|lig[aeio]|rezultat\\S*|srce|olimpij\\S*|\\d+ \\d+";
+const KONEC = "(?=[,.]|$| ker | ce | ko | sam\\S* | sebi| hudega| slabega| pa ne | in ne )";
+const ZIVAL = "mack\\S*|muc\\S*|pes|psa|psic\\S*|kuza\\S*|zdravnik\\S*|zdravnic\\S*|fizioterapevt\\S*|mama|mami|masaz\\S*";
+const KNJIGA = "knjig\\S*|zgodb\\S*|film\\S*|roman\\S*|domac\\S* bran\\S*|opis\\S*|junak\\S*|pisatelj\\S*|cankar\\S*|pravljic\\S*|serij\\S*";
+const IGRA_EN = "chess|scrabble|game\\S*|race|fifa|mario\\S*|tennis|match|score\\S*|monopoly|cards|uno|at";
+const IGRA = "dez|vrocina|veter|toca|sonce|mraz|minecraft\\S*|fortnit\\S*|roblox\\S*|igric\\S*|igri|igro|igra|level\\S*|las|lase|lasmi|frizur\\S*|sah\\S*|kosark\\S*|nogomet\\S*|rokomet\\S*|odbojk\\S*|tekm\\S*|lig[aeio]|rezultat\\S*|srce|olimpij\\S*|\\d+ \\d+";
 const R = (src) => ({ re: new RegExp(`(?:^| )${src}`) });
 const IZS = (src) => ({ ...R(src), izs: true });
 const IZRAZI = {
@@ -495,9 +508,13 @@ const IZRAZI = {
   ],
   stiska: [
     // (živi nabor, #552) »razmišljam, da bi si nekaj naredila«, »želim si, da me sploh ne bi bilo več«, »sem se namenoma poškodovala«
-    R(`(?:razmisljam|premisljujem|mislim|razmisljal\\S*),?(?: \\S+){0,2},? da bi si (?:nekaj|neki|kaj|kej) (?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*)(?!,? mogoce)(?=[,.]|$| ker | ce | ko | sam\\S* | sebi| hudega| slabega| pa ne | in ne )`),
+    R(`(?:razmisljam|premisljujem|mislim|razmisljal\\S*),?(?: \\S+){0,2},? da bi si (?:nekaj|neki|kaj|kej) (?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*)(?!,? mogoce)${KONEC}`),
+    // »nardil si bom nekaj«, »nekaj si bom naredila«, »hočem si nekaj narediti« (konec stavka: ne »… za jest«)
+    R(`(?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*) si bom (?:nekaj|neki|kaj|kej)(?!,? mogoce)${KONEC}`),
+    R(`(?:nekaj|neki|kaj|kej) si bom (?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*)(?!,? mogoce)${KONEC}`),
+    R(`(?:hocem|ocem|zelim|moram) si (?:nekaj|neki|kaj|kej) (?:nar\\S{0,2}d\\S*|nrd\\S*|stor\\S*)(?!,? mogoce)${KONEC}`),
     // »da me (sploh) ne bi bilo (več)«, ne pa »da me ne bi bilo strah / sram / treba«
-    R(`da me (?:sploh )?(?:ne bi|nebi) (?:vec )?(?:bilo|blo)(?! (?:vec |tako |prevec )?(?:strah|sram|treba|nerodno|zeblo|groza)(?=[ ,.]|$))(?=[ ,.]|$)`),
+    R(`da me (?:sploh )?(?:ne bi|nebi) (?:vec )?(?:bilo|blo)(?! (?:vec |tako |prevec )?(?:strah|sram|treba|nerodno|zeblo|groza|skrbel\\S*)(?=[ ,.]|$))(?=[ ,.]|$)`),
     R(`(?:nitko|niko|nikom|nikome|nihce|nobeden|noben|nobedn) (?:me )?(?:ne bi|ne bih|nebi) (?:\\S+ )?(?:fali\\S*|nedostaja\\S*|pogresa\\S*)`),
     RB(IGRA, `sem se (?:namenoma|namerno|nalasc) (?:poskodoval\\S*|porezal\\S*|urezal\\S*|opekl\\S*)(?=[ ,.]|$)`),
     RB(IGRA, `(?:namenoma|namerno|nalasc) sem se (?:poskodoval\\S*|porezal\\S*|urezal\\S*|opekl\\S*)(?=[ ,.]|$)`),
@@ -526,12 +543,16 @@ const IZRAZI = {
     // (živi nabor, #552) slike brez oblačil … poslal vsem; »me skoz otipava«; »jo zdajle tepe«
     IZS(`(?:moj\\S*|mene|me) (?:\\S+ )?(?:slik\\S*|fotk\\S*)(?: \\S+){0,3} brez (?:oblacil|oblek\\S*|cunj)(?=[ ,.]|$)`),
     R(`me (?:\\S+ ){0,2}(?:otipava\\S*|otipaval\\S*)(?=[ ,.]|$)`),
+    // šlatanje, prijemanje (varovalka: žival, zdravnik, mama)
+    RB(ZIVAL, `me (?:\\S+ ){0,2}(?:slata\\S*|slatal\\S*)(?=[ ,.]|$)`),
+    R(`(?:prijel\\S*|prijemal\\S*|zgrabil\\S*|prime|prijema) me (?:je )?(?:\\S+ )?za (?:rit|zadnjico|joske|mednozje)(?=[ ,.]|$)`),
+    R(`me (?:je )?(?:prijel\\S*|prijemal\\S*|zgrabil\\S*|prime|prijema) (?:\\S+ )?za (?:rit|zadnjico|joske|mednozje)(?=[ ,.]|$)`),
     RB(IGRA, `(?:jo|ga|ju|jih|nas) (?:zdajle|zdej|zdele|ravnokar|pravkar|trenutno) (?:tepe|pretepa|tepejo|pretepajo)(?=[ ,.]|$)`),
     // (pregled B, #553) nasilje nad drugim brez zaimka: »ati mamo zdajle tepe«, »ata tolče mamo«, »foter mlati mater«
     RB(IGRA, `(?:mamo|mater|majku|brata|bratca|sestro|sestrico) (?:\\S+ )?(?:tepe|pretepa|tolce|mlati|tuce)(?=[ ,.]|$)`),
     RB(IGRA, `(?:tolce|mlati|premlati\\S*|premlatu) (?:\\S+ )?(?:mamo|mami|mater|majku|brata|bratca|sestro|sestrico)(?=[ ,.]|$)`),
-    R(`(?:dad|father|stepdad|he|boyfriend|uncle|grandpa) (?:is |keeps |always |just )*(?:beating|hitting|beats|hits|beat|hit|kicking|punching) (?:up )?(?:my |our )?(?:mom|mum|mother|sister|brother|us)(?=[ ,.]|$)`),
-    R(`(?:${OS}|ata|foter|fotr\\S*|ocim\\S*) (?:je |bo )?(?:\\S+ )?(?:pijan\\S*|pjan\\S*)(?: \\S+){0,3} (?:razbija\\S*|tepe|krici|se dere|grozi|nori|mlati|tolce)(?=[ ,.]|$)`),
+    RB(IGRA_EN, `(?:dad|father|stepdad|he|boyfriend|uncle|grandpa) (?:is |keeps |always |just )*(?:beating|hitting|beats|hits|beat|hit|kicking|punching) (?:up )?(?:my |our )?(?:mom|mum|mother|sister|brother|us)(?=[ ,.]|$)`),
+    RB(KNJIGA, `(?:${OS}|ata|foter|fotr\\S*|ocim\\S*) (?:je |bo )?(?:\\S+ )?(?:pijan\\S*|pjan\\S*)(?: \\S+){0,3} (?:razbija\\S*|tepe|krici|se dere|grozi|nori|mlati|tolce)(?=[ ,.]|$)`),
     R(`(?:bojim se|strah me je|ne upam si?|ne upam) (?:\\S+ )?(?:it|iti|ici|prit|priti) (?:domov|kuci|home)(?=[ ,.]|$)`),
     R(`(?:afraid|scared) to go home`),
     // slike brez oblek, nage slike: grožnja ali siljenje
@@ -630,7 +651,7 @@ const NESRECA =
   /(?:^| )(?:po nesreci|nehote|pomotoma|pri kuhanju|pri rezanju|z nozem|s nozem|z noz\S*|na steklo|s steklom|z zago|accidentally|by accident|while cooking|with a knife|slucajno|nozem)(?=[ ,.]|$)/;
 const SAMOMOR = /(?:samomor|samoubi|ubi[tlj]\S* se|se ubi|umr|umre|zivet|ziveti|zivjet|suicid|kill myself|want to die|nocem vec|namenoma|namerno|nalasc|on purpose)/;
 
-/** Vrsta nujnega primera ali null. Stiska in nasilje pred zdravjem (zahtevata drugačen odgovor). */
+/** Vrsta nujnega primera, "pogovor" (posredna stiska, blažje okno) ali null. Stiska in nasilje pred zdravjem (zahtevata drugačen odgovor). */
 export function zaznajNujno(text) {
   const low = lower(text);
   if (!low.trim()) return null;
@@ -638,7 +659,7 @@ export function zaznajNujno(text) {
   const norm = DIHANJE.test(norm0) ? norm0 : norm0.replace(PRETIRANO, " ");
   const norms = [norm, brezPolnil(norm)];
   const snov = SNOV.test(norm) || (!ZIVO.test(norm) && SOLA.test(stavki(text)));
-  if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms) || (BLAGA.test(norm) && !UCENJE.test(norm))) {
+  if (any(PATTERNS.stiska, norms, low, snov) || izraz("stiska", norms)) {
     // Nesreča (»porezal sem se z nožem in kri teče«): zdravje, razen če sporočilo omenja samomor ali smrt.
     if (NESRECA.test(norm) && !SAMOMOR.test(norm)) return "zdravje";
     return "stiska";
@@ -647,6 +668,8 @@ export function zaznajNujno(text) {
   if (any(PATTERNS.zdravje, norms, low, snov) || izraz("zdravje", norms) || fever(norm, low)) return "zdravje";
   if (any(P_DOJENCEK, norm, low) && any(P_DOJENCEK_ZNAK, norm, low)) return "zdravje";
   if (any(PATTERNS.nevarnost, norms, low, snov) || izraz("nevarnost", norms)) return "nevarnost";
+  // Posredna stiska: blažje okno »pogovor« (brez 112), j potrdil 10. 11.
+  if (BLAGA.test(norm)) return "pogovor";
   return null;
 }
 

@@ -74,8 +74,8 @@ import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnos
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
-import { nujnoPredZavrnitvijo, nujnoZa, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
-import { zaznajNujno, stevilke as nujnoStevilke } from "../public/nujno.js";
+import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
+import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 
@@ -838,7 +838,11 @@ export function createApp(store, opts = {}) {
     });
     const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
     // Pod mejo: lokalni zaznavalnik (strošek 0); varnostni odgovor se pokaže nad odgovorom inštruktorja (j 6. 11.).
-    const nujnoLokalno = nujnoZa(zaznajNujno(text), student.settings);
+    // Posredna stiska (lokalno »pogovor«, blažje okno): ne gre takoj, da pregled B ali inštruktor (META) lahko odpreta
+    // močnejše okno; če ga ne, se blažje okno pošlje pred koncem odgovora (j 10. 11.).
+    const vrstaLokalno = lokalnaVrsta(text);
+    const blagoLokalno = vrstaLokalno === "pogovor" ? nujnoZa("pogovor", student.settings) : null;
+    const nujnoLokalno = blagoLokalno ? null : nujnoZa(vrstaLokalno, student.settings);
     if (nujnoLokalno) send("nujno", nujnoLokalno);
     // Največ en varnostni odgovor na sporočilo (lokalno, Haiku ali META flag=distress).
     let nujnoPoslano = !!nujnoLokalno;
@@ -1191,6 +1195,7 @@ export function createApp(store, opts = {}) {
       // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
       if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
+      posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
         id: assistantId,
@@ -1236,7 +1241,7 @@ export function createApp(store, opts = {}) {
         // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
         // Pregled B (če teče) ima še do NUJNO_ROK_MS od začetka; njegov zadetek gre kot dogodek »nujno« pred napako.
         await pocakajNujno();
-        send("error", { error: errorText(err), nujno: nujnoPoslano ? undefined : nujnoZa(zaznajNujno(text), student.settings) || undefined });
+        send("error", { error: errorText(err), nujno: nujnoPoslano ? undefined : nujnoZa(lokalnaVrsta(text), student.settings) || undefined });
       }
       res.end();
     } finally {

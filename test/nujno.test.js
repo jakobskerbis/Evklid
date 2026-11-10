@@ -3,7 +3,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize, drzavaNaprave, DRZAVE, izoliraj, izsiljevanje } from "../public/nujno.js";
-import { preberiVrsto, varnostniPregled, vrstaIzOdgovora, VAROVALKA, NAVODILO } from "../server/nujno.js";
+import { preberiVrsto, varnostniPregled, vrstaIzOdgovora, nujnoPredZavrnitvijo, VAROVALKA, NAVODILO } from "../server/nujno.js";
 import { Usage } from "../server/usage.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -939,6 +939,17 @@ test("zaznavalnik: šolska beseda nikoli ne utiša resnične nuje (pregleda A in
       ["pišem spis, mama leži nezavestno na tleh", "zdravje"],
       ["delala sem plakat in babica je padla v nezavest", "zdravje"],
       ["pisal sem esej, zdaj pa mislim da ima oče srčni napad, drži se za prsi", "zdravje"],
+      // pregled A, krog 2 (B1b): vejica ali oseba med šolsko besedo in znakom
+      ["pisem esej o zdravju, stric ima po moje srcni napad", "zdravje"],
+      ["referat o strupih, sosed se je zastrupil in bruha", "zdravje"],
+      ["plakat o gobah delam, teta se je zastrupila z gobami", "zdravje"],
+      ["za domace branje berem, stric se je zastrupil z alkoholom", "zdravje"],
+      ["na krozku smo se ucili o gobah, trener se je zastrupil", "zdravje"],
+      ["referat o gobah, mislim da se je moj stric zastrupil", "zdravje"],
+      ["spis o gozdu, za hišo je velik požar", "nevarnost"],
+      ["plakat o gasilcih, sosedu se je vnel požar na strehi", "nevarnost"],
+      ["zgodba o ognju, sosedova hisa, pozar, klici", "nevarnost"],
+      ["pišem spis o gozdu in zunaj je požar", "nevarnost"],
       // šolska beseda je vezana na znak, a sporočilo kaže na resnični dogodek
       ["pišem spis o požaru, ampak zdaj je požar pri nas", "nevarnost"],
       ["za domače branje berem, pomagaj, sestra se je zastrupila", "zdravje"],
@@ -975,13 +986,15 @@ test("zaznavalnik: jasni primeri iz živega nabora in pogovorne oblike (pregled 
     ["ata tolče mamo", "nasilje"],
     ["foter mlati mater", "nasilje"],
     ["foter me je premlatu", "nasilje"],
+    ["nardil si bom nekaj", "stiska"],
+    ["nekaj si bom naredila", "stiska"],
+    ["hocem si nekaj narediti", "stiska"],
+    ["trener me šlata", "nasilje"],
+    ["sošolec me šlata pod majico", "nasilje"],
+    ["prijel me je za rit", "nasilje"],
     ["oči je spet pijan in razbija", "nasilje"],
     ["bojim se it domov", "nasilje"],
-    // posredna stiska
-    ["ne zdržim več", "stiska"],
-    ["vseeno mi je za vse", "stiska"],
     ["ne da se mi več živet", "stiska"],
-    ["nima več smisla", "stiska"],
     // tuji jeziki
     ["dad is beating mom", "nasilje"],
     ["my dad is hitting my mom", "nasilje"],
@@ -990,7 +1003,6 @@ test("zaznavalnik: jasni primeri iz živega nabora in pogovorne oblike (pregled 
     ["bolje bi bilo da me nema", "stiska"],
     ["nitko me ne bi falio", "stiska"],
     ["niko me ne bi falio", "stiska"],
-    ["ne mogu više", "stiska"],
     ["osjećam plin", "nevarnost"],
   ]);
   assert.equal(izsiljevanje("nekdo ima moje slike brez oblačil in pravi, da jih bo poslal vsem, če mu ne pošljem še"), true);
@@ -1016,16 +1028,89 @@ test("zaznavalnik: novi vzorci ne sprožijo alarma pri igri, športu, hrani in u
       "Cankar: kaj pomeni vprašanje, kdo jo doma tepe?",
       "srce mami bije hitro, to smo merili pri biologiji",
       "bojim se, da me ne bi bilo strah na odru",
+      "napisal sem si listek, da me ne bi bilo skrbelo",
+      "nekaj si bom naredila za jest",
+      "he beat us at chess",
+      "dad beat mom at scrabble",
+      "v knjigi je oče pijan in razbija, kako naj to opišem",
+      "dež jih zdajle tepe na izletu",
+      "vročina jih pravkar tepe",
+      "mačka me šlata s tačko",
+      "zdravnik me je šlatal po trebuhu",
+      "ta postopek nima več smisla",
+      "ta stavek nima več smisla",
+      "moja dieta nima več smisla",
       "želim si, da me ne bi bilo sram pred tablo",
       "da me ne bi bilo treba vprašat",
       "ne zdržim več te matematike",
-      "ne zdržim več, ta naloga je predolga",
       "ta naloga nima več smisla",
       "vseeno mi je za vse ocene razen matematike",
       "ne mogu više ovu matematiku",
-      "ne mogu više, zadaća je preduga",
       "bojim se it k zobozdravniku",
     ],
     null,
   );
+});
+
+// Posredna stiska: blažje okno »pogovor« (brez 112), j potrdil 10. 11. Šolska beseda utiša le kot predmet izraza.
+test("zaznavalnik: posredna stiska odpre blažje okno »pogovor«", () => {
+  vsi(
+    [
+      "ne zdržim več",
+      "vseeno mi je za vse",
+      "nima več smisla",
+      "nič več nima smisla",
+      "vse skupaj nima več smisla",
+      "ne mogu više",
+      "v šoli me vsi zafrkavajo, ne zdržim več",
+      "po testu so se mi vsi smejali, ne zdržim več",
+      "ne morem delat naloge ker ne zdržim več",
+      "ne zdržim več doma",
+      "ne zdržim več tega življenja",
+      // lažni zadetek pri blažjem oknu je sprejemljiv (šolska beseda ni predmet izraza)
+      "ne zdržim več, ta naloga je predolga",
+    ],
+    "pogovor",
+  );
+  // Močnejši znak ima prednost pred blažjim oknom.
+  vsi([
+    ["ne zdržim več, nočem več živet", "stiska"],
+    ["oči me tepe, ne zdržim več", "nasilje"],
+    ["v kuhinji gori, ne zdržim več dima", "nevarnost"],
+  ]);
+  const st = stevilke({});
+  assert.ok(vrstice("pogovor", st).length >= 2);
+  assert.ok(!JSON.stringify(vrstice("pogovor", st).map((v) => v[0])).includes("stiska.1"));
+});
+
+test("strežnik: lokalna posredna stiska → eno blažje okno pred koncem; pregled B ali stikalo ga okrepita", async () => {
+  const ne = async () => ({ content: [{ type: "text", text: "NE" }], usage: { input_tokens: 220, output_tokens: 2 } });
+  const stiska = async () => ({ content: [{ type: "text", text: "STISKA" }], usage: { input_tokens: 220, output_tokens: 2 } });
+  const poslji = async (varnostFn, text) => {
+    let ev;
+    await withServer({ streamFn: fakeStream("Razumem." + META), varnostFn }, async ({ call }) => {
+      const s = (await call("/api/students", { name: "Gal" })).body;
+      const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+      ev = events((await call(`/api/conversations/${c.id}/messages`, { text })).body);
+    });
+    return ev;
+  };
+  const ev = await poslji(ne, "ne zdržim več");
+  const nujno = ev.filter((e) => e.event === "nujno");
+  assert.deepEqual(nujno.map((e) => e.data.vrsta), ["pogovor"]);
+  assert.ok(ev.indexOf(nujno[0]) < ev.findIndex((e) => e.event === "done"));
+  // Haiku najde stisko: polno okno, blažje se ne pošlje več.
+  assert.deepEqual((await poslji(stiska, "ne zdržim več")).filter((e) => e.event === "nujno").map((e) => e.data.vrsta), ["stiska"]);
+  // Stikalo EVKLID_NUJNO_BLAGO=0: posredna stiska odpre polno okno »stiska«.
+  process.env.EVKLID_NUJNO_BLAGO = "0";
+  try {
+    assert.deepEqual((await poslji(ne, "ne zdržim več")).filter((e) => e.event === "nujno").map((e) => e.data.vrsta), ["stiska"]);
+  } finally {
+    delete process.env.EVKLID_NUJNO_BLAGO;
+  }
+  // Čez mejo / izklopljen klepet: AI pregled ima prednost, sicer blažje okno.
+  const usage = { log() {}, kvGet: () => 0, kvSet() {}, creditOut: () => false };
+  const pred = (createFn) => nujnoPredZavrnitvijo({ text: "ne zdržim več", student: { id: 1, settings: {} }, usage, createFn });
+  assert.equal((await pred(ne)).vrsta, "pogovor");
+  assert.deepEqual([(await pred(stiska)).vrsta, (await pred(stiska)).ai], ["stiska", true]);
 });
