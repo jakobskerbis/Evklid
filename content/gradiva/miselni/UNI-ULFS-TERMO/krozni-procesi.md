@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Krožni proces
+  - $\Delta U = 0$, zato $w = q_\mathrm{dov} - q_\mathrm{odv}$
+  - $\eta = 1 - \dfrac{q_\mathrm{odv}}{q_\mathrm{dov}}$, meja Carnot
+- Zračni standard
+  - zrak kot idealni plin, $\kappa = 1{,}4$
+  - zgorevanje nadomesti dovajanje toplote
+- Ottov proces
+  - dve adiabati, dve izohori
+  - $\eta = 1 - \varepsilon^{1-\kappa}$, brez $T_3$
+  - napaka: več toplote ne da večjega $\eta$
+- Dieslov proces
+  - izobarno dovajanje, $\varphi = \dfrac{V_3}{V_2}$
+  - pri enakem $\varepsilon$ slabši od Otta
+- Jouleov proces
+  - dve adiabati, dve izobari
+  - $\eta = 1 - r_p^{(1-\kappa)/\kappa}$
+  - največje delo pri $T_2 = \sqrt{T_1T_3}$
+- Rankinov proces
+  - črpalka, kotel, turbina, kondenzator
+  - suhost $x_4$ iz $s_4 = s_3$
+  - delo kot razlike entalpij

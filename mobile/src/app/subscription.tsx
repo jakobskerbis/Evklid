@@ -16,7 +16,7 @@ import { Banner, Body, Button, Card, Chip, ErrorView, Icon, Loading, Screen, Tit
 
 type Access = { tier: "paid" | "promo" | "trial" | "bonus" | "free"; seats: number; until: string | null };
 type Plan = { seats: number; interval: "month" | "year"; amount: number; currency: string; level?: string | null; family?: boolean };
-type Account = { access: Access; plans: Plan[]; plan_level?: string; family_ok?: boolean; children?: { level?: string }[] };
+type Account = { access: Access; plans: Plan[]; plan_level?: string; family_ok?: boolean; children?: { level?: string }[]; pilot?: { kind: "pilot" | "owner"; last_day: string | null; profiles: number } | null };
 // Ime stopnje (kot na spletu, public/account.js levelName).
 const levelName = (l?: string | null) => t(l === "FAKS" ? "lp.uni" : l === "SS" ? "lp.ss" : "lp.os");
 
@@ -43,7 +43,9 @@ export default function Subscription() {
     !p.level ? true : p.family ? !!account.family_ok && p.level === (withStudent ? "FAKS" : "SS") : p.level === (account.plan_level || "OS");
   const nameOf = (p: StoreProduct) =>
     p.family ? t(p.level === "FAKS" ? "pay.familyStudent" : "pay.family") : p.level ? t("pay.seats1Level", { level: levelName(p.level) }) : t(p.seats === 1 ? "mob.oneChild" : "mob.twoChildren");
-  const paid = access.tier === "paid";
+  // Pilot in lastnik (pregled #477 B3): poln paket brezplačno, brez nakupa (strežnik ga zavrne).
+  const pilot = account.pilot || null;
+  const paid = access.tier === "paid" || !!pilot;
   const otherProvider = paid && info.provider && info.provider !== (Platform.OS === "ios" ? "apple" : "google");
 
   const priceOf = (p: StoreProduct) => {
@@ -93,7 +95,11 @@ export default function Subscription() {
       <Stack.Screen options={{ title: t("mob.subscription") }} />
       <Card tone={paid ? "ok" : "accent"}>
         <Title size={20}>
-          {paid
+          {pilot
+            ? pilot.kind === "owner"
+              ? t("acct.owner")
+              : t("acct.pilot", { date: day(`${pilot.last_day}T12:00:00Z`), n: pilot.profiles })
+            : paid
             ? t("mob.subActive")
             : access.until && access.tier === "trial"
               ? t("mob.trialUntil", { date: day(access.until) })
@@ -101,7 +107,7 @@ export default function Subscription() {
                 ? t("mob.accessUntil", { date: day(access.until) })
                 : t("mob.subFree")}
         </Title>
-        {paid && access.until ? <Body muted>{t(parent?.subscription?.cancel_at_period_end ? "mob.endsOn" : "mob.renews", { date: day(access.until) })}</Body> : null}
+        {paid && !pilot && access.until ? <Body muted>{t(parent?.subscription?.cancel_at_period_end ? "mob.endsOn" : "mob.renews", { date: day(access.until) })}</Body> : null}
         {!paid ? (
           <View style={{ gap: 8 }}>
             {["mob.perk1", "mob.perk2", "mob.perk3", "mob.perk4"].map((k) => (

@@ -19,7 +19,13 @@ export function migrateAppleSignIn(db) {
   const cols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   if (!cols.includes("apple_sub")) db.exec("ALTER TABLE parents ADD COLUMN apple_sub TEXT");
   db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_parents_apple_sub ON parents(apple_sub) WHERE apple_sub IS NOT NULL");
+  // Porabljeni enkratni nizi (sha256) Applovih žetonov: žeton prijave ali prejšnje potrditve ne odpre izvoza ali izbrisa
+  // (pregled #492/#500 B P3-1). Žeton velja ~10 min, zapis 20 min.
+  db.exec("CREATE TABLE IF NOT EXISTS apple_nonces (hash TEXT PRIMARY KEY, expires_at INTEGER NOT NULL)");
 }
+
+// Ponovna potrditev (izvoz, izbris) zahteva svež žeton: izdan v zadnjih 5 minutah.
+export const REAUTH_MAX_AGE_MS = 5 * 60000;
 
 // Ključ .p8 za preklic žetonov ob izbrisu računa (Apple to zahteva od aplikacij s prijavo z Apple).
 function revokeConfig(env) {
@@ -37,10 +43,21 @@ function revokeConfig(env) {
 
 export function mountAppleSignIn(app, ctx, opts = {}) {
   const { db, sessions, getParent, parentByEmail, publicParent, createParent, checkAge, signupThrottle } = ctx;
+  const dropForeignAccess = ctx.dropForeignAccess || ((id) => sessions.destroyAll(id));
+  const audit = ctx.audit || (() => {});
+  // Brez meje na omrežje: neveljaven žeton stane eno preverjanje RSA, prenos Applovih ključev ob neznanem kid je omejen
+  // v apple-crypto.js (največ enkrat na minuto za ves strežnik). Meja na omrežje bi učencu za šolskim NAT dovolila, da z
+  // nesmiselnimi zahtevki zaklene prijavo z Apple vsem na šoli (pregled #492/#500 B P3-1).
   const env = opts.env || process.env;
   const log = opts.log || console;
   const fetchFn = opts.fetchFn || fetch;
   migrateAppleSignIn(db);
+  // true samo ob prvi uporabi enkratnega niza (v zadnjih 20 minutah).
+  const useNonce = (raw) => {
+    const now = Date.now();
+    db.prepare("DELETE FROM apple_nonces WHERE expires_at < ?").run(now);
+    return db.prepare("INSERT OR IGNORE INTO apple_nonces (hash, expires_at) VALUES (?, ?)").run(sha256hex(raw), now + 20 * 60000).changes === 1;
+  };
   const json = express.json({ limit: "32kb" });
   const audiences = [BUNDLE_ID, ...String(env.EVKLID_APPLE_AUDIENCES || "").split(",").map((s) => s.trim()).filter(Boolean)];
   const verify = (token, rawNonce) =>
@@ -52,31 +69,84 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
     let who;
     try {
       who = await verify(req.body?.identity_token, rawNonce);
+      useNonce(rawNonce); // prijava ga zapiše (drugi korak need_signup ga sme ponoviti), ponovna potrditev pa ne sprejme
     } catch (err) {
       if (err instanceof AppleSignatureError) return res.status(401).json({ error: "Prijava z Apple ni uspela. Poskusi znova." });
       log.error?.("[evklid] prijava z Apple:", err.message);
       return res.status(502).json({ error: "Apple se ne odziva. Poskusi znova čez nekaj minut." });
     }
+    // Nov račun ali nepotrjen obstoječ: ista pravila kot registracija (strinjanje, starost, omejitev novih računov na omrežje).
+    // Vrne datum rojstva ali null (odgovor je že poslan).
+    // existing: račun že obstaja (povezava nepotrjenega), zato se ne šteje v mejo novih računov omrežja (pregled #492 B P3-2).
+    const signup = (existing = false) => {
+      if (req.body?.accept_privacy !== true) {
+        res.status(400).json({ error: "Za nov račun potrebujemo še datum rojstva in strinjanje z obvestilom o zasebnosti.", need_signup: true, ...(existing ? { existing: true } : {}) });
+        return null;
+      }
+      const key = netKey(req.ip);
+      if (!existing && !isLocalRequest(req) && signupThrottle.blocked(key)) {
+        res.status(429).json({ error: "S tega omrežja je danes ustvarjenih že preveč računov. Poskusi jutri." });
+        return null;
+      }
+      const birthIso = checkAge(req, res);
+      if (!birthIso) return null;
+      if (!existing) signupThrottle.fail(key);
+      return birthIso;
+    };
+    const name = [req.body?.given_name, req.body?.family_name].filter(Boolean).join(" ").slice(0, 60);
     let p = db.prepare("SELECT * FROM parents WHERE apple_sub = ?").get(who.sub);
     let created = false;
     if (!p && who.email && who.emailVerified) {
       // Obstoječ račun z istim (pri Applu potrjenim) e-naslovom: poveževa ga s prijavo z Apple.
       const byEmail = parentByEmail(who.email);
       if (byEmail && !byEmail.is_guest && !byEmail.apple_sub) {
-        db.prepare("UPDATE parents SET apple_sub = ?, email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?").run(who.sub, new Date().toISOString(), byEmail.id);
+        const hasPassword = !String(byEmail.password_hash || "").startsWith("none$");
+        if (!byEmail.email_verified_at) {
+          // Nepotrjen e-naslov: račun je ustvaril nekdo, ki naslova ni dokazal (lahko tujec pred lastnikom). Z njim ravnamo
+          // kot z novim: lastnik da svoje soglasje in datum rojstva (starost se preveri znova), priporočitelj in ime tujca
+          // odpadeta, geslo, žetoni, seje, obvestila na telefon in ključi razredov ne veljajo več (pregled #492 A, B).
+          const birthIso = signup(true);
+          if (!birthIso) return;
+          db.prepare(
+            `UPDATE parents SET password_hash = ?, verify_token_hash = NULL, reset_token_hash = NULL, reset_expires_at = NULL,
+               birth_date = ?, privacy_version = ?, privacy_accepted_at = datetime('now'), name = ?, referred_by = NULL, referral_rewarded = 0 WHERE id = ?`,
+          ).run(unusablePasswordHash(), birthIso, ctx.privacyVersion ?? byEmail.privacy_version, name, byEmail.id);
+          dropForeignAccess(byEmail.id);
+          audit(db, { req, parentId: byEmail.id, action: "apple_link_unverified" });
+        } else if (hasPassword) {
+          // Potrjen račun z geslom: sem pride samo, kdor ima Apple ID s potrjenim istim naslovom (v praksi lastnik
+          // nabiralnika), zato naprav ne odjavimo (otrokove tablice, obvestila; pregled #492 A P2-2). Lastnik dobi
+          // e-pošto; če povezave ni naredil sam, »Pozabljeno geslo« odjavi vse naprave in odstrani Apple ID.
+          if (ctx.sendMail && ctx.appleLinkedEmail) Promise.resolve(ctx.sendMail(byEmail.email, ctx.appleLinkedEmail())).catch(() => {});
+          audit(db, { req, parentId: byEmail.id, action: "apple_link" });
+        }
+        db.prepare("UPDATE parents SET apple_sub = ?, verify_token_hash = NULL, verify_expires_at = NULL WHERE id = ?").run(who.sub, byEmail.id);
+        // Apple je naslov potrdil: kot povezava za potrditev (nekdanji gost zapusti kvoto omrežja in dobi preizkus,
+        // skrbnik iz EVKLID_ADMIN_EMAILS; pregled #492/#500 B P3-2).
+        if (!byEmail.email_verified_at) {
+          if (ctx.confirmEmail) ctx.confirmEmail(byEmail.id);
+          else db.prepare("UPDATE parents SET email_verified_at = ? WHERE id = ?").run(new Date().toISOString(), byEmail.id);
+        }
         p = getParent(byEmail.id);
       }
     }
     if (!p) {
       if (!who.email) return res.status(400).json({ error: "Apple ni poslal e-naslova. Ustvari račun z e-naslovom in geslom.", no_email: true });
-      // Nov račun: ista pravila kot registracija (strinjanje, starost, omejitev novih računov na omrežje).
-      if (req.body?.accept_privacy !== true) return res.status(400).json({ error: "Za nov račun potrebujemo še datum rojstva in strinjanje z obvestilom o zasebnosti.", need_signup: true });
-      const key = netKey(req.ip);
-      if (!isLocalRequest(req) && signupThrottle.blocked(key)) return res.status(429).json({ error: "S tega omrežja je danes ustvarjenih že preveč računov. Poskusi jutri." });
-      const birthIso = checkAge(req, res);
+      // Naslova, ki ga Apple ni potrdil, ne vzamemo: račun s tujim naslovom in napadalčevim Apple ID (pregled #492 B P2-1).
+      if (!who.emailVerified) return res.status(400).json({ error: "Apple ni potrdil e-naslova. Ustvari račun z e-naslovom in geslom.", no_email: true });
+      // Naslov je že zaseden (npr. Apple ga ni potrdil, zato računa nismo povezali): prijava z geslom.
+      // Račun brez gesla (ustvarjen z drugim Apple ID): »prijavi se z geslom« ne pomaga (pregled #492 A P3-6).
+      const taken = parentByEmail(who.email);
+      if (taken)
+        return res.status(409).json({
+          error: String(taken.password_hash || "").startsWith("none$")
+            ? "Račun s tem e-naslovom že obstaja. Prijavi se z Apple ID, s katerim si ga ustvaril, ali nastavi geslo s »Pozabljeno geslo«."
+            : "Račun s tem e-naslovom že obstaja. Prijavi se z e-naslovom in geslom.",
+          exists: true,
+        });
+      const birthIso = signup();
       if (!birthIso) return;
-      signupThrottle.fail(key);
-      const name = [req.body?.given_name, req.body?.family_name].filter(Boolean).join(" ");
+      // Apple je naslov potrdil (zgoraj).
       const { id } = createParent(req, { email: who.email, passwordHash: unusablePasswordHash(), name, birthIso, verified: true });
       db.prepare("UPDATE parents SET apple_sub = ? WHERE id = ?").run(who.sub, id);
       p = getParent(id);
@@ -89,17 +159,20 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
   // Izbris računa brez gesla: nova prijava z Apple potrdi, da je to lastnik. Ob tem prekličemo
   // Applove žetone (če je nastavljen ključ .p8), kot to zahteva App Store (smernica 5.1.1(v)).
   const revoke = revokeConfig(env);
-  ctx.addReauth(async (req, p) => {
+  // opts.revoke: ob izbrisu računa prekličemo Applove žetone (izvoz jih ne prekliče).
+  ctx.addReauth(async (req, p, opts = {}) => {
     const nonce = text(req.body?.apple_nonce);
     if (!p.apple_sub || !req.body?.apple_identity_token || nonce.length < 16) return false;
     try {
       const who = await verify(req.body.apple_identity_token, nonce);
       if (who.sub !== p.apple_sub) return false;
+      if (!(who.iat * 1000 > Date.now() - REAUTH_MAX_AGE_MS)) return false;
     } catch {
       return false;
     }
+    if (!useNonce(nonce)) return false; // isti žeton drugič ali žeton prijave
     const code = text(req.body?.apple_authorization_code);
-    if (revoke && code) revokeAppleTokens(code, revoke, fetchFn).catch((e) => log.error?.("[evklid] preklic žetona Apple:", e.message));
+    if (opts.revoke && revoke && code) revokeAppleTokens(code, revoke, fetchFn).catch((e) => log.error?.("[evklid] preklic žetona Apple:", e.message));
     return true;
   });
 }

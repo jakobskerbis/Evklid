@@ -101,7 +101,11 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     await tap(sym);
     assert.equal(await open(p), 1, `${vp.width}: okno se odpre`);
     assert.equal(await p.evaluate(() => window.obrati), 0, `${vp.width}: tap na črko ne obrne kartice`);
-    await p.waitForTimeout(150);
+    // Zakasnel dogodek »scroll« brez spremembe lege (prejšnje ali lastno drsenje, na počasnem CI pride pozno)
+    // okna ne zapre; prej ga je po 500 ms in zato nestabilno zaprl (null.closest spodaj).
+    await p.waitForTimeout(600);
+    await p.evaluate(() => document.dispatchEvent(new Event("scroll")));
+    assert.equal(await open(p), 1, `${vp.width}: zakasnel scroll brez premika ne zapre okna`);
     // Okno ne prekrije formule, na katero se nanaša; na telefonu je spodnji list.
     const r = await p.evaluate(() => {
       const box = (el) => { const b = el.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; };
@@ -147,6 +151,12 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     await tap(p.locator("#drug-gumb"));
     assert.equal(await p.evaluate(() => window.gumb), 1, `${vp.width}: gumb deluje ob prvem dotiku`);
     assert.equal(await open(p), 0);
+    // 5b) Pravo drsenje (lega se spremeni) okno zapre.
+    await tap(sym);
+    await p.waitForFunction(() => !document.getElementById("fx-pop").hidden);
+    await p.waitForTimeout(600);
+    await p.evaluate(() => window.scrollBy(0, scrollY > 100 ? -60 : 60));
+    await p.waitForFunction(() => document.getElementById("fx-pop").hidden, null, { timeout: 2000 });
     // 6) Nazaj zapre okno, Esc tudi; tipka Enter na črki ne obrne kartice.
     await p.$eval("#kartica", (el) => el.scrollIntoView({ block: "center" }));
     await settle();

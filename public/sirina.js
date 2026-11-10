@@ -444,12 +444,18 @@ function visina(el) {
   return Number.isFinite(lh) ? lh : parseFloat(getComputedStyle(el).fontSize) * 1.6;
 }
 
+// Formula v delu strani, ki ga brskalnik še ne izriše (content-visibility: auto, npr. daljni razdelki lista formul,
+// graph.css): merjenje bi brskalnik prisililo, da ta del postavi takoj (list formul se je zato odpiral pol sekunde).
+// Prilagodimo jo, ko se del približa zaslonu (dogodek spodaj), še preden je viden. Velja tudi za skrite (display: none).
+export const neizrisano = (el) => !!el.checkVisibility && !el.checkVisibility({ contentVisibilityAuto: true });
+
 function prilagodi(el) {
   if (!el.isConnected) {
     ro.unobserve(el);
     opazovani.delete(el);
     return;
   }
+  if (neizrisano(el)) return;
   if (el.matches(BOX) || el.matches(OKVIRI)) okvir(el);
   else vrstica(el);
 }
@@ -521,6 +527,8 @@ function zazeni() {
     resitve.clear(); // rešitve, izmerjene z nadomestno pisavo, ne veljajo več
     opazovani.forEach(prilagodi);
   };
+  // Del strani s content-visibility: auto se bo izrisal: prilagodi formule v njem (ne skače: še je pod robom zaslona).
+  document.addEventListener("contentvisibilityautostatechange", (e) => !e.skipped && opazovani.forEach((el) => e.target.contains(el) && prilagodi(el)), true);
   document.fonts?.ready?.then(znova);
   document.fonts?.addEventListener?.("loadingdone", znova);
 }

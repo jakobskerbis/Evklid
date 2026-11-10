@@ -42,23 +42,24 @@
 @keyframes bar-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .result .result-icon { animation: pop 0.5s ease, wiggle 0.8s ease 0.5s; }
 @keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg); } 50% { transform: rotate(8deg); } 75% { transform: rotate(-4deg); } }
-.review-item { animation: slide-in 0.4s ease both; animation-delay: calc(0.35s + var(--i, 0) * 0.08s); }
+/* Hitro (j 6. 11.: odziven Evklid): pregled se pokaže skoraj takoj, ne čakamo na dolge zamike. */
+.review-item { animation: slide-in 0.2s ease-out both; animation-delay: min(calc(0.1s + var(--i, 0) * 0.03s), 0.4s); }
 @keyframes slide-in { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
-.review-item .ri-icon { display: inline-flex; animation: pop 0.4s ease both; animation-delay: calc(0.6s + var(--i, 0) * 0.08s); }
-.review-item.bad .ri-icon { animation-name: pop, shake; animation-duration: 0.4s, 0.4s; animation-delay: calc(0.6s + var(--i, 0) * 0.08s), calc(1s + var(--i, 0) * 0.08s); }
+.review-item .ri-icon { display: inline-flex; animation: pop 0.25s ease both; animation-delay: min(calc(0.25s + var(--i, 0) * 0.03s), 0.55s); }
+.review-item.bad .ri-icon { animation-name: pop, shake; animation-duration: 0.25s, 0.3s; animation-delay: min(calc(0.25s + var(--i, 0) * 0.03s), 0.55s), min(calc(0.5s + var(--i, 0) * 0.03s), 0.8s); }
 .review-item summary { transition: background 0.15s; }
 .review-item summary:hover { background: var(--surface-2); }
 /* Ob odprtju se vsebina pokaže po delih: naloga, odgovor, podatki, formula, rešitev. */
-.review-item[open] > :not(summary) { animation: fade-up 0.35s ease both; }
+.review-item[open] > :not(summary) { animation: fade-up 0.18s ease-out both; }
 .review-item[open] > :nth-child(2) { animation-delay: 0.02s; }
-.review-item[open] > :nth-child(3) { animation-delay: 0.1s; }
-.review-item[open] > :nth-child(4) { animation-delay: 0.18s; }
-.review-item[open] > :nth-child(5) { animation-delay: 0.26s; }
-.review-item[open] > :nth-child(6) { animation-delay: 0.34s; }
-.review-item[open] .solution > * { animation: fade-up 0.35s ease both; }
-.review-item[open] .solution > :nth-child(2) { animation-delay: 0.3s; }
-.review-item[open] .solution > :nth-child(3) { animation-delay: 0.42s; }
-.review-item[open] .solution > :nth-child(n+4) { animation-delay: 0.54s; }
+.review-item[open] > :nth-child(3) { animation-delay: 0.04s; }
+.review-item[open] > :nth-child(4) { animation-delay: 0.06s; }
+.review-item[open] > :nth-child(5) { animation-delay: 0.08s; }
+.review-item[open] > :nth-child(6) { animation-delay: 0.1s; }
+.review-item[open] .solution > * { animation: fade-up 0.18s ease-out both; }
+.review-item[open] .solution > :nth-child(2) { animation-delay: 0.06s; }
+.review-item[open] .solution > :nth-child(3) { animation-delay: 0.09s; }
+.review-item[open] .solution > :nth-child(n+4) { animation-delay: 0.12s; }
 .choices.static .choice.right { border-color: var(--ok); background: var(--ok-bg); }
 .choices.static .choice.picked:not(.right) { border-color: var(--danger); background: var(--danger-bg); }
 

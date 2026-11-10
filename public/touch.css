@@ -150,3 +150,20 @@
   #conversation-list li { gap: 12px; }
   #conversation-list li button { opacity: 0.8; min-width: 40px; min-height: 40px !important; margin-block: -8px; display: inline-flex; align-items: center; justify-content: center; }
 }
+
+/* ---------- odziv na dotik (j 6. 11. 2026: »da bo Evklid deloval bolj odzivno«) ----------
+   - brez zakasnitve dotika in povečave ob dvojnem tapu na vsem, kar se tapne (:where = brez prednosti,
+     zato lastna pravila, npr. touch-action: none na platnih in drsnikih, ostanejo),
+   - vidna povratna informacija takoj ob pritisku (< 50 ms): rahel pritisk (scale, ločen od transform,
+     zato se ne tepe z obstoječimi premiki gumbov). Gumbi z lastnim :active (tipkovnica, kalkulator, igre)
+     ga ne dobijo še enkrat. Ob »manj gibanja« (prefers-reduced-motion) brez pomika, samo potemnitev. */
+:where(button, a[href], summary, label, select, [role="button"], [role="tab"], [role="link"], [role="menuitem"], [role="option"], .tab, .node) {
+  touch-action: manipulation;
+}
+:where(button, summary, [role="button"], [role="tab"], [role="menuitem"], [role="option"], .tab):not(:disabled, [aria-disabled="true"], .tk-k, .sc-key, .gm-tile, .gm-btn, .gm-key, .gm-me, .choice, .primary, .modes button):active {
+  scale: 0.97;
+  filter: brightness(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(button, summary, [role="button"], [role="tab"], [role="menuitem"], [role="option"], .tab):active { scale: none; }
+}
