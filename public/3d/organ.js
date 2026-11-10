@@ -211,7 +211,8 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
   const mokro = studio && !prosojno && (t.lak ?? 0) >= 0.45 && !t.suho;
   const omeji = (v, a, b) => Math.min(b, Math.max(a, v));
   const presevnoList = studio && !prosojno && t.dvostransko ? t.presevnost ?? 0.35 : 0;
-  const presevnoMasca = studio && t.masca ? t.mascaPresevnost ?? 0.45 : 0;
+  // PBR: maščoba je v pečeni barvi (t.masca se spodaj izklopi, senčilnik nima orgMas) → brez presevnosti maščobe
+  const presevnoMasca = studio && t.masca && !(tex?.pbr && t.tekstura !== false) ? t.mascaPresevnost ?? 0.45 : 0;
   const m = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(t.barva || "#cccccc"),
     roughness: t.hrap ?? 0.45,
