@@ -745,8 +745,9 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   // Poraba AI brezplačnih učencev v tem mesecu (učenci brez naročnine, preizkusa, bonusa ali kode).
+  // Varnostni pregledi (server/nujno.js) plača aplikacija, zato ne jemljejo brezplačnega bazena.
   const monthUsdByStudent = () =>
-    db.prepare("SELECT student_id AS id, COALESCE(SUM(cost_usd),0) AS usd FROM usage WHERE created_at >= date('now','start of month') GROUP BY student_id").all();
+    db.prepare("SELECT student_id AS id, COALESCE(SUM(cost_usd),0) AS usd FROM usage WHERE created_at >= date('now','start of month') AND kind != 'varnost' GROUP BY student_id").all();
   // Gostje: kvota velja za omrežje (vsi gostje z istega omrežja skupaj, tudi izbrisani), ne za profil.
   const quotaScope = (studentId) => {
     const net = guests.netOf(studentId);
