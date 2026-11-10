@@ -90,10 +90,11 @@ export function mountGuarantee(app, ctx) {
   migrateGuarantee(db);
 
   // Različni dnevi vaje (datum v Ljubljani) med from in to; created_at je UTC.
+  // XP iz nalog pilota (razlog »pilot: …«, server/pilot-naloge.js) ni vaja: ne šteje za dan garancije (pregled B4).
   const practiceDays = (studentId) => (from, to) =>
     new Set(
       db
-        .prepare("SELECT created_at FROM xp_events WHERE student_id = ? AND created_at >= ? AND created_at < ?")
+        .prepare("SELECT created_at FROM xp_events WHERE student_id = ? AND created_at >= ? AND created_at < ? AND COALESCE(reason, '') NOT LIKE 'pilot:%'")
         .all(studentId, sqlTime(from), sqlTime(to))
         .map((r) => ljDate(Date.parse(`${String(r.created_at).replace(" ", "T")}Z`))),
     ).size;

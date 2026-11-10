@@ -88,3 +88,22 @@ thread »Triple-check every app element«): three reviewer agents in parallel, o
 look/phone/i18n; content/pedagogy), then one independent verifier agent that rereads all their fixes.
 Repeat the sweep after any large change (new tab, new design version) and at least before each
 public step (teacher pilot, open beta).
+
+## 5. Samodejni pregledi brez AI
+
+Trije brezplačni pregledi, ki ne kličejo AI in ne stanejo nič (j, 2026-11-08):
+
+- **Dependabot** (`.github/dependabot.yml`): ob ponedeljkih en PR za npm in en za GitHub Actions (vse minor/patch skupaj,
+  največ 3 odprti). Varnostni popravki pridejo kot ločeni PR-ji. `mobile/` je namenoma izven (Expo SDK posodabljamo skupaj).
+  Dependabot posodablja tudi SHA-pripete akcije. Zanj veljajo tri pregledi kot za vsak PR; posodobitve brez dotika kode
+  veljajo za majhne popravke.
+- **CodeQL** (`.github/workflows/codeql.yml`, nastavitev `.github/codeql/codeql-config.yml`): JavaScript, vprašanja
+  `security-extended`, ob PR v main, ob združitvi v main in ob ponedeljkih. Izidi: GitHub > Security > Code scanning
+  (če ga repozitorij še nima vklopljenega: Settings > Advanced Security). Velikih ustvarjenih podatkov (npr.
+  `server/university-extra.js`, generatorji nalog, `public/i18n`) ne pregleduje.
+- **Straža** (`.github/workflows/straza.yml`, `scripts/straza.mjs`): vsakih 15 min in po delovnem toku »Render«
+  preveri živo spletišče (domena iz `brand.json`): `/healthz`, `/healthz/stanje`, domačo stran, `app.js`, JSON
+  3D atlasa in `/api/config`. Samo GET, brez prijave, računov, AI in pisanja. 20 s na preizkus, ob napaki en
+  ponovni poskus čez 30 s. Če preizkus ne uspe, delovni tok pade, GitHub pošlje e-pošto, v dnevniku pa je slovenski
+  povzetek. Ročno: Actions > Straža > Run workflow, ali `node scripts/straza.mjs`. Javnih vsebinskih API-jev
+  (lekcije, formule) brez prijave ni, zato so preverjene le statične datoteke in `/api/config`.

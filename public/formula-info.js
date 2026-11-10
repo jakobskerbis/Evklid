@@ -203,8 +203,17 @@ function refreshMarks() {
   // Najprej vsa branja (vidnost), nato pisanje, da brskalnik ne preračunava postavitve za vsak razdelek.
   const plans = [];
   for (const [root, els] of groups) {
-    const inView = onScreen(root);
-    const vis = els.filter(visible);
+    // Skrit razdelek (npr. skrit podzavihek kalkulatorja, ki ostane v pomnilniku): ena poizvedba namesto ene na
+    // oznako. Viden razdelek lista formul (.fm-sec, oznake nikoli skrite s CSS) brez zaprtih <details> in [hidden]:
+    // vse oznake so vidne (tisoč oznak v Formulah ob vsakem preklopu na telefonu; naloga hitrost, j 6. 11. 2026).
+    // Drugod (pogled, sporočilo, dialog) je oznaka lahko skrita s slogom, zato tam preverimo vsako posebej.
+    const whole = root === document.body ? null : visible(root);
+    const all = whole && root.classList.contains("fm-sec") && !root.querySelector("details:not([open]), [hidden]");
+    const vis = whole === false ? [] : all ? els : els.filter(visible);
+    // Kartica, ki jo brskalnik preskoči (content-visibility: auto, daleč od zaslona), po definiciji ni na zaslonu:
+    // njenih oznak ne merimo, ker bi getBoundingClientRect prisilil postavitev vse preskočene vsebine.
+    const skipped = !!whole && root.checkVisibility?.({ contentVisibilityAuto: true }) === false;
+    const inView = skipped ? () => false : onScreen(root);
     const first = (el) => el === openEl || el === document.activeElement;
     // Vrstni red za claimMarks: odprta/izbrana, nato na zaslonu, nato ostale (vsak del v vrstnem redu strani).
     const shown = [...vis.filter(first), ...vis.filter((el) => !first(el) && inView(el)), ...vis.filter((el) => !first(el) && !inView(el))];

@@ -51,14 +51,17 @@ test("every page starts its modules through zagon.js, and the listed modules exi
   assert.match(i18n, /export const ready = /);
 });
 
-test("main page asks the browser to fetch all first-load modules at once (Link: modulepreload)", async () => {
+// En sam način vnaprejšnjega nalaganja: <link rel="modulepreload"> v vstopni strani (server/vstopna-stran.js),
+// brez dvojnika v glavi Link (PR #481 + #472).
+test("main page asks the browser to fetch all first-load modules at once (modulepreload)", async () => {
   const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, warn() {}, info() {} } });
   const server = app.listen(0);
   try {
     const res = await fetch(`http://127.0.0.1:${server.address().port}/`);
-    const links = (res.headers.get("link") || "").split(", ");
-    for (const u of ["/zagon.js", "/app.js", "/i18n.js", "/i18n/sl.js", "/dropdown.js", "/appearance.js"]) assert.ok(links.includes(`<${u}>; rel=modulepreload`), u);
-    assert.ok(!links.some((l) => l.includes("/vendor/") || l.includes("/theme.js")), "klasične skripte niso moduli");
+    const html = await res.text();
+    for (const u of ["/zagon.js", "/app.js", "/i18n.js", "/i18n/sl.js", "/dropdown.js", "/appearance.js"]) assert.ok(html.includes(`<link rel="modulepreload" href="${u}">`), u);
+    assert.ok(!/modulepreload" href="[^"]*(\/vendor\/|\/theme\.js)/.test(html), "klasične skripte niso moduli");
+    assert.ok(!/modulepreload/.test(res.headers.get("link") || ""), "samo en način (HTML), ne še glava Link");
   } finally {
     server.close();
   }
