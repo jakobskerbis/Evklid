@@ -54,6 +54,16 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   omrežje največ 1 s (`public/sw.js`), nato shranjena kopija iste različice. APK drži zagonski zaslon do sporočila
   »izris« (`mobile/src/app/web.tsx`). Meri korak `tel-zagon` v `scripts/preveri-aplikacijo.cjs` (nad 1,5 s opozorilo, napaka nad 5 s ali če posnetek ni
   prva vsebina).
+- `public/zacetek.js` po delih (komentarji so tu, ker datoteka šteje v proračun prvega odprtja): `izberi` (zadnji
+  pogled ≤ 12 ur, zapis iz prihodnosti ne velja), `konec` (oznaki `data-zacetek`, `data-zacetek-pod` in posnetek
+  izginejo v istem izrisu; varovalo 8 s), `pozabi` (posnetek → okostje, izbris ključa, `lahkoShrani()` false do
+  `znova()`), `lokalnoOdklenjen`/`seznamOdklenjen` (isti lastnik naprave, profil na seznamu brez `locked` in
+  `needs_password`), `ociscen` (drugo čiščenje v `<template>`: brez nevarnih elementov, `on…`, `srcdoc`, `srcset`,
+  tujih naslovov in `url()` v slogu), `posnetekZa` (isti profil, pogled, lekcija, tema, jezik, ≤ 12 ur; klepet nikoli),
+  `koLupina` (ko je razčlenjena spodnja vrstica; prej ob vsaki spremembi), `pokazi` (najprej pred prvi pogled, nato
+  pred `#tabbar`; različica `r` se preveri ob vstavitvi, ker je `meta` na koncu `<head>`; `nadgradi` za profil z
+  geslom po `/api/students`), `vnaprejZacni`/`vnaprej` (GET, 15 s, enkrat, brez roka; neuspeh → `null`), na koncu
+  sporočilo »izris« za APK.
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).
