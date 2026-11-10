@@ -1369,7 +1369,10 @@ export function initKeyboard() {
       if (Date.now() - lastTap.t < 600 && !lastTap.el?.closest?.("button, a, [role='button'], [role='option'], select")) openKeyboard(f);
       return;
     }
-    if (f === S.field) return;
+    if (f === S.field) {
+      emitN++; // gumb je polje le ponovno fokusiral (npr. Pošlji): tap zunaj tipkovnice ne zapre
+      return;
+    }
     numShadow.delete(f);
     if (autoEligible(f) || (S.explicit && fieldKind(f, orig(f)) && !isOwn(f))) openKeyboard(f);
     else hideKeyboard(); // geslo, e-pošta, polje s svojimi tipkami: telefonova tipkovnica

@@ -22,7 +22,7 @@ const PAGES = {
   "/t-calc.html": `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/graph.css"><link rel="stylesheet" href="/tipkovnica.css"><div id="g" style="height:600px"></div><button id="ven" style="position:fixed;top:0;left:0;z-index:9999;width:44px;height:44px">x</button>
 <script type="module">
 import { createCalculator } from "/graph/calc.js";
-window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => "t-calc", studentId: () => "", toast() {}, askTutor() {} });
+window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => new URLSearchParams(location.search).get("k") || "t-calc", studentId: () => "", toast() {}, askTutor() {} });
 window.ready = true;
 </script>`,
   "/t-dd.html": `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/tipkovnica.css">
@@ -139,7 +139,7 @@ test("touch-browser checks", { skip }, async (t) => {
     const page = await ctx.newPage();
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
-    await page.goto(`${base}/t-calc.html`);
+    await page.goto(`${base}/t-calc.html?k=tip-zunaj`); // lasten ključ: brez izraza iz prejšnjega podtesta
     await page.waitForFunction(() => window.ready);
     const kb = "#tipkovnica";
     const hidden = () => page.evaluate(() => document.querySelector("#tipkovnica").hidden);
@@ -187,6 +187,20 @@ test("touch-browser checks", { skip }, async (t) => {
     await page.tap("#oznaka");
     await page.waitForTimeout(250);
     assert.equal(await hidden(), false, "tap na oznako polja ne zapre");
+    // gumb, ki polje le ponovno fokusira (Pošlji v klepetu), tipkovnice ne zapre
+    await page.evaluate(() => {
+      const f = document.querySelector(".gc-input");
+      const b = document.createElement("button");
+      b.id = "fokus";
+      b.textContent = "f";
+      b.style.cssText = "position:fixed;top:120px;left:0;z-index:9999;width:44px;height:44px";
+      b.addEventListener("click", () => f.focus());
+      document.body.append(b);
+      f.blur();
+    });
+    await page.tap("#fokus");
+    await page.waitForTimeout(300);
+    assert.equal(await hidden(), false, "gumb, ki ponovno fokusira polje, ne zapre");
     // iPhone: tap na neklikljiv element brez click-a (le pointerdown + pointerup) zapre; premik ne
     const ptrTap = (dx) =>
       page.evaluate((dx) => {
