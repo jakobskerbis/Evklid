@@ -405,7 +405,7 @@ def krog():
     bpy.context.view_layer.update()
     E = Pogled("krog", 400, 250, 0.6, (0, 0, 0), (196, 158), visina=52.0)
     F = Pogled("makro", 120, 80, 7.0, (BXc, BYc, ZP), (60, 44), visina=38.0)
-    G = Pogled("makroL", 120, 80, 2.7, (BXc, BYc, ZP + 8), (60, 44), visina=30.0)
+    G = Pogled("makroL", 120, 80, 2.7, (BXc, BYc, ZP + 8), (60, 36), visina=30.0)
     osn = ["studio", "pult", "stalno"]
     privzeto = ["gumb-am-200m", "gumb-vm-20"]
     sloji = [dict(ime="krog", pogled=E, vidno=osn + privzeto)]

@@ -105,7 +105,7 @@ test("barva raztopine po Beer–Lambertu: pri referenčni debelini je točno bar
   for (const c of [255, 200, 128, 30, 4]) {
     for (const u of [0.25, 1, 1.5]) assert.ok(Math.abs(Math.exp(-u) ** eksponent(c) - (c / 255) ** u) < 1e-9);
   }
-  assert.equal(eksponent(255), 0); // brezbarvna raztopina slike ne spremeni
+  assert.equal(Math.abs(eksponent(255)), 0); // brezbarvna raztopina slike ne spremeni
 });
 
 test("dokazne reakcije: šest epruvet 16 × 160 mm v merilu, gladina iz izrisa", () => {

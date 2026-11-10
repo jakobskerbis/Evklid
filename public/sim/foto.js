@@ -300,8 +300,8 @@ export function risiDokaz(o, meta, st) {
   label(o.g, D.kopel[0], D.pult + 14, st.greje ? "vrela vodna kopel" : "kopel (ne greje)", "lbl small");
   if (!st.ocala) label(o.g, 200, 16, "brez zaščitnih očal", "lab-warn");
   const d = D.merilo20[1] - D.merilo20[0];
-  s("line", { x1: 376 - d, y1: 14, x2: 376, y2: 14, class: "lab-scale" }, o.g);
-  s("text", { x: 376 - d - 5, y: 18, class: "lbl small", "text-anchor": "end" }, o.g, "2 cm");
+  s("line", { x1: 272, y1: 14, x2: 272 + d, y2: 14, class: "lab-scale" }, o.g);
+  s("text", { x: 272 + d + 5, y: 18, class: "lbl small", "text-anchor": "start" }, o.g, "2 cm");
 }
 
 // ================================================================ ELEKTRIČNI KROG (Ohmov zakon)
@@ -340,7 +340,7 @@ export function risiKrog(o, meta, st) {
     const m = `matrix(${(dz[0] - lz[0]) / w} ${(dz[1] - lz[1]) / w} ${(ls[0] - lz[0]) / hh} ${(ls[1] - lz[1]) / hh} ${lz[0]} ${lz[1]})`;
     s("text", { transform: m, x: w - 3, y: hh * 0.8, "font-size": hh * 0.82, "text-anchor": "end", fill: barva, "font-family": "ui-monospace, Menlo, Consolas, monospace", "font-weight": 700, stroke: sij || null, "stroke-width": sij ? 1.2 : null, style: sij ? "paint-order:stroke" : null }, g, String(txt).replace(".", ",").replace("-", "−"));
   };
-  const Z = meta.zasloni;
+  const Z = meta.zasloni || { psu: [62, 24], am: [52, 24], vm: [52, 24] }; // mere zaslonov v mm
   zaslon(K.psuZaslon, Z.psu, st.U, "rgb(255,84,60)", "rgba(255,60,40,0.3)");
   zaslon(K.amLcd, Z.am, st.I, "rgb(24,28,24)");
   zaslon(K.vmLcd, Z.vm, st.V, "rgb(24,28,24)");

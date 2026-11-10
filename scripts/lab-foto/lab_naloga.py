@@ -57,7 +57,8 @@ def naloga(koren, blender, st, pisi, pisi_stanje, napaka, preveri_napravo=None):
         ukaz = [blender, "-b", "--factory-startup", "--python-exit-code", "1", "--python", os.path.join(TU, "lab_izris.py"), "--",
                 poskus, mapa, "--vzorci", str(n["vzorci"]), "--merilo", str(n["merilo"]), "--naprava", nap]
         with open(os.path.join(izhod, poskus + ".blender.log"), "a", encoding="utf-8", errors="replace") as dn:
-            p = subprocess.Popen(ukaz, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
+            p = subprocess.Popen(ukaz, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace",
+                                 env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
             for vrstica in p.stdout:
                 dn.write(vrstica)
                 m = re.match(r"LAB-SLOJ (\d+)/(\d+) (\S+) (\d+)", vrstica)

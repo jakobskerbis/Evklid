@@ -112,7 +112,8 @@ bore 11 mm); Erlenmeyer 100 mL DIN ISO 1773 (Ø 64, neck Ø 22, h 105 mm; 250 mL
 with the blue ISO 1769 code band; test tube 16 × 160 mm; low beaker 250 mL ISO 3819 (Ø 70 × 95 mm); carbon-film resistor
 0,5 W 9,0 × Ø 3,3 mm (the model's `UPOR.P`; 0,25 W 6,3 × Ø 2,4 mm is in the table) with IEC 60062 bands computed from
 the resistance; borosilicate glass 3.3 n = 1,474, water 1,333; meniscus from the axisymmetric Young–Laplace equation
-(capillary length 2,73 mm, contact angle 0°): 2,9 mm rise in the 11 mm burette bore.
+(capillary length 2,73 mm, contact angle 0°): 3,4 mm rise in the 11 mm burette bore; the meniscus window has a
+burette reading card (black strip 1 mm below the meniscus), so the visible lower edge is within 0,02 mL of the model level.
 Simplifications: the flask level uses the true inner shape of the rendered flask (wall 1,3 mm; table `bucka.VodH`), so it
 is ~6 % higher than `flaskLevel` of the drawing, which treats the outer size as the inner one; the liquid surface in the
 flask is a drawn ellipse, not a render; test-tube contents are one fixed level (6 mL); the thickness layer ignores
