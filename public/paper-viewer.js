@@ -1,5 +1,5 @@
 // Prenesena pola v Evklidu: učenec polo prenese z ric.si (Izpitna pola) in jo izbere tukaj. PDF ostane v napravi:
-// izriše ga pdf.js (/vendor/pdfjs/, naložen šele ob odprtju), strežnik ga ne dobi in ne shrani (pole so last RIC).
+// izriše ga pdf.js 6 (/vendor/pdfjs/, naložen šele ob odprtju), strežnik ga ne dobi in ne shrani (pole so last RIC).
 // Naloge najde besedilna plast (public/paper-tasks.js); »Pomoč pri tej nalogi« izreže le to nalogo (JPEG, največ
 // 1600 px) in jo z besedilom pošlje inštruktorju. Strani brez zaznanih nalog: učenec povleče okvir (prst ali miška).
 import { t } from "./i18n.js";
@@ -20,6 +20,13 @@ async function pdfjs() {
   }
   return lib;
 }
+
+// Rezerva (j, 10. 11.): pdf.js 6 zahteva novejši brskalnik (Safari 18+, Chrome 125+). Če se ne naloži ali prvi izris ne uspe
+// (zaznano po dejanski napaki ali po časovni omejitvi, ne po UA), učenec dobi gumb »Odpri PDF« v pregledovalniku naprave.
+const FALLBACK_MS = 20000; // uvoz modula (počasna povezava ne sme sprožiti rezerve)
+const FILE_ERRORS = /^(InvalidPDFException|MissingPDFException|PasswordException|FormatError)$/; // težava datoteke, ne naprave
+const withTimeout = (promise, ms) =>
+  Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { fallback: true })), ms))]);
 
 let current = null;
 export const paperViewerOpen = () => !!current;
@@ -59,10 +66,29 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   const status = (msg) => ($(".pv-status").textContent = msg);
   const scroller = $(".pv-scroll");
   let doc = null;
+  let loading = null; // pdf.js 6: PDFDocumentProxy nima več destroy(); sprosti ga loadingTask
   let observer = null;
   let pages = []; // { width, height, items, el, canvas, rendered, task }
   let sel = null; // ročni okvir { page, x0, y0, x1, y1 } v enotah PDF
-  const state = { closed: false };
+  const state = { closed: false, fell: false, drawn: false };
+  let blobUrl = null;
+  let onScroll = null;
+  // Evklidova aplikacija (WebView): blob: PDF bi odprl prazen zaslon, zato tam samo sporočilo brez gumba.
+  const inApp = / EvklidApp\//.test(navigator.userAgent || "");
+  // Brez pdf.js: sporočilo in povezava na PDF (nov zavihek / sistemski pregledovalnik).
+  const fallback = () => {
+    if (state.closed || state.fell) return;
+    state.fell = true;
+    observer?.disconnect();
+    for (const p of pages) p.task?.cancel?.();
+    if (onScroll) scroller.removeEventListener("scroll", onScroll);
+    status(""); // sporočilo je samo v odstavku spodaj
+    $(".pv-nav").hidden = true;
+    $("[data-pv-mark]").hidden = true;
+    if (!inApp) blobUrl = URL.createObjectURL(file);
+    const open = blobUrl ? `<a class="btn-primary pv-fb-open" href="${blobUrl}" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("pp.fallbackOpen"))}</span></a>` : "";
+    $(".pv-pages").innerHTML = `<div class="pv-fallback" dir="auto" role="status"><p>${esc(t("pp.fallbackMsg"))}</p>${open}</div>`;
+  };
 
   const close = (forHelp) => {
     if (state.closed) return;
@@ -71,7 +97,8 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     current = null;
     observer?.disconnect();
     for (const p of pages) p.task?.cancel?.();
-    doc?.destroy();
+    loading?.destroy();
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
     el.remove();
     document.documentElement.classList.remove("pv-open");
     back?.focus?.();
@@ -91,19 +118,23 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   try {
     const data = new Uint8Array(await file.arrayBuffer());
     if (String.fromCharCode(...data.slice(0, 5)) !== "%PDF-") throw new Error(t("pp.notPdf"));
-    const pdf = await pdfjs();
+    const pdf = await withTimeout(pdfjs(), FALLBACK_MS);
     if (state.closed) return;
-    doc = await pdf.getDocument({ data, isEvalSupported: false, cMapUrl: `${LIB}cmaps/`, cMapPacked: true, standardFontDataUrl: `${LIB}standard_fonts/` }).promise;
+    // useWasm: false: CSP nima 'wasm-unsafe-eval' (JPX/JBIG2 gresta čez JS nadomestek v wasm/, brez opozorila v konzoli).
+    loading = pdf.getDocument({ data, isEvalSupported: false, cMapUrl: `${LIB}cmaps/`, cMapPacked: true, standardFontDataUrl: `${LIB}standard_fonts/`, useWasm: false, wasmUrl: `${LIB}wasm/`, iccUrl: `${LIB}iccs/` });
+    doc = await loading.promise;
     for (let n = 1; n <= doc.numPages; n++) {
       const page = await doc.getPage(n);
       const vp = page.getViewport({ scale: 1 });
       const tc = await page.getTextContent();
-      if (state.closed) return doc.destroy();
+      if (state.closed) return loading.destroy();
       pages.push({ page, width: vp.width, height: vp.height, items: tc.items });
     }
   } catch (err) {
     if (state.closed) return;
-    status(err.message === t("pp.notPdf") ? err.message : t("pp.loadFail", { msg: err.message }));
+    if (err.message === t("pp.notPdf")) return status(err.message);
+    if (!FILE_ERRORS.test(err.name || "")) return fallback(); // uvoz ali delovanje pdf.js ne uspe v tej napravi
+    status(t("pp.loadFail", { msg: err.message }));
     return;
   }
   const tasks = splitTasks(pages);
@@ -145,10 +176,12 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
       p.task = p.page.render({ canvasContext: c.getContext("2d"), viewport: vp });
       try {
         await p.task.promise;
-      } catch {
+      } catch (err) {
+        if (!state.drawn && err?.name !== "RenderingCancelledException") fallback(); // prvi izris ne uspe: pdf.js ni uporaben
         return;
       }
       if (state.closed || !p.near) return;
+      state.drawn = true;
       p.canvas.replaceWith(c);
       p.canvas = c;
       p.rendered = true;
@@ -184,7 +217,8 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   };
   const showNo = () => ($(".pv-no").textContent = t("pp.pageOf", { n: pageAt() + 1, total: pages.length }));
   let raf = 0;
-  scroller.addEventListener("scroll", () => raf || (raf = requestAnimationFrame(() => ((raf = 0), showNo()))), { passive: true });
+  onScroll = () => raf || (raf = requestAnimationFrame(() => ((raf = 0), state.fell || showNo())));
+  scroller.addEventListener("scroll", onScroll, { passive: true });
   showNo();
 
   // Izrez območij (enote PDF, y od zgoraj) v en JPEG: vsako stran izrišemo posebej v ločljivosti izreza.
