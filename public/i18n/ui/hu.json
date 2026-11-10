@@ -3547,7 +3547,7 @@
   "land.perYear": "vagy {price} évente",
   "land.family": "Család (2–4 profil): {price} havonta.",
   "land.freeAfter": "A próbaidő után választasz egy előfizetést, vagy maradsz az ingyenes csomagnál, napi korlátozott számú kérdéssel. Reklámok nélkül.",
-  "land.fact1": "A számításokat program ellenőrzi, nem MI",
+  "land.fact1": "A számításokat program ellenőrzi",
   "land.fact2": "A szlovén tanterv szerint",
   "land.fact3": "Reklámok nélkül",
   "land.howTitle": "Így kezdheted",

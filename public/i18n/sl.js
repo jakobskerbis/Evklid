@@ -3747,7 +3747,7 @@ export default {
   "land.perYear": "ali {price} na leto",
   "land.family": "Družina (2–4 profili): {price} na mesec.",
   "land.freeAfter": "Po preizkusu izbereš naročnino ali ostaneš na brezplačnem paketu z omejenim številom vprašanj na dan. Brez oglasov.",
-  "land.fact1": "Račune preveri program, ne AI",
+  "land.fact1": "Račune preveri program",
   "land.fact2": "Po slovenskem učnem načrtu",
   "land.fact3": "Brez oglasov",
   "land.howTitle": "Kako začneš",

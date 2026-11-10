@@ -56,7 +56,8 @@ const { default: SL } = await import("../public/i18n/sl.js");
 test("pas pri vrhu: tri dejstva so vedno, garancije brez stikala ni", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
   for (const html of [landingHtml({ name: "Evklid" }), landingHtml({ name: "Evklid", prices, money })]) {
-    assert.match(html, /Račune preveri program, ne AI/);
+    assert.match(html, /Račune preveri program</);
+    assert.doesNotMatch(html, /ne AI/);
     assert.match(html, /Po slovenskem učnem načrtu/);
     assert.match(html, /class="land-facts"[\s\S]*Brez oglasov/);
     assert.doesNotMatch(html, /garancija\.html|land-gar|Boljša ocena/);
@@ -126,4 +127,16 @@ test("/api/account/prices: garancija samo ob vklopu in samo pri cenah v evrih", 
   assert.deepEqual((await get("sk_live_x", on)).guarantee, { weeks: 8, min_days: 3, enroll_days: 14 });
   const inr = await get("sk_live_x", on, "/api/account/prices?country=IN");
   if (inr.currency !== "EUR") assert.equal(inr.guarantee, undefined, "druga valuta: brez garancije");
+});
+
+test("prvo dejstvo brez »ne AI« v vseh jezikih (j 2026-11-10)", async () => {
+  const { readdirSync } = await import("node:fs");
+  const SLx = (await import("../public/i18n/sl.js")).default;
+  assert.equal(SLx["land.fact1"], "Račune preveri program");
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  for (const f of readdirSync(dir).filter((x) => x.endsWith(".json"))) {
+    const v = JSON.parse(readFileSync(new URL(f, dir), "utf8"))["land.fact1"];
+    assert.ok(v && !/AI|KI|IA|MI|ИИ|ШІ|ذكاء|هوش|人工|인공/.test(v), `${f}: ${v}`);
+  }
+  assert.equal(JSON.parse(readFileSync(new URL("de.json", dir), "utf8"))["land.fact1"], "Berechnungen prüft ein Programm");
 });

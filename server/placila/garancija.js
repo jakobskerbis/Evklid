@@ -12,10 +12,12 @@ export const GUARANTEE = { enrollDays: 14, weeks: 8, minDays: 3, claimDays: 60 }
 export const GUARANTEE_SUBJECTS = ["MAT", "FIZ", "KEM", "BIO", "NAR"];
 const DAY = 86400000;
 
-// Oglas garancije na pristajalni strani (pas pri vrhu, public/pristajalna.js; j 2026-11-10). Privzeto IZKLOPLJEN:
+// Ponudba garancije (j 2026-11-10): pas na pristajalni strani (public/pristajalna.js), vrstica pri izbiri paketa v
+// Računu (public/account.js, viewFor().offered) in prijava (POST /api/guarantee/enroll). Privzeto IZKLOPLJENA:
 // pogoji (public/garancija.html) so osnutek do pregleda pravnika, vračila pa do s.p. delujejo samo v testnem načinu
-// Stripa. Pas se pokaže šele, ko velja vse troje: EVKLID_GARANCIJA_OGLAS=1, Stripe s pravim (ne testnim) ključem in
-// vklopljena prava vračila (EVKLID_GUARANTEE_LIVE=1). Tako stran nikoli ne obljubi vračila, ki ga ni mogoče izvesti.
+// Stripa. Garancija se ponudi šele, ko velja vse troje: EVKLID_GARANCIJA_OGLAS=1, Stripe s pravim (ne testnim) ključem in
+// vklopljena prava vračila (EVKLID_GUARANTEE_LIVE=1). Tako aplikacija nikoli ne obljubi vračila, ki ga ni mogoče izvesti.
+// Obstoječe prijave (npr. v testnih bazah) ostanejo: starš jih vidi in odda zahtevek, skrbnik odloči kot prej.
 export function guaranteeAdvertised(stripe, env = process.env) {
   return env.EVKLID_GARANCIJA_OGLAS === "1" && !!stripe?.enabled && !stripe.testMode && env.EVKLID_GUARANTEE_LIVE === "1";
 }
@@ -122,19 +124,23 @@ export function mountGuarantee(app, ctx) {
     return { weeks, practiceOk, missed, opens, until, phase };
   }
 
-  // Kaj vidi starš v Računu. Brez prijave: ali se lahko prijavi (Stripe se vpraša šele ob prijavi).
+  // Kaj vidi starš v Računu. Brez prijave: ali se lahko prijavi (Stripe se vpraša šele ob prijavi); brez ponudbe
+  // (guaranteeAdvertised) nič. offered: ali Račun pri izbiri paketa pokaže vrstico garancije.
   function viewFor(p) {
     if (!p || p.is_guest || isMinor(p)) return null;
+    const offered = guaranteeAdvertised(stripe);
     const g = rowFor(p);
     if (!g) {
+      if (!offered) return null;
       const stripeSub = paidActive(p) && (p.sub_provider || "stripe") === "stripe" && !!p.stripe_customer_id && String(p.sub_id || "").startsWith("sub_");
       const kids = childIds(p.id).filter((id) => levelOf(id) !== "FAKS");
-      return { terms: GUARANTEE, subjects: GUARANTEE_SUBJECTS, can_enroll: !birthMissing(p) && stripeSub && kids.length > 0, students: kids };
+      return { terms: GUARANTEE, offered, subjects: GUARANTEE_SUBJECTS, can_enroll: !birthMissing(p) && stripeSub && kids.length > 0, students: kids };
     }
-    if (g.parent_id !== p.id) return { terms: GUARANTEE, used: true }; // že porabljena na drugem računu iste družine
+    if (g.parent_id !== p.id) return { terms: GUARANTEE, offered, used: true }; // že porabljena na drugem računu iste družine
     const s = stateOf(g);
     return {
       terms: GUARANTEE,
+      offered,
       id: g.id,
       student_id: g.student_id,
       subject: g.subject,
@@ -178,6 +184,7 @@ export function mountGuarantee(app, ctx) {
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Za garancijo se prijavi starš." });
+    if (!guaranteeAdvertised(stripe)) return res.status(409).json({ error: "Garancija trenutno ni na voljo." });
     if (rowFor(p)) return res.status(409).json({ error: "Garancijo je tvoja družina že uporabila." });
     if (!paidActive(p) || (p.sub_provider || "stripe") !== "stripe" || !p.stripe_customer_id || !String(p.sub_id || "").startsWith("sub_"))
       return res.status(409).json({ error: "Garancija velja za naročnino, plačano na spletu." });
