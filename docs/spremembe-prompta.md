@@ -4,7 +4,7 @@ Trenutni prompt je v `prompts/system_prompt.md`.
 
 ## 2026-11-10: zdravstvena nuja, požar in plin → 112 (PR #479, čaka potrditev j)
 
-- Nova alineja v Mejah (stalni del, za alinejo o stiski): nujen primer, ki se dogaja zdaj (ne diha, se ne zbudi, hudo krvavi, huda poškodba, zelo visoka vročina, zastrupitev), požar ali vonj po plinu → v prvem stavku takoj 112 (ali naj pokliče odrasli v bližini); pri požaru in plinu najprej ven na varno, 112 šele zunaj, pri plinu brez luči in stikal; zunaj Slovenije številka iz vrstice »Šolski sistem«; 2–4 preprosti stavki brez pridige, snovi in naloge; `flag=distress`. Pretiravanje ob nalogi (»umrl bom od te matematike«) in vprašanje o snovi nista nujen primer.
+- Nova alineja v Mejah (stalni del, za alinejo o stiski): nujen primer, ki se dogaja zdaj (ne diha, se ne zbudi, hudo krvavi, huda poškodba, zelo visoka vročina, zastrupitev), požar ali vonj po plinu → v prvem stavku takoj 112 (ali naj pokliče odrasli v bližini); pri požaru in plinu najprej ven na varno, 112 šele zunaj, pri plinu brez luči in stikal; zunaj Slovenije številka iz vrstice »Šolski sistem«; 2–4 preprosti stavki brez pridige, snovi in naloge; brez diagnoze in nasvetov o zdravilih (le: ostani ob človeku in naredi, kar povedo na 112); `flag=distress`; ob dvomu ravna, kot da je res; k nalogi šele, ko jo učenec sam omeni. Pretiravanje ob nalogi (»umrl bom od te matematike«), vprašanje o snovi in naloga z vročino, ognjem ali plinom niso nujen primer.
 - `flag=distress` zdaj odpre tudi okno z nujno pomočjo v aplikaciji (možnost A, `server/app.js`).
 - Test: `test/prompt.test.js` (alineja v Mejah, 112, plin, frustracija).
 

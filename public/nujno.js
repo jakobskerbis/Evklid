@@ -659,7 +659,7 @@ export function drzavaNaprave(tz, jeziki) {
 
 // Linije iz besedila »help« (public/regions.js): pari ime–številka; številke za nujno pomoč (emergency,
 // police …) so že v vrstici s {sos}. Splošna angleška imena (»Child helpline«) prevede vmesnik.
-const SPLOSNO = [[/^(child|children'?s?) ?(help ?line|line)\b|child help ?line|children'?s? sos/i, "otroci"], [/^youth (help ?line|counsell?ing)/i, "mladi"], [/^suicide prevention/i, "samomor"]];
+const SPLOSNO = [[/^(child|children'?s?) ?(help ?line|line)\b/i, "otroci"], [/child help ?line|children'?s? sos/i, "otroci"], [/^youth (help ?line|counsell?ing)/i, "mladi"], [/^suicide prevention/i, "samomor"]];
 export function linijeIzPomoci(help) {
   const out = [];
   for (const part0 of String(help || "").split(",")) {

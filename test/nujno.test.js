@@ -355,6 +355,7 @@ test("lažni alarmi: frustracija ob nalogi ne sproži okna", async () => {
   assert.deepEqual(lazni, []);
   assert.match(NAVODILO, /umrl bom od te matematike/);
   assert.match(NAVODILO, /= NE\./);
+  assert.match(NAVODILO, /trema pred testom = NE/);
   // Strežnik: Haiku (mock) po navodilu vrne NE, inštruktor flag=none → nobenega dogodka »nujno«.
   const varnostFn = async () => ({ content: [{ type: "text", text: "NE" }], usage: { input_tokens: 220, output_tokens: 1 } });
   await withServer({ streamFn: fakeStream("Razumem, dajva korak za korakom." + META), varnostFn }, async ({ call }) => {

@@ -117,5 +117,5 @@ test("Meje: zdravstvena nuja, požar in plin → takoj 112, frustracija ni nujen
   const meje = stat.slice(stat.indexOf("## Meje"), stat.indexOf("## Varnostni ščit"));
   const row = meje.split("\n").find((l) => l.startsWith("- Če učenec opisuje nujen primer"));
   assert.ok(row, "alineja o nujnem primeru je v Mejah");
-  for (const re of [/takoj pokliče 112/, /požar ali vonj po plinu/, /ne prižiga luči in ne pritiska stikal/, /»Šolski sistem«/, /`flag=distress`/, /umrl bom od te matematike/, /brez pridige/]) assert.match(row, re);
+  for (const re of [/takoj pokliče 112/, /požar ali vonj po plinu/, /ne prižiga luči in ne pritiska stikal/, /»Šolski sistem«/, /`flag=distress`/, /umrl bom od te matematike/, /brez pridige/, /ne svetuj zdravil/, /ravnaj, kot da je/]) assert.match(row, re);
 });
