@@ -528,7 +528,7 @@ export async function zgradi(THREE, ctx) {
       // polmer iz vsebine rezine (glava je manjša od trupa), da rezina zapolni okno
       const rr = (Math.hypot((vsebina.u1 - vsebina.u0) * w, (vsebina.v1 - vsebina.v0) * h) / 2) * sc;
       if (s !== "a") return { sredisce: [0, 0, 0], polmer: Math.min(1, rr * 1.02) };
-      return { sredisce: [0, 0, 0], polmer: stanje.pogled === "ravno" ? rr * 0.95 : rr * 1.9 };
+      return { sredisce: [0, 0, 0], polmer: stanje.pogled === "ravno" ? rr * 1.15 : rr * 1.9 }; // prostor za oznake smeri ob rezini
     },
     najblizje: 0.1, // povečava do ploščic 0,33 mm
     ao: () => false,
