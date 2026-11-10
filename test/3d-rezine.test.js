@@ -532,3 +532,33 @@ test("rezine: besedila pogleda so v vseh jezikih vmesnika in niso v sl.js (prora
   assert.match(mod, /jez\.uiChain\(lang\)/);
   assert.match(mod, /srToLatin/);
 });
+
+test("rezine: obris – žile pod 5 mm niso luknje, ozke zareze velikega organa zaprte, obris ne sega v maščobo", () => {
+  // organ 30 × 30 celic (2 mm) z žilo 2 × 2 celici (4 mm, drugo oznako 2) in žilo 5 × 5 celic (10 mm)
+  const w = 40, h = 40, data = new Uint8Array(w * h);
+  for (let y = 5; y < 35; y++) for (let x = 5; x < 35; x++) data[y * w + x] = 1;
+  for (let y = 10; y < 12; y++) for (let x = 10; x < 12; x++) data[y * w + x] = 2;
+  for (let y = 20; y < 25; y++) for (let x = 20; x < 25; x++) data[y * w + x] = 2;
+  const je = new Uint8Array(256); je[1] = 1;
+  const zile = Math.round(Math.PI * (2.5 / 2) ** 2);
+  const z = R.zapolniObris({ w, h, data }, je, 40, null, zile);
+  assert.equal(z.data[10 * w + 10], 1, "žila 4 mm zapolnjena");
+  assert.equal(z.data[22 * w + 22], 0, "žila 10 mm ostane luknja");
+  assert.equal(R.zapolniObris({ w, h, data }, je, 40).data[10 * w + 10], 0, "brez meje žile ostanejo");
+  // zareza 1 celico široka in 8 globoka v robu velikega organa se zapre; široka vdolbina (8 celic) ostane
+  const d2 = new Uint8Array(w * h);
+  for (let y = 5; y < 35; y++) for (let x = 5; x < 35; x++) d2[y * w + x] = 1;
+  for (let y = 5; y < 13; y++) d2[y * w + 12] = 0;
+  for (let y = 5; y < 13; y++) for (let x = 22; x < 30; x++) d2[y * w + x] = 0;
+  const f = 3, o = R.gladekObris({ w, h, data: d2 }, je, f, null, { celica: 2 });
+  const v = (cx, cy) => o.data[Math.round(cy * f) * o.w + Math.round(cx * f)];
+  assert.ok(v(12.5, 8), "ozka zareza zaprta");
+  assert.equal(v(26, 7), 0, "široka vdolbina ostane");
+  // tkivo: levi stolpci (x < 8 celic) so na fotografiji maščoba → obris se ob robu umakne
+  const t = R.gladekObris({ w, h, data: d2 }, je, f, null, { celica: 2, tkivo: (X) => X >= 8 * f });
+  assert.equal(t.data[Math.round(20 * f) * t.w + Math.round(5.5 * f)], 0, "maščoba ob robu ni del obrisa");
+  assert.ok(o.data[Math.round(20 * f) * o.w + Math.round(5.5 * f)], "brez tkiva je tam obris");
+  assert.ok(t.data[Math.round(20 * f) * t.w + Math.round(15 * f)], "notranjost ostane");
+  assert.ok(R.jeMascoba(225, 200, 150) && !R.jeMascoba(120, 50, 50) && !R.jeMascoba(90, 20, 25), "barva maščobe in mišice");
+  for (const k of ["desni-preddvor", "jetra"]) assert.ok(R.BREZ_MASCOBE.has(k));
+});

@@ -287,7 +287,10 @@ export function uvTocke(dim, smer, [x, y, z]) {
 // Gladek obris strukture na rezini mreže oznak r = { w, h, data } (je[oznaka] = 1 za izbrano strukturo): brez otočkov
 // (deli, manjši od 10 % največjega, razen tistega, ki se ga je učenec dotaknil), povečan f-krat z bilinearno
 // interpolacijo in pragom, zato rob nima stopnic mreže 2 mm. → { w, h, data: Uint8Array (0 zunaj, 1 notri, 2 rob) } ali null.
-export function gladekObris(r, je, f = 4, tap = null) {
+// opts.celica = velikost celice mreže v mm (privzeto 2): luknje, ožje od 5 mm, se zapolnijo (ocena A, krog 5: krožec žile brez
+// vidne žile); opts.tkivo(X, Y) → false za piksel povečane slike, ki je na fotografiji maščoba: tak piksel ob robu
+// (do 4 px) ni del obrisa (desni preddvor ne sega v maščobo okoli srca).
+export function gladekObris(r, je, f = 4, tap = null, opts = {}) {
   const { w, h, data } = r, n = w * h;
   const M = new Int32Array(n).fill(-1); // -1 = ni strukture, sicer številka dela
   const velikost = [];
@@ -336,10 +339,24 @@ export function gladekObris(r, je, f = 4, tap = null) {
   if (!ima) return null;
   // drobne luknje (do 2,5 celice mreže: ostanek praga na poševnih vrzelih ali 2 mm žilica, ki se ne bere kot žila) zapolnimo
   // (ocena A, krog 4: 2 px luknji v levem prekatu in jetrih)
-  zapolniDrobne(out, W2, H2, Math.round(2.5 * f * f));
+  const celica = opts.celica > 0 ? opts.celica : 2;
+  zapolniDrobne(out, W2, H2, Math.max(Math.round(2.5 * f * f), Math.round(Math.PI * (2.5 / celica) ** 2 * f * f)));
   // veliki organi: še glajenje v povečani sliki (dvakratno okno 2f+1, prag 1/2), ki odstrani zobce mreže ob vratih in
-  // žilah (resast notranji rob jeter), ne da bi organ skrčilo
-  if (naj > 300) for (let p = 0; p < 2; p++) gladiMasko(out, W2, H2, f);
+  // žilah (resast notranji rob jeter), ne da bi organ skrčilo; zapiranje (razširi in skrči za 2,5 mm) zapre ozke zareze
+  // ob vratih jeter (ocena A, krog 5), široke vdolbine (prava vrata, žolčnik) ostanejo
+  if (naj > 300) {
+    zapri(out, W2, H2, Math.max(2, Math.round((2.5 / celica) * f)));
+    for (let p = 0; p < 2; p++) gladiMasko(out, W2, H2, f);
+  }
+  if (typeof opts.tkivo === "function") {
+    const d = razdaljaDoRoba(out, W2, H2);
+    for (let Y = 0; Y < H2; Y++) for (let X = 0; X < W2; X++) {
+      const k = Y * W2 + X;
+      if (out[k] && d[k] <= 4 && !opts.tkivo(X, Y)) out[k] = 0;
+    }
+    gladiMasko(out, W2, H2, 1);
+    if (!out.some(Boolean)) return null;
+  }
   // rob: notranja točka z zunanjim sosedom (do 2 px daleč pri f ≥ 3, da je črta vidna)
   const rob = f >= 3 ? 2 : 1;
   const o2 = out.slice();
@@ -398,6 +415,42 @@ function gladiMasko(m, w, h, r) {
   }
   for (let k = 0; k < w * h; k++) m[k] = b[k] >= 0.5 ? 1 : 0;
 }
+
+// Razdalja (v pikslih, šahovnica 3-4 / 3) vsakega piksla maske do najbližjega piksla zunaj nje; zunaj 0.
+function razdaljaDoRoba(m, w, h, notri = true) {
+  const n = w * h, d = new Float32Array(n), INF = 1e9;
+  for (let k = 0; k < n; k++) d[k] = (notri ? m[k] : !m[k]) ? INF : 0;
+  const pr = (k, j, c) => { if (d[j] + c < d[k]) d[k] = d[j] + c; };
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const k = y * w + x;
+    if (!d[k]) continue;
+    if (notri && (x === 0 || y === 0 || x === w - 1 || y === h - 1)) d[k] = Math.min(d[k], 3); // rob slike je zunaj
+    if (x > 0) pr(k, k - 1, 3);
+    if (y > 0) { pr(k, k - w, 3); if (x > 0) pr(k, k - w - 1, 4); if (x < w - 1) pr(k, k - w + 1, 4); }
+  }
+  for (let y = h - 1; y >= 0; y--) for (let x = w - 1; x >= 0; x--) {
+    const k = y * w + x;
+    if (!d[k]) continue;
+    if (x < w - 1) pr(k, k + 1, 3);
+    if (y < h - 1) { pr(k, k + w, 3); if (x < w - 1) pr(k, k + w + 1, 4); if (x > 0) pr(k, k + w - 1, 4); }
+  }
+  for (let k = 0; k < n; k++) d[k] /= 3;
+  return d;
+}
+
+// Morfološko zapiranje maske m (na mestu) s krogom polmera r px: zapolni ozke zareze in vrzeli, ne poveča organa.
+function zapri(m, w, h, r) {
+  const zunaj = razdaljaDoRoba(m, w, h, false); // razdalja praznih pikslov do maske
+  const raz = new Uint8Array(w * h);
+  for (let k = 0; k < w * h; k++) raz[k] = m[k] || zunaj[k] <= r ? 1 : 0;
+  const notri = razdaljaDoRoba(raz, w, h, true);
+  for (let k = 0; k < w * h; k++) if (!m[k] && notri[k] > r) m[k] = 1;
+}
+
+// Barva piksla fotografije je maščoba (svetlo rumena/bela), ne mišica, kri ali organ (temno rdeče do rjavo).
+export const jeMascoba = (r, g, b) => g > 135 && r > 160 && r - b > 25;
+// Strukture, katerih obris ne sme segati v maščobo ob njih (srce, organi trebuha).
+export const BREZ_MASCOBE = new Set(["desni-preddvor", "levi-preddvor", "desni-prekat", "levi-prekat", "srce", "jetra", "vranica", "ledvica", "desna-ledvica", "leva-ledvica"]);
 
 // Deli, ki so anatomsko znotraj strukture in je na rezini ne preluknjajo (papilarne mišice so del prekata).
 export const NOTRANJI = { "levi-prekat": ["papilarne-misice"], "desni-prekat": ["papilarne-misice"], srce: ["papilarne-misice", "srcne-zaklopke", "medprekatni-pretin"] };
@@ -523,30 +576,33 @@ export function besediloLege({ smer, i, vzorec, ravni, os = false, n = 0 }, t, j
 // do `najvec` celic): mreža oznak ima ob robu organov drobne vrzeli. Luknje z drugo oznako (žile v jetrih) ostanejo.
 // Vrne nov je (Uint8Array dolžine w·h, 1 = del strukture) za gladekObris z je = [0, 1].
 // notranje = Uint8Array(256) oznak, ki so del strukture (R.NOTRANJI, npr. papilarne mišice v prekatu): štejejo k njej.
-export function zapolniObris(r, je, najvec = 40, notranje = null) {
+// zile = največ celic luknje z drugo oznako (žila), ki se še zapolni: žila, ožja od ~5 mm, se na rezini ne bere kot
+// žila (ocena A, krog 5: krožec »jetrne vene« brez vidne žile); večje žile ostanejo luknje.
+export function zapolniObris(r, je, najvec = 40, notranje = null, zile = 0) {
   const { w, h, data } = r, n = w * h;
   const v = new Uint8Array(n);
   for (let k = 0; k < n; k++) if (je[data[k]]) v[k] = 1;
-  const tuja = (d) => d && !notranje?.[d]; // celica druge strukture (žila): luknja z njo ostane
+  const tuja = (d) => d && !notranje?.[d]; // celica druge strukture (žila)
   const vid = new Int32Array(n).fill(-1), sklad = new Int32Array(n);
   for (let k = 0; k < n; k++) {
-    if (v[k] || vid[k] >= 0 || tuja(data[k])) continue;
-    // ena prazna luknja (4-sosednost); če se dotakne roba slike ali celice z drugo oznako, ni luknja
-    let sp = 0, st = 0, odprta = false, notri = false;
+    if (v[k] || vid[k] >= 0) continue;
+    // ena luknja (4-sosednost); če se dotakne roba slike, ni luknja
+    let sp = 0, st = 0, odprta = false, notri = false, zila = false;
     const clani = [];
     sklad[sp++] = k; vid[k] = k;
     while (sp) {
       const q = sklad[--sp], x = q % w;
       clani.push(q); st++;
-      if (data[q]) notri = true;
+      if (tuja(data[q])) zila = true;
+      else if (data[q]) notri = true;
       if (x === 0 || x === w - 1 || q < w || q >= n - w) odprta = true;
       for (const j of [x > 0 ? q - 1 : -1, x < w - 1 ? q + 1 : -1, q >= w ? q - w : -1, q < n - w ? q + w : -1]) {
         if (j < 0 || v[j] || vid[j] >= 0) continue;
-        if (tuja(data[j])) { odprta = true; continue; }
         vid[j] = k; sklad[sp++] = j;
       }
     }
-    if (!odprta && st <= (notri ? najvec * 15 : najvec)) for (const q of clani) v[q] = 1;
+    const meja = zila ? zile : notri ? najvec * 15 : najvec;
+    if (!odprta && st <= meja) for (const q of clani) v[q] = 1;
   }
   return { w, h, data: v };
 }

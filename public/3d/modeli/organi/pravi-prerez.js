@@ -331,6 +331,7 @@ export async function zgradi(THREE, ctx) {
         ostra.visible = true;
         ostraZa = k;
         napakaNalaganja = "";
+        if (stanje.izbrana) narisiPoudarek(); // obris po fotografiji (brez maščobe ob robu)
         narisi();
       },
       () => {
@@ -467,7 +468,10 @@ export async function zgradi(THREE, ctx) {
     // papilarne mišice ipd. (R.NOTRANJI) so del prekata: luknja iz njih se zapolni
     const notranje = new Uint8Array(256);
     for (const x of R.NOTRANJI[kl] || []) { const k = T.meta.oznake.kljuci.indexOf(x); if (k >= 0) notranje[k + 1] = 1; }
-    const o = R.gladekObris(R.zapolniObris(r, je, 40, notranje), Uint8Array.of(0, 1), f, tapUV);
+    // žile, ožje od 5 mm, niso luknje (na fotografiji jih ni videti); obris srca in organov ne sega v maščobo ob njih
+    const mm = T.ozn.mm, zile = Math.round(Math.PI * (2.5 / mm) ** 2);
+    const o = R.gladekObris(R.zapolniObris(r, je, 40, notranje, zile), Uint8Array.of(0, 1), f, tapUV,
+      { celica: mm, tkivo: R.BREZ_MASCOBE.has(kl) ? vzorecTkiva(r.w * f, r.h * f) : null });
     if (!o) {
       poudarek.visible = false;
       return;
@@ -488,6 +492,26 @@ export async function zgradi(THREE, ctx) {
     platnoPoudarka.getContext("2d").putImageData(new ImageData(px, o.w, o.h), 0, 0);
     texPoudarka.needsUpdate = true;
     poudarek.visible = true;
+  }
+
+  // Fotografija rezine (ostra slika 1 mm) v velikosti povečane mreže oznak: (X, Y) → false, če je tam maščoba.
+  // Brez ostre slike (še se nalaga, napaka CORS) null: obris ostane po mreži oznak.
+  function vzorecTkiva(w, h) {
+    const im = ostraZa === kljuc() ? ostra.material.map?.image : null;
+    if (!im) return null;
+    try {
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      const g = c.getContext("2d", { willReadFrequently: true });
+      g.drawImage(im, 0, 0, w, h);
+      const d = g.getImageData(0, 0, w, h).data;
+      return (X, Y) => {
+        const k = (Y * w + X) * 4;
+        return d[k + 3] < 128 || !R.jeMascoba(d[k], d[k + 1], d[k + 2]);
+      };
+    } catch {
+      return null;
+    }
   }
 
   // --- začetne lege: prečno skozi srce; na OŠ frontalno in sagitalno skozi desno ledvico (ne skozi sredino telesa)
