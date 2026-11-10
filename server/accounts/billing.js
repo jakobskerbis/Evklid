@@ -15,6 +15,7 @@ import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
 import { promoEndingEmail, renewalEmail, schoolSubEndEmail, planChangeEmail, allowanceEmail } from "./email.js";
 import { audit } from "../dnevnik-dostopov.js";
+import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
@@ -293,12 +294,18 @@ export function mountBilling(app, ctx) {
   }
 
   // Plačilo paketa je uspelo: vklopi ga (enkrat). session = Stripe Checkout Session.
-  function completePassSession(session) {
+  // unmatched(razlog): zapis plačila, ki ga ni mogoče pripisati (samo iz webhooka; ponoven-id.js).
+  function completePassSession(session, unmatched = null) {
     if (session?.metadata?.kind !== "pass" || session.payment_status !== "paid") return false;
     const pass = passes.get(session.metadata.pass_id);
-    // Profil je bil izbrisan med plačilom (passes ON DELETE CASCADE): plačilo je prejeto, paketa ni – skrbnik ga vrne v Stripu.
-    if (!pass) log.error?.("[evklid] plačan paket pred testom za izbrisan profil; vrni plačilo v Stripu", session.metadata.parent_id, session.payment_intent?.id || session.payment_intent || session.id);
-    if (!pass || String(pass.parent_id) !== String(session.metadata.parent_id)) return false;
+    const why = purchaseMismatch(pass, pass && getParent(pass.parent_id), session);
+    if (why) {
+      // Profil je bil izbrisan med plačilom (passes ON DELETE CASCADE): plačilo je prejeto, paketa ni – skrbnik ga vrne v Stripu.
+      if (!pass) log.error?.("[evklid] plačan paket pred testom za izbrisan profil; vrni plačilo v Stripu", logSafe(session.metadata.parent_id), logSafe(session.payment_intent?.id || session.payment_intent || session.id));
+      log.error?.(`[evklid] Stripe paket: plačilo ni pripisano (${logSafe(why)}), preveri v Stripu`, logSafe(session.id));
+      unmatched?.(why);
+      return false;
+    }
     if (pass.status === "expired") log.error?.("[evklid] zamudno plačilo paketa po izteku čakanja; paket vklopljen", pass.id);
     const ok = passes.activate(pass.id, typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id);
     if (ok) {
@@ -309,8 +316,8 @@ export function mountBilling(app, ctx) {
   }
 
   // Naročnina, plačana prek povezave za starše: plačnikova stranka v Stripu postane stranka računa.
-  async function completeSubSession(session) {
-    const parent = getParent(Number(session?.metadata?.parent_id));
+  async function completeSubSession(session, unmatched = null) {
+    const parent = parentFromMeta(getParent, session?.metadata?.parent_id, session, log, "povezava za plačilo", unmatched);
     if (!parent || !session.subscription) return false;
     const subId0 = typeof session.subscription === "string" ? session.subscription : session.subscription.id;
     if (paidActive(parent) && parent.sub_id && parent.sub_id !== subId0)
@@ -369,7 +376,7 @@ export function mountBilling(app, ctx) {
       const customer = await ensureCustomer(p);
       const passId = passes.create({ parentId: p.id, studentId: c.studentId, plan: c.plan, testDate: c.test.date, testName: c.test.name });
       const base = baseUrl(req);
-      const meta = { kind: "pass", pass_id: passId, parent_id: p.id };
+      const meta = { kind: "pass", pass_id: passId, parent_id: p.id, parent_uid: p.uid || undefined };
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "payment",
         customer,
@@ -446,7 +453,7 @@ export function mountBilling(app, ctx) {
       const customer = await ensureCustomer(p);
       const creditId = credits.create(p.id, pack);
       const base = baseUrl(req);
-      const meta = { kind: "credit", credit_id: creditId, parent_id: p.id };
+      const meta = { kind: "credit", credit_id: creditId, parent_id: p.id, parent_uid: p.uid || undefined };
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "payment",
         customer,
@@ -478,10 +485,15 @@ export function mountBilling(app, ctx) {
   });
 
   // Plačilo dokupa je uspelo: kredit se pripiše (enkrat).
-  function completeCreditSession(session) {
+  function completeCreditSession(session, unmatched = null) {
     if (!credits || session?.metadata?.kind !== "credit" || session.payment_status !== "paid") return false;
     const c = credits.get(session.metadata.credit_id);
-    if (!c || String(c.parent_id) !== String(session.metadata.parent_id)) return false;
+    const why = purchaseMismatch(c, c && getParent(c.parent_id), session);
+    if (why) {
+      log.error?.(`[evklid] Stripe dokup: plačilo ni pripisano (${logSafe(why)}), preveri v Stripu`, logSafe(session.id));
+      unmatched?.(why);
+      return false;
+    }
     return credits.activate(c.id, typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id);
   }
 
@@ -629,7 +641,7 @@ export function mountBilling(app, ctx) {
         if (plan.school && !hasSchoolChild(parent.id)) return res.status(403).json({ error: "Ta cena velja samo za učence s šolsko licenco. Prosite za novo povezavo." });
         const { prices } = plan.school ? await stripe.ensureSchoolPrices() : await stripe.ensurePrices(plan.currency || "EUR");
         const trialEnd = Math.max(Date.parse(parent.trial_ends_at || 0) || 0, Date.parse(parent.promo_until || 0) || 0);
-        const subscription_data = { metadata: { parent_id: parent.id } };
+        const subscription_data = { metadata: { parent_id: parent.id, parent_uid: parent.uid || undefined } };
         if (trialEnd - Date.now() > 49 * 3600000) subscription_data.trial_end = Math.floor(trialEnd / 1000);
         session = await stripe.request("POST", "/checkout/sessions", {
           mode: "subscription",
@@ -641,7 +653,7 @@ export function mountBilling(app, ctx) {
           locale: (plan.currency || "EUR") === "EUR" ? "sl" : "auto",
           allow_promotion_codes: "true",
           subscription_data,
-          metadata: { parent_id: parent.id, pay_link: l.token_hash },
+          metadata: { parent_id: parent.id, parent_uid: parent.uid || undefined, pay_link: l.token_hash },
         });
       } else {
         const plan = passByKey(l.plan_key) || passByDays(l.days);
@@ -652,7 +664,7 @@ export function mountBilling(app, ctx) {
         const prev = l.pass_id ? passes.get(l.pass_id) : null;
         const passId = prev?.status === "pending" ? prev.id : passes.create({ parentId: parent.id, studentId: l.student_id, plan, testDate: l.test_date, testName: l.test_name });
         db.prepare("UPDATE pay_links SET pass_id = ? WHERE token_hash = ?").run(passId, l.token_hash);
-        const meta = { kind: "pass", pass_id: passId, parent_id: parent.id, pay_link: l.token_hash };
+        const meta = { kind: "pass", pass_id: passId, parent_id: parent.id, parent_uid: parent.uid || undefined, pay_link: l.token_hash };
         session = await stripe.request("POST", "/checkout/sessions", {
           mode: "payment",
           customer_email: email,

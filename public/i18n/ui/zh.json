@@ -12,6 +12,7 @@
   "nav.me": "我",
   "nav.main": "主菜单",
   "nav.back": "返回",
+  "nav.exitAgain": "再按一次“返回”即可退出。",
   "xp.title": "经验值（XP）",
   "xp.streakTitle": "连续天数",
   "xp.level": "等级 {n}",

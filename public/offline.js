@@ -134,8 +134,9 @@ const OWNER = "evklid.offline.owner";
 const CONFIG = "evklid.config";
 // Osebni podatki na napravi: paketi vaj, vrsta odgovorov, seznam profilov, lastnik naprave (offline.),
 // zgodovina skenerja (scan.), zapis postopka (work.), kalkulatorja (graph., sci.), ogledani cilji (goalSeen.),
-// opomniki urnika (schedule…), točke na lastnih polah (ours.), pozdrav ob novem letniku (levelup.).
-const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.)/;
+// opomniki urnika (schedule…), točke na lastnih polah (ours.), pozdrav ob novem letniku (levelup.),
+// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon, public/zacetek.js).
+const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$)/;
 // Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
 // priporočilna koda iz povezave, izbrani profil.
 const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref"]);

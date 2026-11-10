@@ -97,9 +97,11 @@ export function mountPodari(app, ctx) {
   }
 
   // Samostojen nakup »Podari mesec« je plačan (Checkout Session v načinu payment).
-  function complete(session) {
+  // unmatched(razlog): kupec je račun izbrisal pred plačilom (parent_id SET NULL) – zapis za ročno vračilo (webhook).
+  function complete(session, unmatched = null) {
     if (session?.metadata?.kind !== "podari" || session.payment_status !== "paid") return false;
     const row = db.prepare("SELECT * FROM podari_fund WHERE id = ?").get(Number(session.metadata.fund_id));
+    if (row && row.parent_id == null && row.status === "pending") unmatched?.("kupec_izbrisan");
     if (!row || row.kind !== "month" || String(row.parent_id) !== String(session.metadata.parent_id)) return false;
     const pi = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || null;
     return db.prepare("UPDATE podari_fund SET status = 'paid', payment_id = ?, paid_at = datetime('now') WHERE id = ? AND status = 'pending'").run(pi, row.id).changes > 0;
@@ -137,7 +139,7 @@ export function mountPodari(app, ctx) {
       const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
       // Shrani se samo to, kar je kupec potrdil (polnoletnost in »ni donacija«), ne besedilo o odstopu pri naročnini.
       db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'podari', ?)").run(p.id, p.email, `${PODARI_ADULT}\n${PODARI_TEXT}\n[jezik: ${lang}]`);
-      const meta = { kind: "podari", fund_id: id, parent_id: p.id };
+      const meta = { kind: "podari", fund_id: id, parent_id: p.id, parent_uid: p.uid || undefined };
       const base = baseUrl(req);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "payment",

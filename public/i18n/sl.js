@@ -15,6 +15,7 @@ export default {
   "nav.me": "Jaz",
   "nav.main": "Glavni meni",
   "nav.back": "Nazaj",
+  "nav.exitAgain": "Še enkrat pritisni Nazaj za izhod.",
   "xp.title": "Točke izkušenj (XP)",
   "xp.streakTitle": "Dnevi zapored",
   "xp.level": "Raven {n}",
