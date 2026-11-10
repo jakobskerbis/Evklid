@@ -135,6 +135,46 @@ test("touch-browser checks", { skip }, async (t) => {
     await jp.close();
   });
 
+  await t.test("tipkovnica se zapre ob tapu zunaj polja in tipkovnice; blur, drsenje in tipke jo ne zaprejo (#247)", async () => {
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`${base}/t-calc.html`);
+    await page.waitForFunction(() => window.ready);
+    const kb = "#tipkovnica";
+    const hidden = () => page.evaluate(() => document.querySelector("#tipkovnica").hidden);
+    await page.tap(".gc-input");
+    await page.waitForSelector(`${kb}:not([hidden])`);
+    // izguba fokusa sama ne zapre (#247)
+    await page.evaluate(() => document.querySelector(".gc-input").blur());
+    await page.waitForTimeout(100);
+    assert.equal(await hidden(), false, "blur ne zapre");
+    // dotik tipke na tipkovnici in preklop plasti ne zapreta
+    await page.locator(`${kb} .tk-tab`, { hasText: "ABC" }).tap();
+    await page.waitForSelector(`${kb} .tk-rows[data-layer="abc"]`);
+    await page.waitForTimeout(100);
+    assert.equal(await hidden(), false, "tipka na tipkovnici ne zapre");
+    // tap na polje samo ne zapre
+    await page.tap(".gc-input");
+    await page.waitForTimeout(100);
+    assert.equal(await hidden(), false, "tap na polje ne zapre");
+    // drsenje strani (premik prsta zunaj polja) ne zapre
+    const cdp = await ctx.newCDPSession(page);
+    await cdp.send("Input.synthesizeScrollGesture", { x: 180, y: 120, yDistance: -60, gestureSourceType: "touch" });
+    await page.waitForTimeout(200);
+    assert.equal(await hidden(), false, "drsenje ne zapre");
+    // pravi tap zunaj zapre
+    await page.tap("#ven");
+    await page.waitForSelector(kb, { state: "hidden" });
+    // ponovno odpiranje deluje, tap zunaj spet zapre
+    await page.tap(".gc-input");
+    await page.waitForSelector(`${kb}:not([hidden])`);
+    await page.tap("#ven");
+    await page.waitForSelector(kb, { state: "hidden" });
+    assert.deepEqual(errors, []);
+    await page.close();
+  });
+
   await t.test("long dropdown opens over its button with the chosen item in the search box", async () => {
     const page = await ctx.newPage();
     await page.goto(`${base}/t-dd.html`);

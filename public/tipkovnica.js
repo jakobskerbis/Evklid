@@ -176,7 +176,9 @@ export function toggleKeyboard(field, opts = {}) {
 export const keyboardOpenFor = (field) => S.open && (!field || S.field === field || field.contains?.(S.field));
 export const keyboardLayer = () => (S.open ? S.layer : null);
 
+let emitN = 0; // šteje spremembe stanja tipkovnice (dotik zunaj jo zapre le, če je nihče ni spremenil)
 function emit() {
+  emitN++;
   window.dispatchEvent(new CustomEvent("evklid:tipkovnica", { detail: { open: S.open, field: S.field, layer: S.layer } }));
 }
 
@@ -1250,6 +1252,27 @@ function wireBoard() {
 
 let inited = false;
 let lastTap = { t: 0, el: null };
+let downN = 0;
+
+/**
+ * Pravi tap (»click«; premik prsta pri drsenju ga ne sproži) zunaj polja in zunaj tipkovnice jo zapre.
+ * Izguba fokusa (blur) tipkovnice NE zapre (#247); tu štejeta le tap in stanje po njem: če je tap kaj
+ * naredil s tipkovnico (Σ preklopi plast, drugo polje jo prevzame, gumb jo zapre), se ne dotikamo.
+ */
+function closeOnOutsideTap(e) {
+  if (!S.open || !touch()) return;
+  const t = e.target;
+  if (!(t instanceof Element) || board?.contains(t)) return;
+  const field = S.field;
+  if (field && (field === t || field.contains?.(t))) return;
+  if (textField(t)) return; // drugo polje: focusin ga prevzame
+  const n = downN;
+  setTimeout(() => {
+    // vsi klik-poslušalci so že tekli; če so tipkovnico spremenili, jo pustimo
+    if (!S.open || emitN !== n) return;
+    hideKeyboard({ blur: true });
+  }, 0);
+}
 /** Poveže tipkovnico z vsemi polji (enkrat; kličejo app.js, kalkulator in plošča). */
 export function initKeyboard() {
   if (inited || typeof document === "undefined") return;
@@ -1303,6 +1326,7 @@ export function initKeyboard() {
       const f = textField(e.target);
       if (f && autoEligible(f)) prepare(f); // pred fokusom: telefonova tipkovnica se ne odpre
       lastTap = { t: Date.now(), el: e.target };
+      downN = emitN;
       setTimeout(checkGone, 0);
     },
     true,
@@ -1312,6 +1336,7 @@ export function initKeyboard() {
     (e) => {
       const f = textField(e.target);
       if (f && !S.open && autoEligible(f)) openKeyboard(f);
+      closeOnOutsideTap(e);
     },
     true,
   );
