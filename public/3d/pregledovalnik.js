@@ -39,8 +39,8 @@ export function odpriModel(el, mod, opts = {}) {
   let izbran = null;
   let tece = true;
   let izpisi = [];
-  let drsIzpisi = [];
-  let skrijNamig = null; // odstrani namig na odru (model.namigOder === false) // osvežitev izpisa in napisa drsnikov (c.izpis, c.oznaka kot funkcija) po vsakem ob()
+  let drsIzpisi = []; // osvežitev izpisa in napisa drsnikov (c.izpis, c.oznaka kot funkcija) po vsakem ob()
+  let skrijNamig = null; // skrije namig na odru, dokler model z namigOder === false ostane naložen
   let sinh = []; // drsnik/stikalo/izbira: { c, zadnja, nastavi } – gradnik sledi c.vrednost, ko jo spremeni model
   let zadnjiDeli = []; // deli ob zadnji gradnji seznama (primerjava po predmetih)
   let vidni = []; // [nadzor, element] za nadzore z vidno()
@@ -79,6 +79,7 @@ export function odpriModel(el, mod, opts = {}) {
   // seznamom delov; plošča se drsi sama, oder ostane ves čas viden. V lekcijah ostane postavitev kot prej.
   let oModelu = null;
   let deliGlava = null;
+  let poskusiEl = null; // besedilo za »Poskusi:«; model.poskusi() ga lahko spreminja (npr. smer in lega rezine)
   if (opts.stran) {
     el.classList.add("k3-stran-pregled");
     spodaj.classList.add("k3-plosca");
@@ -87,7 +88,8 @@ export function odpriModel(el, mod, opts = {}) {
     if (info.opis) oModelu.append(mk("p", "k3-o-opis", info.opis));
     if (info.poskusi) {
       const p = mk("p", "k3-o-poskusi");
-      p.append(mk("b", "", `${t("sc.try")} `), mk("bdi", "", info.poskusi)); // bdi: slovensko besedilo v RTL ostane LTR
+      poskusiEl = mk("bdi", "", info.poskusi);
+      p.append(mk("b", "", `${t("sc.try")} `), poskusiEl); // bdi: slovensko besedilo v RTL ostane LTR
       oModelu.append(p);
     }
     oModelu.hidden = !oModelu.children.length;
@@ -581,6 +583,12 @@ export function odpriModel(el, mod, opts = {}) {
   };
   const osveziIzpise = () => {
     for (const f of drsIzpisi) f();
+    if (poskusiEl && typeof model?.poskusi === "function") {
+      try {
+        const p = String(model.poskusi() || info.poskusi);
+        if (poskusiEl.textContent !== p) poskusiEl.textContent = p;
+      } catch {}
+    }
     for (const [c, out] of izpisi) {
       try {
         out.textContent = String(c.vrednost?.() ?? "");
@@ -931,7 +939,9 @@ export function odpriModel(el, mod, opts = {}) {
         }),
       );
       if (kit.kakovost === "visoka") kit.pripraviAO(0.3);
-      if (opts.stran) {
+      // info.namigOder === false (podatek modula, znan pred gradnjo): namiga sploh ne ustvarimo, da na počasnem omrežju
+      // ne utripne in ne premakne merila (k3-namig-viden)
+      if (opts.stran && info.namigOder !== false) {
         // Namig na odru, dokler se ga prvič ne dotakneš (kot v atlasu).
         const grob = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
         const namig = mk("p", "k3-namig", t(grob ? "a3.hintModel" : "a3.hintModelMouse"));

@@ -408,7 +408,8 @@ test("rezine: poudarek je vedno prosojen z obrobo; okvir rezine zapolni oder", (
   const m = /Math\.max\((\d+), Math\.min\((\d+), 100 - 110 \* svetlost\)\)/.exec(mod);
   assert.ok(m, "polnilo poudarka iz svetlosti barve");
   assert.ok(Number(m[2]) <= 64 && Number(m[1]) >= 20, "polnilo ≤ 25 % prekrivnosti");
-  assert.match(mod, /px\[k \* 4 \+ 3\] = rob \? 240 : polnilo/, "obroba neprosojna, polnilo prosojno");
+  assert.match(mod, /px\[k \* 4 \+ 3\] = polnilo;/, "polnilo prosojno");
+  assert.match(mod, /strokeStyle = "rgba\(255,255,255,0\.96\)"/, "obroba neprosojna (vektorska črta)");
   assert.match(mod, /pravokotnik: \[ew, eh\], zapolni: 0\.9/, "pogled naravnost: rezina čez 90 % odra");
   const pr = beri("public", "3d", "pregledovalnik.js");
   assert.match(pr, /const p = o\?\.pravokotnik;/);
@@ -581,4 +582,74 @@ test("rezine: obris – žile pod 5 mm niso luknje, ozke zareze velikega organa 
   assert.equal(enako.data[22 * w + 22], 1, "žile ni videti → brez obrisa");
   const temna = R.zapolniNevidneZile({ ...zz, data: zz.data.slice() }, (x, y) => (x >= 20 && x < 25 && y >= 20 && y < 25 ? 25 : 90));
   assert.equal(temna.data[22 * w + 22], 0, "vidna (temna) žila ostane luknja");
+});
+
+test("rezine: vektorski obris je sklenjen in gladek, vogali mreže zaobljeni", () => {
+  // pravokotnik 10 × 6 celic (kot sagitalno vretence) v mreži 20 × 14
+  const w = 20, h = 14, data = new Uint8Array(w * h);
+  for (let y = 4; y < 10; y++) for (let x = 5; x < 15; x++) data[y * w + x] = 1;
+  const je = new Uint8Array(256); je[1] = 1;
+  const o = R.gladekObris({ w, h, data }, je, 4);
+  assert.ok(o.crte instanceof Float32Array && o.crte.length > 0, "obris ima vektorske črte");
+  // sklenjen: vsako krajišče daljice je krajišče še ene daljice
+  const kljuc = (x, y) => `${x.toFixed(3)},${y.toFixed(3)}`, st = new Map();
+  for (let k = 0; k < o.crte.length; k += 2) st.set(kljuc(o.crte[k], o.crte[k + 1]), (st.get(kljuc(o.crte[k], o.crte[k + 1])) || 0) + 1);
+  for (const [, n] of st) assert.equal(n % 2, 0, "obris nima prostih koncev");
+  // zaobljeni vogali: v vogalu pravokotnika (celica 5,4 → piksli 20..23, 16..19) ni maske
+  assert.equal(o.data[16 * o.w + 20], 0, "vogal mreže je zaobljen");
+  assert.ok(o.data[28 * o.w + 40] > 0, "sredina ostane");
+  // tanka struktura (1 celica) ne izgine zaradi glajenja
+  const d2 = new Uint8Array(w * h);
+  for (let x = 2; x < 18; x++) d2[7 * w + x] = 1;
+  assert.ok(R.gladekObris({ w, h, data: d2 }, je, 4), "tanka struktura ostane");
+});
+
+test("rezine: medprekatni pretin je del obrisa levega prekata", () => {
+  assert.ok(R.DELI_OBRISA["levi-prekat"].includes("medprekatni-pretin"));
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /R\.DELI_OBRISA\[kl\][^\n]*je\[k \+ 1\] = 1/, "pretin gre v masko izbrane strukture");
+});
+
+test("rezine: ploščice – telefon po pikslih naprave, manjkajoča ploščica tiho raven nižje, povečava v mejah podatkov", () => {
+  assert.equal(R.ravenPloscice(300, {}), 1);
+  assert.equal(R.ravenPloscice(340, {}), 0);
+  assert.equal(R.ravenPloscice(150, {}), -1);
+  // telefon DPR 2: ostrejša vmesna raven že pri 110 px CSS, 0,33 mm pri ≥ 206 px CSS (prej šele 420)
+  assert.equal(R.ravenPloscice(110, { telefon: true, dpr: 2 }), 1);
+  assert.equal(R.ravenPloscice(210, { telefon: true, dpr: 2 }), 0);
+  assert.equal(R.nizjaPloscica(0, () => false), 0);
+  assert.equal(R.nizjaPloscica(0, (r) => r === 0), 1);
+  assert.equal(R.nizjaPloscica(0, () => true), -1);
+  assert.equal(R.nizjaPloscica(-1, () => false), -1);
+  // povečava: telefon DPR 2 ne čez 1,6-kratno povečavo pikslov 0,33 mm, računalnik 3-kratno
+  const sk = 2 / Math.hypot(546, 321, 1878);
+  const dT = R.najblizjeZa({ sk, mm: 0.33, visina: 420, telefon: true, dpr: 2 }), dR = R.najblizjeZa({ sk, mm: 0.33, visina: 700 });
+  const povecava = (d, h) => ((h * sk) / (2 * Math.tan((35 * Math.PI) / 360) * d)) * 0.33;
+  assert.ok(Math.abs(povecava(dT, 840) - 1.6) < 0.01 && Math.abs(povecava(dR, 700) - 3) < 0.01);
+  assert.ok(dT > dR && dR >= 0.1);
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  const napaka = /\(err\) => \{\s*\/\/ ploščica ni prišla[\s\S]*?\n {8}\},/.exec(mod)?.[0] || "";
+  assert.ok(napaka && !/napakaNalaganja/.test(napaka), "manjkajoča ploščica ne pokaže sporočila o napaki");
+});
+
+test("rezine: besedila – ob napaki nalaganja tuji jeziki angleško, slovenščina iz kode", () => {
+  assert.deepEqual(Object.keys(R.BESEDILA_EN).sort(), Object.keys(BESEDILA.en).sort());
+  for (const [k, v] of Object.entries(BESEDILA.en)) assert.equal(R.BESEDILA_EN[k], v, k);
+  assert.equal(R.slovarBesedil(null, ["de", "en", "sl"])("a3.rez.prev"), "Previous slice");
+  assert.equal(R.slovarBesedil(null, ["ar", "en", "sl"])("a3.rez.dir.k"), "Coronal");
+  assert.equal(R.slovarBesedil(null, ["sl"])("a3.rez.prev"), undefined, "slovenščina: besedilo iz kode");
+  assert.equal(R.slovarBesedil(BESEDILA, ["de", "en", "sl"])("a3.rez.prev"), BESEDILA.de["a3.rez.prev"]);
+  assert.equal(R.slovarBesedil(BESEDILA, ["sr-Latn", "sr", "en", "sl"], (x) => `L:${x}`)("a3.rez.prev"), `L:${BESEDILA.sr["a3.rez.prev"]}`);
+  // nalaganje vzporedno: besedila, kazalo in imena oznak v enem Promise.all
+  const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
+  assert.match(mod, /await Promise\.all\(\[\s*naloziBesedila\(\),\s*kazalo \? null : json\(koren \+ "kazalo\.json"\),\s*json\(new URL\("\.\.\/\.\.\/rezine-oznake\.json"/);
+});
+
+test("rezine: »Poskusi« ustreza smeri in predelu rezine", () => {
+  assert.match(R.poskusiZa("a", "prsi"), /srca/);
+  assert.match(R.poskusiZa("a", "trebuh"), /jeter/);
+  assert.doesNotMatch(R.poskusiZa("a", "trebuh"), /prsni/);
+  assert.doesNotMatch(R.poskusiZa("k", "spredaj"), /prsni koš/);
+  assert.match(R.poskusiZa("s", "sredina"), /hrbtenice/);
+  for (const p of Object.keys(R.PREDELI)) assert.ok(R.poskusiZa("a", p).endsWith("."), p);
 });

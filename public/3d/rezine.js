@@ -366,6 +366,15 @@ export function gladekObris(r, je, f = 4, tap = null, opts = {}) {
     zapri(out, W2, H2, Math.max(2, Math.round((2.5 / celica) * f)));
     for (let p = 0; p < 2; p++) gladiMasko(out, W2, H2, f);
   }
+  // zglajen rob za vse strukture (ocena A, krog 6: sagitalno vretence je bilo pravokotno in stopničasto): okno ≈ pol celice
+  // zaobli vogale mreže 2 mm, tanke stene (srčna mišica, ≥ 2 celici) ostanejo
+  {
+    const prej = out.slice();
+    let a = 0, b = 0;
+    gladiMasko(out, W2, H2, Math.max(1, Math.round(f / 2)));
+    for (let k = 0; k < out.length; k++) { a += prej[k]; b += out[k]; }
+    if (b < a * 0.6) out.set(prej); // tanka struktura (žilica, rebro na robu): glajenje bi jo izbrisalo
+  }
   if (typeof opts.tkivo === "function") {
     const d = razdaljaDoRoba(out, W2, H2);
     for (let Y = 0; Y < H2; Y++) for (let X = 0; X < W2; X++) {
@@ -386,7 +395,45 @@ export function gladekObris(r, je, f = 4, tap = null, opts = {}) {
       r2 = X < d || Y < d || X >= W2 - d || Y >= H2 - d || !out[k - d] || !out[k + d] || !out[k - d * W2] || !out[k + d * W2];
     if (r2) o2[k] = 2;
   }
-  return { w: W2, h: H2, data: o2 };
+  return { w: W2, h: H2, data: o2, crte: crteObrisa(out, W2, H2) };
+}
+
+// Vektorski obris maske m (w × h, 0/1): daljice izolinije 0,5 zglajene maske (okno 3 × 3), po kvadratih (marching
+// squares) z linearno interpolacijo, zato je črta gladka in brez stopnic pikslov. → Float32Array [x0, y0, x1, y1, …] v
+// pikslih (središče piksla k je k + 0,5). Riše jo model s ctx.stroke (ena pot: brez temnejših stikov).
+export function crteObrisa(m, w, h) {
+  const g = new Float32Array((w + 2) * (h + 2)); // zglajeno polje z robom 1 (zunaj 0, da je obris sklenjen)
+  const W = w + 2;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let s = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const xx = x + dx, yy = y + dy;
+      if (xx >= 0 && yy >= 0 && xx < w && yy < h) s += m[yy * w + xx] ? (dx || dy ? 1 : 2) : 0;
+    }
+    g[(y + 1) * W + x + 1] = s / 10;
+  }
+  const out = [];
+  const t = (a, b) => (a === b ? 0.5 : (0.5 - a) / (b - a));
+  for (let y = 0; y < h + 1; y++) for (let x = 0; x < w + 1; x++) {
+    const a = g[y * W + x], b = g[y * W + x + 1], c = g[(y + 1) * W + x + 1], d = g[(y + 1) * W + x];
+    const i = (a > 0.5 ? 8 : 0) | (b > 0.5 ? 4 : 0) | (c > 0.5 ? 2 : 0) | (d > 0.5 ? 1 : 0);
+    if (i === 0 || i === 15) continue;
+    // točke na stranicah kvadrata (koordinate polja z robom → piksli: −1, nato +0,5 za središče)
+    const X = x - 0.5, Y = y - 0.5;
+    const zg = [X + t(a, b), Y], de = [X + 1, Y + t(b, c)], sp = [X + t(d, c), Y + 1], le = [X, Y + t(a, d)];
+    const seg = (p, q) => out.push(p[0], p[1], q[0], q[1]);
+    switch (i) {
+      case 1: case 14: seg(le, sp); break;
+      case 2: case 13: seg(sp, de); break;
+      case 3: case 12: seg(le, de); break;
+      case 4: case 11: seg(zg, de); break;
+      case 6: case 9: seg(zg, sp); break;
+      case 7: case 8: seg(le, zg); break;
+      case 5: seg(le, zg); seg(sp, de); break;
+      case 10: seg(zg, de); seg(le, sp); break;
+    }
+  }
+  return new Float32Array(out);
 }
 
 // Zapolni zaprte luknje (0, 4-sosednost, ne dotikajo se roba) do `najvec` celic v maski m (w × h), na mestu.
@@ -476,6 +523,76 @@ export const BREZ_MASCOBE = new Set(["desni-preddvor", "levi-preddvor", "desni-p
 
 // Deli, ki so anatomsko znotraj strukture in je na rezini ne preluknjajo (papilarne mišice so del prekata).
 export const NOTRANJI = { "levi-prekat": ["papilarne-misice"], "desni-prekat": ["papilarne-misice"], srce: ["papilarne-misice", "srcne-zaklopke", "medprekatni-pretin"] };
+
+// Deli, ki jih vodilni atlasi štejejo k strukturi in so del njenega obrisa (ne le zapolnjene luknje): medprekatni pretin
+// je stena levega prekata (ocena A, krog 6). Dotik pretina ga še vedno imenuje posebej.
+export const DELI_OBRISA = { "levi-prekat": ["medprekatni-pretin", "papilarne-misice"] };
+
+// Raven ploščic za ploščico, ki bi bila na zaslonu velika `css` px (cela ploščica): 0 = 0,33 mm (512 px), 1 = 0,66 mm
+// (256 px), −1 = ostane ostra slika 1 mm. Telefon po pikslih naprave (dpr): ostrejša vmesna raven že prej, 0,33 mm šele,
+// ko bi bila raven 1 povečana več kot 1,6-krat (ocena A, krog 6: na telefonu je bila slika pri DPR 2 mehka).
+export function ravenPloscice(css, { telefon = false, dpr = 1 } = {}) {
+  if (!telefon) return css > 330 ? 0 : css > 190 ? 1 : -1;
+  const n = css * Math.max(1, Math.min(dpr || 1, 3));
+  return n > 410 ? 0 : n > 200 ? 1 : -1;
+}
+
+// Manjkajoča ploščica (404) → raven nižje: 0 → 1 → −1 (ostra slika 1 mm). manjka(r) → true, če ploščice ravni r ni.
+export function nizjaPloscica(raven, manjka) {
+  for (let r = raven; r >= 0 && r <= 1; r++) if (!manjka(r)) return r;
+  return -1;
+}
+
+// Najmanjša razdalja kamere (najblizje) tako, da najboljši podatki (mm na piksel slike) na zaslonu niso povečani več kot
+// `najvec`-krat (telefon po pikslih naprave). sk = merilo volumna (enot na mm), visina = višina odra v px CSS, fov v °.
+export function najblizjeZa({ sk, mm, visina, fov = 35, telefon = false, dpr = 1 }) {
+  const h = telefon ? visina * Math.max(1, Math.min(dpr || 1, 3)) : visina;
+  const najvec = telefon ? 1.6 : 3;
+  const d = (h * sk * mm) / (2 * Math.tan((fov * Math.PI) / 360) * najvec);
+  return Math.max(0.1, Math.min(2, d));
+}
+
+// »Poskusi:« v opisu modela glede na smer in predel rezine (ocena A, krog 6: napis o prsnem košu tudi pri frontalnem
+// prerezu in pri Th11). predel = R.predelRezine(…).
+export function poskusiZa(smer, predel) {
+  if (smer === "k") return "Premakni drsnik od spredaj nazaj in se dotakni pljuč, srca, jeter ali hrbtenice na rezini.";
+  if (smer === "s") return "Premakni drsnik od desne proti levi; skozi sredino telesa se dotakni hrbtenice, srca ali možganov.";
+  const kaj = {
+    glava: "možganov ali očesa", vrat: "sapnika, hrbtenjače ali vretenca", prsi: "srca, pljuč ali hrbtenice",
+    trebuh: "jeter, ledvic ali hrbtenice", medenica: "črevesja, sečnega mehurja ali kolčnice",
+    stegna: "stegnenice", kolena: "pogačice ali stegnenice", goleni: "golenice ali mečnice", stopala: "kosti stopala",
+  }[predel] || "srca, pljuč ali hrbtenice";
+  return `Premakni drsnik skozi telo in se na rezini dotakni ${kaj}.`;
+}
+
+// Rezervna besedila pogleda, ko se rezine-besedila.json ne naloži (brez povezave ob prvem odprtju): za vse jezike razen
+// slovenščine angleščina, ne slovenska besedila iz kode (ocena B, krog 6). Test preveri, da je enako kot »en« v datoteki.
+export const BESEDILA_EN = {
+  "a3.rez.fromTop": "below the top", "a3.rez.fromSampleTop": "from the top of the sample", "a3.rez.fromFront": "from the front",
+  "a3.rez.fromRight": "from the body's right side", "a3.rez.female": "Female", "a3.rez.male": "Male",
+  "a3.rez.direction": "Section direction", "a3.rez.dir.a": "Transverse", "a3.rez.dir.k": "Coronal", "a3.rez.dir.s": "Sagittal",
+  "a3.rez.position": "Slice position", "a3.rez.view3d": "In the body", "a3.rez.viewFlat": "Straight at the slice",
+  "a3.rez.showBody": "Body around the slice",
+  "a3.rez.notCurrent": "The data may not be the most current or accurate; NLM does not endorse or recommend Evklid.",
+  "a3.rez.front": "front", "a3.rez.back": "back", "a3.rez.atLevel": "at the level of {r}",
+  "a3.rez.os.glava": "at the level of the head", "a3.rez.os.vrat": "at the level of the neck",
+  "a3.rez.os.prsi": "at the level of the chest", "a3.rez.os.trebuh": "at the level of the belly",
+  "a3.rez.os.medenica": "at the level of the pelvis", "a3.rez.os.stegna": "at the level of the thighs",
+  "a3.rez.os.kolena": "at the level of the knees", "a3.rez.os.goleni": "at the level of the shins",
+  "a3.rez.os.stopala": "at the level of the feet", "a3.rez.os.sredina": "through the middle of the body",
+  "a3.rez.status": "Status", "a3.rez.prev": "Previous slice", "a3.rez.next": "Next slice",
+};
+
+// Slovar besedil pogleda: vse = vsebina rezine-besedila.json ali null (ni se naložila), veriga = uiChain(jezik),
+// lat(s) = srbska latinica iz cirilice. → (ključ) → besedilo ali undefined (tedaj slovensko iz kode).
+export function slovarBesedil(vse, veriga, lat = (x) => x) {
+  if (!vse) return veriga[0] === "sl" ? () => undefined : (k) => BESEDILA_EN[k];
+  const slovarji = veriga.map((c) => {
+    if (c === "sr-Latn" && vse.sr) return Object.fromEntries(Object.entries(vse.sr).map(([k, v]) => [k, lat(v)]));
+    return vse[c];
+  }).filter(Boolean);
+  return (k) => slovarji.find((d) => d[k] != null)?.[k];
+}
 
 // Ključ shrambe za krajevno kazalo razvijalca (<slug>.* iz brand.json; scripts/preimenuj.js ga zamenja, test preveri).
 export const KLJUC_KAZALA = "evklid.3d.rezine";

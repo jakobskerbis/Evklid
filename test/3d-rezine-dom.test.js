@@ -33,11 +33,16 @@ test.after(async () => {
   server?.close();
 });
 
-async function odpri() {
+async function odpri({ jezik = "sl", brezBesedil = false } = {}) {
   const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, deviceScaleFactor: 1, hasTouch: true, isMobile: true, reducedMotion: "reduce", locale: "sl-SI" });
-  await ctx.addInitScript(() => {
-    try { localStorage.setItem("evklid.lang", "sl"); } catch {}
-  });
+  await ctx.addInitScript((j) => {
+    try { localStorage.setItem("evklid.lang", j); } catch {}
+    // namig na odru se ne sme pojaviti niti za trenutek (pred gradnjo modela)
+    window.__namig = false;
+    new MutationObserver(() => { if (document.querySelector(".k3-namig")) window.__namig = true; }).observe(document, { childList: true, subtree: true });
+  }, jezik);
+  // besedila pogleda se ne naložijo (brez povezave ob prvem odprtju, 404)
+  if (brezBesedil) await ctx.route("**/3d/rezine-besedila.json*", (r) => r.fulfill({ status: 404, body: "" }));
   const page = await ctx.newPage();
   const napake = [];
   page.on("pageerror", (e) => napake.push(String(e.message)));
@@ -73,7 +78,7 @@ test("pravi prerez (telefon): lepljivi drsnik ostane na vrhu plošče, preliv sa
         drsi: plosca.scrollTop > 0, pred, vrh: lr.top - pr.top, drsnikViden: inp.top >= pr.top && inp.bottom <= pr.bottom,
         poz: getComputedStyle(lep).position, visinaPreliva: parseFloat(after.height), gap, gumbi,
         napis: dr.querySelector(".k3-drsnik-vrh > span")?.textContent, izpis: dr.querySelector("output")?.textContent,
-        namig: !!document.querySelector(".k3-oder-ovoj .k3-namig"),
+        namig: !!document.querySelector(".k3-oder-ovoj .k3-namig") || window.__namig,
       };
     });
     assert.equal(r.poz, "sticky");
@@ -141,6 +146,26 @@ test("pravi prerez: dolg pritisk na + ponavlja korak, spust ga ustavi, klik ob s
     });
     await page.locator(".k3-lepljivo .k3-drsnik:not([hidden]) .k3-drsnik-gumb").nth(0).click();
     assert.equal(await vrednost(), 0, "− ne gre pod najmanjšo vrednost");
+    assert.deepEqual(napake, []);
+  } finally {
+    await ctx.close();
+  }
+});
+
+test("pravi prerez: besedila se ne naložijo – nemški vmesnik pokaže angleška besedila pogleda, ne slovenskih", { skip, timeout: 120000 }, async () => {
+  const { ctx, page, napake } = await odpri({ jezik: "de", brezBesedil: true });
+  try {
+    const r = await page.evaluate(() => {
+      const dr = [...document.querySelectorAll(".k3-lepljivo .k3-drsnik")].find((e) => !e.hidden);
+      return {
+        napis: dr.querySelector(".k3-drsnik-vrh > span")?.textContent,
+        gumbi: [...dr.querySelectorAll(".k3-drsnik-gumb")].map((b) => b.getAttribute("aria-label")),
+        namig: window.__namig,
+      };
+    });
+    assert.equal(r.napis, "Slice position");
+    assert.deepEqual(r.gumbi, ["Previous slice", "Next slice"]);
+    assert.ok(!r.namig, "namiga ni bilo");
     assert.deepEqual(napake, []);
   } finally {
     await ctx.close();

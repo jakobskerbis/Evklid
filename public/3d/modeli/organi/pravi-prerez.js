@@ -20,6 +20,7 @@ export const info = {
   opis: "Fotografije pravih prerezov človeškega telesa. Podatki NLM niso nujno najnovejši ali najnatančnejši; NLM Evklida ne podpira in ne priporoča.",
   poskusi: "Premakni drsnik skozi prsni koš in se dotakni srca, pljuč ali hrbtenice na rezini.",
   merilo: { m: 1.8, oznaka: "1,8 m" },
+  namigOder: false, // pregledovalnik namiga »Povleci za vrtenje …« sploh ne ustvari (ne utripne pred gradnjo)
 };
 
 const NAVEDBA = "Courtesy of the U.S. National Library of Medicine";
@@ -39,23 +40,19 @@ function slika(url) {
 const json = (url) => fetch(url).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status} ${url}`))));
 
 // Besedila pogleda v izbranem jeziku (veriga i18n/languages.js uiChain; srbska latinica iz cirilice kot v i18n.js).
+// Brez datoteke (brez povezave, 404): tuji jeziki dobijo angleščino (R.BESEDILA_EN), slovenščina besedila iz kode.
 async function naloziBesedila() {
-  try {
-    const [vse, jez, i18n] = await Promise.all([
-      json(new URL("../../rezine-besedila.json", import.meta.url).href),
-      import(new URL("../../../i18n/languages.js", import.meta.url).href),
-      import(new URL("../../../i18n.js", import.meta.url).href),
-    ]);
-    const lang = i18n.currentLang?.() || document.documentElement.lang || "sl";
-    const slovarji = jez.uiChain(lang).map((c) => {
-      if (c === "sr-Latn" && vse.sr) return Object.fromEntries(Object.entries(vse.sr).map(([k, v]) => [k, i18n.srToLatin(v)]));
-      return vse[c];
-    }).filter(Boolean);
-    return (k) => slovarji.find((d) => d[k] != null)?.[k];
-  } catch (err) {
-    console.warn("3D rezine: besedil ni bilo mogoče naložiti", err?.message || err);
-    return () => undefined; // ostanejo slovenska besedila iz kode
-  }
+  const [vse, jez, i18n] = await Promise.all([
+    json(new URL("../../rezine-besedila.json", import.meta.url).href).catch((err) => {
+      console.warn("3D rezine: besedil ni bilo mogoče naložiti", err?.message || err);
+      return null;
+    }),
+    import(new URL("../../../i18n/languages.js", import.meta.url).href).catch(() => null),
+    import(new URL("../../../i18n.js", import.meta.url).href).catch(() => null),
+  ]);
+  const lang = i18n?.currentLang?.() || document.documentElement.lang || "sl";
+  const veriga = jez?.uiChain ? jez.uiChain(lang) : [lang, "en", "sl"];
+  return R.slovarBesedil(vse, veriga, i18n?.srToLatin || ((x) => x));
 }
 
 // Model bere podatke iz datotek (canvas, slike): testi pogodbe v Node ga ne gradijo (test/3d-rezine.test.js preveri pomožne funkcije).
@@ -64,19 +61,23 @@ export const izDatotek = true;
 export async function zgradi(THREE, ctx) {
   // besedila pogleda (a3.rez.*) niso v sl.js in ui/*.json (proračun prvega odprtja): public/3d/rezine-besedila.json
   // { jezik: { ključ: besedilo } } se naloži šele tukaj; veriga jezikov kot v i18n.js (npr. bho → hi → en → sl)
-  const besedila = await naloziBesedila();
-  const t = (k, sl) => {
-    const v = ctx.t ? ctx.t(k) : k;
-    if (v && v !== k) return v;
-    return besedila(k) ?? sl;
-  };
+  // besedila, kazalo in imena oznak vzporedno (ocena B, krog 6: trije zaporedni krogi čakanja na počasnem omrežju)
   const koren = new URL("../../rezine/", import.meta.url).href;
   let kazalo;
   try {
     kazalo = JSON.parse(globalThis.localStorage?.getItem(R.KLJUC_KAZALA) || "null");
   } catch {}
-  kazalo ||= await json(koren + "kazalo.json");
-  const imena = await json(new URL("../../rezine-oznake.json", import.meta.url).href);
+  const [besedila, kazaloOmrezje, imena] = await Promise.all([
+    naloziBesedila(),
+    kazalo ? null : json(koren + "kazalo.json"),
+    json(new URL("../../rezine-oznake.json", import.meta.url).href),
+  ]);
+  kazalo ||= kazaloOmrezje;
+  const t = (k, sl) => {
+    const v = ctx.t ? ctx.t(k) : k;
+    if (v && v !== k) return v;
+    return besedila(k) ?? sl;
+  };
   const telefon = ctx.kakovost !== "visoka";
   // Gostovanje (vedro R2): vsako telo posebej (manjkajoče telo ne podre drugega); če ni nobenega, kazalo.rezerva
   // pokaže vzorec iz repozitorija (model ne pade)
@@ -103,6 +104,7 @@ export async function zgradi(THREE, ctx) {
   if (stanje.raven === 1) Object.assign(stanje, { ...R.pogledZaRaven(1), smer: stanje.smer });
   let T = null; // naloženo telo: { meta, url, mali, ozn, dim }
   let napakaNalaganja = "", ponovi = "", napakePloscic = 0;
+  const manjkajoce = new Set(); // ploščice, ki jih ni (smer/rezina/raven/ime): ne zahtevamo jih znova
   let ostraZa = "", zadnjaKamera = null, visinaPlatna = 800, kljucKamere = "";
   let uraOstre = 0, uraPloscic = 0, uraKamere = 0;
   const narisi = () => ctx.narisi?.(); // slike pridejo kasneje, tudi ko animacija ne teče (zmanjšano gibanje)
@@ -169,7 +171,7 @@ export async function zgradi(THREE, ctx) {
     if (kk !== kljucKamere) {
       kljucKamere = kk;
       clearTimeout(uraKamere);
-      uraKamere = setTimeout(naloziPloscice, 350);
+      uraKamere = setTimeout(() => { naloziPloscice(); preveriDebelinoObrisa(); }, 350);
     }
     drziOznakeSmeri(kamera);
   };
@@ -178,24 +180,41 @@ export async function zgradi(THREE, ctx) {
   // in pri povečavi pripete na rob odra, da ostanejo vidne
   const VISINA_NAPISA = 30; // px CSS: višina napisa (pisava ≈ 16 px)
   const ROB_ORODIJ = 58, ROB_NAVEDBE = 26; // px CSS: orodna vrstica na vrhu odra, navedba vira (in merilo) na dnu
+  // dve sliki napisa: prosto ob rezini (besedilo z obrobo) in pripeto na rob odra pri povečavi (temna ploščica, da napis
+  // ni »na tkivu«, ampak je očitno del vmesnika; ocena A, krog 6)
   const napis = (besedilo) => {
-    const c = document.createElement("canvas");
-    c.width = 256; c.height = 64;
-    const g = c.getContext("2d");
-    g.font = "600 34px 'Instrument Sans', system-ui, sans-serif";
-    g.textAlign = "center"; g.textBaseline = "middle";
-    g.lineJoin = "round"; g.lineWidth = 8; g.strokeStyle = "rgba(8,12,20,0.85)";
-    g.strokeText(besedilo, 128, 34);
-    g.fillStyle = "rgba(226,234,246,0.96)";
-    g.fillText(besedilo, 128, 34);
-    const tx = new THREE.CanvasTexture(c);
-    tx.colorSpace = THREE.SRGBColorSpace;
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tx, depthTest: false, transparent: true, toneMapped: false, sizeAttenuation: false }));
+    const slika = (ploscica) => {
+      const c = document.createElement("canvas");
+      c.width = 256; c.height = 64;
+      const g = c.getContext("2d");
+      g.font = "600 34px 'Instrument Sans', system-ui, sans-serif";
+      g.textAlign = "center"; g.textBaseline = "middle";
+      const w = Math.min(250, g.measureText(besedilo).width + 28);
+      if (ploscica) {
+        g.fillStyle = "rgba(10,14,22,0.82)";
+        g.beginPath();
+        g.roundRect?.(128 - w / 2, 6, w, 54, 27);
+        if (!g.roundRect) g.rect(128 - w / 2, 6, w, 54);
+        g.fill();
+      } else {
+        g.lineJoin = "round"; g.lineWidth = 8; g.strokeStyle = "rgba(8,12,20,0.85)";
+        g.strokeText(besedilo, 128, 34);
+      }
+      g.fillStyle = "rgba(226,234,246,0.96)";
+      g.fillText(besedilo, 128, 34);
+      const tx = new THREE.CanvasTexture(c);
+      tx.colorSpace = THREE.SRGBColorSpace;
+      return { tx, siroka: (ploscica ? w : g.measureText(besedilo).width) / 256 };
+    };
+    const prosto = slika(false), pripeto = slika(true);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: prosto.tx, depthTest: false, transparent: true, toneMapped: false, sizeAttenuation: false }));
     sp.raycast = () => {};
     sp.renderOrder = 6;
     sp.frustumCulled = false;
     sp.userData.sidro = new THREE.Vector3();
-    sp.userData.siroka = g.measureText(besedilo).width / 256;
+    sp.userData.sidro2 = null; // drugo mesto (npr. zgornji kot), če ob strani ni prostora
+    sp.userData.slike = { prosto, pripeto };
+    sp.userData.siroka = prosto.siroka;
     return sp;
   };
   const smeri = { d: napis(t("a3.right", "desno")), l: napis(t("a3.left", "levo")), s: napis(t("a3.rez.front", "spredaj")), z: napis(t("a3.rez.back", "zadaj")) };
@@ -212,11 +231,20 @@ export async function zgradi(THREE, ctx) {
       if (!sp.visible) continue;
       sp.scale.set(sv * 4, sv, 1);
       // sidro na robu vsebine → NDC; če je izven odra, ga pripnemo na rob (z odmikom za pol napisa)
-      _v.copy(sp.userData.sidro).applyMatrix4(notranja.matrixWorld).project(kamera);
       // zgoraj pod orodno vrstico odra (gumbi 40 px), spodaj nad navedbo vira (ocena kroga 6: pri povečavi na telefonu
       // je »spredaj« zdrsnil pod gumbe, »zadaj« na navedbo)
-      const mx = 1 - ((sp.userData.siroka * VISINA_NAPISA * 4) / 2 + 10) / (sirinaPlatna / 2);
+      const mx = 1 - ((sp.userData.slike.pripeto.siroka * VISINA_NAPISA * 4) / 2 + 10) / (sirinaPlatna / 2);
       const myGor = 1 - (VISINA_NAPISA / 2 + 8 + ROB_ORODIJ) / (visinaPlatna / 2), myDol = 1 - (VISINA_NAPISA / 2 + 6 + ROB_NAVEDBE) / (visinaPlatna / 2);
+      const izven = (q) => Math.abs(q.x) > mx || q.y > myGor || q.y < -myDol;
+      _v.copy(sp.userData.sidro).applyMatrix4(notranja.matrixWorld).project(kamera);
+      // ob strani ni prostora (ozek telefon: »desno/levo« bi padla na nadlahti): drugo sidro v zgornjem kotu nad telesom
+      if (izven(_v) && sp.userData.sidro2) {
+        const v2 = sp.userData.sidro2.clone().applyMatrix4(notranja.matrixWorld).project(kamera);
+        if (!izven(v2)) _v.copy(v2);
+      }
+      const pripeto = izven(_v);
+      const sl = sp.userData.slike[pripeto ? "pripeto" : "prosto"];
+      if (sp.material.map !== sl.tx) { sp.material.map = sl.tx; sp.material.needsUpdate = true; }
       _v.x = Math.max(-mx, Math.min(mx, _v.x));
       _v.y = Math.max(-myDol, Math.min(myGor, _v.y));
       _v.unproject(kamera);
@@ -236,12 +264,20 @@ export async function zgradi(THREE, ctx) {
       const p = R.tockaRezine(dim, s, i, u + du / wr, v + dv / hr);
       vMm(p[0], p[1], p[2], sp.userData.sidro);
       sp.position.copy(sp.userData.sidro);
+      sp.userData.sidro2 = null;
       sp.visible = true;
+    };
+    const na2 = (sp, u, v, du, dv) => {
+      const p = R.tockaRezine(dim, s, i, u + du / wr, v + dv / hr);
+      sp.userData.sidro2 = vMm(p[0], p[1], p[2]);
     };
     for (const sp of Object.values(smeri)) sp.visible = false;
     const cv = (v0 + v1) / 2, cu = (u0 + u1) / 2;
     if (s === "a") {
       na(smeri.d, u0, cv, -rob * 1.6, 0); na(smeri.l, u1, cv, rob * 1.6, 0); na(smeri.s, cu, v0, 0, -rob * 0.7); na(smeri.z, cu, v1, 0, rob * 0.7);
+      // ozek oder: »desno/levo« nad zunanjim robom nadlahti, v vrsti s »spredaj« (prečni prerez je tam prazen gel)
+      const du = (u1 - u0) * wr * 0.07;
+      na2(smeri.d, u0, v0, du, -rob * 0.7); na2(smeri.l, u1, v0, -du, -rob * 0.7);
     } else if (s === "k") {
       na(smeri.d, u0, Math.min(cv, 0.3), -rob * 1.6, 0); na(smeri.l, u1, Math.min(cv, 0.3), rob * 1.6, 0);
     } else {
@@ -376,8 +412,10 @@ export async function zgradi(THREE, ctx) {
       // stranica cele ploščice na zaslonu v pikslih CSS (iz diagonale vidnega dela)
       const delez = Math.hypot(u1 - pl.u0, v1 - pl.v0) / Math.hypot(pl.u1 - pl.u0, pl.v1 - pl.v0);
       const naZaslonu = ((Math.hypot(ndc[0].x - ndc[3].x, ndc[0].y - ndc[3].y) / 2) * visinaPlatna) / Math.SQRT2 / Math.max(delez, 0.05);
-      const raven = naZaslonu > (telefon ? 420 : 330) ? 0 : naZaslonu > 190 ? 1 : -1;
-      if (raven >= 0) potrebne.set(`${raven}/${pl.ime}`, { pl, lok, u1, v1 });
+      const raven = R.ravenPloscice(naZaslonu, { telefon, dpr: globalThis.devicePixelRatio || 1 });
+      // manjkajoča ploščica (404): tiho raven nižje (R.nizjaPloscica)
+      const rv = R.nizjaPloscica(raven, (r) => manjkajoce.has(`${s}/${i}/${r}/${pl.ime}`));
+      if (rv >= 0) potrebne.set(`${rv}/${pl.ime}`, { pl, lok, u1, v1 });
     }
     for (const c of [...skupinaPloscic.children])
       if (!potrebne.has(c.userData.kljuc)) {
@@ -404,13 +442,12 @@ export async function zgradi(THREE, ctx) {
           narisi();
         },
         (err) => {
-          // ploščica ni prišla: ostane ostra slika 1 mm; po več zaporednih napakah sporočilo z gumbom »Poskusi znova«
+          // ploščica ni prišla: tiho ostane nižja ločljivost (0,66 mm namesto 0,33 mm, sicer ostra slika 1 mm), ki je že
+          // vidna; brez sporočila o napaki (ocena A, krog 6: okno »ni bilo mogoče naložiti« ob vidni sliki)
           if (k !== kljuc()) return;
           if (++napakePloscic === 1) console.warn("3D rezine: ploščica ni na voljo", kl, err?.message || err);
-          if (napakePloscic >= 3 && !napakaNalaganja) {
-            napakaNalaganja = t("a3.loadError", "Tega dela ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
-            narisi();
-          }
+          manjkajoce.add(`${s}/${stanje.i[s]}/${kl}`);
+          if (kl.startsWith("0/")) naloziPloscice();
         },
       );
     }
@@ -474,6 +511,8 @@ export async function zgradi(THREE, ctx) {
     // papilarne mišice ipd. (R.NOTRANJI) so del prekata: luknja iz njih se zapolni
     const notranje = new Uint8Array(256);
     for (const x of R.NOTRANJI[kl] || []) { const k = T.meta.oznake.kljuci.indexOf(x); if (k >= 0) notranje[k + 1] = 1; }
+    // medprekatni pretin je del obrisa levega prekata (R.DELI_OBRISA; ocena A, krog 6)
+    for (const x of R.DELI_OBRISA[kl] || []) { const k = T.meta.oznake.kljuci.indexOf(x); if (k >= 0) je[k + 1] = 1; }
     // žile do ~5 mm niso luknje (na fotografiji jih ni videti); obris srca in organov ne sega v maščobo ob njih
     const mm = T.ozn.mm, zile = R.ZILA_CELIC(mm);
     const zapolnjen = R.zapolniObris(r, je, 40, notranje, zile);
@@ -483,6 +522,7 @@ export async function zgradi(THREE, ctx) {
       { celica: mm, tkivo: R.BREZ_MASCOBE.has(kl) ? vzorecTkiva(r.w * f, r.h * f) : null });
     if (!o) {
       poudarek.visible = false;
+      zadnjiObris = null;
       return;
     }
     const c = new THREE.Color(deliPoId.get(kl)?.barva || "#6E9BFF");
@@ -492,15 +532,51 @@ export async function zgradi(THREE, ctx) {
     const polnilo = Math.round(Math.max(28, Math.min(64, 100 - 110 * svetlost)));
     const px = new Uint8ClampedArray(o.w * o.h * 4);
     for (let k = 0; k < o.data.length; k++) {
-      const v = o.data[k];
-      if (!v) continue;
-      const rob = v === 2;
-      px[k * 4] = rob ? 255 : c.r * 255; px[k * 4 + 1] = rob ? 255 : c.g * 255; px[k * 4 + 2] = rob ? 255 : c.b * 255; px[k * 4 + 3] = rob ? 240 : polnilo;
+      if (!o.data[k]) continue;
+      px[k * 4] = c.r * 255; px[k * 4 + 1] = c.g * 255; px[k * 4 + 2] = c.b * 255; px[k * 4 + 3] = polnilo;
     }
-    platnoPoudarka.width = o.w; platnoPoudarka.height = o.h;
-    platnoPoudarka.getContext("2d").putImageData(new ImageData(px, o.w, o.h), 0, 0);
+    zadnjiObris = { o, polnilo: new ImageData(px, o.w, o.h) };
+    risiObris();
+  }
+  // Obrobo (vektorska črta R.crteObrisa: gladka, sklenjena) riše platno: bela črta ≈ 2,4 px zaslona s temnim robom, da je
+  // vidna na svetli maščobi in na temni krvi (ocena A, krog 6: tanka, slabo kontrastna obroba). Debelina sledi povečavi:
+  // ko se kamera umiri in se merilo spremeni za več kot ~40 %, se črta nariše znova (brez novega računanja maske).
+  let zadnjiObris = null, merilObrisa = 0;
+  function zaslonNaPikselObrisa() {
+    if (!zadnjaKamera || !zadnjiObris) return 0;
+    const s = stanje.smer, i = stanje.i[s], [wr] = R.velikostRezine(T.dim, s);
+    const a = vMm(...R.tockaRezine(T.dim, s, i, 0.5, 0.5)), b = vMm(...R.tockaRezine(T.dim, s, i, 0.5 + 10 / wr, 0.5));
+    const pa = a.applyMatrix4(notranja.matrixWorld).project(zadnjaKamera), pb = b.applyMatrix4(notranja.matrixWorld).project(zadnjaKamera);
+    const pxNaMm = Math.hypot(((pb.x - pa.x) * sirinaPlatna) / 2, ((pb.y - pa.y) * visinaPlatna) / 2) / 10;
+    return pxNaMm / (zadnjiObris.o.w / wr); // px zaslona na piksel platna obrisa
+  }
+  function risiObris() {
+    const z = zadnjiObris;
+    if (!z) return;
+    const { o } = z;
+    if (platnoPoudarka.width !== o.w || platnoPoudarka.height !== o.h) {
+      platnoPoudarka.width = o.w; platnoPoudarka.height = o.h;
+    }
+    const g = platnoPoudarka.getContext("2d");
+    g.putImageData(z.polnilo, 0, 0);
+    const m = zaslonNaPikselObrisa() || 0.5;
+    merilObrisa = m;
+    const bela = Math.max(1.2, Math.min(14, 2.4 / m)), temna = Math.max(2.4, Math.min(24, 5 / m));
+    const c = o.crte;
+    if (c?.length) {
+      g.beginPath();
+      for (let k = 0; k < c.length; k += 4) { g.moveTo(c[k], c[k + 1]); g.lineTo(c[k + 2], c[k + 3]); }
+      g.lineCap = g.lineJoin = "round";
+      g.strokeStyle = "rgba(8,12,20,0.72)"; g.lineWidth = temna; g.stroke();
+      g.strokeStyle = "rgba(255,255,255,0.96)"; g.lineWidth = bela; g.stroke();
+    }
     texPoudarka.needsUpdate = true;
     poudarek.visible = true;
+  }
+  function preveriDebelinoObrisa() {
+    if (!zadnjiObris || !poudarek.visible) return;
+    const m = zaslonNaPikselObrisa();
+    if (m && merilObrisa && Math.abs(Math.log(m / merilObrisa)) > 0.35) { risiObris(); narisi(); }
   }
 
   // Fotografija rezine (ostra slika 1 mm) v velikosti povečane mreže oznak: (X, Y) → false, če je tam maščoba.
@@ -718,13 +794,15 @@ export async function zgradi(THREE, ctx) {
       { tip: "izpis", id: "stanje", oznaka: t("a3.rez.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
       { tip: "gumb", id: "znova", oznaka: t("task.retry", "Poskusi znova"), vidno: () => !!napakaNalaganja,
         ob: () => {
-          napakaNalaganja = ""; ponovi = ""; napakePloscic = 0;
+          napakaNalaganja = ""; ponovi = ""; napakePloscic = 0; manjkajoce.clear();
           if (zadnjeTelo && zadnjeTelo !== stanje.spol) return nSpol?.ob(zadnjeTelo);
           naloziOstro();
           naloziPloscice();
         } },
     ],
     navedba: { besedilo: NAVEDBA, opomba: t("a3.rez.notCurrent", "Podatki niso nujno najnovejši ali najnatančnejši; NLM Evklida ne podpira in ne priporoča.") },
+    // »Poskusi:« glede na smer in predel rezine (ne »prsni koš« pri frontalnem prerezu ali v trebuhu)
+    poskusi: () => (T ? R.poskusiZa(stanje.smer, R.predelRezine({ smer: stanje.smer, i: stanje.i[stanje.smer], n: R.steviloRezin(T.dim, stanje.smer), ravni: T.meta.oznake?.ravni, vzorec: T.vzorec })) : ""),
     // besedilna različica platna za bralnike zaslona: smer, lega in največje strukture na rezini
     opisPlatna: () => [info.naslov, t(`a3.rez.dir.${stanje.smer}`, IMENA_SMERI[stanje.smer]), lega(), seznamDelov.slice(0, 8).map((d) => d.ime).join(", ")].filter(Boolean).join(" · "),
     merilo: () => {
@@ -749,7 +827,12 @@ export async function zgradi(THREE, ctx) {
       return { sredisce: [0, 0, 0], polmer: (Math.hypot(ew, eh) / 2) * 1.9 };
     },
     namigOder: false, // namig »Povleci za vrtenje …« bi na telefonu prekril rezino, oznako smeri in merilo (ocena A in B, krog 5)
-    najblizje: 0.1, // povečava do ploščic 0,33 mm
+    // povečava do ploščic 0,33 mm, a ne čez mero podatkov: telefon največ 1,6-kratna povečava pikslov naprave (ocena A,
+    // krog 6: pri DPR 2 je bila slika mehka), računalnik 3-kratna (R.najblizjeZa)
+    get najblizje() {
+      if (!T?.meta?.podrobno) return 0.1; // vzorec in telesa brez ploščic: kot prej
+      return R.najblizjeZa({ sk: notranja.scale.x, mm: 0.33, visina: telefon ? 420 : 700, telefon, dpr: globalThis.devicePixelRatio || 1 });
+    },
     ao: () => false,
     izberi(id, hit) {
       if (hit) {
