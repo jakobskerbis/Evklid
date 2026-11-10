@@ -127,7 +127,10 @@
     }
     if (!p || typeof p !== "object" || p.v !== v || String(p.s) !== sid || typeof p.h !== "string" || !p.h) return null;
     var t = Number(p.t);
-    if (!isFinite(t) || zdaj - t > MAX || t - zdaj > 5 * 60 * 1000) return null;
+    if (!isFinite(t) || zdaj - t > MAX || t - zdaj > 5 * 60 * 1000) {
+      pozabiKljuc();
+      return null;
+    }
     if (typeof p.c !== "string" || !/^[a-z0-9 _-]{0,80}$/i.test(p.c)) return null;
     if ((p.g || "") !== jezik()) return null;
     if (v !== "path" && ((p.l || "") !== ((zapis && zapis.l) || "") || (p.p || "") !== ((zapis && zapis.p) || ""))) return null;

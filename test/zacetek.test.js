@@ -332,7 +332,7 @@ test("hiter zagon (j 10. 11. 2026): klepet posnetka nima – ob odprtju okostje,
   const shot = read("public/posnetek.js");
   assert.match(shot, /if \(!meta \|\| !purify\?\.sanitize \|\| !rec \|\| rec\.v === "chat"\) return drop\(\);/);
   assert.match(shot, /el\.querySelector\("\.nujno-card, #messages"\)/, "okno nujne pomoči in sporočila tudi ne");
-  assert.match(read("public/zasebnost.html"), /sliko zadnjega zaslona \(brez pogovorov z inštruktorjem\), največ 12 ur; ob odjavi se izbriše\./);
+  assert.match(read("public/zasebnost.html"), /sliko zadnjega zaslona \(brez pogovorov z inštruktorjem\); uporabi se le, če je mlajša od 12 ur, starejša se ob odprtju izbriše, ob odjavi pa se izbriše vedno\./);
 });
 
 test("hiter zagon (pregled #560 B3): posnetek drugega jezika ali druge različice aplikacije ne velja", async () => {

@@ -1616,6 +1616,7 @@ async function phone(browser, app) {
     const NAPAKA = Number(process.env.EVKLID_PRAG_ZAGON_NAPAKA) || 5000;
     await barTab(p, "me", { wait: 200 });
     await click(p, '#view-me [data-go="settings"]', { wait: 600 });
+    await settle(p, 2500); // modul posnetka se naloži 1,5 s po zagonu (ob mirovanju); brez tega na počasnem CI ob prvem odprtju posnetka še ni
     const casi = [];
     for (let i = 0; i < 3; i++) {
       await p.reload();
