@@ -115,15 +115,6 @@
       ]
     },
     {
-      "id": "polyhaven-studio-small-09",
-      "ime": "Poly Haven: Studio Small 09 (HDRI)",
-      "avtor": "Sergej Majboroda, Poly Haven",
-      "opis": "Studijska svetloba (okolje HDR) za organe s pečenimi teksturami, pomanjšana na 512 × 256 in 256 × 128 slikovnih pik (public/3d/okolje/studio-*.hdr).",
-      "url": "https://polyhaven.com/a/studio_small_09",
-      "licenca": "CC0 1.0",
-      "licencaUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
-    },
-    {
       "id": "evklid-srce",
       "ime": "Evklid: dopolnitve srca",
       "avtor": "Evklid",
