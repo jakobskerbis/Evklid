@@ -54,6 +54,8 @@ od: 1
 do: 1,5
 korak: 0,05
 oznake: 0,25
+oznaka: 1 | 1,00
+oznaka: 1,5 | 1,50
 interval: 1 .. 1,25 | R′ > 0 | zelena
 interval: 1,25 .. 1,5 | R′ < 0 | rdeča
 točka: 1,25 | vrh | oranžna

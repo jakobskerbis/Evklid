@@ -33,7 +33,7 @@ Napetost med notranjostjo in zunanjostjo mirujoče celice je **mirovni potencial
 
 :::risba graf
 opis: Shema akcijskega potenciala: napetost membrane v milivoltih v odvisnosti od časa. Iz mirovanja pri −70 mV se potencial dvigne do praga −55 mV, nato strmo do vrha pri +30 mV, pade pod mirovni potencial do okoli −80 mV in se vrne na −70 mV. Od praga do vrnitve mine okoli 2 ms.
-x: 0 .. 3 | 1 | t
+x: 0 .. 3 | 1 | t [ms]
 y: -90 .. 40 | 10 | U [mV]
 višina: 240
 oznake: ne

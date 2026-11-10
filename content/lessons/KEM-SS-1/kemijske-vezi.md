@@ -73,7 +73,7 @@ oznaka: 3,3 | 3,3
 interval: 0 .. 0,4 | nepolarna | zelena
 interval: 0,4 .. 1,7 | polarna | modra
 interval: 1,7 .. 3,3 | ionska | oranžna
-podnapis: ΔEN; nepolarna in polarna vez sta kovalentni.
+podnapis: Razlika elektronegativnosti ΔEN. Nepolarna in polarna vez sta kovalentni.
 :::
 
 Meji $0{,}4$ in $1{,}7$ sta dogovorjeni, prehod je zvezen. Ionska vez je skrajno polarna vez: par je tako močno na eni strani, da elektron preide k drugemu atomu. V simulaciji spodaj »Polarnost vezi in elektronegativnost« izberi vodik in mu zapored dodaj fluor, klor, brom in jod. Opazuj, kako se $\Delta\mathrm{EN}$ manjša in se par pomika proti sredini. Pri $\mathrm{HF}$ ($\Delta\mathrm{EN} \approx 1{,}8$) simulacija pokaže ionsko vez, čeprav je $\mathrm{HF}$ molekula s polarno kovalentno vezjo: meja $1{,}7$ je le dogovor.

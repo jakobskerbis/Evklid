@@ -37,7 +37,7 @@ Liha. Vsi sumandi so lihi in teh je $5$, kar je liho število. Za kontrolo: vsot
 **5. Barvanje polj.** Pri nalogah na mreži polja pobarvamo, da opazimo invarianto. Najpogostejše je **šahovsko barvanje**: sosednji polji imata vedno različni barvi. Na šahovnici:
 
 :::risba skica
-opis: Šahovnica 8 krat 8 s šahovskim barvanjem: polja so izmenično belo (B) in temno (T), levo zgoraj je belo. Sosednji polji imata vedno različni barvi.
+opis: Šahovnica 8 krat 8 s šahovskim barvanjem: polja so izmenično belo (B, nepobarvano) in temno (T, pobarvano), levo zgoraj je belo. Sosednji polji imata vedno različni barvi.
 območje: 0; 0 .. 8; 8
 enota: 30
 pravokotnik: 0; 7 .. 1; 8 | ozadje
@@ -186,7 +186,7 @@ napis: 4,5; 0,5 | T
 napis: 5,5; 0,5 | B
 napis: 6,5; 0,5 | T
 napis: 7,5; 0,5 | B
-podnapis: T = temno, B = belo.
+podnapis: T = temno polje (pobarvano), B = belo polje (nepobarvano).
 :::
 
 Vsaka domina pokrije dve sosednji polji, torej **eno temno in eno belo**. Če položimo $k$ domin, pokrijejo $k$ temnih in $k$ belih polj. Za pokritje mora biti temnih in belih polj enako.

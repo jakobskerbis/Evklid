@@ -240,15 +240,14 @@ $\Phi(2) - \Phi(-1) = 0{,}4772 + 0{,}3413 = 0{,}8185$, torej približno $82\,\%$
 
 Nariši zvonasto krivuljo in pod njo navpične črte pri $\mu$, $\mu \pm \sigma$, $\mu \pm 2\sigma$. Ploščino razdeli na pasove:
 
-```
-pas            delež
-pod -2σ        2,3 %
--2σ do -σ     13,6 %
--σ do μ       34,1 %
-μ do +σ       34,1 %
-+σ do +2σ     13,6 %
-nad +2σ        2,3 %
-```
+| Pas | Delež |
+|---|---|
+| pod $\mu - 2\sigma$ | $2{,}3\,\%$ |
+| $\mu - 2\sigma$ do $\mu - \sigma$ | $13{,}6\,\%$ |
+| $\mu - \sigma$ do $\mu$ | $34{,}1\,\%$ |
+| $\mu$ do $\mu + \sigma$ | $34{,}1\,\%$ |
+| $\mu + \sigma$ do $\mu + 2\sigma$ | $13{,}6\,\%$ |
+| nad $\mu + 2\sigma$ | $2{,}3\,\%$ |
 
 Med $\mu$ in $\mu + \sigma$ je $34{,}1\,\%$, med $\mu + \sigma$ in $\mu + 2\sigma$ še $13{,}6\,\%$, naprej le še $2{,}3\,\%$. Vsaka naloga z normalno porazdelitvijo je vprašanje, kateri pas pobarvati. $\Phi(z)$ je vedno pas od sredine do $z$; od tam dodaš ali odvzameš polovico ($0{,}5$).
 
