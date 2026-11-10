@@ -4,6 +4,7 @@
 // Fotografija gre na strežnik samo za branje (server/zapiski.js) in se nikjer ne shrani, tudi na napravi ne.
 import { t as tg, currentLang, srToLatin } from "../i18n.js";
 import { uiChain } from "../i18n/languages.js";
+import { zavrzi } from "../odgovor.js";
 import { icon } from "../icons.js";
 import { zaznajNujno, izsiljevanje, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, opomba } from "../nujno.js";
 import SL from "./sl.js";
@@ -29,7 +30,7 @@ function loadDicts() {
     want.map(async (code) => {
       try {
         const res = await fetch(`/zapiski/i18n/${code === "sr-Latn" ? "sr" : code}.json`);
-        if (!res.ok) return null;
+        if (!res.ok) return zavrzi(res), null;
         const d = await res.json();
         return code === "sr-Latn" ? Object.fromEntries(Object.entries(d).map(([k, v]) => [k, srToLatin(v)])) : d;
       } catch {
