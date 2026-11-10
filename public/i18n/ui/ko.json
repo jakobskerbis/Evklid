@@ -3012,6 +3012,7 @@
   "sim.layers.show": "표시:",
   "sim.layer.grid": "격자",
   "sim.lab.pin": "그림 고정",
+  "sim.lab.zoom": "그림 확대",
   "sim.layer.marks": "표시선",
   "sim.layer.fit": "{name}: 직선",
   "sim.color.accent": "파랑",

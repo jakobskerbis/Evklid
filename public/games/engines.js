@@ -152,6 +152,29 @@ export const meteor = {
         g.arc(0, 0, pr, 0, 7);
         g.fill();
         ink(g, 4);
+        // pasovi oblakov, atmosfera (svetel rob proti svetlobi, tanek sij okoli planeta) in senčna stran
+        g.save();
+        g.beginPath();
+        g.arc(0, 0, pr - 2, 0, 7);
+        g.clip();
+        g.fillStyle = "rgba(255,255,255,0.16)";
+        for (const [y, hh] of [[-0.55, 0.16], [-0.12, 0.1], [0.34, 0.2]]) g.fillRect(-pr, y * pr, pr * 2, hh * pr);
+        g.fillStyle = "rgba(20,10,50,0.28)";
+        g.beginPath();
+        g.arc(pr * 0.45, pr * 0.4, pr * 1.05, 0, 7);
+        g.arc(0, 0, pr * 1.2, 0, 7, true);
+        g.fill("evenodd");
+        g.restore();
+        g.lineWidth = 3;
+        g.strokeStyle = "rgba(255,255,255,0.55)";
+        g.beginPath();
+        g.arc(0, 0, pr - 3.5, 3.5, 5.2);
+        g.stroke();
+        g.lineWidth = 7;
+        g.strokeStyle = "rgba(255,255,255,0.1)";
+        g.beginPath();
+        g.arc(0, 0, pr + 5, 0, 7);
+        g.stroke();
         g.beginPath();
         g.ellipse(0, 0, pr * 1.6, pr * 0.35, -0.35, 0.2, Math.PI - 0.2);
         ink(g, 4);
@@ -191,10 +214,21 @@ export const meteor = {
           ink(g, 4);
           g.rotate(r.rot);
           g.fillStyle = "rgba(92,52,22,0.4)";
-          [[-0.4, -0.35, 0.18], [0.35, 0.3, 0.14], [0.3, -0.45, 0.1]].forEach(([cx, cy, cr]) => {
+          // kraterji: temno dno, osvetljen spodnji desni rob (svetloba pada od zgoraj levo), senca pod zgornjim robom
+          [[-0.4, -0.35, 0.18], [0.35, 0.3, 0.14], [0.3, -0.45, 0.1], [-0.15, 0.42, 0.08]].forEach(([cx, cy, cr]) => {
+            g.fillStyle = "rgba(92,52,22,0.45)";
             g.beginPath();
             g.arc(cx * r.r, cy * r.r, cr * r.r, 0, Math.PI * 2);
             g.fill();
+            g.lineWidth = 1.6;
+            g.strokeStyle = "rgba(255,226,190,0.55)";
+            g.beginPath();
+            g.arc(cx * r.r, cy * r.r, cr * r.r, 0.1 - r.rot, 1.9 - r.rot);
+            g.stroke();
+            g.strokeStyle = "rgba(40,20,8,0.5)";
+            g.beginPath();
+            g.arc(cx * r.r, cy * r.r, cr * r.r, 3.3 - r.rot, 5 - r.rot);
+            g.stroke();
           });
           g.rotate(-r.rot);
           g.fillStyle = "#fffbeb";
@@ -377,10 +411,20 @@ export const balloons = {
           g.lineTo(x + 6, b.y + b.r * 1.15 + 6);
           g.lineTo(x, b.y + b.r * 1.1);
           g.fill();
-          g.fillStyle = "rgba(255,255,255,0.55)";
+          g.fillStyle = "rgba(255,255,255,0.6)";
           g.beginPath();
           g.ellipse(x - b.r * 0.4, b.y - b.r * 0.5, b.r * 0.18, b.r * 0.3, -0.5, 0, Math.PI * 2);
           g.fill();
+          // odsev okna spodaj desno in svetlejši rob (svetloba prosojne gume)
+          g.fillStyle = "rgba(255,255,255,0.22)";
+          g.beginPath();
+          g.ellipse(x + b.r * 0.42, b.y + b.r * 0.55, b.r * 0.12, b.r * 0.2, -0.6, 0, Math.PI * 2);
+          g.fill();
+          g.strokeStyle = "rgba(255,255,255,0.35)";
+          g.lineWidth = 2;
+          g.beginPath();
+          g.ellipse(x, b.y, b.r - 4, b.r * 1.15 - 4, 0, 0.3, 1.5);
+          g.stroke();
           if (b.focus) {
             g.strokeStyle = "#1e3a8a";
             g.lineWidth = 3;

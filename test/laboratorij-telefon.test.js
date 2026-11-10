@@ -26,6 +26,7 @@ test("every lab- engine marks itself .lab, and mountSim pins it (lab.js pripni)"
   const idx = fs.readFileSync("public/sim/index.js", "utf8");
   assert.match(idx, /classList\.contains\("lab"\)\) \(await import\("\.\/lab\.js"\)\)\.pripni\(el\)/);
   assert.ok(SL["sim.lab.pin"]);
+  assert.ok(SL["sim.lab.zoom"]);
   for (const f of fs.readdirSync("public/i18n/ui")) assert.ok(JSON.parse(fs.readFileSync(`public/i18n/ui/${f}`, "utf8"))["sim.lab.pin"], `${f}: sim.lab.pin`);
 });
 
@@ -152,6 +153,27 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
     assert.equal(await p.evaluate(() => getComputedStyle(document.querySelector(".demo-stage")).position), "relative");
     await p.locator(".lab-pin").tap();
     assert.equal(await p.evaluate(() => localStorage.getItem("evklid.lab.pripni") + getComputedStyle(document.querySelector(".demo-stage")).position), "1sticky");
+    await ctx.close();
+  });
+
+  await t.test("»Povečaj risbo«: drawing over the whole screen, much taller; same button and Esc close it", async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+    const { p } = await run(ctx, "lab-titracija");
+    const visina = () => p.evaluate(() => Math.round(document.querySelector(".demo-stage .demo-svg").getBoundingClientRect().height));
+    const prej = await visina();
+    await p.locator(".lab-zoom").tap();
+    const odprto = await p.evaluate(() => {
+      const st = document.querySelector(".demo-stage"), r = st.getBoundingClientRect();
+      return { cls: st.classList.contains("lab-povecano"), pritisnjen: document.querySelector(".lab-zoom").getAttribute("aria-pressed"), w: Math.round(r.width), h: Math.round(r.height), top: Math.round(r.top), meriniki: !!st.querySelector(".lab-meters") };
+    });
+    assert.deepEqual(odprto, { cls: true, pritisnjen: "true", w: 360, h: 740, top: 0, meriniki: true });
+    assert.ok((await visina()) >= prej * 1.7, `risba ${prej} → ${await visina()} px`);
+    await p.locator(".lab-zoom").tap();
+    assert.equal(await p.evaluate(() => document.querySelector(".demo-stage").classList.contains("lab-povecano") || document.querySelector(".demo-stage").hasAttribute("popover")), false);
+    assert.equal(await visina(), prej);
+    await p.locator(".lab-zoom").tap();
+    await p.keyboard.press("Escape");
+    assert.equal(await p.evaluate(() => document.querySelector(".demo-stage").classList.contains("lab-povecano")), false);
     await ctx.close();
   });
 

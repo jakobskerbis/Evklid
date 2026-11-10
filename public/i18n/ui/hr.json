@@ -3068,6 +3068,7 @@
   "sim.layers.show": "Prikaži:",
   "sim.layer.grid": "Mreža",
   "sim.lab.pin": "Prikvači sliku",
+  "sim.lab.zoom": "Povećaj sliku",
   "sim.layer.marks": "Oznake",
   "sim.layer.fit": "{name}: pravac",
   "sim.color.accent": "Plava",

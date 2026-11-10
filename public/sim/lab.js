@@ -200,6 +200,36 @@ export function pripni(el) {
   });
   stage.prepend(btn);
   set(pinRead());
+  // »Povečaj risbo«: risba z merilniki čez ves zaslon (vrhnja plast brskalnika), visoka kot zaslon; široko risbo se premika s prstom.
+  // Na telefonu je pripeta risba majhna, steklovina in skale so tako berljive. Esc ali isti gumb zapre.
+  if (typeof stage.showPopover === "function") {
+    const zoom = h("button", { type: "button", class: "lab-zoom", "aria-label": t("sim.lab.zoom"), title: t("sim.lab.zoom"), "aria-pressed": "false", html: icon("maximize-2") });
+    const povecaj = (on) => {
+      if (on === stage.classList.contains("lab-povecano")) return;
+      try {
+        if (on) (stage.setAttribute("popover", "manual"), stage.showPopover());
+        else (stage.hidePopover(), stage.removeAttribute("popover"));
+      } catch {
+        stage.removeAttribute("popover");
+        on = false;
+      }
+      stage.classList.toggle("lab-povecano", on);
+      zoom.setAttribute("aria-pressed", String(on));
+      zoom.innerHTML = icon(on ? "minimize-2" : "maximize-2");
+      if (on) {
+        zoom.focus({ preventScroll: true });
+        stage.scrollLeft = (stage.scrollWidth - stage.clientWidth) / 2; // široka risba: začni na sredini
+      }
+    };
+    zoom.addEventListener("click", () => povecaj(!stage.classList.contains("lab-povecano")));
+    stage.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || !stage.classList.contains("lab-povecano")) return;
+      e.stopPropagation();
+      e.preventDefault();
+      povecaj(false);
+    });
+    btn.after(zoom);
+  }
 
   // Drsni del, v katerem je poskus (pogled aplikacije, stranski stolpec lekcije ali stran sama).
   const scroller = () => {
@@ -233,12 +263,12 @@ export function pripni(el) {
     put(el, "--lab-pin-h", pin && !beside ? `${Math.round(sr.height + 8)}px` : null);
     if (!pin || !svg || !okno) return put(stage, "--lab-risba-h", null);
     const gap = parseFloat(getComputedStyle(stage).top) + (sc ? parseFloat(getComputedStyle(sc).paddingTop) || 0 : 0);
-    // telefon in tablica ~45 %, z miško (npr. stranski stolpec lekcije na računalniku) ~60 %: tam se drsi s kolescem
-    // pokončna risba (titracija: bireta in povečan menisk) je pri isti višini ozka, zato dobi malo več višine (~52 %)
+    // telefon in tablica ~50 % (j, 10. 11. 2026: risba naj bo večja; prej 45 %), z miško (npr. stranski stolpec lekcije na računalniku) ~60 %: tam se drsi s kolescem
+    // pokončna risba (titracija: bireta in povečan menisk) je pri isti višini ozka, zato dobi malo več višine (~58 %)
     const tall = (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1.4) < 0.95;
     // široka risba na širokem zaslonu (zgoraj, merilniki desno od nje): ~45 % vidne višine, ne glede na miško
     const vrh = !beside && el.classList.contains("lab-siroka") && top.clientWidth >= 800;
-    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (vrh || matchMedia("(pointer: coarse)").matches ? (tall ? 0.52 : 0.45) : 0.6);
+    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (vrh || matchMedia("(pointer: coarse)").matches ? (tall ? 0.58 : 0.5) : 0.6);
     // ob merilnikih je višina pripetega dela višina risbe in odmikov (merilniki ne štejejo, sicer bi se risba zibala)
     const rest = vrh ? 18 : sr.height - svg.getBoundingClientRect().height;
     put(stage, "--lab-risba-h", `${Math.round(Math.max(beside ? 100 : 110, total - rest))}px`);

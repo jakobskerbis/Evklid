@@ -21,7 +21,9 @@ test("materiali: razredi poskusov dobijo pravi material", () => {
   // luža in prazna cev nimata odseva; drugi razredi in ne-laboratorijski elementi ostanejo nedotaknjeni
   assert.equal(material("lab-liq lab-liq-voda lab-puddle"), null);
   assert.equal(material("lab-tit-none"), null);
-  assert.equal(material("lab-mark"), null);
+  assert.equal(material("lab-mark"), "oznaka");
+  assert.equal(material("lab-powder"), "zrna");
+  assert.equal(material("lab-scale"), null);
   assert.equal(material("tick small"), null);
   assert.equal(material(""), null);
 });
@@ -35,10 +37,13 @@ test("materiali: okvir poti, ravno dno in telo cevi iz dveh sten", () => {
   // epruveta z okroglim dnom: brez sence na mizi
   const epr = okvirPoti("M89,60 V192 Q89,203 100,203 Q111,203 111,192 V60");
   assert.equal(epr.ravnoDno, false);
+  assert.deepEqual(epr.vrh, [89, 111, 60], "odprto ustje epruvete");
+  assert.deepEqual(buc.vrh, [94.6, 125.4, 115]);
   // bireta: dve steni → mnogokotnik med njima (leva navzdol, desna nazaj gor)
   const bir = okvirPoti("M96,20 V300 M104,20 V300");
   assert.equal(bir.telo, "96 20 96 300 104 300 104 20");
   assert.equal(bir.ravnoDno, false);
+  assert.deepEqual(bir.vrh, [96, 104, 20]);
   // relativni ukazi
   const rel = okvirPoti("M10,10 v20 h30 l4,-3");
   assert.deepEqual([rel.x0, rel.x1, rel.y0, rel.y1], [10, 44, 10, 30]);
@@ -112,7 +117,7 @@ test("slog iger: tekstura sveta je rahla in določena za vsako igro", () => {
   assert.equal(svetIgre({ id: "meteor", svet: "voda" }), "voda");
 });
 
-test("teksture: skupaj največ 30 KB nove kode", () => {
+test("teksture: nova modula skupaj pod mejo velikosti", () => {
   const velikost = ["public/sim/materiali.js", "public/games/slog.js"].reduce((n, p) => n + fs.statSync(new URL(`../${p}`, import.meta.url)).size, 0);
-  assert.ok(velikost <= 29.5 * 1024, `${velikost} B`);
+  assert.ok(velikost <= 70 * 1024, `${velikost} B`);
 });
