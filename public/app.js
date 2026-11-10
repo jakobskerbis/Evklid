@@ -1316,13 +1316,13 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
-    userEl = addMessage("user", text, !!image);
     const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
+    userEl = addMessage("user", text, !!image);
     if (fromInput) {
-      state.dictated = false;
       $("#input").value = "";
       autoGrow();
       clearImage();
+      state.dictated = false;
     }
 
     bubble = addMessage("assistant", "");
