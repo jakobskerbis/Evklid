@@ -44,9 +44,11 @@ test("oznake razdelka imajo prednost; brez njih velja slovar predmeta lista, ne 
   const tex = "(a + b) + c = a + (b + c)";
   const withGlossary = withFormulaSubject("MAT", () => symbolsIn(tex), [{ keys: ["a", "b", "c"], tex: ["a", "b", "c"], n: "poljubna števila", r: "", u: "", note: "" }]);
   assert.ok(withGlossary.every(([, subj]) => subj[0] === "@"));
-  // Brez oznak: matematika nima pomena za c zunaj kvadratne enačbe, fizika bi rekla »hitrost svetlobe«.
+  // Brez oznak: matematika nima pomena za c zunaj kvadratne enačbe.
   assert.deepEqual(symbolsIn(tex, "MAT"), []);
-  assert.ok(symbolsIn(tex, "FIZ").some(([k]) => k === "c"));
+  // Tudi fizika tu nima pomena (pregled 463 §4); c = λν pa je hitrost svetlobe.
+  assert.deepEqual(symbolsIn(tex, "FIZ"), []);
+  assert.ok(symbolsIn("c = \\lambda \\nu", "FIZ").some(([k]) => k === "c"));
 });
 
 test("vsi listi s formulami: vsaka črka ima vrstico v svojem razdelku, brez tujih pomenov", () => {

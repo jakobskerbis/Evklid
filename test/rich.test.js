@@ -5,7 +5,7 @@ import { marked } from "marked";
 import katex from "katex";
 import { createRenderer, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
 import { nextChunk } from "../public/pace.js";
-import { annotateTex } from "../public/formula-data.js";
+import { annotateTex, withFormulaSubject } from "../public/formula-data.js";
 
 const { renderRich } = createRenderer({ marked, katex, sanitize: (h) => h });
 
@@ -174,7 +174,14 @@ test("klikljive formule: \\log_a, \\vec F, \\frac1e se izrišejo brez rdeče nap
   for (const tex of ["\\log_a x^n = n \\log_a x", "\\ln x = \\log_e x", "\\vec F = m \\vec a", "\\bar v \\cdot t", "\\frac1e", "\\int_a^b f(x)\\,dx"]) {
     const html = r.renderMath(tex, false);
     assert.doesNotMatch(html, /katex-error/, tex);
-    if (/log_a/.test(tex)) assert.match(html, /data-fx=/, "simbol ostane klikljiv");
+    // a v \log_a ni »vodilni koeficient« (pregled 463-2); z oznako lekcije (osnova) je klikljiv brez napake.
+    if (/log_a/.test(tex)) {
+      const g = [{ keys: ["a"], tex: ["a"], n: "osnova logaritma", r: "", u: "", note: "" }];
+      const r2 = createRenderer({ marked, katex, sanitize: (h) => h, annotate: (t2, o) => annotateTex(t2, undefined, o) });
+      const lab = withFormulaSubject("MAT", () => r2.renderMath(tex, false), g);
+      assert.doesNotMatch(lab, /katex-error/, tex);
+      assert.match(lab, /data-fx=/, "simbol ostane klikljiv");
+    }
   }
 });
 
