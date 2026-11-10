@@ -87,7 +87,8 @@ async function internalLinks(doc, maxPage) {
 const READ_DOM = () => {
   const text = (el) => {
     const c = el.cloneNode(true);
-    c.querySelectorAll(".katex, .katex-display").forEach((k) => k.replaceWith(" "));
+    // Opis risbe (<title> v SVG) bere bralnik zaslona, v PDF se ne izpiše.
+    c.querySelectorAll(".katex, .katex-display, svg title").forEach((k) => k.replaceWith(" "));
     return c.textContent.replace(/\s+/g, " ").trim();
   };
   // Neizrisan Markdown (tabela, krepko, ograja bloka) zunaj skic <pre> in formul.

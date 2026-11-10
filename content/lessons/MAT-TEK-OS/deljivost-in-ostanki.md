@@ -15,10 +15,17 @@ Takšne bližnjice so jedro mnogih tekmovalnih nalog. Ugotoviti moraš, ali je o
 
 **Kovanci v zavitkih.** Blagajničarka ima $23$ kovancev po $1$ € in jih zlaga v zavitke po $5$. Na številski premici korakamo po pet:
 
-```
-0 ---- 5 ---- 10 ---- 15 ---- 20 --|-- 25
-                                   23
-```
+:::risba premica
+opis: Številska premica od 0 do 25. Štirje loki so koraki po pet: od 0 do 5, do 10, do 15 in do 20. Točka 23 leži 3 desno od 20.
+od: 0
+do: 25
+oznake: 5
+skok: 0 -> 5 | 5
+skok: 5 -> 10 | 5
+skok: 10 -> 15 | 5
+skok: 15 -> 20 | 5
+točka: 23 | 23 | oranžna
+:::
 
 Polnih zavitkov je $4$, od $20$ do $23$ pa ostanejo še $3$ kovanci. Zapišemo $23 = 4 \cdot 5 + 3$. Število $5$ je **delitelj**, $4$ je **količnik**, $3$ pa **ostanek**. Ostanek je vedno manjši od delitelja: če bi ostalo $5$ ali več kovancev, bi napolnili še en zavitek.
 

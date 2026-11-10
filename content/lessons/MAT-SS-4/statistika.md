@@ -49,11 +49,47 @@ Količini $\sigma^2$ rečemo **varianca**. Večji $\sigma$ pomeni bolj razpršen
 
 **Škatla z brki** te podatke nariše na številsko premico:
 
-```
- 20   30  40   60                        400
-  |---[====|====]-------- ... -----------|
- min  Q1  Me   Q3                        max
-```
+:::risba skica
+opis: Škatla z brki nad številsko premico. Levi brk se začne pri najmanjši vrednosti 20, škatla sega od prvega kvartila 30 do tretjega kvartila 60, mediana 40 je črta v škatli, desni brk sega do največje vrednosti 400. Premica je med 70 in 400 prekinjena.
+območje: 0; -0,9 .. 9; 2,4
+črta: 0,3; 0 -> 6,65; 0
+črta: 6,6; -0,2 -> 6,8; 0,2
+črta: 6,9; -0,2 -> 7,1; 0,2
+črta: 6,85; 0 -> 8,8; 0 | puščica
+črta: 0,5; -0,1 -> 0,5; 0,1
+črta: 1,5; -0,1 -> 1,5; 0,1
+črta: 2,5; -0,1 -> 2,5; 0,1
+črta: 3,5; -0,1 -> 3,5; 0,1
+črta: 4,5; -0,1 -> 4,5; 0,1
+črta: 5,5; -0,1 -> 5,5; 0,1
+črta: 6,5; -0,1 -> 6,5; 0,1
+črta: 8,3; -0,1 -> 8,3; 0,1
+napis: 1,5; -0,1 | 20 | pod
+napis: 2,5; -0,1 | 30 | pod
+napis: 3,5; -0,1 | 40 | pod
+napis: 5,5; -0,1 | 60 | pod
+napis: 8,3; -0,1 | 400 | pod
+črta: 1,5; 0 -> 1,5; 0,85 | siva črtkano
+črta: 2,5; 0 -> 2,5; 0,6 | siva črtkano
+črta: 3,5; 0 -> 3,5; 0,6 | siva črtkano
+črta: 5,5; 0 -> 5,5; 0,6 | siva črtkano
+črta: 8,3; 0 -> 8,3; 0,85 | siva črtkano
+pravokotnik: 2,5; 0,6 .. 5,5; 1,6
+črta: 3,5; 0,6 -> 3,5; 1,6 | debelo
+črta: 1,5; 1,1 -> 2,5; 1,1
+črta: 5,5; 1,1 -> 6,65; 1,1
+črta: 6,6; 0,9 -> 6,8; 1,3
+črta: 6,9; 0,9 -> 7,1; 1,3
+črta: 6,85; 1,1 -> 8,3; 1,1
+črta: 1,5; 0,85 -> 1,5; 1,35
+črta: 8,3; 0,85 -> 8,3; 1,35
+napis: 1,5; 1,35 | min | nad
+napis: 2,5; 1,6 | Q_1 | nad
+napis: 3,5; 1,6 | Me | nad
+napis: 5,5; 1,6 | Q_3 | nad
+napis: 8,3; 1,35 | max | nad
+podnapis: Premica je med 70 in 400 prekinjena.
+:::
 
 V škatli je srednja polovica podatkov. Njena širina $Q_3 - Q_1 = 30$ je **medkvartilni razmik**. Podatek, ki je od škatle oddaljen več kot $1{,}5$ te širine (tu nad $60 + 45 = 105$), označimo kot **osamelec**. Igralec s $400$ minutami je osamelec.
 
@@ -204,15 +240,14 @@ $\Phi(2) - \Phi(-1) = 0{,}4772 + 0{,}3413 = 0{,}8185$, torej približno $82\,\%$
 
 Nariši zvonasto krivuljo in pod njo navpične črte pri $\mu$, $\mu \pm \sigma$, $\mu \pm 2\sigma$. Ploščino razdeli na pasove:
 
-```
-pas            delež
-pod -2σ        2,3 %
--2σ do -σ     13,6 %
--σ do μ       34,1 %
-μ do +σ       34,1 %
-+σ do +2σ     13,6 %
-nad +2σ        2,3 %
-```
+| Pas | Delež |
+|---|---|
+| pod $\mu - 2\sigma$ | $2{,}3\,\%$ |
+| $\mu - 2\sigma$ do $\mu - \sigma$ | $13{,}6\,\%$ |
+| $\mu - \sigma$ do $\mu$ | $34{,}1\,\%$ |
+| $\mu$ do $\mu + \sigma$ | $34{,}1\,\%$ |
+| $\mu + \sigma$ do $\mu + 2\sigma$ | $13{,}6\,\%$ |
+| nad $\mu + 2\sigma$ | $2{,}3\,\%$ |
 
 Med $\mu$ in $\mu + \sigma$ je $34{,}1\,\%$, med $\mu + \sigma$ in $\mu + 2\sigma$ še $13{,}6\,\%$, naprej le še $2{,}3\,\%$. Vsaka naloga z normalno porazdelitvijo je vprašanje, kateri pas pobarvati. $\Phi(z)$ je vedno pas od sredine do $z$; od tam dodaš ali odvzameš polovico ($0{,}5$).
 

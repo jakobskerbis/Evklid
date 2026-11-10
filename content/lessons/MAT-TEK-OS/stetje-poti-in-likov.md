@@ -33,13 +33,62 @@ $\binom{4}{2} = 6$: DDGG, DGDG, DGGD, GDDG, GDGD, GGDD. Množenje $2 \cdot 2 = 4
 
 **3. Slika s števili v vozliščih.** Križišču hodnikov recimo vozlišče. Vanj vpišemo, koliko najkrajših poti vodi do njega iz lekarne A. V vozlišče pridemo z zadnjim korakom bodisi z leve bodisi od spodaj. Ti dve skupini poti se ne prekrivata, zato po pravilu vsote seštejemo število levo in število spodaj. Na spodnjem in levem robu je povsod $1$, saj tja vodi ena sama ravna pot. Za Ninino mrežo (A spodaj levo, oddelek B zgoraj desno):
 
-```
-1   4  10  20  35  ← B
-1   3   6  10  15
-1   2   3   4   5
-1   1   1   1   1
-↑ A
-```
+:::risba skica
+opis: Mreža 4 krat 3. V vsakem vozlišču je število najkrajših poti iz A spodaj levo. Po vrstah od spodaj: 1, 1, 1, 1, 1; 1, 2, 3, 4, 5; 1, 3, 6, 10, 15; 1, 4, 10, 20, 35. V B zgoraj desno je 35.
+območje: -0,8; -0,5 .. 4,8; 3,5
+enota: 54
+črta: 0; 0 -> 4; 0 | siva
+črta: 0; 1 -> 4; 1 | siva
+črta: 0; 2 -> 4; 2 | siva
+črta: 0; 3 -> 4; 3 | siva
+črta: 0; 0 -> 0; 3 | siva
+črta: 1; 0 -> 1; 3 | siva
+črta: 2; 0 -> 2; 3 | siva
+črta: 3; 0 -> 3; 3 | siva
+črta: 4; 0 -> 4; 3 | siva
+krog: 0; 3 | 0,28 | ozadje
+napis: 0; 3 | 1 | sredina
+krog: 1; 3 | 0,28 | ozadje
+napis: 1; 3 | 4 | sredina
+krog: 2; 3 | 0,28 | ozadje
+napis: 2; 3 | 10 | sredina
+krog: 3; 3 | 0,28 | ozadje
+napis: 3; 3 | 20 | sredina
+krog: 4; 3 | 0,28 | ozadje
+napis: 4; 3 | 35 | sredina | debelo
+krog: 0; 2 | 0,28 | ozadje
+napis: 0; 2 | 1 | sredina
+krog: 1; 2 | 0,28 | ozadje
+napis: 1; 2 | 3 | sredina
+krog: 2; 2 | 0,28 | ozadje
+napis: 2; 2 | 6 | sredina
+krog: 3; 2 | 0,28 | ozadje
+napis: 3; 2 | 10 | sredina
+krog: 4; 2 | 0,28 | ozadje
+napis: 4; 2 | 15 | sredina
+krog: 0; 1 | 0,28 | ozadje
+napis: 0; 1 | 1 | sredina
+krog: 1; 1 | 0,28 | ozadje
+napis: 1; 1 | 2 | sredina
+krog: 2; 1 | 0,28 | ozadje
+napis: 2; 1 | 3 | sredina
+krog: 3; 1 | 0,28 | ozadje
+napis: 3; 1 | 4 | sredina
+krog: 4; 1 | 0,28 | ozadje
+napis: 4; 1 | 5 | sredina
+krog: 0; 0 | 0,28 | ozadje
+napis: 0; 0 | 1 | sredina
+krog: 1; 0 | 0,28 | ozadje
+napis: 1; 0 | 1 | sredina
+krog: 2; 0 | 0,28 | ozadje
+napis: 2; 0 | 1 | sredina
+krog: 3; 0 | 0,28 | ozadje
+napis: 3; 0 | 1 | sredina
+krog: 4; 0 | 0,28 | ozadje
+napis: 4; 0 | 1 | sredina
+napis: -0,35; 0 | A | levo | modra debelo
+napis: 4,35; 3 | B | desno | modra debelo
+:::
 
 Če je kakšno vozlišče zaprto, vanj vpišemo $0$ in seštevamo naprej.
 
@@ -105,13 +154,63 @@ $N = \binom{m+n}{n} - N_{A \to X} \cdot N_{X \to B}$
 5. Mimo X: $35 - 18 = 17$ poti.
 6. Preizkus s števili v vozliščih, kjer X dobi $0$:
 
-```
-1   4   7  11  17  ← B
-1   3   3   4   6
-1   2   0   1   2
-1   1   1   1   1
-↑ A
-```
+:::risba skica
+opis: Mreža 4 krat 3 z zaprtim vozliščem X (vpisana 0). V vsakem vozlišču je število najkrajših poti iz A spodaj levo. Po vrstah od spodaj: 1, 1, 1, 1, 1; 1, 2, 0, 1, 2; 1, 3, 3, 4, 6; 1, 4, 7, 11, 17. V B zgoraj desno je 17.
+območje: -0,8; -0,5 .. 4,8; 3,5
+enota: 54
+črta: 0; 0 -> 4; 0 | siva
+črta: 0; 1 -> 4; 1 | siva
+črta: 0; 2 -> 4; 2 | siva
+črta: 0; 3 -> 4; 3 | siva
+črta: 0; 0 -> 0; 3 | siva
+črta: 1; 0 -> 1; 3 | siva
+črta: 2; 0 -> 2; 3 | siva
+črta: 3; 0 -> 3; 3 | siva
+črta: 4; 0 -> 4; 3 | siva
+krog: 0; 3 | 0,28 | ozadje
+napis: 0; 3 | 1 | sredina
+krog: 1; 3 | 0,28 | ozadje
+napis: 1; 3 | 4 | sredina
+krog: 2; 3 | 0,28 | ozadje
+napis: 2; 3 | 7 | sredina
+krog: 3; 3 | 0,28 | ozadje
+napis: 3; 3 | 11 | sredina
+krog: 4; 3 | 0,28 | ozadje
+napis: 4; 3 | 17 | sredina | debelo
+krog: 0; 2 | 0,28 | ozadje
+napis: 0; 2 | 1 | sredina
+krog: 1; 2 | 0,28 | ozadje
+napis: 1; 2 | 3 | sredina
+krog: 2; 2 | 0,28 | ozadje
+napis: 2; 2 | 3 | sredina
+krog: 3; 2 | 0,28 | ozadje
+napis: 3; 2 | 4 | sredina
+krog: 4; 2 | 0,28 | ozadje
+napis: 4; 2 | 6 | sredina
+krog: 0; 1 | 0,28 | ozadje
+napis: 0; 1 | 1 | sredina
+krog: 1; 1 | 0,28 | ozadje
+napis: 1; 1 | 2 | sredina
+krog: 2; 1 | 0,28 | ozadje
+napis: 2; 1 | 0 | sredina | rdeča debelo
+krog: 3; 1 | 0,28 | ozadje
+napis: 3; 1 | 1 | sredina
+krog: 4; 1 | 0,28 | ozadje
+napis: 4; 1 | 2 | sredina
+krog: 0; 0 | 0,28 | ozadje
+napis: 0; 0 | 1 | sredina
+krog: 1; 0 | 0,28 | ozadje
+napis: 1; 0 | 1 | sredina
+krog: 2; 0 | 0,28 | ozadje
+napis: 2; 0 | 1 | sredina
+krog: 3; 0 | 0,28 | ozadje
+napis: 3; 0 | 1 | sredina
+krog: 4; 0 | 0,28 | ozadje
+napis: 4; 0 | 1 | sredina
+napis: -0,35; 0 | A | levo | modra debelo
+napis: 4,35; 3 | B | desno | modra debelo
+napis: 2,22; 0,78 | X | pod desno | rdeča
+:::
 
 7. Odgovor: robotu ostane $17$ najkrajših poti.
 

@@ -56,11 +56,17 @@ Splošno pravilo za naravni števili:
 
 **Zaokroževanje.** Avto stane $23\,680$ €. Prodajalec reče, da stane »približno $24\,000$ €«. Število je zaokrožil na **tisočice**. Na številski premici leži $23\,680$ med $23\,000$ in $24\,000$:
 
-```
-23 000 ------------ 23 500 ------------ 24 000
-                         ^      * 23 680
-                       sredina
-```
+:::risba premica
+opis: Številska premica od 23 000 do 24 000 s črtico na vsakih 100. Sredina je 23 500. Število 23 680 leži desno od sredine, bližje 24 000.
+od: 23000
+do: 24000
+korak: 100
+oznake: ne
+oznaka: 23000 | 23 000
+oznaka: 23500 | 23 500 (sredina)
+oznaka: 24000 | 24 000
+točka: 23680 | 23 680 | oranžna
+:::
 
 Število je desno od sredine, zato je bližje $24\,000$. Zapišemo $23\,680 \approx 24\,000$. Znak $\approx$ pomeni »približno enako«.
 

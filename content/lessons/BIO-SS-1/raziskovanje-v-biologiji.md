@@ -41,13 +41,16 @@ Nič zanesljivega. Hkrati sta se spremenila premaz in vlaga, zato ne vemo, kaj j
 | laneno olje | 30, 40, 35 | 35 |
 | premaz proti plesni | 10, 15, 20 | 15 |
 
-**Povprečje** je vsota meritev, deljena s številom meritev. Za kontrolo: $60 + 70 + 65 = 195$ in $195 : 3 = 65$. Na graf damo neodvisno spremenljivko na vodoravno os, odvisno na navpično. Ker so premazi kategorije brez vmesnih vrednosti, narišemo **stolpčni graf**. Spodaj je zaradi ozkega zaslona obrnjen: stolpci ležijo vodoravno.
+**Povprečje** je vsota meritev, deljena s številom meritev. Za kontrolo: $60 + 70 + 65 = 195$ in $195 : 3 = 65$. Na graf damo neodvisno spremenljivko na vodoravno os, odvisno na navpično. Ker so premazi kategorije brez vmesnih vrednosti, narišemo **stolpčni graf**.
 
-```
-brez premaza  █████████████  65 %
-laneno olje   ███████        35 %
-premaz        ███            15 %
-```
+:::risba stolpci
+opis: Stolpčni graf povprečnega deleža plesni na deščicah: brez premaza (kontrola) 65 %, z lanenim oljem 35 %, s premazom proti plesni 15 %.
+os: plesen [%]
+korak: 10
+stolpec: brez premaza | 65
+stolpec: laneno olje | 35
+stolpec: premaz | 15
+:::
 
 Če je neodvisna spremenljivka število, na primer temperatura, točke povežemo v **črtni graf**, saj obstajajo tudi vmesne vrednosti.
 
@@ -168,11 +171,31 @@ $h = \dfrac{3{,}0 + 4{,}5}{2} = 3{,}75\,\text{cm}$, zaokroženo približno $3{,}
 
 Postavitev poskusa z deščicami, gledano od zgoraj. Vse stojijo na isti polici v isti kleti:
 
-```
-  K   K   K     ← brez premaza (kontrola)
-  O   O   O     ← laneno olje
-  P   P   P     ← premaz proti plesni
-```
+:::risba skica
+opis: Devet deščic, gledano od zgoraj, v treh vrsticah po tri. Prva vrstica K je brez premaza (kontrola), druga O z lanenim oljem, tretja P s premazom proti plesni.
+območje: 0; 0 .. 10; 3,2
+pravokotnik: 0,3; 2,25 .. 1,1; 2,95 | siva
+pravokotnik: 1,4; 2,25 .. 2,2; 2,95 | siva
+pravokotnik: 2,5; 2,25 .. 3,3; 2,95 | siva
+pravokotnik: 0,3; 1,25 .. 1,1; 1,95 | oranžna
+pravokotnik: 1,4; 1,25 .. 2,2; 1,95 | oranžna
+pravokotnik: 2,5; 1,25 .. 3,3; 1,95 | oranžna
+pravokotnik: 0,3; 0,25 .. 1,1; 0,95 | zelena
+pravokotnik: 1,4; 0,25 .. 2,2; 0,95 | zelena
+pravokotnik: 2,5; 0,25 .. 3,3; 0,95 | zelena
+napis: 0,7; 2,6 | K
+napis: 1,8; 2,6 | K
+napis: 2,9; 2,6 | K
+napis: 0,7; 1,6 | O
+napis: 1,8; 1,6 | O
+napis: 2,9; 1,6 | O
+napis: 0,7; 0,6 | P
+napis: 1,8; 0,6 | P
+napis: 2,9; 0,6 | P
+napis: 3,6; 2,6 | brez premaza (kontrola) | desno
+napis: 3,6; 1,6 | laneno olje | desno
+napis: 3,6; 0,6 | premaz proti plesni | desno
+:::
 
 Vsaka vrstica je ena vrednost neodvisne spremenljivke. Trije stolpci so ponovitve. Polica, klet, vlaga in čas so za vse enaki.
 

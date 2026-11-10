@@ -172,13 +172,28 @@ Počasnejši, ker je dlje od središča Zemlje. $v = \sqrt{1{,}50 \cdot 10^7}\,\
 
 Predstavljaj si pleskarja, ki z barvno pištolo razprši stalno količino barve. Blizu pištole barva prekrije majhno ploskev z debelo plastjo. Dvakrat dlje se ista barva razporedi na ploskev, ki je dvakrat širša in dvakrat višja, torej štirikrat večja. Plast je štirikrat tanjša. Gravitacija Zemlje se »razporeja« podobno, na krogle okoli Zemlje, zato pada s kvadratom razdalje.
 
-Številska premica prikazuje težni pospešek v odvisnosti od razdalje od središča Zemlje:
+Graf prikazuje težni pospešek v odvisnosti od razdalje od središča Zemlje:
 
-```
-r:   R_Z     2 R_Z    3 R_Z    4 R_Z
-     |-------|--------|--------|
-g:   9,81    2,45     1,09     0,61   (m/s²)
-```
+:::risba graf
+opis: Graf težnega pospeška g v odvisnosti od razdalje r od središča Zemlje, merjene v polmerih Zemlje. Pri enem polmeru je g 9,81 m/s², pri dveh 2,45, pri treh 1,09, pri štirih 0,61 m/s². Krivulja pada vedno počasneje in ne doseže nič.
+x: 0 .. 4,5 | 1 | r
+y: 0 .. 10 | 2 | g [m/s^2]
+oznake: ne
+oznakax: 1 | R_Z
+oznakax: 2 | 2R_Z
+oznakax: 3 | 3R_Z
+oznakax: 4 | 4R_Z
+oznakay: 2 | 2
+oznakay: 4 | 4
+oznakay: 6 | 6
+oznakay: 8 | 8
+oznakay: 10 | 10
+f: 9.81/x^2 | modra | 1 .. 4,5
+točka: 1; 9,81 | 9,81 | desno
+točka: 2; 2,45 | 2,45 | nad desno
+točka: 3; 1,09 | 1,09 | nad desno
+točka: 4; 0,61 | 0,61 | nad
+:::
 
 Vsak naslednji padec $g$ je manjši od prejšnjega: krivulja se hitro položi, a nikoli ne pade na nič.
 

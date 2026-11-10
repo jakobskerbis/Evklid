@@ -176,3 +176,11 @@ test("iskanje in branje na glas uporabljata opis, ne surovega bloka", async () =
   const govor = fs.readFileSync(path.join(import.meta.dirname, "..", "server", "govor.js"), "utf8");
   assert.match(govor, /import \{ DRAW_RE/);
 });
+
+test("check-lesson: vrstice risbe ne štejejo med besede lekcije", () => {
+  const besedilo = Array.from({ length: 100 }, (_, i) => `beseda${i}`).join(" ");
+  const tocke = Array.from({ length: 300 }, (_, i) => `točka: ${(i / 100).toFixed(2).replace(".", ",")} | t ${i} | modra`).join("\n");
+  const src = `${besedilo}\n\n${blok("premica", `${OPIS}\nod: 0\ndo: 3\n${tocke}`)}\n\nKonec.\n`;
+  const m = checkLessonSource(src, "x").warnings.join(" | ").match(/kratka \((\d+) besed/);
+  assert.ok(m && +m[1] < 120, `štetje besed: ${m?.[1]}`);
+});

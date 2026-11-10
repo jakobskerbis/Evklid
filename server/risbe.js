@@ -351,7 +351,7 @@ function graf(b) {
   }
   for (const t of b.all("oznakax")) marks += tx(num(fields(t)[0], "oznakax"), fields(t)[1] ?? "");
   for (const t of b.all("oznakay")) marks += ty(num(fields(t)[0], "oznakay"), fields(t)[1] ?? "");
-  const axes = `${arrow(L, y0, L + pw + 14, y0, style())}${arrow(x0, T + ph, x0, T - 14, style())}${text(L + pw + 14, y0 - 8, x.name, { cls: "rs-it" })}${text(x0 + 8, T - 8, y.name, { a: "start", cls: "rs-it" })}`;
+  const axes = `${arrow(L, y0, L + pw + 14, y0, style())}${arrow(x0, T + ph, x0, T - 14, style())}${text(W - 2, y0 - 8, x.name, { a: "end", cls: "rs-it" })}${text(x0 + 8, T - 8, y.name, { a: "start", cls: "rs-it" })}`;
   let curves = "";
   for (const t of b.all("f")) {
     const f = fields(t);
