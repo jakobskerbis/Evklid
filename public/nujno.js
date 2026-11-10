@@ -450,7 +450,8 @@ const SOLA = new RegExp(
     `(?:${SOLA_SEP}(?!(?:in|pa|ampak|vendar|toda) )[^ .,]+)*?${SOLA_SEP}(?:pozar|zastrup|nezavest|srcn\\S* napad|otrov)`,
 );
 // Ura (»20:30«) ni rezultat igre (IGRA »\d+ \d+«): postane »20h30«.
-const stavki = (text) => normalize(String(text || "").replace(/(?<![\d:])([01]?\d|2[0-4]):([0-5]\d)(?![\d:])/g, "$1h$2").replace(/[?!;\n]+|(?<!\d):|:(?!\d)/g, ". "));
+// Pika brez presledka med črkama (»šlata.Boli«) je tudi meja stavka.
+const stavki = (text) => normalize(String(text || "").replace(/(?<=\p{L})\.(?=\p{L})/gu, ". ").replace(/(?<![\d:])([01]?\d|2[0-4]):([0-5]\d)(?![\d:])/g, "$1h$2").replace(/[?!;\n]+|(?<!\d):|:(?!\d)/g, ". "));
 // Pretiravanje v prihodnjiku (»zadušil se bom v teh domačih nalogah«, »od smeha«): izraz se pred iskanjem znakov izpusti,
 // razen če sporočilo omenja še kaj nevarnega (dim, plin, astma, dihanje, ogenj, ubi-). Preteklik in sedanjik
 // (»zadušil se je«, »se duši«) ostaneta močna znaka.
@@ -490,7 +491,10 @@ const ujame = (r, n) =>
 const KONEC = "(?=[,.]|$| ker | ce | ko | sam\\S* | sebi| hudega| slabega| pa ne | in ne )";
 const ZIVAL = "mack\\S*|muc\\S*|pes|psa|psic\\S*|kuza\\S*|fizioterapevt\\S*|masaz\\S*";
 const OGENJ = "film\\S*|igri|igric\\S*|igra|igro|serij\\S*";
-const BOLEZEN = "boli\\S*|bolel\\S*|bolec\\S*|vrocin\\S*|vrocic\\S*|slepic\\S*|pregled\\S*|temperatur\\S*";
+// Zahteva po molku ali intimen del telesa kjerkoli v sporočilu: izjema za bolezen ne velja (pregled kroga 2, #561).
+const MOLK =
+  "(?:naj|da) (?:nikomur|nikomer|ne) (?:\\S+ )?pov|ne (?:smem|smes) (?:\\S+ )?pov|ne povej|skrivnost|med nog|tam spodaj|mednozj|spolovil|(?:^| )(?:rit|joske|prsi\\S*|lulek|pipi)(?=[ ,.]|$)";
+const BOLEZEN = "boli\\S*|bolel\\S*|bolec\\S*|vrocin\\S*|vrocic\\S*|slepic\\S*|temperatur\\S*";
 const KNJIGA = "knjig\\S*|zgodb\\S*|film\\S*|roman\\S*|domac\\S* bran\\S*|opis\\S*|junak\\S*|pisatelj\\S*|cankar\\S*|pravljic\\S*|serij\\S*";
 const IGRA_EN = "chess|scrabble|game\\S*|race|fifa|mario\\S*|tennis|match|score\\S*|monopoly|cards|uno";
 const IGRA = "dez|vrocina|veter|toca|sonce|mraz|minecraft\\S*|fortnit\\S*|roblox\\S*|igric\\S*|igri|igro|igra|level\\S*|las|lase|lasmi|frizur\\S*|sah\\S*|kosark\\S*|nogomet\\S*|rokomet\\S*|odbojk\\S*|tekm\\S*|lig[aeio]|rezultat\\S*|srce|olimpij\\S*|\\d+ \\d+";
@@ -583,6 +587,7 @@ const IZRAZI = {
     R(`me (?:\\S+ ){0,2}(?:otipava\\S*|otipaval\\S*)(?=[ ,.]|$)`),
     // šlatanje, prijemanje (varovalka: žival; znak bolezni v istem stavku, j 10. 11.: »zdravnik me je šlatal, ker me je bolel slepič«)
     RB(`${ZIVAL}|${BOLEZEN}`, `me (?:\\S+ ){0,2}(?:slata\\S*|slatal\\S*)(?=[ ,.]|$)`),
+    R(`(?=.*(?:${MOLK}))(?:.* )?me (?:\\S+ ){0,2}(?:slata\\S*|slatal\\S*)(?=[ ,.]|$)`),
     R(`(?:prijel\\S*|prijemal\\S*|zgrabil\\S*|prime|prijema) me (?:je )?(?:\\S+ )?za (?:rit|zadnjico|joske|mednozje)(?=[ ,.]|$)`),
     R(`me (?:je )?(?:prijel\\S*|prijemal\\S*|zgrabil\\S*|prime|prijema) (?:\\S+ )?za (?:rit|zadnjico|joske|mednozje)(?=[ ,.]|$)`),
     RB(IGRA, `(?:jo|ga|ju|jih|nas) (?:zdajle|zdej|zdele|ravnokar|pravkar|trenutno) (?:tepe|pretepa|tepejo|pretepajo)(?=[ ,.]|$)`),
@@ -593,6 +598,7 @@ const IZRAZI = {
     RB(KNJIGA, `(?:${OS}|ata|foter|fotr\\S*|ocim\\S*) (?:je |bo )?(?:\\S+ )?(?:pijan\\S*|pjan\\S*)(?: \\S+){0,3} (?:razbija\\S*|tepe|krici|se dere|grozi|nori|mlati|tolce)(?=[ ,.]|$)`),
     // (pregled A po #561) »jo je ati udaru«, »mamo vrgel ob tla«, »jo sili spat z njim«, »če povem komu … bo hudo«
     RB(IGRA, `(?:jo|ga|mamo|mami|mater|brata|bratca|sestro|sestrico) (?:je )?(?:\\S+ )?(?:udaru|udaril\\S*|pretepu|pretepel\\S*|(?:vrgel|vrgu|vrgla) ob (?:tla|steno|zid))(?=[ ,.]|$)`),
+    RB(IGRA, `(?:udaru|udaril\\S*|pretepu|pretepel\\S*) (?:\\S+ )?(?:mamo|mami|mater|brata|bratca|sestro|sestrico)(?=[ ,.]|$)`),
     R(`(?:me|jo|ga) (?:\\S+ )?sil[ie]\\S* (?:\\S+ )?(?:spat z|v sex|v seks|seks|da (?:spi|spim) z)`),
     R(`(?:ce|ako) (?:povem|poves|pove) (?:komu|komurkoli|nekomu|starsem|mami|atiju)\\S*(?: \\S+){0,6} (?:bo hudo|bo konec|me bo|te bo|bos videl\\S*|bos obzaloval\\S*)`),
     R(`(?:bojim se|strah me je|ne upam si?|ne upam) (?:\\S+ )?(?:it|iti|ici|prit|priti) (?:domov|kuci|home)(?=[ ,.]|$)`),
