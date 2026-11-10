@@ -118,7 +118,7 @@ test("varnostne glave: CSP, HSTS samo prek https, no-store za API", async () => 
     assert.equal((await call("/api/paths")).headers.get("cache-control"), "no-cache");
     // Strani brez vrinjenih skript (CSP script-src 'self'). Podatkovni blok schema.org (application/ld+json)
     // ni skripta: brskalnik ga ne izvede in CSP ga ne zadeva (server/vidnost.js).
-    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html", "garancija.html", "o-evklidu.html"]) {
+    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html", "garancija.html", "o-evklidu.html", "zakaj-evklid.html"]) {
       const html = fs.readFileSync(path.join("public", f), "utf8");
       assert.ok(!/<script(?![^>]*\bsrc=)(?![^>]*\btype="application\/ld\+json")[^>]*>/i.test(html), `${f}: vrinjena skripta`);
       assert.ok(!/\son[a-z]+\s*=/i.test(html), `${f}: on…= v HTML`);
