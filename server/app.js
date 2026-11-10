@@ -28,6 +28,7 @@ import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPro
 import { uiLanguage } from "../public/i18n/languages.js";
 import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
 import { printPage, printPageParts, printSignature, printSizeHint, streamParts } from "./textbook-print.js";
+import { createPdfStore, pdfDownloadName } from "./ucbenik-pdf.js";
 import { createPageCache } from "./tisk-predpomnilnik.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
@@ -231,7 +232,7 @@ export function createApp(store, opts = {}) {
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -388,6 +389,42 @@ export function createApp(store, opts = {}) {
         streams--;
         if (collect) collecting.delete(cacheKey);
       });
+  });
+
+  // Vnaprej izdelan PDF razreda, poglavja ali predmeta (server/ucbenik-pdf.js): prava datoteka z diska, ki jo
+  // telefon samo prenese (delni zahtevki Range, ETag iz zgoščene vrednosti vsebine). Če PDF-ja (še) ni ali ne
+  // ustreza sedanjim lekcijam, preusmeri na tisk v brskalniku (/ucbenik/…#natisni). Enaka pravila dostopa kot
+  // /ucbenik (besedilo lekcij je za vse; za skupnim geslom, kadar je vklopljeno).
+  const pdfStore = opts.pdfStore || createPdfStore();
+  app.locals.pdfStore = pdfStore;
+  app.get("/ucbenik-pdf/:path", (req, res, next) => {
+    const key = req.params.path;
+    const unit = typeof req.query.poglavje === "string" && req.query.poglavje && req.query.poglavje.length <= 200 ? req.query.poglavje : null;
+    const hit = pdfStore.find(key, unit);
+    if (!hit) {
+      if (printSignature(key, null, unit) == null) return res.status(404).send("Ta del učbenika ne obstaja.");
+      const q = new URLSearchParams();
+      if (unit) q.set("poglavje", unit);
+      if (typeof req.query.l === "string" && /^[A-Za-z-]{2,12}$/.test(req.query.l)) q.set("l", req.query.l);
+      res.set("Cache-Control", "no-store");
+      return res.redirect(302, `/ucbenik/${encodeURIComponent(key)}${q.size ? `?${q}` : ""}#natisni`);
+    }
+    const name = pdfDownloadName(key, unit) || hit.name;
+    const ascii = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\x20-\x7e]/g, "_").replace(/["\\]/g, "_");
+    res.sendFile(
+      hit.file,
+      {
+        etag: false, // ETag spodaj je iz vsebine lekcij, ne iz časa datoteke
+        cacheControl: false,
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Disposition": `inline; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(name)}`,
+          ETag: `"${hit.hash}"`,
+          "Cache-Control": "no-cache", // vedno preveri ETag (304 brez prenosa); nova izdaja lekcij pride takoj
+        },
+      },
+      (err) => err && !res.headersSent && next(err),
+    );
   });
 
   // Po zagonu (server/index.js) v ozadju izriše strani razredov v predpomnilnik, da prvi bralec ne čaka na izris

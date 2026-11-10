@@ -30,7 +30,7 @@ const demoFor = (topicId, lesson) => simsFor(topicId, lesson)[0] || null;
 
 const md = (text) => renderMd(text, "html");
 
-function lessonHtml(t, lesson, n) {
+export function lessonHtml(t, lesson, n) {
   const demo = demoFor(t.id, lesson);
   const sections = lesson.sections
     .map((s) => {

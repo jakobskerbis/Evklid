@@ -30,6 +30,9 @@
     "three": "0.187.0"
   },
   "devDependencies": {
+    "@fontsource/gelasio": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "dejavu-fonts-ttf": "^2.37.3",
     "lucide-static": "^1.70.0"
   }
 }

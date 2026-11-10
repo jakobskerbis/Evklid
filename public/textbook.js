@@ -15,7 +15,10 @@ const pdfHref = (path, { topic = "", unit = "" } = {}) => {
   const q = new URLSearchParams();
   if (unit) q.set("poglavje", unit);
   q.set("l", uiLanguage(currentLang()));
-  return `/ucbenik/${path}${topic ? `/${topic}` : ""}?${q}#natisni`;
+  // Razred, poglavje in cel predmet: vnaprej izdelana datoteka PDF (server/ucbenik-pdf.js), telefon jo samo prenese;
+  // če je strežnik (še) nima, sam preusmeri na tisk v brskalniku. Lekcija in list formul: tisk v brskalniku.
+  if (!topic) return `/ucbenik-pdf/${path}?${q}`;
+  return `/ucbenik/${path}/${topic}?${q}#natisni`;
 };
 
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }

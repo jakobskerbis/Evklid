@@ -1,0 +1,175 @@
+# PDF-ji učbenika, izdelani vnaprej (j 2026-11-10: »12 s je preveč«; server/ucbenik-pdf.js, docs/objava.md).
+# Ob spremembi lekcij ali predloge tiska (in ročno: Actions > »PDF učbenika« > Run workflow) izdela PDF za vsak
+# predmet, razred in poglavje šolskega učbenika, vsakega samodejno pregleda in jih objavi kot datoteke izdaje
+# »ucbenik-pdf« (ne v zgodovino gita). Strežnik jih od tam prenese na svoj disk in streže na /ucbenik-pdf/….
+# PDF, ki pregleda ne prestane, se NE objavi (zanj ostane tisk v brskalniku), zagon pa se konča z napako.
+# Izdela samo PDF-je, katerih vsebina se je spremenila (zgoščena vrednost v kazalo.json prejšnje objave).
+# Repozitorij je javen in besedilo lekcij je brezplačno, zato so datoteke izdaje lahko javne. Brez skrivnosti,
+# nikoli ob pull requestu (pravica pisanja v izdaje), akcije pripete na SHA.
+name: PDF učbenika
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/lessons/**"
+      - "server/textbook-print.js"
+      - "server/textbook.js"
+      - "server/ucbenik-pdf.js"
+      - "server/curriculum-data.js"
+      - "public/rich.js"
+      - "scripts/ucbenik-pdf.cjs"
+      - "package-lock.json"
+      - ".github/workflows/ucbenik-pdf.yml"
+  workflow_dispatch:
+    inputs:
+      samo:
+        description: "Samo ti PDF-ji (z vejicami, npr. MAT-OS-8,KEM-SS-1); prazno = vsi spremenjeni"
+        required: false
+        default: ""
+      vse:
+        description: "Izdelaj vse na novo (tudi nespremenjene)"
+        type: boolean
+        default: false
+permissions:
+  contents: write # objava datotek v izdajo
+concurrency:
+  group: ucbenik-pdf-${{ github.ref }}
+  cancel-in-progress: false # zagoni se zvrstijo; kazalo vedno ustreza zadnjemu končanemu
+defaults:
+  run:
+    shell: bash
+env:
+  EVKLID_MOCK: "1"
+  ANTHROPIC_API_KEY: ""
+  STRIPE_SECRET_KEY: ""
+  RESEND_API_KEY: ""
+  PLAYWRIGHT_VERSION: "1.63.0" # ista kot v testi.yml
+  GH_TOKEN: ${{ github.token }}
+  # Zunaj veje main (preizkus delovnega toka) gre objava v ločeno izdajo, ki je strežnik ne bere.
+  OZNAKA: ${{ github.ref == 'refs/heads/main' && 'ucbenik-pdf' || 'ucbenik-pdf-preizkus' }}
+jobs:
+  pdf:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+        timeout-minutes: 10
+      - name: Playwright
+        timeout-minutes: 5
+        run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-pdf
+      - name: Chromium in poppler-utils (pdftoppm za pregled prelomov strani)
+        timeout-minutes: 30
+        run: |
+          for poskus in 1 2 3; do
+            if timeout -k 10 9m npx playwright install --with-deps chromium && sudo timeout 4m apt-get install -y -q poppler-utils; then
+              pdftoppm -v 2>&1 | head -1
+              exit 0
+            fi
+            echo "::warning::Namestitev: poskus $poskus ni uspel"
+            sudo pkill -9 -f '[a]pt-get|[a]pt |[d]pkg' || true
+            sleep 5
+            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m dpkg --configure -a || true
+          done
+          exit 1
+      # Prejšnje kazalo in seznam datotek izdaje: nespremenjeni PDF-ji, ki so še objavljeni, se ne izdelajo znova.
+      - name: Prejšnja objava
+        timeout-minutes: 5
+        run: |
+          mkdir -p out
+          if gh release view "$OZNAKA" --repo "$GITHUB_REPOSITORY" --json assets -q '.assets[].name' > obstojece.txt 2>/dev/null; then
+            gh release download "$OZNAKA" --repo "$GITHUB_REPOSITORY" --pattern kazalo.json --output prejsnje.json || echo '{"files":{}}' > prejsnje.json
+          else
+            : > obstojece.txt
+            echo '{"files":{}}' > prejsnje.json
+          fi
+          echo "Objavljenih datotek: $(wc -l < obstojece.txt)"
+      - name: Izdelava in pregled PDF-jev
+        id: izdelava
+        timeout-minutes: 90
+        env:
+          SAMO: ${{ inputs.samo }}
+          VSE: ${{ inputs.vse }}
+        run: |
+          set +e
+          args=(--out out --obstojece obstojece.txt)
+          if [ "$VSE" = "true" ]; then args+=(--vse); fi
+          args+=(--prejsnje prejsnje.json)
+          if [ -n "$SAMO" ]; then args+=(--samo "$SAMO"); fi
+          node scripts/ucbenik-pdf.cjs "${args[@]}" 2>&1 | tee izdelava.log
+          koda=${PIPESTATUS[0]}
+          echo "koda=$koda" >> "$GITHUB_OUTPUT"
+          {
+            echo "### PDF učbenika"
+            echo '```'
+            tail -n 40 izdelava.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          test -s out/kazalo.json
+      - name: Poročilo in zavrnjeni PDF-ji
+        if: always()
+        timeout-minutes: 10
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ucbenik-pdf-porocilo
+          path: |
+            izdelava.log
+            out/porocilo.json
+            out/kazalo.json
+            out/NAPAKA-*.pdf
+          if-no-files-found: ignore
+          retention-days: 14
+      # Najprej nove datoteke, nato kazalo (strežnik bere kazalo: nikoli ne kaže na datoteko, ki je še ni),
+      # na koncu izbris datotek, ki jih ne omenja ne novo ne prejšnje kazalo (strežnik s starim kazalom jih še najde).
+      - name: Objava v izdajo
+        timeout-minutes: 30
+        run: |
+          if ! gh release view "$OZNAKA" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$OZNAKA" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --latest=false \
+              --title "PDF učbenika (samodejno)" \
+              --notes "Vnaprej izdelani PDF-ji učbenika Evklid (predmet, razred, poglavje). Datoteke samodejno zamenjuje delovni tok »PDF učbenika«; strežnik jih prenese sam. Ne briši."
+          fi
+          shopt -s nullglob
+          nove=()
+          for f in out/*.pdf; do case "$(basename "$f")" in NAPAKA-*) ;; *) nove+=("$f") ;; esac; done
+          echo "Novih datotek: ${#nove[@]}"
+          for ((i = 0; i < ${#nove[@]}; i += 20)); do
+            for poskus in 1 2 3; do
+              gh release upload "$OZNAKA" --repo "$GITHUB_REPOSITORY" --clobber "${nove[@]:i:20}" && break
+              [ "$poskus" = 3 ] && exit 1
+              sleep 10
+            done
+          done
+          gh release upload "$OZNAKA" --repo "$GITHUB_REPOSITORY" --clobber out/kazalo.json
+          node -e '
+            const fs = require("fs");
+            const names = (f) => Object.values(JSON.parse(fs.readFileSync(f, "utf8")).files || {}).map((e) => e.file);
+            const keep = new Set(["kazalo.json", ...names("out/kazalo.json"), ...names("prejsnje.json")]);
+            const old = fs.readFileSync("obstojece.txt", "utf8").split("\n").filter((n) => n.endsWith(".pdf") && !keep.has(n));
+            fs.writeFileSync("izbrisi.txt", old.join("\n"));
+          '
+          while IFS= read -r ime; do
+            [ -n "$ime" ] && gh release delete-asset "$OZNAKA" "$ime" --repo "$GITHUB_REPOSITORY" --yes || true
+          done < izbrisi.txt
+          echo "Objavljeno: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${OZNAKA}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Izid pregleda
+        timeout-minutes: 1
+        run: |
+          if [ "${{ steps.izdelava.outputs.koda }}" != "0" ]; then
+            echo "::error::Vsaj en PDF ni prestal pregleda in ni objavljen (zanj ostane tisk v brskalniku). Glej poročilo."
+            exit 1
+          fi

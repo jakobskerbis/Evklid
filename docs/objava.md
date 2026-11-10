@@ -31,6 +31,17 @@ Strošek: paket Starter ≈ 7 $/mesec + disk 1 GB ≈ 0,25 $/mesec. Brezplačni 
 - **Razlage in učbenik:** enkrat poženi generiranje (v Render → Shell):
   `node scripts/generate-explanations.js --yes` in `node scripts/generate-lessons.js --yes --model claude-sonnet-5-5`.
 
+## PDF učbenika (izdelan vnaprej)
+
+PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki spremembi lekcij ga izdela GitHub (Actions → **PDF učbenika**, `.github/workflows/ucbenik-pdf.yml`, brezplačno), vsakega samodejno pregleda (število lekcij, prazne strani, formule, pisave, kazalo, noga, prelomi strani, velikost) in objavi kot datoteke izdaje [`ucbenik-pdf`](https://github.com/jakobskerbis/evklid/releases/tag/ucbenik-pdf) (ne v zgodovini gita). Strežnik jih 20 s po zagonu in nato vsake pol ure prenese v `/var/data/ucbenik-pdf` (samo nove; preveri kontrolno vsoto) in streže na `/ucbenik-pdf/<pot>`; telefon datoteko samo prenese.
+
+- Nastaviti ni treba ničesar. Poraba diska: ~150 MB (meja `EVKLID_PDF_MB`, privzeto 300; bazi in kopijam vedno ostane vsaj 250 MB, sicer se PDF-ji ne prenesejo).
+- Če PDF-ja še ni, je starejši od lekcij ali ni prestal pregleda, gumb sam odpre prejšnjo pot (tisk v brskalniku, »Pripravljam učbenik …«). Enako velja za posamezno lekcijo, list formul in fakultetne učbenike.
+- Stanje: `https://evklid.app/healthz/stanje` → `pdfUcbenika` (`datotek`, `veljavnih`, `predvidenih`, `napaka`). Po združitvi sprememb lekcij traja nekaj minut, da GitHub izdela nove PDF-je, in do pol ure, da jih strežnik prenese; vmes velja rezerva.
+- Ročno: Actions → PDF učbenika → **Run workflow** (polje »samo« za posamezne, npr. `MAT-OS-8`). Lokalno: `node scripts/ucbenik-pdf.cjs --out /tmp/pdf --samo MAT-OS-8` (potrebuje Playwright in `pdftoppm`).
+- Izklop: `EVKLID_PDF=0` (vse gre spet prek tiska v brskalniku). Drug vir: `EVKLID_PDF_URL`, druga mapa: `EVKLID_PDF_DIR`.
+- Besedilo lekcij je brezplačno in javno (repozitorij je javen, `/ucbenik` je brez prijave), zato so datoteke izdaje javne. Strežnik jih vseeno streže sam, za istim skupnim geslom kot `/ucbenik`, kadar je vklopljeno.
+
 ## Omejitve stroškov AI (že nastavljene)
 
 - `EVKLID_STUDENT_MONTHLY_USD=1.5` – največ 1,5 $ na učenca na mesec.
