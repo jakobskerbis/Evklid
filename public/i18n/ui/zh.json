@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "下一个周期从 {date} 开始。",
   "acct.endsOn": "订阅将于 {date} 结束。",
   "acct.trial": "免费试用至 {date}：最多 2 个孩子可使用全部功能。",
+  "acct.pilot": "试点：{date} 前完整套餐免费，最多 {n} 个档案。",
+  "acct.owner": "管理员：完整套餐，导师无限制（使用量会被记录）。",
   "acct.promo": "激活码完整权限至 {date}。",
   "acct.bonus": "推荐获得的免费月至 {date}。",
   "acct.codeExample": "例如 {code}",
@@ -3772,5 +3774,15 @@
   "starsi.codeSend": "通过邮件发送验证码",
   "starsi.codeLabel": "邮件中的验证码",
   "starsi.codeSent": "验证码已发送到账户邮箱。",
-  "pilot.n.realOnly": "试点中只添加真实成员，不要添加自己的测试账户，否则可以从总数算出某个人的回答。"
+  "pilot.n.realOnly": "试点中只添加真实成员，不要添加自己的测试账户，否则可以从总数算出某个人的回答。",
+  "ginv.title": "无需邮箱的邀请",
+  "ginv.help": "最多可供 {n} 位朋友使用的链接：他们无需邮箱地址，使用免费套餐即可使用 Evklid。有效期 {days} 天。",
+  "ginv.create": "生成链接",
+  "ginv.once": "链接只在此时显示一次。请复制并发送给朋友。",
+  "ginv.until": "有效期至 {date}。",
+  "ginv.copy": "复制",
+  "ginv.joinTitle": "你受邀使用 Evklid",
+  "ginv.joinIntro": "你可以无需邮箱地址、使用免费套餐来使用 Evklid。学习进度只保存在这台设备上；你随时可以创建账户。",
+  "ginv.start": "无需邮箱开始",
+  "ginv.invalid": "此邀请已失效（已过期或名额已满）。请创建账户或索取新链接。"
 }

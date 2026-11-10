@@ -20,7 +20,7 @@ const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10
 // Lažni Stripe + Resend. stripe.sessions / stripe.subs: kar vrneta GET /checkout/sessions/:id in /subscriptions/:id.
 function fakeStripe() {
   const calls = [];
-  const state = { sessions: {}, subs: {}, charges: {} };
+  const state = { sessions: {}, subs: {}, charges: {}, invoices: {} };
   let n = 0;
   const fetchFn = async (url, init = {}) => {
     const body = init.body ? (init.headers["Content-Type"]?.includes("json") ? JSON.parse(init.body) : Object.fromEntries(new URLSearchParams(init.body))) : null;
@@ -39,9 +39,15 @@ function fakeStripe() {
     const sub = /^\/subscriptions\/(\w+)$/.exec(p);
     if (sub && init.method === "DELETE") return ok({ ...(state.subs[sub[1]] || { id: sub[1], items: { data: [] } }), status: "canceled" });
     if (sub) return ok(state.subs[sub[1]] || {});
-    if (p === "/subscriptions") return ok({ data: Object.values(state.subs) });
+    if (p === "/subscriptions") {
+      // kot pravi Stripe: samo naročnine vprašane stranke (#490 išče drugo plačano naročnino ISTEGA kupca)
+      const cus = u.searchParams.get("customer") || body?.customer;
+      return ok({ data: Object.values(state.subs).filter((x) => !cus || x.customer === cus) });
+    }
     const ch = /^\/charges\/(\w+)$/.exec(p);
     if (ch) return ok(state.charges[ch[1]] || {});
+    const inv = /^\/invoices\/(\w+)$/.exec(p);
+    if (inv) return ok(state.invoices[inv[1]] || {});
     return { ok: false, status: 404, json: async () => ({ error: { message: "ni" } }) };
   };
   return { calls, state, fetchFn };
@@ -222,9 +228,14 @@ test("B511-5: vračilo in spor pri plačilu izbrisanega A ne vplivata na B; pri 
     assert.equal((await hook({ id: "evt_rf", type: "charge.refunded", data: { object: { id: "ch_a", customer: cusA, amount: 999, amount_refunded: 999, payment_intent: "pi_a", invoice: "in_a" } } })).status, 200);
     assert.equal((await hook({ id: "evt_dp", type: "charge.dispute.created", data: { object: { id: "dp_a", charge: "ch_a", payment_intent: "pi_a" } } })).status, 200);
     assert.equal(row(store, B.id).sub_status, "active", "B ostane nedotaknjen");
-    // spor pri B-jevem plačilu: B-jeva naročnina preklicana
+    // spor pri B-jevem enkratnem plačilu (brez računa naročnine): po #490 naročnina B ostane
     stripe.state.charges.ch_b = { id: "ch_b", customer: "cus_b", invoice: null };
     assert.equal((await hook({ id: "evt_dpb", type: "charge.dispute.created", data: { object: { id: "dp_b", charge: "ch_b", payment_intent: "pi_b" } } })).status, 200);
+    assert.equal(row(store, B.id).sub_status, "active", "spor pri enkratnem plačilu ne prekliče naročnine (#490)");
+    // spor pri računu B-jeve naročnine: naročnina B preklicana (pri pravem lastniku spor deluje)
+    stripe.state.charges.ch_bi = { id: "ch_bi", customer: "cus_b", invoice: "in_b" };
+    stripe.state.invoices.in_b = { id: "in_b", customer: "cus_b", subscription: "sub_b" };
+    assert.equal((await hook({ id: "evt_dpbi", type: "charge.dispute.created", data: { object: { id: "dp_bi", charge: "ch_bi", payment_intent: "pi_bi" } } })).status, 200);
     assert.equal(row(store, B.id).sub_status, "canceled");
   });
 });

@@ -283,10 +283,17 @@ test("RR10: obstoječi naročniki brez uid: po stranki (posodobitev, plačilo, p
     assert.equal((await hook({ id: "e2", type: "invoice.paid", data: { object: { id: "in_s", object: "invoice", customer: "cus_s", amount_paid: 999, subscription: "sub_s", payment_intent: "pi_s", lines: { data: [] } } } })).status, 200);
     assert.equal((await hook({ id: "e3", type: "customer.subscription.updated", data: { object: stripe.state.subs.sub_s } })).status, 200);
     assert.equal(row(store, P.id).sub_status, "active");
-    // nova naročnina istega obstoječega kupca (npr. po preklicu), brez uid, created zdaj, po stranki
+    // druga naročnina istega obstoječega kupca, brez uid, created zdaj: po stranki pripisana istemu računu (brez zapisa
+    // za vračilo). Po pravilu #490/#497 (dve naročnini istega kupca) trenutna veljavna ostane, dokler velja ...
     stripe.state.subs.sub_s2 = subOf("sub_s2", "cus_s", now(), { parent_id: String(P.id) });
     assert.equal((await hook({ id: "e4", type: "customer.subscription.created", data: { object: stripe.state.subs.sub_s2 } })).status, 200);
+    assert.equal(row(store, P.id).sub_id, "sub_s", "trenutna veljavna naročnina ostane (#490)");
+    assert.deepEqual(unmatchedKeys(store), []);
+    // ... ob preklicu trenutne pa velja druga plačana naročnina istega kupca.
+    stripe.state.subs.sub_s = { ...stripe.state.subs.sub_s, status: "canceled" };
+    assert.equal((await hook({ id: "e5", type: "customer.subscription.deleted", data: { object: stripe.state.subs.sub_s } })).status, 200);
     assert.equal(row(store, P.id).sub_id, "sub_s2");
+    assert.equal(row(store, P.id).sub_status, "active");
     assert.deepEqual(unmatchedKeys(store), []);
   });
 });

@@ -734,7 +734,7 @@ export function createCalculator(root, opts) {
     let last = performance.now();
     const step = (now) => {
       const playing = state.items.filter((x) => x.slider?.play);
-      if (!playing.length || !root.isConnected) {
+      if (!playing.length || !root.isConnected || root.closest("[hidden]")) {
         animating = false;
         return;
       }
@@ -1250,6 +1250,7 @@ export function createCalculator(root, opts) {
     resize() {
       view.resize();
       view.draw();
+      if (state.items.some((x) => x.slider?.play)) animate(); // drsnik, ki je tekel pred preklopom, teče naprej
     },
     /** Ob menjavi učenca: njegov zadnji graf (shranjen na napravi). */
     reload() {

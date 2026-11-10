@@ -2224,6 +2224,8 @@
   "acct.renewsOn": "Periudha tjetër fillon më {date}.",
   "acct.endsOn": "Abonimi mbaron më {date}.",
   "acct.trial": "Provë falas deri më {date}: të gjitha funksionet për deri në 2 fëmijë.",
+  "acct.pilot": "Pilot: paketa e plotë falas deri më {date}, deri në {n} profile.",
+  "acct.owner": "Administrator: paketa e plotë, mësues pa kufi (përdorimi regjistrohet).",
   "acct.promo": "Qasje e plotë me kod aktivizimi deri më {date}.",
   "acct.bonus": "Muaj falas nga një ftesë deri më {date}.",
   "acct.codeExample": "p.sh. {code}",
@@ -3800,5 +3802,15 @@
   "starsi.codeSend": "Dërgo kodin me email",
   "starsi.codeLabel": "Kodi nga email-i",
   "starsi.codeSent": "Kodin e dërguam në adresën e email-it të llogarisë.",
-  "pilot.n.realOnly": "Në pilot shtoni vetëm anëtarë të vërtetë, jo llogaritë tuaja testuese: përndryshe nga shumat mund të llogaritej përgjigjja e një personi."
+  "pilot.n.realOnly": "Në pilot shtoni vetëm anëtarë të vërtetë, jo llogaritë tuaja testuese: përndryshe nga shumat mund të llogaritej përgjigjja e një personi.",
+  "ginv.title": "Ftesë pa email",
+  "ginv.help": "Një lidhje për deri në {n} miq: e përdorin Evklid pa adresë emaili, me paketën falas. E vlefshme për {days} ditë.",
+  "ginv.create": "Krijo lidhjen",
+  "ginv.once": "Lidhja shfaqet vetëm tani. Kopjoje dhe dërgoja miqve.",
+  "ginv.until": "E vlefshme deri më {date}.",
+  "ginv.copy": "Kopjo",
+  "ginv.joinTitle": "Je ftuar në Evklid",
+  "ginv.joinIntro": "Mund ta përdorësh Evklid pa adresë emaili, me paketën falas. Përparimi mbetet vetëm në këtë pajisje; llogari mund të krijosh në çdo kohë.",
+  "ginv.start": "Fillo pa email",
+  "ginv.invalid": "Kjo ftesë nuk është më e vlefshme (ka skaduar ose është përdorur). Krijo një llogari ose kërko një lidhje të re."
 }

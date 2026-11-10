@@ -2224,6 +2224,8 @@
   "acct.renewsOn": "The next period starts on {date}.",
   "acct.endsOn": "The subscription ends on {date}.",
   "acct.trial": "Free trial until {date}: all features for up to 2 children.",
+  "acct.pilot": "Pilot: full plan free until {date}, up to {n} profiles.",
+  "acct.owner": "Administrator: full plan, tutor without limit (usage is recorded).",
   "acct.promo": "Full access with an activation code until {date}.",
   "acct.bonus": "Free month from a referral until {date}.",
   "acct.codeExample": "e.g. {code}",
@@ -3800,5 +3802,15 @@
   "starsi.codeSend": "Send code by e-mail",
   "starsi.codeLabel": "Code from the e-mail",
   "starsi.codeSent": "We sent the code to the account's e-mail address.",
-  "pilot.n.realOnly": "Add only real members to the pilot, not your own test accounts: otherwise an individual's answer could be calculated from the totals."
+  "pilot.n.realOnly": "Add only real members to the pilot, not your own test accounts: otherwise an individual's answer could be calculated from the totals.",
+  "ginv.title": "Invite without email",
+  "ginv.help": "A link for up to {n} friends: they use Evklid without an email address, on the free plan. Valid for {days} days.",
+  "ginv.create": "Create link",
+  "ginv.once": "The link is shown only now. Copy it and send it to your friends.",
+  "ginv.until": "Valid until {date}.",
+  "ginv.copy": "Copy",
+  "ginv.joinTitle": "You're invited to Evklid",
+  "ginv.joinIntro": "You can use Evklid without an email address, on the free plan. Your progress stays on this device only; you can create an account at any time.",
+  "ginv.start": "Start without email",
+  "ginv.invalid": "This invite is no longer valid (it has expired or been used up). Create an account or ask for a new link."
 }

@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "다음 기간은 {date}에 시작됩니다.",
   "acct.endsOn": "구독은 {date}에 끝납니다.",
   "acct.trial": "{date}까지 무료 체험: 자녀 최대 2명까지 모든 기능.",
+  "acct.pilot": "파일럿: {date}까지 전체 요금제 무료, 프로필 최대 {n}개.",
+  "acct.owner": "관리자: 전체 요금제, 튜터 무제한(사용량은 기록됨).",
   "acct.promo": "{date}까지 활성화 코드로 전체 이용.",
   "acct.bonus": "{date}까지 추천으로 받은 무료 한 달.",
   "acct.codeExample": "예: {code}",
@@ -3772,5 +3774,15 @@
   "starsi.codeSend": "이메일로 코드 보내기",
   "starsi.codeLabel": "이메일의 코드",
   "starsi.codeSent": "계정 이메일로 코드를 보냈습니다.",
-  "pilot.n.realOnly": "파일럿에는 실제 참여자만 추가하고 본인 테스트 계정은 넣지 마세요. 그렇지 않으면 합계에서 개인의 답을 계산할 수 있습니다."
+  "pilot.n.realOnly": "파일럿에는 실제 참여자만 추가하고 본인 테스트 계정은 넣지 마세요. 그렇지 않으면 합계에서 개인의 답을 계산할 수 있습니다.",
+  "ginv.title": "이메일 없는 초대",
+  "ginv.help": "최대 {n}명의 친구를 위한 링크: 이메일 주소 없이 무료 요금제로 Evklid를 사용합니다. {days}일 동안 유효합니다.",
+  "ginv.create": "링크 만들기",
+  "ginv.once": "링크는 지금만 표시됩니다. 복사해서 친구에게 보내세요.",
+  "ginv.until": "{date}까지 유효.",
+  "ginv.copy": "복사",
+  "ginv.joinTitle": "Evklid에 초대받았어요",
+  "ginv.joinIntro": "이메일 주소 없이 무료 요금제로 Evklid를 사용할 수 있어요. 진도는 이 기기에만 저장되며, 언제든지 계정을 만들 수 있어요.",
+  "ginv.start": "이메일 없이 시작",
+  "ginv.invalid": "이 초대는 더 이상 유효하지 않습니다(만료되었거나 모두 사용됨). 계정을 만들거나 새 링크를 요청하세요."
 }

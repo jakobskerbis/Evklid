@@ -2238,6 +2238,8 @@
   "acct.renewsOn": "Sljedeće razdoblje počinje {date}.",
   "acct.endsOn": "Pretplata završava {date}.",
   "acct.trial": "Besplatno probno razdoblje do {date}: sve funkcije za najviše 2 djece.",
+  "acct.pilot": "Pilot: puni paket besplatno do {date}, do {n} profila.",
+  "acct.owner": "Administrator: puni paket, instruktor bez ograničenja (potrošnja se bilježi).",
   "acct.promo": "Puni pristup s aktivacijskim kodom do {date}.",
   "acct.bonus": "Besplatan mjesec iz preporuke do {date}.",
   "acct.codeExample": "npr. {code}",
@@ -3832,5 +3834,15 @@
   "starsi.codeSend": "Pošalji kod e-poštom",
   "starsi.codeLabel": "Kod iz e-pošte",
   "starsi.codeSent": "Kod smo poslali na e-adresu računa.",
-  "pilot.n.realOnly": "U pilot dodajte samo prave članove, ne svoje testne račune: inače bi se iz zbrojeva mogao izračunati odgovor pojedinca."
+  "pilot.n.realOnly": "U pilot dodajte samo prave članove, ne svoje testne račune: inače bi se iz zbrojeva mogao izračunati odgovor pojedinca.",
+  "ginv.title": "Pozivnica bez e-pošte",
+  "ginv.help": "Poveznica za najviše {n} prijatelja: Evklid koriste bez adrese e-pošte, s besplatnim paketom. Vrijedi {days} dana.",
+  "ginv.create": "Izradi poveznicu",
+  "ginv.once": "Poveznica se prikazuje samo sada. Kopiraj je i pošalji prijateljima.",
+  "ginv.until": "Vrijedi do {date}.",
+  "ginv.copy": "Kopiraj",
+  "ginv.joinTitle": "Pozvan(a) si u Evklid",
+  "ginv.joinIntro": "Evklid možeš koristiti bez adrese e-pošte, s besplatnim paketom. Napredak ostaje samo na ovom uređaju; račun možeš izraditi bilo kada.",
+  "ginv.start": "Započni bez e-pošte",
+  "ginv.invalid": "Pozivnica više ne vrijedi (istekla je ili je iskorištena). Izradi račun ili zatraži novu poveznicu."
 }

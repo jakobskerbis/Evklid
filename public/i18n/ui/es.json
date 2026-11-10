@@ -2225,6 +2225,8 @@
   "acct.renewsOn": "El próximo periodo empieza el {date}.",
   "acct.endsOn": "La suscripción termina el {date}.",
   "acct.trial": "Prueba gratuita hasta el {date}: todas las funciones para hasta 2 hijos.",
+  "acct.pilot": "Piloto: paquete completo gratis hasta el {date}, hasta {n} perfiles.",
+  "acct.owner": "Administrador: paquete completo, tutor sin límite (el uso se registra).",
   "acct.promo": "Acceso completo con código de activación hasta el {date}.",
   "acct.bonus": "Mes gratis por recomendación hasta el {date}.",
   "acct.codeExample": "p. ej. {code}",
@@ -3801,5 +3803,15 @@
   "starsi.codeSend": "Enviar código por correo",
   "starsi.codeLabel": "Código del correo",
   "starsi.codeSent": "Hemos enviado el código al correo de la cuenta.",
-  "pilot.n.realOnly": "Añada al piloto solo miembros reales, no sus cuentas de prueba: si no, de los totales se podría calcular la respuesta de una persona."
+  "pilot.n.realOnly": "Añada al piloto solo miembros reales, no sus cuentas de prueba: si no, de los totales se podría calcular la respuesta de una persona.",
+  "ginv.title": "Invitación sin correo",
+  "ginv.help": "Un enlace para hasta {n} amigos: usan Evklid sin correo electrónico, con el plan gratuito. Válido durante {days} días.",
+  "ginv.create": "Crear enlace",
+  "ginv.once": "El enlace solo se muestra ahora. Cópialo y envíaselo a tus amigos.",
+  "ginv.until": "Válido hasta el {date}.",
+  "ginv.copy": "Copiar",
+  "ginv.joinTitle": "Te han invitado a Evklid",
+  "ginv.joinIntro": "Puedes usar Evklid sin correo electrónico, con el plan gratuito. Tu progreso se queda solo en este dispositivo; puedes crear una cuenta cuando quieras.",
+  "ginv.start": "Empezar sin correo",
+  "ginv.invalid": "Esta invitación ya no es válida (ha caducado o se ha agotado). Crea una cuenta o pide un enlace nuevo."
 }

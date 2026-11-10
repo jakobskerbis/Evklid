@@ -134,6 +134,8 @@ export function migrateAccounts(db) {
   db.exec(`CREATE TRIGGER IF NOT EXISTS parents_uid AFTER INSERT ON parents WHEN NEW.uid IS NULL BEGIN
     UPDATE parents SET uid = lower(hex(randomblob(16))) WHERE id = NEW.id;
   END;`);
+  // Gost iz lastnikovega povabila (/?gost=…, server/accounts/guest.js GuestInvites): uporablja Evklid, čeprav je uporaba brez računa sicer izklopljena.
+  if (!pcols.includes("guest_invite_id")) db.exec("ALTER TABLE parents ADD COLUMN guest_invite_id INTEGER");
   const cols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
   if (!cols.includes("parent_id")) db.exec("ALTER TABLE students ADD COLUMN parent_id INTEGER REFERENCES parents(id) ON DELETE CASCADE");
   if (!cols.includes("birth_year")) db.exec("ALTER TABLE students ADD COLUMN birth_year INTEGER");

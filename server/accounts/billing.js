@@ -227,7 +227,7 @@ export function nextTest(schedules, studentId, now = new Date()) {
 }
 
 export function mountBilling(app, ctx) {
-  const { credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, birthMissing = () => false, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false, levelOf = () => "OS", planForParent = null, aiUsage = null, ageOf = () => null, paidPeriods = null } = ctx;
+  const { specialOf = () => null, credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, birthMissing = () => false, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false, levelOf = () => "OS", planForParent = null, aiUsage = null, ageOf = () => null, paidPeriods = null } = ctx;
   // Paket naročnine za račun: stopnja profila (en profil) ali Družina (glej index.js planForAccount).
   const subPlan = (p, seats, interval, currency) => (planForParent ? planForParent(p.id, seats, interval, currency) : planFor(seats, interval, currency));
   migrateBilling(db);
@@ -268,6 +268,9 @@ export function mountBilling(app, ctx) {
     if (!plan) return { status: 400, body: { error: "Neznan paket." } };
     // j 2026-10-30: paket se ponudi samo učencu brez aktivne naročnine na Evklid.
     if (paidActive(parent)) return { status: 409, body: { error: "Ta račun že ima naročnino, zato paket pred testom ni potreben.", subscription: true } };
+    // Pilot in lastnik (pregled #477 C3): paket med pilotom ne bi dal ničesar, lastnik je brez meje.
+    const why = offersFor(studentId)?.reason;
+    if (why === "pilot" || why === "owner") return { status: 409, body: { error: "Ta račun ima v pilotu poln paket, zato paket pred testom ni potreben.", pilot: true } };
     if (passes.latestFor(studentId)) return { status: 409, body: { error: "Ta profil že ima aktiven paket pred testom.", active: true } };
     if (currencyOf(req, parent) !== "EUR") return { status: 400, body: { error: "Paketi pred testom so zaenkrat na voljo samo v evrih." } };
     const date = cleanDate(body?.test_date);
@@ -421,6 +424,8 @@ export function mountBilling(app, ctx) {
   app.get("/api/billing/credit", (req, res) => {
     const p = req.parent;
     if (!credits || !p || p.is_guest) return res.json({ billing: false, balance_conversations: 0, packs: [] });
+    // Pilot in lastnik (pregled #477 B3): brez ponudbe dokupa.
+    if (specialOf(p)) return res.json({ billing: stripe.enabled, balance_conversations: conversationsFor(credits.balance(p.id)), packs: [], pilot: true, minor: !adultKnown(p), birth_missing: birthMissing(p) });
     res.json({
       billing: stripe.enabled,
       balance_conversations: conversationsFor(credits.balance(p.id)),
@@ -436,6 +441,7 @@ export function mountBilling(app, ctx) {
     if (needStripe(res)) return;
     const p = req.parent;
     if (!credits || !p || p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
+    if (specialOf(p)) return res.status(409).json({ error: "Ta račun ima v pilotu poln paket brezplačno, zato dokup ni potreben.", pilot: true });
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (!adultKnown(p)) return res.status(403).json({ error: "Dokup pogovorov plača polnoleten imetnik računa (starš ali skrbnik)." });
     // Samo paketi 5 / 10 / 20 € (poljubnega zneska ni več, j 2026-11-04).
@@ -897,7 +903,8 @@ export function mountBilling(app, ctx) {
     if (db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND period = ?").get(p.id, kind, month)) return 0; // že poslano ta mesec
     const st = store.getStudent(studentId);
     const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
-    const msg = allowanceEmail({ childName: st?.name || "", stage, left: a?.explanations_left ?? 0, untilText: fmtDate(next.toISOString()), pool: !!a?.pool }, baseUrl(null) + "/");
+    // Pilot in lastnik (pregled #477 B3): e-pošta brez stavka o dokupu.
+    const msg = allowanceEmail({ childName: st?.name || "", stage, left: a?.explanations_left ?? 0, untilText: fmtDate(next.toISOString()), pool: !!a?.pool, topup: !specialOf(p) }, baseUrl(null) + "/");
     return remind(p, kind, month, msg);
   }
 

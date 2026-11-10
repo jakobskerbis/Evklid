@@ -2224,6 +2224,8 @@
   "acct.renewsOn": "Der nächste Zeitraum beginnt am {date}.",
   "acct.endsOn": "Das Abo endet am {date}.",
   "acct.trial": "Kostenloser Test bis {date}: alle Funktionen für bis zu 2 Kinder.",
+  "acct.pilot": "Pilot: volles Paket kostenlos bis {date}, bis zu {n} Profile.",
+  "acct.owner": "Administrator: volles Paket, Tutor ohne Limit (Nutzung wird erfasst).",
   "acct.promo": "Voller Zugang mit Aktivierungscode bis {date}.",
   "acct.bonus": "Kostenloser Monat aus einer Empfehlung bis {date}.",
   "acct.codeExample": "z. B. {code}",
@@ -3800,5 +3802,15 @@
   "starsi.codeSend": "Code per E-Mail senden",
   "starsi.codeLabel": "Code aus der E-Mail",
   "starsi.codeSent": "Wir haben den Code an die E-Mail-Adresse des Kontos gesendet.",
-  "pilot.n.realOnly": "Nur echte Mitglieder in den Pilot aufnehmen, keine eigenen Testkonten: sonst ließe sich aus den Summen die Antwort einer Person berechnen."
+  "pilot.n.realOnly": "Nur echte Mitglieder in den Pilot aufnehmen, keine eigenen Testkonten: sonst ließe sich aus den Summen die Antwort einer Person berechnen.",
+  "ginv.title": "Einladung ohne E-Mail",
+  "ginv.help": "Ein Link für bis zu {n} Freunde: Sie nutzen Evklid ohne E-Mail-Adresse, im kostenlosen Paket. Gültig für {days} Tage.",
+  "ginv.create": "Link erstellen",
+  "ginv.once": "Der Link wird nur jetzt angezeigt. Kopiere ihn und schicke ihn deinen Freunden.",
+  "ginv.until": "Gültig bis {date}.",
+  "ginv.copy": "Kopieren",
+  "ginv.joinTitle": "Du bist zu Evklid eingeladen",
+  "ginv.joinIntro": "Du kannst Evklid ohne E-Mail-Adresse im kostenlosen Paket nutzen. Dein Fortschritt bleibt nur auf diesem Gerät; ein Konto kannst du jederzeit erstellen.",
+  "ginv.start": "Ohne E-Mail starten",
+  "ginv.invalid": "Diese Einladung gilt nicht mehr (abgelaufen oder aufgebraucht). Erstelle ein Konto oder bitte um einen neuen Link."
 }

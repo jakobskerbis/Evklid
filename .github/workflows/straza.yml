@@ -1,0 +1,40 @@
+# Straža: vsakih 15 min preveri živo spletišče (samo GET, brez prijave, brez AI, brez pisanja).
+# Če kaj ne deluje, delovni tok pade in GitHub pošlje e-pošto lastniku. Pregled: docs/pregled.md (»Samodejni pregledi brez AI«).
+# Po objavi na Renderju (delovni tok »Render«) se sproži še en pregled; takrat strežnik ~1 min ne odgovarja,
+# zato skript ob napaki po 30 s poskusi še enkrat.
+# Naslov: brand.json > domain (lahko ga prepiše ročni zagon z vnosom »naslov«).
+name: Straža
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+    inputs:
+      naslov:
+        description: "Drug naslov (privzeto domena iz brand.json)"
+        required: false
+  workflow_run:
+    workflows: [Render]
+    types: [completed]
+permissions:
+  contents: read
+concurrency:
+  group: straza
+  cancel-in-progress: false
+jobs:
+  preveri:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            scripts/straza.mjs
+            brand.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Preveri živo spletišče
+        env:
+          STRAZA_URL: ${{ github.event.inputs.naslov }}
+        run: node scripts/straza.mjs

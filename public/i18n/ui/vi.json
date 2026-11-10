@@ -2213,6 +2213,8 @@
   "acct.renewsOn": "Kỳ tiếp theo bắt đầu ngày {date}.",
   "acct.endsOn": "Gói đăng ký kết thúc ngày {date}.",
   "acct.trial": "Dùng thử miễn phí đến {date}: mọi tính năng cho tối đa 2 con.",
+  "acct.pilot": "Thí điểm: gói đầy đủ miễn phí đến {date}, tối đa {n} hồ sơ.",
+  "acct.owner": "Quản trị viên: gói đầy đủ, gia sư không giới hạn (mức sử dụng được ghi lại).",
   "acct.promo": "Truy cập đầy đủ bằng mã kích hoạt đến {date}.",
   "acct.bonus": "Tháng miễn phí nhờ giới thiệu đến {date}.",
   "acct.codeExample": "vd. {code}",
@@ -3772,5 +3774,15 @@
   "starsi.codeSend": "Gửi mã qua email",
   "starsi.codeLabel": "Mã trong email",
   "starsi.codeSent": "Chúng tôi đã gửi mã đến email của tài khoản.",
-  "pilot.n.realOnly": "Chỉ thêm thành viên thật vào thử nghiệm, không thêm tài khoản thử của mình: nếu không, có thể tính ra câu trả lời của một người từ số tổng."
+  "pilot.n.realOnly": "Chỉ thêm thành viên thật vào thử nghiệm, không thêm tài khoản thử của mình: nếu không, có thể tính ra câu trả lời của một người từ số tổng.",
+  "ginv.title": "Lời mời không cần email",
+  "ginv.help": "Liên kết cho tối đa {n} bạn: họ dùng Evklid không cần địa chỉ email, với gói miễn phí. Có hiệu lực {days} ngày.",
+  "ginv.create": "Tạo liên kết",
+  "ginv.once": "Liên kết chỉ hiển thị lúc này. Hãy sao chép và gửi cho bạn bè.",
+  "ginv.until": "Có hiệu lực đến {date}.",
+  "ginv.copy": "Sao chép",
+  "ginv.joinTitle": "Bạn được mời dùng Evklid",
+  "ginv.joinIntro": "Bạn có thể dùng Evklid không cần địa chỉ email, với gói miễn phí. Tiến độ chỉ lưu trên thiết bị này; bạn có thể tạo tài khoản bất cứ lúc nào.",
+  "ginv.start": "Bắt đầu không cần email",
+  "ginv.invalid": "Lời mời này không còn hiệu lực (đã hết hạn hoặc đã dùng hết). Hãy tạo tài khoản hoặc xin liên kết mới."
 }
