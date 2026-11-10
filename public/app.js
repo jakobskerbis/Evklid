@@ -4800,6 +4800,18 @@ initScan({
   },
   openGraph: (exprs) => openGraphOverlay(exprs, t("scan.nav")),
 });
+// Mnenje člana pilota (public/mnenje.js): Jaz → »Povej mnenje«, vprašanje največ enkrat na teden. Modul se naloži
+// šele, ko je profil član pilota ali je kot bivši član dal dovoljenje za objavo (`published`, odgovor /pilot: opinion),
+// da ga lahko prekliče (GDPR čl. 7(3)); ne ob prvem odprtju. Ob menjavi na profil brez pilota vrstico skrije.
+let opinionP = null;
+function syncOpinion(member, published = false) {
+  if (!member && !published && !opinionP) return;
+  opinionP ||= import("./mnenje.js").then((m) => {
+    m.initOpinion({ api, toast, getStudent: () => state.student });
+    return m;
+  });
+  opinionP.then((m) => m.loadOpinion()).catch(() => (opinionP = null));
+}
 // Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid«.
 initPilot({
   api,
@@ -4812,7 +4824,10 @@ initPilot({
     startPilotScan(scanTask(cond));
     showView("scan");
   },
-  onMember: () => syncBugButton(),
+  onMember: (member, published) => {
+    syncBugButton();
+    syncOpinion(member, published);
+  },
   // Preizkus znanja v pilotu: besedilo naloge in izbire kot v vadnici (brez klikljivih formul).
   renderRich: (text) => renderRich(text),
   choiceHtml: (task, o) => choiceHtml(task, o, false),

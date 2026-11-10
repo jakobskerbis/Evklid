@@ -1702,6 +1702,14 @@ export function mountAccounts(app, store, opts = {}) {
             return null;
           }
         })(),
+        // Mnenja člana pilota (server/pilot-mnenja.js): ocena, besedili, razred ali letnik in dovoljenje za objavo.
+        pilot_opinions: (() => {
+          try {
+            return q("SELECT label, stars, liked, bothers, grade, publish, consent, lang, created_at FROM pilot_mnenja WHERE student_id = ?", c.id).map((r) => ({ ...r, liked: unseal(r.liked), bothers: unseal(r.bothers) }));
+          } catch {
+            return [];
+          }
+        })(),
         // Igre (server/games.js, server/daily-puzzle.js); tabele morda še ne obstajajo.
         games: Object.fromEntries(
           [
@@ -1773,6 +1781,7 @@ export function mountAccounts(app, store, opts = {}) {
     "league_profiles", "league_members", "avatar_state", "avatar_items", "coin_events", "daily_puzzle", "schedules", "feedback",
     // Naloge pilota: ocene, opombe in anketa zgoraj (data.children[].pilot); fotografija in nagrade v data.other.
     "pilot_scans", "pilot_features", "pilot_survey",
+    "pilot_mnenja",
   ];
 
   // Izbris računa z vsemi otroki in pogovori (GDPR čl. 17).
