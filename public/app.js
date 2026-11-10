@@ -324,6 +324,8 @@ function pinSnapshot() {
 // mark: zadnji klic pred zadnjim zaslonom (Učne poti pod njim ne čakamo); null: čakamo vse.
 function finishStart(mark = null) {
   startHold = false;
+  // Modul posnetka vnaprej (v miru): ob pagehide se ne naloži več pravočasno.
+  setTimeout(() => (window.requestIdleCallback || setTimeout)(loadShot), 1500);
   if (!startShot()) return startDone();
   const last = apiSeq;
   const mine = (id) => mark == null || (id > mark && id <= last);
