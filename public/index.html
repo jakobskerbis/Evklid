@@ -37,6 +37,7 @@
   <link rel="stylesheet" href="ui.css">
   <link rel="stylesheet" href="account.css">
   <link rel="stylesheet" href="textbook.css">
+  <link rel="stylesheet" href="risbe.css">
   <link rel="stylesheet" href="leagues.css">
   <link rel="stylesheet" href="kviz.css">
   <link rel="stylesheet" href="competition.css">
@@ -457,6 +458,8 @@
     <button type="button" class="card list-row zb-me-card" id="me-zbirke" data-go="zbirke" hidden></button>
     <!-- Naloge za člane pilota (public/pilot-naloge.js); vidno samo članom pilota -->
     <div class="card list-card pn-me" hidden><button type="button" class="list-row" data-go="pilot" id="me-pilot" hidden></button></div>
+    <!-- Mnenje člana pilota (public/mnenje.js); vidno samo članom pilota -->
+    <div class="card list-card" id="me-mnenje-card" hidden><button type="button" class="list-row" id="me-mnenje"><span class="ic"><i data-icon="star"></i></span><span class="lr-text"><b data-i18n="fb.cardBtn">Povej mnenje</b><small data-i18n="mn.meSub">Ocena z zvezdicami in dve kratki vprašanji</small></span><i data-icon="chevron-right"></i></button></div>
     <div class="card list-card">
       <button type="button" class="list-row" data-go="exams" id="me-exams" hidden><span class="ic"><i data-icon="clipboard-check"></i></span><span class="lr-text"><b data-i18n="nav.examsSi">NPZ in matura</b><small data-i18n="exam.meSub">Pripravljenost, poskusni izpit in pretekle pole</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="competition" id="me-competition"><span class="ic"><i data-icon="medal"></i></span><span class="lr-text"><b data-i18n="nav.competition">Tekmovanja</b><small data-i18n="comp.meSub">Tekmovalni trening in poskusno tekmovanje</small></span><i data-icon="chevron-right"></i></button>

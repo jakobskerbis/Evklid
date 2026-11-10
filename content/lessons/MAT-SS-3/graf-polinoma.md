@@ -181,14 +181,27 @@ Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}
 
 Os $x$ si predstavljaj kot gladino morja, graf pa kot pot delfina. Pri ničli lihe stopnje delfin preide gladino: iz vode skoči v zrak ali se iz zraka potopi. Pri ničli sode stopnje se gladine le dotakne s hrbtom in ostane na isti strani.
 
-Za polinom iz primera 1 je vse to zbrano na številski premici. Nad vsako ničlo je stopnja, med ničlami predznak:
+Za polinom iz primera 1 je vse to zbrano na sliki. Zgoraj je med ničlami zapisan predznak polinoma, spodaj pri vsaki ničli njena stopnja:
 
-```
- +    |  −   |  −   |  +
-------•------•------•------> x
-     −2      1      3
-    (1)     (2)    (1)
-```
+:::risba graf
+opis: Graf polinoma p(x) = (x + 2)(x − 1)²(x − 3). Ničle so −2 (stopnja 1), 1 (stopnja 2) in 3 (stopnja 1). Levo od −2 je graf nad osjo x, med −2 in 1 pod njo, pri 1 se osi le dotakne, med 1 in 3 je spet pod njo, desno od 3 nad njo. Os y seka pri −6.
+x: -3 .. 4
+y: -20 .. 20 | 10
+f: (x+2)*(x-1)^2*(x-3)
+črta: -2; -20 -> -2; 20 | črtkano siva
+črta: 1; -20 -> 1; 20 | črtkano siva
+črta: 3; -20 -> 3; 20 | črtkano siva
+točka: -2; 0
+točka: 1; 0
+točka: 3; 0
+napis: -2,65; 12 | + | sredina | debelo
+napis: -0,5; 12 | − | sredina | debelo
+napis: 2; 12 | − | sredina | debelo
+napis: 3,75; 12 | + | sredina | debelo
+napis: -2; -17 | st. 1 | levo
+napis: 1; -17 | st. 2 | desno
+napis: 3; -17 | st. 1 | desno
+:::
 
 Pri ničli $1$ se predznak ne zamenja, ker je stopnja $2$ soda.
 

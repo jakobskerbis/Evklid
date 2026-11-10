@@ -15,6 +15,7 @@ import { simsForTopic, labKey, LAB_INFO } from "../public/sim/katalog.js";
 import { SCHOOL_SYSTEMS, isRegional } from "../public/regions.js";
 import { SUBJECT_EN } from "./region-curricula.js";
 import { hasEngine } from "../public/sim/index.js";
+import { expandDrawings } from "./risbe.js";
 import { SYMBOLS_BLOCK_RE, parseSymbolsBlock } from "../public/formula-data.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -162,7 +163,8 @@ export function hideSolutions(md) {
 // V aplikaciji je odgovor skrit za gumbom (učenec najprej odgovori v mislih).
 const THINK_RE = /^[ \t]*:::[ \t]*premisli[ \t]*\n([\s\S]*?)\n[ \t]*:::[ \t]*$/gm;
 export function expandThinkBlocks(md, mode = "html") {
-  return String(md ?? "").replace(THINK_RE, (_, body) => {
+  // Risbe (»:::risba«, server/risbe.js) najprej: stojijo lahko tudi v odgovoru »Premisli« ali v bloku s formulo.
+  return expandDrawings(md, mode).replace(THINK_RE, (_, body) => {
     const [q, ...rest] = body.split(/^[ \t]*---[ \t]*$/m);
     const question = q.trim();
     const answer = rest.join("\n").trim();
@@ -430,7 +432,8 @@ const foldedLessons = new WeakMap();
 function foldedText(lesson) {
   let text = foldedLessons.get(lesson);
   if (text === undefined) {
-    text = fold([...lesson.sections, ...lesson.alternatives].map((s) => `${s.title} ${s.md}`).join(" "));
+    // Risbe iščemo po opisu »[Slika: …]«, ne po surovem bloku (ključi in slogi bi dali lažne zadetke).
+    text = fold([...lesson.sections, ...lesson.alternatives].map((s) => `${s.title} ${expandDrawings(s.md, "plain")}`).join(" "));
     foldedLessons.set(lesson, text);
   }
   return text;
@@ -484,7 +487,7 @@ function snippet(lesson, words) {
   let cached = plainLessons.get(lesson);
   if (!cached) {
     const plain = lesson.sections
-      .map((s) => s.md)
+      .map((s) => expandDrawings(s.md, "plain"))
       .join(" ")
       .replace(/\$([^$]*)\$/g, (_, t) => t.replace(/\\(mathrm|text|,)/g, "").replace(/[{}\\]/g, ""))
       .replace(/[#*_>`|]/g, "")

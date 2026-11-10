@@ -34,14 +34,13 @@ $$11 - 2 - 8 = 1$$
 
 Zapis **razporeditve elektronov** je Na: $2, 8, 1$. Številke naštejemo od notranje lupine navzven.
 
-**Diagram v besedah.** Atom natrija nariši kot tarčo. V sredini je jedro z $11$ protoni. Okoli njega so tri krožnice:
+**Diagram.** Atom natrija narišemo kot tarčo. V sredini je jedro z $11$ protoni. Okoli njega so tri krožnice:
 
-```
-          (11 p+)
-  K:  ● ●
-  L:  ● ● ● ● ● ● ● ●
-  M:  ●
-```
+:::risba atom
+opis: Atom natrija kot tarča. V sredini je jedro z 11 protoni. Okoli njega so tri krožnice: na prvi (lupina K) sta 2 elektrona, na drugi (lupina L) jih je 8, na tretji (lupina M) je 1 elektron.
+jedro: 11 p⁺
+lupine: 2, 8, 1
+:::
 
 Tretja krožnica je skoraj prazna: na njej je en sam elektron.
 
