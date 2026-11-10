@@ -24,6 +24,13 @@ const server = app.listen(port, () => {
   app.locals.warmStatic?.()
     .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
     .catch(() => {});
+  // Učbenik za tisk: strani razredov v predpomnilnik v ozadju, 15 s po zagonu (ne upočasni zagona).
+  setTimeout(() => {
+    const t1 = Date.now();
+    app.locals.tiskPredgrej?.()
+      .then((n) => n && console.log(`[evklid] učbenik za tisk: ${n} strani v predpomnilniku v ${Date.now() - t1} ms`))
+      .catch((e) => console.warn(`[evklid] predgrevanje učbenika: ${e?.message || e}`));
+  }, 15_000).unref();
 });
 
 // Zaustavitev (objava na Render pošlje SIGTERM): novih zahtev ne sprejmemo, klici AI v teku se lahko končajo
