@@ -100,7 +100,7 @@ export function tkivoPoBarvi(r, g, b) {
 }
 
 // Površje telesa iz alfe malega volumna (naivne »surface nets«): { pos, col, idx } v mm; korak 2 = pol manj podrobno.
-export function povrsje(m, korak = 1) {
+export function povrsje(m, korak = 1, gladi = 4) {
   const [W0, H0, Z0] = m.dim, d = m.data, mm = m.mm * korak;
   const W = Math.ceil(W0 / korak), H = Math.ceil(H0 / korak), Z = Math.ceil(Z0 / korak);
   const ix = (x, y, z) => ((Math.min(z * korak, Z0 - 1) * H0 + Math.min(y * korak, H0 - 1)) * W0 + Math.min(x * korak, W0 - 1)) * 4;
@@ -150,7 +150,24 @@ export function povrsje(m, korak = 1) {
           else idx.push(p0, p2, p1, p0, p3, p2);
         }
       }
-  return { pos: new Float32Array(pos), col: new Float32Array(col), idx: new Uint32Array(idx) };
+  const P = new Float32Array(pos), I = new Uint32Array(idx);
+  // glajenje (stopničasto površje iz vokslov): vsako oglišče proti povprečju sosedov, izmenično z odmikom nazaj (Taubin),
+  // da se telo ne skrči
+  const n = P.length / 3;
+  for (let krog = 0; krog < gladi * 2; krog++) {
+    const vs = new Float32Array(P.length), st = new Uint16Array(n);
+    for (let i = 0; i < I.length; i += 3)
+      for (let k = 0; k < 3; k++) {
+        const a = I[i + k], b = I[i + ((k + 1) % 3)];
+        vs[a * 3] += P[b * 3]; vs[a * 3 + 1] += P[b * 3 + 1]; vs[a * 3 + 2] += P[b * 3 + 2]; st[a]++;
+      }
+    const l = krog % 2 ? -0.53 : 0.5;
+    for (let a = 0; a < n; a++) {
+      if (!st[a]) continue;
+      for (let k = 0; k < 3; k++) P[a * 3 + k] += l * (vs[a * 3 + k] / st[a] - P[a * 3 + k]);
+    }
+  }
+  return { pos: P, col: new Float32Array(col), idx: I };
 }
 
 // Ploščice podrobne ravni, ki pokrivajo sliko rezine: [{ ime, u0, v0, u1, v1 }] (u, v 0–1 v sliki rezine).

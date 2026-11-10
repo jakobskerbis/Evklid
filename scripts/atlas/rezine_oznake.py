@@ -67,7 +67,7 @@ def mreze(pot):
 
 def vokseliziraj(V, F, dim):
     """Mreža (oglišča v enotah vokslov x, y, z) → bool [Z, H, W]: žarki vzdolž x skozi središča vokslov, parnost prehodov.
-    Žarek z lihim številom prehodov (odprta mreža) se zavrže."""
+    Žarek z lihim številom prehodov (odprta mreža) se nadomesti s presekom sosednjih žarkov."""
     W, H, Z = dim
     P = V[F]                                   # (m, 3, 3)
     y = P[..., 1] - 0.5 - 1.3e-4; z = P[..., 2] - 0.5 - 2.7e-4   # središča vokslov na celih številih (z drobnim zamikom proti robovom)
@@ -99,7 +99,12 @@ def vokseliziraj(V, F, dim):
             np.add.at(st, (kk[v] * H + jj[v]) * (W + 1) + xi, 1)
     st = st.reshape(Z, H, W + 1)
     notri = (np.cumsum(st, 2) % 2 == 1)
-    notri[notri[:, :, -1]] = False
+    slab = notri[:, :, -1].copy()                 # žarek skozi luknjo v mreži: vzamemo, kar se ujema pri obeh sosedih po y
+    notri[slab] = False
+    if slab.any() and H > 2:
+        sos = np.zeros_like(notri)
+        sos[:, 1:-1] = notri[:, :-2] & notri[:, 2:]
+        notri[slab] = sos[slab]
     return notri[:, :, :W]
 
 

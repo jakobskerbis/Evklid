@@ -5,6 +5,7 @@
 #              "rezine": {"spol": "z", "od": 1380, "do": 1440, "podrobno": true, "prenos": true, "obdelava": true}}
 #   spol m|z; od/do: številke rezin (1 mm; privzeto celo telo); podrobno: ploščice v polni ločljivosti 0,33 mm;
 #   prenos/obdelava: false preskoči korak. Samo ta polja, vsa preverjena; nič iz naloge se ne izvede kot ukaz.
+#   »rezine« je lahko tudi seznam takih opravil (največ 4), ki se izvedejo po vrsti.
 # Prenos se nadaljuje po prekinitvi (curl -C -, datoteka velja šele, ko ima velikost iz seznama strežnika); prostor na
 # disku se preveri pred prenosom in pred obdelavo in zapiše v stanje.json (st["rezine"]["disk"]).
 # Samostojno (strežnik, preizkus): python3 rezine_prenos.py <koren> <spol> [od do] [--brez-obdelave]
@@ -149,20 +150,31 @@ def potreba_gb(spol, dat, mapa, podrobno):
 
 
 def naloga(koren, blender, st, pisi, pisi_stanje, napaka, python=None):
-    """Kliče jo rtx.py (opravi). st["rezine"] se sproti dopolnjuje; utrip rtx.py ga piše v stanje.json."""
+    """Kliče jo rtx.py (opravi). »rezine« v naloga.txt je eno opravilo ali seznam (največ 4, po vrsti; npr. ženska,
+    nato moški). st["rezine"] se sproti dopolnjuje; utrip rtx.py ga piše v stanje.json."""
     with open(os.path.join(koren, "naloga.txt"), encoding="utf-8-sig") as f:
-        surova = json.load(f)
+        surova = json.load(f).get("rezine")
+    seznam_ = surova if isinstance(surova, list) else [surova]
     try:
-        n = preveri_nalogo(surova.get("rezine"))
+        if not 1 <= len(seznam_) <= 4:
+            raise ValueError("seznam opravil ima lahko 1 do 4 vnose")
+        opravila = [preveri_nalogo(x) for x in seznam_]
     except ValueError as e:
         napaka(f"naloga rezine zavrnjena: {e}")
+    koncana = []
+    for n in opravila:
+        _eno(koren, blender, st, pisi, pisi_stanje, napaka, python, n, koncana)
+        koncana.append({k: st["rezine"].get(k) for k in ("naloga", "izhod", "disk")})
+
+
+def _eno(koren, blender, st, pisi, pisi_stanje, napaka, python, n, koncana):
     nid = st.get("naloga") or "rocno"
     spol = n["spol"]
     vh = os.path.join(koren, "vhodi", "vhp", spol)
     delo = os.path.join(koren, "rezine-delo", f"{spol}-{n['od']}-{n['do']}")
     cel = (n["od"], n["do"]) == (viri()["telesa"][spol]["od"], viri()["telesa"][spol]["do"])
     izhod = os.path.join(koren, "izhod", "rezine" if cel else f"rezine-{nid}", spol)
-    r = st["rezine"] = {"naloga": n, "korak": "seznam", "izhod": os.path.relpath(izhod, koren), "disk": disk(koren)}
+    r = st["rezine"] = {"naloga": n, "korak": "seznam", "izhod": os.path.relpath(izhod, koren), "disk": disk(koren), "koncana": koncana}
     pisi_stanje(st)
     dat = seznam(spol, n["od"], n["do"], os.path.join(koren, "vhodi", "vhp", f"seznam-{spol}.json"))
     p = potreba_gb(spol, dat, vh, n["podrobno"])

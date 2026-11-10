@@ -867,6 +867,7 @@ export function odpriModel(el, mod, opts = {}) {
       naloziGLB: (pot, napredek) => import("./organ.js").then((m) => m.naloziGLB(new URL(pot, new URL("./modeli/", import.meta.url)).href, napredek)),
       organ: (ime) => import("./organ.js").then((m) => m.zgradiOrgan(ime, ctx)),
       napredek: (d) => nalaganje(d),
+      narisi: () => kit.narisi(), // model, ki sam naloži sliko (rezine), zahteva novo sličico tudi brez animacije
     };
     let r;
     try {

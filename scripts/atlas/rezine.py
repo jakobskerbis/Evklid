@@ -6,8 +6,9 @@
 # Koraki:
 #   1 pregled   vsaka rezina: modri gel (maska po barvi), povprečenje na 1 mm samo po ne-modrih pikslih (brez modrega
 #               roba) → delo/vol.u8 (Z, H, W, RGBA; A = delež ne-modrega) in sličice 3 mm za izravnavo barv
-#   2 maska     zunanjost (okvir, sivinska lestvica, listek) = ne-modro, povezano z robom slike; telo = toplo obarvana
-#               jedra, razlita po ne-modrem; drobni deli (prsti) prek sosednje rezine; izrez na okvir telesa
+#   2 maska     telo = toplo obarvana jedra, razlita po ne-modrem in ne-črnem, če jih obdaja modri gel (listek in
+#               sivinsko lestvico obdaja črn okvir); drobni deli (prsti) prek sosednje rezine; izpadle rezine po
+#               sosednji, rezine brez podatkov s prelivom sosednjih; izrez na okvir telesa
 #   3 barve     razlika med zaporednima rezinama na skupnih celicah (mediana log razmerja) → nihanje osvetlitve okoli
 #               drsečega povprečja se odstrani (ojačanje na rezino in kanal)
 #   4 izhod     a/<z>.webp, k/<y>.webp (frontalno), s/<x>.webp (sagitalno) na 1 mm, mali.webp (volumen 4 mm kot
@@ -31,7 +32,7 @@ except ImportError:
 
 TU = os.path.dirname(os.path.abspath(__file__))
 T = 512      # ploščica
-RAZL = 2     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
+RAZL = 5     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
 MALI = 4     # mm voksla malega volumna
 ROB = 6      # mm roba okoli telesa
 
@@ -238,11 +239,10 @@ def main(arg):
     else:
         nap(sili=True, korak="maska", delez=0)
         telo = np.zeros((Z, H1, W1), bool); kand = np.zeros((Z, H1, W1), bool)
-        rob = np.zeros((H1, W1), bool); rob[0] = rob[-1] = True; rob[:, 0] = rob[:, -1] = True
 
         def razredi(zi):
             v = vol[zi]; r, g_, b = (v[..., c].astype(np.int16) for c in range(3))
-            return v[..., 3] > 127, (np.maximum(np.maximum(r, g_), b) < 40) & (r <= b + 6), (r > b + 20) & (r > 50)
+            return v[..., 3] > 127, (np.maximum(np.maximum(r, g_), b) < 40) & (r <= b + 6), (r > b + 20) & (r > 50), g_ - r
 
         def razlij_odprto(seme, dov):
             """Razlitje po dovoljenem, skrčenem za 1 mm (mostički 1–2 mm do oznak ob telesu se pretrgajo), rob nazaj."""
@@ -250,11 +250,20 @@ def main(arg):
             return razsiri(poplavi(seme & o, o), 1) & dov
 
         for zi in range(Z):
-            nb, temno, toplo = razredi(zi)
-            ozko = skrci_min(nb, 2)
-            zun = razsiri(poplavi(rob & ozko, ozko), 3)
-            kand[zi] = nb & ~zun & ~temno
-            telo[zi] = razlij_odprto(skrci_min(kand[zi] & toplo, 7), kand[zi])
+            nb, temno, toplo, gr = razredi(zi)
+            kand[zi] = nb & ~temno
+            odprto = skrci_min(kand[zi], 1)
+            semena = skrci_min(kand[zi] & toplo, 7) & odprto
+            while semena.any():
+                # vsak toplo obarvan kos posebej: telo obdaja modri gel, listek in lestvico pa črn okvir
+                i0 = int(np.argmax(semena)); eno = np.zeros_like(semena); eno.flat[i0] = True
+                c = razsiri(poplavi(eno, odprto), 1) & kand[zi]
+                semena &= ~c
+                c &= razsiri(c & toplo, 4)          # brez sivih in belih podaljškov (led, lestvica) dlje od tkiva
+                obroc = razsiri(c, 3) & ~c
+                # listek je rumeno-zelen (zelena ≥ rdeča; maščoba in mišice so rdečkaste) in ga le delno obdaja gel
+                if obroc.any() and (~nb)[obroc].mean() >= 0.5 and gr[c].mean() < -6:
+                    telo[zi] |= c
             nap(korak="maska", delez=round(zi / Z / 2, 3))
         for smer in (range(1, Z), range(Z - 2, -1, -1)):   # drobni deli (prsti, teme) prek sosednje rezine; sive oznake ob telesu ne
             for zi in smer:
@@ -263,7 +272,8 @@ def main(arg):
                 if dod.any():
                     dod &= razredi(zi)[2]
                     if dod.any():
-                        telo[zi] |= razlij_odprto(dod | telo[zi], kand[zi])
+                        c = razlij_odprto(dod, kand[zi] & razsiri(prej, 12))   # največ ~1 cm od telesa v sosednji rezini
+                        telo[zi] |= c & razsiri(c & razredi(zi)[2], 4)
         # rezine, kjer se je telo stikalo z zunanjostjo (led ob robu gela) in je maska izpadla: površina pade glede na
         # sosede na obeh straneh → masko vzamemo iz najbližje dobre rezine (telo se med rezinama spremeni za največ ~3 mm)
         pov = telo.reshape(Z, -1).sum(1).astype(np.int64); slabe = []
@@ -279,15 +289,41 @@ def main(arg):
                     zadnja = zi
         for zi in sorted(slabe, key=lambda z: min(abs(z - g) for g in np.where(dobre)[0])):
             g = min(np.where(dobre)[0], key=lambda q: (abs(q - zi), q))
-            nb, temno, _ = razredi(zi)
-            telo[zi] = nb & ~temno & razsiri(telo[g], min(3 * abs(g - zi), 9))
+            nb, temno, toplo, _ = razredi(zi)
+            # jedro iz dobre rezine, rast največ nekaj mm in samo po toplo obarvanem (črn okvir ob roki ne)
+            telo[zi] = (telo[g] & nb & ~temno) | (razsiri(telo[g], min(3 * abs(g - zi), 6)) & nb & toplo)
             dobre[zi] = True
+        # rezine brez uporabnih podatkov (prazna slika na stiku blokov, zaledenela ploskev bloka): tudi po popravku je
+        # telesa občutno manj kot v sosednjih dobrih → nadomestimo jih s prelivom med najbližjima dobrima rezinama
+        pov2 = telo.reshape(Z, -1).sum(1).astype(np.int64); nadomesti = {}
+        prave = np.ones(Z, bool)
+        for zi in slabe:
+            ok = [q for q in range(max(0, zi - 20), min(Z, zi + 21)) if q not in slabe]
+            if ok and pov2[zi] < 0.85 * np.median(pov2[ok]):
+                prave[zi] = False
+        for zi in np.where(~prave)[0]:
+            pred = [q for q in range(zi - 1, -1, -1) if prave[q]][:1]; po_ = [q for q in range(zi + 1, Z) if prave[q]][:1]
+            if pred and po_:
+                nadomesti[int(zi)] = (pred[0], po_[0], (zi - pred[0]) / (po_[0] - pred[0]))
+            elif pred or po_:
+                nadomesti[int(zi)] = ((pred or po_)[0], (pred or po_)[0], 0.0)
+        for zi, (za, zb, w) in nadomesti.items():
+            telo[zi] = telo[za] if w < 0.5 else telo[zb]
+        # temne votline v telesu (zrak v pljučih, kri) so del slike: vse ne-modro, kar telo povsem obdaja; gel v votlinah ostane luknja
+        rob = np.zeros((H1, W1), bool); rob[0] = rob[-1] = True; rob[:, 0] = rob[:, -1] = True
+        for zi in range(Z):
+            if telo[zi].any():
+                telo[zi] |= (vol[zi, ..., 3] > 127) & ~poplavi(rob, ~telo[zi])
+            nap(korak="maska", delez=round(0.5 + zi / Z / 2, 3))
         if slabe:
             dnevnik(f"maska: {len(slabe)} rezin popravljenih po sosednji ({slabe[:12]}…)")
         del kand
         np.savez(mpot, telo=np.packbits(telo))
-        nap(sili=True, maska=Z)
+        nap(sili=True, maska=Z, nadomesti={str(k_): v_ for k_, v_ in nadomesti.items()})
+        if nadomesti:
+            dnevnik(f"maska: {len(nadomesti)} rezin brez podatkov nadomeščenih s prelivom sosednjih ({sorted(nadomesti)[:8]}…)")
         dnevnik(f"maska: telo {telo.mean() * 100:.1f} % volumna")
+    nadomesti = {int(k_): v_ for k_, v_ in nap.d.get("nadomesti", {}).items()}
     if not telo.any():
         raise SystemExit("maska je prazna: v rezinah ni najdenega telesa")
     ys = np.where(telo.any((0, 2)))[0]; xs = np.where(telo.any((0, 1)))[0]
@@ -302,7 +338,7 @@ def main(arg):
     prej = None
     for i in range(N):
         m = mini[i]; velja = (m[..., 3] > 250) & tm[dat[i][0]]
-        zdaj = (np.log(m[..., :3].astype(np.float32) + 2), velja) if velja.sum() > 50 else None
+        zdaj = (np.log(m[..., :3].astype(np.float32) + 2), velja) if velja.sum() > 50 and dat[i][0] not in nadomesti else None
         if zdaj and prej:
             sk = zdaj[1] & prej[1]
             L[i] = L[i - 1] + (np.median(zdaj[0][sk] - prej[0][sk], 0) if sk.sum() > 50 else 0)
@@ -322,10 +358,20 @@ def main(arg):
         for d in ("a", "k", "s"):
             os.makedirs(os.path.join(izhod, d), exist_ok=True)
         for zi in range(Z):
-            v = vol[zi, y0:y1, x0:x1]
-            a = np.where(razsiri(telo[zi], 1)[y0:y1, x0:x1], v[..., 3], 0).astype(np.uint8)
-            a[a < 24] = 0
-            rgb = razlij(v[..., :3].astype(np.float32) * ojac_z[zi], a)
+            def rezina1(q):
+                v = vol[q, y0:y1, x0:x1]
+                a = np.where(razsiri(telo[q], 1)[y0:y1, x0:x1], v[..., 3], 0).astype(np.float32)
+                a[a < 24] = 0
+                return razlij(v[..., :3].astype(np.float32) * ojac_z[q], a), a
+            if zi in nadomesti:
+                za, zb, w = nadomesti[zi]
+                (ra, aa), (rb, ab) = rezina1(za), rezina1(zb)
+                a = (1 - w) * aa + w * ab
+                rgb = ((1 - w) * ra * aa[..., None] + w * rb * ab[..., None]) / np.maximum(a, 1e-3)[..., None]
+                rgb = np.where(a[..., None] > 0, rgb, ra)
+                a[a < 64] = 0
+            else:
+                rgb, a = rezina1(zi)
             konc[zi, ..., :3] = np.clip(rgb + 0.5, 0, 255); konc[zi, ..., 3] = a
             pisi(np.ascontiguousarray(konc[zi]), os.path.join(izhod, "a", f"{zi}.webp"), 90)
             nap(korak="izhod prečno", delez=round(zi / Z, 3))
@@ -370,7 +416,7 @@ def main(arg):
     meta = {"spol": spol, "od": od, "do": do, "mm": 1, "dim": [Wc, Hc, Z], "izrez": [int(x0), int(y0)], "okvir": [W1, H1],
             "px_mm": px, "osi": "x: od desne proti levi strani telesa; y: od spredaj nazaj; z: od glave proti nogam",
             "mali": {"mm": MALI, "dim": [W4, H4, Z4], "stolpcev": stolp, "datoteka": "mali.webp"},
-            "navedba": viri["navedba"], "pogoji": viri["pogoji"], "manjka": nap.d.get("manjka", []),
+            "navedba": viri["navedba"], "pogoji": viri["pogoji"], "manjka": nap.d.get("manjka", []), "nadomescene": sorted(nadomesti),
             "ustvarjeno": time.strftime("%Y-%m-%d")}
 
     # ---- 5 podrobno
@@ -409,6 +455,9 @@ def main(arg):
         zadnja = None
         for i in range(i0, N):
             zi, s, pot = dat[i]
+            if zi in nadomesti:
+                zv = nadomesti[zi][0] if nadomesti[zi][2] < 0.5 else nadomesti[zi][1]
+                pot = dat[zv * len(pod) + pod.index(s)][2]
             potrebna = vzdolzno or s == pod[sred]
             if potrebna:
                 f = nalozi(pot)
