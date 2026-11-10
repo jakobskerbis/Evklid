@@ -150,7 +150,25 @@ const serverError = (err, status) => {
   return hint && hint !== err.hint ? `${own} ${hint}` : own;
 };
 
+// Klici v teku (zaporedna številka): konec zagona počaka, da se prvi pogled napolni, preden zamenja posnetek
+// zadnjega zaslona (finishStart).
+let apiSeq = 0;
+const apiOpen = new Set();
 const api = async (url, opts = {}) => {
+  const id = ++apiSeq;
+  apiOpen.add(id);
+  try {
+    return await apiCall(url, opts);
+  } finally {
+    apiOpen.delete(id);
+  }
+};
+const apiCall = async (url, opts = {}) => {
+  // Klic, ki ga je zagon že začel v <head> (public/zacetek.js): enkrat, samo uspešen odgovor; sicer običajna pot.
+  if (!opts.method && !opts.body) {
+    const early = await window.evklidZacetek?.vnaprej?.(url);
+    if (early != null) return early;
+  }
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
     if (local !== undefined) return local;
@@ -262,8 +280,9 @@ function showView(name) {
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
   if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
+  pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
-    if (!v.classList.contains("in-okno")) v.hidden = v.id !== `view-${name}`;
+    if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
   });
   initView(name);
   if (away("scan")) leaveScan();
@@ -278,6 +297,7 @@ function showView(name) {
   window.scrollTo(0, 0);
   if (!startHold) startDone();
   rememberScreen();
+  snapshotSoon();
 }
 // Zadnji zaslon (j 2026-11-10, public/zacetek.js): ob naslednjem odprtju aplikacije se odpre ta pogled (z odprto
 // lekcijo Učbenika ali temo), če od zadnjega obiska ni minilo več kot 12 ur. Zapis se osveži ob vsaki menjavi
@@ -285,13 +305,86 @@ function showView(name) {
 const ZACETEK = window.evklidZacetek || null;
 let startRec = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
 let startHold = true; // do konca zagona (start) Učna pot ostane skrita: vmesni showView("path") ne sme utripniti
-const startDone = () => document.documentElement.removeAttribute("data-zacetek");
+// Konec zagona: oznaki na <html> in posnetek zadnjega zaslona izginejo skupaj, pravi pogled se pokaže v istem izrisu.
+const startShot = () => document.querySelector("main[data-posnetek]");
+const startDone = () => {
+  if (ZACETEK?.konec) return ZACETEK.konec();
+  document.documentElement.removeAttribute("data-zacetek");
+};
+// Posnetek pripnemo na njegovo mesto, pravi pogled se pod njim izriše neviden (style.css html[data-zacetek-pod]).
+function pinSnapshot() {
+  const shot = startShot();
+  const root = document.documentElement;
+  if (!shot || root.hasAttribute("data-zacetek-pod")) return;
+  const r = shot.getBoundingClientRect();
+  Object.assign(shot.style, { top: `${r.top + scrollY}px`, left: `${r.left + scrollX}px`, width: `${r.width}px`, height: `${r.height}px` });
+  root.setAttribute("data-zacetek-pod", "");
+}
+// Posnetek zamenjamo, ko so klici pogleda končani in se 120 ms ni spremenil, najpozneje po 2,5 s (dotik zavihka takoj).
+// mark: zadnji klic pred zadnjim zaslonom (Učne poti pod njim ne čakamo); null: čakamo vse.
+function finishStart(mark = null) {
+  startHold = false;
+  // Modul posnetka vnaprej (v miru): ob pagehide se ne naloži več pravočasno.
+  setTimeout(() => (window.requestIdleCallback || setTimeout)(loadShot), 1500);
+  if (!startShot()) return startDone();
+  const last = apiSeq;
+  const mine = (id) => mark == null || (id > mark && id <= last);
+  const view = document.getElementById(`view-${currentView}`);
+  const t0 = performance.now();
+  let changed = t0;
+  const mo = view && new MutationObserver(() => (changed = performance.now()));
+  mo?.observe(view, { childList: true, subtree: true, characterData: true });
+  const check = () => {
+    if (!startShot()) return mo?.disconnect();
+    const now = performance.now();
+    if (now - t0 <= 2500 && ([...apiOpen].some(mine) || now - changed < 120)) return setTimeout(check, 40);
+    mo?.disconnect();
+    startDone();
+  };
+  setTimeout(check, 40);
+}
+// Po clearPrivate (odjava, 401) in med zaklepom do naslednje izbire profila (znova) brez zapisa (pregled #560 A2, A3).
+const shotClosed = () => ZACETEK?.lahkoShrani?.() === false;
 function rememberScreen() {
-  if (!ZACETEK || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
+  if (!ZACETEK || shotClosed() || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
   const rec = { v: currentView, t: Date.now(), s: state.student.id };
   if (currentView === "uci" && uciTab() === "textbook" && openLessonId()) rec.l = openLessonId();
   if (currentView === "topic" && state.topicFx && state.topic?.id) rec.p = state.topic.id;
   localStorageSet(ZACETEK.KEY, JSON.stringify(rec));
+  return rec;
+}
+// Posnetek zadnjega zaslona za hiter zagon (public/posnetek.js, naložen po zagonu; zacetek.js ga pokaže ob odprtju).
+let shotMod = null;
+const loadShot = () => import("./posnetek.js").then((m) => (shotMod = m)).catch(() => null);
+// a = lastnik naprave, z = profil z geslom (zacetek.js počaka strežnik); zaklenjen ali brez gesla: null (izbris).
+function shotMeta() {
+  const s = state.student;
+  if (!s || s.locked || (accountsOn() && s.needs_password)) return null;
+  return { a: localStorageGet(ZACETEK.OWNER || "evklid.offline.owner"), z: s.needs_password === false ? 1 : 0 };
+}
+// Tudi ne ob oknu zaklepa (423) ali ko na napravi ni več izbran ta profil.
+const shotAllowed = () =>
+  !shotClosed() && !document.getElementById("lock-overlay") && !!state.student && localStorageGet("studentId") === String(state.student.id) && !startHold && !startShot();
+function saveSnapshot() {
+  if (shotClosed()) return;
+  const rec = rememberScreen();
+  if (!ZACETEK?.POSNETEK || !shotAllowed()) return;
+  if (shotMod) shotMod.shrani(ZACETEK.POSNETEK, rec, shotMeta());
+  else loadShot().then((m) => m && shotAllowed() && m.shrani(ZACETEK.POSNETEK, rememberScreen(), shotMeta()));
+}
+function dropOtherShot(id) {
+  if (!ZACETEK?.POSNETEK) return;
+  let shot = null;
+  try {
+    shot = JSON.parse(localStorageGet(ZACETEK.POSNETEK) || "null");
+  } catch {}
+  if (shot && String(shot.s) !== String(id)) localStorageRemove(ZACETEK.POSNETEK);
+}
+// Med uporabo: nekaj sekund po menjavi pogleda (telefon lahko aplikacijo v ozadju ustavi brez dogodka).
+let shotTimer = 0;
+function snapshotSoon() {
+  clearTimeout(shotTimer);
+  shotTimer = setTimeout(() => (window.requestIdleCallback || setTimeout)(() => document.visibilityState === "visible" && saveSnapshot()), 4000);
 }
 // Zaslon za odprtje: zapis istega profila, mlajši od 12 ur, in pogled, ki ga ta profil ima; sicer null (Učna pot).
 function startScreen() {
@@ -313,14 +406,14 @@ async function openStartScreen(z) {
   else showView(z.v);
 }
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") return rememberScreen();
+  if (document.visibilityState === "hidden") return saveSnapshot();
   // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
   const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
   // Tekmovanje z uro ali neposlano besedilo (klepet, odgovor) ostaneta na zaslonu.
   const busy = state.contestTimer || unsentText();
   if (installed && !busy && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
 });
-window.addEventListener("pagehide", rememberScreen);
+window.addEventListener("pagehide", saveSnapshot);
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
   if (name === "me") renderMe();
@@ -831,6 +924,7 @@ async function selectStudent(id) {
   // Uporabnik lahko namesto tega izbere drug profil; seznam se nato naloži znova (stanje zaklepa profilov se je lahko spremenilo).
   // Brez povezave s strežnikom (shranjena kopija) računi niso vklopljeni: odpremo profil za vadbo brez gesla,
   // zaklenjenega pa ne (zanj ni shranjenih nastavitev).
+  if (target?.locked || (target && accountsOn() && target.needs_password)) ZACETEK?.pozabi?.(); // zaklenjen profil: posnetek njegovega zaslona izgine
   if (target && accountsOn() && (target.locked || target.needs_password)) return loadStudents(await openProfileLock(target, state.students));
   if (target?.locked) {
     const open = state.students.find((s) => !s.locked);
@@ -839,6 +933,8 @@ async function selectStudent(id) {
     $("#student-select").value = open.id;
     return selectStudent(open.id);
   }
+  dropOtherShot(target?.id); // menjava profila: posnetek zaslona prejšnjega profila izgine takoj
+  if (target) ZACETEK?.znova?.(); // izbran odklenjen profil: zapis zadnjega zaslona in posnetka spet velja
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
@@ -1723,15 +1819,18 @@ function dropStaleCopies(v) {
 // šele tik pred osvežitvijo, ko so tekmovanje in neposlano besedilo že preverjeni (pregled B2 P2-1).
 const RELOADED = "evklid.osvezeno";
 async function reloadIfNewer(once = false) {
-  if (!appVersion || state.contestTimer || unsentText()) return;
+  const busy = () => state.contestTimer || unsentText();
+  if (!appVersion || busy()) return;
   const v = await serverVersion();
-  if (!v || v === appVersion) return;
+  // Med klicem je lahko začel pisati (B4).
+  if (!v || v === appVersion || busy()) return;
   try {
     if (once && sessionStorage.getItem(RELOADED) === v) return;
   } catch {
     return; // brez sessionStorage ne tvegamo zanke
   }
   if (pageApp) await dropStaleCopies(v);
+  if (busy()) return;
   // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
   // service worker ali izgubil osvežitev (pregled B2 P2-4).
   try {
@@ -2525,6 +2624,11 @@ function localStorageGet(k) {
 function localStorageSet(k, v) {
   try {
     localStorage.setItem(k, v);
+  } catch {}
+}
+function localStorageRemove(k) {
+  try {
+    localStorage.removeItem(k);
   } catch {}
 }
 
@@ -4849,14 +4953,16 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
     const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
     if (!o?.keepView) showView("path");
+    const mark = apiSeq; // klici do sem so od profila in Učne poti
+    const other = z || (first && START_VIEW && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
     if (z) await openStartScreen(z);
-    startHold = false;
-    startDone();
+    finishStart(other ? mark : null);
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
       box.value = START_ASK;
       autoGrow();
+      startDone(); // viden pogled, sicer fokus ne gre v polje (B1)
       box.focus();
     }
     if (first) restoreWindows();
