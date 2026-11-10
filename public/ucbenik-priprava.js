@@ -7,6 +7,7 @@
 // (iPhone/iPad brez »Safari/« v UA; Safari, Chrome in Firefox na iOS ga imajo).
 function neZnaTiskati(ua = "", hasPrint = true) {
   if (!hasPrint) return true;
+  if (/EvklidApp\//.test(ua)) return false;
   if (/FBAN|FBAV|FB_IAB|FBIOS|Messenger|Instagram|musical_ly|BytedanceWebview|TikTok|Snapchat|\bLine\/|MicroMessenger|LinkedInApp|Pinterest|Twitter|KAKAOTALK|Viber/i.test(ua)) return true;
   if (/; wv\)/.test(ua)) return true;
   if (/iPhone|iPad|iPod/.test(ua) && !/Safari\//.test(ua)) return true;
@@ -20,6 +21,7 @@ if (box) {
   const $ = (s) => box.querySelector(s);
   const bar = $(".p-trak i");
   const total = Number(box.dataset.skupaj) || 0;
+  box.classList.add("p-on"); // pregrada je privzeto skrita v CSS: če ta skripta ne naloži, stran ostane berljiva
   const unsupported = neZnaTiskati(navigator.userAgent, typeof window.print === "function");
   window.__tiskNe = unsupported;
   let text = {};
@@ -39,6 +41,7 @@ if (box) {
     $(".p-navodilo").textContent = d["tbk.pdfNoPrint"];
     $(".p-kopiraj").textContent = d["tbk.pdfCopy"];
     $(".p-vseeno").textContent = d["tbk.pdfTry"];
+    $(".p-prikazi").textContent = d["tbk.pdfShow"];
     const save = document.querySelector(".bar button");
     if (save) save.textContent = d["tbk.pdfSave"];
     paint(lessons());
@@ -46,13 +49,16 @@ if (box) {
   const lang = new URLSearchParams(location.search).get("l") || "";
   if (/^[A-Za-z]{2,3}(-[A-Za-z]{2,4})?$/.test(lang) && lang !== "sl") {
     if (["ar", "fa", "ur"].includes(lang)) box.dir = "rtl";
-    fetch(`/i18n/ui/${lang}.json`).then((r) => (r.ok ? r.json() : null)).then((d) => d && apply(d)).catch(() => {});
+    fetch(`/i18n/ui/${lang}.json`).then(async (r) => { if (!r.ok) { await r.text().catch(() => {}); return null; } return r.json(); }).then((d) => d && apply(d)).catch(() => {});
   }
 
   const hide = () => {
     clearInterval(timer);
     box.hidden = true;
   };
+  // Varnostni čas: če »load« ne pride (počasno omrežje, zataknjen prenos), pregrada ne ostane čez vso stran.
+  $(".p-prikazi").addEventListener("click", hide);
+  if (!unsupported) setTimeout(() => !box.hidden && ($(".p-varnost").hidden = false), 45_000);
   if (unsupported) {
     // Brez samodejnega tiska: navodilo + kopiranje povezave; »Vseeno poskusi« pokaže stran in tiska.
     clearInterval(timer);
@@ -62,7 +68,7 @@ if (box) {
     $(".p-navodilo").hidden = false;
     $(".p-akcije").hidden = false;
     $(".p-kopiraj").addEventListener("click", async (e) => {
-      const url = location.href.replace(/#.*$/, "");
+      const url = location.href; // z #natisni: odprta povezava takoj ponudi shranjevanje
       try {
         await navigator.clipboard.writeText(url);
       } catch {

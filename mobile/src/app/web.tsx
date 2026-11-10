@@ -175,6 +175,11 @@ export default function Web() {
             style={{ flex: 1, backgroundColor: th.bg }}
             applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"}`}
             originWhitelist={["*"]}
+            // Povezave target=_blank (PDF učbenika) na Androidu pridejo sem, ne v onShouldStartLoadWithRequest.
+            onOpenWindow={(e: { nativeEvent: { targetUrl: string } }) => {
+              const u = e.nativeEvent.targetUrl;
+              if (/^https?:/.test(u)) WebBrowser.openBrowserAsync(u).catch(() => {});
+            }}
             injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}
             injectedJavaScript={BAR_JS}
             onMessage={(e: { nativeEvent: { data: string; url?: string } }) => {
@@ -193,8 +198,10 @@ export default function Web() {
             }}
             onShouldStartLoadWithRequest={(req: { url: string; isTopFrame?: boolean }) => {
               if (req.isTopFrame === false) return true;
-              if (req.url.startsWith(ORIGIN + "/") || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
-              if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              if ((req.url.startsWith(ORIGIN + "/") && !req.url.startsWith(ORIGIN + "/ucbenik/")) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
+              // Učbenik za tisk/PDF (/ucbenik/…): WebView ne zna shraniti PDF-ja, zato ga odpre sistemski brskalnik.
+              if (req.url.startsWith(ORIGIN + "/ucbenik/")) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              else if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
               // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;

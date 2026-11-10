@@ -2302,6 +2302,7 @@ export default {
   "tbk.pdfCopy": "Kopiraj povezavo",
   "tbk.pdfCopied": "Povezava kopirana",
   "tbk.pdfTry": "Vseeno poskusi",
+  "tbk.pdfShow": "Vseeno prikaži",
   "tbk.pdfSave": "Shrani kot PDF",
   "tbk.lesson": "lekcija",
   "tbk.demo": "poskus",

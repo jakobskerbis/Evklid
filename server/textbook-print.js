@@ -340,6 +340,7 @@ const PRIPRAVA = (total) => `
   <p class="p-stanje">0 od ${total} lekcij</p>
   <p class="p-navodilo" hidden>Ta brskalnik ne zna shraniti PDF-ja. Odpri povezavo v Chromu ali Safariju.</p>
   <div class="p-akcije" hidden><button type="button" class="p-kopiraj">Kopiraj povezavo</button><button type="button" class="p-drugo p-vseeno">Vseeno poskusi</button></div>
+  <div class="p-akcije p-varnost" hidden><button type="button" class="p-prikazi">Vseeno prikaži</button></div>
 </div>
 <script src="/ucbenik-priprava.js"></script>`;
 
@@ -395,9 +396,10 @@ export function shell(title, content, css = "", total = 0) {
   .katex-display { overflow-x: auto; overflow-y: hidden; }
   section, .alt, li { break-inside: avoid-page; }
   /* Med pripravo (prenos + izris) in v brskalnikih brez tiskanja: pregrada čez vso širino (public/ucbenik-priprava.js). */
-  .priprava { position: fixed; inset: 0; z-index: 10; background: #fff; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px 20px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .priprava { display: none; position: fixed; inset: 0; z-index: 10; background: #fff; flex-direction: column; justify-content: center; gap: 12px; padding: 24px 20px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .priprava.p-on { display: flex; }
   .priprava[hidden] { display: none; }
-  html:has(.priprava:not([hidden])) { overflow: hidden; }
+  html:has(.priprava.p-on:not([hidden])) { overflow: hidden; }
   .priprava h1 { font-size: 1.4rem; margin: 0; } .priprava p { margin: 0; }
   .priprava .p-trak { height: 12px; border-radius: 6px; background: #dde2ec; overflow: hidden; }
   .priprava .p-trak i { display: block; height: 100%; width: 3%; background: #2353d1; transition: width .25s; }
