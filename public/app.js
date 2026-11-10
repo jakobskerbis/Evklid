@@ -356,11 +356,27 @@ function rememberScreen() {
 // Posnetek zadnjega zaslona za hiter zagon (public/posnetek.js, naložen po zagonu; zacetek.js ga pokaže ob odprtju).
 let shotMod = null;
 const loadShot = () => import("./posnetek.js").then((m) => (shotMod = m)).catch(() => null);
+// Zasebnost (pregled #560): a = lastnik naprave (račun, public/offline.js) ob shranjevanju; z = profil ima geslo (zaklep
+// se lahko spremeni na drugi napravi, zacetek.js zato počaka na strežnik). Zaklenjen profil ali profil brez gesla, ki
+// ga mora nastaviti, posnetka nima (meta null → posnetek se izbriše).
+function shotMeta() {
+  const s = state.student;
+  if (!s || s.locked || (accountsOn() && s.needs_password)) return null;
+  return { a: localStorageGet(ZACETEK.OWNER || "evklid.offline.owner"), z: s.needs_password === false ? 1 : 0 };
+}
 function saveSnapshot() {
   const rec = rememberScreen();
   if (!ZACETEK?.POSNETEK || startHold || startShot()) return;
-  if (shotMod) shotMod.shrani(ZACETEK.POSNETEK, rec);
-  else loadShot().then((m) => m && !startHold && !startShot() && m.shrani(ZACETEK.POSNETEK, rememberScreen()));
+  if (shotMod) shotMod.shrani(ZACETEK.POSNETEK, rec, shotMeta());
+  else loadShot().then((m) => m && !startHold && !startShot() && m.shrani(ZACETEK.POSNETEK, rememberScreen(), shotMeta()));
+}
+function dropOtherShot(id) {
+  if (!ZACETEK?.POSNETEK) return;
+  let shot = null;
+  try {
+    shot = JSON.parse(localStorageGet(ZACETEK.POSNETEK) || "null");
+  } catch {}
+  if (shot && String(shot.s) !== String(id)) localStorageRemove(ZACETEK.POSNETEK);
 }
 // Med uporabo: nekaj sekund po menjavi pogleda (telefon lahko aplikacijo v ozadju ustavi brez dogodka).
 let shotTimer = 0;
@@ -909,6 +925,7 @@ async function selectStudent(id) {
     $("#student-select").value = open.id;
     return selectStudent(open.id);
   }
+  dropOtherShot(target?.id); // menjava profila: posnetek zaslona prejšnjega profila izgine takoj
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
@@ -2593,6 +2610,11 @@ function localStorageGet(k) {
 function localStorageSet(k, v) {
   try {
     localStorage.setItem(k, v);
+  } catch {}
+}
+function localStorageRemove(k) {
+  try {
+    localStorage.removeItem(k);
   } catch {}
 }
 

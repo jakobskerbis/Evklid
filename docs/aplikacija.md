@@ -38,11 +38,19 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   HTML pogleda istega profila, star največ 12 ur; `public/posnetek.js` ob skritju strani), brez
   posnetka okostje. Posnetek je samo slika (`main[data-posnetek]`, inert, za pravimi pogledi); pravi pogled se
   pripravi neviden pod njim in ga zamenja v istem izrisu (`pinSnapshot`, `finishStart`). Klici zagona (nastavitve,
-  stanje računa, profili, pogovori) stečejo že v `<head>` (`evklidZacetek.vnaprej`). Zasebnost: ključ je med osebnimi
-  (odjava, izbris profila ga pobrišeta); ob zaklenjenem profilu ali končani seji posnetek izgine takoj, ko strežnik
-  to pove (do takrat, največ en odgovor strežnika, je lahko viden zadnji zaslon te naprave). Vstopna stran čaka
+  stanje računa, profili, pogovori) stečejo že v `<head>` (`evklidZacetek.vnaprej`, rok 5 s). Zasebnost (pregled
+  #560): posnetek se pokaže takoj le, če lokalno stanje potrjuje isti račun (`evklid.offline.owner` kot ob
+  shranjevanju) in isti odklenjen profil (seznam profilov na napravi brez `locked`). `locked` je stanje strežnika
+  (geslo profila, odklep na napravo, `server/accounts/profile-lock.js`); ločenega PIN-a staršev ni. Ker zaklep
+  profila z geslom lahko spremeni druga naprava (novo geslo, »Odjavi vse druge naprave«), ima tak profil (z: 1)
+  najprej okostje, posnetek šele po odgovoru `/api/students` (brez povezave po seznamu na napravi). Zaklenjen
+  profil in profil, ki mora nastaviti geslo, posnetka nimata. Posnetek izgine ob odjavi, menjavi računa
+  (osebni ključ), menjavi profila (`dropOtherShot`), zaklepu (`openProfileLock`, tudi 423) in izbrisu profila. HTML
+  gre ob shranjevanju skozi DOMPurify, ob odprtju skozi `ociscen()` (`<template>`, brez skriptov, dogodkov in
+  naslovov drugih izvorov). Vstopna stran čaka
   omrežje največ 0,4 s (`public/sw.js`), nato shranjena kopija iste različice. APK drži zagonski zaslon do sporočila
-  »izris« (`mobile/src/app/web.tsx`). Meri korak `tel-zagon` v `scripts/preveri-aplikacijo.cjs` (prag 1,5 s).
+  »izris« (`mobile/src/app/web.tsx`). Meri korak `tel-zagon` v `scripts/preveri-aplikacijo.cjs` (nad 1,5 s opozorilo, napaka nad 5 s ali če posnetek ni
+  prva vsebina).
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).

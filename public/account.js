@@ -177,6 +177,7 @@ const lockError = (err) => (unreachable(err) ? t("lock.offline") : err.status ==
 
 export function openProfileLock(student, students = []) {
   $("#lock-overlay")?.remove();
+  window.evklidZacetek?.pozabi?.(); // zaklep (tudi med uporabo, 423): posnetek zadnjega zaslona izgine (public/zacetek.js)
   const set = !student.locked;
   const others = students.filter((s) => s.id !== student.id);
   const pw = (name, auto, label) =>

@@ -12,8 +12,10 @@ const H = 60 * 60 * 1000;
 
 // public/zacetek.js je navaden skript v <head>: zaženemo ga z lažnim oknom in majhno lažno stranjo (spodnja
 // vrstica, prvi pogled, pasici), da vidimo, kaj vstavi in katere klice začne.
-function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori = {}, brezVrstice = false } = {}) {
+function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori = {}, brezVrstice = false, lastnik, profili } = {}) {
   const store = new Map();
+  if (lastnik != null) store.set("evklid.offline.owner", JSON.stringify(lastnik));
+  if (profili) store.set("evklid.offline.students", JSON.stringify(profili));
   if (zapis) store.set("evklid.zadnji-zaslon", JSON.stringify(zapis));
   if (raw != null) store.set("evklid.zadnji-zaslon", raw);
   if (posnetek) store.set("evklid.zadnji-posnetek", typeof posnetek === "string" ? posnetek : JSON.stringify(posnetek));
@@ -29,7 +31,15 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
     e.setAttribute = (k, v) => (e.attrs[k] = v);
     e.removeAttribute = (k) => delete e.attrs[k];
     e.querySelectorAll = () => [];
-    e.remove = () => (e.removed = true);
+    e.remove = () => ((e.removed = true), (e.parentNode = null));
+    // Posnetek se vstavi kot razčlenjen <template> (zacetek.js ociscen); čiščenje samo preizkusi
+    // test/zacetek-posnetek.test.js v pravem brskalniku, tukaj HTML le prenesemo.
+    Object.defineProperty(e, "textContent", { set: () => (e.innerHTML = ""), get: () => e.innerHTML });
+    e.appendChild = (x) => (e.innerHTML += x.__h);
+    if (tag === "template") {
+      e.content = { __h: "", querySelectorAll: () => [] };
+      Object.defineProperty(e, "innerHTML", { set: (h) => (e.content.__h = h), get: () => e.content.__h });
+    }
     return e;
   };
   const tabs = ["path", "uci", "chat", "me"].map((v) => {
@@ -40,7 +50,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
     t.classList = { toggle: (_c, on) => (t.active = on) };
     return t;
   });
-  const parent = { insertBefore: (e, pred) => vstavljeno.push({ el: e, pred: pred.id || pred.tag }) };
+  const parent = { insertBefore: (e, pred) => ((e.parentNode = parent), vstavljeno.push({ el: e, pred: pred.id || pred.tag })) };
   const bar = Object.assign(el("nav"), { id: "tabbar", parentNode: parent, querySelectorAll: () => tabs });
   const prvi = Object.assign(el("main"), { id: "view-auth", parentNode: parent });
   const pasici = { "mock-banner": el("div"), "test-notice": el("div") };
@@ -49,6 +59,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
     documentElement: { setAttribute: (k, v) => (attrs[k] = v), removeAttribute: (k) => delete attrs[k], hasAttribute: (k) => k in attrs },
     getElementById: (id) => (id === "tabbar" ? (brezVrstice ? null : bar) : pasici[id] || null),
     createElement: el,
+    importNode: (c) => ({ __h: c.__h }),
     querySelector: (q) => (q === "body > main" ? prvi : /data-posnetek/.test(q) ? (zadnji() && !zadnji().removed && !(q.includes(":not(.zagon-okostje)") && /zagon-okostje/.test(zadnji().className)) ? zadnji() : null) : null),
     querySelectorAll: (q) => (/data-posnetek/.test(q) && zadnji() ? [zadnji()] : []),
     addEventListener: () => {},
@@ -57,6 +68,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
   const fetch = (url) => {
     klici.push(url);
     const o = odgovori[url];
+    if (o === "visi") return new Promise(() => {});
     return Promise.resolve(o === undefined ? { ok: false } : { ok: true, json: () => Promise.resolve(o) });
   };
   window.ReactNativeWebView = { postMessage: (m) => sporocila.push(JSON.parse(m)) };
@@ -70,6 +82,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
     Date,
     requestAnimationFrame: (fn) => fn(),
     setTimeout: (fn, ms) => timers.push({ fn, ms }),
+    clearTimeout: (id) => id && (timers[id - 1].cleared = true),
   };
   vm.runInNewContext(read("public/zacetek.js"), ctx);
   return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers, vstavljeno, zadnji, klici, sporocila, store, tabs, pasici };
@@ -117,10 +130,11 @@ test("odločitev pade pred prvim izrisom: html[data-zacetek] skrije Učno pot, d
 
 test("varovalo in zasebnost: oznaka izgine po 8 s tudi brez app.js; zapis se ob odjavi ali izbrisu profila pobriše", () => {
   const z = zacetek({ zapis: { v: "chat", t: Date.now() - H, s: 7 } });
-  assert.deepEqual(z.timers.map((x) => x.ms), [8000]);
-  z.timers[0].fn();
+  const varovalo = () => z.timers.filter((x) => x.ms === 8000);
+  assert.equal(varovalo().length, 1);
+  varovalo()[0].fn();
   assert.equal(z.attrs["data-zacetek"], undefined, "stran ne ostane prazna");
-  assert.equal(zacetek().timers.length, 0, "brez oznake ni časovnika");
+  assert.equal(zacetek().timers.filter((x) => x.ms === 8000).length, 0, "brez oznake ni varovala");
   // public/offline.js (uvaža modul strežnika, zato v Node ni uvozljiv): izraz PRIVATE_KEYS iz izvorne kode.
   const m = read("public/offline.js").match(/const PRIVATE_KEYS = \/(.+)\/;/);
   const PRIVATE_KEYS = new RegExp(m[1]);
@@ -232,6 +246,76 @@ test("hiter zagon, zasebnost: seja ne velja več ali profil je zaklenjen → pos
   assert.match(shot, /if \(!h\.trim\(\) \|\| h\.length > SHOT_MAX\) return drop\(\);/);
   assert.match(shot, /el\.parentElement !== document\.body \|\| el\.classList\.contains\("in-okno"\) \|\| document\.body\.classList\.contains\("onboarding"\)\) return drop\(\);/);
   assert.match(app, /import\("\.\/posnetek\.js"\)/, "shranjevanje posnetka ni del prvega odprtja");
+});
+
+test("hiter zagon, zasebnost (pregled #560): posnetek takoj le za isti račun in isti odklenjen profil po stanju naprave", async () => {
+  const tick = () => new Promise((r) => setImmediate(r));
+  const okostje = (z, kaj) => {
+    assert.match(z.zadnji().className, /zagon-okostje/, kaj);
+    assert.doesNotMatch(z.zadnji().innerHTML, /zdravo/, kaj);
+  };
+  const A = [{ id: 7, name: "A", settings: {} }];
+  // Isti lastnik (račun) kot ob shranjevanju, profil na napravi odklenjen: takoj, tudi brez omrežja.
+  const isti = zacetek({ zapis: CHAT, posnetek: POS({ a: "12" }), lastnik: 12, profili: A });
+  assert.equal(isti.zadnji().innerHTML, "<p>zdravo</p>");
+  await tick();
+  assert.equal(isti.zadnji().innerHTML, "<p>zdravo</p>", "brez povezave ostane (seznam na napravi potrjuje profil)");
+  // Drug račun, posnetek brez lastnika na napravi z računom, profil na napravi zaklenjen ali ga ni, ni seznama: okostje in izbris.
+  for (const [o, kaj] of [
+    [{ posnetek: POS({ a: "13" }), lastnik: 12, profili: A }, "drug račun"],
+    [{ posnetek: POS(), lastnik: 12, profili: A }, "posnetek iz časa brez računa"],
+    [{ posnetek: POS({ a: "12" }), profili: A }, "na napravi ni več lastnika (odjava)"],
+    [{ posnetek: POS({ a: "12" }), lastnik: 12, profili: [{ id: 7, name: "A", locked: true }] }, "zaklenjen na napravi"],
+    [{ posnetek: POS({ a: "12" }), lastnik: 12, profili: [{ id: 8, name: "B" }] }, "profila ni"],
+    [{ posnetek: POS({ a: "12" }), lastnik: 12 }, "ni seznama profilov"],
+  ]) {
+    const z = zacetek({ zapis: CHAT, ...o });
+    okostje(z, kaj);
+    assert.equal(z.store.has("evklid.zadnji-posnetek"), false, kaj);
+  }
+  // Profil z geslom (z: 1): zaklep se lahko spremeni na drugi napravi → najprej okostje, posnetek po potrditvi strežnika.
+  const ok = { "/api/account/status": { enabled: true, logged_in: true }, "/api/students": [{ id: 7, name: "A", settings: {}, needs_password: false }] };
+  const geslo = zacetek({ zapis: CHAT, posnetek: POS({ a: "12", z: 1 }), lastnik: 12, profili: A, odgovori: ok });
+  okostje(geslo, "pred odgovorom strežnika");
+  await tick();
+  assert.equal(geslo.zadnji().innerHTML, "<p>zdravo</p>", "po potrditvi");
+  assert.equal(geslo.zadnji().id, "view-chat");
+  const zaklenjen = zacetek({ zapis: CHAT, posnetek: POS({ a: "12", z: 1 }), lastnik: 12, profili: A, odgovori: { ...ok, "/api/students": [{ id: 7, name: "A", locked: true }] } });
+  await tick();
+  okostje(zaklenjen, "strežnik: zaklenjen na drugi napravi");
+  assert.equal(zaklenjen.store.has("evklid.zadnji-posnetek"), false);
+  // Brez povezave (oba klica neuspešna): velja seznam na napravi; ob napaki samo enega (seja?) okostje ostane.
+  const brez = zacetek({ zapis: CHAT, posnetek: POS({ a: "12", z: 1 }), lastnik: 12, profili: A });
+  await tick();
+  assert.equal(brez.zadnji().innerHTML, "<p>zdravo</p>");
+  const napol = zacetek({ zapis: CHAT, posnetek: POS({ a: "12", z: 1 }), lastnik: 12, profili: A, odgovori: { "/api/account/status": { enabled: true, logged_in: true } } });
+  await tick();
+  okostje(napol, "seja velja, seznama profilov ni");
+  // Po koncu zagona (app.js je že zamenjal pogled) potrditev posnetka ne vstavi več.
+  const pozno = zacetek({ zapis: CHAT, posnetek: POS({ a: "12", z: 1 }), lastnik: 12, profili: A, odgovori: ok });
+  pozno.timers.find((x) => x.ms === 8000).fn();
+  await tick();
+  okostje(pozno, "po koncu zagona");
+  // Shranjevanje: zaklenjen profil ali profil, ki mora nastaviti geslo, posnetka nima; lastnik in z gresta v zapis.
+  const app = read("public/app.js");
+  assert.match(app, /if \(!s \|\| s\.locked \|\| \(accountsOn\(\) && s\.needs_password\)\) return null;/);
+  assert.match(app, /z: s\.needs_password === false \? 1 : 0/);
+  assert.match(read("public/posnetek.js"), /if \(!meta \|\| !purify\?\.sanitize\) return drop\(\);/);
+  // Menjava profila: posnetek prejšnjega izgine takoj; zaklep (tudi 423 med uporabo) ga pobriše.
+  assert.match(app, /dropOtherShot\(target\?\.id\); \/\/ menjava profila/);
+  assert.match(read("public/account.js"), /\$\("#lock-overlay"\)\?\.remove\(\);\n\s*window\.evklidZacetek\?\.pozabi\?\.\(\);/);
+});
+
+test("hiter zagon: vnaprejšnji klic ima časovno omejitev (obvisela povezava → app.js pokliče sam)", async () => {
+  const z = zacetek({ zapis: CHAT, odgovori: { "/api/config": "visi", "/api/account/status": { enabled: false } } });
+  const rok = z.timers.filter((x) => x.ms === z.api.ROK);
+  assert.equal(z.api.ROK, 5000);
+  assert.equal(rok.length, 4, "vsak klic svoj rok");
+  const cfg = z.api.vnaprej("/api/config");
+  await new Promise((r) => setImmediate(r)); // odgovori, ki so prišli, pred rokom
+  for (const r of rok) r.fn();
+  assert.equal(await cfg, null);
+  assert.deepEqual(await z.api.vnaprej("/api/account/status"), { enabled: false }, "odgovor pred rokom velja");
 });
 
 test("hiter zagon: klici zagona stečejo že v <head>, app.js jih prevzame enkrat; aplikacija izve za prvi izris", async () => {

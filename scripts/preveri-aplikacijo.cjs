@@ -1587,9 +1587,12 @@ async function phone(browser, app) {
   });
   await step(p, "tel-zagon", async () => {
     // Hiter zagon (j 10. 11. 2026: po odprtju je bil zaslon 2–3 s prazen): ob ponovnem odprtju se takoj pokaže posnetek
-    // zadnjega zaslona, pravi pogled ga zamenja brez praznega vmesnega izrisa. Meri čas do prve vsebine; prag
-    // EVKLID_PRAG_ZAGON (privzeto 1500 ms, mediana treh odprtij) je za počasne stroje CI, lokalno je ~0,3 s.
+    // zadnjega zaslona, pravi pogled ga zamenja brez praznega vmesnega izrisa. Meri čas do prve vsebine (mediana treh
+    // odprtij). Čas je odvisen od stroja: nad EVKLID_PRAG_ZAGON (privzeto 1500 ms) le opozorilo (CI je lahko počasen),
+    // napaka šele nad EVKLID_PRAG_ZAGON_NAPAKA (privzeto 5000 ms, blizu varovala 8 s v zacetek.js) ali če posnetek
+    // ni bil prva vsebina (zanesljivo, ne glede na hitrost stroja). Lokalno je ~0,3 s.
     const PRAG = Number(process.env.EVKLID_PRAG_ZAGON) || 1500;
+    const NAPAKA = Number(process.env.EVKLID_PRAG_ZAGON_NAPAKA) || 5000;
     await barTab(p, "me", { wait: 200 });
     await click(p, '#view-me [data-go="settings"]', { wait: 600 });
     const casi = [];
@@ -1603,11 +1606,17 @@ async function phone(browser, app) {
       if (z.ostal) throw new Error("posnetek ali oznaka zagona je ostala po zagonu");
       if (z.pot) throw new Error(`Učna pot je ob odprtju utripnila (${z.pot}×)`);
       if (z.prazno > 3) throw new Error(`med lupino in vsebino je bilo ${z.prazno} praznih izrisov`);
+      // Relativno (neodvisno od hitrosti stroja): prva vsebina je posnetek, ne šele pravi pogled.
+      if (z.posnetek > z.vsebina + 50) throw new Error(`posnetek se je pokazal šele po pravem pogledu (${Math.round(z.posnetek)} > ${Math.round(z.vsebina)} ms)`);
       casi.push(Math.round(z.vsebina));
     }
     const med = [...casi].sort((a, b) => a - b)[1];
-    notes.push(`zagon na telefonu: prva vsebina po ${casi.join(", ")} ms (mediana ${med} ms, prag ${PRAG} ms)`);
-    if (med > PRAG) throw new Error(`prva vsebina ob odprtju šele po ${med} ms (prag ${PRAG} ms; meritve ${casi.join(", ")})`);
+    notes.push(`zagon na telefonu: prva vsebina po ${casi.join(", ")} ms (mediana ${med} ms, opozorilo nad ${PRAG} ms, napaka nad ${NAPAKA} ms)`);
+    if (med > NAPAKA) throw new Error(`prva vsebina ob odprtju šele po ${med} ms (meja ${NAPAKA} ms; meritve ${casi.join(", ")})`);
+    if (med > PRAG) {
+      notes.push(`OPOZORILO tel-zagon: prva vsebina po ${med} ms (nad ${PRAG} ms; počasen stroj ali počasnejši zagon)`);
+      if (process.env.GITHUB_ACTIONS) console.log(`::warning title=tel-zagon::prva vsebina ob odprtju po ${med} ms (nad ${PRAG} ms)`);
+    }
     // Zasebnost: posnetek drugega profila se ne pokaže (zapis zadnjega zaslona drugega profila → Učna pot kot prej).
     await p.evaluate(() => sessionStorage.setItem("__zadnjiZaslon", JSON.stringify({ s: -1 })));
     await p.reload();

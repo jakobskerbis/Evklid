@@ -18,9 +18,9 @@ const br = (u) => zlib.brotliCompressSync(fs.readFileSync(path.join(pub, u)), { 
 // 10. 11. 2026 (#479, j potrdil 10. 11.): +30 KB za public/nujno.js (lokalni zaznavalnik nujnih primerov, ~24 KB stisnjeno).
 // Ostane del prvega odprtja namenoma: okno z nujno pomočjo mora delovati takoj ob pošiljanju in brez povezave.
 // 10. 11. 2026 (#553, čaka potrditev j): +5 KB za nove znake lokalnega zaznavalnika (public/nujno.js +3 KB stisnjeno; prvo odprtje 811,4 KB).
-// 10. 11. 2026 (#560, ČAKA POTRDITEV j): +4 KB za hiter zagon (public/zacetek.js pokaže posnetek zadnjega zaslona in začne
-// klice zagona že v <head>; prvo odprtje 815,5 KB; zamenjava posnetka s pravim pogledom v app.js). Shranjevanje posnetka
-// (public/posnetek.js) se naloži po zagonu in ne šteje sem.
+// 10. 11. 2026 (#560, ČAKA POTRDITEV j): +6 KB za hiter zagon (public/zacetek.js pokaže posnetek zadnjega zaslona, ga
+// očisti in preveri račun/profil, klice zagona začne že v <head>; zamenjava posnetka s pravim pogledom v app.js);
+// prvo odprtje 811,5 → 817,7 KB. Shranjevanje posnetka (public/posnetek.js) se naloži po zagonu in ne šteje sem.
 const BUDGET = { files: 140, totalKB: 818, fileKB: 75 };
 
 test("prvo odprtje: velikost stisnjenih datotek v proračunu", () => {

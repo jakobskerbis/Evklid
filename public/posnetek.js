@@ -3,13 +3,18 @@
 // besedila. Samo pogled v glavnem delu (ne v premičnem oknu), samo ta profil; ključ je med osebnimi (PRIVATE_KEYS,
 // public/offline.js). Modul se naloži po zagonu (public/app.js saveSnapshot), ni del prvega odprtja.
 const SHOT_MAX = 250000; // znakov; večji pogled dobi ob odprtju okostje
-// key: ključ v localStorage; rec: zapis zadnjega zaslona { v, t, s, l, p } (app.js rememberScreen) ali nič.
-export function shrani(key, rec) {
+// Pred zapisom gre HTML skozi DOMPurify (kot ostala vsebina); brez knjižnice posnetka ni. Ob odprtju ga zacetek.js
+// očisti še enkrat (ociscen) in razčleni v <template>.
+// key: ključ v localStorage; rec: zapis zadnjega zaslona { v, t, s, l, p } (app.js rememberScreen) ali nič;
+// meta: { a: lastnik naprave, z: profil z geslom } ali null (zaklenjen profil, profil brez gesla: posnetka ni).
+export function shrani(key, rec, meta) {
   const drop = () => {
     try {
       localStorage.removeItem(key);
     } catch {}
   };
+  const purify = globalThis.DOMPurify;
+  if (!meta || !purify?.sanitize) return drop();
   const el = rec && document.getElementById(`view-${rec.v}`);
   if (!el || el.hidden || el.parentElement !== document.body || el.classList.contains("in-okno") || document.body.classList.contains("onboarding")) return drop();
   const live = el.querySelectorAll("*");
@@ -29,10 +34,10 @@ export function shrani(key, rec) {
   copy.querySelectorAll("*").forEach((x) => {
     for (const a of [...x.attributes]) if (/^on/i.test(a.name)) x.removeAttribute(a.name);
   });
-  const h = copy.innerHTML;
+  const h = String(purify.sanitize(copy.innerHTML));
   if (!h.trim() || h.length > SHOT_MAX) return drop();
   const b = ["mock-banner", "test-notice"].filter((id) => document.getElementById(id)?.hidden === false);
-  const shot = { ...rec, c: el.className, tb: document.querySelector("#tabbar .tab.active")?.dataset.view || "", b, h };
+  const shot = { ...rec, a: meta.a ?? null, z: meta.z ? 1 : 0, c: el.className, tb: document.querySelector("#tabbar .tab.active")?.dataset.view || "", b, h };
   try {
     localStorage.setItem(key, JSON.stringify(shot));
   } catch {
