@@ -75,7 +75,8 @@ Zadnja meritev: 4. 11. 2026, 50 rešenih primerov iz lekcij, ocenjevalec Opus (m
 
 `server/ustno.js`, `server/ustno-api.js`. Ocena enega odgovora je ločen klic Haikuja (effort `medium`, `EVKLID_USTNO_EFFORT`,
 največ 4000 izhodnih žetonov) s kratkim navodilom in točkovnikom iz lekcije; prompt inštruktorja se ne spremeni. Sodbo »napačno«
-in ugovor »Ne strinjam se« (največ 2× na spraševanje) pregleda Sonnet. Vsak klic gre skozi trdo mejo AI (`usage.hold`, rezerva
+in ugovor »Ne strinjam se« (največ 2× na spraševanje, števec atomaren) pregleda Sonnet; od pregleda A2 (10. 11.) tudi
+napačen rezultat računa, ki ga zavrne koda (en pregled ~0,009 $, največ en na vprašanje). Vsak klic gre skozi trdo mejo AI (`usage.hold`, rezerva
 po `callMaxUsd`) in se zapiše pod učenca (vrsti `ustno`, `ustno-pregled`). Spraševanje šteje kot 3 dnevna vprašanja
 (brezplačni paket: 3 od 10). »Ne vem«, »Preskoči« in samoocena ne kličejo modela.
 

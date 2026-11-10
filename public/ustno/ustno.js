@@ -1,7 +1,8 @@
 // Ustno spraševanje »Vprašaj me« (server/ustno-api.js). Naloži se šele ob odprtju (ni del prvega odprtja).
 // Glas ali tipkanje sta enakovredna. Govor v besedilo spremeni brskalnik (SpeechRecognition): zvoka ne snemamo in ga
 // ne pošiljamo; strežnik dobi samo besedilo, ki ga učenec pred oddajo vidi in lahko popravi. Brez časovnika.
-// Brez povezave: samoocena (vprašanje → vzorčni odgovor → Znam / Delno / Ne znam), brez AI.
+// Samoocena (vprašanje → vzorčni odgovor → Znam / Delno / Ne znam) je brez AI; pri spraševanju z AI pride vzorčni
+// odgovor šele po oddaji (ali ko učenec pri enem vprašanju izbere samooceno, /vzorec).
 import { t as tGlobal, currentLang, locale } from "../i18n.js";
 import { uiChain, UI_LANGUAGES, langInfo } from "../i18n/languages.js";
 import { icon, hydrateIcons } from "../icons.js";
@@ -10,7 +11,7 @@ import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj
 import { zavrzi } from "../odgovor.js";
 import SL from "./besedila/sl.js";
 
-const KEY_NOTICE = "evklid.ustno.obvestilo";
+const KEY_NOTICE = "evklid.ustno.obvestilo"; // + ».<id profila>«: obvestilo vidi vsak profil na napravi (pregled B7)
 const KEY_PREFS = "evklid.ustno.nastavitve";
 const ls = {
   get(k) {
@@ -251,17 +252,18 @@ function setup(src, pre, asked) {
     e.preventDefault();
     const v = read();
     ls.set(KEY_PREFS, JSON.stringify(v));
-    if (v.nacin === "glas" && ls.get(KEY_NOTICE) !== "1") return notice(() => start(src, v, false));
+    if (v.nacin === "glas" && ls.get(noticeKey()) !== "1") return notice(() => start(src, v, false));
     start(src, v, false);
   });
   d.querySelector('[data-us="self"]').addEventListener("click", () => start(src, read(), true));
 }
 
-// Obvestilo pred prvo uporabo glasu (odločitev j).
+// Obvestilo pred prvo uporabo glasu (odločitev j), za vsak profil posebej.
+const noticeKey = () => `${KEY_NOTICE}.${ctx?.student?.id ?? 0}`;
 function notice(next) {
   const d = paint(`<div class="us-notice"><p>${icon("info")} ${esc(tt("u.obvestilo"))}</p><div class="us-actions"><button type="button" class="primary" data-us="ok">${esc(tt("u.razumem"))}</button></div></div>`, { focus: '[data-us="ok"]' });
   d.querySelector('[data-us="ok"]').addEventListener("click", () => {
-    ls.set(KEY_NOTICE, "1");
+    ls.set(noticeKey(), "1");
     next();
   });
 }
@@ -433,19 +435,17 @@ async function grade({ answer, res, skip, follow }) {
     });
   } catch (e) {
     if (e?.body?.nujno) showNujno(e.body.nujno, true);
-    if (e?.offline) {
-      // Brez povezave: preostanek kot samoocena (brez AI).
-      run.samo = true;
-      run.offline = true;
-      live(tt("u.brezPovezave"));
-      return selfQuestion(q, tt("u.brezPovezave"));
-    }
-    const msg = e?.body?.code?.startsWith("u.") ? tt(e.body.code) : e?.message || tt("u.ocenaNapaka");
-    const d = paint(`<p class="us-err">${esc(msg)}</p><div class="us-actions"><button type="button" class="primary" data-us="retry">${esc(tt("u.poskusi"))}</button><button type="button" class="secondary" data-us="self">${esc(tt("u.samoocena"))}</button></div>`);
+    // Brez povezave ali ob napaki: znova, ali samoocena tega vprašanja (vzorec pošlje strežnik, ocene z AI potem ni).
+    const msg = e?.offline ? tt("u.brezPovezave") : e?.body?.code?.startsWith("u.") ? tt(e.body.code) : e?.message || tt("u.ocenaNapaka");
+    const d = paint(`<p class="us-err">${esc(msg)}</p><div class="us-actions"><button type="button" class="primary" data-us="retry">${esc(tt("u.poskusi"))}</button>${follow ? "" : `<button type="button" class="secondary" data-us="self">${esc(tt("u.samoocena"))}</button>`}</div>`);
     d.querySelector('[data-us="retry"]').addEventListener("click", () => question(follow ? run.follow : null));
-    d.querySelector('[data-us="self"]').addEventListener("click", () => {
-      run.samo = true;
-      selfQuestion(q);
+    d.querySelector('[data-us="self"]')?.addEventListener("click", async () => {
+      try {
+        const v = await ctx.api(`/api/students/${ctx.student.id}/ustno/${run.id}/vzorec`, { method: "POST", body: { i: run.i } });
+        selfQuestion({ ...q, vzorec: v.vzorec });
+      } catch (e2) {
+        live(e2?.offline ? tt("u.brezPovezave") : e2?.message || tt("u.ocenaNapaka"));
+      }
     });
     return;
   }
@@ -548,10 +548,12 @@ async function finish() {
   if (!run.offline) {
     try {
       r = await ctx.api(`/api/students/${ctx.student.id}/ustno/${run.id}/konec`, { method: "POST", body: run.self.length ? { samoocena: run.self } : {} });
-    } catch {}
+    } catch {
+      run.offline = true;
+    }
   }
   if (!r) {
-    // brez povezave: izid izračunamo tukaj (ocenjena vprašanja + samoocena)
+    // brez povezave ob koncu: izid izračunamo tukaj (ocenjena vprašanja + samoocena)
     const good = run.qs.map((q, i) => (run.res[i] ? run.res[i].dobro : run.self[i] === "znam"));
     r = {
       dobro: good.filter(Boolean).length,

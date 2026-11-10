@@ -259,10 +259,10 @@ test("zasebnost: nova različica politike pokaže obvestilo enkrat, nov račun g
     assert.equal((await status()).privacy_notice, null);
     assert.equal(store.db.prepare("SELECT privacy_version FROM parents WHERE id = ?").get(a.pid).privacy_version, "2026-10-29", "različica ob registraciji ostane");
     // Račun, ki je potrdil obvestilo prejšnje različice (2026-11-06), ob novejši različici obvestilo vidi znova, enkrat
-    // (2026-11-10 #511; 2026-11-11 ustno spraševanje z glasom).
-    assert.equal(PRIVACY_VERSION, "2026-11-11");
+    // (2026-11-10 #511; 2026-11-12 ustno spraševanje in stikalo starša za glas, skupaj z #563).
+    assert.equal(PRIVACY_VERSION, "2026-11-12");
     store.db.prepare("UPDATE parents SET privacy_seen = '2026-11-06' WHERE id = ?").run(a.pid);
-    assert.equal((await status()).privacy_notice, "2026-11-11");
+    assert.equal((await status()).privacy_notice, "2026-11-12");
     assert.equal((await a.call("/api/account/privacy-seen", { method: "POST", body: { password: "geslo1234" } })).body.parent.privacy_notice, null);
     assert.equal((await status()).privacy_notice, null);
   });

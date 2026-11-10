@@ -26,7 +26,6 @@ import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
-import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
@@ -1318,7 +1317,9 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     userEl = addMessage("user", text, !!image);
+    const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
     if (fromInput) {
+      state.dictated = false;
       $("#input").value = "";
       autoGrow();
       clearImage();
@@ -1350,7 +1351,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     const res = await fetchThroughRestart(`/api/conversations/${state.conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, deep, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
+      body: JSON.stringify({ text, deep, nacin, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
     });
     if (!res) {
       bubble.remove();
@@ -1709,8 +1710,26 @@ $("#composer").addEventListener("submit", (e) => {
   send(input.value.trim());
 });
 
-// Glasovni vnos (brskalnik, sl-SI) in napredna tipkovnica s simboli.
-attachMic($("#mic-btn"), input, { onMessage: (m) => toast(m, "mic"), onChange: autoGrow });
+// Glasovni vnos (brskalnik, sl-SI): public/speech.js se naloži po zagonu (ni del prvega odprtja). Za mlajše od 15 let
+// le s stikalom starša v Računu (j 10. 11.); nacin "glas" ob pošiljanju preveri tudi strežnik. Tipkanje dela vedno.
+const glasOk = {};
+const glasZa = (id) => api(`/api/students/${id}/ustno`).then((r) => (glasOk[id] = r?.glas?.dovoljen !== false), () => true);
+whenIdle(() =>
+  import("./speech.js").then((m) =>
+    m.attachMic($("#mic-btn"), input, {
+      onMessage: (msg) => toast(msg, "mic"),
+      onChange: () => ((state.dictated = true), autoGrow()),
+      allowed: () => {
+        const id = state.student?.id;
+        if (!id) return true;
+        const p = glasZa(id);
+        return id in glasOk ? glasOk[id] : p;
+      },
+      onBlocked: () => import("./ustno/ustno.js").then(async (u) => (await u.loadDicts(), toast(u.tt("u.glasStarsKlepet"), "mic"))),
+    }),
+  ),
+);
+// Napredna tipkovnica s simboli.
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
 initSirina();

@@ -3,8 +3,10 @@
 // Vprašanja NISO izmišljena sproti: vzamemo jih iz lekcije (:::premisli z vzorčnim odgovorom, »Pogoste napake«,
 // »Povzetek«) in iz Vadnice (računske naloge, rezultat preveri koda). Točkovnik so ključni pojmi vzorčnega
 // odgovora (2–4). Model (Haiku z razmislekom) za vsak pojem vrne »povedal / delno / manjka / napačno« in navede
-// učenčeve besede; točke sešteje koda, ki tudi preveri navedke (brez navedka v prepisu pojem ne šteje kot
-// napačen in ne kot povedan), številke in enote. Sodbo »napačno« pred prikazom pregleda Sonnet.
+// učenčeve besede; točke sešteje koda, ki tudi preveri navedke (brez navedka v prepisu, ki je o pojmu, pojem ne šteje
+// kot napačen in ne kot povedan), številke in enote. Sodbo »napačno« pred prikazom pregleda Sonnet.
+// Slaba vprašanja (en sam pojem, pol oklepaja, sklic na sliko ali »preden pogledaš«) izločimo; računska vprašanja iz
+// lekcije (»Koliko je …?«) z enoznačnim rezultatom oceni koda kot račun, druga računska izločimo (j 10. 11., odločitev 2).
 // Ob dvomu v korist učenca. Zvok nikoli ne pride na strežnik: brskalnik ga spremeni v besedilo.
 // Ocenjevanje je ločen klic s svojim kratkim navodilom; prompt inštruktorja (prompts/) ostane nespremenjen.
 import "./env.js";
@@ -48,13 +50,30 @@ export function keyPoints(sample, max = 4) {
   // Zaščita formul pred rezanjem.
   const math = [];
   const masked = text.replace(/\$\$[\s\S]+?\$\$|\$[^$]+?\$/g, (m) => `\u0000${math.push(m) - 1}\u0000`);
-  const unmask = (s) => s.replace(/\u0000(\d+)\u0000/g, (_, i) => math[Number(i)]);
-  let parts = masked.split(/(?<=[.;!?])\s+(?=\S)|:\s+(?=\S)/).map((s) => s.trim()).filter(Boolean);
+  // Oklepaji (…) in navedki »…« se tudi ne režejo (pregled B2: »Pri navadnem uporniku ne« brez zaklepaja).
+  const par = [];
+  let m2 = masked;
+  const GROUP = /\([^()»«]*\)|»[^()»«]*«/g;
+  for (let k = 0; k < 4 && m2.search(GROUP) >= 0; k++) m2 = m2.replace(GROUP, (m) => `\u0001${par.push(m) - 1}\u0001`);
+  const unmask = (s) => {
+    let t = s;
+    while (/\u0001\d+\u0001/.test(t)) t = t.replace(/\u0001(\d+)\u0001/g, (_, i) => par[Number(i)]);
+    return t.replace(/\u0000(\d+)\u0000/g, (_, i) => math[Number(i)]);
+  };
+  // Dvopičje loči pojma le, če sta obe strani dolgi; kratek uvod (»Pri navadnem uporniku ne: …«) ostane s stavkom.
+  let parts = m2
+    .split(/(?<=[.;!?])\s+(?=\S)/)
+    .flatMap((x) => {
+      const k = x.search(/:\s+\S/);
+      return k > 0 && plainLen(unmask(x.slice(0, k))) >= 40 && plainLen(unmask(x.slice(k + 1))) >= 40 ? [x.slice(0, k + 1), x.slice(k + 1)] : [x];
+    })
+    .map((s) => s.trim())
+    .filter(Boolean);
   if (parts.length < 2) {
-    const byComma = masked.split(/,\s+(?=\S)/).map((s) => s.trim()).filter(Boolean);
+    const byComma = m2.split(/(?<=,)\s+(?=\S)/).map((s) => s.trim()).filter(Boolean);
     if (byComma.length >= 2) parts = byComma;
   }
-  // Prekratke dele zlepimo s sosedom.
+  // Prekratke dele zlepimo s sosedom (deli obdržijo svoja ločila, zato je zlepljen pojem dobesedno iz lekcije).
   const out = [];
   for (const p of parts) {
     if (out.length && (plainLen(unmask(out[out.length - 1])) < 14 || plainLen(unmask(p)) < 10)) out[out.length - 1] += " " + p;
@@ -78,10 +97,10 @@ function section(lesson, re) {
 }
 
 /**
- * Vsa možna vprašanja ene teme (brez računskih).
+ * Vsa možna vprašanja ene teme (brez računov iz Vadnice), brez slabih (questionProblem; raw: tudi slaba).
  * @returns {Array<{id, topicId, vrsta, besedilo, vzorec, pojmi}>}
  */
-export function lessonQuestions(topicId, lesson, name = "") {
+export function lessonQuestions(topicId, lesson, name = "", { raw = false } = {}) {
   if (!lesson) return [];
   const out = [];
   const all = (lesson.sections || []).map((s) => s.md).join("\n\n");
@@ -90,24 +109,166 @@ export function lessonQuestions(topicId, lesson, name = "") {
     const [q, ...rest] = m[1].split(/^[ \t]*---[ \t]*$/m);
     const besedilo = clean(q);
     const vzorec = clean(rest.join("\n"));
-    const pojmi = keyPoints(vzorec);
-    if (besedilo && vzorec && pojmi.length) out.push({ id: `${topicId}#p${i}`, topicId, vrsta: "razlozi", besedilo, vzorec, pojmi });
+    if (besedilo && vzorec) {
+      const id = `${topicId}#p${i}`;
+      // Računsko vprašanje (»Koliko je …?«) oceni koda kot račun iz Vadnice; brez jasnega rezultata ga izločimo.
+      const q = CALC_RE.test(besedilo) ? lessonCalc(id, topicId, besedilo, vzorec) : { id, topicId, vrsta: "razlozi", besedilo, vzorec, pojmi: keyPoints(vzorec) };
+      if (q) out.push(q);
+    }
     i++;
   }
   bullets(section(lesson, /^pogoste napake$/i)).forEach((b, j) => {
     const m = /^\*\*(.+?)\*\*\s*(.*)$/.exec(b);
     if (!m || !m[2]) return;
-    const naslov = m[1].replace(/[.:]\s*$/, "").replace(/^[»"]|[«"]$/g, "").replace(/[.:]\s*$/, "").trim();
+    let naslov = m[1].replace(/[.:]\s*$/, "").replace(/^[»"]|[«"]$/g, "").replace(/[.:]\s*$/, "").trim();
+    let quoted = `»${naslov}«`;
+    // Naslov z narekovaji v narekovajih (»pH 0 pomeni »nič kisline««): ostane, kot je v lekciji.
+    if (unbalanced(quoted)) {
+      naslov = m[1].replace(/[.:]\s*$/, "").trim();
+      quoted = /^»/.test(naslov) ? naslov : `»${naslov}«`;
+    }
     const pojmi = keyPoints(m[2], 3);
     if (!pojmi.length) return;
-    out.push({ id: `${topicId}#n${j}`, topicId, vrsta: "napaka", naslov, besedilo: `Pogosta napaka pri tej snovi: »${naslov}« Pojasni, kaj je tu narobe in kako je prav.`, vzorec: clean(m[2]), pojmi });
+    out.push({ id: `${topicId}#n${j}`, topicId, vrsta: "napaka", naslov, besedilo: `Pogosta napaka pri tej snovi: ${quoted} Pojasni, kaj je tu narobe in kako je prav.`, vzorec: clean(m[2]), pojmi });
   });
   const sum = bullets(section(lesson, /^povzetek$/i));
   if (sum.length >= 2) {
     const pojmi = sum.slice(0, 4).map((b) => b.replace(/\*\*/g, "").replace(/[.;]\s*$/, ""));
     out.push({ id: `${topicId}#s`, topicId, vrsta: "povzetek", naslov: name, besedilo: `Povej, kaj veš o temi »${name || "te lekcije"}«. Omeni glavne stvari.`, vzorec: sum.join("\n"), pojmi });
   }
-  return out;
+  return raw ? out : out.filter((q) => !questionProblem(q));
+}
+
+// ---------------------------------------------------------------------------
+// Slaba vprašanja (j 10. 11., odločitev 2): izločimo jih, preden pridejo do učenca.
+
+// Sklic na lekcijo, ki je pri ustnem ni (slika, simulacija, »preden pogledaš«, drsnik …).
+export const REF_RE = /preden pogleda|preden (?:odpreš|klikneš|preveriš|zavrtiš|zaženeš)|\b(?:na|s|z|iz) (?:slik[ie]|risb[ie]|animacij[ie]|simulacij[ie]|posnetk[ua]|videu?)\b|\bsimulacij|\banimacij|\bdrsnik|\bzgoraj\b|\bspodaj\b|\bv (?:tej )?lekciji\b|\b(?:premakni|klikni|povleci|poglej)\b/i;
+// V vzorčnem odgovoru le izrecni sklici (»zgoraj« in »spodaj« sta tam pogosto snov, npr. pri binomskem simbolu).
+const REF_V = /preden pogleda|\b(?:na|s|z|iz) (?:slik[ie]|risb[ie]|animacij[ie]|simulacij[ie])\b|\bsimulacij|\banimacij|\bdrsnik|\bv (?:tej )?lekciji\b|\bv razdelku\b/i;
+// Računsko vprašanje; »… in kaj to pomeni?« (dve vprašanji) ni za oceno s kodo.
+export const CALC_RE = /(?:^|[^\p{L}])(?:koliko|kolikšn\p{L}*|izračunaj\p{L}*)(?![\p{L}])/iu;
+// Računsko vprašanje za oceno s kodo: račun je na začetku stavka (»Koliko je …?«, »S kolikšne razdalje …?«), sprašuje
+// po eni količini (ne »Koliko sta …«, »… in kaj to pomeni?«) in ni vprašanje da/ne (»Ali je … večje?«).
+const CALC_START = /(?:^|[.!?:]\s+)(?:\p{L}+\s+){0,2}(?:koliko|kolikšn\p{L}*|izračunaj\p{L}*)(?![\p{L}])/iu;
+const TWO_ASKS = /\?[^?]*\?|[.?!]\s+(?:preveri|zapiši|pojasni|razloži|nariši|utemelji|primerjaj|opiši|napovej|kaj|zakaj|ali|kako)(?![\p{L}])|^\s*(?:ali|je|sta|so|kaj|zakaj|kako|napovej)(?![\p{L}])|(?:^|[^\p{L}])(?:sta|so|merita|merijo|znašata|znašajo|kolikokrat)(?![\p{L}])|(?:^|[^\p{L}])(?:in|ter|nato) (?:za |na |v |pri |s |z )?(?:koliko|kolikšn\p{L}*|kakš\p{L}*|kaj|zakaj|ali|kako|kater\p{L}*|kje|kdaj|izračunaj\p{L}*|preveri|pojasni|razloži)(?![\p{L}])/iu;
+const noMath = (s) => String(s).replace(/\$\$[\s\S]+?\$\$|\$[^$]*\$/g, " x ");
+function unbalanced(s) {
+  const t = noMath(s);
+  const n = (re) => (t.match(re) || []).length;
+  return n(/\(/g) !== n(/\)/g) || n(/\[/g) !== n(/\]/g) || n(/»/g) !== n(/«/g) || n(/\$/g) % 2 === 1;
+}
+/** Zakaj vprašanje ni primerno za ustno (ali null). */
+export function questionProblem(q) {
+  if (!q?.besedilo || !q.vzorec || !Array.isArray(q.pojmi)) return "prazno";
+  if (q.pojmi.length < 2) return "en pojem";
+  if (q.pojmi.some(unbalanced) || unbalanced(q.besedilo)) return "oklepaj";
+  if (REF_RE.test(noMath(q.besedilo)) || REF_V.test(noMath(q.vzorec))) return "sklic";
+  if (q.vrsta !== "izracunaj" && q.vrsta !== "povzetek" && CALC_RE.test(q.besedilo)) return "racun";
+  if (q.pojmi.some((p) => plainLen(p) < 4)) return "kratek pojem";
+  return null;
+}
+
+// LaTeX → navadno besedilo (za iskanje rezultata v vzorčnem odgovoru).
+const plainMath = (s) =>
+  String(s || "")
+    .replace(/\{,\}/g, ",")
+    .replace(/\\(?:mathrm|text|mathit|operatorname)\{([^}]*)\}/g, "$1")
+    .replace(/\\(?:dfrac|frac|tfrac)\{[^{}]*\}\{[^{}]*\}/g, " F ")
+    .replace(/\^\{?\\circ\}?/g, "°")
+    .replace(/\^\{?2\}?/g, "²")
+    .replace(/\^\{?3\}?/g, "³")
+    .replace(/\\Omega/g, "Ω")
+    .replace(/\\(?:mu|micro)\b\s*/g, "µ")
+    .replace(/\\approx/g, "≈")
+    .replace(/\\(?:cdot|times)/g, "·")
+    .replace(/\\[,;: !]|~/g, " ")
+    .replace(/\$/g, " ")
+    .replace(/(\d)\s(?=\d{3}(?!\d))/g, "$1");
+const UNIT_RE = /^(?:[kMmµcdnG]?(?:mol|min|Pa|Hz|eV|bar|rad|m|g|s|A|V|W|J|N|C|K|Ω|L|l|h|t)[²³]?(?:\/(?:[kMmµcd]?(?:min|mol|m|g|s|h|l|L|K))[²³]?)?|°C|°|%|km\/h)$/;
+// Vrednost »= število (enota)« na koncu verige enačb (ne sredi izraza) v enem delu stavka.
+const NUM_AT = /(?:=|≈)\s*([-−]?\d+(?:[.,]\d+)?)(?![.,]?\d)(?:\s*([^\s.,;:()]+))?(?=\s*(?:[.,;:()]|$|\s+[\p{L}]))/gu;
+function chainEnd(clause) {
+  const ms = [...clause.matchAll(NUM_AT)];
+  const m = ms[ms.length - 1];
+  if (!m) return null;
+  const after = clause.slice(m.index + m[0].length);
+  if (/^\s*(?:[-+·*\/×:^]|F\b)/.test(after) || /[=≈]/.test(after)) return null; // sredi izraza ali verige
+  if (/[²³]\s*$/.test(clause.slice(0, clause.search(/[=≈]/)))) return null; // »|AB|² = 100«: kvadrat, ne količina
+  const [, num, u = ""] = m;
+  const unit = UNIT_RE.test(u) ? u : null;
+  if (u && !unit && !/^\p{L}{2,}$/u.test(u)) return null; // »= 2 \sqrt{3}« ipd.: ni čisto število
+  const value = Number(num.replace("−", "-").replace(",", "."));
+  return Number.isFinite(value) ? { value, unit, dec: (num.split(/[.,]/)[1] || "").length } : null;
+}
+const escRe = (x) => x.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+/**
+ * Rezultat računskega vprašanja iz prvega stavka vzorčnega odgovora (tam je v lekcijah odgovor). Stavek brez »=«
+ * (»$24$ dni.«, »Približno $16$ sponk.«) mora imeti natanko eno število. Stavek z »=«: z vprašano količino
+ * (»Koliko je $d$?«) konec verige »d = … ≈ 125,1 m«, sicer natanko ena končna vrednost. Število za »torej«,
+ * »to je« … mora biti isto (»= 0,8185, torej približno 82 %« je dvoumno). Dvoumno vrne null: takega vprašanja
+ * koda ne oceni in ga izločimo (»Dva.«, »v = 9 ali v = −1«).
+ */
+export function finalResult(vzorec, besedilo = "") {
+  const sentences = plainMath(vzorec).split(/(?<=[.!?])\s+(?=[\p{Lu}$\d])/u);
+  // »= 6: DDGG, …« ali »Odgovor: …«: do dvopičja (ne pri razmerju »342 : 57«).
+  const first = (sentences[0] || "").replace(/:\s+(?=\p{L}).*$/u, "");
+  if (/(?:^|[^\p{L}])ali(?![\p{L}])/u.test(first) || /`/.test(first)) return null;
+  const nums = (t) =>
+    [...noFormulaDigits(t).matchAll(/(?<![\p{L}\d.,])([-−]?\d+(?:[.,]\d+)?)(?![.,]?\d)(?:\s*([^\s.,;:()]+))?/gu)].map((m) => ({
+      value: Number(m[1].replace("−", "-").replace(",", ".")),
+      unit: UNIT_RE.test(m[2] || "") ? m[2] : null,
+      dec: (m[1].split(/[.,]/)[1] || "").length,
+    }));
+  let res = null;
+  if (!/[=≈]/.test(first)) {
+    const n = nums(first);
+    if (n.length !== 1) return null;
+    res = n[0];
+  } else {
+    const clauses = first.split(/[,;]\s+(?=[\p{L}$])|\s(?:in|torej|zato|kar|ker|ter|da|oziroma)\s/u);
+    // Vprašana količina: zadnja formula v vprašanju, levo od »=« (»$x = \dfrac{…}{…}$« → x).
+    const asked = [...String(besedilo).matchAll(/\$([^$]+)\$/g)].pop()?.[1]?.split("=")[0];
+    const v = asked && plainMath(`$${asked}$`).trim();
+    let found = [];
+    if (v && v.length <= 24 && !/\d\s*$/.test(v) && !/^\d/.test(v)) {
+      const re = new RegExp(`(?:^|[^\\p{L}\\d\\\\])${escRe(v)}\\s*[=≈]`, "u");
+      const hits = clauses.filter((c) => re.test(c));
+      found = hits.map((c) => chainEnd(c.slice(c.search(re)))).filter(Boolean);
+      if (hits.length && !found.length) return null;
+    }
+    if (!found.length) found = clauses.map(chainEnd).filter(Boolean);
+    const distinct = [...new Map(found.map((f) => [f.value, f])).values()];
+    if (distinct.length !== 1) return null;
+    res = distinct[0];
+    // »… = 15, torej 15 m«: ista vrednost z enoto; druga vrednost (»torej približno 82 %«) je dvoumna.
+    for (const m of first.matchAll(/(?:torej|to je|kar je|oziroma|približno|okoli)\s+(?:približno\s+|okoli\s+)?([-−]?\d[^\s]*(?:\s+[^\s.,;:()]+)?)/gu)) {
+      const n = nums(m[1])[0];
+      if (!n) continue;
+      if (Math.abs(n.value - res.value) > 1e-9 * Math.max(1, Math.abs(res.value))) return null;
+      if (!res.unit && n.unit) res = { ...res, unit: n.unit };
+    }
+  }
+  if (!res || !Number.isFinite(res.value)) return null;
+  // Kasneje drugačna vrednost iste vrste (»Ploščina je $A = 4 + 4 = 8$«): dvoumno.
+  for (const t of sentences.slice(1)) {
+    for (const c of t.split(/[,;]\s+(?=[\p{L}$])|\s(?:in|torej|zato|kar|ker|ter|da|oziroma)\s/u)) {
+      if (!/^\s*(?:\p{L}+\s+){0,3}[\p{L}](?:_\S+)?\s*[=≈]/u.test(c)) continue;
+      const e = chainEnd(c);
+      if (e && Math.abs(e.value - res.value) > 1e-9 * Math.max(1, Math.abs(res.value))) return null;
+    }
+  }
+  const { value, unit, dec } = res;
+  // Sprejmemo zaokrožen rezultat: pol zadnjega mesta vzorca ali 1 %.
+  const tolerance = Math.max(0.5 * 10 ** -dec, 0.01 * Math.abs(value)) / Math.max(1, Math.abs(value)) + 1e-9;
+  return { type: "number", value, unit, tolerance };
+}
+function lessonCalc(id, topicId, besedilo, vzorec) {
+  const b = noMath(besedilo);
+  if (!CALC_START.test(b) || TWO_ASKS.test(b)) return null;
+  const odgovor = finalResult(vzorec, besedilo);
+  if (!odgovor) return null;
+  return { id, topicId, vrsta: "izracunaj", besedilo, vzorec, pojmi: ["Pravilna pot do rezultata", odgovor.unit ? "Pravilen rezultat z enoto" : "Pravilen rezultat"], enota: odgovor.unit, odgovor };
 }
 
 // Računska naloga iz Vadnice (samo številski odgovor): pojma sta pot (oceni model) in rezultat (preveri koda).
@@ -159,9 +320,10 @@ export function pickQuestions(topics, n, seed = 1) {
       const p = byKind("razlozi");
       const e = byKind("napaka");
       const s = byKind("povzetek");
-      const calc = t.practice ? practiceQuestion(t.id, Math.floor(r() * 2 ** 31)) : null;
+      const lc = byKind("izracunaj");
+      const calc = (t.practice ? practiceQuestion(t.id, Math.floor(r() * 2 ** 31)) : null) || lc.shift();
       // Vrstni red v temi: premisli, napaka, račun, povzetek, nato ostalo.
-      const order = [p.shift(), e.shift(), calc, s.shift(), ...p, ...e].filter(Boolean);
+      const order = [p.shift(), e.shift(), calc, s.shift(), ...p, ...e, ...lc].filter(Boolean);
       return order;
     })
     .filter((p) => p.length);
@@ -172,16 +334,17 @@ export function pickQuestions(topics, n, seed = 1) {
   return out;
 }
 
-// Kar gre k odjemalcu: vprašanje, besedilo za branje na glas, vzorec za samooceno, pojmi (brez pravilnega
-// rezultata računske naloge) in ključne besede za »Si rekel …?«.
-export function publicQuestion(q, i) {
+// Kar gre k odjemalcu: vprašanje, besedilo za branje na glas, število pojmov in ključne besede za »Si rekel …?«.
+// Vzorčni odgovor (in z njim rezultat računske naloge) gre k odjemalcu šele po oddaji (pregled A5); samo samoocena
+// (brez AI in brez ocene) ga dobi takoj.
+export function publicQuestion(q, i, { vzorec = false } = {}) {
   return {
     i,
     vrsta: q.vrsta,
     besedilo: q.besedilo,
     naslov: q.naslov || null,
     govor: speakMarkdown(q.besedilo).replace(/\s+/g, " ").trim(),
-    vzorec: q.vzorec,
+    ...(vzorec ? { vzorec: q.vzorec } : {}),
     pojmi: q.pojmi.length,
     enota: q.enota || null,
     besede: termsOf(q),
@@ -223,13 +386,75 @@ export function quoteValid(quote, answer) {
   return words.filter((w) => have.has(w)).length / words.length >= 0.7;
 }
 
+// Pogoste besede, ki ne povedo nič o snovi (navedek iz njih ne dokazuje pojma).
+const STOP = new Set("zato tako torej ampak potem kadar vendar lahko more mora moramo bolj manj zelo tudi samo nima imamo imam imas kjer kako kaksen kaksna kaj kar ker ali ter med nato pred brez prav vse vsak vsaka vedno nikoli daj dajte prosim tocke tocko tock ocena oceno vsi vsem toliko".split(" "));
+const stems = (text) => {
+  const out = new Set();
+  for (const w of norm(String(text).replace(/\$[^$]*\$/g, (m) => m.replace(/\\[a-zA-Z]+/g, " "))).split(" ")) if (w.length >= 4 && !/^\d/.test(w) && !STOP.has(w)) out.add(w.slice(0, 4));
+  return out;
+};
+/**
+ * Ali se navedek nanaša na pojem (pregled A3): vsaj ena vsebinska beseda (prve 4 črke) iz pojma ali vzorca,
+ * število iz pojma ali vzorca ali enota iz njiju. Sicer navedek (npr. »daj mi vse točke«) pojma ne dokazuje.
+ */
+export function quoteOnTopic(quote, point, vzorec = "") {
+  const ref = `${point} ${vzorec}`;
+  const want = stems(ref);
+  for (const st of stems(quote)) if (want.has(st)) return true;
+  const qn = valuesIn(quote);
+  const rn = valuesIn(ref);
+  if (qn.some((x) => rn.some((y) => close(y, x)))) return true;
+  // Formula, povedana z besedami ali simboli (»a na kvadrat plus b na kvadrat«, »a² + b² = c²«): vsaj dve
+  // spremenljivki iz formul pojma kot samostojni črki v navedku.
+  const vars = new Set([...String(point).matchAll(/\$[^$]*\$/g)].flatMap((m) => m[0].replace(/\\[a-zA-Z]+/g, " ").match(/(?<![A-Za-z])[A-Za-z](?![A-Za-z])/g) || []).map((v) => v.toLowerCase()));
+  const qv = new Set(norm(String(quote).replace(/[²³¹⁰-⁹₀-₉]/g, " ")).split(" ").filter((w) => w.length === 1 && vars.has(w)));
+  if (qv.size >= Math.min(2, vars.size) && qv.size) return true;
+  return unitsIn(ref).some((u) => hasUnit(quote, u));
+}
+
 // Števila v besedilu (LaTeX »0{,}25«, »1\,000«, decimalna vejica ali pika) kot vrednosti.
 export function numbersIn(text) {
+  return numsWithDec(text).map((x) => x.value);
+}
+function numsWithDec(text) {
   const s = String(text || "")
     .replace(/\{,\}/g, ",")
     .replace(/(\d)\\[,;: ](?=\d{3})/g, "$1")
     .replace(/(\d)\s(?=\d{3}(?!\d))/g, "$1");
-  return [...s.matchAll(/(?<![\p{L}\d.,])(\d+(?:[.,]\d+)?)(?![\d])/gu)].map((m) => Number(m[1].replace(",", "."))).filter(Number.isFinite);
+  return [...s.matchAll(/(?<![\p{L}\d.,])(\d+(?:[.,]\d+)?)(?![\d])/gu)]
+    .map((m) => ({ value: Number(m[1].replace(",", ".")), dec: (m[1].split(/[.,]/)[1] || "").length, at: m.index, len: m[0].length, src: s }))
+    .filter((x) => Number.isFinite(x.value));
+}
+// Brez števk v formulah (pregled A1): potence, indeksi, ulomki in koreni niso vrednosti (»a² + b² = c²«, »½ m v²«).
+const noFormulaDigits = (s) =>
+  String(s || "")
+    .replace(/\\(?:dfrac|frac|tfrac)\{[^{}]*\}\{[^{}]*\}/g, " ")
+    .replace(/\\sqrt\[[^\]]*\]/g, "\\sqrt")
+    .replace(/[\^_]\{[^{}]*\}|[\^_]-?\d+/g, " ")
+    .replace(/[\p{L})\]]\d+/gu, (m) => m[0])
+    .replace(/[²³¹⁰-⁹₀-₉½¼¾⅓⅔]/g, " ");
+/** Vrednosti v besedilu: števila brez števk iz formul. */
+export function valuesIn(text) {
+  return numbersIn(noFormulaDigits(text));
+}
+// Vrednosti pojma, ki jih koda preveri: z enoto ali decimalke (pregled A1), z enoto ob njih.
+function checkedValues(point) {
+  const s = noFormulaDigits(point);
+  const plain = s.replace(/\\(?:mathrm|text)\{([^}]*)\}/g, "$1").replace(/\\Omega/g, "Ω").replace(/\{,\}/g, ",").replace(/\\[,;: ]/g, " ");
+  const out = [];
+  for (const m of plain.matchAll(/(?<![\p{L}\d.,])(\d+(?:[.,]\d+)?)(?![\d])\s*([A-Za-zΩ]{1,3}(?![A-Za-z]))?/gu)) {
+    const value = Number(m[1].replace(",", "."));
+    const unit = m[2] && UNIT_WORDS[m[2]] ? m[2] : null;
+    if (Number.isFinite(value) && (unit || /[.,]/.test(m[1]))) out.push({ value, unit });
+  }
+  return out;
+}
+// Ujemanje števila z zaokroževanjem: pol zadnjega mesta, ki ga je zapisal učenec, in največ 10 % (»4,2« za 4,166).
+function close(want, got, gotDec = null) {
+  if (Math.abs(want - got) <= 1e-9 * Math.max(1, Math.abs(want))) return true;
+  if (gotDec === null) return false;
+  const step = 0.5 * 10 ** -gotDec * (1 + 1e-7);
+  return Math.abs(want - got) <= step && Math.abs(want - got) <= 0.1 * Math.abs(want);
 }
 const UNIT_WORDS = {
   A: ["amper"], V: ["volt"], "Ω": ["ohm", "om"], "\\Omega": ["ohm", "om"], W: ["vat", "watt"], J: ["joul", "džul", "dzul"], N: ["newton", "njuton"],
@@ -248,46 +473,53 @@ function hasUnit(answer, unit) {
 }
 
 /**
- * Popravi sodbo modela s kodo: navedek mora biti iz odgovora, števila in enote iz pojma morajo biti v odgovoru.
+ * Popravi sodbo modela s kodo: navedek mora biti iz odgovora in se nanašati na pojem (A3). Števila (A1, B1): koda
+ * zniža »povedal« v »delno« samo, kadar je učenec povedal števila in se nobeno ne ujema z vrednostjo pojma (z
+ * enoto ali decimalko; števke v formulah ne štejejo), ali kadar zadnji ujemajoči se vrednosti manjka enota. Vmesnih števil
+ * ne zahtevamo; odgovor brez števk (»pol ampera«, »a na kvadrat«) presodi model.
  * Vrne novo stanje pojma in razlog popravka (za dnevnik in teste).
  */
-export function codeCheckPoint(point, status, quote, answer) {
+export function codeCheckPoint(point, status, quote, answer, vzorec = "") {
   if (!STATUSES.includes(status)) return { status: "manjka", quote: "", fix: "status" };
   if (status === "manjka") return { status, quote: "" };
   if (!quoteValid(quote, answer)) return { status: "manjka", quote: "", fix: "quote" };
+  if (status !== "napacno" && !quoteOnTopic(quote, point, vzorec)) return { status: "manjka", quote: "", fix: "topic" };
   if (status === "povedal") {
-    const want = numbersIn(point);
-    if (want.length) {
-      const have = numbersIn(answer);
-      const missing = want.filter((x) => !have.some((y) => Math.abs(x - y) <= 1e-9 * Math.max(1, Math.abs(x))));
-      if (missing.length) return { status: "delno", quote, fix: "number" };
-      const units = unitsIn(point);
-      if (units.some((u) => !hasUnit(answer, u))) return { status: "delno", quote, fix: "unit" };
+    const want = checkedValues(point);
+    const have = numsWithDec(noFormulaDigits(answer));
+    if (want.length && have.length) {
+      const hit = want.filter((w) => have.some((h) => close(w.value, h.value, h.dec)));
+      if (!hit.length) return { status: "delno", quote, fix: "number" };
+      // Enota: pri zadnji ujemajoči se vrednosti pojma (običajno rezultat, »… teče 0,5 A«).
+      const last = hit[hit.length - 1];
+      if (last.unit && !hasUnit(answer, last.unit)) return { status: "delno", quote, fix: "unit" };
     }
   }
   return { status, quote: String(quote).slice(0, 300) };
 }
 
-// Rezultat računske naloge: polje z rezultatom ali zadnje število z enoto v prepisu.
+// Rezultat računske naloge (pregled A2): polje z rezultatom in vsa števila v prepisu; šteje najboljše ujemanje
+// (»Tok je 0,25 A, ker je napetost 3 V« je pravilno). »Napačno« od kode pred prikazom pregleda Sonnet.
 export function resultStatus(answerSpec, resultText, transcript) {
   const tries = [];
   if (String(resultText || "").trim()) tries.push(String(resultText).trim());
-  else {
-    const s = String(transcript || "").replace(/(\d)\s(?=\d{3}(?!\d))/g, "$1");
-    const ms = [...s.matchAll(/[-−]?\d+(?:[.,]\d+)?\s*(?:[A-Za-zΩµ°%/²³]{1,6}(?:\/[A-Za-z]{1,3})?)?/g)].map((m) => m[0].trim());
-    if (ms.length) tries.push(ms[ms.length - 1]);
-  }
+  const s = String(transcript || "").replace(/(\d)\s(?=\d{3}(?!\d))/g, "$1");
+  for (const m of s.matchAll(/[-−]?\d+(?:[.,]\d+)?\s*(?:[A-Za-zΩµ°%/²³]{1,6}(?:\/[A-Za-z]{1,3})?)?/g)) tries.push(m[0].trim());
   if (!tries.length) return { status: "manjka", quote: "" };
-  let r;
-  try {
-    r = checkAnswer(answerSpec, tries[0]);
-  } catch {
-    return { status: "manjka", quote: "" };
+  const RANK_R = { povedal: 3, delno: 2, napacno: 1, manjka: 0 };
+  let best = { status: "manjka", quote: "" };
+  for (const t of tries.slice(0, 40)) {
+    let r;
+    try {
+      r = checkAnswer(answerSpec, t);
+    } catch {
+      continue;
+    }
+    const st = r.kind === "correct" ? "povedal" : r.kind === "unit" || r.kind === "rounding" || r.kind === "simplify" ? "delno" : r.kind === "format" ? "manjka" : "napacno";
+    if (RANK_R[st] > RANK_R[best.status]) best = { status: st, quote: t };
+    if (st === "povedal") break;
   }
-  if (r.kind === "correct") return { status: "povedal", quote: tries[0] };
-  if (r.kind === "unit" || r.kind === "rounding" || r.kind === "simplify") return { status: "delno", quote: tries[0] };
-  if (r.kind === "format") return { status: "manjka", quote: "" };
-  return { status: "napacno", quote: tries[0], code: true };
+  return best.status === "napacno" ? { ...best, code: true } : best;
 }
 
 /** Točke vprašanja sešteje koda. */
@@ -400,7 +632,7 @@ export function pointsFrom(json, q, answer, kps) {
   }
   return kps.map((kp) => {
     const p = got.get(kp);
-    const c = codeCheckPoint(q.pojmi[kp], String(p?.status || "manjka"), String(p?.quote || ""), answer);
+    const c = codeCheckPoint(q.pojmi[kp], String(p?.status || "manjka"), String(p?.quote || ""), answer, q.vzorec);
     return { kp, ...c };
   });
 }

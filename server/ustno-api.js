@@ -10,6 +10,7 @@ import { cleanText } from "./settings.js";
 import { seal, sealJson, unsealJson } from "./crypto-polje.js";
 import { callMaxUsd } from "./meje-ai.js";
 import { lokalnaVrsta, nujnoZa } from "./nujno.js";
+import { audit } from "./dnevnik-dostopov.js";
 import {
   pickQuestions, publicQuestion, gradeUser, reviewUser, callModel, pointsFrom, resultStatus, score, better, cleanFollowup, cleanFeedback,
   GRADE_SYSTEM, REVIEW_SYSTEM, USTNO_MODEL, USTNO_REVIEW_MODEL, GRADE_MAX_TOKENS, REVIEW_MAX_TOKENS, USTNO_QUESTIONS, COUNTS, MAX_ANSWER, MAX_APPEALS, POINTS,
@@ -96,6 +97,21 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     return { row, qs: JSON.parse(row.vprasanja), st: unsealJson(row.stanje, { odgovori: [] }) };
   };
   const saveState = (id, st) => db.prepare("UPDATE ustno_seje SET stanje = ? WHERE id = ?").run(sealJson(st), id);
+  // Zapis enega vprašanja na sveže prebrano stanje (hkratni odgovori na druga vprašanja se ne prepišejo).
+  const saveAnswer = (id, i, rec) => {
+    const cur = unsealJson(db.prepare("SELECT stanje FROM ustno_seje WHERE id = ?").get(id)?.stanje, { odgovori: [] });
+    cur.odgovori[i] = rec;
+    saveState(id, cur);
+    return cur;
+  };
+  // Zaklep vprašanja med oceno (pregled A4/B7): hkratne zahteve za isto sejo in vprašanje ne sprožijo dveh ocen.
+  const busy = new Set();
+  const lock = (sid, i) => {
+    const k = `${sid}:${i}`;
+    if (busy.has(k)) return null;
+    busy.add(k);
+    return () => busy.delete(k);
+  };
   const addMsg = (convId, role, text) => {
     if (convId) {
       store.addMessage(convId, role, [{ type: "text", text }], text);
@@ -146,7 +162,8 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const id = Number(
       db.prepare("INSERT INTO ustno_seje (student_id, conversation_id, vprasanja, stanje) VALUES (?, ?, ?, ?)").run(s.id, convId, JSON.stringify(qs), sealJson({ odgovori: [], samoocena })).lastInsertRowid,
     );
-    res.status(201).json({ id, naslov: snov.naslov, samoocena, vprasanja: qs.map(publicQuestion), glas: voice(s.id) });
+    // Vzorčni odgovor dobi odjemalec takoj samo pri samooceni (pregled A5); sicer šele po oddaji.
+    res.status(201).json({ id, naslov: snov.naslov, samoocena, vprasanja: qs.map((q, i) => publicQuestion(q, i, { vzorec: samoocena })), glas: voice(s.id) });
   };
   app.post("/api/students/:id/ustno/zacni", start(false));
   app.post("/api/students/:id/ustno/samoocena", start(true));
@@ -164,9 +181,10 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     }
   }
 
-  // Sodbe »napačno« pregleda Sonnet; brez prostora za pregled ali ob napaki ostane »manjka« (dvom v korist učenca).
+  // Sodbe »napačno« (tudi rezultat, ki ga je zavrnila koda: pregled A2) pregleda Sonnet; brez prostora za pregled ali
+  // ob napaki ostane »manjka« (dvom v korist učenca).
   async function reviewWrong(studentId, q, answer, points, comment = "") {
-    const kps = points.filter((p) => p.status === "napacno" && !p.code).map((p) => p.kp);
+    const kps = points.filter((p) => p.status === "napacno").map((p) => p.kp);
     if (!kps.length) return points;
     const user = reviewUser(q, answer, kps, comment);
     let r = { json: null };
@@ -213,6 +231,17 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const dodatno = req.body?.dodatno === true;
     const prev = st.odgovori[i];
     if (dodatno ? !prev?.dodatno || prev.dodatnoOdgovor !== undefined : prev) return res.status(409).json({ error: "Na to vprašanje si že odgovoril." });
+    if ((st.samo || []).includes(i)) return res.status(409).json({ error: "To vprašanje si ocenil sam." });
+    const unlock = lock(row.id, i);
+    if (!unlock) return res.status(409).json({ error: "Počakaj, ocena še poteka." });
+    try {
+      await answerOne(req, res, { s, row, qs, i, q, prev, nacin, answer, resultText, dodatno });
+    } finally {
+      unlock();
+    }
+  });
+
+  async function answerOne(req, res, { s, row, qs, i, q, prev, nacin, answer, resultText, dodatno }) {
     const nujno = nujnoOf(`${answer} ${resultText}`, s);
     const skip = req.body?.preskoci === true || !answer && !resultText;
 
@@ -237,10 +266,11 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
         if (!r.json) return res.status(502).json({ error: "Ocena tokrat ni uspela. Poskusi znova ali uporabi samooceno.", code: "u.ocenaNapaka", nujno: nujno || undefined });
         const got = new Map(pointsFrom(r.json, q, answer, modelKps).map((p) => [p.kp, p]));
         points = points.map((p) => got.get(p.kp) || p);
-        points = await reviewWrong(s.id, q, answer, points);
         followup = dodatno ? "" : cleanFollowup(r.json.followup);
         razlaga = cleanFeedback(r.json.feedback);
       }
+      // »Napačno« (od modela ali od kode pri rezultatu) pregleda Sonnet; vpisani rezultat je del odgovora.
+      points = await reviewWrong(s.id, q, [answer, resultText && `Rezultat: ${resultText}`].filter(Boolean).join("\n"), points);
     }
     let rec;
     if (dodatno) {
@@ -252,8 +282,7 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
       const needFollow = points.some((p) => p.status === "delno" || p.status === "manjka");
       rec = { points, odgovor: answer, rezultat: resultText, nacin, razlaga, dodatno: !skip && needFollow && followup ? followup : null, preskoceno: skip };
     }
-    st.odgovori[i] = rec;
-    saveState(row.id, st);
+    saveAnswer(row.id, i, rec);
     const out = { ...resultOf(rec.points), razlaga: dodatno ? razlaga : rec.razlaga };
     // Prepis kot pogovor: učenčev odgovor, nato ocena (in dodatno ali naslednje vprašanje).
     addMsg(row.conversation_id, "user", skip ? "(preskočeno)" : [answer, resultText && `Rezultat: ${resultText}`].filter(Boolean).join("\n"));
@@ -267,9 +296,30 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
       razlaga: out.razlaga,
       dodatno: dodatno ? null : rec.dodatno,
       vzorec: q.vzorec,
-      ugovori: MAX_APPEALS - row.ugovori,
+      ugovori: Math.max(0, MAX_APPEALS - (db.prepare("SELECT ugovori FROM ustno_seje WHERE id = ?").get(row.id)?.ugovori ?? 0)),
       nujno: nujno || undefined,
     });
+  }
+
+  // Samoocena enega vprašanja med spraševanjem z AI (npr. ko ocena ne uspe): vzorčni odgovor zdaj, ocena tega
+  // vprašanja z AI potem ni več mogoča (pregled A5: vzorec gre k odjemalcu šele, ko se vprašanje ne ocenjuje).
+  app.post("/api/students/:id/ustno/:sid/vzorec", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const ses = loadSession(req, res, s);
+    if (!ses) return;
+    const { row, qs, st } = ses;
+    const i = Number(req.body?.i);
+    const q = qs[i];
+    if (!q) return res.status(400).json({ error: "Ni takega vprašanja." });
+    if (row.koncano_at) return res.status(409).json({ error: "Spraševanje je končano." });
+    if (busy.has(`${row.id}:${i}`)) return res.status(409).json({ error: "Počakaj, ocena še poteka." });
+    if (!st.odgovori[i] && !(st.samo || []).includes(i)) {
+      const cur = unsealJson(db.prepare("SELECT stanje FROM ustno_seje WHERE id = ?").get(row.id)?.stanje, { odgovori: [] });
+      cur.samo = [...new Set([...(cur.samo || []), i])];
+      saveState(row.id, cur);
+    }
+    res.json({ i, vzorec: q.vzorec });
   });
 
   // »Ne strinjam se«: ponoven pregled s Sonnetom (do MAX_APPEALS na spraševanje), zapis med prijave napak.
@@ -283,8 +333,26 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const i = Number(req.body?.i);
     const q = qs[i];
     const prev = st.odgovori[i];
+    // Samoocena nima ocene AI, zato tudi ugovora ne (pregled B7).
+    if (st.samoocena || prev?.samoocena) return res.status(409).json({ error: "Samoocena nima ugovora." });
     if (!q || !prev || prev.preskoceno) return res.status(400).json({ error: "Ni ocene za ugovor." });
-    if (row.ugovori >= MAX_APPEALS) return res.status(429).json({ error: `Ugovor lahko pošlješ največ ${MAX_APPEALS}-krat na spraševanje.`, code: "u.ugovorKonec" });
+    const unlock = lock(row.id, i);
+    if (!unlock) return res.status(409).json({ error: "Počakaj, ocena še poteka." });
+    // Števec ugovorov se poveča atomarno pred klicem (pregled A4/B7); ob napaki se vrne.
+    const took = db.prepare("UPDATE ustno_seje SET ugovori = ugovori + 1 WHERE id = ? AND ugovori < ?").run(row.id, MAX_APPEALS).changes;
+    if (!took) {
+      unlock();
+      return res.status(429).json({ error: `Ugovor lahko pošlješ največ ${MAX_APPEALS}-krat na spraševanje.`, code: "u.ugovorKonec" });
+    }
+    const refund = () => db.prepare("UPDATE ustno_seje SET ugovori = ugovori - 1 WHERE id = ? AND ugovori > 0").run(row.id);
+    try {
+      await appealOne(req, res, { s, row, q, i, prev, refund });
+    } finally {
+      unlock();
+    }
+  });
+
+  async function appealOne(req, res, { s, row, q, i, prev, refund }) {
     const comment = cleanText(req.body?.razlog, 500) || "";
     const answer = [prev.odgovor, prev.dodatnoOdgovor].filter(Boolean).join(" ");
     const kps = prev.points.filter((p) => p.status !== "povedal" && !(q.vrsta === "izracunaj" && p.kp === 1)).map((p) => p.kp);
@@ -296,18 +364,20 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
         r = await guarded(s.id, { model: USTNO_REVIEW_MODEL(), system: REVIEW_SYSTEM, user, max_tokens: REVIEW_MAX_TOKENS, reserve: reviewReserve(user), kind: "ustno-pregled" });
       } catch (e) {
         console.warn(`[evklid] ustno: ugovor ni uspel: ${e?.message || e}`);
+        refund();
         return res.status(502).json({ error: "Ocena tokrat ni uspela. Poskusi znova ali uporabi samooceno.", code: "u.ocenaNapaka" });
       }
-      if (r.limit) return res.status(429).json(usage.guardBlock(s.id));
+      if (r.limit) {
+        refund();
+        return res.status(429).json(usage.guardBlock(s.id));
+      }
       if (r.json) {
         const byKp = new Map(pointsFrom(r.json, q, answer, kps).map((p) => [p.kp, p]));
         // Ponovni pregled stanje samo izboljša (dvom v korist učenca).
         points = prev.points.map((p) => (byKp.has(p.kp) ? better(p, byKp.get(p.kp)) : p));
       }
     }
-    db.prepare("UPDATE ustno_seje SET ugovori = ugovori + 1 WHERE id = ?").run(row.id);
-    st.odgovori[i] = { ...prev, points, ugovor: true };
-    saveState(row.id, st);
+    saveAnswer(row.id, i, { ...prev, points, ugovor: true });
     // Prijava napake (vidi jo samo skrbnik): vprašanje, ocena pred in po pregledu, razlog; učenčevo ime zamenjano.
     try {
       const note = JSON.stringify({ vprasanje: q.id, pred: prev.points.map((p) => p.status), po: points.map((p) => p.status), razlog: comment });
@@ -319,8 +389,9 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const out = resultOf(points);
     addMsg(row.conversation_id, "user", `Ne strinjam se z oceno.${comment ? ` ${comment}` : ""}`);
     addMsg(row.conversation_id, "assistant", `Ponovni pregled: ${out.tocke} od ${out.max} točk.`);
-    res.json({ tocke: out.tocke, max: out.max, dobro: out.dobro, pojmi: publicPoints(q, points), ugovori: MAX_APPEALS - row.ugovori - 1 });
-  });
+    const used = db.prepare("SELECT ugovori FROM ustno_seje WHERE id = ?").get(row.id)?.ugovori ?? MAX_APPEALS;
+    res.json({ tocke: out.tocke, max: out.max, dobro: out.dobro, pojmi: publicPoints(q, points), ugovori: Math.max(0, MAX_APPEALS - used) });
+  }
 
   // Konec: povzetek (»4 od 5«, kaj znaš, kaj ponovi). Samoocena pošlje svoje ocene (brez AI).
   app.post("/api/students/:id/ustno/:sid/konec", (req, res) => {
@@ -332,7 +403,8 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const self = Array.isArray(req.body?.samoocena) ? req.body.samoocena : null;
     if (self) {
       self.slice(0, qs.length).forEach((v, i) => {
-        if (st.odgovori[i] || !["znam", "delno", "neznam"].includes(v)) return;
+        // Pri spraševanju z AI samo vprašanja, pri katerih je učenec izbral samooceno (/vzorec).
+        if (st.odgovori[i] || !["znam", "delno", "neznam"].includes(v) || (!st.samoocena && !(st.samo || []).includes(i))) return;
         const status = v === "znam" ? "povedal" : v === "delno" ? "delno" : "manjka";
         st.odgovori[i] = { points: qs[i].pojmi.map((_, kp) => ({ kp, status, quote: "" })), samoocena: true };
       });
@@ -356,7 +428,8 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     });
   });
 
-  // Stikalo starša (odločitev 3): »Dovoli odgovarjanje z glasom« za profile mlajše od 15 let, privzeto izklopljeno.
+  // Stikalo starša (odločitev 3; j 10. 11.: velja povsod, tudi za mikrofon v klepetu z inštruktorjem, server/app.js):
+  // »Dovoli odgovarjanje z glasom« za profile mlajše od 15 let, privzeto izklopljeno.
   app.get("/api/account/ustno-glas", (req, res) => {
     if (!accounts || !req.parent) return res.json({ profili: [] });
     const kids = db.prepare("SELECT s.id, s.name, g.dovoljeno FROM students s LEFT JOIN ustno_glas g ON g.student_id = s.id WHERE s.parent_id = ? ORDER BY s.id").all(req.parent.id);
@@ -373,6 +446,8 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     if (!Number.isInteger(id) || accounts.ownerOf(id) !== req.parent.id) return res.status(404).json({ error: "Učenec ne obstaja." });
     if (typeof req.body?.dovoli !== "boolean") return res.status(400).json({ error: "Manjka izbira." });
     db.prepare("INSERT INTO ustno_glas (student_id, dovoljeno, spremenjeno) VALUES (?, ?, datetime('now')) ON CONFLICT(student_id) DO UPDATE SET dovoljeno = excluded.dovoljeno, spremenjeno = excluded.spremenjeno").run(id, req.body.dovoli ? 1 : 0);
+    // Dokaz privolitve starša (pregled B7): vklop in izklop v dnevnik dostopov.
+    audit(db, { req, parentId: req.parent.id, action: req.body.dovoli ? "ustno_glas_on" : "ustno_glas_off", target: `student:${id}` });
     res.json({ ok: true, dovoljeno: req.body.dovoli });
   });
 
