@@ -283,11 +283,11 @@ def main():
     p4 = os.path.join(delo, "vol4.npz")
     if k and not os.path.exists(os.path.join(delo, "vol.u8")) and os.path.exists(p4):
         g4 = np.load(p4); v4 = g4["v4"].astype(np.float32)[:Zk, :Hk, :Wk]; t4 = g4["t4"].astype(np.float32)[:Zk, :Hk, :Wk]
-        Zk = 0
+        Zk, Hk, Wk = t4.shape; vol = None   # Zk ostane (cena ga potrebuje); zanka spodaj se preskoči
     else:
         vol = np.memmap(os.path.join(delo, "vol.u8"), np.uint8, "r", shape=(Z, H1, W1, 4)) if k else None
         v4 = np.zeros((Zk, Hk, Wk, 3), np.float32); t4 = np.zeros((Zk, Hk, Wk), np.float32)
-    for z in range(Zk):
+    for z in range(Zk if vol is not None else 0):
         b = np.asarray(vol[z * k:(z + 1) * k, :Hk * k, :Wk * k, :3], np.float32).reshape(k, Hk, k, Wk, k, 3).mean((0, 2, 4))
         v4[z] = b; t4[z] = telo[z * k:(z + 1) * k, :Hk * k, :Wk * k].reshape(k, Hk, k, Wk, k).mean((0, 2, 4))
     # mreže po oznakah
@@ -323,8 +323,8 @@ def main():
                 continue
             Vg = np.concatenate([V for V, F in g]); lo = Vg.min(0) - 0.004; n = np.ceil((Vg.max(0) - lo) / 0.004).astype(int) + 1
             notri = np.zeros((n[2], n[1], n[0]), bool)
-            for V, F in zdruzi(g):
-                notri |= vokseliziraj((V - lo) / 0.004, F, n)
+            for V, F, odprta in zdruzi(g):   # polna poravnava (ženska): zdruzi vrne tudi »odprta«
+                notri |= vokseli((V - lo) / 0.004, F, odprta, n)
             zz, yy, xx = np.where(notri)
             if len(zz) < 30:
                 continue

@@ -736,7 +736,7 @@
    "dvanajstnik"
   ],
   [
-   "jejunum",
+   "jejunum|jejenum",
    "tesce-crevo"
   ],
   [
@@ -782,6 +782,18 @@
   [
    "urethra",
    "secnica"
+  ],
+  [
+   "heart/valve/(mitral|pulmonary|tricuspid|aortic)_valve/",
+   "srcne-zaklopke"
+  ],
+  [
+   "cardiac_chamber/left_ventricle/",
+   "levi-prekat"
+  ],
+  [
+   "cardiac_chamber/right_ventricle/",
+   "desni-prekat"
   ],
   [
    "heart_valve",
