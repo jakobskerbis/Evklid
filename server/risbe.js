@@ -525,6 +525,7 @@ export function renderDrawing(kind, body) {
   if (opis.length < 20) fail("risba potrebuje »opis:« (vsaj 20 znakov): besedilo, ki sliko nadomesti slepemu učencu in inštruktorju");
   const { w, h, svg } = fn(b);
   const cap = b.one("podnapis");
+  if (/[_^]/.test(cap)) fail("podnapis: indekse in eksponente zapiši z besedami ali znaki Unicode (F₁, x², U Th), ne z _ ali ^");
   // Barve brez risbe.css (zavihek, odprt med objavo): liki prazni, črte in napisi v barvi besedila. CSS to povozi.
   const bare = svg
     .replace(/<text\b/g, '<text fill="currentColor" stroke="none"')

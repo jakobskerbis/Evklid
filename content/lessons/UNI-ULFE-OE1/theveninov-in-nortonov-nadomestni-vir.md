@@ -219,7 +219,7 @@ Izpelji, pri katerem uporu bremena $R_\mathrm{L} > 0$ prejme breme na viru $U_\m
 Vsak linearen vir na sponkah opiše ena premica v ravnini $(I, U)$:
 
 :::risba graf
-opis: Premica vira v ravnini (I, U). Os U seka pri Theveninovi napetosti (napetost odprtih sponk), os I pri Nortonovem toku (tok kratkega stika); njen naklon je minus Theveninova upornost. Črtkana premica bremena gre skozi izhodišče. Narisana je za breme, enako Theveninovi upornosti: delovna točka je na sredini premice vira, pri polovici Nortonovega toka in polovici Theveninove napetosti, pravokotnik pod njo pa predstavlja moč.
+opis: Premica vira v ravnini (I, U). Os U seka pri Theveninovi napetosti (napetost odprtih sponk), os I pri Nortonovem toku (tok kratkega stika); njen naklon je minus Theveninova upornost. Črtkana premica bremena gre skozi izhodišče. Narisana je za breme z upornostjo, enako Theveninovi: delovna točka je na sredini premice vira, pri polovici Nortonovega toka in polovici Theveninove napetosti, pravokotnik pod njo pa predstavlja moč.
 x: 0 .. 1,25 | 0,5 | I
 y: 0 .. 1,25 | 0,5 | U
 enako: da

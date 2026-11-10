@@ -73,7 +73,7 @@ export function checkLessonSource(src, topicId) {
   for (const e of drawingErrors(body)) err(e);
   // Slika iz znakov v bloku ``` brez oznake jezika je v aplikaciji in PDF videti kot surov izpis (j, 10. 11. 2026).
   const ascii = (body.match(/^```[ \t]*\n[\s\S]*?^```[ \t]*$/gm) || []).filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
-  if (ascii) warn(`${ascii} slik iz znakov v bloku \`\`\`: zamenjaj jih z risbo »:::risba« (content/lessons/README.md, razdelek Risbe)`);
+  if (ascii) warn(`Slike iz znakov v blokih (${ascii}): \`\`\` – zamenjaj jih z risbo »:::risba« (content/lessons/README.md, razdelek Risbe)`);
   if (/^[ \t]*:::/m.test(stripped)) err("nezaprt ali napačno zapisan blok »:::formula … :::« ali »:::premisli … :::« (vsak začetek in konec v svoji vrstici)");
   // Merila docs/kakovost.md §1: vmesna vprašanja v razlagi in razlaga vsakega napačnega odgovora.
   const thinks = body.match(/^[ \t]*:::[ \t]*premisli[ \t]*$/gm) || [];
