@@ -74,6 +74,7 @@ import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
 import { startCloudBackups } from "./kopije-oblak.js";
+import { startBackupChecks } from "./kopije-preveri.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -227,9 +228,10 @@ export function createApp(store, opts = {}) {
   const activity = { active: 0, lastSend: 0 };
   let backups = null; // dnevne varnostne kopije baze (server/kopije.js), nastavljene spodaj
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
+  let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -1672,5 +1674,7 @@ export function createApp(store, opts = {}) {
   startFxJobs(store.db, { scheduler: opts.scheduler !== false && opts.fxJobs !== false, fetchFn: opts.fxFetchFn });
   backups = startBackups(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
   cloudBackups = startCloudBackups(store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
+  // Vsako noč (4.30–8.00 po ljubljanskem času) v ločeni niti; ob napaki e-mail skrbnikom, največ enkrat na dan.
+  backupChecks = startBackupChecks(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, isBusy: () => activity.active > 0 });
   return app;
 }
