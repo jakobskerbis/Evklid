@@ -123,18 +123,22 @@ export function ustvariSlog(G, canvas, engine, host) {
     const w = Math.max(40, G.W / 4), h = Math.max(40, G.H / 4);
     const luc = platno(w, h), q = luc.getContext("2d");
     const rob = mesaj(mesaj(engine.colors?.[0] || "#111827", "#000", 0.65), T.accent, 0.12);
-    const v = q.createRadialGradient(w / 2, h * 0.46, Math.min(w, h) * 0.5, w / 2, h / 2, Math.hypot(w, h) * 0.62);
+    // vinjeta v enotskem kvadratu (elipsa po obliki prizora): sredina robov ostane skoraj čista, vogali potemnijo
+    const v = q.createRadialGradient(0.5, 0.5, 0.45, 0.5, 0.5, 0.75);
     v.addColorStop(0, alfa(rob, 0));
-    v.addColorStop(1, alfa(rob, T.temna ? 0.34 : 0.22));
+    v.addColorStop(1, alfa(rob, T.temna ? 0.42 : 0.3));
+    q.save();
+    q.scale(w, h);
     q.fillStyle = v;
-    q.fillRect(0, 0, w, h);
+    q.fillRect(0, 0, 1, 1);
+    q.restore();
     const s = q.createRadialGradient(w * 0.28, 0, 0, w * 0.28, 0, Math.max(w, h) * 0.85);
     const sv = mesaj("#ffffff", T.accent, 0.18);
-    s.addColorStop(0, alfa(sv, T.temna ? 0.13 : 0.2));
+    s.addColorStop(0, alfa(sv, temenSvet ? 0.07 : 0.17));
     s.addColorStop(1, alfa(sv, 0));
     q.fillStyle = s;
     q.fillRect(0, 0, w, h);
-    // žarenje svetlih delov: pomanjšana kopija prizora (pomanjšanje jo zamegli), narisana nazaj čez prizor
+    // žarenje svetlih delov v temnih svetovih: pomanjšana kopija prizora (pomanjšanje jo zamegli), narisana nazaj čez prizor
     cvet = platno(canvas.width / 8, canvas.height / 8);
     cq = cvet.getContext("2d");
     if (!zrnoPl) {
@@ -172,11 +176,14 @@ export function ustvariSlog(G, canvas, engine, host) {
       } else if (pocasne > 0) pocasne--;
       g.save();
       g.setTransform(1, 0, 0, 1, 0, 0);
-      if (raven > 1) {
+      if (raven > 1 && temenSvet) {
+        // samo svetli deli: kopija, pomnožena sama s sabo, potemni temno ozadje skoraj do črne
         cq.globalCompositeOperation = "copy";
         cq.drawImage(canvas, 0, 0, cvet.width, cvet.height);
-        g.globalCompositeOperation = temenSvet ? "lighter" : "soft-light";
-        g.globalAlpha = temenSvet ? 0.2 : 0.3;
+        cq.globalCompositeOperation = "multiply";
+        cq.drawImage(cvet, 0, 0);
+        g.globalCompositeOperation = "lighter";
+        g.globalAlpha = 0.32;
         g.drawImage(cvet, 0, 0, canvas.width, canvas.height);
         g.globalCompositeOperation = "source-over";
         g.globalAlpha = 1;

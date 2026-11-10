@@ -57,6 +57,7 @@ svg.demo-svg .mat-st-sh{fill:none;stroke:var(--mat-st-rob);stroke-opacity:0.6;st
 .demo.lab .lab-tit-top>.demo-stage:has(svg.lab-bench,svg.lab-circuit){background:var(--mat-stena)!important;border-radius:12px;padding:8px!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 7%,transparent)}
 .demo.lab .lab-tit-top>.demo-stage:has(svg.lab-bench,svg.lab-circuit) .lab-lcd{background:color-mix(in srgb,var(--surface) 72%,transparent)}
 .demo.lab .lab-tit-top>.demo-stage svg.demo-svg:is(.lab-bench,.lab-circuit) .lbl{stroke:var(--mat-ozadje)}
+.demo.lab .lab-tit-top>.demo-stage svg :is(.lab-warn,.lab-ek-poptxt,.lab-gib-slow,.lab-mag-warn,.lab-mag-slow){fill:color-mix(in srgb,var(--danger) 78%,var(--text))}
 svg.demo-svg .mat-zica{fill:none;stroke:#fff;stroke-opacity:0.32;stroke-width:0.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 .lab-lcd-screen{background-image:linear-gradient(180deg,rgb(255 255 255 / 0.34),rgb(255 255 255 / 0) 42%,rgb(0 0 0 / 0.07));box-shadow:inset 0 1px 2px rgb(0 0 0 / 0.28),inset 0 0 0 1px rgb(0 0 0 / 0.08)}
 .lab-lcd{box-shadow:0 1px 0 rgb(255 255 255 / 0.5) inset,0 1px 2px rgb(15 23 42 / 0.08)}

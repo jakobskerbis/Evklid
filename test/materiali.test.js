@@ -71,12 +71,16 @@ test("materiali: napisi na ozadju risbe ostanejo berljivi (AA), svetlo in temno"
   const v = (b, ime) => b.match(new RegExp(`${ime}:\\s*(#[0-9a-fA-F]{3,8})`))[1];
   assert.match(CSS, /--mat-ozadje:color-mix\(in srgb,var\(--accent\) 8%,var\(--surface-2\)\)/);
   assert.match(CSS, /color-mix\(in srgb,var\(--text\) 3%,var\(--mat-ozadje\)\)/);
+  assert.match(CSS, /color-mix\(in srgb,var\(--danger\) 78%,var\(--text\)\)/);
   for (const b of [blok(/:root \{([^}]+)\}/), blok(/:root\.dark \{([^}]+)\}/)]) {
     // ozadje risbe: --mat-ozadje = 8 % poudarka v --surface-2; najtemnejši rob še 3 % barve besedila
     const ozadje = mesaj(v(b, "--surface-2"), v(b, "--accent"), 0.08), rob = mesaj(ozadje, v(b, "--text"), 0.03);
     for (const o of [ozadje, rob]) {
       assert.ok(kontrast(v(b, "--muted"), o) >= 4.5, `drugotno besedilo na ${o}: ${kontrast(v(b, "--muted"), o).toFixed(2)}`);
       assert.ok(kontrast(v(b, "--text"), o) >= 7, `besedilo na ${o}`);
+      // opozorila (»brez zaščitnih očal«): rdeča, primešana barvi besedila
+      const opozorilo = mesaj(v(b, "--danger"), v(b, "--text"), 0.22);
+      assert.ok(kontrast(opozorilo, o) >= 4.5, `opozorilo na ${o}: ${kontrast(opozorilo, o).toFixed(2)}`);
     }
   }
 });
