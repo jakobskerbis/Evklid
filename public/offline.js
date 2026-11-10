@@ -135,8 +135,8 @@ const CONFIG = "evklid.config";
 // Osebni podatki na napravi: paketi vaj, vrsta odgovorov, seznam profilov, lastnik naprave (offline.),
 // zgodovina skenerja (scan.), zapis postopka (work.), kalkulatorja (graph., sci.), ogledani cilji (goalSeen.),
 // opomniki urnika (schedule…), točke na lastnih polah (ours.), pozdrav ob novem letniku (levelup.),
-// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon, public/zacetek.js).
-const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$)/;
+// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js).
+const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$|zadnji-posnetek$)/;
 // Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
 // priporočilna koda iz povezave, izbrani profil.
 const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref"]);
@@ -217,6 +217,8 @@ export function clearProfile(sid) {
     for (const k of keys) if (own.test(k)) localStorage.removeItem(k);
     const list = read(STUDENTS, null);
     if (Array.isArray(list)) write(STUDENTS, list.filter((s) => String(s.id) !== id));
+    // Zadnji zaslon in njegov posnetek (public/zacetek.js), če sta od tega profila.
+    for (const k of ["evklid.zadnji-zaslon", "evklid.zadnji-posnetek"]) if (String(read(k, null)?.s) === id) localStorage.removeItem(k);
   } catch {}
 }
 

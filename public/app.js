@@ -150,7 +150,22 @@ const serverError = (err, status) => {
   return hint && hint !== err.hint ? `${own} ${hint}` : own;
 };
 
+// Klici v teku: konec zagona počaka, da se prvi pogled napolni, preden zamenja posnetek zadnjega zaslona (finishStart).
+let apiBusy = 0;
 const api = async (url, opts = {}) => {
+  apiBusy++;
+  try {
+    return await apiCall(url, opts);
+  } finally {
+    apiBusy--;
+  }
+};
+const apiCall = async (url, opts = {}) => {
+  // Klic, ki ga je zagon že začel v <head> (public/zacetek.js): enkrat, samo uspešen odgovor; sicer običajna pot.
+  if (!opts.method && !opts.body) {
+    const early = await window.evklidZacetek?.vnaprej?.(url);
+    if (early != null) return early;
+  }
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
     if (local !== undefined) return local;
@@ -262,8 +277,9 @@ function showView(name) {
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
   if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
+  pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
-    if (!v.classList.contains("in-okno")) v.hidden = v.id !== `view-${name}`;
+    if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
   });
   initView(name);
   if (away("scan")) leaveScan();
@@ -278,6 +294,7 @@ function showView(name) {
   window.scrollTo(0, 0);
   if (!startHold) startDone();
   rememberScreen();
+  snapshotSoon();
 }
 // Zadnji zaslon (j 2026-11-10, public/zacetek.js): ob naslednjem odprtju aplikacije se odpre ta pogled (z odprto
 // lekcijo Učbenika ali temo), če od zadnjega obiska ni minilo več kot 12 ur. Zapis se osveži ob vsaki menjavi
@@ -285,13 +302,90 @@ function showView(name) {
 const ZACETEK = window.evklidZacetek || null;
 let startRec = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
 let startHold = true; // do konca zagona (start) Učna pot ostane skrita: vmesni showView("path") ne sme utripniti
-const startDone = () => document.documentElement.removeAttribute("data-zacetek");
+// Konec zagona: oznaki na <html> in posnetek zadnjega zaslona izginejo skupaj, pravi pogled se pokaže v istem izrisu.
+const startShot = () => document.querySelector("main[data-posnetek]");
+const startDone = () => {
+  if (ZACETEK?.konec) return ZACETEK.konec();
+  document.documentElement.removeAttribute("data-zacetek");
+};
+// Posnetek (ali okostje) je do prvega showView v toku strani. Ko se pravi pogled odkrije, posnetek pripnemo na
+// isto mesto (position: absolute z izmerjenim okvirjem), pravi pogled pa dobi isti prostor, a je neviden
+// (style.css, html[data-zacetek-pod]): izriše se v pravi velikosti (drsenje klepeta, širine formul), brez utripa.
+function pinSnapshot() {
+  const shot = startShot();
+  const root = document.documentElement;
+  if (!shot || root.hasAttribute("data-zacetek-pod")) return;
+  const r = shot.getBoundingClientRect();
+  Object.assign(shot.style, { top: `${r.top + scrollY}px`, left: `${r.left + scrollX}px`, width: `${r.width}px`, height: `${r.height}px` });
+  root.setAttribute("data-zacetek-pod", "");
+}
+// Zagon je končan: posnetek zamenjamo, ko je pravi pogled napolnjen (noben klic ni več v teku), najpozneje po 2,5 s.
+// Dotik zavihka med čakanjem ga zamenja takoj (showView → startDone).
+function finishStart() {
+  startHold = false;
+  if (!startShot()) return startDone();
+  const t0 = performance.now();
+  const check = () => {
+    if (!startShot()) return;
+    if (!apiBusy || performance.now() - t0 > 2500) return startDone();
+    setTimeout(check, 40);
+  };
+  setTimeout(check, 40);
+}
 function rememberScreen() {
   if (!ZACETEK || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
   const rec = { v: currentView, t: Date.now(), s: state.student.id };
   if (currentView === "uci" && uciTab() === "textbook" && openLessonId()) rec.l = openLessonId();
   if (currentView === "topic" && state.topicFx && state.topic?.id) rec.p = state.topic.id;
   localStorageSet(ZACETEK.KEY, JSON.stringify(rec));
+  return rec;
+}
+// Posnetek zadnjega zaslona (public/zacetek.js ga ob naslednjem odprtju pokaže takoj, namesto praznega zaslona):
+// HTML trenutnega pogleda brez skritih delov, skriptov, slik iz pomnilnika in napisanega besedila. Samo pogled v
+// glavnem delu (ne v premičnem oknu), samo ta profil; ključ je med osebnimi (PRIVATE_KEYS, public/offline.js).
+const SHOT_MAX = 250000; // znakov; večji pogled dobi ob odprtju okostje
+function saveSnapshot() {
+  const rec = rememberScreen();
+  if (!ZACETEK?.POSNETEK || startHold || startShot()) return;
+  const drop = () => {
+    try {
+      localStorage.removeItem(ZACETEK.POSNETEK);
+    } catch {}
+  };
+  const el = rec && document.getElementById(`view-${rec.v}`);
+  if (!el || el.hidden || el.parentElement !== document.body || el.classList.contains("in-okno") || document.body.classList.contains("onboarding")) return drop();
+  const live = el.querySelectorAll("*");
+  if (live.length > 6000) return drop();
+  const copy = el.cloneNode(true);
+  const twin = copy.querySelectorAll("*");
+  live.forEach((a, i) => {
+    const b = twin[i];
+    if (a.scrollTop > 0) b.setAttribute("data-zs", String(Math.round(a.scrollTop)));
+    // Izbira v obrazcih (nastavitve) kot na zaslonu; napisano besedilo (klepet, odgovor) in gesla ne gredo v posnetek.
+    if (a.tagName === "INPUT" && (a.type === "checkbox" || a.type === "radio")) b.toggleAttribute("checked", a.checked);
+    else if (a.tagName === "OPTION") b.toggleAttribute("selected", a.selected);
+    else if (a.tagName === "INPUT" && rec.v === "settings" && !["password", "file", "hidden"].includes(a.type)) b.setAttribute("value", a.value);
+  });
+  copy.querySelectorAll("select").forEach((x) => x.setAttribute("data-native", "")); // public/dropdown.js posnetka ne nadgradi še enkrat
+  copy.querySelectorAll('script, iframe, video, audio, object, embed, [hidden], img[src^="blob:"], dialog:not([open])').forEach((x) => x.remove());
+  copy.querySelectorAll("*").forEach((x) => {
+    for (const a of [...x.attributes]) if (/^on/i.test(a.name)) x.removeAttribute(a.name);
+  });
+  const h = copy.innerHTML;
+  if (!h.trim() || h.length > SHOT_MAX) return drop();
+  const b = ["mock-banner", "test-notice"].filter((id) => document.getElementById(id)?.hidden === false);
+  const shot = { ...rec, c: el.className, tb: document.querySelector("#tabbar .tab.active")?.dataset.view || "", b, h };
+  try {
+    localStorage.setItem(ZACETEK.POSNETEK, JSON.stringify(shot));
+  } catch {
+    drop(); // poln pomnilnik naprave: brez posnetka (ob odprtju okostje)
+  }
+}
+// Med uporabo: nekaj sekund po menjavi pogleda (telefon lahko aplikacijo v ozadju ustavi brez dogodka).
+let shotTimer = 0;
+function snapshotSoon() {
+  clearTimeout(shotTimer);
+  shotTimer = setTimeout(() => (window.requestIdleCallback || setTimeout)(() => document.visibilityState === "visible" && saveSnapshot()), 4000);
 }
 // Zaslon za odprtje: zapis istega profila, mlajši od 12 ur, in pogled, ki ga ta profil ima; sicer null (Učna pot).
 function startScreen() {
@@ -313,14 +407,14 @@ async function openStartScreen(z) {
   else showView(z.v);
 }
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") return rememberScreen();
+  if (document.visibilityState === "hidden") return saveSnapshot();
   // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
   const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
   // Tekmovanje z uro ali neposlano besedilo (klepet, odgovor) ostaneta na zaslonu.
   const busy = state.contestTimer || unsentText();
   if (installed && !busy && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
 });
-window.addEventListener("pagehide", rememberScreen);
+window.addEventListener("pagehide", saveSnapshot);
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
   if (name === "me") renderMe();
@@ -825,6 +919,7 @@ async function selectStudent(id) {
   // Uporabnik lahko namesto tega izbere drug profil; seznam se nato naloži znova (stanje zaklepa profilov se je lahko spremenilo).
   // Brez povezave s strežnikom (shranjena kopija) računi niso vklopljeni: odpremo profil za vadbo brez gesla,
   // zaklenjenega pa ne (zanj ni shranjenih nastavitev).
+  if (target?.locked || (target && accountsOn() && target.needs_password)) ZACETEK?.pozabi?.(); // zaklenjen profil: posnetek njegovega zaslona izgine
   if (target && accountsOn() && (target.locked || target.needs_password)) return loadStudents(await openProfileLock(target, state.students));
   if (target?.locked) {
     const open = state.students.find((s) => !s.locked);
@@ -4826,8 +4921,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     if (!o?.keepView) showView("path");
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
     if (z) await openStartScreen(z);
-    startHold = false;
-    startDone();
+    finishStart();
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
       box.value = START_ASK;

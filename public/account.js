@@ -303,7 +303,10 @@ function showError(form, err) {
 // pred Učno potjo (naloga hitrost, j 6. 11. 2026). Samo branje; initAccount ga porabi enkrat.
 let statusEarly = null;
 export function prefetchAccountStatus() {
-  statusEarly ||= api("/api/account/status").catch(() => ({ enabled: false }));
+  // Klic je zagon že začel v <head> (public/zacetek.js); neuspel ali star odgovor ne velja, takrat običajni klic.
+  statusEarly ||= Promise.resolve(window.evklidZacetek?.vnaprej?.("/api/account/status"))
+    .then((early) => early ?? api("/api/account/status"))
+    .catch(() => ({ enabled: false }));
 }
 
 export async function initAccount({ onReady }) {
