@@ -1248,6 +1248,8 @@
   "mode.cards": "Karteikarten",
   "mode.cardsSub": "Wichtige Fakten",
   "cards.title": "Karteikarten zum Wiederholen",
+  "cards.notes": "Meine Notizen",
+  "cards.notesUnchecked": "Aus deinen Notizen – nicht geprüft",
   "cards.intro": "Wichtige Fakten aus den Erklärungen des Tutors. Erinnere dich zuerst selbst an die Antwort und prüfe sie dann. Karten, die du kannst, kommen immer seltener wieder.",
   "cards.dueN": "Heute fällig: {n}",
   "cards.show": "Antwort zeigen",

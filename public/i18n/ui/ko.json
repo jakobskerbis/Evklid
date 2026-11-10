@@ -1242,6 +1242,8 @@
   "mode.cards": "카드",
   "mode.cardsSub": "핵심 내용",
   "cards.title": "복습 카드",
+  "cards.notes": "내 필기",
+  "cards.notesUnchecked": "네 필기에서 – 확인 안 됨",
   "cards.intro": "튜터의 설명에서 나온 핵심 내용이에요. 먼저 스스로 답을 떠올려 보고, 그다음 확인하세요. 아는 카드는 점점 더 드물게 다시 나와요.",
   "cards.dueN": "오늘 복습: {n}",
   "cards.show": "답 보기",

@@ -185,7 +185,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       front TEXT NOT NULL,                       -- vprašanje
       back TEXT NOT NULL,                        -- odgovor
       norm TEXT NOT NULL,                        -- vprašanje za iskanje podvojenih
-      source TEXT NOT NULL DEFAULT 'tutor',      -- tutor | own
+      source TEXT NOT NULL DEFAULT 'tutor',      -- tutor | own | zapiski
       box INTEGER NOT NULL DEFAULT 0,            -- 0 = novo ali pozabljeno, 1..6 = škatle (1, 3, 7, 16, 35, 90 dni)
       due TEXT NOT NULL DEFAULT (datetime('now')),
       reviews INTEGER NOT NULL DEFAULT 0,
@@ -195,6 +195,27 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       UNIQUE (student_id, norm)
     );
     CREATE INDEX IF NOT EXISTS idx_cards_due ON flashcards(student_id, due);
+    -- Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa šifrirana kot pogovori; prepisa tiskanih strani
+    -- ne shranimo (prepis NULL), slik nikoli. Kartice iz zapiskov so v flashcards (zapisek_id, izbris skupaj).
+    CREATE TABLE IF NOT EXISTS zapiski (
+      id INTEGER PRIMARY KEY,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      naslov TEXT NOT NULL,
+      teme TEXT NOT NULL DEFAULT '[]',           -- id-ji tem učne poti (JSON)
+      prepis TEXT,                               -- rokopis in vpisano besedilo; NULL pri tiskanih straneh
+      vrsta TEXT NOT NULL,                       -- rokopis | tiskano | besedilo
+      strani INTEGER NOT NULL DEFAULT 0,         -- prebrane fotografije
+      vsebina_hash TEXT,                         -- ista vsebina dvakrat: shranjeni rezultat brez novega klica
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_zapiski_student ON zapiski(student_id, id);
+    -- Prebrane strani zapiskov v mesecu (meja strani po paketih); izbris zapiska strani ne vrne.
+    CREATE TABLE IF NOT EXISTS zapiski_strani (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      mesec TEXT NOT NULL,
+      strani INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (student_id, mesec)
+    );
     -- Šibke točke iz iger, učbenika, pol, kartic in kviza (server/weaknesses.js): samo dnevne vsote po temi,
     -- brez odgovorov in časov posameznih nalog. Klepet in Vadnica sta v events.
     CREATE TABLE IF NOT EXISTS skill_results (
@@ -295,6 +316,9 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   }
   const cardCols = db.prepare("PRAGMA table_info(flashcards)").all().map((c) => c.name);
   if (!cardCols.includes("verified")) db.exec("ALTER TABLE flashcards ADD COLUMN verified INTEGER NOT NULL DEFAULT 1");
+  // Kartice iz zapiskov (server/zapiski.js): zapisek (izbris zapiska izbriše tudi kartice) in oznaka preverjeno (1) / nepreverjeno (0).
+  if (!cardCols.includes("zapisek_id")) db.exec("ALTER TABLE flashcards ADD COLUMN zapisek_id INTEGER REFERENCES zapiski(id) ON DELETE CASCADE");
+  if (!cardCols.includes("checked")) db.exec("ALTER TABLE flashcards ADD COLUMN checked INTEGER");
   // Priprava na test, ki jo je nastavil test iz urnika (server/schedule.js).
   const planCols = db.prepare("PRAGMA table_info(test_plans)").all().map((c) => c.name);
   if (!planCols.includes("event_id")) db.exec("ALTER TABLE test_plans ADD COLUMN event_id TEXT");

@@ -1248,6 +1248,8 @@
   "mode.cards": "Flashcards",
   "mode.cardsSub": "Key facts",
   "cards.title": "Review flashcards",
+  "cards.notes": "My notes",
+  "cards.notesUnchecked": "From your notes – not checked",
   "cards.intro": "Key facts from the tutor's explanations. First try to recall the answer yourself, then check it. Cards you know come back less and less often.",
   "cards.dueN": "Due today: {n}",
   "cards.show": "Show answer",

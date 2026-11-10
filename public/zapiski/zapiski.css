@@ -1,0 +1,37 @@
+/* »Moji zapiski« (public/zapiski/zapiski.js): naloži se šele ob odprtju. */
+.zap-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.zap-btns button { flex: 1 1 150px; min-height: 44px; justify-content: center; }
+.zap-note { margin: 10px 0 0; font-size: 0.92rem; }
+.zap-msg:empty { display: none; }
+.zap-msg { color: var(--danger); margin: 10px 0 0; }
+.zap-list { margin-top: 20px; }
+.zap-list ul, .zap-card-list, .zap-quiz ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.zap-row { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.zap-row-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 200px; overflow-wrap: anywhere; }
+.zap-row-btns { display: flex; gap: 6px; align-items: center; }
+.zap-row-btns button { min-height: 44px; min-width: 44px; }
+.zap-page { display: grid; gap: 6px; margin-bottom: 12px; font-weight: 600; }
+.zap-page textarea { width: 100%; box-sizing: border-box; font: inherit; font-weight: 400; line-height: 1.5; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); resize: vertical; }
+.zap-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.zap-actions button { min-height: 44px; flex: 1 1 160px; justify-content: center; }
+.zap-wait { margin-top: 12px; }
+.zap-topics { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.zap-topics li { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--text); }
+.zap-quiz, .zap-cards { margin-top: 20px; }
+.zap-q-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; font-size: 0.9rem; }
+.zap-tag { display: inline-flex; gap: 4px; align-items: center; padding: 2px 10px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; border: 1px solid transparent; }
+.zap-tag svg { width: 15px; height: 15px; }
+.zap-ok { background: var(--ok-bg); color: var(--ok); border-color: var(--ok); }
+.zap-unchecked { background: var(--surface); color: var(--muted); border-color: var(--border); }
+.zap-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 8px; }
+.zap-opt { min-height: 44px; justify-content: center; overflow-wrap: anywhere; }
+.zap-opt.zap-right { border: 2px solid var(--ok); background: var(--ok-bg); color: var(--ok); }
+.zap-opt.zap-bad { border: 2px solid var(--danger); background: var(--danger-bg); color: var(--danger); }
+.zap-opt:disabled { opacity: 1; }
+.zap-fb { margin: 8px 0 0; font-weight: 600; }
+.zap-fb:empty, .zap-score:empty { display: none; }
+.zap-front { font-weight: 600; margin-bottom: 4px; }
+.zap-text { margin-top: 16px; }
+.zap-text div { margin-top: 8px; overflow-wrap: anywhere; }
+.zap-check .nujno-card, .view > .nujno-card, #view-cards > .nujno-card { padding-inline-end: 16px; margin-bottom: 12px; }
+.zap-card-list p, .zap-q-text p { margin: 0 0 4px; }

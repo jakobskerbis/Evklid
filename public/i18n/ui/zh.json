@@ -1242,6 +1242,8 @@
   "mode.cards": "卡片",
   "mode.cardsSub": "重点",
   "cards.title": "复习卡片",
+  "cards.notes": "我的笔记",
+  "cards.notesUnchecked": "来自你的笔记——未核实",
   "cards.intro": "来自辅导老师讲解的重点。先自己回想答案，再核对。已经掌握的卡片会越来越少出现。",
   "cards.dueN": "今天待复习：{n}",
   "cards.show": "显示答案",

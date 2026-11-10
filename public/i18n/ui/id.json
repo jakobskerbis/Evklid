@@ -1242,6 +1242,8 @@
   "mode.cards": "Kartu",
   "mode.cardsSub": "Fakta penting",
   "cards.title": "Kartu hafalan",
+  "cards.notes": "Catatanku",
+  "cards.notesUnchecked": "Dari catatanmu – belum diperiksa",
   "cards.intro": "Fakta penting dari penjelasan tutor. Coba ingat jawabannya sendiri dulu, lalu periksa. Kartu yang sudah kamu kuasai akan muncul makin jarang.",
   "cards.dueN": "Jadwal hari ini: {n}",
   "cards.show": "Tampilkan jawaban",

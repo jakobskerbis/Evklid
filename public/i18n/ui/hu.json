@@ -1248,6 +1248,8 @@
   "mode.cards": "Kártyák",
   "mode.cardsSub": "Fontos tények",
   "cards.title": "Ismétlőkártyák",
+  "cards.notes": "Jegyzeteim",
+  "cards.notesUnchecked": "A jegyzetedből – nem ellenőrzött",
   "cards.intro": "Fontos tények a tutor magyarázataiból. Először próbáld magadtól felidézni a választ, aztán ellenőrizd. Az ismert kártyák egyre ritkábban jönnek vissza.",
   "cards.dueN": "Mára esedékes: {n}",
   "cards.show": "Válasz megjelenítése",
