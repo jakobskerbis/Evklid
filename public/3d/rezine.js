@@ -157,6 +157,24 @@ export function poljeTelesa(m, prag = 0.3) {
     const k = vrsta[g++], x = k % W, y = ((k / W) | 0) % H, z = (k / (W * H)) | 0;
     sosedje(k, x, y, z, dodaj);
   }
+  // reže, ki jih je zaprlo samo zapiranje in ne vodijo v votlino (med dlanjo in stegnom, med prsti), so spet zunaj:
+  // del brez telesa znotraj zaprtega telesa, ki ga sestavljajo samo z zapiranjem dodani voksli, je reža ob koži
+  // (ocena A, krog 5: dlani zlite s stegni); del z vsaj enim vokslom prave votline (zrak v pljučih) ostane zaprt
+  const del = new Int32Array(n).fill(-1);
+  for (let k0 = 0; k0 < n; k0++) {
+    if (zunaj[k0] || notri[k0] || del[k0] >= 0) continue;
+    let g2 = 0, r2 = 0, votlina = false, obZunaj = false;
+    del[k0] = k0; vrsta[r2++] = k0;
+    while (g2 < r2) {
+      const k = vrsta[g2++], x = k % W, y = ((k / W) | 0) % H, z = (k / (W * H)) | 0;
+      if (!zap[k]) votlina = true;
+      sosedje(k, x, y, z, (j) => {
+        if (zunaj[j]) obZunaj = true;
+        else if (!notri[j] && del[j] < 0) { del[j] = k0; vrsta[r2++] = j; }
+      });
+    }
+    if (!votlina && obZunaj) for (let q = 0; q < r2; q++) zunaj[vrsta[q]] = 1;
+  }
   const out = new Uint8Array(n);
   for (let k = 0; k < n; k++) out[k] = zunaj[k] ? Math.min(d[k * 4 + 3], P) : Math.max(d[k * 4 + 3], 160); // telo je vedno nad pragom 0,5
   return out;
@@ -340,7 +358,7 @@ export function gladekObris(r, je, f = 4, tap = null, opts = {}) {
   // drobne luknje (do 2,5 celice mreže: ostanek praga na poševnih vrzelih ali 2 mm žilica, ki se ne bere kot žila) zapolnimo
   // (ocena A, krog 4: 2 px luknji v levem prekatu in jetrih)
   const celica = opts.celica > 0 ? opts.celica : 2;
-  zapolniDrobne(out, W2, H2, Math.max(Math.round(2.5 * f * f), Math.round(Math.PI * (2.5 / celica) ** 2 * f * f)));
+  zapolniDrobne(out, W2, H2, Math.max(Math.round(2.5 * f * f), Math.round(Math.PI * (2.5 / celica) ** 2 * f * f))); // ostanki povečave, ožji od 5 mm
   // veliki organi: še glajenje v povečani sliki (dvakratno okno 2f+1, prag 1/2), ki odstrani zobce mreže ob vratih in
   // žilah (resast notranji rob jeter), ne da bi organ skrčilo; zapiranje (razširi in skrči za 2,5 mm) zapre ozke zareze
   // ob vratih jeter (ocena A, krog 5), široke vdolbine (prava vrata, žolčnik) ostanejo
@@ -446,6 +464,10 @@ function zapri(m, w, h, r) {
   const notri = razdaljaDoRoba(raz, w, h, true);
   for (let k = 0; k < w * h; k++) if (!m[k] && notri[k] > r) m[k] = 1;
 }
+
+// Največja žila (v celicah mreže oznak s stranico celica mm), ki se na rezini zapolni: do ~6 mm (3 × 3 celice po 2 mm);
+// po glajenju je tak krožec videti manjši od 5 mm in na fotografiji ga ni videti kot žilo (ocena A, krog 5).
+export const ZILA_CELIC = (celica = 2) => Math.round((6 / celica) ** 2);
 
 // Barva piksla fotografije je maščoba (svetlo rumena/bela), ne mišica, kri ali organ (temno rdeče do rjavo).
 export const jeMascoba = (r, g, b) => g > 135 && r > 160 && r - b > 25;

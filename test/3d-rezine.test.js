@@ -107,6 +107,15 @@ test("rezine: telo okoli rezine nima lukenj (votline in tanke reže v maski so z
   assert.ok(Math.min(...r) > 6.5, `ni notranjih ploskev (najmanjši polmer ${Math.min(...r).toFixed(1)})`);
 });
 
+test("rezine: reža ob koži (dlan ob stegnu) ostane odprta, votlina s kanalom ostane zaprta", () => {
+  // dva kvadra (»stegno« in »dlan«) z režo enega voksla: zapiranje jo zapre, a ne vodi v votlino → spet zunaj
+  const W = 20, H = 12, Z = 12, data = new Uint8Array(W * H * Z * 4);
+  for (let z = 2; z < 10; z++) for (let y = 2; y < 10; y++) for (let x = 2; x < 18; x++) if (x !== 9) data[((z * H + y) * W + x) * 4 + 3] = 255;
+  const f = R.poljeTelesa({ dim: [W, H, Z], mm: 4, data });
+  assert.ok(f[((6 * H + 6) * W + 9)] < 128, "reža med dlanjo in stegnom ostane zunaj");
+  assert.ok(f[((6 * H + 6) * W + 5)] > 128 && f[((6 * H + 6) * W + 14)] > 128, "oba dela sta telo");
+});
+
 test("rezine: gladek obris brez otočkov, središče oznake, uv točke", () => {
   const w = 12, h = 10, data = new Uint8Array(w * h);
   for (let y = 2; y < 8; y++) for (let x = 2; x < 9; x++) data[y * w + x] = 5; // velik del
@@ -544,7 +553,8 @@ test("rezine: obris – žile pod 5 mm niso luknje, ozke zareze velikega organa 
   for (let y = 10; y < 12; y++) for (let x = 10; x < 12; x++) data[y * w + x] = 2;
   for (let y = 20; y < 25; y++) for (let x = 20; x < 25; x++) data[y * w + x] = 2;
   const je = new Uint8Array(256); je[1] = 1;
-  const zile = Math.round(Math.PI * (2.5 / 2) ** 2);
+  const zile = R.ZILA_CELIC(2);
+  assert.equal(zile, 9, "do 3 × 3 celice po 2 mm");
   const z = R.zapolniObris({ w, h, data }, je, 40, null, zile);
   assert.equal(z.data[10 * w + 10], 1, "žila 4 mm zapolnjena");
   assert.equal(z.data[22 * w + 22], 0, "žila 10 mm ostane luknja");

@@ -177,6 +177,7 @@ export async function zgradi(THREE, ctx) {
   // --- oznake smeri ob rezini (desno/levo telesa, spredaj/zadaj): ob robu vsebine, stalne velikosti na zaslonu (≥ 14 px)
   // in pri povečavi pripete na rob odra, da ostanejo vidne
   const VISINA_NAPISA = 30; // px CSS: višina napisa (pisava ≈ 16 px)
+  const ROB_ORODIJ = 58, ROB_NAVEDBE = 26; // px CSS: orodna vrstica na vrhu odra, navedba vira (in merilo) na dnu
   const napis = (besedilo) => {
     const c = document.createElement("canvas");
     c.width = 256; c.height = 64;
@@ -212,9 +213,12 @@ export async function zgradi(THREE, ctx) {
       sp.scale.set(sv * 4, sv, 1);
       // sidro na robu vsebine → NDC; če je izven odra, ga pripnemo na rob (z odmikom za pol napisa)
       _v.copy(sp.userData.sidro).applyMatrix4(notranja.matrixWorld).project(kamera);
-      const mx = 1 - ((sp.userData.siroka * VISINA_NAPISA * 4) / 2 + 10) / (sirinaPlatna / 2), my = 1 - (VISINA_NAPISA / 2 + 8) / (visinaPlatna / 2);
+      // zgoraj pod orodno vrstico odra (gumbi 40 px), spodaj nad navedbo vira (ocena kroga 6: pri povečavi na telefonu
+      // je »spredaj« zdrsnil pod gumbe, »zadaj« na navedbo)
+      const mx = 1 - ((sp.userData.siroka * VISINA_NAPISA * 4) / 2 + 10) / (sirinaPlatna / 2);
+      const myGor = 1 - (VISINA_NAPISA / 2 + 8 + ROB_ORODIJ) / (visinaPlatna / 2), myDol = 1 - (VISINA_NAPISA / 2 + 6 + ROB_NAVEDBE) / (visinaPlatna / 2);
       _v.x = Math.max(-mx, Math.min(mx, _v.x));
-      _v.y = Math.max(-my, Math.min(my, _v.y));
+      _v.y = Math.max(-myDol, Math.min(myGor, _v.y));
       _v.unproject(kamera);
       notranja.worldToLocal(_v);
       sp.position.copy(_v);
@@ -470,8 +474,8 @@ export async function zgradi(THREE, ctx) {
     // papilarne mišice ipd. (R.NOTRANJI) so del prekata: luknja iz njih se zapolni
     const notranje = new Uint8Array(256);
     for (const x of R.NOTRANJI[kl] || []) { const k = T.meta.oznake.kljuci.indexOf(x); if (k >= 0) notranje[k + 1] = 1; }
-    // žile, ožje od 5 mm, niso luknje (na fotografiji jih ni videti); obris srca in organov ne sega v maščobo ob njih
-    const mm = T.ozn.mm, zile = Math.round(Math.PI * (2.5 / mm) ** 2);
+    // žile do ~5 mm niso luknje (na fotografiji jih ni videti); obris srca in organov ne sega v maščobo ob njih
+    const mm = T.ozn.mm, zile = R.ZILA_CELIC(mm);
     const o = R.gladekObris(R.zapolniObris(r, je, 40, notranje, zile), Uint8Array.of(0, 1), f, tapUV,
       { celica: mm, tkivo: R.BREZ_MASCOBE.has(kl) ? vzorecTkiva(r.w * f, r.h * f) : null });
     if (!o) {
