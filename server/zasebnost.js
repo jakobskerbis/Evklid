@@ -1,27 +1,13 @@
 // Varstvo podatkov učencev (docs/varnost-podatkov.md): šifriranje obstoječih vrstic ob zagonu,
 // roki hrambe in dnevno čiščenje. Šifriranje polj: server/crypto-polje.js.
-import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, canOpen, blindIndex, warnIfNoKey } from "./crypto-polje.js";
+import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warnIfNoKey, SEALED, encryptionStats } from "./crypto-polje.js";
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
 
-// Šifrirani stolpci. Nešifrirano ostane, kar SQL uporablja za iskanje ali je skupno vsem (glej dokument):
-// students.name (iskanje podvojenih), answer_cache (skupni, brez osebnih podatkov), knowledge_items (samo id-ji predmetov).
-export const SEALED = [
-  { table: "messages", cols: ["api_content", "display_text"] },
-  { table: "conversations", cols: ["title"] },
-  { table: "conversation_summaries", cols: ["text"] },
-  { table: "message_reports", cols: ["note", "question", "answer", "raw", "shown"] },
-  { table: "bug_reports", cols: ["note", "context"] },
-  { table: "feedback", cols: ["name", "good", "bad", "ideas", "interview"] },
-  { table: "schedules", cols: ["data"] },
-  // norm (za UNIQUE) postane slepi indeks HMAC, sicer bi razkril vprašanje s kartice.
-  { table: "flashcards", cols: ["front", "back"], norm: true },
-  // Naloge za člane pilota (server/pilot-naloge.js): opombe, prepis naloge, fotografija (samo ob soglasju).
-  { table: "pilot_scans", cols: ["note", "problems"] },
-  { table: "pilot_features", cols: ["note"] },
-  { table: "pilot_photos", cols: ["image"] },
-];
+// Šifrirani stolpci (SEALED) in štetje neberljivih (encryptionStats) sta v crypto-polje.js: rabi ju tudi lahka nit
+// za nočni preizkus kopij (server/kopije-preizkus.js), ki ne sme naložiti tega modula in vsega, kar ta uvaža.
+export { SEALED, encryptionStats };
 
 // --- roki hrambe (vse na enem mestu) ---
 const days = (v, d) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number(v) : d);
@@ -113,27 +99,6 @@ export function migrateEncryption(db, batch = 200) {
   return out;
 }
 
-// Koliko vrstic je šifriranih, nešifriranih in neberljivih (scripts/kljuc-podatkov.js --preveri).
-export function encryptionStats(db) {
-  const out = [];
-  for (const t of SEALED) {
-    if (!hasTable(db, t.table)) continue;
-    for (const c of t.cols.filter((x) => hasCol(db, t.table, x))) {
-      const s = { table: t.table, col: c, encrypted: 0, plain: 0, unreadable: 0, oldKey: 0 };
-      const cur = currentKeyId();
-      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL`).iterate()) {
-        if (!isEncrypted(r.v)) s.plain++;
-        else if (!canOpen(r.v)) s.unreadable++;
-        else {
-          s.encrypted++;
-          if (cur && !r.v.startsWith(`enc1:${cur}:`)) s.oldKey++;
-        }
-      }
-      out.push(s);
-    }
-  }
-  return out;
-}
 
 // --- dnevno čiščenje ---
 export function runRetention(db, { now = Date.now(), log = console } = {}) {

@@ -49,6 +49,8 @@ Render → Disks naredi dnevni posnetek diska samodejno (hrani se 7 dni).
 
 Poleg tega Evklid sam naredi kopijo baze **enkrat na dan** (prvič 2 minuti po zagonu; datum je v času UTC) v `/var/data/kopije/evklid-LLLL-MM-DD.db` in hrani zadnjih 7 (`server/kopije.js`). Ko zmanjkuje prostora na disku, najprej pobriše najstarejše kopije. Taka kopija pomaga, ko je pokvarjena samo baza (napaka v posodobitvi, pomotoma izbrisani podatki), posnetek diska pa, ko odpove cel disk. Stanje: `https://evklid.app/healthz/stanje` → `kopije` (`zadnja`, `kopij`, `napaka`, `obnovaCaka`). `EVKLID_BACKUPS=0` kopije izklopi.
 
+Vsako noč (med 4.30 in 8.00 po ljubljanskem času) strežnik sam naredi isti preizkus obnove kot `--preveri` (spodaj) na najnovejši dnevni kopiji, v ločeni niti, in preveri, ali je kopija današnja ter (če je nastavljena) tudi zunaj strežnika (`server/kopije-preveri.js`). Ob napaki zapiše vrstico `[evklid] NAPAKA: preizkus varnostne kopije ni uspel: …` in pošlje en e-mail na dan naslovom iz `EVKLID_ADMIN_EMAILS` (prek Resend); ob uspehu nič. Stanje: `/healthz/stanje` → `preverjanjeKopij` (`datum`, `ok`). `EVKLID_KOPIJE_PREVERI=0` preizkus izklopi.
+
 V Render → evklid → **Shell**:
 
 | Ukaz | Kaj naredi |
