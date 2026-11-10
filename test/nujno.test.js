@@ -147,7 +147,12 @@ test("varnostni pregled: odgovor modela → vrsta", () => {
   // Vrsta kjerkoli v odgovoru; prva beseda NE je NE, tudi če sledi razlaga z imenom vrste.
   assert.equal(preberiVrsto("Odgovor: STISKA"), "stiska");
   assert.equal(preberiVrsto("Odgovor: NE"), null);
-  assert.equal(preberiVrsto("NE, to ni nevarnost"), null);
+  // Protislovje (prva beseda NE, pozneje vrsta) in prazen odgovor sta neznana: čez mejo alarm, pri B brez okna.
+  for (const r of ["NE, to ni nevarnost", "NE vem, morda ZDRAVJE", "No. STISKA", "Ne diha: ZDRAVJE", "", "  "]) {
+    assert.equal(preberiVrsto(r), "zdravje", r);
+    assert.equal(preberiVrsto(r, null), null, r);
+  }
+  assert.equal(preberiVrsto("Ne."), null);
   assert.equal(preberiVrsto("NEIN", null), null);
   assert.equal(preberiVrsto("I can't help with that", null), null);
   assert.equal(preberiVrsto("I can't help with that"), "zdravje");
@@ -798,6 +803,11 @@ test("strežnik A: vrsta okna iz odgovora inštruktorja (samo 112 → zdravje, p
   const st = stevilke({});
   assert.equal(vrstaIzOdgovora("Takoj pokliči 112 ali prosi odraslega.", st, false), "zdravje");
   assert.equal(vrstaIzOdgovora("Pojdi ven. Zunaj pokliči 112. Pri plinu ne prižigaj luči.", st, false), "nevarnost");
+  assert.equal(vrstaIzOdgovora("Če gori, pojdi ven in zunaj pokliči 112.", st, false), "nevarnost");
+  assert.equal(vrstaIzOdgovora("Ob požaru najprej ven, nato 112.", st, false), "nevarnost");
+  // Meje besed: »disciplina«, »kategorija«, »gorivo« niso požar ali plin.
+  assert.equal(vrstaIzOdgovora("Takoj pokliči 112. V kateri kategoriji discipline?", st, false), "zdravje");
+  assert.equal(vrstaIzOdgovora("Takoj pokliči 112. Gorivo in disciplina počakata.", st, false), "zdravje");
   assert.equal(vrstaIzOdgovora("Pokliči TOM telefon 116 111, v nuji 112.", st, true), "stiska");
   assert.equal(vrstaIzOdgovora("Slišim te. Je zdaj kdo pri tebi?", st, false), "stiska");
   assert.equal(vrstaIzOdgovora("Slišim te. Je zdaj kdo pri tebi?", st, true), "pogovor");

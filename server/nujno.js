@@ -41,13 +41,15 @@ export const ovij = (text) => `<sporocilo>\n${String(text).slice(0, 2000).replac
 
 const BESEDA = { ZDRAVJE: "zdravje", STISKA: "stiska", NASILJE: "nasilje", NEVARNOST: "nevarnost" };
 
-// Odgovor modela → { vrsta, znano }. Prva beseda NE/NO = ni nujno; sicer ena od 4 vrst kjerkoli v odgovoru
-// (»Odgovor: STISKA«); sicer NE/NO kjerkoli ali prazen odgovor = ni nujno; vse drugo je neznan odgovor.
+// Odgovor modela → { vrsta, znano }. Ena od 4 vrst kjerkoli v odgovoru (»Odgovor: STISKA«) = vrsta; NE/NO brez vrste = ni
+// nujno. Neznano (znano: false): prazen odgovor, nobene znane besede ali protislovje (prva beseda NE/NO in pozneje
+// vrsta: »Ne vem, morda ZDRAVJE«, »Ne diha: ZDRAVJE«).
 export function razberi(raw) {
   const besede = String(raw || "").toUpperCase().split(/[^A-ZČŠŽ]+/).filter(Boolean);
   const ne = (w) => w === "NE" || w === "NO";
-  if (!besede.length || ne(besede[0])) return { vrsta: null, znano: true };
+  if (!besede.length) return { vrsta: null, znano: false };
   const k = besede.find((w) => BESEDA[w]);
+  if (k && ne(besede[0])) return { vrsta: null, znano: false };
   if (k) return { vrsta: BESEDA[k], znano: true };
   if (besede.some(ne)) return { vrsta: null, znano: true };
   return { vrsta: null, znano: false };
@@ -132,7 +134,7 @@ export function vrstaIzOdgovora(odgovor, st, blago = blagoVklopljeno()) {
   const ima = (nums) => nums.filter((n) => n && /\d{3}/.test(String(n))).some((n) => stRe(n).test(t));
   const sos = ima([st?.sos, ...Object.values(st?.sosZa || {}), st?.policija]);
   const linija = ima([st?.otroci, st?.odrasli, st?.linije?.otroci?.st, st?.linije?.odrasli?.st, ...(st?.tuje || []).map((l) => l.st)]);
-  if (sos && !linija) return /po[zž]ar|plin|gori|ogenj|ognj|\bfire\b|\bgas\b|smoke/i.test(t) ? "nevarnost" : "zdravje";
+  if (sos && !linija) return /(?<!\p{L})(po[zž]ar\p{L}*|plin(a|u|om|i)?|gori|ogenj|ognj\p{L}*)(?!\p{L})|\bfire\b|\bgas\b|\bsmoke\b/iu.test(t) ? "nevarnost" : "zdravje";
   if (blago && !sos && !linija) return "pogovor";
   return "stiska";
 }
