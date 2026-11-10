@@ -8,6 +8,7 @@ export default [
   { id: "organ-pljuca", pot: "./pljuca.js", naslov: "Pljuča", predmet: "BIO", opis: "Pljučni režnji, sapnik, bronhiji in pljučne žile; prerez pokaže bronhije v pljučnem tkivu." },
   { id: "organ-ledvica", pot: "./ledvica.js", naslov: "Ledvica", predmet: "BIO", opis: "Skorja, sredica s piramidami, sečevod in ledvični žili v prerezu." },
   { id: "organ-jetra", pot: "./jetra.js", naslov: "Jetra z žolčnikom", predmet: "BIO", opis: "Jetrni režnji, žolčnik, žolčevod in portalna vena." },
+  { id: "organ-pravi-prerez", pot: "./pravi-prerez.js", naslov: "Pravi prerez telesa", predmet: "BIO", opis: "Fotografije pravih prerezov telesa v treh smereh; dotik pove ime organa." },
   { id: "organ-mreznica", pot: "./mreznica.js", naslov: "Mrežnica pod povečavo", predmet: "BIO", opis: "Plasti mrežnice s paličicami, čepki in živčnimi celicami; svetloba gre skozi vse plasti." },
   { id: "organ-mesicki", pot: "./mesicki.js", naslov: "Pljučni mešički", predmet: "BIO", opis: "Grozd pljučnih mešičkov s kapilarami; kisik gre iz zraka v kri, ogljikov dioksid iz krvi v zrak." },
   { id: "organ-nefron", pot: "./nefron.js", naslov: "Nefron", predmet: "BIO", opis: "Glomerul, Bowmanova kapsula, cevke in Henlejeva zanka: kako ledvica iz krvi naredi seč." },

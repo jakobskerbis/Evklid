@@ -39,7 +39,7 @@ test("povečava: prerezi tkiv imajo veljavne povezave, mrežnica vodi do paliči
   const organi = (await import(path.join(MODELI, "organi", "index.js"))).default;
   for (const e of organi) {
     const mod = await import(path.join(MODELI, "organi", e.pot));
-    if (typeof mod.organ === "string") continue;
+    if (typeof mod.organ === "string" || mod.izDatotek) continue;
     const m = mod.zgradi(THREE, { kakovost: "nizka", gibanje: false });
     for (const d of m.deli) if (d.povecava) assert.ok(ids.has(d.povecava), `${e.id}/${d.id}: ${d.povecava}`);
     if (e.id === "organ-mreznica") {

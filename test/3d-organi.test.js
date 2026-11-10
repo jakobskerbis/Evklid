@@ -23,7 +23,7 @@ for (const e of modeli) {
     const mod = await nalozi(e.pot);
     assert.equal(mod.info.id, e.id);
     assert.equal(mod.info.naslov, e.naslov);
-    if (typeof mod.organ === "string") return; // organ iz GLB: test/3d-organi-glb.test.js
+    if (typeof mod.organ === "string" || mod.izDatotek) return; // organ iz GLB: test/3d-organi-glb.test.js; iz datotek: test/3d-rezine.test.js
     preveriModel(THREE, mod, "organi");
   });
 }

@@ -1,0 +1,897 @@
+{
+ "_opis": "Imena struktur za »Pravi prerez« (public/3d/modeli/organi/pravi-prerez.js). »oznake«: ključ → slovensko ime, latinsko ime, en stavek za 13-letnika, barva poudarka. »vzorci«: [regex, ključ] na poti vozlišča HRA (male črke, brez VH_M_/VH_F_, z / na začetku in koncu), prvi zadetek velja, »-« = brez oznake; uporablja jih scripts/atlas/rezine_oznake.py pri vokselizaciji mrež HuBMAP HRA (CC BY 4.0). t-*: tkivo po barvi, kjer mreže ni.",
+ "oznake": {
+  "veliki-mozgani": {
+   "sl": "Veliki možgani",
+   "la": "Cerebrum",
+   "opis": "Največji del možganov; z njimi mislimo, čutimo, govorimo in hote premikamo telo.",
+   "barva": "#e0b9a6"
+  },
+  "mali-mozgani": {
+   "sl": "Mali možgani",
+   "la": "Cerebellum",
+   "opis": "Usklajujejo gibe in skrbijo za ravnotežje.",
+   "barva": "#d59a8a"
+  },
+  "mozgansko-deblo": {
+   "sl": "Možgansko deblo",
+   "la": "Truncus encephali",
+   "opis": "Povezuje možgane s hrbtenjačo ter uravnava dihanje in bitje srca.",
+   "barva": "#c98f7c"
+  },
+  "talamus": {
+   "sl": "Talamus",
+   "la": "Thalamus",
+   "opis": "Preklopna postaja, skozi katero gre večina sporočil čutil do možganske skorje.",
+   "barva": "#c9a27e"
+  },
+  "mozganski-prekat": {
+   "sl": "Možganski prekat",
+   "la": "Ventriculus cerebri",
+   "opis": "Votlina v možganih, napolnjena z možgansko tekočino, ki možgane varuje in hrani.",
+   "barva": "#7fb4d8"
+  },
+  "hrbtenjaca": {
+   "sl": "Hrbtenjača",
+   "la": "Medulla spinalis",
+   "opis": "Snop živčevja v hrbteničnem kanalu; prenaša sporočila med možgani in telesom.",
+   "barva": "#e8d9a8"
+  },
+  "zrklo": {
+   "sl": "Zrklo",
+   "la": "Bulbus oculi",
+   "opis": "Očesna krogla, v kateri nastane slika tega, kar gledamo.",
+   "barva": "#dfe6ee"
+  },
+  "leca": {
+   "sl": "Očesna leča",
+   "la": "Lens",
+   "opis": "Prozorna leča, ki zbere svetlobo, da je slika na mrežnici ostra.",
+   "barva": "#bfe3f2"
+  },
+  "steklovina": {
+   "sl": "Steklovina",
+   "la": "Corpus vitreum",
+   "opis": "Prozoren žele, ki zapolnjuje zrklo in mu daje obliko.",
+   "barva": "#a9cfe6"
+  },
+  "vidni-zivec": {
+   "sl": "Vidni živec",
+   "la": "Nervus opticus",
+   "opis": "Prenaša sliko iz očesa v možgane.",
+   "barva": "#f0d58a"
+  },
+  "ocesne-misice": {
+   "sl": "Očesne mišice",
+   "la": "Musculi bulbi",
+   "opis": "Šest mišic, ki obračajo zrklo v vse smeri.",
+   "barva": "#b5524a"
+  },
+  "jezik": {
+   "sl": "Jezik",
+   "la": "Lingua",
+   "opis": "Mišičast organ za okušanje, žvečenje, požiranje in govor.",
+   "barva": "#d9777a"
+  },
+  "zobje": {
+   "sl": "Zobje",
+   "la": "Dentes",
+   "opis": "Z njimi hrano odgriznemo in zmeljemo.",
+   "barva": "#f3efe2"
+  },
+  "trdo-nebo": {
+   "sl": "Trdo nebo",
+   "la": "Palatum durum",
+   "opis": "Koščeni sprednji del ustnega stropa.",
+   "barva": "#e3b7a8"
+  },
+  "mehko-nebo": {
+   "sl": "Mehko nebo",
+   "la": "Palatum molle",
+   "opis": "Mišičast zadnji del ustnega stropa; pri požiranju zapre pot v nos.",
+   "barva": "#d99a94"
+  },
+  "ustna-votlina": {
+   "sl": "Ustna votlina",
+   "la": "Cavitas oris",
+   "opis": "Začetek prebavne poti, kjer hrano prežvečimo in zmešamo s slino.",
+   "barva": "#d68f8a"
+  },
+  "obusesna-slinavka": {
+   "sl": "Obušesna slinavka",
+   "la": "Glandula parotidea",
+   "opis": "Največja žleza slinavka, leži pred uhljem in izloča slino.",
+   "barva": "#e2b56f"
+  },
+  "podceljustna-slinavka": {
+   "sl": "Podčeljustna slinavka",
+   "la": "Glandula submandibularis",
+   "opis": "Žleza slinavka pod spodnjo čeljustnico.",
+   "barva": "#e0ab63"
+  },
+  "podjezicna-slinavka": {
+   "sl": "Podjezična slinavka",
+   "la": "Glandula sublingualis",
+   "opis": "Najmanjša od velikih žlez slinavk, leži pod jezikom.",
+   "barva": "#dca25a"
+  },
+  "nebnica": {
+   "sl": "Nebnica (mandelj)",
+   "la": "Tonsilla palatina",
+   "opis": "Del obrambnega sistema v žrelu; prestreza klice, ki pridejo skozi usta.",
+   "barva": "#d8868f"
+  },
+  "podjezicnica": {
+   "sl": "Podjezičnica",
+   "la": "Os hyoideum",
+   "opis": "Majhna kost v vratu, na katero so pripete mišice jezika in grla.",
+   "barva": "#ece3c8"
+  },
+  "scitasti-hrustanec": {
+   "sl": "Ščitasti hrustanec",
+   "la": "Cartilago thyroidea",
+   "opis": "Največji hrustanec grla; pri moških tvori Adamovo jabolko.",
+   "barva": "#9fd3cf"
+  },
+  "obrocasti-hrustanec": {
+   "sl": "Obročasti hrustanec",
+   "la": "Cartilago cricoidea",
+   "opis": "Hrustanec v obliki pečatnega prstana na dnu grla.",
+   "barva": "#8fcac6"
+  },
+  "poklopec": {
+   "sl": "Poklopec",
+   "la": "Epiglottis",
+   "opis": "Hrustančna loputa, ki pri požiranju zapre vhod v grlo.",
+   "barva": "#a8d9c0"
+  },
+  "hrustanci-grla": {
+   "sl": "Hrustanci grla",
+   "la": "Cartilagines laryngis",
+   "opis": "Drobni hrustanci, na katere so pripete glasilke.",
+   "barva": "#97cfc4"
+  },
+  "misice-grla": {
+   "sl": "Mišice grla",
+   "la": "Musculi laryngis",
+   "opis": "Napenjajo in premikajo glasilke, zato lahko govorimo in pojemo.",
+   "barva": "#b85a52"
+  },
+  "sapnik": {
+   "sl": "Sapnik",
+   "la": "Trachea",
+   "opis": "Cev s hrustančnimi obročki, po kateri zrak teče v pljuča in iz njih.",
+   "barva": "#8fd0e8"
+  },
+  "sapnice": {
+   "sl": "Sapnice (bronhiji)",
+   "la": "Bronchi",
+   "opis": "Veje sapnika, ki vodijo zrak v vse dele pljuč.",
+   "barva": "#7cc3de"
+  },
+  "desna-pljuca": {
+   "sl": "Desno pljučno krilo",
+   "la": "Pulmo dexter",
+   "opis": "Ima tri režnje; v pljučih kri sprejme kisik in odda ogljikov dioksid.",
+   "barva": "#e59aa6"
+  },
+  "leva-pljuca": {
+   "sl": "Levo pljučno krilo",
+   "la": "Pulmo sinister",
+   "opis": "Ima dva režnja in je manjše od desnega, ker je ob njem srce.",
+   "barva": "#e08a99"
+  },
+  "levi-prekat": {
+   "sl": "Levi prekat",
+   "la": "Ventriculus sinister",
+   "opis": "Najmočnejši del srca; s kisikom bogato kri požene po vsem telesu.",
+   "barva": "#c8322f"
+  },
+  "desni-prekat": {
+   "sl": "Desni prekat",
+   "la": "Ventriculus dexter",
+   "opis": "Požene kri v pljuča, kjer sprejme kisik.",
+   "barva": "#5f7fd0"
+  },
+  "levi-preddvor": {
+   "sl": "Levi preddvor",
+   "la": "Atrium sinistrum",
+   "opis": "Sprejme s kisikom bogato kri iz pljuč.",
+   "barva": "#e06a5c"
+  },
+  "desni-preddvor": {
+   "sl": "Desni preddvor",
+   "la": "Atrium dextrum",
+   "opis": "Sprejme kri, ki se iz telesa vrača v srce.",
+   "barva": "#7f97dc"
+  },
+  "medprekatni-pretin": {
+   "sl": "Medprekatni pretin",
+   "la": "Septum interventriculare",
+   "opis": "Mišična stena, ki loči levi in desni prekat.",
+   "barva": "#a8443c"
+  },
+  "srcne-zaklopke": {
+   "sl": "Srčne zaklopke",
+   "la": "Valvae cordis",
+   "opis": "Ventili, ki kri spuščajo samo v eno smer.",
+   "barva": "#f0d9b0"
+  },
+  "papilarne-misice": {
+   "sl": "Papilarne mišice",
+   "la": "Musculi papillares",
+   "opis": "Mišice v prekatih, ki s tetivnimi nitkami držijo zaklopke.",
+   "barva": "#b8463f"
+  },
+  "aorta": {
+   "sl": "Aorta",
+   "la": "Aorta",
+   "opis": "Največja arterija; po njej gre kri iz levega prekata v telo.",
+   "barva": "#d83a34"
+  },
+  "votla-vena": {
+   "sl": "Votla vena",
+   "la": "Vena cava",
+   "opis": "Največji veni, ki vračata kri iz telesa v desni preddvor.",
+   "barva": "#4f6fd2"
+  },
+  "pljucna-arterija": {
+   "sl": "Pljučna arterija",
+   "la": "Truncus pulmonalis et arteriae pulmonales",
+   "opis": "Vodi kri z malo kisika iz desnega prekata v pljuča.",
+   "barva": "#5a78d6"
+  },
+  "pljucna-vena": {
+   "sl": "Pljučne vene",
+   "la": "Venae pulmonales",
+   "opis": "Vračajo s kisikom bogato kri iz pljuč v levi preddvor.",
+   "barva": "#e0564c"
+  },
+  "vencne-zile": {
+   "sl": "Venčne žile srca",
+   "la": "Vasa coronaria",
+   "opis": "Arterije in vene na površini srca, ki oskrbujejo srčno mišico.",
+   "barva": "#cf4a44"
+  },
+  "arterija": {
+   "sl": "Arterija",
+   "la": "Arteria",
+   "opis": "Žila, ki vodi kri od srca proti organom.",
+   "barva": "#d4453e"
+  },
+  "vena": {
+   "sl": "Vena",
+   "la": "Vena",
+   "opis": "Žila, ki vrača kri proti srcu.",
+   "barva": "#5576d0"
+  },
+  "prizeljc": {
+   "sl": "Priželjc",
+   "la": "Thymus",
+   "opis": "Žleza za prsnico, v kateri v otroštvu dozorevajo obrambne celice.",
+   "barva": "#e7c98d"
+  },
+  "vranica": {
+   "sl": "Vranica",
+   "la": "Splen (lien)",
+   "opis": "Čisti kri, razgrajuje stare rdeče krvničke in sodeluje pri obrambi telesa.",
+   "barva": "#8e4a6e"
+  },
+  "jetra": {
+   "sl": "Jetra",
+   "la": "Hepar",
+   "opis": "Največja žleza v telesu; predelujejo hranila, razstrupljajo kri in izdelujejo žolč.",
+   "barva": "#9a4a36"
+  },
+  "zolcnik": {
+   "sl": "Žolčnik",
+   "la": "Vesica biliaris",
+   "opis": "Vrečka pod jetri, v kateri se shranjuje žolč.",
+   "barva": "#6f9a4a"
+  },
+  "zolcni-vodi": {
+   "sl": "Žolčni in pankreatični vodi",
+   "la": "Ductus biliares et pancreatici",
+   "opis": "Cevke, po katerih žolč in prebavni sok trebušne slinavke tečeta v dvanajstnik.",
+   "barva": "#86a94f"
+  },
+  "trebusna-slinavka": {
+   "sl": "Trebušna slinavka",
+   "la": "Pancreas",
+   "opis": "Izdeluje prebavne sokove in hormon inzulin, ki uravnava krvni sladkor.",
+   "barva": "#e3bf73"
+  },
+  "dvanajstnik": {
+   "sl": "Dvanajstnik",
+   "la": "Duodenum",
+   "opis": "Prvi del tankega črevesa; vanj pritečeta žolč in sok trebušne slinavke.",
+   "barva": "#e2a37a"
+  },
+  "tesce-crevo": {
+   "sl": "Tešče črevo",
+   "la": "Jejunum",
+   "opis": "Srednji del tankega črevesa, kjer se vsrka večina hranil.",
+   "barva": "#e3a98a"
+  },
+  "vito-crevo": {
+   "sl": "Vito črevo",
+   "la": "Ileum",
+   "opis": "Zadnji del tankega črevesa; vsrka preostala hranila in vitamin B12.",
+   "barva": "#dd9f86"
+  },
+  "slepo-crevo": {
+   "sl": "Slepo črevo s slepičem",
+   "la": "Caecum et appendix vermiformis",
+   "opis": "Začetek debelega črevesa s tankim izrastkom, slepičem.",
+   "barva": "#c98b6f"
+  },
+  "debelo-crevo": {
+   "sl": "Debelo črevo",
+   "la": "Colon",
+   "opis": "Iz ostankov hrane vsrka vodo in oblikuje blato.",
+   "barva": "#c58a68"
+  },
+  "danka": {
+   "sl": "Danka",
+   "la": "Rectum",
+   "opis": "Zadnji del debelega črevesa, kjer se blato zbira pred iztrebljanjem.",
+   "barva": "#bf7f66"
+  },
+  "ledvica": {
+   "sl": "Ledvica",
+   "la": "Ren",
+   "opis": "Iz krvi odstranjuje odpadne snovi in odvečno vodo ter tako nastaja seč.",
+   "barva": "#a8503c"
+  },
+  "ledvicni-meh": {
+   "sl": "Ledvični meh",
+   "la": "Pelvis renalis",
+   "opis": "Lijak v ledvici, ki zbira seč in ga usmerja v sečevod.",
+   "barva": "#e6c36a"
+  },
+  "secevod": {
+   "sl": "Sečevod",
+   "la": "Ureter",
+   "opis": "Cev, po kateri seč teče iz ledvice v sečni mehur.",
+   "barva": "#e4cf7a"
+  },
+  "secni-mehur": {
+   "sl": "Sečni mehur",
+   "la": "Vesica urinaria",
+   "opis": "Mišičasta vreča, v kateri se zbira seč.",
+   "barva": "#e9d27c"
+  },
+  "secnica": {
+   "sl": "Sečnica",
+   "la": "Urethra",
+   "opis": "Cev, po kateri seč zapusti telo.",
+   "barva": "#e0c66f"
+  },
+  "prostata": {
+   "sl": "Prostata (obsečnica)",
+   "la": "Prostata",
+   "opis": "Žleza pod sečnim mehurjem pri moških; izdeluje del semenske tekočine.",
+   "barva": "#c79a86"
+  },
+  "semenjak": {
+   "sl": "Semenjak",
+   "la": "Vesicula seminalis",
+   "opis": "Žleza, ki prispeva večino semenske tekočine.",
+   "barva": "#d1a78f"
+  },
+  "semenovod": {
+   "sl": "Semenovod",
+   "la": "Ductus deferens",
+   "opis": "Cev, po kateri semenčice potujejo iz moda proti sečnici.",
+   "barva": "#d9b59a"
+  },
+  "maternica": {
+   "sl": "Maternica",
+   "la": "Uterus",
+   "opis": "Mišičast organ, v katerem se med nosečnostjo razvija otrok.",
+   "barva": "#d4788a"
+  },
+  "jajcnik": {
+   "sl": "Jajčnik",
+   "la": "Ovarium",
+   "opis": "V njem dozorevajo jajčeca in nastajajo ženski spolni hormoni.",
+   "barva": "#e2a0a6"
+  },
+  "jajcevod": {
+   "sl": "Jajcevod",
+   "la": "Tuba uterina",
+   "opis": "Cev, po kateri jajčece potuje iz jajčnika v maternico.",
+   "barva": "#e08f9c"
+  },
+  "noznica": {
+   "sl": "Nožnica",
+   "la": "Vagina",
+   "opis": "Mišičasta cev, ki povezuje maternico z zunanjostjo telesa.",
+   "barva": "#d98494"
+  },
+  "maternicne-vezi": {
+   "sl": "Vezi maternice in jajčnikov",
+   "la": "Ligamenta uteri et ovarii",
+   "opis": "Vezivni trakovi, ki maternico in jajčnika držijo na mestu.",
+   "barva": "#d7b3a8"
+  },
+  "dojka": {
+   "sl": "Dojka",
+   "la": "Mamma",
+   "opis": "Žlezno in maščobno tkivo; po porodu mlečne žleze izdelujejo mleko.",
+   "barva": "#ecc7a4"
+  },
+  "vratno-vretence": {
+   "sl": "Vratno vretence",
+   "la": "Vertebra cervicalis",
+   "opis": "Eno od sedmih vretenc vratu; nosijo in obračajo glavo.",
+   "barva": "#efe6cc"
+  },
+  "prsno-vretence": {
+   "sl": "Prsno vretence",
+   "la": "Vertebra thoracica",
+   "opis": "Eno od dvanajstih vretenc, na katera so pripeta rebra.",
+   "barva": "#ece2c6"
+  },
+  "ledveno-vretence": {
+   "sl": "Ledveno vretence",
+   "la": "Vertebra lumbalis",
+   "opis": "Eno od petih največjih vretenc; nosijo težo zgornjega dela telesa.",
+   "barva": "#e9dec0"
+  },
+  "medvretencna-plosca": {
+   "sl": "Medvretenčna ploščica",
+   "la": "Discus intervertebralis",
+   "opis": "Prožna hrustančna blazinica med vretencema, ki blaži sunke.",
+   "barva": "#a9d6d2"
+  },
+  "krizinca": {
+   "sl": "Križnica",
+   "la": "Os sacrum",
+   "opis": "Kost iz petih zraslih vretenc, ki hrbtenico povezuje z medenico.",
+   "barva": "#e6dabb"
+  },
+  "trtica": {
+   "sl": "Trtica",
+   "la": "Os coccygis",
+   "opis": "Majhna kost na koncu hrbtenice.",
+   "barva": "#e2d5b4"
+  },
+  "kolcnica": {
+   "sl": "Kolčnica",
+   "la": "Os coxae",
+   "opis": "Velika kost medenice, v katero se prilega glava stegnenice.",
+   "barva": "#eadfbe"
+  },
+  "prsnica": {
+   "sl": "Prsnica",
+   "la": "Sternum",
+   "opis": "Ploščata kost sredi prsnega koša, na katero so pripeta rebra.",
+   "barva": "#ede3c4"
+  },
+  "stegnenica": {
+   "sl": "Stegnenica",
+   "la": "Femur",
+   "opis": "Najdaljša in najmočnejša kost v telesu.",
+   "barva": "#eee4c6"
+  },
+  "golenica": {
+   "sl": "Golenica",
+   "la": "Tibia",
+   "opis": "Močnejša od dveh kosti goleni; nosi težo telesa.",
+   "barva": "#ebe0c0"
+  },
+  "mecnica": {
+   "sl": "Mečnica",
+   "la": "Fibula",
+   "opis": "Tanjša kost goleni na zunanji strani noge.",
+   "barva": "#e8dcba"
+  },
+  "pogacica": {
+   "sl": "Pogačica",
+   "la": "Patella",
+   "opis": "Kost v kiti pred kolenom, ki varuje kolenski sklep.",
+   "barva": "#e5d8b4"
+  },
+  "sklepni-hrustanec": {
+   "sl": "Sklepni hrustanec kolena",
+   "la": "Cartilago articularis genus",
+   "opis": "Gladka plast na koncih kosti, ki omogoča drsenje v sklepu.",
+   "barva": "#9bd0d4"
+  },
+  "meniskus": {
+   "sl": "Meniskus",
+   "la": "Meniscus",
+   "opis": "Hrustančna ploščica v kolenu, ki blaži obremenitve.",
+   "barva": "#8cc7cc"
+  },
+  "kolenske-vezi": {
+   "sl": "Kolenske vezi",
+   "la": "Ligamenta genus",
+   "opis": "Čvrsti vezivni trakovi, ki držijo kolenski sklep skupaj.",
+   "barva": "#d9c9a2"
+  },
+  "prema-stegenska": {
+   "sl": "Prema stegenska mišica",
+   "la": "Musculus rectus femoris",
+   "opis": "Del štiriglave stegenske mišice; izteguje koleno.",
+   "barva": "#b24c44"
+  },
+  "kita-kvadricepsa": {
+   "sl": "Kita štiriglave stegenske mišice",
+   "la": "Tendo musculi quadricipitis femoris",
+   "opis": "Kita, ki stegensko mišico pripenja na pogačico.",
+   "barva": "#e3d6b0"
+  },
+  "t-mascoba": {
+   "sl": "Maščobno tkivo",
+   "la": "Textus adiposus",
+   "opis": "Rumenkasto tkivo pod kožo in med organi; shranjuje energijo in blaži udarce. Določeno po barvi, brez imena posamezne strukture.",
+   "barva": "#ead58a"
+  },
+  "t-misica": {
+   "sl": "Mišično tkivo",
+   "la": "Textus muscularis",
+   "opis": "Rdeče tkivo, ki se krči in premika telo. Določeno po barvi, brez imena posamezne mišice.",
+   "barva": "#a8483f"
+  }
+ },
+ "vzorci": [
+  [
+   "/skin|subcutaneous|visceral_adipose|yao_|placenta|uterovesical_pouch",
+   "-"
+  ],
+  [
+   "eye_[lr]/lens",
+   "leca"
+  ],
+  [
+   "eye_[lr]/vitreous",
+   "steklovina"
+  ],
+  [
+   "/eyes/",
+   "zrklo"
+  ],
+  [
+   "nerves_of_eye|optic_chiasm",
+   "vidni-zivec"
+  ],
+  [
+   "muscles_of_eye",
+   "ocesne-misice"
+  ],
+  [
+   "tendon_of_quadriceps",
+   "kita-kvadricepsa"
+  ],
+  [
+   "rectus_femoris",
+   "prema-stegenska"
+  ],
+  [
+   "muscles_of_larynx",
+   "misice-grla"
+  ],
+  [
+   "thyroid_cartilage",
+   "scitasti-hrustanec"
+  ],
+  [
+   "cricoid_cartilage",
+   "obrocasti-hrustanec"
+  ],
+  [
+   "epiglott",
+   "poklopec"
+  ],
+  [
+   "/larynx/",
+   "hrustanci-grla"
+  ],
+  [
+   "spinal_cord",
+   "hrbtenjaca"
+  ],
+  [
+   "allen.*cerebell",
+   "mali-mozgani"
+  ],
+  [
+   "allen.*(pons|pontine|medulla|midbrain|colliculus)",
+   "mozgansko-deblo"
+  ],
+  [
+   "allen.*thalam",
+   "talamus"
+  ],
+  [
+   "allen.*ventricle",
+   "mozganski-prekat"
+  ],
+  [
+   "allen_brain",
+   "veliki-mozgani"
+  ],
+  [
+   "vas_deferens|ejaculatory",
+   "semenovod"
+  ],
+  [
+   "seminal_vesicle",
+   "semenjak"
+  ],
+  [
+   "prostat|seminal_colliculus",
+   "prostata"
+  ],
+  [
+   "mammary",
+   "dojka"
+  ],
+  [
+   "/vagina|cervicovaginal",
+   "noznica"
+  ],
+  [
+   "fallopian",
+   "jajcevod"
+  ],
+  [
+   "/ovary/",
+   "jajcnik"
+  ],
+  [
+   "ligaments_of_uterus",
+   "maternicne-vezi"
+  ],
+  [
+   "/uterus",
+   "maternica"
+  ],
+  [
+   "submandibular",
+   "podceljustna-slinavka"
+  ],
+  [
+   "parotid",
+   "obusesna-slinavka"
+  ],
+  [
+   "sublingual",
+   "podjezicna-slinavka"
+  ],
+  [
+   "/tongue/",
+   "jezik"
+  ],
+  [
+   "tooth_row",
+   "zobje"
+  ],
+  [
+   "hard_palate",
+   "trdo-nebo"
+  ],
+  [
+   "soft_palate",
+   "mehko-nebo"
+  ],
+  [
+   "/mouth/",
+   "ustna-votlina"
+  ],
+  [
+   "palatine_tonsil",
+   "nebnica"
+  ],
+  [
+   "/liver/",
+   "jetra"
+  ],
+  [
+   "gallbladder",
+   "zolcnik"
+  ],
+  [
+   "/pancreas/",
+   "trebusna-slinavka"
+  ],
+  [
+   "biliary_tree",
+   "zolcni-vodi"
+  ],
+  [
+   "duoden|papilla_of_santorini|sphincter_of_hepatopancreatic",
+   "dvanajstnik"
+  ],
+  [
+   "jejunum",
+   "tesce-crevo"
+  ],
+  [
+   "ileum",
+   "vito-crevo"
+  ],
+  [
+   "caecum|vermiform|ileocecal",
+   "slepo-crevo"
+  ],
+  [
+   "rectum",
+   "danka"
+  ],
+  [
+   "/colon/",
+   "debelo-crevo"
+  ],
+  [
+   "calyx|renal_pelvis(?!_ureter/)|renal_pelvis_ureter/.*renal_pelvis",
+   "ledvicni-meh"
+  ],
+  [
+   "upper_urinary_tract/.*ureter(?!.*kidney)[^/]*$",
+   "secevod"
+  ],
+  [
+   "upper_urinary_tract",
+   "ledvica"
+  ],
+  [
+   "urinary_bladder",
+   "secni-mehur"
+  ],
+  [
+   "urethra",
+   "secnica"
+  ],
+  [
+   "heart_valve",
+   "srcne-zaklopke"
+  ],
+  [
+   "papillary_muscle",
+   "papilarne-misice"
+  ],
+  [
+   "left_cardiac_atrium",
+   "levi-preddvor"
+  ],
+  [
+   "right_cardiac_atrium",
+   "desni-preddvor"
+  ],
+  [
+   "heart_right_ventricle",
+   "desni-prekat"
+  ],
+  [
+   "heart_left_ventricle",
+   "levi-prekat"
+  ],
+  [
+   "interventricular_septum",
+   "medprekatni-pretin"
+  ],
+  [
+   "aort",
+   "aorta"
+  ],
+  [
+   "vena_cava",
+   "votla-vena"
+  ],
+  [
+   "pulmonary_(artery|trunk)",
+   "pljucna-arterija"
+  ],
+  [
+   "pulmonary_vein",
+   "pljucna-vena"
+  ],
+  [
+   "coronary|cardiac_vein|descending_artery|marginal_(artery|branch)|diagonal_branch|vein_of_left_(atrium|ventricle)",
+   "vencne-zile"
+  ],
+  [
+   "blood_vasculature.*(artery|trunk|arteries)",
+   "arterija"
+  ],
+  [
+   "blood_vasculature",
+   "vena"
+  ],
+  [
+   "lungs_l",
+   "leva-pljuca"
+  ],
+  [
+   "lungs_r",
+   "desna-pljuca"
+  ],
+  [
+   "trachea",
+   "sapnik"
+  ],
+  [
+   "bronch",
+   "sapnice"
+  ],
+  [
+   "/spleen/",
+   "vranica"
+  ],
+  [
+   "/thymus/",
+   "prizeljc"
+  ],
+  [
+   "/hyoid",
+   "podjezicnica"
+  ],
+  [
+   "sacrum",
+   "krizinca"
+  ],
+  [
+   "coccyx",
+   "trtica"
+  ],
+  [
+   "pubis|ilium|ischium",
+   "kolcnica"
+  ],
+  [
+   "sternum|manubrium",
+   "prsnica"
+  ],
+  [
+   "articular_cartilage|perichond|trochlear|condyle",
+   "sklepni-hrustanec"
+  ],
+  [
+   "meniscus",
+   "meniskus"
+  ],
+  [
+   "ligament|enthesis",
+   "kolenske-vezi"
+  ],
+  [
+   "patella",
+   "pogacica"
+  ],
+  [
+   "fibula",
+   "mecnica"
+  ],
+  [
+   "tibia",
+   "golenica"
+  ],
+  [
+   "femur|intercondylar",
+   "stegnenica"
+  ],
+  [
+   "intervertebral",
+   "medvretencna-plosca"
+  ],
+  [
+   "cervical_vertebra",
+   "vratno-vretence"
+  ],
+  [
+   "thoracic_vertebra",
+   "prsno-vretence"
+  ],
+  [
+   "lumbar_vertebra",
+   "ledveno-vretence"
+  ],
+  [
+   "vertebral_column",
+   "-"
+  ]
+ ]
+}
