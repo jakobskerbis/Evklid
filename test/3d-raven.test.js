@@ -31,7 +31,8 @@ test("razlaga po ravni: OŠ preprosto (latinsko v »Več o tem«), SŠ z latinsk
 test("okvir 3D v »Uči se« dobi raven profila (ločen dokument brez profila)", async () => {
   const fs = await import("node:fs");
   const src = fs.readFileSync(new URL("../public/uci-se.js", import.meta.url), "utf8");
-  assert.match(src, /import \{ ravenProfila \} from "\.\/3d\/raven\.js"/);
+  // brez uvoza raven.js (prvo odprtje): raven iz profila izračuna uci-se.js sam (stopnja), enako kot ravenProfila
+  assert.match(src, /const ravenProfila = \(\) => \{[\s\S]*?stopnja\(s\)[\s\S]*?"FAKS" \? 3 : st === "SS" \? 2 : 1/);
   assert.match(src, /\/3d\?vgrajeno=1&raven=\$\{ravenProfila\(\)\}/);
 });
 

@@ -4,11 +4,13 @@
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
-import { t } from "/i18n.js";
+import { t, dodajIzvirnik } from "/i18n.js";
+import SL3D from "/i18n/sl-3d.js";
 import { icon } from "/icons.js";
 import { ravenProfila, razlaga, imaRavni } from "./raven.js";
 import { SKUPINE, zacetnaIzbira } from "./skupine.js";
 import { najdiOvoje, okvir } from "./ovoji.js";
+dodajIzvirnik(SL3D); // imena skupin delov (a3.grp.*), niso v prvem odprtju aplikacije
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);

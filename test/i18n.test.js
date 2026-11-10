@@ -2,7 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import SL from "../public/i18n/sl.js";
+import SL0 from "../public/i18n/sl.js";
+import SL3D from "../public/i18n/sl-3d.js";
+
+const SL = { ...SL0, ...SL3D }; // izvirnik = sl.js + besedila strani /3d (dodajIzvirnik)
 import { LANGUAGES, LANGUAGE_CODES, UI_LANGUAGES, RTL, uiChain, uiLanguage, langInfo, detectLanguage, homeLanguage } from "../public/i18n/languages.js";
 import { buildSystemPrompt, systemBlocks, languagePrompt } from "../server/prompt.js";
 import { normalizeSettings } from "../server/settings.js";

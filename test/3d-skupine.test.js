@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { SKUPINE, najdiSkupino, delPoImenu, zacetnaIzbira } from "../public/3d/skupine.js";
-import sl from "../public/i18n/sl.js";
+import sl from "../public/i18n/sl-3d.js"; // imena skupin so v izvirniku strani /3d (dodajIzvirnik)
 
 const koren = new URL("../public/3d/modeli/", import.meta.url);
 test("skupine: vsak del obstaja v modelu, ime skupine v sl in vseh jezikih", () => {
