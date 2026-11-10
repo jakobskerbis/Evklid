@@ -1,7 +1,7 @@
 /* Ustno spraševanje (public/ustno/ustno.js). Naloži se ob odprtju; barve iz spremenljivk teme (svetla in temna). */
 .us-okno { border: 0; padding: 0; margin: auto auto 0; width: 100%; max-width: 560px; max-height: 100dvh; background: transparent; color: var(--text); }
 .us-okno::backdrop { background: rgba(15, 23, 42, 0.45); }
-.us-box { background: var(--surface); border-radius: 20px 20px 0 0; padding: 16px 16px calc(18px + env(safe-area-inset-bottom, 0px)); box-shadow: var(--shadow-lg); max-height: 100dvh; overflow-y: auto; box-sizing: border-box; }
+.us-box { background: var(--surface); border-radius: 20px 20px 0 0; padding: 16px 16px calc(18px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); box-shadow: var(--shadow-lg); max-height: 100dvh; overflow-y: auto; box-sizing: border-box; }
 @media (min-width: 700px) { .us-okno { margin: auto; } .us-box { border-radius: 20px; max-height: 92dvh; } }
 .us-head { display: flex; align-items: center; gap: 10px; }
 .us-head h2 { flex: 1; margin: 0; font-size: 1.1rem; }

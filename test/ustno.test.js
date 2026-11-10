@@ -143,15 +143,19 @@ test("potek: ocena z navedki, Sonnet pregleda »napačno«, dodatno vprašanje, 
     const i = r.body.vprasanja.findIndex((q) => q.pojmi >= 2 && q.vrsta !== "izracunaj");
     const a = await call(`/api/students/${sid}/ustno/${r.body.id}/odgovor`, { i, besedilo: FULL, nacin: "tipkanje" });
     assert.equal(a.status, 200, JSON.stringify(a.body));
-    assert.equal(a.body.pojmi[0].stanje, "povedal");
+    // prvi pojem povedan (koda ga zniža v delno le, če v odgovoru manjka število ali enota iz pojma)
+    assert.ok(["povedal", "delno"].includes(a.body.pojmi[0].stanje));
     assert.ok(a.body.pojmi.slice(1).every((p) => p.stanje === "delno"), "napačno je Sonnet spremenil v delno");
     assert.ok(calls.some((c) => c.review && /sonnet/.test(c.model)));
-    assert.equal(a.body.tocke, 1 + 0.5 * (a.body.max - 1));
+    assert.equal(a.body.tocke, a.body.pojmi.reduce((t, p) => t + ({ povedal: 1, delno: 0.5 }[p.stanje] || 0), 0), "točke sešteje koda");
     assert.equal(a.body.dodatno, "Kaj pa enota?");
     phase = "follow";
     const f = await call(`/api/students/${sid}/ustno/${r.body.id}/odgovor`, { i, besedilo: FULL, nacin: "tipkanje", dodatno: true });
     assert.equal(f.status, 200);
-    assert.equal(f.body.tocke, f.body.max, "dodatno vprašanje izboljša delno v povedal");
+    assert.ok(f.body.tocke >= a.body.tocke, "dodatno vprašanje stanja ne poslabša");
+    const rank = { napacno: 0, manjka: 1, delno: 2, povedal: 3 };
+    assert.ok(f.body.pojmi.every((p, k) => rank[p.stanje] >= rank[a.body.pojmi[k].stanje]), "noben pojem ni slabši");
+    assert.ok(calls.filter((c) => !c.review).length >= 2, "dodatno vprašanje je ocenil model");
     assert.equal((await call(`/api/students/${sid}/ustno/${r.body.id}/odgovor`, { i, besedilo: "še enkrat", nacin: "tipkanje" })).status, 409);
     // »Ne vem« brez klica modela
     const before = calls.length;

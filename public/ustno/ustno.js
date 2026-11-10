@@ -7,6 +7,7 @@ import { uiChain, UI_LANGUAGES, langInfo } from "../i18n/languages.js";
 import { icon, hydrateIcons } from "../icons.js";
 import { spokenMath } from "../speech.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "../nujno.js";
+import { zavrzi } from "../odgovor.js";
 import SL from "./besedila/sl.js";
 
 const KEY_NOTICE = "evklid.ustno.obvestilo";
@@ -38,7 +39,7 @@ export async function loadDicts() {
   const got = await Promise.all(
     want.map((c) =>
       fetch(`/ustno/besedila/${c}.json`)
-        .then((r) => (r.ok ? r.json() : (r.body?.cancel?.(), null)))
+        .then((r) => (r.ok ? r.json() : (zavrzi(r), null)))
         .catch(() => null),
     ),
   );

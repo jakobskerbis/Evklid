@@ -37,7 +37,6 @@ const DRAW_RE = /^[ \t]*:::[ \t]*risba\b[^\n]*\n[\s\S]*?\n[ \t]*:::[ \t]*$/gm;
 const clean = (md) =>
   String(md || "")
     .replace(DRAW_RE, "")
-    .replace(/<\/?[a-z][^>\n]*>/gi, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 const plainLen = (s) => String(s).replace(/\$[^$]*\$/g, "x").replace(/[*_`]/g, "").trim().length;

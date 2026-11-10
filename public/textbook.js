@@ -606,7 +606,7 @@ async function renderLesson(topicId) {
   // ne v levem stolpcu: na računalniku s poskusi desno je ← levo spodaj, številka na sredini in → desno spodaj.
   const nextHtml = `<section class="card tb-next"${stepMode ? " hidden" : ""}>
     <h2>Kaj zdaj?</h2>
-    ${L.practice || !pending || lesson ? `<div class="actions">
+    ${L.practice || !pending ? `<div class="actions">
       ${L.practice ? `<button type="button" class="primary" id="tb-practice">${ic("pencil")}Vadi naloge</button>` : ""}
       ${lesson ? `<button type="button" class="secondary" data-ustno="${esc(L.id)}">${ic("mic")}${esc(t("ustno.vprasajMe"))}</button>` : ""}
       ${pending ? "" : `<button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>`}

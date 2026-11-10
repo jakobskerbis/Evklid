@@ -60,8 +60,9 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
 
   const topicOf = (id) => {
     const t = getTopic(id);
-    const lesson = t ? loadLesson(id) : null;
-    return t && lesson ? { id, name: t.name, lesson, practice: hasGenerator(id) } : null;
+    // Samo id iz učnega načrta (getTopic), nikoli besedilo iz zahteve, gre naprej v iskanje datoteke lekcije.
+    const lesson = t?.id ? loadLesson(t.id) : null;
+    return t && lesson ? { id: t.id, name: t.name, lesson, practice: hasGenerator(t.id) } : null;
   };
   // Snov: ena tema (lekcija), test iz urnika (priprava na test: sklopi) ali besedilo iz klepeta.
   function topicsFor(student, src) {
