@@ -369,22 +369,22 @@ test("rezine: OŠ – lega brez vretenca in milimetrov, namig skladen z imenom �
   assert.equal(lega("a", 1100, 1878), "v višini stegen");
   assert.equal(lega("a", 1800, 1878), "v višini stopal");
   assert.equal(lega("a", 200, 400, true), "v višini prsnega koša", "vzorec je izrez prsnega koša");
-  assert.equal(lega("k", 50, 336), "bliže sprednji strani telesa");
+  assert.equal(lega("k", 50, 336), "spredaj");
   assert.equal(lega("k", 168, 336), "skozi sredino telesa");
-  assert.equal(lega("s", 100, 581), "bliže desni strani telesa");
-  assert.equal(lega("s", 500, 581), "bliže levi strani telesa");
+  assert.equal(lega("s", 100, 581), "desno");
+  assert.equal(lega("s", 500, 581), "levo");
   for (const [smer, n] of [["a", 1878], ["k", 336], ["s", 581]]) for (let i = 0; i < n; i += 37) {
     const b = lega(smer, i, n);
     assert.doesNotMatch(b, /\d|Th|mm|cm/, `${smer} ${i}: ${b}`);
-    assert.ok(SL[`a3.rez.os.${R.predelRezine({ smer, i, n, ravni })}`], b);
+    const pr = R.predelRezine({ smer, i, n, ravni });
+    assert.ok(SL[`a3.rez.os.${pr}`] || SL[{ spredaj: "a3.rez.front", zadaj: "a3.rez.back", desno: "a3.right", levo: "a3.left" }[pr]], b);
   }
   assert.equal(R.besediloLege({ smer: "a", i: 320, ravni }, t), "v višini Th6 · 32,0 cm pod vrhom", "SŠ ostane natančno");
   const mod = beri("public", "3d", "modeli", "organi", "pravi-prerez.js");
-  assert.match(mod, /os\(\) \? t\("a3\.rez\.sliceOS", "Rezina"\)/, "OŠ: drsnik brez »(mm)«");
+  assert.match(mod, /os\(\) \? t\("a3\.rez\.position", "Lega rezine"\)/, "OŠ: drsnik »Lega rezine« brez »(mm)«");
   assert.match(mod, /izpis: \(v\) => \(os\(\) \? lega\(sm, pripni\(sm, v\)\) : ""\)/, "OŠ: drsnik pokaže predel, ne številke");
   assert.match(mod, /id: "lega"[^\n]*vidno: \(\) => !os\(\)/, "OŠ: brez podvojene lege");
   assert.match(mod, /poskusi: "[^"]*hrbtenice[^"]*"/, "namig: hrbtenica (OŠ ime) namesto vretenca");
-  assert.equal(SL["a3.rez.sliceOS"], "Rezina");
 });
 
 test("rezine: poudarek je vedno prosojen z obrobo; okvir rezine zapolni oder", () => {

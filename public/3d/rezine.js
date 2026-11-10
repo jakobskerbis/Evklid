@@ -501,13 +501,15 @@ export function predelRezine({ smer, i, n, ravni, vzorec }) {
   return (meje.find(([m]) => f < m) || [0, "stopala"])[1];
 }
 export const PREDELI = { glava: "v višini glave", vrat: "v višini vratu", prsi: "v višini prsnega koša", trebuh: "v višini trebuha", medenica: "v višini medenice",
-  stegna: "v višini stegen", kolena: "v višini kolen", goleni: "v višini goleni", stopala: "v višini stopal", spredaj: "bliže sprednji strani telesa",
-  sredina: "skozi sredino telesa", zadaj: "bliže hrbtu", desno: "bliže desni strani telesa", levo: "bliže levi strani telesa" };
+  stegna: "v višini stegen", kolena: "v višini kolen", goleni: "v višini goleni", stopala: "v višini stopal", spredaj: "spredaj",
+  sredina: "skozi sredino telesa", zadaj: "zadaj", desno: "desno", levo: "levo" };
+// smeri imajo že ključe oznak ob robu odra (proračun prvega odprtja: brez podvojenih besedil v sl.js)
+const KLJUCI_PREDELOV = { spredaj: "a3.rez.front", zadaj: "a3.rez.back", desno: "a3.right", levo: "a3.left" };
 
 export function besediloLege({ smer, i, vzorec, ravni, os = false, n = 0 }, t, jezik = "sl") {
   if (os) {
     const p = predelRezine({ smer, i, n, ravni, vzorec });
-    return t(`a3.rez.os.${p}`, PREDELI[p]);
+    return t(KLJUCI_PREDELOV[p] || `a3.rez.os.${p}`, PREDELI[p]);
   }
   const cm = (i / 10).toLocaleString(jezik, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const rv = smer === "a" ? ravenPri(ravni, i) : "";

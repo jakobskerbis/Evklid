@@ -171,7 +171,7 @@ export async function zgradi(THREE, ctx) {
     sp.userData.siroka = g.measureText(besedilo).width / 256;
     return sp;
   };
-  const smeri = { d: napis(t("a3.rez.right", "desno")), l: napis(t("a3.rez.left", "levo")), s: napis(t("a3.rez.front", "spredaj")), z: napis(t("a3.rez.back", "zadaj")) };
+  const smeri = { d: napis(t("a3.right", "desno")), l: napis(t("a3.left", "levo")), s: napis(t("a3.rez.front", "spredaj")), z: napis(t("a3.rez.back", "zadaj")) };
   const skupinaSmeri = new THREE.Group();
   skupinaSmeri.add(...Object.values(smeri));
   notranja.add(skupinaSmeri);
@@ -316,7 +316,7 @@ export async function zgradi(THREE, ctx) {
           ponovi = k;
           uraOstre = setTimeout(naloziOstro, 2000);
         } else {
-          napakaNalaganja = t("a3.rez.offline", "Podatkov ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
+          napakaNalaganja = t("a3.loadError", "Tega dela ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
           narisi();
         }
       },
@@ -377,7 +377,7 @@ export async function zgradi(THREE, ctx) {
           if (k !== kljuc()) return;
           if (++napakePloscic === 1) console.warn("3D rezine: ploščica ni na voljo", kl, err?.message || err);
           if (napakePloscic >= 3 && !napakaNalaganja) {
-            napakaNalaganja = t("a3.rez.offline", "Podatkov ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
+            napakaNalaganja = t("a3.loadError", "Tega dela ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
             narisi();
           }
         },
@@ -567,7 +567,7 @@ export async function zgradi(THREE, ctx) {
 
   const drsniki = {};
   const drsnik = (sm) => (drsniki[sm] = {
-    tip: "drsnik", id: `rezina-${sm}`, oznaka: () => (os() ? t("a3.rez.sliceOS", "Rezina") : t("a3.rez.slice", "Rezina (mm)")),
+    tip: "drsnik", id: `rezina-${sm}`, oznaka: () => (os() ? t("a3.rez.position", "Lega rezine") : t("a3.rez.slice", "Rezina (mm)")),
     izpis: (v) => (os() ? lega(sm, pripni(sm, v)) : ""), min: 0, max: Math.max(1, najvec(sm)), korak: 1,
     vrednost: stanje.i[sm], gumba: { korak: 1, manj: "−1 mm", vec: "+1 mm" }, lepljiv: true,
     vidno: () => stanje.smer === sm,
@@ -600,14 +600,14 @@ export async function zgradi(THREE, ctx) {
       sinhroniziraj();
       postaviRezino();
     } };
-  const nSpol = spoli.length > 1 ? { tip: "izbira", id: "telo", oznaka: t("a3.rez.body", "Telo"), moznosti: spoli.map((s) => [s, s === "z" ? t("a3.rez.female", "Ženska") : t("a3.rez.male", "Moški")]), vrednost: stanje.spol, ponastaviPogled: true,
+  const nSpol = spoli.length > 1 ? { tip: "izbira", id: "telo", oznaka: t("a3.body", "Telo"), moznosti: spoli.map((s) => [s, s === "z" ? t("a3.rez.female", "Ženska") : t("a3.rez.male", "Moški")]), vrednost: stanje.spol, ponastaviPogled: true,
     ob: (v) => {
       nalozi(v).then((ok) => {
         if (ok) sinhroniziraj();
         narisi();
       }, (err) => {
         console.error("3D rezine", err);
-        napakaNalaganja = t("a3.rez.offline", "Podatkov ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
+        napakaNalaganja = t("a3.loadError", "Tega dela ni bilo mogoče naložiti. Preveri povezavo in poskusi znova.");
         zadnjeTelo = v;
         narisi();
       });
@@ -620,7 +620,7 @@ export async function zgradi(THREE, ctx) {
       tapUV = null;
       postaviRezino();
     } };
-  const nPogled = { tip: "izbira", id: "pogled", oznaka: t("a3.rez.view", "Pogled"), moznosti: [["3d", t("a3.rez.view3d", "V telesu")], ["ravno", t("a3.rez.viewFlat", "Naravnost na rezino")]], vrednost: stanje.pogled, ponastaviPogled: true,
+  const nPogled = { tip: "izbira", id: "pogled", oznaka: t("a3.view", "Pogled"), moznosti: [["3d", t("a3.rez.view3d", "V telesu")], ["ravno", t("a3.rez.viewFlat", "Naravnost na rezino")]], vrednost: stanje.pogled, ponastaviPogled: true,
     ob: (v) => {
       stanje.pogled = v;
       postaviRezino();
@@ -643,7 +643,7 @@ export async function zgradi(THREE, ctx) {
       { tip: "izpis", id: "lega", oznaka: t("a3.rez.position", "Lega rezine"), vrednost: () => lega(), vidno: () => !os() }, // OŠ: lega je v drsniku
       nPogled,
       nTelo,
-      { tip: "izpis", id: "stanje", oznaka: t("a3.rez.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
+      { tip: "izpis", id: "stanje", oznaka: t("orders.status", "Stanje"), vidno: () => !!napakaNalaganja, vrednost: () => napakaNalaganja },
       { tip: "gumb", id: "znova", oznaka: t("task.retry", "Poskusi znova"), vidno: () => !!napakaNalaganja,
         ob: () => {
           napakaNalaganja = ""; ponovi = ""; napakePloscic = 0;
