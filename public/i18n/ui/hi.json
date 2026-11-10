@@ -3694,7 +3694,7 @@
   "nujno.nevarnost.3": "अगर गैस की गंध आए: बत्ती या आग मत जलाओ और कोई स्विच मत दबाओ। बाहर पहुँचकर ही कॉल करो।",
   "nujno.pogovor.naslov": "मैं तुम्हारी बात सुन रहा हूँ। तुम अकेले नहीं हो।",
   "nujno.pogovor.1": "किसी भरोसेमंद बड़े को बताओ।",
-  "nujno.pogovor.uvod": "अगर किसी से बात करना चाहो:",
+  "nujno.pogovor.uvod": "अगर तुम किसी से बात करना चाहो:",
   "nujno.linija": "{ime} को कॉल करो: {stevilka} (मुफ़्त, {ure})।",
   "nujno.linijaBrezUr": "{ime} को कॉल करो: {stevilka} (मुफ़्त)।",
   "nujno.linijaDrugic": "दूसरे समय पर: {stevilka} ({ime}, {ure})।",

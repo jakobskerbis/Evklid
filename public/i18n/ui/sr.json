@@ -3728,7 +3728,7 @@
   "nujno.nevarnost.3": "Ако мирише на гас: не пали светла ни ватру и не притискај прекидаче. Позови тек кад си напољу.",
   "nujno.pogovor.naslov": "Чујем те. Ниси сам.",
   "nujno.pogovor.1": "Реци одраслој особи којој верујеш.",
-  "nujno.pogovor.uvod": "Ако желиш да с неким разговараш:",
+  "nujno.pogovor.uvod": "Ако желиш да разговараш с неким:",
   "nujno.linija": "Позови {ime} {stevilka} (бесплатно, {ure}).",
   "nujno.linijaBrezUr": "Позови {ime} {stevilka} (бесплатно).",
   "nujno.linijaDrugic": "У друго време: {stevilka} ({ime}, {ure}).",

@@ -1393,6 +1393,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       mastered: (d) => toast(d.unlocked?.length ? `${t("chat.mastered", { topic: d.topic })} ${unlockedText(d.unlocked)}` : t("chat.mastered", { topic: d.topic }), "trophy"),
       done: (d) => {
         doneData = d;
+        // Strežnik ni poslal okna, lokalni zaznavalnik pa je našel nujnost: lokalno okno.
+        if (!nujnoEl && takoj) showNujno(takoj, { before: bubble });
         // Ves delež podrobnih razlag porabljen (strežnik, ai_out): gumba »Razloži podrobneje« ne kažemo več.
         state.aiOut = !!d.ai_out;
         // Predmet pogovora, ki ga je inštruktor pravkar določil (nov pogovor brez teme): formule v tem in naslednjih odgovorih.
