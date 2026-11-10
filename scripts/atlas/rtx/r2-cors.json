@@ -1,6 +1,6 @@
 [
   {
-    "AllowedOrigins": ["https://evklid.app"],
+    "AllowedOrigins": ["https://evklid.app", "https://www.evklid.app", "http://localhost:3000", "http://127.0.0.1:3000"],
     "AllowedMethods": ["GET", "HEAD"],
     "AllowedHeaders": ["*"],
     "MaxAgeSeconds": 86400

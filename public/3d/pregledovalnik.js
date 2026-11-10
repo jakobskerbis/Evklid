@@ -51,6 +51,9 @@ export function odpriModel(el, mod, opts = {}) {
   const oder = mk("div", "k3-oder-ovoj");
   const povzetekEl = mk("div", "k3-povzetek");
   povzetekEl.hidden = true;
+  // model.navedba = { besedilo, opomba }: navedba vira v eni tihi vrstici na dnu odra (npr. NLM pri pravih prerezih)
+  const navedbaEl = mk("div", "k3-navedba");
+  navedbaEl.hidden = true;
   const orodja = mk("div", "k3-orodja");
   const spodaj = mk("div", "k3-spodaj");
   const nadzorEl = mk("div", "k3-nadzor");
@@ -533,6 +536,18 @@ export function odpriModel(el, mod, opts = {}) {
     } catch {}
     povzetekEl.textContent = p;
     povzetekEl.hidden = !p;
+    const nv = model?.navedba?.besedilo || "";
+    if (navedbaEl.textContent !== nv) navedbaEl.textContent = nv;
+    navedbaEl.title = model?.navedba?.opomba || "";
+    navedbaEl.hidden = !nv;
+    oder.classList.toggle("k3-ima-navedbo", !!nv);
+    // besedilna različica platna (bralnik zaslona): model.opisPlatna()
+    if (typeof model?.opisPlatna === "function") {
+      try {
+        const o = String(model.opisPlatna() || "");
+        if (o && kit.canvas.getAttribute("aria-label") !== o) kit.canvas.setAttribute("aria-label", o);
+      } catch {}
+    }
   };
   // Smer kamere ob odprtju in »Ponastavi«: model.pogled ([x, y, z] ali funkcija, ki ga vrne), sicer privzeto.
   const zacetnaSmer = () => {
@@ -600,7 +615,7 @@ export function odpriModel(el, mod, opts = {}) {
         else if (prej) kadrirajPogled(prej);
       };
       if (c.tip === "drsnik") {
-        const lab = mk("label", "k3-drsnik");
+        const lab = mk(c.gumba ? "div" : "label", "k3-drsnik"); // z gumboma ne label: klik na napis bi sprožil gumb −
         const vrh = mk("span", "k3-drsnik-vrh");
         const out = mk("output", "", stevilo(c.vrednost, c.korak));
         vrh.append(mk("span", "", c.oznaka), out);
@@ -641,7 +656,37 @@ export function odpriModel(el, mod, opts = {}) {
           out.textContent = stevilo(v, c.korak);
           klic(v);
         });
-        lab.append(vrh, inp);
+        // c.gumba = { korak, manj, vec }: v isti vrstici [−] drsnik [+]; dolg pritisk ponavlja korak (natančen premik na telefonu)
+        if (c.gumba) {
+          const vrsta = mk("span", "k3-drsnik-vrsta");
+          const gumb = (smer, ime) => {
+            const b = mk("button", "k3-krog k3-drsnik-gumb", smer < 0 ? "−" : "+");
+            b.type = "button";
+            b.setAttribute("aria-label", ime);
+            b.title = ime;
+            let ura = 0;
+            const korak = () => {
+              const v = Math.max(Number(c.min), Math.min(Number(c.max), Number(c.vrednost) + smer * (c.gumba.korak || 1)));
+              if (v === Number(c.vrednost)) return;
+              inp.value = v;
+              c.vrednost = sd.zadnja = v;
+              out.textContent = stevilo(v, c.korak);
+              klic(v);
+            };
+            const stop = () => clearTimeout(ura);
+            b.addEventListener("pointerdown", (e) => {
+              if (e.button !== 0) return;
+              stop();
+              const ponovi = (zamik) => (ura = setTimeout(() => (korak(), ponovi(70)), zamik));
+              ponovi(450);
+            });
+            for (const t of ["pointerup", "pointerleave", "pointercancel", "blur"]) b.addEventListener(t, stop);
+            b.addEventListener("click", korak); // klik ali tipkovnica: en korak
+            return b;
+          };
+          vrsta.append(gumb(-1, c.gumba.manj || "−"), inp, gumb(1, c.gumba.vec || "+"));
+          lab.append(vrh, vrsta);
+        } else lab.append(vrh, inp);
         nadzorEl.append(lab);
       } else if (c.tip === "izbira") {
         const box = mk("div", "k3-izbira");
@@ -796,7 +841,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (!kit) {
       kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true), prostoVrtenje: true });
       poveziGumbVrtenja(btnVrtenje, kit, icon, t);
-      oder.append(orodja, povzetekEl);
+      oder.append(orodja, povzetekEl, navedbaEl);
       kit.naTap((ndc) => {
         if (!model?.group) return;
         const hit = kit.zadetki(ndc, [model.group])[0];

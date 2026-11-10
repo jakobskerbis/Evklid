@@ -141,7 +141,8 @@ export function mount3d(app, { csp, modules }) {
   app.get("/3d/rezine/kazalo.json", (_req, res, next) => {
     const r = rezineIzvor();
     if (!r) return next();
-    res.set("Cache-Control", "public, max-age=300").json({ osnova: r.osnova, telesa: { z: "z/", m: "m/" } });
+    // rezerva: če vedro ali CORS odpove, odjemalec pokaže vzorec iz repozitorija (public/3d/modeli/organi/pravi-prerez.js)
+    res.set("Cache-Control", "public, max-age=300").json({ osnova: r.osnova, telesa: { z: "z/", m: "m/" }, rezerva: { osnova: "", telesa: { m: "vzorec/" } } });
   });
   app.get("/3d/modeli/seznam.json", (_req, res) => {
     res.set("Cache-Control", "no-cache").json(modelList());

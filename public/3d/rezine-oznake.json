@@ -343,6 +343,18 @@
    "opis": "Iz krvi odstranjuje odpadne snovi in odvečno vodo ter tako nastaja seč.",
    "barva": "#a8503c"
   },
+  "desna-ledvica": {
+   "sl": "Desna ledvica",
+   "la": "Ren dexter",
+   "opis": "Iz krvi odstranjuje odpadne snovi in odvečno vodo ter tako nastaja seč; desna leži malo nižje kot leva, ker so nad njo jetra.",
+   "barva": "#a8503c"
+  },
+  "leva-ledvica": {
+   "sl": "Leva ledvica",
+   "la": "Ren sinister",
+   "opis": "Iz krvi odstranjuje odpadne snovi in odvečno vodo ter tako nastaja seč.",
+   "barva": "#b25a46"
+  },
   "ledvicni-meh": {
    "sl": "Ledvični meh",
    "la": "Pelvis renalis",
@@ -748,6 +760,14 @@
    "ledvicni-meh"
   ],
   [
+   "upper_urinary_tract/kidney/left_kidney",
+   "leva-ledvica"
+  ],
+  [
+   "upper_urinary_tract/kidney/right_kidney",
+   "desna-ledvica"
+  ],
+  [
    "upper_urinary_tract/.*ureter(?!.*kidney)[^/]*$",
    "secevod"
   ],
@@ -929,6 +949,8 @@
   "vranica": "vranica",
   "trebusna-slinavka": "trebusna-slinavka",
   "ledvica": "ledvica",
+  "desna-ledvica": "desna-ledvica",
+  "leva-ledvica": "leva-ledvica",
   "ledvicni-meh": "ledvica",
   "dvanajstnik": "tanko-crevo",
   "tesce-crevo": "tanko-crevo",

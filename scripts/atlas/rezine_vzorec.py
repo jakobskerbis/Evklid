@@ -41,6 +41,8 @@ if "oznake" in meta:
         out.append((int(d), int(pl[s])))
     open(os.path.join(cilj, "oznake.bin"), "wb").write(np.array(out, "<u2").tobytes())
     m2["oznake"] = dict(o, dim=[oz.shape[2], oz.shape[1], oz.shape[0]], prisotne=sorted({o["kljuci"][i - 1] for i in np.unique(oz) if i}))
+    # anatomske ravni (vretenca) v koordinatah vzorca
+    m2["oznake"]["ravni"] = [[z0 - za, z1 - za, ime] for z0, z1, ime in o.get("ravni", []) if z1 >= za and z0 < za + Zs]
     m2["poravnava"] = meta.get("poravnava")
 json.dump(m2, open(os.path.join(cilj, "meta.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print(cilj, m2["dim"], {f: os.path.getsize(os.path.join(cilj, f)) for f in os.listdir(cilj)})

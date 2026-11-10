@@ -85,6 +85,43 @@ test("rezine: mreža oznak (RLE), strukture rezine, brez ugibanja po barvi", () 
   assert.deepEqual(R.okvirVsebine({ w: 4, h: 2, data: new Uint8Array([0,0,0,0, 9,9,9,255, 9,9,9,255, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0]) }), { u0: 0.25, v0: 0, u1: 0.75, v1: 0.5 });
 });
 
+test("rezine: telo okoli rezine nima lukenj (votline in tanke reže v maski so zapolnjene)", () => {
+  // krogla z votlino (zrak v črevesu) in luknjo v »koži«: brez zapolnitve bi površje pokazalo notranjost
+  const m = krogla(24, 24, 24, 9);
+  const [W, H] = m.dim;
+  for (let z = 0; z < 24; z++) for (let y = 0; y < 24; y++) for (let x = 0; x < 24; x++) {
+    const r = Math.hypot(x - 12, y - 12, z - 12), i = ((z * H + y) * W + x) * 4 + 3;
+    if (r < 6 || (r >= 6 && x === 12 && y === 12 && z < 12)) m.data[i] = 0; // votlina + tanek kanal do površja
+  }
+  const f = R.poljeTelesa(m);
+  assert.ok(f[(12 * H + 12) * W + 12] > 128, "votlina je zapolnjena");
+  assert.ok(f[0] < 128, "zunaj ostane zunaj");
+  const p = R.povrsje(m, 1);
+  const r = [];
+  for (let k = 0; k < p.pos.length; k += 3) r.push(Math.hypot(p.pos[k] / 4 - 12, p.pos[k + 1] / 4 - 12, p.pos[k + 2] / 4 - 12));
+  assert.ok(Math.min(...r) > 6.5, `ni notranjih ploskev (najmanjši polmer ${Math.min(...r).toFixed(1)})`);
+});
+
+test("rezine: gladek obris brez otočkov, središče oznake, uv točke", () => {
+  const w = 12, h = 10, data = new Uint8Array(w * h);
+  for (let y = 2; y < 8; y++) for (let x = 2; x < 9; x++) data[y * w + x] = 5; // velik del
+  data[0] = 5; // otoček v vogalu
+  const je = new Uint8Array(256); je[5] = 1;
+  const o = R.gladekObris({ w, h, data }, je, 4);
+  assert.equal(o.w, 48); assert.equal(o.h, 40);
+  assert.equal(o.data[0], 0, "otoček je odstranjen");
+  assert.equal(o.data[20 * 48 + 22], 1, "notranjost");
+  assert.ok(o.data.includes(2), "rob");
+  const s = R.gladekObris({ w, h, data }, je, 4, [0.01, 0.01]);
+  assert.ok(s.data[0] === 0 || s.data[5 * 48 + 5] !== 0, "dotaknjeni otoček ostane");
+  assert.equal(R.gladekObris({ w, h, data }, new Uint8Array(256), 4), null);
+  const oz = { dim: [4, 2, 1], mm: 2, data: new Uint8Array([0, 3, 3, 0, 0, 3, 0, 0]) };
+  assert.deepEqual(R.sredisce(oz, 3).map((v) => +v.toFixed(3)), [+((3 + 5 + 3) / 3).toFixed(3), +((1 + 1 + 3) / 3).toFixed(3), 1]);
+  assert.deepEqual(R.sredisce(oz, 3, (x) => x > 4), [5, 1, 1]);
+  assert.equal(R.sredisce(oz, 9), null);
+  assert.deepEqual(R.uvTocke([100, 50, 200], "s", [10, 25, 50]), [0.5, 0.25]);
+});
+
 test("rezine: imena struktur so popolna in vzorci kažejo na obstoječe oznake", () => {
   const t = JSON.parse(beri("public", "3d", "rezine-oznake.json"));
   for (const [k, o] of Object.entries(t.oznake)) {
@@ -110,7 +147,8 @@ test("rezine: pogoji NLM (navedba vira, brez namiga na podporo, ime projekta ni 
   assert.match(nlm.opis, /niso nujno najnovejši/);
   assert.match(nlm.opis, /ne podpira/);
   assert.match(nlm.url, /nlm\.nih\.gov/);
-  assert.ok(mod.includes(`povzetek: () => NAVEDBA`), "navedba vira je ves čas vidna na odru");
+  assert.ok(mod.includes(`navedba: { besedilo: NAVEDBA`), "navedba vira je ves čas vidna na odru (ena vrstica)");
+  assert.doesNotMatch(mod, /daroval|spoštljiv|Preden pogledaš/, "brez uvodnega okna (j, 10. 11.)");
   assert.ok(mod.includes(`const NAVEDBA = "${NAVEDBA}"`));
   const kazalo = (await import("../public/3d/modeli/organi/index.js")).default.find((m) => m.id === "organ-pravi-prerez");
   assert.ok(kazalo);
