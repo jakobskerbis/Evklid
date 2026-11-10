@@ -772,6 +772,17 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .katex { direction: ltr; unicode-bidi: isolate; }
 /* Formula v svojem okviru (simulacija, namig, zbirka) se ne prelomi sama sredi izraza: preširoko zloži
    sirina.js pri enačajih (j 2026-11-04: »To naj velja za vse enačbe«). */
+/* Formula sredi besedila se nikjer ne prelomi sredi izraza (j 2026-11-08): ne za minusom, plusom, oklepajem. Cela
+   gre v naslednjo vrstico; če je širša od vrstice, jo zloži pri enačajih ali pomanjša sirina.js. Velja povsod
+   (naloge, kvizi, igre, kartice, skeniranje, laboratorij, klepet), ne le v učbeniku. Polja za vnos (math-field,
+   tipkovnica) in SVG so zunaj tega: njihove formule se ne izrisujejo kot besedilo. */
+.katex:not(svg .katex) { white-space: nowrap; }
+:is(p, li, dd, dt, blockquote, h1, h2, h3, h4, label, .task-text, .msg, .bubble, .choice, .tb-opt, .tb-q) .katex:not(.katex-display > .katex, svg .katex, .katex .katex) { display: inline-block; text-indent: 0; margin-block: -0.15em; }
+/* Visoka ali zložena formula (sirina.js) je blok v svoji vrstici, v vsakem bloku z besedilom enako kot v učbeniku;
+   v okvirjih s formulo (simulacija, zbirka) ostane, kot je. V gumbu odgovora ostane znotraj gumba, na sredini. */
+.katex.tb-zlozena:not(.katex-display > .katex, :is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex, svg .katex) { display: block; width: fit-content; max-width: 100%; margin: 6px 0; }
+.choice .katex.tb-zlozena { margin-inline: auto; }
+.katex.tb-dolga { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; padding: 2px 0 4px; }
 :is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex { white-space: nowrap; }
 /* Zložena formula: KaTeX-ov stolpec »aligned« seže 2 px čez desni rob (.vlist-s), kar bi okvir naredilo drsen. */
 .katex.tb-zlozena { padding-right: 2px; }

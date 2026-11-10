@@ -6,6 +6,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion } from "./i18n.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "./nujno.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -1173,11 +1174,30 @@ async function send(text, { deep = false, image: attached = null } = {}) {
   const fromInput = !attached && ($("#input").value.trim() || "") === (text || "").trim();
   const image = attached || (fromInput ? state.image : null);
   if (!text && !image) return;
-  // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta.
-  if (!$("#chat-off").hidden) return;
+  // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta. Varnostni
+  // odgovor pa se pokaže tudi zdaj (lokalni zaznavalnik, strošek 0; pregled A V3).
+  if (!$("#chat-off").hidden) {
+    const n = lokalnoNujno(text);
+    if (n) addNujno(n, { meja: true });
+    return;
+  }
   let userEl = null;
   let bubble = null;
   let pacer = null;
+  // Varnostni odgovor (public/nujno.js) največ enkrat na sporočilo: lokalni zaznavalnik takoj ob pošiljanju,
+  // nato strežnik (AI pregled čez mejo). meja: učenec ni dobil odgovora → opomba »ne šteje se med vprašanja«.
+  let nujnoEl = null;
+  const showNujno = (n, opts = {}) => {
+    if (nujnoEl) {
+      if (opts.meja) {
+        nujnoEl.querySelector(".nujno-opomba").textContent = t(opomba(nujnoEl._st, true));
+        nujnoNaVrh(nujnoEl);
+      }
+      return;
+    }
+    // Izsiljevanje prepozna vmesnik sam iz besedila (tudi, ko vrsto pošlje AI pregled).
+    if (n?.vrsta) nujnoEl = addNujno({ ...n, izs: izsiljevanje(text) }, opts);
+  };
   state.sending = true;
   $("#send").disabled = true;
   state.pacer?.skip();
@@ -1200,12 +1220,16 @@ async function send(text, { deep = false, image: attached = null } = {}) {
 
     bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
+    // Takoj, brez čakanja na strežnik (objava nove različice, počasen AI pregled): pregled A V4.
+    showNujno(lokalnoNujno(text), { before: bubble });
     const box = $("#messages");
     const paint = (shown) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
       bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
+      // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
+      if (atBottom && nujnoEl?.isConnected) box.scrollTop = Math.min(box.scrollTop, box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8);
     };
     paint("");
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
@@ -1227,6 +1251,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       bubble.remove();
+      // Zavrnitev (meja porabe, izklopljen klepet, strežnik ne odgovarja): najprej varnostni odgovor, če je nujno.
+      showNujno(err.nujno || lokalnoNujno(text), { meja: true });
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
       // Meja porabe (429, limit): sporočilo je »poslano« (ostane v oblačku), polje ostane prazno.
@@ -1246,6 +1272,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (d.stage === "out") state.aiOut = true;
       },
       delta: (d) => pacer.push(d.text),
+      // Pod mejo: varnostni odgovor nad odgovorom inštruktorja (ga ne ustavi).
+      nujno: (d) => showNujno(d, { before: bubble }),
       cards: (d) => (cardsData = d),
       // Inštruktor je spremenil nastavitve (server/chat-settings.js).
       settings: (d) => {
@@ -1273,6 +1301,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (d.title) $("#chat-title").textContent = d.title;
       },
       error: (d) => {
+        showNujno(d.nujno || lokalnoNujno(text), { before: bubble, meja: true });
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
@@ -1321,6 +1350,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       bubble.removeAttribute("title");
       if (!bubble.textContent.trim()) bubble.remove();
     }
+    // Brez povezave ali prekinjen odgovor: lokalni zaznavalnik (strošek 0).
+    if (text) showNujno(lokalnoNujno(text), { meja: true });
     // Izklopljen klepet: samo obvestilo nad poljem, vprašanje ostane v polju.
     if (err.chatOff) {
       userEl?.remove();
@@ -1342,6 +1373,69 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     state.sending = false;
     $("#send").disabled = false;
   }
+}
+
+// --- varnostni odgovor (public/nujno.js, besedila potrdil j 6. 11.) ---
+// Lokalni zaznavalnik v brskalniku: brez povezave in kot rezerva, ko strežnik ne pošlje vrste.
+function lokalnoNujno(text) {
+  const vrsta = zaznajNujno(text);
+  return vrsta ? { vrsta, izs: izsiljevanje(text) } : null;
+}
+// Okno na vrh vidnega dela klepeta, razen če je učenec seznam sam odmaknil navzgor (pregled B2).
+function nujnoNaVrh(el) {
+  const box = $("#messages");
+  if (!el?.isConnected || el._odmaknjen?.()) return;
+  el.scrollIntoView?.({ block: "start" });
+}
+// Številke v besedilu krepko (kartica: **112**), pregled B.
+function krepke(html, p) {
+  const nums = [p.sos, p.policija, p.otroci, p.odrasli, p.stevilka].filter(Boolean).sort((a, b) => b.length - a.length);
+  if (!nums.length) return html;
+  const re = new RegExp(`(?<![0-9])(${nums.map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?![0-9])`, "g");
+  return html.replace(re, "<strong>$1</strong>");
+}
+// Okno z varnostnim odgovorom: ni napaka, se zapre (×), inštruktorja ne ustavi. before: nad tem mehurčkom.
+// meja: učenec ni dobil odgovora inštruktorja (opomba, da se ne šteje med vprašanja).
+function addNujno(n, { before = null, meja = false } = {}) {
+  const box = $("#messages");
+  box.querySelector(".empty")?.remove();
+  const el = document.createElement("section");
+  el.className = `msg nujno-card nujno-${n.vrsta}`;
+  el.setAttribute("role", "alert");
+  // Bralnik zaslona prebere naslov in vsebino (aria-labelledby, ne aria-label: pregled B2).
+  const hid = `nujno-h-${Date.now()}`;
+  el.setAttribute("aria-labelledby", hid);
+  // Številke vedno tu: strežnik ne pozna države naprave (učenec brez izbrane države, telefon v HR …).
+  const st = stevilke(state.student?.settings, drzavaNaprave());
+  // Parameter [ključ, parametri] (ure, splošno ime linije) najprej prevedemo.
+  const tr = ([k, p]) => t(k, Object.fromEntries(Object.entries(izoliraj(p)).map(([a, v]) => [a, Array.isArray(v) ? t(v[0], v[1]) : v ?? ""])));
+  const [head, ...rest] = vrstice(n.vrsta, st, { izsiljevanje: !!n.izs });
+  const calls = klici(n.vrsta, st).filter(Boolean);
+  el.innerHTML =
+    `<button type="button" class="nujno-zapri" aria-label="${escapeHtml(t("nujno.zapri"))}">${icon("x")}</button>` +
+    `<h3 id="${hid}">${escapeHtml(tr(head))}</h3>` +
+    rest.map((v) => `<p>${krepke(escapeHtml(tr(v)), v[1])}</p>`).join("") +
+    `<div class="nujno-klici">${calls.map((c) => `<a class="nujno-klic" href="${telHref(c)}">${icon("phone")} ${escapeHtml(t("nujno.klic", izoliraj({ n: c })))}</a>`).join("")}</div>` +
+    `<p class="nujno-opomba">${escapeHtml(t(opomba(st, meja)))}</p>`;
+  el._st = st;
+  // Po zaprtju fokus v polje za vnos (samo z miško in tipkovnico: na telefonu se tipkovnica ne odpre sama).
+  const zapri = () => {
+    el.remove();
+    if (!matchMedia("(hover: none)").matches) $("#input")?.focus();
+  };
+  el.querySelector(".nujno-zapri").addEventListener("click", zapri);
+  // Esc zapre okno, ko je fokus v njem (pregled B).
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") zapri();
+  });
+  // Učenec je seznam sam pomaknil navzgor (bere starejša sporočila): okna ne vlečemo na vrh.
+  const top0 = box.scrollTop;
+  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  el._odmaknjen = () => !atBottom && box.scrollTop < top0 - 40;
+  if (before?.isConnected) box.insertBefore(el, before);
+  else box.appendChild(el);
+  nujnoNaVrh(el);
+  return el;
 }
 
 // Pripravljeno vprašanje (kalkulator, skener, 3D, kotiček, predlog) v polje: učenčevega osnutka ne prepiše,

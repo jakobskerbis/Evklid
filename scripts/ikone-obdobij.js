@@ -27,6 +27,8 @@ export const ZNAKI = [
   "house", "table", "wrench", "activity", "chart-area", "chart-spline", "flower", "infinity", "spline", "square-function",
   // 3D atlas in modeli (temni oder brez slogov obdobij)
   "ellipsis", "eye-off", "scissors", "box", "bone", "rotate-3d", "focus",
+  // varnostno okno (public/nujno.js): telefon je povsod enak in takoj prepoznaven
+  "phone",
   // logotip
   "kristal",
 ];

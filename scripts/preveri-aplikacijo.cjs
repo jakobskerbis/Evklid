@@ -780,8 +780,11 @@ async function okna(p, label) {
   await click(p, '.okno[data-view="graph"] .okno-x');
   if (await p.locator(".okno").count()) throw new Error("okno se ni zaprlo");
   // Prijava odgovora: skrbnik vidi odgovor tako, kot ga je videl učenec (izrisan HTML in naprava).
-  const ans = "#view-chat .msg.assistant:has(.msg-report) >> nth=-1";
+  // Odgovor pripnemo na besedilo: »Odprl sem …« pride za oknom, zato bi se »zadnji odgovor« med kliki spremenil
+  // (okvir prijave je ostal v prejšnjem odgovoru in .rep-send v novem ni obstajal: locator.click 5000 ms, [view-chat]).
+  const ans = '#view-chat .msg.assistant:has(.msg-report):has-text("Odprl sem")';
   {
+    await p.locator(ans).first().waitFor({ timeout: 8000 }).catch(() => {});
     if (!(await p.locator(ans).count())) throw new Error("v klepetu ni odgovora s »Prijavi napako«");
     await click(p, `${ans} >> .msg-report`, { wait: 150 });
     await click(p, `${ans} >> .report-box .rep-reasons button >> nth=0`, { wait: 50 });
