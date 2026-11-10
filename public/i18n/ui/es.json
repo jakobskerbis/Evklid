@@ -1787,6 +1787,7 @@
   "sch.noEvents": "No hay exámenes apuntados.",
   "sch.planNote": "La preparación del examen está programada para el {date}.",
   "sch.prepare": "Prepararme",
+  "ustno.vprasajMe": "Pregúntame",
   "sch.linked": "Conectado al calendario: {label}",
   "sch.refresh": "Actualizar",
   "sch.remindersOn": "Aviso el día antes del examen",

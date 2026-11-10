@@ -1779,6 +1779,7 @@
   "sch.noEvents": "還沒有新增考試。",
   "sch.planNote": "備考已設定在 {date}。",
   "sch.prepare": "開始準備",
+  "ustno.vprasajMe": "考考我",
   "sch.linked": "已連結行事曆：{label}",
   "sch.refresh": "重新整理",
   "sch.remindersOn": "考試前一天通知我",

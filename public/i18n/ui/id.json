@@ -1779,6 +1779,7 @@
   "sch.noEvents": "Belum ada ujian.",
   "sch.planNote": "Persiapan ujian diatur untuk {date}.",
   "sch.prepare": "Bersiap",
+  "ustno.vprasajMe": "Tanyai aku",
   "sch.linked": "Terhubung dengan kalender: {label}",
   "sch.refresh": "Segarkan",
   "sch.remindersOn": "Notifikasi sehari sebelum ujian",

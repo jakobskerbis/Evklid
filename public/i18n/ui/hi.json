@@ -1787,6 +1787,7 @@
   "sch.noEvents": "कोई टेस्ट नहीं जोड़ा गया।",
   "sch.planNote": "टेस्ट की तैयारी {date} के लिए सेट है।",
   "sch.prepare": "तैयारी करो",
+  "ustno.vprasajMe": "मुझसे पूछो",
   "sch.linked": "कैलेंडर से जुड़ा: {label}",
   "sch.refresh": "रिफ़्रेश करो",
   "sch.remindersOn": "टेस्ट से एक दिन पहले सूचना",

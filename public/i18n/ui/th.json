@@ -1779,6 +1779,7 @@
   "sch.noEvents": "ยังไม่มีการสอบ",
   "sch.planNote": "ตั้งเตรียมสอบไว้สำหรับ {date}",
   "sch.prepare": "เตรียมตัว",
+  "ustno.vprasajMe": "ถามฉันหน่อย",
   "sch.linked": "เชื่อมกับปฏิทินแล้ว: {label}",
   "sch.refresh": "รีเฟรช",
   "sch.remindersOn": "แจ้งเตือนก่อนสอบหนึ่งวัน",

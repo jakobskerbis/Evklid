@@ -1831,6 +1831,7 @@
   "sch.noEvents": "لا توجد اختبارات مضافة.",
   "sch.planNote": "تم ضبط التحضير للاختبار ليوم {date}.",
   "sch.prepare": "استعدّ",
+  "ustno.vprasajMe": "اسألني",
   "sch.linked": "مرتبط بالتقويم: {label}",
   "sch.refresh": "تحديث",
   "sch.remindersOn": "إشعار قبل الاختبار بيوم",

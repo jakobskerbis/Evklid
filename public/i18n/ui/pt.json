@@ -1787,6 +1787,7 @@
   "sch.noEvents": "Não há testes registados.",
   "sch.planNote": "A preparação para o teste está marcada para {date}.",
   "sch.prepare": "Preparar-me",
+  "ustno.vprasajMe": "Faz-me perguntas",
   "sch.linked": "Ligado ao calendário: {label}",
   "sch.refresh": "Atualizar",
   "sch.remindersOn": "Notificação na véspera do teste",

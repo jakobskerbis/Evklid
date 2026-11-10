@@ -1809,6 +1809,7 @@
   "sch.noEvents": "Žádné zapsané testy.",
   "sch.planNote": "Příprava na test je nastavená na {date}.",
   "sch.prepare": "Připrav se",
+  "ustno.vprasajMe": "Vyzkoušej mě",
   "sch.linked": "Propojeno s kalendářem: {label}",
   "sch.refresh": "Obnovit",
   "sch.remindersOn": "Upozornění den před testem",

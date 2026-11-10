@@ -1268,8 +1268,12 @@ function addMessage(role, text, hasImage = false, info = null) {
   return el;
 }
 
+// Ustno spraševanje (public/ustno/ustno.js, naloži se ob odprtju).
+const openUstno = (src) => state.student && import("./ustno/ustno.js").then((m) => m.odpri(src, { api, student: state.student, renderRich, openLesson, topic: state.chatFx?.topic?.id }));
+document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]")) && openUstno(e.dataset.ustno));
 async function send(text, { deep = false, image: attached = null } = {}) {
   if (state.sending) return;
+  if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
   // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
   // fotografija v polju ostaneta (ne pošljemo ju zraven in ju ne pobrišemo). Slika samodejnega sporočila
   // (izrez naloge iz pole) pride kot attached.
