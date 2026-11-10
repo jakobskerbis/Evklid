@@ -5,11 +5,14 @@
 # PDF, ki pregleda ne prestane, se NE objavi (zanj ostane tisk v brskalniku), zagon pa se konča z napako.
 # Izdela samo PDF-je, katerih vsebina se je spremenila (zgoščena vrednost v kazalo.json prejšnje objave).
 # Repozitorij je javen in besedilo lekcij je brezplačno, zato so datoteke izdaje lahko javne. Brez skrivnosti,
-# nikoli ob pull requestu (pravica pisanja v izdaje), akcije pripete na SHA.
+# nikoli ob pull requestu, akcije pripete na SHA. Dva posla: »izdelava« poganja kodo repozitorija in Chromium samo
+# s pravico branja; »objava« ne poganja kode repozitorija, ima pravico pisanja v izdaje in kazalo podpiše s
+# potrdilom o izvoru (GitHub artifact attestation, Sigstore; brez skrivnosti). Strežnik sprejme samo kazalo s
+# potrdilom tega delovnega toka z veje main (server/pdf-potrdilo.js); vsak PDF je v kazalu s SHA-256.
 name: PDF učbenika
 on:
   push:
-    branches: [main]
+    branches: [main, claude/pdf-vnaprej] # ZAČASNO: preizkus delovnega toka na veji, pred združitvijo odstrani
     paths:
       - "content/lessons/**"
       - "server/textbook-print.js"
@@ -31,7 +34,7 @@ on:
         type: boolean
         default: false
 permissions:
-  contents: write # objava datotek v izdajo
+  contents: read
 concurrency:
   group: ucbenik-pdf-${{ github.ref }}
   cancel-in-progress: false # zagoni se zvrstijo; kazalo vedno ustreza zadnjemu končanemu
@@ -39,18 +42,22 @@ defaults:
   run:
     shell: bash
 env:
-  EVKLID_MOCK: "1"
-  ANTHROPIC_API_KEY: ""
-  STRIPE_SECRET_KEY: ""
-  RESEND_API_KEY: ""
-  PLAYWRIGHT_VERSION: "1.63.0" # ista kot v testi.yml
-  GH_TOKEN: ${{ github.token }}
   # Zunaj veje main (preizkus delovnega toka) gre objava v ločeno izdajo, ki je strežnik ne bere.
   OZNAKA: ${{ github.ref == 'refs/heads/main' && 'ucbenik-pdf' || 'ucbenik-pdf-preizkus' }}
 jobs:
-  pdf:
+  izdelava:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
+    permissions:
+      contents: read
+    outputs:
+      koda: ${{ steps.izdelava.outputs.koda }}
+    env:
+      EVKLID_MOCK: "1"
+      ANTHROPIC_API_KEY: ""
+      STRIPE_SECRET_KEY: ""
+      RESEND_API_KEY: ""
+      PLAYWRIGHT_VERSION: "1.63.0" # ista kot v testi.yml
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         timeout-minutes: 5
@@ -87,8 +94,11 @@ jobs:
           done
           exit 1
       # Prejšnje kazalo in seznam datotek izdaje: nespremenjeni PDF-ji, ki so še objavljeni, se ne izdelajo znova.
+      # Žeton (samo branje) dobi le ta korak, ne korak, ki poganja kodo repozitorija in Chromium.
       - name: Prejšnja objava
         timeout-minutes: 5
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p out
           if gh release view "$OZNAKA" --repo "$GITHUB_REPOSITORY" --json assets -q '.assets[].name' > obstojece.txt 2>/dev/null; then
@@ -120,6 +130,8 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
           test -s out/kazalo.json
+          mkdir -p zavrnjeni && { mv out/NAPAKA-*.pdf zavrnjeni/ 2>/dev/null || true; }
+          cp prejsnje.json obstojece.txt out/
       - name: Poročilo in zavrnjeni PDF-ji
         if: always()
         timeout-minutes: 10
@@ -129,14 +141,49 @@ jobs:
           path: |
             izdelava.log
             out/porocilo.json
-            out/kazalo.json
-            out/NAPAKA-*.pdf
+            zavrnjeni/
           if-no-files-found: ignore
           retention-days: 14
-      # Najprej nove datoteke, nato kazalo (strežnik bere kazalo: nikoli ne kaže na datoteko, ki je še ni),
+      - name: PDF-ji za objavo
+        timeout-minutes: 15
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ucbenik-pdf-objava
+          path: out/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 3
+
+  # Objava ne prevzame kode repozitorija: samo datoteke iz posla »izdelava«, gh in potrdilo o izvoru.
+  objava:
+    needs: izdelava
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: write # datoteke izdaje
+      id-token: write # potrdilo o izvoru (Sigstore, OIDC)
+      attestations: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        timeout-minutes: 15
+        with:
+          name: ucbenik-pdf-objava
+          path: out
+      # Potrdilo za kazalo: strežnik preveri, da ga je izdal ta delovni tok na tej veji, in da se SHA-256 kazala ujema.
+      - name: Potrdilo o izvoru kazala
+        id: potrdilo
+        timeout-minutes: 10
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: out/kazalo.json
+      # Najprej nove datoteke, nato potrdilo in kazalo (strežnik bere kazalo: nikoli ne kaže na datoteko, ki je še ni),
       # na koncu izbris datotek, ki jih ne omenja ne novo ne prejšnje kazalo (strežnik s starim kazalom jih še najde).
       - name: Objava v izdajo
         timeout-minutes: 30
+        env:
+          POTRDILO: ${{ steps.potrdilo.outputs.bundle-path }}
         run: |
           if ! gh release view "$OZNAKA" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release create "$OZNAKA" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --latest=false \
@@ -144,8 +191,7 @@ jobs:
               --notes "Vnaprej izdelani PDF-ji učbenika Evklid (predmet, razred, poglavje). Datoteke samodejno zamenjuje delovni tok »PDF učbenika«; strežnik jih prenese sam. Ne briši."
           fi
           shopt -s nullglob
-          nove=()
-          for f in out/*.pdf; do case "$(basename "$f")" in NAPAKA-*) ;; *) nove+=("$f") ;; esac; done
+          nove=(out/*.pdf)
           echo "Novih datotek: ${#nove[@]}"
           for ((i = 0; i < ${#nove[@]}; i += 20)); do
             for poskus in 1 2 3; do
@@ -154,12 +200,14 @@ jobs:
               sleep 10
             done
           done
+          cp "$POTRDILO" kazalo.potrdilo.json
+          gh release upload "$OZNAKA" --repo "$GITHUB_REPOSITORY" --clobber kazalo.potrdilo.json
           gh release upload "$OZNAKA" --repo "$GITHUB_REPOSITORY" --clobber out/kazalo.json
           node -e '
             const fs = require("fs");
             const names = (f) => Object.values(JSON.parse(fs.readFileSync(f, "utf8")).files || {}).map((e) => e.file);
-            const keep = new Set(["kazalo.json", ...names("out/kazalo.json"), ...names("prejsnje.json")]);
-            const old = fs.readFileSync("obstojece.txt", "utf8").split("\n").filter((n) => n.endsWith(".pdf") && !keep.has(n));
+            const keep = new Set([...names("out/kazalo.json"), ...names("out/prejsnje.json")]);
+            const old = fs.readFileSync("out/obstojece.txt", "utf8").split("\n").filter((n) => n.endsWith(".pdf") && !keep.has(n));
             fs.writeFileSync("izbrisi.txt", old.join("\n"));
           '
           while IFS= read -r ime; do
@@ -168,8 +216,10 @@ jobs:
           echo "Objavljeno: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${OZNAKA}" >> "$GITHUB_STEP_SUMMARY"
       - name: Izid pregleda
         timeout-minutes: 1
+        env:
+          KODA: ${{ needs.izdelava.outputs.koda }}
         run: |
-          if [ "${{ steps.izdelava.outputs.koda }}" != "0" ]; then
+          if [ "$KODA" != "0" ]; then
             echo "::error::Vsaj en PDF ni prestal pregleda in ni objavljen (zanj ostane tisk v brskalniku). Glej poročilo."
             exit 1
           fi
