@@ -264,6 +264,7 @@ async function step(p, name, fn) {
       .evaluate(() => `${[...document.querySelectorAll("main.view")].find((v) => !v.hidden)?.id || "brez pogleda"} ${document.body.className}`.trim())
       .catch(() => "?");
     problem(`${p.label} ${name}`, `korak ni uspel: ${String(e.message).split("\n")[0].slice(0, 200)} [${at}]`);
+    console.log("DBG-FULL", name, String(e.message).slice(0, 1500));
     if (SHOTS) await p.screenshot({ path: path.join(SHOTS, `NAPAKA-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_")) }).catch(() => {});
     if (SHOTS) fs.writeFileSync(path.join(SHOTS, `NAPAKA-${p.label}-${name}.html`.replace(/[^\w.\-]+/g, "_")), await p.content().catch(() => ""));
   }
