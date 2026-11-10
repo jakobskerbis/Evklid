@@ -1078,7 +1078,8 @@ export function odpriModel(el, mod, opts = {}) {
       leti();
       // Postavitev »organ« spremeni višino odra šele ob naslednji postavitvi strani (ResizeObserver): kader ponovimo,
       // da organ pade v ožji zorni kot (pokončen telefon).
-      if (model.postavitev === "organ" && !ponastavi) requestAnimationFrame(() => requestAnimationFrame(() => !unicen && model === m && leti()));
+      // Enako lepljivi drsnik (višja plošča, nižji oder na telefonu).
+      if ((model.postavitev === "organ" || !lepljivoEl.hidden) && !ponastavi) requestAnimationFrame(() => requestAnimationFrame(() => !unicen && model === m && leti()));
     }
     kit.narisi();
     // Del iz naslova (»#organ-srce?del=levi prekat«, gumb inštruktorja public/odpri.js): po id-ju ali imenu.
