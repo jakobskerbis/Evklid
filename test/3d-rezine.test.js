@@ -653,3 +653,36 @@ test("rezine: »Poskusi« ustreza smeri in predelu rezine", () => {
   assert.match(R.poskusiZa("s", "sredina"), /hrbtenice/);
   for (const p of Object.keys(R.PREDELI)) assert.ok(R.poskusiZa("a", p).endsWith("."), p);
 });
+
+test("rezine: maska izhoda – dlan ločena od stegna, rob kože čez stik bloka zglajen (naslednja peka)", { skip: !python && "ni Pythona" }, () => {
+  if (spawnSync(python, ["-c", "import numpy"]).status !== 0) return;
+  const koda = `
+import json, sys
+import numpy as np
+sys.path.insert(0, ${JSON.stringify(path.join(ROOT, "scripts", "atlas"))})
+sys.dont_write_bytecode = True
+import rezine_maska as RM
+RM.ROKA_NAJMANJ = 50
+Z, H, W = 90, 60, 100
+yy, xx = np.mgrid[:H, :W]
+def maska(q):
+    ry = 18 + (4 if q >= 60 else 0)                               # stopnica kože 8 mm na stiku bloka (rezina 60)
+    m = ((xx - 50) / 22) ** 2 + ((yy - 30) / ry) ** 2 < 1
+    if q < 20: m &= False
+    for cx in (17, 83):                                           # roki ločeni, od rezine 30 se dlani počasi približata stegnoma
+        dx = int(min(6, max(0, (q - 30) * 0.4))) * (1 if cx < 50 else -1)
+        if q < 80: m |= ((xx - cx - dx) / 6) ** 2 + ((yy - 30) / 5) ** 2 < 1
+    return m
+M = RM.maska_izhoda(maska, Z, [[60, "skok", 0.1]])
+sir = [int((M[q, :, 50] == 1).sum()) for q in range(Z)]
+deli = [RM.deli(M[q] == 1)[1].size - 1 for q in range(Z)]
+print(json.dumps({"reza": int((M == 2).any(axis=(1, 2)).sum()), "deli": deli[45:78], "sir": sir[50:72],
+  "mali": bool(RM.alfa_malega(M, 12, 4).any()), "stiki": RM.stiki_sivov([[60, "skok", 0.1], [62, "izpad", 1], [3, "skok", 0.2]], Z)}))`;
+  const r = JSON.parse(execFileSync(python, ["-c", koda], { encoding: "utf8" }));
+  assert.ok(r.reza >= 20, `dlan ločena v ${r.reza} rezinah`);
+  assert.ok(r.deli.every((n) => n >= 3), "trup in obe dlani so ločeni deli");
+  assert.ok(r.mali, "reža je prazna tudi v malem volumnu (4 mm)");
+  assert.deepEqual(r.stiki, [61], "stiki zgoščeni, ob koncu volumna izpuščeni");
+  const skoki = r.sir.slice(1).map((v, k) => Math.abs(v - r.sir[k]));
+  assert.ok(Math.max(...skoki) <= 2 && r.sir.at(-1) - r.sir[0] >= 7, `rob kože se čez stik spremeni postopoma (največji skok ${Math.max(...skoki)} px)`);
+});

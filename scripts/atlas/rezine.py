@@ -29,6 +29,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import rezine_sivi as SV  # noqa: E402
+import rezine_maska as RM  # noqa: E402
 
 try:
     import bpy
@@ -38,7 +39,8 @@ except ImportError:
 TU = os.path.dirname(os.path.abspath(__file__))
 T = 512      # ploščica
 RAZL = 7     # različica maske in izhoda: ob spremembi se koraki od maske naprej ponovijo (pregled rezin ostane)
-RAZL_IZHOD = 2   # različica izhoda (2: šivi med bloki): ob spremembi se ponovita izhod in podrobno, maska ostane
+RAZL_IZHOD = 3   # različica izhoda (2: šivi med bloki; 3: maska izhoda – ločene dlani, rob kože čez stike, z-glajenje):
+#                 ob spremembi se ponovita izhod in podrobno, maska ostane (šivi ostanejo od različice 2 naprej)
 MALI = 4     # mm voksla malega volumna
 ROB = 6      # mm roba okoli telesa
 
@@ -239,7 +241,7 @@ def main(arg):
             nap.d.pop(k_, None)
         nap(sili=True, razl=RAZL)
     if nap.d.get("razl_izhod") != RAZL_IZHOD:
-        for k_ in ("izhod1", "podrobno", "sivi", "prenos"):
+        for k_ in ("izhod1", "podrobno", "prenos", "maska3") + (("sivi",) if (nap.d.get("razl_izhod") or 0) < 2 else ()):
             nap.d.pop(k_, None)
         nap(sili=True, razl_izhod=RAZL_IZHOD)
     # ---- 2 maska
@@ -396,6 +398,19 @@ def main(arg):
             _ojac_polje[k_] = SV.razsiri(G[q], h, w, SV.CELICA, px_)
         return _ojac_polje[k_]
 
+    # ---- 3c maska izhoda (rezine_maska.py): ločene dlani, rob kože čez stike blokov, večina treh rezin po z
+    m3, nov3 = mm("maska3.u8", (Z, Hc, Wc))
+    if nov3 or nap.d.get("maska3") != [Z, Hc, Wc]:
+        nap(sili=True, korak="maska izhoda", delez=0)
+        m3[:] = RM.maska_izhoda(lambda q: SV.premakni(telo[q][y0:y1, x0:x1], *P[q]), Z, nap.d.get("sivi_stiki", []), dnevnik)
+        m3.flush()
+        nap(sili=True, maska3=[Z, Hc, Wc])
+
+    def koncna_alfa(a, q):
+        """Alfa izhoda po maski izhoda: zunaj 0, dodano ob koži (preliv čez stik) polno."""
+        mq = m3[q] == 1
+        return np.where(mq, np.where(a > 0, a, 255), 0)
+
     # ---- 4 izhod 1 mm
     konc, _ = mm("konc.u8", (Z, Hc, Wc, 4))
     if nap.d.get("izhod1") != [Z, Hc, Wc] or not os.path.exists(os.path.join(izhod, "s", f"{Wc - 1}.webp")):
@@ -417,6 +432,7 @@ def main(arg):
                 a[a < 64] = 0
             else:
                 rgb, a = rezina1(zi)
+            a = koncna_alfa(a, zi)
             konc[zi, ..., :3] = np.clip(rgb + 0.5, 0, 255); konc[zi, ..., 3] = a
             pisi(np.ascontiguousarray(konc[zi]), os.path.join(izhod, "a", f"{zi}.webp"), 90)
             nap(korak="izhod prečno", delez=round(zi / Z, 3))
@@ -442,6 +458,7 @@ def main(arg):
         sa = al.sum((0, 2, 4))
         cel = np.concatenate([pm / np.maximum(sa, 1e-3), sa / (MALI ** 3)], 2)
         cel[..., :3] = razlij(cel[..., :3], cel[..., 3] > 1, 2)
+        cel[RM.alfa_malega(m3, k, MALI), 3] = 0   # reža med dlanjo in stegnom ostane prazna tudi v 4 mm (površje telesa)
         rr, cc = divmod(k, stolp)
         list_[rr * H4:(rr + 1) * H4, cc * W4:(cc + 1) * W4] = np.clip(cel + 0.5, 0, 255)
     pisi(list_, os.path.join(izhod, "mali.webp"), 92)
@@ -520,7 +537,9 @@ def main(arg):
                 f = nalozi(pot)
                 if f is not None:
                     f = SV.premakni(f[Y0:Y1, X0:X1], *np.rint(P[zg] / px).astype(int))
-                    m = skrci_min(SV.premakni(telo[zg], *P[zg])[iy][:, ix] & ~je_modro(f), 1)   # 1 piksel (0,33 mm) noter: brez svetlega ledenega roba
+                    tm = SV.premakni(telo[zg], *P[zg]).copy()
+                    tm[y0:y1, x0:x1] = m3[zi] == 1   # maska izhoda (ločene dlani, rob kože čez stike)
+                    m = skrci_min(tm[iy][:, ix] & ~je_modro(f), 1)   # 1 piksel (0,33 mm) noter: brez svetlega ledenega roba
                     a = m.astype(np.float32)
                     a = (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) * (255 / 5)
                     a = np.where(razsiri(m, 1), a, 0).astype(np.uint8)
@@ -545,6 +564,15 @@ def main(arg):
             nap(korak="podrobno", delez=round((i + 1) / N, 3))
         meta["podrobno"] = {"ploscica": T, "ravni": [{"mm": px, "px": T}, {"mm": 2 * px, "px": T // 2}], "dim_px": [Wp, Hp, N],
                             "ravnine": ["a", "k", "s"] if vzdolzno else ["a"], "pasov": pasov, "rezin_na_mm": len(pod)}
+    # oznake, ki so bile medtem (med dolgim korakom podrobno) zapisane v meta.json, ostanejo: preberemo ga še enkrat
+    try:
+        with open(os.path.join(izhod, "meta.json"), encoding="utf-8") as f:
+            stara = json.load(f)
+        for k_ in ("oznake", "poravnava"):
+            if k_ in stara:
+                meta[k_] = stara[k_]
+    except (OSError, ValueError):
+        pass
     with open(os.path.join(izhod, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=1)
     # ---- 6 prenos za oznake (rezine_oznake.py teče na strežniku): vol4.npz (4 mm) in konc.u8 v kosih ≤ 300 MB, ker
