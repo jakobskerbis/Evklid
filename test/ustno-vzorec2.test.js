@@ -7,6 +7,7 @@ import {
   lessonQuestions, questionProblem, keyPoints, finalResult, practiceQuestion, pruneNumbers, pruneNames, resultStatus, reviewed, reviewFile, textHash, REF_RE, ORIGIN_RE, foreignName,
 } from "../server/ustno.js";
 import { loadLesson } from "../server/textbook.js";
+import { getTopic } from "../server/curriculum.js";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -189,11 +190,31 @@ test("ročni pregled: vsa vprašanja iz :::premisli v vseh lekcijah imajo veljav
   for (const d of fs.readdirSync(dir).filter((x) => !x.includes(".")).sort()) {
     for (const f of fs.readdirSync(path.join(dir, d)).filter((x) => x.endsWith(".md")).sort()) {
       const id = `${d}/${f.slice(0, -3)}`;
-      for (const q of lessonQuestions(id, loadLesson(id), id, { pregled: false })) if (q.h && file[q.id]?.h !== q.h) brez.push(q.id);
+      for (const q of lessonQuestions(id, loadLesson(id), id, { pregled: false })) {
+        if (q.h && file[q.id]?.h !== q.h) brez.push(q.id);
+        // Sprejeto (»D«, enaka zgoščena vrednost), a reviewed() ga vseeno izloči (npr. pojem iz »k« ni več v točkovniku): tihi izpad.
+        else if (file[q.id]?.o === "D" && file[q.id].h === (q.h || q.hn) && !reviewed(q, file)) brez.push(`${q.id} (D, a izločeno)`);
+      }
     }
   }
   // Lekcija spremenjena ali nova: node scripts/ustno-pregled.js, pregled, nato --sprejmi.
   assert.deepEqual(brez, [], `brezPregleda: ${brez.length}`);
+});
+
+test("posnetek: besedila vseh ponujenih vprašanj so enaka kot v test/fixtures/ustno-besedila.json", () => {
+  // Varovalo za čiščenje besedila (READ_ON, imena …): sprememba ne sme tiho spremeniti že pregledanih vprašanj.
+  // Ob nameravani spremembi preglej razliko in posnetek obnovi: node scripts/ustno-pregled.js --posnetek
+  const want = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, "fixtures", "ustno-besedila.json"), "utf8"));
+  const got = {};
+  const dir = path.join(import.meta.dirname, "..", "content", "lessons");
+  for (const d of fs.readdirSync(dir).filter((x) => !x.includes(".")).sort()) {
+    for (const f of fs.readdirSync(path.join(dir, d)).filter((x) => x.endsWith(".md")).sort()) {
+      const id = `${d}/${f.slice(0, -3)}`;
+      for (const q of lessonQuestions(id, loadLesson(id), getTopic(id)?.name || id)) got[q.id] = q.besedilo;
+    }
+  }
+  const diff = [...new Set([...Object.keys(want), ...Object.keys(got)])].filter((k) => want[k] !== got[k]);
+  assert.deepEqual(diff, [], `spremenjena ali nova/izpadla vprašanja (${diff.length}); node scripts/ustno-pregled.js --posnetek`);
 });
 
 test("READ_ON: »Napovej, nato preveri …« na koncu odpade, vprašanje ostane", () => {
@@ -202,6 +223,10 @@ test("READ_ON: »Napovej, nato preveri …« na koncu odpade, vprašanje ostane"
   const q2 = raw(premisli("Kam odleti kamen, ko se vrvica pretrga? Napovej, nato preveri.", "Po tangenti. Na kamen ne deluje več nobena sila v vodoravni smeri."));
   assert.equal(q2.besedilo, "Kam odleti kamen, ko se vrvica pretrga?");
   assert.equal(real("MAT-SS-3/graf-polinoma#p1")?.besedilo, "Kam kažeta kraka grafa $p(x) = 7 + 2x - x^4$?");
+  // Napotek za metodo ostane (pojmi ga zahtevajo): odpade le »v simulaciji/tabeli …« in golo »nato preveri.«
+  assert.match(real("MAT-OS-7/prastevila-in-razcep#p0")?.besedilo || "", /Napovej, nato preveri z vsoto števk\.$/);
+  assert.match(real("MAT-SS-2/transformacije-grafov#p0")?.besedilo || "", /Napovej, nato preveri z eno vrednostjo\.$/);
+  assert.match(real("MAT-SS-4/limita-in-zveznost-funkcije#p1")?.besedilo || "", /Napovej, nato preveri s formulo\.$/);
 });
 
 test("ročni pregled: vprašanja s sklicem na lekcijo so izločena z razlogom", () => {

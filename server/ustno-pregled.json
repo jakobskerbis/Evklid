@@ -268,7 +268,11 @@
   "FIZ-SS-3/izmenicni-tok-in-nihajni-krog#p1": {
    "h": "9bfc69472012",
    "o": "D",
-   "r": "po odstranitvi »Napovej, nato preveri v simulaciji« samostojno"
+   "r": "po odstranitvi »Napovej, nato preveri v simulaciji« samostojno; 3. pojem ponovi 1. (razpolovi)",
+   "k": [
+    "Lastna frekvenca se razpolovi",
+    "Produkt $LC$ je štirikrat večji, njegov koren pa le dvakrat ($\\sqrt{4} = 2$)"
+   ]
   },
   "FIZ-SS-3/magnetna-sila#p1": {
    "h": "b6c4d2e04568",
