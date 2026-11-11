@@ -523,8 +523,8 @@
  },
  "velikost": 0.2784,
  "trikotniki": {
-  "racunalnik": 280458,
-  "telefon": 87099
+  "racunalnik": 165896,
+  "telefon": 47289
  },
  "luci": [
   {
@@ -567,5 +567,6 @@
    "ime": "Delež mase telesa",
    "vrednost": "≈ 2 %, porabijo ≈ 20 % kisika"
   }
- ]
+ ],
+ "pbr": true
 }
