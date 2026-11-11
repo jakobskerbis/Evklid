@@ -5,6 +5,8 @@
 //   node scripts/ustno-pregled.js --od 0 --n 60   serija (za pregled po delih)
 //   node scripts/ustno-pregled.js --sprejmi f.json  vpiše odločitve { "<id>": { "o": "D"|"I", "r": "razlog", "k": [pojmi] } }
 //   node scripts/ustno-pregled.js --stej          število ponujenih vprašanj po vrstah
+//   node scripts/ustno-pregled.js --posnetek      zapiše besedila vseh ponujenih vprašanj v test/fixtures/ustno-besedila.json
+//                                                 (test/ustno-vzorec2.test.js: sprememba čiščenja ne sme tiho spremeniti pregledanih)
 // Merilo: vprašanje je smiselno samostojno na glas, brez sklica na zgodbo, sliko, poskus ali prejšnji korak lekcije,
 // in pojmi točkovnika zahtevajo le, kar vprašanje sprašuje (»k« obdrži le te pojme).
 import fs from "node:fs";
@@ -41,6 +43,10 @@ if (args.includes("--stej")) {
   const izl = premisli.filter((q) => data.vprasanja[q.id]?.h === q.h && data.vprasanja[q.id].o === "I").length;
   const brez = premisli.filter((q) => data.vprasanja[q.id]?.h !== q.h).length;
   console.log(JSON.stringify({ ponujeno: by, skupaj: Object.values(by).reduce((a, b) => a + b, 0), premisli: premisli.length, izlocenih: izl, brezPregleda: brez }));
+} else if (args.includes("--posnetek")) {
+  const out = Object.fromEntries(all.map((q) => reviewed(q, data.vprasanja)).filter(Boolean).map((q) => [q.id, q.besedilo]));
+  fs.writeFileSync(path.join(root, "test", "fixtures", "ustno-besedila.json"), JSON.stringify(out, null, 1) + "\n");
+  console.log(`zapisanih ${Object.keys(out).length}`);
 } else if (args.includes("--sprejmi")) {
   const dec = JSON.parse(fs.readFileSync(opt("--sprejmi"), "utf8"));
   // Tudi pogosta napaka (neobvezen vnos, npr. »k«): zgoščena vrednost iz »hn«.
@@ -49,7 +55,9 @@ if (args.includes("--stej")) {
   for (const [id, e] of Object.entries(dec)) {
     const q = byId.get(id);
     if (!q || !["D", "I"].includes(e.o)) throw new Error(`neznano vprašanje ali odločitev: ${id}`);
+    if (e.k !== undefined && (!Array.isArray(e.k) || e.k.length < 2)) throw new Error(`»k« mora biti seznam vsaj dveh pojmov: ${id}`);
     if (e.k && !e.k.every((p) => q.pojmi.includes(p))) throw new Error(`pojem ni v točkovniku: ${id}`);
+    if (e.k && new Set(e.k).size !== e.k.length) throw new Error(`»k« ima podvojen pojem: ${id}`);
     data.vprasanja[id] = { h: q.h || q.hn, o: e.o, ...(e.r ? { r: e.r } : {}), ...(e.k ? { k: e.k } : {}) };
     n++;
   }
