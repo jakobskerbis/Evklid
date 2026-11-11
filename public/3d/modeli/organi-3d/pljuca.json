@@ -21,7 +21,8 @@
    "sencaBarva": "#6a2a30",
    "rez": "#d07a78",
    "rezPore": 1400,
-   "rezPoreMoc": 0.45
+   "rezPoreMoc": 0.45,
+   "aoTekstura": 0.25
   },
   "dihalna": {
    "hrap": 0.34,
@@ -375,8 +376,8 @@
  },
  "velikost": 0.4305,
  "trikotniki": {
-  "racunalnik": 239922,
-  "telefon": 80315
+  "racunalnik": 164925,
+  "telefon": 40984
  },
  "luci": [
   {
@@ -423,5 +424,6 @@
    "ime": "Pregrada zrak–kri",
    "vrednost": "≈ 0,2–0,6 µm"
   }
- ]
+ ],
+ "pbr": true
 }
