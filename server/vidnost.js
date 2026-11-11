@@ -74,12 +74,12 @@ function accuracyOf(m) {
     sentence:
       `Meritev ${date}, ${m.primeri} rešenih primerov iz lekcij. ${rows.map((r) => part(r, false)).join(". ")}. ` +
       (app
-        ? `Isti primeri so šli skozi Evklidov klepet dvakrat: brez preverjanja s programom in z njim, z nastavitvami plačljivega paketa ${realCap ? "in z dnevno mejo pregledov z zmogljivejšim modelom, kot velja v aplikaciji" : "brez dnevne meje pregledov z zmogljivejšim modelom"}. Odgovore je ocenil model umetne inteligence. Vzorec je majhen.`
+        ? `Isti primeri so šli skozi Evklidov klepet dvakrat: brez preverjanja in s preverjanjem (program in pregled z zmogljivejšim modelom), z nastavitvami plačljivega paketa. ${realCap ? "Med meritvijo je veljala dnevna meja pregledov, kot v aplikaciji." : "Med meritvijo dnevna meja pregledov ni veljala; v aplikaciji velja, in ko je porabljena, pregleda ni."} Razlika med načinoma je majhna in je lahko naključna. Odgovore je ocenil model umetne inteligence. Vzorec je majhen.`
         : "Merili smo sam model, brez preverjanja s programom in pred spremembo navodil inštruktorja. Odgovore je ocenil model umetne inteligence. Vzorec je majhen. Meritev celega odgovora s preverjanjem še pripravljamo."),
     sentenceEn:
       `Measurement of ${m.datum}, ${m.primeri} worked examples from the app's lessons. ${rows.map((r) => part(r, true)).join(". ")}. ` +
       (app
-        ? `The same examples went through Evklid's chat twice: without the program check and with it, using paid-plan settings ${realCap ? "and the app's daily limit on reviews by the stronger model" : "without the daily limit on reviews by the stronger model"}. Graded by an AI model. The sample is small.`
+        ? `The same examples went through Evklid's chat twice: without checking and with it (program check plus review by a stronger model), using paid-plan settings. ${realCap ? "The app's daily limit on stronger-model reviews applied during the measurement." : "The daily limit on stronger-model reviews was off during the measurement; in the app it applies, and once it is used up there is no review."} The difference between the two is small and may be due to chance. Graded by an AI model. The sample is small.`
         : "This measured the model alone, without the program check and before the tutor's instructions were changed. Graded by an AI model. The sample is small. A measurement of the full answer with the program check is in preparation."),
   };
 }
@@ -97,6 +97,10 @@ export function facts(measurement) {
     accModel: !!acc && !acc.app,
     accNoCap: !!acc?.app && !acc.realCap,
     accRealCap: !!acc?.app && !!acc.realCap,
+    accBolje: acc?.pari?.bolje ?? "",
+    accSlabse: acc?.pari?.slabse ?? "",
+    accMinorBrez: acc?.vrstice?.find((r) => r.kljuc === "brez")?.manjse_napake ?? "",
+    accMinorS: acc?.vrstice?.find((r) => r.kljuc === "s")?.manjse_napake ?? "",
     accThinkTasks: acc?.rows.find((r) => r.kljuc === "razmislek")?.primeri ?? "",
     name: BRAND.name,
     domain: BRAND.domain,
