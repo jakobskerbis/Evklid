@@ -238,12 +238,14 @@ console.log(`Naloge: ${tasks.length} (${Object.entries(tasks.reduce((a, t) => ((
 if (!CHECK) console.log(`Modeli: ${MODES.map((m) => LABEL[m]).join(", ")}; ocenjevalec ${MODEL_DEEP}`);
 if (!CHECK) console.log(`Ocena stroška: ~${est.toFixed(2)} $ (meja --max-usd ${MAX_USD} $)${MOCK ? " — preizkusni način, dejanski strošek 0" : ""}`);
 // Meritev s preverjanjem: na primer dva odgovora po poti klepeta (model po stopnji: OŠ hitri, drugje z več razmisleka),
-// pri tekmovanjih in fakulteti pregled z zmogljivejšim modelom, občasen popravek, in dve oceni.
+// pri tekmovanjih, fakulteti in delu SŠ pregled z zmogljivejšim modelom, občasen popravek, in dve oceni.
 const pairModes = (t) => (group(t.path) === "osnovna šola" ? "chat" : "think");
-const reviewed = (t) => ["tekmovanja", "fakulteta"].includes(group(t.path));
+// Delež odgovorov s pregledom: tekmovanja in fakulteta vsi, srednja šola ~0,7 (odgovor z vajo ali okvirjem v rešeni
+// nalogi, od 2026-11-11), osnovna šola 0 (EVKLID_LIVE_REVIEW_OS je privzeto izklopljen).
+const reviewed = (t) => ({ tekmovanja: 1, fakulteta: 1, "srednja šola": 0.7 })[group(t.path)] || 0;
 const pairEstimate = (t) =>
   2 * costUsd(modeParams(pairModes(t)).model, { input_tokens: 1500, output_tokens: OUT_TOK[pairModes(t)], cache_read_input_tokens: 11000 }) +
-  (reviewed(t) ? costUsd(modeParams("mid").model, { input_tokens: 2500, output_tokens: 1500 }) : 0) +
+  reviewed(t) * costUsd(modeParams("mid").model, { input_tokens: 2500, output_tokens: 1500 }) +
   0.15 * costUsd(modeParams("think").model, { input_tokens: 3000, output_tokens: 2000 }) +
   2 * costUsd(MODEL_DEEP, { input_tokens: 3000, output_tokens: 1500 });
 // Najdražji možni par: dva odgovora (poln izhod, hladen predpomnilnik), pregled z zmogljivejšim modelom (do 8000

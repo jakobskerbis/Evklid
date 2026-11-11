@@ -4,8 +4,9 @@
 //      (public/scan/solvecore.js), dobi model v trenutni potezi skrito opombo s pravilnim rezultatom.
 //   2. Po odgovoru: koda preračuna vsak številski račun (server/lesson-math.js) in končne vrednosti
 //      neznank (public/scan/verify.js). Ob neujemanju en kratek »Popravek:« istega modela.
-//   3. Model (Sonnet) pregleda samo, kjer koda ni mogla ničesar preveriti in je tveganje večje
-//      (tekmovanja, fakulteta, »Razloži podrobneje«), samo Haikujeve odgovore, z dnevno mejo.
+//   3. Model (Sonnet) pregleda, kjer je tveganje večje (tekmovanja, fakulteta, »Razloži podrobneje«), in pri SŠ
+//      odgovor z dodatno vajo ali z okvirjem »Zapomni si« v rešeni nalogi (2026-11-11), samo Haikujeve odgovore,
+//      z dnevno mejo (šolski del posebej), mejo na učenca in rokom.
 //   4. Sodba o učenčevem koraku (j, 2026-11-01: »naj se nikoli ne zgodi«, da inštruktor potrdi napačen ali
 //      zavrne pravilen odgovor): ko učenec pošlje rezultat ali trditev, odgovor ni pretakan, dokler sodbe
 //      ne preveri koda (rešitev naloge iz prvega sporočila) ali model (Sonnet). Ob napačni sodbi inštruktor
@@ -17,7 +18,7 @@ import { joinThousands, digitGap } from "../public/graph/math.js";
 import { parse, compile } from "../public/graph/math.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
-import { askModel, checkerUser } from "./verify.js";
+import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID } from "./claude.js";
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
@@ -284,17 +285,107 @@ export function codeFindings(answer, pre = null) {
 
 const val = (x) => (typeof x === "function" ? x() : x);
 
+// Pri SŠ (po izbiri OŠ) model pregleda odgovor z dodatno vajo ali z okvirjem »Zapomni si« v rešeni nalogi
+// (j, 2026-11-11, meritev 10. 11.: 11 od 13 napak je bilo v trditvah in dodatnih vajah, ki jih koda ne preveri).
+// Vaja: oznaka z dvopičjem v svoji vrstici (»**Vaja:**«, ki jo zahteva prompt, »Dodatna vaja:«, »Za vajo:«,
+// »Practice:«). Sam okvir »Zapomni si« je v večini razlag, zato šteje le ob oznaki rešene naloge (Podatki,
+// Iščemo ali Preverba iz vzorca za računske naloge).
+const EXERCISE_RE = /(?:^|\n)[ \t>*_]*(?:dodatna vaja|vaja|za vajo|practice(?: exercise)?)[*_ \t]*[:：]/iu;
+const BOX_RE = /📌|zapomni si/iu;
+const SOLVED_RE = /(?:^|\n)[ \t>*_\d.]*(?:podatki|iščemo|preverba)[*_ \t]*[:：]/iu;
+export const hasExercise = (answer) => EXERCISE_RE.test(String(answer || ""));
+export const hasClaims = (answer) => {
+  const a = String(answer || "");
+  return EXERCISE_RE.test(a) || (BOX_RE.test(a) && SOLVED_RE.test(a));
+};
+
+// Stopnje, kjer model pregleda odgovor z vajo ali okvirjem tudi brez tveganja (privzeto SŠ; OŠ z EVKLID_LIVE_REVIEW_OS=1).
+export const claimReviewFor = (stopnja) =>
+  stopnja === "SS" ? process.env.EVKLID_LIVE_REVIEW_SS !== "0" : stopnja === "OS" ? process.env.EVKLID_LIVE_REVIEW_OS === "1" : false;
+
+const envNum = (name, def) => {
+  const raw = process.env[name];
+  const v = Number(raw === undefined || raw === "" ? def : raw);
+  return Number.isFinite(v) ? v : def;
+};
+// Del dnevne meje za pregled pri SŠ/OŠ (vrsta »preverjanje-sola«; šteje tudi v skupno mejo), da šolski pregledi ne
+// porabijo vsega za tekmovanja in fakulteto. Privzeto pol skupne meje; negativno = brez posebne meje.
+export const LIVE_REVIEW_SS_DAILY_USD = () => {
+  const total = LIVE_CHECK_DAILY_USD();
+  return envNum("EVKLID_LIVE_REVIEW_SS_DAILY_USD", total < 0 ? -1 : total / 2);
+};
+// Največ toliko pregledov na učenca na dan (vse stopnje); negativno = brez meje.
+export const LIVE_REVIEW_PER_PUPIL = () => envNum("EVKLID_LIVE_REVIEW_PER_PUPIL", 6);
+// Rok za en pregled (ms); po njem odgovor ostane brez pregleda.
+export const LIVE_REVIEW_TIMEOUT_MS = () => envNum("EVKLID_LIVE_REVIEW_TIMEOUT_MS", 25_000);
+// Rezerva enega pregleda v dnevnem bazenu aplikacije (USD): pričakovani strošek, ne najslabši primer (~0,10 $ pri
+// 8000 izhodnih žetonih), sicer bi meja 0,30 $ (šolski del 0,15 $) ustavila pregled že pri ~0,05–0,20 $ porabe.
+// Klici v teku se štejejo, zato vzporedni pregledi mejo presežejo največ za razliko do dejanskega stroška.
+// Meja učenca (marža ≥ 75 %) ostane rezervirana po najslabšem primeru (checkReserveUsd v server/app.js).
+export const LIVE_REVIEW_POOL_RESERVE_USD = () => envNum("EVKLID_LIVE_REVIEW_RESERVE_USD", 0.02);
+// Vrsti porabe pregleda: »preverjanje« (tekmovanja, fakulteta, podrobna razlaga) in »preverjanje-sola« (SŠ/OŠ).
+export const REVIEW_KINDS = ["preverjanje", "preverjanje-sola"];
+export const reviewKindFor = (risky) => (risky ? "preverjanje" : "preverjanje-sola");
+
 /**
- * Ali odgovor pregleda še model. level (raven proračuna, server/proracun.js) in spentToday (USD vrste
- * »preverjanje« danes) sta lahko funkciji: bazo vprašamo šele, ko so drugi pogoji izpolnjeni.
+ * Meje za rezervacijo pregleda (usage.hold(null, caps)): skupna dnevna meja za obe vrsti in pri SŠ/OŠ še šolski
+ * del. Rezervacija šteje klice v teku, zato vzporedni pregledi meje ne prekoračijo.
+ * spent(kinds) → USD danes za te vrste.
  */
-export function needsReview({ checked, model, lite, premium, level, risky, spentToday, answerLength }) {
-  if (!liveCheckOn() || checked > 0 || !risky || lite || !premium) return false;
+export function reviewPoolCaps({ school, spent }) {
+  return () => {
+    const caps = [];
+    const total = LIVE_CHECK_DAILY_USD();
+    if (total >= 0) caps.push({ key: "app:preverjanje", usd: total, spent: spent(REVIEW_KINDS) });
+    const ss = LIVE_REVIEW_SS_DAILY_USD();
+    if (school && ss >= 0) caps.push({ key: "app:preverjanje-sola", usd: ss, spent: spent(["preverjanje-sola"]) });
+    return caps;
+  };
+}
+
+/**
+ * Ali odgovor pregleda še model. level (raven proračuna, server/proracun.js) je lahko funkcija.
+ * risky (tekmovanja, fakulteta, »Razloži podrobneje«): vedno, tudi če je koda preverila račune (koda preveri
+ * števila, ne trditev; prejšnji argument »checked« je zato odstranjen). claimLevel (SŠ, po izbiri OŠ): samo
+ * odgovor z vajo ali okvirjem v rešeni nalogi (claims). Dnevne meje in meja na učenca: reviewBlock in rezervacija.
+ */
+export function needsReview({ model, lite, premium, level, risky, claims = false, claimLevel = false, answerLength }) {
+  if (!liveCheckOn() || lite || !premium) return false;
+  if (!risky && !(claimLevel && claims)) return false;
   if (!/haiku/i.test(String(model || ""))) return false;
   if (answerLength < 120) return false; // kratka vprašanja učencu (»Kaj bi naredil zdaj?«) nimajo kaj preveriti
-  if (!(val(level) > 0)) return false; // varčni način ali ustavljen proračun
-  const cap = LIVE_CHECK_DAILY_USD();
-  return !(cap >= 0 && val(spentToday) >= cap);
+  return val(level) > 0; // varčni način ali ustavljen proračun
+}
+
+/**
+ * Meja, ki ustavi sicer upravičen pregled: "ucenec" (pregledov učenca danes), "sola" (šolski del), "dan" (skupna
+ * meja) ali null. Rezervacija (reviewPoolCaps) je dokončna; to je hiter pregled za razlog v dnevniku.
+ */
+export function reviewBlock({ school, pupilToday, spent, needUsd = 0 }) {
+  const per = LIVE_REVIEW_PER_PUPIL();
+  if (per >= 0 && val(pupilToday) >= per) return "ucenec";
+  const ss = LIVE_REVIEW_SS_DAILY_USD();
+  const over = (used, cap) => used >= cap || used + needUsd > cap;
+  if (school && ss >= 0 && over(spent(["preverjanje-sola"]), ss)) return "sola";
+  const total = LIVE_CHECK_DAILY_USD();
+  if (total >= 0 && over(spent(REVIEW_KINDS), total)) return "dan";
+  return null;
+}
+
+// Števec preskočenih pregledov (kv »pregledi_preskoceni«): { "2026-11-11": { "SS": { "dan": 3, "rok": 1 } } },
+// zadnjih 60 dni. Iz njega se po pilotu nastavi meja (docs/stroski-ai.md). Napaka pri zapisu ne ustavi odgovora.
+export const SKIP_KV = "pregledi_preskoceni";
+export function noteReviewSkip(db, stopnja, reason) {
+  try {
+    const day = new Date().toISOString().slice(0, 10);
+    const cur = JSON.parse(db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV)?.value || "{}");
+    const lvl = ((cur[day] ||= {})[stopnja] ||= {});
+    lvl[reason] = (lvl[reason] || 0) + 1;
+    for (const d of Object.keys(cur).sort().slice(0, -60)) delete cur[d];
+    db.prepare("INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)").run(SKIP_KV, JSON.stringify(cur));
+  } catch {
+    // brez tabele kv (stara baza v testu)
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -429,10 +520,22 @@ export const verdictNote = (reason) =>
   "Your previous reply judged the student's message wrongly, so answer again from scratch, in agreement with this check: confirm what is right; for what is wrong, ask for the working if the student sent none, otherwise show the step where it fails. In način A never state the final result or the full solution. Never mention a program, a check, a reviewer or this note.\n" +
   `</${NOTE_TAG}>`;
 
-/** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js). Vrne { reason: razlog napake ali null, cost }. */
-export async function reviewAnswer({ question, answer, createFn = null, usage = null, studentId = null }) {
-  const r = await askModel(MODEL_MID, checkerUser({ question, answer }), createFn);
-  const cost = usage ? usage.log(studentId, r.model, r.usage, "preverjanje") : 0;
+// Navodila preverjevalca iz server/verify.js in dodatek za vaje in trditve (meritev 10. 11.: bakterija 300 μm,
+// »raztopljen« MgO, razvrščanje brez enolične rešitve, napačna trditev ob pravilnem rezultatu).
+export const LIVE_REVIEW_SYSTEM =
+  CHECKER_SYSTEM +
+  `
+Also check, as strictly as the calculations:
+- every practice exercise the tutor sets for the student: the quantities must be realistic (sizes, masses, speeds, concentrations that really occur), the substances and objects must behave as the exercise assumes (solubility, state, reactions, biology), the data must be consistent, and it must have exactly one correct answer (in a classification every item fits exactly one group and every offered group is used);
+- every side remark, »remember« box and check step, also when the final result is right: definitions, structures, charges, formulas and rules must be correct, and nothing may contradict the tutor's own calculation or the task.
+Reply with exactly one line: OK, or NAPAKA: <short reason>.`;
+
+/** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js in LIVE_REVIEW_SYSTEM). Vrne { reason: razlog napake ali null, cost }. */
+// kind: »preverjanje« ali »preverjanje-sola« (reviewKindFor). signal: prekinitev zahteve; po LIVE_REVIEW_TIMEOUT_MS
+// askModel vrže napako z name »TimeoutError« (klicatelj odgovor pusti brez pregleda).
+export async function reviewAnswer({ question, answer, createFn = null, usage = null, studentId = null, kind = "preverjanje", signal = null, timeoutMs = LIVE_REVIEW_TIMEOUT_MS() }) {
+  const r = await askModel(MODEL_MID, checkerUser({ question, answer }), createFn, LIVE_REVIEW_SYSTEM, { signal, timeoutMs });
+  const cost = usage ? usage.log(studentId, r.model, r.usage, kind) : 0;
   // Samo izrecna NAPAKA; odrezan ali nejasen odgovor preverjevalca ni dovolj za popravek.
   return { reason: !r.verdict.ok && /^[\s*`_]*NAPAKA/i.test(r.text || "") ? r.verdict.reason : null, cost };
 }
@@ -442,6 +545,7 @@ export async function reviewAnswer({ question, answer, createFn = null, usage = 
 
 const FIX_SYSTEM = `You fix one mistake in an AI tutor's answer to a student. You get the answer and a problem that an exact check or a reviewer found in it.
 If the problem is real (the answer states something wrong as true), write a correction of 1 to 3 short sentences addressed to the student, in the language of the answer, that starts with the word for "Correction" in that language followed by a colon (Slovenian: "Popravek:"). Give the correct value or fact. If the answer leaves later steps to the student, correct only the wrong part and do not solve the rest. Write maths as $…$. Do not mention a program, a check or a reviewer, and do not repeat the answer.
+If the problem is in a practice exercise, give corrected data or a replacement exercise; never give the exercise's solution.
 If the answer does not really claim the wrong thing (for example it shows the student's mistake, a hypothetical case, or the check misread it), reply exactly OK.`;
 
 // Odgovor modela → blok za prikaz (»> **Popravek:** …«) ali null.

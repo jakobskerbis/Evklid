@@ -22,7 +22,7 @@ export const VERIFY_DAILY_USD = () => {
 };
 const EFFORT = env("EVKLID_VERIFY_EFFORT", "medium");
 
-const SYSTEM = `You are a strict fact-checker for an AI tutor that teaches school and university maths, physics, chemistry and biology.
+export const SYSTEM = `You are a strict fact-checker for an AI tutor that teaches school and university maths, physics, chemistry and biology.
 You receive the student's question and the tutor's answer (or flashcards made from it). The answer may be in any language.
 Check every statement, number, calculation, unit, formula, chemical formula, definition and named fact. Recompute every calculation yourself.
 Only factual or computational errors count. Teaching style, questions to the student, leaving steps for the student, hints and simplifications that are correct for the school level are fine.
@@ -55,9 +55,35 @@ export function checkerUser({ question, answer, kind = "answer" }) {
   return `STUDENT QUESTION:\n${String(question || "(none)").slice(0, 4000)}\n\n${label}:\n${String(answer)}`;
 }
 
-export async function askModel(model, user, createFn, system = SYSTEM) {
-  const create = createFn || ((p) => getClient().messages.create(p));
-  const r = await create({ model, max_tokens: 8000, output_config: { effort: EFFORT }, system, messages: [{ role: "user", content: user }] });
+// opts.signal: prekinitev (npr. učenec zapre pogovor); opts.timeoutMs: rok, po njem napaka z name »TimeoutError«
+// (tudi če createFn signala ne upošteva).
+export async function askModel(model, user, createFn, system = SYSTEM, { signal = null, timeoutMs = 0 } = {}) {
+  const create = createFn || ((p, o) => getClient().messages.create(p, o));
+  const params = { model, max_tokens: 8000, output_config: { effort: EFFORT }, system, messages: [{ role: "user", content: user }] };
+  let r;
+  if (!signal && !(timeoutMs > 0)) r = await create(params);
+  else {
+    const ctl = new AbortController();
+    const stop = (reason) => ctl.abort(reason);
+    const onAbort = () => stop(Object.assign(new Error("aborted"), { name: "AbortError" }));
+    if (signal?.aborted) onAbort();
+    signal?.addEventListener?.("abort", onAbort, { once: true });
+    let timer = null;
+    const limit = new Promise((_, reject) => {
+      if (timeoutMs > 0) timer = setTimeout(() => {
+        const e = Object.assign(new Error(`pregled ni končal v ${timeoutMs} ms`), { name: "TimeoutError" });
+        stop(e);
+        reject(e);
+      }, timeoutMs);
+      ctl.signal.addEventListener("abort", () => reject(ctl.signal.reason), { once: true });
+    });
+    try {
+      r = await Promise.race([create(params, { signal: ctl.signal }), limit]);
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener?.("abort", onAbort);
+    }
+  }
   const text = (r.content || []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
   // Odrezan (max_tokens) ali zavrnjen odgovor preverjevalca ni OK, tudi če se začne z »OK«.
   const cut = r.stop_reason && r.stop_reason !== "end_turn" && r.stop_reason !== "stop_sequence";
