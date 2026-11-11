@@ -57,7 +57,7 @@ Podobno so fluorid, bromid in jodid. Števil v imenu ionske spojine ne povemo: $
 
 **5. Molekulske spojine.** Kadar se povežeta dve nekovini, ionov ni, ampak nastanejo molekule s kovalentnimi vezmi. Formulo lahko določiš iz števila vezi: H in Cl tvorita $1$ vez, O $2$, N $3$, C $4$. Tako dobiš $\mathrm{HCl}$, $\mathrm{H_2O}$, $\mathrm{NH_3}$, $\mathrm{CH_4}$ in $\mathrm{CCl_4}$.
 
-Število vezi je število skupnih elektronskih parov atoma, ne število njegovih sosedov. Dvojna vez šteje za $2$. V $\mathrm{CO_2}$ ($\mathrm{O{=}C{=}O}$) ima ogljik le dva soseda, a $2 + 2 = 4$ vezi. Izjema je $\mathrm{CO}$: atoma povezuje trojna vez $\mathrm{C{\equiv}O}$, zato ima ogljik $3$ vezi in kisik $3$, ne $4$ in $2$. Formulo $\mathrm{CO}$ zato vzamemo iz imena.
+Število vezi je število skupnih elektronskih parov atoma, ne število njegovih sosedov. Dvojna vez šteje za $2$. V $\mathrm{CO_2}$ ($\mathrm{O{=}C{=}O}$) ima ogljik le dva soseda, a $2 + 2 = 4$ vezi. Izjema je $\mathrm{CO}$: atoma povezuje trojna vez $\mathrm{C{\equiv}O}$, zato ima ogljik $3$ vezi in kisik $3$, ne $4$ in $2$. Formulo $\mathrm{CO}$ torej vzamemo iz imena.
 
 Ime ima enako zgradbo kot pri ionskih spojinah, le da število atomov povemo s **predpono**:
 
@@ -167,7 +167,7 @@ Trije ioni $\mathrm{Mg^{2+}}$ dajo $+6$, dva iona $\mathrm{N^{3-}}$ dasta $-6$. 
 - **Indeks za vse elemente.** Učenec misli, da sta v $\mathrm{CaCl_2}$ dva kalcija in dva klora. Indeks velja samo za element tik pred njim. Pravilno: en $\mathrm{Ca^{2+}}$ in dva $\mathrm{Cl^-}$.
 - **Zamešane predpone.** »Kalcijev diklorid« za $\mathrm{CaCl_2}$ ali »ogljikov oksid« za $\mathrm{CO_2}$. Pri ionskih spojinah razmerje določajo naboji, pri molekulskih ne. Pravilno: predpone samo pri spojinah dveh nekovin.
 - **Napačni končnici.** »Natrijev klor« namesto natrijev klorid ali »klorov natrij«. Pravilno: kovina prva v pridevniški obliki, nekovina druga s končnico -id.
-- **Vezi enake sosedom.** Učenec sklepa: »Ogljik ima $4$ vezi, torej se nanj vežejo štirje kisiki« in dobi $\mathrm{CO_4}$. Število vezi pa šteje skupne elektronske pare, dvojna vez šteje za $2$. Pravilno: $\mathrm{O{=}C{=}O}$, dva kisika in $4$ vezi.
+- **Toliko sosedov kot vezi.** Učenec misli, da ima atom toliko sosedov, kot ima vezi, zato za ogljik in kisik napiše $\mathrm{CO_4}$. Število vezi pa šteje skupne elektronske pare, ne sosedov. Kisik tvori $2$ vezi, zato z ogljikom deli dvojno vez, ki šteje za $2$. Pravilno: $\mathrm{O{=}C{=}O}$, dva kisika in $4$ vezi.
 
 ## Povzetek
 
@@ -176,7 +176,7 @@ Trije ioni $\mathrm{Mg^{2+}}$ dajo $+6$, dva iona $\mathrm{N^{3-}}$ dasta $-6$. 
 - Indeks velja za element tik pred njim.
 - Ime ionske spojine: kovina v pridevniški obliki + nekovina s končnico -id (klorid, oksid, sulfid, nitrid), brez števil.
 - Molekulska spojina (dve nekovini): formula iz števila vezi, v imenu predpone mono-, di-, tri-, tetra- ($\mathrm{CO_2}$ ogljikov dioksid, $\mathrm{CCl_4}$ ogljikov tetraklorid). Predpono izpustimo le pri prvem elementu z enim atomom: $\mathrm{CO}$ je ogljikov monoksid.
-- Število vezi = število skupnih elektronskih parov, ne sosedov; dvojna vez šteje $2$ ($\mathrm{O{=}C{=}O}$: C $4$ vezi, $2$ soseda). Izjema je $\mathrm{CO}$ ($\mathrm{C{\equiv}O}$: C in O po $3$ vezi), formula iz imena.
+- Število vezi = število skupnih elektronskih parov, ne sosedov; dvojna vez šteje $2$ ($\mathrm{O{=}C{=}O}$: C $4$ vezi, $2$ soseda). Izjema je $\mathrm{CO}$ ($\mathrm{C{\equiv}O}$: C in O imata vsak po $3$ vezi), formula iz imena.
 - Ustaljena imena: voda, amonijak, metan.
 
 ## Drugače: Z analogijo
@@ -191,7 +191,7 @@ Ionska spojina ni iz molekul. Kristal safirja je neskončna mreža ionov, kjer j
 
 Nekatere kovine, predvsem prehodne, tvorijo ione z različnimi naboji. Železo je lahko $\mathrm{Fe^{2+}}$ ali $\mathrm{Fe^{3+}}$. Naboj tedaj povemo z rimsko številko: $\mathrm{FeO}$ je železov(II) oksid, $\mathrm{Fe_2O_3}$ železov(III) oksid. Prav slednji je bil v magnetni plasti starih avdiokaset, na katere so snemali glasbo.
 
-Pravilo vezi za molekulske spojine ni vedno dovolj: v $\mathrm{CO}$ in $\mathrm{NO_2}$ so vezi bolj zapletene. Formulo takih spojin zato preberemo iz imena.
+Pravilo vezi za molekulske spojine ni vedno dovolj: v $\mathrm{CO}$ je trojna vez, pri kateri ogljik in kisik nimata običajnega števila vezi, v $\mathrm{NO_2}$ pa so vezi še bolj zapletene. Formulo takih spojin zato preberemo iz imena.
 
 ## Preveri se
 
