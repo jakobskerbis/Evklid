@@ -60,9 +60,10 @@ ORGANI = {
                  r"Amygdal|Hippocamp|Claustrum|Internal capsule|External capsule|Extreme capsule|Basal forebrain|Septal|Indusium|"
                  r"tract\b(?!.*Optic)|fasciculus|Grey matter of|Tegmentum of pons|Reticular|Substantia nigra|Red nucleus|Medial longitudinal|"
                  r"Central canal|Central grey|Area postrema|Locus|Raphe|Vestibular|Cochlear|Solitary|Trigeminal|Olivary",
-        cilj=(240_000, 70_000),
+        cilj=(165_000, 44_000),
         # Pečene PBR teksture (videz, j 10. 11.): sveži možgani rožnato sivi, pialne žilice, vlažna pia mater. Telefon ima
-        # svojo peko 1024 px (rtx.py in peci.py zahtevata delovno datoteko za obe mreži); 70k trikotnikov za mejo 2 MB.
+        # svojo peko 1024 px (rtx.py in peci.py zahtevata delovno datoteko za obe mreži). vz1: 240k / 70k = 6,6 / 2,3 MiB
+        # (geometrija z UV ≈ 25 B na trikotnik) → 165k / 44k, da teksture ostanejo v polni ločljivosti pod mejo 6 / 1,9 MB.
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
                 "skorja": dict(barva=(0.56, 0.40, 0.36), barva2=(0.47, 0.30, 0.28), lise=0.35, liseMera=0.03, hrap=0.38,
@@ -232,7 +233,7 @@ ORGANI = {
         vkljuci=r"^(Sclera|Cornea|Iris|Lens|Retina|Vitreous body|Posterior segment of eyeball|Anterior segment of eyeball|Zonular fibres|Optic nerve \(II\)|"
                 r"(Superior|Inferior|Medial|Lateral) rectus muscle|(Superior|Inferior) oblique muscle|Trochlea of superior oblique muscle|Common tendinous ring)\.l( /|$)",
         izkljuci=r"Anterior chamber",
-        cilj=(180_000, 40_000),
+        cilj=(165_000, 40_000),
         # Pečene PBR teksture (videz): beločnica porcelanasto bela z drobnimi episkleralnimi žilicami, mišice rdeče z vlakni,
         # kite in živec sijoče bele; prozorna in s senčilnikom risana tkiva (roženica, leča, steklovina, šarenica, mrežnica)
         # dobijo nevtralen recept, pregledovalnik jih izključi s »tekstura: false« v oko.json.
@@ -274,7 +275,7 @@ ORGANI = {
         vkljuci=r"/ Lungs\.g( |$)|^Trachea( /|$)|/ Bronchi\.g( |$)|^(Left|Right) pulmonary artery( /|$)|/ (Left|Right) pulmonary artery( |$)|"
                 r"/ Pulmonary veins\.g( |$)",
         izkljuci=r"\?\?\?",
-        cilj=(185_000, 42_000),
+        cilj=(165_000, 40_000),
         # Pečene PBR teksture (videz): plevra vlažna in sijoča, pljučno tkivo rožnato sivo z mrežo režnjičev (interlobularni
         # pretini kot drobne temnejše meje) in ponekod sivimi pegami; hrustanec sapnika in bronhijev smetanasto rožnat.
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
@@ -332,7 +333,7 @@ ORGANI = {
         # Z-Anatomy nadledvična žleza je ob HRA ledvici (merilo 0,77) predebela (4,9 × 4,5 × 2,1 cm): 0,72× z dnom na ledvici.
         napihni=[(r"^Suprarenal", 0.72, "dno")],
         vkljuci=r"^(Kidney\.l|Ureter\.l|Suprarenal gland\.l|Left renal artery|Left renal vein|(Anterior|Posterior) branch of renal artery\.l)( /|$)",
-        cilj=(170_000, 40_000),
+        cilj=(160_000, 40_000),
         # Pečene PBR teksture (videz): ovojnica gladka, sijoča, rdeče rjava; skorja zrnata (glomeruli), piramide temnejše
         # s progami, papile svetlejše; maščoba sinusa in nadledvična žleza rumeni; sečevod bledo rožnat.
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
@@ -361,7 +362,7 @@ ORGANI = {
         # (liver-male) ima gostejšo ovojnico, a nima žolčnika, portalne vene in jetrnih ven (samo vtisnine in vezi).
         vkljuci=r"/ Liver( /|$)|^(Gallbladder|Bile duct|Hepatic portal vein|Hepatic veins|Proper hepatic artery|Common hepatic artery)( /|$)|/ Extrahepatic bile ducts\.g( |$)",
         izkljuci=r"^Liver( /|$)|Tributaries|Gastroduodenal",
-        cilj=(180_000, 42_000),
+        cilj=(165_000, 40_000),
         # Pečene PBR teksture (videz): jetra temno rdeče rjava z gladko, sijočo Glissonovo ovojnico in komaj vidnim vzorcem
         # režnjičev; žolčnik temno zelen, žolčevod zelenkasto rumen, žile kot pri srcu (naravne barve).
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
