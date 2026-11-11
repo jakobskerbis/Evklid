@@ -28,21 +28,21 @@ function start() {
   if (ready) return ready;
   if (failedAt && Date.now() - failedAt < 60_000) return Promise.resolve(false);
   const python = process.env.EVKLID_PYTHON || "python3";
-  ready = new Promise((resolve) => {
+  const pr = new Promise((resolve) => {
     let settled = false;
     const done = (v) => {
       if (settled) return;
       settled = true;
-      if (!v) {
-        failedAt = Date.now();
-        ready = null;
-      }
+      if (!v) failedAt = Date.now();
       resolve(v);
     };
     try {
       const env = { ...process.env, PYTHONDONTWRITEBYTECODE: "1", PYTHONIOENCODING: "utf-8" };
       if (existsSync(PYLIB)) env.PYTHONPATH = PYLIB + (env.PYTHONPATH ? `:${env.PYTHONPATH}` : "");
+      buf = ""; // ostanek vrstice ubitega procesa ne sme pokvariti prve vrstice novega
       proc = spawn(python, [WORKER], { env, stdio: ["pipe", "pipe", "pipe"] });
+      // Pisanje v ustavljen proces (EPIPE) pride kot dogodek »error«: brez poslušalca bi podrl strežnik.
+      proc.stdin.on("error", () => {});
       // Proces ne zadrži strežnika (ali testa) pri izhodu.
       proc.unref();
       for (const s of [proc.stdin, proc.stdout, proc.stderr]) s?.unref?.();
@@ -64,14 +64,16 @@ function start() {
     });
     p.on("exit", () => {
       clearTimeout(boot);
-      if (proc === p) proc = null;
+      done(false);
+      // Proces, ki ga je že zamenjal nov (ubit ob roku), ne sme pobrisati stanja novega.
+      if (proc !== p) return;
+      proc = null;
       ready = null;
       for (const [, w] of waiting) {
         clearTimeout(w.timer);
         w.resolve({ ok: null, why: "preverjevalnik se je ustavil" });
       }
       waiting.clear();
-      done(false);
     });
     p.stdout.setEncoding("utf8");
     p.stdout.on("data", (chunk) => {
@@ -100,14 +102,27 @@ function start() {
       }
     });
   });
-  return ready;
+  ready = pr;
+  pr.then((v) => {
+    if (!v && ready === pr) ready = null;
+  });
+  return pr;
 }
 
 /**
  * Ena trditev: op ∈ solve | equal | diff | int | limit | value | ineq | units, args = deli ločeni z »|«.
  * @returns {Promise<{ok: boolean|null, why: string}>} ok null = koda ne zna preveriti (ni napaka).
  */
-export async function casCheck(op, args) {
+// Zahteve gredo v proces po vrsti: rok vsake teče šele, ko je poslana (sicer bi čakajoče v vrsti, npr. kartice
+// iz zapiskov s Promise.all, potekle in ubile proces sredi dela).
+let queue = Promise.resolve();
+export function casCheck(op, args) {
+  const r = queue.then(() => casCheckNow(op, args));
+  queue = r.catch(() => {});
+  return r;
+}
+
+async function casCheckNow(op, args) {
   if (!(await start()) || !proc) return { ok: null, why: "preverjevalnik ni na voljo" };
   const id = ++seq;
   const p = proc;
@@ -116,6 +131,10 @@ export async function casCheck(op, args) {
       waiting.delete(id);
       // Zataknjen proces (npr. ogromen izraz): ubijemo ga, naslednji klic zažene novega.
       p.kill("SIGKILL");
+      if (proc === p) {
+        proc = null;
+        ready = null;
+      }
       resolve({ ok: null, why: "prepočasno" });
     }, TIMEOUT_MS());
     waiting.set(id, { resolve, timer });

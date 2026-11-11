@@ -136,6 +136,62 @@ cas("skeniranje: AI rešitev preverita numerika in SymPy", async () => {
   assert.equal((await verifyAiFull("\\frac{1}{2}+\\frac{1}{3}", { kind: "arith", value: "5/6" })).verified, true);
 });
 
+// Pregled #581 (funkcija): pravilni šolski odgovori ne smejo sprožiti lažnega alarma.
+cas("SymPy: brez lažnih alarmov (definicijsko območje, zaokroževanje, ±, sistemi, pravila za pozitivna števila)", async () => {
+  const yes = [
+    ["solve", ["ln(x)+ln(x-2)=ln(8)", "x", "4"]],
+    ["solve", ["log(x,2)+log(x-2,2)=3", "x", "4"]],
+    ["solve", ["x^2=2", "x", "1.414, -1.414"]],
+    ["solve", ["x^2=2", "x", "±sqrt(2)"]],
+    ["solve", ["x^2-4=0", "x", "2; -2"]],
+    ["solve", ["2^x=5", "x", "2.32"]],
+    ["solve", ["cos(x)=0.3", "x", "1.266+2*k*pi, -1.266+2*k*pi"]],
+    ["solve", ["x^2+y^2=25, x+y=7", "x, y", "x=3, y=4; x=4, y=3"]],
+    ["solve", ["x+y=2, 2*x+2*y=4", "x, y", "x=t, y=2-t"]],
+    ["solve", ["1.2*x+0.8*y=4, x-y=0.5", "x, y", "x=2.2, y=1.7"]],
+    ["value", ["1000*1.05^10", "≈1629"]],
+    ["value", ["25% * 80", "20"]],
+  ];
+  for (const [op, args] of yes) assert.equal((await casCheck(op, args)).ok, true, args.join(" | "));
+  const notWrong = [
+    ["equal", ["ln(a*b)", "ln(a)+ln(b)"]],
+    ["equal", ["sqrt(a*b)", "sqrt(a)*sqrt(b)"]],
+    ["value", ["1000*1.05^10", "1629"]],
+    ["units", ["100*km/h", "28*m/s"]],
+  ];
+  for (const [op, args] of notWrong) assert.notEqual((await casCheck(op, args)).ok, false, args.join(" | "));
+  const no = [
+    ["solve", ["ln(x)+ln(x-2)=ln(8)", "x", "4, -2"]],
+    ["solve", ["x^2=2", "x", "1.42, -1.414"]],
+    ["solve", ["cos(x)=0.3", "x", "1.266+2*k*pi"]],
+    ["solve", ["x+y=2, 2*x+2*y=4", "x, y", "x=1, y=1"]],
+    ["solve", ["x^2+y^2=25, x+y=7", "x, y", "x=3, y=4; x=5, y=2"]],
+    ["units", ["3000*J", "2*10^3*J"]],
+    ["value", ["7/2", "4"]],
+  ];
+  for (const [op, args] of no) assert.equal((await casCheck(op, args)).ok, false, args.join(" | "));
+  // zapis z znaki, ki niso ASCII (npr. široki podčrtaji), se ne razčleni
+  assert.equal((await casCheck("value", ["\uff3f\uff3fimport\uff3f\uff3f", "1"])).ok, null);
+});
+
+test("blok RAČUN (s šumnikom) in blok v oznakah kode se ne pokažeta", () => {
+  const t = "Rezultat je $4$.\n```\n<<RAČUN\nvrednost: 2+2 | 4\n>>\n```" + META;
+  assert.equal(stripMeta(t), "Rezultat je $4$.");
+  for (const n of [1, 3, 8]) {
+    const f = createStreamFilter();
+    let shown = "";
+    for (let i = 0; i < t.length; i += n) shown += f.push(t.slice(i, i + n));
+    shown += f.end().rest;
+    assert.equal(shown.trim(), "Rezultat je $4$.", `kos ${n}`);
+  }
+  assert.equal(parseClaims(t).length, 1);
+});
+
+cas("vzporedni klici čakajo v vrsti (rok teče šele ob pošiljanju)", async () => {
+  const rs = await Promise.all(Array.from({ length: 30 }, (_, i) => casCheck("equal", [`(a+${i})^2`, `a^2+${2 * i}*a+${i * i}`])));
+  assert.equal(rs.filter((r) => r.ok === true).length, 30);
+});
+
 // Celoten krog v klepetu: inštruktor napiše napačno trditev v skrit blok → en »Popravek:«, odgovor se ne shrani za druge.
 cas("klepet: napačna trditev v bloku RACUN sproži en popravek; blok ni viden", async () => {
   const store = openDb(":memory:");

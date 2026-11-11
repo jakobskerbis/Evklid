@@ -117,8 +117,9 @@ def clean(text):
     s = (
         s.replace("−", "-").replace("–", "-").replace("·", "*").replace("×", "*").replace("÷", "/").replace("⋅", "*")
         .replace("π", "pi").replace("∞", "oo").replace("√", "sqrt").replace("²", "^2").replace("³", "^3").replace("°", "*pi/180")
-        .replace("≤", "<=").replace("≥", ">=").replace("≠", "!=")
+        .replace("≤", "<=").replace("≥", ">=").replace("≠", "!=").replace("%", "*(1/100)")
     )
+    s = re.sub(r"^\s*(?:≈|~|\\approx)\s*", "", s)
     s = re.sub(r"(?<=\d),(?=\d)", ".", s) if "," not in re.sub(r"(?<=\d),(?=\d)", "", s) else s
     return s
 
@@ -127,7 +128,7 @@ def parse(text, variables=None, units=False):
     s = clean(text)
     if not s or len(s) > 600:
         raise Unsure("prazen ali predolg izraz")
-    if BAD.search(s):
+    if BAD.search(s) or not s.isascii():
         raise Unsure("nedovoljen znak")
     local = dict(CONSTS)
     local.update(FUNCS)
@@ -198,10 +199,18 @@ def is_zero(expr, syms=None):
     except Exception:
         pass
     free = sorted(expr.free_symbols, key=str)
+    r = _sample_zero(expr, free, 0)
+    if r is False and free:
+        # pravilo, ki velja samo za pozitivne vrednosti (ln(a*b) = ln a + ln b, sqrt(a*b) …): ne vemo
+        return None if _sample_zero(expr, free, 1) else False
+    return r
+
+
+def _sample_zero(expr, free, lo):
     rng = random.Random(7)
     good = bad = 0
     for _ in range(40):
-        pt = {s: sp.Rational(rng.randint(-300, 300), rng.randint(7, 97)) for s in free}
+        pt = {s: sp.Rational(rng.randint(lo or -300, 300), rng.randint(7, 97)) for s in free}
         try:
             v = complex(sp.N(expr.subs(pt), 25))
         except Exception:
@@ -224,10 +233,22 @@ def is_zero(expr, syms=None):
     return True if good >= 5 else None
 
 
+NUM_RE = re.compile(r"(\d+)(?:\.(\d+))?(?:\s*\*\s*10\s*\^\s*\(?\s*([-+]?\d+)\s*\)?|[eE]([-+]?\d+))?")
+APPROX = re.compile(r"^\s*(?:≈|~|\\approx)")
+
+
+def lead_number(text):
+    """Prvo število v zapisu skupaj z eksponentom (2.0*10^3 → 2000.0) ali None."""
+    m = NUM_RE.search(clean(text))
+    if not m:
+        return None
+    return float(m.group(1) + "." + (m.group(2) or "0")) * 10 ** int(m.group(3) or m.group(4) or 0)
+
+
 def decimals_tol(text):
-    """Dovoljeno odstopanje zaradi zaokroževanja: pol enote zadnjega zapisanega mesta."""
-    m = re.search(r"(\d+)(?:\.(\d+))?(?:\s*\*\s*10\s*\^\s*\(?\s*([-+]?\d+)\s*\)?|[eE]([-+]?\d+))?", clean(text))
-    if not m or not re.search(r"\d\.\d|\d[eE]|\*\s*10\s*\^", clean(text)):
+    """Dovoljeno odstopanje zaradi zaokroževanja: pol enote zadnjega zapisanega mesta (tudi »≈ 1629«)."""
+    m = NUM_RE.search(clean(text))
+    if not m or not (APPROX.match(str(text)) or re.search(r"\d\.\d|\d[eE]|\*\s*10\s*\^", clean(text))):
         return None
     dec = len(m.group(2) or "")
     exp = int(m.group(3) or m.group(4) or 0)
@@ -245,8 +266,13 @@ def same_value(exact, claimed_text, variables=None):
     except Exception:
         return d
     if tol is None:
-        # celo število ali ulomek brez decimalk: zaokroženo na celo je dovoljeno samo, če je napisano »≈«
-        return d if d is not None else abs(ev - cv) <= 1e-9 * max(1, abs(ev))
+        # celo število ali ulomek brez decimalk: zaokroženo na celo je dovoljeno samo, če je napisano »≈«;
+        # brez »≈« in za manj kot pol enote ne vemo, ali je mišljeno zaokroženo (ni napaka, ni potrjeno)
+        if d is None and abs(ev - cv) <= 1e-9 * max(1, abs(ev)):
+            return True
+        if abs(ev - cv) <= 0.5 and abs(cv.imag) < 1e-12 and float(cv.real).is_integer() and abs(ev) >= 10:
+            return None
+        return False
     return abs(ev - cv) <= tol + 1e-12 * max(1, abs(ev))
 
 
@@ -285,8 +311,55 @@ def satisfies(e, pt):
         return None
 
 
+def _claim_list(claim_text):
+    """»2, 3« | »x1=2; x2=-2« | »±sqrt(2)« → seznam zapisov posameznih rešitev."""
+    out = []
+    for c in split_top(claim_text, ",;"):
+        c = (c.split("=", 1)[1] if "=" in c else c).strip().replace("\\pm", "±")
+        if c.count("±") == 1:
+            out += [c.replace("±", "+"), c.replace("±", "-")]
+        else:
+            out.append(c)
+    return out
+
+
+def _real_ok(e, x, v):
+    """Pri x = v so vsi logaritmi in necele potence (korenine) realni (definicijsko območje v realnih številih)."""
+    for a in e.atoms(sp.log, sp.Pow):
+        if isinstance(a, sp.Pow) and (not a.exp.is_number or a.exp.is_integer):
+            continue
+        try:
+            val = complex(sp.N(a.subs(x, v), 20))
+        except Exception:
+            continue
+        if abs(val.imag) > 1e-12:
+            return False
+    return True
+
+
+def _solutions(e, x, domain):
+    """Množica rešitev (solveset); kadar je ne najde, še enkrat z združenimi logaritmi (nadmnožica, nato filter)."""
+    try:
+        s = sp.solveset(e, x, domain)
+    except Timeout:
+        raise
+    except Exception:
+        s = None
+    if (s is None or isinstance(s, sp.ConditionSet)) and e.has(sp.log):
+        # log(x, 2) = log(x)/log(2): pomnožimo s konstantnimi logaritmi (rešitve ostanejo iste)
+        base = sp.Mul(*[a for a in e.atoms(sp.log) if a.args[0].is_number and a.args[0] != 1])
+        try:
+            s = sp.solveset(sp.logcombine(sp.expand(sp.expand_log(e, force=True) * base), force=True), x, domain)
+        except Timeout:
+            raise
+        except Exception:
+            s = None
+    return s
+
+
 def solve_one(e, x, claim_text, names):
     domain = sp.S.Complexes if not x.is_real else sp.S.Reals
+    real = domain == sp.S.Reals
     if EMPTY.match(claim_text):
         claimed = []
     elif ALL.match(claim_text):
@@ -295,44 +368,84 @@ def solve_one(e, x, claim_text, names):
             return True, ""
         return False, f"ni vsako število rešitev ({s})"
     else:
-        claimed = [c.split("=", 1)[1] if "=" in c else c for c in split_top(claim_text)]
+        claimed = _claim_list(claim_text)
     k = sp.Symbol("k", integer=True)
     exprs = [parse(c, names + ["k", "n"]).subs({sp.Symbol("k", real=True): k, sp.Symbol("n", real=True): k, sp.Symbol(str(x), real=True): x}) for c in claimed]
-    # 1. vsaka trditev mora rešiti enačbo (pri družinah za k = −2 … 2)
+    # 1. vsaka trditev mora rešiti enačbo (pri družinah za k = −2 … 2); zaokrožene (decimalke) primerjamo spodaj
+    approx = []
     for c, ex in zip(claimed, exprs):
+        tol = decimals_tol(c)
         ks = [-2, -1, 0, 1, 2] if ex.has(k) else [0]
         for kv in ks:
-            r = satisfies(e, {x: ex.subs(k, kv)})
+            v = ex.subs(k, kv)
+            r = satisfies(e, {x: v})
+            if r is True and real and not _real_ok(e, x, v):
+                r = False
+            if r is False and tol is not None:
+                approx.append((c, ex, tol))
+                break
             if r is False:
                 return False, f"{c} ni rešitev"
             if r is None:
                 raise Unsure(f"ne znam vstaviti {c}")
+
+    def ok_found(f):
+        return satisfies(e, {x: f}) is not False and (not real or _real_ok(e, x, f))
+
+    def near(f, ex, tol):
+        try:
+            fv = complex(sp.N(f))
+            return any(abs(fv - complex(sp.N(ex.subs(k, kv)))) <= tol + 1e-12 for kv in (range(-12, 13) if ex.has(k) else [0]))
+        except Exception:
+            return False
+
+    def covered(f):
+        for c, ex in zip(claimed, exprs):
+            tol = next((a[2] for a in approx if a[1] is ex), None)
+            if tol is not None:
+                if near(f, ex, tol):
+                    return True
+            elif ex.has(k):
+                if _in_family(f, ex, k):
+                    return True
+            elif is_zero(f - ex):
+                return True
+        return False
+
+    def approx_hit(found):
+        for c, ex, tol in approx:
+            if not any(near(f, ex.subs(k, 0), tol) for f in found):
+                return c
+        return None
+
     # 2. nobena rešitev ne sme manjkati
-    try:
-        s = sp.solveset(e, x, domain)
-    except Timeout:
-        raise
-    except Exception:
-        s = None
+    s = _solutions(e, x, domain)
     if s is None or isinstance(s, (sp.ConditionSet,)):
         raise Unsure("reševalnik ne najde vseh rešitev")
-    if s.is_FiniteSet:
-        found = list(s)
+    if s.is_FiniteSet or s == sp.S.EmptySet:
+        found = [f for f in s if ok_found(f)]
+        bad = approx_hit(found)
+        if bad:
+            return False, f"{bad} ni rešitev"
+        if not found:
+            return (True, "") if not exprs else (False, "enačba nima rešitev")
         for f in found:
-            if not any(is_zero(f - ex) for ex in exprs if not ex.has(k)) and not any(_in_family(f, ex, k) for ex in exprs if ex.has(k)):
+            if not covered(f):
                 return False, f"manjka rešitev {sp.sstr(f)}"
         return True, ""
-    if s == sp.S.EmptySet:
-        return (True, "") if not exprs else (False, "enačba nima rešitev")
     # neskončno rešitev (npr. kotne funkcije): vse v [−20, 20] morajo biti v trditvah
     try:
-        part = sp.solveset(e, x, sp.Interval(-20, 20)) if domain == sp.S.Reals else None
+        part = sp.solveset(e, x, sp.Interval(-20, 20)) if real else None
     except Exception:
         part = None
     if part is None or not part.is_FiniteSet:
         raise Unsure("neskončna množica rešitev")
-    for f in part:
-        if not any(_in_family(f, ex, k) if ex.has(k) else is_zero(f - ex) for ex in exprs):
+    found = [f for f in part if ok_found(f)]
+    bad = approx_hit(found)
+    if bad:
+        return False, f"{bad} ni rešitev"
+    for f in found:
+        if not covered(f):
             return False, f"manjka rešitev {sp.sstr(f)}"
     return True, ""
 
@@ -348,13 +461,9 @@ def _in_family(f, ex, k):
     return False
 
 
-def solve_system(eqs, vs, claim_text, names):
-    if EMPTY.match(claim_text):
-        s = sp.solve(eqs, vs, dict=True)
-        return (True, "") if not s else (False, f"sistem ima rešitev {s[0]}")
-    parts = split_top(claim_text, ",;")
-    pt = {}
-    for p in parts:
+def _point(text, vs, names):
+    pt, tol = {}, {}
+    for p in split_top(text, ",;"):
         if "=" not in p:
             raise Unsure("rešitev sistema zapiši kot x=…, y=…")
         a, b = p.split("=", 1)
@@ -363,17 +472,59 @@ def solve_system(eqs, vs, claim_text, names):
         if sym is None:
             raise Unsure(f"neznanka {a}")
         pt[sym] = parse(b, names)
+        tol[sym] = decimals_tol(b)
     if set(pt) != set(vs):
         raise Unsure("rešitev sistema nima vseh neznank")
-    for e in eqs:
-        r = satisfies(e, pt)
-        if r is False:
+    return pt, tol
+
+
+def solve_system(eqs, vs, claim_text, names):
+    if EMPTY.match(claim_text):
+        s = sp.solve(eqs, vs, dict=True)
+        return (True, "") if not s else (False, f"sistem ima rešitev {s[0]}")
+    # več rešitev: »x=3, y=4; x=4, y=3«
+    chunks = split_top(claim_text, ";")
+    if len(chunks) > 1 and all(all(re.search(r"(?<![A-Za-z0-9])%s\s*=" % re.escape(str(v)), ch) for v in vs) for ch in chunks):
+        groups = chunks
+    else:
+        groups = [claim_text]
+    points = [_point(re.sub(r"^\((.*)\)$", r"\1", g.strip()), vs, names) for g in groups]
+    exact, approx = [], []
+    for pt, tol in points:
+        rs = [satisfies(e, pt) for e in eqs]
+        if all(r is True for r in rs):
+            exact.append(pt)
+        elif any(r is False for r in rs) and all(t is not None or pt[v].is_Rational for v, t in tol.items()) and any(t is not None for t in tol.values()):
+            approx.append((pt, tol))
+        elif any(r is False for r in rs):
             return False, "rešitev ne zadošča vsem enačbam"
-        if r is None:
+        else:
             raise Unsure("ne znam vstaviti")
     sols = sp.solve(eqs, vs, dict=True)
-    if len(sols) > 1:
-        return False, f"sistem ima več rešitev ({len(sols)})"
+    if not sols:
+        raise Unsure("reševalnik ne najde rešitev")
+    vset = set(vs)
+    param = any(set(s) != vset or any(val.free_symbols & vset for val in s.values()) for s in sols)
+    claimed_param = any(val.free_symbols for pt in exact for val in pt.values())
+    if param:
+        if claimed_param and not approx:
+            return True, ""
+        return False, "sistem ima neskončno rešitev"
+    if claimed_param:
+        raise Unsure("rešitev s parametrom")
+
+    def close(s, pt, tol):
+        try:
+            return all(abs(complex(sp.N(s[v])) - complex(sp.N(pt[v]))) <= (tol[v] or 1e-9) + 1e-12 for v in vs)
+        except Exception:
+            return False
+
+    for pt, tol in approx:
+        if not any(close(s, pt, tol) for s in sols):
+            return False, "rešitev ne zadošča vsem enačbam"
+    for s in sols:
+        if not any(all(is_zero(s[v] - pt[v]) for v in vs) for pt in exact) and not any(close(s, pt, tol) for pt, tol in approx):
+            return False, f"manjka rešitev {', '.join(f'{v}={sp.sstr(s[v])}' for v in vs)}"
     return True, ""
 
 
@@ -509,11 +660,12 @@ def op_units(expr, claimed):
         return False, "enoti se ne ujemata"
     tol = decimals_tol(claimed)
     rv = float(sp.N(ratio))
+    cval = abs(lead_number(claimed) or 0)
     if tol is None:
         ok = abs(rv - 1) < 1e-9
+        if not ok and cval >= 10 and float(cval).is_integer() and abs(rv - 1) * cval <= 0.5:
+            raise Unsure("zaokroženo na celo brez »≈«")
     else:
-        num = re.search(r"[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?", clean(claimed))
-        cval = abs(float(num.group(0))) if num else 0
         ok = cval > 0 and abs(rv - 1) * cval <= tol * 1.0001 + 1e-12
     return ok, "" if ok else f"vrednost se ne ujema (razmerje {rv:.6g})"
 

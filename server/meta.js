@@ -5,7 +5,8 @@
 
 const META_RE = /<<\s*META\b([\s\S]*?)>>/g;
 const CARD_RE = /<<\s*KARTICA\b([\s\S]*?)>>/g;
-const RACUN_RE = /<<\s*RACUN\b[\s\S]*?>>/g;
+// Tudi »RAČUN« in blok v oznakah kode (```), kot v primeru v navodilih.
+const RACUN_RE = /(?:^[ \t]*```[a-z]*[ \t]*\n)?[ \t]*<<\s*RA[CČ]UN\b[\s\S]*?>>(?:[ \t]*\n[ \t]*```[ \t]*$)?/gm;
 // Gumbi: najprej natančen zapis s seznamom JSON (tudi »>>« ali »]« znotraj niza), sicer do prvega »>>«.
 // Oznaka je lahko prevedena (CHOICES) ali z enim oklepajem; učenec bloka nikoli ne vidi.
 const CHOICES_JSON_RE = /<{1,2}\s*(?:IZBIRE|CHOICES)\b\s*(\[(?:"(?:[^"\\\n]|\\.)*"|[^\]"\n])*\])\s*>{1,2}/g;
@@ -16,7 +17,7 @@ const CHOICES_LOOSE_RE = /^[ \t]*[`*_]*<{1,2}[ \t]*(?:IZBIRE|CHOICES)\b[^\n]*$/g
 const META_LOOSE_RE = /^[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\bsubject=[^\n]*$/gm;
 // Bloki gumbov za orodja aplikacije (<<ODPRI …>>, <<GRAF […]>>, <<SKICA {…}>>, server/odpri.js).
 const OPEN_RE = /`?<<\s*(?:ODPRI|GRAF|SKICA)\b[\s\S]*?>>`?/g;
-const MARKERS = ["<<RACUN", "<< RACUN", "<<ODPRI", "<<GRAF", "<<SKICA", "<< ODPRI", "<< GRAF", "<< SKICA", "<<META", "<<KARTICA", "<<IZBIRE", "<< META", "<< KARTICA", "<< IZBIRE", "<META", "META subject=", "<IZBIRE", "< IZBIRE", "<CHOICES", "< CHOICES"];
+const MARKERS = ["<<RACUN", "<< RACUN", "<<RAČUN", "<< RAČUN", "<<ODPRI", "<<GRAF", "<<SKICA", "<< ODPRI", "<< GRAF", "<< SKICA", "<<META", "<<KARTICA", "<<IZBIRE", "<< META", "<< KARTICA", "<< IZBIRE", "<META", "META subject=", "<IZBIRE", "< IZBIRE", "<CHOICES", "< CHOICES"];
 const MARKER_MAX = Math.max(...MARKERS.map((m) => m.length));
 
 import { ALL_SUBJECTS } from "./subjects.js";
@@ -120,7 +121,7 @@ export function stripMeta(text) {
     .replace(CHOICES_RE, "")
     .replace(CHOICES_LOOSE_RE, "")
     .replace(OPEN_RE, "")
-    .replace(/(?:<<\s*(?:META|KARTICA|RACUN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
+    .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
 }

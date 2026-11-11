@@ -15,7 +15,8 @@ import { casCheck } from "./cas.js";
 import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 
-const BLOCK_RE = /<<\s*RACUN\b([\s\S]*?)>>/g;
+// Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
+const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
 export const MAX_CLAIMS = 16;
 
 // Ključne besede (slovensko ali angleško) → ukaz preverjevalnika.
@@ -49,7 +50,7 @@ export function parseClaims(text) {
   return out;
 }
 
-export const hasClaimBlock = (text) => /<<\s*RACUN\b/.test(String(text || ""));
+export const hasClaimBlock = (text) => /<<\s*RA[CČ]UN\b/.test(String(text || ""));
 
 // ---------------------------------------------------------------------------
 // Kemija (brez Pythona)
@@ -120,12 +121,16 @@ async function checkOne(c) {
  * Preveri vse trditve. Vrne { checked, failed: [{ line, why }], unsure: [{ line, why }] }.
  * checked = koliko trditev je koda potrdila ali ovrgla.
  */
+// Skupni rok za en odgovor: 16 počasnih trditev po 9 s bi učenca pustilo čakati minute.
+const BUDGET_MS = () => Number(process.env.EVKLID_RACUN_BUDGET_MS) || 20_000;
+
 export async function checkClaims(claims) {
   const out = { checked: 0, failed: [], unsure: [] };
+  const t0 = Date.now();
   for (const c of claims.slice(0, MAX_CLAIMS)) {
     let r;
     try {
-      r = await checkOne(c);
+      r = Date.now() - t0 > BUDGET_MS() ? { ok: null, why: "ni časa" } : await checkOne(c);
     } catch (e) {
       r = { ok: null, why: String(e?.message || e) };
     }
