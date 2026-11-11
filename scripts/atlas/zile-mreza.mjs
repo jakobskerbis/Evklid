@@ -322,6 +322,78 @@ export function normaleZvarjenih(m) {
   return N.map(v3.norm);
 }
 
+// Zgostitev oglate cevi (velike žile s 6 ali 12 stranicami): rob se razpolovi, kjer gladka ploskev skozi oglišči in
+// njuni normali (kubična krivulja PN-trikotnikov) od tetive odstopa za več kot »tol« (metri); novo oglišče leži na
+// krivulji, zato je obris bolj okrogel, ne le gostejši. Ravni robovi (vzdolž ravne cevi) ostanejo. Trikotnik z 1, 2
+// ali 3 razpolovljenimi robovi se razdeli na 2, 3 ali 4 (mreža ostane skladna, brez T-stikov). Do »krogov« prehodov
+// (6 → 12 → 24 stranic). Na koncu vse normale dela na novo iz geometrije (gladke). Vrne število novih trikotnikov.
+export function zgosti(m, tol, { krogov = 2 } = {}) {
+  const T0 = m.F.length / 3;
+  for (let krog = 0; krog < krogov; krog++) {
+    const N = normaleZvarjenih(m);
+    const kl = (a, b) => (a < b ? a * 4294967296 + b : b * 4294967296 + a);
+    const sred = new Map(); // zvarjen rob → točka na krivulji ali null
+    const tocka = (a, b) => {
+      const k = kl(a, b);
+      if (sred.has(k)) return sred.get(k);
+      const pa = m.W[a], pb = m.W[b], na = N[a], nb = N[b];
+      const e = v3.sub(pb, pa);
+      const l = v3.len(e);
+      const b1 = v3.sub(v3.add(v3.mul(pa, 2), pb), v3.mul(na, v3.dot(e, na))); // 3 · b210
+      const b2 = v3.add(v3.add(v3.mul(pb, 2), pa), v3.mul(nb, v3.dot(e, nb))); // 3 · b120
+      const p = v3.mul(v3.add(v3.add(pa, pb), v3.add(b1, b2)), 1 / 8);
+      const odm = v3.dist(p, v3.lerp(pa, pb, 0.5));
+      // odstopanje nad 30 % dolžine roba je oster pregib (ali pokvarjena normala), ne gladka cev: rob ostane
+      const r = odm > tol && odm < 0.3 * l && p.every(Number.isFinite) ? p : null;
+      sred.set(k, r);
+      return r;
+    };
+    const novo = new Map(); // izrisni rob → novo izrisno oglišče
+    const vmes = (i, j, p) => {
+      const k = kl(i, j);
+      let r = novo.get(k);
+      if (r === undefined) { r = dodajOglisce(m, p, [[i, 1], [j, 1]]); novo.set(k, r); }
+      return r;
+    };
+    const F = [];
+    const T = m.F.length / 3;
+    let razdeljenih = 0;
+    for (let f = 0; f < T; f++) {
+      const v = [m.F[f * 3], m.F[f * 3 + 1], m.F[f * 3 + 2]];
+      const w = v.map((i) => m.zvar[i]);
+      const s = [0, 1, 2].map((k) => (w[k] === w[(k + 1) % 3] ? null : tocka(w[k], w[(k + 1) % 3])));
+      const st = s.filter(Boolean).length;
+      if (!st) { F.push(v[0], v[1], v[2]); continue; }
+      razdeljenih++;
+      const mi = s.map((p, k) => (p ? vmes(v[k], v[(k + 1) % 3], p) : -1));
+      if (st === 3) F.push(v[0], mi[0], mi[2], mi[0], v[1], mi[1], mi[2], mi[1], v[2], mi[0], mi[1], mi[2]);
+      else if (st === 1) {
+        const k = s.findIndex(Boolean);
+        const a = v[k], b = v[(k + 1) % 3], c = v[(k + 2) % 3];
+        F.push(a, mi[k], c, mi[k], b, c);
+      } else {
+        const k = s.findIndex((p) => !p); // nerazpolovljen rob a → b, nasproti c
+        const a = v[k], b = v[(k + 1) % 3], c = v[(k + 2) % 3];
+        const mbc = mi[(k + 1) % 3], mca = mi[(k + 2) % 3];
+        F.push(mca, mbc, c);
+        // štirikotnik a, b, mbc, mca po krajši diagonali
+        if (v3.dist(pol(m, a), pol(m, mbc)) <= v3.dist(pol(m, b), pol(m, mca))) F.push(a, b, mbc, a, mbc, mca);
+        else F.push(a, b, mca, b, mbc, mca);
+      }
+    }
+    if (!razdeljenih) break;
+    m.F = F;
+    zvari(m);
+  }
+  const dT = m.F.length / 3 - T0;
+  if (dT) {
+    const N = normaleZvarjenih(m);
+    for (let i = 0; i < m.zvar.length; i++) nastaviAtribut(m, "NORMAL", i, N[m.zvar[i]]);
+    m.spremenjeno = true;
+  }
+  return dT;
+}
+
 // Žarek proti trikotnikom mreže (Möller–Trumbore). Vrne { t, f } najbližjega zadetka z t > tmin ali null.
 // stran: 1 = samo ploskve, ki jih žarek zadene od znotraj (v smeri njihove normale), -1 = samo od zunaj, 0 = vse.
 // ploskve: seznam indeksov trikotnikov (privzeto vsi).
@@ -372,10 +444,31 @@ export function steviloZadetkov(m, o, d, ploskve) {
   return st;
 }
 
+// Ali je komponenta »k« ({ vr: ploskve }) vgnezdena v zaprtih lupinah »lupine« (druge komponente istega dela s
+// prostornino > 0)? Vzorec težišč do 9 ploskev komponente; točka je znotraj, če je v vsaj eni lupini (parnost žarka);
+// odloči večina. Unija lupin, ne ena sama: svetlina žile teče skozi več prekrivajočih se zunanjih lupin (deblo + veja),
+// zato škatla svetline ni nujno v škatli ene lupine. Isto pravilo ima pregled (preveri-mreze.mjs, analiziraj).
+const SMERI_VZORCA = [[0.5377, 0.7151, 0.4463], [-0.6713, 0.2911, 0.6816], [0.3015, -0.8452, 0.4413]];
+export function vgnezdena(m, k, lupine) {
+  const drugi = lupine.filter((c) => c !== k);
+  if (!drugi.length) return false;
+  const st = Math.min(9, k.vr.length);
+  let znotraj = 0;
+  for (let i = 0; i < st; i++) {
+    const f = k.vr[Math.floor(((i + 0.5) * k.vr.length) / st)];
+    const p = v3.mul(v3.add(v3.add(pol(m, m.F[f * 3]), pol(m, m.F[f * 3 + 1])), pol(m, m.F[f * 3 + 2])), 1 / 3);
+    const d = SMERI_VZORCA[i % SMERI_VZORCA.length];
+    if (drugi.some((c) => [0, 1, 2].every((j) => c.mn[j] <= p[j] && c.mx[j] >= p[j]) && steviloZadetkov(m, p, d, c.vr) % 2 === 1)) znotraj++;
+  }
+  return znotraj * 2 > st;
+}
+
 // Usmeritev: v vsaki komponenti vse ploskve enako navite (večina zmaga), nato zunanja stran navzven.
-// Zaprta komponenta: predznak prostornine (votlina v drugi zaprti komponenti gleda navznoter). Odprta: žarki iz
-// vzorca ploskev; stran, s katere žarek redkeje zadene isto komponento, je zunanja. Vrne { obrnjene (manjšinske ploskve), navznoter (obrnjene cele komponente) }.
-export function usmeri(m, { vzorec = 120 } = {}) {
+// Zaprta komponenta: predznak prostornine. Odprta: žarki iz vzorca ploskev; stran, s katere žarek redkeje zadene isto
+// komponento, je zunanja. Komponente, vgnezdene v zaprti lupini istega dela (svetlina votle žile: notranja lupina v
+// zunanji), nikoli ne obrnemo: v viru gleda v svetlino in je od zunaj ni videti, žarki in predznak pa bi jo obrnili
+// navzven. Vrne { obrnjene (manjšinske ploskve), navznoter (obrnjene cele komponente) }.
+export function usmeri(m, { vzorec = 120, samoNavitje = false } = {}) {
   const E = robovi(m);
   const T = m.F.length / 3;
   const sos = Array.from({ length: T }, () => []);
@@ -392,7 +485,7 @@ export function usmeri(m, { vzorec = 120 } = {}) {
   const o = new Int8Array(T).fill(-1);
   let obrnjene = 0, navznoter = 0;
   const obrni = (f) => { const x = m.F[f * 3 + 1]; m.F[f * 3 + 1] = m.F[f * 3 + 2]; m.F[f * 3 + 2] = x; };
-  const zaprte = [];
+  const komp = [];
   for (let s = 0; s < T; s++) {
     if (o[s] >= 0) continue;
     const vr = [s];
@@ -406,18 +499,26 @@ export function usmeri(m, { vzorec = 120 } = {}) {
     }
     const manj = n1 * 2 > vr.length ? 0 : 1;
     for (const f of vr) if (o[f] === manj) { obrni(f); obrnjene++; }
-    if (zaprta) {
-      // zaprta komponenta: predznak prostornine, odločimo spodaj (votlina v drugi komponenti gleda navznoter)
-      let V = 0;
-      const mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity];
-      for (const f of vr) {
-        const a = pol(m, m.F[f * 3]), b = pol(m, m.F[f * 3 + 1]), c = pol(m, m.F[f * 3 + 2]);
-        V += v3.dot(a, v3.cross(b, c));
-        for (const p of [a, b, c]) for (let k = 0; k < 3; k++) { if (p[k] < mn[k]) mn[k] = p[k]; if (p[k] > mx[k]) mx[k] = p[k]; }
-      }
-      zaprte.push({ vr, V, mn, mx });
+    let V = 0;
+    const mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity];
+    for (const f of vr) {
+      const a = pol(m, m.F[f * 3]), b = pol(m, m.F[f * 3 + 1]), c = pol(m, m.F[f * 3 + 2]);
+      V += v3.dot(a, v3.cross(b, c));
+      for (const p of [a, b, c]) for (let k = 0; k < 3; k++) { if (p[k] < mn[k]) mn[k] = p[k]; if (p[k] > mx[k]) mx[k] = p[k]; }
+    }
+    komp.push({ vr, V, mn, mx, zaprta });
+  }
+  if (samoNavitje) { if (obrnjene) m.spremenjeno = true; return { obrnjene, navznoter }; } // samo enotno navitje v komponenti
+  const lupine = komp.filter((k) => k.zaprta && k.V > 0);
+  const vsota = lupine.reduce((a, k) => a + k.V, 0);
+  for (const k of komp) {
+    const { vr } = k;
+    if (k.zaprta) {
+      // prostornina > 0 je prav; < 0 je prav samo za votlino (svetlino) v zunanjih lupinah
+      if (k.V < 0 && !(-k.V < vsota && vgnezdena(m, k, lupine))) { for (const f of vr) obrni(f); navznoter++; }
       continue;
     }
+    if (lupine.length && vgnezdena(m, k, lupine)) continue; // odprta (npr. luknjičava) svetlina: ostane kot v viru
     let spredaj = 0, zadaj = 0;
     const korak = Math.max(1, Math.floor(vr.length / vzorec));
     for (let i = (korak / 2) | 0; i < vr.length; i += korak) {
@@ -432,15 +533,6 @@ export function usmeri(m, { vzorec = 120 } = {}) {
       if (zarek(m, v3.sub(c, v3.mul(nn, eps)), v3.mul(nn, -1), 0, vr)) zadaj++;
     }
     if (spredaj > 2 * zadaj + 2) { for (const f of vr) obrni(f); navznoter++; } // samo ob jasni večini (ponovljivo)
-  }
-  // Zaprte komponente: prostornina > 0 je prav. Prostornina < 0 je prav samo za votlino (svetlina votle žile: notranja
-  // lupina v zaprti zunanji lupini istega dela); sicer je komponenta obrnjena navznoter in jo obrnemo.
-  const smer = [0.5377, 0.7151, 0.4463];
-  for (const k of zaprte) {
-    if (k.V >= 0) continue;
-    const p = pol(m, m.F[k.vr[0] * 3]);
-    const votlina = zaprte.some((c) => c.V > 0 && -k.V < c.V && [0, 1, 2].every((i) => c.mn[i] <= k.mn[i] && c.mx[i] >= k.mx[i]) && steviloZadetkov(m, p, smer, c.vr) % 2 === 1);
-    if (!votlina) { for (const f of k.vr) obrni(f); navznoter++; }
   }
   if (obrnjene || navznoter) m.spremenjeno = true;
   return { obrnjene, navznoter };

@@ -131,3 +131,61 @@ test("popravek žil: stik dveh delov iste cevi dobi ista oglišča; luknjica se 
   assert.equal(zakrpaj({ ime: "c", m: c }, 30), 1);
   assert.equal(analiziraj(Float64Array.from(c.P), Uint32Array.from(c.F)).luknje, 2);
 });
+
+test("popravek žil: zgostitev oglate cevi da 24 stranic na krogu, raven rob vzdolž cevi ostane", () => {
+  const m = cev({ n: 12 });
+  const T0 = m.F.length / 3;
+  const dT = G.zgosti(m, 0.00015);
+  assert.ok(dT > 0);
+  // vsak obroč 12 → 24 oglišč, vzdolžni robovi (ravna cev) se ne razpolovijo: konca imata 24 oglišč
+  assert.deepEqual(G.zanke(m).map((z) => z.length), [24, 24]);
+  // nova oglišča ležijo na krogu (ne na tetivi): polmer vseh oglišč 10 mm ± 0,03 mm
+  for (const p of m.W) assert.ok(Math.abs(Math.hypot(p[0], p[2]) - 0.01) < 3e-5, `polmer ${Math.hypot(p[0], p[2])}`);
+  // skladna mreža: brez T-stikov in obrnjenih ploskev, dva odprta konca
+  const r = analiziraj(Float64Array.from(m.P), Uint32Array.from(m.F));
+  assert.deepEqual([r.luknje, r.nemnogoterni, r.obrnjene, r.izrojeni], [2, 0, 0, 0]);
+  assert.ok(m.F.length / 3 < 3.1 * T0, "zgostitev samo po obodu");
+  // pod pragom se nič ne spremeni (24 stranic: odstopanje 0,09 mm)
+  assert.equal(G.zgosti(m, 0.00015), 0);
+  // stena zgoščene cevi je zaprta
+  stena({ ime: "cev", m }, 2.5);
+  assert.deepEqual(pregled(m), [0, 0, 0, 0, 0, 0]);
+});
+
+test("popravek žil: skrit konec (stik, konec v sosednji žili) dobi obroč iz oglišč sten, brez ravnega roba", () => {
+  const a = cev(), b = cev();
+  const kl = (p) => `${Math.round(p[0] / 2e-6)},${Math.round(p[1] / 2e-6)},${Math.round(p[2] / 2e-6)}`;
+  const skrita = new Set(b.W.filter((p) => Math.abs(p[1]) < 1e-9).map(kl)); // konec pri y = 0
+  stena({ ime: "a", m: a }, 2.5);
+  stena({ ime: "b", m: b }, 2.5, { skrita });
+  assert.deepEqual(pregled(b), [0, 0, 0, 0, 0, 0]);
+  assert.equal(a.F.length, b.F.length);
+  assert.equal(a.P.length - b.P.length, 3 * 24, "skriti obroč ne podvoji 12 + 12 oglišč");
+  // na skritem koncu ni oglišča z normalo vzdolž osi (raven rob), na vidnem je
+  const osne = (m, y) => { const n = m.A.get("NORMAL").d; let st = 0; for (let i = 0; i < m.P.length / 3; i++) if (Math.abs(m.P[i * 3 + 1] - y) < 1e-9 && Math.abs(n[i * 3 + 1]) > 0.9) st++; return st; };
+  assert.equal(osne(b, 0), 0);
+  assert.equal(osne(b, 0.08), 24);
+  assert.equal(osne(a, 0), 24);
+});
+
+test("popravek žil: svetlina v zaprti zunanji lupini se ne obrne (tudi čez dve prekrivajoči se lupini), štrleč obrnjen kos pa", () => {
+  // dve zaprti polni cevi, ki se prekrivata vzdolž osi (deblo + veja), in ena svetlina skozi obe
+  const zaprta = (o) => { const m = cev(o); polna({ ime: "c", m }, true); return m; };
+  const zdruzi = (...ms) => {
+    const P = [], N = [], C = [], F = [];
+    for (const m of ms) { const o = P.length / 3; P.push(...m.P); N.push(...m.A.get("NORMAL").d); C.push(...m.A.get("COLOR_0").d); F.push(...m.F.map((i) => i + o)); }
+    return mreza(P, N, C, F);
+  };
+  const obrni = (m) => { for (let f = 0; f < m.F.length; f += 3) [m.F[f + 1], m.F[f + 2]] = [m.F[f + 2], m.F[f + 1]]; return m; };
+  const svetlina = obrni(zaprta({ r: 0.006, L: 0.11, y0: 0.005 }));
+  const m = zdruzi(zaprta({ L: 0.07 }), zaprta({ L: 0.07, y0: 0.05, zasuk: 0.2 }), svetlina);
+  const V0 = prostornina(m);
+  assert.deepEqual(G.usmeri(m), { obrnjene: 0, navznoter: 0 });
+  assert.equal(prostornina(m), V0);
+  assert.equal(pregled(m)[4], 0, "pregled svetline ne šteje za obrnjeno navznoter");
+  // obrnjen kos, ki štrli iz lupine (večina zunaj), se obrne navzven; pregled ga pred tem šteje
+  const strli = zdruzi(zaprta({ L: 0.07 }), obrni(zaprta({ r: 0.003, L: 0.05, y0: 0.06 })));
+  assert.equal(pregled(strli)[4], 1);
+  assert.equal(G.usmeri(strli).navznoter, 1);
+  assert.equal(pregled(strli)[4], 0);
+});

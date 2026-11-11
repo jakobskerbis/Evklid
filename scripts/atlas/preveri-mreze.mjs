@@ -183,8 +183,9 @@ export function analiziraj(p, idx, zrcaljeno = false) {
   };
   const telesa = []; // zaprte komponente: { V, mn, mx, ploskve }
   // Število presečišč žarka iz (ox, oy, oz) v stalni smeri s ploskvami (liho = točka je v telesu).
-  const presecisc = (ox, oy, oz, ploskve) => {
-    const dx = 0.5377, dy = 0.7151, dz = 0.4463;
+  const SMERI = [[0.5377, 0.7151, 0.4463], [-0.6713, 0.2911, 0.6816], [0.3015, -0.8452, 0.4413]];
+  const presecisc = (ox, oy, oz, ploskve, smer = 0) => {
+    const [dx, dy, dz] = SMERI[smer];
     let st = 0;
     for (const f of ploskve) {
       const a = F[f * 3] * 3, b = F[f * 3 + 1] * 3, c = F[f * 3 + 2] * 3;
@@ -235,11 +236,24 @@ export function analiziraj(p, idx, zrcaljeno = false) {
   }
   // Obrnjena navznoter: zaprta komponenta z negativno prostornino, razen votline (svetlina votle žile: notranja lupina,
   // ki leži v zaprti zunanji lupini istega dela in gleda v votlino; tako so narejene votle žile v organih).
+  // Vgnezdenost: vzorec težišč do 9 ploskev, točka je znotraj, če je v vsaj eni drugi zaprti lupini s prostornino > 0
+  // (unija: svetlina teče skozi več prekrivajočih se zunanjih lupin); odloči večina. Isto pravilo: zile-mreza.mjs.
+  const lupine = telesa.filter((c) => c.V > 0);
+  const vsota = lupine.reduce((a, c) => a + c.V, 0);
   for (const k of telesa) {
     if (k.V >= 0) continue;
-    const f0 = k.ploskve[0];
-    const ox = P[F[f0 * 3] * 3], oy = P[F[f0 * 3] * 3 + 1], oz = P[F[f0 * 3] * 3 + 2];
-    const votlina = telesa.some((c) => c.V > 0 && -k.V < c.V && c.mn[0] <= k.mn[0] && c.mn[1] <= k.mn[1] && c.mn[2] <= k.mn[2] && c.mx[0] >= k.mx[0] && c.mx[1] >= k.mx[1] && c.mx[2] >= k.mx[2] && presecisc(ox, oy, oz, c.ploskve) % 2 === 1);
+    let votlina = false;
+    if (-k.V < vsota) {
+      const st = Math.min(9, k.ploskve.length);
+      let znotraj = 0;
+      for (let i = 0; i < st; i++) {
+        const f = k.ploskve[Math.floor(((i + 0.5) * k.ploskve.length) / st)];
+        const a = F[f * 3] * 3, b = F[f * 3 + 1] * 3, c = F[f * 3 + 2] * 3;
+        const ox = (P[a] + P[b] + P[c]) / 3, oy = (P[a + 1] + P[b + 1] + P[c + 1]) / 3, oz = (P[a + 2] + P[b + 2] + P[c + 2]) / 3;
+        if (lupine.some((c2) => c2.mn[0] <= ox && c2.mn[1] <= oy && c2.mn[2] <= oz && c2.mx[0] >= ox && c2.mx[1] >= oy && c2.mx[2] >= oz && presecisc(ox, oy, oz, c2.ploskve, i % 3) % 2 === 1)) znotraj++;
+      }
+      votlina = znotraj * 2 > st;
+    }
     if (!votlina) navznoter++;
   }
   // Zrcaljeno vozlišče (det < 0): glTF tam za sprednjo šteje nasprotno navijanje, zato je predznak prostornine iz
