@@ -1455,7 +1455,7 @@ async function uciPhone(p) {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
     return f;
   });
-  if (!/^\/3d\?vgrajeno=1#[a-z0-9]+(-[a-z0-9]+)*$/.test(src)) throw new Error(`»Poglej v 3D« v lekciji ne odpre modela (${src || "brez okvirja"})`);
+  if (!/^\/3d\?vgrajeno=1(&raven=[123])?#[a-z0-9]+(-[a-z0-9]+)*$/.test(src)) throw new Error(`»Poglej v 3D« v lekciji ne odpre modela (${src || "brez okvirja"})`);
   if (await p.locator(".uci-3d-full").count()) throw new Error("Esc ne zapre 3D modela iz lekcije");
   await closeLesson();
   await uciTb("FIZ-OS-8/gostota");

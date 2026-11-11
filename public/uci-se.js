@@ -4,6 +4,7 @@
 // (showView("textbook"), ?pogled=lab, ukaz inštruktorju »odpri laboratorij«) izberejo pravi zavihek v app.js.
 // Atlas ali model iz 3D sveta se odpre čez cel zaslon: stran /3d v okvirju (isti izvor), Nazaj ali Esc ga zapreta.
 import { t } from "./i18n.js";
+import { stopnja } from "./stopnja.js";
 import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
 
@@ -200,6 +201,13 @@ async function show3d() {
 }
 
 /** Odpre atlas (»atlas«) ali model z id-jem čez cel zaslon; param npr. { izberi } (atlas) ali { del } (model). */
+// raven razlage 3D iz profila (kot 3d/raven.js; brez uvoza zaradi prvega odprtja)
+const ravenProfila = () => {
+  const s = D?.getStudent?.()?.settings;
+  const st = s ? stopnja(s) : "SS";
+  return st === "FAKS" ? 3 : st === "SS" ? 2 : 1;
+};
+
 export function open3d(id, title = "", param = null) {
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id || "")) return;
   const q = param ? new URLSearchParams(Object.entries(param).filter(([, v]) => v)).toString() : "";
@@ -212,7 +220,8 @@ export function open3d(id, title = "", param = null) {
   const frame = document.createElement("iframe");
   frame.title = title || t("a3.hubTitle");
   frame.allow = "fullscreen";
-  frame.src = `/3d?vgrajeno=1#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
+  // raven delov iz profila (OŠ/SŠ/študij): okvir je ločen dokument brez profila (public/3d/raven.js)
+  frame.src = `/3d?vgrajeno=1&raven=${ravenProfila()}#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
   el.append(frame);
   document.body.append(el);
   document.body.classList.add("uci-3d-odprto");
