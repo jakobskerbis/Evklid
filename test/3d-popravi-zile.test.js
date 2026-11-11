@@ -189,3 +189,21 @@ test("popravek žil: svetlina v zaprti zunanji lupini se ne obrne (tudi čez dve
   assert.equal(G.usmeri(strli).navznoter, 1);
   assert.equal(pregled(strli)[4], 0);
 });
+
+test("popravek žil: stik obročev z različnim številom oglišč dobi unijo oglišč (brez T-stikov), stena obeh je zaprta", () => {
+  const a = cev({ L: 0.04, n: 12 }), b = cev({ L: 0.04, y0: 0.04, n: 16, zasuk: 0.07 });
+  assert.ok(stiki([{ ime: "a", m: a }, { ime: "b", m: b }]) > 0);
+  const kl = (p) => p.map((c) => Math.round(c * 1e7)).join(",");
+  const naStiku = (m) => new Set(G.zanke(m).flat().map((e) => m.W[e.w]).filter((p) => Math.abs(p[1] - 0.04) < 1e-4).map(kl));
+  const sa = naStiku(a), sb = naStiku(b);
+  assert.ok(sa.size >= 16 && sa.size === sb.size, `oglišč na stiku ${sa.size} in ${sb.size}`);
+  for (const k of sb) assert.ok(sa.has(k), "oglišče stika manjka v drugem delu");
+  // ponovitev ne spremeni ničesar
+  assert.equal(stiki([{ ime: "a", m: a }, { ime: "b", m: b }]), 0);
+  for (const m of [a, b]) {
+    const r = analiziraj(Float64Array.from(m.P), Uint32Array.from(m.F));
+    assert.deepEqual([r.luknje, r.nemnogoterni, r.obrnjene, r.izrojeni], [2, 0, 0, 0]);
+    stena({ ime: "c", m }, 1.5);
+    assert.deepEqual(pregled(m), [0, 0, 0, 0, 0, 0]);
+  }
+});

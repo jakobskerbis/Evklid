@@ -661,7 +661,8 @@ function zgladiOkoli(deli, { krogov = 24, lambda = 0.5, mu = -0.52 } = {}) {
       const a = d.g[m.zvar[m.F[f + k]]], b = d.g[m.zvar[m.F[f + (k + 1) % 3]]];
       if (a !== b) { sos[a].add(b); sos[b].add(a); }
     }
-    for (const z of G.zanke(m)) for (const e of z) if (!stik(m.W[e.w])) pri[d.g[e.w]] = true; // prost konec
+    // prost konec in stik treh delov (razcepišče: veji se začneta v istem obroču in se prekrivata) ostaneta na mestu
+    for (const z of G.zanke(m)) for (const e of z) if (!stik(m.W[e.w]) || naKoncih.get(kl(m.W[e.w])) > 2) pri[d.g[e.w]] = true;
   }
   const utez = P.map((p, g) => {
     if (pri[g]) return 0;
@@ -704,8 +705,8 @@ function zgladiOkoli(deli, { krogov = 24, lambda = 0.5, mu = -0.52 } = {}) {
 // Skriti konci: oglišča odprtih koncev, ki ležijo na stiku z drugim delom iste žile (stiki) ali v notranjosti sosednje
 // žile (konec veje v glavni cevi, votla vena ↔ brahiocefalni veni). Soseda je cev z odprtimi konci, zato jo za štetje
 // presečišč žarka zapremo s pahljačo čez vsak konec. Rezultat: d.skrita (Set ključev položajev) za steno().
-function skritiKonci(deli) {
-  const telesa = deli.map((d) => {
+function skritiKonci(deli, sosede = []) {
+  const telesa = [...deli, ...sosede].map((d) => {
     const m = d.m;
     const tri = [];
     for (let f = 0; f < m.F.length; f++) tri.push(...G.pol(m, m.F[f]));
@@ -736,18 +737,27 @@ function skritiKonci(deli) {
     }
     return st;
   };
-  for (const t of telesa) {
+  for (const t of telesa.slice(0, deli.length)) {
     const { d } = t;
     d.skrita = new Set();
     let vSosedi = 0;
-    for (const z of G.zanke(d.m)) for (const e of z) {
-      const p = d.m.W[e.w];
-      const k = kl(p);
-      if (skupneNormale.has(k)) { d.skrita.add(k); continue; }
-      for (const o of telesa) {
-        if (o === t || [0, 1, 2].some((c) => p[c] < o.mn[c] || p[c] > o.mx[c])) continue;
-        if (smeri.filter((s) => zadetkov(o.tri, p, s) % 2 === 1).length >= 2) { d.skrita.add(k); vSosedi++; break; }
+    for (const z of G.zanke(d.m)) {
+      let nadaljevanje = false; // konec, ki se nadaljuje v drobno žilo (brahiocefalna vena → podključnična in jugularna)
+      for (const e of z) {
+        const p = d.m.W[e.w];
+        const k = kl(p);
+        if (skupneNormale.has(k)) { d.skrita.add(k); continue; }
+        for (const o of telesa) {
+          if (o === t || [0, 1, 2].some((c) => p[c] < o.mn[c] || p[c] > o.mx[c])) continue;
+          if (smeri.filter((s) => zadetkov(o.tri, p, s) % 2 === 1).length >= 2) {
+            d.skrita.add(k); vSosedi++;
+            if (sosede.includes(o.d)) nadaljevanje = true;
+            break;
+          }
+        }
       }
+      // tak konec ni nikoli viden v celoti: ves obroč brez ravnega roba, sicer se ob robu drobne žile vidi bel srp
+      if (nadaljevanje) for (const e of z) { const k = kl(d.m.W[e.w]); if (!d.skrita.has(k)) { d.skrita.add(k); vSosedi++; } }
     }
     if (vSosedi) log(`   ${d.ime}: ${vSosedi} oglišč koncev v sosednji žili (obroč brez ravnega roba)`);
   }
@@ -886,7 +896,10 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
     vsiStiki();
     // glajenje šivov (stik delov, dograjena stena), nato skupne normale stikov na novo
     if (zgladiOkoli(s.filter(odprt))) vsiStiki();
-    skritiKonci(s.filter(odprt));
+    // sosede za skrite konce: tudi drobne žile (podključnična in jugularna vena ob koncu brahiocefalne vene)
+    const drobne = deli.filter((d) => !s.includes(d) && nacrt.polna && nacrt.polna.test(d.ime));
+    for (const d of drobne) { nalozi(d); stej(d); }
+    skritiKonci(s.filter(odprt), drobne);
   }
   for (const d of deli) {
     const st = (nacrt.stena || []).find(([rx]) => rx.test(d.ime));
