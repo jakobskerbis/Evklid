@@ -8,7 +8,8 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { scrubName } from "../server/reports.js";
+import { scrubName, exportReports, ensureReportsTable } from "../server/reports.js";
+import { ownerOnly } from "../server/accounts/account-lock.js";
 
 const TOKEN = "t".repeat(40);
 const REPLY = 'Ana, 7 krat 8 je 54.\n<<META subject=MAT topic="poštevanka" error=0 mode=A flag=none done=0>>';
@@ -113,6 +114,11 @@ test("izvoz prijav: samo s ključem, brez id-jev in imena učenca, stanje in_rev
     assert.deepEqual(reopened.body, { ok: true, status: "open", pr: null });
     assert.deepEqual({ ...store.db.prepare("SELECT status, pr FROM message_reports WHERE id = ?").get(mid) }, { status: "open", pr: null });
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'report_status'").get().n, 4);
+
+    // Skrbnik prijavo v Računu znova odpre: PR se pobriše (kot »open« zgoraj).
+    assert.equal((await st("message", mid, { status: "in_review", pr: 8 })).status, 200);
+    assert.equal((await call(`/api/admin/reports/message/${mid}`, { method: "POST", body: { status: "open" } })).status, 200);
+    assert.equal(store.db.prepare("SELECT pr FROM message_reports WHERE id = ?").get(mid).pr, null);
   });
 });
 
@@ -123,6 +129,23 @@ test("ime v izvozu: cele in sklonjene oblike, druge besede ostanejo", () => {
   assert.equal(scrubName("Mia misli, da minus gre", "Mia"), "[ime] misli, da minus gre");
   assert.equal(scrubName("Ana Marija in Mariji", "Ana Marija"), "[ime] [ime] in [ime]");
   assert.equal(scrubName(null, "Ana"), null);
+});
+
+test("ime v izvozu: tudi v posnetku pred prvo in za zadnjo oznako (rez na 6000 znakov)", () => {
+  const store = openDb(":memory:");
+  ensureReportsTable(store.db);
+  const sid = store.db.prepare("INSERT INTO students (name, settings) VALUES ('Jakob', '{}')").run().lastInsertRowid;
+  const shown = `Jakobu <b class="Jakob">ok</b>${"x".repeat(5960)} Jakobu na koncu`;
+  store.db.prepare("INSERT INTO message_reports (student_id, conversation_id, message_id, reason, answer, shown) VALUES (?, 1, 1, 'wrong', 'x', ?)").run(sid, shown);
+  const r = exportReports(store.db)[0];
+  assert.ok(r.shown.startsWith('[ime] <b class="Jakob">ok</b>'), "oznake ostanejo, besedilo brez imena");
+  assert.ok(!/Jakobu/.test(r.shown));
+});
+
+test("izvoz prijav s skrbnikovo sejo velja kot dejanje lastnika (zaklep računa)", () => {
+  assert.ok(ownerOnly("/prijave/izvoz", "GET"));
+  assert.ok(ownerOnly("/prijave/lesson/3/stanje", "POST"));
+  assert.ok(ownerOnly("/Prijave/IZVOZ/", "GET"));
 });
 
 test("izvoz prijav: skrbnik in računalnik s strežnikom ga vidita brez ključa", async () => {

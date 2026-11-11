@@ -220,7 +220,13 @@ export function scrubName(text, name = "") {
 
 export function exportReports(db, topicName = () => null) {
   const { reports } = adminReports(db, { status: "open", limit: 300 });
-  const nameOf = (id) => (id ? db.prepare("SELECT name FROM students WHERE id = ?").get(id)?.name || "" : "");
+  const byId = db.prepare("SELECT name FROM students WHERE id = ?");
+  const names = new Map();
+  const nameOf = (id) => {
+    if (!id) return "";
+    if (!names.has(id)) names.set(id, byId.get(id)?.name || "");
+    return names.get(id);
+  };
   return reports.map((r) => [r, nameOf(r.student_id)]).map(([r, name]) => ({
     kind: r.kind,
     id: r.id,
@@ -237,8 +243,9 @@ export function exportReports(db, topicName = () => null) {
     question: scrubName(r.question, name) || null,
     answer: scrubName(r.answer, name) || null,
     raw: r.raw && r.raw !== r.answer ? scrubName(r.raw, name) : null,
-    // Ime samo v besedilu, ne v oznakah in razredih (kot ob prijavi).
-    shown: r.shown ? r.shown.slice(0, EXPORT_SHOWN).replace(/>([^<]*)</g, (_, t) => `>${scrubName(t, name)}<`) : null,
+    // Ime samo v besedilu, ne v oznakah in razredih (kot ob prijavi); tudi besedilo na začetku in na koncu
+    // (po rezu na 6000 znakov ostane zadnje besedilo brez »<«).
+    shown: r.shown ? r.shown.slice(0, EXPORT_SHOWN).replace(/(^|>)([^<]+)/g, (_, a, t) => a + scrubName(t, name)) : null,
     context: scrubName(r.context, name) || null,
   }));
 }
@@ -364,7 +371,8 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     if (!table || !status) return res.status(400).json({ error: "Napačna zahteva." });
     const kindCheck = table === "bug_reports" ? " AND kind = ?" : "";
     const args = [status, status === "fixed" ? new Date().toISOString().slice(0, 19).replace("T", " ") : null, rid, ...(kindCheck ? [req.params.kind] : [])];
-    const n = store.db.prepare(`UPDATE ${table} SET status = ?, fixed_at = ? WHERE id = ?${kindCheck}`).run(...args).changes;
+    // Znova odprta prijava nima več PR (kot POST /api/prijave/…/stanje z »open«).
+    const n = store.db.prepare(`UPDATE ${table} SET status = ?, fixed_at = ?${status === "open" ? ", pr = NULL" : ""} WHERE id = ?${kindCheck}`).run(...args).changes;
     if (!n) return res.status(404).json({ error: "Prijava ne obstaja." });
     res.json({ ok: true, status });
   });
