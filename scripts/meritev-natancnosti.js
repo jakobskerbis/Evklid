@@ -162,7 +162,8 @@ export function summarize(rows, meta) {
       ...(meta.opombe || []),
     ],
     napake: used
-      .filter((r) => r.ocena === "napaka" || (r.koda === false && r.rezultat_podan === true))
+      // Tudi manjše napake (krog 2, 2026-11-11): brez njihovih razlogov ni mogoče iskati vzorcev za naslednji krog.
+      .filter((r) => r.ocena === "napaka" || r.ocena === "manjsa_napaka" || (r.koda === false && r.rezultat_podan === true))
       .map((r) => ({ id: r.id, stopnja: r.stopnja, pogoj: r.pogoj, ocena: r.ocena, vrsta: r.vrsta || null, koda: r.koda, razlog: String(r.razlog || "").slice(0, 300) })),
   };
 }
@@ -247,7 +248,8 @@ function saveProgress(file, rows) {
 // maxUsd velja za VES strošek meritve (tudi že shranjene vrstice prejšnjega zagona). worstPair: najdražji možni par
 // (dva odgovora, pregled, popravek, dve oceni); pred vsakim primerom mora biti zanj še prostor pod mejo.
 // createOpts: samo za teste (vstavljeni streamFn in reviewCreateFn namesto API).
-export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, progressFile, realCap = false, createOpts = {}, log = console.log }) {
+// conditions: podmnožica CONDITIONS (ciljna ponovitev z --pogoj); t.topic: tema pogovora, kadar je id ponovitev (»<id>#2«).
+export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, progressFile, realCap = false, createOpts = {}, log = console.log, conditions = CONDITIONS }) {
   if (!(Number.isFinite(maxUsd) && maxUsd > 0) || !(Number.isFinite(worstPair) && worstPair > 0)) throw new Error("runChecked: neveljavna meja stroška");
   // Nastavitve morajo biti pred uvozom aplikacije (server/app.js jih delno prebere ob uvozu).
   process.env.EVKLID_ANSWER_CACHE = "0"; // vsak odgovor res pripravi model
@@ -275,7 +277,7 @@ export async function runChecked({ tasks, settingsFor, question, grade, group, m
   let stopped = false;
   try {
     for (const [i, t] of tasks.entries()) {
-      const todo = CONDITIONS.filter((c) => !rows.some((r) => r.id === t.id && r.pogoj === c.kljuc));
+      const todo = conditions.filter((c) => !rows.some((r) => r.id === t.id && r.pogoj === c.kljuc));
       if (!todo.length) continue;
       if (spent() + worstPair > maxUsd) {
         stopped = true;
@@ -288,7 +290,7 @@ export async function runChecked({ tasks, settingsFor, question, grade, group, m
         let student = null;
         try {
           student = store.createStudent(`Ana ${i + 1}${c.kljuc}`, settingsFor(t.path));
-          const conv = store.createConversation(student.id, { pathTopic: t.id, title: "Meritev" });
+          const conv = store.createConversation(student.id, { pathTopic: t.topic || t.id, title: "Meritev" });
           const res = await fetch(`${base}/api/conversations/${conv.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: question(t.task) }) });
           const sse = await res.text();
           const done = [...sse.matchAll(/^event: done\ndata: (.*)$/gm)].at(-1);

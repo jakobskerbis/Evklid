@@ -254,7 +254,7 @@ function valueIssue(answer, p) {
  * Preveri odgovor (brez vrstice META) s kodo.
  * @returns {{ checked: number, issue: string|null }} checked = koliko računov in vrednosti je koda preverila
  */
-export function codeFindings(answer, pre = null) {
+export function codeFindings(answer, pre = null, question = "") {
   let checked = 0;
   try {
     const r = checkArithmetic(String(answer || ""));
@@ -275,6 +275,89 @@ export function codeFindings(answer, pre = null) {
     if (v) {
       checked += v.checked;
       if (v.issue) return { checked, issue: v.issue };
+    }
+  }
+  for (const f of [valenceIssue(answer), celsiusIssue(answer, question)]) {
+    checked += f.checked;
+    if (f.issue) return { checked, issue: f.issue };
+  }
+  return { checked, issue: null };
+}
+
+// Kemija in enote brez modela (meritev 11. 11., OŠ brez pregleda z modelom): »$v = 8 - 7$« za dušik (vrstno
+// število namesto števila zunanjih elektronov) in »$20\,\text{K} - 0\,\text{K}$« za temperaturi v °C.
+// Ujemanje je ozko (vzorec v = 8 − z ob imenu elementa), da je lažnih zadetkov čim manj; nejasen primer
+// popravek (FIX_SYSTEM) zavrne z »OK«.
+const ELEMENTS = [
+  ["C", "ogljik", /ogljik|carbon/iu, 4, 6],
+  ["N", "dušik", /dušik|nitrogen/iu, 5, 7],
+  ["O", "kisik", /kisik|oxygen/iu, 6, 8],
+  ["F", "fluor", /fluor(?!esc)/iu, 7, 9],
+  ["Cl", "klor", /(?<!\p{L})klor|chlorin/iu, 7, 17],
+  ["Br", "brom", /(?<!\p{L})brom|bromin/iu, 7, 35],
+  ["I", "jod", /(?<!\p{L})jod|iodin/iu, 7, 53],
+  ["S", "žveplo", /žvepl|sulfur/iu, 6, 16],
+  ["P", "fosfor", /fosfor|phosphor/iu, 5, 15],
+  ["Si", "silicij", /silicij|silicon/iu, 4, 14],
+];
+// Omembe elementov v vrstici (ime ali »\mathrm{N}«) s položajem.
+function elementMentions(line) {
+  const out = [];
+  for (const [sym, , re, outer, z] of ELEMENTS) {
+    for (const m of line.matchAll(new RegExp(re.source, "giu"))) out.push({ at: m.index, sym, outer, z });
+  }
+  for (const m of line.matchAll(/\\(?:mathrm|text|ce)\{([A-Z][a-z]?)\}/g)) {
+    const e = ELEMENTS.find((x) => x[0] === m[1]);
+    if (e) out.push({ at: m.index, sym: e[0], outer: e[3], z: e[4] });
+  }
+  return out.sort((a, b) => a.at - b.at);
+}
+const ELEMENT_NAME = Object.fromEntries(ELEMENTS.map((e) => [e[0], e[1]]));
+
+export function valenceIssue(answer) {
+  let checked = 0;
+  for (const line of String(answer || "").split("\n")) {
+    if (SKIP_LINE.test(line)) continue;
+    for (const m of line.matchAll(/(?<![\p{L}\d])v\s*=\s*(?:8\s*(?:-|−|–|\\minus)\s*z\s*=\s*)?8\s*(?:-|−|–|\\minus)\s*(\d+)(?![\d.,\p{L}]|\{,\})/gu)) {
+      const el = elementMentions(line.slice(0, m.index)).at(-1);
+      if (!el) continue;
+      checked++;
+      const k = Number(m[1]);
+      if (k !== el.outer)
+        return {
+          checked,
+          issue: `in $v = 8 - ${k}$ for ${ELEMENT_NAME[el.sym]} (${el.sym}) the answer uses ${k}${k === el.z ? ", its atomic number," : ""} but ${el.sym} has ${el.outer} outer (valence) electrons, so $v = 8 - ${el.outer} = ${8 - el.outer}$`,
+        };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Temperaturi iz naloge v °C, v odgovoru zapisani kot kelvini v razliki (»$20\,\text{K} - 0\,\text{K}$«).
+const plainTex = (t) =>
+  String(t)
+    .replace(/\{,\}/g, ",")
+    .replace(/\\(?:text|mathrm)\{\s*([KC])\s*\}/g, "$1")
+    .replace(/\^\s*\{?\s*\\circ\s*\}?|\\degree/g, "°")
+    .replace(/\\[,;:! ]|~/g, " ")
+    .replace(/−|–|\\minus/g, "-");
+export function celsiusIssue(answer, question = "") {
+  const q = plainTex(question);
+  const celsius = new Set([...q.matchAll(/(-?\d+(?:[.,]\d+)?)\s*°\s*C/g)].map((m) => m[1].replace(".", ",")));
+  if (!celsius.size) return { checked: 0, issue: null };
+  const kelvinInTask = new Set([...q.matchAll(/(-?\d+(?:[.,]\d+)?)\s*K(?![a-zA-Z])/g)].map((m) => m[1].replace(".", ",")));
+  let checked = 0;
+  for (const seg of String(answer || "").matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+    const tex = plainTex(seg[1] ?? seg[2]);
+    for (const m of tex.matchAll(/(?<![\d.,])(\d+(?:,\d+)?)\s*K\s*-\s*\(?\s*(-?\d+(?:,\d+)?)\s*K(?![a-zA-Z])/g)) {
+      const [a, b] = [m[1], m[2]];
+      if (!celsius.has(a) || !celsius.has(b) || kelvinInTask.has(a) || kelvinInTask.has(b)) continue;
+      checked++;
+      const d = Number(a.replace(",", ".")) - Number(b.replace(",", "."));
+      return {
+        checked,
+        issue: `the task gives ${a} °C and ${b} °C, but the answer writes them as ${a} K and ${b} K; the difference is $${a}\\,°\\text{C} - ${b}\\,°\\text{C} = ${String(d).replace(".", ",")}\\,\\text{K}$, while ${a} K itself would be ${String(Number(a.replace(",", ".")) - 273).replace(".", ",")} °C`,
+      };
     }
   }
   return { checked, issue: null };

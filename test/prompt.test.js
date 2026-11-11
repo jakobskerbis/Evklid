@@ -132,3 +132,16 @@ test("extra exercises and side claims (2026-11-11): one labelled exercise, reali
   assert.ok(rule.length < 2000, `pravilo naj ostane kratko (${rule.length} znakov)`);
   assert.match(fixed, /6\. \*\*Preverba:\*\* samo tvoj rezultat: enote, velikostni red, vstavljanje, mejni ali posebni primer/, "vzorec in pravilo o Preverbi se ujemata");
 });
+
+test("accuracy round 2 (2026-11-11): Lewis rule, possible exercise results and table values, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["število zunanjih elektronov", "ne vrstno število", "oktet štej v elektronih", "pri vsakem atomu", "preprosto pravilo vezi ne zadošča"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  const rule = fixed.slice(fixed.indexOf("- **Dodatne vaje in stranske trditve.**"));
+  assert.match(rule.slice(0, 2000), /vsi dani, rezultat mogoč \(ocena od 1 do 5, celo število ljudi ali predmetov, delež do 100 %\)/);
+  const pravilnost = fixed.slice(fixed.indexOf("### Pravilnost"), fixed.indexOf("## Način A"));
+  assert.match(pravilnost, /najprej vprašaj, namesto da si podatke izmisliš\. Tabelna vrednost ali konstanta, ki je naloga ne poda .*»\(tabelna vrednost\)«.*iz svojega učbenika/);
+  // Krog 2 doda manj kot 800 znakov predpomnjenega dela (50 912 pred spremembo).
+  assert.ok(fixed.length < 50912 + 800, `stalni del ${fixed.length} znakov`);
+});
