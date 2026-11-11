@@ -34,7 +34,7 @@ Beri: »limita $\dfrac{\sin x}{x}$, ko gre $x$ proti $0$, je $1$«. Paradoks je 
 
 **2. Kaj je limita v splošnem.** Število $L$ je **limita funkcije** $f$ v točki $a$, če se vrednosti $f(x)$ poljubno približajo $L$, ko se $x$ dovolj približa $a$, pri tem pa je $x \ne a$. Pišemo $\lim\limits_{x \to a} f(x) = L$.
 
-Z zaporedji, ki jih že poznaš: vzemi katerokoli zaporedje $x_n$, ki ima limito $a$ in nobenega člena enakega $a$. Potem ima zaporedje $f(x_n)$ limito $L$. Naša tabela je pokazala eno tako zaporedje: $0{,}1$, $0{,}01$, $0{,}001$ …
+Z zaporedji, ki jih že poznaš: vzemi katerokoli zaporedje $x_n$, ki ima limito $a$ in nobenega člena enakega $a$. Potem ima zaporedje $f(x_n)$ limito $L$. Naša tabela je pokazala eno tako zaporedje: $0{,}1$; $0{,}01$; $0{,}001$ …
 
 Bodi pozoren na pogoj $x \ne a$ v definiciji. Kaj pomeni za točko $a$ samo?
 

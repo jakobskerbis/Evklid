@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Magnetni pretok
+  - $\Phi = BA\cos\alpha$, enota $\mathrm{Wb} = \mathrm{V\,s}$
+  - sklopljeni pretok $\Psi = N\Phi$
+- Faradayev zakon
+  - $u_i = -\mathrm{d}\Psi/\mathrm{d}t$
+  - šteje sprememba, ne velikost polja
+- Lenzovo pravilo
+  - tok nasprotuje spremembi pretoka
+  - sledi iz ohranitve energije
+- Gibalna napetost
+  - $u_i = Blv$ iz Lorentzove sile
+  - isto iz spremembe ploščine
+- Vrteča se tuljava
+  - $u_i = NBA\omega\sin\omega t$
+  - največja, ko je pretok nič
+- Zanka ob vodniku
+  - $\Phi = \frac{\mu_0 i b}{2\pi}\ln\frac{r_2}{r_1}$
+  - napaka: $B$ iz sredine zanke
+- Meritev pretoka
+  - pretok je ploščina pod $u(t)$
+  - fluksmeter integrira napetost tuljave
+  - Rogowskijeva tuljava meri tok

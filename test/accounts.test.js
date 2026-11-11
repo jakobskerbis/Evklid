@@ -213,6 +213,7 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
       assert.equal(portal.body.url, "https://billing.stripe.test/p");
     });
   } finally {
+    delete process.env.EVKLID_TRIAL_AI_USD;
     delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
   }
 });
@@ -235,11 +236,17 @@ test("daily tutor questions: the plan's limit is the floor, the AI budget raises
       await registerVerified(trial, calls, "meja@preizkus.si");
       const first = await askAll(trial, 4);
       assert.deepEqual(first, [200, 200, 200, 429]);
-      // S proračunom (200 $, malo učencev): meja zraste do zgornje meje (tu 5); brezplačni paket ostane 2.
+      // S proračunom (200 $, malo učencev): preizkus ima nizko stalno mejo AI (server/meje-ai.js, j 2026-11-06), zato
+      // ostane stalna meja 3; z večjo mejo preizkusa meja zraste do zgornje meje (tu 5); brezplačni paket ostane 2.
       store.db.prepare("INSERT INTO kv (key, value) VALUES ('budget_base_usd', '200') ON CONFLICT(key) DO UPDATE SET value = excluded.value").run();
       const trial2 = client();
       await registerVerified(trial2, calls, "meja2@preizkus.si");
-      assert.deepEqual(await askAll(trial2, 6), [200, 200, 200, 200, 200, 429]);
+      assert.deepEqual(await askAll(trial2, 4), [200, 200, 200, 429]);
+      process.env.EVKLID_TRIAL_AI_USD = "50";
+      const trial2b = client();
+      await registerVerified(trial2b, calls, "meja2b@preizkus.si");
+      assert.deepEqual(await askAll(trial2b, 6), [200, 200, 200, 200, 200, 429]);
+      delete process.env.EVKLID_TRIAL_AI_USD;
       const free = client();
       const p = await registerVerified(free, calls, "meja@brezplacno.si");
       store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(p.id);
@@ -257,6 +264,39 @@ test("daily tutor questions: the plan's limit is the floor, the AI budget raises
   }
 });
 
+test("limit hint by age: a parent picks the plan for under 18, an adult student picks it alone", async () => {
+  process.env.EVKLID_FREE_DAILY_QUESTIONS = "1";
+  try {
+    await withServer(async ({ client, calls, store }) => {
+      const ymd = (age) => `${YEAR - age}-01-01`;
+      const blockedFor = async (email, birth, kidBody) => {
+        const a = client();
+        await registerVerified(a, calls, email, { birth_date: birth });
+        const kid = (await a("/api/students", { method: "POST", body: kidBody })).body;
+        store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
+        const conv = (await a(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+        const ask = (t) => a(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: t } });
+        assert.equal((await ask("prvo")).status, 200);
+        const r = await ask("drugo");
+        assert.equal(r.status, 429);
+        assert.equal(r.body.limit, true);
+        return r.body;
+      };
+      // Študent (npr. FKKT, 1. letnik, 19 let) z lastnim profilom: naročnino izbere sam.
+      const adult = await blockedFor("student@primer.si", ymd(19), { name: "Jakob", birth_year: YEAR - 19, self: true, consent: true });
+      assert.equal(adult.hint, "block.hintAdult");
+      assert.match(adult.error, /izberi naročnino v zavihku Račun/);
+      assert.doesNotMatch(adult.error, /starš/);
+      // Dijak (16) na računu staršev: naj starš izbere naročnino.
+      const teen = await blockedFor("mama@primer.si", ADULT, { name: "Lara", birth_year: YEAR - 16, consent: true });
+      assert.equal(teen.hint, "block.hintParent");
+      assert.match(teen.error, /naj starš izbere naročnino/);
+    });
+  } finally {
+    delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
+  }
+});
+
 test("free tier stops at the monthly AI budget (all free students and per student)", async () => {
   process.env.EVKLID_FREE_POOL_USD = "0.5";
   process.env.EVKLID_FREE_STUDENT_USD = "0";
@@ -267,9 +307,9 @@ test("free tier stops at the monthly AI budget (all free students and per studen
       const kid = (await a("/api/students", { method: "POST", body: { name: "Tia", birth_year: YEAR - 10, consent: true } })).body;
       const conv = (await a(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
       const ask = (t) => a(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: t } });
-      store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 0.6)").run(kid.id);
-      // Med preizkusom meja brezplačnega paketa ne velja.
+      // Med preizkusom meja brezplačnega paketa ne velja (preizkus ima svojo mejo, server/meje-ai.js).
       assert.equal((await ask("prvo")).status, 200);
+      store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 0.6)").run(kid.id);
       store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
       const pool = await ask("drugo");
       assert.equal(pool.status, 429);
@@ -906,8 +946,11 @@ test("preverjanje starosti: premlad otrok dobi povezavo za starše, dijak ima sa
   assert.equal(minAgeOf("DE"), 16);
   assert.equal(minAgeOf("IN"), 18);
   assert.equal(parseBirthDate("2010-02-30"), null);
-  assert.equal(ageOn("2010-06-15", new Date(2025, 5, 14)), 14);
-  assert.equal(ageOn("2010-06-15", new Date(2025, 5, 15)), 15);
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 14, 12))), 14);
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 15, 12))), 15);
+  // »Danes« po slovenskem času: 15. 6. ob 00:30 v Ljubljani je v UTC še 14. 6. (22:30), starost je že 15.
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 14, 22, 30))), 15);
+  assert.equal(ageOn("2010-06-15", new Date(Date.UTC(2025, 5, 14, 21, 30))), 14);
 
   const ymd = (yearsAgo) => {
     const d = new Date();
@@ -1095,7 +1138,7 @@ test("guest: limited number of new guests per network per day (deleted guests co
 });
 
 test("guest: upgrade to an account keeps the profile and progress", async () => {
-  await withGuests(async ({ client, calls }) => {
+  await withGuests(async ({ client, calls, store }) => {
     const a = client();
     await guestStart(a);
     const kid = await guestKid(a, "Nika");
@@ -1114,8 +1157,11 @@ test("guest: upgrade to an account keeps the profile and progress", async () => 
     assert.equal((await a("/api/account/promo", { method: "POST", body: { code: "EVKLID100" } })).status, 403);
     assert.equal((await a("/api/auth/upgrade", { method: "POST", body: { email: "x@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT } })).status, 400);
     // E-naslov potrdi kot pri registraciji: šele nato 7-dnevni preizkus; prijava z geslom deluje.
+    // Poraba gosta ostane šteta za omrežje (guest_spent), preden se račun odklopi od omrežja (pregled #462).
+    store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 0.05)").run(kid.id);
     await a(verifyLink(calls));
     assert.equal((await a("/api/account")).body.access.tier, "trial");
+    assert.ok(store.db.prepare("SELECT COALESCE(SUM(usd),0) AS u FROM guest_spent").get().u >= 0.05 - 1e-9, "poraba gosta v kvoti omrežja");
     const b = client();
     assert.equal((await b("/api/auth/login", { method: "POST", body: { email: "nika@primer.si", password: "geslo1234" } })).status, 200);
     assert.equal((await b("/api/students")).body.length, 1);
@@ -1330,5 +1376,140 @@ test("skrbnik ima profil lahko odprt na več napravah hkrati", async () => {
     });
   } finally {
     delete process.env.EVKLID_ADMIN_EMAILS;
+  }
+});
+
+// GDPR (čl. 15, 17, 20): izvoz zajame vse tabele računa in profilov (tudi prijave napak vseh vrst in mnenja),
+// brez gesel in žetonov; izbris računa ali profila izbriše tudi mnenja, dnevnik obvestil in članstvo učitelja.
+test("GDPR: izvoz vseh podatkov in izbris računa brez ostankov", async () => {
+  await withServer(async ({ client, calls, store }) => {
+    const a = client();
+    const p = await registerVerified(a, calls, "gdpr@primer.si");
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 10, consent: true } })).body;
+    const kid2 = (await a("/api/students", { method: "POST", body: { name: "Eva", birth_year: YEAR - 9, consent: true } })).body;
+    const db = store.db;
+    db.prepare("INSERT INTO bug_reports (student_id, kind, reason, note) VALUES (?, 'app', 'gumb', 'gumb ne dela')").run(kid.id);
+    db.prepare("INSERT INTO feedback (student_id, kind, name, ideas) VALUES (?, 'form', 'Lan', 'več iger')").run(kid.id);
+    db.prepare("INSERT INTO feedback (student_id, kind, ideas) VALUES (?, 'form', 'temni način')").run(kid2.id);
+    db.prepare("INSERT INTO offline_results (student_id, topic_id, seed) VALUES (?, 'MAT-OS-7-ulomki', 42)").run(kid.id);
+    db.prepare("CREATE TABLE IF NOT EXISTS push_log (parent_id INTEGER NOT NULL, kind TEXT NOT NULL, period TEXT NOT NULL, PRIMARY KEY (parent_id, kind, period))").run();
+    db.prepare("INSERT INTO push_log (parent_id, kind, period) VALUES (?, 'streak', '2026-11-05:1')").run(p.id);
+    // Nepreverjena kartica, darilo, priporočilo, učiteljev razred in šola, UUID trgovine.
+    db.prepare("INSERT INTO flashcards (student_id, front, back, norm, verified) VALUES (?, 'Kaj je 2+2?', '4', 'kaj je 2+2', 0)").run(kid.id);
+    db.prepare("INSERT INTO gifts (buyer_id, amount, days, code) VALUES (?, 999, 30, 'DAR-TEST-0001')").run(p.id);
+    db.prepare("INSERT INTO referral_rewards (referrer_id, referrer_reward) VALUES (?, 'mesec')").run(p.id);
+    db.prepare("UPDATE parents SET store_account_token = 'uuid-trgovine-123' WHERE id = ?").run(p.id);
+    const school = db.prepare("INSERT INTO schools (name, invite_code, created_by) VALUES ('OŠ Test', 'SOLA-T1', ?)").run(p.id).lastInsertRowid;
+    const cls = db.prepare("INSERT INTO classes (code, name, kind, owner_parent_id, school_id) VALUES ('RAZ-T1', '7.a', 'class', ?, ?)").run(p.id, school).lastInsertRowid;
+    // Učenec drugega računa v učiteljevem razredu z učiteljevo oznako.
+    const other = client();
+    await registerVerified(other, calls, "drugi@primer.si");
+    const tuj = (await other("/api/students", { method: "POST", body: { name: "Tine", birth_year: YEAR - 12, consent: true } })).body;
+    db.prepare("INSERT INTO class_members (class_id, student_id, teacher_label) VALUES (?, ?, 'Tine K.')").run(cls, tuj.id);
+    db.prepare("INSERT INTO class_assignments (class_id, topic_id, title, created_by) VALUES (?, 'MAT-OS-7-ulomki', 'Ulomki', ?)").run(cls, p.id);
+    const exp = (await a("/api/account/export", { method: "POST", body: { password: "geslo1234" } })).body;
+    const lan = exp.children.find((c) => c.id === kid.id);
+    assert.equal(lan.bug_reports[0].note, "gumb ne dela", "prijava napake aplikacije je v izvozu");
+    assert.equal(lan.feedback[0].ideas, "več iger", "mnenje je v izvozu");
+    assert.equal(exp.other.offline_results[0].seed, 42, "tabela brez posebnega izvoza je v izvozu (other)");
+    const text = JSON.stringify(exp);
+    assert.ok(!/password_hash|token_hash|"token"|store_account_token|uuid-trgovine/.test(text), "brez gesel in žetonov");
+    assert.deepEqual(lan.flashcards.map((f) => [f.front, f.verified]), [["Kaj je 2+2?", 0]], "tudi nepreverjena kartica");
+    assert.equal(exp.other.gifts?.[0]?.code, "DAR-TEST-0001", "kupljeno darilo");
+    assert.equal(exp.other.referral_rewards?.[0]?.referrer_reward, "mesec", "priporočilo");
+    assert.equal(exp.other.schools?.[0]?.name, "OŠ Test", "ustanovljena šola");
+    assert.equal(exp.other.classes?.[0]?.name, "7.a", "učiteljev razred");
+    assert.ok(!text.includes("Tine"), "brez podatkov drugih računov (učenec v razredu)");
+    // Izbris profila izbriše njegova mnenja (prej so ostala brez lastnika).
+    assert.equal((await a(`/api/students/${kid2.id}`, { method: "DELETE" })).status, 200);
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM feedback WHERE ideas = 'temni način' OR student_id IS NULL").get().n, 0);
+    // Izbris računa: nič osebnega ne ostane.
+    assert.equal((await a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+    // Učiteljev razred (ime, koda, oznake »Tine K.«, naloge) gre z računom; učenec drugega računa ostane.
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM classes").get().n, 0, "razred izbrisan");
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM class_members").get().n, 0, "oznake učitelja izbrisane");
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM class_assignments").get().n, 0);
+    assert.equal(db.prepare("SELECT created_by FROM schools").get().created_by, null, "šola brez povezave na račun");
+    assert.ok(db.prepare("SELECT 1 FROM students WHERE id = ?").get(tuj.id), "učenec drugega računa ostane");
+    for (const [t, where] of [["students", `id <> ${Number(tuj.id)}`], ["feedback", "1"], ["bug_reports", "1"], ["offline_results", "1"], ["push_log", "1"], ["consents", `parent_id = ${Number(p.id)}`], ["conversations", `student_id <> ${Number(tuj.id)}`]]) {
+      assert.equal(db.prepare(`SELECT COUNT(*) n FROM ${t} WHERE ${where}`).get().n, 0, `${t} je prazna`);
+    }
+  });
+});
+
+// Povezava za potrditev e-naslova velja VERIFY_DAYS dni; potekla ne potrdi računa, nova (»Pošlji znova«) ga.
+test("povezava za potrditev e-naslova ima rok veljavnosti", async () => {
+  await withServer(async ({ client, store, calls }) => {
+    const a = client();
+    const reg = await a("/api/auth/register", { method: "POST", body: { email: "rok@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT } });
+    assert.equal(reg.status, 201);
+    const row = () => store.db.prepare("SELECT email_verified_at, verify_expires_at FROM parents WHERE id = ?").get(reg.body.parent.id);
+    const left = (Date.parse(row().verify_expires_at) - Date.now()) / 86400000;
+    assert.ok(left > 6.9 && left <= 7, String(left));
+    const old = verifyLink(calls);
+    store.db.prepare("UPDATE parents SET verify_expires_at = ? WHERE id = ?").run(new Date(Date.now() - 1000).toISOString(), reg.body.parent.id);
+    const r = await a(old);
+    assert.equal(r.status, 302);
+    assert.equal(row().email_verified_at, null, "potekla povezava je potrdila račun");
+    assert.equal((await a("/api/auth/resend-verification", { method: "POST" })).status, 200);
+    await a(verifyLink(calls));
+    assert.ok(row().email_verified_at);
+    assert.equal(row().verify_expires_at, null);
+  });
+});
+
+// Odklep računa z geslom računa: ista meja za ves račun kot izvoz in geslo profila (acct<id>, 30 na uro), da otrok na
+// starševi napravi z menjavo omrežja (mobilni podatki, Wi-Fi) ne ugiba gesla brez konca.
+test("account unlock: wrong passwords from many networks hit the account-wide limit", async () => {
+  await withServer(async ({ client, calls }) => {
+    const a = client();
+    await registerVerified(a, calls, "omejitev@primer.si");
+    assert.ok((await a("/api/students", { method: "POST", body: { name: "Tine", birth_year: YEAR - 10, consent: true, profile_password: "tine1" } })).body.id);
+    await a("/api/account/lock", { method: "POST" });
+    const tryFrom = (ip, password = "narobe12") => a("/api/account/unlock", { method: "POST", body: { password }, headers: { "X-Forwarded-For": ip } });
+    for (let i = 0; i < 30; i++) assert.equal((await tryFrom(`10.0.${Math.floor(i / 3)}.1`)).status, 401);
+    const r = await tryFrom("10.9.9.9");
+    assert.equal(r.status, 429, "po 30 napačnih poskusih z različnih omrežij odklep še ugiba");
+    assert.match(r.body.error, /eno uro ali se odjavi in znova prijavi/, "sporočilo pove pravo okno in izhod");
+    assert.equal((await tryFrom("10.9.9.10", "geslo1234")).status, 429);
+  }, { accountLock: true });
+});
+
+// Brez e-pošte in s skupnim geslom (EVKLID_GATE=1) povezave za novo geslo ali potrditev nikoli ne gredo v odgovor
+// oddaljenemu odjemalcu (sicer prevzem tujega računa ali skrbnika, pregled #492 B, P2-4); v produkciji sploh ne.
+test("dev links: never to a remote client with the shared gate, never in production", async () => {
+  const saved = { EVKLID_PASSWORD: process.env.EVKLID_PASSWORD, EVKLID_GATE: process.env.EVKLID_GATE, EVKLID_BASE_URL: process.env.EVKLID_BASE_URL };
+  const restore = () => {
+    for (const [k, v] of Object.entries(saved)) if (v === undefined) delete process.env[k];
+    else process.env[k] = v;
+  };
+  try {
+    await withServer(
+      async ({ client }) => {
+        const body = { email: "zrtev-gate@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT };
+        assert.equal((await client()("/api/auth/register", { method: "POST", body })).status, 201);
+        // Skupno geslo vklopljeno po zagonu (prehod skozi vrata ni del tega testa): vsak tester z geslom je »oddaljen«.
+        process.env.EVKLID_PASSWORD = "skupno";
+        process.env.EVKLID_GATE = "1";
+        const remote = { "X-Forwarded-For": "198.51.100.7" };
+        const forgot = await client()("/api/auth/forgot", { method: "POST", body: { email: "zrtev-gate@primer.si" }, headers: remote });
+        assert.equal(forgot.body.dev_reset_url, undefined, "oddaljen tester dobi povezavo za novo geslo tujega računa");
+        const reg = await client()("/api/auth/register", { method: "POST", body: { ...body, email: "admin-gate@primer.si" }, headers: remote });
+        assert.equal(reg.body.dev_verify_url, undefined);
+      },
+      { resendKey: "" },
+    );
+    restore();
+    process.env.EVKLID_BASE_URL = "https://evklid.test";
+    await withServer(
+      async ({ client }) => {
+        const r = await client()("/api/auth/register", { method: "POST", body: { email: "prod@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT } });
+        assert.equal(r.status, 201);
+        assert.equal(r.body.dev_verify_url, undefined, "v produkciji povezava v odgovoru");
+      },
+      { resendKey: "" },
+    );
+  } finally {
+    restore();
   }
 });

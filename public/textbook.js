@@ -1,6 +1,7 @@
 // Učbenik: kazalo, iskanje in lekcije z interaktivnimi demonstracijami.
 import { mountSim } from "./sim/index.js";
-import { t, locale } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n.js";
+import { uiLanguage } from "./i18n/languages.js";
 import { withFormulaSubject, plainTex } from "./formula-data.js";
 import { lessonSteps, demoSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
@@ -8,8 +9,24 @@ import { prilagodiSirino } from "./sirina.js";
 import { jeFaks } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 
+// Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
+// učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
+const pdfHref = (path, { topic = "", unit = "" } = {}) => {
+  const q = new URLSearchParams();
+  if (unit) q.set("poglavje", unit);
+  q.set("l", uiLanguage(currentLang()));
+  // Razred, poglavje in cel predmet: vnaprej izdelana datoteka PDF (server/ucbenik-pdf.js), telefon jo samo prenese;
+  // če je strežnik (še) nima, sam preusmeri na tisk v brskalniku. Lekcija in list formul: tisk v brskalniku.
+  if (!topic) return `/ucbenik-pdf/${path}?${q}`;
+  return `/ucbenik/${path}/${topic}?${q}#natisni`;
+};
+
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
 const $ = (sel) => document.querySelector(sel);
+// Zaporedni številki prikaza: odgovor starejše zahteve (prejšnja poizvedba iskanja, prej kliknjena lekcija,
+// domača stran po »Nazaj«) ne sme prepisati novejšega, ki je prišel prej.
+let navSeq = 0; // celoten pogled Učbenika (domača stran ali lekcija)
+let bodySeq = 0; // spodnji del domače strani (iskanje, kazalo, viri)
 const tb = { browse: false, subject: null, book: null, group: null, query: "", topicId: null, books: [], myPath: null, program: null, profile: null, mode: "lessons", refType: "", refSl: false, refs: null, refOpen: new Set() };
 
 // Kar iz Nastavitev določa učbenik: smer, program, predmet in razred/letnik.
@@ -102,6 +119,8 @@ function selectionInLesson(sel) {
   // Izbor mora biti znotraj besedila lekcije (ne v gumbih ali menijih).
   const start = sel.anchorNode?.nodeType === 1 ? sel.anchorNode : sel.anchorNode?.parentElement;
   if (!el.closest(SELECT_AREA) && !start?.closest(SELECT_AREA)) return null;
+  // Stran »Lekcija še nastaja« nima snovi (ne obvestilo ne naslov ali cilji): tam »Razloži« ne ponudimo.
+  if (view.querySelector(".tb-pending")) return null;
   const text = selectionText(sel);
   return text.length >= 2 ? text : null;
 }
@@ -173,6 +192,9 @@ export function textbookBack() {
   return true;
 }
 
+/** Lekcija, odprta v Učbeniku (ali null na kazalu); za zadnji zaslon ob naslednjem odprtju (app.js). */
+export const openLessonId = () => tb.topicId || null;
+
 // Z Učne poti (»Nižji razredi so v Učbeniku«): odpre izbiro vseh učbenikov in razredov.
 export function openTextbookLower() {
   syncProfile();
@@ -218,6 +240,7 @@ export async function openLesson(topicId) {
 }
 
 async function renderHome() {
+  const my = ++navSeq;
   stopReading();
   current = null;
   const box = $("#view-textbook");
@@ -227,15 +250,22 @@ async function renderHome() {
   const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
   if (!tb.books.length || tb.program !== program || tb.system !== system) {
+    const books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
+    // Stanje šele po preverjanju: zavržen odgovor ne sme pustiti novih knjig brez ponastavitve predmeta in poti.
+    if (my !== navSeq) return;
     tb.program = program;
     tb.system = system;
-    tb.books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
+    tb.books = books;
     tb.subject = null;
     tb.book = null;
     tb.group = null;
     tb.myPath = null;
   }
-  if (tb.myPath === null) tb.myPath = (await ctx.api(`/api/students/${student.id}/path`).catch(() => null))?.key || "";
+  if (tb.myPath === null) {
+    const key = (await ctx.api(`/api/students/${student.id}/path`).catch(() => null))?.key || "";
+    if (my !== navSeq) return;
+    tb.myPath = key;
+  }
   // Privzeto: učbenik predmeta in ravni, ki ju učenec ima v učni poti.
   if (!tb.subject) tb.subject = program ? "PROG" : (tb.myPath || student?.settings?.subject || "MAT").split("-")[0];
   const subjects = [...new Map(tb.books.map((b) => [b.subject, b.subject === "PROG" ? t("tbk.myStudy") : b.subjectName])).entries()];
@@ -268,8 +298,8 @@ async function renderHome() {
         <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)} · ${esc(book.schoolName)}</h2>
         <p class="muted">${esc(t(book.lessons < book.topics ? "tbk.countMore" : "tbk.count", { done: book.lessons, total: book.topics }))}</p></div>
         <div class="tb-book-actions">
-          <a class="btn-primary tb-book-pdf" href="/ucbenik/${esc(book.key)}#natisni" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
-          ${book.formulas ? `<a class="btn-secondary tb-book-pdf" href="/ucbenik/${esc(book.key)}/formule#natisni" target="_blank" rel="noopener">${ic("sigma")}${esc(t("tbk.pdfFormulas"))}</a>` : ""}
+          <a class="btn-primary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
+          ${book.formulas ? `<a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key, { topic: "formule" }))}" target="_blank" rel="noopener">${ic("sigma")}${esc(t("tbk.pdfFormulas"))}</a>` : ""}
         </div>
         ${book.subject === "PROG" ? `<div class="seg tb-mode" role="tablist" aria-label="${esc(t("refs.title"))}">
           <button type="button" role="tab" data-mode="lessons" class="${tb.mode !== "refs" ? "active" : ""}" aria-selected="${tb.mode !== "refs"}">${ic("book-open")}${esc(t("refs.tabLessons"))}</button>
@@ -323,8 +353,23 @@ async function renderHome() {
 async function renderBody() {
   const body = $("#tb-body");
   if (!body) return;
+  const my = ++bodySeq;
+  const stale = () => my !== bodySeq || !body.isConnected;
+  // Napaka iskanja ali kazala: sporočilo namesto zadetkov starejše poizvedbe (in brez neobravnavane zavrnitve).
+  const failed = (err) => {
+    if (stale()) return;
+    // 502/503 od gostitelja (objava nove različice): »Strežnik se ne odziva«, ne »Ni povezave« (app.js api, offline).
+    const msg = err?.status ? t("common.error", { status: err.status }) : err?.offline && err.message ? err.message : t("off.noConnection");
+    body.innerHTML = `<div class="card" role="alert"><p>${esc(msg)}</p></div>`;
+  };
   if (tb.query.length >= 2) {
-    const hits = await ctx.api(`/api/textbook/search?q=${encodeURIComponent(tb.query)}&system=${encodeURIComponent(tb.system || "SI")}`);
+    let hits;
+    try {
+      hits = await ctx.api(`/api/textbook/search?q=${encodeURIComponent(tb.query)}&system=${encodeURIComponent(tb.system || "SI")}`);
+    } catch (err) {
+      return failed(err);
+    }
+    if (stale()) return;
     body.innerHTML = hits.length
       ? `<p class="muted">${esc(t("tbk.hits", { q: tb.query }))}</p><ul class="tb-list">${hits
           .map(
@@ -342,9 +387,15 @@ async function renderBody() {
     body.innerHTML = `<div class="card"><p>${esc(t("tbk.noBook"))}</p></div>`;
     return;
   }
-  const book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
-  if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book);
-  const unitHtml = (u, i) => `<section class="card tb-unit">
+  let book;
+  try {
+    book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
+  } catch (err) {
+    return failed(err);
+  }
+  if (stale()) return;
+  if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book, stale);
+  const unitHtml = (u, i, pathKey) => `<section class="card tb-unit">
         <h2><span class="tb-num">${i + 1}</span>${esc(u.title)}</h2>
         <ul class="tb-list">${u.topics
           .map(
@@ -358,6 +409,7 @@ async function renderBody() {
             </button></li>`,
           )
           .join("")}</ul>
+        ${u.topics.some((tp) => tp.lesson) ? `<p class="tb-unit-pdf"><a class="tb-pdf" href="${esc(pdfHref(pathKey, { unit: u.title }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a></p>` : ""}
       </section>`;
   // Prikažemo razred/letnik iz Nastavitev; druge lahko izbereš zgoraj (ali »Vse«).
   const groups = groupsOf(book);
@@ -373,8 +425,8 @@ async function renderBody() {
       .map(
         (p) => `<section class="tb-part" id="tb-part-${esc(p.key)}">
         <div class="tb-part-head"><h2>${esc(p.label)}</h2>
-          <a class="tb-pdf" href="/ucbenik/${esc(p.key)}#natisni" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfPart"))}</a></div>
-        ${p.units.map(unitHtml).join("")}
+          <a class="tb-pdf" href="${esc(pdfHref(p.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfPart"))}</a></div>
+        ${p.units.map((u, i) => unitHtml(u, i, p.key)).join("")}
       </section>`,
       )
       .join("")}`;
@@ -418,20 +470,29 @@ function wireFormulas(root) {
 }
 
 async function renderLesson(topicId) {
+  const my = ++navSeq;
   stopReading();
   const box = $("#view-textbook");
   let L;
   try {
     L = await ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`);
   } catch (err) {
-    tb.topicId = null;
-    return renderHome();
+    // Brez povezave: javna kopija že obiskane lekcije iz predpomnilnika (public/sw.js, samo besedilo).
+    L = err?.status ? null : await ctx.api(`/api/lesson?id=${encodeURIComponent(topicId)}`).catch(() => null);
+    if (my !== navSeq) return;
+    if (!L) {
+      tb.topicId = null;
+      return renderHome();
+    }
   }
+  if (my !== navSeq) return;
   current = { id: L.id, name: L.name };
   // Simboli v formulah po predmetu lekcije (FIZ-OS-9 → fizika, fakultetna tema → njen predmet), ne po
   // predmetu v nastavitvah. Oznake lekcije (:::simboli) imajo prednost: T v T = I/I₀ je prepustnost.
-  const lessonSubject = L.subject || (/^([A-Z]{3})-/.exec(L.id || "") || [])[1];
-  const R = (text) => withFormulaSubject(lessonSubject, () => ctx.renderRich(text), L.lesson?.symbols);
+  // Fakultetna tema (UNI-…) ima predmet v podatkih (KEM, FIZ …); »UNI« sam ni predmet (bila bi tabela MAT).
+  const lessonSubject = L.subject || (/^UNI-/.test(L.id || "") ? null : (/^([A-Z]{3})-/.exec(L.id || "") || [])[1]);
+  // Tema za pomen dvoumnih črk: ime lekcije in sklopa (x₁ je ničla le v lekciji o kvadratni enačbi).
+  const R = (text) => withFormulaSubject(lessonSubject, () => ctx.renderRich(text), L.lesson?.symbols, [L.name, L.unit].filter(Boolean).join(" · "));
   const lesson = L.lesson;
   const sections = lesson?.sections || [];
   // Demonstracijo postavimo za rešene primere (ali za razlago, če primerov ni).
@@ -471,10 +532,14 @@ async function renderLesson(topicId) {
     })
     .join("");
 
+  // Tema brez lekcije in brez razlage: le obvestilo (ni česa označiti in »Razložiti«), gumb pa vpraša o temi.
+  const pending = !lesson && !L.explanation;
+  const pendingNext = L.demo && L.practice ? "tbk.pendingDemoPractice" : L.demo ? "tbk.pendingDemo" : L.practice ? "tbk.pendingPractice" : "tbk.pendingAsk";
   const fallback = !lesson
-    ? `<section class="card tb-section"><div class="explanation">${
-        L.explanation ? R(L.explanation) : `<p>Lekcija za to temo še nastaja.${L.demo ? " Medtem si oglej poskus spodaj" : ""}${L.practice ? ", reši nekaj nalog" : ""} ali vprašaj inštruktorja, ki ti temo razloži po korakih.</p>`
-      }</div></section>${SLOT}`
+    ? pending
+      ? `<section class="card tb-section tb-pending"><div class="explanation"><p>${esc(t("tbk.pending"))}${/^(zh|ja)/.test(locale()) ? "" : " "}${esc(t(pendingNext))}</p></div>
+        <div class="actions"><button type="button" class="primary" id="tb-ask-topic">${ic("message-circle")}${esc(t("tbk.askTopic"))}</button></div></section>${SLOT}`
+      : `<section class="card tb-section"><div class="explanation">${R(L.explanation)}</div></section>${SLOT}`
     : "";
 
   const staticItem = (c) => `<li><div class="tb-q">${R(c.q)}</div><ol type="a">${c.options.map((o) => `<li>${R(o)}</li>`).join("")}</ol>
@@ -541,10 +606,10 @@ async function renderLesson(topicId) {
   // ne v levem stolpcu: na računalniku s poskusi desno je ← levo spodaj, številka na sredini in → desno spodaj.
   const nextHtml = `<section class="card tb-next"${stepMode ? " hidden" : ""}>
     <h2>Kaj zdaj?</h2>
-    <div class="actions">
+    ${L.practice || !pending ? `<div class="actions">
       ${L.practice ? `<button type="button" class="primary" id="tb-practice">${ic("pencil")}Vadi naloge</button>` : ""}
-      <button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>
-    </div>
+      ${pending ? "" : `<button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>`}
+    </div>` : ""}
     <div class="tb-nav">
       ${L.prev ? `<button type="button" class="ghost" data-lesson="${esc(L.prev.id)}">← ${esc(L.prev.name)}</button>` : "<span></span>"}
       ${L.next ? `<button type="button" class="ghost" data-lesson="${esc(L.next.id)}">${esc(L.next.name)} →</button>` : ""}
@@ -554,9 +619,9 @@ async function renderLesson(topicId) {
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
     <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
-    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="/ucbenik/${L.path}/${L.id.split("/")[1]}#natisni" target="_blank" rel="noopener">${ic("download")}PDF lekcije</a>${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
+    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
     ${linkHtml}
-    <p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>
+    ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
     ${lesson && lesson.status !== "pregledano" ? `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, pritisni »Prijavi napako«.</p>` : ""}
@@ -654,9 +719,11 @@ async function renderLesson(topicId) {
     if (!(await ctx.openTopic(L.id))) ctx.nextPractice();
   });
   $("#tb-pretest")?.addEventListener("click", () => ctx.openTopic(L.id));
-  $("#tb-ask").addEventListener("click", () =>
+  $("#tb-ask")?.addEventListener("click", () =>
     ctx.learnWithTutor({ id: L.id, name: L.name }, `Prebral sem lekcijo »${L.name}«, pa mi še ni čisto jasno. Mi razložiš na drug način?`),
   );
+  // Lekcija še nastaja: inštruktor začne s temo (»Začniva s temo: …«, z imenom teme).
+  $("#tb-ask-topic")?.addEventListener("click", () => ctx.learnWithTutor({ id: L.id, name: L.name }));
 }
 
 // ---------- Lekcija po korakih ----------
@@ -741,12 +808,15 @@ const refRow = (it) => `<a class="list-row ref-row" href="${esc(it.url)}" target
     ${ic("external-link")}<span class="sr-only">${esc(t("refs.newTab"))}</span>
   </a>`;
 
-async function renderRefs(body, book) {
+async function renderRefs(body, book, stale) {
   if (tb.refs?.program !== tb.program) {
     body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
     try {
-      tb.refs = await ctx.api(`/api/references?program=${encodeURIComponent(tb.program)}`);
+      const refs = await ctx.api(`/api/references?program=${encodeURIComponent(tb.program)}`);
+      if (stale()) return;
+      tb.refs = refs;
     } catch {
+      if (stale()) return;
       tb.refs = null;
       body.innerHTML = `<div class="card"><p>${esc(t("refs.none"))}</p></div>`;
       return;

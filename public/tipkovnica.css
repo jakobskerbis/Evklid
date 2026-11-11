@@ -29,7 +29,8 @@
 /* zgodovinski slogi: plošča v barvi menija obdobja */
 :root[data-era] .tk { --tk-board: var(--menu, var(--surface-2)); --tk-ink: var(--menu-text, var(--text)); --tk-dim: color-mix(in srgb, var(--menu-muted, var(--muted)) 70%, var(--menu-text, var(--text))); --tk-fn: color-mix(in srgb, var(--menu, var(--surface-2)) 80%, var(--menu-text, var(--text)) 14%); border-top-color: var(--menu-border, var(--border)); }
 /* Enter na plošči v barvi menija: poudarek menija (v Hiši modrosti in Indiji je plošča temna kot poudarek okna) */
-:root[data-era] .tk-k.go { background: var(--menu-accent, var(--accent)); color: var(--menu-accent-text, var(--accent-text)); box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--menu-accent, var(--accent)) 60%, var(--text)); }
+:root[data-era] .tk-k.chg sub { font-size: 0.9rem; line-height: 1; margin: 0.75em 0 0 1px; vertical-align: baseline; }
+.tk-k.go { background: var(--menu-accent, var(--accent)); color: var(--menu-accent-text, var(--accent-text)); box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--menu-accent, var(--accent)) 60%, var(--text)); }
 /* temni zgodovinski slogi: okno in meni sta skoraj enake barve, tipke malo svetlejše od plošče */
 :root.dark[data-era] .tk { --tk-key: color-mix(in srgb, var(--surface) 90%, var(--text)); }
 .tk-in { position: relative; max-width: 640px; margin: 0 auto; display: grid; gap: 6px; }
@@ -68,7 +69,12 @@
 .tk-k.dig { font-size: 1.25rem; font-weight: 600; }
 .tk-k.sym { font-size: 1.05rem; font-weight: 700; }
 /* Kem: indeksi ₂ ₃ ⁺ ²⁻ so v pisavi drobni, zato večji napis */
-.tk-rows[data-layer="kem"] > .tk-row:nth-child(2) .tk-k { font-size: 1.6rem; }
+.tk-rows[data-layer="kem"] .tk-k.sub { font-size: 1.6rem; }
+/* naboj: ◌ s pravim nadpisom (⁺ v pisavi je videti kot +) */
+.tk-k.chg { font-weight: 700; }
+.tk-k.chg .tk-chg-i { display: inline-flex; align-items: flex-start; white-space: nowrap; line-height: 1; }
+.tk-k.chg .tk-chg-b { color: var(--muted); font-weight: 400; font-size: 1.35rem; }
+.tk-k.chg sup { font-size: 0.85rem; line-height: 1; margin: -0.35em 0 0 1px; vertical-align: baseline; }
 .tk-k.go { background: var(--accent); color: var(--accent-text); font-size: 0.95rem; font-weight: 800; box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--accent) 60%, var(--text)); }
 .tk-k.go.txt { padding: 0 6px; }
 .tk-k.shift.on { background: var(--surface); color: var(--accent); }

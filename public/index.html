@@ -3,12 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-  <title>Evklid</title>
-  <meta name="description" content="Inštruktor za matematiko, fiziko, kemijo in biologijo od 1. razreda osnovne šole do fakultete. Ne reši naloge namesto tebe, ampak te vodi korak za korakom. 7 dni brezplačno.">
-  <meta property="og:title" content="Evklid – rešitev najdeš sam, Evklid ti pokaže pot">
-  <meta property="og:description" content="Inštruktor za matematiko, fiziko, kemijo in biologijo po slovenskem učnem načrtu, od 1. razreda do fakultete.">
-  <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
+  <title>Evklid – slovenski AI inštruktor za šolo in študij | evklid.app</title>
+  <meta name="description" content="Evklid (evklid.app) je slovenski AI inštruktor za matematiko, fiziko, kemijo in biologijo, od 1. razreda osnovne šole do fakultete. Naloge ne reši namesto tebe, ampak te vodi korak za korakom. 7 dni brezplačno.">
+  <link rel="canonical" href="https://evklid.app/">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Evklid">
+  <meta property="og:locale" content="sl_SI">
+  <meta property="og:url" content="https://evklid.app/">
+  <meta property="og:title" content="Evklid – slovenski AI inštruktor za matematiko, fiziko, kemijo in biologijo">
+  <meta property="og:description" content="Evklid (evklid.app) je slovenska aplikacija po slovenskem učnem načrtu, od 1. razreda do fakultete. Inštruktor te vodi korak za korakom, nalogo lahko fotografiraš.">
+  <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Evklid – slovenski AI inštruktor za matematiko, fiziko, kemijo in biologijo">
+  <meta name="twitter:description" content="Slovenska aplikacija po slovenskem učnem načrtu, od 1. razreda do fakultete. Inštruktor te vodi korak za korakom.">
+  <meta name="twitter:image" content="https://evklid.app/icons/icon-512.png">
+  <!-- schema.org: zapis sestavi structuredData() v server/vidnost.js; test/vidnost.test.js pade, če se razide s cenikom ali jeziki. -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://evklid.app/#organizacija","name":"Evklid","url":"https://evklid.app/","logo":"https://evklid.app/icons/icon-512.png","sameAs":["https://evklid.app/prenesi"]},{"@type":"WebSite","@id":"https://evklid.app/#spletisce","name":"Evklid","alternateName":"evklid.app","url":"https://evklid.app/","inLanguage":"sl","publisher":{"@id":"https://evklid.app/#organizacija"}},{"@type":["SoftwareApplication","WebApplication"],"@id":"https://evklid.app/#aplikacija","name":"Evklid","alternateName":["Evklid – slovenski AI inštruktor","evklid.app"],"url":"https://evklid.app/","image":"https://evklid.app/icons/icon-512.png","description":"Evklid (evklid.app) je slovenski AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu, od 1. razreda osnovne šole do fakultete. Naloge ne reši namesto učenca, ampak ga vodi korak za korakom. Ni povezan s projekti z imenom »Euclid«.","disambiguatingDescription":"Slovenska učna aplikacija na naslovu evklid.app; ni povezana s projekti »Euclid AI Math Tutor« in drugimi z imenom »Euclid«.","applicationCategory":"EducationalApplication","operatingSystem":"Web, Android","inLanguage":["sl","ar","bn","bs","cs","de","en","es","fa","fr","hi","hr","hu","id","it","ja","ko","mk","pl","pt","ro","ru","sk","sq","sr","sw","th","tr","uk","ur","vi","zh","zh-Hant"],"isAccessibleForFree":true,"audience":{"@type":"EducationalAudience","educationalRole":"student"},"featureList":["Inštruktor, ki vodi korak za korakom","Skener nalog s kamero in pisanje z roko","Izračune in rezultate preveri program","Učbenik in učna pot po slovenskem učnem načrtu","Simulacije, laboratorij in 3D atlas","Učne igre","Priprava na NPZ, maturo in tekmovanja"],"offers":[{"@type":"Offer","name":"Brezplačni paket","price":"0.00","priceCurrency":"EUR","description":"7 dni brezplačno, nato 10 vprašanj inštruktorju na dan."},{"@type":"Offer","name":"Osnovna šola (na mesec)","price":"9.99","priceCurrency":"EUR","priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"EUR","billingDuration":"P1M","price":"9.99"}},{"@type":"Offer","name":"Srednja šola (na mesec)","price":"13.99","priceCurrency":"EUR","priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"EUR","billingDuration":"P1M","price":"13.99"}},{"@type":"Offer","name":"Fakulteta (na mesec)","price":"19.99","priceCurrency":"EUR","priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"EUR","billingDuration":"P1M","price":"19.99"}}],"publisher":{"@id":"https://evklid.app/#organizacija"}}]}</script>
   <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
@@ -18,6 +28,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Evklid">
   <script src="theme.js"></script>
+  <script src="zacetek.js"></script>
   <link rel="stylesheet" href="vendor/instrument-sans/index.css">
   <link rel="stylesheet" href="vendor/nunito/index.css">
   <link rel="stylesheet" href="vendor/ibm-plex-sans/index.css">
@@ -26,6 +37,7 @@
   <link rel="stylesheet" href="ui.css">
   <link rel="stylesheet" href="account.css">
   <link rel="stylesheet" href="textbook.css">
+  <link rel="stylesheet" href="risbe.css">
   <link rel="stylesheet" href="leagues.css">
   <link rel="stylesheet" href="kviz.css">
   <link rel="stylesheet" href="competition.css">
@@ -45,6 +57,13 @@
   <link rel="stylesheet" href="drsniki.css">
 </head>
 <body>
+  <noscript>
+    <div class="card" style="margin: 16px">
+      <h1>Evklid – slovenski AI inštruktor</h1>
+      <p>Evklid (evklid.app) je slovenska aplikacija za učenje matematike, fizike, kemije, biologije in naravoslovja po slovenskem učnem načrtu, od 1. razreda osnovne šole do fakultete. Za uporabo aplikacije vklopi JavaScript.</p>
+      <p><a href="/o-evklidu">Kaj je Evklid, cene in pogosta vprašanja</a> · <a href="/zakaj-evklid">Zakaj Evklid</a> · <a href="/sole">Za učitelje in šole</a></p>
+    </div>
+  </noscript>
   <header class="topbar">
     <button type="button" class="brand" aria-haspopup="menu" aria-expanded="false" aria-controls="quick-pop" aria-label="Nadaljuj z učenjem" data-i18n-aria="qs.title" title="Nadaljuj z učenjem" data-i18n-title="qs.title">
       <span class="logo" aria-hidden="true"><i data-icon="kristal"></i></span>
@@ -227,7 +246,7 @@
             <i data-icon="camera"></i><input id="image-input" type="file" accept="image/*" capture="environment" hidden>
           </label>
           <button type="button" id="sym-btn" class="icon-btn" title="Simboli: √, π, ∫, H₂O …" aria-label="Simboli" aria-pressed="false" data-i18n-title="chat.symbolsTitle" data-i18n-aria="chat.symbols"><i data-icon="sigma"></i></button>
-          <textarea id="input" rows="1" placeholder="Napiši nalogo ali vprašanje …" data-i18n-ph="chat.placeholder"></textarea>
+          <textarea id="input" rows="1" placeholder="Napiši nalogo ali vprašanje …" aria-label="Napiši nalogo ali vprašanje …" data-i18n-ph="chat.placeholder" data-i18n-aria="chat.placeholder"></textarea>
           <button type="button" id="mic-btn" class="icon-btn mic-btn" title="Povej vprašanje" aria-label="Povej vprašanje" aria-pressed="false" data-i18n-title="chat.mic" data-i18n-aria="chat.mic"><i data-icon="mic"></i></button>
           <button id="send" class="primary send" type="submit" aria-label="Pošlji" data-i18n-aria="chat.send"><i data-icon="send"></i><span data-i18n="chat.send">Pošlji</span></button>
         </div>
@@ -372,7 +391,7 @@
       <h2 data-i18n="set.newStudent">Dodaj profil</h2>
       <p class="muted" data-i18n="set.newStudentText">Nov profil za drugega učenca: vsak ima svojo učno pot, napredek in pogovore.</p>
       <form id="new-student-form" class="inline">
-        <input name="name" maxlength="40" placeholder="Ime" required data-i18n-ph="set.namePh">
+        <input name="name" maxlength="40" placeholder="Ime" aria-label="Ime" required data-i18n-ph="set.namePh" data-i18n-aria="set.name">
         <button type="submit" data-i18n="common.add">Dodaj</button>
       </form>
     </div>
@@ -437,6 +456,10 @@
       <div class="card"><span class="stat-ic streak"><i data-icon="flame"></i></span><b id="me-streak">0</b><span data-i18n="me.streak">dni zapored</span></div>
     </div>
     <button type="button" class="card list-row zb-me-card" id="me-zbirke" data-go="zbirke" hidden></button>
+    <!-- Naloge za člane pilota (public/pilot-naloge.js); vidno samo članom pilota -->
+    <div class="card list-card pn-me" hidden><button type="button" class="list-row" data-go="pilot" id="me-pilot" hidden></button></div>
+    <!-- Mnenje člana pilota (public/mnenje.js); vidno samo članom pilota -->
+    <div class="card list-card" id="me-mnenje-card" hidden><button type="button" class="list-row" id="me-mnenje"><span class="ic"><i data-icon="star"></i></span><span class="lr-text"><b data-i18n="fb.cardBtn">Povej mnenje</b><small data-i18n="mn.meSub">Ocena z zvezdicami in dve kratki vprašanji</small></span><i data-icon="chevron-right"></i></button></div>
     <div class="card list-card">
       <button type="button" class="list-row" data-go="exams" id="me-exams" hidden><span class="ic"><i data-icon="clipboard-check"></i></span><span class="lr-text"><b data-i18n="nav.examsSi">NPZ in matura</b><small data-i18n="exam.meSub">Pripravljenost, poskusni izpit in pretekle pole</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="competition" id="me-competition"><span class="ic"><i data-icon="medal"></i></span><span class="lr-text"><b data-i18n="nav.competition">Tekmovanja</b><small data-i18n="comp.meSub">Tekmovalni trening in poskusno tekmovanje</small></span><i data-icon="chevron-right"></i></button>
@@ -461,6 +484,13 @@
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 class="with-icon"><i data-icon="scan-line"></i> <span data-i18n="scan.title">Skeniraj nalogo</span></h1>
     <div class="scan-body"></div>
+  </main>
+
+  <!-- POMAGAJ IZBOLJŠATI EVKLID (public/pilot-naloge.js): naloge za člane pilota -->
+  <main id="view-pilot" class="view narrow" hidden>
+    <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
+    <h1 class="with-icon"><i data-icon="sparkles"></i> <span data-i18n="pn.title">Pomagaj izboljšati Evklid</span></h1>
+    <div class="pn-body"></div>
   </main>
 
   <!-- URNIK (public/schedule.js) -->
@@ -510,11 +540,9 @@
     </div>
   </div>
 
-  <script src="vendor/katex/katex.min.js"></script>
-  <script src="vendor/marked/lib/marked.umd.js"></script>
-  <script src="vendor/dompurify/purify.min.js"></script>
-  <script type="module" src="dropdown.js"></script>
-  <script type="module" src="appearance.js"></script>
-  <script type="module" src="app.js"></script>
+  <script defer src="vendor/katex/katex.min.js"></script>
+  <script defer src="vendor/marked/lib/marked.umd.js"></script>
+  <script defer src="vendor/dompurify/purify.min.js"></script>
+  <script type="module" src="zagon.js" data-moduli="dropdown.js appearance.js app.js"></script>
 </body>
 </html>

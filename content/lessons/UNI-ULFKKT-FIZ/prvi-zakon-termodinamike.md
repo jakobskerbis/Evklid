@@ -229,7 +229,7 @@ Natančno navedi prvi zakon termodinamike in dokaži, da za reverzibilno adiabat
 
 ### Naloga 3
 
-Idealni plin preide iz stanja $(p_1, V_1) = (2{,}0\,\mathrm{bar}, 1{,}0\,\mathrm{L})$ v stanje $(p_2, V_2) = (1{,}0\,\mathrm{bar}, 2{,}0\,\mathrm{L})$ po dveh poteh: (a) najprej izobarno pri $2{,}0\,\mathrm{bar}$ do $2{,}0\,\mathrm{L}$, nato izohorno do $1{,}0\,\mathrm{bar}$; (b) najprej izohorno do $1{,}0\,\mathrm{bar}$, nato izobarno do $2{,}0\,\mathrm{L}$. Izračunaj toploto, ki jo plin prejme po vsaki poti, in utemelji, ali je toplota funkcija stanja.
+Idealni plin preide iz stanja $(p_1; V_1) = (2{,}0\,\mathrm{bar}; 1{,}0\,\mathrm{L})$ v stanje $(p_2; V_2) = (1{,}0\,\mathrm{bar}; 2{,}0\,\mathrm{L})$ po dveh poteh: (a) najprej izobarno pri $2{,}0\,\mathrm{bar}$ do $2{,}0\,\mathrm{L}$, nato izohorno do $1{,}0\,\mathrm{bar}$; (b) najprej izohorno do $1{,}0\,\mathrm{bar}$, nato izobarno do $2{,}0\,\mathrm{L}$. Izračunaj toploto, ki jo plin prejme po vsaki poti, in utemelji, ali je toplota funkcija stanja.
 
 **Rešitev:**
 

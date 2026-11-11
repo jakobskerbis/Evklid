@@ -228,7 +228,7 @@ Recept za poskus, na primeru »Ali ogrevanje vpliva na število sklec v eni minu
 ~ Pri linearni odvisnosti bi se čas vsak teden skrajšal za *enako*. Tu so spremembe vse manjše.
 + nelinearna, ker se izboljšanje iz tedna v teden manjša
 - ni je mogoče določiti brez grafa
-~ Graf pomaga, a dovolj je primerjati spremembe na enakih korakih: $0{,}3$, $0{,}1$ in $0{,}05\,\text{s}$ niso enake.
+~ Graf pomaga, a dovolj je primerjati spremembe na enakih korakih: $0{,}3$; $0{,}1$ in $0{,}05\,\text{s}$ niso enake.
 > Spremembe na enakih korakih niso enake, zato točke ne ležijo na premici: odvisnost je nelinearna.
 
 :::simboli

@@ -6,7 +6,7 @@
 
 export const DRSNE = [
   // učbenik, klepet, rešitve
-  ".katex-display", ".md-table-wrap", ".msg.assistant pre", ".solution", ".textbook .katex.tb-dolga",
+  ".katex-display", ".md-table-wrap", ".msg.assistant pre", ".solution", ".textbook .katex.tb-dolga", ".katex.tb-dolga",
   ".textbook .explanation pre", ".demo-eq", ".demo-table", ".graf-eq", ".demo-readout", ".lab-table-wrap",
   ".formula-body", ".pad-value", ".fb-summary", ".pilot-scroll", ".tc-scroll", ".lab-bench",
   // kalkulator, grafi, formule
@@ -45,40 +45,58 @@ const premik = (el) => Math.abs(el.scrollLeft); // v RTL je scrollLeft ≤ 0
 // Le ob spremembi: vsak zapis v »style« sproži opazovalca spodaj, ki bi sicer tekel v vsakem okvirju.
 const nastavi = (el, k, v) => el.style.getPropertyValue(k) !== v && el.style.setProperty(k, v);
 
-export function oznaci(el) {
+// Najprej preberemo mere vseh vrstic, šele nato pišemo razrede in sloge: branje za vsakim zapisom bi brskalnik
+// prisililo, da stran postavi znova za vsako vrstico (list formul ima več sto vrstic; j 6. 11. 2026: takojšnje odpiranje).
+function izmeri(el) {
   const cs = getComputedStyle(el);
-  const max = el.scrollWidth - el.clientWidth;
-  const vec = max > 1 && (cs.overflowX === "auto" || cs.overflowX === "scroll");
-  const at = premik(el);
+  const cw = el.clientWidth;
+  const sw = el.scrollWidth;
+  return { el, cw, sw, max: sw - cw, at: premik(el), ox: cs.overflowX, rtl: cs.direction === "rtl" };
+}
+function uporabi({ el, cw, sw, max, at, ox, rtl }) {
+  const vec = max > 1 && (ox === "auto" || ox === "scroll");
   el.classList.toggle("drs", vec);
   el.classList.toggle("drs-z", vec && at > 1);
   el.classList.toggle("drs-k", vec && at < max - 1);
   // Smer šteje element sam (».sc-preview« je LTR tudi na arabski strani), ne <html dir>.
-  el.classList.toggle("drs-rtl", vec && cs.direction === "rtl");
+  el.classList.toggle("drs-rtl", vec && rtl);
   // Položaj in dolžina črte pod vrstico na telefonu (drsniki.css); v RTL se začetek šteje z desne.
   if (vec) {
     const p = Math.min(1, at / max);
-    nastavi(el, "--drs-d", (el.clientWidth / el.scrollWidth).toFixed(3));
-    nastavi(el, "--drs-x", `${((cs.direction === "rtl" ? 1 - p : p) * 100).toFixed(1)}%`);
+    nastavi(el, "--drs-d", (cw / sw).toFixed(3));
+    nastavi(el, "--drs-x", `${((rtl ? 1 - p : p) * 100).toFixed(1)}%`);
   }
   if (vec && !pokukano.has(el)) io?.observe(el);
 }
+export function oznaci(el) {
+  uporabi(izmeri(el));
+}
+const oznaciVse = (els) => els.map(izmeri).forEach(uporabi);
+// Vrstica v delu strani, ki ga brskalnik še ne izriše (content-visibility: auto, kot sirina.js): ne merimo je,
+// ker bi merjenje ta del postavilo takoj; pregledamo jo, ko se del izriše.
+const neizrisano = (el) => !!el.checkVisibility && !el.checkVisibility({ contentVisibilityAuto: true });
 
 // Na zaslonu na dotik vrstico enkrat rahlo premaknemo in vrnemo, ko je prvič vidna.
+// Vrstice, ki se ob odprtju ne smejo premakniti: »Preberi lekcijo« je prvi čip glave pogovora in mora biti viden cel
+// (j, 5. 11.: ob odprtju je bil zamaknjen, »Pre« odrezan); rob, ki zbledi, že pove, da se vrstica pomika.
+export const BREZ_POKUKA = "#chat-state";
 function pokukaj(el) {
   pokukano.add(el);
   io.unobserve(el);
-  if (!el.classList.contains("drs") || premik(el) > 1) return;
+  if (!el.classList.contains("drs") || premik(el) > 1 || el.matches(BREZ_POKUKA)) return;
   const smer = getComputedStyle(el).direction === "rtl" ? -1 : 1;
   const cilj = Math.min(28, el.scrollWidth - el.clientWidth);
   // Če se je učenec medtem sam dotaknil vrstice, je ne vračamo (sicer bi mu jo izpulili izpod prsta).
   let dotik = false;
   const ustavi = () => (dotik = true);
-  for (const t of ["pointerdown", "touchstart", "wheel"]) el.addEventListener(t, ustavi, { once: true, passive: true });
+  const DOGODKI = ["pointerdown", "touchstart", "touchmove", "pointermove", "wheel"];
+  for (const t of DOGODKI) el.addEventListener(t, ustavi, { once: true, passive: true });
   el.scrollBy({ left: smer * cilj, behavior: "smooth" });
   setTimeout(() => {
-    for (const t of ["pointerdown", "touchstart", "wheel"]) el.removeEventListener(t, ustavi);
-    if (el.isConnected && !dotik && Math.abs(premik(el) - cilj) <= 2) el.scrollTo({ left: 0, behavior: "smooth" });
+    for (const t of DOGODKI) el.removeEventListener(t, ustavi);
+    // nazaj le naš pokuk (tudi nedokončan na počasni napravi), ne pomika, ki ga je učenec naredil sam dlje od cilja
+    const x = premik(el);
+    if (el.isConnected && !dotik && x > 0 && x <= cilj + 2) el.scrollTo({ left: 0, behavior: "smooth" });
   }, 450);
 }
 
@@ -91,14 +109,16 @@ function preglej() {
   obmocje = null;
   if (!kje) return;
   sledeni.forEach((el) => el.isConnected || (ro.unobserve(el), io?.unobserve(el), sledeni.delete(el)));
+  const vrste = [];
   kje.querySelectorAll(SEL).forEach((el) => {
     if (NI && el.matches(NI)) return;
     if (!sledeni.has(el)) {
       sledeni.add(el);
       ro.observe(el);
     }
-    oznaci(el);
+    if (!neizrisano(el)) vrste.push(el); // daljni del lista formul: ko se izriše, ga pregledamo (dogodek spodaj)
   });
+  oznaciVse(vrste);
 }
 
 // Kaj pregledati v naslednjem okvirju: document (vse) ali le tipkovnico.
@@ -119,7 +139,8 @@ export function initDrsniki() {
   slog.id = "drs-navpicno";
   slog.textContent = `:where(${BREZ_NAVPICNEGA.join(",")}) { overflow-y: clip; }`;
   document.head.append(slog);
-  ro = new ResizeObserver((vnosi) => vnosi.forEach((v) => oznaci(v.target)));
+  ro = new ResizeObserver((vnosi) => oznaciVse(vnosi.map((v) => v.target).filter((el) => !neizrisano(el))));
+  document.addEventListener("contentvisibilityautostatechange", (e) => e.skipped || kmalu(e.target), true);
   const dotik = matchMedia("(pointer: coarse)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (dotik && typeof IntersectionObserver !== "undefined") {
     io = new IntersectionObserver((vnosi) => vnosi.forEach((v) => v.intersectionRatio >= 0.9 && pokukaj(v.target)), { threshold: 0.9 });

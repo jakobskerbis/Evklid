@@ -11,11 +11,13 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
 
   // Označena formula, ki je KaTeX ne zna izrisati, se izriše neoznačena (nikoli rdeč surov LaTeX).
-  // sentence: poved okoli formule, da dvoumna črka dobi pomen iz besedila (formula-data.js annotateTex).
-  function renderMath(tex, display, fx = true, sentence = "") {
+  // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
+  // (formula-data.js annotateTex): block je celo besedilo (kartica, naloga, razdelek) z definicijami oznak.
+  function renderMath(tex, display, fx = true, ctx = "") {
     try {
       if (annotate && fx) {
-        const annotated = annotate(tex, sentence ? { sentence } : null);
+        const o = typeof ctx === "string" ? (ctx ? { sentence: ctx } : null) : ctx;
+        const annotated = annotate(tex, o);
         if (annotated !== tex) {
           try {
             return katex.renderToString(annotated, { ...trusted, throwOnError: true, displayMode: display });
@@ -41,18 +43,34 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       .replace(/\\\[([\s\S]+?)\\\]/g, (_, t) => stash(t, true))
       .replace(/\\\((.+?)\\\)/g, (_, t) => stash(t, false))
       .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
-    if (annotate) for (const m of src.matchAll(/@@MATH(\d+)@@/g)) if (math[m[1]]) math[m[1]].sentence = sentenceAt(src, m[0], m.index);
+    const block = String(text ?? "");
+    if (annotate) {
+      // Formula nazaj v $…$ (odstavek za oznake iz besedila) ali kot TeX (formule v isti povedi).
+      const back = (s, asTex) => s.replace(/@@MATH(\d+)@@/g, (mk, i) => (!math[i] ? mk : asTex ? ` ${math[i].tex} ;` : math[i].display ? `$$${math[i].tex}$$` : `$${math[i].tex}$`));
+      for (const m of src.matchAll(/@@MATH(\d+)@@/g)) {
+        if (!math[m[1]]) continue;
+        const para = paragraphAt(src, m.index, m[0].length);
+        const raw = rawSentenceAt(src, m[0], m.index);
+        math[m[1]].ctx = { sentence: sentenceAt(src, m[0], m.index), sentenceTex: back(raw, true), sentenceMd: back(raw, false), para: back(para, false), block };
+      }
+    }
     let html = clean(marked.parse(splitFormulaCells(fixTables(src), math), { breaks: true, gfm: true }));
     // Tabela dobi svoj razred (oblika v style.css velja povsod, ne glede na okvir okoli nje);
     // ulomki in potence v njej so v polni velikosti (\displaystyle), sicer so premajhni za branje.
     html = html.replace(/<table>([\s\S]*?)<\/table>/g, (_, body) => {
       const inner = centerNumberColumns(body).replace(/@@MATH(\d+)@@/g, (m, i) =>
-        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].sentence) : m,
+        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].ctx) : m,
       );
       return `<div class="md-table-wrap"><table class="md-table">${inner}</table></div>`;
     });
     html = subHeadings(html);
-    return html.replace(/@@MATH(\d+)@@/g, (m, i) => (math[i] ? renderMath(math[i].tex, math[i].display, true, math[i].sentence) : m));
+    // Ločilo takoj za vrstično formulo (». , ; : ! ?«) ostane z njo v isti vrstici: pika se ne prelomi sama v novo vrstico
+    // (j, 5. 11.: kartica »Zapomni si«). Ne-prelomni ovoj samo za formulo in ločilo, ne za cel stavek.
+    return html.replace(/@@MATH(\d+)@@([.,;:!?]+)?/g, (m, i, punct) => {
+      if (!math[i]) return m;
+      const out = renderMath(math[i].tex, math[i].display, true, math[i].ctx);
+      return punct && !math[i].display ? `<span class="fx-nb">${out}${punct}</span>` : out + (punct || "");
+    });
   }
 
   return { renderMath, renderRich };
@@ -73,6 +91,19 @@ function splitSentences(text) {
   return out;
 }
 const cleanSentence = (s) => s.replace(/@@MATH\d+@@/g, " ").replace(/[*_#>`|]/g, " ").replace(/\s+/g, " ").trim();
+// Poved s formulo v izvirnem besedilu (z oznakami @@MATHn@@), za formule v isti povedi.
+function rawSentenceAt(src, mark, at) {
+  const before = splitSentences(src.slice(Math.max(0, at - 300), at));
+  const after = splitSentences(src.slice(at + mark.length, at + mark.length + 300));
+  return `${before[before.length - 1]} ${mark} ${after[0]}`;
+}
+// Odstavek s formulo (do prazne vrstice): oznaka iz besedila (»Za $y = 2x$ …«) velja le v njem, ne v celem razdelku.
+function paragraphAt(src, at, len) {
+  const a = src.lastIndexOf("\n\n", at);
+  const b = src.indexOf("\n\n", at + len);
+  return src.slice(a < 0 ? 0 : a + 2, b < 0 ? src.length : b);
+}
+
 export function sentenceAt(src, mark, at = src.indexOf(mark)) {
   if (at < 0) return "";
   const before = splitSentences(src.slice(Math.max(0, at - 300), at));

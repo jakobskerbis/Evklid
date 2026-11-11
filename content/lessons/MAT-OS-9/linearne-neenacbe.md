@@ -18,7 +18,7 @@ Neenačbe uporabljamo pri proračunu, pri omejitvah (največja nosilnost, najman
 
 Linearna neenačba z eno neznanko je na primer $2x + 3 < 11$.
 
-**2. Rešitev neenačbe.** Rešitev je vsako število, ki ob vstavitvi v neenačbo da resničen izrek. Pri $x < 4$ so rešitve $3$, $0$, $-5$, $3{,}9$ … in jih je neskončno mnogo. Število $4$ ni rešitev, ker $4 < 4$ ne drži.
+**2. Rešitev neenačbe.** Rešitev je vsako število, ki ob vstavitvi v neenačbo da resničen izrek. Pri $x < 4$ so rešitve $3$; $0$; $-5$; $3{,}9$ … in jih je neskončno mnogo. Število $4$ ni rešitev, ker $4 < 4$ ne drži.
 
 **3. Ekvivalentne preoblikovanja.** Rešitve se ne spremenijo, če:
 

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lahke kovine
+  - Al $2{,}70$, Mg $1{,}74$, Ti $4{,}51\,\mathrm{g/cm^3}$
+  - $E/\rho$ kot pri jeklu
+  - upogib plošč: merilo $E^{1/3}/\rho$
+- Aluminijeve zlitine
+  - 2xxx, 6xxx, 7xxx toplotno utrjevalne
+  - 1xxx, 3xxx, 5xxx hladno utrjevanje
+  - stanja O, H, T4, T6
+- Izločevalno utrjevanje
+  - raztopno žarjenje, gašenje, staranje
+  - GP cone, $\theta''$, $\theta'$, $\theta$
+- Proti kaljenju jekla
+  - po gašenju mehko
+  - trdnost šele s staranjem
+- Vrh in prestaranje
+  - rezanje drobnih izločkov
+  - obidenje grobih (Orowan)
+- Magnezij
+  - heksagonalna mreža, tlačno litje AZ91
+  - korozija, vnetljivi ostružki
+- Titan
+  - $\alpha$ pod $882\,^\circ\mathrm C$, $\beta$ nad
+  - Ti-6Al-4V, vsadki

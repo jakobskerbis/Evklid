@@ -26,7 +26,7 @@ $$1 - \frac12 + \frac13 - \frac14 + \cdots = \sum_{n=1}^{\infty} \frac{(-1)^{n+1
 
 Delne vsote skačejo gor in dol, a skoki so vse manjši. Na številski premici: $S_2 < S_4 < \ldots$ se plazijo desno, $S_1 > S_3 > \ldots$ levo, vmes ostaja vse ožji pas okoli $\ln 2 \approx 0{,}6931$.
 
-Druga različica sešteva $1 + \frac13 - \frac12 + \frac15 + \frac17 - \frac14 + \cdots$. Po $1$, $2$, $3$ in $10$ trojicah dobi $0{,}8333$, $0{,}9262$, $0{,}9615$ in $1{,}0152$; po $100\,000$ trojicah $1{,}0397$. To je $\frac32 \ln 2$.
+Druga različica sešteva $1 + \frac13 - \frac12 + \frac15 + \frac17 - \frac14 + \cdots$. Po $1$, $2$, $3$ in $10$ trojicah dobi $0{,}8333$; $0{,}9262$; $0{,}9615$ in $1{,}0152$, po $100\,000$ trojicah pa $1{,}0397$. To je $\frac32 \ln 2$.
 
 Kaj se zgodi, če Luka vzame samo absolutne vrednosti? Dobi harmonično vrsto $1 + \frac12 + \frac13 + \cdots$, ki divergira. Vrsta konvergira le zato, ker se pozitivni in negativni členi med seboj deloma izničujejo.
 

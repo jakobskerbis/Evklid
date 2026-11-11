@@ -17,19 +17,30 @@ Nobena meritev ni popolnoma točna. Zdravnik, ki izmeri vročino, mora vedeti, a
 
 **Meritve na številski premici.** Pet izmerjenih višin narišemo kot pike na številsko premico:
 
-```
- 172,0   172,2   172,4   172,6   172,8   173,0  cm
-   |-------|-------|-------|-------|-------|
-       •       •       •   •       •
-       [=============▲=============]
-                  172,46
-```
+:::risba premica
+opis: Številska premica višine v centimetrih od 172,0 do 173,0. Pike so pet meritev: 172,1; 172,3; 172,5; 172,6 in 172,8 cm. Povprečje 172,46 cm je označeno s praznim krožcem. Odebeljeni pas sega od 172,10 do 172,82 cm in zajame vse pike.
+od: 172
+do: 173
+korak: 0,1
+oznake: ne
+oznaka: 172 | 172,0
+oznaka: 173 | 173,0
+oznaka: 172,46 | povprečje 172,46
+točka: 172,46 | | oranžna prazna
+interval: 172,1 .. 172,82 | | siva
+točka: 172,1
+točka: 172,3
+točka: 172,5
+točka: 172,6
+točka: 172,8
+podnapis: Višina v centimetrih.
+:::
 
-Pike stojijo pri $172{,}1$, $172{,}3$, $172{,}5$, $172{,}6$ in $172{,}8\,\text{cm}$.
+Pike stojijo pri $172{,}1$; $172{,}3$; $172{,}5$; $172{,}6$ in $172{,}8\,\text{cm}$.
 
-Pike so razsute okrog sredine. Sredino označuje trikotnik: to je **povprečje** $\bar{x}$, vsota vseh meritev, deljena z njihovim številom. Povprečje je naša najboljša ocena prave vrednosti.
+Pike so razsute okrog sredine. Sredino označuje prazen krožec z napisom »povprečje«: to je **povprečje** $\bar{x}$, vsota vseh meritev, deljena z njihovim številom. Povprečje je naša najboljša ocena prave vrednosti.
 
-**Širina pasu.** Pas z oglatimi oklepaji zajame vse pike. Od povprečja sega na vsako stran toliko, kolikor znaša največje odstopanje kake meritve od povprečja. To odstopanje je **absolutna napaka** $\Delta x$. Ima isto enoto kot merjena količina, tu centimetre. Prava višina leži najverjetneje znotraj tega pasu.
+**Širina pasu.** Odebeljeni sivi pas zajame vse pike. Od povprečja sega na vsako stran toliko, kolikor znaša največje odstopanje kake meritve od povprečja. To odstopanje je **absolutna napaka** $\Delta x$. Ima isto enoto kot merjena količina, tu centimetre. Prava višina leži najverjetneje znotraj tega pasu.
 
 Kaj pa, če dobimo petkrat isto število ali merimo samo enkrat? Potem pasu ne moremo izmeriti iz razsutosti pik. Za absolutno napako vzamemo **najmanjši razdelek merila**: pri termometru z razdelki po $0{,}1\,^\circ\text{C}$ je to $0{,}1\,^\circ\text{C}$.
 
@@ -93,7 +104,7 @@ Pri eni meritvi je $\Delta T$ najmanjši razdelek; $\delta = \dfrac{\Delta T}{T}
 
 ### Primer 2: pet meritev višine
 
-Sestra izmeri višino fanta petkrat: $172{,}3\,\text{cm}$, $172{,}8\,\text{cm}$, $172{,}5\,\text{cm}$, $172{,}1\,\text{cm}$ in $172{,}6\,\text{cm}$. Zapiši rezultat in izračunaj relativno napako.
+Sestra izmeri višino fanta petkrat: $172{,}3\,\text{cm}$; $172{,}8\,\text{cm}$; $172{,}5\,\text{cm}$; $172{,}1\,\text{cm}$ in $172{,}6\,\text{cm}$. Zapiši rezultat in izračunaj relativno napako.
 
 **Podatki:** $h_1 = 172{,}3\,\text{cm}$, $h_2 = 172{,}8\,\text{cm}$, $h_3 = 172{,}5\,\text{cm}$, $h_4 = 172{,}1\,\text{cm}$, $h_5 = 172{,}6\,\text{cm}$
 **Iščemo:** zapis $h = (\bar{h} \pm \Delta h)$ in relativno napako $\delta$
@@ -199,7 +210,7 @@ Absolutna napaka je v obeh primerih enaka, relativna pa zelo različna. Zato je 
 
 ? Razvrsti meritve od najnatančnejše do najmanj natančne. A: dojenček $(4{,}00 \pm 0{,}05)\,\text{kg}$. B: odrasli $(80{,}0 \pm 0{,}5)\,\text{kg}$. C: vročina $(37{,}0 \pm 0{,}1)\,^\circ\text{C}$.
 - A, C, B
-~ To je razvrstitev po absolutni napaki ($0{,}05$, $0{,}1$, $0{,}5$). Ta ne upošteva velikosti količine in različnih enot.
+~ To je razvrstitev po absolutni napaki ($0{,}05$; $0{,}1$; $0{,}5$). Ta ne upošteva velikosti količine in različnih enot.
 + C, B, A
 - B, C, A
 ~ To je razvrstitev po velikosti izmerjene vrednosti ($80$, $37$, $4$). Večja vrednost sama še ne pomeni natančnejše meritve. Izračunaj deleže: A $1{,}25\,\%$, B $0{,}625\,\%$, C $0{,}27\,\%$.
@@ -213,7 +224,7 @@ Absolutna napaka je v obeh primerih enaka, relativna pa zelo različna. Zato je 
 + Razpolovi se.
 > $\Delta x$ ostane $1\,\text{mm}$, $\bar{x}$ se podvoji, zato se količnik $\dfrac{\Delta x}{\bar{x}}$ razpolovi.
 
-? Dolžino roke izmerimo trikrat: $61{,}2\,\text{cm}$, $61{,}8\,\text{cm}$ in $61{,}5\,\text{cm}$. Kako zapišemo rezultat?
+? Dolžino roke izmerimo trikrat: $61{,}2\,\text{cm}$; $61{,}8\,\text{cm}$ in $61{,}5\,\text{cm}$. Kako zapišemo rezultat?
 - $(61{,}5 \pm 0{,}6)\,\text{cm}$
 ~ $0{,}6\,\text{cm}$ je razpon med skrajnima meritvama. Napaka je odstopanje od povprečja, torej $0{,}3\,\text{cm}$.
 + $(61{,}5 \pm 0{,}3)\,\text{cm}$

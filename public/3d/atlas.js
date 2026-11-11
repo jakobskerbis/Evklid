@@ -180,7 +180,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   namigVrsta.append(namig, btnNastavitve);
   const kartica = mk("section", "a3-kartica");
   kartica.hidden = true;
-  kartica.setAttribute("aria-live", "polite");
+  // Bralnik zaslona: ime izbrane strukture v ločenem, vedno prisotnem statusu (ne živo območje v skriti kartici).
+  const statusEl = mk("p", "k3-sr");
+  statusEl.setAttribute("role", "status");
   const kviz = mk("section", "a3-kviz");
   kviz.hidden = true;
   dno.append(kartica, kviz, namigVrsta);
@@ -205,7 +207,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   meni.setAttribute("role", "menu");
   meni.hidden = true;
 
-  el.append(oder, vrh, dno, nalaganje, list, meni);
+  el.append(oder, vrh, dno, nalaganje, list, meni, statusEl);
 
   // ---------- podatki ----------
   const [strukture, imena, seznam] = await Promise.all([
@@ -292,6 +294,31 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const kit = ustvariSceno(oder, { kakovost, oznaka: t("a3.title"), fov: 32, ponastavi: () => ponastaviPogled(), preveriZakritje: false });
   kit.controls.minDistance = 0.08;
   kit.controls.maxDistance = 6;
+
+  // Kartica izbranega dela nikoli čez telo (j, 5. 11.): ko je odprta, se oder umakne. Telefon: kartica s spodnjo vrstico
+  // je list pod odrom (oder se skrajša); računalnik: stolpec levo ob odru pod glavo (oder se zoži). Mere v CSS
+  // spremenljivkah, oder dobi novo velikost takoj (pred preletom k delu).
+  const vidnaKartica = () => !kartica.hidden && kartica.getClientRects().length > 0;
+  let zacetniKader = null; // { c, d } zadnjega začetnega kadra (ponastaviPogled)
+  function uskladiKartico() {
+    const odprta = vidnaKartica();
+    const prej = el.classList.contains("a3-info-odprta");
+    el.classList.toggle("a3-info-odprta", odprta);
+    if (odprta) {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--a3-vrh-h", `${Math.round(vrh.getBoundingClientRect().bottom - r.top)}px`);
+      el.style.setProperty("--a3-dno-h", `${Math.round(dno.offsetHeight)}px`);
+      el.style.setProperty("--a3-dno-w", `${Math.round(dno.offsetWidth)}px`);
+    }
+    kit.posodobiVelikost();
+    // Oder se je skrajšal ali zožil (ali spet razširil), kamera pa je še v začetnem kadru: celo telo znova pod glavo
+    // (sicer lobanja zdrsne pod vrstico orodij). Prelet k delu (izberi) ta kader takoj nadomesti.
+    if (prej !== odprta && vZacetnemKadru()) ponastaviPogled(kit.gibanje ? 0.35 : 0);
+  }
+  const roKartica = new ResizeObserver(() => uskladiKartico());
+  for (const x of [dno, vrh]) roKartica.observe(x);
+  const moKartica = new MutationObserver(() => uskladiKartico());
+  moKartica.observe(kartica, { attributes: true, attributeFilter: ["hidden"] });
   const telo = new THREE.Group();
   kit.scene.add(telo);
   // Modeli imajo zapečeno okluzijo v pregibih (barva oglišč), zato je zaslonska (GTAO) šibkejša, le za stike med deli.
@@ -375,8 +402,14 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   });
   const vidiAO = () => kit.nastaviAO(kakovost === "visoka" && !rentgen && !prerez.on && !izbran && !sloji.get("koza").viden);
 
+  // Začetni kader: celo telo v prostem delu odra pod glavo (telefon: lobanja ni pod vrstico orodij), kot poletiK.
   function ponastaviPogled(trajanje = 0.7) {
-    pogled(new THREE.Vector3(...POGLEDI.spredaj), { trajanje, cilj: new THREE.Vector3(0, 0.95, 0), polmer: 0.88 });
+    zacetniKader = poletiK(new THREE.Vector3(0, 0.95, 0), 0.88, { smer: new THREE.Vector3(...POGLEDI.spredaj).normalize(), trajanje, pokonci: true, rob: 1.04 });
+  }
+  function vZacetnemKadru() {
+    if (!zacetniKader || kit.leti) return false;
+    const d = kit.camera.position.distanceTo(kit.controls.target);
+    return Math.abs(d - zacetniKader.d) < 0.03 * zacetniKader.d && kit.controls.target.distanceTo(zacetniKader.c) < 0.03 * zacetniKader.d;
   }
   function pogled(smer, { trajanje = 0.7, cilj = null, polmer = null } = {}) {
     const c = cilj || kit.controls.target.clone();
@@ -789,6 +822,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!izbran) {
       sij.visible = false;
       kartica.hidden = true;
+      statusEl.textContent = "";
+      uskladiKartico();
       uporabiMateriale();
       return;
     }
@@ -805,26 +840,42 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     sij.visible = true;
     uporabiMateriale();
     if (!tiho) pokaziKartico(d.row);
+    statusEl.textContent = tiho ? "" : d.row.prikaz;
+    uskladiKartico();
     if (leti) poletiK(sredisceDela(d), Math.max(0.03, d.row.r * 0.55));
   }
 
-  // Prelet do dela tako, da je del na sredini prostega dela zaslona (med glavo in kartico ali namigom).
-  function poletiK(c, polmer) {
+  // Prelet do dela tako, da je del na sredini prostega dela odra (med glavo in kvizom ali namigom, ki ležita na odru;
+  // kartica dela je ob odru, ne na njem).
+  // smer, trajanje, pokonci: kot kit.poleti (privzeto ista smer pogleda); rob: rezerva okoli krogle (1,12 pri delu).
+  function poletiK(c, polmer, { smer = null, trajanje, pokonci = false, rob = 1.12 } = {}) {
     const { h } = kit.velikost;
-    const r = el.getBoundingClientRect();
-    const zgoraj = vrh.getBoundingClientRect().bottom - r.top;
-    // Na širokem zaslonu je kartica levo spodaj (ne pokrije sredine), na telefonu čez vso širino.
-    const ozek = dno.getBoundingClientRect().width > r.width * 0.7;
-    const spodnji = ozek && !kartica.hidden ? kartica : ozek && !kviz.hidden ? kviz : namigVrsta;
-    const spodaj = spodnji.getBoundingClientRect().top - r.top;
+    const r = kit.canvas.getBoundingClientRect();
+    const zgoraj = Math.max(0, vrh.getBoundingClientRect().bottom - r.top);
+    const naOdru = (x) => {
+      if (x.hidden || !x.getClientRects().length) return false;
+      const b = x.getBoundingClientRect();
+      return b.left < r.right - 1 && b.right > r.left + 1 && b.top < r.bottom - 1;
+    };
+    const spodnji = [kviz, namigVrsta].filter(naOdru).map((x) => x.getBoundingClientRect().top - r.top);
+    const spodaj = Math.min(r.height, ...spodnji);
     const prostor = Math.max(120, spodaj - zgoraj);
     const tan = Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2));
-    const d = Math.max((polmer / tan) * (h / prostor), polmer / (tan * kit.camera.aspect)) * 1.12;
+    const d = Math.max((polmer / tan) * (h / prostor), polmer / (tan * kit.camera.aspect)) * rob;
     const naPx = (2 * Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2)) * d) / h;
     const dy = (zgoraj + prostor / 2 - h / 2) * naPx; // del mora biti dy nižje od sredine zaslona
-    const smer = kit.camera.position.clone().sub(kit.controls.target).normalize();
-    const gor = new THREE.Vector3(0, 1, 0).addScaledVector(smer, -smer.y).normalize();
-    kit.poleti(c.clone().addScaledVector(gor, dy), polmer, { smer, razdalja: d });
+    const s = smer ? smer.clone() : kit.camera.position.clone().sub(kit.controls.target).normalize();
+    const gor = new THREE.Vector3(0, 1, 0).addScaledVector(s, -s.y).normalize();
+    const cilj = c.clone().addScaledVector(gor, dy);
+    kit.poleti(cilj, polmer, { smer: s, razdalja: d, pokonci, ...(trajanje != null ? { trajanje } : {}) });
+    return { c: cilj, d };
+  }
+
+  // × in Esc: kartica se zapre; fokus, ki je bil v njej, gre na oder (ne izgubi se na koncu strani).
+  function zapriKartico() {
+    const vKartici = kartica.contains(document.activeElement);
+    izberi(null);
+    if (vKartici) kit.canvas.focus({ preventScroll: true });
   }
 
   function pokaziKartico(r) {
@@ -838,7 +889,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const vrhK = mk("div", "a3-k-vrh");
     const naslov = mk("h2", "", r.prikaz);
     const x = gumb("a3-krog a3-mali-krog", icon("x"), t("a3.close"));
-    x.addEventListener("click", () => izberi(null));
+    x.addEventListener("click", zapriKartico);
     vrhK.append(naslov, x);
     kartica.append(pot, vrhK);
     if (r.la) kartica.append(mk("p", "a3-latinsko", r.la));
@@ -1645,7 +1696,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!meni.hidden) zapriPlavajoce();
     else if (!list.hidden) zapriList();
     else if (kvizStanje) koncajKviz();
-    else if (izbran) izberi(null);
+    else if (izbran) zapriKartico();
     else return;
     e.preventDefault();
   };
@@ -1710,6 +1761,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     },
     unici() {
       pozabiKvizRentgen();
+      roKartica.disconnect();
+      moKartica.disconnect();
       document.removeEventListener("keydown", naTipko);
       document.removeEventListener("click", naKlik);
       kit.unici();

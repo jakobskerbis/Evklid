@@ -179,14 +179,17 @@ $-6x^2 - 15x = -3x(2x + 5)$. Preverimo: $-3x \cdot 2x = -6x^2$ in $-3x \cdot 5 =
 
 Pravokotnik z višino $4x$ razdelimo navpično na dva dela:
 
-```
-        2x            3
-  +-------------+--------+
-  |             |        |
-4x|    8x²      |  12x   |
-  |             |        |
-  +-------------+--------+
-```
+:::risba skica
+opis: Pravokotnik z višino 4x je navpično razdeljen na dva dela. Levi del je širok 2x in ima ploščino 8x², desni je širok 3 in ima ploščino 12x.
+območje: 0; 0 .. 10; 5,2
+pravokotnik: 1,4; 0,4 .. 6,4; 4,4
+pravokotnik: 6,4; 0,4 .. 9,4; 4,4 | oranžna
+napis: 3,9; 4,4 | 2x | nad
+napis: 7,9; 4,4 | 3 | nad
+napis: 1,4; 2,4 | 4x | levo
+napis: 3,9; 2,4 | 8x^2 | sredina | debelo
+napis: 7,9; 2,4 | 12x | sredina | debelo
+:::
 
 Levi del je širok $2x$ in ima ploščino $4x \cdot 2x = 8x^2$. Desni del je širok $3$ in ima ploščino $4x \cdot 3 = 12x$. Skupaj je to $8x^2 + 12x$.
 

@@ -171,9 +171,16 @@ export const COURSE_EXTENSIONS = {
     [
       "Diferencialne enačbe",
       [
-        "Homogene enačbe in znižanje reda | homogena diferencialna enačba prvega reda, substitucija y = xu, znižanje reda pri enačbah drugega reda",
-        "Sistemi linearnih diferencialnih enačb | sistemi prvega reda s konstantnimi koeficienti, reševanje z lastnimi vrednostmi, zaporedne kemijske reakcije, uporaba v kemiji"
+        "Homogene enačbe in znižanje reda | homogena diferencialna enačba prvega reda, substitucija y = xu, znižanje reda pri enačbah drugega reda"
       ]
+    ],
+    [
+      // Za lastnimi vrednostmi, ker sistem rešujemo z njimi (pregled #494).
+      "Linearna algebra in statistika",
+      [
+        "Sistemi linearnih diferencialnih enačb | sistemi prvega reda s konstantnimi koeficienti, reševanje z lastnimi vrednostmi, zaporedne kemijske reakcije, uporaba v kemiji"
+      ],
+      { after: "Lastne vrednosti in lastni vektorji" }
     ],
     [
       "Linearna algebra in statistika",

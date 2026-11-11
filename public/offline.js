@@ -28,9 +28,20 @@ const read = (key, fallback) => {
     return fallback;
   }
 };
+// Poln pomnilnik naprave: posnetek zadnjega zaslona (do ~0,5 MB, public/posnetek.js) je najmanj pomemben, zato ga
+// najprej pobrišemo in poskusimo znova (vrsta neposlanih odgovorov in paketi vaj imajo prednost; pregled #560 A5).
+const SHOT = "evklid.zadnji-posnetek";
 const write = (key, value) => {
+  let s;
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    s = JSON.stringify(value);
+    localStorage.setItem(key, s);
+    return true;
+  } catch {}
+  try {
+    if (s === undefined || localStorage.getItem(SHOT) == null) return false;
+    localStorage.removeItem(SHOT);
+    localStorage.setItem(key, s);
     return true;
   } catch {
     return false;
@@ -122,4 +133,140 @@ export function offlineApi(sid, url, opts = {}) {
     return { ...out, correct: false, hint: lastTask.hint, ...(res.mistake ? { mistake: res.mistake } : {}), ...(lastTask.attempts >= 3 ? { solution: lastTask.solution, final: true } : {}) };
   }
   return undefined;
+}
+
+// ---------- zasebnost (P7) ----------
+// Service worker osebnih odgovorov API ne shranjuje več. Da se aplikacija odpre tudi brez povezave, si stran
+// zapomni seznam profilov (id, ime, nastavitve, zaklep) tega računa in očiščene nastavitve aplikacije
+// (/api/config brez skrbniških zastavic). Ob odjavi, koncu seje, izbrisu ali menjavi računa se osebni
+// podatki na napravi pobrišejo (PRIVATE_KEYS); nastavitve videza (jezik, tema, enote …) ostanejo.
+const STUDENTS = "evklid.offline.students";
+const OWNER = "evklid.offline.owner";
+const CONFIG = "evklid.config";
+// Osebni podatki na napravi: paketi vaj, vrsta odgovorov, seznam profilov, lastnik naprave (offline.),
+// zgodovina skenerja (scan.), zapis postopka (work.), kalkulatorja (graph., sci.), ogledani cilji (goalSeen.),
+// opomniki urnika (schedule…), točke na lastnih polah (ours.), pozdrav ob novem letniku (levelup.),
+// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js).
+const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$|zadnji-posnetek$)/;
+// Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
+// priporočilna koda iz povezave, izbrani profil.
+const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref"]);
+const PRIVATE_EXACT = new Set(["teacherClasses", "studentId", ...LINK_KEYS]);
+export const isPrivateKey = (k) => typeof k === "string" && (PRIVATE_KEYS.test(k) || PRIVATE_EXACT.has(k));
+
+export function saveStudents(list) {
+  if (!Array.isArray(list)) return;
+  write(STUDENTS, list.map((s) => (s.locked ? { id: s.id, name: s.name, locked: true } : { id: s.id, name: s.name, settings: s.settings })));
+}
+
+// Nastavitve aplikacije za zagon brez povezave: samo javni del (brez skrbniških zastavic).
+export function saveConfig(cfg) {
+  if (!cfg || typeof cfg !== "object") return;
+  const { enums, defaults, mock, chat_off, test_notice, daily_questions, model, model_deep } = cfg;
+  const feedback = cfg.feedback ? { prompt: !!cfg.feedback.prompt, ai: !!cfg.feedback.ai, admin: false } : undefined;
+  write(CONFIG, { enums, defaults, mock, chat_off, test_notice, daily_questions, model, model_deep, feedback, admin: false });
+}
+
+// Odgovor brez povezave za zagon: nastavitve, seznam profilov in prazen seznam pogovorov (pogovori niso shranjeni).
+export function offlineBootApi(url, opts = {}) {
+  if ((opts.method || "GET").toUpperCase() !== "GET") return undefined;
+  const p = new URL(url, location.origin).pathname;
+  if (p === "/api/config") return read(CONFIG, undefined);
+  if (p === "/api/students") return read(STUDENTS, undefined);
+  if (/^\/api\/students\/\d+\/conversations$/.test(p)) return [];
+  return undefined;
+}
+
+// Podatki, ki so samo na tej napravi (za izvoz vseh podatkov), samo za profile tega računa (ids):
+// zgodovina skenerja, neposlani odgovori, kalkulatorja in zapisi postopka pri nalogah.
+export function deviceData(ids = []) {
+  const own = new Set(ids.map(String));
+  const out = { scanner_history: {}, offline_answers: {}, calculator: {}, task_work: {} };
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      const m = /^evklid\.(scan|offline\.queue|graph|sci)\.(.+)$/.exec(k);
+      if (m && own.has(m[2])) {
+        const box = { scan: "scanner_history", "offline.queue": "offline_answers" }[m[1]];
+        if (box) out[box][m[2]] = read(k, []);
+        else (out.calculator[m[2]] ||= {})[m[1]] = read(k, null);
+      }
+      // Zapis postopka je vezan na nalogo, ne na profil; po prijavi drugega računa se pobriše (checkOwner).
+      const w = /^evklid\.work\.(.+)$/.exec(k);
+      if (w) out.task_work[w[1]] = localStorage.getItem(k);
+    }
+  } catch {}
+  return out;
+}
+
+// Pobriše osebne podatke na napravi (PRIVATE_KEYS, PRIVATE_EXACT) in predpomnilnik API (service worker).
+// Ob odjavi, koncu seje, izbrisu računa in prijavi v drug račun.
+export async function clearPrivate() {
+  // Stran, ki se zapira (odjava, 401), posnetka in zadnjega zaslona ne zapiše znova (pagehide; pregled #560 A2).
+  try {
+    globalThis.evklidZacetek?.pozabi?.();
+  } catch {}
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+    for (const k of keys) if (isPrivateKey(k)) localStorage.removeItem(k);
+  } catch {}
+  try {
+    navigator.serviceWorker?.controller?.postMessage({ type: "clear-private" });
+  } catch {}
+  try {
+    if (typeof caches !== "undefined") {
+      const names = await caches.keys();
+      await Promise.all(names.filter((n) => /-api(-|$)/.test(n)).map((n) => caches.delete(n)));
+    }
+  } catch {}
+}
+
+// Izbris enega profila: pobrišejo se njegovi podatki na napravi (paket, vrsta, skener, kalkulator, cilji …).
+export function clearProfile(sid) {
+  const id = String(sid);
+  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup)\\.${id}\\.`);
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+    for (const k of keys) if (own.test(k)) localStorage.removeItem(k);
+    const list = read(STUDENTS, null);
+    if (Array.isArray(list)) write(STUDENTS, list.filter((s) => String(s.id) !== id));
+    // Zadnji zaslon in njegov posnetek (public/zacetek.js), če sta od tega profila.
+    for (const k of ["evklid.zadnji-zaslon", "evklid.zadnji-posnetek"]) if (String(read(k, null)?.s) === id) localStorage.removeItem(k);
+  } catch {}
+}
+
+// Ali so na napravi osebni podatki (brez zapisa o lastniku).
+function hasPrivate() {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      // Ključi iz povezave (povabilo, koda) so od tega obiskovalca, ne od prejšnjega lastnika.
+      if (k !== OWNER && !LINK_KEYS.has(k) && isPrivateKey(k)) return true;
+    }
+  } catch {}
+  return false;
+}
+
+// Prijava v drug račun na isti napravi: podatki prejšnjega računa se pobrišejo. Neznan lastnik (prva prijava
+// po namestitvi te različice) z osebnimi podatki na napravi šteje za tujega. Vrne true, če je bilo kaj pobrisano.
+export async function checkOwner(parentId) {
+  if (parentId == null) return false;
+  const prev = read(OWNER, null);
+  if (prev !== parentId && (prev !== null || hasPrivate())) {
+    await clearPrivate();
+    write(OWNER, parentId);
+    return true;
+  }
+  write(OWNER, parentId);
+  return false;
+}
+
+// Seja na tej napravi je končana (odjava drugje, iztek seje, odjava vseh drugih naprav): če je naprava imela
+// lastnika, se njegovi podatki pobrišejo. Vrne true, če je bilo kaj pobrisano.
+export async function endedSession() {
+  if (read(OWNER, null) === null) return false;
+  await clearPrivate();
+  return true;
 }

@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+
+- Graf in stopnja
+  - $G = (V, E)$, povezava je par vozlišč
+  - $\sum \deg(v) = 2m$
+  - lihih vozlišč je vedno sodo mnogo
+- Poti in cikli
+  - pot brez ponovljenih vozlišč
+  - cikel: sklenjen, dolžina vsaj $3$
+- Eulerjev obhod
+  - vsaka povezava natanko enkrat
+  - obhod: vse stopnje sode
+  - sprehod: natanko dve lihi vozlišči
+- Hamiltonov cikel
+  - vsako vozlišče natanko enkrat
+  - Dirac: $\deg(v) \ge n/2$ zadošča
+  - $K_{p,q}$ s $p \ne q$ ni Hamiltonov
+- Drevesa
+  - povezan graf brez ciklov
+  - $n - 1$ povezav, vsaj dva lista
+  - primer: ogrodje alkana
+- Barvanje
+  - sosedi različnih barv, $\chi(G)$
+  - $\chi(G) \le \Delta + 1$
+  - lih cikel zahteva $3$ barve
+- Dokaz za $\chi$
+  - spodnja meja: podgraf ($K_r$, lih cikel)
+  - zgornja meja: konkretno barvanje
+  - napaka: brez $K_4$ ni nujno $3$

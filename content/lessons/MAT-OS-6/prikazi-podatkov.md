@@ -155,20 +155,21 @@ Razlika zaporednih vrednosti: $\text{novejša} - \text{starejša}$ ($>0$ naraš�
 
 ## Drugače: Na sliki
 
-Predstavljaj si stolpčni prikaz za podatke iz preglednice (en znak # pomeni enega učenca):
+Stolpčni prikaz za podatke iz preglednice (višina stolpca pove število učencev):
 
-```
-Priljubljen šport v razredu (število učencev)
+:::risba stolpci
+opis: Stolpčni prikaz »Priljubljen šport v razredu«. Na navpični osi je število učencev. Stolpci: nogomet 9, košarka 6, plavanje 5, odbojka 3, atletika 2.
+podnapis: Priljubljen šport v razredu
+os: število učencev
+korak: 2
+stolpec: nogomet | 9
+stolpec: košarka | 6
+stolpec: plavanje | 5
+stolpec: odbojka | 3
+stolpec: atletika | 2
+:::
 
-nogomet   | ######### 9
-košarka   | ###### 6
-plavanje  | ##### 5
-odbojka   | ### 3
-atletika  | ## 2
-          +------------------
-```
-
-Najdaljša vrstica je nogomet, najkrajša atletika. Prikaz ti da občutek za velikost brez računanja. Na pravem prikazu so stolpci postavljeni navpično: kategorije so pod vodoravno osjo, števila ob navpični.
+Najvišji stolpec je nogomet, najnižji atletika. Prikaz ti da občutek za velikost brez računanja. Kategorije so pod vodoravno osjo, števila ob navpični.
 
 Črtični prikaz si predstavljaj kot točke na mrežnem papirju. Vodoravno so dnevi, navpično temperature:
 

@@ -1,6 +1,7 @@
 // Besedilo lekcije (Markdown + LaTeX) → slovensko besedilo za branje na glas (zvočni povzetek).
 // Brskalnik ga prebere s slovenskim glasom (speechSynthesis), strežnik nič ne stane.
 // Formule beremo, kot jih prebere učitelj: »I je enako U deljeno z R«, »v nič«, »deset na minus tri«.
+import { DRAW_RE, drawingText } from "./risbe.js";
 
 // Enote: [ednina, dvojina, 3–4, 5 in več, rodilnik ednine (decimalno število), tožilnik ednine (»na sekundo«)].
 const UNITS = {
@@ -251,6 +252,7 @@ function expr(s) {
 /** Markdown z $…$ → besedilo za branje (brez oznak, formule izgovorjene). */
 export function speakMarkdown(md) {
   return String(md || "")
+    .replace(DRAW_RE, (_, kind, body) => drawingText(body))
     .replace(/^[ \t]*:::[ \t]*(formula|premisli)[ \t]*\n([\s\S]*?)\n[ \t]*:::[ \t]*$/gm, "$2")
     .replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => ` ${speakTex(t)}. `)
     .replace(/\$([^$\n]+?)\$/g, (_, t) => speakTex(t))

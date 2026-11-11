@@ -163,11 +163,22 @@ $P = a \cdot b + 2 \cdot a \cdot c + 2 \cdot b \cdot c$, $V = a \cdot b \cdot h$
 
 Predstavljaj si škatlo za čevlje, ki jo previdno razrežeš po robovih in razgrneš na mizo. Dobiš mrežo. Tako izgleda mreža kocke v obliki križa (vsak kvadratek je ena ploskev):
 
-```
-        [ zgoraj ]
-[ levo ][ spredaj ][ desno ][ zadaj ]
-        [ spodaj ]
-```
+:::risba skica
+opis: Mreža kocke v obliki križa iz šestih enakih kvadratov. V srednji vrsti so levo, spredaj, desno in zadaj; nad kvadratom spredaj je zgoraj, pod njim spodaj.
+območje: 0; 0 .. 4; 3
+pravokotnik: 1; 2 .. 2; 3
+pravokotnik: 0; 1 .. 1; 2
+pravokotnik: 1; 1 .. 2; 2
+pravokotnik: 2; 1 .. 3; 2
+pravokotnik: 3; 1 .. 4; 2
+pravokotnik: 1; 0 .. 2; 1
+napis: 1,5; 2,5 | zgoraj
+napis: 0,5; 1,5 | levo
+napis: 1,5; 1,5 | spredaj
+napis: 2,5; 1,5 | desno
+napis: 3,5; 1,5 | zadaj
+napis: 1,5; 0,5 | spodaj
+:::
 
 Vsak od šestih kvadratov ima ploščino $a^2$. Ker mrežo sestavlja šest takih kvadratov, je njena celotna ploščina $6a^2$. Ploščina mreže je torej površina telesa.
 

@@ -19,9 +19,9 @@
     .doc h2 { margin-top: 28px; font-size: 1.15rem; }
     .doc ol li, .doc ul li { margin: 4px 0; }
     .ask { border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; background: var(--surface-2, transparent); }
-    .cta { display: inline-block; margin: 8px 0; padding: 12px 22px; border-radius: 12px; background: var(--accent); color: #fff; font-weight: 700; text-decoration: none; }
+    .cta { display: inline-block; margin: 8px 0; padding: 12px 22px; border-radius: 12px; background: var(--accent); color: var(--accent-text); font-weight: 700; text-decoration: none; }
     a { color: var(--accent); }
-    .doc a.cta { color: #fff; }
+    .doc a.cta { color: var(--accent-text); }
   </style>
 </head>
 <body>
@@ -79,7 +79,6 @@
   <p><a class="cta" id="cta2" href="/?starsi=1">Ustvari račun in dodaj otroka</a></p>
 </div>
 <script src="/starsi.js"></script>
-<script type="module" src="/tipkovnica-strani.js"></script>
-<script type="module" src="/vir.js"></script>
+<script type="module" src="/zagon.js" data-moduli="/tipkovnica-strani.js /vir.js"></script>
 </body>
 </html>

@@ -161,11 +161,12 @@ $* = 1$, ker je $8 + 1 = 9$. Kock je $315$ in $315 : 9 = 35$, saj je $9 \cdot 35
 
 Predstavljaj si stotični kvadrat: števila od $1$ do $100$ v vrstah po deset.
 
-```
- 1  2  3  4  5  6  7  8  9 10
-11 12 13 14 15 16 17 18 19 20
-21 22 23 24 25 26 27 28 29 30
-```
+:::risba mreža
+opis: Prve tri vrste stotičnega kvadrata: števila od 1 do 30, po deset v vsaki vrsti. V prvi vrsti so 1 do 10, v drugi 11 do 20, v tretji 21 do 30.
+vrstic: 3
+stolpcev: 10
+številke: da
+:::
 
 Večkratniki števila $10$ so vsi v zadnjem stolpcu. Večkratniki števila $5$ so v petem in zadnjem stolpcu. Soda števila zapolnijo vsak drugi stolpec. Vzorec je pokončen, ker se v vsakem stolpcu zadnja števka ne spreminja.
 

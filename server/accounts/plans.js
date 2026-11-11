@@ -6,7 +6,10 @@ import { STOPNJE, rang } from "../../public/stopnja.js";
 export const TRIAL_DAYS = 7;
 export const REFERRAL_DAYS = 30;
 export const MAX_CHILDREN = 4;
-export const PRIVACY_VERSION = "2026-10-29";
+// Ob spremembi politike (public/zasebnost.html) novo različico: obstoječi računi ob prijavi enkrat vidijo kratko obvestilo
+// (publicParent.privacy_notice, public/account.js). 2026-11-06: izvoz in izbris brez ostankov (#464), naloge in merjenje v pilotu (#474).
+// 2026-11-10 (potrdil j 10. 11.): #511: neujemajoče plačilo 1 leto; #477: odstavek o pilotu.
+export const PRIVACY_VERSION = "2026-11-10";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
@@ -43,6 +46,37 @@ export const guaranteeFromPrice = (eurMonth, { months = 1, profiles = 1 } = {}) 
   const usd = (eurMonth * (1 - COST.stripePct - COST.minProfit) - COST.stripeFixedEur / months - COST.serverEurPerProfile * profiles) / COST.eurPerUsd;
   return Math.max(0, Math.floor(usd * 10 + 1e-9) / 10);
 };
+
+// ---------- trda meja AI: največ 25 % plačila (j 2026-11-06 6:40, »marža vedno ≥ 75 %«) ----------
+// Strošek AI (vhod, izhod, predpomnilnik, skener, slike, ponovni poskusi, prekinjeni odgovori) ne sme preseči
+// 25 % tega, kar uporabnik plača (brez DDV), za noben paket. € v $ previdno z 0,92 € za 1 $ (višje od tečaja), navzdol na 0,001 $.
+// Vsaka meja paketa spodaj (tudi nastavitve skrbnika in EVKLID_*) se z aiCapFromEur omeji navzgor; brezplačni
+// paketi (brezplačni, gost, preizkus, koda, bonus) imajo nizko stalno mejo (server/meje-ai.js).
+// j 2026-11-06 ~9:00: 25 % se računa od cene BREZ DDV. Cene so z DDV (22 % v Sloveniji); regijske cene in šolske
+// licence štejemo enako (previdno: nižja meja). Edino mesto za stopnjo DDV (tudi server/advice.js, schools.js).
+export const VAT_RATE = 0.22;
+// DDV po državi kupca (j 2026-11-06 12:53; pri prodaji potrošnikom v EU velja stopnja države kupca, OSS). Splošne
+// stopnje 2026 (potrdi računovodja). Zunaj EU: stopnja DDV/GST na digitalne storitve, zaokroženo navzgor (previdno),
+// tudi če je Evklid tam ne obračuna. Neznana država: najvišja stopnja (VAT_MAX).
+export const VAT_RATES = {
+  AT: 0.2, BE: 0.21, BG: 0.2, HR: 0.25, CY: 0.19, CZ: 0.21, DK: 0.25, EE: 0.24, FI: 0.255, FR: 0.2, DE: 0.19, GR: 0.24,
+  HU: 0.27, IE: 0.23, IT: 0.22, LV: 0.21, LT: 0.21, LU: 0.17, MT: 0.18, NL: 0.21, PL: 0.23, PT: 0.23, RO: 0.21, SK: 0.23,
+  SI: 0.22, ES: 0.21, SE: 0.25,
+  IN: 0.18, PK: 0.2, BD: 0.15, NG: 0.075, GH: 0.22, KE: 0.16, ZA: 0.15, EG: 0.14, PH: 0.12, ID: 0.12, VN: 0.1,
+  SN: 0.18, CI: 0.18, ML: 0.18, BF: 0.18, NE: 0.19, BJ: 0.18, TG: 0.18, GW: 0.19,
+};
+export const VAT_MAX = 0.27;
+export const vatRateFor = (country) => VAT_RATES[String(country || "").toUpperCase()] ?? VAT_MAX;
+// Plačilo v evrih: največ od stopnje Slovenije in države kupca (pod pragom OSS prodajalec plača slovenski DDV;
+// država se lahko ponaredi z VPN ali naslovom v portalu, pregled #462 B3).
+export const eurVatFor = (country) => Math.max(VAT_RATE, vatRateFor(country));
+export const netOfVat = (eur, vat = VAT_RATE) => (Number(eur) || 0) / (1 + vat);
+export const AI_MAX_SHARE = 0.25;
+// eur = plačilo z DDV; meja = 25 % plačila brez DDV (stopnja vat), v $ navzdol na 0,001 $.
+export const aiCapFromEur = (eur, vat = VAT_RATE) => aiCapFromNetEur(netOfVat(eur, vat));
+// Meja iz plačila brez DDV (dejansko plačilo obdobja, server/placila/placano.js).
+export const aiCapFromNetEur = (netEur) => Math.max(0, Math.floor(((Number(netEur) || 0) * AI_MAX_SHARE) / COST.eurPerUsd * 1000 + 1e-9) / 1000);
+const capTo = (usd, eur, vat = VAT_RATE) => Math.min(Math.max(0, Number(usd) || 0), aiCapFromEur(eur, vat));
 
 // Kratka oznaka stopnje v nazivu paketa (Stripe, zavihek Račun).
 export const LEVEL_LABEL = { OS: "OŠ", SS: "SŠ", FAKS: "Faks" };
@@ -134,6 +168,25 @@ export const EUR_PER_UNIT = {
   XOF: 0.0015244, // vezan na evro: 1 € = 655,957 XOF
   USD: 0.85,
 };
+// Tečaji za mejo AI (j 2026-11-06 12:53): tedensko osveženi iz odprtega vira brez ključa (server/tecaji.js) z rezervo
+// 10 %; brez svežih (datum podatkov starejši od 8 dni ali vir ne deluje) stalni EUR_PER_UNIT z rezervo 20 %. XOF je vezan na evro
+// (brez rezerve). Rezerva tečaja ni namenjena DDV (ta je zgoraj, po državi).
+export const FX_RESERVE = 0.1;
+export const FX_FIXED_RESERVE = 0.2;
+export const FX_MAX_AGE_MS = 8 * 86400000;
+let fx = { rates: {}, at: 0 };
+export function setFxRates(rates, at = Date.now()) {
+  fx = { rates: { ...(rates || {}) }, at: Number(at) || 0 };
+}
+export const fxState = () => ({ ...fx, fresh: Date.now() - fx.at <= FX_MAX_AGE_MS });
+// € za eno enoto valute za izračun meje (z rezervo); 0 za neznano valuto.
+export function eurPerUnitNow(cur, now = Date.now()) {
+  if (cur === "EUR") return 1;
+  if (cur === "XOF") return EUR_PER_UNIT.XOF;
+  const live = Number(fx.rates[cur]);
+  if (live > 0 && now - fx.at <= FX_MAX_AGE_MS) return live * (1 - FX_RESERVE);
+  return (EUR_PER_UNIT[cur] || 0) * (1 - FX_FIXED_RESERVE);
+}
 // Valute brez decimalk v Stripu (znesek je v celih enotah).
 const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
 const SHAPE = [
@@ -169,11 +222,19 @@ export function plansFor(currency = "EUR") {
 // Zajamčeni AI regijskega paketa na mesec (v $): pravilo 75 % iz cene v evrih (EUR_PER_UNIT). Paket za 2 otroka
 // ima en skupen delež (kot Družina) s strežnikom za 2 profila.
 export const regionalGuaranteeUsd = (plan) => {
-  const rate = EUR_PER_UNIT[plan?.currency];
-  if (!rate) return 0;
-  const major = plan.amount / (ZERO_DECIMAL.has(plan.currency) ? 1 : 100);
-  return guaranteeFromPrice((major * rate) / monthsOf(plan.interval), { months: monthsOf(plan.interval), profiles: plan.seats || 1 });
+  const eur = planEurMonth(plan);
+  if (!eur) return 0;
+  return guaranteeFromPrice(eur, { months: monthsOf(plan.interval), profiles: plan.seats || 1 });
 };
+// Mesečna cena paketa v € (letna / 12; regijske valute po EUR_PER_UNIT), 0 za neznano valuto.
+export function planEurMonth(plan) {
+  if (!plan) return 0;
+  const cur = plan.currency || "EUR";
+  const rate = eurPerUnitNow(cur);
+  if (!rate) return 0;
+  const major = plan.amount / (ZERO_DECIMAL.has(cur) ? 1 : 100);
+  return (major * rate) / monthsOf(plan.interval);
+}
 // ---------- Evklid Osebno za učence s šolsko licenco (j 2026-10-30, načrt »Šolska licenca in Osebno«) ----------
 // 5,99 € na mesec ali 49 € na šolsko leto za en profil z veljavno šolsko licenco (šola že plača šolske
 // predmete, Osebno doda vse ostalo). Samo v evrih. Ni v portalu za preklop paketa (glej stripe.js), da
@@ -234,19 +295,19 @@ export const freeMonthlyPoolUsd = () => envUsd("EVKLID_FREE_POOL_USD", 10);
 export const freeStudentMonthlyUsd = () => envUsd("EVKLID_FREE_STUDENT_USD", 0.2);
 
 // ---------- paketi pred testom (enkratno plačilo, j 2026-10-30, cene j 2026-11-04) ----------
-// Poln dostop za en profil za 7, 14 ali 30 dni, brez naročnine. aiUsd = največja poraba AI v času paketa; ko je
+// Poln dostop za en profil za 7 ali 14 dni, brez naročnine. aiUsd = največja poraba AI v času paketa; ko je
 // porabljena, profil do konca paketa dela kot v brezplačnem paketu. Vsak paket ima vsaj 75 % (worstProfit).
+// 30-dnevnega paketa ni več (j 2026-11-04, brez mikrotransakcij); že kupljeni 30-dnevni paketi v bazi (passes.days = 30)
+// veljajo do konca, stare neplačane povezave zanj pa ne veljajo več (billing.js linkView).
 // Zaenkrat samo v evrih.
 export const PASSES = [
   { days: 7, amount: 549, aiUsd: 0.8, label: "Kratka priprava" },
   { days: 14, amount: 849, aiUsd: 1.5, label: "Temeljita priprava" },
-  { days: 30, amount: 1399, aiUsd: 2.9, label: "Velika priprava" },
 ].map((p) => ({ ...p, key: `${BRAND.slug}_pass_${p.days}`, currency: "EUR" }));
-// Paketi pred testom za faks: 6,99 / 11,49 / 19,99 € z mejo AI 1,1 / 2,3 / 4,5 $.
+// Paketi pred testom za faks: 6,99 / 11,49 € z mejo AI 1,1 / 2,3 $.
 export const FAKS_PASSES = [
   { days: 7, amount: 699, aiUsd: 1.1 },
   { days: 14, amount: 1149, aiUsd: 2.3 },
-  { days: 30, amount: 1999, aiUsd: 4.5 },
 ].map((p) => ({ ...PASSES.find((x) => x.days === p.days), ...p, key: `${BRAND.slug}_pass_faks_${p.days}`, level: "FAKS" }));
 // Paketi za stopnjo profila: faks svoje, OŠ in SŠ kot doslej.
 export const passesFor = (level) => (level === "FAKS" ? FAKS_PASSES : PASSES);
@@ -255,7 +316,8 @@ export const passByKey = (key) => [...PASSES, ...FAKS_PASSES].find((p) => p.key 
 // Stopnja, ki jo paket pred testom odpre: faks vse, paket OŠ/SŠ (ista cena) OŠ in SŠ. Paketi, kupljeni pred
 // cenami po stopnjah (level prazen), odprejo vse stopnje kot ob nakupu (null), da študent ne izgubi dostopa.
 export const passLevel = (pass) => (pass?.level === "FAKS" ? "FAKS" : pass?.level ? "SS" : null);
-// Najmanjši paket, ki pokrije čas do dneva po testu (test čez daysLeft dni; 0 = danes).
+// Najmanjši paket, ki pokrije čas do dneva po testu (test čez daysLeft dni; 0 = danes); null, ko je test dlje,
+// kot ga pokrije najdaljši paket (14 dni): takrat se paket še ne ponudi.
 export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find((p) => p.days >= daysLeft + 1) || null;
 
 // ---------- poraba AI v naročnini (j 2026-11-01, deleži j 2026-11-04 »Predlog A«) ----------
@@ -279,11 +341,14 @@ export const FAST_TAIL = 0.15;
 // Del meje za podrobne razlage (zmogljivejši model); ostanek do meje je hitri način.
 export const detailedShare = (ceilingUsd) => (ceilingUsd || 0) / (1 + FAST_TAIL);
 // Zajamčeno za stopnjo; EVKLID_AI_GUARANTEE_<OS|SS|FAKS>_USD (za teste in skrbnika) velja za mesečno in letno.
+// Nastavitev skrbnika ne more preseči 25 % cene stopnje (aiCapFromEur).
 export const guaranteeUsd = (level, interval = "month") => {
+  const prices = LEVEL_PRICES[level] || LEVEL_PRICES.OS;
+  const eurMonth = interval === "year" ? prices.year / 100 / 12 : prices.month / 100;
   const v = Number(process.env[`EVKLID_AI_GUARANTEE_${level}_USD`]);
-  if (process.env[`EVKLID_AI_GUARANTEE_${level}_USD`] && Number.isFinite(v) && v >= 0) return v;
+  if (process.env[`EVKLID_AI_GUARANTEE_${level}_USD`] && Number.isFinite(v) && v >= 0) return capTo(v, eurMonth);
   const table = interval === "year" ? AI_GUARANTEE_YEAR_USD : AI_GUARANTEE_USD;
-  return table[level] ?? table.OS;
+  return capTo(table[level] ?? table.OS, eurMonth);
 };
 // Brezplačni rep (j 2026-11-04): nad mejo paketa naročnik dela kot brezplačni profil, z enako mesečno mejo
 // (freeStudentMonthlyUsd, 0,2 $ na profil; server/usage.js overFreeTail). Ta rep je vštet v vrednosti iz tabele:
@@ -294,8 +359,21 @@ const withTail = (total, profiles, pool) => ({ usd: subscriptionCeiling(total, p
 // Zajamčeni AI paketa: { usd, total, profiles, pool } ali null (neznan paket). usd = meja paketa (podrobni del in
 // hitri način, server/usage.js), total = vrednost iz tabele (meja + brezplačni rep), pool = en skupen delež za vse
 // profile paketa.
-export function planGuarantee(plan) {
+// Stopnja DDV za paket brez znane države kupca: najvišja na trgu paketa (evri: vsa EU, VAT_MAX; regijska valuta:
+// najvišja med državami te valute).
+export const marketVat = (plan) => {
+  const r = plan?.currency && plan.currency !== "EUR" ? REGIONAL_PRICES[plan.currency] : null;
+  return r ? Math.max(...r.countries.map(vatRateFor)) : VAT_MAX;
+};
+// vat: stopnja DDV države kupca (server/accounts/index.js subGuarantee), sicer najvišja na trgu paketa.
+export function planGuarantee(plan, vat = marketVat(plan)) {
   if (!plan) return null;
+  const g = planGuaranteeRaw(plan);
+  // Trda meja 25 %: vrednost iz tabele (meja + rep) nikoli nad 25 % cene paketa na mesec brez DDV.
+  const max = aiCapFromEur(planEurMonth(plan), vat);
+  return g.total > max ? withTail(max, g.profiles, g.pool) : g;
+}
+function planGuaranteeRaw(plan) {
   const seats = plan.seats || 1;
   if (plan.school) return withTail(SCHOOL_PLAN_AI_USD[plan.interval] ?? SCHOOL_PLAN_AI_USD.year, 1, false);
   if (plan.currency && plan.currency !== "EUR") return withTail(regionalGuaranteeUsd(plan), seats, seats > 1);
@@ -308,20 +386,29 @@ export function planGuarantee(plan) {
 // Darilna koda: zajamčeni AI kot letna naročnina stopnje (useLevel = stopnja profila, največ stopnja darila).
 // Stara darila brez stopnje (49 €, pred 2026-11-04) po pravilu 75 % iz cene 49 € na leto (≈ 0,6 $).
 export const LEGACY_GIFT_CENTS = 4900;
+// Trda meja 25 %: največ 25 % cene darila na mesec (letna cena stopnje darila / 12) brez DDV; kupec darila ni
+// znan, zato najvišja stopnja (VAT_MAX).
 export const giftGuarantee = (giftLevel, useLevel) =>
   STOPNJE.includes(giftLevel)
-    ? withTail(guaranteeUsd(useLevel, "year"), 1, false)
-    : withTail(guaranteeFromPrice(LEGACY_GIFT_CENTS / 100 / 12, { months: 12 }), 1, false);
+    ? withTail(capTo(guaranteeUsd(useLevel, "year"), giftFor(giftLevel).amount / 100 / 12, VAT_MAX), 1, false)
+    : withTail(capTo(guaranteeFromPrice(LEGACY_GIFT_CENTS / 100 / 12, { months: 12 }), LEGACY_GIFT_CENTS / 100 / 12, VAT_MAX), 1, false);
+// Meja AI paketa pred testom (ves čas paketa): shranjena ob nakupu (passes.ai_usd), največ 25 % plačila.
+// Kupec iz katere koli države EU: najvišja stopnja DDV (VAT_MAX).
+export const passCapUsd = (pass) => capTo(pass?.ai_usd, (Number(pass?.amount) || 0) / 100, VAT_MAX);
 // Najmanjša meja naročnika: tudi paket z mejo 0 (majhna regijska cena) ostane »zajamčen« (hitri način, nato
 // brezplačni rep), ne pa brez meje po utežeh skupnega proračuna.
 export const MIN_CEILING_USD = 0.001;
 // Nadgradnja med mesecem: ta mesec zajamčeni AI starega paketa za pretekle dni in novega za preostale (dan
 // nadgradnje šteje k novemu); od naslednjega meseca novi v celoti. Mesec AI je koledarski mesec v UTC (enako
 // kot server/proracun.js periodOf). Nižji paket (ali nadgradnja v prejšnjem mesecu) velja takoj v celoti.
-export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now()) {
+// win = { start, end } (ms): okno meje AI naročnine (pregled #462 L1: obdobje naročnine, ne koledarski mesec);
+// brez win koledarski mesec (stari zapisi, testi).
+const monthOf = (now) => {
   const d = new Date(now);
-  const start = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
-  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+  return { start: Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1), end: Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1) };
+};
+export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now(), win = null) {
+  const { start, end } = win || monthOf(now);
   if (!(upgradedAt >= start && upgradedAt < end) || !(newUsd > oldUsd)) return newUsd;
   const days = Math.round((end - start) / 86400000);
   const left = days - Math.floor((upgradedAt - start) / 86400000);
@@ -330,10 +417,8 @@ export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now()) {
 // Druga zamenjava paketa v istem mesecu: »stari« delež za dneve do nje je povprečje po dnevih prejšnje
 // zamenjave (prev = { usd, at }: stari delež, če je bila nadgradnja, sicer takoj sedanji) in sedanjega paketa
 // (curUsd), da dnevi pred prvo nadgradnjo ne dobijo vmesnega paketa. Brez prev ali iz prejšnjega meseca: curUsd.
-export function upgradeFromUsd(prev, curUsd, now = Date.now()) {
-  const d = new Date(now);
-  const start = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
-  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+export function upgradeFromUsd(prev, curUsd, now = Date.now(), win = null) {
+  const { start, end } = win || monthOf(now);
   if (!prev || !(prev.at >= start && prev.at < end) || !(prev.usd >= 0)) return curUsd;
   const d1 = Math.floor((prev.at - start) / 86400000);
   const d2 = Math.floor((now - start) / 86400000);

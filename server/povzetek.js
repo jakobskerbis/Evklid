@@ -100,7 +100,9 @@ export async function summarizedHistory({ store, conversationId, fullHistory, hi
     store.setSummary(conversationId, summary, dropped);
     failedAt.delete(conversationId);
     return withSummary(history, summary);
-  } catch {
+  } catch (e) {
+    // Prekinjen povzetek (TIMEOUT_MS, zaprta aplikacija) je že plačan: delna poraba (server/claude.js) gre v porabo.
+    if (e?.usage) log?.({ usage: e.usage, model: e.model });
     fail();
     return stale;
   } finally {

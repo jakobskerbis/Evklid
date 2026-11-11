@@ -36,11 +36,158 @@ Liha. Vsi sumandi so lihi in teh je $5$, kar je liho število. Za kontrolo: vsot
 
 **5. Barvanje polj.** Pri nalogah na mreži polja pobarvamo, da opazimo invarianto. Najpogostejše je **šahovsko barvanje**: sosednji polji imata vedno različni barvi. Na šahovnici:
 
-```
-  B T B T B T B T      T = temno
-  T B T B T B T B      B = belo
-  ...                  sosednji polji: vedno T in B
-```
+:::risba skica
+opis: Šahovnica 8 krat 8 s šahovskim barvanjem: polja so izmenično belo (B, nepobarvano) in temno (T, pobarvano), levo zgoraj je belo. Sosednji polji imata vedno različni barvi.
+območje: 0; 0 .. 8; 8
+enota: 30
+pravokotnik: 0; 7 .. 1; 8 | ozadje
+pravokotnik: 1; 7 .. 2; 8 | modra
+pravokotnik: 2; 7 .. 3; 8 | ozadje
+pravokotnik: 3; 7 .. 4; 8 | modra
+pravokotnik: 4; 7 .. 5; 8 | ozadje
+pravokotnik: 5; 7 .. 6; 8 | modra
+pravokotnik: 6; 7 .. 7; 8 | ozadje
+pravokotnik: 7; 7 .. 8; 8 | modra
+pravokotnik: 0; 6 .. 1; 7 | modra
+pravokotnik: 1; 6 .. 2; 7 | ozadje
+pravokotnik: 2; 6 .. 3; 7 | modra
+pravokotnik: 3; 6 .. 4; 7 | ozadje
+pravokotnik: 4; 6 .. 5; 7 | modra
+pravokotnik: 5; 6 .. 6; 7 | ozadje
+pravokotnik: 6; 6 .. 7; 7 | modra
+pravokotnik: 7; 6 .. 8; 7 | ozadje
+pravokotnik: 0; 5 .. 1; 6 | ozadje
+pravokotnik: 1; 5 .. 2; 6 | modra
+pravokotnik: 2; 5 .. 3; 6 | ozadje
+pravokotnik: 3; 5 .. 4; 6 | modra
+pravokotnik: 4; 5 .. 5; 6 | ozadje
+pravokotnik: 5; 5 .. 6; 6 | modra
+pravokotnik: 6; 5 .. 7; 6 | ozadje
+pravokotnik: 7; 5 .. 8; 6 | modra
+pravokotnik: 0; 4 .. 1; 5 | modra
+pravokotnik: 1; 4 .. 2; 5 | ozadje
+pravokotnik: 2; 4 .. 3; 5 | modra
+pravokotnik: 3; 4 .. 4; 5 | ozadje
+pravokotnik: 4; 4 .. 5; 5 | modra
+pravokotnik: 5; 4 .. 6; 5 | ozadje
+pravokotnik: 6; 4 .. 7; 5 | modra
+pravokotnik: 7; 4 .. 8; 5 | ozadje
+pravokotnik: 0; 3 .. 1; 4 | ozadje
+pravokotnik: 1; 3 .. 2; 4 | modra
+pravokotnik: 2; 3 .. 3; 4 | ozadje
+pravokotnik: 3; 3 .. 4; 4 | modra
+pravokotnik: 4; 3 .. 5; 4 | ozadje
+pravokotnik: 5; 3 .. 6; 4 | modra
+pravokotnik: 6; 3 .. 7; 4 | ozadje
+pravokotnik: 7; 3 .. 8; 4 | modra
+pravokotnik: 0; 2 .. 1; 3 | modra
+pravokotnik: 1; 2 .. 2; 3 | ozadje
+pravokotnik: 2; 2 .. 3; 3 | modra
+pravokotnik: 3; 2 .. 4; 3 | ozadje
+pravokotnik: 4; 2 .. 5; 3 | modra
+pravokotnik: 5; 2 .. 6; 3 | ozadje
+pravokotnik: 6; 2 .. 7; 3 | modra
+pravokotnik: 7; 2 .. 8; 3 | ozadje
+pravokotnik: 0; 1 .. 1; 2 | ozadje
+pravokotnik: 1; 1 .. 2; 2 | modra
+pravokotnik: 2; 1 .. 3; 2 | ozadje
+pravokotnik: 3; 1 .. 4; 2 | modra
+pravokotnik: 4; 1 .. 5; 2 | ozadje
+pravokotnik: 5; 1 .. 6; 2 | modra
+pravokotnik: 6; 1 .. 7; 2 | ozadje
+pravokotnik: 7; 1 .. 8; 2 | modra
+pravokotnik: 0; 0 .. 1; 1 | modra
+pravokotnik: 1; 0 .. 2; 1 | ozadje
+pravokotnik: 2; 0 .. 3; 1 | modra
+pravokotnik: 3; 0 .. 4; 1 | ozadje
+pravokotnik: 4; 0 .. 5; 1 | modra
+pravokotnik: 5; 0 .. 6; 1 | ozadje
+pravokotnik: 6; 0 .. 7; 1 | modra
+pravokotnik: 7; 0 .. 8; 1 | ozadje
+črta: 0; 0 -> 8; 0 | siva
+črta: 0; 0 -> 0; 8 | siva
+črta: 0; 1 -> 8; 1 | siva
+črta: 1; 0 -> 1; 8 | siva
+črta: 0; 2 -> 8; 2 | siva
+črta: 2; 0 -> 2; 8 | siva
+črta: 0; 3 -> 8; 3 | siva
+črta: 3; 0 -> 3; 8 | siva
+črta: 0; 4 -> 8; 4 | siva
+črta: 4; 0 -> 4; 8 | siva
+črta: 0; 5 -> 8; 5 | siva
+črta: 5; 0 -> 5; 8 | siva
+črta: 0; 6 -> 8; 6 | siva
+črta: 6; 0 -> 6; 8 | siva
+črta: 0; 7 -> 8; 7 | siva
+črta: 7; 0 -> 7; 8 | siva
+črta: 0; 8 -> 8; 8 | siva
+črta: 8; 0 -> 8; 8 | siva
+napis: 0,5; 7,5 | B
+napis: 1,5; 7,5 | T
+napis: 2,5; 7,5 | B
+napis: 3,5; 7,5 | T
+napis: 4,5; 7,5 | B
+napis: 5,5; 7,5 | T
+napis: 6,5; 7,5 | B
+napis: 7,5; 7,5 | T
+napis: 0,5; 6,5 | T
+napis: 1,5; 6,5 | B
+napis: 2,5; 6,5 | T
+napis: 3,5; 6,5 | B
+napis: 4,5; 6,5 | T
+napis: 5,5; 6,5 | B
+napis: 6,5; 6,5 | T
+napis: 7,5; 6,5 | B
+napis: 0,5; 5,5 | B
+napis: 1,5; 5,5 | T
+napis: 2,5; 5,5 | B
+napis: 3,5; 5,5 | T
+napis: 4,5; 5,5 | B
+napis: 5,5; 5,5 | T
+napis: 6,5; 5,5 | B
+napis: 7,5; 5,5 | T
+napis: 0,5; 4,5 | T
+napis: 1,5; 4,5 | B
+napis: 2,5; 4,5 | T
+napis: 3,5; 4,5 | B
+napis: 4,5; 4,5 | T
+napis: 5,5; 4,5 | B
+napis: 6,5; 4,5 | T
+napis: 7,5; 4,5 | B
+napis: 0,5; 3,5 | B
+napis: 1,5; 3,5 | T
+napis: 2,5; 3,5 | B
+napis: 3,5; 3,5 | T
+napis: 4,5; 3,5 | B
+napis: 5,5; 3,5 | T
+napis: 6,5; 3,5 | B
+napis: 7,5; 3,5 | T
+napis: 0,5; 2,5 | T
+napis: 1,5; 2,5 | B
+napis: 2,5; 2,5 | T
+napis: 3,5; 2,5 | B
+napis: 4,5; 2,5 | T
+napis: 5,5; 2,5 | B
+napis: 6,5; 2,5 | T
+napis: 7,5; 2,5 | B
+napis: 0,5; 1,5 | B
+napis: 1,5; 1,5 | T
+napis: 2,5; 1,5 | B
+napis: 3,5; 1,5 | T
+napis: 4,5; 1,5 | B
+napis: 5,5; 1,5 | T
+napis: 6,5; 1,5 | B
+napis: 7,5; 1,5 | T
+napis: 0,5; 0,5 | T
+napis: 1,5; 0,5 | B
+napis: 2,5; 0,5 | T
+napis: 3,5; 0,5 | B
+napis: 4,5; 0,5 | T
+napis: 5,5; 0,5 | B
+napis: 6,5; 0,5 | T
+napis: 7,5; 0,5 | B
+podnapis: T = temno polje (pobarvano), B = belo polje (nepobarvano).
+:::
 
 Vsaka domina pokrije dve sosednji polji, torej **eno temno in eno belo**. Če položimo $k$ domin, pokrijejo $k$ temnih in $k$ belih polj. Za pokritje mora biti temnih in belih polj enako.
 

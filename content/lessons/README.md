@@ -77,6 +77,45 @@ t | čas | | s
 :::
 ```
 
+## Risbe (`:::risba`)
+
+Slike nikoli ne riši z znaki v bloku ```` ``` ```` (črtice, `|---|`, ■): v aplikaciji in PDF je to videti kot surov izpis.
+Blok ```` ``` ```` je samo za programsko kodo in izpis ukazov, vedno z oznako jezika (```` ```python ````).
+Risbo zapišeš s podatki, strežnik jo izriše v SVG (`server/risbe.js`, videz `public/risbe.css`): enaka je v
+aplikaciji, tisku in PDF, v svetli in temni temi, na telefonu so napisi veliki vsaj 12 px.
+
+```markdown
+:::risba premica
+opis: Številska premica s celimi števili od −6 do 3. Negativna so levo od 0.
+od: -6
+do: 3
+:::
+```
+
+- `opis:` je obvezen: besedilo, ki sliko nadomesti slepemu učencu, inštruktorju in branju na glas (kaj je na sliki, s števili). Opis bere bralnik zaslona dobesedno, zato indekse in eksponente piši z besedami ali znaki Unicode (F₁, x², »Theveninova napetost«), nikoli z `_` ali `^` (check-lesson to javi). Enako velja za `podnapis:`, ki je neobvezen napis pod sliko.
+- Števila piši z decimalno vejico, točko kot `x; y`, polja loči z `|`. Indeks in eksponent v napisih: `F_1`, `x^2`, `a_12`, `10^-3` (celo število s predznakom), več črk v zavitih oklepajih `U_{Th}` (`U_Th` je napaka).
+- Slog (zadnje polje): barve `modra`, `oranžna`, `zelena`, `rdeča`, `siva` (pomenijo vlogo, ne odtenka; pomen naj nikoli ne bo samo v barvi), `črtkano`, `debelo`, `puščica`, `polno`, `ozadje`, `zaprto`. Lega napisa: `nad`, `pod`, `levo`, `desno`, `sredina` (tudi `nad levo`).
+
+| Vrsta | Ključi |
+|---|---|
+| `premica` | `od`, `do`, `korak`, `oznake` (vsaka koliko enot; `ne`), `oznaka: x \| besedilo`, `točka: x \| napis \| slog` (`prazna`), `skok: a -> b \| napis`, `interval: a .. b \| napis` |
+| `mreža` | `vrstic`, `stolpcev`, `spodaj`, `desno` (napisa ob stranicah), `številke: da` |
+| `stolpci` | `stolpec: ime \| vrednost` (2–8), `os` (ime navpične osi), `korak` |
+| `graf` | `x: od .. do \| korak \| ime`, `y: …`, `enako: da` (ista enota na obeh oseh), `višina`, `oznake: ne`, `oznakax` / `oznakay: vrednost \| besedilo`, `f: izraz \| slog \| od .. do` in liki |
+| `skica` | `območje: x0; y0 .. x1; y1`, `enota` (px na enoto), `mreža: da` in liki |
+| `atom` | `jedro` (napis), `lupine: 2, 8, 1`, `imena: K, L, M` |
+| `molekula` | pod vrstico `---` strukturna formula z znaki: atomi, vezi `– \| = ≡ / \\`, nevezni pari `··` ali `:` |
+
+Liki (v `graf` in `skica`, v koordinatah lekcije, rišejo se po vrsti): `črta: x; y -> x; y -> … | slog`,
+`lik: x; y -> … | slog`, `pravokotnik: x; y .. x; y | slog`, `krog: x; y | polmer | slog`, `točka: x; y | napis | lega | slog`,
+`napis: x; y | besedilo | lega | slog`, `puščica: x; y -> x; y | napis | lega | slog`, `pravikot: oglišče | točka | točka`.
+
+Vsi liki (tudi napisi in točke) morajo biti znotraj `območje` oziroma osi `x`, `y`, sicer check-lesson javi napako.
+Risba mora kazati točno to, kar pove besedilo (ista števila in oznake). Koordinate izračunaj, ne ocenjuj na oko:
+funkcijo nariše `f:` iz izraza, lik iz koordinat oglišč. `check-lesson.js` javi napako v zapisu risbe in opozori na
+slike iz znakov, ki so še ostale. Vzorci: `MAT-OS-8/cela-stevila.md` (premica, skica), `MAT-SS-3/graf-polinoma.md` (graf),
+`KEM-OS-8/razporeditev-elektronov.md` (atom), `KEM-OS-8/kovalentna-vez.md` (molekula), `MAT-OS-6/prikazi-podatkov.md` (stolpci).
+
 ## Oznake (`:::simboli`) – klikljive formule
 
 V aplikaciji je vsaka oznaka v formuli klikljiva: kartica pokaže ime, zvezo,
@@ -120,7 +159,8 @@ Obliko preveriš z `node scripts/check-lesson.js -q content/lessons/<pot>/<slug>
 »simulacija spodaj« z njenim naslovom iz public/sim/katalog.js.
 
 Demonstracija se pokaže za razdelkom »Rešeni primeri«. Formule piši v LaTeX z
-decimalno vejico (`$3{,}5$`).
+decimalno vejico (`$3{,}5$`). Če je med naštetimi števili vsaj eno decimalno, jih loči s podpičjem:
+`$1{,}5$; $2$ ali $2{,}99$`, točka `$(1{,}5; 2)$` (preveri `check-lesson.js`).
 
 ## Fakultetne lekcije
 

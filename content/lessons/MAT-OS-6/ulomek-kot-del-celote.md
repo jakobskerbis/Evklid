@@ -58,10 +58,18 @@ Poskusi z interaktivno simulacijo spodaj: z drsnikoma spreminjaš števec in ime
 
 Enoto si je pametno izbrati tako, da je njena dolžina **deljiva z imenovalcem**. Za $\dfrac{3}{4}$ vzemimo enoto, dolgo $8$ kvadratkov v zvezku. Ena četrtina je $8 : 4 = 2$ kvadratka, torej $\dfrac{3}{4}$ leži $3 \cdot 2 = 6$ kvadratkov desno od $0$.
 
-```
-|----|----|----|----|
-0   1/4  2/4  3/4   1
-```
+:::risba premica
+opis: Številska premica od 0 do 1, razdeljena na 4 enake dele. Črtice so pri 0, 1/4, 2/4, 3/4 in 1.
+od: 0
+do: 1
+korak: 0,25
+oznake: ne
+oznaka: 0 | 0
+oznaka: 0,25 | 1/4
+oznaka: 0,5 | 2/4
+oznaka: 0,75 | 3/4
+oznaka: 1 | 1
+:::
 
 Pozor: imenovalec je število **delov** (razmakov med črticami), ne število črtic. Če je enota razdeljena na $4$ dele, so med $0$ in $1$ le tri vmesne črtice.
 
@@ -180,10 +188,22 @@ Predstavljaj si čokolado s $12$ kockami v $3$ vrsticah po $4$ kocke. To je celo
 
 Isto čokolado si lahko predstavljaš kot trak na številski premici od $0$ do $1$. Če ga razdeliš na četrtine in za njim položiš še en enak trak, dobiš premico do $2$:
 
-```
-|----|----|----|----|----|----|----|----|
-0   1/4  2/4  3/4   1   5/4  6/4  7/4   2
-```
+:::risba premica
+opis: Številska premica od 0 do 2, razdeljena na četrtine. Črtice so pri 0, 1/4, 2/4, 3/4, 1, 5/4, 6/4, 7/4 in 2.
+od: 0
+do: 2
+korak: 0,25
+oznake: ne
+oznaka: 0 | 0
+oznaka: 0,25 | 1/4
+oznaka: 0,5 | 2/4
+oznaka: 0,75 | 3/4
+oznaka: 1 | 1
+oznaka: 1,25 | 5/4
+oznaka: 1,5 | 6/4
+oznaka: 1,75 | 7/4
+oznaka: 2 | 2
+:::
 
 Točke so enako razmaknjene. Štiri četrtine ($\dfrac{4}{4}$) padejo v točko $1$, osem četrtin ($\dfrac{8}{4}$) pa v točko $2$. V interaktivni simulaciji spodaj lahko števec povečaš prek imenovalca in opazuješ, kako se pobarva več krogov. Gumbov »Razširi z 2« in »Okrajšaj« zaenkrat ne potrebuješ, o tem se boš učil pozneje.
 

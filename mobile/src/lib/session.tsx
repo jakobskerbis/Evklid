@@ -4,7 +4,7 @@ import Storage from "expo-sqlite/kv-store";
 import { api, ApiError, clearSession, hasSession, loadSession, onSessionChange } from "./api";
 import { setLanguage } from "./i18n";
 import { key } from "./keys";
-import { cancelReminders, unregisterPush } from "./notifications";
+import { cancelReminders, registerPush, reminderTime, unregisterPush } from "./notifications";
 
 export type Parent = {
   id: number;
@@ -88,9 +88,13 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setSignedIn(hasSession());
       await refresh().catch(() => {});
       setReady(true);
+      // Strežnik po ponastavitvi gesla ali prevzemu pobriše žetone obvestil (dropForeignAccess); ob zagonu in prijavi
+      // jih znova prijavimo, če je opomnik vklopljen (pregled #492 A P2-3). Na strežniku je prijava idempotentna.
+      if (hasSession() && reminderTime()) registerPush();
     })();
     return onSessionChange(() => {
       setSignedIn(hasSession());
+      if (hasSession() && reminderTime()) registerPush();
       if (!hasSession()) {
         // Odjava, izbris računa ali potekla seja: proč s podatki računa na telefonu.
         loaded.current = false;

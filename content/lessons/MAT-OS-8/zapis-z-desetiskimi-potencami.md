@@ -166,7 +166,7 @@ Ana snema zvok za šolski koncert. Program za snemanje ji pokaže, da je v posne
 
 Spomni se pravila: eksponent $7$ pomeni, da vejico v $1{,}2$ premakne za $7$ mest v desno. Napiše $1{,}2$, nato prestavlja vejico: $12$, $120$, $1200$ in tako naprej, dokler ne našteje sedmih korakov. Dobi $12\,000\,000$, dvanajst milijonov vzorcev.
 
-Nato pogleda nastavitve mikrofona. Membrana se pri tihem šepetu premakne za približno $5 \cdot 10^{-9}\,\text{m}$. Tu je eksponent negativen, zato vejico pri $5$ premika v levo: $0{,}5$, $0{,}05$ in tako naprej, devetkrat. Dobi $0{,}000000005\,\text{m}$.
+Nato pogleda nastavitve mikrofona. Membrana se pri tihem šepetu premakne za približno $5 \cdot 10^{-9}\,\text{m}$. Tu je eksponent negativen, zato vejico pri $5$ premika v levo: $0{,}5$; $0{,}05$ in tako naprej, devetkrat. Dobi $0{,}000000005\,\text{m}$.
 
 Ana opazi, da sta obe števili v zapisu s potencami enako kratki. Velikost je skrita v eksponentu: $7$ pomeni »zelo veliko«, $-9$ pa »zelo majhno«. Za primerjavo ji ni treba šteti ničel, dovolj je pogledati eksponenta.
 
@@ -229,7 +229,7 @@ Pri majhnih številih velja enako: $0{,}0032 = 3 \cdot 10^{-3} + 2 \cdot 10^{-4}
 ~ Negativen eksponent ne da negativnega števila. $2 \cdot 10^{-4} = 0{,}0002$ je pozitivno.
 - Zmanjša se za $1$.
 ~ Sprememba eksponenta za $1$ pomeni množenje ali deljenje z $10$, ne odštevanje $1$.
-> $2 \cdot 10^{-3} = 0{,}002$, $2 \cdot 10^{-4} = 0{,}0002$. Vejica se premakne še za eno mesto v levo.
+> $2 \cdot 10^{-3} = 0{,}002$; $2 \cdot 10^{-4} = 0{,}0002$. Vejica se premakne še za eno mesto v levo.
 
 ? Membrana mikrofona je debela $0{,}000005\,\text{m}$. Kateri zapis je pravilen zapis z desetiško potenco?
 - $5 \cdot 10^{-5}\,\text{m}$

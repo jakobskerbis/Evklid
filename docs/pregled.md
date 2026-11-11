@@ -14,10 +14,22 @@ commands below and the checklist of their lens.
 
 ## 1. Code and UI changes (every PR that touches `public/`, `server/`, `prompts/`, `scripts/`)
 
-**Pass 1 – automatic (author runs it, must be green before passes 2 and 3):**
-- `npm test`
-- `node scripts/preveri-aplikacijo.cjs` (clicks through every tab and main flow on desktop and phone in
-  test mode; fails on page errors, console errors, HTTP ≥ 400, horizontal scroll, raw i18n keys)
+**Pass 1 – automatic (must be green before passes 2 and 3):**
+- **Green CI on the PR** (j, 2026-11-06). `.github/workflows/testi.yml` runs two parallel jobs on every
+  PR and push to main: `testi` (`npm test`, Chromium + WebKit) and `preveri`
+  (`node scripts/preveri-aplikacijo.cjs`), in test mode with no secrets. Read the result with
+  `gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs -q '.check_runs[]|"\(.name) \(.status) \(.conclusion) \(.output.annotations_count) \(.id)"'`
+  (both `completed success`); on failure the run's artifacts hold the log and screenshots
+  (`gh api repos/jakobskerbis/evklid/actions/runs/<run>/artifacts`). A new push to a PR cancels its old run
+  (pushes to main are never cancelled).
+- **`annotations_count > 0` on `testi` = a flaky test**: a failed test file passed only on its single retry.
+  Read `gh api repos/jakobskerbis/evklid/check-runs/<id>/annotations` (and the `testi-dnevnik` artifact),
+  then fix the test in the same PR, or write it in the PR body with a reason. Green with a retry is not
+  clean.
+- Locally (2-core server, under `flock /tmp/evklid-tezko.lock`) run only the affected test files
+  (`node --test test/x.test.js`) and screenshots; CI covers the full `npm test` and
+  `preveri-aplikacijo.cjs` (it clicks through every tab and main flow on desktop and phone in test mode;
+  fails on page errors, console errors, HTTP ≥ 400, horizontal scroll, raw i18n keys).
 - when touched: `node scripts/preveri-generatorje.js` (0 errors), `node scripts/kakovost-nalog.js <prefix>`,
   `node scripts/preveri-simulacije.cjs`, `node scripts/check-lesson.js -q <files>`,
   `node scripts/preveri-formule.cjs` (sims, `public/sirina.js` or KaTeX output: no formula may scroll at 360 px)
@@ -76,3 +88,22 @@ thread »Triple-check every app element«): three reviewer agents in parallel, o
 look/phone/i18n; content/pedagogy), then one independent verifier agent that rereads all their fixes.
 Repeat the sweep after any large change (new tab, new design version) and at least before each
 public step (teacher pilot, open beta).
+
+## 5. Samodejni pregledi brez AI
+
+Trije brezplačni pregledi, ki ne kličejo AI in ne stanejo nič (j, 2026-11-08):
+
+- **Dependabot** (`.github/dependabot.yml`): ob ponedeljkih en PR za npm in en za GitHub Actions (vse minor/patch skupaj,
+  največ 3 odprti). Varnostni popravki pridejo kot ločeni PR-ji. `mobile/` je namenoma izven (Expo SDK posodabljamo skupaj).
+  Dependabot posodablja tudi SHA-pripete akcije. Zanj veljajo tri pregledi kot za vsak PR; posodobitve brez dotika kode
+  veljajo za majhne popravke.
+- **CodeQL** (`.github/workflows/codeql.yml`, nastavitev `.github/codeql/codeql-config.yml`): JavaScript, vprašanja
+  `security-extended`, ob PR v main, ob združitvi v main in ob ponedeljkih. Izidi: GitHub > Security > Code scanning
+  (če ga repozitorij še nima vklopljenega: Settings > Advanced Security). Velikih ustvarjenih podatkov (npr.
+  `server/university-extra.js`, generatorji nalog, `public/i18n`) ne pregleduje.
+- **Straža** (`.github/workflows/straza.yml`, `scripts/straza.mjs`): vsakih 15 min in po delovnem toku »Render«
+  preveri živo spletišče (domena iz `brand.json`): `/healthz`, `/healthz/stanje`, domačo stran, `app.js`, JSON
+  3D atlasa in `/api/config`. Samo GET, brez prijave, računov, AI in pisanja. 20 s na preizkus, ob napaki en
+  ponovni poskus čez 30 s. Če preizkus ne uspe, delovni tok pade, GitHub pošlje e-pošto, v dnevniku pa je slovenski
+  povzetek. Ročno: Actions > Straža > Run workflow, ali `node scripts/straza.mjs`. Javnih vsebinskih API-jev
+  (lekcije, formule) brez prijave ni, zato so preverjene le statične datoteke in `/api/config`.

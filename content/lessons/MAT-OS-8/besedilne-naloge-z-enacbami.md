@@ -174,11 +174,30 @@ $3x = 69$, $x = 23$. Števila so $23$, $24$ in $25$. Preizkus: $23 + 24 + 25 = 7
 
 Količine si lahko predstaviš s **trakovi** enake dolžine. En trak pomeni neznanko $x$.
 
-```
-Ana:    [ x ]
-Bor:    [ x ][ x ][ x ]
-Skupaj: [ x ][ x ][ x ][ x ] = 36
-```
+:::risba skica
+opis: Trakovi enake dolžine, vsak pomeni x. Ana ima en trak, Bor tri trakove, skupaj so štirje trakovi, ki merijo 36.
+območje: 0; 0 .. 9; 3,3
+napis: 0,1; 2,7 | Ana: | desno
+napis: 0,1; 1,65 | Bor: | desno
+napis: 0,1; 0,6 | Skupaj: | desno
+pravokotnik: 2; 2,35 .. 3; 3,05
+pravokotnik: 2; 1,3 .. 3; 2 | oranžna
+pravokotnik: 3; 1,3 .. 4; 2 | oranžna
+pravokotnik: 4; 1,3 .. 5; 2 | oranžna
+pravokotnik: 2; 0,25 .. 3; 0,95
+pravokotnik: 3; 0,25 .. 4; 0,95 | oranžna
+pravokotnik: 4; 0,25 .. 5; 0,95 | oranžna
+pravokotnik: 5; 0,25 .. 6; 0,95 | oranžna
+napis: 2,5; 2,7 | x
+napis: 2,5; 1,65 | x
+napis: 3,5; 1,65 | x
+napis: 4,5; 1,65 | x
+napis: 2,5; 0,6 | x
+napis: 3,5; 0,6 | x
+napis: 4,5; 0,6 | x
+napis: 5,5; 0,6 | x
+napis: 6,1; 0,6 | = 36 | desno | debelo
+:::
 
 Bor ima trikrat toliko kot Ana, zato ima tri trakove. Skupaj so štirje trakovi, ki merijo $36$. En trak je torej $36 : 4 = 9$. To je natanko enačba $4x = 36$.
 

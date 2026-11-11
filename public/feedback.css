@@ -90,3 +90,105 @@
 .install-mini .list-row { flex: 1; min-width: 0; }
 .install-mini .fb-card-x { color: var(--muted); }
 .install-mini .fb-card-x { align-self: center; }
+
+/* Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid« */
+.pn-me { margin-bottom: 12px; }
+.pn-notice .is-box > p { margin: 10px 0 0; }
+.pn-notice-ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); flex-shrink: 0; }
+.pn-notice-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+.pn-notice-actions > button, .pn-notice-actions > a { min-height: 44px; flex: 1 1 140px; justify-content: center; }
+#view-pilot .pn-body { display: flex; flex-direction: column; gap: 12px; }
+#view-pilot .pn-body > .card { margin: 0; }
+.pn-top p { margin: 6px 0 0; }
+.pn-progress-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pn-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px dashed var(--border); color: var(--muted); font-weight: 700; font-size: 0.9rem; }
+.pn-badge.on { border-style: solid; border-color: var(--gold, #ca8a04); color: var(--text); background: color-mix(in srgb, var(--gold, #ca8a04) 16%, transparent); }
+.pn-bar { height: 10px; border-radius: 999px; background: var(--surface-2); margin-top: 10px; overflow: hidden; }
+.pn-bar > span { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+.pn-head { display: flex; gap: 12px; align-items: flex-start; }
+.pn-head h2 { margin: 2px 0 4px; font-size: 1.1rem; }
+.pn-head p { margin: 0; }
+.pn-num { display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 800; }
+.pn-num.done { background: var(--ok-bg); color: var(--ok); }
+.pn-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; }
+.pn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 0; border-top: 1px solid var(--border); }
+.pn-row-text { flex: 1 1 180px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pn-row-text b { display: inline-flex; align-items: center; gap: 8px; }
+.pn-row-btns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-inline-start: auto; }
+.pn-row-btns > button, .pn-actions > button, #pn-survey > .primary { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.pn-status { display: flex; align-items: flex-start; gap: 0.4em; font-weight: 600; }
+.pn-status > svg, .pn-status > .icon { flex-shrink: 0; margin-top: 0.15em; }
+.pn-status .i { width: 16px; height: 16px; }
+.pn-status.ok { color: var(--ok); }
+.pn-status.bad { color: var(--danger); }
+.pn-yn { display: inline-flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.pn-yn > button { min-height: 44px; border: 0; border-radius: 0; background: var(--surface); color: var(--text); display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; }
+.pn-yn > button + button { border-inline-start: 1px solid var(--border); }
+.pn-yn > [data-pn="works"][aria-pressed="true"] { background: var(--ok-bg); color: var(--ok); font-weight: 700; }
+.pn-yn > [data-pn="broken"][aria-pressed="true"] { background: var(--danger-bg); color: var(--danger); font-weight: 700; }
+.pn-add-note { min-height: 40px; flex-basis: 100%; text-align: start; }
+.pn-note-form { display: flex; gap: 8px; flex-basis: 100%; }
+.pn-note-form input { flex: 1; min-width: 0; min-height: 44px; }
+.pn-note-form button { min-height: 44px; }
+.pn-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.pn-q { border: 0; padding: 0; margin: 12px 0 0; min-width: 0; }
+.pn-q legend { font-weight: 700; margin-bottom: 6px; padding: 0; }
+.pn-scale { display: grid; grid-template-columns: repeat(5, minmax(44px, 1fr)); gap: 6px; }
+.pn-choices { display: flex; flex-wrap: wrap; gap: 6px; }
+.pn-scale > button, .pn-choices > button { min-height: 44px; min-width: 44px; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 12px; font-weight: 700; }
+.pn-scale > button[aria-pressed="true"], .pn-choices > button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.pn-choices > button[aria-pressed="true"]::before { content: "✓ "; content: "✓ " / ""; } /* izbira ne le z barvo */
+.pn-scale > button[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--accent); }
+.pn-err { color: var(--danger); margin: 10px 0 0; }
+#pn-survey > .primary { margin-top: 14px; }
+#chat-bug.pn-spot { outline: 3px solid var(--accent); outline-offset: 2px; animation: pn-pulse 1s ease-in-out 3; }
+@keyframes pn-pulse { 50% { transform: scale(1.18); } }
+@media (prefers-reduced-motion: reduce) { #chat-bug.pn-spot { animation: none; } }
+.pn-rate { padding: 16px; margin-bottom: 12px; border: 2px solid var(--accent); }
+.pn-rate p { margin: 0 0 10px; }
+.pn-rate-title { display: flex; align-items: center; gap: 8px; color: var(--accent); }
+.pn-rate input[type="text"] { width: 100%; min-height: 44px; }
+.pn-consent { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; cursor: pointer; }
+.pn-consent input { width: 24px; height: 24px; flex-shrink: 0; margin: 2px 0 0; }
+.pn-consent span { display: flex; flex-direction: column; gap: 2px; }
+.pn-scan-banner { margin-bottom: 12px; }
+.pn-admin-notes, .pn-admin-photos, .pn-admin-acc { padding-inline-start: 18px; }
+.pn-admin-notes li, .pn-admin-photos li { margin: 6px 0; }
+.pn-admin-photos a { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
+.pn-admin-acc { list-style: none; padding: 0; }
+.pn-admin-acc li { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; overflow-wrap: anywhere; }
+.pn-admin-add { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pn-admin-add input { flex: 1 1 200px; min-height: 44px; }
+.pn-admin-add button { min-height: 44px; }
+/* Bivši član pilota s shranjenimi fotografijami (Jaz) in starš v Računu: izbris fotografij */
+.pn-former { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.pn-former .lr-text { flex: 1 1 180px; min-width: 0; }
+.pn-former > button, .pn-acc > button { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.pn-acc { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 6px; }
+.pn-acc .pill { display: inline-flex; align-items: center; gap: 4px; }
+.pn-acc .pill .i { width: 14px; height: 14px; }
+.pn-rate-btns > button { flex: 1 1 140px; justify-content: center; }
+
+/* Mnenje člana pilota (public/mnenje.js) */
+.mn-okno .is-box { max-height: 100dvh; overflow-y: auto; }
+.mn-okno label { display: block; margin: 12px 0 4px; font-weight: 600; }
+.mn-okno textarea { width: 100%; min-height: 64px; resize: vertical; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; }
+.mn-okno textarea::placeholder { color: var(--muted); }
+.mn-okno textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.mn-stars { display: flex; gap: 4px; margin-top: 12px; }
+.mn-stars > button { width: 48px; height: 48px; min-height: 48px; padding: 0; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); border-radius: 12px; }
+.mn-stars > button svg { width: 32px; height: 32px; }
+.mn-stars > button.on { color: #b45309; }
+.mn-stars > button.on svg { fill: #f59e0b; }
+.mn-stars > button[aria-checked="true"] { background: var(--accent-soft); }
+.mn-err { color: var(--danger, #b91c1c); margin: 6px 0 0; }
+.mn-publish { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.mn-publish + p { margin: 6px 0 0; }
+.mn-allowed { margin: 10px 0 0; }
+.mn-allowed button { min-height: 40px; }
+.mn-admin { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.mn-admin li { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; overflow-wrap: anywhere; }
+.mn-admin p { margin: 4px 0 0; }
+.mn-admin + .mn-admin { margin-top: 10px; }
+.mn-warn { display: flex; align-items: flex-start; gap: 8px; color: var(--danger); font-weight: 700; }
+.mn-warn svg { flex: none; width: 18px; height: 18px; margin-top: 2px; }

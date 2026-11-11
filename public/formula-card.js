@@ -60,7 +60,9 @@ export function cardFor(code) {
   const e = symbolVariant(key, vi) || lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
   if (!e) return null;
   const delta = kind === "d";
-  const name = delta ? T("fx.change", { what: nameOf(e) }) : nameOf(e);
+  // Oznaka, ki jo določi besedilo samo z zvezo (»Za $H = G - F$«), nima imena: »Oznaka iz besedila«.
+  const own = nameOf(e) || T("fx.defined");
+  const name = delta ? T("fx.change", { what: own }) : own;
   const symbol = (delta ? "\\Delta " : "") + (delta ? e.tex || symTex(key) : groupTex(e, key));
   const relation = e.r && !delta ? e.r : "";
   return {

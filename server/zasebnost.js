@@ -1,22 +1,13 @@
 // Varstvo podatkov učencev (docs/varnost-podatkov.md): šifriranje obstoječih vrstic ob zagonu,
 // roki hrambe in dnevno čiščenje. Šifriranje polj: server/crypto-polje.js.
-import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, canOpen, blindIndex, warnIfNoKey } from "./crypto-polje.js";
+import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warnIfNoKey, SEALED, encryptionStats } from "./crypto-polje.js";
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
+import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
 
-// Šifrirani stolpci. Nešifrirano ostane, kar SQL uporablja za iskanje ali je skupno vsem (glej dokument):
-// students.name (iskanje podvojenih), answer_cache (skupni, brez osebnih podatkov), knowledge_items (samo id-ji predmetov).
-export const SEALED = [
-  { table: "messages", cols: ["api_content", "display_text"] },
-  { table: "conversations", cols: ["title"] },
-  { table: "conversation_summaries", cols: ["text"] },
-  { table: "message_reports", cols: ["note", "question", "answer", "raw", "shown"] },
-  { table: "bug_reports", cols: ["note", "context"] },
-  { table: "feedback", cols: ["name", "good", "bad", "ideas", "interview"] },
-  { table: "schedules", cols: ["data"] },
-  // norm (za UNIQUE) postane slepi indeks HMAC, sicer bi razkril vprašanje s kartice.
-  { table: "flashcards", cols: ["front", "back"], norm: true },
-];
+// Šifrirani stolpci (SEALED) in štetje neberljivih (encryptionStats) sta v crypto-polje.js: rabi ju tudi lahka nit
+// za nočni preizkus kopij (server/kopije-preizkus.js), ki ne sme naložiti tega modula in vsega, kar ta uvaža.
+export { SEALED, encryptionStats };
 
 // --- roki hrambe (vse na enem mestu) ---
 const days = (v, d) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number(v) : d);
@@ -108,31 +99,24 @@ export function migrateEncryption(db, batch = 200) {
   return out;
 }
 
-// Koliko vrstic je šifriranih, nešifriranih in neberljivih (scripts/kljuc-podatkov.js --preveri).
-export function encryptionStats(db) {
-  const out = [];
-  for (const t of SEALED) {
-    if (!hasTable(db, t.table)) continue;
-    for (const c of t.cols.filter((x) => hasCol(db, t.table, x))) {
-      const s = { table: t.table, col: c, encrypted: 0, plain: 0, unreadable: 0, oldKey: 0 };
-      const cur = currentKeyId();
-      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL`).iterate()) {
-        if (!isEncrypted(r.v)) s.plain++;
-        else if (!canOpen(r.v)) s.unreadable++;
-        else {
-          s.encrypted++;
-          if (cur && !r.v.startsWith(`enc1:${cur}:`)) s.oldKey++;
-        }
-      }
-      out.push(s);
-    }
-  }
-  return out;
-}
 
 // --- dnevno čiščenje ---
+// Hramba zapisa neujemajočega se plačila Stripa (dni).
+export const UNMATCHED_DAYS = 365;
 export function runRetention(db, { now = Date.now(), log = console } = {}) {
   const out = { images: 0, sessions: 0, unlocks: 0, emailLog: 0, pushLog: 0, audit: 0, unverified: 0 };
+  // Zapisi plačil, ki jih ni bilo mogoče pripisati računu (kv stripe_unmatched:*, accounts/ponoven-id.js): 365 dni
+  // po zapisu (polje at), dovolj za ročno vračilo; neberljiv zapis brez časa se izbriše.
+  if (hasTable(db, "kv")) {
+    const cut = new Date(now - UNMATCHED_DAYS * 86400000).toISOString();
+    for (const r of db.prepare("SELECT key, value FROM kv WHERE key LIKE 'stripe\\_unmatched:%' ESCAPE '\\'").all()) {
+      let at = null;
+      try {
+        at = JSON.parse(r.value)?.at;
+      } catch {}
+      if (typeof at !== "string" || !(at >= cut)) out.unmatched = (out.unmatched || 0) + db.prepare("DELETE FROM kv WHERE key = ?").run(r.key).changes;
+    }
+  }
   const n = RETENTION.imageDays();
   // Fotografije: sporočila s sliko, starejša od n dni (has_image = 2 pomeni, da je slika že odstranjena).
   if (hasTable(db, "messages")) {
@@ -157,6 +141,23 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     }
   }
   const nowIso = new Date(now).toISOString();
+  // Fotografije iz nalog pilota (shranjene ob soglasju): ob roku iz soglasja (expires_at), nikoli pozneje kot
+  // PHOTO_MAX_DAYS po shranitvi, tudi če se nastavitev vmes spremeni. Ocena ostane.
+  if (hasTable(db, "pilot_photos")) {
+    const t = Math.floor(now / 1000);
+    const hasExp = hasCol(db, "pilot_photos", "expires_at");
+    out.pilotPhotos = Number(
+      db
+        .prepare(
+          `DELETE FROM pilot_photos WHERE created_at < datetime(?, 'unixepoch', ?)${hasExp ? " OR (expires_at IS NOT NULL AND expires_at < datetime(?, 'unixepoch'))" : ""}`,
+        )
+        .run(...(hasExp ? [t, `-${PHOTO_MAX_DAYS} days`, t] : [t, `-${PHOTO_MAX_DAYS} days`])).changes,
+    );
+    // Bivši člani pilota (šoli je potekla licenca): fotografije najpozneje v enem dnevu.
+    try {
+      out.pilotFormer = dropFormerPhotos(db);
+    } catch {}
+  }
   if (hasTable(db, "parent_sessions")) out.sessions = Number(db.prepare("DELETE FROM parent_sessions WHERE expires_at < ?").run(nowIso).changes);
   if (hasTable(db, "profile_unlocks")) out.unlocks = Number(db.prepare("DELETE FROM profile_unlocks WHERE expires_at < ?").run(now).changes);
   const ago = (d) => new Date(now - d * 86400000).toISOString().replace("T", " ").slice(0, 19);
@@ -241,4 +242,44 @@ export function startPrivacyJobs(db, { scheduler = true, log = console } = {}) {
     setImmediate(run).unref?.();
   }
   setInterval(run, 24 * 3600000).unref();
+}
+
+// --- izvoz vseh podatkov (GDPR čl. 15 in 20) ---
+// Vse ostale tabele z vrsticami računa ali njegovih profilov (student_id, parent_id, lastnik razreda), ki jih
+// izvoz v server/accounts/index.js ne zajame posebej: tako izvoz ne izpusti nove tabele. Gesla, žetoni in
+// zgoščene vrednosti ostanejo zunaj; šifrirana polja gredo v izvoz odšifrirana.
+const SECRET_COL = /hash|token|secret|password|salt|cipher/i;
+const SECRET_TABLE = new Set(["parent_sessions", "profile_passwords", "profile_unlocks", "account_unlocks", "pay_links", "kv"]);
+// Stolpci z računom: tudi kupec in prejemnik darila (gifts), priporočila (referral_rewards), ustanovitelj šole
+// in avtor naloge razreda (created_by).
+const OWNER_COLS = {
+  student: ["student_id", "owner_student_id"],
+  parent: ["parent_id", "owner_parent_id", "buyer_id", "redeemed_by", "referrer_id", "referred_id", "created_by"],
+};
+export function exportOtherTables(db, { parentId, studentIds = [], skip = [] }) {
+  const out = {};
+  const skipSet = new Set([...skip, "parents", "students"]);
+  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map((r) => r.name);
+  for (const t of tables) {
+    if (skipSet.has(t) || SECRET_TABLE.has(t)) continue;
+    const cols = db.prepare(`PRAGMA table_info(${t})`).all().map((c) => c.name);
+    const where = [];
+    const args = [];
+    for (const c of cols) {
+      if (OWNER_COLS.student.includes(c) && studentIds.length) {
+        where.push(`${c} IN (${studentIds.map(() => "?").join(",")})`);
+        args.push(...studentIds);
+      }
+      if (OWNER_COLS.parent.includes(c) && parentId != null) {
+        where.push(`${c} = ?`);
+        args.push(parentId);
+      }
+    }
+    if (!where.length) continue;
+    const keep = cols.filter((c) => !SECRET_COL.test(c));
+    const rows = db.prepare(`SELECT ${keep.map((c) => `"${c}"`).join(", ")} FROM ${t} WHERE ${where.join(" OR ")}`).all(...args);
+    if (!rows.length) continue;
+    out[t] = rows.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, typeof v === "string" && isEncrypted(v) ? unseal(v, null) : v])));
+  }
+  return out;
 }

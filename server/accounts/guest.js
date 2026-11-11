@@ -4,6 +4,7 @@ import "../env.js";
 // Gost je račun brez e-naslova, vezan na piškotek naprave. Ima brezplačni paket; da brisanje piškotkov
 // ali profila ne da nove kvote, se vprašanja na dan in mesečna poraba AI štejejo za vse goste
 // z istega omrežja (zgoščen IP, pri IPv6 omrežje /64) skupaj, tudi za že izbrisane goste.
+import { randomBytes } from "node:crypto";
 import { sha256 } from "./auth.js";
 import { detachAudit } from "../dnevnik-dostopov.js";
 
@@ -14,6 +15,55 @@ export const GUEST_SESSION_DAYS = 365;
 // in za kvote; teste vklopijo z mountAccounts(..., { guest: true }).
 export function guestModeOn() {
   return false;
+}
+
+// Povabilo brez e-naslova (j, 2026-11-07): lastnik (EVKLID_ADMIN_EMAILS s potrjenim naslovom) ustvari povezavo
+// /?gost=<žeton> za nekaj prijateljev. Samo z veljavnim žetonom nastane gost; brez njega uporaba brez računa
+// ostane izklopljena. Shranjen je le sha256 žetona. Kvote gostov (omrežje, dan, AI) ostanejo enake.
+export const INVITE_MAX_GUESTS = 10;
+export const INVITE_DAYS = 14;
+
+export class GuestInvites {
+  constructor(db) {
+    this.db = db;
+    db.exec(`CREATE TABLE IF NOT EXISTS guest_invites (
+      id INTEGER PRIMARY KEY,
+      token_hash TEXT NOT NULL UNIQUE,
+      max_uses INTEGER NOT NULL,
+      used INTEGER NOT NULL DEFAULT 0,
+      expires_at TEXT NOT NULL,
+      created_by INTEGER,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );`);
+  }
+
+  // Vrne žeton (32 bajtov = 256 bitov); v bazi ostane samo njegov sha256.
+  create(createdBy) {
+    const token = randomBytes(32).toString("base64url");
+    const expires = new Date(Date.now() + INVITE_DAYS * 86400000).toISOString();
+    this.db
+      .prepare("INSERT INTO guest_invites (token_hash, max_uses, expires_at, created_by) VALUES (?, ?, ?, ?)")
+      .run(sha256(token), INVITE_MAX_GUESTS, expires, createdBy ?? null);
+    return { token, expires_at: expires, max_uses: INVITE_MAX_GUESTS };
+  }
+
+  // Veljavno povabilo (obstaja, ni poteklo, ima še prosta mesta) ali null.
+  find(token) {
+    const t = typeof token === "string" ? token.trim() : "";
+    if (!/^[A-Za-z0-9_-]{20,100}$/.test(t)) return null;
+    const r = this.db.prepare("SELECT * FROM guest_invites WHERE token_hash = ?").get(sha256(t));
+    if (!r || r.used >= r.max_uses || !(Date.parse(r.expires_at) > Date.now())) return null;
+    return r;
+  }
+
+  // Porabi eno mesto (atomarno, da dva hkratna gosta ne preideta meje); true, če je uspelo.
+  use(id) {
+    return (
+      this.db
+        .prepare("UPDATE guest_invites SET used = used + 1 WHERE id = ? AND used < max_uses AND expires_at > ?")
+        .run(id, new Date().toISOString()).changes === 1
+    );
+  }
 }
 
 // Največ novih gostov z enega omrežja v 24 urah.
@@ -83,12 +133,10 @@ export class GuestQuota {
   }
 
   questionsToday(ids, net) {
+    // question_log (server/db.js): vprašanja ostanejo šteta tudi po izbrisu pogovora (vsi računi, tudi šolska licenca).
     const live = ids.length
       ? this.db
-          .prepare(
-            `SELECT COUNT(*) AS n FROM messages m JOIN conversations c ON c.id = m.conversation_id
-             WHERE c.student_id IN (${ids.map(() => "?").join(",")}) AND m.role = 'user' AND date(m.created_at) = date('now')`,
-          )
+          .prepare(`SELECT COALESCE(SUM(n),0) AS n FROM question_log WHERE student_id IN (${ids.map(() => "?").join(",")}) AND day = date('now')`)
           .get(...ids).n
       : 0;
     const gone = net ? this.db.prepare("SELECT COALESCE(SUM(questions),0) AS n FROM guest_spent WHERE net = ? AND day = date('now')").get(net).n : 0;
@@ -116,15 +164,9 @@ export class GuestQuota {
     if (q || usd) this.db.prepare("INSERT INTO guest_spent (net, day, questions, usd) VALUES (?, date('now'), ?, ?)").run(net, q, usd);
   }
 
-  // Pred izbrisom pogovora: današnja vprašanja v njem ostanejo šteta.
-  snapshotConversation(conversationId, studentId) {
-    const net = this.netOf(studentId);
-    if (!net) return;
-    const q = this.db
-      .prepare("SELECT COUNT(*) AS n FROM messages WHERE conversation_id = ? AND role = 'user' AND date(created_at) = date('now')")
-      .get(conversationId).n;
-    if (q) this.db.prepare("INSERT INTO guest_spent (net, day, questions, usd) VALUES (?, date('now'), ?, 0)").run(net, q);
-  }
+  // Pred izbrisom pogovora: vprašanja so že v question_log (izbris pogovora jih ne briše), tu ni kaj zapisati.
+  // Zapis v guest_spent bi jih štel dvakrat.
+  snapshotConversation() {}
 
   snapshotParent(parentId) {
     for (const r of this.db.prepare("SELECT id FROM students WHERE parent_id = ?").all(parentId)) this.snapshot(r.id);

@@ -181,7 +181,7 @@ Vsako sekundo pot zraste za $2\,\mathrm{m}$, količnik $s : t$ je povsod enak. �
 
 ## Drugače: Kot zgodba
 
-Eva se odpravi po ravni gozdni poti do koče. Vsakih $10\,\mathrm{min}$ pogleda v telefon, koliko je že prehodila: $0{,}8\,\mathrm{km}$, $1{,}6\,\mathrm{km}$, $2{,}4\,\mathrm{km}$. Vsakih deset minut enak kos poti, torej hodi enakomerno, s hitrostjo $0{,}8\,\mathrm{km}$ v $10\,\mathrm{min}$, kar je $4{,}8\,\mathrm{km/h}$. Njen graf $s(t)$ je doslej poševna premica.
+Eva se odpravi po ravni gozdni poti do koče. Vsakih $10\,\mathrm{min}$ pogleda v telefon, koliko je že prehodila: $0{,}8\,\mathrm{km}$; $1{,}6\,\mathrm{km}$; $2{,}4\,\mathrm{km}$. Vsakih deset minut enak kos poti, torej hodi enakomerno, s hitrostjo $0{,}8\,\mathrm{km}$ v $10\,\mathrm{min}$, kar je $4{,}8\,\mathrm{km/h}$. Njen graf $s(t)$ je doslej poševna premica.
 
 Po $30\,\mathrm{min}$ sede na štor in $10\,\mathrm{min}$ opazuje veverico. Ura teče, kilometri pa ne: graf $s(t)$ postane vodoraven pri $2{,}4\,\mathrm{km}$, graf $v(t)$ pade na nič.
 

@@ -352,7 +352,11 @@ test("Sign in with Apple: new account needs age and consent, then logs in by App
     // Izbris brez gesla: potrditev z novo prijavo z Apple (tuj sub ne zadošča).
     const wrong = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.999" }, NONCE), apple_nonce: NONCE } });
     assert.equal(wrong.status, 401);
-    const del = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, NONCE), apple_nonce: NONCE } });
+    // Žeton prijave (isti enkratni niz) izbrisa ne odpre; potreben je svež žeton z novim nizom.
+    const replay = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, NONCE), apple_nonce: NONCE } });
+    assert.equal(replay.status, 401);
+    const DEL_NONCE = "svez-niz-za-izbris-1234";
+    const del = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, DEL_NONCE), apple_nonce: DEL_NONCE } });
     assert.equal(del.status, 200);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents").get().n, 0);
   });
@@ -400,7 +404,7 @@ test("calculator page for the app works without login and loads only the calcula
     assert.equal(res.status, 200);
     assert.match(res.headers.get("content-type"), /text\/html/);
     const page = await res.text();
-    assert.match(page, /<script type="module" src="kalkulator\.js"><\/script>/);
+    assert.match(page, /<script type="module" src="zagon\.js" data-moduli="kalkulator\.js"><\/script>/);
     assert.doesNotMatch(page, /src="app\.js"|<script>/); // brez celotne aplikacije in brez vrinjenih skript (CSP)
     assert.match(res.headers.get("content-security-policy"), /script-src 'self'/);
     for (const f of ["kalkulator.js", "kalkulator-nastavi.js", "graph/sci.js", "graph/calc.js", "graph/tools.js"]) assert.equal((await fetch(`${base}/${f}`)).status, 200, f);
@@ -649,4 +653,43 @@ test("mobilno preverjanje brez povezave: server/practice/check.js deluje brez st
   const { checkAnswer } = await import("../server/practice/check.js");
   assert.equal(checkAnswer({ type: "number", value: 2 }, "2").kind, "correct");
   assert.notEqual(checkAnswer({ type: "number", value: 2 }, "3").kind, "correct");
+});
+
+// Prevzem pred registracijo: napadalec ustvari račun z žrtvinim e-naslovom (ga ne potrdi) in svojim geslom.
+// Ko se žrtev prijavi z Apple (Apple e-naslov potrdi), se račun poveže; napadalčevo geslo in seja ne smeta veljati.
+test("Sign in with Apple on an unverified account: the old password and sessions stop working", async () => {
+  await withServer(async ({ appClient, store }) => {
+    const attacker = appClient();
+    const reg = await attacker("/api/auth/register", { body: { email: "zrtev@primer.si", password: "napadalec1", accept_privacy: true, birth_date: ADULT } });
+    assert.equal(reg.status, 201, JSON.stringify(reg.body));
+    assert.equal((await attacker("/api/account")).status, 200);
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.888", email: "zrtev@primer.si", email_verified: true }, NONCE), nonce: NONCE, accept_privacy: true, birth_date: ADULT } });
+    assert.equal(r.status, 200);
+    assert.equal(r.body.parent.id, reg.body.parent.id);
+    assert.notEqual((await attacker("/api/account")).status, 200, "napadalčeva seja še velja");
+    const login = await appClient()("/api/auth/login", { body: { email: "zrtev@primer.si", password: "napadalec1" } });
+    assert.equal(login.status, 401, "napadalčevo geslo še odpre račun");
+    assert.ok(store.db.prepare("SELECT email_verified_at FROM parents WHERE id = ?").get(reg.body.parent.id).email_verified_at);
+  });
+});
+
+test("Sign in with Apple on a verified account keeps its password", async () => {
+  await withServer(async ({ appClient, adult }) => {
+    await adult(appClient(), "potrjen@primer.si");
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.999", email: "potrjen@primer.si", email_verified: true }, NONCE), nonce: NONCE } });
+    assert.equal(r.status, 200);
+    assert.equal((await appClient()("/api/auth/login", { body: { email: "potrjen@primer.si", password: "geslo12345" } })).status, 200);
+  });
+});
+
+// Pregled #506 A/B: Apple ključev ni mogoče prenesti → pot prijave odgovori 502 »Apple se ne odziva«, ne 401.
+test("Sign in with Apple: JWKS download failure answers 502, not 401", async () => {
+  const { resetAppleKeyCache } = await import("../server/mobile/apple-crypto.js");
+  resetAppleKeyCache();
+  const fetchFn = async () => ({ ok: false, status: 503, json: async () => ({}) });
+  await withServer(async ({ appClient }) => {
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.502" }, NONCE), nonce: NONCE } });
+    assert.equal(r.status, 502, JSON.stringify(r.body));
+  }, { appleKeys: null, fetchFn });
+  resetAppleKeyCache();
 });

@@ -69,6 +69,7 @@ export async function askModel(model, user, createFn, system = SYSTEM) {
  * Preveri odgovor trikrat. `kind`: "answer" (celoten odgovor) ali "cards" (kartice).
  * @returns {Promise<{ok: boolean, reason?: string, cost: number}>}
  */
+// Strošek plača aplikacija (student_id NULL) iz dnevnega zneska VERIFY_DAILY_USD (j 2026-11-06), ne meja učenca.
 export async function verifyAnswer({ question, answer, kind = "answer", usage = null, createFn = null }) {
   const code = codeCheck(answer);
   if (code) return { ok: false, reason: code, cost: 0 };

@@ -4,6 +4,8 @@ import { t, locale, currentLang, applyI18n } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { initDrsniki } from "./drsniki.js";
 import { initSirina } from "./sirina.js";
+// spustni meniji kot v aplikaciji (sistemski <select> pri 360 px odreže »Samodejno«; pregled #457)
+import "./dropdown.js";
 
 const MODES = ["sci", "graph", "tools", "pse"];
 const q = new URLSearchParams(location.search);
@@ -49,7 +51,9 @@ async function setMode(m) {
   const tl = await tool(m);
   if (mode !== m) return tl;
   if (m === "tools") tl.reload?.();
-  if (tl.root.parentElement !== slot) slot.replaceChildren(tl.root);
+  // orodja ostanejo v pomnilniku in na strani (skrita): preklop je takojšen in ohrani vnos (kot app.js showCalcRoot)
+  if (tl.root.parentElement !== slot) slot.append(tl.root);
+  for (const el of slot.children) el.hidden = el !== tl.root;
   tl.resize?.();
   return tl;
 }

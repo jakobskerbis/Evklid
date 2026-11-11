@@ -127,7 +127,7 @@ nato $\sin\delta = \dfrac{d\sin\varphi}{p}$ in $\lambda = 180^\circ - \varphi - 
 **Rešitev:**
 
 1. Znane so tri stranice, zato kot $\varphi$ dobimo s kosinusnim izrekom.
-2. $l^2 = 400\,\mathrm{m^2}$, $d^2 = 324\,\mathrm{m^2}$, $p^2 \approx 53{,}58\,\mathrm{m^2}$, $2ld = 720\,\mathrm{m^2}$.
+2. $l^2 = 400\,\mathrm{m^2}$; $d^2 = 324\,\mathrm{m^2}$; $p^2 \approx 53{,}58\,\mathrm{m^2}$; $2ld = 720\,\mathrm{m^2}$.
 3. $\cos\varphi \approx \dfrac{400 + 324 - 53{,}58}{720} \approx 0{,}9311$, zato je $\varphi \approx 21{,}4^\circ$.
 4. Drugi kot izberemo premišljeno. Kot $\delta$ leži nasproti $d = 18\,\mathrm{m}$, ki ni najdaljša stranica, zato je $\delta$ zagotovo oster.
 5. Iz sinusnega izreka (z nezaokroženim $\varphi$): $\sin\delta = \dfrac{18\,\mathrm{m} \cdot \sin\varphi}{7{,}32\,\mathrm{m}} \approx 0{,}8967$, zato je $\delta \approx 63{,}7^\circ$.
@@ -150,7 +150,7 @@ $\cos\kappa = \dfrac{x^2 + y^2 - z^2}{2xy}$
 **Rešitev:**
 
 1. Največji kot leži nasproti najdaljše stranice $z = 3{,}5\,\mathrm{km}$, torej pri točki $K_1$, med stranicama $x$ in $y$.
-2. Kvadrati: $2{,}4^2 = 5{,}76$, $3{,}1^2 = 9{,}61$, $3{,}5^2 = 12{,}25$. Imenovalec: $2 \cdot 2{,}4 \cdot 3{,}1 = 14{,}88$.
+2. Kvadrati: $2{,}4^2 = 5{,}76$; $3{,}1^2 = 9{,}61$; $3{,}5^2 = 12{,}25$. Imenovalec: $2 \cdot 2{,}4 \cdot 3{,}1 = 14{,}88$.
 3. Izračunaj $\cos\kappa$ in nato $\kappa$, potem preveri:
 
 :::premisli

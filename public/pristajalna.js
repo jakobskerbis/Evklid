@@ -82,7 +82,17 @@ export function landingHtml({ name, prices = null, money = (x) => String(x) } = 
         `<li class="card land-more"><span class="land-ic" aria-hidden="true">${icon(ic)}</span><h3>${esc(t(`land.${k}.t`))}</h3><p>${esc(t(`land.${k}.d`))}</p><a href="${href}">${esc(t(`land.${k}.go`))} ${icon("chevron-right")}</a></li>`,
     )
     .join("");
+  // Pas pri vrhu (j 2026-11-10): garancija samo, ko jo strežnik oglašuje (prices.guarantee; stikalo in živa plačila,
+  // server/placila/garancija.js guaranteeAdvertised), pod njo tri dejstva. Pogoji v vrstici so isti kot pri izbiri paketa.
+  const gar = prices?.guarantee
+    ? `<p class="land-gar"><span class="land-gar-ic" aria-hidden="true">${icon("award")}</span><span class="land-gar-text"><b>${esc(t("gar.title"))}</b> <span>${esc(t("gar.short"))}</span> <a href="/garancija.html">${esc(t("gar.terms"))}</a></span></p>`
+    : "";
+  const facts = [1, 2, 3].map((n) => `<li>${icon("check")}<span>${esc(t(`land.fact${n}`))}</span></li>`).join("");
   return `<div class="land">
+    <section class="land-top">
+      ${gar}
+      <ul class="land-facts">${facts}</ul>
+    </section>
     <section class="land-hero">
       <div class="land-hero-text">
         <p class="land-eyebrow">${esc(t("land.subjects"))}</p>
@@ -119,6 +129,8 @@ export function landingHtml({ name, prices = null, money = (x) => String(x) } = 
       ${trial}
     </section>
     <footer class="land-foot">
+      <a href="/o-evklidu">${esc(t("land.what"))}</a>
+      <a href="/zakaj-evklid">${esc(t("land.why"))}</a>
       <a href="/zasebnost.html">${esc(t("land.privacy"))}</a>
       <a href="/starsi.html">${esc(t("land.par.t"))}</a>
       <a href="/sole.html">${esc(t("land.sch.t"))}</a>

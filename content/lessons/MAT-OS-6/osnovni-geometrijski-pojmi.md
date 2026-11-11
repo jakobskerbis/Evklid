@@ -138,11 +138,23 @@ V isti ravnini so premice $a$, $b$, $c$ in $d$. Vemo, da je $a \parallel b$, $c 
 
 Poglej premico, poltrak in daljico, narisane eno pod drugo (pike $A$ in $B$ sta isti):
 
-```
-premica p     <----A--------B---->
-poltrak AB         A--------B---->
-daljica AB         A--------B
-```
+:::risba skica
+opis: Premica, poltrak in daljica, narisani eno pod drugo skozi isti točki A in B. Premica p ima puščici na obeh koncih, poltrak AB samo za točko B, daljica AB je med A in B brez puščic.
+območje: 0; 0,2 .. 10; 3,6
+napis: 0,1; 2,8 | premica p | desno
+napis: 0,1; 1,7 | poltrak AB | desno
+napis: 0,1; 0,6 | daljica AB | desno
+črta: 5,9; 2,8 -> 3; 2,8 | puščica
+črta: 5,9; 2,8 -> 9,8; 2,8 | puščica
+črta: 4,2; 1,7 -> 9,8; 1,7 | puščica
+črta: 4,2; 0,6 -> 7,6; 0,6
+točka: 4,2; 2,8 | A | nad
+točka: 7,6; 2,8 | B | nad
+točka: 4,2; 1,7 | A | nad
+točka: 7,6; 1,7 | B | nad
+točka: 4,2; 0,6 | A | nad
+točka: 7,6; 0,6 | B | nad
+:::
 
 Premica ima puščici na obeh koncih, poltrak samo eno, daljica nobene. Odnose med dvema premicama si lahko zapomniš s tremi znaki, ki jih poznaš:
 

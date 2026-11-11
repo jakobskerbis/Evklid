@@ -18,8 +18,9 @@ import { FormulaCtx } from "@/lib/formula-ctx";
 import { useTopicFx } from "@/lib/useTopicFx";
 import { Banner, Button, Card, ErrorView, Icon, Loading } from "@/components/ui";
 import { appDevice, ReportSheet } from "@/components/ReportSheet";
+import { NujnoCard, lokalnoNujno, type Nujno } from "@/components/NujnoCard";
 
-type Msg = { id: number | string; role: "user" | "assistant"; text: string; has_image?: boolean; photo?: string; error?: boolean; streaming?: boolean };
+type Msg = { id: number | string; role: "user" | "assistant" | "nujno"; nujno?: Nujno; meja?: boolean; text: string; has_image?: boolean; photo?: string; error?: boolean; streaming?: boolean };
 type Proposal = { settings: Record<string, string>; from: Desc; to: Desc; state?: "done" | "kept" };
 type Desc = { system?: string; track?: string; level?: string; program?: string };
 
@@ -29,6 +30,17 @@ const levelText = (d: Desc) => {
   const track = d.system ? null : ({ OSNOVNA_SOLA: t("lp.os"), SREDNJA_SOLA: t("lp.ss"), UNIVERZA: t("lp.uni") } as Record<string, string>)[d.track || ""];
   return [d.system, track, level, d.program].filter(Boolean).join(" · ");
 };
+
+// Razlog meje v jeziku vmesnika (kot public/app.js serverError): code in hint sta ključa i18n (block.*),
+// error je slovenska rezerva strežnika.
+const BLOCK_CODE = /^block\.[A-Za-z]+$/;
+function blockText(body: any): string | null {
+  if (typeof body?.code !== "string" || !BLOCK_CODE.test(body.code)) return null;
+  const own = t(body.code, body.params || {});
+  if (own === body.code) return null;
+  const hint = typeof body.hint === "string" && BLOCK_CODE.test(body.hint) ? t(body.hint) : "";
+  return hint && hint !== body.hint ? `${own} ${hint}` : own;
+}
 
 export default function Chat() {
   // Formule v odgovorih: predmet pogovora in, pri pogovoru o temi, oznake lekcije te teme (kot na spletu).
@@ -74,7 +86,27 @@ export default function Chat() {
       setProposal(null);
       const reply: Msg = { id: `r${Date.now()}`, role: "assistant", text: "", streaming: true };
       const userId = `u${Date.now()}`;
-      setMessages((m) => [...m, { id: userId, role: "user", text: msgText || t("chat.photoNote"), photo: body.image?.uri, has_image: !!body.image }, reply]);
+      // Varnostni odgovor (public/nujno.js, j 6. 11.): lokalni zaznavalnik takoj (strošek 0), nato strežnik
+      // (dogodek »nujno«, err.nujno pri 429/503) ali spet lokalno ob napaki in brez povezave. Največ enkrat.
+      const nujnoId = `n${Date.now()}`;
+      const prvo = lokalnoNujno(msgText);
+      let nujnoShown = !!prvo;
+      const nujnoMsg = (n: Nujno, meja = false): Msg => ({ id: nujnoId, role: "nujno", nujno: n, meja, text: "" });
+      setMessages((m) => [...m, { id: userId, role: "user", text: msgText || t("chat.photoNote"), photo: body.image?.uri, has_image: !!body.image }, ...(prvo ? [nujnoMsg(prvo)] : []), reply]);
+      const showNujno = (n: Nujno | null | undefined, meja = false) => {
+        if (nujnoShown) {
+          if (meja) setMessages((all) => all.map((m) => (m.id === nujnoId ? { ...m, meja: true } : m)));
+          return;
+        }
+        if (!n?.vrsta) return;
+        nujnoShown = true;
+        n = { ...n, izs: n.izs ?? !!lokalnoNujno(msgText)?.izs };
+        setMessages((all) => {
+          const i = all.findIndex((m) => m.id === reply.id);
+          const item = nujnoMsg(n, meja);
+          return i < 0 ? [...all, item] : [...all.slice(0, i), item, ...all.slice(i)];
+        });
+      };
       const patch = (fn: (m: Msg) => Msg) => setMessages((all) => all.map((m) => (m.id === reply.id ? fn(m) : m)));
       const net = await Network.getNetworkStateAsync().catch(() => null);
       const lite = net?.type === Network.NetworkStateType.CELLULAR;
@@ -85,6 +117,7 @@ export default function Chat() {
           { text: msgText || undefined, image: body.image ? { media_type: body.image.media_type, data: body.image.data } : undefined, deep: body.deep || undefined, lite },
           (e: ChatEvent) => {
             if (e.event === "delta") patch((m) => ({ ...m, text: m.text + (e.data.text || "") }));
+            else if (e.event === "nujno") showNujno(e.data);
             else if (e.event === "done") {
               patch((m) => ({ ...m, id: e.data.id ?? m.id, text: e.data.text ?? m.text, streaming: false }));
               if (e.data.title) setTitle(e.data.title);
@@ -96,8 +129,15 @@ export default function Chat() {
               setChoices(Array.isArray(e.data.choices) ? e.data.choices.slice(0, 4) : []);
               if (e.data.settings) refresh().catch(() => {});
             } else if (e.event === "error") {
+              showNujno(e.data.nujno || lokalnoNujno(msgText), true);
               patch((m) => ({ ...m, text: e.data.error, error: true, streaming: false }));
               failure();
+              // Napaka modela med odgovorom: strežnik učenčevo sporočilo izbriše, zato se besedilo in fotografija
+              // vrneta v polje (kot na spletu), osnutka pa ne prepišeta.
+              if (!body.deep) {
+                setText((cur) => (cur.trim() ? cur : msgText));
+                if (body.image) setPhoto((cur) => cur || body.image || null);
+              }
             } else if (e.event === "mastered") {
               setNotes((n) => [...n, { key: `m${Date.now()}`, text: t("chat.mastered", { topic: e.data.topic || "" }), tone: "gold" }]);
               celebrate();
@@ -119,14 +159,23 @@ export default function Chat() {
         if ((err as Error).name === "AbortError") {
           setMessages((all) => all.filter((m) => m.id !== reply.id && m.id !== userId));
           if (!body.deep) {
-            setText(msgText);
-            if (body.image) setPhoto(body.image);
+            setText((cur) => (cur.trim() ? cur : msgText));
+            if (body.image) setPhoto((cur) => cur || body.image || null);
           }
           return;
         }
-        const msg = err instanceof ApiError ? (err.offline ? t("mob.offlineChat") : err.message) : (err as Error).message;
+        // Zavrnitev (meja porabe, izklopljen klepet), napaka ali brez povezave: najprej varnostni odgovor.
+        showNujno((err instanceof ApiError && err.body?.nujno) || lokalnoNujno(msgText), true);
+        const msg = err instanceof ApiError ? (err.offline ? t("mob.offlineChat") : blockText(err.body) || err.message) : (err as Error).message;
         patch((m) => ({ ...m, text: msg, error: true, streaming: false }));
         failure();
+        // Kot na spletu: ob meji porabe (429, limit) ostane polje prazno, sporočilo je v oblačku; ob vsaki drugi
+        // napaki (omrežje, strežnik, 4xx) se besedilo in fotografija vrneta, osnutka v polju pa ne prepišeta.
+        const limit = err instanceof ApiError && err.status === 429 && err.body?.limit === true;
+        if (!limit && !body.deep) {
+          setText((cur) => (cur.trim() ? cur : msgText));
+          if (body.image) setPhoto((cur) => cur || body.image || null);
+        }
       } finally {
         setBusy(false);
       }
@@ -253,7 +302,7 @@ export default function Chat() {
               <Text style={{ color: th.muted, fontSize: 15 }}>{t("chat.intro")}</Text>
             </Card>
           }
-          renderItem={({ item }) => <Bubble m={item} conv={id} />}
+          renderItem={({ item }) => <Bubble m={item} conv={id} onClose={() => setMessages((all) => all.filter((x) => x.id !== item.id))} />}
           ListFooterComponent={
             <View style={{ gap: 10 }}>
               {notes.map((n) => (
@@ -412,8 +461,10 @@ function ReportButton({ conv, mid, text }: { conv: string; mid: number; text: st
   );
 }
 
-function Bubble({ m, conv }: { m: Msg; conv: string }) {
+function Bubble({ m, conv, onClose }: { m: Msg; conv: string; onClose?: () => void }) {
   const th = useTheme();
+  const student = useStudent();
+  if (m.role === "nujno" && m.nujno) return <NujnoCard n={m.nujno} settings={student.settings} meja={m.meja} onClose={() => onClose?.()} />;
   if (m.role === "user") {
     return (
       <View style={{ alignSelf: "flex-end", maxWidth: "85%", gap: 6, alignItems: "flex-end" }}>

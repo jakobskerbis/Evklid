@@ -161,7 +161,7 @@ async function newPage(browser, phone, label, base) {
   p.on("crash", () => problem(`${label} ${p.where}`, "stran se je sesula (crash)"));
   // Tipka Nazaj ali zgodovina ne sme odpeljati iz aplikacije (npr. na about:blank).
   p.on("framenavigated", (f) => {
-    if (f === p.mainFrame() && !f.url().startsWith(base)) problem(`${label} ${p.where}`, `stran je zapustila aplikacijo: ${f.url()}`);
+    if (f === p.mainFrame() && !f.url().startsWith(base) && !p.mayLeave) problem(`${label} ${p.where}`, `stran je zapustila aplikacijo: ${f.url()}`);
   });
   await p.addInitScript(PAGE_HOOKS);
   return p;
@@ -170,6 +170,43 @@ async function newPage(browser, phone, label, base) {
 // V strani: id zadnje prikazane naloge (za pravilen/napačen odgovor iz baze) in pospešena ura iger
 // (window.__fastGames: vsak okvir izriše 10 korakov po 50 ms, core.js pa čas igre še pospeši 8×, da se igra konča tudi na počasnem stroju).
 function PAGE_HOOKS() {
+  try {
+    if (sessionStorage.getItem("__brezPosnetka")) {
+      sessionStorage.removeItem("__brezPosnetka");
+      localStorage.removeItem("evklid.zadnji-posnetek");
+    }
+    const patch = sessionStorage.getItem("__zadnjiZaslon");
+    if (patch) {
+      sessionStorage.removeItem("__zadnjiZaslon");
+      localStorage.setItem("evklid.zadnji-zaslon", JSON.stringify({ ...JSON.parse(localStorage.getItem("evklid.zadnji-zaslon")), ...JSON.parse(patch) }));
+    }
+  } catch {}
+  // Odprtje na zadnjem zaslonu (public/zacetek.js): štejemo, kolikokrat je bila v prvih sekundah vidna Učna pot.
+  window.__potVidna = 0;
+  const potT0 = Date.now();
+  const potTimer = setInterval(() => {
+    const el = document.getElementById("view-path");
+    // Šteje šele z naloženim style.css (do takrat brskalnik ne riše, slog pa Učno pot skrije).
+    // Med zagonom se pravi pogled pripravi neviden pod posnetkom zadnjega zaslona (visibility: hidden): to ni utrip.
+    if (el && !el.hasAttribute("data-posnetek") && el.offsetParent !== null && getComputedStyle(el).visibility !== "hidden" && [...document.styleSheets].some((x) => /\/style\.css/.test(x.href || ""))) window.__potVidna++;
+    if (Date.now() - potT0 > 6000) clearInterval(potTimer);
+  }, 10);
+  // Hiter zagon (public/zacetek.js): čas od začetka nalaganja do prvega izrisa z vsebino pogleda (posnetek zadnjega
+  // zaslona ali pravi pogled; okostje ne šteje), in število izrisov z lupino brez vsebine.
+  const zagon = (window.__zagon = { vsebina: null, posnetek: null, okostje: null, prazno: 0 });
+  const zagonTick = () => {
+    const now = performance.now();
+    if (document.body && [...document.styleSheets].some((x) => /\/style\.css/.test(x.href || ""))) {
+      const shot = document.querySelector("main[data-posnetek]");
+      if (shot && zagon.posnetek == null && !shot.classList.contains("zagon-okostje")) zagon.posnetek = now;
+      if (shot && zagon.okostje == null && shot.classList.contains("zagon-okostje")) zagon.okostje = now;
+      const full = [...document.querySelectorAll("main.view")].some((v) => !v.hidden && v.offsetHeight > 40 && getComputedStyle(v).visibility !== "hidden" && (v.innerText || "").trim().length > 20);
+      if (full && zagon.vsebina == null) zagon.vsebina = now;
+      if (!full && document.querySelector(".topbar, #tabbar")?.offsetHeight) zagon.prazno++;
+    }
+    if (now < 8000) requestAnimationFrame(zagonTick);
+  };
+  requestAnimationFrame(zagonTick);
   // Neobravnavane zavrnitve aplikacija pokaže le kot obvestilo; tukaj jih zabeležimo kot napako.
   addEventListener("unhandledrejection", (e) => console.error(`neobravnavana zavrnitev: ${e.reason?.message || e.reason}`));
   const f = window.fetch;
@@ -436,13 +473,20 @@ async function answerTask(p, db, value) {
   await p.locator("#feedback .fb:not(.info), #feedback .fb.info:not(:has-text('Preverjam'))").first().waitFor({ timeout: 5000 });
   await settle(p);
 }
+// Gumb, ki je med zahtevo onemogočen in jo po koncu odstrani ali znova omogoči (#hint-btn, #p-skip): počakaj na konec
+// zahteve. Brez tega je na počasnem strežniku (CI) gumb še viden, a onemogočen, naslednji klik pa čaka na element,
+// ki ga aplikacija medtem odstrani (locator.click: Timeout).
+async function clickUntilIdle(p, sel, opts = {}) {
+  await click(p, sel, opts);
+  await p.waitForFunction((s) => { const b = document.querySelector(s); return !b || !b.disabled || !b.isConnected; }, sel, { timeout: 10000 });
+}
 async function practiceTopic(p, db) {
   // Naslednja tema na učni poti → stran teme (pri novi temi test predznanja).
   await click(p, "#xp-card .next-row[data-open]", { wait: 300 });
   await expectVisible(p, "#view-topic .topic-head, #view-topic #practice .task", "stran teme");
   await screen(p, "tema");
   // Test predznanja: »Ne vem« do konca, nato vaja.
-  for (let i = 0; i < 5 && (await p.locator("#p-skip").isVisible()); i++) await click(p, "#p-skip", { wait: 250 });
+  for (let i = 0; i < 5 && (await p.locator("#p-skip").isVisible()); i++) await clickUntilIdle(p, "#p-skip", { wait: 250 });
   if (await p.locator(".pretest-result").isVisible()) {
     await screen(p, "test-predznanja");
     await click(p, "#pt-practice", { wait: 300 });
@@ -458,7 +502,7 @@ async function practiceTopic(p, db) {
   // Lestev namigov do konca.
   let hints = 0;
   for (; hints < 5 && (await p.locator("#hint-btn").isVisible()); hints++) {
-    await click(p, "#hint-btn", { wait: 200 });
+    await clickUntilIdle(p, "#hint-btn", { wait: 200 });
   }
   const steps = await p.locator("#hint-box .fb.hint").count();
   if (await p.locator("#hint-box").count()) {
@@ -757,8 +801,11 @@ async function okna(p, label) {
   await click(p, '.okno[data-view="graph"] .okno-x');
   if (await p.locator(".okno").count()) throw new Error("okno se ni zaprlo");
   // Prijava odgovora: skrbnik vidi odgovor tako, kot ga je videl učenec (izrisan HTML in naprava).
-  const ans = "#view-chat .msg.assistant:has(.msg-report) >> nth=-1";
+  // Odgovor pripnemo na besedilo: »Odprl sem …« pride za oknom, zato bi se »zadnji odgovor« med kliki spremenil
+  // (okvir prijave je ostal v prejšnjem odgovoru in .rep-send v novem ni obstajal: locator.click 5000 ms, [view-chat]).
+  const ans = '#view-chat .msg.assistant:has(.msg-report):has-text("Odprl sem")';
   {
+    await p.locator(ans).first().waitFor({ timeout: 8000 }).catch(() => {});
     if (!(await p.locator(ans).count())) throw new Error("v klepetu ni odgovora s »Prijavi napako«");
     await click(p, `${ans} >> .msg-report`, { wait: 150 });
     await click(p, `${ans} >> .report-box .rep-reasons button >> nth=0`, { wait: 50 });
@@ -1010,6 +1057,27 @@ async function lab(p, label) {
   await click(p, "#view-lab .lab-card [data-lab-open]", { wait: 300 });
   await expectVisible(p, opened, "odprt poskus");
   await screen(p, `poskus-${label}`);
+  // »Povečaj risbo« (ozek zaslon): tipka Nazaj zapre le povečavo, poskus ostane odprt; ozadje ni več neodzivno (inert).
+  const zoom = p.locator("#view-lab .lab-mount .lab-zoom");
+  if ((await zoom.count()) && (await zoom.isVisible())) {
+    await zoom.click();
+    await expectVisible(p, "#view-lab .demo-stage.lab-povecano", "povečana risba");
+    await screen(p, `poskus-povecan-${label}`);
+    await p.goBack();
+    await settle(p, 300);
+    if (await p.locator(".lab-povecano").count()) throw new Error("Nazaj ne zapre povečave risbe");
+    if (!(await p.locator(opened).first().isVisible())) throw new Error("Nazaj je s povečavo zaprl tudi poskus");
+    if (await p.locator("[inert]").count()) throw new Error("po zaprti povečavi je del strani ostal neodziven (inert)");
+    // poskus se zapre med odprto povečavo (drug pogled): inert mora izginiti
+    await zoom.click();
+    await expectVisible(p, "#view-lab .demo-stage.lab-povecano", "povečana risba");
+    await p.evaluate(() => document.querySelector("#view-lab .lab-mount").replaceChildren());
+    await p.waitForFunction(() => !document.querySelector("[inert]"), null, { timeout: 3000 }).catch(() => { throw new Error("odstranjen poskus med povečavo: stran je ostala neodzivna (inert)"); });
+    await p.goBack();
+    await settle(p, 300);
+    await click(p, "#view-lab .lab-card [data-lab-open]", { wait: 300 });
+    await expectVisible(p, opened, "odprt poskus");
+  }
   await p.goBack();
   await settle(p, 300);
   if ((await currentView(p)) !== "view-lab") throw new Error("Nazaj v poskusu ne vodi na seznam laboratorija");
@@ -1314,6 +1382,7 @@ async function desktop(browser, app) {
     await p.evaluate(async (id) => {
       await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { school_system: "IN-CBSE", educational_track: "SREDNJA_SOLA", curriculum_level: "Class 11", language: "sl" } }) });
     }, id);
+    await tab(p, "path"); // po osvežitvi se odpre zadnji zaslon
     await p.reload();
     await settle(p, 500);
     await expectVisible(p, "#view-path #xp-card .hero", `učna pot po osvežitvi (${p.url()})`, 8000);
@@ -1471,6 +1540,14 @@ async function phone(browser, app) {
     if (await p.locator("#t-practice").isVisible()) await click(p, "#t-practice", { wait: 400 });
     if (await p.locator("#ex-next").isVisible()) await click(p, "#ex-next", { wait: 400 });
     await screen(p, "naloga");
+    // Plasti: odprta plošča za vnos ali tipkovnica se zapre prva (pogled ostane), naslednji Nazaj vodi na Učno pot.
+    const layer = () => p.evaluate(() => document.body.classList.contains("tk-open") || document.body.classList.contains("pad-open"));
+    if (await layer()) {
+      await p.goBack();
+      await settle(p, 300);
+      if ((await currentView(p)) !== "view-topic") throw new Error("tipka Nazaj ob odprti tipkovnici zapre temo namesto tipkovnice");
+      if (await layer()) throw new Error("tipka Nazaj ne zapre tipkovnice ali plošče za vnos");
+    }
     await p.goBack();
     await settle(p, 300);
     if ((await currentView(p)) !== "view-path") throw new Error("tipka Nazaj s teme ne vodi na učno pot");
@@ -1478,17 +1555,163 @@ async function phone(browser, app) {
   await step(p, "tel-nadaljuj", () => quickStart(p));
   await step(p, "tel-klepet", () => chat(p, "tel"));
   await step(p, "tel-osvezitev", async () => {
-    // Osvežitev na podstrani (potegni za osvežitev) in tipka Nazaj: aplikacija mora ostati odprta.
+    // Osvežitev na podstrani (potegni za osvežitev): odpre se isti zaslon brez utripa Učne poti (public/zacetek.js);
+    // tipka Nazaj nato vodi po plasteh in aplikacija ostane odprta.
     await barTab(p, "me", { wait: 200 });
     await click(p, '#view-me [data-go="settings"]', { wait: 300 });
     await p.reload();
     await settle(p, 600);
-    await expectVisible(p, "#view-path #xp-card .hero", "učna pot po osvežitvi", 8000);
+    await expectVisible(p, "#view-settings", "Nastavitve po osvežitvi", 8000);
+    const flash = await p.evaluate(() => window.__potVidna);
+    if (flash) throw new Error(`Učna pot je ob odprtju na zadnjem zaslonu utripnila (${flash}×)`);
+    if (await p.evaluate(() => document.documentElement.hasAttribute("data-zacetek"))) throw new Error("oznaka data-zacetek je ostala po zagonu");
+    await p.goBack();
+    await settle(p, 400);
+    if ((await currentView(p)) !== "view-me") throw new Error(`tipka Nazaj po osvežitvi v Nastavitvah vodi na ${await currentView(p)} namesto na »Jaz«`);
     await barTab(p, "chat", { wait: 300 });
     await p.goBack();
     await settle(p, 400);
     if (!p.url().startsWith(p.base)) throw new Error(`tipka Nazaj po osvežitvi zapre aplikacijo (${p.url()})`);
     if ((await currentView(p)) !== "view-path") throw new Error(`tipka Nazaj po osvežitvi vodi na ${await currentView(p)}`);
+  });
+  await step(p, "tel-odprtje", async () => {
+    // Odprta tema se po ponovnem odprtju vrne; po več kot 12 urah (ali zapisu drugega profila) se odpre Učna pot.
+    await barTab(p, "path", { wait: 300 });
+    await click(p, "#xp-card .next-row[data-open]", { wait: 400 });
+    await expectVisible(p, "#view-topic .topic-head, #view-topic #practice .task", "tema");
+    const rec = await p.evaluate(() => JSON.parse(localStorage.getItem("evklid.zadnji-zaslon") || "null"));
+    if (rec?.v !== "topic" || !rec.s) throw new Error(`zadnji zaslon ni zapisan (${JSON.stringify(rec)})`);
+    if (rec.p) {
+      await p.reload();
+      await settle(p, 600);
+      await expectVisible(p, "#view-topic .topic-head", "tema po ponovnem odprtju", 8000);
+      if (await p.evaluate(() => window.__potVidna)) throw new Error("Učna pot je utripnila pred temo");
+    }
+    // Popravek zapisa (starost, profil) se uporabi ob naslednjem nalaganju, pred skripti strani (PAGE_HOOKS).
+    const old = (patch) => p.evaluate((patch) => sessionStorage.setItem("__zadnjiZaslon", JSON.stringify(patch)), patch);
+    await barTab(p, "chat", { wait: 300 });
+    await old({ t: Date.now() - 12 * 3600 * 1000 - 60 * 1000 });
+    await p.reload();
+    await settle(p, 600);
+    await expectVisible(p, "#view-path #xp-card .hero", "Učna pot po več kot 12 urah", 8000);
+    await barTab(p, "chat", { wait: 300 });
+    await old({ s: -1 });
+    await p.reload();
+    await settle(p, 600);
+    await expectVisible(p, "#view-path #xp-card .hero", "Učna pot ob zapisu drugega profila", 8000);
+    await barTab(p, "chat", { wait: 300 });
+    await old({ t: Date.now() - 11 * 3600 * 1000 });
+    await p.reload();
+    await settle(p, 600);
+    await expectVisible(p, "#view-chat", "Inštruktor po 11 urah", 8000);
+    await barTab(p, "path", { wait: 300 });
+  });
+  await step(p, "tel-zagon", async () => {
+    // Hiter zagon (j 10. 11. 2026: po odprtju je bil zaslon 2–3 s prazen): ob ponovnem odprtju se takoj pokaže posnetek
+    // zadnjega zaslona, pravi pogled ga zamenja brez praznega vmesnega izrisa. Meri čas do prve vsebine (mediana treh
+    // odprtij). Čas je odvisen od stroja: nad EVKLID_PRAG_ZAGON (privzeto 1500 ms) le opozorilo (CI je lahko počasen),
+    // napaka šele nad EVKLID_PRAG_ZAGON_NAPAKA (privzeto 5000 ms, blizu varovala 8 s v zacetek.js) ali če posnetek
+    // ni bil prva vsebina (zanesljivo, ne glede na hitrost stroja). Lokalno je ~0,3 s.
+    const PRAG = Number(process.env.EVKLID_PRAG_ZAGON) || 1500;
+    const NAPAKA = Number(process.env.EVKLID_PRAG_ZAGON_NAPAKA) || 5000;
+    await barTab(p, "me", { wait: 200 });
+    await click(p, '#view-me [data-go="settings"]', { wait: 600 });
+    await settle(p, 2500); // modul posnetka se naloži 1,5 s po zagonu (ob mirovanju); brez tega na počasnem CI ob prvem odprtju posnetka še ni
+    const casi = [];
+    for (let i = 0; i < 3; i++) {
+      await p.reload();
+      await settle(p, 1200);
+      await expectVisible(p, "#view-settings:not([data-posnetek])", "Nastavitve po ponovnem odprtju", 8000);
+      const z = await p.evaluate(() => ({ ...window.__zagon, ostal: !!document.querySelector("main[data-posnetek]") || document.documentElement.hasAttribute("data-zacetek") || document.documentElement.hasAttribute("data-zacetek-pod"), pot: window.__potVidna }));
+      if (z.posnetek == null) throw new Error(`ob odprtju ni posnetka zadnjega zaslona (${JSON.stringify(z)})`);
+      if (z.vsebina == null) throw new Error("čas do prve vsebine ni izmerjen");
+      if (z.ostal) throw new Error("posnetek ali oznaka zagona je ostala po zagonu");
+      if (z.pot) throw new Error(`Učna pot je ob odprtju utripnila (${z.pot}×)`);
+      if (z.prazno > 3) throw new Error(`med lupino in vsebino je bilo ${z.prazno} praznih izrisov`);
+      // Relativno (neodvisno od hitrosti stroja): prva vsebina je posnetek, ne šele pravi pogled.
+      if (z.posnetek > z.vsebina + 50) throw new Error(`posnetek se je pokazal šele po pravem pogledu (${Math.round(z.posnetek)} > ${Math.round(z.vsebina)} ms)`);
+      casi.push(Math.round(z.vsebina));
+    }
+    const med = [...casi].sort((a, b) => a - b)[1];
+    notes.push(`zagon na telefonu: prva vsebina po ${casi.join(", ")} ms (mediana ${med} ms, opozorilo nad ${PRAG} ms, napaka nad ${NAPAKA} ms)`);
+    if (med > NAPAKA) throw new Error(`prva vsebina ob odprtju šele po ${med} ms (meja ${NAPAKA} ms; meritve ${casi.join(", ")})`);
+    if (med > PRAG) {
+      notes.push(`OPOZORILO tel-zagon: prva vsebina po ${med} ms (nad ${PRAG} ms; počasen stroj ali počasnejši zagon)`);
+      if (process.env.GITHUB_ACTIONS) console.log(`::warning title=tel-zagon::prva vsebina ob odprtju po ${med} ms (nad ${PRAG} ms)`);
+    }
+    // Zasebnost: posnetek drugega profila se ne pokaže (zapis zadnjega zaslona drugega profila → Učna pot kot prej).
+    await p.evaluate(() => sessionStorage.setItem("__zadnjiZaslon", JSON.stringify({ s: -1 })));
+    await p.reload();
+    await settle(p, 800);
+    await expectVisible(p, "#view-path #xp-card .hero", "Učna pot ob zapisu drugega profila", 8000);
+    if (await p.evaluate(() => window.__zagon.posnetek != null)) throw new Error("pokazal se je posnetek zaslona drugega profila");
+    // Brez posnetka (npr. prvič po posodobitvi): okostje namesto praznega zaslona.
+    await barTab(p, "me", { wait: 200 });
+    await click(p, '#view-me [data-go="settings"]', { wait: 400 });
+    await p.evaluate(() => sessionStorage.setItem("__brezPosnetka", "1"));
+    await p.reload();
+    await settle(p, 800);
+    await expectVisible(p, "#view-settings:not([data-posnetek])", "Nastavitve brez posnetka", 8000);
+    const o = await p.evaluate(() => window.__zagon);
+    if (o.okostje == null || o.posnetek != null) throw new Error(`brez posnetka ni okostja (${JSON.stringify(o)})`);
+    await barTab(p, "path", { wait: 300 });
+  });
+  await step(p, "tel-nazaj", async () => {
+    // Plasti: tipkovnica → pogled → »Jaz« → Učna pot; zgodovina se ne nabira.
+    const len = () => p.evaluate(() => history.length);
+    const back = async (want, what) => {
+      await p.goBack();
+      await settle(p, 300);
+      if (!p.url().startsWith(p.base)) throw new Error(`${what}: Nazaj je zapustil aplikacijo`);
+      const now = await currentView(p);
+      if (now !== want) throw new Error(`${what}: Nazaj vodi na ${now} namesto na ${want}`);
+    };
+    await barTab(p, "path", { wait: 300 });
+    await barTab(p, "chat", { wait: 300 });
+    const n0 = await len();
+    for (let i = 0; i < 3; i++) {
+      await barTab(p, "me", { wait: 200 });
+      await click(p, '#view-me [data-go="progress"]', { wait: 300 });
+      await back("view-me", "Napredek");
+      await back("view-path", "Jaz");
+      await barTab(p, "uci", { wait: 300 });
+      await back("view-path", "Uči se");
+      await barTab(p, "chat", { wait: 300 });
+    }
+    if ((await len()) !== n0) throw new Error(`zgodovina se nabira (${n0} → ${await len()} zapisov)`);
+    // Evklidova tipkovnica v klepetu: Nazaj jo zapre, pogled ostane.
+    await p.evaluate(() => document.querySelector("#sym-btn")?.click());
+    await settle(p, 300);
+    if (await p.evaluate(() => document.body.classList.contains("tk-open"))) {
+      await back("view-chat", "tipkovnica");
+      if (await p.evaluate(() => document.body.classList.contains("tk-open"))) throw new Error("Nazaj ne zapre Evklidove tipkovnice");
+    } else notes.push("tel-nazaj: tipkovnice ni bilo mogoče odpreti (gumb ni najden)");
+    await back("view-path", "Inštruktor");
+    // Učna pot: prvi pritisk pokaže obvestilo in aplikacija ostane; brez drugega pritiska se varovalo vrne.
+    await p.goBack();
+    await settle(p, 300);
+    if (!p.url().startsWith(p.base)) throw new Error("prvi pritisk Nazaj na Učni poti je zaprl aplikacijo");
+    await expectVisible(p, "#toast", "obvestilo za izhod");
+    const txt = (await p.locator("#toast").innerText()).trim();
+    if (!/Nazaj/.test(txt) || /nav\./.test(txt)) throw new Error(`napačno obvestilo za izhod: »${txt}«`);
+    await screen(p, "nazaj-izhod");
+    await p.waitForFunction(() => history.state?.stm === 2, null, { timeout: 6000 }).catch(() => {
+      throw new Error("varovalo Učne poti se po obvestilu ni vrnilo");
+    });
+    if ((await len()) !== n0 - 1 && (await len()) !== n0) throw new Error(`zgodovina po obvestilu: ${await len()} zapisov (prej ${n0})`);
+    // Dva pritiska zapored zapustita aplikacijo (v brskalniku prejšnja stran, nameščena aplikacija se zapre).
+    p.mayLeave = true;
+    await p.goBack();
+    await p.waitForTimeout(200);
+    await expectVisible(p, "#toast", "obvestilo za izhod (drugič)");
+    await p.goBack().catch(() => {});
+    await p.waitForTimeout(300);
+    const out = p.url();
+    await p.goto(p.base + "/");
+    await settle(p, 600);
+    p.mayLeave = false;
+    if (out.startsWith(p.base)) throw new Error("drugi pritisk Nazaj na Učni poti ni zapustil aplikacije");
+    await expectVisible(p, "#view-path #xp-card .hero", "Učna pot po vrnitvi", 8000);
   });
   await step(p, "tel-ucbenik", () => textbook(p, "tel"));
   await step(p, "tel-kalkulator", () => calculator(p, "tel"));

@@ -41,13 +41,24 @@ Za krožek: $\bar{t} = \dfrac{210{,}5\,\text{s}}{5} = 42{,}1\,\text{s}$.
 
 **Slika na številski premici.** Meritve narišemo kot pike:
 
-```
-  Tim   Ana      Maja     Žan   Lea
-  41,6  41,8     42,1     42,4  42,6
-───•─────•────────•────────•─────•──── t [s]
-                  ↑
-             povprečje
-```
+:::risba premica
+opis: Številska premica za čas v sekundah od 41,5 do 42,7. Pike so meritve: Tim 41,6, Ana 41,8, Maja 42,1, Žan 42,4, Lea 42,6. Majina meritev je enaka povprečju 42,1 s.
+od: 41,5
+do: 42,7
+korak: 0,1
+oznake: ne
+oznaka: 41,6 | 41,6
+oznaka: 41,8 | 41,8
+oznaka: 42,1 | 42,1
+oznaka: 42,4 | 42,4
+oznaka: 42,6 | 42,6
+točka: 41,6 | Tim
+točka: 41,8 | Ana
+točka: 42,1 | Maja | oranžna
+točka: 42,4 | Žan
+točka: 42,6 | Lea
+podnapis: Čas t v sekundah. Oranžna pika (Maja, 42,1 s) leži točno na povprečju.
+:::
 
 Pike se gnetejo okoli povprečja. Najbolj oddaljeni sta Tim in Lea, oba za $0{,}5\,\text{s}$.
 
@@ -92,7 +103,7 @@ $\bar{d} = \dfrac{d_1 + d_2 + d_3 + d_4}{n}$
 
 ### Primer 2: sled meteorja z absolutno napako
 
-Na fotografiji nočnega neba je svetla črta, sled meteorja (utrinka). Pet učencev izmeri njeno dolžino: $6{,}4\,\text{cm}$, $6{,}7\,\text{cm}$, $6{,}5\,\text{cm}$, $6{,}6\,\text{cm}$ in $6{,}3\,\text{cm}$. Zapiši rezultat s povprečjem in absolutno napako.
+Na fotografiji nočnega neba je svetla črta, sled meteorja (utrinka). Pet učencev izmeri njeno dolžino: $6{,}4\,\text{cm}$; $6{,}7\,\text{cm}$; $6{,}5\,\text{cm}$; $6{,}6\,\text{cm}$ in $6{,}3\,\text{cm}$. Zapiši rezultat s povprečjem in absolutno napako.
 
 **Podatki:** $l_1 = 6{,}4\,\text{cm}$, $l_2 = 6{,}7\,\text{cm}$, $l_3 = 6{,}5\,\text{cm}$, $l_4 = 6{,}6\,\text{cm}$, $l_5 = 6{,}3\,\text{cm}$, $n = 5$
 **Iščemo:** povprečje $\bar{l}$, absolutno napako $\Delta l$ in zapis rezultata
@@ -105,13 +116,13 @@ $\bar{l} = \dfrac{l_1 + l_2 + \dots + l_5}{n}$, $\Delta l$ = največji odmik od 
 
 1. Vsota: $6{,}4 + 6{,}7 + 6{,}5 + 6{,}6 + 6{,}3 = 32{,}5$, torej $32{,}5\,\text{cm}$.
 2. Povprečje: $\dfrac{32{,}5}{5} = 6{,}5$, torej $\bar{l} = 6{,}5\,\text{cm}$.
-3. Odmiki od povprečja so $-0{,}1$, $+0{,}2$, $0$, $+0{,}1$ in $-0{,}2\,\text{cm}$. Gledamo velikost odmika, ne predznaka.
+3. Odmiki od povprečja so $-0{,}1$; $+0{,}2$; $0$; $+0{,}1$ in $-0{,}2\,\text{cm}$. Gledamo velikost odmika, ne predznaka.
 4. Največji odmik je $0{,}2\,\text{cm}$, zato je $\Delta l = 0{,}2\,\text{cm}$.
 5. Odgovor: dolžina sledi je $l = (6{,}5 \pm 0{,}2)\,\text{cm}$.
 
 ### Primer 3: prelet postaje in groba napaka
 
-Krožek drugič meri prelet ISS med istima točkama. Šest časov: $58{,}2\,\text{s}$, $57{,}9\,\text{s}$, $58{,}4\,\text{s}$, $63{,}1\,\text{s}$, $58{,}0\,\text{s}$ in $58{,}3\,\text{s}$. Tim prizna, da je ob zvoniku gledal stran in štoparico ustavil šele nekaj sekund pozneje. Kolikšen je čas preleta?
+Krožek drugič meri prelet ISS med istima točkama. Šest časov: $58{,}2\,\text{s}$; $57{,}9\,\text{s}$; $58{,}4\,\text{s}$; $63{,}1\,\text{s}$; $58{,}0\,\text{s}$ in $58{,}3\,\text{s}$. Tim prizna, da je ob zvoniku gledal stran in štoparico ustavil šele nekaj sekund pozneje. Kolikšen je čas preleta?
 
 **Podatki:** $t_1 = 58{,}2\,\text{s}$, $t_2 = 57{,}9\,\text{s}$, $t_3 = 58{,}4\,\text{s}$, $t_4 = 63{,}1\,\text{s}$, $t_5 = 58{,}0\,\text{s}$, $t_6 = 58{,}3\,\text{s}$; ena meritev je pokvarjena
 **Iščemo:** čas preleta $t = (\bar{t} \pm \Delta t)$
@@ -131,7 +142,7 @@ Najprej izloči grobo napako, nato $\bar{t} = \dfrac{t_1 + \dots + t_n}{n}$ in $
 
 ### Primer 4: zdaj ti
 
-Učenka štirikrat izmeri premer Lune na fotografiji. Povprečje je $38{,}5\,\text{mm}$. Tri meritve so $38{,}2\,\text{mm}$, $38{,}9\,\text{mm}$ in $38{,}6\,\text{mm}$, četrte pa ni zapisala. Koliko je bila četrta meritev?
+Učenka štirikrat izmeri premer Lune na fotografiji. Povprečje je $38{,}5\,\text{mm}$. Tri meritve so $38{,}2\,\text{mm}$; $38{,}9\,\text{mm}$ in $38{,}6\,\text{mm}$, četrte pa ni zapisala. Koliko je bila četrta meritev?
 
 **Podatki:** $\bar{d} = 38{,}5\,\text{mm}$, $n = 4$, $d_1 = 38{,}2\,\text{mm}$, $d_2 = 38{,}9\,\text{mm}$, $d_3 = 38{,}6\,\text{mm}$
 **Iščemo:** četrto meritev $d_4$
@@ -169,7 +180,7 @@ $d_4 = 154{,}0\,\text{mm} - 115{,}7\,\text{mm} = 38{,}3\,\text{mm}$. Preizkus: $
 
 ## Drugače: Korak za korakom s številkami
 
-Recept za vsako ponovljeno meritev, na primeru časov $12{,}4$, $12{,}7$, $12{,}5$, $12{,}6$ in $12{,}3\,\text{s}$:
+Recept za vsako ponovljeno meritev, na primeru časov $12{,}4$; $12{,}7$; $12{,}5$; $12{,}6$ in $12{,}3\,\text{s}$:
 
 1. **Preglej.** Je kakšna meritev daleč od drugih? Tu ne, vse so med $12{,}3$ in $12{,}7\,\text{s}$.
 2. **Seštej.** $12{,}4 + 12{,}7 + 12{,}5 + 12{,}6 + 12{,}3 = 62{,}5$
@@ -200,7 +211,7 @@ Nauk zgodbe: šele ko poznaš velikost svoje merske napake, lahko presodiš, ali
 ~ Največja meritev je le ena od razpršenih. Napake so navzgor in navzdol, zato je prava vrednost nekje vmes.
 > Naključne napake gredo enkrat navzgor, enkrat navzdol in se v povprečju večinoma izničijo.
 
-? Pet učencev izmeri čas, v katerem se zvezda skrije za rob strehe: $12{,}4\,\text{s}$, $12{,}7\,\text{s}$, $12{,}5\,\text{s}$, $12{,}6\,\text{s}$, $12{,}3\,\text{s}$. Kolikšno je povprečje?
+? Pet učencev izmeri čas, v katerem se zvezda skrije za rob strehe: $12{,}4\,\text{s}$; $12{,}7\,\text{s}$; $12{,}5\,\text{s}$; $12{,}6\,\text{s}$; $12{,}3\,\text{s}$. Kolikšno je povprečje?
 - $62{,}5\,\text{s}$
 ~ To je vsota. Vsoto moraš še deliti s številom meritev, $5$.
 + $12{,}5\,\text{s}$
@@ -210,7 +221,7 @@ Nauk zgodbe: šele ko poznaš velikost svoje merske napake, lahko presodiš, ali
 ~ To je le prva meritev. Povprečje upošteva vse meritve.
 > $\bar{t} = \dfrac{62{,}5\,\text{s}}{5} = 12{,}5\,\text{s}$.
 
-? Miha izmeri dolžino na fotografiji Saturna: $3{,}2\,\text{cm}$, $3{,}4\,\text{cm}$, $3{,}3\,\text{cm}$, $9{,}3\,\text{cm}$. Zapiše: $\bar{l} = \dfrac{19{,}2\,\text{cm}}{4} = 4{,}8\,\text{cm}$. Kje je napaka?
+? Miha izmeri dolžino na fotografiji Saturna: $3{,}2\,\text{cm}$; $3{,}4\,\text{cm}$; $3{,}3\,\text{cm}$; $9{,}3\,\text{cm}$. Zapiše: $\bar{l} = \dfrac{19{,}2\,\text{cm}}{4} = 4{,}8\,\text{cm}$. Kje je napaka?
 - Narobe je seštel meritve.
 ~ Vsota $19{,}2\,\text{cm}$ je pravilna. Težava je v tem, katere meritve je seštel.
 - Povprečje bi moral zapisati natančneje, $4{,}80\,\text{cm}$.

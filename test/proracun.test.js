@@ -72,17 +72,17 @@ test("budget is shared by plan weight; over the share the account's bought credi
   spend(free, b);
   assert.match(u.blockReason(free), /dokupom porabe/);
   assert.equal(u.blockReason(paid), null);
-  // Dokup: 10 € → 2,28 $ kredita (pravilo 75 %); s kreditom gre naprej, strošek nad deležem gre iz kredita.
+  // Dokup: 10 € → 2,13 $ kredita (25 % plačila brez DDV po najvišji stopnji EU, 27 %); s kreditom gre naprej, strošek nad deležem gre iz kredita.
   const pack = CREDIT_PACKS.find((p) => p.id === "k10");
-  assert.equal(creditUsdFor(pack.amount), 2.28);
+  assert.equal(creditUsdFor(pack.amount), 2.13);
   const id = credits.create(2, pack);
   assert.equal(credits.balance(2), 0, "neplačan nakup ne velja");
   assert.ok(credits.activate(id, "pi_1"));
   assert.ok(!credits.activate(id, "pi_1"), "dvojna potrditev ne pripiše dvakrat");
-  assert.equal(credits.balance(2), 2.28);
+  assert.equal(credits.balance(2), 2.13);
   assert.equal(u.blockReason(free), null);
-  u.log(free, "claude-haiku-5-5", { input_tokens: 1_000_000, output_tokens: 0 }); // 0,10 $
-  assert.ok(Math.abs(credits.balance(2) - 2.18) < 1e-6);
+  u.log(free, "claude-haiku-5-5", { input_tokens: 0, output_tokens: 200_000 }); // 0,10 $
+  assert.ok(Math.abs(credits.balance(2) - 2.03) < 1e-6);
   assert.ok(u.budgetState().spent < 0.02 + b + 1e-9, "poraba iz kredita ne šteje v skupni proračun");
   // Vračilo plačila odvzame kredit.
   assert.ok(credits.refund("pi_1"));
@@ -91,11 +91,11 @@ test("budget is shared by plan weight; over the share the account's bought credi
 });
 
 test("cost uses the model's price also when the API returns a dated model id", () => {
-  const u = { input_tokens: 1_000_000 };
-  assert.equal(costUsd("claude-haiku-5-5", u), 0.1);
-  assert.equal(costUsd("claude-haiku-5-5-20261015", u), 0.1, "ne po ceni Opusa");
-  assert.equal(costUsd("claude-sonnet-5-5-20261001", u), 2);
-  assert.equal(costUsd("neznan-model", u), 4, "neznan model: najdražja cena (varno)");
+  const u = { input_tokens: 100_000 }; // pod pragom dolgega poziva Haikuja (100k)
+  assert.equal(costUsd("claude-haiku-5-5", u), 0.01);
+  assert.equal(costUsd("claude-haiku-5-5-20261015", u), 0.01, "ne po ceni Opusa");
+  assert.equal(costUsd("claude-sonnet-5-5-20261001", u), 0.2);
+  assert.equal(costUsd("neznan-model", u), 0.4, "neznan model: najdražja cena (varno)");
 });
 
 test("daily question limit scales with the student's remaining share and the days left in the month", () => {
@@ -142,8 +142,8 @@ test("daily question limit scales with the student's remaining share and the day
   assert.ok(credits.activate(credits.create(3, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_m"));
   process.env.EVKLID_QUESTION_USD = "0.05";
   try {
-    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), Math.floor(2.28 / 2 / 0.05));
-    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29), credit: 2.28 / 2 }), Math.floor(2.28 / 4 / 0.05), "kredit, deljen med dva otroka");
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), Math.floor(2.13 / 2 / 0.05));
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29), credit: 2.13 / 2 }), Math.floor(2.13 / 4 / 0.05), "kredit, deljen med dva otroka");
   } finally {
     delete process.env.EVKLID_QUESTION_USD;
   }
@@ -203,19 +203,24 @@ test("free plan over its own cap with bought credit: the whole cost comes from c
   u.configure({ ownerOf: () => 3, credits, freeOver: () => over });
   assert.ok(credits.activate(credits.create(3, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_2"));
   assert.equal(u.budget().cap, 0, "brez proračuna");
-  u.log(free, "claude-haiku-5-5", { input_tokens: 1_000_000, output_tokens: 0 }); // 0,10 $, pod mejo
-  assert.equal(credits.balance(3), 2.28, "pod mejo brezplačnega paketa kredit ostane");
+  u.log(free, "claude-haiku-5-5", { input_tokens: 0, output_tokens: 200_000 }); // 0,10 $, pod mejo
+  assert.equal(credits.balance(3), 2.13, "pod mejo brezplačnega paketa kredit ostane");
   over = true;
-  u.log(free, "claude-haiku-5-5", { input_tokens: 1_000_000, output_tokens: 0 });
-  assert.ok(Math.abs(credits.balance(3) - 2.18) < 1e-6, "nad mejo gre ves strošek iz kredita");
+  u.log(free, "claude-haiku-5-5", { input_tokens: 0, output_tokens: 200_000 });
+  assert.ok(Math.abs(credits.balance(3) - 2.03) < 1e-6, "nad mejo gre ves strošek iz kredita");
 });
 
-test("any amount from 5 € can be bought, without an upper limit beyond Stripe's per-payment maximum", async () => {
-  const { customPack, conversationsFor, creditUsdFor } = await import("../server/placila/krediti.js");
-  assert.equal(customPack(4.99), null);
-  assert.equal(customPack("abc"), null);
-  assert.deepEqual(customPack(37.5), { id: "custom", amount: 3750, currency: "EUR" });
-  assert.equal(customPack(250000).amount, 25_000_000);
-  assert.equal(customPack(2_000_000), null, "Stripe ne sprejme več kot 999.999,99 € na plačilo");
-  assert.ok(conversationsFor(creditUsdFor(100_000)) > conversationsFor(creditUsdFor(1000)) * 90);
+test("only the 5 / 10 / 20 € packs can be bought, no custom amount (j 2026-11-04)", async () => {
+  const mod = await import("../server/placila/krediti.js");
+  assert.deepEqual(mod.CREDIT_PACKS.map((p) => [p.id, p.amount]), [["k5", 500], ["k10", 1000], ["k20", 2000]]);
+  assert.equal(mod.packById("custom"), null);
+  assert.equal(mod.customPack, undefined);
+  // Star nakup s poljubnim zneskom ostane v stanju kredita.
+  const { DatabaseSync } = await import("node:sqlite");
+  const db = new DatabaseSync(":memory:");
+  db.exec("CREATE TABLE parents (id INTEGER PRIMARY KEY); CREATE TABLE students (id INTEGER PRIMARY KEY); INSERT INTO parents (id) VALUES (1);");
+  const c = new mod.Credits(db);
+  db.prepare("INSERT INTO ai_credit_buys (parent_id, pack, amount, credit_usd, status) VALUES (1, 'custom', 3750, 9.3, 'active')").run();
+  assert.equal(c.balance(1), 9.3);
+  assert.equal(c.list(1)[0].pack, "custom");
 });

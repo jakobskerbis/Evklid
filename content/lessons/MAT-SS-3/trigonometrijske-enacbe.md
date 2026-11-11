@@ -108,7 +108,7 @@ $\sin x = a \ \Rightarrow\ x = x_1 + k \cdot 360^\circ$ ali $x = 180^\circ - x_1
 
 Polnilnik telefona je priključen v vtičnico z napetostjo $u = 325\,\text{V} \cdot \sin(100\pi t)$, kjer je $t$ čas v sekundah in je kot v radianih. Ena perioda traja $0{,}02\,\text{s}$. Ob katerih časih v prvi periodi je napetost $162{,}5\,\text{V}$?
 
-**Podatki:** $u = 325\,\text{V} \cdot \sin(100\pi t)$, $u = 162{,}5\,\text{V}$, $0 \le t < 0{,}02\,\text{s}$
+**Podatki:** $u = 325\,\text{V} \cdot \sin(100\pi t)$; $u = 162{,}5\,\text{V}$; $0 \le t < 0{,}02\,\text{s}$
 **Iščemo:** čase $t$
 
 :::formula
@@ -175,7 +175,7 @@ Recept na enačbi $\sin x = 0{,}8$:
 4. **Druga točka na krožnici.** $180^\circ - 53{,}13^\circ = 126{,}87^\circ$.
 5. **Dodaj periodo.** $x = 53{,}13^\circ + k \cdot 360^\circ$ ali $x = 126{,}87^\circ + k \cdot 360^\circ$.
 6. **Preveri.** Kalkulator: $\sin 126{,}87^\circ \approx 0{,}8$. ✓
-7. **Izberi rešitve na intervalu**, če ga naloga zahteva: na $[0^\circ, 720^\circ)$ so to $53{,}13^\circ$, $126{,}87^\circ$, $413{,}13^\circ$ in $486{,}87^\circ$.
+7. **Izberi rešitve na intervalu**, če ga naloga zahteva: na $[0^\circ, 720^\circ)$ so to $53{,}13^\circ$; $126{,}87^\circ$; $413{,}13^\circ$ in $486{,}87^\circ$.
 
 ## Drugače: Kot zgodba
 

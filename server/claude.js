@@ -4,6 +4,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { systemBlocks } from "./prompt.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { mockToolCall, mockToolText } from "./chat-settings.js";
+// Zgornja meja vhoda ob prekinitvi pred message_start (krožni uvoz: meje-ai.js uporablja claude.js le v funkcijah).
+import { systemTokens, messageTokens } from "./meje-ai.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 
@@ -48,17 +50,23 @@ export function modeParams(mode = "chat") {
 // zapis za 1 h stane 2× vhod).
 // Preveri na https://claude.com/pricing in po potrebi popravi.
 export const PRICES = {
-  "claude-haiku-5-5": { in: 0.1, out: 0.5, cacheRead: 0.01, cacheWrite: 0.125 },
+  // Haiku 5.5: klic s pozivom nad 100.000 žetonov (vhod + branje + zapis predpomnilnika) plača 5× za ves klic
+  // (platform.claude.com/docs/en/about-claude/pricing, pregled #462 A1).
+  "claude-haiku-5-5": { in: 0.1, out: 0.5, cacheRead: 0.01, cacheWrite: 0.125, long: { over: 100_000, in: 0.5, out: 2.5, cacheRead: 0.05, cacheWrite: 0.625 } },
   "claude-sonnet-5-5": { in: 2, out: 10, cacheRead: 0.2, cacheWrite: 2.5 },
   "claude-opus-5-5": { in: 4, out: 20, cacheRead: 0.2, cacheWrite: 5 },
   "claude-fable-5-1": { in: 10, out: 50, cacheRead: 0.25, cacheWrite: 12.5 },
 };
 
 export function costUsd(model, u) {
+  // Seštevek krogov s strošnikom vsakega kroga (streamReply): ta velja.
+  if (Number.isFinite(u?.cost_usd_exact)) return u.cost_usd_exact;
   // API lahko vrne ime z datumom (»claude-haiku-5-5-20261015«): cena po začetku imena, sicer bi Haiku štel po ceni Opusa.
   const id = String(model || "");
   const key = Object.keys(PRICES).filter((k) => id === k || id.startsWith(`${k}-`)).sort((a, b) => b.length - a.length)[0];
-  const p = PRICES[key] || PRICES["claude-opus-5-5"];
+  let p = PRICES[key] || PRICES["claude-opus-5-5"];
+  const prompt = (u.input_tokens || 0) + (u.cache_read_input_tokens || 0) + (u.cache_creation_input_tokens || 0);
+  if (p.long && prompt > p.long.over) p = p.long;
   // Zapis za 1 h (usage.cache_creation.ephemeral_1h_input_tokens) stane 2× vhod, ostali zapisi 1,25×.
   const write = u.cache_creation_input_tokens || 0;
   const write1h = Math.min(write, u.cache_creation?.ephemeral_1h_input_tokens || 0);
@@ -68,8 +76,19 @@ export function costUsd(model, u) {
       (u.cache_read_input_tokens || 0) * p.cacheRead +
       (write - write1h) * p.cacheWrite +
       write1h * p.in * 2) /
-    1e6
+      1e6 +
+    // Poskusi, ki jih je strežniški nadomestni model zamenjal (usage.iterations, zavrnitev sredi toka): plačani posebej.
+    (u.extra_cost_usd || 0)
   );
+}
+// Strošek zavrnjenih poskusov pred nadomestnim modelom (fallbacks, platform.claude.com refusals-and-fallback: vsak
+// poskus z izhodom je plačan posebej, zgornji usage šteje le poskus, ki je odgovoril; pregled #462 S6).
+export function fallbackExtraUsd(usage) {
+  const it = Array.isArray(usage?.iterations) ? usage.iterations : [];
+  if (!it.some((x) => x?.type === "fallback_message")) return 0;
+  return it
+    .filter((x) => x && x.type !== "fallback_message")
+    .reduce((t, x) => t + costUsd(x.model, { ...x, cache_creation: x.cache_creation || { ephemeral_1h_input_tokens: x.cache_creation_input_tokens || 0 } }), 0);
 }
 
 export const REFUSAL_TEXT =
@@ -114,6 +133,10 @@ export function isMockMode() {
 }
 
 let client = null;
+// Samo za teste: lažen odjemalec API (null vrne pravega).
+export function setClient(c) {
+  client = c;
+}
 export function getClient() {
   if (!client) client = new Anthropic();
   return client;
@@ -126,13 +149,14 @@ export function quickParams(model) {
 }
 
 // Strežniški nadomestni model ob zavrnitvi podpirajo modeli Opus/Sonnet/Fable, Haiku ne.
-const supportsFallback = (model) => !/haiku/.test(model);
+export const supportsFallback = (model) => !/haiku/.test(model);
 
 /**
  * Pretoči odgovor modela.
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null }) {
+// canRound(round): pred vsakim dodatnim krogom orodij; false = brez novega klica (trda meja AI, server/meje-ai.js).
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
@@ -159,7 +183,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
-  if (supportsFallback(model)) {
+  if (supportsFallback(model) && fallback !== false) {
     params.betas = ["server-side-fallback-2026-07-01"];
     params.fallbacks = "default";
   }
@@ -173,20 +197,94 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   let toolCalls = 0;
   let msgs = messages;
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    if (round > 0 && canRound && !canRound(round)) break;
+    // Prekinjeno pred zahtevo (učenec je zaprl aplikacijo med pripravo, npr. povzetkom): klic ne odide in se ne
+    // šteje (pregled #462 S2: prej fantomski strošek vhoda in odgovor Opusa v dnevni meji).
+    if (signal?.aborted) {
+      const e = new Error("Request was aborted.");
+      e.name = "AbortError";
+      if (usage) Object.assign(e, { usage, model: finalModel });
+      throw e;
+    }
     const p = { ...params, messages: msgs };
     if (tools?.length && round === MAX_TOOL_ROUNDS) p.tool_choice = { type: "none" };
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
     const stream = getClient().beta.messages.stream(p, { signal });
-    for await (const event of stream) {
-      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-        const chunk = gap + event.delta.text;
-        gap = "";
-        text += chunk;
-        onText(chunk);
+    // Poraba sproti: ob prekinitvi (učenec zapre aplikacijo) ali napaki sredi toka je klic že plačan, zato napaka nese
+    // porabo in strežnik jo zapiše (server/app.js). message_start nosi vhod in output_tokens ≈ 1; message_delta s
+    // pravim izhodom pride šele tik pred koncem (pregled #462, KRITIČNO). Brez message_delta zato zapišemo izhod
+    // = max_tokens kroga (razmišljanje je lahko plačano, ne da bi ga videli v toku; rezerva je že vzeta), vsaj bajte
+    // vseh delt. Brez message_start (prekinitev pred prvim dogodkom) zapišemo vhod iz rezerve (meje-ai.js).
+    let live = null;
+    let liveModel = model;
+    let lastDelta = false;
+    let deltaBytes = 0;
+    let thinkMs = 0;
+    let thinkAt = 0;
+    let startAt = 0;
+    let firstBlockAt = 0;
+    let final;
+    try {
+      for await (const event of stream) {
+        if (event.type === "message_start") {
+          live = { ...(event.message?.usage || {}) };
+          liveModel = event.message?.model || model;
+          startAt = Date.now();
+        } else if (event.type === "message_delta" && event.usage && live) {
+          for (const [k, v] of Object.entries(event.usage)) if (typeof v === "number") live[k] = v;
+          lastDelta = true;
+        } else if (event.type === "content_block_start" && /thinking/.test(event.content_block?.type || "")) {
+          thinkAt = Date.now();
+          firstBlockAt ||= thinkAt;
+        } else if (event.type === "content_block_stop" && thinkAt) {
+          thinkMs += Date.now() - thinkAt;
+          thinkAt = 0;
+        } else if (event.type === "content_block_start") {
+          firstBlockAt ||= Date.now();
+        } else if (event.type === "content_block_delta") {
+          const d = event.delta || {};
+          deltaBytes += Buffer.byteLength(String(d.text ?? d.thinking ?? d.partial_json ?? d.signature ?? ""), "utf8");
+          if (d.type === "text_delta") {
+            const chunk = gap + d.text;
+            gap = "";
+            text += chunk;
+            onText(chunk);
+          }
+        }
       }
+      final = await stream.finalMessage();
+    } catch (err) {
+      const roundMax = p.max_tokens || max_tokens;
+      let partial = null;
+      if (thinkAt) thinkMs += Date.now() - thinkAt;
+      // Razmišljanje pred prvim blokom (ali brez bloka) se v toku ne vidi (pregled #462 K3-6): čas od message_start.
+      if (p.thinking && startAt) thinkMs += (firstBlockAt || Date.now()) - startAt;
+      // Izhod brez message_delta (j 2026-11-06 12:46): ob NAŠI prekinitvi (učenec zapre aplikacijo → res close →
+      // controller.abort, server/app.js; povezava z API se takoj zapre in API neha pisati) štejemo dejansko napisano:
+      // bajti vseh delt (žeton ≤ bajt) + 10 %; razmišljanje, ki ga tok ne pokaže v celoti (povzetek ali skrito), po
+      // času bloka razmišljanja × največja hitrost modela. Pri drugi napaki sredi toka (API, omrežje) ne vemo,
+      // koliko je API napisal: previdno ves max_tokens kroga. Pol sekunde pisanja po zaprtju povezave je rezerva.
+      const ours = !!signal?.aborted;
+      const outBound = ours
+        ? Math.min(roundMax, Math.ceil(1.1 * deltaBytes + (thinkMs / 1000 + ABORT_LAG_S) * maxTokensPerSec(liveModel)))
+        : roundMax;
+      if (live) partial = lastDelta ? live : { ...live, output_tokens: Math.max(outBound, live.output_tokens || 0) };
+      else if (signal?.aborted) {
+        const inBound = systemTokens(p.system) + messageTokens(p.messages) + (p.tools?.length ? Math.ceil(Buffer.byteLength(JSON.stringify(p.tools), "utf8") / 2) : 0);
+        partial = { input_tokens: 0, cache_creation_input_tokens: inBound, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: inBound }, output_tokens: 0 };
+      }
+      const spent = addUsage(usage, partial);
+      if (spent && err && typeof err === "object") {
+        err.usage = spent;
+        err.model = liveModel;
+      }
+      throw err;
     }
-    const final = await stream.finalMessage();
-    usage = addUsage(usage, final.usage);
+    const extra = fallbackExtraUsd(final.usage);
+    const roundUsage = extra ? { ...final.usage, extra_cost_usd: extra } : { ...final.usage };
+    // Strošek kroga posebej (pregled #462 K3-7): prag dolgega poziva Haikuja velja za vsak klic, ne za seštevek krogov.
+    roundUsage.cost_usd_exact = costUsd(final.model || model, roundUsage);
+    usage = addUsage(usage, roundUsage);
     stopReason = final.stop_reason;
     finalModel = final.model || model;
     content.push(...final.content);
@@ -205,12 +303,22 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
 
 const MAX_TOOL_ROUNDS = 3;
 
+// Največja hitrost pisanja (žetonov na sekundo, zgornja meja z rezervo; pregled #462 S3): za razmišljanje, ki ga
+// prekinjen tok ne pokaže v celoti. Neznan model: najhitrejši.
+// ABORT_LAG_S: čas, ko API po zaprtju povezave še piše (rezerva).
+const ABORT_LAG_S = 0.5;
+const TOKENS_PER_SEC = { haiku: 400, sonnet: 250, opus: 200, fable: 200 };
+export const maxTokensPerSec = (model) => TOKENS_PER_SEC[Object.keys(TOKENS_PER_SEC).find((k) => String(model).includes(k))] || TOKENS_PER_SEC.haiku;
+
 // Seštevek porabe žetonov več klicev (krogi orodij).
 export function addUsage(a, b) {
   if (!b) return a;
   if (!a) return { ...b };
   const out = { ...a };
-  for (const k of ["input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens"]) out[k] = (a[k] || 0) + (b[k] || 0);
+  for (const k of ["input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens", "extra_cost_usd"]) out[k] = (a[k] || 0) + (b[k] || 0);
+  // Natančen strošek ostane le, če ga imata oba dela (delna poraba ob prekinitvi ga nima: velja seštevek, previdno).
+  if (Number.isFinite(a.cost_usd_exact) && Number.isFinite(b.cost_usd_exact)) out.cost_usd_exact = a.cost_usd_exact + b.cost_usd_exact;
+  else delete out.cost_usd_exact;
   // Razdelitev zapisov po času (5 min / 1 h) za pravilno ceno (costUsd).
   if (a.cache_creation || b.cache_creation) {
     out.cache_creation = {};
@@ -235,7 +343,8 @@ function lastUserText(messages) {
 
 function mockAnswer(userText) {
   const t = userText.toLowerCase();
-  if (/sistemsk|prompt|navodil|ignoriraj/.test(t)) {
+  // Poskus brez druge prošnje: ščit. Poskus z nalogo (račun, »reši«, »izračunaj« …): poskus prezri, naloga normalno (prompts/system_prompt.md, Varnostni ščit).
+  if (/sistemsk|prompt|navodil|ignoriraj/.test(t) && !/reši|resi|izračunaj|izracunaj|enačb|enacb|\d\s*[a-z]?\s*[+\-=·*/]/.test(t)) {
     return '»Žal ti teh informacij o svojem delovanju ne morem razkriti. 🛡️ Sem tvoj osebni AI inštruktor za naravoslovne predmete. Povej mi raje, katero nalogo rešuješ, da jo pogledava skupaj!«\n<<META subject=MAT topic="-" error=0 mode=A flag=injection done=0>>';
   }
   if (/kemij/.test(t)) {
@@ -301,7 +410,7 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
 // Branje rokopisa: učenec odgovor napiše s prstom ali miško, model ga prepiše.
 // Model NE preverja pravilnosti (to naredi koda), samo prebere zapisano.
 
-const OCR_MODEL = env("EVKLID_OCR_MODEL", MODEL);
+export const OCR_MODEL = env("EVKLID_OCR_MODEL", MODEL);
 
 export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", unit = null }) {
   if (isMockMode()) return { text: null, mock: true, usage: null, model: OCR_MODEL };

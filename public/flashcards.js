@@ -6,7 +6,7 @@ import { icon } from "./icons.js";
 import { t, locale } from "./i18n.js";
 import { cardSets, sessionCards, OWN, OTHER } from "./kartice-sklopi.js";
 
-let D = null; // { api, renderRich, escapeHtml, toast, showView, getStudent, getPath, subjectName, onDue }
+let D = null; // { api, renderRich, cardRich, escapeHtml, toast, showView, getStudent, getPath, subjectName, onDue }
 const $ = (sel) => document.querySelector(sel);
 const box = () => $("#view-cards");
 let data = null; // zadnji odgovor strežnika { cards, total, due, next_due }
@@ -24,6 +24,8 @@ const sid = () => D.getStudent()?.id;
 // Kartice izbranega predmeta (predmet učne poti); brez poti strežnik vzame predmet iz profila.
 const pathQ = () => (D.getPath?.() ? `?path=${encodeURIComponent(D.getPath())}` : "");
 const rich = (s) => D.renderRich(s);
+// Stran kartice: pomen črk iz teme kartice in druge strani (formula-data.js, kontekst).
+const side = (c, back) => (D.cardRich ? D.cardRich(back ? c.back : c.front, c, back ? c.front : c.back) : rich(back ? c.back : c.front));
 const esc = (s) => D.escapeHtml(s);
 const setName = (s) => (s.kind === "own" ? t("cards.setOwn") : s.kind === "other" ? t("cards.setOther") : s.name);
 const keyName = (key) => (key === null ? t("cards.allSets") : key === OWN ? t("cards.setOwn") : key === OTHER ? t("cards.setOther") : key);
@@ -97,9 +99,9 @@ function setTile(s, i) {
 function rowHtml(c) {
   return `<li data-id="${c.id}">
     <div class="fc-row-text">
-      <div class="fc-q" dir="auto">${rich(c.front)}</div>
+      <div class="fc-q" dir="auto">${side(c, false)}</div>
       <button type="button" class="text-btn fc-peek" data-act="peek" aria-expanded="false">${icon("eye")} <span>${t("cards.show")}</span></button>
-      <div class="fc-a muted" dir="auto" hidden>${rich(c.back)}</div>
+      <div class="fc-a muted" dir="auto" hidden>${side(c, true)}</div>
     </div>
     <div class="fc-row-btns">
       <button type="button" class="ghost icon-only" data-act="edit" title="${t("cards.edit")}" aria-label="${t("cards.edit")}">${icon("pencil")}</button>
@@ -147,12 +149,12 @@ function renderPractice() {
       <div class="fc-inner">
         <div class="fc-face fc-face-front">
           <div class="fc-face-top"><span class="fc-side">${t("cards.front")}</span>${topic}</div>
-          <div class="fc-front" dir="auto">${rich(c.front)}</div>
+          <div class="fc-front" dir="auto">${side(c, false)}</div>
           <div class="fc-hint muted">${icon("refresh-cw")} ${t("cards.flipHint")}</div>
         </div>
         <div class="fc-face fc-face-back" aria-hidden="true">
           <div class="fc-face-top"><span class="fc-side">${t("cards.back")}</span>${topic}</div>
-          <div class="fc-backside" dir="auto">${rich(c.back)}</div>
+          <div class="fc-backside" dir="auto">${side(c, true)}</div>
           <div class="fc-hint muted">${icon("refresh-cw")} ${t("cards.flipBackHint")}</div>
         </div>
       </div>
@@ -299,7 +301,7 @@ export function addCardsNote(bubble, data) {
   const el = document.createElement("div");
   el.className = "cards-note";
   el.innerHTML = `<div class="cn-head">${icon("layers")} <b>${t("cards.added")}</b></div>
-    <ul>${data.cards.map((c) => `<li>${rich(c.front)}</li>`).join("")}</ul>
+    <ul>${data.cards.map((c) => `<li>${side(c, false)}</li>`).join("")}</ul>
     <button type="button" class="text-btn">${t("cards.open")} ${icon("chevron-right")}</button>`;
   el.querySelector("button").addEventListener("click", () => D.showView("cards"));
   bubble.appendChild(el);

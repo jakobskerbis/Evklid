@@ -6,11 +6,11 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, digitFor,
-  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS,
+  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS, KEM_CHARGE,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
-import { GROUPS } from "../public/symbols.js";
+import { GROUPS, symGroups } from "../public/symbols.js";
 import { DEVICE_SETTINGS, deviceValue } from "../public/settings-registry.js";
 import { BUILTINS } from "../public/graph/math.js";
 import { evaluate } from "../public/graph/scicore.js";
@@ -168,7 +168,42 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
   const alg = FX_GROUPS.find(([g]) => g === "alg")[2].map(([l]) => l);
   assert.ok(alg.includes("det") && alg.includes("inverse"));
   assert.equal(CAS_SL.inverse, "inverz");
-  assert.ok(KEM_ROWS.flat().includes("(aq)") && KEM_ROWS.flat().includes("₂") && KEM_ROWS.flat().includes("⇌"));
+  const trimmed = KEM_ROWS.flat().map((k) => k.trim());
+  assert.ok(trimmed.includes("(aq)") && trimmed.includes("₂") && trimmed.includes("⇌") && trimmed.includes("→"));
+});
+
+test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer je zavihek (j, 5. 11.)", () => {
+  const kem = KEM_ROWS.flat().map((k) => k.trim());
+  assert.equal(new Set(kem).size, kem.length, "tipka v Kem je dvakrat");
+  for (const k of GROUPS.kemija.keys) assert.ok(kem.includes(k.ins), `»${k.label}« je bila samo v čipu Σ, v Kem je ni`);
+  for (const [lvl, subj] of [["OS", "MAT"], ["SS", "KEM"], ["FAKS", "KEM"], ["FAKS", "MAT"], ["OS", "FIZ"]]) {
+    assert.ok(!symGroups(lvl, subj, true).includes("kemija"), `${lvl} ${subj}: čip Kemija ob zavihku Kem`);
+    assert.ok(symGroups(lvl, subj, false).includes("kemija"), `${lvl} ${subj}: brez zavihka Kem čip ostane`);
+  }
+  // pregled #460: pravi » + « med snovmi v Reakcijah, naboji (tudi ³⁻) posebej in nadpisani
+  const re = KEM_GROUPS.find(([id]) => id === "re")[2].flat();
+  assert.ok(re.includes(" + "), "» + « med snovmi");
+  for (const c of ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻"]) assert.ok(re.includes(c) && KEM_CHARGE.test(c), c);
+  assert.ok(!KEM_CHARGE.test(" + ") && !KEM_CHARGE.test("e⁻") && !KEM_CHARGE.test("₂"));
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /tk-chg-b[^`]*◌<\/span><sup>/, "naboj je nadpisan ob ◌");
+  // podzavihka imata svoja napisa (i18n), ne enakih kot tipki; tipka »H₂O« ostane oblikovanje formule
+  assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.re"]);
+  assert.match(tk, /subtabs\(KEM_GROUPS\.map\(\(\[id, label\]\) => \[id, t\(label\)\]\)/);
+  assert.match(tk, /key\("H₂O", \{ a: "chem" \}/);
+  assert.match(tk, /role="tab"[^`]*aria-label="\$\{esc\(label\)\}"/, "podzavihki imajo aria-label");
+  for (const f of fs.readdirSync(path.join(ROOT, "public/i18n/ui"))) {
+    const j = JSON.parse(read(`public/i18n/ui/${f}`));
+    assert.ok(j["tk.kem.el"] && j["tk.kem.re"] && j["tk.kem.el"] !== j["tk.kem.re"], `${f}: podzavihka Kem`);
+  }
+  // opisi kemijskih tipk iz GROUPS.kemija (oborina, plin, kristalna voda)
+  const opis = Object.fromEntries(GROUPS.kemija.keys.map((k) => [k.ins, k.title]));
+  assert.equal(opis["↓"], "oborina");
+  assert.equal(opis["↑"], "plin");
+  assert.equal(opis["·"], "kristalna voda");
+  assert.match(tk, /GROUPS\.kemija\.keys\.filter\(\(k\) => k\.title\)/);
+  // dva podzavihka po največ dve vrstici po 10 tipk: zavihek je enako visok kot drugi
+  for (const [, , rows] of KEM_GROUPS) assert.ok(rows.length <= 2 && rows.every((r) => r.length <= 10));
 });
 
 test("settings: registry keys for the tutor, defaults, stored per device", () => {
@@ -381,4 +416,22 @@ test("sentenceBack: troklik na ⌫ izbriše poved do konca prejšnje (presledek 
   assert.equal(sentenceBack("", 0), 0);
   const w = "Prva poved. Druga ";
   assert.equal(w.slice(0, sentenceBack(w, w.length)), "Prva poved. ");
+});
+
+test("pregled #460: puščici in » + « se vstavita s presledkoma, brez dvojnega presledka; ↑ ↓ brez; indeksi z ◌", async () => {
+  const rows = KEM_ROWS.flat();
+  for (const k of [" + ", " → ", " ⇌ "]) assert.ok(rows.includes(k), JSON.stringify(k));
+  assert.ok(rows.includes("↑") && rows.includes("↓"), "↑ ↓ brez presledkov");
+  assert.equal(applyTemplate("2H2", 3, 3, " → ").value, "2H2 → ");
+  assert.equal(applyTemplate("2H2 ", 4, 4, " → ").value, "2H2 → ");
+  assert.equal(applyTemplate("", 0, 0, " + ").value, "+ ");
+  assert.equal(applyTemplate("A ", 2, 2, " ⇌ ").value, "A ⇌ ");
+  assert.equal(applyTemplate("CO2", 3, 3, "↑").value, "CO2↑");
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /opis\.get\(c\.trim\(\)\)/, "opis tipke po obrezani vrednosti");
+  assert.match(tk, /tk-chg-b[^`]*◌<\/span><sub>/, "indeks je podpisan ob ◌");
+  const { chemFormat } = await import("../public/symbols.js");
+  assert.equal(chemFormat("2H2 + O2 → 2H2O"), "2H₂ + O₂ → 2H₂O");
+  assert.equal(chemFormat("CO2↑"), "CO₂↑");
+  assert.equal(chemFormat("AgCl↓ in H2↑"), "AgCl↓ in H₂↑");
 });

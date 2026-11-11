@@ -1,11 +1,11 @@
 // Dokupljena poraba AI (j 2026-10-30): ko učenec porabi svoj mesečni delež skupnega proračuna
 // (server/proracun.js), lahko račun dokupi kredit. Pravilo 75 % (j 2026-11-04, kot pri paketih): od plačila
 // ostane vsaj 75 % dobička tudi, ko je ves kredit porabljen. Kredit v $ = (plačilo × (1 − 0,015 − 0,75) − 0,25 €)
-// / 0,92 (Stripe 1,5 % + 0,25 €, AI po 0,92 € za 1 $; plans.js COST): 5 € → 1,00 $, 10 € → 2,28 $, 20 € → 4,83 $.
+// / 0,92 (Stripe 1,5 % + 0,25 €, AI po 0,92 € za 1 $; plans.js COST), največ 25 % plačila brez DDV (spodaj).
 // Učenec in starš vidita samo ~število razlag oziroma pogovorov, nikoli € ali $. Kredit je vezan na račun
 // (starša ali polnoletnega učenca) in velja za vse njegove profile, dokler ga ne porabijo; ne poteče ob koncu meseca.
 import "../env.js";
-import { COST } from "../accounts/plans.js";
+import { COST, aiCapFromEur, VAT_MAX } from "../accounts/plans.js";
 
 const num = (k, d) => {
   const v = Number(process.env[k]);
@@ -23,15 +23,8 @@ export const CREDIT_PACKS = [
   { id: "k20", amount: 2000, currency: "EUR" },
 ];
 export const packById = (id) => CREDIT_PACKS.find((p) => p.id === id) || null;
-// Poljuben znesek brez zgornje meje (j 2026-10-30); spodnja meja zaradi plačilnih stroškov,
-// zgornja je le tehnična meja enega plačila pri Stripu (999.999,99 €).
-export const CUSTOM_MIN_CENTS = 500;
-export const CUSTOM_MAX_CENTS = 99_999_999;
-export function customPack(amountEur) {
-  const cents = Math.round(Number(amountEur) * 100);
-  if (!Number.isFinite(cents) || cents < CUSTOM_MIN_CENTS || cents > CUSTOM_MAX_CENTS) return null;
-  return { id: "custom", amount: cents, currency: "EUR" };
-}
+// Poljubnega zneska ni več (j 2026-11-04, brez mikrotransakcij): samo paketi zgoraj. Stari zapisi s pack »custom«
+// v ai_credit_buys ostanejo in štejejo v stanje kredita kot doslej (balance sešteje credit_usd).
 
 // Učencu in staršu pokažemo samo, za koliko pogovorov z inštruktorjem zadošča kredit (j 2026-10-30:
 // ne deleža plačila ali zneska kredita). Ocena za običajen pogovor (~10 sporočil, hitri model, včasih
@@ -43,7 +36,10 @@ export function conversationsFor(usd) {
 }
 
 // Kredit v $ za plačilo v centih (evri), navzdol na cent.
-export const creditUsdFor = (amountCents) => Math.max(0, Math.floor((((amountCents / 100) * creditShare() - COST.stripeFixedEur) / COST.eurPerUsd) * 100 + 1e-9) / 100);
+// Trda meja AI (j 2026-11-06): največ 25 % plačila brez DDV (plans.js aiCapFromEur): 5 € → 1,00 $, 10 € → 2,22 $,
+// 20 € → 4,45 $ (prej 2,28 in 4,83 $ po pravilu 75 % od cene z DDV).
+export const creditUsdFor = (amountCents) =>
+  Math.floor(Math.min(aiCapFromEur(amountCents / 100, VAT_MAX), Math.max(0, (((amountCents / 100) * creditShare() - COST.stripeFixedEur) / COST.eurPerUsd))) * 100 + 1e-9) / 100;
 
 export function migrateCredits(db) {
   db.exec(`
@@ -89,6 +85,14 @@ export class Credits {
   usedMonth(studentId = null) {
     const q = `SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE created_at >= date('now','start of month')${studentId ? " AND student_id = ?" : ""}`;
     return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
+  }
+  // Poraba kredita profila od trenutka since (»YYYY-MM-DD HH:MM:SS«, UTC): obdobje naročnine ali paketa.
+  usedSince(studentId, since) {
+    return this.db.prepare("SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE student_id = ? AND created_at >= ?").get(studentId, since).s;
+  }
+  // Kredit, ki so ga porabili izbrisani profili računa (student_id NULL) od since.
+  orphanUsedSince(parentId, since) {
+    return this.db.prepare("SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?").get(parentId, since).s;
   }
   use(parentId, studentId, usd) {
     if (!parentId || !(usd > 0)) return;

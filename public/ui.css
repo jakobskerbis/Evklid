@@ -772,6 +772,17 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .katex { direction: ltr; unicode-bidi: isolate; }
 /* Formula v svojem okviru (simulacija, namig, zbirka) se ne prelomi sama sredi izraza: preširoko zloži
    sirina.js pri enačajih (j 2026-11-04: »To naj velja za vse enačbe«). */
+/* Formula sredi besedila se nikjer ne prelomi sredi izraza (j 2026-11-08): ne za minusom, plusom, oklepajem. Cela
+   gre v naslednjo vrstico; če je širša od vrstice, jo zloži pri enačajih ali pomanjša sirina.js. Velja povsod
+   (naloge, kvizi, igre, kartice, skeniranje, laboratorij, klepet), ne le v učbeniku. Polja za vnos (math-field,
+   tipkovnica) in SVG so zunaj tega: njihove formule se ne izrisujejo kot besedilo. */
+.katex:not(svg .katex) { white-space: nowrap; }
+:is(p, li, dd, dt, blockquote, h1, h2, h3, h4, label, .task-text, .msg, .bubble, .choice, .tb-opt, .tb-q) .katex:not(.katex-display > .katex, svg .katex, .katex .katex) { display: inline-block; text-indent: 0; margin-block: -0.15em; }
+/* Visoka ali zložena formula (sirina.js) je blok v svoji vrstici, v vsakem bloku z besedilom enako kot v učbeniku;
+   v okvirjih s formulo (simulacija, zbirka) ostane, kot je. V gumbu odgovora ostane znotraj gumba, na sredini. */
+.katex.tb-zlozena:not(.katex-display > .katex, :is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex, svg .katex) { display: block; width: fit-content; max-width: 100%; margin: 6px 0; }
+.choice .katex.tb-zlozena { margin-inline: auto; }
+.katex.tb-dolga { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; padding: 2px 0 4px; }
 :is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex { white-space: nowrap; }
 /* Zložena formula: KaTeX-ov stolpec »aligned« seže 2 px čez desni rob (.vlist-s), kar bi okvir naredilo drsen. */
 .katex.tb-zlozena { padding-right: 2px; }
@@ -796,6 +807,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
   padding: 12px 14px; padding-inline-end: 48px; font-size: 0.93rem; line-height: 1.45; display: grid; gap: 6px;
 }
+/* Fokus gre v okno ob odprtju s tipko (Enter); obroba je na ✕, ne na celem oknu. */
+.fx-pop:focus { outline: none; }
 .fx-pop .fx-title { display: flex; align-items: baseline; gap: 8px; color: var(--accent); }
 .fx-pop .fx-title b { color: var(--text); font-size: 1rem; min-width: 0; }
 .fx-pop .fx-title .katex { font-size: 1.25em; color: var(--accent); flex: none; }
@@ -812,6 +825,12 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .fx-pop .fx-close { position: absolute; top: 4px; inset-inline-end: 4px; width: 40px; height: 40px; min-height: 40px !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--muted); font-size: 1.3rem; line-height: 1; }
 .fx-pop .fx-close:hover { color: var(--text); background: var(--surface-2) !important; }
 @media (max-width: 760px) { .fx-pop .fx-sub { padding-inline-start: 0; } .fx-pop .fx-parts { flex-direction: column; gap: 3px; } }
+/* Telefon: okno pomena je spodnji list nad spodnjim menijem (formula-info.js place), nikoli čez formulo. */
+.fx-pop.fx-sheet {
+  position: fixed; left: 0; right: 0; width: auto; top: auto; max-height: min(55vh, 420px); overflow-y: auto;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0; border-bottom: 0; padding: 16px 18px; padding-inline-end: 52px;
+  padding-bottom: calc(14px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+}
 
 /* ---------- Cilj in opomnik (public/goal.js) ---------- */
 .goal-field .goal-box, #settings-goal { display: grid; gap: 10px; margin-top: 8px; }

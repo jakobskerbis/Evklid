@@ -51,7 +51,7 @@ test("every thumbnail belongs to a model, is a small WebP and is listed by the s
 
 test("/3d page loads the Evklid keyboard and its colours, the viewer page mode has its strings", () => {
   const html = fs.readFileSync(path.join(ROOT, "public", "3d.html"), "utf8");
-  assert.match(html, /src="\/tipkovnica-strani\.js"/);
+  assert.match(html, /data-moduli="[^"]*\/tipkovnica-strani\.js[^"]*"/); // zagon.js (test/jezik-ipad.test.js)
   assert.match(html, /href="\/tipkovnica\.css"/);
   const css = fs.readFileSync(path.join(D3, "3d.css"), "utf8");
   // tipkovnica.css reads app tokens that /3d (no style.css) must define
@@ -172,6 +172,6 @@ test("selecting a part hides the parts around it (wall, membrane, envelope) and 
   assert.match(src, /SMERI\.every\(/, "all six rays from outside must hit the shell");
   assert.match(src, /prostornina\(okvirDela\(p, bP\)\) < vS \* 1\.25/, "the shell is bigger than the selected part");
   assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"\) return;/, "biology only");
-  assert.match(src, /sij\.clear\(\);\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
+  assert.match(src, /obarvaj\(null\);[^\n]*\n\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
   assert.match(src, /o\.layers\.set\(SKRITA_PLAST\)/);
 });

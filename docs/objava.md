@@ -31,6 +31,18 @@ Strošek: paket Starter ≈ 7 $/mesec + disk 1 GB ≈ 0,25 $/mesec. Brezplačni 
 - **Razlage in učbenik:** enkrat poženi generiranje (v Render → Shell):
   `node scripts/generate-explanations.js --yes` in `node scripts/generate-lessons.js --yes --model claude-sonnet-5-5`.
 
+## PDF učbenika (izdelan vnaprej)
+
+PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki spremembi lekcij ga izdela GitHub (Actions → **PDF učbenika**, `.github/workflows/ucbenik-pdf.yml`, brezplačno), vsakega samodejno pregleda (število lekcij, prazne strani, formule, pisave, kazalo, noga, prelomi strani, velikost) in objavi kot datoteke izdaje [`ucbenik-pdf`](https://github.com/jakobskerbis/evklid/releases/tag/ucbenik-pdf) (ne v zgodovini gita). Strežnik jih 20 s po zagonu in nato vsake pol ure (prve 3 ure vsakih 5 minut, dokler nima vseh) prenese v `/var/data/ucbenik-pdf` in streže na `/ucbenik-pdf/<pot>`; telefon datoteko samo prenese.
+
+- Nastaviti ni treba ničesar, tudi nobene skrivnosti. Poraba diska: ~100 MB (meja `EVKLID_PDF_MB`, privzeto 300; bazi in kopijam vedno ostane vsaj 250 MB, sicer se PDF-ji ne prenesejo).
+- **Pristnost:** delovni tok kazalo (`kazalo.json`, v njem SHA-256 vsakega PDF-ja) opremi s potrdilom o izvoru (GitHub artifact attestation, `kazalo.potrdilo.json`). Strežnik sprejme kazalo samo, če potrdilo dokazuje, da ga je izdal delovni tok `ucbenik-pdf.yml` tega repozitorija na veji `main` (`server/pdf-potrdilo.js`), in vsak preneseni PDF primerja s SHA-256 iz kazala. Zamenjane datoteke izdaje brez takega potrdila strežnik zavrne in ostane pri prejšnjih oziroma pri tisku v brskalniku. Sigstorjeva overitelja sta pripeta v kodi (veljavna do 2031); če ju Sigstore zamenja prej, `pdfUcbenika.napaka` pokaže »potrdilo o izvoru …« in PDF-ji gredo na rezervo, dokler se potrdili v `server/pdf-potrdilo.js` ne posodobita.
+- Če PDF-ja še ni, je starejši od lekcij ali ni prestal pregleda, gumb sam odpre prejšnjo pot (tisk v brskalniku, »Pripravljam učbenik …«). Enako velja za posamezno lekcijo, list formul, celo matematiko OŠ/SŠ (preveč lekcij za en PDF) in fakultetne učbenike.
+- Stanje: `https://evklid.app/healthz/stanje` → `pdfUcbenika` (`datotek`, `veljavnih`, `predvidenih`, `napaka`). Po združitvi sprememb lekcij GitHub izdela nove PDF-je v ~15 minutah; strežnik med tem obdrži prejšnje, ki še ustrezajo njegovim lekcijam.
+- Ročno: Actions → PDF učbenika → **Run workflow** (polje »samo« za posamezne, npr. `MAT-OS-8`). Lokalno: `node scripts/ucbenik-pdf.cjs --out /tmp/pdf --samo MAT-OS-8` (potrebuje Playwright, `pdftoppm` in `qpdf`).
+- Izklop: `EVKLID_PDF=0` (vse gre spet prek tiska v brskalniku). Drug vir: `EVKLID_PDF_URL` (in `EVKLID_PDF_REF`, če potrdila izdaja druga veja), druga mapa: `EVKLID_PDF_DIR`.
+- Besedilo lekcij je brezplačno in javno (repozitorij je javen, `/ucbenik` je brez prijave), zato so datoteke izdaje javne. Strežnik jih vseeno streže sam, za istim skupnim geslom kot `/ucbenik`, kadar je vklopljeno.
+
 ## Omejitve stroškov AI (že nastavljene)
 
 - `EVKLID_STUDENT_MONTHLY_USD=1.5` – največ 1,5 $ na učenca na mesec.
@@ -48,6 +60,8 @@ Vse lahko spremeniš v Render → Environment.
 Render → Disks naredi dnevni posnetek diska samodejno (hrani se 7 dni).
 
 Poleg tega Evklid sam naredi kopijo baze **enkrat na dan** (prvič 2 minuti po zagonu; datum je v času UTC) v `/var/data/kopije/evklid-LLLL-MM-DD.db` in hrani zadnjih 7 (`server/kopije.js`). Ko zmanjkuje prostora na disku, najprej pobriše najstarejše kopije. Taka kopija pomaga, ko je pokvarjena samo baza (napaka v posodobitvi, pomotoma izbrisani podatki), posnetek diska pa, ko odpove cel disk. Stanje: `https://evklid.app/healthz/stanje` → `kopije` (`zadnja`, `kopij`, `napaka`, `obnovaCaka`). `EVKLID_BACKUPS=0` kopije izklopi.
+
+Vsako noč (med 4.30 in 8.00 po ljubljanskem času) strežnik sam naredi isti preizkus obnove kot `--preveri` (spodaj) na najnovejši dnevni kopiji, v ločeni niti, in preveri, ali je kopija današnja ter (če je nastavljena) tudi zunaj strežnika (`server/kopije-preveri.js`). Ob napaki zapiše vrstico `[evklid] NAPAKA: preizkus varnostne kopije ni uspel: …` in pošlje en e-mail na dan naslovom iz `EVKLID_ADMIN_EMAILS` (prek Resend); ob uspehu nič. Stanje: `/healthz/stanje` → `preverjanjeKopij` (`datum`, `ok`). `EVKLID_KOPIJE_PREVERI=0` preizkus izklopi.
 
 V Render → evklid → **Shell**:
 

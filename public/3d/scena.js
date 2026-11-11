@@ -1,5 +1,5 @@
 // Skupni gradnik 3D prizorov (docs/3d.md): izrisovalnik z varčno ločljivostjo, studijska svetloba (PMREM iz
-// RoomEnvironment), filmska preslikava tonov, vrtenje z dušenjem in prsti, izbira s tapom, mehak prelet kamere,
+// RoomEnvironment ali, za organe, iz studijskega HDRI), filmska preslikava tonov, vrtenje z dušenjem in prsti, izbira s tapom, mehak prelet kamere,
 // barvne točke (ostanejo pripete, skrijejo se za predmeti in za kamero), oznaka ob točki, merilo, samodejna
 // kakovost po napravi (šibek telefon: manjša ločljivost, brez dragih učinkov) in risanje samo ob spremembi.
 // Uvozi gredo po polni poti (/vendor/three/…), zato modul deluje tudi v glavni aplikaciji brez importmap.
@@ -42,6 +42,24 @@ export function kakovostNaprave() {
   if (lahki || dotik || jedra < 4 || pomnilnik < 4) return "nizka";
   return "visoka";
 }
+
+// Studijski videz organov (IBL iz HDRI, moker lak, presevnost): povsod razen na šibkih napravah (deviceMemory ≤ 2,
+// varčevanje s podatki, varčni način aplikacije »lite«). Tam ostanejo RoomEnvironment in prejšnji materiali.
+// Ročna izbira: ?studio=0|1 ali shramba evklid.3d.studio.
+export function studioNaprave() {
+  const q = typeof location !== "undefined" ? new URLSearchParams(location.search).get("studio") : null;
+  const izbrana = q ?? shramba.get("evklid.3d.studio");
+  if (izbrana === "0" || izbrana === "1") return izbrana === "1";
+  const nav = typeof navigator !== "undefined" ? navigator : {};
+  if (nav.deviceMemory > 0 && nav.deviceMemory <= 2) return false;
+  if (nav.connection?.saveData === true) return false;
+  try {
+    if (document.documentElement.classList.contains("lite") || window.parent?.document?.documentElement.classList.contains("lite")) return false;
+  } catch {} // okvir z drugega izvora
+  return true;
+}
+// Poly Haven »Studio Small 09« (Sergej Majboroda, CC0 1.0), pomanjšan na 512 × 256 (≈ 0,5 MB); viri.json »polyhaven-studio«.
+const STUDIO_HDR = new URL("./modeli/okolje/studio_small_09_512.hdr", import.meta.url).href;
 
 // Lepe dolžine za merilo: 1, 2, 5 × 10^k v primerni enoti, z decimalno vejico.
 const ENOTE = [
@@ -166,8 +184,11 @@ export function ustvariSceno(el, opts = {}) {
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   const okolje = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const jakostSobe = opts.okolje ?? 0.72;
+  let aktivnoOkolje = okolje; // RoomEnvironment ali studijski HDRI (nastaviOkolje)
+  let studio = null; // { tex, jakost } ali obljuba med nalaganjem
   scene.environment = okolje;
-  scene.environmentIntensity = opts.okolje ?? 0.72;
+  scene.environmentIntensity = jakostSobe;
   // Rahla usmerjena luč od zgoraj spredaj: oblika dobi globino tudi brez senc.
   const luc = new THREE.DirectionalLight(0xfff4e8, 0.75);
   luc.position.set(0.6, 1.4, 1.2);
@@ -176,9 +197,39 @@ export function ustvariSceno(el, opts = {}) {
   scene.add(luc, luc2);
   // Model s svojo osvetlitvijo (zgradi vrne luci: false, npr. Sonce v vesolju): brez okolja in lastnih luči kompleta.
   function nastaviLuci(vklop) {
-    scene.environment = vklop ? okolje : null;
+    scene.environment = vklop ? aktivnoOkolje : null;
     luc.visible = luc2.visible = !!vklop;
     narisi();
+  }
+  // Okolje modela: "studio" = HDRI s softboksi (mehki dolgi odsevi na laku), sicer RoomEnvironment. HDRI se naloži
+  // enkrat na prizor; do takrat (ali ob napaki) ostane soba. Vrne obljubo, ki se razreši, ko je okolje nastavljeno.
+  function nastaviOkolje(vrsta) {
+    const uporabi = (tex, jakost) => {
+      if (unicen) return;
+      const luci = scene.environment !== null;
+      aktivnoOkolje = tex;
+      scene.environmentIntensity = jakost;
+      if (luci) scene.environment = tex;
+      narisi();
+    };
+    if (vrsta !== "studio") return Promise.resolve(uporabi(okolje, jakostSobe));
+    if (!studio) {
+      studio = import("/vendor/three/examples/jsm/loaders/HDRLoader.js")
+        .then(({ HDRLoader }) => new HDRLoader().setDataType(THREE.HalfFloatType).loadAsync(STUDIO_HDR))
+        .then((hdr) => {
+          hdr.mapping = THREE.EquirectangularReflectionMapping;
+          const tex = unicen ? null : pmrem.fromEquirectangular(hdr).texture;
+          hdr.dispose();
+          return (studio = { tex, jakost: opts.okoljeStudio ?? 0.7 });
+        })
+        .catch((err) => {
+          console.warn("studijsko okolje:", err);
+          return (studio = { tex: okolje, jakost: jakostSobe });
+        });
+    }
+    return Promise.resolve(studio).then((s) => {
+      if (s.tex) uporabi(s.tex, s.jakost);
+    });
   }
 
   const camera = new THREE.PerspectiveCamera(opts.fov ?? 35, 1, 0.01, 200);
@@ -455,7 +506,7 @@ export function ustvariSceno(el, opts = {}) {
           .replace(/\}\s*$/, " gl_FragColor = vec4( gl_FragColor.rgb * evkA, evkA );\n}");
       }
       composer.addPass(izhod);
-      velikost();
+      velikost(true);
       aoVkljucen = true;
       narisi();
     } catch (err) {
@@ -469,12 +520,16 @@ export function ustvariSceno(el, opts = {}) {
     if (prej !== aoVkljucen) narisi();
   };
 
-  let w = 1;
+  let w = 0;
   let h = 1;
-  function velikost() {
+  // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
+  function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
-    w = Math.max(1, Math.round(r.width));
-    h = Math.max(1, Math.round(r.height));
+    const nw = Math.max(1, Math.round(r.width));
+    const nh = Math.max(1, Math.round(r.height));
+    if (nw === w && nh === h && prisilno !== true) return;
+    w = nw;
+    h = nh;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -482,7 +537,7 @@ export function ustvariSceno(el, opts = {}) {
     composer?.setSize(w, h);
     narisi();
   }
-  const ro = new ResizeObserver(velikost);
+  const ro = new ResizeObserver(() => velikost());
   ro.observe(el);
   velikost();
 
@@ -861,7 +916,7 @@ export function ustvariSceno(el, opts = {}) {
           } else if (locljivost > 1) {
             locljivost = Math.max(1, locljivost - 0.25);
             renderer.setPixelRatio(locljivost);
-            velikost();
+            velikost(true);
           }
         }
       }
@@ -883,6 +938,7 @@ export function ustvariSceno(el, opts = {}) {
     ro.disconnect();
     controls.dispose();
     okolje.dispose();
+    if (studio?.tex && studio.tex !== okolje) studio.tex.dispose();
     pmrem.dispose();
     composer?.dispose?.();
     renderer.dispose();
@@ -895,6 +951,7 @@ export function ustvariSceno(el, opts = {}) {
   return {
     THREE,
     nastaviLuci,
+    nastaviOkolje,
     luci: [luc, luc2], // ključna in zadnja luč kompleta (atlas jima prilagodi smer in moč)
     kakovost,
     gibanje: gib,
@@ -931,6 +988,11 @@ export function ustvariSceno(el, opts = {}) {
     get velikost() {
       return { w, h };
     },
+    // prelet kamere (poleti) še teče
+    get leti() {
+      return !!let_;
+    },
+    posodobiVelikost: () => velikost(), // takoj po spremembi postavitve (okno dela ob odru), pred kadriranjem
     unici,
   };
 }

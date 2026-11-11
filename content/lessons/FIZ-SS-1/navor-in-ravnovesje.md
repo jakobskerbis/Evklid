@@ -168,12 +168,22 @@ $r_2 = \dfrac{588{,}6\,\mathrm{N\,m}}{392{,}4\,\mathrm{N}} = 1{,}5\,\mathrm{m}$.
 
 Nariši vodoravno daljico, to je vzvod. Pod sredino nariši trikotnik, to je opora. Na levo stran, $2$ kvadratka od opore, nariši puščico navzdol, dolgo $3$ kvadratke (sila). Na desno stran, $3$ kvadratke od opore, puščico, dolgo $2$ kvadratka.
 
-```
-  3↓             ↓2
-   |←—2—→|←——3——→|
- ════════════════════════
-         ▲
-```
+:::risba skica
+opis: Vzvod na kvadratni mreži z oporo na sredini. Levo, 2 kvadratka od opore, deluje sila navzdol, dolga 3 kvadratke. Desno, 3 kvadratke od opore, deluje sila navzdol, dolga 2 kvadratka.
+območje: -4; -2,6 .. 4; 3,6
+mreža: da
+črta: -3,6; 0 -> 3,6; 0 | debelo
+lik: 0; 0 -> -0,5; -0,8 -> 0,5; -0,8 | siva
+puščica: -2; 3 -> -2; 0 | F_1 = 3 | levo | modra
+puščica: 3; 2 -> 3; 0 | F_2 = 2 | levo | modra
+črta: -2; -1,5 -> 0; -1,5 | oranžna
+črta: 0; -1,5 -> 3; -1,5 | oranžna
+črta: -2; -1,3 -> -2; -1,7 | oranžna
+črta: 0; -1,3 -> 0; -1,7 | oranžna
+črta: 3; -1,3 -> 3; -1,7 | oranžna
+napis: -1; -1,5 | r_1 = 2 | pod | oranžna
+napis: 1,5; -1,5 | r_2 = 3 | pod | oranžna
+:::
 
 Zdaj nariši pravokotnik na vsaki strani: širok je kot ročica, visok kot sila. Levi ima $2 \cdot 3 = 6$ kvadratkov, desni $3 \cdot 2 = 6$. Ploščini sta enaki, zato je vzvod v ravnovesju. Navor si lahko predstavljaš kot tak pravokotnik: kratka in visoka puščica naredi enako »ploščino« kot dolga in nizka.
 

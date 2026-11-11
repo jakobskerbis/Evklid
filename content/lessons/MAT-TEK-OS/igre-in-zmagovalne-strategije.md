@@ -22,10 +22,23 @@ Na glasbenem taboru se Ana in Bor med odmorom igrata z bobnom: izmenično zaigra
 
 Na številski premici označimo s **P** položaj poraza in z **Z** položaj zmage, vedno za igralca, ki je **na potezi**:
 
-```
-ostalo:  0  1  2  3  4  5  6  7  8  9  10
-         P  Z  Z  P  Z  Z  P  Z  Z  P  Z
-```
+:::risba premica
+opis: Številska premica od 0 do 10 za število udarcev, ki so še ostali. Pri 0, 3, 6 in 9 je P (položaj poraza, prazen krožec), pri 1, 2, 4, 5, 7, 8 in 10 je Z (položaj zmage, poln krožec), vedno za igralca na potezi.
+od: 0
+do: 10
+točka: 0 | P | prazna rdeča
+točka: 1 | Z | zelena
+točka: 2 | Z | zelena
+točka: 3 | P | prazna rdeča
+točka: 4 | Z | zelena
+točka: 5 | Z | zelena
+točka: 6 | P | prazna rdeča
+točka: 7 | Z | zelena
+točka: 8 | Z | zelena
+točka: 9 | P | prazna rdeča
+točka: 10 | Z | zelena
+podnapis: Število pove, koliko udarcev je še ostalo. P: poraz (prazen krožec), Z: zmaga (poln krožec).
+:::
 
 Na začetku ostane $10$, to je **Z**. Ana zaigra $1$ udarec in Boru pusti $9$. Nato vsakič dopolni Borovo potezo do $3$: če Bor zaigra $1$, Ana $2$; če Bor zaigra $2$, Ana $1$. Ostanki gredo $9, 6, 3, 0$, in deseti udarec je Anin.
 

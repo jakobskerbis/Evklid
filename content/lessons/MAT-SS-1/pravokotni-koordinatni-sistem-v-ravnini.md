@@ -25,14 +25,21 @@ Osi razdelita ravnino na štiri **kvadrante**, oštevilčene v nasprotni smeri u
 
 **Razdalja v splošnem.** Pri $A(1, 1)$ in $B(5, 4)$ iz uvoda nariši pot iz $A$ najprej vodoravno do $(5, 1)$, nato navpično do $B$. Nastane pravokotni trikotnik:
 
-```
-            B(5,4)
-           /|
-       d  / |  3   (navpično: 4 − 1)
-         /  |
-   A(1,1)───┘ (5,1)
-         4         (vodoravno: 5 − 1)
-```
+:::risba graf
+opis: Koordinatni sistem s točkama A(1, 1) in B(5, 4). Od A vodi vodoravna kateta dolžine 4 do točke (5, 1), od tam navpična kateta dolžine 3 do B. Daljica AB je hipotenuza pravokotnega trikotnika in je označena z d.
+x: 0 .. 6
+y: 0 .. 5
+enako: da
+lik: 1; 1 -> 5; 1 -> 5; 4 | modra
+črta: 1; 1 -> 5; 4 | debelo modra
+pravikot: 5; 1 | 1; 1 | 5; 4
+točka: 1; 1 | A(1, 1) | pod
+točka: 5; 4 | B(5, 4) | nad
+točka: 5; 1 | (5, 1) | pod desno
+napis: 3; 1 | 4 | pod | oranžna debelo
+napis: 5; 2,5 | 3 | desno | oranžna debelo
+napis: 3; 2,5 | d | nad levo | modra debelo
+:::
 
 Kateti merita $|x_B - x_A| = 4$ in $|y_B - y_A| = 3$. Iskana razdalja $d$ je hipotenuza. Po Pitagorovem izreku je $d^2 = 4^2 + 3^2 = 25$, torej $d = 5$. Splošno velja
 
