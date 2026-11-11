@@ -59,7 +59,7 @@ Kratke verige so pri sobni temperaturi plini (metan do butan), srednje so tekoč
         H
 ```
 
-Spojine s takim obročem so **areni** ali aromatski ogljikovodiki. Od alkenov se razlikujejo tudi po obnašanju. Alken hitro razbarva bromovo vodo, ker se brom veže na dvojno vez. Benzen je bolj obstojen, zato bromove vode ne razbarva.
+Spojine s takim obročem so **areni** ali aromatski ogljikovodiki. Od alkenov se razlikujejo tudi po obnašanju. Alken hitro razbarva bromovo vodo (bromovico), ker se brom veže na dvojno vez. Benzen je bolj obstojen, zato bromove vode ne razbarva.
 
 Pozor: obroč iz samih enojnih vezi ni aren. Cikloheksan $\mathrm{C_6H_{12}}$ je **cikloalkan**, njegova splošna formula $\mathrm{C}_n\mathrm{H}_{2n}$ je enaka kot pri alkenih.
 

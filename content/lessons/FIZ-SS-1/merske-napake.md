@@ -216,7 +216,7 @@ Absolutna napaka je v obeh primerih enaka, relativna pa zelo različna. Zato je 
 ~ To je razvrstitev po velikosti izmerjene vrednosti ($80$, $37$, $4$). Večja vrednost sama še ne pomeni natančnejše meritve. Izračunaj deleže: A $1{,}25\,\%$, B $0{,}625\,\%$, C $0{,}27\,\%$.
 > Relativne napake so C $0{,}27\,\%$, B $0{,}625\,\%$, A $1{,}25\,\%$. Najnatančnejša je meritev z najmanjšo relativno napako.
 
-? Z istim ravnilom (razdelki po $1\,\text{mm}$) izmerimo kost, ki je dvakrat daljša od prejšnje. Kaj se zgodi z relativno napako?
+? Z istim ravnilom (razdelki po $1\,\text{mm}$) izmerimo kost, nato še drugo, ki je dvakrat daljša. Kaj se zgodi z relativno napako?
 - Podvoji se, ker je kost daljša.
 ~ Daljša kost ne pomeni večje absolutne napake: ta je določena z ravnilom in ostane $1\,\text{mm}$.
 - Ostane enaka, ker merimo z istim ravnilom.
@@ -245,7 +245,7 @@ Absolutna napaka je v obeh primerih enaka, relativna pa zelo različna. Zato je 
 :::simboli
 \delta | relativna napaka | \delta = \frac{\Delta x}{\bar{x}} | – | pogosto v odstotkih
 x | izmerjena količina
-\bar{x} | povprečje meritev | \bar{x} = \frac{\sum x_i}{n}
+\bar{x} | povprečje meritev | \bar{x} = \frac{x_1 + x_2 + \dots + x_n}{n}
 \Delta x | absolutna napaka | | | največje odstopanje od povprečja
 T | izmerjena telesna temperatura | | ^\circ C
 \Delta T | absolutna napaka temperature | | ^\circ C | pri eni meritvi najmanjši razdelek

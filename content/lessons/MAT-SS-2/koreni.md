@@ -14,7 +14,7 @@ Spoznal boš še **delno korenjenje** in **racionalizacijo**. Potreboval ju boš
 
 ## Razlaga
 
-**1. Kvadratni koren.** Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število, katerega kvadrat je $a$. Pogoj $a \ge 0$ je nujen: v realnih številih ne obstaja koren negativnega števila. Velja
+**1. Kvadratni koren.** Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število, katerega kvadrat je $a$. Pogoj $a \ge 0$ je nujen: v realnih številih ne obstaja kvadratni koren negativnega števila. Velja
 
 $$\left(\sqrt{a}\right)^2 = a \quad (a \ge 0), \qquad \sqrt{x^2} = |x| \quad (x \in \mathbb{R}).$$
 
@@ -278,11 +278,11 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 > $\sqrt{30^2 + 30^2} = \sqrt{900 \cdot 2} = 30\sqrt{2} \approx 42{,}4\,\text{cm}$.
 
 :::simboli
-a | korenjenec; pri delnem korenjenju faktor pred korenom | | | a ≥ 0 pri kvadratnem korenu
+a | korenjenec; pri delnem korenjenju faktor pred korenom, pri racionalizaciji števec ulomka | | | a ≥ 0 pri kvadratnem korenu
 n, m | korenski eksponent | | | naravno število, n ≥ 2
 b | korenjenec (faktor pod korenom) | | | b > 0 pri deljenju
 x | realno število | | | koren iz x² je absolutna vrednost x
-p, q | koeficienta pred istim korenom | | |
+p, q | koeficienta pred istim korenom | | | v dokazu iracionalnosti števila $\sqrt{2}$ števec in imenovalec ulomka
 S | ploščina ploščice | | cm^2 |
 s | stranica kvadrata | s = \sqrt{S} | cm |
 d | dolžina stene | | cm |

@@ -9,7 +9,7 @@ Telefon je vpet v držalo, ki ga motorček enakomerno vrti v navpični ravnini: 
 
 Ob katerih sekundah v prvih dveh minutah pokaže telefon vrednost $0{,}5$?
 
-Kalkulator (tipka $\sin^{-1}$) za $\sin x = 0{,}5$ ponudi en sam kot, $30^\circ$, torej $5\,\text{s}$. Telefon pa se vrti naprej in vrednost $0{,}5$ pokaže večkrat. Enačbi, v kateri je neznanka kot znotraj kotne funkcije, rečemo **trigonometrijska enačba**. Ker se kotne funkcije ponavljajo, ima takšna enačba navadno neskončno rešitev. Vse pa lahko zajameš v en kratek zapis. Enako nalogo rešujejo aplikacije, ki merijo nagib, in elektrotehniki pri izmenični napetosti v vtičnici.
+Kalkulator (tipka $\sin^{-1}$) za $\sin x = 0{,}5$ ponudi en sam kot, $30^\circ$, torej $5\,\text{s}$. Telefon pa se vrti naprej in vrednost $0{,}5$ pokaže večkrat. Enačbi, v kateri je neznanka kot znotraj kotne funkcije, rečemo **trigonometrijska enačba**. Ker se kotne funkcije ponavljajo, ima takšna enačba navadno neskončno mnogo rešitev. Vse pa lahko zajameš v en kratek zapis. Enako nalogo rešujejo aplikacije, ki merijo nagib, in elektrotehniki pri izmenični napetosti v vtičnici.
 
 ## Razlaga
 
@@ -56,7 +56,7 @@ $$x = x_1 + k \cdot 180^\circ$$
 
 **5. Radiani.** Isti zapis velja z radiani: $360^\circ$ zamenja $2\pi$, $180^\circ$ pa $\pi$. Za $\sin x = 0{,}5$ dobiš $x = \frac{\pi}{6} + 2k\pi$ ali $x = \frac{5\pi}{6} + 2k\pi$. V enem zapisu ne mešaj stopinj in radianov.
 
-V simulaciji spodaj (»Trigonometrijska enačba sin x = a«) izberi $\sin x = k$ (tam $k$ pomeni desno stran $a$, ne celega števila) in z drsnikom za desno stran nastavi $0{,}5$. Opazuj dve točki na krožnici in dve presečišči na grafu v enem obratu. Nato drsnik premakni na $1$ in še naprej do $1{,}2$. Kaj se zgodi s številom rešitev?
+V simulaciji spodaj (»Trigonometrijska enačba sin x = a«) izberi $\sin x = a$ in z drsnikom »desna stran a« nastavi $0{,}5$. Opazuj dve točki na krožnici in dve presečišči na grafu v enem obratu. Nato drsnik premakni na $1$ in še naprej do $1{,}2$. Kaj se zgodi s številom rešitev?
 
 :::premisli
 Koliko rešitev ima $\sin x = 1$ na intervalu $[0^\circ, 360^\circ)$? Zakaj se obe družini tu združita v eno?
@@ -157,7 +157,7 @@ $\cos x = 0$: $x = 90^\circ$ in $x = 270^\circ$. $\sin x = \frac{1}{2}$: $x = 30
 
 ## Povzetek
 
-- Trigonometrijska enačba ima navadno neskončno rešitev; zapišemo jih s splošno rešitvijo, $k \in \mathbb{Z}$.
+- Trigonometrijska enačba ima navadno neskončno mnogo rešitev; zapišemo jih s splošno rešitvijo, $k \in \mathbb{Z}$.
 - $\sin x = a$: $x = x_1 + k \cdot 360^\circ$ ali $x = 180^\circ - x_1 + k \cdot 360^\circ$, $x_1 = \arcsin a$.
 - $\cos x = a$: $x = \pm x_1 + k \cdot 360^\circ$, $x_1 = \arccos a$.
 - $\tan x = a$: $x = x_1 + k \cdot 180^\circ$, $x_1 = \arctan a$.

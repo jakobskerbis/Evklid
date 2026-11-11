@@ -63,10 +63,10 @@ Obe povezavi zapišemo v **pravilnostno tabelo**, kjer je v vsaki vrstici ena mo
 :::premisli
 Zdaj reši uganko z začetka. Pravilo je $A \Rightarrow B$, kjer je $A$ »škatla je za kopalnico« in $B$ »ploščice so nedrseče«. Katere škatle moraš obrniti in zakaj ne drugih?
 ---
-Obrneš škatli 1 (»kopalnica«) in 4 (»gladke«). Pravilo krši le kopalniška škatla z gladkimi ploščicami ($A$ = P, $B$ = N), Le pri teh dveh škatlah je to mogoče. Škatla 2 ima $A$ = N, škatla 3 pa $B$ = P: tam je implikacija pravilna ne glede na drugo stran.
+Obrneš škatli 1 (»kopalnica«) in 4 (»gladke«). Pravilo krši le kopalniška škatla z gladkimi ploščicami ($A$ = P, $B$ = N). Le pri teh dveh škatlah je to mogoče. Škatla 2 ima $A$ = N, škatla 3 pa $B$ = P: tam je implikacija pravilna ne glede na drugo stran.
 :::
 
-**7. Sestavljene izjave.** Povezave lahko nizamo, na primer $\neg A \vee B$. Oklepaji povedo vrstni red; brez njih najprej računamo $\neg$, nato $\wedge$ in $\vee$, na koncu $\Rightarrow$ in $\Leftrightarrow$. Tako $\neg A \vee B$ pomeni $(\neg A) \vee B$, ne $\neg(A \vee B)$. Pravilnostno tabelo izpolnjujemo stolpec za stolpcem, od notranjih delov navzven.
+**7. Sestavljene izjave.** Povezave lahko nizamo, na primer $\neg A \vee B$. Oklepaji povedo vrstni red; brez njih najprej računamo $\neg$, nato $\wedge$, za njo $\vee$, nato $\Rightarrow$ in na koncu $\Leftrightarrow$. Tako $\neg A \vee B$ pomeni $(\neg A) \vee B$, ne $\neg(A \vee B)$. Pravilnostno tabelo izpolnjujemo stolpec za stolpcem, od notranjih delov navzven.
 
 Koliko vrstic potrebujemo? Vsaka izjava ima 2 možni vrednosti. Pri dveh izjavah je možnosti $2 \cdot 2 = 4$, pri treh pa $2^3 = 8$. Za $n$ izjav je vrstic
 

@@ -15,7 +15,7 @@ Na tej sili temeljijo elektromotorji v električnih kolesih in dirkalnih avtomob
 
 **1. En primer do konca.** Avtomobilček za dirkalno progo poganja majhen elektromotor. V njem je ravni kos žice, dolg $3\,\mathrm{cm}$, med poloma magneta s poljem $0{,}5\,\mathrm{T}$. Žica je pravokotna na polje, po njej teče $2\,\mathrm{A}$.
 
-Poskusi z žicami v polju (na primer žica, obešena kot gugalnica med poloma podkvastega magneta) pokažejo, da je sila premo sorazmerna s tokom, z dolžino žice v polju in z gostoto polja. Za naš kos žice:
+Poskusi z žicami s tokom (tokovodniki) v polju (na primer žica, obešena kot gugalnica med poloma podkvastega magneta) pokažejo, da je sila premo sorazmerna s tokom, z dolžino žice v polju in z gostoto polja. Za naš kos žice:
 
 $$F = I\, l\, B = 2\,\mathrm{A} \cdot 0{,}03\,\mathrm{m} \cdot 0{,}5\,\mathrm{T} = 0{,}03\,\mathrm{N}$$
 

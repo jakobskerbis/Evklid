@@ -27,7 +27,7 @@ Desna stran je $(n + 1)^2$. Torej trditev velja tudi za $n + 1$. S stožci: kvad
 
 **Zakaj to zadošča.** Velja za $1$. Ker velja za $1$, velja za $2$. Ker velja za $2$, velja za $3$. In tako naprej brez konca: vsako naravno število dosežemo v končno mnogo korakih.
 
-**Splošni postopek.** Dokaz z **matematično indukcijo** ima dva dela:
+**Splošni postopek.** Dokaz z **matematično indukcijo** (rečemo ji tudi **popolna indukcija**) ima dva dela:
 
 1. **Baza indukcije:** preverimo, da $P(1)$ drži.
 2. **Indukcijski korak:** predpostavimo, da $P(n)$ drži za neko naravno število $n$ (to je **indukcijska predpostavka**), in iz tega izpeljemo $P(n + 1)$.

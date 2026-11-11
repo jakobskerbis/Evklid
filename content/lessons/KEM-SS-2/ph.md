@@ -9,7 +9,7 @@ Uganka za začetek. Na vesoljski postaji je vsak liter vode dragocen. Astronavtk
 
 Ugibaj, preden bereš naprej. Večina reče »še en liter«, saj se zdi, da je $4$ dvakrat $2$. Odgovor je presenetljiv: dodati mora $99\,\text{L}$ vode. Razlog za to se skriva v tem, kako je pH sploh definiran.
 
-Isto število srečaš daleč od Zemlje. Kapljice v oblakih Venere so iz koncentrirane žveplove kisline, zato mora sonda, ki skozi njih leti, prenesti zelo kislo okolje. Za ocean pod ledom Saturnove lune Enkelad pa nekatere ocene kažejo, da je bazičen. Kemiki kislost ali bazičnost raztopin opišejo z enim številom, pH, ki v večini vodnih raztopin leži med $0$ in $14$. Danes se naučiš, kako to število izračunaš za raztopine močnih kislin in baz.
+Isto število srečaš daleč od Zemlje. Kapljice v oblakih Venere so iz koncentrirane žveplove kisline, zato mora sonda, ki leti skoznje, prenesti zelo kislo okolje. Za ocean pod ledom Saturnove lune Enkelad pa nekatere ocene kažejo, da je bazičen. Kemiki kislost ali bazičnost raztopin opišejo z enim številom, pH, ki v večini vodnih raztopin leži med $0$ in $14$. Danes se naučiš, kako to število izračunaš za raztopine močnih kislin in baz.
 
 ## Razlaga
 

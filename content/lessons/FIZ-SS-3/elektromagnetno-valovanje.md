@@ -67,7 +67,7 @@ Primerjava z zvokom na enem mestu:
 | rentgenska svetloba | $0{,}01$ do $10\,\mathrm{nm}$ | vroč plin okoli črnih lukenj |
 | žarki gama | pod $0{,}01\,\mathrm{nm}$ | eksplozije zvezd |
 
-Navzdol po tabeli valovna dolžina pada, frekvenca pa raste. Višja frekvenca pomeni tudi več energije, ki jo valovanje prenaša na snov: zato UV svetloba opeče kožo, radijski valovi pa ne. Zemljino ozračje večino UV, rentgenske svetlobe in žarkov gama ustavi, zato teleskope za ta območja pošiljamo v vesolje.
+Navzdol po tabeli valovna dolžina pada, frekvenca pa raste. Višja frekvenca pomeni tudi več energije v vsakem obroku (fotonu), ki ga valovanje preda snovi: zato UV svetloba opeče kožo, radijski valovi pa ne. Zemljino ozračje večino UV, rentgenske svetlobe in žarkov gama ustavi, zato teleskope za ta območja pošiljamo v vesolje.
 
 V simulaciji spodaj, »Elektromagnetni spekter«, premikaj drsnik od radijskih valov proti žarkom gama. Opazuj, kako se valovnica zgoščuje in kako frekvenca narašča, ko valovna dolžina pada. Poišči, pri kateri valovni dolžini se začne vidna svetloba.
 
@@ -150,10 +150,10 @@ $t = \dfrac{2{,}25\cdot10^{11}\,\mathrm{m}}{3{,}00\cdot10^{8}\,\mathrm{m/s}} = 7
 
 Večina napak pride iz tega, da elektromagnetno valovanje obravnavamo kot zvok tudi tam, kjer se od njega razlikuje.
 
-- **»Valovanje potrebuje snov, po kateri se širi.«** Tako misli, kdor sklepa po zvoku; nekoč so zato iskali nevidni »eter«. Elektromagnetno valovanje je nihanje polj, ki se drug drugega ustvarjata, zato se širi tudi skozi vakuum. Dokaz je vsaka zvezda, ki jo vidiš.
+- **»Valovanje potrebuje snov, po kateri se širi.«** Tako misli, kdor sklepa po zvoku; nekoč so zato iskali nevidni »eter«. Elektromagnetno valovanje je nihanje dveh polj, ki ustvarjata drugo drugega, zato se širi tudi skozi vakuum. Dokaz je vsaka zvezda, ki jo vidiš.
 - **Višja frekvenca, večja hitrost.** Učenec misli, da hitreje nihajoče valovanje tudi hitreje potuje. V vakuumu imajo vsa elektromagnetna valovanja hitrost $c$. Višja frekvenca pomeni le krajšo valovno dolžino.
 - **Radijski valovi niso svetloba.** Ker jih ne vidimo, se zdijo nekaj drugega. So isto elektromagnetno valovanje kot svetloba, le z daljšo valovno dolžino, in tudi potujejo s hitrostjo $c$.
-- **Daljša valovna dolžina, več energije.** Daljši val se zdi »večji« in zato močnejši. Pravilno je obratno: več energije prenaša valovanje z višjo frekvenco, torej s krajšo valovno dolžino. Zato so nevarni UV, rentgenski žarki in žarki gama, radijski valovi pa ne.
+- **Daljša valovna dolžina, več energije.** Daljši val se zdi »večji« in zato močnejši. Pravilno je obratno: več energije v posameznem obroku (fotonu) ima valovanje z višjo frekvenco, torej s krajšo valovno dolžino. Zato so nevarni UV, rentgenski žarki in žarki gama, radijski valovi pa ne.
 - **Obrnjena formula ali pozabljena predpona.** $\lambda = \dfrac{\nu}{c}$ ne velja; preveri enoto: $\dfrac{\mathrm{m/s}}{\mathrm{Hz}} = \mathrm{m}$. Pred računom pretvori $\mathrm{nm}$, $\mathrm{cm}$, $\mathrm{MHz}$ in $\mathrm{GHz}$ v osnovne enote.
 
 ## Povzetek
@@ -163,15 +163,15 @@ Večina napak pride iz tega, da elektromagnetno valovanje obravnavamo kot zvok t
 - Je prečno: $\vec E$ in $\vec B$ sta pravokotna drug na drugega in na smer širjenja.
 - Širi se tudi skozi vakuum; tam ima vsako elektromagnetno valovanje hitrost $c = 3{,}00\cdot10^{8}\,\mathrm{m/s}$.
 - Velja $c = \lambda \nu$: višja frekvenca pomeni krajšo valovno dolžino.
-- Spekter od najdaljših valov: radijski valovi, mikrovalovi, infrardeča, vidna ($380$–$750\,\mathrm{nm}$), ultravijolična, rentgenska svetloba, žarki gama. Višja frekvenca pomeni več energije.
+- Spekter od najdaljših valov: radijski valovi, mikrovalovi, infrardeča, vidna ($380$–$750\,\mathrm{nm}$), ultravijolična, rentgenska svetloba, žarki gama. Višja frekvenca pomeni več energije v posameznem fotonu.
 - Čas potovanja signala: $t = \dfrac{d}{c}$; pri odboju je pot dvojna.
 
 ## Drugače: Na sliki
 
-Predstavljaj si dolgo ravno ulico in val, ki potuje po njej od leve proti desni.
+Predstavljaj si, da stojiš na dolgi ravni ulici in val potuje po njej naravnost stran od tebe.
 
 - Električno polje niha **gor in dol**, kot val na vrvi, ki jo stresaš.
-- Magnetno polje niha **levo in desno**, vodoravno in pravokotno na ulico.
+- Magnetno polje niha **levo in desno**, vodoravno in pravokotno na smer ulice.
 - Obe nihanji se ujemata: kjer je $\vec E$ največje, je največje tudi $\vec B$; kjer je eno nič, je nič tudi drugo.
 - Celoten vzorec drsi vzdolž ulice s hitrostjo $c$.
 
@@ -242,6 +242,7 @@ Elektromagnetno valovanje te obkroža ves dan, le z različnimi valovnimi dolži
 c | hitrost svetlobe v vakuumu | c = \lambda \nu | m/s | $3{,}00\cdot10^{8}\,\mathrm{m/s}$ za vsa EM valovanja
 \lambda | valovna dolžina | \lambda = \frac{c}{\nu} | m | razdalja med sosednjima vrhovoma
 \nu | frekvenca | \nu = \frac{c}{\lambda} | Hz | število nihajev v sekundi
+\nu_0 | lastna frekvenca nihajnega kroga | | Hz | s to frekvenco seva antena
 v | hitrost zvoka | v = \lambda \nu | m/s | v zraku okoli $340\,\mathrm{m/s}$
 t | čas potovanja signala | t = \frac{d}{c} | s
 d | razdalja | | m | pri odboju je pot $2d$

@@ -35,7 +35,7 @@ Prva le eno točko, izhodišče $(0, 0)$: vsota dveh kvadratov je $0$ samo, če 
 
 **3. Splošna oblika.** Če v središčni obliki odpraviš oklepaje in vse preneseš na levo, dobiš **splošno obliko** $x^2 + y^2 + Dx + Ey + F = 0$. Iz nje središča ne prebereš takoj. Pomagaš si z **dopolnjevanjem do popolnega kvadrata**: k $x^2 + Dx$ dodaš in odvzameš kvadrat polovice koeficienta. Tako je na primer $x^2 - 6x = (x - 3)^2 - 9$. Enako narediš pri $y$.
 
-Če to narediš s splošnima $D$ in $E$, dobiš: središče je v točki $S\!\left(-\frac{D}{2}, -\frac{E}{2}\right)$ in da je $r^2 = \frac{D^2}{4} + \frac{E^2}{4} - F$. Krožnica obstaja le, če je ta vrednost pozitivna.
+Če to narediš s splošnima $D$ in $E$, dobiš: središče je v točki $S\!\left(-\frac{D}{2}, -\frac{E}{2}\right)$ in velja $r^2 = \frac{D^2}{4} + \frac{E^2}{4} - F$. Krožnica obstaja le, če je ta vrednost pozitivna.
 
 **4. Kje leži točka.** Koordinate točke vstaviš v levo stran središčne oblike in rezultat primerjaš z $r^2$. Manj pomeni, da je točka znotraj kroga. Enako pomeni, da leži na krožnici. Več pomeni, da je zunaj.
 
@@ -123,7 +123,7 @@ Vstavi $y$ iz premice v enačbo krožnice; dolžina daljice $P_1 P_2$ je $s = \s
 
 ### Primer 4 – zdaj ti
 
-Od stolpa iz Primera 3 pelje še gozdna pot po premici $4x + 3y = 43$. Ali ima pot s krožnico $(x - 3)^2 + (y - 2)^2 = 25$ dve, eno ali nobene skupne točke?
+V bližini stolpa iz Primera 3 pelje še gozdna pot po premici $4x + 3y = 43$. Ali ima pot s krožnico $(x - 3)^2 + (y - 2)^2 = 25$ dve, eno ali nobene skupne točke?
 
 **Podatki:** krožnica $(x - 3)^2 + (y - 2)^2 = 25$, premica $4x + 3y = 43$
 **Iščemo:** lego premice glede na krožnico

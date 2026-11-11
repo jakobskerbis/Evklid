@@ -22,7 +22,7 @@ Za elipso s središčem v izhodišču in gorišči $F_1(-4, 0)$, $F_2(4, 0)$ izm
 | $(4;\; 1{,}8)$ | $8{,}2$ | $1{,}8$ | $10$ |
 | $(-5, 0)$ | $1$ | $9$ | $10$ |
 
-Vsota je vedno $10$. To je dolžina daljše osi elipse, ki jo imenujemo **glavna os**. Njena polovica je **velika polos** $a$, tu $a = 5$. Krajša os je **stranska os**, njena polovica je **mala polos** $b$, tu $b = 3$. Krajišča obeh osi so **temena**.
+Vsota je vedno $10$. To je dolžina daljše osi elipse, ki jo imenujemo **velika os** (tudi glavna os). Njena polovica je **velika polos** $a$, tu $a = 5$. Krajša os je **mala os** (tudi stranska os), njena polovica je **mala polos** $b$, tu $b = 3$. Krajišča obeh osi so **temena**.
 
 Zdaj poglej točko $(0, 3)$ na vrhu elipse. Od nje do gorišča je $a$, ker sta obe razdalji enaki in skupaj dasta $2a$. Razdaljo $e$ od središča do gorišča imenujemo **linearna ekscentričnost**. Točka $(0, 3)$, središče in gorišče tvorijo pravokotni trikotnik s katetama $b$ in $e$ ter hipotenuzo $a$. Po Pitagorovem izreku je $b^2 + e^2 = a^2$, torej je $e = \sqrt{a^2 - b^2}$.
 
@@ -204,7 +204,7 @@ Prižgi žepno svetilko in jo usmeri v steno. Svetloba tvori stožec, osvetljena
 - Nagneš jo tako, da je rob stožca vzporeden s steno: lisa je parabola, na eni strani odprta.
 - Nagneš še bolj: lisa je ena veja hiperbole.
 
-Elipse najdeš v orbitah planetov (Sonce je v enem gorišču) in v ovalnih ogledalih. Parabole so v satelitskih antenah, avtomobilskih žarometih in pri metu žoge. Hiperbolo vidiš kot senco, ki jo svetilka z okroglim senčnikom vrže na steno nad seboj in pod seboj.
+Elipse najdeš v orbitah planetov (Sonce je v enem gorišču) in v ovalnih ogledalih. Parabole so v satelitskih antenah, avtomobilskih žarometih in pri metu žoge. Hiperbolo vidiš kot rob svetlobe, ki jo svetilka z okroglim senčnikom vrže na steno nad seboj in pod seboj.
 
 ## Preveri se
 

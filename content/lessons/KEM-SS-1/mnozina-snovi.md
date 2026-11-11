@@ -35,7 +35,7 @@ Nikjer, število molekul je enako: $N = 3\,\mathrm{mol} \cdot N_A$. Množina sno
 
 $$M = \frac{m}{n}, \qquad \text{enota: } \mathrm{g/mol}$$
 
-Številska vrednost molske mase (v $\mathrm{g/mol}$) je enaka relativni atomski ali relativni molekulski masi snovi, ki jo odčitaš iz periodnega sistema.
+Številska vrednost molske mase (v $\mathrm{g/mol}$) je enaka relativni atomski masi elementa, ki jo odčitaš iz periodnega sistema, ali relativni molekulski masi spojine, ki jo iz teh vrednosti izračunaš.
 
 **6. Kako izračunamo molsko maso spojine.** Seštejemo molske mase vseh atomov v formulski enoti. Za vodo $\mathrm{H_2O}$ (uporabimo $A_r(\mathrm{H}) = 1$, $A_r(\mathrm{O}) = 16$):
 
@@ -170,7 +170,7 @@ Predstavljaj si tri »vrečke«, ki jih povezujejo puščice:
 - **množina** $n$ (v molih), ki je v sredini,
 - **število delcev** $N$, ki ga ne vidiš.
 
-Množina je vedno v sredini. Od mase do množine greš z deljenjem z $M$, od množine do števila delcev z množenjem z $N_A$. Nazaj greš z obratnimi operacijami: z $n$ množiš z $M$ (dobiš $m$) ali deliš z $N_A$ (dobiš $n$ iz $N$).
+Množina je vedno v sredini. Od mase do množine greš z deljenjem z $M$, od množine do števila delcev z množenjem z $N_A$. Nazaj greš z obratnimi operacijami: $n$ pomnožiš z $M$ (dobiš $m$), $N$ pa deliš z $N_A$ (dobiš $n$).
 
 Če hočeš iz mase priti do števila delcev, vedno narediš dva koraka: $m \to n \to N$. Neposredne bližnjice ni.
 

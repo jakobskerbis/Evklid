@@ -63,7 +63,7 @@ Vzorec velja v splošnem in mu rečemo **pravilo za potenco**:
 
 $$(x^n)' = n\,x^{n-1}$$
 
-Velja tudi za negativne in ulomljene eksponente, na primer $\left(\frac{1}{x}\right)' = (x^{-1})' = -\frac{1}{x^2}$. Posebna primera: $x' = 1$ in odvod konstante je $0$, saj je graf konstante vodoravna premica.
+Velja tudi za negativne in racionalne eksponente, na primer $\left(\frac{1}{x}\right)' = (x^{-1})' = -\frac{1}{x^2}$. Posebna primera: $x' = 1$ in odvod konstante je $0$, saj je graf konstante vodoravna premica.
 
 **4. Odvod kot funkcija.** Za vsak $x$ lahko izračunamo $f'(x)$. Tako dobimo novo funkcijo $f'$, **odvod funkcije** $f$. Postopku rečemo **odvajanje**.
 
@@ -119,7 +119,7 @@ $f'(a) = \lim\limits_{h \to 0} \dfrac{f(a + h) - f(a)}{h}$
 **Rešitev:**
 
 1. $f(1) = 1 + 3 = 4$.
-2. $f(1 + h) = (1 + h)^2 + 3(1 + h) = 4 + 5h + h^2$, ko razstavimo kvadrat in seštejemo.
+2. $f(1 + h) = (1 + h)^2 + 3(1 + h) = 4 + 5h + h^2$, ko kvadriramo dvočlenik in seštejemo.
 3. Diferenčni količnik: $\dfrac{4 + 5h + h^2 - 4}{h} = \dfrac{5h + h^2}{h} = 5 + h$ (krajšamo $h$, ker je $h \ne 0$).
 4. Limita pri $h \to 0$: $5$.
 5. Preizkus s pravili: $f'(x) = 2x + 3$, pri $x = 1$ je to $2 + 3 = 5$.
@@ -273,7 +273,7 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 > $T'(t) = 12 - t$, zato je $T'(4) = 8\,^\circ\mathrm{C/min}$.
 
 :::simboli
-T | temperatura | T(t) = 20 + 20t - t^2 | °C | v Primeru 3 temperatura pekača
+T | temperatura |  | °C | v razlagi olje: $T(t) = 20 + 20t - t^2$; v Primeru 3 pekač, v kvizu mleko
 t | čas |  | min |
 f | funkcija |  |  |
 a | točka, v kateri odvajamo |  |  |

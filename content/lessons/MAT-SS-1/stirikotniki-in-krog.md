@@ -26,7 +26,7 @@ Vsote se razlikujejo le za stopinjo, kar je napaka merjenja. Vzorec je jasen. Š
 
 $$\alpha + \beta + \gamma + \delta = 360^\circ$$
 
-**2. Vrste štirikotnikov in njihove lastnosti.** Lik prepoznaš po stranicah, še bolj zanesljivo pa po diagonalah. V simulaciji spodaj »Štirikotniki« premikaj oglišča paralelograma in opazuj diagonali. Vedno se sekata v skupni sredini. Ko postaneta enako dolgi, dobiš pravokotnik, ko se sekata pod pravim kotom, romb.
+**2. Vrste štirikotnikov in njihove lastnosti.** Lik prepoznaš po stranicah, še bolj zanesljivo pa po diagonalah. V simulaciji spodaj »Štirikotniki« po vrsti izberi paralelogram, pravokotnik in romb ter opazuj diagonali. Pri vseh treh se razpolavljata. Pri pravokotniku sta poleg tega enako dolgi, pri rombu pa se sekata pod pravim kotom.
 
 | Lik | Definicija | Lastnosti |
 |---|---|---|
@@ -42,7 +42,7 @@ Lastnosti so »podedovane«: vsak kvadrat je romb, vsak romb je paralelogram, pa
 :::premisli
 Zdaj razloži mizarjev trik iz uvoda. Zakaj enako dolgi diagonali pomenita, da je okvir pravokoten?
 ---
-Ker sta oba para nasprotnih letev enako dolga, je okvir paralelogram (štirikotnik z enakima nasprotnima stranicama je vedno paralelogram). Med paralelogrami imajo enako dolgi diagonali le pravokotniki, zato so vsi vogali pravi.
+Ker sta oba para nasprotnih letev enako dolga, je okvir paralelogram (štirikotnik, ki ima oba para nasprotnih stranic enako dolga, je vedno paralelogram). Med paralelogrami imajo enako dolgi diagonali le pravokotniki, zato so vsi vogali pravi.
 :::
 
 **3. Ploščine in obsegi štirikotnikov.** Višina $v_a$ je pravokotna razdalja med osnovnico $a$ in nasprotno stranico. Iz papirnatega paralelograma ob eni poševni stranici odreži pravokotni trikotnik, ki ga odseče višina, in ga prilepi na drugo stran. Dobiš pravokotnik z enako osnovnico $a$ in s stranico $v_a$, zato je ploščina paralelograma $a \cdot v_a$. Dva enaka trapeza, enega obrnjenega, sestavita paralelogram z osnovnico $a + c$, zato ima trapez polovico njegove ploščine. Ker sta diagonali pravokotni, romb in deltoid zapolnita natanko polovico pravokotnika s stranicama $e$ in $f$, ki ju oklepa.
@@ -178,7 +178,7 @@ $d = \sqrt{48100} \approx 219{,}3\,\text{cm}$. Obe diagonali morata meriti pribl
 
 ## Pogoste napake
 
-- **Ploščina romba oziroma paralelograma s stranico namesto višine.** Če za paralelogram s stranicama $10\,\text{cm}$ in $6\,\text{cm}$ izračunaš $S = 10 \cdot 6$, dobiš ploščino pravokotnika. Razlog: pri pravokotniku sta stranici hkrati višina in osnovnica, pri poševnem liku pa ne. Pravilno: $S = a \cdot v_a$, kjer je $v_a$ pravokotna razdalja med osnovnicama in nikoli večja od kraka.
+- **Ploščina romba oziroma paralelograma s stranico namesto višine.** Če za paralelogram s stranicama $10\,\text{cm}$ in $6\,\text{cm}$ izračunaš $S = 10 \cdot 6$, dobiš ploščino pravokotnika. Razlog: pri pravokotniku sta stranici hkrati višina in osnovnica, pri poševnem liku pa ne. Pravilno: $S = a \cdot v_a$, kjer je $v_a$ pravokotna razdalja med stranico $a$ in njej vzporedno stranico, zato ni nikoli večja od stranice $b$.
 - **Za višino trapeza vzameš krak ali računaš z eno samo osnovnico.** Razlog: krak je pri poševnem trapezu na sliki »videti« kot višina, formula $S = a \cdot v$ pa je znana od paralelograma. Pravilno: višina je pravokotna na osnovnici, v formulo gresta obe osnovnici, $S = \dfrac{(a + c)\, v}{2}$. Če poznaš kraka in osnovnici, višino dobiš s Pitagorovim izrekom, kot v primeru 2.
 - **Pozabiš deliti z $2$ pri ploščini romba ali deltoida.** $S = e \cdot f$ je ploščina pravokotnika, ki lik oklepa. Razlog: lik zavzame natanko polovico tega pravokotnika. Pravilno: $S = \dfrac{e \cdot f}{2}$.
 - **Zamenjava $2\pi r$ in $\pi r^2$ ali premera in polmera.** Razlog: obe formuli vsebujeta $\pi$ in $r$, v besedilu pa je pogosto podan premer. Pravilno: najprej izračunaj $r = \dfrac{d}{2}$. Nato: obseg je dolžina in ima enoto $\text{cm}$ ($o = 2\pi r$), ploščina ima enoto $\text{cm}^2$ ($S = \pi r^2$). Preveri enoto rezultata.

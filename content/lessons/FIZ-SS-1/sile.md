@@ -104,14 +104,14 @@ $F_\mathrm{r} = \sqrt{F_1^2 + F_2^2}$, $\tan\varphi = \dfrac{F_2}{F_1}$
 **Rešitev:**
 
 1. Sili sta pravokotni, zato velja Pitagorov izrek: $F_\mathrm{r} = \sqrt{3{,}0^2 + 4{,}0^2}\,\mathrm{N} = 5{,}0\,\mathrm{N}$.
-2. Smer: v pravokotnem trikotniku je $\tan\varphi = \dfrac{4{,}0}{3{,}0} \approx 1{,}33$, torej $\varphi \approx 53^\circ$.
+2. Smer: v pravokotnem trikotniku je $\tan\varphi = \dfrac{4{,}0}{3{,}0} \approx 1{,}33$, torej $\varphi \approx 53^\circ$ (tipka $\tan^{-1}$ na računalu).
 3. Odgovor: rezultanta je $5{,}0\,\mathrm{N}$ in kaže $53^\circ$ od vzhoda proti severu. Jakova trditev o $7\,\mathrm{N}$ tu ne drži.
 
 ### Primer 3: kabel pod kotom (dva koraka)
 
 Telefon z maso $0{,}20\,\mathrm{kg}$ leži na mizi. Polnilni kabel ga vleče s silo $2{,}0\,\mathrm{N}$ pod kotom $30^\circ$ nad vodoravnico, a telefon se ne dvigne od mize. Kolikšni sta komponenti sile kabla? S kolikšno silo miza podpira telefon?
 
-**Podatki:** $m = 0{,}20\,\mathrm{kg}$, $F = 2{,}0\,\mathrm{N}$, $\alpha = 30^\circ$, $g = 9{,}81\,\mathrm{m/s^2}$
+**Podatki:** $m = 0{,}20\,\mathrm{kg}$, $F = 2{,}0\,\mathrm{N}$, $\alpha = 30^\circ$, $g = 9{,}81\,\mathrm{m/s^2}$, telefon ostane na mizi
 **Iščemo:** $F_x$, $F_y$ in sila podlage $F_\mathrm{pod}$
 
 :::formula
@@ -192,7 +192,7 @@ točka: 0; 0
 
 **Magnetni nosilec v avtu.** Telefon se drži prezračevalne rešetke. Navzdol ga vleče teža, magnet pa ga vleče vodoravno k rešetki. Magnetna sila sama telefona ne drži navzgor; to naredi trenje med telefonom in nosilcem. Zato telefon na grbini zdrsne, če je nosilec šibak.
 
-**Stojalo za telefon.** Ko telefon nasloniš na nagnjeno stojalo, ga podlaga ne podpira navpično, ampak pravokotno na naslon. To silo razstavimo na navpično (drži telefon) in vodoravno (potiska ga nazaj ob rob stojala).
+**Stojalo za telefon.** Ko telefon nasloniš na nagnjeno stojalo, ga podlaga ne podpira navpično, ampak pravokotno na naslon. To silo razstavimo na navpično (drži telefon) in vodoravno (potiska ga naprej ob spodnji rob stojala).
 
 ## Preveri se
 

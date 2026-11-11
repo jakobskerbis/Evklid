@@ -200,7 +200,7 @@ Opazovalec na peronu vidi isti met drugače: ključi letijo po loku. Za njega je
 ~ Vodoravna hitrost ne pojema: brez zračnega upora vodoravno ni nobenega pospeška.
 + $v_x$: $3$; $3$; $3\,\text{m/s}$ in $v_y$: $0$; $9{,}8$; $19{,}6\,\text{m/s}$
 - $v_x$: $3$; $3$; $3\,\text{m/s}$ in $v_y$: $0$; $4{,}9$; $19{,}6\,\text{m/s}$
-~ $4{,}9$ in $19{,}6$ sta padca v metrih ($\dfrac{g t^2}{2}$), ne hitrosti. Hitrost $v_y = g t$ raste enakomerno.
+~ $4{,}9$ je padec v metrih po $1\,\text{s}$ ($\dfrac{g t^2}{2}$), ne hitrost. Hitrost $v_y = g t$ raste enakomerno: po $1\,\text{s}$ je $9{,}8\,\text{m/s}$.
 > Vodoravno je gibanje enakomerno ($v_x = 3\,\text{m/s}$), navpično kot prosti pad ($v_y = g t$: $0$; $9{,}8$; $19{,}6\,\text{m/s}$).
 
 ? Zakaj kovanca, od katerih eden pade navpično z mize, drugi pa odleti vodoravno, prileteta na tla hkrati?

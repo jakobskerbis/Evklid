@@ -54,7 +54,7 @@ Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz be
 Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 1. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
 
 :::premisli
-Naloga sprašuje: »Kolikšna je največja hitrost kolesarja in kolikšno pot prevozi do ustavitve?« Dana je hitrost $v(t)$. Katera dva orodja potrebuješ in zakaj ne istega dvakrat?
+Naloga sprašuje: »Kolikšna je največja hitrost kolesarja in kolikšno pot prevozi do ustavitve?« Dana je hitrost $v(t)$. Kateri dve orodji potrebuješ in zakaj ne istega dvakrat?
 ---
 Za največjo hitrost odvod $v'(t) = 0$, ker iščemo maksimum funkcije $v$. Za pot integral $\int v(t)\,dt$, ker je pot ploščina pod grafom hitrosti. Prvo vprašanje je o vrednosti funkcije, drugo o vsoti njenih vrednosti skozi čas.
 :::
@@ -232,8 +232,8 @@ Razlog je število parov $\binom{n}{2} = \frac{n(n-1)}{2}$, ki raste s kvadratom
 
 :::simboli
 P | verjetnost | | – |
-A | dogodek »vsaj dva imata isti rojstni dan« | | |
-\overline{A} | nasprotni dogodek | P(\overline{A}) = 1 - P(A) | | vsi imajo različne rojstne dneve
+A | dogodek | | | pri rojstnih dnevih: vsaj dva imata isti dan
+\overline{A} | nasprotni dogodek | P(\overline{A}) = 1 - P(A) | | pri rojstnih dnevih: vsi imajo različne dneve
 V_n, V_{365} | variacije | | | $V_n^k = \frac{n!}{(n-k)!}$, vrstni red je pomemben
 B | dogodek | | |
 n | število ljudi oziroma elementov ali zaporedna številka člena | | |

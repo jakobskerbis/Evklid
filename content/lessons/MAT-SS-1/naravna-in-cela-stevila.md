@@ -60,7 +60,7 @@ Na primer $47 = 9 \cdot 5 + 2$ in $-17 = (-4) \cdot 5 + 3$. Število $b$ deli $a
 
 **6. Praštevila in razcep.** Naravno število $p > 1$ je **praštevilo**, če ima natanko dva pozitivna delitelja, $1$ in $p$. Naravno število, večje od $1$, ki ni praštevilo, je **sestavljeno**. Število $1$ ni ne praštevilo ne sestavljeno število. Število $2$ je edino sodo praštevilo. Praštevila do $50$ so: $2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47$.
 
-Ali je $n$ praštevilo, preveriš tako, da poskusiš deliti s praštevili $p$, za katera je $p^2 \le n$. Če je namreč $n = a \cdot b$ z $1 < a \le b$, je $a^2 \le a \cdot b = n$. Sestavljeno število ima torej delitelj $a$ z $a^2 \le n$, in tak delitelj ima tudi vsak prafaktor števila $a$.
+Ali je $n$ praštevilo, preveriš tako, da poskusiš deliti s praštevili $p$, za katera je $p^2 \le n$. Če je namreč $n = a \cdot b$ z $1 < a \le b$, je $a^2 \le a \cdot b = n$. Sestavljeno število ima torej delitelj $a$ z $a^2 \le n$, in tak delitelj je tudi vsak prafaktor števila $a$.
 
 **Osnovni izrek aritmetike:** vsako naravno število $n > 1$ je produkt praštevil, in to na en sam način (do vrstnega reda faktorjev). Na primer $360 = 2 \cdot 2 \cdot 2 \cdot 3 \cdot 3 \cdot 5 = 2^3 \cdot 3^2 \cdot 5$. Praštevil je neskončno mnogo.
 
@@ -92,7 +92,7 @@ V simulaciji spodaj (»Evklidov algoritem s kvadrati«) nastavi $a = 48$ in $b =
 
 ### Primer 1 (lažji)
 
-S merili za deljivost ugotovi, s katerimi od števil $2$, $3$, $4$, $5$ in $9$ je deljivo število $4\,536$.
+Z merili za deljivost ugotovi, s katerimi od števil $2$, $3$, $4$, $5$ in $9$ je deljivo število $4\,536$.
 
 **Podatki:** število $4\,536$; preverjamo delitelje $2$, $3$, $4$, $5$ in $9$
 **Iščemo:** katera od števil $2$, $3$, $4$, $5$, $9$ delijo število $4\,536$

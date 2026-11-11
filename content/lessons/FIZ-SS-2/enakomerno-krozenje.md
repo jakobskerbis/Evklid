@@ -25,7 +25,7 @@ $$v = \frac{2\pi r}{t_0}$$
 
 Tej hitrosti rečemo **obodna hitrost**. Za ISS je $t_0 = 93\,\mathrm{min} = 5580\,\mathrm{s}$ in $r = 6{,}79 \cdot 10^6\,\mathrm{m}$, zato je $v \approx 7650\,\mathrm{m/s}$.
 
-*Preveri:* dva satelita imata enak obhodni čas, prvi kroži na dvakrat večjem polmeru. Kateri je hitrejši? (Prvi, dvakrat: v enakem času prepotuje dvakrat daljšo pot.)
+*Preveri:* dva otroka sedita na istem vrtiljaku, zato imata enak obhodni čas. Prvi kroži na dvakrat večjem polmeru. Kateri je hitrejši? (Prvi, dvakrat: v enakem času prepotuje dvakrat daljšo pot.)
 
 **3. Smer hitrosti.** Hitrost je vektor, zato ima tudi smer. V vsaki točki kaže po **tangenti** na krožnico, to je pravokotno na polmer. Ko se telo premika po krožnici, se ta smer ves čas obrača. Velikost $v$ ostaja enaka, vektor $\vec v$ pa ne.
 

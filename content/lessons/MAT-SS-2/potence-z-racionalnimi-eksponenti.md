@@ -278,8 +278,8 @@ Vsi trije grafi gredo skozi točki $(0, 0)$ in $(1, 1)$, ker je $1^r = 1$ za vsa
 :::simboli
 a | osnova potence | | | $a > 0$ pri racionalnih eksponentih
 b | osnova druge potence | | |
-m | števec eksponenta (eksponent potence pod korenom) | | | celo število
-n | imenovalec eksponenta (stopnja korena) | | | naravno število, $n \ge 2$
+m | števec eksponenta (eksponent potence pod korenom) | | | celo število; v pravilih iz točke 2 cel eksponent
+n | imenovalec eksponenta (stopnja korena) | | | naravno število, $n \ge 2$; v pravilih iz točke 2 cel eksponent
 r, s | racionalna eksponenta | | |
 P | dnevna potreba po energiji v mirovanju | P = 70 \cdot M^{\frac{3}{4}} | kcal/dan | ocena za sesalce
 M | masa živali | | kg |
