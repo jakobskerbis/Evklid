@@ -99,7 +99,7 @@ test("izvoz prijav: samo s ključem, brez id-jev in imena učenca, stanje in_rev
     assert.equal((await call("/api/prijave/izvoz", { remote: true, auth: key })).body.reports.find((r) => r.kind === "lesson").pr, 612);
 
     // PR združen: popravljeno, PR ostane zapisan; izvoz in seznam odprtih je ne kažeta več.
-    assert.equal((await st("lesson", lr.body.id, { status: "fixed" })).status, 200);
+    assert.deepEqual((await st("lesson", lr.body.id, { status: "fixed" })).body, { ok: true, status: "fixed", pr: 612 });
     const fixed = store.db.prepare("SELECT status, pr, fixed_at FROM bug_reports WHERE id = ?").get(lr.body.id);
     assert.equal(fixed.status, "fixed");
     assert.equal(fixed.pr, 612);

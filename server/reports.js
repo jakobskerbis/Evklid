@@ -405,6 +405,7 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
       .run(...[status, fixedAt, ...(status === "open" ? [] : [pr]), rid, ...(kindCheck ? [kind] : [])]).changes;
     if (!n) return res.status(404).json({ error: "Prijava ne obstaja." });
     audit(store.db, { req, ...actorOf(req), action: "report_status", target: `${kind}:${rid}:${status}${pr ? `:pr${pr}` : ""}` });
-    res.json({ ok: true, status, pr: status === "open" ? null : pr });
+    // Odgovor pove shranjeno številko PR (ob »fixed« brez pr ostane prejšnja).
+    res.json({ ok: true, status, pr: store.db.prepare(`SELECT pr FROM ${table} WHERE id = ?`).get(rid)?.pr ?? null });
   });
 }
