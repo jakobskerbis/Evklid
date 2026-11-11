@@ -49,6 +49,7 @@ if (args.includes("--stej")) {
   for (const [id, e] of Object.entries(dec)) {
     const q = byId.get(id);
     if (!q || !["D", "I"].includes(e.o)) throw new Error(`neznano vprašanje ali odločitev: ${id}`);
+    if (e.k !== undefined && (!Array.isArray(e.k) || e.k.length < 2)) throw new Error(`»k« mora biti seznam vsaj dveh pojmov: ${id}`);
     if (e.k && !e.k.every((p) => q.pojmi.includes(p))) throw new Error(`pojem ni v točkovniku: ${id}`);
     data.vprasanja[id] = { h: q.h || q.hn, o: e.o, ...(e.r ? { r: e.r } : {}), ...(e.k ? { k: e.k } : {}) };
     n++;

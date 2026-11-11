@@ -96,6 +96,11 @@
    "h": "35b442b994d4",
    "o": "D"
   },
+  "FIZ-OS-8/odboj-svetlobe#p0": {
+   "h": "d3ecb16f53e2",
+   "o": "D",
+   "r": "po odstranitvi »Napovej, nato preveri v simulaciji« samostojno"
+  },
   "FIZ-OS-8/odboj-svetlobe#p1": {
    "h": "6aeb81393fed",
    "o": "D"
@@ -215,6 +220,11 @@
    "h": "086ab9026d97",
    "o": "D"
   },
+  "FIZ-SS-2/enakomerno-krozenje#p0": {
+   "h": "c64df579b7bf",
+   "o": "D",
+   "r": "po odstranitvi »Napovej, nato preveri« samostojno"
+  },
   "FIZ-SS-2/enakomerno-krozenje#p1": {
    "h": "5f6601b4704e",
    "o": "D"
@@ -254,6 +264,11 @@
   "FIZ-SS-3/izmenicni-tok-in-nihajni-krog#p0": {
    "h": "9f87aa292c45",
    "o": "D"
+  },
+  "FIZ-SS-3/izmenicni-tok-in-nihajni-krog#p1": {
+   "h": "9bfc69472012",
+   "o": "D",
+   "r": "po odstranitvi »Napovej, nato preveri v simulaciji« samostojno"
   },
   "FIZ-SS-3/magnetna-sila#p1": {
    "h": "b6c4d2e04568",
@@ -710,12 +725,8 @@
   },
   "MAT-OS-7/premo-sorazmerje#p1": {
    "h": "2154c26faf9a",
-   "o": "D",
-   "r": "taksi iz lekcije",
-   "k": [
-    "Črta dolžine $0\\,\\text{cm}$ na zemljevidu pomeni $0\\,\\text{km}$ v naravi",
-    "Na splošno: iz $y = k \\cdot x$ pri $x = 0$ dobimo $y = 0$"
-   ]
+   "o": "I",
+   "r": "»na primeru zemljevida«: sklic na primer iz lekcije"
   },
   "MAT-OS-7/razsirjanje-in-krajsanje-ulomkov#p0": {
    "h": "d6fde82e8afe",
@@ -996,6 +1007,15 @@
   "MAT-SS-3/graf-polinoma#p0": {
    "h": "499759994b54",
    "o": "D"
+  },
+  "MAT-SS-3/graf-polinoma#p1": {
+   "h": "e16946a3318d",
+   "o": "D",
+   "r": "po odstranitvi »Napovej, nato preveri v tabeli« samostojno; pojem o prostem členu je nevprašan",
+   "k": [
+    "Oba navzdol, levo in desno $-\\infty$",
+    "Vodilni člen je $-x^4$: stopnja $4$ je soda, vodilni koeficient $-1$ negativen"
+   ]
   },
   "MAT-SS-3/grafi-kotnih-funkcij#p1": {
    "h": "999ed4bf4c8e",
@@ -2080,7 +2100,8 @@
   },
   "UNI-ULFMF-ALGEBRA1/linearne-preslikave#p0": {
    "h": "a0db7a9692ef",
-   "o": "D"
+   "o": "I",
+   "r": "sklic na »zgornjo definicijo« iz lekcije; vzorec rabi L(0), ki v vprašanju ni definiran"
   },
   "UNI-ULFMF-ALGEBRA1/linearne-preslikave#p1": {
    "h": "840cf9ae0e7d",
@@ -2100,7 +2121,8 @@
   },
   "UNI-ULFMF-ALGEBRA2/grupe#p1": {
    "h": "57041dd7cd9b",
-   "o": "D"
+   "o": "I",
+   "r": "»pogoj iz trditve«: sklic na trditev iz lekcije"
   },
   "UNI-ULFMF-ALGEBRA2/kolobarji-in-polinomi#p0": {
    "h": "e4146dd91d3d",
@@ -2322,7 +2344,8 @@
   },
   "UNI-UMFE-ET1/metode-analize-vezij#p1": {
    "h": "201b1695cab7",
-   "o": "D"
+   "o": "I",
+   "r": "»sponki škatle«: sklic na škatlo iz lekcije"
   },
   "UNI-UMFE-ET2/moc-v-izmenicnih-vezjih#p0": {
    "h": "af1e6dfc434c",
