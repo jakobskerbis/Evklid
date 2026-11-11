@@ -183,7 +183,7 @@ Trojna vez: atoma si delita tri pare. Vsakemu atomu ostaneta $5 - 3 = 2$ elektro
 - Kovalentna vez je skupni (vezni) elektronski par med atomoma; nastane med nekovinami.
 - Skupni par pripada obema atomoma; vsak ga šteje v svoj oktet (vodik v svoj par dveh).
 - Molekula je skupina atomov, povezanih s kovalentnimi vezmi; molekule elementov ($\mathrm{O_2}$) in spojin ($\mathrm{H_2O}$).
-- Število vezi atoma: $v = 8 - z$ (vodik $v = 1$): H in Cl $1$, O $2$, N $3$, C $4$.
+- Število vezi atoma: $v = 8 - z$, kjer je $z$ število zunanjih elektronov (vodik: $v = 2 - 1 = 1$): H in Cl $1$, O $2$, N $3$, C $4$.
 - Lewisova formula: vezni par je črtica, nevezni par dve piki; enojna, dvojna ($\mathrm{O_2}$, $\mathrm{CO_2}$) in trojna vez ($\mathrm{N_2}$).
 - Snovi iz molekul imajo pogosto nizko tališče in vrelišče.
 

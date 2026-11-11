@@ -23,10 +23,11 @@
 //   --resnicna-meja        pusti dnevno mejo pregledov z zmogljivejšim modelom, kot je v aplikaciji (privzeto izklopljena)
 //   --iz-json <datoteka>   preveri obliko in zapiše povzetek v docs/meritve + tabelo v docs/stroski-ai.md, brez klicev.
 // Ciljna ponovitev (krog 2, 2026-11-11): samo izbrani primeri, vsak večkrat, za poceni preverbo spremembe pri primerih z napako.
-//   node scripts/primerjava-modelov.js --s-preverjanjem --samo KEM-OS-8/kovalentna-vez,UNI-ULFKKT-ORG1/alkani-alkeni-in-alkini --ponovi 3 [--pogoj s] --max-usd 1
+//   node scripts/primerjava-modelov.js --s-preverjanjem --samo KEM-OS-8/kovalentna-vez,UNI-ULFKKT-ORG1/alkani-alkeni-in-alkini --ponovi 3 [--pogoj s] --max-usd 1.5
 //   --samo <id,id>   id-ji lekcij (kot v polju »napake« meritve); isti rešeni primer kot v meritvi z istim --seed
 //   --ponovi <N>     vsak primer N-krat (1–10), ker isti model na isto nalogo ne odgovori vedno enako
 //   --pogoj s|brez   samo en pogoj (privzeto oba); »s« = cel Evklidov odgovor s preverjanjem
+//   --nadaljuj       nadaljuje prekinjeno ciljno ponovitev (privzeto vsak zagon začne na novo)
 // Vmesne vrstice gredo v data/natancnost-ponovitve.json (ne v napredek prave meritve), na koncu je tabela po primerih.
 // Ciljna ponovitev ni meritev za objavo: povzetka za repozitorij ne izpiše. --dry pokaže izbor in oceno stroška.
 import "../server/env.js";
@@ -64,18 +65,23 @@ const OUT = path.resolve(root, arg("out", "data/primerjava-modelov.md"));
 const PROMPT = arg("prompt", "");
 const TEMPLATE = PROMPT ? fs.readFileSync(path.resolve(root, PROMPT), "utf8") : undefined;
 const MOCK = isMockMode();
-const SAMO = arg("samo", "")
+const SAMO_ALL = arg("samo", "")
   .split(",")
   .map((x) => x.trim())
   .filter(Boolean);
-const PONOVI_RAW = arg("ponovi", "1");
+const SAMO = [...new Set(SAMO_ALL)];
+if (SAMO.length < SAMO_ALL.length) console.warn(`--samo: podvojeni id-ji so izpuščeni (${SAMO_ALL.filter((x, i) => SAMO_ALL.indexOf(x) !== i).join(", ")}).`);
+const PONOVI_RAW = process.argv.includes("--ponovi") ? arg("ponovi", "") : "1";
 const PONOVI = /^\d+$/.test(PONOVI_RAW) ? Number(PONOVI_RAW) : NaN;
 const POGOJ = arg("pogoj", "");
-if (SAMO.length || process.argv.includes("--ponovi") || POGOJ) {
-  const why = !CHECK
+const flagNoValue = ["samo", "ponovi", "pogoj"].find((k) => process.argv.includes(`--${k}`) && !arg(k, ""));
+if (SAMO.length || flagNoValue || process.argv.includes("--ponovi") || POGOJ || process.argv.includes("--nadaljuj")) {
+  const why = flagNoValue
+    ? `--${flagNoValue} potrebuje vrednost`
+    : !CHECK
     ? "--samo, --ponovi in --pogoj veljajo le z --s-preverjanjem"
     : !SAMO.length
-      ? "--ponovi in --pogoj veljata le skupaj z --samo <id,id>"
+      ? "--ponovi, --pogoj in --nadaljuj veljajo le skupaj z --samo <id,id>"
       : !(PONOVI >= 1 && PONOVI <= 10)
         ? `neveljaven --ponovi »${PONOVI_RAW}« (celo število od 1 do 10)`
         : POGOJ && !CONDITIONS.some((c) => c.kljuc === POGOJ)
@@ -311,7 +317,8 @@ if (DRY) {
   process.exit(0);
 }
 if (CHECK) {
-  if (process.argv.includes("--znova")) fs.rmSync(PROGRESS, { force: true });
+  // Ciljna ponovitev začne vedno na novo (stari odgovori so lahko iz prejšnjega prompta); --nadaljuj nadaljuje prekinjeno.
+  if (SAMO.length ? !process.argv.includes("--nadaljuj") : process.argv.includes("--znova")) fs.rmSync(PROGRESS, { force: true });
   const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP, conditions: CONDS });
   if (SAMO.length) {
     // Tabela po primerih in pogojih (ni povzetka za objavo: izbor ni vzorec vseh lekcij).

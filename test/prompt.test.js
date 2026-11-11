@@ -137,11 +137,11 @@ test("accuracy round 2 (2026-11-11): Lewis rule, possible exercise results and t
   const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
   const fixed = src.split(SPLIT_MARKER)[0];
   const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
-  for (const s of ["število zunanjih elektronov", "ne vrstno število", "oktet štej v elektronih", "pri vsakem atomu", "preprosto pravilo vezi ne zadošča"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  for (const s of ["število zunanjih elektronov", "ne vrstno število", "vodik $v = 1$", "Ob vsakem atomu preštej elektrone", "po 2 na vezni in na nevezni par", "Pravilo ne velja za $\\mathrm{CO}$", "ione", "$\\mathrm{BF_3}$", "$\\mathrm{SF_6}$", "ne zavrneš zaradi okteta"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
   const rule = fixed.slice(fixed.indexOf("- **Dodatne vaje in stranske trditve.**"));
-  assert.match(rule.slice(0, 2000), /vsi dani, rezultat mogoč \(ocena od 1 do 5, celo število ljudi ali predmetov, delež do 100 %\)/);
+  assert.match(rule.slice(0, 2000), /vsi dani, rezultat mogoč \(ocena na lestvici naloge, v šoli 1–5; celo število ljudi ali predmetov; delež ≤ 100 %\)/);
   const pravilnost = fixed.slice(fixed.indexOf("### Pravilnost"), fixed.indexOf("## Način A"));
-  assert.match(pravilnost, /najprej vprašaj, namesto da si podatke izmisliš\. Tabelna vrednost ali konstanta, ki je naloga ne poda .*»\(tabelna vrednost\)«.*iz svojega učbenika/);
+  assert.match(pravilnost, /najprej vprašaj, namesto da si podatke izmisliš\. Tabelna vrednost, ki je naloga ne poda .*»\(tabelna vrednost\)«.*iz svojega učbenika.*Če je odvisna od vira \(razmerja hitrosti\) ali je ne veš zagotovo, vprašaj/);
   // Krog 2 doda manj kot 800 znakov predpomnjenega dela (50 912 pred spremembo).
   assert.ok(fixed.length < 50912 + 800, `stalni del ${fixed.length} znakov`);
 });

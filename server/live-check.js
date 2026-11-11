@@ -170,7 +170,7 @@ export function withNote(messages, note) {
 
 // Vrstice, kjer napačna vrednost lahko stoji namenoma (učenčeva napaka, vprašanje, »če bi …«).
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
-const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
+const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|vzel[a]?|uporabil[a]?|extraneous|reject)(?!\p{L})/iu;
 
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
 function statedValues(answer, vars) {
@@ -277,7 +277,7 @@ export function codeFindings(answer, pre = null, question = "") {
       if (v.issue) return { checked, issue: v.issue };
     }
   }
-  for (const f of [valenceIssue(answer), celsiusIssue(answer, question)]) {
+  for (const f of [valenceIssue(answer, question), celsiusIssue(answer, question)]) {
     checked += f.checked;
     if (f.issue) return { checked, issue: f.issue };
   }
@@ -293,9 +293,9 @@ const ELEMENTS = [
   ["N", "dušik", /dušik|nitrogen/iu, 5, 7],
   ["O", "kisik", /kisik|oxygen/iu, 6, 8],
   ["F", "fluor", /fluor(?!esc)/iu, 7, 9],
-  ["Cl", "klor", /(?<!\p{L})klor|chlorin/iu, 7, 17],
-  ["Br", "brom", /(?<!\p{L})brom|bromin/iu, 7, 35],
-  ["I", "jod", /(?<!\p{L})jod|iodin/iu, 7, 53],
+  ["Cl", "klor", /(?<!\p{L})klor(?!ofil|id)|chlorin/iu, 7, 17],
+  ["Br", "brom", /(?<!\p{L})brom(?!id)|bromin/iu, 7, 35],
+  ["I", "jod", /(?<!\p{L})jod(?!id)|iodin/iu, 7, 53],
   ["S", "žveplo", /žvepl|sulfur/iu, 6, 16],
   ["P", "fosfor", /fosfor|phosphor/iu, 5, 15],
   ["Si", "silicij", /silicij|silicon/iu, 4, 14],
@@ -314,16 +314,25 @@ function elementMentions(line) {
 }
 const ELEMENT_NAME = Object.fromEntries(ELEMENTS.map((e) => [e[0], e[1]]));
 
-export function valenceIssue(answer) {
+// Pregledi 2 in 3 (PR #574): ime elementa največ ~60 znakov pred »v = 8 − k«; k, ki je število zunanjih elektronov
+// katerega koli elementa v vrstici, ni napaka, razen če je vrstno število elementa ob ujemanju; vrstica s hitrostjo
+// (»hitrost«, m/s, km/h) ni kemija; »8 − k« iz učenčevega sporočila je njegov račun.
+const VALENCE_RE = /(?<![\p{L}\d])v\s*=\s*(?:8\s*(?:-|−|–|\\minus)\s*z\s*=\s*)?8\s*(?:-|−|–|\\minus)\s*(\d+)(?![\d.,\p{L}]|\{,\}|\s*(?:\\cdot|\\times|[·*×/^]|[a-z]\b))/gu;
+const SPEED_RE = /hitrost|\b(?:k?m|cm)\s*\/\s*(?:s|h)\b|\\(?:text|mathrm)\{\s*(?:k?m|cm)\s*\/\s*(?:s|h)\s*\}|\\frac\{\s*(?:\\(?:text|mathrm)\{)?\s*k?m\s*\}?\s*\}\{\s*(?:\\(?:text|mathrm)\{)?\s*(?:s|h)\b/iu;
+const eightMinus = (t) => new Set([...String(t || "").matchAll(/8\s*(?:-|−|–|\\minus)\s*(\d+)(?!\d)/g)].map((m) => Number(m[1])));
+export function valenceIssue(answer, question = "") {
   let checked = 0;
+  const pupil = eightMinus(question);
   for (const line of String(answer || "").split("\n")) {
-    if (SKIP_LINE.test(line)) continue;
-    for (const m of line.matchAll(/(?<![\p{L}\d])v\s*=\s*(?:8\s*(?:-|−|–|\\minus)\s*z\s*=\s*)?8\s*(?:-|−|–|\\minus)\s*(\d+)(?![\d.,\p{L}]|\{,\})/gu)) {
-      const el = elementMentions(line.slice(0, m.index)).at(-1);
+    if (SKIP_LINE.test(line) || SPEED_RE.test(line)) continue;
+    const outerOnLine = new Set(elementMentions(line).map((e) => e.outer));
+    for (const m of line.matchAll(VALENCE_RE)) {
+      const el = elementMentions(line.slice(Math.max(0, m.index - 60), m.index)).at(-1);
       if (!el) continue;
       checked++;
       const k = Number(m[1]);
-      if (k !== el.outer)
+      if (pupil.has(k)) continue;
+      if (k === el.z || (k !== el.outer && !outerOnLine.has(k)))
         return {
           checked,
           issue: `in $v = 8 - ${k}$ for ${ELEMENT_NAME[el.sym]} (${el.sym}) the answer uses ${k}${k === el.z ? ", its atomic number," : ""} but ${el.sym} has ${el.outer} outer (valence) electrons, so $v = 8 - ${el.outer} = ${8 - el.outer}$`,
@@ -356,7 +365,7 @@ export function celsiusIssue(answer, question = "") {
       const d = Number(a.replace(",", ".")) - Number(b.replace(",", "."));
       return {
         checked,
-        issue: `the task gives ${a} °C and ${b} °C, but the answer writes them as ${a} K and ${b} K; the difference is $${a}\\,°\\text{C} - ${b}\\,°\\text{C} = ${String(d).replace(".", ",")}\\,\\text{K}$, while ${a} K itself would be ${String(Number(a.replace(",", ".")) - 273).replace(".", ",")} °C`,
+        issue: `the task gives ${a} °C and ${b} °C, but the answer writes them as ${a} K and ${b} K; the difference is $${a}\\,°\\text{C} - ${b.startsWith("-") ? `(${b}\\,°\\text{C})` : `${b}\\,°\\text{C}`} = ${String(d).replace(".", ",")}\\,\\text{K}$, while ${a} K itself would be ${String(Number(a.replace(",", ".")) - 273).replace(".", ",")} °C`,
       };
     }
   }

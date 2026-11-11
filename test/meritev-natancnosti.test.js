@@ -184,8 +184,14 @@ test("ciljna ponovitev (krog 2): en pogoj, ponovitve z lastnim id-jem in isto te
   assert.match(dry.stdout, /2 primerov × 3 ponovitve × 1 pogoj .* = 6 odgovorov/);
   assert.match(dry.stdout, /Ocena stroška za vse primere: ~\d+\.\d\d \$/);
   assert.match(dry.stdout, /- KEM-OS-8\/kovalentna-vez#3 · /);
+  const dup = run(["--s-preverjanjem", "--samo", "KEM-OS-8/kovalentna-vez,KEM-OS-8/kovalentna-vez", "--dry"]);
+  assert.equal(dup.status, 0, dup.stderr);
+  assert.match(dup.stderr, /podvojeni id-ji so izpuščeni/);
+  assert.match(dup.stdout, /Naloge: 1 /);
+  // Ciljna ponovitev privzeto začne na novo; nadaljuje le z --nadaljuj.
+  assert.match(readFileSync(path.join(root, "scripts/primerjava-modelov.js"), "utf8"), /SAMO\.length \? !process\.argv\.includes\("--nadaljuj"\)/);
   // Napačni argumenti: napaka pred vsakim klicem, tudi s ključem.
-  for (const bad of [["--samo", "NI/tega"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi", "0"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi", "11"], ["--samo", "KEM-OS-8/kovalentna-vez", "--pogoj", "x"], ["--ponovi", "2"]]) {
+  for (const bad of [["--samo", "NI/tega"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi", "0"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi", "11"], ["--samo", "KEM-OS-8/kovalentna-vez", "--pogoj", "x"], ["--ponovi", "2"], ["--samo"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi"], ["--nadaljuj"]]) {
     const r2 = run(["--s-preverjanjem", ...bad]);
     assert.equal(r2.status, 1, bad.join(" "));
     assert.match(r2.stderr, /Nič ni bilo poklicano/);

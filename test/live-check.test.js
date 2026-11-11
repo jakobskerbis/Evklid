@@ -522,6 +522,13 @@ test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, no
     "$v = 8 - 7 = 1$",
   ])
     assert.equal(valenceIssue(a).issue, null, a);
+  // Pregleda PR #574: drug element v vrstici, hitrost, množenje, klorofil/klorid, učenčev račun, »vzel«.
+  assert.equal(valenceIssue("Ogljik ima 4 zunanje elektrone in se veže s kisikom: $v = 8 - 4 = 4$.").issue, null, "4 je ogljikov");
+  assert.match(valenceIssue("Dušik in klor: za dušik $v = 8 - 7 = 1$").issue, /atomic number/, "7 = vrstno število dušika, tudi ob kloru");
+  for (const a of ["Ogljik: $v = 8 - 2\\cdot k$", "Ogljik: $v = 8 - 2 \\times t$", "Ogljik se giblje: v = 8 - 3 = 5 m/s", "Hitrost delca ogljika: $v = 8 - 3 = 5$", "Ogljik: $v = 8 - 3 = 5\\,\\text{m/s}$", "Klorofil: $v = 8 - 3$", "Kloridni ion: $v = 8 - 3$", "Za dušik je učenec vzel $v = 8 - 7 = 1$."])
+    assert.equal(valenceIssue(a).issue, null, a);
+  assert.equal(valenceIssue("Dušik: $v = 8 - 7 = 1$", "Ali je za dušik v = 8 − 7?").issue, null, "učenčev račun iz sporočila");
+  assert.match(valenceIssue("Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo pred računom $v = 8 - 7 = 1$.").issue ?? "", /^$/, "ime več kot 60 znakov pred računom ne šteje");
   // V codeFindings: popravek pride tudi pri OŠ, kjer pregleda z modelom ni.
   assert.match(codeFindings("Dušik: $v = 8 - 7 = 1$").issue, /outer \(valence\) electrons/);
 });
@@ -535,6 +542,7 @@ test("code check (2026-11-11 round 2): temperatures given in °C are not written
     assert.equal(celsiusIssue(a, q).issue, null, a);
   assert.equal(celsiusIssue("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K}$", "Plin ohladimo z 20 K na 0 K.").issue, null, "naloga v kelvinih");
   assert.equal(codeFindings("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K} = 20\\,\\text{K}$", null).issue, null, "brez naloge ni primerjave");
+  assert.match(celsiusIssue("$\\Delta T = 20\\,\\text{K} - (-10)\\,\\text{K}$", "Od -10 °C do 20 °C").issue || celsiusIssue("$\\Delta T = 20\\,\\text{K} - -10\\,\\text{K}$", "Od -10 °C do 20 °C").issue, /- \(-10\\,°\\text\{C\}\) = 30/, "negativna temperatura v oklepaju");
 });
 
 test("code check (2026-11-11 round 2): an OŠ chemistry answer with v = 8 − 7 for nitrogen gets one correction without a model review", async () => {
