@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Podobna trikotnika
+  - enaki koti, stranice v razmerju $k$
+  - $k = 1$ pomeni skladna trikotnika
+- Koeficient podobnosti
+  - $k = \dfrac{a'}{a}$
+  - stranice množiš s $k$, ne prištevaš
+- Izreki podobnosti
+  - KK, SSS, SKS, SSK
+  - najpogosteje zadošča KK
+- Razmerje ploščin
+  - ploščina raste s $k^2$
+  - $3$-krat daljše, $9$-krat večja ploščina
+- Merjenje na daljavo
+  - Luna s kovancem: $\dfrac{x}{R} = \dfrac{p}{r}$
+  - ustrezne dolžine v istem vrstnem redu
+- Višina na hipotenuzo
+  - odseka $c_a$, $c_b$, $c = c_a + c_b$
+  - nastanejo trije podobni trikotniki
+- Evklidov izrek
+  - $a^2 = c \cdot c_a$, $b^2 = c \cdot c_b$
+  - napaka: odsek ob drugi kateti
+- Višinski izrek
+  - $v_c^2 = c_a \cdot c_b$
+  - na koncu koreni

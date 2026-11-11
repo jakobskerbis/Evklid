@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pospešek
+  - $a = \dfrac{\Delta v}{\Delta t}$, enota $\mathrm{m/s^2}$
+  - napaka: velik pospešek ni velika hitrost
+- Graf v(t)
+  - premica z naklonom $a$
+  - ploščina pod njo je pot
+- Hitrost
+  - $v = v_0 + a\,t$
+  - zaviranje: $a$ negativen
+- Pot
+  - $s = v_0\,t + \dfrac{a\,t^2}{2}$
+  - dvojni čas, štirikratna pot
+- Enačba brez časa
+  - $v^2 = v_0^2 + 2\,a\,s$
+  - zavorna pot raste s $v_0^2$
+- Graf s(t)
+  - parabola, vse strmejša
+  - naklon tangente je hitrost

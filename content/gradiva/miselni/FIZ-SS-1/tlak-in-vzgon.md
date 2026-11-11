@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tlak
+  - $p = \dfrac{F}{S}$, enota $1\,\mathrm{Pa} = 1\,\mathrm{N/m^2}$
+  - $1\,\mathrm{bar} = 100\,000\,\mathrm{Pa}$
+- Hidrostatični tlak
+  - $p_h = \rho\,g\,h$
+  - plastenka $0{,}30\,\mathrm{m}$: $2940\,\mathrm{Pa}$
+  - napaka: več vode pomeni večji tlak
+- Skupni tlak
+  - $p = p_0 + \rho\,g\,h$
+  - vsakih $10\,\mathrm{m}$ vode približno $1\,\mathrm{bar}$ več
+- Vzgon
+  - razlika tlakov na spodnjo in zgornjo ploskev
+  - ni odvisen od globine potopljenega telesa
+- Arhimedov zakon
+  - $F_v = \rho_t\,g\,V_i$
+  - $\rho_t$ je gostota tekočine, ne telesa
+- Plavanje ali potop
+  - $\rho < \rho_t$ plava, $\rho > \rho_t$ potone
+  - plavajoče telo: $F_v = F_g$
+  - lubenica $6\,\mathrm{kg}$ izpodrine $6\,\mathrm{L}$ vode
