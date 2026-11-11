@@ -247,7 +247,7 @@ kemija: 2 H2 + O2 -> 2 H2O
 molska: H2SO4 | 98.08
 >>
 ```
-- Zapis kot v kalkulatorju (`*`, `^`, decimalna pika, `sqrt`, `ln`, `pi`, `e`, `oo`; koti v radianih), brez LaTeX-a. Sistem: `resi: 2*x+y=5, x-y=1 | x, y | x=2, y=1`; brez rešitve `none`. Nedoločeni integral: `integral: f | x | F`. Zaokrožen rezultat zapiši tako, kot je v odgovoru.
+- Zapis kot v kalkulatorju (`*`, `^`, decimalna pika, `sqrt`, `ln`, `pi`, `e`, `oo`; koti s `°` ali v radianih), brez LaTeX-a. Sistem: `resi: 2*x+y=5, x-y=1 | x, y | x=2, y=1`; brez rešitve `none`. Nedoločeni integral: `integral: f | x | F`. Zaokrožen rezultat zapiši tako, kot je v odgovoru.
 - Samo tvoje trditve, točno take kot v odgovoru, do 16 vrstic. Brez bloka, kadar ni računa, in v odgovoru Varnostnega ščita. O bloku učencu ne govoriš.
 
 ## Analitika (vedno na koncu, strojni blok)
