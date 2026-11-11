@@ -27,6 +27,20 @@ test("pregled mrež: kocka, obrnjena kocka, ena obrnjena ploskev, odprta škatla
   const p2 = new Float64Array([...p, 0, 0, 0]);
   const q2 = q.slice(); q2[0] = 8;
   assert.equal(analiziraj(p2, Uint32Array.from(q2)).odprtiRobovi, 0);
+  // Zrcaljena kocka (x → −x) v zrcaljenem vozlišču (det < 0) ni obrnjena navznoter.
+  const zrc = Float64Array.from(p, (v, i) => (i % 3 === 0 ? -v : v));
+  assert.equal(analiziraj(zrc, Uint32Array.from(q), true).navznoter, 0);
+  assert.equal(analiziraj(zrc, Uint32Array.from(q), false).navznoter, 1);
+  // Ista kocka brez indeksov (tri oglišča na trikotnik) je ena zaprta komponenta.
+  const brez = new Float64Array(q.length * 3);
+  q.forEach((v, i) => brez.set(p.subarray(v * 3, v * 3 + 3), i * 3));
+  const b = analiziraj(brez, null);
+  assert.deepEqual([b.odprtiRobovi, b.zaprte, b.navznoter], [0, 1, 0]);
+  // Votlina: notranja lupina (obrnjena) v zaprti zunanji lupini ni »navznoter« (votla žila); sama zase je.
+  const zun = Float64Array.from(p, (v) => v * 3 - 1);
+  const oba = new Float64Array([...zun, ...p]);
+  const votla = analiziraj(oba, Uint32Array.from([...q, ...obr.map((v) => v + 8)]));
+  assert.deepEqual([votla.zaprte, votla.navznoter], [2, 0]);
 });
 
 test("pregled mrež: izhodišče ima mere v pravem vrstnem redu", () => {

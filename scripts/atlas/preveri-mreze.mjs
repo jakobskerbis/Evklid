@@ -1,5 +1,6 @@
 // Samodejni pregled mrež vseh 3D modelov (GLB): luknje, odprti robovi, nemnogoterni robovi, obrnjene ploskve,
-// zaprti deli, obrnjeni navznoter, izrojeni trikotniki. Za vsako vozlišče z mrežo (del) in vsak primitiv.
+// zaprti deli, obrnjeni navznoter, izrojeni trikotniki, primitivi, ki niso trikotniki. Za vsako vozlišče z mrežo (del);
+// več primitivov istega vozlišča se pregleda skupaj.
 //
 // Zagon:
 //   node scripts/atlas/preveri-mreze.mjs                 tabela za vse GLB (organi-3d, telo, telo-hd)
@@ -16,7 +17,8 @@
 // odprt konec cevi je tudi zanka). Rob z več kot dvema ploskvama = nemnogoteren. Sosednji ploskvi, ki rob prehodita
 // v isti smeri, imata nasprotno navijanje: z obhodom (BFS) vsako povezano komponento usmerimo po večini, manjšina so
 // »obrnjene ploskve«. Za zaprte komponente (brez odprtih in nemnogoternih robov) izračunamo predznačeno prostornino v
-// svetovnih koordinatah (z matriko vozlišča); < 0 = obrnjena navznoter. Izrojen = trikotnik z dvema enakima ogliščema
+// svetovnih koordinatah (z matriko vozlišča); < 0 = obrnjena navznoter, razen če je votlina: notranja lupina votle žile,
+// ki leži v zaprti zunanji lupini istega dela (preverimo z žarkom). Izrojen = trikotnik z dvema enakima ogliščema
 // po varjenju ali s ploščino skoraj 0.
 // Žile (stolpec »žila«): organi po extras.tkivo (arterija, vena, portalna, pljucna*), telo po sistemu »zile« v
 // public/3d/atlas-strukture.json (extras.zid) brez srčnih votlin in zaklopk, sicer po imenu (artery, vein, aorta …).
@@ -32,7 +34,7 @@ const MODELI = path.join(ROOT, "public", "3d", "modeli");
 export const MAPE = ["organi-3d", "telo", "telo-hd"];
 export const IZHODISCE = path.join(ROOT, "scripts", "atlas", "mreze-izhodisce.json");
 // Mere, ki jih test primerja z izhodiščem (vrstni red v izhodišču).
-export const MERE = ["odprtiRobovi", "luknje", "nemnogoterni", "obrnjene", "navznoter", "izrojeni"];
+export const MERE = ["odprtiRobovi", "luknje", "nemnogoterni", "obrnjene", "navznoter", "izrojeni", "neTrikotniki"];
 
 const ZILA_TKIVO = /^(arterija|vena|portalna|pljucna(-arterija|-vena)?(-v)?)$/;
 const ZILA_IME = /arter|\bvein|\bvena\b|venae|venous|aort|truncus|\btrunk\b|sinus|arch of|plexus|anastomo|vessel|\bbranch(es)?\b|striate/i;
@@ -50,7 +52,7 @@ function sistem(id) {
 export function jeZila(ime, extras = {}) {
   if (extras.tkivo != null) return ZILA_TKIVO.test(extras.tkivo);
   const id = extras.zid || ime;
-  if (NI_ZILA.test(id)) return false;
+  if (NI_ZILA.test(id) && !/\bveins? of\b/i.test(id)) return false; // »Inferior vein of left ventricle« je žila
   const s = sistem(id);
   return s ? s === "zile" : ZILA_IME.test(id);
 }
@@ -179,6 +181,28 @@ export function analiziraj(p, idx, zrcaljeno = false) {
     const a = F[f * 3] * 3, b = F[f * 3 + 1] * 3, c = F[f * 3 + 2] * 3;
     return (P[a] * (P[b + 1] * P[c + 2] - P[b + 2] * P[c + 1]) - P[a + 1] * (P[b] * P[c + 2] - P[b + 2] * P[c]) + P[a + 2] * (P[b] * P[c + 1] - P[b + 1] * P[c])) / 6;
   };
+  const telesa = []; // zaprte komponente: { V, mn, mx, ploskve }
+  // Število presečišč žarka iz (ox, oy, oz) v stalni smeri s ploskvami (liho = točka je v telesu).
+  const presecisc = (ox, oy, oz, ploskve) => {
+    const dx = 0.5377, dy = 0.7151, dz = 0.4463;
+    let st = 0;
+    for (const f of ploskve) {
+      const a = F[f * 3] * 3, b = F[f * 3 + 1] * 3, c = F[f * 3 + 2] * 3;
+      const e1x = P[b] - P[a], e1y = P[b + 1] - P[a + 1], e1z = P[b + 2] - P[a + 2];
+      const e2x = P[c] - P[a], e2y = P[c + 1] - P[a + 1], e2z = P[c + 2] - P[a + 2];
+      const px = dy * e2z - dz * e2y, py = dz * e2x - dx * e2z, pz = dx * e2y - dy * e2x;
+      const det = e1x * px + e1y * py + e1z * pz;
+      if (Math.abs(det) < 1e-24) continue;
+      const tx = ox - P[a], ty = oy - P[a + 1], tz = oz - P[a + 2];
+      const u = (tx * px + ty * py + tz * pz) / det;
+      if (u < 0 || u > 1) continue;
+      const qx = ty * e1z - tz * e1y, qy = tz * e1x - tx * e1z, qz = tx * e1y - ty * e1x;
+      const w = (dx * qx + dy * qy + dz * qz) / det;
+      if (w < 0 || u + w > 1) continue;
+      if ((e2x * qx + e2y * qy + e2z * qz) / det > 0) st++;
+    }
+    return st;
+  };
   for (let s = 0; s < T; s++) {
     if (!ziv[s] || o[s] >= 0) continue;
     komponente++;
@@ -200,9 +224,23 @@ export function analiziraj(p, idx, zrcaljeno = false) {
       zaprte++;
       const vecina = n1 > n0 ? 1 : 0;
       let V = 0;
-      for (let i = 0; i < r; i++) { const f = vrsta[i]; V += (o[f] === vecina ? 1 : -1) * vol(f); }
-      if ((zrcaljeno ? -V : V) < 0) navznoter++;
+      const mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity];
+      for (let i = 0; i < r; i++) {
+        const f = vrsta[i];
+        V += (o[f] === vecina ? 1 : -1) * vol(f);
+        for (let k = 0; k < 3; k++) for (let c = 0; c < 3; c++) { const x = P[F[f * 3 + k] * 3 + c]; if (x < mn[c]) mn[c] = x; if (x > mx[c]) mx[c] = x; }
+      }
+      telesa.push({ V: zrcaljeno ? -V : V, mn, mx, ploskve: vrsta.slice(0, r) });
     }
+  }
+  // Obrnjena navznoter: zaprta komponenta z negativno prostornino, razen votline (svetlina votle žile: notranja lupina,
+  // ki leži v zaprti zunanji lupini istega dela in gleda v votlino; tako so narejene votle žile v organih).
+  for (const k of telesa) {
+    if (k.V >= 0) continue;
+    const f0 = k.ploskve[0];
+    const ox = P[F[f0 * 3] * 3], oy = P[F[f0 * 3] * 3 + 1], oz = P[F[f0 * 3] * 3 + 2];
+    const votlina = telesa.some((c) => c.V > 0 && -k.V < c.V && c.mn[0] <= k.mn[0] && c.mn[1] <= k.mn[1] && c.mn[2] <= k.mn[2] && c.mx[0] >= k.mx[0] && c.mx[1] >= k.mx[1] && c.mx[2] >= k.mx[2] && presecisc(ox, oy, oz, c.ploskve) % 2 === 1);
+    if (!votlina) navznoter++;
   }
   // Zrcaljeno vozlišče (det < 0): glTF tam za sprednjo šteje nasprotno navijanje, zato je predznak prostornine iz
   // svetovnih položajev obrnjen (zgoraj: zrcaljeno ? -V : V).
@@ -228,7 +266,7 @@ export function analiziraj(p, idx, zrcaljeno = false) {
   };
 }
 
-// Analiza ene datoteke GLB: seznam delov (vozlišče × primitiv; več primitivov istega vozlišča se sešteje).
+// Analiza ene datoteke GLB: seznam delov (vozlišče; več trikotniških primitivov istega vozlišča se pregleda skupaj).
 export async function preveriGLB(datoteka) {
   const doc = await (await bralnik()).read(datoteka);
   const deli = [];
@@ -241,14 +279,35 @@ export async function preveriGLB(datoteka) {
     let ime = node.getName() || mesh.getName() || "(brez imena)";
     if (imena.has(ime)) { imena.set(ime, imena.get(ime) + 1); ime = `${ime} #${imena.get(ime)}`; } else imena.set(ime, 1);
     const extras = node.getExtras() || {};
-    const sk = { ime, zila: jeZila(node.getName() || "", extras), trikotniki: 0, oglisca: 0, zanke: [] };
+    const sk = { ime, zila: jeZila(node.getName() || "", extras), trikotniki: 0, oglisca: 0, zanke: [], neTrikotniki: 0 };
     for (const m of ["odprtiRobovi", "luknje", "nemnogoterni", "nasprotniPari", "obrnjene", "komponente", "zaprte", "navznoter", "neusmerljive", "izrojeni"]) sk[m] = 0;
+    // Vsi trikotniški primitivi vozlišča skupaj (šiv med primitivoma ni luknja: oglišča se zvarijo po položaju).
+    // Primitiv, ki ni TRIANGLES (trakovi, pahljače, črte, točke), je težava: pregled ga ne zna preveriti.
+    const kosi = [];
+    let stOgl = 0, stInd = 0;
     for (const prim of mesh.listPrimitives()) {
-      if (prim.getMode() !== 4) continue; // samo TRIANGLES
+      if (prim.getMode() !== 4) { sk.neTrikotniki++; continue; }
       const pos = prim.getAttribute("POSITION");
       if (!pos) continue;
       const ind = prim.getIndices();
-      const r = analiziraj(polozaji(pos, M), ind ? ind.getArray() : null, zrc);
+      const p = polozaji(pos, M);
+      const idx = ind ? ind.getArray() : null;
+      kosi.push({ p, idx, odmik: stOgl });
+      stOgl += p.length / 3;
+      stInd += idx ? idx.length : p.length / 3;
+    }
+    if (kosi.length === 1) {
+      const r = analiziraj(kosi[0].p, kosi[0].idx, zrc);
+      for (const k of Object.keys(r)) if (k === "zanke") sk.zanke.push(...r.zanke); else sk[k] += r[k];
+    } else if (kosi.length > 1) {
+      const p = new Float64Array(stOgl * 3), idx = new Uint32Array(stInd);
+      let j = 0;
+      for (const k of kosi) {
+        p.set(k.p, k.odmik * 3);
+        const n = k.idx ? k.idx.length : k.p.length / 3;
+        for (let i = 0; i < n; i++) idx[j++] = (k.idx ? k.idx[i] : i) + k.odmik;
+      }
+      const r = analiziraj(p, idx, zrc);
       for (const k of Object.keys(r)) if (k === "zanke") sk.zanke.push(...r.zanke); else sk[k] += r[k];
     }
     sk.zanke.sort((a, b) => b.obseg - a.obseg);
@@ -286,9 +345,9 @@ export function noveTezave(rel, deli, izh) {
   const staro = izh[rel] || {};
   const out = [];
   for (const d of deli) {
-    const b = staro[d.ime] || MERE.map(() => 0);
+    const b = staro[d.ime] || [];
     MERE.forEach((m, i) => {
-      if (d[m] > b[i]) out.push(`${rel} »${d.ime}«${d.zila ? " (žila)" : ""}: ${m} ${b[i]} → ${d[m]}`);
+      if (d[m] > (b[i] ?? 0)) out.push(`${rel} »${d.ime}«${d.zila ? " (žila)" : ""}: ${m} ${b[i] ?? 0} → ${d[m]}`);
     });
   }
   return out;
@@ -328,7 +387,7 @@ async function glavni() {
       console.log(`${rel}: ${slabi.length} delov s težavami`);
       for (const d of slabi.slice(0, meja)) {
         const z = d.zanke.slice(0, 3).map((x) => mm(x.obseg)).join(", ");
-        console.log(`  ${d.zila ? "[žila] " : ""}${d.ime}: lukenj ${d.luknje}${z ? ` (obseg največjih ${z} mm)` : ""}, odprtih robov ${d.odprtiRobovi}, nemnog. ${d.nemnogoterni}, obrnjenih ${d.obrnjene}, navznoter ${d.navznoter}/${d.zaprte} zaprtih, izrojenih ${d.izrojeni}`);
+        console.log(`  ${d.zila ? "[žila] " : ""}${d.ime}: lukenj ${d.luknje}${z ? ` (obseg največjih ${z} mm)` : ""}, odprtih robov ${d.odprtiRobovi}, nemnog. ${d.nemnogoterni}, obrnjenih ${d.obrnjene}, navznoter ${d.navznoter}/${d.zaprte} zaprtih, izrojenih ${d.izrojeni}${d.neTrikotniki ? `, primitivov, ki niso trikotniki, ${d.neTrikotniki}` : ""}`);
       }
       if (slabi.length > meja) console.log(`  … še ${slabi.length - meja} (--vse)`);
     }
