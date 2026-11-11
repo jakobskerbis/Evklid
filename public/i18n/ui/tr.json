@@ -1789,6 +1789,7 @@
   "sch.noEvents": "Eklenmiş sınav yok.",
   "sch.planNote": "Sınava hazırlık {date} için ayarlandı.",
   "sch.prepare": "Hazırlan",
+  "ustno.vprasajMe": "Beni sına",
   "sch.linked": "Takvime bağlı: {label}",
   "sch.refresh": "Yenile",
   "sch.remindersOn": "Sınavdan bir gün önce bildirim",

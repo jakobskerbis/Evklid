@@ -1800,6 +1800,7 @@
   "sch.noEvents": "Нема уписаних контролних.",
   "sch.planNote": "Припрема за контролни је подешена за {date}.",
   "sch.prepare": "Припреми се",
+  "ustno.vprasajMe": "Испитај ме",
   "sch.linked": "Повезано са календаром: {label}",
   "sch.refresh": "Освежи",
   "sch.remindersOn": "Обавештење дан пре контролног",

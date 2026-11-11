@@ -26,7 +26,6 @@ import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
-import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
@@ -1268,8 +1267,12 @@ function addMessage(role, text, hasImage = false, info = null) {
   return el;
 }
 
+// Ustno spraševanje (public/ustno/ustno.js, naloži se ob odprtju).
+const openUstno = (src) => state.student && import("./ustno/ustno.js").then((m) => m.odpri(src, { api, student: state.student, renderRich, openLesson, topic: state.chatFx?.topic?.id }));
+document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]")) && openUstno(e.dataset.ustno));
 async function send(text, { deep = false, image: attached = null } = {}) {
   if (state.sending) return;
+  if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
   // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
   // fotografija v polju ostaneta (ne pošljemo ju zraven in ju ne pobrišemo). Slika samodejnega sporočila
   // (izrez naloge iz pole) pride kot attached.
@@ -1313,11 +1316,13 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
+    const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
     userEl = addMessage("user", text, !!image);
     if (fromInput) {
       $("#input").value = "";
       autoGrow();
       clearImage();
+      state.dictated = false;
     }
 
     bubble = addMessage("assistant", "");
@@ -1346,7 +1351,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     const res = await fetchThroughRestart(`/api/conversations/${state.conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, deep, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
+      body: JSON.stringify({ text, deep, nacin, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
     });
     if (!res) {
       bubble.remove();
@@ -1705,8 +1710,26 @@ $("#composer").addEventListener("submit", (e) => {
   send(input.value.trim());
 });
 
-// Glasovni vnos (brskalnik, sl-SI) in napredna tipkovnica s simboli.
-attachMic($("#mic-btn"), input, { onMessage: (m) => toast(m, "mic"), onChange: autoGrow });
+// Glasovni vnos (brskalnik, sl-SI): public/speech.js se naloži po zagonu (ni del prvega odprtja). Za mlajše od 15 let
+// le s stikalom starša v Računu (j 10. 11.); nacin "glas" ob pošiljanju preveri tudi strežnik. Tipkanje dela vedno.
+const glasOk = {};
+const glasZa = (id) => api(`/api/students/${id}/ustno`).then((r) => (glasOk[id] = r?.glas?.dovoljen !== false), () => true);
+whenIdle(() =>
+  import("./speech.js").then((m) =>
+    m.attachMic($("#mic-btn"), input, {
+      onMessage: (msg) => toast(msg, "mic"),
+      onChange: () => ((state.dictated = true), autoGrow()),
+      allowed: () => {
+        const id = state.student?.id;
+        if (!id) return true;
+        const p = glasZa(id);
+        return id in glasOk ? glasOk[id] : p;
+      },
+      onBlocked: () => import("./ustno/ustno.js").then(async (u) => (await u.loadDicts(), toast(u.tt("u.glasStarsKlepet"), "mic"))),
+    }),
+  ),
+);
+// Napredna tipkovnica s simboli.
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
 initSirina();

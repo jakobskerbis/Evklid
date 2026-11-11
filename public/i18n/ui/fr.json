@@ -1789,6 +1789,7 @@
   "sch.noEvents": "Aucun contrôle noté.",
   "sch.planNote": "La préparation au contrôle est prévue pour le {date}.",
   "sch.prepare": "Me préparer",
+  "ustno.vprasajMe": "Interroge-moi",
   "sch.linked": "Lié à l'agenda : {label}",
   "sch.refresh": "Actualiser",
   "sch.remindersOn": "Notification la veille du contrôle",

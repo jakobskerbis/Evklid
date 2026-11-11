@@ -1789,6 +1789,7 @@
   "sch.noEvents": "No tests added.",
   "sch.planNote": "Test prep is set for {date}.",
   "sch.prepare": "Get ready",
+  "ustno.vprasajMe": "Quiz me",
   "sch.linked": "Linked to calendar: {label}",
   "sch.refresh": "Refresh",
   "sch.remindersOn": "Notify me the day before a test",

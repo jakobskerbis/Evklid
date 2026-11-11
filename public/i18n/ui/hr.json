@@ -1800,6 +1800,7 @@
   "sch.noEvents": "Nema upisanih ispita.",
   "sch.planNote": "Priprema za ispit postavljena je za {date}.",
   "sch.prepare": "Pripremi se",
+  "ustno.vprasajMe": "Ispitaj me",
   "sch.linked": "Povezano s kalendarom: {label}",
   "sch.refresh": "Osvježi",
   "sch.remindersOn": "Obavijest dan prije ispita",

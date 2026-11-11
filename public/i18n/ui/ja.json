@@ -1781,6 +1781,7 @@
   "sch.noEvents": "テストはまだ入力されていません。",
   "sch.planNote": "テスト対策は {date} に設定されています。",
   "sch.prepare": "対策する",
+  "ustno.vprasajMe": "質問して",
   "sch.linked": "カレンダーと連携中：{label}",
   "sch.refresh": "更新",
   "sch.remindersOn": "テスト前日にお知らせ",

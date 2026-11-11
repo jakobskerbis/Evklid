@@ -1789,6 +1789,7 @@
   "sch.noEvents": "Nuk ka teste të shënuara.",
   "sch.planNote": "Përgatitja për test është vendosur për {date}.",
   "sch.prepare": "Përgatitu",
+  "ustno.vprasajMe": "Më pyet",
   "sch.linked": "Lidhur me kalendarin: {label}",
   "sch.refresh": "Rifresko",
   "sch.remindersOn": "Njoftim një ditë para testit",

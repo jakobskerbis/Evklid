@@ -1811,6 +1811,7 @@
   "sch.noEvents": "Brak wpisanych sprawdzianów.",
   "sch.planNote": "Przygotowanie do sprawdzianu ustawione na {date}.",
   "sch.prepare": "Przygotuj się",
+  "ustno.vprasajMe": "Przepytaj mnie",
   "sch.linked": "Połączono z kalendarzem: {label}",
   "sch.refresh": "Odśwież",
   "sch.remindersOn": "Powiadomienie dzień przed sprawdzianem",

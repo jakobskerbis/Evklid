@@ -1789,6 +1789,7 @@
   "sch.noEvents": "Keine Tests eingetragen.",
   "sch.planNote": "Die Testvorbereitung ist auf den {date} eingestellt.",
   "sch.prepare": "Vorbereiten",
+  "ustno.vprasajMe": "Frag mich ab",
   "sch.linked": "Mit Kalender verbunden: {label}",
   "sch.refresh": "Aktualisieren",
   "sch.remindersOn": "Benachrichtigung am Tag vor dem Test",

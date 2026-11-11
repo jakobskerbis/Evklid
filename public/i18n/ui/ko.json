@@ -1781,6 +1781,7 @@
   "sch.noEvents": "입력한 시험이 없어요.",
   "sch.planNote": "시험 대비가 {date}(으)로 설정되어 있어요.",
   "sch.prepare": "준비하기",
+  "ustno.vprasajMe": "질문해 줘",
   "sch.linked": "캘린더와 연결됨: {label}",
   "sch.refresh": "새로고침",
   "sch.remindersOn": "시험 전날 알림",

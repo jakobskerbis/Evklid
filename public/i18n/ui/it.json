@@ -1789,6 +1789,7 @@
   "sch.noEvents": "Nessuna verifica inserita.",
   "sch.planNote": "La preparazione alla verifica è impostata per il {date}.",
   "sch.prepare": "Preparati",
+  "ustno.vprasajMe": "Interrogami",
   "sch.linked": "Collegato al calendario: {label}",
   "sch.refresh": "Aggiorna",
   "sch.remindersOn": "Notifica il giorno prima della verifica",

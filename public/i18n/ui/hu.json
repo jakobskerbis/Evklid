@@ -1789,6 +1789,7 @@
   "sch.noEvents": "Nincs beírt dolgozat.",
   "sch.planNote": "A felkészülés dolgozatra erre a napra van beállítva: {date}.",
   "sch.prepare": "Felkészülés",
+  "ustno.vprasajMe": "Kérdezz ki",
   "sch.linked": "Naptárhoz kapcsolva: {label}",
   "sch.refresh": "Frissítés",
   "sch.remindersOn": "Értesítés a dolgozat előtti napon",

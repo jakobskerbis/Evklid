@@ -1706,6 +1706,7 @@ export async function renderAccount() {
       ${birthFormHtml(false)}
     </div>` : ""}
     <div id="credit-card"></div>
+    <div id="ustno-starsi"></div>
 
     <div class="card">
       <h2>${icon("award")} Povabi prijatelje</h2>
@@ -1780,6 +1781,7 @@ export async function renderAccount() {
   wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
+  import("./ustno/starsi.js").then((m) => m.karticaStarsev($("#ustno-starsi"), api)).catch(() => {}); // glas pri ustnem (ob odprtju)
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = $("button[type=submit]", e.target);

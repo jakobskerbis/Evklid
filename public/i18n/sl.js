@@ -2181,6 +2181,7 @@ export default {
   "sch.noEvents": "Ni vpisanih testov.",
   "sch.planNote": "Priprava na test je nastavljena za {date}.",
   "sch.prepare": "Pripravi se",
+  "ustno.vprasajMe": "Vprašaj me",
   "sch.linked": "Povezano s koledarjem: {label}",
   "sch.refresh": "Osveži",
   "sch.remindersOn": "Obvestilo dan pred testom",

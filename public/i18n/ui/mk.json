@@ -1789,6 +1789,7 @@
   "sch.noEvents": "Нема внесени тестови.",
   "sch.planNote": "Подготовката за тест е поставена за {date}.",
   "sch.prepare": "Подготви се",
+  "ustno.vprasajMe": "Испрашај ме",
   "sch.linked": "Поврзано со календар: {label}",
   "sch.refresh": "Освежи",
   "sch.remindersOn": "Известување ден пред тестот",

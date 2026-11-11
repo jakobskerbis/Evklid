@@ -9,8 +9,8 @@ export const MAX_CHILDREN = 4;
 // Ob spremembi politike (public/zasebnost.html) novo različico: obstoječi računi ob prijavi enkrat vidijo kratko obvestilo
 // (publicParent.privacy_notice, public/account.js). 2026-11-06: izvoz in izbris brez ostankov (#464), naloge in merjenje v pilotu (#474).
 // 2026-11-10 (potrdil j 10. 11.): #511: neujemajoče plačilo 1 leto; #477: odstavek o pilotu.
-// 2026-11-11 (j 10. 11.: eno obvestilo za Moje zapiske #563 in ustno spraševanje #564, na obeh vejah isti datum; pred
-// združitvijo ga uskladi z dnevom združitve): odstavek »Moji zapiski« (prepis rokopisa, fotografija se ne shrani).
+// 2026-11-11 (j 10. 11., združeno 11. 11.): eno obvestilo za Moje zapiske #563 (odstavek »Moji zapiski«: prepis rokopisa,
+// fotografija se ne shrani) in ustno spraševanje #564 (stikalo starša za glas, tudi mikrofon v Inštruktorju).
 export const PRIVACY_VERSION = "2026-11-11";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.

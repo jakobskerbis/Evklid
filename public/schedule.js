@@ -563,7 +563,7 @@ export async function renderScheduleCard(el) {
   el.innerHTML = `<div class="card sch-card">
     ${rem
       .map(
-        (e) => `<div class="sch-remind-row"><span class="ic">${icon("bell")}</span><div><b>${t(e.daysLeft === 0 ? "sch.remindToday" : "sch.remindTomorrow", { name: esc(e.name) })}${e.time ? ` · ${e.time}` : ""}</b><p class="muted">${t("sch.remindText")}</p></div>${e.path && TEST_KINDS.includes(e.kind) ? `<button type="button" class="primary" data-prep>${t("sch.prepare")}</button>` : ""}</div>`,
+        (e) => `<div class="sch-remind-row"><span class="ic">${icon("bell")}</span><div><b>${t(e.daysLeft === 0 ? "sch.remindToday" : "sch.remindTomorrow", { name: esc(e.name) })}${e.time ? ` · ${e.time}` : ""}</b><p class="muted">${t("sch.remindText")}</p></div>${e.path && TEST_KINDS.includes(e.kind) ? `<button type="button" class="primary" data-prep>${t("sch.prepare")}</button><button type="button" class="secondary" data-ustno="test">${icon("mic")} ${t("ustno.vprasajMe")}</button>` : ""}</div>`,
       )
       .join("")}
     <button type="button" class="sch-card-head" data-go-schedule><span class="eyebrow">${t(showTomorrow ? "sch.cardTomorrow" : "sch.cardToday")}</span>${icon("chevron-right")}</button>
