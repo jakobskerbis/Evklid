@@ -65,6 +65,7 @@ function renderOverview() {
     <h1 class="with-icon">${icon("layers")} ${t("cards.title")}</h1>
     <p class="muted">${t("cards.intro")}</p>
     <section class="card fc-start">${start}</section>
+    <div class="actions" style="margin-block:12px"><button type="button" class="secondary" data-notes>${icon("notebook-pen")} ${t("cards.notes")}</button></div>
     ${sets.length > 1 ? `<section class="fc-sets"><h2>${t("cards.sets")}</h2><p class="muted">${t("cards.setsHint")}</p>
       <div class="fc-set-grid">${sets.map(setTile).join("")}</div></section>` : ""}
     <details class="card fc-list"${list.length && list.length <= 12 ? " open" : ""}${list.length ? "" : " hidden"}>
@@ -85,6 +86,8 @@ function renderOverview() {
   v.querySelector("[data-practice]")?.addEventListener("click", () => startSession(null, true));
   v.querySelectorAll(".fc-set").forEach((b) => b.addEventListener("click", () => startSession(sets[Number(b.dataset.i)].key)));
   v.querySelector("#fc-add").addEventListener("submit", addOwn);
+  // Moji zapiski (public/zapiski/): modul, besedila in slog se naložijo šele zdaj.
+  v.querySelector("[data-notes]").addEventListener("click", async () => (await import("./zapiski/zapiski.js")).showZapiski({ ...D, box, back: showFlashcards }));
   v.querySelector(".fc-list").addEventListener("click", onListClick);
 }
 
@@ -143,7 +146,8 @@ function renderPractice() {
   const c = cards.get(id);
   session.flipped = false;
   session.seen = false;
-  const topic = session.key === null && c.source !== "own" && c.topic ? `<span class="fc-topic" dir="auto">${esc(c.topic)}</span>` : "";
+  const topic = (session.key === null && c.source !== "own" && c.topic ? `<span class="fc-topic" dir="auto">${esc(c.topic)}</span>` : "") +
+    (c.source === "zapiski" && !c.checked ? `<span class="muted">${esc(t("cards.notesUnchecked"))}</span>` : "");
   v.innerHTML = `<div class="fc-practice">${head}
     <div class="fc-flip" role="button" tabindex="0" aria-pressed="false">
       <div class="fc-inner">

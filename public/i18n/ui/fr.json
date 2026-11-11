@@ -1248,6 +1248,8 @@
   "mode.cards": "Fiches",
   "mode.cardsSub": "Faits clés",
   "cards.title": "Fiches de révision",
+  "cards.notes": "Mes notes",
+  "cards.notesUnchecked": "De tes notes – non vérifié",
   "cards.intro": "Les faits clés des explications du tuteur. Essaie d'abord de te rappeler la réponse tout seul, puis vérifie-la. Les fiches que tu connais reviennent de moins en moins souvent.",
   "cards.dueN": "À réviser aujourd'hui : {n}",
   "cards.show": "Afficher la réponse",

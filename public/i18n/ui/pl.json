@@ -1260,6 +1260,8 @@
   "mode.cards": "Fiszki",
   "mode.cardsSub": "Ważne fakty",
   "cards.title": "Fiszki do powtórki",
+  "cards.notes": "Moje notatki",
+  "cards.notesUnchecked": "Z twoich notatek – niesprawdzone",
   "cards.intro": "Ważne fakty z wyjaśnień korepetytora. Najpierw sam przypomnij sobie odpowiedź, potem ją sprawdź. Fiszki, które znasz, wracają coraz rzadziej.",
   "cards.dueN": "Na dziś: {n}",
   "cards.show": "Pokaż odpowiedź",

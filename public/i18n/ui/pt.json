@@ -1248,6 +1248,8 @@
   "mode.cards": "Cartões",
   "mode.cardsSub": "Factos importantes",
   "cards.title": "Cartões de revisão",
+  "cards.notes": "Os meus apontamentos",
+  "cards.notesUnchecked": "Dos teus apontamentos – não verificado",
   "cards.intro": "Factos importantes das explicações do tutor. Primeiro tenta lembrar-te da resposta sozinho e depois confirma. Os cartões que já sabes voltam cada vez menos vezes.",
   "cards.dueN": "Para hoje: {n}",
   "cards.show": "Mostrar resposta",

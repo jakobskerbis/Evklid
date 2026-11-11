@@ -203,6 +203,8 @@ export default {
   "mode.cards": "Kartice",
   "mode.cardsSub": "Pomembna dejstva",
   "cards.title": "Kartice za ponavljanje",
+  "cards.notes": "Moji zapiski",
+  "cards.notesUnchecked": "Iz tvojih zapiskov – nepreverjeno",
   "cards.intro": "Pomembna dejstva iz razlag inštruktorja. Najprej se sam spomni odgovora, nato ga preveri. Kartice, ki jih znaš, se vračajo vse redkeje.",
   "cards.dueN": "Na vrsti danes: {n}",
   "cards.show": "Pokaži odgovor",

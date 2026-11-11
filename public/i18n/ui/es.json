@@ -1248,6 +1248,8 @@
   "mode.cards": "Tarjetas",
   "mode.cardsSub": "Datos clave",
   "cards.title": "Tarjetas de repaso",
+  "cards.notes": "Mis apuntes",
+  "cards.notesUnchecked": "De tus apuntes – sin verificar",
   "cards.intro": "Datos clave de las explicaciones del tutor. Primero intenta recordar la respuesta tú solo y luego compruébala. Las tarjetas que ya sabes vuelven cada vez con menos frecuencia.",
   "cards.dueN": "Para hoy: {n}",
   "cards.show": "Mostrar respuesta",

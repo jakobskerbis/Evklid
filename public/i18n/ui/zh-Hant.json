@@ -1242,6 +1242,8 @@
   "mode.cards": "卡片",
   "mode.cardsSub": "重點",
   "cards.title": "複習卡片",
+  "cards.notes": "我的筆記",
+  "cards.notesUnchecked": "來自你的筆記——未核實",
   "cards.intro": "來自家教老師講解的重點。先自己回想答案，再核對。已經掌握的卡片會越來越少出現。",
   "cards.dueN": "今天待複習：{n}",
   "cards.show": "顯示答案",

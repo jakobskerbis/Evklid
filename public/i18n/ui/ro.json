@@ -1254,6 +1254,8 @@
   "mode.cards": "Fișe",
   "mode.cardsSub": "Fapte importante",
   "cards.title": "Fișe de recapitulare",
+  "cards.notes": "Notițele mele",
+  "cards.notesUnchecked": "Din notițele tale – neverificat",
   "cards.intro": "Fapte importante din explicațiile tutorelui. Mai întâi încearcă să-ți amintești singur răspunsul, apoi verifică-l. Fișele pe care le știi revin tot mai rar.",
   "cards.dueN": "De recapitulat azi: {n}",
   "cards.show": "Arată răspunsul",

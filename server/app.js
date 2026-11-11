@@ -68,6 +68,7 @@ import { Schedules, scheduleView, schedulePrompt, syncTestPlan } from "./schedul
 import { mountSchedule } from "./schedule-api.js";
 import { mountUstno } from "./ustno-api.js";
 import { mountScan } from "./scan.js";
+import { mountZapiski } from "./zapiski.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
@@ -1771,6 +1772,8 @@ export function createApp(store, opts = {}) {
   mountSchedule(app, store, { loadStudent, progress, usage, schedules, photoFn: opts.schedulePhotoFn, fetchFn: opts.fetchFn, lookup: opts.lookup, modelCapFor: (id) => accounts?.modelCapFor?.(id) ?? null });
   mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn });
   ustno = mountUstno(app, store, { loadStudent, usage, progress, accounts, createFn: opts.ustnoFn }); // ustno spraševanje »Vprašaj me« (server/ustno.js)
+  // Uči se iz svojih zapiskov (korak 1): meja strani po paketu, vsak klic skozi trdo mejo AI.
+  mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });
 
   // --- poraba AI ---
   // Poraba AI za vse profile: brez računov samo na računalniku, kjer teče strežnik

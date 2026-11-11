@@ -1248,6 +1248,8 @@
   "mode.cards": "Kartela",
   "mode.cardsSub": "Fakte të rëndësishme",
   "cards.title": "Kartela për përsëritje",
+  "cards.notes": "Shënimet e mia",
+  "cards.notesUnchecked": "Nga shënimet e tua – e pakontrolluar",
   "cards.intro": "Fakte të rëndësishme nga shpjegimet e tutorit. Së pari përpiqu ta kujtosh vetë përgjigjen, pastaj kontrolloje. Kartelat që i di kthehen gjithnjë e më rrallë.",
   "cards.dueN": "Për sot: {n}",
   "cards.show": "Shfaq përgjigjen",

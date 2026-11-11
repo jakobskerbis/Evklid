@@ -1242,6 +1242,8 @@
   "mode.cards": "Thẻ ghi nhớ",
   "mode.cardsSub": "Kiến thức quan trọng",
   "cards.title": "Thẻ ôn tập",
+  "cards.notes": "Ghi chép của tôi",
+  "cards.notesUnchecked": "Từ ghi chép của bạn – chưa kiểm tra",
   "cards.intro": "Những kiến thức quan trọng từ lời giải thích của gia sư. Trước tiên hãy tự nhớ lại câu trả lời, rồi kiểm tra. Thẻ nào em đã thuộc sẽ quay lại ngày càng thưa hơn.",
   "cards.dueN": "Cần ôn hôm nay: {n}",
   "cards.show": "Hiện câu trả lời",
