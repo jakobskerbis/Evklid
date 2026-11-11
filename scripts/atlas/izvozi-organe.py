@@ -66,11 +66,12 @@ ORGANI = {
         # (geometrija z UV ≈ 25 B na trikotnik) → 165k / 44k, da teksture ostanejo v polni ločljivosti pod mejo 6 / 1,9 MB.
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
-                "skorja": dict(barva=(0.56, 0.40, 0.36), barva2=(0.47, 0.30, 0.28), lise=0.35, liseMera=0.03, hrap=0.38,
-                               gube=0.00004, gubeMera=0.002, zilice=0.22, ziliceBarva=(0.42, 0.06, 0.06), ziliceMera=0.012, razdeli=0),
+                # vz2 (posnetek vz1: bled, plastičen, brazde brez kontrasta): toplejša rožnata, bolj mat, več žilic
+                "skorja": dict(barva=(0.62, 0.35, 0.31), barva2=(0.50, 0.25, 0.23), lise=0.40, liseMera=0.03, hrap=0.46,
+                               gube=0.00004, gubeMera=0.002, zilice=0.32, ziliceBarva=(0.42, 0.06, 0.06), ziliceMera=0.012, razdeli=0),
                 # skorja in sredina iz MRI sta že goste (pialna površina): brez razdelitve (pomnilnik prenosnika)
                 "sredina": dict(barva=(0.58, 0.44, 0.40), barva2=(0.50, 0.36, 0.33), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
-                "mali": dict(barva=(0.50, 0.34, 0.31), barva2=(0.42, 0.26, 0.24), lise=0.30, hrap=0.40, gube=0.00003, gubeMera=0.0015,
+                "mali": dict(barva=(0.56, 0.31, 0.28), barva2=(0.45, 0.23, 0.21), lise=0.35, hrap=0.46, gube=0.00003, gubeMera=0.0015,
                              zilice=0.15, ziliceBarva=(0.40, 0.06, 0.06), ziliceMera=0.010, razdeli=1),
                 "deblo": dict(barva=(0.64, 0.52, 0.45), barva2=(0.56, 0.44, 0.39), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002,
                               zilice=0.12, ziliceBarva=(0.45, 0.08, 0.07), razdeli=1),
