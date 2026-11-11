@@ -19,7 +19,8 @@
    "liseBarva": "#c06050",
    "rez": "#d9c2b0",
    "senca": 0.3,
-   "sencaBarva": "#4a1510"
+   "sencaBarva": "#4a1510",
+   "aoTekstura": 0.45
   },
   "skorja": {
    "hrap": 0.34,
@@ -328,8 +329,8 @@
  },
  "velikost": 0.1667,
  "trikotniki": {
-  "racunalnik": 199968,
-  "telefon": 75011
+  "racunalnik": 169973,
+  "telefon": 40459
  },
  "luci": [
   {
@@ -376,5 +377,6 @@
    "ime": "Glomerulna filtracija",
    "vrednost": "≈ 120 ml/min (obe ledvici)"
   }
- ]
+ ],
+ "pbr": true
 }

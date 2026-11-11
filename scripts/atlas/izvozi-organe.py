@@ -340,8 +340,8 @@ ORGANI = {
         # s progami, papile svetlejše; maščoba sinusa in nadledvična žleza rumeni; sečevod bledo rožnat.
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
-                "ovojnica": dict(barva=(0.34, 0.11, 0.09), barva2=(0.27, 0.08, 0.07), lise=0.35, hrap=0.26, gube=0.00002, gubeMera=0.002, razdeli=1),
-                "skorja": dict(barva=(0.36, 0.12, 0.10), barva2=(0.28, 0.09, 0.08), lise=0.35, hrap=0.40, gube=0.00004, gubeMera=0.0012, razdeli=1),
+                "ovojnica": dict(barva=(0.27, 0.065, 0.05), barva2=(0.21, 0.05, 0.04), lise=0.30, hrap=0.26, gube=0.00002, gubeMera=0.002, razdeli=1),
+                "skorja": dict(barva=(0.30, 0.085, 0.07), barva2=(0.23, 0.065, 0.055), lise=0.35, hrap=0.40, gube=0.00004, gubeMera=0.0012, razdeli=1),
                 "piramida": dict(barva=(0.25, 0.07, 0.07), barva2=(0.19, 0.05, 0.05), lise=0.4, hrap=0.40, vlakna=0.00008, vlaknaMera=0.002, razdeli=1),
                 "papila": dict(barva=(0.50, 0.24, 0.21), barva2=(0.42, 0.19, 0.17), lise=0.3, hrap=0.36, razdeli=1),
                 "sinus": dict(barva=(0.86, 0.64, 0.28), barva2=(0.80, 0.55, 0.22), lise=0.3, hrap=0.40, gube=0.00006, gubeMera=0.004, razdeli=1),

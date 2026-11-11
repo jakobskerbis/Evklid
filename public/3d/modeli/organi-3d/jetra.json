@@ -295,7 +295,7 @@
  "velikost": 0.3047,
  "trikotniki": {
   "racunalnik": 164076,
-  "telefon": 74862
+  "telefon": 41990
  },
  "luci": [
   {
@@ -342,5 +342,6 @@
    "ime": "Pretok krvi",
    "vrednost": "≈ 1,5 l/min (75 % portalna vena)"
   }
- ]
+ ],
+ "pbr": true
 }

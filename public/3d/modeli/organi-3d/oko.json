@@ -32,7 +32,8 @@
    "ao": 0.2,
    "zrno": 0,
    "relief": 0,
-   "spekular": 0.5
+   "spekular": 0.5,
+   "tekstura": false
   },
   "šarenica": {
    "barva": "#6f4a2c",
@@ -64,7 +65,8 @@
     ],
     "polmer": 0.0057,
     "vlakna": 110
-   }
+   },
+   "tekstura": false
   },
   "leča": {
    "barva": "#f1e4c2",
@@ -79,7 +81,8 @@
    "zrno": 0,
    "relief": 0,
    "globina": true,
-   "brezReza": true
+   "brezReza": true,
+   "tekstura": false
   },
   "mrežnica": {
    "barva": "#e0896a",
@@ -118,7 +121,8 @@
    "zile": 0.75,
    "zileSirina": 0.00009,
    "zileBarva": "#a8261f",
-   "zileBarva2": "#6a1216"
+   "zileBarva2": "#6a1216",
+   "tekstura": false
   },
   "steklovina": {
    "barva": "#d6e9f0",
@@ -130,7 +134,8 @@
    "rob": 0.05,
    "ao": 0.3,
    "zrno": 0,
-   "relief": 0
+   "relief": 0,
+   "tekstura": false
   },
   "žilnica": {
    "barva": "#6a2a26",
@@ -545,8 +550,8 @@
  },
  "velikost": 0.0816,
  "trikotniki": {
-  "racunalnik": 219979,
-  "telefon": 70019
+  "racunalnik": 179976,
+  "telefon": 40103
  },
  "luci": [
   {
@@ -593,5 +598,6 @@
    "ime": "Lomnost očesa",
    "vrednost": "≈ 60 dioptrij (roženica ≈ 43)"
   }
- ]
+ ],
+ "pbr": true
 }
