@@ -1248,6 +1248,8 @@
   "mode.cards": "Kadi",
   "mode.cardsSub": "Mambo muhimu",
   "cards.title": "Kadi za marudio",
+  "cards.notes": "Maelezo yangu",
+  "cards.notesUnchecked": "Kutoka maelezo yako – hayajakaguliwa",
   "cards.intro": "Mambo muhimu kutoka kwa maelezo ya mwalimu. Kwanza jaribu kukumbuka jibu mwenyewe, kisha ulikague. Kadi unazozijua hurudi mara chache zaidi na zaidi.",
   "cards.dueN": "Za leo: {n}",
   "cards.show": "Onyesha jibu",

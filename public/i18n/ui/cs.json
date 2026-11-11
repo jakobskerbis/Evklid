@@ -1260,6 +1260,8 @@
   "mode.cards": "Kartičky",
   "mode.cardsSub": "Důležitá fakta",
   "cards.title": "Kartičky na opakování",
+  "cards.notes": "Moje poznámky",
+  "cards.notesUnchecked": "Z tvých poznámek – neověřeno",
   "cards.intro": "Důležitá fakta z výkladu tutora. Nejdřív si odpověď zkus vybavit sám, pak ji zkontroluj. Kartičky, které umíš, se vracejí stále méně často.",
   "cards.dueN": "Dnes na řadě: {n}",
   "cards.show": "Ukázat odpověď",

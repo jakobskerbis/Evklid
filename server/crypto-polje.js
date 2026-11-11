@@ -152,6 +152,8 @@ export const SEALED = [
   { table: "pilot_photos", cols: ["image"] },
   // Mnenja članov pilota (server/pilot-mnenja.js): prosto besedilo učenca.
   { table: "pilot_mnenja", cols: ["liked", "bothers"] },
+  // Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa.
+  { table: "zapiski", cols: ["naslov", "prepis"] },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
