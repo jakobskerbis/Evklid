@@ -75,10 +75,12 @@ Each tool call resends the thread's whole context, which is large in long-runnin
 
 ## 5. Model and effort
 
-- Opus writes and reviews (j's rule). Fable may do the second review of the hardest lessons (competition topics, faks 3rd year and up, proofs, numerics): at most 2 Fable reviewers per batch, because Fable has its own smaller weekly counter on j's Usage screen. Never Sonnet or Haiku for content.
+- **Fable where it has a noticeable edge, else Opus (j, 2026-11-11).** Use Fable for every agent or thread whose result is clearly better with it: writing and reviewing hard lessons (competition topics, faks 3rd year and up, proofs, numerics, multi-step derivations), hard bugs and architecture, 3D/geometry and other maths-heavy code, the second reviewer on money, accounts, personal data, child safety or the tutor prompt, and design or quality judgement j will see. Routine work (easy lessons, small fixes, mechanical edits, coordination, logs) stays on Opus, where Fable adds little; routine code review and bug hunting may stay on Sonnet (j, 2026-11-07).
+- **Fable runs out → Opus, keep going.** Fable has its own smaller weekly counter on j's Usage screen. When a Fable agent or thread hits that limit, rerun or continue the same step on Opus at once, with the same prompt and passes; do not pause or wait for the reset, and note the switch in the report. Fable also costs about 2.5 times as much as Opus against the shared weekly limit, so it counts toward the 90 %/95 % stops.
+- Never Sonnet or Haiku for content.
 - Writers run at the default effort; reviewers at `high` (numbers are still verified with `node -e`, effort buys a more careful reading of level and reasoning).
 - Do not tell agents to shorten or compress their reasoning: the effort setting controls it, and lesson quality depends on it.
-- Effort of the agents a thread launches outside lesson batches: `high` for features and hard bugs, `medium` for small or routine work, `max` only when j asks; agents in lesson batches keep the levels above. A thread's own model and effort are j's choice; the coordinator may suggest them when it opens a thread. Mechanical work with no student-facing text may run on Sonnet, but never review passes 2 and 3 (`docs/pregled.md`). Apart from the Fable uses that this file or `docs/pregled.md` allows, use Fable only when j asks, because it costs 2.5 times as much as Opus.
+- Effort of the agents a thread launches outside lesson batches: `high` for features and hard bugs, `medium` for small or routine work, `max` only when j asks; agents in lesson batches keep the levels above. A thread's own model and effort are j's choice; the coordinator may suggest them when it opens a thread. Mechanical work with no student-facing text may run on Sonnet, but never review passes 2 and 3 (`docs/pregled.md`). Model choice for Fable follows the first two points of this section.
 
 ## 6. App runtime cost (the tutor)
 
