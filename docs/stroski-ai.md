@@ -52,18 +52,29 @@ j (2026-11-01, digitalni razred): »Naj se nikoli ne zgodi«, da inštruktor pot
 Stran evklid.app/zakaj-evklid pokaže zadnjo meritev iz `docs/meritve/natancnost-<datum>.json` (server/vidnost.js; test/vidnost.test.js preveri, da se stran ujema z datoteko). Na stran gredo samo izmerjene številke.
 
 <!-- NATANCNOST:ZACETEK (piše scripts/primerjava-modelov.js, ne urejaj ročno) -->
-Zadnja meritev: 4. 11. 2026, 50 rešenih primerov iz lekcij, ocenjevalec Opus (model AI) (`docs/meritve/natancnost-2026-11-04.json`).
+Zadnja meritev: 11. 11. 2026, 91 rešenih primerov iz lekcij, ocenjevalec claude-opus-5-5 (model AI) (`docs/meritve/natancnost-2026-11-11.json`).
 
 | Kaj je merjeno | Odgovori z napako | Primeri |
 |---|---|---|
-| Hitri model | 12 % | 50 |
-| Hitri model z več razmisleka (samo naloge srednje šole in tekmovanj) | 4 % | 23 |
-| Zmogljivejši model | 2 % | 50 |
+| Sam model, brez preverjanja | 6,6 % (6 od 91) | 91 |
+| Cel Evklidov odgovor, s preverjanjem | 3,3 % (3 od 91) | 91 |
 
-- Merjen je sam model (skripta mu naroči, naj nalogo reši po korakih), brez sprotnega preverjanja s programom (server/live-check.js).
-- Meritev je bila pred spremembo navodil inštruktorja (docs/spremembe-prompta.md, 4. 11.).
+| Stopnja | Sam model, brez preverjanja | Cel Evklidov odgovor, s preverjanjem |
+|---|---|---|
+| osnovna šola | 5 od 28 | 2 od 28 |
+| srednja šola | 1 od 27 | 0 od 27 |
+| fakulteta | 0 od 23 | 1 od 23 |
+| tekmovanja | 0 od 13 | 0 od 13 |
+
+Pari (isti primer v obeh pogojih): bolje 4, slabše 1, napaka v obeh 2, brez napake v obeh 84. Rezultat podan: Sam model, brez preverjanja 97 %, Cel Evklidov odgovor, s preverjanjem 96 %. Dnevna meja pregledov: izklopljena.
+S preverjanjem: popravek v 6 odgovorih, pregled z zmogljivejšim modelom v 58; preostale napake po vrstah: racun_vmes 1, koncni_rezultat 1, trditev 1; koda našla neujemanje končnega števila pri 6 odgovorih brez ocene »napaka« (ročni pregled).
+Strošek zagona: 4,60 $ (aplikacija 0,98 $, ocenjevalec 3,61 $), 77 min.
+
+- Isti primeri v obeh pogojih; vsak odgovor je nastal s svojim klicem modela, zato je del razlike šum: isti model na isto nalogo ne odgovori vedno enako. Polje »pari« pove, pri koliko primerih se je ocena spremenila v vsako smer (bolje: napaka samo brez preverjanja; slabše: napaka samo s preverjanjem).
+- Napaka = ocena »napaka« (napačen rezultat, formula ali trditev). Manjše napake so štete posebej. Odgovor, ki učenca samo vodi z vprašanji in rezultata ne pove, šteje brez napake (delež odgovorov s podanim rezultatom: rezultat_podan_pct).
+- Pot: POST /api/conversations/:id/messages (pravi klepet), nov učenec in pogovor s temo lekcije za vsak primer, model po stopnji kot pri plačljivem paketu.
+- Brez predpomnilnika odgovorov, brez nadgradenj po mesečnem proračunu in BREZ dnevne meje za pregled z zmogljivejšim modelom (v aplikaciji 0,30 $ na dan za vse učence skupaj; ko je porabljena, pregleda ni).
 - Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek.
-- Meritve celega odgovora s preverjanjem še ni: node scripts/primerjava-modelov.js --s-preverjanjem.
 <!-- NATANCNOST:KONEC -->
 
 **Meritev celega odgovora (s preverjanjem s programom).** `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` pošlje rešene primere iz lekcij skozi pravo pot klepeta (isti prompt, model po stopnji kot pri plačljivem paketu, `server/live-check.js`), vsakega dvakrat: z izklopljenim preverjanjem (`EVKLID_LIVE_CHECK=0`, sam model) in z vklopljenim (skrita opomba s preverjenim rezultatom, preračun računov, »Popravek:«, pregled z zmogljivejšim modelom pri tekmovanjih, fakulteti in odgovorih SŠ z vajo ali okvirjem »Zapomni si«). Končno besedilo oceni Opus proti rešitvi iz lekcije; oznako »Popravek:« skripta pred oceno odstrani, da ocenjevalec ne ve, kateri pogoj ocenjuje, šteje pa končno stanje odgovora po popravku. Koda dodatno preveri, ali so končna števila iz vrstice »Odgovor« v odgovoru (neujemanja so izpisana za ročni pregled, ne štejejo samodejno kot napaka). V povzetku so samo primeri, ocenjeni v obeh pogojih, delež odgovorov s podanim rezultatom in število parov, ki so se spremenili v vsako smer (bolje/slabše).
