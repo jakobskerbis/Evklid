@@ -3185,6 +3185,7 @@
   "adm.rep.question": "質問：",
   "adm.rep.fixed": "修正済み",
   "adm.rep.reopen": "再び開く",
+  "adm.rep.inReview": "修正はレビュー待ち · PR #{n}",
   "adm.rep.none": "報告はありません。",
   "adm.rep.download": "修正用にダウンロード（.md）",
   "adm.rep.showAll": "修正済みも表示",

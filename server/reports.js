@@ -3,9 +3,13 @@
 // inštruktorju). Skrbnik jih vidi v Računu (»Prijave napak«) in jih označi kot popravljene.
 // Prijava shrani odgovor, vprašanje pred njim in razlog, odgovor pa odstrani iz predpomnilnika
 // (answer_cache), da ga ne dobi noben drug učenec. Stikalo EVKLID_CHAT_OFF=1 izklopi klepet za vse.
-// Postopek ob neljubem dogodku: docs/krizni-nacrt.md.
+// Postopek ob neljubem dogodku: docs/krizni-nacrt.md. Samodejni pregled prijav (izvoz s ključem, stanje
+// »in_review« s PR): docs/prijave-samodejno.md.
 import { cleanText } from "./settings.js";
 import { seal, unseal } from "./crypto-polje.js";
+import { exportTokenOk } from "./avatar.js";
+import { audit } from "./dnevnik-dostopov.js";
+import { BRAND } from "./brand.js";
 
 export const REPORT_REASONS = ["wrong", "unsafe", "other"];
 // Razlogi pri prijavi napake v lekciji.
@@ -62,7 +66,15 @@ export function ensureReportsTable(db) {
   if (!cols.has("device")) db.exec("ALTER TABLE message_reports ADD COLUMN device TEXT");
   if (!cols.has("raw")) db.exec("ALTER TABLE message_reports ADD COLUMN raw TEXT");
   if (!cols.has("shown")) db.exec("ALTER TABLE message_reports ADD COLUMN shown TEXT");
+  // Samodejni pregled prijav (docs/prijave-samodejno.md): status »in_review« in številka PR s popravkom.
+  if (!cols.has("pr")) db.exec("ALTER TABLE message_reports ADD COLUMN pr INTEGER");
+  const bugCols = new Set(db.prepare("PRAGMA table_info(bug_reports)").all().map((c) => c.name));
+  if (!bugCols.has("pr")) db.exec("ALTER TABLE bug_reports ADD COLUMN pr INTEGER");
 }
+
+// Stanja prijave: odprta, popravek čaka na pregled (PR), popravljena.
+export const REPORT_STATUSES = ["open", "in_review", "fixed"];
+export const prUrl = (n) => (Number.isInteger(n) && n > 0 ? `https://github.com/${BRAND.repo}/pull/${n}` : null);
 
 // Odgovor za druge učence: ime učenca → {{IME}}, samo kot cela beseda in ne glede na velike črke (»Nik« v
 // »Nikoli« se ne zamenja, sicer bi naslednji učenec »Ana« prebral »Anaoli«). Če ime po zamenjavi še ostane
@@ -145,14 +157,14 @@ const openBug = (r) => r && { ...r, note: unseal(r.note), context: unseal(r.cont
 
 // Vse prijave za skrbnika, najnovejše najprej: odgovori inštruktorja, lekcije, aplikacija.
 export function adminReports(db, { status = "open", limit = 300 } = {}) {
-  const where = status === "all" ? "" : "WHERE status = 'open'";
+  const where = status === "all" ? "" : "WHERE status != 'fixed'";
   const msgs = db
     .prepare(`SELECT * FROM message_reports ${where} ORDER BY id DESC LIMIT ?`)
     .all(limit)
     .map((r) => ({ ...openReport(r), kind: "message", code: messageCode(r.message_id) }));
   const bugs = db.prepare(`SELECT * FROM bug_reports ${where} ORDER BY id DESC LIMIT ?`).all(limit).map(openBug);
-  const open = (t) => (t ? db.prepare(`SELECT COUNT(*) AS n FROM ${t} WHERE status = 'open'`).get().n : 0);
-  const reports = [...msgs, ...bugs].sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0)).slice(0, limit);
+  const open = (t) => (t ? db.prepare(`SELECT COUNT(*) AS n FROM ${t} WHERE status != 'fixed'`).get().n : 0);
+  const reports = [...msgs, ...bugs].map((r) => ({ ...r, pr_url: prUrl(r.pr) })).sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0)).slice(0, limit);
   return { reports, open: open("message_reports") + open("bug_reports") };
 }
 
@@ -183,6 +195,52 @@ export function reportsMarkdown({ reports }, topicName = () => null) {
     lines.push("");
   }
   return lines.join("\n");
+}
+
+// Izvoz za samodejni pregled (docs/prijave-samodejno.md): odprte prijave in tiste s popravkom v pregledu.
+// Brez id-jev učenca, pogovora in sporočila (koda sporočila #00YA ostane, da j najde odgovor v Računu).
+const EXPORT_SHOWN = 6000;
+// Ime učenca (in sklonjene oblike, npr. »Jakobu«) se v vseh besedilih zamenja z [ime]; odgovor in surovo
+// besedilo sta že ob prijavi brez imena, vprašanje, opomba in zadnja sporočila pa ne.
+export function scrubName(text, name = "") {
+  if (!text) return text;
+  const parts = [...new Set(String(name || "").trim().split(/\s+/).filter((w) => w.length >= 2))];
+  let out = String(text);
+  for (const p of parts) {
+    const forms = [escRe(p) + (p.length >= 3 ? "\\p{L}{0,3}" : "")]; // Jakob, Jakobu, Jakobom
+    const stem = p.replace(/[aeiouy]$/iu, "");
+    // Ana → Ani, Ano (kratka osnova samo s sklonskimi končnicami); Luka → Luki, Luko.
+    if (stem !== p && stem.length >= 2) forms.push(escRe(stem) + (stem.length >= 3 ? "\\p{L}{1,2}" : "(?:e|i|o|u|jo|ji|je|ju)"));
+    const moving = p.replace(/e(\p{L})$/iu, "$1"); // Peter → Petru, Pavel → Pavlu
+    if (p.length >= 4 && moving !== p) forms.push(escRe(moving) + "\\p{L}{1,3}");
+    for (const f of forms) out = out.replace(new RegExp(`${NAME_EDGE_L}${f}${NAME_EDGE_R}`, "giu"), "[ime]");
+  }
+  return out;
+}
+
+export function exportReports(db, topicName = () => null) {
+  const { reports } = adminReports(db, { status: "open", limit: 300 });
+  const nameOf = (id) => (id ? db.prepare("SELECT name FROM students WHERE id = ?").get(id)?.name || "" : "");
+  return reports.map((r) => [r, nameOf(r.student_id)]).map(([r, name]) => ({
+    kind: r.kind,
+    id: r.id,
+    status: r.status,
+    pr: r.pr ?? null,
+    created_at: r.created_at,
+    reason: r.reason,
+    device: r.device || null,
+    code: r.code || null,
+    topic_id: r.topic_id || null,
+    topic_name: r.topic_id ? topicName(r.topic_id) : null,
+    step: r.step ?? null,
+    note: scrubName(r.note, name) || null,
+    question: scrubName(r.question, name) || null,
+    answer: scrubName(r.answer, name) || null,
+    raw: r.raw && r.raw !== r.answer ? scrubName(r.raw, name) : null,
+    // Ime samo v besedilu, ne v oznakah in razredih (kot ob prijavi).
+    shown: r.shown ? r.shown.slice(0, EXPORT_SHOWN).replace(/>([^<]*)</g, (_, t) => `>${scrubName(t, name)}<`) : null,
+    context: scrubName(r.context, name) || null,
+  }));
 }
 
 export function mountReports(app, store, { loadConversation, loadStudent, localOnly, isAdmin = () => false, isPilot = null, topicName = () => null }) {
@@ -309,5 +367,36 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     const n = store.db.prepare(`UPDATE ${table} SET status = ?, fixed_at = ? WHERE id = ?${kindCheck}`).run(...args).changes;
     if (!n) return res.status(404).json({ error: "Prijava ne obstaja." });
     res.json({ ok: true, status });
+  });
+  // Samodejni pregled prijav (docs/prijave-samodejno.md): ključ EVKLID_EXPORT_TOKEN v glavi Authorization,
+  // skrbnik ali računalnik s strežnikom. Brez tega 404, kot da poti ni. Pot je mimo gesla in prijave (gate.js, accounts).
+  const exportAllowed = (req) => exportTokenOk(req) || isAdmin(req);
+  const actorOf = (req) => (exportTokenOk(req) ? { actor: "system", parentId: null } : { actor: "admin", parentId: req.parent?.id ?? null });
+  app.get("/api/prijave/izvoz", (req, res) => {
+    res.set("Cache-Control", "no-store");
+    if (!exportAllowed(req)) return res.status(404).json({ error: "Ne obstaja." });
+    const reports = exportReports(store.db, topicName);
+    audit(store.db, { req, ...actorOf(req), action: "reports_export", target: `reports:${reports.length}` });
+    res.json({ at: new Date().toISOString(), reports });
+  });
+  // Stanje prijave: in_review + pr (popravek čaka na j-jev pregled), fixed (PR združen), open (PR zaprt brez združitve).
+  app.post("/api/prijave/:kind/:rid/stanje", (req, res) => {
+    res.set("Cache-Control", "no-store");
+    if (!exportAllowed(req)) return res.status(404).json({ error: "Ne obstaja." });
+    const kind = req.params.kind;
+    const table = kind === "message" ? "message_reports" : ["lesson", "app"].includes(kind) ? "bug_reports" : null;
+    const rid = /^\d{1,12}$/.test(req.params.rid) ? Number(req.params.rid) : NaN;
+    const status = REPORT_STATUSES.includes(req.body?.status) ? req.body.status : null;
+    const pr = req.body?.pr == null ? null : Number.isInteger(req.body.pr) && req.body.pr > 0 && req.body.pr < 1e7 ? req.body.pr : NaN;
+    if (!table || !Number.isInteger(rid) || !status || Number.isNaN(pr) || (status === "in_review" && !pr)) return res.status(400).json({ error: "Napačna zahteva." });
+    const kindCheck = table === "bug_reports" ? " AND kind = ?" : "";
+    const fixedAt = status === "fixed" ? new Date().toISOString().slice(0, 19).replace("T", " ") : null;
+    // Ob »open« ostane številka PR prazna; ob »fixed« brez pr ostane prejšnja (PR, ki je napako popravil).
+    const n = store.db
+      .prepare(`UPDATE ${table} SET status = ?, fixed_at = ?, pr = ${status === "open" ? "NULL" : "COALESCE(?, pr)"} WHERE id = ?${kindCheck}`)
+      .run(...[status, fixedAt, ...(status === "open" ? [] : [pr]), rid, ...(kindCheck ? [kind] : [])]).changes;
+    if (!n) return res.status(404).json({ error: "Prijava ne obstaja." });
+    audit(store.db, { req, ...actorOf(req), action: "report_status", target: `${kind}:${rid}:${status}${pr ? `:pr${pr}` : ""}` });
+    res.json({ ok: true, status, pr: status === "open" ? null : pr });
   });
 }

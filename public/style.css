@@ -489,6 +489,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .adm-rep .pill { background: var(--surface); color: var(--text); } /* --muted na --surface-2 je v slogih Igriv/Temen pod 4,5 : 1 */
 .adm-rep button.small { min-height: 40px !important; }
 .adm-rep-note { margin: 0; overflow-wrap: anywhere; }
+.adm-rep-pr { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; font-weight: 600; overflow-wrap: anywhere; } /* samodejni pregled: povezava na PR s popravkom */
+.adm-rep-pr svg.i { width: 16px; height: 16px; flex: none; }
 .adm-rep-shown { justify-self: stretch; display: grid; gap: 4px; }
 .adm-rep-shown .msg { max-width: 100%; margin: 0; contain: layout paint; } /* posnetek nič ne prekrije zunaj kartice */
 .adm-rep-shown .msg::before, .adm-rep-shown .msg::after { display: none; } /* brez avatarja ob robu kartice */

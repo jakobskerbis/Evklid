@@ -3243,6 +3243,7 @@
   "adm.rep.question": "Întrebare:",
   "adm.rep.fixed": "Reparat",
   "adm.rep.reopen": "Redeschide",
+  "adm.rep.inReview": "Corectura așteaptă verificarea · PR #{n}",
   "adm.rep.none": "Niciun raport.",
   "adm.rep.download": "Descarcă pentru reparare (.md)",
   "adm.rep.showAll": "Arată și cele reparate",
