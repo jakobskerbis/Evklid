@@ -5,9 +5,11 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
+V trgovini v košarico zložiš visoko plastenko z $1{,}5\,\mathrm{L}$ vode in nizek, širok bidon s $5\,\mathrm{L}$ vode. V bidonu je več kot trikrat več vode. Kje voda bolj pritiska na dno? Presenetljivo: v plastenki. Tlak na dnu je tam za petino večji, čeprav je vode veliko manj.
+
 Iz osnovne šole že poznaš tlak kot količnik sile in ploščine ($p = F/S$) ter gostoto snovi ($\rho = m/V$). Veš tudi, da se pri potapljanju v globino ušesa »zamašijo« in da les plava, kamen pa potone.
 
-V tej lekciji ti dve opažanji razložimo s fiziko. Zakaj tlak v vodi narašča z globino? Zakaj mora imeti jez pri dnu debelejši zid kot zgoraj? Zakaj težka ladja iz jekla plava, majhna jeklena kroglica pa potone? Odgovora sta **hidrostatični tlak** in **Arhimedov zakon**. Brez njiju ne bi znali načrtovati podmornic, ladij, balonov ali merilnikov globine.
+Ta opažanja bo pojasnila ista ideja. Zakaj tlak v vodi narašča z globino? Zakaj mora imeti jez pri dnu debelejši zid kot zgoraj? Zakaj težka ladja iz jekla plava, majhna jeklena kroglica pa potone? Odgovora sta **hidrostatični tlak** in **Arhimedov zakon**. Brez njiju ne bi znali načrtovati podmornic, ladij, balonov ali merilnikov globine.
 
 ## Razlaga
 
@@ -17,7 +19,24 @@ $$p = \frac{F}{S}$$
 
 Enota je paskal: $1\,\text{Pa} = 1\,\text{N/m}^2$. Pogosto uporabljamo tudi $1\,\text{bar} = 100\,000\,\text{Pa}$. Zračni tlak ob morju je približno $1\,\text{bar}$.
 
-**2. Hidrostatični tlak.** V mirujoči tekočini tlak narašča z globino, ker spodnje plasti tekočine nosijo težo zgornjih. Pomisli na navpičen stolpec tekočine s ploščino preseka $S$ in višino $h$:
+**2. Najprej račun za plastenko in bidon.** Voda v plastenki sega $0{,}30\,\mathrm{m}$ visoko, dno ima ploščino $0{,}0050\,\mathrm{m^2}$. Bidon ima dno s ploščino $0{,}020\,\mathrm{m^2}$, voda v njem sega $0{,}25\,\mathrm{m}$ visoko. Obe posodi imata navpične stene, zato je tlak na dnu teža vode, deljena s ploščino dna:
+
+| | plastenka | bidon |
+|---|---|---|
+| masa vode | $1{,}5\,\mathrm{kg}$ | $5{,}0\,\mathrm{kg}$ |
+| teža $F_g$ | $14{,}7\,\mathrm{N}$ | $49\,\mathrm{N}$ |
+| ploščina dna $S$ | $0{,}0050\,\mathrm{m^2}$ | $0{,}020\,\mathrm{m^2}$ |
+| tlak $F_g/S$ | $2940\,\mathrm{Pa}$ | $2450\,\mathrm{Pa}$ |
+
+Bidon ima res večjo težo vode, a jo razporedi na štirikrat večje dno. Odloča višina vode: $0{,}30\,\mathrm{m}$ proti $0{,}25\,\mathrm{m}$.
+
+:::premisli
+Vodo iz plastenke preliješ v ozek, visok valj, kjer sega $0{,}40\,\mathrm{m}$ visoko. Kaj se zgodi s tlakom na dnu, čeprav je vode enako?
+---
+Tlak naraste. Ista teža $14{,}7\,\mathrm{N}$ pritiska na manjše dno, in to natanko toliko, da je tlak sorazmeren z višino: $\dfrac{0{,}40}{0{,}30} \cdot 2940\,\mathrm{Pa} = 3920\,\mathrm{Pa}$.
+:::
+
+**3. Hidrostatični tlak.** Zdaj isto s črkami. V mirujoči tekočini tlak narašča z globino, ker spodnje plasti tekočine nosijo težo zgornjih. Pomisli na navpičen stolpec tekočine s ploščino preseka $S$ in višino $h$:
 
 - prostornina: $V = S\,h$,
 - masa: $m = \rho\,V = \rho\,S\,h$,
@@ -27,29 +46,37 @@ Ta teža pritiska na ploščino $S$, zato je tlak, ki ga povzroča tekočina:
 
 $$p_h = \frac{F_g}{S} = \rho\,g\,h$$
 
-Tu je $\rho$ gostota tekočine, $g \approx 9{,}8\,\text{m/s}^2$ težni pospešek in $h$ globina pod gladino.
+Tu je $\rho$ gostota tekočine, $g \approx 9{,}8\,\text{m/s}^2$ težni pospešek in $h$ globina pod gladino. Ploščina $S$ se je pokrajšala, zato širina posode ni pomembna. Preveri na plastenki: $1000 \cdot 9{,}8 \cdot 0{,}30 = 2940\,\mathrm{Pa}$, enako kot v tabeli.
 
-**3. Skupni tlak.** Če je gladina odprta v ozračje, na tekočino pritiska še zrak. Skupni tlak v globini $h$ je
+V simulaciji spodaj (»Hidrostatični tlak«) nastavi globino $10\,\mathrm{m}$ in jo nato podvoji. Opazi, da se hidrostatični tlak podvoji. Nato pri isti globini zamenjaj vodo z gostejšo morsko vodo in opazuj, kako tlak naraste.
+
+**4. Skupni tlak.** Če je gladina odprta v ozračje, na tekočino pritiska še zrak. Skupni tlak v globini $h$ je
 
 $$p = p_0 + \rho\,g\,h$$
 
 kjer je $p_0$ zunanji (zračni) tlak.
 
-**4. Lastnosti hidrostatičnega tlaka.**
+**5. Lastnosti hidrostatičnega tlaka.**
 
 - Odvisen je samo od globine, gostote tekočine in $g$, **ne** od oblike posode ali količine tekočine.
 - Na isti globini je tlak v tekočini povsod enak (v vseh smereh).
 - Tlak deluje pravokotno na stene posode.
 
-**5. Vzgon.** Telo, potopljeno v tekočino, doživlja s strani tekočine silo navzgor. Vzrok je razlika tlakov: na spodnjo ploskev telesa deluje večji tlak (večja globina) kot na zgornjo, zato je sila navzgor večja od sile navzdol.
+**6. Vzgon.** Telo, potopljeno v tekočino, doživlja s strani tekočine silo navzgor. Vzrok je razlika tlakov: na spodnjo ploskev telesa deluje večji tlak (večja globina) kot na zgornjo, zato je sila navzgor večja od sile navzdol.
 
-**6. Arhimedov zakon.** Vzgon je enak teži izpodrinjene tekočine:
+**7. Arhimedov zakon.** Vzgon je enak teži izpodrinjene tekočine:
 
 $$F_v = \rho_t\,g\,V_i$$
 
 Tu je $\rho_t$ gostota **tekočine** in $V_i$ prostornina **potopljenega dela** telesa (to je prostornina izpodrinjene tekočine).
 
-**7. Plavanje, lebdenje, potop.** Primerjamo gostoto telesa $\rho$ in gostoto tekočine $\rho_t$ (za telo, ki je v celoti potopljeno):
+:::premisli
+Kepa plastelina v vodi potone. Iz iste kepe oblikuješ čolniček in ta plava. Masa se ni spremenila. Zakaj zdaj plava?
+---
+Čolniček izpodrine veliko več vode kot kepa, ker je v njem zrak. Večja izpodrinjena prostornina $V_i$ pomeni večji vzgon, ki zdaj lahko uravnovesi težo. Tako plavajo tudi jeklene ladje.
+:::
+
+**8. Plavanje, lebdenje, potop.** Primerjamo gostoto telesa $\rho$ in gostoto tekočine $\rho_t$ (za telo, ki je v celoti potopljeno):
 
 - $\rho < \rho_t$: vzgon je večji od teže, telo priplava na površje in plava,
 - $\rho = \rho_t$: vzgon je enak teži, telo lebdi,
@@ -120,14 +147,36 @@ Telo plava, zato je vzgon enak teži: $F_v = F_g$, torej $\rho_t\,g\,V_i = \rho\
 5. **Odgovor.** Potopljenih je $60\,\%$ kvadra. Prostornina potopljenega dela je $V_i = 0{,}6 \cdot 0{,}020 = 0{,}012\,\text{m}^3$.
 6. **Preverimo:** vzgon $= 1000 \cdot 9{,}8 \cdot 0{,}012 = 117{,}6\,\text{N}$, kar je enako teži. ✓
 
+### Primer 4 – zdaj ti: lubenica s tržnice
+
+Na tržnici kupiš lubenico z maso $6{,}0\,\text{kg}$. Doma jo ohladiš v koritu z vodo, kjer plava. Kolikšna prostornina lubenice je pod gladino?
+
+**Podatki:** $m = 6{,}0\,\text{kg}$, lubenica plava, $\rho_t = 1000\,\text{kg/m}^3$ (voda), $g = 9{,}8\,\text{m/s}^2$
+**Iščemo:** prostornino potopljenega dela $V_i$
+
+:::formula
+Plavanje: $F_v = F_g$, torej $\rho_t\,g\,V_i = m\,g$
+:::
+
+**Rešitev:**
+
+1. **Pogoj plavanja.** Lubenica miruje, zato je vzgon enak njeni teži: $\rho_t\,g\,V_i = m\,g$.
+2. **Krajšamo $g$,** ker nastopa na obeh straneh: $\rho_t\,V_i = m$, torej $V_i = \dfrac{m}{\rho_t}$.
+3. Vstavi podatke in rezultat pretvori še v litre.
+
+:::premisli
+Koliko je $V_i$?
+---
+$V_i = \dfrac{6{,}0\,\text{kg}}{1000\,\text{kg/m}^3} = 0{,}0060\,\text{m}^3 = 6{,}0\,\text{L}$. Lubenica izpodrine toliko vode, kolikor sama tehta: $6\,\text{L}$ vode ima maso $6\,\text{kg}$.
+:::
+
 ## Pogoste napake
 
-- **Mešanje gostot.** V formuli za vzgon je $\rho_t$ gostota *tekočine*, ne telesa. Gostota telesa je potrebna samo za njegovo težo.
-- **Napačna prostornina.** Pri vzgonu štejemo samo *potopljeni* del telesa, ne celotne prostornine, če telo plava.
-- **Tlak ni odvisen od oblike posode.** Širša ali ožja posoda pri enaki globini da enak hidrostatični tlak.
-- **Pozabljeno pretvarjanje enot.** $\text{cm}$ in $\text{l}$ moraš pred računanjem pretvoriti v $\text{m}$ in $\text{m}^3$ ($1\,\text{l} = 0{,}001\,\text{m}^3$).
-- **»Težka stvar vedno potone.«** Pomembna je gostota, ne teža. Ogromna ladja plava, ker je njena povprečna gostota (skupaj z zrakom v njej) manjša od gostote vode.
-- **Vzgon ni odvisen od globine.** Dokler je telo v celoti potopljeno, je vzgon enak na vsaki globini.
+- **Mešanje gostot.** Kdor pri lesenem kvadru vstavi v $F_v = \rho_t\,g\,V_i$ gostoto lesa $600\,\text{kg/m}^3$, dobi premajhen vzgon. Vzgon povzroča tekočina, zato vanj spada gostota *tekočine*. Gostoto telesa potrebuješ samo za njegovo težo.
+- **Napačna prostornina ali enote.** Pri plavajočem telesu štejemo samo *potopljeni* del, ne celotne prostornine. Pred računanjem pretvori $\text{cm}^3$ in $\text{L}$ v $\text{m}^3$ ($1\,\text{L} = 0{,}001\,\text{m}^3$) in gostoto zapiši v $\text{kg/m}^3$, ne v $\text{g/cm}^3$.
+- **»Več vode, večji tlak.«** Tako sklepamo pri bidonu: ima več vode, zato bi moral bolj pritiskati na dno. A večja teža se razporedi na večje dno. Hidrostatični tlak je odvisen le od globine in gostote, ne od količine vode ali oblike posode.
+- **»Težka stvar vedno potone.«** Ladja tehta tisoče ton, pa plava. Odloča gostota, ne teža: ladja je skupaj z zrakom v trupu v povprečju redkejša od vode.
+- **»Globlje je vzgon večji.«** Ker tlak z globino raste, se zdi, da mora rasti tudi vzgon. Vendar z globino enako narasteta tlak na spodnjo in na zgornjo ploskev, njuna razlika pa ostane enaka. Dokler je telo v celoti potopljeno, je vzgon na vsaki globini enak.
 
 ## Povzetek
 
@@ -154,8 +203,6 @@ V interaktivni simulaciji spodaj (»Hidrostatični tlak«) spreminjaj globino in
 
 **Ladja.** Jeklena ploščica potone, jeklena ladja pa plava. Ladja ima obliko skodelice, ki izpodrine veliko vode. Vzgon je enak teži izpodrinjene vode, zato ladja potone le toliko, da je vzgon enak njeni teži.
 
-**Led v pijači.** Led ima gostoto okoli $920\,\text{kg/m}^3$, voda $1000\,\text{kg/m}^3$, zato led plava s približno $92\,\%$ prostornine pod gladino.
-
 ## Drugače: Korak za korakom s številkami
 
 Recept za naloge z vzgonom:
@@ -174,6 +221,16 @@ Recept za naloge z vzgonom:
 - Vzgon: $F_v = 1000 \cdot 9{,}8 \cdot 0{,}0005 = 4{,}9\,\text{N}$.
 - Teža: $F_g = 3{,}9 \cdot 9{,}8 = 38{,}22\,\text{N}$.
 - Silomer, na katerega obesimo utež v vodi, pokaže razliko: $38{,}22 - 4{,}9 = 33{,}32\,\text{N}$, kar ustreza teži telesa z maso približno $3{,}4\,\text{kg}$. Utež se zdi lažja.
+
+## Drugače: Z analogijo
+
+Arhimedov zakon je podoben vračilu kavcije za steklenico. Ko vrneš prazno steklenico, ti trgovina vrne denar glede na *steklenico*, ki si jo prinesel nazaj, ne glede na to, kaj si iz nje pil ali koliko ti stane torba.
+
+Pri vzgonu je »vrnjena steklenica« izpodrinjena tekočina. Tekočina telesu »vrne« silo, ki je enaka teži tekočine, ki jo je telo izrinilo s svojega mesta. Ali je telo iz svinca ali iz plute, je vseeno: enaka izpodrinjena prostornina iste tekočine prinese enak vzgon.
+
+Od snovi telesa je odvisno le, ali je to vračilo dovolj. Pluta tehta manj, kot znaša vzgon, zato priplava. Svinec tehta veliko več, zato potone, čeprav dobi enak vzgon kot pluta enake prostornine.
+
+Analogija ima mejo: denar dobiš enkrat, vzgon pa deluje ves čas, dokler je telo v tekočini.
 
 ## Drugače: Bolj natančno
 
@@ -195,22 +252,47 @@ Zunanji tlak $p_0$ se pokrati. Ker je $H S = V$ prostornina kvadra, dobimo Arhim
 
 ? Kolikšen je hidrostatični tlak zaradi vode ($\rho = 1000\,\text{kg/m}^3$) na globini $20\,\text{m}$? Vzemi $g = 9{,}8\,\text{m/s}^2$.
 - $20\,000\,\text{Pa}$
+~ To je samo $\rho \cdot h$: pozabil si na $g$. Tlak je teža stolpca na ploščino, zato $g$ potrebuješ.
 + $196\,000\,\text{Pa}$
-- $9{,}8\,\text{Pa}$
+- $196\,\text{Pa}$
+~ Tako dobiš, če gostoto vstaviš v $\text{g/cm}^3$ ($1$) namesto v $\text{kg/m}^3$ ($1000$).
 - $98\,000\,\text{Pa}$
-> $p_h = \rho g h = 1000 \cdot 9{,}8 \cdot 20 = 196\,000\,\text{Pa}$. Odgovor $98\,000\,\text{Pa}$ bi dobili pri globini $10\,\text{m}$, $20\,000\,\text{Pa}$ pa, če bi pozabili na $g$ in zmnožili samo $\rho$ in $h$.
+~ To je tlak na globini $10\,\text{m}$. Tlak je sorazmeren z globino: pri $20\,\text{m}$ je dvakrat večji.
+> $p_h = \rho g h = 1000 \cdot 9{,}8 \cdot 20 = 196\,000\,\text{Pa}$, kar je skoraj $2\,\text{bar}$.
 
 ? Telo s prostornino $0{,}002\,\text{m}^3$ je v celoti potopljeno v vodo ($\rho_t = 1000\,\text{kg/m}^3$). Kolikšen je vzgon? Vzemi $g = 9{,}8\,\text{m/s}^2$.
 - $2\,\text{N}$
+~ $1000 \cdot 0{,}002 = 2$ je masa izpodrinjene vode v kilogramih. Vzgon je njena teža, zato pomnoži še z $g$.
 - $196\,\text{N}$
+~ Decimalna vejica je zamaknjena: tako dobiš s prostornino $0{,}02\,\text{m}^3$. Pazi pri pretvorbi.
 + $19{,}6\,\text{N}$
-> $F_v = \rho_t g V_i = 1000 \cdot 9{,}8 \cdot 0{,}002 = 19{,}6\,\text{N}$. Vzgon je enak teži izpodrinjene vode, ne odvisen od gostote telesa.
+> $F_v = \rho_t g V_i = 1000 \cdot 9{,}8 \cdot 0{,}002 = 19{,}6\,\text{N}$. Vzgon je enak teži izpodrinjene vode in ni odvisen od gostote telesa.
 
-? Zakaj lesen kvader z gostoto $600\,\text{kg/m}^3$ plava na vodi?
-- Ker je lahek.
-+ Ker je njegova gostota manjša od gostote vode.
-- Ker je vzgon vedno večji od teže.
-> Telo plava, če je njegova gostota manjša od gostote tekočine. Pomembna ni teža sama, ampak gostota. Pri plavajočem telesu je vzgon enak teži, ne večji.
+? Prodajalec ti pri leseni kuhalnici reče: »Les ima gostoto $600\,\text{kg/m}^3$, zato kuhalnica v vodi plava.« Kaj pomeni, da telo plava na vodi?
+- Telo je lahko, zato vedno plava.
+~ Težka ladja plava, majhna jeklena kroglica pa potone. Odloča gostota, ne teža.
++ Gostota telesa je manjša od gostote vode, zato se telo potopi le toliko, da je vzgon enak njegovi teži.
+- Vzgon je večji od teže telesa, dokler telo plava.
+~ Vzgon je večji od teže le, ko se potopljeno telo še dviga proti površju. Ko plava v miru, sta sili enaki.
+> Telo plava, če je njegova gostota manjša od gostote tekočine. Pri plavajočem telesu je vzgon enak teži, ne večji.
+
+? Na polici so tri posode: A je steklenica olja ($\rho = 920\,\text{kg/m}^3$), olje sega $0{,}30\,\text{m}$ visoko; B je širok bidon vode, voda sega $0{,}25\,\text{m}$ visoko; C je ozka plastenka vode, voda sega $0{,}30\,\text{m}$ visoko. Razvrsti jih po tlaku tekočine na dnu, od največjega.
+- B, A, C
+~ Bidon ima največ tekočine, a količina ne odloča. Tlak je odvisen od globine in gostote.
+- A, C, B
+~ Olje je redkejše od vode (zato plava na njej). Pri enaki višini da manjši tlak.
+- A in C enako, nato B
+~ Višini sta enaki, gostoti pa ne. Tlak je sorazmeren tudi z gostoto.
++ C, A, B
+> $p_C = 1000 \cdot 9{,}8 \cdot 0{,}30 = 2940\,\text{Pa}$, $p_A = 920 \cdot 9{,}8 \cdot 0{,}30 \approx 2705\,\text{Pa}$, $p_B = 1000 \cdot 9{,}8 \cdot 0{,}25 = 2450\,\text{Pa}$.
+
+? Kamen, v celoti potopljen v jezero, spuščamo z globine $2\,\text{m}$ na globino $8\,\text{m}$. Kaj se zgodi z vzgonom?
+- Poveča se, ker je globlje tlak večji.
+~ Tlak naraste na spodnji in na zgornji ploskvi enako; razlika med njima, torej vzgon, ostane enaka.
+- Zmanjša se, ker voda nad kamnom pritiska navzdol.
+~ Večji pritisk od zgoraj spremlja enako večji pritisk od spodaj. Vzgon se ne zmanjša.
++ Ostane enak.
+> Vzgon je $F_v = \rho_t\,g\,V_i$. Gostota vode in prostornina kamna se ne spremenita, zato je vzgon na obeh globinah enak.
 
 :::simboli
 p | tlak | p = p_0 + \rho\,g\,h | Pa | v tekočini skupni tlak; splošno p = F/S

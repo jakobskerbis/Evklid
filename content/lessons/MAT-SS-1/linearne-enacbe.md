@@ -5,11 +5,25 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Reševanje preprostih enačb, kot je $x + 5 = 12$ ali $3x = 21$, že znaš. Znaš tudi računati z ulomki (razširjanje, skupni imenovalec) in odpirati oklepaje. V tej lekciji vse to združiš in rešuješ **linearne enačbe**, tudi take z ulomki in s **parametrom**.
+Poskus za doma: na kuhinjsko tehtnico postavi prazno skledo in v njo daj tri jajca. Recimo, da tehtnica pokaže $430\,\text{g}$, prazna skleda pa tehta $250\,\text{g}$. Koliko tehta eno jajce, če so jajca enako težka? Ne da bi ga stehtal posebej, sklepaš: jajca skupaj tehtajo $430 - 250 = 180\,\text{g}$, eno torej $60\,\text{g}$.
 
-Linearne enačbe nastopajo povsod, kjer je nekaj odvisno od nečesa premo sorazmerno: cena taksija, mesečni strošek telefona, čas potovanja. Znanje potrebuješ tudi naprej, saj je reševanje linearnih enačb osnova za sisteme enačb, linearno funkcijo in kasneje za kvadratne enačbe. Parameter pa je prvi korak k pravi algebri: namesto ene enačbe rešuješ cel »razred« enačb naenkrat.
+Pravzaprav si rešil enačbo $3x + 250 = 430$. Takim enačbam rečemo **linearne enačbe**. Naučil se jih boš reševati tudi z ulomki (recepti so polni polovic in tretjin) in s **parametrom**, črko, ki je ne poznamo vnaprej.
+
+Linearne enačbe nastopajo povsod, kjer se nekaj spreminja enakomerno: cena taksija, mesečni strošek telefona, čas potovanja. Znanje potrebuješ tudi naprej, saj je reševanje linearnih enačb osnova za neenačbe, sisteme enačb in kasneje za kvadratne enačbe. Parameter pa je prvi korak k pravi algebri: namesto ene enačbe rešuješ cel »razred« enačb naenkrat.
 
 ## Razlaga
+
+**Najprej opazuj.** Tri tehtanja iz kuhinje, vsako zapisano kot enačba. Pri vsakem smo na obeh straneh naredili isto:
+
+| Enačba | Kaj naredimo na obeh straneh | Ostane |
+|---|---|---|
+| $x + 250 = 430$ | odštejemo $250$ | $x = 180$ |
+| $3x = 180$ | delimo s $3$ | $x = 60$ |
+| $3x + 250 = 430$ | odštejemo $250$, nato delimo s $3$ | $x = 60$ |
+
+Opaziš vzorec? Neznanko vsakič osamimo tako, da »odstranjujemo« člene okrog nje, vedno na obeh straneh hkrati. Tik pred zadnjim korakom ima enačba obliko »število krat $x$ je število«.
+
+V simulaciji spodaj (»Linearne enačbe«) z obeh skodelic tehtnice odstrani enako uteži in opazuj, da ostane v ravnovesju. Nato vzemi utež samo z ene strani: ravnovesje se poruši, enačba ne velja več.
 
 **1. Kaj je linearna enačba.** Linearna enačba z eno neznanko $x$ je enačba, ki jo lahko z ekvivalentnimi preoblikami prevedemo na obliko
 
@@ -24,6 +38,12 @@ kjer sta $a$ in $b$ števili. Neznanka nastopa samo v prvi potenci ($x$, ne $x^2
 - odpremo oklepaje in poenostavimo posamezno stran.
 
 Enačba je kot tehtnica: kar naredimo na eni strani, moramo narediti tudi na drugi.
+
+:::premisli
+Zakaj ne smemo obeh strani pomnožiti z $0$? Kaj bi se zgodilo z enačbo $x + 250 = 430$?
+---
+Dobili bi $0 = 0$, kar velja za vsak $x$. Nova enačba bi imela drugačne rešitve (vsa števila) kot prvotna (samo $180$), zato to ni ekvivalentna preoblika.
+:::
 
 **3. Postopek reševanja.**
 
@@ -40,6 +60,12 @@ Enačba je kot tehtnica: kar naredimo na eni strani, moramo narediti tudi na dru
 - Če je $a = 0$ in $b \neq 0$: enačba $0 \cdot x = b$ **nima rešitve** (npr. $0 = 4$ ni res).
 - Če je $a = 0$ in $b = 0$: enačba $0 \cdot x = 0$ velja za **vsako realno število**, rešitev je $\mathbb{R}$.
 
+:::premisli
+Napovej, preden računaš: koliko rešitev ima enačba $2x + 3 = 2x + 5$?
+---
+Nobene. Ko na obeh straneh odštejemo $2x$, ostane $3 = 5$, kar ni res. To je oblika $0 \cdot x = 2$: leva stran je za vsak $x$ za $2$ manjša od desne.
+:::
+
 **5. Enačbe s parametrom.** Včasih v enačbi poleg $x$ nastopa še črka, npr. $a$ ali $m$, ki predstavlja neko poljubno, a fiksno število. Tej črki rečemo **parameter**. Za vsako vrednost parametra dobimo drugo enačbo, zato rešitev običajno zapišemo kot formulo in ločimo primere.
 
 Primer: $mx + 1 = 3x + 5$. Člene z $x$ prenesemo na levo: $mx - 3x = 5 - 1$, torej $(m-3)x = 4$.
@@ -55,15 +81,34 @@ Pri parametru **nikoli ne delimo z izrazom, ki bi lahko bil $0$**, ne da bi ta p
 
 Reši enačbo $3(x-2) + 5 = 2x + 7$.
 
+**Podatki:** enačba $3(x-2) + 5 = 2x + 7$
+**Iščemo:** neznanko $x$
+
+:::formula
+Ekvivalentne preoblike do oblike $ax = b$, nato $x = \dfrac{b}{a}$ za $a \ne 0$
+:::
+
+**Rešitev:**
+
 1. Odpremo oklepaj. Vsak člen v oklepaju pomnožimo s $3$: $3x - 6 + 5 = 2x + 7$.
 2. Poenostavimo levo stran: $3x - 1 = 2x + 7$.
 3. Člene z $x$ prenesemo na levo, števila na desno. Odštejemo $2x$ in prištejemo $1$: $3x - 2x = 7 + 1$.
 4. Poenostavimo: $x = 8$.
 5. Preverimo. Leva stran: $3 \cdot (8-2) + 5 = 18 + 5 = 23$. Desna stran: $2 \cdot 8 + 7 = 23$. ✓
+6. Odgovor: rešitev enačbe je $x = 8$.
 
 ### Primer 2: ulomki
 
 Reši enačbo $\dfrac{x+1}{2} - \dfrac{2x-1}{3} = 1$.
+
+**Podatki:** enačba $\dfrac{x+1}{2} - \dfrac{2x-1}{3} = 1$, imenovalca $2$ in $3$
+**Iščemo:** neznanko $x$
+
+:::formula
+Vse člene pomnožimo s skupnim imenovalcem (tu $6$), nato rešujemo kot enačbo brez ulomkov.
+:::
+
+**Rešitev:**
 
 1. Skupni imenovalec je $6$. Vsak člen, tudi $1$ na desni, pomnožimo s $6$:
 $$6 \cdot \frac{x+1}{2} - 6 \cdot \frac{2x-1}{3} = 6 \cdot 1.$$
@@ -72,10 +117,20 @@ $$6 \cdot \frac{x+1}{2} - 6 \cdot \frac{2x-1}{3} = 6 \cdot 1.$$
 4. Poenostavimo: $-x + 5 = 6$.
 5. Odštejemo $5$: $-x = 1$. Pomnožimo z $-1$: $x = -1$.
 6. Preverimo. $\dfrac{-1+1}{2} - \dfrac{2\cdot(-1)-1}{3} = \dfrac{0}{2} - \dfrac{-3}{3} = 0 + 1 = 1$. ✓
+7. Odgovor: rešitev enačbe je $x = -1$.
 
 ### Primer 3: parameter
 
 Reši enačbo $ax + 3 = x + a + 2$ za neznanko $x$. Parameter $a$ je realno število.
+
+**Podatki:** enačba $ax + 3 = x + a + 2$, parameter $a \in \mathbb{R}$
+**Iščemo:** rešitev $x$ za vsako vrednost parametra $a$
+
+:::formula
+$(a-1)x = b$: za $a - 1 \ne 0$ je $x = \dfrac{b}{a-1}$; primer $a - 1 = 0$ obravnavamo posebej.
+:::
+
+**Rešitev:**
 
 1. Člene z $x$ prenesemo na levo, ostalo na desno: $ax - x = a + 2 - 3$.
 2. Na levi izpostavimo $x$, na desni poenostavimo: $(a-1)x = a - 1$.
@@ -85,14 +140,37 @@ Reši enačbo $ax + 3 = x + a + 2$ za neznanko $x$. Parameter $a$ je realno šte
 6. Preverimo z vrednostmi. Za $a = 2$: $2x + 3 = x + 4$ da $x = 1$. ✓ Za $a = 1$: $x + 3 = x + 3$ res velja za vsak $x$. ✓
 7. **Odgovor:** za $a \neq 1$ je $x = 1$, za $a = 1$ je rešitev vsako realno število.
 
+### Primer 4 – zdaj ti: mleko v kuhinji
+
+Za palačinke porabiš tretjino mleka iz steklenice, za puding polovico. V steklenici ostane $150\,\text{ml}$. Koliko mleka je bilo v polni steklenici?
+
+**Podatki:** za palačinke $\dfrac{1}{3}$ mleka, za puding $\dfrac{1}{2}$ mleka, ostane $150\,\text{ml}$
+**Iščemo:** začetno količino mleka $x$ (v ml)
+
+:::formula
+Ostanek = vse − porabljeno: $x - \dfrac{x}{3} - \dfrac{x}{2} = 150$; ulomke odpravimo s skupnim imenovalcem $6$.
+:::
+
+**Rešitev:**
+
+1. Neznanka je cela steklenica, zato jo označimo z $x$; porabljeni deli so $\dfrac{x}{3}$ in $\dfrac{x}{2}$.
+2. Enačba: $x - \dfrac{x}{3} - \dfrac{x}{2} = 150$, ker od celote odštejemo oba porabljena dela.
+3. Pomnožimo vsak člen s $6$, tudi $150$ na desni: $6x - 2x - 3x = 900$.
+4. Poenostavi levo stran, izračunaj $x$ in naredi preizkus.
+
+:::premisli
+Koliko mleka je bilo v steklenici?
+---
+$6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150$. V steklenici je bilo $900\,\text{ml}$ mleka.
+:::
+
 ## Pogoste napake
 
-- **Predznak pred oklepajem.** Pri $-(2x-1)$ se predznak spremeni pri *obeh* členih: $-2x + 1$, ne $-2x - 1$. Pri ulomku $-\dfrac{2x-1}{3}$ je števec v oklepaju, zato po množenju s $6$ dobimo $-2(2x-1)$.
-- **Pozabljeno množenje členov brez ulomka.** Če enačbo množiš s skupnim imenovalcem, moraš pomnožiti *vsak* člen, tudi celo število.
-- **Prenos brez spremembe predznaka.** Če člen prenesemo na drugo stran, se mu predznak spremeni, ker pravzaprav na obeh straneh prištejemo ali odštejemo isto.
-- **Deljenje z $0$ pri parametru.** Pri $(a-1)x = a-1$ ne smeš kar deliti, ne da bi ločil primer $a = 1$.
-- **Napačen zaključek pri $0 \cdot x = b$.** Če je $b \neq 0$, rešitve ni. Če je $b = 0$, so rešitve vsa števila. To nista isto.
-- **Izpustiš preverjanje.** Vstavitev v prvotno enačbo hitro razkrije računsko napako.
+- **Predznak pred oklepajem.** »$-(2x-1) = -2x - 1$.« Napačno: minus spremeni predznak *obema* členoma. Popravek: $-(2x-1) = -2x + 1$. Pri ulomku $-\dfrac{2x-1}{3}$ je števec v oklepaju, zato po množenju s $6$ dobimo $-2(2x-1)$.
+- **Pozabljeno množenje členov brez ulomka.** »Pri $\dfrac{x}{2} + \dfrac{x}{3} = 5$ množim s $6$ samo ulomka: $3x + 2x = 5$.« Napačno: tehtnica ostane v ravnovesju le, če pomnožiš *vsak* člen. Popravek: $3x + 2x = 30$.
+- **Prenos brez spremembe predznaka.** »Iz $5x - 7 = 3x + 9$ sledi $2x = 9 - 7$.« Napačno: $-7$ odstranimo tako, da na obeh straneh prištejemo $7$. Popravek: $2x = 9 + 7 = 16$.
+- **Deljenje z $0$ pri parametru.** »$(a-1)x = a-1$, torej vedno $x = 1$.« Napačno: pri $a = 1$ bi delil z $0$. Popravek: primer $a = 1$ reši posebej; tam velja vsak $x$.
+- **Napačen zaključek pri $0 \cdot x = b$.** »$0 \cdot x = 6$, torej $x = 0$.« Napačno: $0 \cdot x$ je vedno $0$, nikoli $6$. Popravek: če je $b \neq 0$, rešitve ni; če je $b = 0$, so rešitve vsa števila.
 
 ## Povzetek
 
@@ -110,17 +188,13 @@ Posebej preprost primer je enačba $ax + b = 0$. Njena rešitev je **ničla** li
 
 Pri parametru slika razloži tudi primere. Če sta premici vzporedni in različni, se ne sekata (ni rešitve). Če sta isti premici, se prekrivata povsod (neskončno rešitev). V ostalih primerih se sekata v eni točki.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Kot zgodba
 
-Taksist zaračuna začetni znesek $2\,\text{€}$ in še $1{,}20\,\text{€}$ za vsak prevožen kilometer. Vožnja je stala $9{,}20\,\text{€}$. Koliko kilometrov si prevozil?
+Babica peče piškote in pravi Maji: »Na tehtnici je pladenj s štirimi enakimi kepami testa in še $100\,\text{g}$ sladkorja. Skupaj je $900\,\text{g}$. Pladenj tehta $200\,\text{g}$. Koliko tehta ena kepa?«
 
-Če je $x$ število kilometrov, je cena $2 + 1{,}2x$. Zapišemo enačbo:
+Maja najprej odmisli, kar ni testo. S tehtnice v mislih umakne pladenj in sladkor, zato od $900$ odšteje $200$ in $100$: ostane $600\,\text{g}$. To je teža štirih kep, ena torej tehta $150\,\text{g}$. Z enačbo: $4x + 300 = 900$, $4x = 600$, $x = 150$.
 
-$$2 + 1{,}2x = 9{,}2.$$
-
-Odštejemo $2$: $1{,}2x = 7{,}2$. Delimo z $1{,}2$: $x = 6$. Prevozil si $6\,\text{km}$. Preveri: $2 + 1{,}2 \cdot 6 = 2 + 7{,}2 = 9{,}2$. ✓
-
-Še analogija s tehtnico. Enačba je tehtnica v ravnovesju. Če z leve skodelice vzameš dve kroglici, moraš vzeti dve tudi z desne, sicer se ravnovesje poruši. Zato smemo na obeh straneh narediti isto. Parameter je pa kot teža, ki je ne poznamo vnaprej: tehtnico moramo uravnotežiti za vsako možno težo.
+Naslednji dan babica uporabi drug pladenj, njegove teže pa ne pove. »Recimo, da tehta $p$ gramov,« reče Maja. Potem je $4x + p + 100 = 900$ in $x = \dfrac{800 - p}{4}$. To je enačba s parametrom: za vsak pladenj dobi drugo kepo. Ko pa babica reče, da pladenj tehta $800\,\text{g}$, Maja vidi, da je $x = 0$: na pladnju sploh ni testa. Parameter torej pove, kdaj ima naloga smisel.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -152,25 +226,51 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 
 ? Reši enačbo $5x - 7 = 3x + 9$.
 - $x = 1$
+~ Pri prenosu $-7$ nisi spremenil predznaka: $2x = 9 - 7$. Pravilno je $2x = 9 + 7$.
 + $x = 8$
 - $x = -8$
+~ Napačen predznak pri zadnjem koraku. Iz $2x = 16$ sledi pozitiven $x$.
 > Člene z $x$ zberemo na levi: $5x - 3x = 9 + 7$, torej $2x = 16$ in $x = 8$. Odgovor $x = 1$ dobimo, če $7$ napačno odštejemo ($9 - 7 = 2$), odgovor $x = -8$ pa, če napačno obrnemo predznak.
 
 ? Reši enačbo $\dfrac{x}{2} + \dfrac{x}{3} = 5$.
 - $x = 1$
+~ S $6$ si pomnožil samo ulomka, ne pa tudi $5$ na desni. Pomnožiti moraš vsak člen.
 - $x = 30$
+~ Ustavil si se pri $5x = 30$. Na koncu deliš s koeficientom $5$.
 + $x = 6$
 > Pomnožimo s $6$: $3x + 2x = 30$, torej $5x = 30$ in $x = 6$. Če pozabimo pomnožiti desno stran, dobimo $x = 1$. Če ne delimo s $5$, dobimo $30$.
 
 ? Za katero vrednost parametra $a$ enačba $ax - 2 = 4 + 2x$ nima rešitve?
 - $a = 0$
+~ Pri $a = 0$ dobimo $-2 = 4 + 2x$, ki ima rešitev $x = -3$. Gledati moraš koeficient pri $x$, ne samo $a$.
 - $a = 6$
+~ $6$ je desna stran $b$, ne pogoj. Rešitve ni, ko je koeficient pri $x$ enak $0$.
 + $a = 2$
 - $a = -2$
+~ Člen $2x$ si prenesel brez spremembe predznaka: $(a+2)x$. Pravilno je $(a-2)x = 6$.
 > Enačbo preoblikujemo: $ax - 2x = 6$, torej $(a-2)x = 6$. Za $a = 2$ dobimo $0 \cdot x = 6$, kar nikoli ne velja. Za vsak drug $a$ je rešitev $x = \dfrac{6}{a-2}$.
+
+? Skleda tehta $248\,\text{g}$, s štirimi enakimi jabolki pa $1052\,\text{g}$. Približno koliko tehta eno jabolko?
+- približno $260\,\text{g}$
+~ Pozabil si odšteti skledo: $1052 : 4 \approx 263$. Najprej odstrani skledo z obeh strani.
++ približno $200\,\text{g}$
+- približno $325\,\text{g}$
+~ Skledo si prištel namesto odštel: $(1052 + 248) : 4 = 325$. Pri prenosu se predznak spremeni.
+- približno $800\,\text{g}$
+~ To so vsa štiri jabolka ($1052 - 248 = 804$). Deliti moraš še s $4$.
+> Enačba $4x + 248 = 1052$ da $4x = 804$ in $x = 201$. Eno jabolko tehta približno $200\,\text{g}$.
+
+? Zakaj enačbe $(a-1)x = a - 1$ ne smemo kar deliti z $a - 1$?
+- Ker $a$ ni znano število, zato z njim ne smemo računati.
+~ S parametrom smemo računati kot s številom. Težava je samo, kadar je izraz enak $0$.
++ Ker je pri $a = 1$ izraz $a - 1$ enak $0$, z $0$ pa ne smemo deliti.
+- Ker bi dobili $x = 1$, to pa ni nikoli rešitev.
+~ Za $a \ne 1$ je $x = 1$ res rešitev. Manjka le poseben primer $a = 1$.
+> Deljenje z $a - 1$ je ekvivalentna preoblika samo za $a \ne 1$. Pri $a = 1$ dobimo $0 \cdot x = 0$, kar velja za vsak $x$.
 
 :::simboli
 x | neznanka | | |
 a | koeficient pri neznanki | | | pri a ≠ 0 je rešitev x = b/a
 b | znano število na desni strani | | |
+m | parameter | | | poljubno, a fiksno število
 :::

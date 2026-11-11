@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Notranja energija
+  - kinetična in potencialna energija delcev
+  - z višjo temperaturo večja
+- Toplota
+  - prenesena energija, v J
+  - teče s toplejšega na hladnejše
+  - napaka: telo »vsebuje toploto«
+- Specifična toplota
+  - $Q = m\,c\,\Delta T$
+  - voda $4200\,\mathrm{J/(kg\,K)}$, železo $450\,\mathrm{J/(kg\,K)}$
+  - masa vedno v kg
+- Temperaturna razlika
+  - $\Delta T$ = končna − začetna
+  - $1\,\mathrm{K}$ razlike $= 1\,^\circ\mathrm{C}$ razlike
+  - negativen $Q$: telo oddaja
+- Fazni prehodi
+  - temperatura med prehodom stoji
+  - energija trga vezi med delci
+- Talilna in izparilna toplota
+  - $Q = m\,q_t$, $Q = m\,q_i$
+  - voda: $334\,\mathrm{kJ/kg}$ in $2260\,\mathrm{kJ/kg}$
+  - parna komora v telefonu
+- Račun po odsekih
+  - segrevanje, prehod, segrevanje
+  - vsak odsek s svojo $c$

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Energija in delo
+  - opravljeno delo spremeni energijo: $A = \Delta W$
+  - enota joule, $1\,\mathrm{J} = 1\,\mathrm{N\,m}$
+- Kinetična energija
+  - $W_k = \dfrac{mv^2}{2}$
+  - dvakrat hitreje, štirikrat več energije
+  - hitrost najprej pretvori v $\mathrm{m/s}$
+- Potencialna energija
+  - $W_p = mgh$
+  - višina od izbrane ničelne ravni
+  - šteje le sprememba višine
+- Prožnostna energija
+  - $W_{pr} = \dfrac{kx^2}{2}$
+  - $x$ je raztezek, ne dolžina vzmeti
+- Ohranitev mehanske energije
+  - brez trenja: $W_k + W_p + W_{pr}$ je stalna
+  - padajoči storž: vsota ves čas $19{,}6\,\mathrm{J}$
+- Trenje in upor
+  - mehanska energija se pretvarja v notranjo
+  - skupna energija se ohranja
+- Hitrost pri padcu
+  - $v = \sqrt{2gh}$, neodvisna od mase
+  - dvakrat višje, le $1{,}4$-krat hitreje

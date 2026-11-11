@@ -5,7 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že iz osnovne šole veš, da pri merjenju ne zadostuje samo število. Če rečeš, da je miza dolga $2$, nihče ne ve, ali misliš $2\,\text{m}$, $2\,\text{cm}$ ali $2$ čevlja. Šele število **skupaj z enoto** pove, kaj smo izmerili.
+Dve situaciji s poti. Navigacija v avtu reče: »Čez $800\,\text{m}$ zavijte desno.« Tabla ob cesti na istem mestu kaže: »Izvoz $0{,}8\,\text{km}$.« Drugič na planinskem zemljevidu v merilu $1 : 25\,000$ izmeriš pot do koče: $8\,\text{cm}$. V naravi je to $200\,000\,\text{cm}$ ali $2\,\text{km}$.
+
+Vsakič je razdalja ena sama, števila pa so različna: $800$ in $0{,}8$; $200\,000$ in $2$. Število se spremeni, ker se spremeni enota. Zato samo število ne pove ničesar. Če rečeš, da je miza dolga $2$, nihče ne ve, ali misliš $2\,\text{m}$ ali $2\,\text{cm}$. Šele število **skupaj z enoto** pove, kaj smo izmerili.
 
 Fizika opisuje naravo s količinami, kot so dolžina, masa, čas in hitrost. Da se znanstveniki, inženirji in proizvajalci po vsem svetu razumejo, uporabljajo skupen sistem enot. Če bi vsak uporabljal svoje, bi prihajalo do hudih napak pri gradnji, v letalstvu, v medicini in pri recepturah. Če znaš enote pravilno zapisati in pretvarjati, lahko pri vsaki fizikalni nalogi preveriš, ali je rezultat smiseln.
 
@@ -40,7 +42,33 @@ Osnovna enota za maso je že sama po sebi **kilogram** (ne gram), kar je pomembn
 
 Nekatere izpeljane enote imajo posebno ime, npr. newton $\text{N} = \dfrac{\text{kg}\cdot\text{m}}{\text{s}^2}$ za silo.
 
-**4. Predpone.** Za zelo velike ali zelo majhne vrednosti pred enoto dodamo predpono, ki pomeni potenco števila $10$:
+**4. Predpone.** Za zelo velike ali zelo majhne vrednosti pred enoto dodamo **predpono**: črko, ki pomeni potenco števila $10$. Najlažje jih vidiš na premici, kjer je zapisan eksponent te potence. Enota brez predpone (meter, sekunda, gram) je pri $0$.
+
+:::risba premica
+opis: Premica eksponentov potenc števila 10 od −9 do 9. Označene predpone: n (nano) pri −9, µ (mikro) pri −6, m (mili) pri −3, c (centi) pri −2, d (deci) pri −1, enota brez predpone pri 0, h (hekto) pri 2, k (kilo) pri 3, M (mega) pri 6, G (giga) pri 9. Levo so majhne enote, desno velike.
+od: -9
+do: 9
+točka: -9 | n
+točka: -6 | µ
+točka: -3 | m
+točka: -2 | c
+točka: -1 | d
+točka: 0 | 1 | modra
+točka: 2 | h
+točka: 3 | k
+točka: 6 | M
+točka: 9 | G
+:::
+
+Vsak korak v desno pomeni desetkrat večjo enoto. Med mili in kilo je šest korakov, zato je kilometer $10^6$-krat daljši od milimetra. Ista premica velja za meter, gram ali sekundo.
+
+:::premisli
+Na premici poišči centi in kilo. Koliko centimetrov je v enem kilometru? Napovej iz razdalje med njima, preden računaš.
+---
+Med $-2$ in $3$ je pet korakov, torej $1\,\text{km} = 10^5\,\text{cm} = 100\,000\,\text{cm}$. Zato je $8\,\text{cm}$ na zemljevidu $1 : 25\,000$ enako $200\,000\,\text{cm} = 2\,\text{km}$.
+:::
+
+Iste predpone v tabeli:
 
 | Predpona | Oznaka | Pomen |
 |---|---|---|
@@ -60,7 +88,27 @@ Primer: $1\,\text{km} = 10^3\,\text{m} = 1000\,\text{m}$ in $1\,\text{mm} = 10^{
 
 $$250\,\text{mm} = 250 \cdot 10^{-3}\,\text{m} = 0{,}25\,\text{m}$$
 
-**6. Pretvarjanje ploščin in prostornin.** Pri $\text{m}^2$ in $\text{m}^3$ je treba potenco **upoštevati tudi pri predponi**:
+**6. Pretvarjanje ploščin in prostornin.** Nariši kvadrat s stranico $1\,\text{dm}$ in ga razdeli na kvadratke s stranico $1\,\text{cm}$:
+
+:::risba mreža
+opis: Kvadrat s stranico 1 dm, razdeljen na 10 vrstic in 10 stolpcev kvadratkov s stranico 1 cm. Skupaj je 100 kvadratkov, torej 1 dm² = 100 cm².
+vrstic: 10
+stolpcev: 10
+spodaj: 1 dm = 10 cm
+desno: 1 dm = 10 cm
+:::
+
+V vsaki vrsti je $10$ kvadratkov, vrst je $10$, skupaj $100$. Torej $1\,\text{dm}^2 = 100\,\text{cm}^2$, čeprav je $1\,\text{dm}$ le $10\,\text{cm}$. Pri kocki dodaš še $10$ plasti: $1\,\text{dm}^3 = 1000\,\text{cm}^3$.
+
+:::premisli
+Koliko $\text{cm}^2$ je $1\,\text{m}^2$? Zakaj ne $100$?
+---
+$10\,000\,\text{cm}^2$. Stranica $1\,\text{m}$ meri $100\,\text{cm}$, kvadrat ima $100$ vrst po $100$ kvadratkov, in $100 \cdot 100 = 10\,000$.
+:::
+
+V simulaciji spodaj »Predpone in osnovne enote SI« izberi količino »ploščina«, vrednost $1$ in pretvori iz $\text{m}^2$ v $\text{cm}^2$. Opazuj, da vsaka stopnica pomeni faktor $100$, ne $10$.
+
+Zato je treba pri $\text{m}^2$ in $\text{m}^3$ potenco **upoštevati tudi pri predponi**:
 
 $$1\,\text{cm}^2 = (10^{-2}\,\text{m})^2 = 10^{-4}\,\text{m}^2, \qquad 1\,\text{cm}^3 = (10^{-2}\,\text{m})^3 = 10^{-6}\,\text{m}^3$$
 
@@ -127,14 +175,35 @@ $1\,\dfrac{\text{km}}{\text{h}} = \dfrac{1000\,\text{m}}{3600\,\text{s}}$ (delim
 5. Enote se pokrajšajo: $\dfrac{\text{m}}{\text{s}} \cdot \text{s} = \text{m}$, kar je res enota za dolžino. ✓
 6. Odgovor: kolesar vozi s hitrostjo $7{,}5\,\dfrac{\text{m}}{\text{s}}$ in v $2\,\text{min}$ prevozi $900\,\text{m}$.
 
+### Primer 4 – zdaj ti: zemljevid
+
+Na planinskem zemljevidu v merilu $1 : 50\,000$ je razdalja med kočama $6{,}4\,\text{cm}$. Kolikšna je resnična razdalja v kilometrih?
+
+**Podatki:** razdalja na zemljevidu $s_z = 6{,}4\,\text{cm}$, merilo $1 : 50\,000$
+**Iščemo:** resnično razdaljo $s$ v $\text{km}$
+
+:::formula
+$s = 50\,000 \cdot s_z$, nato $1\,\text{cm} = 10^{-2}\,\text{m}$ in $1\,\text{m} = 10^{-3}\,\text{km}$
+:::
+
+**Rešitev:**
+
+1. Merilo pove, da je v naravi vse $50\,000$-krat večje: $s = 50\,000 \cdot 6{,}4\,\text{cm} = 320\,000\,\text{cm}$.
+2. Tako veliko število v centimetrih je nepregledno, zato ga pretvori najprej v metre in nato v kilometre.
+
+:::premisli
+Koliko metrov in koliko kilometrov je $320\,000\,\text{cm}$?
+---
+$320\,000 \cdot 10^{-2}\,\text{m} = 3200\,\text{m}$ in $3200 \cdot 10^{-3}\,\text{km} = 3{,}2\,\text{km}$. Koči sta $3{,}2\,\text{km}$ narazen.
+:::
+
 ## Pogoste napake
 
-- **Enota brez števila ali število brez enote.** Rezultat $5$ ni popoln odgovor. Zapiši $5\,\text{m}$ ali $5\,\text{s}$.
-- **Gram namesto kilograma.** Osnovna enota za maso je $\text{kg}$. Pri nalogah v SI moraš grame pretvoriti v kilograme.
-- **Napačna smer pretvorbe.** Ko pretvarjaš v večjo enoto, mora biti število manjše (npr. $500\,\text{m} = 0{,}5\,\text{km}$).
-- **Ploščine in prostornine pretvarjaš kot dolžine.** $1\,\text{cm}^2$ ni $10^{-2}\,\text{m}^2$, ampak $10^{-4}\,\text{m}^2$.
-- **Čas pretvarjaš z $100$.** $1\,\text{h} = 60\,\text{min}$, ne $100\,\text{min}$.
-- **Zamenjava $\text{m}$ in $\text{M}$.** Mala črka $\text{m}$ pomeni mili ($10^{-3}$), velika $\text{M}$ pa mega ($10^6$).
+- **Gram namesto kilograma.** »Kilo je predpona, torej je osnovna enota gram.« Pri masi je izjema: osnovna enota SI je že kilogram. Pravilno: v formule vstavljaj maso v $\text{kg}$, npr. $730\,\text{g} = 0{,}73\,\text{kg}$.
+- **Napačna smer pretvorbe.** »Kilo je $1000$, torej $500\,\text{m}$ krat $1000$ da kilometre.« Tako dobiš $500\,000\,\text{km}$, kar je absurdno. Večja enota pomeni manj enot, zato mora biti število manjše: $500\,\text{m} = 0{,}5\,\text{km}$. Enako pri hitrosti: iz $\text{km/h}$ v $\text{m/s}$ delimo s $3{,}6$, ne množimo.
+- **Ploščine in prostornine kot dolžine.** »Centi je $10^{-2}$, torej $1\,\text{cm}^2 = 10^{-2}\,\text{m}^2$.« Kvadrat ima dve stranici in pretvoriti moraš obe, kot kaže mreža zgoraj. Pravilno: $(10^{-2})^2 = 10^{-4}$, torej $1\,\text{cm}^2 = 10^{-4}\,\text{m}^2$.
+- **Čas pretvarjaš z $100$.** »$1{,}5\,\text{h}$ je $150\,\text{min}$.« Ura nima $100$ minut, ampak $60$; čas ni desetiški. Pravilno: $1{,}5 \cdot 60 = 90\,\text{min}$.
+- **Zamenjava $\text{m}$ in $\text{M}$.** »$5\,\text{Mm}$ je pet milimetrov.« Velika črka $\text{M}$ pomeni mega ($10^6$), mala $\text{m}$ mili ($10^{-3}$). Zato pri predponah vedno pazi na veliko in malo črko.
 
 ## Povzetek
 
@@ -146,15 +215,15 @@ $1\,\dfrac{\text{km}}{\text{h}} = \dfrac{1000\,\text{m}}{3600\,\text{s}}$ (delim
 - Iz $\text{km/h}$ v $\text{m/s}$ delimo s $3{,}6$.
 - Pred računom vse količine pretvori v osnovne enote SI.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Predstavljaj si lestvico enot za dolžino, kjer je vsaka naslednja enota $10^3$-krat večja od prejšnje:
+Pretvarjanje enot je kot menjava denarja na potovanju. Za $1$ evro dobiš $100$ centov. Denarja imaš enako, kovancev pa stokrat več, ker je cent manjša enota. Ko cente zamenjaš nazaj v evre, dobiš manj kosov, vrednost pa ostane.
 
-$$\text{mm} \xrightarrow{\cdot 10^{3}} \text{m} \xrightarrow{\cdot 10^{3}} \text{km}$$
+Enako je z dolžino: $1\,\text{km}$ zamenjaš za $1000\,\text{m}$. Predpona je »menjalni tečaj«: $\text{k}$ pomeni tečaj $1000$, $\text{c}$ tečaj $\dfrac{1}{100}$. Razdalja se ne spremeni, spremeni se le, koliko »kovancev« (enot) jo sestavlja.
 
-Številska vrednost se spreminja v nasprotno smer: pri vsakem koraku navzgor jo delimo s $10^3$, pri vsakem koraku navzdol pa jo množimo s $10^3$. Meter je na sredini. Če greš proti večji enoti (npr. iz $\text{m}$ v $\text{km}$), potrebuješ manj enot, zato je število manjše. Če greš proti manjši enoti (iz $\text{m}$ v $\text{mm}$), potrebuješ več enot, zato je število večje.
+Pri ploščini pa menjaš dvakrat zapored, za vsako stranico enkrat. Zato je tečaj med $\text{m}^2$ in $\text{cm}^2$ enak $100 \cdot 100 = 10\,000$.
 
-Za ploščino si predstavljaj kvadrat s stranico $1\,\text{dm}$. Ta kvadrat ima ploščino $1\,\text{dm}^2$. Vanj gre $10 \cdot 10 = 100$ kvadratkov s stranico $1\,\text{cm}$, torej $1\,\text{dm}^2 = 100\,\text{cm}^2$. Za kocko s stranico $1\,\text{dm}$ gre vanjo $10 \cdot 10 \cdot 10 = 1000$ kockic s stranico $1\,\text{cm}$, torej $1\,\text{dm}^3 = 1000\,\text{cm}^3$. Zato je enota za ploščine in prostornine pri pretvarjanju »bolj občutljiva« kot pri dolžinah.
+Analogija ima mejo: pri denarju tečaj dogovorita banka in trg in se spreminja, predpone pa so stalne in povsod enake.
 
 ## Drugače: Iz vsakdanjega življenja
 
@@ -207,23 +276,49 @@ Enota $\text{km}$ se pokrajša, ostane $\text{m}$.
 
 ## Preveri se
 
-? Koliko metrov je $0{,}35\,\text{km}$?
-- $0{,}35\,\text{m}$
-- $3{,}5\,\text{m}$
-+ $350\,\text{m}$
-- $35\,\text{m}$
+? Na cestnem znaku piše $50\,\text{km/h}$. Kaj je v tem zapisu enota?
+- $50$
+~ To je številska vrednost. Brez enote ne pove, ali gre za kilometre na uro ali metre na sekundo.
+- hitrost
+~ Hitrost je ime količine, ne enota.
+- $\text{km}$
+~ Kilometer je enota za dolžino. Hitrost potrebuje dolžino na čas, torej kilometre na uro.
++ $\text{km/h}$
+> Količina hitrost $= 50 \cdot \text{km/h}$: številska vrednost je $50$, enota je kilometer na uro.
+
+? Na tabli ob poti piše, da je do razgledišča $0{,}35\,\text{km}$. Kaj se zgodi s številom, če isto razdaljo zapišeš v metrih?
+- Zmanjša se na $0{,}00035$.
+~ To je napačna smer. Meter je manjša enota, zato potrebuješ več metrov in število je večje.
+- Ostane $0{,}35$, saj se razdalja ne spremeni.
+~ Razdalja res ostane enaka, enota pa je manjša, zato se število spremeni.
+- Poveča se na $35$.
+~ Tako bi bilo, če bi kilo pomenil $100$. Kilo pomeni $10^3 = 1000$.
++ Poveča se na $350$.
 > Predpona kilo pomeni $10^3$, zato $0{,}35 \cdot 1000 = 350\,\text{m}$. Kilometer je večja enota, zato je število v metrih večje.
+
+? Trije pohodniki povedo, kako daleč so še od koče: Ana $0{,}2\,\text{km}$, Bor $1500\,\text{cm}$, Cene $30\,\text{m}$. Kako si sledijo od najbližjega do najbolj oddaljenega?
+- Ana, Cene, Bor
+~ Primerjal si samo števila $0{,}2 < 30 < 1500$, brez enot. Najprej pretvori vse v isto enoto.
+- Bor, Ana, Cene
+~ Tako dobiš, če $0{,}2\,\text{km}$ pretvoriš v $20\,\text{m}$. Kilo pomeni $1000$, torej $200\,\text{m}$.
++ Bor, Cene, Ana
+> V metrih: Bor $1500 \cdot 10^{-2} = 15\,\text{m}$, Cene $30\,\text{m}$, Ana $0{,}2 \cdot 1000 = 200\,\text{m}$.
 
 ? Koliko $\text{m}^2$ je $500\,\text{cm}^2$?
 - $5\,\text{m}^2$
+~ Uporabil si faktor $10^{-2}$ kot pri dolžini. Pri ploščini se pretvorita obe stranici: $10^{-4}$.
 - $5000\,\text{m}^2$
+~ Napačna smer: $\text{m}^2$ je večja enota, zato mora biti število manjše od $500$.
 - $0{,}5\,\text{m}^2$
+~ To je faktor $10^{-3}$, ki velja za mili pri dolžini. Za $\text{cm}^2$ je faktor $10^{-4}$.
 + $0{,}05\,\text{m}^2$
 > $1\,\text{cm}^2 = 10^{-4}\,\text{m}^2$, zato $500 \cdot 10^{-4} = 0{,}05\,\text{m}^2$. Če bi uporabili samo $10^{-2}$, bi dobili $5\,\text{m}^2$, kar je napaka.
 
 ? Avto vozi s hitrostjo $72\,\dfrac{\text{km}}{\text{h}}$. Kolikšna je hitrost v $\dfrac{\text{m}}{\text{s}}$?
 - $259{,}2\,\dfrac{\text{m}}{\text{s}}$
+~ Množil si s $3{,}6$. Ker je $1\,\text{m/s}$ večja hitrost od $1\,\text{km/h}$, mora biti število manjše: deli s $3{,}6$.
 - $7{,}2\,\dfrac{\text{m}}{\text{s}}$
+~ Delil si z $10$. Ura ima $3600\,\text{s}$, kilometer $1000\,\text{m}$, zato je faktor $3{,}6$.
 + $20\,\dfrac{\text{m}}{\text{s}}$
 > Iz $\text{km/h}$ v $\text{m/s}$ delimo s $3{,}6$: $72 : 3{,}6 = 20$. Množenje s $3{,}6$ bi dalo $259{,}2$, kar je napačna smer pretvorbe.
 
@@ -231,4 +326,5 @@ Enota $\text{km}$ se pokrajša, ostane $\text{m}$.
 s | pot | s = v \cdot t | m
 v | hitrost | | m/s | 1 m/s = 3,6 km/h
 t | čas | | s
+s_z | razdalja na zemljevidu | | cm | merilo $1 : 50\,000$
 :::

@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dogodki
+  - dogodek je podmnožica izidov
+  - $P(A) = \dfrac{m}{n}$, vedno med $0$ in $1$
+  - nasprotni: $P(\overline{A}) = 1 - P(A)$
+- Vsota dogodkov
+  - $A + B$: zgodi se $A$ ali $B$
+  - $P(A + B) = P(A) + P(B) - P(A \cdot B)$
+  - napaka: rezultat nad $1$, pozabljen presek
+- Nezdružljiva dogodka
+  - $P(A \cdot B) = 0$
+  - $P(A + B) = P(A) + P(B)$
+  - nista neodvisna
+- Pogojna verjetnost
+  - $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)}$
+  - pogoj zoži svet na $B$
+  - napaka: zamenjava $P(A \mid B)$ in $P(B \mid A)$
+- Produkt dogodkov
+  - $P(A \cdot B) = P(B) \cdot P(A \mid B)$
+  - dve celi jajci: $\frac{10}{12} \cdot \frac{9}{11}$
+- Neodvisna dogodka
+  - $P(A \mid B) = P(A)$
+  - $P(A \cdot B) = P(A) \cdot P(B)$
+  - napaka: množenje pri jemanju brez vračanja
+- Verjetnostno drevo
+  - po poti množi
+  - različne poti do istega izida seštej

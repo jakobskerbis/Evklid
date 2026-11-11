@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Električni tok
+  - $I = \dfrac{e}{t}$, enota amper ($\text{A}$)
+  - $1\,\text{A}$ pomeni $1\,\text{As}$ naboja v sekundi
+- Napetost
+  - »potisk« vira, enota volt ($\text{V}$)
+  - voltmeter vežemo vzporedno
+- Upor
+  - nasprotuje toku, enota ohm ($\Omega$)
+  - odvisen od snovi, dolžine, preseka
+  - napaka: upor raste z napetostjo
+- Ohmov zakon
+  - $U = I \cdot R$, torej $I = \dfrac{U}{R}$
+  - navigacija: $\dfrac{12\,\text{V}}{20\,\Omega} = 0{,}6\,\text{A}$
+  - napaka: $\dfrac{R}{U}$ namesto $\dfrac{U}{R}$
+- Graf I(U)
+  - premica skozi izhodišče
+  - večji upor, bolj položna premica
+- Merjenje
+  - ampermeter vežemo zaporedno
+  - pred računom pretvori $\text{mA}$ in $\text{k}\Omega$
