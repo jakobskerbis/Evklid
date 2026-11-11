@@ -6,10 +6,12 @@ j je izbral: vsak dan zjutraj (5.43 po ljubljanskem času). English below on pur
 ## What the server offers (server/reports.js)
 
 - `GET https://evklid.app/api/prijave/izvoz` → `{ at, reports: [...] }`: reports with status `open` or `in_review`,
-  newest first, at most 300 per table. Each: `kind` (message | lesson | app), `id`, `status`, `pr`, `created_at`,
+  newest first, at most 300 in total. Each: `kind` (message | lesson | app), `id`, `status`, `pr`, `created_at`,
   `reason`, `device`, `code` (tutor message code, e.g. `#00YA`), `topic_id`, `topic_name`, `step`, `note`,
   `question`, `answer`, `raw` (model text if it differs), `shown` (rendered HTML, max 6000 chars), `context`
-  (last chat messages, app reports only). No student, conversation or message ids; the profile name is replaced
+  (last chat messages, app reports only). `kind: app` with `reason: "ustno"` is a student's objection to an oral-quiz
+  grade (`note` is JSON: question id, point statuses before and after, comment). No student or conversation ids, and
+  no message id except inside `code` (base 36, so j can find the answer); the profile name is replaced
   by `[ime]` (also declined forms). `Cache-Control: no-store`; every call is written to the access log.
 - `POST https://evklid.app/api/prijave/<kind>/<id>/stanje` with JSON `{ "status": "in_review", "pr": 612 }`,
   `{ "status": "fixed" }` (keeps the PR number) or `{ "status": "open" }` (clears it). 400 on bad input, 404 if the
