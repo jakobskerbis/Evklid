@@ -11,6 +11,7 @@ const OWNER_ONLY = [
   [/^\/account\/birth-date\/?$/i, "POST"], // datum rojstva imetnika: otrok ga na starševi napravi ne sme vpisati
   [/^\/account\/(pilot-wtp|privacy-seen|owner-code)\/?$/i, "POST"], // vprašanje o plačilu, obvestilo o zasebnosti, koda imetnika: samo imetnik
   [/^\/account\/pilot-photos\/\d+\/?$/i, "DELETE"], // izbris fotografij pilota v Računu (pregled B3)
+  [/^\/account\/ustno-glas\/?$/i, null], // stikalo starša »Dovoli odgovarjanje z glasom« (server/ustno-api.js): samo imetnik
   [/^\/billing\/(checkout|portal)\/?$/i, null],
   [/^\/admin(\/|$)/i, null],
   [/^\/students\/?$/i, "POST"], // nov profil

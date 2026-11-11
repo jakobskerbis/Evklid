@@ -146,6 +146,12 @@ export function migrateAccounts(db) {
       UPDATE usage SET parent_id = NULL WHERE parent_id = OLD.id;
     END;`);
   }
+  // Izbris računa: strani zapiskov izbrisanih profilov (server/zapiski.js) niso več vezane na račun.
+  if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'zapiski_strani'").get()) {
+    db.exec(`CREATE TRIGGER IF NOT EXISTS zapiski_strani_parent_delete AFTER DELETE ON parents BEGIN
+      DELETE FROM zapiski_strani WHERE parent_id = OLD.id;
+    END;`);
+  }
   // Izbris računa (vse poti: račun, gost, čiščenje neaktivnih): zapisi meje AI v kv z id računa (server/placila/placano.js
   // plačana obdobja, dobroimetje, vračila; okno meje in nadgradnja v accounts/index.js). id dobi naslednji nov račun, ki bi
   // sicer podedoval tuje dobroimetje (šteje kot pravi denar za mejo AI) in podatke o plačilih (GDPR čl. 17).

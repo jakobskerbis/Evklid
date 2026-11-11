@@ -1,0 +1,2648 @@
+{
+ "opis": "Ročni pregled vprašanj za ustno spraševanje (vzorec 2, pravilo 6). Pregledal Opus 10. 11. 2026 po merilu: smiselno samostojno na glas, brez sklica na zgodbo, sliko, poskus ali prejšnji korak lekcije; pojmi zahtevajo le vprašano. h = zgoščena vrednost besedila v lekciji, o = D (obdrži) ali I (izloči), r = razlog, k = pojmi, ki ostanejo. Vprašanje iz :::premisli brez veljavnega vnosa ni ponujeno. Nova vprašanja: node scripts/ustno-pregled.js",
+ "vprasanja": {
+  "BIO-OS-8/biologija-in-raziskovanje#p0": {
+   "h": "bbd4c3e4a43b",
+   "o": "D"
+  },
+  "BIO-OS-8/celica-pod-mikroskopom#p1": {
+   "h": "a7c9972dd0d8",
+   "o": "D"
+  },
+  "BIO-OS-9/biologija-in-druzba#p0": {
+   "h": "edb2549069e3",
+   "o": "D"
+  },
+  "BIO-OS-9/nacrtovanje-poskusa#p0": {
+   "h": "00aa8550333e",
+   "o": "D"
+  },
+  "BIO-SS-1/raziskovanje-v-biologiji#p0": {
+   "h": "e2e375c92d63",
+   "o": "D"
+  },
+  "BIO-SS-1/znacilnosti-zivljenja#p1": {
+   "h": "c8afaa5f6c77",
+   "o": "D"
+  },
+  "BIO-SS-1/znacilnosti-zivljenja#p2": {
+   "h": "143b008dc330",
+   "o": "D"
+  },
+  "BIO-SS-2/mehanizmi-evolucije#p0": {
+   "h": "bdcae71f7a43",
+   "o": "I",
+   "r": "izraz iz lekcije (»razlaga z navajanjem«) brez pojasnila"
+  },
+  "BIO-SS-2/mehanizmi-evolucije#p1": {
+   "h": "0d18ecc5d11f",
+   "o": "D"
+  },
+  "BIO-SS-2/nastanek-in-razvoj-zivljenja#p0": {
+   "h": "17c85652d989",
+   "o": "D"
+  },
+  "BIO-SS-2/nastanek-in-razvoj-zivljenja#p1": {
+   "h": "cfa1c9b51c4d",
+   "o": "D"
+  },
+  "BIO-SS-3/hormonski-sistem#p0": {
+   "h": "2b7d66fbd686",
+   "o": "D"
+  },
+  "BIO-SS-3/hormonski-sistem#p1": {
+   "h": "705e10496d30",
+   "o": "D"
+  },
+  "BIO-SS-3/zivcna-celica-in-sinapsa#p0": {
+   "h": "e6482857810d",
+   "o": "D"
+  },
+  "BIO-SS-3/zivcna-celica-in-sinapsa#p1": {
+   "h": "95e8b48e6364",
+   "o": "D"
+  },
+  "BIO-SS-4/statistika-v-biologiji#p1": {
+   "h": "d9c6e8163f26",
+   "o": "D"
+  },
+  "BIO-SS-4/znanstvena-metoda#p0": {
+   "h": "1970bc715c99",
+   "o": "D"
+  },
+  "BIO-SS-4/znanstvena-metoda#p1": {
+   "h": "dfbc4901eabb",
+   "o": "D"
+  },
+  "FIZ-OS-8/enakomerno-gibanje#p1": {
+   "h": "0fcf97452b96",
+   "o": "I",
+   "r": "sklic na graf lista iz lekcije"
+  },
+  "FIZ-OS-8/gostota#p1": {
+   "h": "f54bdf433c44",
+   "o": "D"
+  },
+  "FIZ-OS-8/lom-svetlobe#p1": {
+   "h": "36679cb604a7",
+   "o": "D"
+  },
+  "FIZ-OS-8/merske-napake#p0": {
+   "h": "6cac16b114cc",
+   "o": "I",
+   "r": "sklic na pet meritev iz lekcije, ki jih vprašanje ne pove"
+  },
+  "FIZ-OS-8/nebo-in-osoncje#p0": {
+   "h": "35b442b994d4",
+   "o": "D"
+  },
+  "FIZ-OS-8/odboj-svetlobe#p1": {
+   "h": "6aeb81393fed",
+   "o": "D"
+  },
+  "FIZ-OS-8/sestavljanje-sil-in-ravnovesje#p1": {
+   "h": "7943e7e34421",
+   "o": "D"
+  },
+  "FIZ-OS-8/sirjenje-svetlobe#p0": {
+   "h": "5142237b4d23",
+   "o": "D"
+  },
+  "FIZ-OS-8/tlak#p0": {
+   "h": "256aa0a286c0",
+   "o": "D"
+  },
+  "FIZ-OS-8/trenje-in-upor#p1": {
+   "h": "37a2be92b8af",
+   "o": "D"
+  },
+  "FIZ-OS-8/vzgon#p0": {
+   "h": "40d40819d8ac",
+   "o": "D"
+  },
+  "FIZ-OS-8/vzgon#p1": {
+   "h": "c7b1fc358420",
+   "o": "D"
+  },
+  "FIZ-OS-9/elektricni-krog#p0": {
+   "h": "526e937e20cb",
+   "o": "I",
+   "r": "sklic na dve povezavi iz lekcije"
+  },
+  "FIZ-OS-9/elektricni-krog#p1": {
+   "h": "9501a3013570",
+   "o": "D"
+  },
+  "FIZ-OS-9/elektricni-naboj#p0": {
+   "h": "234107de100e",
+   "o": "D"
+  },
+  "FIZ-OS-9/elektricni-naboj#p1": {
+   "h": "41d7d8c3aaae",
+   "o": "D"
+  },
+  "FIZ-OS-9/elektricni-tok-in-napetost#p1": {
+   "h": "b698b60781f2",
+   "o": "D"
+  },
+  "FIZ-OS-9/elektromagnet#p0": {
+   "h": "f84bedef8328",
+   "o": "I",
+   "r": "sklic na prvi poskus z žico iz lekcije"
+  },
+  "FIZ-OS-9/kineticna-in-potencialna-energija#p1": {
+   "h": "58b89ba06172",
+   "o": "D"
+  },
+  "FIZ-OS-9/magneti-in-magnetno-polje#p0": {
+   "h": "19a38cedb713",
+   "o": "D"
+  },
+  "FIZ-OS-9/magneti-in-magnetno-polje#p1": {
+   "h": "10a9d0740f7a",
+   "o": "D"
+  },
+  "FIZ-OS-9/moc-in-izkoristek#p1": {
+   "h": "afc4e51a1afd",
+   "o": "D",
+   "r": "izkoristek 20 % ni podan",
+   "k": [
+    "Delo je enako, a ga opraviš v krajšem času, zato je moč večja",
+    "Pri večji moči zato v vsaki sekundi nastane več toplote, kot je telo sproti odda okolici"
+   ]
+  },
+  "FIZ-OS-9/newtonovi-zakoni#p0": {
+   "h": "dd694e3d62ba",
+   "o": "D"
+  },
+  "FIZ-OS-9/newtonovi-zakoni#p1": {
+   "h": "451c930e3c0d",
+   "o": "D"
+  },
+  "FIZ-OS-9/prenos-toplote#p0": {
+   "h": "d9c36f3a21b1",
+   "o": "D"
+  },
+  "FIZ-OS-9/prenos-toplote#p1": {
+   "h": "fe167988dc6a",
+   "o": "D"
+  },
+  "FIZ-OS-9/prosti-pad#p0": {
+   "h": "f06c47bec8bb",
+   "o": "D"
+  },
+  "FIZ-OS-9/temperatura-in-notranja-energija#p1": {
+   "h": "db596fc8b7ac",
+   "o": "D"
+  },
+  "FIZ-OS-9/upor-in-ohmov-zakon#p1": {
+   "h": "1a4123893714",
+   "o": "D"
+  },
+  "FIZ-SS-1/navor-in-ravnovesje#p1": {
+   "h": "a3ea3779e2ea",
+   "o": "D"
+  },
+  "FIZ-SS-1/navor-in-ravnovesje#p2": {
+   "h": "12a9da561723",
+   "o": "D"
+  },
+  "FIZ-SS-1/trenje#p1": {
+   "h": "644f7f9c877d",
+   "o": "D"
+  },
+  "FIZ-SS-1/vektorji-v-kinematiki#p1": {
+   "h": "086ab9026d97",
+   "o": "D"
+  },
+  "FIZ-SS-2/enakomerno-krozenje#p1": {
+   "h": "5f6601b4704e",
+   "o": "D"
+  },
+  "FIZ-SS-2/gravitacijski-zakon#p0": {
+   "h": "114da90d4211",
+   "o": "D"
+  },
+  "FIZ-SS-2/gravitacijski-zakon#p1": {
+   "h": "4fdc96f2e2e5",
+   "o": "D"
+  },
+  "FIZ-SS-2/plinska-enacba#p1": {
+   "h": "4345501fe815",
+   "o": "D"
+  },
+  "FIZ-SS-2/prevajanje-toplote-in-sevanje#p0": {
+   "h": "ca902d959c05",
+   "o": "D"
+  },
+  "FIZ-SS-2/prevajanje-toplote-in-sevanje#p1": {
+   "h": "9742094b87ea",
+   "o": "D"
+  },
+  "FIZ-SS-2/temperatura-in-raztezanje#p0": {
+   "h": "260a0395fb75",
+   "o": "D"
+  },
+  "FIZ-SS-3/elektromagnetno-valovanje#p0": {
+   "h": "bdf259ae40ed",
+   "o": "D"
+  },
+  "FIZ-SS-3/elektromagnetno-valovanje#p1": {
+   "h": "314db69fa58a",
+   "o": "D"
+  },
+  "FIZ-SS-3/izmenicni-tok-in-nihajni-krog#p0": {
+   "h": "9f87aa292c45",
+   "o": "D"
+  },
+  "FIZ-SS-3/magnetna-sila#p1": {
+   "h": "b6c4d2e04568",
+   "o": "D"
+  },
+  "FIZ-SS-3/magnetno-polje#p0": {
+   "h": "ec5a2b33915d",
+   "o": "D"
+  },
+  "FIZ-SS-3/magnetno-polje#p1": {
+   "h": "54fda857b3b3",
+   "o": "D"
+  },
+  "FIZ-SS-4/atom#p1": {
+   "h": "d64ef3d39b6f",
+   "o": "D"
+  },
+  "FIZ-SS-4/osoncje-in-gibanje-planetov#p0": {
+   "h": "cca47ba6042e",
+   "o": "D"
+  },
+  "FIZ-SS-4/zvezde-in-vesolje#p0": {
+   "h": "9ebf71455b11",
+   "o": "D"
+  },
+  "FIZ-SS-4/zvezde-in-vesolje#p1": {
+   "h": "13da4871b4ac",
+   "o": "D"
+  },
+  "KEM-OS-8/energija-pri-reakcijah#p0": {
+   "h": "0e627fc8b12c",
+   "o": "D"
+  },
+  "KEM-OS-8/energija-pri-reakcijah#p1": {
+   "h": "b39a9db89782",
+   "o": "D"
+  },
+  "KEM-OS-8/formule-spojin#p0": {
+   "h": "a036ef585c38",
+   "o": "D"
+  },
+  "KEM-OS-8/formule-spojin#p1": {
+   "h": "669846524727",
+   "o": "D"
+  },
+  "KEM-OS-8/formule-spojin#p2": {
+   "h": "b1d7078d3af5",
+   "o": "D"
+  },
+  "KEM-OS-8/kemijska-reakcija#p0": {
+   "h": "47e4a7e7d44e",
+   "o": "D"
+  },
+  "KEM-OS-8/kemijska-reakcija#p1": {
+   "h": "0a1332278676",
+   "o": "D"
+  },
+  "KEM-OS-8/kisline-in-baze#p0": {
+   "h": "c7d03a87c2fc",
+   "o": "D"
+  },
+  "KEM-OS-8/kisline-in-baze#p1": {
+   "h": "54ad6beec8a2",
+   "o": "D"
+  },
+  "KEM-OS-8/kovalentna-vez#p1": {
+   "h": "3dc9ebb7cf7a",
+   "o": "D"
+  },
+  "KEM-OS-8/kovine#p0": {
+   "h": "bb4f7d230727",
+   "o": "D"
+  },
+  "KEM-OS-8/kovine#p1": {
+   "h": "f1942009b271",
+   "o": "D"
+  },
+  "KEM-OS-8/kovine#p2": {
+   "h": "bb8bd06cdd1a",
+   "o": "I",
+   "r": "vprašanje ne pove, katero enačbo"
+  },
+  "KEM-OS-8/nekovine#p0": {
+   "h": "4fff63818321",
+   "o": "D"
+  },
+  "KEM-OS-8/nekovine#p1": {
+   "h": "b0cff6e9cdd1",
+   "o": "D"
+  },
+  "KEM-OS-8/nevtralizacija-in-soli#p1": {
+   "h": "ad0ad5fe703b",
+   "o": "D"
+  },
+  "KEM-OS-8/nevtralizacija-in-soli#p2": {
+   "h": "5411f3dbf3de",
+   "o": "I",
+   "r": "vprašanje ne pove, katero enačbo"
+  },
+  "KEM-OS-8/periodni-sistem#p1": {
+   "h": "517c0616c713",
+   "o": "D"
+  },
+  "KEM-OS-8/ph-lestvica#p0": {
+   "h": "f57dfd7c04cb",
+   "o": "D"
+  },
+  "KEM-OS-8/ph-lestvica#p1": {
+   "h": "9f0a4546045f",
+   "o": "D"
+  },
+  "KEM-OS-8/ph-lestvica#p2": {
+   "h": "fc19ff518faa",
+   "o": "D"
+  },
+  "KEM-OS-8/razporeditev-elektronov#p0": {
+   "h": "dce3477a9e9b",
+   "o": "D"
+  },
+  "KEM-OS-8/razporeditev-elektronov#p1": {
+   "h": "1d8c3255f041",
+   "o": "D"
+  },
+  "KEM-OS-8/snovi-in-njihove-lastnosti#p1": {
+   "h": "991597ce0171",
+   "o": "D"
+  },
+  "KEM-OS-8/urejanje-kemijskih-enacb#p0": {
+   "h": "b50f76c650ba",
+   "o": "I",
+   "r": "sklic na model s kroglicami iz lekcije"
+  },
+  "KEM-OS-8/urejanje-kemijskih-enacb#p1": {
+   "h": "f1593ac58178",
+   "o": "D"
+  },
+  "KEM-OS-8/varno-delo-v-laboratoriju#p0": {
+   "h": "04a40f1cff45",
+   "o": "D"
+  },
+  "KEM-OS-8/varno-delo-v-laboratoriju#p1": {
+   "h": "97db14d693a5",
+   "o": "D"
+  },
+  "KEM-OS-8/zgradba-atoma#p1": {
+   "h": "a645eb703e96",
+   "o": "D"
+  },
+  "KEM-OS-9/alkani-alkeni-alkini#p0": {
+   "h": "4eab86f5bee6",
+   "o": "D"
+  },
+  "KEM-OS-9/alkani-alkeni-alkini#p1": {
+   "h": "4ed7e52a7428",
+   "o": "D"
+  },
+  "KEM-OS-9/alkoholi#p0": {
+   "h": "dfeabfddefba",
+   "o": "D"
+  },
+  "KEM-OS-9/alkoholi#p1": {
+   "h": "2735d8a2a4ac",
+   "o": "D"
+  },
+  "KEM-OS-9/amini-in-aminokisline#p0": {
+   "h": "95651db1821a",
+   "o": "D"
+  },
+  "KEM-OS-9/amini-in-aminokisline#p1": {
+   "h": "93928b5aad2d",
+   "o": "D"
+  },
+  "KEM-OS-9/beljakovine#p1": {
+   "h": "f755bf4b9003",
+   "o": "D"
+  },
+  "KEM-OS-9/karboksilne-kisline-in-estri#p1": {
+   "h": "6fa429fba495",
+   "o": "D"
+  },
+  "KEM-OS-9/mascobe#p0": {
+   "h": "90751dcc7ea7",
+   "o": "D"
+  },
+  "KEM-OS-9/mascobe#p1": {
+   "h": "a81e5565769e",
+   "o": "D"
+  },
+  "KEM-OS-9/mnozina-snovi#p1": {
+   "h": "c99e26dd51ab",
+   "o": "D"
+  },
+  "KEM-OS-9/nafta-in-zemeljski-plin#p1": {
+   "h": "f63a17bcdb82",
+   "o": "D"
+  },
+  "KEM-OS-9/ogljikovi-hidrati#p1": {
+   "h": "3c49b5755029",
+   "o": "D"
+  },
+  "KEM-OS-9/polimeri#p0": {
+   "h": "7f7a88b23176",
+   "o": "D"
+  },
+  "KEM-OS-9/polimeri#p1": {
+   "h": "80baf4c1a637",
+   "o": "D"
+  },
+  "KEM-SS-1/kemijske-vezi#p0": {
+   "h": "d8d1ea0f68ee",
+   "o": "D"
+  },
+  "KEM-SS-1/kemijske-vezi#p1": {
+   "h": "f41ef89b941b",
+   "o": "D"
+  },
+  "KEM-SS-1/kemijske-vezi#p2": {
+   "h": "377555d5b02d",
+   "o": "D"
+  },
+  "KEM-SS-1/medmolekulske-sile#p0": {
+   "h": "a7f9ce9e9db6",
+   "o": "D"
+  },
+  "KEM-SS-1/medmolekulske-sile#p2": {
+   "h": "c6d6f5025401",
+   "o": "I",
+   "r": "snovi, med katerimi izbira, niso podane"
+  },
+  "KEM-SS-1/mnozina-snovi#p0": {
+   "h": "8cd1554ebdb0",
+   "o": "D"
+  },
+  "KEM-SS-1/periodni-sistem#p0": {
+   "h": "01538adee253",
+   "o": "D"
+  },
+  "KEM-SS-1/raztopine#p1": {
+   "h": "9e26d47dede0",
+   "o": "D"
+  },
+  "KEM-SS-1/urejanje-enacb#p0": {
+   "h": "837fe086f6da",
+   "o": "I",
+   "r": "sklic na popravek in blisk iz lekcije"
+  },
+  "KEM-SS-1/urejanje-enacb#p1": {
+   "h": "cd0e52e35ac2",
+   "o": "D"
+  },
+  "KEM-SS-1/zgradba-atoma#p0": {
+   "h": "fb9faa34f260",
+   "o": "D"
+  },
+  "KEM-SS-1/zgradba-atoma#p1": {
+   "h": "7cc96680d010",
+   "o": "D"
+  },
+  "KEM-SS-2/alkalijske-kovine-in-halogeni#p0": {
+   "h": "288f7d30cf57",
+   "o": "D"
+  },
+  "KEM-SS-2/alkalijske-kovine-in-halogeni#p1": {
+   "h": "52fd4ac7edb1",
+   "o": "D"
+  },
+  "KEM-SS-2/elementi-v-bioloskih-sistemih#n2": {
+   "h": "197b5b4152de",
+   "o": "D",
+   "r": "pojem o fosforju je nevprašan (vzorec 2: #32)",
+   "k": [
+    "Kovinski kalcij bi burno reagiral z vodo, kovinsko železo bi rjavelo",
+    "V telesu sta kot iona $\\mathrm{Ca^{2+}}$ in $\\mathrm{Fe^{2+}}$ v spojinah"
+   ]
+  },
+  "KEM-SS-2/elementi-v-bioloskih-sistemih#p0": {
+   "h": "c8b0e230025c",
+   "o": "D"
+  },
+  "KEM-SS-2/elementi-v-bioloskih-sistemih#p1": {
+   "h": "a01a21b5c8fa",
+   "o": "D"
+  },
+  "KEM-SS-2/hitrost-reakcij#p0": {
+   "h": "d40f1e7009cc",
+   "o": "D"
+  },
+  "KEM-SS-2/hitrost-reakcij#p1": {
+   "h": "a62e359aa7d9",
+   "o": "I",
+   "r": "ne pove, kaj se spremeni (temperatura)"
+  },
+  "KEM-SS-2/kemijsko-ravnotezje#p0": {
+   "h": "785eb37d10e5",
+   "o": "I",
+   "r": "sklic na prvi poskus in razmerje iz lekcije"
+  },
+  "KEM-SS-2/kemijsko-ravnotezje#p1": {
+   "h": "1a7f13d2b729",
+   "o": "D"
+  },
+  "KEM-SS-2/lastnosti-elementov-v-periodnem-sistemu#p0": {
+   "h": "a4f604cad305",
+   "o": "D"
+  },
+  "KEM-SS-2/lastnosti-elementov-v-periodnem-sistemu#p1": {
+   "h": "e310877814d6",
+   "o": "D"
+  },
+  "KEM-SS-2/ph#p1": {
+   "h": "07a69e0970dd",
+   "o": "D"
+  },
+  "KEM-SS-3/dusikove-organske-spojine#p0": {
+   "h": "ea8bc59d100f",
+   "o": "D"
+  },
+  "KEM-SS-3/izomerija#p1": {
+   "h": "aadf56a384bc",
+   "o": "D"
+  },
+  "KEM-SS-3/izomerija#p2": {
+   "h": "ca975212b6bc",
+   "o": "I",
+   "r": "molekula ni podana"
+  },
+  "KEM-SS-3/ogljikovodiki#p1": {
+   "h": "40c883946802",
+   "o": "D"
+  },
+  "KEM-SS-4/organska-kemija#p1": {
+   "h": "4ef77d62cc2f",
+   "o": "D"
+  },
+  "KEM-SS-4/splosna-in-anorganska-kemija#p2": {
+   "h": "19a5865e33af",
+   "o": "I",
+   "r": "reakcija ni podana"
+  },
+  "MAT-OS-6/deljivost#p0": {
+   "h": "4d4ff496d9c6",
+   "o": "D"
+  },
+  "MAT-OS-6/deljivost#p1": {
+   "h": "af45ff7c1f5a",
+   "o": "D"
+  },
+  "MAT-OS-6/desetiski-ulomki-in-decimalna-stevila#p0": {
+   "h": "81431d304e2d",
+   "o": "D"
+  },
+  "MAT-OS-6/desetiski-ulomki-in-decimalna-stevila#p1": {
+   "h": "5d6df3215dc6",
+   "o": "D"
+  },
+  "MAT-OS-6/desetiski-ulomki-in-decimalna-stevila#p2": {
+   "h": "60ce04bf9980",
+   "o": "I",
+   "r": "sklic na zgodbo s kisom"
+  },
+  "MAT-OS-6/merske-enote#p0": {
+   "h": "8ff63b550deb",
+   "o": "D"
+  },
+  "MAT-OS-6/mnozice-in-diagrami#p0": {
+   "h": "3d012427b40b",
+   "o": "I",
+   "r": "sklic na diagram iz lekcije"
+  },
+  "MAT-OS-6/mnozice-in-diagrami#p1": {
+   "h": "abc8faceb944",
+   "o": "D"
+  },
+  "MAT-OS-6/obseg-in-ploscina-pravokotnika-in-kvadrata#p0": {
+   "h": "75b8c6851a4a",
+   "o": "I",
+   "r": "pravokotnik 4 × 3 ni podan"
+  },
+  "MAT-OS-6/preproste-neenacbe#p0": {
+   "h": "9217c538930f",
+   "o": "I",
+   "r": "sklic na zgodbo s kombijem"
+  },
+  "MAT-OS-6/preproste-neenacbe#p1": {
+   "h": "6696e2a05c12",
+   "o": "D"
+  },
+  "MAT-OS-6/preproste-neenacbe#p2": {
+   "h": "0b2917cdccc8",
+   "o": "I",
+   "r": "neenačba ni podana"
+  },
+  "MAT-OS-6/racunanje-z-decimalnimi-stevili#p0": {
+   "h": "e01b296bc1fa",
+   "o": "D"
+  },
+  "MAT-OS-6/racunanje-z-decimalnimi-stevili#p1": {
+   "h": "db89d6cd2912",
+   "o": "D"
+  },
+  "MAT-OS-6/zapis-in-urejanje-velikih-stevil#p1": {
+   "h": "81800a5c042b",
+   "o": "D"
+  },
+  "MAT-OS-7/aritmeticna-sredina#p1": {
+   "h": "23023c654a67",
+   "o": "D"
+  },
+  "MAT-OS-7/konstrukcije-stirikotnikov#p0": {
+   "h": "a3522acc4560",
+   "o": "D"
+  },
+  "MAT-OS-7/konstrukcije-stirikotnikov#p1": {
+   "h": "27f45f40a06a",
+   "o": "D"
+  },
+  "MAT-OS-7/konstrukcije-stirikotnikov#p2": {
+   "h": "8819fa41d48f",
+   "o": "I",
+   "r": "paralelogram ni podan"
+  },
+  "MAT-OS-7/mnozenje-in-deljenje-ulomkov#p1": {
+   "h": "251ae4b613c3",
+   "o": "D"
+  },
+  "MAT-OS-7/najvecji-skupni-delitelj-in-najmanjsi-skupni-veckratnik#p1": {
+   "h": "e1baa0bd0800",
+   "o": "D"
+  },
+  "MAT-OS-7/obseg-in-ploscina-stirikotnikov#p1": {
+   "h": "c215c87efe17",
+   "o": "D"
+  },
+  "MAT-OS-7/obseg-in-ploscina-trikotnika#p1": {
+   "h": "4ac66fb59b2f",
+   "o": "D"
+  },
+  "MAT-OS-7/odstotni-racun#p1": {
+   "h": "e9265d5ff93c",
+   "o": "D"
+  },
+  "MAT-OS-7/prastevila-in-razcep#p0": {
+   "h": "4f7d577717a9",
+   "o": "D"
+  },
+  "MAT-OS-7/prastevila-in-razcep#p1": {
+   "h": "37242c4d2a56",
+   "o": "D"
+  },
+  "MAT-OS-7/prastevila-in-razcep#p2": {
+   "h": "1751be9de471",
+   "o": "I",
+   "r": "sklic na začeti razcep iz lekcije"
+  },
+  "MAT-OS-7/premo-sorazmerje#p1": {
+   "h": "2154c26faf9a",
+   "o": "D",
+   "r": "taksi iz lekcije",
+   "k": [
+    "Črta dolžine $0\\,\\text{cm}$ na zemljevidu pomeni $0\\,\\text{km}$ v naravi",
+    "Na splošno: iz $y = k \\cdot x$ pri $x = 0$ dobimo $y = 0$"
+   ]
+  },
+  "MAT-OS-7/razsirjanje-in-krajsanje-ulomkov#p0": {
+   "h": "d6fde82e8afe",
+   "o": "D"
+  },
+  "MAT-OS-7/razsirjanje-in-krajsanje-ulomkov#p1": {
+   "h": "2b86d29a4f13",
+   "o": "D"
+  },
+  "MAT-OS-7/sestevanje-in-odstevanje-ulomkov#p0": {
+   "h": "78a5c1d2f802",
+   "o": "D"
+  },
+  "MAT-OS-7/sestevanje-in-odstevanje-ulomkov#p1": {
+   "h": "a63cebe2d0a5",
+   "o": "D",
+   "r": "sklic na Primer 3",
+   "k": [
+    "Manj. Najprej odštejemo celoto: $3\\frac{1}{4} - 1 = 2\\frac{1}{4}$",
+    "Nato odštejemo še $\\frac{5}{6}$, kar je več kot $\\frac{1}{4}$, zato pademo pod $2$"
+   ]
+  },
+  "MAT-OS-7/tortni-prikaz#p1": {
+   "h": "f647c5073b67",
+   "o": "I",
+   "r": "sklic na anketo iz lekcije"
+  },
+  "MAT-OS-7/vrste-kotov-in-pari-kotov#p1": {
+   "h": "0a3b75e0ae9e",
+   "o": "I",
+   "r": "sklic na zgodbo z ulico in progo"
+  },
+  "MAT-OS-7/vrste-trikotnikov-in-notranji-koti#p0": {
+   "h": "50d996495c05",
+   "o": "D"
+  },
+  "MAT-OS-8/algebrski-izrazi#p1": {
+   "h": "8b43d1df5b57",
+   "o": "D"
+  },
+  "MAT-OS-8/algebrski-izrazi#p2": {
+   "h": "01dd3e8628b9",
+   "o": "D"
+  },
+  "MAT-OS-8/besedilne-naloge-z-enacbami#p0": {
+   "h": "b410e64f958d",
+   "o": "D"
+  },
+  "MAT-OS-8/besedilne-naloge-z-enacbami#p1": {
+   "h": "5fbd79f73c5b",
+   "o": "D"
+  },
+  "MAT-OS-8/cela-stevila#p1": {
+   "h": "ccb6fe20541c",
+   "o": "D"
+  },
+  "MAT-OS-8/krozni-lok-in-krozni-izsek#p1": {
+   "h": "0833e3ee9f51",
+   "o": "D"
+  },
+  "MAT-OS-8/kvadrat-stevila#p0": {
+   "h": "3982e27e8c57",
+   "o": "D"
+  },
+  "MAT-OS-8/kvadrat-stevila#p1": {
+   "h": "ae3d058d3897",
+   "o": "D"
+  },
+  "MAT-OS-8/linearne-enacbe#p1": {
+   "h": "f9564352f73a",
+   "o": "D"
+  },
+  "MAT-OS-8/mnozenje-izrazov#p2": {
+   "h": "b59e455a606b",
+   "o": "I",
+   "r": "izraz ni podan"
+  },
+  "MAT-OS-8/obseg-in-ploscina-kroga#p1": {
+   "h": "52574b707ba3",
+   "o": "I",
+   "r": "sklic na prerazporejene izseke iz lekcije"
+  },
+  "MAT-OS-8/pitagorov-izrek#p1": {
+   "h": "dd61eedafbb1",
+   "o": "D"
+  },
+  "MAT-OS-8/racunanje-s-celimi-stevili#p0": {
+   "h": "0a9de2ef3c2b",
+   "o": "I",
+   "r": "sklic na vzorec vrstic iz lekcije"
+  },
+  "MAT-OS-8/razstavljanje#p0": {
+   "h": "40c5d8bd209c",
+   "o": "D"
+  },
+  "MAT-OS-8/razstavljanje#p1": {
+   "h": "402b6262ee96",
+   "o": "D"
+  },
+  "MAT-OS-8/realna-stevila#p0": {
+   "h": "a85d2fc9a75a",
+   "o": "D"
+  },
+  "MAT-OS-8/uporaba-pitagorovega-izreka#p0": {
+   "h": "25057eeda871",
+   "o": "D"
+  },
+  "MAT-OS-8/zapis-z-desetiskimi-potencami#p0": {
+   "h": "642b932b979b",
+   "o": "D"
+  },
+  "MAT-OS-9/besedilne-naloge#p1": {
+   "h": "d7706a49fa56",
+   "o": "D"
+  },
+  "MAT-OS-9/mesane-naloge-npz#p1": {
+   "h": "65ff0eb662ef",
+   "o": "D"
+  },
+  "MAT-OS-9/tocke-premice-in-ravnine-v-prostoru#p1": {
+   "h": "503a174b6dd9",
+   "o": "I",
+   "r": "ne pove, da gre za pravokotnico na ravnino"
+  },
+  "MAT-SS-1/algebrski-izrazi#p0": {
+   "h": "c8ded8aa9bd3",
+   "o": "I",
+   "r": "sklic na razlike iz lekcije"
+  },
+  "MAT-SS-1/mnozice#p0": {
+   "h": "f0e45a63ead0",
+   "o": "D"
+  },
+  "MAT-SS-1/mnozice#p1": {
+   "h": "16bda8cd7171",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p0": {
+   "h": "f6058c06fc6a",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p1": {
+   "h": "1645ed1f6603",
+   "o": "D"
+  },
+  "MAT-SS-1/obdelava-podatkov#p0": {
+   "h": "3d2674635b44",
+   "o": "I",
+   "r": "sklic na podatke o žepnini iz lekcije"
+  },
+  "MAT-SS-1/osnove-logike#p2": {
+   "h": "c6ce26557213",
+   "o": "I",
+   "r": "izjavi nista podani"
+  },
+  "MAT-SS-1/osnovni-geometrijski-pojmi#p0": {
+   "h": "560979387fa1",
+   "o": "D"
+  },
+  "MAT-SS-1/osnovni-geometrijski-pojmi#p1": {
+   "h": "6ddb446ff102",
+   "o": "D"
+  },
+  "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti#p2": {
+   "h": "5629e268d049",
+   "o": "I",
+   "r": "izraz ni podan"
+  },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p0": {
+   "h": "496257bbd0a0",
+   "o": "D"
+  },
+  "MAT-SS-1/racionalna-stevila#p1": {
+   "h": "b151147ef2b4",
+   "o": "D"
+  },
+  "MAT-SS-1/razstavljanje-izrazov#p0": {
+   "h": "61543b3017f0",
+   "o": "D"
+  },
+  "MAT-SS-1/realna-stevila-in-intervali#p2": {
+   "h": "cd44d66a8196",
+   "o": "I",
+   "r": "merilo normalnega utripa ni podano"
+  },
+  "MAT-SS-1/sistemi-linearnih-enacb#p1": {
+   "h": "22e77e7848fd",
+   "o": "D"
+  },
+  "MAT-SS-1/trikotnik#p0": {
+   "h": "8e8ecade01a1",
+   "o": "D"
+  },
+  "MAT-SS-1/ulomljeni-izrazi#p0": {
+   "h": "3a68e678941e",
+   "o": "D"
+  },
+  "MAT-SS-1/ulomljeni-izrazi#p1": {
+   "h": "16ad2710b1ad",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentna-funkcija#p1": {
+   "h": "4e5a6fa53a9c",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentna-funkcija#p2": {
+   "h": "634395120f04",
+   "o": "I",
+   "r": "funkcija g ni podana"
+  },
+  "MAT-SS-2/eksponentne-enacbe#p1": {
+   "h": "9ae27fd41af4",
+   "o": "D"
+  },
+  "MAT-SS-2/funkcije-in-njihove-lastnosti#p1": {
+   "h": "d17e86d20f84",
+   "o": "D"
+  },
+  "MAT-SS-2/koreni#p1": {
+   "h": "ddb428c98211",
+   "o": "D"
+  },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p0": {
+   "h": "8b03de2e9d4e",
+   "o": "D"
+  },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p1": {
+   "h": "b1638b9dcd4c",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-enacba#p1": {
+   "h": "2ab78ced0ac9",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-funkcija#p0": {
+   "h": "f973d2834808",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-funkcija#p1": {
+   "h": "c6f6fe960de4",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-funkcija#p2": {
+   "h": "97dcbd79ad4e",
+   "o": "I",
+   "r": "funkcija ni podana"
+  },
+  "MAT-SS-2/logaritemska-funkcija-in-enacbe#p2": {
+   "h": "bf37a36bd0b6",
+   "o": "I",
+   "r": "enačba ni podana"
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p1": {
+   "h": "d0ffb95fb2c0",
+   "o": "D"
+  },
+  "MAT-SS-2/transformacije-grafov#p0": {
+   "h": "6eb30da6d32a",
+   "o": "D"
+  },
+  "MAT-SS-2/transformacije-grafov#p1": {
+   "h": "a7403ff37f4f",
+   "o": "D"
+  },
+  "MAT-SS-3/adicijski-izreki#p1": {
+   "h": "59713dedf443",
+   "o": "D"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p0": {
+   "h": "1121b26c3dba",
+   "o": "I",
+   "r": "sklic na risanje z vrvico iz lekcije"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p1": {
+   "h": "ac274372c2cc",
+   "o": "D"
+  },
+  "MAT-SS-3/graf-polinoma#p0": {
+   "h": "499759994b54",
+   "o": "D"
+  },
+  "MAT-SS-3/grafi-kotnih-funkcij#p1": {
+   "h": "999ed4bf4c8e",
+   "o": "D"
+  },
+  "MAT-SS-3/kotne-funkcije-poljubnega-kota#p0": {
+   "h": "3403f6611fc4",
+   "o": "D"
+  },
+  "MAT-SS-3/kroznica#p0": {
+   "h": "3088d20fba7b",
+   "o": "D"
+  },
+  "MAT-SS-3/kroznica#p2": {
+   "h": "2583f0da5c36",
+   "o": "I",
+   "r": "sklic na nalogo iz lekcije"
+  },
+  "MAT-SS-3/polinomi#p1": {
+   "h": "b622850ab0dc",
+   "o": "D"
+  },
+  "MAT-SS-3/polinomi#p2": {
+   "h": "f58a6daa414a",
+   "o": "I",
+   "r": "deljenje ni podano"
+  },
+  "MAT-SS-3/racionalne-funkcije#p0": {
+   "h": "4be5784578f7",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-funkcije#p1": {
+   "h": "41dcbf577f68",
+   "o": "D"
+  },
+  "MAT-SS-3/sinusni-in-kosinusni-izrek#p1": {
+   "h": "1a97ad1a00c9",
+   "o": "I",
+   "r": "sklic na past iz lekcije"
+  },
+  "MAT-SS-3/skalarni-produkt#p1": {
+   "h": "8b3ea9f140ee",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p0": {
+   "h": "b61fa5c4b425",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p1": {
+   "h": "256339ef08d0",
+   "o": "D"
+  },
+  "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#p1": {
+   "h": "f25347d6a8cf",
+   "o": "D"
+  },
+  "MAT-SS-4/kombinatorika#p1": {
+   "h": "ebcc5175f5aa",
+   "o": "D"
+  },
+  "MAT-SS-4/limita-in-zveznost-funkcije#p0": {
+   "h": "40ba8af60bd2",
+   "o": "D"
+  },
+  "MAT-SS-4/limita-in-zveznost-funkcije#p1": {
+   "h": "602a2c8b02bc",
+   "o": "D"
+  },
+  "MAT-SS-4/matematicna-indukcija#p0": {
+   "h": "5e3b6b153457",
+   "o": "D"
+  },
+  "MAT-SS-4/matematicna-indukcija#p1": {
+   "h": "a1428020d9ce",
+   "o": "D"
+  },
+  "MAT-SS-4/mesane-maturitetne-naloge#p0": {
+   "h": "99fc7000f73d",
+   "o": "I",
+   "r": "sklic na nalogo o rojstnih dnevih iz lekcije"
+  },
+  "MAT-SS-4/nedoloceni-integral#p1": {
+   "h": "8c2b741d545d",
+   "o": "D"
+  },
+  "MAT-SS-4/statistika#p1": {
+   "h": "37cb46c15df3",
+   "o": "D"
+  },
+  "MAT-SS-4/uporaba-odvoda#p0": {
+   "h": "dd0b3294acff",
+   "o": "I",
+   "r": "lok ni podan"
+  },
+  "MAT-SS-4/zaporedja#p0": {
+   "h": "f360a8bdfeb5",
+   "o": "I",
+   "r": "zaporedje ni podano"
+  },
+  "MAT-TEK-OS/deljivost-in-ostanki#p1": {
+   "h": "c4f6f62990b4",
+   "o": "D"
+  },
+  "MAT-TEK-OS/deljivost-in-ostanki#p2": {
+   "h": "15ef15ec8791",
+   "o": "D"
+  },
+  "MAT-TEK-OS/dirichletovo-nacelo#p1": {
+   "h": "2561a52f9560",
+   "o": "D"
+  },
+  "MAT-TEK-OS/dirichletovo-nacelo#p2": {
+   "h": "4c9771ec0c9c",
+   "o": "I",
+   "r": "sklic na meritve iz lekcije"
+  },
+  "MAT-TEK-OS/igre-in-zmagovalne-strategije#p1": {
+   "h": "06c01f0b882b",
+   "o": "D"
+  },
+  "MAT-TEK-OS/logicne-naloge-in-sklepanje#p0": {
+   "h": "42b332501660",
+   "o": "D"
+  },
+  "MAT-TEK-OS/logicne-naloge-in-sklepanje#p2": {
+   "h": "c3d64d7cee10",
+   "o": "I",
+   "r": "sklic na nalogo iz lekcije"
+  },
+  "MAT-TEK-OS/lovljenje-kotov#p1": {
+   "h": "6187ce771da0",
+   "o": "D"
+  },
+  "MAT-TEK-OS/ocenjevanje-in-fermijeve-naloge#p1": {
+   "h": "24ddb2329838",
+   "o": "D",
+   "r": "pojma 3–4 odgovarjata na nevprašano",
+   "k": [
+    "V prvem primeru se napaki izničita, ker je $2 \\cdot \\dfrac{1}{2} = 1$",
+    "V drugem je rezultat $4$-krat prevelik, kar je še vedno blizu pravega reda velikosti"
+   ]
+  },
+  "MAT-TEK-OS/parnost-in-invariante#p0": {
+   "h": "cb26ed55e898",
+   "o": "D"
+  },
+  "MAT-TEK-OS/pitagorov-izrek-v-tekmovalnih-nalogah#p1": {
+   "h": "4d489a3ec27f",
+   "o": "D"
+  },
+  "MAT-TEK-OS/ploscine-z-razrezom-in-dopolnjevanjem#p0": {
+   "h": "8168ee54acfc",
+   "o": "I",
+   "r": "pojmi ne odgovarjajo na vprašano, pravokotnik 8 × 2 ni podan"
+  },
+  "MAT-TEK-OS/ploscine-z-razrezom-in-dopolnjevanjem#p1": {
+   "h": "ccfae60a9485",
+   "o": "D"
+  },
+  "MAT-TEK-OS/prastevila-in-delitelji-v-nalogah#p0": {
+   "h": "fe2b08e6ea29",
+   "o": "D"
+  },
+  "MAT-TEK-OS/prastevila-in-delitelji-v-nalogah#p1": {
+   "h": "ef27f9d73a11",
+   "o": "D"
+  },
+  "MAT-TEK-OS/prastevila-in-delitelji-v-nalogah#p2": {
+   "h": "0504ca80bfb3",
+   "o": "I",
+   "r": "podatki niso podani"
+  },
+  "MAT-TEK-OS/prestevanje-moznosti#p1": {
+   "h": "85eb7aa431b9",
+   "o": "I",
+   "r": "sklic na stolpce iz lekcije"
+  },
+  "MAT-TEK-OS/razporeditve-in-izbire#p0": {
+   "h": "f653fa2d0ed6",
+   "o": "I",
+   "r": "sklic na tabelo iz lekcije"
+  },
+  "MAT-TEK-OS/starosti-ure-in-koledar#p0": {
+   "h": "81da360d117f",
+   "o": "I",
+   "r": "sklic na zgodbo s starostmi"
+  },
+  "MAT-TEK-OS/starosti-ure-in-koledar#p1": {
+   "h": "cc4dcfa8a056",
+   "o": "D"
+  },
+  "MAT-TEK-OS/stetje-poti-in-likov#p1": {
+   "h": "f933a0686efd",
+   "o": "I",
+   "r": "sklic na robota iz lekcije"
+  },
+  "MAT-TEK-OS/stevilske-uganke-in-zapisi#p0": {
+   "h": "08a85da93f78",
+   "o": "D"
+  },
+  "NAR-OS-6/naravoslovni-postopki#p0": {
+   "h": "0418167f0d16",
+   "o": "D"
+  },
+  "NAR-OS-7/elementi-in-spojine#p0": {
+   "h": "121c83ba3869",
+   "o": "D"
+  },
+  "NAR-OS-7/elementi-in-spojine#p1": {
+   "h": "8c5b9d1c977f",
+   "o": "D"
+  },
+  "NAR-OS-7/zgradba-snovi#p1": {
+   "h": "40af56989431",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/anatomsko-izrazoslovje#p1": {
+   "h": "9dfcec8930ef",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/anatomsko-izrazoslovje#p2": {
+   "h": "f3a4a765d96f",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/dihala#p0": {
+   "h": "d31783f9549a",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/okostje-in-sklepi#p0": {
+   "h": "c3b8ed77d68e",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/okostje-in-sklepi#p1": {
+   "h": "a8f44c034c0c",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/prebavila#p0": {
+   "h": "104507fffa82",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/prebavila#p1": {
+   "h": "01bab218de0c",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/secila-in-spolovila#p0": {
+   "h": "18937eb20fa1",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/secila-in-spolovila#p1": {
+   "h": "e7afec19a5cf",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/secila-in-spolovila#p2": {
+   "h": "2a120453fb7d",
+   "o": "I",
+   "r": "sklic na pot iz lekcije"
+  },
+  "UNI-ULBF-AANAT/srce-in-ozilje#p0": {
+   "h": "16b3b19f8b69",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/srce-in-ozilje#p2": {
+   "h": "a36ddb287ee8",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/zivcevje#p1": {
+   "h": "b5ad362f0cd0",
+   "o": "D"
+  },
+  "UNI-ULBF-AANAT/zivcevje#p2": {
+   "h": "685a26eafed3",
+   "o": "I",
+   "r": "sklic na primer iz lekcije"
+  },
+  "UNI-ULBF-ABIOCEL/bioloske-membrane#p0": {
+   "h": "423184b4aa21",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/bioloske-membrane#p1": {
+   "h": "1fa951dc874b",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/celicna-signalizacija-in-apoptoza#p0": {
+   "h": "39fc1a2790d8",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/celicna-signalizacija-in-apoptoza#p1": {
+   "h": "70bd6c716c6a",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/celicna-signalizacija-in-apoptoza#p2": {
+   "h": "b52113c5aca5",
+   "o": "I",
+   "r": "sklic na primer iz lekcije"
+  },
+  "UNI-ULBF-ABIOCEL/citoskelet-in-gibanje-celic#p0": {
+   "h": "38e5dd560d3a",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/citoskelet-in-gibanje-celic#p1": {
+   "h": "d3fe2ab449b0",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/epitelno-in-vezivno-tkivo#p0": {
+   "h": "853e950a3686",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/epitelno-in-vezivno-tkivo#p1": {
+   "h": "fae2711bc257",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/mejoza#p0": {
+   "h": "cce877ecb44c",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/mejoza#p1": {
+   "h": "4ed202b6e114",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/misicno-in-zivcno-tkivo#p1": {
+   "h": "b13a04b3fd11",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOCEL/prokariontska-in-evkariontska-celica#p0": {
+   "h": "9d2c1e330315",
+   "o": "I",
+   "r": "sklic na tabelo iz lekcije"
+  },
+  "UNI-ULBF-ABIOCEL/prokariontska-in-evkariontska-celica#p1": {
+   "h": "cbd02c587cea",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOKEM/presnova-aminokislin#p0": {
+   "h": "bc34d2abbff6",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOKEM/presnova-aminokislin#p2": {
+   "h": "d1b447dd9f28",
+   "o": "I",
+   "r": "sklic na poskus iz lekcije"
+  },
+  "UNI-ULBF-ABIOVEC/organski-sistemi-zivali#p0": {
+   "h": "ccf8dae49244",
+   "o": "D"
+  },
+  "UNI-ULBF-ABIOVEC/organski-sistemi-zivali#p1": {
+   "h": "f5cf4f4ba9a0",
+   "o": "D"
+  },
+  "UNI-ULBF-AGEN/izrazanje-genov#p0": {
+   "h": "09e6559db475",
+   "o": "D"
+  },
+  "UNI-ULBF-AGEN/izrazanje-genov#p1": {
+   "h": "23ef11f61a02",
+   "o": "D"
+  },
+  "UNI-ULBF-AMIKRO/mikrobni-metabolizem#p0": {
+   "h": "5612ca00c524",
+   "o": "D"
+  },
+  "UNI-ULBF-AMIKRO/mikrobni-metabolizem#p1": {
+   "h": "b2b0063fabf9",
+   "o": "D"
+  },
+  "UNI-ULBF-AMIKRO/zgradba-prokariontske-celice#p0": {
+   "h": "3c1cc57a2b7e",
+   "o": "D"
+  },
+  "UNI-ULBF-AMIKRO/zgradba-prokariontske-celice#p1": {
+   "h": "0d869a708c84",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/korenina#p0": {
+   "h": "55a019c23b62",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/korenina#p1": {
+   "h": "e19b93e48982",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/list#p0": {
+   "h": "56967e22e9e4",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/list#p1": {
+   "h": "1d8c5778ea61",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/rastlinska-celica#p0": {
+   "h": "cba16e013b9f",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/rastlinska-celica#p1": {
+   "h": "0d83d1dc8c85",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/razmnozevanje-rastlin#p1": {
+   "h": "71c1206602d4",
+   "o": "D"
+  },
+  "UNI-ULBF-ASPLBOT/trajna-tkiva#p0": {
+   "h": "e46069bcd246",
+   "o": "D",
+   "r": "pojem o poskusih v vesolju je nevprašan",
+   "k": [
+    "Manj, ker ji ni treba držati lastne teže",
+    "Tkivo za vodo (ksilem, spodaj) pa ostane, ker mora voda še vedno priti od korenin do listov, ne glede na težnost"
+   ]
+  },
+  "UNI-ULBF-ASPLBOT/trajna-tkiva#p1": {
+   "h": "ac8fcb861bc3",
+   "o": "D"
+  },
+  "UNI-ULBF-BBIOL/osnove-ekologije#p0": {
+   "h": "fa3279237941",
+   "o": "I",
+   "r": "enačba ni podana"
+  },
+  "UNI-ULBF-CBTINF/delo-s-preglednicami#p0": {
+   "h": "f44724e99d2d",
+   "o": "I",
+   "r": "sklic na preglednico iz lekcije"
+  },
+  "UNI-ULBF-CBTINF/delo-s-preglednicami#p1": {
+   "h": "7b4ed8ca07b0",
+   "o": "I",
+   "r": "zapis v HTML se ne da prebrati na glas"
+  },
+  "UNI-ULBF-CBTINF/poizvedbe-sql#p1": {
+   "h": "2151b7466449",
+   "o": "D"
+  },
+  "UNI-ULBF-CKEMBIO/fotosinteza#p0": {
+   "h": "b7932852ff3e",
+   "o": "D"
+  },
+  "UNI-ULBF-CKEMBIO/fotosinteza#p1": {
+   "h": "e74a62a68799",
+   "o": "D"
+  },
+  "UNI-ULBF-CPEDO/organska-snov-tal#p0": {
+   "h": "54a97368a147",
+   "o": "D"
+  },
+  "UNI-ULBF-CPEDO/organska-snov-tal#p1": {
+   "h": "a2137ab55682",
+   "o": "D"
+  },
+  "UNI-ULBF-CPEDO/voda-v-tleh#p1": {
+   "h": "d2dd9cae6df1",
+   "o": "I",
+   "r": "sklic na troje tal iz lekcije"
+  },
+  "UNI-ULBF-CSPLPOLJ/obdelava-tal#p0": {
+   "h": "01427d9a5fe5",
+   "o": "D"
+  },
+  "UNI-ULBF-CSPLPOLJ/obdelava-tal#p1": {
+   "h": "f7f9e8d4fce5",
+   "o": "D"
+  },
+  "UNI-ULBF-DPEDOL/kemijske-lastnosti-tal#p1": {
+   "h": "4ae2132dd276",
+   "o": "D"
+  },
+  "UNI-ULBF-DRACPRAK/osnove-programiranja#p1": {
+   "h": "d733159c4bfc",
+   "o": "D"
+  },
+  "UNI-ULFE-MERITVE/merjenje-upornosti-in-impedance#p0": {
+   "h": "5831ea22e37a",
+   "o": "I",
+   "r": "sklic na vezavo A iz lekcije"
+  },
+  "UNI-ULFE-MERITVE/merjenje-upornosti-in-impedance#p1": {
+   "h": "1b8c96f6c7b8",
+   "o": "D"
+  },
+  "UNI-ULFE-MERITVE/osciloskop#p0": {
+   "h": "e0a23d6b04a0",
+   "o": "D"
+  },
+  "UNI-ULFE-MERITVE/osciloskop#p1": {
+   "h": "1fb56f6bfe7b",
+   "o": "D"
+  },
+  "UNI-ULFE-OE1/kapacitivnost#p0": {
+   "h": "f54fd0d221a2",
+   "o": "D"
+  },
+  "UNI-ULFE-OE1/kapacitivnost#p1": {
+   "h": "aae5d06b16e6",
+   "o": "D"
+  },
+  "UNI-ULFE-OE1/theveninov-in-nortonov-nadomestni-vir#p0": {
+   "h": "4d17c2c37021",
+   "o": "D"
+  },
+  "UNI-ULFE-OE1/theveninov-in-nortonov-nadomestni-vir#p1": {
+   "h": "92b5c9df8d9a",
+   "o": "D",
+   "r": "sklic na Primer 3",
+   "k": [
+    "Ne. Nadomestni vir je enak prvotnemu vezju le *navzven*, na sponkah",
+    "Moč, ki se troši v notranjih uporih, je lahko čisto drugačna kot v $R_\\mathrm{Th}$"
+   ]
+  },
+  "UNI-ULFE-OE2/faradayev-zakon-indukcije#p0": {
+   "h": "244861a4b8cc",
+   "o": "D"
+  },
+  "UNI-ULFE-OE2/faradayev-zakon-indukcije#p1": {
+   "h": "8a7166e98970",
+   "o": "D"
+  },
+  "UNI-ULFE-OE2/magnetno-polje-toka#p0": {
+   "h": "0f5514e2468a",
+   "o": "D"
+  },
+  "UNI-ULFE-OSNPROG/spremenljivke-in-izrazi#p0": {
+   "h": "9b7edc5f388d",
+   "o": "D"
+  },
+  "UNI-ULFE-OSNPROG/spremenljivke-in-izrazi#p1": {
+   "h": "9a1574156289",
+   "o": "D"
+  },
+  "UNI-ULFGG-GTRDNOST/strig-pri-upogibu#p1": {
+   "h": "8dddc014112a",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANAL1/redoks-titracije#p1": {
+   "h": "3e21d2aad5ac",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANAL1/statisticna-obdelava-rezultatov#p1": {
+   "h": "9eb1b2219274",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANAL2/kromatografske-metode#p1": {
+   "h": "d72661072a38",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANORG/elementi-p-bloka#p0": {
+   "h": "823bcfc5d76d",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANORG/koordinacijske-spojine#p1": {
+   "h": "0053fe451459",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANORG/kristalne-strukture#p0": {
+   "h": "c5f3879f0a66",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANORG/kristalne-strukture#p1": {
+   "h": "9c0d1d53cbd2",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANORG/prehodni-elementi#p0": {
+   "h": "1713f2832182",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANORG/vodik-in-elementi-s-bloka#p0": {
+   "h": "62efee11f634",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ANORG/vodik-in-elementi-s-bloka#p1": {
+   "h": "25db1daaf829",
+   "o": "D"
+  },
+  "UNI-ULFKKT-BIOLKEM/aminokisline-in-proteini#p1": {
+   "h": "42d8075baf32",
+   "o": "D"
+  },
+  "UNI-ULFKKT-BIOLKEM/encimska-kinetika#p1": {
+   "h": "65a11da844b1",
+   "o": "D"
+  },
+  "UNI-ULFKKT-BIOLKEM/nukleinske-kisline#p0": {
+   "h": "654b1f0f1c53",
+   "o": "D"
+  },
+  "UNI-ULFKKT-BIOLKEM/nukleinske-kisline#p1": {
+   "h": "170b1bca9f65",
+   "o": "D"
+  },
+  "UNI-ULFKKT-BIOLKEM/presnova#p0": {
+   "h": "3c620d6f60c9",
+   "o": "D"
+  },
+  "UNI-ULFKKT-BIOLKEM/presnova#p1": {
+   "h": "4ecd344168fb",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/delo-energija-in-gibalna-kolicina#p0": {
+   "h": "17aeab633059",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/delo-energija-in-gibalna-kolicina#p1": {
+   "h": "4ddd6e1b9586",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/drugi-zakon-termodinamike#p0": {
+   "h": "66e0ecb5a9c6",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/drugi-zakon-termodinamike#p1": {
+   "h": "08ae58157a8f",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/elektricni-tok-in-vezja#p0": {
+   "h": "2fc54c2bf0e8",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/elektrostatika#p0": {
+   "h": "53fc2cdbf2df",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/elektrostatika#p1": {
+   "h": "d473d80563f4",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/fotoni-in-atomi#p0": {
+   "h": "c9dc3092b6c0",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/fotoni-in-atomi#p1": {
+   "h": "1503b76a318a",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/geometrijska-in-valovna-optika#p1": {
+   "h": "cf9fa1876626",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/harmonicno-nihanje#p0": {
+   "h": "4e8e23aa6901",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/harmonicno-nihanje#p1": {
+   "h": "4155bf21a46a",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/idealni-plin-in-kineticna-teorija#p0": {
+   "h": "3e309d04267e",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/idealni-plin-in-kineticna-teorija#p1": {
+   "h": "9ce081bb0401",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/kinematika#p0": {
+   "h": "9e1b19924eb2",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/kontinuitetna-in-bernoullijeva-enacba#p0": {
+   "h": "370db18f13e4",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/kontinuitetna-in-bernoullijeva-enacba#p1": {
+   "h": "f5223f96ff12",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/magnetno-polje-in-indukcija#p0": {
+   "h": "ada651fa0acf",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/magnetno-polje-in-indukcija#p1": {
+   "h": "832850a17102",
+   "o": "I",
+   "r": "sklic na poskuse iz lekcije"
+  },
+  "UNI-ULFKKT-FIZ/newtonovi-zakoni-in-sile#p0": {
+   "h": "75a425228135",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/newtonovi-zakoni-in-sile#p1": {
+   "h": "1f20419f6baf",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/prvi-zakon-termodinamike#p0": {
+   "h": "233e47864472",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/prvi-zakon-termodinamike#p1": {
+   "h": "06e8b90b4f34",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/valovanje#p0": {
+   "h": "e726b269845a",
+   "o": "D"
+  },
+  "UNI-ULFKKT-FIZ/vrtenje-togega-telesa#p0": {
+   "h": "39cc270defb4",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/kemijsko-ravnotezje#p0": {
+   "h": "353ceba79e18",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/kemijsko-ravnotezje#p1": {
+   "h": "870f0a2871fb",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/kisline-in-baze#p1": {
+   "h": "03732900ae15",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/plini#p1": {
+   "h": "d04b917351a4",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/raztopine#p1": {
+   "h": "4d92c9742482",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/stehiometrija#p1": {
+   "h": "c2359c30cbb7",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/topnost#p0": {
+   "h": "485da2ce1762",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KEMIJA/topnost#p1": {
+   "h": "e5c183c4ef61",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KI1/viskoznost-in-reynoldsovo-stevilo#p1": {
+   "h": "fda62ece25bd",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KI2/prevod-toplote#p0": {
+   "h": "27d35fb7de2f",
+   "o": "D"
+  },
+  "UNI-ULFKKT-KI2/prevod-toplote#p1": {
+   "h": "ff687cfbc454",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/diferencialne-enacbe-prvega-reda#p0": {
+   "h": "e789b53fa7b4",
+   "o": "I",
+   "r": "sklic na zemljevid naklonov iz lekcije"
+  },
+  "UNI-ULFKKT-MAT/diferencialne-enacbe-prvega-reda#p1": {
+   "h": "a389b1a5b6da",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/ekstremi-funkcij-vec-spremenljivk#p0": {
+   "h": "aed81ea191ae",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/ekstremi-funkcij-vec-spremenljivk#p1": {
+   "h": "f81c068de21f",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/elementarne-funkcije#p0": {
+   "h": "28b0b9a916fb",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/lastne-vrednosti-in-lastni-vektorji#p0": {
+   "h": "6eb89e25abff",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/lastne-vrednosti-in-lastni-vektorji#p1": {
+   "h": "5d793731e0fa",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/limita-in-zveznost-funkcije#p0": {
+   "h": "4dc9cfd685bf",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/limita-in-zveznost-funkcije#p1": {
+   "h": "a5bfdc80c979",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/linearne-diferencialne-enacbe-drugega-reda#p0": {
+   "h": "625f538823cb",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/matrike-in-determinante#p0": {
+   "h": "b5c02acc678b",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/matrike-in-determinante#p1": {
+   "h": "2135eb4e118e",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/nedoloceni-integral#p0": {
+   "h": "2377dd70bf84",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/odvod-funkcije#p0": {
+   "h": "5d93ecdb4949",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/odvod-funkcije#p1": {
+   "h": "0118dade7fb7",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/realna-in-kompleksna-stevila#p0": {
+   "h": "c6341bc8340f",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/realna-in-kompleksna-stevila#p1": {
+   "h": "b9154f493dd4",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/sistemi-linearnih-diferencialnih-enacb#p0": {
+   "h": "c2085529348c",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/sistemi-linearnih-diferencialnih-enacb#p1": {
+   "h": "1e6fa53deae2",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/taylorjeva-vrsta#p0": {
+   "h": "4285b668c5df",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/vektorji#p0": {
+   "h": "6122e6b6a841",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/vektorji#p1": {
+   "h": "2f35995fd3d0",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/verjetnost-in-statistika#p1": {
+   "h": "b67fd8b4255a",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/vrste#p1": {
+   "h": "e975ce5c4a0f",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MAT/zaporedja-in-limite#p0": {
+   "h": "b6b6ae69413c",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MATINZ/kristalna-zgradba-kovin#p1": {
+   "h": "3e8cedbff3ad",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MATINZ/mehanske-lastnosti-materialov#p1": {
+   "h": "e99b9acf5908",
+   "o": "D"
+  },
+  "UNI-ULFKKT-MATINZ/polimeri#p0": {
+   "h": "dea1bd769e29",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NBIOCEL/endomembranski-sistem#p0": {
+   "h": "340d75e36d2b",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NBIOCEL/endomembranski-sistem#p1": {
+   "h": "c39a4129331e",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NDELOK/vlazen-zrak#p1": {
+   "h": "50573f8f2b0d",
+   "o": "I",
+   "r": "sklic na diagram iz lekcije"
+  },
+  "UNI-ULFKKT-NMIKRO/mikrobna-rast#p1": {
+   "h": "78406321ac1d",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NMOVZ/celicni-cikel-in-delitev#p0": {
+   "h": "cc85d171f465",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NMOVZ/celicni-cikel-in-delitev#p1": {
+   "h": "7c54b4c0190d",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NMOVZ/uravnavanje-izrazanja-genov#p0": {
+   "h": "8e9a12da8b7b",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NMOVZ/uravnavanje-izrazanja-genov#p1": {
+   "h": "2252ad56c9b0",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NMOVZ/zgradba-celice#p1": {
+   "h": "dc8a20f1ca06",
+   "o": "D",
+   "r": "opomba v oklepaju je nevprašana",
+   "k": [
+    "Ker bi bilo razmerje $S/V$ nekaj tisočkrat manjše",
+    "Skozi membrano ne bi prišlo dovolj hrane in kisika za vso notranjost, snovi pa bi z difuzijo predolgo potovale do sredine",
+    "Brez notranjih predelkov in transporta celica ne more biti velika"
+   ]
+  },
+  "UNI-ULFKKT-NOSNPROG/pogojni-stavki#p1": {
+   "h": "71de385ebb23",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-ULFKKT-NOSNPROG/slovarji-in-mnozice#p0": {
+   "h": "17edc21a971c",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NOSNPROG/slovarji-in-mnozice#p1": {
+   "h": "2b7fdf48f9db",
+   "o": "I",
+   "r": "simptomi niso podani"
+  },
+  "UNI-ULFKKT-NOSNPROG/spremenljivke-in-podatkovni-tipi#p1": {
+   "h": "65cdd0ae2f81",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NOSNPROG/zanke#p0": {
+   "h": "60522278e8d4",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-ULFKKT-NOSNPROG/zanke#p1": {
+   "h": "e1ca3e27df86",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NPRSAK/osnovne-laboratorijske-tehnike#p0": {
+   "h": "4f768d9d6f45",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NPRSAK/osnovne-laboratorijske-tehnike#p1": {
+   "h": "41190d293b50",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NSPLBIO/evolucija#p0": {
+   "h": "79076fc3bfbb",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NSPLBIO/evolucija#p1": {
+   "h": "efe53c3a3e7a",
+   "o": "D",
+   "r": "pojem o tetraploidih je nevprašan",
+   "k": [
+    "V mejozi I se homologni kromosomi združijo v pare",
+    "Pri treh kopijah vsakega kromosoma ostane eden brez para in naključno odide na eno stran",
+    "Gamete dobijo neuravnoteženo število kromosomov in večinoma niso sposobne za oploditev"
+   ]
+  },
+  "UNI-ULFKKT-NSPLBIO/mendlovo-dedovanje#p0": {
+   "h": "35a7fe6bd02a",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NSPLBIO/mendlovo-dedovanje#p1": {
+   "h": "e6874874e54e",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NUMVAR/resevanje-nelinearnih-enacb#p1": {
+   "h": "00c2bdb9b59b",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NVARGRAD/ravnotezje-togega-telesa#p0": {
+   "h": "52d57f01dbc8",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NVARGRAD/ravnotezje-togega-telesa#p1": {
+   "h": "a3cff60583a2",
+   "o": "D"
+  },
+  "UNI-ULFKKT-NVARGRAD/sile-in-momenti#p1": {
+   "h": "03e6ac2f6bc3",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/aromatske-spojine#p1": {
+   "h": "5ee13f7fd163",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/aromatske-spojine#p2": {
+   "h": "b6a066973942",
+   "o": "I",
+   "r": "reakcija ni podana"
+  },
+  "UNI-ULFKKT-ORG1/nomenklatura-organskih-spojin#p0": {
+   "h": "9bd76470fce6",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/nukleofilne-substitucije-in-eliminacije#p0": {
+   "h": "395a9d453423",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/nukleofilne-substitucije-in-eliminacije#p1": {
+   "h": "d58ce93f166f",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/nukleofilne-substitucije-in-eliminacije#p2": {
+   "h": "26e6943cfb96",
+   "o": "I",
+   "r": "reakcija ni podana"
+  },
+  "UNI-ULFKKT-ORG1/stereokemija#p0": {
+   "h": "ec3d87d0389e",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/stereokemija#p1": {
+   "h": "907215426930",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/zgradba-in-vezi-organskih-molekul#p0": {
+   "h": "c28cf5f68ada",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/zgradba-in-vezi-organskih-molekul#p1": {
+   "h": "8fa2a57b3bf2",
+   "o": "D",
+   "r": "sklic na pogoje iz lekcije",
+   "k": [
+    "Ne. Ogljika C5 in C6 sta $sp^3$ in nimata orbitale $p$, zato obroč ni popolnoma konjugiran",
+    "Spojina je nearomatski dien"
+   ]
+  },
+  "UNI-ULFKKT-ORG2/karbonilne-spojine#p1": {
+   "h": "2003e3a612ef",
+   "o": "D"
+  },
+  "UNI-ULFKKT-SPLKEM/kemijska-kinetika#p0": {
+   "h": "9aaaca446c47",
+   "o": "D"
+  },
+  "UNI-ULFKKT-SPLKEM/kemijska-kinetika#p1": {
+   "h": "081d79706354",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STATVAR/cenilke#p0": {
+   "h": "6a91dd30cfed",
+   "o": "I",
+   "r": "sklic na žrebanje iz lekcije"
+  },
+  "UNI-ULFKKT-STATVAR/cenilke#p1": {
+   "h": "d3ca6331008d",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STATVAR/slucajne-spremenljivke-in-porazdelitve#p1": {
+   "h": "d9290d3e4d09",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STATVAR/statisticno-sklepanje#p0": {
+   "h": "3b5862a64f62",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STATVAR/statisticno-sklepanje#p1": {
+   "h": "823024ce8ea4",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STROJGRAD/napetosti-in-deformacije#p0": {
+   "h": "5773be5da4ad",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STROJGRAD/napetosti-in-deformacije#p1": {
+   "h": "76386edf2b7d",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STROJGRAD/osna-obremenitev#p1": {
+   "h": "8a95bc943f3e",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STROJGRAD/torzija#p1": {
+   "h": "c15039d7eafd",
+   "o": "D"
+  },
+  "UNI-ULFKKT-STROJGRAD/upogib-nosilcev#p0": {
+   "h": "a9d3e119beca",
+   "o": "D"
+  },
+  "UNI-ULFKKT-TEMBIOKEM/ogljikovi-hidrati-in-lipidi#p0": {
+   "h": "0f47183263f6",
+   "o": "D"
+  },
+  "UNI-ULFKKT-TEMBIOKEM/ogljikovi-hidrati-in-lipidi#p1": {
+   "h": "1d08fff9d02a",
+   "o": "D"
+  },
+  "UNI-ULFKKT-WMERDEL/merilna-negotovost#p1": {
+   "h": "a3f1c97f51e2",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA1/linearne-preslikave#p0": {
+   "h": "a0db7a9692ef",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA1/linearne-preslikave#p1": {
+   "h": "840cf9ae0e7d",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA1/skalarni-produkt-in-ortogonalnost#p0": {
+   "h": "f141fb65b59e",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA1/vektorski-prostori#p1": {
+   "h": "6b99a937471e",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA2/grupe#p0": {
+   "h": "037b3f914de9",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA2/grupe#p1": {
+   "h": "57041dd7cd9b",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA2/kolobarji-in-polinomi#p0": {
+   "h": "e4146dd91d3d",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA2/kolobarji-in-polinomi#p2": {
+   "h": "5ec302d85993",
+   "o": "I",
+   "r": "sklic na deljenje iz lekcije"
+  },
+  "UNI-ULFMF-ALGEBRA2/sebiadjungirane-in-ortogonalne-preslikave#p0": {
+   "h": "76fdb9887914",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA2/sebiadjungirane-in-ortogonalne-preslikave#p1": {
+   "h": "ee9ef55ca52f",
+   "o": "D"
+  },
+  "UNI-ULFMF-ALGEBRA2/sebiadjungirane-in-ortogonalne-preslikave#p2": {
+   "h": "7808ff17812c",
+   "o": "I",
+   "r": "forma ni podana"
+  },
+  "UNI-ULFMF-ANALIZA1/mnozice-in-realna-stevila#p1": {
+   "h": "e382bdc84217",
+   "o": "D"
+  },
+  "UNI-ULFMF-ANALIZA1/mnozice-in-realna-stevila#p2": {
+   "h": "bc01528f0600",
+   "o": "D"
+  },
+  "UNI-ULFMF-ANALIZA1/posploseni-integral#p0": {
+   "h": "e86ddb1eb7ab",
+   "o": "D"
+  },
+  "UNI-ULFMF-ANALIZA1/posploseni-integral#p1": {
+   "h": "1b5384be05df",
+   "o": "D"
+  },
+  "UNI-ULFMF-DISKRETNA1/grafi#p1": {
+   "h": "661a5622a1c7",
+   "o": "D"
+  },
+  "UNI-ULFMF-DISKRETNA1/grafi#p2": {
+   "h": "bca35543a370",
+   "o": "I",
+   "r": "graf ni podan"
+  },
+  "UNI-ULFMF-DISKRETNA1/kombinatorika#p0": {
+   "h": "6ee4fe4cebe3",
+   "o": "D"
+  },
+  "UNI-ULFMF-DISKRETNA1/kombinatorika#p1": {
+   "h": "6c0d7db93a11",
+   "o": "I",
+   "r": "drugi pojem je zgodba iz lekcije, ostane en sam"
+  },
+  "UNI-ULFMF-EMPOLJE/elektromagnetno-valovanje#p0": {
+   "h": "4f3fbdfadbe4",
+   "o": "D"
+  },
+  "UNI-ULFMF-EMPOLJE/elektromagnetno-valovanje#p1": {
+   "h": "8d289ee792c5",
+   "o": "D"
+  },
+  "UNI-ULFMF-LOGIKA/mnozice-in-operacije#p0": {
+   "h": "d8bcb2fa47a1",
+   "o": "D"
+  },
+  "UNI-ULFMF-LOGIKA/moc-mnozic#p1": {
+   "h": "5c1ca8062b16",
+   "o": "D"
+  },
+  "UNI-ULFMF-LOGIKA/predikatni-racun#p0": {
+   "h": "d4c68b0a6674",
+   "o": "D"
+  },
+  "UNI-ULFMF-LOGIKA/predikatni-racun#p1": {
+   "h": "474c40f38dec",
+   "o": "D"
+  },
+  "UNI-ULFMF-LOGIKA/predikatni-racun#p2": {
+   "h": "f6ace80a0cbd",
+   "o": "I",
+   "r": "izjava ni podana"
+  },
+  "UNI-ULFMF-LOGIKA/relacije-in-funkcije#p0": {
+   "h": "957cfbf868d5",
+   "o": "D"
+  },
+  "UNI-ULFMF-LOGIKA/relacije-in-funkcije#p1": {
+   "h": "85f2e3f81ae9",
+   "o": "D"
+  },
+  "UNI-ULFMF-MODERNA1/posebna-teorija-relativnosti#p1": {
+   "h": "36da06aea47a",
+   "o": "D"
+  },
+  "UNI-ULFMF-NMIKROEK/ponudba-in-povprasevanje#p1": {
+   "h": "7e9b90f05341",
+   "o": "D"
+  },
+  "UNI-ULFMF-NRACPRAK/datotecni-sistem-in-ukazna-vrstica#p0": {
+   "h": "17754a66cb5a",
+   "o": "D"
+  },
+  "UNI-ULFMF-NRACPRAK/datotecni-sistem-in-ukazna-vrstica#p1": {
+   "h": "3fbe18720da0",
+   "o": "D"
+  },
+  "UNI-ULFMF-NRACPRAK/prvi-programi-v-pythonu#p1": {
+   "h": "ad3272bba777",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-ULFMF-NUVPROG/razredi-in-objekti#p0": {
+   "h": "36c2aa8ee278",
+   "o": "D"
+  },
+  "UNI-ULFMF-OPTIKA/polarizacija#p0": {
+   "h": "6b80c13a5548",
+   "o": "D"
+  },
+  "UNI-ULFMF-OPTIKA/polarizacija#p1": {
+   "h": "183b3e0e5db3",
+   "o": "D"
+  },
+  "UNI-ULFMF-WDM2/rodovne-funkcije#p0": {
+   "h": "a8e77ae48805",
+   "o": "I",
+   "r": "sklic na nalogo iz lekcije"
+  },
+  "UNI-ULFMF-WDM2/rodovne-funkcije#p1": {
+   "h": "b43815141d98",
+   "o": "I",
+   "r": "enačba ni podana"
+  },
+  "UNI-ULFMF-XDS1/delne-urejenosti-in-mreze#p0": {
+   "h": "0dd0e5d2f7e8",
+   "o": "D"
+  },
+  "UNI-ULFMF-XPROG1/dedovanje-in-polimorfizem#p0": {
+   "h": "f7b3f4beef3a",
+   "o": "D"
+  },
+  "UNI-ULFMF-XPROG1/dedovanje-in-polimorfizem#p1": {
+   "h": "efcb976304d3",
+   "o": "D"
+  },
+  "UNI-ULFMF-XPROG1/izjeme-in-zbirke#p0": {
+   "h": "c4ecd83175db",
+   "o": "D"
+  },
+  "UNI-ULFMF-XPROG1/izjeme-in-zbirke#p1": {
+   "h": "0b4cedee2726",
+   "o": "D"
+  },
+  "UNI-ULFRI-P1/zbirke#p1": {
+   "h": "442f23f1db05",
+   "o": "D"
+  },
+  "UNI-ULFS-INTFOUR/laplaceova-transformacija#p0": {
+   "h": "96db78b1351b",
+   "o": "I",
+   "r": "izrek ni podan"
+  },
+  "UNI-ULFS-INTFOUR/laplaceova-transformacija#p1": {
+   "h": "bbbd814d7fb3",
+   "o": "D"
+  },
+  "UNI-ULFS-LAVA/gradient-divergenca-in-rotor#p1": {
+   "h": "a89190b2fc00",
+   "o": "D"
+  },
+  "UNI-ULFS-NTEHRIS/pravokotne-projekcije#p1": {
+   "h": "5c6701f403f6",
+   "o": "D"
+  },
+  "UNI-ULFS-PDEKOMPL/linearno-programiranje#p1": {
+   "h": "e0f4c74b4236",
+   "o": "I",
+   "r": "model (pice, pite) ni podan"
+  },
+  "UNI-ULFS-STATKIN/kinematika-togega-telesa#p0": {
+   "h": "edf1b37a274d",
+   "o": "D"
+  },
+  "UNI-ULFS-STATKIN/palicja#p0": {
+   "h": "29e2bc586bd4",
+   "o": "D"
+  },
+  "UNI-ULFS-STATKIN/palicja#p1": {
+   "h": "e2f7d600b590",
+   "o": "D"
+  },
+  "UNI-ULFS-STATKIN/trenje#p1": {
+   "h": "87e1ef764336",
+   "o": "D"
+  },
+  "UNI-ULFS-TERMO/krozni-procesi#p1": {
+   "h": "9dacf15b8ad0",
+   "o": "D"
+  },
+  "UNI-ULNTF-MMEHMAT/utrujanje-in-lezenje#p1": {
+   "h": "fce596e131de",
+   "o": "D"
+  },
+  "UNI-ULNTF-TMAT2/uporaba-dolocenega-integrala#p1": {
+   "h": "f31091c6195a",
+   "o": "D"
+  },
+  "UNI-UMFE-ET1/induktivnost#p1": {
+   "h": "cf6ab1b9882e",
+   "o": "D"
+  },
+  "UNI-UMFE-ET1/magnetni-krogi#p1": {
+   "h": "1d7b6f3ff418",
+   "o": "D"
+  },
+  "UNI-UMFE-ET1/metode-analize-vezij#p1": {
+   "h": "201b1695cab7",
+   "o": "D"
+  },
+  "UNI-UMFE-ET2/moc-v-izmenicnih-vezjih#p0": {
+   "h": "af1e6dfc434c",
+   "o": "D"
+  },
+  "UNI-UMFE-ET2/moc-v-izmenicnih-vezjih#p1": {
+   "h": "7ae13b193a64",
+   "o": "D"
+  },
+  "UNI-UMFE-ET2/resonanca#p0": {
+   "h": "a540a9821f3e",
+   "o": "D"
+  },
+  "UNI-UMFE-ET2/resonanca#p1": {
+   "h": "a8ff718eae9c",
+   "o": "D"
+  },
+  "UNI-UMFE-MEHTEH/fazni-diagrami#p0": {
+   "h": "31bfa92fa517",
+   "o": "D",
+   "r": "sklic na razdelek iz lekcije",
+   "k": [
+    "$K = 2$ in $P = 3$, zato $F = 2 - 3 + 1 = 0$",
+    "Temperatura je določena, kot pri čisti kovini, zato krivulja pokaže vodoraven plato"
+   ]
+  },
+  "UNI-UMFE-MEHTEH/kristalna-zgradba-kovin#p1": {
+   "h": "9f641d98ab24",
+   "o": "D"
+  },
+  "UNI-UMFE-MEHTEH/mehanske-lastnosti-materialov#p1": {
+   "h": "e82fd9593b45",
+   "o": "D"
+  },
+  "UNI-UMFE-MEHTEH/toplotna-obdelava-jekel#p0": {
+   "h": "5f9c9583f2ec",
+   "o": "D"
+  },
+  "UNI-UMFE-MEHTEH/toplotna-obdelava-jekel#p1": {
+   "h": "94403e875adc",
+   "o": "D"
+  },
+  "UNI-UMFE-RPROG/algoritmi-in-diagrami-poteka#p1": {
+   "h": "aeb042e052b1",
+   "o": "D",
+   "r": "sklic na Primer 3",
+   "k": [
+    "Pogoja ni mogoče preveriti, preden obstaja podatek",
+    "Prvi podatek zato preberemo enkrat pred zanko, nato pa na koncu vsake ponovitve preberemo naslednjega"
+   ]
+  },
+  "UNI-UMFERI-MATER1/keramika-in-kompoziti#p1": {
+   "h": "7a8689f78335",
+   "o": "D"
+  },
+  "UNI-UMFERI-MATER1/polimeri#p0": {
+   "h": "c8237eece481",
+   "o": "D"
+  },
+  "UNI-UMFERI-MATER1/polimeri#p1": {
+   "h": "696b1400e9cf",
+   "o": "D"
+  },
+  "UNI-UMFKBV-INF/strojna-in-programska-oprema#p1": {
+   "h": "a90e5c3d2c79",
+   "o": "D"
+  },
+  "UNI-UMFKKT-NRACKEM/resevanje-nelinearnih-enacb#p1": {
+   "h": "ce2d7d141f33",
+   "o": "I",
+   "r": "funkcija ni podana"
+  },
+  "UNI-UMFNM-NORI/vrste-programskih-jezikov#p0": {
+   "h": "73de2398006f",
+   "o": "D"
+  },
+  "UNI-UMFNM-NORI/vrste-programskih-jezikov#p1": {
+   "h": "c982a60857fd",
+   "o": "D"
+  },
+  "UNI-UMFNM-NSPLBOT/zgradba-rastlinske-celice#p0": {
+   "h": "95c632c2314c",
+   "o": "D"
+  },
+  "UNI-UMFNM-NSPLBOT/zgradba-rastlinske-celice#p1": {
+   "h": "3d10a1786e93",
+   "o": "D"
+  },
+  "UNI-UMFNM-NSPLZOO/pregled-zivalskih-skupin#p1": {
+   "h": "2497dd67972e",
+   "o": "D"
+  },
+  "UNI-UMFNM-NSPLZOO/pregled-zivalskih-skupin#p2": {
+   "h": "c2e53165a807",
+   "o": "I",
+   "r": "žival ni podana"
+  },
+  "UNI-UMFNM-NVEKMAT/premice-in-ravnine-v-prostoru#p0": {
+   "h": "149de2475989",
+   "o": "D"
+  },
+  "UNI-UMFNM-NVEKMAT/premice-in-ravnine-v-prostoru#p1": {
+   "h": "421b8bce64c5",
+   "o": "D"
+  },
+  "UNI-UMFS-LA/kvadratne-forme#p0": {
+   "h": "e6612c9e2f6c",
+   "o": "D"
+  },
+  "UNI-UMFS-LA/kvadratne-forme#p1": {
+   "h": "811f569c0915",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT1/atomska-zgradba-in-vezi#p0": {
+   "h": "ef3408bea6e5",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT1/atomska-zgradba-in-vezi#p1": {
+   "h": "30815cd6c7bd",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT1/strjevanje-kovin#p1": {
+   "h": "0f6407ea5cdf",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT2/bakrove-in-nikljeve-zlitine#p0": {
+   "h": "038492f47028",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT2/bakrove-in-nikljeve-zlitine#p1": {
+   "h": "d4337a225323",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT2/korozija-kovin#p1": {
+   "h": "458db29412bd",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT2/lahke-kovine#p0": {
+   "h": "92f18710c4f2",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT2/lahke-kovine#p1": {
+   "h": "bb7c2cb2b51e",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT2/vrste-jekel-in-litin#p0": {
+   "h": "cc9c4f36d229",
+   "o": "D"
+  },
+  "UNI-UMFS-MAT2/vrste-jekel-in-litin#p1": {
+   "h": "ac9efe5fa710",
+   "o": "D"
+  },
+  "UNI-UMFS-MEH1/notranje-sile-v-nosilcih#p1": {
+   "h": "98e6de0dd6e5",
+   "o": "D"
+  },
+  "UNI-UMFS-MEH1/tezisce#p0": {
+   "h": "94a16c9ded10",
+   "o": "D"
+  },
+  "UNI-UMFS-MEH2/ploskovni-vztrajnostni-momenti#p1": {
+   "h": "5648c8ade000",
+   "o": "D"
+  },
+  "UNI-UMFS-MEH2/primerjalne-napetosti#p0": {
+   "h": "bc225fed3801",
+   "o": "D"
+  },
+  "UNI-UMFS-MEH2/ravninsko-napetostno-stanje#p0": {
+   "h": "4112389cd1f2",
+   "o": "D",
+   "r": "sklic na tabelo iz lekcije",
+   "k": [
+    "Čisti nateg velikosti $\\tau$, striga tam ni (na pravokotni ploskvi pa tlak $-\\tau$)",
+    "Obratno čisti strig skriva nateg pod $45^\\circ$",
+    "Zato kreda in golenica počita po vijačnici"
+   ]
+  },
+  "UNI-UMFS-MEH2/ravninsko-napetostno-stanje#p1": {
+   "h": "51cfc3c1cf47",
+   "o": "D"
+  },
+  "UNI-UMFS-MEH2/upogibnica#p0": {
+   "h": "c5eade7ea249",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG1/cramerjevo-pravilo#p0": {
+   "h": "cd4524b288f9",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG1/cramerjevo-pravilo#p1": {
+   "h": "52460a2df946",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG1/rang-in-inverzna-matrika#p0": {
+   "h": "c6fdcddf4a37",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG1/rang-in-inverzna-matrika#p1": {
+   "h": "7b4dec922b49",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG2/karakteristicni-in-minimalni-polinom#p0": {
+   "h": "554a201b6524",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG2/karakteristicni-in-minimalni-polinom#p1": {
+   "h": "0da7368bc704",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG2/normirani-prostori-in-konveksnost#p1": {
+   "h": "4e8493bc3aff",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ALG2/normirani-prostori-in-konveksnost#p2": {
+   "h": "bf862a4abbdf",
+   "o": "I",
+   "r": "množica ni podana"
+  },
+  "UNI-UPFAMNIT-ANA1/absolutna-in-pogojna-konvergenca#p0": {
+   "h": "2134e6704d8f",
+   "o": "I",
+   "r": "neenakost ni podana"
+  },
+  "UNI-UPFAMNIT-ANA1/absolutna-in-pogojna-konvergenca#p1": {
+   "h": "40323a739389",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ANA1/absolutna-in-pogojna-konvergenca#p2": {
+   "h": "15d21f8192ac",
+   "o": "I",
+   "r": "vrsta ni podana"
+  },
+  "UNI-UPFAMNIT-ANA2/potencne-in-taylorjeve-vrste#p0": {
+   "h": "d5668bccf697",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-ANA2/potencne-in-taylorjeve-vrste#p1": {
+   "h": "f96af1cd932b",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-DM1/aksiomi-zfc-in-aksiom-izbire#p0": {
+   "h": "35e4d1a9cf4a",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-DM1/aksiomi-zfc-in-aksiom-izbire#p1": {
+   "h": "c7d3c8c590a5",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-DM1/ekvivalencne-relacije#p0": {
+   "h": "a6b379137283",
+   "o": "I",
+   "r": "sklic na dokaz iz lekcije"
+  },
+  "UNI-UPFAMNIT-DM1/ekvivalencne-relacije#p1": {
+   "h": "ff5796c0b0de",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-DM1/kardinalna-in-ordinalna-stevila#p0": {
+   "h": "ea979e0ca1ca",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-MATPRAK1/osnove-latex-a#p1": {
+   "h": "c755d6c3496b",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-RAC1/funkcije-in-podajanje-parametrov#p0": {
+   "h": "04873062c87f",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-UPFAMNIT-RAC1/funkcije-in-podajanje-parametrov#p1": {
+   "h": "08812ea06507",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-UPFAMNIT-RAC1/povezane-strukture#p1": {
+   "h": "24aa6046278d",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-RAC1/rekurzivni-algoritmi#p0": {
+   "h": "51102a027cd4",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-UPFAMNIT-RAC1/tabele-in-nizi#p0": {
+   "h": "1de0d4ff899b",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-RPRAK/operacijski-sistem#p0": {
+   "h": "44b303dc5855",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-RPRAK/operacijski-sistem#p1": {
+   "h": "afbae0f4814b",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-RPRAK/prvi-programi-v-jeziku-c#p0": {
+   "h": "564ff30a400f",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-UPFAMNIT-RPRAK/prvi-programi-v-jeziku-c#p2": {
+   "h": "31864f8eace8",
+   "o": "I",
+   "r": "sklic na program iz lekcije"
+  },
+  "UNI-UPFAMNIT-RPRAK/ukazna-lupina-bash#p0": {
+   "h": "833bfc6f44a4",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-RPRAK/ukazna-lupina-bash#p1": {
+   "h": "491fbbd1ef7e",
+   "o": "D"
+  },
+  "UNI-UPFAMNIT-RPRAK/ukazna-lupina-bash#p2": {
+   "h": "fa120552c46d",
+   "o": "I",
+   "r": "sklic na nalogo iz lekcije"
+  }
+ }
+}
