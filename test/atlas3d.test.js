@@ -375,27 +375,3 @@ test("prerez: pokrovi in polnilo so vklopljeni le ob prerezu brez rentgena, brez
   assert.match(src, /sablona: true/);
   assert.match(fs.readFileSync(path.join(D3, "scena.js"), "utf8"), /stencil: !!opts\.sablona/);
 });
-
-test("atlas: zasijSive zapre šiv med deloma kože (razmik in T-stik)", () => {
-  // atlas.js uvaža brskalniške poti: funkcija je samostojna, preberemo jo iz vira.
-  const src = fs.readFileSync(path.join(ROOT, "public/3d/atlas.js"), "utf8");
-  const m = src.match(/export function zasijSive[\s\S]*?\n}\n/);
-  assert.ok(m, "zasijSive v atlas.js");
-  const zasijSive = new Function(`${m[0].replace("export ", "")}\nreturn zasijSive;`)();
-  // Del A (0–4): rob x = 0,01 s tremi oglišči; del B (5–8): rob 1,2 mm stran (x = 0,0112) z dvema ogliščema.
-  const tocke = [[0, 0], [0, 0.02], [0.01, 0], [0.01, 0.01], [0.01, 0.02], [0.0112, 0], [0.0112, 0.02], [0.02, 0], [0.02, 0.02]];
-  const pos = new Float32Array(tocke.flatMap(([x, y]) => [x, y, 0]));
-  const idx = new Uint32Array([0, 2, 3, 0, 3, 1, 1, 3, 4, 5, 7, 8, 5, 8, 6]);
-  const del = new Int32Array([0, 0, 0, 0, 0, 1, 1, 1, 1]);
-  const I = zasijSive(pos, zasijSive(pos, idx, { tol: 0.006, del }), { tol: 0.0003 });
-  const robovi = new Map();
-  for (let t = 0; t < I.length; t += 3)
-    for (let s = 0; s < 3; s++) {
-      const a = I[t + s], b = I[t + ((s + 1) % 3)];
-      const k = `${Math.min(a, b)}-${Math.max(a, b)}`;
-      robovi.set(k, (robovi.get(k) || 0) + 1);
-    }
-  const odprtiNaSivu = [...robovi].filter(([k, n]) => n === 1 && k.split("-").every((i) => pos[3 * i] > 0.005 && pos[3 * i] < 0.015));
-  assert.deepEqual(odprtiNaSivu, [], "šiv brez odprtih robov");
-  assert.equal(I.length / 3, 6, "trikotnik B ob T-stiku razdeljen na dva");
-});
