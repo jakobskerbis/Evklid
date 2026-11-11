@@ -7,6 +7,9 @@ import {
   lessonQuestions, questionProblem, keyPoints, finalResult, practiceQuestion, pruneNumbers, pruneNames, resultStatus, reviewed, reviewFile, textHash, REF_RE, ORIGIN_RE, foreignName,
 } from "../server/ustno.js";
 import { loadLesson } from "../server/textbook.js";
+import { getTopic } from "../server/curriculum.js";
+import fs from "node:fs";
+import path from "node:path";
 
 const premisli = (q, a) => ({ sections: [{ title: "Razlaga", md: `:::premisli\n${q}\n---\n${a}\n:::` }] });
 const napaka = (naslov, text) => ({ sections: [{ title: "Pogoste napake", md: `- **${naslov}.** ${text}` }] });
@@ -136,7 +139,7 @@ test("ročni pregled :::premisli: izločena vprašanja niso ponujena (#7, #16, #
     // dokler je besedilo v lekciji enako, je v pregledu izločeno z razlogom
     if (q?.h && file[id]?.h === q.h) assert.ok(file[id].o === "I" && file[id].r, id);
   }
-  // vsa vprašanja iz :::premisli imajo veljaven vnos (sicer jih je treba pregledati: node scripts/ustno-pregled.js)
+  // pregledano vprašanje iz :::premisli je ponujeno (da so pregledana vsa, preveri test »vsa vprašanja … imajo veljaven pregled«)
   assert.equal(real("FIZ-SS-2/gravitacijski-zakon#p0")?.vrsta, "razlozi");
 });
 
@@ -177,4 +180,59 @@ test("ključni pojmi: »E. coli«, »2. Newtonov zakon«, koda z »**« in »(Pr
   assert.deepEqual(keyPoints("Enaka sila ne pomeni enakega pospeška. Po 2. Newtonovem zakonu je $a = \\dfrac{F}{m}$."), ["Enaka sila ne pomeni enakega pospeška", "Po 2. Newtonovem zakonu je $a = \\dfrac{F}{m}$"]);
   assert.match(keyPoints("Najprej `3 ** 2 = 9`, nato predznak da `-9`. Kdor računa drugače, dobi napačnih $18$.")[0], /`3 \*\* 2 = 9`/);
   assert.ok(!keyPoints("Bakterija se ustavi praktično takoj (Primer 3). Poganjati se mora neprestano z vrtenjem.").some((p) => /Primer/.test(p)));
+});
+
+test("ročni pregled: vsa vprašanja iz :::premisli v vseh lekcijah imajo veljaven pregled (kot ustno-pregled.js --stej)", () => {
+  const file = reviewFile();
+  assert.ok(Object.keys(file).length > 0, "server/ustno-pregled.json je prazen ali neberljiv");
+  const dir = path.join(import.meta.dirname, "..", "content", "lessons");
+  const brez = [];
+  for (const d of fs.readdirSync(dir).filter((x) => !x.includes(".")).sort()) {
+    for (const f of fs.readdirSync(path.join(dir, d)).filter((x) => x.endsWith(".md")).sort()) {
+      const id = `${d}/${f.slice(0, -3)}`;
+      for (const q of lessonQuestions(id, loadLesson(id), id, { pregled: false })) {
+        if (q.h && file[q.id]?.h !== q.h) brez.push(q.id);
+        // Sprejeto (»D«, enaka zgoščena vrednost), a reviewed() ga vseeno izloči (npr. pojem iz »k« ni več v točkovniku): tihi izpad.
+        else if (file[q.id]?.o === "D" && file[q.id].h === (q.h || q.hn) && !reviewed(q, file)) brez.push(`${q.id} (D, a izločeno)`);
+      }
+    }
+  }
+  // Lekcija spremenjena ali nova: node scripts/ustno-pregled.js, pregled, nato --sprejmi.
+  assert.deepEqual(brez, [], `brezPregleda: ${brez.length}`);
+});
+
+test("posnetek: besedila vseh ponujenih vprašanj so enaka kot v test/fixtures/ustno-besedila.json", () => {
+  // Varovalo za čiščenje besedila (READ_ON, imena …): sprememba ne sme tiho spremeniti že pregledanih vprašanj.
+  // Ob nameravani spremembi preglej razliko in posnetek obnovi: node scripts/ustno-pregled.js --posnetek
+  const want = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, "fixtures", "ustno-besedila.json"), "utf8"));
+  const got = {};
+  const dir = path.join(import.meta.dirname, "..", "content", "lessons");
+  for (const d of fs.readdirSync(dir).filter((x) => !x.includes(".")).sort()) {
+    for (const f of fs.readdirSync(path.join(dir, d)).filter((x) => x.endsWith(".md")).sort()) {
+      const id = `${d}/${f.slice(0, -3)}`;
+      for (const q of lessonQuestions(id, loadLesson(id), getTopic(id)?.name || id)) got[q.id] = q.besedilo;
+    }
+  }
+  const diff = [...new Set([...Object.keys(want), ...Object.keys(got)])].filter((k) => want[k] !== got[k]);
+  assert.deepEqual(diff, [], `spremenjena ali nova/izpadla vprašanja (${diff.length}); node scripts/ustno-pregled.js --posnetek`);
+});
+
+test("READ_ON: »Napovej, nato preveri …« na koncu odpade, vprašanje ostane", () => {
+  const q = raw(premisli("Kam kažeta kraka grafa $p(x) = 7 + 2x - x^4$? Napovej, nato preveri v tabeli.", "Oba navzdol, levo in desno $-\\infty$. Vodilni člen je $-x^4$: stopnja $4$ je soda, vodilni koeficient $-1$ negativen."));
+  assert.equal(q.besedilo, "Kam kažeta kraka grafa $p(x) = 7 + 2x - x^4$?");
+  const q2 = raw(premisli("Kam odleti kamen, ko se vrvica pretrga? Napovej, nato preveri.", "Po tangenti. Na kamen ne deluje več nobena sila v vodoravni smeri."));
+  assert.equal(q2.besedilo, "Kam odleti kamen, ko se vrvica pretrga?");
+  assert.equal(real("MAT-SS-3/graf-polinoma#p1")?.besedilo, "Kam kažeta kraka grafa $p(x) = 7 + 2x - x^4$?");
+  // Napotek za metodo ostane (pojmi ga zahtevajo): odpade le »v simulaciji/tabeli …« in golo »nato preveri.«
+  assert.match(real("MAT-OS-7/prastevila-in-razcep#p0")?.besedilo || "", /Napovej, nato preveri z vsoto števk\.$/);
+  assert.match(real("MAT-SS-2/transformacije-grafov#p0")?.besedilo || "", /Napovej, nato preveri z eno vrednostjo\.$/);
+  assert.match(real("MAT-SS-4/limita-in-zveznost-funkcije#p1")?.besedilo || "", /Napovej, nato preveri s formulo\.$/);
+});
+
+test("ročni pregled: vprašanja s sklicem na lekcijo so izločena z razlogom", () => {
+  const file = reviewFile();
+  for (const id of ["UNI-ULFMF-ALGEBRA1/linearne-preslikave#p0", "UNI-UMFE-ET1/metode-analize-vezij#p1", "UNI-ULFMF-ALGEBRA2/grupe#p1", "MAT-OS-7/premo-sorazmerje#p1"]) {
+    assert.equal(real(id), undefined, id);
+    assert.ok(file[id]?.o === "I" && file[id].r, id);
+  }
 });
