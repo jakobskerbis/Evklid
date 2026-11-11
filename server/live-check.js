@@ -170,7 +170,7 @@ export function withNote(messages, note) {
 
 // Vrstice, kjer napačna vrednost lahko stoji namenoma (učenčeva napaka, vprašanje, »če bi …«).
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
-const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|vzel[a]?|uporabil[a]?|extraneous|reject)(?!\p{L})/iu;
+const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
 
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
 function statedValues(answer, vars) {
@@ -324,7 +324,8 @@ export function valenceIssue(answer, question = "") {
   let checked = 0;
   const pupil = eightMinus(question);
   for (const line of String(answer || "").split("\n")) {
-    if (SKIP_LINE.test(line) || SPEED_RE.test(line)) continue;
+    // »vzel/uporabil« samo tukaj: v skupnem SKIP_LINE bi skrili napake v računih popravkov (pregled krog 2).
+    if (SKIP_LINE.test(line) || /(?<!\p{L})(vzel|uporabil)a?(?!\p{L})/iu.test(line) || SPEED_RE.test(line)) continue;
     const outerOnLine = new Set(elementMentions(line).map((e) => e.outer));
     for (const m of line.matchAll(VALENCE_RE)) {
       const el = elementMentions(line.slice(Math.max(0, m.index - 60), m.index)).at(-1);

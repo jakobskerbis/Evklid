@@ -559,3 +559,10 @@ test("code check (2026-11-11 round 2): an OŠ chemistry answer with v = 8 − 7 
     h.close();
   }
 });
+
+test("»vzel/uporabil« izpusti samo preverjanje vezi, ne računov v popravkih (krog 2, pregled)", () => {
+  for (const t of ["Vzel si $g = 10$; pravilno je $F = 2 \\cdot 9{,}81 = 18{,}62\\,\\text{N}$.", "Uporabil bom: $3 \\cdot 4 = 13$."]) {
+    assert.ok(codeFindings(t).issue, t);
+  }
+  assert.equal(valenceIssue("Pri dušiku si vzel vrstno število: $v = 8 - 7 = 1$.").issue, null);
+});
