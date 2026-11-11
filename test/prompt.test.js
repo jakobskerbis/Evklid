@@ -142,6 +142,7 @@ test("accuracy round 2 (2026-11-11): Lewis rule, possible exercise results and t
   assert.match(rule.slice(0, 2000), /vsi dani, rezultat mogoč \(ocena na lestvici naloge, v šoli 1–5; celo število ljudi ali predmetov; delež ≤ 100 %\)/);
   const pravilnost = fixed.slice(fixed.indexOf("### Pravilnost"), fixed.indexOf("## Način A"));
   assert.match(pravilnost, /najprej vprašaj, namesto da si podatke izmisliš\. Tabelna vrednost, ki je naloga ne poda .*»\(tabelna vrednost\)«.*iz svojega učbenika.*Če je odvisna od vira \(razmerja hitrosti\) ali je ne veš zagotovo, vprašaj/);
-  // Krog 2 doda manj kot 800 znakov predpomnjenega dela (50 912 pred spremembo).
-  assert.ok(fixed.length < 50912 + 800, `stalni del ${fixed.length} znakov`);
+  // Krog 2 doda manj kot 800 znakov predpomnjenega dela (50 912 pred spremembo); blok »Račun za kodo«
+  // (j, 2026-11-11: odgovore vedno potrdi koda) še do 1200 znakov.
+  assert.ok(fixed.length < 50912 + 800 + 1200, `stalni del ${fixed.length} znakov`);
 });

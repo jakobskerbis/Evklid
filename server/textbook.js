@@ -188,6 +188,8 @@ const cache = new Map(); // datoteka -> { mtime, lesson }
 
 // Lekcija teme. Fakultetna tema, ki se ponovi v več predmetih (enak naslov in
 // predmet), ima eno lekcijo: če je ni v mapi tega predmeta, vzamemo prvo, ki obstaja.
+export const stripRacunBlocks = (src) => String(src).replace(/\n?[ \t]*<<\s*RACUN\b[\s\S]*?>>[ \t]*\n?/g, "\n");
+
 export function loadLesson(topicId) {
   const t = getTopic(topicId);
   // Regijska tema: lekcija prve osnovne teme, ki jo ima.
@@ -232,7 +234,8 @@ function readLesson(file) {
     cache.delete(file);
     return null;
   }
-  const lesson = parseLesson(src);
+  // Blok <<RACUN …>> je za preverjanje s kodo (scripts/check-lesson.js), učenec ga ne vidi.
+  const lesson = parseLesson(stripRacunBlocks(src));
   cache.set(file, { mtime: st.mtimeMs, lesson });
   return lesson;
 }
