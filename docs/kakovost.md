@@ -15,7 +15,7 @@ Each item is a check. Every change is reviewed three times against this bar (`do
 
 ## 1. Lessons (`content/lessons/**`, format in `content/lessons/README.md`)
 
-Writers and reviewers: Opus (or Fable), never Sonnet. Checker: `node scripts/check-lesson.js -q`.
+Writers and reviewers: Opus or Fable (Fable where it has a noticeable edge, `docs/token-rules.md` §5), never Sonnet. Checker: `node scripts/check-lesson.js -q`.
 
 1. **MUST: correct.** Every number in worked examples recomputed (`node -e`), every quiz key checked, units and significant figures right, Slovenian terms of the school level (OŠ/SŠ/faks).
 2. **MUST: right level.** Uses only what the path taught before (`previousSummaries`); goals from the curriculum are all covered.

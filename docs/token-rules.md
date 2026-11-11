@@ -7,7 +7,7 @@ Written in English on purpose: it is read by agents, and English needs fewer tok
 Save tokens only where lesson quality stays the same. Never to save tokens:
 - drop the second-Opus review, the recalculation of every worked example, or the quiz-key check;
 - shorten lessons, remove »Drugače« sections, worked examples or quiz questions;
-- switch writers or reviewers to Sonnet or Haiku (Opus or Fable only; Opus is the default).
+- switch writers or reviewers to Sonnet or Haiku (Opus or Fable only; Fable where it has a noticeable edge, §5).
 
 Since 2026-10-29 13:00 UTC j has the Claude Max 20x plan and set the rule (12:59): every thread spends the remaining usage on the best quality it can buy, relative to what is left. Quality steps (second review, raising old lessons to `docs/kakovost.md` §1, reviewer effort high) come before more lessons per day.
 
@@ -75,7 +75,7 @@ Each tool call resends the thread's whole context, which is large in long-runnin
 
 ## 5. Model and effort
 
-- **Fable where it has a noticeable edge, else Opus (j, 2026-11-11).** Use Fable for every agent or thread whose result is clearly better with it: writing and reviewing hard lessons (competition topics, faks 3rd year and up, proofs, numerics, multi-step derivations), hard bugs and architecture, 3D/geometry and other maths-heavy code, the second reviewer on money, accounts, personal data, child safety or the tutor prompt, and design or quality judgement j will see. Routine work (easy lessons, small fixes, mechanical edits, coordination, logs) stays on Opus, where Fable adds little; routine code review and bug hunting may stay on Sonnet (j, 2026-11-07).
+- **Fable where it has a noticeable edge, else Opus (j, 2026-11-11).** Use Fable for every agent or thread whose result is clearly better with it, for example: writing and reviewing hard lessons (competition topics, faks 3rd year and up, proofs, numerics, multi-step derivations), hard bugs and architecture, 3D/geometry and other maths-heavy code, the second reviewer on money, accounts, personal data, child safety or the tutor prompt, and design or quality judgement j will see. Routine work (easy lessons, small fixes, mechanical edits, coordination, logs) stays on Opus, where Fable adds little; routine code review and bug hunting may stay on Sonnet (j's »profil A« rules, 2026-11-07).
 - **Fable runs out → Opus, keep going.** Fable has its own smaller weekly counter on j's Usage screen. When a Fable agent or thread hits that limit, rerun or continue the same step on Opus at once, with the same prompt and passes; do not pause or wait for the reset, and note the switch in the report. Fable also costs about 2.5 times as much as Opus against the shared weekly limit, so it counts toward the 90 %/95 % stops.
 - Never Sonnet or Haiku for content.
 - Writers run at the default effort; reviewers at `high` (numbers are still verified with `node -e`, effort buys a more careful reading of level and reasoning).

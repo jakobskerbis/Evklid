@@ -8,7 +8,7 @@ agents read this file (see `docs/token-rules.md`). The bar each pass checks agai
 Small fixes get one reviewer instead of two (§1, last paragraph; j, 2026-11-04).
 
 The author's own checking does not count as one of the three passes. Pass 1 is automatic; passes 2
-and 3 are separate reviewer agents (Opus, or Fable for the hardest content; never Sonnet or Haiku for
+and 3 are separate reviewer agents (Opus, or Fable where it has a noticeable edge, `docs/token-rules.md` §5; never Sonnet or Haiku for
 content) that did not write the change and start from a fresh context with only the diff, the
 commands below and the checklist of their lens.
 
