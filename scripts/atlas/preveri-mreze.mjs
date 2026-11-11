@@ -394,7 +394,8 @@ async function glavni() {
   }
 
   let izh = {};
-  if (fs.existsSync(IZHODISCE)) izh = JSON.parse(fs.readFileSync(IZHODISCE, "utf8"));
+  try { izh = JSON.parse(fs.readFileSync(IZHODISCE, "utf8")); }
+  catch (e) { if (e.code !== "ENOENT") throw e; }
   const nove = Object.entries(rezultati).flatMap(([rel, deli]) => noveTezave(rel, deli, izh.modeli || {}));
   if (zast.has("--izhodisce")) {
     if (filtri.length) { console.error("--izhodisce zapiše vse modele: zaženi brez filtra."); process.exit(1); }
