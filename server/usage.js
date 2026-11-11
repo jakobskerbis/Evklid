@@ -399,6 +399,11 @@ export class Usage {
     if (take > 0) this.credits.use(sb.owner, studentId, Math.round(take * 1e6) / 1e6);
   }
   // Poraba ene vrste (npr. "verify") danes, v USD.
+  // Število zapisov teh vrst danes za učenca (npr. pregledi, server/live-check.js LIVE_REVIEW_PER_PUPIL).
+  kindsCountToday(studentId, kinds) {
+    if (!kinds.length) return 0;
+    return this.db.prepare(`SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN (${kinds.map(() => "?").join(",")}) AND created_at >= date('now')`).get(studentId, ...kinds).n;
+  }
   kindToday(kind) {
     return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE kind = ? AND created_at >= date('now')").get(kind).s;
   }

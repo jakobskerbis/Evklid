@@ -126,8 +126,9 @@ test("extra exercises and side claims (2026-11-11): one labelled exercise, reali
   const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
   assert.ok(start > fixed.indexOf("### Pravilnost"), "pravilo je v razdelku Pravilnost, v predpomnjenem delu");
   const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
-  for (const s of ["»**Vaja:**«", "največ eno", "ista situacija z drugimi števili", "resničnem obsegu", "topnost", "natanko ena pravilna rešitev", "natanko eno skupino", "»Zapomni si«", "Preverbi", "učbeniško definicijo", "Preverba preveri samo tvoj rezultat"]) {
+  for (const s of ["»**Vaja:**«", "največ eno na sporočilo", "po običajnih pravilih", "izjeme, ki jih naloga ne potrebuje", "ista situacija z drugimi števili", "resničnem obsegu", "topnost", "natanko ena pravilna rešitev", "natanko eno skupino", "»Zapomni si«", "Preverbi", "učbeniško definicijo", "Preverba preveri samo tvoj rezultat", "mejni ali posebni primer", "ne dodaja novih dejstev"]) {
     assert.ok(rule.includes(s), `pravilo vsebuje »${s}«`);
   }
-  assert.ok(rule.length < 1800, `pravilo naj ostane kratko (${rule.length} znakov)`);
+  assert.ok(rule.length < 2000, `pravilo naj ostane kratko (${rule.length} znakov)`);
+  assert.match(fixed, /6\. \*\*Preverba:\*\* samo tvoj rezultat: enote, velikostni red, vstavljanje, mejni ali posebni primer/, "vzorec in pravilo o Preverbi se ujemata");
 });

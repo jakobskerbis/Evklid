@@ -55,9 +55,35 @@ export function checkerUser({ question, answer, kind = "answer" }) {
   return `STUDENT QUESTION:\n${String(question || "(none)").slice(0, 4000)}\n\n${label}:\n${String(answer)}`;
 }
 
-export async function askModel(model, user, createFn, system = SYSTEM) {
-  const create = createFn || ((p) => getClient().messages.create(p));
-  const r = await create({ model, max_tokens: 8000, output_config: { effort: EFFORT }, system, messages: [{ role: "user", content: user }] });
+// opts.signal: prekinitev (npr. učenec zapre pogovor); opts.timeoutMs: rok, po njem napaka z name »TimeoutError«
+// (tudi če createFn signala ne upošteva).
+export async function askModel(model, user, createFn, system = SYSTEM, { signal = null, timeoutMs = 0 } = {}) {
+  const create = createFn || ((p, o) => getClient().messages.create(p, o));
+  const params = { model, max_tokens: 8000, output_config: { effort: EFFORT }, system, messages: [{ role: "user", content: user }] };
+  let r;
+  if (!signal && !(timeoutMs > 0)) r = await create(params);
+  else {
+    const ctl = new AbortController();
+    const stop = (reason) => ctl.abort(reason);
+    const onAbort = () => stop(Object.assign(new Error("aborted"), { name: "AbortError" }));
+    if (signal?.aborted) onAbort();
+    signal?.addEventListener?.("abort", onAbort, { once: true });
+    let timer = null;
+    const limit = new Promise((_, reject) => {
+      if (timeoutMs > 0) timer = setTimeout(() => {
+        const e = Object.assign(new Error(`pregled ni končal v ${timeoutMs} ms`), { name: "TimeoutError" });
+        stop(e);
+        reject(e);
+      }, timeoutMs);
+      ctl.signal.addEventListener("abort", () => reject(ctl.signal.reason), { once: true });
+    });
+    try {
+      r = await Promise.race([create(params, { signal: ctl.signal }), limit]);
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener?.("abort", onAbort);
+    }
+  }
   const text = (r.content || []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
   // Odrezan (max_tokens) ali zavrnjen odgovor preverjevalca ni OK, tudi če se začne z »OK«.
   const cut = r.stop_reason && r.stop_reason !== "end_turn" && r.stop_reason !== "stop_sequence";

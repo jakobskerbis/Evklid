@@ -307,7 +307,7 @@ export async function runChecked({ tasks, settingsFor, question, grade, group, m
         row.usd = used.reduce((s, u) => s + u.cost_usd, 0);
         row.model = used.find((u) => u.kind === "chat")?.model || "?";
         row.popravek = used.some((u) => u.kind === "popravek");
-        row.pregled = used.some((u) => u.kind === "preverjanje");
+        row.pregled = used.some((u) => u.kind === "preverjanje" || u.kind === "preverjanje-sola");
         (isGraded(row) ? rows : dead).push(row);
         if (progressFile) saveProgress(progressFile, [...rows, ...dead]);
         log(`[${i + 1}/${tasks.length}] ${c.kljuc.padEnd(4)} ${String(row.ocena).padEnd(13)} ${row.popravek ? "popravek " : ""}${row.pregled ? "pregled " : ""}${t.id}  (skupaj ${spent().toFixed(2)} $)`);

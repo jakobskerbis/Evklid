@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -164,7 +164,7 @@ test("live check: competition and university Haiku answers without calculations 
 });
 
 test("live check: review rules (free plan, saving mode, calculations already checked, non-Haiku)", () => {
-  const base = { checked: 0, model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: true, spentToday: 0, answerLength: 300 };
+  const base = { model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: true, answerLength: 300 };
   assert.equal(needsReview(base), true);
   assert.equal(needsReview({ ...base, premium: false }), false, "brezplačni paket");
   assert.equal(needsReview({ ...base, lite: true }), false);
@@ -174,11 +174,13 @@ test("live check: review rules (free plan, saving mode, calculations already che
   assert.equal(needsReview({ ...base, model: "claude-sonnet-5-5" }), false);
   assert.equal(needsReview({ ...base, risky: false }), false);
   assert.equal(needsReview({ ...base, answerLength: 40 }), false);
-  assert.equal(needsReview({ ...base, spentToday: () => 1 }), false, "privzeta dnevna meja 1 $");
+  const spent = (v) => () => v;
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spent(1) }), "dan", "privzeta dnevna meja 0,30 $");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spent(0) }), null);
 });
 
 test("live check: the daily cap stops reviews", async () => {
-  process.env.EVKLID_LIVE_CHECK_DAILY_USD = "0.005";
+  process.env.EVKLID_LIVE_CHECK_DAILY_USD = "0.03"; // rezerva v bazenu je 0,02 $
   const h = harness({ answers: [LONG, LONG] });
   try {
     const s = await h.student({ track: "COMPETITION" });
@@ -378,38 +380,53 @@ test("verdict check: after a later task the solver cannot read, the code does no
   }
 });
 
-test("live check: answers with a practice exercise or a »Zapomni si« box are recognised", () => {
+test("live check: SŠ trigger = labelled exercise, or a »Zapomni si« box inside a solved task", () => {
   assert.equal(hasClaims("Rešitev je $x = 4$.\n\n**Vaja:** Reši $3x + 2 = 11$."), true);
-  assert.equal(hasClaims("> 📌 **Zapomni si:** redoks reakcija …"), true);
-  assert.equal(hasClaims("Poskusi sama: koliko je $2 \\cdot 7$?"), true);
-  assert.equal(hasClaims("Za vajo izračunaj še maso."), true);
-  assert.equal(hasClaims("Try it yourself: solve $x^2 = 9$."), true);
+  assert.equal(hasClaims("**Vaja**: reši še $3x = 9$."), true);
+  assert.equal(hasClaims("Dodatna vaja: izračunaj maso."), true);
+  assert.equal(hasClaims("Za vajo: koliko je $2 \\cdot 7$?"), true);
+  assert.equal(hasClaims("Practice: solve $x^2 = 9$."), true);
+  assert.equal(hasClaims("**Podatki:** $m = 2$ kg\n…\n> 📌 **Zapomni si:** redoks reakcija …"), true, "okvir v rešeni nalogi");
+  assert.equal(hasClaims("> 📌 **Zapomni si:** ulomek je del celote."), false, "sam okvir v razlagi ni dovolj");
+  assert.equal(hasClaims("Poskusi sama: koliko je $2 \\cdot 7$?"), false);
+  assert.equal(hasClaims("Your turn: what is $2 + 2$?"), false);
+  assert.equal(hasClaims("Vaja dela mojstra, zato poskusi še enkrat."), false, "beseda brez oznake ni vaja");
   assert.equal(hasClaims("Rešitev je $x = 4$. Kaj dobiš, če vstaviš?"), false);
-  assert.equal(hasClaims("Vajam se vrnem kasneje."), false, "beseda, ki se začne z »vaja«, ni vaja");
 });
 
-test("live check: review at SŠ only for answers with an exercise or box; OŠ only when switched on", () => {
-  const base = { checked: 1, model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: false, spentToday: 0, answerLength: 300 };
+test("live check: review at SŠ only for claims; OŠ only when switched on; school pool, per-pupil limit", () => {
+  const base = { model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: false, answerLength: 300 };
   assert.equal(claimReviewFor("SS"), true);
   assert.equal(claimReviewFor("OS"), false);
   assert.equal(claimReviewFor("FAKS"), false);
-  assert.equal(needsReview({ ...base, claimLevel: true, claims: true }), true, "SŠ z vajo, tudi ko je koda preverila račune");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true }), true, "SŠ z vajo");
   assert.equal(needsReview({ ...base, claimLevel: true, claims: false }), false, "SŠ brez vaje in okvirja");
   assert.equal(needsReview({ ...base, claimLevel: false, claims: true }), false, "OŠ privzeto brez pregleda");
   assert.equal(needsReview({ ...base, claimLevel: true, claims: true, premium: false }), false, "brezplačni paket");
-  assert.equal(needsReview({ ...base, claimLevel: true, claims: true, spentToday: 0.3 }), false, "dnevna meja 0,30 $ ostane");
+  assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 0.15, "šolski del je privzeto pol skupne meje");
+  assert.equal(LIVE_REVIEW_PER_PUPIL(), 6);
+  const spentBy = (m) => (kinds) => kinds.reduce((t, k) => t + (m[k] || 0), 0);
+  assert.equal(reviewBlock({ school: true, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15 }) }), "sola");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15 }) }), null, "šolski del ne ustavi fakultete");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15, preverjanje: 0.15 }) }), "dan", "skupna meja šteje obe vrsti");
+  assert.equal(reviewBlock({ school: true, pupilToday: 6, spent: spentBy({}) }), "ucenec");
+  assert.equal(reviewKindFor(true), "preverjanje");
+  assert.equal(reviewKindFor(false), "preverjanje-sola");
   process.env.EVKLID_LIVE_REVIEW_SS = "0";
   process.env.EVKLID_LIVE_REVIEW_OS = "1";
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.05";
+  process.env.EVKLID_LIVE_REVIEW_PER_PUPIL = "-1";
   try {
     assert.equal(claimReviewFor("SS"), false);
     assert.equal(claimReviewFor("OS"), true);
+    assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 0.05);
+    assert.equal(reviewBlock({ school: true, pupilToday: 99, spent: spentBy({}) }), null, "brez meje na učenca");
   } finally {
-    delete process.env.EVKLID_LIVE_REVIEW_SS;
-    delete process.env.EVKLID_LIVE_REVIEW_OS;
+    for (const k of ["EVKLID_LIVE_REVIEW_SS", "EVKLID_LIVE_REVIEW_OS", "EVKLID_LIVE_REVIEW_SS_DAILY_USD", "EVKLID_LIVE_REVIEW_PER_PUPIL"]) delete process.env[k];
   }
   assert.match(LIVE_REVIEW_SYSTEM, /practice exercise/);
   assert.match(LIVE_REVIEW_SYSTEM, /exactly one correct answer/);
-  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.`?$/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
 });
 
 test("live check: SŠ answer with an exercise is reviewed and corrected; without one it is not", async () => {
@@ -439,4 +456,54 @@ test("live check: at university the review runs even when the code checked a cal
   } finally {
     h.close();
   }
+});
+
+test("live check: per-pupil daily limit and skip counter", async () => {
+  process.env.EVKLID_LIVE_REVIEW_PER_PUPIL = "1";
+  const h = harness({ answers: [LONG, LONG] });
+  try {
+    const s = await h.student({ track: "COMPETITION" });
+    await h.ask(s, "Kako začnem geometrijsko nalogo?");
+    await h.ask(s, "Kako začnem geometrijsko nalogo?");
+    assert.equal(h.reviewCalls.length, 1, "drugi pregled istega učenca isti dan ne gre");
+    const kv = JSON.parse(h.store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV).value);
+    const day = Object.values(kv)[0];
+    assert.equal(Object.values(day).reduce((t, r) => t + (r.ucenec || 0), 0), 1, "preskok je zapisan z razlogom");
+    assert.equal(h.kinds().preverjanje, 1);
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_PER_PUPIL;
+    h.close();
+  }
+});
+
+test("live check: SŠ reviews use their own pool and kind", async () => {
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.01";
+  const ex = "Rešitev je pH = 12, ker je koncentracija 0,01 mol/L hidroksidnih ionov v raztopini.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g CaO. Kolikšen je pH?";
+  const h = harness({ answers: [ex, ex, LONG] });
+  try {
+    const ss = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
+    await h.ask(ss, "Koliko je pH?");
+    assert.equal(h.reviewCalls.length, 0, "rezerva pregleda (0,02 $) je večja od šolskega dela");
+    const tek = await h.student({ track: "COMPETITION" });
+    await h.ask(tek, "Kako začnem geometrijsko nalogo?");
+    assert.equal(h.reviewCalls.length, 1, "tekmovanja imajo svojo pot do skupne meje");
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD;
+    h.close();
+  }
+});
+
+test("live check: a review that times out is skipped, the answer stays", async () => {
+  const slow = () => new Promise(() => {});
+  await assert.rejects(reviewAnswer({ question: "q", answer: "a", createFn: slow, timeoutMs: 30 }), (e) => e.name === "TimeoutError");
+  const ctl = new AbortController();
+  const p = reviewAnswer({ question: "q", answer: "a", createFn: slow, signal: ctl.signal, timeoutMs: 5000 });
+  ctl.abort();
+  await assert.rejects(p, (e) => e.name === "AbortError");
+});
+
+test("live check: the fix call never solves a practice exercise", async () => {
+  let system = "";
+  await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
 });

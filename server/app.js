@@ -54,7 +54,7 @@ import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from ".
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor } from "./live-check.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
@@ -1123,21 +1123,39 @@ export function createApp(store, opts = {}) {
         const found = codeFindings(plain, pre);
         let issue = found.issue;
         const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
-        if (
+        const stopnja = jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS";
+        const school = !risky; // pregled SŠ/OŠ (vaja ali okvir v rešeni nalogi) ima svoj del dnevne meje
+        const reviewUsd = checkReserveUsd(MODEL_MID, text + plain);
+        const spentKinds = (kinds) => kinds.reduce((t, k) => t + usage.kindToday(k), 0);
+        const eligible =
           !issue &&
           !image && // pregledovalec slike naloge ne vidi
           !verdictChecked && // sodbo je model že pregledal
           liveReviewOn() &&
-          needsReview({ checked: found.checked, model: answerModel, lite, premium, risky, claims: hasClaims(plain), claimLevel: claimReviewFor(jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS"), answerLength: plain.length, level: () => usage.budgetState().level, spentToday: () => usage.kindToday("preverjanje") }) &&
-          hold.take(checkReserveUsd(MODEL_MID, text + plain))
-        ) {
+          needsReview({ model: answerModel, lite, premium, risky, claims: hasClaims(plain), claimLevel: claimReviewFor(stopnja), answerLength: plain.length, level: () => usage.budgetState().level });
+        const poolUsd = LIVE_REVIEW_POOL_RESERVE_USD();
+        const blockedBy = eligible ? reviewBlock({ school, needUsd: poolUsd, spent: spentKinds, pupilToday: () => usage.kindsCountToday(student.id, REVIEW_KINDS) }) : null;
+        if (blockedBy) noteReviewSkip(store.db, stopnja, blockedBy);
+        // Rezervacija v dnevnem bazenu (klici v teku štejejo, vzporedni pregledi meje ne prekoračijo) in v meji učenca.
+        const pool = eligible && !blockedBy ? usage.hold(null, reviewPoolCaps({ school, spent: spentKinds })) : null;
+        if (eligible && !blockedBy && !(pool && pool.take(poolUsd))) noteReviewSkip(store.db, stopnja, school ? "sola" : "dan");
+        if (pool?.held > 0 && !hold.take(reviewUsd)) {
+          pool.release();
+          noteReviewSkip(store.db, stopnja, "meja_ucenca");
+        }
+        if (pool?.held > 0) {
           try {
-            const rv = await reviewAnswer({ question: text, answer: plain, createFn: opts.reviewCreateFn, usage, studentId: student.id });
+            const rv = await reviewAnswer({ question: text, answer: plain, createFn: opts.reviewCreateFn, usage, studentId: student.id, kind: reviewKindFor(risky), signal: controller.signal });
             extraCost += rv.cost;
-            hold.settle(checkReserveUsd(MODEL_MID, text + plain));
             if (rv.reason) issue = `a reviewer reported: ${rv.reason}`;
           } catch (e) {
-            if (!controller.signal.aborted) console.warn(`[evklid] sprotni pregled ni uspel: ${e?.message || e}`);
+            if (e?.name === "TimeoutError") {
+              noteReviewSkip(store.db, stopnja, "rok");
+              console.warn(`[evklid] sprotni pregled: rok potekel (${stopnja})`);
+            } else if (!controller.signal.aborted) console.warn(`[evklid] sprotni pregled ni uspel: ${e?.message || e}`);
+          } finally {
+            hold.settle(reviewUsd);
+            pool.release();
           }
         }
         // Popravek (server/live-check.js correction): način popravka (pri hitrem modelu »think«, 8000 izhodnih žetonov),
