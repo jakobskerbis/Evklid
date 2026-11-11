@@ -280,6 +280,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   let prerez = { on: false, os: "y", poz: 0.5 };
   let rentgen = false;
   let kvizStanje = null;
+  // Kviz: ob napačnem odgovoru se rentgen za 5 s sam prižge, da se pravilna struktura vidi skozi ostalo telo.
+  const KVIZ_RENTGEN_MS = 5000;
+  let kvizRentgen = null; // { casovnik, prej }
   const skupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 } };
   const materiali = new Map(); // razred → material (vsi BatchedMesh tega razreda)
   const svetSkupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 }, uObroba: { value: 0.35 } };
@@ -1363,7 +1366,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     renSw.setAttribute("role", "switch");
     renSw.setAttribute("aria-checked", String(rentgen));
     renSw.setAttribute("aria-label", t("a3.xray"));
+    renSw.dataset.a3Rentgen = "";
     renSw.addEventListener("click", () => {
+      pozabiKvizRentgen(); // učenec je rentgen preklopil sam: ne ugasnemo ga namesto njega
       rentgen = !rentgen;
       renSw.setAttribute("aria-checked", String(rentgen));
       uporabiMateriale();
@@ -1480,6 +1485,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const k = kvizStanje;
     const d = k.vprasanja[k.i];
     k.odgovorjeno = false;
+    koncajKvizRentgen();
     kviz.replaceChildren();
     const vrhQ = mk("div", "a3-kviz-vrh");
     vrhQ.append(mk("span", "a3-kviz-st", t("a3.quizProgress", { i: k.i + 1, n: k.vprasanja.length })), mk("span", "a3-kviz-tocke", t("a3.quizScore", { n: k.prav })));
@@ -1508,6 +1514,30 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     }
     kviz.hidden = false;
   }
+  function nastaviRentgen(v) {
+    if (rentgen === v) return;
+    rentgen = v;
+    el.querySelectorAll("[data-a3-rentgen]").forEach((sw) => sw.setAttribute("aria-checked", String(v)));
+    uporabiMateriale();
+  }
+  function pozabiKvizRentgen() {
+    if (!kvizRentgen) return;
+    clearTimeout(kvizRentgen.casovnik);
+    kvizRentgen = null;
+  }
+  // Napačen odgovor: rentgen prižgemo (če ni že prižgan) in ga po 5 s vrnemo, kot je bil.
+  function kvizRentgenZaHip() {
+    const prej = kvizRentgen ? kvizRentgen.prej : rentgen;
+    pozabiKvizRentgen();
+    nastaviRentgen(true);
+    kvizRentgen = { prej, casovnik: setTimeout(koncajKvizRentgen, KVIZ_RENTGEN_MS) };
+  }
+  function koncajKvizRentgen() {
+    if (!kvizRentgen) return;
+    const { prej } = kvizRentgen;
+    pozabiKvizRentgen();
+    nastaviRentgen(prej);
+  }
   function povratno(ok, besedilo) {
     const fb = kviz.querySelector(".a3-kviz-fb");
     fb.textContent = besedilo;
@@ -1533,6 +1563,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (ok) k.prav++;
     else k.narobe++;
     izberi(d.row.id, { tiho: true });
+    if (!ok) kvizRentgenZaHip();
     povratno(ok, ok ? t("a3.quizRight") : istoIme ? t("a3.quizSide") : t("a3.quizWrongWas", { ime: vrstice.get(id)?.prikaz || "" }));
   }
   function odgovorKaj(m, b) {
@@ -1547,13 +1578,17 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       x.disabled = true;
       if (x.textContent === d.row.prikaz.replace(/\s*\((levo|desno|left|right)\)$/i, "")) x.classList.add("prav");
     });
-    if (!ok) b.classList.add("narobe");
+    if (!ok) {
+      b.classList.add("narobe");
+      kvizRentgenZaHip();
+    }
     povratno(ok, ok ? t("a3.quizRight") : t("a3.quizWrongIs", { ime: d.row.prikaz }));
   }
   async function koncajKviz(dokoncan = false) {
     const k = kvizStanje;
     if (!k) return;
     kvizStanje = null;
+    koncajKvizRentgen();
     izberi(null);
     if (dokoncan !== true) {
       kviz.hidden = true;
@@ -1717,14 +1752,15 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         razmik = v;
         uporabiRazmik();
       } else if (k === "rentgen") {
-        rentgen = !!v;
-        uporabiMateriale();
+        pozabiKvizRentgen(); // izrecna nastavitev ima prednost pred kvizovim časovnikom
+        nastaviRentgen(!!v);
       } else if (k === "prerez") {
         prerez = { ...prerez, ...v };
         uporabiPrerez();
       }
     },
     unici() {
+      pozabiKvizRentgen();
       roKartica.disconnect();
       moKartica.disconnect();
       document.removeEventListener("keydown", naTipko);

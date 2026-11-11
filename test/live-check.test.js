@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -164,21 +164,23 @@ test("live check: competition and university Haiku answers without calculations 
 });
 
 test("live check: review rules (free plan, saving mode, calculations already checked, non-Haiku)", () => {
-  const base = { checked: 0, model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: true, spentToday: 0, answerLength: 300 };
+  const base = { model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: true, answerLength: 300 };
   assert.equal(needsReview(base), true);
   assert.equal(needsReview({ ...base, premium: false }), false, "brezplačni paket");
   assert.equal(needsReview({ ...base, lite: true }), false);
   assert.equal(needsReview({ ...base, level: 0 }), false, "varčni način proračuna");
   assert.equal(needsReview({ ...base, level: () => -1 }), false);
-  assert.equal(needsReview({ ...base, checked: 2 }), false, "koda je že preverila račune");
+  assert.equal(needsReview({ ...base, checked: 2 }), true, "koda preveri števila, trditev ne: pri tveganju pregled ostane");
   assert.equal(needsReview({ ...base, model: "claude-sonnet-5-5" }), false);
   assert.equal(needsReview({ ...base, risky: false }), false);
   assert.equal(needsReview({ ...base, answerLength: 40 }), false);
-  assert.equal(needsReview({ ...base, spentToday: () => 1 }), false, "privzeta dnevna meja 1 $");
+  const spent = (v) => () => v;
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spent(1) }), "dan", "privzeta dnevna meja 0,30 $");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spent(0) }), null);
 });
 
 test("live check: the daily cap stops reviews", async () => {
-  process.env.EVKLID_LIVE_CHECK_DAILY_USD = "0.005";
+  process.env.EVKLID_LIVE_CHECK_DAILY_USD = "0.03"; // rezerva v bazenu je 0,02 $
   const h = harness({ answers: [LONG, LONG] });
   try {
     const s = await h.student({ track: "COMPETITION" });
@@ -376,4 +378,191 @@ test("verdict check: after a later task the solver cannot read, the code does no
   } finally {
     h.close();
   }
+});
+
+test("live check: SŠ trigger = labelled exercise, or a »Zapomni si« box inside a solved task", () => {
+  assert.equal(hasClaims("Rešitev je $x = 4$.\n\n**Vaja:** Reši $3x + 2 = 11$."), true);
+  assert.equal(hasClaims("**Vaja**: reši še $3x = 9$."), true);
+  assert.equal(hasClaims("Dodatna vaja: izračunaj maso."), true);
+  assert.equal(hasClaims("Za vajo: koliko je $2 \\cdot 7$?"), true);
+  assert.equal(hasClaims("Practice: solve $x^2 = 9$."), true);
+  assert.equal(hasClaims("**Podatki:** $m = 2$ kg\n…\n> 📌 **Zapomni si:** redoks reakcija …"), true, "okvir v rešeni nalogi");
+  assert.equal(hasClaims("> 📌 **Zapomni si:** ulomek je del celote."), false, "sam okvir v razlagi ni dovolj");
+  assert.equal(hasClaims("Poskusi sama: koliko je $2 \\cdot 7$?"), false);
+  assert.equal(hasClaims("Your turn: what is $2 + 2$?"), false);
+  assert.equal(hasClaims("Vaja dela mojstra, zato poskusi še enkrat."), false, "beseda brez oznake ni vaja");
+  assert.equal(hasClaims("Rešitev je $x = 4$. Kaj dobiš, če vstaviš?"), false);
+});
+
+test("live check: review at SŠ only for claims; OŠ only when switched on; school pool, per-pupil limit", () => {
+  const base = { model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: false, answerLength: 300 };
+  assert.equal(claimReviewFor("SS"), true);
+  assert.equal(claimReviewFor("OS"), false);
+  assert.equal(claimReviewFor("FAKS"), false);
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true }), true, "SŠ z vajo");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: false }), false, "SŠ brez vaje in okvirja");
+  assert.equal(needsReview({ ...base, claimLevel: false, claims: true }), false, "OŠ privzeto brez pregleda");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true, premium: false }), false, "brezplačni paket");
+  assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 0.15, "šolski del je privzeto pol skupne meje");
+  assert.equal(LIVE_REVIEW_PER_PUPIL(), 6);
+  const spentBy = (m) => (kinds) => kinds.reduce((t, k) => t + (m[k] || 0), 0);
+  assert.equal(reviewBlock({ school: true, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15 }) }), "sola");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15 }) }), null, "šolski del ne ustavi fakultete");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15, preverjanje: 0.15 }) }), "dan", "skupna meja šteje obe vrsti");
+  assert.equal(reviewBlock({ school: true, pupilToday: 6, spent: spentBy({}) }), "ucenec");
+  assert.equal(reviewKindFor(true), "preverjanje");
+  assert.equal(reviewKindFor(false), "preverjanje-sola");
+  process.env.EVKLID_LIVE_REVIEW_SS = "0";
+  process.env.EVKLID_LIVE_REVIEW_OS = "1";
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.05";
+  process.env.EVKLID_LIVE_REVIEW_PER_PUPIL = "-1";
+  try {
+    assert.equal(claimReviewFor("SS"), false);
+    assert.equal(claimReviewFor("OS"), true);
+    assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 0.05);
+    assert.equal(reviewBlock({ school: true, pupilToday: 99, spent: spentBy({}) }), null, "brez meje na učenca");
+  } finally {
+    for (const k of ["EVKLID_LIVE_REVIEW_SS", "EVKLID_LIVE_REVIEW_OS", "EVKLID_LIVE_REVIEW_SS_DAILY_USD", "EVKLID_LIVE_REVIEW_PER_PUPIL"]) delete process.env[k];
+  }
+  assert.match(LIVE_REVIEW_SYSTEM, /practice exercise/);
+  assert.match(LIVE_REVIEW_SYSTEM, /exactly one correct answer/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
+});
+
+test("live check: SŠ answer with an exercise is reviewed and corrected; without one it is not", async () => {
+  const withEx = "Rešitev je pH = 12, ker je $c(OH^-) = 0{,}01$ mol/L.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g MgO. Kolikšen je pH raztopine?";
+  const plainSs = "Rešitev je pH = 12, ker je koncentracija hidroksidnih ionov 0,01 mol/L. Preveri še, ali je enota prava in ali je rezultat smiseln za bazično raztopino.";
+  const h = harness({ answers: [withEx, plainSs], reviews: ["NAPAKA: MgO je v vodi zelo slabo topen; vaja ni izvedljiva."], fixes: ["Popravek: MgO se v vodi skoraj ne raztopi, zato vzemi raje 0,40 g CaO."] });
+  try {
+    const s = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
+    const r = await h.ask(s, "Koliko je pH raztopine CaO?");
+    assert.equal(h.reviewCalls.length, 1, "odgovor z vajo pregleda model");
+    assert.match(h.reviewCalls[0].system, /practice exercise/, "pregled z navodili za vaje");
+    assert.match(r.messages.at(-1).display_text, /Popravek:/);
+    await h.ask(s, "Koliko je pH raztopine CaO?");
+    assert.equal(h.reviewCalls.length, 1, "brez vaje in okvirja pri SŠ ni pregleda");
+  } finally {
+    h.close();
+  }
+});
+
+test("live check: at university the review runs even when the code checked a calculation", async () => {
+  const ans = "Velja $3 \\cdot 1000 = 3000$, zato je naslov 3000. Mimogrede: indeksiranje je od 1, zato bi bil naslov 2996, kar je pomembno pri vseh poljih v tem jeziku.";
+  const h = harness({ answers: [ans], reviews: ["OK"] });
+  try {
+    const s = await h.student({ educational_track: "UNIVERZA", curriculum_level: "1" });
+    await h.ask(s, "Kateri je naslov elementa?");
+    assert.equal(h.reviewCalls.length, 1);
+  } finally {
+    h.close();
+  }
+});
+
+test("live check: per-pupil daily limit and skip counter", async () => {
+  process.env.EVKLID_LIVE_REVIEW_PER_PUPIL = "1";
+  const h = harness({ answers: [LONG, LONG] });
+  try {
+    const s = await h.student({ track: "COMPETITION" });
+    await h.ask(s, "Kako začnem geometrijsko nalogo?");
+    await h.ask(s, "Kako začnem geometrijsko nalogo?");
+    assert.equal(h.reviewCalls.length, 1, "drugi pregled istega učenca isti dan ne gre");
+    const kv = JSON.parse(h.store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV).value);
+    const day = Object.values(kv)[0];
+    assert.equal(Object.values(day).reduce((t, r) => t + (r.ucenec || 0), 0), 1, "preskok je zapisan z razlogom");
+    assert.equal(h.kinds().preverjanje, 1);
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_PER_PUPIL;
+    h.close();
+  }
+});
+
+test("live check: SŠ reviews use their own pool and kind", async () => {
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.01";
+  const ex = "Rešitev je pH = 12, ker je koncentracija 0,01 mol/L hidroksidnih ionov v raztopini.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g CaO. Kolikšen je pH?";
+  const h = harness({ answers: [ex, ex, LONG] });
+  try {
+    const ss = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
+    await h.ask(ss, "Koliko je pH?");
+    assert.equal(h.reviewCalls.length, 0, "rezerva pregleda (0,02 $) je večja od šolskega dela");
+    const tek = await h.student({ track: "COMPETITION" });
+    await h.ask(tek, "Kako začnem geometrijsko nalogo?");
+    assert.equal(h.reviewCalls.length, 1, "tekmovanja imajo svojo pot do skupne meje");
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD;
+    h.close();
+  }
+});
+
+test("live check: a review that times out is skipped, the answer stays", async () => {
+  const slow = () => new Promise(() => {});
+  await assert.rejects(reviewAnswer({ question: "q", answer: "a", createFn: slow, timeoutMs: 30 }), (e) => e.name === "TimeoutError");
+  const ctl = new AbortController();
+  const p = reviewAnswer({ question: "q", answer: "a", createFn: slow, signal: ctl.signal, timeoutMs: 5000 });
+  ctl.abort();
+  await assert.rejects(p, (e) => e.name === "AbortError");
+});
+
+test("live check: the fix call never solves a practice exercise", async () => {
+  let system = "";
+  await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
+});
+
+test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, not the atomic number", () => {
+  // Meritev 11. 11., KEM-OS-8/kovalentna-vez: »v = 8 − 7 = 1« za dušik.
+  assert.match(valenceIssue("1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$.").issue, /N has 5 outer.*atomic number|atomic number.*5 outer/);
+  assert.match(valenceIssue("Za dušik: $v = 8 - z = 8 - 7 = 1$").issue, /v = 8 - 5 = 3/);
+  assert.match(valenceIssue("Ogljik tvori $v = 8 - 4 = 4$ vezi, vsak kisik $v = 8 - 8 = 0$.").issue, /kisik \(O\)/, "napaka pri drugem elementu v vrstici");
+  for (const a of [
+    "1. Vsak atom dušika tvori $v = 8 - 5 = 3$ vezi.",
+    "Ogljik tvori $v = 8 - 4 = 4$ vezi, vsak kisik $v = 8 - 6 = 2$ vezi, vsak vodik $v = 2 - 1 = 1$.",
+    "Za $\\mathrm{O}$: $v = 8 - 6 = 2$; za $\\mathrm{Cl}$: $v = 8 − 7 = 1$",
+    "Hitrost dušika $v = 8 - 2t$",
+    "Če bi za dušik vzel $v = 8 - 7$, bi dobil eno vez.",
+    "$v = 8 - 7 = 1$",
+  ])
+    assert.equal(valenceIssue(a).issue, null, a);
+  // Pregleda PR #574: drug element v vrstici, hitrost, množenje, klorofil/klorid, učenčev račun, »vzel«.
+  assert.equal(valenceIssue("Ogljik ima 4 zunanje elektrone in se veže s kisikom: $v = 8 - 4 = 4$.").issue, null, "4 je ogljikov");
+  assert.match(valenceIssue("Dušik in klor: za dušik $v = 8 - 7 = 1$").issue, /atomic number/, "7 = vrstno število dušika, tudi ob kloru");
+  for (const a of ["Ogljik: $v = 8 - 2\\cdot k$", "Ogljik: $v = 8 - 2 \\times t$", "Ogljik se giblje: v = 8 - 3 = 5 m/s", "Hitrost delca ogljika: $v = 8 - 3 = 5$", "Ogljik: $v = 8 - 3 = 5\\,\\text{m/s}$", "Klorofil: $v = 8 - 3$", "Kloridni ion: $v = 8 - 3$", "Za dušik je učenec vzel $v = 8 - 7 = 1$."])
+    assert.equal(valenceIssue(a).issue, null, a);
+  assert.equal(valenceIssue("Dušik: $v = 8 - 7 = 1$", "Ali je za dušik v = 8 − 7?").issue, null, "učenčev račun iz sporočila");
+  assert.match(valenceIssue("Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo pred računom $v = 8 - 7 = 1$.").issue ?? "", /^$/, "ime več kot 60 znakov pred računom ne šteje");
+  // V codeFindings: popravek pride tudi pri OŠ, kjer pregleda z modelom ni.
+  assert.match(codeFindings("Dušik: $v = 8 - 7 = 1$").issue, /outer \(valence\) electrons/);
+});
+
+test("code check (2026-11-11 round 2): temperatures given in °C are not written as kelvin in a difference", () => {
+  // Meritev 11. 11., FIZ-SS-2/notranja-energija-in-toplota: »$\Delta T_3 = 20\,\text{K} - 0\,\text{K}$«.
+  const q = "Led z maso 200 g pri 0 °C stalimo in vodo segrejemo do 20 °C.";
+  assert.match(celsiusIssue("$\\Delta T_3 = 20\\,\\text{K} - 0\\,\\text{K} = 20\\,\\text{K}$", q).issue, /20 °C and 0 °C/);
+  assert.ok(celsiusIssue("$\\Delta T = 20\\,\\mathrm{K} - 0\\,\\mathrm{K}$", "Voda pri $20\\,^{\\circ}\\mathrm{C}$ in led pri $0\\,^\\circ\\text{C}$").issue, "°C v zapisu LaTeX");
+  for (const a of ["$\\Delta T = (20 - 0)\\,\\text{K} = 20\\,\\text{K}$", "$\\Delta T = 293\\,\\text{K} - 273\\,\\text{K} = 20\\,\\text{K}$", "$\\Delta T = 20\\,°\\text{C} - 0\\,°\\text{C} = 20\\,\\text{K}$"])
+    assert.equal(celsiusIssue(a, q).issue, null, a);
+  assert.equal(celsiusIssue("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K}$", "Plin ohladimo z 20 K na 0 K.").issue, null, "naloga v kelvinih");
+  assert.equal(codeFindings("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K} = 20\\,\\text{K}$", null).issue, null, "brez naloge ni primerjave");
+  assert.match(celsiusIssue("$\\Delta T = 20\\,\\text{K} - (-10)\\,\\text{K}$", "Od -10 °C do 20 °C").issue || celsiusIssue("$\\Delta T = 20\\,\\text{K} - -10\\,\\text{K}$", "Od -10 °C do 20 °C").issue, /- \(-10\\,°\\text\{C\}\) = 30/, "negativna temperatura v oklepaju");
+});
+
+test("code check (2026-11-11 round 2): an OŠ chemistry answer with v = 8 − 7 for nitrogen gets one correction without a model review", async () => {
+  const h = harness({ answers: ["1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$ vez."], fixes: ["Popravek: dušik ima 5 zunanjih elektronov, zato $v = 8 - 5 = 3$: vez v $\\mathrm{N_2}$ je trojna."] });
+  try {
+    const s = await h.student({ educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred", subject: "KEM" });
+    const r = await h.ask(s, "Kakšna vez povezuje atoma dušika v N2?");
+    assert.equal(h.calls.length, 2, "odgovor in en popravek");
+    assert.ok(h.calls[1].isFix);
+    assert.match(h.calls[1].messages[0].content[0].text, /5 outer \(valence\) electrons/);
+    assert.equal(h.reviewCalls.length, 0, "pri OŠ brez pregleda z modelom");
+    assert.match(r.messages.at(-1).display_text, /\*\*Popravek:\*\* dušik ima 5/);
+  } finally {
+    h.close();
+  }
+});
+
+test("»vzel/uporabil« izpusti samo preverjanje vezi, ne računov v popravkih (krog 2, pregled)", () => {
+  for (const t of ["Vzel si $g = 10$; pravilno je $F = 2 \\cdot 9{,}81 = 18{,}62\\,\\text{N}$.", "Uporabil bom: $3 \\cdot 4 = 13$."]) {
+    assert.ok(codeFindings(t).issue, t);
+  }
+  assert.equal(valenceIssue("Pri dušiku si vzel vrstno število: $v = 8 - 7 = 1$.").issue, null);
 });

@@ -47,6 +47,8 @@ services:
         value: "1.5"
       - key: EVKLID_MONTHLY_BUDGET_USD
         value: "200"
+      - key: EVKLID_LIVE_CHECK_DAILY_USD   # pregled z zmogljivejšim modelom, vsi učenci skupaj na dan (j 11. 11.: 1 $ med pilotom; SŠ polovica)
+        value: "1"
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET

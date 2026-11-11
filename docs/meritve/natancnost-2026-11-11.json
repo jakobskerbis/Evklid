@@ -1,0 +1,331 @@
+{
+ "shema": 1,
+ "datum": "2026-11-11",
+ "vrsta": "aplikacija",
+ "meja_pregledov": "brez",
+ "pari": {
+  "bolje": 4,
+  "slabse": 1,
+  "napaka_v_obeh": 2,
+  "brez_napake_v_obeh": 84
+ },
+ "primeri": 91,
+ "izpusceni": 6,
+ "ocenjevalec": "claude-opus-5-5 (model AI)",
+ "vprasanje": "Kako rešim to nalogo? Pokaži mi rešitev po korakih in končni rezultat.\n\n<naloga>",
+ "vrstice": [
+  {
+   "kljuc": "brez",
+   "ime": "Sam model, brez preverjanja",
+   "ime_en": "Model alone, without the program check",
+   "primeri": 91,
+   "napake": 6,
+   "manjse_napake": 23,
+   "pravilno": 62,
+   "rezultat_podan": 88,
+   "rezultat_podan_pct": 97,
+   "po_stopnjah": {
+    "osnovna šola": {
+     "primeri": 28,
+     "napake": 5
+    },
+    "srednja šola": {
+     "primeri": 27,
+     "napake": 1
+    },
+    "fakulteta": {
+     "primeri": 23,
+     "napake": 0
+    },
+    "tekmovanja": {
+     "primeri": 13,
+     "napake": 0
+    }
+   },
+   "vrste_napak": {
+    "racun_vmes": 1,
+    "dodatna_vaja": 4,
+    "trditev": 1
+   },
+   "koda_neujemanje": 9,
+   "popravki": 0,
+   "pregledi": 0,
+   "modeli": {
+    "claude-haiku-5-5": 91
+   },
+   "usd_na_odgovor": 0.00231
+  },
+  {
+   "kljuc": "s",
+   "ime": "Cel Evklidov odgovor, s preverjanjem",
+   "ime_en": "Evklid's full answer, with the program check",
+   "primeri": 91,
+   "napake": 3,
+   "manjse_napake": 12,
+   "pravilno": 76,
+   "rezultat_podan": 87,
+   "rezultat_podan_pct": 96,
+   "po_stopnjah": {
+    "osnovna šola": {
+     "primeri": 28,
+     "napake": 2
+    },
+    "srednja šola": {
+     "primeri": 27,
+     "napake": 0
+    },
+    "fakulteta": {
+     "primeri": 23,
+     "napake": 1
+    },
+    "tekmovanja": {
+     "primeri": 13,
+     "napake": 0
+    }
+   },
+   "vrste_napak": {
+    "racun_vmes": 1,
+    "koncni_rezultat": 1,
+    "trditev": 1
+   },
+   "koda_neujemanje": 6,
+   "popravki": 6,
+   "pregledi": 58,
+   "modeli": {
+    "claude-haiku-5-5": 91
+   },
+   "usd_na_odgovor": 0.00729
+  }
+ ],
+ "strosek_usd": {
+  "aplikacija": 0.98,
+  "ocenjevalec": 3.61,
+  "skupaj": 4.6
+ },
+ "trajanje_min": 77,
+ "opombe": [
+  "Isti primeri v obeh pogojih; vsak odgovor je nastal s svojim klicem modela, zato je del razlike šum: isti model na isto nalogo ne odgovori vedno enako. Polje »pari« pove, pri koliko primerih se je ocena spremenila v vsako smer (bolje: napaka samo brez preverjanja; slabše: napaka samo s preverjanjem).",
+  "Napaka = ocena »napaka« (napačen rezultat, formula ali trditev). Manjše napake so štete posebej. Odgovor, ki učenca samo vodi z vprašanji in rezultata ne pove, šteje brez napake (delež odgovorov s podanim rezultatom: rezultat_podan_pct).",
+  "Pot: POST /api/conversations/:id/messages (pravi klepet), nov učenec in pogovor s temo lekcije za vsak primer, model po stopnji kot pri plačljivem paketu.",
+  "Brez predpomnilnika odgovorov, brez nadgradenj po mesečnem proračunu in BREZ dnevne meje za pregled z zmogljivejšim modelom (v aplikaciji 0,30 $ na dan za vse učence skupaj; ko je porabljena, pregleda ni).",
+  "Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek."
+ ],
+ "napake": [
+  {
+   "id": "FIZ-SS-2/notranja-energija-in-toplota",
+   "stopnja": "srednja šola",
+   "pogoj": "brez",
+   "ocena": "manjsa_napaka",
+   "vrsta": "racun_vmes",
+   "koda": false,
+   "razlog": "Končni rezultat 87 800 J je pravilen, a zapis $\\Delta T_3 = 20\\,\\text{K} - 0\\,\\text{K}$ temperaturi 20 °C in 0 °C napačno označi kot absolutni temperaturi v kelvinih; primerjava $q_t$ s specifično toploto (različni enoti) je tudi nerodna, vendar učenca ne zavede."
+  },
+  {
+   "id": "UNI-ULFKKT-FIZ/fotoni-in-atomi",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Najvišji nivo n = 3, tri črte (656 nm vidna, 122 nm in 102,5 nm v UV), preverba z Rydbergovo formulo in U₄ = 12,75 V so pravilno izračunani in utemeljeni."
+  },
+  {
+   "id": "MAT-TEK-OS/igre-in-zmagovalne-strategije",
+   "stopnja": "tekmovanja",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Prvi igralec zmaga s pritiskom na tipko 8 in zrcaljenjem (k→16−k, par k,k+1→15−k,16−k), kar se ujema z uradno rešitvijo; primeri, preverba in dodatna vaja so pravilni."
+  },
+  {
+   "id": "KEM-OS-8/kovalentna-vez",
+   "stopnja": "osnovna šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "racun_vmes",
+   "koda": null,
+   "razlog": "Končni rezultat (trojna vez, en nevezni par na vsakem atomu) je pravilen, a pri preverbi okteta inštruktor zapiše, da ima vsak atom 3 vezne in 2 nevezna elektrona, »skupaj 8«; 3 + 2 = 5, pravilno pa je 3·2 + 2 = 8, zato bi učenca naučil napačnega štetja okteta."
+  },
+  {
+   "id": "KEM-OS-8/kovalentna-vez",
+   "stopnja": "osnovna šola",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "racun_vmes",
+   "koda": null,
+   "razlog": "Trojna vez in Lewisova formula sta pravilni, a inštruktor v pravilo v = 8 − z vstavi vrstno število z = 7 in dobi v = 1, nato pa namesto da bi pojasnil, da je z število valenčnih elektronov (5), zmedeno trdi, da se pravilo pri dušiku uporablja drugače, kar bi učenca naučilo napačne uporabe pravila."
+  },
+  {
+   "id": "BIO-OS-8/biologija-in-raziskovanje",
+   "stopnja": "osnovna šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": null,
+   "razlog": "Rešitev glavne naloge je pravilna, dodana vaja pa je slabo zastavljena: manjka raven celice, »srčna mišica« in »srčno tkivo« pa sta pojma iste ali nejasno ločene ravni (srčna mišica je vrsta tkiva), zato enoznačnega vrstnega reda ni."
+  },
+  {
+   "id": "KEM-SS-3/ogljikovodiki",
+   "stopnja": "srednja šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": true,
+   "razlog": "Rešitev glavne naloge je pravilna (C6H10, pravilno številčenje), vendar dodatna vaja navaja napačno oštevilčeno ime 2,2-dimetilbut-3-in, ki krši ravnokar razloženo pravilo; pravilno ime je 3,3-dimetilbut-1-in."
+  },
+  {
+   "id": "UNI-ULBF-AANAT/secila-in-spolovila",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsi izračuni (G = 125 mL/min, f ≈ 0,21, izločanje 125 mg/min, U_g = 125 mg/mL, prag 3,0 mg/mL) se ujemajo z uradno rešitvijo, razlage so strokovno ustrezne, utemeljitev za kreatinin pa je običajna učbeniška poenostavitev, skladna s predpostavko naloge."
+  },
+  {
+   "id": "UNI-ULBF-AANAT/secila-in-spolovila",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsi rezultati (G = 125 mL/min, f ≈ 0,21, izločenih 125 mg/min, U_g = 125 mg/mL, prag 3,0 mg/mL) in vmesni koraki se ujemajo z uradno rešitvijo, dodatna vaja pa je smiselno zastavljena."
+  },
+  {
+   "id": "FIZ-SS-3/elektromagnetno-valovanje",
+   "stopnja": "srednja šola",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Formula d = ct/2, račun in rezultat 3,84·10⁸ m = 384 000 km so pravilni, dodana vaja pa je smiselno zastavljena (d = 120 km)."
+  },
+  {
+   "id": "FIZ-SS-3/elektromagnetno-valovanje",
+   "stopnja": "srednja šola",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Zveza 2d = c·t in rezultat d = 3,84·10^8 m sta pravilna, dodatna vaja z radarjem pa je smiselno zastavljena."
+  },
+  {
+   "id": "UNI-ULFKKT-ANAL1/kislinsko-bazne-titracije",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Odgovor se konča pri pOH = 5,22 in pH v EP, pH ob skoku ter izbire indikatorja ne poda, vendar so vsi podani računi pravilni: c = 0,1680 mol/L, c(A⁻) = 0,06269 mol/L, K_b = 5,71·10⁻¹⁰, [OH⁻] = 5,99·10⁻⁶ mol/L in pOH = 5,22."
+  },
+  {
+   "id": "UNI-ULFKKT-ORG1/alkani-alkeni-in-alkini",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "koncni_rezultat",
+   "koda": false,
+   "razlog": "Inštruktor je namesto podane relativne hitrosti za klor 3,8 uporabil 3,6, zato navede 45 % 1-kloropropana in 55 % 2-kloropropana namesto pravilnih 44 % in 56 %, čeprav so bromiranje, meja r ≥ 27 in izbira broma pravilni."
+  },
+  {
+   "id": "MAT-OS-7/aritmeticna-sredina",
+   "stopnja": "osnovna šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": true,
+   "razlog": "Glavni postopek in rezultat 88 točk sta pravilna, a dodatna vaja nima veljavne rešitve: četrta ocena bi morala biti 18 − 12 = 6, kar na lestvici ocen od 1 do 5 ni mogoče."
+  },
+  {
+   "id": "UNI-ULFMF-NRACPRAK/preglednice",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsota 703,4, povprečje ≈ 117,23 cm in mediana 120,2 cm so pravilni, odločitev za rez po mediani ob preverbi odstopajoče meritve 102,4 cm pa je pravilno utemeljena."
+  },
+  {
+   "id": "MAT-OS-6/mnozice-in-diagrami",
+   "stopnja": "osnovna šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": true,
+   "razlog": "Rešitev glavne naloge je pravilna (14, 8, 11, 7), dodatna vaja pa je nerešljiva, ker manjka podatek o tem, koliko učencev ima psa skupaj, zato polj v vrstici »kolo« ni mogoče določiti."
+  },
+  {
+   "id": "KEM-OS-8/formule-spojin",
+   "stopnja": "osnovna šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": true,
+   "razlog": "Trditev, da trojna vez C≡O izpolni število vezi obeh atomov, je napačna: ogljik ima tako 3 vezi namesto 4, kisik pa 3 namesto 2, zato se preprosto pravilo vezi pri CO ne izide (kot pravi uradna rešitev)."
+  },
+  {
+   "id": "KEM-OS-8/formule-spojin",
+   "stopnja": "osnovna šola",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": true,
+   "razlog": "V koraku 4 inštruktor trdi, da ima ogljik v CO 2 vezi, kar je v nasprotju z njegovim lastnim pravilom (ogljik tvori 4 vezi) in kemijsko napačno; pri CO preprosto pravilo vezi ne velja (CO ima trojno vez), zato formulo vzamemo iz imena."
+  },
+  {
+   "id": "UNI-ULFKKT-ANORG/kristalne-strukture",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsi izračuni so pravilni: a ≈ 564 pm, r(Na⁺) ≈ 101 pm, r₊/r₋ ≈ 0,56 (ustreza KŠ 6) in f ≈ 0,65. Tudi razlaga, zakaj je f manj kot 0,74, se ujema z uradno rešitvijo, dodatna vaja pa je smiselno zastavljena."
+  },
+  {
+   "id": "UNI-ULFKKT-ANORG/kristalne-strukture",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsi izračuni so pravilni: a ≈ 564 pm, r(Na⁺) ≈ 101 pm, razmerje 0,56 (KŠ 6) in f ≈ 0,65; razlaga z razmaknjenimi anioni (a√2 > 4r₋) je pravilna, odvečni okrnjeni 'Na' na koncu pa ne vpliva na vsebino."
+  },
+  {
+   "id": "UNI-ULFMF-NUVPROG/razredi-in-objekti",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Koda razreda je pravilna, rezultat 28 se ujema z uradno rešitvijo, preverba je smiselna in dodatna vaja je pravilno zastavljena, saj je ploščina 15·6 = 90 = 9·10 in ne 3·10."
+  },
+  {
+   "id": "UNI-ULFMF-NUVPROG/razredi-in-objekti",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Koda in razlaga sta pravilni, končni rezultat 28 se ujema z uradno rešitvijo, dodatna vaja pa je smiselno zastavljena."
+  },
+  {
+   "id": "FIZ-SS-1/sile",
+   "stopnja": "srednja šola",
+   "pogoj": "brez",
+   "ocena": "manjsa_napaka",
+   "vrsta": "trditev",
+   "koda": false,
+   "razlog": "Računi so pravilni (F_g ≈ 1,77 N navzdol, F_pod ≈ 1,77 N navzgor, F_r = 0), a trditev v preverbi, da rezultanta nič pomeni mirovanje, je nenatančna, saj ničelna rezultanta pomeni tudi možnost enakomernega gibanja."
+  },
+  {
+   "id": "FIZ-SS-1/sile",
+   "stopnja": "srednja šola",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Teža 0,180 kg · 9,81 m/s² ≈ 1,77 N navzdol, sila podlage enako velika navzgor in rezultanta 0 N so pravilni; od uradnih 1,8 N se razlikuje le zaokroževanje."
+  }
+ ]
+}

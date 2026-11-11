@@ -38,7 +38,12 @@ En odgovor Haikuja stane okoli 0,0004 €, en odgovor Opusa okoli 0,07 €, tore
 
 ## Sprotno preverjanje odgovorov (j, 2026-10-30)
 
-j: »Kako vemo, da Haiku najprej ne da napačnega rezultata?« Koda (`server/live-check.js`) preveri vsak odgovor brez stroška: pred klicem reševalnik (`public/scan/solvecore.js`) reši enačbo, sistem, odvod ali račun z vsaj dvema operacijama iz učenčevega sporočila, model pa dobi preverjen rezultat v skriti opombi (~80 žetonov vhoda, samo v tisti potezi; predpomnjen začetek ostane enak); po odgovoru koda preračuna vsak račun in končne vrednosti neznank. Model se pokliče le ob najdeni napaki (en kratek »Popravek:« istega modela, vrsta `popravek`, ~0,001 $ pri Haikuju) in za pregled s Sonnetom, kjer koda ni preverila ničesar, tveganje pa je večje (tekmovanja, fakulteta, »Razloži podrobneje«): samo Haikujevi odgovori, ne v lahkem načinu, ne v brezplačnem paketu, ne v varčnem načinu proračuna (raven ≤ 0), največ `EVKLID_LIVE_CHECK_DAILY_USD` (0,30 $, j 2026-10-30; ~25 pregledov, največ ~9 $ na mesec) na dan, vrsta `preverjanje` (~0,005–0,02 $ na pregled, Sonnet razmišlja) šteje v mesečni proračun. `EVKLID_LIVE_CHECK=0` vse izklopi.
+j: »Kako vemo, da Haiku najprej ne da napačnega rezultata?« Koda (`server/live-check.js`) preveri vsak odgovor brez stroška: pred klicem reševalnik (`public/scan/solvecore.js`) reši enačbo, sistem, odvod ali račun z vsaj dvema operacijama iz učenčevega sporočila, model pa dobi preverjen rezultat v skriti opombi (~80 žetonov vhoda, samo v tisti potezi; predpomnjen začetek ostane enak); po odgovoru koda preračuna vsak račun in končne vrednosti neznank. Od 2026-11-11 (krog 2) koda preveri še število vezi $v = 8 - z$ ob imenu elementa (zunanji elektroni, ne vrstno število) in temperaturi iz naloge v °C, zapisani kot kelvina v razliki; to velja na vseh stopnjah, tudi v OŠ brez pregleda z modelom. Model se pokliče le ob najdeni napaki (en kratek »Popravek:« istega modela, vrsta `popravek`, ~0,001 $ pri Haikuju) in za pregled s Sonnetom, kjer je tveganje večje (tekmovanja, fakulteta, »Razloži podrobneje«; od 2026-11-11 tudi, kadar je koda preverila račun, ker koda trditev ne preveri), in pri SŠ za odgovore z označeno dodatno vajo ali z okvirjem »Zapomni si« v rešeni nalogi (2026-11-11; OŠ z `EVKLID_LIVE_REVIEW_OS=1`): samo Haikujevi odgovori, ne v lahkem načinu, ne v brezplačnem paketu, ne v varčnem načinu proračuna (raven ≤ 0).
+  - **Meje pregleda** (vse dnevne): skupaj `EVKLID_LIVE_CHECK_DAILY_USD` (privzeto 0,30 $, j 2026-10-30; na Renderju med pilotom 1 $ na dan, j 2026-11-11, `render.yaml`; največ ~30 $ na mesec) za vrsti `preverjanje` (tekmovanja, fakulteta, podrobna razlaga) in `preverjanje-sola` (SŠ/OŠ); od tega SŠ/OŠ največ `EVKLID_LIVE_REVIEW_SS_DAILY_USD` (privzeto pol skupne meje: 0,15 $, med pilotom 0,50 $), da šolski pregledi ne porabijo vsega za tekmovanja in fakulteto; na učenca največ `EVKLID_LIVE_REVIEW_PER_PUPIL` (6) pregledov na dan. Dnevni bazen rezervira `EVKLID_LIVE_REVIEW_RESERVE_USD` (0,02 $, pričakovani strošek) na pregled v teku, zato ga vzporedni pregledi presežejo največ za razliko do dejanskega stroška; meja učenca je rezervirana po najslabšem primeru (~0,10 $), strošek gre v mejo učenca, zato marža ≥ 75 % ostane.
+  - **Strošek:** ~0,01–0,02 $ na pregled (Sonnet razmišlja); »Popravek:« je dodaten klic (Haiku `think`, ~0,001–0,005 $, vrsta `popravek`) in ni v dnevni meji pregledov, le v meji učenca. Pregledov pri fakulteti je zdaj več (preverjen račun jih ne izključi). Pilot (10 dijakov, ~100 odgovorov na dan): ocena ~20–30 upravičenih odgovorov SŠ na dan, šolski del 0,15 $ bi zadoščal za ~8–15, zato je meja med pilotom 1 $ (šolski del 0,50 $, ~25–50 pregledov).
+  - **Rok:** pregled, ki ne konča v `EVKLID_LIVE_REVIEW_TIMEOUT_MS` (25 s) ali ga prekine učenec, odpade; odgovor ostane brez popravka.
+  - **Preskočeni pregledi** (meja `dan`, `sola`, `ucenec`, `meja_ucenca`, rok `rok`) se štejejo po dnevu in stopnji v `kv` pod ključem `pregledi_preskoceni` (zadnjih 60 dni), da se meja po pilotu nastavi iz podatkov: `sqlite3 data/evklid.db "SELECT value FROM kv WHERE key='pregledi_preskoceni'"`.
+  - `EVKLID_LIVE_CHECK=0` vse izklopi.
 
 j (2026-11-01, digitalni razred): »Naj se nikoli ne zgodi«, da inštruktor potrdi napačen ali zavrne pravilen odgovor. Zato `server/live-check.js` 4: ko učenec pošlje rezultat ali trditev (število, »=« ali odgovor na inštruktorjevo vprašanje), se odgovor ne pretaka, dokler sodba ni preverjena. Če je naloga iz prvega sporočila rešljiva z reševalnikom, koda učenčevo vrednost primerja z rešitvijo in model dobi sodbo v skriti opombi (brez stroška). Sicer, kadar odgovor izreče sodbo (»točno«, »ni prav« …), jo pregleda Sonnet (vrsta `sodba`, ločen dnevni števec od vrste `preverjanje`, ~0,005–0,01 $, vsi modeli in paketi, ne v lahkem načinu, največ `EVKLID_VERDICT_DAILY_USD` = 2 $ na dan, ~200–400 pregledov); ob napačni sodbi isti model odgovori še enkrat z ugotovitvijo v skriti opombi (vrsta `popravek`). Učenec vidi šele končni odgovor (zamik nekaj sekund).
 
@@ -46,22 +51,35 @@ j (2026-11-01, digitalni razred): »Naj se nikoli ne zgodi«, da inštruktor pot
 
 Stran evklid.app/zakaj-evklid pokaže zadnjo meritev iz `docs/meritve/natancnost-<datum>.json` (server/vidnost.js; test/vidnost.test.js preveri, da se stran ujema z datoteko). Na stran gredo samo izmerjene številke.
 
+Ciljna ponovitev (krog 2, 2026-11-11): `--samo <id,id> --ponovi N [--pogoj s]` z `--s-preverjanjem` ponovi samo izbrane primere (npr. tiste z napako) N-krat; `--dry` pokaže oceno stroška (ocena je previdna: ~0,05 $ na odgovor s preverjanjem, dejansko 11. 11. ~0,025 $). Vrstice gredo v `data/natancnost-ponovitve.json`, na stran nič.
+
 <!-- NATANCNOST:ZACETEK (piše scripts/primerjava-modelov.js, ne urejaj ročno) -->
-Zadnja meritev: 4. 11. 2026, 50 rešenih primerov iz lekcij, ocenjevalec Opus (model AI) (`docs/meritve/natancnost-2026-11-04.json`).
+Zadnja meritev: 11. 11. 2026, 91 rešenih primerov iz lekcij, ocenjevalec claude-opus-5-5 (model AI) (`docs/meritve/natancnost-2026-11-11.json`).
 
 | Kaj je merjeno | Odgovori z napako | Primeri |
 |---|---|---|
-| Hitri model | 12 % | 50 |
-| Hitri model z več razmisleka (samo naloge srednje šole in tekmovanj) | 4 % | 23 |
-| Zmogljivejši model | 2 % | 50 |
+| Sam model, brez preverjanja | 6,6 % (6 od 91) | 91 |
+| Cel Evklidov odgovor, s preverjanjem | 3,3 % (3 od 91) | 91 |
 
-- Merjen je sam model (skripta mu naroči, naj nalogo reši po korakih), brez sprotnega preverjanja s programom (server/live-check.js).
-- Meritev je bila pred spremembo navodil inštruktorja (docs/spremembe-prompta.md, 4. 11.).
+| Stopnja | Sam model, brez preverjanja | Cel Evklidov odgovor, s preverjanjem |
+|---|---|---|
+| osnovna šola | 5 od 28 | 2 od 28 |
+| srednja šola | 1 od 27 | 0 od 27 |
+| fakulteta | 0 od 23 | 1 od 23 |
+| tekmovanja | 0 od 13 | 0 od 13 |
+
+Pari (isti primer v obeh pogojih): bolje 4, slabše 1, napaka v obeh 2, brez napake v obeh 84. Rezultat podan: Sam model, brez preverjanja 97 %, Cel Evklidov odgovor, s preverjanjem 96 %. Dnevna meja pregledov: izklopljena.
+S preverjanjem: popravek v 6 odgovorih, pregled z zmogljivejšim modelom v 58; preostale napake po vrstah: racun_vmes 1, koncni_rezultat 1, trditev 1; koda našla neujemanje končnega števila pri 6 odgovorih brez ocene »napaka« (ročni pregled).
+Strošek zagona: 4,60 $ (aplikacija 0,98 $, ocenjevalec 3,61 $), 77 min.
+
+- Isti primeri v obeh pogojih; vsak odgovor je nastal s svojim klicem modela, zato je del razlike šum: isti model na isto nalogo ne odgovori vedno enako. Polje »pari« pove, pri koliko primerih se je ocena spremenila v vsako smer (bolje: napaka samo brez preverjanja; slabše: napaka samo s preverjanjem).
+- Napaka = ocena »napaka« (napačen rezultat, formula ali trditev). Manjše napake so štete posebej. Odgovor, ki učenca samo vodi z vprašanji in rezultata ne pove, šteje brez napake (delež odgovorov s podanim rezultatom: rezultat_podan_pct).
+- Pot: POST /api/conversations/:id/messages (pravi klepet), nov učenec in pogovor s temo lekcije za vsak primer, model po stopnji kot pri plačljivem paketu.
+- Brez predpomnilnika odgovorov, brez nadgradenj po mesečnem proračunu in BREZ dnevne meje za pregled z zmogljivejšim modelom (v aplikaciji 0,30 $ na dan za vse učence skupaj; ko je porabljena, pregleda ni).
 - Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek.
-- Meritve celega odgovora s preverjanjem še ni: node scripts/primerjava-modelov.js --s-preverjanjem.
 <!-- NATANCNOST:KONEC -->
 
-**Meritev celega odgovora (s preverjanjem s programom).** `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` pošlje rešene primere iz lekcij skozi pravo pot klepeta (isti prompt, model po stopnji kot pri plačljivem paketu, `server/live-check.js`), vsakega dvakrat: z izklopljenim preverjanjem (`EVKLID_LIVE_CHECK=0`, sam model) in z vklopljenim (skrita opomba s preverjenim rezultatom, preračun računov, »Popravek:«, pregled z zmogljivejšim modelom pri tekmovanjih in fakulteti). Končno besedilo oceni Opus proti rešitvi iz lekcije; oznako »Popravek:« skripta pred oceno odstrani, da ocenjevalec ne ve, kateri pogoj ocenjuje, šteje pa končno stanje odgovora po popravku. Koda dodatno preveri, ali so končna števila iz vrstice »Odgovor« v odgovoru (neujemanja so izpisana za ročni pregled, ne štejejo samodejno kot napaka). V povzetku so samo primeri, ocenjeni v obeh pogojih, delež odgovorov s podanim rezultatom in število parov, ki so se spremenili v vsako smer (bolje/slabše).
+**Meritev celega odgovora (s preverjanjem s programom).** `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` pošlje rešene primere iz lekcij skozi pravo pot klepeta (isti prompt, model po stopnji kot pri plačljivem paketu, `server/live-check.js`), vsakega dvakrat: z izklopljenim preverjanjem (`EVKLID_LIVE_CHECK=0`, sam model) in z vklopljenim (skrita opomba s preverjenim rezultatom, preračun računov, »Popravek:«, pregled z zmogljivejšim modelom pri tekmovanjih, fakulteti in odgovorih SŠ z vajo ali okvirjem »Zapomni si«). Končno besedilo oceni Opus proti rešitvi iz lekcije; oznako »Popravek:« skripta pred oceno odstrani, da ocenjevalec ne ve, kateri pogoj ocenjuje, šteje pa končno stanje odgovora po popravku. Koda dodatno preveri, ali so končna števila iz vrstice »Odgovor« v odgovoru (neujemanja so izpisana za ročni pregled, ne štejejo samodejno kot napaka). V povzetku so samo primeri, ocenjeni v obeh pogojih, delež odgovorov s podanim rezultatom in število parov, ki so se spremenili v vsako smer (bolje/slabše).
 
 - **Kaj šteje kot napaka:** ocena »napaka« (napačen rezultat, formula ali trditev). Manjše napake so štete posebej; odgovor, ki samo vodi z vprašanji, šteje brez napake.
 - **Šum:** oba pogoja sta ločena klica modela, isti model na isto nalogo ne odgovori vedno enako. Razlika nekaj primerov je lahko naključna; zato sta v povzetku para »bolje« in »slabše«, ne samo razlika.
