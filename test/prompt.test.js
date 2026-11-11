@@ -119,3 +119,15 @@ test("Meje: zdravstvena nuja, požar in plin → takoj 112, frustracija ni nujen
   assert.ok(row, "alineja o nujnem primeru je v Mejah");
   for (const re of [/takoj pokliče 112/, /požar ali vonj po plinu/, /ne prižiga luči in ne pritiska stikal/, /»Šolski sistem«/, /`flag=distress`/, /umrl bom od te matematike/, /brez pridige/, /ne svetuj zdravil/, /ravnaj, kot da je/]) assert.match(row, re);
 });
+
+test("extra exercises and side claims (2026-11-11): one labelled exercise, realistic, exactly one answer; every claim checked, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
+  assert.ok(start > fixed.indexOf("### Pravilnost"), "pravilo je v razdelku Pravilnost, v predpomnjenem delu");
+  const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
+  for (const s of ["»**Vaja:**«", "največ eno", "ista situacija z drugimi števili", "resničnem obsegu", "topnost", "natanko ena pravilna rešitev", "natanko eno skupino", "»Zapomni si«", "Preverbi", "učbeniško definicijo", "Preverba preveri samo tvoj rezultat"]) {
+    assert.ok(rule.includes(s), `pravilo vsebuje »${s}«`);
+  }
+  assert.ok(rule.length < 1800, `pravilo naj ostane kratko (${rule.length} znakov)`);
+});

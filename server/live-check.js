@@ -4,8 +4,8 @@
 //      (public/scan/solvecore.js), dobi model v trenutni potezi skrito opombo s pravilnim rezultatom.
 //   2. Po odgovoru: koda preračuna vsak številski račun (server/lesson-math.js) in končne vrednosti
 //      neznank (public/scan/verify.js). Ob neujemanju en kratek »Popravek:« istega modela.
-//   3. Model (Sonnet) pregleda samo, kjer koda ni mogla ničesar preveriti in je tveganje večje
-//      (tekmovanja, fakulteta, »Razloži podrobneje«), samo Haikujeve odgovore, z dnevno mejo.
+//   3. Model (Sonnet) pregleda, kjer je tveganje večje (tekmovanja, fakulteta, »Razloži podrobneje«), in pri SŠ
+//      odgovor z dodatno vajo ali okvirjem »Zapomni si« (2026-11-11), samo Haikujeve odgovore, z dnevno mejo.
 //   4. Sodba o učenčevem koraku (j, 2026-11-01: »naj se nikoli ne zgodi«, da inštruktor potrdi napačen ali
 //      zavrne pravilen odgovor): ko učenec pošlje rezultat ali trditev, odgovor ni pretakan, dokler sodbe
 //      ne preveri koda (rešitev naloge iz prvega sporočila) ali model (Sonnet). Ob napačni sodbi inštruktor
@@ -17,7 +17,7 @@ import { joinThousands, digitGap } from "../public/graph/math.js";
 import { parse, compile } from "../public/graph/math.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
-import { askModel, checkerUser } from "./verify.js";
+import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID } from "./claude.js";
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
@@ -284,12 +284,25 @@ export function codeFindings(answer, pre = null) {
 
 const val = (x) => (typeof x === "function" ? x() : x);
 
+// Odgovor vsebuje dodatno vajo ali okvir »Zapomni si« (j, 2026-11-11, meritev 10. 11.: 11 od 13 napak je bilo
+// v trditvah in dodatnih vajah, ki jih koda ne preveri). Prompt vajo označi z »**Vaja:**«; ostali vzorci ujamejo
+// starejše in prevedene oblike.
+const CLAIM_RE = /📌|zapomni si|(?:^|\n)[ \t>*_]*(?:dodatna vaja|vaja|za vajo|poskusi (?:še )?sam\p{L}*|še ena naloga|podobna naloga|practice|your turn|try (?:this|it) yourself)(?!\p{L})/iu;
+export const hasClaims = (answer) => CLAIM_RE.test(String(answer || ""));
+
+// Stopnje, kjer model pregleda odgovor z vajo ali okvirjem tudi brez tveganja (privzeto SŠ; OŠ z EVKLID_LIVE_REVIEW_OS=1).
+export const claimReviewFor = (stopnja) =>
+  stopnja === "SS" ? process.env.EVKLID_LIVE_REVIEW_SS !== "0" : stopnja === "OS" ? process.env.EVKLID_LIVE_REVIEW_OS === "1" : false;
+
 /**
  * Ali odgovor pregleda še model. level (raven proračuna, server/proracun.js) in spentToday (USD vrste
  * »preverjanje« danes) sta lahko funkciji: bazo vprašamo šele, ko so drugi pogoji izpolnjeni.
+ * risky (tekmovanja, fakulteta, »Razloži podrobneje«): vedno, tudi če je koda preverila račune (koda preveri
+ * števila, ne trditev). claimLevel (SŠ, po izbiri OŠ): samo odgovor z vajo ali okvirjem »Zapomni si« (claims).
  */
-export function needsReview({ checked, model, lite, premium, level, risky, spentToday, answerLength }) {
-  if (!liveCheckOn() || checked > 0 || !risky || lite || !premium) return false;
+export function needsReview({ checked, model, lite, premium, level, risky, claims = false, claimLevel = false, spentToday, answerLength }) {
+  if (!liveCheckOn() || lite || !premium) return false;
+  if (!risky && !(claimLevel && claims)) return false;
   if (!/haiku/i.test(String(model || ""))) return false;
   if (answerLength < 120) return false; // kratka vprašanja učencu (»Kaj bi naredil zdaj?«) nimajo kaj preveriti
   if (!(val(level) > 0)) return false; // varčni način ali ustavljen proračun
@@ -429,9 +442,19 @@ export const verdictNote = (reason) =>
   "Your previous reply judged the student's message wrongly, so answer again from scratch, in agreement with this check: confirm what is right; for what is wrong, ask for the working if the student sent none, otherwise show the step where it fails. In način A never state the final result or the full solution. Never mention a program, a check, a reviewer or this note.\n" +
   `</${NOTE_TAG}>`;
 
-/** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js). Vrne { reason: razlog napake ali null, cost }. */
+// Navodila preverjevalca iz server/verify.js in dodatek za vaje in trditve (meritev 10. 11.: bakterija 300 μm,
+// »raztopljen« MgO, razvrščanje brez enolične rešitve, napačna trditev ob pravilnem rezultatu).
+export const LIVE_REVIEW_SYSTEM =
+  CHECKER_SYSTEM +
+  `
+Also check, as strictly as the calculations:
+- every practice exercise the tutor sets for the student: the quantities must be realistic (sizes, masses, speeds, concentrations that really occur), the substances and objects must behave as the exercise assumes (solubility, state, reactions, biology), the data must be consistent, and it must have exactly one correct answer (in a classification every item fits exactly one group and every offered group is used);
+- every side remark, »remember« box and check step, also when the final result is right: definitions, structures, charges, formulas and rules must be correct, and nothing may contradict the tutor's own calculation or the task.
+Reply with exactly one line: OK, or NAPAKA: <short reason>.`;
+
+/** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js in LIVE_REVIEW_SYSTEM). Vrne { reason: razlog napake ali null, cost }. */
 export async function reviewAnswer({ question, answer, createFn = null, usage = null, studentId = null }) {
-  const r = await askModel(MODEL_MID, checkerUser({ question, answer }), createFn);
+  const r = await askModel(MODEL_MID, checkerUser({ question, answer }), createFn, LIVE_REVIEW_SYSTEM);
   const cost = usage ? usage.log(studentId, r.model, r.usage, "preverjanje") : 0;
   // Samo izrecna NAPAKA; odrezan ali nejasen odgovor preverjevalca ni dovolj za popravek.
   return { reason: !r.verdict.ok && /^[\s*`_]*NAPAKA/i.test(r.text || "") ? r.verdict.reason : null, cost };

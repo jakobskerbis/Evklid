@@ -54,7 +54,7 @@ import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from ".
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
@@ -74,7 +74,7 @@ import { mobileClient, mountMobile } from "./mobile/index.js";
 import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
 import { startFxJobs } from "./tecaji.js";
-import { jeFaks, jeSs } from "../public/stopnja.js";
+import { jeFaks, jeSs, jeOs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
 import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
 import { stevilke as nujnoStevilke } from "../public/nujno.js";
@@ -1128,7 +1128,7 @@ export function createApp(store, opts = {}) {
           !image && // pregledovalec slike naloge ne vidi
           !verdictChecked && // sodbo je model že pregledal
           liveReviewOn() &&
-          needsReview({ checked: found.checked, model: answerModel, lite, premium, risky, answerLength: plain.length, level: () => usage.budgetState().level, spentToday: () => usage.kindToday("preverjanje") }) &&
+          needsReview({ checked: found.checked, model: answerModel, lite, premium, risky, claims: hasClaims(plain), claimLevel: claimReviewFor(jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS"), answerLength: plain.length, level: () => usage.budgetState().level, spentToday: () => usage.kindToday("preverjanje") }) &&
           hold.take(checkReserveUsd(MODEL_MID, text + plain))
         ) {
           try {

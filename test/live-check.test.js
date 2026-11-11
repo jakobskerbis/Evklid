@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -170,7 +170,7 @@ test("live check: review rules (free plan, saving mode, calculations already che
   assert.equal(needsReview({ ...base, lite: true }), false);
   assert.equal(needsReview({ ...base, level: 0 }), false, "varčni način proračuna");
   assert.equal(needsReview({ ...base, level: () => -1 }), false);
-  assert.equal(needsReview({ ...base, checked: 2 }), false, "koda je že preverila račune");
+  assert.equal(needsReview({ ...base, checked: 2 }), true, "koda preveri števila, trditev ne: pri tveganju pregled ostane");
   assert.equal(needsReview({ ...base, model: "claude-sonnet-5-5" }), false);
   assert.equal(needsReview({ ...base, risky: false }), false);
   assert.equal(needsReview({ ...base, answerLength: 40 }), false);
@@ -373,6 +373,69 @@ test("verdict check: after a later task the solver cannot read, the code does no
     const note = h.calls.at(-1).messages.at(-1).content;
     assert.equal(note.length, 1, "brez sodbe kode proti stari nalogi");
     assert.equal(h.reviewCalls.length, 1, "sodi model");
+  } finally {
+    h.close();
+  }
+});
+
+test("live check: answers with a practice exercise or a »Zapomni si« box are recognised", () => {
+  assert.equal(hasClaims("Rešitev je $x = 4$.\n\n**Vaja:** Reši $3x + 2 = 11$."), true);
+  assert.equal(hasClaims("> 📌 **Zapomni si:** redoks reakcija …"), true);
+  assert.equal(hasClaims("Poskusi sama: koliko je $2 \\cdot 7$?"), true);
+  assert.equal(hasClaims("Za vajo izračunaj še maso."), true);
+  assert.equal(hasClaims("Try it yourself: solve $x^2 = 9$."), true);
+  assert.equal(hasClaims("Rešitev je $x = 4$. Kaj dobiš, če vstaviš?"), false);
+  assert.equal(hasClaims("Vajam se vrnem kasneje."), false, "beseda, ki se začne z »vaja«, ni vaja");
+});
+
+test("live check: review at SŠ only for answers with an exercise or box; OŠ only when switched on", () => {
+  const base = { checked: 1, model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: false, spentToday: 0, answerLength: 300 };
+  assert.equal(claimReviewFor("SS"), true);
+  assert.equal(claimReviewFor("OS"), false);
+  assert.equal(claimReviewFor("FAKS"), false);
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true }), true, "SŠ z vajo, tudi ko je koda preverila račune");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: false }), false, "SŠ brez vaje in okvirja");
+  assert.equal(needsReview({ ...base, claimLevel: false, claims: true }), false, "OŠ privzeto brez pregleda");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true, premium: false }), false, "brezplačni paket");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true, spentToday: 0.3 }), false, "dnevna meja 0,30 $ ostane");
+  process.env.EVKLID_LIVE_REVIEW_SS = "0";
+  process.env.EVKLID_LIVE_REVIEW_OS = "1";
+  try {
+    assert.equal(claimReviewFor("SS"), false);
+    assert.equal(claimReviewFor("OS"), true);
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_SS;
+    delete process.env.EVKLID_LIVE_REVIEW_OS;
+  }
+  assert.match(LIVE_REVIEW_SYSTEM, /practice exercise/);
+  assert.match(LIVE_REVIEW_SYSTEM, /exactly one correct answer/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.`?$/);
+});
+
+test("live check: SŠ answer with an exercise is reviewed and corrected; without one it is not", async () => {
+  const withEx = "Rešitev je pH = 12, ker je $c(OH^-) = 0{,}01$ mol/L.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g MgO. Kolikšen je pH raztopine?";
+  const plainSs = "Rešitev je pH = 12, ker je koncentracija hidroksidnih ionov 0,01 mol/L. Preveri še, ali je enota prava in ali je rezultat smiseln za bazično raztopino.";
+  const h = harness({ answers: [withEx, plainSs], reviews: ["NAPAKA: MgO je v vodi zelo slabo topen; vaja ni izvedljiva."], fixes: ["Popravek: MgO se v vodi skoraj ne raztopi, zato vzemi raje 0,40 g CaO."] });
+  try {
+    const s = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
+    const r = await h.ask(s, "Koliko je pH raztopine CaO?");
+    assert.equal(h.reviewCalls.length, 1, "odgovor z vajo pregleda model");
+    assert.match(h.reviewCalls[0].system, /practice exercise/, "pregled z navodili za vaje");
+    assert.match(r.messages.at(-1).display_text, /Popravek:/);
+    await h.ask(s, "Koliko je pH raztopine CaO?");
+    assert.equal(h.reviewCalls.length, 1, "brez vaje in okvirja pri SŠ ni pregleda");
+  } finally {
+    h.close();
+  }
+});
+
+test("live check: at university the review runs even when the code checked a calculation", async () => {
+  const ans = "Velja $3 \\cdot 1000 = 3000$, zato je naslov 3000. Mimogrede: indeksiranje je od 1, zato bi bil naslov 2996, kar je pomembno pri vseh poljih v tem jeziku.";
+  const h = harness({ answers: [ans], reviews: ["OK"] });
+  try {
+    const s = await h.student({ educational_track: "UNIVERZA", curriculum_level: "1" });
+    await h.ask(s, "Kateri je naslov elementa?");
+    assert.equal(h.reviewCalls.length, 1);
   } finally {
     h.close();
   }

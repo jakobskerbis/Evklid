@@ -22,7 +22,7 @@ export const VERIFY_DAILY_USD = () => {
 };
 const EFFORT = env("EVKLID_VERIFY_EFFORT", "medium");
 
-const SYSTEM = `You are a strict fact-checker for an AI tutor that teaches school and university maths, physics, chemistry and biology.
+export const SYSTEM = `You are a strict fact-checker for an AI tutor that teaches school and university maths, physics, chemistry and biology.
 You receive the student's question and the tutor's answer (or flashcards made from it). The answer may be in any language.
 Check every statement, number, calculation, unit, formula, chemical formula, definition and named fact. Recompute every calculation yourself.
 Only factual or computational errors count. Teaching style, questions to the student, leaving steps for the student, hints and simplifications that are correct for the school level are fine.
