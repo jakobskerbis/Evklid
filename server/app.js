@@ -1126,7 +1126,7 @@ export function createApp(store, opts = {}) {
       let fix = "";
       if (liveCheckOn() && !cached && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used) {
         const plain = stripMeta(result.text);
-        const found = codeFindings(plain, pre);
+        const found = codeFindings(plain, pre, text);
         let issue = found.issue;
         const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
         const stopnja = jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS";

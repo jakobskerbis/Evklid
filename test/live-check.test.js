@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -506,4 +506,63 @@ test("live check: the fix call never solves a practice exercise", async () => {
   let system = "";
   await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
   assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
+});
+
+test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, not the atomic number", () => {
+  // Meritev 11. 11., KEM-OS-8/kovalentna-vez: »v = 8 − 7 = 1« za dušik.
+  assert.match(valenceIssue("1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$.").issue, /N has 5 outer.*atomic number|atomic number.*5 outer/);
+  assert.match(valenceIssue("Za dušik: $v = 8 - z = 8 - 7 = 1$").issue, /v = 8 - 5 = 3/);
+  assert.match(valenceIssue("Ogljik tvori $v = 8 - 4 = 4$ vezi, vsak kisik $v = 8 - 8 = 0$.").issue, /kisik \(O\)/, "napaka pri drugem elementu v vrstici");
+  for (const a of [
+    "1. Vsak atom dušika tvori $v = 8 - 5 = 3$ vezi.",
+    "Ogljik tvori $v = 8 - 4 = 4$ vezi, vsak kisik $v = 8 - 6 = 2$ vezi, vsak vodik $v = 2 - 1 = 1$.",
+    "Za $\\mathrm{O}$: $v = 8 - 6 = 2$; za $\\mathrm{Cl}$: $v = 8 − 7 = 1$",
+    "Hitrost dušika $v = 8 - 2t$",
+    "Če bi za dušik vzel $v = 8 - 7$, bi dobil eno vez.",
+    "$v = 8 - 7 = 1$",
+  ])
+    assert.equal(valenceIssue(a).issue, null, a);
+  // Pregleda PR #574: drug element v vrstici, hitrost, množenje, klorofil/klorid, učenčev račun, »vzel«.
+  assert.equal(valenceIssue("Ogljik ima 4 zunanje elektrone in se veže s kisikom: $v = 8 - 4 = 4$.").issue, null, "4 je ogljikov");
+  assert.match(valenceIssue("Dušik in klor: za dušik $v = 8 - 7 = 1$").issue, /atomic number/, "7 = vrstno število dušika, tudi ob kloru");
+  for (const a of ["Ogljik: $v = 8 - 2\\cdot k$", "Ogljik: $v = 8 - 2 \\times t$", "Ogljik se giblje: v = 8 - 3 = 5 m/s", "Hitrost delca ogljika: $v = 8 - 3 = 5$", "Ogljik: $v = 8 - 3 = 5\\,\\text{m/s}$", "Klorofil: $v = 8 - 3$", "Kloridni ion: $v = 8 - 3$", "Za dušik je učenec vzel $v = 8 - 7 = 1$."])
+    assert.equal(valenceIssue(a).issue, null, a);
+  assert.equal(valenceIssue("Dušik: $v = 8 - 7 = 1$", "Ali je za dušik v = 8 − 7?").issue, null, "učenčev račun iz sporočila");
+  assert.match(valenceIssue("Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo pred računom $v = 8 - 7 = 1$.").issue ?? "", /^$/, "ime več kot 60 znakov pred računom ne šteje");
+  // V codeFindings: popravek pride tudi pri OŠ, kjer pregleda z modelom ni.
+  assert.match(codeFindings("Dušik: $v = 8 - 7 = 1$").issue, /outer \(valence\) electrons/);
+});
+
+test("code check (2026-11-11 round 2): temperatures given in °C are not written as kelvin in a difference", () => {
+  // Meritev 11. 11., FIZ-SS-2/notranja-energija-in-toplota: »$\Delta T_3 = 20\,\text{K} - 0\,\text{K}$«.
+  const q = "Led z maso 200 g pri 0 °C stalimo in vodo segrejemo do 20 °C.";
+  assert.match(celsiusIssue("$\\Delta T_3 = 20\\,\\text{K} - 0\\,\\text{K} = 20\\,\\text{K}$", q).issue, /20 °C and 0 °C/);
+  assert.ok(celsiusIssue("$\\Delta T = 20\\,\\mathrm{K} - 0\\,\\mathrm{K}$", "Voda pri $20\\,^{\\circ}\\mathrm{C}$ in led pri $0\\,^\\circ\\text{C}$").issue, "°C v zapisu LaTeX");
+  for (const a of ["$\\Delta T = (20 - 0)\\,\\text{K} = 20\\,\\text{K}$", "$\\Delta T = 293\\,\\text{K} - 273\\,\\text{K} = 20\\,\\text{K}$", "$\\Delta T = 20\\,°\\text{C} - 0\\,°\\text{C} = 20\\,\\text{K}$"])
+    assert.equal(celsiusIssue(a, q).issue, null, a);
+  assert.equal(celsiusIssue("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K}$", "Plin ohladimo z 20 K na 0 K.").issue, null, "naloga v kelvinih");
+  assert.equal(codeFindings("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K} = 20\\,\\text{K}$", null).issue, null, "brez naloge ni primerjave");
+  assert.match(celsiusIssue("$\\Delta T = 20\\,\\text{K} - (-10)\\,\\text{K}$", "Od -10 °C do 20 °C").issue || celsiusIssue("$\\Delta T = 20\\,\\text{K} - -10\\,\\text{K}$", "Od -10 °C do 20 °C").issue, /- \(-10\\,°\\text\{C\}\) = 30/, "negativna temperatura v oklepaju");
+});
+
+test("code check (2026-11-11 round 2): an OŠ chemistry answer with v = 8 − 7 for nitrogen gets one correction without a model review", async () => {
+  const h = harness({ answers: ["1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$ vez."], fixes: ["Popravek: dušik ima 5 zunanjih elektronov, zato $v = 8 - 5 = 3$: vez v $\\mathrm{N_2}$ je trojna."] });
+  try {
+    const s = await h.student({ educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred", subject: "KEM" });
+    const r = await h.ask(s, "Kakšna vez povezuje atoma dušika v N2?");
+    assert.equal(h.calls.length, 2, "odgovor in en popravek");
+    assert.ok(h.calls[1].isFix);
+    assert.match(h.calls[1].messages[0].content[0].text, /5 outer \(valence\) electrons/);
+    assert.equal(h.reviewCalls.length, 0, "pri OŠ brez pregleda z modelom");
+    assert.match(r.messages.at(-1).display_text, /\*\*Popravek:\*\* dušik ima 5/);
+  } finally {
+    h.close();
+  }
+});
+
+test("»vzel/uporabil« izpusti samo preverjanje vezi, ne računov v popravkih (krog 2, pregled)", () => {
+  for (const t of ["Vzel si $g = 10$; pravilno je $F = 2 \\cdot 9{,}81 = 18{,}62\\,\\text{N}$.", "Uporabil bom: $3 \\cdot 4 = 13$."]) {
+    assert.ok(codeFindings(t).issue, t);
+  }
+  assert.equal(valenceIssue("Pri dušiku si vzel vrstno število: $v = 8 - 7 = 1$.").issue, null);
 });

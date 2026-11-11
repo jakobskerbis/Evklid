@@ -22,6 +22,14 @@
 // Brez ključa ali z EVKLID_MOCK=1 konča z 0 brez klica in brez zapisa (izmišljene številke ne smejo na stran).
 //   --resnicna-meja        pusti dnevno mejo pregledov z zmogljivejšim modelom, kot je v aplikaciji (privzeto izklopljena)
 //   --iz-json <datoteka>   preveri obliko in zapiše povzetek v docs/meritve + tabelo v docs/stroski-ai.md, brez klicev.
+// Ciljna ponovitev (krog 2, 2026-11-11): samo izbrani primeri, vsak večkrat, za poceni preverbo spremembe pri primerih z napako.
+//   node scripts/primerjava-modelov.js --s-preverjanjem --samo KEM-OS-8/kovalentna-vez,UNI-ULFKKT-ORG1/alkani-alkeni-in-alkini --ponovi 3 [--pogoj s] --max-usd 1.5
+//   --samo <id,id>   id-ji lekcij (kot v polju »napake« meritve); isti rešeni primer kot v meritvi z istim --seed
+//   --ponovi <N>     vsak primer N-krat (1–10), ker isti model na isto nalogo ne odgovori vedno enako
+//   --pogoj s|brez   samo en pogoj (privzeto oba); »s« = cel Evklidov odgovor s preverjanjem
+//   --nadaljuj       nadaljuje prekinjeno ciljno ponovitev (privzeto vsak zagon začne na novo)
+// Vmesne vrstice gredo v data/natancnost-ponovitve.json (ne v napredek prave meritve), na koncu je tabela po primerih.
+// Ciljna ponovitev ni meritev za objavo: povzetka za repozitorij ne izpiše. --dry pokaže izbor in oceno stroška.
 import "../server/env.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -57,6 +65,34 @@ const OUT = path.resolve(root, arg("out", "data/primerjava-modelov.md"));
 const PROMPT = arg("prompt", "");
 const TEMPLATE = PROMPT ? fs.readFileSync(path.resolve(root, PROMPT), "utf8") : undefined;
 const MOCK = isMockMode();
+const SAMO_ALL = arg("samo", "")
+  .split(",")
+  .map((x) => x.trim())
+  .filter(Boolean);
+const SAMO = [...new Set(SAMO_ALL)];
+if (SAMO.length < SAMO_ALL.length) console.warn(`--samo: podvojeni id-ji so izpuščeni (${SAMO_ALL.filter((x, i) => SAMO_ALL.indexOf(x) !== i).join(", ")}).`);
+const PONOVI_RAW = process.argv.includes("--ponovi") ? arg("ponovi", "") : "1";
+const PONOVI = /^\d+$/.test(PONOVI_RAW) ? Number(PONOVI_RAW) : NaN;
+const POGOJ = arg("pogoj", "");
+const flagNoValue = ["samo", "ponovi", "pogoj"].find((k) => process.argv.includes(`--${k}`) && !arg(k, ""));
+if (SAMO.length || flagNoValue || process.argv.includes("--ponovi") || POGOJ || process.argv.includes("--nadaljuj")) {
+  const why = flagNoValue
+    ? `--${flagNoValue} potrebuje vrednost`
+    : !CHECK
+    ? "--samo, --ponovi in --pogoj veljajo le z --s-preverjanjem"
+    : !SAMO.length
+      ? "--ponovi, --pogoj in --nadaljuj veljajo le skupaj z --samo <id,id>"
+      : !(PONOVI >= 1 && PONOVI <= 10)
+        ? `neveljaven --ponovi »${PONOVI_RAW}« (celo število od 1 do 10)`
+        : POGOJ && !CONDITIONS.some((c) => c.kljuc === POGOJ)
+          ? `neveljaven --pogoj »${POGOJ}« (${CONDITIONS.map((c) => c.kljuc).join(" ali ")})`
+          : "";
+  if (why) {
+    console.error(`${why}. Nič ni bilo poklicano.`);
+    process.exit(1);
+  }
+}
+const CONDS = POGOJ ? CONDITIONS.filter((c) => c.kljuc === POGOJ) : CONDITIONS;
 if (FROM_JSON) {
   try {
     const file = writeMeasurement(JSON.parse(fs.readFileSync(path.resolve(root, FROM_JSON), "utf8")));
@@ -126,6 +162,8 @@ function pick() {
       (pool[group(p)] ||= []).push({ id, path: p, ...e });
     }
   }
+  // --samo: izbrani primeri iz celotnega nabora (isti rešeni primer kot v meritvi, ker je seme enako).
+  if (SAMO.length) return Object.values(pool).flat();
   const out = [];
   for (const [g, share] of Object.entries(SHARE)) {
     const list = (pool[g] || []).map((x) => [rand(), x]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
@@ -231,7 +269,15 @@ const fromRows = () => {
     .filter((r) => !seen.has(r.id) && seen.add(r.id))
     .map(({ id, path: p, title, task, solution, hard }) => ({ id, path: p, title, task, solution, hard }));
 };
-const tasks = (FROM ? fromRows() : pick()).filter((t) => !GROUPS.length || GROUPS.includes(group(t.path)));
+const base = (FROM ? fromRows() : pick()).filter((t) => !GROUPS.length || GROUPS.includes(group(t.path)));
+// --samo/--ponovi: izbrani primeri v podanem vrstnem redu; ponovitev k dobi id »<id>#k« (tema pogovora ostane <id>).
+const missing = SAMO.filter((id) => !base.some((t) => t.id === id));
+if (missing.length) {
+  console.error(`--samo: teh primerov ni med lekcijami z rešenimi primeri${GROUPS.length ? " izbranih stopenj" : ""}: ${missing.join(", ")}. Nič ni bilo poklicano.`);
+  process.exit(1);
+}
+const chosen = SAMO.length ? SAMO.map((id) => base.find((t) => t.id === id)) : base;
+const tasks = SAMO.length && PONOVI > 1 ? Array.from({ length: PONOVI }, (_, k) => chosen.map((t) => ({ ...t, id: `${t.id}#${k + 1}`, topic: t.id }))).flat() : chosen;
 const est = estimate(tasks.length);
 const eur = EUR_PER_USD();
 console.log(`Naloge: ${tasks.length} (${Object.entries(tasks.reduce((a, t) => ((a[group(t.path)] = (a[group(t.path)] || 0) + 1), a), {})).map(([k, v]) => `${k} ${v}`).join(", ")})`);
@@ -243,11 +289,12 @@ const pairModes = (t) => (group(t.path) === "osnovna šola" ? "chat" : "think");
 // Delež odgovorov s pregledom: tekmovanja in fakulteta vsi, srednja šola ~0,7 (odgovor z vajo ali okvirjem v rešeni
 // nalogi, od 2026-11-11), osnovna šola 0 (EVKLID_LIVE_REVIEW_OS je privzeto izklopljen).
 const reviewed = (t) => ({ tekmovanja: 1, fakulteta: 1, "srednja šola": 0.7 })[group(t.path)] || 0;
-const pairEstimate = (t) =>
-  2 * costUsd(modeParams(pairModes(t)).model, { input_tokens: 1500, output_tokens: OUT_TOK[pairModes(t)], cache_read_input_tokens: 11000 }) +
-  reviewed(t) * costUsd(modeParams("mid").model, { input_tokens: 2500, output_tokens: 1500 }) +
-  0.15 * costUsd(modeParams("think").model, { input_tokens: 3000, output_tokens: 2000 }) +
-  2 * costUsd(MODEL_DEEP, { input_tokens: 3000, output_tokens: 1500 });
+// Ocena za en pogoj: odgovor in ocena; s preverjanjem še pregled (delež po stopnji) in občasen popravek.
+const condEstimate = (t, kljuc) =>
+  costUsd(modeParams(pairModes(t)).model, { input_tokens: 1500, output_tokens: OUT_TOK[pairModes(t)], cache_read_input_tokens: 11000 }) +
+  costUsd(MODEL_DEEP, { input_tokens: 3000, output_tokens: 1500 }) +
+  (kljuc === "s" ? reviewed(t) * costUsd(modeParams("mid").model, { input_tokens: 2500, output_tokens: 1500 }) + 0.15 * costUsd(modeParams("think").model, { input_tokens: 3000, output_tokens: 2000 }) : 0);
+const pairEstimate = (t) => CONDS.reduce((s, c) => s + condEstimate(t, c.kljuc), 0);
 // Najdražji možni par: dva odgovora (poln izhod, hladen predpomnilnik), pregled z zmogljivejšim modelom (do 8000
 // izhodnih žetonov), popravek in dve oceni, kjer gre ocenjevalcu ves dolg odgovor (do max_tokens) z nalogo in rešitvijo.
 const thinkP = modeParams("think");
@@ -257,20 +304,35 @@ const worstPair =
   costUsd(thinkP.model, { input_tokens: thinkP.max_tokens + 4000, output_tokens: thinkP.max_tokens }) +
   2 * costUsd(MODEL_DEEP, { input_tokens: thinkP.max_tokens + 6000, output_tokens: GRADER_MAX_TOKENS });
 const REAL_CAP = process.argv.includes("--resnicna-meja");
-const PROGRESS = path.join(root, "data", "natancnost-napredek.json");
+const PROGRESS = path.join(root, "data", SAMO.length ? "natancnost-ponovitve.json" : "natancnost-napredek.json");
 if (CHECK) {
   const estC = tasks.reduce((s, t) => s + pairEstimate(t), 0);
   const perUsd = estC / Math.max(1, tasks.length);
-  console.log(`Meritev s preverjanjem: vsak primer dvakrat (${CONDITIONS.map((c) => c.ime).join(" / ")}).`);
-  console.log(`Ocena stroška za vse primere: ~${estC.toFixed(2)} $ (~${perUsd.toFixed(3)} $ na primer); meja --max-usd ${MAX_USD} $ zadošča za ~${Math.min(tasks.length, Math.max(0, Math.floor((MAX_USD - worstPair) / perUsd)))} primerov. Trajanje ~${Math.round((tasks.length * 1.2))} min za vse.`);
+  if (SAMO.length) console.log(`Ciljna ponovitev: ${chosen.length} primerov × ${PONOVI} ponovitve × ${CONDS.length} pogoj${CONDS.length > 1 ? "a" : ""} (${CONDS.map((c) => c.ime).join(" / ")}) = ${tasks.length * CONDS.length} odgovorov.`);
+  else console.log(`Meritev s preverjanjem: vsak primer dvakrat (${CONDITIONS.map((c) => c.ime).join(" / ")}).`);
+  console.log(`Ocena stroška za vse primere: ~${estC.toFixed(2)} $ (~${perUsd.toFixed(3)} $ na primer); meja --max-usd ${MAX_USD} $ zadošča za ~${Math.min(tasks.length, Math.max(0, Math.floor((MAX_USD - worstPair) / perUsd)))} primerov. Trajanje ~${Math.round((tasks.length * 0.6 * CONDS.length))} min za vse.`);
 }
 if (DRY) {
   for (const t of tasks) console.log(`- ${t.id} · ${t.title}`);
   process.exit(0);
 }
 if (CHECK) {
-  if (process.argv.includes("--znova")) fs.rmSync(PROGRESS, { force: true });
-  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP });
+  // Ciljna ponovitev začne vedno na novo (stari odgovori so lahko iz prejšnjega prompta); --nadaljuj nadaljuje prekinjeno.
+  if (SAMO.length ? !process.argv.includes("--nadaljuj") : process.argv.includes("--znova")) fs.rmSync(PROGRESS, { force: true });
+  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP, conditions: CONDS });
+  if (SAMO.length) {
+    // Tabela po primerih in pogojih (ni povzetka za objavo: izbor ni vzorec vseh lekcij).
+    console.log(`\nCiljna ponovitev (${PONOVI}× na primer):`);
+    for (const t of chosen)
+      for (const c of CONDS) {
+        const mine = r.rows.filter((x) => (x.id === t.id || x.id.startsWith(`${t.id}#`)) && x.pogoj === c.kljuc);
+        const n = (o) => mine.filter((x) => x.ocena === o).length;
+        console.log(`- ${t.id} [${c.kljuc}]: napaka ${n("napaka")}, manjša ${n("manjsa_napaka")}, pravilno ${n("pravilno")} od ${mine.length}${mine.some((x) => x.popravek) ? `; popravkov ${mine.filter((x) => x.popravek).length}` : ""}`);
+        for (const x of mine.filter((x) => x.ocena !== "pravilno")) console.log(`    ${x.id} ${x.ocena}: ${String(x.razlog || "").slice(0, 220)}`);
+      }
+    console.log(`Strošek: ${(r.appUsd + r.gradeUsd).toFixed(2)} $ (aplikacija ${r.appUsd.toFixed(2)} $, ocenjevalec ${r.gradeUsd.toFixed(2)} $). Odgovori: ${path.relative(root, PROGRESS)}.`);
+    process.exit(0);
+  }
   const summary = summarize(r.rows, {
     datum: new Date().toISOString().slice(0, 10),
     ocenjevalec: `${MODEL_DEEP} (model AI)`,

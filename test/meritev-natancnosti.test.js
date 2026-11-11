@@ -148,3 +148,53 @@ test("oblika meritve: pokvarjena datoteka → null, --iz-json zavrne napačno ob
   assert.equal(src.match(/writeMeasurement\(/g).length, 1);
   assert.ok(src.indexOf("writeMeasurement(") < src.indexOf("if (CHECK && MOCK && !DRY)"));
 });
+
+test("ciljna ponovitev (krog 2): en pogoj, ponovitve z lastnim id-jem in isto temo; manjše napake v seznamu; --samo/--ponovi/--pogoj v ukazu", async () => {
+  const log = [];
+  const streamFn = async ({ onText }) => {
+    const text = "Rezultat je $40$, ker je $12 \\cdot 3 + 4 = 40$. To je končni rezultat naloge, ki ga preveriš z vstavljanjem.";
+    onText?.(text);
+    return { content: [{ type: "text", text }], text, stopReason: "end_turn", usage, model: "claude-haiku-5-5" };
+  };
+  let k = 0;
+  const grade = async () => ({ ocena: k++ % 2 ? "manjsa_napaka" : "pravilno", vrsta: "ni", rezultat_podan: true, razlog: "izmišljen", usd: 0.01 });
+  const t = { id: TOPIC, path: "FIZ-OS-9", title: "P1", task: "Koliko je vmesni rezultat?", solution: "**Rešitev:**\n1. Odgovor: $40$." };
+  const tasks = [1, 2].map((i) => ({ ...t, id: `${TOPIC}#${i}`, topic: TOPIC }));
+  const progressFile = path.join(tmp(), "ponovitve.json");
+  const r = await runChecked({ tasks, settingsFor: () => ({ ...DEFAULT_SETTINGS }), question: (x) => x, grade, group: () => "osnovna šola", maxUsd: 5, worstPair: 0.5, progressFile, createOpts: { streamFn }, log: (l) => log.push(l), conditions: [{ kljuc: "s", liveCheck: "1" }] });
+  assert.deepEqual(r.rows.map((x) => [x.id, x.pogoj]), [[`${TOPIC}#1`, "s"], [`${TOPIC}#2`, "s"]], "samo pogoj »s«, vsaka ponovitev posebej");
+  // Manjše napake so v seznamu »napake« povzetka (za analizo naslednjega kroga).
+  const rows = [
+    { id: "A", stopnja: "osnovna šola", pogoj: "brez", ocena: "manjsa_napaka", rezultat_podan: true, koda: true, razlog: "nerodno" },
+    { id: "A", stopnja: "osnovna šola", pogoj: "s", ocena: "pravilno", rezultat_podan: true, koda: true },
+  ];
+  const sum = summarize(rows, { datum: "2026-12-01", ocenjevalec: "x", vprasanje: "q", strosek_usd: {}, trajanje_min: 1 });
+  assert.deepEqual(sum.napake.map((x) => [x.pogoj, x.ocena]), [["brez", "manjsa_napaka"]]);
+
+  const run = (args) =>
+    spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", "scripts/primerjava-modelov.js", ...args], {
+      cwd: root,
+      env: { PATH: process.env.PATH, HOME: process.env.HOME, ANTHROPIC_API_KEY: "sk-ant-test", ANTHROPIC_BASE_URL: "http://127.0.0.1:9" },
+      encoding: "utf8",
+      timeout: 60000,
+    });
+  const dry = run(["--s-preverjanjem", "--samo", "KEM-OS-8/kovalentna-vez,UNI-ULFKKT-ORG1/alkani-alkeni-in-alkini", "--ponovi", "3", "--pogoj", "s", "--dry"]);
+  assert.equal(dry.status, 0, dry.stderr);
+  assert.match(dry.stdout, /Naloge: 6 \(osnovna šola 3, fakulteta 3\)/);
+  assert.match(dry.stdout, /2 primerov × 3 ponovitve × 1 pogoj .* = 6 odgovorov/);
+  assert.match(dry.stdout, /Ocena stroška za vse primere: ~\d+\.\d\d \$/);
+  assert.match(dry.stdout, /- KEM-OS-8\/kovalentna-vez#3 · /);
+  const dup = run(["--s-preverjanjem", "--samo", "KEM-OS-8/kovalentna-vez,KEM-OS-8/kovalentna-vez", "--dry"]);
+  assert.equal(dup.status, 0, dup.stderr);
+  assert.match(dup.stderr, /podvojeni id-ji so izpuščeni/);
+  assert.match(dup.stdout, /Naloge: 1 /);
+  // Ciljna ponovitev privzeto začne na novo; nadaljuje le z --nadaljuj.
+  assert.match(readFileSync(path.join(root, "scripts/primerjava-modelov.js"), "utf8"), /SAMO\.length \? !process\.argv\.includes\("--nadaljuj"\)/);
+  // Napačni argumenti: napaka pred vsakim klicem, tudi s ključem.
+  for (const bad of [["--samo", "NI/tega"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi", "0"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi", "11"], ["--samo", "KEM-OS-8/kovalentna-vez", "--pogoj", "x"], ["--ponovi", "2"], ["--samo"], ["--samo", "KEM-OS-8/kovalentna-vez", "--ponovi"], ["--nadaljuj"]]) {
+    const r2 = run(["--s-preverjanjem", ...bad]);
+    assert.equal(r2.status, 1, bad.join(" "));
+    assert.match(r2.stderr, /Nič ni bilo poklicano/);
+    assert.ok(!/\[\d+\/\d+\]/.test(r2.stdout));
+  }
+});
