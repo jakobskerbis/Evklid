@@ -161,7 +161,7 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   const counts = [...text.matchAll(/(\d+) od (\d+)/g)].map((x) => `${x[1]}/${x[2]}`);
   assert.deepEqual(counts.sort(), m.vrstice.filter((r) => Number.isFinite(r.napake)).map((r) => `${r.napake}/${r.primeri}`).sort());
   assert.ok(text.includes(`${slDate(m.datum)} smo`) && text.includes(`${m.primeri} rešenih primerov`));
-  for (const s of ["Vzorec je majhen", "Ocenjeval jih ni človek", "Natančnosti drugih orodij nismo merili", "Manjših nenatančnosti, na primer pri zaokroževanju, nismo šteli kot napako", "samo vodi z vprašanji in rezultata ne pove, šteje kot odgovor brez napake"]) assert.ok(text.includes(s), s);
+  for (const s of ["Vzorec je majhen", "Ocenjeval jih ni človek", "Natančnosti drugih orodij nismo merili", "Manjših nenatančnosti, ki učenca ne zavedejo (na primer zaokroževanje ali nenatančen zapis), nismo šteli kot napako", "samo vodi z vprašanji in rezultata ne pove, šteje kot odgovor brez napake"]) assert.ok(text.includes(s), s);
   // Tabela v docs/stroski-ai.md je zapis iste meritve.
   const doc = readFileSync(new URL("../docs/stroski-ai.md", import.meta.url), "utf8");
   assert.equal(updateDoc(doc, m), doc, "docs/stroski-ai.md: node scripts/primerjava-modelov.js --iz-json <zadnja meritev>");
@@ -259,11 +259,11 @@ test("meritev s preverjanjem: povzetek, tabela in stran iz istih številk; skrip
   assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40</small></td><td>40</td></tr>'));
   assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40</small></td><td>40</td></tr>'));
   // Viden pripis, kaj je bilo merjeno: plačljivi paket brez dnevne meje pregledov; z --resnicna-meja drugo besedilo.
-  assert.ok(text.includes("enkrat z vklopljenim, z nastavitvami plačljivega paketa") && !text.includes("kot odgovor vidi učenec"));
+  assert.ok(text.includes("enkrat s preverjanjem (program preveri račune, pri delu nalog odgovor pregleda še zmogljivejši model), z nastavitvami plačljivega paketa") && !text.includes("kot odgovor vidi učenec"));
   assert.ok(text.includes("Merili smo plačljivi paket brez dnevne meje pregledov z zmogljivejšim modelom.") && !text.includes("z dnevno mejo pregledov z zmogljivejšim modelom, kot velja"));
   const real = textOf(whyPage({ ...sum, meja_pregledov: "resnicna" }));
   assert.ok(real.includes("Merili smo plačljivi paket z dnevno mejo pregledov z zmogljivejšim modelom, kot velja v aplikaciji.") && !real.includes("brez dnevne meje pregledov"));
-  assert.ok(llmsTxt(sum).includes("brez dnevne meje pregledov z zmogljivejšim modelom") && llmsTxt({ ...sum, meja_pregledov: "resnicna" }).includes("in z dnevno mejo pregledov"));
+  assert.ok(llmsTxt(sum).includes("Med meritvijo dnevna meja pregledov ni veljala") && llmsTxt({ ...sum, meja_pregledov: "resnicna" }).includes("Med meritvijo je veljala dnevna meja pregledov"));
   assert.ok(text.includes("1. 12. 2026 smo skozi Evklidov klepet poslali 40 rešenih primerov") && text.includes("Vsak odgovor je nastal posebej"));
   assert.ok(!text.includes("še pripravljamo") && !text.includes("pred spremembo navodil") && !/12 %|4 %/.test(text), "stara meritev ni več na strani");
   assert.ok(!/\{\{|<!--\/?ce:/.test(html));
