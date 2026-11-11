@@ -281,8 +281,9 @@ ORGANI = {
         # pretini kot drobne temnejše meje) in ponekod sivimi pegami; hrustanec sapnika in bronhijev smetanasto rožnat.
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
-                "pljuca": dict(barva=(0.58, 0.33, 0.33), barva2=(0.40, 0.24, 0.26), lise=0.45, liseMera=0.04, hrap=0.30,
-                               gube=0.00003, gubeMera=0.003, zilice=0.30, ziliceBarva=(0.22, 0.15, 0.17), ziliceMera=0.05, razdeli=1),
+                # vz2 (posnetek vz1: temne lise in brez vzorca režnjičev): svetlejša rožnata, mehkejše lise, svetlejši pretini
+                "pljuca": dict(barva=(0.66, 0.37, 0.37), barva2=(0.54, 0.29, 0.31), lise=0.30, liseMera=0.04, hrap=0.32,
+                               gube=0.00003, gubeMera=0.003, zilice=0.22, ziliceBarva=(0.42, 0.25, 0.27), ziliceMera=0.04, razdeli=1),
                 "dihalna": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.3, hrap=0.44, gube=0.00004, gubeMera=0.002, razdeli=1),
                 "dihalna-v": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.2, hrap=0.44, gube=0.0, razdeli=0),
                 "pljucna-arterija": dict(barva=(0.44, 0.28, 0.30), barva2=(0.38, 0.23, 0.26), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
