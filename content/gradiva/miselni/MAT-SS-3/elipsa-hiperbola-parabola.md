@@ -8,7 +8,7 @@ stanje: osnutek
 - Enačba elipse
   - $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$
   - $e = \sqrt{a^2 - b^2}$, $\varepsilon = \frac{e}{a}$
-  - napaka: $a$ je koren imenovalca
+  - napaka: $a$ ni imenovalec, ampak njegov koren
 - Hiperbola z razliko
   - absolutna razlika razdalj je $2a$
   - dve veji, gorišči zunaj temen

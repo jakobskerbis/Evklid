@@ -40,7 +40,7 @@ Povprečje skoči na $\dfrac{9 \cdot 10 + 2\,000}{10} = 209\,\text{€}$, median
 **3. Mere razpršenosti.** Pokažejo, kako se podatki raztezajo okoli sredine.
 
 - **Razmah** (variacijski razmik) je $R = x_{\max} - x_{\min}$. Je preprost, a odvisen le od dveh skrajnih podatkov.
-- **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednji podatek v nobeno polovico ne všteješ. **Medkvartilni razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov.
+- **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednjega podatka ne všteješ v nobeno polovico. **Medkvartilni razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov.
 - **Varianca** je povprečje kvadratov odklonov. **Odklon** podatka je razlika $x_i - \bar{x}$, torej koliko podatek leži nad sredino ali pod njo:
 $$\sigma^2 = \frac{(x_1-\bar{x})^2 + \cdots + (x_n-\bar{x})^2}{n}$$
 - **Standardni odklon** je njen koren: $\sigma = \sqrt{\sigma^2}$. Ima enako enoto kot podatki, zato ga lahko neposredno primerjamo s sredino. Manjši kot je, bolj so podatki zbrani okoli sredine.
@@ -221,7 +221,7 @@ Izračunajmo standardni odklon za podatke $3, 5, 6, 8, 8$. Pomagaj si s tabelo.
 
 **Zakaj vsota odklonov nikoli ne prinese informacije.** Ker je $\bar{x} = \dfrac{\sum x_i}{n}$, velja $\sum (x_i - \bar{x}) = \sum x_i - n\bar{x} = 0$. Zato odklone kvadriramo. Aritmetična sredina je prav tisto število $c$, pri katerem je vsota $\sum (x_i - c)^2$ najmanjša.
 
-**Drugi zapis variance.** Raztegnemo kvadrate in dobimo
+**Drugi zapis variance.** Če odklone kvadriramo kot dvočlenike in člene seštejemo, dobimo
 $$\sigma^2 = \frac{\sum x_i^2}{n} - \bar{x}^2,$$
 torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2, 4, 4, 4, 5, 5, 7, 9$: povprečje je $5$, povprečje kvadratov $\dfrac{232}{8} = 29$, zato je $\sigma^2 = 29 - 25 = 4$ in $\sigma = 2$.
 

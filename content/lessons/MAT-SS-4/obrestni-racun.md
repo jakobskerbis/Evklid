@@ -125,7 +125,7 @@ $r = 1 + \dfrac{p}{100}$, $\quad G_n = G_0 \cdot r^n$
 
 Slaščičar Marko želi čez $5$ let kupiti novo krušno peč za $6000\,\text{€}$. Banka ponuja $3\,\%$ letno z obrestnim obrestovanjem. Koliko mora vložiti danes? Koliko bi moral vložiti pri navadnem obrestovanju z isto mero?
 
-**Podatki:** $G_5 = 6000\,\text{€}$, $p = 3\,\%$, $n = 5$ let
+**Podatki:** $G_5 = 6000\,\text{€}$, $p = 3\,\%$, $n = 5$ let, obrestno obrestovanje (za primerjavo še navadno)
 **Iščemo:** potrebno vlogo $G_0$ pri obrestnem in pri navadnem obrestovanju
 
 :::formula

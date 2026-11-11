@@ -106,7 +106,7 @@ Halogen izpodrine iz soli le halogen, ki je nižje v 17. skupini.
 
 Učiteljica da v $100\,\text{mL}$ vode košček natrija z maso $0{,}23\,\text{g}$. Natrij popolnoma zreagira, prostornina se ne spremeni. Kolikšen je pH raztopine pri $25\,^\circ\mathrm{C}$? Molska masa natrija je $23\,\text{g/mol}$.
 
-**Podatki:** $m = 0{,}23\,\text{g}$, $M = 23\,\text{g/mol}$, $V = 100\,\text{mL} = 0{,}1\,\text{L}$
+**Podatki:** $m = 0{,}23\,\text{g}$, $M = 23\,\text{g/mol}$, $V = 100\,\text{mL} = 0{,}1\,\text{L}$ (se ne spremeni), temperatura $25\,^\circ\mathrm{C}$
 **Iščemo:** $\mathrm{pH}$
 
 :::formula
@@ -134,9 +134,9 @@ $\mathrm{Cl_2 + 2\,KI \rightarrow 2\,KCl + I_2}$; $n = \dfrac{m}{M}$, nato $m = 
 
 **Rešitev:**
 
-1. Množina jodida: $n = \dfrac{0{,}130\,\text{g}}{166\,\text{g/mol}} \approx 7{,}83 \cdot 10^{-4}\,\text{mol}$.
-2. Iz dveh enot KI nastane ena molekula $\mathrm{I_2}$, ker ima molekula dva atoma joda: $n(\mathrm{I_2}) \approx 3{,}92 \cdot 10^{-4}\,\text{mol}$.
-3. Masa joda: $m = 3{,}92 \cdot 10^{-4} \cdot 253{,}8 \approx 0{,}0995\,\text{g}$.
+1. Množina jodida: $n = \dfrac{0{,}130\,\text{g}}{166\,\text{g/mol}} \approx 7{,}831 \cdot 10^{-4}\,\text{mol}$.
+2. Iz dveh enot KI nastane ena molekula $\mathrm{I_2}$, ker ima molekula dva atoma joda: $n(\mathrm{I_2}) \approx 3{,}916 \cdot 10^{-4}\,\text{mol}$.
+3. Masa joda: $m = 3{,}916 \cdot 10^{-4} \cdot 253{,}8 \approx 0{,}0994\,\text{g}$.
 4. Odgovor: nastane približno $99\,\text{mg}$ joda. Toliko joda je bilo v tableti kot jodid; klor ga je le oksidiral.
 
 ### Primer 4 – zdaj ti

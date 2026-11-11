@@ -226,7 +226,7 @@ Vsota ploščin je $x^2 + 4x + 3x + 12 = x^2 + 7x + 12$. Srednji člen je nastal
 
 | Korak | Kaj naredimo | Rezultat |
 |---|---|---|
-| 1 | Izpostavimo $4x$ (koeficienta sta $4$ in $36$, $D = 4$; $x$ z najmanjšim eksponentom $1$) | $4x(x^2 - 9)$ |
+| 1 | Izpostavimo $4x$ (koeficienta sta $4$ in $36$, $D(4, 36) = 4$; $x$ z najmanjšim eksponentom $1$) | $4x(x^2 - 9)$ |
 | 2 | Drugi faktor je razlika kvadratov $x^2 - 3^2$ | $4x(x-3)(x+3)$ |
 | 3 | Preizkus pri $x = 2$: prvotni izraz $4 \cdot 8 - 72 = -40$, razcep $4 \cdot 2 \cdot (-1) \cdot 5 = -40$ | enako |
 
@@ -303,8 +303,8 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 
 :::simboli
 x, y | spremenljivki | | |
-a, b | števili z vsoto $p$ in zmnožkom $q$ (Vietovo pravilo) | | | v $ab + ac$ je $a$ skupni faktor, v $a^2 - b^2$ osnovi
-c, d | členi v oklepaju po izpostavljanju | | |
+a, b | števili z vsoto $p$ in zmnožkom $q$ (Vietovo pravilo) | | | v $ab + ac$ je $a$ skupni faktor, v $a^2 - b^2$ osnovi, v primeru 1 spremenljivki
+c, d | členi v oklepaju po izpostavljanju | | | v $x^2 + c$ je $c$ pozitivno število
 p | koeficient pri $x$ v tričleniku | p = a + b | |
 q | prosti člen tričlenika | q = a \cdot b | |
 :::

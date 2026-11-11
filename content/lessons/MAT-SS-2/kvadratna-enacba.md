@@ -61,7 +61,7 @@ Ne doseže. $D = 24{,}01 - 4 \cdot 4{,}9 \cdot 1{,}5 = 24{,}01 - 29{,}4 = -5{,}3
 | $D = 0$ | ena dvojna realna, $x_1 = x_2 = -\dfrac{b}{2a}$ | teme leži na osi $x$ |
 | $D < 0$ | dve konjugirano kompleksni | ne seka osi $x$ |
 
-V simulaciji spodaj (»Kvadratna enačba in diskriminanta«) spreminjaj samo $c$. Parabola se premika gor in dol. Opazuj, pri kateri vrednosti $c$ se teme ravno dotakne osi $x$: tam je $D = 0$.
+V simulaciji spodaj (»Kvadratna enačba in diskriminanta«) nastavi $a = 1$ in $b = -2$, nato spreminjaj samo $c$. Parabola se premika gor in dol. Opazuj, pri kateri vrednosti $c$ se teme ravno dotakne osi $x$: tam je $D = 0$.
 
 *Preveri:* koliko realnih rešitev ima $x^2 - 6x + 9 = 0$? ($D = 36 - 36 = 0$: ena dvojna, $x = 3$.)
 

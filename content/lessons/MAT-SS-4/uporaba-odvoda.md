@@ -109,7 +109,7 @@ $f'(x) > 0$: narašča, $f'(x) < 0$: pada; ekstrem, kjer $f'$ zamenja predznak
 **Rešitev:**
 
 1. Odvod: $f'(x) = 3x^2 - 6x - 9 = 3(x + 1)(x - 3)$.
-2. Stacionarni točki sta $x_1 = -1$ in $x_2 = 3$, ker je tam en od faktorjev enak $0$.
+2. Stacionarni točki sta $x_1 = -1$ in $x_2 = 3$, ker je tam eden od faktorjev enak $0$.
 3. Predznak preverimo s po eno testno točko na vsakem intervalu:
 
 | interval | testna točka | $f'$ | $f$ |

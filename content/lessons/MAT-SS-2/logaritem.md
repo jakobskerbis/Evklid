@@ -7,7 +7,7 @@ avtor: AI
 
 Poleti alge na ribniku vsak teden podvojijo površino, ki jo prekrivajo. Danes pokrivajo $1\,\text{m}^2$, čez $x$ tednov torej $2^x\,\text{m}^2$. Kdaj bodo pokrivale $5\,\text{m}^2$? Rešiti moramo enačbo $2^x = 5$.
 
-Tu odpove vse, kar znaš iz eksponentnih enačb: števila $5$ ne moreš zapisati kot potenco števila $2$, zato enačenje osnov ne gre, tipke $\log_2$ pa na računalu ni. Ima enačba sploh rešitev?
+Tu odpove vse, kar znaš iz eksponentnih enačb: števila $5$ ne moreš zapisati kot potenco števila $2$, zato enačenje osnov ne gre. Ima enačba sploh rešitev?
 
 Alge se za to ne zmenijo. Po dveh tednih pokrivajo $4\,\text{m}^2$, po treh $8\,\text{m}^2$, vmes pa površina raste brez skokov. Nekje med drugim in tretjim tednom torej pokrijejo natanko $5\,\text{m}^2$; graf $y = 2^x$ res seka premico $y = 5$ med $x = 2$ in $x = 3$. To število potrebuje ime in zapis: imenujemo ga **logaritem**, pišemo $\log_2 5$.
 

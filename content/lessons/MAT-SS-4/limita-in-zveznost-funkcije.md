@@ -252,19 +252,19 @@ Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na e
 + $1$
 > $x^2 + 5x + 6 = (x + 2)(x + 3)$; po krajšanju ostane $x + 3$, pri $x = -2$ je to $1$.
 
-? Po vklopu ojačevalnika se relativna jakost zvoka v dvorani spreminja po formuli $I(t) = \dfrac{12t^2 + 5}{4t^2 + 5}$. Kateri vrednosti se jakost približuje, ko $t \to \infty$?
+? Po vklopu ojačevalnika se relativna glasnost v dvorani spreminja po formuli $v(t) = \dfrac{12t^2 + 5}{4t^2 + 5}$. Kateri vrednosti se glasnost približuje, ko $t \to \infty$?
 - $1$
-~ To je $\frac{\infty}{\infty} = 1$, kar ne velja. (Vrednost $1$ ima jakost ob vklopu, pri $t = 0$.)
+~ To je $\frac{\infty}{\infty} = 1$, kar ne velja. (Vrednost $1$ ima glasnost ob vklopu, pri $t = 0$.)
 - $\infty$
-~ Števec res raste čez vse meje, a imenovalec raste enako hitro.
+~ Števec res raste čez vse meje, a tudi imenovalec; oba rasteta s $t^2$, zato je ulomek omejen.
 + $3$
 - $12$
 ~ Upoštevati moraš tudi vodilni koeficient imenovalca, $4$.
 > Delimo z $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$.
 
 :::simboli
-f | funkcija (relativna moč zvoka v smeri $x$) | f(x) = \dfrac{\sin x}{x} |  |
-x | neodvisna spremenljivka (pri zvočniku odvisna od kota) |  |  | argument sinusa, v radianih
+f | funkcija |  |  | v uvodu relativna moč zvoka v smeri $x$: $f(x) = \dfrac{\sin x}{x}$
+x | neodvisna spremenljivka (pri zvočniku odvisna od kota) |  |  | pri $\sin x$ v radianih
 a | točka, h kateri se približuje $x$ |  |  |
 L | limita funkcije |  |  |
 g | funkcija s skokom pri $x = 1$ |  |  |
@@ -275,6 +275,6 @@ v | relativna glasnost (ovojnica) |  | – |
 t | čas |  | s |
 k | parameter ovojnice |  | s^{-1} |
 c | konstanta v števcu |  |  |
-n | pozitiven eksponent |  |  |
+n | naravno število: indeks člena zaporedja ali eksponent |  |  |
 \pi | število pi |  |  | $\pi \approx 3{,}14$
 :::

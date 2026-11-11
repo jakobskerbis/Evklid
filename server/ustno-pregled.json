@@ -291,8 +291,13 @@
    "o": "D"
   },
   "FIZ-SS-2/plinska-enacba#p1": {
-   "h": "4345501fe815",
-   "o": "D"
+   "h": "d1939acde46a",
+   "o": "D",
+   "r": "Samostojno vprašanje z vsemi podatki; razlaga s trki molekul ni vprašana, zato ostaneta le odgovor in enačba.",
+   "k": [
+    "Prostornini sta enaki",
+    "V enačbi $pV = nRT$ ni molske mase: šteje le število molekul, ne njihova masa"
+   ]
   },
   "FIZ-SS-2/prevajanje-toplote-in-sevanje#p0": {
    "h": "ca902d959c05",
@@ -971,8 +976,13 @@
    "o": "D"
   },
   "MAT-SS-1/osnovni-geometrijski-pojmi#p1": {
-   "h": "6ddb446ff102",
-   "o": "D"
+   "h": "1b4d5bec77d6",
+   "o": "D",
+   "r": "Položaj (nevzporedni žici in prečnica) je opisan v vprašanju samem; nagib žice iz razlike kotov ni vprašan.",
+   "k": [
+    "Ne. Istoležna kota sta enaka *zato*, ker sta premici vzporedni",
+    "Po obratu pravila bi enaka istoležna kota pomenila, da sta žici vzporedni, kar pa nista"
+   ]
   },
   "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti#p2": {
    "h": "5629e268d049",
@@ -1068,8 +1078,9 @@
    "o": "D"
   },
   "MAT-SS-2/potencna-in-korenska-funkcija#p1": {
-   "h": "d0ffb95fb2c0",
-   "o": "D"
+   "h": "3c20dfbebc7b",
+   "o": "D",
+   "r": "Samostojno vprašanje; oba dela (kateri x in kaj storiti) pokrijejo vsi štirje pojmi."
   },
   "MAT-SS-2/transformacije-grafov#p0": {
    "h": "6eb30da6d32a",

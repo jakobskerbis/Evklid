@@ -212,7 +212,7 @@ Limita je ena sama: če bi imelo zaporedje limiti $L_1 \ne L_2$, bi izbrali $\va
 - Limita postane $7$, ker se zaporedje zdaj začne s samimi sedmicami.
 ~ Limito določajo členi daleč v zaporedju. Zunaj okolice sme biti končno mnogo členov.
 - Limite ni več, ker zaporedje ni več monotono.
-~ Monotonost ni pogoj za limito. Od $a_{1001}$ naprej so členi enaki kot prej in se bližajo $0$.
+~ Zaporedje je še vedno padajoče (le ne več strogo), pa tudi sicer monotonost ni pogoj za limito. Od $a_{1001}$ naprej so členi enaki kot prej in se bližajo $0$.
 + Limita ostane $0$.
 > Spremenili smo le končno mnogo členov. V vsaki okolici števila $0$ so še vedno vsi členi od nekega indeksa naprej (zdaj vsaj od $1001$).
 

@@ -189,7 +189,7 @@ $\Delta m \approx 4{,}28\cdot10^{9}\,\mathrm{kg}$, več kot štiri milijone ton 
 Kako astronomi iz treh meritev ugotovijo, kako velika je zvezda, ki je nihče ne more obiskati? Vzemimo Sirij.
 
 1. **Razdalja iz paralakse.** Izmerjena paralaksa je $p = 0{,}379''$. Torej $d = 1/0{,}379 = 2{,}64\,\mathrm{pc}$, to je $2{,}64 \cdot 3{,}09\cdot10^{16} = 8{,}16\cdot10^{16}\,\mathrm{m}$ ali $8{,}6$ svetlobnega leta.
-2. **Izsev iz svetlosti.** Na Zemlji izmerimo od Sirija $j = 1{,}15\cdot10^{-7}\,\mathrm{W/m^2}$. Izsev je $L = 4\pi d^2 j = 8{,}36\cdot10^{34}\,\mathrm{m^2} \cdot 1{,}15\cdot10^{-7}\,\mathrm{W/m^2} \approx 9{,}6\cdot10^{27}\,\mathrm{W}$, okoli $25$-krat več kot Sonce.
+2. **Izsev iz svetlosti.** Na Zemlji izmerimo od Sirija $j = 1{,}15\cdot10^{-7}\,\mathrm{W/m^2}$. Izsev je $L = 4\pi d^2 j = 8{,}37\cdot10^{34}\,\mathrm{m^2} \cdot 1{,}15\cdot10^{-7}\,\mathrm{W/m^2} \approx 9{,}6\cdot10^{27}\,\mathrm{W}$, okoli $25$-krat več kot Sonce.
 3. **Temperatura iz barve.** Sirij seva najmočneje pri $293\,\mathrm{nm}$, zato $T = \dfrac{2{,}90\cdot10^{-3}}{2{,}93\cdot10^{-7}} \approx 9900\,\mathrm{K}$.
 4. **Moč kvadratnega metra.** $\sigma T^4 = 5{,}67\cdot10^{-8} \cdot 9900^4 = 5{,}45\cdot10^{8}\,\mathrm{W/m^2}$.
 5. **Površina in polmer.** Površina je $\dfrac{L}{\sigma T^4} = \dfrac{9{,}6\cdot10^{27}}{5{,}45\cdot10^{8}} \approx 1{,}76\cdot10^{19}\,\mathrm{m^2}$. Iz $4\pi R^2$ sledi $R \approx 1{,}18\cdot10^{9}\,\mathrm{m}$, kar je $1{,}7$ polmera Sonca.

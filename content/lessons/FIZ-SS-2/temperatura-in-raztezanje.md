@@ -125,7 +125,7 @@ $\Delta V = S \, \Delta h$, nato iz $\Delta V = \beta V_0 \Delta T$ izrazimo $V_
 
 1. Višek alkohola zapolni del kapilare, ki je valj z osnovno ploskvijo $S$ in višino $\Delta h$: $\Delta V = 0{,}02\,\mathrm{mm^2} \cdot 15\,\mathrm{mm} = 0{,}3\,\mathrm{mm^3}$.
 2. Ta višek nastane z raztezanjem alkohola v bučki, zato $V_0 = \dfrac{0{,}3\,\mathrm{mm^3}}{1{,}1 \cdot 10^{-3}\,\mathrm{K^{-1}} \cdot 1\,\mathrm{K}} \approx 273\,\mathrm{mm^3}$.
-3. Preverimo smiselnost: $273\,\mathrm{mm^3}$ je približno $0{,}27\,\mathrm{cm^3}$, kar je kapljica, ki gre v majhno bučko.
+3. Preverimo smiselnost: $273\,\mathrm{mm^3}$ je približno $0{,}27\,\mathrm{cm^3}$, kar je nekaj kapljic, ki gredo v majhno bučko.
 4. Odgovor: v bučki mora biti okoli $0{,}27\,\mathrm{cm^3}$ alkohola. Steklo smemo zanemariti, ker se razteza $40$-krat manj.
 
 ### Primer 4: zdaj ti
@@ -174,7 +174,7 @@ Predstavljaj si vrsto ljudi, ki stojijo z rameni skupaj. Na znak vsak začne zib
 - Daljša vrsta se podaljša bolj, ker vsak človek doda svoj delček. To je $L_0$.
 - Nekateri potrebujejo več prostora kot drugi (različna snov). To je $\alpha$.
 
-Če ljudje stojijo v gneči na trgu, se razmaknejo v vse smeri, ne le v eno. Trg postane tesen hitreje kot vrsta: to je prostorninsko raztezanje s približno trikrat večjim koeficientom. Primerjava ima mejo: delci v trdnini se ne premikajo prosto, ampak nihajo okoli stalnih leg.
+Če ljudje stojijo v gneči na trgu, se razmaknejo v dve smeri, ne le v eno. Trg postane tesen hitreje kot vrsta. Delci v telesu se razmaknejo v vse tri smeri: to je prostorninsko raztezanje s približno trikrat večjim koeficientom. Primerjava ima mejo: delci v trdnini se ne premikajo prosto, ampak nihajo okoli stalnih leg.
 
 ## Drugače: Bolj natančno
 

@@ -96,7 +96,7 @@ Ulomka razširimo na skupni imenovalec $v$ (najmanjši skupni večkratnik imenov
 
 1. Najmanjši skupni večkratnik števil $4$ in $6$ je $v(4,6) = 12$.
 2. Razširimo: $\dfrac{3}{4} = \dfrac{3 \cdot 3}{4 \cdot 3} = \dfrac{9}{12}$ in $\dfrac{5}{6} = \dfrac{5 \cdot 2}{6 \cdot 2} = \dfrac{10}{12}$.
-3. Seštejemo: $V = \dfrac{9}{12} + \dfrac{10}{12} = \dfrac{19}{12}$. Ulomek je nekrajšljiv, ker je $19$ praštevilo.
+3. Seštejemo: $V = \dfrac{9}{12} + \dfrac{10}{12} = \dfrac{19}{12}$. Ulomek je nekrajšljiv, ker je $19$ praštevilo in ne deli števila $12$.
 4. Mešano število: $19 = 1 \cdot 12 + 7$, torej $\dfrac{19}{12} = 1\dfrac{7}{12}$.
 5. Odgovor: skupaj potrebuješ $\dfrac{19}{12}\,\text{l} = 1\dfrac{7}{12}\,\text{l}$ mleka, to je približno $1{,}58\,\text{l}$.
 
@@ -145,7 +145,7 @@ Periodično število pretvorimo v ulomek, vsa števila zapišemo na skupnem imen
    - $-0{,}7 = -\dfrac{7}{10} = -\dfrac{84}{120}$,
    - $\dfrac{5}{8} = \dfrac{75}{120}$.
 5. Števci po velikosti: $-84 < -80 < 72 < 75 < 80$.
-6. Velja $-0{,}7 < -\dfrac{2}{3} < \dfrac{3}{5} < \dfrac{5}{8} < 0{,}\overline{6}$. Ekipi B in C imata isto absolutno vrednost, a minus postavi B daleč levo.
+6. Velja $-0{,}7 < -\dfrac{2}{3} < \dfrac{3}{5} < \dfrac{5}{8} < 0{,}\overline{6}$. Števili ekip B in C sta enako daleč od $0$, a minus postavi B daleč levo.
 7. Odgovor: od najslabše do najboljše so ekipe D, B, A, E in C.
 
 ### Primer 4 – zdaj ti
