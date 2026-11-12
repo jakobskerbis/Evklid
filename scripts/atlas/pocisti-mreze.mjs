@@ -28,9 +28,7 @@ const MODELI = path.join(ROOT, "public", "3d", "modeli");
 // datoteka → [vzorec imena dela, koraki]. Jetra za telefon niso v načrtu: tanke vejice so tam namenoma sploščene v
 // dvostranske trakove (pari trikotnikov z istimi oglišči), ki jih »blazinice« ne sme odstraniti.
 export const NACRT = {
-  "organi-3d/pljuca.glb": [[/ (artery|vein) of (left|right) lung$/, ["izrojeni", "blazinice", "stisk"]]],
-  "organi-3d/pljuca-telefon.glb": [[/ (artery|vein) of (left|right) lung$/, ["izrojeni", "blazinice", "stisk"]]],
-  "organi-3d/jetra.glb": [[/ branches \(lastno\)$/, ["izrojeni", "blazinice", "stisk"]]],
+  // pljuča in jetra (2026-11-12): cevi nastanejo kot zaprte mreže pri izvozu (drevesa.py), čiščenje ni več potrebno
   "organi-3d/oko.glb": [[/^iris_L/, ["izrojeni", "navitje"]]],
   "organi-3d/oko-telefon.glb": [[/^iris_L/, ["izrojeni", "navitje"]]],
 };

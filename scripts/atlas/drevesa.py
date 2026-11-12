@@ -1,0 +1,459 @@
+# Drevesa cevi v organih (lastno delo, CC BY-SA 4.0): drobne veje bronhijev in žil v pljučih, portalna vena, jetrne
+# vene, jetrne arterije in žolčni vodi v jetrih. Z-Anatomy ima veje le do segmentov (pljuča) oziroma samo debla (jetra);
+# pravo drevo se v organu razveji do režnjičev. Veje rastejo s kolonizacijo prostora (Runions et al. 2007: točke privlaka
+# v notranjosti organa, vsaka vleče najbližje vozlišče drevesa, točka ugasne, ko jo veja doseže), polmeri po Murrayjevem
+# zakonu (r_starš^e = Σ r_otrok^e), cevi so zaprta telesa (začetek skrit v starševski cevi, konec zaobljen).
+# Uporaba: izvozi-organe.py (»dodaj«: pljucna_drevesa, jetra_geometrija.jetra_deli). Ponovljivo (seme).
+import bpy, bmesh, math, random, re
+from mathutils import Vector
+from mathutils.bvhtree import BVHTree
+from mathutils.kdtree import KDTree
+
+_SMERI = [Vector((0.0123, 0.0071, 1)).normalized(), Vector((1, 0.0211, 0.0137)).normalized(), Vector((0.0171, 1, 0.0093)).normalized()]
+
+
+class Notranjost:
+    """Notranjost unije zaprtih mrež: znotraj(p), globina(p) (m pod površino, negativna zunaj)."""
+
+    def __init__(self, mreze):
+        self.bvh = []
+        bm = bmesh.new()
+        for me in mreze:
+            bm.from_mesh(me)
+            b1 = bmesh.new(); b1.from_mesh(me); self.bvh.append(BVHTree.FromBMesh(b1)); b1.free()
+        self.vse = BVHTree.FromBMesh(bm)
+        self.lo = Vector([min(v.co[i] for v in bm.verts) for i in range(3)])
+        self.hi = Vector([max(v.co[i] for v in bm.verts) for i in range(3)])
+        bm.free()
+
+    @staticmethod
+    def _parnost(t, p, d):
+        n = 0; q = p.copy()
+        for _ in range(64):
+            h = t.ray_cast(q, d)
+            if h[0] is None:
+                break
+            n += 1; q = h[0] + d * 1e-5
+        return n % 2 == 1
+
+    def v_mrezi(self, i, p):
+        return sum(self._parnost(self.bvh[i], p, d) for d in _SMERI) >= 2
+
+    def kje(self, p):
+        """Indeks mreže, v kateri je točka (−1: zunaj)."""
+        for i in range(len(self.bvh)):
+            if self.v_mrezi(i, p):
+                return i
+        return -1
+
+    def znotraj(self, p):
+        return self.kje(p) >= 0
+
+    def globina(self, p):
+        d = self.vse.find_nearest(p)[3]
+        return d if self.znotraj(p) else -d
+
+
+def privlaki(notr, razmik, rob, rnd, sprejmi=None):
+    """Točke privlaka v notranjosti (vsaj »rob« pod površino), približno ena na razmik³ (drhteča mreža)."""
+    t = []
+    n = [max(1, int((notr.hi[i] - notr.lo[i]) / razmik)) for i in range(3)]
+    for i in range(n[0] + 1):
+        for j in range(n[1] + 1):
+            for k in range(n[2] + 1):
+                p = Vector((notr.lo.x + (i + rnd.uniform(-0.45, 0.45)) * razmik, notr.lo.y + (j + rnd.uniform(-0.45, 0.45)) * razmik,
+                            notr.lo.z + (k + rnd.uniform(-0.45, 0.45)) * razmik))
+                if notr.vse.find_nearest(p)[3] >= rob and notr.znotraj(p) and (sprejmi is None or sprejmi(p)):
+                    t.append(p)
+    return t
+
+
+def rasti(vozli, tocke, korak, vpliv, ubij, dovoli, najvec=400, vztrajnost=0.35):
+    """Kolonizacija prostora. vozli: [dict(p, stars (indeks ali −1), r (stalni polmer ali None), rast (sme pognati))];
+    seznam se dopolni z novimi vozlišči (r None). dovoli(a, b): ali sme veja od a do b (ostane v organu)."""
+    ziva = list(tocke)
+    slepe = set()
+    for _ in range(najvec):
+        if not ziva:
+            break
+        kd = KDTree(len(vozli))
+        for i, v in enumerate(vozli):
+            kd.insert(v["p"], i)
+        kd.balance()
+        vlek = {}
+        for a in ziva:
+            for co, i, d in kd.find_n(a, 4):
+                if d <= vpliv and vozli[i].get("rast", True) and i not in slepe:
+                    vlek.setdefault(i, []).append(a); break
+        if not vlek:
+            break
+        novo = 0
+        for i, sez in vlek.items():
+            v = vozli[i]
+            d = sum(((a - v["p"]).normalized() for a in sez), Vector())
+            if v["stars"] >= 0 and v.get("r") is None:
+                d += (v["p"] - vozli[v["stars"]]["p"]).normalized() * vztrajnost * len(sez)
+            if d.length < 1e-6:
+                slepe.add(i); continue
+            q = v["p"] + d.normalized() * korak
+            if any((vozli[o]["p"] - q).length < korak * 0.45 for o in v.setdefault("otroci", [])) or not dovoli(v["p"], q):
+                slepe.add(i); continue
+            vozli.append(dict(p=q, stars=i, r=None)); v["otroci"].append(len(vozli) - 1); novo += 1
+        kd = KDTree(len(vozli))
+        for i, v in enumerate(vozli):
+            kd.insert(v["p"], i)
+        kd.balance()
+        ziva = [a for a in ziva if kd.find(a)[2] > ubij]
+        if not novo:
+            break
+    return vozli
+
+
+def polmeri(vozli, r_list, e=2.7, delez=0.8):
+    """Murray: polmer novih vozlišč od listov proti korenu; ob stiku s stalnim vozliščem največ delez · njegov polmer."""
+    otroci = {}
+    for i, v in enumerate(vozli):
+        if v["stars"] >= 0:
+            otroci.setdefault(v["stars"], []).append(i)
+    listi = [0] * len(vozli)
+    for i in range(len(vozli) - 1, -1, -1):  # otroci imajo vedno večji indeks od starša
+        v = vozli[i]
+        if v.get("r") is not None and not v.get("nov"):
+            continue
+        ot = [o for o in otroci.get(i, [])]
+        if not ot:
+            v["r"] = r_list; listi[i] = 1
+        else:
+            v["r"] = sum(vozli[o]["r"] ** e for o in ot) ** (1 / e); listi[i] = sum(listi[o] for o in ot)
+        v["nov"] = True
+    # omejitev ob stalnem deblu: veja ne sme biti debelejša od debla
+    for i, v in enumerate(vozli):
+        if v.get("nov") and v["stars"] >= 0 and not vozli[v["stars"]].get("nov"):
+            m = vozli[v["stars"]]["r"] * delez
+            if v["r"] > m:
+                f = m / v["r"]
+                sklad = [i]
+                while sklad:
+                    j = sklad.pop(); vozli[j]["r"] *= f ** 0.6 if j != i else f
+                    sklad += otroci.get(j, [])
+    for i, v in enumerate(vozli):
+        v["listi"] = listi[i]
+    return otroci
+
+
+def veje(vozli, otroci, najmanj_listov=1):
+    """Nove veje kot lomljenke [(P, R)]: pri razcepu najdebelejši otrok nadaljuje vejo, drugi začnejo svojo v starševi osi."""
+    izhod = []
+    zacetki = [i for i, v in enumerate(vozli) if v.get("nov") and v["stars"] >= 0 and not vozli[v["stars"]].get("nov")]
+    sklad = [(i, [vozli[vozli[i]["stars"]]["p"]], [min(vozli[i]["r"], vozli[vozli[i]["stars"]]["r"])]) for i in zacetki]
+    while sklad:
+        i, P, R = sklad.pop()
+        while True:
+            v = vozli[i]
+            if v["listi"] < najmanj_listov:
+                break
+            P.append(v["p"]); R.append(v["r"])
+            ot = sorted((o for o in otroci.get(i, []) if vozli[o]["listi"] >= najmanj_listov), key=lambda o: -vozli[o]["r"])
+            if not ot:
+                break
+            for o in ot[1:]:
+                sklad.append((o, [v["p"]], [min(vozli[o]["r"], v["r"])]))
+            i = ot[0]
+        if len(P) >= 2:
+            izhod.append((P, R))
+    return izhod
+
+
+def zgladi(P, R, krat=4):
+    """Notranje točke proti povprečju sosedov (konca ostaneta), nato vmesne točke (Chaikin brez krajšanja)."""
+    P = [p.copy() for p in P]
+    for _ in range(krat):
+        Q = [P[0]] + [(P[i - 1] + P[i] * 2 + P[i + 1]) / 4 for i in range(1, len(P) - 1)] + [P[-1]]
+        P = Q
+    return P, list(R)
+
+
+def _okvirji(P):
+    n = len(P)
+    T = [(P[min(i + 1, n - 1)] - P[max(i - 1, 0)]).normalized() for i in range(n)]
+    ref = T[0].orthogonal().normalized(); out = []
+    for t in T:
+        ref = ref - t * ref.dot(t)
+        ref = ref.normalized() if ref.length > 1e-9 else t.orthogonal().normalized()
+        out.append((t, ref, t.cross(ref)))
+    return out
+
+
+def cev(bm, P, R, seg, kupola=True, zacetek_kupola=False, stena=0.0, casa=None):
+    """Zaprta cev v bmesh. stena > 0: votla cev s steno (notranja ploskev z normalami v svetlino, na koncih obroč stene)."""
+    okv = _okvirji(P)
+    def obroc(p, r, o):
+        return [bm.verts.new(p + (o[1] * math.cos(2 * math.pi * k / seg) + o[2] * math.sin(2 * math.pi * k / seg)) * r) for k in range(seg)]
+    zun = [obroc(p, r, o) for p, r, o in zip(P, R, okv)]
+    for i in range(len(zun) - 1):
+        for k in range(seg):
+            bm.faces.new([zun[i][k], zun[i][(k + 1) % seg], zun[i + 1][(k + 1) % seg], zun[i + 1][k]])
+    if stena > 0:
+        nt = [obroc(p, max(r - stena, r * 0.6), o) for p, r, o in zip(P, R, okv)]
+        for i in range(len(nt) - 1):
+            for k in range(seg):
+                bm.faces.new([nt[i + 1][k], nt[i + 1][(k + 1) % seg], nt[i][(k + 1) % seg], nt[i][k]])
+        for i, smer in ((0, -1), (len(P) - 1, 1)):
+            for k in range(seg):
+                q = [zun[i][k], zun[i][(k + 1) % seg], nt[i][(k + 1) % seg], nt[i][k]]
+                bm.faces.new(q[::-1] if smer < 0 else q)
+        return
+    for i, smer, kup in ((0, -1, zacetek_kupola), (len(P) - 1, 1, kupola)):
+        t = okv[i][0]
+        if i == 0 and casa:  # prerezan začetek žile: obroč stene in slepa svetlina (čaša globine casa[1])
+            w, glob = casa
+            n0 = obroc(P[0], R[0] - w, okv[0]); n1 = obroc(P[0] + t * glob, (R[0] - w) * 0.9, okv[0]); dno = bm.verts.new(P[0] + t * glob * 1.05)
+            for k in range(seg):
+                k1 = (k + 1) % seg
+                bm.faces.new([zun[0][k1], zun[0][k], n0[k], n0[k1]])
+                bm.faces.new([n0[k1], n0[k], n1[k], n1[k1]])
+                bm.faces.new([n1[k1], n1[k], dno])
+            continue
+        if kup:  # nizka kupola: vmesni obroč in vrh
+            vm = obroc(P[i] + t * smer * R[i] * 0.45, R[i] * 0.72, okv[i])
+            for k in range(seg):
+                q = [zun[i][k], zun[i][(k + 1) % seg], vm[(k + 1) % seg], vm[k]]
+                bm.faces.new(q[::-1] if smer < 0 else q)
+            rob_ = vm; vrh = bm.verts.new(P[i] + t * smer * R[i] * 0.75)
+        else:
+            rob_ = zun[i]; vrh = bm.verts.new(P[i])
+        for k in range(seg):
+            q = [rob_[k], rob_[(k + 1) % seg], vrh]
+            bm.faces.new(q[::-1] if smer < 0 else q)
+
+
+def st_stranic(r, telefon=False):
+    if telefon:
+        return 8 if r > 0.005 else 6 if r > 0.003 else 5 if r > 0.0015 else 4
+    return 16 if r > 0.006 else 12 if r > 0.003 else 8 if r > 0.0014 else 6
+
+
+def redci(P, R, korak):
+    """Lomljenko razredči: točka ostane, če je od zadnje ohranjene dlje kot korak(r) ali se smer zasuka > ~14°."""
+    oP, oR = [P[0]], [R[0]]
+    for i in range(1, len(P) - 1):
+        a = (P[i] - oP[-1]); b = (P[i + 1] - P[i])
+        if a.length >= korak(R[i]) or (a.length > 1e-6 and b.length > 1e-6 and a.normalized().dot(b.normalized()) < 0.97 and a.length > korak(R[i]) * 0.4):
+            oP.append(P[i]); oR.append(R[i])
+    oP.append(P[-1]); oR.append(R[-1])
+    return oP, oR
+
+
+def mreza_vej(seznam, ime, telefon=False, stena=None, kupole=(False, True)):
+    """Lomljenke [(P, R)] → ena mreža zaprtih cevi. stena(r) → debelina stene (0 = polna cev) za vejo s polmerom r."""
+    bm = bmesh.new()
+    for P, R in seznam:
+        P, R = zgladi(P, R, 10 if max(R) < 0.0015 else 4)  # tanke vejice bolj: kolonizacija jih zvija
+        P, R = redci(P, R, (lambda r: max(0.009, 5.0 * r)) if telefon else (lambda r: max(0.0035, 1.8 * r)))
+        if len(P) < 2 or (P[-1] - P[0]).length < 1e-5:
+            continue
+        r = max(R)
+        cev(bm, P, R, st_stranic(r, telefon), kupola=kupole[1], zacetek_kupola=kupole[0], stena=stena(r) if stena else 0.0)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    me = bpy.data.meshes.new(ime); bm.to_mesh(me); bm.free()
+    for p in me.polygons:
+        p.use_smooth = True
+    return me
+
+
+def tris(me):
+    return sum(len(p.vertices) - 2 for p in me.polygons)
+
+
+def poenostavi(me, delez, tmp):
+    """Kopija mreže, poenostavljena na delež trikotnikov (telefon)."""
+    m = me.copy()
+    bm = bmesh.new(); bm.from_mesh(m); bmesh.ops.triangulate(bm, faces=bm.faces); bm.to_mesh(m); bm.free()
+    o = bpy.data.objects.new("_p", m); tmp.objects.link(o)
+    mod = o.modifiers.new("dec", "DECIMATE"); mod.ratio = delez
+    m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+    bpy.data.objects.remove(o)
+    for p in m2.polygons:
+        p.use_smooth = True
+    return m2
+
+
+def zapri_luknje(me, stranic=400):
+    """Zapre luknje v mreži (odprti robovi režnjev pljuč ob hilusu), da je telo zaprto."""
+    bm = bmesh.new(); bm.from_mesh(me)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
+    rob = [e for e in bm.edges if len(e.link_faces) == 1]
+    if rob:
+        bmesh.ops.holes_fill(bm, edges=rob, sides=stranic)
+        bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 4])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    ostalo = sum(1 for e in bm.edges if len(e.link_faces) == 1)
+    bm.to_mesh(me); bm.free()
+    return len(rob), ostalo
+
+
+def pljucna_drevesa(osnovni, cfg, tmp):
+    """Pljuča: režnji postanejo zaprta telesa; iz segmentnih vej Z-Anatomy zrastejo subsegmentne veje bronhijev, pljučnih
+    arterij in ven do režnjičev (3 drevesa, vsako svoje točke privlaka). Telefon: iste veje brez najtanjših."""
+    rezn = [r for r in osnovni if r[2] == "pljuca"]
+    tel = cfg.setdefault("_telefon", {})
+    nast = cfg.get("drevesa", {})
+    for r in rezn:
+        n, ost = zapri_luknje(r[1])
+        # režnji po SUBSURF ob špranjah segajo v soseda: oglišča malo navznoter po normali (prej cfg »skrci«)
+        nor = [v.normal.copy() for v in r[1].vertices]
+        for v, nn in zip(r[1].vertices, nor):
+            v.co -= nn * nast.get("skrci", 0.0012)
+        r[1].update()
+        tel[r[0]] = poenostavi(r[1], nast.get("rezenjTelefon", 0.36), tmp)
+        r[4] = "(lastno) " + r[4]
+        print(f"[organi] {r[0]}: zaprtih robov {n}, ostane {ost}; trikotnikov {tris(r[1])} / {tris(tel[r[0]])}")
+    notr = Notranjost([r[1] for r in rezn])
+    rob = 0.004
+    def dovoli(a, b):
+        if notr.vse.find_nearest(b)[3] < rob:
+            return False
+        i = notr.kje(b)
+        return i >= 0 and notr.v_mrezi(i, a.lerp(b, 0.5)) and notr.v_mrezi(i, a)
+    # Veje Z-Anatomy v pljučih (tkiva »…-v«): cevi na novo iz središčnic krivulj (polne, 6–12 stranic; mreža krivulje ima
+    # 28 stranic in bi jo poenostavitev na telefonu zmečkala), konec odrezan, kjer veja zapusti reženj.
+    def v_reznju(p, r):
+        return notr.vse.find_nearest(p)[3] >= r + 0.0035 and notr.znotraj(p)
+    stalne = {}
+    for r in osnovni:
+        if not r[2].endswith("-v"):
+            continue
+        sez = []
+        for P, R in cfg["_krivulje"].get(r[0], []):
+            P = [Vector(p) for p in P]; R = [max(x, 0.0007) for x in R]
+            ok = [v_reznju(p, x) for p, x in zip(P, R)]
+            if any(ok):  # distalni konec zunaj režnja odpade (korenina je pri hilusu: bližje središču obeh kril)
+                if abs(P[0].x) > abs(P[-1].x):
+                    P.reverse(); R.reverse(); ok.reverse()
+                prvi = next(i for i, o in enumerate(ok) if o)
+                # začetek zunaj režnja ostane samo, če vodi proti sredini (hilus); sicer je to konec, ki štrli iz režnja
+                if prvi and any(abs(p.x) > abs(P[prvi].x) + 0.002 for p in P[:prvi]):
+                    P, R, ok = P[prvi:], R[prvi:], ok[prvi:]; prvi = 0
+                zadnji = next((i for i in range(prvi, len(ok)) if not ok[i]), len(ok)) - 1  # do prvega izhoda iz režnja
+                P, R, ok = P[:zadnji + 1], R[:zadnji + 1], ok[:zadnji + 1]
+            elif max(R) < 0.0022 and sum(abs(p.x) for p in P) / len(P) > 0.055:
+                continue  # tanka veja tik pod plevro, daleč od hilusa: v prerezu bi lebdela kot črtica
+            dolz = sum((b_ - a_).length for a_, b_ in zip(P, P[1:]))
+            if dolz < 0.008 and max(R) < 0.002:
+                continue  # kratek ostanek po obrezovanju
+            if len(P) >= 2:
+                # konec veje se stanjša (zadnja tretjina na 55 %): veja se nadaljuje v drobnejše, ne konča se kot top krn
+                L = [0.0]
+                for a_, b_ in zip(P, P[1:]):
+                    L.append(L[-1] + (b_ - a_).length)
+                R = [x * (1 - 0.45 * max(0.0, (l / max(L[-1], 1e-9) - 0.65) / 0.35)) for x, l in zip(R, L)]
+                sez.append((P, R, ok))
+        if not sez:
+            continue
+        stalne[r[0]] = (r[2], sez)
+        gol = [(P, R) for P, R, _ in sez]
+        r[1] = mreza_vej(gol, r[0], kupole=(True, True)); tel[r[0]] = mreza_vej(gol, r[0] + " t", telefon=True, kupole=(True, True))
+        r[4] = "(lastno) " + r[4]
+    print(f"[organi] veje v pljučih iz središčnic: {len(stalne)} delov, trikotnikov {sum(tris(r[1]) for r in osnovni if r[0] in stalne)} / {sum(tris(tel[i]) for i in stalne)}")
+    izhod = []
+    for seme, tkivo, del_, ime, r_list in ((11, "dihalna-v", "bronhiji", "Evklid subsegmental bronchi (lastno)", 0.00065),
+                                           (23, "pljucna-arterija-v", "pljucne-arterije", "Evklid subsegmental pulmonary arteries (lastno)", 0.0006),
+                                           (37, "pljucna-vena-v", "pljucne-vene", "Evklid subsegmental pulmonary veins (lastno)", 0.0006)):
+        rnd = random.Random(seme)
+        vozli = []
+        for ime_s, (tk_s, sez) in stalne.items():
+            if tk_s != tkivo:
+                continue
+            for P, R, ok in sez:
+                pred = -1
+                for k in range(0, len(P), 2):
+                    if not ok[k]:
+                        pred = -1; continue
+                    # nove veje poženejo samo iz konca segmentne veje (ne iz vsakega vozlišča: ščetina)
+                    vozli.append(dict(p=P[k], stars=pred, r=max(R[k], 0.0012), rast=False)); pred = len(vozli) - 1
+                if pred >= 0:
+                    vozli[pred]["rast"] = True
+        n0 = len(vozli)
+        if not n0 or not nast.get("veje"):
+            continue
+        tocke = privlaki(notr, nast.get("razmik", 0.017), rob + 0.002, rnd)
+        rasti(vozli, tocke, nast.get("korak", 0.005), nast.get("vpliv", 0.045), nast.get("ubij", 0.008), dovoli, vztrajnost=0.9)
+        ot = polmeri(vozli, r_list, e=2.4, delez=0.7)
+        v_r = veje(vozli, ot, 1); v_t = veje(vozli, ot, nast.get("telefonListi", 3))
+        me = mreza_vej(v_r, ime); me_t = mreza_vej(v_t, ime + " t", telefon=True)
+        tel[ime] = me_t
+        print(f"[organi] {ime}: {n0} stalnih, {len(vozli) - n0} novih vozlišč, {len(tocke)} točk, vej {len(v_r)} / {len(v_t)}, trikotnikov {tris(me)} / {tris(me_t)}")
+        izhod.append([ime, me, tkivo, del_, ime + " / Evklid"])
+    return izhod
+
+
+def ledvicne_zile(osnovni, cfg, tmp):
+    """Ledvična arterija in vena (lastno): Z-Anatomy žili ob ledvici HRA ne segata do hilusa (vena je bila kratek obroč
+    v zraku, arterija sploščena). Od spredaj nazaj: vena, arterija, ledvični meh. Vena nastane v sinusu iz treh pritokov,
+    arterija se pred hilusom razdeli v sprednjo (tri segmentne veje pred mehom) in zadnjo vejo (za mehom). Medialna konca
+    sta prerezana (stena in svetlina)."""
+    pap = [sum((v.co for v in me.vertices), Vector()) / len(me.vertices) for ime, me, *_ in osnovni if "papilla" in ime]
+    hil = next(me for ime, me, *_ in osnovni if "hilum" in ime)
+    hc = sum((v.co for v in hil.vertices), Vector()) / len(hil.vertices)
+    pc = sum(pap, Vector()) / len(pap)
+    m = hc - pc; m.z *= 0.25; m.normalize()  # medialno, iz ledvice
+    gor = Vector((0, 0, 1)); gor = (gor - m * gor.dot(m)).normalized()
+    spr = gor.cross(m).normalized()
+    if spr.y > 0:
+        spr = -spr  # spredaj = −y
+    T = lambda a, b, c: hc + m * a + spr * b + gor * c
+    def pot(tocke, r0, r1, n=14):
+        P = []
+        for i in range(len(tocke) - 1):
+            P += [tocke[i].lerp(tocke[i + 1], j / n) for j in range(n)]
+        P.append(tocke[-1])
+        P, _ = zgladi(P, [0] * len(P), 12)
+        return P, [r0 + (r1 - r0) * i / (len(P) - 1) for i in range(len(P))]
+    nast = cfg.get("zile", {})
+    rv, ra = nast.get("vena", 0.0048), nast.get("arterija", 0.0028)
+    L = nast.get("dolzina", 0.036)
+    vena = [("deblo", pot([T(L, 0.0075, -0.001), T(L * 0.55, 0.0078, -0.002), T(0.008, 0.007, -0.001)], rv, rv * 0.94))]
+    for dz, rr in ((0.015, 0.6), (0.001, 0.66), (-0.014, 0.6)):
+        vena.append(("veja", pot([T(0.012, 0.0072, -0.001), T(0.002, 0.006, dz * 0.55), T(-0.012, 0.004, dz)], rv * rr, rv * rr * 0.75)))
+    art = [("deblo", pot([T(L + 0.003, -0.0005, 0.007), T(L * 0.6, 0.0, 0.0065), T(0.017, 0.0005, 0.005)], ra, ra * 0.95))]
+    for dz, db in ((0.017, 0.002), (0.004, 0.0025), (-0.012, 0.002)):  # sprednja veja: segmentne arterije pred mehom
+        art.append(("veja", pot([T(0.02, 0.0005, 0.0052), T(0.008, 0.0015, 0.004 + dz * 0.4), T(-0.01, db, dz)], ra * 0.62, ra * 0.45)))
+    art.append(("veja", pot([T(0.02, 0.0005, 0.0052), T(0.01, -0.005, 0.006), T(-0.008, -0.009, 0.004)], ra * 0.6, ra * 0.42)))  # zadnja veja za mehom
+    # žila ne sme v ledvični meh ali sečevod (v peki bi tam nastala črna lisa, v prerezu prekrivanje): točke osi, ki so
+    # bližje od polmera + 1,2 mm, se odmaknejo (vena in sprednje veje naprej, zadnja veja arterije nazaj), nato glajenje
+    ovire = [r[1] for r in osnovni if r[2] == "meh" or "Ureter" in r[0]]
+    if ovire:
+        ovir = Notranjost(ovire)
+        def odmakni(P, R, smer):
+            P = [p.copy() for p in P]
+            for i, (p, r) in enumerate(zip(P, R)):
+                for _ in range(12):
+                    if not ovir.znotraj(p) and ovir.vse.find_nearest(p)[3] >= r + 0.0012:
+                        break
+                    p += smer * 0.0004
+            Q, _ = zgladi(P, [0] * len(P), 6)
+            Q[0] = P[0]; Q[-1] = P[-1]
+            return Q, R
+        vena = [(v, odmakni(P, R, spr)) for v, (P, R) in vena]
+        art = [(v, odmakni(P, R, -spr if i == len(art) - 1 else spr)) for i, (v, (P, R)) in enumerate(art)]
+    tel = cfg.setdefault("_telefon", {})
+    izhod = []
+    for ime, tkivo, del_, sez, stena in (("Renal vein (lastno)", "vena", "ledvicna-vena", vena, 0.0007), ("Renal artery (lastno)", "arterija", "ledvicna-arterija", art, 0.001)):
+        for t_ in (False, True):
+            bm = bmesh.new()
+            for vrsta, (P, R) in sez:
+                P2, R2 = redci(P, R, (lambda r: max(0.004, 2.2 * r)) if t_ else (lambda r: max(0.0015, 0.8 * r)))
+                seg = (10 if vrsta == "deblo" else 7) if t_ else (24 if vrsta == "deblo" else 14)
+                # votla cev po vsej dolžini: prerez pokaže obroč stene in temno svetlino (rezPresek z luknjaBarva), prerezan
+                # medialni konec pa svetlino
+                cev(bm, P2, R2, seg, stena=stena if vrsta == "deblo" else stena * 0.7)
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+            me = bpy.data.meshes.new(ime + (" t" if t_ else "")); bm.to_mesh(me); bm.free()
+            for p in me.polygons:
+                p.use_smooth = True
+            if t_:
+                tel[ime] = me
+            else:
+                izhod.append([ime, me, tkivo, del_, ime + " / Evklid"])
+    osnovni[:] = [r for r in osnovni if not re.search(r"renal (artery|vein)", r[0])]
+    return izhod

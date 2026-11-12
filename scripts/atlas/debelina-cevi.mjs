@@ -15,7 +15,7 @@ const MODELI = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..
 const ledvica = [
   // raven: prosti konec (nasproti »prehod.pri«) je bil poševno odrezan z zarezo; zadnjih »raven« metrov se poravna v ravnino
   [/^Ureter\.l$/, { polmer: 0.0021, prehod: { pri: [0.0, 0.006, -0.003], dolzina: 0.014 }, raven: 0.005 }],
-  [/^Left renal vein$/, { polmer: 0.0048 }],
+  // ledvični veni in arteriji da pravo mero že izvoz (drevesa.py, ledvicne_zile; 2026-11-12)
 ];
 const oko = [[/^Optic nerve \(II\)\.l$/, { polmer: 0.00175 }]];
 export const NACRT = {
