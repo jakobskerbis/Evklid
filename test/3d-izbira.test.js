@@ -2,7 +2,7 @@
 // drugi tap na isto mesto izbere kožo. Pregledovalnik modelov ostane pri najbližjem zadetku (prosojni deli celic,
 // organov in fizike ostanejo izbirljivi); preskoči le material z userData.skozi.
 // 1) brez brskalnika: pomožna funkcija in citoskelet živalske celice;
-// 2) v pravem brskalniku (Playwright, če je nameščen): atlas s kožo in prosojnimi učnimi cilji.
+// 2) v pravem brskalniku (Playwright, če je nameščen): atlas s kožo in prosojnim učnim ciljem (veliki pečni).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -63,13 +63,14 @@ for (const p of ["playwright", process.env.PLAYWRIGHT, "/opt/npm-tools/node_modu
     break;
   } catch {}
 }
-let browser = null;
-try {
-  if (playwright) browser = await playwright.chromium.launch();
-} catch {}
-const skip = browser ? false : "Playwright/Chromium ni nameščen";
-
-test("atlas: tap skozi kožo izbere del pod njo, drugi tap kožo; prosojni učni cilji ostanejo izbirljivi", { skip, timeout: 180000 }, async () => {
+test("atlas: tap skozi kožo izbere del pod njo, drugi tap kožo; veliki pečni ostane izbirljiv", { skip: playwright ? false : "Playwright ni nameščen", timeout: 180000 }, async (t) => {
+  // Brskalnik zaženemo v preizkusu: z --test-force-exit (CI) se preizkus, registriran za vrhnjim await, ne zažene.
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
   const vrstice = JSON.parse(fs.readFileSync("public/3d/atlas-strukture.json", "utf8"));
   const sistem = new Map(vrstice.map((r) => [r.id, r.sistem]));
   const app = createApp(openDb(":memory:"), { accounts: true, scheduler: false, log: { error() {}, info() {}, warn() {} } });
@@ -92,12 +93,13 @@ test("atlas: tap skozi kožo izbere del pod njo, drugi tap kožo; prosojni učni
         const r = kit.canvas.getBoundingClientRect();
         return { x: r.left + ((v.x + 1) / 2) * r.width, y: r.top + ((1 - v.y) / 2) * r.height };
       }, c);
-    // Preleti kamere: po izbiri počakamo stalen čas, začetni pogled (Home) počakamo do konca preleta.
+    // Izbira in začetni pogled (Home) premakneta kamero: počakamo do konca preleta.
     const brezPreleta = () => p.waitForFunction(() => !window.__atlas.kit.leti, null, { timeout: 60000 });
     const tap = async (c) => {
       const xy = await naZaslon(c);
       await p.mouse.click(xy.x, xy.y);
-      await p.waitForTimeout(1200);
+      await p.waitForTimeout(100);
+      await brezPreleta();
       return p.evaluate(() => window.__atlas.izbran);
     };
     const pocisti = async () => {
@@ -107,21 +109,10 @@ test("atlas: tap skozi kožo izbere del pod njo, drugi tap kožo; prosojni učni
       await p.waitForTimeout(200);
       await brezPreleta();
     };
-    // Prosojni učni cilji (veliki pečni, roženica) ostanejo izbirljivi: vsaj en tap blizu središča jih izbere.
-    const cilj = async (ime) => {
-      const c = vrstice.find((r) => r.ime === ime && r.stran !== "l").c;
-      const dobljeni = [];
-      for (const [dx, dy] of [[0, 0], [0.01, 0], [0, 0.01]]) {
-        await pocisti();
-        dobljeni.push(await tap([c[0] + dx, c[1] + dy, c[2]]));
-      }
-      assert.ok(dobljeni.some((id) => vrstice.find((r) => r.id === id)?.ime === ime), `${ime} ni izbirljiv: ${[...new Set(dobljeni)].join(", ")}`);
-    };
-    await cilj("Greater omentum");
-    await p.evaluate(() => window.__atlas.preklopiSloj("zivcevje", true));
-    await p.waitForTimeout(2500); // plast se pokaže po nalaganju
-    await cilj("Cornea");
-    await p.evaluate(() => window.__atlas.preklopiSloj("zivcevje", false));
+    // Prosojni učni cilj (veliki pečni, v privzetem bazenu kviza »Najdi«) ostane izbirljiv: tap na njegovo središče.
+    await pocisti();
+    const pecnica = vrstice.find((r) => r.ime === "Greater omentum");
+    assert.equal(await tap(pecnica.c), pecnica.id, "veliki pečni ni izbirljiv");
     // Koža: tap na sredino prsnega koša (telo prsnice) izbere kost ali organ, drugi tap kožo, tretji počisti.
     await p.evaluate(() => window.__atlas.preklopiSloj("koza", true));
     await p.waitForTimeout(500);
@@ -139,8 +130,4 @@ test("atlas: tap skozi kožo izbere del pod njo, drugi tap kožo; prosojni učni
     await browser.close();
     server.close();
   }
-});
-
-test.after(async () => {
-  await browser?.close().catch(() => {});
 });

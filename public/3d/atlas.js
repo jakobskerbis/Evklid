@@ -946,7 +946,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (kvizStanje?.nacin === "najdi" && !kvizStanje.odgovorjeno) return odgovorNajdi(id, spredaj);
     if (kvizStanje) return;
     // Drugi tap na izbrani del pod kožo izbere kožo pred njim (tretji izbiro počisti).
-    if (id && id === izbran && spredaj.length) return izberi(spredaj[0]);
+    if (id && id === izbran && spredaj.length && deli.get(izbran)?.row.sistem !== "koza") return izberi(spredaj[0]);
     izberi(id && id !== izbran ? id : null);
   });
 
