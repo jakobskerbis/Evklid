@@ -881,13 +881,14 @@
    "r": "ne pove, kaj se spremeni (temperatura)"
   },
   "KEM-SS-2/kemijsko-ravnotezje#p0": {
-   "h": "785eb37d10e5",
+   "h": "d90f0f84abf8",
    "o": "I",
-   "r": "sklic na prvi poskus in razmerje iz lekcije"
+   "r": "sklicuje se na prvi poskus in vrednost 64 iz lekcije; na glas brez tega ni smiselno"
   },
   "KEM-SS-2/kemijsko-ravnotezje#p1": {
-   "h": "1a7f13d2b729",
-   "o": "D"
+   "h": "8876edbc5aa8",
+   "o": "D",
+   "r": "samostojno vprašanje o Le Chatelierjevem načelu; 64 je kot zgled vrednosti K sprejemljiv"
   },
   "KEM-SS-2/kisline-in-baze#p0": {
    "h": "e2d3f802743e",
@@ -916,8 +917,9 @@
    "o": "D"
   },
   "KEM-SS-2/ph#p1": {
-   "h": "07a69e0970dd",
-   "o": "D"
+   "h": "0486ef512b3b",
+   "o": "D",
+   "r": "samostojno vprašanje o redčenju kisline"
   },
   "KEM-SS-2/redoks-reakcije#p0": {
    "h": "51abe9aba583",

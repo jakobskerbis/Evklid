@@ -322,3 +322,13 @@ test("drsnik: brskalnik in strežnik uporabljata isto kodo izrisa", async () => 
   assert.match(lekcija, /^drsnik: n \|/m);
   assert.deepEqual(drawingErrors(lekcija), []);
 });
+
+test("drsnik: {izraz} zaokroži polovice navzgor (44,145 → 44,15, ne 44,14)", () => {
+  const r = renderDrawing("graf", "opis: Pot {4.905*t*t} m in {-4.905*t*t} m.\nx: 0 .. 4\ny: 0 .. 50 | 10\ndrsnik: t | 0,5 .. 3 | 0,5 | 3 | čas t\nf: 4.905*x^2");
+  assert.match(r.html, /Pot 44,15 m in −44,15 m\./);
+});
+
+test("drsnik: {izraz:.2} izpiše natanko 2 decimalki", () => {
+  const r = renderDrawing("graf", "opis: pH je {2.3:.2}, c je {c:.1}, k je {c}.\nx: 0 .. 4\ny: 0 .. 4\ndrsnik: c | 1 .. 3 | 1 | 2 | c\nf: c");
+  assert.match(r.html, /pH je 2,30, c je 2,0, k je 2\./);
+});

@@ -2,16 +2,20 @@
 avtor: AI
 stanje: osnutek
 ---
+- Znotraj in zunaj
+  - zunaj $f$: navpično, kot piše
+  - pri $x$: vodoravno, obratno
 - Navpični premik
   - $f(x) + q$: za $q$ navzgor
-  - tehtnica brez tarire: $+250$ g
+  - senzor kaže $0{,}5$ preveč: graf višje
 - Vodoravni premik
   - $f(x - p)$: za $p$ v desno
   - napaka: minus v oklepaju ni levo
+  - zajtrk $2$ h kasneje: $m(t - 2)$
 - Zrcaljenje
   - $-f(x)$: čez os $x$
   - $f(-x)$: čez os $y$
-  - soda funkcija se ne spremeni
+  - soda funkcija: $f(-x)$ grafa ne spremeni
 - Raztezanje
   - $a \cdot f(x)$: v smeri osi $y$
   - $a > 1$ strmejši, $0 < a < 1$ položnejši
@@ -19,6 +23,7 @@ stanje: osnutek
 - Več korakov
   - $a \cdot f(x - p) + q$
   - točka $(x, y)$ preide v $(x + p,\ ay + q)$
+  - vrstni red: razteg pred premikom $q$
 - Predpis iz grafa
   - teme parabole je $(p, q)$
   - $a$ iz ene dodatne točke

@@ -209,11 +209,16 @@ function okolje(list, given, lenient) {
     },
     text: (s) =>
       String(s ?? "").replace(/(?<![_^])\{([^{}]+)\}/g, (_, e) => {
+        // {izraz:.2} izpiše natanko 2 decimalki (2,30 namesto 2,3).
+        const fix = e.match(/:\.(\d)\s*$/);
+        if (fix) e = e.slice(0, fix.index);
+        const d = fix ? +fix[1] : dec;
         const signed = /^\s*\+/.test(e);
         const v = value(e.replace(/^\s*\+/, "").replace(/[−–]/g, "-"));
         if (!Number.isFinite(v)) return "/";
-        const r = +v.toFixed(dec);
-        const a = String(Math.abs(r)).replace(".", ",");
+        // 44,145 → 44,15: zaokrožimo na 12 mest, preden odrežemo (sicer dvojiški zapis da 44,14).
+        const r = Math.sign(v) * (Math.round(+(Math.abs(v) * 10 ** d).toPrecision(12)) / 10 ** d);
+        const a = (fix ? Math.abs(r).toFixed(d) : String(Math.abs(r))).replace(".", ",");
         return signed ? `${r < 0 ? "−" : "+"} ${a}` : `${r < 0 ? "−" : ""}${a}`;
       }),
   };
