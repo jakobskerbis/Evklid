@@ -167,7 +167,7 @@ $v = 8 - z$; vse vezi gredo do edinega soseda
 :::premisli
 Koliko neveznih parov ostane vsakemu atomu dušika v $\mathrm{N_2}$ in kako to preveriš z oktetom?
 ---
-Trojna vez: atoma si delita tri pare. Vsakemu atomu ostaneta $5 - 3 = 2$ elektrona, to je en nevezni par. Formula: $:\!\mathrm{N}\equiv\mathrm{N}\!:$. Preverba: trije vezni in en nevezni par so $4$ pari, $3 \cdot 2 + 1 \cdot 2 = 8$ elektronov.
+Trojna vez: atoma si delita tri pare. Vsakemu atomu ostaneta $5 - 3 = 2$ elektrona, to je en nevezni par. Formula: ${:}\mathrm{N}{\equiv}\mathrm{N}{:}$ (vsako dvopičje je en nevezni par). Preverba: trije vezni in en nevezni par so $4$ pari, $3 \cdot 2 + 1 \cdot 2 = 8$ elektronov.
 :::
 
 ## Pogoste napake
@@ -184,9 +184,9 @@ Trojna vez: atoma si delita tri pare. Vsakemu atomu ostaneta $5 - 3 = 2$ elektro
 - Skupni par pripada obema atomoma; vsak ga šteje v svoj oktet (vodik v svoj par dveh).
 - Molekula je skupina atomov, povezanih s kovalentnimi vezmi; molekule elementov ($\mathrm{O_2}$) in spojin ($\mathrm{H_2O}$).
 - Število vezi atoma: $v = 8 - z$, kjer je $z$ število zunanjih elektronov (vodik: $v = 2 - 1 = 1$): H in Cl $1$, O $2$, N $3$, C $4$.
-- Lewisova formula: vezni par je črtica, nevezni par dve piki; enojna, dvojna ($\mathrm{O_2}$, $\mathrm{CO_2}$) in trojna vez ($\mathrm{N_2}$).
+- Lewisova formula: vezni par je črtica, nevezni par ena oznaka (dve piki ali »:«); enojna, dvojna ($\mathrm{O_2}$, $\mathrm{CO_2}$) in trojna vez.
 - Preverba ob vsakem atomu: vezni in nevezni pari so skupaj $4$ pari, to je $8$ elektronov (vodik: $1$ par, $2$ elektrona). C, N, O, F so v 2. periodi: lupina L sprejme največ $8$ elektronov, zato atom nikoli nima več kot $4$ parov.
-- $\mathrm{N_2}$: dušik (2. perioda, 15. skupina, $z = 5$) tvori $3$ vezi; edini sosed je drugi dušik, zato so vse tri med njima: trojna vez. Ostane mu $5 - 3 = 2$ elektrona, to je $1$ nevezni par. Ob vsakem atomu: $3 + 1 = 4$ pari, $3 \cdot 2 + 1 \cdot 2 = 8$ elektronov.
+- $\mathrm{N_2}$: dušik (2. perioda, 15. skupina, $z = 5$) tvori $3$ vezi; edini sosed je drugi dušik, zato so vse tri med njima: trojna vez. Ostane mu $5 - 3 = 2$ elektrona, to je $1$ nevezni par: ${:}\mathrm{N}{\equiv}\mathrm{N}{:}$. Ob vsakem atomu: $3 + 1 = 4$ pari, $3 \cdot 2 + 1 \cdot 2 = 8$ elektronov.
 - Snovi iz molekul imajo pogosto nizko tališče in vrelišče.
 
 ## Drugače: Kot zgodba
