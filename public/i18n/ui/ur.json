@@ -3209,6 +3209,7 @@
   "adm.rep.question": "سوال:",
   "adm.rep.fixed": "درست ہو گیا",
   "adm.rep.reopen": "دوبارہ کھولیں",
+  "adm.rep.inReview": "اصلاح جائزے کی منتظر ہے · PR #{n}",
   "adm.rep.none": "کوئی رپورٹ نہیں۔",
   "adm.rep.download": "درستی کے لیے ڈاؤن لوڈ کریں (.md)",
   "adm.rep.showAll": "درست شدہ بھی دکھائیں",

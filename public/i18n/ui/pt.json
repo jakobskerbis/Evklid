@@ -3216,6 +3216,7 @@
   "adm.rep.question": "Pergunta:",
   "adm.rep.fixed": "Corrigido",
   "adm.rep.reopen": "Reabrir",
+  "adm.rep.inReview": "Correção a aguardar revisão · PR #{n}",
   "adm.rep.none": "Sem relatórios.",
   "adm.rep.download": "Transferir para corrigir (.md)",
   "adm.rep.showAll": "Mostrar também os corrigidos",
