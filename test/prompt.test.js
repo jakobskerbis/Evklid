@@ -173,7 +173,17 @@ test("accuracy round 7 (2026-11-12): cross rule always with reducing the subscri
   const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
   const fixed = src.split(SPLIT_MARKER)[0];
   const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
-  for (const s of ["Križno pravilo povej vedno s krajšanjem", "indeksa skrajšaj na najmanjše celo razmerje", "$\\mathrm{Mg_2O_2}$ → $\\mathrm{MgO}$", "molekulskih formul ne krajšaj"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
-  // Krog 7 doda manj kot 300 znakov predpomnjenega dela (53 687 pred spremembo; ~80 predpomnjenih žetonov).
-  assert.ok(fixed.length < 53687 + 300, `stalni del ${fixed.length} znakov`);
+  for (const s of ["povej ga vedno s krajšanjem", "indeksa skrajšaj na najmanjše celo razmerje", "$\\mathrm{Mg_2O_2}$ → $\\mathrm{MgO}$", "molekulskih formul ne krajšaj"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  // Krog 7 je dodal 281 znakov predpomnjenega dela (53 687 → 53 968); mejo za nove kroge preveri test kroga 8.
+  assert.ok(fixed.length > 53687);
+});
+
+test("accuracy round 8 (2026-11-12): charge balance first, cross rule as a shortcut with explicit sides and a check, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["Formulo ionske spojine določa vsota nabojev $0$", "$2 \\cdot 3 + 3 \\cdot (-2) = 0$", "Križno pravilo je le bližnjica", "indeks kationa je naboj aniona, indeks aniona naboj kationa", "en ion na en ion", "Vsako razmerje ionov, ki ga navedeš, preveri z vsoto nabojev"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  assert.doesNotMatch(kem, /naboj kationa je indeks aniona in obratno/, "strani križnega pravila sta izrecni");
+  // Krog 8 doda manj kot 300 znakov predpomnjenega dela (53 968 pred spremembo; ~75 predpomnjenih žetonov).
+  assert.ok(fixed.length < 53968 + 300, `stalni del ${fixed.length} znakov`);
 });

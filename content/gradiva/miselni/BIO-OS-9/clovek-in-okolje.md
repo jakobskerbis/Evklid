@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Veriga vzrokov
+  - dejavnost → sprememba okolja → posledica → ukrep
+  - Luka: kurjenje drv → PM₁₀ → napad astme
+- Onesnaževanje
+  - zrak: delci, kisli dež
+  - voda: gnojila → evtrofikacija → pomor rib
+  - tla: težke kovine, mikroplastika
+  - preseganje $p = \dfrac{c - c_m}{c_m} \cdot 100\,\%$
+- Kopičenje strupov
+  - DDT, živo srebro ostanejo v maščobi
+  - največ pri plenilcih na vrhu verige
+  - napaka: pravilo $10\,\%$ velja za energijo
+- Ozonska luknja
+  - ozon v stratosferi prestreže UV-B
+  - freoni ga razgrajujejo; prepoved 1987
+  - posledica: opekline, kožni rak
+- Globalno segrevanje
+  - $\mathrm{CO_2}$ in metan zadržujeta toploto
+  - naravni učinek: $15\,^\circ\mathrm{C}$ namesto $-18\,^\circ\mathrm{C}$
+  - napaka: zamenjava z ozonsko luknjo
+- Ogrožene vrste
+  - glavni vzrok: uničevanje habitatov
+  - Rdeči seznam; invazivne tujerodne vrste
+- Varstvo
+  - narave: vrste (človeška ribica, ris), parki, Natura 2000
+  - okolja: čistilne naprave, filtri, ločevanje
+- Trajnostni razvoj
+  - potrebe danes brez škode prihodnjim rodovom
+  - kolo namesto avtomobila, manj odpadkov

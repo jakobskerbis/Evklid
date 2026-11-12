@@ -563,7 +563,8 @@ function mestoFormule(k) {
   const o = k.closest(OKVIRI);
   if (o) return o.parentElement?.closest(".katex-display") ? null : o;
   // .sk-chip: oznaka okna s podatki pod skico ima stalno postavitev (graph.css), ne zlagamo je in ne pomikamo.
-  if (k.closest("table, svg, math-field, textarea, input, [contenteditable], .sk-chip")) return null;
+  // .k3-izpis: izpis 3D modela prelomi KaTeX sam (vsaka formula v svoji vrstici), enako v aplikaciji in na strani /3d.
+  if (k.closest("table, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis")) return null;
   if (k.closest(".textbook")) return k.parentElement?.closest(VRSTE) || null;
   return blok(k);
 }

@@ -7,7 +7,7 @@ stanje: osnutek
   - zanka: sklenjena pot po vejah
 - Prvi Kirchhoffov zakon
   - vtekajoči tokovi = iztekajoči tokovi
-  - $3\,\text{A}$ noter, $1{,}2\,\text{A}$ ven, ostane $1{,}8\,\text{A}$
+  - avto: $4{,}5\,\text{A}$ noter, $0{,}5\,\text{A}$ in $4\,\text{A}$ ven
 - Drugi Kirchhoffov zakon
   - $U_{\text{vira}} = U_1 + U_2$
   - ohranitev energije v zanki
@@ -18,10 +18,10 @@ stanje: osnutek
 - Vzporedna vezava
   - enaka napetost, $I = I_1 + I_2$
   - $\dfrac{1}{R} = \dfrac{1}{R_1} + \dfrac{1}{R_2}$
-  - napaka: pozabljeno obračanje ulomka
+  - nova veja zmanjša skupni upor
 - Električna moč
   - $P = U I = I^2 R = \dfrac{U^2}{R}$, enota $\text{W}$
-  - polnilnik $5\,\text{V}$, $2\,\text{A}$ da $10\,\text{W}$
+  - polnilna postaja: $5\,\text{V} \cdot 3\,\text{A} = 15\,\text{W}$
 - Energija
   - $A = P \cdot t$, enota $\text{J}$
   - napaka: vat zamenjan z džulom

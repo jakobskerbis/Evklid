@@ -12,8 +12,10 @@ stanje: osnutek
 - Skupni tlak
   - $p = p_0 + \rho\,g\,h$
   - vsakih $10\,\mathrm{m}$ vode približno $1\,\mathrm{bar}$ več
+  - napaka: dvakrat globlje ni dvakrat večji skupni tlak
 - Vzgon
   - razlika tlakov na spodnjo in zgornjo ploskev
+  - kocka $0{,}10\,\mathrm{m}$: $29{,}4 - 19{,}6 = 9{,}8\,\mathrm{N}$
   - ni odvisen od globine potopljenega telesa
 - Arhimedov zakon
   - $F_v = \rho_t\,g\,V_i$
@@ -21,4 +23,4 @@ stanje: osnutek
 - Plavanje ali potop
   - $\rho < \rho_t$ plava, $\rho > \rho_t$ potone
   - plavajoče telo: $F_v = F_g$
-  - lubenica $6\,\mathrm{kg}$ izpodrine $6\,\mathrm{L}$ vode
+  - delež pod gladino $V_i/V = \rho/\rho_t$, led v morju $90\,\%$

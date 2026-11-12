@@ -3,7 +3,7 @@
 // Risbe so v stalnem merilu (merilna črta), oprema v pravih razmerjih; čas teče v realnem času (pospešek časa in posnetek ×0,1
 // sta označena v risbi). Risba se nariše znova ob vsakem koraku ure (10-krat na sekundo) ali sličici poskusa.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
 import {
   ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, SPONKA, HALL,
   TehtnicaBench, MAGNETI, VODNIKI, TEHTNICA, NAPAJALNIK_TT, poljeReze,
@@ -468,14 +468,14 @@ export function labElektromagnet(el, opts = {}) {
     const out = [];
     if (sred.length && !OS) {
       const k = sred.reduce((s_, m) => s_ + m.B / (m.N * m.I), 0) / sred.length;
-      out.push(`<p>Brez jedra v sredini tuljave: <i>B</i>/(<i>N I</i>) = <b>${num(k * 1000, 2)}${nb}µT/A</b> (povprečje ${sred.length} meritev). Za dolgo tuljavo bi bilo μ<sub>0</sub>/<i>l</i> = ${num((1.2566e-6 / NAVITJE.L) * 1e6, 1)}${nb}µT/A; tuljava je kratka in debela, zato je polje v sredini manjše.</p>`);
+      out.push(`<p>Brez jedra v sredini tuljave: ${tex(String.raw`\frac{B}{NI} = ${rez(num(k * 1000, 2))}`)}${nb}<b>µT/A</b> (povprečje ${sred.length} meritev). Za dolgo tuljavo bi bilo ${tex(String.raw`\frac{\mu_0}{l} = ${num((1.2566e-6 / NAVITJE.L) * 1e6, 1)}`)}${nb}µT/A; tuljava je kratka in debela, zato je polje v sredini manjše.</p>`);
     }
     const zel = meas.filter((m) => m.jedro !== "zrak" && Number.isFinite(m.B) && m.I > 0.05);
     if (zel.length && sred.length) {
       const k0 = sred.reduce((s_, m) => s_ + m.B / (m.N * m.I), 0) / sred.length;
       const best = zel.reduce((a, m) => (m.B / (m.N * m.I) > a.B / (a.N * a.I) ? m : a));
       const f = num(best.B / (best.N * best.I) / k0, 0);
-      out.push(OS ? `<p>Z jedrom (${jName(best.jedro)}) je gostota magnetnega polja pri enakem toku in številu ovojev do ${f}-krat večja kot v sredini tuljave brez jedra.</p>` : `<p>Z jedrom (${jName(best.jedro)}) je <i>B</i>/(<i>N I</i>) do ${f}-krat večje kot v sredini tuljave brez jedra.</p>`);
+      out.push(OS ? `<p>Z jedrom (${jName(best.jedro)}) je gostota magnetnega polja pri enakem toku in številu ovojev do ${f}-krat večja kot v sredini tuljave brez jedra.</p>` : `<p>Z jedrom (${jName(best.jedro)}) je ${tex(String.raw`\frac{B}{NI}`)} do ${f}-krat večje kot v sredini tuljave brez jedra.</p>`);
     }
     calc.innerHTML = out.join("");
     const nN = new Set(meas.filter((m) => m.jedro === "zrak" && Number.isFinite(m.B)).map((m) => m.N)).size;
@@ -722,7 +722,7 @@ export function labSilaVodnik(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gI, gL, calc, qBox,
-      notes(POENOSTAVITVE_MAGNETIZEM.sila, "Sila na vodnik <i>F</i> = <i>I L B</i> sin α; tehtnica kaže Δ<i>m</i> = <i>F</i>/<i>g</i> (tretji Newtonov zakon), <i>g</i> = 9,806 m/s² v Ljubljani. Tehtnica 0,01 g (npr. KERN EMB 200-2). Ocene po šolskih kompletih (npr. PASCO SF-8607): gostota polja feritnih magnetov v reži ~0,09 T, širina magneta 1,4 cm, oblika polja ob robu, upor tiskanine."),
+      notes(POENOSTAVITVE_MAGNETIZEM.sila, `Sila na vodnik ${tex(String.raw`F = ILB\sin\alpha`)}; tehtnica kaže ${tex(String.raw`\Delta m = \frac{F}{g}`)} (tretji Newtonov zakon), <i>g</i> = 9,806 m/s² v Ljubljani. Tehtnica 0,01 g (npr. KERN EMB 200-2). Ocene po šolskih kompletih (npr. PASCO SF-8607): gostota polja feritnih magnetov v reži ~0,09 T, širina magneta 1,4 cm, oblika polja ob robu, upor tiskanine.`),
     ],
     tryText: "Tariraj tehtnico in povečuj tok od 0 do 5 A po 1 A. Nariši F(I) in iz naklona izračunaj B. Nato pri 3 A zamenjaj tiskanine (1, 2, 4, 8 cm). Kaj se zgodi, ko zamenjaš smer toka ali nosilec zasukaš za 90°?",
   });
@@ -768,12 +768,12 @@ export function labSilaVodnik(el) {
     for (const [name, pts] of gr1) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), L = parseFloat(name) / 100;
-      out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je <i>B</i> = <i>k</i> : <i>L</i> = ${num(k / 1000, 5)}${nb}N/A : ${num(L, 2)}${nb}m = <b>${num(k / 1000 / L, 3)}${nb}T</b>.</p>`);
+      out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je ${tex(String.raw`B = \frac{k}{L} = \frac{${num(k / 1000, 5)}${en("N/A")}}{${num(L, 2)}${en("m")}} = ${rez(num(k / 1000 / L, 3), "T")}`)}.</p>`);
     }
     for (const [name, pts] of gr2) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), I = parseFloat(name.replace(",", "."));
-      if (I > 0) out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je <i>B</i> = <i>k</i> : <i>I</i> = <b>${num((k * 100) / 1000 / I, 3)}${nb}T</b>.</p>`);
+      if (I > 0) out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je ${tex(String.raw`B = \frac{k}{I} = ${rez(num((k * 100) / 1000 / I, 3), "T")}`)}.</p>`);
     }
     calc.innerHTML = out.join("");
     const max = Math.max(0, ...[...gr1.values(), ...gr2.values()].map((p) => p.length));

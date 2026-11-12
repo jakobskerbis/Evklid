@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tri ravni
+  - genska, vrstna, ekosistemska
+  - večja pestrost, odpornejša narava
+- Genska pestrost
+  - aleli med osebki iste vrste
+  - sorte jabolk, pasme psov
+  - napaka: sorte niso različne vrste
+- Vrstna pestrost
+  - število različnih vrst
+  - vsako vrsto štejemo enkrat
+- Pestrost ekosistemov
+  - gozd, travnik, barje, potok, jama
+  - izsušeno barje: izginejo tudi vrste
+- Metode ugotavljanja
+  - vzorčni kvadrat, transekt, talna past
+  - kvadrate razporedi po vsem travniku
+  - vrste določi s ključem
+- Ocena števila
+  - gostota $g = \dfrac{n}{S}$
+  - $N = g \cdot A$
+  - napaka: množiš vsoto namesto gostote
+- Slovenija
+  - $0{,}004\,\%$ površja, več kot $1\,\%$ vrst
+  - Alpe, kras, Panonska nižina, morje
+  - endemiti: človeška ribica

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Spolne celice
+  - semenčica: drobna, gibljiva, z bičkom
+  - jajčna celica: velika, z zalogo hrane
+- Oploditev
+  - semenčica in jajčna celica se združita
+  - oplojena jajčna celica → zarodek
+  - mladič ima lastnosti obeh staršev
+- Zunanja ali notranja
+  - zunanja v vodi: ribe, žabe
+  - notranja na kopnem: žuželke, ptiči, sesalci
+- Brez preobrazbe
+  - mladič podoben odrasli, samo raste
+  - lastovka, mačka, kuščarica
+- Nepopolna preobrazba
+  - jajce → ličinka → odrasla žival
+  - kobilica, kačji pastir; bube ni
+- Popolna preobrazba
+  - jajce → ličinka → buba → odrasla žival
+  - metulj, čebela, muha, trdoglavec
+  - napaka: buba ne spi, telo se preuredi
+- Čas razvoja
+  - $t = t_\text{j} + t_\text{l} + t_\text{b}$
+  - čebela delavka: $3 + 6 + 12 = 21$ dni

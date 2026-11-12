@@ -145,13 +145,15 @@ test("skupina »Pravilna telesa (Platonova)«: izbira, razlaga, krogli in prerez
   assert.match(iz("zakaj5"), /samo 5/);
   assert.match(iz("elementi"), /^Evklid, Elementi, .*XIII\. knjiga, trditev 16/);
   assert.match(iz("euler"), /12 oglišč, 30 robov, 20 ploskev: 12 − 30 \+ 20 = 2/);
-  assert.match(iz("V"), /V = 5\(3 \+ √5\)a³\/12 = 139,6\scm³/); // a = 4: 5(3+√5)/12 · 64 = 139,63
+  // izpis je formula (tex: true): pravi ulomek, ne 5(3 + √5)a³/12; a = 4: 5(3+√5)/12 · 64 = 139,63
+  assert.equal(c("V").tex, true);
+  assert.equal(iz("V"), "$\\displaystyle V = {\\frac{5(3 + \\sqrt{5})\\,a^3}{12}} = {139{,}6\\,\\mathrm{cm^3}}$");
   // krogli: vklop naredi ploskve prosojne, prikaže obe krogli in polmera
   c("krogli").ob(true);
   assert.equal(c("prosojno").vrednost, true);
   assert.equal(r.group.getObjectByName("vcrtana-krogla").visible, true);
   assert.ok(r.deli.some((d) => d.id === "ocrtana") && r.deli.some((d) => d.id === "vcrtana"));
-  assert.match(iz("polmera"), /r = .* = 3,0\scm; R = .* = 3,8\scm/); // a = 4: r = 3,02, R = 3,80
+  assert.match(iz("polmera"), /^\$\\displaystyle r = .* = \{3\{,\}0\\,\\mathrm\{cm\}\}\$\n\$\\displaystyle R = .* = \{3\{,\}8\\,\\mathrm\{cm\}\}\$$/); // a = 4: r = 3,02, R = 3,80
   // kocka je v obeh skupinah; v osnovni skupini nima krogel
   c("platon").ob("kocka"); assert.equal(c("krogli").vidno(), true);
   c("skupina").ob("osnovna"); assert.equal(c("telo").vrednost, "kocka"); assert.equal(c("krogli").vidno(), false);

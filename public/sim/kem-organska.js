@@ -532,6 +532,6 @@ export function organskeReakcije(el) {
       buttons(button("Izvedi reakcijo", () => ((t = 0.12), anim.play()), "primary small"), button("Znova", reset)),
     ],
     out,
-    tryText: "V čem se razlikujeta adicija in substitucija? Katera reakcija je obratna adiciji vode?",
+    tryText: { razmisli: "V čem se razlikujeta adicija in substitucija? Katera reakcija je obratna adiciji vode?" },
   });
 }

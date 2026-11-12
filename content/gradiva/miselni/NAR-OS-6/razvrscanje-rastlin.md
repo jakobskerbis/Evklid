@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Razvrščanje po lastnosti
+  - vprašanja: žile, semena, plod
+  - vsaka skupina ima eno lastnost več
+- Mahovi
+  - brez pravih korenin in žil, le rizoidi
+  - vodo vpijajo s celim telesom
+  - trosi v glavicah na pecljih
+- Praprotnice
+  - praproti, preslice, lisičjaki
+  - korenine, steblo, listi z žilami
+  - napaka: rjavi kupčki so trosovniki, ne semena
+- Voda za oploditev
+  - mahovi in praprotnice rastejo na vlažnem
+  - tros: ena celica brez zaloge hrane
+- Golosemenke
+  - semena gola na luskah storža
+  - smreka, bor, jelka, macesen
+  - napaka: storž ni plod
+- Kritosemenke
+  - cvet, iz plodnice nastane plod
+  - javor, jablana, pšenica, regrat
+- Določevalni ključ
+  - dvojice nasprotnih trditev, začni pri 1
+  - $k = n - 1$, za $6$ rastlin $5$ dvojic

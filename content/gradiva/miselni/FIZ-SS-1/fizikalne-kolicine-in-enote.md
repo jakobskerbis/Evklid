@@ -12,7 +12,7 @@ stanje: osnutek
   - hitrost v $\mathrm{m/s}$, gostota v $\mathrm{kg/m^3}$
   - $1\,\mathrm{N} = 1\,\mathrm{kg\,m/s^2}$
 - Predpone
-  - k $= 10^3$, c $= 10^{-2}$, m $= 10^{-3}$
+  - k $= 10^3$, da $= 10$, c $= 10^{-2}$, m $= 10^{-3}$
   - M (mega) ni m (mili)
 - Smer pretvorbe
   - večja enota, manjše število
@@ -21,7 +21,8 @@ stanje: osnutek
   - $1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$
   - $1\,\mathrm{L} = 1\,\mathrm{dm^3} = 10^{-3}\,\mathrm{m^3}$
 - Čas in hitrost
-  - $1\,\mathrm{h} = 3600\,\mathrm{s}$, ne $100$ minut
+  - $1\,\mathrm{h} = 60\,\mathrm{min} = 3600\,\mathrm{s}$ (ne $100\,\mathrm{min}$)
   - iz $\mathrm{km/h}$ v $\mathrm{m/s}$ deli s $3{,}6$
 - Merilo zemljevida
+  - $1 : 25\,000$: $8\,\mathrm{cm}$ je $2\,\mathrm{km}$
   - $1 : 50\,000$: $1\,\mathrm{cm}$ je $500\,\mathrm{m}$

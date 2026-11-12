@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Van Helmontova vrba
+  - vrba pridobila okoli $75\,\mathrm{kg}$
+  - zemlja izgubila le okoli $60\,\mathrm{g}$
+  - večina mase iz zraka in vode, ne iz zemlje
+  - napaka: rastlina se ne hrani z zemljo
+- Fotosinteza
+  - ogljikov dioksid + voda → glukoza + kisik
+  - samo na svetlobi, v zelenih delih
+  - klorofil ujame svetlobo
+- Glukoza in kisik
+  - glukoza je hrana, shranjena kemijska energija
+  - kisik uide skozi listne reže
+- Celično dihanje
+  - glukoza + kisik → ogljikov dioksid + voda + energija
+  - v vseh živih celicah, podnevi in ponoči
+- Dan in noč
+  - podnevi rastlina odda več kisika, kot ga porabi
+  - ponoči kisik samo porablja
+- Potrebe za rast
+  - svetloba, voda, ogljikov dioksid, rudninske snovi
+  - primerna temperatura, kisik tudi v koreninah

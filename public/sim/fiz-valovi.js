@@ -422,7 +422,7 @@ export function interferenca(el) {
       buttons(playButton(anim, { play: "Valovanje", pause: "Ustavi" })),
     ],
     out,
-    tryText: "Kako bi iz razmika prog izmeril valovno dolžino laserja?",
+    tryText: { razmisli: "Kako bi iz razmika prog izmeril valovno dolžino laserja?" },
   });
   draw();
 }

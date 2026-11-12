@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Hrbtenica
+  - vretenca; človek jih ima $33$
+  - s hrbtenico vretenčarji, brez nje nevretenčarji
+- Pet skupin vretenčarjev
+  - ribe, dvoživke, plazilci, ptiči, sesalci
+  - ločimo po koži, dihanju, mladičih
+- Nevretenčarji
+  - ožigalkarji, črvi, mehkužci, členonožci, iglokožci
+  - žuželke $6$ nog, pajkovci $8$ nog
+  - več kot $95\,\%$ vseh vrst
+- Določevalni ključ
+  - pari nasprotnih trditev
+  - izberi eno, sledi številki do imena
+  - vedno preberi obe trditvi
+- Zgradba, ne okolje
+  - kit in netopir sta sesalca
+  - napaka: želva ni dvoživka
+- Delež
+  - $d = \dfrac{N_\text{v}}{N} \cdot 100\,\%$
+  - $3$ od $50$ živali je $6\,\%$

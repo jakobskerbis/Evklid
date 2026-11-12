@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rast bakterij
+  - $n = \dfrac{t}{t_d}$, $N = N_0 \cdot 2^n$
+  - $1$ bakterija, $3$ h po $20$ min: $512$
+  - napaka: šest podvojitev ni »krat 6«
+- Koža in vnetje
+  - koža je prva pregrada
+  - rana pordeči, oteče, pritečejo bele krvničke
+  - bele krvničke požirajo bakterije
+- Povzročitelji bolezni
+  - bakterija: celica brez jedra, se deli
+  - virus: ni celica, množi se v gostitelju
+  - zajedavec: živi na račun gostitelja, npr. uši, gliste
+- Antibiotik
+  - uniči le bakterije
+  - pri gripi in prehladu ne pomaga
+- Protitelesa in spomin
+  - prepoznajo en sam povzročitelj
+  - spominske celice: imunost, npr. norice
+  - cepivo da imunost brez bolezni
+- Nenalezljive bolezni
+  - poškodbe: zvin, zlom, pretres možganov
+  - dedne: hemofilija, podedovana od staršev
+- Skrb za zdravje
+  - umivanje rok, svoj bidon
+  - cepljenje, spanje, gibanje, zaščitna oprema

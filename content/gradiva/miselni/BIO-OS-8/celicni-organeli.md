@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Poskus s krompirjem
+  - v vodi iz pipe težji, v slani lažji
+  - sprememba mase: $\Delta m = m_2 - m_1$
+- Celična membrana
+  - tanka, izbirno prepustna ovojnica vsake celice
+  - stena iz celuloze le opora, prepušča skoraj vse
+- Izmenjava snovi
+  - difuzija: kisik noter, ogljikov dioksid ven
+  - osmoza: voda teče k več raztopljenim snovem
+  - napaka: »sol vdre v celico«
+- Jedro
+  - hrani DNA, navodila za rast in delitev
+- Mitohondrij
+  - celično dihanje: s kisikom sprosti energijo iz glukoze
+  - tudi v vsaki rastlinski celici
+- Kloroplast
+  - fotosinteza s klorofilom na svetlobi
+  - samo zeleni deli, korenina ga nima
+- Enotna zgradba
+  - vse celice: membrana, citoplazma, DNA
+  - živali, rastline, glive: še jedro in mitohondriji

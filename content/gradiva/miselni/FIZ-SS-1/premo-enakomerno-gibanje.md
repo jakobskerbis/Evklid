@@ -16,7 +16,7 @@ stanje: osnutek
   - vodoravna premica pomeni mirovanje
 - Graf v(t)
   - vodoravna črta na višini $v$
-  - ploščina pod njo je pot
+  - ploščina pod njo je sprememba lege
 - Srečanje teles
-  - izenači $s_1 = s_2$
+  - izenači legi: $s_K = s_P$
   - presečišče premic na $s(t)$

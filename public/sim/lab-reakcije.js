@@ -2,8 +2,8 @@
 // plamenska reakcija (lab-plamenska). Modeli: lab-model-reakcije.js (brez DOM). CSS: predpona lab-rk-.
 // Risbe so v stalnem merilu (merilna črta); steklo, mehurčki, stojalo in prijemalo so iz lab-elektrokemija.js.
 // Mehurčki in plamen so v ločeni plasti (plastMehurckov), da animacija teče gladko, čeprav se risba obnovi 10-krat na sekundo.
-import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
 import { gradienti, plastMehurckov, steklo, tekocina, mehurcki, stojalo, prijemalo, ura } from "./lab-elektrokemija.js";
 import {
   MarmorBench, MagnezijBench, TiosulfatBench, PeroksidBench, MARMOR, MARMOR_OBLIKE, MARMOR_MASE, KONC_HCL, MG_TRAK, TIO, TIO_VOLUMNI, KATALIZATORJI, PEROKSID_V,
@@ -447,7 +447,7 @@ export function labHitrost(el, opts = {}) {
       gTT.draw(serije(byC));
       for (const [k, p] of byT) if (p.length >= 2 && !OS) {
         const q = p.map(([c, it]) => it / c), avg = q.reduce((a, b) => a + b, 0) / q.length, dev = Math.max(...q.map((x) => Math.abs(x / avg - 1)));
-        out.push(`<p>Pri ${k}: (1/<i>t</i>)/<i>c</i> = ${num(avg, 0)}${nb}·10⁻³ L/(mol s), odstopanje ${num(dev * 100, 0)}${nb}% → ${dev < 0.1 ? "1/<i>t</i> je sorazmeren s <i>c</i> (reakcija 1. reda glede na tiosulfat)." : "točke še niso na premici skozi izhodišče."}</p>`);
+        out.push(`<p>Pri ${k}: ${tex(String.raw`\frac{1/t}{c} = ${num(avg, 0)} \cdot 10^{-3}${en("L/(mol s)")}`)}, odstopanje ${num(dev * 100, 0)}${nb}% → ${dev < 0.1 ? `${tex(String.raw`\frac{1}{t}`)} je sorazmeren s <i>c</i> (reakcija 1. reda glede na tiosulfat).` : "točke še niso na premici skozi izhodišče."}</p>`);
       }
       for (const [k, p] of byC) if (p.length >= 2) {
         const a = p.reduce((x, y) => (y[0] < x[0] ? y : x)), b = p.reduce((x, y) => (y[0] > x[0] ? y : x));
@@ -842,7 +842,7 @@ export function labEnergija(el, opts = {}) {
       series = [{ id: "T", pts: q, cls: "a", shape: "o", label: "T(V)" }];
       if (q.length >= 4) {
         const mx = q.reduce((a, b) => (b[1] > a[1] ? b : a));
-        out.push(`<p>Najvišja temperatura pri <i>V</i> = ${num(mx[0], 0)}${nb}mL NaOH: ekvivalentna točka. ${OS ? "" : `<i>c</i>(HCl) = <i>c</i>(NaOH)·<i>V</i>/25${nb}mL ≈ ${num((+cSel.get() * mx[0]) / 25, 2)}${nb}mol/L.`}</p>`);
+        out.push(`<p>Najvišja temperatura pri <i>V</i> = ${num(mx[0], 0)}${nb}mL NaOH: ekvivalentna točka. ${OS ? "" : `${tex(String.raw`c(\mathrm{HCl}) = \frac{c(\mathrm{NaOH})\,V}{25${en("mL")}} \approx ${num((+cSel.get() * mx[0]) / 25, 2)}${en("mol/L")}`)}.`}</p>`);
       }
     } else {
       const q = p.map((x) => [x.t, x.T]);
@@ -866,7 +866,7 @@ export function labEnergija(el, opts = {}) {
           const m = tr ? 100 + +gSel.get() : proc === "mg" ? 50 : 100, n = B.nReakcija();
           const lit = proc === "nevtr" ? DH.nevtr : proc === "ocetna" ? DH.ocetna : proc === "mg" ? DH.Mg : TRDNE[proc].dH;
           out.push(`<p>Začetna temperatura <i>T</i><sub>0</sub> = ${num(T0m, 1)}${nb}°C${proc === "nevtr" || proc === "ocetna" ? " (povprečje obeh raztopin)" : ""}; ${endo ? "najnižja" : "najvišja"} izmerjena ${num(ext.T, 1)}${nb}°C (Δ<i>T</i> = ${num(dTm, 1)}${nb}K)${e ? `; z ekstrapolacijo do časa mešanja ${num(e.T, 1)}${nb}°C (Δ<i>T</i> = ${num(dTe, 1)}${nb}K)` : ""}.</p>`);
-          if (e) out.push(`<p class="lab-rk-eq">Δ<i>H</i> = −<i>m c</i> Δ<i>T</i> / <i>n</i> = −${num(m, 0)}${nb}g · 4,18${nb}J/(g${nb}K) · ${num(dTe, 1)}${nb}K / ${num(n * 1000, 1)}${nb}mmol = <b>${num(entalpija({ m, dT: dTe, n }), 1)}${nb}kJ/mol</b> (literatura ${num(lit, 1)}${nb}kJ/mol; brez ekstrapolacije ${num(entalpija({ m, dT: dTm, n }), 1)}${nb}kJ/mol).</p>`);
+          if (e) out.push(`${texBlock(String.raw`\Delta H = -\dfrac{mc\,\Delta T}{n} = -\dfrac{${num(m, 0)}${en("g")} \cdot 4{,}18${en("J/(g K)")} \cdot ${dTe < 0 ? `(${num(dTe, 1)}${en("K")})` : `${num(dTe, 1)}${en("K")}`}}{${num(n * 1000, 1)}${en("mmol")}} = ${rez(num(entalpija({ m, dT: dTe, n }), 1), "kJ/mol")}`)}<p>Literatura: ${num(lit, 1)}${nb}kJ/mol; brez ekstrapolacije ${num(entalpija({ m, dT: dTm, n }), 1)}${nb}kJ/mol.</p>`);
         }
       }
     }
@@ -885,7 +885,7 @@ export function labEnergija(el, opts = {}) {
       } : {
         text: "Zakaj je izmerjena |Δ<i>H</i>| nevtralizacije običajno manjša od literaturne vrednosti −57,1 kJ/mol?",
         options: [
-          { t: "Del sproščene toplote segreje lonček, termometer in zrak ter uide skozi steno in pokrov; ekstrapolacija popravi le izgube po mešanju, toplotne kapacitete posode pa ne.", ok: true, why: "Reakcija je eksotermna (Δ<i>H</i> < 0). V računu −<i>m c</i> Δ<i>T</i>/<i>n</i> upoštevamo le raztopino. Lonček iz stiropora pobere le nekaj J/K, steklena čaša pa ~90 J/K (≈ 20 % toplotne kapacitete 100 g vode) in še hitro oddaja toploto, zato je tam |Δ<i>H</i>| očitno manjša. Ekstrapolacija premice ohlajanja nazaj do časa mešanja popravi ohlajanje med meritvijo." },
+          { t: "Del sproščene toplote segreje lonček, termometer in zrak ter uide skozi steno in pokrov; ekstrapolacija popravi le izgube po mešanju, toplotne kapacitete posode pa ne.", ok: true, why: `Reakcija je eksotermna (Δ<i>H</i> < 0). V računu ${tex(String.raw`-\frac{mc\,\Delta T}{n}`)} upoštevamo le raztopino. Lonček iz stiropora pobere le nekaj J/K, steklena čaša pa ~90 J/K (≈ 20 % toplotne kapacitete 100 g vode) in še hitro oddaja toploto, zato je tam |Δ<i>H</i>| očitno manjša. Ekstrapolacija premice ohlajanja nazaj do časa mešanja popravi ohlajanje med meritvijo.` },
           { t: "Ker je nevtralizacija endotermna reakcija.", ok: false, why: "Temperatura se je zvišala: sistem je oddal toploto v raztopino, reakcija je eksotermna, Δ<i>H</i> < 0." },
           { t: "Ker termometer kaže preveč.", ok: false, why: "Stalna napaka termometra se v razliki Δ<i>T</i> odšteje. Manjša |Δ<i>H</i>| je posledica toplote, ki ne ostane v raztopini." },
           { t: "Ker je bilo premalo NaOH.", ok: false, why: "V računu uporabimo množino omejitvenega reaktanta (<i>n</i> nastale vode). Pri 50 mL 1 M HCl in 50 mL 1 M NaOH je to 50 mmol." },
@@ -1101,7 +1101,7 @@ export function labPlamenska(el, opts = {}) {
     table.add({ v: V.name, b, l, i: i === "Na+K" ? "Na⁺, K⁺" : IONI[i].ion, ok: V.neznan ? (prav ? "✓" : "✗") : prav ? "✓" : "✗" });
     if (!prav) log.push(V.neznan ? "Ne čisto: v tem vzorcu je drug ion. Očisti zanko in preizkusi znova; primerjaj z znanimi solmi." : "Ta sol ne vsebuje izbranega iona.", "warn");
     const nX = rows.filter((r) => r.prav && r.v.startsWith("neznani")).length;
-    calc.innerHTML = `<p>Pravilno določenih neznanih vzorcev: ${new Set(rows.filter((r) => r.prav && r.v.startsWith("neznani")).map((r) => r.v)).size} od 4.</p>` + (!OS && zadnjeCrte[0] ? `<p class="lab-rk-eq">Najsvetlejša ${zadnjeCrte[0].crta ? "črta" : "črta (pas)"} ${zadnjeCrte[0].odcitek}${nb}nm: <i>E</i> = <i>hc</i>/λ = ${num(energijaFotona(zadnjeCrte[0].l) * 1e19, 2)}·10⁻¹⁹${nb}J = ${num(energijaFotona(zadnjeCrte[0].l) / E_NAB, 2)}${nb}eV.</p>` : "");
+    calc.innerHTML = `<p>Pravilno določenih neznanih vzorcev: ${new Set(rows.filter((r) => r.prav && r.v.startsWith("neznani")).map((r) => r.v)).size} od 4.</p>` + (!OS && zadnjeCrte[0] ? `<p class="lab-rk-eq">Najsvetlejša ${zadnjeCrte[0].crta ? "črta" : "črta (pas)"} ${zadnjeCrte[0].odcitek}${nb}nm: ${tex(String.raw`E = \frac{hc}{\lambda} = ${num(energijaFotona(zadnjeCrte[0].l) * 1e19, 2)} \cdot 10^{-19}${en("J")} = ${num(energijaFotona(zadnjeCrte[0].l) / E_NAB, 2)}${en("eV")}`)}.</p>` : "");
     if (!asked && rows.length >= 4 && nX >= 1) {
       asked = true;
       qBox.append(conclusion(OS ? {

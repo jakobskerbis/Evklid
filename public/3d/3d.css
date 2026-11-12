@@ -145,10 +145,15 @@
 .k3-izbor-moznost[aria-selected="true"] { background: var(--k3-accent-soft); color: var(--k3-accent); }
 .k3-izbor-moznost[aria-selected="true"]::after { content: ""; margin-inline-start: auto; width: 16px; height: 16px; flex: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e9bff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") no-repeat center / contain; }
-.k3-izbira-oznaka, .k3-izpis span:first-child { font-size: 0.92rem; color: var(--k3-muted); }
+.k3-izbira-oznaka, .k3-izpis > span:first-child { font-size: 0.92rem; color: var(--k3-muted); }
 .k3-stikalo { display: flex; align-items: center; gap: 12px; min-height: 44px; }
 .k3-izpis { flex: 1 1 100%; display: flex; justify-content: space-between; gap: 12px; padding: 8px 12px; border-radius: 12px; background: var(--k3-povrsina); font-variant-numeric: tabular-nums; }
 .k3-izpis output { font-weight: 600; }
+/* Izpis s formulami (tex: true): formule gredo pod oznako, ko ob njej niso cele (vsaka v svoji vrstici, prelom le pri =). */
+.k3-izpis-tex { flex-wrap: wrap; row-gap: 4px; }
+.k3-izpis-tex output { flex: 1 0 auto; max-width: 100%; text-align: right; font-weight: 400; }
+/* Aplikacija (ui.css) formulam prepove prelom, ker jih zlaga sirina.js; izpisa 3D ta ne obdela (prelomi KaTeX, kot na /3d). */
+.k3-izpis.k3-izpis-tex output .katex { white-space: normal; }
 .k3-deli { display: flex; flex-wrap: wrap; gap: 8px; }
 .k3-del {
   display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px;

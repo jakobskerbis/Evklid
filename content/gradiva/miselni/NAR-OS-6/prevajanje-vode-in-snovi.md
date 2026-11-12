@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mamljiva zamisel
+  - napaka: rastlina vodo shrani za rast
+  - poskus z vrečko: kapljice iz listov
+- Koreninski laski
+  - vsrkajo vodo z rudninskimi snovmi
+  - drobni, a skupaj velika površina
+- Les in ličje
+  - les (ksilem): voda navzgor
+  - ličje (floem): hrana v vse dele
+- Transpiracija
+  - izhlapevanje vode skozi liste
+  - večina vsrkane vode izhlapi
+  - hladi list kot znoj kožo
+- Listne reže
+  - večinoma na spodnji strani lista
+  - celici zapiralki odpreta ali zapreta režo
+  - ob suši zaprte: manj fotosinteze
+- Vlek od zgoraj
+  - kot pitje po slamici
+  - napaka: korenina ni črpalka
+- Merjenje porabe
+  - valj z oljem: $V = V_1 - V_2$
+  - vazelin pokaže, kje so reže

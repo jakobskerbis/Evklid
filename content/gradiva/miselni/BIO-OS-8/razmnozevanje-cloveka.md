@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kromosomi in mejoza
+  - telesna celica $46$, spolna celica $23$
+  - oploditev: $23 + 23 = 46$
+  - napaka: »otrok ima $92$ kromosomov«
+- Moški spolni organi
+  - moda v mošnji: semenčice, testosteron
+  - nadmodek, semenovod, prostata, spolni ud
+- Ženski spolni organi
+  - jajčnika: jajčne celice, estrogen, progesteron
+  - jajcevod, maternica, nožnica
+- Menstrualni ciklus
+  - okoli $28$ dni, 1. dan menstruacija
+  - ovulacija $d_o = L - 14$
+  - plodni dnevi: od $5$ dni pred do dneva po
+- Oploditev
+  - v jajcevodu, prodre ena semenčica
+  - spol določi semenčica: XX ali XY
+- Nosečnost
+  - ugnezdenje po okoli tednu
+  - posteljica in popkovina hranita plod
+  - okoli $40$ tednov od zadnje menstruacije
+- Puberteta
+  - hipotalamus, hipofiza, spolne žleze
+  - sekundarni spolni znaki
+- Spolno prenosljive bolezni
+  - klamidija, HPV, HIV, pogosto brez znakov
+  - zaščita: kondom, cepljenje, testiranje

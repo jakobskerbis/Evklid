@@ -8,10 +8,10 @@ stanje: osnutek
 - Lepenje
   - telo miruje, lepenje vrača tvojo silo
   - največ $F_\mathrm{l,max} = k_\mathrm{l}\,F_\mathrm{p}$
-  - napaka: lepenje ni vedno največje
+  - napaka: »lepenje je vedno $k_\mathrm{l}\,F_\mathrm{p}$«
 - Drsenje
   - $F_\mathrm{tr} = k_\mathrm{tr}\,F_\mathrm{p}$
-  - neodvisno od hitrosti in ploskve
+  - skoraj neodvisno od hitrosti, neodvisno od ploskve
   - običajno $k_\mathrm{tr} < k_\mathrm{l}$
 - Klanec
   - dinamična komponenta $F_\parallel = m\,g\sin\alpha$
@@ -19,6 +19,7 @@ stanje: osnutek
 - Mejni kot
   - $\tan\alpha_\mathrm{m} = k_\mathrm{l}$, neodvisno od mase
   - deska: $k_\mathrm{l} = \dfrac{h}{d}$
+  - napaka: »težji pacient zdrsne prej«
 - Drsenje po klancu
   - $F_\mathrm{r} = F_\parallel - F_\mathrm{tr}$
   - $a = \dfrac{F_\mathrm{r}}{m}$

@@ -8,16 +8,21 @@ stanje: osnutek
 - Ohranitev naboja
   - drgnjenje le prenese elektrone
   - balon negativen, lasje pozitivni
+  - ločena lepilna trakova: en $+$, drug $-$
 - Osnovni naboj
   - $e_0 = 1{,}6 \cdot 10^{-19}\,\mathrm{As}$
   - $e = N e_0$, enota $\mathrm{As}$
 - Coulombov zakon
   - $F = \dfrac{e_1 e_2}{4\pi\varepsilon_0 r^2}$
-  - $\dfrac{1}{4\pi\varepsilon_0} \approx 9{,}0 \cdot 10^9\,\mathrm{N\,m^2/(As)^2}$
-  - napaka: $r$ v centimetrih
-- Odvisnost od razdalje
+  - $\dfrac{1}{4\pi\varepsilon_0} \approx 9{,}0 \cdot 10^9\,\mathrm{N\,m^2/(As)^2}$, $r$ v metrih
+  - uporaba: lebdenje, električna sila enaka teži
+- Odvisnost sile
   - dvakrat dlje, štirikrat šibkejša
+  - dvakrat večji naboj, dvakrat večja sila
   - napaka: pozabljen kvadrat
+- Zakaj kvadrat razdalje
+  - črte se razredčijo po površini krogle
+  - krogla z $2r$: štirikrat večja površina
 - Smer sile
   - vzdolž zveznice nabojev
   - na oba naboja enako velika

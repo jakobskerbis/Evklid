@@ -6,6 +6,7 @@ import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGum
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { skoziLupino } from "./izbira.js";
 import { t } from "/i18n.js";
+import { napisPoskusa } from "../sim/napis-poskusa.js";
 import { icon } from "/icons.js";
 
 const mk = (tag, cls, text) => {
@@ -24,6 +25,44 @@ function pretvori(c, v) {
   if (c.tip === "stikalo") return v === true || /^(1|true|da|on)$/i.test(String(v));
   if (c.tip === "izbira") return (c.moznosti || []).some(([k]) => String(k) === String(v)) ? (c.moznosti.find(([k]) => String(k) === String(v))[0]) : c.vrednost;
   return v;
+}
+
+// Izpis s formulami (nadzor s tex: true): deli med $…$ so formule KaTeX s pravimi ulomki, ostalo je besedilo
+// (j, 12. 11. 2026: »Popravi take formule povsod«; prej V = a³√2/12 v besedilu). Stran /3d (3d.html) KaTeX ne
+// naloži sama: naložimo ga ob prvem takem izpisu in izpise nato osvežimo.
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+// Ločilo tik ob formuli (»(β = 80°«, »= 4,5 cm;«) gre v formulo, da ne ostane samo na začetku ali koncu vrstice.
+export function izpisHtml(v) {
+  const d = String(v).split(/\$([^$]*)\$/);
+  for (let i = 1; i < d.length; i += 2) {
+    const pred = /\($/.exec(d[i - 1]);
+    const za = /^[.,;:)]+/.exec(d[i + 1] ?? "");
+    if (pred) d[i - 1] = d[i - 1].slice(0, -1);
+    if (za) d[i + 1] = d[i + 1].slice(za[0].length);
+    d[i] = `${pred ? "\\text{(}" : ""}${d[i]}${za ? `\\text{${za[0]}}` : ""}`;
+  }
+  // \n: vsaka formula v svoji vrstici
+  return d.map((x, i) => (i % 2 ? globalThis.katex.renderToString(x, { throwOnError: false }) : esc(x).replace(/\n/g, "<br>"))).join("");
+}
+// Brez KaTeX (ni povezave): formula kot berljivo besedilo, (a)/(b) in √(x).
+const brezTex = (v) => {
+  let t = v.replace(/\$/g, "").replace(/\\(?:mathrm|text)\{([^{}]*)\}/g, "$1");
+  for (let p = ""; p !== t; ) (p = t), (t = t.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)"));
+  return t.replace(/\\cdot ?/g, "· ").replace(/\\,/g, " ").replace(/\^2/g, "²").replace(/\^3/g, "³").replace(/\^\\circ/g, "°").replace(/\\(pi|alpha|beta|varphi|sin) ?/g, (m, g) => ({ pi: "π", alpha: "α", beta: "β", varphi: "φ", sin: "sin " })[g]).replace(/[{}]/g, "").replace(/_(\w)/g, "$1");
+};
+let katexObljuba = null;
+function naloziKatex() {
+  if (globalThis.katex) return Promise.resolve();
+  return (katexObljuba ??= new Promise((ok, ne) => {
+    const css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = new URL("../vendor/katex/katex.min.css", import.meta.url).href;
+    const js = document.createElement("script");
+    js.src = new URL("../vendor/katex/katex.min.js", import.meta.url).href;
+    js.onload = ok;
+    js.onerror = ne;
+    document.head.append(css, js);
+  }));
 }
 
 const decimalke = (korak) => {
@@ -78,9 +117,10 @@ export function odpriModel(el, mod, opts = {}) {
     oModelu = mk("section", "k3-o-modelu");
     oModelu.setAttribute("aria-label", t("a3.about"));
     if (info.opis) oModelu.append(mk("p", "k3-o-opis", info.opis));
-    if (info.poskusi) {
+    const np = napisPoskusa(info.poskusi); // »Preizkusi:« ali »Razmisli:« (public/sim/napis-poskusa.js)
+    if (np) {
       const p = mk("p", "k3-o-poskusi");
-      p.append(mk("b", "", `${t("sc.try")} `), mk("bdi", "", info.poskusi)); // bdi: slovensko besedilo v RTL ostane LTR
+      p.append(mk("b", "", `${t(np.kljuc)} `), mk("bdi", "", np.besedilo)); // bdi: slovensko besedilo v RTL ostane LTR
       oModelu.append(p);
     }
     oModelu.hidden = !oModelu.children.length;
@@ -556,7 +596,13 @@ export function odpriModel(el, mod, opts = {}) {
   const osveziIzpise = () => {
     for (const [c, out] of izpisi) {
       try {
-        out.textContent = String(c.vrednost?.() ?? "");
+        const v = String(c.vrednost?.() ?? "");
+        if (!c.tex) out.textContent = v;
+        else if (!globalThis.katex) naloziKatex().then(() => !unicen && osveziIzpise(), () => (out.textContent = brezTex(v)));
+        else if (out.dataset.v !== v) {
+          out.innerHTML = izpisHtml(v);
+          out.dataset.v = v;
+        }
       } catch {}
     }
   };
@@ -768,7 +814,7 @@ export function odpriModel(el, mod, opts = {}) {
         lab.append(mk("span", "", c.oznaka), sw);
         nadzorEl.append(lab);
       } else if (c.tip === "izpis") {
-        const line = mk("div", "k3-izpis");
+        const line = mk("div", c.tex ? "k3-izpis k3-izpis-tex" : "k3-izpis");
         const out = mk("output", "");
         out.setAttribute("aria-live", "polite");
         line.append(mk("span", "", c.oznaka), out);

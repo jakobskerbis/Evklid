@@ -107,3 +107,9 @@ test("chat: first question of a free chat carries the lesson note; the student n
     server.close();
   }
 });
+
+test("lesson search: titles with the same word stems are told apart by the full topic name", () => {
+  // »Celični organeli« in »Od celice do organizma« imata enake korene (celic, organ) in enako oceno.
+  assert.equal(lessonForQuestion("Kaj je Od celice do organizma?", os("BIO", 8))?.id, "BIO-OS-8/od-celice-do-organizma");
+  assert.equal(lessonForQuestion("Kaj so celični organeli?", os("BIO", 8))?.id, "BIO-OS-8/celicni-organeli");
+});

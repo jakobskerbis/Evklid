@@ -5,16 +5,236 @@
    "h": "bbd4c3e4a43b",
    "o": "D"
   },
+  "BIO-OS-8/bolezni-in-zdravje#p1": {
+   "h": "a9608e777385",
+   "o": "D"
+  },
   "BIO-OS-8/celica-pod-mikroskopom#p1": {
    "h": "a7c9972dd0d8",
    "o": "D"
+  },
+  "BIO-OS-8/celicna-delitev#p0": {
+   "h": "266c8c796b32",
+   "o": "D"
+  },
+  "BIO-OS-8/celicna-delitev#p1": {
+   "h": "f9ee248e546b",
+   "o": "D"
+  },
+  "BIO-OS-8/celicni-organeli#p0": {
+   "h": "abab4bb1d7f6",
+   "o": "I",
+   "r": "ne pove, kaj je trakec (krompir iz poskusa v lekciji)"
+  },
+  "BIO-OS-8/celicni-organeli#p1": {
+   "h": "309f38e9238f",
+   "o": "D"
+  },
+  "BIO-OS-8/cutila#p0": {
+   "h": "e0609ff05ee8",
+   "o": "D",
+   "r": "ime napake ni vprašano",
+   "k": [
+    "Žarki se sekajo šele za mrežnico, ker je mrežnica preblizu leče",
+    "Najbolj moti pri predmetih od blizu, zato Ana slabo bere",
+    "Pomaga zbiralna leča, ki žarke zbere prej"
+   ]
+  },
+  "BIO-OS-8/cutila#p1": {
+   "h": "9d612543a95c",
+   "o": "D"
+  },
+  "BIO-OS-8/dihala#p0": {
+   "h": "094da518514f",
+   "o": "D"
+  },
+  "BIO-OS-8/dihala#p1": {
+   "h": "a71f4d46644a",
+   "o": "D"
+  },
+  "BIO-OS-8/izlocala#p1": {
+   "h": "f018040accb4",
+   "o": "D"
+  },
+  "BIO-OS-8/koza#p0": {
+   "h": "91c408b015d4",
+   "o": "D",
+   "r": "ledvice in koža skupaj niso vprašane",
+   "k": [
+    "Manj ga bo in bo temnejši",
+    "Telo je veliko vode izgubilo z znojem, zato ledvice vodo varčujejo in izločijo bolj zgoščen seč"
+   ]
+  },
+  "BIO-OS-8/koza#p1": {
+   "h": "4babea37e45a",
+   "o": "D"
+  },
+  "BIO-OS-8/koza#p2": {
+   "h": "ce1c62236ac2",
+   "o": "I",
+   "r": "ne poda podatkov za račun"
+  },
+  "BIO-OS-8/kri-in-krvozilje#p1": {
+   "h": "ce43f9e4b0ea",
+   "o": "D"
+  },
+  "BIO-OS-8/od-celice-do-organizma#p0": {
+   "h": "ec3db243fda3",
+   "o": "D",
+   "r": "analogija iz lekcije ni zahtevana",
+   "k": [
+    "Tudi celica uporablja le del navodil iz DNA",
+    "Mišična celica uporablja navodila za krčenje, črevesna celica navodila za mikrovile"
+   ]
+  },
+  "BIO-OS-8/od-celice-do-organizma#p1": {
+   "h": "f41e3e5c75f0",
+   "o": "D"
+  },
+  "BIO-OS-8/okostje-in-misice#p0": {
+   "h": "2b8bca5ced9c",
+   "o": "D",
+   "r": "žganje kosti ni vprašano",
+   "k": [
+    "Upogljiva, skoraj kot guma",
+    "Ostanejo beljakovine, ki dajejo prožnost, trdnost pa je izginila z rudninskimi snovmi"
+   ]
+  },
+  "BIO-OS-8/okostje-in-misice#p1": {
+   "h": "12a0119dfc9b",
+   "o": "D"
+  },
+  "BIO-OS-8/prebavila-in-prehrana#p0": {
+   "h": "ba2d4bef7fa9",
+   "o": "D"
+  },
+  "BIO-OS-8/prebavila-in-prehrana#p1": {
+   "h": "e102ade75152",
+   "o": "D"
+  },
+  "BIO-OS-8/razmnozevanje-cloveka#p1": {
+   "h": "1a2b37cf1376",
+   "o": "D",
+   "r": "znak nosečnosti ni vprašan",
+   "k": [
+    "Ne. Zarodek se ugnezdi v sluznico, ta mora ostati",
+    "Hormoni (predvsem progesteron) ostanejo visoki in sluznica se ne odlušči"
+   ]
+  },
+  "BIO-OS-8/zivcevje-in-hormoni#p0": {
+   "h": "3f6fc3a7e35a",
+   "o": "D"
+  },
+  "BIO-OS-8/zivcevje-in-hormoni#p1": {
+   "h": "151e290bf9cf",
+   "o": "D",
+   "r": "sladkor v seču ni vprašan",
+   "k": [
+    "Prebava bo normalna, ker encimi po cevki še vedno tečejo v črevo",
+    "Sladkor v krvi pa bo previsok: brez inzulina celice ne sprejmejo glukoze iz krvi"
+   ]
   },
   "BIO-OS-9/biologija-in-druzba#p0": {
    "h": "edb2549069e3",
    "o": "D"
   },
+  "BIO-OS-9/biotehnologija#p1": {
+   "h": "58d3b74c6288",
+   "o": "D"
+  },
+  "BIO-OS-9/biotehnologija#p2": {
+   "h": "82e416971136",
+   "o": "I",
+   "r": "sklic na poskus s skledami iz lekcije"
+  },
+  "BIO-OS-9/biotska-pestrost#p0": {
+   "h": "8f63ac10cd5c",
+   "o": "D"
+  },
+  "BIO-OS-9/biotska-pestrost#p1": {
+   "h": "de3385fb07d0",
+   "o": "I",
+   "r": "sklic na metodo s kvadrati iz lekcije"
+  },
+  "BIO-OS-9/clovek-in-okolje#p0": {
+   "h": "8c72772a77ad",
+   "o": "D"
+  },
+  "BIO-OS-9/clovek-in-okolje#p1": {
+   "h": "b951f8f83c61",
+   "o": "D"
+  },
+  "BIO-OS-9/dedovanje-lastnosti#p0": {
+   "h": "05ff7e12e72f",
+   "o": "D"
+  },
+  "BIO-OS-9/dedovanje-lastnosti#p1": {
+   "h": "31e3db7694d7",
+   "o": "D"
+  },
+  "BIO-OS-9/dedovanje-lastnosti#p2": {
+   "h": "e20b2369ae28",
+   "o": "I",
+   "r": "ne pove križanja iz naloge"
+  },
+  "BIO-OS-9/dedovanje-pri-cloveku#p0": {
+   "h": "825f2596e5d4",
+   "o": "D"
+  },
+  "BIO-OS-9/ekosistemi-in-biomi#p0": {
+   "h": "d3c85e1e6647",
+   "o": "D",
+   "r": "dolžina verig ni vprašana",
+   "k": [
+    "Na vsako višjo raven preide le okoli desetina energije",
+    "Lisice imajo na voljo le desetino energije zajcev, zato jih lahko preživi veliko manj",
+    "Plenilec nad lisico bi dobil spet desetino, premalo za stalno populacijo"
+   ]
+  },
+  "BIO-OS-9/ekosistemi-in-biomi#p1": {
+   "h": "2549cce73d5d",
+   "o": "D"
+  },
+  "BIO-OS-9/kromosomi-in-geni#p0": {
+   "h": "c28b10b3ca39",
+   "o": "D"
+  },
+  "BIO-OS-9/kromosomi-in-geni#p1": {
+   "h": "e5dd2619e99a",
+   "o": "D"
+  },
   "BIO-OS-9/nacrtovanje-poskusa#p0": {
    "h": "00aa8550333e",
+   "o": "D"
+  },
+  "BIO-OS-9/naravni-izbor#p0": {
+   "h": "258059b99edd",
+   "o": "I",
+   "r": "ne pove, za katere ptice in katero sušo gre"
+  },
+  "BIO-OS-9/naravni-izbor#p1": {
+   "h": "75d70b8b0acc",
+   "o": "D"
+  },
+  "BIO-OS-9/sistematika#p0": {
+   "h": "206397dcf54a",
+   "o": "I",
+   "r": "ne poda latinskih imen leva in tigra"
+  },
+  "BIO-OS-9/sistematika#p1": {
+   "h": "aec2023a0987",
+   "o": "D"
+  },
+  "BIO-OS-9/snovi-v-zivih-bitjih#p0": {
+   "h": "6cbe9a9259be",
+   "o": "D"
+  },
+  "BIO-OS-9/zgodovina-zivljenja#p0": {
+   "h": "eb02bbe6a819",
+   "o": "D"
+  },
+  "BIO-OS-9/zgodovina-zivljenja#p1": {
+   "h": "4421cc5bd242",
    "o": "D"
   },
   "BIO-SS-1/biotska-membrana#p0": {
@@ -689,8 +909,9 @@
    "r": "ime ne moti, vprašanje je samostojno"
   },
   "FIZ-SS-1/energija#p0": {
-   "h": "e6bdb017e15b",
-   "o": "D"
+   "h": "eb42c64affe8",
+   "o": "D",
+   "r": "samostojno vprašanje o izbiri ničelne ravni"
   },
   "FIZ-SS-1/gibalna-kolicina#p1": {
    "h": "c5a9adbdc7ab",
@@ -705,33 +926,34 @@
    "o": "D"
   },
   "FIZ-SS-1/newtonovi-zakoni#p0": {
-   "h": "d319164cea20",
-   "o": "I",
-   "r": "sklic na Timovo trditev iz zgodbe lekcije"
+   "h": "8897c2157f56",
+   "o": "D",
+   "r": "samostojno o prvem zakonu; pojem o Timu se sklicuje na zgodbo lekcije",
+   "k": [
+    "Hitrost ostaja skoraj enaka, ker je rezultanta sil skoraj nič",
+    "Za gibanje sila ni potrebna; potrebna je le za spremembo hitrosti"
+   ]
   },
   "FIZ-SS-1/newtonovi-zakoni#p1": {
    "h": "5697f9d6b44c",
    "o": "D"
   },
   "FIZ-SS-1/premo-enakomerno-gibanje#p1": {
-   "h": "ddd47478b6ba",
+   "h": "f23116e6666c",
    "o": "D",
-   "r": "splošni povzetek o vodoravnih odsekih ni vprašan",
-   "k": [
-    "Na $s(t)$ je vodoraven odsek: lega se ne spreminja",
-    "Na $v(t)$ črta za $4\\,\\mathrm{s}$ pade na $0$ in se nato vrne na prejšnjo višino"
-   ]
+   "r": "samostojno vprašanje o grafih s(t) in v(t)"
   },
   "FIZ-SS-1/prosti-pad-in-navpicni-met#p0": {
    "h": "2171db7f3d9f",
    "o": "D"
   },
   "FIZ-SS-1/tlak-in-vzgon#p1": {
-   "h": "dfe0f2d72434",
+   "h": "e4d29ebbd3fe",
    "o": "D",
-   "r": "ladje niso vprašane",
+   "r": "samostojno; ladje so le zgled",
    "k": [
-    "Čolniček izpodrine veliko več vode kot kepa, ker je v njem zrak",
+    "Kepa izpodrine le toliko vode, kolikor je sama velika",
+    "Potopljeni del čolnička, skupaj z zrakom v njem, je mnogo večji, zato izpodrine več vode",
     "Večja izpodrinjena prostornina $V_i$ pomeni večji vzgon, ki zdaj lahko uravnovesi težo"
    ]
   },
@@ -740,21 +962,19 @@
    "o": "D"
   },
   "FIZ-SS-1/vektorji-v-kinematiki#p1": {
-   "h": "086ab9026d97",
-   "o": "D"
+   "h": "944e22c81361",
+   "o": "D",
+   "r": "samostojno"
   },
   "FIZ-SS-2/elektricna-vezja#p0": {
-   "h": "74ba4fabb164",
-   "o": "D"
+   "h": "18114bb19774",
+   "o": "D",
+   "r": "samostojno, brez računanja"
   },
   "FIZ-SS-2/elektricna-vezja#p1": {
-   "h": "dd01a63825d0",
+   "h": "7f51bd04ecad",
    "o": "D",
-   "r": "ime ne moti; Tilnova trditev iz zgodbe in preobremenitev nista vprašani",
-   "k": [
-    "Polnilniki so vezani vzporedno",
-    "Vsak nov polnilnik je nova pot za tok, zato se skupni upor *zmanjša*, skupni tok pa *poveča*: tokovi vseh polnilnikov se seštejejo"
-   ]
+   "r": "samostojna napoved"
   },
   "FIZ-SS-2/elektricni-naboj-in-coulombov-zakon#p1": {
    "h": "6d7e07313df7",
@@ -779,8 +999,14 @@
    "o": "D"
   },
   "FIZ-SS-2/gravitacijski-zakon#p1": {
-   "h": "4fdc96f2e2e5",
-   "o": "D"
+   "h": "2dd6129e3372",
+   "o": "D",
+   "r": "samostojno"
+  },
+  "FIZ-SS-2/notranja-energija-in-toplota#p0": {
+   "h": "1a68e7e2bbad",
+   "o": "D",
+   "r": "samostojna napoved z razlogom"
   },
   "FIZ-SS-2/plinska-enacba#p1": {
    "h": "d1939acde46a",
@@ -2046,9 +2272,159 @@
    "h": "08a85da93f78",
    "o": "D"
   },
+  "NAR-OS-6/agregatna-stanja#p0": {
+   "h": "53373f56f132",
+   "o": "D"
+  },
+  "NAR-OS-6/fotosinteza-in-celicno-dihanje#p0": {
+   "h": "ca26236f2b8d",
+   "o": "D"
+  },
+  "NAR-OS-6/fotosinteza-in-celicno-dihanje#p1": {
+   "h": "f2284987a08f",
+   "o": "D"
+  },
+  "NAR-OS-6/fotosinteza-in-celicno-dihanje#p2": {
+   "h": "d06d63133595",
+   "o": "I",
+   "r": "ne poda podatkov za račun"
+  },
+  "NAR-OS-6/lastnosti-snovi#p1": {
+   "h": "991597ce0171",
+   "o": "D",
+   "r": "izparevanje ni vprašano",
+   "k": [
+    "Ker je sol raztopljena: njeni delci so pomešani med delce vode in so tako majhni, da gredo skozi luknjice v papirju",
+    "Filter zadrži samo neraztopljene delce, na primer pesek"
+   ]
+  },
+  "NAR-OS-6/locevanje-zmesi#p0": {
+   "h": "79f32cfa4a54",
+   "o": "D"
+  },
+  "NAR-OS-6/locevanje-zmesi#p1": {
+   "h": "fbbd44d94a48",
+   "o": "D"
+  },
+  "NAR-OS-6/mikroskop-in-celica#p1": {
+   "h": "a0a712074188",
+   "o": "D",
+   "r": "vodna kuga ni vprašana",
+   "k": [
+    "Mesnati listi čebule so skriti pod suhimi lupinami in v zemlji, zato niso zeleni in s svetlobo ne izdelujejo hrane",
+    "Kloroplastov ne potrebujejo"
+   ]
+  },
   "NAR-OS-6/naravoslovni-postopki#p0": {
    "h": "0418167f0d16",
    "o": "D"
+  },
+  "NAR-OS-6/oblike-energije#p0": {
+   "h": "e2251262aa57",
+   "o": "D"
+  },
+  "NAR-OS-6/oblike-energije#p1": {
+   "h": "fd517a3bfc07",
+   "o": "D"
+  },
+  "NAR-OS-6/prenos-toplote#p0": {
+   "h": "d9c36f3a21b1",
+   "o": "D"
+  },
+  "NAR-OS-6/prenos-toplote#p1": {
+   "h": "fe167988dc6a",
+   "o": "D"
+  },
+  "NAR-OS-6/prevajanje-vode-in-snovi#p0": {
+   "h": "1ddf4afcdbfd",
+   "o": "D"
+  },
+  "NAR-OS-6/prevajanje-vode-in-snovi#p1": {
+   "h": "55b44910e655",
+   "o": "D"
+  },
+  "NAR-OS-6/rastline-in-okolje#p0": {
+   "h": "12acb0d247f0",
+   "o": "D"
+  },
+  "NAR-OS-6/rastline-in-okolje#p1": {
+   "h": "a2944fbaa862",
+   "o": "D"
+  },
+  "NAR-OS-6/razmnozevanje-rastlin#p1": {
+   "h": "d8b76f154cf3",
+   "o": "D"
+  },
+  "NAR-OS-6/raznolikost-organizmov#p0": {
+   "h": "82032c72846f",
+   "o": "D",
+   "r": "rastlina v kleti ni vprašana",
+   "k": [
+    "Ker za rast ne potrebujejo svetlobe, hrane ne izdelajo s fotosintezo",
+    "Hrano vsrkavajo iz podlage (gnoja in slame), na kateri rastejo"
+   ]
+  },
+  "NAR-OS-6/raznolikost-organizmov#p1": {
+   "h": "d6403864cdcc",
+   "o": "D"
+  },
+  "NAR-OS-6/razvrscanje-rastlin#p0": {
+   "h": "0bac048c0dd0",
+   "o": "D"
+  },
+  "NAR-OS-6/toplota-in-temperatura#p1": {
+   "h": "b514413f2786",
+   "o": "D"
+  },
+  "NAR-OS-6/zgradba-rastline#p1": {
+   "h": "d04ec69bd1c4",
+   "o": "D"
+  },
+  "NAR-OS-6/zgradba-rastline#p2": {
+   "h": "855fe6f76960",
+   "o": "I",
+   "r": "ne pove, med katerimi rastlinami izbiramo"
+  },
+  "NAR-OS-6/zmesi-in-ciste-snovi#p0": {
+   "h": "2e9b250e19b5",
+   "o": "D"
+  },
+  "NAR-OS-6/zmesi-in-ciste-snovi#p1": {
+   "h": "4cdcbde71a47",
+   "o": "D"
+  },
+  "NAR-OS-7/clovek-in-okolje#p0": {
+   "h": "bd06d9a1565e",
+   "o": "D"
+  },
+  "NAR-OS-7/clovek-in-okolje#p1": {
+   "h": "636bc3dbf0d5",
+   "o": "D"
+  },
+  "NAR-OS-7/cutila-in-zivcevje#p0": {
+   "h": "a3ff83447c89",
+   "o": "D"
+  },
+  "NAR-OS-7/cutila-in-zivcevje#p1": {
+   "h": "f86b56059125",
+   "o": "D"
+  },
+  "NAR-OS-7/dihanje-in-krvni-obtok#p0": {
+   "h": "1c724d74041c",
+   "o": "D"
+  },
+  "NAR-OS-7/dihanje-in-krvni-obtok#p1": {
+   "h": "fa824b85c0e1",
+   "o": "D"
+  },
+  "NAR-OS-7/ekosistem#p1": {
+   "h": "7b7cdcc9bcf6",
+   "o": "D"
+  },
+  "NAR-OS-7/ekosistem#p2": {
+   "h": "0782a36d5aad",
+   "o": "I",
+   "r": "ne pove, za katero zdravljenje gre"
   },
   "NAR-OS-7/elementi-in-spojine#p0": {
    "h": "121c83ba3869",
@@ -2057,6 +2433,101 @@
   "NAR-OS-7/elementi-in-spojine#p1": {
    "h": "8c5b9d1c977f",
    "o": "D"
+  },
+  "NAR-OS-7/fizikalne-in-kemijske-spremembe#p0": {
+   "h": "d60c04f7c454",
+   "o": "D"
+  },
+  "NAR-OS-7/fizikalne-in-kemijske-spremembe#p1": {
+   "h": "808c9f9eb07b",
+   "o": "D"
+  },
+  "NAR-OS-7/gibanje-in-opora#p1": {
+   "h": "9639446a8716",
+   "o": "D"
+  },
+  "NAR-OS-7/kisle-in-bazicne-raztopine#p0": {
+   "h": "f57dfd7c04cb",
+   "o": "D"
+  },
+  "NAR-OS-7/kisle-in-bazicne-raztopine#p1": {
+   "h": "9f0a4546045f",
+   "o": "D"
+  },
+  "NAR-OS-7/kisle-in-bazicne-raztopine#p2": {
+   "h": "fc19ff518faa",
+   "o": "D"
+  },
+  "NAR-OS-7/kopenski-in-vodni-ekosistemi#p1": {
+   "h": "ecfe9bff78b3",
+   "o": "D",
+   "r": "splošna opomba ni vprašana",
+   "k": [
+    "Riba ne preživi dolgo",
+    "Njeno telo je prilagojeno na vodo z zelo malo soli",
+    "v morju je soli več kot sedemdesetkrat več, s tem pa telo ribe iz ribnika ne zna živeti"
+   ]
+  },
+  "NAR-OS-7/krozenje-snovi-in-pretok-energije#p0": {
+   "h": "37f219b4625d",
+   "o": "D"
+  },
+  "NAR-OS-7/krozenje-snovi-in-pretok-energije#p1": {
+   "h": "7e99e6311a98",
+   "o": "D"
+  },
+  "NAR-OS-7/prehranjevalne-verige-in-spleti#p0": {
+   "h": "e5dd5d05b033",
+   "o": "D"
+  },
+  "NAR-OS-7/prehranjevalne-verige-in-spleti#p1": {
+   "h": "f09ee3b94e36",
+   "o": "D",
+   "r": "odpornost spleta ni vprašana",
+   "k": [
+    "Tista z eno vrsto hrane",
+    "Žival s petimi vrstami hrane preprosto poje več drugih"
+   ]
+  },
+  "NAR-OS-7/prehranjevalne-verige-in-spleti#p2": {
+   "h": "febe1a1f1895",
+   "o": "I",
+   "r": "sklic na spremembo v spletu iz lekcije"
+  },
+  "NAR-OS-7/prehranjevanje-in-prebava#p1": {
+   "h": "dad01c9beec7",
+   "o": "D"
+  },
+  "NAR-OS-7/razmnozevanje-in-razvoj#p0": {
+   "h": "b496272bff0c",
+   "o": "D"
+  },
+  "NAR-OS-7/razmnozevanje-in-razvoj#p1": {
+   "h": "b4a5a0450b5e",
+   "o": "D"
+  },
+  "NAR-OS-7/razvrscanje-zivali#p0": {
+   "h": "8b41aa915986",
+   "o": "I",
+   "r": "sklic na določevalni ključ iz lekcije"
+  },
+  "NAR-OS-7/razvrscanje-zivali#p1": {
+   "h": "2c72ec010f84",
+   "o": "I",
+   "r": "sklic na določevalni ključ iz lekcije"
+  },
+  "NAR-OS-7/zgradba-in-delovanje-zivali#p0": {
+   "h": "b0ce7ed8173e",
+   "o": "D"
+  },
+  "NAR-OS-7/zgradba-in-delovanje-zivali#p1": {
+   "h": "77535b89f8fc",
+   "o": "D",
+   "r": "srce ni vprašano",
+   "k": [
+    "Tkivo, in sicer vezivno",
+    "Kri je iz krvnih celic in tekočine, nima pa več različnih tkiv, kot jih ima organ"
+   ]
   },
   "NAR-OS-7/zgradba-snovi#p1": {
    "h": "40af56989431",
