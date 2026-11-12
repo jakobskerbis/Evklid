@@ -738,6 +738,7 @@ test("accuracy round 7: an ionic formula with unreduced cross-rule subscripts is
     [R`Kalcijev sulfat je $\mathrm{Ca_2(SO_4)_2}$.`, /Ca2\(SO4\)2 → CaSO4/],
     ["Zn2S2 je cinkov sulfid.", /ZnS/],
     [R`$\ce{Al3(PO4)3}$`, /AlPO4/],
+    ["Po križnem pravilu dobimo Mg₂O₂.", /MgO/], // križno pravilo brez krajšanja
   ];
   for (const [a, re] of bad) assert.match(subscriptIssue(a).issue || "", re, a);
   const ok = [
@@ -751,6 +752,8 @@ test("accuracy round 7: an ionic formula with unreduced cross-rule subscripts is
     "MgO namesto Mg2O2",
     "Ali je Mg2O2 prav?", // SKIP_LINE
     "Ti si napisal Mg2O2.",
+    "Križno pravilo da Mg₂O₂, kar še poenostavimo.",
+    "Fe₂O₃, Fe₃O₄, Pb₃O₄, C₂H₆, S₂O₃²⁻, CuSO₄·5H₂O, Al₂(SO₄)₃, Mg₃(PO₄)₂",
   ];
   for (const a of ok) assert.equal(subscriptIssue(a).issue, null, a);
   // formula iz učenčevega sporočila ni napaka odgovora

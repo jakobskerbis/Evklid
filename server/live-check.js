@@ -660,13 +660,14 @@ export function lewisIssue(answer, question = "") {
 // ionsko formulo kovine s stalnim nabojem (Be, Mg, Ca, Sr, Ba, Zn 2+; Al 3+) in enostavnega aniona (O, S, N, P,
 // SO₄, CO₃, SO₃, PO₄), ko sta indeksa natanko neskrajšani rezultat križnega pravila (indeks kovine = naboj aniona,
 // indeks aniona = naboj kovine) in imata skupni delitelj. Molekulske spojine (H₂O₂, N₂O₄, C₂H₄), Hg₂Cl₂, Fe₂S₂ in
-// peroksidi (Na₂O₂, BaO₂) zato izpadejo sami. Ne šteje: `SKIP_LINE`, vrstica s krajšanjem, križnim pravilom ali
+// peroksidi (Na₂O₂, BaO₂) zato izpadejo sami. Ne šteje: `SKIP_LINE`, vrstica s krajšanjem (tudi »poenostav«) ali
 // besedo »namesto«, formula, katere skrajšana oblika je v odgovoru, in formula iz učenčevega sporočila.
 const IONIC_CATION = { Be: 2, Mg: 2, Ca: 2, Sr: 2, Ba: 2, Zn: 2, Al: 3 };
 const IONIC_ANION = { O: 2, S: 2, N: 3, P: 3, SO4: 2, CO3: 2, SO3: 2, PO4: 3 };
 const SUB_DIGITS = "₀₁₂₃₄₅₆₇₈₉";
 const IONIC_RE = /(?<![A-Za-z)\]])(Be|Mg|Ca|Sr|Ba|Zn|Al)(\d)(O|S|N|P|\((?:SO4|CO3|SO3|PO4)\))(\d)(?![A-Za-z\d(+\-−])/g;
-const REDUCE_LINE_RE = /krajš|(?<!\p{L})del(?:i|imo|iš)(?!\p{L})|razmerj|križ|namesto/iu;
+// »križ« ne izpusti vrstice: »Po križnem pravilu dobimo Mg₂O₂.« je prav napaka, ki jo iščemo (pregled 1, PR #606).
+const REDUCE_LINE_RE = /krajš|poenostav|(?<!\p{L})del(?:i|imo|iš)(?!\p{L})|razmerj|namesto/iu;
 const ionicPlain = (t) =>
   String(t)
     .replace(/[₀-₉]/g, (d) => String(SUB_DIGITS.indexOf(d)))
