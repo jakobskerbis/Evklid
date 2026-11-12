@@ -50,6 +50,11 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - `EVKLID_FREE_POOL_USD=10` – brezplačni paket: vsi brezplačni učenci skupaj porabijo največ 10 $ (≈ 8,7 €) na mesec, nato do 1. v mesecu samo Vadnica in lekcije.
 - `EVKLID_FREE_STUDENT_USD=0.2` – brezplačni paket: največ 0,2 $ na brezplačnega učenca na mesec.
 - `EVKLID_MONTHLY_BUDGET_USD=50` – opozorilo v dnevniku pri 80 % porabe.
+- `EVKLID_MERITEV_PO_OBJAVI=1` – 5 min po vsaki objavi ciljna meritev natančnosti lekcij, ki jih je objava spremenila
+  (ob spremembi prompta ali sprotnega preverjanja še primeri zadnjega kroga iz `docs/spremembe-prompta.md`), 4×, s preverjanjem.
+  Največ 1 $ na zagon, 15 $ na teden (ISO, UTC), en zagon na objavo; brez sprememb ni zagona. Izid: prijavljen skrbnik odpre
+  `/api/admin/meritev-po-objavi` (`?json=1` za JSON); stanje in dnevniki v `/var/data/meritev-po-objavi.json` in
+  `/var/data/meritve-po-objavi/`. Koda: `server/meritev-po-objavi.js`. `0` izklopi.
 
 Vse lahko spremeniš v Render → Environment.
 

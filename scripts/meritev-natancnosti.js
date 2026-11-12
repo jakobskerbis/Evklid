@@ -19,6 +19,28 @@ export const DOC = path.join(root, "docs", "stroski-ai.md");
 export const DOC_START = "<!-- NATANCNOST:ZACETEK (piše scripts/primerjava-modelov.js, ne urejaj ročno) -->";
 export const DOC_END = "<!-- NATANCNOST:KONEC -->";
 
+// Rešeni primeri lekcije (naloga + rešitev po korakih); skupno za primerjava-modelov.js in server/meritev-po-objavi.js.
+// Rešene primere pišeta in pregledujeta Opus ali Fable, zato je njihova rešitev merilo.
+export function examplesOf(file) {
+  const md = fs.readFileSync(file, "utf8");
+  const sec = md.split(/^## Rešeni primeri\s*$/m)[1]?.split(/^## (?!#)/m)[0];
+  if (!sec) return [];
+  return sec
+    .split(/^### /m)
+    .slice(1)
+    .map((block) => {
+      const [head, ...rest] = block.split("\n");
+      const body = rest.join("\n").trim();
+      const cut = body.search(/^\*\*(Podatki|Rešitev|Iščemo)[:*]/m);
+      // Vprašanje je pogosto le v »Iščemo« (ne izda rešitve), zato ga dodamo; formulo (namig) izpustimo.
+      const wanted = body.match(/^\*\*Iščemo(?::\*\*|\*\*:)\s*(.+)$/m)?.[1];
+      const prose = (cut > 0 ? body.slice(0, cut) : "").replace(/:::formula[\s\S]*?:::/g, "").trim();
+      const task = prose && wanted ? `${prose}\n\nIščemo: ${wanted.trim()}` : prose;
+      return { title: head.trim(), task, solution: body, hard: /težj/i.test(head) };
+    })
+    .filter((e) => e.task.length >= 30 && /Rešitev/.test(e.solution));
+}
+
 export const CONDITIONS = [
   { kljuc: "brez", liveCheck: "0", ime: "Sam model, brez preverjanja", ime_en: "Model alone, without the program check" },
   { kljuc: "s", liveCheck: "1", ime: "Cel Evklidov odgovor, s preverjanjem", ime_en: "Evklid's full answer, with the program check" },

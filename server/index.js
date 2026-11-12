@@ -6,6 +6,7 @@ import { applyPendingRestore } from "./kopije.js";
 import { createApp } from "./app.js";
 import { isMockMode, MODEL } from "./claude.js";
 import { casCheck, casOn } from "./cas.js";
+import { nacrtujMeritevPoObjavi } from "./meritev-po-objavi.js";
 
 // Obnova iz varnostne kopije (scripts/obnovi-kopijo.js) samo ob zagonu strežnika, preden se baza odpre.
 applyPendingRestore(process.env.EVKLID_DB || `data/${BRAND.slug}.db`);
@@ -44,6 +45,9 @@ const server = app.listen(port, () => {
     };
     setTimeout(pdfSync, 20_000).unref();
   }
+  // Ciljna meritev natančnosti po objavi (server/meritev-po-objavi.js): le na Render z EVKLID_MERITEV_PO_OBJAVI=1,
+  // 5 min po zagonu, v ozadju z najnižjo prednostjo; največ 1 $ na zagon in 15 $ na teden, en zagon na objavo.
+  if (nacrtujMeritevPoObjavi({ mock: isMockMode() })) console.log("[evklid] meritev po objavi: načrtovana čez nekaj minut");
 });
 
 // Zaustavitev (objava na Render pošlje SIGTERM): novih zahtev ne sprejmemo, klici AI v teku se lahko končajo
