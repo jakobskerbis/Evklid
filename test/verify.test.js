@@ -60,6 +60,14 @@ for (const f of FIX.primeri) {
   });
 }
 
+test("cards: a multi-line card stays one numbered item for the reviewer", async () => {
+  const seen = [];
+  const fn = async (p) => (seen.push(p), { content: [{ type: "text", text: "OK" }], usage: { input_tokens: 10, output_tokens: 1 }, model: p.model, stop_reason: "end_turn" });
+  const cards = ["Koraki? → 1. naboja\n2. križno pravilo", "B → b"];
+  await verifyAnswer({ question: "q", answer: cards.join("\n"), kind: "cards", cards, createFn: fn });
+  for (const p of seen) assert.match(p.messages[0].content, /1\. Koraki\? → 1\. naboja ; 2\. križno pravilo\n2\. B → b/);
+});
+
 test("cards: a cut-off reviewer rejects every card", async () => {
   const cut = async (p) => ({ content: [{ type: "text", text: "OK" }], stop_reason: "max_tokens", usage: { output_tokens: 10 }, model: p.model });
   const r = await verifyAnswer({ question: "q", answer: "A → a\nB → b", kind: "cards", cards: ["A → a", "B → b"], createFn: cut });

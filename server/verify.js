@@ -124,6 +124,9 @@ export async function askModel(model, user, createFn, system = SYSTEM, { signal 
   return { verdict, text, usage: r.usage, model: r.model || model };
 }
 
+// Kartica v eni vrstici: večvrstični odgovor (»1. …\n2. …«) bi preverjevalcu zamaknil številke kartic.
+const oneLine = (c) => String(c).replace(/\s*\n\s*/g, " ; ");
+
 /**
  * Preveri odgovor trikrat. `kind`: "answer" (celoten odgovor) ali "cards" (kartice).
  * `cards`: seznam kartic (»vprašanje → odgovor«); preverjevalca jih dobita oštevilčene in sodita vsako posebej,
@@ -145,7 +148,7 @@ export async function verifyAnswer({ question, answer, kind = "answer", cards = 
   // Pravilo treh pregledov: koda in vsaj dva različna modela.
   const models = [...new Set(VERIFY_MODELS())];
   if (models.length < 2) return { ok: false, reason: "za preverjanje sta potrebna dva različna modela (EVKLID_VERIFY_MODELS)", cost: 0 };
-  const user = checkerUser({ question, answer: n ? cards.map((c, i) => `${i + 1}. ${c}`).join("\n") : answer, kind });
+  const user = checkerUser({ question, answer: n ? cards.map((c, i) => `${i + 1}. ${oneLine(c)}`).join("\n") : answer, kind });
   let cost = 0;
   try {
     // allSettled: tudi ko en klic pade, se strošek uspelega zabeleži (dnevna omejitev).
