@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import * as G from "../scripts/atlas/zile-mreza.mjs";
-import { stena, polna, dopolni, stiki, zakrpaj, zasijRobove } from "../scripts/atlas/popravi-zile.mjs";
+import { stena, polna, dopolni, stiki, zakrpaj, zasijRobove, vDrugiMrezi } from "../scripts/atlas/popravi-zile.mjs";
 import { analiziraj } from "../scripts/atlas/preveri-mreze.mjs";
 
 // Cev vzdolž osi y: polmer r, dolžina L, n stranic, obroči na korak; oba konca odprta. Normale radialne, COLOR_0 = 1.
@@ -305,4 +305,23 @@ test("popravek žil: pokrov drobne žile ima oglišče v sredini z normalo v sme
   assert.ok(pregled(r)[0] > 0, "poskusna reža ni nastala");
   assert.ok(zasijRobove(r) >= 1);
   assert.equal(pregled(r)[0], 0);
+});
+
+test("popravek žil: konec drobne žile, ki tiči v drugi žili, ostane raven; prosti konec dobi kupolo", () => {
+  const debela = cev({ r: 0.004, L: 0.02, korak: 0.002, n: 8 });
+  polna({ ime: "debela", m: debela }, true);
+  for (let i = 0; i < debela.P.length / 3; i++) debela.P[i * 3 + 1] += 0.015; // debela žila: y od 0,015 do 0,035
+  const mreze = [{ m: debela, mn: [-0.004, 0.015, -0.004], mx: [0.004, 0.035, 0.004] }];
+  assert.equal(vDrugiMrezi([0, 0.02, 0], mreze), true);
+  assert.equal(vDrugiMrezi([0, 0.01, 0], mreze), false);
+  assert.equal(vDrugiMrezi([0.006, 0.02, 0], mreze), false);
+  const m = cev({ r: 0.001, L: 0.02, korak: 0.002, n: 6 }); // tanka: y od 0 do 0,02, zgornji konec v debeli
+  const r = polna({ ime: "tanka", m }, "kupola", (c, ven, rr) => !vDrugiMrezi(G.v3.add(c, G.v3.mul(ven, 0.3 * rr)), mreze));
+  assert.equal(r.koncev, 2);
+  assert.equal(r.ravnih, 1);
+  assert.deepEqual(pregled(m), [0, 0, 0, 0, 0, 0]);
+  let najY = -Infinity, najmanjY = Infinity;
+  for (let i = 0; i < m.P.length / 3; i++) { najY = Math.max(najY, m.P[i * 3 + 1]); najmanjY = Math.min(najmanjY, m.P[i * 3 + 1]); }
+  assert.ok(Math.abs(najY - 0.02) < 1e-9, `konec v drugi žili ne sme segati čez obroč (${najY})`);
+  assert.ok(najmanjY < -1e-4, "prosti konec ni izbočen");
 });

@@ -85,7 +85,7 @@ NACRT.telo = {
   zgosti: (pot) => (/telo-hd/.test(pot) ? 0.3 : 0.7),
   // Konec drobne žile: rahlo izbočen pokrov z ogliščem v sredini (normala v smeri osi) in svojimi oglišči na robu
   // (normala med steno in osjo). Raven pokrov iz oglišč obroča (normale stene, pravokotne na pogled) se je od
-  // spredaj osenčil bledo sivo.
+  // spredaj osenčil bledo sivo. Kupolo dobi samo prost konec; konec, ki tiči v drugi žili, ostane raven.
   pokrov: "kupola",
 };
 
@@ -565,13 +565,31 @@ function zapriZanko(m, z, { vrh = 0, raven = false, svojRob = false } = {}) {
   return tri.length;
 }
 
-export function polna(d, pokrov) {
+// »prost(c, ven, r)«: ali je konec (središče, smer navzven, polmer) prost. Kupolo dobi samo prost konec; konec, ki
+// tiči v drugi žili, ostane raven (kupola bi tam pogledala skozi steno sosede ali naredila svetel obroč na stopnici).
+export function polna(d, pokrov, prost = null) {
   const z = G.zanke(d.m);
-  let st = 0;
-  for (const zz of z) st += zapriZanko(d.m, zz, pokrov === true || pokrov === "raven" ? { raven: true } : { vrh: 0.3, svojRob: pokrov === "kupola" });
+  let st = 0, ravnih = 0;
+  for (const zz of z) {
+    let raven = pokrov === true || pokrov === "raven";
+    if (!raven && prost) { const o = G.opisZanke(d.m, zz); if (!prost(o.c, v3.mul(o.n, -1), o.r)) { raven = true; ravnih++; } }
+    st += zapriZanko(d.m, zz, raven ? { raven: true } : { vrh: 0.3, svojRob: pokrov === "kupola" });
+  }
   if (z.length) { d.m.spremenjeno = true; G.zvari(d.m); }
   const zasitih = zasijRobove(d.m);
-  return { koncev: z.length, trikotnikov: st, zasitih };
+  return { koncev: z.length, trikotnikov: st, zasitih, ravnih };
+}
+
+// Ali je točka v kateri od drugih mrež (parnost žarka v treh smereh; že ena liha smer šteje za »znotraj«, ker
+// napaka v to smer pomeni le raven pokrov kot doslej). Mreže: [{ m, mn, mx }] s škatlo.
+const SMERI_KONCA = [[0.5377, 0.7151, 0.4463], [-0.6713, 0.2911, 0.6816], [0.3015, -0.8452, 0.4413]];
+export function vDrugiMrezi(p, mreze) {
+  for (const { m, mn, mx } of mreze) {
+    if (p[0] < mn[0] || p[1] < mn[1] || p[2] < mn[2] || p[0] > mx[0] || p[1] > mx[1] || p[2] > mx[2]) continue;
+    const vse = m.vsePloskve && m.vsePloskve.length === m.F.length / 3 ? m.vsePloskve : (m.vsePloskve = Array.from({ length: m.F.length / 3 }, (_, i) => i));
+    for (const s of SMERI_KONCA) if (G.steviloZadetkov(m, p, s, vse) % 2) return true;
+  }
+  return false;
 }
 
 // Odprti robovi, ki niso zanka (nemnogoterna mreža, npr. »Cavernous sinus«): reža med dvema skoraj enakima
@@ -1022,6 +1040,13 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
     return d;
   };
   const nalozi = (d) => { if (!d.m) d.m = G.preberi(d.node, d.prim); return d; };
+  const izvirne = new Map(); // še neobdelani deli (samo za preskus, ali konec tiči v drugi žili)
+  const skatla = (m) => {
+    if (m.skatla && !m.spremenjeno) return m.skatla;
+    const mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity];
+    for (let i = 0; i < m.P.length; i++) { const v = m.P[i], c = i % 3; if (v < mn[c]) mn[c] = v; if (v > mx[c]) mx[c] = v; }
+    return (m.skatla = { m, mn, mx });
+  };
   const odprt = (d) => G.zanke(d.m).length > 0;
   const T0 = new Map();
   const stej = (d) => { if (!T0.has(d)) T0.set(d, d.m.F.length / 3); };
@@ -1081,8 +1106,9 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
       const r = stena(d, st[1], { skrita: d.skrita, izpostavljena: d.izpostavljena });
       if (r) opombe.push(`stena ${st[1]} mm (najmanj ${mm(r.najmanj)} mm), obročev ${r.obrocev}`);
     } else if (jePolna && (odprt(d) || [...G.robovi(d.m).values()].some((l) => l.length === 1))) {
-      const r = polna(d, nacrt.pokrov);
-      opombe.push(`zaprtih koncev ${r.koncev}${r.zasitih ? `, zašitih rež ${r.zasitih}` : ""}`);
+      const drugi = nacrt.pokrov === "kupola" ? deli.filter((x) => x !== d).map((x) => skatla(x.m || (izvirne.get(x) || izvirne.set(x, G.preberi(x.node, x.prim)).get(x)))) : null;
+      const r = polna(d, nacrt.pokrov, drugi && ((c, ven, rr) => !vDrugiMrezi(v3.add(c, v3.mul(ven, 0.3 * rr)), drugi) && !vDrugiMrezi(v3.add(c, v3.mul(ven, 0.05 * rr)), drugi)));
+      opombe.push(`zaprtih koncev ${r.koncev}${r.ravnih ? ` (ravnih, ker tičijo v drugi žili: ${r.ravnih})` : ""}${r.zasitih ? `, zašitih rež ${r.zasitih}` : ""}`);
     }
     if (!odprt(d)) { const u2 = G.usmeri(d.m); if (u2.navznoter || u2.obrnjene) G.poravnajNormale(d.m); } // zaprto: predznak prostornine
     if (opombe.length) log(`   ${d.ime}: ${opombe.join(", ")}`);
