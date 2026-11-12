@@ -38,9 +38,9 @@ test("količnik: enota in cel račun", () => {
   assert.equal(kind({ type: "number", value: 0.5, unit: "m" }, "1/2 kg"), "unit");
   assert.equal(kind({ type: "number", value: 0.5, unit: "m" }, "1/3 kg"), "unit");
   assert.equal(kind({ type: "number", value: 0.5, unit: "m" }, "1/2"), "unit");
-  assert.match(checkAnswer({ type: "number", value: 0.5, unit: "m" }, "1/2 m").message, /Količnik je pravilen/);
+  assert.match(checkAnswer({ type: "number", value: 0.5, unit: "m" }, "1/2 m").message, /Količnik je zapisan pravilno/);
   // »12:3=5« ni »pravilen količnik«
-  assert.doesNotMatch(checkAnswer({ type: "number", value: 4 }, "12:3=5").message || "", /Količnik je pravilen/);
+  assert.doesNotMatch(checkAnswer({ type: "number", value: 4 }, "12:3=5").message || "", /Količnik je zapisan pravilno/);
   assert.equal(kind({ type: "number", value: 4 }, "12:3=4"), "format");
 });
 
@@ -67,13 +67,13 @@ test("količnik pri številskem odgovoru: znak za deljenje prepoznan, število p
   for (const i of ["5:4", "5 : 4", "5÷4", "5/4", "10:8", "2,5 : 2"]) {
     const r = checkAnswer(n, i);
     assert.equal(r.kind, "format", i);
-    assert.match(r.message, /Količnik je pravilen/, i);
+    assert.match(r.message, /Količnik je zapisan pravilno/, i);
   }
   assert.equal(kind(n, "4:5"), "wrong");
   assert.equal(checkAnswer(n, "4:5").mistake?.code, "chk.reciprocal");
   // zahtevano zaokroževanje, rešitev shranjena zaokrožena: količnik je še vedno prav zapisan
-  assert.match(checkAnswer({ type: "number", value: 1.67, decimals: 2 }, "5/3").message, /Količnik je pravilen/);
-  assert.match(checkAnswer({ type: "number", value: 0.33, decimals: 2 }, "1:3").message, /Količnik je pravilen/);
+  assert.match(checkAnswer({ type: "number", value: 1.67, decimals: 2 }, "5/3").message, /Količnik je zapisan pravilno/);
+  assert.match(checkAnswer({ type: "number", value: 0.33, decimals: 2 }, "1:3").message, /Količnik je zapisan pravilno/);
   assert.equal(kind(n, "5÷0"), "format");
   // prej je »5/4« pri rezultatu 5 veljal za pravilnega (»/4« je bil prebran kot enota)
   assert.equal(kind({ type: "number", value: 5 }, "5/4"), "wrong");
@@ -96,4 +96,39 @@ test("ure, oznake in enote z »/« se ne berejo kot količnik", () => {
   assert.equal(kind({ type: "fraction", num: 3, den: 4 }, "6/8"), "simplify");
   assert.equal(kind({ type: "fraction", num: 0, den: 1 }, "0/5"), "correct");
   assert.equal(kind({ type: "fraction", num: 2, den: 1 }, "2"), "correct");
+});
+
+test("vsak nov namig ima svojo kodo s prevodom, besedilo pa ne izda števil iz rešitve", async () => {
+  const SL = (await import("../public/i18n/sl.js")).default;
+  const cases = [
+    [{ type: "number", value: 1.25 }, "5:4", "chk.quotient"],
+    [{ type: "number", value: 1.25 }, "5÷0", "chk.divZero"],
+    [{ type: "number", value: 2 }, "2:3:4", "chk.oneNumber"],
+    [R54, "1,25", "chk.fractionForm"],
+    [R54, "10:8", "chk.simplifyRatio"],
+    [R54, "10/8", "chk.simplify"],
+    [R54, "Odgovor: 5", "chk.fraction"],
+  ];
+  for (const [a, i, code] of cases) {
+    const r = checkAnswer(a, i);
+    assert.equal(r.code, code, i);
+    assert.equal(r.message, SL[code], `${i}: besedilo mora biti enako kot v sl.js`);
+  }
+  // nova namiga ob pravi vrednosti nimata nobenega zgleda s števili (zgled bi lahko bil ravno rešitev)
+  for (const code of ["chk.quotient", "chk.oneNumber", "chk.fractionForm", "chk.simplifyRatio"]) assert.doesNotMatch(SL[code], /\d/, code);
+  assert.match(SL["chk.fraction"], /a : b/);
+});
+
+test("razmerje s tisočicami (1 : 100 000) in z negativnim členom (6 : -3)", () => {
+  const map = { type: "fraction", num: 1, den: 100000 };
+  for (const i of ["1:100 000", "1 : 100 000", "1:100000", "1÷100 000"]) assert.equal(kind(map, i), "correct", i);
+  assert.equal(kind({ type: "fraction", num: 1, den: 2 }, "1 000 : 2 000"), "simplify");
+  assert.equal(kind({ type: "fraction", num: 1, den: 2, simplest: false }, "1 000 : 2 000"), "correct");
+  assert.equal(kind({ type: "fraction", num: 11, den: 2 }, "1 100/200"), "wrong"); // pri »/« je to mešano število 1 100/200 = 3/2, ne 1100/200
+  assert.equal(kind({ type: "fraction", num: -2, den: 1, simplest: false }, "6:-3"), "correct");
+  assert.equal(kind({ type: "fraction", num: -2, den: 1 }, "-2:1"), "correct");
+  assert.equal(kind({ type: "fraction", num: -2, den: 1 }, "6:-3"), "simplify");
+  assert.equal(checkAnswer({ type: "number", value: -2 }, "6:-3").code, "chk.quotient");
+  assert.equal(checkAnswer({ type: "number", value: -2 }, "6 : - 3").code, "chk.quotient");
+  assert.equal(kind({ type: "number", value: 2 }, "6:-3"), "wrong");
 });

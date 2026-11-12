@@ -118,7 +118,7 @@ function parseQuotient(input, { dot = false } = {}) {
   const a = parseNumberWithUnit(l, { dot });
   const b = parseNumberWithUnit(r, { dot });
   // »12:3=4«: zapisan je cel račun, ne količnik (ni ga mogoče preveriti kot količnik).
-  if (!a || !b || a.unit || !/^\d/.test(r) || b.unit.includes("=")) return null;
+  if (!a || !b || a.unit || !/^[+-]?\s*\d/.test(r) || b.unit.includes("=")) return null;
   return { value: a.value / b.value, unit: b.unit };
 }
 
@@ -128,7 +128,7 @@ function checkNumber(ans, input) {
   if (q) {
     // Količnik je zapisan prav, a število je treba še izračunati (»Izračunaj 5 : 4« z odgovorom »5 : 4« ne velja).
     // Vrsta »format« ne šteje kot napačen poskus.
-    if (!Number.isFinite(q.value)) return { kind: "format", code: "chk.number", message: "Z 0 ne moreš deliti. Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
+    if (!Number.isFinite(q.value)) return { kind: "format", code: "chk.divZero", message: "Z 0 ne moreš deliti. Vpiši število." };
     // Enota se preveri kot pri številu (»1/2 kg« pri nalogi v m: namig o enoti, ne »količnik je pravilen«).
     const unit = unitIssue(ans, q.unit);
     if (unit) return unit;
@@ -139,7 +139,8 @@ function checkNumber(ans, input) {
       Math.abs(q.value - e) <= (ans.tolerance ?? 1e-9) * Math.max(1, Math.abs(e)) ||
       (d !== undefined && d !== null && Math.abs(roundHalfUp(q.value, d) - roundHalfUp(e, d)) < 1e-9);
     if (exacts.some(same)) {
-      return { kind: "format", code: "chk.number", message: "Količnik je pravilen. Izračunaj ga še do konca in rezultat zapiši kot število (npr. 5 : 4 = 1,25)." };
+      // Brez zgleda s števili: zgled bi lahko bil ravno rešitev naloge.
+      return { kind: "format", code: "chk.quotient", message: "Količnik je zapisan pravilno. Izračunaj ga še do konca in rezultat zapiši kot število." };
     }
     // Obrnjeni količnik (»4 : 5« namesto 5 : 4) in napake iz generatorja dobijo isti namig kot pri številu.
     return { kind: "wrong", ...diagnose(ans, { value: q.value, decimals: 6, unit: "" }) };
@@ -147,7 +148,7 @@ function checkNumber(ans, input) {
   const p = parseNumberWithUnit(input, { dot: !!ans.dot });
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
   // »2:3:4« pri nalogi brez enote: znak za deljenje ni enota (prej je veljalo kot 2).
-  if (!ans.unit && /^[:÷∶/]/.test(p.unit)) return { kind: "format", code: "chk.number", message: "Vpiši eno število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
+  if (!ans.unit && /^[:÷∶/]/.test(p.unit)) return { kind: "format", code: "chk.oneNumber", message: "Vpiši eno samo število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
   const res = checkParsed(ans, p);
   // »2.500« je lahko 2500 (pika za tisočice) ali 2,5 s piko kot decimalnim ločilom (tipkovnica v
   // angleščini, arabščini, urdujščini). Decimalno branje upoštevamo samo, kadar rezultat res ima tri
@@ -288,11 +289,14 @@ function parseFraction(input) {
   const s = westernDigits(String(input).trim()).replace(/−/g, "-").replace(/\s+/g, " ");
   // predznak lahko stoji tudi v imenovalcu: 3/-4 = -3/4
   // Ulomek a/b ali razmerje / količnik a : b, a ÷ b, a ∶ b (razmerje 5 : 4 je ulomek 5/4).
-  let m = s.match(/^([+-]?\d+)\s*[/:÷∶]\s*([+-]?\d+)$/);
+  // Pri razmerju sta lahko člena zapisana s presledkom med tisočicami (»1 : 100 000«); pri »/« ne, ker je »1 100/200«
+  // mešano število. ratio: zapisano z znakom za razmerje oziroma deljenje (namig »okrajšaj razmerje«).
+  let m = s.match(/^([+-]?\d+)\s*\/\s*([+-]?\d+)$/) || s.match(/^([+-]?(?:\d{1,3}(?: \d{3})+|\d+))\s*[:÷∶]\s*([+-]?(?:\d{1,3}(?: \d{3})+|\d+))$/);
   if (m) {
-    const num = Number(m[1]);
-    const den = Number(m[2]);
-    return den < 0 ? { num: -num, den: -den } : { num, den };
+    const num = Number(m[1].replace(/ /g, ""));
+    const den = Number(m[2].replace(/ /g, ""));
+    const ratio = !s.includes("/");
+    return den < 0 ? { num: -num, den: -den, ratio } : { num, den, ratio };
   }
   m = s.match(/^([+-]?)(\d+) (\d+)\s*\/\s*(\d+)$/); // mešano število "1 1/2"
   if (m) {
@@ -315,7 +319,7 @@ function checkFraction(ans, input) {
     const p = !f && parseNumberWithUnit(input);
     if (p && !p.unit && ans.den) {
       if (Math.abs(p.value - ans.num / ans.den) < 1e-9) {
-        return { kind: "format", code: "chk.fraction", message: "Vrednost je prava, zapiši jo še kot ulomek (npr. 3/4) ali razmerje (npr. 3 : 4)." };
+        return { kind: "format", code: "chk.fractionForm", message: "Vrednost je prava, zapiši jo še kot ulomek a/b ali razmerje a : b." };
       }
       return { kind: "wrong" };
     }
@@ -333,7 +337,11 @@ function checkFraction(ans, input) {
     return { kind: "wrong" };
   }
   // 0/5 je že 0: okrajšati ni česa. answer.simplest === false: naloga ne zahteva okrajšanega zapisa (10 : 8 = 5 : 4).
-  if (ans.simplest !== false && f.num !== 0 && gcd(f.num, f.den) !== 1) return { kind: "simplify", code: "chk.simplify", message: "Vrednost je pravilna, a ulomek še okrajšaj do konca." };
+  if (ans.simplest !== false && f.num !== 0 && gcd(f.num, f.den) !== 1) {
+    return f.ratio
+      ? { kind: "simplify", code: "chk.simplifyRatio", message: "Vrednost je pravilna, a razmerje še okrajšaj do konca." }
+      : { kind: "simplify", code: "chk.simplify", message: "Vrednost je pravilna, a ulomek še okrajšaj do konca." };
+  }
   return { kind: "correct" };
 }
 
