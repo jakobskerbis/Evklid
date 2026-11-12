@@ -5,6 +5,7 @@ import { BRAND } from "./brand.js";
 import { applyPendingRestore } from "./kopije.js";
 import { createApp } from "./app.js";
 import { isMockMode, MODEL } from "./claude.js";
+import { casCheck, casOn } from "./cas.js";
 
 // Obnova iz varnostne kopije (scripts/obnovi-kopijo.js) samo ob zagonu strežnika, preden se baza odpre.
 applyPendingRestore(process.env.EVKLID_DB || `data/${BRAND.slug}.db`);
@@ -19,6 +20,9 @@ const port = Number(process.env.PORT || 3000);
 const server = app.listen(port, () => {
   console.log(`Evklid teče na http://localhost:${port}`);
   console.log(isMockMode() ? "Preizkusni način (brez API ključa)." : `Model: ${MODEL}`);
+  // Preverjanje s SymPy (server/cas.js): proces se zažene takoj, da prvi odgovor ne čaka; v dnevniku je vidno, ali dela.
+  if (casOn())
+    casCheck("value", ["1+1", "2"]).then((r) => console.log(r.ok === true ? "[evklid] preverjanje s SymPy: deluje" : `[evklid] preverjanje s SymPy ni na voljo (${r.why})`));
   // Datoteke prvega odprtja strani stisnemo v ozadju takoj po zagonu (server/compress.js).
   const t0 = Date.now();
   app.locals.warmStatic?.()

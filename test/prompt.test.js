@@ -156,5 +156,6 @@ test("accuracy round 4: no side facts about other substances, OŠ stays on the t
   assert.doesNotMatch(fixed, /masa ostane enaka, če plin ne uide/);
   // Krog 4 doda manj kot 550 znakov predpomnjenega dela (51 711 pred spremembo; 500 → 550 po pregledu B:
   // izjema za vprašano primerjavo in analogijo, kisik iz zraka, CO₂ pri tableti).
-  assert.ok(fixed.length < 51711 + 550, `stalni del ${fixed.length} znakov`);
+  // Blok »Račun za kodo« (j, 2026-11-11: odgovore vedno potrdi koda, #581) doda še do 1200 znakov.
+  assert.ok(fixed.length < 51711 + 550 + 1200, `stalni del ${fixed.length} znakov`);
 });

@@ -2,3 +2,5 @@ node_modules/
 data/
 .env
 sim-results/
+.pylib/
+__pycache__/
