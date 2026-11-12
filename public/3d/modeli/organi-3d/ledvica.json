@@ -10,17 +10,201 @@
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
-   "barva": "#8f3a2f",
+   "barva": "#8a372c",
    "sijajBarva": "#ffb0a0",
    "rob": 0.2,
    "robBarva": "#ff8070",
    "relief": 0.25,
-   "lise": 0.1,
+   "lise": 0.18,
    "liseBarva": "#c06050",
-   "rez": "#d9c2b0",
+   "rez": "#b8634a",
    "senca": 0.3,
    "sencaBarva": "#4a1510",
-   "aoTekstura": 0.45
+   "aoTekstura": 0.6,
+   "mapa": false,
+   "detajl": true,
+   "rezSum": 1,
+   "rezCelice": [
+    {
+     "mera": 0.0007,
+     "jedroMoc": 0.55,
+     "jedro": "#7c2a22",
+     "jedroR": 0.24,
+     "ton": 0.1
+    }
+   ],
+   "rezZarki": {
+    "sredisce": [
+     0.004,
+     -0.006,
+     -0.005
+    ],
+    "sredisce2": [
+     0.004,
+     0.026,
+     -0.005
+    ],
+    "gostota": 60,
+    "moc": 0.18,
+    "barva": "#d2917a",
+    "visina": 0.15
+   },
+   "rezPresek": {
+    "vrsta": -1,
+    "ovoj": true,
+    "rob": 0.0007,
+    "robBarva": "#e3cdb8"
+   },
+   "rezPiramide": {
+    "del": "piramide",
+    "osnovaDel": "skorja",
+    "seznam": [
+     [
+      0.0035,
+      0.0325,
+      -0.005,
+      -0.9903,
+      0.1392,
+      0,
+      0.0165,
+      0.5,
+      0.0015
+     ],
+     [
+      0.0072,
+      0.034,
+      -0.005,
+      -0.4384,
+      0.8988,
+      0,
+      0.0119,
+      0.42,
+      0.0015
+     ],
+     [
+      0.0118,
+      0.0322,
+      -0.005,
+      0.3746,
+      0.9272,
+      0,
+      0.0102,
+      0.42,
+      0.0015
+     ],
+     [
+      0.0112,
+      0.0285,
+      -0.005,
+      0.9135,
+      0.4067,
+      0,
+      0.013,
+      0.42,
+      0.0015
+     ],
+     [
+      0.0166,
+      0.0161,
+      -0.005,
+      0.9945,
+      0.1045,
+      0,
+      0.0129,
+      0.55,
+      0.0015
+     ],
+     [
+      0.0125,
+      0.01,
+      -0.005,
+      0.9135,
+      -0.4067,
+      0,
+      0.016,
+      0.55,
+      0.0015
+     ],
+     [
+      0.0129,
+      -0.0033,
+      -0.005,
+      0.6428,
+      -0.766,
+      0,
+      0.0144,
+      0.55,
+      0.0015
+     ],
+     [
+      0.0104,
+      -0.0095,
+      -0.005,
+      0.1045,
+      -0.9945,
+      0,
+      0.0151,
+      0.5,
+      0.0015
+     ],
+     [
+      0.0085,
+      -0.0092,
+      -0.005,
+      -0.6157,
+      -0.788,
+      0,
+      0.0094,
+      0.5,
+      0.0015
+     ]
+    ],
+    "barva": "#8a2f2c",
+    "notranja": "#d8a08a",
+    "proge": "#cf8a76",
+    "gostota": 46,
+    "moc": 0.55,
+    "zile": 0.85,
+    "val": 0.0007,
+    "visina": 0.35,
+    "sinus": {
+     "del": "ovojnica",
+     "kapsule": [
+      [
+       0.004,
+       -0.006,
+       -0.005,
+       0.004,
+       0.026,
+       -0.005,
+       0.0088
+      ],
+      [
+       0.002,
+       0.005,
+       -0.005,
+       -0.02,
+       0.012,
+       -0.005,
+       0.0125
+      ]
+     ],
+     "barva": "#e0c27c",
+     "pretini": "#b89a5a",
+     "mera": 0.0016,
+     "zile": 0.55,
+     "zileMera": 0.0045
+    }
+   },
+   "celice": [
+    {
+     "mera": 0.0009,
+     "ton": 0.14,
+     "moc": 0.12,
+     "stena": "#a85444",
+     "sirina": 0.1
+    }
+   ]
   },
   "skorja": {
    "hrap": 0.34,
@@ -31,8 +215,154 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#9c4434",
-   "rez": "#b4553f",
-   "sijajBarva": "#ffb0a0"
+   "rez": "#b8634a",
+   "sijajBarva": "#ffb0a0",
+   "mapa": false,
+   "detajl": true,
+   "rezSum": 1,
+   "rezCelice": [
+    {
+     "mera": 0.0007,
+     "jedroMoc": 0.55,
+     "jedro": "#7c2a22",
+     "jedroR": 0.24,
+     "ton": 0.1
+    }
+   ],
+   "rezZarki": {
+    "sredisce": [
+     0.004,
+     -0.006,
+     -0.005
+    ],
+    "sredisce2": [
+     0.004,
+     0.026,
+     -0.005
+    ],
+    "gostota": 60,
+    "moc": 0.18,
+    "barva": "#d2917a",
+    "visina": 0.15
+   },
+   "rezPresek": {
+    "vrsta": 0,
+    "polno": true,
+    "rob": 0.0005
+   },
+   "rezPiramide": {
+    "del": "piramide",
+    "osnovaDel": "skorja",
+    "seznam": [
+     [
+      0.0035,
+      0.0325,
+      -0.005,
+      -0.9903,
+      0.1392,
+      0,
+      0.0165,
+      0.5,
+      0.0015
+     ],
+     [
+      0.0072,
+      0.034,
+      -0.005,
+      -0.4384,
+      0.8988,
+      0,
+      0.0119,
+      0.42,
+      0.0015
+     ],
+     [
+      0.0118,
+      0.0322,
+      -0.005,
+      0.3746,
+      0.9272,
+      0,
+      0.0102,
+      0.42,
+      0.0015
+     ],
+     [
+      0.0112,
+      0.0285,
+      -0.005,
+      0.9135,
+      0.4067,
+      0,
+      0.013,
+      0.42,
+      0.0015
+     ],
+     [
+      0.0166,
+      0.0161,
+      -0.005,
+      0.9945,
+      0.1045,
+      0,
+      0.0129,
+      0.55,
+      0.0015
+     ],
+     [
+      0.0125,
+      0.01,
+      -0.005,
+      0.9135,
+      -0.4067,
+      0,
+      0.016,
+      0.55,
+      0.0015
+     ],
+     [
+      0.0129,
+      -0.0033,
+      -0.005,
+      0.6428,
+      -0.766,
+      0,
+      0.0144,
+      0.55,
+      0.0015
+     ],
+     [
+      0.0104,
+      -0.0095,
+      -0.005,
+      0.1045,
+      -0.9945,
+      0,
+      0.0151,
+      0.5,
+      0.0015
+     ],
+     [
+      0.0085,
+      -0.0092,
+      -0.005,
+      -0.6157,
+      -0.788,
+      0,
+      0.0094,
+      0.5,
+      0.0015
+     ]
+    ],
+    "barva": "#8a2f2c",
+    "notranja": "#d8a08a",
+    "proge": "#cf8a76",
+    "gostota": 46,
+    "moc": 0.55,
+    "zile": 0.85,
+    "val": 0.0007,
+    "visina": 0.35
+   }
   },
   "piramida": {
    "hrap": 0.34,
@@ -43,9 +373,10 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#6d2622",
-   "rez": "#7a2a28",
-   "rezVlakna": 900,
-   "sijajBarva": "#ff9a90"
+   "rez": "#8c302a",
+   "sijajBarva": "#ff9a90",
+   "mapa": false,
+   "detajl": true
   },
   "papila": {
    "hrap": 0.34,
@@ -57,7 +388,10 @@
    "f": 70,
    "barva": "#c48676",
    "rez": "#c48676",
-   "sijajBarva": "#ffd0c0"
+   "sijajBarva": "#ffd0c0",
+   "mapa": false,
+   "detajl": true,
+   "vrstni": -4
   },
   "secevod": {
    "hrap": 0.34,
@@ -69,35 +403,72 @@
    "f": 70,
    "barva": "#e3cdb0",
    "rez": "#d8bc98",
-   "sijajBarva": "#ffffff"
+   "sijajBarva": "#ffffff",
+   "mapa": false,
+   "detajl": true,
+   "rezVotlina": {
+    "barva": "#ead6c4",
+    "senca": "#6e4034",
+    "globina": 0.006
+   },
+   "rezPresek": {
+    "vrsta": 3,
+    "samoRob": true,
+    "rob": 0.0005,
+    "robBarva": "#f0e2cf"
+   }
   },
   "arterija": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#c4312e",
-   "rez": "#a92a28",
+   "barva": "#ad2521",
+   "rez": "#c4473c",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
-   "robBarva": "#ff6458"
+   "robBarva": "#ff6458",
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "relief": 0.25,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#3a0b0b",
+    "rob": 0.0003,
+    "robBarva": "#c4473c"
+   }
   },
   "vena": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#3b5ba8",
-   "rez": "#2f4b8c",
+   "barva": "#3f5298",
+   "rez": "#6877bd",
    "sijajBarva": "#9db8ff",
    "rob": 0.18,
-   "robBarva": "#6f93ff"
+   "robBarva": "#6f93ff",
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "relief": 0.25,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#1d1630",
+    "rob": 0.0002,
+    "robBarva": "#6877bd"
+   }
   },
   "nadledvicna": {
    "hrap": 0.34,
@@ -111,7 +482,9 @@
    "rez": "#c9802c",
    "sijajBarva": "#ffe0a0",
    "lise": 0.2,
-   "liseBarva": "#e8b860"
+   "liseBarva": "#e8b860",
+   "mapa": false,
+   "detajl": true
   },
   "meh": {
    "hrap": 0.38,
@@ -122,10 +495,23 @@
    "zrno": 0.05,
    "f": 90,
    "barva": "#ead9b4",
-   "rez": "#f3e6c6",
+   "rez": "#eee0c6",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
-   "robBarva": "#fff4dc"
+   "robBarva": "#fff4dc",
+   "mapa": false,
+   "detajl": true,
+   "rezVotlina": {
+    "barva": "#ead6c4",
+    "senca": "#6e4034",
+    "globina": 0.007
+   },
+   "rezPresek": {
+    "vrsta": 3,
+    "samoRob": true,
+    "rob": 0.0006,
+    "robBarva": "#f0e2cf"
+   }
   }
  },
  "deli": [
@@ -269,6 +655,10 @@
     ],
     "d": -0.005
    }
+  ],
+  "brezPokrova": [
+   "piramide",
+   "papile"
   ]
  },
  "pogledi": {

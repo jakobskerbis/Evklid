@@ -8,21 +8,62 @@
    "lakHrap": 0.25,
    "sijaj": 0.5,
    "ao": 0.5,
-   "zrno": 0.06,
+   "zrno": 0.07,
    "f": 160,
-   "barva": "#d98c88",
+   "barva": "#d88d88",
    "sijajBarva": "#ffd0c8",
    "rob": 0.25,
    "robBarva": "#ffb0a8",
-   "lise": 0.35,
-   "liseBarva": "#a8585c",
-   "relief": 0.4,
+   "lise": 0.3,
+   "liseBarva": "#b06468",
+   "relief": 0.5,
    "senca": 0.25,
    "sencaBarva": "#6a2a30",
-   "rez": "#d07a78",
-   "rezPore": 1400,
-   "rezPoreMoc": 0.45,
-   "aoTekstura": 0.25
+   "rez": "#c96f6c",
+   "aoTekstura": 0.6,
+   "mapa": false,
+   "detajl": true,
+   "lise2": 0.45,
+   "lise2Barva": "#a38d94",
+   "lise2F": 34,
+   "celice": [
+    {
+     "mera": 0.012,
+     "moc": 0.5,
+     "stena": "#8a7780",
+     "sirina": 0.045,
+     "ton": 0.16,
+     "zvitost": 0.7,
+     "relief": 0.00012
+    }
+   ],
+   "rezPresek": {
+    "vrsta": 0,
+    "polno": true,
+    "rob": 0.0004
+   },
+   "rezCelice": [
+    {
+     "mera": 0.0011,
+     "jedroMoc": 0.6,
+     "jedro": "#6b262b",
+     "jedroR": 0.46,
+     "moc": 0.4,
+     "stena": "#f2bdb4",
+     "sirina": 0.12,
+     "vdolbina": 0.8,
+     "zvitost": 0.5,
+     "ton": 0.1
+    },
+    {
+     "mera": 0.013,
+     "moc": 0.45,
+     "stena": "#ecc9c1",
+     "sirina": 0.03,
+     "ton": 0.14,
+     "zvitost": 0.7
+    }
+   ]
   },
   "dihalna": {
    "hrap": 0.34,
@@ -37,37 +78,62 @@
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
-   "relief": 0.2
+   "relief": 0.2,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5
   },
   "pljucna-arterija": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#4566b8",
-   "rez": "#36549c",
+   "barva": "#46589f",
+   "rez": "#6677b8",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
-   "relief": 0.3
+   "relief": 0.25,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#161a3d",
+    "rob": 0.0003,
+    "robBarva": "#6677b8"
+   }
   },
   "pljucna-vena": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#c4312e",
-   "rez": "#a92a28",
+   "barva": "#ad2521",
+   "rez": "#c4473c",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
-   "relief": 0.3
+   "relief": 0.25,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#330909",
+    "rob": 0.0003,
+    "robBarva": "#c4473c"
+   }
   },
   "dihalna-v": {
    "hrap": 0.34,
@@ -78,41 +144,74 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#dccbb0",
+   "rez": "#eadcc6",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
-   "relief": 0.2
+   "relief": 0.2,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#33221f",
+    "rob": 0.0003,
+    "robBarva": "#eadcc6"
+   }
   },
   "pljucna-arterija-v": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#4566b8",
-   "rez": "#36549c",
+   "barva": "#46589f",
+   "rez": "#6677b8",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
-   "relief": 0.3
+   "relief": 0.25,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#161a3d",
+    "rob": 0.0003,
+    "robBarva": "#6677b8"
+   }
   },
   "pljucna-vena-v": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#c4312e",
-   "rez": "#a92a28",
+   "barva": "#ad2521",
+   "rez": "#c4473c",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
-   "relief": 0.3
+   "relief": 0.25,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#330909",
+    "rob": 0.0003,
+    "robBarva": "#c4473c"
+   }
   }
  },
  "deli": [
