@@ -4,7 +4,7 @@ stanje: osnutek
 ---
 - Rezultanta
   - nasprotne sile odštejemo
-  - risba: vse sile iz središča telesa
+  - $50\,\mathrm{N} - 20\,\mathrm{N} = 30\,\mathrm{N}$
 - Prvi zakon
   - $F_\mathrm{r} = 0$: miruje ali enakomerno
   - vztrajnost raste z maso
@@ -20,7 +20,7 @@ stanje: osnutek
 - Teža in podlaga
   - $F_\mathrm{g} = m\,g$ v newtonih
   - masa v kg je povsod enaka
-  - dvigalo navzgor: $F_\mathrm{p} = m\,(g + a)$
+  - dvigalo pospešuje navzgor: $F_\mathrm{p} = m\,(g + a)$
 - Postopek naloge
   - skica, sile, pozitivna smer
   - raketa: potisna sila minus teža
