@@ -63,10 +63,25 @@ const tSt = (x, d) => st(x, d).replace(",", "{,}").replace(/[ \u00a0\u202f]/g, "
 const tCm = (x, e = "") => `${tSt(x)}\\,\\mathrm{cm${e}}`;
 // {…}: KaTeX formulo prelomi le pri =, ne sredi izraza (za ·, +); le predolg izraz (površina paralelepipeda)
 // se sme prelomiti še za +, da ne gre čez rob (členi med + ostanejo celi).
-const enacba = (ime, z, x, e) => {
+// Členi med + zunaj {…} (+ v ulomku ali korenu ostane v svojem členu).
+function cleni(f) {
+  const d = [];
+  let g = 0, s = 0;
+  for (let i = 0; i < f.length; i++) {
+    if (f[i] === "{") g++;
+    else if (f[i] === "}") g--;
+    else if (!g && f.startsWith(" + ", i)) {
+      d.push(f.slice(s, i));
+      s = i + 3;
+    }
+  }
+  return [...d, f.slice(s)];
+}
+// \displaystyle: ulomki v izpisu so polne velikosti (plošča ima prostor v višino).
+export const enacba = (ime, z, x, e) => {
   const f = fTex(z);
-  const g = f.length > 40 ? f.split(" + ").map((c) => `{${c}}`).join(" + ") : `{${f}}`;
-  return `$${ime} = ${g} = {${tCm(x, e)}}$`;
+  const g = f.length > 40 ? cleni(f).map((c) => `{${c}}`).join(" + ") : `{${f}}`;
+  return `$\\displaystyle ${ime} = ${g} = {${tCm(x, e)}}$`;
 };
 
 // ---------- Evklidovi Elementi (preverjeno na D. E. Joyce, Clark University, Euclid's Elements) ----------

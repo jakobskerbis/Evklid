@@ -287,7 +287,7 @@ export function labKlanec(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gS, vHint, gV, calc, qBox,
-      notes(POENOSTAVITVE_GIBANJE.klanec, `Pospešek na klancu ${tex(String.raw`a = \frac{g(\sin\theta - \mu_\mathrm{r}\cos\theta)}{1 + \frac{I}{mr^2}}`)}, <i>g</i> = 9,806 m/s² v Ljubljani. Časovnik: ločljivost 0,1 ms (kot PASCO ME-8930), točnost ±(0,01 % + 1 digit, ocena). Ocene: koeficient kotalnega upora 0,0025–0,0045, vztrajnost koles (10 g), nagib mize 3–6 mm/m, zamik elektromagneta ~5 ms, širina žarka.`),
+      notes(POENOSTAVITVE_GIBANJE.klanec, `Pospešek na klancu ${tex(String.raw`a = \frac{g(\sin\theta - \mu_\mathrm{r}\cos\theta)}{1 + I/(mr^2)}`)}, <i>g</i> = 9,806 m/s² v Ljubljani. Časovnik: ločljivost 0,1 ms (kot PASCO ME-8930), točnost ±(0,01 % + 1 digit, ocena). Ocene: koeficient kotalnega upora 0,0025–0,0045, vztrajnost koles (10 g), nagib mize 3–6 mm/m, zamik elektromagneta ~5 ms, širina žarka.`),
     ],
     tryText: "Postavi 2 kvadra in vrata na 30, 50, 70 in 90 cm (dva spusta). Nariši s(t²) in iz naklona izračunaj pospešek. Je manjši od g·sin θ? Zakaj? Kaj se zgodi s pospeškom, če voziček obtežiš?",
   });
@@ -362,7 +362,7 @@ export function labKlanec(el) {
           { t: "Točke ležijo na premici skozi izhodišče: pot je sorazmerna s kvadratom časa, gibanje je enakomerno pospešeno z <i>a</i> = 2<i>k</i>.", ok: true, why: `Pri enakomerno pospešenem gibanju iz mirovanja je ${tex(String.raw`s = \frac{1}{2}at^2`)}, zato je naklon premice ${tex(String.raw`k = \frac{a}{2}`)}. Tudi <i>v</i>(<i>t</i>) je premica skozi izhodišče z naklonom <i>a</i>.` },
           { t: "Pot je sorazmerna s časom: voziček ima ves čas enako hitrost.", ok: false, why: "Potem bi bil premica graf <i>s</i>(<i>t</i>), ne <i>s</i>(<i>t</i>²). Hitrost na vratih 2 je večja kot na vratih 1, voziček pospešuje." },
           { t: "Pospešek je vse večji, ker voziček pada vse hitreje.", ok: false, why: "Hitrost raste, pospešek pa je stalen: sila teže vzdolž klanca in kotalni upor se med vožnjo ne spreminjata. Zato so točke na premici." },
-          { t: "Težji voziček ima veliko večji pospešek.", ok: false, why: `Pospešek je skoraj neodvisen od mase: ${tex(String.raw`a = \frac{g(\sin\theta - \mu_\mathrm{r}\cos\theta)}{1 + \frac{I}{mr^2}}`)}. Težji voziček je le malo hitrejši, ker gre manjši del energije v vrtenje koles.` },
+          { t: "Težji voziček ima veliko večji pospešek.", ok: false, why: `Pospešek je skoraj neodvisen od mase: ${tex(String.raw`a = \frac{g(\sin\theta - \mu_\mathrm{r}\cos\theta)}{1 + I/(mr^2)}`)}. Težji voziček je le malo hitrejši, ker gre manjši del energije v vrtenje koles.` },
         ],
       }));
     }
@@ -707,7 +707,7 @@ export function labNewton2(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gF, gM, calc, qBox, qBox2,
-      notes(POENOSTAVITVE_GIBANJE.newton, `Drugi Newtonov zakon za voziček in obešalo: ${tex(String.raw`a = \frac{m_\mathrm{o}g - F_\mathrm{tr}}{M + m_\mathrm{o} + \frac{I_\mathrm{k}}{r^2} + \frac{I_\text{š}}{r^2}}`)}, <i>g</i> = 9,806 m/s². Uteži razreda M3 (OIML R111-1). Pospešek iz hitrosti na vratih: ${tex(String.raw`a = \frac{v_2^2 - v_1^2}{2s}`)}. Ocene: kotalni upor, vztrajnost koles in škripca, trenje v ležaju, višina mize 90 cm.`),
+      notes(POENOSTAVITVE_GIBANJE.newton, `Drugi Newtonov zakon za voziček in obešalo: ${tex(String.raw`a = \frac{m_\mathrm{o}g - F_\mathrm{tr}}{M + m_\mathrm{o} + (I_\mathrm{k} + I_\text{š})/r^2}`)}, <i>g</i> = 9,806 m/s². Uteži razreda M3 (OIML R111-1). Pospešek iz hitrosti na vratih: ${tex(String.raw`a = \frac{v_2^2 - v_1^2}{2s}`)}. Ocene: kotalni upor, vztrajnost koles in škripca, trenje v ležaju, višina mize 90 cm.`),
     ],
     tryText: "Najprej izravnaj trenje. Nato utežice eno za drugo prestavljaj z vozička na obešalo in vsakič izmeri pospešek. Je graf a(F) premica skozi izhodišče? Kaj pokaže naklon? Kaj se zgodi, če vrata 2 postaviš na 105 cm?",
   });
@@ -781,7 +781,7 @@ export function labNewton2(el) {
     for (const [name, pts] of skupine(meas, "mk", "F", "a")) {
       if (pts.length < 3) continue;
       const L = premica(pts);
-      out.push(`<p><b>${name}</b>: naklon ${tex(String.raw`\frac{a}{F} = ${num(L.a, 2)}${en("1/kg")}`)}, torej ${tex(String.raw`m = \frac{F}{a} \approx ${rez(num(1000 / L.a, 0), "g")}`)} (voziček, uteži in obešalo: ${name.slice(4)}${1000 / L.a > 1.03 * parseFloat(name.slice(4)) ? "; malo več, ker sila zavrti tudi kolesa in škripec" : ""}). Odsek na osi <i>a</i>: ${num(L.b, 3)}${nb}m/s²${Math.abs(L.b) > 0.03 ? " – premica ne gre skozi izhodišče: trenje ni izravnano." : "."}</p>`);
+      out.push(`<p><b>${name}</b>: naklon ${tex(String.raw`\frac{a}{F} = ${num(L.a, 2)}${en("kg⁻¹")}`)}, torej ${tex(String.raw`m = \frac{F}{a} \approx ${rez(num(1000 / L.a, 0), "g")}`)} (voziček, uteži in obešalo: ${name.slice(4)}${1000 / L.a > 1.03 * parseFloat(name.slice(4)) ? "; malo več, ker sila zavrti tudi kolesa in škripec" : ""}). Odsek na osi <i>a</i>: ${num(L.b, 3)}${nb}m/s²${Math.abs(L.b) > 0.03 ? " – premica ne gre skozi izhodišče: trenje ni izravnano." : "."}</p>`);
     }
     calc.innerHTML = out.join("");
     const maxF = Math.max(0, ...[...skupine(meas, "mk", "F", "a").values()].map((p) => p.length));

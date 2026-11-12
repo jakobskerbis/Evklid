@@ -92,7 +92,7 @@ test("laboratorij: vsak tex(…) in texBlock(…) se izriše brez napake (strogi
 
 // 3) 3D telesa: prostornina, površina, osnovna ploskev, plašč in polmera krogel so v izpisu formule (tex: true).
 test("3D telesa: vsak zapis količine (a³√2/12, O · v/3 …) se prepiše v LaTeX in izriše brez napake", async () => {
-  const { fTex } = await import("../public/3d/modeli/matematika/telesa.js");
+  const { fTex, enacba } = await import("../public/3d/modeli/matematika/telesa.js");
   const src = fs.readFileSync("public/3d/modeli/matematika/telesa.js", "utf8");
   const zapisi = [...new Set([...src.matchAll(/\b(?:V|P|O|O2|pl|Rv|Ro): \["([^"]+)",/g)].map((m) => m[1]))];
   assert.ok(zapisi.length >= 50, `premalo zapisov (${zapisi.length})`);
@@ -102,5 +102,16 @@ test("3D telesa: vsak zapis količine (a³√2/12, O · v/3 …) se prepiše v L
     assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "error" }), `${z} → ${t}`);
   }
   assert.equal(fTex("O · v/3"), "\\frac{O \\cdot v}{3}");
+  // izpis: vsak člen med + na vrhu je cel {…} (+ v ulomku ali korenu se ne razcepi), formula se izriše
+  const uravnotezen = (x) => [...x].reduce((g, c) => (g < 0 ? g : g + (c === "{") - (c === "}")), 0) === 0;
+  for (const z of zapisi) {
+    const t = enacba("X", z, 12.3, "^2").slice(1, -1);
+    const sredina = t.slice(t.indexOf("= ") + 2, t.lastIndexOf(" = "));
+    // na vrhu (zunaj {…}) so le celi členi {…}, ločeni s +
+    let g = 0;
+    const vrh = [...sredina].filter((c) => ((g += (c === "{") - (c === "}")), g === 0 && c !== "}")).join("");
+    if (!uravnotezen(sredina) || vrh.replace(/ \+ /g, "") !== "") assert.fail(`${z}: ${t}`);
+    assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "error" }), t);
+  }
   assert.match(src, /id: "V", oznaka: "Prostornina", tex: true/);
 });

@@ -152,6 +152,8 @@
 /* Izpis s formulami (tex: true): formule gredo pod oznako, ko ob njej niso cele (vsaka v svoji vrstici, prelom le pri =). */
 .k3-izpis-tex { flex-wrap: wrap; row-gap: 4px; }
 .k3-izpis-tex output { flex: 1 0 auto; max-width: 100%; text-align: right; font-weight: 400; }
+/* Aplikacija (ui.css) formulam prepove prelom, ker jih zlaga sirina.js; izpisa 3D ta ne obdela (prelomi KaTeX, kot na /3d). */
+.k3-izpis.k3-izpis-tex output .katex { white-space: normal; }
 .k3-deli { display: flex; flex-wrap: wrap; gap: 8px; }
 .k3-del {
   display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px;
