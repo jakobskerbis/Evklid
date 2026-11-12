@@ -2,7 +2,7 @@
 // kovine v kislinah in raztopinah soli (lab-kovine). Modeli: lab-model-elektrokemija.js (brez DOM). CSS: predpona lab-ek-.
 // Risbe so v stalnem merilu (merilna črta), oprema v pravih razmerjih; mehurčki se gibljejo z realno hitrostjo dviganja.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en } from "./lab.js";
 import { AM_RANGES, VM_RANGES, R_PLIN } from "./lab-model.js";
 import { pNas } from "./lab-model-toplota.js";
 import {
@@ -243,7 +243,7 @@ export function labElektroliza(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Prostornina plina in naboj"), graph, calc, qBox,
-      notes(POENOSTAVITVE_ELEKTROKEMIJA.elektroliza, "Faradayev zakon <i>n</i> = <i>Q</i>/(<i>zF</i>), <i>F</i> = 96 485 C/mol (CODATA 2018). Razkrojna napetost vode 1,229 V (Atkins), izmenjalni tokovi vodika na platini (Bard & Faulkner, tab. 3.4.1), prevodnost raztopin (CRC Handbook), topnost plinov (Sander 2015), parni tlak vode (Antoinova enačba). Ocene: prenapetost kisika in klora, kinetika na grafitu, oblika aparata (konstanta celice 700 m⁻¹), raztapljanje plinov ob elektrodi, toplotne izgube."),
+      notes(POENOSTAVITVE_ELEKTROKEMIJA.elektroliza, `Faradayev zakon ${tex(String.raw`n = \frac{Q}{zF}`)}, <i>F</i> = 96 485 C/mol (CODATA 2018). Razkrojna napetost vode 1,229 V (Atkins), izmenjalni tokovi vodika na platini (Bard & Faulkner, tab. 3.4.1), prevodnost raztopin (CRC Handbook), topnost plinov (Sander 2015), parni tlak vode (Antoinova enačba). Ocene: prenapetost kisika in klora, kinetika na grafitu, oblika aparata (konstanta celice 700 m⁻¹), raztapljanje plinov ob elektrodi, toplotne izgube.`),
     ],
     tryText: "Napovej, v kateri cevi se bo nabralo več plina. Elektrolizo naredi z razredčeno žveplovo kislino, nato poskusi destilirano vodo in raztopino natrijevega klorida. Kaj se zgodi, če zamenjaš pola? Iz svojih meritev izračunaj Faradayevo konstanto.",
   });
@@ -305,12 +305,12 @@ export function labElektroliza(el) {
       { id: "a", pts: rows.map((r, i) => [Q[i], r.Va]).filter((p) => Number.isFinite(p[1])), cls: "b", shape: "^", label: "anoda (+)", line: (x) => (x / (4 * F)) * Vm },
     ]);
     const last = rows.length ? rows[rows.length - 1] : null;
-    if (!last || !(last.Vk > 2) || !(Q[Q.length - 1] > 0)) return calc.replaceChildren(h("p", { class: "muted" }, "Ko zapišeš nekaj meritev z vsaj 2 mL plina, se tu izračunajo naboj, množina vodika in Faradayeva konstanta iz tvojih podatkov. Premici na grafu sta napoved po Faradayevem zakonu (H₂: Q/2F, O₂: Q/4F) pri izmerjenem tlaku in temperaturi."));
+    if (!last || !(last.Vk > 2) || !(Q[Q.length - 1] > 0)) return calc.replaceChildren(h("p", { class: "muted", html: `Ko zapišeš nekaj meritev z vsaj 2 mL plina, se tu izračunajo naboj, množina vodika in Faradayeva konstanta iz tvojih podatkov. Premici na grafu sta napoved po Faradayevem zakonu (H₂: ${tex(String.raw`\frac{Q}{2F}`)}, O₂: ${tex(String.raw`\frac{Q}{4F}`)}) pri izmerjenem tlaku in temperaturi.` }));
     const Qs = Q[Q.length - 1], pw = pNas(T), n = ((p - pw) * last.Vk * 1e-6) / (R_PLIN * (T + 273.15)), Fx = Qs / (2 * n);
     calc.replaceChildren(
-      h("p", { html: `<b>Naboj:</b> <i>Q</i> = Σ <i>Ī</i>·Δ<i>t</i> = ${num(Qs, 1)}${nb}C (iz tvojih odčitkov toka in časa).` }),
-      h("p", { html: `<b>Vodik:</b> zračni tlak je ${num(p / 1000, 1)}${nb}kPa, parni tlak vode pri ${num(T, 1)}${nb}°C pa ${num(pw / 1000, 2)}${nb}kPa, zato je <i>n</i>(H₂) = (<i>p</i> − <i>p</i><sub>H₂O</sub>)·<i>V</i>/(<i>RT</i>) = ${num(n * 1000, 3)}${nb}mmol.` }),
-      h("p", { html: `<b>Faradayeva konstanta:</b> <i>F</i> = <i>Q</i>/(2<i>n</i>) = ${num(Fx, 0).replace(/\B(?=(\d{3})+(?!\d))/g, nb)}${nb}C/mol (literatura 96${nb}485${nb}C/mol, odstopanje ${num(((Fx - F) / F) * 100, 1)}${nb}%).` }),
+      h("p", { html: `<b>Naboj:</b> ${tex(String.raw`Q = \sum \bar I\,\Delta t = ${num(Qs, 1)}${en("C")}`)} (iz tvojih odčitkov toka in časa).` }),
+      h("p", { html: `<b>Vodik:</b> zračni tlak je ${num(p / 1000, 1)}${nb}kPa, parni tlak vode pri ${num(T, 1)}${nb}°C pa ${num(pw / 1000, 2)}${nb}kPa, zato je ${tex(String.raw`n(\mathrm{H_2}) = \frac{(p - p_\mathrm{H_2O})\,V}{RT} = ${num(n * 1000, 3)}${en("mmol")}`)}.` }),
+      h("p", { html: `<b>Faradayeva konstanta:</b> ${tex(String.raw`F = \frac{Q}{2n} = ${num(Fx, 0).replace(/\B(?=(\d{3})+(?!\d))/g, "\\,")}${en("C/mol")}`)} (literatura 96${nb}485${nb}C/mol, odstopanje ${num(((Fx - F) / F) * 100, 1)}${nb}%).` }),
       Number.isFinite(last.Va) && last.Va > 0.5 ? h("p", { html: `<b>Razmerje:</b> <i>V</i>(katoda) : <i>V</i>(anoda) = ${num(last.Vk / last.Va, 2)} : 1.` }) : null,
     );
     if (!asked && rows.length >= 3 && last.Vk >= 10 && ["h2so4", "na2so4", "naoh"].includes(B.tek?.id)) {
@@ -619,7 +619,7 @@ export function labGalvanski(el) {
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Napetost člena in vrsta potencialov"), graph,
       h("h4", { class: "lab-h" }, "Koncentracijski člen"), hint("Daj v obe čaši isto kovino v raztopini njene soli z različnima koncentracijama. Premica je idealna Nernstova napoved s koncentracijami, trikotniki so napoved z aktivnostmi (»dejavnimi« koncentracijami). Primerjaj, kam padejo tvoje meritve."), graphK, qBox,
-      notes(POENOSTAVITVE_ELEKTROKEMIJA.galvanski, "Standardni elektrodni potenciali: CRC Handbook, »Electrochemical series« (Mg −2,372, Zn −0,762, Fe −0,447, Pb −0,126, Cu +0,342, Ag +0,800 V). Nernstova enačba <i>E</i> = <i>E</i>° + (<i>RT</i>/<i>zF</i>) ln <i>c</i>. Aktivnostni koeficienti γ± pri 25 °C: Robinson & Stokes (1959), CRC Handbook (npr. CuSO₄ 0,41 pri 0,01 mol/L, 0,042 pri 1 mol/L). Magnezij: mešani potencial ~−1,55 V (ocena po Song & Atrens 1999). Voltmeter ±(0,5 % + 2 digita), 10 MΩ. Ocene: upor solnega mostu (papir ~8 kΩ, U-cev ~0,4 kΩ), upor raztopin, oksidne plasti, nihanje potenciala."),
+      notes(POENOSTAVITVE_ELEKTROKEMIJA.galvanski, `Standardni elektrodni potenciali: CRC Handbook, »Electrochemical series« (Mg −2,372, Zn −0,762, Fe −0,447, Pb −0,126, Cu +0,342, Ag +0,800 V). Nernstova enačba ${tex(String.raw`E = E^\circ + \frac{RT}{zF}\ln c`)}. Aktivnostni koeficienti γ± pri 25 °C: Robinson & Stokes (1959), CRC Handbook (npr. CuSO₄ 0,41 pri 0,01 mol/L, 0,042 pri 1 mol/L). Magnezij: mešani potencial ~−1,55 V (ocena po Song & Atrens 1999). Voltmeter ±(0,5 % + 2 digita), 10 MΩ. Ocene: upor solnega mostu (papir ~8 kΩ, U-cev ~0,4 kΩ), upor raztopin, oksidne plasti, nihanje potenciala.`),
     ],
     tryText: "Sestavi Daniellov člen (cink v ZnSO₄, baker v CuSO₄) in izmeri napetost brez solnega mostu in z njim. Napovej, kateri pari kovin dajo največjo napetost. Razredči eno raztopino: za koliko se spremeni napetost? Kaj pokaže člen iz dveh bakrovih elektrod v različno koncentriranih raztopinah?",
   });

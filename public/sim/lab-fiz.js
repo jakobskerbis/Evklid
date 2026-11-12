@@ -1,6 +1,6 @@
 // Virtualni laboratorij, fizika. Učenec sam sestavi poskus, meri in vidi posledice napak.
 import { h, s, fmt, svgBox, slider, select, segmented, button, layout, label } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez } from "./lab.js";
 import { OhmBench, LOADS, AM_RANGES, VM_RANGES, NAPAJALNIK, UPOR, POENOSTAVITVE, fitOrigin } from "./lab-model.js";
 
 // Barvne oznake uporov (4 obročki: dve števki, množitelj, toleranca ±5 % = zlata).
@@ -50,7 +50,7 @@ export function labOhm(el, { load = "R100" } = {}) {
   layout(el, {
     stage: [svg, meters],
     controls: [uSl, loadSel, row("ampermeter", amSeg), amRange, row("voltmeter", vmSeg), vmRange, h("div", { class: "demo-buttons" }, rec, fuseBtn, partBtn, clearBtn)],
-    extra: [log, h("h4", { class: "lab-h" }, "Meritve"), table, graph, fitOut, qBox, notes(POENOSTAVITVE.ohm, "Ohmov zakon <i>I</i> = <i>U</i>/<i>R</i>. Natančnost merilnikov: navodila šolskega multimetra s 3½ mesta. Varovalke: IEC 60127-2 (hitre, F). Žarnica: moč ∝ <i>U</i><sup>1,6</sup>.")],
+    extra: [log, h("h4", { class: "lab-h" }, "Meritve"), table, graph, fitOut, qBox, notes(POENOSTAVITVE.ohm, `Ohmov zakon ${tex(String.raw`I = \frac{U}{R}`)}. Natančnost merilnikov: navodila šolskega multimetra s 3½ mesta. Varovalke: IEC 60127-2 (hitre, F). Žarnica: moč ∝ <i>U</i><sup>1,6</sup>.`)],
     tryText: "Napovej, kolikšen tok teče skozi upornik 100 Ω pri 6 V. Izmeri tok pri vsaj petih napetostih in iz naklona grafa določi upor. Potem priključi žarnico: ali je tudi njen graf premica? Kaj se zgodi, če ampermeter priključiš vzporedno?",
   });
   el.classList.add("lab");
@@ -82,8 +82,8 @@ export function labOhm(el, { load = "R100" } = {}) {
     graph.draw(list);
     const fit = list.find((S) => S.id === cur && Number.isFinite(S.k));
     fitOut.innerHTML = fit
-      ? `Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Naklon: ${fmt(fit.k, 2)} mA/V = ${fmt(fit.k / 1000, 5)} A/V, zato <i>R</i> = 1/naklon = <b>${fmt(1000 / fit.k, 1)} Ω</b>. Na uporniku piše ${LOADS[cur].nom} Ω ± 5 %.`
-      : LOADS[cur].type === "R" ? "Za premico in upor iz naklona potrebuješ vsaj 3 meritve." : "Žarnica: primerjaj <i>U</i>/<i>I</i> pri različnih napetostih.";
+      ? `Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Naklon: ${fmt(fit.k, 2)} mA/V = ${fmt(fit.k / 1000, 5)} A/V, zato ${tex(String.raw`R = \frac{1}{\text{naklon}} = ${rez(fmt(1000 / fit.k, 1), "Ω")}`)}. Na uporniku piše ${LOADS[cur].nom} Ω ± 5 %.`
+      : LOADS[cur].type === "R" ? "Za premico in upor iz naklona potrebuješ vsaj 3 meritve." : `Žarnica: primerjaj ${tex(String.raw`\frac{U}{I}`)} pri različnih napetostih.`;
   }
   function maybeAsk(p) {
     const pts = series[p] || [];
@@ -96,7 +96,7 @@ export function labOhm(el, { load = "R100" } = {}) {
             text: "Kaj kažejo tvoje meritve za upornik?",
             options: [
               { t: "Točke ležijo na premici skozi izhodišče: tok je premo sorazmeren z napetostjo, upor je stalen.", ok: true, why: "To je Ohmov zakon. Majhna odstopanja od premice so merilne napake (zadnje mesto merilnika, napaka umeritve)." },
-              { t: "Tok narašča vedno počasneje, ker se upor veča.", ok: false, why: "Pri uporniku <i>U</i>/<i>I</i> ostaja skoraj enak. Tako se obnaša žarnica, ker se nitka segreje." },
+              { t: "Tok narašča vedno počasneje, ker se upor veča.", ok: false, why: `Pri uporniku ${tex(String.raw`\frac{U}{I}`)} ostaja skoraj enak. Tako se obnaša žarnica, ker se nitka segreje.` },
               { t: "Tok je od napetosti neodvisen.", ok: false, why: "Poglej tabelo: ko podvojiš napetost, se podvoji tudi tok." },
             ],
           })
@@ -104,7 +104,7 @@ export function labOhm(el, { load = "R100" } = {}) {
             text: "Kaj kažejo tvoje meritve za žarnico?",
             options: [
               { t: "Graf se ukrivi navzdol: z napetostjo se upor žarnice veča, ker se nitka segreje.", ok: true, why: "Upor kovine raste s temperaturo; volframova nitka pri svetenju doseže okoli 2000 °C in ima ~10-krat večji upor kot hladna." },
-              { t: "Graf je premica skozi izhodišče, tako kot pri uporniku.", ok: false, why: "Primerjaj <i>U</i>/<i>I</i> pri 2 V in pri 6 V: ni enak, zato upor žarnice ni stalen in njen graf ni premica." },
+              { t: "Graf je premica skozi izhodišče, tako kot pri uporniku.", ok: false, why: `Primerjaj ${tex(String.raw`\frac{U}{I}`)} pri 2 V in pri 6 V: ni enak, zato upor žarnice ni stalen in njen graf ni premica.` },
               { t: "Tok pada, ko napetost raste.", ok: false, why: "Tok še vedno narašča, a počasneje kot napetost." },
             ],
           }),

@@ -368,3 +368,12 @@ export const fixed = (x, d) => {
   return t.replace(".", ",").replace("-", "−");
 };
 export { tex };
+// Formule v besedilu poskusov so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«), ne
+// <i>T</i> = (…)/(…) v besedilu, ki se lomi sredi izraza. Formula ostane v eni vrstici, ko gre; sicer jo sirina.js
+// prelomi pri =; nikoli ne drsi. Enota za številom: en("°C"), en("J/(kg·K)"); krepki rezultat: rez(fixed(x, 1), "°C").
+// Enote so stalni zapisi iz kode (ne vnos): vsak znak, ki v LaTeX ni sam zase (tudi \ { } $ _ ^ ~ # &), dobi svoj zapis.
+const ENOTA = { " ": "\\,", "%": "\\%", "°": "{}^\\circ ", "·": "\\cdot ", "²": "^2", "³": "^3", "⁻¹": "^{-1}", "Ω": "\\Omega ", "\\": "\\backslash ", "{": "\\{", "}": "\\}", "$": "\\$", _: "\\_", "^": "\\hat{}", "~": "\\sim ", "#": "\\#", "&": "\\&" };
+const enTex = (u) => String(u).replace(/⁻¹|[ %°·²³Ω\\{}$_^~#&]/g, (c) => ENOTA[c]);
+export const en = (u) => `\\,\\mathrm{${enTex(u)}}`;
+// Število, ki ga ni (fmt da »–«), je v formuli \text{–}; µ v enoti ne gre (KaTeX ga piše ležeče): enoto z µ napiši za formulo.
+export const rez = (x, u) => `\\mathbf{${String(x).replace("–", "\\text{–}")}${u ? `\\,${enTex(u)}` : ""}}`;

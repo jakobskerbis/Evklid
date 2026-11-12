@@ -35,6 +35,55 @@ const cm2 = (x) => st(x) + NB + "cm²";
 const cm3 = (x) => st(x) + NB + "cm³";
 const kratko = (x) => st(x, 1).replace(/,0$/, "");
 
+// Formule v izpisih (nadzor s tex: true) so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«):
+// zapis iz preglednic (a³√2/12) → LaTeX. Ulomke prepišemo na roke (pri O · v/3 je v števcu O · v, ne le v), ostalo
+// (potence, indeksi, koreni, grške črke) samodejno.
+const ULOMKI = {
+  "a³√2/12": "\\frac{a^3\\sqrt{2}}{12}", "a³√2/3": "\\frac{a^3\\sqrt{2}}{3}",
+  "(15 + 7√5)a³/4": "\\frac{(15 + 7\\sqrt{5})\\,a^3}{4}", "5(3 + √5)a³/12": "\\frac{5(3 + \\sqrt{5})\\,a^3}{12}",
+  "a/2": "\\frac{a}{2}", "a√2/2": "\\frac{a\\sqrt{2}}{2}", "a√3/2": "\\frac{a\\sqrt{3}}{2}",
+  "a√6/4": "\\frac{a\\sqrt{6}}{4}", "a√6/6": "\\frac{a\\sqrt{6}}{6}", "a√6/12": "\\frac{a\\sqrt{6}}{12}",
+  "(a/4)√(10 + 2√5)": "\\frac{a}{4}\\sqrt{10 + 2\\sqrt{5}}", "(a/2)√((25 + 11√5)/10)": "\\frac{a}{2}\\sqrt{\\frac{25 + 11\\sqrt{5}}{10}}",
+  "a√3(1 + √5)/4": "\\frac{a\\sqrt{3}\\,(1 + \\sqrt{5})}{4}", "a√3(3 + √5)/12": "\\frac{a\\sqrt{3}\\,(3 + \\sqrt{5})}{12}",
+  "3 · a · vₛ/2": "\\frac{3 \\cdot a \\cdot v_s}{2}", "4 · a · vₛ/2": "\\frac{4 \\cdot a \\cdot v_s}{2}",
+  "3a²√3/2": "\\frac{3a^2\\sqrt{3}}{2}", "a²√3/4": "\\frac{a^2\\sqrt{3}}{4}", "4πr³/3": "\\frac{4\\pi r^3}{3}",
+  "O · v/3": "\\frac{O \\cdot v}{3}", "a² · v/3": "\\frac{a^2 \\cdot v}{3}", "πr² · v/3": "\\frac{\\pi r^2 \\cdot v}{3}",
+  "v(O₁ + √(O₁O₂) + O₂)/3": "\\frac{v\\,(O_1 + \\sqrt{O_1O_2} + O_2)}{3}", "πv(r₁² + r₁r₂ + r₂²)/3": "\\frac{\\pi v\\,(r_1^2 + r_1r_2 + r_2^2)}{3}",
+};
+const ZNAKI = { "·": "\\cdot ", "²": "^2", "³": "^3", "ₛ": "_s", "₁": "_1", "₂": "_2", π: "\\pi ", α: "\\alpha ", β: "\\beta ", φ: "\\varphi " };
+export function fTex(z) {
+  if (ULOMKI[z]) return ULOMKI[z];
+  if (z.includes("/")) throw new Error(`telesa: ulomek brez zapisa v ULOMKI: ${z}`);
+  let t = z.replace(/sin /g, "\\sin ").replace(/[·²³ₛ₁₂παβφ]/g, (c) => ZNAKI[c]);
+  for (let prej = ""; prej !== t && /√\(/.test(t); ) (prej = t), (t = t.replace(/√\(([^()]*)\)/, "\\sqrt{$1}"));
+  if (/√\(/.test(t)) throw new Error(`telesa: koren z oklepaji v oklepaju, dodaj ga v ULOMKI: ${z}`);
+  return t.replace(/√(\d)/g, "\\sqrt{$1}");
+}
+const tSt = (x, d) => st(x, d).replace(",", "{,}").replace(/[ \u00a0\u202f]/g, "\\,").replace("−", "-");
+const tCm = (x, e = "") => `${tSt(x)}\\,\\mathrm{cm${e}}`;
+// {…}: KaTeX formulo prelomi le pri =, ne sredi izraza (za ·, +); le predolg izraz (površina paralelepipeda)
+// se sme prelomiti še za +, da ne gre čez rob (členi med + ostanejo celi).
+// Členi med + zunaj {…} (+ v ulomku ali korenu ostane v svojem členu).
+function cleni(f) {
+  const d = [];
+  let g = 0, s = 0;
+  for (let i = 0; i < f.length; i++) {
+    if (f[i] === "{") g++;
+    else if (f[i] === "}") g--;
+    else if (!g && f.startsWith(" + ", i)) {
+      d.push(f.slice(s, i));
+      s = i + 3;
+    }
+  }
+  return [...d, f.slice(s)];
+}
+// \displaystyle: ulomki v izpisu so polne velikosti (plošča ima prostor v višino).
+export const enacba = (ime, z, x, e) => {
+  const f = fTex(z);
+  const g = f.length > 40 ? cleni(f).map((c) => `{${c}}`).join(" + ") : `{${f}}`;
+  return `$\\displaystyle ${ime} = ${g} = {${tCm(x, e)}}$`;
+};
+
 // ---------- Evklidovi Elementi (preverjeno na D. E. Joyce, Clark University, Euclid's Elements) ----------
 // Vrstica »v kateri knjigi Elementov« za vsako telo. Knjiga XI: definicije teles in paralelepipedi (24–34),
 // knjiga XII: prostornine (piramida, stožec, krogla), knjiga XIII: pet pravilnih teles, včrtanih v kroglo (13–17).
@@ -1575,20 +1624,20 @@ export function zgradi(THREE, ctx) {
       { tip: "drsnik", id: "r2", oznaka: "Zgornji polmer r₂ (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.r2, ob: ob("r2"), vidno: rabi("r2") },
       { tip: "drsnik", id: "v", oznaka: "Višina v (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.v, ob: ob("v"), vidno: rabi("v") },
       { tip: "izpis", id: "mere", oznaka: "Mere", vrednost: () => mere() },
-      { tip: "izpis", id: "V", oznaka: "Prostornina", vrednost: () => { const k = kolicine(); return `V = ${k.V[0]} = ${cm3(k.V[1])}`; } },
-      { tip: "izpis", id: "P", oznaka: "Površina", vrednost: () => { const k = kolicine(); return `P = ${k.P[0]} = ${cm2(k.P[1])}`; } },
-      { tip: "izpis", id: "Opl", oznaka: "Osnovna ploskev in plašč", vidno: () => !NOVA.has(S.telo), vrednost: () => {
+      { tip: "izpis", id: "V", oznaka: "Prostornina", tex: true, vrednost: () => { const k = kolicine(); return enacba("V", k.V[0], k.V[1], "^3"); } },
+      { tip: "izpis", id: "P", oznaka: "Površina", tex: true, vrednost: () => { const k = kolicine(); return enacba("P", k.P[0], k.P[1], "^2"); } },
+      { tip: "izpis", id: "Opl", oznaka: "Osnovna ploskev in plašč", tex: true, vidno: () => !NOVA.has(S.telo), vrednost: () => {
         const k = kolicine();
         if (!k.O && PRAVILNA[S.telo]) return `vseh ${PRAVILNA[S.telo].p} ploskev je enakih: P = ${PRAVILNA[S.telo].p} · ploščina ene ploskve`;
         if (!k.O) return "krogla nima ne osnovne ploskve ne plašča";
-        if (k.beta != null) return `O = ${k.O[0]} = ${cm2(k.O[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])} (β = ${st(k.beta)}° je kot med b in c)`;
-        if (k.O2) return `O₁ = ${k.O[0]} = ${cm2(k.O[1])}; O₂ = ${k.O2[0]} = ${cm2(k.O2[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
-        return `O = ${k.O[0]} = ${cm2(k.O[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
+        if (k.beta != null) return `${enacba("O", k.O[0], k.O[1], "^2")}\n${enacba("pl", k.pl[0], k.pl[1], "^2")}\n($\\beta = ${tSt(k.beta)}^\\circ$ je kot med $b$ in $c$)`;
+        if (k.O2) return `${enacba("O_1", k.O[0], k.O[1], "^2")}\n${enacba("O_2", k.O2[0], k.O2[1], "^2")}\n${enacba("pl", k.pl[0], k.pl[1], "^2")}`;
+        return `${enacba("O", k.O[0], k.O[1], "^2")}\n${enacba("pl", k.pl[0], k.pl[1], "^2")}`;
       } },
-      { tip: "izpis", id: "polmera", oznaka: "Včrtana in očrtana krogla", vidno: () => pravilno(), vrednost: () => {
+      { tip: "izpis", id: "polmera", oznaka: "Včrtana in očrtana krogla", tex: true, vidno: () => pravilno(), vrednost: () => {
         const P = PRAVILNA[S.telo];
         if (!P) return "samo pri pravilnih telesih";
-        return `r = ${P.Rv[0]} = ${cm(P.Rv[1](S.a))}; R = ${P.Ro[0]} = ${cm(P.Ro[1](S.a))}`;
+        return `${enacba("r", P.Rv[0], P.Rv[1](S.a))}\n${enacba("R", P.Ro[0], P.Ro[1](S.a))}`;
       } },
       { tip: "izpis", id: "euler", oznaka: "Oglišča, robovi, ploskve", vidno: () => !!ORP[S.telo], vrednost: () => euler(S.telo) || "Eulerjeva formula velja za telesa z ravnimi ploskvami" },
       { tip: "izpis", id: "elementi", oznaka: "Evklidovi Elementi", vrednost: () => { const t = ELEMENTI[S.telo]; return t.startsWith("v ") ? "V" + t.slice(1) : "Evklid, Elementi, " + t; } },

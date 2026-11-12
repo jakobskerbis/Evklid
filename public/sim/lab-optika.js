@@ -1,7 +1,7 @@
 // Virtualni laboratorij, optika: optični disk z laserjem (lab-lom) in optična klop z zbiralno lečo (lab-leca).
 // Modeli: lab-model-optika.js (brez DOM). Optika ne potrebuje ure: risba se nariše ob vsaki spremembi.
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
 import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, mejniKot, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -66,7 +66,7 @@ export function labLom(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table, calc,
       h("h4", { class: "lab-h" }, "Graf: sin β v odvisnosti od sin α"), graph, qBox,
-      notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon <i>n</i>₁ sin α = <i>n</i>₂ sin β; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,488 (Sultanova in sod. 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ((<i>n</i> − 1)/(<i>n</i> + 1))² = 3,8${NB}% za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`),
+      notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon ${tex(String.raw`n_1\sin\alpha = n_2\sin\beta`)}; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,488 (Sultanova in sod. 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ${tex(String.raw`\left(\frac{n - 1}{n + 1}\right)^2 = 3{,}8${en("%")}`)} za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`),
     ],
     tryText: "Izberi akrilni polvalj in izmeri lomni kot pri vpadnih kotih 10°, 20° … 80°. Iz naklona grafa izračunaj lomni količnik. Nato obrni smer (iz snovi v zrak) in poišči kot, pri katerem lomljeni žarek izgine.",
   });
@@ -121,7 +121,7 @@ export function labLom(el) {
     for (const x of serije.values()) {
       if (x.pts.length < 2) continue;
       const kk = naklon(x.pts), n = x.smer === "zrak" ? 1 / kk : kk;
-      out.push(`<p>${x.name}: naklon sin β / sin α = ${fixed(kk, 3)} → <i>n</i> = ${x.smer === "zrak" ? `1/${fixed(kk, 3)} = ` : ""}<b>${fixed(n, 2)}</b> (iz ${x.pts.length} meritev).</p>`);
+      out.push(`<p>${x.name}: naklon ${tex(String.raw`\frac{\sin\beta}{\sin\alpha} = ${fixed(kk, 3)}`)} → ${tex(String.raw`n = ${x.smer === "zrak" ? String.raw`\frac{1}{${fixed(kk, 3)}} = ` : ""}${rez(fixed(n, 2))}`)} (iz ${x.pts.length} meritev).</p>`);
     }
     calc.innerHTML = out.join("") + (out.length ? `<p class="muted">Iz zraka v snov je naklon 1/<i>n</i>, iz snovi v zrak pa <i>n</i>.</p>` : "");
     graph.draw([...serije.values()].map((x, i) => {
@@ -236,7 +236,7 @@ export function labLeca(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table, calc,
       h("h4", { class: "lab-h" }, "Graf: 1/b v odvisnosti od 1/a"), graph, qBox,
-      notes(POENOSTAVITVE_OPTIKA.leca, `Enačba leče 1/<i>a</i> + 1/<i>b</i> = 1/<i>f</i>, povečava <i>M</i> = −<i>b</i>/<i>a</i> (minus: slika je obrnjena). Ostra slika na zaslonu obstaja le, če je zaslon od predmeta oddaljen vsaj 4<i>f</i>. Ocene: odstopanje leče ±2${NB}%, odprtina 30${NB}mm, meja ostrine 0,5${NB}mm, zamik sredine leče od oznake ±1${NB}mm.`),
+      notes(POENOSTAVITVE_OPTIKA.leca, `Enačba leče ${tex(String.raw`\frac{1}{a} + \frac{1}{b} = \frac{1}{f}`)}, povečava ${tex(String.raw`M = -\frac{b}{a}`)} (minus: slika je obrnjena). Ostra slika na zaslonu obstaja le, če je zaslon od predmeta oddaljen vsaj 4<i>f</i>. Ocene: odstopanje leče ±2${NB}%, odprtina 30${NB}mm, meja ostrine 0,5${NB}mm, zamik sredine leče od oznake ±1${NB}mm.`),
     ],
     tryText: "Z lečo f = 100 mm postavi predmet 200 mm pred lečo in poišči ostro sliko. Kje je in kako velika je? Nato zapiši vsaj pet meritev pri različnih a in iz grafa 1/b od 1/a določi goriščno razdaljo. Kaj vidiš, ko je predmet bližje kot f?",
   });
@@ -287,7 +287,7 @@ export function labLeca(el) {
     const ser = [];
     for (const [f, rows] of meritve) {
       const fm = fIzMeritev(rows), cls = RAZREDI[i % 3];
-      out.push(`<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} <i>f</i> = povprečje <i>ab</i>/(<i>a</i> + <i>b</i>) = <b>${fixed(fm, 1)}${NB}mm</b>, 1/<i>f</i> = ${fixed(1000 / fm, 2)}${NB}m⁻¹.</p>`);
+      out.push(`<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} ${tex(String.raw`f = \text{povprečje } \frac{ab}{a + b} = ${rez(fixed(fm, 1), "mm")}`)}, ${tex(String.raw`\frac{1}{f} = ${fixed(1000 / fm, 2)}${en("m⁻¹")}`)}.</p>`);
       ser.push({ id: `f${f}`, pts: rows.map((r) => [1000 / r.a, 1000 / r.b]), cls, shape: i % 2 ? "^" : "o", label: `f = ${f}${NB}mm`, line: (x) => 1000 / fm - x });
       i++;
     }

@@ -2,7 +2,7 @@
 // Učenec spere in napolni bireto, izpusti zrak iz konice, odpipetira vzorec, izbere indikator, titrira po kapljicah,
 // sam odčita bireto, ponavlja do ujemanja in izračuna koncentracijo. Napake imajo posledice kot v pravem laboratoriju.
 import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en } from "./lab.js";
 import { flaskLevel } from "./lab-kem.js";
 import { TitrBench, VZORCI, INDIKATORJI, BIRETA, PIPETA, colourName, indicatorColor, POENOSTAVITVE_TITRACIJA } from "./lab-model-titracija.js";
 
@@ -69,7 +69,7 @@ export function labTitracija(el) {
   cIn.addEventListener("keydown", (e) => e.key === "Enter" && checkC());
   const cBtn = button("Preveri koncentracijo", () => checkC(), "primary small");
   const calc = h("div", { class: "lab-tit-calc", hidden: true },
-    h("p", { class: "muted", html: "<i>c</i>(kisline) = <i>c</i>(NaOH) · <i>V</i>(NaOH) / <i>V</i>(vzorca); <i>c</i>(NaOH) = 0,1000 mol/L, <i>V</i>(vzorca) = 25,00 mL. Vzemi povprečje titracij, ki se ujemajo." }),
+    h("p", { class: "muted", html: `${tex(String.raw`c(\text{kisline}) = \frac{c(\mathrm{NaOH}) \cdot V(\mathrm{NaOH})}{V(\text{vzorca})}`)}; ${tex(String.raw`c(\mathrm{NaOH}) = 0{,}1000${en("mol/L")}`)}, ${tex(String.raw`V(\text{vzorca}) = 25{,}00${en("mL")}`)}. Vzemi povprečje titracij, ki se ujemajo.` }),
     h("label", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, "c(kisline) [mol/L]"), cIn), h("div", { class: "demo-buttons" }, cBtn));
   const grp = (title, ...kids) => h("fieldset", { class: "lab-tit-grp" }, h("legend", {}, title), ...kids);
   const buttons = (...k) => h("div", { class: "demo-buttons" }, ...k);
