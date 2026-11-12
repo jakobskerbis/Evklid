@@ -393,15 +393,15 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
     let vklop = false;
     try { vklop = globalThis.localStorage?.getItem(KLJUC) === "1"; } catch {}
     const izv = new Map(), srednja = new WeakMap(), t = new THREE.Color(), c = new THREE.Color();
-    function povprecje(g) { // povprečna barva oglišč (material z barvami oglišč dobi razmerje cilj / povprečje)
-      if (srednja.has(g)) return srednja.get(g);
+    function povprecje(g, kljuc = g) { // povprečna barva oglišč ali primerkov (material dobi razmerje cilj / povprečje)
+      if (srednja.has(kljuc)) return srednja.get(kljuc);
       const a = g.attributes.color, m = new THREE.Color(1, 1, 1);
       if (a && a.count) {
         let r = 0, gg = 0, b = 0;
         for (let i = 0; i < a.count; i++) { r += a.getX(i); gg += a.getY(i); b += a.getZ(i); }
         m.setRGB(Math.max(0.05, r / a.count), Math.max(0.05, gg / a.count), Math.max(0.05, b / a.count));
       }
-      srednja.set(g, m);
+      srednja.set(kljuc, m);
       return m;
     }
     function nastavi(v) {
@@ -422,10 +422,11 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
             return;
           }
           t.set(cilj);
-          if (m.vertexColors && o.geometry?.attributes.color) {
-            const p = povprecje(o.geometry);
-            c.setRGB(Math.min(3, t.r / p.r), Math.min(3, t.g / p.g), Math.min(3, t.b / p.b));
-          } else c.copy(t);
+          // barve oglišč in barve primerkov (InstancedMesh.instanceColor) množijo barvo materiala: cilj delimo z njunim povprečjem
+          const p = new THREE.Color(1, 1, 1);
+          if (m.vertexColors && o.geometry?.attributes.color) p.multiply(povprecje(o.geometry));
+          if (o.isInstancedMesh && o.instanceColor) p.multiply(povprecje({ attributes: { color: o.instanceColor } }, o));
+          c.setRGB(Math.min(3, t.r / p.r), Math.min(3, t.g / p.g), Math.min(3, t.b / p.b));
           if (m.userData.steklo) c.multiplyScalar(0.25);
           m.color.copy(c);
           if (iz.emissive && (iz.emissive.r + iz.emissive.g + iz.emissive.b) > 0.01) m.emissive.copy(t).multiplyScalar(0.18);
