@@ -1,0 +1,57 @@
+diff -ru a/scripts/atlas/rtx/paket.sh b/scripts/atlas/rtx/paket.sh
+--- a/scripts/atlas/rtx/paket.sh	2026-11-12 05:21:16.831633280 +0100
++++ b/scripts/atlas/rtx/paket.sh	2026-11-12 05:21:16.849359686 +0100
+@@ -20,6 +20,8 @@
+ crlf "$TU/peci.bat" "$CILJ/peci.bat"
+ crlf "$TU/NAVODILO.txt" "$CILJ/NAVODILO.txt"
+ cp "$TU/rtx.py" "$TU/viri.json" "$ATLAS/peci.py" "$ATLAS/peka.py" "$ATLAS/izvozi-organe.py" "$CILJ/koda/"
++# atlas v2 (naloga »atlas-v2«): moduli so v podmapi v2/, manifest pozna samo imena brez poti
++cp "$ATLAS/v2/rtx_v2.py" "$ATLAS/v2/izvozi_kost.py" "$ATLAS/v2/postopek.py" "$ATLAS/v2/kost.py" "$ATLAS/v2/podrobnosti_"*.py "$ATLAS/v2/"*-bp3d.json "$CILJ/koda/"
+ # vsi lokalni moduli, ki jih koda uvozi, prehodno in tudi znotraj funkcij (»    from srce_geometrija import …«):
+ # ponavljamo, dokler se seznam ne neha večati
+ while :; do
+diff -ru a/scripts/atlas/rtx/rtx.py b/scripts/atlas/rtx/rtx.py
+--- a/scripts/atlas/rtx/rtx.py	2026-11-12 05:21:16.827633280 +0100
++++ b/scripts/atlas/rtx/rtx.py	2026-11-12 05:21:16.849218597 +0100
+@@ -20,6 +20,9 @@
+ # utrip (čas zadnjega pregleda), zgodovina. Računalnik ne zaspi, dokler je okno odprto (zaslon sme ugasniti).
+ # NALOGA »rezine« ("organi": ["rezine"], polje "rezine": {spol, od, do, podrobno, …}): barvne kriorezine za »Pravi prerez«;
+ # prenos in obdelavo opravi rezine_prenos.py (ob tej datoteki), napredek in prostor na disku sta v stanje.json → rezine.
++# NALOGA »atlas-v2« ("organi": ["atlas-v2"], polje "atlas-v2": {"kosti": ["Femur.l"], "kakovost": "rtx"}): postopek
++# atlas v2 (scripts/atlas/v2/rtx_v2.py: izvoz kosti iz vhodi/Startup.blend, čiščenje, visoka/nizka mreža, peka na
++# grafični kartici) v izhod/atlas-v2-<id>/<kost>/.
+ # --enkrat: brez čakanja (samo prvi zagon). RTX_DOVOLI_CPU=1: SAMO za preizkus na strežniku brez kartice (CPU).
+ import hashlib, json, os, re, shutil, subprocess, sys, threading, time, zipfile
+ 
+@@ -411,6 +414,13 @@
+                 napaka(f"ni Blenderja ({BLENDER})")
+             import rezine_prenos
+             rezine_prenos.naloga(KOREN, BLENDER, st, pisi, pisi_stanje, napaka)
++        elif organi == ["atlas-v2"]:  # ista kartica in Blender kot organi, svoj postopek (scripts/atlas/v2)
++            peka.pripravi()
++            st.update(kartica=peka.kartica, naprava=peka.nap, blender=peka.razl)
++            with open(NALOGA, encoding="utf-8-sig") as f:
++                nastavitve = json.load(f).get("atlas-v2") or {}
++            import rtx_v2
++            rtx_v2.naloga(KOREN, BLENDER, st, pisi, pisi_stanje, napaka, nastavitve, nid, peka.nap)
+         else:
+             peka.pripravi()
+             st.update(kartica=peka.kartica, naprava=peka.nap, blender=peka.razl)
+@@ -521,7 +531,7 @@
+                         st.setdefault("napake", []).append(f"nova koda {koda} je kasneje končala z izhodom {r}; vrnjena prejšnja koda")
+                     continue
+                 znani = organi_v_kodi()
+-                slabi = [o for o in organi if o not in znani and organi != ["rezine"]]
++                slabi = [o for o in organi if o not in znani and organi not in (["rezine"], ["atlas-v2"])]
+                 if slabi:
+                     zavrni(st, nid, organi, f"neznani organi: {', '.join(slabi)}")
+                 else:
+@@ -585,7 +595,7 @@
+         if nadaljuj:  # po zamenjavi kode: naloga, zaradi katere je bila zamenjana
+             nid, organi, _ = beri_nalogo()
+             if nid == nadaljuj and isinstance(organi, list):
+-                slabi = [o for o in organi if o not in znani and organi != ["rezine"]]
++                slabi = [o for o in organi if o not in znani and organi not in (["rezine"], ["atlas-v2"])]
+                 if slabi:
+                     zavrni(st, nid, organi, f"neznani organi: {', '.join(slabi)}")
+                 else:

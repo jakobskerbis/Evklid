@@ -1,0 +1,17 @@
+{
+  "_opis": "Atlas v2, F0: točna naloga za peko stegnenice v polni kakovosti na j-jevem prenosniku (paket scripts/atlas/rtx iz PR #473/#567, način čakanja v rtx.py). Paket iz te veje še ne zna naloge »atlas-v2«: najprej rtx-v2.patch (ob tej datoteki) na vejo paketa (claude/videz-rtx), nato paket.sh → koda-nova/ z manifestom, nato naloga.txt spodaj. Claude v mapo paketa le piše datoteke; j ne naredi nič (prenosnik vklopljen, okno peci.bat odprto).",
+  "koraki": [
+    "1. Na veji paketa (PR #567, claude/videz-rtx) združi to vejo (scripts/atlas/v2/) in uveljavi scripts/atlas/v2/rtx-v2.patch (rtx.py: veja »atlas-v2«; paket.sh: kopira rtx_v2.py, izvozi_kost.py, postopek.py, kost.py v koda/).",
+    "2. RAZLICICA=v2s1 sh scripts/atlas/rtx/paket.sh <mapa paketa> → koda-nova/ + manifest.json (SHA-256 vsake datoteke, samo imena *.py/*.json).",
+    "3. V mapo paketa zapiši naloga.txt (spodaj, »naloga.txt«). rtx.py jo prebere v ≤ 60 s, zamenja koda/ s koda-nova/ po manifestu, preveri kartico (OPTIX, sicer CUDA; nikoli tiho CPU) in požene rtx_v2.naloga.",
+    "4. Rezultat: izhod/atlas-v2-v2s1/Femur.l/ (stegnenica-leva-{telefon,racunalnik}-{realisticno,ucbenisko}.glb, *.webp, delo.blend, porocilo.json, postopek.log); stanje.json → »atlas-v2«: uspeli/napake. Posnetki: node scripts/atlas/v2/predogled.cjs."
+  ],
+  "naloga.txt": { "id": "v2s1", "organi": ["atlas-v2"], "koda": "v2s1", "atlas-v2": { "kosti": ["Femur.l"], "kakovost": "rtx" } },
+  "kakovost_rtx": {
+    "visoka_mreza": "voxel 0,25 mm (CPU na strežniku: 0,7 mm), ~2,8 M trikotnikov; hranilna odprtina (Ø ~1 mm) in drobne žilne odprtine (0,35–0,6 mm) so šele tu res v geometriji",
+    "peka": "4096 px za računalnik, 2048 px za telefon, AO 128 vzorcev; izvoz WebP 2048 (računalnik) / 1024 (telefon)",
+    "pricakovana_gostota_px_mm": { "telefon": 3.2, "racunalnik": 6.3 },
+    "ocena_casa": "geometrija ~5–10 min (CPU), peka na RTX 3050 Ti nekaj minut (srce s 4× več površine: 14–16 min)",
+    "pomnilnik": "izmerjeno na strežniku samo za geometrijo (glej PR); peka 4096 px dodatno ~1–2 GB"
+  }
+}

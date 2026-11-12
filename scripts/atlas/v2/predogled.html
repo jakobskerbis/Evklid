@@ -1,0 +1,81 @@
+<!doctype html>
+<!-- Atlas v2: predogled ene kosti iz 8+ pogledov (scripts/atlas/v2/predogled.cjs). Ni del aplikacije. -->
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#0e131c}canvas{display:block}</style></head>
+<body><script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/addons/":"/vendor/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "/vendor/three/build/three.module.js";
+import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
+import { PLYLoader } from "/vendor/three/examples/jsm/loaders/PLYLoader.js";
+import { RoomEnvironment } from "/vendor/three/examples/jsm/environments/RoomEnvironment.js";
+import { ustvariMaterial } from "/3d/tkiva.js";
+
+const q = new URLSearchParams(location.search);
+const w = +q.get("w") || 600, h = +q.get("h") || 1000;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setSize(w, h); renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.6;
+const key = new THREE.DirectionalLight(0xffffff, 2.2); scene.add(key);
+const fill = new THREE.DirectionalLight(0xdfe8ff, 0.6); scene.add(fill);
+const camera = new THREE.PerspectiveCamera(22, w / h, 0.01, 10);
+let obj;
+
+async function nalozi(pot, nacin) {
+  if (pot.endsWith(".ply")) {
+    let g = await new PLYLoader().loadAsync(pot);
+    if (nacin === "ravno") {  // surova mreža, ploskovno senčenje (primerjava virov)
+      g = g.toNonIndexed(); g.computeVertexNormals();
+      return new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: "#e8dcc4", roughness: 0.7, flatShading: true }));
+    }
+    g.computeVertexNormals();
+    // izhodišče: material kosti iz atlasa (tkiva.js, razred »kost«, visoka kakovost), barva Bone #e8dcc4, COLOR_0 = pečena senca
+    const skupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 } };
+    const m = ustvariMaterial("kost", "visoka", skupno);
+    m.color = new THREE.Color("#e8dcc4");
+    if (!g.attributes.color) m.vertexColors = false;
+    return new THREE.Mesh(g, m);
+  }
+  const gl = await new GLTFLoader().loadAsync(pot);
+  let mesh; gl.scene.traverse((o) => { if (o.isMesh) mesh = o; });
+  mesh.updateWorldMatrix(true, false);
+  mesh.geometry.applyMatrix4(mesh.matrixWorld); mesh.position.set(0, 0, 0); mesh.rotation.set(0, 0, 0); mesh.scale.set(1, 1, 1);
+  if (nacin === "brez-tekstur") mesh.material = new THREE.MeshStandardMaterial({ color: "#e8dcc4", roughness: 0.7 });
+  // preizkus normal map: »brez-normale« (samo geometrija + barva/AO), »obrni-g« (zelen kanal obrnjen)
+  if (nacin === "brez-normale") { mesh.material.normalMap = null; mesh.material.needsUpdate = true; }
+  if (nacin === "obrni-g") mesh.material.normalScale.y *= -1;
+  // »senca«: bel material z isto normal map (brez barve, AO in hrapavosti) – ali se grebeni berejo kot izbokline
+  if (nacin === "senca") {
+    const nm = mesh.material.normalMap;
+    mesh.material = new THREE.MeshStandardMaterial({ color: "#f2f2f2", roughness: 0.65, normalMap: nm });
+  }
+  return mesh;
+}
+
+window.pripravi = async (pot, nacin) => {
+  if (obj) scene.remove(obj);
+  obj = await nalozi(pot, nacin); scene.add(obj);
+  const box = new THREE.Box3().setFromObject(obj);
+  window._box = { c: box.getCenter(new THREE.Vector3()).toArray(), s: box.getSize(new THREE.Vector3()).toArray() };
+  return window._box;
+};
+// smer kamere (od središča proti kameri), središče in polovična višina kadra v metrih
+window.posnemi = (smer, sredisce, pol) => {
+  const d = new THREE.Vector3(...smer).normalize();
+  const c = new THREE.Vector3(...sredisce);
+  const razd = pol / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  camera.position.copy(c).addScaledVector(d, razd);
+  camera.up.set(0, 1, 0); if (Math.abs(d.y) > 0.95) camera.up.set(0, 0, d.y > 0 ? -1 : 1);
+  camera.lookAt(c); camera.near = razd * 0.2; camera.far = razd * 3; camera.updateProjectionMatrix();
+  // ključna luč zgoraj levo od kamere, polnilna nasproti (enako za vse modele)
+  const desno = new THREE.Vector3().crossVectors(d, camera.up).normalize();
+  key.position.copy(c).addScaledVector(d, 1).addScaledVector(camera.up, 0.8).addScaledVector(desno, 0.6); key.target.position.copy(c);
+  fill.position.copy(c).addScaledVector(d, 0.6).addScaledVector(desno, -1).addScaledVector(camera.up, -0.3); fill.target.position.copy(c);
+  key.target.updateMatrixWorld(); fill.target.updateMatrixWorld();
+  renderer.render(scene, camera);
+  return renderer.domElement.toDataURL("image/png");
+};
+window.pripravljeno = true;
+</script></body></html>
