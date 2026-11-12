@@ -3212,6 +3212,7 @@
   "adm.rep.question": "Domanda:",
   "adm.rep.fixed": "Corretto",
   "adm.rep.reopen": "Riapri",
+  "adm.rep.inReview": "Correzione in attesa di revisione · PR #{n}",
   "adm.rep.none": "Nessuna segnalazione.",
   "adm.rep.download": "Scarica per la correzione (.md)",
   "adm.rep.showAll": "Mostra anche quelli corretti",

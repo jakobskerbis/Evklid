@@ -3273,6 +3273,7 @@
   "adm.rep.question": "Otázka:",
   "adm.rep.fixed": "Opravené",
   "adm.rep.reopen": "Znova otvoriť",
+  "adm.rep.inReview": "Oprava čaká na kontrolu · PR #{n}",
   "adm.rep.none": "Žiadne hlásenia.",
   "adm.rep.download": "Stiahnuť na opravu (.md)",
   "adm.rep.showAll": "Zobraziť aj opravené",

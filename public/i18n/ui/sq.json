@@ -3211,6 +3211,7 @@
   "adm.rep.question": "Pyetja:",
   "adm.rep.fixed": "U ndreq",
   "adm.rep.reopen": "Rihape",
+  "adm.rep.inReview": "Ndreqja pret shqyrtimin · PR #{n}",
   "adm.rep.none": "Nuk ka raporte.",
   "adm.rep.download": "Shkarko për ndreqje (.md)",
   "adm.rep.showAll": "Shfaq edhe të ndrequrat",

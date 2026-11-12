@@ -3212,6 +3212,7 @@
   "adm.rep.question": "Question :",
   "adm.rep.fixed": "Corrigé",
   "adm.rep.reopen": "Rouvrir",
+  "adm.rep.inReview": "Correctif en attente de relecture · PR #{n}",
   "adm.rep.none": "Aucun signalement.",
   "adm.rep.download": "Télécharger pour corriger (.md)",
   "adm.rep.showAll": "Afficher aussi les corrigés",

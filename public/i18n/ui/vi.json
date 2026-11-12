@@ -3185,6 +3185,7 @@
   "adm.rep.question": "Câu hỏi:",
   "adm.rep.fixed": "Đã sửa",
   "adm.rep.reopen": "Mở lại",
+  "adm.rep.inReview": "Bản sửa đang chờ duyệt · PR #{n}",
   "adm.rep.none": "Không có báo cáo.",
   "adm.rep.download": "Tải về để sửa (.md)",
   "adm.rep.showAll": "Hiện cả các lỗi đã sửa",

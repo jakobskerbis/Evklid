@@ -3185,6 +3185,7 @@
   "adm.rep.question": "Pertanyaan:",
   "adm.rep.fixed": "Sudah diperbaiki",
   "adm.rep.reopen": "Buka lagi",
+  "adm.rep.inReview": "Perbaikan menunggu peninjauan · PR #{n}",
   "adm.rep.none": "Tidak ada laporan.",
   "adm.rep.download": "Unduh untuk diperbaiki (.md)",
   "adm.rep.showAll": "Tampilkan juga yang sudah diperbaiki",

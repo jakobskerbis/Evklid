@@ -211,6 +211,7 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
       (r) => `<li class="adm-rep${r.status === "fixed" ? " fixed" : ""}" data-kind="${esc(r.kind)}" data-id="${esc(r.id)}">
         <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b>${esc(reportTitle(r))}</b>${reasonText(r) ? `<span class="pill">${esc(reasonText(r))}</span>` : ""}</div>
         <small class="muted" dir="auto">${esc(r.created_at)} UTC${r.device ? ` · ${esc(r.device)}` : ""}</small>
+        ${r.status === "in_review" && r.pr_url ? `<a class="adm-rep-pr" href="${esc(r.pr_url)}" target="_blank" rel="noopener">${icon("clipboard-check")}<span>${esc(t("adm.rep.inReview", { n: r.pr }))}</span></a>` : ""}
         ${r.note ? `<p class="adm-rep-note" dir="auto">${esc(r.note)}</p>` : ""}
         ${shownBlock(r)}
         ${r.question || r.raw || r.answer || r.context ? `<details><summary>${esc(t("adm.rep.more"))}</summary>${r.question ? `<p dir="auto"><b>${esc(t("adm.rep.question"))}</b> ${esc(r.question)}</p>` : ""}${r.raw || r.answer ? `<p><b>${esc(t("adm.rep.raw"))}</b></p><pre dir="auto">${esc(r.raw || r.answer)}</pre>` : ""}${r.context ? `<pre dir="auto">${esc(r.context)}</pre>` : ""}</details>` : ""}
