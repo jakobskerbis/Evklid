@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import * as G from "../scripts/atlas/zile-mreza.mjs";
-import { stena, polna, dopolni, stiki, zakrpaj } from "../scripts/atlas/popravi-zile.mjs";
+import { stena, polna, dopolni, stiki, zakrpaj, zasijRobove } from "../scripts/atlas/popravi-zile.mjs";
 import { analiziraj } from "../scripts/atlas/preveri-mreze.mjs";
 
 // Cev vzdolž osi y: polmer r, dolžina L, n stranic, obroči na korak; oba konca odprta. Normale radialne, COLOR_0 = 1.
@@ -230,4 +230,79 @@ test("popravek žil: stik obročev z različnim številom oglišč dobi unijo og
     stena({ ime: "c", m }, 1.5);
     assert.deepEqual(pregled(m), [0, 0, 0, 0, 0, 0]);
   }
+});
+
+test("popravek žil: stik dveh delov ima v obeh delih iste trikotnike pregrade, nasprotno navite (pregledovalnik jo odstrani)", () => {
+  const a = cev({ L: 0.04 }), b = cev({ L: 0.04, y0: 0.04 });
+  const deli = [{ ime: "a", m: a }, { ime: "b", m: b }];
+  stiki(deli);
+  const kl = (p) => `${Math.round(p[0] / 2e-6)},${Math.round(p[1] / 2e-6)},${Math.round(p[2] / 2e-6)}`;
+  const skrita = new Set(a.W.filter((p) => Math.abs(p[1] - 0.04) < 1e-9).map(kl));
+  stena(deli[0], 2.5, { skrita });
+  stena(deli[1], 2.5, { skrita });
+  // trikotniki pregrade: vsa tri oglišča v ravnini stika y = 0,04
+  const pregrada = (m) => {
+    const out = [];
+    for (let f = 0; f < m.F.length; f += 3) {
+      const p = [0, 1, 2].map((k) => G.pol(m, m.F[f + k]));
+      if (!p.every((q) => Math.abs(q[1] - 0.04) < 1e-9)) continue;
+      const k = p.map(kl);
+      const i = k.indexOf([...k].sort()[0]);
+      out.push([k[i], k[(i + 1) % 3], k[(i + 2) % 3]]);
+    }
+    return out;
+  };
+  const pa = pregrada(a), pb = pregrada(b);
+  assert.equal(pa.length, 24);
+  assert.equal(pb.length, 24);
+  const vB = new Set(pb.map((k) => k.join("|")));
+  for (const k of pa) assert.ok(vB.has([k[0], k[2], k[1]].join("|")), "trikotnik pregrade nima nasprotno navitega dvojnika v sosednjem delu");
+});
+
+test("popravek žil: razcepišče (trije deli v istem obroču) dobi v vseh delih isto normalo", () => {
+  // glavna cev do y = 0,04, veji se začneta v njenem končnem obroču in gresta poševno narazen
+  const veja = (dx) => {
+    const m = cev({ L: 0.04, y0: 0.04 });
+    for (let i = 0; i < m.P.length / 3; i++) m.P[i * 3] += dx * (m.P[i * 3 + 1] - 0.04);
+    return G.zvari(m);
+  };
+  const deli = [{ ime: "glavna", m: cev({ L: 0.04 }) }, { ime: "leva", m: veja(-0.6) }, { ime: "desna", m: veja(0.6) }];
+  stiki(deli);
+  const kl = (p) => `${Math.round(p[0] / 2e-6)},${Math.round(p[1] / 2e-6)},${Math.round(p[2] / 2e-6)}`;
+  const normale = deli.map(({ m }) => {
+    const n = m.A.get("NORMAL").d, o = new Map();
+    for (let i = 0; i < m.P.length / 3; i++) if (Math.abs(m.P[i * 3 + 1] - 0.04) < 1e-9) o.set(kl(G.pol(m, i)), [n[i * 3], n[i * 3 + 1], n[i * 3 + 2]]);
+    return o;
+  });
+  assert.equal(normale[0].size, 12);
+  for (const [k, n] of normale[0]) for (const o of normale.slice(1)) {
+    assert.ok(o.has(k), "oglišče obroča manjka v veji");
+    assert.ok(G.v3.dist(n, o.get(k)) < 1e-9, `normala na razcepišču se razlikuje: ${n} ≠ ${o.get(k)}`);
+  }
+});
+
+test("popravek žil: pokrov drobne žile ima oglišče v sredini z normalo v smeri osi; reža med skoraj enakima ogliščema se zašije", () => {
+  const m = cev({ r: 0.001, L: 0.02, korak: 0.002, n: 6 });
+  polna({ ime: "cevka", m }, "kupola");
+  assert.deepEqual(pregled(m), [0, 0, 0, 0, 0, 0]);
+  const n = m.A.get("NORMAL").d;
+  // rob pokrova ima svoja oglišča z normalo med steno in osjo (6 na vsakem koncu)
+  let nagnjenih = 0;
+  for (let i = 0; i < m.P.length / 3; i++) if (Math.hypot(m.P[i * 3], m.P[i * 3 + 2]) > 1e-4 && Math.abs(n[i * 3 + 1]) > 0.7) nagnjenih++;
+  assert.equal(nagnjenih, 12);
+  const sredini = [];
+  for (let i = 0; i < m.P.length / 3; i++) if (Math.hypot(m.P[i * 3], m.P[i * 3 + 2]) < 1e-9) sredini.push([m.P[i * 3 + 1], n[i * 3 + 1]]);
+  assert.equal(sredini.length, 2);
+  for (const [y, ny] of sredini) assert.ok(y < 0.01 ? y < 0 && ny < -0.99 : y > 0.02 && ny > 0.99, `pokrov ni izbočen z osno normalo (y ${y}, n ${ny})`);
+  // reža: oglišče sredi zaprte cevke podvojimo in kopijo premaknemo za 2 µm (štirje odprti robovi, ki niso zanka v eni smeri)
+  const r = cev({ r: 0.001, L: 0.02, korak: 0.002, n: 6 });
+  polna({ ime: "r", m: r }, "kupola");
+  const i0 = 5 * 6 + 2;
+  const kopija = G.dodajOglisce(r, [r.P[i0 * 3] + 2e-6, r.P[i0 * 3 + 1], r.P[i0 * 3 + 2]], [[i0, 1]]);
+  let st = 0;
+  for (let f = 0; f < r.F.length; f += 3) for (let k = 0; k < 3; k++) if (r.F[f + k] === i0 && st++ % 2 === 0) r.F[f + k] = kopija;
+  G.zvari(r);
+  assert.ok(pregled(r)[0] > 0, "poskusna reža ni nastala");
+  assert.ok(zasijRobove(r) >= 1);
+  assert.equal(pregled(r)[0], 0);
 });

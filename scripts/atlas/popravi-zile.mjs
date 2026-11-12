@@ -51,6 +51,7 @@ export const NACRT = {
     // Zgostitev oglatih velikih žil (12 stranic → 24, kjer gladka cev od tetive odstopa za več kot toliko mm).
     // Telefon: samo aorta (polmer ≥ 14 mm), ker ima srce za telefon mejo 90 000 trikotnikov.
     zgosti: (pot) => (/telefon/.test(path.basename(pot)) ? 0.44 : 0.15),
+    stikiSkupaj: true, // deli iste žile: skupna mreža kvantizacije in oznaka »stik« (prerez brez pregrade na stiku)
     senca: true, // COLOR_0.r spremenjenih delov na novo (enak postopek kot izvoz)
     odprtost: true, // COLOR_0.g (izvoz srca: odprtost=True)
     // Velikost organa ob izvozu (diagonala škatle; dolžina žarkov sence je 0,14 × velikost). Namenoma velikost ob
@@ -82,7 +83,10 @@ NACRT.telo = {
   polna: /./,
   // 6 stranic → 12 → 24 pri velikih žilah (HD); navadna različica (telefon) ostane pri 12
   zgosti: (pot) => (/telo-hd/.test(pot) ? 0.3 : 0.7),
-  pokrov: "raven", // šestkotni konci: raven pokrov brez novega oglišča (manjša datoteka; konci so skriti v sosednji žili)
+  // Konec drobne žile: rahlo izbočen pokrov z ogliščem v sredini (normala v smeri osi) in svojimi oglišči na robu
+  // (normala med steno in osjo). Raven pokrov iz oglišč obroča (normale stene, pravokotne na pogled) se je od
+  // spredaj osenčil bledo sivo.
+  pokrov: "kupola",
 };
 
 const log = (...a) => console.log(...a);
@@ -363,6 +367,26 @@ export function stiki(deli) {
       skupneNormale.set(kl(m.W[m.zvar[r]]), n);
     }
   }
+  // Stik treh ali več delov (razcepišče: veji se začneta v obroču glavne cevi): pari zgoraj bi dali glavni cevi in
+  // vejama različne normale (stopnica v svetlosti ob obroču). Vsi deli dobijo isto normalo: vsoto svojih gladkih.
+  const naStiku = new Map(); // ključ položaja → [{ m, w }]
+  for (const d of new Set(vse.map((x) => x.d))) d.m.W.forEach((p, w) => {
+    const k = kl(p);
+    if (!skupneNormale.has(k)) return;
+    let l = naStiku.get(k);
+    if (!l) naStiku.set(k, (l = []));
+    l.push({ m: d.m, w });
+  });
+  const gladke = new Map();
+  for (const [k, l] of naStiku) {
+    if (l.length < 3) continue;
+    let n = [0, 0, 0];
+    for (const { m, w } of l) { if (!gladke.has(m)) gladke.set(m, G.normaleZvarjenih(m)); n = v3.add(n, gladke.get(m)[w]); }
+    if (v3.len(n) < 0.5) continue; // normale si nasprotujejo: ostane, kot je
+    n = v3.norm(n);
+    skupneNormale.set(k, n);
+    for (const { m, w } of l) for (let r = 0; r < m.zvar.length; r++) if (m.zvar[r] === w) G.nastaviAtribut(m, "NORMAL", r, n);
+  }
   return st;
 }
 // Stik obročev z različnim številom oglišč (oglišča y že ležijo na mnogokotniku x): rob obroča x razpolovimo v vsakem
@@ -428,6 +452,66 @@ function uskladiObroca(mx, my, c) {
   return dodanih;
 }
 
+// Vrstni red dveh položajev (po zaokroženih koordinatah): enak v obeh delih stika.
+const vecji = (p, q) => { for (let c = 0; c < 3; c++) { const d = Math.round(p[c] / 2e-6) - Math.round(q[c] / 2e-6); if (d) return d > 0; } return false; };
+// Razcepišče (obroč, ki si ga delijo trije ali več delov): po uskladitvi je obroč unija oglišč vseh delov, od katerih
+// so ena na krožnici (zgoščena cev), druga na tetivah sosednjega obroča. Tak nazobčan obroč se ob stiku treh cevi
+// osenči kot »zobje« (telefon: 12 stranic). Oglišča obroča prestavimo na skupno krožnico v ravnini obroča; premik
+// zamre v razdalji 1,2 polmera, v vseh delih enako. Vrne število prestavljenih oglišč.
+export function zaokroziRazcepisca(deli) {
+  const stDelov = new Map(); // ključ položaja na odprtem koncu → število delov
+  const zanke = deli.map((d) => G.zanke(d.m));
+  deli.forEach((d, i) => { for (const k of new Set(zanke[i].flat().map((e) => kl(d.m.W[e.w])))) stDelov.set(k, (stDelov.get(k) || 0) + 1); });
+  const cilj = new Map(); // ključ → nov položaj
+  const krogi = [];
+  deli.forEach((d, i) => {
+    for (const z of zanke[i]) {
+      if (!z.every((e) => stDelov.get(kl(d.m.W[e.w])) >= 3)) continue;
+      const o = G.opisZanke(d.m, z);
+      if (o.okroglost < 0.7 || o.odmik > 0.2 * o.r || krogi.some((k) => v3.dist(k.c, o.c) < 0.25 * o.r)) continue;
+      krogi.push(o);
+      for (const e of z) {
+        const p = d.m.W[e.w];
+        const v = v3.sub(p, o.c);
+        const vRavnini = v3.sub(v, v3.mul(o.n, v3.dot(v, o.n)));
+        cilj.set(kl(p), v3.add(o.c, v3.mul(v3.norm(vRavnini), o.r)));
+      }
+    }
+  });
+  if (!cilj.size) return 0;
+  let st = 0;
+  for (const d of deli) {
+    const m = d.m;
+    const rob = [];
+    m.W.forEach((p, w) => { const c = cilj.get(kl(p)); if (c) rob.push({ w, premik: v3.sub(c, p) }); });
+    if (!rob.length) continue;
+    const naRobu = new Map(rob.map((x) => [x.w, x.premik]));
+    let D = 0;
+    for (const k of krogi) if (v3.dist(k.c, m.W[rob[0].w]) < 2 * k.r) D = 1.2 * k.r;
+    const novo = m.W.map((p, w) => {
+      if (naRobu.has(w)) return v3.add(p, naRobu.get(w));
+      let bd = Infinity, bp = null;
+      for (const x of rob) { const dd = v3.dist(p, m.W[x.w]); if (dd < bd) { bd = dd; bp = x.premik; } }
+      if (bd >= D) return p;
+      const u = 1 - bd / D;
+      return v3.add(p, v3.mul(bp, u * u * (3 - 2 * u)));
+    });
+    const premaknjena = [];
+    for (let r = 0; r < m.zvar.length; r++) {
+      const p = novo[m.zvar[r]];
+      if (p !== m.W[m.zvar[r]]) premaknjena.push(r);
+      m.P[r * 3] = p[0]; m.P[r * 3 + 1] = p[1]; m.P[r * 3 + 2] = p[2];
+    }
+    G.zvari(m);
+    const N = G.normaleZvarjenih(m);
+    for (const r of premaknjena) G.nastaviAtribut(m, "NORMAL", r, N[m.zvar[r]]);
+    m.spremenjeno = true;
+    st += rob.length;
+  }
+  if (st) log(`   razcepišča: ${krogi.length} obročev na krožnico (${st} oglišč)`);
+  return st;
+}
+
 const skupneNormale = new Map(); // položaj oglišča na stiku → normala (stena: ista smer odmika v obeh delih)
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -435,7 +519,7 @@ const skupneNormale = new Map(); // položaj oglišča na stiku → normala (ste
 // ---------------------------------------------------------------------------------------------------------------
 
 // Zapre zanko s trikotniki. Okrogla zanka: pahljača do sredine (rahlo izbočena, »vrh«); sicer triangulacija v ravnini.
-function zapriZanko(m, z, { vrh = 0, raven = false } = {}) {
+function zapriZanko(m, z, { vrh = 0, raven = false, svojRob = false } = {}) {
   const o = G.opisZanke(m, z);
   const E = raven ? G.robovi(m) : null;
   const obstaja = (a, b) => E.has(a < b ? a * 4294967296 + b : b * 4294967296 + a);
@@ -460,7 +544,18 @@ function zapriZanko(m, z, { vrh = 0, raven = false } = {}) {
   if (!tri) {
     const ven = v3.mul(o.n, -1);
     const c = G.dodajOglisce(m, v3.add(o.c, v3.mul(ven, vrh * o.r)), z.map((e) => [e.r, 1]), { NORMAL: ven });
-    for (const e of z) m.F.push(e.r2, e.r, c);
+    if (!svojRob) { for (const e of z) m.F.push(e.r2, e.r, c); return z.length; }
+    // pokrov s svojimi oglišči na robu: normala med steno in osjo (z normalo stene je rob pokrova od spredaj bled)
+    const nd = m.A.get("NORMAL")?.d;
+    const rob = new Map();
+    const naRobu = (r) => {
+      if (!rob.has(r)) {
+        const n = nd ? v3.norm(v3.add(v3.mul([nd[r * 3], nd[r * 3 + 1], nd[r * 3 + 2]], 0.6), ven)) : ven;
+        rob.set(r, G.dodajOglisce(m, G.pol(m, r), [[r, 1]], { NORMAL: n }));
+      }
+      return rob.get(r);
+    };
+    for (const e of z) m.F.push(naRobu(e.r2), naRobu(e.r), c);
     return z.length;
   }
   const a = z[0].w, b = z[0].w2;
@@ -470,12 +565,52 @@ function zapriZanko(m, z, { vrh = 0, raven = false } = {}) {
   return tri.length;
 }
 
-export function polna(d, raven) {
+export function polna(d, pokrov) {
   const z = G.zanke(d.m);
   let st = 0;
-  for (const zz of z) st += zapriZanko(d.m, zz, raven ? { raven: true } : { vrh: 0.3 });
+  for (const zz of z) st += zapriZanko(d.m, zz, pokrov === true || pokrov === "raven" ? { raven: true } : { vrh: 0.3, svojRob: pokrov === "kupola" });
   if (z.length) { d.m.spremenjeno = true; G.zvari(d.m); }
-  return { koncev: z.length, trikotnikov: st };
+  const zasitih = zasijRobove(d.m);
+  return { koncev: z.length, trikotnikov: st, zasitih };
+}
+
+// Odprti robovi, ki niso zanka (nemnogoterna mreža, npr. »Cavernous sinus«): reža med dvema skoraj enakima
+// ogliščema (nekaj µm narazen, zato se pri varjenju nista združili). Robno oglišče prestavimo na bližnje robno
+// oglišče (do »tol«), trikotniki brez ploščine odpadejo; kar se pri tem sklene v zanko, se zapre. Vrne število
+// združenih oglišč.
+export function zasijRobove(m, tol = 6e-6) {
+  let zdruzenih = 0;
+  for (let krog = 0; krog < 3; krog++) {
+    const rob = new Set();
+    for (const [k, l] of G.robovi(m)) if (l.length === 1) { rob.add(Math.floor(k / 4294967296)); rob.add(k % 4294967296); }
+    if (!rob.size) break;
+    const ogl = [...rob].sort((a, b) => a - b);
+    const cilj = new Map();
+    for (let i = 0; i < ogl.length; i++) for (let j = i + 1; j < ogl.length; j++) {
+      if (cilj.has(ogl[i]) || cilj.has(ogl[j]) || [...cilj.values()].includes(ogl[j])) continue;
+      if (v3.dist(m.W[ogl[i]], m.W[ogl[j]]) <= tol) cilj.set(ogl[j], ogl[i]);
+    }
+    if (!cilj.size) break;
+    // šiv ne sme narediti nemnogoternega roba (tri ploskve na robu): tedaj mreža ostane, kot je bila
+    const nemnog = () => { let n = 0; for (const l of G.robovi(m).values()) if (l.length > 2) n++; return n; };
+    const prej = { n: nemnog(), P: m.P.slice(), F: m.F.slice(), A: new Map([...m.A].map(([s, a]) => [s, { n: a.n, d: a.d.slice() }])) };
+    const razveljavi = () => { m.P = prej.P; m.F = prej.F; m.A = prej.A; G.zvari(m); };
+    for (let r = 0; r < m.zvar.length; r++) {
+      const c = cilj.get(m.zvar[r]);
+      if (c === undefined) continue;
+      const p = m.W[c];
+      m.P[r * 3] = p[0]; m.P[r * 3 + 1] = p[1]; m.P[r * 3 + 2] = p[2];
+    }
+    G.zvari(m);
+    if (G.brezIzrojenih(m)) G.zvari(m);
+    const z = G.zanke(m);
+    for (const zz of z) zapriZanko(m, zz, { raven: true });
+    if (z.length) G.zvari(m);
+    if (nemnog() > prej.n) { razveljavi(); break; }
+    zdruzenih += cilj.size;
+    m.spremenjeno = true;
+  }
+  return zdruzenih;
 }
 
 export function zakrpaj(d, najObsegMm = Infinity) {
@@ -596,7 +731,11 @@ export function stena(d, tMm, { senca = 1, skrita = null, izpostavljena = null }
     }
     for (const e of zz) {
       const a = rz.get(e.w), b = rz.get(e.w2), ai = rn.get(e.w), bi = rn.get(e.w2);
-      m.F.push(b, a, ai, b, ai, bi);
+      // Stik dveh delov iste žile: sosednji del ima isti obroč v nasprotni smeri. Diagonalo štirikotnika določi
+      // položaj oglišč, ne smer zanke, da imata dela na stiku iste trikotnike (pregrada, ki jo pregledovalnik odstrani).
+      const ka = kl(m.W[e.w]), kb = kl(m.W[e.w2]);
+      if (skupneNormale.has(ka) && skupneNormale.has(kb) && vecji(m.W[e.w], m.W[e.w2])) m.F.push(b, a, bi, a, ai, bi);
+      else m.F.push(b, a, ai, b, ai, bi);
     }
     obrocev++;
   }
@@ -646,7 +785,7 @@ export function stena(d, tMm, { senca = 1, skrita = null, izpostavljena = null }
 // odsevu) in ob dograjeni steni (m.jedro iz dopolni) oglišča zgladimo po Taubinu (λ/μ: brez krčenja cevi). Deli se
 // gladijo skupaj (oglišča stika so ista v obeh delih), učinek zamre z razdaljo od jedra; drugi odprti konci ostanejo
 // na mestu. Nato vse normale zglajenih delov na novo iz geometrije. Vrne število premaknjenih oglišč.
-function zgladiOkoli(deli, { krogov = 24, lambda = 0.5, mu = -0.52 } = {}) {
+function zgladiOkoli(deli, { krogov = +(process.env.EVK_K || 24), lambda = 0.5, mu = +(process.env.EVK_MU || -0.52) } = {}) {
   const jedro = [];
   const naKoncih = new Map(); // položaj oglišča na odprtem koncu → število delov, ki ga imajo na koncu
   const zanke = deli.map((d) => G.zanke(d.m));
@@ -656,7 +795,7 @@ function zgladiOkoli(deli, { krogov = 24, lambda = 0.5, mu = -0.52 } = {}) {
     if (d.m.jedro) jedro.push(...d.m.jedro);
     for (const z of zanke[i]) {
       const o = G.opisZanke(d.m, z);
-      for (const e of z) if (stik(d.m.W[e.w])) jedro.push({ p: d.m.W[e.w], D: 1.2 * o.r });
+      for (const e of z) if (stik(d.m.W[e.w])) jedro.push({ p: d.m.W[e.w], D: +(process.env.EVK_D || 1.2) * o.r });
     }
   });
   if (!jedro.length) return 0;
@@ -908,6 +1047,7 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
     // stik treh delov (votla vena + brahiocefalni veni): ponavljamo, dokler nimajo vsi obroči istih oglišč
     const vsiStiki = () => { for (let i = 0; i < 4; i++) { skupneNormale.clear(); if (!stiki(s.filter(odprt))) break; } };
     vsiStiki();
+    if (zaokroziRazcepisca(s.filter(odprt))) vsiStiki();
     // glajenje šivov (stik delov, dograjena stena), nato skupne normale stikov na novo
     if (zgladiOkoli(s.filter(odprt))) vsiStiki();
     // sosede za skrite konce: tudi drobne žile (podključnična in jugularna vena ob koncu brahiocefalne vene)
@@ -940,12 +1080,37 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
     if (st && odprt(d)) {
       const r = stena(d, st[1], { skrita: d.skrita, izpostavljena: d.izpostavljena });
       if (r) opombe.push(`stena ${st[1]} mm (najmanj ${mm(r.najmanj)} mm), obročev ${r.obrocev}`);
-    } else if (jePolna && odprt(d)) {
-      const r = polna(d, nacrt.pokrov === "raven");
-      opombe.push(`zaprtih koncev ${r.koncev}`);
+    } else if (jePolna && (odprt(d) || [...G.robovi(d.m).values()].some((l) => l.length === 1))) {
+      const r = polna(d, nacrt.pokrov);
+      opombe.push(`zaprtih koncev ${r.koncev}${r.zasitih ? `, zašitih rež ${r.zasitih}` : ""}`);
     }
     if (!odprt(d)) { const u2 = G.usmeri(d.m); if (u2.navznoter || u2.obrnjene) G.poravnajNormale(d.m); } // zaprto: predznak prostornine
     if (opombe.length) log(`   ${d.ime}: ${opombe.join(", ")}`);
+  }
+  // Deli, ki se stikajo (ista oglišča na stiku): skupna mreža kvantizacije in oznaka »stik« v extras vozlišča;
+  // pregledovalnik organov (organ.js) pri takih delih odstrani dvojne trikotnike pregrade na stiku.
+  if (nacrt.stikiSkupaj) {
+    const s = deli.filter((d) => d.m && d.m.spremenjeno && (nacrt.stena || []).some(([rx]) => rx.test(d.ime)));
+    const sk = s.map((_, i) => i);
+    const najdi = (i) => { while (sk[i] !== i) i = sk[i] = sk[sk[i]]; return i; };
+    const prvi = new Map();
+    s.forEach((d, i) => {
+      for (const k of new Set(d.m.W.map(kl))) {
+        if (!skupneNormale.has(k)) continue;
+        if (prvi.has(k)) sk[najdi(i)] = najdi(prvi.get(k)); else prvi.set(k, i);
+      }
+    });
+    const skupine = new Map();
+    s.forEach((d, i) => { const r = najdi(i); if (!skupine.has(r)) skupine.set(r, []); skupine.get(r).push(d); });
+    for (const l of skupine.values()) {
+      if (l.length < 2) continue;
+      const mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity];
+      for (const d of l) for (let i = 0; i < d.m.P.length; i++) { const c = i % 3, v = d.m.P[i]; if (v < mn[c]) mn[c] = v; if (v > mx[c]) mx[c] = v; }
+      // premik in merilo zaokrožena na float32 (tako ju bere pregledovalnik), z nekaj rezerve za zaokrožitev
+      const mreza = { c: mn.map((v, c) => Math.fround((v + mx[c]) / 2)), h: Math.fround(Math.max(mx[0] - mn[0], mx[1] - mn[1], mx[2] - mn[2]) / 2 * 1.0001) };
+      for (const d of l) { d.m.mreza = mreza; if (!suho) d.node.setExtras({ ...(d.node.getExtras() || {}), stik: 1 }); }
+      log(`   skupna mreža oglišč (korak ${(mreza.h / 32767 * 1e6).toFixed(1)} µm): ${l.map((d) => d.ime).join(", ")}`);
+    }
   }
   // senca okolice (COLOR_0) za spremenjene dele: ovire so vsi deli modela v končni obliki
   const spremenjeni = deli.filter((d) => d.m && d.m.spremenjeno);
