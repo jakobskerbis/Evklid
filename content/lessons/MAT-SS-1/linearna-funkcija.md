@@ -47,6 +47,21 @@ točka: 3; 11 | (3, 11) | desno
 - $k = 0$: funkcija je **konstantna** $y = n$, premica je vodoravna.
 - Večja ko je $|k|$, strmejša je premica.
 
+Preizkusi sam: z drsnikoma pod sliko spreminjaj $k$ in $n$. Črtkana stopnica kaže smerni koeficient: ko greš od točke $(0, n)$ za $1$ v desno, se premica dvigne za $k$ (pri negativnem $k$ se spusti).
+
+:::risba graf
+opis: Graf premice y = kx + n v koordinatnem sistemu od −6 do 6 na obeh oseh. Z drsnikoma spreminjaš smerni koeficient k od −3 do 3 in začetno vrednost n od −3 do 3. Izbrano je k = {k} in n = {n}: premica seka os y v točki (0, {n}), črtkana stopnica gre od te točke za 1 v desno in nato za k do premice.
+x: -6 .. 6
+y: -6 .. 6
+enako: da
+drsnik: k | -3 .. 3 | 0,5 | 1 | smerni koeficient k
+drsnik: n | -3 .. 3 | 1 | 2 | začetna vrednost n
+f: k*x + n
+črta: 0; n -> 1; n -> 1; k + n | oranžna črtkano
+točka: 0; n | (0, {n}) | levo | oranžna
+podnapis: y = kx + n pri k = {k} in n = {n}
+:::
+
 V simulaciji spodaj (»Graf funkcije y = kx + n«) pusti $n = 5$ in pomikaj $k$ od $2$ do $-2$. Opazi, da se premica vrti okoli točke $(0, 5)$ in da je pri $k = 0$ vodoravna.
 
 :::premisli

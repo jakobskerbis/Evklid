@@ -101,7 +101,7 @@ do: 3
 | `premica` | `od`, `do`, `korak`, `oznake` (vsaka koliko enot; `ne`), `oznaka: x \| besedilo`, `točka: x \| napis \| slog` (`prazna`), `skok: a -> b \| napis`, `interval: a .. b \| napis` |
 | `mreža` | `vrstic`, `stolpcev`, `spodaj`, `desno` (napisa ob stranicah), `številke: da` |
 | `stolpci` | `stolpec: ime \| vrednost` (2–8), `os` (ime navpične osi), `korak` |
-| `graf` | `x: od .. do \| korak \| ime`, `y: …`, `enako: da` (ista enota na obeh oseh), `višina`, `oznake: ne`, `oznakax` / `oznakay: vrednost \| besedilo`, `f: izraz \| slog \| od .. do` in liki |
+| `graf` | `x: od .. do \| korak \| ime`, `y: …`, `enako: da` (ista enota na obeh oseh), `višina`, `oznake: ne`, `oznakax` / `oznakay: vrednost \| besedilo`, `f: izraz \| slog \| od .. do`, `drsnik: ime \| od .. do \| korak \| začetna \| napis` (spodaj) in liki |
 | `skica` | `območje: x0; y0 .. x1; y1`, `enota` (px na enoto), `mreža: da` in liki |
 | `atom` | `jedro` (napis), `lupine: 2, 8, 1`, `imena: K, L, M` |
 | `molekula` | pod vrstico `---` strukturna formula z znaki: atomi, vezi `– \| = ≡ / \\`, nevezni pari `··` ali `:` |
@@ -109,6 +109,26 @@ do: 3
 Liki (v `graf` in `skica`, v koordinatah lekcije, rišejo se po vrsti): `črta: x; y -> x; y -> … | slog`,
 `lik: x; y -> … | slog`, `pravokotnik: x; y .. x; y | slog`, `krog: x; y | polmer | slog`, `točka: x; y | napis | lega | slog`,
 `napis: x; y | besedilo | lega | slog`, `puščica: x; y -> x; y | napis | lega | slog`, `pravikot: oglišče | točka | točka`.
+
+**Graf z drsniki** (samo `graf`, 1 do 3 drsniki): učenec pod sliko premika drsnik in graf se sproti izriše znova.
+
+```markdown
+:::risba graf
+opis: Premica y = kx + n. Z drsnikoma spreminjaš k in n; izbrano je k = {k} in n = {n}.
+x: -6 .. 6
+y: -6 .. 6
+drsnik: k | -3 .. 3 | 0,5 | 1 | smerni koeficient k
+drsnik: n | -3 .. 3 | 1 | 2 | začetna vrednost n
+f: k*x + n
+točka: 0; n | (0, {n}) | levo
+podnapis: y = {k}x {+n}
+:::
+```
+
+- `drsnik: ime | od .. do | korak | začetna | napis`: ime je ena črka (ne `x`, `y`, `e`), korak razdeli območje na največ 200 enakih delov, začetna vrednost leži na koraku. Napis je navadno besedilo (bere ga bralnik zaslona); če ga ni, je napis ime.
+- Ime uporabiš v `f:` (`k*x + n`), v koordinatah likov in polmeru kroga (`točka: 0; n`, `črta: 0; n -> 1; k + n`) ter kot `{izraz}` v napisih likov, v `opis:` in `podnapis:` (`k = {k}`, `{-n/k}`; `{+n}` izpiše predznak: »+ 2« ali »− 2«). Vrednost se izpiše z decimalno vejico, zaokrožena na 2 decimalki (pri drobnejšem koraku drsnika do 4); izraz, ki ni določen (deljenje z 0), se izpiše kot »/«. V koordinati `|x|` piši kot `abs(x)`.
+- Tisk, PDF, inštruktor in branje na glas dobijo sliko oziroma opis pri začetnih vrednostih, zato mora biti takrat vse na sliki (sicer napaka). Pri drugih vrednostih se lik, ki pade iz območja ali ni določen, samo ne nariše.
+- check-lesson javi: napačno območje, korak ali začetno vrednost, več kot 3 drsnike, drsnik, ki ni nikjer uporabljen, in neznano črko v izrazu. Vzorec: `MAT-SS-1/linearna-funkcija.md`.
 
 Vsi liki (tudi napisi in točke) morajo biti znotraj `območje` oziroma osi `x`, `y`, sicer check-lesson javi napako.
 Risba mora kazati točno to, kar pove besedilo (ista števila in oznake). Koordinate izračunaj, ne ocenjuj na oko:
