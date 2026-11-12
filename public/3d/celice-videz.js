@@ -445,5 +445,75 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
     return el;
   }
 
-  return { GLSL, vLuknji, barveUcbenika, hash, sum, fbm, rnd, sencilo, steklo, poglobi, poliraj, pike, zdruzi, vlakna, posej, beljakovine, BARVE, BARVE_UCBENIK };
+  // Lipidni dvosloj v prerezu, narisan v senčilniku (kot pri živalski celici): glave fosfolipidov (kroglice), po dva
+  // valovita repa, ponekod beljakovina čez ves dvosloj. Geometrija potrebuje atribut aRez = (s: dolžina vzdolž roba,
+  // t: 0 zunaj … 1 znotraj); D = debelina v enotah modela. o = { glave, repi, beljakovina: barve (sRGB), delez: delež
+  // beljakovin 0 … 1 }. Brez dodatnih trikotnikov; material ima userData.rez (poliraj ga pusti pri miru).
+  function dvoslojMat(D, o = {}) {
+    const m = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.46, clearcoat: 0.55, clearcoatRoughness: 0.18, sheen: 0.3, sheenColor: new THREE.Color(0xdcd6ff), side: THREE.DoubleSide });
+    m.userData.rez = true;
+    odpad.push(m);
+    const Df = F(D), Cg = new THREE.Color(o.glave || "#8057e6"), Ct = new THREE.Color(o.repi || "#c7c2f2"), Cb = new THREE.Color(o.beljakovina || "#fab33d");
+    const v3 = (c) => `vec3(${F(c.r)}, ${F(c.g)}, ${F(c.b)})`, Ct2 = Ct.clone().lerp(new THREE.Color(1, 1, 1), 0.7), pr = F(1 - (o.delez ?? 0.18));
+    function dodaj(m) {
+      m.onBeforeCompile = (sh) => {
+        sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nattribute vec2 aRez;\nvarying vec2 vRez;")
+          .replace("#include <begin_vertex>", "#include <begin_vertex>\nvRez = aRez;");
+        sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec2 vRez;" + GLSL)
+          .replace("#include <color_fragment>", `#include <color_fragment>
+            float D = ${Df}, y = vRez.y * D, s = vRez.x, aa = max(fwidth(s), 1e-5);
+            float h = 0.25 * D, xl = (fract(s / h) - 0.5) * h, ci = floor(s / h);
+            float bx = s / (4.0 * h), bl = (fract(bx) - 0.5) * 4.0 * h, jeB = step(${pr}, zvH(vec3(floor(bx), 3.1, 7.7)));
+            float rh = 0.115 * D, d1 = length(vec2(xl, y - 0.13 * D)), d2 = length(vec2(xl, y - 0.87 * D)), dg = min(d1, d2);
+            float gl = smoothstep(rh + aa, rh - aa, dg);
+            float yy = min(y, D - y), wig = 0.02 * D * sin(yy / D * 38.0 + ci * 1.7), rp = 0.0;
+            for (int k = 0; k < 2; k++) {
+              float xt = abs(xl - (float(k) * 2.0 - 1.0) * 0.045 * D - wig);
+              rp = max(rp, smoothstep(0.021 * D + aa, 0.021 * D - aa, xt) * smoothstep(0.2 * D, 0.23 * D, yy) * smoothstep(0.49 * D, 0.46 * D, yy));
+            }
+            vec3 bv = mix(${v3(Ct)}, ${v3(Ct2)}, rp);
+            bv = mix(bv, ${v3(Cg)} * (0.72 + 0.45 * (1.0 - dg / rh)), gl);
+            float pd = length(vec2(bl / (1.75 * h), (y - 0.5 * D) / (0.55 * D))), pa = fwidth(pd), pm = jeB * smoothstep(1.0 + pa, 1.0 - pa, pd);
+            bv = mix(bv, ${v3(Cb)} * (0.7 + 0.4 * (1.0 - pd)), pm);
+            bv *= 1.0 - 0.4 * (1.0 - smoothstep(0.0, 0.04, min(vRez.y, 1.0 - vRez.y)));
+            diffuseColor.rgb = bv;
+            float zh = (gl * (1.0 - pm) * sqrt(max(0.0, 1.0 - dg * dg / (rh * rh))) * 0.5 + pm * sqrt(max(0.0, 1.0 - pd * pd)) * 0.8 + rp * 0.12) * D * 0.2;`)
+          .replace("#include <normal_fragment_maps>", "#include <normal_fragment_maps>\nnormal = zvRelief(normal, zh, faceDirection);");
+      };
+      m.customProgramCacheKey = () => ["kit-dvosloj", Df, o.glave, o.repi, o.beljakovina, pr].join("|");
+      m.clone = function () { const c = new this.constructor().copy(this); dodaj(c); return c; };
+    }
+    dodaj(m);
+    return m;
+  }
+  // Ploskev prereza plasti med zunanjo fZ(smer) in notranjo fN(smer) na robovih odrezanega osmega dela (x < 0, y > 0,
+  // z > 0) z atributom aRez za dvoslojMat. loki = [t → smer] (privzeto trije loki osmine).
+  const LOKI_OSMINE = [
+    (t) => new THREE.Vector3(0, Math.cos(t * Math.PI / 2), Math.sin(t * Math.PI / 2)),
+    (t) => new THREE.Vector3(-Math.sin(t * Math.PI / 2), Math.cos(t * Math.PI / 2), 0),
+    (t) => new THREE.Vector3(-Math.cos(t * Math.PI / 2), 0, Math.sin(t * Math.PI / 2)),
+  ];
+  function prerezDvosloj(fZ, fN, seg, loki = LOKI_OSMINE) {
+    const pos = [], rez = [], idx = [], prej = new THREE.Vector3(), P = new THREE.Vector3();
+    loki.forEach((L, li) => {
+      const off = pos.length / 3;
+      let s = li * 7.3;
+      for (let i = 0; i <= seg; i++) {
+        const d = L(i / seg).normalize(), rz = fZ(d), rn = fN(d);
+        P.copy(d).multiplyScalar(rz);
+        if (i) s += P.distanceTo(prej);
+        prej.copy(P);
+        for (const t of [0, 1]) { const rr = rz + (rn - rz) * t; pos.push(d.x * rr, d.y * rr, d.z * rr); rez.push(s, t); }
+      }
+      for (let i = 0; i < seg; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    });
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("aRez", new THREE.Float32BufferAttribute(rez, 2));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+
+  return { GLSL, vLuknji, barveUcbenika, hash, sum, fbm, rnd, sencilo, steklo, poglobi, poliraj, pike, zdruzi, vlakna, posej, beljakovine, dvoslojMat, prerezDvosloj, BARVE, BARVE_UCBENIK };
 }
