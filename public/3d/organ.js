@@ -413,9 +413,10 @@ function mreznicaGLSL(t, merilo, izh) {
 // obroč. sarenica: { sredisce, os (smer naprej), polmer } v metrih; vlakna (število), barve venecBarva, robBarva.
 function sarenicaGLSL(t, merilo, izh) {
   const z = t.sarenica;
-  const v3 = (a, k = merilo) => `vec3( ${a.map((x, i) => fl(+((k === 1 ? x : x - izh[i]) * k).toFixed(5))).join(", ")} )`;
+  // smer: vektor smeri (brez izhodišča in merila), sicer točka v prostoru organa
+  const v3 = (a, smer = false) => `vec3( ${a.map((x, i) => fl(+(smer ? x : (x - izh[i]) * merilo).toFixed(5))).join(", ")} )`;
   return `{
-          vec3 iA = normalize( ${v3(z.os, 1)} );
+          vec3 iA = normalize( ${v3(z.os, true)} );
           vec3 iD = vOrgPos - ${v3(z.sredisce)}; iD -= iA * dot( iD, iA );
           float iR = length( iD ) / ${fl(+(z.polmer * merilo).toFixed(5))};
           vec3 iB = normalize( cross( iA, abs( iA.y ) < 0.9 ? vec3( 0.0, 1.0, 0.0 ) : vec3( 1.0, 0.0, 0.0 ) ) );
