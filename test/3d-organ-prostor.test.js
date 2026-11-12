@@ -38,7 +38,9 @@ test("organ.js mere iz JSON pretvarja s prostorom organa (ne samo z merilom)", (
   const src = fs.readFileSync(path.join(KOREN, "public", "3d", "organ.js"), "utf8");
   assert.match(src, /prostor\.ravnina\(r\.n, r\.d/);
   assert.match(src, /prostor\.tocka\(d\.tocka\)/);
-  assert.match(src, /prostor\.tocka\(o\.sredisce\)/);
+  // okvir: središče v metrih GLB (privzeto središče škatle), po potrebi premaknjeno na ravnino reza, nato prostor.tocka
+  assert.match(src, /o\.sredisce \|\| prostor\.sredisce/);
+  assert.match(src, /sredisce: prostor\.tocka\(c\)/);
   assert.doesNotMatch(src, /r\.d \|\| 0\) \* s\b/);
   assert.doesNotMatch(src, /\.map\(\(\w+\) => \w+ \* s\)/, "mera v metrih pomnožena samo z merilom");
 });
