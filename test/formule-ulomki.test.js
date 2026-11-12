@@ -3,6 +3,7 @@
 // cela, ko gre; sicer jo sirina.js prelomi pri =.
 // 1) Nobena formula v laboratoriju ni več ulomek s poševnico v HTML (<i>a</i>/<i>b</i>, (…)/(…)).
 // 2) Vsak tex(…) v laboratoriju se z vzorčnimi števili izriše brez napake, tudi v strogem načinu KaTeX.
+// 3) Izpisi 3D teles (V = a³√2/12 = …) so formule; vsak zapis se prepiše v LaTeX.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -87,4 +88,19 @@ test("laboratorij: vsak tex(…) in texBlock(…) se izriše brez napake (strogi
     }
   }
   assert.ok(n >= 60, `premalo formul (${n})`);
+});
+
+// 3) 3D telesa: prostornina, površina, osnovna ploskev, plašč in polmera krogel so v izpisu formule (tex: true).
+test("3D telesa: vsak zapis količine (a³√2/12, O · v/3 …) se prepiše v LaTeX in izriše brez napake", async () => {
+  const { fTex } = await import("../public/3d/modeli/matematika/telesa.js");
+  const src = fs.readFileSync("public/3d/modeli/matematika/telesa.js", "utf8");
+  const zapisi = [...new Set([...src.matchAll(/\b(?:V|P|O|O2|pl|Rv|Ro): \["([^"]+)",/g)].map((m) => m[1]))];
+  assert.ok(zapisi.length >= 50, `premalo zapisov (${zapisi.length})`);
+  for (const z of zapisi) {
+    const t = fTex(z);
+    assert.ok(!/[/√·²³ₛ₁₂]/.test(t.replace(/\\frac|\\sqrt/g, "")), `${z} → ${t}`);
+    assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "error" }), `${z} → ${t}`);
+  }
+  assert.equal(fTex("O · v/3"), "\\frac{O \\cdot v}{3}");
+  assert.match(src, /id: "V", oznaka: "Prostornina", tex: true/);
 });
