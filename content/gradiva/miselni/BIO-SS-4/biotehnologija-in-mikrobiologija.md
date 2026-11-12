@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prokarionti
+  - bakterije: nukleoid, plazmidi, peptidoglikan
+  - arheje: drugačni lipidi, skrajna okolja
+  - napaka: arheje niso stare bakterije
+- Praživali in virusi
+  - praživali: enocelični evkarionti, npr. paramecij
+  - virus: DNA ali RNA v kapsidi
+  - antibiotik na viruse ne deluje
+- Presnova
+  - avtotrof iz $\mathrm{CO_2}$, heterotrof iz organskih snovi
+  - fototrof s svetlobe, kemotrof iz reakcij
+  - nitrifikacijske bakterije: avtotrofi brez svetlobe
+- Vrenje
+  - alkoholno: glukoza v etanol in $\mathrm{CO_2}$
+  - mlečnokislinsko: brez plina, jogurt
+- Rast bakterij
+  - $N = N_0 \cdot 2^{n}$
+  - $n = \frac{t}{g}$, generacijski čas v min
+  - množimo z $2$, ne seštevamo
+- Ekosistem
+  - razkrojevalci vračajo snovi rastlinam
+  - kroženje dušika: vezalci, nitrifikacija, denitrifikacija
+  - cianobakterije proizvajajo kisik
+- Biotehnologija
+  - kruh, jogurt, kis
+  - inzulin iz bakterije s plazmidom
+  - Taq-polimeraza za PCR
