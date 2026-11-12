@@ -457,7 +457,7 @@
    "Marginal artery.001": [0,0,64,0,0,0,0],
    "Ascending pharyngeal artery.r.001": [0,0,144,0,0,0,0],
    "Ascending pharyngeal artery.l.001": [0,0,144,0,0,0,0],
-   "Cavernous sinus.r.001": [4,1,63,0,0,0,0],
+   "Cavernous sinus.r.001": [0,0,63,0,0,0,0],
    "Cavernous sinus.l.001": [0,0,61,0,0,0,0]
   },
   "telo/zivcevje.glb": {
@@ -1106,7 +1106,7 @@
    "Left ventricle.001": [343,4,0,0,0,0,0],
    "Ascending pharyngeal artery.r.001": [0,0,276,0,0,0,0],
    "Ascending pharyngeal artery.l.001": [0,0,276,0,0,0,0],
-   "Cavernous sinus.r.001": [4,1,889,0,0,0,0],
+   "Cavernous sinus.r.001": [0,0,889,0,0,0,0],
    "Cavernous sinus.l.001": [4,1,908,0,0,0,0]
   },
   "telo-hd/zivcevje.glb": {
