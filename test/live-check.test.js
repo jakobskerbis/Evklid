@@ -714,6 +714,11 @@ test("accuracy round 6: lone pairs drawn in a one-line Lewis formula must match 
   // formula iz učenčevega sporočila ni napaka odgovora
   assert.equal(lewisIssue(R`Tu je $:\ddot{N}\equiv\ddot{N}:$ in`, R`Je $:\ddot{N}\equiv\ddot{N}:$ pravilno`).issue, null);
   assert.equal(lewisIssue(R`Formula: $:\mathrm{N}\equiv\mathrm{N}:$`).checked, 1);
+  // priporočeni zapis z gnezdenima \overset in \underset se prebere (ne samo »ni zadetka«)
+  const water = R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{-}\mathrm{H}$`;
+  assert.equal(lewisIssue(water).checked, 1);
+  assert.equal(lewisIssue("$" + R`{:}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{:}$`).checked, 1);
+  assert.match(lewisIssue(R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{:}{-}\mathrm{H}$`).issue || "", /3 lone pair\(s\) on O/);
 });
 
 test("accuracy round 6: codeFindings joins the Lewis finding with the other chemistry checks", () => {

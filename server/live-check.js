@@ -542,9 +542,13 @@ function lewisTokens(tex) {
     .replace(/\\cdot\s*\\cdot/g, "··")
     .replace(/\\equiv/g, "≡")
     .replace(/\\minus|−|–|—/g, "-");
-  for (let i = 0; i < 12; i++) {
+  // Splošne zavite oklepaje odstrani šele, ko se nič drugega ne spremeni: sicer izgine {··} zunanjega
+  // \overset{··}{\underset{··}{O}}, preden ga naslednji krog prebere (priporočeni zapis vode bi izpadel).
+  const marks = LEWIS_STEPS.slice(0, -1), braces = LEWIS_STEPS[LEWIS_STEPS.length - 1];
+  for (let i = 0; i < 24; i++) {
     const before = s;
-    for (const [re, to] of LEWIS_STEPS) s = s.replace(re, to);
+    for (const [re, to] of marks) s = s.replace(re, to);
+    if (s === before) s = s.replace(braces[0], braces[1]);
     if (s === before) break;
   }
   s = s.replace(/\s+/g, "").replace(/··/g, ":");
