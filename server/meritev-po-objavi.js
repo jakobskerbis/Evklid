@@ -163,7 +163,8 @@ function zapisiStanje(file, s) {
 function zaženiSkripto({ idji, maxUsd, izidFile, logFile, root }) {
   return new Promise((resolve) => {
     const fd = fs.openSync(logFile, "a");
-    const args = ["--disable-warning=ExperimentalWarning", "scripts/primerjava-modelov.js", "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
+    // Meja kopice: Render starter ima 512 MB za strežnik in meritev skupaj; ob rasti naj pade meritev, ne strežnik z učenci.
+    const args = ["--disable-warning=ExperimentalWarning", "--max-old-space-size=256", "scripts/primerjava-modelov.js", "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
     const child = spawn(process.execPath, args, { cwd: root, stdio: ["ignore", fd, fd], env: { ...process.env, EVKLID_MERITEV_PO_OBJAVI: "0" } });
     try {
       os.setPriority(child.pid, 19);
@@ -296,17 +297,19 @@ export function nacrtujMeritevPoObjavi({ env = process.env, mock = false, log = 
 }
 
 // Skrbnik: GET /api/admin/meritev-po-objavi (besedilo) ali ?json=1. Brez prijave skrbnika 403.
+// Znesek za skrbnika: decimalna vejica; neberljiva knjiga (Infinity) ni »Infinity $«.
+const usd = (x) => (Number.isFinite(Number(x)) ? `${Number(x).toFixed(2).replace(".", ",")} $` : "neznano (knjiga stroška ni berljiva, zagon se ne zažene)");
 export function povzetekBesedilo(s, { knjiga = 0 } = {}) {
   const teden = isoTeden();
   const vrstice = [
     "Meritev natančnosti po objavi",
-    `Ta teden (${teden}, UTC): ${(porabaTedna(s, teden) + knjiga).toFixed(2)} $ od ${MAX_TEDEN_USD} $ (vse meritve, tudi ročne); en zagon največ ${MAX_ZAGON_USD} $.`,
+    `Ta teden (${teden}, UTC): ${usd(porabaTedna(s, teden) + knjiga)} od ${MAX_TEDEN_USD} $ (vse meritve, tudi ročne); en zagon največ ${MAX_ZAGON_USD} $.`,
     "",
   ];
   const zg = s.zgodovina || [];
   if (!zg.length) vrstice.push("Še ni bilo nobenega zagona.");
   for (const z of zg) {
-    vrstice.push(`${z.cas.slice(0, 16).replace("T", " ")} UTC · objava ${z.objava} · ${z.stanje}${z.strosek_usd != null ? ` · ${z.strosek_usd} $` : ""}`);
+    vrstice.push(`${z.cas.slice(0, 16).replace("T", " ")} UTC · objava ${z.objava} · ${z.stanje}${z.strosek_usd != null ? ` · ${usd(z.strosek_usd)}` : ""}`);
     if (z.razlog) vrstice.push(`  ${z.razlog}`);
     if (z.idji?.length && z.stanje !== "preskočeno") vrstice.push(`  primeri: ${z.idji.join(", ")}`);
     for (const p of z.primeri || []) {

@@ -234,7 +234,7 @@ test("GET /api/admin/meritev-po-objavi: skrbnik vidi povzetek (besedilo in JSON 
     const besedilo = await t.text();
     assert.match(besedilo, /Meritev natančnosti po objavi/);
     assert.match(besedilo, /MAT-OS-7\/a: napaka 0, manjša 1, pravilno 3 od 4/);
-    assert.match(besedilo, /0\.50 \$ od 15 \$/);
+    assert.match(besedilo, /0,50 \$ od 15 \$/);
     const j = await (await fetch(`${base}?json=1`)).json();
     assert.equal(j.meja_zagon_usd, 1);
     assert.equal(j.meja_teden_usd, 15);
