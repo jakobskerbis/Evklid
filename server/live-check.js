@@ -279,7 +279,7 @@ export function codeFindings(answer, pre = null, question = "") {
   }
   // Kemijske preverbe se združijo v eno napako (en »Popravek:«), da »Dušik je v 5. skupini in v 3. periodi.« popravi
   // obe (pregled A, PR #589).
-  const chem = [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question), lewisIssue(answer, question)];
+  const chem = [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question), lewisIssue(answer, question), subscriptIssue(answer, question)];
   for (const f of chem) checked += f.checked;
   const chemIssues = chem.map((f) => f.issue).filter(Boolean);
   if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
@@ -650,6 +650,63 @@ export function lewisIssue(answer, question = "") {
       return {
         checked,
         issue: `the Lewis formula ${f.src} draws ${bad.lone} lone pair(s) on ${el}, but ${el} with ${bad.bonds} bond(s) has ${want} lone pair(s) (bonds + lone pairs = 4 pairs = 8 electrons; H: 1 pair). Every mark is one lone pair: each ":" beside the symbol and each \\ddot or \\overset/\\underset dot pair, so never put both a ":" and \\ddot for one pair. Redraw it, e.g. N₂ as ${LEWIS_N2}`,
+      };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Krog 7 (2026-11-12): križno pravilo brez krajšanja (»$\mathrm{Mg_2O_2}$« namesto MgO). Preveri samo preprosto
+// ionsko formulo kovine s stalnim nabojem (Be, Mg, Ca, Sr, Ba, Zn 2+; Al 3+) in enostavnega aniona (O, S, N, P,
+// SO₄, CO₃, SO₃, PO₄), ko sta indeksa natanko neskrajšani rezultat križnega pravila (indeks kovine = naboj aniona,
+// indeks aniona = naboj kovine) in imata skupni delitelj. Molekulske spojine (H₂O₂, N₂O₄, C₂H₄), Hg₂Cl₂, Fe₂S₂ in
+// peroksidi (Na₂O₂, BaO₂) zato izpadejo sami. Ne šteje: `SKIP_LINE`, vrstica s krajšanjem, križnim pravilom ali
+// besedo »namesto«, formula, katere skrajšana oblika je v odgovoru, in formula iz učenčevega sporočila.
+const IONIC_CATION = { Be: 2, Mg: 2, Ca: 2, Sr: 2, Ba: 2, Zn: 2, Al: 3 };
+const IONIC_ANION = { O: 2, S: 2, N: 3, P: 3, SO4: 2, CO3: 2, SO3: 2, PO4: 3 };
+const SUB_DIGITS = "₀₁₂₃₄₅₆₇₈₉";
+const IONIC_RE = /(?<![A-Za-z)\]])(Be|Mg|Ca|Sr|Ba|Zn|Al)(\d)(O|S|N|P|\((?:SO4|CO3|SO3|PO4)\))(\d)(?![A-Za-z\d(+\-−])/g;
+const REDUCE_LINE_RE = /krajš|(?<!\p{L})del(?:i|imo|iš)(?!\p{L})|razmerj|križ|namesto/iu;
+const ionicPlain = (t) =>
+  String(t)
+    .replace(/[₀-₉]/g, (d) => String(SUB_DIGITS.indexOf(d)))
+    .replace(/\\(?:mathrm|text|ce|rm)\s*/g, "")
+    .replace(/\\left|\\right/g, "")
+    .replace(/_\{?\s*(\d)\s*\}?/g, "$1")
+    .replace(/[{}]/g, "");
+function ionicFormulas(text) {
+  const out = [];
+  for (const m of ionicPlain(text).matchAll(IONIC_RE)) {
+    const an = m[3].replace(/[()]/g, "");
+    const a = Number(m[2]), b = Number(m[4]);
+    if (a !== IONIC_ANION[an] || b !== IONIC_CATION[m[1]] || a === 1) continue;
+    const g = gcdInt(a, b);
+    if (g < 2) continue;
+    const ra = a / g, rb = b / g;
+    const group = an.length > 1;
+    const reduced = `${m[1]}${ra > 1 ? ra : ""}${group ? (rb > 1 ? `(${an})${rb}` : an) : `${an}${rb > 1 ? rb : ""}`}`;
+    out.push({ src: m[0], reduced });
+  }
+  return out;
+}
+function gcdInt(a, b) {
+  while (b) [a, b] = [b, a % b];
+  return a;
+}
+export function subscriptIssue(answer, question = "") {
+  let checked = 0;
+  const text = String(answer || "");
+  const asked = new Set(ionicFormulas(question).map((f) => f.src));
+  const plainAll = ionicPlain(text);
+  for (const line of text.split("\n")) {
+    if (SKIP_LINE.test(line) || REDUCE_LINE_RE.test(line)) continue;
+    for (const f of ionicFormulas(line)) {
+      if (asked.has(f.src)) continue;
+      checked++;
+      if (new RegExp(`(?<![A-Za-z)\\]\\d])${f.reduced.replace(/[()]/g, "\\$&")}(?![A-Za-z\\d(])`).test(plainAll)) continue;
+      return {
+        checked,
+        issue: `the formula ${f.src} keeps the subscripts unreduced; an ionic formula gives the smallest whole-number ratio of ions, so the cross rule ends by reducing them: ${f.src} → ${f.reduced} (Mg²⁺ + O²⁻ → Mg₂O₂ → MgO)`,
       };
     }
   }

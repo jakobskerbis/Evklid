@@ -40,7 +40,7 @@ $$n_+ \cdot q_+ + n_- \cdot q_- = 0$$
 
 To je pogoj, ki ga mora izpolniti vsaka formula. Tu je $n_+$ število kationov, $q_+$ naboj kationa, $n_-$ število anionov in $q_-$ naboj aniona.
 
-Hitra pot je **križno pravilo**. Številko naboja kationa zapišeš kot **indeks** (malo številko spodaj desno) k anionu, številko naboja aniona pa kot indeks h kationu. Nato oba indeksa skrajšaš, če se da. Indeksa $1$ ne pišemo. Kation (kovina) stoji v formuli prvi, naboji pa se v formulo spojine ne pišejo.
+Hitra pot je **križno pravilo**. Številko naboja kationa zapišeš kot **indeks** (malo številko spodaj desno) k anionu, številko naboja aniona pa kot indeks h kationu. Nato oba indeksa skrajšaš na najmanjše celo razmerje, če se da: $\mathrm{Mg^{2+}}$ + $\mathrm{O^{2-}}$ → $\mathrm{Mg_2O_2}$ → okrajšamo → $\mathrm{MgO}$. Indeksa $1$ ne pišemo. Kation (kovina) stoji v formuli prvi, naboji pa se v formulo spojine ne pišejo.
 
 **3. Kaj pove indeks.** Indeks velja samo za element, ki stoji tik pred njim. V $\mathrm{CaCl_2}$ je en kalcijev ion in sta dva kloridna iona. Pri ionski spojini formula pove razmerje ionov v kristalu. Najmanjši skupek ionov s tem razmerjem imenujemo **formulska enota**. Pri molekulski spojini pa formula pove natančno sestavo ene molekule.
 
@@ -172,7 +172,7 @@ Trije ioni $\mathrm{Mg^{2+}}$ dajo $+6$, dva iona $\mathrm{N^{3-}}$ dasta $-6$. 
 ## Povzetek
 
 - Ionska spojina: kation prvi, anion drugi; vsota nabojev v formuli je $0$.
-- Križno pravilo: naboj kationa je indeks aniona in obratno; indeksa skrajšaj, indeksa $1$ ne pišeš ($\mathrm{Al_2O_3}$, $\mathrm{MgO}$, $\mathrm{AlCl_3}$, $\mathrm{Mg_3N_2}$).
+- Križno pravilo: naboj kationa je indeks aniona in obratno; nato indeksa skrajšaj na najmanjše celo razmerje ($\mathrm{Mg^{2+}}$ + $\mathrm{O^{2-}}$ → $\mathrm{Mg_2O_2}$ → okrajšamo → $\mathrm{MgO}$); indeksa $1$ ne pišeš ($\mathrm{Al_2O_3}$, $\mathrm{AlCl_3}$, $\mathrm{Mg_3N_2}$).
 - Indeks velja za element tik pred njim.
 - Ime ionske spojine: kovina v pridevniški obliki + nekovina s končnico -id (klorid, oksid, sulfid, nitrid), brez števil.
 - Molekulska spojina (dve nekovini): formula iz števila vezi, v imenu predpone mono-, di-, tri-, tetra- ($\mathrm{CO_2}$ ogljikov dioksid, $\mathrm{CCl_4}$ ogljikov tetraklorid). Predpono mono- izpustimo le pred prvim elementom (»ogljikov«, ne »monoogljikov«), pri drugem jo zapišemo: $\mathrm{CO}$ je ogljikov monoksid.
