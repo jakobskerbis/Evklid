@@ -226,7 +226,7 @@ export function razvrsti(el, { set = "zmesi" } = {}) {
     stage: svg,
     controls: [catBtns, buttons(button("Naslednja ▸", next, "primary small"))],
     out,
-    tryText: set === "zmesi" ? "Kako po sliki delcev ločiš element od spojine? Koliko različnih vrst atomov je v eni molekuli?" : "Poišči dve izjemi: kovino, ki je tekoča, in nekovino, ki prevaja tok.",
+    tryText: set === "zmesi" ? { razmisli: "Kako po sliki delcev ločiš element od spojine? Koliko različnih vrst atomov je v eni molekuli?" } : "Poišči dve izjemi: kovino, ki je tekoča, in nekovino, ki prevaja tok.",
   });
 }
 

@@ -97,7 +97,9 @@ export async function preveriGradnik(mod, pricakovanId) {
   if (!PREDMETI.includes(info.predmet)) n(`predmet ${info.predmet}`);
   if (!besedilo(info.opis)) n("ni opisa");
   if (!(info.merilo?.m > 0) || !besedilo(info.merilo?.oznaka)) n("ni merila");
-  if (info.poskusi !== undefined && (!besedilo(info.poskusi) || /^Poskusi/.test(info.poskusi))) n("poskusi: besedilo brez »Poskusi:« na začetku");
+  // poskusi: niz (»Preizkusi:«) ali { razmisli: niz } (»Razmisli:«), public/sim/napis-poskusa.js; napisa ni v besedilu
+  const posk = typeof info.poskusi === "string" ? info.poskusi : info.poskusi?.razmisli;
+  if (info.poskusi !== undefined && (!besedilo(posk) || /^(Poskusi|Preizkusi|Razmisli)\b/.test(posk))) n("poskusi: besedilo brez napisa »Preizkusi:«/»Razmisli:« na začetku");
   if (napake.length) return napake;
   for (const kakovost of ["visoka", "nizka"]) {
     for (const gibanje of [true, false]) {
