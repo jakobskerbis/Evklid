@@ -494,8 +494,9 @@ export function zakrpaj(d, najObsegMm = Infinity) {
 // Notranja stena v razdalji t in obroč na vsaki zanki. Senca notranje stene: COLOR_0.r pomnožen s »senca«.
 // skrita: Set ključev položajev (kl) oglišč na koncih, ki jih ni videti (stik z drugim delom iste žile ali konec v
 // sosednji žili): tam obroč uporabi oglišča sten (normala in senca stene), da skozi špranjo stika ali ob robu sosede
-// ni videti drugače osenčenega ravnega obroča (pikčasta črta, bela črta).
-export function stena(d, tMm, { senca = 1, skrita = null } = {}) {
+// ni videti drugače osenčenega ravnega obroča (pikčasta črta, bela črta). izpostavljena: tista skrita oglišča, ki v
+// resnici niso v sosedi (konec ob drobni žili): obroč tam dobi svoje notranje oglišče z normalo zunanje stene.
+export function stena(d, tMm, { senca = 1, skrita = null, izpostavljena = null } = {}) {
   const m = d.m;
   const z = G.zanke(m);
   if (!z.length) return null;
@@ -576,7 +577,19 @@ export function stena(d, tMm, { senca = 1, skrita = null } = {}) {
     }
     for (const e of zz) {
       if (rz.has(e.w)) continue;
-      if (skrita && skrita.has(kl(m.W[e.w]))) { rz.set(e.w, e.r); rn.set(e.w, notr[e.r]); continue; }
+      if (skrita && skrita.has(kl(m.W[e.w]))) {
+        rz.set(e.w, e.r);
+        rn.set(e.w, notr[e.r]);
+        const nd = m.A.get("NORMAL")?.d;
+        if (!nd || !izpostavljena || !izpostavljena.has(kl(m.W[e.w]))) continue;
+        // izpostavljen del skritega obroča: notranje oglišče z normalo zunanje stene (z normalo notranje stene je črn);
+        // del normale proti ploskvi obroča odpade (poševen konec), da je poravnajNormale ne obrne navznoter
+        const g = v3.norm(nObr.get(e.w));
+        const n0 = [nd[e.r * 3], nd[e.r * 3 + 1], nd[e.r * 3 + 2]];
+        const n = v3.norm(v3.sub(n0, v3.mul(g, Math.min(0, v3.dot(n0, g)))));
+        rn.set(e.w, G.dodajOglisce(m, G.pol(m, notr[e.r]), [[e.r, 1]], { NORMAL: n }));
+        continue;
+      }
       const n = ven(e.w) || v3.norm(nObr.get(e.w));
       rz.set(e.w, G.dodajOglisce(m, G.pol(m, e.r), [[e.r, 1]], { NORMAL: n }));
       rn.set(e.w, G.dodajOglisce(m, G.pol(m, notr[e.r]), [[e.r, 1]], { NORMAL: n }));
@@ -740,6 +753,7 @@ function skritiKonci(deli, sosede = []) {
   for (const t of telesa.slice(0, deli.length)) {
     const { d } = t;
     d.skrita = new Set();
+    d.izpostavljena = new Set(); // skrita samo po pravilu »nadaljevanje«: v resnici vidna ob robu drobne žile
     let vSosedi = 0;
     for (const z of G.zanke(d.m)) {
       let nadaljevanje = false; // konec, ki se nadaljuje v drobno žilo (brahiocefalna vena → podključnična in jugularna)
@@ -757,7 +771,7 @@ function skritiKonci(deli, sosede = []) {
         }
       }
       // tak konec ni nikoli viden v celoti: ves obroč brez ravnega roba, sicer se ob robu drobne žile vidi bel srp
-      if (nadaljevanje) for (const e of z) { const k = kl(d.m.W[e.w]); if (!d.skrita.has(k)) { d.skrita.add(k); vSosedi++; } }
+      if (nadaljevanje) for (const e of z) { const k = kl(d.m.W[e.w]); if (!d.skrita.has(k)) { d.skrita.add(k); d.izpostavljena.add(k); vSosedi++; } }
     }
     if (vSosedi) log(`   ${d.ime}: ${vSosedi} oglišč koncev v sosednji žili (obroč brez ravnega roba)`);
   }
@@ -924,7 +938,7 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
     if (u.obrnjene) opombe.push(`obrnjenih ploskev ${u.obrnjene}`);
     if (u.navznoter) opombe.push(`kosov obrnjenih navzven ${u.navznoter}`);
     if (st && odprt(d)) {
-      const r = stena(d, st[1], { skrita: d.skrita });
+      const r = stena(d, st[1], { skrita: d.skrita, izpostavljena: d.izpostavljena });
       if (r) opombe.push(`stena ${st[1]} mm (najmanj ${mm(r.najmanj)} mm), obročev ${r.obrocev}`);
     } else if (jePolna && odprt(d)) {
       const r = polna(d, nacrt.pokrov === "raven");
