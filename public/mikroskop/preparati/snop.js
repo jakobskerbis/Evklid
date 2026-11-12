@@ -226,5 +226,5 @@ export const zivec = {
   ime: "Periferni živec",
   opis: "Prečni prerez živca: snopiči živčnih vlaken, vsak obdan s perinevrijem. V snopiču so aksoni, oviti z mielinom (pri barvanju HE je mielin skoraj prozoren), med njimi jedra Schwannovih celic.",
   zacetek: { m: 100, sredisce: N },
-  isci: "Pri 400× poišči akson v sredini mielinske ovojnice. Pri TEM nad 100 000× vidiš plasti mielina na 12 nm.",
+  isci: "Pri 400× poišči akson v sredini mielinske ovojnice. Pri TEM nad 100 000× vidiš plasti mielina, ki si sledijo na približno 12 nm.",
 };

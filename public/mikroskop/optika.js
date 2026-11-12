@@ -110,6 +110,8 @@ export function oznakaDolzine(um) {
 }
 // Povečava z ločili tisočic: 50 000 000×.
 export function oznakaPovecave(m) {
-  const r = m >= 1000 ? Math.round(m / (m >= 1e5 ? 1000 : 10)) * (m >= 1e5 ? 1000 : 10) : Math.round(m);
+  // največ tri veljavne števke (29 995 000× → 30 000 000×), da drsnik ne kaže naključnih repov
+  const k = m >= 1000 ? 10 ** (Math.floor(Math.log10(m)) - 2) : 1;
+  const r = Math.round(m / k) * k;
   return `${String(r).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}×`;
 }

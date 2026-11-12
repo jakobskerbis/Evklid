@@ -3,9 +3,19 @@
 // (pri organih iz GLB tudi po delu). test/mikroskop.test.js preveri, da ima vsaka struktura atlasa in vsaka celica svoj
 // preparat. Brez DOM, da jo uporabi tudi test.
 
+// Ime pove tkivo (arterija, kost, mišica …) ali je površinska regija kože: velja material, ne organ v imenu
+// (»Renal artery« je arterija, ne ledvica; »Lacrimal bone« kost, ne požiralnik; »Thyroid cartilage« hrustanec).
+const TKIVO_V_IMENU = /\b(arter(y|ies)|veins?|bones?|cartilages?|muscles?|(?<!round )ligaments?|nerves?|fascia)\b/i; // okrogla vez maternice: gladke mišice (pravilo spodaj)
+
 // [vzorec imena, preparat]: prvo ujemanje velja.
 const IMENA = [
-  [/cerebell/i, "mali-mozgani"],
+  [/tentorium|falx|dura mater|arachnoid/i, "vezivo"], // možganske ovojnice so gosto vezivo (pred »cerebell«)
+  [/iliotibial/i, "kita"],
+  [/\bnucleus of\b/i, "skorja"],
+  [/\btracts?\b|\bstria\b|fasciculus|lemniscus|commissure/i, "bela-snov"], // proge živčnih vlaken (pred »thalam«)
+  [/thalam|grey matter|gray matter|horn of spinal cord/i, "skorja"], // siva snov (pred »spinal cord«)
+  [/cerebell|vermis/i, "mali-mozgani"],
+  [/choroid plexus/i, "skorja"],
   [/thymus|spleen|tonsil|\bnodes?\b/i, "bezgavka"],
   [/penis|glans|corpus cavernosum|corpus spongiosum|clitoris/i, "vena"],
   [/\b(atrium|auricle of heart|ventricle of heart|myocardium|heart)\b/i, "srcna-misica"],
@@ -100,10 +110,11 @@ const osnova = (m) => String(m || "").replace(/-\d+'?$/, "");
 // Struktura atlasa ({ ime, material }) → id preparata ali null.
 export function preparatAtlasa(r) {
   const ime = String(r?.ime || "");
-  for (const [re, p] of IMENA) if (re.test(ime)) return p;
   const m = osnova(r?.material);
-  if (MISICE.has(m)) return "skeletna-misica";
-  return MATERIALI[m] ?? null;
+  const izMateriala = MISICE.has(m) ? "skeletna-misica" : (MATERIALI[m] ?? null);
+  if (izMateriala && (TKIVO_V_IMENU.test(ime) || m === "Skin" || m === "Skin-in")) return izMateriala;
+  for (const [re, p] of IMENA) if (re.test(ime)) return p;
+  return izMateriala;
 }
 
 // Modeli celic in organov (public/3d/modeli) → preparat; pri organih iz GLB lahko del izbere drugega.
@@ -154,7 +165,7 @@ const MODELI = {
 };
 const DELI = {
   "organ-jetra": { zolcnik: "tanko-crevo", "portalna-vena": "vena", "jetrna-arterija": "arterija", "jetrne-vene": "vena" },
-  "organ-ledvica": { ovojnica: "kita", secevod: "mehur", "ledvicna-arterija": "arterija", "ledvicna-vena": "vena", nadledvicna: "nadledvicna" },
+  "organ-ledvica": { ovojnica: "kita", meh: "mehur", secevod: "mehur", "ledvicna-arterija": "arterija", "ledvicna-vena": "vena", nadledvicna: "nadledvicna" },
   "organ-mozgani": { mali: "mali-mozgani", deblo: "bela-snov", zuljevo: "bela-snov", krizisce: "bela-snov" },
   "organ-oko": { belocnica: "kita", rozenica: "rozenica", leca: "leca", "vidni-zivec": "zivec", misice: "skeletna-misica" },
   "organ-pljuca": { sapnik: "sapnik", bronhiji: "sapnik", "pljucne-arterije": "arterija", "pljucne-vene": "vena" },

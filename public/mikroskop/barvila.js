@@ -24,14 +24,14 @@ const ORCEIN = norm([0.38, 0.86, 0.34]); // acetoorcein: kromosomi rdeče vijoli
 const RJAVKASTO = norm([0.28, 0.5, 0.82]); // obrus zoba ali kosti: rumeno rjav zaradi sipanja in organskih snovi
 
 export const BARVANJA = {
-  he: { ime: "hematoksilin in eozin (HE)", opis: "Jedra so modro-vijolična, citoplazma in kolagen rožnata.", od: [HEM, EOZ, MELANIN], moc: 1.15 },
+  he: { ime: "hematoksilin in eozin (HE)", opis: "Jedra so modrovijolična, citoplazma in kolagen rožnata.", od: [HEM, EOZ, MELANIN], moc: 1.15 },
   giemsa: { ime: "barvilo po Giemsi", opis: "Jedra levkocitov so vijolična, eritrociti rožnati, citoplazma limfocitov svetlo modra.", od: [AZUR, EOZ_G, MET_MODRO], moc: 1.5 },
-  jod: { ime: "Lugolova raztopina (jod)", opis: "Jod obarva celične stene in jedra rumeno-rjavo, škrob temno modro.", od: [JOD, SKROB_JOD, SIVO], moc: 1.3 },
+  jod: { ime: "Lugolova raztopina (jod)", opis: "Jod obarva jedra in citoplazmo rumenorjavo, škrob temno modro.", od: [JOD, SKROB_JOD, SIVO], moc: 1.3 },
   metilensko: { ime: "metilensko modro", opis: "Jedra so temno modra, citoplazma svetlo modra.", od: [MET_MODRO, SIVO, EOZ], moc: 1.5 },
   gram: { ime: "barvanje po Gramu", opis: "Grampozitivne bakterije so vijolične, gramnegativne rožnate.", od: [KRISTAL_VIJ, SAFRANIN, SIVO], moc: 1.6 },
   safranin: { ime: "safranin in hitra zelena", opis: "Olesenele stene (ksilem) so rdeče, celulozne stene zelene.", od: [SAFRANIN, ZELENO, SIVO], moc: 1.5 },
-  orcein: { ime: "acetoorcein", opis: "Kromosomi in jedra so rdeče vijolični, citoplazma skoraj brezbarvna.", od: [ORCEIN, SIVO, EOZ], moc: 1.5 },
-  obrus: { ime: "obrus brez barvanja", opis: "Trdo tkivo je zbrušeno do tankega lističa. Barve ni, svetloba se siplje na kristalih in kanalčkih, zato je rumeno rjavkasto.", od: [RJAVKASTO, SIVO, MELANIN], moc: 1.2 },
+  orcein: { ime: "acetoorcein", opis: "Kromosomi in jedra so rdečevijolični, citoplazma skoraj brezbarvna.", od: [ORCEIN, SIVO, EOZ], moc: 1.5 },
+  obrus: { ime: "obrus brez barvanja", opis: "Trdo tkivo je zbrušeno do tankega lističa. Barve ni, svetloba se siplje na kristalih in kanalčkih, zato je rumenorjavkasto.", od: [RJAVKASTO, SIVO, MELANIN], moc: 1.2 },
   naravno: { ime: "brez barvanja", opis: "Vidiš naravne barve: zelene kloroplaste in sence celičnih sten.", od: [KLOROFIL, SIVO, HEMOGLOBIN], moc: 1.4 },
 };
 

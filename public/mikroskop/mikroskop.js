@@ -137,7 +137,8 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   try {
     upo = ustvariUpodobitev(platno);
   } catch (e) {
-    el.replaceChildren(mk("p", "k3-napaka", t(e?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
+    bIzberi.hidden = true; // glava z gumbom Nazaj ostane
+    el.replaceChildren(vrh, mk("p", "k3-napaka", t(e?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
     return { unici() {} };
   }
   let prep = null;
@@ -243,8 +244,10 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   const izbirnik = mk("div", "mk-izbirnik");
   izbirnik.hidden = true;
   izbirnik.setAttribute("role", "dialog");
+  izbirnik.setAttribute("aria-modal", "true");
   izbirnik.setAttribute("aria-label", "Preparati");
   const izbOkno = mk("div", "mk-izb-okno");
+  izbOkno.tabIndex = -1; // klik na prazno v oknu obdrži fokus v izbirniku, da Esc zapre izbirnik in ne mikroskopa (stran.js)
   const izbVrh = mk("div", "mk-izb-vrh");
   const iskanje = mk("input", "mk-iskanje");
   iskanje.type = "search";
@@ -253,7 +256,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   const bZapriIzb = mk("button", "a3-krog a3-mali-krog");
   bZapriIzb.type = "button";
   bZapriIzb.innerHTML = ikona("x");
-  bZapriIzb.setAttribute("aria-label", "Zapri");
+  bZapriIzb.setAttribute("aria-label", t("a3.close"));
   izbVrh.append(iskanje, bZapriIzb);
   const izbSeznam = mk("div", "mk-izb-seznam");
   izbOkno.append(izbVrh, izbSeznam);
@@ -301,6 +304,13 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       e.preventDefault();
       e.stopPropagation();
       zapriIzbirnik();
+    } else if (e.key === "Tab") {
+      // fokus ostane v izbirniku (Tab s prvega/zadnjega gumba skoči na drugi konec)
+      const f = [...izbirnik.querySelectorAll("input,button")].filter((x) => !x.hidden && x.offsetParent);
+      if (!f.length) return;
+      const [a, b] = [f[0], f[f.length - 1]];
+      if (e.shiftKey && document.activeElement === a) (e.preventDefault(), b.focus());
+      else if (!e.shiftKey && document.activeElement === b) (e.preventDefault(), a.focus());
     }
   });
 
@@ -429,7 +439,10 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     const snovT = Math.round(o.snovT);
     const snovU = Math.round(o.snov);
     const tip = Math.round(o.tip);
-    const imeSnovi = (k) => prep.snovi?.[k] ?? SNOVI[k] ?? "";
+    // snovi[0] preparata (svetlina cevke, Haversov kanal …) velja le znotraj rezine (velikost = polosi v µm; rezine so
+    // približno eliptične), zunaj nje je prazno stekelce
+    const zunaj = prep.velikost && (p[0] / prep.velikost[0]) ** 2 + (p[1] / prep.velikost[1]) ** 2 > 1;
+    const imeSnovi = (k) => (k === 0 && zunaj ? SNOVI[0] : prep.snovi?.[k] ?? SNOVI[k] ?? "");
     const celica = prep.imena?.[tip] ?? CELICE[tip] ?? "celica";
     const vCelici = snovT === 1 || snovT === 2 || snovT === 25 || snovT === 27;
     let ime;
@@ -515,13 +528,15 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   }
 
   // ---------- preparat ----------
+  let zahteva = 0; // hitra menjava preparata: velja zadnja izbira, tudi če se prejšnja datoteka naloži pozneje
   async function izberiPreparat(id, { zacetek = true } = {}) {
+    const moja = ++zahteva;
     const p = await naloziPreparat(id);
-    if (!p || !zivo) return;
+    if (!p || !zivo || moja !== zahteva) return;
     nalaganje.hidden = false;
     h1.textContent = p.ime;
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
-    if (!zivo) return;
+    if (!zivo || moja !== zahteva) return;
     upo.nastaviPreparat(p);
     prep = p;
     nalaganje.hidden = true;
@@ -669,6 +684,8 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
 // Pogon simulacij »lab-mikroskop« (public/sim/index.js): mikroskop v lekciji ali laboratoriju.
 export function simMikroskop(el, opts = {}) {
   el.__mikroskop?.unici?.();
+  el.__mikroskop = null;
+  const gen = (el.__mikroskopGen = (el.__mikroskopGen || 0) + 1);
   const naloga = document.createElement("p");
   naloga.className = "demo-try";
   naloga.innerHTML =
@@ -676,7 +693,8 @@ export function simMikroskop(el, opts = {}) {
   const box = document.createElement("div");
   el.append(naloga, box);
   odpriMikroskop(box, { preparat: opts.preparat || null, vLekciji: true })
-    .then((m) => (el.__mikroskop = m))
+    // »Ponastavi« pred koncem nalaganja: ta mikroskop je že zamenjan, zato ga takoj uničimo (kontekst WebGL)
+    .then((m) => (el.__mikroskopGen === gen ? (el.__mikroskop = m) : m.unici()))
     .catch((err) => {
     console.error("Mikroskop:", err);
     box.textContent = "Mikroskopa ni bilo mogoče naložiti.";

@@ -34,7 +34,7 @@ bool kloroplastL(inout T t, vec2 p, vec2 c, vec2 sm, float r, float px) {
 export const ustne = {
   id: "ustne",
   ime: "Celice ustne sluznice",
-  opis: "Razmaz celic, ki jih z žličko postrgaš z notranje strani lica. To so ploščate živalske celice brez celične stene. Metilensko modro obarva jedro temno modro, citoplazmo svetlo. Drobne pike na celicah so bakterije iz ust.",
+  opis: "Razmaz celic, ki jih z žličko postrgaš z notranje strani lica. To so ploščate živalske celice brez celične stene. Metilensko modro obarva jedro temno modro, citoplazmo svetlo modro. Drobne pike na celicah so bakterije iz ust.",
   barvanje: "metilensko",
   velikost: [1600, 1100],
   zacetek: { m: 100, sredisce: [0, 0] },
@@ -74,7 +74,7 @@ T tkivo(vec2 p, float px) {
 export const cebula = {
   id: "cebula",
   ime: "Povrhnjica čebule",
-  opis: "Tanka kožica z notranje strani čebulnega luska. Podolgovate rastlinske celice ležijo kot opeke. Vsaka ima celično steno, veliko vakuolo in jedro z jedrci. Jod obarva jedro in citoplazmo rumeno rjavo. Kloroplastov ni, ker luski rastejo v temi.",
+  opis: "Tanka kožica z notranje strani čebulne luske. Podolgovate rastlinske celice ležijo kot opeke. Vsaka ima celično steno, veliko vakuolo in jedro z jedrci. Jod obarva jedro in citoplazmo rumenorjavo. Kloroplastov ni, ker luske rastejo v temi.",
   barvanje: "jod",
   velikost: [1800, 1200],
   zacetek: { m: 100, sredisce: [0, 0] },
@@ -436,8 +436,8 @@ export const steblo = {
   zacetek: { m: 40, sredisce: [0, 0] },
   sredisceBlizu: [0, 1120],
   imena: { 0: "rastlinska celica" },
-  snovi: { 11: "celična stena", 12: "vakuola", 0: "žila ksilema (prazna)", 6: "kutikula" },
-  isci: "Poišči prevajalni snopič: rdeče žile ksilema, zelen floem in rdečo kapo vlaken. Med ksilemom in floemom je kambij iz ploščatih celic.",
+  snovi: { 11: "celična stena", 12: "vakuola", 0: "svetlina cevi ksilema", 6: "kutikula" },
+  isci: "Poišči prevajalni snopič: rdeče cevi ksilema, zelen floem in rdečo kapo vlaken. Med ksilemom in floemom je kambij iz ploščatih celic.",
   glsl: RASTLINSKA + /* glsl */ `
 T tkivo(vec2 p, float px) {
   T t = prazno();
@@ -574,7 +574,7 @@ T tkivo(vec2 p, float px) {
 export const kvasovke = {
   id: "kvasovke",
   ime: "Kvasovke",
-  opis: "Pivske kvasovke v kapljici z metilenskim modrim. Kvasovke so enocelične glive. Ovalne celice se razmnožujejo z brstenjem: na celici zraste manjša hčerinska celica. Žive celice barvilo razgradijo in ostanejo svetle, mrtve so modre.",
+  opis: "Pivske kvasovke v kapljici z metilenskim modrim. Kvasovke so enocelične glive. Ovalne celice se razmnožujejo z brstenjem: na celici zraste manjša hčerinska celica. Žive celice barvilo razbarvajo in ostanejo svetle, mrtve so modre.",
   barvanje: "metilensko",
   velikost: [600, 420],
   zacetek: { m: 400, sredisce: [0, 0] },
@@ -611,7 +611,7 @@ T tkivo(vec2 p, float px) {
 export const kapljica = {
   id: "kapljica",
   ime: "Kapljica vode iz ribnika",
-  opis: "Živa kapljica iz ribnika brez barvanja. V njej plavajo praživali: copatkar z migetalkami, evglena z zelenimi kloroplasti in rdečo očesno pego, ameba z nožicami. Diagonalno leži nitasta alga zelenica s spiralnim kloroplastom (uvijačka).",
+  opis: "Živa kapljica iz ribnika brez barvanja. V njej plavajo praživali: copatkar z migetalkami, evglena z zelenimi kloroplasti in rdečo očesno pego, ameba s panožicami. Diagonalno leži nitasta alga zelenica s spiralnim kloroplastom (uvijačka).",
   barvanje: "naravno",
   velikost: [1200, 800],
   zacetek: { m: 100, sredisce: [0, 0] },
@@ -883,7 +883,7 @@ T tkivo(vec2 p, float px) {
 export const virusSars = {
   id: "virus-sars",
   ime: "Virus SARS-CoV-2 v celicah",
-  opis: "Celice, okužene z novim koronavirusom. Virus je premer okoli 90 nanometrov, zato ga s svetlobnim mikroskopom ne vidiš, tudi z najboljšim objektivom ne. S presevnim elektronskim mikroskopom (TEM) vidiš virusne delce z venčkom bodic na celični membrani in v mešičkih v celici.",
+  opis: "Celice, okužene z novim koronavirusom. Premer virusa je okoli 90 nanometrov, zato ga s svetlobnim mikroskopom ne vidiš, tudi z najboljšim objektivom ne. S presevnim elektronskim mikroskopom (TEM) vidiš virusne delce z venčkom bodic na celični membrani in v mešičkih v celici.",
   barvanje: "he",
   velikost: [400, 300],
   zacetek: { m: 1000, sredisce: [0, 0] },
@@ -897,14 +897,14 @@ export const virusSars = {
 export const virusHiv = {
   id: "virus-hiv",
   ime: "Virus HIV na limfocitih",
-  opis: "Limfociti T, okuženi z virusom HIV. Virusi brstijo iz celične membrane. Zreli virusi imajo stožčasto jedrce, nezreli pa debel obroč beljakovin pod ovojnico. Premer okoli 110 nanometrov: viden samo s TEM.",
+  opis: "Limfociti T, okuženi z virusom HIV. Virusi brstijo iz celične membrane. Zreli virusi imajo stožčasto kapsido, nezreli pa debel obroč beljakovin pod ovojnico. Premer okoli 110 nanometrov: viden samo s TEM.",
   barvanje: "giemsa",
   velikost: [400, 300],
   zacetek: { m: 1000, sredisce: [0, 0] },
   sredisceBlizu: [0, 4.25],
   imena: { 3: "limfocit T" },
   snovi: { 17: "virus HIV", 14: "gojišče" },
-  isci: "Pri TEM nad 50 000× poišči zrele viruse s stožčastim jedrcem in nezrele z obročem.",
+  isci: "Pri TEM nad 50 000× poišči zrele viruse s stožčasto kapsido in nezrele z obročem.",
   glsl: virusGlsl("hiv"),
 };
 

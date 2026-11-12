@@ -95,6 +95,11 @@ test("mikroskop: vsaka struktura atlasa telesa ima preparat", () => {
   assert.equal(preparatAtlasa({ ime: "Left ventricle of heart", material: "Organ" }), "srcna-misica");
   assert.equal(preparatAtlasa({ ime: "Cerebellum", material: "Brain" }), "mali-mozgani");
   assert.equal(preparatAtlasa({ ime: "Biceps brachii", material: "Flexion" }), "skeletna-misica");
+  // tkivo v imenu ima prednost pred organom v imenu
+  assert.equal(preparatAtlasa({ ime: "Left renal artery", material: "Artery" }), "arterija");
+  assert.equal(preparatAtlasa({ ime: "Lacrimal bone", material: "Bone-6" }), "kost");
+  assert.equal(preparatAtlasa({ ime: "Thyroid cartilage", material: "Cartilage" }), "hrustanec");
+  assert.equal(preparatAtlasa({ ime: "Uvula of vermis", material: "Cerebellum" }), "mali-mozgani");
 });
 
 test("mikroskop: vsak model celice in organa ter vsak del iz preslikave obstaja", async () => {

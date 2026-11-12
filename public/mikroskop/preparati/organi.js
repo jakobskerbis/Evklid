@@ -278,7 +278,7 @@ export const bezgavka = {
   velikost: [2300, 1500],
   zacetek: { m: 40, sredisce: [0, 0] },
   sredisceBlizu: [-1450, 450],
-  imena: { 3: "limfocit", 15: "makrofag", 2: "retikulinska celica" },
+  imena: { 3: "limfocit", 15: "makrofag", 2: "retikularna celica" },
   snovi: { 3: "vezivna ovojnica", 14: "limfa v sinusu" },
   isci: "Poišči limfne folikle v skorji. Pri 1000× opazuj limfocite: okroglo temno jedro in le ozek rob citoplazme.",
   glsl: /* glsl */ `

@@ -167,7 +167,7 @@ void temPosebno(inout U u, T t, vec2 p, float px) {
 export const rozenica = {
   id: "rozenica",
   ime: "Roženica",
-  opis: "Roženica je prozorno okno očesa. Zgoraj je večskladni ploščati epitelij brez poroženevanja, pod njim Bowmanova plast, debela stroma iz pravilno zloženih plasti kolagena (zato je prozorna), Descemetova membrana in enoplastni endotelij. V roženici ni žil.",
+  opis: "Roženica je prozorno okno očesa. Zgoraj je večskladni ploščati epitelij brez poroženevanja, pod njim Bowmanova plast, debela stroma iz pravilno zloženih plasti kolagena (zato je prozorna), Descemetova membrana in enoskladni endotelij. V roženici ni žil.",
   barvanje: "he",
   velikost: [2400, 900],
   zacetek: { m: 100, sredisce: [0, 50] },
@@ -221,7 +221,7 @@ T tkivo(vec2 p, float px) {
 export const leca = {
   id: "leca",
   ime: "Leča",
-  opis: "Leča je zgrajena iz dolgih prozornih vlaken, polnih beljakovin kristalinov. Zgoraj je debela ovojnica in pod njo enoplasten epitelij; mlada vlakna pod njim imajo še jedra, starejša v globini jih izgubijo.",
+  opis: "Leča je zgrajena iz dolgih prozornih vlaken, polnih beljakovin kristalinov. Zgoraj je debela ovojnica in pod njo enoskladni epitelij; mlada vlakna pod njim imajo še jedra, starejša v globini jih izgubijo.",
   barvanje: "he",
   velikost: [2000, 900],
   zacetek: { m: 100, sredisce: [0, 500] },

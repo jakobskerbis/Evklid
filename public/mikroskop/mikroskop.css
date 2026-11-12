@@ -45,7 +45,7 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
 }
 .mk-merilo { left: 12px; bottom: 10px; color: #e8ecf3; text-shadow: 0 1px 2px #000; }
 .mk-merilo .k3-merilo-crta { border-color: #e8ecf3; }
-.mk-tem .mk-merilo { color: #0b0f16; text-shadow: none; }
+.mk-tem .mk-merilo { color: #0b0f16; text-shadow: none; background: rgba(240, 243, 238, 0.82); padding: 4px 8px; border-radius: 8px; } /* svetla podlaga: berljivo tudi na črnem modelu atomov */
 .mk-tem .mk-merilo .k3-merilo-crta { border-color: #0b0f16; }
 .mk-igla {
   position: absolute; right: 50%; top: 50%; width: min(26%, 150px); height: 5px; margin-top: -2.5px; background: #101010;
@@ -99,3 +99,7 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
   position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); background: var(--k3-accent); border-color: var(--k3-accent);
   color: #0b0f16; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
+
+/* RTL (npr. arabščina): vsebina mikroskopa je slovenska; vrednosti z enotami (100×, 0,00 µm, 1,8 mm) naj se ne obrnejo v »×100«, »µm 0,00« */
+.mk output, .mk-znacka, .mk-podatki dd, .mk-obj b { direction: ltr; unicode-bidi: isolate; text-align: match-parent; }
+.mk-opis, .mk-barvanje, .mk-naloga, .mk-resnica, .mk-kazalec, .mk-oznaka, .mk-opozorilo { unicode-bidi: plaintext; text-align: match-parent; }

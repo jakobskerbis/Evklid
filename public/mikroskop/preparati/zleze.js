@@ -99,14 +99,14 @@ T tkivo(vec2 p, float px) {
 export const nadledvicna = {
   id: "nadledvicna",
   ime: "Nadledvična žleza",
-  opis: "Žleza z notranjim izločanjem. Pod ovojnico je skorja v treh plasteh (klobčičasta, pasasta s svetlimi celicami, polnimi maščobnih kapljic, in mrežasta); v sredici so celice, ki izločajo adrenalin. Podobno (v trakovih in skupkih) so zgrajene obščitnice in hipofiza.",
+  opis: "Žleza z notranjim izločanjem. Pod ovojnico je skorja v treh plasteh (klobčičasta, snopasta s svetlimi celicami, polnimi maščobnih kapljic, in mrežasta); v sredici so celice, ki izločajo adrenalin. Podobno (v trakovih in skupkih) so zgrajene obščitnice in hipofiza.",
   barvanje: "he",
   velikost: [2400, 1500],
   zacetek: { m: 40, sredisce: [0, 0] },
   sredisceBlizu: [0, 900],
   imena: { 5: "endokrina celica" },
   snovi: { 6: "maščobna kapljica (holesterol za hormone)" },
-  isci: "Poišči tri plasti skorje in sredico. Pasasta plast je svetla, ker so celice polne maščobnih kapljic.",
+  isci: "Poišči tri plasti skorje in sredico. Snopasta plast je svetla, ker so celice polne maščobnih kapljic.",
   glsl: /* glsl */ `
 T tkivo(vec2 p, float px) {
   T t = prazno();
@@ -139,7 +139,7 @@ T tkivo(vec2 p, float px) {
 export const mehur = {
   id: "mehur",
   ime: "Sečni mehur",
-  opis: "Steno sečnega mehurja, sečevoda in sečnice obdaja prehodni epitelij: površinske celice so velike in obokane (»dežnikaste«) ter se pri raztezanju sploščijo. Pod njim je vezivo in debela plast gladkih mišic.",
+  opis: "Sečni mehur, sečevoda in začetek sečnice od znotraj prekriva prehodni epitelij: površinske celice so velike in obokane (»dežnikaste«) ter se pri raztezanju sploščijo. Pod njim sta vezivo in debela plast gladkih mišic.",
   barvanje: "he",
   velikost: [2400, 1500],
   zacetek: { m: 100, sredisce: [0, 1100] },
@@ -269,7 +269,7 @@ export const jajcnik = {
   velikost: [2400, 1500],
   zacetek: { m: 40, sredisce: [0, 0] },
   sredisceBlizu: [-300, 650],
-  imena: { 5: "zrnata (granulozna) celica", 0: "jajčna celica (oocita)", 2: "celica strome" },
+  imena: { 5: "zrnata (granulozna) celica", 0: "jajčna celica (oocit)", 2: "celica strome" },
   snovi: { 14: "folikularna tekočina" },
   isci: "Poišči jajčno celico z velikim jedrom in rožnato ovojnico (zona pellucida) v zorečem foliklu.",
   glsl: /* glsl */ `

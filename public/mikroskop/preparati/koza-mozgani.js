@@ -113,7 +113,7 @@ export const skorja = {
   zacetek: { m: 100, sredisce: [0, 900] },
   sredisceBlizu: [0, 300],
   imena: { 4: "nevron (piramidna celica)", 10: "celica glije", 17: "nevropil (aksoni, dendriti, sinapse)" },
-  snovi: {},
+  snovi: { 3: "mehka možganska ovojnica (vezivo)" },
   isci: "Pri 400× poišči piramidno celico z dendritom proti površini. Pri TEM nad 20 000× poišči sinapse z mehurčki.",
   glsl: /* glsl */ `
 T nevropil(vec2 p, float px) {
@@ -238,7 +238,7 @@ export const mali = {
   zacetek: { m: 40, sredisce: [0, 0] },
   sredisceBlizu: [0, 360],
   imena: { 4: "nevron", 10: "celica glije", 17: "nevropil" },
-  snovi: { 8: "mielinska ovojnica" },
+  snovi: { 8: "mielinska ovojnica", 3: "mehka možganska ovojnica (vezivo)" },
   isci: "Poišči vrsto Purkinjevih celic med molekularno in zrnato plastjo.",
   glsl: /* glsl */ `
 T tkivo(vec2 p, float px) {
