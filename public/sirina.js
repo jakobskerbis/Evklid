@@ -80,7 +80,8 @@ function razrezi(t, dolg, znaki = PLUS) {
     const tok = zeton(t, i);
     const g = globina(tok);
     if (znaki === NOTER && depth === 0 && i > 0) {
-      if (tok === "{" && /^\{(?:-|=|\\equiv)\}/.test(t.slice(i))) vezi.push(i);
+      // Ne naboj iona (»OH^{-}«): tam {-} spada k ^ ali _.
+      if (tok === "{" && /^\{(?:-|=|\\equiv)\}/.test(t.slice(i)) && !/[\^_]\s*$/.test(t.slice(0, i))) vezi.push(i);
       else if (tok === ",") {
         const m = /^(?:\s|\\[ ;:]|\\q?quad(?![a-zA-Z]))+/.exec(t.slice(i + 1));
         if (m && i + 1 + m[0].length < t.length) vrh.push(i + 1 + m[0].length);
@@ -489,7 +490,8 @@ function vrstica(el) {
     if (!el.closest(".textbook") && blok(k) !== el) continue; // formula v gnezdenem odstavku ima svoje mesto
     const tex = !izvirnik.has(k) && k.querySelector("annotation")?.textContent;
     const kljuc = tex && `${Math.round(w)}|${Math.round(vis)}|${pisava}|${tex}`;
-    if (kljuc && ustrezne.has(kljuc)) {
+    // Ne formula, ki je pri ožji vrstici ostala drsna ali pomanjšana (obrat telefona nazaj): ta se izmeri znova.
+    if (kljuc && ustrezne.has(kljuc) && !k.classList.contains("tb-dolga") && !k.style.fontSize) {
       prilagojene.set(k, w);
       continue;
     }

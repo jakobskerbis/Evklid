@@ -191,4 +191,6 @@ test("a list without brackets folds after top-level commas, a chemical chain bef
   assert.equal(zlozTex("12,5 13,25 14,75 15,5 16,25 17,75 18,5 19,25", 3, 10), null);
   assert.doesNotMatch(zlozTex("2{,}998 \\cdot 10^{8} \\cdot 6{,}674 \\cdot 10^{-11} \\cdot 1{,}602 \\cdot 10^{-19}", 3, 10), /\{,\}\s*\\\\|,\s*\\\\/);
   assert.equal(zlozTex("\\mathrm{CH(CH_2{-}CH_2{-}CH_2{-}CH_3)}", 3, 6), null);
+  // Naboj iona (^{-}) ni vez: »\mathrm{OH^}« bi se ne izrisal.
+  assert.doesNotMatch(zlozTex("\\mathrm{C_6H_{11}Br + OH^{-} \\xrightarrow{H_2O} C_6H_{11}OH + Br^{-}}", 3, 8), /\^\}/);
 });
