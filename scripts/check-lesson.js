@@ -36,9 +36,9 @@ for (const file of files) {
   }
   const r = checkLessonSource(stripRacunBlocks(src), id);
   // Blok <<RACUN …>> (server/racun.js): vsako trditev preveri SymPy ali urejevalnik enačb; napačna je napaka lekcije.
-  const claims = parseClaims(src);
+  const claims = parseClaims(src, Infinity); // lekcija: vse trditve, ne le prvih 16 (meja velja za odgovore inštruktorja)
   if (claims.length) {
-    const c = await checkClaims(claims);
+    const c = await checkClaims(claims, { max: Infinity, budgetMs: Infinity });
     r.calcChecked += c.checked;
     for (const f of c.failed) r.errors.push(`RACUN: ${f.line} – ${f.why}`);
     for (const u of c.unsure) r.warnings.push(`RACUN ni preverjen: ${u.line} – ${u.why}`);
