@@ -74,7 +74,7 @@ test("kazalo Formul: vsak čip (tudi daljna zadnja kartica FIZ-UNI) pripelje kar
         await p.waitForTimeout(2000);
         const r = await p.evaluate((i) => {
           const root = document.querySelector("#view-graph .fm");
-          const toc = root.querySelector(".fm-toc");
+          const toc = root.querySelector(".fm-toc-bar"); // prilepljena vrstica kazala (z ozadjem)
           const sec = root.querySelector("#" + toc.querySelectorAll("[data-sec]")[i].dataset.sec);
           const off = sec.getBoundingClientRect().top - toc.getBoundingClientRect().bottom;
           const atEnd = root.scrollTop >= root.scrollHeight - root.clientHeight - 2;

@@ -446,7 +446,8 @@ body.graph-open { overflow: hidden; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
-.fm-toc { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 6px 0; margin: -6px 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.fm-toc-bar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 6px 0; margin: -6px 0; }
+.fm-toc { position: relative; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
 .fm-toc::-webkit-scrollbar { display: none; }
 .fm-toc > button { flex: none; }
 .fm-body { display: flex; flex-direction: column; gap: 12px; }
