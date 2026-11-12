@@ -1,0 +1,30 @@
+{
+  "_opis": "Učbeniške mere za samodejno preverjanje modelov atlasa (načrt atlasa v2, §1.3: ključne mere znotraj ±10 % učbeniških vrednosti). Vsaka mera ima obmocje [od, do] za odraslega in vire. »preverjeno«: true = vrednost smo v tej seji prebrali na viru (datum v »prebrano«); false = vrednost je splošno znana učbeniška vrednost, ki jo mora pred F1 potrditi še ≥ 1 prebran vir (pravilo: ≥ 3 viri na strukturo). Meri jih scripts/atlas/v2/mere.py (definicije v kost.py: mere_stegnenice). Enote: mm, stopinje, razmerja brez enote.",
+  "toleranca": 0.10,
+  "viri": {
+    "naloga-j": { "opis": "Naloga F0 (11. 11. 2026): odrasla stegnenica ~43–48 cm.", "vrsta": "naloga" },
+    "radiopaedia-ccd": { "opis": "Radiopaedia: Femoral neck shaft angle (CCD angle), »normal range … generally considered 125°–135°«.", "url": "https://radiopaedia.org/articles/femoral-neck-shaft-angle", "prebrano": "2026-11-12" },
+    "wheeless-femur": { "opis": "Wheeless' Textbook of Orthopaedics: Anatomy of femur – vrat se z diafizo sreča pod kotom okoli 125°; anteverzija pri odraslem 5–15° (nad 15° povečana); hranilna odprtina »at or near upper end of linea aspera«; mali obrtec posteromedialno; linea aspera = narastišče fascije, tam je kompakta najdebelejša.", "url": "https://www.wheelessonline.com/bones/anatomy-of-femur/", "prebrano": "2026-11-12" },
+    "trotter-gleser-1952": { "opis": "Trotter M, Gleser GC. Estimation of stature from long bones of American Whites and Negroes. Am J Phys Anthropol 1952;10(4):463–514 (moški belci: višina = 2,38 · dolžina stegnenice + 61,41 cm).", "doi": "10.1002/ajpa.1330100407", "prebrano": null },
+    "gray-42": { "opis": "Standring S (ur.). Gray's Anatomy, 42. izd., Elsevier 2020, pogl. Pelvic girdle, gluteal region and thigh (stegnenica).", "prebrano": null }
+  },
+  "kosti": {
+    "Femur": {
+      "sl": "stegnenica",
+      "mere": {
+        "najvecja_dolzina_mm": { "obmocje": [430, 480], "viri": ["naloga-j", "gray-42", "trotter-gleser-1952"], "preverjeno": false, "opomba": "Osteometrična največja dolžina (glavica–medialni kondil). Za model višine ~1,79 m (koža atlasa) bi Trotter–Gleser dal ~49 cm." },
+        "premer_glavice_mm": { "obmocje": [40, 52], "viri": ["gray-42"], "preverjeno": false, "opomba": "Ženske ~41–45, moški ~45–51 mm (splošno znano; potrdi z virom)." },
+        "kot_vrat_diafiza_st": { "obmocje": [120, 135], "toleranca": 0.03, "viri": ["radiopaedia-ccd", "wheeless-femur"], "preverjeno": true, "opomba": "Pod 120° coxa vara, nad 135° coxa valga (Wheeless). Meritev v kost.py je približna (±3°), zato ožja toleranca 3 %." },
+        "anteverzija_st": { "obmocje": [5, 15], "toleranca": 0.0, "dovoljeno_odstopanje_st": 5, "viri": ["wheeless-femur"], "preverjeno": true, "opomba": "Meri se glede na čelno ravnino telesa, ne glede na zadnjo kondilarno os (približek)." },
+        "bikondilarna_sirina_mm": { "obmocje": [70, 90], "viri": ["gray-42"], "preverjeno": false },
+        "diafiza_ap_mm": { "obmocje": [24, 34], "viri": ["gray-42"], "preverjeno": false, "opomba": "Spredaj-zadaj na sredini, z linea aspera." },
+        "diafiza_ml_mm": { "obmocje": [23, 32], "viri": ["gray-42"], "preverjeno": false }
+      },
+      "lega_podrobnosti": {
+        "hranilna_odprtina": { "opis": "Ena (redko dve) glavna hranilna odprtina na zadnji strani diafize, ob ali blizu zgornjega dela linea aspera, kanal usmerjen proksimalno (stran od kolena).", "viri": ["wheeless-femur"], "postopek": "t_od_proksimalno 0,40 ± 0,05 dolžine, 2–4 mm medialno od linea aspera" },
+        "linea_aspera": { "opis": "Hrapav greben na zadnji strani srednje tretjine diafize z medialno in lateralno ustnico; proksimalno lateralna ustnica v glutealno grčavino, medialna v spiralno linijo; distalno se razcepi v medialno in lateralno suprakondilarno linijo.", "viri": ["wheeless-femur", "gray-42"] },
+        "obrtca": { "opis": "Veliki obrtec lateralno zgoraj, mali obrtec posteromedialno pod vratom; zadaj ju povezuje intertrohanterni greben.", "viri": ["wheeless-femur"] }
+      }
+    }
+  }
+}
