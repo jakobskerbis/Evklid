@@ -69,6 +69,13 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
       };
       const sl = slider({ ...opts, fino });
       sl.classList.add("sk-slider", `sk-${barva}`);
+      // Izpis je širok kot najdaljša vrednost (predznak, cela mesta, stotinke, enota): sicer se ob vlečenju (»123,4°« ↔
+      // »123,45°«) širina stolpca izpisa in s tem drsnika spreminja in drsnik pod prstom poskakuje.
+      if (fino && !opts.format) {
+        const cele = Math.max(...[opts.min, opts.max].map((x) => String(Math.trunc(Math.abs(x))).length + (x < 0 ? 1 : 0)));
+        const enota = opts.unit ? (opts.unit === "°" || opts.unit === "%" ? 1 : opts.unit.length + 1) : 0;
+        sl.querySelector("output").style.minWidth = `max(4.5ch, ${cele + (d ? d + 1 : 0) + enota}ch)`;
+      }
       const fill = () => {
         const i = sl.input;
         sl.style.setProperty("--sk-p", `${((Number(i.value) - Number(i.min)) / (Number(i.max) - Number(i.min))) * 100}%`);
