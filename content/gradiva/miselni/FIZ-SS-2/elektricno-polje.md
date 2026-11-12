@@ -12,6 +12,7 @@ stanje: osnutek
 - Točkasti naboj
   - $E = \dfrac{e}{4\pi\varepsilon_0 r^2}$
   - dvakrat dlje, štirikrat šibkejše
+  - na razdalji $2r$ silnice na 4-krat večji površini
 - Silnice
   - od pozitivnega k negativnemu naboju
   - gostejše silnice, močnejše polje

@@ -2,28 +2,34 @@
 avtor: AI
 stanje: osnutek
 ---
-- Notranja energija
-  - kinetična in potencialna energija delcev
-  - z višjo temperaturo večja
 - Toplota
   - prenesena energija, v J
   - teče s toplejšega na hladnejše
   - napaka: telo »vsebuje toploto«
+- Notranja energija
+  - kinetična in potencialna energija delcev
+  - $\Delta W_n = Q$, če ni dela
 - Specifična toplota
-  - $Q = m\,c\,\Delta T$
-  - voda $4200\,\mathrm{J/(kg\,K)}$, železo $450\,\mathrm{J/(kg\,K)}$
-  - masa vedno v kg
+  - ista toplota, različno segretje: odvisno od $c$
+  - $Q = m\,c\,\Delta T$, masa vedno v kg
+  - voda $4200\,\mathrm{J/(kg\,K)}$, pesek $800\,\mathrm{J/(kg\,K)}$
 - Temperaturna razlika
   - $\Delta T$ = končna − začetna
   - $1\,\mathrm{K}$ razlike $= 1\,^\circ\mathrm{C}$ razlike
   - negativen $Q$: telo oddaja
+- Toplotna bilanca
+  - $Q_{\mathrm{oddana}} = Q_{\mathrm{prejeta}}$
+  - po 1 kg: voda $80\,^\circ\mathrm{C}$ in železo $20\,^\circ\mathrm{C}$ → $74\,^\circ\mathrm{C}$
+  - v kalorimetru brez izgub
 - Fazni prehodi
   - temperatura med prehodom stoji
-  - energija trga vezi med delci
+  - energija razmakne delce
+  - na Kredarici voda vre pri približno $92\,^\circ\mathrm{C}$
 - Talilna in izparilna toplota
   - $Q = m\,q_t$, $Q = m\,q_i$
   - voda: $334\,\mathrm{kJ/kg}$ in $2260\,\mathrm{kJ/kg}$
-  - parna komora v telefonu
-- Račun po odsekih
-  - segrevanje, prehod, segrevanje
-  - vsak odsek s svojo $c$
+  - para opeče bolj kot vrela voda
+- Krivulja segrevanja
+  - poševni odseki: $Q = m\,c\,\Delta T$
+  - vodoravni odseki: fazni prehodi
+  - toplote odsekov seštejemo

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enakomerno kroženje
+  - v enakih časih enako dolgi loki
+  - obhodni čas $t_0$, frekvenca $\nu = \dfrac{1}{t_0}$
+- Obodna hitrost
+  - $v = \dfrac{2\pi r}{t_0}$, enota $\mathrm{m/s}$
+  - ISS: $7{,}65\,\mathrm{km/s}$ v $93$ minutah
+- Smer hitrosti
+  - po tangenti, pravokotno na polmer
+  - pretrgana vrvica: kamen odleti po tangenti
+- Sprememba smeri
+  - velikost stalna, vektor $\vec v$ se obrača
+  - $\Delta \vec v$ kaže proti središču
+- Centripetalni pospešek
+  - kaže proti središču, ne navzven
+  - $a_r = \dfrac{v^2}{r}$, enota $\mathrm{m/s^2}$
+  - dvakratna hitrost, štirikratni pospešek
+- Centripetalna sila
+  - $F_r = \dfrac{m v^2}{r}$, kaže proti središču
+  - vlogo prevzame vrvica, lepenje ali gravitacija
+- Pasti pri računanju
+  - vse v metre in sekunde
+  - km in minute dajo nesmiselne rezultate
