@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import * as G from "../scripts/atlas/zile-mreza.mjs";
-import { stena, polna, dopolni, stiki, zakrpaj, zasijRobove, vDrugiMrezi } from "../scripts/atlas/popravi-zile.mjs";
+import { stena, polna, dopolni, stiki, zakrpaj, zasijRobove, vDrugiMrezi, konecProst } from "../scripts/atlas/popravi-zile.mjs";
 import { analiziraj } from "../scripts/atlas/preveri-mreze.mjs";
 
 // Cev vzdolž osi y: polmer r, dolžina L, n stranic, obroči na korak; oba konca odprta. Normale radialne, COLOR_0 = 1.
@@ -324,4 +324,52 @@ test("popravek žil: konec drobne žile, ki tiči v drugi žili, ostane raven; p
   for (let i = 0; i < m.P.length / 3; i++) { najY = Math.max(najY, m.P[i * 3 + 1]); najmanjY = Math.min(najmanjY, m.P[i * 3 + 1]); }
   assert.ok(Math.abs(najY - 0.02) < 1e-9, `konec v drugi žili ne sme segati čez obroč (${najY})`);
   assert.ok(najmanjY < -1e-4, "prosti konec ni izbočen");
+});
+
+test("popravek žil: konec ob stopnici, delno potopljen konec in konec tik ob sosedi ostanejo ravni; res prost konec dobi kupolo", () => {
+  // debela žila (r 4 mm, zaprta) vzdolž y, premaknjena za dx; tanka (r 1 mm) od y = 0 do 0,02 na osi x = 0
+  const soseda = (dx, y0, L = 0.02) => {
+    const m = cev({ r: 0.004, L, korak: 0.002, n: 8, y0 });
+    polna({ ime: "debela", m }, true);
+    for (let i = 0; i < m.P.length / 3; i++) m.P[i * 3] += dx;
+    G.zvari(m);
+    return [{ m, mn: [dx - 0.004, y0, -0.004], mx: [dx + 0.004, y0 + L, 0.004] }];
+  };
+  const naOsi = (mreze) => (c, ven, r) => !vDrugiMrezi(G.v3.add(c, G.v3.mul(ven, 0.3 * r)), mreze) && !vDrugiMrezi(G.v3.add(c, G.v3.mul(ven, 0.05 * r)), mreze);
+  const primer = (mreze, prost = (c, ven, r, obroc) => konecProst(c, ven, r, obroc, mreze)) => {
+    const m = cev({ r: 0.001, L: 0.02, korak: 0.002, n: 6 });
+    const r = polna({ ime: "tanka", m }, "kupola", prost);
+    assert.deepEqual(pregled(m), [0, 0, 0, 0, 0, 0]);
+    let najY = -Infinity, najmanjY = Infinity;
+    for (let i = 0; i < m.P.length / 3; i++) { najY = Math.max(najY, m.P[i * 3 + 1]); najmanjY = Math.min(najmanjY, m.P[i * 3 + 1]); }
+    assert.ok(najmanjY < -1e-4, "spodnji, prosti konec ni izbočen");
+    return { ravnih: r.ravnih, zgorajRaven: Math.abs(najY - 0.02) < 1e-9, konci: r.konci };
+  };
+  // 1. stopnica: debela se začne v ravnini konca tanke, os tanke je zunaj nje, rob pa sega vanjo
+  const stopnica = soseda(0.0045, 0.02);
+  assert.deepEqual(primer(stopnica, naOsi(stopnica)).ravnih, 0, "preskus samo na osi bi moral ta konec šteti za prost (sicer primer ne preverja ničesar)");
+  let r = primer(stopnica);
+  assert.equal(r.ravnih, 1);
+  assert.ok(r.zgorajRaven, "konec ob stopnici ne sme dobiti kupole");
+  assert.deepEqual(r.konci.map((k) => k.raven).sort(), [false, true]);
+  // 2. delno potopljen konec: tanka teče ob steni debele in je z eno stranjo v njej
+  const potopljen = soseda(0.0043, 0.01);
+  assert.equal(primer(potopljen, naOsi(potopljen)).ravnih, 0);
+  r = primer(potopljen);
+  assert.equal(r.ravnih, 1);
+  assert.ok(r.zgorajRaven, "delno potopljen konec ne sme dobiti kupole");
+  // 3. dotik: noben vzorec ni v sosedi, rob konca pa je 0,05 r od njene stene
+  const dotik = soseda(0.00505, 0.01);
+  assert.equal(primer(dotik, naOsi(dotik)).ravnih, 0);
+  r = primer(dotik);
+  assert.equal(r.ravnih, 1);
+  assert.ok(r.zgorajRaven, "konec tik ob sosedi ne sme dobiti kupole");
+  // 4. res prost konec: soseda je 3 polmere stran
+  r = primer(soseda(0.008, 0.01));
+  assert.equal(r.ravnih, 0);
+  assert.ok(!r.zgorajRaven, "prosti konec ni izbočen");
+  // 5. konec v celoti v sosedi (kot doslej)
+  r = primer(soseda(0, 0.015));
+  assert.equal(r.ravnih, 1);
+  assert.ok(r.zgorajRaven);
 });
