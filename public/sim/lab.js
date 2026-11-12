@@ -346,3 +346,9 @@ export const fixed = (x, d) => {
   return t.replace(".", ",").replace("-", "−");
 };
 export { tex };
+// Formule v besedilu poskusov so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«), ne
+// <i>T</i> = (…)/(…) v besedilu, ki se lomi sredi izraza. Formula ostane v eni vrstici, ko gre; sicer jo sirina.js
+// prelomi pri =; nikoli ne drsi. Enota za številom: en("°C"), en("J/(kg·K)"); krepki rezultat: rez(fixed(x, 1), "°C").
+const enTex = (u) => u.replace(/ /g, "\\,").replace(/%/g, "\\%").replace(/°/g, "{}^\\circ ").replace(/·/g, "\\cdot ").replace(/²/g, "^2").replace(/³/g, "^3").replace(/⁻¹/g, "^{-1}").replace(/Ω/g, "\\Omega ").replace(/µ/g, "μ");
+export const en = (u) => `\\,\\mathrm{${enTex(u)}}`;
+export const rez = (x, u) => `\\mathbf{${x}${u ? `\\,${enTex(u)}` : ""}}`;
