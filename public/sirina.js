@@ -502,8 +502,13 @@ function vrstica(el) {
     // Zložena formula je blok z max-width 100 %, zato štejemo tudi njeno vsebino (scrollWidth).
     const sirina = (x) => Math.max(x.getBoundingClientRect().width, x.scrollWidth);
     k = prilagodiFormulo(k, w, sirina, vis * VISOKA);
-    // Drsna formula pusti prostor za ločilo za njo (»…, 45$.«), sicer ločilo štrli čez rob vrstice.
-    if (sirina(k) > w + 1) k.classList.add("tb-dolga"), (k.style.maxWidth = `${Math.floor(w)}px`);
+    // Drsna formula pusti prostor za ločilo za njo (»…, 45$.«), sicer ločilo štrli čez rob vrstice; brez ločila ima
+    // vso vrstico.
+    if (sirina(k) > w + 1) {
+      k.classList.add("tb-dolga");
+      const za = k.nextSibling;
+      if (za?.nodeType === 3 && /^[.,;:!?)]/.test(za.data)) k.style.maxWidth = `${Math.floor(w)}px`;
+    }
     else if (kljuc && k === k0 && !k.style.fontSize) {
       if (ustrezne.size > 1000) ustrezne = new Set();
       ustrezne.add(kljuc);
