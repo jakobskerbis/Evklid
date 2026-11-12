@@ -524,6 +524,7 @@ export default {
   "adm.rep.question": "Vprašanje:",
   "adm.rep.fixed": "Popravljeno",
   "adm.rep.reopen": "Znova odpri",
+  "adm.rep.inReview": "Popravek čaka na pregled · PR #{n}",
   "adm.rep.none": "Ni prijav.",
   "adm.rep.download": "Prenesi za popravke (.md)",
   "adm.rep.showAll": "Pokaži tudi popravljene",
@@ -552,9 +553,6 @@ export default {
   "set.school": "Šola in letnik",
   "set.schoolNote": "Učna pot, naloge in učbenik se prilagodijo izbiri. Pri fakulteti sledijo javnemu predmetniku programa.",
   "set.subject": "Predmet",
-  "set.program": "Program",
-  "set.regular": "Redni pouk (NPZ / matura)",
-  "set.competition": "Tekmovanja",
   "set.mode": "Način",
   "set.modeA": "A – vodenje korak za korakom",
   "set.modeB": "B – celotna rešitev z razlago",
@@ -749,7 +747,6 @@ export default {
 
   // povratne informacije testerjev (feedback.js)
   "nav.feedback": "Povratne informacije",
-  "nav.feedbackShort": "Mnenje",
   "me.feedbackSub": "Povej, kaj je dobro in kaj ne",
   "fb.cardTitle": "Kako ti je všeč Evklid?",
   "fb.cardText": "Povej v dveh minutah, kaj je dobro in kaj ne. Po tvojih predlogih bomo aplikacijo izboljšali.",
@@ -1069,6 +1066,7 @@ export default {
   "pp.taskMsg": "Rešujem preteklo polo: {paper}, naloga {n}.",
   "pp.boxMsg": "Rešujem preteklo polo: {paper}, stran {page}.",
   "pp.empty": "Za to izbiro na ric.si ni objavljenih pol.",
+  "pp.other": "Druge pretekle pole",
   // referenčni material (fakultetni predmeti, učbenik → Moj študij)
   "refs.title": "Referenčni material",
   "refs.tabLessons": "Lekcije",
@@ -2036,9 +2034,6 @@ export default {
   "ap.styleCistText": "Umirjen in pregleden",
   "ap.styleIgriv": "Igriv",
   "ap.styleIgrivText": "Zaobljen in topel",
-  "ap.styleTemen": "Temen",
-  "ap.styleTemenText": "Vedno temen, za večer",
-  "ap.temenMode": "Slog Temen je vedno temen. Za svetli način izberi kateri koli drug slog.",
   "ap.styleAntik": "Antični",
   "ap.styleAntikText": "Marmor in terakota, kot v stari Grčiji",
   // Zgodovinski slogi (public/theme.js → ERAS): ime ap.style<Slog>, opis ap.style<Slog>Text.

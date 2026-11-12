@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Past pol-pol
+  - »dobim ali ne« ni samodejno $50\,\%$
+  - kolo: $2$ dobitni polji od $8$
+- Poskus in izid
+  - poskus: vrtenje kolesa, met kocke
+  - izid: en mogoč rezultat
+- Dogodek
+  - ugodni izidi: tisti, pri katerih se zgodi
+  - gotov, nemogoč, slučajni
+- Preprosta verjetnost
+  - $P(A) = \dfrac{\text{ugodni}}{\text{vsi}}$
+  - samo pri enako verjetnih izidih
+  - napaka: ugodni proti neugodnim
+- Od nič do ena
+  - nemogoč $0$, gotov $1$
+  - $\dfrac{1}{4} = 0{,}25 = 25\,\%$
+- Nasprotni dogodek
+  - $P(\text{ne } A) = 1 - P(A)$
+- Relativna frekvenca
+  - $f_r = \dfrac{f}{n}$, izmerjena
+  - več poskusov, bližje verjetnosti
+  - kocka si ne zapomni prejšnjih metov

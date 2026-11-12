@@ -113,6 +113,7 @@ Read once: \`content/lessons/README.md\` (format) and \`${exemplar}\` (style). D
 
 Quality bar (docs/kakovost.md §1, all required):
 - Correct. Compute every number with one \`node -e\` before writing it. \`check-lesson.js\` recomputes pure-number steps itself and fails on a mismatch.
+- End the lesson with a \`<<RACUN\` block (README »Račun za kodo«): every final and key intermediate result of the worked examples, exercises and quiz in machine form, one claim per line. \`check-lesson.js\` verifies each with SymPy (equations, identities, derivatives, integrals, limits, units, reactions, molar masses) and fails on a wrong one.
 - Level. Use only what \`before\` / \`previousSummaries\` taught; cover every goal in \`goals\`.
 - Zakaj: start from a concrete situation or question the student knows, not a definition.
 - Razlaga: concrete → picture → symbols; define each new term at first use; one idea per paragraph; at least one picture-like representation (table ≤ 4 columns, a drawing in a »:::risba« block (README »Risbe«; never characters in a code block), or »simulacija spodaj« with one thing to try and what to notice). Exactly 2 \`:::premisli\` blocks that ask for a prediction or a »zakaj«, not a copy of the sentence above.
@@ -150,7 +151,7 @@ Reply ≤ 3 lines per lesson: \`OK <id>, <words> besed\` or what is unresolved. 
 
 const REVIEWER = `# Evklid review brief: ${topics.length} lesson${topics.length > 1 ? "s" : ""} (second, independent pass)
 
-Run first: \`node scripts/check-lesson.js -q ${files}\` and \`node scripts/check-gradivo.js -q ${maps}\`. Format, LaTeX and pure-number steps are then already checked (it prints how many steps it recomputed and any mismatch). Read for content only and check:
+Run first: \`node scripts/check-lesson.js -q ${files}\` and \`node scripts/check-gradivo.js -q ${maps}\`. Format, LaTeX, pure-number steps and every \`<<RACUN\` claim (SymPy) are then already checked; check that the RACUN block covers every worked-example result and matches the text (it prints how many steps it recomputed and any mismatch). Read for content only and check:
 1. Remaining numbers: substitutions, rounding, units and significant figures in every worked example (batch them into one \`node -e\`); every \`+\` quiz answer truly correct, every \`-\` truly wrong; every \`~\` names the real error.
 2. Level fits the path: nothing used that the path has not taught yet; every goal covered.
 3. »Podatki« lists all given data; steps say why; Primer 3 is ${onlyUni ? "at exam level" : "a transfer case"}; the faded final step exists.

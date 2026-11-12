@@ -50,8 +50,8 @@ export default function narisi(host, { kot = true } = {}) {
     const cipi = [{ barva: "izbor", oznaka: kot ? "k = \\tan\\varphi" : "k", vrednost: st(k, 2) }];
     if (kot) cipi.push({ barva: "ploskev", oznaka: "\\varphi", vrednost: `${vr(q.alfa, 1)}°` });
     cipi.push(
-      { barva: "druga", oznaka: "n", vrednost: st(n, 1) },
-      { barva: "druga", oznaka: "N(0, n)", vrednost: `N${par(0, n, 1)}` },
+      { barva: "druga", oznaka: "n", vrednost: st(n, 2) },
+      { barva: "druga", oznaka: "N(0, n)", vrednost: `N${par(0, n, 2)}` },
       { barva: "glavna", oznaka: "x_0 = -\\frac{n}{k}", vrednost: q.x0 === null ? (q.vsakX ? "vsak x" : "ni ničle") : `${Math.abs(q.x0 - Number(q.x0.toFixed(2))) < 1e-9 ? "" : "≈\u00a0"}${st(q.x0, 2)}` },
     );
     S.cipi(cipi);

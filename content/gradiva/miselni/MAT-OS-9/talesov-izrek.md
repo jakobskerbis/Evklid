@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kot in vzporednici
+  - vrh $S$; $A, C$ na enem kraku, $B, D$ na drugem
+  - pogoj: $AB \parallel CD$
+- Cela odseka od vrha
+  - $SA : SC = SB : SD$
+  - $3 : 9 = 4 : SD$, torej $SD = 12$
+  - napaka: razlika namesto razmerja
+- Odseka med vzporednicama
+  - $SA : AC = SB : BD$
+  - napaka: cel odsek na enem kraku, del na drugem
+- Vzporednici sami
+  - $SA : SC = AB : CD$
+  - vedno cel odsek od vrha
+  - Luna: krožec $5$ mm na $55$ cm
+- Obrat izreka
+  - enaka razmerja pomenijo vzporedni daljici
+- Deljenje daljice
+  - poltrak z enakimi odseki, nato vzporednice
+  - razmerje $m : n$: nanesi $m + n$ odsekov
+  - napaka: $m$ ali $n$ odsekov namesto $m + n$

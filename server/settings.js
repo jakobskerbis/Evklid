@@ -67,6 +67,14 @@ export function cleanText(value, maxLen) {
   return value.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, maxLen);
 }
 
+// Shranjene nastavitve + sprememba. Ker track sledi cilju, ob novem cilju stari track ne velja več
+// (sicer bi shranjeni »COMPETITION« cilj spet vrnil na Tekmovanje).
+export function mergeSettings(cur = {}, patch = {}) {
+  const base = { ...cur };
+  if (patch.goal !== undefined && patch.track === undefined) delete base.track;
+  return normalizeSettings({ ...base, ...patch });
+}
+
 export function normalizeSettings(input = {}) {
   const out = { ...DEFAULT_SETTINGS };
   for (const [key, allowed] of Object.entries(ENUMS)) {
@@ -87,7 +95,6 @@ export function normalizeSettings(input = {}) {
   // Fakulteta: program je obvezen, tekmovanj ni; brez fakultete programa ne hranimo.
   if (jeFaks(out)) {
     if (!out.study_program) out.study_program = Object.keys(PROGRAMS)[0];
-    out.track = "REGULAR";
     // Predmet iz predmetnika: veljati mora za program in letnik (ali biti izbirni),
     // sicer (npr. po prehodu v višji letnik) velja prvi predmet letnika. Predmet aplikacije sledi njemu.
     const course = typeof input.study_course === "string" ? input.study_course : "";
@@ -114,8 +121,12 @@ export function normalizeSettings(input = {}) {
   if (input.personality_setting !== undefined) {
     out.personality_setting = cleanText(input.personality_setting, 200);
   }
+  // Program (redni pouk / tekmovanja) ni več posebna izbira, sledi cilju (j, 4. 11.): cilj Tekmovanje = tekmovalni način.
+  // Stari profili in starejši odjemalci imajo track »COMPETITION«: to pomeni cilj Tekmovanje.
+  if (input.track === "COMPETITION" && goalsFor(out).includes("tekmovanje")) out.goal = "tekmovanje";
   // Cilj mora ustrezati šoli (NPZ le v OŠ, matura le v SŠ …), sicer sprotno učenje.
   if (!goalsFor(out).includes(out.goal)) out.goal = DEFAULT_GOAL;
+  out.track = out.goal === "tekmovanje" ? "COMPETITION" : "REGULAR";
   if (validDate(input.goal_date)) out.goal_date = input.goal_date;
   if (input.xp_goal !== undefined) out.xp_goal = cleanXpGoal(input.xp_goal);
   if (input.goal_reminder !== undefined) out.goal_reminder = input.goal_reminder === true || input.goal_reminder === 1 || input.goal_reminder === "1" || input.goal_reminder === "true";

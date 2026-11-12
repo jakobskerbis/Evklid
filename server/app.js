@@ -53,6 +53,7 @@ import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
+import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
@@ -119,7 +120,7 @@ function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [
 }
 
 // Pisave slogov (docs/oblikovanje.md): vsak paket @fontsource-variable/* iz package.json se streže pod /vendor/<ime>/
-// (Čist = Instrument Sans, Igriv = Nunito, Temen = IBM Plex Sans, zgodovinski slogi po public/theme.js → ERAS).
+// (Čist = Instrument Sans, Igriv = Nunito, zgodovinski slogi po public/theme.js → ERAS).
 const FONTS = Object.keys(JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).dependencies || {})
   .filter((m) => m.startsWith("@fontsource-variable/"))
   .map((m) => [m.split("/")[1], m.split("/")[1]]);
@@ -1124,10 +1125,20 @@ export function createApp(store, opts = {}) {
       // Ob napaki en kratek »Popravek:«, ki se pripne odgovoru (prikaz in zgodovina).
       const answerModel = result.model || answerModelOf(mode, deep);
       let fix = "";
+      let claimFailed = false; // koda je ovrgla trditev iz bloka RACUN: odgovor in kartice se ne shranijo za ponovno uporabo
       if (liveCheckOn() && !cached && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used) {
         const plain = stripMeta(result.text);
         const found = codeFindings(plain, pre, text);
         let issue = found.issue;
+        // Skrit »račun za kodo« (server/racun.js): vsako računsko trditev preveri SymPy ali urejevalnik enačb.
+        const hadBlock = hasClaimBlock(result.text);
+        let claimRes = null;
+        if (!issue && hadBlock && !controller.signal.aborted) {
+          claimRes = await checkAnswerClaims(result.text);
+          if (claimRes.issue) issue = claimRes.issue;
+          claimFailed = claimRes.failed.length > 0;
+        }
+        noteClaimStats(store.db, { hadBlock, res: claimRes });
         const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
         const stopnja = jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS";
         const school = !risky; // pregled SŠ/OŠ (vaja ali okvir v rešeni nalogi) ima svoj del dnevne meje
@@ -1214,7 +1225,7 @@ export function createApp(store, opts = {}) {
         }
       }
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
-      if (key && !cached && !fix && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
+      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
         const generic = genericAnswer(result.text, student.name);
@@ -1246,7 +1257,7 @@ export function createApp(store, opts = {}) {
       const assistantId = store.addMessage(conv.id, "assistant", content, display);
       // Kartice za ponavljanje iz odgovora (ne pri zavrnitvi in ne pri opozorilih).
       // Kartice so vidne šele po trojnem preverjanju; z napačnim računom se sploh ne shranijo.
-      const parsedCards = result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? parseCards(result.text) : [];
+      const parsedCards = result.stopReason !== "refusal" && !fix && !claimFailed && (!meta || meta.flag === "none") ? parseCards(result.text) : [];
       const cardsText = parsedCards.map((c) => `${c.front} → ${c.back}`).join("\n");
       const liveCards = verifyLive();
       // Kartice so vidne šele po preverjanju (plača aplikacija); brez prostora v dnevnem znesku se ne shranijo.

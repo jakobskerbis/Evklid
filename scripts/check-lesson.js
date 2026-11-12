@@ -6,7 +6,9 @@
 // Izhodna koda 1, če ima katera lekcija napako. Opozorila ne štejejo.
 import fs from "node:fs";
 import path from "node:path";
-import { LESSONS_DIR } from "../server/textbook.js";
+import { LESSONS_DIR, stripRacunBlocks } from "../server/textbook.js";
+import { parseClaims, checkClaims } from "../server/racun.js";
+import { casStop } from "../server/cas.js";
 import { checkLessonSource } from "../server/lesson-check.js";
 
 const strict = process.argv.includes("--strict"); // tudi opozorila so napake
@@ -32,7 +34,15 @@ for (const file of files) {
     bad++;
     continue;
   }
-  const r = checkLessonSource(src, id);
+  const r = checkLessonSource(stripRacunBlocks(src), id);
+  // Blok <<RACUN …>> (server/racun.js): vsako trditev preveri SymPy ali urejevalnik enačb; napačna je napaka lekcije.
+  const claims = parseClaims(src);
+  if (claims.length) {
+    const c = await checkClaims(claims);
+    r.calcChecked += c.checked;
+    for (const f of c.failed) r.errors.push(`RACUN: ${f.line} – ${f.why}`);
+    for (const u of c.unsure) r.warnings.push(`RACUN ni preverjen: ${u.line} – ${u.why}`);
+  }
   const fail = r.errors.length || (strict && r.warnings.length);
   if (fail) bad++;
   calcChecked += r.calcChecked;
@@ -42,4 +52,5 @@ for (const file of files) {
   for (const w of r.warnings) console.log(`  opozorilo: ${w}`);
 }
 console.log(`${files.length - bad}/${files.length} lekcij v redu; ${calcChecked} številskih korakov preračunanih.`);
+casStop();
 process.exit(bad ? 1 : 0);

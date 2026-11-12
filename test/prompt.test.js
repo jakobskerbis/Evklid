@@ -142,6 +142,29 @@ test("accuracy round 2 (2026-11-11): Lewis rule, possible exercise results and t
   assert.match(rule.slice(0, 2000), /vsi dani, rezultat mogoč \(ocena na lestvici naloge, v šoli 1–5; celo število ljudi ali predmetov; delež ≤ 100 %\)/);
   const pravilnost = fixed.slice(fixed.indexOf("### Pravilnost"), fixed.indexOf("## Način A"));
   assert.match(pravilnost, /najprej vprašaj, namesto da si podatke izmisliš\. Tabelna vrednost, ki je naloga ne poda .*»\(tabelna vrednost\)«.*iz svojega učbenika.*Če je odvisna od vira \(razmerja hitrosti\) ali je ne veš zagotovo, vprašaj/);
-  // Krog 2 doda manj kot 800 znakov predpomnjenega dela (50 912 pred spremembo).
-  assert.ok(fixed.length < 50912 + 800, `stalni del ${fixed.length} znakov`);
+  // Krog 2 je dodal manj kot 800 znakov predpomnjenega dela (50 912 → 51 711); mejo za nove kroge preveri test kroga 4.
+});
+
+test("accuracy round 4: no side facts about other substances, OŠ stays on the task, groups 1–18, mass always conserved", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
+  const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
+  assert.match(rule, /zgodovina, lastnosti drugih snovi in pojavov, primerjave z njimi, ki jih ne zahtevata naloga ali učenec\), ne dodajaš; v OŠ ostani pri snovi in pojavu iz naloge \(analogija za razlago je dovoljena\)\./);
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["Skupine periodnega sistema štej 1–18", "N v 15., O v 16. skupini", "Masa se pri kemijski reakciji ohrani vedno", "ali se veže kisik iz zraka, se spremeni le izmerjena masa", "iz šumeče tablete v vodi), je produkt, ne reaktant"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  assert.doesNotMatch(fixed, /masa ostane enaka, če plin ne uide/);
+  // Krog 4 doda manj kot 550 znakov predpomnjenega dela (51 711 pred spremembo; 500 → 550 po pregledu B:
+  // izjema za vprašano primerjavo in analogijo, kisik iz zraka, CO₂ pri tableti).
+  // Krog 4 je končal pri 52 228 znakih, blok »Račun za kodo« (#581) doda do 1200; mejo za nove kroge preveri test kroga 6.
+  assert.ok(fixed.length > 51711);
+});
+
+test("accuracy round 6 (2026-11-12): one Lewis notation in LaTeX, every mark one lone pair, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["vsaka oznaka en nevezni par", "»:« ob strani", "`\\overset{\\cdot\\cdot}{}` nad", "`\\underset{\\cdot\\cdot}{}` pod", "»:« in `\\ddot` ob istem atomu sta dva para", "${:}\\mathrm{N}{\\equiv}\\mathrm{N}{:}$", "oznake preštej"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  // Krog 6 doda manj kot 300 znakov predpomnjenega dela (53 413 pred spremembo: krog 4 52 228 + Račun za kodo #581).
+  assert.ok(fixed.length < 53413 + 300, `stalni del ${fixed.length} znakov`);
 });

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, celsiusIssue } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -533,6 +533,105 @@ test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, no
   assert.match(codeFindings("Dušik: $v = 8 - 7 = 1$").issue, /outer \(valence\) electrons/);
 });
 
+test("code check (round 4): main-group elements use groups 1–18, not the old main-group number", () => {
+  // Ciljna meritev po krogu 3, KEM-OS-8/kovalentna-vez: dušik »v 5. skupini« namesto v 15.
+  assert.match(groupIssue("Dušik je v 5. skupini, zato ima 5 zunanjih elektronov.").issue, /15\. skupina/);
+  assert.match(groupIssue("Atom $\\mathrm{O}$ spada v 6. skupino periodnega sistema.").issue, /O\) in the 6\. skupina.*16\. skupina/);
+  assert.match(codeFindings("Klor je v 7. skupini.").issue, /17\. skupina/, "popravek tudi pri OŠ brez pregleda");
+  for (const a of [
+    "Dušik je v 15. skupini, zato ima 5 zunanjih elektronov.",
+    "Kisik je v 16. skupini, ogljik v 14. skupini.",
+    "Dušik (15. skupina) ima 5 zunanjih elektronov; v stari oznaki je to 5. skupina glavnih skupin.",
+    "Kisik reagira s kovinami 1. in 2. skupine.",
+    "Natrij je v 1. skupini.",
+    "Ali je dušik v 5. skupini?",
+    "Ne drži, da je dušik v 5. skupini.",
+    "Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo, dolgo pred 5. skupino.",
+  ])
+    assert.equal(groupIssue(a).issue, null, a);
+  assert.equal(groupIssue("Dušik je v 5. skupini.", "Učitelj pravi, da je dušik v 5. skupini.").issue, null, "oznaka iz učenčevega sporočila");
+  // Pregled A (PR #585): prehodne kovine, skupina česa drugega, nova poved.
+  for (const a of [
+    "Kisik tvori okside s kovinami, npr. s kromom iz 6. skupine.",
+    "Ogljik in titan: titan je v 4. skupini.",
+    "Dušik in vanadij (5. skupina) tvorita nitrid.",
+    "Fluor reagira z $\\mathrm{Mn}$ iz 7. skupine.",
+    "Ogljik: najprej rešimo 4. skupino nalog",
+    "Kisik ima 6 zunanjih elektronov. 6. skupina učencev naj nariše model.",
+  ])
+    assert.equal(groupIssue(a).issue, null, a);
+  for (const a of ["Halogeni (fluor, klor, brom, jod) so v 7. skupini.", "Dušik je v 2. periodi in 5. skupini.", "Kisik je nekovina. Kisik je v 6. skupini."])
+    assert.ok(groupIssue(a).issue, a);
+});
+
+test("code check (round 5): period of light elements and electron pairs around one period-2 atom", () => {
+  // Ciljna meritev po krogu 4, KEM-OS-8/kovalentna-vez: »dušik v 3. periodi« in »vsak atom 3 + 2 = 5 parov«.
+  assert.match(periodIssue("Dušik je v 3. periodi in 15. skupini.").issue, /N in the 3\. perioda.*2\. perioda/);
+  assert.ok(periodIssue("Atom $\\mathrm{O}$ leži v 3. periodi.").issue, "simbol v LaTeXu");
+  assert.ok(periodIssue("Natrij je v 2. periodi.").issue, "Na je v 3. periodi");
+  assert.match(codeFindings("Dušik v 3. periodi ima 5 zunanjih elektronov.").issue, /2\. perioda/, "popravek tudi pri OŠ brez pregleda");
+  for (const a of [
+    "Dušik je v 2. periodi in 15. skupini.",
+    "Natrij in klor sta v 3. periodi.",
+    "Vodik je v 1. periodi.",
+    "Ogljik je v 2. periodi, $\\mathrm{Na}$ v 3. periodi.",
+    "Pod dušikom je v 3. periodi fosfor.",
+    "Fosfor je pod dušikom v 3. periodi.",
+    "Dušik ima manj lupin kot elementi 3. periode.",
+    "Ali je dušik v 3. periodi?",
+    "Ne drži, da je dušik v 3. periodi.",
+    "Učenec postavi magnezij v 2. periodo, ker ima 2 zunanja elektrona.",
+    "$\\mathrm{M^{3+}}$: $[\\mathrm{Ar}]\\,3d^5$, argon ima $18$ elektronov; M je v 4. periodi",
+    "Kisik je v 2. periodi. 3. perioda nihanja traja dlje.",
+  ])
+    assert.equal(periodIssue(a).issue, null, a);
+  assert.equal(periodIssue("Dušik je v 3. periodi.", "Ali je dušik v 3. periodi?").issue, null, "perioda iz učenčevega sporočila");
+  // Pregled A (PR #589): element 4. periode ali višje je pravi osebek; imenovalnik na začetku stavka; »element« zadene.
+  for (const a of [
+    "Kisik reagira s kalijem, ki je v 4. periodi.",
+    "Klor in brom: brom je v 4. periodi.",
+    "$\\mathrm{Cl}$ in $\\mathrm{Br}$: $\\mathrm{Br}$ je v 4. periodi.",
+    "Natrij reagira s kalcijem iz 4. periode podobno.",
+    "Dušik in arzen sta v 15. skupini, arzen v 4. periodi.",
+    "Kisik; kalcij je v 4. periodi.",
+    "Vodik se veže z jodom, ki je v 5. periodi.",
+    "Magnezij in stroncij sta v 2. skupini; stroncij je v 5. periodi.",
+    "Kisik, žveplo, selen: selen je v 4. periodi.",
+    "Kloridni ion $\\mathrm{Cl^-}$ ima konfiguracijo argona, kalijev ion K⁺ tudi, kalij pa je v 4. periodi.",
+    "Ogljikov dioksid: ogljik in kisik sta nekovini; v 4. periodi pa so kovine kalij in kalcij.",
+    "Ogljik tvori verige, 4. perioda pa ima 18 elementov.",
+    "Kisik in fluor: 3. perioda vsebuje njune spodnje sosede.",
+    "Aluminij je tretji element 3. periode, galij pa je v 4. periodi.",
+  ])
+    assert.equal(periodIssue(a).issue, null, a);
+  for (const a of ["Klor je element 2. periode.", "Fluor je najbolj elektronegativen element 3. periode.", "Argon je žlahtni plin 4. periode."])
+    assert.ok(periodIssue(a).issue, a);
+  // Kemijske preverbe se združijo v en popravek.
+  const both = codeFindings("Dušik je v 5. skupini in v 3. periodi.").issue;
+  assert.match(both, /15\. skupina/);
+  assert.match(both, /2\. perioda/);
+
+  assert.match(pairsIssue("Vsak atom ima $3 + 2 = 5$ parov.").issue, /at most 4 pairs/);
+  assert.ok(pairsIssue("Ob vsakem atomu dušika je 5 elektronskih parov.").issue);
+  // Pregled A (PR #589): »so« ni formula SO; vsota veznih in neveznih parov.
+  for (const a of ["Ob atomu dušika so 5 parov.", "Okoli kisika so 6 parov.", "Ob dušiku so 3 vezni pari in 2 nevezna para, to je 5 parov.", "Ob dušiku so 3 vezni pari in 2 nevezna para.", "Ob vsakem atomu dušika so 3 vezni in 2 nevezna para."])
+    assert.ok(pairsIssue(a).issue, a);
+  for (const a of [
+    "Ob vsakem atomu dušika so 3 vezni in 1 nevezni par, skupaj 4 pari.",
+    "V molekuli $\\mathrm{N_2}$ je skupaj 5 parov.",
+    "Vsak atom ima 3 vezne pare, v vsej molekuli pa je 5 parov.",
+    "Okoli žvepla v SF₆ je 6 parov.",
+    "Okoli žveplovega atoma v SO₄²⁻ je 6 parov.",
+    "Vsak atom v $\\mathrm{C_2H_2}$: ogljik ima 4 vezne pare, etin pa 5 veznih parov.",
+    "Okoli vsakega atoma ogljika so 4 pari, zato v C₂H₆ nastane 7 veznih parov.",
+    "Ob atomu dušika so 3 vezni pari in en nevezni par, tj. 4 pari, a molekula NH₃ ima 3 vezne pare in 1 nevezni par.",
+    "Ob atomu dušika je 8 elektronov v parih.",
+    "Vsak atom dušika ima 5 zunanjih elektronov in en nevezni par.",
+    "Ali ima vsak atom 5 parov?",
+  ])
+    assert.equal(pairsIssue(a).issue, null, a);
+});
+
 test("code check (2026-11-11 round 2): temperatures given in °C are not written as kelvin in a difference", () => {
   // Meritev 11. 11., FIZ-SS-2/notranja-energija-in-toplota: »$\Delta T_3 = 20\,\text{K} - 0\,\text{K}$«.
   const q = "Led z maso 200 g pri 0 °C stalimo in vodo segrejemo do 20 °C.";
@@ -565,4 +664,66 @@ test("»vzel/uporabil« izpusti samo preverjanje vezi, ne računov v popravkih (
     assert.ok(codeFindings(t).issue, t);
   }
   assert.equal(valenceIssue("Pri dušiku si vzel vrstno število: $v = 8 - 7 = 1$.").issue, null);
+});
+
+test("accuracy round 6: lone pairs drawn in a one-line Lewis formula must match v = 8 − z", () => {
+  const R = String.raw;
+  const bad = [
+    [R`Lewisova formula: $:\!\ddot{N}\!\equiv\!\ddot{N}\!:$`, /2 lone pair\(s\) on N.*has 1 lone pair/],
+    [R`Formula dušika je $:\!\ddot{\mathrm{N}}\!\equiv\!\ddot{\mathrm{N}}\!:$.`, /on N/],
+    [R`$::\mathrm{N}\equiv\mathrm{N}::$`, /2 lone pair/],
+    [R`$:\mathrm{N}\equiv\mathrm{N}$`, /0 lone pair\(s\) on N/],
+    [R`$\mathrm{H}-\ddot{\mathrm{O}}-\mathrm{H}$`, /1 lone pair\(s\) on O.*has 2/],
+    [R`Molekula: $\ddot{O}=C=\ddot{O}$`, /on O/],
+    [R`$\mathrm{H}{:}{-}\mathrm{Cl}$`, /on H/],
+    ["Narišemo ::N≡N:: in preverimo oktet.", /2 lone pair\(s\) on N/],
+  ];
+  for (const [a, re] of bad) {
+    const r = lewisIssue(a);
+    assert.match(r.issue || "", re, a);
+    assert.ok(r.issue.includes("{:}\\mathrm{N}{\\equiv}\\mathrm{N}{:}"), "popravek pokaže pravilen zapis");
+  }
+  const ok = [
+    R`Formula: $:\!\mathrm{N}\equiv\mathrm{N}\!:$`,
+    "Formula: $" + R`{:}\mathrm{N}{\equiv}\mathrm{N}{:}$`,
+    "Narišemo :N≡N: in preverimo.",
+    R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{-}\mathrm{H}$`,
+    R`$:\ddot{\mathrm{O}}{=}\mathrm{C}{=}\ddot{\mathrm{O}}:$`,
+    "$" + R`{:}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{:}$`,
+    R`$\overset{..}{\underset{..}{O}}=C=\overset{..}{\underset{..}{O}}$`,
+    R`$\mathrm{H}-\mathrm{C}\equiv\mathrm{N}:$`,
+    R`Izjema: $:\mathrm{C}\equiv\mathrm{O}:$`, // CO: C ima 3 vezi, pravilo v = 8 − z ne velja
+    R`$[:\mathrm{C}\equiv\mathrm{N}:]^-$`, // ion
+    R`$\cdot\mathrm{N}=\mathrm{O}$`, // radikal
+    R`$\mathrm{H}-\ddot{\mathrm{N}}-\mathrm{H}$`, // NH₃ v eni vrstici (razvejana)
+    R`$\mathrm{H{-}C{\equiv}C{-}H}$`, // brez neveznih parov: ni risbe parov
+    R`$\mathrm{CH_3{-}\ddot{N}H_2}$`, // skrajšana formula z indeksi
+    R`$m\ddot x + kx = 0$`,
+    R`$\mathrm{H}:\mathrm{H}$`, // pikčasta formula veznega para
+    R`$a : b = 2 : 3$`,
+    "Vez v N≡N: trojna.",
+    "Formula je N≡N:",
+    "Odgovor: N≡N",
+    "razmerje 2:1 in N:O",
+    R`Ali je $:\ddot{N}\equiv\ddot{N}:$ prav?`, // vprašanje (SKIP_LINE)
+    R`Tvoja formula $:\ddot{N}\equiv\ddot{N}:$ ima preveč parov.`,
+    "  ··   ··\n :Cl – Cl:\n  ··   ··", // večvrstična risba
+    "     ··\n  H – N – H\n      |\n      H",
+  ];
+  for (const a of ok) assert.equal(lewisIssue(a).issue, null, a);
+  // formula iz učenčevega sporočila ni napaka odgovora
+  assert.equal(lewisIssue(R`Tu je $:\ddot{N}\equiv\ddot{N}:$ in`, R`Je $:\ddot{N}\equiv\ddot{N}:$ pravilno`).issue, null);
+  assert.equal(lewisIssue(R`Formula: $:\mathrm{N}\equiv\mathrm{N}:$`).checked, 1);
+  // priporočeni zapis z gnezdenima \overset in \underset se prebere (ne samo »ni zadetka«)
+  const water = R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{-}\mathrm{H}$`;
+  assert.equal(lewisIssue(water).checked, 1);
+  assert.equal(lewisIssue("$" + R`{:}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{:}$`).checked, 1);
+  assert.match(lewisIssue(R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{:}{-}\mathrm{H}$`).issue || "", /3 lone pair\(s\) on O/);
+});
+
+test("accuracy round 6: codeFindings joins the Lewis finding with the other chemistry checks", () => {
+  const a = String.raw`Dušik je v 5. skupini. Formula: $:\!\ddot{N}\!\equiv\!\ddot{N}\!:$`;
+  const r = codeFindings(a);
+  assert.match(r.issue, /15/);
+  assert.match(r.issue, /; the Lewis formula/);
 });

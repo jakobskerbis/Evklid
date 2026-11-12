@@ -213,6 +213,10 @@
    "h": "e6bdb017e15b",
    "o": "D"
   },
+  "FIZ-SS-1/gibalna-kolicina#p1": {
+   "h": "c5a9adbdc7ab",
+   "o": "D"
+  },
   "FIZ-SS-1/navor-in-ravnovesje#p1": {
    "h": "a3ea3779e2ea",
    "o": "D"
@@ -273,6 +277,15 @@
     "Vsak nov polnilnik je nova pot za tok, zato se skupni upor *zmanjša*, skupni tok pa *poveča*: tokovi vseh polnilnikov se seštejejo"
    ]
   },
+  "FIZ-SS-2/elektricni-naboj-in-coulombov-zakon#p1": {
+   "h": "6d7e07313df7",
+   "o": "D",
+   "r": "gravitacija ni vprašana",
+   "k": [
+    "Ker sta obe telesi skoraj natanko nevtralni",
+    "Vsako ima enako pozitivnega in negativnega naboja, zato se privlačne in odbojne sile med vsemi delci skoraj popolnoma izničijo"
+   ]
+  },
   "FIZ-SS-2/enakomerno-krozenje#p0": {
    "h": "c64df579b7bf",
    "o": "D",
@@ -319,6 +332,22 @@
    "h": "314db69fa58a",
    "o": "D"
   },
+  "FIZ-SS-3/geometrijska-optika#p0": {
+   "h": "3cb999a76a33",
+   "o": "D"
+  },
+  "FIZ-SS-3/geometrijska-optika#p1": {
+   "h": "47892a6e9bde",
+   "o": "D"
+  },
+  "FIZ-SS-3/indukcija#p0": {
+   "h": "29a5d35204a6",
+   "o": "D"
+  },
+  "FIZ-SS-3/indukcija#p1": {
+   "h": "b397be52877f",
+   "o": "D"
+  },
   "FIZ-SS-3/izmenicni-tok-in-nihajni-krog#p0": {
    "h": "9f87aa292c45",
    "o": "D"
@@ -344,8 +373,50 @@
    "h": "54fda857b3b3",
    "o": "D"
   },
+  "FIZ-SS-3/nihanje#p0": {
+   "h": "91d330996536",
+   "o": "I",
+   "r": "sklic na prvo vzmet in utež iz lekcije"
+  },
+  "FIZ-SS-3/nihanje#p1": {
+   "h": "3dc5f2105fa3",
+   "o": "D"
+  },
+  "FIZ-SS-3/valovanje#p1": {
+   "h": "11555a3c551e",
+   "o": "D"
+  },
+  "FIZ-SS-3/valovna-optika#p1": {
+   "h": "fc7176ed8885",
+   "o": "D"
+  },
+  "FIZ-SS-3/zvok#p0": {
+   "h": "dee60c8e398d",
+   "o": "D"
+  },
+  "FIZ-SS-3/zvok#p1": {
+   "h": "215381da0852",
+   "o": "D"
+  },
   "FIZ-SS-4/atom#p1": {
    "h": "d64ef3d39b6f",
+   "o": "D"
+  },
+  "FIZ-SS-4/jedro-in-radioaktivnost#p0": {
+   "h": "d4d698bd76f2",
+   "o": "D",
+   "r": "nabiranje v kleteh ni vprašano",
+   "k": [
+    "Masno število $226 - 4 = 222$, vrstno število $88 - 2 = 86$",
+    "Element z $Z = 86$ je radon, ${}^{222}_{86}\\mathrm{Rn}$"
+   ]
+  },
+  "FIZ-SS-4/jedro-in-radioaktivnost#p1": {
+   "h": "103cf891ee68",
+   "o": "D"
+  },
+  "FIZ-SS-4/mesane-maturitetne-naloge#p1": {
+   "h": "2351935faa4f",
    "o": "D"
   },
   "FIZ-SS-4/osoncje-in-gibanje-planetov#p0": {
@@ -539,6 +610,20 @@
    "h": "80baf4c1a637",
    "o": "D"
   },
+  "KEM-SS-1/energija-pri-reakcijah#p0": {
+   "h": "e6647e9de485",
+   "o": "D",
+   "r": "splošna opomba ni vprašana",
+   "k": [
+    "Reakcija se mora najprej »zagnati«: delci morajo dobiti dovolj energije, da se stare vezi začnejo trgati",
+    "To je aktivacijska energija",
+    "Trenje jo dovede, potem pa sproščena toplota sama poganja nadaljnje gorenje"
+   ]
+  },
+  "KEM-SS-1/energija-pri-reakcijah#p1": {
+   "h": "b3a59a86ea82",
+   "o": "D"
+  },
   "KEM-SS-1/kemijske-vezi#p0": {
    "h": "d8d1ea0f68ee",
    "o": "D"
@@ -566,6 +651,10 @@
   },
   "KEM-SS-1/periodni-sistem#p0": {
    "h": "01538adee253",
+   "o": "D"
+  },
+  "KEM-SS-1/plini#p0": {
+   "h": "16bd074ce1cf",
    "o": "D"
   },
   "KEM-SS-1/raztopine#p1": {
@@ -614,6 +703,19 @@
    "h": "a01a21b5c8fa",
    "o": "D"
   },
+  "KEM-SS-2/galvanski-cleni-in-elektroliza#p0": {
+   "h": "b36e24267d36",
+   "o": "D",
+   "r": "primerjava z bakrom ni podana v vprašanju",
+   "k": [
+    "Napetost ostane enaka",
+    "Večja elektroda le dlje zdrži in da več toka"
+   ]
+  },
+  "KEM-SS-2/galvanski-cleni-in-elektroliza#p1": {
+   "h": "601cc58298c9",
+   "o": "D"
+  },
   "KEM-SS-2/hitrost-reakcij#p0": {
    "h": "d40f1e7009cc",
    "o": "D"
@@ -632,6 +734,20 @@
    "h": "1a7f13d2b729",
    "o": "D"
   },
+  "KEM-SS-2/kisline-in-baze#p0": {
+   "h": "e2d3f802743e",
+   "o": "D"
+  },
+  "KEM-SS-2/kisline-in-baze#p1": {
+   "h": "044911971ce2",
+   "o": "I",
+   "r": "sklic na enačbe v lekciji"
+  },
+  "KEM-SS-2/kisline-in-baze#p2": {
+   "h": "55b08b8fe687",
+   "o": "I",
+   "r": "ne pove, za katero kislino gre"
+  },
   "KEM-SS-2/lastnosti-elementov-v-periodnem-sistemu#p0": {
    "h": "a4f604cad305",
    "o": "D"
@@ -640,12 +756,33 @@
    "h": "e310877814d6",
    "o": "D"
   },
+  "KEM-SS-2/oksidacijska-stevila#p1": {
+   "h": "a9d9b060c932",
+   "o": "D"
+  },
   "KEM-SS-2/ph#p1": {
    "h": "07a69e0970dd",
    "o": "D"
   },
+  "KEM-SS-2/redoks-reakcije#p0": {
+   "h": "51abe9aba583",
+   "o": "D"
+  },
+  "KEM-SS-2/sibke-kisline-in-baze#p0": {
+   "h": "34d6d0ac0e39",
+   "o": "D",
+   "r": "pH ni vprašan",
+   "k": [
+    "Delež naraste",
+    "Razredčenje zmanjša vse koncentracije, ravnotežje pa se premakne v smer, kjer je več raztopljenih delcev: iz ene molekule $\\mathrm{HA}$ nastaneta dva iona"
+   ]
+  },
   "KEM-SS-3/dusikove-organske-spojine#p0": {
    "h": "ea8bc59d100f",
+   "o": "D"
+  },
+  "KEM-SS-3/halogenoalkani-in-alkoholi#p1": {
+   "h": "7cd1d777d5e4",
    "o": "D"
   },
   "KEM-SS-3/izomerija#p1": {
@@ -657,9 +794,45 @@
    "o": "I",
    "r": "molekula ni podana"
   },
+  "KEM-SS-3/karboksilne-kisline-in-derivati#p0": {
+   "h": "02e9f978963e",
+   "o": "D"
+  },
+  "KEM-SS-3/karboksilne-kisline-in-derivati#p1": {
+   "h": "7d862d452f2f",
+   "o": "D"
+  },
+  "KEM-SS-3/karbonilne-spojine#p2": {
+   "h": "0d3122ee6cf8",
+   "o": "I",
+   "r": "X in Y sta iz naloge v lekciji"
+  },
+  "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine#p1": {
+   "h": "39f64338c10a",
+   "o": "D"
+  },
   "KEM-SS-3/ogljikovodiki#p1": {
    "h": "40c883946802",
    "o": "D"
+  },
+  "KEM-SS-3/organske-reakcije#p0": {
+   "h": "58215852dceb",
+   "o": "I",
+   "r": "sklic na hitri preizkus iz lekcije"
+  },
+  "KEM-SS-3/organske-reakcije#p1": {
+   "h": "2549e8cec322",
+   "o": "I",
+   "r": "en sam vprašani pojem (vodna raztopina NaOH ni vprašana)"
+  },
+  "KEM-SS-3/polimeri#p1": {
+   "h": "1267c0867260",
+   "o": "D"
+  },
+  "KEM-SS-4/kemijsko-racunanje#p1": {
+   "h": "799e01c2fc78",
+   "o": "I",
+   "r": "ne pove, katera plina sta v balonih"
   },
   "KEM-SS-4/organska-kemija#p1": {
    "h": "4ef77d62cc2f",
@@ -904,14 +1077,83 @@
    "h": "d7706a49fa56",
    "o": "D"
   },
+  "MAT-OS-9/graf-linearne-funkcije#p0": {
+   "h": "6e55e9c794ef",
+   "o": "D"
+  },
+  "MAT-OS-9/graf-linearne-funkcije#p1": {
+   "h": "8038a0ee3f03",
+   "o": "D"
+  },
+  "MAT-OS-9/linearna-funkcija#p1": {
+   "h": "62a14ab961d5",
+   "o": "I",
+   "r": "sklic na kozarec z dežjem in prejšnjo premico iz lekcije"
+  },
+  "MAT-OS-9/linearne-enacbe-z-ulomki#p1": {
+   "h": "2427cc4258ba",
+   "o": "D"
+  },
+  "MAT-OS-9/linearne-neenacbe#p0": {
+   "h": "4c099f824207",
+   "o": "D"
+  },
+  "MAT-OS-9/linearne-neenacbe#p1": {
+   "h": "25a48fa3e578",
+   "o": "I",
+   "r": "sklic na avtobusno neenačbo iz lekcije"
+  },
+  "MAT-OS-9/linearne-neenacbe#p2": {
+   "h": "83bbe1ec84b2",
+   "o": "I",
+   "r": "ne pove, katero neenačbo rešujemo"
+  },
   "MAT-OS-9/mesane-naloge-npz#p1": {
    "h": "65ff0eb662ef",
    "o": "D"
+  },
+  "MAT-OS-9/piramida#p1": {
+   "h": "563326ffe45a",
+   "o": "D",
+   "r": "napačen odgovor »dvakrat« ni vprašan",
+   "k": [
+    "Natanko trikrat",
+    "Piramida pa se zoži v dveh smereh hkrati, v širino in v globino, zato je v njej le tretjina prostora prizme"
+   ]
+  },
+  "MAT-OS-9/podobni-trikotniki#p1": {
+   "h": "3acc11c0e1f7",
+   "o": "D"
+  },
+  "MAT-OS-9/prizma#p1": {
+   "h": "76107d009981",
+   "o": "D"
+  },
+  "MAT-OS-9/stozec#p0": {
+   "h": "2de2a177d71e",
+   "o": "D"
+  },
+  "MAT-OS-9/talesov-izrek#p1": {
+   "h": "9e72594d65e2",
+   "o": "I",
+   "r": "ne pove, da delimo daljico AB s točko T"
   },
   "MAT-OS-9/tocke-premice-in-ravnine-v-prostoru#p1": {
    "h": "503a174b6dd9",
    "o": "I",
    "r": "ne pove, da gre za pravokotnico na ravnino"
+  },
+  "MAT-OS-9/valj#p1": {
+   "h": "a4e5bdaa9f3f",
+   "o": "D"
+  },
+  "MAT-OS-9/verjetnost#p0": {
+   "h": "23734e404ba3",
+   "o": "D"
+  },
+  "MAT-OS-9/verjetnost#p1": {
+   "h": "a1c9486c0def",
+   "o": "D"
   },
   "MAT-SS-1/algebrski-izrazi#p0": {
    "h": "c8ded8aa9bd3",

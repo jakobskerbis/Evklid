@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dve vrsti naboja
+  - enoimenska se odbijata
+  - raznoimenska se privlačita
+- Ohranitev naboja
+  - drgnjenje le prenese elektrone
+  - balon negativen, lasje pozitivni
+- Osnovni naboj
+  - $e_0 = 1{,}6 \cdot 10^{-19}\,\mathrm{As}$
+  - $e = N e_0$, enota $\mathrm{As}$
+- Coulombov zakon
+  - $F = \dfrac{e_1 e_2}{4\pi\varepsilon_0 r^2}$
+  - $\dfrac{1}{4\pi\varepsilon_0} \approx 9{,}0 \cdot 10^9\,\mathrm{N\,m^2/(As)^2}$
+  - napaka: $r$ v centimetrih
+- Odvisnost od razdalje
+  - dvakrat dlje, štirikrat šibkejša
+  - napaka: pozabljen kvadrat
+- Smer sile
+  - vzdolž zveznice nabojev
+  - na oba naboja enako velika
+- Primerjava z gravitacijo
+  - obe padata z $r^2$
+  - električna tudi odbija, je močnejša

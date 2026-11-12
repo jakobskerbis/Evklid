@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ekvivalentna enačba
+  - obe strani krat isto število, ki ni $0$
+  - rešitev ostane enaka
+- Odpravljanje ulomkov
+  - pomnožimo z najmanjšim skupnim večkratnikom imenovalcev
+  - imenovalci $2$, $3$, $4$: množimo z $12$
+- Vsak člen
+  - tudi člene brez ulomka
+  - $\dfrac{x}{2}+3=5$ postane $x+6=10$
+- Oklepaj za števec
+  - $12\cdot\dfrac{x-2}{6}=2(x-2)$
+  - minus spremeni predznak vsem členom
+- Navadna linearna enačba
+  - člene z $x$ na eno stran, števila na drugo
+  - delimo s številom pred $x$
+- Preizkus
+  - vstavi v prvotno enačbo z ulomki
+  - leva in desna stran enaki

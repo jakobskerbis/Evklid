@@ -52,12 +52,30 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
     },
     // Drsnik je 10000-krat drobnejši od step (skoraj zvezen, j 2026-11-04); zvezno: false za cela števila (n).
     // pripni: posebne vrednosti (npr. q = 0), na katere se vrednost pripne, ko bi se v izpisu že brala kot ta.
+    // Od 12. 11. 2026 (j): zvezni drsnik se premika po 1/10000, vrednost kaže in računa na stotinke (1/100), da se
+    // izpis ob drsniku in računi v čipih ujemajo. Cela števila (n, člen zaporedja …) ostanejo zvezno: false.
+    // Drsnik s svojim zapisom (format, npr. φ v delih π) ostane nezaokrožen.
     drsnik({ barva = "ploskev", zvezno = true, pripni = [], ...opts }) {
-      const pol = 0.5 * 10 ** -(opts.digits ?? 0) + 1e-12, onInput = opts.onInput;
-      const k = (v) => pripni.find((c) => Math.abs(v - c) < pol) ?? v;
-      if (pripni.length) opts.onInput = (v) => (k(v) !== v && sl.set(k(v), true), onInput?.(k(v)));
-      const sl = slider({ ...opts, fino: zvezno ? 10000 : 0 });
+      const fino = zvezno ? Math.max(1, Math.round(opts.step / 1e-4)) : 0;
+      if (zvezno && !opts.format) opts.digits = Math.max(opts.digits ?? 0, 2);
+      const d = opts.digits ?? 0, onInput = opts.onInput;
+      const pol = 0.5 * 10 ** -d + 1e-12;
+      const okrozi = (v) => (fino && !opts.format ? Number(v.toFixed(d)) : v);
+      // Drsnik sam ostane na fini legi (ne skače po stotinkah); pripne se le na posebne vrednosti (pripni).
+      opts.onInput = (v) => {
+        const c = pripni.find((x) => Math.abs(v - x) < pol);
+        if (c !== undefined && c !== v) sl.set(c, true);
+        onInput?.(c ?? okrozi(v));
+      };
+      const sl = slider({ ...opts, fino });
       sl.classList.add("sk-slider", `sk-${barva}`);
+      // Izpis je širok kot najdaljša vrednost (predznak, cela mesta, stotinke, enota): sicer se ob vlečenju (»123,4°« ↔
+      // »123,45°«) širina stolpca izpisa in s tem drsnika spreminja in drsnik pod prstom poskakuje.
+      if (fino && !opts.format) {
+        const cele = Math.max(...[opts.min, opts.max].map((x) => String(Math.trunc(Math.abs(x))).length + (x < 0 ? 1 : 0)));
+        const enota = opts.unit ? (opts.unit === "°" || opts.unit === "%" ? 1 : opts.unit.length + 1) : 0;
+        sl.querySelector("output").style.minWidth = `max(4.5ch, ${cele + (d ? d + 1 : 0) + enota}ch)`;
+      }
       const fill = () => {
         const i = sl.input;
         sl.style.setProperty("--sk-p", `${((Number(i.value) - Number(i.min)) / (Number(i.max) - Number(i.min))) * 100}%`);

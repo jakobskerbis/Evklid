@@ -30,7 +30,7 @@ export default function narisi(host, crka = "Δx") {
     napis(g, A.X(0) + 6, A.T + 12, "f(x) = x²/2", "glavna", { style: "font-size: 12px" });
     tocka?.move(...P);
     S.cipi([
-      { barva: "ploskev", oznaka: crka === "h" ? "h = \\Delta x" : "\\Delta x", vrednost: st(h, 1) },
+      { barva: "ploskev", oznaka: crka === "h" ? "h = \\Delta x" : "\\Delta x", vrednost: st(h, 2) },
       { barva: "ploskev", oznaka: `\\Delta f = f(x_0 + ${T}) - f(x_0)`, vrednost: vr(q.df, 3) },
       { barva: "izbor", oznaka: "\\frac{\\Delta f}{\\Delta x}", vrednost: vr(q.kvocient, 3) },
       { barva: "druga", oznaka: "f'(x_0) = x_0", vrednost: st(q.k, 1) },
