@@ -5,7 +5,7 @@ srce-tkivo.png (tekstura reznih ploskev srca: miokard in maščoba)
   najnovejših oziroma najtočnejših podatkov NLM. Pogoji: https://www.nlm.nih.gov/databases/download/terms_and_conditions.html
   Izdelava: scripts/atlas/vhp/tkivo.py.
 
-srce.glb, srce-telefon.glb, srce-volumen.png (stene srca, smer mišičnih vlaken)
+srce.glb, srce-telefon.glb, srce-volumen.png, srce-stena.png, srce-stena-telefon.png (stene srca, smer mišičnih vlaken, delež stene za rezne ploskve)
   Rodero C., Strocchi M., Marciniak M. et al., »Linking statistical shape models and simulated function in the
   healthy adult human heart«, PLOS Comput Biol 17(4): e1008851 (2021); podatki https://doi.org/10.5281/zenodo.4593739,
   CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Prirejeno (poravnava, deli, maščoba, trabekule).

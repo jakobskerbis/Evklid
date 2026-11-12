@@ -78,11 +78,18 @@ test("srce: ravnina prereza v koordinatah GLB odpre oba prekata (računalnik in 
     const lv = await oglisca(path.join(ORGANI, dat), ["Left ventricle"]);
     const dl = delezPred(lv, r);
     assert.ok(lv.length > 100 && dl > 0.2 && dl < 0.8, `${dat}: prerez ne gre skozi levi prekat (delež oglišč pred ravnino ${dl.toFixed(2)})`);
-    // Desni prekat leži spredaj: za ravnino mora ostati vsaj 10 mm njegove votline (11,6 mm; s premaknjenim rezom 6 mm).
+    // Desni prekat leži spredaj: za ravnino mora ostati vsaj 10 mm njegove votline. Srce iz CT (#567) ima desni prekat
+    // širši in bolj spredaj kot prejšnje (33 mm namesto 11,6 mm), zato je zgornja meja 40 mm; da je rez še vedno pogled
+    // na vse štiri votline, preverimo še oba preddvora.
     const rv = await oglisca(path.join(ORGANI, dat), ["Right ventricle"]);
     const l = Math.hypot(...r.n);
     const globina = Math.max(...rv.map((p) => (r.n[0] * p[0] + r.n[1] * p[1] + r.n[2] * p[2] + (r.d || 0)) / l));
-    assert.ok(rv.length > 100 && globina > 0.01 && globina < 0.03, `${dat}: prerez ne odpre desnega prekata (za ravnino ostane ${(globina * 1000).toFixed(1)} mm)`);
+    assert.ok(rv.length > 100 && globina > 0.01 && globina < 0.04, `${dat}: prerez ne odpre desnega prekata (za ravnino ostane ${(globina * 1000).toFixed(1)} mm)`);
+    for (const ime of ["Left atrium", "Right atrium"]) {
+      const a = await oglisca(path.join(ORGANI, dat), [ime]);
+      const da = delezPred(a, r);
+      assert.ok(a.length > 100 && da > 0.1 && da < 0.9, `${dat}: prerez ne gre skozi ${ime} (delež oglišč pred ravnino ${da.toFixed(2)})`);
+    }
   }
 });
 
@@ -112,15 +119,30 @@ test("pregrada na stiku: par nasprotno navitih trikotnikov z istimi oglišči od
   assert.equal(brezPregrad(p.slice(0, 12), idx.slice(0, 12)), null);
 });
 
-test("srce: deli iste žile (extras »stik«) imajo skupno mrežo oglišč; brez pregrad je združena žila zaprta", async () => {
+// Srce iz CT (#567): aorta in pljučno deblo nista več razrezana na dele z istim obročem. Korena sta dela stene srca
+// (prerez.volumen.stenaVozlisca: odprta krpa zaprte unije stene), druge žile so vsaka zase zaprte cevi z debelino stene.
+// Skupine »stik« zato niso več obvezne; če so, zanje velja isto kot prej, sicer mora biti zaprta vsaka žila zase.
+test("srce: žile so zaprte; deli iste žile (extras »stik«) imajo skupno mrežo oglišč in so brez pregrad zaprti", async () => {
   await MeshoptDecoder.ready;
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ "meshopt.decoder": MeshoptDecoder });
+  const stena = new Set(JSON.parse(fs.readFileSync(path.join(ORGANI, "srce.json"), "utf8")).prerez.volumen.stenaVozlisca || []);
   for (const dat of ["srce.glb", "srce-telefon.glb"]) {
     const doc = await io.read(path.join(ORGANI, dat));
     const skupine = new Map();
+    let zil = 0;
     for (const node of doc.getRoot().listNodes()) {
       const ex = node.getExtras() || {};
-      if (!ex.stik) continue;
+      if (!ex.stik) {
+        if (!node.getMesh() || stena.has(node.getName()) || !/^(aorta|arterija|pljucna|vena|pljucna-vena|vencna-arterija|vencna-vena)$/.test(ex.tkivo)) continue;
+        const prim = node.getMesh().listPrimitives()[0];
+        const pos = prim.getAttribute("POSITION");
+        const p = new Float64Array(pos.getCount() * 3);
+        const el = [0, 0, 0];
+        for (let i = 0; i < pos.getCount(); i++) { pos.getElement(i, el); p.set(el, i * 3); }
+        assert.equal(analiziraj(p, Uint32Array.from(prim.getIndices().getArray())).odprtiRobovi, 0, `${dat} ${node.getName()}: žila ni zaprta`);
+        zil++;
+        continue;
+      }
       assert.equal(node.getParentNode(), null);
       const k = `${ex.del}|${ex.tkivo}`;
       if (!skupine.has(k)) skupine.set(k, { premik: node.getTranslation(), merilo: node.getScale(), p: [], idx: [], imena: [] });
@@ -135,7 +157,8 @@ test("srce: deli iste žile (extras »stik«) imajo skupno mrežo oglišč; brez
       for (const i of prim.getIndices().getArray()) s.idx.push(i + odmik);
       s.imena.push(node.getName());
     }
-    assert.deepEqual([...skupine.keys()].sort(), ["aorta|arterija", "pljucno-deblo|pljucna"], dat);
+    assert.ok(zil >= 20, `${dat}: premalo samostojnih žil (${zil})`);
+    for (const k of skupine.keys()) assert.ok(["aorta|arterija", "pljucno-deblo|pljucna"].includes(k), `${dat}: nepričakovana skupina ${k}`);
     for (const [k, s] of skupine) {
       const idx = Uint32Array.from(s.idx);
       const nov = brezPregrad(Float32Array.from(s.p), idx);

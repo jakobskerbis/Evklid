@@ -5,8 +5,8 @@
   "miokard": {
    "barva": "#93362f",
    "hrap": 0.34,
-   "lak": 0.12,
-   "lakHrap": 0.65,
+   "lak": 0.5,
+   "lakHrap": 0.5,
    "sijaj": 0.1,
    "sijajBarva": "#9a3a30",
    "rob": 0.1,
@@ -19,7 +19,7 @@
    "liseBarva": "#ffb0a0",
    "masca": 0.6,
    "mascaBarva": "#e7c46e",
-   "rez": "#6e261d",
+   "rez": "#c2625a",
    "senca": 0.35,
    "sencaBarva": "#4a1512",
    "mascaZunaj": true,
@@ -29,13 +29,19 @@
    "sijajHrap": 0.7,
    "spekular": 0.7,
    "rezVolumen": true,
-   "rezMasca": "#d6ae5c",
+   "rezMasca": "#e2c98f",
    "rezVlaknaCt": 1400,
-   "rezTkivoMoc": 0.3,
-   "rezVlaknaMoc": 0.55,
-   "rezSum": 0.4,
-   "rezHrap": 0.55,
-   "rezLak": 0.24
+   "rezTkivoMoc": 0.12,
+   "rezVlaknaMoc": 0.9,
+   "rezSum": 0.25,
+   "rezHrap": 0.42,
+   "rezLak": 0.75,
+   "rezLakHrap": 0.22,
+   "rezMascaMeja": [
+    0.22,
+    0.4
+   ],
+   "rezRelief": 0.0002
   },
   "zaklopka": {
    "barva": "#efd3c3",
@@ -90,7 +96,9 @@
    "relief": 0.3,
    "rez": "#a92a28",
    "sijajHrap": 0.65,
-   "spekular": 0.75
+   "spekular": 0.75,
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
   },
   "vena": {
    "barva": "#3b5ba8",
@@ -108,7 +116,9 @@
    "rez": "#5a2e34",
    "odtenek": "#ffffff",
    "sijajHrap": 0.75,
-   "spekular": 0.55
+   "spekular": 0.55,
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
   },
   "pljucna": {
    "barva": "#4566b8",
@@ -124,9 +134,11 @@
    "f": 80,
    "relief": 0.3,
    "rez": "#d2c2bc",
-   "odtenek": "#ffffff",
+   "odtenek": "#f3dcd6",
    "sijajHrap": 0.75,
-   "spekular": 0.55
+   "spekular": 0.55,
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
   },
   "pljucna-vena": {
    "barva": "#a3304a",
@@ -144,7 +156,9 @@
    "rez": "#8a2840",
    "sijajHrap": 0.75,
    "spekular": 0.55,
-   "odtenek": "#ffffff"
+   "odtenek": "#ffffff",
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
   },
   "aorta": {
    "barva": "#b8453c",
@@ -162,7 +176,9 @@
    "zrno": 0.05,
    "relief": 0.3,
    "hrap": 0.58,
-   "odtenek": "#ffffff"
+   "odtenek": "#fbe3d8",
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
   },
   "vencna-arterija": {
    "barva": "#d3302a",
@@ -179,7 +195,10 @@
    "f": 80,
    "zrno": 0.05,
    "relief": 0.3,
-   "hrap": 0.42
+   "hrap": 0.42,
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25,
+   "odtenek": "#cc665a"
   },
   "vencna-vena": {
    "barva": "#3e3a8c",
@@ -197,7 +216,9 @@
    "zrno": 0.05,
    "relief": 0.3,
    "hrap": 0.45,
-   "odtenek": "#ffffff"
+   "odtenek": "#a58aa0",
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
   },
   "prevodni": {
    "barva": "#d9b42a",
@@ -230,7 +251,26 @@
    "f": 90,
    "sijajHrap": 0.6,
    "spekular": 0.3,
-   "rez": "#b8b0a6"
+   "rez": "#b8b0a6",
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
+  },
+  "guba": {
+   "barva": "#cf8f86",
+   "hrap": 0.4,
+   "lak": 0.5,
+   "lakHrap": 0.3,
+   "sijaj": 0.2,
+   "sijajBarva": "#ffffff",
+   "sijajHrap": 0.6,
+   "spekular": 0.7,
+   "rob": 0.2,
+   "robBarva": "#ffd9d0",
+   "ao": 0.7,
+   "zrno": 0.04,
+   "f": 90,
+   "dvostransko": true,
+   "tekstura": false
   }
  },
  "deli": [
@@ -877,12 +917,15 @@
   ],
   "temnenje": {
    "razdalja": 0.03,
-   "moc": 0.6,
+   "moc": 0.32,
    "odprtost": true,
-   "endokard": "#a8463c",
-   "endokardMoc": 0.42,
+   "endokard": "#d98f86",
+   "endokardMoc": 0.7,
    "endokardTkiva": [
-    "miokard"
+    "miokard",
+    "vez",
+    "vena",
+    "pljucna-vena"
    ]
   },
   "volumen": {
@@ -902,7 +945,30 @@
     10,
     10
    ],
-   "tkivo": "srce-tkivo.png"
+   "tkivo": "srce-tkivo.png",
+   "stena": {
+    "slika": "srce-stena.png",
+    "telefon": "srce-stena-telefon.png",
+    "lo": [
+     -0.06729,
+     -0.10242,
+     -0.0585
+    ],
+    "korak": 0.001,
+    "n": [
+     135,
+     129,
+     118
+    ],
+    "ploscice": [
+     11,
+     11
+    ]
+   },
+   "stenaVozlisca": [
+    "Root of aorta",
+    "Root of pulmonary trunk"
+   ]
   }
  },
  "pogledi": {
@@ -937,20 +1003,11 @@
     "desni-preddvor",
     "av-zaklopki"
    ],
-   "skrijDele": [
-    "aorta",
-    "brahiocefalicno-deblo",
-    "leva-skupna-karotida",
-    "leva-podkljucnicna-arterija",
-    "arterijska-vez",
-    "v-azygos",
-    "brahiocefalicni-veni",
-    "pljucno-deblo",
-    "pljucne-vene"
-   ],
+   "skrijDele": [],
    "tkiva": {
     "miokard": {
-     "lak": 0.2
+     "lak": 0.7,
+     "lakHrap": 0.35
     },
     "zaklopka": {
      "svetlost": 1.05
@@ -958,6 +1015,14 @@
     "zep": {
      "svetlost": 1.05
     }
+   },
+   "okvir": {
+    "sredisce": [
+     -0.003,
+     -0.0477,
+     -0.0049
+    ],
+    "polmer": 0.66
    }
   }
  },
@@ -988,8 +1053,8 @@
  },
  "velikost": 0.2649,
  "trikotniki": {
-  "racunalnik": 207617,
-  "telefon": 55377
+  "racunalnik": 223546,
+  "telefon": 63391
  },
  "luci": [
   {

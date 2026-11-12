@@ -536,6 +536,20 @@ vec3 orgTkivo( vec3 p, float blok ) {
 }
 `;
 
+// Delež stene (R) in drugih polnih teles s pokrovom, npr. venčnih žil (G), iz mreže: rezine kot pri orgVolumen (svoja
+// mreža vokslov, lahko gostejša).
+const GLSL_STENA = `
+uniform sampler2D orgSt; uniform vec3 orgStN; uniform vec2 orgStP; uniform vec3 orgStLo; uniform float orgStK;
+vec2 orgStena( vec3 p ) {
+  vec3 g = clamp( ( p - orgStLo ) / orgStK - 0.5, vec3( 0.0 ), orgStN - 1.0 );
+  float z0 = floor( g.z ), fz = g.z - z0, z1 = min( z0 + 1.0, orgStN.z - 1.0 );
+  vec2 pl = orgStN.xy + 2.0, vel = orgStP * pl, xy = g.xy + 1.5;
+  vec2 a = ( vec2( mod( z0, orgStP.x ), floor( z0 / orgStP.x ) ) * pl + xy ) / vel;
+  vec2 b = ( vec2( mod( z1, orgStP.x ), floor( z1 / orgStP.x ) ) * pl + xy ) / vel;
+  return mix( texture2D( orgSt, a ).rg, texture2D( orgSt, b ).rg, fz );
+}
+`;
+
 function materialPokrova(t, ravnine, merilo = 1, vol = null) {
   const n = ravnine.seznam.length;
   vol = t.rezVolumen && vol ? vol : null;
@@ -544,7 +558,11 @@ function materialPokrova(t, ravnine, merilo = 1, vol = null) {
     roughness: t.rezHrap ?? 0.62,
     metalness: 0,
     clearcoat: t.rezLak ?? 0.18,
-    clearcoatRoughness: 0.45,
+    clearcoatRoughness: t.rezLakHrap ?? 0.45,
+    sheen: t.rezSijaj ?? 0,
+    sheenColor: new THREE.Color(t.rezSijajBarva || "#ffffff"),
+    sheenRoughness: 0.5,
+    specularIntensity: t.rezSpekular ?? 1,
     side: THREE.BackSide,
     clippingPlanes: ravnine.seznam,
     clipIntersection: !!ravnine.presek,
@@ -552,6 +570,10 @@ function materialPokrova(t, ravnine, merilo = 1, vol = null) {
   const relief = (t.rezRelief ?? 0.00012) * merilo;
   const vlCt = t.rezVlaknaCt ?? 1400; // gostota vlaken (1/m) v teksturi CT
   const sumMoc = t.rezSum ?? 1; // moč lis in zrnatosti pokrova (srce n11: enakomeren vlažen miokard, ne »šmirgl«)
+  // vol.stena (prerez.volumen.stena, scripts/atlas/rez-stena.mjs): delež voksla v polni steni, izračunan iz končne
+  // mreže (ne iz CT). Rob pokrova se zato ujema z obrisom mreže; prej je bil stopničast, kjer se mreža (endokard,
+  // premaknjen v votlino, relief maščobe) in tekstura CT nista ujemali (»luske« ob robu reza).
+  const st = vol?.stena || null;
   m.onBeforeCompile = (sh) => {
     sh.uniforms.orgRav = { value: ravnine.seznam.map((p) => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, p.constant)) };
     if (vol) {
@@ -560,6 +582,7 @@ function materialPokrova(t, ravnine, merilo = 1, vol = null) {
         orgVol: { value: vol.tex }, orgVolN: { value: new THREE.Vector3(...v.n) }, orgVolP: { value: new THREE.Vector2(...v.ploscice) },
         orgVolLo: { value: new THREE.Vector3(...vol.lo) }, orgVolK: { value: vol.k }, orgTk: { value: vol.tkivo }, orgTkK: { value: vol.tkK },
       });
+      if (st) Object.assign(sh.uniforms, { orgSt: { value: st.tex }, orgStN: { value: new THREE.Vector3(...st.n) }, orgStP: { value: new THREE.Vector2(...st.ploscice) }, orgStLo: { value: new THREE.Vector3(...st.lo) }, orgStK: { value: st.k } });
     }
     sh.vertexShader = sh.vertexShader
       .replace("#include <common>", "#include <common>\nvarying vec3 vOrgW;" + (vol ? "\nvarying vec3 vOrgM; varying vec3 vOrgCm;" : ""))
@@ -569,7 +592,7 @@ function materialPokrova(t, ravnine, merilo = 1, vol = null) {
           (vol ? "\nvOrgM = transformed; vOrgCm = ( inverse( modelMatrix ) * vec4( cameraPosition, 1.0 ) ).xyz;" : ""),
       );
     const pars = `#include <common>\nvarying vec3 vOrgW;\nuniform mat4 projectionMatrix;\nuniform vec4 orgRav[ ${n} ];\nvec3 orgQ; vec3 orgNw; float orgH;\n${GLSL_SUM}${
-      vol ? `\nvarying vec3 vOrgM; varying vec3 vOrgCm; vec3 orgQm; vec4 orgV4;\n${GLSL_VOL}` : ""
+      vol ? `\nvarying vec3 vOrgM; varying vec3 vOrgCm; vec3 orgQm; vec4 orgV4;\n${GLSL_VOL}${st ? GLSL_STENA : ""}` : ""
     }`;
     sh.fragmentShader = sh.fragmentShader
       .replace("#include <common>", pars)
@@ -595,7 +618,8 @@ ${
           // in dno papilarnih mišic za ravnino skriti (kot pri pravem rezu). Sicer (votlina; A ≈ 1 = venčna žila v maščobi,
           // katere prerez nariše njen pokrov) ostane globina zadnje ploskve.
           { vec4 orgC = projectionMatrix * viewMatrix * vec4( orgQ, 1.0 );
-            gl_FragDepth = ( length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 || orgV4.a > 0.15 ) && orgV4.a < 0.8 ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
+            ${st ? "vec2 orgSt2 = orgStena( orgQm );" : ""}
+            gl_FragDepth = ${st ? "orgSt2.x > 0.5 && orgSt2.y < 0.5" : "( length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 || orgV4.a > 0.15 ) && orgV4.a < 0.8"} ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
           #endif`
               : ""
           }
@@ -629,7 +653,7 @@ ${
           vec3 orgMaT = orgTkivo( orgQm, 1.0 );
           vec3 orgMa = ${vec3(t.rezMasca || "#d8b060")} * orgMaT / ${vec3(t.rezTkivoMasca || "#af9361")};
           orgMi *= ${fl(1 - 0.14 * (t.rezVlaknaMoc ?? 1))} + ${fl(0.28 * (t.rezVlaknaMoc ?? 1))} * orgVl;
-          float orgFa = smoothstep( 0.17, 0.37, orgV4.a ); // A: maščoba 0–0,6, venčna žila 1
+          float orgFa = smoothstep( ${fl((t.rezMascaMeja || [0.17, 0.37])[0])}, ${fl((t.rezMascaMeja || [0.17, 0.37])[1])}, orgV4.a ); // A: maščoba 0–0,6, venčna žila 1
           diffuseColor.rgb = mix( orgMi, orgMa, orgFa );
           orgH = mix( orgVl, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgFa );
         }`
@@ -659,7 +683,7 @@ ${
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov2-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}`;
+  m.customProgramCacheKey = () => `org-pokrov3-${st ? "s" : ""}-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}`;
   return m;
 }
 
@@ -740,6 +764,9 @@ export async function zgradiOrgan(ime, ctx = {}) {
     };
     const s0 = prostor.s;
     vol = { tex: nalozi(pv.slika), tkivo: nalozi(pv.tkivo || `${ime}-tkivo.png`, true), meta: pv, lo: prostor.tocka(pv.lo), k: pv.korak * s0, tkK: (pv.tkivoMera ?? 0.016) * s0 };
+    // delež stene iz mreže (rez-stena.mjs): telefon ima svojo mrežo, zato svojo sliko (stena.telefon)
+    const ps = pv.stena;
+    if (ps) vol.stena = { tex: nalozi((!visoka && ps.telefon) || ps.slika), n: ps.n, ploscice: ps.ploscice, lo: prostor.tocka(ps.lo), k: ps.korak * s0 };
   }
   const teksture = pripravljeno.teksture ? { ...pripravljeno.teksture, pbr: !!podatki.pbr } : null;
   if (teksture?.orm) teksture.orm.channel = 0; // aoMap bere isti UV kot ostale mape (three privzeto: uv1 za aoMap v starejših)
@@ -846,7 +873,9 @@ export async function zgradiOrgan(ime, ctx = {}) {
       if (o.svetlost) mm.color.multiplyScalar(o.svetlost); // npr. prerez: svetlejši vlažen endokard v votlinah (pravo srce)
       mm.userData.osnova ||= { sheen: mm.sheen, clearcoat: mm.clearcoat };
       mm.sheen = o.sijaj ?? mm.userData.osnova.sheen;
+      mm.userData.osnova.lakHrap ??= mm.clearcoatRoughness;
       mm.clearcoat = o.lak ?? mm.userData.osnova.clearcoat;
+      mm.clearcoatRoughness = o.lakHrap ?? mm.userData.osnova.lakHrap; // npr. prerez: gladek moker endokard
       const op = o.prosojnost ?? t.prosojnost ?? 1;
       const side = o.dvostransko ?? (t.dvostransko || kljuc !== tk) ? THREE.DoubleSide : THREE.FrontSide;
       if (mm.opacity !== op || mm.side !== side) {
@@ -1007,7 +1036,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     dispose() {
       for (const m of materiali.values()) m.dispose();
       for (const m of pokrovi.values()) m.dispose();
-      if (vol) (vol.tex.dispose(), vol.tkivo.dispose());
+      if (vol) (vol.tex.dispose(), vol.tkivo.dispose(), vol.stena?.tex.dispose());
       for (const u of ucni.values()) (u.mat.dispose(), u.pokrov.dispose());
       proxyMat.dispose();
       // Geometrija ostane v predpomnilniku (»Ponastavi« zgradi znova brez prenosa).

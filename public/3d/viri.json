@@ -75,7 +75,8 @@
       "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
       "datoteke": [
         "organi-3d/srce*.glb",
-        "organi-3d/srce-volumen.png"
+        "organi-3d/srce-volumen.png",
+        "organi-3d/srce-stena*.png"
       ]
     },
     {

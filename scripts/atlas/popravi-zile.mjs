@@ -44,14 +44,18 @@ export const NACRT = {
     // Imena delov: srce iz #461/#567 (»Aorta«, »Root of aorta«, »Pulmonary trunk and left pulmonary artery« …) in starejši izvoz.
     dopolni: [["Aortic arch", "Thoracic aorta"], ["Left pulmonary artery"], ["Aorta"], ["Pulmonary trunk and left pulmonary artery"]],
     stena: [
-      [/^(Ascending aorta|Aortic arch|Thoracic aorta|Aorta|Root of aorta)$/, 2.5],
-      [/^(Pulmonary trunk|Bifurcation of pulmonary trunk|(Left|Right) pulmonary artery|Pulmonary trunk and left pulmonary artery|Root of pulmonary trunk)$/, 1.5],
+      [/^(Ascending aorta|Aortic arch|Thoracic aorta|Aorta)$/, 2.5],
+      [/^(Pulmonary trunk|Bifurcation of pulmonary trunk|(Left|Right) pulmonary artery|Pulmonary trunk and left pulmonary artery)$/, 1.5],
       [/vena cava|pulmonary vein|brachiocephalic vein|Azygos/, 1.0],
     ],
-    polna: /coronary|cardiac vein|interventricular|Circumflex|vein of left ventricle|marginal branch|Diagonal branch|carotid|subclavian|Brachiocephalic trunk/i,
+    polna: /coronary|cardiac vein|interventricular (artery|vein|branch)|Circumflex|vein of left ventricle|marginal branch|Diagonal branch|carotid|subclavian|Brachiocephalic trunk/i,
     // Zgostitev oglatih velikih žil (12 stranic → 24, kjer gladka cev od tetive odstopa za več kot toliko mm).
     // Telefon: samo aorta (polmer ≥ 14 mm), ker ima srce za telefon mejo 90 000 trikotnikov.
     zgosti: (pot) => (/telefon/.test(path.basename(pot)) ? 0.44 : 0.15),
+    // Brahiocefalni veni (srce iz #461, srce_zile.py) sta že cevi z zunanjo in notranjo steno; odprt je samo kolobar med
+    // njima na koncu ob zgornji votli veni. Tam dobita rob (obrocRob), ne druge stene: obe veni se končata v istem
+    // obroču, zato ju je »stiki« paril med seboj in je desna vena na računalniku ostala z luknjo in brez roba.
+    rob: /brachiocephalic vein/,
     stikiSkupaj: true, // deli iste žile: skupna mreža kvantizacije in oznaka »stik« (prerez brez pregrade na stiku)
     senca: true, // COLOR_0.r spremenjenih delov na novo (enak postopek kot izvoz)
     odprtost: true, // COLOR_0.g (izvoz srca: odprtost=True)
@@ -521,7 +525,7 @@ const skupneNormale = new Map(); // položaj oglišča na stiku → normala (ste
 // ---------------------------------------------------------------------------------------------------------------
 
 // Zapre zanko s trikotniki. Okrogla zanka: pahljača do sredine (rahlo izbočena, »vrh«); sicer triangulacija v ravnini.
-function zapriZanko(m, z, { vrh = 0, raven = false, svojRob = false } = {}) {
+export function zapriZanko(m, z, { vrh = 0, raven = false, svojRob = false } = {}) {
   const o = G.opisZanke(m, z);
   const E = raven ? G.robovi(m) : null;
   const obstaja = (a, b) => E.has(a < b ? a * 4294967296 + b : b * 4294967296 + a);
@@ -565,6 +569,40 @@ function zapriZanko(m, z, { vrh = 0, raven = false, svojRob = false } = {}) {
   for (const t of tri) for (let k = 0; k < 3; k++) if (z[t[k]].w === a && z[t[(k + 1) % 3]].w === b) obrni = true;
   for (const t of tri) m.F.push(z[t[0]].r, z[t[obrni ? 2 : 1]].r, z[t[obrni ? 1 : 2]].r);
   return tri.length;
+}
+
+// Cev z zunanjo in notranjo steno, ki ji na koncu manjka rob: dva soosna obroča (isto središče, podoben polmer,
+// nasprotna smer obhoda) povežemo s trakom trikotnikov. Oglišča roba so nova, z normalo iz konca cevi (raven rob).
+// Vrne število dodanih trikotnikov.
+export function obrocRob(m) {
+  const z = G.zanke(m).map((x) => ({ z: x, o: G.opisZanke(m, x) }));
+  const porabljen = new Set();
+  let st = 0;
+  for (let i = 0; i < z.length; i++) for (let j = i + 1; j < z.length; j++) {
+    if (porabljen.has(i) || porabljen.has(j)) continue;
+    let [a, b] = z[i].o.r >= z[j].o.r ? [z[i], z[j]] : [z[j], z[i]]; // a zunanji, b notranji
+    if (v3.dist(a.o.c, b.o.c) > 0.15 * a.o.r || b.o.r < 0.6 * a.o.r || v3.dot(a.o.n, b.o.n) > -0.9) continue;
+    if (Math.max(a.o.odmik, b.o.odmik) > 0.2 * a.o.r) continue;
+    porabljen.add(i); porabljen.add(j);
+    const ven = v3.mul(a.o.n, -1);
+    const A = a.z.map((e) => e.r), B = b.z.map((e) => e.r); // izrisna oglišča v smeri robov ploskev
+    const nova = new Map();
+    const rob = (r) => { if (!nova.has(r)) nova.set(r, G.dodajOglisce(m, G.pol(m, r), [[r, 1]], { NORMAL: ven })); return nova.get(r); };
+    const pa = (k) => G.pol(m, A[((k % A.length) + A.length) % A.length]), pb = (k) => G.pol(m, B[((k % B.length) + B.length) % B.length]);
+    const ia = (k) => rob(A[((k % A.length) + A.length) % A.length]), ib = (k) => rob(B[((k % B.length) + B.length) % B.length]);
+    // začetek: notranje oglišče, najbližje prvemu zunanjemu; zunanji obroč naprej, notranji nazaj (nasprotna obhoda)
+    let q = 0, bd = Infinity;
+    for (let k = 0; k < B.length; k++) { const dd = v3.dist(pa(0), pb(k)); if (dd < bd) { bd = dd; q = k; } }
+    let p = 0, na = 0, nb = 0;
+    while (na < A.length || nb < B.length) {
+      const naprejA = nb >= B.length || (na < A.length && v3.dist(pa(p + 1), pb(q)) <= v3.dist(pa(p), pb(q - 1)));
+      if (naprejA) { m.F.push(ia(p + 1), ia(p), ib(q)); p++; na++; }
+      else { m.F.push(ib(q), ib(q - 1), ia(p)); q--; nb++; }
+      st++;
+    }
+  }
+  if (st) { m.spremenjeno = true; G.zvari(m); }
+  return st;
 }
 
 // »prost(c, ven, r, obroc)«: ali je konec (središče, smer navzven, polmer, oglišča obroča) prost. Kupolo dobi samo
@@ -1131,6 +1169,11 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
     if (tol) for (const d of s.filter(odprt)) {
       const dT = G.zgosti(d.m, tol * MM);
       if (dT) log(`   ${d.ime}: zgoščena cev, +${dT} trikotnikov (konci ${G.zanke(d.m).map((z) => z.length).join(", ")} oglišč)`);
+    }
+    // cev, ki že ima zunanjo in notranjo steno: rob med soosnima obročema (potem je zaprta in se ne stika z drugimi)
+    if (nacrt.rob) for (const d of s.filter((x) => nacrt.rob.test(x.ime) && odprt(x))) {
+      const st = obrocRob(d.m);
+      if (st) log(`   ${d.ime}: rob med zunanjo in notranjo steno (${st} trikotnikov)`);
     }
     // stik treh delov (votla vena + brahiocefalni veni): ponavljamo, dokler nimajo vsi obroči istih oglišč
     const vsiStiki = () => { for (let i = 0; i < 4; i++) { skupneNormale.clear(); if (!stiki(s.filter(odprt))) break; } };
