@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, celsiusIssue } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -664,4 +664,61 @@ test("»vzel/uporabil« izpusti samo preverjanje vezi, ne računov v popravkih (
     assert.ok(codeFindings(t).issue, t);
   }
   assert.equal(valenceIssue("Pri dušiku si vzel vrstno število: $v = 8 - 7 = 1$.").issue, null);
+});
+
+test("accuracy round 6: lone pairs drawn in a one-line Lewis formula must match v = 8 − z", () => {
+  const R = String.raw;
+  const bad = [
+    [R`Lewisova formula: $:\!\ddot{N}\!\equiv\!\ddot{N}\!:$`, /2 lone pair\(s\) on N.*has 1 lone pair/],
+    [R`Formula dušika je $:\!\ddot{\mathrm{N}}\!\equiv\!\ddot{\mathrm{N}}\!:$.`, /on N/],
+    [R`$::\mathrm{N}\equiv\mathrm{N}::$`, /2 lone pair/],
+    [R`$:\mathrm{N}\equiv\mathrm{N}$`, /0 lone pair\(s\) on N/],
+    [R`$\mathrm{H}-\ddot{\mathrm{O}}-\mathrm{H}$`, /1 lone pair\(s\) on O.*has 2/],
+    [R`Molekula: $\ddot{O}=C=\ddot{O}$`, /on O/],
+    [R`$\mathrm{H}{:}{-}\mathrm{Cl}$`, /on H/],
+    ["Narišemo ::N≡N:: in preverimo oktet.", /2 lone pair\(s\) on N/],
+  ];
+  for (const [a, re] of bad) {
+    const r = lewisIssue(a);
+    assert.match(r.issue || "", re, a);
+    assert.ok(r.issue.includes("{:}\\mathrm{N}{\\equiv}\\mathrm{N}{:}"), "popravek pokaže pravilen zapis");
+  }
+  const ok = [
+    R`Formula: $:\!\mathrm{N}\equiv\mathrm{N}\!:$`,
+    "Formula: $" + R`{:}\mathrm{N}{\equiv}\mathrm{N}{:}$`,
+    "Narišemo :N≡N: in preverimo.",
+    R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{-}\mathrm{H}$`,
+    R`$:\ddot{\mathrm{O}}{=}\mathrm{C}{=}\ddot{\mathrm{O}}:$`,
+    "$" + R`{:}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{:}$`,
+    R`$\overset{..}{\underset{..}{O}}=C=\overset{..}{\underset{..}{O}}$`,
+    R`$\mathrm{H}-\mathrm{C}\equiv\mathrm{N}:$`,
+    R`Izjema: $:\mathrm{C}\equiv\mathrm{O}:$`, // CO: C ima 3 vezi, pravilo v = 8 − z ne velja
+    R`$[:\mathrm{C}\equiv\mathrm{N}:]^-$`, // ion
+    R`$\cdot\mathrm{N}=\mathrm{O}$`, // radikal
+    R`$\mathrm{H}-\ddot{\mathrm{N}}-\mathrm{H}$`, // NH₃ v eni vrstici (razvejana)
+    R`$\mathrm{H{-}C{\equiv}C{-}H}$`, // brez neveznih parov: ni risbe parov
+    R`$\mathrm{CH_3{-}\ddot{N}H_2}$`, // skrajšana formula z indeksi
+    R`$m\ddot x + kx = 0$`,
+    R`$\mathrm{H}:\mathrm{H}$`, // pikčasta formula veznega para
+    R`$a : b = 2 : 3$`,
+    "Vez v N≡N: trojna.",
+    "Formula je N≡N:",
+    "Odgovor: N≡N",
+    "razmerje 2:1 in N:O",
+    R`Ali je $:\ddot{N}\equiv\ddot{N}:$ prav?`, // vprašanje (SKIP_LINE)
+    R`Tvoja formula $:\ddot{N}\equiv\ddot{N}:$ ima preveč parov.`,
+    "  ··   ··\n :Cl – Cl:\n  ··   ··", // večvrstična risba
+    "     ··\n  H – N – H\n      |\n      H",
+  ];
+  for (const a of ok) assert.equal(lewisIssue(a).issue, null, a);
+  // formula iz učenčevega sporočila ni napaka odgovora
+  assert.equal(lewisIssue(R`Tu je $:\ddot{N}\equiv\ddot{N}:$ in`, R`Je $:\ddot{N}\equiv\ddot{N}:$ pravilno`).issue, null);
+  assert.equal(lewisIssue(R`Formula: $:\mathrm{N}\equiv\mathrm{N}:$`).checked, 1);
+});
+
+test("accuracy round 6: codeFindings joins the Lewis finding with the other chemistry checks", () => {
+  const a = String.raw`Dušik je v 5. skupini. Formula: $:\!\ddot{N}\!\equiv\!\ddot{N}\!:$`;
+  const r = codeFindings(a);
+  assert.match(r.issue, /15/);
+  assert.match(r.issue, /; the Lewis formula/);
 });
