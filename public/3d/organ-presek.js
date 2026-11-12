@@ -110,18 +110,49 @@ export function ovojnica(tocke) {
   return [...pol(t), ...pol(t.reverse())];
 }
 
-// Zapolnjen presek: { polozaji: Float32Array (3D, na ravnini), indeksi: number[] } ali null, če ravnina mreže ne seka.
+// Zapolnjen presek: { polozaji: Float32Array (3D, na ravnini), indeksi: number[], vrste: Float32Array } ali null, če
+// ravnina mreže ne seka; os = { O, U, V } ravnine. vrste (na oglišče): 0 = ploskev preseka, 1 = obroba (rob), 2 = zapolnjena luknja (luknje).
 // idx: indeksi trikotnikov ali seznam takih polj (vsako zaprto telo posebej: zanke sosednjih teles se ne gnezdijo).
 // polno: samo zunanji obrisi brez lukenj (lupina z votlino postane polna ploskev).
 // ovoj: ena sama ploskev, izbočena ovojnica vseh zank (podlaga pod drugimi plastmi).
 // rob: polovična širina obrobe vzdolž vsakega obrisa (enote mreže; zapre špranjo med sosednjima telesoma iste plasti).
+// luknje: luknje preseka (svetlina cevi z dvojno steno) dobijo svojo ploskev (vrsta 2) namesto praznine; obris brez lukenj
+// (polna cev) je ves svetlina (vrsta 2), njegovo steno nariše obroba (rob).
+// brezPloskve: samo obroba (stena votlega organa: ledvični meh), ploskve preseka ni.
 // povecaj: faktor, s katerim se vsaka zanka poveča okoli svojega težišča (1,02: sosednji telesi se prekrijeta).
 // trianguliraj(obris, luknje) → [[a, b, c], …] z indeksi v obris, nato luknje po vrsti (kot THREE.ShapeUtils.triangulateShape).
 // najPloscina: zanke z manjšo ploščino odpadejo (drobir).
-export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7 } = {}) {
+export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7 } = {}) {
   const polozaji = [];
   const indeksi = [];
+  const vrste = []; // na oglišče: 0 ploskev, 1 obroba, 2 zapolnjena luknja
   const vseZanke = [];
+  // obroba: trak širine 2·rob vzdolž obrisa (zapre špranjo do sosednjega telesa iste plasti; z drugo barvo stena ali ovojnica)
+  const obroba = (z, { O, U, V }) => {
+    for (let a = 0; a < z.length; a++) {
+      const p = z[a], q = z[(a + 1) % z.length];
+      const l = Math.hypot(q[0] - p[0], q[1] - p[1]);
+      if (l < 1e-9) continue;
+      const nx = (-(q[1] - p[1]) / l) * rob, ny = ((q[0] - p[0]) / l) * rob;
+      const i0 = polozaji.length / 3;
+      for (const [x, y] of [[p[0] + nx, p[1] + ny], [p[0] - nx, p[1] - ny], [q[0] - nx, q[1] - ny], [q[0] + nx, q[1] + ny]]) {
+        for (let c = 0; c < 3; c++) polozaji.push(O[c] + x * U[c] + y * V[c]);
+        vrste.push(1);
+      }
+      indeksi.push(i0, i0 + 1, i0 + 2, i0, i0 + 2, i0 + 3);
+      // zaobljen stik s prejšnjim odsekom: trikotnika od oglišča do obeh robov (brez zareze na zunanji strani ovinka)
+      const o = z[(a + z.length - 1) % z.length];
+      const lo = Math.hypot(p[0] - o[0], p[1] - o[1]);
+      if (lo < 1e-9) continue;
+      const mx = (-(p[1] - o[1]) / lo) * rob, my = ((p[0] - o[0]) / lo) * rob;
+      const j0 = polozaji.length / 3;
+      for (const [x, y] of [[p[0], p[1]], [p[0] + mx, p[1] + my], [p[0] + nx, p[1] + ny], [p[0] - mx, p[1] - my], [p[0] - nx, p[1] - ny]]) {
+        for (let c = 0; c < 3; c++) polozaji.push(O[c] + x * U[c] + y * V[c]);
+        vrste.push(1);
+      }
+      indeksi.push(j0, j0 + 1, j0 + 2, j0, j0 + 3, j0 + 4);
+    }
+  };
   let os = null;
   for (const del of typeof idx[0] === "number" ? [idx] : idx) {
     const { zanke, O, U, V } = zankePreseka(pos, del, n, d);
@@ -134,7 +165,11 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, povec
         return z.map((p) => [c[0] + (p[0] - c[0]) * povecaj, c[1] + (p[1] - c[1]) * povecaj]);
       });
     }
-    if (ovoj) { vseZanke.push(...dobre); continue; }
+    if (ovoj) {
+      vseZanke.push(...dobre);
+      if (rob > 0) for (const z of dobre) obroba(z, os);
+      continue;
+    }
     // globina gnezdenja: v koliko drugih zankah leži zanka
     const v = dobre.map((z, i) => dobre.map((y, j) => i !== j && vZanki(z[0], y)));
     const globina = v.map((r) => r.filter(Boolean).length);
@@ -144,25 +179,24 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, povec
       const vse = [z, ...luknje].flat();
       const zacetek = polozaji.length / 3;
       for (const p of vse) for (let c = 0; c < 3; c++) polozaji.push(O[c] + p[0] * U[c] + p[1] * V[c]);
-      for (const t of trianguliraj(z, luknje)) indeksi.push(zacetek + t[0], zacetek + t[1], zacetek + t[2]);
-      // obroba: trak širine 2·rob vzdolž obrisa (zapre špranjo do sosednjega telesa iste plasti)
-      if (rob > 0) {
-        for (let a = 0; a < z.length; a++) {
-          const p = z[a], q = z[(a + 1) % z.length];
-          const l = Math.hypot(q[0] - p[0], q[1] - p[1]);
-          if (l < 1e-9) continue;
-          const nx = (-(q[1] - p[1]) / l) * rob, ny = ((q[0] - p[0]) / l) * rob;
-          const i0 = polozaji.length / 3;
-          for (const [x, y] of [[p[0] + nx, p[1] + ny], [p[0] - nx, p[1] - ny], [q[0] - nx, q[1] - ny], [q[0] + nx, q[1] + ny]]) for (let c = 0; c < 3; c++) polozaji.push(O[c] + x * U[c] + y * V[c]);
-          indeksi.push(i0, i0 + 1, i0 + 2, i0, i0 + 2, i0 + 3);
+      if (!brezPloskve) for (const t of trianguliraj(z, luknje)) indeksi.push(zacetek + t[0], zacetek + t[1], zacetek + t[2]);
+      // polna cev brez notranje stene (obris brez lukenj): vsa ploskev je svetlina, steno nariše obroba
+      for (let i = 0; i < vse.length; i++) vrste.push(zapolniLuknje && !luknje.length ? 2 : 0);
+      if (zapolniLuknje) {
+        for (const l of luknje) {
+          const z2 = polozaji.length / 3;
+          for (const p of l) { for (let c = 0; c < 3; c++) polozaji.push(O[c] + p[0] * U[c] + p[1] * V[c]); vrste.push(2); }
+          for (const t of trianguliraj(l, [])) indeksi.push(z2 + t[0], z2 + t[1], z2 + t[2]);
         }
       }
+      if (rob > 0) obroba(z, os);
     });
   }
   if (ovoj && vseZanke.length) {
     const h = ovojnica(vseZanke.flat());
-    for (const p of h) for (let c = 0; c < 3; c++) polozaji.push(os.O[c] + p[0] * os.U[c] + p[1] * os.V[c]);
-    for (let i = 1; i + 1 < h.length; i++) indeksi.push(0, i, i + 1);
+    const z0 = polozaji.length / 3;
+    for (const p of h) { for (let c = 0; c < 3; c++) polozaji.push(os.O[c] + p[0] * os.U[c] + p[1] * os.V[c]); vrste.push(0); }
+    for (let i = 1; i + 1 < h.length; i++) indeksi.push(z0, z0 + i, z0 + i + 1);
   }
-  return indeksi.length ? { polozaji: new Float32Array(polozaji), indeksi } : null;
+  return indeksi.length ? { polozaji: new Float32Array(polozaji), indeksi, vrste: new Float32Array(vrste), os } : null;
 }

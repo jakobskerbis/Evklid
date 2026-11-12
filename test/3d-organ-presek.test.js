@@ -1,5 +1,6 @@
 // Pravi presek mreže z ravnino reza (public/3d/organ-presek.js, tkivo.rezPresek v organ.js): obris preseka je sklenjen,
-// luknje ostanejo luknje, »polno« jih zapolni, »ovoj« da izbočeno podlago. Ledvica: vsaka sekana piramida da svoj presek.
+// luknje ostanejo luknje, »polno« jih zapolni, »ovoj« da izbočeno podlago, »luknje« in »rob« dasta svetlino in steno cevi.
+// Ledvica: skorja, ovojnica in meh dajo sklenjen obris; piramide na rezu so stožci iz papil modela (rezPiramide).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -78,24 +79,54 @@ test("presek: votlina je luknja, »polno« jo zapolni, ločena telesa se ne gnez
   assert.equal(ovojnica([[0, 0], [1, 0], [1, 1], [0, 1], [0.5, 0.5]]).length, 4);
 });
 
-test("presek ledvice: ravnina iz JSON seka skorjo, meh in vsaj šest piramid; vsaka da sklenjen obris", async () => {
+test("presek cevi: dvojna stena da obroč in svetlino, polna cev svetlino z obrobo; vrste oglišč", () => {
+  const zunaj = kvader([-2, -2, -2], [2, 2, 2]);
+  const znotraj = kvader([-1, -1, -1], [1, 1, 1], true);
+  const pos = [...zunaj.pos, ...znotraj.pos];
+  const idx = [...zunaj.idx, ...znotraj.idx.map((i) => i + zunaj.pos.length / 3)];
+  const tri = (obris, luknje) => (luknje.length ? [[0, 1, 4], [1, 5, 4]] : pahljaca(obris)); // obroč: dovolj je nekaj trikotnikov
+  const votla = presekMreze(pos, idx, [1, 0, 0], 0, { luknje: true, trianguliraj: tri });
+  assert.deepEqual([...new Set(votla.vrste)].sort(), [0, 2], "stena (0) in svetlina (2)");
+  assert.equal(votla.vrste.length, votla.polozaji.length / 3);
+  const polna = presekMreze(zunaj.pos, zunaj.idx, [1, 0, 0], 0, { luknje: true, rob: 0.1, trianguliraj: tri });
+  assert.deepEqual([...new Set(polna.vrste)].sort(), [1, 2], "polna cev: svetlina (2) z obrobo (1)");
+  const samoRob = presekMreze(zunaj.pos, zunaj.idx, [1, 0, 0], 0, { brezPloskve: true, rob: 0.1, trianguliraj: tri });
+  assert.ok(samoRob.indeksi.every((i) => samoRob.vrste[i] === 1), "samo obroba");
+  assert.ok(Math.abs(samoRob.os.U[0]) < 1e-9 && Math.abs(samoRob.os.V[0]) < 1e-9, "osi ležita v ravnini");
+});
+
+test("presek ledvice: ravnina iz JSON seka skorjo, ovojnico in meh; piramide so stožci iz papil modela", async () => {
   const j = JSON.parse(fs.readFileSync(path.join(ORGANI, "ledvica.json"), "utf8"));
   const rv = j.prerez.ravnine[0];
   const l = Math.hypot(...rv.n);
   const n = rv.n.map((x) => x / l), d = (rv.d || 0) / l;
-  for (const t of ["ovojnica", "skorja", "piramida", "meh"]) assert.ok(j.tkiva[t].rezPresek, `tkivo ${t}: rezPresek`);
+  for (const t of ["ovojnica", "skorja", "meh"]) assert.ok(j.tkiva[t].rezPresek, `tkivo ${t}: rezPresek`);
+  assert.ok(j.tkiva.meh.rezVotlina, "meh: odprta votlina");
+  const stozci = j.tkiva.skorja.rezPiramide.seznam;
+  assert.ok(stozci.length >= 8 && stozci.length <= 12, `piramid ${stozci.length}`);
+  assert.deepEqual(j.tkiva.ovojnica.rezPiramide.seznam, stozci, "ovojnica in skorja rišeta iste piramide");
   for (const f of ["ledvica.glb", "ledvica-telefon.glb"]) {
     const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(ORGANI, f));
-    let piramid = 0;
+    const papile = [];
     for (const node of doc.getRoot().listNodes()) {
       const tk = node.getExtras()?.tkivo;
-      if (!node.getMesh() || !["skorja", "piramida", "meh"].includes(tk)) continue;
+      if (!node.getMesh() || !["skorja", "ovojnica", "meh", "papila"].includes(tk)) continue;
       const m = preberi(node, node.getMesh().listPrimitives()[0]);
+      if (tk === "papila") {
+        const c = [0, 0, 0];
+        for (let i = 0; i < m.P.length; i++) c[i % 3] += m.P[i] / (m.P.length / 3);
+        papile.push(c);
+        continue;
+      }
       const { zanke } = zankePreseka(m.P, m.F, n, d, 1e-6);
-      const velike = zanke.filter((z) => Math.abs(ploscina(z)) > 2e-6); // > 2 mm²
-      if (tk === "piramida") piramid += velike.length ? 1 : 0;
-      else assert.ok(velike.length >= 1, `${f}: ${node.getName()} brez preseka`);
+      assert.ok(zanke.some((z) => Math.abs(ploscina(z)) > 2e-6), `${f}: ${node.getName()} brez preseka`);
     }
-    assert.ok(piramid >= 6, `${f}: sekanih piramid ${piramid}`);
+    // vrh vsakega stožca leži ob papili modela (≤ 6 mm), dolžina in polkot sta v mejah prave piramide
+    for (const s of stozci) {
+      const naj = Math.min(...papile.map((p) => Math.hypot(p[0] - s[0], p[1] - s[1], p[2] - s[2])));
+      assert.ok(naj < 0.006, `${f}: vrh stožca ${s.slice(0, 3)} je ${(naj * 1000).toFixed(1)} mm od najbližje papile`);
+      assert.ok(Math.abs(Math.hypot(s[3], s[4], s[5]) - 1) < 1e-3, "os stožca je enotska");
+      assert.ok(s[6] > 0.007 && s[6] < 0.02 && s[7] > 0.25 && s[7] < 0.65, `mere stožca ${s.slice(6)}`);
+    }
   }
 });

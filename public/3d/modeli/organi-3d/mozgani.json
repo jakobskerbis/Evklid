@@ -70,16 +70,23 @@
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.7,
-   "rezZarki": {
-    "sredisce": [
-     0,
-     -0.033,
-     -0.03
+   "rezSum": 0.5,
+   "rezPresek": {
+    "vrsta": 0,
+    "ovoj": true
+   },
+   "rezSlika": {
+    "slika": "mozgani-mali-rez.webp",
+    "lo": [
+     0.00869,
+     -0.05372
     ],
-    "gostota": 17,
-    "moc": 0.45,
-    "barva": "#f0e6da",
-    "visina": 0.03
+    "mera": [
+     0.05016,
+     0.05016
+    ],
+    "izrez": true,
+    "visina": 0.5
    }
   },
   "deblo": {

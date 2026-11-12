@@ -36,6 +36,11 @@
      "zvitost": 0.4
     }
    ],
+   "rezPresek": {
+    "vrsta": 0,
+    "polno": true,
+    "rob": 0.0009
+   },
    "rezCelice": [
     {
      "mera": 0.0013,
@@ -68,7 +73,18 @@
    "liseBarva": "#88b060",
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.6
+   "aoTekstura": 0.6,
+   "rezVotlina": {
+    "barva": "#8c8a3c",
+    "senca": "#2c3110",
+    "globina": 0.012
+   },
+   "rezPresek": {
+    "vrsta": 3,
+    "samoRob": true,
+    "rob": 0.0007,
+    "robBarva": "#a9ad6a"
+   }
   },
   "zolcevod": {
    "hrap": 0.34,
@@ -79,13 +95,21 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#8fa83a",
-   "rez": "#6f8a2a",
+   "rez": "#9aa052",
    "sijajBarva": "#eaffb0",
    "rob": 0.15,
    "robBarva": "#d0f080",
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.5
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#2a2c10",
+    "rob": 0.0003,
+    "robBarva": "#9aa052"
+   }
   },
   "portalna": {
    "hrap": 0.36,
@@ -96,14 +120,22 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#64449c",
-   "rez": "#4d3380",
+   "rez": "#8f66cc",
    "sijajBarva": "#c8b0ff",
    "rob": 0.18,
    "robBarva": "#a080ff",
    "relief": 0.25,
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.5
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#24113f",
+    "rob": 0.0004,
+    "robBarva": "#8f66cc"
+   }
   },
   "arterija": {
    "hrap": 0.36,
@@ -114,14 +146,22 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#8c1f1d",
+   "rez": "#c4473c",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
    "relief": 0.25,
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.5
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#330909",
+    "rob": 0.0003,
+    "robBarva": "#c4473c"
+   }
   },
   "vena": {
    "hrap": 0.36,
@@ -132,14 +172,22 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#3c58a2",
-   "rez": "#2d4586",
+   "rez": "#4f7ad2",
    "sijajBarva": "#9db8ff",
    "rob": 0.18,
    "robBarva": "#6f93ff",
    "relief": 0.25,
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.5
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#0f1a40",
+    "rob": 0.00025,
+    "robBarva": "#4f7ad2"
+   }
   }
  },
  "deli": [
@@ -307,7 +355,13 @@
    ],
    "skrijDele": [
     "zolcevod"
-   ]
+   ],
+   "tkiva": {
+    "jetra": {
+     "lak": 0.3,
+     "sijaj": 0
+    }
+   }
   }
  },
  "podrobnosti": {
