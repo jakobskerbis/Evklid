@@ -76,14 +76,27 @@ test("atlas: tap skozi kožo izbere del pod njo, drugi tap kožo; veliki pečni 
   const app = createApp(openDb(":memory:"), { accounts: true, scheduler: false, log: { error() {}, info() {}, warn() {} } });
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  // Manj gibanja: preleti kamere so takojšnji. Prelet napreduje po sličicah (dt ≤ 0,1 s), zato pri programskem risanju
+  // v CI (sličica celega telesa traja več sekund) en sam prelet traja več kot minuto – od tod občasni padci.
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
   try {
     const p = await ctx.newPage();
     const napake = [];
     p.on("pageerror", (e) => napake.push(String(e)));
     await p.goto(`${base}/3d#atlas`, { waitUntil: "load" });
+    // __atlas je nastavljen šele po naloženih začetnih plasteh (odpriAtlas čaka nanje).
     await p.waitForFunction(() => window.__atlas?.kit, null, { timeout: 60000 });
-    await p.waitForFunction(() => !window.__atlas.kit.leti, null, { timeout: 60000 }); // začetni prelet kamere
+    assert.equal(await p.evaluate(() => window.__atlas.kit.gibanje), false, "manj gibanja ni upoštevano: preleti niso takojšnji");
+    // Števci za preizkus: poslušalci, dodani za atlasovimi, tečejo za njimi – ko se števec poveča, je dogodek obdelan.
+    await p.evaluate(() => {
+      Object.assign(window, { __tapi: 0, __spusti: 0, __tipke: 0 });
+      const { kit } = window.__atlas;
+      kit.naTap(() => window.__tapi++);
+      kit.canvas.addEventListener("pointerup", () => window.__spusti++);
+      kit.canvas.addEventListener("keydown", () => window.__tipke++);
+    });
+    const brezPreleta = () => p.waitForFunction(() => !window.__atlas.kit.leti, null, { timeout: 60000 });
+    // Točko projiciramo vsakič znova (po izbiri ali Home je kamera drugje), na zaslonske (CSS) koordinate platna.
     const naZaslon = (c) =>
       p.evaluate(async (c) => {
         const THREE = await import("/vendor/three/build/three.module.js");
@@ -91,39 +104,53 @@ test("atlas: tap skozi kožo izbere del pod njo, drugi tap kožo; veliki pečni 
         kit.camera.updateMatrixWorld();
         const v = new THREE.Vector3(...c).project(kit.camera);
         const r = kit.canvas.getBoundingClientRect();
-        return { x: r.left + ((v.x + 1) / 2) * r.width, y: r.top + ((1 - v.y) / 2) * r.height };
+        return { x: r.left + ((v.x + 1) / 2) * r.width, y: r.top + ((1 - v.y) / 2) * r.height, z: v.z };
       }, c);
-    // Izbira in začetni pogled (Home) premakneta kamero: počakamo do konca preleta.
-    const brezPreleta = () => p.waitForFunction(() => !window.__atlas.kit.leti, null, { timeout: 60000 });
-    const tap = async (c) => {
-      const xy = await naZaslon(c);
-      await p.mouse.click(xy.x, xy.y);
-      await p.waitForTimeout(100);
+    // Tap šteje le, če pritisk in spust nista več kot 600 ms narazen (scena.js); pri obremenjenem CPU ju lahko loči
+    // počasna sličica. Tak zavrnjen klik ne spremeni ničesar, zato ga ponovimo. Ponovimo le, ko je spust že obdelan in
+    // tap ni bil sprejet – tako vsak klik da največ en tap in drugi tap nikoli ne pride namesto prvega.
+    const tap = async (c, kateri) => {
+      await brezPreleta();
+      for (let poskus = 1; ; poskus++) {
+        const xy = await naZaslon(c);
+        assert.ok(xy.z > -1 && xy.z < 1 && xy.x >= 0 && xy.x <= 1280 && xy.y >= 0 && xy.y <= 800, `${kateri}: točka ${c} ni v kadru (${JSON.stringify(xy)})`);
+        const prej = await p.evaluate(() => ({ tapi: window.__tapi, spusti: window.__spusti }));
+        await p.mouse.click(xy.x, xy.y);
+        await p.waitForFunction((n) => window.__spusti > n, prej.spusti, { timeout: 30000 });
+        const tapi = await p.evaluate(() => window.__tapi);
+        if (tapi === prej.tapi + 1) break;
+        assert.equal(tapi, prej.tapi, `${kateri}: en klik je dal ${tapi - prej.tapi} tapov`);
+        assert.ok(poskus < 5, `${kateri}: platno ni sprejelo tapa niti v 5 poskusih`);
+      }
       await brezPreleta();
       return p.evaluate(() => window.__atlas.izbran);
     };
     const pocisti = async () => {
       await p.evaluate(() => window.__atlas.izberi(null));
       await p.locator("canvas").first().focus();
+      const prej = await p.evaluate(() => window.__tipke);
       await p.keyboard.press("Home");
-      await p.waitForTimeout(200);
+      await p.waitForFunction((n) => window.__tipke > n, prej, { timeout: 10000 });
       await brezPreleta();
+      assert.equal(await p.evaluate(() => window.__atlas.izbran), null, "izbira ni počiščena");
     };
     // Prosojni učni cilj (veliki pečni, v privzetem bazenu kviza »Najdi«) ostane izbirljiv: tap na njegovo središče.
     await pocisti();
     const pecnica = vrstice.find((r) => r.ime === "Greater omentum");
-    assert.equal(await tap(pecnica.c), pecnica.id, "veliki pečni ni izbirljiv");
+    const izbranPecnica = await tap(pecnica.c, "veliki pečni");
+    assert.equal(izbranPecnica, pecnica.id, `veliki pečni ni izbirljiv: tap na njegovo središče je izbral ${izbranPecnica}`);
     // Koža: tap na sredino prsnega koša (telo prsnice) izbere kost ali organ, drugi tap kožo, tretji počisti.
+    // preklopiSloj vrne obljubo, ki se izpolni, ko je plast naložena in vidna.
     await p.evaluate(() => window.__atlas.preklopiSloj("koza", true));
-    await p.waitForTimeout(500);
     await pocisti();
     const prsi = [0, 1.3, 0.1];
-    const prvi = await tap(prsi);
+    const prvi = await tap(prsi, "prvi tap");
     assert.ok(prvi, "tap na prsni koš ni izbral ničesar");
     assert.notEqual(sistem.get(prvi), "koza", `izbrana koža (${prvi}) namesto dela pod njo`);
-    const drugi = await tap(prsi);
-    assert.equal(sistem.get(drugi), "koza", `drugi tap ni izbral kože (${drugi})`);
-    assert.equal(await tap(prsi), null, "tretji tap ne počisti izbire");
+    const drugi = await tap(prsi, "drugi tap");
+    assert.equal(sistem.get(drugi), "koza", `drugi tap ni izbral kože (${drugi}), prvi je izbral ${prvi}`);
+    const tretji = await tap(prsi, "tretji tap");
+    assert.equal(tretji, null, `tretji tap ne počisti izbire (izbrano: ${tretji})`);
     assert.deepEqual(napake, []);
   } finally {
     await ctx.close();
