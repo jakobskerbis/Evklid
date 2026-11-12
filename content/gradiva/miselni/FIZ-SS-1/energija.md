@@ -3,7 +3,7 @@ avtor: AI
 stanje: osnutek
 ---
 - Energija in delo
-  - opravljeno delo spremeni energijo: $A = \Delta W$
+  - delo rezultante spremeni $W_k$
   - enota joule, $1\,\mathrm{J} = 1\,\mathrm{N\,m}$
 - Kinetična energija
   - $W_k = \dfrac{mv^2}{2}$
@@ -18,8 +18,10 @@ stanje: osnutek
   - $x$ je raztezek, ne dolžina vzmeti
 - Ohranitev mehanske energije
   - brez trenja: $W_k + W_p + W_{pr}$ je stalna
-  - padajoči storž: vsota ves čas $19{,}6\,\mathrm{J}$
+  - delo teže: $W_k$ pridobi, kolikor $W_p$ izgubi
+  - padajoča veja: vsota ves čas $19{,}6\,\mathrm{J}$
 - Trenje in upor
+  - delo trenja: $A_{tr} = W_2 - W_1 < 0$
   - mehanska energija se pretvarja v notranjo
   - skupna energija se ohranja
 - Hitrost pri padcu

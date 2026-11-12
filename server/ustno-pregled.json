@@ -689,8 +689,9 @@
    "r": "ime ne moti, vprašanje je samostojno"
   },
   "FIZ-SS-1/energija#p0": {
-   "h": "e6bdb017e15b",
-   "o": "D"
+   "h": "eb42c64affe8",
+   "o": "D",
+   "r": "samostojno vprašanje o izbiri ničelne ravni"
   },
   "FIZ-SS-1/gibalna-kolicina#p1": {
    "h": "c5a9adbdc7ab",
@@ -705,22 +706,22 @@
    "o": "D"
   },
   "FIZ-SS-1/newtonovi-zakoni#p0": {
-   "h": "d319164cea20",
-   "o": "I",
-   "r": "sklic na Timovo trditev iz zgodbe lekcije"
+   "h": "8897c2157f56",
+   "o": "D",
+   "r": "samostojno o prvem zakonu; pojem o Timu se sklicuje na zgodbo lekcije",
+   "k": [
+    "Hitrost ostaja skoraj enaka, ker je rezultanta sil skoraj nič",
+    "Za gibanje sila ni potrebna; potrebna je le za spremembo hitrosti"
+   ]
   },
   "FIZ-SS-1/newtonovi-zakoni#p1": {
    "h": "5697f9d6b44c",
    "o": "D"
   },
   "FIZ-SS-1/premo-enakomerno-gibanje#p1": {
-   "h": "ddd47478b6ba",
+   "h": "f23116e6666c",
    "o": "D",
-   "r": "splošni povzetek o vodoravnih odsekih ni vprašan",
-   "k": [
-    "Na $s(t)$ je vodoraven odsek: lega se ne spreminja",
-    "Na $v(t)$ črta za $4\\,\\mathrm{s}$ pade na $0$ in se nato vrne na prejšnjo višino"
-   ]
+   "r": "samostojno vprašanje o grafih s(t) in v(t)"
   },
   "FIZ-SS-1/prosti-pad-in-navpicni-met#p0": {
    "h": "2171db7f3d9f",

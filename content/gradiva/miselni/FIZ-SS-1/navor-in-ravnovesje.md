@@ -19,6 +19,7 @@ stanje: osnutek
 - Vzvod
   - $F_1 r_1 = F_2 r_2$
   - daljša ročica, manjša sila
+  - gugalnica: težji sede bliže osi
 - Težišče
   - teža $F_\mathrm{g} = m\,g$ prijemlje tu
   - enakomerno telo: na sredini

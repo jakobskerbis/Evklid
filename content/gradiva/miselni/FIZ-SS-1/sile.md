@@ -15,11 +15,12 @@ stanje: osnutek
   - sila vrvi vzdolž vrvi, sila vzmeti
   - trenje in upor zraka
 - Sestavljanje
-  - isti smeri seštej, nasprotni odštej
+  - v isti smeri seštej, nasprotni odštej
   - pravokotni: $F_\mathrm{r} = \sqrt{F_1^2 + F_2^2}$
-  - poljuben kot: paralelogram
+  - poljuben kot: paralelogram, večji kot da manjšo rezultanto
 - Ravnovesje
   - rezultanta je nič
+  - skica sil: vse sile na eno telo
   - telefon na mizi: teža in sila mize
 - Razstavljanje
   - $F_x = F\cos\alpha$, $F_y = F\sin\alpha$
