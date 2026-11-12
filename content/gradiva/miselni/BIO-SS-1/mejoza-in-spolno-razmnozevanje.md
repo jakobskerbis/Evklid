@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Diploidno in haploidno
+  - telesna celica $2n = 46$
+  - spolna celica $n = 23$, en kromosom iz para
+- Neodvisna razporeditev
+  - $K = 2^n$ kombinacij
+  - človek: $2^{23}$, več kot 8 milijonov
+- Mejoza I
+  - prekrižanje v profazi I
+  - homologna kromosoma gresta narazen
+  - napaka: šteti kromatide kot kromosome
+- Mejoza II
+  - sestrski kromatidi gresta narazen, kot pri mitozi
+  - štiri različne haploidne celice
+- Primerjava z mitozo
+  - mitoza: dve enaki diploidni celici
+  - mejoza: dve delitvi, DNA podvojena enkrat
+- Oploditev
+  - $n + n = 2n$, nastane zigota
+  - naključna oploditev poveča raznolikost
+- Kloniranje
+  - nespolno, enaka DNA: potaknjenci, enojajčni dvojčki
+  - ovca Dolly s prenosom jedra

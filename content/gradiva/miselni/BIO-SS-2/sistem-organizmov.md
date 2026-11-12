@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Drevo življenja
+  - skupni prednik vseh organizmov
+  - sorodstvo po razcepiščih, ne po videzu
+  - glive so bližje živalim kot rastlinam
+- Tri domene
+  - bakterije: brez jedra, peptidoglikan v steni
+  - arheje: brez jedra, posebni lipidi, skrajna okolja
+  - evkarionti: celično jedro in organeli
+- Skupine evkariontov
+  - protisti, glive, rastline, živali
+  - glive: heterotrofne, stena iz hitina
+- Rastline
+  - mahovi, praprotnice: brez semen, trosi
+  - golosemenke: gola semena (smreka)
+  - kritosemenke: semena v plodu (regrat)
+- Živali
+  - spužve, ožigalkarji, črvi, mehkužci
+  - členonožci: največja skupina, žuželke
+  - strunarji z vretenčarji
+- Dvodelno ime
+  - *Rod vrstni pridevek*, ležeče
+  - napaka: »homo Sapiens«
+- Sistematske kategorije
+  - domena, kraljestvo, deblo, razred, red, družina, rod, vrsta
+  - skupna nižja kategorija pomeni bližje sorodstvo
+- Delež vrst
+  - $d = \dfrac{n}{N} \cdot 100\,\%$
+  - žuželke: $\dfrac{1\,000\,000}{2\,000\,000} \cdot 100\,\% = 50\,\%$

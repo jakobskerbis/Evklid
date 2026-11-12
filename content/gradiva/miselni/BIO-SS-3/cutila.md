@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dražljaj in čutnica
+  - primerni dražljaj: svetloba, pritisk, snov, toplota
+  - čutnica: receptorski potencial, nato akcijski potenciali
+- Moč dražljaja
+  - $f = \dfrac{N}{t}$ v $\mathrm{Hz}$
+  - napaka: impulz ni večji, le pogostejši
+  - prilagajanje: vonj peke kmalu izgine
+- Oko
+  - roženica, šarenica, leča, mrežnica
+  - paličice: mrak, brez barv
+  - čepki: tri vrste, barve, rumena pega
+- Akomodacija
+  - $D = \dfrac{1}{d}$ v dioptrijah
+  - starejšim leča otrdi: očala za branje
+- Uho in ravnotežje
+  - bobnič, koščice, ovalno okence, polž
+  - koščice ojačajo tlak okoli $22$-krat
+  - polkrožni kanali zaznajo vrtenje
+- Zaznava v možganih
+  - pomen določi mesto v skorji
+  - vid v zatilnem, sluh v senčnem režnju
+- Čutila živali
+  - čebela UV, kača IR, netopir ultrazvok
+- Evolucija očesa
+  - pega, čašasto oko, ozka odprtina, leča
+  - vsaka stopnja koristi

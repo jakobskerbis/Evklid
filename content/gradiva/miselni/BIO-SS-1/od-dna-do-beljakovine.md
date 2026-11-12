@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nukleotid
+  - deoksiriboza, fosfat, baza
+  - baze A, T, G, C
+- Dvojna vijačnica
+  - pari A–T in G–C
+  - ena veriga določa drugo
+- RNA
+  - riboza, uracil namesto timina
+  - mRNA, tRNA, rRNA
+- Podvojevanje DNA
+  - helikaza razpre, DNA-polimeraza dopolni
+  - semikonzervativno: ena stara, ena nova veriga
+- Genetski kod
+  - kodon iz treh baz, $4^3 = 64$
+  - AUG start; UAA, UAG, UGA stop
+  - napaka: ena baza za eno aminokislino
+- Prepis: DNA → mRNA
+  - v jedru, RNA-polimeraza
+  - nasproti A pride U
+- Prevod: mRNA → beljakovina
+  - ribosom v citoplazmi bere kodone
+  - antikodon tRNA prinese aminokislino
+- Uravnavanje izražanja
+  - ista DNA, različni geni vklopljeni
+  - primer: laktoza pri *E. coli*

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vrste ogrodja
+  - zunanje: hitin, levitev (členonožci)
+  - hidrostatsko: tekočina pod tlakom (deževnik)
+  - notranje: kosti in hrustanec (vretenčarji)
+- Kost
+  - kolagen za prožnost, kalcijev fosfat za trdnost
+  - osteoblasti gradijo, osteoklasti razgrajujejo
+  - napaka: »kost je mrtva«
+- Hrustanec
+  - brez žil, celi se počasi
+  - sklepne površine, uhelj, medvretenčne ploščice
+- Kite in vezi
+  - kita: mišica s kostjo
+  - vez: kost s kostjo
+- Antagonista
+  - mišica lahko le vleče
+  - biceps upogne, triceps iztegne komolec
+- Zgradba mišice
+  - vlakno, miofibrila, sarkomera
+  - $N = \dfrac{L}{l}$
+- Drsenje niti
+  - $\mathrm{Ca^{2+}}$ na troponin, glavice vlečejo aktin
+  - ATP odpne glavico
+  - niti se ne skrajšajo

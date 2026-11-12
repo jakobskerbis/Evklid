@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Masa iz zraka
+  - van Helmont: zemlja izgubi le $57\,\mathrm{g}$
+  - ogljik lesa iz $\mathrm{CO_2}$
+- Fotosinteza in dihanje
+  - fotosinteza v listih, na svetlobi
+  - dihanje v vseh celicah, dan in noč
+- Mineralne snovi
+  - ioni N, P, K, Mg
+  - aktivni transport porablja ATP
+  - napaka: gnojilo ni hrana
+- Osmoza v korenini
+  - voda v bolj koncentrirano raztopino
+  - turgor, plazmoliza ob soli
+- Transpiracija
+  - izhlapevanje skozi listne reže
+  - vlek, kohezija, adhezija v ksilemu
+  - $J = \dfrac{\Delta m}{t \cdot A}$
+- Listne reže
+  - zapiralki nabrekneta, reža se odpre
+  - suša in tema: reža zaprta
+- Floem
+  - saharoza od vira do porabnika
+  - žive sitaste cevi, obe smeri

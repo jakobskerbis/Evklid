@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prebava
+  - velike molekule razpadejo na gradnike
+  - škrob v glukozo, beljakovine v aminokisline
+  - napaka: beljakovina gre naravnost v mišico
+- Potrebne snovi
+  - energija: ogljikovi hidrati, maščobe, beljakovine
+  - vitamini, minerali, voda, vlaknine
+- Prebavna cev
+  - usta, želodec, tanko in debelo črevo
+  - želodec: kislina in pepsin
+- Prebavne žleze
+  - trebušna slinavka: amilaza, tripsin, lipaza
+  - žolč ni encim, maščobe razbije v kapljice
+- Absorpcija
+  - v tankem črevesu
+  - resice in mikrovili povečajo površino
+- Uravnotežena prehrana
+  - $17\,\mathrm{kJ/g}$ ogljikovi hidrati in beljakovine, $37\,\mathrm{kJ/g}$ maščobe
+  - $\mathrm{ITM} = \dfrac{m}{h^2}$, normalno od $18{,}5$ do $25$
+- Motnje hranjenja
+  - anoreksija, bulimija, kompulzivno prenajedanje
+  - duševne bolezni, potrebna strokovna pomoč
+- Druge živali
+  - spužve: prebava v celicah
+  - trdoživ: votlina z eno odprtino
+  - prežvekovalci: mikroorganizmi razgradijo celulozo

@@ -17,9 +17,91 @@
    "h": "00aa8550333e",
    "o": "D"
   },
+  "BIO-SS-1/biotska-membrana#p0": {
+   "h": "07bbffcfeb2f",
+   "o": "I",
+   "r": "sklic na analogijo s sitom iz lekcije"
+  },
+  "BIO-SS-1/biotska-membrana#p1": {
+   "h": "9aa05ff9aafb",
+   "o": "D"
+  },
+  "BIO-SS-1/celicni-cikel-in-mitoza#p1": {
+   "h": "97c5f644cf4f",
+   "o": "D"
+  },
+  "BIO-SS-1/celicno-dihanje-in-vrenje#p0": {
+   "h": "4206a01a1de1",
+   "o": "D"
+  },
+  "BIO-SS-1/celicno-dihanje-in-vrenje#p1": {
+   "h": "7870253e45e2",
+   "o": "D"
+  },
+  "BIO-SS-1/encimi-in-atp#p0": {
+   "h": "dae6963a1780",
+   "o": "I",
+   "r": "sklic na epruvete iz poskusa v lekciji"
+  },
+  "BIO-SS-1/encimi-in-atp#p1": {
+   "h": "bc85f95920c4",
+   "o": "D"
+  },
+  "BIO-SS-1/fotosinteza#p0": {
+   "h": "9e3f51c156b9",
+   "o": "I",
+   "r": "sklic na premico iz lekcije"
+  },
+  "BIO-SS-1/fotosinteza#p1": {
+   "h": "8d4b3912348a",
+   "o": "D"
+  },
+  "BIO-SS-1/geni-aleli-in-mutacije#p0": {
+   "h": "540b65ce7100",
+   "o": "I",
+   "r": "točkovnik se sklicuje na dvojčka iz lekcije"
+  },
+  "BIO-SS-1/geni-aleli-in-mutacije#p1": {
+   "h": "47ef687bfeb2",
+   "o": "D"
+  },
+  "BIO-SS-1/genska-tehnologija#p0": {
+   "h": "9d90de94e32c",
+   "o": "D"
+  },
+  "BIO-SS-1/genska-tehnologija#p1": {
+   "h": "7f4ac49109cf",
+   "o": "D"
+  },
+  "BIO-SS-1/mejoza-in-spolno-razmnozevanje#p1": {
+   "h": "2942bab8d408",
+   "o": "D"
+  },
+  "BIO-SS-1/mendlovo-dedovanje#p1": {
+   "h": "097c82dc3151",
+   "o": "D"
+  },
+  "BIO-SS-1/prokariontska-in-evkariontska-celica#p0": {
+   "h": "3a12168ec6b5",
+   "o": "D"
+  },
+  "BIO-SS-1/prokariontska-in-evkariontska-celica#p1": {
+   "h": "96da7b29a7b6",
+   "o": "D"
+  },
   "BIO-SS-1/raziskovanje-v-biologiji#p0": {
    "h": "e2e375c92d63",
    "o": "D"
+  },
+  "BIO-SS-1/snovi-v-celici#p1": {
+   "h": "d02fb11e4a6d",
+   "o": "D",
+   "r": "membrana ni vprašana",
+   "k": [
+    "Glave se obrnejo proti vodi, repi stran od nje, drug proti drugemu",
+    "Nastane dvojna plast, v kateri so repi skriti v sredini",
+    "Hidrofilne glave se povezujejo z molekulami vode, hidrofobni repi pa se jim izognejo"
+   ]
   },
   "BIO-SS-1/znacilnosti-zivljenja#p1": {
    "h": "c8afaa5f6c77",
@@ -27,6 +109,66 @@
   },
   "BIO-SS-1/znacilnosti-zivljenja#p2": {
    "h": "143b008dc330",
+   "o": "D"
+  },
+  "BIO-SS-2/bakterije#p0": {
+   "h": "d121caf3517d",
+   "o": "D",
+   "r": "izvor mitohondrijev ni vprašan",
+   "k": [
+    "Na celični membrani",
+    "Encimi, ki so pri nas v notranji membrani mitohondrija, so pri bakteriji vgrajeni v njeno celično membrano"
+   ]
+  },
+  "BIO-SS-2/bakterije#p1": {
+   "h": "a64e8c7f47ec",
+   "o": "D"
+  },
+  "BIO-SS-2/dihanje#p1": {
+   "h": "416531f9bbf7",
+   "o": "D"
+  },
+  "BIO-SS-2/dokazi-evolucije#p0": {
+   "h": "6599c49a292b",
+   "o": "D"
+  },
+  "BIO-SS-2/dokazi-evolucije#p1": {
+   "h": "c413f4d31873",
+   "o": "D"
+  },
+  "BIO-SS-2/glive#p0": {
+   "h": "b5739ec4db0d",
+   "o": "D"
+  },
+  "BIO-SS-2/glive#p1": {
+   "h": "79be8b04a3fa",
+   "o": "D"
+  },
+  "BIO-SS-2/glive#p2": {
+   "h": "3b027ac06a2b",
+   "o": "I",
+   "r": "sklic na Nežo iz lekcije"
+  },
+  "BIO-SS-2/izlocala#p0": {
+   "h": "4c85d17d172f",
+   "o": "D"
+  },
+  "BIO-SS-2/izlocala#p1": {
+   "h": "597067873012",
+   "o": "D",
+   "r": "morska riba ni vprašana",
+   "k": [
+    "Voda z osmozo nenehno vdira v ribo skozi škrge in kožo",
+    "Riba zato ne pije in izloča veliko zelo razredčenega seča, soli pa aktivno sprejema skozi škrge"
+   ]
+  },
+  "BIO-SS-2/kri-in-obtocila#p0": {
+   "h": "312d0274633b",
+   "o": "I",
+   "r": "sklic na shemo in Tilna iz lekcije"
+  },
+  "BIO-SS-2/kri-in-obtocila#p1": {
+   "h": "18c477de46b1",
    "o": "D"
   },
   "BIO-SS-2/mehanizmi-evolucije#p0": {
@@ -46,12 +188,194 @@
    "h": "cfa1c9b51c4d",
    "o": "D"
   },
+  "BIO-SS-2/nastanek-vrst#p0": {
+   "h": "f3ddc007c8c3",
+   "o": "D"
+  },
+  "BIO-SS-2/nastanek-vrst#p1": {
+   "h": "5dbfb2b1d822",
+   "o": "D"
+  },
+  "BIO-SS-2/odzivi-rastlin-na-okolje#p0": {
+   "h": "a949bfcfda7c",
+   "o": "D"
+  },
+  "BIO-SS-2/odzivi-rastlin-na-okolje#p1": {
+   "h": "fdbd4acb6b5c",
+   "o": "D"
+  },
+  "BIO-SS-2/prehrana-in-prebava#p0": {
+   "h": "fe69c1998cc8",
+   "o": "D"
+  },
+  "BIO-SS-2/prehrana-in-prebava#p1": {
+   "h": "286a842b07a4",
+   "o": "D"
+  },
+  "BIO-SS-2/prehrana-in-transport-pri-rastlinah#p0": {
+   "h": "c94c51c2f7ff",
+   "o": "D"
+  },
+  "BIO-SS-2/prehrana-in-transport-pri-rastlinah#p1": {
+   "h": "567daa938143",
+   "o": "D"
+  },
+  "BIO-SS-2/rast-in-razmnozevanje-rastlin#p0": {
+   "h": "d509ddd51247",
+   "o": "D"
+  },
+  "BIO-SS-2/rast-in-razmnozevanje-rastlin#p1": {
+   "h": "6b2cc995447d",
+   "o": "D"
+  },
+  "BIO-SS-2/sistem-organizmov#p0": {
+   "h": "60f9a0d29701",
+   "o": "I",
+   "r": "»na drevesu« se nanaša na drevo iz lekcije"
+  },
+  "BIO-SS-2/sistem-organizmov#p1": {
+   "h": "64a2c43dd6c4",
+   "o": "D"
+  },
+  "BIO-SS-2/zgradba-rastline#p0": {
+   "h": "8d5b0ef675c8",
+   "o": "D"
+  },
+  "BIO-SS-2/zgradba-rastline#p1": {
+   "h": "cf3cb803f58a",
+   "o": "D"
+  },
+  "BIO-SS-2/zivljenjski-problemi-organizmov#p1": {
+   "h": "12909e4f354d",
+   "o": "I",
+   "r": "sklic na zanko iz lekcije"
+  },
+  "BIO-SS-2/zivljenjski-problemi-organizmov#p2": {
+   "h": "843eb8e37182",
+   "o": "I",
+   "r": "ne poda podatkov za račun"
+  },
+  "BIO-SS-3/clovek-in-ekosistemi#p0": {
+   "h": "e01a787076ba",
+   "o": "D"
+  },
+  "BIO-SS-3/clovek-in-ekosistemi#p1": {
+   "h": "1b5394f0dbcf",
+   "o": "D"
+  },
+  "BIO-SS-3/cutila#p0": {
+   "h": "622f3e0a132f",
+   "o": "D"
+  },
+  "BIO-SS-3/cutila#p1": {
+   "h": "41ed0e08cec6",
+   "o": "D"
+  },
+  "BIO-SS-3/ekologija-in-ekosistem#p0": {
+   "h": "90d9e5fd00f7",
+   "o": "D",
+   "r": "biotop ni vprašan",
+   "k": [
+    "Ribe bodo zbolele",
+    "Na filtru živi večina bakterij, ki razgrajujejo strupene odpadke rib, filter pa tudi meša vodo in jo bogati s kisikom",
+    "Brez njega se strupi kopičijo"
+   ]
+  },
+  "BIO-SS-3/ekologija-in-ekosistem#p1": {
+   "h": "f17c30892f24",
+   "o": "I",
+   "r": "sklic na akvarij in neonke iz lekcije"
+  },
+  "BIO-SS-3/ekoloski-dejavniki-in-nisa#p1": {
+   "h": "c88163371717",
+   "o": "D"
+  },
   "BIO-SS-3/hormonski-sistem#p0": {
    "h": "2b7d66fbd686",
    "o": "D"
   },
   "BIO-SS-3/hormonski-sistem#p1": {
    "h": "705e10496d30",
+   "o": "D"
+  },
+  "BIO-SS-3/imunski-sistem#p0": {
+   "h": "799561cacc4f",
+   "o": "D"
+  },
+  "BIO-SS-3/imunski-sistem#p1": {
+   "h": "c0be44fcd947",
+   "o": "D"
+  },
+  "BIO-SS-3/koza-in-krovne-strukture#p0": {
+   "h": "d9cfb5a553be",
+   "o": "D",
+   "r": "bolečina ni vprašana",
+   "k": [
+    "Le v povrhnjico",
+    "Ta nima krvnih žil, zato plitev urez ne krvavi",
+    "Če bi rana krvavela, bi segla do usnjice, kjer so žile"
+   ]
+  },
+  "BIO-SS-3/koza-in-krovne-strukture#p1": {
+   "h": "acc1c2f7f21b",
+   "o": "D"
+  },
+  "BIO-SS-3/odnosi-med-vrstami#p0": {
+   "h": "91be24bd2e63",
+   "o": "D"
+  },
+  "BIO-SS-3/odnosi-med-vrstami#p1": {
+   "h": "57f19d7065b4",
+   "o": "I",
+   "r": "sklic na poskus s pšenico na vati"
+  },
+  "BIO-SS-3/opora-in-gibanje#p0": {
+   "h": "13b60c7fd4a4",
+   "o": "D"
+  },
+  "BIO-SS-3/opora-in-gibanje#p1": {
+   "h": "258cfe94abc1",
+   "o": "D"
+  },
+  "BIO-SS-3/populacije#p0": {
+   "h": "cbf2252c93e1",
+   "o": "D"
+  },
+  "BIO-SS-3/populacije#p1": {
+   "h": "1ee070e09408",
+   "o": "D"
+  },
+  "BIO-SS-3/pretok-energije-in-krozenje-snovi#p1": {
+   "h": "7d93d46f5641",
+   "o": "D"
+  },
+  "BIO-SS-3/razmnozevanje-zivali-in-cloveka#p1": {
+   "h": "e897563873c5",
+   "o": "D",
+   "r": "primerjava z bodibilderjem iz lekcije ni vprašana",
+   "k": [
+    "Hormoni v tabletki zavirajo hipotalamus in hipofizo, tako kot rumeno telo",
+    "FSH in LH ostaneta nizka, folikel ne dozori in ovulacije ni"
+   ]
+  },
+  "BIO-SS-3/razvoj-zivali-in-cloveka#p0": {
+   "h": "eae7895bf8fc",
+   "o": "D"
+  },
+  "BIO-SS-3/razvoj-zivali-in-cloveka#p1": {
+   "h": "60d2d75288b9",
+   "o": "D"
+  },
+  "BIO-SS-3/sukcesija-in-biotska-pestrost#p0": {
+   "h": "3be07526b148",
+   "o": "D"
+  },
+  "BIO-SS-3/zivcevje-in-vedenje#p0": {
+   "h": "08e6d4b9f31b",
+   "o": "D"
+  },
+  "BIO-SS-3/zivcevje-in-vedenje#p1": {
+   "h": "e62317f8250d",
    "o": "D"
   },
   "BIO-SS-3/zivcna-celica-in-sinapsa#p0": {

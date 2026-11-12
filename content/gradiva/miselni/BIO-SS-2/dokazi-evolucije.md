@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Fosili
+  - globlje plasti so starejše
+  - prehodne oblike: arheopteriks, tiktaalik
+  - ogljik-14: $t_{1/2} = 5730$ let
+- Homologija
+  - enaka zgradba, skupni izvor
+  - roka, plavut kita, krilo netopirja
+  - divergenca, zakrneli organi (trtica, slepič)
+- Analogija
+  - ista naloga, različen izvor
+  - konvergenca: delfin in morski pes
+  - napaka: podobna oblika ni sorodnost
+- Embriologija
+  - žrelni loki in rep pri zarodku
+  - zarodek nikoli ne diha s škrgami
+- Biogeografija
+  - vrečarji v Avstraliji
+  - otoške vrste podobne celinskim
+- Molekulski dokazi
+  - isti genetski kod, inzulin iz bakterij
+  - $d = \dfrac{r}{a} \cdot 100\,\%$
+  - svinjski inzulin: $1$ razlika od $51$
+- Evolucija človeka
+  - skupni prednik s šimpanzom, $6$ do $7$ milijonov let
+  - najprej pokončna hoja, nato večji možgani
+- Skupni sklep
+  - neodvisni dokazi kažejo isto drevo sorodnosti
+  - napaka: vrzeli v fosilih niso protidokaz
