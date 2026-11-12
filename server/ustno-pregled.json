@@ -5,16 +5,236 @@
    "h": "bbd4c3e4a43b",
    "o": "D"
   },
+  "BIO-OS-8/bolezni-in-zdravje#p1": {
+   "h": "a9608e777385",
+   "o": "D"
+  },
   "BIO-OS-8/celica-pod-mikroskopom#p1": {
    "h": "a7c9972dd0d8",
    "o": "D"
+  },
+  "BIO-OS-8/celicna-delitev#p0": {
+   "h": "266c8c796b32",
+   "o": "D"
+  },
+  "BIO-OS-8/celicna-delitev#p1": {
+   "h": "f9ee248e546b",
+   "o": "D"
+  },
+  "BIO-OS-8/celicni-organeli#p0": {
+   "h": "abab4bb1d7f6",
+   "o": "I",
+   "r": "ne pove, kaj je trakec (krompir iz poskusa v lekciji)"
+  },
+  "BIO-OS-8/celicni-organeli#p1": {
+   "h": "309f38e9238f",
+   "o": "D"
+  },
+  "BIO-OS-8/cutila#p0": {
+   "h": "e0609ff05ee8",
+   "o": "D",
+   "r": "ime napake ni vprašano",
+   "k": [
+    "Žarki se sekajo šele za mrežnico, ker je mrežnica preblizu leče",
+    "Najbolj moti pri predmetih od blizu, zato Ana slabo bere",
+    "Pomaga zbiralna leča, ki žarke zbere prej"
+   ]
+  },
+  "BIO-OS-8/cutila#p1": {
+   "h": "9d612543a95c",
+   "o": "D"
+  },
+  "BIO-OS-8/dihala#p0": {
+   "h": "094da518514f",
+   "o": "D"
+  },
+  "BIO-OS-8/dihala#p1": {
+   "h": "a71f4d46644a",
+   "o": "D"
+  },
+  "BIO-OS-8/izlocala#p1": {
+   "h": "f018040accb4",
+   "o": "D"
+  },
+  "BIO-OS-8/koza#p0": {
+   "h": "91c408b015d4",
+   "o": "D",
+   "r": "ledvice in koža skupaj niso vprašane",
+   "k": [
+    "Manj ga bo in bo temnejši",
+    "Telo je veliko vode izgubilo z znojem, zato ledvice vodo varčujejo in izločijo bolj zgoščen seč"
+   ]
+  },
+  "BIO-OS-8/koza#p1": {
+   "h": "4babea37e45a",
+   "o": "D"
+  },
+  "BIO-OS-8/koza#p2": {
+   "h": "ce1c62236ac2",
+   "o": "I",
+   "r": "ne poda podatkov za račun"
+  },
+  "BIO-OS-8/kri-in-krvozilje#p1": {
+   "h": "ce43f9e4b0ea",
+   "o": "D"
+  },
+  "BIO-OS-8/od-celice-do-organizma#p0": {
+   "h": "ec3db243fda3",
+   "o": "D",
+   "r": "analogija iz lekcije ni zahtevana",
+   "k": [
+    "Tudi celica uporablja le del navodil iz DNA",
+    "Mišična celica uporablja navodila za krčenje, črevesna celica navodila za mikrovile"
+   ]
+  },
+  "BIO-OS-8/od-celice-do-organizma#p1": {
+   "h": "f41e3e5c75f0",
+   "o": "D"
+  },
+  "BIO-OS-8/okostje-in-misice#p0": {
+   "h": "2b8bca5ced9c",
+   "o": "D",
+   "r": "žganje kosti ni vprašano",
+   "k": [
+    "Upogljiva, skoraj kot guma",
+    "Ostanejo beljakovine, ki dajejo prožnost, trdnost pa je izginila z rudninskimi snovmi"
+   ]
+  },
+  "BIO-OS-8/okostje-in-misice#p1": {
+   "h": "12a0119dfc9b",
+   "o": "D"
+  },
+  "BIO-OS-8/prebavila-in-prehrana#p0": {
+   "h": "ba2d4bef7fa9",
+   "o": "D"
+  },
+  "BIO-OS-8/prebavila-in-prehrana#p1": {
+   "h": "e102ade75152",
+   "o": "D"
+  },
+  "BIO-OS-8/razmnozevanje-cloveka#p1": {
+   "h": "1a2b37cf1376",
+   "o": "D",
+   "r": "znak nosečnosti ni vprašan",
+   "k": [
+    "Ne. Zarodek se ugnezdi v sluznico, ta mora ostati",
+    "Hormoni (predvsem progesteron) ostanejo visoki in sluznica se ne odlušči"
+   ]
+  },
+  "BIO-OS-8/zivcevje-in-hormoni#p0": {
+   "h": "3f6fc3a7e35a",
+   "o": "D"
+  },
+  "BIO-OS-8/zivcevje-in-hormoni#p1": {
+   "h": "151e290bf9cf",
+   "o": "D",
+   "r": "sladkor v seču ni vprašan",
+   "k": [
+    "Prebava bo normalna, ker encimi po cevki še vedno tečejo v črevo",
+    "Sladkor v krvi pa bo previsok: brez inzulina celice ne sprejmejo glukoze iz krvi"
+   ]
   },
   "BIO-OS-9/biologija-in-druzba#p0": {
    "h": "edb2549069e3",
    "o": "D"
   },
+  "BIO-OS-9/biotehnologija#p1": {
+   "h": "58d3b74c6288",
+   "o": "D"
+  },
+  "BIO-OS-9/biotehnologija#p2": {
+   "h": "82e416971136",
+   "o": "I",
+   "r": "sklic na poskus s skledami iz lekcije"
+  },
+  "BIO-OS-9/biotska-pestrost#p0": {
+   "h": "8f63ac10cd5c",
+   "o": "D"
+  },
+  "BIO-OS-9/biotska-pestrost#p1": {
+   "h": "de3385fb07d0",
+   "o": "I",
+   "r": "sklic na metodo s kvadrati iz lekcije"
+  },
+  "BIO-OS-9/clovek-in-okolje#p0": {
+   "h": "8c72772a77ad",
+   "o": "D"
+  },
+  "BIO-OS-9/clovek-in-okolje#p1": {
+   "h": "b951f8f83c61",
+   "o": "D"
+  },
+  "BIO-OS-9/dedovanje-lastnosti#p0": {
+   "h": "05ff7e12e72f",
+   "o": "D"
+  },
+  "BIO-OS-9/dedovanje-lastnosti#p1": {
+   "h": "31e3db7694d7",
+   "o": "D"
+  },
+  "BIO-OS-9/dedovanje-lastnosti#p2": {
+   "h": "e20b2369ae28",
+   "o": "I",
+   "r": "ne pove križanja iz naloge"
+  },
+  "BIO-OS-9/dedovanje-pri-cloveku#p0": {
+   "h": "825f2596e5d4",
+   "o": "D"
+  },
+  "BIO-OS-9/ekosistemi-in-biomi#p0": {
+   "h": "d3c85e1e6647",
+   "o": "D",
+   "r": "dolžina verig ni vprašana",
+   "k": [
+    "Na vsako višjo raven preide le okoli desetina energije",
+    "Lisice imajo na voljo le desetino energije zajcev, zato jih lahko preživi veliko manj",
+    "Plenilec nad lisico bi dobil spet desetino, premalo za stalno populacijo"
+   ]
+  },
+  "BIO-OS-9/ekosistemi-in-biomi#p1": {
+   "h": "2549cce73d5d",
+   "o": "D"
+  },
+  "BIO-OS-9/kromosomi-in-geni#p0": {
+   "h": "c28b10b3ca39",
+   "o": "D"
+  },
+  "BIO-OS-9/kromosomi-in-geni#p1": {
+   "h": "e5dd2619e99a",
+   "o": "D"
+  },
   "BIO-OS-9/nacrtovanje-poskusa#p0": {
    "h": "00aa8550333e",
+   "o": "D"
+  },
+  "BIO-OS-9/naravni-izbor#p0": {
+   "h": "258059b99edd",
+   "o": "I",
+   "r": "ne pove, za katere ptice in katero sušo gre"
+  },
+  "BIO-OS-9/naravni-izbor#p1": {
+   "h": "75d70b8b0acc",
+   "o": "D"
+  },
+  "BIO-OS-9/sistematika#p0": {
+   "h": "206397dcf54a",
+   "o": "I",
+   "r": "ne poda latinskih imen leva in tigra"
+  },
+  "BIO-OS-9/sistematika#p1": {
+   "h": "aec2023a0987",
+   "o": "D"
+  },
+  "BIO-OS-9/snovi-v-zivih-bitjih#p0": {
+   "h": "6cbe9a9259be",
+   "o": "D"
+  },
+  "BIO-OS-9/zgodovina-zivljenja#p0": {
+   "h": "eb02bbe6a819",
+   "o": "D"
+  },
+  "BIO-OS-9/zgodovina-zivljenja#p1": {
+   "h": "4421cc5bd242",
    "o": "D"
   },
   "BIO-SS-1/biotska-membrana#p0": {

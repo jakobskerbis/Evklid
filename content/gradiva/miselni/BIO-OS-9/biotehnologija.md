@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Klasična biotehnologija
+  - kvasovke: kruh, vino
+  - mlečnokislinske bakterije: jogurt, kislo zelje
+  - plesen daje penicilin
+- Alkoholno vrenje
+  - glukoza → alkohol + ogljikov dioksid
+  - brez kisika, plin dvigne testo
+  - toplota pomaga do okoli $35\,\mathrm{°C}$, vročina kvasovke ubije
+- Hitro množenje
+  - $N = N_0 \cdot 2^n$
+  - $n = \dfrac{t}{t_\mathrm{d}}$
+  - napaka: delitve sešteješ namesto zmnožiš
+- Gensko spremenjeni organizmi
+  - vstavljen gen druge vrste
+  - bakterije s plazmidom izdelujejo insulin
+  - križanje le med sorodnimi, počasi
+- Kloniranje
+  - enak dedni zapis kot en starš
+  - pritlike jagod, potaknjenci, ovca Dolly
+  - fenotip klona odvisen tudi od okolja
+- Izvorne celice
+  - še niso specializirane
+  - zarodek: vse celice; kostni mozeg: krvne
+- Etična vprašanja
+  - širjenje genov v naravo
+  - Dolly: $1$ uspeh od $277$ poskusov
+  - uničenje zarodkov

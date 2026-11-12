@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Živčna celica
+  - dendriti sprejemajo, akson odda signal
+  - mielinska ovojnica pospeši signal
+  - sinapsa: prenašalec sproži signal v naslednji celici
+- Osrednje živčevje
+  - možgani in hrbtenjača
+  - veliki, mali možgani, možgansko deblo
+- Obkrajno živčevje
+  - čutilni in gibalni živci
+  - živec je snop aksonov
+- Refleks
+  - čutilna celica → hrbtenjača → mišica
+  - napaka: možgani ne ukažejo umika roke
+- Čas signala
+  - $t = \dfrac{s}{v}$
+  - do okoli $100\,\mathrm{m/s}$
+  - zavesten odziv okoli $0{,}2\,\mathrm{s}$
+- Hormoni
+  - žleze z notranjim izločanjem, izločajo v kri
+  - delujejo počasneje in dlje
+  - inzulin zniža sladkor v krvi
+- Hipofiza
+  - glavna žleza, nadzira druge žleze
+  - njo nadzira hipotalamus

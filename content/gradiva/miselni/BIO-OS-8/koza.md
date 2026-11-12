@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tri plasti
+  - povrhnjica: roževinasta plast, melanin, brez žil
+  - usnjica: žile, znojnice, lojnice, čutnice
+  - podkožje: maščoba izolira in blaži udarce
+- Koža in ledvice
+  - obe izločata vodo, soli, sečnino
+  - znoj predvsem hladi, seč čisti kri
+- Uravnavanje temperature
+  - hipotalamus kot termostat, okoli $37\,^\circ\mathrm{C}$
+  - vroče: žile se razširijo, znoj izhlapi
+  - mraz: žile se zožijo, kurja polt, drgetanje
+- Čutnice v koži
+  - dotik, pritisk, toplota, mraz, bolečina
+  - najgostejše na prstih, redke na hrbtu
+- UV-sevanje
+  - ga ne vidimo in ne čutimo
+  - raste okoli $10\,\%$ na $1000\,\mathrm{m}$, sneg odbija
+  - napaka: »mraz ali oblaki, krema ni potrebna«
+- Zaščitni faktor
+  - $\mathrm{ZF} = \dfrac{t_z}{t_0}$
+  - velja le ob dovolj kreme, obnavljaj jo
+- Opekline
+  - 1. stopnja: rdečina, povrhnjica
+  - 2. stopnja: mehurji, usnjica
+  - 3. stopnja: vse plasti, malo bolečine

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- En gen ali več
+  - en gen: barvna slepota, krvne skupine
+  - več genov: višina, glasbena nadarjenost
+  - napaka: »gen za glasbo«
+- Spolni kromosomi
+  - ženska $XX$, moški $XY$
+  - sin dobi $X$ od matere
+- Barvna slepota in hemofilija
+  - recesivna alela na kromosomu $X$
+  - moški: en alel zadošča
+  - prenašalka $X^B X^b$ vidi normalno
+- Mati prenašalka
+  - polovica sinov ima lastnost
+  - vseh otrok le četrtina
+- Rodovnik
+  - kvadrat moški, krog ženska
+  - poln znak lastnost, pika prenašalka
+  - recesivna lastnost preskoči rod
+- Kromosomska analiza
+  - celice gojimo, obarvamo, fotografiramo
+  - kariogram: pari po velikosti, $46$
+- Downov sindrom
+  - trisomija 21, $47$ kromosomov
+  - napaka v mejozi: $24 + 23 = 47$

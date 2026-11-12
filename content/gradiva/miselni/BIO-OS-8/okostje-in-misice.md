@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Naloge okostja
+  - opora, zaščita, gibanje
+  - krvne celice v rdečem kostnem mozgu
+- Živa kost
+  - pokostnica z žilami, kostne celice
+  - rudninske snovi trdnost, beljakovine prožnost
+  - napaka: »kosti so mrtve kot les«
+- Sklepi
+  - glavica, ponvica, hrustanec, sklepna tekočina, vezi
+  - kroglasti (rama) in tečajasti (komolec)
+- Hrbtenica
+  - $7 + 12 + 5 = 24$ gibljivih vretenc
+  - oblika dvojnega S blaži sunke
+  - dvigovanje iz počepa, raven hrbet
+- Mišično tkivo
+  - skeletno: zavestno, se utrudi
+  - gladko: nehote, stene črevesja in žil
+  - srčno: nehote, se ne utrudi
+- Antagonistični par
+  - mišica samo vleče
+  - biceps upogne, triceps iztegne komolec
+- Pomen gibanja
+  - obremenitev okrepi kosti in mišice
+  - brez gibanja slabša drža, šibkejše kosti in mišice
