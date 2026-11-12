@@ -41,7 +41,7 @@ EOF
 rm -rf "$CILJ/koda-nova"; cp -r "$CILJ/koda" "$CILJ/koda-nova"
 echo "različica kode: $RAZL (veja $(git -C "$ATLAS" rev-parse --abbrev-ref HEAD 2>/dev/null))"
 for f in "$CILJ"/koda/*.py; do  # zadnji commit vsake datoteke: takoj se vidi, če je kakšna stara
-  b=$(basename "$f"); [ "$b" = rtx.py ] && r=rtx/$b || r=$b
+  b=$(basename "$f"); [ "$b" = rtx.py ] && r=rtx/$b || r=$b; [ -f "$ATLAS/v2/$b" ] && r=v2/$b
   echo "  $b: $(git -C "$ATLAS" log -1 --format='%h %ci' -- "$r" 2>/dev/null)"
 done
 if [ $# -gt 0 ]; then
