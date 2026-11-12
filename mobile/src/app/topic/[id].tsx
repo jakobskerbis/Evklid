@@ -389,6 +389,8 @@ function OrderItem({ c, interactive, onAnswer }: { c: OrderCheck; interactive: b
               <View style={{ flex: 1 }} pointerEvents="none">
                 <RichText text={c.items[k]} size={16} noFx />
               </View>
+              {/* Ne samo barva: kljukica ali križec ob vsakem elementu po preverjanju. */}
+              {mark ? <Icon name={mark === "ok" ? { ios: "checkmark", android: "check" } : { ios: "xmark", android: "close" }} size={18} color={mark === "ok" ? th.ok : th.danger} /> : null}
             </Pressable>
             {arrow(i, -1)}
             {arrow(i, 1)}

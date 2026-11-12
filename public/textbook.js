@@ -729,11 +729,12 @@ async function renderLesson(topicId) {
         why.hidden = false;
         why.className = `tb-why fb ${ok ? "ok" : "bad"}`;
         const wrongWhy = c.optionWhy?.[o];
-        why.innerHTML = ok
+        // V <div>: .fb je flex, besedilo in odstavki razlage bi sicer stali v stolpcih.
+        why.innerHTML = `<div>${ok
           ? `Pravilno! ${c.why ? R(c.why) : ""}`
           : wrongWhy
           ? `Ni čisto tako. ${R(wrongWhy)} Poskusi še enkrat.`
-          : "Ni čisto tako. Premisli še enkrat ali preberi razlago zgoraj.";
+          : "Ni čisto tako. Premisli še enkrat ali preberi razlago zgoraj."}</div>`;
         prilagodiSirino(why);
         if (ok) el.querySelectorAll(".tb-opt").forEach((x) => (x.disabled = true));
       }),

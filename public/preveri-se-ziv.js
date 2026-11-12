@@ -26,7 +26,11 @@ const CSS = `
 .tb-order-mv svg { width: 20px; height: 20px; }
 .tb-order-up { display: inline-flex; transform: rotate(180deg); }
 .tb-order-item.ok .tb-order-pick { border-color: var(--ok) !important; background: color-mix(in srgb, var(--ok) 15%, transparent) !important; }
-.tb-order-item.bad .tb-order-pick { border-color: var(--danger) !important; }
+.tb-order-item.bad .tb-order-pick { border-color: var(--danger) !important; border-style: dashed !important; }
+.tb-order-mark { flex: none; margin-inline-start: auto; display: inline-flex; }
+.tb-order-mark svg { width: 20px; height: 20px; }
+.tb-order-item.ok .tb-order-mark { color: var(--ok); }
+.tb-order-item.bad .tb-order-mark { color: var(--danger); }
 .tb-order-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .tb-order-actions button { min-height: 44px; }
 .tb-order-mv:disabled, .tb-order-actions button:disabled { opacity: 0.4; cursor: default; }
@@ -75,7 +79,8 @@ function feedback(el, h, ok, html) {
   const why = el.querySelector(".tb-why");
   why.hidden = false;
   why.className = `tb-why fb ${ok ? "ok" : "bad"}`;
-  why.innerHTML = html;
+  // En otrok: .fb je flex, zato bi besedilo in odstavki razlage sicer stali v stolpcih.
+  why.innerHTML = `<div>${html}</div>`;
   h.fit?.(why);
 }
 const tryAgain = (R, wrongWhy) => (wrongWhy ? `Ni čisto tako. ${R(wrongWhy)} Poskusi še enkrat.` : "Ni čisto tako. Premisli še enkrat ali preberi razlago zgoraj.");
@@ -121,7 +126,9 @@ function orderItem(el, body, c, qi, h) {
     list.innerHTML = order
       .map(
         (k, i) => `<li class="tb-order-item${i < placed ? " placed" : ""}${marks ? (marks[i] ? " ok" : " bad") : ""}">
-          <button type="button" class="tb-order-pick" data-i="${i}"${done ? " disabled" : ""}><span class="tb-order-n" aria-hidden="true">${i < placed ? i + 1 : ""}</span><span class="tb-order-txt">${R(c.items[k])}</span></button>
+          <button type="button" class="tb-order-pick" data-i="${i}"${done ? " disabled" : ""}><span class="tb-order-n" aria-hidden="true">${i < placed ? i + 1 : ""}</span><span class="tb-order-txt">${R(c.items[k])}</span>${
+            marks ? `<span class="tb-order-mark">${ic(marks[i] ? "check" : "x")}</span>` : ""
+          }</button>
           <button type="button" class="tb-order-mv" data-i="${i}" data-d="-1" aria-label="${esc(t("tb.order.up", { pos: i + 1 }))}"${done || i === 0 ? " disabled" : ""}><span class="tb-order-up">${ic("chevron-down")}</span></button>
           <button type="button" class="tb-order-mv" data-i="${i}" data-d="1" aria-label="${esc(t("tb.order.down", { pos: i + 1 }))}"${done || i === n - 1 ? " disabled" : ""}>${ic("chevron-down")}</button>
         </li>`,
@@ -165,7 +172,7 @@ function orderItem(el, body, c, qi, h) {
       resetBtn.disabled = true;
     }
     draw();
-    feedback(body, h, ok, ok ? `Pravilno! ${c.why ? R(c.why) : ""}` : `Ni čisto tako. ${esc(t("tb.order.wrong", { ok: orderHits(order), all: n }))}`);
+    feedback(body, h, ok, ok ? `Pravilno! ${c.why ? R(c.why) : ""}` : `${esc(t("mob.notQuite"))} ${esc(t("tb.order.wrong", { ok: orderHits(order), all: n }))}`);
   });
   draw();
 }
