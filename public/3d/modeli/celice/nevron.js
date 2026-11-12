@@ -220,7 +220,7 @@ export function zgradi(THREE, ctx = {}) {
     return RS * (1 + b + 0.045 * fbm(d.x * 2.2 + 1, d.y * 2.2, d.z * 2.2));
   };
   const soma = lupina(oblS, hi ? 120 : 56, hi ? 72 : 38);
-  const somaMat = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.14, rf: 90, k: 0.9, rob: B.membranaRob, rk: 1.35 });
+  const somaMat = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.24, rf: 90, k: 0.9, rob: B.membranaRob, rk: 1.7, difuzno: 0.2 });
   const somaOut = new THREE.Mesh(soma.odprta, somaMat);
   const citMat = notranja();
   const MS = 0.93; // debelina membrane v prerezu (povečana): ≈ 7 % polmera some
@@ -408,7 +408,7 @@ export function zgradi(THREE, ctx = {}) {
   dSmeri.forEach((u, i) => veja(S.clone().addScaledVector(u, RS * 1.45), u, 0.15 + (i % 3) * 0.02, 0.034, 0));
   // začetki dendritov, ki segajo v notranjost some, odrežemo (sicer bi skozi steklo videli njihove konce)
   const dendGeo = odrezi(zdruzi(dGeo), (p) => { const d = p.clone().sub(S); return d.length() < oblS(d.normalize()) * MS; });
-  const dendriti = new THREE.Mesh(dendGeo, steklo(0.22));
+  const dendriti = new THREE.Mesh(dendGeo, steklo(0.28));
   const dendIn = new THREE.Mesh(dendGeo, notranja());
   // dendritni trni: drobne gobaste izbokline, na katerih so sinapse
   const trnGeo = new THREE.IcosahedronGeometry(0.0042, 0);

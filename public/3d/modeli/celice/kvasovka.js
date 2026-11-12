@@ -217,7 +217,9 @@ export function zgradi(THREE, ctx = {}) {
 
   // ---------- matična celica: stena, membrana, citoplazma ----------
   const P0 = profMati(0);
-  const stc = new THREE.Color(), st1 = new THREE.Color(B.stena).lerp(new THREE.Color(B.stenaTemna), 0.3), st2 = new THREE.Color(B.stenaTemna).multiplyScalar(0.85);
+  // gliva: stena iz glukanov in hitina je bež (ne zelena kot pri rastlinah, ki fotosintetizirajo)
+  const STENA = "#d2ad6e", STENA_T = "#8f6a36";
+  const stc = new THREE.Color(), st1 = new THREE.Color(STENA), st2 = new THREE.Color(STENA_T);
   const barvaSt = (v) => stc.copy(st1).lerp(st2, 0.5 + 0.5 * fbm(v.x * 14, v.y * 14, v.z * 14));
   const stenaMat = mat(0xffffff, { vertexColors: true, roughness: 0.42, clearcoat: 0.7, sheen: 0.5 });
   const rezMat = mat(0xffffff, { vertexColors: true, roughness: 0.55, clearcoat: 0.45, side: THREE.DoubleSide });
@@ -226,7 +228,7 @@ export function zgradi(THREE, ctx = {}) {
   memMat.userData.rez = true;
   // prerez po plasteh: stena (zunaj manoproteini, znotraj glukani s hitinom) in membrana (lipidni dvosloj)
   const plasti = (PP, meje, barve, rI = n1) => zdruzi(meje.slice(0, -1).map((a, i) => vrtRez(PP, nK, rI, a, meje[i + 1], sumF)), barve);
-  const stenaRez = (PP, k = 1, rI = n1) => plasti(PP, [0, 0.009 * k, 0.0115 * k, (ZS - 0.0015) * k, ZS * k], [0x3f6b14, 0x2c4d0c, 0x8cc63f, 0x4f7f1c], rI);
+  const stenaRez = (PP, k = 1, rI = n1) => plasti(PP, [0, 0.009 * k, 0.0115 * k, (ZS - 0.0015) * k, ZS * k], [0x6e4a20, 0x4f3414, 0xdcbb7c, 0x8c6430], rI);
   const memRez = (PP, k = 1, rI = n1) => plasti(PP, [ZS * k, (ZS + 0.002) * k, (ZM - 0.002) * k, ZM * k], [0x6b3fc8, new THREE.Color(B.dvosloj).getHex(), 0x6b3fc8], rI);
   const citMat = mat(0x3d3180, { roughness: 0.62, clearcoat: 0.25, sheen: 0.35, sheenColor: new THREE.Color(0x8d7ee0), side: THREE.BackSide });
   const mS = vrtenina(P0, nK, rezM, 0, sumF);
@@ -242,18 +244,18 @@ export function zgradi(THREE, ctx = {}) {
   const B1 = profBrst(1, RNK);
   const bStenaMat = mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.55, sheen: 0.5 });
   const bS = vrtenina(B1.P, nK, n1, 0, sumF);
-  pobarvaj(bS.g, (v) => barvaSt(v).lerp(new THREE.Color(0xc6ec8a), 0.4)); // mlada stena je svetlejša
+  pobarvaj(bS.g, (v) => barvaSt(v).lerp(new THREE.Color(0xf2dfae), 0.4)); // mlada stena je svetlejša
   const bStena = new THREE.Mesh(bS.g, bStenaMat);
   const bRez = new THREE.Mesh(new THREE.BufferGeometry(), rezMat);
   const bMem = new THREE.Mesh(new THREE.BufferGeometry(), memMat);
   const bC = vrtenina(B1.P, nK, n1, ZC, sumF);
   const bCit = new THREE.Mesh(bC.g, citMat);
-  const vrat = new THREE.Mesh(new THREE.TorusGeometry(RNK, 0.011, q(8), q(40)).rotateY(Math.PI / 2), mat(0xe3f0b0, { roughness: 0.4, clearcoat: 0.7 }));
+  const vrat = new THREE.Mesh(new THREE.TorusGeometry(RNK, 0.011, q(8), q(40)).rotateY(Math.PI / 2), mat(0xf4e8c8, { roughness: 0.4, clearcoat: 0.7 }));
   group.add(bStena, bRez, bMem, bCit, vrat);
 
   // ---------- brazgotine po prejšnjih brstih ----------
   const brz = [[2.3, 1.85], [2.75, 2.85], [1.25, 2.35]];
-  const brzM = new THREE.InstancedMesh(new THREE.TorusGeometry(0.075, 0.013, q(8), q(30)).scale(1, 1, 0.5), mat(0xe3f0b0, { roughness: 0.4, clearcoat: 0.7 }), brz.length);
+  const brzM = new THREE.InstancedMesh(new THREE.TorusGeometry(0.075, 0.013, q(8), q(30)).scale(1, 1, 0.5), mat(0xf4e8c8, { roughness: 0.4, clearcoat: 0.7 }), brz.length);
   const brzT = [];
   brz.forEach(([u, v], i) => {
     const p = v3(M.x + AXm * Math.cos(u), Rm * Math.sin(u) * Math.cos(v), Rm * Math.sin(u) * Math.sin(v));
@@ -440,7 +442,7 @@ export function zgradi(THREE, ctx = {}) {
 
   // ---------- manoproteini: gost puh vlaken na zunanji strani stene ----------
   const fibGeo = new THREE.CylinderGeometry(0.0008, 0.0013, 1, hi ? 4 : 3, 1, true).translate(0, 0.5, 0);
-  const fibMat = mat(0x9fcf5c, { roughness: 0.4, clearcoat: 0.6, emissive: new THREE.Color(0x10200a) });
+  const fibMat = mat(0xd9b57c, { roughness: 0.4, clearcoat: 0.6, emissive: new THREE.Color(0x201408) });
   function puh(tt, m0) {
     const im = new THREE.InstancedMesh(fibGeo, fibMat, tt.length);
     tt.forEach((t, i) => {
@@ -467,15 +469,15 @@ export function zgradi(THREE, ctx = {}) {
   brstG.add(krpice);
 
   // ---------- deli ----------
-  del("celicna-stena", "Celična stena", "Čvrsta plast iz glukanov in nekaj hitina; na zunanji strani (v prerezu temnejši pas) so manoproteini, ki štrlijo kot puh. Celico ščiti in ji daje obliko. Debelina je povečana.", B.stena, [mStena, mRez, bRez, vrat, manM, manB],
+  del("celicna-stena", "Celična stena", "Čvrsta plast iz glukanov in nekaj hitina; na zunanji strani (v prerezu temnejši pas) so manoproteini, ki štrlijo kot puh. Celico ščiti in ji daje obliko. Debelina je povečana.", STENA, [mStena, mRez, bRez, vrat, manM, manB],
     vrtTocka(P0, n1 + 6, Math.PI * 0.62, 0, sumF, v3()).toArray());
   del("membrana", "Celična membrana", "Dvosloj fosfolipidov tik pod steno, ki uravnava prehod snovi v celico in iz nje; tanjši je od stene. Debelina je povečana.", B.dvosloj, [mMem, bMem], vrtTocka(P0, Math.round(n1 * 0.55), 0.03, (ZS + ZM) / 2, sumF, v3()).toArray());
   del("citoplazma", "Citoplazma", "Tekočina v celici z ribosomi in organeli; v njej poteka tudi alkoholno vrenje, pri katerem iz sladkorja nastaneta alkohol in ogljikov dioksid.", "#5b4bb0", [mCit, bCit],
     vrtTocka(P0, Math.round(n1 * 0.6), Math.PI * 1.3, ZC + 0.003, sumF, v3()).toArray());
-  const brstDel = { id: "brst", ime: "Brst (hčerinska celica)", opis: "Izboklina, ki zraste iz matične celice; ko je dovolj velika in dobi svoje jedro, se odcepi kot nova kvasovka.", barva: "#c6ec8a", meshes: [bStena], tocka: [0, 0, 0] };
+  const brstDel = { id: "brst", ime: "Brst (hčerinska celica)", opis: "Izboklina, ki zraste iz matične celice; ko je dovolj velika in dobi svoje jedro, se odcepi kot nova kvasovka.", barva: "#ecd6a0", meshes: [bStena], tocka: [0, 0, 0] };
   bStena.userData.del = "brst";
   deli.push(brstDel);
-  del("brazgotine", "Brazgotine po brstenju", "Obročki iz hitina na steni matične celice: vsak ostane po enem odcepljenem brstu, zato po njih preštejemo, kolikokrat je celica brstela.", "#e3f0b0", [brzM], brzT[0].toArray());
+  del("brazgotine", "Brazgotine po brstenju", "Obročki iz hitina na steni matične celice: vsak ostane po enem odcepljenem brstu, zato po njih preštejemo, kolikokrat je celica brstela.", "#f4e8c8", [brzM], brzT[0].toArray());
   const jedroDel = { id: "jedro", ime: "Jedro", opis: "Hrani DNK. Pri brstenju se podaljša skozi vrat brsta in razdeli; eno jedro ostane v matični celici, drugo preide v brst.", barva: B.jedro, meshes: [jM, jH, most], tocka: [0, 0, 0] };
   for (const m of jedroDel.meshes) m.userData.del = "jedro";
   deli.push(jedroDel);
@@ -595,7 +597,7 @@ export function zgradi(THREE, ctx = {}) {
     aktin: { tex: null },
   });
   // stikalo »Barve kot v učbeniku« (po poliranju, da shrani končne barve)
-  nadzor.push(V.barveUcbenika(vsiDeli, { brst: "#7cb84a", brazgotine: "#c9b27a", er: "#4f95e8", "lipidne-kapljice": "#f5c842", peroksisomi: "#bcd83a", aktin: "#d94f4f" }));
+  nadzor.push(V.barveUcbenika(vsiDeli, { "celicna-stena": "#c99a55", brst: "#e3c58a", brazgotine: "#8a6430", er: "#4f95e8", "lipidne-kapljice": "#f5c842", peroksisomi: "#bcd83a", aktin: "#d94f4f" }));
 
   return {
     group,
