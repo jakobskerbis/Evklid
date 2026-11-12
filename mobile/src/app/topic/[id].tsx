@@ -317,6 +317,9 @@ function OrderItem({ c, interactive, onAnswer }: { c: OrderCheck; interactive: b
   const [order, setOrder] = useState<number[]>(() => c.shown.slice());
   const [placed, setPlaced] = useState(0);
   const [checked, setChecked] = useState<boolean | null>(null);
+  // »Preveri« pred prvim dotikom ni odgovor (premešani red ni nikoli pravilen): samo namig.
+  const [touched, setTouched] = useState(false);
+  const [hint, setHint] = useState(false);
   const done = checked === true;
   if (!interactive)
     return (
@@ -339,13 +342,16 @@ function OrderItem({ c, interactive, onAnswer }: { c: OrderCheck; interactive: b
     setOrder(r.order);
     setPlaced(r.placed);
     setChecked(null);
+    setTouched(true);
   };
   const move = (i: number, d: number) => {
     tap();
     setOrder(moveItem(order, i, d));
     setChecked(null);
+    setTouched(true);
   };
   const check = () => {
+    if (!touched) return setHint(true);
     const ok = orderOk(c, order);
     onAnswer(order);
     setChecked(ok);
@@ -366,7 +372,7 @@ function OrderItem({ c, interactive, onAnswer }: { c: OrderCheck; interactive: b
   return (
     <View style={{ gap: 8, paddingVertical: 6 }}>
       <RichText text={c.q} size={16} />
-      <Text style={{ color: th.muted }}>{t("tb.order.hint")}</Text>
+      <Text style={{ color: hint && !touched ? th.text : th.muted, fontWeight: hint && !touched ? "700" : "400" }}>{t("tb.order.hint")}</Text>
       {order.map((k, i) => {
         const mark = checked === null ? null : k === i ? "ok" : "bad";
         return (

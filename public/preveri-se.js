@@ -28,7 +28,10 @@ function token(s) {
   const value = Number(`${m[1]}${digits}`) * 10 ** exp;
   if (!Number.isFinite(value)) return null;
   const decimals = (/[.,](\d*)/.exec(m[2]) || [, ""])[1].length;
-  return { value, decimals, exp, rest: t.slice(m[0].length).trim(), text: m[0].trim() };
+  const rest = t.slice(m[0].length).trim();
+  // Za številom še števka, ulomek, potenca ali množenje (»2 5«, »1/2«, »10^-3«, »2·10³«): to ni eno število.
+  if (/^[\d.,/^:·⋅*×⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/.test(rest)) return null;
+  return { value, decimals, exp, rest, text: m[0].trim(), mant: `${m[1]}${m[2]}`, hasExp: m[3] != null };
 }
 
 /** Število iz vnosa učenca (vejica ali pika, različni minusi, enota za številom se ne upošteva); sicer null. */
@@ -51,7 +54,11 @@ export function parseAnswerLine(s) {
     if (!tt || tt.value < 0 || tt.rest) return null;
     tol = tt.value;
   } else tol = 0.5 * 10 ** (tk.exp - tk.decimals);
-  return { answer: tk.text.replace(/^\+/, "").replace(/-/g, "−").replace(".", ","), value: tk.value, unit: tk.rest, tol };
+  // S potenco kot formula ($1{,}5\cdot 10^{-3}$), da se v rešitvi, tisku in aplikaciji izpiše kot potenca.
+  const answer = tk.hasExp
+    ? `$${tk.mant.replace(/^\+/, "").replace(" ", "\\,").replace(/[.,]/, "{,}")}\\cdot 10^{${tk.exp}}$`
+    : tk.text.replace(/^\+/, "").replace(/-/g, "−").replace(".", ",");
+  return { answer, value: tk.value, unit: tk.rest, tol };
 }
 
 const near = (x, v, tol) => Math.abs(x - v) <= tol * (1 + 1e-9) + 1e-12 * Math.max(1, Math.abs(v));

@@ -65,6 +65,8 @@ test("number answers: comma or point, minus variants, unit ignored, default tole
   assert.equal(parseNum("pH = 2,30"), 2.3);
   assert.equal(parseNum(""), null);
   assert.equal(parseNum("abc"), null);
+  // Več števil ali nedokončan zapis ni odgovor (prej »1/2« → 1, »2 5« → 2, »10^-3« → 10).
+  for (const x of ["1/2", "2 5", "2,5,3", "10^-3", "2·10³"]) assert.equal(parseNum(x), null, x);
 
   const a = parseAnswerLine("2,30");
   assert.deepEqual([a.answer, a.value, a.unit], ["2,30", 2.3, ""]);
@@ -72,6 +74,7 @@ test("number answers: comma or point, minus variants, unit ignored, default tole
   const b = parseAnswerLine("2,5 m/s | 0,1");
   assert.deepEqual([b.answer, b.value, b.unit, b.tol], ["2,5", 2.5, "m/s", 0.1]);
   assert.equal(parseAnswerLine("-3 | 0").answer, "−3");
+  assert.equal(parseAnswerLine("1,5·10^-3 mol/L").answer, "$1{,}5\\cdot 10^{-3}$", "potenca kot formula");
   assert.equal(parseAnswerLine("$2{,}5$"), null, "vrednost brez $");
   assert.equal(parseAnswerLine("dva"), null);
   assert.equal(parseAnswerLine("2 | -1"), null, "negativna toleranca");

@@ -60,7 +60,7 @@ export function oziviPreveri(root, h) {
       body.innerHTML =
         c.type === "stevilo"
           ? `<p class="tb-vnos-prazno">${esc(t("tb.num.label"))}: ________${unitOf(c)}</p>
-            <details><summary>${esc(t("task.solution"))}</summary>${esc(c.answer)}${unitOf(c)}${c.why ? ` ${R(c.why)}` : ""}</details>`
+            <details><summary>${esc(t("task.solution"))}</summary>${inline(c.answer)}${unitOf(c)}${c.why ? ` ${R(c.why)}` : ""}</details>`
           : `<ol type="a">${c.shown.map((k) => `<li>${R(c.items[k])}</li>`).join("")}</ol>
             <details><summary>${esc(t("task.solution"))}</summary>${c.items.map((_, i) => `${L[c.shown.indexOf(i)]})`).join(" → ")} ${c.why ? R(c.why) : ""}</details>`;
       h.fit?.(body);
@@ -109,6 +109,7 @@ function orderItem(el, body, c, qi, h) {
   let order = c.shown.slice();
   let placed = 0;
   let done = false;
+  let touched = false; // »Preveri« pred prvim dotikom ni odgovor (premešani red ni nikoli pravilen)
   let marks = null; // po preverjanju: kateri so na pravem mestu
   body.innerHTML = `<p class="muted tb-order-hint">${esc(t("tb.order.hint"))}</p><ol class="tb-order"></ol>
     <div class="tb-order-actions"><button type="button" class="primary tb-order-check">${esc(t("tb.quiz.check"))}</button><button type="button" class="ghost tb-order-reset">${esc(t("tb.order.reset"))}</button></div>
@@ -134,6 +135,7 @@ function orderItem(el, body, c, qi, h) {
     if (!b || done) return;
     const i = Number(b.dataset.i);
     marks = null;
+    touched = true;
     if (b.classList.contains("tb-order-pick")) {
       ({ order, placed } = placeItem(order, placed, i));
       draw(`.tb-order-pick[data-i="${Math.min(placed, n - 1)}"]`);
@@ -152,6 +154,7 @@ function orderItem(el, body, c, qi, h) {
     draw();
   });
   checkBtn.addEventListener("click", () => {
+    if (!touched) return feedback(body, h, false, esc(t("tb.order.hint")));
     const ok = orderOk(c, order);
     h.send(qi, { order });
     marks = order.map((v, i) => v === i);
