@@ -54,11 +54,11 @@ test("izvoz prijav: samo s ključem, brez id-jev in imena učenca, stanje in_rev
 
     const key = `Bearer ${TOKEN}`;
     // Od zunaj brez ključa ali z napačnim: 404, kot da poti ni.
-    assert.equal((await call("/api/prijave/izvoz", { remote: true })).status, 404);
-    assert.equal((await call("/api/prijave/izvoz", { remote: true, auth: `Bearer ${"x".repeat(40)}` })).status, 404);
-    assert.equal((await call(`/api/prijave/lesson/${lr.body.id}/stanje`, { method: "POST", remote: true, body: { status: "fixed" } })).status, 404);
+    assert.equal((await call("/api/kozmetika/prijave/izvoz", { remote: true })).status, 404);
+    assert.equal((await call("/api/kozmetika/prijave/izvoz", { remote: true, auth: `Bearer ${"x".repeat(40)}` })).status, 404);
+    assert.equal((await call(`/api/kozmetika/prijave/lesson/${lr.body.id}/stanje`, { method: "POST", remote: true, body: { status: "fixed" } })).status, 404);
 
-    const out = await call("/api/prijave/izvoz", { remote: true, auth: key });
+    const out = await call("/api/kozmetika/prijave/izvoz", { remote: true, auth: key });
     assert.equal(out.status, 200);
     assert.equal(out.headers.get("cache-control"), "no-store");
     assert.equal(out.body.reports.length, 2);
@@ -79,7 +79,7 @@ test("izvoz prijav: samo s ključem, brez id-jev in imena učenca, stanje in_rev
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'reports_export' AND actor = 'system'").get().n, 1);
 
     // Napačne zahteve: 400; neobstoječa prijava: 404.
-    const st = (kind, id, body) => call(`/api/prijave/${kind}/${id}/stanje`, { method: "POST", remote: true, auth: key, body });
+    const st = (kind, id, body) => call(`/api/kozmetika/prijave/${kind}/${id}/stanje`, { method: "POST", remote: true, auth: key, body });
     assert.equal((await st("lesson", lr.body.id, { status: "in_review" })).status, 400, "in_review brez PR");
     assert.equal((await st("lesson", lr.body.id, { status: "done", pr: 5 })).status, 400);
     assert.equal((await st("lesson", lr.body.id, { status: "in_review", pr: "5" })).status, 400);
@@ -96,7 +96,7 @@ test("izvoz prijav: samo s ključem, brez id-jev in imena učenca, stanje in_rev
     const row = admin.reports.find((r) => r.kind === "lesson");
     assert.equal(row.status, "in_review");
     assert.equal(row.pr_url, "https://github.com/jakobskerbis/evklid/pull/612");
-    assert.equal((await call("/api/prijave/izvoz", { remote: true, auth: key })).body.reports.find((r) => r.kind === "lesson").pr, 612);
+    assert.equal((await call("/api/kozmetika/prijave/izvoz", { remote: true, auth: key })).body.reports.find((r) => r.kind === "lesson").pr, 612);
 
     // PR združen: popravljeno, PR ostane zapisan; izvoz in seznam odprtih je ne kažeta več.
     assert.deepEqual((await st("lesson", lr.body.id, { status: "fixed" })).body, { ok: true, status: "fixed", pr: 612 });
@@ -104,7 +104,7 @@ test("izvoz prijav: samo s ključem, brez id-jev in imena učenca, stanje in_rev
     assert.equal(fixed.status, "fixed");
     assert.equal(fixed.pr, 612);
     assert.ok(fixed.fixed_at);
-    assert.equal((await call("/api/prijave/izvoz", { remote: true, auth: key })).body.reports.length, 1);
+    assert.equal((await call("/api/kozmetika/prijave/izvoz", { remote: true, auth: key })).body.reports.length, 1);
     assert.equal((await call("/api/admin/reports")).body.open, 1);
 
     // PR zaprt brez združitve: prijava je spet odprta in brez PR.
@@ -143,14 +143,14 @@ test("ime v izvozu: tudi v posnetku pred prvo in za zadnjo oznako (rez na 6000 z
 });
 
 test("izvoz prijav s skrbnikovo sejo velja kot dejanje lastnika (zaklep računa)", () => {
-  assert.ok(ownerOnly("/prijave/izvoz", "GET"));
-  assert.ok(ownerOnly("/prijave/lesson/3/stanje", "POST"));
-  assert.ok(ownerOnly("/Prijave/IZVOZ/", "GET"));
+  assert.ok(ownerOnly("/kozmetika/prijave/izvoz", "GET"));
+  assert.ok(ownerOnly("/kozmetika/prijave/lesson/3/stanje", "POST"));
+  assert.ok(ownerOnly("/Kozmetika/Prijave/IZVOZ/", "GET"));
 });
 
 test("izvoz prijav: skrbnik in računalnik s strežnikom ga vidita brez ključa", async () => {
   await withServer(async ({ call }) => {
-    const out = await call("/api/prijave/izvoz");
+    const out = await call("/api/kozmetika/prijave/izvoz");
     assert.equal(out.status, 200);
     assert.deepEqual(out.body.reports, []);
   });
@@ -191,15 +191,15 @@ for (const extra of [{ EVKLID_ACCOUNTS: "1" }, { EVKLID_PASSWORD: "geslo-za-test
           headers: { "X-Forwarded-For": "1.2.3.4", "Content-Type": "application/json", ...(auth ? { Authorization: auth } : {}) },
           body: method === "POST" ? JSON.stringify({ status: "fixed" }) : undefined,
         });
-      assert.equal((await req("/api/prijave/izvoz")).status, 404);
-      assert.equal((await req("/api/prijave/izvoz", `Bearer ${TOKEN}`)).status, 200);
-      assert.equal((await req("/api/prijave/lesson/1/stanje", null, "POST")).status, 404);
+      assert.equal((await req("/api/kozmetika/prijave/izvoz")).status, 404);
+      assert.equal((await req("/api/kozmetika/prijave/izvoz", `Bearer ${TOKEN}`)).status, 200);
+      assert.equal((await req("/api/kozmetika/prijave/lesson/1/stanje", null, "POST")).status, 404);
       // S ključem gre mimo gesla in prijave do poti: prijave 1 ni, zato »Prijava ne obstaja.«
-      const r = await req("/api/prijave/lesson/1/stanje", `Bearer ${TOKEN}`, "POST");
+      const r = await req("/api/kozmetika/prijave/lesson/1/stanje", `Bearer ${TOKEN}`, "POST");
       assert.equal(r.status, 404);
       assert.equal((await r.json()).error, "Prijava ne obstaja.");
-      // Druge poti pod /api/prijave/ ostanejo zaprte za geslom ali prijavo.
-      assert.notEqual((await req("/api/prijave/lesson/1", `Bearer ${TOKEN}`)).status, 200);
+      // Druge poti pod /api/kozmetika/prijave/ ostanejo zaprte za geslom ali prijavo.
+      assert.notEqual((await req("/api/kozmetika/prijave/lesson/1", `Bearer ${TOKEN}`)).status, 200);
     } finally {
       srv.kill();
       fs.rmSync(dir, { recursive: true, force: true });

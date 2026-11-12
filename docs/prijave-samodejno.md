@@ -5,7 +5,7 @@ j je izbral: vsak dan zjutraj (5.43 po ljubljanskem času). English below on pur
 
 ## What the server offers (server/reports.js)
 
-- `GET https://evklid.app/api/prijave/izvoz` → `{ at, reports: [...] }`: reports with status `open` or `in_review`,
+- `GET https://evklid.app/api/kozmetika/prijave/izvoz` → `{ at, reports: [...] }`: reports with status `open` or `in_review`,
   newest first, at most 300 in total. Each: `kind` (message | lesson | app), `id`, `status`, `pr`, `created_at`,
   `reason`, `device`, `code` (tutor message code, e.g. `#00YA`), `topic_id`, `topic_name`, `step`, `note`,
   `question`, `answer`, `raw` (model text if it differs), `shown` (rendered HTML, max 6000 chars), `context`
@@ -13,18 +13,19 @@ j je izbral: vsak dan zjutraj (5.43 po ljubljanskem času). English below on pur
   grade (`note` is JSON: question id, point statuses before and after, comment). No student or conversation ids, and
   no message id except inside `code` (base 36, so j can find the answer); the profile name is replaced
   by `[ime]` (also declined forms). `Cache-Control: no-store`; every call is written to the access log.
-- `POST https://evklid.app/api/prijave/<kind>/<id>/stanje` with JSON `{ "status": "in_review", "pr": 612 }`,
+- `POST https://evklid.app/api/kozmetika/prijave/<kind>/<id>/stanje` with JSON `{ "status": "in_review", "pr": 612 }`,
   `{ "status": "fixed" }` (keeps the PR number) or `{ "status": "open" }` (clears it). 400 on bad input, 404 if the
   report does not exist.
 - Both need `Authorization: Bearer $EVKLID_EXPORT_TOKEN` (the same key as `/api/kozmetika/export`), an admin
-  session or the server's own computer; otherwise 404. The environment's network secret for evklid.app must allow
-  `/api/prijave/` (besides `/api/kozmetika/`); it then adds the header itself. Never print, log or commit the key.
+  session or the server's own computer; otherwise 404. The paths are under `/api/kozmetika/` on purpose: the
+  environment's network secret for evklid.app only covers that prefix (j cannot widen it), and adds the header
+  itself. Never print, log or commit the key.
 - The admin sees `in_review` reports in Račun → Prijave napak with a link »Popravek čaka na pregled · PR #N«.
 
 ## Daily run (scheduled task in the thread »Samodejno pregleduj prijave napak«)
 
-1. `curl -s https://evklid.app/api/prijave/izvoz`. On 403 from the proxy: the network secret is missing
-   `/api/prijave/`; tell j once and stop. On any other failure: stop silently and try again tomorrow.
+1. `curl -s https://evklid.app/api/kozmetika/prijave/izvoz`. On 403 from the proxy or 404: the network secret or
+   the key is missing; tell j once and stop. On any other failure: stop silently and try again tomorrow.
 2. **`in_review` reports:** look up their PR (GitHub MCP). Merged → POST `fixed`. Closed without merge → POST
    `open` and mention it to j. Still open → leave it.
 3. **`open` reports:** if none, end the run with no message (an empty day costs almost nothing).

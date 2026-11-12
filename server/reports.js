@@ -371,16 +371,17 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     if (!table || !status) return res.status(400).json({ error: "Napačna zahteva." });
     const kindCheck = table === "bug_reports" ? " AND kind = ?" : "";
     const args = [status, status === "fixed" ? new Date().toISOString().slice(0, 19).replace("T", " ") : null, rid, ...(kindCheck ? [req.params.kind] : [])];
-    // Znova odprta prijava nima več PR (kot POST /api/prijave/…/stanje z »open«).
+    // Znova odprta prijava nima več PR (kot POST /api/kozmetika/prijave/…/stanje z »open«).
     const n = store.db.prepare(`UPDATE ${table} SET status = ?, fixed_at = ?${status === "open" ? ", pr = NULL" : ""} WHERE id = ?${kindCheck}`).run(...args).changes;
     if (!n) return res.status(404).json({ error: "Prijava ne obstaja." });
     res.json({ ok: true, status });
   });
   // Samodejni pregled prijav (docs/prijave-samodejno.md): ključ EVKLID_EXPORT_TOKEN v glavi Authorization,
   // skrbnik ali računalnik s strežnikom. Brez tega 404, kot da poti ni. Pot je mimo gesla in prijave (gate.js, accounts).
+  // Pod /api/kozmetika/, ker skrivnost okolja Claude doda ključ samo za to predpono (j je ne more razširiti).
   const exportAllowed = (req) => exportTokenOk(req) || isAdmin(req);
   const actorOf = (req) => (exportTokenOk(req) ? { actor: "system", parentId: null } : { actor: "admin", parentId: req.parent?.id ?? null });
-  app.get("/api/prijave/izvoz", (req, res) => {
+  app.get("/api/kozmetika/prijave/izvoz", (req, res) => {
     res.set("Cache-Control", "no-store");
     if (!exportAllowed(req)) return res.status(404).json({ error: "Ne obstaja." });
     const reports = exportReports(store.db, topicName);
@@ -388,7 +389,7 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     res.json({ at: new Date().toISOString(), reports });
   });
   // Stanje prijave: in_review + pr (popravek čaka na j-jev pregled), fixed (PR združen), open (PR zaprt brez združitve).
-  app.post("/api/prijave/:kind/:rid/stanje", (req, res) => {
+  app.post("/api/kozmetika/prijave/:kind/:rid/stanje", (req, res) => {
     res.set("Cache-Control", "no-store");
     if (!exportAllowed(req)) return res.status(404).json({ error: "Ne obstaja." });
     const kind = req.params.kind;

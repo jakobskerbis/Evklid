@@ -893,7 +893,7 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Izvoz in stanje prijav (server/reports.js): brez seje s ključem ali na računalniku s strežnikom; s sejo gredo skozi
   // preverjanje spodaj (zaklep računa, OWNER_ONLY), da otrok na skrbnikovi napravi ne vidi prijav mimo zaklepa.
-  const SESSIONLESS = [/^\/prijave\/izvoz$/, /^\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
+  const SESSIONLESS = [/^\/kozmetika\/prijave\/izvoz$/, /^\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
   const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
   app.use("/api", (req, res, next) => {
     if (PUBLIC.some((re) => re.test(req.path))) return next();
