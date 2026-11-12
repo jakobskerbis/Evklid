@@ -155,7 +155,11 @@ export function rankLessons(text, settings) {
     const key = fold(d.name);
     if (!byName.has(key) || byName.get(key).score < score) byName.set(key, { d, score, inTitle });
   }
-  return [...byName.values()].sort((a, b) => b.score - a.score);
+  // Enaka ocena (naslova z enakimi koreni, »Celični organeli« in »Od celice do organizma«): prednost ima tema,
+  // katere celo ime je v vprašanju.
+  const fq = fold(text);
+  const named = (x) => (fq.includes(fold(x.d.name)) ? 1 : 0);
+  return [...byName.values()].sort((a, b) => b.score - a.score || named(b) - named(a));
 }
 
 // Skrita opomba za inštruktorja (kot opomba pole): povzetek lekcije in kje jo učenec najde.

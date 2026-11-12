@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Načrt vseh čutil
+  - čutnica zazna, živec prenese, možgani razložijo
+- Pot svetlobe
+  - roženica, zenica, leča, steklovina, mrežnica
+  - vidni živec v zatilni del možganov
+  - napaka: »vidimo z očmi«, v resnici z možgani
+- Paličice in čepki
+  - paličice: šibka svetloba, brez barv
+  - čepki: barve, največ v rumeni pegi
+  - slepa pega: izstop vidnega živca
+- Napake vida
+  - kratkovidnost: slika pred mrežnico, razpršilna leča
+  - daljnovidnost: slika za mrežnico, zbiralna leča
+  - barvna slepota: okvarjeni čepki
+- Pot zvoka
+  - uhelj, sluhovod, bobnič, koščice, polž, slušni živec
+  - Evstahijeva cev izenači tlak
+  - $t = \dfrac{s}{v}$, $v \approx 340\,\mathrm{m/s}$
+- Ravnotežje
+  - polkrožni kanali zaznajo vrtenje
+  - preddvor zazna lego glave
+- Okus in voh
+  - pet okusov, vsaka brbončica zazna vse
+  - aroma hrane pride iz nosu

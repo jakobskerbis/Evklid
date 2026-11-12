@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Genetska variabilnost
+  - osebki iste vrste imajo različne alele
+  - mejoza in oploditev premešata alele
+- Mutacije
+  - naključna sprememba zaporedja baz
+  - večina nevtralnih ali škodljivih
+  - napaka: nastane, ker jo organizem potrebuje
+- Naravni izbor
+  - več potomcev, kot jih preživi
+  - ugodna dedna lastnost: več potomcev
+  - suša: debel kljun s $25\,\%$ na $67\,\%$
+- Prilagoditev
+  - dedna lastnost, koristna v določenem okolju
+  - bela dlaka zajca na snegu
+- Odpornost na antibiotike
+  - odporne bakterije obstajajo že pred zdravljenjem
+  - antibiotik izbere, ne povzroči mutacije
+  - $N_\mathrm{odp} = \dfrac{N}{k}$
+- Geografska izolacija
+  - morje, gorovje ali reka loči populacije
+  - po mnogo rodovih nova vrsta
+  - ščinkavci na Galápagosu

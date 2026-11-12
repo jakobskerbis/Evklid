@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kri kroži
+  - srce na dan prečrpa okoli $7000$ L
+  - v telesu je le okoli $5$ L krvi
+  - napaka: kri se ne porabi
+- Sestavine krvi
+  - plazma prenaša raztopljene snovi
+  - rdeče krvničke: hemoglobin, brez jedra
+  - bele krvničke branijo telo, ploščice strjujejo kri
+- Žile
+  - arterije iz srca, vene v srce
+  - kapilare: izmenjava snovi s celicami
+  - napaka: venska kri ni modra
+- Srce
+  - dva preddvora, dva prekata
+  - zaklopke spuščajo kri v eno smer
+  - levi prekat ima najdebelejšo steno
+- Dva krvna obtoka
+  - pljučni: desni prekat → pljuča → levi preddvor
+  - telesni: levi prekat → aorta → telo → desni preddvor
+  - pljučna arterija nosi kri z malo kisika
+- Limfa
+  - tekočina iz tkiv v limfnih žilah
+  - bezgavke lovijo povzročitelje
+- Krvne skupine
+  - A, B, AB, 0 in faktor Rh
+  - AB prejme vse, 0 dobijo vsi
+- Utrip in cepljenje
+  - udarci v $15$ s krat $4$
+  - cepivo: protitelesa in spominske celice
