@@ -656,7 +656,7 @@ export function zgradi(THREE, ctx = {}) {
   del("citoplazma", "Citoplazma", "Tekočina v celičnem telesu, v kateri so jedro, Nisslova telesca, Golgijev aparat in mitohondriji.", "#5b4bb0", [somaIn], naS(-0.2, 0.25, -0.95, 0.95));
   del("jedro", "Jedro", "Veliko okroglo jedro z DNK, ki usmerja delovanje nevrona; nevroni se praviloma ne delijo več.", B.jedro, [jOut, jRob, jObr, jPokrov, pore], [-0.494, 0.065, 0.037]);
   del("nukleoplazma", "Nukleoplazma", "Tekočina v notranjosti jedra, v kateri sta kromatin in jedrce.", "#a565f0", [jIn], J.clone().add(v3(-0.02, 0.01, -0.03)).toArray());
-  del("kromatin", "Kromatin", "Tanke niti DNK, navite na beljakovine; v nevronu je večinoma razrahljan, ker celica neprestano bere navodila za beljakovine.", B.kromatin, [krom], J.clone().add(v3(-0.03, 0.03, -0.01)).toArray());
+  del("kromatin", "Kromatin", "Tanke niti DNK, navite na beljakovine; v nevronu so večinoma razrahljane, ker celica neprestano bere navodila za beljakovine.", B.kromatin, [krom], J.clone().add(v3(-0.03, 0.03, -0.01)).toArray());
   del("jedrce", "Jedrce", "Izrazito temno telesce v jedru; v njem nastajajo deli ribosomov, ki jih nevron potrebuje veliko.", B.jedrce, [jedrce], jedrce.position.toArray());
   del("nisslova-telesca", "Nisslova telesca", "Kupčki zrnatega endoplazemskega retikuluma z ribosomi; izdelujejo beljakovine za ves nevron. V aksonskem griču jih ni.", B.zer, [nissl], (nisslT.filter((p) => p.dot(kam) > S.dot(kam) + 0.04).sort((a, b) => b.y - a.y)[0] || nisslT[0] || S).toArray());
   del("ribosomi", "Ribosomi", "Drobna zrnca, ki sestavljajo beljakovine; v nevronu jih je zelo veliko, na Nisslovih telescih in prosto v citoplazmi.", B.ribosomi, [ribosomi], (ribT.find((p) => vidnaS(p)) || S).toArray());
@@ -670,7 +670,7 @@ export function zgradi(THREE, ctx = {}) {
   del("schwannova-celica", "Jedro Schwannove celice", "Vsak odsek mielinske ovojnice je ena Schwannova celica; njeno jedro je potisnjeno na zunanjo stran ovojnice.", "#7a52e8", [schwJ], sjT);
   del("ranvierjev-zazemek", "Ranvierjev zažemek", "Kratek gol del aksona med dvema odsekoma mielina, poln natrijevih kanalčkov; impulz skače od zažemka do zažemka (skokovito prevajanje).", "#2fc9b4", [zaz, kanalcki], vSkupino(zazX[2], 0.004, ra + 0.004));
   del("koncne-razvejitve", "Končne razvejitve aksona", "Na koncu se akson razveji v tanke veje, tako da lahko en nevron vzburi več celic hkrati.", "#a9b8ff", [koncM, koncIn], vSkupino(XK + 0.05, 0.01, 0.01));
-  del("sinapticni-koncici", "Sinaptični končiči", "Odebeljeni konci aksona; ob sinapsi se dotikajo naslednje celice in vanjo prenesejo signal s kemičnim prenašalcem.", "#ffb35c", [bulbi, bulbIn], vSkupino(kTk.x + kT.d.x * 0.015, kTk.y + kT.d.y * 0.015, kTk.z + kT.d.z * 0.015));
+  del("sinapticni-koncici", "Sinaptični končiči", "Odebeljeni konci aksona; ob sinapsi se skoraj dotikajo naslednje celice in vanjo prenesejo signal s kemičnim prenašalcem.", "#ffb35c", [bulbi, bulbIn], vSkupino(kTk.x + kT.d.x * 0.015, kTk.y + kT.d.y * 0.015, kTk.z + kT.d.z * 0.015));
   del("sinapticni-mesicki", "Sinaptični mešički", "Drobni mehurčki v končičih, polni živčnega prenašalca; ko pride impulz, se zlijejo z membrano in prenašalec izločijo v sinaptično špranjo.", B.mesicki, [vesikli], vSkupino(kTk.x, kTk.y, kTk.z));
 
   // ---------- nadzor ----------

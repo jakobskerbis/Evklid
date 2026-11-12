@@ -341,7 +341,7 @@ export function zgradi(THREE, ctx = {}) {
   del("nukleokapsidni-protein", "Nukleokapsidni protein (p7)", "Majhna beljakovina, ki se v velikem številu veže na RNK, jo zgosti in varuje v kapsidi.", "#46c8ff", [nc], najV(ncT).toArray());
   del("reverzna-transkriptaza", "Reverzna transkriptaza", "Encim, ki po virusni RNK izdela DNK; zato HIV uvrščamo med retroviruse. Oblika spominja na desno roko z dlanjo, prsti in palcem.", "#3347ff", [rt], najV(rtP).toArray());
   del("integraza", "Integraza", "Encim, ki virusno DNK vgradi v DNK okužene celice; tam lahko ostane skrita več let.", "#b07be8", [integ], najV(inP).toArray());
-  del("proteaza", "Proteaza", "Encim, ki razreže dolge verige virusnih beljakovin na posamezne beljakovine, da virus dozori; zdravila proti HIV jo pogosto zavirajo.", "#c6f04a", [prot], najV(prP).toArray());
+  del("proteaza", "Proteaza", "Encim, ki razreže dolge verige virusnih beljakovin na posamezne beljakovine, da virus dozori; zdravila proti HIV ga pogosto zavirajo.", "#c6f04a", [prot], najV(prP).toArray());
 
   // ---------- nadzor ----------
   const nadzor = [

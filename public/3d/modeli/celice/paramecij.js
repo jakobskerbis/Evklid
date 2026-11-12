@@ -498,7 +498,7 @@ export function zgradi(THREE, ctx = {}) {
     [krcljivi, kanalcki], kmPol[0].p.toArray());
   del("prebavni-mehurcki", "Prebavni mehurčki", "Mehurčki s hrano krožijo po celici; encimi hrano prebavijo, ostanki gredo ven skozi celično zadnjično odprtino.", "#9fc46a",
     [prebavni], kroz.getPointAt(0.45).toArray());
-  del("mitohondriji", "Mitohondriji", "Številne drobne paličice, največ tik pod pelikulo; s celičnim dihanjem dajejo energijo za utripanje migetalk. Narisani so povečani.", B.mitohondrij,
+  del("mitohondriji", "Mitohondriji", "Številne drobne paličice, največ tik pod pelikulo; s celičnim dihanjem dajejo energijo za utripanje migetalk. Narisane so povečane.", B.mitohondrij,
     [mitohondriji], (mitSez.find((m) => m.p.z > 0.1 && m.p.y < 0) || mitSez[0]).p.toArray());
   del("citoprokt", "Celična zadnjična odprtina", "Mesto na pelikuli, kjer se prazen prebavni mehurček zlije z membrano in izloči neprebavljene ostanke hrane.", "#3d2a80",
     [citoprokt], cpT.toArray());

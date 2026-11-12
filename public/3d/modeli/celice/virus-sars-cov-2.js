@@ -309,7 +309,7 @@ export function zgradi(THREE, ctx = {}) {
     V(-0.42, 0.42, 0).normalize().multiplyScalar(RE - D / 2).toArray());
   del("beljakovina-s", "Beljakovina S (konica)", "Konica iz treh enakih verig: glavica (S1) se pripne na receptor ACE2 na celicah dihal, steblo (S2) zlije ovojnico s celico. Steblo ima pregibe, zato so konice različno nagnjene.", "#e8384f", [glave, stebla],
     glTocka(KS.i, V(0, 0.12, 0)).toArray());
-  del("rbd", "Vezavna domena (RBD)", "Vrh vsake verige S, ki se dotakne receptorja ACE2. Lahko je spuščena ali dvignjena; vezati se more le dvignjena, zato je pri mnogih konicah ena dvignjena.", "#ffb43c", [rbdM], tRBD.toArray());
+  del("rbd", "Vezavna domena (RBD)", "Vrh vsake verige S, ki se dotakne receptorja ACE2. Lahko je spuščena ali dvignjena; vezati se more le dvignjena. Pri mnogih konicah je dvignjena ena od treh.", "#ffb43c", [rbdM], tRBD.toArray());
   del("glikani", "Sladkorni ovoj (glikani)", "Verige sladkorjev na beljakovini S (okoli 66 na konico); prekrivajo jo kot ščit, zato jo protitelesa težje prepoznajo.", "#bdeeff", [glik],
     glTocka(KS.i, glLay[2].p.clone().addScaledVector(glLay[2].n, 0.012)).toArray());
   del("beljakovina-m", "Beljakovina M", "Najpogostejša beljakovina ovojnice; daje virusu obliko in povezuje ovojnico z nukleokapsido.", B.beljakovine, [mProt], tM.clone().multiplyScalar(oblE(tM) + 0.008).toArray());

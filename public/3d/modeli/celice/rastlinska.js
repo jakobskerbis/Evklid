@@ -701,7 +701,7 @@ export function zgradi(THREE, ctx = {}) {
   rib.count = k;
   o.scale.setScalar(1);
   group.add(rib);
-  del("ribosomi", "Ribosomi", "Drobna zrnca, ki po navodilih iz DNK sestavljajo beljakovine; nekateri prosto plavajo, drugi sedijo na zrnatem ER.", B.ribosomi, [rib], [N.x + 0.24, N.y + 0.02, N.z + 0.02]);
+  del("ribosomi", "Ribosomi", "Drobna zrnca, ki po navodilih iz DNK sestavljajo beljakovine; nekatera prosto plavajo, druga sedijo na zrnatem ER.", B.ribosomi, [rib], [N.x + 0.24, N.y + 0.02, N.z + 0.02]);
 
   // ---------- citoskelet: kortikalni mikrotubuli (prečni obroči pod membrano) in aktinska vlakna ----------
   const mtK = [], akK = [];

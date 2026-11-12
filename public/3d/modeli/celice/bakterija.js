@@ -212,7 +212,7 @@ export function zgradi(THREE, ctx = {}) {
   const peri = new THREE.Mesh(zdruzi([vrtRez(P, nK, rezI, Z.om1, Z.pg0, sumF, S_OM), vrtRez(P, nK, rezI, Z.pg1, Z.im0, sumF, S_PG)]), periMat);
   peri.renderOrder = 1;
   telo.add(peri);
-  del("periplazma", "Periplazma", "Ozek prostor z gelom med zunanjo in celično membrano; v njem je peptidoglikan, encimi in beljakovine, ki prenašajo snovi.", "#6fd2e0",
+  del("periplazma", "Periplazma", "Ozek prostor z gelom med zunanjo in celično membrano; v njem so peptidoglikan, encimi in beljakovine, ki prenašajo snovi.", "#6fd2e0",
     [peri], tocka(0.1, -S_PG * KOR, (Z.pg1 + Z.im0) / 2).toArray());
 
   // ---------- celična stena: tanka mreža peptidoglikana ----------

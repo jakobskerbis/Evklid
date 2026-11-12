@@ -637,7 +637,7 @@ export function zgradi(THREE, ctx = {}) {
     kalozaM ? [ploscice, kalozaM] : [ploscice], [xS1, plS1[0], -0.03]);
   del("membrana", "Celična membrana", "Žive celice floema imajo tik pod steno celično membrano; v prerezu se vidi lipidni dvosloj (debelina je povečana). Mrtve celice ksilema je nimajo.", B.dvosloj, memMreze, [xS1 - rS + W_S + 0.002, -0.05, 0]);
   del("citoplazma", "Citoplazma", "V sitasti cevi je le tanka plast ob steni, sredina je prosta za tok; celica spremljevalka ima gosto citoplazmo z ribosomi.", "#4a3c96", [...citMreze, ribosomi], [xC1 + 0.012, 0.45, -0.018]);
-  del("jedro", "Jedro celice spremljevalke", "Sitaste cevi nimajo jedra; namesto njih delo upravlja jedro sosednje celice spremljevalke. V prerezu se vidijo kromatin, jedrce in dvojna ovojnica.", B.jedro, [jedri, jedriR, pore], [xC1, 0.16, 0.001]);
+  del("jedro", "Jedro celice spremljevalke", "Sitaste cevi nimajo jedra; njihovo delo upravlja jedro sosednje celice spremljevalke. V prerezu se vidijo kromatin, jedrce in dvojna ovojnica.", B.jedro, [jedri, jedriR, pore], [xC1, 0.16, 0.001]);
   const mT = (pol[3] || pol[0] || cele[0]).p;
   del("mitohondrij", "Mitohondriji", "V celicah spremljevalkah jih je veliko, ker nalaganje sladkorjev v sitaste cevi porablja energijo (ATP); v prerezu se vidijo kriste.", B.mitohondrij, [mitohondriji, mitPol, mitRez], mT.toArray());
   del("plazmodezme", "Plazmodezme", "Razvejani kanalčki skozi steno med celico spremljevalko in sitasto cevjo; po njih potujejo sladkorji, beljakovine in signali.", "#ff7ad9", [plazmodezme], [(xS1 + rS + xC1 - rC) / 2, 0.02, 0]);

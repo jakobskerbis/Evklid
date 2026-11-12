@@ -557,7 +557,7 @@ export function zgradi(THREE, ctx = {}) {
     [mitohondriji], (mitSez.find((m) => m.p.z < -0.05) || mitSez[0]).p.toArray());
   del("golgi", "Golgijev aparat", "Kupčki sploščenih cistern, ki dodelajo beljakovine in jih zapakirajo v mešičke; evglena jih ima več.", B.golgi,
     [golgi], golSez[0].p.toArray());
-  del("ribosomi", "Ribosomi", "Drobna zrnca po vsej citoplazmi, na katerih nastajajo beljakovine. Narisani so povečani.", B.ribosomi,
+  del("ribosomi", "Ribosomi", "Drobna zrnca po vsej citoplazmi, na katerih nastajajo beljakovine. Narisana so povečana.", B.ribosomi,
     [ribosomi], ribSez[Math.round(ribSez.length / 2)].p.toArray());
   del("paramilon", "Paramilonska zrnca", "Bela zrnca paramilona, ogljikovega hidrata, ki ga evglena shrani kot zalogo hrane (podoben škrobu).", B.skrob,
     [paramilon], parSez.reduce((b, k) => (k.p.y < b.y ? k.p : b), parSez[0].p).toArray());

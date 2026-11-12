@@ -663,7 +663,7 @@ export function zgradi(THREE, ctx = {}) {
   del("jedrce", "Jedrce", "Gosto območje v jedru, kjer nastajajo deli ribosomov.", BC.jedrce, [jedrce], L(0.45, 8.0, 0.3));
   del("mitohondrij", "Mitohondriji", "Imajo dvojno membrano; notranja je nagubana v kriste. Pridobivajo energijo (ATP) za črpanje hranil skozi membrano; največ jih je pod vrhom in ob dnu.", BC.mitohondrij, [mit], L(...mitPol.reduce((a, p) => (p.y > 14 && p.z > a.z ? p : a), V(0, 16, -9)).clone().add(V(0, 0, 0.4)).toArray()));
   del("zrnati-er", "Zrnati endoplazemski retikulum", "Sploščeni membranski mešički z ribosomi; v njem nastajajo beljakovine, na primer encimi na mikrovilih.", BC.zer, [zer], L(-2.4, 12.95, -0.6));
-  del("ribosomi", "Ribosomi", "Drobna zrnca, ki sestavljajo beljakovine; mnogo jih sedi na zrnatem ER, drugi so prosti.", BC.ribosomi, [rib], L(2.0, 13.5, -0.55));
+  del("ribosomi", "Ribosomi", "Drobna zrnca, ki sestavljajo beljakovine; mnogo jih sedi na zrnatem ER, druga so prosta.", BC.ribosomi, [rib], L(2.0, 13.5, -0.55));
   del("gladki-er", "Gladki endoplazemski retikulum", "Mreža cevk brez ribosomov; v enterocitu iz vsrkanih maščob sestavi nove maščobe, ki jih celica pošlje v limfo.", BC.ger, [gladki], vozl.reduce((a, c) => (c.z > a.z ? c : a)).toArray().map((x, i) => x * s + svet.position.getComponent(i)));
   del("golgi", "Golgijev aparat", "Leži nad jedrom; beljakovine in maščobe dodela in zapakira v mešičke.", BC.golgi, [golgi], L(-0.2, 11.6, -1.4));
   del("lizosomi", "Lizosomi", "Mešički z encimi, ki razgradijo odslužene dele celice.", BC.lizosom, [liz], L(...lizT.reduce((a, p) => (p.z > a.z ? p : a)).toArray()));

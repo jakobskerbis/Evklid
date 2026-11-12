@@ -489,7 +489,7 @@ export function zgradi(THREE, ctx = {}) {
     najblizja(mit, (v) => v.z < 0.05));
   del("er", "Endoplazemski retikulum", "Ploščice in cevke tik pod membrano in ob jedru, v katerih nastajajo beljakovine in maščobe; na zrnatem delu sedijo ribosomi.", B.zer, [er], najblizja(er, (v) => v.z < -0.05 && v.y > 0.05));
   del("lipidne-kapljice", "Lipidne kapljice", "Kapljice maščob, ki so celici zaloga energije in gradiva za membrane.", B.mascoba, [lip, bLip], (lipP.find((p) => vidna(p.clone().sub(M), (x) => !vMati(x.clone().add(M), ZC))) || lipP[0]).toArray());
-  del("ribosomi", "Ribosomi", "Drobna zrnca, ki sestavljajo beljakovine; nekateri prosto plavajo, drugi sedijo na endoplazemskem retikulumu.", B.ribosomi, [rib, bRib, ribER], [M.x - 0.12, -0.05, -0.3]);
+  del("ribosomi", "Ribosomi", "Drobna zrnca, ki sestavljajo beljakovine; nekatera prosto plavajo, druga sedijo na endoplazemskem retikulumu.", B.ribosomi, [rib, bRib, ribER], [M.x - 0.12, -0.05, -0.3]);
   del("jedrna-ovojnica", "Jedrna ovojnica in pore", "Dvojna membrana okoli jedra s porami, skozi katere potujejo snovi med jedrom in citoplazmo. Pri kvasovki ostane cela tudi med delitvijo jedra.", B.ovojnica, [poreM, poreH], [-0.2, 0.15, 0.08]);
   del("peroksisomi", "Peroksisomi", "Majhni mehurčki z encimi, ki razgrajujejo maščobne kisline in strupeni vodikov peroksid.", B.peroksisom, [per], perT[0].toArray());
   del("golgi", "Golgijev aparat", "Pri kvasovki so njegove cisterne raztresene po celici in niso zložene v kup; beljakovine dodelajo in jih zapakirajo v mešičke.", B.golgi, [gol], golT[0].toArray());

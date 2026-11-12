@@ -312,7 +312,7 @@ export function zgradi(THREE, ctx = {}) {
   const ribT = new THREE.Vector3(), ribM = new THREE.Matrix4(), ribC = new THREE.Vector3(0.276, 0.36, 0.297), ribP = new THREE.Vector3();
   for (let i = 0, best = 1e9; i < nRib; i++) { rib.getMatrixAt(i, ribM); ribP.setFromMatrixPosition(ribM); if (ribP.distanceTo(ribC) < best) { best = ribP.distanceTo(ribC); ribT.copy(ribP); } }
   group.add(rib);
-  del("ribosomi", "Ribosomi", "Drobna zrnca, ki po navodilih iz DNK sestavljajo beljakovine; nekateri prosto plavajo, drugi sedijo na zrnatem ER.", B.ribosomi, [rib], ribT.toArray());
+  del("ribosomi", "Ribosomi", "Drobna zrnca, ki po navodilih iz DNK sestavljajo beljakovine; nekatera prosto plavajo, druga sedijo na zrnatem ER.", B.ribosomi, [rib], ribT.toArray());
 
   // ---------- Golgijev aparat ----------
   // Ukrivljene sploščene cisterne: sredina tanka, robovi in konci odebeljeni; od cis (svetlejše) do trans strani (temnejše).

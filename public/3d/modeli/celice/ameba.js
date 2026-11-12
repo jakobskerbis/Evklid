@@ -499,7 +499,7 @@ export function zgradi(THREE, ctx = {}) {
   del("prebavni-mehurcki", "Prebavni mehurčki", "Mehurčki s pogoltnjeno hrano; encimi jo v njih prebavijo, ostanke pa ameba izloči.", "#e8e2a0",
     [prebavni, hrana], [prebSez[0].p.x, prebSez[0].p.y + 0.04, prebSez[0].p.z]);
   del("alga", "Alga (plen)", "Drobna zelena alga; ameba jo obda s panožicama, zapre v prebavni mehurček in prebavi.", B.kloroplast, [alga], ALGA_ZUNAJ.toArray());
-  del("mitohondriji", "Mitohondriji", "Številne drobne paličice po vsej endoplazmi; s celičnim dihanjem pridobivajo energijo za gibanje in požiranje. Narisani so povečani.", B.mitohondrij,
+  del("mitohondriji", "Mitohondriji", "Številne drobne paličice po vsej endoplazmi; s celičnim dihanjem pridobivajo energijo za gibanje in požiranje. Narisane so povečane.", B.mitohondrij,
     [mitohondriji], mitSez.find((m) => m.p.y < 0 && m.p.x < -0.05 && m.p.z > 0.05)?.p.toArray() || mitSez[0].p.toArray());
   del("lizosomi", "Lizosomi", "Mehurčki z encimi, ki se zlijejo s prebavnim mehurčkom in v njem razgradijo hrano.", B.lizosom, [lizosomi], lizSez[0].p.toArray());
 
