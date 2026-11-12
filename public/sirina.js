@@ -542,7 +542,8 @@ function mestoFormule(k) {
   if (d) return d.parentElement?.closest(".katex-display, table") ? null : d;
   const o = k.closest(OKVIRI);
   if (o) return o.parentElement?.closest(".katex-display") ? null : o;
-  if (k.closest("table, svg, math-field, textarea, input, [contenteditable]")) return null;
+  // .sk-chip: oznaka okna s podatki pod skico ima stalno postavitev (graph.css), ne zlagamo je in ne pomikamo.
+  if (k.closest("table, svg, math-field, textarea, input, [contenteditable], .sk-chip")) return null;
   if (k.closest(".textbook")) return k.parentElement?.closest(VRSTE) || null;
   return blok(k);
 }
