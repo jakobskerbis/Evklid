@@ -62,9 +62,164 @@
    "h": "95e8b48e6364",
    "o": "D"
   },
+  "BIO-SS-4/beljakovine-in-celicni-signali#p0": {
+   "h": "93bdd16f53b5",
+   "o": "D"
+  },
+  "BIO-SS-4/beljakovine-in-celicni-signali#p1": {
+   "h": "b501b9c1d4ed",
+   "o": "D"
+  },
+  "BIO-SS-4/bioloske-osnove-zdravega-zivljenja#p0": {
+   "h": "e248b5717b2d",
+   "o": "D",
+   "r": "nasvet za solato ni vprašan",
+   "k": [
+    "Lahko. Vitamin A se topi v maščobah in se iz črevesa vsrka le skupaj z maščobo",
+    "Brez nje ga večina odide neizkoriščena"
+   ]
+  },
+  "BIO-SS-4/biotehnologija-in-mikrobiologija#p0": {
+   "h": "4646153f5edd",
+   "o": "I",
+   "r": "en sam vprašani pojem (naše celice niso vprašane)"
+  },
+  "BIO-SS-4/biotehnologija-in-mikrobiologija#p1": {
+   "h": "4aed8e3eb796",
+   "o": "D"
+  },
+  "BIO-SS-4/clovek-in-naravni-viri#p0": {
+   "h": "b3f80623966a",
+   "o": "D"
+  },
+  "BIO-SS-4/clovek-in-naravni-viri#p1": {
+   "h": "ec2d3b8b4623",
+   "o": "D"
+  },
+  "BIO-SS-4/endocitoza-in-eksocitoza#p0": {
+   "h": "38a1a925355c",
+   "o": "I",
+   "r": "sklic na poskus z oznako iz lekcije"
+  },
+  "BIO-SS-4/endocitoza-in-eksocitoza#p1": {
+   "h": "9aa650c55389",
+   "o": "D",
+   "r": "splošna opomba ni vprašana",
+   "k": [
+    "Ker hkrati teče endocitoza",
+    "Celica z njo odvzame približno toliko membrane, kot jo je dodala z eksocitozo, in jo po veziklih vrne v notranjost, kjer jo spet uporabi"
+   ]
+  },
+  "BIO-SS-4/energetika-celice#p1": {
+   "h": "4125a283cb12",
+   "o": "D"
+  },
+  "BIO-SS-4/evolucija-cloveka#p0": {
+   "h": "5994b5d71f49",
+   "o": "I",
+   "r": "ne poda prostornin možganov"
+  },
+  "BIO-SS-4/evolucija-cloveka#p1": {
+   "h": "3cec69e88a70",
+   "o": "D"
+  },
+  "BIO-SS-4/evolucija-cloveka#p2": {
+   "h": "a6468e8bbe7d",
+   "o": "I",
+   "r": "ne poda podatkov za račun"
+  },
+  "BIO-SS-4/geni-in-razvoj-cloveka#p0": {
+   "h": "c4fad64c1959",
+   "o": "D"
+  },
+  "BIO-SS-4/geni-in-razvoj-cloveka#p1": {
+   "h": "533cd716828e",
+   "o": "D"
+  },
+  "BIO-SS-4/geni-in-razvoj-cloveka#p2": {
+   "h": "7d6142cf4a54",
+   "o": "I",
+   "r": "ne pove staršev iz naloge"
+  },
+  "BIO-SS-4/homeostaza#p0": {
+   "h": "0c20643445fb",
+   "o": "D"
+  },
+  "BIO-SS-4/homeostaza#p1": {
+   "h": "27eff0799aa8",
+   "o": "I",
+   "r": "sklic na tekmo iz lekcije"
+  },
+  "BIO-SS-4/imunost-in-krvne-skupine#p0": {
+   "h": "225f1850281d",
+   "o": "D"
+  },
+  "BIO-SS-4/imunost-in-krvne-skupine#p1": {
+   "h": "93863c322d47",
+   "o": "D",
+   "r": "preprečevanje ni vprašano",
+   "k": [
+    "Z otrokovimi eritrociti Rh+ pride mati v stik predvsem ob prvem porodu",
+    "šele takrat nastanejo anti-D in spominske celice",
+    "V drugi nosečnosti anti-D prehajajo skozi posteljico in razgrajujejo otrokove eritrocite (hemolitična bolezen novorojenčka)"
+   ]
+  },
+  "BIO-SS-4/imunost-in-krvne-skupine#p2": {
+   "h": "5bbbdf7637cb",
+   "o": "I",
+   "r": "ne pove skupin matere in otroka"
+  },
+  "BIO-SS-4/misice-med-naporom#p0": {
+   "h": "67a249729741",
+   "o": "I",
+   "r": "sklic na preglednico iz lekcije"
+  },
+  "BIO-SS-4/misice-med-naporom#p1": {
+   "h": "d9e7c43d0342",
+   "o": "D"
+  },
+  "BIO-SS-4/molekularna-genetika#p0": {
+   "h": "f7def759e954",
+   "o": "D"
+  },
+  "BIO-SS-4/molekularna-genetika#p1": {
+   "h": "1f5370c079b2",
+   "o": "D"
+  },
+  "BIO-SS-4/nastanek-zivljenja#p1": {
+   "h": "c05e9418a261",
+   "o": "D",
+   "r": "zgodnja atmosfera ni vprašana",
+   "k": [
+    "Nastalo bi veliko manj organskih snovi",
+    "Kisik organske molekule oksidira in razgradi, iskre bi metan večinoma spremenile v $\\mathrm{CO_2}$ in vodo"
+   ]
+  },
+  "BIO-SS-4/speciacija-in-filogenija#p1": {
+   "h": "58e228887ae6",
+   "o": "D"
+  },
+  "BIO-SS-4/speciacija-in-filogenija#p2": {
+   "h": "244bcad86dc2",
+   "o": "I",
+   "r": "ne poda podatkov za račun"
+  },
   "BIO-SS-4/statistika-v-biologiji#p1": {
    "h": "d9c6e8163f26",
    "o": "D"
+  },
+  "BIO-SS-4/vedenje-zivali#p0": {
+   "h": "a4ec073deb27",
+   "o": "D"
+  },
+  "BIO-SS-4/vedenje-zivali#p1": {
+   "h": "679c2e541c8b",
+   "o": "D",
+   "r": "lačna mačka ni vprašana",
+   "k": [
+    "Ker je sita in je njena motivacija za hranjenje nizka",
+    "Dražljaj je zaznala, odziv pa je odvisen tudi od notranjega stanja"
+   ]
   },
   "BIO-SS-4/znanstvena-metoda#p0": {
    "h": "1970bc715c99",

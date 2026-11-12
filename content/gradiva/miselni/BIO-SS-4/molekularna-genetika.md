@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Trojiški kod
+  - $N = 4^n$, za $n = 3$: $64$ kodonov
+  - $61$ kodonov za aminokisline, $3$ stop, AUG začetek
+- Podvojevalne vilice
+  - helikaza, primaza, DNA-polimeraza, ligaza
+  - vodilna neprekinjeno, zaostajajoča v fragmentih
+  - napaka: polimeraza gradi $3' \to 5'$
+- Tipi RNA
+  - mRNA zapis, tRNA antikodon
+  - rRNA ribosom, miRNA utišanje
+- Univerzalni genetski kod
+  - izrojen, nedvoumen, univerzalen
+  - bakterija izdela človeški inzulin
+- Mutacije
+  - tiha, spremenjen pomen, nesmiselna
+  - premik bralnega okvirja: vrinjenje, izpad
+  - srpastocelična anemija: GAG → GUG
+- Operon lac
+  - promotor, operator, represor
+  - laktoza odstrani represor: geni vklopljeni
+- Evkariontsko uravnavanje
+  - kromatin, transkripcijski dejavniki, ojačevalci
+  - alternativno izrezovanje intronov
