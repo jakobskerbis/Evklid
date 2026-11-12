@@ -60,6 +60,7 @@ export function odpriModel(el, mod, opts = {}) {
   const orodja = mk("div", "k3-orodja");
   const spodaj = mk("div", "k3-spodaj");
   const nadzorEl = mk("div", "k3-nadzor");
+  const ozekZaslon = window.matchMedia("(max-width: 480px)");
   const deliEl = mk("div", "k3-deli");
   deliEl.setAttribute("role", "group");
   deliEl.setAttribute("aria-label", t("a3.parts"));
@@ -530,8 +531,13 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => izberi(g.id === izbran ? null : g.id));
       deliEl.append(b);
     }
+    // Telefon (≤ 480 px, organ): seznam se prelomi v vrste (brez vodoravnega drsenja); skupine in prvih 6 delov, ostali
+    // za gumbom »Pokaži vse (N)« (izbrani del je viden vedno). Skrivanje je v 3d.css (.k3-del-vec), širši zasloni kažejo vse.
+    const NAJ_DELOV = 6;
+    let zaporedni = 0;
     for (const d of seznam) {
       const b = mk("button", "k3-del");
+      if (++zaporedni > NAJ_DELOV) b.classList.add("k3-del-vec");
       b.type = "button";
       b.dataset.del = d.id;
       b.setAttribute("aria-pressed", String(d.id === izbran));
@@ -542,7 +548,17 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => izberi(d.id === izbran ? null : d.id));
       deliEl.append(b);
     }
-    const stevilo = seznam.length;
+    if (seznam.length > NAJ_DELOV) {
+      const vsi = mk("button", "k3-del k3-deli-vsi", `${t("a3.showAll")} (${seznam.length})`);
+      vsi.type = "button";
+      vsi.addEventListener("click", () => {
+        deliEl.classList.add("k3-deli-odprti");
+        deliEl.querySelector(".k3-del-vec")?.focus();
+      });
+      deliEl.append(vsi);
+    }
+    // število delov modela (ne le vidnih v tem pogledu): ob preklopu prereza se ne spreminja
+    const stevilo = model?.steviloDelov ?? seznam.length;
     deliEl.hidden = !seznam.length;
     if (deliGlava) {
       deliGlava.hidden = !seznam.length;
@@ -825,6 +841,10 @@ export function odpriModel(el, mod, opts = {}) {
           sw.setAttribute("aria-checked", String(!!c.vrednost));
           klic(!!c.vrednost);
         });
+        // tudi napis preklaplja (cilj dotika je vsa vrstica, ≥ 40 px)
+        lab.addEventListener("click", (e) => {
+          if (!sw.contains(e.target)) sw.click();
+        });
         lab.append(mk("span", "", c.oznaka), sw);
         nadzorEl.append(lab);
       } else if (c.tip === "izpis") {
@@ -1046,7 +1066,8 @@ export function odpriModel(el, mod, opts = {}) {
     nalaganje(null);
     el.classList.toggle("k3-organ", model.postavitev === "organ");
     // Organ: nadzor (npr. stikalo »Prerez«) lebdi na odru levo zgoraj, spodaj ostanejo deli in »Podrobnosti organa«.
-    if (model.postavitev === "organ") oder.append(nadzorEl);
+    // organ: stikala lebdijo nad odrom; na telefonu (≤ 480 px) so pod odrom, da ne prekrijejo vrha organa
+    if (model.postavitev === "organ" && !ozekZaslon.matches) oder.append(nadzorEl);
     else if (nadzorEl.parentNode !== spodaj) spodaj.insertBefore(nadzorEl, deliGlava || deliEl);
     // telefon pokonci: stikala organa (Učne barve, Prerez) pod gumbi; model nižje, da ga ne prekrijejo (3d.css ≤ 480 px)
     kit.zamikZgoraj?.(model.postavitev === "organ" && opts.stran && matchMedia("(max-width: 480px)").matches ? 48 : 0);

@@ -3,8 +3,9 @@
 
 Model ima režnjiče črva (vermis) kot gladka telesa brez listov, zato pravi presek mreže ne pokaže ne bele možganovine ne
 skorje. Slika nastane iz obrisov preseka režnjičev v ravnini prereza (scripts/atlas/zanke-reza.mjs):
-  - bela možganovina: deblo (corpus medullare) nad streho četrtega prekata, iz njega veja v vsak režnjič (do njegovega
-    najbolj oddaljenega konca) in iz veje izmenično na obe strani lističi bele možganovine (laminae albae); listič sega
+  - bela možganovina: podolgovato jedro (corpus medullare) nad streho četrtega prekata (fastigium spredaj), iz njega
+    veja v vsak režnjič črva po imenu (lobulus centralis, culmen | fissura prima | declive, folium, tuber, pyramis,
+    uvula, nodulus; do njegovega najbolj oddaljenega konca) in iz veje izmenično na obe strani lističi bele možganovine (laminae albae); listič sega
     le po območju svoje veje (do polovice poti do sosednje), zato se lističi sosednjih režnjičev ne križajo;
   - skorja: zrnata plast (≈ 0,35 mm, temnejša) tik ob beli možganovini in molekularna plast (do ≈ 0,95 mm, svetlejša);
     list (folium) je torej listič bele možganovine s skorjo, širok ≈ 2,3 mm;
@@ -35,8 +36,9 @@ SEKTOR = 15  # režnjiči, katerih konca sta v istem sektorju (stopinje) okoli d
 
 random.seed(11)
 d = json.load(open(VHOD))
-# vidna polovica: sredinski deli in leva stran (pogled prereza skrije desno stran); režnjiči črva in polobel ob sredini
-telesa = [z for o in d if o["tkivo"] == "mali" and not o["ime"].endswith(".r") for z in o["zanke"]]
+# režnjiči črva (vermis) po imenih Z-Anatomy; režnjiči polobel ob sredinski ravnini niso del sredinskega reza črva
+CRV = ("Lingula of cerebellum", "Central lobule", "Culmen", "Declive", "Folium of vermis", "Tuber of vermis", "Pyramis of vermis", "Uvula of vermis", "Nodule of vermis")
+pari = [(o["ime"], z) for o in d if o["ime"] in CRV for z in o["zanke"]]
 
 
 def ploscina(z):
@@ -47,7 +49,9 @@ def raz(a, b):
     return math.hypot(a[0] - b[0], a[1] - b[1])
 
 
-telesa = [z for z in telesa if abs(ploscina(z)) > 4e-6]  # > 4 mm²
+pari = [(ime, z) for ime, z in pari if abs(ploscina(z)) > 4e-6]  # > 4 mm²
+imena = [ime for ime, _ in pari]
+telesa = [z for _, z in pari]
 xs = [p[0] for z in telesa for p in z]
 ys = [p[1] for z in telesa for p in z]
 mera = max(max(xs) - min(xs), max(ys) - min(ys)) + 2 * ROB
@@ -67,40 +71,62 @@ for _ in range(6):
     blizu = [min(z, key=lambda p: raz(p, c0)) for z in telesa]
     c0 = (sum(p[0] for p in blizu) / len(blizu), sum(p[1] for p in blizu) / len(blizu))
 
+
+def sredina(seznam):
+    t = [min(telesa[i], key=lambda p: raz(p, c0)) for i, ime in enumerate(imena) if ime in seznam]
+    return (sum(p[0] for p in t) / len(t), sum(p[1] for p in t) / len(t))
+
+
+# Jedro bele možganovine (corpus medullare) ni točka: leži nad streho četrtega prekata (fastigium, sprednji konec A med
+# centralnim režnjičem in nodulom) in sega nazaj do stika deklive, folija in tuberja (zadnji konec B). Sprednji režnjiči
+# (lobulus centralis, culmen) in zadnji (declive … uvula) izhajajo vsak s svojega mesta na jedru; nodul iz fastigija.
+A = sredina(("Central lobule", "Nodule of vermis"))
+B = sredina(("Declive", "Folium of vermis", "Tuber of vermis"))
+
+
+def na_jedru(p):
+    ab = (B[0] - A[0], B[1] - A[1])
+    s = max(0.0, min(1.0, ((p[0] - A[0]) * ab[0] + (p[1] - A[1]) * ab[1]) / (ab[0] ** 2 + ab[1] ** 2)))
+    return (A[0] + ab[0] * s, A[1] + ab[1] * s)
+
+
+vstopi = [min(z, key=lambda p: raz(p, na_jedru(p))) for z in telesa]
+izvor = [na_jedru(v) for v in vstopi]
+
 # obris: unija režnjičev modela in deblo (med režnjiči ob deblu ni praznine)
 obris = Image.new("L", (N, N), 0)
 dro = ImageDraw.Draw(obris)
 for z in telesa:
     dro.polygon([px(p) for p in z], fill=255)
-x, y = px(c0)
-r = 0.0036 * k
-dro.ellipse((x - r, y - r, x + r, y + r), fill=255)
-for z in telesa:  # vrat veje med deblom in režnjičem
-    dro.line([px(c0), px(min(z, key=lambda p: raz(p, c0)))], fill=255, width=round(0.004 * k))
+dro.line([px(A), px(B)], fill=255, width=round(0.0036 * k))
+for q in (A, B):
+    x, y = px(q)
+    r = 0.0018 * k
+    dro.ellipse((x - r, y - r, x + r, y + r), fill=255)
+for i, z in enumerate(telesa):  # vrat veje med jedrom in režnjičem
+    dro.line([px(izvor[i]), px(vstopi[i])], fill=255, width=round(0.0034 * k))
+    for q in (izvor[i], vstopi[i]):  # zaobljena konca vratu
+        x, y = px(q)
+        r = 0.0017 * k
+        dro.ellipse((x - r, y - r, x + r, y + r), fill=255)
 # mreža za preverjanje »znotraj obrisa« in »območje moje veje« (0,1 mm)
 G = 512
 gk = G / mera
 maska = np.asarray(obris.resize((G, G), Image.BILINEAR)) > 127
 
 # osi režnjičev: en režnjič na sektor okoli debla (prekrivajoča se telesa modela se združijo)
-konci = []
-for i, z in enumerate(telesa):
-    konec = max(z, key=lambda p: raz(p, c0))
-    konci.append((math.degrees(math.atan2(konec[1] - c0[1], konec[0] - c0[0])), raz(konec, c0), i, konec))
-konci.sort(key=lambda t: -t[1])
-izbrani = []
-for kot, dol, i, konec in konci:
-    if all(abs((kot - k2 + 180) % 360 - 180) > SEKTOR for k2, *_ in izbrani):
-        izbrani.append((kot, dol, i, konec))
 osi = []
-for kot, dol, i, konec in izbrani:
+for i, z in enumerate(telesa):
+    o, vstop = izvor[i], vstopi[i]
+    konec = max(z, key=lambda p: raz(p, o))
+    dol = raz(konec, o)
     t = tez[i]
-    u = ((konec[0] - c0[0]) / dol, (konec[1] - c0[1]) / dol)
+    u = ((konec[0] - o[0]) / dol, (konec[1] - o[1]) / dol)
     kon = (konec[0] - u[0] * 0.0019, konec[1] - u[1] * 0.0019)  # veja konča pred obrisom (skorja + lističi na koncu)
-    # os: od debla skozi težišče režnjiča proti koncu (kvadratna Bézierova krivulja, rahlo ukrivljena)
-    m = ((t[0] + (c0[0] + kon[0]) / 2) / 2, (t[1] + (c0[1] + kon[1]) / 2) / 2)
+    # os: iz jedra skozi vstop in težišče režnjiča proti koncu (kvadratna Bézierova krivulja, rahlo ukrivljena)
+    m = ((t[0] + vstop[0]) / 2, (t[1] + vstop[1]) / 2)
     n = max(10, int(dol / 0.0003))
-    osi.append([((1 - s) ** 2 * c0[0] + 2 * s * (1 - s) * m[0] + s * s * kon[0], (1 - s) ** 2 * c0[1] + 2 * s * (1 - s) * m[1] + s * s * kon[1]) for s in (j / n for j in range(n + 1))])
+    osi.append([((1 - s) ** 2 * o[0] + 2 * s * (1 - s) * m[0] + s * s * kon[0], (1 - s) ** 2 * o[1] + 2 * s * (1 - s) * m[1] + s * s * kon[1]) for s in (j / n for j in range(n + 1))])
 
 # območje veje: vsaka točka mreže pripada najbližji osi
 gy, gx = np.mgrid[0:G, 0:G]
@@ -188,9 +214,11 @@ def narisi(dodatek):
         dr.line(q, fill=255, width=s, joint="curve")
         for x, y in q:  # zaobljeni konci in stiki
             dr.ellipse((x - s / 2, y - s / 2, x + s / 2, y + s / 2), fill=255)
-    x, y = px(c0)  # deblo: zaobljeno jedro
-    r = (0.0016 + dodatek) * k
-    dr.ellipse((x - r, y - r, x + r, y + r), fill=255)
+    q = [px(A), px(B)]  # jedro bele možganovine (corpus medullare)
+    s = max(1, round((0.0030 + 2 * dodatek) * k))
+    dr.line(q, fill=255, width=s)
+    for x, y in q:
+        dr.ellipse((x - s / 2, y - s / 2, x + s / 2, y + s / 2), fill=255)
     return im
 
 
@@ -208,4 +236,4 @@ alfa = ImageChops.multiply(narisi(D_SKORJA + 0.00045), obris)
 slika.putalpha(alfa)
 slika = slika.resize((PX, PX), Image.LANCZOS)
 slika.save(IZHOD, quality=88, method=6)
-print(json.dumps({"lo": [round(lo[0], 5), round(lo[1], 5)], "mera": [round(mera, 5), round(mera, 5)], "deblo": [round(c0[0], 5), round(c0[1], 5)], "reznjicev": len(osi)}))
+print(json.dumps({"lo": [round(lo[0], 5), round(lo[1], 5)], "mera": [round(mera, 5), round(mera, 5)], "jedro": [[round(v, 5) for v in A], [round(v, 5) for v in B]], "reznjicev": len(osi)}))

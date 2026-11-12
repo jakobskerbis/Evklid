@@ -528,7 +528,11 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-organ .k3-spodaj { gap: 12px; padding: 12px 16px 16px; }
 .k3-organ .k3-deli { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px; mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); }
 .k3-organ .k3-deli::-webkit-scrollbar { display: none; }
-.k3-organ .k3-del { flex: none; min-height: 38px; font-size: 0.9rem; }
+.k3-organ .k3-del { flex: none; min-height: 40px; font-size: 0.9rem; }
+.k3-stikalo { cursor: pointer; }
+.k3-deli-vsi { display: none; font-weight: 600; }
+/* stikala organa v plošči pod odrom (telefon): brez lebdenja */
+.k3-organ .k3-plosca > .k3-nadzor { position: static; align-self: flex-start; }
 .k3 .k3-podrobnosti-gumb { width: 100%; min-height: 52px; justify-content: center; gap: 10px; font-size: 1rem; font-weight: 600; background: var(--k3-povrsina); }
 .k3-nalaganje {
   position: absolute; z-index: 3; left: 50%; top: 50%; translate: -50% -50%; width: min(300px, calc(100% - 32px)); padding: 18px 20px;
@@ -581,8 +585,10 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 @media (max-width: 480px) {
   .k3-stran-pregled .k3-orodja { gap: 6px; top: 10px; right: 10px; }
   .k3-stran-pregled .k3-orodja .k3-krog { width: 40px; height: 40px; min-height: 40px; }
-  /* telefon: stikala (Učne barve, Prerez) pod vrsto gumbov, sicer prekrijejo »Oddalji« in »Vrti« */
-  .k3-organ.k3-stran-pregled .k3-nadzor { top: 58px; left: 10px; }
+  /* telefon: deli v več vrstah (brez vodoravnega drsenja), najprej skupine in prvih 6 delov, ostali za »Pokaži vse« */
+  .k3-organ .k3-deli { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; mask-image: none; }
+  .k3-organ .k3-deli:not(.k3-deli-odprti) .k3-del-vec:not([aria-pressed="true"]) { display: none; }
+  .k3-organ .k3-deli:not(.k3-deli-odprti) .k3-deli-vsi { display: inline-flex; }
   .k3-namig { max-width: calc(100% - 32px); bottom: 10px; }
   .k3-namig-viden .k3-merilo { bottom: 62px; }
 }

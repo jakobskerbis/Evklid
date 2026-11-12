@@ -130,3 +130,28 @@ test("presek ledvice: ravnina iz JSON seka skorjo, ovojnico in meh; piramide so 
     }
   }
 });
+
+test("presek: odprta mreža (odprtina v plašču) da zanko le s »skleni«; ozek obris brez lukenj je s »stena« stena, ne svetlina", () => {
+  // kvader brez ploskve x = hi (odprtina kot hilus pljuč): presek z ravnino z = 0 je odprta veriga v obliki črke U
+  const { pos, idx } = kvader([0, 0, -0.01], [0.02, 0.02, 0.01]);
+  const brez = [];
+  for (let f = 0; f < idx.length; f += 3) {
+    const vsi = [0, 1, 2].every((k) => Math.abs(pos[idx[f + k] * 3] - 0.02) < 1e-9);
+    if (!vsi) brez.push(idx[f], idx[f + 1], idx[f + 2]);
+  }
+  const odprt = new Uint32Array(brez);
+  assert.equal(zankePreseka(pos, odprt, [0, 0, 1], 0).zanke.length, 0);
+  assert.equal(zankePreseka(pos, odprt, [0, 0, 1], 0, 2e-5, 0.01).zanke.length, 0, "odprtina širša od »skleni« ostane odprta");
+  const z = zankePreseka(pos, odprt, [0, 0, 1], 0, 2e-5, 0.03).zanke;
+  assert.equal(z.length, 1);
+  assert.ok(Math.abs(Math.abs(ploscina(z[0])) - 0.02 * 0.02) < 1e-9);
+  // ozek trak 20 × 1 mm: brez »stena« svetlina (vrsta 2), s »stena« 1,8 mm stena (vrsta 0); širok obris ostane svetlina
+  const tri = (obris, luknje) => (luknje.length ? [] : obris.slice(2).map((_, i) => [0, i + 1, i + 2]));
+  const trak = kvader([0, 0, -0.01], [0.02, 0.001, 0.01]);
+  const a = presekMreze(trak.pos, trak.idx, [0, 0, 1], 0, { luknje: true, trianguliraj: tri });
+  assert.ok([...a.vrste].every((v) => v === 2));
+  const b = presekMreze(trak.pos, trak.idx, [0, 0, 1], 0, { luknje: true, stena: 0.0018, trianguliraj: tri });
+  assert.ok([...b.vrste].every((v) => v === 0));
+  const c = presekMreze(pos, idx, [0, 0, 1], 0, { luknje: true, stena: 0.0018, trianguliraj: tri });
+  assert.ok([...c.vrste].every((v) => v === 2));
+});

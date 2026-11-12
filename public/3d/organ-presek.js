@@ -24,7 +24,21 @@ function vZanki(p, zanka) {
 // Oglišča se najprej zvarijo po položaju (šivi UV), točka preseka je vezana na rob mreže, zato se zanke sklenejo natanko.
 // Odprte verige (luknja v mreži, nemnogoteren rob) odpadejo. Vrne { zanke: [[x, y], …][], O, U, V } (2D v ravnini:
 // točka = O + x·U + y·V).
-export function zankePreseka(pos, idx, n, d, zvar = 2e-5) {
+export function zankePreseka(pos, idx, n, d, zvar = 2e-5, skleni = 0) {
+  // hitro: mreža, ki je ravnina ne seka (vsa oglišča na isti strani), nima zank – brez varjenja oglišč
+  let pod = false, nad = false;
+  for (let f = 0; f < idx.length && !(pod && nad); f++) {
+    const i = idx[f] * 3;
+    if (n[0] * pos[i] + n[1] * pos[i + 1] + n[2] * pos[i + 2] + d > 0) nad = true;
+    else pod = true;
+  }
+  const kriz0 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  if (!(pod && nad)) {
+    const u0 = Math.abs(n[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+    const u = kriz0(u0, n), l = Math.hypot(...u) || 1;
+    const U = u.map((x) => x / l);
+    return { zanke: [], O: n.map((x) => -d * x), U, V: kriz0(n, U) };
+  }
   const nv = pos.length / 3;
   const kljuci = new Map();
   const w = new Uint32Array(nv);
@@ -78,11 +92,12 @@ export function zankePreseka(pos, idx, n, d, zvar = 2e-5) {
   const zanke = [];
   for (let s = 0; s < tocke.length; s++) {
     if (obiskana[s] || sos[s].length !== 2) continue;
-    const z = [];
+    const z = [], zi = [];
     let prej = -1, t = s, sklenjena = false;
     while (true) {
       obiskana[t] = 1;
       z.push(tocke[t]);
+      zi.push(t);
       const nasl = sos[t][0] !== prej ? sos[t][0] : sos[t][1];
       if (nasl === s) { sklenjena = z.length >= 3; break; }
       if (nasl === undefined || obiskana[nasl] || sos[nasl].length !== 2) break;
@@ -90,6 +105,47 @@ export function zankePreseka(pos, idx, n, d, zvar = 2e-5) {
       t = nasl;
     }
     if (sklenjena) zanke.push(z);
+    else for (const i of zi) obiskana[i] = 2; // del odprte verige
+  }
+  // skleni > 0: odprte verige (mreža z odprtino, npr. hilus pljuč) se sklenejo z ravno črto čez odprtino, če sta konca
+  // največ »skleni« narazen; več verig istega obrisa se prej poveže po najbližjih koncih.
+  if (skleni > 0) {
+    const verige = [];
+    for (let s = 0; s < tocke.length; s++) {
+      if (obiskana[s] % 2 || sos[s].length !== 1) continue;
+      const z = [];
+      let prej = -1, t = s;
+      while (t !== undefined && !(obiskana[t] % 2)) {
+        obiskana[t] = 3;
+        z.push(tocke[t]);
+        if (sos[t].length > 2) break;
+        const nasl = sos[t][0] !== prej ? sos[t][0] : sos[t][1];
+        prej = t;
+        t = nasl;
+      }
+      if (z.length >= 2) verige.push(z);
+    }
+    const r2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    while (verige.length) {
+      const z = verige.pop();
+      while (true) {
+        const konec = z[z.length - 1];
+        let naj = r2(konec, z[0]), kdo = -1, obrni = false;
+        for (let i = 0; i < verige.length; i++) {
+          const v = verige[i];
+          const a = r2(konec, v[0]), b = r2(konec, v[v.length - 1]);
+          if (a < naj) { naj = a; kdo = i; obrni = false; }
+          if (b < naj) { naj = b; kdo = i; obrni = true; }
+        }
+        if (kdo < 0) {
+          if (naj <= skleni && z.length >= 3) zanke.push(z);
+          break;
+        }
+        if (naj > skleni) break;
+        const v = verige.splice(kdo, 1)[0];
+        z.push(...(obrni ? v.reverse() : v));
+      }
+    }
   }
   return { zanke, O, U, V };
 }
@@ -122,7 +178,7 @@ export function ovojnica(tocke) {
 // povecaj: faktor, s katerim se vsaka zanka poveča okoli svojega težišča (1,02: sosednji telesi se prekrijeta).
 // trianguliraj(obris, luknje) → [[a, b, c], …] z indeksi v obris, nato luknje po vrsti (kot THREE.ShapeUtils.triangulateShape).
 // najPloscina: zanke z manjšo ploščino odpadejo (drobir).
-export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7 } = {}) {
+export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7, skleni = 0, stena = 0 } = {}) {
   const polozaji = [];
   const indeksi = [];
   const vrste = []; // na oglišče: 0 ploskev, 1 obroba, 2 zapolnjena luknja
@@ -155,7 +211,7 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, luknj
   };
   let os = null;
   for (const del of typeof idx[0] === "number" ? [idx] : idx) {
-    const { zanke, O, U, V } = zankePreseka(pos, del, n, d);
+    const { zanke, O, U, V } = zankePreseka(pos, del, n, d, 2e-5, skleni);
     os = { O, U, V };
     let dobre = zanke.filter((z) => Math.abs(ploscina(z)) > najPloscina);
     if (povecaj !== 1) {
@@ -181,7 +237,12 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, luknj
       for (const p of vse) for (let c = 0; c < 3; c++) polozaji.push(O[c] + p[0] * U[c] + p[1] * V[c]);
       if (!brezPloskve) for (const t of trianguliraj(z, luknje)) indeksi.push(zacetek + t[0], zacetek + t[1], zacetek + t[2]);
       // polna cev brez notranje stene (obris brez lukenj): vsa ploskev je svetlina, steno nariše obroba
-      for (let i = 0; i < vse.length; i++) vrste.push(zapolniLuknje && !luknje.length ? 2 : 0);
+      // stena > 0: ozek obris brez lukenj (srednja širina 2·ploščina/obseg pod »stena«) je vzdolž prerezana stena odprte
+      // cevi z dvojno steno, ne svetlina
+      let obseg = 0;
+      for (let i = 0; i < z.length; i++) obseg += Math.hypot(z[(i + 1) % z.length][0] - z[i][0], z[(i + 1) % z.length][1] - z[i][1]);
+      const jeStena = stena > 0 && (2 * Math.abs(ploscina(z))) / Math.max(obseg, 1e-12) < stena;
+      for (let i = 0; i < vse.length; i++) vrste.push(zapolniLuknje && !luknje.length && !jeStena ? 2 : 0);
       if (zapolniLuknje) {
         for (const l of luknje) {
           const z2 = polozaji.length / 3;

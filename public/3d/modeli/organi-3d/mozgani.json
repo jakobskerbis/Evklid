@@ -133,7 +133,7 @@
    "rezVlakna": 3200
   },
   "medmozgani": {
-   "barva": "#c48d86",
+   "barva": "#bfa39c",
    "hrap": 0.4,
    "lak": 0.7,
    "lakHrap": 0.1,
@@ -145,9 +145,9 @@
    "zrno": 0.05,
    "f": 16,
    "relief": 0.3,
-   "senca": 0.45,
+   "senca": 0.2,
    "sencaBarva": "#6a2424",
-   "rez": "#d6aa9f",
+   "rez": "#c9b8b0",
    "aoExp": 2.2,
    "vrstni": 2,
    "mapa": false,
@@ -542,7 +542,10 @@
      "aoTekstura": 0.12
     },
     "medmozgani": {
-     "aoTekstura": 0.12
+     "aoTekstura": 0.12,
+     "barva": "#b9aca6",
+     "lak": 0.12,
+     "sijaj": 0.1
     },
     "sredina": {
      "aoTekstura": 0.12
