@@ -59,7 +59,7 @@ test("/3d page loads the Evklid keyboard and its colours, the viewer page mode h
   const blok = css.match(/html\.k3-stran \{([^}]*)\}/)[1];
   const iz = new Set([...tk.matchAll(/var\(--([a-z0-9-]+)/g)].map((m) => m[1]).filter((v) => !/^(tk-|varno-|cols$)/.test(v)));
   for (const v of iz) assert.ok(blok.includes(`--${v}:`), `--${v} missing in html.k3-stran`);
-  for (const k of ["a3.searchModels", "a3.areas", "a3.all", "a3.area.telo", "a3.recent", "a3.seeAll", "a3.results", "a3.noModels", "a3.prevModel", "a3.nextModel", "a3.position", "a3.fullscreen", "a3.exitFullscreen", "a3.about", "a3.hintModel", "a3.hintModelMouse", "a3.zoomIn", "a3.zoomOut", "sc.try"]) {
+  for (const k of ["a3.searchModels", "a3.areas", "a3.all", "a3.area.telo", "a3.recent", "a3.seeAll", "a3.results", "a3.noModels", "a3.prevModel", "a3.nextModel", "a3.position", "a3.fullscreen", "a3.exitFullscreen", "a3.about", "a3.hintModel", "a3.hintModelMouse", "a3.zoomIn", "a3.zoomOut", "sc.try", "sc.think"]) {
     assert.ok(typeof sl[k] === "string" && sl[k], `missing ${k}`);
   }
   const src = fs.readFileSync(path.join(D3, "stran.js"), "utf8");

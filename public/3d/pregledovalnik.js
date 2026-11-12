@@ -6,6 +6,7 @@ import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGum
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { skoziLupino } from "./izbira.js";
 import { t } from "/i18n.js";
+import { napisPoskusa } from "../sim/napis-poskusa.js";
 import { icon } from "/icons.js";
 
 const mk = (tag, cls, text) => {
@@ -78,9 +79,10 @@ export function odpriModel(el, mod, opts = {}) {
     oModelu = mk("section", "k3-o-modelu");
     oModelu.setAttribute("aria-label", t("a3.about"));
     if (info.opis) oModelu.append(mk("p", "k3-o-opis", info.opis));
-    if (info.poskusi) {
+    const np = napisPoskusa(info.poskusi); // »Preizkusi:« ali »Razmisli:« (public/sim/napis-poskusa.js)
+    if (np) {
       const p = mk("p", "k3-o-poskusi");
-      p.append(mk("b", "", `${t("sc.try")} `), mk("bdi", "", info.poskusi)); // bdi: slovensko besedilo v RTL ostane LTR
+      p.append(mk("b", "", `${t(np.kljuc)} `), mk("bdi", "", np.besedilo)); // bdi: slovensko besedilo v RTL ostane LTR
       oModelu.append(p);
     }
     oModelu.hidden = !oModelu.children.length;

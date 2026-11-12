@@ -97,7 +97,7 @@ const PORT = 3998;
     const r = await p.evaluate((i) => mountOne(i), i);
     const issues = [];
     if (r.overflow) issues.push(`širša od zaslona za ${r.overflow} px`);
-    if (!r.tryText) issues.push("brez »Poskusi«");
+    if (!r.tryText) issues.push("brez »Preizkusi:«/»Razmisli:«");
     if (!r.reset) issues.push("brez »Ponastavi«");
     if (r.unlabeled) issues.push(`${r.unlabeled} kontrol brez oznake`);
     if (r.dragNoKey) issues.push(`${r.dragNoKey} vlečnih elementov brez tipkovnice`);
