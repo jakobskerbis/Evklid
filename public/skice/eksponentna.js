@@ -43,7 +43,7 @@ export default function narisi(host) {
       if (S.svg.lastChild !== tocka) S.svg.append(tocka);
     }
     S.cipi([
-      { barva: "ploskev", oznaka: "a", vrednost: st(a, 1) },
+      { barva: "ploskev", oznaka: "a", vrednost: st(a, 2) },
       { barva: "ploskev", oznaka: a > 1 ? "a > 1" : "0 < a < 1", vrednost: a > 1 ? "obe funkciji naraščata" : "obe funkciji padata" },
       { barva: "izbor", oznaka: "x", vrednost: vr(x) },
       { barva: "izbor", oznaka: "y = a^x", vrednost: vr(y) },

@@ -433,15 +433,24 @@ function hitro(mesta) {
 // Širina, ki jo ima formula sredi besedila na voljo v bloku el: vsebina brez notranjega roba (padding). Blok, ki se
 // skrči na vsebino (klepetov mehurček: width: fit-content in max-width, okno z oblačkom), bi se zaradi formule, ki
 // se ne prelomi, kar razširil do največje širine, zato merimo proti tej meji, ne proti trenutni širini.
+// Enako velja za element v vrstici flex (čip z oznako in vrednostjo, j 12. 11. 2026): širok je toliko kot njegova
+// vsebina, zato bi bila vsaka formula v njem »preširoka« za ločilo in zložena v stolpec. Prostor takega elementa je
+// prostor njegovega starša (ta je lahko spet tak, npr. čip v vrstici čipov); v vrstici, ki se ne prelomi, brez
+// sosedov, v vrstici, ki se prelomi, pa vsa vrstica (sosed gre v naslednjo vrstico).
 function prostor(el) {
   const cs = getComputedStyle(el);
   const px = (v) => parseFloat(v) || 0;
   const rob = px(cs.paddingLeft) + px(cs.paddingRight);
   const cw = el.clientWidth - rob;
-  if (!el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
   const p = el.parentElement;
   const ps = p && getComputedStyle(p);
-  const pw = p ? p.clientWidth - px(ps.paddingLeft) - px(ps.paddingRight) : innerWidth;
+  const vFlex = !!ps && /flex$/.test(ps.display) && !ps.flexDirection.startsWith("column");
+  if (!vFlex && !el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
+  let pw = p && p !== document.body ? prostor(p) : innerWidth;
+  if (vFlex && ps.flexWrap === "nowrap") {
+    const gap = px(ps.columnGap);
+    for (const s of p.children) if (s !== el && getComputedStyle(s).position !== "absolute") pw -= s.offsetWidth + gap;
+  }
   let lim = Math.min(pw - px(cs.marginLeft) - px(cs.marginRight), innerWidth - 16); // okvir (z robom in obrobo)
   const mx = cs.maxWidth;
   let najvec = mx.endsWith("%") ? (pw * parseFloat(mx)) / 100 : mx.endsWith("px") ? parseFloat(mx) : Infinity;
