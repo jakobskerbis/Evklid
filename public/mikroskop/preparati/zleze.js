@@ -73,17 +73,23 @@ T tkivo(vec2 p, float px) {
   Vor v = vor(w, 120.0, vec2(1.0), 0.0, 0.85);
   vec4 h = h42(v.id);
   float pre = 3.0 + 2.0 * h.w;
-  if (v.rob < pre) {
-    t.snov = S_KOLAGEN; t.dye = vec3(0.04, 0.22, 0.0);
+  // folikli so okrogli: rob celice Voronoi zaobljen s krogom; v kotih med folikli ostane vezivo s kapilarami
+  vec2 qf = w - v.c;
+  float rq = length(qf);
+  float dc = 72.0 * (0.9 + 0.3 * h.z) - rq;
+  vec2 nv = dc < v.rob ? qf / max(rq, 1e-3) : v.nb;
+  float rb = min(v.rob, dc);
+  if (rb < pre) {
+    t.snov = S_KOLAGEN; t.dye = vec3(0.05, 0.36, 0.0);
     vec4 e = krogci(p, 9.0, 2.6, 3.0, 0.35, 5.0);
     if (e.x < 0.0) { t.dye.y = 0.72; t.snov = S_ERITROCIT; t.meja = -e.x; }
     return t;
   }
   float H = 7.0 + 4.0 * h.x;
-  float d = v.rob - pre;
+  float d = rb - pre;
   if (d < H) {
-    vec2 q = w - v.c;
-    T e = epitel(H - d, atan(q.y, q.x) * 60.0, H, 8.0, 0.4, C_ZLEZNA, v.id, p, -v.nb, px);
+    T e = epitel(H - d, atan(qf.y, qf.x) * 50.0, H, 8.0, 0.4, C_ZLEZNA, v.id, p, -nv, px);
+    e.dye.x += 0.05; // citoplazma tirocitov je rahlo bazofilna (vijoličasta)
     return e;
   }
   // koloid: gost rožnat, ob robu svetle vakuole (resorpcija)

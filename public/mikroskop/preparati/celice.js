@@ -700,23 +700,23 @@ bool uvijacka(inout T t, vec2 p, float px) {
   vec2 dir = normalize(vec2(1.0, -0.35));
   vec2 l = p - vec2(0.0, -470.0);
   float a = dot(l, dir), b = dot(l, vec2(-dir.y, dir.x));
-  if (abs(b) > 18.5) return false;
+  if (abs(b) > 22.0) return false; // nit ~44 µm, celice ~72 µm dolge
   float ci = floor(a / 72.0);
   float la = (fract(a / 72.0) - 0.5) * 72.0;
   t = prazno(); t.tip = C_SPLOSNA; t.cid = vec2(ci, 5.0); t.cc = p - dir * la - vec2(-dir.y, dir.x) * b; t.jc = t.cc;
-  float dw = min(18.5 - abs(b), 36.0 - abs(la));
-  if (dw < 0.8) { t.snov = S_STENA; t.smer = abs(b) > 17.5 ? dir : vec2(-dir.y, dir.x); t.r1 = dw; t.dye = vec3(0.0, 0.3, 0.0); return true; }
-  t.snov = S_VAKUOLA; t.meja = dw - 0.8; t.dye = vec3(0.0, 0.03, 0.0);
-  float rc = 15.5;
+  float dw = min(22.0 - abs(b), 36.0 - abs(la));
+  if (dw < 1.0) { t.snov = S_STENA; t.smer = abs(b) > 21.0 ? dir : vec2(-dir.y, dir.x); t.r1 = dw; t.dye = vec3(0.04, 0.45, 0.0); return true; }
+  t.snov = S_VAKUOLA; t.meja = dw - 1.0; t.dye = vec3(0.07, 0.05, 0.0); // tanka plast citoplazme ob steni je rahlo zelena
+  float rc = 19.0;
   float th = acos(clamp(b / rc, -1.0, 1.0));
   float pitch = 48.0;
   float s1 = abs(fract((a - pitch * th / 6.2832) / pitch + 0.5) - 0.5) * pitch;
   float s2 = abs(fract((a + pitch * th / 6.2832) / pitch + 0.5) - 0.5) * pitch;
-  float rib = max(pokrij(s1 - 3.2, px), 0.45 * pokrij(s2 - 3.2, px)) * step(abs(b), rc + 1.5);
+  float rib = max(pokrij(s1 - 5.0, px), 0.45 * pokrij(s2 - 5.0, px)) * step(abs(b), rc + 1.5); // trak kloroplasta ~10 µm
   if (rib > 0.0) {
     t.dye.x = mix(t.dye.x, 0.9, rib);
     float pir = pokrij(length(vec2((fract(a / 9.0) - 0.5) * 9.0, s1)) - 1.6, px);
-    t.dye.y += 0.35 * pir * step(s1, 3.2);
+    t.dye.y += 0.35 * pir * step(s1, 5.0);
     if (rib > 0.5) { t.snov = S_KLOROPLAST; t.jc = p; t.smer = normalize(dir + vec2(-dir.y, dir.x) * 0.6); t.r1 = 3.0; t.meja = 1e3; }
   }
   float dj = sdElipsa(vec2(la, b), vec2(5.0, 3.5));

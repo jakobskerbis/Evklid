@@ -28,7 +28,7 @@ T tkivo(vec2 p, float px) {
   float hw = 21.8 + 1.4 * h.y - (mod(i, 9.0) < 0.5 ? 8.0 : 0.0);  // vsak deveti: širši perimizij
   float v = wy - sred;
   float bd = hw - abs(v);
-  float vid = 1.0 - smoothstep(0.5, 1.1, px);
+  float vid = 1.0 - smoothstep(0.75, 1.15, px); // progavost (2,3 µm) izgine šele pod Nyquistovo mejo zaslona
   // vezivo med vlakni
   t.snov = S_KOLAGEN; t.smer = smer;
   t.dye = vec3(0.04, 0.16 + 0.06 * sumL(p, 5.0, px), 0.0);
@@ -48,7 +48,7 @@ T tkivo(vec2 p, float px) {
   T f = prazno();
   f.snov = S_MIOFIBRILA; f.tip = C_MISICA; f.smer = smer; f.r1 = xs - 1.15;
   f.meja = bd; f.cc = transpose(R) * vec2(z.x, sred); f.cid = vec2(i, 3.0);
-  f.dye = vec3(0.05 + 0.02 * prog * vid, 0.56 + 0.12 * prog * vid + 0.04 * sin(v * 5.0) * vid + 0.08 * (sumL(p, 60.0, px) - 0.5), 0.0);
+  f.dye = vec3(0.06 + 0.05 * prog * vid, 0.56 + 0.2 * prog * vid + 0.04 * sin(v * 5.0) * vid + 0.08 * (sumL(p, 60.0, px) - 0.5), 0.0);
   // jedra ob robu vlakna
   for (int sgn = -1; sgn <= 1; sgn += 2) {
     float yj = sred + float(sgn) * (hw - 1.7);
