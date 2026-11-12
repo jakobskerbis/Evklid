@@ -655,6 +655,8 @@ export function zgradi(THREE, ctx = {}) {
     citoskelet: { tex: null },
     mesicki: { rf: 50, k: 0.6 },
   });
+  // stikalo »Barve kot v učbeniku« (po poliranju, da shrani končne barve)
+  nadzor.push(V.barveUcbenika(deli));
 
   return {
     group,

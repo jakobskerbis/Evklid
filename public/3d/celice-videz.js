@@ -57,6 +57,19 @@ export const BARVE = {
   bicek: "#f6e7b8",
 };
 
+// »Barve kot v učbeniku« (j, 12. 11.): klasične barve šolskih slik celice, svetlejše in bolj razločne med seboj. Ključ je
+// id dela (enaki id-ji v vseh celicah); celica lahko doda svoje (posebne) v V.barveUcbenika.
+export const BARVE_UCBENIK = {
+  membrana: "#e8809a", "celicna-membrana": "#e8809a", citoplazma: "#f5d6b8", jedro: "#9a6fe0", nukleoplazma: "#cdb8f5",
+  "jedrna-ovojnica": "#5e40bd", kromatin: "#4a2fa3", jedrce: "#2f1e80", "zrnati-er": "#4f95e8", "gladki-er": "#35c4b0",
+  ribosomi: "#1d2c80", golgi: "#f5d23c", mitohondrij: "#ea5f3a", mitohondriji: "#ea5f3a", lizosom: "#68c24a",
+  lizosomi: "#68c24a", peroksisom: "#bcd83a", centrosom: "#28b8dc", citoskelet: "#8fa3cc", mesicki: "#f8de72",
+  kloroplast: "#35a83a", kloroplasti: "#35a83a", vakuola: "#86d4f2", "osrednja-vakuola": "#86d4f2", tonoplast: "#4aa8d8",
+  stena: "#5c9e2e", "celicna-stena": "#5c9e2e", plazmodezme: "#a3c95a", nukleoid: "#e46aa6", plazmid: "#f29ac2",
+  plazmidi: "#f29ac2", bicek: "#c9a46a", bicki: "#c9a46a", pili: "#d9c08a", kapsula: "#d8e6a0", migetalke: "#c9a46a",
+  "skrobna-zrna": "#f2ecd6", "krcljiva-vakuola": "#7ccdf0", "prebavna-vakuola": "#e2b36c",
+};
+
 export function videzCelic(THREE, { hi = true, odpad = [] } = {}) {
   const hash = (x, y, z) => { const s = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453; return s - Math.floor(s); };
   function sum(x, y, z) { // gladek 3D šum vrednosti, -1 … 1
@@ -372,5 +385,64 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
     return im;
   }
 
-  return { GLSL, vLuknji, hash, sum, fbm, rnd, sencilo, steklo, poglobi, poliraj, pike, zdruzi, vlakna, posej, beljakovine, BARVE };
+  // Stikalo »Barve kot v učbeniku«: zamenja barve delov (materiali, pike točk in barva v seznamu delov) s klasičnimi
+  // barvami iz BARVE_UCBENIK (+ posebne[idDela]) in nazaj. Pokliči ga na koncu zgradi(), po V.poliraj; izbira se zapomni
+  // za vse celice (localStorage evklid.3d.ucbenik). Vrne element nadzora (stikalo) za nadzor[].
+  function barveUcbenika(deli, posebne = {}) {
+    const KLJUC = "evklid.3d.ucbenik";
+    let vklop = false;
+    try { vklop = globalThis.localStorage?.getItem(KLJUC) === "1"; } catch {}
+    const izv = new Map(), srednja = new WeakMap(), t = new THREE.Color(), c = new THREE.Color();
+    function povprecje(g) { // povprečna barva oglišč (material z barvami oglišč dobi razmerje cilj / povprečje)
+      if (srednja.has(g)) return srednja.get(g);
+      const a = g.attributes.color, m = new THREE.Color(1, 1, 1);
+      if (a && a.count) {
+        let r = 0, gg = 0, b = 0;
+        for (let i = 0; i < a.count; i++) { r += a.getX(i); gg += a.getY(i); b += a.getZ(i); }
+        m.setRGB(Math.max(0.05, r / a.count), Math.max(0.05, gg / a.count), Math.max(0.05, b / a.count));
+      }
+      srednja.set(g, m);
+      return m;
+    }
+    function nastavi(v) {
+      for (const d of deli) {
+        const cilj = posebne[d.id] || BARVE_UCBENIK[d.id];
+        if (!cilj) continue;
+        if (!izv.has(d)) izv.set(d, { barva: d.barva, mat: new Map() });
+        const z = izv.get(d);
+        d.barva = v ? cilj : z.barva;
+        for (const x of d.meshes) x.traverse((o) => {
+          const m = o.material;
+          if (!m || !m.color || (!o.isMesh && !o.isPoints) || m.userData.rez) return;
+          if (!z.mat.has(m)) z.mat.set(m, { color: m.color.clone(), emissive: m.emissive ? m.emissive.clone() : null });
+          const iz = z.mat.get(m);
+          if (!v) {
+            m.color.copy(iz.color);
+            if (iz.emissive) m.emissive.copy(iz.emissive);
+            return;
+          }
+          t.set(cilj);
+          if (m.vertexColors && o.geometry?.attributes.color) {
+            const p = povprecje(o.geometry);
+            c.setRGB(Math.min(3, t.r / p.r), Math.min(3, t.g / p.g), Math.min(3, t.b / p.b));
+          } else c.copy(t);
+          if (m.userData.steklo) c.multiplyScalar(0.25);
+          m.color.copy(c);
+          if (iz.emissive && (iz.emissive.r + iz.emissive.g + iz.emissive.b) > 0.01) m.emissive.copy(t).multiplyScalar(0.18);
+        });
+      }
+    }
+    const el = {
+      tip: "stikalo", id: "ucbenik", oznaka: "Barve kot v učbeniku", vrednost: vklop,
+      ob(v) {
+        el.vrednost = !!v;
+        nastavi(el.vrednost);
+        try { globalThis.localStorage?.setItem(KLJUC, el.vrednost ? "1" : "0"); } catch {}
+      },
+    };
+    if (vklop) nastavi(true);
+    return el;
+  }
+
+  return { GLSL, vLuknji, barveUcbenika, hash, sum, fbm, rnd, sencilo, steklo, poglobi, poliraj, pike, zdruzi, vlakna, posej, beljakovine, BARVE, BARVE_UCBENIK };
 }
