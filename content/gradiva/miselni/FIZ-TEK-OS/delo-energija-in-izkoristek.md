@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tok energije
+  - vložena, koristna, izgube
+  - energija se ne uniči
+- Izkoristek
+  - $\eta = \dfrac{W_\mathrm{kor}}{W_\mathrm{vl}}$
+  - vedno pod $100\,\%$
+  - napaka: obrnjeno deljenje
+- Moč
+  - $P = \dfrac{W}{t}$, enota $\mathrm{W}$
+  - vat je joule na sekundo
+  - napaka: moč namesto energije
+- Kilovatna ura
+  - $1\,\mathrm{kWh} = 3{,}6\,\mathrm{MJ}$
+  - cena je energija krat cena za kWh
+- Veriga naprav
+  - izkoristki se množijo
+  - $0{,}4 \cdot 0{,}9 \cdot 0{,}8 = 0{,}288$
+- Delo in energija
+  - $A = F \cdot s$
+  - $W_p = m g h$, $W_k = \dfrac{m v^2}{2}$
+  - rampa: del energije v toploto

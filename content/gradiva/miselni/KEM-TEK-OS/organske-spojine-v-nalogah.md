@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Formula ni snov
+  - $\mathrm{C_2H_6O}$: etanol ali dimetil eter
+  - molekulska formula pove le sestavo
+- Strukturna formula
+  - pokaže, kako so atomi povezani
+  - C štirivezen, O dvovezen, H enovezen
+- Funkcionalne skupine
+  - $\mathrm{-OH}$ alkohol, $\mathrm{-O-}$ eter
+  - $\mathrm{-COOH}$ kislina, $\mathrm{-COO-}$ ester
+  - napaka: alkohol ni baza
+- Vrste izomerov
+  - veriga: butan in 2-metilpropan
+  - lega skupine: propan-1-ol, propan-2-ol
+  - vrsta skupine: alken in cikloalkan
+- Stopnja nenasičenosti
+  - $D = \dfrac{2x + 2 - y}{2}$
+  - bromovico razbarvajo le alkeni in alkini
+- Štetje izomerov
+  - vsako zgradbo poimenuj
+  - $\mathrm{C_4H_{10}O}$: 4 alkoholi in 3 etri
+- Vrelišče
+  - daljša veriga višje, razvejana nižje
+  - $\mathrm{-OH}$ in $\mathrm{-COOH}$ ga močno dvigneta
+- Sežig in sestava
+  - ves C konča v $\mathrm{CO_2}$
+  - izomeri imajo enak $w(\mathrm{C})$

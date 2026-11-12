@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sestavljanje gibanj
+  - vodoravno enakomerno, navpično navpični met
+  - povezuje ju skupni čas $t$
+  - spuščeno in odrinjeno zrno padeta hkrati
+- Komponente hitrosti
+  - $v_{0x} = v_0 \cos\alpha$, med letom stalna
+  - $v_{0y} = v_0 \sin\alpha$
+  - računalo v stopinjah
+- Najvišja točka
+  - $t_v = \dfrac{v_0 \sin\alpha}{g}$
+  - $H = \dfrac{v_0^2 \sin^2\alpha}{2g}$
+  - hitrost tam $v_0 \cos\alpha$, ne nič
+- Domet
+  - $D = \dfrac{v_0^2 \sin 2\alpha}{g}$
+  - največji pri $45^\circ$
+  - kota z vsoto $90^\circ$: enak domet
+  - dvakrat hitreje: štirikrat dlje in višje
+- Met z višine
+  - formula za $D$ tu ne velja
+  - čas iz navpične enačbe, nato $x = v_{0x} t$
+- Tir
+  - parabola $y = x \tan\alpha - \dfrac{g x^2}{2 v_0^2 \cos^2\alpha}$
+  - uporabna, ko je podana točka na tiru, ne čas

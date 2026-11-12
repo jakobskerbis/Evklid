@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rezultanta
+  - ista smer: vsota, nasprotni: razlika
+  - pravi kot: $F_R = \sqrt{F_1^2 + F_2^2}$
+  - enaki sili pod $120^\circ$: rezultanta $F$
+- Ravnovesje sil
+  - rezultanta vseh sil je nič
+  - manjkajoča sila nasprotna ostalim
+- Navor
+  - $M = F \cdot r$, enota $\mathrm{N\,m}$
+  - ročica od osi, pravokotno na silo
+- Vzvod
+  - $F_1 \cdot r_1 = F_2 \cdot r_2$
+  - opora nosi vsoto sil
+- Škripci
+  - stalni le preusmeri silo
+  - gibljivi: $F = \dfrac{F_g}{2}$, dvojna pot vrvi
+- Škripčevje
+  - $F = \dfrac{F_g + F_s}{n}$
+  - napaka: pozabljena teža škripca

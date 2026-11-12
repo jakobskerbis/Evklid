@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Oktet
+  - osem zunanjih elektronov, vodik dva
+  - kot žlahtni plini
+- Ioni iz skupine
+  - kovine: 1+, 2+, 3+
+  - nekovine do osem: $\mathrm{N^{3-}}$, $\mathrm{O^{2-}}$, $\mathrm{Cl^-}$
+  - napaka: $\mathrm{N^{5-}}$
+- Ionska vez
+  - kristal, brez molekul
+  - vsota nabojev: $2 \cdot (+3) + 3 \cdot (-2) = 0$
+  - okrajšaj: $\mathrm{Mg_2O_2}$ v $\mathrm{MgO}$
+- Večatomni ioni
+  - $\mathrm{OH^-}$, $\mathrm{SO_4^{2-}}$, $\mathrm{PO_4^{3-}}$, $\mathrm{NH_4^+}$
+  - oklepaj: $\mathrm{Ca(OH)_2}$, ne $\mathrm{CaOH_2}$
+- Kovine z več naboji
+  - rimska številka: železov(III) sulfat
+  - naboj iz formule: $\mathrm{Fe_2(SO_4)_3}$
+- Kovalentna vez
+  - nekovini si delita elektronske pare
+  - vezavnost $v = 8 - z$
+  - $\mathrm{H_2O}$, $\mathrm{NH_3}$, $\mathrm{CO_2}$ z dvojnima vezema
+- Imena spojin
+  - ionske: kation + anion (-id, -at)
+  - kovalentne: predpone di-, tri-, tetra-
+  - $\mathrm{NF_3}$ dušikov trifluorid

@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Močna kislina
+  - disociira popolnoma, $[\mathrm{H_3O^+}] = c$
+  - $\mathrm{pH} = -\log [\mathrm{H_3O^+}]$
+- Šibka kislina
+  - ravnotežje, $K_\mathrm{a} = \dfrac{x^2}{c - x}$
+  - približek $x \approx \sqrt{K_\mathrm{a} \cdot c}$ le pod $5\,\%$
+  - napaka: $[\mathrm{H_3O^+}] = c$ kot pri močni
+- Redčenje
+  - močna kislina: pH zraste za $1$
+  - šibka kislina: pH zraste za $0{,}5$
+- Konjugirani par
+  - $K_\mathrm{a} \cdot K_\mathrm{b} = K_\mathrm{w}$
+  - $K_\mathrm{w} = 1{,}0 \cdot 10^{-14}$ pri $25\,\mathrm{°C}$
+- Pufer
+  - šibka kislina in njena konjugirana baza
+  - $\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log \dfrac{n(\mathrm{A^-})}{n(\mathrm{HA})}$
+  - dodano kislino najprej stehiometrično odštej
+- Titracijska krivulja
+  - polovična nevtralizacija: $\mathrm{pH} = \mathrm{p}K_\mathrm{a}$
+  - šibka kislina: ekvivalenca nad pH 7
+  - indikator za ocetno kislino: fenolftalein
