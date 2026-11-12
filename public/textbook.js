@@ -548,8 +548,6 @@ async function renderLesson(topicId) {
       : `<section class="card tb-section"><div class="explanation">${R(L.explanation)}</div></section>${SLOT}`
     : "";
 
-  // Vpiši število in razvrsti (polje type, public/preveri-se.js): tu le vprašanje; vnos, elemente in rešitev
-  // doda public/preveri-se-ziv.js, ki se naloži samo pri lekciji s takim vprašanjem (prvo odprtje ostane manjše).
   const typedItem = (c, qi, tag) => `<${tag} class="tb-check tb-typed" data-q="${qi}"><div class="tb-q">${R(c.q)}</div><div class="tb-typed-body"></div></${tag}>`;
   const staticItem = (c, qi) =>
     c.type
