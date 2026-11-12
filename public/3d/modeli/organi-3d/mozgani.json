@@ -3,7 +3,7 @@
  "vir": "Skorja iz MRI (OpenNeuro ds000001, CC0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "skorja": {
-   "barva": "#d0706b",
+   "barva": "#d58076",
    "hrap": 0.3,
    "lak": 1,
    "lakHrap": 0.06,
@@ -15,32 +15,35 @@
    "zrno": 0.1,
    "f": 18,
    "relief": 0.6,
-   "lise": 0.28,
+   "lise": 0.3,
    "liseBarva": "#e9b9ad",
-   "senca": 0.9,
-   "sencaBarva": "#681019",
+   "senca": 0.85,
+   "sencaBarva": "#6a1420",
    "aoExp": 3,
-   "rez": "#c98a82",
+   "rez": "#cfa59a",
    "brazde": 0.85,
-   "brazdeBarva": "#a3222f",
-   "vrh": 0.3,
-   "vrhBarva": "#efbcae",
+   "brazdeBarva": "#9c2230",
+   "vrh": 0.42,
+   "vrhBarva": "#f0cbbd",
    "lise2": 0.25,
    "lise2Barva": "#d6aca6",
    "lise2F": 10,
-   "zile": 0.75,
+   "zile": 1,
    "zileBarva": "#a52838",
    "zileBarva2": "#6a2552",
-   "zileSirina": 0.00034,
+   "zileSirina": 0.00045,
    "zileF": 26,
    "zileRaven": 0.51,
    "brazdeMeja": [
     0.5,
     0.63
-   ]
+   ],
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.7
   },
   "mali": {
-   "barva": "#8f463f",
+   "barva": "#a85850",
    "hrap": 0.38,
    "lak": 0.9,
    "lakHrap": 0.08,
@@ -55,7 +58,7 @@
    "senca": 0.8,
    "sencaBarva": "#3a1010",
    "aoExp": 2.6,
-   "rez": "#c4847a",
+   "rez": "#cf958a",
    "vrstni": 2,
    "listi": 0.5,
    "listiSredisce": [
@@ -63,10 +66,24 @@
     -0.036,
     -0.03
    ],
-   "listiRazmik": 0.0015
+   "listiRazmik": 0.0015,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.7,
+   "rezZarki": {
+    "sredisce": [
+     0,
+     -0.033,
+     -0.03
+    ],
+    "gostota": 17,
+    "moc": 0.45,
+    "barva": "#f0e6da",
+    "visina": 0.03
+   }
   },
   "deblo": {
-   "barva": "#d9aea0",
+   "barva": "#e3c4b4",
    "hrap": 0.4,
    "lak": 0.7,
    "lakHrap": 0.1,
@@ -80,9 +97,13 @@
    "relief": 0.3,
    "senca": 0.45,
    "sencaBarva": "#7a2a2a",
-   "rez": "#e9d9cc",
+   "rez": "#eddccd",
    "aoExp": 1.8,
-   "vrstni": 2
+   "vrstni": 2,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.7,
+   "rezVlakna": 2600
   },
   "bela": {
    "barva": "#efe2d6",
@@ -97,11 +118,15 @@
    "zrno": 0.04,
    "f": 20,
    "relief": 0.25,
-   "rez": "#f2ebe2",
-   "vrstni": 2
+   "rez": "#f4ede4",
+   "vrstni": 2,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.7,
+   "rezVlakna": 3200
   },
   "medmozgani": {
-   "barva": "#bb7c77",
+   "barva": "#c48d86",
    "hrap": 0.4,
    "lak": 0.7,
    "lakHrap": 0.1,
@@ -115,9 +140,12 @@
    "relief": 0.3,
    "senca": 0.45,
    "sencaBarva": "#6a2424",
-   "rez": "#d9a79d",
+   "rez": "#d6aa9f",
    "aoExp": 2.2,
-   "vrstni": 2
+   "vrstni": 2,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.7
   },
   "sredina": {
    "barva": "#cda39a",
@@ -135,7 +163,10 @@
    "brezGlobine": true,
    "brezIzbire": true,
    "vrstni": 1,
-   "brezReza": true
+   "brezReza": true,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.7
   }
  },
  "deli": [
@@ -491,7 +522,23 @@
    "tkiva": {
     "deblo": {
      "lak": 0.25,
-     "sijaj": 0.3
+     "sijaj": 0.3,
+     "aoTekstura": 0.12
+    },
+    "skorja": {
+     "aoTekstura": 0.12
+    },
+    "mali": {
+     "aoTekstura": 0.12
+    },
+    "bela": {
+     "aoTekstura": 0.12
+    },
+    "medmozgani": {
+     "aoTekstura": 0.12
+    },
+    "sredina": {
+     "aoTekstura": 0.12
     }
    }
   }

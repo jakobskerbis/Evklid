@@ -19,7 +19,14 @@
    "liseBarva": "#ffe0d6",
    "rez": "#e6ddd0",
    "senca": 0.3,
-   "sencaBarva": "#b98a80"
+   "sencaBarva": "#b98a80",
+   "detajl": true,
+   "zile": 1,
+   "zileBarva": "#b5433a",
+   "zileBarva2": "#8f2f3a",
+   "zileSirina": 0.00008,
+   "zileF": 16,
+   "zileMaska": 9
   },
   "roženica": {
    "barva": "#f4fbff",
@@ -85,7 +92,7 @@
    "tekstura": false
   },
   "mrežnica": {
-   "barva": "#e0896a",
+   "barva": "#dc7a52",
    "hrap": 0.78,
    "lak": 0,
    "lakHrap": 0.2,
@@ -186,7 +193,8 @@
    "zrno": 0.05,
    "f": 140,
    "relief": 0.3,
-   "rez": "#e6cf91"
+   "rez": "#e6cf91",
+   "detajl": true
   },
   "kita": {
    "barva": "#ece7dc",
@@ -215,7 +223,8 @@
    "relief": 0.6,
    "rez": "#a0372f",
    "senca": 0.35,
-   "sencaBarva": "#5a1a16"
+   "sencaBarva": "#5a1a16",
+   "detajl": true
   },
   "papila": {
    "barva": "#f0d3a4",
@@ -229,7 +238,9 @@
    "zrno": 0.04,
    "f": 200,
    "relief": 0.1,
-   "rez": "#e9cfa4"
+   "rez": "#e9cfa4",
+   "mapa": false,
+   "aoTekstura": 0
   }
  },
  "deli": [
