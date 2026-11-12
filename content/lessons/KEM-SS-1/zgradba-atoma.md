@@ -7,7 +7,7 @@ avtor: AI
 
 Ko naslednjič kuhaš na plinskem štedilniku, stresi ščepec kuhinjske soli v modri plamen. Za trenutek zagori živo rumeno. V šoli lahko poskus ponovite z žičko, pomočeno v raztopine različnih soli: z natrijevo soljo je plamen rumen, z bakrovo zelenkast, z litijevo rdeč. Vsak element ima svojo barvo.
 
-Astronomi razklonijo sončno svetlobo s prizmo in v njej najdejo natančno isto rumeno črto natrija. Tako vemo, da je na Soncu natrij, čeprav tja ne bo nikoli poletela sonda z merilnikom. Helij so leta 1868 najprej opazili v spektru Sonca, na Zemlji pa so ga našli šele $27$ let pozneje.
+Astronomi razklonijo sončno svetlobo s prizmo in v njej najdejo natančno isto rumeno črto natrija. Tako vemo, da je na Soncu natrij, čeprav je Sonce $150$ milijonov kilometrov daleč. Helij so leta 1868 najprej opazili v spektru Sonca, na Zemlji pa so ga našli šele $27$ let pozneje.
 
 Zakaj ima vsak element svojo barvo, kot prstni odtis? Odgovor je v zgradbi atoma: koliko delcev je v jedru in kako so okoli njega razporejeni elektroni. Ta razporeditev, **elektronska konfiguracija**, bo pozneje razložila periodni sistem in kemijske vezi. **Izotopi** pa razložijo, zakaj ima isti element atome z različno maso.
 
@@ -109,11 +109,11 @@ Atom natrija ima $11$ protonov, $12$ nevtronov in $11$ elektronov.
 
 Klor ($Z = 17$) ima dva naravna izotopa: $^{35}\mathrm{Cl}$ z deležem $75\,\%$ in $^{37}\mathrm{Cl}$ z deležem $25\,\%$. Koliko nevtronov ima vsak izotop in kolikšna je relativna atomska masa klora?
 
-**Podatki:** $Z = 17$, $A_1 = 35$, $w_1 = 0{,}75$, $A_2 = 37$, $w_2 = 0{,}25$
+**Podatki:** $Z = 17$, $A_1 = 35$, $x_1 = 0{,}75$, $A_2 = 37$, $x_2 = 0{,}25$
 **Iščemo:** $N_1$, $N_2$ in relativno atomsko maso $A_r$
 
 :::formula
-$N = A - Z$ in $A_r = w_1 \cdot A_1 + w_2 \cdot A_2$
+$N = A - Z$ in $A_r = x_1 \cdot A_1 + x_2 \cdot A_2$
 :::
 
 **Rešitev:**
@@ -196,9 +196,9 @@ Lupine natrija kot obroči okoli jedra: notranji obroč $2$ elektrona, srednji $
 
 **Hundovo pravilo.** V podlupini z več orbitalami elektroni najprej zasedejo vsako orbitalo posamič, šele nato se združujejo v pare. Zato je pri dušiku v vsaki orbitali $2p$ po en elektron.
 
-**Uteženo povprečje.** Za izotope z masami $m_i$ in deleži $w_i$ (vsota deležev je $1$):
+**Uteženo povprečje.** Za izotope z masami $m_i$ in deleži $x_i$ (vsota deležev je $1$):
 
-$$A_r = \sum_i w_i\, m_i$$
+$$A_r = \sum_i x_i\, m_i$$
 
 **Spektralne črte.** Elektron, ki preskoči z višjega energijskega nivoja (lupine ali podlupine) na nižjega, odda svetlobo z energijo, enako razliki energij nivojev. Rumena črta natrija nastane pri preskoku iz $3p$ v $3s$. Ker so te razlike za vsak element drugačne, je spekter elementa enoličen. Po njem astronomi določijo sestavo zvezd in meglic.
 
@@ -261,9 +261,9 @@ d | podlupina d | | | pet orbital, največ 10 elektronov
 A | masno število | A = Z + N | – | število protonov in nevtronov skupaj
 Z | vrstno (atomsko) število | | – | število protonov
 N | število nevtronov | N = A - Z | –
-A_r | relativna atomska masa elementa | A_r = \sum_i w_i\, m_i | – | za dva izotopa: w₁ · A₁ + w₂ · A₂
+A_r | relativna atomska masa elementa | A_r = \sum_i x_i\, m_i | – | za dva izotopa: x₁ · A₁ + x₂ · A₂
 i | zaporedna številka izotopa | | – |
-w_i, w_1, w_2 | delež izotopa v naravni zmesi | | – | vsota vseh deležev je 1
+x_i, x_1, x_2 | množinski (številski) delež izotopa v naravni zmesi | | – | vsota vseh deležev je 1
 m_i | relativna masa izotopa | | – | približno enaka masnemu številu
 A_1, A_2 | masni števili obeh izotopov | | – |
 :::
