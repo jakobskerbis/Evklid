@@ -1028,6 +1028,8 @@ export function odpriModel(el, mod, opts = {}) {
     model = m;
     nalaganje(null);
     el.classList.toggle("k3-organ", model.postavitev === "organ");
+    // Celice (oder: "celica"): temno vijoličen oder kot v ciljnem videzu celic (public/3d/celice-videz.js).
+    el.classList.toggle("k3-celica", model.oder === "celica");
     // Organ: nadzor (npr. stikalo »Prerez«) lebdi na odru levo zgoraj, spodaj ostanejo deli in »Podrobnosti organa«.
     if (model.postavitev === "organ") oder.append(nadzorEl);
     else if (nadzorEl.parentNode !== spodaj) spodaj.insertBefore(nadzorEl, deliGlava || deliEl);

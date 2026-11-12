@@ -508,6 +508,12 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   background-image: radial-gradient(ellipse 62% 54% at 50% 47%, rgba(118, 84, 80, 0.30) 0%, rgba(62, 44, 46, 0.18) 42%, transparent 74%);
 }
 .k3-organ .k3-oder::after { background: radial-gradient(ellipse 80% 75% at 50% 46%, transparent 52%, rgba(5, 5, 7, 0.6) 100%); }
+/* Celice (model.oder = "celica"): globok vijoličen oder z mehkim sijem za celico, kot ciljni videz celic. */
+.k3-celica .k3-oder {
+  background-color: #110c22 !important;
+  background-image: radial-gradient(ellipse 60% 56% at 50% 46%, rgba(104, 76, 178, 0.46) 0%, rgba(56, 40, 110, 0.26) 46%, transparent 78%);
+}
+.k3-celica .k3-oder::after { background: radial-gradient(ellipse 80% 75% at 50% 46%, transparent 52%, rgba(6, 3, 14, 0.62) 100%); }
 .k3-organ .k3-nadzor {
   position: absolute; z-index: 2; top: 12px; left: 12px; gap: 8px; padding: 4px 6px 4px 14px; border-radius: 999px;
   background: var(--k3-steklo); border: 1px solid var(--k3-rob); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);

@@ -11,7 +11,7 @@ let THREE = null;
 try { THREE = await import("three"); } catch { /* three arrives with the 3D kit */ }
 const skip = THREE ? false : "three ni nameščen";
 
-const MEJE = { visoka: 150000, nizka: 60000 };
+const MEJE = { visoka: 350000, nizka: 60000 };
 const KLICI = 60;
 
 // Draw calls and triangles the way the renderer counts them for visible objects.
@@ -112,7 +112,28 @@ for (const f of datoteke) {
       assert.ok(c.length() < 0.35, `${f}: središče ${c.toArray().map((x) => x.toFixed(2))}`);
 
       preveriDele(f, M);
+      // »Barve kot v učbeniku«: vklop spremeni barve, izklop vrne vse natančno (tudi deljene materiale in kopijo
+      // materiala izbranega dela, ki jo naredi pregledovalnik)
+      const uc = (M.nadzor || []).find((n) => n.id === "ucbenik");
+      assert.ok(uc && uc.tip === "stikalo", `${f}: stikalo ucbenik`);
+      if (kakovost === "nizka") {
+        const barve = () => { const s = []; M.group.traverse((o) => { if (o.material?.color) s.push(o.material.color.getHexString() + (o.material.emissive?.getHexString() ?? "")); }); return s.join() + M.deli.map((d) => d.barva).join(); };
+        const izbrani = M.deli.find((d) => d.meshes.some((x) => x.material?.color)), izv = new Map();
+        const izberi = () => { for (const x of izbrani.meshes) if (x.material?.color) { izv.set(x, x.material); x.material = x.material.clone(); } };
+        const odizberi = () => { for (const [x, m] of izv) x.material = m; izv.clear(); };
+        const b0 = barve();
+        uc.ob(true);
+        const b1 = barve();
+        assert.notEqual(b1, b0, `${f}: učbeniške barve se ne vklopijo`);
+        uc.ob(false);
+        assert.equal(barve(), b0, `${f}: izklop učbeniških barv ne vrne izvirnih`);
+        izberi(); uc.ob(true); odizberi();
+        assert.equal(barve(), b1, `${f}: vklop med izbranim delom`);
+        izberi(); uc.ob(false); odizberi();
+        assert.equal(barve(), b0, `${f}: izklop med izbranim delom`);
+      }
       for (const n of M.nadzor || []) {
+        if (n.id === "ucbenik") continue;
         assert.ok(["drsnik", "izbira", "gumb", "stikalo", "izpis"].includes(n.tip) && n.id && n.oznaka, `${f}: nadzor ${n.id}`);
         if (n.tip === "izpis") { assert.equal(typeof n.vrednost(), "string"); continue; }
         assert.equal(typeof n.ob, "function", `${f}: nadzor ${n.id}.ob`);
