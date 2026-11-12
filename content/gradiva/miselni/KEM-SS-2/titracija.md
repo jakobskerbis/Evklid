@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pribor in postopek
+  - pipeta odmeri vzorec, bireta dodaja titrant
+  - poraba = končni odčitek − začetni odčitek
+- Nevtralizacija
+  - $\mathrm{H_3O^+} + \mathrm{OH^-} \rightarrow 2\,\mathrm{H_2O}$
+  - šibka kislina porabi enako baze kot močna
+- Točka ekvivalence
+  - množini kisline in baze po enačbi reakcije
+  - ob njej pH skoči za več enot
+- Titracijska krivulja
+  - HCl z NaOH: TE pri pH $7$
+  - ocetna kislina z NaOH: TE pri pH $8{,}7$
+  - polovica nevtralizirana: $\mathrm{pH} = \mathrm{p}K_\mathrm{a}$
+- Izbira indikatorja
+  - območje preskoka znotraj skoka pH
+  - ocetna kislina: fenolftalein, ne metiloranž
+- Računanje koncentracije
+  - $n_\mathrm{b} = c_\mathrm{b} \cdot V_\mathrm{b}$
+  - razmerje iz enačbe: $\mathrm{H_2SO_4}$ porabi $2$ NaOH
+  - $c_\mathrm{k} = \dfrac{n_\mathrm{k}}{V_\mathrm{k}}$, samo prostornina vzorca

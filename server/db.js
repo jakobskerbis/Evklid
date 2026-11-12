@@ -4,7 +4,7 @@ import { BRAND, LEGACY } from "./brand.js";
 import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { DEFAULT_SETTINGS, normalizeSettings, normalizeWeaknessList } from "./settings.js";
+import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE } from "./crypto-polje.js";
 
@@ -412,7 +412,7 @@ export class Store {
   updateStudent(id, { name, settings, manual_weaknesses }) {
     const cur = this.getStudent(id);
     if (!cur) return null;
-    const next = normalizeSettings({ ...cur.settings, ...(settings || {}) });
+    const next = mergeSettings(cur.settings, settings || {});
     const levelChanged = ["educational_track", "curriculum_level", "study_program", "school_system"].some((k) => next[k] !== cur.settings[k]);
     this.db
       .prepare(

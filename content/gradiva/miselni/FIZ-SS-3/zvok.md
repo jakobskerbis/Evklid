@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zvok rabi snov
+  - vzdolžno valovanje, v zraku $340\,\mathrm{m/s}$
+  - v vesolju ni zvoka
+- Višina tona
+  - določa jo frekvenca
+  - slišimo od $20\,\mathrm{Hz}$ do $20\,\mathrm{kHz}$
+- Jakost zvoka
+  - $j = \dfrac{P}{4\pi r^2}$, enota $\mathrm{W/m^2}$
+  - dvakrat dlje: štirikrat manj
+- Decibeli
+  - $L = 10\,\mathrm{dB} \cdot \log \dfrac{j}{j_0}$
+  - $+10\,\mathrm{dB}$: desetkratna jakost
+  - napaka: $60\,\mathrm{dB}$ ni dvakrat $30\,\mathrm{dB}$
+- Dopplerjev pojav
+  - približevanje: $\nu' = \nu\,\dfrac{c}{c - v}$, višji ton
+  - oddaljevanje: $c + v$, nižji ton
+  - odloča gibanje, ne razdalja
+- Astronomija
+  - premik k modri ali rdeči
+  - zibanje zvezde razkrije planet

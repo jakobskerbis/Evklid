@@ -293,7 +293,7 @@ html.lite .tabs { box-shadow: none !important; backdrop-filter: none !important;
 
 /* ---------- Slogi (Nastavitve → Videz → Slog; theme.js nastavi data-style na <html>) ----------
    Čist je privzeti (style.css :root). Igriv: Nunito, bolj zaobljen, »pritisnjeni« gumbi s spodnjo senco.
-   Temen: IBM Plex Sans, vedno temen, ostrejši robovi. Zgodovinski slogi (Antični, Renesansa, Hiša modrosti, Indija …)
+   Zgodovinski slogi (Antični, Renesansa, Hiša modrosti, Indija …)
    so v public/theme.js → ERAS; theme.js nastavi data-era in spremenljivke spodaj. Barve slogov izračuna theme.js. */
 :root[data-style="igriv"] {
   --font: "Nunito Variable", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -303,12 +303,6 @@ html.lite .tabs { box-shadow: none !important; backdrop-filter: none !important;
   --shadow: 0 4px 0 rgba(31, 26, 46, 0.07);
 }
 :root.dark[data-style="igriv"] { --shadow: 0 4px 0 rgba(0, 0, 0, 0.3); }
-:root[data-style="temen"] {
-  --font: "IBM Plex Sans Variable", "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --radius: 10px;
-  --radius-sm: 7px;
-  --shadow: none;
-}
 /* Zgodovinski slogi (data-era; docs/oblikovanje.md → »Zgodovinski slogi«). Nevsiljivo (j, 2026-10-30): enobarvno
    ozadje, besedilo ostane v --font, pisava sloga (--era-font iz theme.js) samo za h1, naslove sklopov na Učni poti in
    ime ob logotipu; en pas vzorca samo na kartici dejstev; risbe obdobja le kot zelo bleda tapeta ozadja (»Tapeta« spodaj). */
@@ -694,7 +688,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   }
 }
 
-/* Čist in Temen: brez prelivov in senc pod logotipom in kartico Današnji trening. */
+/* Vsi slogi razen Igriv: brez prelivov in senc pod logotipom in kartico Današnji trening. */
 :root:not([data-style="igriv"]) .logo { box-shadow: none; }
 :root:not([data-style="igriv"]) h1, :root:not([data-style="igriv"]) h2 { font-weight: 700; }
 

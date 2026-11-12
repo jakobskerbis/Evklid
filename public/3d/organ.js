@@ -10,7 +10,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { mergeGeometries } from "/vendor/three/examples/jsm/utils/BufferGeometryUtils.js";
 import { THREE } from "./scena.js";
 import { seznamDatotek } from "./modeli.js";
-import { prostorOrgana } from "./organ-prostor.js";
+import { prostorOrgana, brezPregrad } from "./organ-prostor.js";
 
 const BAZA = new URL("./modeli/organi-3d/", import.meta.url).href;
 const scene = new Map(); // url → Promise<THREE.Group> (surova scena glTF)
@@ -116,12 +116,16 @@ function pripravi(url, napredek) {
         const del = v.userData?.del || "";
         const k = `${del}|${tkivo}|${stranImena(ime)}`;
         if (!skupine.has(k)) skupine.set(k, { del, tkivo, stran: stranImena(ime), geos: [], vozlisca: [] });
+        if (v.userData?.stik) skupine.get(k).stik = true;
         skupine.get(k).geos.push(ploskaKopija(o));
         skupine.get(k).vozlisca.push(ime);
       });
       const kosi = [...skupine.values()].map((s) => {
         const geo = s.geos.length === 1 ? s.geos[0] : mergeGeometries(s.geos, false);
         if (s.geos.length > 1) for (const g of s.geos) g.dispose();
+        // deli iste žile s steno (extras »stik«): brez pregrade na stiku, sicer se v prerezu vidi črtkan drugi obroč
+        const brez = s.stik && s.geos.length > 1 ? brezPregrad(geo.attributes.position.array, geo.index.array) : null;
+        if (brez) geo.setIndex(new THREE.BufferAttribute(brez, 1));
         return { del: s.del, tkivo: s.tkivo, stran: s.stran, geo, vozlisca: s.vozlisca };
       });
       const box = new THREE.Box3();

@@ -12,7 +12,7 @@ import { LANGUAGE_CODES, langInfo } from "../public/i18n/languages.js";
 import { SCHOOL_SYSTEMS, SYSTEM_IDS, isRegional, gradesOf } from "../public/regions.js";
 import { PROFILE_SETTINGS, DEVICE_SETTINGS, SCHEDULE_SETTINGS, EVENT_KINDS, deviceValue } from "../public/settings-registry.js";
 import { scheduleView } from "./schedule.js";
-import { goalsFor, validDate } from "../public/goal-data.js";
+import { goalsFor, validDate, DEFAULT_GOAL } from "../public/goal-data.js";
 import { Avatars } from "./avatar.js";
 import { ITEMS, SLOTS, MULTI_MAX, isMulti, itemOf, wear } from "../public/avatar.js";
 import { INTERESTS, cleanInterests } from "../public/interests.js";
@@ -359,6 +359,9 @@ function validateProfile(changes, student) {
     if (goalsFor({ ...cur, educational_track: track, school_system: system }).includes(changes.goal)) patch.goal = changes.goal;
     else errors.push(`goal: allowed for this school ${goalsFor({ ...cur, educational_track: track, school_system: system }).join(", ")}`);
   }
+  // Program sledi cilju (j, 4. 11.): tekmovanja = cilj Tekmovanje, redni pouk = kateri koli drug cilj.
+  if (patch.goal === undefined && patch.track === "COMPETITION") patch.goal = "tekmovanje";
+  if (patch.goal === undefined && patch.track === "REGULAR" && cur.goal === "tekmovanje") patch.goal = DEFAULT_GOAL;
   if (changes.goal_date !== undefined) {
     const d = String(changes.goal_date).trim();
     if (d === "" || validDate(d)) patch.goal_date = d;

@@ -277,11 +277,15 @@ export function codeFindings(answer, pre = null, question = "") {
       if (v.issue) return { checked, issue: v.issue };
     }
   }
-  for (const f of [valenceIssue(answer, question), groupIssue(answer, question), celsiusIssue(answer, question)]) {
-    checked += f.checked;
-    if (f.issue) return { checked, issue: f.issue };
-  }
-  return { checked, issue: null };
+  // Kemijske preverbe se združijo v eno napako (en »Popravek:«), da »Dušik je v 5. skupini in v 3. periodi.« popravi
+  // obe (pregled A, PR #589).
+  const chem = [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question), lewisIssue(answer, question), subscriptIssue(answer, question)];
+  for (const f of chem) checked += f.checked;
+  const chemIssues = chem.map((f) => f.issue).filter(Boolean);
+  if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
+  const c = celsiusIssue(answer, question);
+  checked += c.checked;
+  return { checked, issue: c.issue || null };
 }
 
 // Kemija in enote brez modela (meritev 11. 11., OŠ brez pregleda z modelom): »$v = 8 - 7$« za dušik (vrstno
@@ -374,6 +378,336 @@ export function groupIssue(answer, question = "") {
       return {
         checked,
         issue: `the answer puts ${ELEMENT_NAME[el.sym]} (${el.sym}) in the ${k}. skupina, but Slovenian schools number the groups 1–18 and ${el.sym} is in the ${el.outer + 10}. skupina (it has ${el.outer} outer electrons)`,
+      };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Perioda lahkih elementov (meritev 12. 11. po krogu 4, OŠ: »dušik v 3. periodi«, pravilno 2.). Isti varovali kot
+// groupIssue: ista poved (konec tudi pri »;« in »:«), element največ 60 znakov pred »k. period…«, vrstica s pravo
+// periodo, k iz učenčevega sporočila, SKIP_LINE, prehodna kovina. Dodatno (pregled A, PR #589): element 4. periode
+// ali višje (kalij, brom, \mathrm{Br} …) kot zadnja omemba pred številko ali prva za njo (»s kalijem, ki je v
+// 4. periodi«, »v 4. periodi pa so kovine kalij«); primerjava (»pod/nad dušikom«, »kot elementi 3. periode«);
+// imenovalnik na začetku stavka (», 4. perioda pa ima 18 elementov«); »perioda nihanja«; opis učenčeve napake
+// (»učenec«, »zamenjava«); jedro žlahtnega plina (»[Ar] 3d⁵«). Bor je izpuščen (»bor« je tudi drevo).
+// Znane zgrešitve (namerno): angleški zapis (»period 3«, »Nitrogen is in period 3«), rimske številke, »perioda 3«.
+const PERIODS = [
+  [/(?<!\p{L})vodik|hydrogen/iu, "H", 1],
+  [/(?<!\p{L})liti(?:j|ja|ju|jem)(?!\p{L})|lithium/iu, "Li", 2],
+  [/(?<!\p{L})berilij|beryllium/iu, "Be", 2],
+  [/ogljik|carbon/iu, "C", 2],
+  [/dušik|nitrogen/iu, "N", 2],
+  [/kisik|oxygen/iu, "O", 2],
+  [/fluor(?!esc)/iu, "F", 2],
+  [/(?<!\p{L})neon(?!\p{L})|(?<!\p{L})neona|(?<!\p{L})neonu/iu, "Ne", 2],
+  [/(?<!\p{L})natrij|sodium/iu, "Na", 3],
+  [/magnezij|magnesium/iu, "Mg", 3],
+  [/aluminij|alumini?um/iu, "Al", 3],
+  [/silicij|silicon/iu, "Si", 3],
+  [/fosfor|phosphor/iu, "P", 3],
+  [/žvepl|sulfur/iu, "S", 3],
+  [/(?<!\p{L})klor(?!ofil|id)|chlorin/iu, "Cl", 3],
+  [/(?<!\p{L})argon/iu, "Ar", 3],
+];
+// Elementi 4. periode in višje (ime ali simbol): ob njih perioda ≥ 4 ni napaka lahkega elementa.
+const HEAVY_EL_RE = new RegExp(
+  String.raw`(?<!\p{L})(?:kalij|kalcij|brom|jod|arzen|selen|stroncij|galij|germanij|kripton|ksenon|rubidij|cezij|barij|kositer|kositr|svinec|svinc|srebr|zlat|živ\p{L}*srebr|radij|radon|polonij|bizmut|antimon|telur)` +
+    String.raw`|\\(?:mathrm|text|ce)\{(?:K|Ca|Br|I|As|Se|Sr|Ga|Ge|Kr|Xe|Rb|Cs|Ba|Sn|Pb|Ag|Au|Hg|Sb|Te|Bi|Rn|Ra)(?![a-z])` +
+    String.raw`|(?<![\p{L}\d])(?:Ca|Br|As|Se|Sr|Ga|Ge|Kr|Xe|Rb|Cs|Ba|Sn|Pb|Ag|Au|Hg|Sb|Te|Bi)(?![\p{L}\d])`,
+  "gu",
+);
+function periodMentions(text) {
+  const out = [];
+  for (const [re, sym, p] of PERIODS) for (const m of text.matchAll(new RegExp(re.source, "giu"))) out.push({ at: m.index, end: m.index + m[0].length, sym, p });
+  for (const m of text.matchAll(/\\(?:mathrm|text|ce)\{([A-Z][a-z]?)(?![a-z])/g)) {
+    const e = PERIODS.find((x) => x[1] === m[1]);
+    if (e) out.push({ at: m.index, end: m.index + m[0].length, sym: e[1], p: e[2] });
+  }
+  for (const m of text.matchAll(new RegExp(HEAVY_EL_RE.source, "giu"))) out.push({ at: m.index, end: m.index + m[0].length, sym: m[0], p: 0, heavy: true });
+  for (const m of text.matchAll(new RegExp(D_BLOCK_RE.source, "gu"))) out.push({ at: m.index, end: m.index + m[0].length, sym: m[0], p: 0, heavy: true });
+  return out.sort((a, b) => a.at - b.at);
+}
+const PERIOD_RE = /(?<![\p{L}\d.,])(\d)\.\s*period(?!n|ič)/giu;
+const PERIOD_NOT_CHEM_RE = /^\p{L}*\s+(?:nihanj|nihal|valovanj|vala|ure|let|leta|šolsk|pouk)/iu;
+const COMPARE_RE = /(?<!\p{L})(?:pod|nad|kot|od|elementi|elementov|elementih|atomi|atomov|ostali|drugi|drugih)(?!\p{L})/iu;
+// Opis učenčeve napake (»Učenec postavi magnezij v 2. periodo«) in zapis z jedrom žlahtnega plina (»[Ar] 3d⁵ … M je
+// v 4. periodi«, argon ni element, o katerem govori poved).
+const PERIOD_SKIP_RE = /(?<!\p{L})(?:učen\p{L}*|zamenj\p{L}*)(?!\p{L})|\[\s*(?:\\mathrm\{)?\s*(?:He|Ne|Ar|Kr|Xe|Rn)\b/iu;
+const CLAUSE_END_RE = /(?<!\d)[.!?;:](?:\s|$)/g;
+const periodsIn = (t) => new Set([...String(t || "").matchAll(PERIOD_RE)].map((m) => Number(m[1])));
+export function periodIssue(answer, question = "") {
+  let checked = 0;
+  const pupil = periodsIn(question);
+  for (const line of String(answer || "").split("\n")) {
+    if (SKIP_LINE.test(line) || PERIOD_SKIP_RE.test(line)) continue;
+    const named = periodsIn(line);
+    for (const m of line.matchAll(PERIOD_RE)) {
+      const after = line.slice(m.index + m[0].length);
+      if (PERIOD_NOT_CHEM_RE.test(after)) continue;
+      let win = line.slice(Math.max(0, m.index - 60), m.index);
+      const ends = [...win.matchAll(CLAUSE_END_RE)];
+      if (ends.length) win = win.slice(ends.at(-1).index + ends.at(-1)[0].length);
+      // »…, 4. perioda pa ima 18 elementov«: perioda je osebek novega stavka, ne mesto elementa.
+      if (/^a(?!\p{L})/u.test(after) && /(?:^|[,;:])\s*$/u.test(win)) continue;
+      const el = periodMentions(win).at(-1);
+      if (!el || el.heavy) continue;
+      checked++;
+      const k = Number(m[1]);
+      if (k === el.p || pupil.has(k) || named.has(el.p)) continue;
+      const between = win.slice(el.end);
+      if (COMPARE_RE.test(between) || /(?<!\p{L})(?:pod|nad|kot|od)\s+$/iu.test(win.slice(0, el.at))) continue;
+      const next = periodMentions(after.split(CLAUSE_END_RE)[0].slice(0, 40))[0];
+      if (next && (next.heavy || next.p === k)) continue;
+      return {
+        checked,
+        issue: `the answer puts ${el.sym === "H" ? "hydrogen" : el.sym} in the ${k}. perioda, but ${el.sym} is in the ${el.p}. perioda`,
+      };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Pari ob enem atomu 2. periode (meritev 12. 11.: »vsak atom 3 + 2 = 5 parov« v N₂; pravilno 3 vezni + 1 nevezni
+// = 4 pari). Atom C, N, O ali F ima ob sebi največ 4 elektronske pare (lupina L sprejme 8 elektronov). Zadetek je
+// samo, ko vrstica govori o enem atomu (»vsak atom«, »ob atomu/dušiku«, »okoli kisika« …) in je število parov
+// (ali vsota veznih in neveznih: »3 vezni pari in 2 nevezna para«) večje od 4. Ne šteje: element 3. periode ali
+// višje ali njegova formula v vrstici (SF₆, PCl₅ smejo imeti več), »molekul«, »skupaj«, »vseh« pred številom,
+// drug stavek (».!?;:« ali vejica, razen »…, to je 5 parov«), SKIP_LINE, število iz učenčevega sporočila. Znane zgrešitve: angleško
+// (»Each nitrogen atom has 5 pairs«), števila z besedo (»pet parov«).
+const ONE_ATOM_RE = /(?<!\p{L})(?:vsak(?:i|em|ega)?\s+atom\p{L}*|ob\s+(?:vsakem\s+)?(?:atomu|ogljiku|dušiku|kisiku|fluoru)|okoli\s+(?:vsakega\s+)?(?:atoma|ogljika|dušika|kisika|fluora))(?!\p{L})/giu;
+const PAIR_ADJ = String.raw`(?:skupn|elektronsk|vezn|nevezn|prost)\p{L}*`;
+const PAIRS_RE = new RegExp(String.raw`(?<![\d.,])(\d+)\s*\$?\s*(?:${PAIR_ADJ}\s+(?:in\s+${PAIR_ADJ}\s+)?)?par(?:ov|i|a|e|ih)?(?!\p{L})`, "giu");
+// »3 vezni (pari) in 2 nevezna para«: vezni in nevezni pari ob istem atomu se seštejejo.
+const KIND_RE = /(?<![\d.,])(\d+)\s*\$?\s*(nevezn|prost|vezn)\p{L}*(?=\s+(?:in\s+(?:\d+\s*\$?\s*)?(?:nevezn|prost|vezn)\p{L}*\s+)?par)/giu;
+const WHOLE_RE = /molekul|skupaj|vseh|vsega|celot/iu;
+const HEAVY_RE = /žvepl|fosfor|(?<!\p{L})klor(?!ofil)|brom|(?<!\p{L})jod|ksenon|kripton|silicij|selen|telur|arzen|\\(?:mathrm|text|ce)\{(?:S|P|Cl|Br|I|Xe|Kr|Si|Se|Te|As)\b/iu;
+// Formule brez zastavice i (sicer bi »so« ujel SO in »if« IF): za znaki mora biti števka, indeks ali »_«.
+const HEAVY_FORMULA_RE = /(?<![\p{L}\d])(?:SF|PCl|XeF|SO|PF|ClF|BrF|IF)(?=[\d₀-₉_]|$)/u;
+export function pairsIssue(answer, question = "") {
+  let checked = 0;
+  for (const line of String(answer || "").split("\n")) {
+    if (SKIP_LINE.test(line) || HEAVY_RE.test(line) || HEAVY_FORMULA_RE.test(line)) continue;
+    if (!periodMentions(line).some((e) => e.p === 2) && !/atom/iu.test(line)) continue;
+    for (const a of line.matchAll(ONE_ATOM_RE)) {
+      let rest = line.slice(a.index + a[0].length).split(CLAUSE_END_RE)[0];
+      // Po vejici se začne nov stavek (»…, etin pa 5 veznih parov«, »…, zato v C₂H₆ nastane 7 veznih parov«),
+      // razen ko nadaljuje isti atom (»…, to je 5 parov«).
+      const comma = rest.search(/,(?!\s*(?:to je|tj\.?|torej|kar je)(?!\p{L}))/u);
+      if (comma >= 0) rest = rest.slice(0, comma);
+      const whole = rest.search(WHOLE_RE);
+      if (whole >= 0) rest = rest.slice(0, whole);
+      const counts = [];
+      for (const m of rest.matchAll(PAIRS_RE)) counts.push(Number(m[1]));
+      let bond = 0, lone = 0;
+      for (const m of rest.matchAll(KIND_RE)) /^vezn/iu.test(m[2]) ? (bond ||= Number(m[1])) : (lone ||= Number(m[1]));
+      if (bond && lone) counts.push(bond + lone);
+      for (const k of counts) {
+        checked++;
+        if (k <= 4 || question.includes(`${k} par`)) continue;
+        return { checked, issue: `the answer says one atom has ${k} electron pairs around it, but an atom of period 2 (C, N, O, F) has at most 4 pairs (8 electrons) around it; e.g. each N in N₂ has 3 bonding pairs + 1 lone pair = 4 pairs` };
+      }
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Nevezni pari v narisani Lewisovi formuli v eni vrstici (meritev 12. 11. po krogu 5: 2 od 4 odgovorov N₂ s
+// »$:\!\ddot{N}\!\equiv\!\ddot{N}\!:$«, kjer dvopičje IN \ddot pomenita vsak en par, torej 2 para ob N namesto 1).
+// Vsaka oznaka je en nevezni par: »:« ob strani (tudi \colon, {:}, »··«, \cdot\cdot), \ddot{X} nad znakom,
+// \overset{··}{X} / \underset{··}{X} / \stackrel{··}{X}. Pari ob atomu se primerjajo s pravilom v = 8 − z: H 0,
+// C 0, N 1, O 2, F/Cl/Br/I 3 nevezni pari. Preverja se samo verižna formula, ki jo lahko preberemo v celoti:
+// samo H, C, N, O, F, Cl, Br, I; med vsakima atomoma vez (-, =, ≡); vsak atom ima natanko običajno število vezi
+// (C 4, N 3, O 2, H in halogeni 1), zato CO, ioni, razvejane molekule (NH₃ v eni vrstici) in razširjeni okteti
+// izpadejo sami; vsaj ena oznaka para. Ne šteje: karkoli drugega v formuli (števke, indeksi, naboj, oklepaji,
+// \ce, en sam \cdot ali \dot = radikal), dvopičje med dvema atomoma (pikčasta formula vezi »H:H«), SKIP_LINE,
+// formula iz učenčevega sporočila. Navadno besedilo (zunaj $…$): samo formule z N, C, H (pari se ne dajo narisati
+// nad in pod znakom), ne ob vrstici iz samih pik (večvrstična risba) in ne, ko je dvopičje samo na koncu (ločilo: »N≡N: trojna«).
+const LEWIS_V = { H: 1, C: 4, N: 3, O: 2, F: 1, Cl: 1, Br: 1, I: 1 };
+const LEWIS_LONE = { H: 0, C: 0, N: 1, O: 2, F: 3, Cl: 3, Br: 3, I: 3 };
+const LEWIS_NAME = { H: "H", C: "C", N: "N", O: "O", F: "F", Cl: "Cl", Br: "Br", I: "I" };
+const LEWIS_PAIR = String.raw`(?:··|\.\.|:)`;
+const LEWIS_ATOM = String.raw`([A-Z][a-z]?¨*)`;
+const LEWIS_STEPS = [
+  [/\\(?:mathrm|text|textrm|rm|mathsf|textsf)\s*\{([^{}]*)\}/g, "$1"],
+  [new RegExp(String.raw`\\(?:overset|underset|stackrel)\s*\{${LEWIS_PAIR}\}\s*\{${LEWIS_ATOM}\}`, "g"), "$1¨"],
+  [/\\ddot\s*\{([A-Z][a-z]?¨*)\}/g, "$1¨"],
+  [/\\ddot\s*([A-Z][a-z]?)/g, "$1¨"],
+  [/\{([^{}]*)\}/g, "$1"],
+];
+function lewisTokens(tex) {
+  let s = String(tex)
+    .replace(/\\[,;:! >]|\\quad|\\qquad|~/g, "")
+    .replace(/\\colon/g, ":")
+    .replace(/\\cdot\s*\\cdot/g, "··")
+    .replace(/\\equiv/g, "≡")
+    .replace(/\\minus|−|–|—/g, "-");
+  // Splošne zavite oklepaje odstrani šele, ko se nič drugega ne spremeni: sicer izgine {··} zunanjega
+  // \overset{··}{\underset{··}{O}}, preden ga naslednji krog prebere (priporočeni zapis vode bi izpadel).
+  const marks = LEWIS_STEPS.slice(0, -1), braces = LEWIS_STEPS[LEWIS_STEPS.length - 1];
+  for (let i = 0; i < 24; i++) {
+    const before = s;
+    for (const [re, to] of marks) s = s.replace(re, to);
+    if (s === before) s = s.replace(braces[0], braces[1]);
+    if (s === before) break;
+  }
+  s = s.replace(/\s+/g, "").replace(/··/g, ":");
+  if (!/^[A-Za-z¨:≡=-]+$/.test(s)) return null;
+  const toks = s.match(/[A-Z][a-z]?|¨|:|[≡=-]/g) || [];
+  if (toks.join("") !== s) return null;
+  return toks;
+}
+// Vrne [{ el, bonds, lone }] ali null, ko formule ni mogoče zanesljivo prebrati.
+function lewisAtoms(toks) {
+  const items = [];
+  for (const t of toks) {
+    if (t === "¨") {
+      const a = items[items.length - 1];
+      if (!a || a.kind !== "atom") return null;
+      a.lone++;
+    } else if (t === ":") {
+      const last = items[items.length - 1];
+      if (last?.kind === "colon") last.n++;
+      else items.push({ kind: "colon", n: 1 });
+    } else if (/[≡=-]/.test(t)) items.push({ kind: "bond", order: t === "≡" ? 3 : t === "=" ? 2 : 1 });
+    else {
+      if (!(t in LEWIS_V)) return null;
+      items.push({ kind: "atom", el: t, bonds: 0, lone: 0 });
+    }
+  }
+  const atoms = [];
+  let marks = 0;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.kind === "atom") {
+      atoms.push(it);
+      marks += it.lone;
+      continue;
+    }
+    const prev = items[i - 1], next = items[i + 1];
+    if (it.kind === "bond") {
+      if (prev?.kind !== "atom" && prev?.kind !== "colon") return null;
+      // vez mora biti med atomoma (dvopičje ob vezi spada k atomu na drugi strani)
+      const left = prev?.kind === "atom" ? prev : items[i - 2];
+      const right = next?.kind === "atom" ? next : items[i + 2];
+      if (left?.kind !== "atom" || right?.kind !== "atom") return null;
+      left.bonds += it.order;
+      right.bonds += it.order;
+      continue;
+    }
+    // dvopičje: k atomu, ob katerem stoji; med dvema atomoma (»H:H«) ali dvema vezema ga ne beremo
+    const pa = prev?.kind === "atom", na = next?.kind === "atom";
+    if (pa && na) return null;
+    if (!pa && !na) return null;
+    (pa ? prev : next).lone += it.n;
+    marks += it.n;
+  }
+  if (atoms.length < 2 || !marks) return null;
+  for (let i = 1; i < items.length; i++) if (items[i].kind === "atom" && items[i - 1].kind === "atom") return null;
+  if (atoms.some((a) => a.bonds !== LEWIS_V[a.el])) return null;
+  return atoms;
+}
+const LEWIS_N2 = String.raw`$\{:\}\mathrm{N}{\equiv}\mathrm{N}{:}$`.replace(/\\([{}])/g, "$1");
+const LEWIS_MATH_RE = /\$\$([^$]+?)\$\$|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g;
+const LEWIS_PLAIN_ATOM = String.raw`(?::|··)*(?:H|C|N)(?::|··)*`;
+const LEWIS_PLAIN_RE = new RegExp(String.raw`(?<![\p{L}\d:·.])(${LEWIS_PLAIN_ATOM}(?:\s?[≡=\-–—−]\s?${LEWIS_PLAIN_ATOM})+)(?![\p{L}\d·]|:\s*\p{L})`, "gu");
+const DOTS_ONLY_RE = /^[\s·.:'|`]*[·.:][\s·.:'|`]*$/;
+export function lewisIssue(answer, question = "") {
+  let checked = 0;
+  const lines = String(answer || "").split("\n");
+  const asked = new Set();
+  for (const m of String(question || "").matchAll(LEWIS_MATH_RE)) {
+    const t = lewisTokens(m[1] ?? m[2] ?? m[3]);
+    if (t) asked.add(t.join(""));
+  }
+  for (const m of String(question || "").matchAll(LEWIS_PLAIN_RE)) {
+    const t = lewisTokens(m[1]);
+    if (t) asked.add(t.join(""));
+  }
+  for (let li = 0; li < lines.length; li++) {
+    const line = lines[li];
+    if (SKIP_LINE.test(line) || /\\ce\s*\{/.test(line)) continue;
+    const found = [];
+    for (const m of line.matchAll(LEWIS_MATH_RE)) found.push({ src: m[0], toks: lewisTokens(m[1] ?? m[2] ?? m[3]) });
+    const near = [lines[li - 2], lines[li - 1], lines[li + 1], lines[li + 2]].some((l) => l != null && DOTS_ONLY_RE.test(l));
+    if (!near) {
+      const plain = line.replace(LEWIS_MATH_RE, " ");
+      for (const m of plain.matchAll(LEWIS_PLAIN_RE)) {
+        // dvopičje na koncu je ločilo (»N≡N: trojna vez«, »Formula je N≡N:«), razen pri risbi s pari na obeh straneh
+        if (m[1].endsWith(":") && !/^(?::|··)/.test(m[1])) continue;
+        found.push({ src: m[1], toks: lewisTokens(m[1]) });
+      }
+    }
+    for (const f of found) {
+      if (!f.toks || asked.has(f.toks.join(""))) continue;
+      const atoms = lewisAtoms(f.toks);
+      if (!atoms) continue;
+      checked++;
+      const bad = atoms.find((a) => a.lone !== LEWIS_LONE[a.el]);
+      if (!bad) continue;
+      const want = LEWIS_LONE[bad.el];
+      const el = LEWIS_NAME[bad.el];
+      return {
+        checked,
+        issue: `the Lewis formula ${f.src} draws ${bad.lone} lone pair(s) on ${el}, but ${el} with ${bad.bonds} bond(s) has ${want} lone pair(s) (bonds + lone pairs = 4 pairs = 8 electrons; H: 1 pair). Every mark is one lone pair: each ":" beside the symbol and each \\ddot or \\overset/\\underset dot pair, so never put both a ":" and \\ddot for one pair. Redraw it, e.g. N₂ as ${LEWIS_N2}`,
+      };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Krog 7 (2026-11-12): križno pravilo brez krajšanja (»$\mathrm{Mg_2O_2}$« namesto MgO). Preveri samo preprosto
+// ionsko formulo kovine s stalnim nabojem (Be, Mg, Ca, Sr, Ba, Zn 2+; Al 3+) in enostavnega aniona (O, S, N, P,
+// SO₄, CO₃, SO₃, PO₄), ko sta indeksa natanko neskrajšani rezultat križnega pravila (indeks kovine = naboj aniona,
+// indeks aniona = naboj kovine) in imata skupni delitelj. Molekulske spojine (H₂O₂, N₂O₄, C₂H₄), Hg₂Cl₂, Fe₂S₂ in
+// peroksidi (Na₂O₂, BaO₂) zato izpadejo sami. Ne šteje: `SKIP_LINE`, vrstica s krajšanjem (tudi »poenostav«) ali
+// besedo »namesto«, formula, katere skrajšana oblika je v odgovoru, in formula iz učenčevega sporočila.
+const IONIC_CATION = { Be: 2, Mg: 2, Ca: 2, Sr: 2, Ba: 2, Zn: 2, Al: 3 };
+const IONIC_ANION = { O: 2, S: 2, N: 3, P: 3, SO4: 2, CO3: 2, SO3: 2, PO4: 3 };
+const SUB_DIGITS = "₀₁₂₃₄₅₆₇₈₉";
+const IONIC_RE = /(?<![A-Za-z)\]])(Be|Mg|Ca|Sr|Ba|Zn|Al)(\d)(O|S|N|P|\((?:SO4|CO3|SO3|PO4)\))(\d)(?![A-Za-z\d(+\-−])/g;
+// »križ« ne izpusti vrstice: »Po križnem pravilu dobimo Mg₂O₂.« je prav napaka, ki jo iščemo (pregled 1, PR #606).
+const REDUCE_LINE_RE = /krajš|poenostav|(?<!\p{L})del(?:i|imo|iš)(?!\p{L})|razmerj|namesto/iu;
+const ionicPlain = (t) =>
+  String(t)
+    .replace(/[₀-₉]/g, (d) => String(SUB_DIGITS.indexOf(d)))
+    .replace(/\\(?:mathrm|text|ce|rm)\s*/g, "")
+    .replace(/\\left|\\right/g, "")
+    .replace(/_\{?\s*(\d)\s*\}?/g, "$1")
+    .replace(/[{}]/g, "");
+function ionicFormulas(text) {
+  const out = [];
+  for (const m of ionicPlain(text).matchAll(IONIC_RE)) {
+    const an = m[3].replace(/[()]/g, "");
+    const a = Number(m[2]), b = Number(m[4]);
+    if (a !== IONIC_ANION[an] || b !== IONIC_CATION[m[1]] || a === 1) continue;
+    const g = gcdInt(a, b);
+    if (g < 2) continue;
+    const ra = a / g, rb = b / g;
+    const group = an.length > 1;
+    const reduced = `${m[1]}${ra > 1 ? ra : ""}${group ? (rb > 1 ? `(${an})${rb}` : an) : `${an}${rb > 1 ? rb : ""}`}`;
+    out.push({ src: m[0], reduced });
+  }
+  return out;
+}
+function gcdInt(a, b) {
+  while (b) [a, b] = [b, a % b];
+  return a;
+}
+export function subscriptIssue(answer, question = "") {
+  let checked = 0;
+  const text = String(answer || "");
+  const asked = new Set(ionicFormulas(question).map((f) => f.src));
+  const plainAll = ionicPlain(text);
+  for (const line of text.split("\n")) {
+    if (SKIP_LINE.test(line) || REDUCE_LINE_RE.test(line)) continue;
+    for (const f of ionicFormulas(line)) {
+      if (asked.has(f.src)) continue;
+      checked++;
+      if (new RegExp(`(?<![A-Za-z)\\]\\d])${f.reduced.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![A-Za-z\\d(])`).test(plainAll)) continue;
+      return {
+        checked,
+        issue: `the formula ${f.src} keeps the subscripts unreduced; an ionic formula gives the smallest whole-number ratio of ions, so the cross rule ends by reducing them: ${f.src} → ${f.reduced} (Mg²⁺ + O²⁻ → Mg₂O₂ → MgO)`,
       };
     }
   }
@@ -706,6 +1040,6 @@ export async function correction({ streamFn, mode, answer, issue, language = "sl
 // Popravek vstavi pred vrstico META (in kartice), da ostane zgodovina v pričakovani obliki.
 export function insertFix(text, block) {
   const s = String(text || "");
-  const i = s.search(/\n?<<(?:META|KARTICA|IZBIRE)\b/);
+  const i = s.search(/\n?<<(?:META|KARTICA|IZBIRE|RA[CČ]UN)\b/);
   return i < 0 ? s + block : s.slice(0, i) + block + s.slice(i);
 }

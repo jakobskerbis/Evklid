@@ -2,7 +2,7 @@
    Lastne barve iz Nastavitve → Videz theme.js zapiše kot slog na <html> in prepišejo te privzete. */
 :root {
   --rob-strani: clamp(16px, 2.5vw, 40px); /* rob vsebine ob straneh pogleda, brez praznega pasu (j 2026-11-04) */
-  /* Slog Čist (privzeti, docs/oblikovanje.md); Igriv in Temen sta v ui.css (»Slogi«) in theme.js. */
+  /* Slog Čist (privzeti, docs/oblikovanje.md); Igriv je v ui.css (»Slogi«) in theme.js. */
   --bg: #f6f7f9;
   --surface: #ffffff;
   --surface-2: #eef1f5;
@@ -489,6 +489,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .adm-rep .pill { background: var(--surface); color: var(--text); } /* --muted na --surface-2 je v slogih Igriv/Temen pod 4,5 : 1 */
 .adm-rep button.small { min-height: 40px !important; }
 .adm-rep-note { margin: 0; overflow-wrap: anywhere; }
+.adm-rep-pr { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; font-weight: 600; overflow-wrap: anywhere; } /* samodejni pregled: povezava na PR s popravkom */
+.adm-rep-pr svg.i { width: 16px; height: 16px; flex: none; }
 .adm-rep-shown { justify-self: stretch; display: grid; gap: 4px; }
 .adm-rep-shown .msg { max-width: 100%; margin: 0; contain: layout paint; } /* posnetek nič ne prekrije zunaj kartice */
 .adm-rep-shown .msg::before, .adm-rep-shown .msg::after { display: none; } /* brez avatarja ob robu kartice */
@@ -799,6 +801,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 @media (min-width: 761px) {
   .topbar .tabs { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; padding: 4px; margin: -4px; }
   .topbar .tabs::-webkit-scrollbar { display: none; }
+  .topbar .tabs .tab { scroll-margin-inline: 48px; } /* izbrani zavihek se pomakne iz zbledelega roba (dolgi napisi, npr. Povratne informacije) */
   .topbar .tabs.fade-end { mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); }
   .topbar .tabs.fade-start { mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); }
   .topbar .tabs.fade-start.fade-end { mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); }

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prenos elektronov
+  - od Lavoisierja: oksidacija kot vezava kisika
+  - danes: ena snov odda, druga sprejme
+- Premica oksidacijskih števil
+  - premik desno: oksidacija, oddani elektroni
+  - premik levo: redukcija, sprejeti elektroni
+  - Mn iz $+7$ v $+2$: pet elektronov
+- Oksidant in reducent
+  - oksidant sprejme elektrone, se reducira
+  - napaka: oksidant se oksidira
+- Polreakcije
+  - oksidacija: $\mathrm{Zn \rightarrow Zn^{2+} + 2\,e^-}$
+  - redukcija: elektroni na levi strani
+- Urejanje v kisli raztopini
+  - O z $\mathrm{H_2O}$, H z $\mathrm{H^+}$
+  - naboj uredimo z elektroni
+  - napaka: dodan $\mathrm{O^{2-}}$ ali $\mathrm{O_2}$
+- Enako število elektronov
+  - polreakciji pomnoži, nato seštej
+  - v končni enačbi ni elektronov
+- Titracija železa
+  - $\mathrm{MnO_4^-}$ in $\mathrm{Fe^{2+}}$ v razmerju $1 : 5$
+  - $m = n \cdot M$, rezultat v mg

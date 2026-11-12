@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Polje kot karta
+  - lastnost vsake točke prostora
+  - obstaja tudi brez poskusnega naboja
+- Jakost polja
+  - $E = \dfrac{F}{e}$, enota $\mathrm{N/As} = \mathrm{V/m}$
+  - smer sile na pozitivni naboj
+  - napaka: večji poskusni naboj, močnejše polje
+- Točkasti naboj
+  - $E = \dfrac{e}{4\pi\varepsilon_0 r^2}$
+  - dvakrat dlje, štirikrat šibkejše
+- Silnice
+  - od pozitivnega k negativnemu naboju
+  - gostejše silnice, močnejše polje
+- Napetost
+  - $U = \dfrac{A_e}{e}$, enota $\mathrm{V}$
+  - vedno med dvema točkama
+- Homogeno polje
+  - $U = E d$, torej $E = \dfrac{U}{d}$
+  - ekvipotencialne ploskve kot plastnice
+- Kondenzator
+  - $C = \dfrac{e}{U}$, enota $\mathrm{F}$
+  - $C = \dfrac{\varepsilon_0 S}{d}$
+  - napaka: kapaciteta raste z napetostjo

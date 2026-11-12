@@ -3,6 +3,7 @@
 import katex from "katex";
 import { parseLesson, expandFormulaBlocks } from "./textbook.js";
 import { drawingErrors, DRAW_RE } from "./risbe.js";
+import { parseAnswerLine } from "../public/preveri-se.js";
 import { getTopic } from "./curriculum.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { checkIdentities } from "./lesson-identity.js";
@@ -78,32 +79,74 @@ export function checkLessonSource(src, topicId) {
   // Merila docs/kakovost.md §1: vmesna vprašanja v razlagi in razlaga vsakega napačnega odgovora.
   const thinks = body.match(/^[ \t]*:::[ \t]*premisli[ \t]*$/gm) || [];
   if (thinks.length < 2) warn(`v razlagi sta priporočeni 2 vmesni vprašanji »:::premisli« (${thinks.length})`);
-  const noWhy = checks.reduce((n, c) => n + c.options.filter((_, i) => i !== c.correct && !c.optionWhy?.[i]).length, 0);
+  const noWhy = checks.reduce((n, c) => n + (c.type ? 0 : c.options.filter((_, i) => i !== c.correct && !c.optionWhy?.[i]).length), 0);
   if (checks.length && noWhy) warn(`${noWhy} napačnih možnosti v »Preveri se« nima razlage »~ …«`);
 
-  // Kviz: vsako vprašanje natanko en »+«, vsaj 3 možnosti, brez ponavljanja.
+  // Kviz (content/lessons/README.md, »Preveri se«): izbira – natanko en »+«, vsaj 3 možnosti, brez ponavljanja;
+  // vpiši število – natanko en »= vrednost | toleranca«, »~ vrednost | zakaj«; razvrsti – 3 do 6 vrstic »1.« … po vrsti.
+  // Risba »:::risba« sme stati v besedilu vprašanja (pred prvim odgovorom); drugi bloki »:::« (simboli) se preskočijo.
   const quizMd = body.split(/^## +/m).find((p) => /^preveri se/i.test(p)) || "";
   const qs = [];
+  let block = null; // "risba" | "drugo" | null
   for (const raw of quizMd.split("\n").slice(1)) {
     const line = raw.trim();
+    if (block) {
+      if (line === ":::") block = null;
+      continue;
+    }
     if (!line) continue;
-    if (line[0] === "?") qs.push({ q: line.slice(1).trim(), plus: 0, opts: [] });
-    else if (!qs.length) continue;
+    const cur = qs[qs.length - 1];
+    if (/^:::/.test(line)) {
+      block = /^:::[ \t]*risba\b/.test(line) ? "risba" : "drugo";
+      if (block === "risba" && cur && (cur.opts.length || cur.eq.length || cur.items.length)) cur.late = true;
+      continue;
+    }
+    if (line[0] === "?") qs.push({ q: line.slice(1).trim(), plus: 0, opts: [], eq: [], tilde: [], items: [], late: false });
+    else if (!cur) continue;
     else if (line[0] === "+" || line[0] === "-") {
-      const cur = qs[qs.length - 1];
       if (line[0] === "+") cur.plus++;
       cur.opts.push(line.slice(1).trim().replace(/\s+/g, " ").toLowerCase());
-    }
+    } else if (line[0] === "=") cur.eq.push(line.slice(1).trim());
+    else if (line[0] === "~") {
+      if (!cur.opts.length) cur.tilde.push(line.slice(1).trim());
+    } else if (line[0] !== ">" && !cur.opts.length && !cur.eq.length && /^\d+\.\s/.test(line)) cur.items.push(line);
   }
   if (qs.length < 3) err(`v »Preveri se« so potrebna vsaj 3 vprašanja (${qs.length})`);
   qs.forEach((q, i) => {
     const n = i + 1;
+    const kinds = [q.opts.length && "izbira (+/-)", q.eq.length && "število (=)", q.items.length && !q.opts.length && "razvrsti (1. 2. …)"].filter(Boolean);
+    if (kinds.length > 1) return err(`vprašanje ${n}: mešane vrste odgovorov (${kinds.join(", ")}); vsako vprašanje ima eno vrsto`);
+    if (q.late) err(`vprašanje ${n}: risba »:::risba« mora stati v besedilu vprašanja, pred prvim odgovorom`);
+    if (q.eq.length) {
+      if (q.eq.length !== 1) err(`vprašanje ${n}: natanko ena vrstica »= vrednost | toleranca« (zdaj ${q.eq.length})`);
+      const a = parseAnswerLine(q.eq[0]);
+      if (!a) err(`vprašanje ${n}: »= ${q.eq[0]}« ni število (zapis: »= 2,30« ali »= 2,5 m/s | 0,1«; decimalna vejica, brez $)`);
+      for (const w of q.tilde) {
+        const [v, ...why] = w.split("|");
+        const x = parseAnswerLine(v);
+        if (!x) err(`vprašanje ${n}: »~ ${w}« potrebuje obliko »~ napačna vrednost | zakaj« (vrednost kot število)`);
+        else if (!why.join("|").trim()) err(`vprašanje ${n}: »~ ${v.trim()}« nima razlage za »|«`);
+        else if (a && Math.abs(x.value - a.value) <= a.tol) err(`vprašanje ${n}: napačna vrednost »~ ${v.trim()}« je znotraj tolerance pravilnega odgovora`);
+      }
+      return;
+    }
+    if (q.items.length && !q.opts.length) {
+      if (q.items.length < 3 || q.items.length > 6) err(`vprašanje ${n}: razvrsti potrebuje 3 do 6 elementov (zdaj ${q.items.length})`);
+      q.items.forEach((it, k) => {
+        if (Number(/^(\d+)\./.exec(it)[1]) !== k + 1) err(`vprašanje ${n}: elementi razvrščanja so oštevilčeni po vrsti 1., 2., 3. … (»${it.slice(0, 30)}«)`);
+      });
+      const texts = q.items.map((it) => it.replace(/^\d+\.\s*/, "").replace(/\s+/g, " ").toLowerCase());
+      if (new Set(texts).size !== texts.length) err(`vprašanje ${n}: elementi razvrščanja se ponavljajo`);
+      if (texts.some((x) => !x)) err(`vprašanje ${n}: prazen element razvrščanja`);
+      if (q.tilde.length) err(`vprašanje ${n}: vrstice »~« pri razvrščanju niso mogoče (razlago napiši v »>«)`);
+      return;
+    }
     if (q.plus !== 1) err(`vprašanje ${n}: natanko en pravilen odgovor »+« (zdaj ${q.plus})`);
     if (q.opts.length < 3) err(`vprašanje ${n}: vsaj 3 možnosti (zdaj ${q.opts.length})`);
     if (new Set(q.opts).size !== q.opts.length) err(`vprašanje ${n}: možnosti se ponavljajo`);
     if (q.opts.some((o) => !o)) err(`vprašanje ${n}: prazna možnost`);
   });
-  if (checks.length !== qs.length) err("nekaterih vprašanj v »Preveri se« ni mogoče prebrati (oblika ? - + >)");
+  if (checks.length !== qs.length) err("nekaterih vprašanj v »Preveri se« ni mogoče prebrati (oblika ? - + = 1. ~ >)");
 
   // LaTeX: vsaka formula se mora izrisati, $ v vrstici v parih.
   const lines = body.split("\n");

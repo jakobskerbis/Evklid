@@ -17,8 +17,8 @@ export function interval(vrsta, a, b) {
     b,
     levoZaprt: lz,
     desnoZaprt: dz,
-    zapis: `${lz ? "[" : "("}${st(a, 1)}${ločilo}${st(b, 1)}${dz ? "]" : ")"}`,
-    neenacba: `${st(a, 1)} ${lz ? "≤" : "<"} x ${dz ? "≤" : "<"} ${st(b, 1)}`,
+    zapis: `${lz ? "[" : "("}${st(a, 2)}${ločilo}${st(b, 2)}${dz ? "]" : ")"}`,
+    neenacba: `${st(a, 2)} ${lz ? "≤" : "<"} x ${dz ? "≤" : "<"} ${st(b, 2)}`,
     vsebuje: (x) => (lz ? x >= a : x > a) && (dz ? x <= b : x < b),
     dolzina: b - a,
   };
@@ -67,7 +67,7 @@ export default function narisi(host) {
     S.cipi([
       { barva: "ploskev", oznaka: "I", vrednost: I.zapis },
       { barva: "ploskev", oznaka: "x \\in I", vrednost: I.neenacba },
-      { barva: "glavna", oznaka: "b - a", vrednost: st(I.dolzina, 1) },
+      { barva: "glavna", oznaka: "b - a", vrednost: st(I.dolzina, 2) },
     ]);
   }
 

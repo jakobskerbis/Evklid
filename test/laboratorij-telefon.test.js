@@ -5,7 +5,7 @@
 //    pri vsaki kontroli je risba vsaj 80 % vidna, nobena kontrola ni pod njo, sklep spodaj ni pokrit, gumb »Pripni sliko«
 //    jo odpne (zapomnjeno), ležeče (740 × 360) je risba ob kontrolah in cela vidna; na računalniku (1280 × 800) je pokončna
 //    risba levo ob kontrolah, široka (proga, vezje: razmerje ≥ 1,55) pa čez vso širino zgoraj, pripeta in vsaj 480 px široka.
-import test from "node:test";
+import test, { before } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
 import fs from "node:fs";
@@ -35,11 +35,13 @@ let playwright = null;
 try {
   playwright = require("playwright");
 } catch {}
+// Brskalnik se zažene v before(): vsi testi se registrirajo sinhrono (sicer jih --test-force-exit izpusti).
 let browser = null;
-try {
-  if (playwright) browser = await playwright.chromium.launch();
-} catch {}
-const skip = browser ? false : "Playwright/Chromium ni nameščen";
+before(async () => {
+  try {
+    if (playwright) browser = await playwright.chromium.launch();
+  } catch {}
+});
 
 const PUB = path.resolve("public");
 const TYPES = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html", ".woff2": "font/woff2" };
@@ -101,7 +103,8 @@ const MEASURE = async () => {
   };
 };
 
-test("lab on a phone: the drawing stays visible while using the controls", { skip, timeout: 240000 }, async (t) => {
+test("lab on a phone: the drawing stays visible while using the controls", { timeout: 240000 }, async (t) => {
+  if (!browser) return t.skip("Playwright/Chromium ni nameščen");
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}`;
   t.after(async () => {

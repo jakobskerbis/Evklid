@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mitohondrij in kloroplast
+  - rastlinska celica ima oboje
+  - isto načelo, drugačen vir elektronov
+- Prenos elektronov
+  - mitohondrij: elektroni iz hrane na kisik
+  - kloroplast: svetloba vzbudi klorofil, voda se razcepi
+- Protonski gradient
+  - $\mathrm{H^+}$ v lumen ali medmembranski prostor
+  - $k = 10^{\Delta \mathrm{pH}}$, lumen pH 5, stroma pH 8
+  - poskus Jagendorfa: ATP v temi
+- ATP-sintaza
+  - turbina, ne črpalka
+  - 14 protonov na obrat, 3 ATP
+- Absorpcijski spekter
+  - klorofil vpija modro in rdečo
+  - zeleno odbija, zato je list zelen
+- Omejujoči dejavniki
+  - svetloba, $\mathrm{CO_2}$, temperatura
+  - $p = \dfrac{v_2 - v_1}{v_1} \cdot 100\,\%$
+  - napaka: več svetlobe vedno pomaga
+- C3 in CAM
+  - C3: reže odprte podnevi
+  - CAM: $\mathrm{CO_2}$ ponoči v jabolčno kislino
+  - CAM izgubi približno desetkrat manj vode
