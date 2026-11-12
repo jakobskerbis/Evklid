@@ -117,7 +117,8 @@ function parseQuotient(input, { dot = false } = {}) {
   const [l, r] = s.split(DIV).map((x) => x.trim());
   const a = parseNumberWithUnit(l, { dot });
   const b = parseNumberWithUnit(r, { dot });
-  if (!a || !b || a.unit || !/^\d/.test(r)) return null;
+  // »12:3=4«: zapisan je cel račun, ne količnik (ni ga mogoče preveriti kot količnik).
+  if (!a || !b || a.unit || !/^\d/.test(r) || b.unit.includes("=")) return null;
   return { value: a.value / b.value, unit: b.unit };
 }
 
@@ -128,6 +129,9 @@ function checkNumber(ans, input) {
     // Količnik je zapisan prav, a število je treba še izračunati (»Izračunaj 5 : 4« z odgovorom »5 : 4« ne velja).
     // Vrsta »format« ne šteje kot napačen poskus.
     if (!Number.isFinite(q.value)) return { kind: "format", code: "chk.number", message: "Z 0 ne moreš deliti. Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
+    // Enota se preveri kot pri številu (»1/2 kg« pri nalogi v m: namig o enoti, ne »količnik je pravilen«).
+    const unit = unitIssue(ans, q.unit);
+    if (unit) return unit;
     const exacts = [ans.value, ...(ans.alsoAccept || [])];
     // Pri zahtevanem zaokroževanju je »5/3« prav tudi, kadar je rešitev shranjena že zaokrožena (1,67).
     const d = ans.decimals;
@@ -173,16 +177,20 @@ function threeDecimals(ans) {
   return [ans.value, ...(ans.alsoAccept || [])].some((e) => Number.isFinite(e) && whole(e * 1000) && !whole(e * 100));
 }
 
+function unitIssue(ans, unit) {
+  if (!ans.unit) return null;
+  if (!normUnit(unit)) return { kind: "unit", code: "chk.addUnit", message: `Število je zapisano, dodaj še enoto. V kateri enoti je rezultat?` };
+  if (![ans.unit, ...(ans.unitAlternatives || [])].some((u) => sameUnit(u, unit))) {
+    return { kind: "unit", code: "chk.unit", params: { unit: ans.unit }, message: `Preveri enoto: rezultat zapiši v ${ans.unit}.` };
+  }
+  return null;
+}
+
 function checkParsed(ans, p) {
 
   // Enota
-  if (ans.unit) {
-    const got = normUnit(p.unit);
-    if (!got) return { kind: "unit", code: "chk.addUnit", message: `Število je zapisano, dodaj še enoto. V kateri enoti je rezultat?` };
-    if (![ans.unit, ...(ans.unitAlternatives || [])].some((u) => sameUnit(u, p.unit))) {
-      return { kind: "unit", code: "chk.unit", params: { unit: ans.unit }, message: `Preveri enoto: rezultat zapiši v ${ans.unit}.` };
-    }
-  }
+  const unit = unitIssue(ans, p.unit);
+  if (unit) return unit;
 
   const exacts = [ans.value, ...(ans.alsoAccept || [])];
   const d = ans.decimals;
@@ -300,10 +308,16 @@ function parseFraction(input) {
 function checkFraction(ans, input) {
   const f = parseFraction(input);
   if (!f || f.den === 0) {
-    // Decimalno število s pravo vrednostjo (»1,25« za 5/4): vrednost je prava, zapis pa ne.
+    // Decimalno število s pravo vrednostjo (»1,25« za 5/4): vrednost je prava, zapis pa ne. Sporočilo ne izda
+    // ulomka (pri nalogi »okrajšaj razmerje« bi bil to odgovor). Decimalno število z napačno vrednostjo je
+    // napačen poskus: sicer bi bil vsak decimalni vnos brezplačen in »Vrednost je prava« bi izdala vrednost
+    // (kviz, preizkus v pilotu in tekmovanje imajo en poskus, napaka v zapisu pa se lahko ponavlja).
     const p = !f && parseNumberWithUnit(input);
-    if (p && !p.unit && ans.den && Math.abs(p.value - ans.num / ans.den) < 1e-9) {
-      return { kind: "format", code: "chk.fraction", message: `Vrednost je prava, zapiši jo še kot ulomek ali razmerje (npr. ${ans.num}/${ans.den} ali ${ans.num} : ${ans.den}).` };
+    if (p && !p.unit && ans.den) {
+      if (Math.abs(p.value - ans.num / ans.den) < 1e-9) {
+        return { kind: "format", code: "chk.fraction", message: "Vrednost je prava, zapiši jo še kot ulomek (npr. 3/4) ali razmerje (npr. 3 : 4)." };
+      }
+      return { kind: "wrong" };
     }
     return { kind: "format", code: "chk.fraction", message: "Zapiši ulomek v obliki a/b (npr. 3/4), razmerje v obliki a : b (npr. 3 : 4) ali mešano število (npr. 1 1/2)." };
   }

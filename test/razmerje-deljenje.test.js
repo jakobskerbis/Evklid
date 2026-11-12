@@ -26,7 +26,22 @@ test("decimalno število pri razmerju: prava vrednost, a ne v zahtevani obliki (
   assert.equal(r.kind, "format");
   assert.match(r.message, /Vrednost je prava/);
   assert.equal(kind(R54, "1.25"), "format");
-  assert.doesNotMatch(checkAnswer(R54, "1,3").message, /Vrednost je prava/);
+  // sporočilo ne izda ulomka (pri »okrajšaj razmerje« bi bil to odgovor)
+  assert.doesNotMatch(r.message, /5\/4|5 : 4/);
+  // decimalno število z napačno vrednostjo je napačen poskus: sicer bi bilo ugibanje brezplačno, »Vrednost je prava« pa bi izdala vrednost
+  assert.equal(kind(R54, "1,3"), "wrong");
+  assert.equal(kind(R54, "0,8"), "wrong");
+});
+
+test("količnik: enota in cel račun", () => {
+  // enota se preveri tudi pri količniku
+  assert.equal(kind({ type: "number", value: 0.5, unit: "m" }, "1/2 kg"), "unit");
+  assert.equal(kind({ type: "number", value: 0.5, unit: "m" }, "1/3 kg"), "unit");
+  assert.equal(kind({ type: "number", value: 0.5, unit: "m" }, "1/2"), "unit");
+  assert.match(checkAnswer({ type: "number", value: 0.5, unit: "m" }, "1/2 m").message, /Količnik je pravilen/);
+  // »12:3=5« ni »pravilen količnik«
+  assert.doesNotMatch(checkAnswer({ type: "number", value: 4 }, "12:3=5").message || "", /Količnik je pravilen/);
+  assert.equal(kind({ type: "number", value: 4 }, "12:3=4"), "format");
 });
 
 test("napačna razmerja ostanejo napačna", () => {
