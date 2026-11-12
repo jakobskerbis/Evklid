@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba piramide
+  - ena osnovna ploskev, stranski trikotniki
+  - trikotniki se stikajo v vrhu
+  - pravilna: vrh nad središčem pravilne osnove
+- Primerjava s prizmo
+  - ena osnovna ploskev namesto dveh
+  - trikotniki namesto pravokotnikov
+- Dve višini
+  - $v$ navpično od vrha do osnove
+  - $v_s$ po stranski ploskvi
+  - $v_s^2 = v^2 + \left(\frac{a}{2}\right)^2$
+- Plašč
+  - $\mathrm{pl} = n \cdot \frac{a \cdot v_s}{2}$
+  - napaka: $v$ namesto $v_s$
+- Površina
+  - $P = O + \mathrm{pl}$
+  - streha ali lampion: samo plašč
+- Prostornina
+  - $V = \frac{O \cdot v}{3}$
+  - napaka: polovica ali brez tretjine
