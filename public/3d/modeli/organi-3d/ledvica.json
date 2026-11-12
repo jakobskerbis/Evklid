@@ -3,10 +3,10 @@
  "vir": "HuBMAP Human Reference Atlas (CC BY 4.0; ovojnica, skorja, piramide, papile, ledvični sinus) in Z-Anatomy (CC BY-SA 4.0; sečevod, ledvični žili, nadledvična žleza); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "ovojnica": {
-   "hrap": 0.34,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "hrap": 0.5,
+   "lak": 0.38,
+   "lakHrap": 0.34,
+   "sijaj": 0.22,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -49,6 +49,9 @@
     "barva": "#d2917a",
     "visina": 0.15
    },
+   "zile": 0.4,
+   "zileSirina": 0.00022,
+   "zileBarva": "#5e1a18",
    "rezPresek": {
     "vrsta": -1,
     "ovoj": true,

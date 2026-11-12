@@ -28,10 +28,10 @@
    "lise2": 0.25,
    "lise2Barva": "#d6aca6",
    "lise2F": 10,
-   "zile": 1,
+   "zile": 0.35,
    "zileBarva": "#a52838",
    "zileBarva2": "#6a2552",
-   "zileSirina": 0.00045,
+   "zileSirina": 0.0003,
    "zileF": 26,
    "zileRaven": 0.51,
    "brazdeMeja": [
@@ -78,12 +78,12 @@
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     0.00869,
-     -0.05372
+     -0.01963,
+     -0.08189
     ],
     "mera": [
-     0.05016,
-     0.05016
+     0.08146,
+     0.08146
     ],
     "izrez": true,
     "visina": 0.5
@@ -110,7 +110,24 @@
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.7,
-   "rezVlakna": 2600
+   "rezSum": 0.3,
+   "rezPresek": {
+    "vrsta": 0,
+    "ovoj": true
+   },
+   "rezSlika": {
+    "slika": "mozgani-mali-rez.webp",
+    "lo": [
+     -0.01963,
+     -0.08189
+    ],
+    "mera": [
+     0.08146,
+     0.08146
+    ],
+    "izrez": true,
+    "visina": 0.2
+   }
   },
   "bela": {
    "barva": "#efe2d6",
@@ -156,12 +173,12 @@
   },
   "sredina": {
    "barva": "#cda39a",
-   "hrap": 0.5,
-   "lak": 0.25,
+   "hrap": 0.9,
+   "lak": 0,
    "lakHrap": 0.3,
-   "sijaj": 0.3,
+   "sijaj": 0,
    "sijajBarva": "#ffd6cc",
-   "rob": 0.08,
+   "rob": 0,
    "ao": 0.6,
    "zrno": 0.05,
    "f": 20,
@@ -480,7 +497,7 @@
      0,
      0
     ],
-    "d": 0.0003
+    "d": -0.0004
    }
   ]
  },
@@ -548,7 +565,9 @@
      "sijaj": 0.1
     },
     "sredina": {
-     "aoTekstura": 0.12
+     "aoTekstura": 0.12,
+     "lak": 0,
+     "sijaj": 0
     }
    }
   }

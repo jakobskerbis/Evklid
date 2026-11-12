@@ -13,7 +13,8 @@ import * as G from "./zile-mreza.mjs";
 
 const MODELI = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public", "3d", "modeli");
 const ledvica = [
-  [/^Ureter\.l$/, { polmer: 0.0021, prehod: { pri: [0.0, 0.006, -0.003], dolzina: 0.014 } }],
+  // raven: prosti konec (nasproti »prehod.pri«) je bil poševno odrezan z zarezo; zadnjih »raven« metrov se poravna v ravnino
+  [/^Ureter\.l$/, { polmer: 0.0021, prehod: { pri: [0.0, 0.006, -0.003], dolzina: 0.014 }, raven: 0.005 }],
   [/^Left renal vein$/, { polmer: 0.0048 }],
 ];
 const oko = [[/^Optic nerve \(II\)\.l$/, { polmer: 0.00175 }]];
@@ -40,7 +41,7 @@ function glavnaSmer(P, c) {
   return a;
 }
 
-export function odebeli(m, { polmer, prehod = null, korak = 0.001 }) {
+export function odebeli(m, { polmer, prehod = null, korak = 0.001, raven = 0 }) {
   const n = m.P.length / 3;
   const c = [0, 0, 0];
   for (let i = 0; i < m.P.length; i++) c[i % 3] += m.P[i] / n;
@@ -95,6 +96,15 @@ export function odebeli(m, { polmer, prehod = null, korak = 0.001 }) {
     }
     for (let j = 0; j < 3; j++) m.P[i * 3 + j] += R[i * 3 + j] * (k - 1);
   }
+  // raven konec: oglišča v zadnjih »raven« metrih prostega konca se premaknejo vzdolž osi na ravnino pravokotno na os
+  if (raven > 0 && pri !== null) {
+    const konec = pri === t0 ? t1 : t0, smer = pri === t0 ? 1 : -1;
+    const meja = konec - smer * raven;
+    for (let i = 0; i < n; i++) {
+      const cez = (t[i] - meja) * smer;
+      if (cez > 0) for (let j = 0; j < 3; j++) m.P[i * 3 + j] -= a[j] * cez * smer * 0.97; // 3 % ostane: brez izrojenih trikotnikov
+    }
+  }
   return { polmer: zdaj, faktor: k0 };
 }
 
@@ -112,7 +122,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       const korak = mesh && nacrt.find(([rx]) => rx.test(node.getName()));
       if (!korak) continue;
       // že obdelano (extras.debelinaCevi = ciljni polmer): srednji polmer po prehodu ni natanko ciljni, zato brez ponovitve
-      if (node.getExtras().debelinaCevi === korak[1].polmer) continue;
+      if (node.getExtras().debelinaCevi === korak[1].polmer + (korak[1].raven || 0)) continue;
       for (const prim of mesh.listPrimitives()) {
         const m = G.preberi(node, prim);
         const r = odebeli(m, korak[1]);
@@ -122,9 +132,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
           if (!suho) G.zapisi(doc, node, prim, m);
         }
       }
-      node.setExtras({ ...node.getExtras(), debelinaCevi: korak[1].polmer });
+      node.setExtras({ ...node.getExtras(), debelinaCevi: korak[1].polmer + (korak[1].raven || 0) });
       spremenjeno++;
     }
+    // stari dostopniki zamenjanih mrež ne smejo ostati v datoteki
+    for (const acc of doc.getRoot().listAccessors()) if (acc.listParents().every((x) => x.propertyType === "Root")) acc.dispose();
     if (spremenjeno && !suho) await io.write(pot, doc);
   }
 }

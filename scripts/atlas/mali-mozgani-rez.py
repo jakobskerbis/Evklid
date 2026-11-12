@@ -13,9 +13,14 @@ skorje. Slika nastane iz obrisov preseka režnjičev v ravnini prereza (scripts/
 Mere: skorja malih možganov ≈ 1 mm, listi 2–3 mm, deblo bele možganovine nekaj mm (Standring, Gray's Anatomy, 41. izd.).
 
 Zagon:
-  node scripts/atlas/zanke-reza.mjs mozgani /tmp/zanke-mozgani.json mali
+  node scripts/atlas/zanke-reza.mjs mozgani /tmp/zanke-mozgani.json mali,deblo
   python3 scripts/atlas/mali-mozgani-rez.py /tmp/zanke-mozgani.json public/3d/modeli/organi-3d/mozgani-mali-rez.webp
-Izpiše »lo« in »mera« (metri, koordinati ravnine) za tkiva.mali.rezSlika v mozgani.json.
+Izpiše »lo« in »mera« (metri, koordinati ravnine) za tkiva.mali.rezSlika in tkiva.deblo.rezSlika v mozgani.json.
+
+Možgansko deblo (če so v vhodu zanke tkiva »deblo«) je naslikano na isti sliki: most s tegmentumom in bazalnim delom
+(siva jedra mostu, beli vzdolžni snopi), srednji možgani s tektumom, rdečim jedrom in črno substanco, podaljšana
+hrbtenjača s piramido in olivnim jedrom; med deblom in malimi možgani temna votlina četrtega prekata z vrhom (fastigium)
+v jedru bele možganovine. Akvedukt je špranja med zankama srednjih možganov v modelu (slika je tam prosojna).
 """
 import json
 import math
@@ -26,8 +31,8 @@ import numpy as np
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 VHOD, IZHOD = sys.argv[1], sys.argv[2]
-PX = 1024  # stranica slike
-NV = 3  # nadvzorčenje (glajenje robov)
+PX = 1536  # stranica slike
+NV = 2  # nadvzorčenje (glajenje robov)
 ROB = 0.0015  # prazen rob okoli obrisa (m)
 BELA, ZRNATA, MOLEKULARNA, BRAZDA = (243, 233, 219), (170, 108, 96), (212, 164, 148), (104, 46, 46)
 D_ZRNATA, D_SKORJA = 0.00033, 0.00095  # debelina zrnate plasti in cele skorje (m)
@@ -52,8 +57,10 @@ def raz(a, b):
 pari = [(ime, z) for ime, z in pari if abs(ploscina(z)) > 4e-6]  # > 4 mm²
 imena = [ime for ime, _ in pari]
 telesa = [z for _, z in pari]
-xs = [p[0] for z in telesa for p in z]
-ys = [p[1] for z in telesa for p in z]
+# možgansko deblo v isti ravnini (srednji možgani, most, podaljšana hrbtenjača): slika pokriva oboje
+DEBLO = [(o["ime"], z) for o in d if o["tkivo"] == "deblo" for z in o["zanke"] if abs(ploscina(z)) > 4e-6]
+xs = [p[0] for z in telesa for p in z] + [p[0] for _, z in DEBLO for p in z]
+ys = [p[1] for z in telesa for p in z] + [p[1] for _, z in DEBLO for p in z]
 mera = max(max(xs) - min(xs), max(ys) - min(ys)) + 2 * ROB
 lo = ((max(xs) + min(xs)) / 2 - mera / 2, (max(ys) + min(ys)) / 2 - mera / 2)
 N = PX * NV
@@ -91,14 +98,40 @@ def na_jedru(p):
 
 
 vstopi = [min(z, key=lambda p: raz(p, na_jedru(p))) for z in telesa]
+# Veje se delijo kot v pravem črvu: iz jedra izhaja nekaj glavnih vej (sprednji reženj: lobulus centralis + culmen;
+# zadnji: declive + folium + tuber; spodnji: pyramis + uvula; nodulus iz fastigija), vsaka se v vozlu razcepi v režnjiče.
+SKUPINE = (
+    (("Central lobule", "Culmen"), 0.2),
+    (("Declive", "Folium of vermis", "Tuber of vermis"), 1.0),
+    (("Pyramis of vermis", "Uvula of vermis"), 0.6),
+    (("Nodule of vermis", "Lingula of cerebellum"), 0.0),
+)
 izvor = [na_jedru(v) for v in vstopi]
+debla = []  # glavne veje: (točka na jedru, vozel)
+for clani, sj in SKUPINE:
+    idx = [i for i, ime in enumerate(imena) if ime in clani]
+    if not idx:
+        continue
+    baza = (A[0] + (B[0] - A[0]) * sj, A[1] + (B[1] - A[1]) * sj)
+    m = (sum(vstopi[i][0] for i in idx) / len(idx), sum(vstopi[i][1] for i in idx) / len(idx))
+    f = 0.0 if sj == 0.0 else 0.5
+    vozel = (baza[0] + (m[0] - baza[0]) * f, baza[1] + (m[1] - baza[1]) * f)
+    debla.append((baza, vozel))
+    for i in idx:
+        izvor[i] = vozel
 
 # obris: unija režnjičev modela in deblo (med režnjiči ob deblu ni praznine)
 obris = Image.new("L", (N, N), 0)
 dro = ImageDraw.Draw(obris)
-for z in telesa:
-    dro.polygon([px(p) for p in z], fill=255)
-dro.line([px(A), px(B)], fill=255, width=round(0.0036 * k))
+for z in telesa:  # režnjič malo širši od telesa modela: med režnjiči ostane ozka razpoka, ne široka praznina
+    q = [px(p) for p in z]
+    dro.polygon(q, fill=255)
+    dro.line(q + q[:1], fill=255, width=round(0.0026 * k), joint="curve")
+for a, b in debla:
+    dro.line([px(a), px(b)], fill=255, width=round(0.0036 * k))
+    x, y = px(b)
+    dro.ellipse((x - 0.0018 * k, y - 0.0018 * k, x + 0.0018 * k, y + 0.0018 * k), fill=255)
+dro.line([px(A), px(B)], fill=255, width=round(0.0044 * k))
 for q in (A, B):
     x, y = px(q)
     r = 0.0018 * k
@@ -110,7 +143,7 @@ for i, z in enumerate(telesa):  # vrat veje med jedrom in režnjičem
         r = 0.0017 * k
         dro.ellipse((x - r, y - r, x + r, y + r), fill=255)
 # mreža za preverjanje »znotraj obrisa« in »območje moje veje« (0,1 mm)
-G = 512
+G = 768
 gk = G / mera
 maska = np.asarray(obris.resize((G, G), Image.BILINEAR)) > 127
 
@@ -214,8 +247,14 @@ def narisi(dodatek):
         dr.line(q, fill=255, width=s, joint="curve")
         for x, y in q:  # zaobljeni konci in stiki
             dr.ellipse((x - s / 2, y - s / 2, x + s / 2, y + s / 2), fill=255)
+    for a, b in debla:  # glavne veje
+        s = max(1, round((0.0022 + 2 * dodatek) * k))
+        q = [px(a), px(b)]
+        dr.line(q, fill=255, width=s)
+        for x, y in q:
+            dr.ellipse((x - s / 2, y - s / 2, x + s / 2, y + s / 2), fill=255)
     q = [px(A), px(B)]  # jedro bele možganovine (corpus medullare)
-    s = max(1, round((0.0030 + 2 * dodatek) * k))
+    s = max(1, round((0.0038 + 2 * dodatek) * k))
     dr.line(q, fill=255, width=s)
     for x, y in q:
         dr.ellipse((x - s / 2, y - s / 2, x + s / 2, y + s / 2), fill=255)
@@ -233,6 +272,100 @@ slika = ImageChops.multiply(slika, Image.merge("RGB", [senca.point(lambda v: 200
 # alfa: skorja in ozke brazde med listi (do 0,45 mm od skorje) znotraj obrisa; zunanji obris je nazobčan po listih, širše
 # praznine med režnjiči ostanejo odprte (senčilnik tam ploskve ne riše)
 alfa = ImageChops.multiply(narisi(D_SKORJA + 0.00045), obris)
+
+# ---- četrti prekat in možgansko deblo ----
+def maska_zank(zanke, siri=0.0):
+    im = Image.new("L", (N, N), 0)
+    dd = ImageDraw.Draw(im)
+    for z in zanke:
+        q = [px(p) for p in z]
+        dd.polygon(q, fill=255)
+        if siri:
+            dd.line(q + q[:1], fill=255, width=round(2 * siri * k), joint="curve")
+    return im
+
+
+def premik(im, dx, dy):  # premik maske za (dx, dy) metrov
+    return ImageChops.offset(im, round(dx * k), round(-dy * k))
+
+
+def crta(dd, c, u, dol, sirina, barva):  # zaobljena črta s središčem c vzdolž u
+    a, b = px((c[0] - u[0] * dol / 2, c[1] - u[1] * dol / 2)), px((c[0] + u[0] * dol / 2, c[1] + u[1] * dol / 2))
+    w = max(1, round(sirina * k))
+    dd.line([a, b], fill=barva, width=w)
+    for x, y in (a, b):
+        dd.ellipse((x - w / 2, y - w / 2, x + w / 2, y + w / 2), fill=barva)
+
+
+if DEBLO:
+    po = lambda ime: [z for i, z in DEBLO if i.startswith(ime)]
+    tezisce = lambda z: (sum(q[0] for q in z) / len(z), sum(q[1] for q in z) / len(z))
+    VENT = (-0.94, -0.34)  # ventralna (sprednja) smer debla v ravnini reza
+    OS = (0.34, -0.94)  # os debla navzdol
+    BELINA, SIVINA = (233, 217, 202), (214, 192, 180)
+    m_deblo = maska_zank([z for _, z in DEBLO], 0.00025)
+    m_most, m_pod, m_sred = maska_zank(po("Pons")), maska_zank(po("Medulla")), maska_zank(po("Midbrain"))
+    # most: tegmentum (hrbtnih 6,5 mm) in bazalni del s sivimi jedri mostu in belimi vzdolžnimi snopi (piramidna proga)
+    tegmentum = ImageChops.subtract(m_most, premik(m_most, VENT[0] * 0.0065, VENT[1] * 0.0065))
+    bazalni = ImageChops.subtract(m_most, tegmentum)
+    deblo = Image.new("RGB", (N, N), BELINA)
+    deblo.paste(Image.new("RGB", (N, N), SIVINA), mask=bazalni)
+    snopi = Image.new("L", (N, N), 0)
+    ds = ImageDraw.Draw(snopi)
+    most = max(po("Pons"), key=lambda z: abs(ploscina(z)))
+    bx, by = [q[0] for q in most], [q[1] for q in most]
+    for _ in range(18):
+        c = (random.uniform(min(bx), max(bx)), random.uniform(min(by), max(by)))
+        crta(ds, c, OS, random.uniform(0.004, 0.009), random.uniform(0.0009, 0.0016), 255)
+    deblo.paste(Image.new("RGB", (N, N), (229, 212, 198)), mask=ImageChops.multiply(snopi, bazalni))
+    deblo.paste(Image.new("RGB", (N, N), (219, 199, 187)), mask=tegmentum)
+    # srednji možgani: tektum (zadnja zanka) siv, v tegmentumu rdeče jedro in črna substanca
+    dd = ImageDraw.Draw(deblo)
+    sred = sorted(po("Midbrain"), key=lambda z: tezisce(z)[0])
+    if len(sred) > 1:
+        dd.polygon([px(q) for q in sred[-1]], fill=(209, 188, 178))
+    if sred:
+        c = tezisce(sred[0])
+        plast = Image.new("RGB", (N, N), BELINA)
+        dp = ImageDraw.Draw(plast)
+        mp = Image.new("L", (N, N), 0)
+        dm = ImageDraw.Draw(mp)
+        crta(dp, (c[0] + VENT[0] * 0.0042, c[1] + VENT[1] * 0.0042), OS, 0.011, 0.0014, (132, 104, 98))
+        crta(dm, (c[0] + VENT[0] * 0.0042, c[1] + VENT[1] * 0.0042), OS, 0.011, 0.0014, 255)
+        crta(dp, (c[0] + VENT[0] * 0.0005, c[1] + 0.0015), OS, 0.0012, 0.0042, (216, 174, 164))
+        crta(dm, (c[0] + VENT[0] * 0.0005, c[1] + 0.0015), OS, 0.0012, 0.0042, 255)
+        deblo.paste(plast, mask=ImageChops.multiply(mp, maska_zank(sred[:1])))
+    # podaljšana hrbtenjača: piramida spredaj (bela), za njo spodnje olivno jedro (siv nagubani trak)
+    piramida = ImageChops.subtract(m_pod, premik(m_pod, -VENT[0] * 0.003, -VENT[1] * 0.003))
+    deblo.paste(Image.new("RGB", (N, N), (240, 231, 218)), mask=piramida)
+    pod = max(po("Medulla"), key=lambda z: abs(ploscina(z)), default=None)
+    if pod:
+        vrh = max(q[1] for q in pod)
+        zg = [q for q in pod if q[1] > vrh - 0.016]
+        c = tezisce(zg)
+        c = (c[0] + VENT[0] * 0.0015, c[1] - 0.002)
+        plast = Image.new("RGB", (N, N), BELINA)
+        dp = ImageDraw.Draw(plast)
+        mp = Image.new("L", (N, N), 0)
+        dm = ImageDraw.Draw(mp)
+        crta(dp, c, OS, 0.0085, 0.0034, (198, 170, 160))
+        crta(dm, c, OS, 0.0085, 0.0034, 255)
+        crta(dp, c, OS, 0.0062, 0.0011, BELINA)
+        deblo.paste(plast, mask=ImageChops.multiply(mp, m_pod))
+    deblo = deblo.filter(ImageFilter.GaussianBlur(0.0005 * k))
+    # četrti prekat: temna šotorasta votlina med hrbtno stranjo mostu in podaljšane hrbtenjače ter malimi možgani, vrh
+    # (fastigium) sega v jedro bele možganovine
+    glavni = [z for _, z in DEBLO if abs(ploscina(z)) > 1e-4]
+    hrbet = lambda y: max((q[0] for z in glavni for q in z if abs(q[1] - y) < 0.0015), default=None)
+    veriga = [(hrbet(y) - 0.0004, y) for y in np.arange(A[1] + 0.009, A[1] - 0.0155, -0.001) if hrbet(y) is not None]
+    prekat = Image.new("L", (N, N), 0)
+    if len(veriga) > 2:
+        ImageDraw.Draw(prekat).polygon([px(q) for q in veriga] + [px((A[0] - 0.002, A[1]))], fill=255)
+    dno = Image.new("RGB", (N, N), (58, 32, 30))
+    dno.paste(slika, mask=alfa)
+    dno.paste(deblo, mask=m_deblo)
+    slika = dno
+    alfa = ImageChops.lighter(ImageChops.lighter(alfa, prekat), m_deblo)
 slika.putalpha(alfa)
 slika = slika.resize((PX, PX), Image.LANCZOS)
 slika.save(IZHOD, quality=88, method=6)
