@@ -13,7 +13,7 @@ const path = require("node:path");
 const { chromium } = require("playwright");
 
 const [organ = "srce", izhod = "posnetki", oznaka = "novo"] = process.argv.slice(2);
-const PORT = 3996;
+const PORT = +process.env.POSNETKI_PORT || 3996; // POSNETKI_PORT: več zagonov hkrati
 const root = process.env.EVKLID_KOREN || path.join(__dirname, "..", ".."); // EVKLID_KOREN: pot brez mape s piko (express ne streže skozi .claude/)
 const NAPRAVE = {
   // 4G: 9 Mbit/s, 150 ms (»Fast 4G« v orodjih Chrome); kabel: 50 Mbit/s, 20 ms
