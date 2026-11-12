@@ -1,5 +1,7 @@
 // Epitelna celica z mikrovili (enterocit tankega črevesa) med dvema prerezanima sosedama.
-// Pogodba graditelja: docs/3d.md. Brez uvozov; THREE pride od kompleta. Model je zgrajen v µm in nato umerjen v enotsko kroglo.
+// Pogodba graditelja: docs/3d.md. THREE pride od kompleta; skupni videz celic iz public/3d/celice-videz.js.
+// Zgrajena je v µm in nato umerjena v enotsko kroglo.
+import { videzCelic, BARVE as BC } from "../../celice-videz.js";
 
 export const info = {
   id: "celica-epitelna",
@@ -19,64 +21,18 @@ export function zgradi(THREE, ctx = {}) {
   const deli = [];
   const odpad = [];
 
+  const kit = videzCelic(THREE, { hi, odpad });
+  const { sum, fbm } = kit;
   // ---------- orodja ----------
   let seme = 7;
   const rnd = () => ((seme = (seme * 16807) % 2147483647) - 1) / 2147483646;
-  const hash = (x, y, z) => { const s = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453; return s - Math.floor(s); };
-  function sum(x, y, z) { // gladek 3D šum vrednosti, -1 … 1
-    const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
-    const xf = x - xi, yf = y - yi, zf = z - zi;
-    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), w = zf * zf * (3 - 2 * zf);
-    const l = (a, b, t) => a + (b - a) * t;
-    const h = (a, b, c) => hash(xi + a, yi + b, zi + c);
-    return 2 * l(l(l(h(0, 0, 0), h(1, 0, 0), u), l(h(0, 1, 0), h(1, 1, 0), u), v),
-      l(l(h(0, 0, 1), h(1, 0, 1), u), l(h(0, 1, 1), h(1, 1, 1), u), v), w) - 1;
-  }
-  const fbm = (x, y, z) => sum(x, y, z) * 0.6 + sum(x * 2.1, y * 2.1, z * 2.1) * 0.3 + sum(x * 4.3, y * 4.3, z * 4.3) * 0.1;
   const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
-  // Proceduralna normalna mapa (DataTexture iz periodičnega šuma, brez platna): "zrnje" drobne izbokline, "gube" gubice, "vlakna" proge.
-  const _nm = {}, odpadT = [];
-  function normalnaMapa(vrsta) {
-    if (_nm[vrsta]) return _nm[vrsta];
-    const N = 128, P = vrsta === "gube" ? 5 : vrsta === "vlakna" ? 4 : 12, h = new Float32Array(N * N), sl = vrsta.length * 13.1;
-    const hp = (i, j, s) => hash(((i % s) + s) % s, ((j % s) + s) % s, s * 7.3 + sl);
-    const vn = (x, y, s) => {
-      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
-      const a = hp(xi, yi, s), b = hp(xi + 1, yi, s), c = hp(xi, yi + 1, s), d = hp(xi + 1, yi + 1, s);
-      return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
-    };
-    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
-      let s = 0, a = 1, f = P;
-      for (let o = 0; o < 4; o++) {
-        let n = vrsta === "vlakna" ? vn(i / N * f * 6, j / N * f, f * 6) * 0.7 + vn(i / N * f, j / N * f, f) * 0.3 : vn(i / N * f, j / N * f, f);
-        if (vrsta === "gube") n = 1 - Math.abs(2 * n - 1);
-        s += n * a; a *= 0.5; f *= 2;
-      }
-      h[j * N + i] = s;
-    }
-    const d = new Uint8Array(N * N * 4), k = vrsta === "gube" ? 2.4 : 3.4;
-    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
-      const dx = h[j * N + (i + 1) % N] - h[j * N + (i + N - 1) % N], dy = h[((j + 1) % N) * N + i] - h[((j + N - 1) % N) * N + i];
-      let x = -dx * k, y = -dy * k, z = 1; const l = Math.hypot(x, y, z);
-      const o = (j * N + i) * 4; d[o] = (x / l * 0.5 + 0.5) * 255; d[o + 1] = (y / l * 0.5 + 0.5) * 255; d[o + 2] = (z / l * 0.5 + 0.5) * 255; d[o + 3] = 255;
-    }
-    const t = new THREE.DataTexture(d, N, N, THREE.RGBAFormat);
-    t.wrapS = t.wrapT = THREE.RepeatWrapping; t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.needsUpdate = true;
-    odpadT.push(t);
-    return (_nm[vrsta] = t);
-  }
-  // mat(barva, { …, zrnje: [vrsta, ponovitev u, ponovitev v, jakost] }): mokra, rahlo prosojna organska površina.
+  // mat(barva, {…}): mokra organska površina (relief in vlažen videz doda kit.poliraj na koncu).
   function mat(barva, o = {}) {
-    const { zrnje, ...ost } = o;
     const m = new THREE.MeshPhysicalMaterial(Object.assign({
-      color: barva, roughness: 0.55, clearcoat: 0.35, clearcoatRoughness: 0.22,
+      color: barva, roughness: 0.45, clearcoat: 0.6, clearcoatRoughness: 0.2,
       sheen: 0.35, sheenColor: new THREE.Color(barva).lerp(new THREE.Color(0xffffff), 0.45).multiplyScalar(0.8), sheenRoughness: 0.45,
-    }, ost));
-    if (zrnje) {
-      const [vrsta = "zrnje", ru = 4, rv = 2, j = 0.3] = zrnje, t = normalnaMapa(vrsta).clone();
-      t.repeat.set(ru, rv); t.needsUpdate = true; odpadT.push(t);
-      m.normalMap = t; m.normalScale = new THREE.Vector2(j, j);
-    }
+    }, o));
     odpad.push(m);
     return m;
   }
@@ -321,6 +277,39 @@ export function zgradi(THREE, ctx = {}) {
   const oznaka = (um) => (um >= 10 ? String(Math.round(um)) : String(Math.round(um * 10) / 10).replace(".", ",")) + " µm";
   const o = new THREE.Object3D();
 
+  // Golgijev aparat: ukrivljene sploščene cisterne (cis svetlejše, trans temnejše) in mehurčki ob koncih.
+  function golgiGeo(n) {
+    const zb = { pos: [], col: [], idx: [] };
+    const mreza = (nU, nV, f, b) => {
+      const off = zb.pos.length / 3, P = V();
+      for (let j = 0; j <= nV; j++) for (let i = 0; i <= nU; i++) { f(i / nU, j / nV, P); zb.pos.push(P.x, P.y, P.z); const c = b(i / nU, j / nV); zb.col.push(c[0], c[1], c[2]); }
+      for (let j = 0; j < nV; j++) for (let i = 0; i < nU; i++) { const a = off + j * (nU + 1) + i, c = a + nU + 1; zb.idx.push(a, c, a + 1, a + 1, c, c + 1); }
+    };
+    const gCis = new THREE.Color(BC.golgiSvetel), gTrans = new THREE.Color(0xd9781a), gRob = new THREE.Color(0xffeaa8), gC = new THREE.Color();
+    const konci = [];
+    for (let i = 0; i < n; i++) {
+      const R = 0.26 - i * 0.022, L = Math.PI * (0.78 - i * 0.05), a0 = Math.PI * (0.11 + i * 0.025), W = 0.05 * (1 - i * 0.03), T = 0.0075;
+      const prerez = (u, v) => {
+        const s = 2 * u - 1, e = Math.pow(Math.max(0, 1 - Math.pow(Math.abs(s), 6)), 0.3) * (1 + 0.7 * Math.pow(s, 4));
+        const b = v * Math.PI * 2, cb = Math.cos(b), sb = Math.sin(b);
+        return { cb, sb, rad: T * e * (1 + 3 * Math.pow(sb, 12)) * Math.sign(cb) * Math.pow(Math.abs(cb), 0.4), z: W * e * sb };
+      };
+      mreza(q(30), q(12), (u, v, P) => { const a = a0 + u * L, x = prerez(u, v), r = R + x.rad; P.set(Math.cos(a) * r, Math.sin(a) * r, x.z); },
+        (u, v) => { const x = prerez(u, v); gC.copy(gCis).lerp(gTrans, i / Math.max(1, n - 1)).lerp(gRob, 0.3 * Math.pow(Math.abs(x.sb), 10)); const k = 0.84 + 0.16 * x.cb; return [gC.r * k, gC.g * k, gC.b * k]; });
+      for (const u of [0, 1]) konci.push({ a: a0 + u * L + (u ? 1 : -1) * 0.12, r: R });
+    }
+    for (let k = 0; k < (hi ? 8 : 5); k++) {
+      const kk = konci[(k * 3) % konci.length], c = V(Math.cos(kk.a) * kk.r, Math.sin(kk.a) * kk.r, (rnd() - 0.5) * 0.06), r = 0.017 + rnd() * 0.01, b = gC.copy(gCis).lerp(gTrans, 0.6);
+      mreza(q(10), q(7), (u, v, P) => { P.set(Math.sin(Math.PI * v) * Math.cos(2 * Math.PI * u), Math.cos(Math.PI * v), Math.sin(Math.PI * v) * Math.sin(2 * Math.PI * u)).multiplyScalar(r).add(c); },
+        (u, v) => { const t = 0.8 + 0.2 * Math.cos(Math.PI * v); return [b.r * t, b.g * t, b.b * t]; });
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(zb.pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(zb.col, 3));
+    g.setIndex(zb.idx);
+    g.computeVertexNormals();
+    return g;
+  }
   const H = 20, w = 3.9, KB = 0.7, KT = 0.55, DOME = 0.25, NSE = 5;
   const se = (th) => Math.pow(Math.pow(Math.abs(Math.cos(th)), NSE) + Math.pow(Math.abs(Math.sin(th)), NSE), -1 / NSE);
   // profil stebra (d od osi, y) z zaobljenima robovoma, enakomerno po dolžini
@@ -351,66 +340,69 @@ export function zgradi(THREE, ctx = {}) {
   const svet = new THREE.Group(); group.add(svet);
 
   // ---------- glavna celica: odprta spredaj (z > 0 odrezano) ----------
-  const memMat = mat(0xc06e8e, { vertexColors: true, roughness: 0.5, clearcoat: 0.42, clearcoatRoughness: 0.18, sheen: 0.45, sheenColor: new THREE.Color(0xd895b4), sheenRoughness: 0.35, zrnje: ["zrnje", 8, 24, 0.28] });
-  const mem = new THREE.Mesh(lise(ploskev(steber(zunPr, 0, Math.PI, Math.PI * 2), q(64), q(100), true), { j: 0.15, fr: 0.35, odtenek: 0.05 }), memMat);
-  // notranja stena: temnejša od zunanje, globlje (zadaj, ob dnu in vrhu) še temnejša – navidezna senca
-  const cit = new THREE.Mesh(lise(ploskev(steber(notPr, 0, Math.PI, Math.PI * 2, 0.008), q(48), q(80), true), { j: 0.2, fr: 0.45, odtenek: 0.05, temno: (x, y, z) => (0.62 + 0.38 * THREE.MathUtils.smoothstep(z, -w, -0.5)) * (0.8 + 0.2 * THREE.MathUtils.smoothstep(y, 0, 2.5) * (1 - THREE.MathUtils.smoothstep(y, H - 1.5, H))) }), mat(0xb98272, { vertexColors: true, roughness: 0.72, clearcoat: 0.12, sheen: 0.25, sheenColor: new THREE.Color(0x9a6a5e), side: THREE.BackSide, zrnje: ["zrnje", 8, 20, 0.4] }));
-  const obris = [];
-  for (let i = 0; i <= 80; i++) { const v = i / 80; obris.push(steber(zunPr, 0, Math.PI, Math.PI)(0, v, V()).multiplyScalar(1)); }
-  const obris2 = [];
-  for (let i = 0; i <= 80; i++) obris2.push(steber(zunPr, 0, Math.PI * 2, Math.PI * 2)(0, i / 80, V()));
+  // membrana je steklena: na vrhu se skoznjo vidijo korenine mikrovilov in terminalna mreža
+  const memMat = kit.steklo(mat(BC.membrana, { side: THREE.FrontSide }), { a: 0.16, rf: 2.2, rob: "#8c9cff", rk: 1.3 });
+  const mem = new THREE.Mesh(ploskev(steber(zunPr, 0, Math.PI, Math.PI * 2), q(64), q(100), true), memMat);
+  // notranja stena: temnejša globlje (zadaj, ob dnu in vrhu) – navidezna senca
+  const cit = new THREE.Mesh(lise(ploskev(steber(notPr, 0, Math.PI, Math.PI * 2, 0.008), q(48), q(80), true), { j: 0.2, fr: 0.45, odtenek: 0.05, temno: (x, y, z) => (0.62 + 0.38 * THREE.MathUtils.smoothstep(z, -w, -0.5)) * (0.8 + 0.2 * THREE.MathUtils.smoothstep(y, 0, 2.5) * (1 - THREE.MathUtils.smoothstep(y, H - 1.5, H))) }),
+    mat(0x3d3182, { vertexColors: true, roughness: 0.62, clearcoat: 0.25, sheen: 0.3, side: THREE.BackSide }));
   // debela membrana na ploskvi prereza z = 0: trak med zunanjo in notranjo ploskvijo (debelina povečana)
+  const PLASTI_MEM = [[0, 0.2, new THREE.Color(0x5a32b8)], [0.34, 0.66, new THREE.Color(0xeee6ff)], [0.8, 1, new THREE.Color(0x5a32b8)]];
   const trakStebra = (cx, th, ravnina, sx = 1) => {
-    const A = [], B = [], N = q(110);
+    const A = [], B = [], N = hi ? 110 : 46;
     for (let i = 0; i <= N; i++) {
       const v = i / N, a = steber(notPr, cx, th, th, 0.008)(0, v, V()), b = steber(zunPr, cx, th, th)(0, v, V());
       if (ravnina === "x") { a.x = b.x = cx - sx * 0.012; } else { a.z = b.z = 0.012; }
       A.push(a); B.push(b);
     }
-    return trakPlasti(A, B, ravnina === "x" ? V(-sx, 0, 0) : V(0, 0, 1), DVOSLOJ(0xd88aa2));
+    return trakPlasti(A, B, ravnina === "x" ? V(-sx, 0, 0) : V(0, 0, 1), PLASTI_MEM);
   };
-  const memRob = new THREE.Mesh(zdruziPlasti([trakStebra(0, Math.PI), trakStebra(0, Math.PI * 2)]), matPlasti({ roughness: 0.55, clearcoat: 0.25 }));
+  const memRob = new THREE.Mesh(zdruziPlasti([trakStebra(0, Math.PI), trakStebra(0, Math.PI * 2)]), matPlasti({ roughness: 0.45, clearcoat: 0.5 }));
+  memRob.material.userData.rez = true;
   svet.add(mem, cit, memRob);
 
   // ---------- sosednji celici: prerezani na ravninah z = 0 in x = ±8 ----------
   const sosGeo = [];
+  const MITO_PL = [[0, 0.28, new THREE.Color(0xb4621a)], [0.4, 0.6, new THREE.Color(0xffe6b0)], [0.72, 1, new THREE.Color(0xe8a032)]];
+  const OVOJ = (svet2) => [[0, 0.07, new THREE.Color(0x34107a)], [0.12, 0.24, new THREE.Color(0xc39af5)], [0.29, 0.31, new THREE.Color(0x34107a)], [0.38, 0.62, new THREE.Color(svet2)], [0.69, 0.71, new THREE.Color(0x34107a)], [0.76, 0.88, new THREE.Color(0xc39af5)], [0.93, 1, new THREE.Color(0x34107a)]];
   for (const [cx, t0, t1, sx] of [[-8, Math.PI * 1.5, Math.PI * 2, 1], [8, Math.PI, Math.PI * 1.5, -1]]) {
-    sosGeo.push(pobarvaj(ploskev(steber(zunPr, cx, t0, t1), q(24), q(80), true), 0xb4668a));
+    sosGeo.push(pobarvaj(ploskev(steber(zunPr, cx, t0, t1), hi ? 24 : 10, hi ? 80 : 34, true), 0x7a6cc8));
     // ploskev prereza z = 0 in x = cx
     const kz = (u, v, p) => { const [d, y] = zunPr(v); return p.set(cx + sx * u * d * 0.998, y, 0); };
     const kx = (u, v, p) => { const [d, y] = zunPr(v); return p.set(cx, y, -u * d * 0.998); };
-    sosGeo.push(pobarvaj(ploskev(kz, 6, q(70)), 0xcf9a86), pobarvaj(ploskev(kx, 6, q(70)), 0xcf9a86));
+    sosGeo.push(pobarvaj(ploskev(kz, hi ? 6 : 4, hi ? 70 : 30), 0x4a3c96), pobarvaj(ploskev(kx, hi ? 6 : 4, hi ? 70 : 30), 0x4a3c96));
     // prerez jedra in nekaj mitohondrijev na obeh ploskvah
     const elipsa = (cx2, cy, a, b, ravnina, zac = -Math.PI / 2, kon = Math.PI / 2) => (u, v, p) => {
       const ang = zac + (kon - zac) * u, x = a * v * Math.cos(ang), y = cy + b * v * Math.sin(ang);
       return ravnina === "z" ? p.set(cx2 + sx * x, y, 0.025) : p.set(cx - sx * 0.025, y, -x);
     };
-    sosGeo.push(pobarvaj(ploskev(elipsa(cx, 6.8, 2.1, 3.6, "z"), 16, 6), 0x6654c4), pobarvaj(ploskev(elipsa(cx, 6.8, 2.1, 3.6, "x"), 16, 6), 0x6654c4));
-    sosGeo.push(pobarvaj(ploskev(elipsa(cx + sx * 0.4, 7.6, 0.55, 0.6, "z", 0, Math.PI * 2), 12, 3), 0x34268a));
+    sosGeo.push(pobarvaj(ploskev(elipsa(cx, 6.8, 2.1, 3.6, "z"), 16, 6), 0xa565f0), pobarvaj(ploskev(elipsa(cx, 6.8, 2.1, 3.6, "x"), 16, 6), 0xa565f0));
+    sosGeo.push(pobarvaj(ploskev(elipsa(cx + sx * 0.4, 7.6, 0.55, 0.6, "z", 0, Math.PI * 2), 12, 3), 0x37128c));
     for (const [mx, my, ra, rb, rv] of [[1.6, 16.5, 0.28, 0.8, "z"], [2.8, 2.2, 0.28, 0.75, "z"], [2.9, 14.4, 0.3, 0.7, "z"], [1.4, 17.2, 0.3, 0.75, "x"], [2.5, 2.6, 0.28, 0.8, "x"], [2.8, 12.6, 0.3, 0.7, "x"]]) {
       const e = (u, v, p) => { const ang = u * Math.PI * 2, x = mx + ra * v * Math.cos(ang), y = my + rb * v * Math.sin(ang); return rv === "z" ? p.set(cx + sx * x, y, 0.03) : p.set(cx - sx * 0.03, y, -x); };
-      sosGeo.push(pobarvaj(ploskev(e, 10, 2), 0xe8743b));
+      sosGeo.push(pobarvaj(ploskev(e, 10, 2), 0xffd67e));
       const A = [], B = [], np = rv === "z" ? V(0, 0, 1) : V(-sx, 0, 0);
-      for (let i = 0, n = q(20); i <= n; i++) { B.push(e(i / n, 1, V()).addScaledVector(np, 0.006)); A.push(e(i / n, 0.72, V()).addScaledVector(np, 0.006)); }
-      sosGeo.push(trakPlasti(A, B, np, [[0, 0.28, new THREE.Color(0xb8501f)], [0.4, 0.6, new THREE.Color(0xf7c29a)], [0.72, 1, new THREE.Color(0xc85a26)]]));
+      for (let i = 0, n = hi ? 20 : 10; i <= n; i++) { B.push(e(i / n, 1, V()).addScaledVector(np, 0.006)); A.push(e(i / n, 0.72, V()).addScaledVector(np, 0.006)); }
+      sosGeo.push(trakPlasti(A, B, np, MITO_PL));
     }
     for (const rv of ["z", "x"]) { // dvojna ovojnica jeder sosed
       const e = elipsa(cx, 6.8, 2.1, 3.6, rv), np = rv === "z" ? V(0, 0, 1) : V(-sx, 0, 0), A = [], B = [];
-      for (let i = 0, n = q(40); i <= n; i++) { B.push(e(i / n, 1, V()).addScaledVector(np, 0.006)); A.push(e(i / n, 0.94, V()).addScaledVector(np, 0.006)); }
-      sosGeo.push(trakPlasti(A, B, np, DVOJNA(0x5a48c0, 0xcfc4f7), porePrereza(7, 0xb9a8ff)));
+      for (let i = 0, n = hi ? 40 : 24; i <= n; i++) { B.push(e(i / n, 1, V()).addScaledVector(np, 0.006)); A.push(e(i / n, 0.94, V()).addScaledVector(np, 0.006)); }
+      sosGeo.push(trakPlasti(A, B, np, OVOJ(0xe8d6ff), porePrereza(7, 0xe8d6ff)));
     }
   }
   for (const [cx, sx] of [[-8, 1], [8, -1]]) { // membrana sosed na obeh ploskvah prereza
     sosGeo.push(trakStebra(cx, sx > 0 ? Math.PI * 2 : Math.PI, "z"));
     sosGeo.push(trakStebra(cx, Math.PI * 1.5, "x", sx));
   }
-  const sosedi = new THREE.Mesh(lise(zdruzi(sosGeo, true), { j: 0.24, fr: 0.7, odtenek: 0.05, mnozi: true }), mat(0xffffff, { vertexColors: true, roughness: 0.58, clearcoat: 0.3, clearcoatRoughness: 0.2, sheen: 0.35, sheenColor: new THREE.Color(0xb08890), side: THREE.DoubleSide, zrnje: ["zrnje", 2, 8, 0.35] }));
+  const sosedi = new THREE.Mesh(lise(zdruzi(sosGeo, true), { j: 0.24, fr: 0.7, odtenek: 0.05, mnozi: true }), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.45, clearcoatRoughness: 0.2, sheen: 0.35, side: THREE.DoubleSide }));
   svet.add(sosedi);
 
-  // ---------- mikrovili (krtačasti obrobek) ----------
-  const mvGeo = new THREE.CylinderGeometry(0.05, 0.055, 1, q(6), 1, false); mvGeo.translate(0, 0.5, 0);
+  // ---------- mikrovili (krtačasti obrobek): steklena membrana, v vsakem snop aktinskih vlaken s koreninico ----------
+  const mvGeo = new THREE.CapsuleGeometry(0.05, 0.9, hi ? 2 : 1, hi ? 6 : 4); mvGeo.translate(0, 0.45, 0);
+  const jgGeo = new THREE.CylinderGeometry(0.016, 0.016, 1.4, 3, 1, true); jgGeo.translate(0, 0.88 - 0.7, 0);
   const mvTocke = [];
-  const korakM = hi ? 0.22 : 0.33;
+  const korakM = hi ? 0.22 : 0.42;
   for (const [cx, x0, x1] of [[0, -w, w], [-8, -8, -8 + w], [8, 8 - w, 8]]) {
     for (let x = x0 + korakM / 2; x < x1; x += korakM) for (let z = -w + korakM / 2; z < -0.02; z += korakM * 0.87) {
       const xx = x + (rnd() - 0.5) * korakM * 0.35, zz = z + (rnd() - 0.5) * korakM * 0.35 + ((Math.round((x - x0) / korakM) % 2) * korakM * 0.43);
@@ -420,48 +412,71 @@ export function zgradi(THREE, ctx = {}) {
       mvTocke.push(V(xx, vrh(d) - 0.05, zz));
     }
   }
-  const mvMat = mat(0xcf86a2, { roughness: 0.48, clearcoat: 0.45, clearcoatRoughness: 0.15, sheen: 0.5, sheenColor: new THREE.Color(0xf0b8cc) });
+  const mvMat = kit.steklo(mat(0xb4a8ff, { side: THREE.FrontSide }), { a: 0.34, rf: 30, k: 0.4, rob: "#b8c4ff", rk: 1.25, difuzno: 0.45, iri: 0.4 });
   const mv = new THREE.InstancedMesh(mvGeo, mvMat, mvTocke.length);
-  mvTocke.forEach((p, i) => { o.position.copy(p); o.rotation.set((rnd() - 0.5) * 0.08, 0, (rnd() - 0.5) * 0.08); o.scale.set(1, 0.9 + rnd() * 0.25, 1); o.updateMatrix(); mv.setMatrixAt(i, o.matrix); });
-  svet.add(mv);
+  const jedraMv = new THREE.InstancedMesh(jgGeo, mat(BC.aktin, { roughness: 0.3, clearcoat: 0.6, emissive: new THREE.Color(BC.aktin).multiplyScalar(0.45) }), mvTocke.length);
+  mvTocke.forEach((p, i) => { o.position.copy(p); o.rotation.set((rnd() - 0.5) * 0.08, 0, (rnd() - 0.5) * 0.08); o.scale.set(1, 0.9 + rnd() * 0.25, 1); o.updateMatrix(); mv.setMatrixAt(i, o.matrix); jedraMv.setMatrixAt(i, o.matrix); });
+  svet.add(jedraMv, mv);
+  // glikokaliks na vrhu mikrovilov (encimi, ki dokončno razgradijo hrano): drobne beljakovine na konicah
+  const glkT = [];
+  mvTocke.forEach((p, i) => { if (i % (hi ? 1 : 3) === 0) glkT.push({ p: p.clone().add(V((rnd() - 0.5) * 0.06, 0.93 + rnd() * 0.12, (rnd() - 0.5) * 0.06)), n: V(rnd() - 0.5, 2, rnd() - 0.5).normalize() }); });
+  const encimi = kit.beljakovine(glkT, BC.beljakovine, 0.035, { visina: 1.3 });
+  svet.add(encimi);
+
+  // ---------- terminalna mreža (aktin, spektrin, keratin) tik pod vrhom, v njej korenine mikrovilov ----------
+  const tmK = [];
+  for (let i = 0, t = 0; i < (hi ? 150 : 55) && t < 4000; t++) {
+    const p = V((rnd() * 2 - 1) * (w - 0.45), H - 0.32 - rnd() * 0.55, -0.15 - rnd() * (w - 0.5));
+    const sm = V(rnd() - 0.5, (rnd() - 0.5) * 0.12, rnd() - 0.5).normalize(), pts = [];
+    for (let j = 0; j < 4; j++) pts.push(p.clone().addScaledVector(sm, (j - 1.5) * 0.45).add(V(0, (rnd() - 0.5) * 0.08, (rnd() - 0.5) * 0.1)));
+    if (pts.some((x) => x.z > -0.05 || Math.abs(x.x) > w - 0.3 || x.z < -w + 0.3)) continue;
+    tmK.push(new THREE.CatmullRomCurve3(pts)); i++;
+  }
+  const termMreza = kit.vlakna(tmK, 0.022, "#ffd27a", { sij: 0.45, seg: hi ? 12 : 6, rad: 3 });
+  svet.add(termMreza);
 
   // ---------- jedro (prerezano na ravnini z = 0) ----------
   const J = V(0, 6.8, 0), ja = 2.1, jb = 3.7;
   const jF = (u, v, p) => { const f = Math.PI + Math.PI * u, t = Math.PI * v; p.set(ja * Math.sin(t) * Math.cos(f), jb * Math.cos(t), ja * Math.sin(t) * Math.sin(f)); return p.multiplyScalar(1 + 0.03 * sum(p.x * 1.4 + 2, p.y * 1.4, p.z * 1.4)).add(J); };
-  const jedro = new THREE.Mesh(ploskev(jF, q(40), q(48), true), mat(0x6654c4, { roughness: 0.45, clearcoat: 0.4, sheen: 0.4, sheenColor: new THREE.Color(0xa898f0), zrnje: ["gube", 6, 4, 0.4] }));
+  const jedro = new THREE.Mesh(ploskev(jF, q(40), q(48), true), mat(BC.jedro, { roughness: 0.4, clearcoat: 0.6 }));
   const jPrerez = (u, v, p) => { const a = u * Math.PI * 2; p.set(ja * v * Math.cos(a), jb * v * Math.sin(a), 0); p.multiplyScalar(0.985); return p.add(J); };
-  const jCap = ploskev(jPrerez, q(48), q(14));
-  { // kromatin in jedrce z barvo oglišč
-    const p = jCap.attributes.position, col = new Float32Array(p.count * 3), a = new THREE.Color(0xa08ef0), b = new THREE.Color(0x4a38a8), c = new THREE.Color(0x2a1e78), t = new THREE.Color();
+  const jCap = ploskev(jPrerez, q(64), q(18));
+  { // kromatin (temne lise, več ob ovojnici) z barvo oglišč
+    const p = jCap.attributes.position, col = new Float32Array(p.count * 3), a = new THREE.Color(0xb27af8), b = new THREE.Color(BC.kromatin), t = new THREE.Color();
     for (let i = 0; i < p.count; i++) {
-      const x = p.getX(i), y = p.getY(i), dj = Math.hypot(x - 0.45, (y - 8.0) * 0.9);
-      t.copy(a).lerp(b, THREE.MathUtils.clamp(sum(x * 2.2, y * 2.2, 3) * 0.9 + 0.1, 0, 0.8));
-      if (dj < 0.75) t.copy(c);
+      const x = p.getX(i), y = p.getY(i), rr = Math.hypot((x - J.x) / ja, (y - J.y) / jb);
+      t.copy(a).lerp(b, THREE.MathUtils.clamp(sum(x * 2.2, y * 2.2, 3) * 0.9 + 0.15 + 0.5 * THREE.MathUtils.smoothstep(rr, 0.75, 0.97), 0, 0.9));
       col.set([t.r, t.g, t.b], i * 3);
     }
     jCap.setAttribute("color", new THREE.BufferAttribute(col, 3));
   }
-  const jPlo = new THREE.Mesh(jCap, mat(0xffffff, { vertexColors: true, roughness: 0.62, clearcoat: 0.25, side: THREE.DoubleSide, zrnje: ["zrnje", 5, 3, 0.35] }));
+  const jPlo = new THREE.Mesh(jCap, mat(0xffffff, { vertexColors: true, roughness: 0.55, clearcoat: 0.35, side: THREE.DoubleSide }));
   // dvojna jedrna ovojnica s porami na prerezu
   const ovoj = (() => {
     const A = [], B = [], N = q(160), E = 0.2;
     for (let i = 0; i <= N; i++) { const a = (i / N) * Math.PI * 2, c = Math.cos(a), sn = Math.sin(a); B.push(V(ja * c, jb * sn, 0).multiplyScalar(0.995).add(J).setZ(0.014)); A.push(V((ja - E) * c, (jb - E) * sn, 0).multiplyScalar(0.995).add(J).setZ(0.014)); }
-    return trakPlasti(A, B, V(0, 0, 1), DVOJNA(0x5a48c0, 0xcfc4f7), porePrereza(14, 0xb9a8ff));
+    return trakPlasti(A, B, V(0, 0, 1), OVOJ(0xe8d6ff), porePrereza(14, 0xe8d6ff));
   })();
-  const jOvoj = new THREE.Mesh(ovoj, matPlasti({ roughness: 0.58, clearcoat: 0.2 }));
-  svet.add(jedro, jPlo, jOvoj);
+  const jOvoj = new THREE.Mesh(ovoj, matPlasti({ roughness: 0.5, clearcoat: 0.4 }));
+  jOvoj.material.userData.rez = true;
+  // jedrce: izboklina na ploskvi prereza
+  const jcG = new THREE.SphereGeometry(0.72, q(28), q(18));
+  deformiraj(jcG, (v) => { v.multiplyScalar(1 + 0.12 * kit.fbm(v.x * 5, v.y * 5, v.z * 5)); v.z *= 0.55; });
+  const jedrce = new THREE.Mesh(jcG, mat(BC.jedrce, { roughness: 0.5, clearcoat: 0.5 }));
+  jedrce.position.set(0.45, 8.0, 0);
+  svet.add(jedro, jPlo, jOvoj, jedrce);
 
   // ---------- mitohondriji ----------
   function mitohondrij() {
     const L = 1.3, r = 0.42, prof = [];
-    for (let i = 0; i <= 14; i++) { const a = -Math.PI / 2 + (i / 14) * Math.PI; prof.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r + (a < 0 ? -L / 2 : L / 2))); }
-    const zun = new THREE.LatheGeometry(prof, q(13), 0.5 * Math.PI, 1.45 * Math.PI);
-    const not = new THREE.LatheGeometry(prof.map((p) => new THREE.Vector2(p.x * 0.8, p.y * 0.9)), q(13), 0.5 * Math.PI, 1.45 * Math.PI);
+    for (let i = 0, nP = hi ? 14 : 8; i <= nP; i++) { const a = -Math.PI / 2 + (i / nP) * Math.PI; prof.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r + (a < 0 ? -L / 2 : L / 2))); }
+    const zun = new THREE.LatheGeometry(prof, hi ? 13 : 6, 0.5 * Math.PI, 1.45 * Math.PI);
+    const not = new THREE.LatheGeometry(prof.map((p) => new THREE.Vector2(p.x * 0.8, p.y * 0.9)), hi ? 13 : 6, 0.5 * Math.PI, 1.45 * Math.PI);
     const ix = not.index.array; for (let i = 0; i < ix.length; i += 3) { const t = ix[i]; ix[i] = ix[i + 2]; ix[i + 2] = t; }
     not.computeVertexNormals();
     const kr = [];
-    for (let i = 0; i < 6; i++) {
-      const y = -L / 2 - r * 0.45 + i * ((L + r * 0.9) / 5);
+    for (let i = 0, nK = hi ? 6 : 4; i < nK; i++) {
+      const y = -L / 2 - r * 0.45 + i * ((L + r * 0.9) / (nK - 1));
       const wd = Math.sqrt(Math.max(0, 1 - Math.pow(Math.max(0, Math.abs(y) - L / 2) / r, 2))) * r * 0.6;
       const c = new THREE.BoxGeometry(wd * 1.5, 0.06, wd * 1.6);
       c.translate(i % 2 ? wd * 0.25 : -wd * 0.25, y, 0);
@@ -472,10 +487,10 @@ export function zgradi(THREE, ctx = {}) {
       const A = [], B = [], sn = Math.sin(phi), cs = Math.cos(phi);
       for (const pt of prof.filter((_, i) => hi || i % 2 === 0 || i === prof.length - 1)) { B.push(V(pt.x * sn, pt.y, pt.x * cs)); A.push(V(pt.x * 0.8 * sn, pt.y * 0.9, pt.x * 0.8 * cs)); }
       const n = V(cs, 0, -sn).multiplyScalar(k ? 1 : -1);
-      return trakPlasti(A, B, n, [[0, 0.28, new THREE.Color(0xb8501f)], [0.4, 0.6, new THREE.Color(0xf7c29a)], [0.72, 1, new THREE.Color(0xc85a26)]]);
+      return trakPlasti(A, B, n, MITO_PL);
     });
-    for (const [g, b] of [[zun, 0xd8642c], [not, 0xc0582a]]) pobarvaj(g, b);
-    kr.forEach((g) => pobarvaj(g, 0xf0a868));
+    for (const [g, b] of [[zun, 0xd98a1e], [not, 0xf0b24a]]) pobarvaj(g, b);
+    kr.forEach((g) => pobarvaj(g, 0xffd67e));
     return zdruziPlasti([zun, not, ...kr, ...konca]);
   }
   const mitPol = [];
@@ -488,42 +503,70 @@ export function zgradi(THREE, ctx = {}) {
       mitPol.push(p); k++;
     }
   }
-  const mit = new THREE.InstancedMesh(mitohondrij(), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, sheen: 0.35, sheenColor: new THREE.Color(0xf0a070), side: THREE.DoubleSide }), mitPol.length);
+  const mit = new THREE.InstancedMesh(mitohondrij(), mat(0xffffff, { vertexColors: true, roughness: 0.38, side: THREE.DoubleSide }), mitPol.length);
   mitPol.forEach((p, i) => { o.position.copy(p); o.rotation.set((rnd() - 0.5) * 0.5, rnd() * 6, (rnd() - 0.5) * 0.5); o.scale.setScalar(0.85 + rnd() * 0.35); o.updateMatrix(); mit.setMatrixAt(i, o.matrix); });
   svet.add(mit);
+  const zasedeno = mitPol.map((p) => ({ p, r: 1 }));
 
-  // ---------- zrnati ER z ribosomi ----------
+  // ---------- zrnati ER z ribosomi (cisterne z odprtinami) ----------
+  const erLu = { f: 1.6, prag: 0.72 };
   const erGeo = [], ribT = [];
   for (let i = 0; i < 4; i++) {
     const y0 = 12.35 + i * 0.55;
     const f = (u, v, p) => { const x = -3.0 + 6.0 * u, z = -3.3 + 2.8 * v; return p.set(x, y0 + 0.13 * Math.sin(x * 1.4 + i) + 0.09 * Math.cos(z * 1.9 + i * 2), z); };
     erGeo.push(ploskev(f, q(40), q(18)));
-    for (let k = 0; k < (hi ? 115 : 60); k++) { const p = f(rnd(), rnd(), V()); p.y += rnd() < 0.5 ? 0.07 : -0.07; ribT.push(p); }
+    for (let k = 0; k < (hi ? 170 : 70); k++) { const p = f(rnd(), rnd(), V()); if (kit.vLuknji(p, erLu)) continue; p.y += rnd() < 0.5 ? 0.07 : -0.07; ribT.push(p); }
   }
   for (const sx of [-1, 1]) { // ob jedru
     const f = (u, v, p) => { const y = 4.2 + 6.5 * u, z = -3.2 + 2.7 * v; return p.set(sx * (2.85 + 0.1 * Math.sin(y * 1.3)), y, z); };
     erGeo.push(ploskev(f, q(28), q(12)));
-    for (let k = 0; k < (hi ? 70 : 36); k++) { const p = f(rnd(), rnd(), V()); p.x += rnd() < 0.5 ? 0.07 : -0.07; ribT.push(p); }
+    for (let k = 0; k < (hi ? 100 : 40); k++) { const p = f(rnd(), rnd(), V()); if (kit.vLuknji(p, erLu)) continue; p.x += rnd() < 0.5 ? 0.07 : -0.07; ribT.push(p); }
   }
-  const zer = new THREE.Mesh(zdruzi(erGeo), mat(0x4676c8, { roughness: 0.5, clearcoat: 0.4, sheen: 0.4, sheenColor: new THREE.Color(0x9ac0f0), side: THREE.DoubleSide, zrnje: ["gube", 3, 2, 0.45] }));
-  const rib = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.065, 0), mat(0x22337a, { roughness: 0.6, clearcoat: 0.2 }), ribT.length);
-  ribT.forEach((p, i) => { o.position.copy(p); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrix(); rib.setMatrixAt(i, o.matrix); });
+  const zer = new THREE.Mesh(zdruzi(erGeo), kit.sencilo(mat(0x3550d8, { roughness: 0.38, clearcoat: 0.35, clearcoatRoughness: 0.12, sheen: 0, side: THREE.DoubleSide }), { vr: 2, rf: 7, k: 0.6, b: 0.22, s: 0.1, luknje: erLu }));
+  const rib = new THREE.InstancedMesh(hi ? new THREE.IcosahedronGeometry(0.06, 0) : new THREE.OctahedronGeometry(0.068, 0), mat(BC.ribosomi, { roughness: 0.28, clearcoat: 0.9, emissive: new THREE.Color(BC.ribosomi).multiplyScalar(0.22) }), ribT.length);
+  ribT.forEach((p, i) => { o.position.copy(p); o.rotation.set(rnd() * 3, rnd() * 3, 0); o.scale.setScalar(0.8 + rnd() * 0.45); o.updateMatrix(); rib.setMatrixAt(i, o.matrix); });
   svet.add(zer, rib);
 
-  // ---------- Golgijev aparat (nad jedrom) ----------
-  const golGeo = [];
-  for (let i = 0; i < 5; i++) {
-    const R = 1.9 - i * 0.15;
-    const g = new THREE.SphereGeometry(1, q(28), q(8));
-    deformiraj(g, (v) => { v.set(v.x * R, v.y * 0.085, v.z * R * 0.6); v.y += 0.32 * (v.x / R) ** 2 + i * 0.26; });
-    golGeo.push(g);
+  // ---------- gladki ER (cevke; v enterocitu iz maščob nastajajo hilomikroni) ----------
+  const ger = [], vozl = [];
+  for (let i = 0, t = 0; i < (hi ? 16 : 10) && t < 4000; t++) {
+    const c = V((rnd() * 2 - 1) * 3.0, 14.6 + rnd() * 4.0, -0.4 - rnd() * 3.0);
+    if (vozl.some((x) => x.distanceTo(c) < 0.9) || mitPol.some((m) => m.distanceTo(c) < 0.75)) continue;
+    vozl.push(c); i++;
   }
-  for (let i = 0; i < 10; i++) { const a = rnd() * Math.PI * 2, s = new THREE.SphereGeometry(0.13 + rnd() * 0.07, q(10), q(8)); s.translate(Math.cos(a) * (1.9 + rnd() * 0.4), 0.4 + rnd() * 1.2, Math.sin(a) * 0.9); golGeo.push(s); }
-  const golgi = new THREE.Mesh(zdruzi(golGeo), mat(0xdcab34, { roughness: 0.48, clearcoat: 0.45, sheen: 0.4, sheenColor: new THREE.Color(0xf5d890), zrnje: ["gube", 3, 1, 0.35] }));
-  golgi.position.set(0.2, 10.75, -1.9);
+  const povezave = new Set();
+  vozl.forEach((a, i) => {
+    vozl.map((b, j) => [a.distanceTo(b), j]).filter(([, j]) => j !== i).sort((x, y) => x[0] - y[0]).slice(0, 2 + (i % 2)).forEach(([d, j]) => {
+      const kl = Math.min(i, j) + "-" + Math.max(i, j);
+      if (povezave.has(kl) || d > 2.2) return;
+      povezave.add(kl);
+      const b = vozl[j], m = a.clone().lerp(b, 0.5).add(V(rnd() - 0.5, rnd() - 0.5, rnd() - 0.5).multiplyScalar(0.5));
+      ger.push(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([a, m, b]), q(12), 0.09 + rnd() * 0.03, q(7), false));
+    });
+  });
+  for (const c of vozl) ger.push(new THREE.SphereGeometry(0.15, q(10), q(8)).translate(c.x, c.y, c.z));
+  const gladki = new THREE.Mesh(zdruzi(ger), mat(BC.ger, { roughness: 0.3, clearcoat: 0.9 }));
+  svet.add(gladki);
+
+  // ---------- Golgijev aparat (nad jedrom) ----------
+  const golgi = new THREE.Mesh(golgiGeo(6), mat(0xffffff, { vertexColors: true, roughness: 0.34, clearcoat: 0.85, side: THREE.DoubleSide }));
+  golgi.position.set(0.2, 9.95, -1.7); golgi.scale.set(7, 7, 9); golgi.rotation.y = 0.15;
   svet.add(golgi);
 
-  // ---------- tesni stiki (pas pod vrhom) in dezmosomi (na notranji strani bočne membrane) ----------
+  // ---------- lizosomi ----------
+  const lizT = [];
+  for (let t = 0; lizT.length < 6 && t < 2000; t++) {
+    const p = V((rnd() * 2 - 1) * 2.9, 11 + rnd() * 7.5, -0.5 - rnd() * 2.8);
+    if (mitPol.some((m) => m.distanceTo(p) < 1) || vozl.some((c) => c.distanceTo(p) < 0.5) || (p.y > 12.1 && p.y < 14.2)) continue;
+    lizT.push(p);
+  }
+  const lizG = new THREE.SphereGeometry(0.3, q(16), q(12));
+  deformiraj(lizG, (v) => v.multiplyScalar(1 + 0.08 * sum(v.x * 6, v.y * 6, v.z * 6)));
+  const liz = new THREE.InstancedMesh(lizG, mat(BC.lizosom, { roughness: 0.18, clearcoat: 1 }), lizT.length);
+  lizT.forEach((p, i) => { o.position.copy(p); o.rotation.set(0, 0, 0); o.scale.setScalar(0.8 + rnd() * 0.5); o.updateMatrix(); liz.setMatrixAt(i, o.matrix); });
+  svet.add(liz);
+
+  // ---------- stični kompleks: tesni stik, pasasti stik (z aktinskim obročem), dezmosomi; keratinske niti ----------
   const tjGeo = [];
   for (let s = 0; s < 4; s++) {
     const pts = [];
@@ -532,57 +575,129 @@ export function zgradi(THREE, ctx = {}) {
       const r = (w - 0.2) * se(th);
       pts.push(V(r * Math.cos(th), y, Math.min(-0.02, r * Math.sin(th))));
     }
-    tjGeo.push(nit(pts, 0.055, 200, 5));
+    tjGeo.push(nit(pts, 0.055, hi ? 200 : 110, hi ? 5 : 4));
   }
-  const tesni = new THREE.Mesh(zdruzi(tjGeo), mat(0x24a888, { roughness: 0.45, clearcoat: 0.45, sheen: 0.4, sheenColor: new THREE.Color(0x80e0c8) }));
+  const tesni = new THREE.Mesh(zdruzi(tjGeo), mat(0x1fd6a8, { roughness: 0.35, clearcoat: 0.7, emissive: new THREE.Color(0x0a4a3a) }));
   svet.add(tesni);
+  const ajK = [];
+  for (let s = 0; s < 3; s++) {
+    const pts = [];
+    for (let i = 0; i <= 60; i++) {
+      const th = Math.PI + Math.PI * (i / 60), y = H - KT - 1.45 - s * 0.13 + 0.05 * Math.sin(i * 0.7 + s);
+      const r = (w - 0.32 - s * 0.06) * se(th);
+      pts.push(V(r * Math.cos(th), y, Math.min(-0.04, r * Math.sin(th))));
+    }
+    ajK.push(new THREE.CatmullRomCurve3(pts));
+  }
+  const pasasti = kit.vlakna(ajK, 0.05, BC.aktin, { sij: 0.5, seg: hi ? 120 : 60, rad: hi ? 5 : 3 });
+  svet.add(pasasti);
   const dezGeo = [], dezT = [];
   const dezPol = [[1, 15.8, -2.2], [1, 12.0, -1.0], [1, 8.4, -2.6], [1, 4.6, -1.4], [1, 2.2, -2.8], [0, 16.8, 1.2], [0, 13.2, -1.6], [0, 9.6, 0.4], [0, 5.5, 1.8], [0, 3.0, -0.6], [-1, 14.5, -2.0], [-1, 6.5, -1.2]];
+  const kerK = [];
   for (const [stran, y, s] of dezPol) {
     // stran 1: desna stena (x ≈ w), 0: zadnja stena (z ≈ -w), -1: leva stena
     const p = stran === 0 ? V(s, y, -(w - 0.17)) : V(stran * (w - 0.17), y, s);
     const n = stran === 0 ? V(0, 0, 1) : V(-stran, 0, 0);
     const plosca = new THREE.CylinderGeometry(0.42, 0.42, 0.1, q(16));
     plosca.applyMatrix4(new THREE.Matrix4().compose(p, new THREE.Quaternion().setFromUnitVectors(V(0, 1, 0), n), V(1, 1, 1)));
-    dezGeo.push(pobarvaj(plosca, 0xb5507f));
-    for (let k = 0; k < 4; k++) { // keratinske niti
+    dezGeo.push(pobarvaj(plosca, 0xe0408a));
+    // gosta notranja plošča in kadherini v medceličnem prostoru
+    const pl2 = new THREE.CylinderGeometry(0.34, 0.34, 0.08, q(14));
+    pl2.applyMatrix4(new THREE.Matrix4().compose(p.clone().addScaledVector(n, 0.1), new THREE.Quaternion().setFromUnitVectors(V(0, 1, 0), n), V(1, 1, 1)));
+    dezGeo.push(pobarvaj(pl2, 0xff8cc0));
+    for (let k = 0; k < 4; k++) { // keratinske niti, ki se zankajo v ploščo
       const a = (k / 4) * Math.PI * 2 + rnd(), t = V(0, Math.cos(a), Math.sin(a));
       if (stran === 0) t.set(Math.sin(a), Math.cos(a), 0);
       const z = p.clone().addScaledVector(t, 0.25), k1 = z.clone().addScaledVector(n, 0.9).addScaledVector(t, 0.6), k2 = p.clone().addScaledVector(t, -0.2).addScaledVector(n, 0.35);
-      dezGeo.push(pobarvaj(nit([z, k1, k1.clone().addScaledVector(t, -0.6).addScaledVector(n, 0.3), k2], 0.03, 16, 4), 0xe3b0cc));
+      kerK.push(new THREE.CatmullRomCurve3([z, k1, k1.clone().addScaledVector(t, -0.6).addScaledVector(n, 0.3), k2]));
     }
     dezT.push(p.clone().addScaledVector(n, 0.05));
   }
-  const dez = new THREE.Mesh(zdruzi(dezGeo, true), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, sheen: 0.3 }));
-  svet.add(dez);
+  // keratinska mreža čez celico: od dezmosoma do dezmosoma in do terminalne mreže
+  dezT.forEach((a, i) => {
+    for (const b of [dezT[(i + 5) % dezT.length], V(a.x * 0.3, H - 0.6, Math.min(-0.4, a.z))]) {
+      const m = a.clone().lerp(b, 0.5).add(V(rnd() - 0.5, rnd() - 0.5, -rnd() * 0.6).multiplyScalar(1.4));
+      if (m.z > -0.2) m.z = -0.2;
+      kerK.push(new THREE.CatmullRomCurve3([a.clone(), a.clone().lerp(m, 0.6), m, b]));
+    }
+  });
+  const dez = new THREE.Mesh(zdruzi(dezGeo, true), mat(0xffffff, { vertexColors: true, roughness: 0.4, clearcoat: 0.6 }));
+  const keratin = kit.vlakna(kerK, 0.03, "#ea9cff", { sij: 0.45, seg: hi ? 24 : 8, rad: 3 });
+  svet.add(dez, keratin);
 
-  // ---------- bazalna membrana ----------
-  const bm = new THREE.BoxGeometry(16.4, 0.4, 4.4, q(80), 1, q(22));
+  // ---------- bazalna membrana (bazalna lamina iz kolagena IV in laminina) ----------
+  const bm = new THREE.BoxGeometry(16.4, 0.4, 4.4, hi ? 80 : 34, 1, hi ? 22 : 9);
   bm.translate(0, -0.34, -2.2);
   deformiraj(bm, (v) => { if (v.y > -0.2) v.y += 0.035 * fbm(v.x * 1.5, 0, v.z * 1.5); });
-  const bazalna = new THREE.Mesh(bm, mat(0x6f948c, { roughness: 0.85, clearcoat: 0.05, sheen: 0.3, zrnje: ["vlakna", 8, 2, 0.5] }));
-  svet.add(bazalna);
+  const bazalna = new THREE.Mesh(bm, mat(0x2f9a88, { roughness: 0.55, clearcoat: 0.35, sheen: 0.4 }));
+  const bmK = [];
+  for (let i = 0; i < (hi ? 110 : 40); i++) {
+    const p = V((rnd() * 2 - 1) * 8, -0.12, -0.15 - rnd() * 4.1), sm = V(rnd() - 0.5, 0, rnd() - 0.5).normalize(), pts = [];
+    for (let j = 0; j < 4; j++) pts.push(p.clone().addScaledVector(sm, (j - 1.5) * 0.5).add(V(0, 0.03 * Math.sin(j * 2 + i), 0)));
+    if (pts.some((x) => Math.abs(x.x) > 8.1 || x.z > -0.05 || x.z < -4.35)) continue;
+    bmK.push(new THREE.CatmullRomCurve3(pts));
+  }
+  const bmVl = kit.vlakna(bmK, 0.03, "#9ff5dc", { sij: 0.3, seg: hi ? 10 : 5, rad: 3 });
+  svet.add(bazalna, bmVl);
+
+  // drobni prosti ribosomi in temna zrnca citoplazme (točke)
+  const prostiR = [], prah = [];
+  for (let t = 0; (prostiR.length < (hi ? 500 : 220) || prah.length < (hi ? 2200 : 900)) && t < 80000; t++) {
+    const p = V((rnd() * 2 - 1) * (w - 0.35), 0.4 + rnd() * (H - 1.2), -0.08 - rnd() * (w - 0.4));
+    if (Math.hypot((p.x - J.x) / (ja + 0.15), (p.y - J.y) / (jb + 0.15)) < 1 && p.z > -ja - 0.2) continue;
+    if (prostiR.length < (hi ? 500 : 220) && rnd() < 0.3) prostiR.push(p); else if (prah.length < (hi ? 2200 : 900)) prah.push(p);
+  }
+  const ribP = kit.pike(prostiR, BC.ribosomi, 0.1, 0.4), prahP = kit.pike(prah, 0x2c2462, 0.07, 0.5);
+  svet.add(ribP, prahP);
 
   const s = umeri(svet, 0.985);
+  for (const pt of [ribP, prahP]) pt.material.size *= s; // velikost točk je v enotah sveta
   const L = (x, y, z) => V(x, y, z).multiplyScalar(s).add(svet.position).toArray();
 
-  del("mikrovili", "Mikrovili (krtačasti obrobek)", "Na tisoče prstastih izrastkov, dolgih okoli 1 µm; kot krtača povečajo površino celice več kot 20-krat, zato celica hitreje vsrka hranila.", "#eaa0b6", [mv], L(-1.6, H + 1.0, -0.15));
-  del("membrana", "Celična membrana", "Ovojnica celice iz dvosloja maščob; na vrhu je nagubana v mikrovile, ob straneh pa se dotika sosednjih celic. Debelina membrane je povečana.", "#d88aa2", [mem, memRob], L(-w, 13, -0.05));
-  del("citoplazma", "Citoplazma", "Želatinasta notranjost celice z organeli.", "#f1c9b6", [cit], L(1.2, 16, -w + 0.2));
-  del("jedro", "Jedro", "Ovalno jedro z dvojno ovojnico in porami leži v spodnjem delu celice; v njem sta DNK in temnejše jedrce.", "#7a68d8", [jedro, jPlo, jOvoj], L(-0.8, 5.4, 0.05));
-  del("mitohondrij", "Mitohondriji", "Imajo dvojno membrano; notranja je nagubana v kriste. Pridobivajo energijo (ATP) za črpanje hranil skozi membrano; največ jih je pod vrhom in ob dnu.", "#e8743b", [mit], L(...mitPol.reduce((a, p) => (p.y > 14 && p.z > a.z ? p : a), V(0, 16, -9)).clone().add(V(0, 0, 0.4)).toArray()));
-  del("zrnati-er", "Zrnati endoplazemski retikulum", "Sploščeni membranski mešički z ribosomi; v njem nastajajo beljakovine, na primer encimi na mikrovilih.", "#5b8fe0", [zer], L(-2.4, 12.95, -0.6));
-  del("ribosomi", "Ribosomi", "Drobna zrnca, ki sestavljajo beljakovine; mnogo jih sedi na zrnatem ER.", "#2b3f8f", [rib], L(2.0, 13.5, -0.55));
-  del("golgi", "Golgijev aparat", "Leži nad jedrom; beljakovine in maščobe dodela in zapakira v mešičke.", "#f2c94c", [golgi], L(-1.5, 11.15, -1.4));
-  del("tesni-stiki", "Tesni stiki", "Pas beljakovinskih niti tik pod vrhom, ki sosednji celici tesno zlepi; tako snovi iz črevesa ne morejo zdrsniti med celicama.", "#3fcfa8", [tesni], L(w - 0.25, H - KT - 0.6, -1.0));
-  del("dezmosomi", "Dezmosomi", "Točkasti stiki kot zakovice; s keratinskimi nitmi povežejo sosednji celici, da se tkivo ne raztrga.", "#b5507f", [dez], L(...dezT[1].toArray()));
-  del("bazalna-membrana", "Bazalna membrana", "Tanka plast beljakovinskih vlaken pod epitelijem, na kateri celice stojijo.", "#8fb0a8", [bazalna], L(-1, -0.3, -0.02));
-  del("sosednje-celice", "Sosednji celici (prerez)", "Enake celice ob strani, prerezane, da se vidita jedro in mitohondriji; skupaj tvorijo enoslojni valjasti epitelij.", "#cf8199", [sosedi], L(-6.4, 9.5, 0.05));
+  del("mikrovili", "Mikrovili (krtačasti obrobek)", "Na tisoče prstastih izrastkov, dolgih okoli 1 µm; kot krtača povečajo površino celice več kot 20-krat, zato celica hitreje vsrka hranila.", "#b4a8ff", [mv, encimi], L(-1.6, H + 1.0, -0.15));
+  del("aktin-mikrovilov", "Aktinska vlakna mikrovilov", "V vsakem mikrovilu je snop 20 do 30 aktinskih vlaken, ki ga drži pokonci; njegova koreninica sega v terminalno mrežo.", BC.aktin, [jedraMv], L(-0.9, H + 0.5, -0.3));
+  del("terminalna-mreza", "Terminalna mreža", "Gosta mreža vlaken (aktin, spektrin, keratin) tik pod vrhom celice; vanjo so zasidrane korenine mikrovilov.", "#ffd27a", [termMreza], L(1.4, H - 0.55, -1.2));
+  del("membrana", "Celična membrana", "Ovojnica celice iz dvosloja maščob; na vrhu je nagubana v mikrovile, ob straneh pa se dotika sosednjih celic. Debelina membrane je povečana.", "#9fb4ff", [mem, memRob], L(-w, 13, -0.05));
+  del("citoplazma", "Citoplazma", "Želatinasta notranjost celice z organeli.", "#4a3d9a", [cit], L(1.2, 16, -w + 0.2));
+  del("jedro", "Jedro", "Ovalno jedro z dvojno ovojnico in porami leži v spodnjem delu celice; v njem je DNK (kromatin).", BC.jedro, [jedro, jPlo, jOvoj], L(-0.8, 5.4, 0.05));
+  del("jedrce", "Jedrce", "Gosto območje v jedru, kjer nastajajo deli ribosomov.", BC.jedrce, [jedrce], L(0.45, 8.0, 0.3));
+  del("mitohondrij", "Mitohondriji", "Imajo dvojno membrano; notranja je nagubana v kriste. Pridobivajo energijo (ATP) za črpanje hranil skozi membrano; največ jih je pod vrhom in ob dnu.", BC.mitohondrij, [mit], L(...mitPol.reduce((a, p) => (p.y > 14 && p.z > a.z ? p : a), V(0, 16, -9)).clone().add(V(0, 0, 0.4)).toArray()));
+  del("zrnati-er", "Zrnati endoplazemski retikulum", "Sploščeni membranski mešički z ribosomi; v njem nastajajo beljakovine, na primer encimi na mikrovilih.", BC.zer, [zer], L(-2.4, 12.95, -0.6));
+  del("ribosomi", "Ribosomi", "Drobna zrnca, ki sestavljajo beljakovine; mnogo jih sedi na zrnatem ER, drugi so prosti.", BC.ribosomi, [rib], L(2.0, 13.5, -0.55));
+  del("gladki-er", "Gladki endoplazemski retikulum", "Mreža cevk brez ribosomov; v enterocitu iz vsrkanih maščob sestavi nove maščobe, ki jih celica pošlje v limfo.", BC.ger, [gladki], vozl.reduce((a, c) => (c.z > a.z ? c : a)).toArray().map((x, i) => x * s + svet.position.getComponent(i)));
+  del("golgi", "Golgijev aparat", "Leži nad jedrom; beljakovine in maščobe dodela in zapakira v mešičke.", BC.golgi, [golgi], L(-0.2, 11.6, -1.4));
+  del("lizosomi", "Lizosomi", "Mešički z encimi, ki razgradijo odslužene dele celice.", BC.lizosom, [liz], L(...lizT.reduce((a, p) => (p.z > a.z ? p : a)).toArray()));
+  del("tesni-stiki", "Tesni stiki", "Pas beljakovinskih niti tik pod vrhom, ki sosednji celici tesno zlepi; tako snovi iz črevesa ne morejo zdrsniti med celicama.", "#1fd6a8", [tesni], L(w - 0.25, H - KT - 0.6, -1.0));
+  del("pasasti-stik", "Pasasti stik", "Pas pod tesnim stikom, kjer se celici držita s kadherini; na notranji strani ga obkroža obroč aktinskih vlaken.", BC.aktin, [pasasti], L(w - 0.4, H - KT - 1.5, -1.2));
+  del("dezmosomi", "Dezmosomi", "Točkasti stiki kot zakovice; s keratinskimi nitmi povežejo sosednji celici, da se tkivo ne raztrga.", "#e0408a", [dez], L(...dezT[1].toArray()));
+  del("keratin", "Keratinske niti", "Vmesni filamenti iz keratina, ki se raztezajo od dezmosoma do dezmosoma čez vso celico in ji dajejo trdnost.", "#ea9cff", [keratin], L(...dezT[6].clone().add(V(0.6, 0.4, 0.6)).toArray()));
+  del("bazalna-membrana", "Bazalna membrana", "Tanka plast prepletenih beljakovinskih vlaken (kolagen IV, laminin) pod epitelijem, na kateri celice stojijo.", "#2f9a88", [bazalna, bmVl], L(-1, -0.3, -0.02));
+  del("sosednje-celice", "Sosednji celici (prerez)", "Enake celice ob strani, prerezane, da se vidita jedro in mitohondriji; skupaj tvorijo enoslojni valjasti epitelij.", "#7a6cc8", [sosedi], L(-6.4, 9.5, 0.05));
+
+  kit.poliraj(svet, deli, {
+    citoplazma: { tex: "fino", rf: hi ? 9 : 6, k: hi ? 0.55 : 0.3, b: 0.2, lisa: 0.2, f: 0.3 },
+    jedro: { tex: "zrna", rf: hi ? 10 : 7, k: hi ? 0.6 : 0.35, b: 0.2 },
+    jedrce: { tex: "zrna", rf: 8, k: 1.3, b: 0.25 },
+    mitohondrij: { tex: "zrna", rf: 6, k: 0.7, b: 0.18 },
+    ribosomi: { tex: null },
+    "aktin-mikrovilov": { tex: null },
+    "gladki-er": { tex: "fino", rf: 6, k: 0.7 },
+    golgi: { tex: "fino", rf: 7, k: 0.8 },
+    lizosomi: { tex: "zrna", rf: 7, k: 0.9, b: 0.22 },
+    "tesni-stiki": { tex: "zrna", rf: 10, k: 0.6 },
+    dezmosomi: { tex: "zrna", rf: 8, k: 0.7 },
+    "bazalna-membrana": { tex: "vlakna", rf: 3, k: 0.8, b: 0.2 },
+    "sosednje-celice": { tex: "fino", rf: hi ? 7 : 5, k: hi ? 0.45 : 0.25, b: 0.16 },
+  });
+  const nadzor = [kit.barveUcbenika(deli, { mikrovili: "#e8809a", "aktin-mikrovilov": "#c0504a", "terminalna-mreza": "#c08a4a", jedrce: "#2f1e80", "tesni-stiki": "#2fb89a",
+    "pasasti-stik": "#e0a040", dezmosomi: "#b5507f", keratin: "#c49ad8", "bazalna-membrana": "#8fb0a8", "sosednje-celice": "#f0c8b0" })];
 
   return {
     group,
+    oder: "celica",
     pogled: [-0.47, 0.34, 0.81], // smer kamere: yaw −30°, pitch 20° (odrezani del proti gledalcu)
     deli,
+    nadzor,
     korak(t) {
       if (!gib) return;
       group.rotation.y = Math.sin(t * 0.15) * 0.04;
@@ -590,7 +705,6 @@ export function zgradi(THREE, ctx = {}) {
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       odpad.forEach((m) => m.dispose());
-      odpadT.forEach((t) => t.dispose());
     },
   };
 }
