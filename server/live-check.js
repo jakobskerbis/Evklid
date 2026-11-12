@@ -703,7 +703,7 @@ export function subscriptIssue(answer, question = "") {
     for (const f of ionicFormulas(line)) {
       if (asked.has(f.src)) continue;
       checked++;
-      if (new RegExp(`(?<![A-Za-z)\\]\\d])${f.reduced.replace(/[()]/g, "\\$&")}(?![A-Za-z\\d(])`).test(plainAll)) continue;
+      if (new RegExp(`(?<![A-Za-z)\\]\\d])${f.reduced.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![A-Za-z\\d(])`).test(plainAll)) continue;
       return {
         checked,
         issue: `the formula ${f.src} keeps the subscripts unreduced; an ionic formula gives the smallest whole-number ratio of ions, so the cross rule ends by reducing them: ${f.src} → ${f.reduced} (Mg²⁺ + O²⁻ → Mg₂O₂ → MgO)`,
