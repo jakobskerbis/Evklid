@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Notranja vrednost
+  - telo se odziva na odstop, ne na zrak
+  - vrednost niha okoli nastavljene
+- Regulacijska zanka
+  - receptor zazna, center primerja, efektor odgovori
+  - hipotalamus: center za temperaturo in vodo
+- Negativna povratna zanka
+  - odziv nasproten odstopu
+  - napaka: negativna ne pomeni zmanjšati
+- Antagonistično uravnavanje
+  - znojenje proti drgetanju
+  - inzulin zniža, glukagon zviša glukozo
+- Telesna temperatura
+  - znoj hladi le z izhlapevanjem
+  - okoli $2{,}4\,\mathrm{kJ}$ na gram znoja
+  - $\Delta T = \dfrac{Q}{m \cdot c}$
+- Voda v telesu
+  - osmoreceptorji, hipotalamus, ADH iz hipofize
+  - ADH: akvaporini v zbiralcih, manj urina
+  - $d = \dfrac{m_1 - m_2}{m_1} \cdot 100\,\%$

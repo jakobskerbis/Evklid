@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sarkomera
+  - enota krčenja med dvema Z-črtama, okoli $2{,}5\,\mu\mathrm{m}$
+  - aktin zdrsne med miozin, niti se ne skrajšajo
+  - $N = \dfrac{L_1}{l_1}$: tisoče sarkomer zaporedno
+- Cikel miozinske glave
+  - ATP napne glavo, glava prime aktin
+  - zaveslaj potegne aktin proti sredini
+  - nov ATP odlepi glavo; brez ATP mrliška otrdelost
+- Kalcij kot stikalo
+  - sarkoplazemski retikel sprosti $\mathrm{Ca^{2+}}$
+  - troponin premakne tropomiozin, aktin je prost
+  - napaka: kalcij ni gorivo
+- Aerobna pot
+  - glikoliza, nato mitohondrij in kisik
+  - okoli $30$ ATP na glukozo
+- Anaerobna pot
+  - piruvat v laktat, $\mathrm{NAD^+}$ se obnovi
+  - $2$ ATP na glukozo, hitro a potratno
+  - $\mathrm{H^+}$ zmanjšajo moč mišice
+- Srce med naporom
+  - $Q = f \cdot V_u$
+  - simpatik in adrenalin: hitreje in močneje
+- Dihanje med naporom
+  - $V_E = f_d \cdot V_d$
+  - več $\mathrm{CO_2}$, nižji pH, hitrejše dihanje
+  - po naporu kisikov dolg
