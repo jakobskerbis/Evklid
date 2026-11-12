@@ -508,7 +508,7 @@ export function createApp(store, opts = {}) {
   const verifyHold = (txt) => usage.appHold("verify", VERIFY_DAILY_USD(), [...new Set(VERIFY_MODELS())].reduce((t, m) => t + checkReserveUsd(m, txt), 0));
   const settleLater = (promise, done) =>
     Promise.resolve(promise)
-      .then((v) => done(!!v?.ok, v?.reason || ""), (e) => done(false, e?.message || "napaka"))
+      .then((v) => done(!!v?.ok, v?.reason || "", v), (e) => done(false, e?.message || "napaka", null))
       .catch((e) => console.warn(`[evklid] preverjanje: ${e?.message || e}`));
   const progress = new Progress(store);
   const knowledge = new Knowledge(store.db); // zbirke znanja in učni pass (server/zbirke.js)
@@ -1241,7 +1241,7 @@ export function createApp(store, opts = {}) {
               if (ok) store.db.prepare("UPDATE answer_cache SET verified = 1 WHERE key = ? AND text = ?").run(key, generic);
               else {
                 store.db.prepare("DELETE FROM answer_cache WHERE key = ? AND text = ? AND verified = 0").run(key, generic);
-                console.warn(`[evklid] odgovor ni shranjen za ponovno uporabo (${String(reason).slice(0, 120)})`);
+                console.warn(`[evklid] odgovor ni shranjen za ponovno uporabo (razlog ${String(reason).length} znakov; besedilo ne gre v dnevnik, docs/varnost-podatkov.md)`);
               }
             });
           }
@@ -1275,10 +1275,15 @@ export function createApp(store, opts = {}) {
       if (cHold && !cards.length) cHold.release();
       if (cards.length && liveCards) {
         const ids = cards.map((c) => c.id);
-        settleLater(runVerify({ question: text, answer: cardsText, kind: "cards" }), (ok, reason) => {
+        // Vsaka kartica dobi svojo sodbo (server/verify.js): napačna se izbriše, pravilne ostanejo.
+        const list = cards.map((c) => `${c.front} → ${c.back}`);
+        settleLater(runVerify({ question: text, answer: list.join("\n"), kind: "cards", cards: list }), (ok, reason, v) => {
           cHold.release();
-          store.cards.settle(ids, ok);
-          if (!ok) console.warn(`[evklid] kartice niso shranjene (${String(reason).slice(0, 120)})`);
+          const pass = Array.isArray(v?.cards) && v.cards.length === ids.length ? v.cards : ids.map(() => ok);
+          store.cards.settle(ids.filter((_, i) => pass[i]), true);
+          store.cards.settle(ids.filter((_, i) => !pass[i]), false);
+          const lost = pass.filter((p) => !p).length;
+          if (lost) console.warn(`[evklid] kartice niso shranjene (${lost} od ${ids.length}; razlog ne gre v dnevnik, docs/varnost-podatkov.md)`);
         });
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).

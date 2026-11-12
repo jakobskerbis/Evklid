@@ -1,0 +1,60 @@
+{
+  "_opis": "Kartice in odgovori preverjevalca (server/verify.js, kind cards). Krog 8 (KEM-OS-8/formule-spojin): Sonnet je pravilno kartico s križnim pravilom utemeljil brez besede NAPAKA, kar je veljalo za zavrnitev.",
+  "primeri": [
+    {
+      "ime": "pravilno križno pravilo, utemeljitev pred OK (primer iz kroga 8)",
+      "kartice": ["Kako s križnim pravilom določiš indeksa v formuli ionske spojine? → Indeks kationa je naboj aniona, indeks aniona je naboj kationa; nato indeksa skrajšaj ($\\mathrm{Mg_2O_2}$ → $\\mathrm{MgO}$)."],
+      "odgovori": {
+        "sonnet": "The flashcard states the criss-cross rule: the cation's subscript is the anion's charge and vice versa, then the subscripts are reduced (Mg2O2 → MgO). This is correct.\nOK",
+        "opus": "OK"
+      },
+      "pricakovano": [true]
+    },
+    {
+      "ime": "napačna kartica: indeks kationa je naboj kationa",
+      "kartice": ["Kaj je indeks kationa v formuli ionske spojine? → Indeks kationa je naboj kationa."],
+      "odgovori": {
+        "sonnet": "NAPAKA 1: the cation's subscript is the anion's charge, not its own charge (Mg2+ and O2- give MgO, Al3+ and O2- give Al2O3).",
+        "opus": "NAPAKA 1: indeks kationa je naboj aniona."
+      },
+      "pricakovano": [false]
+    },
+    {
+      "ime": "mešan paket: napačna je samo druga kartica",
+      "kartice": [
+        "Kako s križnim pravilom določiš indeksa v formuli ionske spojine? → Indeks kationa je naboj aniona, indeks aniona je naboj kationa; nato indeksa skrajšaj.",
+        "Kaj je indeks kationa v formuli ionske spojine? → Indeks kationa je naboj kationa.",
+        "Formula aluminijevega oksida? → $\\mathrm{Al_2O_3}$, ker $2 \\cdot 3 + 3 \\cdot (-2) = 0$."
+      ],
+      "odgovori": {
+        "sonnet": "NAPAKA 2: the cation's subscript is the anion's charge.",
+        "opus": "**NAPAKA 2:** wrong side of the criss-cross rule."
+      },
+      "pricakovano": [true, false, true]
+    },
+    {
+      "ime": "mešan paket: modela zavrneta različni kartici",
+      "kartice": ["A → a", "B → b", "C → c"],
+      "odgovori": { "sonnet": "NAPAKA 1: wrong", "opus": "NAPAKA 3: wrong" },
+      "pricakovano": [false, true, false]
+    },
+    {
+      "ime": "utemeljitev brez sodbe je dvom: vse zavrnjene",
+      "kartice": ["A → a", "B → b"],
+      "odgovori": { "sonnet": "The first card states the rule; the second is hard to judge.", "opus": "OK" },
+      "pricakovano": [false, false]
+    },
+    {
+      "ime": "NAPAKA brez veljavne številke zavrne vse",
+      "kartice": ["A → a", "B → b"],
+      "odgovori": { "sonnet": "NAPAKA: the second card is wrong", "opus": "NAPAKA 7: wrong" },
+      "pricakovano": [false, false]
+    },
+    {
+      "ime": "OK z dodatkom ni golo OK",
+      "kartice": ["A → a"],
+      "odgovori": { "sonnet": "OK, but the card should mention the reduction", "opus": "OK" },
+      "pricakovano": [false]
+    }
+  ]
+}
