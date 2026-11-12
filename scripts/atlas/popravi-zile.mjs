@@ -41,13 +41,14 @@ const kl = (p) => `${Math.round(p[0] / 2e-6)},${Math.round(p[1] / 2e-6)},${Math.
 export const NACRT = {
   srce: {
     datoteke: ["organi-3d/srce.glb", "organi-3d/srce-telefon.glb"],
-    dopolni: [["Aortic arch", "Thoracic aorta"], ["Left pulmonary artery"]],
+    // Imena delov: srce iz #461/#567 (»Aorta«, »Root of aorta«, »Pulmonary trunk and left pulmonary artery« …) in starejši izvoz.
+    dopolni: [["Aortic arch", "Thoracic aorta"], ["Left pulmonary artery"], ["Aorta"], ["Pulmonary trunk and left pulmonary artery"]],
     stena: [
-      [/^(Ascending aorta|Aortic arch|Thoracic aorta)$/, 2.5],
-      [/^(Pulmonary trunk|Bifurcation of pulmonary trunk|(Left|Right) pulmonary artery)$/, 1.5],
-      [/vena cava|pulmonary vein/, 1.0],
+      [/^(Ascending aorta|Aortic arch|Thoracic aorta|Aorta|Root of aorta)$/, 2.5],
+      [/^(Pulmonary trunk|Bifurcation of pulmonary trunk|(Left|Right) pulmonary artery|Pulmonary trunk and left pulmonary artery|Root of pulmonary trunk)$/, 1.5],
+      [/vena cava|pulmonary vein|brachiocephalic vein|Azygos/, 1.0],
     ],
-    polna: /coronary|cardiac vein|interventricular|Circumflex|vein of left ventricle/i,
+    polna: /coronary|cardiac vein|interventricular|Circumflex|vein of left ventricle|marginal branch|Diagonal branch|carotid|subclavian|Brachiocephalic trunk/i,
     // Zgostitev oglatih velikih žil (12 stranic → 24, kjer gladka cev od tetive odstopa za več kot toliko mm).
     // Telefon: samo aorta (polmer ≥ 14 mm), ker ima srce za telefon mejo 90 000 trikotnikov.
     zgosti: (pot) => (/telefon/.test(path.basename(pot)) ? 0.44 : 0.15),

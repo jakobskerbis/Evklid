@@ -6,7 +6,7 @@ export const info = {
   podrocje: "organi",
   predmet: "BIO",
   opis: "Pet pljučnih režnjev, sapnik, bronhiji in pljučne žile; prerez pokaže bronhije in žile v pljučnem tkivu.",
-  merilo: { m: 0.27, oznaka: "27 cm" },
+  merilo: { m: 0.38, oznaka: "38 cm" }, // obseg modela s sapnikom (organ.js ga povozi z izmerjenim)
 };
 export const organ = "pljuca";
 export const zgradi = (THREE, ctx) => ctx.organ(organ);

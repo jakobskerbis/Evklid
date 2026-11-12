@@ -5,8 +5,13 @@
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { skoziLupino } from "./izbira.js";
-import { t } from "/i18n.js";
+import { t, dodajIzvirnik } from "/i18n.js";
+import SL3D from "/i18n/sl-3d.js";
 import { icon } from "/icons.js";
+import { ravenProfila, razlaga, imaRavni } from "./raven.js";
+import { SKUPINE, zacetnaIzbira } from "./skupine.js";
+import { najdiOvoje, okvir } from "./ovoji.js";
+dodajIzvirnik(SL3D); // imena skupin delov (a3.grp.*), niso v prvem odprtju aplikacije
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -199,6 +204,9 @@ export function odpriModel(el, mod, opts = {}) {
     }
     sij.clear();
     if (!d) return;
+    // Skupina delov organa iz GLB (zaklopke, velike žile …): okolica je skrita (skrijObdajajoce), zato ostanejo prave
+    // barve tkiv brez sija in obrisa (ocena srca n10: zaklopke »mlečno bele/lila«, papilarne mišice z modrim obrisom).
+    if (d.naravno) return;
     const barva = new THREE.Color(d.barva || "#6E9BFF");
     for (const m of d.meshes || []) {
       if (!m?.material || sij.has(m)) continue;
@@ -314,65 +322,40 @@ export function odpriModel(el, mod, opts = {}) {
   // lupine, telesa) snov učenja.
   const SKRITA_PLAST = 31;
   const skrite = new Map(); // object → izvirna maska plasti
-  const _rc = new THREE.Raycaster();
-  const SMERI = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].map((v) => new THREE.Vector3(...v));
-  function okvirDela(d, box) {
-    box.makeEmpty();
-    for (const m of d.meshes || []) {
-      if (!m) continue;
-      m.updateWorldMatrix(true, true);
-      m.traverseVisible((o) => {
-        if (!o.isMesh || (o.isInstancedMesh && o.count === 0)) return;
-        const g = o.isInstancedMesh ? (o.boundingBox || (o.computeBoundingBox(), o.boundingBox)) : (o.geometry.boundingBox || (o.geometry.computeBoundingBox(), o.geometry.boundingBox));
-        if (g) box.union(g.clone().applyMatrix4(o.matrixWorld));
-      });
-    }
-    return box;
-  }
-  const prostornina = (b) => {
-    const v = b.getSize(new THREE.Vector3());
-    return Math.max(v.x, 1e-6) * Math.max(v.y, 1e-6) * Math.max(v.z, 1e-6);
-  };
+  const okvirDela = (d, box) => okvir(d, box);
+  // Ovoji in stene okoli izbranega dela ali skupine (public/3d/ovoji.js: najdiOvoje, test 3d-ovoji).
   function skrijObdajajoce(d) {
     for (const [o, maska] of skrite) o.layers.mask = maska;
     skrite.clear();
-    if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO") return;
-    const izbrane = new Set();
-    for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
-    const bS = okvirDela(d, new THREE.Box3());
-    if (bS.isEmpty() || !model.group) return;
-    const c = bS.getCenter(new THREE.Vector3());
-    const vS = prostornina(bS);
-    const bP = new THREE.Box3();
-    const R = new THREE.Box3().setFromObject(model.group).getBoundingSphere(new THREE.Sphere()).radius * 2 + 1;
-    const izvor = new THREE.Vector3();
-    for (const p of model.deli) {
-      if (p === d || !p.meshes?.length) continue;
-      if (prostornina(okvirDela(p, bP)) < vS * 1.25) continue; // ovoj je večji od izbranega
-      const mreze = [];
-      // tudi skrite mreže dela: skrit »pokrov« izreza sklene lupino (celica, HIV), da jo žarek iz izreza zadene
-      for (const m of p.meshes) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) mreze.push(o); });
-      if (!mreze.length) continue;
-      const obdaja = SMERI.every((s) => {
-        _rc.set(izvor.copy(c).addScaledVector(s, R), s.clone().negate());
-        _rc.far = R;
-        return _rc.intersectObjects(mreze, false).length > 0;
-      });
-      if (!obdaja) continue;
-      for (const o of mreze) {
-        if (skrite.has(o)) continue;
-        skrite.set(o, o.layers.mask);
-        o.layers.set(SKRITA_PLAST);
-      }
+    if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO" || !model.group) return;
+    for (const o of najdiOvoje(THREE, d, model.deli, model.group)) {
+      skrite.set(o, o.layers.mask);
+      o.layers.set(SKRITA_PLAST);
     }
   }
 
   // hit = { object, instanceId, point } iz tapa (null iz seznama delov); model.izberi lahko vrne drug del (npr. element
   // v InstancedMesh). preklopi: ponoven tap na izbrani del izbiro prekliče. pomakni: false = del iz naslova ob odprtju
   // (plošča in stran se ne premakneta).
+  // Skupine delov (skupine.js): »skupina-<id>« izbere vse dele skupine hkrati (osvetlitev in skriti ovoji okoli njih).
+  const PRED = "skupina-";
+  function skupineModela() {
+    const deli = Array.isArray(model?.deli) ? model.deli : [];
+    return (SKUPINE[info.id] || [])
+      .map((g) => {
+        const clani = deli.filter((d) => g.deli.includes(d.id));
+        const meshes = [...new Set(clani.flatMap((d) => d.meshes || []))];
+        const ime = t(`a3.grp.${g.id}`);
+        // razlaga skupine po ravni (skupine.js opisOs/opis/opisStudij, pregled #461 C P2-2), pod njo seznam članov
+        const seznam = clani.map((d) => d.ime).join(", ");
+        return { id: PRED + g.id, skupinaDelov: true, naravno: model?.postavitev === "organ", ime, barva: "#6E9BFF", meshes, opis: g.opis || seznam, opisOs: g.opisOs, opisStudij: g.opisStudij, seznam: g.opis ? seznam : "", smer: g.smer, clani };
+      })
+      .filter((g) => g.clani.length > 1 && g.meshes.length);
+  }
+  const najdiDel = (id) => (model?.deli || []).find((x) => x.id === id) || (String(id || "").startsWith(PRED) ? skupineModela().find((g) => g.id === id) : null) || null;
   function izberi(id, { leti = true, hit = null, preklopi = false, pomakni = true } = {}) {
     let cilj = id;
-    if ((id || hit) && typeof model?.izberi === "function") {
+    if ((id || hit) && typeof model?.izberi === "function" && !String(id || "").startsWith(PRED)) {
       try {
         const r = model.izberi(id, hit);
         if (typeof r === "string") cilj = r;
@@ -381,7 +364,7 @@ export function odpriModel(el, mod, opts = {}) {
       }
     }
     if (preklopi && cilj && cilj === izbran) cilj = null;
-    const d = (model?.deli || []).find((x) => x.id === cilj) || null;
+    const d = najdiDel(cilj);
     // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
     const prej = leti && model?.group ? kadrModela() : null;
     izbran = d ? d.id : null;
@@ -409,7 +392,9 @@ export function odpriModel(el, mod, opts = {}) {
     const naslov = mk("div", "k3-info-naslov");
     // stran /3d: h1 ime modela, h2 okno dela in »Deli«; v lekciji je okno pod naslovi lekcije (h3)
     naslov.append(mk(opts.stran ? "h2" : "h3", "k3-info-ime", d.ime));
-    if (d.la) naslov.append(mk("i", "k3-la", d.la)); // latinsko ime (organi, prerezi tkiv)
+    // razlaga po ravni (raven.js): OŠ preprosto, SŠ z latinskim imenom, študij še podrobneje; globlje v »Več o tem«
+    const rz = imaRavni(model?.deli) ? razlaga(d, raven) : { opis: d.opis, la: d.la, vec: null };
+    if (rz.la) naslov.append(mk("i", "k3-la", rz.la)); // latinsko ime (organi, prerezi tkiv)
     const x = mk("button", "k3-krog k3-info-zapri");
     x.type = "button";
     x.innerHTML = icon("x");
@@ -418,7 +403,13 @@ export function odpriModel(el, mod, opts = {}) {
     x.addEventListener("click", zapriInfo);
     glava.append(mk("i", "k3-pika"), naslov, x);
     infoEl.append(glava);
-    if (d.opis) infoEl.append(mk("p", "k3-info-opis", d.opis));
+    if (rz.opis) infoEl.append(mk("p", "k3-info-opis", rz.opis));
+    if (d.seznam) infoEl.append(mk("p", "k3-info-clani", d.seznam)); // člani skupine pod razlago
+    if (rz.vec) {
+      const vec = mk("details", "k3-info-vec");
+      vec.append(mk("summary", "", t("a3.moreAbout")), mk("p", "k3-info-opis", rz.vec));
+      infoEl.append(vec);
+    }
     // Del s `povecava: "<id modela>"` (docs/3d.md): gumb odpre povečan prikaz (stran /3d da opts.povecava).
     if (d.povecava && typeof opts.povecava === "function") {
       const b = mk("button", "k3-pill k3-povecava-gumb");
@@ -480,6 +471,7 @@ export function odpriModel(el, mod, opts = {}) {
     const b = okvirDela(d, new THREE.Box3());
     const s = b.isEmpty() ? null : b.getBoundingSphere(new THREE.Sphere());
     const drug = drugKader(prej, [mc, mr]);
+    if (d.smer && s) return poleti(s.center, Math.max(s.radius, 0.35 * mr), { smer: new THREE.Vector3(...d.smer) }); // skupina z lastno smerjo
     const povsemIzven = !vidnaKrogla(THREE, kit.camera, mc, mr) || (s && !vidnaKrogla(THREE, kit.camera, s.center, s.radius));
     if (!drug && !povsemIzven) {
       if (uporabnikovKader()) return;
@@ -496,10 +488,48 @@ export function odpriModel(el, mod, opts = {}) {
     poleti(c, r);
   }
 
+  // Raven razlage (raven.js): preklop »OŠ / SŠ / Študij« nad seznamom delov; vsi deli so vedno vidni, prilagodi se
+  // samo razlaga izbranega dela. Začetna raven je raven profila, ob menjavi modela se vrne nanjo.
+  const ravenZacetna = Number(opts.raven) || ravenProfila();
+  let raven = ravenZacetna;
+  const ravenEl = mk("div", "k3-raven");
+  ravenEl.setAttribute("role", "group");
+  ravenEl.setAttribute("aria-label", t("a3.detail"));
   function deli() {
     const seznam = Array.isArray(model?.deli) ? model.deli : [];
     zadnjiDeli = [...seznam];
     deliEl.replaceChildren();
+    const zRavnmi = imaRavni(seznam);
+    ravenEl.replaceChildren();
+    ravenEl.hidden = !zRavnmi;
+    if (zRavnmi) {
+      for (const [k, oz] of [[1, "a3.levelOS"], [2, "a3.levelSS"], [3, "a3.levelUni"]]) {
+        const g = mk("button", "k3-raven-gumb", t(oz));
+        g.type = "button";
+        g.setAttribute("aria-pressed", String(k === raven));
+        g.addEventListener("click", () => {
+          if (raven === k) return;
+          raven = k;
+          ravenEl.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(i + 1 === raven)));
+          const d = najdiDel(izbran);
+          if (d) pokaziInfo(d);
+          mere();
+        });
+        ravenEl.append(g);
+      }
+      if (ravenEl.parentNode !== deliEl.parentNode) deliEl.parentNode?.insertBefore(ravenEl, deliEl);
+    }
+    for (const g of skupineModela()) {
+      // skupine pred deli (npr. Zaklopke, Velike žile): en dotik osvetli vse njihove dele
+      const b = mk("button", "k3-del k3-del-skupina");
+      b.type = "button";
+      b.dataset.del = g.id;
+      b.setAttribute("aria-pressed", String(g.id === izbran));
+      b.append(mk("span", "", g.ime));
+      b.title = g.opis;
+      b.addEventListener("click", () => izberi(g.id === izbran ? null : g.id));
+      deliEl.append(b);
+    }
     for (const d of seznam) {
       const b = mk("button", "k3-del");
       b.type = "button";
@@ -512,18 +542,46 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => izberi(d.id === izbran ? null : d.id));
       deliEl.append(b);
     }
+    const stevilo = seznam.length;
     deliEl.hidden = !seznam.length;
     if (deliGlava) {
       deliGlava.hidden = !seznam.length;
-      deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(seznam.length)));
+      deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(stevilo)));
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
-    if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
-    else if (izbran) skrijObdajajoce(seznam.find((d) => d.id === izbran)); // nova faza: drugi ovoji
+    if (izbran && !najdiDel(izbran)) izberi(null, { leti: false });
+    else if (izbran) skrijObdajajoce(najdiDel(izbran)); // nova faza: drugi ovoji
     // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
 
+  // Legenda s pravimi merami ob modelu (ne čez; j 6. 11.): model.mere = [{ ime, vrednost }] (npr. organ <o>.json
+  // »mere«). Na plošči pod opisom modela; OŠ vidi prvi dve, SŠ štiri, ostale pod »Več o tem«, študij vse.
+  let mereEl = null;
+  const mere = () => {
+    mereEl?.remove();
+    mereEl = null;
+    const seznam = Array.isArray(model?.mere) ? model.mere.filter((x) => x && x.ime && x.vrednost) : [];
+    if (!seznam.length) return;
+    mereEl = mk("section", "k3-mere");
+    mereEl.append(mk("h2", "k3-mere-glava", t("a3.measures")));
+    const vrstice = (xs) => {
+      const dl = mk("dl", "k3-mere-seznam");
+      for (const x of xs) dl.append(mk("dt", "", x.ime), mk("dd", "", x.vrednost));
+      return dl;
+    };
+    const vidne = seznam.slice(0, raven <= 1 ? 2 : raven === 2 ? 4 : seznam.length);
+    mereEl.append(vrstice(vidne));
+    if (vidne.length < seznam.length) {
+      const vec = mk("details", "k3-info-vec");
+      vec.append(mk("summary", "", t("a3.moreAbout")), vrstice(seznam.slice(vidne.length)));
+      mereEl.append(vec);
+    }
+    if (oModelu) {
+      oModelu.append(mereEl);
+      oModelu.hidden = false;
+    } else spodaj.insertBefore(mereEl, deliEl);
+  };
   const merilo = () => {
     const m = model && "merilo" in model && model.merilo !== undefined ? (typeof model.merilo === "function" ? model.merilo() : model.merilo) : info.merilo;
     kit.nastaviMerilo(m || null, 2);
@@ -596,6 +654,8 @@ export function odpriModel(el, mod, opts = {}) {
         } catch (err) {
           console.error("3D nadzor", c.id, err);
         }
+        // nadzor je lahko zamenjal materiale (»Učne barve«): sij izbranega dela znova na nove materiale
+        if (izbran && !c.ponastaviPogled) obarvaj(najdiDel(izbran));
         poSpremembi();
         if (c.ponastaviPogled) poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
         else if (prej) kadrirajPogled(prej);
@@ -802,7 +862,9 @@ export function odpriModel(el, mod, opts = {}) {
         if (!model?.group) return;
         const hit = skoziLupino(kit.zadetki(ndc, [model.group])).zadetek; // najbližji; preskoči le material z userData.skozi
         if (!hit) return izberi(null);
-        const d = (model.deli || []).find((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
+        const zadeti = (model.deli || []).filter((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
+        // tap: OŠ izbere skupni del (npr. Venčne arterije), SŠ in študij najožji (posamezno žilo)
+        const d = raven <= 1 ? zadeti.find((x) => !x.skupina) || zadeti[0] : zadeti.find((x) => x.skupina) || zadeti[0];
         izberi(d?.id ?? null, { hit: { object: hit.object, instanceId: hit.instanceId ?? null, point: hit.point.clone() }, preklopi: true });
       });
       pocisti.push(
@@ -864,6 +926,7 @@ export function odpriModel(el, mod, opts = {}) {
       gibanje: kit.gibanje,
       zacetek: { ...zacetek },
       t,
+      raven: ravenZacetna, // raven profila (1 OŠ): organ.js privzeto vklopi učne barve (barve.js)
       // Modeli iz datotek (docs/3d.md): naloziGLB(pot glede na public/3d/modeli/) in organi iz modeli/organi-3d (organ.js).
       naloziGLB: (pot, napredek) => import("./organ.js").then((m) => m.naloziGLB(new URL(pot, new URL("./modeli/", import.meta.url)).href, napredek)),
       organ: (ime) => import("./organ.js").then((m) => m.zgradiOrgan(ime, ctx)),
@@ -985,6 +1048,8 @@ export function odpriModel(el, mod, opts = {}) {
     // Organ: nadzor (npr. stikalo »Prerez«) lebdi na odru levo zgoraj, spodaj ostanejo deli in »Podrobnosti organa«.
     if (model.postavitev === "organ") oder.append(nadzorEl);
     else if (nadzorEl.parentNode !== spodaj) spodaj.insertBefore(nadzorEl, deliGlava || deliEl);
+    // telefon pokonci: stikala organa (Učne barve, Prerez) pod gumbi; model nižje, da ga ne prekrijejo (3d.css ≤ 480 px)
+    kit.zamikZgoraj?.(model.postavitev === "organ" && opts.stran && matchMedia("(max-width: 480px)").matches ? 48 : 0);
     if (model.group) kit.scene.add(model.group);
     kit.nastaviOkolje(model.okolje === "studio" ? "studio" : "soba");
     kit.nastaviLuci(model.luci !== false);
@@ -1005,8 +1070,10 @@ export function odpriModel(el, mod, opts = {}) {
     nastaviTek(typeof model.korak === "function" && kit.gibanje);
     cas = 0;
     nadzor();
+    if (!ponastavi) raven = ravenZacetna; // nov model: raven profila (pregled #461)
     deli();
     merilo();
+    mere();
     pokaziInfo(null);
     podrobnostiGumb();
     if (typeof model.ao === "function") kit.nastaviAO(model.ao() !== false);
@@ -1023,13 +1090,12 @@ export function odpriModel(el, mod, opts = {}) {
     kit.narisi();
     // Del iz naslova (»#organ-srce?del=levi prekat«, gumb inštruktorja public/odpri.js): po id-ju ali imenu.
     if (zacetek.del && !ponastavi) {
-      const want = fold(zacetek.del);
-      const vsi = Array.isArray(model.deli) ? model.deli : [];
-      const d = vsi.find((x) => x.id === zacetek.del || fold(x.ime) === want) || vsi.find((x) => fold(x.ime).startsWith(want) || want.startsWith(fold(x.ime)));
-      if (d) requestAnimationFrame(() => !unicen && model === m && izberi(d.id, { pomakni: false }));
+      // del (tudi »membrana« → Celična membrana, sinonimi »mitralna zaklopka«) pred skupino (»zaklopke«, »organeli« …;
+      // id iz strežnika ali besede, tudi v jeziku vmesnika): skupine.js zacetnaIzbira
+      const cilj = zacetnaIzbira(info.id, model.deli, zacetek.del, Object.fromEntries((SKUPINE[info.id] || []).map((x) => [x.id, [t(`a3.grp.${x.id}`)]])));
+      if (cilj) requestAnimationFrame(() => !unicen && model === m && izberi(cilj, { pomakni: false }));
     }
   }
-  const fold = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
 
   zgradiVse(false);
   const api = {

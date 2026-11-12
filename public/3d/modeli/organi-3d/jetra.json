@@ -106,7 +106,9 @@
    "ime": "Desni jetrni reženj",
    "la": "Lobus hepatis dexter",
    "barva": "#ff8a6a",
+   "opisOs": "Največji del jeter, na desni strani trebuha pod rebri.",
    "opis": "Največji del jeter; v kirurgiji ga delijo na štiri segmente (V–VIII).",
+   "opisStudij": "Anatomsko ga od levega loči srpasta vez; funkcionalna desna jetra (segmenti V–VIII, desna veja portalne vene in jetrne arterije) od levih loči Cantliejeva ravnina od žolčnika do spodnje votle vene. Spodaj se dotika desne ledvice, debelega črevesa in dvanajstnika.",
    "vozlisca": [
     "Anterior lateral segment of liver (VI)",
     "Anterior medial segment of liver (V)",
@@ -120,7 +122,9 @@
    "ime": "Levi jetrni reženj",
    "la": "Lobus hepatis sinister",
    "barva": "#a78bfa",
+   "opisOs": "Manjši, tanjši del jeter na levi, nad želodcem.",
    "opis": "Tanjši reženj levo od srpaste vezi, ki sega nad želodec (segmenta II in III).",
+   "opisStudij": "Anatomsko levo od srpaste vezi (lig. falciforme) in fissura ligamenti teretis; segmenta II in III. Funkcionalni levi del (po Cantliejevi ravnini) obsega še segment IV. Na spodnji strani ima vtis želodca (impressio gastrica).",
    "vozlisca": [
     "Left anterior lateral segment of liver (III)",
     "Left posterior lateral segment of liver (II)"
@@ -132,7 +136,9 @@
    "ime": "Kvadratni reženj",
    "la": "Lobus quadratus",
    "barva": "#ffc06a",
+   "opisOs": "Majhen štirikoten del jeter ob žolčniku.",
    "opis": "Majhen reženj ob žolčniku na spodnji strani jeter; z delom nad njim tvori segment IV.",
+   "opisStudij": "Na visceralni strani med fossa vesicae biliaris, fissura ligamenti teretis in porta hepatis; skupaj z delom nad njim segment IV (IVb). Funkcionalno spada k levim jetrom, ker ga oskrbuje leva veja portalne vene.",
    "vozlisca": [
     "Left medial segment of liver (IV)"
    ]
@@ -143,7 +149,9 @@
    "ime": "Repasti reženj",
    "la": "Lobus caudatus",
    "barva": "#f472b6",
+   "opisOs": "Majhen del jeter zadaj, ob veliki veni.",
    "opis": "Majhen reženj na zadnji strani jeter ob spodnji votli veni (segment I).",
+   "opisStudij": "Segment I med fissura ligamenti venosi in sulcus venae cavae; kri dobiva iz obeh vej portalne vene in se odteka neposredno v spodnjo votlo veno. Zato pri Budd-Chiarijevem sindromu pogosto ostane ohranjen in se poveča.",
    "vozlisca": [
     "Posterior segment of liver (I)"
    ]
@@ -153,7 +161,9 @@
    "ime": "Žolčnik",
    "la": "Vesica biliaris",
    "barva": "#7ccf5a",
+   "opisOs": "Majhna vrečka pod jetri, ki hrani žolč. Žolč pomaga prebaviti maščobe.",
    "opis": "Hruškasta vrečka pod jetri, ki shranjuje in zgošča žolč do obroka.",
+   "opisStudij": "Fundus, corpus, collum; prostornina 30–50 ml, žolč zgosti do 10-krat. Krčenje sproži holecistokinin po obroku. Arterija a. cystica (iz desne jetrne), ductus cysticus s spiralno gubo (plica spiralis); Calotov trikotnik pri holecistektomiji.",
    "vozlisca": [
     "Gallbladder"
    ]
@@ -163,7 +173,9 @@
    "ime": "Žolčevod",
    "la": "Ductus choledochus",
    "barva": "#c8e060",
+   "opisOs": "Cevka, po kateri teče žolč v črevo.",
    "opis": "Vod, ki odvaja žolč iz jeter in žolčnika v dvanajstnik.",
+   "opisStudij": "Nastane iz ductus hepaticus communis in ductus cysticus; dolg 6–8 cm, premer do 6 mm. Poteka v lig. hepatoduodenale desno od jetrne arterije in pred portalno veno, nato za glavo trebušne slinavke; z ductus pancreaticus se izliva na papilla duodeni major (Vaterjeva ampula, Oddijeva zapiralka).",
    "vozlisca": [
     "Bile duct"
    ]
@@ -173,7 +185,9 @@
    "ime": "Portalna vena",
    "la": "Vena portae hepatis",
    "barva": "#a080ff",
+   "opisOs": "Vena, ki prinese v jetra kri s hranili iz črevesja.",
    "opis": "Prinese v jetra kri iz želodca, črevesja in vranice, bogato s hranili.",
+   "opisStudij": "Nastane za vratom trebušne slinavke iz v. mesenterica superior in v. splenica; dolga 6–8 cm. Daje okoli 75 % pretoka in polovico kisika jeter. Portokavalne anastomoze (požiralnik, rektum, popek) se pri portalni hipertenziji razširijo (varice, caput medusae).",
    "vozlisca": [
     "Hepatic portal vein",
     "Hepatic portal vein branches (lastno)"
@@ -184,7 +198,9 @@
    "ime": "Jetrna arterija",
    "la": "Arteria hepatica propria",
    "barva": "#ff5a5a",
+   "opisOs": "Žila, ki prinese v jetra kri s kisikom.",
    "opis": "Prinese v jetra s kisikom bogato kri iz trebušne aorte.",
+   "opisStudij": "A. hepatica propria iz a. hepatica communis (truncus coeliacus); v lig. hepatoduodenale levo od žolčevoda. Daje okoli 25 % pretoka; razcepi se v desno in levo vejo, desna daje a. cystica. Pogoste različice: nadomestna desna iz a. mesenterica superior.",
    "vozlisca": [
     "Common hepatic artery",
     "Proper hepatic artery"
@@ -195,7 +211,9 @@
    "ime": "Jetrne vene",
    "la": "Venae hepaticae",
    "barva": "#6e9bff",
+   "opisOs": "Žile, ki odvedejo kri iz jeter proti srcu.",
    "opis": "Odvedejo kri iz jeter v spodnjo votlo veno in naprej v srce.",
+   "opisStudij": "Tri glavne (desna, srednja, leva) potekajo med segmenti in se tik pod prepono izlivajo v spodnjo votlo veno; nimajo zaklopk. Srednja leži v Cantliejevi ravnini. Manjše vene repastega režnja se izlivajo neposredno.",
    "vozlisca": [
     "Hepatic vein branches (lastno)",
     "Hepatic veins"
@@ -276,8 +294,8 @@
  },
  "velikost": 0.3047,
  "trikotniki": {
-  "racunalnik": 163534,
-  "telefon": 74983
+  "racunalnik": 164076,
+  "telefon": 41990
  },
  "luci": [
   {
@@ -298,5 +316,32 @@
    "moc": 0.6,
    "barva": "#ffd6cc"
   }
- ]
+ ],
+ "mere": [
+  {
+   "ime": "Masa",
+   "vrednost": "≈ 1,4–1,6 kg (največji notranji organ)"
+  },
+  {
+   "ime": "Širina",
+   "vrednost": "≈ 20–22 cm"
+  },
+  {
+   "ime": "Višina desnega režnja",
+   "vrednost": "≈ 15–17 cm"
+  },
+  {
+   "ime": "Debelina spredaj–zadaj",
+   "vrednost": "≈ 10–12 cm"
+  },
+  {
+   "ime": "Žolčnik",
+   "vrednost": "≈ 7–10 cm, 30–50 ml"
+  },
+  {
+   "ime": "Pretok krvi",
+   "vrednost": "≈ 1,5 l/min (75 % portalna vena)"
+  }
+ ],
+ "pbr": true
 }
