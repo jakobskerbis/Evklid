@@ -1,10 +1,11 @@
 // Lekcija teme: po korakih (kratke kartice z vprašanji »Preveri se« vmes, public/lesson-steps.js)
 // ali vsa naenkrat, »Razloži drugače«, nato Vadi naloge ali razlaga z inštruktorjem.
 import React, { useMemo, useRef, useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Platform, Pressable, Text, TextInput, View } from "react-native";
 import Storage from "expo-sqlite/kv-store";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { lessonSteps } from "../../../../public/lesson-steps.js";
+import { checkNumber, moveItem, orderHits, orderOk, placeItem } from "../../../../public/preveri-se.js";
 import { api } from "@/lib/api";
 import { key } from "@/lib/keys";
 import { useStudent } from "@/lib/session";
@@ -17,7 +18,13 @@ import { FormulaCtx, type Fx } from "@/lib/formula-ctx";
 import { Banner, Body, Button, Card, Chip, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
 import { appDevice, ReportSheet } from "@/components/ReportSheet";
 
-type Check = { q: string; options: string[]; correct: number; why?: string; optionWhy?: string[] };
+// Vrste vprašanj »Preveri se« (public/preveri-se.js). Aplikacija pošlje glavo x-app-kviz (src/lib/api.ts), zato
+// strežnik pošlje tudi vpis števila in razvrščanje; starejše različice dobijo samo izbiro (server/textbook.js).
+type ChoiceCheck = { type?: undefined; q: string; options: string[]; correct: number; why?: string; optionWhy?: string[] };
+type NumberCheck = { type: "stevilo"; q: string; answer: string; value: number; tol: number; unit: string; wrong: { answer: string; value: number; why: string }[]; why?: string };
+type OrderCheck = { type: "razvrsti"; q: string; items: string[]; shown: number[]; why?: string };
+type Check = ChoiceCheck | NumberCheck | OrderCheck;
+type Answer = { o: number } | { v: string } | { order: number[] };
 type Section = { title: string; md: string };
 type Lesson = {
   id: string;
@@ -46,10 +53,10 @@ export default function Topic() {
   const { data: L, error, loading, reload } = useLoad(() => api<Lesson>(`/api/students/${student.id}/lesson?id=${encodeURIComponent(id)}`), [id, student.id]);
   // Prvi odgovor na vsako vprašanje »Preveri se« gre med šibke točke (strežnik sam preveri pravilnost).
   const answered = useRef(new Set<number>());
-  const sendCheck = (qi: number, o: number) => {
+  const sendCheck = (qi: number, a: Answer) => {
     if (!L || answered.current.has(qi)) return;
     answered.current.add(qi);
-    api(`/api/students/${student.id}/lesson-check`, { body: { topic: L.id, q: qi, o } }).catch(() => null);
+    api(`/api/students/${student.id}/lesson-check`, { body: { topic: L.id, q: qi, ...a } }).catch(() => null);
   };
   const [byStep, setByStep] = useState(() => Storage.getItemSync(STEP_PREF) !== "0");
   const [step, setStep] = useState(0);
@@ -221,18 +228,196 @@ function NavLink({ label, dir, onPress }: { label: string; dir: "prev" | "next";
 }
 
 // »Preveri se«: z dotikom odgovora (v paketu in preizkusu); sicer vprašanja z rešitvijo na dotik.
-function Checks({ checks, idx, onPick, title, interactive }: { checks: Check[]; idx: number[]; onPick: (qi: number, o: number) => void; title: string; interactive: boolean }) {
+function Checks({ checks, idx, onPick, title, interactive }: { checks: Check[]; idx: number[]; onPick: (qi: number, a: Answer) => void; title: string; interactive: boolean }) {
   return (
     <Card tone="accent">
       <Title size={18}>{title}</Title>
-      {checks.map((c, i) => (
-        <CheckItem key={c.q + i} c={c} interactive={interactive} onPick={(o) => onPick(idx[i], o)} />
-      ))}
+      {checks.map((c, i) =>
+        c.type === "stevilo" ? (
+          <NumberItem key={c.q + i} c={c} interactive={interactive} onAnswer={(v) => onPick(idx[i], { v })} />
+        ) : c.type === "razvrsti" ? (
+          <OrderItem key={c.q + i} c={c} interactive={interactive} onAnswer={(order) => onPick(idx[i], { order })} />
+        ) : (
+          <CheckItem key={c.q + i} c={c} interactive={interactive} onPick={(o) => onPick(idx[i], { o })} />
+        ),
+      )}
     </Card>
   );
 }
 
-function CheckItem({ c, interactive, onPick }: { c: Check; interactive: boolean; onPick: (o: number) => void }) {
+// Brez paketa: vprašanje in rešitev na dotik (kot pri izbiri).
+function SolutionButton({ text }: { text: string }) {
+  const [shown, setShown] = useState(false);
+  return shown ? <RichText text={text} size={15} /> : <Button title={t("task.solution")} kind="ghost" onPress={() => setShown(true)} style={{ alignSelf: "flex-start", minHeight: 44 }} />;
+}
+
+// Vpiši število: vejica ali pika, enota se ne upošteva (public/preveri-se.js checkNumber).
+function NumberItem({ c, interactive, onAnswer }: { c: NumberCheck; interactive: boolean; onAnswer: (v: string) => void }) {
+  const th = useTheme();
+  const [value, setValue] = useState("");
+  const [res, setRes] = useState<ReturnType<typeof checkNumber> | null>(null);
+  const unit = c.unit ? ` ${c.unit}` : "";
+  const submit = () => {
+    const r = checkNumber(c, value);
+    setRes(r);
+    if (r.empty) return;
+    onAnswer(value);
+    (r.ok ? success : failure)();
+  };
+  const ok = !!res?.ok;
+  const border = res && !res.empty ? (ok ? th.ok : th.danger) : th.border;
+  return (
+    <View style={{ gap: 8, paddingVertical: 6 }}>
+      <RichText text={c.q} size={16} />
+      {interactive ? (
+        <>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <TextInput
+              value={value}
+              onChangeText={(v) => {
+                setValue(v);
+                if (res?.empty) setRes(null);
+              }}
+              editable={!ok}
+              placeholder={t("tb.num.label")}
+              placeholderTextColor={th.muted}
+              accessibilityLabel={t("tb.num.label")}
+              keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
+              autoCorrect={false}
+              autoCapitalize="none"
+              returnKeyType="done"
+              onSubmitEditing={submit}
+              style={{ flexGrow: 1, flexBasis: 120, maxWidth: 220, minHeight: 48, borderRadius: radius.button, borderWidth: 2, borderColor: border, backgroundColor: th.surface, color: th.text, paddingHorizontal: 12, fontSize: 18, fontWeight: "600" }}
+            />
+            {c.unit ? (
+              <View pointerEvents="none">
+                <RichText text={c.unit} size={16} noFx />
+              </View>
+            ) : null}
+            <Button title={t("tb.quiz.check")} onPress={submit} disabled={ok} style={{ minHeight: 48 }} />
+          </View>
+          {res ? (
+            <RichText
+              text={res.empty ? t("tb.num.empty") : ok ? `**${t("task.correctBang")}** ${c.why || ""}` : `${t("mob.notQuite")} ${c.wrong[res.wrong]?.why || t("mob.thinkAgain")}`}
+              size={15}
+            />
+          ) : null}
+        </>
+      ) : (
+        <SolutionButton text={`**${c.answer}${unit}** ${c.why || ""}`} />
+      )}
+    </View>
+  );
+}
+
+// Razvrsti: dotik postavi element na naslednje mesto, puščici ga premakneta; nato »Preveri«. Cilji vsaj 44 pt.
+function OrderItem({ c, interactive, onAnswer }: { c: OrderCheck; interactive: boolean; onAnswer: (order: number[]) => void }) {
+  const th = useTheme();
+  const n = c.items.length;
+  const [order, setOrder] = useState<number[]>(() => c.shown.slice());
+  const [placed, setPlaced] = useState(0);
+  const [checked, setChecked] = useState<boolean | null>(null);
+  // »Preveri« pred prvim dotikom ni odgovor (premešani red ni nikoli pravilen): samo namig.
+  const [touched, setTouched] = useState(false);
+  const [hint, setHint] = useState(false);
+  const done = checked === true;
+  if (!interactive)
+    return (
+      <View style={{ gap: 8, paddingVertical: 6 }}>
+        <RichText text={c.q} size={16} />
+        {c.shown.map((k, i) => (
+          <View key={k} style={{ flexDirection: "row", gap: 10 }}>
+            <Text style={{ color: th.muted, fontWeight: "800" }}>{"abcdefgh"[i]})</Text>
+            <View style={{ flex: 1 }}>
+              <RichText text={c.items[k]} size={16} noFx />
+            </View>
+          </View>
+        ))}
+        <SolutionButton text={`**${c.items.map((_, i) => `${"abcdefgh"[c.shown.indexOf(i)]})`).join(" → ")}** ${c.why || ""}`} />
+      </View>
+    );
+  const pick = (i: number) => {
+    tap();
+    const r = placeItem(order, placed, i);
+    setOrder(r.order);
+    setPlaced(r.placed);
+    setChecked(null);
+    setTouched(true);
+  };
+  const move = (i: number, d: number) => {
+    tap();
+    setOrder(moveItem(order, i, d));
+    setChecked(null);
+    setTouched(true);
+  };
+  const check = () => {
+    if (!touched) return setHint(true);
+    const ok = orderOk(c, order);
+    onAnswer(order);
+    setChecked(ok);
+    if (ok) setPlaced(n);
+    (ok ? success : failure)();
+  };
+  const arrow = (i: number, d: number) => (
+    <Pressable
+      onPress={() => move(i, d)}
+      disabled={done || i + d < 0 || i + d >= n}
+      accessibilityRole="button"
+      accessibilityLabel={t(d < 0 ? "tb.order.up" : "tb.order.down", { pos: i + 1 })}
+      style={({ pressed }) => ({ width: 44, minHeight: 44, alignItems: "center", justifyContent: "center", borderRadius: radius.button, backgroundColor: pressed ? th.accentSoft : th.surface2, opacity: done || i + d < 0 || i + d >= n ? 0.35 : 1 })}
+    >
+      <Icon name={d < 0 ? { ios: "chevron.up", android: "keyboard_arrow_up" } : { ios: "chevron.down", android: "keyboard_arrow_down" }} size={18} color={th.text} />
+    </Pressable>
+  );
+  return (
+    <View style={{ gap: 8, paddingVertical: 6 }}>
+      <RichText text={c.q} size={16} />
+      <Text style={{ color: hint && !touched ? th.text : th.muted, fontWeight: hint && !touched ? "700" : "400" }}>{t("tb.order.hint")}</Text>
+      {order.map((k, i) => {
+        const mark = checked === null ? null : k === i ? "ok" : "bad";
+        return (
+          <View key={k} style={{ flexDirection: "row", gap: 6, alignItems: "stretch" }}>
+            <Pressable
+              onPress={() => pick(i)}
+              disabled={done}
+              accessibilityRole="button"
+              style={{ flex: 1, minHeight: 44, flexDirection: "row", alignItems: "center", gap: 10, padding: 8, borderRadius: radius.button, borderWidth: mark ? 2 : 1, borderColor: mark === "ok" ? th.ok : mark === "bad" ? th.danger : th.border, backgroundColor: mark === "ok" ? th.okSoft : th.surface }}
+            >
+              <View style={{ width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", borderWidth: 2, borderStyle: i < placed ? "solid" : "dashed", borderColor: i < placed ? th.accent : th.border, backgroundColor: i < placed ? th.accentSoft : "transparent" }}>
+                <Text style={{ color: th.text, fontWeight: "800" }}>{i < placed ? i + 1 : ""}</Text>
+              </View>
+              <View style={{ flex: 1 }} pointerEvents="none">
+                <RichText text={c.items[k]} size={16} noFx />
+              </View>
+              {/* Ne samo barva: kljukica ali križec ob vsakem elementu po preverjanju. */}
+              {mark ? <Icon name={mark === "ok" ? { ios: "checkmark", android: "check" } : { ios: "xmark", android: "close" }} size={18} color={mark === "ok" ? th.ok : th.danger} /> : null}
+            </Pressable>
+            {arrow(i, -1)}
+            {arrow(i, 1)}
+          </View>
+        );
+      })}
+      <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+        <Button title={t("tb.quiz.check")} onPress={check} disabled={done} style={{ minHeight: 44 }} />
+        <Button
+          title={t("tb.order.reset")}
+          kind="ghost"
+          disabled={done}
+          onPress={() => {
+            setPlaced(0);
+            setChecked(null);
+          }}
+          style={{ minHeight: 44 }}
+        />
+      </View>
+      {checked !== null ? (
+        <RichText text={checked ? `**${t("task.correctBang")}** ${c.why || ""}` : `${t("mob.notQuite")} ${t("tb.order.wrong", { ok: orderHits(order), all: n })}`} size={15} />
+      ) : null}
+    </View>
+  );
+}
+
+function CheckItem({ c, interactive, onPick }: { c: ChoiceCheck; interactive: boolean; onPick: (o: number) => void }) {
   const th = useTheme();
   const [picked, setPicked] = useState<number | null>(null);
   const [shown, setShown] = useState(false);

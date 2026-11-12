@@ -28,7 +28,7 @@ import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
-import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
+import { lessonView, viewForClient, legacyClient, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
 import { printPage, printPageParts, printSignature, printSizeHint, streamParts } from "./textbook-print.js";
 import { createPdfStore, pdfDownloadName, printFallbackExists } from "./ucbenik-pdf.js";
 import { createPageCache } from "./tisk-predpomnilnik.js";
@@ -1395,7 +1395,8 @@ export function createApp(store, opts = {}) {
   // Lekcija brez učenčevih polj (besedilo je za vse): kopija za branje brez povezave (public/sw.js shrani to pot,
   // osebne /api/students/:id/lesson pa ne, P7). Brez interaktivnega dela, ponudb in testa predznanja.
   app.get("/api/lesson", (req, res) => {
-    const view = lessonView(String(req.query.id || ""));
+    const view = viewForClient(lessonView(String(req.query.id || "")), legacyClient(req));
+    res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
     res.json({ ...view, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
   });
@@ -1404,7 +1405,9 @@ export function createApp(store, opts = {}) {
   app.get("/api/students/:id/lesson", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const view = lessonView(String(req.query.id || ""));
+    // Stara nameščena aplikacija dobi vprašanja »Preveri se« samo z izbiro (server/textbook.js, legacyClient).
+    const view = viewForClient(lessonView(String(req.query.id || "")), legacyClient(req));
+    res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
     const interactive = !accounts || accounts.lessonInteractive(s.id, view.id);
     // Nova tema z nalogami: na začetku lekcije povabilo na test predznanja.

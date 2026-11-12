@@ -145,7 +145,9 @@ export function compressedJson() {
       if (body.length < MIN_SIZE || res.headersSent) return plain(obj);
       // Hitrejša raven za sprotno stiskanje.
       const out = enc === "br" ? zlib.brotliCompressSync(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }) : zlib.gzipSync(body, { level: 6 });
-      res.setHeader("Vary", "Accept-Encoding");
+      // Dopolni (ne zamenja) Vary, ki ga je nastavila pot (lekcija: x-app-kviz, server/app.js).
+      if (typeof res.vary === "function") res.vary("Accept-Encoding");
+      else res.setHeader("Vary", "Accept-Encoding");
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Content-Encoding", enc);
       res.setHeader("Content-Length", out.length);

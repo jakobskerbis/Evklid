@@ -130,7 +130,7 @@ formula oksida po križnem pravilu; $N = k \cdot i$; pri indeksih 2 in 3 poišč
 
 **Rešitev:**
 
-1. Formule: železo je $\mathrm{Fe}$, kisik je iz dvoatomnih molekul, $\mathrm{O_2}$. Pri oksidu po križnem pravilu naboj železa (3) postane indeks kisika, naboj kisika (2) indeks železa: $\mathrm{Fe_2O_3}$.
+1. Formule: železo je $\mathrm{Fe}$, kisik je iz dvoatomnih molekul, $\mathrm{O_2}$. Pri oksidu po križnem pravilu naboj železa (3) postane indeks kisika, naboj kisika (2) indeks železa: $\mathrm{Fe_2O_3}$. Indeksov $2$ in $3$ ne moremo skrajšati (pri $\mathrm{Mg_2O_2}$ bi skrajšali v $\mathrm{MgO}$).
 2. Neurejena enačba: $\mathrm{Fe + O_2 \rightarrow Fe_2O_3}$.
 3. Kisik: levo 2, desno 3. Najmanjši skupni večkratnik 2 in 3 je 6, zato $3\,\mathrm{O_2}$ ($3 \cdot 2 = 6$) in $2\,\mathrm{Fe_2O_3}$ ($2 \cdot 3 = 6$): $\mathrm{Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$.
 4. Železo uredi sam, nato preveri:

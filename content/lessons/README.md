@@ -77,6 +77,48 @@ t | čas | | s
 :::
 ```
 
+## Preveri se: vrste vprašanj
+
+Vsako vprašanje se začne z `?`; besedilo vprašanja (tudi tabela ali risba `:::risba`) stoji med vrstico `?` in
+prvim odgovorom. Vrsta vprašanja sledi iz odgovorov; v enem vprašanju je samo ena vrsta. Mešaj vrste: kjer je odgovor
+število, naj ga učenec vpiše; kjer ima tema graf, skico ali tabelo, naj vsaj eno vprašanje zahteva branje risbe.
+
+**Izbira** (kot zgoraj): vsaj 3 možnosti, natanko ena `+`, vsaka `-` ima svojo vrstico `~`.
+
+**Vpiši število:** natanko ena vrstica `= vrednost | toleranca`.
+
+```markdown
+? Kolikšen je pH raztopine HCl s koncentracijo $0{,}0050\,\mathrm{mol/L}$?
+= 2,30 | 0,01
+~ 5,30 | Uporabil si naravni logaritem (ln) namesto desetiškega (log).
+~ -2,30 | pH kisle raztopine ni negativen: pozabil si na minus pred logaritmom.
+> $\mathrm{pH} = -\log 0{,}0050 = 2{,}30$.
+```
+
+- Vrednost z decimalno vejico, brez `$`; potenca kot `1,5·10^-3`. Za vrednostjo sme stati enota (`= 2,5 m/s | 0,1`), ki se izpiše ob polju za vnos (enoto lahko zapišeš tudi v `$…$`).
+- Toleranca je neobvezna; brez nje velja natančno na izpisane decimalke (`= 2,30` sprejme 2,295 do 2,305, tudi »2,3«).
+- `~ vrednost | zakaj`: tipična napačna vrednost (z isto toleranco) in razlaga, ki se pokaže ob njej. Napačna vrednost ne sme biti znotraj tolerance pravilne.
+- Učenec sme pisati vejico ali piko, katerikoli minus (−, -) in enoto (se ne upošteva).
+
+**Razvrsti:** 3 do 6 vrstic `1.`, `2.` … v pravilnem vrstnem redu; aplikacija jih pokaže premešane (ob vsakem
+nalaganju enako), učenec jih postavi po vrsti z dotikom ali puščicama. Razlaga je v `>`, vrstic `~` ni.
+
+```markdown
+? Razvrsti raztopine od najbolj kisle do najbolj bazične.
+1. HCl, $0{,}1\,\mathrm{mol/L}$
+2. ocetna kislina, $0{,}1\,\mathrm{mol/L}$
+3. voda
+4. NaOH, $0{,}1\,\mathrm{mol/L}$
+> Močna kislina ima najnižji pH, šibka višjega, voda 7, močna baza najvišjega.
+```
+
+**Risba v vprašanju:** blok `:::risba … :::` (razdelek Risbe) takoj pod vrstico `?`, pred odgovori. Izriše se v
+aplikaciji, tisku in PDF; inštruktor dobi njen `opis:`. Vprašanje naj se nanjo nanaša (»Z grafa odčitaj …«).
+
+V tisku in PDF ima vpiši število prazno črto, razvrsti premešane elemente z začetnicami (a, b, c), rešitve pa
+pravilno vrednost oziroma vrstni red. `check-lesson.js` preveri zapis vseh treh vrst (pri številu samo zapis, ne
+računa).
+
 ## Risbe (`:::risba`)
 
 Slike nikoli ne riši z znaki v bloku ```` ``` ```` (črtice, `|---|`, ■): v aplikaciji in PDF je to videti kot surov izpis.

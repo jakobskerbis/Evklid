@@ -12,7 +12,8 @@
 import { getTopic, getPath } from "./curriculum.js";
 import { topicForName } from "./lekcija-za-vprasanje.js";
 import { stopnja } from "../public/stopnja.js";
-import { loadLesson } from "./textbook.js";
+import { loadLesson, legacyChecks, legacyClient } from "./textbook.js";
+import { checkNumber, orderOk } from "../public/preveri-se.js";
 import { loadOurPaper } from "./our-papers.js";
 import { partKey } from "../public/our-paper-key.js";
 
@@ -193,20 +194,47 @@ export function paperTopics(id, paper) {
   return map;
 }
 
+// Pravilnost odgovora na vprašanje »Preveri se«: true / false, null = neveljaven odgovor (400).
+export function answerOk(check, body) {
+  if (check.type === "stevilo") {
+    const v = typeof body?.v === "string" || typeof body?.v === "number" ? String(body.v).slice(0, 80) : "";
+    const r = checkNumber(check, v);
+    return r.empty ? null : r.ok;
+  }
+  if (check.type === "razvrsti") {
+    const order = body?.order;
+    const n = check.items.length;
+    if (!Array.isArray(order) || order.length !== n || !order.every((x) => Number.isInteger(x) && x >= 0 && x < n) || new Set(order).size !== n) return null;
+    return orderOk(check, order);
+  }
+  const o = Number(body?.o);
+  if (!Number.isInteger(o) || o < 0 || o >= (check.options?.length || 0)) return null;
+  return o === check.correct;
+}
+
 // ---------- Zapis iz brskalnika: »Preveri se« v učbeniku in »Imam prav« na naši poli ----------
 export function mountSkillChecks(app, store, { loadStudent }) {
   const db = store.db;
   // Prvi odgovor na vprašanje »Preveri se« (en na dan za vprašanje); pravilnost preveri strežnik iz lekcije.
+  // Izbira: { q, o } (indeks možnosti); vpiši število: { q, v } (besedilo vnosa); razvrsti: { q, order } (indeksi
+  // elementov v pravilnem vrstnem redu, kot jih je učenec postavil). Stara aplikacija (brez glave x-app-kviz) šteje
+  // q po svojem seznamu samo z izbiro (legacyChecks), zapis pa je pod indeksom vprašanja v lekciji.
   app.post("/api/students/:id/lesson-check", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
     const topicId = String(req.body?.topic || "");
     const q = Number(req.body?.q);
-    const o = Number(req.body?.o);
-    const check = getTopic(topicId) && Number.isInteger(q) && q >= 0 ? loadLesson(topicId)?.checks?.[q] : null;
-    if (!check || !Number.isInteger(o) || o < 0 || o >= (check.options?.length || 0)) return res.status(400).json({ error: "Neznano vprašanje." });
-    const counted = firstTime(db, s.id, `L|${topicId}|${q}|${new Date().toISOString().slice(0, 10)}`);
-    if (counted) recordSkill(db, s.id, { source: "lesson", topicId, n: 1, wrong: o === check.correct ? 0 : 1 });
+    const all = getTopic(topicId) && Number.isInteger(q) && q >= 0 ? loadLesson(topicId)?.checks : null;
+    let check = null;
+    let src = q;
+    if (all && legacyClient(req)) {
+      const hit = legacyChecks(all)[q];
+      if (hit) [check, src] = [hit.c, hit.src];
+    } else check = all?.[q] || null;
+    const ok = check ? answerOk(check, req.body) : null;
+    if (ok === null) return res.status(400).json({ error: "Neznano vprašanje." });
+    const counted = firstTime(db, s.id, `L|${topicId}|${src}|${new Date().toISOString().slice(0, 10)}`);
+    if (counted) recordSkill(db, s.id, { source: "lesson", topicId, n: 1, wrong: ok ? 0 : 1 });
     res.json({ counted });
   });
   // Naša pola: deli, pri katerih je učenec odprl rešitev ali označil »Imam prav« (ok = označeno). Vsak del enkrat.
