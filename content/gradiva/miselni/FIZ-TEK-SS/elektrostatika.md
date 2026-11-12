@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Coulombov zakon
+  - $F = k\frac{q_1 q_2}{r^2}$, $k = 9{,}0 \cdot 10^9\,\mathrm{N\,m^2/C^2}$
+  - istoimenska naboja se odbijata
+- Električno polje
+  - $E = \frac{F}{q}$, enota $\mathrm{V/m} = \mathrm{N/C}$
+  - točkasti naboj: $E = k\frac{Q}{r^2}$
+  - napaka: polja seštevaš kot števila
+- Superpozicija in simetrija
+  - polja seštej kot vektorje
+  - nasprotni komponenti se izničita
+- Potencial in napetost
+  - $V = k\frac{Q}{r}$, število s predznakom
+  - homogeno polje: $U = E d$
+  - $V = 0$ ne pomeni $E = 0$
+  - silnice pravokotne na ekvipotencialne ploskve
+- Ohranitev energije
+  - naboj pridobi $qU$, pot ni pomembna
+  - iz mirovanja: $qU = \frac{1}{2} m v^2$
+- Kondenzator
+  - $C = \frac{Q}{U}$, ploščati $C = \frac{\varepsilon_r \varepsilon_0 S}{d}$
+  - membrana celice, defibrilator
+- Energija kondenzatorja
+  - $W = \frac{1}{2} C U^2$
+  - odklopljen ohrani naboj, priklopljen napetost

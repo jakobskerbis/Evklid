@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Normalna sila
+  - na klancu $F_\mathrm{N} = mg\cos\alpha$
+  - napaka: vedno pisati $mg$
+- Razstavljanje teže
+  - vzdolž klanca $mg\sin\alpha$
+  - osi vzdolž klanca in pravokotno nanj
+- Lepenje
+  - $F_\mathrm{l} \le k_\mathrm{l} F_\mathrm{N}$
+  - toliko, kolikor je treba za ravnovesje
+- Mejni naklon
+  - miruje, če $\tan\alpha \le k_\mathrm{l}$
+  - masa se pokrajša
+  - naklon 14 % pomeni $\tan\alpha = 0{,}14$
+- Drsenje in trenje
+  - $F_\mathrm{tr} = k_\mathrm{tr} F_\mathrm{N}$, nasproti relativnemu gibanju
+  - navzdol $a = g(\sin\alpha - k_\mathrm{tr}\cos\alpha)$
+- Vrvi in škripci
+  - idealna vrv: povsod ista sila $F_\mathrm{v}$
+  - padajoča utež: $F_\mathrm{v} = m(g - a)$
+  - gibljivi škripec: sila $2F_\mathrm{v}$, pospešek polovičen
+- Postopek reševanja
+  - sile na vsako telo posebej
+  - najprej določi smer gibanja
+  - enačbe za vsako telo in vez

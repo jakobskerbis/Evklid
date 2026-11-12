@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rekurzija prvega reda
+  - $a_{n+1} = q a_n + d$
+  - zdravilo: $a_{n+1} = 0{,}5 a_n + 100$
+- Ravnovesje
+  - $L = \frac{d}{1 - q}$
+  - razdalja do $L$ se množi s $q$
+  - ni odvisno od začetka
+- Rekurzija drugega reda
+  - $a_{n+2} = b a_{n+1} + c a_n$
+  - karakteristična enačba $r^2 = br + c$
+  - $a_n = A r_1^n + B r_2^n$
+- Konstanti A in B
+  - iz prvih dveh členov
+  - napaka: zamik indeksov
+- Popolna indukcija
+  - baza pri $n_0$
+  - korak $n \to n + 1$
+  - napaka: korak brez baze
+- Krepka indukcija
+  - korak uporabi manjše primere
+  - tablete $3$ in $5$ mg: baze $8$, $9$, $10$

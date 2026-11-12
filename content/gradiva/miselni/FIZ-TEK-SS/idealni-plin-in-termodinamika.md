@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Absolutne količine
+  - $T = t + 273\,\mathrm{K}$, nikoli °C
+  - $p = p_\mathrm{nad} + p_0$
+- Plinska enačba
+  - $pV = nRT$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
+  - $\dfrac{p_1V_1}{T_1} = \dfrac{p_2V_2}{T_2}$
+- Delo plina
+  - ploščina pod krivuljo v $p$–$V$
+  - izobarno $A_\mathrm{pl} = p\,\Delta V$, izohorno $0$
+  - stiskanje: delo plina negativno
+- Notranja energija
+  - enoatomni $W_n = \frac{3}{2}nRT$
+  - odvisna le od temperature
+- Prvi zakon
+  - $Q = \Delta W_n + A_\mathrm{pl}$
+  - izotermno: $Q = A_\mathrm{pl}$, ne nič
+  - $Q = 0$: stiskanje segreje plin
+- Krožna sprememba
+  - $\Delta W_n = 0$, $Q = A_\mathrm{pl}$
+  - delo je obkrožena ploščina

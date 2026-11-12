@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Štiri sredine
+  - $A = \frac{a+b}{2}$, $G = \sqrt{ab}$
+  - $H = \frac{2ab}{a+b}$, $K = \sqrt{\frac{a^2+b^2}{2}}$
+- Vrstni red
+  - $H \le G \le A \le K$
+  - za $2$ in $8$: $3{,}2$; $4$; $5$; $5{,}83$
+- Polkrog
+  - polmer je $A$, višina v $C$ je $G$
+  - kateta je krajša od hipotenuze
+- Enakost
+  - natanko pri $a = b$
+  - preveri, da je dovoljena
+- AM-GM za n členov
+  - $\frac{a_1 + \dots + a_n}{n} \ge \sqrt[n]{a_1 \cdots a_n}$
+  - samo za pozitivna števila
+- Strategija ekstremov
+  - stalen produkt: najmanjša vsota pri enakih
+  - stalna vsota: največji produkt pri enakih
+  - $x + \frac{9}{x} \ge 6$, enakost pri $x = 3$
+- Tonska sredina
+  - sredina oktave: geometrijska, ne aritmetična
+  - $\sqrt{220 \cdot 440} \approx 311\,\mathrm{Hz}$
