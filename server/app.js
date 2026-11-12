@@ -119,7 +119,7 @@ function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [
 }
 
 // Pisave slogov (docs/oblikovanje.md): vsak paket @fontsource-variable/* iz package.json se streže pod /vendor/<ime>/
-// (Čist = Instrument Sans, Igriv = Nunito, Temen = IBM Plex Sans, zgodovinski slogi po public/theme.js → ERAS).
+// (Čist = Instrument Sans, Igriv = Nunito, zgodovinski slogi po public/theme.js → ERAS).
 const FONTS = Object.keys(JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).dependencies || {})
   .filter((m) => m.startsWith("@fontsource-variable/"))
   .map((m) => [m.split("/")[1], m.split("/")[1]]);

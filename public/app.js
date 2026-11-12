@@ -729,7 +729,8 @@ function renderMe() {
   loadMeOverview();
 }
 // Pregled na strani Jaz (j, 4. 11. 2026: prazen spodnji del strani naj bo izkoriščen): koledar aktivnosti,
-// »Nadaljuj« (današnji trening, Učna pot, Inštruktor) in prihodnji testi iz Urnika.
+// »Nadaljuj« (današnji trening) in prihodnji testi iz Urnika. Brez povezav, ki so tik ob njem že na zaslonu
+// (j, 12. 11.): Učna pot in Inštruktor sta v spodnji vrstici, Napredek in Urnik v seznamu nad pregledom.
 async function loadMeOverview() {
   const box = $("#me-overview");
   const id = state.student?.id;
@@ -745,19 +746,17 @@ async function loadMeOverview() {
     `<button type="button" class="list-row" data-me="${go}"><span class="ic">${icon(ic)}</span><span class="lr-text"><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</span>${icon("chevron-right")}</button>`;
   box.innerHTML = `
     <div class="card me-akt">
-      <div class="me-ov-head"><h2>${t("akt.title")}</h2><button type="button" class="text-btn" data-me="progress">${t("nav.progress")}</button></div>
+      <div class="me-ov-head"><h2>${t("akt.title")}</h2></div>
       ${heatmapHtml(p?.xpDays || [])}
     </div>
     <div class="card me-next">
       <h2>${t("qs.title")}</h2>
       <div class="list-card">
         ${row("daily", "zap", t("daily.title"), t("daily.about"))}
-        ${row("path", "map", t("nav.path"))}
-        ${row("chat", "message-circle", t("nav.chat"))}
       </div>
     </div>
     <div class="card me-tests">
-      <div class="me-ov-head"><h2>${t("sch.upcoming")}</h2><button type="button" class="text-btn" data-me="schedule">${t("sch.title")}</button></div>
+      <div class="me-ov-head"><h2>${t("sch.upcoming")}</h2></div>
       ${
         events.length
           ? `<div class="list-card">${events
@@ -3970,6 +3969,7 @@ async function showPapers(c) {
   const level = /VR/.test(String(s.curriculum_level || "")) ? "VR" : "OR";
   mountPapers(slot, papers, { track: s.educational_track, exam: c.exam, subject: c.subject, level }, {
     subjectName: (k) => SUBJECT_NAMES[k] || k,
+    follow: true,
     onTutor: paperTutor,
     onOurs: openOurs,
     onLocal: (entry, file, subjectName) => openLocalPaper(entry, file, subjectName),
@@ -4302,7 +4302,7 @@ const TOUR = [
   { sel: '.tab[data-view="progress"]', title: "nav.progress", text: "tour.progressText" },
   { sel: '.tab[data-view="league"]', title: "nav.league", text: "tour.leagueText" },
   { sel: '.tab[data-view="settings"]', title: "nav.settings", text: "tour.settingsText" },
-  { sel: '.tab[data-view="feedback"]', title: "nav.feedbackShort", text: "tour.feedbackText" },
+  { sel: '.tab[data-view="feedback"]', title: "nav.feedback", text: "tour.feedbackText" },
   { sel: '#tabbar [data-view="me"]', title: "nav.me", text: "tour.meText2" },
   { sel: "#profile-btn", title: "tour.profile", text: "tour.profileText" },
   { title: "tour.end", text: "tour.endText" },
