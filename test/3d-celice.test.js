@@ -11,7 +11,7 @@ let THREE = null;
 try { THREE = await import("three"); } catch { /* three arrives with the 3D kit */ }
 const skip = THREE ? false : "three ni nameščen";
 
-const MEJE = { visoka: 150000, nizka: 60000 };
+const MEJE = { visoka: 350000, nizka: 60000 };
 const KLICI = 60;
 
 // Draw calls and triangles the way the renderer counts them for visible objects.
