@@ -415,8 +415,8 @@ export function labMesanje(el) {
   function stanje() {
     table.setEmpty(B.faza === "prazno" ? "Še ni meritev. Natoči hladno vodo, zlij k njej toplo, premešaj in zapiši končno temperaturo."
       : B.faza === "hladna" ? "Hladna voda je v posodi. Počakaj, da se termometer ustali, nato zlij k njej toplo vodo."
-      : "Zmes je v posodi. Premešaj in pritisni »Zapiši končno temperaturo«. V tabelo gre šele zapisana temperatura.");
-    const note = B.faza !== "zmes" ? "" : `Točke kažejo termometer vsaki 2 s, črtkana črta pa izračun, ki upošteva samo vodo (brez posode, termometra in zraka).${B.premesano < 5 ? " Dokler ne premešaš, je sonda pri dnu v hladnejši plasti, zato temperatura raste počasi." : ""} Zakaj termometer ostane malo pod črto, preveriš v sklepu, ko zapišeš končno temperaturo.`;
+      : "Zmes je v posodi. Premešaj in pritisni »Zapiši končno temperaturo«. V tabeli bo meritev šele, ko jo zapišeš.");
+    const note = B.faza !== "zmes" ? "" : `Polna črta s točkami kaže odčitke termometra (vsaki 2 s), črtkana pa izračun, ki upošteva samo vodo (brez posode, termometra in zraka).${B.premesano < 5 ? " Dokler ne premešaš, je sonda pri dnu v hladnejši plasti, zato termometer kaže manj in odčitek le počasi raste." : ""} Zakaj termometer ostane malo pod črto, preveriš v sklepu, ko zapišeš končno temperaturo.`;
     if (graphNote.textContent !== note) graphNote.textContent = note; // aria-live: le ob spremembi, ne vsakih 100 ms
   }
   function sync() {

@@ -110,10 +110,13 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
       if (!off.has(`pt:${id}`)) {
         // Gosto zapisane meritve (samodejni zapis vsaki 2 s): vsaka točka ima obrobo v barvi podlage, zato bi se
         // prekrivajoče točke zlile v temno packo. Tedaj nariše črto skozi vse meritve in točko le na ~14 px.
+        // Le časovni niz (x ne pada, brez lastne premice): ročne meritve v poljubnem vrstnem redu (I(U), Hooke) ostanejo vse
+        // vidne, brez cikcak črte po vrstnem redu zapisa in brez črte čez črtkano premico.
         const vis = S.pts.filter(inside), drawn = [];
+        const niz = !S.line && vis.every((p, i) => !i || p[0] >= vis[i - 1][0]);
         for (const p of vis) {
           const cx = A.X(p[0]), cy = A.Y(p[1]), q = drawn[drawn.length - 1];
-          if (!q || Math.hypot(cx - q[0], cy - q[1]) >= 14) drawn.push([cx, cy]);
+          if (!niz || !q || Math.hypot(cx - q[0], cy - q[1]) >= 14) drawn.push([cx, cy]);
         }
         if (vis.length) {
           const z = [A.X(vis[vis.length - 1][0]), A.Y(vis[vis.length - 1][1])], q = drawn[drawn.length - 1];
