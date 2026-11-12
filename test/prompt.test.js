@@ -150,10 +150,11 @@ test("accuracy round 4: no side facts about other substances, OŠ stays on the t
   const fixed = src.split(SPLIT_MARKER)[0];
   const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
   const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
-  assert.match(rule, /zgodovina, lastnosti drugih snovi in pojavov, primerjave z njimi\), ne dodajaš; v OŠ ostani pri snovi in pojavu iz naloge\./);
+  assert.match(rule, /zgodovina, lastnosti drugih snovi in pojavov, primerjave z njimi, ki jih ne zahtevata naloga ali učenec\), ne dodajaš; v OŠ ostani pri snovi in pojavu iz naloge \(analogija za razlago je dovoljena\)\./);
   const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
-  for (const s of ["Skupine periodnega sistema štej 1–18", "N v 15., O v 16. skupini", "Masa se pri reakciji ohrani vedno", "spremeni le izmerjena masa", "je produkt, ne reaktant"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  for (const s of ["Skupine periodnega sistema štej 1–18", "N v 15., O v 16. skupini", "Masa se pri kemijski reakciji ohrani vedno", "ali se veže kisik iz zraka, se spremeni le izmerjena masa", "iz šumeče tablete v vodi), je produkt, ne reaktant"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
   assert.doesNotMatch(fixed, /masa ostane enaka, če plin ne uide/);
-  // Krog 4 doda manj kot 500 znakov predpomnjenega dela (51 711 pred spremembo).
-  assert.ok(fixed.length < 51711 + 500, `stalni del ${fixed.length} znakov`);
+  // Krog 4 doda manj kot 550 znakov predpomnjenega dela (51 711 pred spremembo; 500 → 550 po pregledu B:
+  // izjema za vprašano primerjavo in analogijo, kisik iz zraka, CO₂ pri tableti).
+  assert.ok(fixed.length < 51711 + 550, `stalni del ${fixed.length} znakov`);
 });

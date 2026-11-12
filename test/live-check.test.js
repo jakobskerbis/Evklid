@@ -550,6 +550,18 @@ test("code check (round 4): main-group elements use groups 1–18, not the old m
   ])
     assert.equal(groupIssue(a).issue, null, a);
   assert.equal(groupIssue("Dušik je v 5. skupini.", "Učitelj pravi, da je dušik v 5. skupini.").issue, null, "oznaka iz učenčevega sporočila");
+  // Pregled A (PR #585): prehodne kovine, skupina česa drugega, nova poved.
+  for (const a of [
+    "Kisik tvori okside s kovinami, npr. s kromom iz 6. skupine.",
+    "Ogljik in titan: titan je v 4. skupini.",
+    "Dušik in vanadij (5. skupina) tvorita nitrid.",
+    "Fluor reagira z $\\mathrm{Mn}$ iz 7. skupine.",
+    "Ogljik: najprej rešimo 4. skupino nalog",
+    "Kisik ima 6 zunanjih elektronov. 6. skupina učencev naj nariše model.",
+  ])
+    assert.equal(groupIssue(a).issue, null, a);
+  for (const a of ["Halogeni (fluor, klor, brom, jod) so v 7. skupini.", "Dušik je v 2. periodi in 5. skupini.", "Kisik je nekovina. Kisik je v 6. skupini."])
+    assert.ok(groupIssue(a).issue, a);
 });
 
 test("code check (2026-11-11 round 2): temperatures given in °C are not written as kelvin in a difference", () => {
