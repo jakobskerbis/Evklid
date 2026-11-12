@@ -3211,6 +3211,7 @@
   "adm.rep.question": "Прашање:",
   "adm.rep.fixed": "Поправено",
   "adm.rep.reopen": "Отвори повторно",
+  "adm.rep.inReview": "Поправката чека преглед · PR #{n}",
   "adm.rep.none": "Нема пријави.",
   "adm.rep.download": "Преземи за поправки (.md)",
   "adm.rep.showAll": "Прикажи ги и поправените",

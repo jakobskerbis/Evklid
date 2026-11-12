@@ -3275,6 +3275,7 @@
   "adm.rep.question": "Питання:",
   "adm.rep.fixed": "Виправлено",
   "adm.rep.reopen": "Відкрити знову",
+  "adm.rep.inReview": "Виправлення чекає на перевірку · PR #{n}",
   "adm.rep.none": "Повідомлень немає.",
   "adm.rep.download": "Завантажити для виправлення (.md)",
   "adm.rep.showAll": "Показати й виправлені",

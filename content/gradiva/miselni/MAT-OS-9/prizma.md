@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba prizme
+  - dve skladni vzporedni osnovni ploskvi
+  - stranske ploskve skupaj so plašč
+  - pokončna prizma: stranske ploskve so pravokotniki
+- Višina
+  - razdalja med osnovnima ploskvama
+  - napaka: poševni rob namesto višine
+- Prostornina
+  - $V = O \cdot v$, tudi pri poševni prizmi
+  - kovček $15 \cdot 4 = 60\,\text{dm}^3 = 60\,\text{l}$
+- Mreža
+  - dve osnovni ploskvi in vrsta pravokotnikov
+  - pravokotnikov je toliko kot stranic osnove
+- Plašč
+  - $\mathrm{pl} = o \cdot v$
+  - napaka: $O \cdot v$ namesto $o \cdot v$
+- Površina
+  - $P = 2O + \mathrm{pl}$
+  - enota $\text{cm}^2$, prostornina $\text{cm}^3$

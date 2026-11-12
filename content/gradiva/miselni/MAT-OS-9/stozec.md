@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deli stožca
+  - osnovna ploskev, plašč, vrh
+  - višina $v$ pravokotna, stranica $s$ na plašču
+- Stranica
+  - $s^2 = r^2 + v^2$
+  - napaka: $s = r + v$
+- Plašč kot izsek
+  - polmer izseka $s$, lok $2\pi r$
+  - $\alpha = \frac{r}{s} \cdot 360^\circ$
+- Plašč in površina
+  - $\mathrm{pl} = \pi r s$
+  - $P = \pi r^2 + \pi r s$
+  - lijak ali megafon: samo plašč
+- Prostornina
+  - $V = \frac{\pi r^2 v}{3}$
+  - tretjina valja z enako $r$ in $v$
+  - napaka: $s$ namesto $v$
+- Vrtenina
+  - pravokotni trikotnik zavrtimo okoli katete
+  - kateta ob osi je $v$, hipotenuza $s$
+- Osni presek
+  - enakokraki trikotnik, osnovnica $2r$
+  - enakostranični stožec: $s = 2r$

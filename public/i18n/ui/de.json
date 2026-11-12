@@ -3211,6 +3211,7 @@
   "adm.rep.question": "Frage:",
   "adm.rep.fixed": "Behoben",
   "adm.rep.reopen": "Wieder öffnen",
+  "adm.rep.inReview": "Korrektur wartet auf Prüfung · PR #{n}",
   "adm.rep.none": "Keine Meldungen.",
   "adm.rep.download": "Zum Beheben herunterladen (.md)",
   "adm.rep.showAll": "Auch behobene zeigen",

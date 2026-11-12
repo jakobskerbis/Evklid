@@ -450,6 +450,12 @@ document.addEventListener("click", (e) => {
 // Formula in rešitev v rešenem primeru sta skriti za gumbom, da učenec najprej poskusi sam.
 // Kadar je vsaka črka formule klikljiva s pomenom iz lekcije (:::simboli), okna »Pokaži formulo«
 // ni (j, 1. 11. 2026): formula je razložena že v rešitvi. V PDF-ju ostane.
+// Grafi z drsniki (»drsnik:« v bloku :::risba graf): izris naložimo šele, ko ga lekcija potrebuje. Brez
+// povezave ali ob napaki ostane strežniška slika pri začetnih vrednostih.
+function oziviRisbe(root) {
+  if (root?.querySelector("figure.risba-ziva")) import("./risbe-zive.js").then((m) => m.oziviRisbe(root)).catch(() => {});
+}
+
 function wireFormulas(root) {
   root.querySelectorAll("details.tb-formula").forEach((d) => {
     const fx = [...d.querySelectorAll("[data-fx]")].map((el) => decodeURIComponent(el.dataset.fx.replace(/\./g, "%")).split(":"));
@@ -648,6 +654,7 @@ async function renderLesson(topicId) {
   });
   wireFormulas(box);
   prilagodiSirino(box);
+  oziviRisbe(box);
   wireLessonReport($("#tb-report"), {
     api: ctx.api,
     studentId: ctx.getStudent().id,
@@ -675,6 +682,7 @@ async function renderLesson(topicId) {
     altBody.innerHTML = `<div class="explanation">${R(lesson.alternatives[i].md)}</div>`;
     wireFormulas(altBody);
     prilagodiSirino(altBody);
+    oziviRisbe(altBody);
   };
   $("#tb-alt-btn")?.addEventListener("click", () => {
     const altBox = $("#tb-alt-box");

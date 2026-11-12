@@ -3335,6 +3335,7 @@
   "adm.rep.question": "السؤال:",
   "adm.rep.fixed": "تم الإصلاح",
   "adm.rep.reopen": "إعادة الفتح",
+  "adm.rep.inReview": "الإصلاح بانتظار المراجعة · PR #{n}",
   "adm.rep.none": "لا توجد بلاغات.",
   "adm.rep.download": "تنزيل للإصلاح (.md)",
   "adm.rep.showAll": "إظهار المُصلَحة أيضًا",

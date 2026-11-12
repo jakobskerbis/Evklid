@@ -3269,6 +3269,7 @@
   "adm.rep.question": "Otázka:",
   "adm.rep.fixed": "Opraveno",
   "adm.rep.reopen": "Znovu otevřít",
+  "adm.rep.inReview": "Oprava čeká na kontrolu · PR #{n}",
   "adm.rep.none": "Žádná hlášení.",
   "adm.rep.download": "Stáhnout k opravě (.md)",
   "adm.rep.showAll": "Zobrazit i opravené",

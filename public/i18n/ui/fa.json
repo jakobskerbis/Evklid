@@ -3209,6 +3209,7 @@
   "adm.rep.question": "پرسش:",
   "adm.rep.fixed": "رفع شد",
   "adm.rep.reopen": "بازکردن دوباره",
+  "adm.rep.inReview": "اصلاح در انتظار بررسی · PR #{n}",
   "adm.rep.none": "گزارشی نیست.",
   "adm.rep.download": "دانلود برای رفع (.md)",
   "adm.rep.showAll": "نمایش رفع‌شده‌ها هم",

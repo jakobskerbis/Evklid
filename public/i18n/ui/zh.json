@@ -3185,6 +3185,7 @@
   "adm.rep.question": "问题：",
   "adm.rep.fixed": "已修正",
   "adm.rep.reopen": "重新打开",
+  "adm.rep.inReview": "修复等待审核 · PR #{n}",
   "adm.rep.none": "没有报告。",
   "adm.rep.download": "下载以便修正（.md）",
   "adm.rep.showAll": "也显示已修正的",

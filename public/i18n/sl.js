@@ -524,6 +524,7 @@ export default {
   "adm.rep.question": "Vprašanje:",
   "adm.rep.fixed": "Popravljeno",
   "adm.rep.reopen": "Znova odpri",
+  "adm.rep.inReview": "Popravek čaka na pregled · PR #{n}",
   "adm.rep.none": "Ni prijav.",
   "adm.rep.download": "Prenesi za popravke (.md)",
   "adm.rep.showAll": "Pokaži tudi popravljene",

@@ -3241,6 +3241,7 @@
   "adm.rep.question": "Pitanje:",
   "adm.rep.fixed": "Ispravljeno",
   "adm.rep.reopen": "Ponovo otvori",
+  "adm.rep.inReview": "Ispravka čeka pregled · PR #{n}",
   "adm.rep.none": "Nema prijava.",
   "adm.rep.download": "Preuzmi za ispravke (.md)",
   "adm.rep.showAll": "Prikaži i ispravljene",
