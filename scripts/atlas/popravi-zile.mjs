@@ -590,7 +590,22 @@ export function polna(d, pokrov, prost = null) {
 // osi (konec, ki se s stopnico naslanja na širši odsek ali je delno potopljen v sosedo, ima os zunaj vseh mrež,
 // rob kupole pa bi pogledal skozi sosedo). Vzorci: vrh kupole, središče in oglišča obroča (ter razpolovišča
 // njegovih stranic), pomaknjena za 0,05 r po osi, in točke na ploskvah kupole. Konec ni prost, če je kateri
-// vzorec v drugi mreži (parnost žarka) ali manj kot »rob« · r od njene površine. Mreže: [{ m, mn, mx }] s škatlo.
+// vzorec v drugi mreži (parnost žarka) ali manj kot »rob« · r od njene površine ali če kateri trikotnik kupole
+// seka trikotnik druge mreže (tanek rob sosede med vzorci). Mreže: [{ m, mn, mx }] s škatlo.
+function daljicaSeka(p, q, a, b, c) {
+  const d = v3.sub(q, p), e1 = v3.sub(b, a), e2 = v3.sub(c, a), h = v3.cross(d, e2), det = v3.dot(e1, h);
+  if (Math.abs(det) < 1e-30) return false;
+  const s = v3.sub(p, a), u = v3.dot(s, h) / det;
+  if (u < 0 || u > 1) return false;
+  const k = v3.cross(s, e1), w = v3.dot(d, k) / det;
+  if (w < 0 || u + w > 1) return false;
+  const t = v3.dot(e2, k) / det;
+  return t >= 0 && t <= 1;
+}
+function trikotnikaSekata(T, U) {
+  for (let k = 0; k < 3; k++) if (daljicaSeka(T[k], T[(k + 1) % 3], U[0], U[1], U[2]) || daljicaSeka(U[k], U[(k + 1) % 3], T[0], T[1], T[2])) return true;
+  return false;
+}
 export function konecProst(c, ven, r, obroc, mreze, rob = 0.1) {
   const vrh = v3.add(c, v3.mul(ven, VRH_KUPOLE * r)), dv = v3.mul(ven, 0.05 * r);
   const med = (p, q, k) => v3.add(p, v3.mul(v3.sub(q, p), k));
@@ -618,6 +633,7 @@ export function konecProst(c, ven, r, obroc, mreze, rob = 0.1) {
       blizu = true;
       const A = [P[ia], P[ia + 1], P[ia + 2]], B = [P[ib], P[ib + 1], P[ib + 2]], C = [P[ic], P[ic + 1], P[ic + 2]];
       for (const p of vzorci) if (v3.dist(p, G.najblizjaNaTrikotniku(p, A, B, C)) < eps) return false;
+      for (let i = 0; i < obroc.length; i++) if (trikotnikaSekata([obroc[i], obroc[(i + 1) % obroc.length], vrh], [A, B, C])) return false;
     }
     // brez trikotnikov ob kupoli so vsi vzorci na isti strani sosede: zadoščata točki na osi (vrh in središče)
     for (let i = 0; i < (blizu ? vzorci.length : 2); i++) if (vDrugiMrezi(vzorci[i], [s])) return false;
@@ -1070,13 +1086,14 @@ async function bralnik() {
 export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
   const doc = await (await bralnik()).read(vhod);
   const deli = [];
+  const ostali = []; // deli, ki niso žile (srčne votline, zaklopke): samo kot sosede pri preskusu prostega konca
   for (const node of doc.getRoot().listNodes()) {
     const mesh = node.getMesh();
     if (!mesh) continue;
     const prims = mesh.listPrimitives().filter((p) => p.getMode() === 4 && p.getAttribute("POSITION"));
     if (prims.length !== 1) continue; // več primitivov na del: ne obravnavamo (v današnjih GLB jih ni)
     const extras = node.getExtras() || {};
-    if (nacrt.izberi && !nacrt.izberi(node.getName(), extras)) continue;
+    if (nacrt.izberi && !nacrt.izberi(node.getName(), extras)) { ostali.push({ node, prim: prims[0] }); continue; }
     deli.push({ ime: extras.zid || node.getName(), node, prim: prims[0], m: null, vsi: true });
   }
   const del = (ime) => {
@@ -1151,7 +1168,7 @@ export async function popravi(vhod, izhod, nacrt, { suho = false } = {}) {
       const r = stena(d, st[1], { skrita: d.skrita, izpostavljena: d.izpostavljena });
       if (r) opombe.push(`stena ${st[1]} mm (najmanj ${mm(r.najmanj)} mm), obročev ${r.obrocev}`);
     } else if (jePolna && (odprt(d) || [...G.robovi(d.m).values()].some((l) => l.length === 1))) {
-      const drugi = nacrt.pokrov === "kupola" ? deli.filter((x) => x !== d).map((x) => skatla(x.m || (izvirne.get(x) || izvirne.set(x, G.preberi(x.node, x.prim)).get(x)))) : null;
+      const drugi = nacrt.pokrov === "kupola" ? [...deli, ...ostali].filter((x) => x !== d).map((x) => skatla(x.m || (izvirne.get(x) || izvirne.set(x, G.preberi(x.node, x.prim)).get(x)))) : null;
       const r = polna(d, nacrt.pokrov, drugi && ((c, ven, rr, obroc) => konecProst(c, ven, rr, obroc, drugi)));
       opombe.push(`zaprtih koncev ${r.koncev}${r.ravnih ? ` (ravnih, ker tičijo v drugi žili ali se je dotikajo: ${r.ravnih})` : ""}${r.zasitih ? `, zašitih rež ${r.zasitih}` : ""}`);
       if (process.env.ZILE_KONCI) for (const k of r.konci) log(`   KONEC\t${d.ime}\t${k.c.map((x) => x.toFixed(5)).join(",")}\t${k.r.toFixed(5)}\t${k.raven ? "raven" : "kupola"}`);

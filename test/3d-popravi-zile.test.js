@@ -368,7 +368,16 @@ test("popravek žil: konec ob stopnici, delno potopljen konec in konec tik ob so
   r = primer(soseda(0.008, 0.01));
   assert.equal(r.ravnih, 0);
   assert.ok(!r.zgorajRaven, "prosti konec ni izbočen");
-  // 5. konec v celoti v sosedi (kot doslej)
+  // 5. tanka igla skozi ploskev kupole med vzorci (noben vzorec ni v njej ali blizu nje): odloči presek trikotnikov
+  const igla = cev({ r: 0.00002, L: 0.002, korak: 0.001, n: 6, y0: 0.0195 });
+  polna({ ime: "igla", m: igla }, true);
+  const q = [0.001 * (1 + Math.cos(Math.PI / 3)) / 2 * 0.75, 0, 0.001 * Math.sin(Math.PI / 3) / 2 * 0.75]; // na ploskvi kupole, četrt poti od roba k vrhu
+  for (let i = 0; i < igla.P.length / 3; i++) { igla.P[i * 3] += q[0]; igla.P[i * 3 + 2] += q[2]; }
+  G.zvari(igla);
+  r = primer([{ m: igla, mn: [q[0] - 0.00002, 0.0195, q[2] - 0.00002], mx: [q[0] + 0.00002, 0.0215, q[2] + 0.00002] }]);
+  assert.equal(r.ravnih, 1);
+  assert.ok(r.zgorajRaven, "kupola, ki jo prebada soseda, ne sme ostati");
+  // 6. konec v celoti v sosedi (kot doslej)
   r = primer(soseda(0, 0.015));
   assert.equal(r.ravnih, 1);
   assert.ok(r.zgorajRaven);
