@@ -96,9 +96,14 @@ for (const [kind, browser] of browsers) {
     assert.equal(r.vrednost, "(3)/(4)", "vrednost polja ostane, kot je napisana");
     assert.ok(!r.kalk && !r.klepet, "kalkulator in klepet imata svoj izris");
     assert.ok(r.sirina <= 360);
+    // Vrednost, ki jo nastavi koda (plošča Piši: prebrani zapis, Popravi), osveži predogled brez dogodka »input«.
+    await p.evaluate(() => (document.getElementById("answer").value = "(1)/(2)"));
+    await p.waitForFunction(() => document.querySelector("form.answer-row + .vnos-predogled annotation")?.textContent.includes("\\frac{1}{2}"));
     // Brez zapisa formule predogled izgine.
     await p.fill("#answer", "0,75");
     assert.equal(await p.evaluate(() => document.querySelector("form.answer-row").nextElementSibling.hidden), true);
+    await p.evaluate(() => (document.getElementById("answer").value = "(3)/(4)"));
+    await p.waitForFunction(() => !document.querySelector("form.answer-row + .vnos-predogled").hidden);
     assert.deepEqual(errors, []);
     await ctx.close();
   });
