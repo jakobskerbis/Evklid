@@ -6,7 +6,7 @@ diff -ru a/scripts/atlas/rtx/paket.sh b/scripts/atlas/rtx/paket.sh
  crlf "$TU/NAVODILO.txt" "$CILJ/NAVODILO.txt"
  cp "$TU/rtx.py" "$TU/viri.json" "$ATLAS/peci.py" "$ATLAS/peka.py" "$ATLAS/izvozi-organe.py" "$CILJ/koda/"
 +# atlas v2 (naloga »atlas-v2«): moduli so v podmapi v2/, manifest pozna samo imena brez poti
-+cp "$ATLAS/v2/rtx_v2.py" "$ATLAS/v2/izvozi_kost.py" "$ATLAS/v2/postopek.py" "$ATLAS/v2/kost.py" "$CILJ/koda/"
++cp "$ATLAS/v2/rtx_v2.py" "$ATLAS/v2/izvozi_kost.py" "$ATLAS/v2/postopek.py" "$ATLAS/v2/kost.py" "$ATLAS/v2/podrobnosti_"*.py "$ATLAS/v2/"*-bp3d.json "$CILJ/koda/"
  # vsi lokalni moduli, ki jih koda uvozi, prehodno in tudi znotraj funkcij (»    from srce_geometrija import …«):
  # ponavljamo, dokler se seznam ne neha večati
  while :; do

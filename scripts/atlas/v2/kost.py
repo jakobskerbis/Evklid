@@ -7,12 +7,12 @@ import numpy as np
 C_BL2GL = np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]], float)  # (x, y, z)_glTF = C · (x, y, z)_Blender
 
 # Imena datotek po kosteh (Z-Anatomy ime brez ».l/.r« → slovensko ime brez šumnikov; stran: -leva / -desna).
-# PODROBNOSTI: kosti, za katere postopek.py zna anatomske podrobnosti (okvir in mere so zaenkrat samo za stegnenico).
+# PODROBNOSTI: kosti, za katere postopek.py zna anatomske podrobnosti (podrobnosti_<ime>.py; mere: MERE).
 IMENA = {"Femur": "stegnenica", "Tibia": "golenica", "Fibula": "mecnica", "Patella": "pogacica", "Hip bone": "kolcnica",
          "Humerus": "nadlahtnica", "Radius": "kozeljnica", "Ulna": "podlahtnica", "Scapula": "lopatica", "Clavicle": "kljucnica"}
-PODROBNOSTI = {"Femur"}
+PODROBNOSTI = {"Femur", "Humerus"}
 # Podrobnejši vir mreže namesto Z-Anatomy (bp3d_vir.py; JSON ob tej datoteki, v paketu RTX v koda/):
-VIRI_MREZ = {"Femur.l": "stegnenica-leva-bp3d.json"}
+VIRI_MREZ = {"Femur.l": "stegnenica-leva-bp3d.json", "Humerus.l": "nadlahtnica-leva-bp3d.json"}
 
 
 def razcleni(objekt):
@@ -236,6 +236,58 @@ def mere_stegnenice(V0, F, stran, hrustanec_v=None):
     m["prostornina_cm3"] = prostornina(V0, F) * 1e6
     m["povrsina_cm2"] = povrsina(V0, F) * 1e4
     return m, {"okvir": o, "glavica": (hc, hr), "veliki_obrtec": gt, "os_diafize": osd}
+
+
+def os_diafize(V, o, od=0.25, do=0.75):
+    """Os diafize: premica skozi središča prerezov pri t od–do (okvir o), usmerjena proksimalno."""
+    sred = np.array([V[np.abs(o["t"] - tt) < 0.02].mean(0) for tt in np.linspace(od, do, 11)])
+    _, _, vt = np.linalg.svd(sred - sred.mean(0))
+    return vt[0] * np.sign(vt[0] @ o["os"])
+
+
+def mere_nadlahtnice(V0, F, stran, hrustanec_v=None):
+    """Mere nadlahtnice (mm, stopinje) iz enakomernega vzorca površine, kot mere_stegnenice. Glavica = krogla skozi
+    proksimalni hrustanec (brez oznak: najbolj medialna proksimalna točka); os glavice = od središča krogle proti težišču
+    hrustanca glavice; kot vratu (inklinacija) = kot med osjo glavice in osjo diafize (navzdol), v čelni ravnini kosti."""
+    P, fi = vzorec(V0, F)
+    if hrustanec_v is not None:
+        hrustanec_v = (hrustanec_v[F].sum(1) >= 2)[fi]
+    V = P
+    o = okvir_stegnenice(V, stran)
+    t, os_, med, spr = o["t"], o["os"], o["med"], o["spr"]
+    osd = os_diafize(V, o)
+    m = {}
+    h = V @ osd
+    m["najvecja_dolzina_mm"] = float((h.max() - h.min()) * 1000)
+    prox = t > 0.8
+    if hrustanec_v is not None and (hrustanec_v & prox).sum() > 30:
+        Pg = V[hrustanec_v & prox]
+    else:  # brez oznak: začetek na zgornji medialni strani, nato 4× krogla skozi točke ±1,2 mm od nje (glavica je edina krogla)
+        q = V[prox] @ (med + os_)
+        Pg = V[prox][q > np.percentile(q, 85)]
+        for _ in range(4):
+            hc, hr = krogla(Pg)
+            Pg = V[prox][np.abs(np.linalg.norm(V[prox] - hc, axis=1) - hr) < 1.2e-3]
+    hc, hr = krogla(Pg)
+    m["premer_glavice_mm"] = 2 * hr * 1000
+    a_gl = Pg.mean(0) - hc; a_gl /= np.linalg.norm(a_gl)
+    d = V[t < 0.15] @ med
+    m["sirina_epikondilov_mm"] = float((d.max() - d.min()) * 1000)
+    s = np.abs(t - 0.5) < 0.004
+    m["diafiza_ap_mm"] = float(np.ptp(V[s] @ spr) * 1000)
+    m["diafiza_ml_mm"] = float(np.ptp(V[s] @ med) * 1000)
+    def proj(x, n):
+        x = x - n * (x @ n); return x / np.linalg.norm(x)
+    m["kot_vratu_st"] = float(np.degrees(np.arccos(np.clip(proj(a_gl, spr) @ proj(-osd, spr), -1, 1))))
+    # retroverzija glavice: kot med osjo glavice in medialno smerjo, gledano vzdolž diafize (+ = glavica gleda nazaj)
+    pg = proj(a_gl, osd)
+    m["retroverzija_st"] = float(np.degrees(np.arctan2(-(pg @ spr), pg @ proj(med, osd))))
+    m["prostornina_cm3"] = prostornina(V0, F) * 1e6
+    m["povrsina_cm2"] = povrsina(V0, F) * 1e4
+    return m, {"okvir": o, "glavica": (hc, hr), "os_glavice": a_gl, "os_diafize": osd}
+
+
+MERE = {"Femur": mere_stegnenice, "Humerus": mere_nadlahtnice}
 
 
 def preberi_mere(pot):

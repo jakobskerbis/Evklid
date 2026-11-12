@@ -2,7 +2,7 @@
 #   python3 scripts/atlas/v2/mere.py <mreza.ply|.glb> --kost Femur --stran l [--hrustanec <ply z materiali>] [--json izhod.json]
 # Mreža: trikotniki, oglišča (zvarjena), odprti in nemnogoterni robovi, nedosledna usmerjenost, komponente, predznak
 # prostornine (navznoter obrnjena), izrojeni trikotniki, samopresečišča (Blenderjev BVHTree.overlap, če je bpy na
-# voljo), mere iz kost.mere_stegnenice in primerjava z mere.json (±10 %). Izhod: JSON na stdout (in --json).
+# voljo), mere iz kost.MERE[--kost] (mere_stegnenice, mere_nadlahtnice) in primerjava z mere.json (±10 %). Izhod: JSON na stdout (in --json).
 import json, os, sys
 
 import numpy as np
@@ -71,7 +71,7 @@ def main(a):
         oz = np.zeros(len(Vh), bool); oz[np.unique(Fh[dh["material"] == 1])] = True
         _, i = cKDTree(Vh).query(V)
         hr = oz[i]
-    mer, _ = kost.mere_stegnenice(V, F, stran, hr)
+    mer, _ = kost.MERE[kost_ime](V, F, stran, hr)
     tabela = kost.preberi_mere(os.path.join(KOREN, "scripts", "atlas", "mere.json"))
     out = {"datoteka": os.path.relpath(os.path.abspath(pot), KOREN) if os.path.abspath(pot).startswith(KOREN) else pot,
            "bajti": os.path.getsize(pot), "mreza": m, "mere": {k: round(v, 2) for k, v in mer.items()},

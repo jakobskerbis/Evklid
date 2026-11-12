@@ -1,6 +1,7 @@
 # Atlas v2 na j-jevem prenosniku: naloga »atlas-v2« za rtx.py (paket scripts/atlas/rtx, PR #473/#567).
 # rtx.py jo pokliče, ko je v naloga.txt "organi": ["atlas-v2"] (glej rtx-v2.patch in rtx-naloga.json ob tej datoteki):
 #   {"id": "v2s1", "organi": ["atlas-v2"], "koda": "<različica>", "atlas-v2": {"kosti": ["Femur.l"], "kakovost": "rtx"}}
+# Kosti s podrobnostmi: Femur.l, Humerus.l (postopek.py bere podrobnosti_<ime>.py; obe datoteki morata biti v koda/).
 # Za vsako kost: izvozi_kost.py (vhodi/Startup.blend, že preverjen po SHA-256; za kosti s podrobnejšim virom v
 # VIRI_MREZ ta korak odpade in postopek bere JSON ob tej datoteki) → postopek.py --kakovost rtx --naprava
 # <OPTIX|CUDA> v izhod/atlas-v2-<id>/<kost>/ (GLB telefon/računalnik v obeh videzih, teksture, delo.blend,
@@ -9,7 +10,7 @@ import json, os, re, subprocess, time
 
 KOSTI = re.compile(r"[A-Z][A-Za-z ]{1,40}\.(l|r)")  # imena Z-Anatomy, npr. »Femur.l«, »Hip bone.r«
 TU = os.path.dirname(os.path.abspath(__file__))
-VIRI_MREZ = {"Femur.l": "stegnenica-leva-bp3d.json"}  # isto kot kost.VIRI_MREZ (rtx_v2 ne uvaža numpy)
+VIRI_MREZ = {"Femur.l": "stegnenica-leva-bp3d.json", "Humerus.l": "nadlahtnica-leva-bp3d.json"}  # isto kot kost.VIRI_MREZ (rtx_v2 ne uvaža numpy)
 
 
 def naloga(koren, blender, st, pisi, pisi_stanje, napaka, nastavitve, nid, naprava):

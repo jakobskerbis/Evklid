@@ -1,5 +1,7 @@
 // Atlas v2: posnetki ene kosti iz istih 8 pogledov (+ 2 od blizu) za izhodišče in nov model (Playwright, swiftshader).
-//   node scripts/atlas/v2/predogled.cjs <izhodna mapa> <oznaka>=<pot do .ply|.glb>[:brez-tekstur|:brez-normale|:obrni-g|:senca] …
+//   node scripts/atlas/v2/predogled.cjs [--kost=Humerus] <izhodna mapa> <oznaka>=<pot do .ply|.glb>[:brez-tekstur|:brez-normale|:obrni-g|:senca] …
+// --kost=Humerus: pogledi za nadlahtnico (spredaj, zadaj, medialno, lateralno, zgoraj, spodaj vzdolž osi kosti in 4 od blizu
+// na proksimalnem in distalnem koncu); brez --kost pogledi stegnenice (nespremenjeni).
 // »senca«: bel material z isto normal map (brez barve, AO, hrapavosti) – ali se grebeni berejo kot izbokline.
 // Primer: node scripts/atlas/v2/predogled.cjs /home/claude/atlas-v2-predogled izhodisce=/tmp/femur-telo-hd.ply \
 //           realisticno=/tmp/v2/stegnenica-leva-racunalnik-realisticno.glb ucbenisko=/tmp/v2/stegnenica-leva-racunalnik-ucbenisko.glb
@@ -15,7 +17,9 @@ try {
   ({ chromium } = require("playwright"));
 }
 const KOREN = path.join(__dirname, "..", "..", "..");
-const [izhod, ...modeli] = process.argv.slice(2);
+const zastavice = process.argv.slice(2).filter((a) => a.startsWith("--"));
+const [izhod, ...modeli] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
+const KOST = (zastavice.find((a) => a.startsWith("--kost=")) || "--kost=Femur").slice(7);
 if (!izhod || !modeli.length) {
   console.error("uporaba: predogled.cjs <izhodna mapa> <oznaka>=<pot>[:brez-tekstur] …");
   process.exit(2);
@@ -47,6 +51,25 @@ const POGLEDI = [
   ["9-blizu-proksimalno-zadaj", [-0.35, 0.15, -1], [0.86, 0.075]],
   ["10-blizu-diafiza-zadaj", [-0.15, 0, -1], [0.58, 0.05]],
 ];
+// Nadlahtnica (leva, medialno = −X): os kosti v atlasu je nagnjena (~10° od navpičnice, roka malo odmaknjena), zato
+// sta pogleda zgoraj/spodaj vzdolž osi in kadri od blizu na osi: ["os", t (0 distalno … 1 proksimalno), polovica v m].
+const OS_NADLAHTNICE = [-0.175, 0.984, 0.041];
+const POGLEDI_KOSTI = {
+  Femur: POGLEDI,
+  Humerus: [
+    ["1-spredaj", [0, 0, 1], "cela"],
+    ["2-zadaj", [0, 0, -1], "cela"],
+    ["3-medialno", [-1, -0.18, 0], "cela"],
+    ["4-lateralno", [1, 0.18, 0], "cela"],
+    ["5-zgoraj", [-0.175, 0.984, 0.041 + 0.1], ["os", 0.93, 0.045]],
+    ["6-spodaj", [0.175, -0.984, -0.041 + 0.1], ["os", 0.06, 0.045]],
+    ["7-blizu-proksimalno-spredaj", [0.15, 0.1, 1], ["os", 0.88, 0.05]],
+    ["8-blizu-proksimalno-zadaj", [-0.15, 0.1, -1], ["os", 0.88, 0.05]],
+    ["9-blizu-distalno-spredaj", [-0.1, 0.15, 1], ["os", 0.09, 0.045]],
+    ["10-blizu-distalno-zadaj", [0.1, 0.15, -1], ["os", 0.09, 0.045]],
+  ],
+}[KOST];
+if (!POGLEDI_KOSTI) { console.error(`neznana kost ${KOST}`); process.exit(2); }
 (async () => {
   await new Promise((r) => streznik.listen(0, r));
   const port = streznik.address().port;
@@ -58,7 +81,7 @@ const POGLEDI = [
     const [pot, nacin] = ostalo.split(":");
     const kljuc = `/model/${oznaka}${path.extname(pot)}`;
     datoteke.set(kljuc, path.resolve(pot));
-    for (const [ime, smer, kader] of POGLEDI) {
+    for (const [ime, smer, kader] of POGLEDI_KOSTI) {
       const celo = kader === "cela";
       const w = celo ? 520 : 760, h = celo ? 1000 : 760;
       const page = await browser.newPage({ viewport: { width: w, height: h } });
@@ -73,7 +96,11 @@ const POGLEDI = [
       if (celo) pol = s[1] * 0.53;
       else if (kader === "konec-zg") { sredisce = [c[0], c[1] + s[1] * 0.4, c[2]]; pol = 0.075; }
       else if (kader === "konec-sp") { sredisce = [c[0], c[1] - s[1] * 0.42, c[2]]; pol = 0.065; }
-      else { sredisce = [c[0], c[1] - s[1] / 2 + s[1] * kader[0], c[2] - s[2] * 0.1]; pol = kader[1]; }
+      else if (kader[0] === "os") {  // točka na osi kosti pri t (dolžina ≈ višina škatle / cos nagiba)
+        const L = s[1] / OS_NADLAHTNICE[1];
+        sredisce = [0, 1, 2].map((k) => c[k] + OS_NADLAHTNICE[k] * L * (kader[1] - 0.5));
+        pol = kader[2];
+      } else { sredisce = [c[0], c[1] - s[1] / 2 + s[1] * kader[0], c[2] - s[2] * 0.1]; pol = kader[1]; }
       const url = await page.evaluate(([d, sr, p]) => window.posnemi(d, sr, p), [smer, sredisce, pol]);
       const dat = path.join(izhod, `${oznaka}-${ime}.png`);
       fs.writeFileSync(dat, Buffer.from(url.split(",")[1], "base64"));
@@ -84,5 +111,5 @@ const POGLEDI = [
   }
   await browser.close();
   streznik.close();
-  fs.writeFileSync(path.join(izhod, "posnetki.json"), JSON.stringify({ pogledi: POGLEDI.map((p) => p[0]), izid }, null, 1));
+  fs.writeFileSync(path.join(izhod, "posnetki.json"), JSON.stringify({ ...(KOST !== "Femur" ? { kost: KOST } : {}), pogledi: POGLEDI_KOSTI.map((p) => p[0]), izid }, null, 1));
 })().catch((e) => { console.error(e); process.exit(1); });
