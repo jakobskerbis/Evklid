@@ -39,20 +39,22 @@
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
-    "rob": 0.0009
+    "rob": 0.0014,
+    "povecaj": 1.004
    },
+   "rezSum": 0.5,
    "rezCelice": [
     {
      "mera": 0.0013,
-     "moc": 0.55,
-     "stena": "#c0745a",
+     "moc": 0.3,
+     "stena": "#b0644c",
      "sirina": 0.1,
-     "jedroMoc": 0.65,
-     "jedro": "#4c1510",
-     "jedroR": 0.22,
-     "ton": 0.2,
+     "jedroMoc": 0.3,
+     "jedro": "#5c1c14",
+     "jedroR": 0.2,
+     "ton": 0.08,
      "zvitost": 0.4,
-     "vdolbina": 0.3
+     "vdolbina": 0.15
     }
    ]
   },
@@ -95,7 +97,7 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#8fa83a",
-   "rez": "#9aa052",
+   "rez": "#b9bf78",
    "sijajBarva": "#eaffb0",
    "rob": 0.15,
    "robBarva": "#d0f080",
@@ -106,9 +108,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#2a2c10",
+    "luknjaBarva": "#5c6124",
     "rob": 0.0003,
-    "robBarva": "#9aa052"
+    "robBarva": "#b9bf78",
+    "stena": 0.0018
    }
   },
   "portalna": {
@@ -120,7 +123,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#64449c",
-   "rez": "#8f66cc",
+   "rez": "#d3c6e4",
    "sijajBarva": "#c8b0ff",
    "rob": 0.18,
    "robBarva": "#a080ff",
@@ -132,9 +135,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#24113f",
-    "rob": 0.0004,
-    "robBarva": "#8f66cc"
+    "luknjaBarva": "#55407a",
+    "rob": 0.0008,
+    "robBarva": "#d3c6e4",
+    "stena": 0.0018
    }
   },
   "arterija": {
@@ -146,7 +150,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#c4473c",
+   "rez": "#eab0a6",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -158,9 +162,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#330909",
-    "rob": 0.0003,
-    "robBarva": "#c4473c"
+    "luknjaBarva": "#7a2a26",
+    "rob": 0.0005,
+    "robBarva": "#eab0a6",
+    "stena": 0.0018
    }
   },
   "vena": {
@@ -172,7 +177,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#3c58a2",
-   "rez": "#4f7ad2",
+   "rez": "#bdc8e6",
    "sijajBarva": "#9db8ff",
    "rob": 0.18,
    "robBarva": "#6f93ff",
@@ -184,9 +189,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#0f1a40",
-    "rob": 0.00025,
-    "robBarva": "#4f7ad2"
+    "luknjaBarva": "#3c4a80",
+    "rob": 0.0005,
+    "robBarva": "#bdc8e6",
+    "stena": 0.0018
    }
   }
  },
@@ -354,7 +360,8 @@
     "jetrne-vene"
    ],
    "skrijDele": [
-    "zolcevod"
+    "zolcevod",
+    "jetrna-arterija"
    ],
    "tkiva": {
     "jetra": {

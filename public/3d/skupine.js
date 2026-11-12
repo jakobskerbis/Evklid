@@ -57,7 +57,7 @@ export const SKUPINE = {
     { id: "reznji", deli: ["desni-zgornji", "desni-srednji", "desni-spodnji", "levi-zgornji", "levi-spodnji"], sinonimi: ["pljučni režnji", "lobusi"],
       opisOs: "Pljuča so razdeljena na režnje: desna na tri, leva na dva.",
       opis: "Desna pljuča imajo zgornji, srednji in spodnji reženj (poševna in vodoravna špranja), leva zgornji in spodnji; na levi je prostor za srce.",
-      opisStudij: "Vsak reženj ima segmente s svojim segmentnim bronhom in vejo pljučne arterije (desno 10, levo 8–10); segment je kirurška enota." },
+      opisStudij: "Vsak reženj ima segmente s svojim segmentnim bronhijem in vejo pljučne arterije (desno 10, levo 8–10); segment je kirurška enota." },
     { id: "dihalne-poti", deli: ["sapnik", "bronhiji"], sinonimi: ["dihalne cevi", "sapnik in bronhiji"],
       opisOs: "Cevi, po katerih zrak potuje v pljuča.",
       opis: "Sapnik se v višini T4–T5 razcepi v levi in desni glavni bronhij, ta pa naprej v vedno manjše bronhije.",
@@ -65,7 +65,7 @@ export const SKUPINE = {
     { id: "pljucne-zile", deli: ["pljucne-arterije", "pljucne-vene"], sinonimi: ["žile pljuč", "krvne žile pljuč"],
       opisOs: "Žile, ki pripeljejo kri v pljuča in jo odpeljejo nazaj v srce.",
       opis: "Pljučne arterije nosijo kri z malo kisika iz desnega prekata, pljučne vene s kisikom bogato kri v levi preddvor.",
-      opisStudij: "Nizkotlačni obtok (≈ 25/10 mmHg); arterije sledijo bronhom, vene tečejo med segmenti. Pri pomanjkanju kisika se pljučne arterije skrčijo (Euler-Liljestrand)." },
+      opisStudij: "Nizkotlačni obtok (≈ 25/10 mmHg); arterije sledijo bronhijem, vene tečejo med segmenti. Pri pomanjkanju kisika se pljučne arterije skrčijo (Euler-Liljestrand)." },
   ],
   "organ-ledvica": [
     { id: "ledvicne-zile", deli: ["ledvicna-arterija", "ledvicna-vena"], sinonimi: ["žile ledvice", "krvne žile ledvice"],

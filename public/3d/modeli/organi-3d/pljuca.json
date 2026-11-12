@@ -40,7 +40,8 @@
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
-    "rob": 0.0004
+    "rob": 0.0004,
+    "skleni": 0.07
    },
    "rezCelice": [
     {
@@ -57,10 +58,10 @@
     },
     {
      "mera": 0.013,
-     "moc": 0.45,
-     "stena": "#ecc9c1",
+     "moc": 0.16,
+     "stena": "#e3b5ad",
      "sirina": 0.03,
-     "ton": 0.14,
+     "ton": 0.12,
      "zvitost": 0.7
     }
    ]
@@ -74,14 +75,23 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#dccbb0",
+   "rez": "#eadcc6",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
    "relief": 0.2,
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.5
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 2,
+    "luknjaBarva": "#7d5a52",
+    "rob": 0.0008,
+    "robBarva": "#eadcc6",
+    "stena": 0.0018
+   }
   },
   "pljucna-arterija": {
    "hrap": 0.36,
@@ -92,7 +102,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#46589f",
-   "rez": "#6677b8",
+   "rez": "#c3c9e6",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
@@ -104,9 +114,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#161a3d",
-    "rob": 0.0003,
-    "robBarva": "#6677b8"
+    "luknjaBarva": "#454b80",
+    "rob": 0.0006,
+    "robBarva": "#c3c9e6",
+    "stena": 0.0018
    }
   },
   "pljucna-vena": {
@@ -118,7 +129,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#c4473c",
+   "rez": "#eab0a6",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -130,9 +141,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#330909",
-    "rob": 0.0003,
-    "robBarva": "#c4473c"
+    "luknjaBarva": "#7a2a26",
+    "rob": 0.0005,
+    "robBarva": "#eab0a6",
+    "stena": 0.0018
    }
   },
   "dihalna-v": {
@@ -156,9 +168,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#33221f",
-    "rob": 0.0003,
-    "robBarva": "#eadcc6"
+    "luknjaBarva": "#7d5a52",
+    "rob": 0.0008,
+    "robBarva": "#eadcc6",
+    "stena": 0.0018
    }
   },
   "pljucna-arterija-v": {
@@ -170,7 +183,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#46589f",
-   "rez": "#6677b8",
+   "rez": "#c3c9e6",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
@@ -182,9 +195,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#161a3d",
-    "rob": 0.0003,
-    "robBarva": "#6677b8"
+    "luknjaBarva": "#454b80",
+    "rob": 0.0006,
+    "robBarva": "#c3c9e6",
+    "stena": 0.0018
    }
   },
   "pljucna-vena-v": {
@@ -196,7 +210,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#c4473c",
+   "rez": "#eab0a6",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -208,9 +222,10 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 2,
-    "luknjaBarva": "#330909",
-    "rob": 0.0003,
-    "robBarva": "#c4473c"
+    "luknjaBarva": "#7a2a26",
+    "rob": 0.0005,
+    "robBarva": "#eab0a6",
+    "stena": 0.0018
    }
   }
  },
@@ -236,7 +251,7 @@
    "barva": "#ffc06a",
    "opisOs": "Srednji del desnih pljuč. Ima ga samo desna stran.",
    "opis": "Najmanjši reženj, ki ga imajo samo desna pljuča; leži spredaj ob srcu.",
-   "opisStudij": "Segmenta laterale in mediale (S4, S5); leži ob srcu, zato njegova pljučnica zabriše desni rob srca na rentgenski sliki. Ozek bronhus srednjega režnja je nagnjen k zapori (sindrom srednjega režnja).",
+   "opisStudij": "Segmenta laterale in mediale (S4, S5); leži ob srcu, zato njegova pljučnica zabriše desni rob srca na rentgenski sliki. Ozek bronhij srednjega režnja je nagnjen k zapori (sindrom srednjega režnja).",
    "vozlisca": [
     "Middle lobe of right lung"
    ]
@@ -249,7 +264,7 @@
    "barva": "#f472b6",
    "opisOs": "Spodnji del desnih pljuč, leži na preponi.",
    "opis": "Velik reženj zadaj in spodaj, ki leži na trebušni preponi.",
-   "opisStudij": "Segmenti S6 (superius) in bazalni S7–S10; od zgornjega in srednjega ga loči poševna špranja. Desni glavni bronh je bolj navpičen in širši, zato vdihnjeni tujki najpogosteje zaidejo sem.",
+   "opisStudij": "Segmenti S6 (superius) in bazalni S7–S10; od zgornjega in srednjega ga loči poševna špranja. Desni glavni bronhij je bolj navpičen in širši, zato vdihnjeni tujki najpogosteje zaidejo sem.",
    "vozlisca": [
     "Inferior lobe of right lung"
    ]
@@ -407,7 +422,7 @@
      0,
      -1
     ],
-    "d": 0
+    "d": -0.024
    }
   ]
  },

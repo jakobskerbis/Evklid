@@ -22,10 +22,16 @@ const out = [];
 for (const node of doc.getRoot().listNodes()) {
   const tkivo = node.getExtras()?.tkivo;
   if (!node.getMesh() || (hoce && !hoce.has(tkivo))) continue;
-  const m = preberi(node, node.getMesh().listPrimitives()[0]);
-  const r = zankePreseka(m.P, m.F, n, d, 1e-6);
-  const zanke = r.zanke.filter((z) => Math.abs(ploscina(z)) > 1e-7);
-  if (zanke.length) out.push({ ime: node.getName(), tkivo, zanke, O: r.O, U: r.U, V: r.V });
+  // vsi primitivi vozlišča (vsak zase: zanka, ki bi tekla čez mejo primitivov, odpade)
+  const zanke = [];
+  let os = null;
+  for (const prim of node.getMesh().listPrimitives()) {
+    const m = preberi(node, prim);
+    const r = zankePreseka(m.P, m.F, n, d, 1e-6, j.tkiva?.[tkivo]?.rezPresek?.skleni || 0);
+    os = r;
+    zanke.push(...r.zanke.filter((z) => Math.abs(ploscina(z)) > 1e-7));
+  }
+  if (zanke.length) out.push({ ime: node.getName(), tkivo, zanke, O: os.O, U: os.U, V: os.V });
 }
 fs.writeFileSync(izhod, JSON.stringify(out));
 console.log(`${organ}: ${out.length} vozlišč z zankami → ${izhod}`);

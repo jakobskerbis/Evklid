@@ -3542,7 +3542,7 @@ export default {
   "a3.cutPos": "Lega prereza",
   "a3.xray": "Rentgen",
   "a3.xrayHint": "Vse razen izbrane strukture postane prosojno.",
-  "a3.detail": "Podrobnost",
+  "a3.detail": "Raven razlage",
   "a3.levelOS": "OŠ",
   "a3.levelSS": "SŠ",
   "a3.levelAll": "Vse",

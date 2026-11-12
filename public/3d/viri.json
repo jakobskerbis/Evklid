@@ -67,7 +67,7 @@
     },
     {
       "id": "rodero-2021-povprecno-srce",
-      "ime": "Povprečno srce 20 zdravih odraslih (statistični model oblike iz CT)",
+      "ime": "Povprečno srce 20 zdravih odraslih (povprečna oblika iz CT)",
       "avtor": "Cristobal Rodero, Marina Strocchi, Maciej Marciniak et al. (King's College London): »Linking statistical shape models and simulated function in the healthy adult human heart«, PLOS Computational Biology 17(4): e1008851, 2021",
       "opis": "Stene srca v Organih v 3D (oba prekata s pretinom, oba preddvora, koren aorte in pljučnega debla) s pravimi debelinami in smerjo mišičnih vlaken; iz nje sta pokrov reza (vlakna, maščoba) in prava oblika srca. Zaklopke, tetive, papilarne mišice in žile so iz Z-Anatomy in naše geometrije, poravnane na te stene.",
       "url": "https://doi.org/10.5281/zenodo.4593739",
@@ -95,7 +95,7 @@
       "id": "evklid-telo",
       "ime": "Evklid: prirejeni modeli telesa",
       "avtor": "Evklid",
-      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Sami smo oblikovali ledvični meh s čašicami (Organi v 3D: ledvica), narisali rezno ploskev malih možganov z belo možganovino in skorjo (Organi v 3D: možgani), veje portalne vene in jetrnih ven v jetrih (Organi v 3D: jetra) ter lističe zaklopk s tetivami, papilarne mišice, trabekule ter velike in venčne žile srca kot cevi s steno (Organi v 3D: srce). Prirejene modele delimo pod isto licenco.",
+      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Sami smo oblikovali ledvični meh s čašicami (Organi v 3D: ledvica), s programom izrisali shematsko rezno ploskev malih možganov po obrisih režnjičev (Organi v 3D: možgani), veje portalne vene in jetrnih ven v jetrih (Organi v 3D: jetra) ter lističe zaklopk s tetivami, papilarne mišice, trabekule ter velike in venčne žile srca kot cevi s steno (Organi v 3D: srce). Prirejene modele delimo pod isto licenco.",
       "url": "https://evklid.app/3d",
       "licenca": "CC BY-SA 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -120,7 +120,7 @@
       "id": "evklid-srce",
       "ime": "Evklid: dopolnitve srca",
       "avtor": "Evklid",
-      "opis": "Srce je iz Z-Anatomy (najpopolnejši odprti vir: vse štiri votline, zaklopke s tetivami, venčne žile in velike žile; HuBMAP HRA srce nima velikih žil in venčnih žil, BodyParts3D je osnova Z-Anatomy, TotalSegmentator iz CT nima zaklopk in tetiv). Dodali smo, česar Z-Anatomy nima: sprednja lističa mitralne in trikuspidalne zaklopke s tetivami, sprednjo-stransko papilarno mišico levega prekata, septomarginalno in mesnate trabekule; teksture so pečene v Blenderju. Izpeljani model je pod CC BY-SA 4.0.",
+      "opis": "Srce je iz Z-Anatomy (najpopolnejši odprti vir: vse štiri votline, zaklopke s tetivami, venčne žile in velike žile; HuBMAP HRA srce nima velikih žil in venčnih žil, BodyParts3D je osnova Z-Anatomy, TotalSegmentator iz CT nima zaklopk in tetiv). Dodali smo, česar Z-Anatomy nima: sprednja lističa mitralne in trikuspidalne zaklopke s tetivami, sprednjo-stransko papilarno mišico levega prekata, septomarginalno in mesnate trabekule; teksture so pečene v Blenderju. Predelava je pod CC BY-SA 4.0.",
       "licenca": "CC BY-SA 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "datoteke": [
