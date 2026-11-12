@@ -4,7 +4,7 @@
 //
 // Vrste vprašanj (content/lessons/README.md, »Preveri se«):
 //   izbira (brez polja type): { q, options, correct, why, optionWhy }
-//   število:  { type: "stevilo", q, answer, value, tol, unit, wrong: [{ answer, value, why }], why }
+//   število:  { type: "stevilo", q, answer, value, tol, unit, wrong: [{ answer, value, tol, why }], why }
 //   razvrsti: { type: "razvrsti", q, items (pravilni vrstni red), shown (premešan vrstni red indeksov), why }
 
 const MINUS = /[−‐-―﹣－]/g;
@@ -20,12 +20,15 @@ function token(s) {
     .replace(SPACES, " ")
     .trim()
     // »x = 2,5« ali »pH = 2,30«: oznaka pred enačajem se ne šteje.
-    .replace(/^[^\d+\-.,=]{0,12}=\s*/, "");
+    .replace(/^[^\d+\-.,=]{0,12}=\s*/, "")
+    // »10^-4« (brez množitelja) je 1·10^-4.
+    .replace(/^([+-]?)\s*10\s*\^/, "$11·10^");
   const m = NUM.exec(t);
   if (!m) return null;
   const digits = m[2].replace(/ /g, "").replace(",", ".");
   const exp = m[3] ? Number(m[3]) : 0;
-  const value = Number(`${m[1]}${digits}`) * 10 ** exp;
+  const n = Number(`${m[1]}${digits}`);
+  const value = exp < 0 ? n / 10 ** -exp : n * 10 ** exp; // deljenje: 1·10^-4 je točno 0,0001
   if (!Number.isFinite(value)) return null;
   const decimals = (/[.,](\d*)/.exec(m[2]) || [, ""])[1].length;
   const rest = t.slice(m[0].length).trim();
@@ -71,7 +74,8 @@ export function checkNumber(c, input) {
   const x = parseNum(input);
   if (x === null) return { empty: true, ok: false, wrong: -1 };
   if (near(x, c.value, c.tol)) return { ok: true, wrong: -1 };
-  return { ok: false, wrong: (c.wrong || []).findIndex((w) => near(x, w.value, c.tol)) };
+  // Tipična napačna vrednost »~« ima svojo natančnost (izpisane decimalke), ne tolerance pravilnega odgovora.
+  return { ok: false, wrong: (c.wrong || []).findIndex((w) => near(x, w.value, w.tol ?? c.tol)) };
 }
 
 /** Vrstni red učenca (indeksi elementov v pravilnem vrstnem redu) je pravilen. */

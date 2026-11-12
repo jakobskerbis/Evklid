@@ -172,7 +172,7 @@ function finishCheck(c) {
       .map((w) => {
         const [v, ...why] = w.split("|");
         const x = parseAnswerLine(v);
-        return x ? { answer: x.answer, value: x.value, why: why.join("|").trim() } : null;
+        return x ? { answer: x.answer, value: x.value, tol: x.tol, why: why.join("|").trim() } : null;
       })
       .filter(Boolean);
     return { type: "stevilo", q: c.qText, answer: a.answer, value: a.value, tol: a.tol, unit: a.unit, wrong, why: c.why };
