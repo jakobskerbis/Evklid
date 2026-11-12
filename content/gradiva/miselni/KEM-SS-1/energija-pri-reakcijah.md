@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sistem in okolica
+  - sistem so snovi, ki reagirajo
+  - energija prehaja kot toplota
+- Eksotermna reakcija
+  - odda toploto, okolica se segreje
+  - gorenje vodika v raketi
+- Endotermna reakcija
+  - sprejme toploto, okolica se ohladi
+  - hladilna obloga, elektroliza vode
+- Reakcijska entalpija
+  - $\Delta H = H(\text{produkti}) - H(\text{reaktanti})$
+  - ekso $\Delta H < 0$, endo $\Delta H > 0$
+  - napaka: sprošča se, torej plus
+- Termokemijska enačba
+  - $\Delta H$ velja za koeficiente
+  - $Q = \dfrac{n}{\nu} \cdot \lvert \Delta H \rvert$
+  - obratna reakcija: nasprotni predznak
+- Vezi
+  - trganje porabi energijo
+  - nastanek vezi energijo sprosti
+- Aktivacijska energija
+  - potrebna za začetek reakcije
+  - ni isto kot $\Delta H$

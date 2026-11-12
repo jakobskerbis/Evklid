@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Funkcionalna skupina
+  - halogenoalkan: X namesto H
+  - alkohol: skupina $\mathrm{{-}OH}$
+- Imena
+  - predpona kloro-, bromo-: 2-klorobutan
+  - končnica -ol: propan-2-ol
+- Sile med molekulami
+  - vez C–X polarna: dipol-dipol
+  - alkohol: vodikove vezi, višje vrelišče
+  - napaka: večja masa ne pomeni vedno višjega vrelišča
+- Obnašanje v vodi
+  - kratki alkoholi se mešajo z vodo
+  - halogenoalkani v vodi netopni
+  - alkohol ni baza
+- Primarni, sekundarni, terciarni
+  - na koliko atomov C je vezan ogljik s skupino
+- Reakcije halogenoalkanov
+  - NaOH v vodi: alkohol (substitucija)
+  - KOH v etanolu, toplota: alken (eliminacija)
+- Reakcije alkoholov
+  - gorenje: $\mathrm{C_2H_5OH + 3\,O_2 \rightarrow 2\,CO_2 + 3\,H_2O}$
+  - konc. $\mathrm{H_2SO_4}$: alken; HBr: bromoalkan
+- Oksidacija z dikromatom
+  - primarni: aldehid, sekundarni: keton
+  - terciarni se ne oksidira

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vse čez množino
+  - kemija šteje delce, ne gramov in ne litrov
+  - $n = \dfrac{N}{N_\mathrm{A}}$
+- Masa v mole
+  - $n = \dfrac{m}{M}$
+  - masni delež ni delež atomov
+- Plini
+  - $pV = nRT$, $T$ v kelvinih
+  - enaka $p$, $V$, $T$: enako molekul
+- Raztopine
+  - $n = c \cdot V$, $V$ v litrih
+  - $c$ v mol/L
+- Koeficienti
+  - razmerje množin, ne mas
+  - $\mathrm{Zn} + 2\,\mathrm{HCl}$: kisline dvakrat več molov
+- Omejitveni reaktant
+  - množino deli s koeficientom
+  - najmanjši količnik se porabi prvi
+  - produkt računaj samo iz njega
+- Nazaj v iskano enoto
+  - $m = n \cdot M$ ali $V = \dfrac{nRT}{p}$
+  - preveri smisel rezultata
