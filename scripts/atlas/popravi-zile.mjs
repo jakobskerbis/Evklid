@@ -785,7 +785,7 @@ export function stena(d, tMm, { senca = 1, skrita = null, izpostavljena = null }
 // odsevu) in ob dograjeni steni (m.jedro iz dopolni) oglišča zgladimo po Taubinu (λ/μ: brez krčenja cevi). Deli se
 // gladijo skupaj (oglišča stika so ista v obeh delih), učinek zamre z razdaljo od jedra; drugi odprti konci ostanejo
 // na mestu. Nato vse normale zglajenih delov na novo iz geometrije. Vrne število premaknjenih oglišč.
-function zgladiOkoli(deli, { krogov = +(process.env.EVK_K || 24), lambda = 0.5, mu = +(process.env.EVK_MU || -0.52) } = {}) {
+function zgladiOkoli(deli, { krogov = 24, lambda = 0.5, mu = -0.52 } = {}) {
   const jedro = [];
   const naKoncih = new Map(); // položaj oglišča na odprtem koncu → število delov, ki ga imajo na koncu
   const zanke = deli.map((d) => G.zanke(d.m));
@@ -795,7 +795,7 @@ function zgladiOkoli(deli, { krogov = +(process.env.EVK_K || 24), lambda = 0.5, 
     if (d.m.jedro) jedro.push(...d.m.jedro);
     for (const z of zanke[i]) {
       const o = G.opisZanke(d.m, z);
-      for (const e of z) if (stik(d.m.W[e.w])) jedro.push({ p: d.m.W[e.w], D: +(process.env.EVK_D || 1.2) * o.r });
+      for (const e of z) if (stik(d.m.W[e.w])) jedro.push({ p: d.m.W[e.w], D: 1.2 * o.r });
     }
   });
   if (!jedro.length) return 0;
