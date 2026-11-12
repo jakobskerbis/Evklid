@@ -729,7 +729,6 @@ async function renderLesson(topicId) {
         why.hidden = false;
         why.className = `tb-why fb ${ok ? "ok" : "bad"}`;
         const wrongWhy = c.optionWhy?.[o];
-        // V <div>: .fb je flex, besedilo in odstavki razlage bi sicer stali v stolpcih.
         why.innerHTML = `<div>${ok
           ? `Pravilno! ${c.why ? R(c.why) : ""}`
           : wrongWhy
