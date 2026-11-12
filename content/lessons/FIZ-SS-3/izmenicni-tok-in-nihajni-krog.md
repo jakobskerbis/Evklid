@@ -260,7 +260,7 @@ U_0 | temenska napetost | U_0 = \sqrt{2}\, U_{\mathrm{ef}} | V | največja vredn
 \omega | krožna frekvenca | \omega = 2\pi\nu | s^{-1}
 \nu | frekvenca | \nu = \frac{1}{t_0} | Hz | število nihajev v sekundi
 t | čas | | s
-t_0 | nihajni čas | t_0 = 2\pi\sqrt{LC} | s | trajanje enega nihaja
+t_0 | nihajni čas | t_0 = \frac{1}{\nu} | s | trajanje enega nihaja; v nihajnem krogu $2\pi\sqrt{LC}$
 I | trenutni tok | I = I_0 \sin(\omega t) | A
 I_0 | temenski tok | I_0 = \frac{U_0}{R} | A
 R | upor | R = \frac{U_{\mathrm{ef}}}{I_{\mathrm{ef}}} | Ω

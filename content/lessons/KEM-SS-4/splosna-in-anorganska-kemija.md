@@ -87,7 +87,7 @@ To je odgovor na začetno uganko: voda iz pipe je na poti skozi tla raztopila ap
 :::premisli
 Kaj se po tem načelu zgodi s kapljo, ko iz nje uide $\mathrm{CO_2}$? Kaj bi videl na stropu jame po mnogo letih?
 ---
-Ravnotežje se premakne v levo, zato iz raztopine izloči trden $\mathrm{CaCO_3}$. Tanka plast se nalaga kapljo za kapljo in iz nje po tisočletjih zraste kapnik.
+Ravnotežje se premakne v levo, zato se iz raztopine izloči trden $\mathrm{CaCO_3}$. Tanka plast se nalaga kapljo za kapljo in iz nje po tisočletjih zraste kapnik.
 :::
 
 V simulaciji spodaj (Zbirka simulacij: splošna kemija, zavihek Ravnotežje) povečaj koncentracijo enega izmed reaktantov. Opazuj, da se po kratkem času vzpostavi novo ravnotežje z več produkta.

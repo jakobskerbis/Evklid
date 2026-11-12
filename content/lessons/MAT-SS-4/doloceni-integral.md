@@ -25,7 +25,7 @@ Interval razdelimo na $n$ enako širokih delov, vsak je širok $\Delta x = \frac
 | $10$ | $0{,}285$ | $0{,}385$ | $0{,}1$ |
 | $100$ | $0{,}32835$ | $0{,}33835$ | $0{,}01$ |
 
-Obe vsoti se stiskata k istemu številu, $\frac{1}{3}$. Lik pod parabolo zavzema natanko tretjino kvadrata. To je odkril že Arhimed, več kot dva tisoč let pred iznajdbo odvoda.
+Obe vsoti se stiskata k istemu številu, $\frac{1}{3}$. Lik pod parabolo zavzema natanko tretjino kvadrata. To je odkril že Arhimed, skoraj dva tisoč let pred iznajdbo odvoda.
 
 :::premisli
 Razlika med zgornjo in spodnjo vsoto je bila $0{,}25$; $0{,}1$ in $0{,}01$. Kolikšna bo pri $n = 1000$? Zakaj se tako lepo zmanjšuje?

@@ -56,7 +56,7 @@ Slika v besedah, pogled od zgoraj na navpično žico, tok teče proti tebi (iz z
 
 Puščice tečejo v nasprotni smeri urnega kazalca. Če tok teče v zaslon, se obrnejo.
 
-**4. Kolikšno je polje ravne žice.** Meritve pokažejo dvoje. Polje je premo sorazmerno s tokom $I$ in obratno sorazmerno z razdaljo $r$ od žice:
+**4. Kolikšno je polje ravne žice.** Žici, po kateri teče tok, rečemo tudi **tokovodnik** ali vodnik s tokom. Meritve pokažejo dvoje. Polje je premo sorazmerno s tokom $I$ in obratno sorazmerno z razdaljo $r$ od žice:
 
 $$B = \frac{\mu_0\, I}{2\pi\, r}$$
 
@@ -103,7 +103,7 @@ $B = \dfrac{\mu_0\, I}{2\pi\, r}$
 
 V poenostavljenem modelu je v plošči za ugašanje varnostnih nalepk tuljava z $200$ ovoji, dolga $5\,\mathrm{cm}$. Ob pritisku gumba steče tok $4\,\mathrm{A}$. Kolikšna je gostota polja v tuljavi? Kolikokrat je večja od polja magneta na hladilniku ($5\,\mathrm{mT}$)?
 
-**Podatki:** $N = 200$, $l = 5\,\mathrm{cm}$, $I = 4\,\mathrm{A}$, $B_\mathrm{hl} = 5\,\mathrm{mT}$
+**Podatki:** $N = 200$, $l = 5\,\mathrm{cm}$, $I = 4\,\mathrm{A}$, $B_\mathrm{hl} = 5\,\mathrm{mT}$, $\mu_0 = 4\pi\cdot10^{-7}\,\mathrm{V\,s/(A\,m)}$
 **Iščemo:** $B$ v tuljavi in razmerje $B / B_\mathrm{hl}$
 
 :::formula
@@ -122,7 +122,7 @@ $B = \dfrac{\mu_0\, N\, I}{l}$
 
 Magnetni trak starejše bančne kartice se lahko izbriše v polju okoli $30\,\mathrm{mT}$. Kupec pri plačilu položi denarnico na pult, pod katerim je kabel. Kolikšen tok bi moral teči po ravni žici, da bi bilo $1\,\mathrm{cm}$ od nje polje $30\,\mathrm{mT}$? Je to nevarno, če po hišnih kablih teče največ okoli $16\,\mathrm{A}$?
 
-**Podatki:** $B = 30\,\mathrm{mT}$, $r = 1\,\mathrm{cm}$, največji tok v hišni napeljavi $16\,\mathrm{A}$
+**Podatki:** $B = 30\,\mathrm{mT}$, $r = 1\,\mathrm{cm}$, $\mu_0 = 4\pi\cdot10^{-7}\,\mathrm{V\,s/(A\,m)}$, največji tok v hišni napeljavi $16\,\mathrm{A}$
 **Iščemo:** potrebni tok $I$
 
 :::formula
@@ -141,7 +141,7 @@ Iz $B = \dfrac{\mu_0\, I}{2\pi\, r}$ izrazimo $I = \dfrac{2\pi\, r\, B}{\mu_0}$.
 
 V trgovini z opremo za pohodnike preizkušaš kompas za $12\,\mathrm{€}$. Na kolikšni razdalji od ravne žice s tokom $10\,\mathrm{A}$ je polje žice enako Zemljinemu, $50\,\mu\mathrm{T}$?
 
-**Podatki:** $I = 10\,\mathrm{A}$, $B = 50\,\mu\mathrm{T}$, cena kompasa $12\,\mathrm{€}$ (za račun ni potrebna)
+**Podatki:** $I = 10\,\mathrm{A}$, $B = 50\,\mu\mathrm{T}$, $\mu_0 = 4\pi\cdot10^{-7}\,\mathrm{V\,s/(A\,m)}$, cena kompasa $12\,\mathrm{€}$ (za račun ni potrebna)
 **Iščemo:** razdaljo $r$
 
 :::formula
@@ -157,7 +157,7 @@ $r = \dfrac{\mu_0\, I}{2\pi\, B}$
 :::premisli
 Koliko je $r = \dfrac{2\cdot10^{-7} \cdot 10}{5\cdot10^{-5}}\,\mathrm{m}$?
 ---
-$r = 0{,}04\,\mathrm{m} = 4\,\mathrm{cm}$. Bližje od $4\,\mathrm{cm}$ polje žice preglasi Zemljino in igla kaže bolj po žici kot proti severu.
+$r = 0{,}04\,\mathrm{m} = 4\,\mathrm{cm}$. Bližje od $4\,\mathrm{cm}$ polje žice preglasi Zemljino in igla se ravna bolj po krožnih silnicah žice kot proti severu.
 :::
 
 ## Pogoste napake

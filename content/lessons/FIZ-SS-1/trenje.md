@@ -108,7 +108,7 @@ $F_\mathrm{l,max} = k_\mathrm{l}\,F_\mathrm{p}$; telo miruje, če je $F \le F_\m
 
 Pri poskusu z začetka je solnička zdrsnila, ko je bil konec deske dvignjen $h = 18\,\mathrm{cm}$, vodoravna razdalja do spodnjega konca pa je bila $d = 36\,\mathrm{cm}$. Kolikšen je koeficient lepenja med solničko in desko? Pri kolikšnem kotu bi zdrsnila dvakrat težja solnička?
 
-**Podatki:** $h = 18\,\mathrm{cm}$, $d = 36\,\mathrm{cm}$, solnička zdrsne na meji lepenja
+**Podatki:** $h = 18\,\mathrm{cm}$, $d = 36\,\mathrm{cm}$, solnička zdrsne na meji lepenja; druga solnička ima dvakrat večjo maso
 **Iščemo:** $k_\mathrm{l}$ in mejni kot $\alpha_\mathrm{m}$ za težjo solničko
 
 :::formula
@@ -145,7 +145,7 @@ $F_\parallel = m\,g\sin\alpha$, $F_\mathrm{p} = m\,g\cos\alpha$, $F_\mathrm{tr} 
 :::premisli
 Koliko sta $F_\mathrm{r} = F_\parallel - F_\mathrm{tr}$ in $a = \dfrac{F_\mathrm{r}}{m}$?
 ---
-$F_\mathrm{r} \approx 1{,}41\,\mathrm{N} - 0{,}80\,\mathrm{N} \approx 0{,}60\,\mathrm{N}$ in $a \approx \dfrac{0{,}60\,\mathrm{N}}{0{,}25\,\mathrm{kg}} \approx 2{,}4\,\mathrm{m/s^2}$ navzdol po pladnju.
+$F_\mathrm{r} \approx 1{,}407\,\mathrm{N} - 0{,}804\,\mathrm{N} \approx 0{,}60\,\mathrm{N}$ in $a \approx \dfrac{0{,}60\,\mathrm{N}}{0{,}25\,\mathrm{kg}} \approx 2{,}4\,\mathrm{m/s^2}$ navzdol po pladnju.
 :::
 
 ## Pogoste napake

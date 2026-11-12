@@ -28,10 +28,10 @@ Vendar $x^2 + 5$ in $x^2 - 3$ imata tudi odvod $2x$, saj se konstanta pri odvaja
 
 **Premaknjene parabole.** Nariši parabole $y = x^2$, $y = x^2 + 1$, $y = x^2 + 2$ in $y = x^2 - 1$. Vse so enake oblike, le premaknjene gor ali dol. Pri $x = 1$ nariši tangento na vsako od njih: vse so vzporedne, vse imajo smerni koeficient $2$. Graf se premakne, naklon ostane.
 
-Družino lahko premikaš sam: simulacija »Nedoločeni integral: družina funkcij« spodaj ima drsnik za konstanto $C$ v $y = x^2 + C$, tangenta pa ostane pri isti abscisi.
+Družino lahko premikaš sam: simulacija »Nedoločeni integral: družina funkcij« spodaj ima drsnik za konstanto $C$ (od $-3$ do $3$). Graf $F(x) + C$ se premakne gor ali dol, kratke črtice, ki kažejo naklon, pa ostanejo enake.
 
 :::premisli
-Konstanto $C$ povečaš z $1$ na $4$. Za koliko se premakne tangenta pri $x = 1$ in ali se kaj nagne? Napovej, nato preveri v simulaciji.
+Konstanto $C$ povečaš z $0$ na $3$. Za koliko se premakne tangenta pri $x = 1$ in ali se kaj nagne? Napovej, nato v simulaciji preveri premik grafa in naklon črtic.
 ---
 Premakne se za $3$ navzgor, a ostane vzporedna prejšnji. Odvod konstante je $0$, zato $C$ ne vpliva na naklon, le na višino grafa.
 :::

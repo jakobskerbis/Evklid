@@ -69,7 +69,7 @@ $(A \cap B)^c = A^c \cup B^c$. Element ni v obeh hkrati natanko tedaj, ko manjka
 - Razliko lahko zapišemo s komplementom: $A \setminus B = A \cap B^c$.
 - Komplement komplementa je prvotna množica: $(A^c)^c = A$.
 - Distributivnost: $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ in $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$.
-- De Morganovi pravili: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$. Komplement unije je presek komplementov, komplement preseka pa unija komplementov. To sta De Morganova zakona iz logike, prepisana za množice.
+- De Morganovi pravili: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$. Komplement unije je presek komplementov, komplement preseka pa unija komplementov. To sta De Morganovi pravili iz logike, prepisani za množice.
 
 **7. Štetje elementov.** Za končni množici velja
 

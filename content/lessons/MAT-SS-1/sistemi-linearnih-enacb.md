@@ -28,7 +28,7 @@ kjer so $a_1, b_1, c_1, a_2, b_2, c_2$ znana števila. **Rešitev sistema** je u
 
 **2. Grafična metoda.** Pari iz vsakega stolpca ležijo na premici, saj je vsaka linearna enačba z dvema neznankama (če $a$ in $b$ nista oba $0$) enačba premice. Skupni par je točka, ki leži na obeh premicah. Zato:
 
-- vsako enačbo izrazimo z $y$ (če ni že tako), npr. $x + y = 6$ postane $y = 6 - x$,
+- iz vsake enačbe izrazimo $y$ (če ni že tako), npr. $x + y = 6$ postane $y = 6 - x$,
 - narišemo obe premici (dovolj sta po dve točki, za natančnost vzamemo tri),
 - rešitev sistema so koordinate **presečišča** premic, ker je presečišče edina točka, ki leži na obeh premicah.
 
@@ -95,7 +95,7 @@ Rešitev sistema so koordinate presečišča premic, ki ju določata enačbi.
 
 **Rešitev:**
 
-1. Drugo enačbo izrazimo z $y$: $y = 5 - x$.
+1. Iz druge enačbe izrazimo $y$: $y = 5 - x$.
 2. Tabela točk za prvo premico $y = x + 1$: pri $x = 0$ je $y = 1$, pri $x = 2$ je $y = 3$, pri $x = 3$ je $y = 4$.
 3. Tabela točk za drugo premico $y = 5 - x$: pri $x = 0$ je $y = 5$, pri $x = 2$ je $y = 3$, pri $x = 5$ je $y = 0$.
 4. Obe premici narišemo. Prva narašča, druga pada, zato se sekata. Skupna točka obeh tabel in presečišče na risbi je $(2, 3)$: pri $x = 2$ je $x + 1 = 3$ in $5 - x = 3$.

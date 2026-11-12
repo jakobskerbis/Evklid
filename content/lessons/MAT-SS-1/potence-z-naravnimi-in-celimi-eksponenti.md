@@ -175,7 +175,7 @@ $2^{-2} = \dfrac{1}{4}$, $(a^4)^{-2} = a^{-8}$ in $(b^{-3})^{-2} = b^6$, torej $
 
 ## Pogoste napake
 
-- **Minus in oklepaj: »$-3^2 = 9$«.** Razlog: minus pred potenco ni del osnove, če ni oklepaja, potenciranje pa je pred negacijo. Pravilno: $-3^2 = -(3 \cdot 3) = -9$, medtem ko je $(-3)^2 = (-3) \cdot (-3) = 9$.
+- **Minus in oklepaj: »$-3^2 = 9$«.** Razlog: minus pred potenco ni del osnove, če ni oklepaja, potenciranje pa je na vrsti pred predznakom minus. Pravilno: $-3^2 = -(3 \cdot 3) = -9$, medtem ko je $(-3)^2 = (-3) \cdot (-3) = 9$.
 - **Seštevanje in množenje eksponentov zamenjaš: »$2^3 \cdot 2^4 = 2^{12}$« ali »$2^3 \cdot 2^4 = 4^7$«.** Razlog: pri $2^3 \cdot 2^4$ imaš skupaj $3 + 4 = 7$ faktorjev dvojk, osnova pa ostane $2$. Pravilno: $2^3 \cdot 2^4 = 2^7 = 128$. Eksponente množiš samo pri potenci potence: $(2^3)^4 = 2^{12}$.
 - **Potenca vsote: »$(a + b)^n = a^n + b^n$«.** Razlog: pravilo velja za zmnožek, za vsoto ne. Preizkus s številkami: $(2 + 3)^2 = 25$, vendar $2^2 + 3^2 = 13$. Pravilno: najprej izračunaj vsoto v oklepaju in jo šele nato potenciraj. Kako vsoto v oklepaju razviješ, se naučiš v naslednji temi.
 - **Negativni eksponent da negativno število: »$2^{-3} = -8$« ali »$2^{-3} = -\dfrac{1}{8}$«.** Razlog: negativni eksponent pomeni obratno vrednost, predznaka rezultata ne spremeni. Pravilno: $2^{-3} = \dfrac{1}{2^3} = \dfrac{1}{8}$. Ničta potenca prav tako ni $0$: $5^0 = 1$.

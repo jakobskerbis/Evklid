@@ -203,7 +203,7 @@ Pri sili, ki ni pravokotna na vzvod, nosilko podaljšaj s črtkano črto. Iz opo
 - Če je vsota sil na telo nič, se telo zagotovo ne vrti.
 ~ Dve nasprotni sili na različnih koncih dasta rezultanto nič, a telo zavrtita. Potreben je še pogoj za navore.
 - Ročica je razdalja od osi do prijemališča sile.
-~ Ročica je razdalja do nosilke, merjena pravokotno. Do prijemališča je enaka le, če je sila pravokotna na zvezo z osjo.
+~ Ročica je razdalja do nosilke, merjena pravokotno. Do prijemališča je enaka le, če je sila pravokotna na zveznico med osjo in prijemališčem.
 + Navor sile, katere nosilka gre skozi os, je nič.
 - Navor merimo v newtonih na meter, $\mathrm{N/m}$.
 ~ Navor je produkt sile in ročice, zato je enota $\mathrm{N\,m}$. $\mathrm{N/m}$ je enota prožnostnega koeficienta.

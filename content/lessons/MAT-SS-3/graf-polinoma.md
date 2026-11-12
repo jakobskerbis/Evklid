@@ -141,7 +141,7 @@ Cele ničle so med delitelji prostega člena $-20$; Hornerjev algoritem odcepi f
 
 Poišči polinom najmanjše stopnje, katerega graf seka os $x$ pri $-1$ in pri $4$, se osi $x$ dotakne pri $2$ in gre skozi točko $(0, 8)$. Kam gresta njegova kraka?
 
-**Podatki:** sečišči z osjo $x$: $-1$ in $4$; dotikališče: $2$; točka $(0, 8)$
+**Podatki:** sečišči z osjo $x$: $-1$ in $4$; dotikališče: $2$; točka $(0, 8)$; stopnja najmanjša možna
 **Iščemo:** polinom $p(x)$ in smer obeh krakov
 
 :::formula

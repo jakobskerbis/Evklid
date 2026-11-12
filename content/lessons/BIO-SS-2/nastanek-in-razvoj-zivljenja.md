@@ -48,7 +48,7 @@ Današnji zrak vsebuje kisik. Kisik organske molekule oksidira in jih razgradi, 
 **4. Fotosinteza in kisik.** Heterotrofi so porabljali organske snovi, ki so nastale s kemijsko evolucijo, zato je hrane v oceanu zmanjkovalo. Prednost so dobile celice, ki so si hrano izdelale same iz svetlobe, vode in ogljikovega dioksida. **Cianobakterije** so pri tem kot stranski produkt sproščale kisik. Kisik se je najprej vezal na železo v morju (nastale so rjave plasti železovih oksidov v kamninah), nato se je pred približno $2{,}4$ milijarde let začel kopičiti v ozračju. Posledici sta bili dve:
 
 - Iz kisika je v visoki atmosferi nastal **ozon**, ki zadrži velik del UV-svetlobe.
-- Razvilo se je **aerobno dihanje**, ki iz glukoze pridobi veliko več energije (ATP) kot dihanje brez kisika.
+- Razvilo se je **aerobno dihanje**, ki iz glukoze pridobi veliko več energije (ATP) kot vrenje, ki poteka brez kisika.
 
 :::premisli
 Napovej: kaj se je zgodilo z anaerobnimi organizmi, ko se je v vodi in zraku kopičil kisik?
@@ -95,7 +95,7 @@ $\text{let na sekundo} = \dfrac{T}{t_\mathrm{p}}$
 **Rešitev:**
 
 1. Delimo vsa leta s številom sekund, ker vsaka sekunda pesmi predstavlja enako dolg kos zgodovine: $\dfrac{4\,600\,000\,000}{276} \approx 16\,666\,667$.
-2. Zaokrožimo, saj je starost Zemlje znana le na dve mesti: približno $16{,}7$ milijona let.
+2. Zaokrožimo na tri mesta, saj je starost Zemlje le približna: približno $16{,}7$ milijona let.
 3. Odgovor: ena sekunda pesmi predstavlja približno $16{,}7$ milijona let.
 
 ### Primer 2: prve celice in človek v pesmi

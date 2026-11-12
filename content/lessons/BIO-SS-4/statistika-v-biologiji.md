@@ -21,11 +21,11 @@ Najprej slike, simboli šele na koncu.
 
 **2. Razpršenost.** Predstavljaj si še eno skupino s povprečjem $75$, pri kateri so vse pike stisnjene med $73$ in $77$. Povprečje je enako, slika pa povsem drugačna. **Standardni odklon** $s$ je tipična razdalja pike od povprečja. Stisnjene pike imajo majhen $s$, raztresene velik. Enoto ima enako kot podatki.
 
-V simulaciji spodaj »Sredine in razpršenost podatkov« eno piko potegni daleč stran od drugih. Opazi, da se standardni odklon poveča bolj kot povprečje.
+V simulaciji spodaj »Sredine in razpršenost podatkov« povečaj drsnik »razpršenost«. Opazi, da se histogram razširi in standardni odklon (tam označen s $\sigma$) zraste, povprečje pa ostane skoraj enako.
 
 **3. Kako zanesljivo je povprečje.** Če bi Lara meritev ponovila z drugimi desetimi sošolci, bi dobila malo drugačno povprečje. Za koliko se povprečje tipično premakne od vzorca do vzorca, pove **standardna napaka** $\mathrm{SE}$. Odvisna je od razpršenosti in od števila meritev $n$: več meritev, manjša napaka. Ne pada pa sorazmerno z $n$, ampak počasneje, s korenom $\sqrt{n}$.
 
-Na stolpčnem diagramu povprečje nariše stolpec, standardno napako pa navpična črtica na vrhu, **stolpec napak**. Če se črtici dveh stolpcev močno prekrivata, razlika verjetno ni prava. O mejnih primerih odloči test.
+Na stolpčnem diagramu povprečje nariše stolpec, standardno napako pa navpična črtica na vrhu, **črtica napake**. Če se črtici dveh stolpcev močno prekrivata, je razlika lahko le naključna. O mejnih primerih odloči test.
 
 :::premisli
 Lara bi rada standardno napako razpolovila. Koliko sošolcev mora izmeriti v vsaki skupini namesto $10$?
@@ -70,7 +70,7 @@ Stopinje prostosti so število kategorij manj ena, $k - 1$. Kritične vrednosti 
 
 V simulaciji spodaj »Izbira statističnega testa« razvrsti primere. Pri vsakem se najprej vprašaj: so to meritve ali štetja?
 
-**8. Formule na enem mestu.** $\mathrm{SE}_r$ je standardna napaka razlike med povprečjema; $r$ tu pomeni razliko, ne korelacije.
+**8. Formule na enem mestu.** $\mathrm{SE}_r$ je standardna napaka razlike med povprečjema; $r$ tu pomeni razliko, ne korelacije. Znak $\sum$ pomeni »seštej vse«: vse meritve oziroma vse kategorije.
 
 $$\bar{x} = \frac{\sum x_i}{n} \qquad s = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n - 1}} \qquad \mathrm{SE} = \frac{s}{\sqrt{n}}$$
 
@@ -198,7 +198,7 @@ Kadar se bobnarja ločita za manj, kot znaša njuno tipično nihanje, iz kratkeg
 
 ## Drugače: Iz vsakdanjega življenja
 
-Pri vremenski napovedi slišiš: »Jutri $20\,^\circ\text{C}$, plus minus $2\,^\circ\text{C}$.« Prva številka je kot povprečje, druga kot negotovost. Če za dve mesti napovedo $20 \pm 2$ in $21 \pm 2$, ne veš, kje bo topleje. Pri $20 \pm 1$ in $27 \pm 1$ pa je jasno. To je ideja stolpcev napak in t-testa.
+Pri vremenski napovedi slišiš: »Jutri $20\,^\circ\text{C}$, plus minus $2\,^\circ\text{C}$.« Prva številka je kot povprečje, druga kot negotovost. Če za dve mesti napovedo $20 \pm 2$ in $21 \pm 2$, ne veš, kje bo topleje. Pri $20 \pm 1$ in $27 \pm 1$ pa je jasno. To je ideja črtic napak in t-testa.
 
 Hi-kvadrat srečaš pri metu kovanca. V $100$ metih pričakuješ $50$ grbov. Če jih pade $54$, nihče ne posumi na goljufijo. Pri $80$ pa vsak. Test izmeri, kje je meja med »še naključje« in »nekaj ni prav«.
 

@@ -11,7 +11,7 @@ Odgovor je v obnašanju plina. Za razliko od trdnin, ki se pri segrevanju razši
 
 ## Razlaga
 
-**1. Stanje plina.** Plin vedno zapolni vso posodo. Njegove molekule se gibljejo hitro in neurejeno ter trkajo ob stene; vsi ti trki skupaj dajo **tlak** $p$ (v paskalih, $1\,\mathrm{bar} = 100\,\mathrm{kPa}$). Stanje plina opišejo štiri količine: tlak $p$, prostornina $V$ (v $\mathrm{m^3}$, $1\,\mathrm{L} = 10^{-3}\,\mathrm{m^3}$), temperatura $T$ v kelvinih ($T = t + 273\,\mathrm{K}$) in količina plina $n$ v molih (en mol je $6{,}02 \cdot 10^{23}$ molekul).
+**1. Stanje plina.** Plin vedno zapolni vso posodo. Njegove molekule se gibljejo hitro in neurejeno ter trkajo ob stene; vsi ti trki skupaj dajo **tlak** $p$ (v paskalih, $1\,\mathrm{bar} = 100\,\mathrm{kPa}$). Stanje plina opišejo štiri količine: tlak $p$, prostornina $V$ (v $\mathrm{m^3}$, $1\,\mathrm{L} = 10^{-3}\,\mathrm{m^3}$), temperatura $T$ v kelvinih ($T = t + 273\,\mathrm{K}$) in količina plina $n$ v molih, ki ji rečemo tudi **množina snovi** (en mol je $6{,}02 \cdot 10^{23}$ molekul).
 
 *Preveri:* koliko $\mathrm{m^3}$ je $0{,}5\,\mathrm{L}$? Odgovor: $5 \cdot 10^{-4}\,\mathrm{m^3}$.
 
@@ -72,7 +72,7 @@ Količino plina izračunamo iz mase: $n = \dfrac{m}{M}$, kjer je $M$ molska masa
 :::premisli
 En mol helija ima maso $4\,\mathrm{g}$, en mol kisika $32\,\mathrm{g}$. Kateri od njiju ima pri enakem tlaku in temperaturi večjo prostornino?
 ---
-Prostornini sta enaki. V enačbi $pV = nRT$ ni molske mase: šteje le število molekul, ne njihova masa. Lažje molekule helija so hitrejše, zato ob stene udarjajo enako močno kot težje molekule kisika.
+Prostornini sta enaki. V enačbi $pV = nRT$ ni molske mase: šteje le število molekul, ne njihova masa. Lažje molekule helija ob steno udarijo šibkeje, a so hitrejše in zato trkajo pogosteje. Oboje se ravno izravna, zato je tlak enak kot pri težjih molekulah kisika.
 :::
 
 **6. Idealni plin.** Enačba $pV = nRT$ natančno velja za **idealni plin**: model, v katerem so molekule drobne točke, ki se med seboj ne privlačijo in le trkajo. Zrak, helij in drugi plini se pri običajnih tlakih in temperaturah obnašajo skoraj idealno. Odstopanja so velika pri zelo visokih tlakih in tik pred utekočinjenjem, na primer pri vodni pari, ki se v oblaku kondenzira v kapljice.

@@ -125,7 +125,7 @@ $y = F(C)$, iz tega izrazimo $C$: dobimo $F^{-1}$.
 
 Babica za $x$ palačink porabi $f(x) = 50x + 100$ mililitrov mleka. Liter mleka stane $1{,}20\,€$, zato $m$ mililitrov stane $g(m) = 0{,}0012\,m$ evrov. Koliko stane mleko za $10$ palačink?
 
-**Podatki:** $f(x) = 50x + 100$ (ml), $g(m) = 0{,}0012\,m$ (€), $x = 10$
+**Podatki:** $f(x) = 50x + 100$ (ml), cena mleka $1{,}20\,€$ na liter, torej $g(m) = 0{,}0012\,m$ (€), $x = 10$
 **Iščemo:** $(g \circ f)(10)$
 
 :::formula
@@ -226,9 +226,9 @@ Nekega dne kuhar dobi le skodelico moke in vpraša: »Koliko zrnja je bilo?« Od
 > Funkcija, ki ves čas pada, vsako vrednost doseže le enkrat. $T^{-1}(40)$ je iskani čas.
 
 :::simboli
-f | funkcija (babičino pravilo: palačinke → mleko) | f(x) = 50x + 100 |
-x | neodvisna spremenljivka (vhod; število palačink) | |
-g | druga funkcija (cena mleka) | g(m) = 0{,}0012\,m |
+f | funkcija (pravilo, ki vsakemu $x$ priredi natanko eno vrednost) | | | pri babici $f(x) = 50x + 100$ (palačinke → mleko)
+x | neodvisna spremenljivka (vhod) | | | pri babici število palačink
+g | druga funkcija | | | v primeru 4 cena mleka, $g(m) = 0{,}0012\,m$
 m | prostornina mleka v ml | | ml
 y | vrednost funkcije | y = f(x) |
 F | temperatura v stopinjah Fahrenheita | F = 1{,}8\,C + 32 | ^\circ\mathrm{F}

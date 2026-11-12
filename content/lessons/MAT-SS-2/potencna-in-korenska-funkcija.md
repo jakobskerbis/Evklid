@@ -41,7 +41,7 @@ V simulaciji spodaj »Potenčne funkcije s celim eksponentom« zamenjaj eksponen
 
 $$x^{-n} = \frac{1}{x^n}$$
 
-Deliti z $0$ ne smemo, zato je $D_f = \mathbb{R} \setminus \{0\}$. Ko je $x$ blizu $0$, je $x^n$ zelo majhen, ulomek pa zelo velik: graf se ob osi $y$ dviga čez vse meje. Ko $x$ raste, gre vrednost proti $0$. Graf je **hiperbola** z dvema vejama. Premici, ki se jima veji poljubno približata, sta **asimptoti**: tukaj os $x$ ($y = 0$) in os $y$ ($x = 0$).
+Deliti z $0$ ne smemo, zato je $D_f = \mathbb{R} \setminus \{0\}$. Ko je $x$ blizu $0$, je $x^n$ po absolutni vrednosti zelo majhen, ulomek pa zelo velik: graf se ob osi $y$ dviga (pri lihem $n$ levo od nje spušča) čez vse meje. Ko se $x$ oddaljuje od $0$, gre vrednost proti $0$. Graf je **hiperbola** z dvema vejama. Premici, ki se jima veji poljubno približata, sta **asimptoti**: tukaj os $x$ ($y = 0$) in os $y$ ($x = 0$).
 
 Tudi tu odloča parnost eksponenta:
 
@@ -53,7 +53,7 @@ Tudi tu odloča parnost eksponenta:
 :::premisli
 Funkcija $f(x) = x^2$ da vrednost $9$. Kateri $x$ naj vrne njena inverzna funkcija? Kaj moramo storiti, da inverzno funkcijo sploh dobimo?
 ---
-Ker ni injektivna: $f(-3) = f(3) = 9$, zato iz vrednosti $9$ ne vemo, ali je bil $x$ enak $3$ ali $-3$. Definicijsko območje zožimo na $[0, \infty)$. Tam $x^2$ narašča, inverzna funkcija je $\sqrt{x}$.
+Tega ne more odločiti, ker $x^2$ ni injektivna: $f(-3) = f(3) = 9$, zato iz vrednosti $9$ ne vemo, ali je bil $x$ enak $3$ ali $-3$. Definicijsko območje zato zožimo na $[0, \infty)$. Tam $x^2$ narašča, inverzna funkcija je $\sqrt{x}$.
 :::
 
 Splošno: za lihi $n$ je inverzna funkcija od $x^n$ koren $\sqrt[n]{x}$ z $D = \mathbb{R}$. Za sodi $n$ vzamemo $x^n$ le na $[0, \infty)$; njen inverz $\sqrt[n]{x}$ ima $D = [0, \infty)$. Velja $\sqrt[n]{x} = x^{1/n}$ za $x \ge 0$.
@@ -174,13 +174,17 @@ Graf korena lahko narišeš iz tabele potence, ne da bi karkoli korenil.
 
 1. Zapiši tabelo za $y = x^3$:
 
-| $x$ | $-2$ | $-1$ | $0$ | $1$ | $2$ |
-|---|---|---|---|---|---|
-| $x^3$ | $-8$ | $-1$ | $0$ | $1$ | $8$ |
+| $x$ | $x^3$ |
+|---|---|
+| $-2$ | $-8$ |
+| $-1$ | $-1$ |
+| $0$ | $0$ |
+| $1$ | $1$ |
+| $2$ | $8$ |
 
-2. Zamenjaj vrstici. Dobiš točke grafa $y = \sqrt[3]{x}$: $(-8, -2)$, $(-1, -1)$, $(0, 0)$, $(1, 1)$, $(8, 2)$.
+2. Zamenjaj stolpca. Dobiš točke grafa $y = \sqrt[3]{x}$: $(-8, -2)$, $(-1, -1)$, $(0, 0)$, $(1, 1)$, $(8, 2)$.
 3. Vriši jih in poveži. Med $-1$ in $1$ je graf strm, dlje od izhodišča pa zelo položen: da $y$ naraste z $1$ na $2$, mora $x$ zrasti z $1$ na $8$.
-4. Za $\sqrt{x}$ vzameš le stolpce z $x \ge 0$ iz tabele $x^2$: $(0, 0)$, $(1, 1)$, $(4, 2)$, $(9, 3)$.
+4. Za $\sqrt{x}$ vzameš le vrstice z $x \ge 0$ iz tabele $x^2$: $(0, 0)$, $(1, 1)$, $(4, 2)$, $(9, 3)$.
 
 ## Drugače: Kot zgodba
 
@@ -241,7 +245,7 @@ x | neodvisna spremenljivka | |
 n | eksponent | | | celo število
 f | potenčna funkcija | f(x) = x^n |
 y | vrednost funkcije | y = f(x) |
-a | rob kocke (v primeru 4 dolžina plošče) | a = \sqrt[3]{V} (kocka) | m
+a | rob kocke (v primeru 4 dolžina plošče) | a = \sqrt[3]{V} | m | zveza velja za kocko
 a_1 | notranji rob prvega zabojnika (v primeru 4 prva dolžina plošče) | | m
 a_2 | rob večjega zabojnika (v primeru 4 dvakrat daljša plošča) | | m
 V | prostornina kocke | V = a^3 | m^3

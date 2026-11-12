@@ -217,7 +217,7 @@ Ko na koncu pogledaš predpis $2(x - p)^2 + q$, iz njega razbereš vso zgodbo: k
 - $T(t) - 5$
 ~ To bi pomenilo zrak, ki je ves čas za $5$ stopinj hladnejši, ne zamika v času.
 + $T(t - 5)$
-> Jutri ima zrak ob času $t$ tisto temperaturo, kot jo je danes imela ob $t - 5$. Graf se premakne za $5$ minut v desno.
+> Jutri ima zrak ob času $t$ tisto temperaturo, kot jo je danes imel ob $t - 5$. Graf se premakne za $5$ minut v desno.
 
 :::simboli
 f | osnovna funkcija | |

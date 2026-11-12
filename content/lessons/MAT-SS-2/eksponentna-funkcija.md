@@ -212,7 +212,7 @@ $$a^{x_2} = a^{x_1} \cdot a^{x_2 - x_1}.$$
 
 Za $a > 1$ in pozitiven eksponent je $a^{x_2 - x_1} > 1$ (za racionalni eksponent $\frac{m}{n} > 0$ je $\sqrt[n]{a^m} > 1$, ker je $a^m > 1$). Ker je $a^{x_1} > 0$, sledi $a^{x_2} > a^{x_1}$. Pri $0 < a < 1$ je $a^{x_2 - x_1} < 1$ in neenakost se obrne.
 
-**Iracionalni eksponenti.** Potence smo doslej poznali le z racionalnimi eksponenti. Kaj pomeni $2^{\sqrt{2}}$? Eksponent $\sqrt{2} = 1{,}41421\ldots$ približujemo z $1{,}4$; $1{,}41$; $1{,}414$; … Potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … zaradi monotonosti naraščajo, so manjše od $2^{1{,}5}$ in se približujejo enemu samemu številu, $2^{\sqrt{2}} \approx 2{,}665$. Tako je $a^x$ definirana za vsak realen $x$, graf pa je sklenjena krivulja brez lukenj.
+**Iracionalni eksponenti.** Potence smo doslej poznali le z racionalnimi eksponenti. Kaj pomeni $2^{\sqrt{2}}$? Eksponent $\sqrt{2} = 1{,}41421\ldots$ približujemo z $1{,}4$; $1{,}41$; $1{,}414$; … Potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … zaradi monotonosti naraščajo, so manjše od $2^{1{,}5}$ in se približujejo enemu samemu številu, $2^{\sqrt{2}} \approx 2{,}665$. Tako je $a^x$ definirana za vsak realen $x$, graf pa je neprekinjena krivulja brez lukenj.
 
 **Značilna lastnost.** Za eksponentno funkcijo velja $f(u + v) = f(u) \cdot f(v)$, ker je $a^{u+v} = a^u \cdot a^v$. Zaradi stroge monotonosti je funkcija tudi injektivna: različnim $x$ pripadata različni vrednosti. Na tem temelji reševanje eksponentnih enačb.
 
