@@ -904,14 +904,83 @@
    "h": "d7706a49fa56",
    "o": "D"
   },
+  "MAT-OS-9/graf-linearne-funkcije#p0": {
+   "h": "6e55e9c794ef",
+   "o": "D"
+  },
+  "MAT-OS-9/graf-linearne-funkcije#p1": {
+   "h": "8038a0ee3f03",
+   "o": "D"
+  },
+  "MAT-OS-9/linearna-funkcija#p1": {
+   "h": "62a14ab961d5",
+   "o": "I",
+   "r": "sklic na kozarec z dežjem in prejšnjo premico iz lekcije"
+  },
+  "MAT-OS-9/linearne-enacbe-z-ulomki#p1": {
+   "h": "2427cc4258ba",
+   "o": "D"
+  },
+  "MAT-OS-9/linearne-neenacbe#p0": {
+   "h": "4c099f824207",
+   "o": "D"
+  },
+  "MAT-OS-9/linearne-neenacbe#p1": {
+   "h": "25a48fa3e578",
+   "o": "I",
+   "r": "sklic na avtobusno neenačbo iz lekcije"
+  },
+  "MAT-OS-9/linearne-neenacbe#p2": {
+   "h": "83bbe1ec84b2",
+   "o": "I",
+   "r": "ne pove, katero neenačbo rešujemo"
+  },
   "MAT-OS-9/mesane-naloge-npz#p1": {
    "h": "65ff0eb662ef",
    "o": "D"
+  },
+  "MAT-OS-9/piramida#p1": {
+   "h": "563326ffe45a",
+   "o": "D",
+   "r": "napačen odgovor »dvakrat« ni vprašan",
+   "k": [
+    "Natanko trikrat",
+    "Piramida pa se zoži v dveh smereh hkrati, v širino in v globino, zato je v njej le tretjina prostora prizme"
+   ]
+  },
+  "MAT-OS-9/podobni-trikotniki#p1": {
+   "h": "3acc11c0e1f7",
+   "o": "D"
+  },
+  "MAT-OS-9/prizma#p1": {
+   "h": "76107d009981",
+   "o": "D"
+  },
+  "MAT-OS-9/stozec#p0": {
+   "h": "2de2a177d71e",
+   "o": "D"
+  },
+  "MAT-OS-9/talesov-izrek#p1": {
+   "h": "9e72594d65e2",
+   "o": "I",
+   "r": "ne pove, da delimo daljico AB s točko T"
   },
   "MAT-OS-9/tocke-premice-in-ravnine-v-prostoru#p1": {
    "h": "503a174b6dd9",
    "o": "I",
    "r": "ne pove, da gre za pravokotnico na ravnino"
+  },
+  "MAT-OS-9/valj#p1": {
+   "h": "a4e5bdaa9f3f",
+   "o": "D"
+  },
+  "MAT-OS-9/verjetnost#p0": {
+   "h": "23734e404ba3",
+   "o": "D"
+  },
+  "MAT-OS-9/verjetnost#p1": {
+   "h": "a1c9486c0def",
+   "o": "D"
   },
   "MAT-SS-1/algebrski-izrazi#p0": {
    "h": "c8ded8aa9bd3",
