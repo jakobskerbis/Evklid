@@ -3185,6 +3185,7 @@
   "adm.rep.question": "คำถาม:",
   "adm.rep.fixed": "แก้ไขแล้ว",
   "adm.rep.reopen": "เปิดอีกครั้ง",
+  "adm.rep.inReview": "การแก้ไขรอการตรวจสอบ · PR #{n}",
   "adm.rep.none": "ไม่มีรายงาน",
   "adm.rep.download": "ดาวน์โหลดเพื่อแก้ไข (.md)",
   "adm.rep.showAll": "แสดงที่แก้ไขแล้วด้วย",

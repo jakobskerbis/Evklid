@@ -3209,6 +3209,7 @@
   "adm.rep.question": "Swali:",
   "adm.rep.fixed": "Imerekebishwa",
   "adm.rep.reopen": "Fungua tena",
+  "adm.rep.inReview": "Marekebisho yanasubiri ukaguzi · PR #{n}",
   "adm.rep.none": "Hakuna ripoti.",
   "adm.rep.download": "Pakua kwa kurekebisha (.md)",
   "adm.rep.showAll": "Onyesha pia zilizorekebishwa",

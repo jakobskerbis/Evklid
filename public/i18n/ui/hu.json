@@ -3209,6 +3209,7 @@
   "adm.rep.question": "Kérdés:",
   "adm.rep.fixed": "Javítva",
   "adm.rep.reopen": "Újranyitás",
+  "adm.rep.inReview": "A javítás ellenőrzésre vár · PR #{n}",
   "adm.rep.none": "Nincs jelentés.",
   "adm.rep.download": "Letöltés javításhoz (.md)",
   "adm.rep.showAll": "A javítottak is",
