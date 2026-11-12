@@ -122,7 +122,7 @@
 .pp-file svg.i:last-child { width: 14px; height: 14px; opacity: 0.7; }
 .pp-expl { grid-column: 2; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.84rem; }
 .pp-expl svg.i { width: 15px; height: 15px; flex: none; }
-.pp-more { align-self: flex-start; }
+.pp-more, .pp-other { align-self: flex-start; } /* besedilni povezavi pod polami: poravnani na začetek, ne raztegnjeni čez kartico */
 @media (max-width: 560px) {
   .pp-row { grid-template-columns: 1fr; }
   .pp-expl { grid-column: 1; }

@@ -801,6 +801,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 @media (min-width: 761px) {
   .topbar .tabs { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; padding: 4px; margin: -4px; }
   .topbar .tabs::-webkit-scrollbar { display: none; }
+  .topbar .tabs .tab { scroll-margin-inline: 48px; } /* izbrani zavihek se pomakne iz zbledelega roba (dolgi napisi, npr. Povratne informacije) */
   .topbar .tabs.fade-end { mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); }
   .topbar .tabs.fade-start { mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); }
   .topbar .tabs.fade-start.fade-end { mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); }
