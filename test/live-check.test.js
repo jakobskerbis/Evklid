@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, subscriptIssue, celsiusIssue } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, subscriptIssue, ionRatioIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -762,3 +762,39 @@ test("accuracy round 7: an ionic formula with unreduced cross-rule subscripts is
   // združeno z drugimi kemijskimi preverbami v en popravek
   assert.match(codeFindings("Dušik je v 5. skupini. Formula je Mg2O2.").issue, /15.*; the formula Mg2O2/);
 });
+
+test("ionRatioIssue (round 8): an ion ratio that does not balance the charges", () => {
+  const R = String.raw;
+  const bad = [
+    ["Zato mora biti na 2 iona Mg²⁺ en ion O²⁻.", /\+4 and −2.*1 Mg per 1 O/], // ocenjevalec, ponovitev po #606
+    [R`Na dva iona $\mathrm{Mg^{2+}}$ pride en ion $\mathrm{O^{2-}}$, zato $\mathrm{MgO}$.`, /1 Mg per 1 O/],
+    [R`Dva iona $\mathrm{Al^{3+}}$ na dva iona $\mathrm{O^{2-}}$.`, /2 Al per 3 O/],
+    ["En ion Ca^{2+} na en ion Cl^-.", /1 Ca per 2 Cl/],
+    ["2 Na⁺ per 2 O²⁻", /2 Na per 1 O/],
+  ];
+  for (const [a, re] of bad) assert.match(ionRatioIssue(a).issue || "", re, a);
+  const ok = [
+    "Na en ion Mg²⁺ pride en ion O²⁻: MgO.",
+    R`En ion $\mathrm{Mg^{2+}}$ na en ion $\mathrm{O^{2-}}$.`,
+    "Na 2 iona Al^{3+} pridejo 3 ioni O^{2-}.",
+    "dva iona Na⁺ na en ion O²⁻",
+    "en ion Ca^{2+} na dva iona Cl^-",
+    "3 ioni Mg^{2+} na 2 iona N^{3-}",
+    "Dva Mg²⁺ na en O²⁻ bi dala 2, ne 0.", // pogojnik (SKIP_LINE)
+    "Dva iona Mg²⁺ na en ion O²⁻ je napačno.",
+    "Ali sta na 2 iona Mg²⁺ en ion O²⁻?",
+    "Ne dva iona Mg²⁺ na en ion O²⁻, temveč en na en.",
+    "Trije ioni Mg²⁺ dajo +6, dva iona N³⁻ dasta −6.", // brez »na«: ni trditve o razmerju
+    "Dva iona Mg²⁺ in en ion O²⁻.", // brez »na«
+    "Na 2 iona Mg²⁺ pride 1 ion Mg²⁺.", // isti predznak
+    "Mg²⁺ na O²⁻", // brez števcev
+    "Na 2 iona Mg^{2+} pride en ion O^{2-} in en ion S^{2-}.", // več kot dva iona
+  ];
+  for (const a of ok) assert.equal(ionRatioIssue(a).issue, null, a);
+  assert.equal(ionRatioIssue("En ion Mg²⁺ na en ion O²⁻.").checked, 1);
+  // razmerje iz učenčevega sporočila
+  assert.equal(ionRatioIssue("Torej: na 2 iona Mg²⁺ en ion O²⁻.", "Zakaj je na 2 iona Mg²⁺ en ion O²⁻").issue, null);
+  // združeno z drugimi kemijskimi preverbami v en popravek
+  assert.match(codeFindings("Dušik je v 5. skupini. Na 2 iona Mg²⁺ pride en ion O²⁻.").issue, /15.*; ".*does not add up|15.*do not add up/);
+});
+

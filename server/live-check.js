@@ -279,7 +279,7 @@ export function codeFindings(answer, pre = null, question = "") {
   }
   // Kemijske preverbe se združijo v eno napako (en »Popravek:«), da »Dušik je v 5. skupini in v 3. periodi.« popravi
   // obe (pregled A, PR #589).
-  const chem = [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question), lewisIssue(answer, question), subscriptIssue(answer, question)];
+  const chem = [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question), lewisIssue(answer, question), subscriptIssue(answer, question), ionRatioIssue(answer, question)];
   for (const f of chem) checked += f.checked;
   const chemIssues = chem.map((f) => f.issue).filter(Boolean);
   if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
@@ -710,6 +710,64 @@ export function subscriptIssue(answer, question = "") {
         issue: `the formula ${f.src} keeps the subscripts unreduced; an ionic formula gives the smallest whole-number ratio of ions, so the cross rule ends by reducing them: ${f.src} → ${f.reduced} (Mg²⁺ + O²⁻ → Mg₂O₂ → MgO)`,
       };
     }
+  }
+  return { checked, issue: null };
+}
+
+// Krog 8 (2026-11-12): razmerje ionov, ki ne da vsote nabojev 0 (»na 2 iona Mg²⁺ en ion O²⁻« pri MgO; ponovitev po
+// #606). Preveri samo stavek z »na«, v katerem sta natanko dva iona s števcem in zapisanim nabojem (»2 iona Mg²⁺«,
+// »en $\mathrm{O^{2-}}$«), en kation in en anion: števec · naboj mora biti na obeh straneh enak. Ne šteje: `SKIP_LINE`
+// (»bi«, »če«, »napačn«, vprašanje …), stavek z »ne«/»ni«/»namesto«, razmerje iz učenčevega sporočila. Znane
+// zgrešitve: ioni brez zapisanega naboja ali z imenom (»dva magnezijeva iona«), razmerje brez »na« ali v ulomku.
+const COUNT_WORDS = { en: 1, ena: 1, eno: 1, eden: 1, enega: 1, enemu: 1, one: 1, dva: 2, dve: 2, dveh: 2, dvema: 2, two: 2, trije: 3, tri: 3, treh: 3, trem: 3, three: 3, štirje: 4, štiri: 4, štirih: 4, four: 4, pet: 5, petih: 5, šest: 6, šestih: 6 };
+const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "-" };
+const ionPlain = (t) =>
+  String(t)
+    .replace(/\\(?:mathrm|text|ce|rm)\s*/g, "")
+    .replace(/\\left|\\right|\$/g, "")
+    .replace(/[⁰-⁹¹²³⁺⁻]+/g, (m) => "^" + [...m].map((c) => SUP[c]).join(""))
+    .replace(/[₀-₉]/g, (d) => String(SUB_DIGITS.indexOf(d)))
+    .replace(/_\{?\s*(\d)\s*\}?/g, "$1")
+    .replace(/[{}]/g, "")
+    .replace(/[−–]/g, "-");
+const ION_MENTION_RE = new RegExp(
+  `(?<![\\p{L}\\d])(\\d|${Object.keys(COUNT_WORDS).join("|")})\\s+(?:ion\\p{L}*\\s+)?((?:[A-Z][a-z]?\\d?)+)\\^(\\d?)([+-])(?![\\d+-])`,
+  "giu",
+);
+const RATIO_SKIP_RE = /(?<!\p{L})(ne|ni|nista|niso|namesto|not|instead)(?!\p{L})/iu;
+function ionRatios(text) {
+  const out = [];
+  for (const line of ionPlain(text).split("\n")) {
+    if (SKIP_LINE.test(line)) continue;
+    for (const clause of line.split(/[.;!](?!\d)/)) {
+      if (!/(?<!\p{L})(na|per)(?!\p{L})/iu.test(clause) || RATIO_SKIP_RE.test(clause)) continue;
+      const ions = [...clause.matchAll(ION_MENTION_RE)].map((m) => ({
+        n: /^\d$/.test(m[1]) ? Number(m[1]) : COUNT_WORDS[m[1].toLowerCase()],
+        ion: m[2],
+        q: Number(m[3] || 1),
+        sign: m[4],
+        src: m[0].trim(),
+      }));
+      if (ions.length !== 2 || ions[0].sign === ions[1].sign || ions.some((i) => !i.n)) continue;
+      out.push(ions);
+    }
+  }
+  return out;
+}
+export function ionRatioIssue(answer, question = "") {
+  let checked = 0;
+  const asked = new Set(ionRatios(question).map((r) => r.map((i) => `${i.n}${i.ion}`).join("/")));
+  for (const r of ionRatios(answer)) {
+    if (asked.has(r.map((i) => `${i.n}${i.ion}`).join("/"))) continue;
+    checked++;
+    const [a, b] = r;
+    if (a.n * a.q === b.n * b.q) continue;
+    const g = gcdInt(a.q, b.q);
+    const sa = a.sign === "+" ? "+" : "−", sb = b.sign === "+" ? "+" : "−";
+    return {
+      checked,
+      issue: `"${a.src} … ${b.src}" gives charges ${sa}${a.n * a.q} and ${sb}${b.n * b.q}, which do not add up to 0; the ion ratio must balance the charges: ${b.q / g} ${a.ion} per ${a.q / g} ${b.ion} (e.g. MgO: one Mg²⁺ per one O²⁻, +2 − 2 = 0; Al₂O₃: 2 · (+3) + 3 · (−2) = 0). In the cross rule the anion's charge becomes the cation's subscript and the cation's charge the anion's subscript, then reduce and check the sum`,
+    };
   }
   return { checked, issue: null };
 }
