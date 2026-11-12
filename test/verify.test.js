@@ -247,7 +247,8 @@ test("chat: in a mixed batch only the wrong flashcard is deleted", async () => {
     const fronts = (await app.cards()).map((c) => c.front).sort();
     assert.deepEqual(fronts, ["Formula aluminijevega oksida?", "Kako s križnim pravilom določiš indeksa?"]);
     assert.equal(app.store.db.prepare("SELECT COUNT(*) AS n FROM flashcards").get().n, 2);
-    assert.ok(logs.some((l) => /kartice niso shranjene \(1 od 3; .*: 2: the cation/.test(l)), logs.join("\n"));
+    assert.ok(logs.some((l) => /kartice niso shranjene \(1 od 3; razlog ne gre v dnevnik/.test(l)), logs.join("\n"));
+    assert.ok(!logs.some((l) => /the cation/.test(l)), "besedilo kartice ne sme v dnevnik");
   } finally {
     console.warn = warn;
     app.close();

@@ -1241,7 +1241,7 @@ export function createApp(store, opts = {}) {
               if (ok) store.db.prepare("UPDATE answer_cache SET verified = 1 WHERE key = ? AND text = ?").run(key, generic);
               else {
                 store.db.prepare("DELETE FROM answer_cache WHERE key = ? AND text = ? AND verified = 0").run(key, generic);
-                console.warn(`[evklid] odgovor ni shranjen za ponovno uporabo (${String(reason).slice(0, 120)})`);
+                console.warn(`[evklid] odgovor ni shranjen za ponovno uporabo (razlog ${String(reason).length} znakov; besedilo ne gre v dnevnik, docs/varnost-podatkov.md)`);
               }
             });
           }
@@ -1283,7 +1283,7 @@ export function createApp(store, opts = {}) {
           store.cards.settle(ids.filter((_, i) => pass[i]), true);
           store.cards.settle(ids.filter((_, i) => !pass[i]), false);
           const lost = pass.filter((p) => !p).length;
-          if (lost) console.warn(`[evklid] kartice niso shranjene (${lost} od ${ids.length}; ${String(reason).slice(0, 120)})`);
+          if (lost) console.warn(`[evklid] kartice niso shranjene (${lost} od ${ids.length}; razlog ne gre v dnevnik, docs/varnost-podatkov.md)`);
         });
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
