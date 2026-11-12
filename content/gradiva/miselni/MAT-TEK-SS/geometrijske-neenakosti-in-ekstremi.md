@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Poskus z roverjem
+  - preizkusi več točk $P$ na robu
+  - najkrajša pot: enaka kota z robom
+- Trikotniška neenakost
+  - $|XZ| \le |XY| + |YZ|$
+  - enakost le za $Y$ na daljici $XZ$
+  - napaka: pozabljena spodnja meja $|a - b|$
+- Zrcaljenje čez premico
+  - $|AP| = |A'P|$, poveži $A'$ z $B$
+  - napaka: pravokotnica ali sredina med nožiščema
+  - nasprotni strani: kar daljica $AB$
+- Dve zrcaljenji
+  - v kotu $\theta$ kot $2\theta$ med slikama
+  - kot $30^\circ$, $|OP| = 10$: obseg $10$
+- Zrcaljenje čez točko
+  - podvojena težiščnica, paralelogram
+  - $2t_a < b + c$
+- Razgrnitev telesa
+  - kvader $6 \times 4 \times 2$: najkrajša $\sqrt{72}$
+  - preveri vse razgrnitve
+- Iskanje ekstrema
+  - neenakost plus primer enakosti
+  - teleskopi: presečišče diagonal

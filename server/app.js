@@ -1,5 +1,6 @@
 // HTTP strežnik Evklid: API + statični vmesnik.
 import "./env.js";
+import { mountMeritevPoObjavi } from "./meritev-po-objavi.js";
 import express from "express";
 import helmet from "helmet";
 import fs from "node:fs";
@@ -559,6 +560,9 @@ export function createApp(store, opts = {}) {
     topicName: (id) => lessonView(id)?.name || null,
     localOnly: (req, res, next) => (isLocalRequest(req) ? next() : res.status(403).json({ error: "Samo na računalniku, kjer teče Evklid." })),
   });
+
+  // Izid samodejne meritve natančnosti po objavi (server/meritev-po-objavi.js), samo za skrbnika.
+  mountMeritevPoObjavi(app, { isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req) });
 
   // Obvestilo »Testna verzija«: kaj še ne dela. EVKLID_TESTNA_VERZIJA=off ga skrije (ob javni objavi).
   const testNotice = () => {

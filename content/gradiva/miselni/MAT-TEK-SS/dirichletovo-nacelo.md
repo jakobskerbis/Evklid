@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Predali in predmeti
+  - več predmetov kot predalov
+  - neki predal ima vsaj dva
+- Najbolj neugodna razporeditev
+  - čim bolj enakomerno
+  - 16 kovancev: po 2 vsake vrste
+- Posplošeno načelo
+  - $g = \left\lceil \frac{N}{n} \right\rceil$
+  - napaka: spodnji namesto zgornjega celega dela
+- Najmanj predmetov
+  - $N = n \cdot m + 1$
+  - napaka: pozabljeni $+1$
+- Izbira predalov
+  - ostanki, pari z vsoto, intervali
+  - cene $\{c, 21 - c\}$: $11$ izdelkov
+- Delne vsote
+  - $S_j - S_i$ je vsota zaporednih
+  - 10 vsot, 9 ostankov brez ničle
+- Posplošitve
+  - vsaj eno število je vsaj povprečje
+  - neskončno predmetov, končno predalov

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Bijekcija
+  - vsak element natanko en par: $|A| = |B|$
+  - podmnožice in nizi ničel in enic: $2^n$
+- Poti po mreži
+  - niz črk V in S
+  - do $(m; n)$: $\binom{m+n}{n}$ poti
+  - skozi točko: produkt dveh delov
+- Zvezdice in pregrade
+  - $n$ enakih v $k$ predalov: $\binom{n+k-1}{k-1}$
+  - »vsaj 1«: vsakemu predalu najprej enega
+  - napaka: formula za različne predmete
+- Dvojno štetje
+  - tabelo seštej po vrsticah in stolpcih
+  - vsota stopenj je dvakratnik števila stez
+  - tabor: $3d = 105$, $d = 35$
+- Vključitve in izključitve
+  - $|A \cup B| = |A| + |B| - |A \cap B|$
+  - tri množice: $S_1 - S_2 + S_3$
+  - napaka: presek odštet dvakrat
+- Zgornja meja
+  - izključi množice »preveč v predalu«
+  - $66 - 63 + 3 = 6$

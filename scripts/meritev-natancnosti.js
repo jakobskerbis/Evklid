@@ -19,6 +19,28 @@ export const DOC = path.join(root, "docs", "stroski-ai.md");
 export const DOC_START = "<!-- NATANCNOST:ZACETEK (piše scripts/primerjava-modelov.js, ne urejaj ročno) -->";
 export const DOC_END = "<!-- NATANCNOST:KONEC -->";
 
+// Rešeni primeri lekcije (naloga + rešitev po korakih); skupno za primerjava-modelov.js in server/meritev-po-objavi.js.
+// Rešene primere pišeta in pregledujeta Opus ali Fable, zato je njihova rešitev merilo.
+export function examplesOf(file) {
+  const md = fs.readFileSync(file, "utf8");
+  const sec = md.split(/^## Rešeni primeri\s*$/m)[1]?.split(/^## (?!#)/m)[0];
+  if (!sec) return [];
+  return sec
+    .split(/^### /m)
+    .slice(1)
+    .map((block) => {
+      const [head, ...rest] = block.split("\n");
+      const body = rest.join("\n").trim();
+      const cut = body.search(/^\*\*(Podatki|Rešitev|Iščemo)[:*]/m);
+      // Vprašanje je pogosto le v »Iščemo« (ne izda rešitve), zato ga dodamo; formulo (namig) izpustimo.
+      const wanted = body.match(/^\*\*Iščemo(?::\*\*|\*\*:)\s*(.+)$/m)?.[1];
+      const prose = (cut > 0 ? body.slice(0, cut) : "").replace(/:::formula[\s\S]*?:::/g, "").trim();
+      const task = prose && wanted ? `${prose}\n\nIščemo: ${wanted.trim()}` : prose;
+      return { title: head.trim(), task, solution: body, hard: /težj/i.test(head) };
+    })
+    .filter((e) => e.task.length >= 30 && /Rešitev/.test(e.solution));
+}
+
 export const CONDITIONS = [
   { kljuc: "brez", liveCheck: "0", ime: "Sam model, brez preverjanja", ime_en: "Model alone, without the program check" },
   { kljuc: "s", liveCheck: "1", ime: "Cel Evklidov odgovor, s preverjanjem", ime_en: "Evklid's full answer, with the program check" },
@@ -249,7 +271,8 @@ function saveProgress(file, rows) {
 // (dva odgovora, pregled, popravek, dve oceni); pred vsakim primerom mora biti zanj še prostor pod mejo.
 // createOpts: samo za teste (vstavljeni streamFn in reviewCreateFn namesto API).
 // conditions: podmnožica CONDITIONS (ciljna ponovitev z --pogoj); t.topic: tema pogovora, kadar je id ponovitev (»<id>#2«).
-export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, progressFile, realCap = false, createOpts = {}, log = console.log, conditions = CONDITIONS }) {
+// knjiga(usd): po vsakem plačanem odgovoru (tudi neocenjenem) njegov strošek v tedensko knjigo meritev (server/meritev-po-objavi.js).
+export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, progressFile, realCap = false, createOpts = {}, log = console.log, conditions = CONDITIONS, knjiga = () => {} }) {
   if (!(Number.isFinite(maxUsd) && maxUsd > 0) || !(Number.isFinite(worstPair) && worstPair > 0)) throw new Error("runChecked: neveljavna meja stroška");
   // Nastavitve morajo biti pred uvozom aplikacije (server/app.js jih delno prebere ob uvozu).
   process.env.EVKLID_ANSWER_CACHE = "0"; // vsak odgovor res pripravi model
@@ -311,6 +334,7 @@ export async function runChecked({ tasks, settingsFor, question, grade, group, m
         row.popravek = used.some((u) => u.kind === "popravek");
         row.pregled = used.some((u) => u.kind === "preverjanje" || u.kind === "preverjanje-sola");
         (isGraded(row) ? rows : dead).push(row);
+        knjiga(rowCost(row));
         if (progressFile) saveProgress(progressFile, [...rows, ...dead]);
         log(`[${i + 1}/${tasks.length}] ${c.kljuc.padEnd(4)} ${String(row.ocena).padEnd(13)} ${row.popravek ? "popravek " : ""}${row.pregled ? "pregled " : ""}${t.id}  (skupaj ${spent().toFixed(2)} $)`);
       }

@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lom svetlobe
+  - kote meriš od pravokotnice
+  - $n_1\sin\alpha = n_2\sin\beta$
+  - večji $n$: žarek proti pravokotnici
+- Popolni odboj
+  - le iz večjega $n$ v manjši
+  - $\sin\alpha_m = \frac{n_2}{n_1}$, steklo $41{,}8^\circ$
+  - optični kabel za zvok
+- Konstrukcija slike
+  - vzporedni žarek skozi gorišče
+  - žarek skozi središče naravnost
+  - presečišče je vrh slike
+- Vrste slik
+  - $a > 2f$: pomanjšana realna
+  - $f < a < 2f$: povečana realna
+  - $a < f$: navidezna pokončna
+- Enačba leče
+  - $\frac{1}{f} = \frac{1}{a} + \frac{1}{b}$
+  - povečava $\frac{S}{P} = \frac{b}{a}$
+  - napaka: slika vedno v gorišču
+- Zrcala
+  - vbočeno: $f = \frac{r}{2}$
+  - izbočeno: vedno pomanjšana navidezna slika
+- Optične naprave
+  - fotoaparat, projektor, lupa
+  - daljnogled: $M = \frac{f_\mathrm{ob}}{f_\mathrm{ok}}$
