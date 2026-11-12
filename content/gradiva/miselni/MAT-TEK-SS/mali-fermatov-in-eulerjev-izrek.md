@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ostanki potenc se ponavljajo
+  - $3^k \bmod 7$: $3, 2, 6, 4, 5, 1$
+  - cikel se konča pri ostanku $1$
+- Mali Fermatov izrek
+  - $a^{p-1} \equiv 1 \pmod p$, če $p \nmid a$
+  - $a^p \equiv a \pmod p$ za vsak $a$
+  - samo za praštevilski modul
+- Red števila
+  - najmanjši $k > 0$ z $a^k \equiv 1$
+  - $a^m \equiv 1$ natanko tedaj, ko red deli $m$
+  - red deli $p - 1$; $\mathrm{ord}_7(2) = 3$
+- Eulerjeva funkcija
+  - šteje ostanke, tuje z $n$
+  - $\varphi(100) = 100 \cdot \frac{1}{2} \cdot \frac{4}{5} = 40$
+- Eulerjev izrek
+  - $a^{\varphi(n)} \equiv 1 \pmod n$, če $D(a, n) = 1$
+  - zadnji dve števki: modul $100$
+- Zmanjševanje eksponenta
+  - eksponent po redu ali $\varphi(n)$, ne po modulu
+  - $3^{100} \equiv 3^4 \equiv 4 \pmod 7$

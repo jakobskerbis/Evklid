@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ničle na grafu
+  - $p(x_0) = 0$, graf seka os $x$
+  - $(x - 1)(x - 2)(x - 3) = x^3 - 6x^2 + 11x - 6$
+- Izrek o ostanku
+  - $p(x) = (x - x_0)\,q(x) + r$, $r = p(x_0)$
+  - napaka: pri $x + 1$ vstaviti $1$ namesto $-1$
+  - kvadratni delitelj: ostanek oblike $ux + v$
+- Hornerjev algoritem
+  - spusti, pomnoži z $x_0$, prištej
+  - zadnja vrstica: količnik in ostanek
+- Cele ničle
+  - delijo prosti člen
+  - $x^3 - 4x^2 + x + 6$: ničle $-1, 2, 3$
+- Vietove formule
+  - $x_1 + x_2 = -\frac{b}{a}$, $x_1 x_2 = \frac{c}{a}$
+  - kubični: $e_1 = -\frac{b}{a}$, $e_2 = \frac{c}{a}$, $e_3 = -\frac{d}{a}$
+  - napaka: pozabljen minus ali delitev z $a$
+- Simetrični izrazi
+  - $x_1^2 + x_2^2 = e_1^2 - 2e_2$
+  - $\frac{1}{x_1} + \frac{1}{x_2} = \frac{e_1}{e_2}$
+  - $s_n = e_1 s_{n-1} - e_2 s_{n-2}$
+- Realnost ničel
+  - vsota $2$, produkt $5$: diskriminanta $-16$, ni realnih števil

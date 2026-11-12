@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Gibalna količina
+  - $p = mv$, enota $\mathrm{kg\,m/s}$
+  - vektor: na premici s predznakom
+- Sunek sile
+  - $F\Delta t = \Delta p$
+  - odboj palice da večji sunek
+- Ohranitev
+  - zaprt sistem, vsak trk in odriv
+  - $m_1 v_1 + m_2 v_2 = m_1 v_1' + m_2 v_2'$
+- Popolnoma neprožni trk
+  - telesi se sprimeta
+  - $v' = \frac{m_1 v_1 + m_2 v_2}{m_1 + m_2}$
+  - izguba kinetične energije največja
+- Prožni trk
+  - ohrani se kinetična energija
+  - $v_1 - v_2 = v_2' - v_1'$
+  - enaki masi, druga miruje: prva obstane
+- Paradoks odboja
+  - vpadna kroglica gre v minus
+  - zadeta dobi več gibalne količine
+- Sestavljene naloge
+  - trk: samo gibalna količina
+  - pred in po trku: energija

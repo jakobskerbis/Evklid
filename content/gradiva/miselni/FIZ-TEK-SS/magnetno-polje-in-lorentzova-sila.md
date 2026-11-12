@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lorentzova sila
+  - $F = qvB\sin\alpha$, enota tesla
+  - pravokotna na hitrost in silnice
+  - napaka: sila vzdolž silnic
+- Desna roka
+  - prsti v smeri $v$, pokrčeni proti $B$
+  - elektron zavije nasprotno
+- Brez dela
+  - velikost hitrosti ostane enaka
+  - hitrost dobiš iz napetosti: $eU = \frac{1}{2}mv^2$
+- Kroženje v polju
+  - $r = \frac{mv}{qB}$
+  - $t_0 = \frac{2\pi m}{qB}$, neodvisen od hitrosti
+- Vijačnica
+  - kroženje povzroča le $v\sin\alpha$
+  - korak $h = v\cos\alpha \cdot t_0$
+- Masni spektrometer
+  - izbiralnik hitrosti: $v = \frac{E}{B}$
+  - sled pri $d = 2r$, sorazmerno z maso
+  - zlato in volfram: dve sledi
+- Sila na vodnik
+  - $F = IlB\sin\alpha$
+  - tehtnica v zlatarni: $\Delta I\,lB = mg$
+  - polje žice $B = \frac{\mu_0 I}{2\pi r}$

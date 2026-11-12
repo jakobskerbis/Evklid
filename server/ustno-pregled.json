@@ -1136,6 +1136,62 @@
    "h": "13da4871b4ac",
    "o": "D"
   },
+  "FIZ-TEK-SS/elektrostatika#p0": {
+   "h": "984819ede310",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/elektrostatika#p1": {
+   "h": "525a9d79a4e3",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/gibalna-kolicina-in-trki#p1": {
+   "h": "c80b643d2cbd",
+   "o": "I",
+   "r": "sklic na primer iz lekcije"
+  },
+  "FIZ-TEK-SS/gravitacija-in-krozenje#p0": {
+   "h": "9205de9cb893",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/idealni-plin-in-termodinamika#p1": {
+   "h": "d079944f1a22",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/magnetno-polje-in-lorentzova-sila#p0": {
+   "h": "d0d60266da7f",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/newtonovi-zakoni-s-trenjem-in-klanci#p1": {
+   "h": "2cd26c7d0eac",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/nihanje-in-valovanje#p0": {
+   "h": "aeb5fb878ce9",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/nihanje-in-valovanje#p1": {
+   "h": "b8fc45bfc01c",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/ocenjevanje-in-dimenzijska-analiza#p0": {
+   "h": "ff7961b2956c",
+   "o": "D"
+  },
+  "FIZ-TEK-SS/tokokrogi-s-kirchhoffovimi-pravili#p1": {
+   "h": "cc812dc5d71e",
+   "o": "D",
+   "r": "največja moč ni vprašana",
+   "k": [
+    "Nekje vmes, natanko pri $R = R_i$",
+    "Pri zelo majhnem uporu teče velik tok, napetost na zvočniku pa je skoraj nič",
+    "Pri zelo velikem je napetost skoraj $U_g$, tok pa skoraj nič"
+   ]
+  },
+  "FIZ-TEK-SS/vrtenje-in-navor#p1": {
+   "h": "9db98b9e2ae4",
+   "o": "I",
+   "r": "sklic na tekmo iz lekcije"
+  },
   "KEM-OS-8/energija-pri-reakcijah#p0": {
    "h": "0e627fc8b12c",
    "o": "D"
@@ -1549,6 +1605,14 @@
    "h": "19a5865e33af",
    "o": "I",
    "r": "reakcija ni podana"
+  },
+  "KEM-TEK-OS/lastnosti-snovi-in-locevanje-zmesi#p0": {
+   "h": "7ed631190e70",
+   "o": "D"
+  },
+  "KEM-TEK-OS/lastnosti-snovi-in-locevanje-zmesi#p1": {
+   "h": "4b8830b4562d",
+   "o": "D"
   },
   "MAT-OS-6/deljivost#p0": {
    "h": "4d4ff496d9c6",
@@ -2270,6 +2334,170 @@
   },
   "MAT-TEK-OS/stevilske-uganke-in-zapisi#p0": {
    "h": "08a85da93f78",
+   "o": "D"
+  },
+  "MAT-TEK-SS/deljivost-d-in-v-evklidov-algoritem#p0": {
+   "h": "741332ee43a6",
+   "o": "I",
+   "r": "»tak postopek« iz lekcije"
+  },
+  "MAT-TEK-SS/deljivost-d-in-v-evklidov-algoritem#p1": {
+   "h": "d32aeb953389",
+   "o": "D"
+  },
+  "MAT-TEK-SS/diofantske-enacbe#p0": {
+   "h": "038a83b75796",
+   "o": "D"
+  },
+  "MAT-TEK-SS/diofantske-enacbe#p1": {
+   "h": "7cc4440a2962",
+   "o": "I",
+   "r": "sklic na prejšnji korak"
+  },
+  "MAT-TEK-SS/diofantske-enacbe#p2": {
+   "h": "d9c9f5a77fe8",
+   "o": "I",
+   "r": "sklic na prejšnji korak"
+  },
+  "MAT-TEK-SS/dirichletovo-nacelo#p1": {
+   "h": "f64021d8c098",
+   "o": "I",
+   "r": "sklic na trditev iz lekcije"
+  },
+  "MAT-TEK-SS/ekstremalni-princip#p0": {
+   "h": "5be07f1a9eca",
+   "o": "I",
+   "r": "sklic na turnir iz lekcije"
+  },
+  "MAT-TEK-SS/ekstremalni-princip#p1": {
+   "h": "5f9ed98d1386",
+   "o": "I",
+   "r": "»isti dokaz« iz lekcije"
+  },
+  "MAT-TEK-SS/ekstremalni-princip#p2": {
+   "h": "10b4867a0300",
+   "o": "I",
+   "r": "sklic na prejšnji korak"
+  },
+  "MAT-TEK-SS/funkcijske-enacbe#p0": {
+   "h": "9837445c9035",
+   "o": "I",
+   "r": "»te enačbe« iz lekcije"
+  },
+  "MAT-TEK-SS/funkcijske-enacbe#p1": {
+   "h": "7f0a9e130b1f",
+   "o": "D"
+  },
+  "MAT-TEK-SS/geometrijske-neenakosti-in-ekstremi#p0": {
+   "h": "f48512092944",
+   "o": "I",
+   "r": "sklic na primer iz lekcije"
+  },
+  "MAT-TEK-SS/grafi-in-barvanja#p0": {
+   "h": "cf4dc411fab3",
+   "o": "D"
+  },
+  "MAT-TEK-SS/grafi-in-barvanja#p1": {
+   "h": "ac46b16e09f1",
+   "o": "I",
+   "r": "sklic na korak 5"
+  },
+  "MAT-TEK-SS/grafi-in-barvanja#p2": {
+   "h": "287f69d25f80",
+   "o": "I",
+   "r": "sklic na prejšnji korak"
+  },
+  "MAT-TEK-SS/invariante-in-monovariante#p0": {
+   "h": "231d1f6dbce5",
+   "o": "I",
+   "r": "sklic na primer s cevmi"
+  },
+  "MAT-TEK-SS/invariante-in-monovariante#p2": {
+   "h": "3d6827c8bc1f",
+   "o": "I",
+   "r": "sklic na primer s ploščicami"
+  },
+  "MAT-TEK-SS/kongruence#p0": {
+   "h": "6c67fc1b74ea",
+   "o": "D"
+  },
+  "MAT-TEK-SS/kongruence#p1": {
+   "h": "ac9ed02b53fa",
+   "o": "D"
+  },
+  "MAT-TEK-SS/kongruence#p2": {
+   "h": "e8f80f3b0bba",
+   "o": "I",
+   "r": "»enačba« iz lekcije"
+  },
+  "MAT-TEK-SS/koti-v-kroznici-in-tetivni-stirikotniki#p1": {
+   "h": "a7a22f602f3f",
+   "o": "D"
+  },
+  "MAT-TEK-SS/mali-fermatov-in-eulerjev-izrek#p0": {
+   "h": "1581cf320d76",
+   "o": "I",
+   "r": "sklic na prejšnji korak"
+  },
+  "MAT-TEK-SS/mali-fermatov-in-eulerjev-izrek#p1": {
+   "h": "120a3993e4f1",
+   "o": "D"
+  },
+  "MAT-TEK-SS/mali-fermatov-in-eulerjev-izrek#p2": {
+   "h": "bb39a3ea6f4d",
+   "o": "I",
+   "r": "sklic na prejšnji korak"
+  },
+  "MAT-TEK-SS/podobnost-menelaj-in-ceva#p1": {
+   "h": "893c5e6ad3ee",
+   "o": "D"
+  },
+  "MAT-TEK-SS/polinomi-in-vietove-formule#p0": {
+   "h": "878de3064b5c",
+   "o": "D"
+  },
+  "MAT-TEK-SS/polinomi-in-vietove-formule#p1": {
+   "h": "552e5be41545",
+   "o": "D"
+  },
+  "MAT-TEK-SS/potenca-tocke-in-radikalna-os#p2": {
+   "h": "6e4ea6ce5e16",
+   "o": "I",
+   "r": "sklic na prejšnji korak"
+  },
+  "MAT-TEK-SS/prastevila-in-eksponent-prastevila#p0": {
+   "h": "79d91a38039f",
+   "o": "D"
+  },
+  "MAT-TEK-SS/prastevila-in-eksponent-prastevila#p1": {
+   "h": "a069e86fda63",
+   "o": "D"
+  },
+  "MAT-TEK-SS/stetje-z-bijekcijami#p0": {
+   "h": "059aecead38f",
+   "o": "D"
+  },
+  "MAT-TEK-SS/stetje-z-bijekcijami#p1": {
+   "h": "1ba2fb40561f",
+   "o": "I",
+   "r": "sklic na S1, S2, S3 iz lekcije"
+  },
+  "MAT-TEK-SS/zaporedja-rekurzije-in-indukcija#p0": {
+   "h": "b1763403820e",
+   "o": "I",
+   "r": "sklic na primer z zdravilom"
+  },
+  "MAT-TEK-SS/zaporedja-rekurzije-in-indukcija#p1": {
+   "h": "0b515c440b09",
+   "o": "I",
+   "r": "sklic na formuli iz lekcije"
+  },
+  "MAT-TEK-SS/znacilne-tocke-trikotnika#p0": {
+   "h": "167105bc09fa",
+   "o": "D"
+  },
+  "MAT-TEK-SS/znacilne-tocke-trikotnika#p1": {
+   "h": "b7c92ad8ad06",
    "o": "D"
   },
   "NAR-OS-6/agregatna-stanja#p0": {

@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Funkcijska enačba
+  - neznanka je cela funkcija $f$
+  - velja za vse dovoljene $x$, $y$
+- Substitucije
+  - $x = y = 0$ da $f(0) = 0$
+  - $y = x$, $y = -x$
+  - $x = f(y)$ izniči argument
+- Zamenjava para
+  - $x \to 1 - x$ da sistem
+  - iz sistema izrazi $f(x)$
+- Injektivnost
+  - iz $f(a) = f(b)$ sledi $a = b$
+  - šele nato krajšaj $f$
+  - napaka: $x^2$ ni injektivna
+- Cauchyjeva enačba
+  - $f(x + y) = f(x) + f(y)$
+  - na $\mathbb{Q}$: $f(x) = cx$, $c = f(1)$
+  - na $\mathbb{R}$ le z zveznostjo ali monotonostjo
+- Preizkus
+  - izpeljava da le potrebne pogoje
+  - kandidata vstavi v prvotno enačbo

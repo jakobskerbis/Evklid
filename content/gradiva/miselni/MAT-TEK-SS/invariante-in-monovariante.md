@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Šahovsko barvanje
+  - ploščica $1 \times 2$ pokrije eno belo, eno črno
+  - $8 \times 8$ brez nasprotnih vogalov: $30$ belih, $32$ črnih
+- Invarianta
+  - poteza je ne spremeni, kot korak indukcije
+  - različna na začetku in cilju: cilj nedosegljiv
+  - napaka: ujemanje vzeti kot dokaz, da gre
+- Parnost in ostanki
+  - $a + b$ in $|a - b|$ imata enako parnost
+  - $1, \dots, 10$: vsota $55$, zadnje število liho
+- Barvanje z ostanki
+  - barva = ostanek $i + j$ pri deljenju s $4$
+  - $10 \times 10$: barve $25$, $24$, $25$, $26$
+- Monovarianta
+  - spremeni se vedno v isto smer
+  - nenegativno celo število: največ $M$ potez
+  - napaka: realna števila padajo v nedogled
+- Število inverzij
+  - zamenjava sosedov ga zmanjša za natanko $1$
+  - $100$ dlet obratno: $4950$ zamenjav

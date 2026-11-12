@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Produkt kot pravokotnik
+  - $a \cdot b$ je ploščina s širino $a$, višino $b$
+  - žetoni $2, 5, 8$ na $\times 1, 2, 3$: največ $36$
+- Zamenjava para
+  - razlika je $(a_j - a_i)(b_j - b_i) \ge 0$
+  - vsak popravljen par vsoto poveča
+- Neenakost urejanja
+  - enako urejeni: največja vsota produktov
+  - nasprotno urejeni: najmanjša vsota
+  - napaka: pariti brez urejanja
+- Čebišev
+  - $(a_1 + \dots + a_n)(b_1 + \dots + b_n) \le n(a_1 b_1 + \dots + a_n b_n)$
+  - vsota cikličnih zamikov: $90 \le 96$
+  - nasprotno urejeni: neenakost se obrne
+- Cauchy-Schwarz
+  - $(\sum a_i b_i)^2 \le \sum a_i^2 \sum b_i^2$
+  - enakost pri $b_i = t a_i$
+  - $x + 2y + 2z = 9$ da $x^2 + y^2 + z^2 \ge 9$
+- Engelova oblika
+  - $\sum \frac{x_i^2}{y_i} \ge \frac{(\sum x_i)^2}{\sum y_i}$, $y_i > 0$
+  - enakost pri enakih $\frac{x_i}{y_i}$
+- Primer enakosti
+  - mejo vedno preizkusi v točki
+  - napaka: kar vzeti $x = y$
