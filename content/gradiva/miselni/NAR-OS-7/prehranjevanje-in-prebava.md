@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Načini prehranjevanja
+  - rastlinojedci, mesojedci, vsejedci, precejalci
+  - zajedavci se hranijo z gostiteljem
+- Zobje in hrana
+  - ploski kočniki meljejo rastline
+  - ostri podočniki trgajo meso
+  - ptiči: kljun in mišičnati želodec
+- Mehanska prebava
+  - zobje drobijo, želodec meša
+  - snov ostane ista
+- Kemijska prebava
+  - encimi razgradijo velike molekule
+  - amilaza v slini: škrob → sladkor
+  - napaka: prebava se začne šele v želodcu
+- Pot hrane
+  - usta → požiralnik → želodec (kisel sok)
+  - tanko črevo → debelo črevo → zadnjik
+  - jetra in trebušna slinavka pošljejo sokove
+- Vsrkavanje
+  - v tankem črevesu, resice povečajo površino
+  - debelo črevo vsrka vodo
+- Dolžina črevesa
+  - $k = \dfrac{L}{l}$
+  - mačka $4$-krat, ovca $25$-krat

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zemlja kot ladja
+  - od zunaj pride skoraj samo svetloba
+  - snovi krožijo, »stran« ne obstaja
+- Onesnaževanje
+  - zrak, voda, tla, nočno nebo
+  - gnojila: alge se razbohotijo, ribam zmanjka kisika
+  - luči: v mestu $10$-krat manj zvezd
+- Kopičenje strupov
+  - na vsaki stopnji $10$-krat več: $c_2 = 10 \cdot c_1$
+  - alge $5$, čaplja $5000\,\mu\mathrm{g/kg}$
+  - napaka: deliti kot pri energiji
+- Biotska raznovrstnost
+  - število različnih vrst, ne osebkov
+  - več vrst, bolj odporen splet
+- Grožnje
+  - uničevanje življenjskih prostorov
+  - tujerodne invazivne vrste (japonski dresnik)
+  - lov, onesnaževanje, podnebne spremembe
+- Varovanje
+  - Triglavski narodni park, Natura 2000
+  - zavarovane vrste: človeška ribica, planika
+- Zmanjšaj, ponovno uporabi, recikliraj
+  - najboljše je ne kupiti
+  - recikliranje porabi energijo

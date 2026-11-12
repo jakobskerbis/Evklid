@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deli cveta
+  - pestič: brazda, vrat, plodnica
+  - prašniki s pelodom
+- Opraševanje
+  - pelod s prašnika na brazdo
+  - prenašajo žuželke ali veter
+- Oploditev
+  - moška spolna celica in jajčna celica
+  - napaka: oprašen cvet še ni oplojen
+  - spolno razmnoževanje: potomci različni
+- Seme in plod
+  - semenska zasnova postane seme
+  - plodnica postane plod
+  - paradižnik in kumara sta plodova
+- Kalitev in raznašanje
+  - seme: zarodek, zaloga hrane, lupina
+  - plodove raznašajo veter in živali
+- Nespolno razmnoževanje
+  - pritlike, gomolji, čebulice, potaknjenci
+  - potomci enaki materi
+- Štetje
+  - en plod iz ene plodnice
+  - $N_1 = N_0 + N_0 \cdot p$

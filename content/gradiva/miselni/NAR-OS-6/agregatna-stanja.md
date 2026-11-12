@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tri stanja
+  - trdno: svoja oblika in prostornina
+  - tekoče: oblika od posode
+  - plinasto: zavzame ves prostor
+- Delci
+  - trdno: tesno skupaj, na svojih mestih
+  - tekoče: blizu, drsijo drug ob drugem
+  - plin: daleč narazen, zato ga stisneš
+- Spremembe v parih
+  - taljenje in strjevanje
+  - izparevanje in kondenzacija
+- Toplota
+  - taljenje, izparevanje: snov prejema toploto
+  - strjevanje, kondenzacija: snov oddaja toploto
+- Izhlapevanje in vrenje
+  - izhlapevanje na površini, pri vsaki temperaturi
+  - vrenje v vsej tekočini, pri vrelišču
+  - napaka: voda izpareva šele pri $100\,^\circ\mathrm{C}$
+- Tališče in vrelišče
+  - voda: $0\,^\circ\mathrm{C}$ in $100\,^\circ\mathrm{C}$
+  - med taljenjem temperatura stoji
+- Masa in prostornina
+  - masa se ohrani
+  - led ima večjo prostornino: $V = \dfrac{m}{\rho}$
