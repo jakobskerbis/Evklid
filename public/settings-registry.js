@@ -24,7 +24,7 @@ export const PROFILE_SETTINGS = {
   study_program: { confirm: true, desc: "faculty study programme: id or name with faculty, e.g. 'Kemija UL FKKT' (get_settings options=study_program lists them)" },
   study_course: { desc: "faculty only: course of the programme's current year or an elective, by name (get_settings options=study_course)" },
   subject: { values: ["MAT", "FIZ", "KEM", "NAR", "BIO", "GEO", "RAC", "EKO"], desc: "school subject; OŠ 6./7. has MAT and NAR only; at faculty prefer study_course" },
-  track: { values: ["REGULAR", "COMPETITION"], desc: "REGULAR = school (NPZ/matura), COMPETITION = competition preparation (not at faculty or in regional systems)" },
+  track: { values: ["REGULAR", "COMPETITION"], desc: "REGULAR = school (NPZ/matura), COMPETITION = competition preparation (not at faculty or in regional systems). Follows goal: COMPETITION is the same as goal tekmovanje" },
   solving_mode: { values: ["A", "B"], desc: "A = step-by-step guidance, B = full worked solution with explanation (permanent default)" },
   personality_setting: { desc: "tutor tone / theme of examples, max 200 chars, e.g. 'strog', 'šaljiv, primeri iz nogometa'" },
   language: { desc: "conversation and app language, ISO 639 code (e.g. 'sl', 'en', 'de', 'hr', 'zh-Hant'); the app reloads in it" },
