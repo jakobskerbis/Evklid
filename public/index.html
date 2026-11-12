@@ -31,7 +31,6 @@
   <script src="zacetek.js"></script>
   <link rel="stylesheet" href="vendor/instrument-sans/index.css">
   <link rel="stylesheet" href="vendor/nunito/index.css">
-  <link rel="stylesheet" href="vendor/ibm-plex-sans/index.css">
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="ui.css">
@@ -84,7 +83,7 @@
       <button class="tab" data-view="settings"><i data-icon="settings"></i><span data-i18n="nav.settings">Nastavitve</span></button>
       <button class="tab" data-view="account" id="account-tab" hidden><i data-icon="user"></i><span data-i18n="nav.account">Račun</span></button>
       <button class="tab" data-view="league"><i data-icon="trophy"></i><span data-i18n="nav.league">Lige</span></button>
-      <button class="tab" data-view="feedback" id="feedback-tab" hidden><i data-icon="message-square-heart"></i><span data-i18n="nav.feedbackShort">Mnenje</span></button>
+      <button class="tab" data-view="feedback" id="feedback-tab" hidden><i data-icon="message-square-heart"></i><span data-i18n="nav.feedback">Povratne informacije</span></button>
     </nav>
     <div id="xp-badge" class="xp-badge">
       <button type="button" id="goal-chip" class="stat goal-chip" hidden><i data-icon="target"></i><b></b></button>
@@ -280,12 +279,6 @@
           <option value="KEM" data-i18n="subj.KEM">Kemija</option>
           <option value="NAR" data-i18n="subj.NAR">Naravoslovje</option>
           <option value="BIO" data-i18n="subj.BIO">Biologija</option>
-        </select>
-      </label>
-      <label id="track-row"><span data-i18n="set.program">Program</span>
-        <select name="track">
-          <option value="REGULAR" data-i18n="set.regular">Redni pouk (NPZ / matura)</option>
-          <option value="COMPETITION" data-i18n="set.competition">Tekmovanja</option>
         </select>
       </label>
       <fieldset class="goal-field">

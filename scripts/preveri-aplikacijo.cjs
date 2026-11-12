@@ -1011,7 +1011,9 @@ async function examsView(p, label) {
   await p.waitForTimeout(200);
   if (await p.locator(".pv").count()) throw new Error("Esc ne zapre prenesene pole");
   await p.setViewportSize(size);
-  // Izbira pol po korakih: krušne drobtine vrnejo korak, izbira ga zapre.
+  // Pole sledijo čipom na vrhu; »Druge pretekle pole« odpre izbiro po korakih (drobtine vrnejo korak, izbira ga zapre).
+  if (await p.locator("#exam-papers .lp-opt").count()) throw new Error("pri polah je še drug izbirnik šole/izpita");
+  await click(p, "#exam-papers [data-pp-other]", { wait: 200 });
   await click(p, "#exam-papers .lp-crumb[data-pp-step=\"exam\"]", { wait: 200 });
   await expectVisible(p, "#exam-papers .lp-opt", "izbira izpita pri polah");
   await click(p, "#exam-papers .lp-opt", { wait: 200 });
