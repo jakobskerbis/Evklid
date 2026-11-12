@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, celsiusIssue } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, subscriptIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -726,4 +726,39 @@ test("accuracy round 6: codeFindings joins the Lewis finding with the other chem
   const r = codeFindings(a);
   assert.match(r.issue, /15/);
   assert.match(r.issue, /; the Lewis formula/);
+});
+
+test("accuracy round 7: an ionic formula with unreduced cross-rule subscripts is a mistake", () => {
+  const R = String.raw;
+  const bad = [
+    [R`Magnezijev oksid je $\mathrm{Mg_2O_2}$.`, /Mg2O2 → MgO/],
+    ["Kalcijev oksid: Ca2O2", /Ca2O2 → CaO/],
+    [R`Aluminijev nitrid je $\mathrm{Al_{3}N_{3}}$.`, /Al3N3 → AlN/],
+    ["Dobimo Mg₂O₂.", /MgO/],
+    [R`Kalcijev sulfat je $\mathrm{Ca_2(SO_4)_2}$.`, /Ca2\(SO4\)2 → CaSO4/],
+    ["Zn2S2 je cinkov sulfid.", /ZnS/],
+    [R`$\ce{Al3(PO4)3}$`, /AlPO4/],
+    ["Po križnem pravilu dobimo Mg₂O₂.", /MgO/], // križno pravilo brez krajšanja
+  ];
+  for (const [a, re] of bad) assert.match(subscriptIssue(a).issue || "", re, a);
+  const ok = [
+    R`$\mathrm{H_2O_2}$ je vodikov peroksid.`, // molekulska spojina
+    "N2O4", "C2H4", "Hg2Cl2", "Fe2S2", "BaO2",
+    "Na2O2 je natrijev peroksid.", // Na⁺: križno pravilo da Na₂O, zato Na₂O₂ ni neskrajšan rezultat
+    "Mg3N2", "Al2O3", "CaCl2", "K2SO4", "Mg2+ in O2-", R`$\mathrm{Mg^{2+}}$`,
+    "Po križnem pravilu dobimo Mg2O2, skrajšamo v MgO.",
+    R`$\mathrm{Mg^{2+}}$ + $\mathrm{O^{2-}}$ → $\mathrm{Mg_2O_2}$ → okrajšamo → $\mathrm{MgO}$`,
+    "Najprej $\\mathrm{Mg_2O_2}$.\nTo je $\\mathrm{MgO}$.", // skrajšana oblika je v odgovoru
+    "MgO namesto Mg2O2",
+    "Ali je Mg2O2 prav?", // SKIP_LINE
+    "Ti si napisal Mg2O2.",
+    "Križno pravilo da Mg₂O₂, kar še poenostavimo.",
+    "Fe₂O₃, Fe₃O₄, Pb₃O₄, C₂H₆, S₂O₃²⁻, CuSO₄·5H₂O, Al₂(SO₄)₃, Mg₃(PO₄)₂",
+  ];
+  for (const a of ok) assert.equal(subscriptIssue(a).issue, null, a);
+  // formula iz učenčevega sporočila ni napaka odgovora
+  assert.equal(subscriptIssue("Mg2O2", "Ali je Mg2O2 prav?").issue, null);
+  assert.equal(subscriptIssue("Formula je Mg2O2.").checked, 1);
+  // združeno z drugimi kemijskimi preverbami v en popravek
+  assert.match(codeFindings("Dušik je v 5. skupini. Formula je Mg2O2.").issue, /15.*; the formula Mg2O2/);
 });

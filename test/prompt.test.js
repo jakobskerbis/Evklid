@@ -165,6 +165,15 @@ test("accuracy round 6 (2026-11-12): one Lewis notation in LaTeX, every mark one
   const fixed = src.split(SPLIT_MARKER)[0];
   const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
   for (const s of ["vsaka oznaka en nevezni par", "»:« ob strani", "`\\overset{\\cdot\\cdot}{}` nad", "`\\underset{\\cdot\\cdot}{}` pod", "»:« in `\\ddot` ob istem atomu sta dva para", "${:}\\mathrm{N}{\\equiv}\\mathrm{N}{:}$", "oznake preštej"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
-  // Krog 6 doda manj kot 300 znakov predpomnjenega dela (53 413 pred spremembo: krog 4 52 228 + Račun za kodo #581).
-  assert.ok(fixed.length < 53413 + 300, `stalni del ${fixed.length} znakov`);
+  // Krog 6 je dodal 274 znakov predpomnjenega dela (53 413 → 53 687); mejo za nove kroge preveri test kroga 7.
+  assert.ok(fixed.length > 53413);
+});
+
+test("accuracy round 7 (2026-11-12): cross rule always with reducing the subscripts, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["Križno pravilo povej vedno s krajšanjem", "indeksa skrajšaj na najmanjše celo razmerje", "$\\mathrm{Mg_2O_2}$ → $\\mathrm{MgO}$", "molekulskih formul ne krajšaj"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  // Krog 7 doda manj kot 300 znakov predpomnjenega dela (53 687 pred spremembo; ~80 predpomnjenih žetonov).
+  assert.ok(fixed.length < 53687 + 300, `stalni del ${fixed.length} znakov`);
 });
