@@ -645,7 +645,7 @@
 })();
 
 // Pisava besedila izbranega sloga takoj (preload), ne šele ko brskalnik prebere CSS: besedilo se ne
-// preriše z drugo pisavo pozneje (brez premikov postavitve). Samo Čist/Igriv/Temen (zgodovinski slogi imajo
+// preriše z drugo pisavo pozneje (brez premikov postavitve). Samo Čist/Igriv (zgodovinski slogi imajo
 // isto pisavo besedila kot Čist) in nikoli v lahkem načinu (tam spletne pisave sploh ni).
 (function () {
   try {

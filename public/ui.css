@@ -688,7 +688,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   }
 }
 
-/* Čist in Temen: brez prelivov in senc pod logotipom in kartico Današnji trening. */
+/* Vsi slogi razen Igriv: brez prelivov in senc pod logotipom in kartico Današnji trening. */
 :root:not([data-style="igriv"]) .logo { box-shadow: none; }
 :root:not([data-style="igriv"]) h1, :root:not([data-style="igriv"]) h2 { font-weight: 700; }
 

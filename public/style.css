@@ -2,7 +2,7 @@
    Lastne barve iz Nastavitve → Videz theme.js zapiše kot slog na <html> in prepišejo te privzete. */
 :root {
   --rob-strani: clamp(16px, 2.5vw, 40px); /* rob vsebine ob straneh pogleda, brez praznega pasu (j 2026-11-04) */
-  /* Slog Čist (privzeti, docs/oblikovanje.md); Igriv in Temen sta v ui.css (»Slogi«) in theme.js. */
+  /* Slog Čist (privzeti, docs/oblikovanje.md); Igriv je v ui.css (»Slogi«) in theme.js. */
   --bg: #f6f7f9;
   --surface: #ffffff;
   --surface-2: #eef1f5;
