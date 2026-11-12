@@ -1,5 +1,7 @@
 // Skeletno mišično vlakno: odsek vlakna v prerezu (miofibrile s progami, jedra, SR, T-cevke) in ena sarkomera
 // (aktin, miozin, titin, Z-linije, M-linija). Drsnik »Krčenje« pokaže drsenje filamentov. Pogodba graditelja: docs/3d.md.
+// Skupni videz celic iz public/3d/celice-videz.js.
+import { videzCelic, BARVE as B } from "../../celice-videz.js";
 
 export const info = {
   id: "celica-skeletno-misicno-vlakno",
@@ -18,6 +20,7 @@ export function zgradi(THREE, ctx = {}) {
   const group = new THREE.Group();
   const odpad = [];
   let deli = [];
+  const V = videzCelic(THREE, { hi, odpad });
 
   // ---------- orodja (kot v zivalska.js) ----------
   let seme = 7;
@@ -212,7 +215,7 @@ export function zgradi(THREE, ctx = {}) {
   function palica(a, b, r, n) {
     const d = b.clone().sub(a), L = d.length();
     const g = new THREE.CylinderGeometry(r, r, L, n, 1, true);
-    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V(0, 1, 0), d.normalize()));
+    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(v3(0, 1, 0), d.normalize()));
     g.translate((a.x + b.x) / 2, (a.y + b.y) / 2, (a.z + b.z) / 2);
     return g;
   }
@@ -236,13 +239,15 @@ export function zgradi(THREE, ctx = {}) {
     return g;
   }
   const o = new THREE.Object3D(), smer = new THREE.Vector3();
-  const V = (x, y, z) => new THREE.Vector3(x, y, z);
-  const nakljucna = (s = 1) => V(rnd() - 0.5, rnd() - 0.5, rnd() - 0.5).multiplyScalar(s * 2);
+  const v3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const nakljucna = (s = 1) => v3(rnd() - 0.5, rnd() - 0.5, rnd() - 0.5).multiplyScalar(s * 2);
 
   const osX = (g) => g.rotateZ(-Math.PI / 2);
   const DEBELI = 1.6, TANKI = 1.0; // dolžina debelih (miozin) in tankih (aktin) filamentov v µm
   let Lsar = 2.5; // dolžina sarkomere v µm
   const hex = (a) => { const c = new THREE.Color(a); return [c.r * 255, c.g * 255, c.b * 255]; };
+  // barve filamentov in pasov (enake v obeh pogledih: pas A = miozin, pas I = aktin)
+  const AKT = "#4fe0b0", MIO = "#ff4f9a", GLAV = "#ffb0d4", MLIN = "#ff9b4a", ZLIN = "#9d8cff", TIT = B.citoskelet, TC = "#f4f6ff", PLO = "#ffb35c";
 
   // =====================================================================
   // POGLED 1: VLAKNO (1 enota = 50 µm)
@@ -261,7 +266,7 @@ export function zgradi(THREE, ctx = {}) {
     if (dc < DEBELI / 2) { if (dc < 0.035) return "m"; return dc < Lsar / 2 - TANKI ? "h" : "a"; }
     return "i";
   };
-  const BP = { z: hex(0x4a1d2e), m: hex(0x6b2234), h: hex(0xb4505e), a: hex(0x8a2a3b), i: hex(0xf3c6cb) };
+  const BP = { z: hex(0x2a1a6e), m: hex(0x6e1a48), h: hex(0xe872a8), a: hex(0xc2306e), i: hex(0xc9f4e2) };
   const progeTex = tekstura(4, 256, (u, v) => BP[pasovi(v)]);
   progeTex.repeat.set(1, nSar);
   // SR: vzdolžne cevke in končne cisterne ob T-cevkah; T-cevke na meji pasov A in I
@@ -281,17 +286,8 @@ export function zgradi(THREE, ctx = {}) {
   const tTex = tekstura(4, 128, tF, false);
   tTex.repeat.set(1, nSar);
   tTex.minFilter = THREE.LinearFilter; tTex.generateMipmaps = false;
-  // sarkolema: odprtine T-cevk v vrsticah na meji pasov A in I
-  const slF = (u, v) => {
-    const [a0, a1] = mejeAI(), d = Math.min(Math.abs(v - a0), Math.abs(v - a1)), fu = (u * 24) % 1 - 0.5;
-    const n = 0.94 + 0.06 * sum(u * 30, v * 3, 2);
-    if (d < 0.03 && fu * fu < 0.02) return [150, 70, 95];
-    return [216 * n, 138 * n, 162 * n];
-  };
-  const slTex = tekstura(128, 64, slF);
-  slTex.repeat.set(4, nSar);
   function osveziTeksture() {
-    for (const [t, f, w, h] of [[progeTex, (u, v) => BP[pasovi(v)], 4, 256], [srTex, srF, 64, 128], [tTex, tF, 4, 128], [slTex, slF, 128, 64]]) {
+    for (const [t, f, w, h] of [[progeTex, (u, v) => BP[pasovi(v)], 4, 256], [srTex, srF, 64, 128], [tTex, tF, 4, 128]]) {
       const d = t.image.data;
       for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
         const c = f((i + 0.5) / w, (j + 0.5) / h), k = (j * w + i) * 4;
@@ -301,18 +297,18 @@ export function zgradi(THREE, ctx = {}) {
     }
   }
 
-  // sarkolema (prosojna, da se vidijo jedra in proge pod njo)
+  // sarkolema: steklena membrana, da se vidijo jedra in proge pod njo
   const profV = [];
   for (let i = 0; i <= 50; i++) { const x = -XV + (2 * XV * i) / 50; profV.push([x, RV * (1 + 0.012 * sum(x * 6, 3, 1))]); }
   const vv = vrtenina(profV, q(72));
-  const slMat = mat(0xffffff, { map: slTex, roughness: 0.3, clearcoat: 1, transparent: true, opacity: 0.42, depthWrite: false });
+  const slMat = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.12, rf: 26, k: 0.9, rob: B.membranaRob, rk: 1.3 });
   const slOut = new THREE.Mesh(osX(vv.odprta), slMat);
   // prerez sarkoleme: lipidni dvosloj (debelina povečana)
-  const slRob = new THREE.Mesh(osX(prerezVrtenine(profV, (y, r) => r * 0.975, DVOSLOJ(0xb4587c, 0xf4d9c4))), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
+  const slRob = new THREE.Mesh(osX(prerezVrtenine(profV, (y, r) => r * 0.975, [[0, 0.08, 0xc8d2ff], [0.08, 0.32, 0x6a4fd0], [0.32, 0.68, 0xe6e0ff], [0.68, 0.92, 0x6a4fd0], [0.92, 1, 0x4a33a8]])), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const vin = vrtenina(profV.map(([x, r]) => [x, r * 0.975]), q(72));
-  const spMat = mat(0xf1c9b6, { roughness: 0.75, clearcoat: 0.1, sheen: 0.2, side: THREE.BackSide });
+  const spMat = mat(0x3d3180, { roughness: 0.62, clearcoat: 0.25, sheen: 0.35, sheenColor: new THREE.Color(0x8d7ee0), side: THREE.BackSide });
   const spIn = new THREE.Mesh(osX(vin.odprta), spMat);
-  const kapM = mat(0xe6b6a6, { roughness: 0.7, clearcoat: 0.15 });
+  const kapM = mat(0x4a3a96, { roughness: 0.6, clearcoat: 0.25 });
   const kapi = [new THREE.Mesh(kapa(-XV, RV * 0.98, -1, q(36), 6), kapM), new THREE.Mesh(kapa(XV, RV * 0.98, 1, q(36), 6), kapM)];
   GV.add(slOut, slRob, spIn, ...kapi);
 
@@ -330,13 +326,22 @@ export function zgradi(THREE, ctx = {}) {
   const robne = mf.filter((m) => m.rob);
   const zSR = robne.filter((m, i) => Math.round((m.y + m.z) / SP) % 2 === 0);
   const srM = new THREE.InstancedMesh(osX(new THREE.CylinderGeometry(RF * 1.12, RF * 1.12, Lf, q(14), 1, true)),
-    mat(0x5b8fe0, { alphaMap: srTex, alphaTest: 0.5, roughness: 0.4, clearcoat: 0.6, side: THREE.DoubleSide }), zSR.length);
+    mat(B.ger, { alphaMap: srTex, alphaTest: 0.5, roughness: 0.4, clearcoat: 0.6, side: THREE.DoubleSide }), zSR.length);
   const tM = new THREE.InstancedMesh(osX(new THREE.CylinderGeometry(RF * 1.2, RF * 1.2, Lf, q(14), 1, true)),
-    mat(0xeef2fb, { alphaMap: tTex, alphaTest: 0.5, roughness: 0.35, clearcoat: 0.6, side: THREE.DoubleSide }), zSR.length);
+    mat(TC, { alphaMap: tTex, alphaTest: 0.5, roughness: 0.35, clearcoat: 0.6, side: THREE.DoubleSide }), zSR.length);
   mf.forEach((m, i) => { o.position.set(0, m.y, m.z); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrix(); mfM.setMatrixAt(i, o.matrix); });
   zSR.forEach((m, i) => { o.position.set(0, m.y, m.z); o.updateMatrix(); srM.setMatrixAt(i, o.matrix); tM.setMatrixAt(i, o.matrix); });
   // konci miofibril na obeh prerezanih koncih vlakna
-  const mfKon = new THREE.InstancedMesh(new THREE.CircleGeometry(RF, q(12)), mat(0x9c3346, { roughness: 0.55, clearcoat: 0.3 }), mf.length * 2);
+  // prerez miofibrile: debeli filamenti (magenta pike) v šesterokotni mreži, okoli njih tanki (mentolne pike)
+  const prerezTex = tekstura(64, 64, (u, v) => {
+    const x = u * 8, y = v * 8 / 0.866, j = Math.round(y), i = Math.round(x - (j % 2) * 0.5), dx = x - i - (j % 2) * 0.5, dy = (y - j) * 0.866;
+    const d = Math.hypot(dx, dy);
+    if (d < 0.2) return hex(MIO);
+    if (d > 0.42 && d < 0.56 && Math.abs(Math.sin(Math.atan2(dy, dx) * 3)) > 0.75) return hex(AKT);
+    return [92, 36, 92];
+  });
+  prerezTex.repeat.set(2, 2);
+  const mfKon = new THREE.InstancedMesh(new THREE.CircleGeometry(RF, q(16)), mat(0xffffff, { map: prerezTex, roughness: 0.5, clearcoat: 0.4 }), mf.length * 2);
   mf.forEach((m, i) => {
     for (const s of [0, 1]) {
       o.position.set(s ? XV + 0.002 : -XV - 0.002, m.y, m.z); o.rotation.set(0, s ? Math.PI / 2 : -Math.PI / 2, 0); o.updateMatrix();
@@ -356,10 +361,10 @@ export function zgradi(THREE, ctx = {}) {
   const tcG = [];
   for (let k = 0; k < nSar; k++) for (const a of mejeAI()) {
     const x = -XV + (k + a) * (2 * XV / nSar);
-    tcG.push(palica(V(x, RMF - 0.01, 0.002), V(x, RV * 0.985, 0.002), 0.0026, q(5)));
-    tcG.push(palica(V(x, 0.002, RMF - 0.01), V(x, 0.002, RV * 0.985), 0.0026, q(5)));
+    tcG.push(palica(v3(x, RMF - 0.01, 0.002), v3(x, RV * 0.985, 0.002), 0.0026, q(5)));
+    tcG.push(palica(v3(x, 0.002, RMF - 0.01), v3(x, 0.002, RV * 0.985), 0.0026, q(5)));
   }
-  const tCev = new THREE.Mesh(zdruzi(tcG), mat(0xeef2fb, { roughness: 0.35, clearcoat: 0.6 }));
+  const tCev = new THREE.Mesh(zdruzi(tcG), mat(TC, { roughness: 0.3, clearcoat: 0.7 }));
   GV.add(tCev);
 
   // jedra pod sarkolemo
@@ -369,7 +374,7 @@ export function zgradi(THREE, ctx = {}) {
     if (vRezu(y + 0.03, z + 0.03) || jedraKos.some((j) => Math.abs(j.x - x) < 0.2 && Math.abs(Math.atan2(Math.sin(j.a - a), Math.cos(j.a - a))) < 0.4)) continue;
     jedraKos.push({ x, a, y, z }); i++;
   }
-  const jMat = mat(0x7a68d8, { roughness: 0.36, clearcoat: 0.6 });
+  const jMat = mat(B.jedro, { roughness: 0.3, clearcoat: 0.7 });
   const jedra = new THREE.InstancedMesh(new THREE.SphereGeometry(1, q(20), q(12)), jMat, jedraKos.length);
   jedraKos.forEach((j, i) => {
     o.position.set(j.x, j.y, j.z); o.rotation.set(j.a, 0, 0); o.scale.set(0.085, 0.022, 0.036); o.updateMatrix(); jedra.setMatrixAt(i, o.matrix);
@@ -392,21 +397,78 @@ export function zgradi(THREE, ctx = {}) {
     const j = jedraKos[i % jedraKos.length], a = j.a + (rnd() - 0.5) * 0.5;
     mitKos.push([j.x + (rnd() - 0.5) * 0.25, Math.cos(a) * 0.35, Math.sin(a) * 0.35]);
   }
-  const mitV = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.0065, 0.016, 2, q(6)), mat(0xe8743b, { roughness: 0.4 }), mitKos.length);
+  const mitV = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.0065, 0.016, 2, q(6)), mat(B.mitohondrij, { roughness: 0.36 }), mitKos.length);
   mitKos.forEach((p, i) => {
     o.position.set(...p); o.rotation.set(0, 0, Math.PI / 2); o.scale.setScalar(1); o.updateMatrix(); mitV.setMatrixAt(i, o.matrix);
     const k = 0.85 + 0.25 * hash(p[0] * 17, p[1] * 23, p[2] * 29); mitV.setColorAt(i, cc.setRGB(k, k * 0.97, k * 0.94));
   });
   GV.add(mitV);
 
+
+  // beljakovine v sarkolemi in odprtine T-cevk (vrstice na meji pasov A in I)
+  const nadS = (t) => ({ p: t.p.addScaledVector(t.n, 0.002), n: t.n });
+  const beljS = V.beljakovine(V.posej(slOut, hi ? 900 : 260).map(nadS), B.beljakovine, 0.0075, { visina: 1.5 });
+  GV.add(beljS);
+  let pore = null;
+  const poreKos = [];
+  if (hi) {
+    for (let k = 0; k < nSar; k++) for (let h = 0; h < 2; h++) for (let j = 0; j < 14; j++) {
+      const a = (j / 14) * Math.PI * 2 + (k % 2) * 0.22;
+      if (vRezu(Math.cos(a) + 0.02, Math.sin(a) + 0.02)) continue;
+      poreKos.push({ k, h, a });
+    }
+    pore = new THREE.InstancedMesh(new THREE.TorusGeometry(0.006, 0.0022, 4, 8), mat(0x6a4fd0, { roughness: 0.35, clearcoat: 0.8 }), poreKos.length);
+    GV.add(pore);
+  }
+  function postaviPore() {
+    if (!pore) return;
+    const m = mejeAI();
+    poreKos.forEach(({ k, h, a }, i) => {
+      const x = -XV + (k + m[h]) * (2 * XV / nSar), r = RV * 1.004;
+      o.position.set(x, Math.cos(a) * r, Math.sin(a) * r); o.quaternion.setFromUnitVectors(v3(0, 0, 1), v3(0, Math.cos(a), Math.sin(a))); o.scale.setScalar(1); o.updateMatrix();
+      pore.setMatrixAt(i, o.matrix);
+    });
+    pore.instanceMatrix.needsUpdate = true;
+  }
+  postaviPore();
+
+  // glikogen: zrnca med miofibrilami (zaloga glukoze)
+  const glT = [];
+  for (let t = 0; glT.length < (hi ? 2600 : 900) && t < 40000; t++) {
+    const i = Math.floor(rnd() * 25) - 12, j = Math.floor(rnd() * 25) - 12, y = SP * (i + j / 2 + 0.5) + (rnd() - 0.5) * 0.008, z = SP * (j + 1 / 3) * 0.866 + (rnd() - 0.5) * 0.008;
+    if (Math.hypot(y, z) > RMF + 0.02 || vRezu(y + 0.004, z + 0.004)) continue;
+    glT.push(v3(-XV + 0.01 + rnd() * (2 * XV - 0.02), y, z));
+  }
+  const glikogen = V.pike(glT, B.glikogen, 0.007, 0.35, { lovi: true });
+  GV.add(glikogen);
+
+  // živčno-mišični stik (motorična ploščica): končič aksona se razveji po površini vlakna
+  const plGeo = [], PA = 2.2, PX = 0.22, nPl = v3(0, Math.cos(PA), Math.sin(PA));
+  const naPov = (x, a, d = 0) => v3(x, Math.cos(a) * (RV * 1.012 + d), Math.sin(a) * (RV * 1.012 + d));
+  plGeo.push(cev(new THREE.CatmullRomCurve3([naPov(PX - 0.34, PA - 0.25, 0.3), naPov(PX - 0.2, PA - 0.12, 0.14), naPov(PX - 0.06, PA - 0.02, 0.03), naPov(PX, PA, 0.008)]), q(24), (t) => 0.014 - 0.004 * t, q(10), true));
+  for (let i = 0; i < 6; i++) {
+    const smerV = (i / 6) * Math.PI * 2 + 0.3, pts = [];
+    for (let t = 0; t <= 4; t++) { const d = t * 0.022; pts.push(naPov(PX + Math.cos(smerV) * d, PA + (Math.sin(smerV) * d) / RV + 0.03 * Math.sin(t * 2 + i), 0.006)); }
+    plGeo.push(cev(new THREE.CatmullRomCurve3(pts), q(12), (t) => 0.0075 - 0.002 * t, q(8), false));
+    for (const t of [2, 4]) {
+      const g = new THREE.SphereGeometry(1, q(12), q(8)); g.scale(0.014, 0.006, 0.011);
+      g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(v3(0, 1, 0), nPl.clone().applyAxisAngle(v3(1, 0, 0), (Math.sin(smerV) * t * 0.022) / RV)));
+      const c0 = pts[t]; g.translate(c0.x, c0.y, c0.z); plGeo.push(g);
+    }
+  }
+  const plosc = new THREE.Mesh(zdruzi(plGeo), mat(PLO, { roughness: 0.32, clearcoat: 0.9 }));
+  GV.add(plosc);
+
   const naRobu = robne.filter((m) => m.z > -0.001 && m.z < 0.01 && m.y > 0.1)[0] || robne[0];
-  del("sarkolema", "Sarkolema", "Celična membrana mišičnega vlakna (v prerezu dvosloj, debelina povečana); vanjo se odpirajo T-cevke, po katerih se električni signal razširi globoko v vlakno.", "#d88aa2", [slOut, slRob], [0.3, -0.2, RV * 0.98], deliV);
-  del("sarkoplazma", "Sarkoplazma", "Citoplazma mišičnega vlakna; vsebuje glikogen in mioglobin, ki hrani kisik.", "#f1c9b6", [spIn, ...kapi], [-XV - 0.005, -0.1, -0.36], deliV);
-  del("jedra", "Jedra", "Vlakno nastane z zlitjem mnogih celic, zato ima na stotine jeder; ležijo ob robu, tik pod sarkolemo.", "#7a68d8", [jedra], (() => { const j = jedraKos.reduce((a, b) => (b.z - Math.abs(b.x) * 0.3 > a.z - Math.abs(a.x) * 0.3 ? b : a)); return [j.x, j.y * 1.08, j.z * 1.08]; })(), deliV);
-  del("miofibrile", "Miofibrile", "Dolge niti iz zaporedja sarkomer; temni pasovi A in svetli pasovi I sosednjih miofibril se ujemajo, zato je vlakno prečno progasto.", "#9c3346", [mfM, mfKon], [-0.3, naRobu.y, naRobu.z + RF], deliV);
-  del("sarkoplazemski-retikulum", "Sarkoplazemski retikulum", "Mreža cevk okoli vsake miofibrile, ki hrani kalcijeve ione; ob signalu jih sprosti in sproži krčenje.", "#5b8fe0", [srM], [0.15, zSR[2] ? zSR[2].y : 0.1, (zSR[2] ? zSR[2].z : 0) + RF * 1.15], deliV);
-  del("t-cevke", "T-cevke (prečne cevke)", "Vdolbine sarkoleme, ki obkrožajo miofibrile na meji pasov A in I; signal z membrane hitro prenesejo do sarkoplazemskega retikuluma.", "#eef2fb", [tM, tCev], [zx(Math.round(nSar * 0.62)) + 0.015, 0.36, 0.004], deliV);
-  del("mitohondriji", "Mitohondriji", "Ležijo med miofibrilami in pod sarkolemo; z ATP oskrbujejo miozinske glavice in črpalke za kalcij.", "#e8743b", [mitV], mitKos[Math.floor(mitKos.length * 0.4)] || [0, 0, 0], deliV);
+  del("sarkolema", "Sarkolema", "Celična membrana mišičnega vlakna (v prerezu dvosloj, debelina povečana); vanjo se odpirajo T-cevke, po katerih se električni signal razširi globoko v vlakno.", "#9fb4ff", [slOut, slRob, beljS, ...(pore ? [pore] : [])], [0.3, -0.2, RV * 0.98], deliV);
+  del("sarkoplazma", "Sarkoplazma", "Citoplazma mišičnega vlakna; vsebuje glikogen in mioglobin, ki hrani kisik.", "#5b4bb0", [spIn, ...kapi], [-XV - 0.005, -0.1, -0.36], deliV);
+  del("jedra", "Jedra", "Vlakno nastane z zlitjem mnogih celic, zato ima na stotine jeder; ležijo ob robu, tik pod sarkolemo.", B.jedro, [jedra], (() => { const j = jedraKos.reduce((a, b) => (b.z - Math.abs(b.x) * 0.3 > a.z - Math.abs(a.x) * 0.3 ? b : a)); return [j.x, j.y * 1.08, j.z * 1.08]; })(), deliV);
+  del("miofibrile", "Miofibrile", "Dolge niti iz zaporedja sarkomer; temni pasovi A in svetli pasovi I sosednjih miofibril se ujemajo, zato je vlakno prečno progasto.", "#c2306e", [mfM, mfKon], [-0.3, naRobu.y, naRobu.z + RF], deliV);
+  del("sarkoplazemski-retikulum", "Sarkoplazemski retikulum", "Mreža cevk okoli vsake miofibrile, ki hrani kalcijeve ione; ob signalu jih sprosti in sproži krčenje.", B.ger, [srM], [0.15, zSR[2] ? zSR[2].y : 0.1, (zSR[2] ? zSR[2].z : 0) + RF * 1.15], deliV);
+  del("t-cevke", "T-cevke (prečne cevke)", "Vdolbine sarkoleme, ki obkrožajo miofibrile na meji pasov A in I; signal z membrane hitro prenesejo do sarkoplazemskega retikuluma.", TC, [tM, tCev], [zx(Math.round(nSar * 0.62)) + 0.015, 0.36, 0.004], deliV);
+  del("mitohondriji", "Mitohondriji", "Ležijo med miofibrilami in pod sarkolemo; z ATP oskrbujejo miozinske glavice in črpalke za kalcij.", B.mitohondrij, [mitV], mitKos[Math.floor(mitKos.length * 0.4)] || [0, 0, 0], deliV);
+  del("glikogen", "Glikogen", "Zrnca shranjenega sladkorja med miofibrilami; ob naporu se razgradijo v glukozo, iz katere mitohondriji pridobijo ATP.", B.glikogen, [glikogen], glT.find((p) => p.z < 0.004 && p.z > -0.02 && p.y > 0.1)?.toArray() || glT[0].toArray(), deliV);
+  del("motoricna-ploscica", "Živčno-mišični stik", "Mesto, kjer se končič živčnega vlakna dotika mišičnega vlakna; izločeni prenašalec (acetilholin) vzdraži sarkolemo in sproži krčenje.", PLO, [plosc], naPov(PX, PA, 0.012).toArray(), deliV);
 
   // =====================================================================
   // POGLED 2: SARKOMERA (1 enota = 1,5 µm)
@@ -419,7 +481,7 @@ export function zgradi(THREE, ctx = {}) {
   const debeli = [];
   for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) {
     const y = D * (i + j / 2), z = D * j * 0.866;
-    if (Math.hypot(y, z) < D * 2.01) debeli.push(V(0, y, z));
+    if (Math.hypot(y, z) < D * 2.01) debeli.push(v3(0, y, z));
   }
   const tanki = [];
   for (let a = 0; a < debeli.length; a++) for (let b = a + 1; b < debeli.length; b++) for (let c = b + 1; c < debeli.length; c++) {
@@ -428,7 +490,7 @@ export function zgradi(THREE, ctx = {}) {
   }
   // debeli filamenti (miozin) z glavicami; v sredini gola cona in M-linija
   const xD = (DEBELI / 2) * K;
-  const deb = new THREE.InstancedMesh(osX(new THREE.CylinderGeometry(0.019, 0.019, 2 * xD, q(12), 1, false)), mat(0x5a7de0, { roughness: 0.4, clearcoat: 0.5 }), debeli.length);
+  const deb = new THREE.InstancedMesh(osX(new THREE.CylinderGeometry(0.019, 0.019, 2 * xD, q(12), 1, false)), mat(MIO, { roughness: 0.3, clearcoat: 0.7, emissive: new THREE.Color(MIO).multiplyScalar(0.14) }), debeli.length);
   debeli.forEach((p, i) => { o.position.copy(p); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrix(); deb.setMatrixAt(i, o.matrix); });
   const glG = [];
   const nKr = hi ? 12 : 8;
@@ -436,22 +498,22 @@ export function zgradi(THREE, ctx = {}) {
     for (const sg of [-1, 1]) for (let k = 0; k < nKr; k++) {
       const x = sg * (0.075 + (k + 0.5) * ((xD - 0.09) / nKr));
       for (let h = 0; h < 2; h++) {
-        const a = k * 1.05 + h * Math.PI + fi * 0.7, r = V(0, Math.cos(a), Math.sin(a));
+        const a = k * 1.05 + h * Math.PI + fi * 0.7, r = v3(0, Math.cos(a), Math.sin(a));
         const g = new THREE.SphereGeometry(1, q(6), q(4));
         g.scale(0.011, 0.02, 0.011);
-        const smerG = r.clone().addScaledVector(V(1, 0, 0), -sg * 0.7).normalize();
-        g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V(0, 1, 0), smerG));
+        const smerG = r.clone().addScaledVector(v3(1, 0, 0), -sg * 0.7).normalize();
+        g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(v3(0, 1, 0), smerG));
         g.translate(x + smerG.x * 0.03, p.y + smerG.y * 0.03, p.z + smerG.z * 0.03);
         glG.push(g);
       }
     }
   });
-  const glave = new THREE.Mesh(zdruzi(glG), mat(0x8fb0ff, { roughness: 0.35, clearcoat: 0.6 }));
+  const glave = new THREE.Mesh(zdruzi(glG), mat(GLAV, { roughness: 0.3, clearcoat: 0.8 }));
   // M-linija: prečne povezave med debelimi filamenti
   const mG = [];
   for (let a = 0; a < debeli.length; a++) for (let b = a + 1; b < debeli.length; b++) if (debeli[a].distanceTo(debeli[b]) < D * 1.01) mG.push(palica(debeli[a], debeli[b], 0.007, q(6)));
   debeli.forEach((p) => mG.push(osX(new THREE.CylinderGeometry(0.026, 0.026, 0.03, q(12))).translate(0, p.y, p.z)));
-  const mLin = new THREE.Mesh(zdruzi(mG), mat(0xd86fa0, { roughness: 0.4, clearcoat: 0.6 }));
+  const mLin = new THREE.Mesh(zdruzi(mG), mat(MLIN, { roughness: 0.3, clearcoat: 0.8 }));
   GS.add(deb, glave, mLin);
 
   // tanki filamenti (aktin): dvojna vijačnica, pripeta na Z-linijo
@@ -459,11 +521,11 @@ export function zgradi(THREE, ctx = {}) {
   const aktG = [];
   for (const f of [0, Math.PI]) {
     const pts = [];
-    for (let i = 0; i <= 60; i++) { const x = (i / 60) * xT, a = (x / 0.12) * Math.PI * 2 + f; pts.push(V(x, Math.cos(a) * 0.0065, Math.sin(a) * 0.0065)); }
+    for (let i = 0; i <= 60; i++) { const x = (i / 60) * xT, a = (x / 0.12) * Math.PI * 2 + f; pts.push(v3(x, Math.cos(a) * 0.0065, Math.sin(a) * 0.0065)); }
     aktG.push(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), q(48), 0.0062, q(5), false));
   }
   const aktGeo = zdruzi(aktG);
-  const akt = new THREE.InstancedMesh(aktGeo, mat(0x8fdcc2, { roughness: 0.45, clearcoat: 0.4 }), tanki.length * 2);
+  const akt = new THREE.InstancedMesh(aktGeo, mat(AKT, { roughness: 0.3, clearcoat: 0.6, emissive: new THREE.Color(AKT).multiplyScalar(0.25) }), tanki.length * 2);
   GS.add(akt);
 
   // Z-linije: valovite (cikcak) plošče iz α-aktinina
@@ -481,17 +543,17 @@ export function zgradi(THREE, ctx = {}) {
       geos.push(g);
     }
     const pts = [];
-    for (let i = 0; i <= 160; i++) { const a = (i / 160) * Math.PI * 2, y = Math.cos(a) * RZ, z = Math.sin(a) * RZ; pts.push(V(zig(y, z), y, z)); }
+    for (let i = 0; i <= 160; i++) { const a = (i / 160) * Math.PI * 2, y = Math.cos(a) * RZ, z = Math.sin(a) * RZ; pts.push(v3(zig(y, z), y, z)); }
     geos.push(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 160, 0.017, q(8), true));
     return zdruzi(geos);
   }
-  const zMat = mat(0xc4bce8, { roughness: 0.4, clearcoat: 0.7, side: THREE.DoubleSide });
+  const zMat = mat(ZLIN, { roughness: 0.3, clearcoat: 0.8, side: THREE.DoubleSide });
   const zGeo = zDisk();
   const zL = new THREE.Mesh(zGeo, zMat), zD = new THREE.Mesh(zGeo.clone(), zMat);
   GS.add(zL, zD);
 
   // titin: vzmet od Z-linije do konca debelega filamenta
-  const titMat = mat(0xf0b44a, { roughness: 0.45, clearcoat: 0.5 });
+  const titMat = mat(TIT, { roughness: 0.3, clearcoat: 0.6, emissive: new THREE.Color(TIT).multiplyScalar(0.2) });
   const titin = new THREE.Mesh(new THREE.BufferGeometry(), titMat);
   GS.add(titin);
   function titinGeo(xz) {
@@ -500,7 +562,7 @@ export function zgradi(THREE, ctx = {}) {
       const a0 = sg * xz, a1 = sg * xD, pts = [], nOv = 7;
       for (let i = 0; i <= 56; i++) {
         const t = i / 56, x = a0 + (a1 - a0) * t, a = t * nOv * Math.PI * 2, r = 0.008 * Math.min(1, t * 6, (1 - t) * 6);
-        pts.push(V(x, p.y + Math.cos(a) * r, p.z + Math.sin(a) * r));
+        pts.push(v3(x, p.y + Math.cos(a) * r, p.z + Math.sin(a) * r));
       }
       geos.push(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), q(56), 0.0032, q(4), false));
     }
@@ -510,7 +572,7 @@ export function zgradi(THREE, ctx = {}) {
   // trakovi pod sarkomero: pas A, pas I (dve polovici), cona H
   const trak = (barva) => new THREE.Mesh(osX(new THREE.CylinderGeometry(0.018, 0.018, 1, q(12))), mat(barva, { roughness: 0.4, clearcoat: 0.8 }));
   const YT = -0.46;
-  const pasA = trak(0x4c6fd8), pasI1 = trak(0x7fcfb4), pasI2 = new THREE.Mesh(pasI1.geometry.clone(), pasI1.material), conaH = trak(0xb6c3f5);
+  const pasA = trak(MIO), pasI1 = trak(AKT), pasI2 = new THREE.Mesh(pasI1.geometry.clone(), pasI1.material), conaH = trak(GLAV);
   GS.add(pasA, pasI1, pasI2, conaH);
 
   function postaviSarkomero() {
@@ -540,15 +602,15 @@ export function zgradi(THREE, ctx = {}) {
     }
   }
   const zgornji = debeli.reduce((a, b) => (b.y + b.z > a.y + a.z ? b : a));
-  del("z-linija", "Z-linija (Z-disk)", "Meja med sosednjima sarkomerama; nanjo so pripeti aktinski filamenti. V prerezu je videti kot cikcak črta.", "#c4bce8", [zL, zD], [0, 0, 0], deliS);
-  del("aktin", "Aktinski (tanki) filamenti", "Tanke niti iz dveh zvitih verižic aktina; s Z-linije segajo proti sredini sarkomere.", "#8fdcc2", [akt], [0, 0, 0], deliS);
-  del("miozin", "Miozinski (debeli) filamenti", "Debele niti v sredini sarkomere; njihova dolžina (1,6 µm) določa širino pasu A in se pri krčenju ne spremeni.", "#5a7de0", [deb], [0.3, zgornji.y + 0.02, zgornji.z + 0.012], deliS);
-  del("miozinske-glavice", "Miozinske glavice", "Izrastki miozina, ki se z energijo iz ATP pripnejo na aktin, ga potegnejo proti sredini in spustijo – kot veslači.", "#8fb0ff", [glave], [-0.4, zgornji.y + 0.04, zgornji.z + 0.02], deliS);
-  del("m-linija", "M-linija", "Sredina sarkomere, kjer so debeli filamenti povezani med seboj in držijo pravilno razporeditev.", "#d86fa0", [mLin], [0, zgornji.y + 0.03, zgornji.z + 0.02], deliS);
-  del("titin", "Titin", "Velikanska prožna beljakovina od Z-linije do miozina; kot vzmet vrne sproščeno sarkomero na prvotno dolžino.", "#f0b44a", [titin], [0, 0, 0], deliS);
-  del("pas-a", "Pas A", "Temni pas, širok toliko, kot je dolg miozinski filament; pri krčenju ostane enako širok.", "#4c6fd8", [pasA], [0.25, YT, 0.02], deliS);
-  del("pas-i", "Pas I", "Svetli pas samo z aktinom na obeh straneh Z-linije; pri krčenju se zoži.", "#7fcfb4", [pasI1, pasI2], [0, 0, 0], deliS);
-  del("cona-h", "Cona H", "Srednji del pasu A, kjer je samo miozin; ko aktin zdrsne do sredine, izgine.", "#b6c3f5", [conaH], [0, 0, 0], deliS);
+  del("z-linija", "Z-linija (Z-disk)", "Meja med sosednjima sarkomerama; nanjo so pripeti aktinski filamenti. V prerezu je videti kot cikcak črta.", ZLIN, [zL, zD], [0, 0, 0], deliS);
+  del("aktin", "Aktinski (tanki) filamenti", "Tanke niti iz dveh zvitih verižic aktina; s Z-linije segajo proti sredini sarkomere.", AKT, [akt], [0, 0, 0], deliS);
+  del("miozin", "Miozinski (debeli) filamenti", "Debele niti v sredini sarkomere; njihova dolžina (1,6 µm) določa širino pasu A in se pri krčenju ne spremeni.", MIO, [deb], [0.3, zgornji.y + 0.02, zgornji.z + 0.012], deliS);
+  del("miozinske-glavice", "Miozinske glavice", "Izrastki miozina, ki se z energijo iz ATP pripnejo na aktin, ga potegnejo proti sredini in spustijo – kot veslači.", GLAV, [glave], [-0.4, zgornji.y + 0.04, zgornji.z + 0.02], deliS);
+  del("m-linija", "M-linija", "Sredina sarkomere, kjer so debeli filamenti povezani med seboj in držijo pravilno razporeditev.", MLIN, [mLin], [0, zgornji.y + 0.03, zgornji.z + 0.02], deliS);
+  del("titin", "Titin", "Velikanska prožna beljakovina od Z-linije do miozina; kot vzmet vrne sproščeno sarkomero na prvotno dolžino.", TIT, [titin], [0, 0, 0], deliS);
+  del("pas-a", "Pas A", "Temni pas, širok toliko, kot je dolg miozinski filament; pri krčenju ostane enako širok.", MIO, [pasA], [0.25, YT, 0.02], deliS);
+  del("pas-i", "Pas I", "Svetli pas samo z aktinom na obeh straneh Z-linije; pri krčenju se zoži.", AKT, [pasI1, pasI2], [0, 0, 0], deliS);
+  del("cona-h", "Cona H", "Srednji del pasu A, kjer je samo miozin; ko aktin zdrsne do sredine, izgine.", GLAV, [conaH], [0, 0, 0], deliS);
   postaviSarkomero();
 
   // ---------- nadzor ----------
@@ -561,6 +623,7 @@ export function zgradi(THREE, ctx = {}) {
     GV.scale.set(s, g, g);
     for (const d of deliV) d.tocka = nagni(d.tockaOsn.map((x, i) => x * (i ? g : s)));
     osveziTeksture();
+    postaviPore();
     postaviSarkomero();
   }
   // vlakno rahlo nagnemo, da bolje zapolni zaslon in deluje bolj prostorsko
@@ -568,7 +631,7 @@ export function zgradi(THREE, ctx = {}) {
   group.remove(GV); GVn.add(GV); group.add(GVn);
   GVn.rotation.z = 0.2;
   GVn.updateMatrix();
-  const nagni = (t) => V(...t).applyMatrix4(GVn.matrix).toArray().map((x) => Math.round(x * 1000) / 1000);
+  const nagni = (t) => v3(...t).applyMatrix4(GVn.matrix).toArray().map((x) => Math.round(x * 1000) / 1000);
   deliV.forEach((d) => { d.tockaOsn = d.tocka.slice(); d.tocka = nagni(d.tockaOsn); });
   const nadzor = [
     {
@@ -614,164 +677,29 @@ export function zgradi(THREE, ctx = {}) {
   // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
   function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
 
-  // ---------- videz: globlje barve, vlažni materiali, drobna površinska tekstura, senčenje v vdolbinah ----------
-  // nast[idDela] = { tex: "zrna" | "gube" | "fino" | "vlakna" | null, rep: [u, v], k: moč normal mape, lisa: lise,
-  //   f: gostota lis, uv: "smer" (krogelni uv), ton: 0 … 1 (poglobitev barve), rough, cc, sheen, temni: zatemnitev, ao(p, n) → faktor }
-  function poliraj(nast = {}, seznam) {
-    seznam = seznam || deli;
-    const N = 128, teks = {}, obdelane = new Set(), hsl = {}, c = new THREE.Color(), bel = new THREE.Color(1, 1, 1);
-    const per = (x, y, P, s) => { // periodičen šum vrednosti (ploščica brez šiva)
-      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
-      const h = (a, b) => hash(((xi + a) % P + P) % P, ((yi + b) % P + P) % P, s);
-      return h(0, 0) * (1 - u) * (1 - v) + h(1, 0) * u * (1 - v) + h(0, 1) * (1 - u) * v + h(1, 1) * u * v;
-    };
-    const vrste = {
-      zrna: (x, y) => 0.5 * per(x * 16, y * 16, 16, 1) + 0.3 * Math.pow(per(x * 32, y * 32, 32, 2), 2) + 0.2 * per(x * 64, y * 64, 64, 3),
-      gube: (x, y) => 0.6 * (1 - Math.abs(2 * per(x * 8, y * 8, 8, 4) - 1)) + 0.25 * per(x * 24, y * 24, 24, 5) + 0.15 * per(x * 64, y * 64, 64, 6),
-      fino: (x, y) => 0.6 * per(x * 32, y * 32, 32, 7) + 0.4 * per(x * 64, y * 64, 64, 8),
-      vlakna: (x, y) => 0.55 * per(x * 4, y * 48, 4, 9) + 0.3 * per(x * 8, y * 96, 8, 10) + 0.15 * per(x * 32, y * 64, 32, 11),
-    };
-    function tekstura(vrsta, rep) {
-      const kl = vrsta + rep;
-      if (teks[kl]) return teks[kl];
-      if (!teks[vrsta]) {
-        const H = new Float32Array(N * N), d = new Uint8Array(N * N * 4), f = vrste[vrsta];
-        for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) H[j * N + i] = f(i / N, j / N);
-        for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
-          const dx = (H[j * N + (i + 1) % N] - H[j * N + (i + N - 1) % N]) * 6, dy = (H[((j + 1) % N) * N + i] - H[((j + N - 1) % N) * N + i]) * 6;
-          const l = Math.hypot(dx, dy, 1), k = (j * N + i) * 4;
-          d[k] = (-dx / l * 0.5 + 0.5) * 255; d[k + 1] = (-dy / l * 0.5 + 0.5) * 255; d[k + 2] = (1 / l * 0.5 + 0.5) * 255; d[k + 3] = 255;
-        }
-        const t = new THREE.DataTexture(d, N, N, THREE.RGBAFormat);
-        t.wrapS = t.wrapT = THREE.RepeatWrapping;
-        t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true;
-        t.needsUpdate = true;
-        odpad.push(t);
-        teks[vrsta] = t;
-      }
-      const t = teks[vrsta].clone();
-      t.repeat.set(rep[0], rep[1]); t.needsUpdate = true;
-      odpad.push(t);
-      return (teks[kl] = t);
-    }
-    function poglobi(col, moc) { // nasičenost gor, svetlost dol (pastel → barva znanstvene ilustracije)
-      col.getHSL(hsl);
-      const s = hsl.s < 0.06 ? hsl.s : Math.min(1, hsl.s * (1 + 0.2 * moc) + 0.03 * moc);
-      const l = hsl.l > 0.42 ? hsl.l - (hsl.l - 0.42) * 0.3 * moc : hsl.l * (1 - 0.03 * moc);
-      return col.setHSL(hsl.h, s, l);
-    }
-    function uvIzSmeri(g) { // manjkajoči uv: krogelna projekcija okoli središča geometrije
-      g.computeBoundingBox();
-      const s = g.boundingBox.getCenter(new THREE.Vector3()), p = g.attributes.position, uv = new Float32Array(p.count * 2), v = new THREE.Vector3();
-      for (let i = 0; i < p.count; i++) {
-        v.fromBufferAttribute(p, i).sub(s);
-        const r = v.length() || 1;
-        uv[i * 2] = Math.atan2(v.z, v.x) / (2 * Math.PI) + 0.5; uv[i * 2 + 1] = Math.acos(Math.max(-1, Math.min(1, v.y / r))) / Math.PI;
-      }
-      g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
-    }
-    function obdelajGeo(g, o, m) { // barve oglišč: poglobitev, lise, zatemnitev v vdolbinah in na notranjih stenah
-      if (obdelane.has(g)) return;
-      obdelane.add(g);
-      if (!g.attributes.uv || (o.uv === "smer" && !m.map)) uvIzSmeri(g);
-      const p = g.attributes.position, nrm = g.attributes.normal;
-      if (!(o.lisa || o.ao || m.side === THREE.BackSide || m.vertexColors)) return;
-      let col = g.attributes.color;
-      if (!col) { col = new THREE.BufferAttribute(new Float32Array(p.count * 3).fill(1), 3); g.setAttribute("color", col); }
-      const P = new THREE.Vector3(), Nn = new THREE.Vector3(), f = o.f || 3, zn = m.side === THREE.BackSide;
-      for (let i = 0; i < p.count; i++) {
-        P.fromBufferAttribute(p, i);
-        if (nrm) Nn.fromBufferAttribute(nrm, i);
-        c.fromBufferAttribute(col, i);
-        if (m.vertexColors && o.ton !== 0) poglobi(c, o.ton == null ? 1 : o.ton);
-        let k = 1;
-        if (o.lisa) k *= 1 + o.lisa * fbm(P.x * f + 11, P.y * f + 5, P.z * f + 3);
-        if (zn) k *= 0.84 + 0.12 * (P.y / (Math.hypot(P.x, P.y, P.z) || 1));
-        if (o.ao) k *= o.ao(P, Nn);
-        c.multiplyScalar(k);
-        col.setXYZ(i, c.r, c.g, c.b);
-      }
-      col.needsUpdate = true;
-    }
-    const mati = new Map();
-    for (const d of seznam) for (const x of d.meshes) x.traverse((y) => { if (y.isMesh && y.material && !mati.has(y.material)) mati.set(y.material, d.id); });
-    group.traverse((y) => { if (y.isMesh && y.material && !mati.has(y.material)) mati.set(y.material, null); });
-    for (const [m, id] of mati) {
-      if (!m.isMeshPhysicalMaterial) continue;
-      const o = Object.assign({}, nast["*"] || {}, (id && nast[id]) || {});
-      const ton = o.ton == null ? 1 : o.ton, zn = m.side === THREE.BackSide;
-      const meshes = [];
-      group.traverse((y) => { if (y.isMesh && y.material === m) meshes.push(y); });
-      const geos = meshes.map((y) => y.geometry);
-      if (!m.vertexColors) poglobi(m.color, ton);
-      if (o.temni) m.color.multiplyScalar(o.temni);
-      if (zn) m.color.multiplyScalar(0.88);
-      m.roughness = o.rough != null ? o.rough : Math.min(0.74, Math.max(0.44, m.roughness * 0.55 + 0.3 + (zn ? 0.1 : 0)));
-      m.clearcoat = o.cc != null ? o.cc : Math.min(0.5, m.clearcoat * 0.55);
-      m.clearcoatRoughness = 0.2;
-      m.sheen = o.sheen != null ? o.sheen : Math.max(m.sheen, 0.4);
-      m.sheenRoughness = 0.45;
-      const sc = m.vertexColors ? c.set(id ? seznam.find((d) => d.id === id).barva : 0xffffff) : c.copy(m.color);
-      m.sheenColor = sc.clone().lerp(bel, 0.4).multiplyScalar(0.7);
-      m.envMapIntensity = 0.9;
-      if (o.lisa || o.ao || zn) m.vertexColors = true;
-      for (const g of geos) obdelajGeo(g, o, m);
-      if (o.tex !== null) {
-        let rep = o.rep;
-        if (!rep) {
-          const g = geos[0]; g.computeBoundingSphere();
-          const n = Math.max(1, Math.round(g.boundingSphere.radius * 9));
-          rep = [2 * n, n];
-        }
-        m.normalMap = tekstura(o.tex || "zrna", rep);
-        const k = o.k != null ? o.k : 0.3;
-        m.normalScale.set(k, k);
-      }
-      m.userData.pol = (g) => obdelajGeo(g, o, m);
-      m.needsUpdate = true;
-    }
-  }
-  // Drobna zrnca v citoplazmi (točke brez trikotnikov); tocke(i) → Vector3 ali null.
-  function zrnca(n, tocke, barva, velikost, razp = 0.35) {
-    const pos = [], col = [], b = new THREE.Color(barva), c = new THREE.Color();
-    for (let i = 0, p = 0; i < n && p < n * 20; p++) {
-      const v = tocke(p);
-      if (!v) continue;
-      i++;
-      pos.push(v.x, v.y, v.z);
-      c.copy(b).multiplyScalar(1 - razp / 2 + razp * hash(p * 0.37, 3.1, 9.7));
-      col.push(c.r, c.g, c.b);
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
-    const S = 32, d = new Uint8Array(S * S * 4);
-    for (let j = 0; j < S; j++) for (let i = 0; i < S; i++) {
-      const r = Math.hypot(i + 0.5 - S / 2, j + 0.5 - S / 2) / (S / 2), k = (j * S + i) * 4, a = Math.max(0, 1 - r);
-      d[k] = d[k + 1] = d[k + 2] = 255 * (0.55 + 0.45 * Math.sqrt(a)); d[k + 3] = r < 0.9 ? 255 : 0;
-    }
-    const t = new THREE.DataTexture(d, S, S, THREE.RGBAFormat);
-    t.magFilter = THREE.LinearFilter; t.needsUpdate = true;
-    const m = new THREE.PointsMaterial({ size: velikost, map: t, alphaTest: 0.5, vertexColors: true, sizeAttenuation: true });
-    odpad.push(t, m);
-    const pt = new THREE.Points(g, m);
-    pt.raycast = () => {};
-    return pt;
-  }
-
-  poliraj({
-    sarkolema: { tex: "zrna", rep: [12, 40], k: 0.25, ton: 0.6 },
-    sarkoplazma: { tex: "fino", rep: [6, 18], k: 0.25, lisa: 0.15, f: 6 },
-    jedra: { tex: "zrna", rep: [6, 4], k: 0.35, lisa: 0.1, f: 20 },
-    miofibrile: { tex: "vlakna", rep: [2, 2], k: 0.2, ton: 0.5 },
-    mitohondriji: { tex: "fino", rep: [3, 2], k: 0.25 },
+  const vsiDeli = [...deliV, ...deliS];
+  V.poliraj(group, vsiDeli, {
+    sarkoplazma: { tex: "fino", rf: 46, k: 1.1, b: 0.24, lisa: 0.2, f: 6 },
+    jedra: { tex: "zrna", rf: 160, k: 1, lisa: 0.1, f: 20 },
+    miofibrile: { tex: "vlakna", rf: 160, k: 0.7, ton: 0.4 },
+    "sarkoplazemski-retikulum": { tex: "fino", rf: 200, k: 0.6 },
+    mitohondriji: { tex: "gube", rf: 300, k: 0.8 },
+    "motoricna-ploscica": { tex: "zrna", rf: 200, k: 0.8 },
+    "z-linija": { tex: "fino", rf: 60, k: 0.6 }, "m-linija": { tex: "fino", rf: 80, k: 0.5 },
     aktin: { tex: null }, miozin: { tex: null }, "miozinske-glavice": { tex: null }, titin: { tex: null },
-  }, [...deliV, ...deliS]);
+  });
+  // stikalo »Barve kot v učbeniku« (po poliranju, da shrani končne barve)
+  nadzor.push(V.barveUcbenika(vsiDeli, {
+    sarkolema: "#e8809a", sarkoplazma: "#f5d6b8", jedra: "#9a6fe0", miofibrile: "#e07a8a", "sarkoplazemski-retikulum": "#35c4b0",
+    "t-cevke": "#f8de72", glikogen: "#f2ecd6", "motoricna-ploscica": "#f2a65a", "z-linija": "#2f1e80", aktin: "#d94f4f", miozin: "#4a6fd8",
+    "miozinske-glavice": "#8fb0ff", "m-linija": "#5e40bd", titin: "#f5d23c", "pas-a": "#4a6fd8", "pas-i": "#d94f4f", "cona-h": "#b6c3f5",
+  }));
 
   return {
     group,
     get deli() { return pogled === "sarkomera" ? deliS : deliV; },
     nadzor,
+    oder: "celica",
     pogled: [-0.47, 0.34, 0.81],
     get merilo() { return pogled === "sarkomera" ? { m: 3e-6, oznaka: "3 µm" } : info.merilo; },
     dispose() {
