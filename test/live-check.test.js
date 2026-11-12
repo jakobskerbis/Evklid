@@ -586,14 +586,45 @@ test("code check (round 5): period of light elements and electron pairs around o
   ])
     assert.equal(periodIssue(a).issue, null, a);
   assert.equal(periodIssue("Dušik je v 3. periodi.", "Ali je dušik v 3. periodi?").issue, null, "perioda iz učenčevega sporočila");
+  // Pregled A (PR #589): element 4. periode ali višje je pravi osebek; imenovalnik na začetku stavka; »element« zadene.
+  for (const a of [
+    "Kisik reagira s kalijem, ki je v 4. periodi.",
+    "Klor in brom: brom je v 4. periodi.",
+    "$\\mathrm{Cl}$ in $\\mathrm{Br}$: $\\mathrm{Br}$ je v 4. periodi.",
+    "Natrij reagira s kalcijem iz 4. periode podobno.",
+    "Dušik in arzen sta v 15. skupini, arzen v 4. periodi.",
+    "Kisik; kalcij je v 4. periodi.",
+    "Vodik se veže z jodom, ki je v 5. periodi.",
+    "Magnezij in stroncij sta v 2. skupini; stroncij je v 5. periodi.",
+    "Kisik, žveplo, selen: selen je v 4. periodi.",
+    "Kloridni ion $\\mathrm{Cl^-}$ ima konfiguracijo argona, kalijev ion K⁺ tudi, kalij pa je v 4. periodi.",
+    "Ogljikov dioksid: ogljik in kisik sta nekovini; v 4. periodi pa so kovine kalij in kalcij.",
+    "Ogljik tvori verige, 4. perioda pa ima 18 elementov.",
+    "Kisik in fluor: 3. perioda vsebuje njune spodnje sosede.",
+    "Aluminij je tretji element 3. periode, galij pa je v 4. periodi.",
+  ])
+    assert.equal(periodIssue(a).issue, null, a);
+  for (const a of ["Klor je element 2. periode.", "Fluor je najbolj elektronegativen element 3. periode.", "Argon je žlahtni plin 4. periode."])
+    assert.ok(periodIssue(a).issue, a);
+  // Kemijske preverbe se združijo v en popravek.
+  const both = codeFindings("Dušik je v 5. skupini in v 3. periodi.").issue;
+  assert.match(both, /15\. skupina/);
+  assert.match(both, /2\. perioda/);
 
   assert.match(pairsIssue("Vsak atom ima $3 + 2 = 5$ parov.").issue, /at most 4 pairs/);
   assert.ok(pairsIssue("Ob vsakem atomu dušika je 5 elektronskih parov.").issue);
+  // Pregled A (PR #589): »so« ni formula SO; vsota veznih in neveznih parov.
+  for (const a of ["Ob atomu dušika so 5 parov.", "Okoli kisika so 6 parov.", "Ob dušiku so 3 vezni pari in 2 nevezna para, to je 5 parov.", "Ob dušiku so 3 vezni pari in 2 nevezna para.", "Ob vsakem atomu dušika so 3 vezni in 2 nevezna para."])
+    assert.ok(pairsIssue(a).issue, a);
   for (const a of [
     "Ob vsakem atomu dušika so 3 vezni in 1 nevezni par, skupaj 4 pari.",
     "V molekuli $\\mathrm{N_2}$ je skupaj 5 parov.",
     "Vsak atom ima 3 vezne pare, v vsej molekuli pa je 5 parov.",
     "Okoli žvepla v SF₆ je 6 parov.",
+    "Okoli žveplovega atoma v SO₄²⁻ je 6 parov.",
+    "Vsak atom v $\\mathrm{C_2H_2}$: ogljik ima 4 vezne pare, etin pa 5 veznih parov.",
+    "Okoli vsakega atoma ogljika so 4 pari, zato v C₂H₆ nastane 7 veznih parov.",
+    "Ob atomu dušika so 3 vezni pari in en nevezni par, tj. 4 pari, a molekula NH₃ ima 3 vezne pare in 1 nevezni par.",
     "Ob atomu dušika je 8 elektronov v parih.",
     "Vsak atom dušika ima 5 zunanjih elektronov in en nevezni par.",
     "Ali ima vsak atom 5 parov?",
