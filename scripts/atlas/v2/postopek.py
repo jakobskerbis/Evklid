@@ -839,7 +839,7 @@ porocilo = {"kost": OBJEKT, "ime": IME, "kakovost": KAKOVOST, "naprava": NAPRAVA
                             "linea_aspera": "anatomsko: zadnja sredinska črta (θ = 0), ustnici ±2,5 mm", "crte": crte,
                             "veliki_obrtec": gt.round(4).tolist(), "mali_obrtec": lt.round(4).tolist(),
                             "zilne_odprtine": len(izbor), "hranilna_odprtina_t": t_f, "fovea": {"premer_mm": 2 * FOV_R * 1000, "globina_mm": FOV_D * 1000,
-                                      "pod_sredino_st": 16, "zadaj_st": 12}, "makro_mm": [round(float(hp_m.min()) * 1000, 2), round(float(hp_m.max()) * 1000, 2)],
+                                      "pod_medialnim_polom_st": 9, "zadaj_st": 13}, "makro_mm": [round(float(hp_m.min()) * 1000, 2), round(float(hp_m.max()) * 1000, 2)],
                             "hrustanec_delez_povrsine": round(float(hr.mean()), 3)},
             "izhodi": {}}
 kost.pisi_ply(os.path.join(IZHOD, "visoka.ply"), H, GF)
