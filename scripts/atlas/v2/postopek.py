@@ -364,7 +364,7 @@ hrap1 = np.zeros(len(G1))  # hrapava mesta pripojev (barva, hrapavost, drobna gr
 crte = {}
 
 
-def greben(ime, sidra, h, w, hrap_=0.8, konca=(0.12, 0.12), oblika=None, sirina=None):
+def greben(ime, sidra, h, w, hrap_=0.8, konca=(0.12, 0.12), oblika=None, sirina=None, plato=False):
     """Izbočen greben po črti: višina h (m) z mehkim začetkom/koncem, prečni profil Gauss s σ = w (m).
     oblika(u) → množitelj višine vzdolž črte (npr. prekinitev medialne suprakondilarne linije);
     sirina(u) → množitelj σ vzdolž črte (npr. greben, ki se široko zlije z velikim obrtcem)."""
@@ -378,7 +378,8 @@ def greben(ime, sidra, h, w, hrap_=0.8, konca=(0.12, 0.12), oblika=None, sirina=
     vz = vz * (smooth(1, 1 - konca[1], uu) if konca[1] > 0 else 1.0)
     if oblika is not None:
         vz = vz * oblika(uu)
-    prof = gauss(dd, w) * vz * (1 - cart1[idx])
+    # plato: raven vrh do w, strma boka do 2,2 w (pilaster linea aspera: robova se bereta kot ustnici, ne kot Gaussov hrib)
+    prof = (smooth(2.2 * w, w, dd) if plato else gauss(dd, w)) * vz * (1 - cart1[idx])
     hp_m[idx] += h * prof
     hrap1[idx] = np.maximum(hrap1[idx], hrap_ * smooth(0.15, 0.6, prof))
     crte[ime] = {"tock": len(P), "dolzina_mm": round(float(np.linalg.norm(np.diff(P, axis=0), axis=1).sum() * 1000), 1)}
@@ -414,24 +415,26 @@ hr_b = hr1.copy()
 e1 = spr - a_gl * (a_gl @ spr); e1 /= np.linalg.norm(e1)  # spredaj, pravokotno na os vratu
 e2 = np.cross(a_gl, e1)
 alfa = np.arccos(np.clip(u_h1 @ a_gl, -1, 1)); fi_h = np.arctan2(u_h1 @ e2, u_h1 @ e1)
-glava_obm = (d_h1 < 1.45 * R) & (alfa < np.radians(125)) & (t1 > 0.8)
+glava_obm = (d_h1 < 1.6 * R) & (alfa < np.radians(125)) & (t1 > 0.8)
 kosi = np.linspace(-np.pi, np.pi, 25)
 a_m = []
 for k in range(24):
     s_ = glava_obm & (hr1 > 0.5) & (fi_h >= kosi[k]) & (fi_h < kosi[k + 1])
     a_m.append(np.percentile(alfa[s_], 95) if s_.sum() > 5 else np.nan)
 a_m = np.array(a_m); a_m[np.isnan(a_m)] = np.nanmedian(a_m)
-a_m = np.convolve(np.r_[a_m[-2:], a_m, a_m[:2]], np.ones(5) / 5, mode="valid")  # krožno glajenje
+a_m = np.convolve(np.r_[a_m[-3:], a_m, a_m[:3]], np.ones(7) / 7, mode="valid")  # krožno glajenje (ena gladka obroba)
 sred_k = (kosi[:-1] + kosi[1:]) / 2
 a_meja = np.interp(fi_h, np.r_[sred_k - 2 * np.pi, sred_k, sred_k + 2 * np.pi], np.r_[a_m, a_m, a_m])
-a_meja = (a_meja + np.radians(18) * np.maximum(0, np.cos(fi_h - 0.35)) ** 1.5 + np.radians(4.0) * np.sin(3 * fi_h + 0.7)
-          + np.radians(2.5) * np.sin(5 * fi_h + 2.1))
+a_meja = (a_meja + np.radians(18) * np.maximum(0, np.cos(fi_h - 0.35)) ** 1.5 + np.radians(2.5) * np.sin(3 * fi_h + 0.7)
+          + np.radians(1.0) * np.sin(5 * fi_h + 2.1))
 hr_b[glava_obm] = (alfa[glava_obm] < a_meja[glava_obm]).astype(float)
+# zunaj glave proksimalno ni hrustanca (v4s1: prenos maske Z-Anatomy na BodyParts3D je pustil »kaplje« na vratu)
+hr_b[(t1 > 0.75) & ~glava_obm] = 0.0
 print("[v2] glava: meja vira (st)", np.degrees(a_m).round(0).tolist(), "dodano", int(((hr_b > 0.5) & (hr1 < 0.5) & glava_obm).sum()), "odvzeto", int(((hr_b < 0.5) & (hr1 > 0.5) & glava_obm).sum()), flush=True)
 # fovea capitis: plitva skledica malo pod in za medialnim polom glavice (vir: izvrtan valj)
 u_f = med - np.tan(np.radians(9)) * osd + np.tan(np.radians(13)) * zad; u_f /= np.linalg.norm(u_f)
 rho = R * np.arccos(np.clip(u_h1 @ u_f, -1, 1))  # razdalja po glavici od središča fovee
-FOV_R, FOV_D, FOV_GOLO = 6.0e-3, 1.3e-3, 0.6  # ena mehka skledica Ø 12 mm, 1,3 mm; gola kost do 0,6 polmera
+FOV_R, FOV_D, FOV_GOLO = 7.0e-3, 1.0e-3, 0.5  # ena plitva skledica Ø 14 mm, 1 mm, širok poševen rob; gola kost Ø 7 mm
 na_glavici = (d_h1 < 1.25 * R) & (u_h1 @ a_gl > 0)
 hr_b[na_glavici & (rho < FOV_GOLO * FOV_R)] = 0.0
 # facies patellaris naj sega višje spredaj (vir: le ~12 mm nad kondili, v resnici ~35 mm): polje hrustanca na sprednji
@@ -445,7 +448,7 @@ for i, p in enumerate(G1):
 kd1.balance()
 for i in np.where(spredaj_d)[0]:
     # lateralni rob facies patellaris je višji od medialnega: lateralno do 24 mm, medialno do 16 mm
-    for pm in ((5e-3, 10e-3, 16e-3, 20e-3, 24e-3) if (G1[i] - c0) @ lat > 0 else (5e-3, 10e-3, 16e-3)):
+    for pm in ((5e-3, 10e-3, 15e-3, 19e-3) if (G1[i] - c0) @ lat > 0 else (5e-3, 10e-3, 13e-3)):
         _, j, _ = kd1.find((G1[i] - pm * osd).tolist())
         if hr1[j] > 0.5:
             hr_b[i] = 1.0
@@ -465,7 +468,7 @@ for i in np.where(zadaj_d)[0]:
             break
 # zglajen obris (meja = izolinija 0,5): 3 mm proksimalno, 9 mm distalno (vir ima na kondilih oglate vogale)
 w_d = smooth(0.30, 0.22, t1)
-hr_s1 = dif(hr_b, 3.0e-3) * (1 - w_d) + dif3d(hr_b, 4.5e-3) * w_d
+hr_s1 = dif(hr_b, 3.0e-3) * (1 - w_d) + dif3d(hr_b, 6.0e-3) * w_d
 cart1 = smooth(0.3, 0.7, hr_s1)    # 0 kost … 1 hrustanec
 
 # ---- linea aspera: pilaster (srednja tretjina), dve ustnici; distalno suprakondilarni liniji, proksimalno lateralna
@@ -473,11 +476,13 @@ cart1 = smooth(0.3, 0.7, hr_s1)    # 0 kost … 1 hrustanec
 # vmesna → pektinealna linija do malega obrtca
 # v3s3: ozki grebeni (σ ≤ 1,2 mm) so tudi na visoki mreži sami (brez peke) videti kot dve vrezani črti (svetla/temna
 # stran ozkega grebena pri stranski luči); zato vsi profili široki (σ ≥ 1,8 mm), ustnici sta zaobljena ramena pilastra
-th_u = np.degrees(3.0e-3 / r_sred)  # ustnici ±3 mm od sredine
+th_u = np.degrees(2.6e-3 / r_sred)  # ustnici ±2,6 mm od sredine (na robovih planote pilastra)
 # Podrobnejši vir (BodyParts3D) že ima pravo obliko grebenov, obrtcev in jam: dodatke zmanjšamo, da se ne bijejo z njo
 # (Z-Anatomy: 1). K_* = množitelji višin.
-K_LA, K_PROKS, K_DIST = (0.5, 0.45, 0.5) if VIR_JSON else (1.0, 1.0, 1.0)
-greben("linea_aspera_pilaster", [tocka(x, 0) for x in (0.24, 0.36, 0.45, 0.55, 0.64, 0.74)], 3.6e-3 * K_LA, 3.4e-3, 0.5, (0.25, 0.3))
+# v4s2: izmerjeno (orodje greben_profil): vir 1,4–2,3 mm, z dodatkom 1,8 mm v končni nizki mreži 3,0–3,8 mm, FWHM 10 mm, a
+# Gaussov hrib se pri luči od spredaj ne vidi; zato pilaster s planoto (vrh ~6 mm, boka strma) +3,5 mm → ~5,5 mm skupaj
+K_LA, K_PROKS, K_DIST = (1.0, 0.8, 1.0) if VIR_JSON else (1.0, 1.0, 1.0)
+greben("linea_aspera_pilaster", [tocka(x, 0) for x in (0.22, 0.32, 0.45, 0.55, 0.66, 0.76)], 3.8e-3, 2.3e-3, 0.5, (0.25, 0.25), plato=True)
 t_g = t_lt - 0.012  # zgornji konec glutealne grčavine: pod bazo velikega obrtca, v višini malega obrtca
 mlg = (G1 - c0) @ med
 dist = (t1 > 0.03) & (t1 < 0.12) & (cart1 < 0.2)
@@ -531,9 +536,9 @@ greben("intertrohanterna_linija", [gt_spr + k * (it_kon - gt_spr) + (2.5e-3 * np
        1.8e-3 * (0.5 + 0.5 * K_PROKS), 3.0e-3, 1.0, (0.15, 0.1))
 
 # ---- distalno ----
-izboklina(epi_med, 13e-3, 2.0e-3 * K_DIST, 0.8, 1.6)
-izboklina(epi_lat, 12e-3, 1.7e-3 * K_DIST, 0.8, 1.6)
-izboklina(add, 6.5e-3, 2.0e-3 * (0.5 + 0.5 * K_DIST), 0.9, 1.4)
+izboklina(epi_med, 13e-3, 2.4e-3, 0.8, 1.6)
+izboklina(epi_lat, 12e-3, 1.8e-3, 0.8, 1.6)
+izboklina(add, 7e-3, 2.6e-3, 0.9, 1.3)
 # medkondilarna jama: globlja (zadaj spodaj med kondiloma); središče = najvišja zadnja točka med kondiloma
 mid = 0.5 * ((epi_med - c0) @ med + (epi_lat - c0) @ med)
 med_k = (t1 < 0.09) & (np.abs(mlg - mid) < 5e-3) & ((G1 - c0) @ zad > 0) & (cart1 < 0.5)
@@ -612,20 +617,24 @@ hrap = np.maximum(hrap, epi * 0.6)
 # mehka (fbm brez absolutne vrednosti, ki dela ostre gube)
 Pz = np.c_[(G - c0) @ lat, (G - c0) @ zad, (G - c0) @ osd]
 fino = fbm(G / 0.9e-3, 3) * 0.025e-3 + fbm(G / 3.5e-3, 3) * 0.04e-3
-brazde = fbm(np.c_[Pz[:, 0] / 2.0e-3, Pz[:, 1] / 2.0e-3, Pz[:, 2] / 30e-3], 2) * 0.012e-3 * smooth(0.18, 0.3, t) * (1 - smooth(0.7, 0.8, t))
+# v4s2: kost ne sme biti »plastična«: vzdolžne proge na diafizi (široke 1,5–3 mm, dolge ~40 mm, 0,03 mm) in drobne
+# pore na metafizah (jamice ~0,3 mm, 0,05 mm globoke); oboje mehko (brez |šuma|), da ni razpok ali »dlak«
+brazde = fbm(np.c_[Pz[:, 0] / 1.6e-3, Pz[:, 1] / 1.6e-3, Pz[:, 2] / 40e-3], 3) * 0.03e-3 * smooth(0.16, 0.28, t) * (1 - smooth(0.72, 0.82, t))
+metafiza = np.maximum(smooth(0.22, 0.12, t), smooth(0.74, 0.84, t))
+pore = -0.05e-3 * smooth(0.55, 0.85, fbm(G / 0.45e-3 + 2.3, 2) * 0.5 + 0.5) * metafiza
 grce = fbm(G / 1.6e-3 + 3.7, 3) * 0.07e-3 * hrap
-hp += (fino + brazde + grce) * kompakta
+hp += (fino + brazde + grce + pore) * kompakta
 
 # Hranilna odprtina (ena): zadaj, 3 mm medialno od medialne ustnice linea aspera, 40 % dolžine od proksimalnega konca;
 # kanal poševno proksimalno → jamica z brazdo navzgor
 t_f = 1 - 0.40
-th_f = -(2.5e-3 + 3e-3) / r_sred
+th_f = -6.5e-3 / r_sred  # ob vznožju pilastra, medialno
 s_f = kotna(theta - th_f) * r
 v_f = (t - t_f) * L
-jamica = gauss(s_f, 0.55e-3) * gauss(v_f, 0.8e-3)
+jamica = gauss(s_f, 0.4e-3) * gauss(v_f, 0.6e-3)
 brazda = gauss(s_f, 0.45e-3) * gauss(v_f - 3.0e-3, 2.5e-3) * (v_f > 0)
-hp -= 1.4e-3 * jamica + 0.35e-3 * brazda
-temno = np.maximum(temno, smooth(0.25, 0.8, jamica))
+hp -= 0.9e-3 * jamica + 0.3e-3 * brazda
+temno = np.maximum(temno, 0.55 * smooth(0.3, 0.9, jamica))
 
 # Drobne žilne odprtine: samo na vratu (retinakularne, zgoraj spredaj in zadaj) in na metafizah ob kondilih.
 # Malo in neopazno: 4 + 5 odprtin, vsaj 8 mm narazen, plitve (0,3 mm), podolgovate vzdolž kosti, mehak rob
@@ -679,13 +688,13 @@ hr_b = (np.array([0.78, 0.77, 0.73]) * hr_rob[:, None] + np.array([0.80, 0.75, 0
 hr_b = hr_b * (0.93 + 0.07 * hr_lisa[:, None]) * (0.985 + 0.03 * zrno[:, None]) + np.array([-0.01, 0.0, 0.015]) * (hr_lisa[:, None] - 0.5)
 odp_b = np.array([0.50, 0.42, 0.33])
 real = kost_b * (1 - hr_g[:, None]) + hr_b * hr_g[:, None]
-fov_b = np.array([0.77, 0.74, 0.67]) * (0.96 + 0.08 * zrno[:, None])  # dno fovee: zamolklo, temnejše od hrustanca
+fov_b = np.array([0.80, 0.77, 0.70]) * (0.97 + 0.06 * zrno[:, None])  # dno fovee: zamolklo, svetlo kot hrustanec (ne temna luknja)
 real = real * (1 - fz[:, None]) + fov_b * fz[:, None]
 real = real * (1 - temno[:, None]) + odp_b * temno[:, None]
 ucb = np.array([0.93, 0.87, 0.72]) * (1 - hr_g[:, None]) + np.array([0.55, 0.78, 0.93]) * hr_g[:, None]
 ucb = ucb * (1 - 0.6 * temno[:, None]) + np.array([0.45, 0.35, 0.28]) * 0.6 * temno[:, None]
 ucb = ucb * (1 - fz[:, None]) + np.array([0.80, 0.74, 0.60]) * fz[:, None]
-rough = 0.62 + 0.14 * hrap + 0.04 * (zrno - 0.5)
+rough = 0.62 + 0.14 * hrap + 0.04 * (zrno - 0.5) + 0.08 * (lisa - 0.5)  # spremenljiva hrapavost (ne enoten plastičen sijaj)
 rough = rough * (1 - hr_g) + (0.48 + 0.08 * hr_lisa + 0.03 * (zrno - 0.5)) * hr_g
 rough = np.maximum(rough, 0.9 * temno)
 rough = rough * (1 - fz) + 0.8 * fz
@@ -993,7 +1002,7 @@ def material_glb(ime, barva_pot, normala_pot, orm_pot, ucb):
 porocilo = {"kost": OBJEKT, "ime": IME, "kakovost": KAKOVOST, "naprava": NAPRAVA, "ciscenje": ciscenje, "nastavitve": NASTAVITVE, "proracun": PRORACUN,
             "visoka": {"trikotniki": int(len(GF)), "oglisca": int(len(G))}, "mere_gladke": {k: round(v, 2) for k, v in mer_g.items()},
             "podrobnosti": {"linea_aspera_theta_vir_st": [round(math.degrees(x), 1) for x in th_surovo],
-                            "linea_aspera": "anatomsko: pilaster 3,6 mm × K_LA (BodyParts3D 0,5) (σ 3,4 mm) na zadnji sredinski črti (θ = 0), ustnici ±3 mm kot neprekinjeni poti (suprakondilarna → ustnica → glutealna grčavina / spiralna linija)", "crte": crte,
+                            "linea_aspera": "anatomsko: pilaster s planoto +3,8 mm (vrh 4,6 mm, dno ~10 mm) na zadnji sredinski črti (θ = 0), ustnici ±2,6 mm kot neprekinjeni poti (suprakondilarna → ustnica → glutealna grčavina / spiralna linija)", "crte": crte,
                             "veliki_obrtec": gt.round(4).tolist(), "mali_obrtec": lt.round(4).tolist(),
                             "zilne_odprtine": len(izbor), "hranilna_odprtina_t": t_f, "fovea": {"premer_mm": 2 * FOV_R * 1000, "gola_kost_premer_mm": 2 * FOV_GOLO * FOV_R * 1000, "globina_mm": FOV_D * 1000,
                                       "pod_medialnim_polom_st": 9, "zadaj_st": 13}, "makro_mm": [round(float(hp_m.min()) * 1000, 2), round(float(hp_m.max()) * 1000, 2)],
