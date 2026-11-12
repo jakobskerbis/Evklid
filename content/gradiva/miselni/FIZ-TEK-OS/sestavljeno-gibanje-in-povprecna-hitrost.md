@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Povprečna hitrost
+  - $\bar v = \dfrac{s}{t}$, celotna pot in celoten čas
+  - postanek šteje v čas
+- Več odsekov
+  - čas odseka $t_1 = \dfrac{s_1}{v_1}$
+  - poti in čase seštej posebej
+- Enaki poti
+  - $\bar v = \dfrac{2 v_1 v_2}{v_1 + v_2}$
+  - manjša od sredine hitrosti
+- Srečevanje
+  - razmik se manjša z $v_1 + v_2$
+  - $t = \dfrac{d}{v_1 + v_2}$
+- Dohitevanje
+  - razmik se manjša z $v_1 - v_2$
+  - prednost pri zamiku $d = v_2 \cdot t_0$
+- Graf poti
+  - srečanje je presečišče premic
+- Tekmovalni triki
+  - manjkajočo pot si izberi sam
+  - enote najprej poenoti

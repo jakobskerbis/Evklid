@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Topljenec in topilo
+  - $m_{\mathrm{r}} = m_{\mathrm{t}} + m_{\mathrm{v}}$
+  - kristalna voda hidrata gre k topilu
+- Masni delež
+  - $w = \frac{m_{\mathrm{t}}}{m_{\mathrm{r}}}$, brez enote
+  - napaka: deljenje z maso vode
+  - $3{,}5\,\%$ je $0{,}035$
+- Redčenje
+  - masa topljenca ostane enaka
+  - $w_1 m_1 = w_2 m_2$
+  - dolita voda je $m_2 - m_1$
+- Izparevanje
+  - topljenec ostane, voda odide
+  - izparjena voda je $m_1 - m_2$
+- Mešanje
+  - seštej mase topljenca in raztopin
+  - povprečje le pri enakih masah
+- Mešalni križ
+  - $m_1 : m_2 = (w - w_2) : (w_1 - w)$
+  - 25 % in 5 % za 10 %: razmerje 1 : 3

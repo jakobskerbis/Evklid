@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lestvica pH
+  - pod 7 kislo, nad 7 bazično
+  - čista voda je nevtralna, pH 7
+- Indikatorji
+  - lakmus: rdeč v kislem, moder v bazičnem
+  - fenolftalein rožnat le v bazičnem
+  - brezbarven ne pomeni nujno kisel
+- Nevtralizacija
+  - $\mathrm{H^+ + OH^- \rightarrow H_2O}$
+  - kislina + baza → sol + voda
+- Formula soli
+  - kation baze, anion kisline
+  - vsota nabojev 0: $\mathrm{Ca(NO_3)_2}$
+- Drugi nastanki soli
+  - kovina + kislina → sol + vodik
+  - karbonat + kislina → sol + voda + $\mathrm{CO_2}$
+- Račun nevtralizacije
+  - za vsak $\mathrm{H^+}$ en $\mathrm{OH^-}$
+  - $\mathrm{H_2SO_4}$ rabi dva $\mathrm{NaOH}$
+  - enaki množini, ne enaki masi
+- Uganke z epruvetami
+  - fenolftalein najde bazo
+  - v kislini baza obarva šele po več kapljicah

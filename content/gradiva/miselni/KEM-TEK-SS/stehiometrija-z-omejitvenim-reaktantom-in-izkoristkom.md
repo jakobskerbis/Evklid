@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Recept enačbe
+  - koeficienti $\nu$ dajo razmerje množin
+  - štafeta: 4 tekači + 1 palica
+- Mase v množine
+  - $n = \dfrac{m}{M}$
+  - mas nikoli ne primerjaj
+- Omejitveni reaktant
+  - najmanjši količnik $\dfrac{n}{\nu}$
+  - porabi se v celoti
+  - drugi reaktant ostane v prebitku
+- Tabela začetek–konec
+  - spremembe v razmerju koeficientov
+  - pokaže produkt in prebitek
+- Izkoristek
+  - $\eta = \dfrac{m_\mathrm{dej}}{m_\mathrm{teor}} \cdot 100\,\%$
+  - $m_\mathrm{teor}$ iz omejitvenega reaktanta
+  - dve stopnji: izkoristka se zmnožita
+- Čistost vzorca
+  - $w = \dfrac{m_\mathrm{snovi}}{m_\mathrm{vzorca}}$
+  - reagira le čisti del
+- Obratna naloga
+  - k vzorcu deliš z $w$ in $\eta$
+  - napaka: množenje da premalo vzorca

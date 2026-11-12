@@ -1136,6 +1136,69 @@
    "h": "13da4871b4ac",
    "o": "D"
   },
+  "FIZ-TEK-OS/branje-in-risanje-grafov-gibanja#p1": {
+   "h": "27c24c1b4d07",
+   "o": "I",
+   "r": "»ta voziček« iz lekcije"
+  },
+  "FIZ-TEK-OS/delo-energija-in-izkoristek#p0": {
+   "h": "4d85b7e49570",
+   "o": "D"
+  },
+  "FIZ-TEK-OS/nacrtovanje-poskusa-in-obdelava-meritev#p0": {
+   "h": "143cd5b56371",
+   "o": "I",
+   "r": "zgodba iz lekcije"
+  },
+  "FIZ-TEK-OS/nacrtovanje-poskusa-in-obdelava-meritev#p1": {
+   "h": "841d6fa8e764",
+   "o": "I",
+   "r": "zgodba iz lekcije"
+  },
+  "FIZ-TEK-OS/ocenjevanje-in-merske-napake#p0": {
+   "h": "1dcac909ece6",
+   "o": "D"
+  },
+  "FIZ-TEK-OS/sestavljeno-gibanje-in-povprecna-hitrost#p0": {
+   "h": "98aae5ac41f3",
+   "o": "I",
+   "r": "sklic na tabelo"
+  },
+  "FIZ-TEK-OS/sestavljeno-gibanje-in-povprecna-hitrost#p1": {
+   "h": "337c07a1f100",
+   "o": "D"
+  },
+  "FIZ-TEK-OS/sile-ravnovesje-in-vzvod#p1": {
+   "h": "48be301f02ca",
+   "o": "I",
+   "r": "Žanova trditev iz lekcije"
+  },
+  "FIZ-TEK-OS/tlak-in-vzgon-v-nalogah#p1": {
+   "h": "dbb294f2343b",
+   "o": "D"
+  },
+  "FIZ-TEK-OS/toplotne-bilance#p1": {
+   "h": "ce50bb1d0751",
+   "o": "D"
+  },
+  "FIZ-TEK-OS/vezja-z-vec-porabniki#p0": {
+   "h": "8eb1be5e6664",
+   "o": "D"
+  },
+  "FIZ-TEK-OS/vezja-z-vec-porabniki#p1": {
+   "h": "dc42c76a1086",
+   "o": "D"
+  },
+  "FIZ-TEK-OS/zrcala-in-lece-v-nalogah#p0": {
+   "h": "1a6fe9192828",
+   "o": "I",
+   "r": "sklic na oznake na sliki"
+  },
+  "FIZ-TEK-OS/zrcala-in-lece-v-nalogah#p1": {
+   "h": "f7dd84aafb03",
+   "o": "I",
+   "r": "ni jasno, ali gre za zrcalo ali lečo"
+  },
   "FIZ-TEK-SS/elektrostatika#p0": {
    "h": "984819ede310",
    "o": "D"
@@ -1606,12 +1669,119 @@
    "o": "I",
    "r": "reakcija ni podana"
   },
+  "KEM-TEK-OS/eksperimentalne-in-opazovalne-naloge#p0": {
+   "h": "6ed15bdbc76b",
+   "o": "D"
+  },
+  "KEM-TEK-OS/eksperimentalne-in-opazovalne-naloge#p1": {
+   "h": "55a1e32b3756",
+   "o": "D"
+  },
+  "KEM-TEK-OS/kemijske-vezi-in-formule-spojin#p0": {
+   "h": "f17aa51ed6ef",
+   "o": "D"
+  },
+  "KEM-TEK-OS/kemijske-vezi-in-formule-spojin#p1": {
+   "h": "69e500264a11",
+   "o": "D"
+  },
+  "KEM-TEK-OS/kisline-baze-in-soli-v-nalogah#p0": {
+   "h": "e8642e1fbc82",
+   "o": "D"
+  },
   "KEM-TEK-OS/lastnosti-snovi-in-locevanje-zmesi#p0": {
    "h": "7ed631190e70",
    "o": "D"
   },
   "KEM-TEK-OS/lastnosti-snovi-in-locevanje-zmesi#p1": {
    "h": "4b8830b4562d",
+   "o": "D"
+  },
+  "KEM-TEK-OS/racunanje-mas-iz-enacb#p0": {
+   "h": "8d69f6ab2423",
+   "o": "D"
+  },
+  "KEM-TEK-OS/racunanje-mas-iz-enacb#p1": {
+   "h": "afaece742965",
+   "o": "I",
+   "r": "sklic na primer iz lekcije"
+  },
+  "KEM-TEK-OS/raztopine-in-masni-delez#p1": {
+   "h": "d553a5bb22da",
+   "o": "D"
+  },
+  "KEM-TEK-OS/urejanje-enacb-in-mnozina-snovi#p0": {
+   "h": "e4a20a6ecdcc",
+   "o": "D"
+  },
+  "KEM-TEK-OS/zgradba-atoma-in-periodni-sistem-v-nalogah#p0": {
+   "h": "45fe8f79317e",
+   "o": "D"
+  },
+  "KEM-TEK-OS/zgradba-atoma-in-periodni-sistem-v-nalogah#p1": {
+   "h": "87b25b75ad1f",
+   "o": "I",
+   "r": "sklic na premico"
+  },
+  "KEM-TEK-SS/analizna-kemija-titracije#p1": {
+   "h": "4111a7d775ee",
+   "o": "D"
+  },
+  "KEM-TEK-SS/kemijska-vez-in-geometrija-molekul#p0": {
+   "h": "fc3a097dc99b",
+   "o": "D"
+  },
+  "KEM-TEK-SS/kemijska-vez-in-geometrija-molekul#p1": {
+   "h": "d759f177191f",
+   "o": "D"
+  },
+  "KEM-TEK-SS/kemijsko-ravnotezje#p0": {
+   "h": "80fc7d94b4b6",
+   "o": "D"
+  },
+  "KEM-TEK-SS/kemijsko-ravnotezje#p1": {
+   "h": "48fca56a1fd5",
+   "o": "D"
+  },
+  "KEM-TEK-SS/kisline-baze-ph-in-pufri#p0": {
+   "h": "b5b1e3dfda75",
+   "o": "I",
+   "r": "sklic na uganko"
+  },
+  "KEM-TEK-SS/kisline-baze-ph-in-pufri#p1": {
+   "h": "53f6c1361479",
+   "o": "D"
+  },
+  "KEM-TEK-SS/organska-kemija-reakcijski-mehanizmi#p0": {
+   "h": "f777fc4cde35",
+   "o": "D"
+  },
+  "KEM-TEK-SS/organska-kemija-reakcijski-mehanizmi#p1": {
+   "h": "b63da3827c37",
+   "o": "D"
+  },
+  "KEM-TEK-SS/plini-in-plinska-enacba#p0": {
+   "h": "246ec9f6f738",
+   "o": "D"
+  },
+  "KEM-TEK-SS/redoks-reakcije-in-elektrokemija#p0": {
+   "h": "4535d7e21946",
+   "o": "D"
+  },
+  "KEM-TEK-SS/stehiometrija-z-omejitvenim-reaktantom-in-izkoristkom#p0": {
+   "h": "2a810cf502c4",
+   "o": "D"
+  },
+  "KEM-TEK-SS/stehiometrija-z-omejitvenim-reaktantom-in-izkoristkom#p1": {
+   "h": "543dfb7484fe",
+   "o": "D"
+  },
+  "KEM-TEK-SS/zgradba-atoma-in-periodne-lastnosti#p0": {
+   "h": "39018b59fce0",
+   "o": "D"
+  },
+  "KEM-TEK-SS/zgradba-atoma-in-periodne-lastnosti#p1": {
+   "h": "29d01715cca0",
    "o": "D"
   },
   "MAT-OS-6/deljivost#p0": {

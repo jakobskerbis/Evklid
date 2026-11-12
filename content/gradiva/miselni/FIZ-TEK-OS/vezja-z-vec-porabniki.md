@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zaporedna vezava
+  - tok povsod enak
+  - $U = U_1 + U_2$, $R = R_1 + R_2$
+  - večji upor dobi večjo napetost
+- Vzporedna vezava
+  - napetost na vseh vejah enaka
+  - $I = I_1 + I_2$
+  - $\dfrac{1}{R} = \dfrac{1}{R_1} + \dfrac{1}{R_2}$
+- Skupni vzporedni upor
+  - manjši od najmanjšega
+  - dva upora: $R = \dfrac{R_1 R_2}{R_1 + R_2}$
+  - napaka: pozabljen obrat ulomka
+- Mešano vezje
+  - poenostavi od znotraj navzven
+  - nato tok razdeli nazaj po vejah
+- Merjenje
+  - ampermeter zaporedno, majhen upor
+  - voltmeter vzporedno, velik upor
+  - napaka: ampermeter vzporedno naredi kratek stik
+- Od meritve nazaj
+  - iz enega toka dobiš napetost veje
+  - $U = U_1 + U_2$ da napetost vira

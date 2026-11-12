@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ravno zrcalo
+  - odbojni kot je enak vpadnemu
+  - slika navidezna, enako daleč za zrcalom
+  - do slike je dvakratna razdalja do zrcala
+- Zrcalo za postavo
+  - višina zrcala je pol telesne višine
+  - razdalja od zrcala ni pomembna
+- Gorišče
+  - vzporedni žarki se zberejo v $F$
+  - slika Sonca nastane v gorišču
+- Značilni žarki
+  - vzporedni gre po leči skozi gorišče
+  - skozi središče gre naravnost
+  - skozi gorišče gre po leči vzporedno
+- Vrste slik
+  - $a > 2f$: realna, pomanjšana, obrnjena
+  - $a < f$: navidezna, pokončna (lupa)
+  - pol leče prekrito: slika cela, temnejša
+- Enačba leče
+  - $\dfrac{1}{a} + \dfrac{1}{b} = \dfrac{1}{f}$
+  - napaka: pozabljen obrat ulomka
+- Povečava
+  - $\dfrac{S}{P} = \dfrac{b}{a}$
+  - oddaljen predmet: $S = P \cdot \dfrac{f}{a}$

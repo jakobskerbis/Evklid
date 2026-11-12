@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lewisova struktura
+  - seštej valenčne elektrone, upoštevaj naboj
+  - $q_\mathrm{f} = V - N - \frac{B}{2}$
+  - izjeme: $\mathrm{BF_3}$, $\mathrm{SF_6}$
+- Elektronske domene
+  - večkratna vez je ena domena
+  - $E = \frac{V - \sum p - q}{2}$
+  - $N_\mathrm{d} = X + E$
+- Razporeditev in koti
+  - 2 linearna $180°$, 3 trikotna $120°$, 4 tetraeder $109{,}5°$
+  - 5 bipiramida $90°$ in $120°$, 6 oktaeder $90°$
+- Oblika molekule
+  - imenujemo jo po atomih
+  - $\mathrm{NH_3}$ piramida $107°$, $\mathrm{H_2O}$ kotna $104{,}5°$
+  - pri 5 domenah nevezni pari ekvatorialno
+- Polarnost molekule
+  - vektorska vsota dipolov vezi
+  - $\mu = 2\,\mu_\mathrm{v}\cos\frac{\theta}{2}$
+  - $\mathrm{CO_2}$ nepolaren kljub polarnim vezem
+- Hibridizacija
+  - število hibridnih orbital je $N_\mathrm{d}$
+  - $sp$, $sp^2$, $sp^3$, $sp^3d$, $sp^3d^2$
+  - dvojna vez: ena $\sigma$ in ena $\pi$

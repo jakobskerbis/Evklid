@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dinamično ravnotežje
+  - hitrosti v obe smeri enaki
+  - napaka: koncentracije niso enake
+- Konstanta ravnotežja
+  - $K = \frac{[\mathrm{C}]^c\,[\mathrm{D}]^d}{[\mathrm{A}]^a\,[\mathrm{B}]^b}$
+  - samo ravnotežne koncentracije, koeficienti so potence
+  - odvisna samo od temperature
+- Pravila za K
+  - obrnjena enačba: $\frac{1}{K}$
+  - podvojena enačba: $K^2$
+  - vsota enačb: produkt konstant
+- Reakcijski količnik
+  - $Q < K$: reakcija teče v desno
+  - $Q > K$: reakcija teče v levo
+- Le Chatelierovo načelo
+  - dodatek reaktanta premakne v desno
+  - večji tlak: stran z manj molekulami plina
+  - segrevanje: smer endotermne reakcije
+  - katalizator ne premakne ravnotežja
+- Računanje sestave
+  - tabela začetek, sprememba, ravnotežje
+  - spremembe v razmerju koeficientov: $2x$ pri 2 HI
+  - nesmiselni koren zavrzi
