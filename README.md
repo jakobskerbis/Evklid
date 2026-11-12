@@ -7,7 +7,7 @@ Osebni AI inštruktor za matematiko, fiziko in kemijo za slovenske učence (OŠ 
 ## Kaj zna
 
 - **Klepet** s pretakanjem odgovorov, izrisom formul (KaTeX) in fotografijami nalog (kamera ali prilepljena slika).
-- **Nastavitve** na učenca: predmet, šola, raven, program (redni / tekmovanja), način A (vodenje) ali B (celotna rešitev), osebnost/tema, ročno vnesene šibke točke.
+- **Nastavitve** na učenca: predmet, šola, raven, cilj (cilj Tekmovanje vklopi pripravo na tekmovanja), način A (vodenje) ali B (celotna rešitev), osebnost/tema, ročno vnesene šibke točke.
 - **Spremembe iz klepeta** (»zdaj kemija«, »daj mi celo rešitev«) model upošteva sam; glava klepeta pokaže trenutni predmet in način.
 - **Analitika**: model na konec vsakega odgovora doda vrstico `<<META …>>`. Strežnik jo odstrani še preden jo učenec vidi (tudi med pretakanjem), jo shrani in iz nje izračuna šibke točke.
 - **Samodejne šibke točke**: tema z vsaj 3 potezami in vsaj 40 % napak v zadnjih 60 dneh se doda v prompt kot šibka točka.

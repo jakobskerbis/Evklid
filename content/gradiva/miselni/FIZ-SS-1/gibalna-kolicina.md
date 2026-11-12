@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Gibalna količina
+  - $\vec p = m\,\vec v$, vektor v smeri hitrosti
+  - enota $\mathrm{kg\,m/s} = \mathrm{N\,s}$
+  - toča $20\,\mathrm{g}$ pri $25\,\mathrm{m/s}$: $0{,}5\,\mathrm{kg\,m/s}$
+- Predznaki
+  - najprej izberi pozitivno smer
+  - napaka: $8 + 2$ namesto $8 - 2$
+- Izrek o gibalni količini
+  - $F\,\Delta t = \Delta p$
+  - sunek sile je ploščina pod grafom $F(t)$
+- Daljši čas, manjša sila
+  - upognjene noge, sneg, čelada
+  - $\Delta p$ ostane enaka, raste $\Delta t$
+- Odboj
+  - $\Delta p = m\,(v' - v)$ s predznaki
+  - odboj da večjo $\Delta p$ kot zaustavitev
+- Ohranitev pri trkih
+  - $p_1 + p_2 = p_1' + p_2'$
+  - velja, ko je vsota zunanjih sil nič
+  - sunka teles sta nasprotno enaka
+- Neprožni trk
+  - telesi se sprimeta
+  - $m_1 v_1 + m_2 v_2 = (m_1 + m_2)\,v'$
+- Prožni trk
+  - telesi se odbijeta

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ena ideja: delci in temperatura
+  - žoga na mrazu je mehkejša
+  - balon v vročem avtu se napne
+- Delci daleč narazen
+  - velikost molekul skoraj ne šteje
+  - mol $\mathrm{H_2}$ in mol $\mathrm{CO_2}$: enaka prostornina
+- Molska prostornina
+  - $V_m = \dfrac{V}{n}$ v $\mathrm{L/mol}$
+  - normalni pogoji: $22{,}4\,\mathrm{L/mol}$
+  - pri $25\,^\circ\mathrm{C}$ približno $24{,}5\,\mathrm{L/mol}$
+- Plinska enačba
+  - $pV = nRT$
+  - $R = 8{,}314\,\mathrm{kPa \cdot L/(mol \cdot K)}$
+  - tlak v kPa, prostornina v L
+- Kelvini
+  - $T = t + 273$
+  - napaka: stopinje Celzija v enačbi
+- Plin pri reakciji
+  - $m \to n$, razmerje koeficientov
+  - nato $V = \dfrac{nRT}{p}$

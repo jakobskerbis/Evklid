@@ -182,6 +182,18 @@ Demonstracija se pokaže za razdelkom »Rešeni primeri«. Formule piši v LaTeX
 decimalno vejico (`$3{,}5$`). Če je med naštetimi števili vsaj eno decimalno, jih loči s podpičjem:
 `$1{,}5$; $2$ ali $2{,}99$`, točka `$(1{,}5; 2)$` (preveri `check-lesson.js`).
 
+## Račun za kodo (`<<RACUN`)
+
+Na koncu lekcije je blok z vsemi končnimi in pomembnimi vmesnimi rezultati rešenih primerov, vaj in vprašanj v strojni obliki, ena trditev na vrstico (zapis in ključne besede kot v `prompts/system_prompt.md`, »Račun za kodo«: `resi`, `neenacba`, `enako`, `odvod`, `integral`, `limita`, `vrednost`, `enote`, `kemija`, `molska`). Učenec ga ne vidi (`server/textbook.js`); `node scripts/check-lesson.js` vsako trditev preveri s SymPy oziroma urejevalnikom enačb in napačno javi kot napako.
+
+```
+<<RACUN
+resi: 2*x+3=11 | x | 4
+enote: 72*km/h | 20*m/s
+kemija: CH4 + 2 O2 -> CO2 + 2 H2O
+>>
+```
+
 ## Fakultetne lekcije
 
 Fakultetna tema z enakim naslovom in predmetom se pojavi v več predmetih (npr.

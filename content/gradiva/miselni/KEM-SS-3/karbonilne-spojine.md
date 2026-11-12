@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Karbonilna skupina
+  - dvojna vez $\mathrm{C{=}O}$
+  - napaka: skupina $\mathrm{{-}OH}$ ni karbonilna
+- Aldehid ali keton
+  - aldehid: $\mathrm{{-}CHO}$ na koncu verige
+  - keton: C=O med dvema atomoma C
+  - izomera: propanal in propanon, $\mathrm{C_3H_6O}$
+- Imena
+  - končnica -al: butanal, brez številke
+  - končnica -on: pentan-2-on, propanon (aceton)
+- Nastanek
+  - primarni alkohol → aldehid
+  - sekundarni alkohol → keton
+- Vrelišče in topnost
+  - dipol-dipol, brez vodikovih vezi med seboj
+  - etanal $20\,^\circ\mathrm{C}$, etanol $78\,^\circ\mathrm{C}$
+  - kratki topni v vodi
+- Oksidacija aldehidov
+  - aldehid → karboksilna kislina
+  - Fehling: rdeča oborina; Tollens: srebrno ogledalo
+  - keton ne reagira
+- Redukcija
+  - aldehid → primarni alkohol
+  - keton → sekundarni alkohol

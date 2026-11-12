@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pot do vinila
+  - eten + $\mathrm{Cl_2}$ → 1,2-dikloroetan
+  - dikloroetan → kloroeten + $\mathrm{HCl}$
+- Hiter preizkus
+  - preštej molekule na obeh straneh
+  - dvojna vez: nastane, izgine ali ostane
+- Adicija
+  - dve molekuli → ena, dvojna vez izgine
+  - alkeni, alkini; bromova voda se razbarva
+- Eliminacija
+  - ena molekula → dve, nastane dvojna vez
+  - odcepi se $\mathrm{H_2O}$ ali $\mathrm{HX}$
+  - napaka: misliti, da molekula razpade na pol
+- Substitucija
+  - dve molekuli → dve, zamenjava atoma
+  - alkan + halogen ob svetlobi
+  - halogenoalkan + $\mathrm{OH^-}$ → alkohol
+- Pogoji odločijo
+  - $\mathrm{NaOH}$ v vodi: substitucija
+  - $\mathrm{KOH}$ v etanolu, toplota: eliminacija
+- Atomska ekonomičnost
+  - $E_{\mathrm{at}} = \dfrac{m_{\mathrm{p}}}{m_{\mathrm{r}}}$
+  - adicija $100\,\%$, kloroeten iz dikloroetana $63\,\%$
+  - ni isto kot izkoristek

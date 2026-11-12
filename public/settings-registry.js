@@ -24,7 +24,7 @@ export const PROFILE_SETTINGS = {
   study_program: { confirm: true, desc: "faculty study programme: id or name with faculty, e.g. 'Kemija UL FKKT' (get_settings options=study_program lists them)" },
   study_course: { desc: "faculty only: course of the programme's current year or an elective, by name (get_settings options=study_course)" },
   subject: { values: ["MAT", "FIZ", "KEM", "NAR", "BIO", "GEO", "RAC", "EKO"], desc: "school subject; OŠ 6./7. has MAT and NAR only; at faculty prefer study_course" },
-  track: { values: ["REGULAR", "COMPETITION"], desc: "REGULAR = school (NPZ/matura), COMPETITION = competition preparation (not at faculty or in regional systems)" },
+  track: { values: ["REGULAR", "COMPETITION"], desc: "REGULAR = school (NPZ/matura), COMPETITION = competition preparation (not at faculty or in regional systems). Follows goal: COMPETITION is the same as goal tekmovanje" },
   solving_mode: { values: ["A", "B"], desc: "A = step-by-step guidance, B = full worked solution with explanation (permanent default)" },
   personality_setting: { desc: "tutor tone / theme of examples, max 200 chars, e.g. 'strog', 'šaljiv, primeri iz nogometa'" },
   language: { desc: "conversation and app language, ISO 639 code (e.g. 'sl', 'en', 'de', 'hr', 'zh-Hant'); the app reloads in it" },
@@ -49,8 +49,8 @@ export const PROFILE_SETTINGS = {
 // ls: ključ v localStorage in preslikava vrednosti; brez ls ima nastavitev svojo kodo v public/chat-settings.js.
 export const DEVICE_SETTINGS = {
   // Zgodovinski slogi (public/theme.js → ERAS) so našteti tu, ker strežnik ne bere theme.js; test/teme.test.js preveri oboje.
-  style: { values: ["cist", "igriv", "temen", "antik", "renesansa", "bagdad", "indija", "egipt"], desc: "visual style: cist = clean (default), igriv = playful/rounded, temen = always dark; history styles (light or dark, subtle period drawings in the background, serif headings, facts card about that era's mathematicians): antik = ancient Greece (marble, terracotta), renesansa = Renaissance (parchment, crimson), bagdad = House of Wisdom / Islamic golden age (teal and gold), indija = Indian mathematics (saffron and indigo), egipt = ancient Egyptian mathematics (sand and lapis lazuli)" },
-  theme: { values: ["light", "dark", "system"], desc: "light / dark mode, system = follow the device (ignored in style temen)" },
+  style: { values: ["cist", "igriv", "antik", "renesansa", "bagdad", "indija", "egipt"], desc: "visual style: cist = clean (default), igriv = playful/rounded (for a dark look use theme dark); history styles (light or dark, subtle period drawings in the background, serif headings, facts card about that era's mathematicians): antik = ancient Greece (marble, terracotta), renesansa = Renaissance (parchment, crimson), bagdad = House of Wisdom / Islamic golden age (teal and gold), indija = Indian mathematics (saffron and indigo), egipt = ancient Egyptian mathematics (sand and lapis lazuli)" },
+  theme: { values: ["light", "dark", "system"], desc: "light / dark mode, system = follow the device" },
   accent: { desc: "accent colour: '#rrggbb', 'random' or 'default' (contrast is fixed automatically)" },
   colors: { values: ["random", "default"], desc: "whole colour palette of the current light/dark mode: random or back to default" },
   color_background: { desc: "background colour '#rrggbb' (current light/dark mode)" },

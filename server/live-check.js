@@ -982,6 +982,6 @@ export async function correction({ streamFn, mode, answer, issue, language = "sl
 // Popravek vstavi pred vrstico META (in kartice), da ostane zgodovina v pričakovani obliki.
 export function insertFix(text, block) {
   const s = String(text || "");
-  const i = s.search(/\n?<<(?:META|KARTICA|IZBIRE)\b/);
+  const i = s.search(/\n?<<(?:META|KARTICA|IZBIRE|RA[CČ]UN)\b/);
   return i < 0 ? s + block : s.slice(0, i) + block + s.slice(i);
 }
