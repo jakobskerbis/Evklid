@@ -46,6 +46,11 @@ async function nalozi(pot, nacin) {
   // preizkus normal map: »brez-normale« (samo geometrija + barva/AO), »obrni-g« (zelen kanal obrnjen)
   if (nacin === "brez-normale") { mesh.material.normalMap = null; mesh.material.needsUpdate = true; }
   if (nacin === "obrni-g") mesh.material.normalScale.y *= -1;
+  // »senca«: bel material z isto normal map (brez barve, AO in hrapavosti) – ali se grebeni berejo kot izbokline
+  if (nacin === "senca") {
+    const nm = mesh.material.normalMap;
+    mesh.material = new THREE.MeshStandardMaterial({ color: "#f2f2f2", roughness: 0.65, normalMap: nm });
+  }
   return mesh;
 }
 

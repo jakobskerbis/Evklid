@@ -1,5 +1,6 @@
 // Atlas v2: posnetki ene kosti iz istih 8 pogledov (+ 2 od blizu) za izhodišče in nov model (Playwright, swiftshader).
-//   node scripts/atlas/v2/predogled.cjs <izhodna mapa> <oznaka>=<pot do .ply|.glb>[:brez-tekstur] …
+//   node scripts/atlas/v2/predogled.cjs <izhodna mapa> <oznaka>=<pot do .ply|.glb>[:brez-tekstur|:brez-normale|:obrni-g|:senca] …
+// »senca«: bel material z isto normal map (brez barve, AO, hrapavosti) – ali se grebeni berejo kot izbokline.
 // Primer: node scripts/atlas/v2/predogled.cjs /home/claude/atlas-v2-predogled izhodisce=/tmp/femur-telo-hd.ply \
 //           realisticno=/tmp/v2/stegnenica-leva-racunalnik-realisticno.glb ucbenisko=/tmp/v2/stegnenica-leva-racunalnik-ucbenisko.glb
 // Izhodišče (.ply iz izvleci.mjs) dobi material kosti atlasa (public/3d/tkiva.js) z isto lučjo kot nov model.
