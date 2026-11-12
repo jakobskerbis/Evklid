@@ -19,7 +19,9 @@ if os.environ.get("SKRIJ"):  # regex imen vozlišč, ki jih skrijemo (npr. aorta
     obj = [o for o in sc.objects if o.type == "MESH"]
 BARVE = {"miokard": (0.55, 0.12, 0.1), "zaklopka": (0.9, 0.85, 0.72), "arterija": (0.85, 0.12, 0.1), "vena": (0.15, 0.25, 0.7),
          "pljucna": (0.2, 0.35, 0.8), "pljucna-vena": (0.62, 0.22, 0.38), "aorta": (0.85, 0.6, 0.55), "vencna-arterija": (0.95, 0.12, 0.1),
-         "vencna-vena": (0.25, 0.2, 0.55)}
+         "vencna-vena": (0.25, 0.2, 0.55),
+         "mišica": (0.6, 0.15, 0.12), "kita": (0.9, 0.88, 0.8), "beločnica": (0.92, 0.9, 0.86), "živec": (0.9, 0.8, 0.5), "šarenica": (0.4, 0.25, 0.12),
+         "masca": (0.9, 0.78, 0.4), "uho": (0.5, 0.14, 0.12)}
 for o in obj:
     t = o.get("tkivo") or (o.parent.get("tkivo") if o.parent else None) or ""
     o.color = (*BARVE.get(t, (0.7, 0.7, 0.7)), 1)

@@ -44,7 +44,7 @@ for (const organ of organi) {
       // Zadnji koraki telefona zmanjšajo slike (px), ker pri nizki kakovosti WebP nastanejo bloki (srce n8: CT stene).
       const lestev = pripona
         ? [[86, 70, 84], [80, 66, 78], [82, 66, 80, 896], [82, 66, 80, 832], [82, 66, 80, 768], [76, 60, 74, 768]]
-        : [[90, 82, 95], [84, 76, 90], [78, 72, 85], [72, 66, 80], [78, 72, 85, 1792], [78, 72, 85, 1536]]; // zadnja: manjše slike (srce n11: geometrija 207k ≈ 5,2 MiB)
+        : [[90, 82, 95], [84, 76, 90], [78, 72, 85], [72, 66, 80], [78, 72, 85, 1792], [78, 72, 85, 1536], [75, 70, 83, 1536], [72, 68, 81, 1536]]; // zadnji dve: srce krog 5 (dodelava po izvozu doda ≈ 0,4 MiB) // zadnja: manjše slike (srce n11: geometrija 207k ≈ 5,2 MiB)
       const meja = (pripona ? 2 : 6) * 1024 * 1024 * (pripona ? 0.95 : 0.97);
       const r = path.join(src, `${organ}${pripona}.r.glb`);
       for (const [k, [qb, qo, qn, px]] of lestev.entries()) {
@@ -81,7 +81,8 @@ for (const organ of organi) {
   for (const v of izvoz.vozlisca) j.tkiva[v.tkivo] ||= {};
   j.velikost = izvoz.velikost;
   // srce (srce_ct.py): štiriprostorska ravnina iz CT in prostorska tekstura reza (smer vlaken, maščoba) ob GLB
-  if (izvoz.ravnina4 && j.prerez?.ravnine?.length) j.prerez.ravnine[0] = izvoz.ravnina4;
+  // »rocno«: ravnina, nastavljena ročno v JSON (srce: rez skozi aortni koren), ostane
+  if (izvoz.ravnina4 && j.prerez?.ravnine?.length && !j.prerez.ravnine[0].rocno) j.prerez.ravnine[0] = izvoz.ravnina4;
   if (izvoz.volumen) {
     fs.copyFileSync(path.join(src, izvoz.volumen.slika), path.join(CILJ, `${organ}-volumen.png`));
     j.prerez = { ...(j.prerez || {}), volumen: { ...(j.prerez?.volumen || {}), ...izvoz.volumen, slika: `${organ}-volumen.png` } };

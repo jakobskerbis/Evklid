@@ -759,7 +759,8 @@ def debelina_mascobe(V, F, oz, epi, X_zile, L=None):
     else:
         tv = np.full(nV, 0.7)
     s_iv = 0.0030 + 0.0022 * tv
-    h = np.maximum.reduce([6.0e-3 * g(d_av, 0.0075), 3.4e-3 * np.exp(-(d_iv / s_iv) ** 2) * (0.6 + 0.4 * tv), 2.5e-3 * g(d_ar, 0.006),
+    # krog 5 (predaja: »smetanaste kepe maščobe ob robu reza«): venčni žleb 6 → 4,4 mm, zapolnitev rež največ 4,8 mm
+    h = np.maximum.reduce([4.4e-3 * g(d_av, 0.0075), 3.4e-3 * np.exp(-(d_iv / s_iv) ** 2) * (0.6 + 0.4 * tv), 2.5e-3 * g(d_ar, 0.006),
                            2.6e-3 * np.clip(zleb * 1.5, 0, 1) * np.clip(1 - d_z / 0.0034, 0, 1) ** 0.7])  # ob vejah na prosti steni le malo (n8: »reke« maščobe)
     # n10: medpreddvorni žleb (Waterston) zapolni maščoba: epikard LA in RA, ki sta bližje kot 8 mm, se razširi do stika
     # (ocena n9: »nazobčana črna vrzel med preddvoroma nad pretinom«, crux)
@@ -774,7 +775,7 @@ def debelina_mascobe(V, F, oz, epi, X_zile, L=None):
         if len(ia) and B_.any():
             dd = _razdalja(_kd(V[B_]), V[ia], 0.014)
             m = dd < do
-            h[ia[m]] = np.maximum(h[ia[m]], dd[m] * 0.6 + 0.0004)
+            h[ia[m]] = np.maximum(h[ia[m]], np.minimum(dd[m] * 0.6 + 0.0004, 0.0048))
     vrv = np.zeros(nV); vrv[F[oz == 2].ravel()] = 1
     # n11: brez tankih lis maščobe na prosti steni RV (ocena n10: »svetlejši pravokoten zaplat na desnem prekatu« – lisa
     # pod 1 mm po decimiranih trikotnikih)

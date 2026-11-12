@@ -954,11 +954,12 @@
   "ravnine": [
    {
     "n": [
-     -0.1626,
-     -0.6836,
-     -0.7115
+     -0.0169,
+     -0.5139,
+     -0.8577
     ],
-    "d": -0.0331
+    "d": -0.0204,
+    "rocno": true
    }
   ],
   "brezPokrova": [
@@ -983,15 +984,15 @@
   "volumen": {
    "slika": "srce-volumen.png",
    "lo": [
-    -0.06772,
+    -0.06706,
     -0.10285,
-    -0.05871
+    -0.05615
    ],
    "korak": 0.00125,
    "n": [
-    109,
+    108,
     104,
-    93
+    91
    ],
    "ploscice": [
     10,
@@ -1002,15 +1003,15 @@
     "slika": "srce-stena.png",
     "telefon": "srce-stena-telefon.png",
     "lo": [
-     -0.06721,
-     -0.10319,
-     -0.0576
+     -0.06701,
+     -0.10318,
+     -0.05612
     ],
     "korak": 0.001,
     "n": [
-     136,
+     135,
      130,
-     115
+     113
     ],
     "ploscice": [
      11,
@@ -1046,9 +1047,9 @@
   },
   "prerez": {
    "pogled": [
-    0.1626,
-    0.6836,
-    0.7115
+    0.0169,
+    0.5139,
+    0.8577
    ],
    "tocke": [
     "levi-prekat",
@@ -1061,7 +1062,11 @@
     "vencne-arterije",
     "vencne-vene",
     "vencni-sinus",
-    "prevodni-sistem"
+    "prevodni-sistem",
+    "brahiocefalicni-veni",
+    "brahiocefalicno-deblo",
+    "leva-skupna-karotida",
+    "leva-podkljucnicna-arterija"
    ],
    "tkiva": {
     "miokard": {
@@ -1084,7 +1089,7 @@
    "okvir": {
     "sredisce": [
      -0.003,
-     -0.0477,
+     -0.046,
      -0.0049
     ],
     "polmer": 0.66
@@ -1116,10 +1121,10 @@
    }
   ]
  },
- "velikost": 0.2649,
+ "velikost": 0.2633,
  "trikotniki": {
-  "racunalnik": 244414,
-  "telefon": 73881
+  "racunalnik": 244800,
+  "telefon": 74121
  },
  "luci": [
   {
