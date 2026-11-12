@@ -196,7 +196,7 @@
    "Semilunar cusps of aortic valve": [0,0,3,0,0,0,0],
    "Semilunar cusps of pulmonary valve": [0,0,3,0,0,0,0],
    "Superior vena cava": [0,0,3,0,0,0,0],
-   "Trabeculae carneae of right ventricle (lastno)": [0,0,0,0,4,0,0],
+   "Trabeculae carneae of right ventricle (lastno)": [0,0,0,0,5,0,0],
    "Valve of coronary sinus": [0,0,64,0,0,0,0],
    "Valve of inferior vena cava": [0,0,64,0,0,0,0]
   },

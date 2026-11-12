@@ -250,7 +250,9 @@ export function zgosti(mreze, sme) {
 // so krpe ene površine, zato se oglišča na šivih (isti položaj do 0,03 mm) gladijo kot eno in ostanejo skupaj.
 // mreze: [G.preberi(...)], premicno(d, r): ali se izrisno oglišče r dela d sme premakniti; normale premaknjenih oglišč
 // se izračunajo na novo (ploščinsko uteženo, čez šive). Vrne { oglisc, rob (povprečna dolžina roba, m), korakov }.
-export function zgladi(mreze, premicno, korakov = 0) {
+// splosci (0–1): izbokline nad zelo zglajeno površino (maščobne blazine iz CT, ki štrlijo iz obrisa srca in so v
+// prerezu videti kot kocke maščobe ob robu) se za ta delež znižajo; vdolbine ostanejo.
+export function zgladi(mreze, premicno, korakov = 0, splosci = 0) {
   const h = 1e-4;
   const cel = new Map();
   const U = [];
@@ -287,6 +289,34 @@ export function zgladi(mreze, premicno, korakov = 0) {
     return p.map((x, c) => x + k * (a[c] / sos[u].size - x));
   });
   for (let i = 0; i < korakov; i++) { P = korak(0.5); P = korak(-0.53); }
+  if (splosci) {
+    // zunanja normala: ploskve trenutne površine, usmerjene po normalah izvoza
+    const stara = U.map(() => [0, 0, 0]);
+    const nova = U.map(() => [0, 0, 0]);
+    mreze.forEach((m, d) => {
+      const nor = m.A.get("NORMAL");
+      if (nor) for (let r = 0; r < m.zvar.length; r++) { const u = id[d][m.zvar[r]]; for (let c = 0; c < 3; c++) stara[u][c] += nor.d[r * 3 + c]; }
+      for (let q = 0; q < m.F.length; q += 3) {
+        const [a, b, c] = [0, 1, 2].map((e) => id[d][m.zvar[m.F[q + e]]]);
+        const n = G.v3.cross(G.v3.sub(P[b], P[a]), G.v3.sub(P[c], P[a]));
+        for (const u of [a, b, c]) { nova[u][0] += n[0]; nova[u][1] += n[1]; nova[u][2] += n[2]; }
+      }
+    });
+    const izhod = P;
+    for (let i = 0; i < 300; i++) { P = korak(0.5); P = korak(-0.505); } // ozek prepustni pas: ostane samo oblika srca brez blazin
+    const gladka = P;
+    let znizanih = 0, najvec = 0;
+    P = izhod.map((p, u) => {
+      if (!sme[u] || G.v3.len(nova[u]) < 1e-12) return p;
+      let n = G.v3.norm(nova[u]);
+      if (G.v3.dot(n, stara[u]) < 0) n = G.v3.mul(n, -1);
+      const b = G.v3.dot(G.v3.sub(p, gladka[u]), n) - 0.0005;
+      if (b > 0) { znizanih++; if (b > najvec) najvec = b; }
+      return b > 0 ? p.map((x, c) => x - splosci * b * n[c]) : p;
+    });
+    console.log(`      sploščeno ${znizanih} oglišč, največja izboklina ${(najvec * 1000).toFixed(1)} mm`);
+    for (let i = 0; i < 3; i++) { P = korak(0.5); P = korak(-0.53); }
+  }
   // normale
   const N = U.map(() => [0, 0, 0]);
   mreze.forEach((m, d) => {
@@ -442,10 +472,10 @@ export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [
     const novoTkivo = (n) => TKIVA.find(([rx]) => rx.test(n.getName()))?.[1] || n.getExtras()?.tkivo; // preimenovanje tkiv pride pozneje
     const jeStena = (n) => !NI_STENA.test(n.getName()) && (tkiva[n.getExtras()?.tkivo]?.rezVolumen || stenaVozlisca.includes(n.getName()));
     const skupine = [
-      ["epikard", vsa.filter(jeStena), null, 0],
-      ...vsa.filter((n) => /^(uho|guba)$/.test(novoTkivo(n))).map((n) => [n.getName(), [n], () => () => true, novoTkivo(n) === "uho" ? 10 : 6]),
+      ["epikard", vsa.filter(jeStena), null, 0, 0.75],
+      ...vsa.filter((n) => /^(uho|guba)$/.test(novoTkivo(n))).map((n) => [n.getName(), [n], () => () => true, novoTkivo(n) === "uho" ? 30 : 6, 0]),
     ];
-    for (const [ime, deli, pogoj, korakov] of skupine) {
+    for (const [ime, deli, pogoj, korakov, splosci] of skupine) {
       if (!deli.length || deli.every((n) => n.getExtras().zglajeno)) continue;
       const prims = deli.map((n) => n.getMesh().listPrimitives()[0]);
       const mreze = deli.map((n, i) => G.preberi(n, prims[i]));
@@ -457,7 +487,7 @@ export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [
       }
       const zun = pogoj ? null : zunanjaOglisca(mreze); // epikard: samo zunanja oglišča sten, korena žil ostaneta
       const p = deli.map((n, i) => (pogoj ? pogoj(n, mreze[i]) : stenaVozlisca.includes(n.getName()) ? () => false : (r) => zun[i][r]));
-      const r = zgladi(mreze, (d, i) => p[d](i), korakov);
+      const r = zgladi(mreze, (d, i) => p[d](i), korakov, splosci);
       porocilo.push(`${ime}: zglajeno ${r.oglisc} oglišč (rob ${(r.rob * 1000).toFixed(2)} mm, ${r.korakov} korakov)`);
       if (!suho) deli.forEach((n, i) => {
         if (mreze[i].spremenjeno) G.zapisi(doc, n, prims[i], mreze[i]);

@@ -162,14 +162,22 @@ async function glavni() {
   const pot = path.join(MAPA, `${organ}.json`);
   const j = JSON.parse(fs.readFileSync(pot, "utf8"));
   if (!j.prerez?.volumen) throw new Error(`${organ}.json: prerez.volumen manjka`);
-  const brez = new Set(j.prerez.brezPokrova || []);
+  // brez pokrova in deli, ki jih pogled prereza skrije (pogledi.prerez.skrijDele): ne štejejo ne v steno ne v druga telesa
+  const brez = new Set([...(j.prerez.brezPokrova || []), ...(j.pogledi?.prerez?.skrijDele || [])]);
+  // B: notranji deli stene v votlinah (prerez.volumen.brezMasce, regularni izraz imen vozlišč: papilarne mišice,
+  // trabekule); prostorska tekstura ima v votlinah naključno »maščobo«, zato je bil njihov prerez bel
+  const brezMasce = j.prerez.volumen.brezMasce ? new RegExp(j.prerez.volumen.brezMasce) : null;
+  const jeBrezMasce = (ex, ime) => (!!brezMasce?.test(ime) || !!votlo?.test(ime)) && !brez.has(ex.del);
   // stena: tkiva s prostorsko teksturo reza in vozlišča iste zaprte stene z drugim tkivom (stenaVozlisca: korena aorte
   // in pljučnega debla sta del stene iz CT); druga: vsa druga tkiva, ki imajo pokrov reza (pravilo kot v organ.js)
   const dodatna = new Set(j.prerez.volumen.stenaVozlisca || []);
-  const jeStena = (ex, ime) => !brez.has(ex.del) && (!!j.tkiva[ex.tkivo]?.rezVolumen || dodatna.has(ime));
+  // votlo (regularni izraz imen): votla telesa iz tkiva stene (srčni ušesi kot naša dopolnitev): niso polna stena, zato
+  // brez pokrova na ravnini (v prerezu se vidi notranjost žepa), in tam ni maščobe (kanal B)
+  const votlo = j.prerez.volumen.votlo ? new RegExp(j.prerez.volumen.votlo) : null;
+  const jeStena = (ex, ime) => !brez.has(ex.del) && !votlo?.test(ime) && (!!j.tkiva[ex.tkivo]?.rezVolumen || dodatna.has(ime));
   const jeDrugo = (ex, ime) => {
     const t = j.tkiva[ex.tkivo] || {};
-    return !brez.has(ex.del) && !jeStena(ex, ime) && !t.brezReza && !t.dvostransko && (t.prosojnost ?? 1) >= 1;
+    return !brez.has(ex.del) && !jeStena(ex, ime) && !votlo?.test(ime) && !t.brezReza && !t.dvostransko && (t.prosojnost ?? 1) >= 1;
   };
   let mreza = null;
   const meta = { slika: `${organ}-stena.png`, telefon: `${organ}-stena-telefon.png` };
@@ -184,7 +192,8 @@ async function glavni() {
       mreza.n = mx.map((v, c) => Math.ceil((v - mreza.lo[c]) / korak) + 2);
     }
     const r = delezStene(tri, mreza);
-    const s = rezine([r.delez, triDrugo.length ? delezStene(triDrugo, mreza).delez : null], mreza.n);
+    const triB = brezMasce || votlo ? await trikotniki(path.join(MAPA, `${organ}${pripona}.glb`), jeBrezMasce) : [];
+    const s = rezine([r.delez, triDrugo.length ? delezStene(triDrugo, mreza).delez : null, triB.length ? delezStene(triB, mreza).delez : null], mreza.n);
     fs.writeFileSync(path.join(MAPA, meta[kljuc]), pngRGB(s.w, s.h, s.slika));
     mreza.ploscice = s.ploscice;
     let polnih = 0;

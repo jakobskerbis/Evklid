@@ -32,8 +32,8 @@
    "rezMasca": "#e2c98f",
    "rezVlaknaCt": 1400,
    "rezTkivoMoc": 0.12,
-   "rezVlaknaMoc": 0.9,
-   "rezSum": 0.25,
+   "rezVlaknaMoc": 1.4,
+   "rezSum": 0.08,
    "rezHrap": 0.42,
    "rezLak": 0.75,
    "rezLakHrap": 0.22,
@@ -41,7 +41,12 @@
     0.22,
     0.4
    ],
-   "rezRelief": 0.0002
+   "rezRelief": 0.0002,
+   "rezVlaknaOs": [
+    0.677,
+    -0.571,
+    0.464
+   ]
   },
   "zaklopka": {
    "barva": "#efd3c3",
@@ -216,7 +221,7 @@
    "zrno": 0.05,
    "relief": 0.3,
    "hrap": 0.45,
-   "odtenek": "#a58aa0",
+   "odtenek": "#b9a3c4",
    "rezLak": 0.6,
    "rezLakHrap": 0.25
   },
@@ -301,8 +306,8 @@
    "rezMasca": "#e2c98f",
    "rezVlaknaCt": 1400,
    "rezTkivoMoc": 0.12,
-   "rezVlaknaMoc": 0.9,
-   "rezSum": 0.25,
+   "rezVlaknaMoc": 1.4,
+   "rezSum": 0.08,
    "rezHrap": 0.42,
    "rezLak": 0.75,
    "rezLakHrap": 0.22,
@@ -311,6 +316,11 @@
     0.4
    ],
    "rezRelief": 0.0002,
+   "rezVlaknaOs": [
+    0.677,
+    -0.571,
+    0.464
+   ],
    "tekstura": false
   }
  },
@@ -370,7 +380,7 @@
   },
   {
    "id": "zaklopki-ustij",
-   "ime": "Zaklopki ustij",
+   "ime": "Zaklopki spodnje votle vene in venčnega sinusa",
    "la": "Valvula venae cavae inferioris, valvula sinus coronarii",
    "barva": "#f8fafc",
    "opis": "Polmesečasti gubi ob ustju spodnje votle vene (Eustahijeva) in venčnega sinusa (Tebezijeva).",
@@ -413,7 +423,7 @@
   },
   {
    "id": "conus-arteriosus",
-   "ime": "Arterijski stožec (conus arteriosus)",
+   "ime": "Arterijski stožec",
    "la": "Conus arteriosus, crista supraventricularis",
    "barva": "#0ea5e9",
    "opis": "Gladki iztočni del desnega prekata pod pljučno zaklopko; od dotočnega ga loči nadprekatni greben.",
@@ -567,7 +577,7 @@
   },
   {
    "id": "v-azygos",
-   "ime": "Vena azygos",
+   "ime": "Nesparna vena",
    "la": "Vena azygos",
    "barva": "#1e3a8a",
    "opis": "Zbira kri iz stene prsnega koša; nad desnim glavnim bronhom se od zadaj izlije v zgornjo votlo veno.",
@@ -944,11 +954,11 @@
   "ravnine": [
    {
     "n": [
-     -0.1479,
-     -0.755,
-     -0.6388
+     -0.1626,
+     -0.6836,
+     -0.7115
     ],
-    "d": -0.0396
+    "d": -0.0331
    }
   ],
   "brezPokrova": [
@@ -957,8 +967,8 @@
    "glavnicaste-misice"
   ],
   "temnenje": {
-   "razdalja": 0.03,
-   "moc": 0.32,
+   "razdalja": 0.02,
+   "moc": 0.5,
    "odprtost": true,
    "endokard": "#d98f86",
    "endokardMoc": 0.7,
@@ -992,15 +1002,15 @@
     "slika": "srce-stena.png",
     "telefon": "srce-stena-telefon.png",
     "lo": [
-     -0.06722,
-     -0.10448,
-     -0.05845
+     -0.06721,
+     -0.10318,
+     -0.05796
     ],
     "korak": 0.001,
     "n": [
      136,
-     131,
-     117
+     130,
+     115
     ],
     "ploscice": [
      11,
@@ -1010,7 +1020,9 @@
    "stenaVozlisca": [
     "Root of aorta",
     "Root of pulmonary trunk"
-   ]
+   ],
+   "brezMasce": "papillary|Trabecul|Septomarginal",
+   "votlo": "^(Left auricle|Right auricle \\(lastno\\))$"
   }
  },
  "pogledi": {
@@ -1034,9 +1046,9 @@
   },
   "prerez": {
    "pogled": [
-    0.1479,
-    0.755,
-    0.6388
+    0.1626,
+    0.6836,
+    0.7115
    ],
    "tocke": [
     "levi-prekat",
@@ -1045,7 +1057,12 @@
     "desni-preddvor",
     "av-zaklopki"
    ],
-   "skrijDele": [],
+   "skrijDele": [
+    "vencne-arterije",
+    "vencne-vene",
+    "vencni-sinus",
+    "prevodni-sistem"
+   ],
    "tkiva": {
     "miokard": {
      "lak": 0.7,
@@ -1058,7 +1075,7 @@
      "svetlost": 1.05
     },
     "vena": {
-     "barva": "#f6c9c0"
+     "barva": "#f0a59a"
     },
     "pljucna-vena": {
      "barva": "#f6c9c0"

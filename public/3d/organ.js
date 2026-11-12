@@ -593,13 +593,14 @@ vec3 orgTkivo( vec3 p, float blok ) {
 // mreža vokslov, lahko gostejša).
 const GLSL_STENA = `
 uniform sampler2D orgSt; uniform vec3 orgStN; uniform vec2 orgStP; uniform vec3 orgStLo; uniform float orgStK;
-vec2 orgStena( vec3 p ) {
+vec3 orgSt3;
+vec3 orgStena( vec3 p ) {
   vec3 g = clamp( ( p - orgStLo ) / orgStK - 0.5, vec3( 0.0 ), orgStN - 1.0 );
   float z0 = floor( g.z ), fz = g.z - z0, z1 = min( z0 + 1.0, orgStN.z - 1.0 );
   vec2 pl = orgStN.xy + 2.0, vel = orgStP * pl, xy = g.xy + 1.5;
   vec2 a = ( vec2( mod( z0, orgStP.x ), floor( z0 / orgStP.x ) ) * pl + xy ) / vel;
   vec2 b = ( vec2( mod( z1, orgStP.x ), floor( z1 / orgStP.x ) ) * pl + xy ) / vel;
-  return mix( texture2D( orgSt, a ).rg, texture2D( orgSt, b ).rg, fz );
+  return mix( texture2D( orgSt, a ).rgb, texture2D( orgSt, b ).rgb, fz );
 }
 `;
 
@@ -692,8 +693,8 @@ ${
           // in dno papilarnih mišic za ravnino skriti (kot pri pravem rezu). Sicer (votlina; A ≈ 1 = venčna žila v maščobi,
           // katere prerez nariše njen pokrov) ostane globina zadnje ploskve.
           { vec4 orgC = projectionMatrix * viewMatrix * vec4( orgQ, 1.0 );
-            ${st ? "vec2 orgSt2 = orgStena( orgQm );" : ""}
-            gl_FragDepth = ${st ? "orgSt2.x > 0.5 && orgSt2.y < 0.5" : "( length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 || orgV4.a > 0.15 ) && orgV4.a < 0.8"} ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
+            ${st ? "orgSt3 = orgStena( orgQm );" : ""}
+            gl_FragDepth = ${st ? "orgSt3.x > 0.5 && orgSt3.y < 0.5" : "( length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 || orgV4.a > 0.15 ) && orgV4.a < 0.8"} ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
           #endif`
               : ""
           }
@@ -718,7 +719,16 @@ ${
             ? `
         { // pravo tkivo (Visible Woman) in smer vlaken iz CT: miokard rdeče rjav z vlakni, maščoba rumena z režnjiči
           vec3 orgF = orgV4.rgb * 2.0 - 1.0; float orgFl = length( orgF ); orgF = orgFl > 0.2 ? orgF / orgFl : vec3( 0.0, 1.0, 0.0 );
-          vec3 orgPq = orgQm - orgF * dot( orgQm, orgF );
+          ${
+            t.rezVlaknaOs
+              ? `// rezVlaknaOs (vzdolžna os organa): vzorec se raztegne vzdolž projekcije vlakna na ravnino reza, kjer vlakno
+          // ravnino prebada (prej pikčast šum), pa vzdolž osi: rezna ploskev se bere kot snopi vlaken
+          vec3 orgNm = normalize( cross( dFdx( orgQm ), dFdy( orgQm ) ) );
+          vec3 orgOs = vec3( ${t.rezVlaknaOs.map((x) => fl(+x.toFixed(4))).join(", ")} ); orgOs = normalize( orgOs - orgNm * dot( orgOs, orgNm ) );
+          vec3 orgFp = orgF - orgNm * dot( orgF, orgNm ); orgFp = normalize( orgFp * ( dot( orgFp, orgOs ) < 0.0 ? -1.0 : 1.0 ) + 0.6 * orgOs );
+          vec3 orgPq = orgQm - orgFp * dot( orgQm, orgFp ) * 0.93;`
+              : "vec3 orgPq = orgQm - orgF * dot( orgQm, orgF );"
+          }
           float orgFw2 = length( fwidth( orgQm ) );
           float orgS1 = orgSum( orgPq * ${fl(+(vlCt / merilo).toPrecision(4))} ), orgS2 = orgSum( orgPq * ${fl(+((vlCt * 3.2) / merilo).toPrecision(4))} );
           float orgL1 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 3) / merilo).toPrecision(4))}, 0.0, 1.0 ), orgL2 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 9.6) / merilo).toPrecision(4))}, 0.0, 1.0 );
@@ -727,7 +737,7 @@ ${
           vec3 orgMaT = orgTkivo( orgQm, 1.0 );
           vec3 orgMa = ${vec3(t.rezMasca || "#d8b060")} * orgMaT / ${vec3(t.rezTkivoMasca || "#af9361")};
           orgMi *= ${fl(1 - 0.14 * (t.rezVlaknaMoc ?? 1))} + ${fl(0.28 * (t.rezVlaknaMoc ?? 1))} * orgVl;
-          float orgFa = smoothstep( ${fl((t.rezMascaMeja || [0.17, 0.37])[0])}, ${fl((t.rezMascaMeja || [0.17, 0.37])[1])}, orgV4.a ); // A: maščoba 0–0,6, venčna žila 1
+          float orgFa = smoothstep( ${fl((t.rezMascaMeja || [0.17, 0.37])[0])}, ${fl((t.rezMascaMeja || [0.17, 0.37])[1])}, orgV4.a )${st ? " * ( 1.0 - smoothstep( 0.25, 0.6, orgSt3.z ) )" : ""}; // A: maščoba 0–0,6, venčna žila 1; stena.b: papilarne mišice in trabekule v votlini niso maščoba
           diffuseColor.rgb = mix( orgMi, orgMa, orgFa );
           orgH = mix( orgVl, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgFa );
         }`
@@ -838,7 +848,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
   return m;
 }
 
@@ -939,11 +949,13 @@ export async function zgradiOrgan(ime, ctx = {}) {
   // prostorska tekstura reza (podatki.prerez.volumen): smer vlaken in maščoba + kocki pravega tkiva (Visible Woman, NLM)
   const pv = podatki.prerez?.volumen;
   let vol = null;
+  const volCaka = []; // prostorske teksture reza: prenos ob prvem prerezu
   if (pv) {
     // Ne čakamo: teksturi reza (≈ 0,8 MB) se naložita v ozadju po GLB, prvi prikaz (celota) je zato hitrejši (telefon
     // 4G: ocena n9 4,8 s). Do naložitve vzorčenje vrne 0 (pokrov kot brez stene, nekaj sto ms, samo če je prerez že vklopljen).
     const nalozi = (ime, srgb = false) => {
-      const tx = new THREE.TextureLoader().load(`${BAZA}${ime}`, undefined, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
+      const tx = new THREE.Texture(); // prazna do prvega prereza (volCaka): celota teh slik ne potrebuje
+      volCaka.push({ tx, pot: ime });
       tx.flipY = false;
       tx.generateMipmaps = false;
       tx.minFilter = THREE.LinearFilter;
@@ -1171,6 +1183,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     }
     // naslikane rezne ploskve: prenos šele ob prvem prerezu (celota jih ne potrebuje)
     if (rezi) {
+      for (const c of volCaka.splice(0)) new THREE.ImageLoader().load(`${BAZA}${c.pot}`, (img) => { c.tx.image = img; c.tx.needsUpdate = true; }, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
       for (const sl of slike) {
         if (sl.tex) continue;
         sl.tex = new THREE.TextureLoader().load(`${BAZA}${sl.pot}`, (tx) => (sl.uniform.value = tx), undefined, (e) => console.warn("organ: slika reza ni naložena", e));
