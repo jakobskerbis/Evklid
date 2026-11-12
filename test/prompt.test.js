@@ -142,6 +142,18 @@ test("accuracy round 2 (2026-11-11): Lewis rule, possible exercise results and t
   assert.match(rule.slice(0, 2000), /vsi dani, rezultat mogoč \(ocena na lestvici naloge, v šoli 1–5; celo število ljudi ali predmetov; delež ≤ 100 %\)/);
   const pravilnost = fixed.slice(fixed.indexOf("### Pravilnost"), fixed.indexOf("## Način A"));
   assert.match(pravilnost, /najprej vprašaj, namesto da si podatke izmisliš\. Tabelna vrednost, ki je naloga ne poda .*»\(tabelna vrednost\)«.*iz svojega učbenika.*Če je odvisna od vira \(razmerja hitrosti\) ali je ne veš zagotovo, vprašaj/);
-  // Krog 2 doda manj kot 800 znakov predpomnjenega dela (50 912 pred spremembo).
-  assert.ok(fixed.length < 50912 + 800, `stalni del ${fixed.length} znakov`);
+  // Krog 2 je dodal manj kot 800 znakov predpomnjenega dela (50 912 → 51 711); mejo za nove kroge preveri test kroga 4.
+});
+
+test("accuracy round 4: no side facts about other substances, OŠ stays on the task, groups 1–18, mass always conserved", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
+  const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
+  assert.match(rule, /zgodovina, lastnosti drugih snovi in pojavov, primerjave z njimi\), ne dodajaš; v OŠ ostani pri snovi in pojavu iz naloge\./);
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["Skupine periodnega sistema štej 1–18", "N v 15., O v 16. skupini", "Masa se pri reakciji ohrani vedno", "spremeni le izmerjena masa", "je produkt, ne reaktant"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  assert.doesNotMatch(fixed, /masa ostane enaka, če plin ne uide/);
+  // Krog 4 doda manj kot 500 znakov predpomnjenega dela (51 711 pred spremembo).
+  assert.ok(fixed.length < 51711 + 500, `stalni del ${fixed.length} znakov`);
 });

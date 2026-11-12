@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, celsiusIssue } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -531,6 +531,25 @@ test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, no
   assert.match(valenceIssue("Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo pred računom $v = 8 - 7 = 1$.").issue ?? "", /^$/, "ime več kot 60 znakov pred računom ne šteje");
   // V codeFindings: popravek pride tudi pri OŠ, kjer pregleda z modelom ni.
   assert.match(codeFindings("Dušik: $v = 8 - 7 = 1$").issue, /outer \(valence\) electrons/);
+});
+
+test("code check (round 4): main-group elements use groups 1–18, not the old main-group number", () => {
+  // Ciljna meritev po krogu 3, KEM-OS-8/kovalentna-vez: dušik »v 5. skupini« namesto v 15.
+  assert.match(groupIssue("Dušik je v 5. skupini, zato ima 5 zunanjih elektronov.").issue, /15\. skupina/);
+  assert.match(groupIssue("Atom $\\mathrm{O}$ spada v 6. skupino periodnega sistema.").issue, /O\) in the 6\. skupina.*16\. skupina/);
+  assert.match(codeFindings("Klor je v 7. skupini.").issue, /17\. skupina/, "popravek tudi pri OŠ brez pregleda");
+  for (const a of [
+    "Dušik je v 15. skupini, zato ima 5 zunanjih elektronov.",
+    "Kisik je v 16. skupini, ogljik v 14. skupini.",
+    "Dušik (15. skupina) ima 5 zunanjih elektronov; v stari oznaki je to 5. skupina glavnih skupin.",
+    "Kisik reagira s kovinami 1. in 2. skupine.",
+    "Natrij je v 1. skupini.",
+    "Ali je dušik v 5. skupini?",
+    "Ne drži, da je dušik v 5. skupini.",
+    "Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo, dolgo pred 5. skupino.",
+  ])
+    assert.equal(groupIssue(a).issue, null, a);
+  assert.equal(groupIssue("Dušik je v 5. skupini.", "Učitelj pravi, da je dušik v 5. skupini.").issue, null, "oznaka iz učenčevega sporočila");
 });
 
 test("code check (2026-11-11 round 2): temperatures given in °C are not written as kelvin in a difference", () => {
