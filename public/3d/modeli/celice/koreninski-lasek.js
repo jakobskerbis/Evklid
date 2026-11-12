@@ -627,7 +627,7 @@ export function zgradi(THREE, ctx = {}) {
   const _m = new THREE.Vector3();
   function postaviMolekule(t) {
     poti.forEach((p, i) => {
-      const u = (p.f + t * 0.07) % 1;
+      const u = (((p.f + t * 0.07) % 1) + 1) % 1; // t je lahko ob prvi sličici rahlo negativen (scena.js dt)
       p.pot.getPointAt(u, _m); _m.z += p.z;
       o.position.copy(_m); o.rotation.set(0, 0, 0); o.scale.setScalar(Math.max(0.0001, gladko(0, 0.08, u) * (1 - gladko(0.85, 1, u)))); o.updateMatrix();
       molekule.setMatrixAt(i, o.matrix);
@@ -714,7 +714,7 @@ export function zgradi(THREE, ctx = {}) {
     get deli() { return deli.filter((d) => d.meshes.some((m) => { for (let o = m; o; o = o.parent) if (!o.visible) return false; return true; })); },
     nadzor,
     korak(t) {
-      if (!gib) return;
+      if (!gib || !Number.isFinite(t)) return;
       postaviMolekule(t);
     },
     dispose() {

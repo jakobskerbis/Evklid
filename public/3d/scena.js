@@ -881,7 +881,7 @@ export function ustvariSceno(el, opts = {}) {
   let stevec = 0;
   function zanka(now) {
     raf = requestAnimationFrame(zanka);
-    const dt = Math.min(0.1, (now - zadnji) / 1000);
+    const dt = Math.min(0.1, Math.max(0, (now - zadnji) / 1000)); // prvi okvir: čas iz rAF je lahko pred zadnji
     zadnji = now;
     if (++stevec % 60 === 0 && !el.isConnected) return unici();
     let risi = dirty;

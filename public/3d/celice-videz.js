@@ -392,7 +392,14 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
     const KLJUC = "evklid.3d.ucbenik";
     let vklop = false;
     try { vklop = globalThis.localStorage?.getItem(KLJUC) === "1"; } catch {}
-    const izv = new Map(), srednja = new WeakMap(), t = new THREE.Color(), c = new THREE.Color();
+    // Izvirne barve po materialu (en material je lahko v več delih) in po id-ju dela (graditelj lahko dele zgradi znova).
+    // Kopija materiala za izbrani del (pregledovalnik: material.clone(), userData se kopira) kaže na izvirnik z ucbIzv.
+    const izvMat = new WeakMap(), izvBarva = new Map(), poUuid = new Map(), srednja = new WeakMap(), t = new THREE.Color(), c = new THREE.Color();
+    const izvirnik = (m) => {
+      if (!m.userData.ucbIzv) { m.userData.ucbIzv = m.uuid; poUuid.set(m.uuid, m); }
+      return poUuid.get(m.userData.ucbIzv) || m;
+    };
+    for (const d of deli) for (const x of d.meshes) x.traverse((o) => { if (o.material?.color && !Array.isArray(o.material)) izvirnik(o.material); });
     function povprecje(g, kljuc = g) { // povprečna barva oglišč ali primerkov (material dobi razmerje cilj / povprečje)
       if (srednja.has(kljuc)) return srednja.get(kljuc);
       const a = g.attributes.color, m = new THREE.Color(1, 1, 1);
@@ -408,16 +415,16 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
       for (const d of deli) {
         const cilj = posebne[d.id] || BARVE_UCBENIK[d.id];
         if (!cilj) continue;
-        if (!izv.has(d)) izv.set(d, { barva: d.barva, mat: new Map() });
-        const z = izv.get(d);
-        d.barva = v ? cilj : z.barva;
+        if (!izvBarva.has(d.id)) izvBarva.set(d.id, d.barva);
+        d.barva = v ? cilj : izvBarva.get(d.id);
         for (const x of d.meshes) x.traverse((o) => {
-          const m = o.material;
-          if (!m || !m.color || (!o.isMesh && !o.isPoints) || m.userData.rez) return;
-          if (!z.mat.has(m)) z.mat.set(m, { color: m.color.clone(), emissive: m.emissive ? m.emissive.clone() : null });
-          const iz = z.mat.get(m);
+          const m0 = o.material;
+          if (!m0 || !m0.color || Array.isArray(m0) || (!o.isMesh && !o.isPoints) || m0.userData.rez) return;
+          const m = izvirnik(m0), kopija = m !== m0; // kopija izbranega dela: barva kot izvirnik, sij izbire ostane
+          if (!izvMat.has(m)) izvMat.set(m, { color: m.color.clone(), emissive: m.emissive ? m.emissive.clone() : null });
+          const iz = izvMat.get(m);
           if (!v) {
-            m.color.copy(iz.color);
+            for (const y of kopija ? [m, m0] : [m]) y.color.copy(iz.color);
             if (iz.emissive) m.emissive.copy(iz.emissive);
             return;
           }
@@ -429,6 +436,7 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
           c.setRGB(Math.min(3, t.r / p.r), Math.min(3, t.g / p.g), Math.min(3, t.b / p.b));
           if (m.userData.steklo) c.multiplyScalar(0.25);
           m.color.copy(c);
+          if (kopija) m0.color.copy(c);
           if (iz.emissive && (iz.emissive.r + iz.emissive.g + iz.emissive.b) > 0.01) m.emissive.copy(t).multiplyScalar(0.18);
         });
       }

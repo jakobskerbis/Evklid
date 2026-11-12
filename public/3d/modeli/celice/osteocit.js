@@ -618,7 +618,7 @@ export function zgradi(THREE, ctx = {}) {
   del("kanalikuli", "Kanalikuli", "Drobni kanalčki, ki povezujejo lakune; po tekočini v njih potujejo hranila, kisik in signali.", "#8a6a48", [kanal, odprtine], L(kp.x + 0.6, zg(kp.x + 0.6, kp.z), kp.z));
   del("osteocit", "Osteocit (telo celice)", "Zrela kostna celica, ujeta v medceličnino; zaznava obremenitev kosti in uravnava njeno obnavljanje. Debelina membrane je povečana.", "#9fb4ff", [tOut, tRob, beljO], L(4, 2.0, 2.6));
   del("citoplazma", "Citoplazma", "Notranjost osteocita z malo organeli, saj celica le še vzdržuje kost.", "#5b4bb0", [tIn], L(-5.5, -0.9, 1.6));
-  del("jedro", "Jedro", "Sploščeno jedro z DNK in dvojno ovojnico s porami; zavzema velik del telesa osteocita.", B.jedro, [jedro, jRob, jedrce], L(JC.x - 1.6, JC.y + 0.2, JC.z + 1.2));
+  del("jedro", "Jedro", "Sploščeno jedro z DNK in dvojno ovojnico s porami; zavzema velik del telesa osteocita.", B.jedro, [jedro, jRob, jIn, jedrce], L(JC.x - 1.6, JC.y + 0.2, JC.z + 1.2));
   del("izrastki", "Izrastki (dendriti)", "Okoli 50 tankih izrastkov iz vsake celice teče po kanalikulih; s sosednjimi se dotikajo v presledkovnih stikih, skozi katere prehajajo snovi.", IZR, [izrastki], (() => { const k = krivulje[poti.findIndex((p) => p.od === 0 && p.t[0][1] > 3)] || krivulje[0]; const e = k.getPoint(0.2); return L(e.x, zg(e.x, e.z) + 0.4, e.z); })());
   del("sosednji-osteociti", "Sosednja osteocita", "Osteocita v sosednjih lakunah; vse celice so povezane v mrežo, ki prepreda celo kost.", SOS, [sosedi], L(-20.5, 1.4, -6));
   const tl = (p) => { const w = p.clone().add(telesa.position); return L(w.x, w.y, w.z); };

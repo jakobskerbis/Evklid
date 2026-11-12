@@ -391,7 +391,7 @@ export function zgradi(THREE, ctx = {}) {
   const fmt = (x) => String(Math.round(x));
   const nadzor = [
     { tip: "drsnik", id: "mascoba", oznaka: "Shranjena maščoba", min: 10, max: 100, korak: 1, vrednost: 80,
-      ob: (v) => { f = THREE.MathUtils.clamp(v, 10, 100) / 100; postavi(); postaviDele(); } },
+      ob: (v) => { f = THREE.MathUtils.clamp(v, 10, 100) / 100; postavi(); postaviDele(); const u = nadzor.find((c) => c.id === "ucbenik"); if (u?.vrednost) u.ob(true); } },
     { tip: "izpis", id: "mere", oznaka: "Velikost", vrednost: () => `celica ${fmt(2 * Rc)} µm · kapljica ${fmt(2 * Rd)} µm (${fmt((Rd ** 3 / Rc ** 3) * 100)} % prostornine)` },
   ];
   const zac = ctx.zacetek && Number(ctx.zacetek.mascoba);
