@@ -31,7 +31,7 @@ export default function narisi(host) {
     napis(g, A.X(0) + 6, A.T + 12, "f(x) = x²/2", "glavna", { style: "font-size: 12px" });
     tocka?.move(...P);
     S.cipi([
-      { barva: "ploskev", oznaka: "dx = \\Delta x", vrednost: st(dx, 1) },
+      { barva: "ploskev", oznaka: "dx = \\Delta x", vrednost: st(dx, 2) },
       { barva: "izbor", oznaka: "\\Delta f", vrednost: vr(q.Df, 3) },
       { barva: "druga", oznaka: "df = f'(x)\\,dx", vrednost: vr(q.df, 3) },
       { barva: "napaka", oznaka: "\\Delta f - df", vrednost: vr(q.razlika, 3) },

@@ -634,9 +634,12 @@ export function createFormulas(root, opts) {
   root.classList.add("fm");
   const seg = (cls, label, items) =>
     `<div class="seg ${cls}" role="tablist" aria-label="${esc(label)}">${items.map(([k, txt]) => `<button type="button" role="tab" data-k="${k}">${esc(txt)}</button>`).join("")}</div>`;
-  root.innerHTML = `<div class="fm-wrap"><div class="fm-bar"><div class="fm-sel">${seg("fm-subj", t("set.subject"), SUBJ.map((s) => [s, t(`subj.${s}`)]))}${seg("fm-lvl", t("set.school"), Object.entries(LVL).map(([l, key]) => [l, t(key)]))}</div></div><div class="chip-row fm-toc" hidden></div><div class="fm-body textbook-md"></div></div>`;
+  root.innerHTML = `<div class="fm-wrap"><div class="fm-bar"><div class="fm-sel">${seg("fm-subj", t("set.subject"), SUBJ.map((s) => [s, t(`subj.${s}`)]))}${seg("fm-lvl", t("set.school"), Object.entries(LVL).map(([l, key]) => [l, t(key)]))}</div></div><div class="fm-toc-bar" hidden><div class="chip-row fm-toc"></div></div><div class="fm-body textbook-md"></div></div>`;
   const body = root.querySelector(".fm-body");
-  const toc = root.querySelector(".fm-toc");
+  // Kazalo je v svoji prilepljeni vrstici z ozadjem: bledenje roba drsne vrstice (drsniki.css, maska) bi sicer
+  // zbledelo tudi ozadje kazala in pod njim bi se videl naslov kartice (j 12. 11. 2026).
+  const tocBar = root.querySelector(".fm-toc-bar");
+  const toc = tocBar.firstElementChild;
 
   // Markdown zbirke razdelimo na kartice po naslovih; dvostolpčne tabele postanejo vrstice »ime + formula«,
   // da se na telefonu ime postavi nad formulo in se formula ne lomi sredi izraza.
@@ -770,7 +773,7 @@ export function createFormulas(root, opts) {
     const key = book;
     if (!(key in cache)) {
       body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
-      toc.hidden = true;
+      tocBar.hidden = true;
       loading = key;
       try {
         const r = await opts.api(`/api/formulas?book=${key}`);
@@ -783,13 +786,13 @@ export function createFormulas(root, opts) {
     }
     if (!cache[book]) {
       body.innerHTML = `<div class="card"><p class="muted">${esc(t("sc.formNone"))}</p></div>`;
-      toc.hidden = true;
+      tocBar.hidden = true;
       return;
     }
     const subject = book.split("-")[0];
     const parts = cache[book].sections || [{ md: cache[book].md, symbols: null }];
     const render = (x) => (opts.withSymbols ? opts.withSymbols(subject, () => opts.renderRich(x.md), x.symbols) : opts.renderRich(x.md));
-    toc.hidden = true;
+    tocBar.hidden = true;
     root.scrollTop = 0;
     for (let i = 0; i < parts.length; i++) {
       if (i) {
@@ -802,7 +805,7 @@ export function createFormulas(root, opts) {
     }
     const secs = [...body.querySelectorAll(".fm-sec[id]")];
     toc.innerHTML = secs.map((x) => `<button type="button" data-sec="${x.id}">${esc(x.querySelector("h2").textContent)}</button>`).join("");
-    toc.hidden = secs.length < 2;
+    tocBar.hidden = secs.length < 2;
     spy();
   }
 
@@ -812,8 +815,8 @@ export function createFormulas(root, opts) {
   // List, ki ni prikazan (pripravljen ob nedejavnosti, skrit podzavihek), nima postavitve: vse kartice bi imele vrh 0
   // in označen bi bil zadnji čip. Takrat ne označujemo; ob prikazu pokliče resize() (pregled B2 P2-2).
   function spy() {
-    if (toc.hidden || !root.getClientRects().length) return;
-    const top = toc.getBoundingClientRect().bottom + 8;
+    if (tocBar.hidden || !root.getClientRects().length) return;
+    const top = tocBar.getBoundingClientRect().bottom + 8;
     let cur = null;
     for (const x of body.querySelectorAll(".fm-sec[id]")) if (x.getBoundingClientRect().top <= top + 1) cur = x.id;
     cur ??= body.querySelector(".fm-sec[id]")?.id;
@@ -847,7 +850,7 @@ export function createFormulas(root, opts) {
     if (!sec) return;
     // kazalo je prilepljeno na vrh pomičnega okna, zato ciljamo tik podenj
     // (do dna lista, če je ciljna kartica zadnja in nižja od zaslona)
-    const goal = () => Math.min(root.scrollHeight - root.clientHeight, root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - toc.offsetHeight - 8);
+    const goal = () => Math.min(root.scrollHeight - root.clientHeight, root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - tocBar.offsetHeight - 8);
     if (Math.abs(goal() - root.scrollTop) < 2) return;
     // Kartice daleč od zaslona imajo do izrisa le ocenjeno višino (content-visibility v graph.css). Med pomikom
     // in po njem se kartice ob poti izrišejo s pravo višino (tudi skice, sirina.js), zato se cilj premakne.
