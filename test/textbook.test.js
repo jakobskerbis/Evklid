@@ -138,7 +138,10 @@ test("every lesson file belongs to a topic and is complete", () => {
       // Vsako vprašanje: natanko en pravilen odgovor, vsi odgovori različni.
       const raw = fs.readFileSync(path.join(LESSONS_DIR, dir.name, f), "utf8");
       const quiz = raw.split(/^## Preveri se\s*$/m)[1] || "";
-      for (const block of quiz.split(/^\? /m).slice(1)) {
+      for (const raw of quiz.split(/^\? /m).slice(1)) {
+        // Slika v vprašanju (:::risba … :::) ni del odgovorov; »vpiši število« (=) in »razvrsti« (1. …) imata svoja pravila (preveri-se.test.js).
+        const block = raw.replace(/^:::risba[\s\S]*?^:::\s*$/gm, "");
+        if (/^= /m.test(block) || /^\d+\. /m.test(block)) continue;
         const opts = block.split("\n").filter((l) => /^[+-] /.test(l));
         const q = block.split("\n")[0];
         assert.equal(opts.filter((l) => l.startsWith("+")).length, 1, `${id}: »${q}« nima natanko enega pravilnega odgovora`);

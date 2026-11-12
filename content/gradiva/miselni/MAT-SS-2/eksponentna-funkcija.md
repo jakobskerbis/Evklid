@@ -4,14 +4,15 @@ stanje: osnutek
 ---
 - Množenje s faktorjem
   - vsaka oktava podvoji frekvenco
-  - napaka: enaki koraki v hercih
+  - enaka razmerja, ne enake razlike
+  - $2^x$: $1, 2, 4, 8$; $2x + 1$: $1, 3, 5, 7$
 - Definicija
   - $f(x) = a^x$, $a > 0$, $a \ne 1$
   - spremenljivka v eksponentu, ne v osnovi
 - Lastnosti
-  - $D_f = \mathbb{R}$, $Z_f = (0, \infty)$
-  - graf skozi $(0, 1)$ in $(1, a)$
-  - ničel ni, asimptota $y = 0$
+  - $D_f = \mathbb{R}$, $Z_f = (0, \infty)$, ničel ni
+  - graf skozi $(0, 1)$ in $(1, a)$, asimptota $y = 0$
+  - strogo monotona, zato injektivna
 - Vpliv osnove
   - $a > 1$ narašča, $0 < a < 1$ pada
   - levo od osi $y$: $2^{-1} > 3^{-1}$
@@ -20,10 +21,12 @@ stanje: osnutek
   - zrcalna slika čez os $y$
 - Premiki grafa
   - $y = a^{x-p} + q$, asimptota $y = q$
-  - napaka: $2^{x-3}$ premaknjen v levo
+  - $2^{x-3}$: za 3 v desno, ne v levo
+  - $y = c \cdot a^x$ gre skozi $(0, c)$
 - Primerjanje potenc
-  - $2^{0{,}4} < 2^{0{,}7}$
-  - pri $0 < a < 1$ se neenakost obrne
+  - ista osnova: $2^{0{,}4} < 2^{0{,}7}$, $0{,}3^{-1{,}2} > 0{,}3^{-0{,}8}$
+  - različni osnovi: $\left(\frac{1}{2}\right)^{-0{,}3} = 2^{0{,}3}$
 - Število e
   - $e \approx 2{,}718$
   - graf $e^x$ med $2^x$ in $3^x$
+  - $e^x$: naravna eksponentna funkcija

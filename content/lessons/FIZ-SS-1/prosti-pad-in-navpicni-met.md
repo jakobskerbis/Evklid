@@ -6,26 +6,22 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Primi ravnilo za zgornji konec. Prijatelj naj drži palec in kazalec odprta ob oznaki $0$, ne da bi se ravnila dotikal. Brez opozorila ga spusti. Prijatelj ga ujame šele, ko opazi gibanje, in ravnilo do takrat pade kakih $20\,\text{cm}$. Iz te ene dolžine boš izračunal njegov reakcijski čas, brez štoparice.
+Primi ravnilo za zgornji konec. Prijatelj naj drži palec in kazalec odprta ob oznaki $0$, ne da bi se ravnila dotikal. Brez opozorila ga spusti. Prijatelj ga ujame šele, ko opazi gibanje, in ravnilo do takrat pade približno $20\,\text{cm}$. Iz te ene dolžine boš izračunal njegov reakcijski čas, brez štoparice.
 
 Natančneje izmeriš padanje s telefonom. Postavi ga ob meter, posnemi padec žoge v počasnem posnetku in preštej sličice. Oba poskusa pokažeta isto: spuščeno telo ne pada s stalno hitrostjo, ampak vedno hitreje. Gre za enakomerno pospešeno gibanje, ki ga že poznaš ($v = v_0 + at$, $s = v_0 t + \dfrac{at^2}{2}$). Novo je le to, da ima pospešek tu posebno ime in znano vrednost.
 
-S temi enačbami izračunaš, s kolikšno hitrostjo prileti v vodo skakalka z $10$-metrskega stolpa, kako visoko poleti žoga in celo težni pospešek iz posnetka s telefonom. Enake enačbe veljajo na Luni; tam je $g$ približno šestkrat manjši.
+S temi enačbami izračunaš, kako hitro prileti v vodo skakalka z $10$-metrskega stolpa, kako visoko poleti žoga in celo težni pospešek iz posnetka s telefonom.
 
 ## Razlaga
 
-**1. Prosti pad.** Prosti pad je gibanje telesa, ki ga spustimo (začetna hitrost je $0$) in nanj deluje samo teža. Zračni upor zanemarimo. (V širšem pomenu je prosti pad vsako gibanje samo pod vplivom teže; v tej lekciji pomeni spust z $v_0 = 0$.)
+**1. Prosti pad.** Prosti pad je gibanje telesa, ki ga spustimo (začetna hitrost je $0$) in nanj deluje samo teža. Zračni upor zanemarimo.
 
 *Hiter preizkus:* ali je žoga, ki jo vržeš navzdol, v prostem padu? (Po naši ožji definiciji ne, ker začetna hitrost ni $0$. Pospešek pa je enak, $g$.)
 
-**2. Težni pospešek.** Pri prostem padu se hitrost vsako sekundo poveča za enako vrednost, približno $9{,}81\,\mathrm{m/s}$: po $1\,\text{s}$ je $9{,}81\,\mathrm{m/s}$, po $2\,\text{s}$ $19{,}62\,\mathrm{m/s}$, po $3\,\text{s}$ $29{,}43\,\mathrm{m/s}$. Ta pospešek imenujemo **težni pospešek** $g$. Na Zemlji je
-
-$$g \approx 9{,}81\,\mathrm{\frac{m}{s^2}}.$$
-
-Kaj to pomeni za pot, pokaže počasni posnetek. Slika kaže, kje je spuščena žogica vsako desetinko sekunde:
+**2. Težni pospešek.** Kako spuščeno telo pada, pokaže počasni posnetek z $240$ sličicami na sekundo. Na sliki je lega spuščene žogice na vsaki $24.$ sličici, torej vsako desetinko sekunde (lege so zaokrožene; pravi posnetek odstopa za kak milimeter):
 
 :::risba skica
-opis: Pet zaporednih leg spuščene žogice, narisanih navpično od zgoraj navzdol, v razmikih 0,1 s, izračunanih z g ≈ 9,8 m/s². Ob 0 s je žogica na 0 cm, ob 0,1 s na 4,9 cm, ob 0,2 s na 19,6 cm, ob 0,3 s na 44,1 cm in ob 0,4 s na 78,4 cm pod mestom spusta. Levo so zapisani razmiki med sosednjimi legami: 4,9 cm, 14,7 cm, 24,5 cm in 34,3 cm.
+opis: Pet zaporednih leg spuščene žogice, narisanih navpično od zgoraj navzdol, v razmikih 0,1 s, kot jih pokaže počasni posnetek. Ob 0 s je žogica na 0 cm, ob 0,1 s na 4,9 cm, ob 0,2 s na 19,6 cm, ob 0,3 s na 44,1 cm in ob 0,4 s na 78,4 cm pod mestom spusta. Levo so zapisani razmiki med sosednjimi legami: 4,9 cm, 14,7 cm, 24,5 cm in 34,3 cm.
 območje: 0; 0 .. 7,4; 9,4
 enota: 40
 črta: 2,4; 8,5 -> 4; 8,5 | siva
@@ -47,7 +43,15 @@ napis: 2,8; 2,37 | 34,3 cm | levo | oranžna
 podnapis: Desno: čas in globina pod mestom spusta. Levo: razmik med sosednjima legama.
 :::
 
-Lege so izračunane z $g \approx 9{,}8\,\mathrm{m/s^2}$. Razmiki med njimi so $4{,}9$; $14{,}7$; $24{,}5$ in $34{,}3\,\text{cm}$. Vsak je za $9{,}8\,\text{cm}$ daljši od prejšnjega, ker je žogica v vsaki naslednji desetinki hitrejša za enako vrednost. Razmiki so v razmerju $1 : 3 : 5 : 7$.
+Razmiki med legami so $4{,}9$; $14{,}7$; $24{,}5$ in $34{,}3\,\text{cm}$, v razmerju $1 : 3 : 5 : 7$. Vsak je za $9{,}8\,\text{cm}$ daljši od prejšnjega. Povprečne hitrosti v zaporednih desetinkah so zato $0{,}49$; $1{,}47$; $2{,}45$ in $3{,}43\,\mathrm{m/s}$: vsaka je za $0{,}98\,\mathrm{m/s}$ večja od prejšnje. Hitrost raste enakomerno, pospešek je stalen:
+
+$$a = \frac{0{,}98\,\mathrm{m/s}}{0{,}1\,\text{s}} = 9{,}8\,\mathrm{\frac{m}{s^2}}$$
+
+Imenujemo ga **težni pospešek** $g$. Natančnejše meritve dajo
+
+$$g \approx 9{,}81\,\mathrm{\frac{m}{s^2}}.$$
+
+Hitrost padajočega telesa se torej vsako sekundo poveča za $9{,}81\,\mathrm{m/s}$: po $1\,\text{s}$ je $9{,}81\,\mathrm{m/s}$, po $2\,\text{s}$ $19{,}62\,\mathrm{m/s}$, po $3\,\text{s}$ $29{,}43\,\mathrm{m/s}$. Po Zemlji se $g$ malo spreminja: od $9{,}78\,\mathrm{m/s^2}$ na ekvatorju do $9{,}83\,\mathrm{m/s^2}$ na polih.
 
 Pospešek je enak za vsa telesa, težka in lahka, če zanemarimo zračni upor. Brez zraka bi kamen in pero padla enako hitro.
 
@@ -59,9 +63,11 @@ V sobi telefon, ker pero močno zavira zrak. V cevi brez zraka padeta hkrati: ob
 
 Poskus so naredili tudi na Luni, kjer ni zraka: leta 1971 je astronavt David Scott hkrati spustil kladivo in pero. Na tla sta padla hkrati.
 
-**3. Enačbe prostega pada.** Os $y$ usmerimo navzdol. Iz enačb za enakomerno pospešeno gibanje z $v_0 = 0$ in $a = g$ dobimo:
+**3. Enačbe prostega pada.** Globino pod mestom spusta označimo s $h$ (os kaže navzdol). Iz enačb za enakomerno pospešeno gibanje z $v_0 = 0$ in $a = g$ dobimo:
 
-$$v = g\,t \qquad h = \frac{g\,t^2}{2} \qquad v^2 = 2\,g\,h$$
+$$v = g\,t \qquad h = \frac{g\,t^2}{2}$$
+
+$$v^2 = 2\,g\,h$$
 
 Od kod polovica v drugi enačbi? Hitrost raste od $0$ do $g\,t$, zato telo ne pade $g\,t \cdot t$, ampak manj. Pot je ploščina pod grafom $v(t)$, kot pri vsakem pospešenem gibanju. Tu je to trikotnik z osnovnico $t$ in višino $g\,t$:
 
@@ -81,7 +87,7 @@ podnapis: t = {t} s: hitrost {9.81*t:.2} m/s, pot {4.905*t*t:.2} m
 
 Slika kaže $t = 3\,\text{s}$: hitrost je $29{,}43\,\mathrm{m/s}$, ploščina trikotnika pa $\dfrac{1}{2} \cdot 3 \cdot 29{,}43 \approx 44{,}15\,\text{m}$. V aplikaciji premakni drsnik s $3\,\text{s}$ na $1{,}5\,\text{s}$. Opazi: hitrost se razpolovi (na $14{,}72\,\mathrm{m/s}$), pot pa pade na četrtino (na $11{,}04\,\text{m}$), ker se trikotniku skrajšata osnovnica in višina.
 
-Tretja enačba nastane z izločitvijo časa. Uporabimo jo, kadar čas ni znan ali ni zanimiv.
+Tretja enačba nastane z izločitvijo časa. Uporabimo jo, kadar čas ni znan.
 
 :::premisli
 Ravnilo iz uvoda pade $20\,\text{cm}$, preden ga prijatelj ujame. Je njegov reakcijski čas bližje $0{,}02\,\text{s}$; $0{,}2\,\text{s}$ ali $2\,\text{s}$? Napovej, nato izračunaj.
@@ -91,19 +97,24 @@ Bližje $0{,}2\,\text{s}$. Iz $h = \dfrac{g t^2}{2}$ sledi $t = \sqrt{\dfrac{2h}
 
 **4. Navpični met navzgor.** Telo vržemo navzgor z začetno hitrostjo $v_0$. Os $y$ zdaj usmerimo **navzgor**. Pospešek kaže navzdol, zato je $a = -g$:
 
-$$v = v_0 - g\,t \qquad y = v_0\,t - \frac{g\,t^2}{2}$$
+$$v = v_0 - g\,t$$
+
+$$y = v_0\,t - \frac{g\,t^2}{2}$$
 
 Hitrost se najprej zmanjšuje, v vrhu postane $0$, nato pa telo pada nazaj (hitrost je negativna). Graf kaže met z $v_0 = 14\,\mathrm{m/s}$ iz Primera 2:
 
 :::risba graf
-opis: Graf hitrosti v odvisnosti od časa za žogo, vrženo navzgor z začetno hitrostjo 14 m/s. Premica pada od 14 m/s pri času 0 do 0 pri 1,43 s (vrh) in naprej do −14 m/s pri 2,85 s, ko je žoga spet v roki. Pobarvan je trikotnik med premico in osjo t od časa 0 do vrha; njegova ploščina je višina vrha, približno 10 m.
+opis: Graf hitrosti v odvisnosti od časa za žogo, vrženo navzgor z začetno hitrostjo 14 m/s. Premica pada od 14 m/s pri času 0 do 0 pri 1,43 s (vrh) in naprej do približno −14 m/s pri 2,85 s, ko je žoga spet v roki; točki sta označeni »vrh 1,43 s« in »2,85 s«. Pobarvana sta dva enako velika trikotnika med premico in osjo t: nad osjo od časa 0 do vrha (napis »gor 10 m«) in pod osjo od vrha do vrnitve (napis »dol 10 m«).
 x: 0 .. 3,5 | 0,5 | t [s]
 y: -15 .. 15 | 5 | v [m/s]
 lik: 0; 0 -> 1,43; 0 -> 0; 14 | oranžna
+lik: 1,43; 0 -> 2,85; 0 -> 2,85; -13,96 | zelena
 f: 14-9.81*x | modra | 0 .. 2,85
-napis: 0,45; 3,5 | 10 m
-točka: 1,43; 0 | vrh | nad desno
-točka: 2,85; -13,96 | vrnitev | nad desno
+napis: 0,5; 3 | gor 10 m
+napis: 2,3; -3 | dol 10 m
+točka: 1,43; 0 | vrh 1,43 s | nad desno
+točka: 2,85; -13,96 | 2,85 s | desno
+napis: 2,75; -14 | −14 m/s | levo
 :::
 
 Naklon premice je povsod enak, $-g$: hitrost se vsako sekundo zmanjša za $9{,}81\,\mathrm{m/s}$, tudi ko je že negativna.
@@ -114,13 +125,17 @@ Naklon premice je povsod enak, $-g$: hitrost se vsako sekundo zmanjša za $9{,}8
 
 $$t_\text{vrh} = \frac{v_0}{g}$$
 
-Ta čas vstavimo v enačbo za $y$ in dobimo največjo višino:
+Ta čas vstavimo v enačbo za $y$:
+
+$$h_\text{max} = v_0 \cdot \frac{v_0}{g} - \frac{g}{2} \cdot \frac{v_0^2}{g^2}$$
+
+V drugem členu okrajšamo $g$ in dobimo največjo višino:
 
 $$h_\text{max} = \frac{v_0^2}{g} - \frac{v_0^2}{2g} = \frac{v_0^2}{2g}$$
 
-Isto pove graf $v(t)$ zgoraj: višina je ploščina pobarvanega trikotnika nad osjo $t$ do vrha, $\dfrac{1}{2} \cdot 1{,}43 \cdot 14 \approx 10\,\text{m}$.
+Isto pove graf $v(t)$ zgoraj: višina je ploščina trikotnika nad osjo $t$, $\dfrac{1}{2} \cdot 1{,}43 \cdot 14 \approx 10\,\text{m}$. Trikotnik pod osjo je enako velik: žoga se za $10\,\text{m}$ spusti. Premik je zato $0$, prepotovana pot pa $20\,\text{m}$.
 
-Graf kaže višino žoge med letom. Pri $v_0 = 14\,\mathrm{m/s}$ je vrh po $1{,}43\,\text{s}$ na višini $9{,}99\,\text{m}$:
+Spodnji graf kaže višino žoge med letom, $y(t)$. Pri $v_0 = 14\,\mathrm{m/s}$ je vrh po $1{,}43\,\text{s}$ na višini $9{,}99\,\text{m}$:
 
 :::risba graf
 opis: Graf višine v odvisnosti od časa za navpični met navzgor: parabola, ki se začne v izhodišču, doseže vrh in se vrne na višino 0. V aplikaciji se začetna hitrost spreminja z drsnikom od 8 m/s do 20 m/s. Izbrano je {v} m/s: vrh je po {v/9.81:.2} s na višini {v*v/19.62:.2} m, žoga se vrne po {v/4.905:.2} s.
@@ -136,11 +151,11 @@ podnapis: Začetna hitrost {v} m/s: vrh po {v/9.81:.2} s na višini {v*v/19.62:.
 
 V aplikaciji nastavi drsnik na $10\,\mathrm{m/s}$ in nato na $20\,\mathrm{m/s}$. Opazi: pri dvakratni začetni hitrosti pride vrh dvakrat pozneje (po $1{,}02\,\text{s}$ in po $2{,}04\,\text{s}$), višina pa je štirikrat večja ($5{,}10\,\text{m}$ in $20{,}39\,\text{m}$), ker je v enačbi $v_0^2$.
 
-Parabola je simetrična. Čas vzpona je enak času padanja nazaj na isto višino. Celoten let do vrnitve na izhodišče traja $\dfrac{2v_0}{g}$. Ob vrnitvi je hitrost po velikosti enaka $v_0$, usmerjena pa je navzdol.
+Parabola je simetrična. Čas vzpona je enak času padanja nazaj na isto višino. Celoten let do vrnitve na izhodišče traja $\dfrac{2v_0}{g}$. Ob vrnitvi je hitrost po velikosti enaka $v_0$, usmerjena navzdol.
 
 **6. Pospešek v vrhu ni nič.** Na poti navzgor, v vrhu in na poti navzdol je pospešek ves čas enak: $g$, usmerjen navzdol. V vrhu ima telo hitrost nič, pospešek pa ne.
 
-V aplikaciji v simulaciji spodaj »Navpični met« pritisni »Vrzi« in tik pred vrhom »Ustavi«, nato nadaljuj. Opazuj puščico hitrosti: krajša se, izgine in zraste navzdol. Preklopi še na graf $v(t)$: premica gre skozi ničlo brez preloma.
+V aplikaciji v simulaciji spodaj »Navpični met« nastavi začetno hitrost na $14\,\mathrm{m/s}$ kot v Primeru 2 (višina je tam označena s $h$), pritisni »Vrzi« in tik pred vrhom »Ustavi«. Napovej: bo puščica hitrosti v vrhu skočila ali gladko prešla skozi nič? Nato spet »Vrzi«: puščica se krajša, izgine in zraste navzdol. Preklopi še na graf $v(t)$: premica gre skozi ničlo brez preloma.
 
 **7. Predznaki.** Pred računom izberi smer osi in je sredi naloge ne spreminjaj. Kar kaže v smeri osi, je pozitivno, kar kaže nasproti, negativno:
 
@@ -151,13 +166,15 @@ V aplikaciji v simulaciji spodaj »Navpični met« pritisni »Vrzi« in tik pred
 | hitrost pri padanju | negativna | pozitivna |
 | lega pod izhodiščem | negativna | pozitivna |
 
-Pri prostem padu (razdelek 3) smo os usmerili navzdol, pri metu navzgor (razdelek 4) pa navzgor. Od tod minus pred $g$ v enačbah meta. Če telo vržemo navzdol z začetno hitrostjo $v_0$ (navpični met navzdol), os usmerimo navzdol in oba člena seštevamo: $v = v_0 + g\,t$, $h = v_0\,t + \dfrac{g\,t^2}{2}$.
+Pri prostem padu smo os usmerili navzdol, pri metu navzgor pa navzgor; od tod minus pred $g$. Če telo vržemo navzdol z začetno hitrostjo $v_0$ (navpični met navzdol), os usmerimo navzdol in oba člena seštevamo: $v = v_0 + g\,t$, $h = v_0\,t + \dfrac{g\,t^2}{2}$.
+
+Preveri na kamnu: vržeš ga z mostu navzdol s $5\,\mathrm{m/s}$. Kako hiter in kako globoko je po $2\,\text{s}$? ($v = 5 + 9{,}81 \cdot 2 = 24{,}62\,\mathrm{m/s}$, $h = 5 \cdot 2 + 4{,}905 \cdot 2^2 = 29{,}62\,\text{m}$. Kdor pozabi $v_0$, dobi le $19{,}62\,\text{m}$.)
 
 ## Rešeni primeri
 
 ### Primer 1: skok s stolpa (višina → čas in hitrost)
 
-Olimpijski skakalni stolp je $10\,\text{m}$ nad vodo. Skakalka stopi z roba, njena začetna hitrost v navpični smeri je približno $0$. Koliko časa pada in s kolikšno hitrostjo prileti v vodo? Zračni upor zanemari.
+Olimpijski skakalni stolp je $10\,\text{m}$ nad vodo. Skakalka stopi z roba, njena začetna hitrost v navpični smeri je približno $0$ (v resnici se malo odrine navzgor, zato je let nekoliko daljši). Koliko časa pada in s kolikšno hitrostjo prileti v vodo? Zračni upor zanemari.
 
 **Podatki:** $h = 10\,\text{m}$, $v_0 = 0$, $g = 9{,}81\,\mathrm{m/s^2}$, zračni upor zanemarimo
 **Iščemo:** čas padanja $t$ in hitrost $v$ ob vodi
@@ -212,7 +229,7 @@ Vzpon: $t_1 = \dfrac{v_0}{g}$, dvig $\dfrac{v_0^2}{2g}$. Prosti pad z vrha: $t_2
 
 1. **Razdelimo gibanje.** Kamen se najprej dviga do vrha, nato z vrha prosto pada do tal. Oba dela že znamo izračunati.
 2. **Vzpon.** Čas: $t_1 = \dfrac{10}{9{,}81} \approx 1{,}02\,\text{s}$. Dvig nad rob: $\dfrac{10^2}{2 \cdot 9{,}81} \approx 5{,}10\,\text{m}$.
-3. **Višina vrha nad tlemi.** $h = 25 + 5{,}10 = 30{,}10\,\text{m}$.
+3. **Višina vrha nad tlemi.** $h = 25 + 5{,}10 = 30{,}10\,\text{m}$. Toliko kamen pade z vrha do tal.
 4. **Prosti pad z vrha.** V vrhu je hitrost $0$, zato $t_2 = \sqrt{\dfrac{2 \cdot 30{,}1}{9{,}81}} = \sqrt{6{,}137} \approx 2{,}48\,\text{s}$.
 5. **Skupni čas.** $t = 1{,}02 + 2{,}48 = 3{,}50\,\text{s}$.
 6. **Hitrost ob tleh.** $v = g\,t_2 = 9{,}81 \cdot 2{,}48 \approx 24{,}3\,\mathrm{m/s}$, usmerjena navzdol.
@@ -220,9 +237,9 @@ Vzpon: $t_1 = \dfrac{v_0}{g}$, dvig $\dfrac{v_0^2}{2g}$. Prosti pad z vrha: $t_2
 
 **Odgovor:** kamen pade na tla po približno $3{,}5\,\text{s}$ s hitrostjo približno $24\,\mathrm{m/s}$.
 
-**Druga pot (ko boš poznal kvadratno enačbo).** Z osjo navzgor in izhodiščem na tleh velja enačba $y = 25 + 10\,t - 4{,}905\,t^2$. Ob tleh je $y = 0$. Pozitivna rešitev te kvadratne enačbe je $t \approx 3{,}50\,\text{s}$; negativna, $-1{,}46\,\text{s}$, je trenutek pred metom in je ne upoštevamo.
+**Druga pot (ko boš poznal kvadratno enačbo).** Z osjo navzgor in izhodiščem na tleh velja enačba $y = 25 + 10\,t - 4{,}905\,t^2$. Ob tleh je $y = 0$. Pozitivna rešitev te kvadratne enačbe je $t \approx 3{,}50\,\text{s}$; negativna, $-1{,}46\,\text{s}$, pove, kdaj bi bil kamen na tleh, če bi po isti paraboli letel že pred metom (kot da bi ga vrgli s tal). Za našo nalogo nima pomena.
 
-Graf višine pokaže ves let. Kamen se najprej dvigne do $30{,}1\,\text{m}$, po $2{,}04\,\text{s}$ je spet ob robu strehe in šele nato pada proti tlom:
+Kamen se najprej dvigne do $30{,}1\,\text{m}$, po $2{,}04\,\text{s}$ je spet ob robu strehe in šele nato pada proti tlom:
 
 :::risba graf
 opis: Graf višine kamna nad tlemi v odvisnosti od časa. Parabola se začne pri 25 m (rob stavbe), doseže vrh 30,1 m po 1,02 s, se po 2,04 s vrne na 25 m in doseže tla (višina 0) po 3,50 s. Črtkana vodoravna črta označuje višino stavbe 25 m.
@@ -262,11 +279,11 @@ $g = \dfrac{2 \cdot 1{,}00}{0{,}45^2} = \dfrac{2{,}00}{0{,}2025} \approx 9{,}88\
 
 ## Pogoste napake
 
-- **Pospešek v vrhu je nič.** Ker žoga za trenutek obstane, se zdi, da nanjo nič ne deluje. Ni res. V vrhu je nič samo hitrost, pospešek je še vedno $g$ navzdol. Če bi bil pospešek nič, bi telo obvisilo v zraku.
-- **Mešanje predznakov.** Dijak piše $v = v_0 + g t$ tudi pri metu navzgor in dobi hitrost, ki ves čas raste. Če os usmeriš navzgor, mora imeti $g$ v enačbah nasprotno smer od $v_0$. Izberi smer in je ne spreminjaj sredi naloge.
-- **Pozabljen faktor $\tfrac{1}{2}$ ali kvadrat časa.** Kdor si zapomni le »hitrost krat čas«, računa $h = g t$ ali $h = g t^2$. Hitrost pa med padanjem raste od $0$, zato je povprečna le polovica končne. Pravilno je $h = \dfrac{g t^2}{2}$ in $h_\text{max} = \dfrac{v_0^2}{2g}$ (dvojka je v imenovalcu).
+- **Pospešek v vrhu je nič ali tam zamenja smer.** Žoga za trenutek obstane, zato se zdi, da nanjo nič ne deluje; ali pa, da pospešek kaže tja, kamor se žoga giblje. Ni res. Smer zamenja hitrost, pospešek je ves čas $g$ navzdol. Če bi bil v vrhu nič, bi telo obvisilo v zraku.
+- **Mešanje predznakov.** Dijak piše $v = v_0 + g t$ tudi pri metu navzgor in dobi hitrost, ki ves čas raste. Če os usmeriš navzgor, mora imeti $g$ v enačbah nasprotno smer od $v_0$.
+- **Pozabljen faktor $\tfrac{1}{2}$ ali kvadrat časa.** Kdor si zapomni le »hitrost krat čas«, računa $h = g t$ ali $h = g t^2$. Hitrost pa med padanjem raste od $0$, zato je povprečna le polovica končne. Pravilno je $h = \dfrac{g t^2}{2}$ in $h_\text{max} = \dfrac{v_0^2}{2g}$.
 - **»Težja telesa padajo hitreje.«** Izkušnja s peresom in kamnom to navidez potrjuje. Brez zračnega upora vsa telesa padajo z istim pospeškom; razliko povzroča le zrak.
-- **»Dvakrat višje, dvakrat dlje.«** Čas ni sorazmeren z višino, ker je $h$ sorazmerna s $t^2$. Pri dvakratni višini je čas $\sqrt{2} \approx 1{,}41$-krat daljši. Čas vedno računaj s korenom: $t = \sqrt{\dfrac{2h}{g}}$.
+- **»Dvakrat višje, dvakrat dlje.«** Čas ni sorazmeren z višino, ker je $h$ sorazmerna s $t^2$. Pri dvakratni višini je čas $\sqrt{2} \approx 1{,}41$-krat daljši. Pravilno: $t = \sqrt{\dfrac{2h}{g}}$.
 
 ## Povzetek
 
@@ -281,15 +298,11 @@ $g = \dfrac{2 \cdot 1{,}00}{0{,}45^2} = \dfrac{2{,}00}{0{,}2025} \approx 9{,}88\
 
 ## Drugače: Na sliki
 
-V demonstraciji »Prosti pad na Zemlji, Luni in Marsu« spustiš telo na Zemlji, Luni ali Marsu (na izbiro je še Jupiter) in opazuješ, kako hitro pada. Pozorno spremljaj, kako se razmiki med zaporednimi položaji večajo. To je znak, da se hitrost povečuje, saj telo v enakih časovnih razmikih preleti vedno daljše poti.
+V demonstraciji »Prosti pad na Zemlji, Luni in Marsu« spustiš telo na Zemlji, Luni ali Marsu (na izbiro je še Jupiter) in opazuješ, kako se razmiki med zaporednimi položaji večajo.
 
-Opaziš lahko:
+Med Zemljo ($g \approx 9{,}81\,\mathrm{m/s^2}$), Marsom ($3{,}71\,\mathrm{m/s^2}$) in Luno ($1{,}62\,\mathrm{m/s^2}$) telo najhitreje pade na Zemlji, najpočasneje na Luni. Na Jupitru ($24{,}8\,\mathrm{m/s^2}$) bi padlo še hitreje.
 
-- Od teh treh teles pade najhitreje na Zemlji ($g \approx 9{,}81\,\mathrm{m/s^2}$); na Jupitru ($g \approx 24{,}8\,\mathrm{m/s^2}$) bi padlo še hitreje.
-- Na Marsu ($g \approx 3{,}71\,\mathrm{m/s^2}$) telo isto višino preleti počasneje.
-- Na Luni ($g \approx 1{,}62\,\mathrm{m/s^2}$) je padanje najpočasnejše.
-
-Graf kaže globino padca $h = \dfrac{g\,t^2}{2}$ na vseh treh telesih. Črtkana črta je pri $10\,\text{m}$: Zemljina krivulja jo doseže po $1{,}43\,\text{s}$, Marsova po $2{,}32\,\text{s}$, Lunina po $3{,}51\,\text{s}$.
+Napovej: bo padec na Luni šestkrat daljši? Graf kaže globino padca $h = \dfrac{g\,t^2}{2}$ na vseh treh telesih; krivulje si od leve proti desni sledijo Zemlja, Mars, Luna. Črtkana črta je pri $10\,\text{m}$: Zemljina krivulja jo doseže po $1{,}43\,\text{s}$, Marsova po $2{,}32\,\text{s}$, Lunina po $3{,}51\,\text{s}$.
 
 :::risba graf
 opis: Graf globine padca v odvisnosti od časa za Zemljo, Mars in Luno. Vse tri krivulje so parabole iz izhodišča; Zemljina je najstrmejša, Lunina najbolj položna. Črtkana vodoravna črta pri 10 m jih seka pri 1,43 s (Zemlja), 2,32 s (Mars) in 3,51 s (Luna).
@@ -314,9 +327,9 @@ $$h = \frac{g}{2}\cdot\frac{v^2}{g^2} = \frac{v^2}{2g} \quad\Rightarrow\quad v^2
 
 **Zakaj je čas vzpona enak času padanja.** Pri metu navzgor je $v = v_0 - g t$. V vrhu je $v = 0$, zato je $t_\text{vrh} = v_0/g$. Pri padanju iz vrha pa velja $h_\text{max} = \dfrac{g t^2}{2}$, torej $t = \sqrt{\dfrac{2 h_\text{max}}{g}}$. Vstavimo $h_\text{max} = \dfrac{v_0^2}{2g}$ in dobimo $t = \dfrac{v_0}{g}$. Časa sta enaka, gibanje je simetrično.
 
-**Zakaj padajo vsa telesa enako.** (Pogled naprej: sile in Newtonove zakone boš spoznal v naslednjih poglavjih.) Po drugem Newtonovem zakonu je $F = m a$. Sila teže je $F_g = m g$, zato je $a = \dfrac{m g}{m} = g$. Masa se pokrajša, torej je pospešek neodvisen od mase. Do enakega sklepa je s poskusi na klancu in razmislekom prišel že Galilei, dolgo pred Newtonom.
+**Zakaj padajo vsa telesa enako.** (Pogled naprej v poglavje o silah.) Po drugem Newtonovem zakonu je $F = m a$. Sila teže je $F_g = m g$, zato je $a = \dfrac{m g}{m} = g$. Masa se pokrajša. Do enakega sklepa je s poskusi na klancu in razmislekom prišel že Galilei, dolgo pred Newtonom.
 
-**Omejitve modela.** Enačbe veljajo, če je zračni upor zanemarljiv in če je višina majhna v primerjavi s polmerom planeta (tako je $g$ približno stalen). Pri velikih hitrostih ali lahkih telesih z veliko površino (list, padalo) je zračni upor bistven in se telo ne giblje enakomerno pospešeno.
+**Omejitve modela.** Enačbe veljajo, če je zračni upor zanemarljiv in če je višina majhna v primerjavi s polmerom planeta (tako je $g$ približno stalen). Pri velikih hitrostih ali lahkih telesih z veliko površino (list, padalo) je zračni upor bistven. Padalec v legi na trebuhu z razširjenimi rokami doseže le približno $54\,\mathrm{m/s}$ (okoli $195\,\mathrm{km/h}$) in nato ne pospešuje več. Skakalka iz Primera 1 doseže $14\,\mathrm{m/s}$, zato je tam model dober.
 
 ## Preveri se
 
@@ -328,39 +341,43 @@ $$h = \frac{g}{2}\cdot\frac{v^2}{g^2} = \frac{v^2}{2g} \quad\Rightarrow\quad v^2
 ~ Na lažjo deluje tudi manjša teža. Oboje se izniči, pospešek je za obe $g$.
 > Brez zračnega upora imajo vsa telesa enak pospešek $g$, zato z iste višine padajo enako dolgo. Razlike pri peresu ali listu povzroča zrak.
 
+? Graf kaže hitrost žoge, vržene navpično navzgor (os navzgor). Z grafa odčitaj začetno hitrost in čas vrha (na cela števila). Kako visoko poleti žoga?
+:::risba graf
+opis: Graf hitrosti v odvisnosti od časa: padajoča premica od približno 20 m/s pri času 0 skozi vrednost 0 pri času 2 s do približno −20 m/s pri času 4 s.
+x: 0 .. 4,5 | 0,5 | t [s]
+y: -25 .. 25 | 5 | v [m/s]
+f: 19.62 - 9.81*x | modra | 0 .. 4
+:::
+= 20 m | 1
+~ 40 | To je ploščina pravokotnika $20 \cdot 2$. Hitrost med vzponom pada proti $0$, zato je višina ploščina trikotnika, polovica tega.
+> Začetna hitrost je približno $20\,\mathrm{m/s}$, premica seka os $t$ pri $2\,\text{s}$ (vrh). Višina je ploščina trikotnika nad osjo: $\dfrac{1}{2} \cdot 2 \cdot 20 = 20\,\text{m}$.
+
 ? Na grafu $v(t)$ navpičnega meta gre premica skozi vrednost $0$ brez preloma, z enakim naklonom kot prej. Kaj to pove o žogi v vrhu?
 - Hitrost in pospešek sta enaka $0$.
 ~ Pri pospešku nič bi bila premica tam vodoravna in žoga bi obvisela. Naklon pa se ne spremeni.
-- Pospešek je enak $0$, hitrost pa je največja.
-~ Hitrost je v vrhu najmanjša (nič), največja je ob metu in ob vrnitvi. Pospešek se med letom ne spremeni.
+- Pospešek v vrhu zamenja smer z navzgor na navzdol.
+~ Pospešek je naklon premice; ta je pred vrhom in po njem enak, $-g$. Smer zamenja hitrost.
 + Hitrost je $0$, pospešek je $g$ navzdol.
 > Vrednost na grafu je hitrost, v vrhu je nič. Naklon je pospešek in je povsod $-g$, tudi v vrhu, saj teža deluje ves čas.
 
-? Žoga, vržena navpično navzgor, doseže višino $20{,}4\,\text{m}$. Približno s kolikšno hitrostjo smo jo vrgli? ($g = 9{,}81\,\mathrm{m/s^2}$)
-+ $20\,\mathrm{m/s}$
-- $14\,\mathrm{m/s}$
-~ Tako dobiš iz $v_0 = \sqrt{g h}$, ko pozabiš dvojko: pravilno je $v_0^2 = 2 g h$.
-- $400\,\mathrm{m/s}$
-~ To je $v_0^2 = 2 g h$ brez korena. Hitrost je koren tega števila.
-> Iz $h_\text{max} = \dfrac{v_0^2}{2g}$ sledi $v_0 = \sqrt{2 g h_\text{max}} = \sqrt{2 \cdot 9{,}81 \cdot 20{,}4} \approx 20\,\mathrm{m/s}$.
+? Poskus z ravnilom iz uvoda: ravnilo pade $11\,\text{cm}$, preden ga prijatelj ujame. Kolikšen je njegov reakcijski čas? ($g = 9{,}81\,\mathrm{m/s^2}$)
+= 0,15 s | 0,01
+~ 1,5 | Centimetrov nisi pretvoril v metre: $h = 0{,}11\,\text{m}$.
+~ 0,022 | To je $\dfrac{2h}{g}$, torej $t^2$. Čas je koren tega števila.
+> $t = \sqrt{\dfrac{2h}{g}} = \sqrt{\dfrac{2 \cdot 0{,}11}{9{,}81}} \approx 0{,}15\,\text{s}$.
 
-? Žogo vržemo navzgor z $v_0 = 10\,\mathrm{m/s}$. Katera tabela hitrosti ($g = 9{,}81\,\mathrm{m/s^2}$, os navzgor) ustreza časom $0$; $0{,}5$; $1{,}0$; $1{,}5\,\text{s}$?
-+ $10$; $5{,}1$; $0{,}2$; $-4{,}7\,\mathrm{m/s}$
-- $10$; $5{,}1$; $0$; $0\,\mathrm{m/s}$
-~ Ta tabela misli, da žoga v vrhu obstane. Pospešek je tudi v vrhu $g$, zato hitrost postane negativna.
-- $10$; $14{,}9$; $19{,}8$; $24{,}7\,\mathrm{m/s}$
-~ Tu je $g$ prištet ($v = v_0 + g t$). Pri osi navzgor pospešek kaže nasprotno od $v_0$.
-> Po $v = v_0 - g t$ se hitrost vsake pol sekunde zmanjša za $4{,}9\,\mathrm{m/s}$, tudi čez vrh. Minus pomeni, da žoga že pada.
+? Telefon štirikrat zdrsne iz rok. Razvrsti padce po času padanja, od najkrajšega do najdaljšega. ($g$: Zemlja $9{,}81$; Mars $3{,}71$; Luna $1{,}62\,\mathrm{m/s^2}$)
+1. z $0{,}8\,\text{m}$ na Zemlji
+2. z $1{,}6\,\text{m}$ na Zemlji
+3. z $0{,}8\,\text{m}$ na Marsu
+4. z $0{,}8\,\text{m}$ na Luni
+> Po $t = \sqrt{\dfrac{2h}{g}}$ so časi $0{,}40$; $0{,}57$; $0{,}66$ in $0{,}99\,\text{s}$. Dvakrat večja višina čas podaljša le $\sqrt{2} \approx 1{,}41$-krat, zato padec z $1{,}6\,\text{m}$ na Zemlji traja manj kot padec z $0{,}8\,\text{m}$ na Marsu.
 
-? Telefon ti zdrsne z mize, visoke $0{,}8\,\text{m}$, in pada približno $0{,}4\,\text{s}$. Približno koliko časa bi padal z dvakrat višje police ($1{,}6\,\text{m}$)?
-- približno $0{,}4\,\text{s}$
-~ Enak za vsa telesa je pospešek, ne čas padanja. Daljša pot zahteva več časa.
-+ približno $0{,}57\,\text{s}$
-- približno $0{,}8\,\text{s}$
-~ »Dvakrat višje, dvakrat dlje« velja le pri stalni hitrosti. Telefon je v drugi polovici poti hitrejši.
-- približno $1{,}6\,\text{s}$
-~ Tu je čas pomnožen s $4$. Višina raste s $t^2$, zato čas raste s korenom višine, ne s kvadratom.
-> $t = \sqrt{\dfrac{2 \cdot 1{,}6}{9{,}81}} \approx 0{,}57\,\text{s}$, kar je $\sqrt{2} \approx 1{,}41$-krat dlje kot z mize. Telefona z mize skoraj nikoli ne ujamemo: od $0{,}4\,\text{s}$ gre okoli $0{,}2\,\text{s}$ za reakcijo, za gib roke ostane le $0{,}2\,\text{s}$.
+? Z roba $25\,\text{m}$ visoke stavbe (kot v Primeru 3) vržemo kamen navpično navzgor s hitrostjo $10\,\mathrm{m/s}$. Os kaže navzgor, izhodišče je na robu. Kolikšna je lega $y$ kamna po $3\,\text{s}$? ($g = 9{,}81\,\mathrm{m/s^2}$)
+= -14,1 m | 0,2
+~ 14,1 | Velikost je prava, predznak ne. Os kaže navzgor, kamen pa je že pod robom, zato je lega negativna.
+~ 74,1 | Člen z $g$ si prištel. Pri osi navzgor je $a = -g$: $y = v_0 t - \dfrac{g t^2}{2}$.
+> $y = 10 \cdot 3 - 4{,}905 \cdot 3^2 = 30 - 44{,}1 = -14{,}1\,\text{m}$. Kamen je že $14{,}1\,\text{m}$ pod robom.
 
 :::simboli
 g | težni pospešek | | m/s^2 | približno 9,81 m/s²
@@ -369,11 +386,14 @@ v_0 | začetna hitrost | | m/s | pri prostem padu v₀ = 0
 t | čas | | s
 a | pospešek | | m/s^2 | pri osi navzdol $a = g$, pri osi navzgor $a = -g$
 s | premik (pri gibanju v eno smer enak poti) | | m | v Primeru 3 od roba stavbe do tal
-h | višina padca | h = \dfrac{g t^2}{2} | m | velja tudi $v^2 = 2\,g\,h$
+h | višina padca (globina pod mestom spusta) | h = \dfrac{g t^2}{2} | m | velja pri $v_0 = 0$; v Primeru 3 padec z vrha do tal
 y | višina (lega na navpični osi) | y = v_0\,t - \frac{g\,t^2}{2} | m | pri metu os y kaže navzgor
 y_0 | začetna višina | | m
 t_1 | čas vzpona do vrha (Primer 3) | t_1 = \dfrac{v_0}{g} | s
 t_2 | čas padanja z vrha do tal (Primer 3) | t_2 = \sqrt{\dfrac{2h}{g}} | s
 t_{\text{vrh}} | čas vzpona do vrha | t_\text{vrh} = \dfrac{v_0}{g} | s | celoten let traja $2\,t_\text{vrh}$
 h_{\text{max}} | največja višina | h_\text{max} = \dfrac{v_0^2}{2g} | m
+m | masa | | kg
+F | sila | F = m\,a | N
+F_g | sila teže | F_g = m\,g | N
 :::

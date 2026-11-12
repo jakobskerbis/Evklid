@@ -16,7 +16,9 @@ stanje: osnutek
 - Velikost K
   - velik $K$: prevladujejo produkti
   - majhen $K$: prevladujejo reaktanti
+  - nič ne pove o hitrosti
 - Motnja ravnotežja
+  - razmerje $Q$: trenutne koncentracije
   - dodamo $\mathrm{H_2}$: razmerje $32 < K = 64$
   - reakcija teče v desno do $K$
 - Le Chatelierjevo načelo

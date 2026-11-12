@@ -39,7 +39,7 @@ f: (x - 2)^2 | oranžna
 točka: 0; 0 | (0, 0) | pod levo | siva
 točka: 0; 2 | | | modra
 točka: 2; 0 | (2, 0) | pod desno | oranžna
-napis: 0,15; 5,4 | x^2 + 2 | desno | modra
+napis: 1,75; 5,6 | x^2 + 2 | levo | modra
 napis: 4,9; 0,6 | (x − 2)^2 | levo | oranžna
 napis: -1,9; 1,6 | x^2 | levo | siva
 podnapis: Črtkana: x². Teme (0, 2): x² + 2, premik navzgor. Teme (2, 0): (x − 2)², premik v desno.
@@ -54,7 +54,7 @@ Zakaj v desno? Funkcija $g$ pri $x$ izračuna to, kar je $f$ izračunala pri $x 
 
 S števili iz tabele, kjer je $p = 2$: pri $x = 3$ funkcija $(x - 2)^2$ izračuna $1^2 = 1$, torej isto kot $x^2$ pri $x = 1$. Enako je pri Tinetu: sobotni sladkor ob 10.00 je tak kot običajni ob 8.00.
 
-Na spodnji sliki je parabola $y = (x - p)^2 + q$ pri $p = 2$ in $q = 1$, s temenom v $(2, 1)$; črtkana je osnovna $x^2$. V aplikaciji premikaj drsnik $p$ in glej samo teme: pri $p = 2$ stoji v predpisu $x - 2$, teme pa je pri $x = +2$. Nato premikaj $q$: teme gre gor in dol, levo in desno pa nič. Opazi še, da se oblika parabole ne spremeni pri nobenem drsniku.
+Na spodnji sliki je parabola $y = (x - p)^2 + q$ pri $p = 2$ in $q = 1$, s temenom v $(2, 1)$; črtkana je osnovna $x^2$. V aplikaciji premikaj drsnik $p$ in glej samo teme: pri $p = 2$ stoji v predpisu $x - 2$, teme pa je pri $x = +2$. Nastavi še $p = -3$: pod sliko se izpiše $(x + 3)^2$, teme pa je pri $x = -3$. Nato premikaj $q$: teme gre gor in dol, levo in desno pa nič. Opazi še, da se oblika parabole ne spremeni pri nobenem drsniku; pri $p = 0$ in $q = 0$ se grafa pokrijeta: pod sliko piše $(x + 0)^2 + 0$, kar je $x^2$.
 
 :::risba graf
 opis: Parabola y = (x − p)² + q in črtkana osnovna parabola y = x². V aplikaciji se p in q spreminjata z drsnikoma; izbrano je p = {p} in q = {q}. Teme je v točki ({p}, {q}); črtkani črti vodita od temena do osi: p odčitaš na osi x, q na osi y.
@@ -68,7 +68,7 @@ f: (x - p)^2 + q
 črta: 0; q -> p; q | oranžna črtkano
 črta: p; 0 -> p; q | oranžna črtkano
 točka: p; q | | | oranžna
-podnapis: y = (x − p)² + q pri p = {p} in q = {q}; teme ({p}, {q})
+podnapis: p = {p}, q = {q}: y = (x {+(-p)})² {+q}; teme ({p}, {q})
 :::
 
 :::premisli
@@ -102,19 +102,21 @@ podnapis: Črtkana: √x. Pod osjo x: −√x (zrcaljenje čez os x). Levo od os
 
 **Raztezanje v smeri osi $y$.** Pri $g(x) = a \cdot f(x)$ z $a > 0$ se vsaka vrednost pomnoži z $a$: točka $(x, y)$ preide v $(x, ay)$. Pri $a > 1$ se graf raztegne stran od osi $x$ in postane strmejši; pri $0 < a < 1$ se skrči proti osi $x$. Pri negativnem $a$ se graf raztegne ali skrči s faktorjem $|a|$ in še zrcali čez os $x$.
 
-Spodnja slika kaže $y = a \cdot |x|$ pri $a = 2$: točka $(1;\ 1)$ osnovnega grafa se dvigne v $(1;\ 2)$. V aplikaciji povleci drsnik $a$ od $2$ proti $0$ in naprej do $-2$. Opazi tri stvari: točka ostane na navpičnici $x = 1$, pri $a$ med $0$ in $1$ je graf položnejši od osnovnega, pri negativnem $a$ pa se »V« obrne navzdol. Vmes sta dva mejna primera: pri $a = 1$ se grafa pokrijeta, pri $a = 0$ se graf splošči v os $x$, ker so vse vrednosti $0$. Konica v $(0, 0)$ ves čas miruje, ker je $a \cdot 0 = 0$.
+Spodnja slika kaže $y = a \cdot |x|$ pri $a = 2$: točka $(1, 1)$ osnovnega grafa se dvigne v $(1, 2)$. V aplikaciji povleci drsnik $a$ od $2$ proti $0$ in naprej do $-3$. Opazi tri stvari: točka ostane na navpičnici $x = 1$, pri $a$ med $0$ in $1$ je graf položnejši od osnovnega, pri negativnem $a$ pa se »V« obrne navzdol. Vmes sta dva mejna primera: pri $a = 1$ se grafa pokrijeta, pri $a = 0$ se graf splošči v os $x$, ker so vse vrednosti $0$. Konica v $(0, 0)$ ves čas miruje, ker je $a \cdot 0 = 0$.
 
 :::risba graf
-opis: Graf y = a·|x| in črtkan osnovni graf y = |x|. V aplikaciji se a spreminja z drsnikom; izbrano je a = {a}. Točka (1; 1) osnovnega grafa preide v točko (1; {a}), konica ostane v (0; 0).
+opis: Graf y = a·|x| in črtkan osnovni graf y = |x|. V aplikaciji se a spreminja z drsnikom; izbrano je a = {a}. Točka (1; 1) osnovnega grafa preide v točko (1; {a}) na črtkani navpičnici x = 1. Od nove točke vodi vodoravna črtkana črta do osi y, kjer odčitaš a. Konica ostane v (0; 0).
 x: -4 .. 4
 y: -4 .. 4
 enako: da
 drsnik: a | -3 .. 3 | 0,5 | 2 | faktor a
 f: abs(x) | siva črtkano
 f: a*abs(x)
+črta: 1; -4 -> 1; 4 | oranžna črtkano
+črta: 0; a -> 1; a | oranžna črtkano
 točka: 1; 1 | | | siva
 točka: 1; a | | | oranžna
-podnapis: y = a·|x| pri a = {a}: točka (1; 1) črtkanega grafa |x| preide v (1; {a})
+podnapis: y = a·|x| pri a = {a}: točka (1; 1) črtkanega grafa |x| preide v (1; {a}); od nje vodi črtica do osi y
 :::
 
 **Raztezanje v smeri osi $x$.** Pri $g(x) = f(kx)$ s $k > 0$ se graf v vodoravni smeri skrči s faktorjem $k$ (pri $0 < k < 1$ se v resnici raztegne). Točka $(x, y)$ preide v $\left(\frac{x}{k}, y\right)$. Razlog je isti kot pri premiku: $g$ pri $x$ izračuna to, kar $f$ pri $kx$, torej $k$-krat dlje od osi $y$. Vsaka vrednost se zato pojavi $k$-krat bliže osi $y$. Tudi tu sprememba znotraj oklepaja deluje »obratno«: $k = 2$ graf stisne na polovico širine. Preizkus: $x^2$ doseže $4$ pri $x = 2$, $(2x)^2$ pa že pri $x = 1$. Pri paraboli je $(2x)^2 = 4x^2$: vodoravna skrčitev s faktorjem $2$ da isti graf kot navpični razteg s faktorjem $4$.
@@ -122,15 +124,16 @@ podnapis: y = a·|x| pri a = {a}: točka (1; 1) črtkanega grafa |x| preide v (1
 Na spodnji sliki je $y = \sqrt{kx}$ pri $k = 2$ ob črtkanem $\sqrt{x}$. Osnovni graf doseže vrednost $2$ pri $x = 4$, novi že pri $x = 2$, ker je $\sqrt{2 \cdot 2} = 2$. V aplikaciji premikaj drsnik $k$ in opazuj, kje graf seka črto $y = 2$: vedno pri $x = \frac{4}{k}$. Pri $k = 4$ je to $x = 1$, pri $k = 0{,}5$ šele $x = 8$.
 
 :::risba graf
-opis: Graf y = √(kx) in črtkan osnovni graf y = √x. V aplikaciji se k spreminja z drsnikom; izbrano je k = {k}. Osnovni graf doseže vrednost 2 pri x = 4, novi pri x = {4/k}. Vodoravna črtkana črta označuje vrednost 2.
+opis: Graf y = √(kx) in črtkan osnovni graf y = √x. V aplikaciji se k spreminja z drsnikom; izbrano je k = {k}. Osnovni graf doseže vrednost 2 pri x = 4, novi pri x = {4/k}. Vodoravna črtkana črta označuje vrednost 2; od točke novega grafa na njej vodi navpična črtkana črta do osi x.
 x: -1 .. 9
-y: -1 .. 4
+y: -1 .. 6
 enako: da
 drsnik: k | 0,5 .. 4 | 0,5 | 2 | faktor k pri x
 f: sqrt(x) | siva črtkano | 0 .. 9
 f: sqrt(k*x) | modra | 0 .. 9
 črta: 0; 2 -> 9; 2 | oranžna črtkano
 točka: 4; 2 | | | siva
+črta: 4/k; 0 -> 4/k; 2 | oranžna črtkano
 točka: 4/k; 2 | | | oranžna
 podnapis: y = √(kx) pri k = {k}: vrednost 2 doseže pri x = {4/k}, črtkani √x pri x = 4
 :::
@@ -141,7 +144,7 @@ $$g(x) = a \cdot f(x - p) + q$$
 
 beri od znotraj navzven: premik za $p$ vodoravno, razteg in morebitno zrcaljenje z $a$, na koncu premik za $q$ navpično. Točka $(x, y)$ grafa $f$ preide v $(x + p,\ ay + q)$.
 
-Vrstni red je pomemben. Točka $(1, 1)$ grafa $x^2$ gre pri »najprej krat $2$, nato plus $1$« v $(1, 3)$, pri »najprej plus $1$, nato krat $2$« pa v $(1, 4)$. Predpis $a \cdot f(x) + q$ pomeni prvo. Kadar je v korenu ali oklepaju minus pred $x$, ga najprej izpostavi: $\sqrt{2 - x}$ zapiši kot $\sqrt{-(x - 2)}$. To je graf $\sqrt{-x}$, premaknjen za $2$ v desno, ne v levo.
+Vrstni red je pomemben. Točka $(1, 1)$ grafa $x^2$ gre pri »najprej krat $2$, nato plus $1$« v $(1, 3)$, pri »najprej plus $1$, nato krat $2$« pa v $(1, 4)$. Predpis $a \cdot f(x) + q$ pomeni prvo. Kadar je v korenu ali oklepaju minus pred $x$, ga najprej izpostavi: $\sqrt{2 - x}$ zapiši kot $\sqrt{-(x - 2)}$. To je graf $\sqrt{-x}$, premaknjen za $2$ v desno, ne v levo. Preizkus: pri $x = 2$ je vrednost $0$, pri $x = -2$ pa $\sqrt{4} = 2$; graf se začne v $(2, 0)$ in gre v levo.
 
 :::premisli
 Graf $f(x) = |x|$ zrcališ čez os $y$. Kaj se zgodi in zakaj? Kaj pa, če čez os $y$ zrcališ $x^3$?
@@ -149,7 +152,20 @@ Graf $f(x) = |x|$ zrcališ čez os $y$. Kaj se zgodi in zakaj? Kaj pa, če čez 
 Graf $|x|$ se ne spremeni, ker je $|x|$ soda funkcija: $|-x| = |x|$, graf je že simetričen glede na os $y$. Pri $x^3$ dobiš $(-x)^3 = -x^3$: ker je $x^3$ liha, zrcaljenje čez os $y$ da isti graf kot zrcaljenje čez os $x$.
 :::
 
-V simulaciji spodaj, »Premik, zrcaljenje in raztezanje grafa«, izberi $f(x) = \sqrt{x}$ ter nastavi $p = 2$ in $q = -1$. Opazuj, kam se pomakne začetna točka grafa. Nato vrni $p$ in $q$ na $0$ ter preklopi $b = -1$ (to da $f(-x)$: zrcaljenje čez os $y$) najprej pri $\sqrt{x}$ in potem pri $x^2$ ter primerjaj.
+Vse preslikave na enem mestu:
+
+| Predpis | $(x, y)$ gre v | Učinek |
+|---|---|---|
+| $f(x) + q$ | $(x,\ y + q)$ | premik navpično |
+| $f(x - p)$ | $(x + p,\ y)$ | premik vodoravno |
+| $-f(x)$ | $(x,\ -y)$ | zrcaljenje čez os $x$ |
+| $f(-x)$ | $(-x,\ y)$ | zrcaljenje čez os $y$ |
+| $a \cdot f(x)$ | $(x,\ ay)$ | razteg navpično |
+| $f(kx)$ | $\left(\frac{x}{k},\ y\right)$ | skrčitev vodoravno |
+
+Sprememba zunaj $f$ deluje navpično in tako, kot piše. Sprememba pri $x$ deluje vodoravno in obratno.
+
+V simulaciji spodaj, »Premik, zrcaljenje in raztezanje grafa«, izberi $f(x) = \sqrt{x}$ ter nastavi $p = 2$ in $q = -1$. Opazuj, kam se pomakne začetna točka grafa. Nato vrni $p$ in $q$ na $0$ ter preklopi $b = -1$ (to da $f(-x)$: zrcaljenje čez os $y$) najprej pri $\sqrt{x}$ in potem pri $x^2$. Prej napovej, pri kateri se graf ne bo spremenil in zakaj.
 
 ## Rešeni primeri
 
@@ -170,7 +186,21 @@ $g(x) = f(x - p) + q$: premik za $p$ v desno in $q$ navzgor; $(x, y) \mapsto (x 
 2. Teme $(0, 0)$ preide v $(0 + 3,\ 0 + 1) = (3, 1)$.
 3. Točki $(1, 1)$ in $(-1, 1)$ grafa $f$ preideta v $(4, 2)$ in $(2, 2)$. Preizkus: $g(4) = 1^2 + 1 = 2$.
 4. Točka $(2, 4)$ preide v $(5, 5)$; $g(5) = 2^2 + 1 = 5$.
-5. Odgovor: graf $g$ je parabola $x^2$, premaknjena za $3$ v desno in $1$ navzgor, s temenom v $(3, 1)$. Preveri na sliki z drsnikoma v Razlagi: v aplikaciji nastavi $p = 3$ in $q = 1$.
+5. Odgovor: graf $g$ je parabola $x^2$, premaknjena za $3$ v desno in $1$ navzgor, s temenom v $(3, 1)$.
+
+:::risba graf
+opis: Črtkana osnovna parabola y = x² s temenom v (0, 0) in parabola y = (x − 3)² + 1 s temenom v (3, 1), ki gre skozi točke (2, 2), (4, 2) in (5, 5).
+x: -3 .. 7
+y: -1 .. 7
+enako: da
+f: x^2 | siva črtkano
+f: (x - 3)^2 + 1 | modra
+točka: 3; 1 | (3, 1) | pod | modra
+točka: 2; 2 | | | modra
+točka: 4; 2 | (4, 2) | pod desno | modra
+točka: 5; 5 | (5, 5) | desno | modra
+podnapis: Črtkano: x². Polna črta: (x − 3)² + 1 s temenom (3, 1); neoznačena točka je (2, 2).
+:::
 
 ### Primer 2: razteg in zrcaljenje
 
@@ -180,12 +210,12 @@ Opiši, kako iz grafa $f(x) = |x|$ dobiš graf $g(x) = -2|x| + 4$. Določi vrh, 
 **Iščemo:** zaporedje preslikav, vrh, ničle, $Z_g$
 
 :::formula
-$g(x) = a \cdot f(x) + q$ z $a = -2$, $q = 4$; $(x, y) \mapsto (x,\ ay + q)$
+$g(x) = a \cdot f(x) + q$; $(x, y) \mapsto (x,\ ay + q)$
 :::
 
 **Rešitev:**
 
-1. Faktor $2$ raztegne graf v smeri osi $y$: krak skozi $(1, 1)$ gre zdaj skozi $(1, 2)$, graf je strmejši.
+1. Primerjamo s pravilom: $a = -2$, $q = 4$. Faktor $2$ raztegne graf v smeri osi $y$: krak skozi $(1, 1)$ gre zdaj skozi $(1, 2)$, graf je strmejši.
 2. Minus zrcali graf čez os $x$: »V« se obrne v »Λ«, točka $(1, 2)$ preide v $(1, -2)$.
 3. Prištevanje $4$ dvigne vse za $4$: konica $(0, 0)$ gre v $(0, 4)$, točka $(1, -2)$ v $(1, 2)$. Preizkus: $g(1) = -2 + 4 = 2$.
 4. Ničle iz $-2|x| + 4 = 0$: $|x| = 2$, torej $x = -2$ ali $x = 2$.
@@ -202,30 +232,40 @@ f: -2*abs(x) + 4 | modra
 točka: 0; 4 | (0, 4) | desno | modra
 točka: -2; 0 | −2 | nad levo | modra
 točka: 2; 0 | 2 | nad desno | modra
-točka: 1; 2 | | | modra
-napis: 1,3; 2,8 | (1, 2) | desno | modra
+točka: 1; 2 | (1, 2) | nad desno | modra
 podnapis: Črtkano: |x|. Polna črta: −2|x| + 4 z vrhom (0, 4) in ničlama −2 in 2.
 :::
 
 ### Primer 3 (težji): senzor za sladkor in pozen zajtrk
 
-Tinetov krvni sladkor po zajtrku v preprostem modelu opisuje $m(t) = -2(t - 1)^2 + 7$ (v $\mathrm{mmol/L}$) za $0 \le t \le 2$, kjer je $t$ čas v urah od 7.00, ko zajtrkuje. Številke so v resničnem območju: pri zdravem človeku je sladkor na tešče približno med $4$ in $6\,\mathrm{mmol/L}$, dve uri po obroku pa pod $7{,}8\,\mathrm{mmol/L}$. V soboto Tine zajtrkuje $2\,\mathrm{h}$ kasneje, senzor pa ni umerjen in kaže ves čas $0{,}5\,\mathrm{mmol/L}$ preveč. Zapiši, kaj kaže senzor v soboto, $s(t)$; čas še vedno teče od 7.00. Kdaj kaže največ in koliko? Kdaj kaže vsaj $7\,\mathrm{mmol/L}$?
+Tinetov krvni sladkor po zajtrku v preprostem modelu opisuje $m(t) = -2(t - 1)^2 + 7$ (v $\mathrm{mmol/L}$) za $0 \le t \le 2$, kjer je $t$ čas v urah od 7.00, ko zajtrkuje. 
+Model je poenostavljen, a blizu meritvam. V raziskavi z neprekinjenim merjenjem pri $24$ zdravih odraslih (Freckmann in sod., 2007) je bil povprečni vrh po zajtrku $132\,\mathrm{mg/dL}$, to je približno $7{,}3\,\mathrm{mmol/L}$, dosežen $46$ do $50$ minut po obroku. Naš vrh, $7\,\mathrm{mmol/L}$ po $60$ minutah, je malo nižji in poznejši, prava krivulja pa ni simetrična.
 
-**Podatki:** $m(t) = -2(t - 1)^2 + 7$ ($\mathrm{mmol/L}$, $t$ v h, $0 \le t \le 2$), zamik $2\,\mathrm{h}$, napaka senzorja $+0{,}5\,\mathrm{mmol/L}$, meja $7\,\mathrm{mmol/L}$
-**Iščemo:** predpis $s(t)$, najvišjo vrednost in čas, ko je $s(t) \ge 7$
+V soboto Tine zajtrkuje $2\,\mathrm{h}$ kasneje, senzor pa ni umerjen in kaže ves čas $0{,}5\,\mathrm{mmol/L}$ preveč. Čas še vedno teče od 7.00.
+
+1. Zapiši, kaj kaže senzor v soboto, $s(t)$.
+2. Kdaj kaže največ in koliko?
+3. Kdaj kaže vsaj $7\,\mathrm{mmol/L}$?
+4. Denimo, da po kosilu vse poteka dvakrat počasneje: $n(t) = m\left(\frac{t}{2}\right)$, $t$ teče od kosila. Kdaj je vrh?
+
+**Podatki:** $m(t) = -2(t - 1)^2 + 7$ ($\mathrm{mmol/L}$, $t$ v h, $0 \le t \le 2$), zamik $2\,\mathrm{h}$, napaka senzorja $+0{,}5\,\mathrm{mmol/L}$, meja $7\,\mathrm{mmol/L}$, po kosilu $n(t) = m\left(\frac{t}{2}\right)$
+**Iščemo:** predpis $s(t)$, najvišjo vrednost, čas, ko je $s(t) \ge 7$, in vrh grafa $n$
 
 :::formula
 Zamik za $p$ v času: $m(t - p)$; dvig za $q$: $s(t) = m(t - p) + q$; $(t, y) \mapsto (t + p,\ y + q)$
+
+Razteg v času: $m(kt)$; $(t, y) \mapsto \left(\frac{t}{k},\ y\right)$
 :::
 
 **Rešitev:**
 
 1. Zajtrk je $2\,\mathrm{h}$ kasneje, zato graf $m$ premaknemo za $2$ v desno. Vsak $t$ zamenjamo s $t - 2$: $m(t - 2) = -2(t - 3)^2 + 7$, ker je $t - 2 - 1 = t - 3$.
-2. Senzor kaže $0{,}5$ preveč, zato graf dvignemo za $0{,}5$: $s(t) = -2(t - 3)^2 + 7{,}5$ za $2 \le t \le 4$. Pred zajtrkom in po 11.00 kaže senzor približno $5{,}5$.
+2. Senzor kaže $0{,}5$ preveč, zato graf dvignemo za $0{,}5$: $s(t) = -2(t - 3)^2 + 7{,}5$ za $2 \le t \le 4$.
 3. Vrh $(1, 7)$ grafa $m$ preide v $(1 + 2;\ 7 + 0{,}5) = (3;\ 7{,}5)$. Senzor kaže največ ob 10.00, in sicer $7{,}5\,\mathrm{mmol/L}$.
 4. Preizkus na začetku: $s(2) = -2 \cdot 1 + 7{,}5 = 5{,}5$, kar je $m(0) + 0{,}5 = 5 + 0{,}5$.
-5. Enačba $-2(t - 3)^2 + 7{,}5 = 7$ da $(t - 3)^2 = 0{,}25$, torej $t - 3 = \pm 0{,}5$ in $t = 2{,}5$ ali $t = 3{,}5$. Med tema časoma je parabola nad mejo, ker je obrnjena navzdol. To sta za $2\,\mathrm{h}$ premaknjena časa $0{,}5$ in $1{,}5$, ko je na običajen dan $m(t) = 6{,}5$: senzor doda $0{,}5$, zajtrk pa $2$ uri.
-6. Odgovor: $s(t) = -2(t - 3)^2 + 7{,}5$. Senzor kaže največ, $7{,}5\,\mathrm{mmol/L}$, ob 10.00, vsaj $7\,\mathrm{mmol/L}$ pa od 9.30 do 10.30.
+5. Enačba $-2(t - 3)^2 + 7{,}5 = 7$ da $(t - 3)^2 = 0{,}25$, torej $t - 3 = \pm 0{,}5$ in $t = 2{,}5$ ali $t = 3{,}5$. Med tema časoma je parabola nad mejo, ker je obrnjena navzdol.
+6. Pri $n(t) = m\left(\frac{t}{2}\right)$ je $k = \frac{1}{2}$: točka $(t, y)$ preide v $(2t, y)$, graf se vodoravno raztegne na dvojno širino. Vrh $(1, 7)$ gre v $(2, 7)$. Preizkus: $n(2) = m(1) = 7$.
+7. Odgovor: $s(t) = -2(t - 3)^2 + 7{,}5$. Senzor kaže največ, $7{,}5\,\mathrm{mmol/L}$, ob 10.00, vsaj $7\,\mathrm{mmol/L}$ pa od 9.30 do 10.30. Po kosilu je vrh šele po $2$ urah.
 
 :::risba graf
 opis: Dve enaki paraboli, obrnjeni navzdol. Črtkana m(t) teče od t = 0 do t = 2 z vrhom v (1; 7). Polna s(t) teče od t = 2 do t = 4 z vrhom v (3; 7,5): je 2 uri bolj desno in 0,5 višje. Vodoravna črtkana črta pri 7 jo seka pri t = 2,5 in t = 3,5.
@@ -241,7 +281,7 @@ napis: 1; 5,6 | m(t) | sredina | siva
 napis: 3; 6,5 | s(t) | sredina | modra
 točka: 2,5; 7 | 2,5 | nad levo | oranžna
 točka: 3,5; 7 | 3,5 | nad desno | oranžna
-podnapis: Črtkana krivulja: običajen dan, m(t). Polna: sobota na senzorju, s(t). Vodoravna črta: meja 7 mmol/L.
+podnapis: Črtkana krivulja: običajen dan, m(t). Polna: sobota na senzorju, s(t). Vodoravna črta: meja 7 mmol/L. Os y se začne pri 4.
 :::
 
 ### Primer 4: zdaj ti
@@ -250,8 +290,9 @@ Parabola na sliki nastane iz grafa $f(x) = x^2$ z raztegom in premikom. Teme ima
 
 :::risba graf
 opis: Parabola, odprta navzgor, s temenom v točki (−2, −3). Gre skozi točko (0, 5) na osi y.
-x: -5 .. 2
+x: -6 .. 4
 y: -4 .. 6
+enako: da
 f: 2*(x + 2)^2 - 3 | modra
 točka: -2; -3 | teme (−2, −3) | pod | modra
 točka: 0; 5 | (0, 5) | desno | modra
@@ -268,13 +309,12 @@ $g(x) = a(x - p)^2 + q$, teme je v $(p, q)$
 **Rešitev:**
 
 1. Iz temena: $p = -2$, $q = -3$, zato $g(x) = a(x + 2)^2 - 3$.
-2. Vstavimo točko $(0, 5)$: $5 = a \cdot 2^2 - 3$, torej $5 = 4a - 3$.
-3. Izračunaj $a$ sam in zapiši predpis:
+2. Zdaj ti: vstavi točko $(0, 5)$, izračunaj $a$ in zapiši predpis.
 
 :::premisli
-Koliko je $a$ in kako se glasi $g(x)$?
+Kakšno enačbo dobiš, koliko je $a$ in kako se glasi $g(x)$?
 ---
-$4a = 8$, torej $a = 2$ in $g(x) = 2(x + 2)^2 - 3$. Preizkus: $g(0) = 2 \cdot 4 - 3 = 5$.
+Enačba je $5 = a \cdot 2^2 - 3$, torej $4a = 8$, $a = 2$ in $g(x) = 2(x + 2)^2 - 3$. Preizkus: $g(0) = 2 \cdot 4 - 3 = 5$.
 :::
 
 ## Pogoste napake
@@ -311,37 +351,50 @@ Za $g(x) = 3\sqrt{x + 1} - 2$ sledi trem točkam skozi vse korake.
 
 Parabola $x^2$ je kulisa na odru, ki jo trije odrski delavci premikajo, ne da bi jo izdelali znova. Prvi jo porine za $p$ v desno. Kar je prej stalo pri $0$, zdaj stoji pri $p$, zato mora biti oklepaj enak $0$ pri $x = p$: napiše $x - p$. Drugi jo z vrvmi raztegne navzgor, da je dvakrat višja: pred vse napiše $2$. Če jo obrne na glavo, doda še minus. Tretji z dvigalom dvigne tla odra za $q$ in na konec doda $+\,q$.
 
-Ko na koncu pogledaš predpis $2(x - p)^2 + q$, iz njega razbereš vso zgodbo: kdo je kuliso porinil, kdo raztegnil in kdo dvignil. Kulisa je ves čas ista parabola, le premaknjena in raztegnjena.
+Ko na koncu pogledaš predpis $2(x - p)^2 + q$, iz njega razbereš vso zgodbo: kdo je kuliso porinil, kdo raztegnil in kdo dvignil.
 
 ## Preveri se
 
-? Trije od teh grafov imajo enako obliko kot graf $x^2$, le premaknjeni ali obrnjeni so. Eden je ožji. Kateri izstopa?
-- $x^2 + 2$
-~ Prištevanje zunaj graf samo dvigne za $2$. Višje teme ne pomeni ožje parabole.
-- $(x - 2)^2$
-~ Število $2$ v oklepaju ni faktor: graf se premakne za $2$ v desno, oblika ostane.
-- $-x^2$
-~ Minus zunaj parabolo obrne navzdol (zrcaljenje čez os $x$), široka pa je enako.
-+ $(2x)^2$
-> Množenje vhoda z $2$ graf stisne proti osi $y$ na polovico širine: vrednost $4$ doseže že pri $x = 1$ namesto pri $x = 2$. Na dvojno širino bi ga raztegnil faktor $\frac{1}{2}$ pri $x$.
+? Razvrsti parabole od najožje do najširše.
+1. $(2x)^2$
+2. $3x^2$
+3. $x^2 + 5$
+4. $\frac{1}{2}x^2$
+> Širino določa samo faktor: $(2x)^2 = 4x^2$ je najožja, sledi $3x^2$. Prištevanje $5$ parabolo le dvigne, zato je $x^2 + 5$ široka kot $x^2$. Faktor $\frac{1}{2}$ jo razširi.
 
-? Graf $x^2$ najprej dvignemo za $1$, nato vse vrednosti pomnožimo z $2$. Koliko je vrednost dobljene funkcije pri $x = 3$?
-+ $20$
-- $19$
-~ To je $2 \cdot 9 + 1$: najprej si množil in šele nato prištel. Tu je premik prvi, zato se podvoji tudi $1$.
-- $10$
-~ To je $9 + 1$. Pozabil si na razteg s faktorjem $2$.
-- $37$
-~ To je $(2 \cdot 3)^2 + 1$: faktor si postavil k $x$ v oklepaj. Množimo vrednosti, ne vhoda.
-> Po dvigu dobimo $x^2 + 1$, po raztegu $2(x^2 + 1)$. Pri $x = 3$: $2 \cdot (9 + 1) = 20$.
+? Točka $(4, 2)$ leži na grafu $f(x) = \sqrt{x}$. Graf preslikamo v $g(x) = -2\sqrt{x - 1} + 3$. Vpiši koordinato $y$ točke, v katero preide $(4, 2)$.
+= -1 | 0,01
+~ 7 | Izpustil si minus pred $2$. Negativen faktor vrednost še zrcali čez os $x$.
+~ -10 | Najprej si prištel $3$ in šele nato množil z $-2$. Razteg pride pred premikom $q$.
+~ -0,46 | To je $g(4)$. Točka se premakne tudi vodoravno, v $x = 5$.
+> Točka $(x, y)$ preide v $(x + p,\ ay + q)$: $x = 4 + 1 = 5$ in $y = -2 \cdot 2 + 3 = -1$. Nova točka je $(5, -1)$.
 
 ? Zakaj graf $g(x) = f(x - 3)$ leži $3$ enote desno od grafa $f$?
 - Ker se $3$ odšteje od vrednosti funkcije.
 ~ Odštevanje od vrednosti bi bilo $f(x) - 3$ in bi graf spustilo navzdol.
 - Ker vsak minus zrcali graf čez os $y$.
 ~ Zrcali le minus pred celim $x$, kot v $f(-x)$. Tu se od $x$ odšteva število.
-+ Ker $g$ pri $x$ zavzame vrednost, ki jo je $f$ imela pri $x - 3$, torej $3$ enote bolj levo.
++ Ker ima $g$ pri $x$ vrednost, ki jo ima $f$ pri $x - 3$, torej $3$ enote bolj levo.
+- Ker se vsaki točki grafa od koordinate $x$ odšteje $3$.
+~ Potem bi šel graf v levo. Koordinati $x$ se $3$ prišteje: $(x, y)$ preide v $(x + 3, y)$.
 > Vsaka vrednost grafa $f$ se pri $g$ pojavi $3$ enote bolj desno, zato je cel graf premaknjen v desno.
+
+? Na sliki je graf $g(x) = a|x - p| + q$. Z grafa odčitaj faktor $a$.
+:::risba graf
+opis: Graf v obliki obrnjene črke V na mreži s korakom 1; vrh je označen s točko brez koordinat. Lego vrha in strmino krakov je treba odčitati z mreže.
+x: -3 .. 5
+y: -4 .. 4
+enako: da
+f: -2*abs(x - 1) + 3 | modra
+točka: 1; 3 | | | modra
+podnapis: Graf g; mreža ima korak 1
+:::
+= -2 | 0,01
+~ 2 | Strmino si odčital prav, a graf je obrnjen navzdol. Zrcaljenje čez os $x$ pomeni negativen $a$.
+~ -0,5 | Zamenjal si smeri: za $1$ v desno od vrha se graf spusti za $2$, ne za $0{,}5$.
+~ 3 | To je $q$, višina vrha. Faktor $a$ pove, kako strma sta kraka.
+~ 1 | To je $p$, lega vrha na osi $x$.
+> Vrh je v $(1, 3)$. En korak desno od vrha je graf za $2$ niže, pri $|x|$ pa bi bil za $1$ više: $a = -2$ in $g(x) = -2|x - 1| + 3$.
 
 ? Žan riše graf $g(x) = -|x - 2| + 3$ iz grafa $|x|$ v treh korakih. Kateri korak je napačen?
 - 1. korak: »Zaradi $x - 2$ graf premaknem za $2$ v desno, konica je v $(2, 0)$.«
@@ -351,12 +404,12 @@ Ko na koncu pogledaš predpis $2(x - p)^2 + q$, iz njega razbereš vso zgodbo: k
 ~ Prištevanje zunaj res dvigne graf. Preizkus: $g(2) = -0 + 3 = 3$, vrh je v $(2, 3)$.
 > Minus zunaj spremeni predznak vrednosti, zato zrcali čez os $x$: »V« se obrne navzdol. Čez os $y$ bi zrcalil minus pri vhodu, $f(-x)$.
 
-? Graf $T(t)$ kaže, kako se segreva zrak v učilnici, ko hišnik ob času $t = 0$ vklopi ogrevanje ($t$ merimo v minutah). Jutri ga bo vklopil $5$ minut kasneje, vse drugo bo enako. Kateri predpis opisuje jutrišnjo temperaturo, merjeno od istega trenutka?
+? Graf $T(t)$ kaže, kako se segreva zrak v učilnici, ko hišnik ob času $t = 0$ vklopi ogrevanje ($t$ merimo v minutah). Jutri ga bo vklopil $5$ minut kasneje, vse drugo bo enako. Čas $t$ še vedno štejemo od trenutka, ko ga je vklopil danes. Kateri predpis opisuje jutrišnjo temperaturo za $t \ge 5$?
++ $T(t - 5)$
 - $T(t + 5)$
 ~ Plus v oklepaju premakne graf v levo, segrevanje bi se začelo prej.
 - $T(t) - 5$
 ~ To bi pomenilo zrak, ki je ves čas za $5$ stopinj hladnejši, ne zamika v času.
-+ $T(t - 5)$
 > Jutri ima zrak ob času $t$ tisto temperaturo, kot jo je danes imel ob $t - 5$. Graf se premakne za $5$ minut v desno.
 
 :::simboli
@@ -374,4 +427,22 @@ Z_g | zaloga vrednosti funkcije $g$ | |
 b | faktor v simulaciji | | | pri $p = 0$ da $b = -1$ graf $f(-x)$
 s | vrednost na senzorju v soboto | s(t) = m(t - p) + q | mmol/L
 k | faktor skrčitve v smeri osi $x$ | | | $k > 0$
+n | krvni sladkor po kosilu v modelu | n(t) = m\left(\frac{t}{2}\right) | mmol/L
 :::
+
+<<RACUN
+vrednost: (4-3)^2+1 | 2
+vrednost: (5-3)^2+1 | 5
+resi: -2*abs(x)+4=0 | x | -2, 2
+enako: -2*((t-2)-1)^2+7+0.5 | -2*(t-3)^2+7.5
+resi: -2*(t-3)^2+7.5=7 | t | 2.5, 3.5
+vrednost: -2*(2/2-1)^2+7 | 7
+vrednost: 132.3/18.016 | 7.3
+resi: 5=4*a-3 | a | 2
+vrednost: 2*(0+2)^2-3 | 5
+vrednost: 3*sqrt(3+1)-2 | 4
+enako: (2*x)^2 | 4*x^2
+vrednost: -2*2+3 | -1
+vrednost: -2*sqrt(4-1)+3 | -0.46
+vrednost: -2*abs(2-1)+3 | 1
+>>

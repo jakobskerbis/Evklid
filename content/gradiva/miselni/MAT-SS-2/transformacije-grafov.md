@@ -2,6 +2,9 @@
 avtor: AI
 stanje: osnutek
 ---
+- Znotraj in zunaj
+  - zunaj $f$: navpično, kot piše
+  - pri $x$: vodoravno, obratno
 - Navpični premik
   - $f(x) + q$: za $q$ navzgor
   - senzor kaže $0{,}5$ preveč: graf višje

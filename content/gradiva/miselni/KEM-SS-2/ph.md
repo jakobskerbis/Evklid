@@ -12,12 +12,12 @@ stanje: osnutek
 - Lestvica pH
   - pod $7$ kislo, nad $7$ bazično ($25\,^\circ\mathrm{C}$)
   - ena enota pomeni faktor $10$
-  - pH $2 \to 4$: $100$-krat redčenje
+  - pH $2 \to 4$: $100$-kratno redčenje
 - Voda in pOH
-  - $[\mathrm{H_3O^+}] \cdot [\mathrm{OH^-}] = 10^{-14}$
+  - ionski produkt vode $K_w = [\mathrm{H_3O^+}] \cdot [\mathrm{OH^-}] = 10^{-14}$
   - $\mathrm{pH} + \mathrm{pOH} = 14$ pri $25\,^\circ\mathrm{C}$
 - Močne baze
-  - $[\mathrm{OH^-}] = c$, pri $\mathrm{Ba(OH)_2}$ $2c$
+  - $[\mathrm{OH^-}] = c$, pri $\mathrm{Ba(OH)_2}$ $2c$ (drugi $\mathrm{OH^-}$)
   - najprej pOH, nato $14 - \mathrm{pOH}$
   - napaka: pOH zapisan kot pH
 - Obratni račun
@@ -26,7 +26,7 @@ stanje: osnutek
 - Redčenje
   - $c_1 \cdot V_1 = c_2 \cdot V_2$
   - razpolovitev: pH zraste za $0{,}30$
-  - kislina nikoli ne preseže pH $7$
+  - razredčena kislina se pH $7$ le približa
 - Meje
   - pH pod $0$ pri $c$ nad $1\,\text{mol/L}$
   - $\mathrm{H_2SO_4}$: $[\mathrm{H_3O^+}]$ ni $2c$
