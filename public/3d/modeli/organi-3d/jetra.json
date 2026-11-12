@@ -4,10 +4,10 @@
  "tkiva": {
   "jetra": {
    "hrap": 0.3,
-   "lak": 0.9,
-   "lakHrap": 0.1,
+   "lak": 0.6,
+   "lakHrap": 0.16,
    "sijaj": 0.12,
-   "ao": 0.85,
+   "ao": 0.5,
    "zrno": 0.06,
    "f": 220,
    "barva": "#7a2c22",
@@ -17,12 +17,12 @@
    "lise": 0.2,
    "liseBarva": "#a0483a",
    "relief": 0.25,
-   "senca": 0.3,
+   "senca": 0.12,
    "sencaBarva": "#3a120c",
    "rez": "#93392a",
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.7,
+   "aoTekstura": 0.3,
    "celice": [
     {
      "mera": 0.0014,
