@@ -4,6 +4,7 @@
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
+import { prviNeprosojen } from "./izbira.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -799,7 +800,7 @@ export function odpriModel(el, mod, opts = {}) {
       oder.append(orodja, povzetekEl);
       kit.naTap((ndc) => {
         if (!model?.group) return;
-        const hit = kit.zadetki(ndc, [model.group])[0];
+        const hit = prviNeprosojen(kit.zadetki(ndc, [model.group])); // skozi prosojne ovojnice do dela za njimi
         if (!hit) return izberi(null);
         const d = (model.deli || []).find((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
         izberi(d?.id ?? null, { hit: { object: hit.object, instanceId: hit.instanceId ?? null, point: hit.point.clone() }, preklopi: true });

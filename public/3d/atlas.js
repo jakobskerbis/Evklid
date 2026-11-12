@@ -12,6 +12,7 @@ import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
+import { prviNeprosojen, prosojenZadetek } from "./izbira.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -934,7 +935,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const vidniObjekti = () => [...[...sloji.values()].flatMap((s) => (s.viden ? s.skupine : [])), ...(sij.visible ? [sij] : [])];
   function zadetek(ndc) {
     const hits = kit.zadetki(ndc, vidniObjekti(), (h) => !prerez.on || ravnina.distanceToPoint(h.point) >= 0);
-    const h = hits[0];
+    // Skozi kožo, ovojnice in rentgensko steklo izbere del za njimi (izbrani del, sij, je vedno neprosojen).
+    const skozi = (h) => h.object !== sij && (rentgen || h.object.material.userData.osnovaProsojnost < 1 || prosojenZadetek(h));
+    const h = prviNeprosojen(hits, skozi);
     if (!h) return null;
     if (h.object === sij) return izbran;
     return h.object.userData[h.batchId]?.row.id || null;
@@ -1745,6 +1748,10 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     get stVidnih() {
       return stVidnih;
     },
+    get izbran() {
+      return izbran;
+    },
+    preklopiSloj, // za preizkuse: plast vklopi/izklopi kot stikalo v Brskaj
     // Za preizkuse (Playwright) in povezave: /3d#atlas?izberi=Femur.r
     izberiIzSeznama,
     nastavi(k, v) {
