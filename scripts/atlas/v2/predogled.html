@@ -39,6 +39,9 @@ async function nalozi(pot, nacin) {
   mesh.updateWorldMatrix(true, false);
   mesh.geometry.applyMatrix4(mesh.matrixWorld); mesh.position.set(0, 0, 0); mesh.rotation.set(0, 0, 0); mesh.scale.set(1, 1, 1);
   if (nacin === "brez-tekstur") mesh.material = new THREE.MeshStandardMaterial({ color: "#e8dcc4", roughness: 0.7 });
+  // preizkus normal map: »brez-normale« (samo geometrija + barva/AO), »obrni-g« (zelen kanal obrnjen)
+  if (nacin === "brez-normale") { mesh.material.normalMap = null; mesh.material.needsUpdate = true; }
+  if (nacin === "obrni-g") mesh.material.normalScale.y *= -1;
   return mesh;
 }
 
