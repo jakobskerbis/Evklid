@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Naravni viri
+  - obnovljivi: gozd, ribe; neobnovljivi: nafta, rude
+  - $\Delta N = rN - U$
+  - trajnostno: ulov največ enak prirastku
+- Onesnaževanje
+  - kisli dež, evtrofikacija, plastika
+  - biomagnifikacija: DDT se kopiči proti vrhu verige
+- Invazivne vrste
+  - prinesel človek, brez naravnih sovražnikov
+  - signalni rak, japonski dresnik, ambrozija
+  - napaka: nova vrsta ne poveča pestrosti
+- Izumiranje
+  - največ zaradi uničevanja in drobljenja habitatov
+  - še izkoriščanje, podnebje, onesnaževanje, invazivne vrste
+- Rdeči seznam
+  - LC → NT → VU → EN → CR → EW → EX
+  - upad $u = \dfrac{N_0 - N}{N_0}$
+- Zavarovana območja
+  - narodni, regijski in krajinski park
+  - naravni rezervat, naravni spomenik
+- Natura 2000
+  - omrežje EU za vrste in habitatne tipe
+  - dejavnosti dovoljene, če ne poslabšajo stanja

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Elementi
+  - O, C, H, N: okoli $96\,\%$ mase
+  - kisika največ zaradi vode
+- Voda
+  - polarna, vodikove vezi
+  - topilo, blaži nihanje temperature
+  - v človeku okoli $60\,\%$ mase
+- Mineralne snovi
+  - ioni $\mathrm{Na^+}$, $\mathrm{K^+}$, $\mathrm{Ca^{2+}}$, fosfat
+  - malo jih je, a so nujne
+- Makromolekule iz gradnikov
+  - kondenzacija odcepi vodo, hidroliza jo porabi
+  - iz $n$ gradnikov $n - 1$ vezi
+  - napaka: pozabljena odcepljena voda
+- Ogljikovi hidrati
+  - glukoza $\mathrm{C_6H_{12}O_6}$, maltoza $\mathrm{C_{12}H_{22}O_{11}}$
+  - škrob, glikogen, celuloza iz glukoze
+- Lipidi
+  - maščoba: glicerol in 3 maščobne kisline
+  - fosfolipid: hidrofilna glava, hidrofobna repa
+  - niso polimeri
+- Beljakovine
+  - 20 vrst aminokislin, peptidna vez
+  - oblika določa nalogo
+  - denaturacija ohrani zaporedje

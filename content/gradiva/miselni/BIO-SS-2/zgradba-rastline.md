@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba po nalogi
+  - smrekov les: dolge traheide vzdolž debla
+  - ozke letnice, enakomerno tog pokrov kitare
+- Rastlinska celica
+  - stena iz celuloze, v lesu lignin
+  - kloroplasti, velika vakuola, plazmodezmije
+- Tkiva
+  - tvorno: meristem, kambij
+  - krovno, osnovno, oporno
+  - napaka: les ni živo tkivo
+- Ksilem in floem
+  - ksilem: mrtve cevi, voda navzgor
+  - floem: žive sitaste cevi, sladkor
+  - floem v lubju, olupljen obroč ubije drevo
+- Korenina
+  - čepica, meristem, koreninski laski
+  - lasek je izrastek ene celice
+- Steblo
+  - dvokaličnice: žile v krogu, kambij, letnice
+  - enokaličnice: raztresene žile, brez letnic
+  - širina letnice $d = \dfrac{r}{n}$
+- List
+  - palisadni parenhim: največ fotosinteze
+  - gobasti parenhim, reže spodaj
+- Mikroskop
+  - $l = \dfrac{l_s}{M}$, deliš s povečavo
+  - $1\,\mathrm{mm} = 1000\,\mathrm{\mu m}$

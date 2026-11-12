@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ontogeneza
+  - razvoj osebka od zigote do smrti
+  - začne se z oploditvijo, ne z rojstvom
+- Brazdanje
+  - delitve brez rasti: $N = 2^n$
+  - morula, nato blastula (blastocista)
+  - ugnezdenje okoli 7. dne
+- Zarodni listi
+  - ektoderm: koža, živčevje, čutila
+  - mezoderm: mišice, kosti, srce, kri
+  - endoderm: sluznica prebavil, pljuča, jetra
+- Diferenciacija
+  - enaki geni, vključeni različni
+  - napaka: različne celice imajo različne gene
+  - matične celice še niso specializirane
+- Preobrazba
+  - popolna: jajce, ličinka, buba, odrasla (mušica)
+  - nepopolna: brez bube, z levitvami (ščurek)
+  - paglavec v žabo: tiroksin
+- Rast
+  - žuželke le kot ličinke, ob levitvah
+  - človek: najhitreje prvo leto, nato puberteta
+  - $v = \dfrac{\Delta h}{\Delta t}$, v cm na leto
+- Puberteta
+  - hipotalamus, hipofiza (FSH, LH), spolne žleze
+  - sekundarni spolni znaki
+  - rastne plošče zakostenijo
+- Staranje
+  - telomere se ob delitvah krajšajo
+  - kopičenje poškodb, menopavza okoli 50 let

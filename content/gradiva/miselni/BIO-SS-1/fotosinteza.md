@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kloroplast
+  - dve membrani, tilakoide v granih
+  - stroma, tekočina z encimi
+- Fotosintezna barvila
+  - klorofila a in b, karotenoidi
+  - vpijajo modro in rdečo, zeleno odbijejo
+- Svetlobne reakcije
+  - na tilakoidni membrani
+  - svetloba vzbudi elektrone klorofila
+  - nastaneta ATP in NADPH
+- Kisik iz vode
+  - voda se razcepi, sprosti se $\mathrm{O_2}$
+  - poskus z označenim $^{18}\mathrm{O}$ v vodi
+  - napaka: kisik iz $\mathrm{CO_2}$
+- Vezava $\mathrm{CO_2}$
+  - Calvinov cikel v stromi, encim rubisko
+  - za glukozo $6$ $\mathrm{CO_2}$, $18$ ATP, $12$ NADPH
+  - v temi se kmalu ustavi
+- Enačba fotosinteze
+  - $6\,\mathrm{CO_2} + 6\,\mathrm{H_2O} \rightarrow \mathrm{C_6H_{12}O_6} + 6\,\mathrm{O_2}$
+  - $264\,\text{g}$ $\mathrm{CO_2}$ da $180\,\text{g}$ glukoze
+  - snov iz $\mathrm{CO_2}$ v zraku, energija iz svetlobe
+- Dihanje rastlin
+  - mitohondriji delajo noč in dan
+  - v temi rastlina troši zalogo škroba

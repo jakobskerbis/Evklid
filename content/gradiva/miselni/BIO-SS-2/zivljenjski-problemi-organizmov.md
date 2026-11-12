@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Površina in prostornina
+  - kocka: $\dfrac{P}{V} = \dfrac{6}{a}$, enota $\mu\mathrm{m}^{-1}$
+  - večja celica, manj membrane na prostornino
+  - zato se celica deli in ostane majhna
+- Ločenost od okolja
+  - celična membrana, selektivno prepustna
+- Energija
+  - avtotrofi: fotosinteza; heterotrofi: hrana iz okolja
+  - celično dihanje sprosti energijo v ATP
+  - napaka: »rastline ne dihajo«
+- Notranje okolje
+  - homeostaza: stalna temperatura, voda, sladkor
+  - človek okoli $37\,\mathrm{°C}$
+- Negativna povratna zanka
+  - receptor, center, efektor
+  - odziv nasprotuje spremembi (potenje, inzulin)
+- Enoceličnost
+  - copatkar: migetalke, prebavne in krčljiva vakuola
+  - ameba: panožke
+- Večceličnost in diferenciacija
+  - celica, tkivo, organ, organski sistem
+  - enaki geni, različno uporabljeni
+  - tisoč majhnih celic: desetkrat več membrane

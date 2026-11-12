@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Celični cikel
+  - interfaza: G1, S, G2
+  - mitoza in citokineza
+- Delež celic kaže čas
+  - $t_\text{f} = \dfrac{N_\text{f}}{N} \cdot T$
+  - interfaza je najdaljša
+- Sestrski kromatidi
+  - nastaneta v fazi S
+  - povezani v centromeri, oblika X
+- Faze mitoze
+  - profaza, metafaza, anafaza, telofaza
+  - anafaza: kromatidi k poloma
+- Število kromosomov ostane
+  - človek: $46$ v hčerinski celici
+  - napaka: hčerinska dobi polovico
+- Diferenciacija
+  - ista DNA, različni geni izraženi
+  - matične celice obnavljajo tkiva
+- Rakave celice
+  - mutacije v nadzornih genih, npr. UV
+  - maligni tumor tvori zasevke

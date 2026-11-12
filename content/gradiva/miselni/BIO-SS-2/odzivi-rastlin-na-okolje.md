@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tropizmi
+  - usmerjena rast proti dražljaju ali stran
+  - foto-, gravi-, tigmotropizem
+  - steblo navzgor, korenina navzdol
+- Avksin
+  - premakne se na senčno stran
+  - senčna stran raste hitreje
+  - napaka: osvetljena stran ne raste hitreje
+- Rastlinski hormoni
+  - giberelini rast stebla, citokinini delitev
+  - abscizinska kislina zapre reže
+  - etilen: zorenje, odpadanje listov
+- Fotoperiodizem
+  - rastlina meri neprekinjeno noč
+  - $t_\mathrm{t} = 24\,\mathrm{h} - t_\mathrm{d} - t_\mathrm{l}$
+- Obramba pred patogeni
+  - pregrade: kutikula, stena, pluta
+  - celice okoli okužbe odmrejo
+- Neugodne razmere
+  - suša: zaprte reže
+  - zima: listi odpadejo, brsti mirujejo
+- Odnosi z organizmi
+  - mutualizem: mikoriza, bakterije, ki vežejo dušik
+  - zajedavstvo: omela, predenica
+  - bršljan ni zajedavec

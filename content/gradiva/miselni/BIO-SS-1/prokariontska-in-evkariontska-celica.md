@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mikrob ni ena stvar
+  - bakterija, kvasovka in virus so različno zgrajeni
+  - antibiotik ne deluje na virus
+- Prokariontska celica
+  - brez jedra, krožna DNA v nukleoidu
+  - stena iz peptidoglikana, ribosomi, plazmidi
+  - velikost okoli $2\,\mu\text{m}$
+- Evkariontska celica
+  - jedro z dvojno ovojnico
+  - organeli z membrano, okoli $10$–$100\,\mu\text{m}$
+- Organeli
+  - ER in Golgijev aparat: izdelava in pakiranje
+  - mitohondrij sprošča energijo, kloroplast jo ujame
+  - lizosom prebavlja, vakuola hrani vodo
+- Rastlina, žival, gliva
+  - stena: celuloza, je ni, hitin
+  - napaka: rastline nimajo mitohondrijev
+- Endosimbioza
+  - mitohondrij in kloroplast iz požrtih bakterij
+  - dve membrani, lastna DNA in ribosomi
+- Virusi
+  - dednina v kapsidi, niso celice
+  - razmnožujejo se le v gostiteljski celici
