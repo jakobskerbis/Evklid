@@ -4,7 +4,7 @@
     "1. Na veji paketa (PR #567, claude/videz-rtx) združi to vejo (scripts/atlas/v2/) in uveljavi scripts/atlas/v2/rtx-v2.patch (rtx.py: veja »atlas-v2«; paket.sh: kopira rtx_v2.py, izvozi_kost.py, postopek.py, kost.py v koda/).",
     "2. RAZLICICA=v2s1 sh scripts/atlas/rtx/paket.sh <mapa paketa> → koda-nova/ + manifest.json (SHA-256 vsake datoteke, samo imena *.py/*.json).",
     "3. V mapo paketa zapiši naloga.txt (spodaj, »naloga.txt«). rtx.py jo prebere v ≤ 60 s, zamenja koda/ s koda-nova/ po manifestu, preveri kartico (OPTIX, sicer CUDA; nikoli tiho CPU) in požene rtx_v2.naloga.",
-    "4. Rezultat: izhod/atlas-v2-v2s1/Femur.l/ (stegnenica-{telefon,racunalnik}-{realisticno,ucbenisko}.glb, *.webp, delo.blend, porocilo.json, postopek.log); stanje.json → »atlas-v2«: uspeli/napake. Posnetki: node scripts/atlas/v2/predogled.cjs."
+    "4. Rezultat: izhod/atlas-v2-v2s1/Femur.l/ (stegnenica-leva-{telefon,racunalnik}-{realisticno,ucbenisko}.glb, *.webp, delo.blend, porocilo.json, postopek.log); stanje.json → »atlas-v2«: uspeli/napake. Posnetki: node scripts/atlas/v2/predogled.cjs."
   ],
   "naloga.txt": { "id": "v2s1", "organi": ["atlas-v2"], "koda": "v2s1", "atlas-v2": { "kosti": ["Femur.l"], "kakovost": "rtx" } },
   "kakovost_rtx": {

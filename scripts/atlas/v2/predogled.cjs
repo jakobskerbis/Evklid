@@ -1,7 +1,7 @@
 // Atlas v2: posnetki ene kosti iz istih 8 pogledov (+ 2 od blizu) za izhodišče in nov model (Playwright, swiftshader).
 //   node scripts/atlas/v2/predogled.cjs <izhodna mapa> <oznaka>=<pot do .ply|.glb>[:brez-tekstur] …
 // Primer: node scripts/atlas/v2/predogled.cjs /home/claude/atlas-v2-predogled izhodisce=/tmp/femur-telo-hd.ply \
-//           realisticno=/tmp/v2/stegnenica-racunalnik-realisticno.glb ucbenisko=/tmp/v2/stegnenica-racunalnik-ucbenisko.glb
+//           realisticno=/tmp/v2/stegnenica-leva-racunalnik-realisticno.glb ucbenisko=/tmp/v2/stegnenica-leva-racunalnik-ucbenisko.glb
 // Izhodišče (.ply iz izvleci.mjs) dobi material kosti atlasa (public/3d/tkiva.js) z isto lučjo kot nov model.
 // Kader vseh modelov je iz škatle prvega, zato so posnetki poravnani. Strežnik: public/ in node_modules/three.
 const fs = require("node:fs");

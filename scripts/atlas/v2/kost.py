@@ -6,6 +6,27 @@ import numpy as np
 
 C_BL2GL = np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]], float)  # (x, y, z)_glTF = C · (x, y, z)_Blender
 
+# Imena datotek po kosteh (Z-Anatomy ime brez ».l/.r« → slovensko ime brez šumnikov; stran: -leva / -desna).
+# PODROBNOSTI: kosti, za katere postopek.py zna anatomske podrobnosti (okvir in mere so zaenkrat samo za stegnenico).
+IMENA = {"Femur": "stegnenica", "Tibia": "golenica", "Fibula": "mecnica", "Patella": "pogacica", "Hip bone": "kolcnica",
+         "Humerus": "nadlahtnica", "Radius": "kozeljnica", "Ulna": "podlahtnica", "Scapula": "lopatica", "Clavicle": "kljucnica"}
+PODROBNOSTI = {"Femur"}
+
+
+def razcleni(objekt):
+    """»Femur.l« / »Femur.l.001« → ("Femur", "l")."""
+    m = re.fullmatch(r"(.+?)\.(l|r)(\.\d{3})?", objekt)
+    if not m:
+        raise ValueError(f"ime kosti brez strani .l/.r: {objekt!r}")
+    return m.group(1), m.group(2)
+
+
+def ime_datoteke(objekt):
+    """»Femur.l« → »stegnenica-leva«; neznana kost → ime iz Z-Anatomy (male črke, presledki → -)."""
+    osnova, stran = razcleni(objekt)
+    ime = IMENA.get(osnova) or re.sub(r"[^a-z0-9]+", "-", osnova.lower()).strip("-")
+    return f"{ime}-{'leva' if stran == 'l' else 'desna'}"
+
 
 def beri_ply(pot):
     """Binarni ali ASCII PLY (naš izvoz) → V (n×3), F (m×3), dodatno {material: m, barva: n×3}."""

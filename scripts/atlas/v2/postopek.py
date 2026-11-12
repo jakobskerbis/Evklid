@@ -14,7 +14,7 @@
 #   4 nizki mreži za telefon in računalnik (QuadriFlow, sicer zmanjšanje), UV (Smart UV + pakiranje)
 #   5 peka z visoke na nizko (Cycles): normala (tangentna), AO, barva, hrapavost → ORM; cpu = nizka ločljivost
 #   6 GLB (WebP teksture, tangente) za telefon in računalnik v obeh videzih + delo.blend (par za peko) + porocilo.json
-import json, math, os, sys, time
+import json, math, os, re, sys, time
 
 import numpy as np
 
@@ -32,8 +32,15 @@ VHOD, INFO, IZHOD = z("--vhod"), z("--info"), z("--izhod")
 KAKOVOST = z("--kakovost", "cpu")
 NAPRAVA = z("--naprava", "CPU").upper()
 BREZ_PEKE = "--brez-peke" in a
-STRAN = z("--stran", "l")
 os.makedirs(IZHOD, exist_ok=True)
+with open(INFO, encoding="utf-8") as f:
+    info = json.load(f)
+OBJEKT = re.sub(r"\.\d{3}$", "", info["objekt"])  # ime v Z-Anatomy, npr. »Femur.l«
+OSNOVA, STRAN_IZ_IMENA = kost.razcleni(OBJEKT)
+STRAN = z("--stran", STRAN_IZ_IMENA)
+IME = kost.ime_datoteke(OBJEKT)  # imena izhodnih datotek, npr. »stegnenica-leva-racunalnik-realisticno.glb«
+if OSNOVA not in kost.PODROBNOSTI:
+    sys.exit(f"[v2] {OBJEKT}: postopek ima anatomske podrobnosti samo za {', '.join(sorted(kost.PODROBNOSTI))}")
 
 # Proračuni (načrt §1.3: telo ≤ 1,5 M telefon / ≤ 4 M računalnik; stegnenica je največja kost: ~1 % proračuna okostja)
 PRORACUN = {"telefon": 6000, "racunalnik": 16000}
@@ -171,8 +178,6 @@ def smooth(e0, e1, x):
 # =============================== 1 čiščenje ===============================
 nova_scena()
 V, F, dod = kost.beri_ply(VHOD)
-with open(INFO, encoding="utf-8") as f:
-    info = json.load(f)
 V, zrcaljeno = kost.v_atlas(V, info)
 if zrcaljeno:
     F = F[:, ::-1]
@@ -309,22 +314,31 @@ brazda = gauss(s_f, 0.45e-3) * gauss(v_f - 3.0e-3, 2.5e-3) * (v_f > 0)
 hp -= 1.4e-3 * jamica + 0.35e-3 * brazda
 temno = np.maximum(temno, smooth(0.25, 0.8, jamica))
 
-# Drobne žilne odprtine: samo na vratu (retinakularne, zgoraj spredaj in zadaj) in na metafizah ob kondilih
+# Drobne žilne odprtine: samo na vratu (retinakularne, zgoraj spredaj in zadaj) in na metafizah ob kondilih.
+# Malo in neopazno (v1 so bile videti kot žigosane pike): 4 + 5 odprtin, vsaj 8 mm narazen, plitve (0,3 mm),
+# podolgovate vzdolž kosti, mehak rob in le rahlo temnejše dno (barva kosti v senci, ne rjava pika)
 rng = np.random.default_rng(7)
 hc, hrd = lm["glavica"]
 d_h = np.linalg.norm(G - hc, axis=1)
 vrat = (d_h > 1.15 * hrd) & (d_h < 1.55 * hrd) & (d_gt > 0.025) & (hr_g < 0.05)
 metaf = (t > 0.06) & (t < 0.16) & (hr_g < 0.05) & ((G - c0) @ zad > 0)
 izbor = []
-for maska, n_ in ((vrat, 8), (metaf, 10)):
-    idx = np.where(maska)[0]
-    if len(idx):
-        izbor += list(rng.choice(idx, min(n_, len(idx)), replace=False))
+for maska, n_ in ((vrat, 4), (metaf, 5)):
+    idx = rng.permutation(np.where(maska)[0])
+    zbrani = []
+    for i in idx:
+        if len(zbrani) == n_:
+            break
+        if all(np.linalg.norm(G[i] - G[j]) > 8e-3 for j in zbrani + izbor):
+            zbrani.append(i)
+    izbor += zbrani
 for i in izbor:
-    d = np.linalg.norm(G - G[i], axis=1)
-    rr = rng.uniform(0.35e-3, 0.6e-3)
-    k = gauss(d, rr)
-    hp -= 0.8e-3 * k; temno = np.maximum(temno, smooth(0.3, 0.9, k) * 0.8)
+    d = G - G[i]
+    d_os = d @ osd  # podolgovate vzdolž osi (žile vstopajo poševno), 1,8 : 1
+    d_pr = np.linalg.norm(d - np.outer(d_os, osd), axis=1)
+    rr = rng.uniform(0.3e-3, 0.45e-3)
+    k = gauss(np.sqrt(d_pr ** 2 + (d_os / 1.8) ** 2), rr)
+    hp -= 0.3e-3 * k; temno = np.maximum(temno, smooth(0.45, 1.0, k) * 0.45)
 
 # Fovea capitis: otok brez hrustanca na glavici (iz vira) poglobimo za 1,5 mm (pripoj vezi glavice)
 fov = (d_h < 1.05 * hrd) & (hr < 0.5) & (((G - hc) @ med) > 0.3 * hrd)
@@ -342,14 +356,19 @@ zrno = fbm(G / 0.8e-3, 2) * 0.5 + 0.5
 kost_b = np.array([0.86, 0.80, 0.68]) * (0.94 + 0.08 * lisa[:, None]) + np.array([0.02, 0.01, -0.03]) * (lisa[:, None] - 0.5)
 kost_b *= (0.97 + 0.05 * zrno[:, None])
 kost_b = kost_b * (1 - 0.10 * hrap[:, None]) + np.array([-0.02, -0.03, -0.05]) * hrap[:, None]
-hr_b = np.array([0.90, 0.89, 0.84]) * (0.97 + 0.03 * lisa[:, None])  # sklepni hrustanec: biserno bel, rahlo hladen
-odp_b = np.array([0.30, 0.20, 0.15])
+# sklepni hrustanec (v1 preveč bel in plastičen): prosojno sivkasto-biserna z rahlo rumenkastim tonom, kjer je tanek
+# (ob robu prosveti kost), mehke lise in drobno zrno; brez čisto bele
+hr_rob = smooth(0.5, 0.95, hr_g)  # 0 ob robu, 1 sredi sklepne ploskve
+hr_lisa = fbm(G / 6e-3, 3) * 0.5 + 0.5
+hr_b = (np.array([0.78, 0.77, 0.73]) * hr_rob[:, None] + np.array([0.80, 0.75, 0.63]) * (1 - hr_rob[:, None]))
+hr_b = hr_b * (0.93 + 0.07 * hr_lisa[:, None]) * (0.985 + 0.03 * zrno[:, None]) + np.array([-0.01, 0.0, 0.015]) * (hr_lisa[:, None] - 0.5)
+odp_b = np.array([0.50, 0.42, 0.33])  # dno odprtine: kost v senci (AO doda globino)
 real = kost_b * (1 - hr_g[:, None]) + hr_b * hr_g[:, None]
 real = real * (1 - temno[:, None]) + odp_b * temno[:, None]
 ucb = np.array([0.93, 0.87, 0.72]) * (1 - hr_g[:, None]) + np.array([0.55, 0.78, 0.93]) * hr_g[:, None]
 ucb = ucb * (1 - 0.6 * temno[:, None]) + np.array([0.45, 0.35, 0.28]) * 0.6 * temno[:, None]
 rough = 0.62 + 0.20 * hrap + 0.04 * (zrno - 0.5)
-rough = rough * (1 - hr_g) + 0.38 * hr_g
+rough = rough * (1 - hr_g) + (0.48 + 0.08 * hr_lisa + 0.03 * (zrno - 0.5)) * hr_g  # vlažen sijaj, ne plastika
 rough = np.maximum(rough, 0.9 * temno)
 
 
@@ -412,11 +431,51 @@ def uv_siv(lo):
     return n
 
 
+def presecisca(lo):
+    """Pari ploskev nizke mreže, ki se sekajo (brez sosednjih s skupnim ogliščem; kot mere.py)."""
+    V_, F_ = np_mreza(lo)
+    tr = BVHTree.FromPolygons(V_.tolist(), F_.tolist(), all_triangles=True, epsilon=0.0)
+    Fs = [set(f) for f in F_.tolist()]
+    return F_, [(i, j) for i, j in tr.overlap(tr) if i < j and not (Fs[i] & Fs[j])]
+
+
+def razresi_presecisca(lo, gl_bvh, krogov=40):
+    """SHRINKWRAP (najbližja točka) v ozkih vdolbinah (fovea, med obrtcema, med kondiloma) potegne sosednja oglišča na
+    isto mesto in ploskve se prepognejo. Popravek: oglišča sekajočih se ploskev (+ en obroč sosedov, vsak krog širše)
+    sprostimo z Laplaceovim glajenjem in jih spet položimo na gladko površino, a le do polovice (sicer bi jih prilepljanje
+    znova zložilo). Če po 3/4 krogov še niso razrešena, jih ne prilepimo več (le glajenje; odmik je < 0,5 mm in peka ga
+    pokrije s kletko 2,5 mm). Vrne (pari pred, pari po, krogi)."""
+    F_, pari = presecisca(lo)
+    zacetek = len(pari)
+    E, d = sosedi(len(lo.data.vertices), F_)
+    k = 0
+    while pari and k < krogov:
+        k += 1
+        V_, _ = np_mreza(lo)
+        izb = np.zeros(len(V_), bool); izb[F_[[i for p in pari for i in p]].ravel()] = True
+        for _ in range(1 + k // 8):  # obroč sosedov se širi
+            izb[E[izb[E[:, 0]], 1]] = True; izb[E[izb[E[:, 1]], 0]] = True
+        s = np.zeros_like(V_); np.add.at(s, E[:, 0], V_[E[:, 1]]); np.add.at(s, E[:, 1], V_[E[:, 0]])
+        Vn = V_.copy(); Vn[izb] = 0.4 * V_[izb] + 0.6 * (s[izb] / d[izb, None])
+        if k <= krogov * 3 // 4:
+            Vb = v_blender(Vn[izb])
+            P = np.array([gl_bvh.find_nearest(p)[0] for p in Vb])
+            Vn[izb] = 0.5 * Vn[izb] + 0.5 * iz_blenderja(P)
+        nastavi_oglisca(lo, Vn)
+        _, pari = presecisca(lo)
+    return zacetek, len(pari), k
+
+
+dg = bpy.context.evaluated_depsgraph_get()
+gl_bvh = BVHTree.FromObject(gl, dg)
 nizke = {}
 for cilj, n_tri in PRORACUN.items():
     lo = mreza_obj(f"nizka-{cilj}", G, GF)
-    if len(GF) > 1000000:  # QuadriFlow na milijonih ploskev (rtx) je počasen; zmanjšana mreža z robovi kolapsa ga ustavi
-        uporabi(lo, "REMESH", mode="VOXEL", voxel_size=0.0015, adaptivity=0.0)  # (CANCELLED), voxel 1,5 mm ostane zaprt
+    if len(GF) > 1000000:
+        # QuadriFlow na RTX geometriji (2,8 M) odpove (»needs to be manifold«, CANCELLED; na strežniku tudi po voxel
+        # 1,5 mm in 0,7 mm). Vhod vseeno zmanjšamo na voxel 0,7 mm (hitreje, bolj enakomerni trikotniki za zmanjšanje s
+        # kolapsom, ki ostane rezerva: mreža zaprta, mnogoterna, brez samopresečišč; preverjeno z mere.py).
+        uporabi(lo, "REMESH", mode="VOXEL", voxel_size=0.0007, adaptivity=0.0)
     nacin = "quadriflow"
     try:
         aktiviraj(lo)
@@ -425,19 +484,21 @@ for cilj, n_tri in PRORACUN.items():
         if "FINISHED" not in r_:
             raise RuntimeError(str(r_))
     except Exception as e:  # QuadriFlow včasih ne uspe (nemnogoterni vhod); takrat zmanjšanje s kolapsom robov
-        print("[v2] quadriflow ni uspel:", e, flush=True)
+        print("[v2] quadriflow ni uspel, zmanjšanje s kolapsom:", e, flush=True)
         nacin = "decimate"
         uporabi(lo, "DECIMATE", decimate_type="COLLAPSE", ratio=n_tri / max(1, sum(len(p.vertices) - 2 for p in lo.data.polygons)), use_collapse_triangulate=True)
     uporabi(lo, "TRIANGULATE", quad_method="BEAUTY")
     if len(lo.data.polygons) > n_tri * 1.02:
         uporabi(lo, "DECIMATE", decimate_type="COLLAPSE", ratio=n_tri / len(lo.data.polygons), use_collapse_triangulate=True)
-    # nizko mrežo potisnemo na gladko površino (QuadriFlow malo skrči izbokline)
+    # nizko mrežo potisnemo na gladko površino (QuadriFlow malo skrči izbokline), nato razrešimo samopresečišča
     sw = lo.modifiers.new("prilepi", "SHRINKWRAP"); sw.target = gl; sw.wrap_method = "NEAREST_SURFACEPOINT"
     aktiviraj(lo); bpy.ops.object.modifier_apply(modifier=sw.name)
+    sp = razresi_presecisca(lo, gl_bvh)
+    print(f"[v2] {cilj}: samopresečišča po prilepljanju {sp[0]} → {sp[1]} ({sp[2]} krogov)", flush=True)
     uv_siv(lo)
     for p in lo.data.polygons:
         p.use_smooth = True
-    nizke[cilj] = (lo, nacin)
+    nizke[cilj] = (lo, nacin, sp)
 korak("4 nizki mrezi in UV")
 
 
@@ -521,7 +582,7 @@ def peci(lo, tip, im, mat_vis=None, vzorci=1):
 pekel = {}
 if not BREZ_PEKE:
     px = NASTAVITVE["peka"]
-    for cilj, (lo, _) in nizke.items():
+    for cilj, (lo, _, _) in nizke.items():
         p_c = px if cilj == "racunalnik" else px // 2
         sl = {}
         sl["normala"] = slika(f"{cilj}-normala", p_c, False); peci(lo, "NORMAL", sl["normala"])
@@ -582,7 +643,7 @@ def material_glb(ime, barva_pot, normala_pot, orm_pot, ucb):
 
 
 # =============================== 6 izvoz ===============================
-porocilo = {"kakovost": KAKOVOST, "naprava": NAPRAVA, "ciscenje": ciscenje, "nastavitve": NASTAVITVE, "proracun": PRORACUN,
+porocilo = {"kost": OBJEKT, "ime": IME, "kakovost": KAKOVOST, "naprava": NAPRAVA, "ciscenje": ciscenje, "nastavitve": NASTAVITVE, "proracun": PRORACUN,
             "visoka": {"trikotniki": int(len(GF)), "oglisca": int(len(G))}, "mere_gladke": {k: round(v, 2) for k, v in mer_g.items()},
             "podrobnosti": {"linea_aspera_theta_st": [round(math.degrees(x), 1) for x in th_surovo[::4]],
                             "veliki_obrtec": gt.round(4).tolist(), "mali_obrtec": lt.round(4).tolist(),
@@ -590,11 +651,11 @@ porocilo = {"kakovost": KAKOVOST, "naprava": NAPRAVA, "ciscenje": ciscenje, "nas
                             "hrustanec_delez_povrsine": round(float(hr.mean()), 3)},
             "izhodi": {}}
 kost.pisi_ply(os.path.join(IZHOD, "visoka.ply"), H, GF)
-for cilj, (lo, nacin) in nizke.items():
+for cilj, (lo, nacin, sp) in nizke.items():
     Vl, Fl = np_mreza(lo)
     kost.pisi_ply(os.path.join(IZHOD, f"nizka-{cilj}.ply"), Vl, Fl)
     ime_px = NASTAVITVE["izvoz"][cilj]
-    zapis = {"nacin": nacin, "trikotniki": int(len(Fl)), **gostota(lo, ime_px)}
+    zapis = {"nacin": nacin, "trikotniki": int(len(Fl)), "samopresecisca": {"po_prilepljanju": sp[0], "konec": sp[1], "krogi": sp[2]}, **gostota(lo, ime_px)}
     if pekel:
         sl = pekel[cilj]
         nor = pomanjsaj(v_np(sl["normala"]), ime_px)
@@ -610,9 +671,9 @@ for cilj, (lo, nacin) in nizke.items():
         for vid, ime_v in (("real", "realisticno"), ("ucb", "ucbenisko")):
             lo.data.materials.clear()
             lo.data.materials.append(material_glb(f"Kost-{ime_v}", poti[vid], poti["normala"], poti["orm"], vid == "ucb"))
-            lo.name = "Femur.l"
+            lo.name = OBJEKT
             aktiviraj(lo)
-            pot = os.path.join(IZHOD, f"stegnenica-{cilj}-{ime_v}.glb")
+            pot = os.path.join(IZHOD, f"{IME}-{cilj}-{ime_v}.glb")
             bpy.ops.export_scene.gltf(filepath=pot, export_format="GLB", use_selection=True, export_yup=True,
                                       export_tangents=True, export_image_format="WEBP", export_materials="EXPORT",
                                       export_normals=True, export_texcoords=True, export_draco_mesh_compression_enable=False)
