@@ -7,6 +7,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import {
   zaženi, odlociZagon, izberiIdje, idjiKroga, isoTeden, vklopljeno, porabaTedna, preberiStanje, nacrtujMeritevPoObjavi,
+  vpisiVKnjigo, porabaKnjige,
   MAX_ZAGON_USD, MAX_TEDEN_USD, MAX_PRIMEROV, PONOVI,
 } from "../server/meritev-po-objavi.js";
 
@@ -22,14 +23,16 @@ function repo() {
   w("prompts/system_prompt.md", "p1");
   w("server/live-check.js", "l1");
   w("docs/spremembe-prompta.md", KROG_MD);
-  return { root, w, file: path.join(root, "data", "meritev-po-objavi.json") };
+  return { root, w, file: path.join(root, "data", "meritev-po-objavi.json"), knjiga: path.join(root, "data", "meritve-strosek.jsonl") };
 }
 
 // Vstavljen zagon: zapiše izid s podanim stroškom (ali nič, kot ob sesutju) in si zapomni klice.
-function lazniZagon(strosek, { code = 0 } = {}) {
+// Kot prava skripta vpiše strošek v knjigo ob izidu (path.dirname(izidFile)/../meritve-strosek.jsonl).
+function lazniZagon(strosek, { code = 0, now = new Date("2026-11-12T10:00:00Z") } = {}) {
   const klici = [];
   const fn = async (o) => {
     klici.push(o);
+    if (strosek) vpisiVKnjigo(path.join(path.dirname(o.izidFile), "..", "meritve-strosek.jsonl"), strosek, { now, vir: "po-objavi" });
     if (strosek != null) fs.writeFileSync(o.izidFile, JSON.stringify({ strosek_usd: strosek, ustavljeno_ob_meji: false, primeri: o.idji.map((id) => ({ id, pogoj: "s", od: 4, napaka: 0, manjsa_napaka: 1, pravilno: 3, razlogi: ["manjsa_napaka: x"] })) }));
     return { code };
   };
@@ -92,9 +95,9 @@ test("odločitev: tedenska meja, en zagon na objavo, nič spremenjenega", () => 
 });
 
 test("zaženi: prvi zagon le izhodišče; nato meri samo spremenjeno, z mejo 1 $ na zagon in pravim ukazom", async () => {
-  const { root, w, file } = repo();
+  const { root, w, file, knjiga } = repo();
   const zagon = lazniZagon(0.42);
-  const o = { root, file, merljiv: vse, zagon, log() {}, now: ura("2026-11-12T10:00:00Z") };
+  const o = { root, file, knjiga, merljiv: vse, zagon, log() {}, now: ura("2026-11-12T10:00:00Z") };
   let r = await zaženi({ ...o, env: env("c0") });
   assert.equal(r.ok, false);
   assert.match(r.razlog, /prvi zagon/);
@@ -113,7 +116,8 @@ test("zaženi: prvi zagon le izhodišče; nato meri samo spremenjeno, z mejo 1 $
   assert.equal(zagon.klici[0].maxUsd, MAX_ZAGON_USD, "skripta dobi --max-usd 1");
   assert.equal(PONOVI, 4);
   const s = preberiStanje(file);
-  assert.equal(s.porabljeno_usd, 0.42, "rezervacija 1 $ zamenjana z dejanskim stroškom");
+  assert.equal(s.porabljeno_usd, 0, "rezervacija 1 $ odpade, dejanski strošek je v knjigi");
+  assert.equal(porabaKnjige(knjiga, "2026-W46"), 0.42);
   assert.equal(s.zgodovina[0].stanje, "končano");
   assert.equal(s.zgodovina[0].primeri[0].id, "MAT-OS-7/a");
 
@@ -124,9 +128,9 @@ test("zaženi: prvi zagon le izhodišče; nato meri samo spremenjeno, z mejo 1 $
 });
 
 test("zaženi: največ en zagon na objavo, tudi po ponovnem zagonu strežnika in če se je prvi sesul", async () => {
-  const { root, w, file } = repo();
+  const { root, w, file, knjiga } = repo();
   const zagon = lazniZagon(null, { code: 1 }); // sesutje brez izida
-  const o = { root, file, merljiv: vse, zagon, log() {}, now: ura("2026-11-12T10:00:00Z") };
+  const o = { root, file, knjiga, merljiv: vse, zagon, log() {}, now: ura("2026-11-12T10:00:00Z") };
   await zaženi({ ...o, env: env("c0") });
   w("content/lessons/FIZ-OS-8/b.md", "b2");
   assert.equal((await zaženi({ ...o, env: env("c1") })).ok, true);
@@ -139,9 +143,9 @@ test("zaženi: največ en zagon na objavo, tudi po ponovnem zagonu strežnika in
 });
 
 test("zaženi: tedenska meja 15 $ zavrne zagon pred klicem; nov teden spet dovoli", async () => {
-  const { root, w, file } = repo();
+  const { root, w, file, knjiga } = repo();
   const zagon = lazniZagon(1); // vsak zagon porabi cel 1 $
-  const o = { root, file, merljiv: vse, zagon, log() {} };
+  const o = { root, file, knjiga, merljiv: vse, zagon, log() {} };
   await zaženi({ ...o, env: env("c0"), now: ura("2026-11-10T10:00:00Z") });
   for (let i = 1; i <= MAX_TEDEN_USD + 2; i++) {
     w("content/lessons/MAT-OS-7/a.md", `a${i}`);
@@ -149,16 +153,17 @@ test("zaženi: tedenska meja 15 $ zavrne zagon pred klicem; nov teden spet dovol
   }
   assert.equal(zagon.klici.length, MAX_TEDEN_USD, "15 zagonov po 1 $, nato zavrnjeno");
   const s = preberiStanje(file);
-  assert.equal(s.porabljeno_usd, MAX_TEDEN_USD);
+  assert.equal(s.porabljeno_usd, 0, "rezervacije so odpadle");
+  assert.equal(porabaKnjige(knjiga, "2026-W46"), MAX_TEDEN_USD);
   assert.match(s.zgodovina[0].razlog, /tedenska meja/);
   w("content/lessons/MAT-OS-7/a.md", "nov teden");
   assert.equal((await zaženi({ ...o, env: env("c-nov"), now: ura("2026-11-16T08:00:00Z") })).ok, true);
-  assert.equal(preberiStanje(file).porabljeno_usd, 1);
+  assert.equal(preberiStanje(file).porabljeno_usd, 0);
 });
 
 test("zaženi: prekinjen zagon (objava ustavi proces) šteje cel 1 $ v tedensko porabo", async () => {
-  const { root, w, file } = repo();
-  const o = { root, file, merljiv: vse, log() {}, now: ura("2026-11-12T10:00:00Z") };
+  const { root, w, file, knjiga } = repo();
+  const o = { root, file, knjiga, merljiv: vse, log() {}, now: ura("2026-11-12T10:00:00Z") };
   await zaženi({ ...o, env: env("c0"), zagon: lazniZagon(0) });
   w("content/lessons/MAT-OS-7/a.md", "a2");
   // Zagon, ki se nikoli ne konča (proces ustavljen med meritvijo): rezervacija je že zapisana.
@@ -169,13 +174,52 @@ test("zaženi: prekinjen zagon (objava ustavi proces) šteje cel 1 $ v tedensko 
   await zaženi({ ...o, env: env("c2"), zagon: lazniZagon(0.3) });
   const s = preberiStanje(file);
   assert.equal(s.zgodovina.find((z) => z.objava === "c1").stanje, "prekinjeno");
-  assert.equal(Number(s.porabljeno_usd.toFixed(4)), 1.3);
+  assert.equal(s.porabljeno_usd, 1, "prekinjeni zagon: cel 1 $ ostane rezerviran");
+  assert.equal(porabaKnjige(knjiga, "2026-W46"), 0.3);
+});
+
+test("zaženi: ročne meritve iz iste knjige štejejo v tedensko mejo 15 $", async () => {
+  const { root, w, file, knjiga } = repo();
+  const zagon = lazniZagon(0.5);
+  const o = { root, file, knjiga, merljiv: vse, zagon, log() {}, now: ura("2026-11-12T10:00:00Z") };
+  await zaženi({ ...o, env: env("c0") });
+  // Ročni zagoni ta teden: 14,2 $ (zapisano po odgovorih) + en lanski teden, ki ne šteje.
+  for (let i = 0; i < 142; i++) vpisiVKnjigo(knjiga, 0.1, { now: new Date("2026-11-11T09:00:00Z"), vir: "ročno" });
+  vpisiVKnjigo(knjiga, 50, { now: new Date("2026-11-05T09:00:00Z"), vir: "ročno" });
+  fs.appendFileSync(knjiga, '{"pretrgana vrst'); // pretrgana zadnja vrstica se izpusti
+  assert.equal(Number(porabaKnjige(knjiga, "2026-W46").toFixed(4)), 14.2);
+  w("content/lessons/MAT-OS-7/a.md", "a2");
+  const r = await zaženi({ ...o, env: env("c1") });
+  assert.equal(r.ok, false);
+  assert.match(r.razlog, /tedenska meja: porabljeno 14\.20/);
+  assert.equal(zagon.klici.length, 0);
+  // Neberljiva knjiga (npr. mapa namesto datoteke) zavrne zagon.
+  assert.equal(porabaKnjige(path.dirname(knjiga), "2026-W46"), Infinity);
+  assert.equal(odlociZagon({}, { objava: "x", teden: "2026-W46", idji: ["a/b"], knjiga: Infinity }).ok, false);
+});
+
+test("zaženi: pokvarjeno stanje → ni zagona, datoteka ostane nespremenjena (ne izgubi tedenske porabe)", async () => {
+  const { root, w, file, knjiga } = repo();
+  const zagon = lazniZagon(0.5);
+  const o = { root, file, knjiga, merljiv: vse, zagon, log() {}, now: ura("2026-11-12T10:00:00Z") };
+  await zaženi({ ...o, env: env("c0") });
+  w("content/lessons/MAT-OS-7/a.md", "a2");
+  fs.writeFileSync(file, '{"teden":"2026-W46","porabljeno_usd":3,');
+  const r = await zaženi({ ...o, env: env("c1") });
+  assert.equal(r.ok, false);
+  assert.match(r.razlog, /pokvarjeno/);
+  assert.equal(zagon.klici.length, 0);
+  assert.equal(fs.readFileSync(file, "utf8"), '{"teden":"2026-W46","porabljeno_usd":3,');
+  assert.equal(preberiStanje(file), null);
+  fs.writeFileSync(file, "[]");
+  assert.equal(preberiStanje(file), null);
+  assert.deepEqual(preberiStanje(path.join(root, "ni.json")), {}, "manjkajoča datoteka = prvi zagon (le izhodišče, brez stroška)");
 });
 
 test("GET /api/admin/meritev-po-objavi: skrbnik vidi povzetek (besedilo in JSON brez odtisov), drugi 403", async () => {
-  const { root, w, file } = repo();
+  const { root, w, file, knjiga } = repo();
   process.env.EVKLID_DB = path.join(path.dirname(file), "evklid.db");
-  const o = { root, file, merljiv: vse, log() {}, now: ura("2026-11-12T10:00:00Z") };
+  const o = { root, file, knjiga, merljiv: vse, log() {}, now: ura("2026-11-12T10:00:00Z") };
   await zaženi({ ...o, env: env("c0"), zagon: lazniZagon(0) });
   w("content/lessons/MAT-OS-7/a.md", "a2");
   await zaženi({ ...o, env: env("abc1234567890"), zagon: lazniZagon(0.5) });

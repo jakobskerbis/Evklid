@@ -52,7 +52,8 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - `EVKLID_MONTHLY_BUDGET_USD=50` – opozorilo v dnevniku pri 80 % porabe.
 - `EVKLID_MERITEV_PO_OBJAVI=1` – 5 min po vsaki objavi ciljna meritev natančnosti lekcij, ki jih je objava spremenila
   (ob spremembi prompta ali sprotnega preverjanja še primeri zadnjega kroga iz `docs/spremembe-prompta.md`), 4×, s preverjanjem.
-  Največ 1 $ na zagon, 15 $ na teden (ISO, UTC), en zagon na objavo; brez sprememb ni zagona. Izid: prijavljen skrbnik odpre
+  Največ 1 $ na zagon, 15 $ na teden (ISO, UTC) skupaj z ročnimi meritvami (knjiga `/var/data/meritve-strosek.jsonl`, ki jo
+  piše `primerjava-modelov.js` ob vsakem plačanem odgovoru), en zagon na objavo; brez sprememb ni zagona. Izid: prijavljen skrbnik odpre
   `/api/admin/meritev-po-objavi` (`?json=1` za JSON); stanje in dnevniki v `/var/data/meritev-po-objavi.json` in
   `/var/data/meritve-po-objavi/`. Koda: `server/meritev-po-objavi.js`. `0` izklopi.
 

@@ -271,7 +271,8 @@ function saveProgress(file, rows) {
 // (dva odgovora, pregled, popravek, dve oceni); pred vsakim primerom mora biti zanj še prostor pod mejo.
 // createOpts: samo za teste (vstavljeni streamFn in reviewCreateFn namesto API).
 // conditions: podmnožica CONDITIONS (ciljna ponovitev z --pogoj); t.topic: tema pogovora, kadar je id ponovitev (»<id>#2«).
-export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, progressFile, realCap = false, createOpts = {}, log = console.log, conditions = CONDITIONS }) {
+// knjiga(usd): po vsakem plačanem odgovoru (tudi neocenjenem) njegov strošek v tedensko knjigo meritev (server/meritev-po-objavi.js).
+export async function runChecked({ tasks, settingsFor, question, grade, group, maxUsd, worstPair, progressFile, realCap = false, createOpts = {}, log = console.log, conditions = CONDITIONS, knjiga = () => {} }) {
   if (!(Number.isFinite(maxUsd) && maxUsd > 0) || !(Number.isFinite(worstPair) && worstPair > 0)) throw new Error("runChecked: neveljavna meja stroška");
   // Nastavitve morajo biti pred uvozom aplikacije (server/app.js jih delno prebere ob uvozu).
   process.env.EVKLID_ANSWER_CACHE = "0"; // vsak odgovor res pripravi model
@@ -333,6 +334,7 @@ export async function runChecked({ tasks, settingsFor, question, grade, group, m
         row.popravek = used.some((u) => u.kind === "popravek");
         row.pregled = used.some((u) => u.kind === "preverjanje" || u.kind === "preverjanje-sola");
         (isGraded(row) ? rows : dead).push(row);
+        knjiga(rowCost(row));
         if (progressFile) saveProgress(progressFile, [...rows, ...dead]);
         log(`[${i + 1}/${tasks.length}] ${c.kljuc.padEnd(4)} ${String(row.ocena).padEnd(13)} ${row.popravek ? "popravek " : ""}${row.pregled ? "pregled " : ""}${t.id}  (skupaj ${spent().toFixed(2)} $)`);
       }

@@ -43,6 +43,7 @@ import { getTopic, getPath, learningPathPrompt } from "../server/curriculum.js";
 import { lessonSummaryForPrompt } from "../server/textbook.js";
 import { EUR_PER_USD } from "../server/usage.js";
 import { PROGRAMS } from "../server/university-data.js";
+import { vpisiVKnjigo, knjigaFile } from "../server/meritev-po-objavi.js";
 import { runChecked, summarize, writeMeasurement, measurementError, examplesOf, CONDITIONS, MIN_PRIMERI, GRADER_FINAL_RULE } from "./meritev-natancnosti.js";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -285,7 +286,18 @@ const worstPair =
   costUsd(thinkP.model, { input_tokens: thinkP.max_tokens + 4000, output_tokens: thinkP.max_tokens }) +
   2 * costUsd(MODEL_DEEP, { input_tokens: thinkP.max_tokens + 6000, output_tokens: GRADER_MAX_TOKENS });
 const REAL_CAP = process.argv.includes("--resnicna-meja");
-const PROGRESS = path.join(root, "data", SAMO.length ? "natancnost-ponovitve.json" : "natancnost-napredek.json");
+// Samodejna meritev po objavi (--izid-json) ima svoj napredek, da ne pobriše ročne ponovitve, ki morda teče hkrati.
+const IZID_RAW = arg("izid-json", "");
+const PROGRESS = IZID_RAW ? `${path.resolve(root, IZID_RAW)}.napredek.json` : path.join(root, "data", SAMO.length ? "natancnost-ponovitve.json" : "natancnost-napredek.json");
+// Tedenska knjiga stroška vseh meritev (server/meritev-po-objavi.js): samodejna meritev se ne zažene, če bi skupaj z
+// ročnimi presegla 15 $ na teden. Vsak plačan odgovor se vpiše sproti, zato šteje tudi prekinjen zagon.
+const knjiga = (usd) => {
+  try {
+    vpisiVKnjigo(knjigaFile(), usd, { vir: IZID_RAW ? "po-objavi" : "ročno" });
+  } catch (e) {
+    console.warn(`Knjiga stroška meritev: ${e?.message || e}`);
+  }
+};
 if (CHECK) {
   const estC = tasks.reduce((s, t) => s + pairEstimate(t), 0);
   const perUsd = estC / Math.max(1, tasks.length);
@@ -300,7 +312,7 @@ if (DRY) {
 if (CHECK) {
   // Ciljna ponovitev začne vedno na novo (stari odgovori so lahko iz prejšnjega prompta); --nadaljuj nadaljuje prekinjeno.
   if (SAMO.length ? !process.argv.includes("--nadaljuj") : process.argv.includes("--znova")) fs.rmSync(PROGRESS, { force: true });
-  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP, conditions: CONDS });
+  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP, conditions: CONDS, knjiga });
   if (SAMO.length) {
     // Tabela po primerih in pogojih (ni povzetka za objavo: izbor ni vzorec vseh lekcij).
     console.log(`\nCiljna ponovitev (${PONOVI}× na primer):`);
@@ -314,7 +326,7 @@ if (CHECK) {
     console.log(`Strošek: ${(r.appUsd + r.gradeUsd).toFixed(2)} $ (aplikacija ${r.appUsd.toFixed(2)} $, ocenjevalec ${r.gradeUsd.toFixed(2)} $). Odgovori: ${path.relative(root, PROGRESS)}.`);
     // Samodejna meritev po objavi (server/meritev-po-objavi.js) prebere dejanski strošek za tedensko mejo in povzetek za skrbnika.
     // Brez odgovorov in nalog: le id-ji lekcij, štetje ocen in kratek razlog ocenjevalca (učenčevih podatkov tu ni).
-    const IZID = arg("izid-json", "");
+    const IZID = IZID_RAW;
     if (IZID) {
       const primeri = chosen.flatMap((t) =>
         CONDS.map((c) => {
@@ -383,6 +395,7 @@ for (const [i, t] of tasks.entries()) {
     // Cena ocene (Opus) je ločena od cene odgovora, sicer bi stolpec »Cena na odgovor« kazal ceno ocenjevanja.
     const { usd: gradeUsd = 0, ...verdict } = g;
     spent += usd + gradeUsd;
+    knjiga(usd + gradeUsd);
     rows.push({ ...t, mode: m, answer, usd, grade_usd: gradeUsd, ...verdict });
     console.log(`[${i + 1}/${tasks.length}] ${LABEL[m].padEnd(8)} ${String(g.ocena).padEnd(13)} ${t.id}  (skupaj ${spent.toFixed(2)} $)`);
   }
