@@ -35,14 +35,19 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
   const plasti = {};
   // Postavitev čipov se določi enkrat za vsako širino mreže (prvi izris, vrtenje telefona): čip, katerega oznaka ali
   // vrednost ne gre udobno v en stolpec, dobi vso vrstico (siroki[i]); poznejše vrednosti se po potrebi le pomanjšajo
-  // v svojem oknu. Višina mreže ne pade (če se število čipov spremeni, se spodnji drsniki ne premaknejo nazaj).
+  // v svojem oknu (do 60 %, da ostane cela, npr. s₈ geometrijskega zaporedja pri 360 px).
+  // Višina mreže ne pade (če se število čipov spremeni, se spodnji drsniki ne premaknejo nazaj).
   const mreza = { w: 0, h: 0, siroki: [] };
   const rng = typeof document !== "undefined" ? document.createRange() : null;
   const vsebina = (e) => (rng.selectNodeContents(e), rng.getBoundingClientRect().width); // širina besedila, ne okna
+  // Pomanjšano besedilo obdrži višino polne velikosti, sicer bi okno (in drsniki pod njim) poskočilo, ko vrednost spet
+  // gre v okno v polni velikosti (pregled #596: geometrijsko zaporedje pri 360 px, +3 px).
   const prileg = (e) => {
-    e.style.fontSize = "";
+    Object.assign(e.style, { fontSize: "", minHeight: "", lineHeight: "" });
     const w = vsebina(e);
-    if (w > e.clientWidth) e.style.fontSize = `${Math.max(0.7, e.clientWidth / w) * 100}%`;
+    if (w <= e.clientWidth) return;
+    const v = e.getBoundingClientRect().height; // ne offsetHeight: zaokroži na cel px in okno zraste
+    Object.assign(e.style, { fontSize: `${Math.max(0.6, e.clientWidth / w) * 100}%`, minHeight: `${v}px`, lineHeight: `${v}px` });
   };
   function uredi() {
     const w = cipiEl.clientWidth;
@@ -53,7 +58,7 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
     const nove = cipi.map((c, i) => mreza.siroki[i] ?? ("siroko" in c.dataset || [...c.querySelectorAll(".sk-tex, .sk-val")].some((e) => vsebina(e) > e.clientWidth * 0.85)));
     cipi.forEach((c, i) => c.classList.toggle("sk-chip-siroko", (mreza.siroki[i] = nove[i])));
     for (const e of cipiEl.querySelectorAll(".sk-tex, .sk-val")) prileg(e);
-    mreza.h = Math.max(mreza.h, cipiEl.offsetHeight);
+    mreza.h = Math.max(mreza.h, cipiEl.getBoundingClientRect().height);
     cipiEl.style.minHeight = `${mreza.h}px`;
   }
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => uredi()).observe(cipiEl);
