@@ -26,6 +26,10 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   enkrat in podeli XP.
 - **Lekcije** po korakih (kratke kartice z vprašanji »Preveri se« vmes, `public/lesson-steps.js`) ali vse
   naenkrat, »Razloži drugače«, formule in tabele kot na spletu.
+  Vprašanja z vpisom števila in razvrščanjem (`public/preveri-se.js`) aplikacija dobi, ker pošlje glavo
+  `x-app-kviz: 2` (`src/lib/api.ts`); starejše nameščene različice brez te glave dobijo samo izbiro
+  (`legacyChecks` v `server/textbook.js`: razvrsti in število s tipičnimi napačnimi vrednostmi postaneta izbira,
+  število brez njih se izpusti), odgovor pa strežnik preveri po istem seznamu.
 - **Razloži**: v lekciji označi besedilo in v meniju izbora tapni »Razloži«; odpre se pogovor z inštruktorjem z
   istim sporočilom kot na spletu (`public/textbook.js`). Na Androidu je v meniju še »Kopiraj«.
 - **Kalkulator** med vajo (gumb ob Namigu): spletni kalkulator s strani `/kalkulator` (znanstveni, grafični,
