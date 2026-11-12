@@ -789,6 +789,10 @@ test("ionRatioIssue (round 8): an ion ratio that does not balance the charges", 
     "Na 2 iona Mg²⁺ pride 1 ion Mg²⁺.", // isti predznak
     "Mg²⁺ na O²⁻", // brez števcev
     "Na 2 iona Mg^{2+} pride en ion O^{2-} in en ion S^{2-}.", // več kot dva iona
+    "Praviš, da na 2 iona Mg²⁺ pride en ion O²⁻.", // navedba zmote (pregled #610)
+    "Mnogi mislijo, da na 2 iona Mg²⁺ pride en ion O²⁻.",
+    "Učenci zmotno pišejo: na 2 iona Mg²⁺ en ion O²⁻.",
+    "Recimo, da na 2 iona Mg²⁺ pride en ion O²⁻.",
   ];
   for (const a of ok) assert.equal(ionRatioIssue(a).issue, null, a);
   assert.equal(ionRatioIssue("En ion Mg²⁺ na en ion O²⁻.").checked, 1);

@@ -734,7 +734,8 @@ const ION_MENTION_RE = new RegExp(
   `(?<![\\p{L}\\d])(\\d|${Object.keys(COUNT_WORDS).join("|")})\\s+(?:ion\\p{L}*\\s+)?((?:[A-Z][a-z]?\\d?)+)\\^(\\d?)([+-])(?![\\d+-])`,
   "giu",
 );
-const RATIO_SKIP_RE = /(?<!\p{L})(ne|ni|nista|niso|namesto|not|instead)(?!\p{L})/iu;
+// Navedba zmote (»Praviš, da …«, »Mnogi mislijo …«, »Recimo, da …«) ni trditev tutorja (pregled #610).
+const RATIO_SKIP_RE = /(?<!\p{L})(ne|ni|nista|niso|namesto|not|instead|praviš|pravite|trdiš|trdite|recimo|denimo|kaj pa)(?!\p{L})|misli|zmotn/iu;
 function ionRatios(text) {
   const out = [];
   for (const line of ionPlain(text).split("\n")) {
