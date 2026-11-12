@@ -11,6 +11,8 @@ C_BL2GL = np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]], float)  # (x, y, z)_glTF 
 IMENA = {"Femur": "stegnenica", "Tibia": "golenica", "Fibula": "mecnica", "Patella": "pogacica", "Hip bone": "kolcnica",
          "Humerus": "nadlahtnica", "Radius": "kozeljnica", "Ulna": "podlahtnica", "Scapula": "lopatica", "Clavicle": "kljucnica"}
 PODROBNOSTI = {"Femur"}
+# Podrobnejši vir mreže namesto Z-Anatomy (bp3d_vir.py; JSON ob tej datoteki, v paketu RTX v koda/):
+VIRI_MREZ = {"Femur.l": "stegnenica-leva-bp3d.json"}
 
 
 def razcleni(objekt):
@@ -65,6 +67,14 @@ def beri_ply(pot):
         if "material" in f_lastn:
             dod["material"] = b["material"].astype(int)
     return V, F, dod
+
+
+def beri_vir(pot):
+    """JSON iz bp3d_vir.py → V (n×3, m, osi atlasa), F, {material}, info (objekt, matrix_basis = enotska, vir)."""
+    with open(pot, encoding="utf-8") as f:
+        d = json.load(f)
+    V = np.array(d.pop("V"), float).reshape(-1, 3); F = np.array(d.pop("F"), np.int64).reshape(-1, 3)
+    return V, F, {"material": np.array(d.pop("material"), int)}, d
 
 
 def pisi_ply(pot, V, F, material=None):

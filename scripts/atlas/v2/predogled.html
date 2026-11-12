@@ -25,7 +25,11 @@ let obj;
 
 async function nalozi(pot, nacin) {
   if (pot.endsWith(".ply")) {
-    const g = await new PLYLoader().loadAsync(pot);
+    let g = await new PLYLoader().loadAsync(pot);
+    if (nacin === "ravno") {  // surova mreža, ploskovno senčenje (primerjava virov)
+      g = g.toNonIndexed(); g.computeVertexNormals();
+      return new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: "#e8dcc4", roughness: 0.7, flatShading: true }));
+    }
     g.computeVertexNormals();
     // izhodišče: material kosti iz atlasa (tkiva.js, razred »kost«, visoka kakovost), barva Bone #e8dcc4, COLOR_0 = pečena senca
     const skupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 } };

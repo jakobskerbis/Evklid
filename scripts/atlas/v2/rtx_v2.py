@@ -1,13 +1,15 @@
 # Atlas v2 na j-jevem prenosniku: naloga »atlas-v2« za rtx.py (paket scripts/atlas/rtx, PR #473/#567).
 # rtx.py jo pokliče, ko je v naloga.txt "organi": ["atlas-v2"] (glej rtx-v2.patch in rtx-naloga.json ob tej datoteki):
 #   {"id": "v2s1", "organi": ["atlas-v2"], "koda": "<različica>", "atlas-v2": {"kosti": ["Femur.l"], "kakovost": "rtx"}}
-# Za vsako kost: izvozi_kost.py (vhodi/Startup.blend, že preverjen po SHA-256) → postopek.py --kakovost rtx --naprava
+# Za vsako kost: izvozi_kost.py (vhodi/Startup.blend, že preverjen po SHA-256; za kosti s podrobnejšim virom v
+# VIRI_MREZ ta korak odpade in postopek bere JSON ob tej datoteki) → postopek.py --kakovost rtx --naprava
 # <OPTIX|CUDA> v izhod/atlas-v2-<id>/<kost>/ (GLB telefon/računalnik v obeh videzih, teksture, delo.blend,
 # porocilo.json). Vsak korak je svoj proces Blenderja; dnevnik v <kost>.log. Napaka ene kosti ne ustavi ostalih.
 import json, os, re, subprocess, time
 
 KOSTI = re.compile(r"[A-Z][A-Za-z ]{1,40}\.(l|r)")  # imena Z-Anatomy, npr. »Femur.l«, »Hip bone.r«
 TU = os.path.dirname(os.path.abspath(__file__))
+VIRI_MREZ = {"Femur.l": "stegnenica-leva-bp3d.json"}  # isto kot kost.VIRI_MREZ (rtx_v2 ne uvaža numpy)
 
 
 def naloga(koren, blender, st, pisi, pisi_stanje, napaka, nastavitve, nid, naprava):
@@ -34,6 +36,10 @@ def naloga(koren, blender, st, pisi, pisi_stanje, napaka, nastavitve, nid, napra
              "--", "--vhod", os.path.join(surovo, kost + ".ply"), "--info", os.path.join(surovo, kost + ".json"),
              "--izhod", mapa, "--kakovost", kakovost, "--naprava", naprava, "--stran", kost[-1]],
         ]
+        # podrobnejši vir (npr. BodyParts3D za Femur.l, kost.VIRI_MREZ): JSON ob tej datoteki, izvoz iz Startup.blend odpade
+        vir = os.path.join(TU, VIRI_MREZ.get(kost, "-"))
+        if os.path.exists(vir):
+            koraki = [koraki[1][:8] + ["--vhod", vir, "--info", vir] + koraki[1][12:]]
         try:
             for uk in koraki:
                 with open(dnevnik, "a", encoding="utf-8") as f:
