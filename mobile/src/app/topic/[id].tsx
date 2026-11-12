@@ -21,7 +21,7 @@ import { appDevice, ReportSheet } from "@/components/ReportSheet";
 // Vrste vprašanj »Preveri se« (public/preveri-se.js). Aplikacija pošlje glavo x-app-kviz (src/lib/api.ts), zato
 // strežnik pošlje tudi vpis števila in razvrščanje; starejše različice dobijo samo izbiro (server/textbook.js).
 type ChoiceCheck = { type?: undefined; q: string; options: string[]; correct: number; why?: string; optionWhy?: string[] };
-type NumberCheck = { type: "stevilo"; q: string; answer: string; value: number; tol: number; unit: string; wrong: { answer: string; value: number; why: string }[]; why?: string };
+type NumberCheck = { type: "stevilo"; q: string; answer: string; value: number; tol: number; unit: string; wrong: { answer: string; value: number; tol?: number; why: string }[]; why?: string };
 type OrderCheck = { type: "razvrsti"; q: string; items: string[]; shown: number[]; why?: string };
 type Check = ChoiceCheck | NumberCheck | OrderCheck;
 type Answer = { o: number } | { v: string } | { order: number[] };

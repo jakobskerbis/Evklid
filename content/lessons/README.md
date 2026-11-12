@@ -98,7 +98,7 @@ prvim odgovorom. Vrsta vprašanja sledi iz odgovorov; v enem vprašanju je samo 
 - Vrednost z decimalno vejico, brez `$`; potenca kot `1,5·10^-3`. Za vrednostjo sme stati enota (`= 2,5 m/s | 0,1`), ki se izpiše ob polju za vnos (enoto lahko zapišeš tudi v `$…$`).
 - Toleranca je neobvezna; brez nje velja natančno na izpisane decimalke (`= 2,30` sprejme 2,295 do 2,305, tudi »2,3«).
 - `~ vrednost | zakaj`: tipična napačna vrednost in razlaga, ki se pokaže ob njej. Ujema se na svoje izpisane decimalke (`~ 501` sprejme 501,19; `~ 1·10^-10` le vrednosti okoli 10⁻¹⁰), zato jo zapiši tako natančno, kot jo dijak res vpiše. Napačna vrednost ne sme biti znotraj tolerance pravilne.
-- Učenec sme pisati vejico ali piko, katerikoli minus (−, -) in enoto (se ne upošteva).
+- Učenec sme pisati vejico ali piko, katerikoli minus (−, -), potenco tudi brez množitelja (»10^-4«) in enoto (se ne upošteva).
 
 **Razvrsti:** 3 do 6 vrstic `1.`, `2.` … v pravilnem vrstnem redu; aplikacija jih pokaže premešane (ob vsakem
 nalaganju enako), učenec jih postavi po vrsti z dotikom ali puščicama. Razlaga je v `>`, vrstic `~` ni.
