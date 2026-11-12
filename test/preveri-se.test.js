@@ -65,8 +65,11 @@ test("number answers: comma or point, minus variants, unit ignored, default tole
   assert.equal(parseNum("pH = 2,30"), 2.3);
   assert.equal(parseNum(""), null);
   assert.equal(parseNum("abc"), null);
-  // Več števil ali nedokončan zapis ni odgovor (prej »1/2« → 1, »2 5« → 2, »10^-3« → 10).
-  for (const x of ["1/2", "2 5", "2,5,3", "10^-3", "2·10³"]) assert.equal(parseNum(x), null, x);
+  // Več števil ali nedokončan zapis ni odgovor (prej »1/2« → 1, »2 5« → 2).
+  for (const x of ["1/2", "2 5", "2,5,3", "2·10³"]) assert.equal(parseNum(x), null, x);
+  // »10^-4« brez množitelja je 1·10^-4 (zapis iz lekcije; j, 12. 11. 2026).
+  assert.equal(parseNum("10^-4"), 0.0001);
+  assert.equal(parseNum("−10^{3}"), -1000);
 
   const a = parseAnswerLine("2,30");
   assert.deepEqual([a.answer, a.value, a.unit], ["2,30", 2.3, ""]);
@@ -119,7 +122,7 @@ test("parse: choice keeps its old shape, number and ordering get a type, a figur
   assert.equal(mc.correct, 1);
   assert.equal(num.type, "stevilo");
   assert.deepEqual([num.answer, num.value, num.tol, num.unit], ["2,0", 2, 0.1, "A"]);
-  assert.deepEqual(num.wrong, [{ answer: "8", value: 8, why: "Napetost si pomnožil z 2 namesto delil." }]);
+  assert.deepEqual(num.wrong, [{ answer: "8", value: 8, tol: 0.5, why: "Napetost si pomnožil z 2 namesto delil." }]);
   assert.match(num.q, /^Z grafa odčitaj tok pri napetosti 4 V\.\n\n:::risba graf\nopis: .*\nx: 0 \.\. 6\ny: 0 \.\. 3\nf: x\/2\n:::\n\nOdgovor zapiši v amperih\.$/);
   assert.equal(ord.type, "razvrsti");
   assert.equal(ord.q, "Razvrsti upore od najmanjšega do največjega.");
@@ -276,4 +279,15 @@ test("API: an old app's answer to a converted question is checked against its ow
   } finally {
     server.close();
   }
+});
+
+test("vpiši število: tipična napačna vrednost »~« ima svojo natančnost, ne tolerance pravilnega odgovora", () => {
+  // Prej: »~ 1·10^-10« je ob = 0,0001 | 0,00001 ujel vsak vnos od 0 do 0,0001; »~ 501« ni ujel 501,19.
+  const c = { value: 0.0001, tol: 0.00001, wrong: [{ value: 1e-10, tol: 0.5e-10 }, { value: 501, tol: 0.5 }] };
+  assert.deepEqual(checkNumber(c, "0,00001"), { ok: false, wrong: -1 });
+  assert.deepEqual(checkNumber(c, "1·10^-10"), { ok: false, wrong: 0 });
+  assert.deepEqual(checkNumber(c, "501,19"), { ok: false, wrong: 1 });
+  assert.deepEqual(checkNumber(c, "10^-4"), { ok: true, wrong: -1 });
+  // Brez lastne natančnosti (stari podatki) velja kot prej toleranca pravilnega odgovora.
+  assert.equal(checkNumber({ value: 2.3, tol: 0.005, wrong: [{ value: 5.3 }] }, "5,301").wrong, 0);
 });
