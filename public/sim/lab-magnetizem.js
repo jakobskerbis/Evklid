@@ -468,7 +468,7 @@ export function labElektromagnet(el, opts = {}) {
     const out = [];
     if (sred.length && !OS) {
       const k = sred.reduce((s_, m) => s_ + m.B / (m.N * m.I), 0) / sred.length;
-      out.push(`<p>Brez jedra v sredini tuljave: ${tex(String.raw`\frac{B}{NI} = ${rez(num(k * 1000, 2), "µT/A")}`)} (povprečje ${sred.length} meritev). Za dolgo tuljavo bi bilo ${tex(String.raw`\frac{\mu_0}{l} = ${num((1.2566e-6 / NAVITJE.L) * 1e6, 1)}${en("µT/A")}`)}; tuljava je kratka in debela, zato je polje v sredini manjše.</p>`);
+      out.push(`<p>Brez jedra v sredini tuljave: ${tex(String.raw`\frac{B}{NI} = ${rez(num(k * 1000, 2))}`)}${nb}<b>µT/A</b> (povprečje ${sred.length} meritev). Za dolgo tuljavo bi bilo ${tex(String.raw`\frac{\mu_0}{l} = ${num((1.2566e-6 / NAVITJE.L) * 1e6, 1)}`)}${nb}µT/A; tuljava je kratka in debela, zato je polje v sredini manjše.</p>`);
     }
     const zel = meas.filter((m) => m.jedro !== "zrak" && Number.isFinite(m.B) && m.I > 0.05);
     if (zel.length && sred.length) {

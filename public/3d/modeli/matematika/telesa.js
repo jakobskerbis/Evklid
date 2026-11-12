@@ -55,13 +55,19 @@ export function fTex(z) {
   if (ULOMKI[z]) return ULOMKI[z];
   if (z.includes("/")) throw new Error(`telesa: ulomek brez zapisa v ULOMKI: ${z}`);
   let t = z.replace(/sin /g, "\\sin ").replace(/[·²³ₛ₁₂παβφ]/g, (c) => ZNAKI[c]);
-  while (/√\(/.test(t)) t = t.replace(/√\(([^()]*)\)/, "\\sqrt{$1}");
+  for (let prej = ""; prej !== t && /√\(/.test(t); ) (prej = t), (t = t.replace(/√\(([^()]*)\)/, "\\sqrt{$1}"));
+  if (/√\(/.test(t)) throw new Error(`telesa: koren z oklepaji v oklepaju, dodaj ga v ULOMKI: ${z}`);
   return t.replace(/√(\d)/g, "\\sqrt{$1}");
 }
-const tSt = (x, d) => st(x, d).replace(",", "{,}").replace(/ /g, "\\,").replace("−", "-");
+const tSt = (x, d) => st(x, d).replace(",", "{,}").replace(/[ \u00a0\u202f]/g, "\\,").replace("−", "-");
 const tCm = (x, e = "") => `${tSt(x)}\\,\\mathrm{cm${e}}`;
-// {…}: KaTeX formulo prelomi le pri =, ne sredi izraza (za ·, +).
-const enacba = (ime, z, x, e) => `$${ime} = {${fTex(z)}} = {${tCm(x, e)}}$`;
+// {…}: KaTeX formulo prelomi le pri =, ne sredi izraza (za ·, +); le predolg izraz (površina paralelepipeda)
+// se sme prelomiti še za +, da ne gre čez rob (členi med + ostanejo celi).
+const enacba = (ime, z, x, e) => {
+  const f = fTex(z);
+  const g = f.length > 40 ? f.split(" + ").map((c) => `{${c}}`).join(" + ") : `{${f}}`;
+  return `$${ime} = ${g} = {${tCm(x, e)}}$`;
+};
 
 // ---------- Evklidovi Elementi (preverjeno na D. E. Joyce, Clark University, Euclid's Elements) ----------
 // Vrstica »v kateri knjigi Elementov« za vsako telo. Knjiga XI: definicije teles in paralelepipedi (24–34),

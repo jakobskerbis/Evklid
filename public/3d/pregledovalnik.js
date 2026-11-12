@@ -43,6 +43,12 @@ export function izpisHtml(v) {
   // \n: vsaka formula v svoji vrstici
   return d.map((x, i) => (i % 2 ? globalThis.katex.renderToString(x, { throwOnError: false }) : esc(x).replace(/\n/g, "<br>"))).join("");
 }
+// Brez KaTeX (ni povezave): formula kot berljivo besedilo, (a)/(b) in √(x).
+const brezTex = (v) => {
+  let t = v.replace(/\$/g, "").replace(/\\(?:mathrm|text)\{([^{}]*)\}/g, "$1");
+  for (let p = ""; p !== t; ) (p = t), (t = t.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)"));
+  return t.replace(/\\cdot ?/g, "· ").replace(/\\,/g, " ").replace(/\^2/g, "²").replace(/\^3/g, "³").replace(/\^\\circ/g, "°").replace(/\\(pi|alpha|beta|varphi|sin) ?/g, (m, g) => ({ pi: "π", alpha: "α", beta: "β", varphi: "φ", sin: "sin " })[g]).replace(/[{}]/g, "").replace(/_(\w)/g, "$1");
+};
 let katexObljuba = null;
 function naloziKatex() {
   if (globalThis.katex) return Promise.resolve();
@@ -590,7 +596,7 @@ export function odpriModel(el, mod, opts = {}) {
       try {
         const v = String(c.vrednost?.() ?? "");
         if (!c.tex) out.textContent = v;
-        else if (!globalThis.katex) naloziKatex().then(() => !unicen && osveziIzpise(), () => (out.textContent = v.replace(/\$/g, "")));
+        else if (!globalThis.katex) naloziKatex().then(() => !unicen && osveziIzpise(), () => (out.textContent = brezTex(v)));
         else if (out.dataset.v !== v) {
           out.innerHTML = izpisHtml(v);
           out.dataset.v = v;

@@ -866,7 +866,7 @@ export function labEnergija(el, opts = {}) {
           const m = tr ? 100 + +gSel.get() : proc === "mg" ? 50 : 100, n = B.nReakcija();
           const lit = proc === "nevtr" ? DH.nevtr : proc === "ocetna" ? DH.ocetna : proc === "mg" ? DH.Mg : TRDNE[proc].dH;
           out.push(`<p>Začetna temperatura <i>T</i><sub>0</sub> = ${num(T0m, 1)}${nb}°C${proc === "nevtr" || proc === "ocetna" ? " (povprečje obeh raztopin)" : ""}; ${endo ? "najnižja" : "najvišja"} izmerjena ${num(ext.T, 1)}${nb}°C (Δ<i>T</i> = ${num(dTm, 1)}${nb}K)${e ? `; z ekstrapolacijo do časa mešanja ${num(e.T, 1)}${nb}°C (Δ<i>T</i> = ${num(dTe, 1)}${nb}K)` : ""}.</p>`);
-          if (e) out.push(`${texBlock(String.raw`\Delta H = -\dfrac{mc\,\Delta T}{n} = -\dfrac{${num(m, 0)}${en("g")} \cdot 4{,}18${en("J/(g K)")} \cdot ${num(dTe, 1)}${en("K")}}{${num(n * 1000, 1)}${en("mmol")}} = ${rez(num(entalpija({ m, dT: dTe, n }), 1), "kJ/mol")}`)}<p>Literatura: ${num(lit, 1)}${nb}kJ/mol; brez ekstrapolacije ${num(entalpija({ m, dT: dTm, n }), 1)}${nb}kJ/mol.</p>`);
+          if (e) out.push(`${texBlock(String.raw`\Delta H = -\dfrac{mc\,\Delta T}{n} = -\dfrac{${num(m, 0)}${en("g")} \cdot 4{,}18${en("J/(g K)")} \cdot ${dTe < 0 ? `(${num(dTe, 1)}${en("K")})` : `${num(dTe, 1)}${en("K")}`}}{${num(n * 1000, 1)}${en("mmol")}} = ${rez(num(entalpija({ m, dT: dTe, n }), 1), "kJ/mol")}`)}<p>Literatura: ${num(lit, 1)}${nb}kJ/mol; brez ekstrapolacije ${num(entalpija({ m, dT: dTm, n }), 1)}${nb}kJ/mol.</p>`);
         }
       }
     }
