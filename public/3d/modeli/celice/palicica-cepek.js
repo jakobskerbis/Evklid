@@ -288,13 +288,13 @@ export function zgradi(THREE, ctx = {}) {
   for (const [P, M, x, ime] of [[Ppal, MEJE.pal, XP, "pal"], [Pcep, MEJE.cep, XC, "cep"]]) {
     for (let i = 0; i < 4; i++) zgradiKos(IDS[i] === "zunanji" ? "zunanji-" + ime : IDS[i], P, M[i], M[i + 1], x);
   }
-  // rob stekla v barvi dela: zunanji členek paličice vijoličen, čepka zlat, notranji členek in telo modra, končič rožnat
-  const ROB = { koncic: "#ff9ed2", telo: "#8fd0ff", notranji: B.membranaRob, "zunanji-pal": "#c9a6ff", "zunanji-cep": "#ffd98a" };
+  // neprozorna membrana v barvi dela (paličica ima vidni škrlat, zato je vijoličasta); notranjost pokaže prerez
+  const OVOJ = { koncic: "#f2a0c8", telo: "#ecc0b4", notranji: "#f0a98c", "zunanji-pal": "#b07ae8", "zunanji-cep": "#f2c55c" };
   const dvoMat = V.dvoslojMat(DM);
   const citMat = mat(0x3d3180, { roughness: 0.62, clearcoat: 0.25, sheen: 0.35, sheenColor: new THREE.Color(0x8d7ee0), side: THREE.BackSide });
   const memM = {}, pokrovi = [], pasovi = [], vseNotr = [], vsiNotrPok = [];
   for (const id of Object.keys(kosi)) {
-    const m = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.14, rf: 110, k: 0.8, rob: ROB[id], rk: 1.3 });
+    const m = mat(OVOJ[id], { side: THREE.DoubleSide, roughness: 0.5 });
     const zun = new THREE.Mesh(zdruzi(kosi[id].odprta), m), pk = new THREE.Mesh(zdruzi(kosi[id].pokrov), m);
     const ps = new THREE.Mesh(zdruzi(kosi[id].pasovi), dvoMat);
     memM[id] = { zun, pk, ps };
@@ -591,21 +591,21 @@ export function zgradi(THREE, ctx = {}) {
 
   // ---------- deli ----------
   const mem = (id) => [memM[id].zun, memM[id].pk, memM[id].ps];
-  del("zunanji-clenek-palicice", "Zunanji členek paličice", "Dolg valjast vrh paličice; v njem je kup diskov s svetlobnim barvilom.", ROB["zunanji-pal"], mem("zunanji-pal"), [XP + 0.04, 0.75, 0.056]);
+  del("zunanji-clenek-palicice", "Zunanji členek paličice", "Dolg valjast vrh paličice; v njem je kup diskov s svetlobnim barvilom.", OVOJ["zunanji-pal"], mem("zunanji-pal"), [XP + 0.04, 0.75, 0.056]);
   del("diski-rodopsin", "Diski z rodopsinom", "Ploščati membranski mešički, ki prosto ležijo v paličici; rodopsin v njih zazna že zelo šibko svetlobo, a ne loči barv.", "#a64fe0", [diski, diskiP, diskiR], [XP, 0.62, 0.035]);
-  del("zunanji-clenek-cepka", "Zunanji členek čepka", "Stožčast vrh čepka; je krajši od zunanjega členka paličice.", ROB["zunanji-cep"], mem("zunanji-cep"), [XC + 0.07, 0.33, 0.06]);
+  del("zunanji-clenek-cepka", "Zunanji členek čepka", "Stožčast vrh čepka; je krajši od zunanjega členka paličice.", OVOJ["zunanji-cep"], mem("zunanji-cep"), [XC + 0.07, 0.33, 0.06]);
   del("gube-jodopsin", "Membranske gube z jodopsinom", "Pri čepku so diski gube celične membrane; barvilo jodopsin je v treh različicah (za modro, zeleno, rdečo svetlobo), zato vidimo barve.", "#f2b12e", [gube, gubeP, gubeR], [XC - 0.05, 0.28, 0]);
   del("cilij", "Povezovalni cilij", "Tanek most med notranjim in zunanjim členkom iz devetih parov mikrotubulov; po njem potujejo beljakovine za nove diske. Izrašča iz bazalnega telesca, korenina ga sidra v celico.", CIL, [cilij, cilijC], [XP + 0.005, 0.2, -0.005]);
-  del("notranji-clenek", "Notranji členek", "Presnovni del čutnice, poln mitohondrijev; izdeluje beljakovine in daje energijo zunanjemu členku.", ROB.notranji, mem("notranji"), [XC + 0.12, -0.2, 0.12]);
+  del("notranji-clenek", "Notranji členek", "Presnovni del čutnice, poln mitohondrijev; izdeluje beljakovine in daje energijo zunanjemu členku.", OVOJ.notranji, mem("notranji"), [XC + 0.12, -0.2, 0.12]);
   const mT = (pol.find((m) => m.tip === "x" && m.p.x > 0) || pol[0] || cele[0]).p;
   del("mitohondriji", "Mitohondriji", "Gosto zloženi v zgornjem delu notranjega členka (elipsoid); zaznavanje svetlobe porabi veliko energije (ATP). V prerezu se vidijo kriste.", B.mitohondrij, [mit, mitPol, mitRez, mitCela], mT.toArray());
   del("jedro", "Jedro", "Jedro čutnice z dvojno jedrno ovojnico in porami; pri paličici je manjše in temnejše od jedra čepka.", B.jedro, [jedro, jedroPok, jedroOvoj, pore], [XC - 0.1, -0.458, 0]);
   del("nukleoplazma", "Nukleoplazma", "Notranjost jedra z DNK.", "#a565f0", [nuk], [XP - 0.03, -0.52, 0.03]);
   del("kromatin", "Kromatin", "DNK z beljakovinami. Paličica ima veliko gostega kromatina, čepek manj, zato je njegovo jedro svetlejše.", B.kromatin, [krom], [XP + 0.03, -0.53, -0.02]);
   del("jedrce", "Jedrce", "Gosto telesce v jedru čepka, kjer nastajajo ribosomi.", B.jedrce, [jedrce], jedrce.position.toArray());
-  del("celicno-telo", "Celično telo in akson", "Del celice z jedrom; tanko vlakno (akson) ga povezuje s sinaptičnim končičem.", ROB.telo, mem("telo"), [XP + 0.016, -0.72, 0.012]);
+  del("celicno-telo", "Celično telo in akson", "Del celice z jedrom; tanko vlakno (akson) ga povezuje s sinaptičnim končičem.", OVOJ.telo, mem("telo"), [XP + 0.016, -0.72, 0.012]);
   del("citoskelet", "Mikrotubuli v aksonu", "Tanke cevke citoskeleta v aksonu; po njih motorne beljakovine prenašajo mešičke in beljakovine do končiča.", B.citoskelet, [mikrotubuli], [XC + 0.008, -0.7, -0.003]);
-  del("sinapticni-koncic", "Sinaptični končič", "Končič odda signal naslednjim živčnim celicam mrežnice; paličica ima majhen okrogel končič, čepek širšo ploščico.", ROB.koncic, mem("koncic"), [XC + 0.14, -0.92, 0.07]);
+  del("sinapticni-koncic", "Sinaptični končič", "Končič odda signal naslednjim živčnim celicam mrežnice; paličica ima majhen okrogel končič, čepek širšo ploščico.", OVOJ.koncic, mem("koncic"), [XC + 0.14, -0.92, 0.07]);
   del("sinapticni-mesicki", "Sinaptični mešički", "Mešički z živčnim prenašalcem (glutamatom); v temi jih čutnica sprošča največ, svetloba to zmanjša.", B.mesicki, [mes, mesC], [XC + 0.05, -0.915, -0.04]);
   del("sinapticni-trak", "Sinaptični trakovi", "Ploščice, na katere so privezani mešički; trak jih vodi k membrani, da čutnica sprošča glutamat hitro in ves čas, dokler je tema.", "#ff6b2e", [trakM], trakovi[0].c.toArray());
   del("dendriti", "Dendriti sosednjih celic", "V končič se vrivajo odrastki horizontalnih celic (zeleni) in dendriti bipolarnih celic (rumeni); ti sprejmejo glutamat iz čutnice.", "#9ed85a", [dendriti], [XC + 0.03, -0.975, -0.06]);

@@ -265,7 +265,7 @@ export function zgradi(THREE, ctx = {}) {
     const prof = [];
     for (let i = 0; i <= c.nProf; i++) { const x = c.xr[0] + (c.xr[1] - c.xr[0]) * (i / c.nProf); prof.push([x, R(x) * (1 + 0.025 * sum(x * 9, 1, 2))]); }
     const v = vrtenina(prof, q(c.nKot));
-    const memMat = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: c.kape ? 0.13 : 0.2, rf: c.kape ? 24 : 70, k: 0.9, rob: B.membranaRob, rk: 1.3 });
+    const memMat = mat("#d77482", { side: THREE.DoubleSide, roughness: 0.5 });
     const memOut = dodaj(meji(osX(v.odprta), new THREE.Mesh(v.odprta, memMat)));
     const pok = dodaj(meji(osX(v.pokrov), new THREE.Mesh(v.pokrov, memMat)));
     pok.visible = false;
@@ -565,7 +565,7 @@ export function zgradi(THREE, ctx = {}) {
     const naM = (x, a, f = 1.01) => v3(x, Math.cos(a) * R(x) * f, Math.sin(a) * R(x) * f).toArray();
     const notri = vozli.filter((w) => !w.m && (w.p.y > 0 || w.p.z > 0)).sort((a, b) => Math.abs(a.p.x + 0.3) - Math.abs(b.p.x + 0.3));
     const gtT = (notri[0] || vozli[0]).p;
-    dl.push(["membrana", "Celična membrana", c.kaveole ? "Meja celice iz dvosloja fosfolipidov (debelina povečana); drobne vdolbine v njej so kaveole, ki uravnavajo vstop kalcijevih ionov, ti pa sprožijo krčenje." : "Meja celice; na njeno notranjo stran so pripeti filamenti, zato se ob krčenju nagrbanči. Kaveole vidiš v povečanem izseku.", "#9fb4ff", [memOut, memRob, pok, ...belj], naM(c.tMem, -0.9)]);
+    dl.push(["membrana", "Celična membrana", c.kaveole ? "Meja celice iz dvosloja fosfolipidov (debelina povečana); drobne vdolbine v njej so kaveole, ki uravnavajo vstop kalcijevih ionov, ti pa sprožijo krčenje." : "Meja celice; na njeno notranjo stran so pripeti filamenti, zato se ob krčenju nagrbanči. Kaveole vidiš v povečanem izseku.", "#d77482", [memOut, memRob, pok, ...belj], naM(c.tMem, -0.9)]);
     dl.push(["citoplazma", "Citoplazma", "Notranjost celice; skoraj vso zapolnjujejo aktinski in miozinski filamenti, zato je v mikroskopu enakomerno svetla, brez prog.", "#5b4bb0", citDeli, c.tCit]);
     dl.push(["jedro", "Jedro", "Eno samo podolgovato jedro leži v sredini celice; ko se celica skrči, se nagrbanči in zvije kot vijak.", B.jedro, [jOut, jRob, jPok], c.tJedro]);
     dl.push(["nukleoplazma", "Nukleoplazma", "Tekočina v notranjosti jedra z dednim zapisom (DNK).", "#a565f0", [jIn], c.tNuk]);

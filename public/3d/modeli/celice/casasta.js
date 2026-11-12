@@ -309,7 +309,7 @@ export function zgradi(THREE, ctx = {}) {
   const svet = new THREE.Group(); group.add(svet);
 
   // ---------- čašasta celica: odprta spredaj, membrana je steklena ----------
-  const memMat = kit.steklo(mat(0xe08aac, { side: THREE.FrontSide }), { a: 0.16, rf: 2.2, rob: "#ffa8cc", rk: 1.3 });
+  const memMat = mat("#f0a0aa", { side: THREE.DoubleSide, roughness: 0.5 });
   const mem = new THREE.Mesh(ploskev(casa(0), hi ? 64 : 30, hi ? 120 : 52, true), memMat);
   // notranja stena: temna (zadaj in ob dnu še temnejša, navidezna senca), da organeli in zrnca izstopijo
   const cit = new THREE.Mesh(lise(ploskev(casa(0.12, 0.01), hi ? 48 : 22, hi ? 100 : 44, true), { j: 0.2, fr: 0.45, odtenek: 0.05, temno: (x, y, z) => (0.62 + 0.38 * THREE.MathUtils.smoothstep(z, -3.5, -0.4)) * (0.8 + 0.2 * THREE.MathUtils.smoothstep(y, 0, 2.5)) }),
@@ -339,8 +339,8 @@ export function zgradi(THREE, ctx = {}) {
     const capZ = (u, v, p) => { const y = H * v, x = -8 + (8 - xin(y, 0) - 0.01) * u; return p.set(X(x), y, 0); };
     const capX = (u, v, p) => p.set(X(-8), H * v, -w * u);
     const zr = sx > 0; // zrcaljenje obrne ploskve; material je dvostranski
-    sosGeo.push(pobarvaj(ploskev(notr, hi ? 40 : 14, hi ? 90 : 36, zr), 0x7a6cc8), pobarvaj(ploskev(zad, hi ? 10 : 6, hi ? 50 : 24, zr), 0x7a6cc8), pobarvaj(ploskev(zgo, hi ? 12 : 6, hi ? 8 : 4, zr), 0x8577d0));
-    sosGeo.push(pobarvaj(ploskev(capZ, hi ? 8 : 4, hi ? 80 : 32), 0x4a3c96), pobarvaj(ploskev(capX, hi ? 6 : 4, hi ? 40 : 24), 0x4a3c96));
+    sosGeo.push(pobarvaj(ploskev(notr, hi ? 40 : 14, hi ? 90 : 36, zr), 0xe6a2a6), pobarvaj(ploskev(zad, hi ? 10 : 6, hi ? 50 : 24, zr), 0xe6a2a6), pobarvaj(ploskev(zgo, hi ? 12 : 6, hi ? 8 : 4, zr), 0x8577d0));
+    sosGeo.push(pobarvaj(ploskev(capZ, hi ? 8 : 4, hi ? 80 : 32), 0xb06a70), pobarvaj(ploskev(capX, hi ? 6 : 4, hi ? 40 : 24), 0xb06a70));
     const elipsa = (cx2, cy, a, b, ravnina, zac = -Math.PI / 2, kon = Math.PI / 2) => (u, v, p) => {
       const ang = zac + (kon - zac) * u, x = a * v * Math.cos(ang), y = cy + b * v * Math.sin(ang);
       return ravnina === "z" ? p.set(X(cx2 + x), y, 0.025) : p.set(X(-8 - 0.025), y, -x);
@@ -588,7 +588,7 @@ export function zgradi(THREE, ctx = {}) {
 
   del("zrnca-sluzi", "Zrnca sluzi", "Mešički, polni mucina, ki gosto zapolnijo teko; ko pridejo do vrha, se izpraznijo in mucin z vodo nabrekne v sluz.", BC.sluz, [zrnca], L(zv.p.x, zv.p.y, zv.p.z + zv.r));
   del("sluz", "Izločena sluz", "Spolzka plast na površini črevesa; varuje celice pred prebavnimi encimi in olajša drsenje hrane.", "#a9c9ef", [sluz], L(-2.4, vrhG + 1.3, -0.3));
-  del("membrana", "Celična membrana", "Ovojnica čašaste celice iz dvosloja maščob z beljakovinami; na vrhu ima le malo mikrovilov, skozi njo se izloča sluz. Debelina membrane je povečana.", "#ffa8cc", [mem, memRob, belj], L(-rG(12), 12, -0.05));
+  del("membrana", "Celična membrana", "Ovojnica čašaste celice iz dvosloja maščob z beljakovinami; na vrhu ima le malo mikrovilov, skozi njo se izloča sluz. Debelina membrane je povečana.", "#f0a0aa", [mem, memRob, belj], L(-rG(12), 12, -0.05));
   del("citoplazma", "Citoplazma", "Notranjost celice; v ozkem dnu je skoraj vsa zapolnjena z jedrom, zrnatim ER in Golgijevim aparatom.", "#6a4296", [cit], L(0.9, 3.0, -1.35));
   del("jedro", "Jedro", "Sploščeno jedro z gostim kromatinom, dvojno ovojnico in porami; zrnca sluzi ga potisnejo v ozko dno celice.", BC.jedro, [jedro, jPlo, jOvoj], L(-0.4, 3.3, 0.05));
   del("jedrce", "Jedrce", "Gosto območje v jedru, kjer nastajajo deli ribosomov.", BC.jedrce, [jedrce], L(0.3, 3.9, 0.2));
@@ -601,7 +601,7 @@ export function zgradi(THREE, ctx = {}) {
   del("tesni-stiki", "Tesni stiki", "Pas beljakovinskih niti tik pod vrhom, ki čašasto celico tesno zlepi s sosedama, da snovi ne zdrsnejo med celicami.", "#1fd6a8", [tesni], L(-rG(H - 0.5) - 0.1, H - 0.6, -0.6));
   del("keratin", "Košara iz keratina", "Mreža vmesnih filamentov (keratina) objema teko in jo drži v obliki čaše, ko se napolni z zrnci sluzi.", "#ea9cff", [keratin], L(rG(13) - 0.3, 13, -1.6));
   del("bazalna-membrana", "Bazalna membrana", "Tanka plast beljakovinskih vlaken (kolagena IV in laminina) pod epitelijem, na kateri celice stojijo.", "#2f9a88", [bazalna, bmVl], L(-1, -0.3, -0.02));
-  del("sosednje-celice", "Sosednji valjasti celici", "Celici z mikrovili (enterocita), ki vsrkavata hranila; čašasta celica je stisnjena med njiju.", "#7a6cc8", [sosedi], L(-6.2, 9.5, 0.05));
+  del("sosednje-celice", "Sosednji valjasti celici", "Celici z mikrovili (enterocita), ki vsrkavata hranila; čašasta celica je stisnjena med njiju.", "#e6a2a6", [sosedi], L(-6.2, 9.5, 0.05));
 
   kit.poliraj(svet, deli, {
     citoplazma: { tex: "fino", rf: hi ? 9 : 6, k: hi ? 0.55 : 0.3, b: 0.2 },

@@ -381,7 +381,7 @@ export function zgradi(THREE, ctx = {}) {
     // ---------- celična membrana (steklena), nabori in mikrovili ----------
     const gube = (d) => { const n = sum(d.x * 2.4 + 5, d.y * 2.4, d.z * 2.4); return Math.pow(1 - Math.abs(n), 4); };
     const oblika = (d) => R * (1 + c.guba * gube(d) + 0.025 * fbm(d.x * 1.5 + 2, d.y * 1.5, d.z * 1.5) - c.guba * 0.3);
-    const memMat = kit.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.13, rf: 19 / R, rob: "#8c9cff", rk: 1.3 });
+    const memMat = mat("#ece8f2", { side: THREE.DoubleSide, roughness: 0.5 });
     const memOut = new THREE.Mesh(lupina(oblika, q(120), q(72)), memMat);
     const memRob = new THREE.Mesh(prerezDvosloj(oblika, (d) => oblika(d) * DM, q(120)), dvoslojMat(R * (1 - DM)));
     const citIn = new THREE.Mesh(lupina((d) => oblika(d) * DM, q(96), q(56)), mat(c.cit, { roughness: 0.62, clearcoat: 0.25, sheen: 0.35, side: THREE.BackSide }));
@@ -720,7 +720,7 @@ export function zgradi(THREE, ctx = {}) {
     const naCeli = (x, y, z) => { const d = V(x, y, z).normalize(); return L(d.multiplyScalar(oblika(d) * 1.01).toArray()); };
     const vJG = (p) => p.clone().multiply(JG.scale).add(JG.position);
 
-    dd("membrana", "Celična membrana", "Prožna ovojnica iz dvosloja fosfolipidov z beljakovinami (v prerezu glave in repi); bela krvnička z njo spremeni obliko in se preriva skozi steno žile. Debelina je povečana.", "#9fb4ff", [memOut, memRob, belj], naCeli(0.55, 0.15, 0.8));
+    dd("membrana", "Celična membrana", "Prožna ovojnica iz dvosloja fosfolipidov z beljakovinami (v prerezu glave in repi); bela krvnička z njo spremeni obliko in se preriva skozi steno žile. Debelina je povečana.", "#ece8f2", [memOut, memRob, belj], naCeli(0.55, 0.15, 0.8));
     dd("mikrovili", "Mikrovili in nabori", "Prstasti izrastki in valovite gube membrane; z njimi se bela krvnička oprime stene žile, tipa okolico in obda delce, ki jih bo požrla.", "#a8b4ff", nabori ? [mv, nabori] : [mv], naCeli(0.75, -0.35, 0.55));
     dd("citoplazma", "Citoplazma", c.opisCel + " Citoplazma z organeli zapolnjuje celico med membrano in jedrom.", "#" + new THREE.Color(c.cit).getHexString(), [citIn], L(V(0.45, -0.35, -0.55).normalize().multiplyScalar(R * 0.92).toArray()));
     if (c.jedro.lobi) {

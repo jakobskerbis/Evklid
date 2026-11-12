@@ -301,7 +301,7 @@ export function zgradi(THREE, ctx = {}) {
   const profV = [];
   for (let i = 0; i <= 50; i++) { const x = -XV + (2 * XV * i) / 50; profV.push([x, RV * (1 + 0.012 * sum(x * 6, 3, 1))]); }
   const vv = vrtenina(profV, q(72));
-  const slMat = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.12, rf: 26, k: 0.9, rob: B.membranaRob, rk: 1.3 });
+  const slMat = mat("#c9505e", { side: THREE.DoubleSide, roughness: 0.5 });
   const slOut = new THREE.Mesh(osX(vv.odprta), slMat);
   // prerez sarkoleme: lipidni dvosloj (debelina povečana)
   const slRob = new THREE.Mesh(osX(prerezVrtenine(profV, (y, r) => r * 0.975, [[0, 0.08, 0xc8d2ff], [0.08, 0.32, 0x6a4fd0], [0.32, 0.68, 0xe6e0ff], [0.68, 0.92, 0x6a4fd0], [0.92, 1, 0x4a33a8]])), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
@@ -460,7 +460,7 @@ export function zgradi(THREE, ctx = {}) {
   GV.add(plosc);
 
   const naRobu = robne.filter((m) => m.z > -0.001 && m.z < 0.01 && m.y > 0.1)[0] || robne[0];
-  del("sarkolema", "Sarkolema", "Celična membrana mišičnega vlakna (v prerezu dvosloj, debelina povečana); vanjo se odpirajo T-cevke, po katerih se električni signal razširi globoko v vlakno.", "#9fb4ff", [slOut, slRob, beljS, ...(pore ? [pore] : [])], [0.3, -0.2, RV * 0.98], deliV);
+  del("sarkolema", "Sarkolema", "Celična membrana mišičnega vlakna (v prerezu dvosloj, debelina povečana); vanjo se odpirajo T-cevke, po katerih se električni signal razširi globoko v vlakno.", "#c9505e", [slOut, slRob, beljS, ...(pore ? [pore] : [])], [0.3, -0.2, RV * 0.98], deliV);
   del("sarkoplazma", "Sarkoplazma", "Citoplazma mišičnega vlakna; vsebuje glikogen in mioglobin, ki hrani kisik.", "#5b4bb0", [spIn, ...kapi], [-XV - 0.005, -0.1, -0.36], deliV);
   del("jedra", "Jedra", "Vlakno nastane z zlitjem mnogih celic, zato ima na stotine jeder; ležijo ob robu, tik pod sarkolemo.", B.jedro, [jedra], (() => { const j = jedraKos.reduce((a, b) => (b.z - Math.abs(b.x) * 0.3 > a.z - Math.abs(a.x) * 0.3 ? b : a)); return [j.x, j.y * 1.08, j.z * 1.08]; })(), deliV);
   del("miofibrile", "Miofibrile", "Dolge niti iz zaporedja sarkomer; temni pasovi A in svetli pasovi I sosednjih miofibril se ujemajo, zato je vlakno prečno progasto.", "#c2306e", [mfM, mfKon], [-0.3, naRobu.y, naRobu.z + RF], deliV);

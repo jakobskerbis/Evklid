@@ -341,7 +341,7 @@ export function zgradi(THREE, ctx = {}) {
 
   // ---------- glavna celica: odprta spredaj (z > 0 odrezano) ----------
   // membrana je steklena: na vrhu se skoznjo vidijo korenine mikrovilov in terminalna mreža
-  const memMat = kit.steklo(mat(BC.membrana, { side: THREE.FrontSide }), { a: 0.16, rf: 2.2, rob: "#8c9cff", rk: 1.3 });
+  const memMat = mat("#f0a0aa", { side: THREE.DoubleSide, roughness: 0.5 });
   const mem = new THREE.Mesh(ploskev(steber(zunPr, 0, Math.PI, Math.PI * 2), q(64), q(100), true), memMat);
   // notranja stena: temnejša globlje (zadaj, ob dnu in vrhu) – navidezna senca
   const cit = new THREE.Mesh(lise(ploskev(steber(notPr, 0, Math.PI, Math.PI * 2, 0.008), q(48), q(80), true), { j: 0.2, fr: 0.45, odtenek: 0.05, temno: (x, y, z) => (0.62 + 0.38 * THREE.MathUtils.smoothstep(z, -w, -0.5)) * (0.8 + 0.2 * THREE.MathUtils.smoothstep(y, 0, 2.5) * (1 - THREE.MathUtils.smoothstep(y, H - 1.5, H))) }),
@@ -366,11 +366,11 @@ export function zgradi(THREE, ctx = {}) {
   const MITO_PL = [[0, 0.28, new THREE.Color(0xb4621a)], [0.4, 0.6, new THREE.Color(0xffe6b0)], [0.72, 1, new THREE.Color(0xe8a032)]];
   const OVOJ = (svet2) => [[0, 0.07, new THREE.Color(0x34107a)], [0.12, 0.24, new THREE.Color(0xc39af5)], [0.29, 0.31, new THREE.Color(0x34107a)], [0.38, 0.62, new THREE.Color(svet2)], [0.69, 0.71, new THREE.Color(0x34107a)], [0.76, 0.88, new THREE.Color(0xc39af5)], [0.93, 1, new THREE.Color(0x34107a)]];
   for (const [cx, t0, t1, sx] of [[-8, Math.PI * 1.5, Math.PI * 2, 1], [8, Math.PI, Math.PI * 1.5, -1]]) {
-    sosGeo.push(pobarvaj(ploskev(steber(zunPr, cx, t0, t1), hi ? 24 : 10, hi ? 80 : 34, true), 0x7a6cc8));
+    sosGeo.push(pobarvaj(ploskev(steber(zunPr, cx, t0, t1), hi ? 24 : 10, hi ? 80 : 34, true), 0xe6a2a6));
     // ploskev prereza z = 0 in x = cx
     const kz = (u, v, p) => { const [d, y] = zunPr(v); return p.set(cx + sx * u * d * 0.998, y, 0); };
     const kx = (u, v, p) => { const [d, y] = zunPr(v); return p.set(cx, y, -u * d * 0.998); };
-    sosGeo.push(pobarvaj(ploskev(kz, hi ? 6 : 4, hi ? 70 : 30), 0x4a3c96), pobarvaj(ploskev(kx, hi ? 6 : 4, hi ? 70 : 30), 0x4a3c96));
+    sosGeo.push(pobarvaj(ploskev(kz, hi ? 6 : 4, hi ? 70 : 30), 0xb06a70), pobarvaj(ploskev(kx, hi ? 6 : 4, hi ? 70 : 30), 0xb06a70));
     // prerez jedra in nekaj mitohondrijev na obeh ploskvah
     const elipsa = (cx2, cy, a, b, ravnina, zac = -Math.PI / 2, kon = Math.PI / 2) => (u, v, p) => {
       const ang = zac + (kon - zac) * u, x = a * v * Math.cos(ang), y = cy + b * v * Math.sin(ang);
@@ -657,7 +657,7 @@ export function zgradi(THREE, ctx = {}) {
   del("mikrovili", "Mikrovili (krtačasti obrobek)", "Na tisoče prstastih izrastkov, dolgih okoli 1 µm; kot krtača povečajo površino celice več kot 20-krat, zato celica hitreje vsrka hranila.", "#b4a8ff", [mv, encimi], L(-1.6, H + 1.0, -0.15));
   del("aktin-mikrovilov", "Aktinska vlakna mikrovilov", "V vsakem mikrovilu je snop 20 do 30 aktinskih vlaken, ki ga drži pokonci; njegova koreninica sega v terminalno mrežo.", BC.aktin, [jedraMv], L(-0.9, H + 0.5, -0.3));
   del("terminalna-mreza", "Terminalna mreža", "Gosta mreža vlaken (aktin, spektrin, keratin) tik pod vrhom celice; vanjo so zasidrane korenine mikrovilov.", "#ffd27a", [termMreza], L(1.4, H - 0.55, -1.2));
-  del("membrana", "Celična membrana", "Ovojnica celice iz dvosloja maščob; na vrhu je nagubana v mikrovile, ob straneh pa se dotika sosednjih celic. Debelina membrane je povečana.", "#9fb4ff", [mem, memRob], L(-w, 13, -0.05));
+  del("membrana", "Celična membrana", "Ovojnica celice iz dvosloja maščob; na vrhu je nagubana v mikrovile, ob straneh pa se dotika sosednjih celic. Debelina membrane je povečana.", "#f0a0aa", [mem, memRob], L(-w, 13, -0.05));
   del("citoplazma", "Citoplazma", "Želatinasta notranjost celice z organeli.", "#4a3d9a", [cit], L(1.2, 16, -w + 0.2));
   del("jedro", "Jedro", "Ovalno jedro z dvojno ovojnico in porami leži v spodnjem delu celice; v njem je DNK (kromatin).", BC.jedro, [jedro, jPlo, jOvoj], L(-0.8, 5.4, 0.05));
   del("jedrce", "Jedrce", "Gosto območje v jedru, kjer nastajajo deli ribosomov.", BC.jedrce, [jedrce], L(0.45, 8.0, 0.3));
@@ -672,7 +672,7 @@ export function zgradi(THREE, ctx = {}) {
   del("dezmosomi", "Dezmosomi", "Točkasti stiki kot zakovice; s keratinskimi nitmi povežejo sosednji celici, da se tkivo ne raztrga.", "#e0408a", [dez], L(...dezT[1].toArray()));
   del("keratin", "Keratinske niti", "Vmesni filamenti iz keratina, ki se raztezajo od dezmosoma do dezmosoma čez vso celico in ji dajejo trdnost.", "#ea9cff", [keratin], L(...dezT[6].clone().add(V(0.6, 0.4, 0.6)).toArray()));
   del("bazalna-membrana", "Bazalna membrana", "Tanka plast prepletenih beljakovinskih vlaken (kolagen IV, laminin) pod epitelijem, na kateri celice stojijo.", "#2f9a88", [bazalna, bmVl], L(-1, -0.3, -0.02));
-  del("sosednje-celice", "Sosednji celici (prerez)", "Enake celice ob strani, prerezane, da se vidita jedro in mitohondriji; skupaj tvorijo enoslojni valjasti epitelij.", "#7a6cc8", [sosedi], L(-6.4, 9.5, 0.05));
+  del("sosednje-celice", "Sosednji celici (prerez)", "Enake celice ob strani, prerezane, da se vidita jedro in mitohondriji; skupaj tvorijo enoslojni valjasti epitelij.", "#e6a2a6", [sosedi], L(-6.4, 9.5, 0.05));
 
   kit.poliraj(svet, deli, {
     citoplazma: { tex: "fino", rf: hi ? 9 : 6, k: hi ? 0.55 : 0.3, b: 0.2, lisa: 0.2, f: 0.3 },

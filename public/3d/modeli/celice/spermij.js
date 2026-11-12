@@ -32,7 +32,8 @@ export function zgradi(THREE, ctx = {}) {
     odpad.push(m);
     return m;
   }
-  const steklo = (o = {}) => V.steklo(mat(B.membrana, { side: THREE.FrontSide }), Object.assign({ a: 0.14, rf: 60, k: 0.9, rob: B.membranaRob, rk: 1.3 }, o));
+  const SPM = "#eee6dc"; // neprozorna membrana (semenčice so belkaste); notranjost pokaže prerez
+  const steklo = () => mat(SPM, { side: THREE.DoubleSide, roughness: 0.5 });
   // Združi geometrije (z indeksom ali brez) v eno; ohrani barve oglišč in aRez, če jih imajo vse.
   function zdruzi(geos, barve) {
     const pos = [], nor = [], col = [], rez = [], idx = [];
@@ -343,7 +344,7 @@ export function zgradi(THREE, ctx = {}) {
   }
   postaviRep(0);
   G1.add(jed1, akr1, memGl1, vrat1, sred1, jedro1, ovoj1, osM, repM);
-  del("membrana", "Celična membrana", "Tanka prožna ovojnica, ki obdaja vso semenčico od glave do konca biča; skoznjo vidiš jedro, akrosom in mitohondrije.", "#9fb4ff", [memGl1, ovoj1], [HC1.x + 0.02, 0.045, 0.01], deli1);
+  del("membrana", "Celična membrana", "Tanka prožna ovojnica, ki obdaja vso semenčico od glave do konca biča; jedro, akrosom in mitohondrije pod njo pokaže prerez.", "#eee6dc", [memGl1, ovoj1], [HC1.x + 0.02, 0.045, 0.01], deli1);
   del("akrosom", "Akrosom", "Kapica na sprednjem delu glave z encimi, ki semenčici pomagajo prebiti ovojnico jajčne celice.", C_AKR, [akr1], [HC1.x + 0.05, 0.02, 0.012], deli1);
   del("jedro", "Jedro (v glavi)", "Zelo zgoščeno jedro s polovičnim številom kromosomov (23); to je očetov delež dednega zapisa.", B.jedro, [jed1], [HC1.x - 0.03, 0.01, 0.018], deli1);
   del("vrat", "Vrat s centriolama", "Kratek vrat povezuje glavo in bič; v njem sta dve centrioli, iz ene izrašča bič.", B.centrosom, [vrat1], [XV0 - 0.006, 0.008, 0.004], deli1);
@@ -526,7 +527,7 @@ export function zgradi(THREE, ctx = {}) {
   G2.add(mito, mitoZ, mitoR);
 
   const naB = (x, a, f = 1.02) => [x, Math.cos(a) * rB(x) * f, Math.sin(a) * rB(x) * f];
-  del("membrana", "Celična membrana", "Dvosloj fosfolipidov z beljakovinami, ki ovija vso semenčico; na glavi se ob oploditvi zlije z membrano jajčne celice. Debelina je povečana.", "#9fb4ff", [memG, memGP, memGR, memB, memBP, memBR, beljG, beljGP], naB(-0.3, -0.9), deli2);
+  del("membrana", "Celična membrana", "Dvosloj fosfolipidov z beljakovinami, ki ovija vso semenčico; na glavi se ob oploditvi zlije z membrano jajčne celice. Debelina je povečana.", "#eee6dc", [memG, memGP, memGR, memB, memBP, memBR, beljG, beljGP], naB(-0.3, -0.9), deli2);
   del("akrosom", "Akrosom", "Kapica z encimi na sprednjih dveh tretjinah jedra; ob stiku z jajčno celico encime sprosti in prebavi pot skozi njeno ovojnico.", C_AKR, [akM, akP, akR], [HC2.x + 0.2, 0.08, 0.05], deli2);
   del("jedro", "Jedro", "Zelo zgoščeno jedro s 23 kromosomi; DNK je tesno stisnjena (v prerezu temna, s svetlimi jedrnimi vakuolami), da je glava čim manjša.", B.jedro, [jM, jP, jR], [HC2.x - 0.06, 0.06, 0.03], deli2);
   del("centriola", "Vrat s centriolama", "V vratu sta dve centrioli iz trojčkov mikrotubulov; oddaljena je bazalno telesce, iz katerega raste bič, bližnjo semenčica prinese v jajčno celico.", B.centrosom, [centM], [XG - 0.018, 0.03, 0.03], deli2);

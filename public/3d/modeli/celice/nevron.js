@@ -201,7 +201,9 @@ export function zgradi(THREE, ctx = {}) {
   const nad = (d) => (t) => ({ p: t.p.addScaledVector(t.n, d), n: t.n });
   // steklena membrana izrastkov (vsak del svoj material, da stikalo učbeniških barv obarva vsakega posebej) in temna
   // notranja stena (zadnje ploskve iste mreže), da je izrastek »poln« citoplazme in ne prazna cev
-  const steklo = (a = 0.2) => V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a, rf: 150, k: 0.9, rob: B.membranaRob, rk: 1.3 });
+  // neprozorna membrana v barvi živčnega tkiva (rožnato siva); notranjost pokaže prerez
+  const NEV = "#e3b2b8";
+  const steklo = () => mat(NEV, { side: THREE.DoubleSide, roughness: 0.5 });
   const notranja = () => mat(0x3d3180, { roughness: 0.62, clearcoat: 0.25, sheen: 0.35, sheenColor: new THREE.Color(0x8d7ee0), side: THREE.BackSide });
 
   // ---------- celično telo (soma): steklena membrana, v prerezu debel dvosloj ----------
@@ -220,7 +222,7 @@ export function zgradi(THREE, ctx = {}) {
     return RS * (1 + b + 0.045 * fbm(d.x * 2.2 + 1, d.y * 2.2, d.z * 2.2));
   };
   const soma = lupina(oblS, hi ? 120 : 56, hi ? 72 : 38);
-  const somaMat = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.24, rf: 90, k: 0.9, rob: B.membranaRob, rk: 1.7, difuzno: 0.2 });
+  const somaMat = mat(NEV, { side: THREE.DoubleSide, roughness: 0.5 });
   const somaOut = new THREE.Mesh(soma.odprta, somaMat);
   const citMat = notranja();
   const MS = 0.93; // debelina membrane v prerezu (povečana): ≈ 7 % polmera some
@@ -652,7 +654,7 @@ export function zgradi(THREE, ctx = {}) {
   // ---------- deli ----------
   const kT = koncici.reduce((a, k) => (vLok(k.p).z > vLok(a.p).z ? k : a), koncici[0]);
   const kTk = kT.p.clone().addScaledVector(kT.d, 0.018);
-  del("celicno-telo", "Celično telo (soma)", "Najdebelejši del nevrona z jedrom, obdan s celično membrano (v prerezu dvosloj, debelina povečana); zbira signale iz dendritov in jih pošlje naprej v akson.", "#9fb4ff", [somaOut, somaRob, somaObr, somaPokrov, beljS, beljSP], naS(0.35, -0.2, 0.92));
+  del("celicno-telo", "Celično telo (soma)", "Najdebelejši del nevrona z jedrom, obdan s celično membrano (v prerezu dvosloj, debelina povečana); zbira signale iz dendritov in jih pošlje naprej v akson.", NEV, [somaOut, somaRob, somaObr, somaPokrov, beljS, beljSP], naS(0.35, -0.2, 0.92));
   del("citoplazma", "Citoplazma", "Tekočina v celičnem telesu, v kateri so jedro, Nisslova telesca, Golgijev aparat in mitohondriji.", "#5b4bb0", [somaIn], naS(-0.2, 0.25, -0.95, 0.95));
   del("jedro", "Jedro", "Veliko okroglo jedro z DNK, ki usmerja delovanje nevrona; nevroni se praviloma ne delijo več.", B.jedro, [jOut, jRob, jObr, jPokrov, pore], [-0.494, 0.065, 0.037]);
   del("nukleoplazma", "Nukleoplazma", "Tekočina v notranjosti jedra, v kateri sta kromatin in jedrce.", "#a565f0", [jIn], J.clone().add(v3(-0.02, 0.01, -0.03)).toArray());
@@ -663,8 +665,8 @@ export function zgradi(THREE, ctx = {}) {
   del("golgi", "Golgijev aparat", "Kup sploščenih membranskih vrečk ob jedru; beljakovine dodela in zapakira v mešičke, ki potujejo tudi do končičev aksona.", B.golgi, [golgi, golMes], G.toArray());
   del("mitohondriji", "Mitohondriji", "Pridobivajo energijo (ATP), ki jo nevron porablja predvsem za črpanje ionov skozi membrano; veliko jih je tudi v končičih.", B.mitohondrij, [mito, mitoA], (mitT.filter((p) => p.dot(kam) > S.dot(kam) + 0.02).sort((a, b) => a.x + a.y - b.x - b.y)[0] || mitT[0] || S).toArray());
   del("citoskelet", "Nevrofilamenti in mikrotubuli", "Vlakna citoskeleta vzdolž dendritov, celičnega telesa in aksona; dajejo oporo, po mikrotubulih pa se mešički in mitohondriji prevažajo do končičev.", B.citoskelet, [nfSoma, nfDend, nfAks], vSkupino(0.3, 0.012, 0.004));
-  del("dendriti", "Dendriti", "Kratki, močno razvejani izrastki, ki sprejemajo signale drugih nevronov; drobni trni na njih povečajo površino za sinapse.", "#b7a2ff", [dendriti, dendIn, trn], S.clone().addScaledVector(dSmeri[3], RS * 1.7).toArray());
-  del("aksonski-gric", "Aksonski grič", "Stožčast prehod iz celičnega telesa v akson; tu se sproži živčni impulz, ko je vzburjenje dovolj močno.", "#8fa0ff", [gricM, gricIn], vSkupino(0.28, 0.026, 0.026));
+  del("dendriti", "Dendriti", "Kratki, močno razvejani izrastki, ki sprejemajo signale drugih nevronov; drobni trni na njih povečajo površino za sinapse.", NEV, [dendriti, dendIn, trn], S.clone().addScaledVector(dSmeri[3], RS * 1.7).toArray());
+  del("aksonski-gric", "Aksonski grič", "Stožčast prehod iz celičnega telesa v akson; tu se sproži živčni impulz, ko je vzburjenje dovolj močno.", NEV, [gricM, gricIn], vSkupino(0.28, 0.026, 0.026));
   del("akson", "Akson (nevrit)", "Dolg izrastek, ki prevaja živčni impulz stran od celičnega telesa do naslednje celice; v resnici je lahko dolg do 1 m.", "#7f95ff", [aksonM, aksonIn], vSkupino(xm0 + RZ * (Lm + rez) + Lm * 0.5, 0.006, 0.012));
   del("mielinska-ovojnica", "Mielinska ovojnica", "Membrana Schwannove celice, večkrat ovita okoli aksona (v prerezu plasti); maščobna ovojnica akson izolira, zato impulz potuje hitreje.", B.mielin, [miel, plasti, mielPokrov], vSkupino(xm0 + 3 * (Lm + rez) + Lm * 0.4, 0.02, rm * 0.9));
   del("schwannova-celica", "Jedro Schwannove celice", "Vsak odsek mielinske ovojnice je ena Schwannova celica; njeno jedro je potisnjeno na zunanjo stran ovojnice.", "#7a52e8", [schwJ], sjT);

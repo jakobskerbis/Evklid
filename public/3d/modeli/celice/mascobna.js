@@ -175,7 +175,7 @@ export function zgradi(THREE, ctx = {}) {
 
   // ---------- materiali in mreže (zgradi jih postavi()) ----------
   const prazna = () => new THREE.BufferGeometry();
-  const memMat = V.steklo(mat(B.membrana, { side: THREE.FrontSide }), { a: 0.1, rf: 1.6, k: 0.3, rob: B.membranaRob, rk: 1.3, difuzno: 0.08 });
+  const memMat = mat("#f0d9a0", { side: THREE.DoubleSide, roughness: 0.5 });
   const mem = new THREE.Mesh(prazna(), memMat);
   const robMat = mat(0xffffff, { vertexColors: true, roughness: 0.45, clearcoat: 0.5, side: THREE.DoubleSide });
   robMat.userData.rez = true;
@@ -374,7 +374,7 @@ export function zgradi(THREE, ctx = {}) {
     const sm = V3(0.45, 0.25, 0.86).normalize();
     const mi = mitL.find((x) => ob(x.d)) || mitL[0], ka = kapL.find((x) => ob(x.d)) || kapL[0], er = erL.find((x) => ob(x.d)) || erL[0];
     const pas = (x) => x.d.clone().multiplyScalar(Rd + (oblika(x.d) - TM - Rd) * x.t);
-    del("membrana", "Celična membrana", "Tanka ovojnica celice iz dveh plasti fosfolipidov z beljakovinami; ob jedru je navzven nekoliko izbočena. Debelina membrane je povečana.", "#9fb4ff", [mem, memRob, belM], W(sm.multiplyScalar(oblika(sm) * 1.005)));
+    del("membrana", "Celična membrana", "Tanka ovojnica celice iz dveh plasti fosfolipidov z beljakovinami; ob jedru je navzven nekoliko izbočena. Debelina membrane je povečana.", "#f0d9a0", [mem, memRob, belM], W(sm.multiplyScalar(oblika(sm) * 1.005)));
     del("kaveole", "Kaveole", "Drobne vdolbinice v membrani; maščobna celica jih ima zelo veliko. Pomagajo pri sprejemu maščobnih kislin in pri odzivu na inzulin.", "#ff7fc0", [kavM], naSmer(0.62, -0.3, 0.72, (d) => oblika(d) + 0.1));
     del("kapljica", "Maščobna kapljica", "Ena velika kapljica maščob (trigliceridov), ki zapolni skoraj vso celico; je zaloga energije in toplotna izolacija telesa.", "#f3d36b", [kapljica, kapPov], W(naRavnini(1, 0.75, Rd * 0.55)));
     del("citoplazma", "Citoplazma", "Le tanek pas citoplazme ob membrani, ker kapljica zavzame skoraj ves prostor.", "#5b4bb0", [cit], W(naRavnini(0, 0.55, (Rd + robR(0, 0.55)) / 2)));

@@ -313,7 +313,7 @@ export function zgradi(THREE, ctx = {}) {
   const enota = lupina(() => 1, q(120), q(72));
   const smeri = [enota.odprta.attributes.position.array.slice()];
   enota.pokrov.dispose();
-  const memMat = kit.steklo(mat(BC.membrana, { side: THREE.FrontSide }), { a: 0.14, rf: 15, rob: "#8c9cff", rk: 1.3 });
+  const memMat = mat("#eedcb0", { side: THREE.DoubleSide, roughness: 0.5 });
   const memOut = new THREE.Mesh(enota.odprta, memMat);
   const citIn = new THREE.Mesh(enota.odprta.clone(), mat(0x3e2a62, { roughness: 0.62, clearcoat: 0.25, sheen: 0.3, side: THREE.BackSide }));
   const TM = 0.06; // debelina membrane (povečana)
@@ -512,7 +512,7 @@ export function zgradi(THREE, ctx = {}) {
     deli.length = 0;
     const akt = cilj > 0.5;
     const sm = V(0.35, 0.55, 0.75).normalize();
-    del("membrana", "Celična membrana", "Ovojnica ploščice iz dvosloja fosfolipidov (v prerezu temni glavi in svetli repi). Debelina membrane je povečana.", "#9fb4ff", [memOut, memRob], W(sm.clone().multiplyScalar(fT(sm) * 1.01).toArray()));
+    del("membrana", "Celična membrana", "Ovojnica ploščice iz dvosloja fosfolipidov (v prerezu temni glavi in svetli repi). Debelina membrane je povečana.", "#eedcb0", [memOut, memRob], W(sm.clone().multiplyScalar(fT(sm) * 1.01).toArray()));
     const rr = recD.reduce((a, b) => (b.d.z + b.d.y * 0.5 > a.d.z + a.d.y * 0.5 ? b : a));
     del("receptorji", "Receptorji (GPIb, GPIIb/IIIa)", "Beljakovine v membrani: GPIb ploščico prilepi na poškodovano steno žile, aktivirani GPIIb/IIIa pa prek fibrinogena poveže ploščice med seboj v čep.", "#6f7dff", [rec],
       W(rr.d.clone().multiplyScalar(fT(rr.d) * 1.03).toArray()));

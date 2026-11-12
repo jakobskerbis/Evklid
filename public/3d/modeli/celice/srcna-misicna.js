@@ -258,12 +258,12 @@ export function zgradi(THREE, ctx = {}) {
     return "i";
   };
   // barve, ki jih skupna paleta nima (pas A = miozin magenta, pas I = aktin mentol; enako kot pri skeletnem vlaknu)
-  const DISK = "#f1ecff", STIK = "#41e0e8", DEZ = "#6a2fd0", SOS = "#8a7fd8", TC = "#f4f6ff";
+  const DISK = "#f1ecff", STIK = "#41e0e8", DEZ = "#6a2fd0", SOS = "#c25866", TC = "#f4f6ff";
   const BP = { z: hex(0x2a1a6e), m: hex(0x6e1a48), h: hex(0xe872a8), a: hex(0xc2306e), i: hex(0xc9f4e2) };
   const mfTex = tekstura(4, 128, (u, v) => BP[pas(v)]);
   const sosTex = tekstura(32, 64, (u, v) => {
     const p = pas(v), k = p === "z" ? 0.72 : p === "a" || p === "m" ? 0.86 : 1, n = 0.94 + 0.06 * sum(u * 20, v * 2, 4);
-    return [138 * k * n, 127 * k * n, 216 * k * n];
+    return [194 * k * n, 88 * k * n, 102 * k * n]; // sosednje celice so enako rdeče kot srčna mišica
   });
   // SR okoli miofibril: vzdolžne cevke, ob Z-liniji končne cisterne (diade s T-cevko); T-cevka na Z-liniji
   const srTex = tekstura(64, 128, (u, v) => {
@@ -365,7 +365,7 @@ export function zgradi(THREE, ctx = {}) {
   const n2 = odsek(B, v3(0.9, Y0, 0), R * 0.97, R * 0.93, { dA: dkB, nKot: 40 });
   const n3 = odsek(Dv, Dv.clone().addScaledVector(smerVeje, 0.27), R * 0.8, R * 0.85, { dA: dkD, nKot: 40 });
 
-  const slMat = V.steklo(mat(Bc.membrana, { side: THREE.FrontSide }), { a: 0.16, rf: 60, k: 0.9, rob: Bc.membranaRob, rk: 1.3 });
+  const slMat = mat("#b8424f", { side: THREE.DoubleSide, roughness: 0.5 });
   const memOdprta = new THREE.Mesh(glavna.odprta, slMat);
   const memCela = new THREE.Mesh(zdruzi([glavna.cela, veja.cela]), slMat);
   const memPokrov = new THREE.Mesh(glavna.pokrov, slMat);
@@ -551,7 +551,7 @@ export function zgradi(THREE, ctx = {}) {
   telo.add(glikogen);
 
   // ---------- deli ----------
-  del("sarkolema", "Sarkolema", "Celična membrana srčne mišične celice (v prerezu dvosloj, debelina povečana); skozi njo vstopajo kalcijevi ioni, ki sprožijo vsak utrip.", "#9fb4ff", [memOdprta, memCela, memPokrov, memRob, lokRob, beljS], [0.25, Y0 - 0.02, R * 1.02]);
+  del("sarkolema", "Sarkolema", "Celična membrana srčne mišične celice (v prerezu dvosloj, debelina povečana); skozi njo vstopajo kalcijevi ioni, ki sprožijo vsak utrip.", "#b8424f", [memOdprta, memCela, memPokrov, memRob, lokRob, beljS], [0.25, Y0 - 0.02, R * 1.02]);
   del("sarkoplazma", "Sarkoplazma", "Citoplazma celice z glikogenom in mioglobinom; v prerezu se vidijo konci miofibril in mitohondriji.", "#5b4bb0", [spIn, spCela, prerez], [A.x + REZ + 0.002, Y0 + 0.06, 0.08]);
   del("jedro", "Jedro", "Eno ali dve jedri ležita v sredini celice (pri skeletni mišici so ob robu); celice srca se po rojstvu skoraj ne delijo več.", Bc.jedro, [jedroM, jedroPok], [jedra[0][0], Y0 + 0.03, 0.03]);
   del("nukleoplazma", "Nukleoplazma", "Notranjost jedra z dednim zapisom (DNK).", "#a565f0", [nukM], [jedra[1][0], Y0 + 0.015, 0.012]);
