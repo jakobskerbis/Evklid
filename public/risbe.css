@@ -4,7 +4,8 @@
 .risba { margin: 14px 0; text-align: center; break-inside: avoid; page-break-inside: avoid; }
 .risba figcaption { margin-top: 4px; font-size: 0.9em; color: var(--muted, #566070); }
 .risba-opis { font-style: italic; color: var(--muted, #566070); }
-.rs { display: inline-block; width: 100%; height: auto; color: var(--text, #1c2233); overflow: visible; }
+/* direction: ltr: v jezikih, pisanih z desne (arabščina), bi se sicer napisi zasidrali na napačno stran in minus bi stal za številom. */
+.rs { display: inline-block; width: 100%; height: auto; color: var(--text, #1c2233); overflow: visible; direction: ltr; }
 .rs .a { --c: var(--accent, #2353d1); }
 .rs .b { --c: var(--warm, #b0500a); }
 .rs .c { --c: var(--ok, #1e7a4c); }
@@ -33,7 +34,7 @@
 .rs-drsniki { display: grid; gap: 2px; max-width: 400px; margin: 6px auto 0; text-align: start; }
 .rs-drsnik { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: 10px; }
 .rs-drsnik label { font-weight: 600; overflow-wrap: anywhere; }
-.rs-drsnik output { min-width: 2.6em; text-align: end; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent, #2353d1); }
+.rs-drsnik output { direction: ltr; unicode-bidi: isolate; min-width: 2.6em; text-align: end; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent, #2353d1); }
 .rs-drsnik input[type="range"] { grid-column: 1 / -1; box-sizing: border-box; width: 100%; height: 44px; margin: 0; padding: 0; border: 0; background: none; accent-color: var(--accent, #2353d1); direction: ltr; touch-action: pan-y; cursor: pointer; }
 .rs-drsnik input[type="range"]:focus-visible { outline: 3px solid var(--accent, #2353d1); outline-offset: 2px; border-radius: 6px; }
 @media print { .rs-drsniki { display: none; } }

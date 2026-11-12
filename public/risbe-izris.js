@@ -129,7 +129,7 @@ function known(b, keys) {
 // ---------- drsniki (graf): parametri v izrazih, koordinatah in napisih ----------
 // drsnik: ime | od .. do | korak | začetna | napis. Ime (ena črka) sme nastopati v »f:«, v koordinatah likov
 // (»točka: 0; n«, »črta: 0; n -> 1; k + n«) in v napisih, opisu in podnapisu kot »{izraz}« (»k = {k}«,
-// »y = {k}x {+n}«: s plusom spredaj se izpiše predznak). Brez drsnikov velja BREZ: vse ostane dobesedno.
+// »{+n}«: s plusom spredaj se izpiše predznak). Brez drsnikov velja BREZ: vse ostane dobesedno.
 const BREZ = { vals: null, lenient: false, num, text: (s) => s, used: null };
 const decimalk = (v) => (String(+(+v).toFixed(6)).split(".")[1] || "").length;
 const MAX_KORAKOV = 200;
@@ -142,7 +142,7 @@ function drsniki(b) {
     try {
       ast = parse(name);
     } catch {}
-    if (!/^\p{L}$/u.test(name) || name === "x" || name === "y" || ast?.k !== "var" || ast.name !== name) fail(`drsnik: ime »${name}« ni dovoljeno (ena črka, ne x, y ali e)`);
+    if (!/^\p{L}$/u.test(name) || name === "x" || name === "y" || ast?.k !== "var" || ast.name !== name) fail(`drsnik: ime »${name}« ni dovoljeno (ena črka, ne x, y, e ali π)`);
     const [lo, hi] = span(f[1], `drsnik ${name}`).map((q) => num(q, `drsnik ${name}`));
     if (!(hi > lo)) fail(`drsnik ${name}: »do« mora biti večji od »od«`);
     const step = num(f[2], `korak drsnika ${name}`);
