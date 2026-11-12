@@ -32,15 +32,17 @@ export default function narisi(host) {
     s("path", { d: fnPath(k.f, A, { n: 200 }), class: "sk-s-glavna", "stroke-width": 2.5 }, zg);
     for (const x of k.nicle) s("circle", { cx: A.X(x), cy: A.Y(0), r: 5, class: "sk-fill sk-fill-ploskev" }, zg);
     s("circle", { cx: A.X(p), cy: A.Y(q), r: 6, class: "sk-fill sk-fill-druga" }, zg);
-    napis(g, A.X(p) + 9, A.Y(q) + (a > 0 ? 16 : -8), "T", "druga");
-    napis(g, Math.min(A.R - 4, A.X(p) + 5), A.T + 12, "x = p", "izbor", { style: "font-size: 11px" });
+    // Oznaki na strani, ki je stran od osi y (tam so številke osi): pri p < 0 levo od točke in simetrale.
+    const levo = p < 0;
+    napis(g, A.X(p) + (levo ? -9 : 9), A.Y(q) + (a > 0 ? 16 : -8), "T", "druga", levo ? { "text-anchor": "end" } : {});
+    napis(g, levo ? Math.max(A.L + 34, A.X(p) - 5) : Math.min(A.R - 4, A.X(p) + 5), A.T + 12, "x = p", "izbor", { style: "font-size: 11px", ...(levo ? { "text-anchor": "end" } : {}) });
     const z = (v) => `${Math.abs(v - Number(v.toFixed(2))) < 1e-9 ? "" : "≈\u00a0"}${st(v, 2)}`;
     S.cipi([
       { barva: "druga", oznaka: "T(p, q)", vrednost: `T${par(p, q, 2)}` },
       { barva: "glavna", oznaka: "b = -2ap", vrednost: st(k.b, 2) },
       { barva: "glavna", oznaka: "c = ap^2 + q", vrednost: st(k.c, 3) },
       { barva: "glavna", oznaka: "D = b^2 - 4ac", vrednost: st(k.D, 2) },
-      { barva: "ploskev", oznaka: k.nicle.length === 1 ? "x_1 = x_2" : "x_{1,2}", vrednost: k.nicle.length ? k.nicle.map(z).join("; ") : "ni realnih" },
+      { barva: "ploskev", siroko: true, oznaka: k.nicle.length === 1 ? "x_1 = x_2" : "x_{1,2}", vrednost: k.nicle.length ? k.nicle.map(z).join("; ") : "ni realnih" },
     ]);
   }
   izris();

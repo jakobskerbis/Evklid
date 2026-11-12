@@ -692,11 +692,15 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-pt .sk-ring { fill: color-mix(in srgb, var(--sk-pt) 28%, transparent); stroke: none; }
 .sk-pt .sk-core { fill: var(--sk-pt); stroke: #fff; stroke-width: 2; }
 .sk-pt:focus-visible .sk-ring { stroke: #fff; stroke-width: 2; }
-.sk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.sk-chip { direction: ltr; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px 7px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); font-size: 0.92rem; }
+/* Okna s podatki: stalna mreža (stolpci le po širini, ne po vsebini), vsa okna enako visoka, oznaka vedno nad
+   vrednostjo; nič se ne prelomi in nič ne skače, ko drsnik spremeni vrednost (j, 12. 11. 2026). */
+.sk-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); grid-auto-rows: 1fr; gap: 6px; }
+.sk-chip { direction: ltr; display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: center; align-items: center; gap: 3px 7px; min-width: 0; padding: 6px 10px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); font-size: 0.92rem; }
+.sk-chip-siroko { grid-column: 1 / -1; }
 .sk-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18); flex: none; }
+.sk-tex { min-width: 0; white-space: nowrap; overflow-x: clip; }
 .sk-tex .katex { white-space: nowrap; }
-.sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; }
+.sk-val { grid-column: 1 / -1; min-width: 0; min-height: 1.35em; line-height: 1.35; white-space: nowrap; overflow-x: clip; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; font-variant-numeric: tabular-nums; }
 .sk-glavna { --sk-c: #8a8fa8; }
 .sk-ploskev { --sk-c: var(--sk-ploskev); }
 .sk-izbor { --sk-c: var(--sk-izbor); }
@@ -718,7 +722,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-ctl .demo-slider-label::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); margin-inline-end: 6px; }
 .sk-ctl input[type="range"] { accent-color: var(--sk-c); min-height: 40px;
   background: linear-gradient(to right, var(--sk-c) var(--sk-p, 0%), transparent var(--sk-p, 0%)) center / 100% 4px no-repeat; }
-.sk-ctl output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; min-width: 4.5ch; text-align: end; }
+.sk-ctl output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; min-width: 4.5ch; text-align: end; white-space: nowrap; }
 .sk-svg .sk-n { font: 500 11px/1 var(--font, system-ui), sans-serif; fill: var(--sk-glavna); opacity: 0.7; }
 .sk-svg .sk-grid { stroke: var(--sk-line); stroke-width: 1; }
 .sk-svg .sk-fill { stroke: none; }
