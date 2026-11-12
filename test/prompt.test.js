@@ -156,6 +156,15 @@ test("accuracy round 4: no side facts about other substances, OŠ stays on the t
   assert.doesNotMatch(fixed, /masa ostane enaka, če plin ne uide/);
   // Krog 4 doda manj kot 550 znakov predpomnjenega dela (51 711 pred spremembo; 500 → 550 po pregledu B:
   // izjema za vprašano primerjavo in analogijo, kisik iz zraka, CO₂ pri tableti).
-  // Blok »Račun za kodo« (j, 2026-11-11: odgovore vedno potrdi koda, #581) doda še do 1200 znakov.
-  assert.ok(fixed.length < 51711 + 550 + 1200, `stalni del ${fixed.length} znakov`);
+  // Krog 4 je končal pri 52 228 znakih, blok »Račun za kodo« (#581) doda do 1200; mejo za nove kroge preveri test kroga 6.
+  assert.ok(fixed.length > 51711);
+});
+
+test("accuracy round 6 (2026-11-12): one Lewis notation in LaTeX, every mark one lone pair, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["vsaka oznaka en nevezni par", "»:« ob strani", "`\\overset{\\cdot\\cdot}{}` nad", "`\\underset{\\cdot\\cdot}{}` pod", "»:« in `\\ddot` ob istem atomu sta dva para", "${:}\\mathrm{N}{\\equiv}\\mathrm{N}{:}$", "oznake preštej"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  // Krog 6 doda manj kot 300 znakov predpomnjenega dela (53 413 pred spremembo: krog 4 52 228 + Račun za kodo #581).
+  assert.ok(fixed.length < 53413 + 300, `stalni del ${fixed.length} znakov`);
 });

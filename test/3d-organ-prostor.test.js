@@ -9,7 +9,8 @@ import { fileURLToPath } from "node:url";
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { MeshoptDecoder } from "meshoptimizer";
-import { prostorOrgana } from "../public/3d/organ-prostor.js";
+import { prostorOrgana, brezPregrad } from "../public/3d/organ-prostor.js";
+import { analiziraj } from "../scripts/atlas/preveri-mreze.mjs";
 
 const KOREN = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ORGANI = path.join(KOREN, "public", "3d", "modeli", "organi-3d");
@@ -91,6 +92,54 @@ test("vsak organ s prerezom: ravnina gre skozi model", async () => {
     for (const r of j.prerez.ravnine) {
       const d = delezPred(t, r);
       assert.ok(d > 0.1 && d < 0.9, `${f}: ravnina prereza je izven modela (delež ${d.toFixed(2)})`);
+    }
+  }
+});
+
+test("pregrada na stiku: par nasprotno navitih trikotnikov z istimi oglišči odpade, drugo ostane", () => {
+  // dva tetraedra s skupno ploskvijo (0, 1, 2): vsak je zaprt, skupna ploskev je v obeh, nasprotno navita
+  const p = Float32Array.from([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, /* drugi */ 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1]);
+  const idx = Uint32Array.from([0, 2, 1, 0, 1, 3, 1, 2, 3, 2, 0, 3, /* drugi */ 4, 5, 6, 4, 7, 5, 5, 7, 6, 6, 7, 4]);
+  const nov = brezPregrad(p, idx);
+  assert.equal(nov.length, idx.length - 6);
+  assert.deepEqual([...nov], [0, 1, 3, 1, 2, 3, 2, 0, 3, 4, 7, 5, 5, 7, 6, 6, 7, 4]);
+  const r = analiziraj(Float64Array.from(p), nov);
+  assert.equal(r.odprtiRobovi, 0, "unija brez pregrade mora ostati zaprta");
+  // enako navit dvojnik (ista ploskev dvakrat) ni pregrada
+  assert.equal(brezPregrad(p.slice(0, 12), Uint32Array.from([0, 1, 2, 0, 1, 2])), null);
+  assert.equal(brezPregrad(p.slice(0, 12), idx.slice(0, 12)), null);
+});
+
+test("srce: deli iste žile (extras »stik«) imajo skupno mrežo oglišč; brez pregrad je združena žila zaprta", async () => {
+  await MeshoptDecoder.ready;
+  const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ "meshopt.decoder": MeshoptDecoder });
+  for (const dat of ["srce.glb", "srce-telefon.glb"]) {
+    const doc = await io.read(path.join(ORGANI, dat));
+    const skupine = new Map();
+    for (const node of doc.getRoot().listNodes()) {
+      const ex = node.getExtras() || {};
+      if (!ex.stik) continue;
+      assert.equal(node.getParentNode(), null);
+      const k = `${ex.del}|${ex.tkivo}`;
+      if (!skupine.has(k)) skupine.set(k, { premik: node.getTranslation(), merilo: node.getScale(), p: [], idx: [], imena: [] });
+      const s = skupine.get(k);
+      assert.deepEqual([node.getTranslation(), node.getScale()], [s.premik, s.merilo], `${dat} ${node.getName()}: deli žile nimajo iste mreže oglišč`);
+      const prim = node.getMesh().listPrimitives()[0];
+      const pos = prim.getAttribute("POSITION");
+      const odmik = s.p.length / 3;
+      const el = [0, 0, 0];
+      // kot pregledovalnik: normalizirano celo število → float32, nato premik in merilo → float32
+      for (let i = 0; i < pos.getCount(); i++) { pos.getElement(i, el); for (let c = 0; c < 3; c++) s.p.push(Math.fround(Math.fround(el[c]) * s.merilo[c] + s.premik[c])); }
+      for (const i of prim.getIndices().getArray()) s.idx.push(i + odmik);
+      s.imena.push(node.getName());
+    }
+    assert.deepEqual([...skupine.keys()].sort(), ["aorta|arterija", "pljucno-deblo|pljucna"], dat);
+    for (const [k, s] of skupine) {
+      const idx = Uint32Array.from(s.idx);
+      const nov = brezPregrad(Float32Array.from(s.p), idx);
+      assert.ok(nov && idx.length - nov.length >= 2 * 3 * 24 * (s.imena.length - 1), `${dat} ${k}: pregrade na stikih niso bile odstranjene`);
+      const r = analiziraj(Float64Array.from(s.p), nov);
+      assert.equal(r.odprtiRobovi, 0, `${dat} ${k}: združena žila brez pregrad ni zaprta`);
     }
   }
 });

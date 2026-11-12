@@ -1733,6 +1733,7 @@ whenIdle(() =>
 initKeyboard();
 initSirina();
 initDrsniki();
+document.addEventListener("input", (e) => hasFormula(e.target.value || "") && import("./predogled-vnosa.js").then((m) => m.initPredogledVnosa(e.target)), true);
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
 configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS });

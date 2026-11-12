@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Genski sklad
+  - vsi aleli populacije
+  - vsak osebek ima dva alela
+- Pogostost alelov
+  - $p = \dfrac{2N_{AA} + N_{Aa}}{2N}$
+  - $p + q = 1$
+  - napaka: deljenje z $N$ namesto $2N$
+- Hardy-Weinbergovo ravnovesje
+  - genotipi $p^2$, $2pq$, $q^2$
+  - $p$ in $q$ se ne spreminjata
+- Pet pogojev
+  - velika populacija, naključno parjenje
+  - brez mutacij, selitev in izbora
+- Evolucijski dejavniki
+  - mutacije, izbor, genski zdrs
+  - pretok genov, nenaključno parjenje
+- Prenašalci
+  - $q = \sqrt{q^2}$
+  - primer: $q^2 = 0{,}0004$ da $2pq = 0{,}0392$
+- Akomodacija in adaptacija
+  - akomodacija: posameznik, ni dedna
+  - adaptacija: populacija, naravni izbor

@@ -279,7 +279,7 @@ export function codeFindings(answer, pre = null, question = "") {
   }
   // Kemijske preverbe se združijo v eno napako (en »Popravek:«), da »Dušik je v 5. skupini in v 3. periodi.« popravi
   // obe (pregled A, PR #589).
-  const chem = [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question)];
+  const chem = [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question), lewisIssue(answer, question)];
   for (const f of chem) checked += f.checked;
   const chemIssues = chem.map((f) => f.issue).filter(Boolean);
   if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
@@ -507,6 +507,150 @@ export function pairsIssue(answer, question = "") {
         if (k <= 4 || question.includes(`${k} par`)) continue;
         return { checked, issue: `the answer says one atom has ${k} electron pairs around it, but an atom of period 2 (C, N, O, F) has at most 4 pairs (8 electrons) around it; e.g. each N in N₂ has 3 bonding pairs + 1 lone pair = 4 pairs` };
       }
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Nevezni pari v narisani Lewisovi formuli v eni vrstici (meritev 12. 11. po krogu 5: 2 od 4 odgovorov N₂ s
+// »$:\!\ddot{N}\!\equiv\!\ddot{N}\!:$«, kjer dvopičje IN \ddot pomenita vsak en par, torej 2 para ob N namesto 1).
+// Vsaka oznaka je en nevezni par: »:« ob strani (tudi \colon, {:}, »··«, \cdot\cdot), \ddot{X} nad znakom,
+// \overset{··}{X} / \underset{··}{X} / \stackrel{··}{X}. Pari ob atomu se primerjajo s pravilom v = 8 − z: H 0,
+// C 0, N 1, O 2, F/Cl/Br/I 3 nevezni pari. Preverja se samo verižna formula, ki jo lahko preberemo v celoti:
+// samo H, C, N, O, F, Cl, Br, I; med vsakima atomoma vez (-, =, ≡); vsak atom ima natanko običajno število vezi
+// (C 4, N 3, O 2, H in halogeni 1), zato CO, ioni, razvejane molekule (NH₃ v eni vrstici) in razširjeni okteti
+// izpadejo sami; vsaj ena oznaka para. Ne šteje: karkoli drugega v formuli (števke, indeksi, naboj, oklepaji,
+// \ce, en sam \cdot ali \dot = radikal), dvopičje med dvema atomoma (pikčasta formula vezi »H:H«), SKIP_LINE,
+// formula iz učenčevega sporočila. Navadno besedilo (zunaj $…$): samo formule z N, C, H (pari se ne dajo narisati
+// nad in pod znakom), ne ob vrstici iz samih pik (večvrstična risba) in ne, ko je dvopičje samo na koncu (ločilo: »N≡N: trojna«).
+const LEWIS_V = { H: 1, C: 4, N: 3, O: 2, F: 1, Cl: 1, Br: 1, I: 1 };
+const LEWIS_LONE = { H: 0, C: 0, N: 1, O: 2, F: 3, Cl: 3, Br: 3, I: 3 };
+const LEWIS_NAME = { H: "H", C: "C", N: "N", O: "O", F: "F", Cl: "Cl", Br: "Br", I: "I" };
+const LEWIS_PAIR = String.raw`(?:··|\.\.|:)`;
+const LEWIS_ATOM = String.raw`([A-Z][a-z]?¨*)`;
+const LEWIS_STEPS = [
+  [/\\(?:mathrm|text|textrm|rm|mathsf|textsf)\s*\{([^{}]*)\}/g, "$1"],
+  [new RegExp(String.raw`\\(?:overset|underset|stackrel)\s*\{${LEWIS_PAIR}\}\s*\{${LEWIS_ATOM}\}`, "g"), "$1¨"],
+  [/\\ddot\s*\{([A-Z][a-z]?¨*)\}/g, "$1¨"],
+  [/\\ddot\s*([A-Z][a-z]?)/g, "$1¨"],
+  [/\{([^{}]*)\}/g, "$1"],
+];
+function lewisTokens(tex) {
+  let s = String(tex)
+    .replace(/\\[,;:! >]|\\quad|\\qquad|~/g, "")
+    .replace(/\\colon/g, ":")
+    .replace(/\\cdot\s*\\cdot/g, "··")
+    .replace(/\\equiv/g, "≡")
+    .replace(/\\minus|−|–|—/g, "-");
+  // Splošne zavite oklepaje odstrani šele, ko se nič drugega ne spremeni: sicer izgine {··} zunanjega
+  // \overset{··}{\underset{··}{O}}, preden ga naslednji krog prebere (priporočeni zapis vode bi izpadel).
+  const marks = LEWIS_STEPS.slice(0, -1), braces = LEWIS_STEPS[LEWIS_STEPS.length - 1];
+  for (let i = 0; i < 24; i++) {
+    const before = s;
+    for (const [re, to] of marks) s = s.replace(re, to);
+    if (s === before) s = s.replace(braces[0], braces[1]);
+    if (s === before) break;
+  }
+  s = s.replace(/\s+/g, "").replace(/··/g, ":");
+  if (!/^[A-Za-z¨:≡=-]+$/.test(s)) return null;
+  const toks = s.match(/[A-Z][a-z]?|¨|:|[≡=-]/g) || [];
+  if (toks.join("") !== s) return null;
+  return toks;
+}
+// Vrne [{ el, bonds, lone }] ali null, ko formule ni mogoče zanesljivo prebrati.
+function lewisAtoms(toks) {
+  const items = [];
+  for (const t of toks) {
+    if (t === "¨") {
+      const a = items[items.length - 1];
+      if (!a || a.kind !== "atom") return null;
+      a.lone++;
+    } else if (t === ":") {
+      const last = items[items.length - 1];
+      if (last?.kind === "colon") last.n++;
+      else items.push({ kind: "colon", n: 1 });
+    } else if (/[≡=-]/.test(t)) items.push({ kind: "bond", order: t === "≡" ? 3 : t === "=" ? 2 : 1 });
+    else {
+      if (!(t in LEWIS_V)) return null;
+      items.push({ kind: "atom", el: t, bonds: 0, lone: 0 });
+    }
+  }
+  const atoms = [];
+  let marks = 0;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.kind === "atom") {
+      atoms.push(it);
+      marks += it.lone;
+      continue;
+    }
+    const prev = items[i - 1], next = items[i + 1];
+    if (it.kind === "bond") {
+      if (prev?.kind !== "atom" && prev?.kind !== "colon") return null;
+      // vez mora biti med atomoma (dvopičje ob vezi spada k atomu na drugi strani)
+      const left = prev?.kind === "atom" ? prev : items[i - 2];
+      const right = next?.kind === "atom" ? next : items[i + 2];
+      if (left?.kind !== "atom" || right?.kind !== "atom") return null;
+      left.bonds += it.order;
+      right.bonds += it.order;
+      continue;
+    }
+    // dvopičje: k atomu, ob katerem stoji; med dvema atomoma (»H:H«) ali dvema vezema ga ne beremo
+    const pa = prev?.kind === "atom", na = next?.kind === "atom";
+    if (pa && na) return null;
+    if (!pa && !na) return null;
+    (pa ? prev : next).lone += it.n;
+    marks += it.n;
+  }
+  if (atoms.length < 2 || !marks) return null;
+  for (let i = 1; i < items.length; i++) if (items[i].kind === "atom" && items[i - 1].kind === "atom") return null;
+  if (atoms.some((a) => a.bonds !== LEWIS_V[a.el])) return null;
+  return atoms;
+}
+const LEWIS_N2 = String.raw`$\{:\}\mathrm{N}{\equiv}\mathrm{N}{:}$`.replace(/\\([{}])/g, "$1");
+const LEWIS_MATH_RE = /\$\$([^$]+?)\$\$|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g;
+const LEWIS_PLAIN_ATOM = String.raw`(?::|··)*(?:H|C|N)(?::|··)*`;
+const LEWIS_PLAIN_RE = new RegExp(String.raw`(?<![\p{L}\d:·.])(${LEWIS_PLAIN_ATOM}(?:\s?[≡=\-–—−]\s?${LEWIS_PLAIN_ATOM})+)(?![\p{L}\d·]|:\s*\p{L})`, "gu");
+const DOTS_ONLY_RE = /^[\s·.:'|`]*[·.:][\s·.:'|`]*$/;
+export function lewisIssue(answer, question = "") {
+  let checked = 0;
+  const lines = String(answer || "").split("\n");
+  const asked = new Set();
+  for (const m of String(question || "").matchAll(LEWIS_MATH_RE)) {
+    const t = lewisTokens(m[1] ?? m[2] ?? m[3]);
+    if (t) asked.add(t.join(""));
+  }
+  for (const m of String(question || "").matchAll(LEWIS_PLAIN_RE)) {
+    const t = lewisTokens(m[1]);
+    if (t) asked.add(t.join(""));
+  }
+  for (let li = 0; li < lines.length; li++) {
+    const line = lines[li];
+    if (SKIP_LINE.test(line) || /\\ce\s*\{/.test(line)) continue;
+    const found = [];
+    for (const m of line.matchAll(LEWIS_MATH_RE)) found.push({ src: m[0], toks: lewisTokens(m[1] ?? m[2] ?? m[3]) });
+    const near = [lines[li - 2], lines[li - 1], lines[li + 1], lines[li + 2]].some((l) => l != null && DOTS_ONLY_RE.test(l));
+    if (!near) {
+      const plain = line.replace(LEWIS_MATH_RE, " ");
+      for (const m of plain.matchAll(LEWIS_PLAIN_RE)) {
+        // dvopičje na koncu je ločilo (»N≡N: trojna vez«, »Formula je N≡N:«), razen pri risbi s pari na obeh straneh
+        if (m[1].endsWith(":") && !/^(?::|··)/.test(m[1])) continue;
+        found.push({ src: m[1], toks: lewisTokens(m[1]) });
+      }
+    }
+    for (const f of found) {
+      if (!f.toks || asked.has(f.toks.join(""))) continue;
+      const atoms = lewisAtoms(f.toks);
+      if (!atoms) continue;
+      checked++;
+      const bad = atoms.find((a) => a.lone !== LEWIS_LONE[a.el]);
+      if (!bad) continue;
+      const want = LEWIS_LONE[bad.el];
+      const el = LEWIS_NAME[bad.el];
+      return {
+        checked,
+        issue: `the Lewis formula ${f.src} draws ${bad.lone} lone pair(s) on ${el}, but ${el} with ${bad.bonds} bond(s) has ${want} lone pair(s) (bonds + lone pairs = 4 pairs = 8 electrons; H: 1 pair). Every mark is one lone pair: each ":" beside the symbol and each \\ddot or \\overset/\\underset dot pair, so never put both a ":" and \\ddot for one pair. Redraw it, e.g. N₂ as ${LEWIS_N2}`,
+      };
     }
   }
   return { checked, issue: null };
