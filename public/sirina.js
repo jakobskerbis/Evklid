@@ -71,10 +71,22 @@ function razrezi(t, dolg, znaki = PLUS) {
   // NOTER: v vrhnjem navadnem oklepaju (ne \left(, ne {…} ulomka ali korena) najprej za vejicami (»(2 \cdot 3 - 0,\ 0 -
   // 3,\ …)«, »\{(0, x), (0, y), …\}«), sicer pred + in −, sicer pred · (»10\,\mathrm{A}/(8{,}5 \cdot 10^{28} \cdot …)«).
   const noter = [[], [], []];
+  // Zadnja možnost (j 12. 11. 2026: »nič naj se ne pomika«): naštevanje brez oklepaja (»12, 13, 14, …«) za vrhnjimi
+  // vejicami s presledkom (decimalna vejica je v {,} ali brez presledka), kemijska veriga (»CH_3{-}CH(CH_3){-}…«)
+  // pred vrhnjo vezjo {-}, {=} ali {\equiv}: vez gre na začetek naslednje vrstice.
+  const vrh = [], vezi = [];
   let depth = 0;
   for (let i = 0; i < t.length; ) {
     const tok = zeton(t, i);
     const g = globina(tok);
+    if (znaki === NOTER && depth === 0 && i > 0) {
+      // Ne naboj iona (»OH^{-}«): tam {-} spada k ^ ali _.
+      if (tok === "{" && /^\{(?:-|=|\\equiv)\}/.test(t.slice(i)) && !/[\^_]\s*$/.test(t.slice(0, i))) vezi.push(i);
+      else if (tok === ",") {
+        const m = /^(?:\s|\\[ ;:]|\\q?quad(?![a-zA-Z]))+/.exec(t.slice(i + 1));
+        if (m && i + 1 + m[0].length < t.length) vrh.push(i + 1 + m[0].length);
+      }
+    }
     if (g > 0) odprti.push(tok);
     else if (g < 0) odprti.pop();
     const pred = () => !PRED.test(t.slice(0, i).trimEnd()) && !/^\s*10\s*\^/.test(t.slice(i + tok.length));
@@ -91,7 +103,7 @@ function razrezi(t, dolg, znaki = PLUS) {
     else if (depth === 0 && znaki.has(tok) && !PRED.test(t.slice(0, i).trimEnd()) && t.slice(0, i).trim() && !(znaki === KRAT_ALI && /^\s*10\s*\^/.test(t.slice(i + tok.length)))) reze.push(i);
     i += tok.length;
   }
-  if (znaki === NOTER) reze = noter.find((x) => x.length) || [];
+  if (znaki === NOTER) reze = noter.find((x) => x.length) || (vrh.length ? vrh : vezi);
   const vse = dolzina(t);
   const kosov = Math.min(reze.length + 1, Math.ceil(vse / dolg));
   // Za vsak kos rez, ki je najbližje j-temu delu dolžine (»a + b + c + d« v dva kosa: »a + b«, »+ c + d«).
@@ -478,17 +490,25 @@ function vrstica(el) {
     if (!el.closest(".textbook") && blok(k) !== el) continue; // formula v gnezdenem odstavku ima svoje mesto
     const tex = !izvirnik.has(k) && k.querySelector("annotation")?.textContent;
     const kljuc = tex && `${Math.round(w)}|${Math.round(vis)}|${pisava}|${tex}`;
-    if (kljuc && ustrezne.has(kljuc)) {
+    // Ne formula, ki je pri ožji vrstici ostala drsna ali pomanjšana (obrat telefona nazaj): ta se izmeri znova.
+    if (kljuc && ustrezne.has(kljuc) && !k.classList.contains("tb-dolga") && !k.style.fontSize) {
       prilagojene.set(k, w);
       continue;
     }
     const k0 = k;
     k.classList.remove("tb-dolga");
+    k.style.maxWidth = "";
     // Formula se ne prelomi sredi izraza (ui.css), zato šteje njena cela širina.
     // Zložena formula je blok z max-width 100 %, zato štejemo tudi njeno vsebino (scrollWidth).
     const sirina = (x) => Math.max(x.getBoundingClientRect().width, x.scrollWidth);
     k = prilagodiFormulo(k, w, sirina, vis * VISOKA);
-    if (sirina(k) > w + 1) k.classList.add("tb-dolga");
+    // Drsna formula pusti prostor za ločilo za njo (»…, 45$.«), sicer ločilo štrli čez rob vrstice; brez ločila ima
+    // vso vrstico.
+    if (sirina(k) > w + 1) {
+      k.classList.add("tb-dolga");
+      const za = k.nextSibling;
+      if (za?.nodeType === 3 && /^[.,;:!?)]/.test(za.data)) k.style.maxWidth = `${Math.floor(w)}px`;
+    }
     else if (kljuc && k === k0 && !k.style.fontSize) {
       if (ustrezne.size > 1000) ustrezne = new Set();
       ustrezne.add(kljuc);

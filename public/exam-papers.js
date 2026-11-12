@@ -1,5 +1,7 @@
 // Pretekle pole NPZ in mature v razdelku »NPZ in matura«: izbira po korakih kot pri ravni izobrazbe
 // (level-picker.js): šola → izpit → predmet → (matematika na maturi: raven) → leta in roki.
+// follow: šola, izpit in predmet sledijo čipom na vrhu razdelka (j, 12. 11.: ista izbira ni dvakrat na strani);
+// »Druge pretekle pole« odpre celotno izbiro (npr. pole druge šole).
 // Katalog (server/exam-papers-si.js) ima samo povezave na ric.si: pole so last Državnega izpitnega centra,
 // zato jih ne kopiramo in ne prenašamo; vsaka povezava odpre dokument na ric.si v novem zavihku.
 import { t } from "./i18n.js";
@@ -76,24 +78,35 @@ function rowHtml(e, i, tutor, local, ours) {
 }
 
 // Namesti izbirnik v `box`. start: { track, exam, subject, level } (privzeto učenčeva raven).
-export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null } = {}) {
+export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null, follow = false } = {}) {
   const v = { ...start };
   // Neveljavna začetna izbira (npr. predmet, ki ga izpit nima) se izbriše od tam naprej.
+  let cleared = null;
   for (const key of ["track", "exam", "subject", "level"]) {
     const st = steps(v, papers, subjectName).find((s) => s[0] === key);
     if (v[key] && (!st || !st[2].some((o) => o[0] === v[key]))) {
       for (const k of [key, ...(AFTER[key] || [])]) delete v[k];
+      cleared = key;
       break;
     }
   }
+  // Brez celotne izbire: šola, izpit in predmet so izbrani zgoraj, tu se ne pokažejo.
+  const FIXED = ["track", "exam", "subject"];
+  let free = !follow || FIXED.some((k) => !start[k]);
+  const none = !free && FIXED.includes(cleared); // za izbrani izpit in predmet pol ni
   autofill(v, papers, subjectName);
   let open = steps(v, papers, subjectName).find((s) => !s[3])?.[0] || null;
   let all = false;
   let shown = [];
 
   const render = () => {
+    const other = free ? "" : `<button type="button" class="text-btn pp-other" data-pp-other>${esc(t("pp.other"))}</button>`;
+    if (!free && none) {
+      box.innerHTML = `<p class="muted">${esc(t("pp.empty"))}</p>${other}`;
+      return;
+    }
     const list = steps(v, papers, subjectName);
-    const done = list.filter((s) => s[3] && s[0] !== open);
+    const done = list.filter((s) => s[3] && s[0] !== open && (free || !FIXED.includes(s[0])));
     const current = list.find((s) => s[0] === open) || list.find((s) => !s[3]);
     const entries = current ? [] : papers.filter((p) => p.exam === v.exam && p.subject === v.subject && (!p.level || p.level === v.level));
     shown = all ? entries : entries.slice(0, SHOW);
@@ -110,7 +123,7 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
           : entries.length
             ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint"))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
             : `<p class="muted">${esc(t("pp.empty"))}</p>`
-      }`;
+      }${other}`;
   };
   box.onchange = (e) => {
     const input = e.target.closest("[data-pp-local]");
@@ -127,6 +140,11 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
     if (ours && onOurs) return onOurs(shown[Number(ours.dataset.ppOurs)], subjectName);
     const tutor = e.target.closest("[data-pp-tutor]");
     if (tutor && onTutor) return onTutor(shown[Number(tutor.dataset.ppTutor)], subjectName);
+    if (e.target.closest("[data-pp-other]")) {
+      free = true;
+      open = "track";
+      return render();
+    }
     const step = e.target.closest("[data-pp-step]");
     if (step) {
       open = step.dataset.ppStep;

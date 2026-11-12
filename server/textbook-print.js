@@ -74,12 +74,29 @@ export function lessonHtml(t, lesson, n) {
     const rows = c.options.map((_, i) => (i !== c.correct && c.optionWhy?.[i] ? `<li>${md(`*Zakaj ne ${letters[i]})?* ${c.optionWhy[i]}`)}</li>` : "")).join("");
     return rows ? `<ul class="zakaj-ne">${rows}</ul>` : "";
   };
+  // Vpiši število: prostor za odgovor; v rešitvah vrednost (s tolerančnim območjem, če ga lekcija navede) in
+  // tipične napačne vrednosti z razlago. Razvrsti: elementi premešani z začetnicami, v rešitvah pravi vrstni red.
+  const unit = (c) => (c.unit ? ` ${c.unit}` : "");
+  const question = (c) =>
+    c.type === "stevilo"
+      ? `<li>${md(c.q)}<p class="num-blank">Odgovor: ____________${md(unit(c)).replace(/^\s*<p>|<\/p>\s*$/g, "")}</p></li>`
+      : c.type === "razvrsti"
+        ? `<li>${md(c.q)}<ol class="opts">${c.shown.map((k) => `<li>${md(c.items[k])}</li>`).join("")}</ol></li>`
+        : `<li>${md(c.q)}<ol class="opts">${c.options.map((o) => `<li>${md(o)}</li>`).join("")}</ol></li>`;
+  const keyRow = (c) => {
+    if (c.type === "stevilo") {
+      const wrong = c.wrong.filter((w) => w.why).map((w) => `<li>${md(`*Če dobiš ${w.answer}${unit(c)}:* ${w.why}`)}</li>`).join("");
+      return `<li><b>${md(`${c.answer}${unit(c)}`).replace(/^\s*<p>|<\/p>\s*$/g, "")}</b> ${c.why ? md(c.why) : ""}${wrong ? `<ul class="zakaj-ne">${wrong}</ul>` : ""}</li>`;
+    }
+    if (c.type === "razvrsti") return `<li><b>${c.items.map((_, i) => `${letters[c.shown.indexOf(i)]})`).join(" → ")}</b> ${c.why ? md(c.why) : ""}</li>`;
+    return `<li><b>${letters[c.correct]})</b> ${c.why ? md(c.why) : ""}${whyNot(c)}</li>`;
+  };
   const checks = lesson.checks.length
     ? `<section class="checks"><h3>Preveri se</h3><ol>${lesson.checks
-        .map((c) => `<li>${md(c.q)}<ol class="opts">${c.options.map((o) => `<li>${md(o)}</li>`).join("")}</ol></li>`)
+        .map(question)
         .join("")}</ol>
         <details open class="key"><summary>Rešitve</summary><ol>${lesson.checks
-          .map((c) => `<li><b>${letters[c.correct]})</b> ${c.why ? md(c.why) : ""}${whyNot(c)}</li>`)
+          .map(keyRow)
           .join("")}</ol></details></section>`
     : "";
   return `<article class="lesson" id="${esc(t.id)}">
@@ -247,7 +264,7 @@ export function printSizeHint(pathKey) {
       if (!l) continue;
       for (const x of l.sections) md += x.md.length;
       for (const a of l.alternatives) md += a.md.length;
-      for (const c of l.checks) md += c.q.length + c.options.reduce((n, o) => n + o.length, 0) + (c.why?.length || 0);
+      for (const c of l.checks) md += c.q.length + (c.options || c.items || []).reduce((n, o) => n + o.length, 0) + (c.why?.length || 0);
     }
   return md * HTML_PER_MD;
 }

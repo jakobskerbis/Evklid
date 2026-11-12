@@ -1,9 +1,9 @@
 // Svetli/temni način in lastne barve. Navaden skript v <head>, da se barve nastavijo pred prvim izrisom.
 // Nastavitve so shranjene na tej napravi (localStorage "evklid.theme"):
-//   { style: "cist" | "igriv" | "temen" | ključ iz ERAS (zgodovinski slogi), mode: "system" | "light" | "dark", accent: "#rrggbb" | null,
+//   { style: "cist" | "igriv" | ključ iz ERAS (zgodovinski slogi), mode: "system" | "light" | "dark", accent: "#rrggbb" | null,
 //     light: { bg, surface, menu, text } | null, dark: { … } | null }
-// Slog (docs/oblikovanje.md): Čist (privzeto, Instrument Sans, umirjen), Igriv (Nunito, zaobljen, topel),
-// Temen (IBM Plex Sans, vedno temen, metin poudarek) in zgodovinski slogi iz tabele ERAS spodaj (Antični,
+// Slog (docs/oblikovanje.md): Čist (privzeto, Instrument Sans, umirjen), Igriv (Nunito, zaobljen, topel)
+// in zgodovinski slogi iz tabele ERAS spodaj (Antični,
 // Renesansa, Hiša modrosti, Indija …). Slog nastavi data-style na <html> (pisava, oblike)
 // in osnovne barve; lastne barve uporabnika veljajo nad njimi.
 // Iz teh nekaj barv izračunamo vse ostale (robove, sivo besedilo, poudarke …) in pri tem
@@ -200,7 +200,7 @@
       },
     },
   };
-  const STYLES = ["cist", "igriv", "temen", ...Object.keys(ERAS)];
+  const STYLES = ["cist", "igriv", ...Object.keys(ERAS)];
   // Osnovne barve slogov. Čist je enak privzetim barvam v style.css (brez izračuna).
   const BASES = {
     cist: {
@@ -210,10 +210,6 @@
     igriv: {
       light: { bg: "#fff6ea", surface: "#ffffff", menu: "#ffffff", text: "#1f1a2e", accent: "#6a3bd6" },
       dark: { bg: "#17121f", surface: "#211a2e", menu: "#211a2e", text: "#efeaf8", accent: "#a98bff" },
-    },
-    temen: {
-      light: { bg: "#0d1117", surface: "#151b23", menu: "#151b23", text: "#e6eaf0", accent: "#4cd3a4" },
-      dark: { bg: "#0d1117", surface: "#151b23", menu: "#151b23", text: "#e6eaf0", accent: "#4cd3a4" },
     },
   };
   for (const [k, e] of Object.entries(ERAS)) BASES[k] = { light: e.light, dark: e.dark };
@@ -327,6 +323,8 @@
   function load() {
     try {
       const s = JSON.parse(localStorage.getItem(KEY) || "{}");
+      // Slog »Temen« je odstranjen (j, 12. 11.: isto kot način Temno): kdor ga je imel, dobi Čist v temnem načinu.
+      if (s.style === "temen") Object.assign(s, { style: "cist", mode: "dark" });
       return { style: STYLES.includes(s.style) ? s.style : "cist", mode: ["light", "dark", "system"].includes(s.mode) ? s.mode : "system", accent: hexToRgb(s.accent) ? s.accent : null, light: s.light || null, dark: s.dark || null };
     } catch {
       return { style: "cist", mode: "system", accent: null, light: null, dark: null };
@@ -337,7 +335,7 @@
     apply(s);
     window.dispatchEvent(new CustomEvent("evklid:theme", { detail: s }));
   }
-  const isDarkMode = (s) => s.style === "temen" || s.mode === "dark" || (s.mode === "system" && mq.matches);
+  const isDarkMode = (s) => s.mode === "dark" || (s.mode === "system" && mq.matches);
 
   // Iz nekaj izbranih barv izračuna vse spremenljivke. Vrne null, če ni lastnih barv.
   function compute(s) {
@@ -647,7 +645,7 @@
 })();
 
 // Pisava besedila izbranega sloga takoj (preload), ne šele ko brskalnik prebere CSS: besedilo se ne
-// preriše z drugo pisavo pozneje (brez premikov postavitve). Samo Čist/Igriv/Temen (zgodovinski slogi imajo
+// preriše z drugo pisavo pozneje (brez premikov postavitve). Samo Čist/Igriv (zgodovinski slogi imajo
 // isto pisavo besedila kot Čist) in nikoli v lahkem načinu (tam spletne pisave sploh ni).
 (function () {
   try {
@@ -656,7 +654,7 @@
     // Pod service workerjem pisava pride iz predpomnilnika takoj; preload bi jo le prenesel dvakrat in Chromium
     // javi »preloaded but not used« (pregled PR #481 B2 P3-1).
     if (navigator.serviceWorker?.controller) return;
-    const pkg = { igriv: "nunito", temen: "ibm-plex-sans" }[r.dataset.style] || "instrument-sans";
+    const pkg = { igriv: "nunito" }[r.dataset.style] || "instrument-sans";
     for (const sub of ["latin", "latin-ext"]) {
       const l = document.createElement("link");
       l.rel = "preload";

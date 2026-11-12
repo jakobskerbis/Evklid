@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pot energije
+  - vsa energija v hrani izvira iz Sonca
+  - na višjo raven okoli $10\,\%$
+  - $E_2 = 0{,}1 \cdot E_1$
+- Energija in snovi
+  - hrana, goriva, voda, les, rude
+  - fosilna goriva so shranjena sončna energija
+- Udomačitev
+  - pred okoli $10\,000$ leti
+  - teosinte v koruzo, tur v govedo
+  - napaka: gojene sorte so v vsem boljše
+- Rastlinske surovine
+  - vlakna, les, olja, škrob, zdravila
+  - bioetanol z alkoholnim vrenjem
+- Obnovljivi viri
+  - obnovijo se v človeškem času
+  - ribe in gozd le pogojno
+  - nafta in fosfati so neobnovljivi
+- Trajnostna raba
+  - $P = p \cdot Z$, posek $S \le P$
+  - gozd: $0{,}03 \cdot 2\,400 = 72\,\mathrm{m^3}$
+- Pametni nakup
+  - beljakovine iz leče skoraj petkrat cenejše
+  - lokalno, sezonsko, manj zavržene hrane

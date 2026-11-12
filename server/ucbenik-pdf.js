@@ -106,7 +106,11 @@ const PROBE = {
     { title: "Rešeni primeri", md: "### Primer 1\n**Podatki:** $v = 9\\,\\mathrm{m/s}$\n\n:::formula\n$s = v \\cdot t$\n:::\n\n1. korak" },
   ],
   alternatives: [{ title: "Na sliki", md: "Drugače." }],
-  checks: [{ q: "Koliko je $1+1$?", options: ["$2$", "$3$"], correct: 0, why: "Ker." }],
+  checks: [
+    { q: "Koliko je $1+1$?", options: ["$2$", "$3$"], correct: 0, why: "Ker." },
+    { type: "stevilo", q: "Koliko je $0{,}5 \\cdot 3$?", answer: "1,5", value: 1.5, tol: 0.05, unit: "m", wrong: [{ answer: "3,5", value: 3.5, why: "Seštel si." }], why: "Zmnožimo." },
+    { type: "razvrsti", q: "Razvrsti od najmanjšega.", items: ["$1$", "$2$", "$3$"], shown: [2, 0, 1], why: "Po velikosti." },
+  ],
 };
 let template;
 export function pdfTemplateHash() {

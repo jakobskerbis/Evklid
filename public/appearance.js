@@ -1,4 +1,4 @@
-// Nastavitve → Videz: slog (Čist / Igriv / Temen in zgodovinski slogi iz theme.js → ERAS), svetli/temni način, poudarki, barve oken, menijev in pisave, naključne barve.
+// Nastavitve → Videz: slog (Čist / Igriv in zgodovinski slogi iz theme.js → ERAS), svetli/temni način, poudarki, barve oken, menijev in pisave, naključne barve.
 // Vse se zgodi takoj in velja za to napravo (theme.js).
 import { icon } from "./icons.js";
 import { t } from "./i18n.js";
@@ -18,7 +18,6 @@ const PARTS = [
 const STYLES = [
   ["cist", t("ap.styleCist"), t("ap.styleCistText"), ["#f6f7f9", "#ffffff", "#2353d1"], "Instrument Sans Variable"],
   ["igriv", t("ap.styleIgriv"), t("ap.styleIgrivText"), ["#fff6ea", "#ffc56b", "#6a3bd6"], "Nunito Variable"],
-  ["temen", t("ap.styleTemen"), t("ap.styleTemenText"), ["#0d1117", "#151b23", "#4cd3a4"], "IBM Plex Sans Variable"],
 ];
 // Zgodovinski slogi iz tabele v theme.js (ERAS): ime ap.style<Slog>, vzorec iz svetlih barv (ozadje, pas, poudarek), pisava naslovov.
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
@@ -68,8 +67,8 @@ export function mountAppearance(box) {
 
       <div class="ap-row">
         <span class="field-label">${t("ap.mode")}</span>
-        ${s.style === "temen" ? `<p class="small-note muted">${t("ap.temenMode")}</p>` : `<div class="seg" role="radiogroup" aria-label="${t("ap.mode")}">${MODES.map(([v, ic, label]) =>
-          `<button type="button" role="radio" data-mode="${v}" class="${s.mode === v ? "active" : ""}" aria-checked="${s.mode === v}">${icon(ic)}${label}</button>`).join("")}</div>`}
+        <div class="seg" role="radiogroup" aria-label="${t("ap.mode")}">${MODES.map(([v, ic, label]) =>
+          `<button type="button" role="radio" data-mode="${v}" class="${s.mode === v ? "active" : ""}" aria-checked="${s.mode === v}">${icon(ic)}${label}</button>`).join("")}</div>
       </div>
 
       <div class="ap-row">

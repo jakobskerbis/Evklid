@@ -179,3 +179,18 @@ test("a long tuple or set continues after a comma in its outer bracket (not insi
   assert.equal(zlozTex("A \\times B = \\{(0, x), (0, y), (0, z), (1, x), (1, y), (1, z)\\}", 3, 30), "\\begin{aligned}&A \\times B \\\\ &\\quad {}= \\{(0, x), (0, y), (0, z), \\\\ &\\quad \\quad {}(1, x), (1, y), (1, z)\\}\\end{aligned}");
   assert.doesNotMatch(zlozTex("f(x, y) = \\left(x^2 + y^2, 2xy, x - y, x + y, 3x, 4y, 5x, 6y\\right)", 5, 20), /, \\\\/);
 });
+
+test("a list without brackets folds after top-level commas, a chemical chain before a top-level bond (j 2026-11-12: nothing scrolls)", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  assert.equal(zlozTex("12, 13, 14, 14, 15, 15, 16, 16, 17, 18, 45", 3, 20), "\\begin{aligned}&12, 13, 14, 14, 15, \\\\ &\\quad {}15, 16, 16, 17, 18, 45\\end{aligned}");
+  assert.equal(
+    zlozTex("\\mathrm{CH_3{-}CH(CH_3){-}CH_2{-}CH(CH_2CH_3){-}CH_2{-}CH_3}", 3, 20),
+    "\\begin{aligned}&\\mathrm{CH_3{-}CH(CH_3)} \\\\ &\\quad {}\\mathrm{{-}CH_2{-}CH(CH_2CH_3)} \\\\ &\\quad {}\\mathrm{{-}CH_2{-}CH_3}\\end{aligned}",
+  );
+  // Decimalna vejica ({,} ali brez presledka) in vez v oklepaju (veja) nista mesti za prelom.
+  assert.equal(zlozTex("12,5 13,25 14,75 15,5 16,25 17,75 18,5 19,25", 3, 10), null);
+  assert.doesNotMatch(zlozTex("2{,}998 \\cdot 10^{8} \\cdot 6{,}674 \\cdot 10^{-11} \\cdot 1{,}602 \\cdot 10^{-19}", 3, 10), /\{,\}\s*\\\\|,\s*\\\\/);
+  assert.equal(zlozTex("\\mathrm{CH(CH_2{-}CH_2{-}CH_2{-}CH_3)}", 3, 6), null);
+  // Naboj iona (^{-}) ni vez: »\mathrm{OH^}« bi se ne izrisal.
+  assert.doesNotMatch(zlozTex("\\mathrm{C_6H_{11}Br + OH^{-} \\xrightarrow{H_2O} C_6H_{11}OH + Br^{-}}", 3, 8), /\^\}/);
+});

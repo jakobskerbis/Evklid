@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Motnja potuje
+  - delci nihajo na mestu
+  - prenaša se energija, ne snov
+- Prečno in vzdolžno
+  - prečno: vrv, gladina vode
+  - vzdolžno: zgoščine in razredčine, ultrazvok
+- Valovna dolžina
+  - $\lambda$: od vrha do sosednjega vrha
+  - napaka: od vrha do doline je $\frac{1}{2}\lambda$
+- Hitrost valovanja
+  - $c = \lambda \nu$, enota $\mathrm{m/s}$
+  - ultrazvok v tkivu: $1540\,\mathrm{m/s}$
+- Kdo kaj določa
+  - frekvenco izvir, hitrost sredstvo
+  - na meji ostane $\nu$, spremeni se $\lambda$
+- Interferenca
+  - odmika se seštejeta
+  - $\Delta s = N\lambda$: ojačitev
+  - $\Delta s = \left(N + \frac{1}{2}\right)\lambda$: oslabitev
+- Medicina
+  - sonda $3\,\mathrm{MHz}$: $\lambda \approx 0{,}5\,\mathrm{mm}$
+  - usmerjanje snopa z interferenco
