@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Oprema za okolje
+  - maska za morje, pohodni čevlji za gore
+  - bitja svojo opremo nosijo na telesu
+- Prilagoditev
+  - pogoj okolja → lastnost → korist
+  - zgradba telesa, delovanje ali vedenje
+  - napaka: žival se ne prilagodi po želji
+- Ribnik
+  - stoječa sladka voda, plitek
+  - vodni drsalec, žaba, lokvanj
+- Gozd
+  - drevesna, grmovna, zeliščna, mahovna plast
+  - vetrnica cveti, preden bukev olista
+- Travnik
+  - veliko sonca, redna košnja
+  - brez košnje zaraste v gozd
+- Morje
+  - okoli $38\,\mathrm{g}$ soli v litru
+  - morska zvezda s priseski, pozidonija
+- Višina in mraz
+  - na $100\,\mathrm{m}$ hladneje za $0{,}6\,°\mathrm{C}$
+  - nad gozdno mejo ruševje
+- Ocena z zemljevida
+  - obe stranici najprej v metre
+  - $A = a \cdot b$, nato $N = g \cdot A$

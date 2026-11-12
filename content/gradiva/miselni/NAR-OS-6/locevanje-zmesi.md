@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Razlika v lastnosti
+  - velikost, gostota, topnost, vrelišče
+  - vsak postopek izkoristi eno razliko
+  - železo izvlečeš z magnetom
+- Sejanje in dekantiranje
+  - sito: manjši delci padejo skozi
+  - usedlina na dnu, tekočino odliješ
+- Filtriranje
+  - ostanek na filtru, filtrat steče skozi
+  - napaka: raztopljene soli filter ne zadrži
+- Izparevanje
+  - topilo odide v zrak, topljenec ostane
+  - soline: sol iz morske vode
+- Destilacija
+  - nižje vrelišče se upari prej
+  - hladilnik: para kondenzira v destilat
+  - alkohol $78\,^\circ\mathrm{C}$, voda $100\,^\circ\mathrm{C}$
+- Kromatografija
+  - barvila potujejo po papirju različno hitro
+  - črno črnilo je pogosto zmes barvil
+- Masa se ohrani
+  - $m_\mathrm{zmesi} = m_1 + m_2$
+  - nobena snov ne izgine

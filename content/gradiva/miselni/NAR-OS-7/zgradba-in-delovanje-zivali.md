@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Celica
+  - najmanjša živa enota
+  - membrana, citoplazma, jedro, mitohondriji
+  - brez celične stene in kloroplastov
+- Različne celice
+  - mišična, živčna, rdeča krvnička
+  - oblika se ujema z nalogo
+  - napaka: slon nima večjih celic
+- Tkivo
+  - enake celice, ista naloga
+  - krovno, mišično, živčno, vezivno
+  - kri je vezivno tkivo
+- Organ
+  - več različnih tkiv
+  - srce, želodec, pljuča
+- Organski sistem
+  - organi z isto večjo nalogo
+  - prebavila, dihala, krvožilje, izločala, živčevje
+- Organizem
+  - sistemi sodelujejo
+  - celica → tkivo → organ → organski sistem → organizem
+  - utrip: $u = N \cdot \dfrac{60\,\mathrm{s}}{t}$

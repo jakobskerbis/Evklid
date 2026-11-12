@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Temperatura
+  - kako toplo ali hladno je telo
+  - oznaka $T$, enota $^\circ\mathrm{C}$
+  - roka je slab merilnik
+  - ni toplota: kad rabi več toplote kot skodelica
+- Merjenje s termometrom
+  - bučka v snovi, ne ob steni
+  - počakaj, da se stolpec ustavi
+  - napaka: odčitaš zunaj snovi
+- Gibanje delcev
+  - višja temperatura, hitrejši delci
+- Toplota
+  - energija, ki prehaja med telesoma
+  - s toplejšega na hladnejše telo
+  - napaka: »mraz prehaja v čaj«
+- Segrevanje in ohlajanje
+  - prejema toploto: segreva se
+  - oddaja toploto: ohlaja se
+  - čaj na začetku hitro, nato počasi
+- Toplotno ravnovesje
+  - enaki temperaturi, toplota ne prehaja
+  - čaj se ustavi pri temperaturi zraka
+- Sprememba temperature
+  - $\Delta T = T_\mathrm{v} - T_\mathrm{n}$
+  - čez ničlo štej po delih: $75 + 15 = 90$
+- Mešanje vode
+  - enaki količini: $T_\mathrm{zmesi} = \dfrac{T_1 + T_2}{2}$
+  - napaka: $20 + 60 = 80$

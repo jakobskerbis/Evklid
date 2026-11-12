@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vloga, ne zgradba
+  - krava in lisica sta sesalca
+  - krava porabnik 1. reda, lisica 2. reda
+- Proizvajalci
+  - rastline in alge
+  - fotosinteza: hrana iz vode in ogljikovega dioksida ob svetlobi
+- Porabniki
+  - 1. reda jedo rastline
+  - vsejedec ima lahko več redov
+- Razkrojevalci
+  - glive in bakterije
+  - napaka: plesen ni proizvajalec
+  - vračajo rudninske snovi v prst
+- Prehranjevalna veriga
+  - puščica kaže smer hrane
+  - $r = m - 1$
+- Prehranjevalni splet
+  - prepletene verige istega ekosistema
+  - več povezav, bolj odporen ekosistem

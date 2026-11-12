@@ -2272,9 +2272,159 @@
    "h": "08a85da93f78",
    "o": "D"
   },
+  "NAR-OS-6/agregatna-stanja#p0": {
+   "h": "53373f56f132",
+   "o": "D"
+  },
+  "NAR-OS-6/fotosinteza-in-celicno-dihanje#p0": {
+   "h": "ca26236f2b8d",
+   "o": "D"
+  },
+  "NAR-OS-6/fotosinteza-in-celicno-dihanje#p1": {
+   "h": "f2284987a08f",
+   "o": "D"
+  },
+  "NAR-OS-6/fotosinteza-in-celicno-dihanje#p2": {
+   "h": "d06d63133595",
+   "o": "I",
+   "r": "ne poda podatkov za račun"
+  },
+  "NAR-OS-6/lastnosti-snovi#p1": {
+   "h": "991597ce0171",
+   "o": "D",
+   "r": "izparevanje ni vprašano",
+   "k": [
+    "Ker je sol raztopljena: njeni delci so pomešani med delce vode in so tako majhni, da gredo skozi luknjice v papirju",
+    "Filter zadrži samo neraztopljene delce, na primer pesek"
+   ]
+  },
+  "NAR-OS-6/locevanje-zmesi#p0": {
+   "h": "79f32cfa4a54",
+   "o": "D"
+  },
+  "NAR-OS-6/locevanje-zmesi#p1": {
+   "h": "fbbd44d94a48",
+   "o": "D"
+  },
+  "NAR-OS-6/mikroskop-in-celica#p1": {
+   "h": "a0a712074188",
+   "o": "D",
+   "r": "vodna kuga ni vprašana",
+   "k": [
+    "Mesnati listi čebule so skriti pod suhimi lupinami in v zemlji, zato niso zeleni in s svetlobo ne izdelujejo hrane",
+    "Kloroplastov ne potrebujejo"
+   ]
+  },
   "NAR-OS-6/naravoslovni-postopki#p0": {
    "h": "0418167f0d16",
    "o": "D"
+  },
+  "NAR-OS-6/oblike-energije#p0": {
+   "h": "e2251262aa57",
+   "o": "D"
+  },
+  "NAR-OS-6/oblike-energije#p1": {
+   "h": "fd517a3bfc07",
+   "o": "D"
+  },
+  "NAR-OS-6/prenos-toplote#p0": {
+   "h": "d9c36f3a21b1",
+   "o": "D"
+  },
+  "NAR-OS-6/prenos-toplote#p1": {
+   "h": "fe167988dc6a",
+   "o": "D"
+  },
+  "NAR-OS-6/prevajanje-vode-in-snovi#p0": {
+   "h": "1ddf4afcdbfd",
+   "o": "D"
+  },
+  "NAR-OS-6/prevajanje-vode-in-snovi#p1": {
+   "h": "55b44910e655",
+   "o": "D"
+  },
+  "NAR-OS-6/rastline-in-okolje#p0": {
+   "h": "12acb0d247f0",
+   "o": "D"
+  },
+  "NAR-OS-6/rastline-in-okolje#p1": {
+   "h": "a2944fbaa862",
+   "o": "D"
+  },
+  "NAR-OS-6/razmnozevanje-rastlin#p1": {
+   "h": "d8b76f154cf3",
+   "o": "D"
+  },
+  "NAR-OS-6/raznolikost-organizmov#p0": {
+   "h": "82032c72846f",
+   "o": "D",
+   "r": "rastlina v kleti ni vprašana",
+   "k": [
+    "Ker za rast ne potrebujejo svetlobe, hrane ne izdelajo s fotosintezo",
+    "Hrano vsrkavajo iz podlage (gnoja in slame), na kateri rastejo"
+   ]
+  },
+  "NAR-OS-6/raznolikost-organizmov#p1": {
+   "h": "d6403864cdcc",
+   "o": "D"
+  },
+  "NAR-OS-6/razvrscanje-rastlin#p0": {
+   "h": "0bac048c0dd0",
+   "o": "D"
+  },
+  "NAR-OS-6/toplota-in-temperatura#p1": {
+   "h": "b514413f2786",
+   "o": "D"
+  },
+  "NAR-OS-6/zgradba-rastline#p1": {
+   "h": "d04ec69bd1c4",
+   "o": "D"
+  },
+  "NAR-OS-6/zgradba-rastline#p2": {
+   "h": "855fe6f76960",
+   "o": "I",
+   "r": "ne pove, med katerimi rastlinami izbiramo"
+  },
+  "NAR-OS-6/zmesi-in-ciste-snovi#p0": {
+   "h": "2e9b250e19b5",
+   "o": "D"
+  },
+  "NAR-OS-6/zmesi-in-ciste-snovi#p1": {
+   "h": "4cdcbde71a47",
+   "o": "D"
+  },
+  "NAR-OS-7/clovek-in-okolje#p0": {
+   "h": "bd06d9a1565e",
+   "o": "D"
+  },
+  "NAR-OS-7/clovek-in-okolje#p1": {
+   "h": "636bc3dbf0d5",
+   "o": "D"
+  },
+  "NAR-OS-7/cutila-in-zivcevje#p0": {
+   "h": "a3ff83447c89",
+   "o": "D"
+  },
+  "NAR-OS-7/cutila-in-zivcevje#p1": {
+   "h": "f86b56059125",
+   "o": "D"
+  },
+  "NAR-OS-7/dihanje-in-krvni-obtok#p0": {
+   "h": "1c724d74041c",
+   "o": "D"
+  },
+  "NAR-OS-7/dihanje-in-krvni-obtok#p1": {
+   "h": "fa824b85c0e1",
+   "o": "D"
+  },
+  "NAR-OS-7/ekosistem#p1": {
+   "h": "7b7cdcc9bcf6",
+   "o": "D"
+  },
+  "NAR-OS-7/ekosistem#p2": {
+   "h": "0782a36d5aad",
+   "o": "I",
+   "r": "ne pove, za katero zdravljenje gre"
   },
   "NAR-OS-7/elementi-in-spojine#p0": {
    "h": "121c83ba3869",
@@ -2283,6 +2433,101 @@
   "NAR-OS-7/elementi-in-spojine#p1": {
    "h": "8c5b9d1c977f",
    "o": "D"
+  },
+  "NAR-OS-7/fizikalne-in-kemijske-spremembe#p0": {
+   "h": "d60c04f7c454",
+   "o": "D"
+  },
+  "NAR-OS-7/fizikalne-in-kemijske-spremembe#p1": {
+   "h": "808c9f9eb07b",
+   "o": "D"
+  },
+  "NAR-OS-7/gibanje-in-opora#p1": {
+   "h": "9639446a8716",
+   "o": "D"
+  },
+  "NAR-OS-7/kisle-in-bazicne-raztopine#p0": {
+   "h": "f57dfd7c04cb",
+   "o": "D"
+  },
+  "NAR-OS-7/kisle-in-bazicne-raztopine#p1": {
+   "h": "9f0a4546045f",
+   "o": "D"
+  },
+  "NAR-OS-7/kisle-in-bazicne-raztopine#p2": {
+   "h": "fc19ff518faa",
+   "o": "D"
+  },
+  "NAR-OS-7/kopenski-in-vodni-ekosistemi#p1": {
+   "h": "ecfe9bff78b3",
+   "o": "D",
+   "r": "splošna opomba ni vprašana",
+   "k": [
+    "Riba ne preživi dolgo",
+    "Njeno telo je prilagojeno na vodo z zelo malo soli",
+    "v morju je soli več kot sedemdesetkrat več, s tem pa telo ribe iz ribnika ne zna živeti"
+   ]
+  },
+  "NAR-OS-7/krozenje-snovi-in-pretok-energije#p0": {
+   "h": "37f219b4625d",
+   "o": "D"
+  },
+  "NAR-OS-7/krozenje-snovi-in-pretok-energije#p1": {
+   "h": "7e99e6311a98",
+   "o": "D"
+  },
+  "NAR-OS-7/prehranjevalne-verige-in-spleti#p0": {
+   "h": "e5dd5d05b033",
+   "o": "D"
+  },
+  "NAR-OS-7/prehranjevalne-verige-in-spleti#p1": {
+   "h": "f09ee3b94e36",
+   "o": "D",
+   "r": "odpornost spleta ni vprašana",
+   "k": [
+    "Tista z eno vrsto hrane",
+    "Žival s petimi vrstami hrane preprosto poje več drugih"
+   ]
+  },
+  "NAR-OS-7/prehranjevalne-verige-in-spleti#p2": {
+   "h": "febe1a1f1895",
+   "o": "I",
+   "r": "sklic na spremembo v spletu iz lekcije"
+  },
+  "NAR-OS-7/prehranjevanje-in-prebava#p1": {
+   "h": "dad01c9beec7",
+   "o": "D"
+  },
+  "NAR-OS-7/razmnozevanje-in-razvoj#p0": {
+   "h": "b496272bff0c",
+   "o": "D"
+  },
+  "NAR-OS-7/razmnozevanje-in-razvoj#p1": {
+   "h": "b4a5a0450b5e",
+   "o": "D"
+  },
+  "NAR-OS-7/razvrscanje-zivali#p0": {
+   "h": "8b41aa915986",
+   "o": "I",
+   "r": "sklic na določevalni ključ iz lekcije"
+  },
+  "NAR-OS-7/razvrscanje-zivali#p1": {
+   "h": "2c72ec010f84",
+   "o": "I",
+   "r": "sklic na določevalni ključ iz lekcije"
+  },
+  "NAR-OS-7/zgradba-in-delovanje-zivali#p0": {
+   "h": "b0ce7ed8173e",
+   "o": "D"
+  },
+  "NAR-OS-7/zgradba-in-delovanje-zivali#p1": {
+   "h": "77535b89f8fc",
+   "o": "D",
+   "r": "srce ni vprašano",
+   "k": [
+    "Tkivo, in sicer vezivno",
+    "Kri je iz krvnih celic in tekočine, nima pa več različnih tkiv, kot jih ima organ"
+   ]
   },
   "NAR-OS-7/zgradba-snovi#p1": {
    "h": "40af56989431",

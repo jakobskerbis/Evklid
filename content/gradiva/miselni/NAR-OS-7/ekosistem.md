@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ne samo živa bitja
+  - črevesne bakterije na krožniku propadejo
+  - potrebni so tudi pogoji okolja
+- Življenjski prostor
+  - kraj s svojimi pogoji
+  - črevo, mlaka, travnik
+- Neživi dejavniki
+  - svetloba, temperatura, voda, kisik, tla
+  - napaka: glive v tleh so žive
+- Populacija in združba
+  - populacija: vsi osebki ene vrste
+  - združba: vse populacije skupaj
+- Živi dejavniki
+  - hrana, tekmovanje, pomoč med organizmi
+  - koristne bakterije tekmujejo s škodljivimi
+- Ekosistem
+  - prostor + združba + vplivi
+  - drevesa senčijo, deževniki rahljajo prst
+- Ocena populacije
+  - $g = \dfrac{n}{A_\text{v}}$, $N = g \cdot A$
+  - $32$ regratov v $4\,\mathrm{m^2}$, travnik $2000$

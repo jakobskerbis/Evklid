@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Barva in sijaj
+  - kovine se bleščijo
+  - napaka: barva sama zavede
+- Vonj
+  - pahljaj z dlanjo proti nosu
+- Trdota
+  - trša snov razi mehkejšo
+  - diamant reže steklo
+- Gostota
+  - $\rho = \dfrac{m}{V}$, enota $\mathrm{g/cm^3}$
+  - pod $1\,\mathrm{g/cm^3}$ plava v vodi
+  - prostornina: razlika odčitkov v valju
+- Topnost
+  - sol in sladkor topna, pesek in olje ne
+  - raztopljena snov ne izgine
+- Prevodnost
+  - kovine prevajajo toploto in tok
+  - les, plastika, guma: izolatorji
+- Prepoznavanje snovi
+  - primerjaj več lastnosti hkrati
+  - aluminij in marmor: oba $2{,}7\,\mathrm{g/cm^3}$

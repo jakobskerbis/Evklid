@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Izmenjava plinov
+  - vdih: $21\,\mathrm{L}$ kisika v $100\,\mathrm{L}$ zraka
+  - izdih: $16\,\mathrm{L}$ kisika, $4\,\mathrm{L}$ ogljikovega dioksida
+  - zeljni sok ob izdihanem zraku pordeči
+- Celično dihanje
+  - v mitohondrijih, kisik in hranilne snovi
+  - nastaneta ogljikov dioksid in voda
+- Difuzija
+  - delci gredo tja, kjer jih je manj
+  - ploskev tanka, vlažna, velika
+- Dihala živali
+  - ribe in paglavci: škrge
+  - deževnik koža, žuželke vzdušnice
+  - sesalci in ptiči: pljuča
+- Kri
+  - rdeče krvničke s hemoglobinom nosijo kisik
+  - bele branijo, ploščice strjujejo kri
+  - napaka: kri v venah je modra
+- Krvni obtok
+  - arterije od srca, vene k srcu
+  - v kapilarah izmenjava s celicami
+  - zaprt pri vretenčarjih, odprt pri žuželkah
+- Dihalna frekvenca
+  - $f = N \cdot \dfrac{60\,\mathrm{s}}{t}$
+  - $5$ vdihov v $15\,\mathrm{s}$ je $20$ na minuto
