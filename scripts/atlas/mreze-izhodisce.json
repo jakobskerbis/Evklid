@@ -124,14 +124,12 @@
   "organi-3d/oko-telefon.glb": {
    "ciliary_processes_L (HRA)": [516,172,0,0,0,0,0],
    "iris_L (HRA)": [50,11,12,0,0,0,0],
-   "Optic nerve (II).l": [46,3,0,0,0,0,0],
    "ora_serrata_of_retina_L (HRA)": [0,0,0,0,1,0,0],
    "suspensory_ligament_of_lens_L (HRA)": [518,172,0,0,8,0,0]
   },
   "organi-3d/oko.glb": {
    "ciliary_processes_L (HRA)": [516,172,0,0,0,0,0],
    "iris_L (HRA)": [62,13,12,0,0,0,0],
-   "Optic nerve (II).l": [58,4,0,0,0,0,0],
    "optic_disc_L (HRA)": [0,0,0,0,0,4,0],
    "ora_serrata_of_retina_L (HRA)": [0,0,0,0,1,0,0],
    "suspensory_ligament_of_lens_L (HRA)": [807,172,0,0,8,0,0]

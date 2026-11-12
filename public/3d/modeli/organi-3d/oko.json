@@ -1,6 +1,6 @@
 {
  "organ": "oko",
- "vir": "Zrklo HuBMAP HRA (CC BY 4.0), očesne mišice in vidni živec Z-Anatomy (CC BY-SA 4.0), levo oko; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Zrklo HuBMAP HRA (CC BY 4.0), očesne mišice in vidni živec Z-Anatomy (CC BY-SA 4.0), levo oko; izvoz scripts/atlas/izvozi-organe.py; vidni živec v očnici je naša cev (3,5 mm) od papile do vrha očnice, scripts/atlas/oko-dodelava.mjs",
  "tkiva": {
   "beločnica": {
    "barva": "#f2ede6",
@@ -17,7 +17,7 @@
    "relief": 0.2,
    "lise": 0.12,
    "liseBarva": "#ffe0d6",
-   "rez": "#e6ddd0",
+   "rez": "#f4f0ea",
    "senca": 0.3,
    "sencaBarva": "#b98a80",
    "detajl": true,
@@ -104,7 +104,7 @@
    "zrno": 0.05,
    "f": 200,
    "relief": 0.3,
-   "rez": "#d48064",
+   "rez": "#eaa79b",
    "aoExp": 2,
    "spekular": 0.2,
    "aoOkolje": 0,
@@ -157,7 +157,7 @@
    "zrno": 0.1,
    "f": 220,
    "relief": 0.3,
-   "rez": "#5a221f",
+   "rez": "#3a1712",
    "aoExp": 1.4
   },
   "ciliarnik": {
@@ -530,6 +530,10 @@
     "mrežnica": {
      "lak": 0.05,
      "sijaj": 0
+    },
+    "roženica": {
+     "prosojnost": 0.3,
+     "barva": "#eaf4fa"
     }
    }
   }
@@ -561,8 +565,8 @@
  },
  "velikost": 0.0816,
  "trikotniki": {
-  "racunalnik": 179976,
-  "telefon": 40103
+  "racunalnik": 179545,
+  "telefon": 40100
  },
  "luci": [
   {

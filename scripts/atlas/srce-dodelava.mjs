@@ -310,7 +310,7 @@ export function zgladi(mreze, premicno, korakov = 0, splosci = 0) {
       if (!sme[u] || G.v3.len(nova[u]) < 1e-12) return p;
       let n = G.v3.norm(nova[u]);
       if (G.v3.dot(n, stara[u]) < 0) n = G.v3.mul(n, -1);
-      const b = G.v3.dot(G.v3.sub(p, gladka[u]), n) - 0.0005;
+      const b = G.v3.dot(G.v3.sub(p, gladka[u]), n) - 0.0002;
       if (b > 0) { znizanih++; if (b > najvec) najvec = b; }
       return b > 0 ? p.map((x, c) => x - splosci * b * n[c]) : p;
     });
@@ -472,7 +472,7 @@ export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [
     const novoTkivo = (n) => TKIVA.find(([rx]) => rx.test(n.getName()))?.[1] || n.getExtras()?.tkivo; // preimenovanje tkiv pride pozneje
     const jeStena = (n) => !NI_STENA.test(n.getName()) && (tkiva[n.getExtras()?.tkivo]?.rezVolumen || stenaVozlisca.includes(n.getName()));
     const skupine = [
-      ["epikard", vsa.filter(jeStena), null, 0, 0.75],
+      ["epikard", vsa.filter(jeStena), null, 0, 1],
       ...vsa.filter((n) => /^(uho|guba)$/.test(novoTkivo(n))).map((n) => [n.getName(), [n], () => () => true, novoTkivo(n) === "uho" ? 30 : 6, 0]),
     ];
     for (const [ime, deli, pogoj, korakov, splosci] of skupine) {
