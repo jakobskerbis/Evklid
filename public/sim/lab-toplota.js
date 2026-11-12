@@ -326,7 +326,8 @@ export function labMesanje(el) {
     { key: "Tm", label: "<i>T</i> izm. [°C]" },
     { key: "Tc", label: "<i>T</i> izr. [°C]" },
   ], { empty: "Še ni meritev. Natoči hladno vodo, zlij k njej toplo, premešaj in zapiši končno temperaturo." });
-  const graph = dataGraph({ x: [0, 120], y: [10, 60], xStep: 20, yStep: 10, xLabel: "t [s]", yLabel: "T [°C]", title: "Temperatura zmesi po zlivanju", origin: false });
+  const graph = dataGraph({ x: [0, 120], y: [0, 60], xStep: 20, yStep: 10, xLabel: "t [s]", yLabel: "T [°C]", title: "Temperatura zmesi po zlivanju", origin: false });
+  const graphNote = h("p", { class: "muted lab-graph-note", "aria-live": "polite" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const pts = [];
@@ -356,7 +357,7 @@ export function labMesanje(el) {
         log,
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table, calc,
-      h("h4", { class: "lab-h" }, "Temperatura po zlivanju"), graph, qBox,
+      h("h4", { class: "lab-h" }, "Temperatura po zlivanju"), graph, graphNote, qBox,
       notes(POENOSTAVITVE_TOPLOTA.mesanje, "Toplotna bilanca: <i>m</i>₁<i>c</i>(<i>T</i>₁ − <i>T</i>) = <i>m</i>₂<i>c</i>(<i>T</i> − <i>T</i>₂), torej <i>T</i> = (<i>m</i>₁<i>T</i>₁ + <i>m</i>₂<i>T</i>₂)/(<i>m</i>₁ + <i>m</i>₂). Steklo ~0,83 kJ/(kg·K), k = 1,14 W/(m·K) (Schott Duran); stiropor k = 0,035 W/(m·K) (EN 13163). Termometer ±0,5 °C, tehtnica ±0,2 g. Ocene: mase in stene posod, prestop toplote, razplastenost."),
     ],
     tryText: "Zmešaj 100 g vode z 80 °C in 100 g vode z 20 °C v lončku iz stiropora s pokrovom. Napovej končno temperaturo, nato poskus ponovi v stekleni čaši brez pokrova. Kaj se zgodi, če zapišeš temperaturo, preden premešaš?",
@@ -371,7 +372,7 @@ export function labMesanje(el) {
     else balL.set("", "", "ne tehtaš");
     pts.length = 0;
     log.push(`V posodi je hladna voda (${st.tehtaj ? `${fixed(trial.m2, 1)} g` : `do oznake ${st.m2} mL`}). Počakaj, da se termometer ustali.`, "info");
-    redraw(), draw();
+    stanje(), redraw(), draw();
   }
   function mix() {
     if (B.faza !== "hladna") return log.push(B.faza === "prazno" ? "Najprej natoči hladno vodo v posodo." : "Topla voda je že v posodi.", "warn");
@@ -410,10 +411,19 @@ export function labMesanje(el) {
       }));
     }
   }
+  // Besedilo pod tabelo in grafom sledi korakom poskusa.
+  function stanje() {
+    table.setEmpty(B.faza === "prazno" ? "Še ni meritev. Natoči hladno vodo, zlij k njej toplo, premešaj in zapiši končno temperaturo."
+      : B.faza === "hladna" ? "Hladna voda je v posodi. Počakaj, da se termometer ustali, nato zlij k njej toplo vodo."
+      : "Zmes je v posodi. Premešaj in pritisni »Zapiši končno temperaturo«. V tabeli bo meritev šele, ko jo zapišeš.");
+    const note = B.faza !== "zmes" ? "" : `Polna črta s točkami kaže odčitke termometra (vsaki 2 s), črtkana pa izračun, ki upošteva samo vodo (brez posode, termometra in zraka).${B.premesano < 5 ? " Dokler ne premešaš, je sonda pri dnu v hladnejši plasti, zato termometer kaže manj in odčitek le počasi raste." : ""} Zakaj termometer ostane malo pod črto, preveriš v sklepu, ko zapišeš končno temperaturo.`;
+    if (graphNote.textContent !== note) graphNote.textContent = note; // aria-live: le ob spremembi, ne vsakih 100 ms
+  }
   function sync() {
+    stanje();
     if (!trial?.T1) return (calc.innerHTML = "");
     const Tc = T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2);
-    calc.innerHTML = `<p><i>T</i> = (<i>m</i>₁<i>T</i>₁ + <i>m</i>₂<i>T</i>₂)/(<i>m</i>₁ + <i>m</i>₂) = (${fixed(trial.m1, 1)} g · ${fixed(trial.T1, 1)} °C + ${fixed(trial.m2, 1)} g · ${fixed(trial.T2, 1)} °C)/${fixed(trial.m1 + trial.m2, 1)} g = <b>${fixed(Tc, 1)} °C</b></p>${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(Math.abs(trial.done.T - Tc), 1)} °C ${trial.done.T < Tc ? "manj" : "več"}, kot kaže izračun.</p>` : ""}`;
+    calc.innerHTML = `<p>Napoved (samo voda): <i>T</i> = (<i>m</i>₁<i>T</i>₁ + <i>m</i>₂<i>T</i>₂)/(<i>m</i>₁ + <i>m</i>₂) = (${fixed(trial.m1, 1)} g · ${fixed(trial.T1, 1)} °C + ${fixed(trial.m2, 1)} g · ${fixed(trial.T2, 1)} °C)/${fixed(trial.m1 + trial.m2, 1)} g = <b>${fixed(Tc, 1)} °C</b></p>${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(Math.abs(trial.done.T - Tc), 1)} °C ${trial.done.T < Tc ? "manj" : "več"}, kot kaže izračun.</p>` : ""}`;
   }
   function reset() {
     B.faza = "prazno";
@@ -424,11 +434,14 @@ export function labMesanje(el) {
     B.th.Tp = null;
     calc.innerHTML = "";
     balL.set("", "", "");
-    redraw(), draw();
+    stanje(), redraw(), draw();
   }
   function redraw() {
     const tMax = Math.max(120, Math.ceil(B.t / 60) * 60);
-    graph.setAxes({ x: [0, tMax], xStep: tMax > 300 ? 60 : 20 });
+    // Os T od 0 °C do vsaj 5 °C nad izračunom in najvišjo meritvijo: hladna voda, zmes in izračun so vedno na grafu.
+    const top = Math.max(trial?.T1 ? T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2) : 0, ...pts.map((p) => p[1]));
+    const yMax = Math.max(40, Math.ceil((top + 5) / 10) * 10);
+    graph.setAxes({ x: [0, tMax], xStep: tMax > 600 ? 120 : tMax > 180 ? 60 : 20, y: [0, yMax] }); // ≤ 11 oznak, da se na telefonu ne stikajo
     const ser = pts.length ? [{ id: "T", pts: [...pts], cls: "a", label: "termometer" }] : [];
     if (trial?.T1) ser.push({ id: "Tc", pts: [], cls: "b", label: "izračun", line: () => T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2) });
     graph.draw(ser);
@@ -440,7 +453,7 @@ export function labMesanje(el) {
       const r = B.readT();
       thL.set(B.faza === "prazno" ? "" : r.text, "°C", B.faza === "prazno" ? "posoda je prazna" : B.mesaj ? "mešaš" : "sonda pri dnu");
       swL.set(B.faza === "zmes" ? ura(B.t) : "", "", B.faza === "zmes" ? "od zlivanja" : "začne ob zlivanju");
-      if (B.faza === "zmes") redraw();
+      if (B.faza === "zmes") stanje(), redraw();
       draw();
     },
   });
