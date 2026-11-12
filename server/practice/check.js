@@ -129,10 +129,16 @@ function checkNumber(ans, input) {
     // Vrsta »format« ne šteje kot napačen poskus.
     if (!Number.isFinite(q.value)) return { kind: "format", code: "chk.number", message: "Z 0 ne moreš deliti. Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
     const exacts = [ans.value, ...(ans.alsoAccept || [])];
-    if (exacts.some((e) => Math.abs(q.value - e) <= (ans.tolerance ?? 1e-9) * Math.max(1, Math.abs(e)))) {
+    // Pri zahtevanem zaokroževanju je »5/3« prav tudi, kadar je rešitev shranjena že zaokrožena (1,67).
+    const d = ans.decimals;
+    const same = (e) =>
+      Math.abs(q.value - e) <= (ans.tolerance ?? 1e-9) * Math.max(1, Math.abs(e)) ||
+      (d !== undefined && d !== null && Math.abs(roundHalfUp(q.value, d) - roundHalfUp(e, d)) < 1e-9);
+    if (exacts.some(same)) {
       return { kind: "format", code: "chk.number", message: "Količnik je pravilen. Izračunaj ga še do konca in rezultat zapiši kot število (npr. 5 : 4 = 1,25)." };
     }
-    return { kind: "wrong" };
+    // Obrnjeni količnik (»4 : 5« namesto 5 : 4) in napake iz generatorja dobijo isti namig kot pri številu.
+    return { kind: "wrong", ...diagnose(ans, { value: q.value, decimals: 6, unit: "" }) };
   }
   const p = parseNumberWithUnit(input, { dot: !!ans.dot });
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };

@@ -55,6 +55,10 @@ test("količnik pri številskem odgovoru: znak za deljenje prepoznan, število p
     assert.match(r.message, /Količnik je pravilen/, i);
   }
   assert.equal(kind(n, "4:5"), "wrong");
+  assert.equal(checkAnswer(n, "4:5").mistake?.code, "chk.reciprocal");
+  // zahtevano zaokroževanje, rešitev shranjena zaokrožena: količnik je še vedno prav zapisan
+  assert.match(checkAnswer({ type: "number", value: 1.67, decimals: 2 }, "5/3").message, /Količnik je pravilen/);
+  assert.match(checkAnswer({ type: "number", value: 0.33, decimals: 2 }, "1:3").message, /Količnik je pravilen/);
   assert.equal(kind(n, "5÷0"), "format");
   // prej je »5/4« pri rezultatu 5 veljal za pravilnega (»/4« je bil prebran kot enota)
   assert.equal(kind({ type: "number", value: 5 }, "5/4"), "wrong");
