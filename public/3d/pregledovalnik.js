@@ -468,6 +468,16 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => opts.povecava(d.povecava));
       infoEl.append(b);
     }
+    // »Poglej z mikroskopom« (stran /3d da opts.mikroskop): preparat tkiva tega dela ali modela (public/mikroskop/mapa.js).
+    const prep = opts.mikroskop?.za?.(d.id);
+    if (prep) {
+      const b = mk("button", "k3-pill k3-povecava-gumb");
+      b.type = "button";
+      b.innerHTML = `${icon("microscope")}<span></span>`;
+      b.lastChild.textContent = t("mk.open");
+      b.addEventListener("click", () => opts.mikroskop.odpri(prep));
+      infoEl.append(b);
+    }
     // Stran /3d: plošča se drsi sama in okno je na njenem vrhu. Tap na model: plošča takoj na vrh (gladko drsenje se je
     // na počasnih napravah ustavilo pred vrhom). Izbira iz seznama: le toliko, da je okno vidno (seznam ne skoči).
     // Lekcija: okno je pod odrom; če je pod robom zaslona, se stran pomakne do njega.
