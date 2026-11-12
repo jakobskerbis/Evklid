@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Opis nihanja
+  - odmik $x$, amplituda $x_0$
+  - nihajni čas $t_0$, frekvenca $\nu = \dfrac{1}{t_0}$
+  - napaka: pol nihaja namesto celega
+- Sila nazaj
+  - $F = k x$, kaže proti ravnovesni legi
+  - skrajna lega: največja sila, hitrost nič
+- Nihalo na vzmeti
+  - $t_0 = 2\pi\sqrt{\dfrac{m}{k}}$
+  - dvakrat težja utež: $\sqrt{2}$-krat daljši nihaj
+- Matematično nihalo
+  - $t_0 = 2\pi\sqrt{\dfrac{l}{g}}$, majhni odmiki
+  - masa in amplituda ne vplivata
+  - nihalo $1\,\mathrm{m}$: $t_0 \approx 2\,\mathrm{s}$
+- Energija
+  - $W = \dfrac{1}{2} k x_0^2$
+  - ravnovesna lega: vsa energija kinetična
+  - trenje nihanje duši
+- Glasba
+  - metronom: dolžina nihala določa tempo
+  - glasbene vilice: $440\,\mathrm{Hz}$

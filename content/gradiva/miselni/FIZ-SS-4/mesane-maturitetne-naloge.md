@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vzorec iz meritve
+  - nihalo štirikrat daljše, nihaj dvakrat daljši
+  - $T \propto \sqrt{l}$
+- Metoda razmerij
+  - $\dfrac{y_2}{y_1} = \left(\dfrac{x_2}{x_1}\right)^n$
+  - konstante se pokrajšajo
+- Potence iz vseh letnikov
+  - gravitacija $F \propto r^{-2}$, Stefan $j \propto T^4$
+  - Kepler $T^2 \propto a^3$, moč $P \propto U^2$
+- Več količin hkrati
+  - $L \propto R^2 T^4$: razmerja zmnoži
+  - gostota toka $j \propto 1/d^2$
+- Red dela
+  - skica, SI-enote, kateri zakon
+  - simbolno, nato števila
+  - preveri red velikosti
+- Pasti
+  - linearno sklepanje pri $n \ne 1$
+  - temperatura v K, ne v °C
+  - razdalja od središča, ne višina
