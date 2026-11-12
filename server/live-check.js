@@ -277,7 +277,7 @@ export function codeFindings(answer, pre = null, question = "") {
       if (v.issue) return { checked, issue: v.issue };
     }
   }
-  for (const f of [valenceIssue(answer, question), groupIssue(answer, question), celsiusIssue(answer, question)]) {
+  for (const f of [valenceIssue(answer, question), groupIssue(answer, question), periodIssue(answer, question), pairsIssue(answer, question), celsiusIssue(answer, question)]) {
     checked += f.checked;
     if (f.issue) return { checked, issue: f.issue };
   }
@@ -375,6 +375,104 @@ export function groupIssue(answer, question = "") {
         checked,
         issue: `the answer puts ${ELEMENT_NAME[el.sym]} (${el.sym}) in the ${k}. skupina, but Slovenian schools number the groups 1–18 and ${el.sym} is in the ${el.outer + 10}. skupina (it has ${el.outer} outer electrons)`,
       };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Perioda lahkih elementov (meritev 12. 11. po krogu 4, OŠ: »dušik v 3. periodi«, pravilno 2.). Isti varovali kot
+// groupIssue: ista poved, element največ 60 znakov pred »k. period…«, vrstica s pravo periodo, k iz učenčevega
+// sporočila, SKIP_LINE, prehodna kovina. Dodatno: primerjava (»pod/nad dušikom«, »kot«, »elementi/atomi«) med
+// elementom in številko ter element z isto periodo takoj za številko (»pod dušikom je v 3. periodi fosfor«) nista
+// zadetek; »perioda nihanja« ni kemija. Bor je izpuščen (»bor« je tudi drevo).
+const PERIODS = [
+  [/(?<!\p{L})vodik|hydrogen/iu, "H", "vodik", 1],
+  [/(?<!\p{L})liti(?:j|ja|ju|jem)(?!\p{L})|lithium/iu, "Li", "litij", 2],
+  [/(?<!\p{L})berilij|beryllium/iu, "Be", "berilij", 2],
+  [/ogljik|carbon/iu, "C", "ogljik", 2],
+  [/dušik|nitrogen/iu, "N", "dušik", 2],
+  [/kisik|oxygen/iu, "O", "kisik", 2],
+  [/fluor(?!esc)/iu, "F", "fluor", 2],
+  [/(?<!\p{L})neon(?!\p{L})|(?<!\p{L})neona|(?<!\p{L})neonu/iu, "Ne", "neon", 2],
+  [/(?<!\p{L})natrij|sodium/iu, "Na", "natrij", 3],
+  [/magnezij|magnesium/iu, "Mg", "magnezij", 3],
+  [/aluminij|alumini?um/iu, "Al", "aluminij", 3],
+  [/silicij|silicon/iu, "Si", "silicij", 3],
+  [/fosfor|phosphor/iu, "P", "fosfor", 3],
+  [/žvepl|sulfur/iu, "S", "žveplo", 3],
+  [/(?<!\p{L})klor(?!ofil|id)|chlorin/iu, "Cl", "klor", 3],
+  [/(?<!\p{L})argon/iu, "Ar", "argon", 3],
+];
+function periodMentions(text) {
+  const out = [];
+  for (const [re, sym, , p] of PERIODS) for (const m of text.matchAll(new RegExp(re.source, "giu"))) out.push({ at: m.index, end: m.index + m[0].length, sym, p });
+  for (const m of text.matchAll(/\\(?:mathrm|text|ce)\{([A-Z][a-z]?)\}/g)) {
+    const e = PERIODS.find((x) => x[1] === m[1]);
+    if (e) out.push({ at: m.index, end: m.index + m[0].length, sym: e[1], p: e[3] });
+  }
+  return out.sort((a, b) => a.at - b.at);
+}
+const PERIOD_RE = /(?<![\p{L}\d.,])(\d)\.\s*period(?!n|ič)/giu;
+const PERIOD_NOT_CHEM_RE = /^\p{L}*\s+(?:nihanj|nihal|valovanj|vala|ure|let|leta|šolsk|pouk)/iu;
+const COMPARE_RE = /(?<!\p{L})(?:pod|nad|kot|od|elementi|elementov|element|atomi|atomov|ostali|drugi|drugih)(?!\p{L})/iu;
+// Opis učenčeve napake (»Učenec postavi magnezij v 2. periodo«) in zapis z jedrom žlahtnega plina (»[Ar] 3d⁵ … M je
+// v 4. periodi«, argon ni element, o katerem govori poved).
+const PERIOD_SKIP_RE = /(?<!\p{L})(?:učen\p{L}*|zamenj\p{L}*)(?!\p{L})|\[\s*(?:\\mathrm\{)?\s*(?:He|Ne|Ar|Kr|Xe|Rn)\b/iu;
+const periodsIn = (t) => new Set([...String(t || "").matchAll(PERIOD_RE)].map((m) => Number(m[1])));
+export function periodIssue(answer, question = "") {
+  let checked = 0;
+  const pupil = periodsIn(question);
+  for (const line of String(answer || "").split("\n")) {
+    if (SKIP_LINE.test(line) || PERIOD_SKIP_RE.test(line)) continue;
+    const named = periodsIn(line);
+    for (const m of line.matchAll(PERIOD_RE)) {
+      const after = line.slice(m.index + m[0].length);
+      if (PERIOD_NOT_CHEM_RE.test(after)) continue;
+      let win = line.slice(Math.max(0, m.index - 60), m.index);
+      const ends = [...win.matchAll(/(?<!\d)[.!?]\s/g)];
+      if (ends.length) win = win.slice(ends.at(-1).index + ends.at(-1)[0].length);
+      const el = periodMentions(win).at(-1);
+      if (!el) continue;
+      checked++;
+      const k = Number(m[1]);
+      if (k === el.p || pupil.has(k) || named.has(el.p)) continue;
+      const between = win.slice(el.end);
+      if (COMPARE_RE.test(between) || D_BLOCK_RE.test(between) || /(?<!\p{L})(?:pod|nad|kot|od)\s+$/iu.test(win.slice(0, el.at))) continue;
+      const next = periodMentions(after.split(/(?<!\d)[.!?](?:\s|$)/)[0].slice(0, 40))[0];
+      if (next && next.p === k) continue;
+      return {
+        checked,
+        issue: `the answer puts ${el.sym === "H" ? "hydrogen" : el.sym} in the ${k}. perioda, but ${el.sym} is in the ${el.p}. perioda`,
+      };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Pari ob enem atomu 2. periode (meritev 12. 11.: »vsak atom 3 + 2 = 5 parov« v N₂; pravilno 3 vezni + 1 nevezni
+// = 4 pari). Atom C, N, O ali F ima ob sebi največ 4 elektronske pare (lupina L sprejme 8 elektronov). Zadetek je
+// samo, ko vrstica govori o enem atomu (»vsak atom«, »ob atomu«, »okoli dušika« …), število parov je večje od 4 in
+// v vrstici ni elementa 3. periode ali višje (SF₆, PCl₅ smejo imeti več; tudi formule SF, PCl, XeF …) ne besede za vso molekulo (»molekul«,
+// »skupaj«, »vseh«) med omembo atoma in številom.
+const ONE_ATOM_RE = /(?<!\p{L})(?:vsak(?:i|em|ega)?\s+atom\p{L}*|ob\s+(?:vsakem\s+)?(?:atomu|ogljiku|dušiku|kisiku|fluoru)|okoli\s+(?:vsakega\s+)?(?:atoma|ogljika|dušika|kisika|fluora))(?!\p{L})/giu;
+const PAIR_ADJ = String.raw`(?:skupn|elektronsk|vezn|nevezn|prost)\p{L}*`;
+const PAIRS_RE = new RegExp(String.raw`(?<![\d.,])(\d+)\s*\$?\s*(?:${PAIR_ADJ}\s+(?:in\s+${PAIR_ADJ}\s+)?)?par(?:ov|i|a|e|ih)?(?!\p{L})`, "giu");
+const WHOLE_RE = /molekul|skupaj|vseh|vsega|celot/iu;
+const HEAVY_RE = /žvepl|fosfor|(?<!\p{L})klor(?!ofil)|brom|(?<!\p{L})jod|ksenon|kripton|silicij|selen|telur|arzen|\\(?:mathrm|text|ce)\{(?:S|P|Cl|Br|I|Xe|Kr|Si|Se|Te|As)\b|(?<![\p{L}\d])(?:SF|PCl|XeF|SO|PF|ClF|BrF|IF)/iu;
+export function pairsIssue(answer, question = "") {
+  let checked = 0;
+  for (const line of String(answer || "").split("\n")) {
+    if (SKIP_LINE.test(line) || HEAVY_RE.test(line)) continue;
+    if (!periodMentions(line).some((e) => e.p === 2) && !/atom/iu.test(line)) continue;
+    for (const a of line.matchAll(ONE_ATOM_RE)) {
+      const rest = line.slice(a.index + a[0].length).split(/(?<!\d)[.!?;](?:\s|$)/)[0];
+      for (const m of rest.matchAll(PAIRS_RE)) {
+        if (WHOLE_RE.test(rest.slice(0, m.index))) break;
+        checked++;
+        const k = Number(m[1]);
+        if (k <= 4 || question.includes(`${k} par`)) continue;
+        return { checked, issue: `the answer says one atom has ${k} electron pairs around it, but an atom of period 2 (C, N, O, F) has at most 4 pairs (8 electrons) around it; e.g. each N in N₂ has 3 bonding pairs + 1 lone pair = 4 pairs` };
+      }
     }
   }
   return { checked, issue: null };

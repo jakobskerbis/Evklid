@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, celsiusIssue } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -562,6 +562,43 @@ test("code check (round 4): main-group elements use groups 1–18, not the old m
     assert.equal(groupIssue(a).issue, null, a);
   for (const a of ["Halogeni (fluor, klor, brom, jod) so v 7. skupini.", "Dušik je v 2. periodi in 5. skupini.", "Kisik je nekovina. Kisik je v 6. skupini."])
     assert.ok(groupIssue(a).issue, a);
+});
+
+test("code check (round 5): period of light elements and electron pairs around one period-2 atom", () => {
+  // Ciljna meritev po krogu 4, KEM-OS-8/kovalentna-vez: »dušik v 3. periodi« in »vsak atom 3 + 2 = 5 parov«.
+  assert.match(periodIssue("Dušik je v 3. periodi in 15. skupini.").issue, /N in the 3\. perioda.*2\. perioda/);
+  assert.ok(periodIssue("Atom $\\mathrm{O}$ leži v 3. periodi.").issue, "simbol v LaTeXu");
+  assert.ok(periodIssue("Natrij je v 2. periodi.").issue, "Na je v 3. periodi");
+  assert.match(codeFindings("Dušik v 3. periodi ima 5 zunanjih elektronov.").issue, /2\. perioda/, "popravek tudi pri OŠ brez pregleda");
+  for (const a of [
+    "Dušik je v 2. periodi in 15. skupini.",
+    "Natrij in klor sta v 3. periodi.",
+    "Vodik je v 1. periodi.",
+    "Ogljik je v 2. periodi, $\\mathrm{Na}$ v 3. periodi.",
+    "Pod dušikom je v 3. periodi fosfor.",
+    "Fosfor je pod dušikom v 3. periodi.",
+    "Dušik ima manj lupin kot elementi 3. periode.",
+    "Ali je dušik v 3. periodi?",
+    "Ne drži, da je dušik v 3. periodi.",
+    "Učenec postavi magnezij v 2. periodo, ker ima 2 zunanja elektrona.",
+    "$\\mathrm{M^{3+}}$: $[\\mathrm{Ar}]\\,3d^5$, argon ima $18$ elektronov; M je v 4. periodi",
+    "Kisik je v 2. periodi. 3. perioda nihanja traja dlje.",
+  ])
+    assert.equal(periodIssue(a).issue, null, a);
+  assert.equal(periodIssue("Dušik je v 3. periodi.", "Ali je dušik v 3. periodi?").issue, null, "perioda iz učenčevega sporočila");
+
+  assert.match(pairsIssue("Vsak atom ima $3 + 2 = 5$ parov.").issue, /at most 4 pairs/);
+  assert.ok(pairsIssue("Ob vsakem atomu dušika je 5 elektronskih parov.").issue);
+  for (const a of [
+    "Ob vsakem atomu dušika so 3 vezni in 1 nevezni par, skupaj 4 pari.",
+    "V molekuli $\\mathrm{N_2}$ je skupaj 5 parov.",
+    "Vsak atom ima 3 vezne pare, v vsej molekuli pa je 5 parov.",
+    "Okoli žvepla v SF₆ je 6 parov.",
+    "Ob atomu dušika je 8 elektronov v parih.",
+    "Vsak atom dušika ima 5 zunanjih elektronov in en nevezni par.",
+    "Ali ima vsak atom 5 parov?",
+  ])
+    assert.equal(pairsIssue(a).issue, null, a);
 });
 
 test("code check (2026-11-11 round 2): temperatures given in °C are not written as kelvin in a difference", () => {
