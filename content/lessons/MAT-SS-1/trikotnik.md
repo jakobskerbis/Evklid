@@ -65,7 +65,7 @@ To, da se tri premice iste vrste vedno sekajo v eni točki, ni samoumevno (dokaz
 :::premisli
 V simulaciji vlečeš oglišče $C$ od ostrega kota proti topemu. Napovej: kje je središče očrtane krožnice ravno takrat, ko je kot pri $C$ pravi?
 ---
-Na sredino hipotenuze. Po Talesovem izreku leži oglišče pravega kota na krožnici, ki ima hipotenuzo za premer, in to je očrtana krožnica. Hipotenuza je premer, njena sredina je središče.
+Na sredini hipotenuze. Po Talesovem izreku leži oglišče pravega kota na krožnici, ki ima hipotenuzo za premer, in to je očrtana krožnica. Hipotenuza je premer, njena sredina je središče.
 :::
 
 Lega se spreminja z obliko trikotnika:
@@ -101,9 +101,9 @@ $\alpha + \beta + \gamma = 180^\circ$, zunanji kot $\gamma' = 180^\circ - \gamma
 
 ### Primer 2 (srednji)
 
-Dve trikotni stranici stojal za telefon sta izdelani v različnih tovarnah. Trikotnik $ABC$ ima stranici $a = 5\,\text{cm}$ in $b = 7\,\text{cm}$ ter kot $\gamma = 50^\circ$ med njima. Trikotnik $DEF$ ima stranici $d = 7\,\text{cm}$ in $f = 5\,\text{cm}$ ter kot $\varepsilon = 50^\circ$ med njima. V trikotniku $ABC$ je $\beta = 62^\circ$. Ali sta trikotnika skladna? Če sta, zapiši, katera oglišča si ustrezajo, in izračunaj kote $\delta$, $\varphi$ ter $\alpha$.
+Dve trikotni stranici stojal za telefon sta izdelani v različnih tovarnah. Trikotnik $ABC$ ima stranici $a = 5\,\text{cm}$ in $b = 7\,\text{cm}$ ter kot $\gamma = 50^\circ$ med njima. Trikotnik $DEF$ ima stranici $d = 7\,\text{cm}$ in $f = 5\,\text{cm}$ ter kot $\varepsilon = 50^\circ$ med njima. V trikotniku $ABC$ je $\beta \approx 85^\circ$ (zaokroženo na stopinjo). Ali sta trikotnika skladna? Če sta, zapiši, katera oglišča si ustrezajo, in izračunaj kote $\delta$, $\varphi$ ter $\alpha$.
 
-**Podatki:** $ABC$: $a = 5\,\text{cm}$, $b = 7\,\text{cm}$, $\gamma = 50^\circ$, $\beta = 62^\circ$; $DEF$: $d = 7\,\text{cm}$, $f = 5\,\text{cm}$, $\varepsilon = 50^\circ$
+**Podatki:** $ABC$: $a = 5\,\text{cm}$, $b = 7\,\text{cm}$, $\gamma = 50^\circ$, $\beta \approx 85^\circ$; $DEF$: $d = 7\,\text{cm}$, $f = 5\,\text{cm}$, $\varepsilon = 50^\circ$
 **Iščemo:** ali je $\triangle ABC \cong \triangle DEF$, ujemajoča se oglišča, kote $\delta$, $\varphi$, $\alpha$
 
 :::formula
@@ -115,9 +115,9 @@ Izrek SKS: trikotnika sta skladna, če se ujemata v dveh stranicah in kotu med n
 1. Kot $\gamma$ leži med stranicama $a$ in $b$ (to sta stranici, ki se stikata v $C$). Kot $\varepsilon$ leži med stranicama $d$ in $f$ (stikata se v $E$).
 2. Stranici se ujemata: $a = 5\,\text{cm} = f$ in $b = 7\,\text{cm} = d$, kota med njima pa sta enaka: $\gamma = 50^\circ = \varepsilon$. Po izreku SKS sta trikotnika skladna.
 3. Ujemanje oglišč: $A \leftrightarrow F$ (nasproti obeh je stranica $5\,\text{cm}$), $B \leftrightarrow D$ (nasproti obeh $7\,\text{cm}$), $C \leftrightarrow E$. Zapišemo $\triangle ABC \cong \triangle FDE$.
-4. Ujemajoči se koti so enaki: $\delta = \beta = 62^\circ$.
-5. V trikotniku $ABC$: $\alpha = 180^\circ - 50^\circ - 62^\circ = 68^\circ$, zato je $\varphi = \alpha = 68^\circ$.
-6. Odgovor: trikotnika (in s tem stranici stojal) sta skladna po izreku SKS, $\delta = 62^\circ$, $\varphi = 68^\circ$, $\alpha = 68^\circ$.
+4. Ujemajoči se koti so enaki: $\delta = \beta \approx 85^\circ$.
+5. V trikotniku $ABC$: $\alpha \approx 180^\circ - 50^\circ - 85^\circ = 45^\circ$, zato je $\varphi = \alpha \approx 45^\circ$. Smiselno: nasproti krajše stranice $a$ leži manjši kot.
+6. Odgovor: trikotnika (in s tem stranici stojal) sta skladna po izreku SKS, $\delta \approx 85^\circ$, $\varphi \approx 45^\circ$, $\alpha \approx 45^\circ$.
 
 ### Primer 3 (težji)
 

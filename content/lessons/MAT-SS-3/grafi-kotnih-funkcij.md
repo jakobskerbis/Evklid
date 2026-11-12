@@ -51,7 +51,7 @@ Ali je $\sin 4$ pozitiven ali negativen? Pomagaj si z grafom, ne s kalkulatorjem
 Negativen. Velja $\pi \approx 3{,}14 < 4 < \frac{3\pi}{2} \approx 4{,}71$, na tem delu pa je graf sinusa pod osjo $x$ (padajoč proti $-1$).
 :::
 
-**4. Amplituda: število pred sinusom.** Graf $y = 2\sin x$ dobiš tako, da vsako vrednost sinusa podvojiš. Val sega od $-2$ do $2$, ničle ostanejo na mestu. **Amplituda** je razdalja od srednje črte vala do vrha. Srednja črta je vodoravna premica, okoli katere val niha; pri $y = 2\sin x$ je to kar os $x$. Pri $y = A\sin x$ je to $|A|$. Če je $A < 0$, se graf še zrcali čez os $x$.
+**4. Amplituda: število pred sinusom.** Graf $y = 2\sin x$ dobiš tako, da vsako vrednost sinusa podvojiš. Val sega od $-2$ do $2$, ničle ostanejo na mestu. **Amplituda** je razdalja od srednje črte vala do vrha. Srednja črta je vodoravna premica, okoli katere val niha; pri $y = 2\sin x$ je to kar os $x$. Pri $y = A\sin x$ je amplituda $|A|$. Če je $A < 0$, se graf še zrcali čez os $x$.
 
 *Preveri:* kolikšna je amplituda $y = -3\sin x$? *Odgovor:* $3$; graf je še zrcaljen čez os $x$.
 
@@ -159,7 +159,7 @@ $A = \dfrac{r_{\max} - r_{\min}}{2}$, $\quad d = \dfrac{r_{\max} + r_{\min}}{2}$
 4. Premika $c$ ne potrebujemo: $\sin$ je pri $0$ na srednji črti in narašča, tako kot polmer kroga.
 5. Torej $r(t) = 10\sin\left(\frac{\pi}{4}t\right) + 20$.
 6. Po $1\,\text{s}$: $r(1) = 10\sin\frac{\pi}{4} + 20 = 10 \cdot \frac{\sqrt2}{2} + 20 = 5\sqrt2 + 20 \approx 27{,}1$, ker je $\frac{\pi}{4} = 45^\circ$.
-7. Po $6\,\text{s}$: $r(6) = 10\sin\frac{3\pi}{2} + 20 = -10 + 20 = 10$. Minili sta tri četrtine periode, krog je najmanjši.
+7. Po $6\,\text{s}$: $r(6) = 10\sin\frac{3\pi}{2} + 20 = -10 + 20 = 10$. Minile so tri četrtine periode, krog je najmanjši.
 8. Odgovor: $r(t) = 10\sin\left(\frac{\pi}{4}t\right) + 20$ (v milimetrih, $t$ v sekundah); po $1\,\text{s}$ je polmer približno $27{,}1\,\text{mm}$, po $6\,\text{s}$ pa $10\,\text{mm}$.
 
 ### Primer 4: zdaj ti

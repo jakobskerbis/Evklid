@@ -204,6 +204,15 @@
    "h": "1a4123893714",
    "o": "D"
   },
+  "FIZ-SS-1/enakomerno-pospeseno-gibanje#p1": {
+   "h": "a22e0ae6ff1c",
+   "o": "D",
+   "r": "ime ne moti, vprašanje je samostojno"
+  },
+  "FIZ-SS-1/energija#p0": {
+   "h": "e6bdb017e15b",
+   "o": "D"
+  },
   "FIZ-SS-1/navor-in-ravnovesje#p1": {
    "h": "a3ea3779e2ea",
    "o": "D"
@@ -212,6 +221,37 @@
    "h": "12a9da561723",
    "o": "D"
   },
+  "FIZ-SS-1/newtonovi-zakoni#p0": {
+   "h": "d319164cea20",
+   "o": "I",
+   "r": "sklic na Timovo trditev iz zgodbe lekcije"
+  },
+  "FIZ-SS-1/newtonovi-zakoni#p1": {
+   "h": "5697f9d6b44c",
+   "o": "D"
+  },
+  "FIZ-SS-1/premo-enakomerno-gibanje#p1": {
+   "h": "ddd47478b6ba",
+   "o": "D",
+   "r": "splošni povzetek o vodoravnih odsekih ni vprašan",
+   "k": [
+    "Na $s(t)$ je vodoraven odsek: lega se ne spreminja",
+    "Na $v(t)$ črta za $4\\,\\mathrm{s}$ pade na $0$ in se nato vrne na prejšnjo višino"
+   ]
+  },
+  "FIZ-SS-1/prosti-pad-in-navpicni-met#p0": {
+   "h": "2171db7f3d9f",
+   "o": "D"
+  },
+  "FIZ-SS-1/tlak-in-vzgon#p1": {
+   "h": "dfe0f2d72434",
+   "o": "D",
+   "r": "ladje niso vprašane",
+   "k": [
+    "Čolniček izpodrine veliko več vode kot kepa, ker je v njem zrak",
+    "Večja izpodrinjena prostornina $V_i$ pomeni večji vzgon, ki zdaj lahko uravnovesi težo"
+   ]
+  },
   "FIZ-SS-1/trenje#p1": {
    "h": "644f7f9c877d",
    "o": "D"
@@ -219,6 +259,19 @@
   "FIZ-SS-1/vektorji-v-kinematiki#p1": {
    "h": "086ab9026d97",
    "o": "D"
+  },
+  "FIZ-SS-2/elektricna-vezja#p0": {
+   "h": "74ba4fabb164",
+   "o": "D"
+  },
+  "FIZ-SS-2/elektricna-vezja#p1": {
+   "h": "dd01a63825d0",
+   "o": "D",
+   "r": "ime ne moti; Tilnova trditev iz zgodbe in preobremenitev nista vprašani",
+   "k": [
+    "Polnilniki so vezani vzporedno",
+    "Vsak nov polnilnik je nova pot za tok, zato se skupni upor *zmanjša*, skupni tok pa *poveča*: tokovi vseh polnilnikov se seštejejo"
+   ]
   },
   "FIZ-SS-2/enakomerno-krozenje#p0": {
    "h": "c64df579b7bf",
@@ -238,8 +291,13 @@
    "o": "D"
   },
   "FIZ-SS-2/plinska-enacba#p1": {
-   "h": "4345501fe815",
-   "o": "D"
+   "h": "d1939acde46a",
+   "o": "D",
+   "r": "Samostojno vprašanje z vsemi podatki; razlaga s trki molekul ni vprašana, zato ostaneta le odgovor in enačba.",
+   "k": [
+    "Prostornini sta enaki",
+    "V enačbi $pV = nRT$ ni molske mase: šteje le število molekul, ne njihova masa"
+   ]
   },
   "FIZ-SS-2/prevajanje-toplote-in-sevanje#p0": {
    "h": "ca902d959c05",
@@ -860,6 +918,33 @@
    "o": "I",
    "r": "sklic na razlike iz lekcije"
   },
+  "MAT-SS-1/linearna-funkcija#p0": {
+   "h": "e1795da45718",
+   "o": "I",
+   "r": "prvi paket iz zgodbe lekcije ni podan"
+  },
+  "MAT-SS-1/linearna-funkcija#p1": {
+   "h": "fc58515bd62a",
+   "o": "D",
+   "r": "obe funkciji sta podani v vprašanju"
+  },
+  "MAT-SS-1/linearne-enacbe#p0": {
+   "h": "2269aedfb70c",
+   "o": "D"
+  },
+  "MAT-SS-1/linearne-neenacbe#p0": {
+   "h": "bcbd5814e10e",
+   "o": "D"
+  },
+  "MAT-SS-1/linearne-neenacbe#p2": {
+   "h": "7d22af055a22",
+   "o": "D",
+   "r": "preizkus se nanaša na primer iz lekcije",
+   "k": [
+    "Delimo z $-2$, zato se znak obrne: $x \\le -5$",
+    "Interval je $(-\\infty, -5]$, krajišče $-5$ je vključeno"
+   ]
+  },
   "MAT-SS-1/mnozice#p0": {
    "h": "f0e45a63ead0",
    "o": "D"
@@ -891,8 +976,13 @@
    "o": "D"
   },
   "MAT-SS-1/osnovni-geometrijski-pojmi#p1": {
-   "h": "6ddb446ff102",
-   "o": "D"
+   "h": "1b4d5bec77d6",
+   "o": "D",
+   "r": "Položaj (nevzporedni žici in prečnica) je opisan v vprašanju samem; nagib žice iz razlike kotov ni vprašan.",
+   "k": [
+    "Ne. Istoležna kota sta enaka *zato*, ker sta premici vzporedni",
+    "Po obratu pravila bi enaka istoležna kota pomenila, da sta žici vzporedni, kar pa nista"
+   ]
   },
   "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti#p2": {
    "h": "5629e268d049",
@@ -983,9 +1073,14 @@
    "o": "I",
    "r": "enačba ni podana"
   },
-  "MAT-SS-2/potencna-in-korenska-funkcija#p1": {
-   "h": "d0ffb95fb2c0",
+  "MAT-SS-2/podobnost#p0": {
+   "h": "475ef8610349",
    "o": "D"
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p1": {
+   "h": "3c20dfbebc7b",
+   "o": "D",
+   "r": "Samostojno vprašanje; oba dela (kateri x in kaj storiti) pokrijejo vsi štirje pojmi."
   },
   "MAT-SS-2/transformacije-grafov#p0": {
    "h": "6eb30da6d32a",
@@ -1046,6 +1141,10 @@
    "h": "f58a6daa414a",
    "o": "I",
    "r": "deljenje ni podano"
+  },
+  "MAT-SS-3/povrsina-in-prostornina-teles#p0": {
+   "h": "106468105879",
+   "o": "D"
   },
   "MAT-SS-3/racionalne-funkcije#p0": {
    "h": "4be5784578f7",
@@ -1113,6 +1212,10 @@
    "h": "dd0b3294acff",
    "o": "I",
    "r": "lok ni podan"
+  },
+  "MAT-SS-4/verjetnost#p0": {
+   "h": "bae5548048fc",
+   "o": "D"
   },
   "MAT-SS-4/zaporedja#p0": {
    "h": "f360a8bdfeb5",

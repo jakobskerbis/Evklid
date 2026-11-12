@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Planinka gre od parkirišča po ravni poti: $5\,\mathrm{km}$ hoje, smer poti pa s smerjo proti severu oklepa kot $60^\circ$. Koča stoji natanko severno. Za koliko se je koči približala? Ne za $5\,\mathrm{km}$, ampak samo za $2{,}5\,\mathrm{km}$.
+Planinka gre od parkirišča po ravni poti: $5\,\mathrm{km}$ hoje, smer poti pa s smerjo proti severu oklepa kot $60^\circ$. Koča stoji natanko severno. Koliko je napredovala v smeri proti severu? Ne $5\,\mathrm{km}$, ampak samo $2{,}5\,\mathrm{km}$.
 
 Kolesar se pelje proti vzhodu, veter s hitrostjo $20\,\mathrm{km/h}$ pa piha pod kotom $60^\circ$ glede na smer vožnje. Koliko vetra ga zares potiska naprej? Spet le polovica: $10\,\mathrm{km/h}$.
 
@@ -223,7 +223,7 @@ Fiziki temu rečejo **delo** sile: $\vec F \cdot \vec s = |\vec F|\,|\vec s|\cos
 
 :::simboli
 \vec a, \vec b | vektorja | |
-\vec c | smer ceste | |
+\vec c | smer ceste (primer 4); v pravilih računanja poljuben tretji vektor | |
 \vec p | smer pešpoti | |
 \varphi | kot med vektorjema | | | med $0^\circ$ in $180^\circ$, skupen začetek
 \alpha | kot trikotnika pri $A$ | |

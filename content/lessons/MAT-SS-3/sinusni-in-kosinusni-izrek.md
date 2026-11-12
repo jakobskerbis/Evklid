@@ -240,7 +240,7 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 + $4{,}55\,\mathrm{km}$
 - $3{,}61\,\mathrm{km}$
 ~ To je $\sqrt{9 + 4}$, Pitagorov izrek. Velja le za zavoj za $90^\circ$.
-> Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $d^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $d \approx 4{,}55\,\mathrm{km}$.
+> Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.
 
 :::simboli
 a, b, c | stranice trikotnika | | | $a$ leži nasproti oglišča $A$ itd.
@@ -254,7 +254,7 @@ d | razdalja igralca do bližje vratnice | | m | stranica nasproti $D$
 l | razdalja igralca do daljne vratnice | | m | stranica nasproti $L$
 p | širina vrat | | m | stranica nasproti $P$
 \kappa | največji kot orientacijske proge | \cos\kappa = \frac{x^2 + y^2 - z^2}{2xy} | ° | pri točki $K_1$
-x | odsek od starta $S$ do $K_1$ | | km |
+x | odsek od starta $S$ do $K_1$ (primer 4) | | km | pri pasti s sinusom je $x$ kot v stopinjah
 y | odsek od $K_1$ do $K_2$ | | km |
 z | odsek od $K_2$ nazaj do $S$ | | km | najdaljša stranica
 :::

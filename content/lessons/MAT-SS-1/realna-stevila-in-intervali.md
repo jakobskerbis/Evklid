@@ -141,7 +141,7 @@ $x \in A \cap B \iff x \in A \text{ in } x \in B$; $\;x \in A \cup B \iff x \in 
 
 Na izvidu piše, da je normalni srčni utrip odraslega v mirovanju od $60$ do $100$ utripov na minuto, obe meji vključno. (a) Zapiši območje kot interval. (b) Zapiši isti pogoj z absolutno vrednostjo v obliki $|x - c| \le r$. (c) Ali sta normalna utripa $58$ in $96$ utripov na minuto?
 
-**Podatki:** spodnja meja $a = 60\,\text{min}^{-1}$, zgornja meja $b = 100\,\text{min}^{-1}$, obe meji vključeni; izmerjena utripa $58\,\text{min}^{-1}$ in $96\,\text{min}^{-1}$
+**Podatki:** spodnja meja $a = 60$ utripov na minuto, zgornja meja $b = 100$ utripov na minuto, obe meji vključeni; izmerjena utripa $58$ in $96$ utripov na minuto
 **Iščemo:** interval, središče $c$ in polmer $r$ za pogoj $|x - c| \le r$ ter ali sta utripa normalna
 
 :::formula
@@ -213,13 +213,13 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 + Normalne so vse vrednosti od $3{,}5$ do $5{,}1$, obe meji vključno.
 > Interval $[a, b]$ je množica vseh realnih $x$ z $a \le x \le b$. Oglata oklepaja povesta, da sta tudi $3{,}5$ in $5{,}1$ normalni vrednosti.
 
-? Razvrsti od najmanjšega do največjega: $a = |-7|$, $b = |3 - 5|$, $c = -|4|$, $d = |0|$.
-- $d < b < c < a$
-~ Tu je $c$ vzet kot $4$. Minus stoji zunaj absolutne vrednosti, zato je $c = -|4| = -4$.
-- $c < d < a < b$
+? Razvrsti od najmanjšega do največjega: $p = |-7|$, $q = |3 - 5|$, $u = -|4|$, $v = |0|$.
+- $v < q < u < p$
+~ Tu je $u$ vzet kot $4$. Minus stoji zunaj absolutne vrednosti, zato je $u = -|4| = -4$.
+- $u < v < p < q$
 ~ Tu je $|3 - 5|$ izračunano kot $3 + 5 = 8$. Najprej izračunaj $3 - 5 = -2$, nato $|-2| = 2$.
-+ $c < d < b < a$
-> Vrednosti so $a = 7$, $b = 2$, $c = -4$ in $d = 0$. Le $c$ je negativen, ker minus stoji pred absolutno vrednostjo.
++ $u < v < q < p$
+> Vrednosti so $p = 7$, $q = 2$, $u = -4$ in $v = 0$. Le $u$ je negativen, ker minus stoji pred absolutno vrednostjo.
 
 ? Rešitev neenačbe $|x - 1| < 2$ je $(-1, 3)$. Kaj se zgodi z rešitvijo, če znak $<$ zamenjamo z $\ge$?
 - Postane $[-1, 3]$.
@@ -254,7 +254,7 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 :::simboli
 x | realno število (v primeru 3 srčni utrip) | | |
 A, B | intervala (množici realnih števil) | | | v primeru 1 točki na številski premici
-a, b | krajišči intervala ali abscisi točk $A$ in $B$ | | | razdalja točk je $\lvert b - a \rvert$
+a, b | krajišči intervala ali abscisi točk $A$ in $B$ | | | razdalja točk je $\lvert b - a \rvert$; v enačbi $\lvert x \rvert = a$ je $a$ dano število
 c | središče, od katerega merimo razdaljo | c = \frac{a + b}{2} | |
 r | polmer: največja razdalja od $c$ | r = \frac{b - a}{2} | | $r > 0$
 :::

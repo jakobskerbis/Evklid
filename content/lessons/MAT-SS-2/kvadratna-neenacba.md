@@ -47,7 +47,7 @@ kjer so $a, b, c$ realna števila in $a \ne 0$. **Rešitev** neenačbe je množi
 2. Poišči ničle funkcije $f(x) = ax^2 + bx + c$ (diskriminanta $D = b^2 - 4ac$ in obrazec $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$).
 3. Nariši skico parabole: ničle označi na osi $x$, po predznaku $a$ ugotovi, ali je parabola odprta navzgor ($a > 0$) ali navzdol ($a < 0$). Teme in natančna oblika niso potrebni.
 4. Na skici preberi, kje je parabola nad osjo $x$ oziroma pod njo.
-5. Rešitev zapiši z intervali. Pri ostrem neenačaju ($>$, $<$) ničle **niso** del rešitve (okrogli oklepaj), pri neostrem ($\ge$, $\le$) **so** (oglati oklepaj).
+5. Rešitev zapiši z intervali. Pri strogem neenačaju ($>$, $<$) ničle **niso** del rešitve (okrogli oklepaj), pri nestrogem ($\ge$, $\le$) **so** (oglati oklepaj).
 
 **5. Primer $a > 0$ in $D > 0$.** Parabola je odprta navzgor in seka os $x$ v ničlah $x_1 < x_2$. Med ničlama je pod osjo, zunaj njiju pa nad osjo:
 
@@ -90,7 +90,7 @@ $D = b^2 - 4ac$, $\; x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$; pri $a > 0$ je $f(x
 1. Desna stran je že $0$. Diskriminanta: $D = (-1)^2 - 4 \cdot 1 \cdot (-6) = 1 + 24 = 25$.
 2. Ničli: $x_{1,2} = \dfrac{1 \pm 5}{2}$, torej $x_1 = -2$ in $x_2 = 3$.
 3. Ker je $a = 1 > 0$, je parabola odprta navzgor. Pod osjo $x$ je med ničlama.
-4. Neenačaj je oster, zato ničel ne vključimo.
+4. Neenačaj je strog, zato ničel ne vključimo.
 5. Preizkus s številom iz intervala, na primer $x = 0$: $0 - 0 - 6 = -6 < 0$. Velja. Za $x = 4$: $16 - 4 - 6 = 6$, kar ni manjše od $0$, in $4$ res ni v rešitvi.
 6. Odgovor: rešitev neenačbe je interval $(-2, 3)$.
 
@@ -110,7 +110,7 @@ $D = b^2 - 4ac$, $\; x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$; pri $a < 0$ je $f(x
 1. Diskriminanta: $D = 5^2 - 4 \cdot (-2) \cdot 3 = 25 + 24 = 49$.
 2. Ničli: $x_{1,2} = \dfrac{-5 \pm 7}{2 \cdot (-2)} = \dfrac{-5 \pm 7}{-4}$. Torej $x_1 = \dfrac{2}{-4} = -\dfrac{1}{2}$ in $x_2 = \dfrac{-12}{-4} = 3$.
 3. Ker je $a = -2 < 0$, je parabola odprta navzdol. Nad osjo $x$ je med ničlama.
-4. Neenačaj je neoster, zato ničli spadata v rešitev: $x \in \left[-\dfrac{1}{2}, 3\right]$.
+4. Neenačaj je nestrog, zato ničli spadata v rešitev: $x \in \left[-\dfrac{1}{2}, 3\right]$.
 5. Cela števila v tem intervalu so $0$, $1$, $2$ in $3$ (število $-1$ je manjše od $-\dfrac{1}{2}$).
 6. Preizkus: za $x = 3$ je $-18 + 15 + 3 = 0 \ge 0$, za $x = -1$ pa $-2 - 5 + 3 = -4 < 0$, zato $-1$ res ni rešitev.
 7. Odgovor: rešitev je interval $\left[-\dfrac{1}{2}, 3\right]$, v njem so štiri cela števila: $0$, $1$, $2$ in $3$.
@@ -156,7 +156,7 @@ Nima. $D = 25600 - 26000 = -400 < 0$, parabola je odprta navzgor in je vsa nad o
 - Ničle poišči z $D = b^2 - 4ac$ in $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$; nariši skico parabole.
 - $f(x) > 0$: graf nad osjo $x$; $f(x) < 0$: graf pod osjo $x$.
 - Za $a > 0$, $D > 0$: $f(x) < 0$ za $x \in (x_1, x_2)$, $f(x) > 0$ za $x \in (-\infty, x_1) \cup (x_2, \infty)$.
-- Oster neenačaj: ničle izključimo $( \;)$; neoster: vključimo $[\;]$.
+- Strog neenačaj: ničle izključimo $( \;)$; nestrog: vključimo $[\;]$.
 - Pri $D < 0$ ima $ax^2 + bx + c$ za vse $x$ predznak koeficienta $a$.
 - Pri množenju ali deljenju z negativnim številom obrni neenačaj.
 
@@ -177,7 +177,7 @@ Reši $x^2 + 2x > 8$ in rešitev preveri s preizkusom.
 3. **Diskriminanta:** $D = 2^2 - 4 \cdot 1 \cdot (-8) = 4 + 32 = 36$.
 4. **Ničli:** $x_{1,2} = \dfrac{-2 \pm 6}{2}$, torej $x_1 = -4$ in $x_2 = 2$.
 5. **Skica:** $a > 0$, parabola odprta navzgor, nad osjo je levo od $-4$ in desno od $2$.
-6. **Oklepaji:** neenačaj je oster, ničli izključimo.
+6. **Oklepaji:** neenačaj je strog, ničli izključimo.
 7. **Rešitev:** $(-\infty, -4) \cup (2, \infty)$.
 
 **Preizkus s po enim številom iz vsakega dela:**
@@ -251,8 +251,8 @@ Izraz v oglatem oklepaju je vsota nenegativnega kvadrata in pozitivnega števila
 ~ Tako bi bilo pri $a > 0$. Tu je $a = -1 < 0$, parabola je odprta navzdol in nad osjo med ničlama. Enako napako narediš, če pomnožiš z $-1$ in ne obrneš neenačaja.
 + $[2, 4]$
 - $(2, 4)$
-~ Neenačaj $\ge$ je neoster, zato ničli spadata v rešitev: $f(2) = 0 \ge 0$.
-> Ničli sta $2$ in $4$. Parabola je odprta navzdol, nad osjo je med ničlama; neenačaj je neoster, zato ničli vključimo.
+~ Neenačaj $\ge$ je nestrog, zato ničli spadata v rešitev: $f(2) = 0 \ge 0$.
+> Ničli sta $2$ in $4$. Parabola je odprta navzdol, nad osjo je med ničlama; neenačaj je nestrog, zato ničli vključimo.
 
 :::simboli
 a | vodilni koeficient (pri $x^2$) | | | $a \ne 0$

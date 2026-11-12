@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Število in enota
+  - količina $=$ število $\cdot$ enota
+  - $800\,\mathrm{m}$ in $0{,}8\,\mathrm{km}$ sta ista razdalja
+- Osnovne enote SI
+  - m, kg, s, A, K, mol, cd
+  - pri masi je osnovna enota kilogram
+- Izpeljane enote
+  - hitrost v $\mathrm{m/s}$, gostota v $\mathrm{kg/m^3}$
+  - $1\,\mathrm{N} = 1\,\mathrm{kg\,m/s^2}$
+- Predpone
+  - k $= 10^3$, c $= 10^{-2}$, m $= 10^{-3}$
+  - M (mega) ni m (mili)
+- Smer pretvorbe
+  - večja enota, manjše število
+  - $500\,\mathrm{m} = 0{,}5\,\mathrm{km}$
+- Ploščina in prostornina
+  - $1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$
+  - $1\,\mathrm{L} = 1\,\mathrm{dm^3} = 10^{-3}\,\mathrm{m^3}$
+- Čas in hitrost
+  - $1\,\mathrm{h} = 3600\,\mathrm{s}$, ne $100$ minut
+  - iz $\mathrm{km/h}$ v $\mathrm{m/s}$ deli s $3{,}6$
+- Merilo zemljevida
+  - $1 : 50\,000$: $1\,\mathrm{cm}$ je $500\,\mathrm{m}$

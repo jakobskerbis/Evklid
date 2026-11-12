@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vozlišče in zanka
+  - vozlišče: stik vsaj treh vodnikov
+  - zanka: sklenjena pot po vejah
+- Prvi Kirchhoffov zakon
+  - vtekajoči tokovi = iztekajoči tokovi
+  - $3\,\text{A}$ noter, $1{,}2\,\text{A}$ ven, ostane $1{,}8\,\text{A}$
+- Drugi Kirchhoffov zakon
+  - $U_{\text{vira}} = U_1 + U_2$
+  - ohranitev energije v zanki
+- Zaporedna vezava
+  - enak tok, napetost se razdeli
+  - $R = R_1 + R_2$
+  - en element odpove, ugasne vse
+- Vzporedna vezava
+  - enaka napetost, $I = I_1 + I_2$
+  - $\dfrac{1}{R} = \dfrac{1}{R_1} + \dfrac{1}{R_2}$
+  - napaka: pozabljeno obračanje ulomka
+- Električna moč
+  - $P = U I = I^2 R = \dfrac{U^2}{R}$, enota $\text{W}$
+  - polnilnik $5\,\text{V}$, $2\,\text{A}$ da $10\,\text{W}$
+- Energija
+  - $A = P \cdot t$, enota $\text{J}$
+  - napaka: vat zamenjan z džulom

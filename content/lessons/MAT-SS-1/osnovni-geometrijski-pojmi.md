@@ -75,7 +75,7 @@ Velja tudi **obrat**: če sta istoležna ali izmenična kota enaka (ali kota na 
 V simulaciji spodaj »Koti ob premicah« izberi »Vzporednici in prečnica« in premikaj drsnik »kot α«. Opazuj, kateri koti ostanejo enaki, ko prečnico vrtiš, in katera dva skupaj vedno merita $180^\circ$.
 
 :::premisli
-Na rešetki pečice ena žica je malo zasukana, zato ni vzporedna sosednji. Nož ju seka. Ali sta istoležna kota še enaka?
+Na rešetki pečice je ena žica malo zasukana, zato ni vzporedna sosednji. Nož ju seka. Ali sta istoležna kota še enaka?
 ---
 Ne. Istoležna kota sta enaka *zato*, ker sta premici vzporedni. Po obratu pravila bi enaka istoležna kota pomenila, da sta žici vzporedni, kar pa nista. Razlika med kotoma pove, za koliko je žica nagnjena.
 :::
@@ -258,7 +258,7 @@ Lastnosti kotov ob prečnici izhajajo iz **aksioma o vzporednici**, ki ga je v n
 
 :::simboli
 \alpha | dani kot | | ° | v Primeru 3 notranji kot pri $p$
-\beta | sokot ali komplementarni kot kota $\alpha$ | \beta = 180^\circ - \alpha | ° | komplementarni kot: $\beta = 90^\circ - \alpha$
+\beta | sokot ali komplementarni kot kota $\alpha$ | \beta = 180^\circ - \alpha | ° | komplementarni kot: $\beta = 90^\circ - \alpha$; v Primeru 3 notranji kot pri $q$
 \gamma | sovršni kot, sokot ali izmenični kot | | ° | odvisno od primera
 x | manjši od dveh sokotov (Primer 4) | | ° |
 :::

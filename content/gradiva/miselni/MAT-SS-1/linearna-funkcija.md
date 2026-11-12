@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enakomerna rast
+  - $f(x) = kx + n$
+  - paket: $y = 2x + 5$ (€, GB)
+- Smerni koeficient
+  - sprememba $y$, ko $x$ zraste za $1$
+  - $k > 0$ narašča, $k < 0$ pada
+- Začetna vrednost
+  - $n = f(0)$, točka $(0, n)$
+  - napaka: zamenjava $k$ in $n$
+- Graf premica
+  - dovolj sta dve točki
+  - večji $|k|$, strmejša premica
+- Naklon iz točk
+  - $k = \dfrac{y_2 - y_1}{x_2 - x_1}$
+  - razlika $y$ v števcu
+- Ničla
+  - $x_0 = -\dfrac{n}{k}$, $k \ne 0$
+  - presečišče z osjo $x$, ne $y$
+  - $3x - 12 = 0$ da $x_0 = 4$

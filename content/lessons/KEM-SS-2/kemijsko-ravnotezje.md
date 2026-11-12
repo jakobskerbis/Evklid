@@ -29,9 +29,9 @@ Koncentracije merimo v več trenutkih. Zadnji stolpec je razmerje $\dfrac{c(\mat
 | še pozneje | $0{,}20$ | $1{,}60$ | $64$ |
 | čez eno uro | $0{,}20$ | $1{,}60$ | $64$ |
 
-Koncentracije so v $\mathrm{mol/L}$. Ko HI nastaja, koncentracija reaktantov pada in naprejšnja reakcija (v desno, nastajanje HI) se upočasnjuje, saj je trkov $\mathrm{H_2}$ z $\mathrm{I_2}$ vse manj. Hkrati je vse več HI, zato vse pogosteje poteka obratna reakcija, razpad HI nazaj v $\mathrm{H_2}$ in $\mathrm{I_2}$.
+Koncentracije so v $\mathrm{mol/L}$. Ko HI nastaja, koncentracija reaktantov pada in reakcija v desno (nastajanje HI) se upočasnjuje, saj je trkov $\mathrm{H_2}$ z $\mathrm{I_2}$ vse manj. Hkrati je vse več HI, zato vse pogosteje poteka obratna reakcija, razpad HI nazaj v $\mathrm{H_2}$ in $\mathrm{I_2}$.
 
-**Dinamično ravnotežje.** Od nekega trenutka naprej se koncentracije ne spreminjajo več. Reakcija se ni ustavila: v vsaki sekundi nastane enako molekul HI, kot jih razpade. Stanje, v katerem sta hitrosti naprejšnje in obratne reakcije enaki, imenujemo **kemijsko ravnotežje**. Ker obe reakciji tečeta naprej, je ravnotežje **dinamično**.
+**Dinamično ravnotežje.** Od nekega trenutka naprej se koncentracije ne spreminjajo več. Reakcija se ni ustavila: v vsaki sekundi nastane enako molekul HI, kot jih razpade. Stanje, v katerem sta hitrosti reakcije v desno in obratne reakcije enaki, imenujemo **kemijsko ravnotežje**. Ker obe reakciji tečeta naprej, je ravnotežje **dinamično**.
 
 :::premisli
 Drugi poskus pri isti temperaturi: na začetku je $c(\mathrm{H_2}) = 1{,}00\,\mathrm{mol/L}$ in $c(\mathrm{I_2}) = 2{,}00\,\mathrm{mol/L}$. V ravnotežju izmerimo $c(\mathrm{H_2}) \approx 0{,}053\,\mathrm{mol/L}$, $c(\mathrm{I_2}) \approx 1{,}053\,\mathrm{mol/L}$ in $c(\mathrm{HI}) \approx 1{,}89\,\mathrm{mol/L}$. Napovej razmerje, preden računaš.
@@ -53,7 +53,7 @@ Produkti so v števcu, reaktanti v imenovalcu, stehiometrijski koeficienti posta
 
 $$\frac{1{,}60^2}{0{,}40 \cdot 0{,}20} = 32$$
 
-kar je manj od $K = 64$. Sistem ni več v ravnotežju. Naprejšnja reakcija je zdaj hitrejša od obratne, zato nastaja HI, dokler razmerje spet ne doseže $64$. Del dodanega vodika se pri tem porabi.
+kar je manj od $K = 64$. Sistem ni več v ravnotežju. Reakcija v desno je zdaj hitrejša od obratne, zato nastaja HI, dokler razmerje spet ne doseže $64$. Del dodanega vodika se pri tem porabi.
 
 :::premisli
 Kaj bi se zgodilo, če bi iz ravnotežne zmesi sproti odstranjevali HI? V katero smer bi tekla reakcija in kaj bi se dogajalo s $K$?
@@ -158,7 +158,7 @@ $0{,}10^2 = 0{,}01$ in $8 \cdot 0{,}01 = 0{,}08$, torej $[\mathrm{N_2O_4}] = 0{,
 
 ## Povzetek
 
-- Kemijsko ravnotežje je dinamično: naprejšnja in obratna reakcija potekata enako hitro, koncentracije se ne spreminjajo.
+- Kemijsko ravnotežje je dinamično: reakcija v desno in obratna reakcija potekata enako hitro, koncentracije se ne spreminjajo.
 - Konstanta ravnotežja za $a\mathrm{A} + b\mathrm{B} \rightleftharpoons c\mathrm{C} + d\mathrm{D}$: $K = \dfrac{[\mathrm{C}]^c[\mathrm{D}]^d}{[\mathrm{A}]^a[\mathrm{B}]^b}$; produkti zgoraj, koeficienti so eksponenti.
 - Velik $K$: v ravnotežju prevladujejo produkti; majhen $K$: prevladujejo reaktanti. $K$ je odvisna le od temperature.
 - Le Chatelierjevo načelo: motnja premakne ravnotežje v smer, ki jo delno izniči (koncentracija, tlak pri plinih, temperatura).
@@ -200,7 +200,7 @@ Ko smo dodali vodik, je bil $Q = 32 < K = 64$, zato je reakcija tekla v desno.
 + dodamo katalizator
 - posodo segrejemo
 ~ Segrevanje podpira endotermno smer, tu razpad $\mathrm{N_2O_4}$; spremeni se tudi $K$.
-> Katalizator pospeši naprejšnjo in obratno reakcijo enako, zato ravnotežja ne premakne. Ostali trije posegi ga premaknejo.
+> Katalizator pospeši reakcijo v desno in obratno reakcijo enako, zato ravnotežja ne premakne. Ostali trije posegi ga premaknejo.
 
 ? Za $\mathrm{H_2} + \mathrm{I_2} \rightleftharpoons 2\,\mathrm{HI}$ so v ravnotežju $[\mathrm{H_2}] = [\mathrm{I_2}] = 0{,}20\,\mathrm{mol/L}$ in $[\mathrm{HI}] = 1{,}0\,\mathrm{mol/L}$. Kolikšna je $K$?
 - $50$

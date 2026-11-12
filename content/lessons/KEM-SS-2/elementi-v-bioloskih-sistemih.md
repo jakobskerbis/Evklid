@@ -156,7 +156,7 @@ $w(\mathrm{C}) = \dfrac{144{,}12}{342{,}30} = 0{,}421$, torej $m(\mathrm{C}) = 0
 
 - **»Ker smo organski, je v nas največ ogljika.«** Po številu atomov je največ vodika, po masi pa kisika ($65\,\%$). Razlog je voda: je je veliko, kisik v njej pa je težek. Ogljik je na drugem mestu.
 - **»Dušik dobimo iz zraka, saj ga vdihnemo največ.«** Molekula $\mathrm{N_2}$ ima trojno vez in v telesu ne reagira; izdihnemo jo nespremenjeno. Dušik dobimo z beljakovinami iz hrane, rastline pa iz nitratov in amonijevih soli v tleh.
-- **»Železo v špinači in kalcij v kosteh sta kovini.«** Kovinski kalcij bi burno reagiral z vodo, kovinsko železo bi rjavelo. V telesu sta kot iona $\mathrm{Ca^{2+}}$ in $\mathrm{Fe^{2+}}$ v spojinah. Fosfor je kot fosfat, ne kot strupeni beli fosfor.
+- **»Železo v špinači in kalcij v kosteh sta kovini.«** Kovinski kalcij bi reagiral z vodo, kovinsko železo bi rjavelo. V telesu sta kot iona $\mathrm{Ca^{2+}}$ in $\mathrm{Fe^{2+}}$ v spojinah. Fosfor je kot fosfat, ne kot strupeni beli fosfor.
 - **»Mikroelement je nepomemben, ker ga je malo.«** Železa je v telesu le okoli $4\,\mathrm{g}$, a brez njega hemoglobin ne prenaša kisika. Majhen delež pomeni le majhno maso, ne majhne vloge.
 - **Odstotek vstavljen kot celo število.** Kdor računa $16 \cdot 22$ namesto $0{,}16 \cdot 22$, dobi $352\,\mathrm{g}$ dušika v $100\,\mathrm{g}$ fižola, kar je nemogoče. Odstotek vedno najprej deli s $100$.
 

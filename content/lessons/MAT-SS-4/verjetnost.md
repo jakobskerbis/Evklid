@@ -5,11 +5,11 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz prejšnjih letnikov že znaš klasično definicijo verjetnosti: če je vseh enako verjetnih izidov $n$, ugodnih za dogodek $A$ pa $m$, je
-$$P(A) = \frac{m}{n}.$$
-Ugodne in vse izide štejemo s kombinatoriko (permutacije, variacije, kombinacije).
+Za palačinke potrebuješ dve jajci. V škatli jih je $12$, a dve sta počeni, česar ne vidiš. Brez gledanja vzameš dve. Kolikšna je verjetnost, da sta obe celi? Mnogi rečejo $\frac{10}{12} \cdot \frac{10}{12} \approx 0{,}69$, a to ni čisto prav, ker prvo jajce ne gre nazaj v škatlo.
 
-Realni problemi pa so redko samo »vrzi kocko enkrat«. Zanima nas, kolikšna je verjetnost, da se zgodi *eno ali drugo*, da se zgodita *obe hkrati* ali da se zgodi nekaj, *če že vemo*, da se je zgodilo nekaj drugega. Tako razmišljajo zavarovalnice, zdravniki pri razlagi izvidov testov, tovarne pri nadzoru kakovosti in vsak, ki hoče pošteno oceniti tveganje. V tej lekciji se naučiš tri orodja: **verjetnost vsote dogodkov**, **verjetnost produkta dogodkov** in **pogojno verjetnost**.
+Klasično definicijo že znaš: če je vseh enako verjetnih izidov $n$, ugodnih za dogodek $A$ pa $m$, je
+$$P(A) = \frac{m}{n}.$$
+Ugodne in vse izide štejemo s kombinatoriko. Pri jajcih pa se zgodita *dve stvari zapored* in druga je odvisna od prve. Podobno razmišljajo zavarovalnice, zdravniki pri branju izvidov in tovarne pri nadzoru kakovosti. Za take naloge potrebuješ tri orodja: **verjetnost vsote dogodkov**, **verjetnost produkta dogodkov** in **pogojno verjetnost**.
 
 ## Razlaga
 
@@ -21,6 +21,10 @@ Realni problemi pa so redko samo »vrzi kocko enkrat«. Zanima nas, kolikšna je
 - **Nasprotni dogodek** $\overline{A}$ se zgodi, kadar se $A$ ne zgodi:
 $$P(\overline{A}) = 1 - P(A).$$
 
+Preveri: kaj je nasprotni dogodek dogodka »vsaj eno od dveh jajc je počeno«? (Obe jajci sta celi.)
+
+V simulaciji spodaj (»Verjetnost in relativna frekvenca«) izberi met kocke in klikni »1000«. Opazuj, kako se delež šestic ustali blizu $\frac{1}{6} \approx 0{,}17$: verjetnost je delež, ki ga dobiš pri zelo veliko poskusih.
+
 **2. Vsota in produkt dogodkov.**
 
 - **Vsota** $A + B$: zgodi se $A$ ali $B$ (vsaj eden od njiju).
@@ -28,22 +32,69 @@ $$P(\overline{A}) = 1 - P(A).$$
 
 Dogodka sta **nezdružljiva**, če se ne moreta zgoditi hkrati, torej je $A \cdot B$ nemogoč dogodek. Pri metu kocke sta »padla je 1« in »padla je 2« nezdružljiva.
 
+Preveri: ali sta »padlo je sodo« in »padla je 6« nezdružljiva? (Ne, šestica je soda, zato se lahko zgodita hkrati.)
+
 **3. Verjetnost vsote.** Pri splošnih dogodkih velja
 $$P(A + B) = P(A) + P(B) - P(A \cdot B).$$
 Izide, ki so v obeh dogodkih, bi pri seštevanju šteli dvakrat, zato jih enkrat odštejemo. Če sta $A$ in $B$ nezdružljiva, je $P(A \cdot B) = 0$ in dobimo preprosto
 $$P(A + B) = P(A) + P(B).$$
 
+:::premisli
+V kuhinji je verjetnost, da je v hladilniku mleko, $0{,}7$, da so jajca, pa $0{,}6$. Ali je verjetnost, da je vsaj eno od obojega, $1{,}3$? Zakaj ne?
+---
+Ne, verjetnost ne more biti večja od $1$. Dneve, ko sta v hladilniku oboje, smo šteli dvakrat. Odšteti moramo $P(A \cdot B)$; ta je vsaj $0{,}3$, saj mora biti vsota največ $1$.
+:::
+
 **4. Pogojna verjetnost.** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (z $P(B) > 0$), je
 $$P(A \mid B) = \frac{P(A \cdot B)}{P(B)}.$$
 Pogoj $B$ »zoži svet« na izide, v katerih se je $B$ zgodil, in med njimi gledamo, kolikšen delež jih je ugodnih za $A$.
+
+:::premisli
+Prvo jajce iz škatle je bilo celo. Kolikšna je zdaj verjetnost, da je celo tudi drugo? Zakaj ni več $\frac{10}{12}$?
+---
+$\frac{9}{11}$. V škatli je ostalo $11$ jajc, celih je še $9$. Pogoj »prvo je bilo celo« je spremenil vsebino škatle.
+:::
 
 **5. Verjetnost produkta.** Iz definicije pogojne verjetnosti sledi
 $$P(A \cdot B) = P(B) \cdot P(A \mid B).$$
 Verjetnost, da se zgodita oba dogodka, je verjetnost prvega, pomnožena z verjetnostjo drugega, ko je prvi že nastopil. To je pravilo za računanje po stopnjah (npr. dva izvlečka brez vračanja).
 
+Zdaj lahko odgovorimo na vprašanje z jajci. Pomaga **verjetnostno drevo**: veje so izidi, na vejah so (pogojne) verjetnosti.
+
+:::risba skica
+opis: Verjetnostno drevo za dve jajci iz škatle z 12 jajci, od katerih sta 2 počeni. Prvo jajce: celo z verjetnostjo 10/12, počeno z 2/12. Po celem: drugo celo 9/11, počeno 2/11. Po počenem: drugo celo 10/11, počeno 1/11. Poti dajo 90/132, 20/132, 20/132 in 2/132.
+območje: 0; 0 .. 10; 7
+enota: 30
+črta: 0,5; 3,5 -> 3,5; 5,5
+črta: 0,5; 3,5 -> 3,5; 1,5
+črta: 3,5; 5,5 -> 6,5; 6,5
+črta: 3,5; 5,5 -> 6,5; 4,5
+črta: 3,5; 1,5 -> 6,5; 2,5
+črta: 3,5; 1,5 -> 6,5; 0,5
+točka: 0,5; 3,5 | | levo
+napis: 2; 4,8 | 10/12 | nad levo
+napis: 2; 2,2 | 2/12 | pod levo
+napis: 3,5; 5,5 | celo | nad
+napis: 3,5; 1,5 | počeno | pod
+napis: 5; 6,2 | 9/11 | nad
+napis: 5; 4,8 | 2/11 | pod
+napis: 5; 2,2 | 10/11 | nad
+napis: 5; 0,8 | 1/11 | pod
+napis: 6,6; 6,5 | celo: 90/132 | desno
+napis: 6,6; 4,5 | počeno: 20/132 | desno
+napis: 6,6; 2,5 | celo: 20/132 | desno
+napis: 6,6; 0,5 | počeno: 2/132 | desno
+:::
+
+Na zgornji poti pomnožimo: $P = \frac{10}{12} \cdot \frac{9}{11} = \frac{90}{132} = \frac{15}{22} \approx 0{,}68$. Vsota vseh štirih poti je $1$, saj se gotovo zgodi ena od njih.
+
+Preveri: kolikšna je verjetnost, da sta obe jajci počeni? ($\frac{2}{12} \cdot \frac{1}{11} = \frac{2}{132} = \frac{1}{66}$.)
+
 **6. Neodvisna dogodka.** Dogodka $A$ in $B$ sta **neodvisna**, če informacija o enem ne spremeni verjetnosti drugega, torej $P(A \mid B) = P(A)$. Takrat velja
 $$P(A \cdot B) = P(A) \cdot P(B).$$
-Primer: dva zaporedna meta kovanca. Pri vlečenju brez vračanja dogodka niha biti neodvisna.
+Primer: dva zaporedna meta kovanca. Pri vlečenju brez vračanja dogodka nista neodvisna.
+
+Preveri: sta »prvo jajce je celo« in »drugo jajce je celo« neodvisna? (Ne: $\frac{9}{11} \ne \frac{10}{12}$.)
 
 ## Rešeni primeri
 
@@ -51,48 +102,83 @@ Primer: dva zaporedna meta kovanca. Pri vlečenju brez vračanja dogodka niha bi
 
 Vržemo pošteno kocko. Dogodek $A$: padlo je sodo število. Dogodek $B$: padlo je število, večje od $3$. Izračunaj $P(A + B)$.
 
+**Podatki:** poštena kocka, $6$ enako verjetnih izidov; $A$: sodo število, $B$: število, večje od $3$
+**Iščemo:** $P(A + B)$
+
+:::formula
+$P(A + B) = P(A) + P(B) - P(A \cdot B)$
+:::
+
+**Rešitev:**
+
 1. Zapišemo izide: $A = \{2, 4, 6\}$, $B = \{4, 5, 6\}$. Vseh izidov je $6$.
 2. $P(A) = \dfrac{3}{6} = \dfrac{1}{2}$ in $P(B) = \dfrac{3}{6} = \dfrac{1}{2}$.
 3. Dogodka sta združljiva (izida $4$ in $6$ sta v obeh), zato potrebujemo presek: $A \cdot B = \{4, 6\}$, torej $P(A \cdot B) = \dfrac{2}{6} = \dfrac{1}{3}$.
 4. Uporabimo formulo, ki odšteje dvakrat štete izide:
 $$P(A + B) = \frac{1}{2} + \frac{1}{2} - \frac{1}{3} = \frac{2}{3}.$$
 5. Preverimo z neposrednim štetjem: $A + B = \{2, 4, 5, 6\}$ ima $4$ izide, $\dfrac{4}{6} = \dfrac{2}{3}$. Ujemanje potrdi račun.
+6. Odgovor: verjetnost, da pade sodo število ali število, večje od $3$, je $\frac{2}{3}$.
 
 ### Primer 2: produkt dogodkov brez vračanja
 
-V vrečki je $5$ rdečih in $3$ modre kroglice. Brez vračanja izvlečemo dve. Kolikšna je verjetnost, da sta (a) obe rdeči, (b) različnih barv?
+V košari je $5$ rdečih in $3$ zelena jabolka. Za zavitek brez gledanja vzameš dve. Kolikšna je verjetnost, da sta (a) obe rdeči, (b) različnih barv?
+
+**Podatki:** $5$ rdečih in $3$ zelena jabolka, skupaj $8$; vzamemo $2$ brez vračanja
+**Iščemo:** (a) $P(R_1 \cdot R_2)$, (b) verjetnost, da sta jabolki različnih barv
+
+:::formula
+$P(A \cdot B) = P(A) \cdot P(B \mid A)$; za nezdružljiva dogodka $P(A + B) = P(A) + P(B)$
+:::
+
+**Rešitev:**
 
 **(a)**
-1. Dogodek $R_1$: prva je rdeča, $R_2$: druga je rdeča. Iščemo $P(R_1 \cdot R_2) = P(R_1) \cdot P(R_2 \mid R_1)$.
+1. Dogodek $R_1$: prvo je rdeče, $R_2$: drugo je rdeče. Iščemo $P(R_1 \cdot R_2) = P(R_1) \cdot P(R_2 \mid R_1)$.
 2. $P(R_1) = \dfrac{5}{8}$, ker je $5$ rdečih od $8$.
-3. Če je bila prva rdeča, je v vrečki še $7$ kroglic, od tega $4$ rdeče, zato $P(R_2 \mid R_1) = \dfrac{4}{7}$. Pogojna verjetnost je tu nujna, ker se sestava vrečke po prvem izvlečku spremeni.
+3. Če je bilo prvo rdeče, so v košari še $7$ jabolk, od tega $4$ rdeča, zato $P(R_2 \mid R_1) = \dfrac{4}{7}$. Pogojna verjetnost je tu nujna, ker se vsebina košare po prvem jemanju spremeni.
 4. $P = \dfrac{5}{8} \cdot \dfrac{4}{7} = \dfrac{20}{56} = \dfrac{5}{14}$.
 
 **(b)**
-1. Različni barvi pomenita »prva rdeča in druga modra« ali »prva modra in druga rdeča«. To sta nezdružljiva dogodka, zato verjetnosti seštejemo.
-2. $P(R_1 M_2) = \dfrac{5}{8} \cdot \dfrac{3}{7} = \dfrac{15}{56}$ in $P(M_1 R_2) = \dfrac{3}{8} \cdot \dfrac{5}{7} = \dfrac{15}{56}$.
+1. Različni barvi pomenita »prvo rdeče in drugo zeleno« ali »prvo zeleno in drugo rdeče«. To sta nezdružljiva dogodka, zato verjetnosti seštejemo.
+2. $P(R_1 Z_2) = \dfrac{5}{8} \cdot \dfrac{3}{7} = \dfrac{15}{56}$ in $P(Z_1 R_2) = \dfrac{3}{8} \cdot \dfrac{5}{7} = \dfrac{15}{56}$.
 3. $P = \dfrac{15}{56} + \dfrac{15}{56} = \dfrac{30}{56} = \dfrac{15}{28}$.
 4. Preverimo s kombinacijami: $\dfrac{\binom{5}{1}\binom{3}{1}}{\binom{8}{2}} = \dfrac{15}{28}$. Ujema se.
+
+Odgovor: obe jabolki sta rdeči z verjetnostjo $\frac{5}{14}$, različnih barv pa z verjetnostjo $\frac{15}{28}$.
 
 ### Primer 3 (težji): pogojna verjetnost pri kontroli kakovosti
 
 Tovarna ima dva stroja. Stroj $A$ izdela $60\,\%$ vseh izdelkov, stroj $B$ pa $40\,\%$. Pri stroju $A$ je $2\,\%$ izdelkov pokvarjenih, pri stroju $B$ pa $5\,\%$. Naključno izberemo en izdelek in je pokvarjen. Kolikšna je verjetnost, da ga je izdelal stroj $A$?
+
+**Podatki:** $P(A) = 0{,}6$, $P(B) = 0{,}4$, $P(N \mid A) = 0{,}02$, $P(N \mid B) = 0{,}05$
+**Iščemo:** $P(A \mid N)$, verjetnost, da je pokvarjen izdelek s stroja $A$
+
+:::formula
+$P(A \mid N) = \dfrac{P(A \cdot N)}{P(N)}$, $P(A \cdot N) = P(A) \cdot P(N \mid A)$
+:::
+
+**Rešitev:**
 
 1. Označimo: $A$ – izdelek je s stroja $A$, $B$ – s stroja $B$, $N$ – izdelek je pokvarjen. Podano: $P(A) = 0{,}6$, $P(B) = 0{,}4$, $P(N \mid A) = 0{,}02$, $P(N \mid B) = 0{,}05$.
 2. Iščemo $P(A \mid N) = \dfrac{P(A \cdot N)}{P(N)}$.
 3. Števec izračunamo s pravilom za produkt: $P(A \cdot N) = P(A) \cdot P(N \mid A) = 0{,}6 \cdot 0{,}02 = 0{,}012$.
 4. Imenovalec: izdelek je pokvarjen, če je pokvarjen in s stroja $A$, ali pokvarjen in s stroja $B$. To sta nezdružljiva dogodka, zato seštejemo:
 $$P(N) = 0{,}6 \cdot 0{,}02 + 0{,}4 \cdot 0{,}05 = 0{,}012 + 0{,}020 = 0{,}032.$$
-5. Delimo: $P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}375$.
-6. Odgovor: z verjetnostjo $37{,}5\,\%$. Čeprav stroj $A$ izdela več izdelkov, je pri pokvarjenih manjši delež, ker je njegova stopnja napak manjša.
+5. Zdaj ti: deli števec z imenovalcem in odgovor zapiši v odstotkih. Je več ali manj kot polovica pokvarjenih izdelkov s stroja $A$?
+
+:::premisli
+Koliko je $P(A \mid N)$?
+---
+$P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}375$, torej $37{,}5\,\%$. To je manj kot polovica: čeprav stroj $A$ izdela več izdelkov, ima manjšo stopnjo napak, zato je med pokvarjenimi redkeje.
+:::
 
 ## Pogoste napake
 
-- **Pozabljen presek pri vsoti.** Pri združljivih dogodkih ne smeš samo sešteti $P(A) + P(B)$. Če dobiš verjetnost, večjo od $1$, je skoraj gotovo to vzrok.
-- **Zamenjava $P(A \mid B)$ in $P(B \mid A)$.** To sta različni količini. Verjetnost, da je pokvarjen izdelek s stroja $A$, ni enaka verjetnosti, da je izdelek s stroja $A$ pokvarjen.
-- **Množenje, kot da sta dogodka neodvisna.** Pri vlečenju brez vračanja se verjetnosti po prvem izvlečku spremenijo. Formula $P(A)\cdot P(B)$ velja samo za neodvisna dogodka.
-- **Zamenjava »nezdružljiva« in »neodvisna«.** Nezdružljiva dogodka (z verjetnostima nad $0$) sta močno odvisna: če se zgodi eden, se drugi gotovo ne.
-- **Napačen imenovalec pri pogojni verjetnosti.** Delimo z $P(B)$, to je verjetnostjo pogoja, ne z $P(A)$ ali s številom vseh izidov.
+- **Pozabljen presek pri vsoti.** »Mleko $0{,}7$, jajca $0{,}6$, vsaj eno $1{,}3$.« Izidi, kjer se zgodita oba dogodka, so šteti dvakrat. Pri združljivih dogodkih odštej $P(A \cdot B)$; verjetnost nad $1$ je vedno znak te napake.
+- **Zamenjava $P(A \mid B)$ in $P(B \mid A)$.** »Stroj $A$ ima $2\,\%$ napak, torej je pokvarjen izdelek s stroja $A$ z verjetnostjo $0{,}02$.« To sta različni vprašanji z različnim pogojem. Popravek: najprej zapiši, kaj že veš (pogoj), in ta dogodek daj za navpičnico.
+- **Množenje, kot da sta dogodka neodvisna.** »Dve celi jajci: $\frac{10}{12} \cdot \frac{10}{12}$.« Brez vračanja se vsebina škatle po prvem jemanju spremeni. Popravek: drugi faktor je pogojna verjetnost $\frac{9}{11}$; $P(A) \cdot P(B)$ velja le za neodvisna dogodka.
+- **Zamenjava »nezdružljiva« in »neodvisna«.** »Ne moreta se zgoditi hkrati, torej se ne motita, torej sta neodvisna.« Ravno obratno: nezdružljiva dogodka (z verjetnostima nad $0$) sta močno odvisna, saj se drugi gotovo ne zgodi, če se zgodi prvi. Popravek: nezdružljivost preveri s $P(A \cdot B) = 0$, neodvisnost s $P(A \cdot B) = P(A) \cdot P(B)$.
+- **Napačen imenovalec pri pogojni verjetnosti.** Pri $P(A \mid B)$ učenec deli s številom vseh izidov. Pogoj pa zoži svet na $B$. Popravek: deli s $P(B)$ oziroma s številom izidov v $B$.
 
 ## Povzetek
 
@@ -113,42 +199,7 @@ Predstavljaj si pravokotnik s ploščino $1$, ki predstavlja vse izide. Dogodek 
 
 Pri računanju po stopnjah nariši **drevo**. Iz začetka potegni veje za možne izide prvega koraka in nanje napiši verjetnosti. Iz konca vsake veje potegni nove veje s pogojnimi verjetnostmi drugega koraka. Verjetnost cele poti dobiš tako, da verjetnosti na poti zmnožiš.
 
-Predstavljaj si desko z vrstami žebljičkov (Galtonova deska), skozi katero padajo kroglice. Na vsakem žebljičku se kroglica odloči za levo ali desno. Vsak žebljiček je en dogodek v zaporedju, pot do posamezne košare pa je produkt takih dogodkov. Ker se kroglica na vsakem žebljičku odloča neodvisno, verjetnosti na poti množimo. Do iste košare vodi več različnih poti, njihove verjetnosti pa seštevamo (poti so med seboj nezdružljive). Pri treh vrstah in enaki verjetnosti levo/desno pridemo do skrajne košare le na eni poti: $\left(\dfrac{1}{2}\right)^3 = \dfrac{1}{8}$. V srednji košari končamo po $3$ poteh, torej $\dfrac{3}{8}$. V simulaciji spodaj (»Verjetnost in relativna frekvenca«) lahko preveriš podobno: ko poskus ponoviš velikokrat, se relativna frekvenca približa izračunani verjetnosti.
-
-## Drugače: Iz vsakdanjega življenja
-
-**Vreme in dežnik.** Recimo, da je verjetnost dežja zjutraj $0{,}3$, verjetnost dežja popoldne $0{,}4$, verjetnost dežja v obeh delih dneva pa $0{,}2$. Verjetnost, da bo deževalo *vsaj enkrat* v dnevu, je
-$$0{,}3 + 0{,}4 - 0{,}2 = 0{,}5.$$
-Če bi preprosto seštela $0{,}3 + 0{,}4 = 0{,}7$, bi dneve, ko dežuje zjutraj *in* popoldne, šteli dvakrat.
-
-**Pogojna verjetnost v življenju.** »Verjetnost, da je človek bolan, če je test pozitiven« in »verjetnost, da je test pozitiven, če je človek bolan« sta zelo različni stvari. Zdravnik mora vedeti, katera od njiju je podana. Zato je razumevanje pogojne verjetnosti tako pomembno pri branju zdravstvenih in drugih statističnih podatkov.
-
-**Pogoj kot zožitev.** Če veš, da je v razredu $12$ deklet in $10$ fantov, in veš, da je k tabli poklican nekdo z modro majico (recimo, da so jo oblekla $4$ dekleta in $6$ fantov), te ne zanima več ves razred, ampak samo $10$ ljudi z modro majico. Verjetnost, da je to dekle, je $\dfrac{4}{10}$.
-
-## Drugače: Korak za korakom s številkami
-
-Dve pošteni kocki vržemo hkrati. Vseh izidov je $6 \cdot 6 = 36$. Dogodek $B$: vsota je $8$. Dogodek $A$: na prvi kocki je $3$. Kolikšna je $P(A \mid B)$?
-
-**Korak 1: izpišemo izide za $B$** (v obliki (prva, druga)):
-
-| Prva kocka | Druga kocka | Vsota |
-|---|---|---|
-| $2$ | $6$ | $8$ |
-| $3$ | $5$ | $8$ |
-| $4$ | $4$ | $8$ |
-| $5$ | $3$ | $8$ |
-| $6$ | $2$ | $8$ |
-
-Ugodnih izidov za $B$ je $5$, torej $P(B) = \dfrac{5}{36}$.
-
-**Korak 2: poiščemo presek.** Med temi petimi izidi je na prvi kocki $3$ samo pri $(3, 5)$. Torej $P(A \cdot B) = \dfrac{1}{36}$.
-
-**Korak 3: vstavimo v formulo.**
-$$P(A \mid B) = \frac{\dfrac{1}{36}}{\dfrac{5}{36}} = \frac{1}{5}.$$
-
-**Korak 4: preverimo z zožitvijo.** Če vemo, da je vsota $8$, so možni samo ti $5$ izidi, med njimi je en ugoden, torej $\dfrac{1}{5}$. Rezultat se ujema.
-
-Opomba: $P(A) = \dfrac{1}{6}$, $P(A \mid B) = \dfrac{1}{5}$. Informacija o vsoti je torej verjetnost za $A$ spremenila, zato dogodka nista neodvisna.
+Predstavljaj si desko z vrstami žebljičkov (Galtonova deska), skozi katero padajo kroglice. Na vsakem žebljičku se kroglica odloči za levo ali desno. Vsak žebljiček je en dogodek v zaporedju, pot do posamezne košare pa je produkt takih dogodkov. Ker se kroglica na vsakem žebljičku odloča neodvisno, verjetnosti na poti množimo. Do iste košare vodi več različnih poti, njihove verjetnosti pa seštevamo (poti so med seboj nezdružljive). Pri treh vrstah in enaki verjetnosti levo/desno pridemo do skrajne košare le na eni poti: $\left(\dfrac{1}{2}\right)^3 = \dfrac{1}{8}$. V vsaki od dveh srednjih košar končamo po $3$ poteh, torej $\dfrac{3}{8}$. V simulaciji spodaj (»Verjetnost in relativna frekvenca«) lahko preveriš podobno: ko poskus ponoviš velikokrat, se relativna frekvenca približa izračunani verjetnosti.
 
 ## Drugače: Bolj natančno
 
@@ -164,24 +215,60 @@ $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(
 
 ## Preveri se
 
-? Za dogodka $A$ in $B$ velja $P(A) = 0{,}5$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}2$. Kolikšna je $P(A + B)$?
+? Za dogodka $A$ in $B$ velja $P(A) = 0{,}5$, $P(B) = 0{,}4$ in $P(A + B) = 0{,}6$. Kolikšna je $P(A \cdot B)$?
+- $0{,}2$
+~ To je $P(A) \cdot P(B)$, kar velja le za neodvisna dogodka. Tu ne veš, da sta neodvisna, zato uporabi formulo za vsoto.
+- $0$
+~ Nič bi bilo pri nezdružljivih dogodkih, a takrat bi bila $P(A + B) = 0{,}9$, ne $0{,}6$.
++ $0{,}3$
 - $0{,}9$
-- $0{,}3$
-+ $0{,}7$
-> $P(A + B) = 0{,}5 + 0{,}4 - 0{,}2 = 0{,}7$. Odgovor $0{,}9$ pozabi odšteti presek, $0{,}3$ pa nastane, če presek odštejemo samo od prve verjetnosti.
+~ To je $P(A) + P(B)$. Produkt $A \cdot B$ pomeni »oba hkrati« in ne more biti verjetnejši od $A$ samega.
+> Iz $P(A + B) = P(A) + P(B) - P(A \cdot B)$ sledi $P(A \cdot B) = 0{,}5 + 0{,}4 - 0{,}6 = 0{,}3$.
 
 ? Za dogodka $A$ in $B$ velja $P(A) = 0{,}6$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}12$. Kolikšna je $P(A \mid B)$?
 - $0{,}2$
+~ To je $P(B \mid A) = \frac{0{,}12}{0{,}6}$: deljeno je z verjetnostjo napačnega dogodka. Pogoj je $B$, zato deli s $P(B)$.
 + $0{,}3$
 - $0{,}048$
-> $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)} = \dfrac{0{,}12}{0{,}4} = 0{,}3$. Vrednost $0{,}2$ je $P(B \mid A) = \dfrac{0{,}12}{0{,}6}$, torej zamenjava dogodkov, $0{,}048$ pa dobimo z napačnim množenjem.
+~ To je $0{,}12 \cdot 0{,}4$. Pogojno verjetnost dobiš z deljenjem s $P(B)$, ne z množenjem.
+> $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)} = \dfrac{0{,}12}{0{,}4} = 0{,}3$.
 
-? Kovanec vržemo trikrat. Kolikšna je verjetnost, da pade vsaj enkrat cifra?
-- $\dfrac{3}{8}$
-- $\dfrac{1}{8}$
-- $\dfrac{1}{2}$
-+ $\dfrac{7}{8}$
-> Nasprotni dogodek je, da cifra ne pade nikoli, torej trikrat pade grb: $\left(\dfrac{1}{2}\right)^3 = \dfrac{1}{8}$. Zato je $P = 1 - \dfrac{1}{8} = \dfrac{7}{8}$.
+? Kuharska knjiga ima $20$ receptov:
+
+| | hiter | počasen |
+|---|---|---|
+| sladek | $6$ | $4$ |
+| slan | $3$ | $7$ |
+
+Naključno izbereš sladek recept. Kolikšna je verjetnost, da je hiter?
+- $0{,}3$
+~ To je $\frac{6}{20}$: deljeno je z vsemi recepti. Pogoj »sladek« zoži izbor na $10$ sladkih receptov.
+- $\frac{2}{3}$
+~ To je $\frac{6}{9}$, verjetnost, da je hiter recept sladek. Pogoj in dogodek sta zamenjana.
++ $0{,}6$
+- $0{,}45$
+~ To je $\frac{9}{20}$, delež vseh hitrih receptov. Podatek, da je recept sladek, je prezrt.
+> Med $10$ sladkimi recepti je $6$ hitrih, zato $P(\text{hiter} \mid \text{sladek}) = \frac{6}{10} = 0{,}6$.
+
+? Iz škatle z $12$ jajci, od katerih sta $2$ počeni, vzameš dve. Zakaj verjetnost, da sta obe celi, ni $\frac{10}{12} \cdot \frac{10}{12}$?
+- ker bi morali verjetnosti sešteti, ne zmnožiti
+~ Seštevamo pri »ali« (nezdružljivi izidi). Tu sta obe jajci celi hkrati, to je produkt dogodkov.
++ ker po prvem celem jajcu v škatli ostane $11$ jajc in le $9$ celih
+- ker sta dogodka nezdružljiva
+~ Obe jajci sta lahko celi hkrati, zato dogodka nista nezdružljiva. Težava je, da sta odvisna.
+- ker je treba uporabiti kombinacije, množenje pa nikoli ne da pravega rezultata
+~ Množenje da pravi rezultat, če je drugi faktor pogojna verjetnost: $\frac{10}{12} \cdot \frac{9}{11}$. Isto dobiš s kombinacijami.
+> Prvo jemanje spremeni škatlo, zato je drugi faktor pogojna verjetnost $\frac{9}{11}$: $P = \frac{10}{12} \cdot \frac{9}{11} = \frac{15}{22}$.
+
+? Kruh z marmelado pade z mize z namazom navzdol z verjetnostjo približno $0{,}6$, padci so neodvisni. Kruh ti pade trikrat. Približno kolikšna je verjetnost, da vsaj enkrat pristane z namazom navzdol?
+- približno $1{,}8$
+~ To je $3 \cdot 0{,}6$. Verjetnost ne more biti večja od $1$: dogodki niso nezdružljivi, zato jih ne smeš kar sešteti.
+- približno $0{,}22$
+~ To je $0{,}6^3$, verjetnost, da kruh *vsakič* pade z namazom navzdol, ne vsaj enkrat.
++ približno $0{,}94$
+- približno $0{,}6$
+~ To je verjetnost za en sam padec. Pri treh padcih ima »vsaj enkrat« več možnosti, zato je verjetnost večja.
+> Nasprotni dogodek je »vsakič z namazom navzgor«: $0{,}4^3 = 0{,}064$. Zato je $P = 1 - 0{,}064 = 0{,}936 \approx 0{,}94$.
 
 :::simboli
 P | verjetnost dogodka | P(A) = \frac{m}{n} | | vedno med 0 in 1

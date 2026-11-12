@@ -33,7 +33,7 @@ Ali skupna pot kdaj preseže $112\,\mathrm{m}$, če seštejemo dovolj veliko ods
 Ne. Vsak nov odsek doda le enico na naslednjem decimalnem mestu: $111{,}1$; $111{,}11$; $111{,}111$ … Vse te vsote so manjše od $111{,}\overline{1}$, to pa je manj kot $112$.
 :::
 
-Preverimo še z gibanjem. Po času $t$ (v sekundah) je Ahil pretekel $10t$ metrov, želva pa je od Ahilovega starta oddaljena $100 + t$ metrov. Ahil jo ujame, ko je $10t = 100 + t$, torej pri $t = \frac{100}{9}\,\mathrm{s} \approx 11{,}1\,\mathrm{s}$. Takrat je pretekel $\frac{1000}{9}\,\mathrm{m} = 111{,}\overline{1}\,\mathrm{m}$. Neskončno mnogo odsekov, a končna pot in končen čas. Zenon je zmotno mislil, da neskončno mnogo sumandov nujno da neskončno vsoto.
+Preverimo še z gibanjem. Po času $t$ (v sekundah) je Ahil pretekel $10t$ metrov, želva pa je od Ahilovega starta oddaljena $100 + t$ metrov. Ahil jo ujame, ko je $10t = 100 + t$, torej pri $t = \frac{100}{9}\,\mathrm{s} \approx 11{,}1\,\mathrm{s}$. Takrat je pretekel $\frac{1000}{9}\,\mathrm{m} = 111{,}\overline{1}\,\mathrm{m}$. Neskončno mnogo odsekov, a končna pot in končen čas. Zenon je zmotno mislil, da neskončno mnogo členov nujno da neskončno vsoto.
 
 **Imena.** Izraz z neskončno mnogo členi
 
@@ -154,7 +154,7 @@ $S = \dfrac{0{,}36}{0{,}99} = \dfrac{36}{99} = \dfrac{4}{11}$. Preizkus: $4 : 11
 ## Pogoste napake
 
 - **Formula brez preverjanja količnika.** »$1 + 2 + 4 + \dots = \frac{1}{1-2} = -1$.« Vsota pozitivnih števil ne more biti negativna. Formula $S = \frac{a_1}{1-q}$ velja le pri $|q| < 1$. Zato najprej preveri $|q|$, šele nato računaj.
-- **»Neskončno sumandov, neskončna vsota.«** To je Zenonova napaka. Če je $|q| < 1$, se členi manjšajo tako hitro, da so delne vsote omejene. Vrsta $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \dots$ ima vsoto $1$.
+- **»Neskončno členov, neskončna vsota.«** To je Zenonova napaka. Če je $|q| < 1$, se členi manjšajo tako hitro, da so delne vsote omejene. Vrsta $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \dots$ ima vsoto $1$.
 - **Predznak pri negativnem količniku.** Pri $q = -\frac{1}{2}$ je $1 - q = \frac{3}{2}$, ne $\frac{1}{2}$. Kdor to zamenja, dobi v primeru 2 vsoto $24$ namesto $8$. Negativen $q$ vstavi v oklepaju.
 - **Obrnjen količnik.** $q = \frac{a_1}{a_2}$ namesto $\frac{a_2}{a_1}$. Pri vrsti $6 + 2 + \dots$ bi dobil $q = 3$ in zmotno sklepal, da vrsta divergira. Količnik je vedno »naslednji deljeno s prejšnjim«.
 - **Pozabljen dvojni odsek.** Pri žogi nekateri seštejejo $2 + 1{,}2 + 0{,}72 + \dots = \frac{2}{1 - 0{,}6} = 5\,\mathrm{m}$. Vsako višino po odboju žoga prepotuje dvakrat, zato je pravilno $8\,\mathrm{m}$. Najprej nariši pot, nato zapiši vrsto.
@@ -182,7 +182,7 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 
 **Delna vsota.** Naj bo $S_n = a_1 + a_1 q + \dots + a_1 q^{n-1}$. Pomnožimo s $q$: $q S_n = a_1 q + \dots + a_1 q^n$. Razlika: $S_n - q S_n = a_1 - a_1 q^n$. Za $q \ne 1$ sledi $S_n = a_1 \cdot \frac{1 - q^n}{1 - q}$.
 
-**Zakaj $q^n \to 0$ pri $|q| < 1$.** Zaporedje $x_n = |q|^n$ je padajoče ($x_{n+1} = |q|\,x_n < x_n$) in navzdol omejeno z $0$. Monotono in omejeno zaporedje je konvergentno, recimo z limito $L$. Iz $x_{n+1} = |q|\,x_n$ v limiti dobimo $L = |q|\,L$. Ker je $|q| \ne 1$, je $L = 0$. Torej $S_n \to \frac{a_1}{1-q}$.
+**Zakaj $q^n \to 0$ pri $|q| < 1$.** Zaporedje $x_n = |q|^n$ je padajoče ($x_{n+1} = |q|\,x_n \le x_n$) in navzdol omejeno z $0$. Monotono in omejeno zaporedje je konvergentno, recimo z limito $L$. Iz $x_{n+1} = |q|\,x_n$ v limiti dobimo $L = |q|\,L$. Ker je $|q| \ne 1$, je $L = 0$. Torej $S_n \to \frac{a_1}{1-q}$.
 
 **Divergenca pri $|q| \ge 1$.** Če bi $S_n \to S$, bi tudi $S_{n-1} \to S$, zato bi šli členi $a_n = S_n - S_{n-1}$ proti $0$. Pri $|q| \ge 1$ in $a_1 \ne 0$ pa je $|a_n| = |a_1|\,|q|^{n-1} \ge |a_1| > 0$. Protislovje.
 

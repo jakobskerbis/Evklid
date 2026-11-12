@@ -46,7 +46,7 @@ $$f(x) = \frac{p(x)}{q(x)}$$
 
 Tu $q$ ni ničelni polinom. Definirana je povsod razen v ničlah imenovalca.
 
-**Ničle, poli in luknje.** Najprej števec in imenovalec razcepi ter okrajšaj skupne faktorje. Po krajšanju so ničle funkcije ničle števca, poli pa ničle imenovalca. Če je $c$ ničla obeh, faktor $(x - c)$ okrajšaš; namesto pola ostane v grafu le prazna točka, **luknja**. Funkcija tam še vedno ni definirana.
+**Ničle, poli in luknje.** Najprej števec in imenovalec razcepi ter okrajšaj skupne faktorje. Po krajšanju so ničle funkcije ničle števca, poli pa ničle imenovalca. Če je $c$ ničla obeh, faktor $(x - c)$ okrajšaš. Če ga po krajšanju v imenovalcu ni več, namesto pola ostane v grafu le prazna točka, **luknja**. Funkcija tam še vedno ni definirana.
 
 **Stopnja pola.** Če je v imenovalcu faktor $(x - c)^m$, je $c$ pol stopnje $m$. Velja isto kot pri ničlah polinoma: pri lihi stopnji ima graf na obeh straneh pola nasproten predznak (ena veja $+\infty$, druga $-\infty$), pri sodi stopnji gresta obe veji v isto smer.
 
@@ -78,7 +78,7 @@ Lahko. Asimptota je $y = 2$ (enaki stopnji, $\frac{2}{1}$), in $h(-1) = \frac{2 
 
 **Postopek.** (1) Definicijsko območje. (2) Razcep in krajšanje, luknje. (3) Ničle in poli s stopnjami. (4) Asimptote. (5) Presečišče z osjo $y$, $f(0)$, in predznaki na intervalih med ničlami in poli. (6) Skica.
 
-Preveri se še v simulaciji »Racionalna funkcija: poli in asimptote«. Premikaj ničlo proti polu, dokler je ne postaviš točno nanj. Kaj se zgodi z grafom in z navpično asimptoto? Nato nastavi stopnjo pola na $2$ in opazuj, kam gresta veji ob polu in kam se premakne vodoravna asimptota.
+Preveri se še v simulaciji »Racionalna funkcija: poli in asimptote«. Premikaj ničlo proti polu, dokler je ne postaviš točno nanj. Kaj se zgodi z grafom in z navpično asimptoto? Nato ničlo spet odmakni od pola, nastavi stopnjo pola na $2$ in opazuj, kam gresta veji ob polu in kam se premakne vodoravna asimptota.
 
 ## Rešeni primeri
 
@@ -188,7 +188,7 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 ~ To bi bila ničla funkcije. Ničle dá števec, $v = 3$ pa je ničla imenovalca.
 + Funkcija tam ni definirana, za $v$ tik nad $3$ pa čas raste čez vse meje.
 - Pri $v = 3$ graf seka svojo vodoravno asimptoto.
-~ Vodoravna asimptota je $t = 0$; pol je navpična premica $v = 3$, kjer funkcija sploh ni definirana.
+~ Vodoravna asimptota je $t = 0$; pri polu $v = 3$ je navpična asimptota, tam pa funkcija sploh ni definirana.
 > Pol je ničla imenovalca, ki se ne okrajša: imenovalec gre proti $0$, količnik pa po absolutni vrednosti čez vse meje.
 
 ? Uredi funkcije po vrednosti vodoravne asimptote od najmanjše do največje: $f(x) = \dfrac{3x + 1}{x - 2}$, $g(x) = \dfrac{x^2}{2x^2 + 1}$, $h(x) = \dfrac{5}{x + 4}$.
@@ -207,7 +207,7 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 ~ Števec je $0$ le pri $x = 1$, tam pa je $0$ tudi imenovalec. Drugod je ulomek enak $1$.
 > Števec in imenovalec imata isti faktor $(x - 1)$. Po krajšanju ostane $f(x) = 1$, ki pa pri $x = 1$ ni definirana: luknja namesto pola.
 
-? Taksi zaračuna $4\,€$ ob vstopu in $0{,}80\,€$ na kilometer. Cena na kilometer za vožnjo $x$ kilometrov je $c(x) = \dfrac{4 + 0{,}8x}{x}$. Kateri vrednosti se bliža pri zelo dolgih vožnjah?
+? Taksi zaračuna $4\,€$ ob vstopu in $0{,}80\,€$ na kilometer. Cena na kilometer za vožnjo $x$ kilometrov je $\dfrac{4 + 0{,}8x}{x}$ (v evrih). Kateri vrednosti se bliža pri zelo dolgih vožnjah?
 - $4\,€$
 ~ To je vstopnina. Pri dolgi vožnji se razdeli na veliko kilometrov, zato njen delež na kilometer pada proti $0$.
 - $0\,€$
@@ -237,9 +237,9 @@ k | količnik pri deljenju $p$ s $q$ | | | njegov graf je asimptota
 r | ostanek pri deljenju $p$ s $q$ | | | stopnja manjša od stopnje $q$
 a_n | vodilni koeficient števca | |
 b_n | vodilni koeficient imenovalca | |
-c | ničla imenovalca | q(c) = 0 | | pol; če je tudi ničla števca, luknja
+c | ničla imenovalca | q(c) = 0 | | pol; če se faktor $(x - c)$ iz imenovalca povsem okrajša, luknja
 m | stopnja pola $c$ | | | eksponent faktorja $(x - c)^m$ v imenovalcu
-t | skupni čas plovbe | t(v) = \frac{24v}{v^2 - 9} | h
+t | čas plovbe | t(v) = \frac{24v}{v^2 - 9} | h | zveza velja za skupni čas tja in nazaj v primeru 3
 s | pot v eno smer | | km
 u | hitrost reke | | km/h
 :::

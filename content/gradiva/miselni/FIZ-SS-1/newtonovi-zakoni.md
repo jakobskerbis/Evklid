@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rezultanta
+  - nasprotne sile odštejemo
+  - risba: vse sile iz središča telesa
+- Prvi zakon
+  - $F_\mathrm{r} = 0$: miruje ali enakomerno
+  - vztrajnost raste z maso
+  - napaka: »za gibanje je potrebna sila«
+- Drugi zakon
+  - $F_\mathrm{r} = m\,a$, pospešek v smeri rezultante
+  - $1\,\mathrm{N} = 1\,\mathrm{kg\,m/s^2}$
+  - ista sila, dvojna masa: pol pospeška
+- Tretji zakon
+  - $\vec F_{21} = -\vec F_{12}$
+  - sili na različnih telesih, se ne izničita
+  - astronavt se odrine od stene
+- Teža in podlaga
+  - $F_\mathrm{g} = m\,g$ v newtonih
+  - masa v kg je povsod enaka
+  - dvigalo navzgor: $F_\mathrm{p} = m\,(g + a)$
+- Postopek naloge
+  - skica, sile, pozitivna smer
+  - raketa: potisna sila minus teža

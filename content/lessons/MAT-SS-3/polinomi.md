@@ -79,7 +79,7 @@ Pri Hornerjevem algoritmu za deljenje z $x + 3$ moraš na levo napisati neko št
 
 $$f(t) = (t - 1)(t - 2)(t - 3).$$
 
-Polinom stopnje $n$ ima največ $n$ ničel, zato četrtega trenutka ni. V simulaciji spodaj (»Polinom in njegove ničle«) postavi vodilni koeficient $a = 1$ in ničle na $1$, $2$ in $3$, vse s stopnjo $1$ (stopnja ničle pove, kolikokrat se faktor $x - a$ ponovi). Opazi, da graf os $x$ seka natanko v teh točkah. Nato eni ničli nastavi stopnjo $0$: polinom izgubi faktor in eno presečišče.
+Polinom stopnje $n$ ima največ $n$ ničel, zato četrtega trenutka ni. V simulaciji spodaj (»Polinom in njegove ničle«) postavi vodilni koeficient (drsnik a) na $1$ in ničle na $1$, $2$ in $3$, vse s stopnjo $1$ (stopnja ničle pove, kolikokrat se faktor $x - a$ ponovi). Opazi, da graf os $x$ seka natanko v teh točkah. Nato eni ničli nastavi stopnjo $0$: polinom izgubi faktor in eno presečišče.
 
 **Hitri test:** kateri kandidati za cele ničle pridejo v poštev pri $x^3 + 2x - 5$? *Odgovor: $\pm 1$ in $\pm 5$.*
 

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prosti pad
+  - spustimo, $v_0 = 0$, samo teža
+  - zračni upor zanemarimo
+- Težni pospešek
+  - $g \approx 9{,}81\,\mathrm{m/s^2}$, navzdol
+  - enak za težka in lahka telesa
+  - Luna $1{,}62\,\mathrm{m/s^2}$, Mars $3{,}71\,\mathrm{m/s^2}$
+- Enačbe padanja
+  - $v = g\,t$, $h = \dfrac{g t^2}{2}$
+  - $v^2 = 2\,g\,h$, ko čas ni znan
+  - ravnilo pade $20\,\mathrm{cm}$: reakcija $0{,}2\,\mathrm{s}$
+- Met navzgor
+  - os navzgor: $v = v_0 - g\,t$
+  - $y = v_0\,t - \dfrac{g t^2}{2}$
+  - napaka: $g$ prišteti k $v_0$
+- Najvišja točka
+  - $t_\text{vrh} = \dfrac{v_0}{g}$, $h_\text{max} = \dfrac{v_0^2}{2g}$
+  - hitrost nič, pospešek še vedno $g$
+- Simetrija leta
+  - vzpon traja kot padec
+  - ob vrnitvi hitrost po velikosti $v_0$
+- Čas in višina
+  - $t = \sqrt{\dfrac{2h}{g}}$
+  - dvakrat višje: le $1{,}41$-krat dlje

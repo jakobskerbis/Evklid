@@ -189,7 +189,7 @@ Gaussovo vsoto si predstavljaj kot Tilnove stopnice iz kock: v prvem stolpcu je 
 
 Pri aritmetičnem zaporedju je vsak člen (razen prvega) **aritmetična sredina** sosedov: $a_n = \dfrac{a_{n-1} + a_{n+1}}{2}$, ker je $a_{n-1} = a_n - d$ in $a_{n+1} = a_n + d$. Pri geometrijskem zaporedju s pozitivnimi členi je vsak člen **geometrijska sredina** sosedov: $a_n = \sqrt{a_{n-1}\,a_{n+1}}$, ker je $a_{n-1}\,a_{n+1} = \dfrac{a_n}{q} \cdot a_n q = a_n^2$. Od tod imeni zaporedij.
 
-Splošni člen $a_n = a_1 + (n-1)d = d\,n + (a_1 - d)$ je linearna funkcija spremenljivke $n$, zato točke ležijo na premici. Splošni člen $a_n = a_1 q^{\,n-1} = \dfrac{a_1}{q} \cdot q^n$ je pri $q > 0$ eksponentna funkcija, zožena na naravna števila.
+Splošni člen $a_n = a_1 + (n-1)d = d\,n + (a_1 - d)$ je linearna funkcija spremenljivke $n$, zato točke ležijo na premici. Splošni člen $a_n = a_1 q^{\,n-1} = \dfrac{a_1}{q} \cdot q^n$ je pri $q > 0$, $q \ne 1$ eksponentna funkcija, zožena na naravna števila.
 
 Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri $n = 1$: $a_1 \frac{q - 1}{q - 1} = a_1$. Iz $S_n$ dobimo $S_{n+1} = S_n + a_1 q^n = a_1 \frac{q^n - 1 + q^{n+1} - q^n}{q - 1} = a_1 \frac{q^{n+1} - 1}{q - 1}$.
 

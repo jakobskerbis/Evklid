@@ -32,7 +32,7 @@ Tretja mera je **modus** $\mathrm{Mo}$, najpogostejši podatek. Tu je to $40$.
 :::premisli
 Zadnji podatek ($400$) popravimo na $100$. Napovej, preden računaš: koliko sta zdaj aritmetična sredina in mediana?
 ---
-Sredina pade s $80$ na $50$ minut (vsota je $500$), mediana ostane $40$. Mediana se ni spremenila, ker je $100$ še vedno največji podatek in vrstni red ostane enak.
+Sredina pade z $80$ na $50$ minut (vsota je $500$), mediana ostane $40$. Mediana se ni spremenila, ker je $100$ še vedno največji podatek in vrstni red ostane enak.
 :::
 
 **2. Enaka sredina, različna razpršenost.** Dva modela telefona v petih dneh zdržita povprečno $20$ ur. Pri prvem so trajanja vsa blizu $20$, pri drugem nekega dne $14$ ur, drugega $26$. Sredina ju ne loči, zato potrebujemo mero razpršenosti.
@@ -112,7 +112,7 @@ Ploščine pod krivuljo že znaš računati: to je določeni integral. Verjetnos
 
 $$f(x) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2\sigma^2}}$$
 
-Iz predpisa razbereš lastnosti. Krivulja je simetrična glede na $x = \mu$ in tam doseže maksimum. Z odvodom bi našel prevoja pri $x = \mu - \sigma$ in $x = \mu + \sigma$. Večji $\sigma$ pomeni širšo krivuljo, a tudi nižjo.
+Iz predpisa razbereš lastnosti. Krivulja je simetrična glede na $x = \mu$ in tam doseže maksimum. Z odvodom bi našel **prevoja**, točki, v katerih je krivulja najbolj strma, pri $x = \mu - \sigma$ in $x = \mu + \sigma$. Večji $\sigma$ pomeni širšo krivuljo, a tudi nižjo.
 
 :::premisli
 Zakaj večji $\sigma$ ne more dati krivulje, ki je hkrati širša in enako visoka?
@@ -179,7 +179,7 @@ $\sigma^2 = \dfrac{(x_1 - \bar x)^2 + \dots + (x_N - \bar x)^2}{N}$, $\sigma = \
 
 ### Primer 3 (težji): koliko baterij preseže $23$ ur
 
-Trajanje baterije novega telefona je normalno porazdeljeno s $\mu = 20\,\mathrm{h}$ in $\sigma = 2\,\mathrm{h}$. Prodali so $5000$ telefonov. Približno koliko jih zdrži več kot $23\,\mathrm{h}$? Iz tabele: $\Phi(1{,}5) = 0{,}4332$.
+Trajanje baterije novega telefona je normalno porazdeljeno z $\mu = 20\,\mathrm{h}$ in $\sigma = 2\,\mathrm{h}$. Prodali so $5000$ telefonov. Približno koliko jih zdrži več kot $23\,\mathrm{h}$? Iz tabele: $\Phi(1{,}5) = 0{,}4332$.
 
 **Podatki:** $\mu = 20\,\mathrm{h}$, $\sigma = 2\,\mathrm{h}$, $x = 23\,\mathrm{h}$, $5000$ telefonov, $\Phi(1{,}5) = 0{,}4332$
 **Iščemo:** $P(X > 23)$ in število takih telefonov

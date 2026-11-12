@@ -59,7 +59,7 @@ $$1\,\text{W} = \frac{1\,\text{J}}{1\,\text{s}}$$
 
 Pogosto se uporablja tudi $1\,\text{kW} = 1000\,\text{W}$.
 
-V simulaciji spodaj (Delo in moč) nastavi maso $60\,\text{kg}$ in višino $10\,\text{m}$, nato čas najprej $20\,\text{s}$ in potem $10\,\text{s}$. Opazuj: delo ostane $5886\,\text{J}$, moč pa se podvoji (z $294\,\text{W}$ na $589\,\text{W}$), ker se isto delo opravi v pol krajšem času.
+V simulaciji spodaj (Delo in moč) nastavi maso $60\,\text{kg}$ in višino $10\,\text{m}$, nato čas najprej $20\,\text{s}$ in potem $10\,\text{s}$. Opazuj: delo ostane $5886\,\text{J}$ (simulacija računa z $g = 9{,}81\,\text{m/s}^2$), moč pa se podvoji (z $294\,\text{W}$ na $589\,\text{W}$), ker se isto delo opravi v pol krajšem času.
 
 **6. Moč pri stalni hitrosti.** Ker je $A = F s$ in $v = s/t$, velja
 

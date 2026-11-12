@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enakomerno gibanje
+  - ravna črta, stalna hitrost
+  - zvok: $34\,\mathrm{m}$ v vsaki desetinki
+- Hitrost
+  - $v = \dfrac{\Delta s}{\Delta t}$, enota $\mathrm{m/s}$
+  - napaka: $s/t$ iz ene točke
+- Enačba gibanja
+  - $s = s_0 + v\,t$
+  - $s_0$ je lega ob $t = 0$
+- Graf s(t)
+  - premica, naklon je hitrost
+  - vodoravna premica pomeni mirovanje
+- Graf v(t)
+  - vodoravna črta na višini $v$
+  - ploščina pod njo je pot
+- Srečanje teles
+  - izenači $s_1 = s_2$
+  - presečišče premic na $s(t)$
