@@ -3211,6 +3211,7 @@
   "adm.rep.question": "Question:",
   "adm.rep.fixed": "Fixed",
   "adm.rep.reopen": "Reopen",
+  "adm.rep.inReview": "Fix awaiting review · PR #{n}",
   "adm.rep.none": "No reports.",
   "adm.rep.download": "Download for fixing (.md)",
   "adm.rep.showAll": "Show fixed ones too",

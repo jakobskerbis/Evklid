@@ -3209,6 +3209,7 @@
   "adm.rep.question": "Soru:",
   "adm.rep.fixed": "Düzeltildi",
   "adm.rep.reopen": "Yeniden aç",
+  "adm.rep.inReview": "Düzeltme incelemeyi bekliyor · PR #{n}",
   "adm.rep.none": "Bildirim yok.",
   "adm.rep.download": "Düzeltmek için indir (.md)",
   "adm.rep.showAll": "Düzeltilenleri de göster",

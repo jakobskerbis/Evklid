@@ -3275,6 +3275,7 @@
   "adm.rep.question": "Pytanie:",
   "adm.rep.fixed": "Poprawione",
   "adm.rep.reopen": "Otwórz ponownie",
+  "adm.rep.inReview": "Poprawka czeka na sprawdzenie · PR #{n}",
   "adm.rep.none": "Brak zgłoszeń.",
   "adm.rep.download": "Pobierz do poprawek (.md)",
   "adm.rep.showAll": "Pokaż też poprawione",

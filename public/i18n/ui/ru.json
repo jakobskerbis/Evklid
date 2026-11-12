@@ -3275,6 +3275,7 @@
   "adm.rep.question": "Вопрос:",
   "adm.rep.fixed": "Исправлено",
   "adm.rep.reopen": "Открыть снова",
+  "adm.rep.inReview": "Исправление ждёт проверки · PR #{n}",
   "adm.rep.none": "Сообщений нет.",
   "adm.rep.download": "Скачать для исправления (.md)",
   "adm.rep.showAll": "Показать и исправленные",

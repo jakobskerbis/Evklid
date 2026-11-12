@@ -3209,6 +3209,7 @@
   "adm.rep.question": "প্রশ্ন:",
   "adm.rep.fixed": "ঠিক হয়েছে",
   "adm.rep.reopen": "আবার খোলো",
+  "adm.rep.inReview": "সংশোধন পর্যালোচনার অপেক্ষায় · PR #{n}",
   "adm.rep.none": "কোনো রিপোর্ট নেই।",
   "adm.rep.download": "ঠিক করার জন্য ডাউনলোড (.md)",
   "adm.rep.showAll": "ঠিক হওয়াগুলোও দেখাও",
