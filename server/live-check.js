@@ -731,7 +731,7 @@ const ionPlain = (t) =>
     .replace(/[{}]/g, "")
     .replace(/[−–]/g, "-");
 const ION_MENTION_RE = new RegExp(
-  `(?<![\\p{L}\\d])(\\d|${Object.keys(COUNT_WORDS).join("|")})\\s+(?:ion\\p{L}*\\s+)?((?:[A-Z][a-z]?\\d?)+)\\^(\\d?)([+-])(?![\\d+-])`,
+  `(?<![\\p{L}\\d])(\\d|${Object.keys(COUNT_WORDS).join("|")})\\s+(?:ion\\p{L}*\\s+)?([A-Z][A-Z\\d]*)\\^(\\d?)([+-])(?![\\d+-])`,
   "giu",
 );
 // Navedba zmote (»Praviš, da …«, »Mnogi mislijo …«, »Recimo, da …«) ni trditev tutorja (pregled #610).

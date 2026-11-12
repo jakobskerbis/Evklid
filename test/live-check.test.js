@@ -799,6 +799,10 @@ test("ionRatioIssue (round 8): an ion ratio that does not balance the charges", 
   // razmerje iz učenčevega sporočila
   assert.equal(ionRatioIssue("Torej: na 2 iona Mg²⁺ en ion O²⁻.", "Zakaj je na 2 iona Mg²⁺ en ion O²⁻").issue, null);
   // združeno z drugimi kemijskimi preverbami v en popravek
+  // dolga beseda po števcu: brez katastrofalnega vračanja (pregled B #610; prej ~2× čas na črko)
+  const t0 = performance.now();
+  assert.equal(ionRatioIssue("na 2 " + "Ab".repeat(5000) + "x").issue, null);
+  assert.ok(performance.now() - t0 < 500, "ionRatioIssue na dolgi besedi");
   assert.match(codeFindings("Dušik je v 5. skupini. Na 2 iona Mg²⁺ pride en ion O²⁻.").issue, /15.*; ".*does not add up|15.*do not add up/);
 });
 
