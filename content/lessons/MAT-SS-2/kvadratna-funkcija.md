@@ -6,7 +6,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Šolska vremenska postaja je v jasnem poletnem dnevu izmerila temperaturo zraka:
+Šolska vremenska postaja je v jasnem pomladnem dnevu merila temperaturo zraka. Vrednosti so poenostavljene, da bo računanje lažje:
 
 | ura | temperatura |
 |---|---|
@@ -17,7 +17,18 @@ avtor: AI
 
 Sošolec Jaka trdi: »Najvišja temperatura dneva je bila $19\,^\circ\text{C}$, ob 12.00 ali ob 16.00. Višje nismo izmerili.« Ima prav?
 
-Če meritve vrišeš v koordinatni sistem, se točke prilegajo krivulji, ki se dviga, doseže vrh in se nato spet spušča. Taka krivulja je **parabola**, graf **kvadratne funkcije**. Njen vrh ali dno se imenuje **teme**. Ko ga boš znal poiskati, boš Jaki znal odgovoriti. Po paraboli poteka tudi skok delfina ali kobilice.
+:::risba graf
+opis: Štiri meritve temperature kot točke v koordinatnem sistemu: (8, 11), (12, 19), (16, 19) in (20, 11). Točki ob 12.00 in 16.00 sta enako visoko, pri 19 °C; med njima ni nobene meritve.
+x: 6 .. 22 | 2 | ura
+y: 0 .. 24 | 4 | °C
+točka: 8; 11 | (8, 11) | desno
+točka: 12; 19 | (12, 19) | nad levo
+točka: 16; 19 | (16, 19) | nad desno
+točka: 20; 11 | (20, 11) | levo
+podnapis: Meritve vremenske postaje: kaj se je dogajalo med 12.00 in 16.00?
+:::
+
+Točke ležijo na krivulji, ki se dviga, doseže vrh in se nato spet spušča. Tak potek dobro opiše **parabola**, graf **kvadratne funkcije**. Njen vrh ali dno se imenuje **teme**. Ko ga boš znal poiskati, boš Jaki znal odgovoriti. Po paraboli leti tudi košarkarska žoga na poti proti košu (Primer 2).
 
 ## Razlaga
 
@@ -51,31 +62,70 @@ Vrednosti pri $x$ in $-x$ so enake, zato je graf simetričen glede na os $y$ (ta
 - $a < 0$: parabola je odprta **navzdol**, teme je najvišja točka (maksimum).
 - $|a| > 1$: parabola je ožja od $y = x^2$; $|a| < 1$: parabola je širša.
 
-V simulaciji spodaj (»Kvadratna funkcija v temenski obliki«) nastavi $p = 0$ in $q = 0$ (pomen $p$ in $q$ spoznaš v 4. in 5. točki), nato spremeni $a$ z $1$ na $-1$ in potem na $3$. Opazuj: pri $-1$ se parabola obrne navzdol, pri $3$ postane ožja, teme pa ostane v izhodišču.
+Zakaj? Množenje z $a$ pomnoži vsako vrednost funkcije: namesto $1$, $4$, $9$ iz tabele dobimo pri $a = 2$ vrednosti $2$, $8$, $18$. To je razteg v smeri osi $y$. Na sliki je $a = 2$: označena točka $(1; a)$ je na dvakratni višini črtkane parabole $y = x^2$, zato je graf ožji. V aplikaciji premikaj drsnik $a$ pod sliko in opazuj to točko: pri $a = 0{,}5$ je na polovici višine, graf je širši; pri $a = -1$ je pod osjo $x$, graf se prezrcali. Pri $a = 0$ parabola izgine v vodoravno premico, zato definicija zahteva $a \ne 0$. Teme ves čas ostane v izhodišču.
+
+:::risba graf
+opis: Graf funkcije y = ax² in za primerjavo črtkana parabola y = x², obe s temenom v izhodišču. V aplikaciji se a spreminja z drsnikom od −3 do 3; izbrano je a = {a}. Na grafu je označena točka (1; {a}).
+x: -4 .. 4
+y: -6 .. 6
+enako: da
+drsnik: a | -3 .. 3 | 0,5 | 2 | vodilni koeficient a
+f: x^2 | siva črtkano
+f: a*x^2 | modra
+točka: 1; a | | | oranžna
+podnapis: y = ax² pri a = {a}; označena je točka (1; {a}), črtkano je y = x²
+:::
 
 *Preveri:* je $y = -0{,}5x^2$ ožja ali širša od $y = x^2$? (Širša, ker je $|a| = 0{,}5 < 1$; odprta je navzdol.)
 
 **4. Tri oblike zapisa.**
 
-| Oblika | Zapis | Kaj takoj preberemo |
-|---|---|---|
-| splošna | $f(x) = ax^2 + bx + c$ | presečišče z osjo $y$: $(0, c)$ |
-| temenska | $f(x) = a(x - p)^2 + q$ | teme $T(p, q)$ |
-| ničelna | $f(x) = a(x - x_1)(x - x_2)$ | ničli $x_1$ in $x_2$ |
+- **splošna** $f(x) = ax^2 + bx + c$: takoj preberemo presečišče z osjo $y$, točko $(0, c)$;
+- **temenska** $f(x) = a(x - p)^2 + q$: takoj preberemo teme $T(p, q)$;
+- **ničelna** $f(x) = a(x - x_1)(x - x_2)$: takoj preberemo ničli $x_1$ in $x_2$.
 
 V vseh treh oblikah je $a$ isto število. Ničelna oblika obstaja v realnih številih samo, če ima funkcija realne ničle.
+
+Ista funkcija ima lahko vse tri zapise, na primer $x^2 - 2x - 3 = (x - 1)^2 - 4 = (x + 1)(x - 3)$. Na sliki vsaka oblika pokaže svoje točke: splošna presečišče $(0, -3)$, temenska teme $T(1, -4)$, ničelna ničli $-1$ in $3$.
+
+:::risba graf
+opis: Parabola y = x² − 2x − 3 z označenimi točkami: presečišče z osjo y (0, −3), teme T(1, −4) ter ničli (−1, 0) in (3, 0).
+x: -4 .. 6
+y: -6 .. 6 | 2
+f: x^2 - 2*x - 3 | modra
+točka: 0; -3 | (0, −3) | levo
+točka: 1; -4 | T(1, −4) | pod desno
+točka: -1; 0 | −1 | pod levo | oranžna
+točka: 3; 0 | 3 | pod desno | oranžna
+podnapis: Ena parabola, trije zapisi: vsak takoj pokaže druge točke
+:::
 
 *Preveri:* kaj takoj prebereš iz $f(x) = 3(x + 1)(x - 4)$? (Ničli $-1$ in $4$.)
 
 **5. Teme.** Graf funkcije $f(x) = a(x - p)^2 + q$ dobimo tako, da parabolo $y = ax^2$ premaknemo za $p$ v smeri osi $x$ in za $q$ v smeri osi $y$. Teme je $T(p, q)$, **simetrijska os** je navpična premica $x = p$. Pazi na predznak: pri $(x - 2)^2$ je $p = 2$, pri $(x + 2)^2 = (x - (-2))^2$ pa $p = -2$.
 
-Iz splošne oblike dobimo teme z obrazcema
+Kje pa je teme, če je funkcija v splošni obliki? Poskusimo na $f(x) = x^2 - 6x + 5$. Pri $x = 0$ je $f(0) = 5$. Enako vrednost dobimo še tam, kjer je $x^2 - 6x = x(x - 6)$ spet enako $0$, torej pri $x = 6$. Točki $(0, 5)$ in $(6, 5)$ sta enako visoko, zato leži simetrijska os na sredini med njima, pri $x = 3$. Teme je $T(3, f(3)) = T(3, -4)$.
+
+:::risba graf
+opis: Parabola y = x² − 6x + 5. Točki (0, 5) in (6, 5) sta enako visoko in povezani s črtkano vodoravno črto. Na sredini med njima je črtkana navpična simetrijska os x = 3, na njej je teme T(3, −4).
+x: -2 .. 8
+y: -6 .. 8 | 2
+f: x^2 - 6*x + 5 | modra
+črta: 0; 5 -> 6; 5 | oranžna črtkano
+črta: 3; -6 -> 3; 8 | siva črtkano
+točka: 0; 5 | (0, 5) | levo | oranžna
+točka: 6; 5 | (6, 5) | desno | oranžna
+točka: 3; -4 | T(3, −4) | pod desno
+podnapis: Os x = 3 je na sredini med enako visokima točkama
+:::
+
+Sklep drži, ker je graf res premaknjena parabola $y = x^2$: $x^2 - 6x + 5 = (x - 3)^2 - 4$. Da je tudi graf vsake druge kvadratne funkcije premaknjena parabola $y = ax^2$ in zato simetričen, pokaže dopolnjevanje do popolnega kvadrata (Drugače: Bolj natančno).
+
+Enako sklepamo v splošnem. Izraz $ax^2 + bx = x(ax + b)$ je enak $0$ pri $x = 0$ in pri $x = -\dfrac{b}{a}$, tam je vrednost funkcije obakrat $c$. Os je na sredini med tema številoma (pri $b = 0$ sovpadeta v $x = 0$, kjer je teme), zato velja
 
 $$p = -\frac{b}{2a}, \qquad q = f(p).$$
 
-Drugo koordinato lahko izračunaš tudi kot $q = c - \dfrac{b^2}{4a}$, vendar je vstavljanje $p$ v predpis navadno varnejše.
-
-Zaradi simetrije imata točki, enako oddaljeni od osi $x = p$, enako vrednost. Pri meritvah iz uvoda sta enaki vrednosti ob 12.00 in 16.00, zato je os na sredini, ob 14.00. Vrh je bil torej ob 14.00, in ker je to najvišja točka, je bilo takrat topleje kot $19\,^\circ\text{C}$. Jaka se moti; koliko je bilo, izračunaš v Primeru 3.
+Zaradi simetrije imata točki, enako oddaljeni od osi $x = p$, enako vrednost. Če temperaturo iz uvoda opišemo s parabolo, sta enaki vrednosti ob 12.00 in 16.00 enako daleč od osi, zato je os ob 14.00. Ker sta meritvi ob 8.00 in 20.00 nižji, je parabola odprta navzdol in je tam vrh, torej je bilo takrat topleje kot $19\,^\circ\text{C}$. Po tem modelu se Jaka moti; koliko je bilo, izračunaš v Primeru 3.
 
 :::premisli
 Parabolo $y = 2x^2$ premaknemo tako, da ima teme $T(-1, 4)$. Napovej brez računanja: ali nova parabola seka os $x$?
@@ -85,12 +135,33 @@ Ne seka. Ker je $a = 2 > 0$, je parabola odprta navzgor in teme je njena najniž
 
 *Preveri:* kje je teme $f(x) = x^2 - 4x + 1$? ($p = 2$, $q = f(2) = 4 - 8 + 1 = -3$, torej $T(2, -3)$.)
 
-**6. Ničle.** Ničla je vrednost $x$, pri kateri je $f(x) = 0$; tam graf seka ali se dotika osi $x$. Zaenkrat ničle iščemo na dva načina:
+**6. Ničle.** Ničla je vrednost $x$, pri kateri je $f(x) = 0$; tam graf seka ali se dotika osi $x$. Splošni obrazec zanje spoznaš v lekciji Kvadratna enačba; za zdaj jih iščemo na dva načina:
 
 - **iz temenske oblike**: rešimo $a(x - p)^2 + q = 0$, torej $(x - p)^2 = -\dfrac{q}{a}$, in korenimo (ne pozabi na $\pm$);
 - **z razstavljanjem**, kot znaš iz 1. letnika: $x^2 - 5x + 6 = (x - 2)(x - 3)$, ničli sta $2$ in $3$.
 
-Iz lege temena in smeri odprtosti vidiš, koliko realnih ničel je: če sta $a$ in $q$ različno predznačena, sta dve; če je $q = 0$, je ena (dvojna, teme leži na osi $x$); če sta $a$ in $q$ enako predznačena, realnih ničel ni.
+Iz lege temena in smeri odprtosti vidiš, koliko realnih ničel je: če sta $a$ in $q$ različno predznačena, sta dve; če je $q = 0$, je ena (dvojna, teme leži na osi $x$); če sta $a$ in $q$ enako predznačena, realnih ničel ni (ničli sta takrat kompleksni števili, več v Kvadratni enačbi). Pri dvojni ničli je ničelna oblika $f(x) = a(x - x_1)^2$.
+
+Na sliki je $a = 1$, $p = 1$ in $q = -4$: teme $T(1, -4)$ leži pod osjo $x$, parabola je odprta navzgor, ničli sta $-1$ in $3$. V aplikaciji z drsnikom dviguj $q$ proti $0$ in opazuj ničli: bližata se druga drugi, pri $q = 0$ se zlijeta v temenu, pri $q > 0$ izgineta. Nato nastavi $a = -1$: ničli se vrneta, ker se kraka zdaj spuščata proti osi. Premakni še $p$: ničli potujeta skupaj z osjo, razdalja med njima ostane enaka. Ves čas sta enako oddaljeni od črtkane osi $x = p$. Pri $a = 0$ graf ni več parabola, temveč vodoravna premica brez temena. Teme je označeno s $T$, ničli z $x_1$ in $x_2$; pod sliko sta izpisani njuni vrednosti. Enaki števili pomenita dvojno ničlo, znak »/« pa, da realnih ničel ni ali da graf ni parabola.
+
+:::risba graf
+opis: Graf funkcije y = a(x − p)² + q; pri a ≠ 0 je to parabola s temenom T({p}, {q}) in črtkano simetrijsko osjo x = {p}, teme je označeno s T, ničli z x₁ in x₂; pri a = 0 je graf vodoravna premica brez temena in osi. V aplikaciji se a, p in q spreminjajo z drsniki; izbrano je a = {a}, p = {p} in q = {q}. Ničli sta {p - sqrt(-q/a)} in {p + sqrt(-q/a)}; enaki števili pomenita dvojno ničlo, »/« pomeni, da realnih ničel ni ali graf ni parabola.
+x: -6 .. 6 | 2
+y: -6 .. 6 | 2
+enako: da
+drsnik: a | -2 .. 2 | 0,5 | 1 | vodilni koeficient a
+drsnik: p | -2 .. 2 | 1 | 1 | prva koordinata temena p
+drsnik: q | -4 .. 4 | 1 | -4 | druga koordinata temena q
+f: a*(x - p)^2 + q | modra
+črta: p + 0/a; -6 -> p + 0/a; 6 | siva črtkano
+točka: p - sqrt(-q/a); 0 | | | oranžna
+točka: p + sqrt(-q/a); 0 | | | oranžna
+točka: p + 0/a; q
+napis: p - sqrt(-q/a) - 0,45; 0,55*q/abs(q) | x_1 | sredina | oranžna
+napis: p + sqrt(-q/a) + 0,45; 0,55*q/abs(q) | x_2 | sredina | oranžna
+napis: p + 0,45; q - 0,6*a/abs(a) | T | sredina
+podnapis: a = {a}, p = {p}, q = {q}; ničli: {p - sqrt(-q/a)} in {p + sqrt(-q/a)}
+:::
 
 :::premisli
 Funkciji $f(x) = -2(x - 1)^2 + 8$ in $g(x) = 2(x - 1)^2 + 8$ imata isto teme. Napovej, kje graf $f$ seka os $x$, in pojasni, zakaj graf $g$ osi ne seka.
@@ -126,26 +197,39 @@ Temenska oblika $f(x) = a(x - p)^2 + q$, teme $T(p, q)$; ničle iz $f(x) = 0$
 5. Zaloga vrednosti: najmanjša vrednost je $q = -8$, zato $Z_f = [-8, \infty)$.
 6. Odgovor: teme je $T(1, -8)$, parabola je odprta navzgor, os $y$ seka v $(0, -6)$, ničli sta $-1$ in $3$, zaloga vrednosti je $[-8, \infty)$.
 
-### Primer 2 (srednji)
+### Primer 2 (srednji): prosti met
 
-Funkcijo $f(x) = -x^2 + 4x + 5$ zapiši v temenski in ničelni obliki ter opiši njen graf.
+Košarkar izvaja prosti met. Po pravilih FIBA je obroč $3{,}05\,\text{m}$ nad tlemi. Žoga zapusti iztegnjene roke na višini $2{,}25\,\text{m}$, vodoravno $4\,\text{m}$ pred sredino obroča. Njeno višino v metrih opiše model $h(x) = -0{,}25x^2 + 1{,}2x + 2{,}25$, kjer je $x$ vodoravna razdalja od mesta meta v metrih. Kje in kako visoko je žoga najvišje? Pri katerih $x$ je na višini obroča?
 
-**Podatki:** splošna oblika $f(x) = -x^2 + 4x + 5$, torej $a = -1$, $b = 4$, $c = 5$
-**Iščemo:** temensko obliko, ničelno obliko, teme, ničle, intervala naraščanja in padanja, zalogo vrednosti
+**Podatki:** $h(x) = -0{,}25x^2 + 1{,}2x + 2{,}25$, torej $a = -0{,}25$, $b = 1{,}2$, $c = 2{,}25$; višina obroča $3{,}05\,\text{m}$, sredina obroča pri $x = 4\,\text{m}$
+**Iščemo:** teme $T(p, q)$, temensko obliko in razdalje $x$, pri katerih je $h(x) = 3{,}05$
 
 :::formula
-$p = -\dfrac{b}{2a}$, $\; q = f(p)$, $\; f(x) = a(x - p)^2 + q = a(x - x_1)(x - x_2)$
+$p = -\dfrac{b}{2a}$, $q = h(p)$, $h(x) = a(x - p)^2 + q$
 :::
 
 **Rešitev:**
 
-1. Prva koordinata temena: $p = -\dfrac{4}{2 \cdot (-1)} = 2$.
-2. Druga koordinata: $q = f(2) = -(2^2) + 4 \cdot 2 + 5 = -4 + 8 + 5 = 9$. Teme je $T(2, 9)$.
-3. Temenska oblika: $f(x) = -(x - 2)^2 + 9$.
-4. Ničle: $-(x - 2)^2 + 9 = 0$, $(x - 2)^2 = 9$, $x - 2 = \pm 3$, torej $x_1 = -1$, $x_2 = 5$.
-5. Ničelna oblika: $f(x) = -(x + 1)(x - 5)$. Preverjanje: $-(x^2 - 4x - 5) = -x^2 + 4x + 5$.
-6. Ker je $a = -1 < 0$, je parabola odprta navzdol, teme je najvišja točka. Os $y$ seka v $(0, 5)$; simetrična točka glede na os $x = 2$ je $(4, 5)$.
-7. Odgovor: $f(x) = -(x - 2)^2 + 9 = -(x + 1)(x - 5)$. Funkcija narašča na $(-\infty, 2]$, pada na $[2, \infty)$, največja vrednost je $9$, zaloga vrednosti je $(-\infty, 9]$, ničli sta $-1$ in $5$.
+1. Prva koordinata temena: $p = -\dfrac{1{,}2}{2 \cdot (-0{,}25)} = 2{,}4$.
+2. Druga koordinata: $q = h(2{,}4) = -0{,}25 \cdot 2{,}4^2 + 1{,}2 \cdot 2{,}4 + 2{,}25 = 3{,}69$. Ker je $a < 0$, je teme najvišja točka.
+3. Temenska oblika: $h(x) = -0{,}25(x - 2{,}4)^2 + 3{,}69$. Kontrola s prostim členom: $h(0) = -0{,}25 \cdot 5{,}76 + 3{,}69 = 2{,}25$, to je višina, s katere žoga odleti.
+4. Višina obroča: enačba $-0{,}25(x - 2{,}4)^2 + 3{,}69 = 3{,}05$ da $(x - 2{,}4)^2 = 2{,}56$, torej $x - 2{,}4 = \pm 1{,}6$. Rešitvi sta $x = 0{,}8$ in $x = 4$, simetrični glede na os $x = 2{,}4$.
+5. Pri $x = 0{,}8$ se žoga še dviga (funkcija narašča na $[0; 2{,}4]$), pri $x = 4$ pa pada, zato pade v koš od zgoraj.
+6. Odgovor: žoga je najvišje $2{,}4\,\text{m}$ od mesta meta, na višini $3{,}69\,\text{m}$. Na višini obroča je pri $0{,}8\,\text{m}$, ko se še dviga, in pri $4\,\text{m}$, kjer pade skozi obroč.
+
+:::risba graf
+opis: Pot žoge kot parabola od točke meta (0; 2,25) čez teme T(2,4; 3,69) do obroča v točki (4; 3,05). Črtkana vodoravna črta na višini obroča 3,05 m seka parabolo že v točki (0,8; 3,05). Vodoravna os je razdalja od mesta meta v metrih, navpična višina v metrih.
+x: 0 .. 5 | 1 | x (m)
+y: 0 .. 5 | 1 | h (m)
+enako: da
+f: -0,25*x^2 + 1,2*x + 2,25 | modra | 0 .. 4
+črta: 0; 3,05 -> 4; 3,05 | oranžna črtkano
+točka: 0; 2,25 | met | desno
+točka: 2,4; 3,69 | T(2,4; 3,69) | nad
+točka: 0,8; 3,05 | (0,8; 3,05) | pod desno | oranžna
+točka: 4; 3,05 | obroč | desno | oranžna
+podnapis: Žoga je najvišje 2,4 m od mesta meta, 1,6 m pred košem
+:::
 
 ### Primer 3 (težji): najtoplejša ura dneva
 
@@ -164,8 +248,26 @@ $f(t) = a(t - p)^2 + q$; enaki vrednosti $f(t_1) = f(t_2)$ ležita simetrično g
 2. Torej $f(t) = a(t - 14)^2 + q$. Točka $(12, 19)$ da enačbo $4a + q = 19$, točka $(8, 11)$ pa enačbo $36a + q = 11$.
 3. Drugo enačbo odštejemo od prve: $-32a = 8$, zato $a = -0{,}25$. Nato $q = 19 - 4 \cdot (-0{,}25) = 20$.
 4. Model je $f(t) = -0{,}25(t - 14)^2 + 20$. Kontrola s četrto meritvijo: $f(20) = -0{,}25 \cdot 36 + 20 = 11$.
-5. Temperatura $16\,^\circ\text{C}$: $-0{,}25(t - 14)^2 + 20 = 16$, torej $(t - 14)^2 = 16$ in $t - 14 = \pm 4$. Dobimo $t_1 = 10$ in $t_2 = 18$.
-6. Odgovor: najtopleje je bilo ob 14.00, $20\,^\circ\text{C}$, zato Jaka nima prav; $16\,^\circ\text{C}$ je bilo ob 10.00 in ob 18.00.
+5. Temperatura $16\,^\circ\text{C}$: $-0{,}25(t - 14)^2 + 20 = 16$, torej $(t - 14)^2 = 16$ in $t - 14 = \pm 4$. Dobimo $t = 10$ in $t = 18$.
+6. Odgovor: po modelu je bilo najtopleje ob 14.00, $20\,^\circ\text{C}$, zato Jaka nima prav; $16\,^\circ\text{C}$ je bilo ob 10.00 in ob 18.00.
+7. Meja modela: velja le med 8.00 in 20.00. Za polnoč bi dal $f(0) = -0{,}25 \cdot 196 + 20 = -29$, torej nesmiselnih $-29\,^\circ\text{C}$.
+
+:::risba graf
+opis: Parabola skozi štiri meritve (8, 11), (12, 19), (16, 19) in (20, 11) s temenom T(14, 20) na črtkani simetrijski osi pri 14.00. Črtkana vodoravna črta pri 16 °C seka parabolo ob 10.00 in 18.00.
+x: 6 .. 22 | 2 | ura
+y: 0 .. 24 | 4 | °C
+f: -0,25*(x - 14)^2 + 20 | modra | 8 .. 20
+črta: 14; 0 -> 14; 24 | siva črtkano
+črta: 10; 16 -> 18; 16 | oranžna črtkano
+točka: 8; 11
+točka: 12; 19
+točka: 16; 19
+točka: 20; 11
+točka: 14; 20 | T(14, 20) | nad desno
+točka: 10; 16 | (10, 16) | nad levo | oranžna
+točka: 18; 16 | (18, 16) | desno | oranžna
+podnapis: Vrh leži med meritvama ob 12.00 in 16.00, višje od obeh
+:::
 
 ### Primer 4 – zdaj ti
 
@@ -195,7 +297,7 @@ Iz $2(x - 3)^2 = 2$ sledi $(x - 3)^2 = 1$ in $x - 3 = \pm 1$, torej $x_1 = 2$ in
 ## Pogoste napake
 
 - **Napačen predznak v temenu.** Pri $f(x) = (x + 3)^2 - 1$ teme ni $(3, -1)$. Razlog: v temenski obliki je $x - p$, zato $x + 3 = x - (-3)$ in $p = -3$. Pravilno: $T(-3, -1)$. Preveri tako, da vstaviš $x = p$: oklepaj mora biti enak $0$.
-- **Zamenjava $c$ in $q$.** Prosti člen $c$ je vrednost funkcije pri $x = 0$, ne pri temenu. Pri $f(x) = -x^2 + 4x + 5$ je $c = 5$, teme pa $(2, 9)$. Razlog za zmedo: pri $b = 0$ sta enaka. Pravilno: $q$ vedno izračunaj kot $f(p)$.
+- **Zamenjava $c$ in $q$.** Prosti člen $c$ je vrednost funkcije pri $x = 0$, ne pri temenu. Pri metu na koš iz Primera 2 je $c = 2{,}25$ višina, s katere žoga odleti, najvišja točka pa je $q = 3{,}69$. Razlog za zmedo: pri $b = 0$ sta enaka. Pravilno: $q$ vedno izračunaj kot $f(p)$.
 - **Pozabljen $\pm$ pri korenjenju.** Iz $(x - 1)^2 = 4$ nekateri dobijo le $x = 3$. Razlog: enačba $u^2 = 4$ ima rešitvi $u = 2$ in $u = -2$. Pravilno: $x - 1 = \pm 2$, torej $x = 3$ ali $x = -1$.
 - **Napaka pri $p = -\dfrac{b}{2a}$.** Pri $f(x) = 2x^2 - 12x + 16$ je $b = -12$, zato $p = -\dfrac{-12}{4} = 3$, ne $-3$. Pravilno: $b$ vstavi z njegovim predznakom v oklepaju.
 - **$-x^2$ in $(-x)^2$.** Pri $f(x) = -x^2 + 4x + 5$ je $f(-1) = -(-1)^2 - 4 + 5 = -1 - 4 + 5 = 0$, ne $1 - 4 + 5 = 2$. Razlog: najprej kvadriramo, nato upoštevamo minus pred členom.
@@ -210,19 +312,19 @@ Iz $2(x - 3)^2 = 2$ sledi $(x - 3)^2 = 1$ in $x - 3 = \pm 1$, torej $x_1 = 2$ in
 - Dve realni ničli, če sta $a$ in $q$ različnih predznakov; ena pri $q = 0$; nobene, če sta enakih predznakov.
 - Zaloga vrednosti: $[q, \infty)$ za $a > 0$, $(-\infty, q]$ za $a < 0$.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
 Predstavljaj si parabolo $y = x^2$ kot črko U, narisano na prozorni foliji, ki leži na koordinatnem sistemu tako, da je njeno dno v izhodišču. Vsak parameter temenske oblike naredi s to folijo nekaj drugega:
 
-- $q$ folijo **premakne gor ali dol**. Pri $q = 3$ se dno dvigne v točko $(0, 3)$.
-- $p$ folijo **premakne levo ali desno**. Pri $(x - 2)^2$ gre dno v desno na $x = 2$, saj je oklepaj enak nič ravno pri $x = 2$.
-- $a$ folijo **raztegne ali stisne** v navpični smeri. Pri $a = 2$ je vsaka točka dvakrat dlje od osi $x$, zato je krak strmejši in parabola videti ožja. Pri negativnem $a$ se U **prezrcali** čez os $x$ in postane obrnjen U.
+- Najprej $a$ folijo **raztegne ali stisne** v navpični smeri. Pri $a = 2$ je vsaka točka dvakrat dlje od osi $x$, zato je krak strmejši in parabola videti ožja. Pri negativnem $a$ se U **prezrcali** čez os $x$ in postane obrnjen U.
+- Nato $p$ folijo **premakne levo ali desno**. Pri $(x - 2)^2$ gre dno v desno na $x = 2$, saj je oklepaj enak nič ravno pri $x = 2$.
+- Nazadnje $q$ folijo **premakne gor ali dol**. Pri $q = 3$ se dno dvigne na višino $3$.
 
-Ničle so mesta, kjer krivulja preseka vodoravno os. Če je dno U nad osjo $x$ in je U odprt navzgor, krivulja osi nikoli ne doseže, zato realnih ničel ni. Če dno leži pod osjo, jo kraka presekata dvakrat, simetrično levo in desno od simetrijske osi. Če dno leži točno na osi, je ničla ena sama.
+Vrstni red je pomemben: če bi folijo najprej dvignil za $q$ in jo šele nato raztegnil, bi dno pristalo na višini $a \cdot q$.
 
 ## Drugače: Korak za korakom s številkami
 
-Postopek risanja grafa pokažimo na funkciji $f(x) = x^2 - 6x + 5$.
+Graf funkcije $f(x) = x^2 - 6x + 5$ iz 5. točke narišemo po korakih.
 
 1. **Preberi koeficiente:** $a = 1$, $b = -6$, $c = 5$. Ker je $a > 0$, je parabola odprta navzgor.
 2. **Teme:** $p = -\dfrac{-6}{2 \cdot 1} = 3$, $q = f(3) = 9 - 18 + 5 = -4$. Teme je $T(3, -4)$.
@@ -241,13 +343,15 @@ Postopek risanja grafa pokažimo na funkciji $f(x) = x^2 - 6x + 5$.
 | $5$ | $0$ |
 | $6$ | $5$ |
 
-7. **Nariši:** označi točke, skozi njih nariši gladko krivuljo, simetrično glede na premico $x = 3$. Vrednosti v tabeli so simetrične okoli $x = 3$, kar je dobra kontrola, da si teme izračunal pravilno.
+7. **Nariši:** označi točke, skozi njih nariši gladko krivuljo, simetrično glede na premico $x = 3$. Simetrične vrednosti v tabeli potrdijo, da je teme pravo.
 
 ## Drugače: Bolj natančno
 
-Temensko obliko dobimo iz splošne z **dopolnjevanjem do popolnega kvadrata**. Za $a \ne 0$ izpostavimo $a$ in prištejemo ter odštejemo kvadrat polovice koeficienta pri $x$:
+Temensko obliko dobimo iz splošne z **dopolnjevanjem do popolnega kvadrata**. Za $a \ne 0$ izpostavimo $a$, torej $ax^2 + bx = a\left(x^2 + \dfrac{b}{a}x\right)$, ter v oklepaju prištejemo in odštejemo kvadrat polovice koeficienta pri $x$:
 
-$$ax^2 + bx + c = a\left(x^2 + \frac{b}{a}x\right) + c = a\left(x + \frac{b}{2a}\right)^2 - \frac{b^2}{4a} + c.$$
+$$ax^2 + bx + c = a\left[\left(x + \frac{b}{2a}\right)^2 - \frac{b^2}{4a^2}\right] + c$$
+
+$$ax^2 + bx + c = a\left(x + \frac{b}{2a}\right)^2 - \frac{b^2}{4a} + c$$
 
 Od tod je $p = -\dfrac{b}{2a}$ in $q = c - \dfrac{b^2}{4a}$, kar se ujema s $q = f(p)$.
 
@@ -260,61 +364,63 @@ Od tod je $p = -\dfrac{b}{2a}$ in $q = c - \dfrac{b^2}{4a}$, kar se ujema s $q =
 ## Preveri se
 
 ? Kje je teme parabole $f(x) = -3(x + 2)^2 + 5$?
++ $T(-2, 5)$
 - $T(2, 5)$
 ~ Predznak v oklepaju si prebral naravnost. Ker je $x + 2 = x - (-2)$, je $p = -2$.
-+ $T(-2, 5)$
 - $T(-2, -5)$
 ~ Minus pred $3$ obrne parabolo navzdol, teme pa ostane na višini $q = 5$.
 - $T(5, -2)$
 ~ Koordinati sta zamenjani. Prva je iz oklepaja, druga je število za oklepajem.
 > Ker je $x + 2 = x - (-2)$, je $p = -2$, in $q = 5$. Teme je $T(-2, 5)$.
 
-? Katera trditev velja za $f(x) = -x^2 + 2x + 3$?
-- Parabola je odprta navzgor.
-~ Vodilni koeficient je $a = -1 < 0$, zato je parabola odprta navzdol.
-- Teme je $T(1, 3)$.
-~ $3$ je prosti člen $c$, ne $q$. Druga koordinata temena je $f(1) = 4$.
-+ Največja vrednost funkcije je $4$.
-- Os $y$ seka v točki $(0, -3)$.
-~ Presečišče z osjo $y$ je $(0, c) = (0, 3)$; predznaka $c$ ne spreminjaj.
-> $a = -1 < 0$, zato je parabola odprta navzdol. $p = -\dfrac{2}{-2} = 1$, $q = f(1) = -1 + 2 + 3 = 4$, os $y$ seka v $(0, 3)$.
+? Tri žoge letijo po parabolah $f(x) = -x^2 + 4x + 5$, $g(x) = -(x - 1)^2 + 7$ in $k(x) = -2x^2 + 8$. Razvrsti jih od najnižje do najvišje največje višine.
+- $f$, $g$, $k$
+~ Pri $f$ si za največjo višino vzel prosti člen $5$. To je vrednost pri $x = 0$; v temenu je $f(2) = 9$.
+- $k$, $g$, $f$
+~ Vodilni koeficient $-2$ parabolo zoži, ne zniža. Višino temena pove $q$: pri $k$ je $8$, pri $g$ pa $7$.
++ $g$, $k$, $f$
+> Največja vrednost je $q$. Pri $g$ je $q = 7$, pri $k$ je $q = 8$, pri $f$ je $p = 2$ in $q = f(2) = -4 + 8 + 5 = 9$.
 
 ? Ana je iskala ničle $f(x) = 2(x - 3)^2 - 18$ takole: $(x - 3)^2 = 9$, nato $x - 3 = 3$ in $x = 6$. Kje je napaka?
 - Ničla je $x = 3$, ker je tam oklepaj enak $0$.
 ~ Pri $x = 3$ je $f(3) = -18$: to je teme, ne ničla.
-+ Pozabila je na $\pm$: velja tudi $x - 3 = -3$, zato je druga ničla $x = 0$.
++ Pozabila je na $\pm$; druga ničla je $x = 0$.
 - Napake ni, kvadratna funkcija ima vedno natanko eno ničlo.
 ~ Ničli sta lahko dve, ena ali nobena. Tu je teme pod osjo, parabola pa odprta navzgor, zato sta dve.
 > Iz $(x - 3)^2 = 9$ sledi $x - 3 = \pm 3$, torej $x_1 = 0$ in $x_2 = 6$. Kontrola: $f(0) = 2 \cdot 9 - 18 = 0$.
 
-? Primerjaj grafa $f(x) = (x - 2)^2$ in $g(x) = x^2 - 2$. Kaj drži?
-- Oba sta parabola $y = x^2$, premaknjena za $2$ v desno.
-~ To velja le za $f$. Pri $g$ je $-2$ zunaj kvadrata, zato je premik za $2$ navzdol.
-- $f$ je premaknjen za $2$ v levo, $g$ za $2$ navzdol.
-~ Sprememba v oklepaju deluje obratno: $(x - 2)^2$ pomeni premik v desno.
-+ $f$ ima teme $(2, 0)$ in eno ničlo, $g$ ima teme $(0, -2)$ in dve ničli.
-> Pri $f$ je oklepaj enak $0$ pri $x = 2$, teme leži na osi $x$, ničla je ena (dvojna). Pri $g$ je teme pod osjo, parabola je odprta navzgor, ničli sta $\pm\sqrt{2}$.
+? Funkcija $f(x) = (x - 1)^2 - 4$ ima teme $T(1, -4)$ in ničli $-1$ in $3$. Kaj se zgodi, če vodilni koeficient spremenimo z $1$ na $-1$ in dobimo $g(x) = -(x - 1)^2 - 4$?
+- Teme se prezrcali v $(1, 4)$, ničli ostaneta $-1$ in $3$.
+~ To velja za $-f(x) = -(x - 1)^2 + 4$, kjer se spremeni tudi predznak $q$. Tu ostane $q = -4$.
+- Parabola se obrne navzdol, ničli ostaneta $-1$ in $3$.
+~ Parabola se obrne okoli temena, ki ostane pod osjo $x$. Kraka gresta navzdol in osi ne dosežeta več.
+- Teme se premakne v $(-1, -4)$.
+~ Minus pred oklepajem ne spremeni $p$: oklepaj je še vedno enak $0$ pri $x = 1$.
++ Teme ostane $T(1, -4)$, parabola se obrne navzdol in nima več realnih ničel.
+> $p$ in $q$ se ne spremenita, zato teme ostane. Zdaj sta $a$ in $q$ oba negativna: teme je najvišja točka in leži pod osjo $x$, zato realnih ničel ni.
 
-? Delfin skoči iz vode. Višina njegovega trupa nad gladino je $h(x) = -0{,}5(x - 3)^2 + 2$ metrov, kjer je $x$ vodoravna razdalja v metrih. Kako dolg je skok od mesta, kjer delfin izskoči, do mesta, kjer se potopi?
-- $3\,\text{m}$
-~ $3$ je prva koordinata temena, kjer je delfin najvišje, ne dolžina skoka.
-- $2\,\text{m}$
-~ $2\,\text{m}$ je največja višina skoka ($q$), ne vodoravna razdalja.
-+ $4\,\text{m}$
-- $5\,\text{m}$
-~ $5$ je le večja ničla. Dolžina skoka je razlika ničel.
-> Iz $-0{,}5(x - 3)^2 + 2 = 0$ sledi $(x - 3)^2 = 4$, $x - 3 = \pm 2$, ničli sta $1$ in $5$. Skok je dolg $5 - 1 = 4\,\text{m}$.
+? Kje je teme parabole $f(x) = -x^2 - 6x + 7$?
+- $T(3, -20)$
+~ V obrazec si vstavil $b = 6$ namesto $b = -6$. Pravilno je $p = -\dfrac{-6}{2 \cdot (-1)} = -3$.
+- $T(-3, 34)$
+~ Računal si $(-3)^2 = 9$ in pozabil minus pred členom: $-x^2$ je pri $x = -3$ enako $-9$.
++ $T(-3, 16)$
+- $T(-3, 7)$
+~ $7$ je prosti člen $c$, vrednost pri $x = 0$, ne v temenu.
+> $p = -\dfrac{-6}{2 \cdot (-1)} = -3$ in $q = f(-3) = -9 + 18 + 7 = 16$, torej $T(-3, 16)$.
 
 :::simboli
-f | kvadratna funkcija | f(x) = ax^2 + bx + c | |
-x | neodvisna spremenljivka | | |
+f | kvadratna funkcija | f(x) = ax^2 + bx + c | | v Primeru 3 temperatura v $^\circ\text{C}$
+x | neodvisna spremenljivka | | | v Primeru 2 vodoravna razdalja od mesta meta v m
 a | vodilni koeficient | | | $a \ne 0$; pri $a > 0$ je parabola odprta navzgor
 b | linearni koeficient | | |
 c | prosti člen | | | presečišče z osjo $y$ je $(0, c)$
-p | abscisa temena | p = -\frac{b}{2a} | | simetrijska os je $x = p$
-q | ordinata temena | q = f(p) | |
+p | prva koordinata temena | p = -\frac{b}{2a} | | simetrijska os je $x = p$
+q | druga koordinata temena | q = f(p) | |
 T | teme parabole | | |
 x_1, x_2 | ničli funkcije | | |
+h | višina žoge nad tlemi | | m | v Primeru 2, odvisna od razdalje $x$
+Z_f | zaloga vrednosti | | |
 t | ura dneva | | h
 t_1, t_2 | uri z enako temperaturo | | h | $p = \frac{t_1 + t_2}{2}$
 :::

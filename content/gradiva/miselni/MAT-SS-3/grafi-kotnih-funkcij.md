@@ -4,7 +4,10 @@ stanje: osnutek
 ---
 - Sinusoida
   - višina točke na enotski krožnici
-  - ničle pri $k\pi$, vrh pri $\frac{\pi}{2}$
+  - ničle pri $k\pi$, vrh pri $\frac{\pi}{2} + 2k\pi$
+- Kosinus
+  - sinus, premaknjen za $\frac{\pi}{2}$ v levo
+  - vrh pri $0$
 - Perioda
   - $\sin$, $\cos$: $2\pi$; $\tan$: $\pi$
   - $T = \dfrac{2\pi}{|b|}$
@@ -20,6 +23,7 @@ stanje: osnutek
   - $Z_f = [d - |A|,\ d + |A|]$
 - Splošna oblika
   - $f(x) = A\sin\big(b(x - c)\big) + d$
-  - dihalni krog: $r = 10\sin\left(\frac{\pi}{4}t\right) + 20$
+  - dolžina dneva: $A = 3{,}6\,\text{h}$, $d = 12{,}2\,\text{h}$, $c = 79$
 - Tangens
   - asimptote pri $\frac{\pi}{2} + k\pi$
+  - $\tan(bx)$: perioda $\frac{\pi}{|b|}$

@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Oksonijevi ioni
+  - močna kislina odda proton popolnoma
+  - $[\mathrm{H_3O^+}] = c$ pri $\mathrm{HCl}$, $\mathrm{HNO_3}$
+- Definicija pH
+  - $\mathrm{pH} = -\log[\mathrm{H_3O^+}]$
+  - kalkulator: $-\log 0{,}0020 \approx 2{,}70$
+  - napaka: izgubljen minus
+- Lestvica pH
+  - pod $7$ kislo, nad $7$ bazično ($25\,^\circ\mathrm{C}$)
+  - ena enota pomeni faktor $10$
+  - pH $2 \to 4$: $100$-krat redčenje
+- Voda in pOH
+  - $[\mathrm{H_3O^+}] \cdot [\mathrm{OH^-}] = 10^{-14}$
+  - $\mathrm{pH} + \mathrm{pOH} = 14$ pri $25\,^\circ\mathrm{C}$
+- Močne baze
+  - $[\mathrm{OH^-}] = c$, pri $\mathrm{Ba(OH)_2}$ $2c$
+  - najprej pOH, nato $14 - \mathrm{pOH}$
+  - napaka: pOH zapisan kot pH
+- Obratni račun
+  - $[\mathrm{H_3O^+}] = 10^{-\mathrm{pH}}$
+  - nato $n = c \cdot V$, $m = n \cdot M$
+- Redčenje
+  - $c_1 \cdot V_1 = c_2 \cdot V_2$
+  - razpolovitev: pH zraste za $0{,}30$
+  - kislina nikoli ne preseže pH $7$
+- Meje
+  - pH pod $0$ pri $c$ nad $1\,\text{mol/L}$
+  - $\mathrm{H_2SO_4}$: $[\mathrm{H_3O^+}]$ ni $2c$

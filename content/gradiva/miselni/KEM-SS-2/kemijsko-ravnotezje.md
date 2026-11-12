@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Obojesmerna reakcija
+  - $\mathrm{H_2 + I_2 \rightleftharpoons 2\,HI}$
+  - poteka v desno in v levo hkrati
+- Dinamično ravnotežje
+  - hitrosti obeh reakcij sta enaki
+  - koncentracije stalne, a ne enake
+  - napaka: »reakcija se ustavi«
+- Konstanta ravnotežja
+  - $K = \dfrac{[\mathrm{C}]^x[\mathrm{D}]^y}{[\mathrm{A}]^a[\mathrm{B}]^b}$
+  - produkti zgoraj, koeficienti so eksponenti
+  - spremeni jo samo temperatura
+- Velikost K
+  - velik $K$: prevladujejo produkti
+  - majhen $K$: prevladujejo reaktanti
+- Motnja ravnotežja
+  - dodamo $\mathrm{H_2}$: razmerje $32 < K = 64$
+  - reakcija teče v desno do $K$
+- Le Chatelierjevo načelo
+  - premik v smer, ki motnjo delno izniči
+  - tlak: stran z manj molekulami plina
+  - segrevanje: endotermna smer
+- Katalizator
+  - ravnotežja ne premakne
+  - ravnotežje se vzpostavi prej
+- Apnenica
+  - $\mathrm{CaCO_3 \rightleftharpoons CaO + CO_2}$
+  - odprta peč: $\mathrm{CO_2}$ uhaja, razpad do konca
+  - trdnih snovi v $K$ ne pišemo

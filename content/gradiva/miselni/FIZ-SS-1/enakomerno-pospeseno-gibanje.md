@@ -5,6 +5,7 @@ stanje: osnutek
 - Pospešek
   - $a = \dfrac{\Delta v}{\Delta t}$, enota $\mathrm{m/s^2}$
   - napaka: velik pospešek ni velika hitrost
+  - graf $a(t)$: vodoravna premica
 - Graf v(t)
   - premica z naklonom $a$
   - ploščina pod njo je pot
@@ -13,6 +14,7 @@ stanje: osnutek
   - zaviranje: $a$ negativen
 - Pot
   - $s = v_0\,t + \dfrac{a\,t^2}{2}$
+  - $s = \bar v\, t$, $\bar v = \dfrac{v_0 + v}{2}$
   - dvojni čas, štirikratna pot
 - Enačba brez časa
   - $v^2 = v_0^2 + 2\,a\,s$
