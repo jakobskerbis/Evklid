@@ -59,10 +59,10 @@ const FORM = {
     "technology and phones", "shopping and money", "building and crafts", "medicine and the body", "space and astronomy",
   ],
   quiz: [
-    "mix: one »which is true«, one numeric, one »spot the mistake in this solution«, one comparison, one real-life case",
-    "mix: one definition-in-context, one ordering/ranking, one »what happens if …«, two numeric",
-    "mix: one »which picture/table fits«, one estimate, one »why« question, one reverse question, one transfer case",
-    "mix: one »odd one out«, one numeric, one cause–effect, one »which step is wrong«, one real-life case",
+    "mix: one »which is true«, one »vpiši število« (=), one »spot the mistake in this solution«, one comparison, one real-life case",
+    "mix: one definition-in-context, one »razvrsti« (ordering/ranking), one »what happens if …«, two numeric (at least one »vpiši število«)",
+    "mix: one »read the figure« (:::risba in the question), one estimate (»vpiši število« with a tolerance), one »why« question, one reverse question, one transfer case",
+    "mix: one »odd one out«, one »vpiši število«, one cause–effect, one »which step is wrong«, one »razvrsti« (steps of a procedure in order)",
   ],
   alts: [
     ["Na sliki", "Iz vsakdanjega življenja"],
@@ -121,7 +121,7 @@ Quality bar (docs/kakovost.md §1, all required):
 - Pogoste napake: 3–5 real misconceptions of this topic, each with the wrong reasoning, why it is wrong and the fix; the quiz distractors use the same misconceptions.
 - Povzetek: a few bullet lines (the tutor gets it as context).
 - Drugače: at least 2 truly different alternatives (»Na sliki«, »${onlyUni ? "Uporaba v stroki" : "Iz vsakdanjega življenja"}«, »Korak za korakom s številkami«, »Bolj natančno«).
-- Preveri se: 5 questions (1 recall, 2 understanding, 2 application), ≥ 3 options, exactly one \`+\`, every \`-\` option has its own \`~\` line (why a student picks it), \`>\` explains the right answer.
+- Preveri se: 5 questions (1 recall, 2 understanding, 2 application), mixed types (README »Preveri se«): multiple choice (≥ 3 options, exactly one \`+\`, every \`-\` option has its own \`~\` line: why a student picks it), »vpiši število« (exactly one \`= value | tolerance\`, decimal comma, optional unit; add \`~ value | why\` for each typical wrong result) and »razvrsti« (3–6 lines \`1.\` … in the correct order; the app shuffles them). Do not make every question multiple choice: use a number where the answer is a number. Where the topic has a graph, diagram or table, at least one question asks the student to read a \`:::risba\` placed in the question (between the \`?\` line and the answers). \`>\` explains the right answer.
 - Variety (docs/kakovost.md §1b): follow each topic's \`form\` plan below for the Zakaj opening, the Razlaga path, the main context (Zakaj and at least one example; other examples may use other contexts), the quiz question types and the 2 Drugače titles (add more alternatives only if they add something). Use the exemplar for format only, never copy its structure, openings or phrasing. Vary sentence openings and paragraph lengths; no stock phrases (»V tej lekciji se bomo naučili«, »Poglejmo si«, »Kot vidimo«) and no section that starts the same way as in the other lesson you write.
 - Phone: no information only in colour; formulas fit 360 px or are split. ${onlyUni ? "1800–3000" : "1300–2300"} words, short sentences.
 - Tappable formulas: end the file with one \`:::simboli\` block, one line per symbol of every \`$$…$$\` and \`:::formula\` formula: \`<TeX symbol> | <Slovenian name as in the lesson> | <defining relation in TeX or empty> | <unit in TeX, e.g. kg/m^3, mol/L, L\\,mol^{-1}\\,cm^{-1}; – if dimensionless; empty for pure maths> | <optional note ≤ 12 words>\`; maths inside a name or note goes in \`$…$\`. Meaning as used in THIS lesson (T in $T = I/I_0$ is »prepustnost«, not temperature). The checker lists symbols still missing.
@@ -152,7 +152,7 @@ Reply ≤ 3 lines per lesson: \`OK <id>, <words> besed\` or what is unresolved. 
 const REVIEWER = `# Evklid review brief: ${topics.length} lesson${topics.length > 1 ? "s" : ""} (second, independent pass)
 
 Run first: \`node scripts/check-lesson.js -q ${files}\` and \`node scripts/check-gradivo.js -q ${maps}\`. Format, LaTeX, pure-number steps and every \`<<RACUN\` claim (SymPy) are then already checked; check that the RACUN block covers every worked-example result and matches the text (it prints how many steps it recomputed and any mismatch). Read for content only and check:
-1. Remaining numbers: substitutions, rounding, units and significant figures in every worked example (batch them into one \`node -e\`); every \`+\` quiz answer truly correct, every \`-\` truly wrong; every \`~\` names the real error.
+1. Remaining numbers: substitutions, rounding, units and significant figures in every worked example (batch them into one \`node -e\`); every \`+\` quiz answer truly correct, every \`-\` truly wrong; every \`~\` names the real error; every \`=\` value recomputed with a sensible tolerance and every \`~ value\` really the result of the named error; every »razvrsti« list truly in the correct order (1. first); a figure in a question shows what the question needs.
 2. Level fits the path: nothing used that the path has not taught yet; every goal covered.
 3. »Podatki« lists all given data; steps say why; Primer 3 is ${onlyUni ? "at exam level" : "a transfer case"}; the faded final step exists.
 4. Pogoste napake are real misconceptions of this topic and match the distractors; the 2 »premisli« ask for a prediction or a »zakaj«.

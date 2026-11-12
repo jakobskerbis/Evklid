@@ -548,9 +548,18 @@ async function renderLesson(topicId) {
       : `<section class="card tb-section"><div class="explanation">${R(L.explanation)}</div></section>${SLOT}`
     : "";
 
-  const staticItem = (c) => `<li><div class="tb-q">${R(c.q)}</div><ol type="a">${c.options.map((o) => `<li>${R(o)}</li>`).join("")}</ol>
+  // Vpiši število in razvrsti (polje type, public/preveri-se.js): tu le vprašanje; vnos, elemente in rešitev
+  // doda public/preveri-se-ziv.js, ki se naloži samo pri lekciji s takim vprašanjem (prvo odprtje ostane manjše).
+  const typedItem = (c, qi, tag) => `<${tag} class="tb-check tb-typed" data-q="${qi}"><div class="tb-q">${R(c.q)}</div><div class="tb-typed-body"></div></${tag}>`;
+  const staticItem = (c, qi) =>
+    c.type
+      ? typedItem(c, qi, "li")
+      : `<li><div class="tb-q">${R(c.q)}</div><ol type="a">${c.options.map((o) => `<li>${R(o)}</li>`).join("")}</ol>
       <details><summary>Rešitev</summary>${"abcdefgh"[c.correct]}) ${c.why ? R(c.why) : ""}</details></li>`;
-  const liveItem = (c, qi) => `<div class="tb-check" data-q="${qi}">
+  const liveItem = (c, qi) =>
+    c.type
+      ? typedItem(c, qi, "div")
+      : `<div class="tb-check" data-q="${qi}">
             <div class="tb-q">${R(c.q)}</div>
             <div class="tb-opts">${c.options.map((o, oi) => `<button type="button" class="tb-opt" data-o="${oi}">${R(o)}</button>`).join("")}</div>
             <div class="tb-why" hidden></div>
@@ -560,7 +569,7 @@ async function renderLesson(topicId) {
     `<section class="card tb-checks"><h2>${ic("circle-help")}${esc(title)}</h2>${
       L.interactive
         ? idx.map((qi) => liveItem(lesson.checks[qi], qi)).join("")
-        : `<ol start="${idx[0] + 1}">${idx.map((qi) => staticItem(lesson.checks[qi])).join("")}</ol>`
+        : `<ol start="${idx[0] + 1}">${idx.map((qi) => staticItem(lesson.checks[qi], qi)).join("")}</ol>`
     }</section>`;
   const nChecks = lesson?.checks?.length || 0;
   const checksHtml = nChecks ? checksCard(lesson.checks.map((_, i) => i)) : "";
@@ -692,7 +701,18 @@ async function renderLesson(topicId) {
   box.querySelectorAll("[data-alt]").forEach((b) => b.addEventListener("click", () => showAlt(Number(b.dataset.alt))));
   // Preveri se. Prvi odgovor na vsako vprašanje gre tudi med šibke točke (strežnik sam preveri pravilnost).
   const answered = new Set();
-  if (L.interactive) box.querySelectorAll(".tb-check").forEach((el) => {
+  const sendFirst = (qi, body) => {
+    const sid = ctx.getStudent()?.id;
+    if (sid && !answered.has(qi)) {
+      answered.add(qi);
+      ctx.api(`/api/students/${sid}/lesson-check`, { method: "POST", body: { topic: L.id, q: qi, ...body } }).catch(() => {});
+    }
+  };
+  if (box.querySelector(".tb-typed"))
+    import("./preveri-se-ziv.js")
+      .then((m) => current?.id === L.id && m.oziviPreveri(box, { checks: lesson.checks, interactive: !!L.interactive, R, esc, ic, send: sendFirst, fit: prilagodiSirino }))
+      .catch(() => {});
+  if (L.interactive) box.querySelectorAll(".tb-check:not(.tb-typed)").forEach((el) => {
     const qi = Number(el.dataset.q);
     const c = lesson.checks[qi];
     el.querySelectorAll(".tb-opt").forEach((b) =>
