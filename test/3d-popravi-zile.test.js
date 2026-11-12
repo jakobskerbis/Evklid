@@ -168,6 +168,30 @@ test("popravek žil: skrit konec (stik, konec v sosednji žili) dobi obroč iz o
   assert.equal(osne(a, 0), 24);
 });
 
+test("popravek žil: izpostavljen del skritega konca (ob drobni žili) ima obroč z normalo zunanje stene, tudi poševen", () => {
+  const kl = (p) => `${Math.round(p[0] / 2e-6)},${Math.round(p[1] / 2e-6)},${Math.round(p[2] / 2e-6)}`;
+  for (const strig of [0, 0.7]) {
+    const narejena = (izp) => {
+      const m = cev();
+      for (let i = 0; i < m.P.length / 3; i++) m.P[i * 3 + 1] += strig * m.P[i * 3]; // poševen konec
+      G.zvari(m);
+      const skrita = new Set(m.W.filter((p) => Math.abs(p[1] - strig * p[0]) < 1e-9).map(kl));
+      stena({ ime: "c", m }, 2.5, { skrita, izpostavljena: izp ? skrita : null });
+      G.poravnajNormale(m); // drugi klic kot v popravi(): ne sme obrniti ničesar več
+      assert.equal(G.poravnajNormale(m), 0);
+      assert.deepEqual(pregled(m), [0, 0, 0, 0, 0, 0]);
+      return m;
+    };
+    const a = narejena(false), b = narejena(true);
+    assert.equal(b.P.length - a.P.length, 3 * 12, "12 novih oglišč obroča");
+    assert.equal(a.F.length, b.F.length);
+    // oglišča na notranjem polmeru z normalo navzven: samo nova oglišča obroča
+    const navzven = (m) => { const n = m.A.get("NORMAL").d; let st = 0; for (let i = 0; i < m.P.length / 3; i++) { const x = m.P[i * 3], z = m.P[i * 3 + 2]; if (Math.abs(m.P[i * 3 + 1] - strig * x) < 0.004 && Math.hypot(x, z) < 0.009 && x * n[i * 3] + z * n[i * 3 + 2] > 0) st++; } return st; };
+    assert.equal(navzven(a), 0);
+    assert.equal(navzven(b), 12);
+  }
+});
+
 test("popravek žil: svetlina v zaprti zunanji lupini se ne obrne (tudi čez dve prekrivajoči se lupini), štrleč obrnjen kos pa", () => {
   // dve zaprti polni cevi, ki se prekrivata vzdolž osi (deblo + veja), in ena svetlina skozi obe
   const zaprta = (o) => { const m = cev(o); polna({ ime: "c", m }, true); return m; };

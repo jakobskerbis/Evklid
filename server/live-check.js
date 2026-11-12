@@ -277,7 +277,7 @@ export function codeFindings(answer, pre = null, question = "") {
       if (v.issue) return { checked, issue: v.issue };
     }
   }
-  for (const f of [valenceIssue(answer, question), celsiusIssue(answer, question)]) {
+  for (const f of [valenceIssue(answer, question), groupIssue(answer, question), celsiusIssue(answer, question)]) {
     checked += f.checked;
     if (f.issue) return { checked, issue: f.issue };
   }
@@ -338,6 +338,43 @@ export function valenceIssue(answer, question = "") {
           checked,
           issue: `in $v = 8 - ${k}$ for ${ELEMENT_NAME[el.sym]} (${el.sym}) the answer uses ${k}${k === el.z ? ", its atomic number," : ""} but ${el.sym} has ${el.outer} outer (valence) electrons, so $v = 8 - ${el.outer} = ${8 - el.outer}$`,
         };
+    }
+  }
+  return { checked, issue: null };
+}
+
+// Skupina po stari oznaki glavnih skupin (meritev 12. 11., OŠ: »dušik je v 5. skupini«; slovenski učbeniki štejejo
+// 1–18, dušik je v 15.). Vsi elementi v ELEMENTS so p-elementi, skupina = zunanji elektroni + 10. Zadetek je samo,
+// ko je k točno število zunanjih elektronov elementa, ki je v isti povedi zadnji omenjen največ 60 znakov pred
+// »k. skupin…«. Ne štejejo (pregled A, PR #585): vrstica, ki omeni tudi pravo skupino; k iz učenčevega sporočila;
+// prehodna kovina med elementom in številko (»s kromom iz 6. skupine«); skupina česa drugega (»4. skupino nalog«).
+// Znane zgrešitve (namerno, da ni lažnih zadetkov): stara oznaka »VA« ali rimske številke, »skupini 5«, vrstilni
+// števnik v LaTeXu (»$5.$ skupina«).
+const GROUP_RE = /(?<![\p{L}\d.,])(\d{1,2})\.\s*skupin/giu;
+const D_BLOCK_RE = /skandij|titan|vanadij|krom|mangan|želez|kobalt|nikelj|nikl|baker|bakr|cink|cirkonij|niobij|molibden|volfram|prehodn|(?<![\p{L}\d])(?:Sc|Ti|V|Cr|Mn|Fe|Co|Ni|Cu|Zn|Zr|Nb|Mo|W)(?![\p{L}\d])/u;
+const NOT_CHEM_RE = /^\p{L}*\s+(?:nalog|vprašanj|vaj|učenc|dijak|točk|podatk|primer|otrok|ljudi)/iu;
+const groupsIn = (t) => new Set([...String(t || "").matchAll(GROUP_RE)].map((m) => Number(m[1])));
+export function groupIssue(answer, question = "") {
+  let checked = 0;
+  const pupil = groupsIn(question);
+  for (const line of String(answer || "").split("\n")) {
+    if (SKIP_LINE.test(line)) continue;
+    const named = groupsIn(line);
+    for (const m of line.matchAll(GROUP_RE)) {
+      if (NOT_CHEM_RE.test(line.slice(m.index + m[0].length))) continue;
+      let win = line.slice(Math.max(0, m.index - 60), m.index);
+      // Samo ista poved: konec povedi je ».!?« in presledek, ne vrstilni števnik (»2. periodi«).
+      const ends = [...win.matchAll(/(?<!\d)[.!?]\s/g)];
+      if (ends.length) win = win.slice(ends.at(-1).index + ends.at(-1)[0].length);
+      const el = elementMentions(win).at(-1);
+      if (!el) continue;
+      checked++;
+      const k = Number(m[1]);
+      if (k !== el.outer || pupil.has(k) || named.has(el.outer + 10) || D_BLOCK_RE.test(win.slice(el.at + 1))) continue;
+      return {
+        checked,
+        issue: `the answer puts ${ELEMENT_NAME[el.sym]} (${el.sym}) in the ${k}. skupina, but Slovenian schools number the groups 1–18 and ${el.sym} is in the ${el.outer + 10}. skupina (it has ${el.outer} outer electrons)`,
+      };
     }
   }
   return { checked, issue: null };
