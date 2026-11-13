@@ -341,7 +341,7 @@ def oblika_kril(P, stran, zl, zh, hil, o):
     ku = np.where(sg * u > 0, k, 0.3 * k)
     u2 = u * np.sqrt(1 - ku * vc * vc / 2); v2 = v * np.sqrt(1 - k * uc * uc / 2)
     # (b) stožec: nad 40 % višine se prerez oži proti vrhu, vrh se pomakne medialno in nazaj
-    w = ss(0.4, 1.0, t) ** 1.3
+    w = ss(o.get("zoziOd", 0.4), 1.0, t) ** 1.3
     sk = 1 - o.get("zozi", 0.34) * w
     u2 = u2 * sk - sg * 0.22 * w; v2 = v2 * sk + 0.10 * w
     Q[:, 0] = c[0] + u2 * h[0]; Q[:, 1] = c[1] + v2 * h[1]
@@ -352,6 +352,15 @@ def oblika_kril(P, stran, zl, zh, hil, o):
     # (d) srčna vtisnina / zareza: medialna ploskev spredaj se med 12 % in 50 % višine umakne lateralno
     N = o.get("srce", (0.028, 0.010))[0 if stran == "left" else 1]
     Q[:, 0] += sg * N * np.exp(-((t - o.get("srceT", 0.30)) / 0.15) ** 2) * np.exp(-((vc + 1) / 0.95) ** 2) * np.exp(-((sg * uc + 1) / 0.75) ** 2)
+    # (e) n6: lingula – pod srčno zarezo se sprednji medialni rob levega krila podaljša medialno v jeziček
+    if stran == "left" and o.get("lingula", 0) > 0:
+        Q[:, 0] -= sg * o["lingula"] * np.exp(-((t - o.get("lingulaT", 0.13)) / 0.06) ** 2) * np.exp(-((vc + 1) / 0.5) ** 2) * np.exp(-((sg * uc + 1) / 0.6) ** 2)
+    # (f) n6 (ocena n5: »hard ledge at base«): spodnjih 22 % višine se prerez proti spodnjemu robu rahlo zoži (zaobljen
+    # rebrno-preponski rob namesto police)
+    bz = o.get("bazaZozi", 0)
+    if bz:
+        f = 1 - bz * (1 - ss(0.0, 0.22, t)) ** 1.5
+        Q[:, 0] = c[0] + (Q[:, 0] - c[0]) * f; Q[:, 1] = c[1] + (Q[:, 1] - c[1]) * f
     if hil is not None:
         g = ss(0.012, 0.05, np.linalg.norm(P - np.asarray(hil, float), axis=1))
         Q = P + (Q - P) * g[:, None]
@@ -561,6 +570,36 @@ def pljucna_drevesa(osnovni, cfg, tmp):
         tel[ime] = me_t
         print(f"[organi] {ime}: {n0} stalnih, {len(vozli) - n0} novih vozlišč, {len(tocke)} točk, vej {len(v_r)} / {len(v_t)}, trikotnikov {tris(me)} / {tris(me_t)}")
         izhod.append([ime, me, tkivo, del_, ime + " / Evklid"])
+    # n6 (ocena n5: »horizontal pipe + hanging stub«): pljučno deblo Z-Anatomy je odrezano tik pod razcepiščem, od spredaj
+    # je bilo videti kot krn. Podaljšamo ga navzdol in naprej proti izhodišču iz desnega prekata (debloDolzina m): od spredaj
+    # se vidi žila, ki se dviga izpod loka in se razcepi v desno in levo pljučno arterijo.
+    dz = nast.get("debloDolzina", 0)
+    deblo = next((r for r in osnovni if r[0].startswith("Pulmonary trunk")), None)
+    if dz and deblo is not None:
+        import numpy as np
+        V = np.array([list(v.co) for v in deblo[1].vertices])
+        c = V.mean(0); os_ = np.linalg.svd(V - c, full_matrices=False)[2][0]
+        t = (V - c) @ os_
+        if V[t < np.quantile(t, 0.1)][:, 2].mean() > V[t > np.quantile(t, 0.9)][:, 2].mean():
+            os_ = -os_; t = -t  # os kaže navzgor, proti razcepišču
+        sp = V[t < np.quantile(t, 0.12)]; a = sp.mean(0)
+        r = float(np.linalg.norm((sp - a) - np.outer((sp - a) @ os_, os_), axis=1).mean())
+        P = [a + os_ * 0.006]; n = 10
+        for i in range(n):
+            u = (i + 0.5) / n
+            d = (1 - u) * (-os_) + u * np.array([0.0, -0.25, -1.0]); d /= np.linalg.norm(d)
+            P.append(P[-1] + d * (dz + 0.006) / n)
+        P = [Vector(q) for q in P]; R = [r * (1.0 + 0.14 * i / n) for i in range(n + 1)]
+        for t_ in (False, True):
+            bm = bmesh.new(); cev(bm, P, R, 12 if t_ else 24, kupola=True)
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+            me = bpy.data.meshes.new("deblo"); bm.to_mesh(me); bm.free()
+            for q in me.polygons: q.use_smooth = True
+            if t_:
+                tel["Pulmonary trunk (lastno)"] = me
+            else:
+                izhod.append(["Pulmonary trunk (lastno)", me, deblo[2], deblo[3], "Pulmonary trunk (lastno) / Evklid"])
+        print(f"[organi] pljučno deblo: podaljšek {dz * 1000:.0f} mm, polmer {r * 1000:.1f} mm, začetek {[round(float(x), 3) for x in a]}")
     return izhod
 
 

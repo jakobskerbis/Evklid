@@ -3,10 +3,10 @@
  "vir": "Pljučni režnji iz CT (TotalSegmentator, CC BY 4.0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; veje bronhijev in žil v pljučih so cevi iz središčnic Z-Anatomy (scripts/atlas/drevesa.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "pljuca": {
-   "hrap": 0.4,
-   "lak": 0.55,
-   "lakHrap": 0.32,
-   "sijaj": 0.5,
+   "hrap": 0.52,
+   "lak": 0.22,
+   "lakHrap": 0.5,
+   "sijaj": 0.25,
    "ao": 0.5,
    "zrno": 0.045,
    "f": 160,
@@ -67,10 +67,10 @@
    ]
   },
   "dihalna": {
-   "hrap": 0.34,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "hrap": 0.45,
+   "lak": 0.3,
+   "lakHrap": 0.35,
+   "sijaj": 0.25,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -435,6 +435,7 @@
     "Posterior segmental artery of left lung",
     "Posterior segmental artery of right lung",
     "Pulmonary trunk",
+    "Pulmonary trunk (lastno)",
     "Right pulmonary artery",
     "Superior lingular artery of left lung",
     "Superior lobar artery of right lung",
@@ -548,10 +549,10 @@
    }
   ]
  },
- "velikost": 0.4316,
+ "velikost": 0.4309,
  "trikotniki": {
-  "racunalnik": 163642,
-  "telefon": 54318
+  "racunalnik": 163954,
+  "telefon": 54422
  },
  "luci": [
   {

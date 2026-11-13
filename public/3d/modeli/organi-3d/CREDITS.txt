@@ -17,7 +17,8 @@ pljuca.glb, pljuca-telefon.glb (površine pljučnih režnjev s špranjami)
   https://doi.org/10.5281/zenodo.6802613, preiskava s0913, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
   Prirejeno (marching cubes, glajenje, poenostavitev, poravnava na pljuča Z-Anatomy); izdelava scripts/atlas/pljuca-ct.py.
   Bronhiji, žile, pljučno deblo in sapnik ob hilusu: Z-Anatomy (CC BY-SA 4.0) in lastna geometrija Evklid; deljenje pod
-  enakimi pogoji (izpeljane mreže pod CC BY-SA 4.0). Oblika kril n5: scripts/atlas/drevesa.py (oblika_kril).
+  enakimi pogoji (izpeljane mreže pod CC BY-SA 4.0). Oblika kril n5: scripts/atlas/drevesa.py (oblika_kril). Podaljšek pljučnega debla
+  (Pulmonary trunk (lastno)): lastna geometrija Evklid.
 
 mozgani.glb, mozgani-telefon.glb (skorja, mali možgani, bele sredinske strukture)
   OpenNeuro ds000001, fMRIPrep/FreeSurfer, sub-01 (CC0 1.0): pialna površina (lh/rh.pial, sulc, aparc) in segmentacija
