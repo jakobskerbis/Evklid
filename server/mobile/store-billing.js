@@ -176,7 +176,9 @@ export function mountStoreBilling(app, ctx, opts = {}) {
     if (tx.revocationDate) markRevoked(tx);
     else if (isRevoked(tx)) return res.status(409).json({ error: "Ta nakup je bil vrnjen ali preklican.", revoked: true });
     const existing = row("apple", String(tx.originalTransactionId));
-    const older = existing && (!existing.parent_id || existing.parent_id === p.id) && Number(tx.expiresDate) < Date.parse(existing.expires_at);
+    // Samo dokler je shranjena naročnina živa: po vračilu je expires_at lahko daleč naprej (letni paket), nov krajši nakup pa mora skozi.
+    const live = existing && ["active", "grace", "billing_retry"].includes(existing.status);
+    const older = live && (!existing.parent_id || existing.parent_id === p.id) && Number(tx.expiresDate) < Date.parse(existing.expires_at);
     if (older) return res.json({ ok: true, older: true, conflict: null, account: accountView(req, getParent(p.id)) });
     const out = apply("apple", String(tx.originalTransactionId), appleState(tx), p.id);
     if (out.error) return res.status(400).json({ error: out.error });

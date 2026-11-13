@@ -267,6 +267,17 @@ test("Apple: after REFUND the same signed purchase stays canceled, a new purchas
     const renewed = await post(appleJws(tx({ appAccountToken: token, transactionId: "2000000012", expiresDate: Date.now() + 30 * DAY, signedDate: Date.now() })));
     assert.equal(renewed.status, 200, JSON.stringify(renewed.body));
     assert.equal(status(), "active");
+
+    // Letni paket, vrnjen po 20 dneh (expires_at ostane ~345 dni naprej), nato mesečni nakup v isti skupini:
+    // krajše obdobje od shranjenega, a shranjena naročnina ni živa, zato nakup velja.
+    const year = tx({ appAccountToken: token, transactionId: "2000000013", expiresDate: Date.now() + 345 * DAY, signedDate: Date.now() });
+    assert.equal((await post(appleJws(year))).status, 200);
+    assert.equal((await notify("REFUND", { ...year, revocationDate: Date.now() })).status, 200);
+    assert.equal(status(), "canceled");
+    const month = await post(appleJws(tx({ appAccountToken: token, transactionId: "2000000014", expiresDate: Date.now() + 30 * DAY, signedDate: Date.now() })));
+    assert.equal(month.status, 200, JSON.stringify(month.body));
+    assert.equal(month.body.older, undefined);
+    assert.equal(status(), "active");
   });
 });
 
