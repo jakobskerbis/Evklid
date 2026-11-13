@@ -21,3 +21,9 @@ pljuca.glb, pljuca-telefon.glb (površine pljučnih režnjev s špranjami)
 mozgani.glb, mozgani-telefon.glb (skorja in mali možgani)
   OpenNeuro ds000001, fMRIPrep/FreeSurfer, sub-01 (CC0 1.0): pialna površina (lh/rh.pial, sulc, aparc) in segmentacija
   aseg.mgz (mali možgani, oznake 7/8/46/47); izdelava scripts/atlas/mali-mozgani-mri.py in izvozi-organe.py.
+
+oko-foto.webp (fotografska tekstura šarenice in žilic beločnice; projicira jo public/3d/organ.js, tkivo.foto)
+  This work is based on "Realistic Human Eye"
+  (https://sketchfab.com/3d-models/realistic-human-eye-417cbd1aac554ea189966250b784ab6f) by Alexander Antipov
+  (https://sketchfab.com/Dessen) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/).
+  Prirejeno: difuzna tekstura pomanjšana na 1024 × 1024 (WebP).

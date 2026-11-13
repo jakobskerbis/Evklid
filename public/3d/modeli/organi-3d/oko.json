@@ -29,7 +29,31 @@
    "zileMaska": 9,
    "lise2": 0.18,
    "lise2Barva": "#f6e6d6",
-   "lise2F": 5
+   "lise2F": 5,
+   "foto": {
+    "slika": "oko-foto.webp",
+    "nacin": "krogla",
+    "sredisce": [
+     0.0086,
+     -0.00114,
+     0.01487
+    ],
+    "os": [
+     0.0666,
+     0.0539,
+     0.9963
+    ],
+    "kot0": 0.51,
+    "kot1": 1.3,
+    "uv0": 0.2,
+    "uv1": 0.45,
+    "pojenja": 0.3,
+    "uvSredisce": [
+     0.4989,
+     0.5036
+    ],
+    "moc": 1
+   }
   },
   "roženica": {
    "barva": "#f4fbff",
@@ -64,7 +88,7 @@
    "zrcalo": true,
    "ucnaProsojnost": 1,
    "ucnaRob": [
-    0.3,
+    0.06,
     0.85
    ]
   },
@@ -100,7 +124,28 @@
     "vlakna": 110
    },
    "tekstura": false,
-   "ucnaGladko": true
+   "ucnaGladko": true,
+   "foto": {
+    "slika": "oko-foto.webp",
+    "nacin": "disk",
+    "sredisce": [
+     0.00953,
+     -0.00096,
+     0.02568
+    ],
+    "os": [
+     0.0666,
+     0.0539,
+     0.9963
+    ],
+    "polmer": 0.0062,
+    "uvPolmer": 0.195,
+    "uvSredisce": [
+     0.4989,
+     0.5036
+    ],
+    "moc": 0.9
+   }
   },
   "leča": {
    "barva": "#efdcae",
@@ -542,8 +587,8 @@
      -0.00136,
      0.01468
     ],
-    "polmer": 0.86,
-    "polmerTelefon": 0.8
+    "polmer": 1.0,
+    "polmerTelefon": 0.95
    },
    "skrijTkiva": [
     "leča",
@@ -590,9 +635,9 @@
    ],
    "okvir": {
     "sredisce": [
-     0.00713,
-     0.00201,
-     0.01144
+     0.00743,
+     0.00221,
+     0.01544
     ],
     "polmer": 0.54,
     "polmerTelefon": 0.52

@@ -355,6 +355,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
   const rob = t.rob ?? 0.12;
   const ao = t.ao ?? 0.85;
   m.onBeforeCompile = (sh) => {
+    if (t.foto) sh.uniforms.orgFoto = { value: fotoSlika(t.foto.slika) };
     sh.vertexShader = sh.vertexShader
       .replace("#include <common>", "#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;")
       .replace(
@@ -370,7 +371,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       )
       .replace("#include <begin_vertex>", "#include <begin_vertex>\nvOrgPos = position;");
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${GLSL_SUM}${celice || t.konec ? GLSL_CEL : ""}`)
+      .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${t.foto ? "uniform sampler2D orgFoto;\n" : ""}${GLSL_SUM}${celice || t.konec ? GLSL_CEL : ""}`)
       .replace(
         "#include <color_fragment>",
         `${t.kita ? kitaGLSL(t.kita) : "float orgKita = 0.0;"}
@@ -387,6 +388,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         ${t.zile && !t.mreznicaZile ? zileGLSL(t, merilo) : ""}
         ${t.mreznicaZile ? mreznicaGLSL(t, merilo, izh) : ""}
         ${t.sarenica ? sarenicaGLSL(t, merilo, izh) : ""}
+        ${t.foto ? fotoGLSL(t, merilo, izh) : ""}
         ${t.limbus ? limbusGLSL(t, merilo, izh, "barva") : ""}
         ${t.konec ? konecGLSL(t, merilo, izh) : ""}
         float orgListi = 0.0;
@@ -457,7 +459,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.kita ? `-ki${JSON.stringify(t.kita)}` : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
+  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.kita ? `-ki${JSON.stringify(t.kita)}` : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.foto ? `-fo${JSON.stringify(t.foto)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
   return ohraniSencilnik(m);
 }
 
@@ -587,6 +589,46 @@ function konecGLSL(t, merilo, izh) {
             diffuseColor.rgb = kc;
           }
         }`;
+}
+
+// Fotografska tekstura, projicirana na tkivo (tkivo.foto, samo naravne barve): slika čelnega pogleda (oko: šarenica in
+// žilice beločnice iz »Realistic Human Eye«, Alexander Antipov, CC BY 4.0, gl. viri.json). foto: { slika (datoteka v
+// organi-3d/), sredisce, os (smer naprej), uvSredisce [u, v] (v od spodaj), moc }, in
+//  - nacin "disk" (šarenica): ravninska projekcija vzdolž osi; `polmer` (m) ustreza `uvPolmer` (delež širine slike);
+//  - nacin "krogla" (beločnica): kot od osi okoli `sredisce` (središče zrkla) kot0..kot1 (rad) ustreza uvPolmeru uv0..uv1,
+//    zadnjih `pojenja` rad slika pojenja v barvo tkiva.
+// zasuk (rad) zavrti sliko okoli osi; odtenek [r, g, b] pomnoži barvo slike.
+const fotoSlike = new Map();
+function fotoSlika(ime) {
+  if (!fotoSlike.has(ime)) {
+    const tx = new THREE.TextureLoader().load(`${BAZA}${ime}`, undefined, undefined, (e) => console.warn("organ: fotografska tekstura ni naložena", e));
+    tx.colorSpace = THREE.SRGBColorSpace;
+    tx.anisotropy = 4;
+    fotoSlike.set(ime, tx);
+  }
+  return fotoSlike.get(ime);
+}
+function fotoGLSL(t, merilo, izh) {
+  const z = t.foto;
+  const v3 = (a, smer = false) => `vec3( ${a.map((x, i) => fl(+(smer ? x : (x - izh[i]) * merilo).toFixed(5))).join(", ")} )`;
+  const uv = z.uvSredisce || [0.5, 0.5], od = z.odtenek || [1, 1, 1], zas = z.zasuk ?? 0;
+  const osnova = `vec3 fA = normalize( ${v3(z.os, true)} ); vec3 fP = vOrgPos - ${v3(z.sredisce)};
+          vec3 fB = normalize( cross( abs( fA.y ) < 0.9 ? vec3( 0.0, 1.0, 0.0 ) : vec3( 1.0, 0.0, 0.0 ), fA ) ); vec3 fC = cross( fA, fB );
+          vec3 fD = fP - fA * dot( fP, fA ); vec2 fS = vec2( dot( fD, fB ), dot( fD, fC ) );
+          fS = mat2( ${fl(+Math.cos(zas).toFixed(5))}, ${fl(+Math.sin(zas).toFixed(5))}, ${fl(+(-Math.sin(zas)).toFixed(5))}, ${fl(+Math.cos(zas).toFixed(5))} ) * fS;`;
+  const konec = `vec3 fT = texture2D( orgFoto, vec2( ${fl(uv[0])}, ${fl(uv[1])} ) + fUv ).rgb * vec3( ${od.map(fl).join(", ")} );
+          diffuseColor.rgb = mix( diffuseColor.rgb, fT, fW );`;
+  if (z.nacin === "krogla")
+    return `{ ${osnova}
+          float fK = acos( clamp( dot( normalize( fP ), fA ), -1.0, 1.0 ) );
+          float fR = mix( ${fl(z.uv0)}, ${fl(z.uv1)}, ( fK - ${fl(z.kot0)} ) / ${fl(+(z.kot1 - z.kot0).toFixed(5))} );
+          vec2 fUv = normalize( fS + 1e-9 ) * fR;
+          float fW = ${fl(z.moc ?? 1)} * ( 1.0 - smoothstep( ${fl(+(z.kot1 - (z.pojenja ?? 0.3)).toFixed(5))}, ${fl(z.kot1)}, fK ) );
+          ${konec} }`;
+  return `{ ${osnova}
+          vec2 fUv = fS * ${fl(+(z.uvPolmer / (z.polmer * merilo)).toPrecision(6))};
+          float fW = ${fl(z.moc ?? 1)};
+          ${konec} }`;
 }
 
 // Šarenica: žarkasta vlakna (strome) okoli zenice, svetlejši venec (collarette), temnejši rob ob zenici in limbalni

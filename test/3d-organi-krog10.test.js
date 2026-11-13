@@ -47,7 +47,8 @@ test("oko: kite na zrklo po poenostavitvi in na visoki mreži, brez dvostranske 
   for (const ime of ["Superior oblique", "Inferior oblique", "Lateral rectus", "Medial rectus", "Superior rectus", "Inferior rectus"])
     assert.ok(m.includes(`("${ime} muscle"`), `${ime} v PLASTI`);
   const izv = beri("scripts", "atlas", "izvozi-organe.py");
-  assert.match(izv, /po_poenostavitvi=\["kite_na_zrklo"\]/);
+  // m1: mišice so lastna geometrija (trakovi z vgrajeno kito), kite_na_zrklo ostane za izvirnike Z-Anatomy
+  assert.match(izv, /dodaj=\["ocesne_misice", "ocesne_misice_lastne"\], nedotakni=r"\(rectus\|oblique\) muscle"/);
   assert.match(izv, /types\.SimpleNamespace\(name=r\[0\], data=r\[1\]\) for r in osnovni/, "isti popravek na izvirnikih (visoka mreža peke)");
   const oko = json("oko.json");
   const mis = oko.tkiva["mišica"];
@@ -61,7 +62,9 @@ test("oko.json, organ.js: limbus, zamik žilnice, rez skozi vidni živec, leča 
   const L = oko.tkiva["roženica"].limbus;
   assert.ok(L.barva2 && L.r1 - L.r0 >= 0.001, "limbus: širok prehod v barvo beločnice");
   assert.ok(oko.pogledi.celota.tkiva["žilnica"].zamik > 0, "žilnica v celoti zamaknjena za beločnico");
-  assert.equal(oko.tkiva["leča"].brezReza, undefined, "leča se v prerezu reže");
+  // m1: leča v prerezu ostane cela in prosojna (bikonveksna oblika, ocena m1), prej rezana
+  assert.equal(oko.tkiva["leča"].brezReza, true);
+  assert.ok(oko.tkiva["leča"].prosojnost < 1, "cela leča je prosojna");
   const [r] = oko.prerez.ravnine;
   const disk = oko.tkiva["mrežnica"].mreznicaZile.disk;
   const dd = r.n.reduce((s, x, i) => s + x * disk[i], 0) + r.d;
