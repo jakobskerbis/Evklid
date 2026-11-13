@@ -221,6 +221,82 @@ test("App Store purchase gives the plan, other account is refused, refund notifi
   });
 });
 
+// Točka 1.2: po vračilu star podpisan nakup (isti JWS) naročnine ne oživi; nov nakup, obnova in nadgradnja jo.
+// Transakcija, kupljena pred najnovejšo znano (iOS jih ob zagonu dostavi po vrsti; star letni paket po nadgradnji),
+// stanja ne spremeni. REFUND_REVERSED nakup spet vklopi.
+test("Apple: refunded purchase stays refunded; renewals, upgrades and new purchases go through; older ones are no-ops", async () => {
+  await withServer(async ({ appClient, adult, store, base }) => {
+    const c = appClient();
+    const p = await adult(c);
+    const token = (await c("/api/billing/store")).body.account_token;
+    const post = (t) => c("/api/billing/apple", { body: { signed_transaction: appleJws(t) } });
+    const parent = () => store.db.prepare("SELECT sub_status, sub_plan FROM parents WHERE id = ?").get(p.id);
+    const status = () => parent().sub_status;
+    const notify = (type, t) =>
+      fetch(`${base}/webhooks/app-store`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ signedPayload: appleJws({ notificationType: type, data: { bundleId: BUNDLE_ID, signedTransactionInfo: appleJws(t) } }) }) });
+    const DAY = 86400000;
+    const now = Date.now();
+    const product = (interval, family) => STORE_PRODUCTS.find((x) => !x.legacy && x.interval === interval && !!x.family === family);
+    const t = (id, o) => tx({ appAccountToken: token, transactionId: id, signedDate: now, ...o });
+    const oct = t("2000000010", { purchaseDate: now - 32 * DAY, expiresDate: now - 2 * DAY });
+    const nov = t("2000000011", { purchaseDate: now - 2 * DAY, expiresDate: now + 28 * DAY });
+
+    // 1. Novejše obdobje, nato iOS znova dostavi starejšo transakcijo: brez učinka, ostane dejavno.
+    assert.equal((await post(nov)).status, 200);
+    const older = await post(oct);
+    assert.equal(older.status, 200);
+    assert.equal(older.body.older, true);
+    assert.equal(status(), "active");
+    assert.equal((await post(nov)).status, 200, "isti nakup znova (»Obnovi nakupe«)");
+
+    // 2. Vračilo starejšega obdobja: obvestilo naročnino konča, trenutni (plačani) nakup jo znova vklopi.
+    assert.equal((await notify("REFUND", { ...oct, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    assert.equal((await post(nov)).status, 200);
+    assert.equal(status(), "active");
+
+    // 3. Vračilo trenutnega obdobja: isti nakup ostane zavrnjen (tudi brez datuma podpisa), zakasnelo obvestilo ga ne vklopi.
+    assert.equal((await notify("REFUND", { ...nov, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    const again = await post(nov);
+    assert.equal(again.status, 409);
+    assert.equal(again.body.revoked, true);
+    assert.equal((await post({ ...nov, signedDate: undefined })).status, 409);
+    assert.equal((await notify("DID_RENEW", nov)).status, 200);
+    assert.equal(status(), "canceled");
+
+    // 4. Vračilo preklicano (spor končan): nakup spet velja.
+    assert.equal((await notify("REFUND_REVERSED", nov)).status, 200);
+    assert.equal(status(), "active");
+    assert.equal((await post(nov)).status, 200);
+
+    // 5. Nadgradnja iz letnega v družinski mesečni paket v aplikaciji: novi paket velja.
+    const y1 = t("2000000020", { productId: product("year", false).id, purchaseDate: now - DAY, expiresDate: now + 364 * DAY });
+    const m1 = t("2000000021", { productId: product("month", true).id, purchaseDate: now, expiresDate: now + 30 * DAY });
+    assert.equal((await post(y1)).status, 200);
+    assert.equal(parent().sub_plan, product("year", false).plan);
+    const up = await post(m1);
+    assert.equal(up.status, 200, JSON.stringify(up.body));
+    assert.equal(up.body.older, undefined);
+    assert.deepEqual({ ...parent() }, { sub_status: "active", sub_plan: product("month", true).plan });
+
+    // 6. Vračilo nadgradnje: star letni nakup iz predpomnilnika naročnine ne vklopi.
+    assert.equal((await notify("REFUND", { ...m1, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    const stale = await post(y1);
+    assert.equal(stale.status, 200);
+    assert.equal(stale.body.older, true);
+    assert.equal(status(), "canceled");
+
+    // 7. Nov nakup po vračilu (krajše obdobje od vrnjenega letnega): velja.
+    const m2 = t("2000000022", { productId: product("month", false).id, purchaseDate: now + 1000, expiresDate: now + 30 * DAY });
+    const fresh = await post(m2);
+    assert.equal(fresh.status, 200, JSON.stringify(fresh.body));
+    assert.equal(fresh.body.older, undefined);
+    assert.equal(status(), "active");
+  });
+});
+
 // Testni nakupi so brezplačni (TestFlight, peskovnik): veljajo samo za testne račune.
 test("test purchases count only for store testers and admins", async () => {
   await withServer(
