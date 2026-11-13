@@ -33,7 +33,7 @@
       "id": "openneuro-ds000001",
       "ime": "OpenNeuro ds000001 (fMRIPrep, FreeSurfer)",
       "avtor": "OpenNeuro Preprocessing Team; izvorni podatki: ds000001 (Balloon Analog Risk-taking Task)",
-      "opis": "Površina možganske skorje (pialna površina obeh polobel) in globina brazd iz MRI ene anonimne prostovoljke ali prostovoljca (sub-01). Iz nje so vijuge in brazde v Organih v 3D: možgani; režnji po parcelaciji Desikan-Killiany.",
+      "opis": "Površina možganske skorje (pialna površina obeh polobel) in globina brazd iz MRI ene anonimne prostovoljke ali prostovoljca (sub-01). Iz nje so vijuge in brazde v Organih v 3D: možgani; režnji po parcelaciji Desikan-Killiany. Mali možgani so iz segmentacije istega MRI (aseg: oblika polobel, črva in tonzil).",
       "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/dataset_description.json",
       "licenca": "CC0 1.0",
       "licencaUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
@@ -89,6 +89,18 @@
       "licencaUrl": "https://www.nlm.nih.gov/databases/download/terms_and_conditions.html",
       "datoteke": [
         "organi-3d/srce-tkivo.png"
+      ]
+    },
+    {
+      "id": "totalsegmentator",
+      "ime": "TotalSegmentator: dataset v1 (CT, 1204 preiskav)",
+      "avtor": "Jakob Wasserthal, Hanns-Christian Breit, Manfred T. Meyer et al.: »TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images«, Radiology: Artificial Intelligence 5(5), 2023",
+      "opis": "Ročno preverjene segmentacije organov na CT. Iz preiskave s0913 so površine petih pljučnih režnjev s pravimi špranjami v Organih v 3D: pljuča (poravnani na pljuča Z-Anatomy).",
+      "url": "https://doi.org/10.5281/zenodo.6802613",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/pljuca*.glb"
       ]
     },
     {

@@ -86,7 +86,7 @@ export const SKUPINE = {
       opisOs: "Poti, po katerih žolč teče iz jeter v črevo.",
       opis: "Žolč nastaja v jetrih, v žolčniku se shranjuje in zgosti, po žolčevodu pa teče v dvanajstnik in pomaga prebaviti maščobe.",
       opisStudij: "Ductus hepaticus communis in ductus cysticus se združita v ductus choledochus (≈ 7 cm), ki se z vodom trebušne slinavke izliva na papili Vateri; žolčnik se izprazni ob holecistokininu." },
-    { id: "jetrne-zile", deli: ["portalna-vena", "jetrna-arterija", "jetrne-vene"], sinonimi: ["žile jeter", "krvne žile jeter"],
+    { id: "jetrne-zile", deli: ["portalna-vena", "jetrna-arterija", "jetrne-vene", "spodnja-votla-vena"], sinonimi: ["žile jeter", "krvne žile jeter"],
       opisOs: "Žile, ki kri pripeljejo v jetra in jo odvajajo.",
       opis: "Portalna vena prinese kri iz prebavil (≈ 75 % pretoka), jetrna arterija s kisikom bogato kri (≈ 25 %); jetrne vene odvajajo kri v spodnjo votlo veno.",
       opisStudij: "Portalna vena nastane za vratom trebušne slinavke iz v. mesenterica superior in v. lienalis; kri teče skozi sinusoide v centralne vene lobulusov in v tri jetrne vene." },

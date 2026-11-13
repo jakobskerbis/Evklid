@@ -191,6 +191,14 @@ const NAPRAVE = {
         for (let i = 0; i < 2; i++) await blizje.click().catch(() => {});
         await slikaj("prerez-blizu");
         await slikajMere("prerez-blizu");
+        // UCNE=1: učne barve tudi na rezu (notranji deli, ki jih celota ne pokaže: skorja, sredica, meh …)
+        if (process.env.UCNE) {
+          await p.locator(".k3-stikalo", { hasText: "Učne barve" }).locator(".switch").first().click().catch(() => {});
+          await p.waitForTimeout(1200);
+          await slikaj("ucne-prerez-blizu");
+          await p.locator(".k3-stikalo", { hasText: "Učne barve" }).locator(".switch").first().click().catch(() => {});
+          await p.waitForTimeout(800);
+        }
       }
       const skupaj = Object.values(datoteke).reduce((s, x) => s + x, 0);
       meritve[ime] = { prenosBajtov: skupaj, datoteke, nalaganjeS: +nalaganje.toFixed(2), omrezje: n.omrezje, napake: [...new Set(napake)] };

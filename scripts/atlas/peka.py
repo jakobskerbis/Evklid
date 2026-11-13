@@ -643,6 +643,15 @@ def zakljuci(pot, glb, niti=2):
                         mm = np.roll(np.roll(pokrito, dy, 0), dx, 1)
                         s_ += np.roll(np.roll(a[..., 0], dy, 0), dx, 1) * mm; n_ += mm
                 a[..., 0] = np.where(pokrito, s_ / np.maximum(n_, 1), a[..., 0])
+        if k == "normala":
+            # normala v tangentnem prostoru gleda vedno navzven (z > 0); obrnjena (z < 0,25) pomeni, da je žarek zadel
+            # visoko mrežo z druge strani (poenostavljena nizka mreža v tesni gubi, npr. gyrus rectus ob sredini možganov):
+            # taka pika postane nevtralna, sicer pregledovalnik tam riše sivo bleščečo liso
+            nz = a[..., 2] * 2 - 1
+            slabe = pokrito & (a[..., 3] >= 0.5) & (nz < 0.25)
+            if slabe.any():
+                a[slabe, 0] = 0.5; a[slabe, 1] = 0.5; a[slabe, 2] = 1.0
+                print(f"[peka] normala: obrnjenih {slabe.sum() / max(pokrito.sum(), 1):.2%} pokritih pik → nevtralne", flush=True)
         koncne[k] = _razsiri(a[..., :3], pokrito & (a[..., 3] >= 0.5) if k != "ao" else pokrito, korakov)
     orm = np.zeros((px, px, 3), np.float32)
     orm[..., 0] = np.clip(koncne["ao"][..., 0], 0, 1) ** tc.get("aoKontrast", 1.0)

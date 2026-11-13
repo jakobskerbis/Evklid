@@ -10,10 +10,9 @@ import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import * as G from "./zile-mreza.mjs";
 
 const MODELI = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public", "3d", "modeli");
-export const NACRT = {
-  "organi-3d/jetra.glb": { tkivo: "jetra", odmik: 0.0028 },
-  "organi-3d/jetra-telefon.glb": { tkivo: "jetra", odmik: 0.0028 },
-};
+// 2026-11-12: jetra so ena sama površina, razdeljena na režnje že pri izvozu (scripts/atlas/jetra_geometrija.py), zato
+// napihovanje segmentov ni več potrebno in bi nove režnje pokvarilo. Načrt je prazen; orodje ostane za druge organe.
+export const NACRT = {};
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const suho = process.argv.includes("--suho");

@@ -10,7 +10,9 @@ import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import * as G from "./zile-mreza.mjs";
 
 const MODELI = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public", "3d", "modeli");
-const DATOTEKE = ["organi-3d/pljuca.glb", "organi-3d/pljuca-telefon.glb"];
+// 2026-11-12: veje v pljučih nastanejo iz središčnic in so obrezane že pri izvozu (scripts/atlas/drevesa.py,
+// pljucna_drevesa), režnji so zaprta telesa brez hilusne odprtine – naknadno rezanje ni več potrebno.
+const DATOTEKE = [];
 const VEJE = new Set(["dihalna-v", "pljucna-arterija-v", "pljucna-vena-v"]);
 // območje hilusa (m, koordinate organa): tu se ne reže
 const obHilusu = (x, y) => Math.abs(x) < 0.05 && y > -0.06 && y < 0.06;

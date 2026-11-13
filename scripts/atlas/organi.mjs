@@ -18,6 +18,7 @@ if (!src) {
 }
 fs.mkdirSync(CILJ, { recursive: true });
 const organi = izbrani.length ? izbrani : fs.readdirSync(src).filter((f) => f.endsWith(".vozlisca.json")).map((f) => f.replace(".vozlisca.json", ""));
+const SKUPNA_MREZA = new Set(["jetra", "mozgani"]);
 const gt = (...a) => execFileSync("npx", ["--yes", "@gltf-transform/cli@4", ...a], { stdio: ["ignore", "ignore", "inherit"] });
 
 for (const organ of organi) {
@@ -34,7 +35,10 @@ for (const organ of organi) {
     // mapa q95 (telefon q84; brez blokov v odsevih; brez izgub je ~3× večja in na zaslonu ni razlike). Telefon ima ≥ 5 %
     // rezerve pod mejo 2 MiB (test/3d-organi-glb.test.js). Tangente ostanejo 8-bitne kot normale.
     const q = imaSlike ? path.join(src, `${organ}${pripona}.q.glb`) : izhod;
-    gt("quantize", tmp, q, "--quantize-position", "14", "--quantize-normal", "8", "--quantize-color", "8", "--quantize-texcoord", "14");
+    // SKUPNA_MREZA: vsa vozlišča organa na isti kvantizacijski mreži (režnji jeter so zaprta telesa s skupnimi mejami:
+    // z mrežo po vozliščih bi se enaka oglišča sosedov zaokrožila različno in na meji bi nastale lasne špranje)
+    gt("quantize", tmp, q, "--quantize-position", "14", "--quantize-normal", "8", "--quantize-color", "8", "--quantize-texcoord", "14",
+      ...(SKUPNA_MREZA.has(organ) ? ["--quantization-volume", "scene"] : []));
     if (imaSlike) {
       const w = path.join(src, `${organ}${pripona}.w.glb`);
       const w2 = path.join(src, `${organ}${pripona}.w2.glb`);
@@ -86,6 +90,8 @@ for (const organ of organi) {
   // srce (srce_ct.py): štiriprostorska ravnina iz CT in prostorska tekstura reza (smer vlaken, maščoba) ob GLB
   // »rocno«: ravnina, nastavljena ročno v JSON (srce: rez skozi aortni koren), ostane
   if (izvoz.ravnina4 && j.prerez?.ravnine?.length && !j.prerez.ravnine[0].rocno) j.prerez.ravnine[0] = izvoz.ravnina4;
+  // mali možgani iz MRI: lističi (senčilnik) okoli fastigija
+  if (izvoz.fastigij && j.tkiva?.mali) j.tkiva.mali.listiSredisce = izvoz.fastigij;
   if (izvoz.volumen) {
     fs.copyFileSync(path.join(src, izvoz.volumen.slika), path.join(CILJ, `${organ}-volumen.png`));
     j.prerez = { ...(j.prerez || {}), volumen: { ...(j.prerez?.volumen || {}), ...izvoz.volumen, slika: `${organ}-volumen.png` } };

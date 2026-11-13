@@ -10,3 +10,14 @@ srce.glb, srce-telefon.glb, srce-volumen.png, srce-stena.png, srce-stena-telefon
   healthy adult human heart«, PLOS Comput Biol 17(4): e1008851 (2021); podatki https://doi.org/10.5281/zenodo.4593739,
   CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Prirejeno (poravnava, deli, maščoba, trabekule).
   Ostali deli srca: Z-Anatomy (CC BY-SA 4.0) in lastna geometrija Evklid; vse vire navaja public/3d/viri.json.
+
+pljuca.glb, pljuca-telefon.glb (površine pljučnih režnjev s špranjami)
+  Wasserthal J., Breit H.-C., Meyer M. T. et al., »TotalSegmentator: Robust Segmentation of 104 Anatomic Structures
+  in CT Images«, Radiology: Artificial Intelligence 5(5): e230024 (2023); podatki TotalSegmentator dataset v1,
+  https://doi.org/10.5281/zenodo.6802613, preiskava s0913, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+  Prirejeno (marching cubes, glajenje, poenostavitev, poravnava na pljuča Z-Anatomy); izdelava scripts/atlas/pljuca-ct.py.
+  Bronhiji, žile in sapnik ob hilusu: Z-Anatomy (CC BY-SA 4.0) in lastna geometrija Evklid.
+
+mozgani.glb, mozgani-telefon.glb (skorja in mali možgani)
+  OpenNeuro ds000001, fMRIPrep/FreeSurfer, sub-01 (CC0 1.0): pialna površina (lh/rh.pial, sulc, aparc) in segmentacija
+  aseg.mgz (mali možgani, oznake 7/8/46/47); izdelava scripts/atlas/mali-mozgani-mri.py in izvozi-organe.py.

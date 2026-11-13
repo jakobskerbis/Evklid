@@ -1,14 +1,14 @@
 {
  "organ": "pljuca",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Pljučni režnji iz CT (TotalSegmentator, CC BY 4.0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; veje bronhijev in žil v pljučih so cevi iz središčnic Z-Anatomy (scripts/atlas/drevesa.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "pljuca": {
    "hrap": 0.4,
    "lak": 0.55,
-   "lakHrap": 0.25,
+   "lakHrap": 0.32,
    "sijaj": 0.5,
    "ao": 0.5,
-   "zrno": 0.07,
+   "zrno": 0.045,
    "f": 160,
    "barva": "#d88d88",
    "sijajBarva": "#ffd0c8",
@@ -16,7 +16,7 @@
    "robBarva": "#ffb0a8",
    "lise": 0.3,
    "liseBarva": "#b06468",
-   "relief": 0.5,
+   "relief": 0.2,
    "senca": 0.25,
    "sencaBarva": "#6a2a30",
    "rez": "#c96f6c",
@@ -75,7 +75,7 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#eadcc6",
+   "rez": "#e6d6bd",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
@@ -86,10 +86,10 @@
    "rezSum": 0.4,
    "rezLak": 0.4,
    "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7d5a52",
-    "rob": 0.0008,
-    "robBarva": "#eadcc6",
+    "vrsta": 4,
+    "luknjaBarva": "#3b2622",
+    "rob": 0.0003,
+    "robBarva": "#f4eadb",
     "stena": 0.0018
    }
   },
@@ -102,7 +102,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#46589f",
-   "rez": "#c3c9e6",
+   "rez": "#9aa3d4",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
@@ -113,10 +113,10 @@
    "rezSum": 0.4,
    "rezLak": 0.4,
    "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#454b80",
-    "rob": 0.0006,
-    "robBarva": "#c3c9e6",
+    "vrsta": 4,
+    "luknjaBarva": "#2e2b55",
+    "rob": 0.0003,
+    "robBarva": "#c0c8ee",
     "stena": 0.0018
    }
   },
@@ -129,7 +129,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#eab0a6",
+   "rez": "#e3a094",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -140,10 +140,10 @@
    "rezSum": 0.4,
    "rezLak": 0.4,
    "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7a2a26",
-    "rob": 0.0005,
-    "robBarva": "#eab0a6",
+    "vrsta": 4,
+    "luknjaBarva": "#5c1d1b",
+    "rob": 0.0003,
+    "robBarva": "#efb5aa",
     "stena": 0.0018
    }
   },
@@ -156,7 +156,7 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#eadcc6",
+   "rez": "#4a2d29",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
@@ -167,11 +167,9 @@
    "rezSum": 0.4,
    "rezLak": 0.4,
    "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7d5a52",
-    "rob": 0.0008,
-    "robBarva": "#eadcc6",
-    "stena": 0.0018
+    "vrsta": 4,
+    "rob": 0.00035,
+    "robBarva": "#efe2cc"
    }
   },
   "pljucna-arterija-v": {
@@ -183,7 +181,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#46589f",
-   "rez": "#c3c9e6",
+   "rez": "#3b3568",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
@@ -194,11 +192,9 @@
    "rezSum": 0.4,
    "rezLak": 0.4,
    "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#454b80",
-    "rob": 0.0006,
-    "robBarva": "#c3c9e6",
-    "stena": 0.0018
+    "vrsta": 4,
+    "rob": 0.0003,
+    "robBarva": "#aeb8e6"
    }
   },
   "pljucna-vena-v": {
@@ -210,7 +206,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#eab0a6",
+   "rez": "#6b2523",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -221,11 +217,9 @@
    "rezSum": 0.4,
    "rezLak": 0.4,
    "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7a2a26",
-    "rob": 0.0005,
-    "robBarva": "#eab0a6",
-    "stena": 0.0018
+    "vrsta": 4,
+    "rob": 0.0003,
+    "robBarva": "#e39a90"
    }
   }
  },
@@ -404,7 +398,6 @@
     "Lingular vein of left lung",
     "Medial vein of right lung",
     "Posterior vein of right lung",
-    "Right inferior pulmonary vein",
     "Right superior pulmonary vein",
     "Superior basal vein of left lung",
     "Superior basal vein of right lung",
@@ -488,10 +481,10 @@
    }
   ]
  },
- "velikost": 0.4305,
+ "velikost": 0.4307,
  "trikotniki": {
-  "racunalnik": 164925,
-  "telefon": 40984
+  "racunalnik": 165000,
+  "telefon": 55324
  },
  "luci": [
   {

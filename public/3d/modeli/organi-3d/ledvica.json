@@ -1,12 +1,12 @@
 {
  "organ": "ledvica",
- "vir": "HuBMAP Human Reference Atlas (CC BY 4.0; ovojnica, skorja, piramide, papile, ledvični sinus) in Z-Anatomy (CC BY-SA 4.0; sečevod, ledvični žili, nadledvična žleza); izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "HuBMAP Human Reference Atlas (CC BY 4.0; ovojnica, skorja, piramide, papile, ledvični sinus) in Z-Anatomy (CC BY-SA 4.0; sečevod, nadledvična žleza); ledvični meh s čašicami ter ledvična vena in arterija so lastna geometrija Evklid (scripts/atlas/drevesa.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "ovojnica": {
-   "hrap": 0.5,
-   "lak": 0.38,
-   "lakHrap": 0.34,
-   "sijaj": 0.22,
+   "hrap": 0.64,
+   "lak": 0.16,
+   "lakHrap": 0.48,
+   "sijaj": 0.1,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -36,13 +36,13 @@
    "rezZarki": {
     "sredisce": [
      0.004,
-     -0.006,
-     -0.005
+     -0.02316,
+     -0.00155
     ],
     "sredisce2": [
      0.004,
-     0.026,
-     -0.005
+     0.00884,
+     -0.00155
     ],
     "gostota": 60,
     "moc": 0.18,
@@ -54,7 +54,7 @@
    "zileBarva": "#5e1a18",
    "rezPresek": {
     "vrsta": -1,
-    "ovoj": true,
+    "trak": true,
     "rob": 0.0007,
     "robBarva": "#e3cdb8"
    },
@@ -64,8 +64,8 @@
     "seznam": [
      [
       0.00548,
-      0.03222,
-      -0.005,
+      0.01506,
+      -0.00155,
       -0.9903,
       0.1392,
       0,
@@ -75,8 +75,8 @@
      ],
      [
       0.00808,
-      0.0322,
-      -0.005,
+      0.01504,
+      -0.00155,
       -0.4384,
       0.8988,
       0,
@@ -86,8 +86,8 @@
      ],
      [
       0.01105,
-      0.03035,
-      -0.005,
+      0.01319,
+      -0.00155,
       0.3746,
       0.9272,
       0,
@@ -97,8 +97,8 @@
      ],
      [
       0.00937,
-      0.02769,
-      -0.005,
+      0.01053,
+      -0.00155,
       0.9135,
       0.4067,
       0,
@@ -108,8 +108,8 @@
      ],
      [
       0.01461,
-      0.01589,
-      -0.005,
+      -0.00127,
+      -0.00155,
       0.9945,
       0.1045,
       0,
@@ -119,8 +119,8 @@
      ],
      [
       0.01067,
-      0.01081,
-      -0.005,
+      -0.00635,
+      -0.00155,
       0.9135,
       -0.4067,
       0,
@@ -130,8 +130,8 @@
      ],
      [
       0.01161,
-      -0.00177,
-      -0.005,
+      -0.01893,
+      -0.00155,
       0.6428,
       -0.766,
       0,
@@ -141,8 +141,8 @@
      ],
      [
       0.01019,
-      -0.00751,
-      -0.005,
+      -0.02467,
+      -0.00155,
       0.1045,
       -0.9945,
       0,
@@ -152,8 +152,8 @@
      ],
      [
       0.00973,
-      -0.00762,
-      -0.005,
+      -0.02478,
+      -0.00155,
       -0.6157,
       -0.788,
       0,
@@ -178,20 +178,20 @@
      "kapsule": [
       [
        0.004,
-       -0.006,
-       -0.005,
+       -0.02316,
+       -0.00155,
        0.004,
-       0.026,
-       -0.005,
+       0.00884,
+       -0.00155,
        0.0088
       ],
       [
        0.002,
-       0.005,
-       -0.005,
+       -0.01216,
+       -0.00155,
        -0.02,
-       0.012,
-       -0.005,
+       -0.00516,
+       -0.00155,
        0.0125
       ]
      ],
@@ -214,9 +214,9 @@
   },
   "skorja": {
    "hrap": 0.34,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "lak": 0.3,
+   "lakHrap": 0.35,
+   "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -238,13 +238,13 @@
    "rezZarki": {
     "sredisce": [
      0.004,
-     -0.006,
-     -0.005
+     -0.02316,
+     -0.00155
     ],
     "sredisce2": [
      0.004,
-     0.026,
-     -0.005
+     0.00884,
+     -0.00155
     ],
     "gostota": 60,
     "moc": 0.18,
@@ -262,8 +262,8 @@
     "seznam": [
      [
       0.00548,
-      0.03222,
-      -0.005,
+      0.01506,
+      -0.00155,
       -0.9903,
       0.1392,
       0,
@@ -273,8 +273,8 @@
      ],
      [
       0.00808,
-      0.0322,
-      -0.005,
+      0.01504,
+      -0.00155,
       -0.4384,
       0.8988,
       0,
@@ -284,8 +284,8 @@
      ],
      [
       0.01105,
-      0.03035,
-      -0.005,
+      0.01319,
+      -0.00155,
       0.3746,
       0.9272,
       0,
@@ -295,8 +295,8 @@
      ],
      [
       0.00937,
-      0.02769,
-      -0.005,
+      0.01053,
+      -0.00155,
       0.9135,
       0.4067,
       0,
@@ -306,8 +306,8 @@
      ],
      [
       0.01461,
-      0.01589,
-      -0.005,
+      -0.00127,
+      -0.00155,
       0.9945,
       0.1045,
       0,
@@ -317,8 +317,8 @@
      ],
      [
       0.01067,
-      0.01081,
-      -0.005,
+      -0.00635,
+      -0.00155,
       0.9135,
       -0.4067,
       0,
@@ -328,8 +328,8 @@
      ],
      [
       0.01161,
-      -0.00177,
-      -0.005,
+      -0.01893,
+      -0.00155,
       0.6428,
       -0.766,
       0,
@@ -339,8 +339,8 @@
      ],
      [
       0.01019,
-      -0.00751,
-      -0.005,
+      -0.02467,
+      -0.00155,
       0.1045,
       -0.9945,
       0,
@@ -350,8 +350,8 @@
      ],
      [
       0.00973,
-      -0.00762,
-      -0.005,
+      -0.02478,
+      -0.00155,
       -0.6157,
       -0.788,
       0,
@@ -375,9 +375,9 @@
   },
   "piramida": {
    "hrap": 0.34,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "lak": 0.3,
+   "lakHrap": 0.35,
+   "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -389,9 +389,9 @@
   },
   "papila": {
    "hrap": 0.34,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "lak": 0.3,
+   "lakHrap": 0.35,
+   "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -404,9 +404,9 @@
   },
   "secevod": {
    "hrap": 0.34,
-   "lak": 0.7,
+   "lak": 0.3,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -483,19 +483,25 @@
   },
   "nadledvicna": {
    "hrap": 0.34,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "lak": 0.3,
+   "lakHrap": 0.35,
+   "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 110,
    "barva": "#d49a3a",
-   "rez": "#c9802c",
+   "rez": "#d7a24a",
    "sijajBarva": "#ffe0a0",
    "lise": 0.2,
    "liseBarva": "#e8b860",
    "mapa": false,
-   "detajl": true
+   "detajl": true,
+   "rezPresek": {
+    "vrsta": -2,
+    "polno": true,
+    "rob": 0.0004,
+    "robBarva": "#a8701f"
+   }
   },
   "meh": {
    "hrap": 0.38,
@@ -517,9 +523,9 @@
     "senca": "#4a2820",
     "sencaMoc": 0.92,
     "globina": 0.006,
-    "hrap": 0.6,
-    "lak": 0.2,
-    "okolje": 0.3
+    "hrap": 0.78,
+    "lak": 0.06,
+    "okolje": 0.15
    },
    "rezPresek": {
     "vrsta": 3,
@@ -630,9 +636,7 @@
    "opis": "Pripelje kri iz aorte; skozi ledvici steče okoli petina vse krvi iz srca.",
    "opisStudij": "Izhaja iz aorte v višini L1–L2; desna je daljša in poteka za spodnjo votlo veno. Pred hilusom se deli v segmentne arterije (končne arterije, brez anastomoz), naprej interlobarne, arkuatne, interlobularne in vas afferens. Pretok obeh ledvic okoli 1,1 l/min (20 % minutnega volumna).",
    "vozlisca": [
-    "Anterior branch of renal artery.l",
-    "Left renal artery",
-    "Posterior branch of renal artery.l"
+    "Renal artery (lastno)"
    ]
   },
   {
@@ -644,7 +648,7 @@
    "opis": "Odvede prečiščeno kri iz ledvice v spodnjo votlo veno.",
    "opisStudij": "Leži pred arterijo; leva je daljša, poteka med aorto in a. mesenterica superior tik pod njenim izstopom (sindrom hrestača) in sprejme levo gonadno ter nadledvično veno. Leva gonadna vena se izliva pravokotno, zato je levostranska varikokela pogostejša.",
    "vozlisca": [
-    "Left renal vein"
+    "Renal vein (lastno)"
    ]
   },
   {
@@ -668,7 +672,7 @@
      0,
      -1
     ],
-    "d": -0.005
+    "d": -0.00155
    }
   ],
   "brezPokrova": [
@@ -702,8 +706,7 @@
     "piramide",
     "papile",
     "meh",
-    "ovojnica",
-    "secevod"
+    "ovojnica"
    ],
    "skrijDele": [
     "papile"
@@ -735,10 +738,10 @@
    }
   ]
  },
- "velikost": 0.1667,
+ "velikost": 0.1356,
  "trikotniki": {
-  "racunalnik": 169973,
-  "telefon": 40459
+  "racunalnik": 159980,
+  "telefon": 40327
  },
  "luci": [
   {

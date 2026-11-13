@@ -626,6 +626,10 @@ function listiGLSL(t, merilo, izh) {
           float lW = fwidth( lF );
           float lD = abs( fract( lF ) - 0.5 ) * 2.0; // 0 sredi lističa, 1 v žlebu
           orgListi = smoothstep( 0.68 - lW, 0.98 + lW, lD ) * ( 1.0 - smoothstep( 0.25, 0.5, lW ) );
+          // medialna ploskev polobel ob sredini (vidna v prerezu ob črvu): lupine elipsoidov jo sekajo skoraj vzporedno,
+          // zato so bile tam goste vodoravne proge kot stopnice (ocena r5) – tam lističi pojenjajo
+          vec3 lN = normalize( cross( dFdx( vOrgPos ), dFdy( vOrgPos ) ) );
+          orgListi *= 1.0 - smoothstep( 0.3, 0.6, abs( lN.x ) ) * ( 1.0 - smoothstep( ${fl(+(0.018 * merilo).toPrecision(4))}, ${fl(+(0.03 * merilo).toPrecision(4))}, abs( vOrgPos.x - lC.x ) ) );
           diffuseColor.rgb *= 1.0 - ${fl(t.listi)} * orgListi;
         }`;
 }
@@ -1219,7 +1223,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     meshi.push(mesh);
     const t = podatki.tkiva?.[k.tkivo] || {};
     // brez pokrova reza: notranje strukture, ki se sekajo s steno (trabekule, papilarne mišice …), sicer drobir na rezu
-    // Pravi presek (tkivo.rezPresek: { vrsta, polno, ovoj, povecaj, rob [m], robBarva, luknjaBarva, samoRob }; ena ravnina): zapolnjen obris preseka na ravnini reza namesto
+    // Pravi presek (tkivo.rezPresek: { vrsta, polno, ovoj, trak, povecaj, rob [m], robBarva, luknjaBarva, samoRob }; ena ravnina): zapolnjen obris preseka na ravnini reza namesto
     // pokrova iz zadnjih ploskev, za vsako vozlišče GLB (zaprto telo) posebej. vrsta = vrstni red plasti (višja je bliže
     // gledalcu: sredica čez skorjo, meh čez oboje); polno = brez lukenj; ovoj = izbočena ovojnica preseka (podlaga: maščoba
     // ledvičnega sinusa pod skorjo, sredico in mehom).
@@ -1238,6 +1242,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       const r = presekMreze(k.geo.attributes.position.array, deliMreze(), n, rav.constant, {
         polno: !!t.rezPresek.polno,
         ovoj: !!t.rezPresek.ovoj,
+        trak: !!t.rezPresek.trak,
         luknje: !!t.rezPresek.luknjaBarva,
         brezPloskve: !!t.rezPresek.samoRob,
         stena: (t.rezPresek.stena || 0) * s, // ozek obris brez lukenj je stena (vzdolž prerezana odprta cev), ne svetlina (m)

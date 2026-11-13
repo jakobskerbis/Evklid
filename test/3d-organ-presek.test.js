@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
-import { zankePreseka, presekMreze, ploscina, ovojnica } from "../public/3d/organ-presek.js";
+import { zankePreseka, presekMreze, ploscina, ovojnica, trakVObris } from "../public/3d/organ-presek.js";
 import { preberi } from "../scripts/atlas/zile-mreza.mjs";
 
 const KOREN = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -102,6 +102,9 @@ test("presek ledvice: ravnina iz JSON seka skorjo, ovojnico in meh; piramide so 
   const n = rv.n.map((x) => x / l), d = (rv.d || 0) / l;
   for (const t of ["ovojnica", "skorja", "meh"]) assert.ok(j.tkiva[t].rezPresek, `tkivo ${t}: rezPresek`);
   assert.ok(j.tkiva.meh.rezVotlina, "meh: odprta votlina");
+  // ovojnica je ob hilusu odprta lupina: trak do tetive čez hilus, ne izbočena ovojnica (štrlel je rumen trikotnik maščobe)
+  assert.ok(j.tkiva.ovojnica.rezPresek.trak && !j.tkiva.ovojnica.rezPresek.ovoj, "ledvična ovojnica: trak namesto izbočene ovojnice");
+  assert.ok(j.tkiva.nadledvicna.rezPresek, "nadledvična žleza ima presek");
   const stozci = j.tkiva.skorja.rezPiramide.seznam;
   assert.ok(stozci.length >= 8 && stozci.length <= 12, `piramid ${stozci.length}`);
   assert.deepEqual(j.tkiva.ovojnica.rezPiramide.seznam, stozci, "ovojnica in skorja rišeta iste piramide");
@@ -154,4 +157,26 @@ test("presek: odprta mreža (odprtina v plašču) da zanko le s »skleni«; ozek
   assert.ok([...b.vrste].every((v) => v === 0));
   const c = presekMreze(pos, idx, [0, 0, 1], 0, { luknje: true, stena: 0.0018, trianguliraj: tri });
   assert.ok([...c.vrste].every((v) => v === 2));
+});
+
+test("presek: »trak« (tanka odprta lupina, ledvična ovojnica ob hilusu) se zapolni do tetive čez odprtino, ne do ovojnice", () => {
+  // lupina v obliki črke C (krog r = 10 z odprtino 90° na desni), debela 0,2: zanka gre po zunanji strani do roba in po
+  // notranji nazaj
+  const zun = [], notr = [];
+  for (let i = 0; i <= 120; i++) {
+    const a = Math.PI / 4 + (i / 120) * (1.5 * Math.PI);
+    zun.push([10.1 * Math.cos(a), 10.1 * Math.sin(a)]);
+    notr.push([9.9 * Math.cos(a), 9.9 * Math.sin(a)]);
+  }
+  const zanka = [...zun, ...notr.reverse()];
+  const o = trakVObris(zanka);
+  assert.ok(o, "tanek trak prepoznan");
+  const P = Math.abs(ploscina(o));
+  // krožni izsek 270° + trikotnik do tetive: 0,75·π·r² + r²/2 ≈ 285; izbočena ovojnica bi bila ≈ 0,75·π·r² + r² ≈ 336
+  assert.ok(Math.abs(P - (0.75 * Math.PI * 100 + 50)) < 12, `ploščina ${P.toFixed(1)}`);
+  // rob je pri robovih odprtine (kot ±45°), ne sredi lupine
+  const kot = (p) => (Math.atan2(p[1], p[0]) * 180) / Math.PI;
+  assert.ok(Math.abs(Math.abs(kot(o[0])) - 45) < 8 && Math.abs(Math.abs(kot(o[o.length - 1])) - 45) < 8, `robova ${kot(o[0]).toFixed(0)}°, ${kot(o[o.length - 1]).toFixed(0)}°`);
+  // debel obris (pravo telo, ne lupina) ni trak
+  assert.equal(trakVObris(zun), null);
 });
