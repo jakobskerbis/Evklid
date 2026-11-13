@@ -25,7 +25,7 @@ from mathutils.bvhtree import BVHTree
 PRIVZETO = dict(barva=(0.5, 0.2, 0.18), barva2=(0.42, 0.14, 0.13), lise=0.35, liseMera=0.025, hrap=0.35, gube=0.00012, gubeMera=0.003,
                 vlakna=0.0, vlaknaMera=0.0012, masca=None, mascaBarva=(0.86, 0.66, 0.30), mascaPremik=0.0012, mascaNasip=0.0, mascaMera=0.004,
                 mascaHrap=0.42, zilice=0.0, ziliceBarva=(0.36, 0.06, 0.07), ziliceMera=0.012, notranja=None, notranjaHrap=0.22,
-                razdeli=2, robSvetel=0.0, kita=None, kitaHrap=0.3, vzdolz=0.0, vzdolzRazmik=0.0025, vasa=0.0, vasaBarva=(0.42, 0.06, 0.06))
+                razdeli=2, robSvetel=0.0, kita=None, kitaHrap=0.3, greben=0.0, vzdolz=0.0, vzdolzRazmik=0.0025, vasa=0.0, vasaBarva=(0.42, 0.06, 0.06))
 
 
 def _r(tc, tkivo):
@@ -277,6 +277,17 @@ def visoka(ime, me, tkivo, r, velikost, tmp):
         P0 = np.empty(n * 3); me2.vertices.foreach_get("co", P0); P0 = P0.reshape(-1, 3)
         N0 = np.empty(n * 3); me2.vertex_normals.foreach_get("vector", N0); N0 = N0.reshape(-1, 3)
         me2.vertices.foreach_set("co", (P0 + N0 * (g * r["vzdolz"])[:, None]).ravel()); me2.update()
+    gr = me2.color_attributes.get("GREBEN")
+    if r.get("greben") and gr is not None and gr.domain == "POINT":
+        # grebeni (atribut oglišč GREBEN: R = faza, G = utež; srce_ct.levo_uho): glavničaste mišice srčnih ušes kot
+        # vzporedni zaobljeni grebeni na visoki mreži (normalna karta in AO), nizka mreža ostane gladka
+        n = len(me2.vertices)
+        A = np.zeros(n * 4); gr.data.foreach_get("color", A); A = A.reshape(-1, 4)
+        u = A[:, 0] - np.floor(A[:, 0])
+        prof = (1 - np.abs(2 * u - 1)) ** 1.6 - 0.35
+        P0 = np.empty(n * 3); me2.vertices.foreach_get("co", P0); P0 = P0.reshape(-1, 3)
+        N0 = np.empty(n * 3); me2.vertex_normals.foreach_get("vector", N0); N0 = N0.reshape(-1, 3)
+        me2.vertices.foreach_set("co", (P0 + N0 * (prof * np.clip(A[:, 1], 0, 1) * r["greben"])[:, None]).ravel()); me2.update()
     at = me2.color_attributes.get("PEKA")
     if r["masca"] and at is not None and at.domain == "POINT":
         n = len(me2.vertices)
@@ -403,7 +414,7 @@ def shrani_delo(pot, objekti, vrstice, velikost, tc, px):
         if r is None: continue
         v = bpy.data.objects.new("_vir", r[1]); v["ime"] = o["ime"]; v["tkivo"] = r[2]; vir.append(v)
     for o in objekti:  # maske PEKA potrebujejo samo izvirne mreže (sicer gredo v GLB kot COLOR_1)
-        for ime_ in ("PEKA", "OSI"):
+        for ime_ in ("PEKA", "OSI", "GREBEN"):
             pk = o.data.color_attributes.get(ime_)
             if pk is not None: o.data.color_attributes.remove(pk)
         kt = o.data.attributes.get("KITA")

@@ -43,15 +43,17 @@ for (const organ of organi) {
       // test/3d-organi-glb.test.js), znižamo kakovost po korakih (najprej osnovna in normalna, ORM že nizko).
       // Zadnji koraki telefona zmanjšajo slike (px), ker pri nizki kakovosti WebP nastanejo bloki (srce n8: CT stene).
       const lestev = pripona
-        ? [[86, 70, 84], [80, 66, 78], [82, 66, 80, 896], [82, 66, 80, 832], [82, 66, 80, 768], [76, 60, 74, 768]]
+        ? [[86, 70, 84], [80, 66, 78], [82, 66, 80, 896], [82, 66, 80, 832], [82, 66, 80, 800], [80, 62, 78, 800], [82, 66, 80, 768], [76, 60, 74, 768]] // 800 px: srce krog 7 (rob pod mejo po dodelavi)
         : [[90, 82, 95], [84, 76, 90], [78, 72, 85], [72, 66, 80], [78, 72, 85, 1792], [78, 72, 85, 1536], [75, 70, 83, 1536], [72, 68, 81, 1536]]; // zadnji dve: srce krog 5 (dodelava po izvozu doda ≈ 0,4 MiB) // zadnja: manjše slike (srce n11: geometrija 207k ≈ 5,2 MiB)
-      const meja = (pripona ? 2 : 6) * 1024 * 1024 * (pripona ? 0.95 : 0.97);
+      // srce: dodelava po izvozu (srce-dodelava.mjs, zgoščen epikard) telefonu doda ≈ 25–35 kB, zato tam meja nižje (krog 7)
+      const meja = (pripona ? 2 : 6) * 1024 * 1024 * (pripona ? 0.95 : 0.97) - (organ === "srce" && pripona ? 28 * 1024 : 0);
       const r = path.join(src, `${organ}${pripona}.r.glb`);
       for (const [k, [qb, qo, qn, px]] of lestev.entries()) {
         if (px) gt("resize", q, r, "--width", String(px), "--height", String(px));
         gt("webp", px ? r : q, w, "--slots", "baseColorTexture", "--quality", String(qb), "--effort", "100");
         gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", String(qo), "--effort", "100");
         gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", String(qn), "--effort", "100");
+        if (process.env.ORGANI_LESTEV) console.log(organ + pripona, k, fs.statSync(izhod).size);
         if (fs.statSync(izhod).size <= meja || k === lestev.length - 1) {
           if (k) console.log(`${organ}${pripona}: WebP q${qb}/${qo}/${qn}${px ? `, ${px} px` : ""} (meja ${(meja / 1048576).toFixed(2)} MiB)`);
           break;

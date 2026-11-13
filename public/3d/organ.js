@@ -570,7 +570,7 @@ function temnenjeGLSL(o, merilo, tkivo) {
 // (Visible Woman, Courtesy of the U.S. National Library of Medicine) za miokard in maščobo, zrcaljeno ponovljeni. Vzorec je
 // odvisen samo od točke v prostoru, zato je rez v vsaki ravnini enak in enako oster (čelni, bočni, prečni, prosti).
 // Vlakna: šum v ravnini, pravokotni na vlakno (vzdolž vlakna stalen): rez vzdolž vlaken kaže proge, prečni rez pike.
-const CELICA_VLAKEN = 0.003; // m: celica s stalno smerjo vlaken na pokrovu reza (materialPokrova)
+const CELICA_VLAKEN = 0.006; // m: celica s stalno smerjo vlaken na pokrovu reza (materialPokrova)
 const GLSL_VOL = `
 uniform sampler2D orgVol; uniform vec3 orgVolN; uniform vec2 orgVolP; uniform vec3 orgVolLo; uniform float orgVolK;
 uniform sampler2D orgTk; uniform float orgTkK;

@@ -499,7 +499,7 @@ def relief(V, F, oz, epi, dl, L, h_masca, stran=None):
     h = h_masca * samo_epi
     lob = _sumi(V, 0.003, 7)
     h = np.where(h > 2e-4, h + 4e-4 * (lob - 0.5) * np.clip(h / 1.5e-3, 0, 1), h)
-    h = _gladi(h, e, st, 3)
+    h = _gladi(h, e, st, 8)  # krog 7: 3 → 8 (mehkejši robovi maščobnih blazin)
     # n10 (ocena n9: »stena LV 5–7 mm«): CT povprečje (živo srce v diastoli) ima LV ≈ 10 mm; preparat (mrtvaško
     # skrčenje, fiksacija) in učbenik kažeta 12–15 mm. Endokard LV (prosta stena +3,2 mm, leva stran pretina +2,2 mm)
     # premaknemo v votlino; konica (tanjša) in pas ob mitralnem obroču ter iztoku v aorto ostaneta (zaklopke se ne premaknejo).
@@ -697,7 +697,7 @@ def _vencne_cevi(vencne, bvh_povrsina, tel):
         r[4] = f"{r[0]} (lastno, CT središčnica) / Heart.g"
 
 
-def zapolni_zlebove(V, V2, F, oz, epi, do=0.012, krat=40):
+def zapolni_zlebove(V, V2, F, oz, epi, do=0.014, krat=70):
     """n11 (ocena n10: »črna razpoka na crux in v zadnjem venčnem žlebu, temna reža med desnim preddvorom in prekatom«):
     odmik maščobe po normalah globoke zareze med preddvorom in prekatom ne zapre (normali na dnu gledata navzven).
     Oglišča epikarda ob stiku preddvor–prekat (do `do`) zgladimo (Laplace, utež pada z razdaljo), kar zarezo napolni
@@ -708,7 +708,10 @@ def zapolni_zlebove(V, V2, F, oz, epi, do=0.012, krat=40):
     ve[F[np.isin(oz, (1, 2)) & epi].ravel()] = True
     ep[F[epi].ravel()] = True
     w = np.zeros(nV)
-    for A_, B_ in ((atr, ve), (ve, atr)):
+    # krog 7: tudi stik levi–desni preddvor (Waterstonov žleb, crux): temne gube med »ploščami« maščobe na zadnji strani
+    la = np.zeros(nV, bool); ra = np.zeros(nV, bool)
+    la[F[np.isin(oz, (3, 18, 19, 20, 21, 22)) & epi].ravel()] = True; ra[F[np.isin(oz, (4, 23, 24)) & epi].ravel()] = True
+    for A_, B_ in ((atr, ve), (ve, atr), (la, ra), (ra, la)):
         ia = np.nonzero(A_)[0]
         if len(ia) and B_.any():
             dd = _razdalja(_kd(V[B_]), V[ia], do)
@@ -760,7 +763,9 @@ def debelina_mascobe(V, F, oz, epi, X_zile, L=None):
         tv = np.full(nV, 0.7)
     s_iv = 0.0030 + 0.0022 * tv
     # krog 5 (predaja: »smetanaste kepe maščobe ob robu reza«): venčni žleb 6 → 4,4 mm, zapolnitev rež največ 4,8 mm
-    h = np.maximum.reduce([4.4e-3 * g(d_av, 0.0075), 3.4e-3 * np.exp(-(d_iv / s_iv) ** 2) * (0.6 + 0.4 * tv), 2.5e-3 * g(d_ar, 0.006),
+    # krog 7: venčni žleb 4,4 → 3,4 mm (blazina ob žlebu RA/RV in crux še predebela), zapolnitev rež največ 3,6 mm in
+    # proti robu dosega mehko pojenja (prej stopnica 4,8 mm na robu dosega = »plošče« maščobe s temnimi gubami vmes)
+    h = np.maximum.reduce([3.4e-3 * g(d_av, 0.0075), 3.4e-3 * np.exp(-(d_iv / s_iv) ** 2) * (0.6 + 0.4 * tv), 2.5e-3 * g(d_ar, 0.006),
                            2.6e-3 * np.clip(zleb * 1.5, 0, 1) * np.clip(1 - d_z / 0.0034, 0, 1) ** 0.7])  # ob vejah na prosti steni le malo (n8: »reke« maščobe)
     # n10: medpreddvorni žleb (Waterston) zapolni maščoba: epikard LA in RA, ki sta bližje kot 8 mm, se razširi do stika
     # (ocena n9: »nazobčana črna vrzel med preddvoroma nad pretinom«, crux)
@@ -775,7 +780,11 @@ def debelina_mascobe(V, F, oz, epi, X_zile, L=None):
         if len(ia) and B_.any():
             dd = _razdalja(_kd(V[B_]), V[ia], 0.014)
             m = dd < do
-            h[ia[m]] = np.maximum(h[ia[m]], np.minimum(dd[m] * 0.6 + 0.0004, 0.0048))
+            hz = np.minimum(dd[m] * 0.6 + 0.0004, 0.0036) * np.clip((do - dd[m]) / (0.4 * do), 0, 1)
+            h[ia[m]] = np.maximum(h[ia[m]], hz)
+    # votli veni (oznaki 23, 24): ob ustju spodnje votle vene le tanka plast (krog 7: »kepe maščobe ob robu IVC«)
+    vv = np.zeros(nV, bool); vv[F[np.isin(oz, (23, 24)) & epi].ravel()] = True
+    h[vv] = np.minimum(h[vv], 0.0016)
     vrv = np.zeros(nV); vrv[F[oz == 2].ravel()] = 1
     # n11: brez tankih lis maščobe na prosti steni RV (ocena n10: »svetlejši pravokoten zaplat na desnem prekatu« – lisa
     # pod 1 mm po decimiranih trikotnikih)
@@ -800,13 +809,16 @@ def levo_uho(P, C, T, premik, bvh_epi, c_la, sk=0.0, osnova=None):
         cilj = np.array([0.30, -1.0, -0.45]); cilj /= np.linalg.norm(cilj)  # naprej in navzdol čez levi rob pljučnega debla
         L = 0.040
     k = 64
-    a = c0 - n * 0.003; b = c0 + n * 0.010; cc = b + (n * 0.3 + cilj).astype(float) / np.linalg.norm(n * 0.3 + cilj) * (L - 0.013)
+    kb = 0.010 if osnova is None else 0.014  # desno uho: daljši lok ob ustju (polmer ukrivljenosti > polširina vrečke, brez prepogiba)
+    a = c0 - n * 0.003; b = c0 + n * kb; cc = b + (n * 0.3 + cilj).astype(float) / np.linalg.norm(n * 0.3 + cilj) * (L - 0.013)
     S_ = np.linspace(0, 1, k)
     pot = np.array([(1 - s) ** 2 * a + 2 * (1 - s) * s * b + s * s * cc for s in S_])
     # ob epikard: središčnica vsaj R + 0,6 mm od stene (vrečka leži na bazi levega prekata / korenu pljučnega debla)
     R = r0 * 1.08 * (1 + 0.22 * np.sin(np.pi * np.minimum(S_ * 1.3, 1))) * np.sqrt(np.clip(1 - S_ ** 6, 0, 1))
     R[-1] = 0
-    for _ in range(3):
+    # krog 7: 3 → 10 korakov odmika od stene z glajenjem in enakomernim prevzorčenjem po loku (prej se je pot desnega
+    # ušesa ob korenu aorte zvila v klobčič: raztrgane, prepognjene ploskve s črnimi luknjami)
+    for _ in range(10):
         for i in range(4, k):
             h = bvh_epi.find_nearest(Vector(pot[i]))
             if h[0] is None:
@@ -814,23 +826,36 @@ def levo_uho(P, C, T, premik, bvh_epi, c_la, sk=0.0, osnova=None):
             nn = np.array(h[1]); d = (pot[i] - np.array(h[0])) @ nn
             if d < R[i] * 0.62 + 0.0006:
                 pot[i] += nn * (R[i] * 0.62 + 0.0006 - d)
-        pot[1:-1] = 0.25 * pot[:-2] + 0.5 * pot[1:-1] + 0.25 * pot[2:]
+        for _g in range(3):
+            pot[1:-1] = 0.25 * pot[:-2] + 0.5 * pot[1:-1] + 0.25 * pot[2:]
+        lok = np.r_[0, np.cumsum(np.linalg.norm(np.diff(pot, axis=0), axis=1))]
+        pot = np.c_[[np.interp(S_ * lok[-1], lok, pot[:, j]) for j in range(3)]].T
     # okvirji
     tg = np.gradient(pot, axis=0); tg /= np.linalg.norm(tg, axis=1)[:, None]
     up = np.array([0, 0, 1.0])
     seg = 36; th = np.linspace(0, 2 * np.pi, seg, endpoint=False)
-    zun, notr = [], []
+    zun, notr, greb = [], [], []
+    x_prej = None
     for i in range(k):
         h = bvh_epi.find_nearest(Vector(pot[i])); nn = np.array(h[1]) if h[0] is not None else up
-        x = nn - tg[i] * (nn @ tg[i]); x /= np.linalg.norm(x) + 1e-12; y = np.cross(tg[i], x)
+        x = nn - tg[i] * (nn @ tg[i]); x /= np.linalg.norm(x) + 1e-12
+        if x_prej is not None:  # okvir se prenaša vzdolž poti (brez nenadnih zasukov, ko najbližja točka stene skoči)
+            xt = x_prej - tg[i] * (x_prej @ tg[i]); xt /= np.linalg.norm(xt) + 1e-12
+            x = xt * 0.85 + (x if x @ xt > 0 else xt) * 0.15; x /= np.linalg.norm(x) + 1e-12
+        x_prej = x
+        y = np.cross(tg[i], x)
         s = S_[i]
         reznji = 1 - 0.08 * zobje * np.clip(np.sin(2 * np.pi * (s * 3.0 + 0.15)), 0, 1) ** 2 * (s > 0.25)
         zob = 1 + zobje * (0.05 * np.sin(3 * th + 7 * s) + 0.025 * np.sin(7 * th - 11 * s))
         Ri = R[i] * reznji * (zob if s > 0.2 else np.ones(seg))
         ex = 0.62 if s > 0.2 else 0.62 + (0.2 - s) / 0.2 * 0.38  # ob ustju okroglo
         zun.append(pot[i] + Ri[:, None] * (np.cos(th)[:, None] * x * ex + np.sin(th)[:, None] * y))
-        Rn = np.maximum(Ri - 0.0015 - 0.0004 * np.sin(9 * th + 30 * s) ** 2, Ri * 0.35)
+        Rn = np.maximum(Ri - 0.0020 - 0.0004 * np.sin(9 * th + 30 * s) ** 2, Ri * 0.35)  # stena 2 mm (krog 7: pri 1,5 mm je notranja ploskev po poenostavitvi gledala skozi zunanjo)
         notr.append(pot[i] + Rn[:, None] * (np.cos(th)[:, None] * x * ex + np.sin(th)[:, None] * y))
+        # krog 7: glavničaste mišice (mm. pectinati) – grebeni prečno na os ušesa, razmik ≈ 2,7 mm, rahlo valoviti in
+        # poševni; faza in utež gresta v atribut GREBEN, grebene izboči peka (peka.visoka, recept »greben«)
+        greb.append(np.c_[s * L / 0.0027 + 0.45 * np.sin(2 * th + 5 * s) + 0.25 * np.sin(5 * th - 9 * s),
+                          np.full(seg, np.clip((s - 0.14) / 0.12, 0, 1) * np.clip((0.99 - s) / 0.06, 0, 1))])
     Vz = np.array(zun).reshape(-1, 3); Vn = np.array(notr).reshape(-1, 3)
     Vv = np.r_[Vz, Vn]; o = len(Vz)
     Fs = []
@@ -843,7 +868,16 @@ def levo_uho(P, C, T, premik, bvh_epi, c_la, sk=0.0, osnova=None):
     for j in range(seg):  # obroč ob ustju poveže zunanjo in notranjo ploskev
         a_, b_ = j, (j + 1) % seg
         Fs += [(a_, o + b_, b_), (a_, o + a_, o + b_)]
+    levo_uho.greben = np.r_[np.array(greb).reshape(-1, 2), np.array(greb).reshape(-1, 2)]
     return Vv, np.array(Fs)
+
+
+def _greben(me, G):
+    """Atribut oglišč GREBEN (R faza grebenov, G utež) za peko glavničastih mišic."""
+    at = me.color_attributes.new("GREBEN", "FLOAT_COLOR", "POINT")
+    c = np.zeros((len(G), 4)); c[:, :2] = G; c[:, 3] = 1
+    at.data.foreach_set("color", c.ravel())
+    return me
 
 
 def srce_ct(osnovni, cfg, tmp):
@@ -927,7 +961,7 @@ def srce_ct(osnovni, cfg, tmp):
     vrstice = _deli_iz_unije(V2, F, dl, epi, masca, cfg, tmp, ohrani=np.clip(tr / 1.2e-3, 0, 1))
     nove += vrstice
     Vu, Fu = levo_uho(P, C, T, premik, bvh_epi, Lc["mitralna"])
-    me = _mesh("Left auricle", Vu, Fu)
+    me = _greben(_mesh("Left auricle", Vu, Fu), levo_uho.greben)
     cfg.setdefault("_telefon", {})["Left auricle"] = _poenostavi(me, 0.25, tmp)  # telefon 25 %, računalnik 50 % (n11: meja 6 / 2 MB)
     me = _poenostavi(me, 0.5, tmp, "Left auricle")
     nove.append(["Left auricle", me, "miokard", "levo-srcno-uho", "Left auricle (lastno, CT) / Heart.g", 0])  # brez poenostavitve (oglato)
@@ -941,8 +975,8 @@ def srce_ct(osnovni, cfg, tmp):
         tip = Cra[((Cra - cr) @ smer).argmax()]
         h_ = bvh_epi2.find_nearest(Vector(tip)); nt = np.array(h_[1]) if h_[0] is not None else smer
         cilj = np.asarray(Lc["aortna"]) - tip; cilj = cilj / np.linalg.norm(cilj) + np.array([0, -0.55, 0.35])
-        Vr, Fr = levo_uho(P, C, T, premik, bvh_epi2, None, osnova=(tip - nt * 0.002, nt, 0.0105, cilj, 0.036, 1.8))
-        me = _mesh("Right auricle (lastno)", Vr, Fr)
+        Vr, Fr = levo_uho(P, C, T, premik, bvh_epi2, None, osnova=(tip - nt * 0.002, nt, 0.0088, cilj, 0.038, 1.8))
+        me = _greben(_mesh("Right auricle (lastno)", Vr, Fr), levo_uho.greben)
         cfg["_telefon"]["Right auricle (lastno)"] = _poenostavi(me, 0.25, tmp)
         me = _poenostavi(me, 0.5, tmp, "Right auricle (lastno)")
         nove.append(["Right auricle (lastno)", me, "miokard", "desno-srcno-uho", "Right auricle (lastno, CT) / Heart.g", 0])

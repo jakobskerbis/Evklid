@@ -1038,9 +1038,9 @@
   "volumen": {
    "slika": "srce-volumen.png",
    "lo": [
-    -0.06706,
-    -0.10285,
-    -0.05615
+    -0.067,
+    -0.10281,
+    -0.056
    ],
    "korak": 0.00125,
    "n": [
@@ -1057,9 +1057,9 @@
     "slika": "srce-stena.png",
     "telefon": "srce-stena-telefon.png",
     "lo": [
-     -0.06701,
-     -0.10318,
-     -0.05612
+     -0.06729,
+     -0.10312,
+     -0.05595
     ],
     "korak": 0.001,
     "n": [
@@ -1120,7 +1120,8 @@
     "brahiocefalicni-veni",
     "brahiocefalicno-deblo",
     "leva-skupna-karotida",
-    "leva-podkljucnicna-arterija"
+    "leva-podkljucnicna-arterija",
+    "levo-srcno-uho"
    ],
    "tkiva": {
     "miokard": {
@@ -1181,8 +1182,8 @@
  },
  "velikost": 0.2633,
  "trikotniki": {
-  "racunalnik": 244800,
-  "telefon": 74121
+  "racunalnik": 243392,
+  "telefon": 73495
  },
  "luci": [
   {

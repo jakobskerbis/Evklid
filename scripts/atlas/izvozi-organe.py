@@ -148,6 +148,7 @@ ORGANI = {
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
                 "miokard": dict(barva=(0.24, 0.07, 0.05), barva2=(0.17, 0.05, 0.036), lise=0.45, hrap=0.56, gube=0.00016, gubeMera=0.004,
+                                greben=0.00042,  # glavničaste mišice srčnih ušes (atribut GREBEN iz srce_ct.levo_uho, krog 7)
                                 vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.90, 0.66, 0.24), mascaBarva2=(0.92, 0.56, 0.17),
                                 # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
                                 # krog 5 (predaja: »temne gube med ploščami maščobe«): plitvejši režnjiči, svetlejši žleb med njimi
