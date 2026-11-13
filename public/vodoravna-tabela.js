@@ -51,8 +51,9 @@ export function obrnjenaTabela(inner) {
 // Tabela s tremi ali več stolpci (Telo | Površina | Prostornina, Skupina | Formula | Končnica | Primer): vsaka celica
 // dobi ime svojega stolpca (data-label), da se na telefonu vrstica zloži v kartico »ime stolpca nad vrednostjo«
 // (list formul: public/graph.css, tisk: server/textbook-print.js). Vrne novo notranjost ali null.
-// Besedilo celice je že HTML (& in < sta ubežana); v atributu ubežimo še narekovaj.
-const ATRIBUT = (s) => s.replace(/"/g, "&quot;");
+// Besedilo celice je že HTML (& in < sta ubežana); v atributu ubežimo še narekovaj. Ostanek oznake po odstranjevanju
+// (npr. »<scr<b>ipt«) ne sme ostati: vsak preostali < ali > ubežimo.
+const ATRIBUT = (s) => s.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const besedilo = (html) => html.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
 
 export function oznaciStolpce(inner) {
