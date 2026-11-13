@@ -1,0 +1,5095 @@
+{
+ "datum": "2026-11-13T21:26:34.470Z",
+ "deli": [
+  "zagon",
+  "poti",
+  "sql",
+  "prvo",
+  "instruktor",
+  "velika"
+ ],
+ "okolje": {
+  "node": "v22.23.4",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "jeder": 4,
+  "taskset": true,
+  "stopnje": [
+   1,
+   10,
+   50
+  ],
+  "uporabnikov": 50,
+  "hitro": false
+ },
+ "zagon": {
+  "ponovitve": [
+   {
+    "healthzMs": 2088,
+    "rssHealthzMB": 199.1,
+    "warm": {
+     "datotek": 165,
+     "ms": 1615,
+     "t": 3640,
+     "rssMB": 192.1
+    },
+    "tisk": {
+     "strani": 11,
+     "ms": 6176,
+     "t": 23250,
+     "rssMB": 281.3
+    },
+    "rssKonecMB": 281.3,
+    "maxRssMB": 281.3,
+    "casovnica": [
+     [
+      2089,
+      199.3
+     ],
+     [
+      3091,
+      190.2
+     ],
+     [
+      4094,
+      192.1
+     ],
+     [
+      5097,
+      192.1
+     ],
+     [
+      6100,
+      192.1
+     ],
+     [
+      7104,
+      192.1
+     ],
+     [
+      8107,
+      192.1
+     ],
+     [
+      9110,
+      192.1
+     ],
+     [
+      10114,
+      192.1
+     ],
+     [
+      11117,
+      192.1
+     ],
+     [
+      12119,
+      192.1
+     ],
+     [
+      13124,
+      192.1
+     ],
+     [
+      14128,
+      192.1
+     ],
+     [
+      15132,
+      192.1
+     ],
+     [
+      16135,
+      192.1
+     ],
+     [
+      17137,
+      193.1
+     ],
+     [
+      18140,
+      238.9
+     ],
+     [
+      19142,
+      253.2
+     ],
+     [
+      20145,
+      263.9
+     ],
+     [
+      21147,
+      266
+     ],
+     [
+      22149,
+      269.5
+     ],
+     [
+      23151,
+      277.8
+     ]
+    ]
+   },
+   {
+    "healthzMs": 1852,
+    "rssHealthzMB": 193.2,
+    "warm": {
+     "datotek": 165,
+     "ms": 1681,
+     "t": 3473,
+     "rssMB": 190.7
+    },
+    "tisk": {
+     "strani": 11,
+     "ms": 6160,
+     "t": 22999,
+     "rssMB": 274.5
+    },
+    "rssKonecMB": 274.5,
+    "maxRssMB": 274.5,
+    "casovnica": [
+     [
+      1853,
+      193.2
+     ],
+     [
+      2855,
+      200.2
+     ],
+     [
+      3858,
+      190.7
+     ],
+     [
+      4861,
+      190.7
+     ],
+     [
+      5864,
+      190.7
+     ],
+     [
+      6867,
+      190.7
+     ],
+     [
+      7871,
+      190.7
+     ],
+     [
+      8874,
+      190.7
+     ],
+     [
+      9876,
+      190.7
+     ],
+     [
+      10879,
+      190.7
+     ],
+     [
+      11882,
+      190.7
+     ],
+     [
+      12885,
+      190.7
+     ],
+     [
+      13888,
+      190.7
+     ],
+     [
+      14890,
+      190.7
+     ],
+     [
+      15893,
+      190.7
+     ],
+     [
+      16895,
+      191.7
+     ],
+     [
+      17898,
+      238.9
+     ],
+     [
+      18899,
+      252.1
+     ],
+     [
+      19902,
+      257.2
+     ],
+     [
+      20903,
+      260.1
+     ],
+     [
+      21906,
+      270.5
+     ],
+     [
+      22908,
+      271
+     ]
+    ]
+   },
+   {
+    "healthzMs": 1761,
+    "rssHealthzMB": 179.9,
+    "warm": {
+     "datotek": 165,
+     "ms": 1520,
+     "t": 3230,
+     "rssMB": 190.5
+    },
+    "tisk": {
+     "strani": 11,
+     "ms": 6575,
+     "t": 23333,
+     "rssMB": 273.1
+    },
+    "rssKonecMB": 273.1,
+    "maxRssMB": 273.1,
+    "casovnica": [
+     [
+      1761,
+      179.9
+     ],
+     [
+      2763,
+      192.5
+     ],
+     [
+      3765,
+      190.5
+     ],
+     [
+      4768,
+      190.5
+     ],
+     [
+      5771,
+      190.5
+     ],
+     [
+      6773,
+      190.5
+     ],
+     [
+      7776,
+      190.5
+     ],
+     [
+      8778,
+      190.5
+     ],
+     [
+      9781,
+      190.5
+     ],
+     [
+      10784,
+      190.5
+     ],
+     [
+      11787,
+      190.5
+     ],
+     [
+      12790,
+      190.5
+     ],
+     [
+      13793,
+      190.5
+     ],
+     [
+      14795,
+      190.5
+     ],
+     [
+      15798,
+      190.5
+     ],
+     [
+      16800,
+      190.8
+     ],
+     [
+      17803,
+      238.1
+     ],
+     [
+      18806,
+      250.4
+     ],
+     [
+      19809,
+      253.4
+     ],
+     [
+      20812,
+      261.5
+     ],
+     [
+      21815,
+      265.8
+     ],
+     [
+      22817,
+      266.6
+     ]
+    ]
+   }
+  ],
+  "healthzMs": 1852,
+  "faze": {
+   "zacetek": {
+    "t": 31,
+    "rss": 44466176,
+    "heapUsed": 3879888,
+    "heapTotal": 5349376,
+    "external": 1388452,
+    "arrayBuffers": 10511
+   },
+   "uvozi": {
+    "t": 1763,
+    "rss": 192917504,
+    "heapUsed": 95913448,
+    "heapTotal": 120328192,
+    "external": 2708121,
+    "arrayBuffers": 255940
+   },
+   "createApp": {
+    "t": 1852,
+    "rss": 181575680,
+    "heapUsed": 77196384,
+    "heapTotal": 106999808,
+    "external": 2708153,
+    "arrayBuffers": 255972
+   },
+   "healthz": {
+    "t": 1916,
+    "rss": 186138624,
+    "heapUsed": 80312160,
+    "heapTotal": 108572672,
+    "external": 4043607,
+    "arrayBuffers": 306173,
+    "status": 200
+   },
+   "warmStatic": {
+    "t": 3873,
+    "rss": 195375104,
+    "heapUsed": 75064248,
+    "heapTotal": 111312896,
+    "external": 12694044,
+    "arrayBuffers": 8956610,
+    "datotek": 165,
+    "ms": 1956
+   },
+   "tiskPredgrej": {
+    "t": 9967,
+    "rss": 302387200,
+    "heapUsed": 151092208,
+    "heapTotal": 184045568,
+    "external": 26238272,
+    "arrayBuffers": 22500838,
+    "strani": 11,
+    "ms": 6094
+   },
+   "poGC": {
+    "t": 10086,
+    "rss": 281755648,
+    "heapUsed": 113512504,
+    "heapTotal": 161812480,
+    "external": 26238272,
+    "arrayBuffers": 22500838
+   }
+  }
+ },
+ "male": {
+  "zagonMs": 2071,
+  "rssPoZagonuMB": 195.9,
+  "poti": [
+   {
+    "pot": "prijava",
+    "c": 1,
+    "n": 20,
+    "statusi": {
+     "200": 20
+    },
+    "vzorci": {},
+    "p50": 437.3,
+    "p95": 463,
+    "p99": 476.6,
+    "max": 476.6,
+    "zahtevNaS": 2.3,
+    "eld": {
+     "p50": 0.09,
+     "p95": 0.22,
+     "p99": 2.75,
+     "max": 21.87,
+     "povp": 0.18
+    },
+    "pripravNaZahtevo": 7,
+    "rssMB": 297.2,
+    "maxRssMB": 425.2
+   },
+   {
+    "pot": "prijava",
+    "c": 10,
+    "n": 60,
+    "statusi": {
+     "200": 8,
+     "503": 52
+    },
+    "vzorci": {
+     "503": "Evklid je trenutno preobremenjen. Poskusi čez nekaj sekund."
+    },
+    "p50": 6.4,
+    "p95": 2290.7,
+    "p99": 3551.5,
+    "max": 3551.5,
+    "ok": {
+     "n": 8,
+     "p50": 1819.3,
+     "p95": 3551.5,
+     "p99": 3551.5
+    },
+    "zahtevNaS": 16.9,
+    "eld": {
+     "p50": 0.08,
+     "p95": 0.54,
+     "p99": 6.15,
+     "max": 13.3,
+     "povp": 0.3
+    },
+    "pripravNaZahtevo": 3.5,
+    "rssMB": 297.4,
+    "maxRssMB": 425.4
+   },
+   {
+    "pot": "prijava",
+    "c": 50,
+    "n": 150,
+    "statusi": {
+     "200": 8,
+     "503": 142
+    },
+    "vzorci": {
+     "503": "Evklid je trenutno preobremenjen. Poskusi čez nekaj sekund."
+    },
+    "p50": 62.4,
+    "p95": 652.5,
+    "p99": 3320.8,
+    "max": 3747.9,
+    "ok": {
+     "n": 8,
+     "p50": 1976.3,
+     "p95": 3747.9,
+     "p99": 3747.9
+    },
+    "zahtevNaS": 40,
+    "eld": {
+     "p50": 0.09,
+     "p95": 0.82,
+     "p99": 41.48,
+     "max": 68.05,
+     "povp": 0.99
+    },
+    "pripravNaZahtevo": 3.2,
+    "rssMB": 298.6,
+    "maxRssMB": 426.6
+   },
+   {
+    "pot": "pogovori",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 3.7,
+    "p95": 7.9,
+    "p99": 25.7,
+    "max": 25.7,
+    "zahtevNaS": 223.2,
+    "eld": {
+     "p50": 0.94,
+     "p95": 5.39,
+     "p99": 15.44,
+     "max": 15.44,
+     "povp": 2.15
+    },
+    "pripravNaZahtevo": 10,
+    "rssMB": 298.8,
+    "maxRssMB": 298.9
+   },
+   {
+    "pot": "pogovori",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 21.1,
+    "p95": 64.3,
+    "p99": 73.2,
+    "max": 84.5,
+    "zahtevNaS": 370.2,
+    "eld": {
+     "p50": 5.7,
+     "p95": 31.62,
+     "p99": 43.28,
+     "max": 43.28,
+     "povp": 8.27
+    },
+    "pripravNaZahtevo": 10,
+    "rssMB": 293,
+    "maxRssMB": 303.4
+   },
+   {
+    "pot": "pogovori",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 119,
+    "p95": 207.4,
+    "p99": 227.6,
+    "max": 233.6,
+    "zahtevNaS": 391.7,
+    "eld": {
+     "p50": 47.34,
+     "p95": 113.54,
+     "p99": 144.14,
+     "max": 144.14,
+     "povp": 53.45
+    },
+    "pripravNaZahtevo": 10,
+    "rssMB": 294.8,
+    "maxRssMB": 294.8
+   },
+   {
+    "pot": "pogovor",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 3.3,
+    "p95": 7.8,
+    "p99": 14.9,
+    "max": 14.9,
+    "zahtevNaS": 253.4,
+    "eld": {
+     "p50": 0.29,
+     "p95": 2.93,
+     "p99": 3.56,
+     "max": 3.56,
+     "povp": 0.56
+    },
+    "pripravNaZahtevo": 14,
+    "rssMB": 294.8,
+    "maxRssMB": 294.9
+   },
+   {
+    "pot": "pogovor",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 32.2,
+    "p95": 54.2,
+    "p99": 58.3,
+    "max": 61.9,
+    "zahtevNaS": 307.7,
+    "eld": {
+     "p50": 6.7,
+     "p95": 19.74,
+     "p99": 29.94,
+     "max": 29.94,
+     "povp": 8.41
+    },
+    "pripravNaZahtevo": 14,
+    "rssMB": 294.8,
+    "maxRssMB": 294.9
+   },
+   {
+    "pot": "pogovor",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 121.7,
+    "p95": 235.2,
+    "p99": 300.6,
+    "max": 311.3,
+    "zahtevNaS": 354.4,
+    "eld": {
+     "p50": 111.04,
+     "p95": 149.51,
+     "p99": 149.51,
+     "max": 149.51,
+     "povp": 116.66
+    },
+    "pripravNaZahtevo": 14,
+    "rssMB": 303.1,
+    "maxRssMB": 303.2
+   },
+   {
+    "pot": "sporocilo",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 66.6,
+    "p95": 95.7,
+    "p99": 127.1,
+    "max": 127.1,
+    "zahtevNaS": 13.8,
+    "eld": {
+     "p50": 53.24,
+     "p95": 70.61,
+     "p99": 76.9,
+     "max": 93.48,
+     "povp": 47.32
+    },
+    "pripravNaZahtevo": 868.8,
+    "rssMB": 346.8,
+    "maxRssMB": 346.9
+   },
+   {
+    "pot": "sporocilo",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 532,
+    "p95": 1132.8,
+    "p99": 1209,
+    "max": 1653.5,
+    "zahtevNaS": 15.6,
+    "eld": {
+     "p50": 576.68,
+     "p95": 604.47,
+     "p99": 672.1,
+     "max": 672.1,
+     "povp": 570.17
+    },
+    "pripravNaZahtevo": 865,
+    "rssMB": 417.8,
+    "maxRssMB": 417.8
+   },
+   {
+    "pot": "sporocilo",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 1991.2,
+    "p95": 4815.7,
+    "p99": 32611.9,
+    "max": 32867.5,
+    "zahtevNaS": 15.2,
+    "eld": {
+     "p50": 1578.59,
+     "p95": 2462.54,
+     "p99": 2485.61,
+     "max": 2485.61,
+     "povp": 1207.19
+    },
+    "pripravNaZahtevo": 865,
+    "rssMB": 488.5,
+    "maxRssMB": 488.5
+   },
+   {
+    "pot": "lekcija",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 4,
+    "p95": 8.6,
+    "p99": 24.2,
+    "max": 24.2,
+    "zahtevNaS": 207.2,
+    "eld": {
+     "p50": 0.4,
+     "p95": 4.43,
+     "p99": 11.45,
+     "max": 11.45,
+     "povp": 1.13
+    },
+    "pripravNaZahtevo": 17,
+    "rssMB": 488.5,
+    "maxRssMB": 488.5
+   },
+   {
+    "pot": "lekcija",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 28.9,
+    "p95": 43.4,
+    "p99": 45.9,
+    "max": 46,
+    "zahtevNaS": 327.2,
+    "eld": {
+     "p50": 8.04,
+     "p95": 20.08,
+     "p99": 24.21,
+     "max": 24.21,
+     "povp": 9.86
+    },
+    "pripravNaZahtevo": 17,
+    "rssMB": 488.5,
+    "maxRssMB": 488.5
+   },
+   {
+    "pot": "lekcija",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 137.5,
+    "p95": 266,
+    "p99": 300.3,
+    "max": 329.1,
+    "zahtevNaS": 301.8,
+    "eld": {
+     "p50": 120.15,
+     "p95": 186.87,
+     "p99": 213.74,
+     "max": 213.74,
+     "povp": 126.39
+    },
+    "pripravNaZahtevo": 17,
+    "rssMB": 486,
+    "maxRssMB": 488.6
+   },
+   {
+    "pot": "lestvica",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 2.7,
+    "p95": 4.5,
+    "p99": 6.6,
+    "max": 6.6,
+    "zahtevNaS": 352,
+    "eld": {
+     "p50": 0.67,
+     "p95": 1.24,
+     "p99": 2.08,
+     "max": 2.08,
+     "povp": 0.59
+    },
+    "pripravNaZahtevo": 23.9,
+    "rssMB": 486,
+    "maxRssMB": 486.1
+   },
+   {
+    "pot": "lestvica",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 16.8,
+    "p95": 26,
+    "p99": 27.8,
+    "max": 27.9,
+    "zahtevNaS": 539,
+    "eld": {
+     "p50": 5.2,
+     "p95": 9.97,
+     "p99": 16.03,
+     "max": 16.03,
+     "povp": 4.8
+    },
+    "pripravNaZahtevo": 22,
+    "rssMB": 486,
+    "maxRssMB": 486.1
+   },
+   {
+    "pot": "lestvica",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 86.9,
+    "p95": 134.8,
+    "p99": 177.8,
+    "max": 339.3,
+    "zahtevNaS": 496.7,
+    "eld": {
+     "p50": 33.22,
+     "p95": 53.05,
+     "p99": 68.45,
+     "max": 68.45,
+     "povp": 34.83
+    },
+    "pripravNaZahtevo": 22,
+    "rssMB": 486,
+    "maxRssMB": 486.2
+   },
+   {
+    "pot": "fotografija",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 31.9,
+    "p95": 56.5,
+    "p99": 68,
+    "max": 68,
+    "zahtevNaS": 27.4,
+    "eld": {
+     "p50": 21.33,
+     "p95": 29.78,
+     "p99": 36.1,
+     "max": 45.57,
+     "povp": 21.11
+    },
+    "pripravNaZahtevo": 476,
+    "rssMB": 486.1,
+    "maxRssMB": 491.5
+   },
+   {
+    "pot": "fotografija",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 284.3,
+    "p95": 596.3,
+    "p99": 682.4,
+    "max": 857.2,
+    "zahtevNaS": 29.6,
+    "eld": {
+     "p50": 287.53,
+     "p95": 340.22,
+     "p99": 345.47,
+     "max": 345.47,
+     "povp": 260.32
+    },
+    "pripravNaZahtevo": 476,
+    "rssMB": 493.6,
+    "maxRssMB": 495.5
+   },
+   {
+    "pot": "fotografija",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 1607.2,
+    "p95": 2664.9,
+    "p99": 3771.2,
+    "max": 5792,
+    "zahtevNaS": 29.5,
+    "eld": {
+     "p50": 376.14,
+     "p95": 1710.71,
+     "p99": 1739.02,
+     "max": 1739.02,
+     "povp": 760.24
+    },
+    "pripravNaZahtevo": 476,
+    "rssMB": 524.2,
+    "maxRssMB": 529.5
+   }
+  ],
+  "instruktor": {
+   "navaden": {
+    "n": 15,
+    "napak": 0,
+    "opisNapak": [],
+    "glave": {
+     "p50": 60.1,
+     "p95": 86.4,
+     "max": 86.4
+    },
+    "prviBajt": {
+     "p50": 60.2,
+     "p95": 86.5,
+     "max": 86.5
+    },
+    "prviDelta": {
+     "p50": 60.2,
+     "p95": 86.5,
+     "max": 86.5
+    },
+    "done": {
+     "p50": 60.2,
+     "p95": 86.5,
+     "max": 86.5
+    },
+    "konec": {
+     "p50": 60.3,
+     "p95": 86.6,
+     "max": 86.6
+    }
+   },
+   "lahki": {
+    "n": 15,
+    "napak": 0,
+    "opisNapak": [],
+    "glave": {
+     "p50": 62.1,
+     "p95": 102.7,
+     "max": 102.7
+    },
+    "prviBajt": {
+     "p50": 62.2,
+     "p95": 102.8,
+     "max": 102.8
+    },
+    "prviDelta": {
+     "p50": 62.2,
+     "p95": 102.8,
+     "max": 102.8
+    },
+    "done": {
+     "p50": 62.2,
+     "p95": 102.8,
+     "max": 102.8
+    },
+    "konec": {
+     "p50": 62.3,
+     "p95": 102.8,
+     "max": 102.8
+    }
+   },
+   "podrobneje": {
+    "n": 15,
+    "napak": 0,
+    "opisNapak": [],
+    "glave": {
+     "p50": 59.1,
+     "p95": 106.9,
+     "max": 106.9
+    },
+    "prviBajt": {
+     "p50": 59.2,
+     "p95": 107,
+     "max": 107
+    },
+    "prviDelta": {
+     "p50": 59.2,
+     "p95": 107,
+     "max": 107
+    },
+    "done": {
+     "p50": 59.2,
+     "p95": 107,
+     "max": 107
+    },
+    "konec": {
+     "p50": 59.3,
+     "p95": 107,
+     "max": 107
+    }
+   },
+   "podrobneje2": {
+    "n": 15,
+    "napak": 0,
+    "opisNapak": [],
+    "glave": {
+     "p50": 68.1,
+     "p95": 97.5,
+     "max": 97.5
+    },
+    "prviBajt": {
+     "p50": 68.1,
+     "p95": 97.6,
+     "max": 97.6
+    },
+    "prviDelta": {
+     "p50": 68.1,
+     "p95": 97.6,
+     "max": 97.6
+    },
+    "done": {
+     "p50": 77.4,
+     "p95": 111.8,
+     "max": 111.8
+    },
+    "konec": {
+     "p50": 77.5,
+     "p95": 111.9,
+     "max": 111.9
+    }
+   },
+   "slika": {
+    "n": 15,
+    "napak": 0,
+    "opisNapak": [],
+    "glave": {
+     "p50": 132.5,
+     "p95": 210.7,
+     "max": 210.7
+    },
+    "prviBajt": {
+     "p50": 132.7,
+     "p95": 210.8,
+     "max": 210.8
+    },
+    "prviDelta": {
+     "p50": 132.7,
+     "p95": 210.8,
+     "max": 210.8
+    },
+    "done": {
+     "p50": 143.7,
+     "p95": 223.5,
+     "max": 223.5
+    },
+    "konec": {
+     "p50": 143.8,
+     "p95": 223.6,
+     "max": 223.6
+    }
+   }
+  },
+  "sql": {
+   "stavkov": 70,
+   "vrstic": {
+    "students": 57,
+    "conversations": 637,
+    "messages": 13200,
+    "events": 900,
+    "topic_state": 0,
+    "tasks": 0,
+    "xp_events": 0,
+    "usage": 900,
+    "answer_cache": 55,
+    "sessions": 0,
+    "test_plans": 0,
+    "offline_results": 0,
+    "offline_issued": 0,
+    "offline_packs": 0,
+    "flashcards": 0,
+    "zapiski": 0,
+    "zapiski_strani": 0,
+    "skill_results": 0,
+    "skill_seen": 0,
+    "conversation_summaries": 0,
+    "ai_holds": 0,
+    "ai_school_use": 0,
+    "kv": 5,
+    "question_log": 56,
+    "parents": 57,
+    "parent_sessions": 99,
+    "consents": 57,
+    "referral_rewards": 0,
+    "email_log": 0,
+    "devices": 57,
+    "profile_devices": 57,
+    "profile_claims": 57,
+    "profile_changes": 57,
+    "promo_redemptions": 0,
+    "passes": 0,
+    "pay_links": 0,
+    "billing_consents": 0,
+    "billing_events": 0,
+    "plan_changes": 0,
+    "store_level_grace": 0,
+    "guest_spent": 0,
+    "guest_created": 0,
+    "guest_invites": 0,
+    "profile_passwords": 0,
+    "profile_unlocks": 0,
+    "account_unlocks": 57,
+    "promo_codes": 1,
+    "ai_credit_buys": 0,
+    "ai_credit_use": 0,
+    "schedules": 0,
+    "owner_codes": 0,
+    "gifts": 0,
+    "podari_fund": 0,
+    "guarantees": 0,
+    "app_links": 0,
+    "apple_nonces": 0,
+    "store_subscriptions": 0,
+    "push_tokens": 0,
+    "push_log": 0,
+    "page_visits": 0,
+    "source_visits": 0,
+    "knowledge_items": 0,
+    "showcase": 0,
+    "feedback": 0,
+    "message_reports": 0,
+    "bug_reports": 0,
+    "coin_events": 0,
+    "avatar_items": 0,
+    "avatar_state": 0,
+    "league_profiles": 51,
+    "league_groups": 0,
+    "league_members": 0,
+    "league_month_awards": 3,
+    "classes": 0,
+    "class_members": 0,
+    "schools": 0,
+    "school_teachers": 0,
+    "school_licences": 0,
+    "class_assignments": 0,
+    "pilot_mnenja": 0,
+    "pilot_mnenja_vprasano": 0,
+    "pilot_mnenja_prenehalo": 0,
+    "pilot_state": 0,
+    "pilot_scans": 0,
+    "pilot_photos": 0,
+    "pilot_features": 0,
+    "pilot_survey": 0,
+    "pilot_rewards": 0,
+    "pilot_quiz": 0,
+    "pilot_wtp": 0,
+    "school_orders": 0,
+    "graphs": 0,
+    "game_scores": 0,
+    "game_ratings": 0,
+    "game_wishes": 0,
+    "game_unlocks": 0,
+    "game_days": 0,
+    "game_concept_days": 0,
+    "daily_puzzle": 0,
+    "news_cache": 0,
+    "corner_pins": 0,
+    "ustno_seje": 0,
+    "ustno_glas": 0,
+    "audit_log": 42
+   },
+   "sql": [
+    {
+     "sql": "SELECT parent_id, expires_at FROM parent_sessions WHERE token_hash = ?",
+     "n": 26,
+     "poti": {
+      "prijava": 3,
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.59,
+     "max": 0.04,
+     "klicev": 26,
+     "plan": [
+      "SEARCH parent_sessions USING INDEX sqlite_autoindex_parent_sessions_1 (token_hash=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM parents WHERE id = ?",
+     "n": 2205,
+     "poti": {
+      "prijava": 3,
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 666,
+      "lekcija": 6,
+      "lestvica": 3,
+      "fotografija": 393,
+      "instruktor:navaden": 222,
+      "instruktor:lahki": 222,
+      "instruktor:podrobneje": 222,
+      "instruktor:podrobneje2": 240,
+      "instruktor:slika": 222
+     },
+     "ms": 35.43,
+     "max": 0.18,
+     "klicev": 2205,
+     "plan": [
+      "SEARCH parents USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM parents WHERE email = ?",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 0.09,
+     "max": 0.04,
+     "klicev": 3,
+     "plan": [
+      "SEARCH parents USING INDEX sqlite_autoindex_parents_1 (email=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT password_hash FROM parents WHERE id = ?",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 0.15,
+     "max": 0.06,
+     "klicev": 3,
+     "plan": [
+      "SEARCH parents USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO audit_log (parent_id, actor, action, target, ip_hash, ok) VALUES (?, ?, ?, ?, ?, ?)",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 4.19,
+     "max": 2.9,
+     "klicev": 3,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO account_unlocks (parent_id, device_id, expires_at) VALUES (?, ?, ?)\n         ON CONFLICT(parent_id, device_id) DO UPDATE SET expires_at = excluded.expires_at",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 0.76,
+     "max": 0.36,
+     "klicev": 3,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO parent_sessions (token_hash, parent_id, expires_at) VALUES (?, ?, ?)",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 0.64,
+     "max": 0.25,
+     "klicev": 3,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT parent_id FROM students WHERE id = ?",
+     "n": 1359,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 411,
+      "lekcija": 6,
+      "lestvica": 3,
+      "fotografija": 237,
+      "instruktor:navaden": 137,
+      "instruktor:lahki": 137,
+      "instruktor:podrobneje": 137,
+      "instruktor:podrobneje2": 148,
+      "instruktor:slika": 137
+     },
+     "ms": 4.93,
+     "max": 0.09,
+     "klicev": 1359,
+     "plan": [
+      "SEARCH students USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT id FROM students WHERE parent_id = ? ORDER BY id",
+     "n": 601,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 180,
+      "lekcija": 6,
+      "lestvica": 3,
+      "fotografija": 102,
+      "instruktor:navaden": 60,
+      "instruktor:lahki": 60,
+      "instruktor:podrobneje": 60,
+      "instruktor:podrobneje2": 64,
+      "instruktor:slika": 60
+     },
+     "ms": 5.12,
+     "max": 0.2,
+     "klicev": 601,
+     "plan": [
+      "SEARCH students USING COVERING INDEX idx_students_parent (parent_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO devices (id, label) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET last_seen = datetime('now'), label = excluded.label",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 1.13,
+     "max": 0.47,
+     "klicev": 23,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT device_id, last_seen FROM profile_claims WHERE student_id = ?",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.16,
+     "max": 0.02,
+     "klicev": 23,
+     "plan": [
+      "SEARCH profile_claims USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO profile_claims (student_id, device_id, last_seen) VALUES (?, ?, ?)\n       ON CONFLICT(student_id) DO UPDATE SET device_id = excluded.device_id, last_seen = excluded.last_seen",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 9.51,
+     "max": 0.62,
+     "klicev": 23,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO profile_devices (student_id, device_id) VALUES (?, ?)\n       ON CONFLICT(student_id, device_id) DO UPDATE SET last_seen = datetime('now')",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.61,
+     "max": 0.17,
+     "klicev": 23,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM students WHERE id = ?",
+     "n": 596,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 177,
+      "lekcija": 6,
+      "lestvica": 6,
+      "fotografija": 102,
+      "instruktor:navaden": 59,
+      "instruktor:lahki": 59,
+      "instruktor:podrobneje": 59,
+      "instruktor:podrobneje2": 63,
+      "instruktor:slika": 59
+     },
+     "ms": 5.6,
+     "max": 0.08,
+     "klicev": 596,
+     "plan": [
+      "SEARCH students USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM conversations WHERE student_id = ? ORDER BY updated_at DESC, id DESC",
+     "n": 3,
+     "poti": {
+      "pogovori": 3
+     },
+     "ms": 0.25,
+     "max": 0.1,
+     "klicev": 3,
+     "plan": [
+      "SCAN conversations",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [
+      {
+       "tabela": "conversations",
+       "detail": "SCAN conversations",
+       "vrstic": 637
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT * FROM conversations WHERE id = ?",
+     "n": 30,
+     "poti": {
+      "pogovor": 6,
+      "sporocilo": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 0.44,
+     "max": 0.03,
+     "klicev": 30,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1",
+     "n": 3,
+     "poti": {
+      "pogovor": 3
+     },
+     "ms": 0.18,
+     "max": 0.07,
+     "klicev": 3,
+     "plan": [
+      "SCAN events"
+     ],
+     "scan": [
+      {
+       "tabela": "events",
+       "detail": "SCAN events",
+       "vrstic": 900
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT message_id FROM message_reports WHERE conversation_id = ?",
+     "n": 3,
+     "poti": {
+      "pogovor": 3
+     },
+     "ms": 0.01,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SCAN message_reports"
+     ],
+     "scan": [
+      {
+       "tabela": "message_reports",
+       "detail": "SCAN message_reports",
+       "vrstic": 0
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM messages WHERE conversation_id = ? ORDER BY id",
+     "n": 27,
+     "poti": {
+      "pogovor": 3,
+      "sporocilo": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 1.14,
+     "max": 0.67,
+     "klicev": 27,
+     "plan": [
+      "SEARCH messages USING INDEX idx_msg_conv (conversation_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_licences'",
+     "n": 603,
+     "poti": {
+      "sporocilo": 183,
+      "lekcija": 3,
+      "fotografija": 108,
+      "instruktor:navaden": 61,
+      "instruktor:lahki": 61,
+      "instruktor:podrobneje": 61,
+      "instruktor:podrobneje2": 65,
+      "instruktor:slika": 61
+     },
+     "ms": 12.05,
+     "max": 0.07,
+     "klicev": 603,
+     "plan": [
+      "SCAN sqlite_master"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "PRAGMA table_info(classes)",
+     "n": 603,
+     "poti": {
+      "sporocilo": 183,
+      "lekcija": 3,
+      "fotografija": 108,
+      "instruktor:navaden": 61,
+      "instruktor:lahki": 61,
+      "instruktor:podrobneje": 61,
+      "instruktor:podrobneje2": 65,
+      "instruktor:slika": 61
+     },
+     "ms": 12.54,
+     "max": 0.71,
+     "klicev": 603,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT DISTINCT s.id, s.name, s.stage FROM class_members m JOIN classes c ON c.id = m.class_id JOIN schools s ON s.id = c.school_id\n       WHERE m.student_id = ? AND c.kind = 'class' ORDER BY s.id",
+     "n": 570,
+     "poti": {
+      "sporocilo": 174,
+      "lekcija": 3,
+      "fotografija": 99,
+      "instruktor:navaden": 58,
+      "instruktor:lahki": 58,
+      "instruktor:podrobneje": 58,
+      "instruktor:podrobneje2": 62,
+      "instruktor:slika": 58
+     },
+     "ms": 8.12,
+     "max": 0.06,
+     "klicev": 570,
+     "plan": [
+      "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+      "SEARCH c USING INTEGER PRIMARY KEY (rowid=?)",
+      "SEARCH s USING INTEGER PRIMARY KEY (rowid=?)",
+      "USE TEMP B-TREE FOR DISTINCT",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [
+      {
+       "tabela": "class_members",
+       "detail": "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+       "vrstic": 0
+      }
+     ],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR DISTINCT",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT value FROM kv WHERE key = ?",
+     "n": 457,
+     "poti": {
+      "sporocilo": 144,
+      "fotografija": 69,
+      "instruktor:navaden": 48,
+      "instruktor:lahki": 48,
+      "instruktor:podrobneje": 48,
+      "instruktor:podrobneje2": 52,
+      "instruktor:slika": 48
+     },
+     "ms": 1.83,
+     "max": 0.04,
+     "klicev": 457,
+     "plan": [
+      "SEARCH kv USING INDEX sqlite_autoindex_kv_1 (key=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')",
+     "n": 101,
+     "poti": {
+      "sporocilo": 33,
+      "fotografija": 12,
+      "instruktor:navaden": 11,
+      "instruktor:lahki": 11,
+      "instruktor:podrobneje": 11,
+      "instruktor:podrobneje2": 12,
+      "instruktor:slika": 11
+     },
+     "ms": 6.06,
+     "max": 0.11,
+     "klicev": 101,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE created_at >= date('now','start of month')",
+     "n": 101,
+     "poti": {
+      "sporocilo": 33,
+      "fotografija": 12,
+      "instruktor:navaden": 11,
+      "instruktor:lahki": 11,
+      "instruktor:podrobneje": 11,
+      "instruktor:podrobneje2": 12,
+      "instruktor:slika": 11
+     },
+     "ms": 0.34,
+     "max": 0.01,
+     "klicev": 101,
+     "plan": [
+      "SCAN ai_credit_use"
+     ],
+     "scan": [
+      {
+       "tabela": "ai_credit_use",
+       "detail": "SCAN ai_credit_use",
+       "vrstic": 0
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now')",
+     "n": 93,
+     "poti": {
+      "sporocilo": 30,
+      "fotografija": 12,
+      "instruktor:navaden": 10,
+      "instruktor:lahki": 10,
+      "instruktor:podrobneje": 10,
+      "instruktor:podrobneje2": 11,
+      "instruktor:slika": 10
+     },
+     "ms": 4.77,
+     "max": 0.09,
+     "klicev": 93,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month') AND student_id = ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 4.33,
+     "max": 0.09,
+     "klicev": 85,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE created_at >= date('now','start of month') AND student_id = ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 0.32,
+     "max": 0.01,
+     "klicev": 85,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use_student (student_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(credit_usd),0) AS s FROM ai_credit_buys WHERE parent_id = ? AND status = 'active'",
+     "n": 126,
+     "poti": {
+      "sporocilo": 39,
+      "fotografija": 21,
+      "instruktor:navaden": 13,
+      "instruktor:lahki": 13,
+      "instruktor:podrobneje": 13,
+      "instruktor:podrobneje2": 14,
+      "instruktor:slika": 13
+     },
+     "ms": 0.42,
+     "max": 0.01,
+     "klicev": 126,
+     "plan": [
+      "SEARCH ai_credit_buys USING INDEX idx_credit_buys_parent (parent_id=? AND status=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE parent_id = ?",
+     "n": 126,
+     "poti": {
+      "sporocilo": 39,
+      "fotografija": 21,
+      "instruktor:navaden": 13,
+      "instruktor:lahki": 13,
+      "instruktor:podrobneje": 13,
+      "instruktor:podrobneje2": 14,
+      "instruktor:slika": 13
+     },
+     "ms": 0.34,
+     "max": 0,
+     "klicev": 126,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use (parent_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT datetime('now','start of month') AS d",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 0.28,
+     "max": 0.01,
+     "klicev": 85,
+     "plan": [
+      "SCAN CONSTANT ROW"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 4.7,
+     "max": 0.1,
+     "klicev": 85,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE student_id = ? AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 0.34,
+     "max": 0.01,
+     "klicev": 85,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use_student (student_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 0.41,
+     "max": 0.01,
+     "klicev": 85,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage_parent (parent_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 0.25,
+     "max": 0.01,
+     "klicev": 85,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use (parent_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT p.guest_net AS net FROM students s JOIN parents p ON p.id = s.parent_id WHERE s.id = ? AND (p.is_guest = 1 OR (p.guest_net IS NOT NULL AND p.email_verified_at IS NULL))",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.03,
+     "max": 0,
+     "klicev": 8,
+     "plan": [
+      "SEARCH s USING INTEGER PRIMARY KEY (rowid=?)",
+      "SEARCH p USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(n),0) AS n FROM question_log WHERE student_id IN (?) AND day = date('now')",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.12,
+     "max": 0.08,
+     "klicev": 8,
+     "plan": [
+      "SEARCH question_log USING INDEX sqlite_autoindex_question_log_1 (student_id=? AND day=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT birth_year FROM students WHERE id = ?",
+     "n": 33,
+     "poti": {
+      "sporocilo": 9,
+      "fotografija": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 0.13,
+     "max": 0.03,
+     "klicev": 33,
+     "plan": [
+      "SEARCH students USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n, SUM(c.school_id IS NOT NULL) AS school, MAX(c.offers_off) AS off FROM class_members m\n       JOIN classes c ON c.id = m.class_id WHERE m.student_id = ? AND c.kind = 'class'",
+     "n": 33,
+     "poti": {
+      "sporocilo": 9,
+      "fotografija": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 0.18,
+     "max": 0.01,
+     "klicev": 33,
+     "plan": [
+      "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+      "SEARCH c USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [
+      {
+       "tabela": "class_members",
+       "detail": "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+       "vrstic": 0
+      }
+     ],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT data FROM schedules WHERE student_id = ?",
+     "n": 44,
+     "poti": {
+      "sporocilo": 13,
+      "fotografija": 9,
+      "instruktor:navaden": 5,
+      "instruktor:lahki": 5,
+      "instruktor:podrobneje": 4,
+      "instruktor:podrobneje2": 4,
+      "instruktor:slika": 4
+     },
+     "ms": 0.11,
+     "max": 0,
+     "klicev": 44,
+     "plan": [
+      "SEARCH schedules USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT CASE WHEN conversation_id IS NULL THEN 'practice' ELSE 'chat' END AS source, topic_id, subject, topic,\n           date(created_at) AS day, COUNT(*) AS n, SUM(error) AS wrong, MAX(created_at) AS last\n         FROM events WHERE student_id = ? AND topic IS NOT NULL AND created_at >= datetime('now', ?)\n         GROUP BY source, topic_id, subject, topic, day",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.33,
+     "max": 0.07,
+     "klicev": 8,
+     "plan": [
+      "SEARCH events USING INDEX idx_events_student (student_id=? AND created_at>?)",
+      "USE TEMP B-TREE FOR GROUP BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR GROUP BY"
+     ]
+    },
+    {
+     "sql": "SELECT source, topic_id, subject, topic, day, n, wrong, last_at AS last\n         FROM skill_results WHERE student_id = ? AND day >= date('now', ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.04,
+     "max": 0.01,
+     "klicev": 8,
+     "plan": [
+      "SEARCH skill_results USING INDEX sqlite_autoindex_skill_results_1 (student_id=? AND day>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n, COALESCE(SUM(first_try_correct), 0) AS ok FROM tasks\n       WHERE student_id = ? AND first_try_correct IS NOT NULL AND mode != 'pretest' AND created_at >= datetime('now', '-30 days')",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.05,
+     "max": 0.01,
+     "klicev": 8,
+     "plan": [
+      "SEARCH tasks USING INDEX idx_tasks_topic (student_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n, COALESCE(SUM(error), 0) AS err FROM events\n       WHERE student_id = ? AND conversation_id IS NOT NULL AND topic IS NOT NULL AND created_at >= datetime('now', '-30 days')",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.06,
+     "max": 0.02,
+     "klicev": 8,
+     "plan": [
+      "SEARCH events USING INDEX idx_events_student (student_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO ai_holds (student_id, usd) VALUES (?, ?)",
+     "n": 11,
+     "poti": {
+      "sporocilo": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 6.43,
+     "max": 0.78,
+     "klicev": 11,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO messages (conversation_id, role, api_content, display_text, has_image) VALUES (?, ?, ?, ?, ?)",
+     "n": 16,
+     "poti": {
+      "sporocilo": 6,
+      "instruktor:navaden": 2,
+      "instruktor:lahki": 2,
+      "instruktor:podrobneje": 2,
+      "instruktor:podrobneje2": 2,
+      "instruktor:slika": 2
+     },
+     "ms": 19.65,
+     "max": 13.39,
+     "klicev": 16,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "UPDATE conversations SET updated_at = datetime('now') WHERE id = ?",
+     "n": 16,
+     "poti": {
+      "sporocilo": 6,
+      "instruktor:navaden": 2,
+      "instruktor:lahki": 2,
+      "instruktor:podrobneje": 2,
+      "instruktor:podrobneje2": 2,
+      "instruktor:slika": 2
+     },
+     "ms": 0.33,
+     "max": 0.16,
+     "klicev": 16,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO question_log (student_id, day, n) VALUES (?, date('now'), MAX(0, ?)) ON CONFLICT(student_id, day) DO UPDATE SET n = MAX(0, n + ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 1.85,
+     "max": 0.46,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "UPDATE conversations SET title = ? WHERE id = ?",
+     "n": 4,
+     "poti": {
+      "sporocilo": 1,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.88,
+     "max": 0.34,
+     "klicev": 4,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT text FROM answer_cache WHERE key = ? AND verified = 1 AND created_at >= datetime('now','-30 days')",
+     "n": 1,
+     "poti": {
+      "sporocilo": 1
+     },
+     "ms": 0.01,
+     "max": 0.01,
+     "klicev": 1,
+     "plan": [
+      "SEARCH answer_cache USING INDEX sqlite_autoindex_answer_cache_1 (key=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "DELETE FROM ai_holds WHERE id = ?",
+     "n": 11,
+     "poti": {
+      "sporocilo": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 4.54,
+     "max": 1.23,
+     "klicev": 11,
+     "plan": [
+      "SEARCH ai_holds USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 2.45,
+     "max": 0.45,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO usage (student_id, model, kind, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd, parent_id)\n         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 1.94,
+     "max": 0.33,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT OR REPLACE INTO answer_cache (key, text, verified) VALUES (?, ?, ?)",
+     "n": 1,
+     "poti": {
+      "sporocilo": 1
+     },
+     "ms": 0.56,
+     "max": 0.56,
+     "klicev": 1,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)\n         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 3.44,
+     "max": 1.37,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT mode FROM events WHERE conversation_id = ? AND message_id IS NOT NULL ORDER BY id DESC LIMIT ?",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.43,
+     "max": 0.07,
+     "klicev": 8,
+     "plan": [
+      "SCAN events"
+     ],
+     "scan": [
+      {
+       "tabela": "events",
+       "detail": "SCAN events",
+       "vrstic": 900
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM topic_state WHERE student_id = ? AND topic_id = ?",
+     "n": 3,
+     "poti": {
+      "lekcija": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH topic_state USING INDEX sqlite_autoindex_topic_state_1 (student_id=? AND topic_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM league_groups WHERE finalized = 0 AND week < ? ORDER BY week, id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH league_groups USING INDEX idx_league_groups (week<?)",
+      "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT DISTINCT x.student_id AS id FROM xp_events x\n           WHERE x.created_at >= ? AND x.created_at < ? AND x.amount > 0 AND COALESCE(x.reason, '') NOT LIKE 'pilot:%'\n             AND NOT EXISTS (SELECT 1 FROM league_members m WHERE m.student_id = x.student_id AND m.week = ?)\n           ORDER BY x.student_id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH x USING INDEX idx_xp_time (created_at>? AND created_at<?)",
+      "CORRELATED SCALAR SUBQUERY 1",
+      "SEARCH m USING COVERING INDEX sqlite_autoindex_league_members_2 (student_id=? AND week=?)",
+      "USE TEMP B-TREE FOR DISTINCT"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR DISTINCT"
+     ]
+    },
+    {
+     "sql": "SELECT 1 FROM league_month_awards WHERE month = ? AND stage = ?",
+     "n": 9,
+     "poti": {
+      "lestvica": 9
+     },
+     "ms": 0.04,
+     "max": 0.01,
+     "klicev": 9,
+     "plan": [
+      "SEARCH league_month_awards USING COVERING INDEX sqlite_autoindex_league_month_awards_1 (month=? AND stage=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM league_profiles WHERE student_id = ?",
+     "n": 7,
+     "poti": {
+      "lestvica": 7
+     },
+     "ms": 0.05,
+     "max": 0.01,
+     "klicev": 7,
+     "plan": [
+      "SEARCH league_profiles USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO league_profiles (student_id, nickname) VALUES (?, ?)",
+     "n": 1,
+     "poti": {
+      "lestvica": 1
+     },
+     "ms": 0.26,
+     "max": 0.26,
+     "klicev": 1,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT m.final_rank, m.outcome, m.week, g.tier, (SELECT COUNT(*) FROM league_members x WHERE x.group_id = m.group_id AND x.final_xp > 0) AS n\n         FROM league_members m JOIN league_groups g ON g.id = m.group_id\n         WHERE m.student_id = ? AND m.week < ? AND m.outcome IS NOT NULL ORDER BY m.week DESC LIMIT 1",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.01,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH m USING INDEX sqlite_autoindex_league_members_2 (student_id=? AND week<?)",
+      "SEARCH g USING INTEGER PRIMARY KEY (rowid=?)",
+      "CORRELATED SCALAR SUBQUERY 1",
+      "SEARCH x USING INDEX sqlite_autoindex_league_members_1 (group_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT item FROM knowledge_items WHERE student_id = ? AND source = 'league' AND revoked_at IS NULL ORDER BY earned_at DESC, item",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.01,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH knowledge_items USING INDEX sqlite_autoindex_knowledge_items_1 (student_id=?)",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT equipped FROM avatar_state WHERE student_id = ?",
+     "n": 0,
+     "poti": {},
+     "ms": 0.01,
+     "max": 0,
+     "klicev": 3,
+     "plan": [
+      "SEARCH avatar_state USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT g.* FROM league_members m JOIN league_groups g ON g.id = m.group_id WHERE m.student_id = ? AND m.week = ?",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.01,
+     "max": 0,
+     "klicev": 3,
+     "plan": [
+      "SEARCH m USING INDEX sqlite_autoindex_league_members_2 (student_id=? AND week=?)",
+      "SEARCH g USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT x.student_id, p.nickname, SUM(x.amount) AS xp, MIN(x.created_at) AS first FROM xp_events x\n         JOIN league_profiles p ON p.student_id = x.student_id\n         JOIN students s ON s.id = x.student_id\n         WHERE x.created_at >= ? AND x.created_at < ? AND CASE json_extract(s.settings, '$.educational_track') WHEN 'SREDNJA_SOLA' THEN 'SS' WHEN 'UNIVERZA' THEN 'UNI' ELSE 'OS' END = ? AND COALESCE(x.reason, '') NOT LIKE 'pilot:%'\n         GROUP BY x.student_id HAVING xp > 0 ORDER BY xp DESC, first, x.student_id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH x USING INDEX idx_xp_time (created_at>? AND created_at<?)",
+      "SEARCH p USING INTEGER PRIMARY KEY (rowid=?)",
+      "SEARCH s USING INTEGER PRIMARY KEY (rowid=?)",
+      "USE TEMP B-TREE FOR GROUP BY",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR GROUP BY",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT c.* FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.student_id = ? ORDER BY m.joined_at, c.id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SCAN m",
+      "SEARCH c USING INTEGER PRIMARY KEY (rowid=?)",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [
+      {
+       "tabela": "class_members",
+       "detail": "SCAN m",
+       "vrstic": 0
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "UPDATE conversations SET deep = ? WHERE id = ?",
+     "n": 2,
+     "poti": {
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1
+     },
+     "ms": 0.97,
+     "max": 0.53,
+     "klicev": 2,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND date(created_at) = date('now')",
+     "n": 1,
+     "poti": {
+      "instruktor:podrobneje2": 1
+     },
+     "ms": 0.05,
+     "max": 0.05,
+     "klicev": 1,
+     "plan": [
+      "SCAN usage"
+     ],
+     "scan": [
+      {
+       "tabela": "usage",
+       "detail": "SCAN usage",
+       "vrstic": 900
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    }
+   ]
+  },
+  "prvo": {
+   "staticno": {
+    "datotekPrvegaOdprtja": 135,
+    "sestava": {
+     "aplikacija:html": {
+      "datotek": 1,
+      "surovo": 50856,
+      "br": 10810,
+      "brezStiskanja": 0,
+      "surovoKB": 50,
+      "brKB": 11
+     },
+     "aplikacija:skupaj": {
+      "datotek": 129,
+      "surovo": 2762443,
+      "br": 865088,
+      "brezStiskanja": 6,
+      "surovoKB": 2698,
+      "brKB": 845
+     },
+     "vse:skupaj": {
+      "datotek": 135,
+      "surovo": 3143438,
+      "br": 965579,
+      "brezStiskanja": 7,
+      "surovoKB": 3070,
+      "brKB": 943
+     },
+     "aplikacija:drugo": {
+      "datotek": 3,
+      "surovo": 28731,
+      "br": 27830,
+      "brezStiskanja": 2,
+      "surovoKB": 28,
+      "brKB": 27
+     },
+     "aplikacija:js": {
+      "datotek": 103,
+      "surovo": 2091158,
+      "br": 687696,
+      "brezStiskanja": 4,
+      "surovoKB": 2042,
+      "brKB": 672
+     },
+     "knjiznice:css": {
+      "datotek": 3,
+      "surovo": 27538,
+      "br": 4567,
+      "brezStiskanja": 1,
+      "surovoKB": 27,
+      "brKB": 4
+     },
+     "knjiznice:skupaj": {
+      "datotek": 6,
+      "surovo": 380995,
+      "br": 100491,
+      "brezStiskanja": 1,
+      "surovoKB": 372,
+      "brKB": 98
+     },
+     "aplikacija:css": {
+      "datotek": 22,
+      "surovo": 591698,
+      "br": 138752,
+      "brezStiskanja": 0,
+      "surovoKB": 578,
+      "brKB": 136
+     },
+     "knjiznice:js": {
+      "datotek": 3,
+      "surovo": 353457,
+      "br": 95924,
+      "brezStiskanja": 0,
+      "surovoKB": 345,
+      "brKB": 94
+     }
+    },
+    "modulepreload": 101,
+    "vhodniModuli": [
+     "theme.js",
+     "zacetek.js",
+     "vendor/katex/katex.min.js",
+     "vendor/marked/lib/marked.umd.js",
+     "vendor/dompurify/purify.min.js",
+     "zagon.js",
+     "dropdown.js",
+     "appearance.js",
+     "app.js"
+    ],
+    "globinaUvozov": 4,
+    "najdaljsaVeriga": [
+     "/app.js",
+     "/chat-settings.js",
+     "/settings-registry.js",
+     "/games/childhood.js"
+    ],
+    "najdaljsaPotUvozov": 8,
+    "najdaljsaPot": [
+     "/app.js",
+     "/schedule.js",
+     "/pass-offer.js",
+     "/account.js",
+     "/profile-menu.js",
+     "/subject-switch.js",
+     "/i18n.js",
+     "/i18n/sl.js"
+    ],
+    "modulepreloadVDatoteki": 0,
+    "staticnihModulov": 104
+   },
+   "chromium": {
+    "brskalnik": "chromium",
+    "razlicica": "153.0.8010.12",
+    "omejitve": "CPU 4×, Slow 4G (CDP)",
+    "anonimno": {
+     "loadMs": 15523,
+     "pripravljenoMs": null,
+     "fcpMs": 4024,
+     "lcpMs": 18284,
+     "lcpElement": "p.land-lead",
+     "cls": 0.257,
+     "clsDoInterakcij": 0.257,
+     "dolgihDoInterakcij": 4,
+     "inpMs": null,
+     "interakcije": [],
+     "dolgih": 4,
+     "dolgeSkupajMs": 1553,
+     "najdaljsaMs": 1313,
+     "zahteve": {
+      "aplikacija:document": {
+       "zahtev": 1,
+       "prenosKB": 12,
+       "suroviKB": 50
+      },
+      "vse:skupaj": {
+       "zahtev": 141,
+       "prenosKB": 1139,
+       "suroviKB": 3113
+      },
+      "aplikacija:skupaj": {
+       "zahtev": 133,
+       "prenosKB": 991,
+       "suroviKB": 2700
+      },
+      "knjiznice:stylesheet": {
+       "zahtev": 3,
+       "prenosKB": 8,
+       "suroviKB": 27
+      },
+      "knjiznice:skupaj": {
+       "zahtev": 8,
+       "prenosKB": 148,
+       "suroviKB": 412
+      },
+      "aplikacija:stylesheet": {
+       "zahtev": 22,
+       "prenosKB": 162,
+       "suroviKB": 578
+      },
+      "aplikacija:script": {
+       "zahtev": 105,
+       "prenosKB": 808,
+       "suroviKB": 2067
+      },
+      "knjiznice:font": {
+       "zahtev": 2,
+       "prenosKB": 43,
+       "suroviKB": 40
+      },
+      "aplikacija:fetch": {
+       "zahtev": 5,
+       "prenosKB": 10,
+       "suroviKB": 6
+      },
+      "knjiznice:script": {
+       "zahtev": 3,
+       "prenosKB": 97,
+       "suroviKB": 345
+      }
+     },
+     "podprto": {
+      "largest-contentful-paint": true,
+      "layout-shift": true,
+      "longtask": true,
+      "event": true,
+      "paint": true
+     },
+     "napake": []
+    },
+    "prijavljen": {
+     "loadMs": 15570,
+     "pripravljenoMs": 20913,
+     "fcpMs": 4100,
+     "lcpMs": 17732,
+     "lcpElement": "p.muted",
+     "cls": 0.732,
+     "clsDoInterakcij": 0.688,
+     "dolgihDoInterakcij": 6,
+     "inpMs": 176,
+     "interakcije": [
+      [
+       "pointerdown",
+       56,
+       23000
+      ],
+      [
+       "pointerup",
+       56,
+       23000
+      ],
+      [
+       "click",
+       56,
+       23000
+      ],
+      [
+       "pointerdown",
+       40,
+       25745
+      ],
+      [
+       "pointerup",
+       40,
+       25745
+      ],
+      [
+       "click",
+       88,
+       25745
+      ],
+      [
+       "pointerdown",
+       16,
+       28380
+      ],
+      [
+       "pointerup",
+       16,
+       28380
+      ],
+      [
+       "click",
+       88,
+       28380
+      ],
+      [
+       "click",
+       176,
+       31031
+      ]
+     ],
+     "dolgih": 10,
+     "dolgeSkupajMs": 2054,
+     "najdaljsaMs": 1338,
+     "zahteve": {
+      "aplikacija:document": {
+       "zahtev": 1,
+       "prenosKB": 12,
+       "suroviKB": 50
+      },
+      "vse:skupaj": {
+       "zahtev": 168,
+       "prenosKB": 1271,
+       "suroviKB": 3438
+      },
+      "aplikacija:skupaj": {
+       "zahtev": 160,
+       "prenosKB": 1123,
+       "suroviKB": 3026
+      },
+      "knjiznice:stylesheet": {
+       "zahtev": 3,
+       "prenosKB": 8,
+       "suroviKB": 27
+      },
+      "knjiznice:skupaj": {
+       "zahtev": 8,
+       "prenosKB": 148,
+       "suroviKB": 412
+      },
+      "aplikacija:stylesheet": {
+       "zahtev": 22,
+       "prenosKB": 162,
+       "suroviKB": 578
+      },
+      "aplikacija:script": {
+       "zahtev": 116,
+       "prenosKB": 914,
+       "suroviKB": 2345
+      },
+      "knjiznice:font": {
+       "zahtev": 2,
+       "prenosKB": 43,
+       "suroviKB": 40
+      },
+      "aplikacija:fetch": {
+       "zahtev": 21,
+       "prenosKB": 35,
+       "suroviKB": 53
+      },
+      "knjiznice:script": {
+       "zahtev": 3,
+       "prenosKB": 97,
+       "suroviKB": 345
+      }
+     },
+     "podprto": {
+      "largest-contentful-paint": true,
+      "layout-shift": true,
+      "longtask": true,
+      "event": true,
+      "paint": true
+     },
+     "napake": []
+    }
+   }
+  },
+  "rssKonecMB": 333
+ },
+ "velika": {
+  "baza": {
+   "profilov": 5000,
+   "sporocil": 200000,
+   "porabe": 1000000,
+   "xp": 100000,
+   "odgovorovVPredpomnilniku": 2000,
+   "velikostMB": 347.2,
+   "polnjenjeS": 20
+  },
+  "zagonMs": 1982,
+  "rssPoZagonuMB": 189.4,
+  "poti": [
+   {
+    "pot": "prijava",
+    "c": 1,
+    "n": 20,
+    "statusi": {
+     "200": 20
+    },
+    "vzorci": {},
+    "p50": 440.3,
+    "p95": 461.8,
+    "p99": 462.8,
+    "max": 462.8,
+    "zahtevNaS": 2.3,
+    "eld": {
+     "p50": 0.09,
+     "p95": 0.18,
+     "p99": 3.31,
+     "max": 4.17,
+     "povp": 0.15
+    },
+    "pripravNaZahtevo": 7,
+    "rssMB": 289.3,
+    "maxRssMB": 417.3
+   },
+   {
+    "pot": "prijava",
+    "c": 10,
+    "n": 60,
+    "statusi": {
+     "200": 8,
+     "503": 52
+    },
+    "vzorci": {
+     "503": "Evklid je trenutno preobremenjen. Poskusi čez nekaj sekund."
+    },
+    "p50": 5.8,
+    "p95": 2253.7,
+    "p99": 3564.9,
+    "max": 3564.9,
+    "ok": {
+     "n": 8,
+     "p50": 1814.1,
+     "p95": 3564.9,
+     "p99": 3564.9
+    },
+    "zahtevNaS": 16.8,
+    "eld": {
+     "p50": 0.09,
+     "p95": 1.48,
+     "p99": 4.02,
+     "max": 15.13,
+     "povp": 0.3
+    },
+    "pripravNaZahtevo": 3.5,
+    "rssMB": 289.5,
+    "maxRssMB": 417.5
+   },
+   {
+    "pot": "prijava",
+    "c": 50,
+    "n": 150,
+    "statusi": {
+     "200": 8,
+     "503": 142
+    },
+    "vzorci": {
+     "503": "Evklid je trenutno preobremenjen. Poskusi čez nekaj sekund."
+    },
+    "p50": 49.3,
+    "p95": 651.1,
+    "p99": 3266.4,
+    "max": 3734.4,
+    "ok": {
+     "n": 8,
+     "p50": 1977.8,
+     "p95": 3734.4,
+     "p99": 3734.4
+    },
+    "zahtevNaS": 40.2,
+    "eld": {
+     "p50": 0.09,
+     "p95": 2.3,
+     "p99": 30.17,
+     "max": 60.06,
+     "povp": 0.88
+    },
+    "pripravNaZahtevo": 3.2,
+    "rssMB": 289.6,
+    "maxRssMB": 417.6
+   },
+   {
+    "pot": "pogovori",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 3.6,
+    "p95": 9.4,
+    "p99": 11,
+    "max": 11,
+    "zahtevNaS": 226.9,
+    "eld": {
+     "p50": 0.49,
+     "p95": 4.02,
+     "p99": 4.71,
+     "max": 4.71,
+     "povp": 0.96
+    },
+    "pripravNaZahtevo": 10,
+    "rssMB": 289.6,
+    "maxRssMB": 289.7
+   },
+   {
+    "pot": "pogovori",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 25,
+    "p95": 32.3,
+    "p99": 37.2,
+    "max": 45.7,
+    "zahtevNaS": 394.9,
+    "eld": {
+     "p50": 1.62,
+     "p95": 7.65,
+     "p99": 17.33,
+     "max": 17.33,
+     "povp": 2.87
+    },
+    "pripravNaZahtevo": 10,
+    "rssMB": 291.2,
+    "maxRssMB": 291.3
+   },
+   {
+    "pot": "pogovori",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 98.9,
+    "p95": 245.3,
+    "p99": 782.8,
+    "max": 1289.8,
+    "zahtevNaS": 365.1,
+    "eld": {
+     "p50": 73.89,
+     "p95": 120.94,
+     "p99": 162.23,
+     "max": 162.23,
+     "povp": 79.14
+    },
+    "pripravNaZahtevo": 10,
+    "rssMB": 296.9,
+    "maxRssMB": 297.1
+   },
+   {
+    "pot": "pogovor",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 3.3,
+    "p95": 7.6,
+    "p99": 11.6,
+    "max": 11.6,
+    "zahtevNaS": 247.6,
+    "eld": {
+     "p50": 0.49,
+     "p95": 1.73,
+     "p99": 4.86,
+     "max": 4.86,
+     "povp": 0.67
+    },
+    "pripravNaZahtevo": 14,
+    "rssMB": 297.3,
+    "maxRssMB": 297.5
+   },
+   {
+    "pot": "pogovor",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 27.8,
+    "p95": 62.4,
+    "p99": 115,
+    "max": 119.7,
+    "zahtevNaS": 307.3,
+    "eld": {
+     "p50": 3.5,
+     "p95": 10.35,
+     "p99": 55.31,
+     "max": 55.31,
+     "povp": 6.23
+    },
+    "pripravNaZahtevo": 14,
+    "rssMB": 297.4,
+    "maxRssMB": 297.5
+   },
+   {
+    "pot": "pogovor",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 123.9,
+    "p95": 147.3,
+    "p99": 149,
+    "max": 244.9,
+    "zahtevNaS": 393.6,
+    "eld": {
+     "p50": 54.59,
+     "p95": 103.64,
+     "p99": 115.37,
+     "max": 115.37,
+     "povp": 60.17
+    },
+    "pripravNaZahtevo": 14,
+    "rssMB": 300.7,
+    "maxRssMB": 299.6
+   },
+   {
+    "pot": "sporocilo",
+    "c": 1,
+    "n": 5,
+    "statusi": {
+     "200": 5
+    },
+    "vzorci": {},
+    "p50": 6992.9,
+    "p95": 7158.3,
+    "p99": 7158.3,
+    "max": 7158.3,
+    "zahtevNaS": 0.1,
+    "eld": {
+     "p50": 6986.1,
+     "p95": 7149.68,
+     "p99": 7149.68,
+     "max": 7149.68,
+     "povp": 5606.75
+    },
+    "pripravNaZahtevo": 866.6,
+    "rssMB": 300.8,
+    "maxRssMB": 345.7
+   },
+   {
+    "pot": "sporocilo",
+    "c": 10,
+    "preskoceno": "10 × p50 pri 1 uporabniku (6993 ms) > 30 s"
+   },
+   {
+    "pot": "sporocilo",
+    "c": 50,
+    "preskoceno": "50 × p50 pri 1 uporabniku (6993 ms) > 30 s"
+   },
+   {
+    "pot": "lekcija",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 4.5,
+    "p95": 7,
+    "p99": 15.2,
+    "max": 15.2,
+    "zahtevNaS": 199.6,
+    "eld": {
+     "p50": 0.57,
+     "p95": 1.9,
+     "p99": 6.52,
+     "max": 6.52,
+     "povp": 0.9
+    },
+    "pripravNaZahtevo": 17,
+    "rssMB": 302.7,
+    "maxRssMB": 302.5
+   },
+   {
+    "pot": "lekcija",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 31.8,
+    "p95": 93.9,
+    "p99": 125.6,
+    "max": 142.6,
+    "zahtevNaS": 255.6,
+    "eld": {
+     "p50": 5.78,
+     "p95": 16.05,
+     "p99": 52.69,
+     "max": 52.69,
+     "povp": 8.56
+    },
+    "pripravNaZahtevo": 17,
+    "rssMB": 312.9,
+    "maxRssMB": 312.1
+   },
+   {
+    "pot": "lekcija",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 109.1,
+    "p95": 210.9,
+    "p99": 1680.2,
+    "max": 1695.4,
+    "zahtevNaS": 294.2,
+    "eld": {
+     "p50": 73.1,
+     "p95": 95.58,
+     "p99": 114.19,
+     "max": 114.19,
+     "povp": 67.96
+    },
+    "pripravNaZahtevo": 17,
+    "rssMB": 338.9,
+    "maxRssMB": 338.9
+   },
+   {
+    "pot": "lestvica",
+    "c": 1,
+    "n": 50,
+    "statusi": {
+     "200": 50
+    },
+    "vzorci": {},
+    "p50": 65.6,
+    "p95": 75.3,
+    "p99": 91.5,
+    "max": 91.5,
+    "zahtevNaS": 15,
+    "eld": {
+     "p50": 55.83,
+     "p95": 65.56,
+     "p99": 81.88,
+     "max": 81.88,
+     "povp": 56.86
+    },
+    "pripravNaZahtevo": 23.9,
+    "rssMB": 393.9,
+    "maxRssMB": 393.7
+   },
+   {
+    "pot": "lestvica",
+    "c": 10,
+    "n": 200,
+    "statusi": {
+     "200": 200
+    },
+    "vzorci": {},
+    "p50": 662.3,
+    "p95": 737.2,
+    "p99": 1365.1,
+    "max": 2047.5,
+    "zahtevNaS": 15.1,
+    "eld": {
+     "p50": 285.44,
+     "p95": 429.62,
+     "p99": 468.41,
+     "max": 468.41,
+     "povp": 301.25
+    },
+    "pripravNaZahtevo": 22,
+    "rssMB": 455.7,
+    "maxRssMB": 455.2
+   },
+   {
+    "pot": "lestvica",
+    "c": 50,
+    "n": 500,
+    "statusi": {
+     "200": 500
+    },
+    "vzorci": {},
+    "p50": 1615.2,
+    "p95": 8358.4,
+    "p99": 32340.9,
+    "max": 32663.5,
+    "zahtevNaS": 15.3,
+    "eld": {
+     "p50": 1391.95,
+     "p95": 1768.38,
+     "p99": 1783.06,
+     "max": 1783.06,
+     "povp": 1036.1
+    },
+    "pripravNaZahtevo": 22,
+    "rssMB": 486.1,
+    "maxRssMB": 486.3
+   },
+   {
+    "pot": "fotografija",
+    "c": 1,
+    "n": 11,
+    "statusi": {
+     "200": 11
+    },
+    "vzorci": {},
+    "p50": 2870.4,
+    "p95": 3067,
+    "p99": 3067,
+    "max": 3067,
+    "zahtevNaS": 0.3,
+    "eld": {
+     "p50": 2835.84,
+     "p95": 2995.22,
+     "p99": 3058.13,
+     "max": 3058.13,
+     "povp": 2228.41
+    },
+    "pripravNaZahtevo": 476,
+    "rssMB": 339.6,
+    "maxRssMB": 493.1
+   },
+   {
+    "pot": "fotografija",
+    "c": 10,
+    "n": 22,
+    "statusi": {
+     "200": 19,
+     "izjema ECONNRESET": 3
+    },
+    "vzorci": {},
+    "p50": 17972.9,
+    "p95": 32660,
+    "p99": 32818.3,
+    "max": 32818.3,
+    "ok": {
+     "n": 19,
+     "p50": 23214.6,
+     "p95": 32818.3,
+     "p99": 32818.3
+    },
+    "zahtevNaS": 0.4,
+    "eld": {
+     "p50": 2900.85,
+     "p95": 8697.38,
+     "p99": 17689.96,
+     "max": 17689.96,
+     "povp": 4651.94
+    },
+    "pripravNaZahtevo": 411.1,
+    "rssMB": 352.5,
+    "maxRssMB": 352.6
+   },
+   {
+    "pot": "fotografija",
+    "c": 50,
+    "preskoceno": "50 × p50 pri 1 uporabniku (2870 ms) > 30 s"
+   }
+  ],
+  "sql": {
+   "stavkov": 70,
+   "vrstic": {
+    "students": 5057,
+    "conversations": 10632,
+    "messages": 211438,
+    "events": 19,
+    "topic_state": 0,
+    "tasks": 0,
+    "xp_events": 100000,
+    "usage": 1000019,
+    "answer_cache": 2006,
+    "sessions": 0,
+    "test_plans": 0,
+    "offline_results": 0,
+    "offline_issued": 0,
+    "offline_packs": 0,
+    "flashcards": 0,
+    "zapiski": 0,
+    "zapiski_strani": 0,
+    "skill_results": 0,
+    "skill_seen": 0,
+    "conversation_summaries": 0,
+    "ai_holds": 0,
+    "ai_school_use": 0,
+    "kv": 5,
+    "question_log": 6,
+    "parents": 5057,
+    "parent_sessions": 99,
+    "consents": 57,
+    "referral_rewards": 0,
+    "email_log": 0,
+    "devices": 57,
+    "profile_devices": 57,
+    "profile_claims": 57,
+    "profile_changes": 57,
+    "promo_redemptions": 0,
+    "passes": 0,
+    "pay_links": 0,
+    "billing_consents": 0,
+    "billing_events": 0,
+    "plan_changes": 0,
+    "store_level_grace": 0,
+    "guest_spent": 0,
+    "guest_created": 0,
+    "guest_invites": 0,
+    "profile_passwords": 0,
+    "profile_unlocks": 0,
+    "account_unlocks": 57,
+    "promo_codes": 1,
+    "ai_credit_buys": 0,
+    "ai_credit_use": 0,
+    "schedules": 0,
+    "owner_codes": 0,
+    "gifts": 0,
+    "podari_fund": 0,
+    "guarantees": 0,
+    "app_links": 0,
+    "apple_nonces": 0,
+    "store_subscriptions": 0,
+    "push_tokens": 0,
+    "push_log": 0,
+    "page_visits": 0,
+    "source_visits": 0,
+    "knowledge_items": 4,
+    "showcase": 0,
+    "feedback": 0,
+    "message_reports": 0,
+    "bug_reports": 0,
+    "coin_events": 0,
+    "avatar_items": 0,
+    "avatar_state": 0,
+    "league_profiles": 4060,
+    "league_groups": 134,
+    "league_members": 4009,
+    "league_month_awards": 3,
+    "classes": 0,
+    "class_members": 0,
+    "schools": 0,
+    "school_teachers": 0,
+    "school_licences": 0,
+    "class_assignments": 0,
+    "pilot_mnenja": 0,
+    "pilot_mnenja_vprasano": 0,
+    "pilot_mnenja_prenehalo": 0,
+    "pilot_state": 0,
+    "pilot_scans": 0,
+    "pilot_photos": 0,
+    "pilot_features": 0,
+    "pilot_survey": 0,
+    "pilot_rewards": 0,
+    "pilot_quiz": 0,
+    "pilot_wtp": 0,
+    "school_orders": 0,
+    "graphs": 0,
+    "game_scores": 0,
+    "game_ratings": 0,
+    "game_wishes": 0,
+    "game_unlocks": 0,
+    "game_days": 0,
+    "game_concept_days": 0,
+    "daily_puzzle": 0,
+    "news_cache": 0,
+    "corner_pins": 0,
+    "ustno_seje": 0,
+    "ustno_glas": 0,
+    "audit_log": 42
+   },
+   "sql": [
+    {
+     "sql": "SELECT parent_id, expires_at FROM parent_sessions WHERE token_hash = ?",
+     "n": 26,
+     "poti": {
+      "prijava": 3,
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.82,
+     "max": 0.08,
+     "klicev": 26,
+     "plan": [
+      "SEARCH parent_sessions USING INDEX sqlite_autoindex_parent_sessions_1 (token_hash=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM parents WHERE id = ?",
+     "n": 2205,
+     "poti": {
+      "prijava": 3,
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 666,
+      "lekcija": 6,
+      "lestvica": 3,
+      "fotografija": 393,
+      "instruktor:navaden": 222,
+      "instruktor:lahki": 222,
+      "instruktor:podrobneje": 222,
+      "instruktor:podrobneje2": 240,
+      "instruktor:slika": 222
+     },
+     "ms": 77.95,
+     "max": 4.75,
+     "klicev": 2205,
+     "plan": [
+      "SEARCH parents USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM parents WHERE email = ?",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 0.1,
+     "max": 0.04,
+     "klicev": 3,
+     "plan": [
+      "SEARCH parents USING INDEX sqlite_autoindex_parents_1 (email=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT password_hash FROM parents WHERE id = ?",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 0.14,
+     "max": 0.05,
+     "klicev": 3,
+     "plan": [
+      "SEARCH parents USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO audit_log (parent_id, actor, action, target, ip_hash, ok) VALUES (?, ?, ?, ?, ?, ?)",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 2.67,
+     "max": 0.95,
+     "klicev": 3,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO account_unlocks (parent_id, device_id, expires_at) VALUES (?, ?, ?)\n         ON CONFLICT(parent_id, device_id) DO UPDATE SET expires_at = excluded.expires_at",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 1.23,
+     "max": 0.45,
+     "klicev": 3,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO parent_sessions (token_hash, parent_id, expires_at) VALUES (?, ?, ?)",
+     "n": 3,
+     "poti": {
+      "prijava": 3
+     },
+     "ms": 0.94,
+     "max": 0.36,
+     "klicev": 3,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT parent_id FROM students WHERE id = ?",
+     "n": 1359,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 411,
+      "lekcija": 6,
+      "lestvica": 3,
+      "fotografija": 237,
+      "instruktor:navaden": 137,
+      "instruktor:lahki": 137,
+      "instruktor:podrobneje": 137,
+      "instruktor:podrobneje2": 148,
+      "instruktor:slika": 137
+     },
+     "ms": 9.49,
+     "max": 0.05,
+     "klicev": 1359,
+     "plan": [
+      "SEARCH students USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT id FROM students WHERE parent_id = ? ORDER BY id",
+     "n": 601,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 180,
+      "lekcija": 6,
+      "lestvica": 3,
+      "fotografija": 102,
+      "instruktor:navaden": 60,
+      "instruktor:lahki": 60,
+      "instruktor:podrobneje": 60,
+      "instruktor:podrobneje2": 64,
+      "instruktor:slika": 60
+     },
+     "ms": 8.98,
+     "max": 0.07,
+     "klicev": 601,
+     "plan": [
+      "SEARCH students USING COVERING INDEX idx_students_parent (parent_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO devices (id, label) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET last_seen = datetime('now'), label = excluded.label",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 5.43,
+     "max": 1.24,
+     "klicev": 23,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT device_id, last_seen FROM profile_claims WHERE student_id = ?",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.66,
+     "max": 0.42,
+     "klicev": 23,
+     "plan": [
+      "SEARCH profile_claims USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO profile_claims (student_id, device_id, last_seen) VALUES (?, ?, ?)\n       ON CONFLICT(student_id) DO UPDATE SET device_id = excluded.device_id, last_seen = excluded.last_seen",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 30.61,
+     "max": 15,
+     "klicev": 23,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO profile_devices (student_id, device_id) VALUES (?, ?)\n       ON CONFLICT(student_id, device_id) DO UPDATE SET last_seen = datetime('now')",
+     "n": 23,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 3,
+      "lekcija": 3,
+      "lestvica": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 2.29,
+     "max": 0.55,
+     "klicev": 23,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM students WHERE id = ?",
+     "n": 596,
+     "poti": {
+      "pogovori": 3,
+      "pogovor": 3,
+      "sporocilo": 177,
+      "lekcija": 6,
+      "lestvica": 6,
+      "fotografija": 102,
+      "instruktor:navaden": 59,
+      "instruktor:lahki": 59,
+      "instruktor:podrobneje": 59,
+      "instruktor:podrobneje2": 63,
+      "instruktor:slika": 59
+     },
+     "ms": 7.61,
+     "max": 0.17,
+     "klicev": 596,
+     "plan": [
+      "SEARCH students USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM conversations WHERE student_id = ? ORDER BY updated_at DESC, id DESC",
+     "n": 3,
+     "poti": {
+      "pogovori": 3
+     },
+     "ms": 2.29,
+     "max": 1.04,
+     "klicev": 3,
+     "plan": [
+      "SCAN conversations",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [
+      {
+       "tabela": "conversations",
+       "detail": "SCAN conversations",
+       "vrstic": 10632
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT * FROM conversations WHERE id = ?",
+     "n": 30,
+     "poti": {
+      "pogovor": 6,
+      "sporocilo": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 0.52,
+     "max": 0.03,
+     "klicev": 30,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1",
+     "n": 3,
+     "poti": {
+      "pogovor": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SCAN events"
+     ],
+     "scan": [
+      {
+       "tabela": "events",
+       "detail": "SCAN events",
+       "vrstic": 19
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT message_id FROM message_reports WHERE conversation_id = ?",
+     "n": 3,
+     "poti": {
+      "pogovor": 3
+     },
+     "ms": 0.01,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SCAN message_reports"
+     ],
+     "scan": [
+      {
+       "tabela": "message_reports",
+       "detail": "SCAN message_reports",
+       "vrstic": 0
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM messages WHERE conversation_id = ? ORDER BY id",
+     "n": 27,
+     "poti": {
+      "pogovor": 3,
+      "sporocilo": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 1.24,
+     "max": 0.65,
+     "klicev": 27,
+     "plan": [
+      "SEARCH messages USING INDEX idx_msg_conv (conversation_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_licences'",
+     "n": 603,
+     "poti": {
+      "sporocilo": 183,
+      "lekcija": 3,
+      "fotografija": 108,
+      "instruktor:navaden": 61,
+      "instruktor:lahki": 61,
+      "instruktor:podrobneje": 61,
+      "instruktor:podrobneje2": 65,
+      "instruktor:slika": 61
+     },
+     "ms": 19.24,
+     "max": 1.5,
+     "klicev": 603,
+     "plan": [
+      "SCAN sqlite_master"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "PRAGMA table_info(classes)",
+     "n": 603,
+     "poti": {
+      "sporocilo": 183,
+      "lekcija": 3,
+      "fotografija": 108,
+      "instruktor:navaden": 61,
+      "instruktor:lahki": 61,
+      "instruktor:podrobneje": 61,
+      "instruktor:podrobneje2": 65,
+      "instruktor:slika": 61
+     },
+     "ms": 27.26,
+     "max": 2.28,
+     "klicev": 603,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT DISTINCT s.id, s.name, s.stage FROM class_members m JOIN classes c ON c.id = m.class_id JOIN schools s ON s.id = c.school_id\n       WHERE m.student_id = ? AND c.kind = 'class' ORDER BY s.id",
+     "n": 570,
+     "poti": {
+      "sporocilo": 174,
+      "lekcija": 3,
+      "fotografija": 99,
+      "instruktor:navaden": 58,
+      "instruktor:lahki": 58,
+      "instruktor:podrobneje": 58,
+      "instruktor:podrobneje2": 62,
+      "instruktor:slika": 58
+     },
+     "ms": 12.14,
+     "max": 0.32,
+     "klicev": 570,
+     "plan": [
+      "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+      "SEARCH c USING INTEGER PRIMARY KEY (rowid=?)",
+      "SEARCH s USING INTEGER PRIMARY KEY (rowid=?)",
+      "USE TEMP B-TREE FOR DISTINCT",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [
+      {
+       "tabela": "class_members",
+       "detail": "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+       "vrstic": 0
+      }
+     ],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR DISTINCT",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT value FROM kv WHERE key = ?",
+     "n": 457,
+     "poti": {
+      "sporocilo": 144,
+      "fotografija": 69,
+      "instruktor:navaden": 48,
+      "instruktor:lahki": 48,
+      "instruktor:podrobneje": 48,
+      "instruktor:podrobneje2": 52,
+      "instruktor:slika": 48
+     },
+     "ms": 2.97,
+     "max": 0.06,
+     "klicev": 457,
+     "plan": [
+      "SEARCH kv USING INDEX sqlite_autoindex_kv_1 (key=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')",
+     "n": 101,
+     "poti": {
+      "sporocilo": 33,
+      "fotografija": 12,
+      "instruktor:navaden": 11,
+      "instruktor:lahki": 11,
+      "instruktor:podrobneje": 11,
+      "instruktor:podrobneje2": 12,
+      "instruktor:slika": 11
+     },
+     "ms": 23083.75,
+     "max": 287.82,
+     "klicev": 101,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE created_at >= date('now','start of month')",
+     "n": 101,
+     "poti": {
+      "sporocilo": 33,
+      "fotografija": 12,
+      "instruktor:navaden": 11,
+      "instruktor:lahki": 11,
+      "instruktor:podrobneje": 11,
+      "instruktor:podrobneje2": 12,
+      "instruktor:slika": 11
+     },
+     "ms": 1.88,
+     "max": 0.05,
+     "klicev": 101,
+     "plan": [
+      "SCAN ai_credit_use"
+     ],
+     "scan": [
+      {
+       "tabela": "ai_credit_use",
+       "detail": "SCAN ai_credit_use",
+       "vrstic": 0
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now')",
+     "n": 93,
+     "poti": {
+      "sporocilo": 30,
+      "fotografija": 12,
+      "instruktor:navaden": 10,
+      "instruktor:lahki": 10,
+      "instruktor:podrobneje": 10,
+      "instruktor:podrobneje2": 11,
+      "instruktor:slika": 10
+     },
+     "ms": 1437.9,
+     "max": 23.64,
+     "klicev": 93,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month') AND student_id = ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 19342.36,
+     "max": 277.79,
+     "klicev": 85,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE created_at >= date('now','start of month') AND student_id = ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 1.92,
+     "max": 0.04,
+     "klicev": 85,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use_student (student_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(credit_usd),0) AS s FROM ai_credit_buys WHERE parent_id = ? AND status = 'active'",
+     "n": 126,
+     "poti": {
+      "sporocilo": 39,
+      "fotografija": 21,
+      "instruktor:navaden": 13,
+      "instruktor:lahki": 13,
+      "instruktor:podrobneje": 13,
+      "instruktor:podrobneje2": 14,
+      "instruktor:slika": 13
+     },
+     "ms": 0.96,
+     "max": 0.03,
+     "klicev": 126,
+     "plan": [
+      "SEARCH ai_credit_buys USING INDEX idx_credit_buys_parent (parent_id=? AND status=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE parent_id = ?",
+     "n": 126,
+     "poti": {
+      "sporocilo": 39,
+      "fotografija": 21,
+      "instruktor:navaden": 13,
+      "instruktor:lahki": 13,
+      "instruktor:podrobneje": 13,
+      "instruktor:podrobneje2": 14,
+      "instruktor:slika": 13
+     },
+     "ms": 0.52,
+     "max": 0.01,
+     "klicev": 126,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use (parent_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT datetime('now','start of month') AS d",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 0.42,
+     "max": 0.04,
+     "klicev": 85,
+     "plan": [
+      "SCAN CONSTANT ROW"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 19604.38,
+     "max": 266.94,
+     "klicev": 85,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage (created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE student_id = ? AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 1.89,
+     "max": 0.05,
+     "klicev": 85,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use_student (student_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 2.87,
+     "max": 1.63,
+     "klicev": 85,
+     "plan": [
+      "SEARCH usage USING INDEX idx_usage_parent (parent_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?",
+     "n": 85,
+     "poti": {
+      "sporocilo": 27,
+      "fotografija": 12,
+      "instruktor:navaden": 9,
+      "instruktor:lahki": 9,
+      "instruktor:podrobneje": 9,
+      "instruktor:podrobneje2": 10,
+      "instruktor:slika": 9
+     },
+     "ms": 0.5,
+     "max": 0.03,
+     "klicev": 85,
+     "plan": [
+      "SEARCH ai_credit_use USING INDEX idx_credit_use (parent_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT p.guest_net AS net FROM students s JOIN parents p ON p.id = s.parent_id WHERE s.id = ? AND (p.is_guest = 1 OR (p.guest_net IS NOT NULL AND p.email_verified_at IS NULL))",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.16,
+     "max": 0.02,
+     "klicev": 8,
+     "plan": [
+      "SEARCH s USING INTEGER PRIMARY KEY (rowid=?)",
+      "SEARCH p USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COALESCE(SUM(n),0) AS n FROM question_log WHERE student_id IN (?) AND day = date('now')",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.14,
+     "max": 0.03,
+     "klicev": 8,
+     "plan": [
+      "SEARCH question_log USING INDEX sqlite_autoindex_question_log_1 (student_id=? AND day=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT birth_year FROM students WHERE id = ?",
+     "n": 33,
+     "poti": {
+      "sporocilo": 9,
+      "fotografija": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 0.12,
+     "max": 0.01,
+     "klicev": 33,
+     "plan": [
+      "SEARCH students USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n, SUM(c.school_id IS NOT NULL) AS school, MAX(c.offers_off) AS off FROM class_members m\n       JOIN classes c ON c.id = m.class_id WHERE m.student_id = ? AND c.kind = 'class'",
+     "n": 33,
+     "poti": {
+      "sporocilo": 9,
+      "fotografija": 9,
+      "instruktor:navaden": 3,
+      "instruktor:lahki": 3,
+      "instruktor:podrobneje": 3,
+      "instruktor:podrobneje2": 3,
+      "instruktor:slika": 3
+     },
+     "ms": 0.39,
+     "max": 0.05,
+     "klicev": 33,
+     "plan": [
+      "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+      "SEARCH c USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [
+      {
+       "tabela": "class_members",
+       "detail": "SCAN m USING COVERING INDEX sqlite_autoindex_class_members_1",
+       "vrstic": 0
+      }
+     ],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT data FROM schedules WHERE student_id = ?",
+     "n": 44,
+     "poti": {
+      "sporocilo": 13,
+      "fotografija": 9,
+      "instruktor:navaden": 5,
+      "instruktor:lahki": 5,
+      "instruktor:podrobneje": 4,
+      "instruktor:podrobneje2": 4,
+      "instruktor:slika": 4
+     },
+     "ms": 0.19,
+     "max": 0.01,
+     "klicev": 44,
+     "plan": [
+      "SEARCH schedules USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT CASE WHEN conversation_id IS NULL THEN 'practice' ELSE 'chat' END AS source, topic_id, subject, topic,\n           date(created_at) AS day, COUNT(*) AS n, SUM(error) AS wrong, MAX(created_at) AS last\n         FROM events WHERE student_id = ? AND topic IS NOT NULL AND created_at >= datetime('now', ?)\n         GROUP BY source, topic_id, subject, topic, day",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.39,
+     "max": 0.06,
+     "klicev": 8,
+     "plan": [
+      "SEARCH events USING INDEX idx_events_student (student_id=? AND created_at>?)",
+      "USE TEMP B-TREE FOR GROUP BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR GROUP BY"
+     ]
+    },
+    {
+     "sql": "SELECT source, topic_id, subject, topic, day, n, wrong, last_at AS last\n         FROM skill_results WHERE student_id = ? AND day >= date('now', ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.07,
+     "max": 0.03,
+     "klicev": 8,
+     "plan": [
+      "SEARCH skill_results USING INDEX sqlite_autoindex_skill_results_1 (student_id=? AND day>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n, COALESCE(SUM(first_try_correct), 0) AS ok FROM tasks\n       WHERE student_id = ? AND first_try_correct IS NOT NULL AND mode != 'pretest' AND created_at >= datetime('now', '-30 days')",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.07,
+     "max": 0.01,
+     "klicev": 8,
+     "plan": [
+      "SEARCH tasks USING INDEX idx_tasks_topic (student_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n, COALESCE(SUM(error), 0) AS err FROM events\n       WHERE student_id = ? AND conversation_id IS NOT NULL AND topic IS NOT NULL AND created_at >= datetime('now', '-30 days')",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.05,
+     "max": 0.01,
+     "klicev": 8,
+     "plan": [
+      "SEARCH events USING INDEX idx_events_student (student_id=? AND created_at>?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO ai_holds (student_id, usd) VALUES (?, ?)",
+     "n": 11,
+     "poti": {
+      "sporocilo": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 9.59,
+     "max": 1.4,
+     "klicev": 11,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO messages (conversation_id, role, api_content, display_text, has_image) VALUES (?, ?, ?, ?, ?)",
+     "n": 16,
+     "poti": {
+      "sporocilo": 6,
+      "instruktor:navaden": 2,
+      "instruktor:lahki": 2,
+      "instruktor:podrobneje": 2,
+      "instruktor:podrobneje2": 2,
+      "instruktor:slika": 2
+     },
+     "ms": 15.26,
+     "max": 3.68,
+     "klicev": 16,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "UPDATE conversations SET updated_at = datetime('now') WHERE id = ?",
+     "n": 16,
+     "poti": {
+      "sporocilo": 6,
+      "instruktor:navaden": 2,
+      "instruktor:lahki": 2,
+      "instruktor:podrobneje": 2,
+      "instruktor:podrobneje2": 2,
+      "instruktor:slika": 2
+     },
+     "ms": 6.52,
+     "max": 1.35,
+     "klicev": 16,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO question_log (student_id, day, n) VALUES (?, date('now'), MAX(0, ?)) ON CONFLICT(student_id, day) DO UPDATE SET n = MAX(0, n + ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 3.33,
+     "max": 1.47,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "UPDATE conversations SET title = ? WHERE id = ?",
+     "n": 4,
+     "poti": {
+      "sporocilo": 1,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 1.34,
+     "max": 0.44,
+     "klicev": 4,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT text FROM answer_cache WHERE key = ? AND verified = 1 AND created_at >= datetime('now','-30 days')",
+     "n": 1,
+     "poti": {
+      "sporocilo": 1
+     },
+     "ms": 0.02,
+     "max": 0.02,
+     "klicev": 1,
+     "plan": [
+      "SEARCH answer_cache USING INDEX sqlite_autoindex_answer_cache_1 (key=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "DELETE FROM ai_holds WHERE id = ?",
+     "n": 11,
+     "poti": {
+      "sporocilo": 3,
+      "fotografija": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 5.79,
+     "max": 0.84,
+     "klicev": 11,
+     "plan": [
+      "SEARCH ai_holds USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 3.84,
+     "max": 0.64,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO usage (student_id, model, kind, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd, parent_id)\n         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 2.44,
+     "max": 0.56,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT OR REPLACE INTO answer_cache (key, text, verified) VALUES (?, ?, ?)",
+     "n": 1,
+     "poti": {
+      "sporocilo": 1
+     },
+     "ms": 0.89,
+     "max": 0.89,
+     "klicev": 1,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)\n         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 2.68,
+     "max": 0.62,
+     "klicev": 8,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT mode FROM events WHERE conversation_id = ? AND message_id IS NOT NULL ORDER BY id DESC LIMIT ?",
+     "n": 8,
+     "poti": {
+      "sporocilo": 3,
+      "instruktor:navaden": 1,
+      "instruktor:lahki": 1,
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1,
+      "instruktor:slika": 1
+     },
+     "ms": 0.19,
+     "max": 0.03,
+     "klicev": 8,
+     "plan": [
+      "SCAN events"
+     ],
+     "scan": [
+      {
+       "tabela": "events",
+       "detail": "SCAN events",
+       "vrstic": 19
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM topic_state WHERE student_id = ? AND topic_id = ?",
+     "n": 3,
+     "poti": {
+      "lekcija": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH topic_state USING INDEX sqlite_autoindex_topic_state_1 (student_id=? AND topic_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM league_groups WHERE finalized = 0 AND week < ? ORDER BY week, id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.04,
+     "max": 0.02,
+     "klicev": 3,
+     "plan": [
+      "SEARCH league_groups USING INDEX idx_league_groups (week<?)",
+      "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT DISTINCT x.student_id AS id FROM xp_events x\n           WHERE x.created_at >= ? AND x.created_at < ? AND x.amount > 0 AND COALESCE(x.reason, '') NOT LIKE 'pilot:%'\n             AND NOT EXISTS (SELECT 1 FROM league_members m WHERE m.student_id = x.student_id AND m.week = ?)\n           ORDER BY x.student_id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 62.87,
+     "max": 37.04,
+     "klicev": 3,
+     "plan": [
+      "SEARCH x USING INDEX idx_xp_time (created_at>? AND created_at<?)",
+      "CORRELATED SCALAR SUBQUERY 1",
+      "SEARCH m USING COVERING INDEX sqlite_autoindex_league_members_2 (student_id=? AND week=?)",
+      "USE TEMP B-TREE FOR DISTINCT"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR DISTINCT"
+     ]
+    },
+    {
+     "sql": "SELECT 1 FROM league_month_awards WHERE month = ? AND stage = ?",
+     "n": 9,
+     "poti": {
+      "lestvica": 9
+     },
+     "ms": 0.1,
+     "max": 0.04,
+     "klicev": 9,
+     "plan": [
+      "SEARCH league_month_awards USING COVERING INDEX sqlite_autoindex_league_month_awards_1 (month=? AND stage=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT * FROM league_profiles WHERE student_id = ?",
+     "n": 7,
+     "poti": {
+      "lestvica": 7
+     },
+     "ms": 0.11,
+     "max": 0.02,
+     "klicev": 7,
+     "plan": [
+      "SEARCH league_profiles USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "INSERT INTO league_profiles (student_id, nickname) VALUES (?, ?)",
+     "n": 1,
+     "poti": {
+      "lestvica": 1
+     },
+     "ms": 0.65,
+     "max": 0.65,
+     "klicev": 1,
+     "plan": [],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT m.final_rank, m.outcome, m.week, g.tier, (SELECT COUNT(*) FROM league_members x WHERE x.group_id = m.group_id AND x.final_xp > 0) AS n\n         FROM league_members m JOIN league_groups g ON g.id = m.group_id\n         WHERE m.student_id = ? AND m.week < ? AND m.outcome IS NOT NULL ORDER BY m.week DESC LIMIT 1",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH m USING INDEX sqlite_autoindex_league_members_2 (student_id=? AND week<?)",
+      "SEARCH g USING INTEGER PRIMARY KEY (rowid=?)",
+      "CORRELATED SCALAR SUBQUERY 1",
+      "SEARCH x USING INDEX sqlite_autoindex_league_members_1 (group_id=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT item FROM knowledge_items WHERE student_id = ? AND source = 'league' AND revoked_at IS NULL ORDER BY earned_at DESC, item",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.02,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SEARCH knowledge_items USING INDEX sqlite_autoindex_knowledge_items_1 (student_id=?)",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT equipped FROM avatar_state WHERE student_id = ?",
+     "n": 0,
+     "poti": {},
+     "ms": 0.26,
+     "max": 0.03,
+     "klicev": 93,
+     "plan": [
+      "SEARCH avatar_state USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT g.* FROM league_members m JOIN league_groups g ON g.id = m.group_id WHERE m.student_id = ? AND m.week = ?",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.01,
+     "max": 0,
+     "klicev": 3,
+     "plan": [
+      "SEARCH m USING INDEX sqlite_autoindex_league_members_2 (student_id=? AND week=?)",
+      "SEARCH g USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT x.student_id, p.nickname, SUM(x.amount) AS xp, MIN(x.created_at) AS first FROM xp_events x\n         JOIN league_profiles p ON p.student_id = x.student_id\n         JOIN students s ON s.id = x.student_id\n         WHERE x.created_at >= ? AND x.created_at < ? AND CASE json_extract(s.settings, '$.educational_track') WHEN 'SREDNJA_SOLA' THEN 'SS' WHEN 'UNIVERZA' THEN 'UNI' ELSE 'OS' END = ? AND COALESCE(x.reason, '') NOT LIKE 'pilot:%'\n         GROUP BY x.student_id HAVING xp > 0 ORDER BY xp DESC, first, x.student_id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 171.5,
+     "max": 66.48,
+     "klicev": 3,
+     "plan": [
+      "SEARCH x USING INDEX idx_xp_time (created_at>? AND created_at<?)",
+      "SEARCH p USING INTEGER PRIMARY KEY (rowid=?)",
+      "SEARCH s USING INTEGER PRIMARY KEY (rowid=?)",
+      "USE TEMP B-TREE FOR GROUP BY",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR GROUP BY",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "SELECT c.* FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.student_id = ? ORDER BY m.joined_at, c.id",
+     "n": 3,
+     "poti": {
+      "lestvica": 3
+     },
+     "ms": 0.03,
+     "max": 0.01,
+     "klicev": 3,
+     "plan": [
+      "SCAN m",
+      "SEARCH c USING INTEGER PRIMARY KEY (rowid=?)",
+      "USE TEMP B-TREE FOR ORDER BY"
+     ],
+     "scan": [
+      {
+       "tabela": "class_members",
+       "detail": "SCAN m",
+       "vrstic": 0
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": [
+      "USE TEMP B-TREE FOR ORDER BY"
+     ]
+    },
+    {
+     "sql": "UPDATE conversations SET deep = ? WHERE id = ?",
+     "n": 2,
+     "poti": {
+      "instruktor:podrobneje": 1,
+      "instruktor:podrobneje2": 1
+     },
+     "ms": 3.67,
+     "max": 2.87,
+     "klicev": 2,
+     "plan": [
+      "SEARCH conversations USING INTEGER PRIMARY KEY (rowid=?)"
+     ],
+     "scan": [],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    },
+    {
+     "sql": "SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND date(created_at) = date('now')",
+     "n": 1,
+     "poti": {
+      "instruktor:podrobneje2": 1
+     },
+     "ms": 50.29,
+     "max": 50.29,
+     "klicev": 1,
+     "plan": [
+      "SCAN usage"
+     ],
+     "scan": [
+      {
+       "tabela": "usage",
+       "detail": "SCAN usage",
+       "vrstic": 1000019
+      }
+     ],
+     "polniIndeks": [],
+     "zacasnoDrevo": []
+    }
+   ]
+  },
+  "rssKonecMB": 355.4
+ },
+ "trajanjeS": 657
+}

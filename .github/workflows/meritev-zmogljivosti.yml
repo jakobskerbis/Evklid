@@ -1,0 +1,113 @@
+# Meritev zmogljivosti, del 0.4 »prvo odprtje« (Faza 0, docs/meritve/zmogljivost-2026-11-13.md) v Chromiumu in WebKitu.
+# WebKit lokalno ni nameščen, zato samo tu. Samo ročni zagon (Actions > Meritev zmogljivosti > Run workflow).
+# Preizkusni način (EVKLID_MOCK=1): brez ključev, brez klicev AI, Stripe ali e-pošte; zavržena baza v začasni mapi.
+# Rezultat: artefakt »meritev-zmogljivosti« (JSON in povzetek v Markdown). Chromium z omejitvami (CPU 4×, Slow 4G prek CDP),
+# WebKit brez omejitev (CDP ni na voljo). Repozitorij je javen: brez skrivnosti, samo pravica branja, akcije pripete na SHA.
+# Namestitev Playwrighta in predpomnilniki kot v testi.yml.
+name: Meritev zmogljivosti
+on:
+  workflow_dispatch:
+    inputs:
+      deli:
+        description: "Deli skripte (--samo), npr. prvo ali prvo,poti"
+        required: false
+        default: "prvo"
+permissions:
+  contents: read
+concurrency:
+  group: meritev-zmogljivosti
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+env:
+  EVKLID_MOCK: "1"
+  ANTHROPIC_API_KEY: ""
+  STRIPE_SECRET_KEY: ""
+  RESEND_API_KEY: ""
+  PLAYWRIGHT_VERSION: "1.63.0"
+jobs:
+  meritev:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+        timeout-minutes: 10
+      - name: Playwright (Chromium in WebKit)
+        timeout-minutes: 5
+        run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit
+      - id: mesec
+        timeout-minutes: 1
+        run: |
+          echo "m=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+          echo "img=${ImageOS:-ubuntu}" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
+        with:
+          path: ~/apt-arhiv
+          key: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-${{ steps.mesec.outputs.m }}
+          restore-keys: apt-${{ runner.os }}-${{ steps.mesec.outputs.img }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit-
+      # Enako kot testi.yml: omejitev časa, 3 poskusi, arhiv paketov .deb (podrobnosti v komentarjih tam).
+      - name: Namestitev brskalnikov (omejitev časa + ponovitev)
+        timeout-minutes: 42
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "30";
+          Acquire::https::Timeout "30";
+          Dir::Cache::Archives "/home/runner/apt-arhiv/";
+          APT::Keep-Downloaded-Packages "true";
+          Binary::apt::APT::Keep-Downloaded-Packages "true";
+          APT
+          sudo mkdir -p ~/apt-arhiv/partial
+          sudo chown _apt:root ~/apt-arhiv/partial
+          echo "Paketov v predpomnilniku: $(find ~/apt-arhiv -maxdepth 1 -name '*.deb' | wc -l)"
+          for poskus in 1 2 3; do
+            if timeout -k 10 13m npx playwright install --with-deps chromium webkit; then
+              sudo timeout 2m apt-get autoclean -q || true
+              sudo rm -rf ~/apt-arhiv/partial ~/apt-arhiv/lock; sudo chmod -R a+rX ~/apt-arhiv
+              exit 0
+            fi
+            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (13 min)"
+            sudo pkill -9 -f '[a]pt-get|[a]pt |[d]pkg' || true
+            sleep 2
+            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock ~/apt-arhiv/lock
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m dpkg --configure -a --force-confdef --force-confold || true
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m apt-get -f install -y || true
+            sleep 5
+          done
+          echo "::error::Namestitev brskalnikov ni uspela v 3 poskusih"
+          exit 1
+      - name: Meritev
+        timeout-minutes: 30
+        env:
+          DELI: ${{ inputs.deli }}
+        run: |
+          node --disable-warning=ExperimentalWarning scripts/meritev-zmogljivosti.mjs --samo "${DELI:-prvo}" --brskalnik chromium,webkit \
+            --json meritev-zmogljivosti.json --md meritev-zmogljivosti.md 2>&1 | tee meritev.log
+          cat meritev-zmogljivosti.md >> "$GITHUB_STEP_SUMMARY"
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        timeout-minutes: 5
+        with:
+          name: meritev-zmogljivosti
+          path: |
+            meritev-zmogljivosti.json
+            meritev-zmogljivosti.md
+            meritev.log
+          retention-days: 30
+          if-no-files-found: ignore
