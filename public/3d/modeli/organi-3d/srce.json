@@ -1109,7 +1109,8 @@
     "uho",
     "vez",
     "vena",
-    "pljucna-vena"
+    "pljucna-vena",
+    "vena-spodnja"
    ]
   },
   "volumen": {
@@ -1219,10 +1220,10 @@
      "barva": "#d0968a"
     },
     "vena-spodnja": {
-     "barva": "#4a2228",
+     "barva": "#f0a59a",
      "dvostransko": true,
      "sijaj": 0,
-     "lak": 0
+     "lak": 0.1
     }
    },
    "okvir": {
