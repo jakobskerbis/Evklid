@@ -330,7 +330,8 @@ export function createApp(store, opts = {}) {
       ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
       ["/vendor/three/build/", path.join(modules, "three", "build")],
       ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
-      ["/practice/", path.join(here, "practice")],
+      // Iz server/practice samo check.js (kot spodaj brez stiskanja), ne cela mapa s kodo strežnika (točka 1.7).
+      ["/practice/check.js", path.join(here, "practice", "check.js")],
       ["/", publicDir],
     ]);
     app.use(statics);
