@@ -5,10 +5,37 @@ import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabe
 
 const lib = (name) => globalThis[name];
 
+// Točka A3: besedilo od modela in učencev (in vse drugo, kar gre skozi renderRich) ne sme nalagati ničesar z drugih
+// strani in ne sme vsebovati obrazcev ali vrinjenih slogov (style z url() bi naložil zunanjo sliko, gumb ali obrazec
+// bi se pretvarjal, da je del aplikacije). Povezave ostanejo. KaTeX se vstavi šele po čiščenju (style v formulah ostane).
+const PREPOVEDANE_OZNAKE = ["form", "input", "button", "textarea", "select", "option", "style", "link", "meta", "base"];
+const PREPOVEDANI_ATRIBUTI = ["style", "srcset", "poster", "background", "formaction", "action"];
+const NASLOVI_SLIK = ["src", "href", "xlink:href"];
+// Slika ali vir je dovoljen samo z iste strani, kot data:image/… ali blob: (fotografija s kamere).
+function lokalno(v) {
+  const s = String(v || "").trim();
+  if (/^data:image\//i.test(s)) return true;
+  try {
+    const u = new URL(s, globalThis.location?.href);
+    return (u.protocol === "blob:" || u.protocol === location.protocol) && u.origin === location.origin;
+  } catch {
+    return false;
+  }
+}
+export function ocistiStrogo(html, purify = lib("DOMPurify")) {
+  const frag = purify.sanitize(html, { FORBID_TAGS: PREPOVEDANE_OZNAKE, FORBID_ATTR: PREPOVEDANI_ATRIBUTI, RETURN_DOM_FRAGMENT: true });
+  for (const el of frag.querySelectorAll("img, source, video, audio, track, image, use, feImage, iframe, embed, object")) {
+    for (const a of NASLOVI_SLIK) if (el.hasAttribute(a) && !lokalno(el.getAttribute(a))) el.removeAttribute(a);
+  }
+  const ovoj = frag.ownerDocument.createElement("div");
+  ovoj.append(frag);
+  return ovoj.innerHTML;
+}
+
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
 // renderMath(tex, display, false) jih izpusti (npr. v gumbih z možnostmi odgovora).
 export function createRenderer({ marked = lib("marked"), katex = lib("katex"), sanitize, annotate = null } = {}) {
-  const clean = sanitize || ((html) => lib("DOMPurify").sanitize(html));
+  const clean = sanitize || ((html) => ocistiStrogo(html));
   const plain = { throwOnError: false, strict: "ignore" };
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
 

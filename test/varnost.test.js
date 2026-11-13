@@ -103,8 +103,9 @@ test("varnostne glave: CSP, HSTS samo prek https, no-store za API", async () => 
     const call = client();
     const home = await call("/");
     const csp = home.headers.get("content-security-policy");
-    for (const d of ["default-src 'self'", "script-src 'self'", "object-src 'none'", "frame-ancestors 'none'", "img-src 'self' data: blob: https:", "connect-src 'self'"]) assert.ok(csp.includes(d), d);
+    for (const d of ["default-src 'self'", "script-src 'self'", "object-src 'none'", "frame-ancestors 'none'", "img-src 'self' data: blob:", "connect-src 'self'"]) assert.ok(csp.includes(d), d);
     assert.ok(!/script-src[^;]*unsafe-inline/.test(csp));
+    assert.ok(!/img-src[^;]*https:/.test(csp), "A3: slike samo lastne, data: in blob:");
     assert.equal(home.headers.get("x-content-type-options"), "nosniff");
     assert.equal(home.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
     assert.equal(home.headers.get("cross-origin-opener-policy"), "same-origin");
