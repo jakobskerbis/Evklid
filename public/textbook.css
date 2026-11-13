@@ -1,0 +1,1419 @@
+/* Učbenik in interaktivne demonstracije. Barve samo iz spremenljivk v :root. */
+
+.textbook, .lab-view, .gr-video { --demo-a: #e8833a; --demo-b: #2f9e8f; --demo-c: #7b61d1; }
+.dark .textbook, .dark .lab-view, .dark .gr-video { --demo-a: #f2a061; --demo-b: #4cc3b2; --demo-c: #a58ff0; }
+
+/* Ikone v učbeniku. Ne KaTeX: njegovi SVG-ji (znak korena s črto, puščice, oklepaji) imajo svojo širino (j 2026-10-31). */
+.textbook svg:not(.demo-svg):not(.rs):not(.katex svg) { width: 1.1em; height: 1.1em; vertical-align: -0.15em; margin-right: 6px; }
+.tb-head h1 { display: flex; align-items: center; }
+.tb-search input {
+  width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); font-size: 1rem;
+}
+.tb-search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tb-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0 18px; }
+
+.tb-book { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.tb-book h2 { margin: 2px 0; }
+.tb-book p { margin: 0; }
+.tb-book .eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+.tb-book-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.tb-jump { padding: 8px 0; background: var(--bg, var(--surface)); }
+.tb-mine { margin-inline-start: 4px; padding: 1px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.72rem; font-weight: 800; }
+.tb-jump .active .tb-mine { background: var(--surface); }
+.tb-part { scroll-margin-top: 130px; }
+.tb-part-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin: 22px 0 8px; }
+.tb-part-head h2 { margin: 0; }
+.tb-unit h2 { display: flex; align-items: center; gap: 10px; }
+.tb-num {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-text, #fff); font-size: 0.85rem; flex: none;
+}
+.tb-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.tb-topic {
+  width: 100%; text-align: start; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 4px 10px;
+  border: 0 !important; background: none !important; border-radius: 10px !important; padding: 9px 10px !important; cursor: pointer;
+}
+.tb-topic:hover { background: var(--surface-2) !important; }
+.tb-topic.pending .tb-name { color: var(--muted); }
+.tb-name { font-weight: 600; flex: 1 1 200px; }
+.tb-sub, .tb-snip { flex-basis: 100%; font-size: 0.85rem; color: var(--muted); }
+.tb-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+.tb-badge { font-size: 0.72rem; border-radius: 99px; padding: 1px 8px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 600; }
+/* besedilo značk pomešano z barvo besedila, da ima na svetlem ozadju kontrast vsaj 4,5 : 1 (oranžna sama 2,3 : 1) */
+.tb-badge.demo { background: color-mix(in srgb, var(--demo-a) 18%, transparent); color: color-mix(in srgb, var(--demo-a) 58%, var(--text)); }
+.tb-badge.vaje { background: color-mix(in srgb, var(--ok) 16%, transparent); color: color-mix(in srgb, var(--ok) 72%, var(--text)); }
+
+/* PDF in zaklenjen interaktivni del */
+.tb-pdf { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; color: var(--accent); font-weight: 600; text-decoration: none; font-size: 0.92rem; }
+.tb-pdf:hover { text-decoration: underline; }
+.tb-unit-pdf { margin: 6px 0 0; }
+.tb-locked { border: 1px dashed var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
+.tb-checks ol { padding-inline-start: 1.3em; }
+.tb-checks > ol > li { margin-bottom: 12px; }
+.tb-checks details { background: var(--surface-2); border-radius: 8px; padding: 4px 10px; margin-top: 4px; }
+
+/* lekcija */
+.tb-crumb { margin: 2px 0 2px; }
+.tb-title { font-size: 1.7rem; margin-bottom: 6px; }
+.tb-goals { margin-top: 0; }
+.tb-draft { background: color-mix(in srgb, #e0a100 14%, transparent); border-radius: 10px; padding: 8px 12px; font-size: 0.9rem; }
+.tb-section .explanation { line-height: 1.65; }
+.tb-section .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0 6px; } /* 6px: osvetlitev klikljive oznake v imenovalcu ni odrezana */
+/* Formula v besedilu se nikoli ne prelomi v dve vrstici (j 2026-10-31: »(p + | q)√b«); preširoko ureja sirina.js. */
+/* Formula v besedilu je celota (inline-block), zato se nikoli ne prekriva s sosednjima vrsticama. Rahlo višja (koren,
+   potenca) z negativnim robom ne razmakne vrstice; višjo (ulomek) sirina.js postavi v svojo vrstico (j 2026-11-01). */
+.textbook .katex { white-space: nowrap; }
+.textbook :is(p, li, dd, blockquote, h2, h3, td, th) .katex:not(.katex-display > .katex) { display: inline-block; text-indent: 0; margin-block: -0.15em; }
+/* Zložena formula (sirina.js, j 2026-11-01): leva stran zgoraj, vsak »= …« spodaj. Sredi besedila je v svoji vrstici. */
+.textbook :is(p, li, dd, blockquote, h2, h3) .katex.tb-zlozena:not(.katex-display > .katex) { display: block; width: fit-content; max-width: 100%; margin: 6px 0; }
+.textbook .katex.tb-dolga { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; padding: 2px 0 4px; }
+.textbook .explanation code { overflow-wrap: anywhere; }
+.textbook .explanation pre { max-width: 100%; overflow-x: auto; }
+/* Nizek števec (m/V): okvir oznake sega 4,6 px nad formulo; brez tega je osvetlitev zgoraj odrezana. */
+.tb-section .katex-display:has(.mfrac [data-fx]) { padding-top: 9px; margin-top: calc(1em - 5px); }
+.tb-why { border-inline-start: 4px solid var(--accent); }
+.tb-summary { border-inline-start: 4px solid var(--ok); }
+.tb-mistakes { border-inline-start: 4px solid var(--danger); }
+/* Vmesno vprašanje »Premisli« v razlagi (:::premisli) */
+.tb-think { margin: 12px 0; border-inline-start: 4px solid var(--gold, #e0a100); background: var(--surface-2); border-radius: 0; border-start-end-radius: 10px; border-end-end-radius: 10px; padding: 4px 14px 8px; }
+.tb-think-label { margin: 6px 0 0; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.tb-think > details > summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: 4px 0; }
+.tb-formula { margin: 8px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); padding: 0 12px; }
+.tb-formula > summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: 8px 0; list-style: none; }
+.tb-formula > summary::-webkit-details-marker { display: none; }
+.tb-formula > summary::before { content: "+ "; }
+.tb-formula[open] > summary::before { content: "− "; }
+.tb-formula[open] > summary { border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+.tb-formula p { margin: 6px 0; }
+/* Rešitev rešenega primera: gumb »Pokaži rešitev« (server/textbook.js hideSolutions); enako v aplikaciji. */
+.tb-solution { margin: 10px 0; }
+.tb-solution > summary { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border-radius: 999px; cursor: pointer; font-weight: 700; color: var(--accent); background: var(--accent-soft); list-style: none; }
+.tb-solution > summary::-webkit-details-marker { display: none; }
+.tb-solution > summary:hover { filter: brightness(0.97); }
+.tb-solution[open] > summary { margin-bottom: 6px; }
+.tb-alt { margin-top: 12px; }
+.tb-alt-tabs { flex-wrap: wrap; margin: 12px 0 8px; }
+.tb-alt-body { background: var(--surface-2); border-radius: 12px; padding: 4px 14px; }
+.tb-checks .tb-check { padding: 10px 0; border-top: 1px solid var(--border); }
+.tb-checks .tb-check:first-of-type { border-top: 0; }
+.tb-q p { margin: 0 0 8px; font-weight: 600; }
+.tb-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.tb-opt p { margin: 0; }
+.tb-opt .katex { pointer-events: none; }
+.tb-opt.ok { border-color: var(--ok) !important; background: color-mix(in srgb, var(--ok) 15%, transparent) !important; }
+.tb-opt.bad { border-color: var(--danger) !important; background: color-mix(in srgb, var(--danger) 12%, transparent) !important; }
+.tb-checks .tb-why { margin-top: 8px; font-weight: 400; }
+.tb-checks .tb-why p { display: inline; }
+.tb-nav { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+/* Lekcija po korakih */
+.tb-mode-btn { margin: 0 0 4px; font-size: 0.9rem; }
+.tb-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+.tb-tools .tb-mode-btn, .tb-tools .tb-report-btn { margin: 0; padding-inline: 4px; }
+.tb-tools + .report-box { margin-bottom: 12px; }
+.tb-gradiva { display: contents; }
+.tb-gr-btn { background: none; border: 0; padding: 0; font: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer; min-height: 0; }
+.tb-gr-btn[aria-pressed="true"] { text-decoration: underline; }
+.tb-gr-msg { flex-basis: 100%; margin: 4px 0 0; font-size: 0.9rem; }
+/* Na dotik: vrstice orodij so cele 40 px visoke (brez negativnega roba, da se gumbi v več vrsticah ne prekrivajo). */
+@media (hover: none) and (pointer: coarse) { .tb-tools { row-gap: 0; } .tb-tools .tb-pdf { min-height: 40px; padding-block: 0; margin-block: 0; } }
+.tb-progress { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin: 4px 0 12px; scroll-margin-top: 80px; }
+.tb-progress > span { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.2s ease; }
+/* Koraki lekcije: plavajoči krogi Nazaj · 1/12 · Naprej na dnu pogleda. Vsebina teče pod njimi (prozorna vrstica,
+   rahel preliv ozadja za berljivost); vrstica na koncu zavzame svojo višino, zato zadnje vrstice odpeljemo nadnjo.
+   Pogled pod njo nima spodnjega odmika (brez praznega pasu); varno območje doda touch.css. */
+#view-textbook:has(.tb-stepper) { padding-bottom: 0; }
+.tb-stepper {
+  position: sticky; bottom: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: 8px 0 0; padding: 14px 2px 12px; pointer-events: none;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--bg) 60%, transparent) 60%, color-mix(in srgb, var(--bg) 75%, transparent));
+}
+.tb-stepper > * { pointer-events: auto; }
+.tb-step-btn, .tb-step-count { flex: none; width: 52px; height: 52px; border-radius: 50%; box-shadow: var(--shadow-lg); }
+.tb-step-btn {
+  display: grid; place-items: center; margin: 0; padding: 0; min-height: 0; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+.tb-step-btn.next { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
+.tb-step-btn svg { width: 24px; height: 24px; margin: 0; }
+.tb-step-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 3px; }
+.tb-step-btn:disabled { cursor: default; box-shadow: var(--shadow); border-color: var(--border); background: var(--surface); color: var(--muted); }
+.tb-step-btn:disabled svg { opacity: 0.4; }
+@media (hover: hover) { .tb-step-btn:not(:disabled):hover { border-color: var(--accent); } .tb-step-btn.next:not(:disabled):hover { filter: brightness(1.08); } }
+[dir="rtl"] .tb-step-btn svg { transform: scaleX(-1); }
+.tb-step-count {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+  border: 2px solid var(--accent); background: var(--surface); color: var(--text); font-variant-numeric: tabular-nums;
+}
+.tb-step-count b { font-size: 1.12rem; font-weight: 800; }
+.tb-step-count small { margin-top: 2px; font-size: 0.72rem; font-weight: 600; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .tb-progress > span { transition: none; } }
+
+/* demonstracije */
+.demo-stage { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+.demo-stage.two .demo-svg:first-child { flex: 2 1 280px; }
+.demo-stage.two .demo-svg.small { flex: 1 1 180px; max-width: 240px; }
+.demo-svg { width: 100%; max-width: 420px; height: auto; touch-action: manipulation; }
+.demo-controls { display: flex; flex-direction: column; gap: 10px; margin: 14px 0 6px; }
+.demo-slider { display: grid; grid-template-columns: 7.5em 1fr 5.5em; align-items: center; gap: 10px; font-weight: 600; }
+.demo-slider input[type="range"] { width: 100%; accent-color: var(--accent); height: 28px; }
+.demo-slider output { font-variant-numeric: tabular-nums; text-align: right; }
+.demo-slider .dd { grid-column: 2 / 4; }
+.demo-slider .dd-btn { min-height: 40px; font-weight: 600; }
+.demo-check { display: flex; gap: 8px; align-items: center; font-size: 0.92rem; }
+.demo-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.demo-readout { margin-top: 6px; }
+.demo-readout ul { padding-left: 1.2em; }
+.demo-eq { font-size: 1.15rem; margin: 6px 0; overflow-x: auto; }
+.demo-try { background: var(--surface-2); border-radius: 10px; padding: 8px 12px; font-size: 0.92rem; }
+.demo-values { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 10px 0; }
+.demo-val { display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface-2); min-width: 0; }
+.demo-val span { font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.demo-val b { font-size: 1.2rem; font-weight: 900; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 520px) { .demo-values { grid-template-columns: 1fr 1fr; } }
+/* Osnovni videz tabele je skupen (style.css, »tabele«); tu samo pomik vstran na ozkem zaslonu. */
+.demo-table { display: block; width: max-content; max-width: 100%; overflow-x: auto; }
+.demo-table :is(th, td) { white-space: nowrap; }
+.demo-table.atoms tr.ok td:last-child { color: var(--ok); font-weight: 700; }
+.demo-table.atoms tr.bad td:last-child { color: var(--danger); font-weight: 700; }
+.demo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.chip-btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 99px !important; padding: 3px 10px !important; font-size: 0.82rem; cursor: pointer; }
+.chip-btn i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.chips .chip-btn { display: inline-flex !important; border: 1px solid var(--accent) !important; color: var(--accent); background: none !important; }
+
+.demo-svg .grid { stroke: var(--border); stroke-width: 1; }
+.demo-svg .axis { stroke: var(--text); stroke-width: 1.6; fill: none; }
+.demo-svg .fill-text { fill: var(--text); }
+.demo-svg .tick { fill: var(--muted); font-size: 11px; }
+.demo-svg .axis-label { fill: var(--text); font-size: 14px; font-style: italic; font-weight: 700; }
+.demo-svg .graph-line { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+.demo-svg .slope-tri { fill: none; stroke: var(--demo-a); stroke-width: 2; stroke-dasharray: 5 3; }
+.demo-svg .slope-label { fill: var(--demo-a); font-size: 12px; font-weight: 700; }
+.demo-svg .pt { stroke: var(--surface); stroke-width: 2; }
+.demo-svg .pt-n { fill: var(--demo-a); }
+.demo-svg .pt-zero { fill: var(--demo-b); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: 0; }
+.dot-n, .dot-a { background: var(--demo-a); }
+.dot-zero, .dot-b { background: var(--demo-b); }
+.dot-c { background: var(--demo-c); }
+
+.demo-svg .sq { stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .sq-a { fill: color-mix(in srgb, var(--demo-a) 35%, transparent); }
+.demo-svg .sq-b { fill: color-mix(in srgb, var(--demo-b) 35%, transparent); }
+.demo-svg .sq-c { fill: color-mix(in srgb, var(--demo-c) 30%, transparent); }
+.demo-svg .unit-grid { stroke: var(--text); stroke-opacity: 0.25; stroke-width: 1; }
+.demo-svg .tri { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.demo-svg .right-angle { fill: none; stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .sq-label { font-size: 13px; font-weight: 700; fill: var(--text); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+
+.demo-svg .pie { fill: var(--surface-2); stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .pie.on { fill: var(--demo-a); }
+.demo-svg .nl-range { stroke: var(--demo-a); stroke-width: 5; stroke-linecap: round; }
+
+.demo-svg .wire { fill: none; stroke: var(--muted); stroke-width: 4; stroke-linejoin: round; }
+.demo-svg .bg-cut { fill: var(--surface); }
+.demo-svg .batt-long { stroke: var(--text); stroke-width: 3; }
+.demo-svg .batt-short { stroke: var(--text); stroke-width: 6; }
+.demo-svg .resistor { fill: var(--surface); stroke: var(--demo-a); }
+.demo-svg .meter { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.demo-svg .meter-label { font-weight: 800; fill: var(--text); font-size: 14px; }
+.demo-svg .circ-label { fill: var(--text); font-size: 12px; font-weight: 700; }
+.demo-svg .heat { fill: #ff7a2f; filter: blur(5px); }
+.demo-svg .electron { fill: var(--accent); }
+
+.demo-svg .ground { stroke: var(--text); stroke-width: 3; }
+.demo-svg .ball { fill: var(--demo-a); stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .ghost { fill: var(--demo-a); opacity: 0.22; }
+.demo-svg .vel { stroke: var(--demo-b); stroke-width: 3; }
+.demo-svg .guide { stroke: var(--border); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.demo-svg .string { stroke: var(--text); stroke-width: 2; }
+
+.demo-svg .box { fill: var(--surface-2); stroke: var(--text); stroke-width: 2; }
+.demo-svg .piston { fill: var(--muted); }
+.demo-svg .particle { stroke: none; }
+
+.demo-svg .beaker { fill: none; stroke: var(--text); stroke-width: 2; }
+
+.eq-box { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px; font-size: 1.25rem; margin: 10px 0; }
+.eq-term { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
+.eq-term button { padding: 0 10px !important; margin: 0 !important; line-height: 1.4; font-size: 1rem; }
+.eq-formula { font-weight: 700; white-space: nowrap; }
+.eq-coef { color: var(--accent); margin-right: 2px; }
+.eq-arrow, .eq-plus { color: var(--muted); font-weight: 700; }
+.eq-mols { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+.eq-group { display: flex; flex-wrap: wrap; gap: 6px; max-width: 160px; padding: 6px; border-radius: 10px; background: var(--surface-2); }
+.mol { display: inline-flex; flex-wrap: wrap; max-width: 44px; gap: 1px; }
+.mol i, .atom { width: 11px; height: 11px; border-radius: 50%; display: inline-block; border: 1px solid rgb(0 0 0 / 0.3); }
+
+@media (max-width: 520px) {
+  .demo-slider { grid-template-columns: 1fr 4.8em; }
+  .demo-slider .demo-slider-label { grid-column: 1 / 3; font-size: 0.88rem; }
+  .demo-slider .dd { grid-column: 1 / 3; }
+  .tb-title { font-size: 1.4rem; }
+}
+
+/* Označi besedilo in vprašaj tutorja */
+.tb-sel-ask { position: absolute; z-index: 60; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 0; border-radius: 999px; background: var(--accent); color: var(--accent-text, #fff); font: inherit; font-weight: 600; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22); cursor: pointer; }
+.tb-sel-ask[hidden] { display: none; }
+.tb-sel-ask .i { width: 18px; height: 18px; }
+.tb-sel-hint { display: flex; align-items: center; gap: 6px; font-size: 0.88rem; margin: 4px 0 10px; }
+.tb-sel-hint .i { width: 16px; height: 16px; flex: none; }
+
+/* ---------- lastne simulacije (public/sim) ---------- */
+.demo { --demo-soft: color-mix(in srgb, var(--accent) 16%, var(--surface)); }
+.demo-canvas { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; border-radius: 12px; background: var(--surface-2); touch-action: none; }
+.demo-svg { max-width: 460px; user-select: none; -webkit-user-select: none; }
+.demo-svg text { font-family: inherit; }
+.demo-seg-wrap { width: 100%; display: flex; justify-content: center; margin-bottom: 6px; }
+.demo-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 4px; border-radius: 22px; background: var(--surface-2); }
+.ovl { text-decoration: overline; text-decoration-thickness: 0.07em; }
+/* V HTML je overline na višini velikih črk, nad malo črko previsoko: črta tik nad x-višino (sredina vrstice − 0,36em). */
+span.ovl { text-decoration: none; background: linear-gradient(currentColor, currentColor) 50% calc(50% - 0.36em) / 0.62em 0.075em no-repeat; }
+.demo .demo-seg .seg-btn { min-height: 36px; padding: 5px 14px; border: 0; border-radius: 999px; background: none; font-weight: 800; color: var(--muted); }
+.demo .demo-seg .seg-btn.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+.demo-controls > .demo-seg, .demo-controls > .demo-buttons { align-self: flex-start; }
+.demo-readout p { margin: 6px 0; }
+.demo-readout .ok-text { color: var(--ok); }
+.demo-try b { color: var(--accent); }
+
+/* barve likov */
+.demo-svg .fill-a { fill: var(--demo-a); }
+.demo-svg .fill-b { fill: var(--demo-b); }
+.demo-svg .fill-c { fill: var(--demo-c); }
+.demo-svg .fill-accent { fill: var(--accent); }
+.demo-svg .fill-muted { fill: var(--muted); }
+.demo-svg .fill-ok { fill: var(--ok); }
+.demo-svg .fill-danger { fill: var(--danger); }
+.demo-svg .fill-soft { fill: var(--demo-soft); }
+.demo-svg .fill-danger-soft { fill: color-mix(in srgb, var(--danger) 30%, var(--surface)); }
+.demo-svg .stroke-a { stroke: var(--demo-a); }
+.demo-svg .stroke-b { stroke: var(--demo-b); }
+.demo-svg .stroke-c { stroke: var(--demo-c); }
+.demo-svg .stroke-text { stroke: var(--text); }
+.demo-svg .stroke-muted { stroke: var(--muted); }
+.demo-svg .stroke-accent { stroke: var(--accent); }
+.demo-svg .stroke-danger { stroke: var(--danger); }
+.demo-svg .stroke-ok { stroke: var(--ok); }
+.demo-svg .vec { stroke-linecap: round; fill: none; }
+.demo-svg .lbl { fill: var(--text); font-size: 13px; font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+.demo-svg .lbl.small { font-size: 11px; }
+.demo-svg .lbl.big { font-size: 20px; }
+.demo-svg .lbl.inv { fill: #fff; stroke: none; font-size: 10px; }
+.demo-svg .tick.small { font-size: 9px; }
+.demo-svg .tick.b { font-weight: 700; fill: var(--text); }
+.demo-svg .pt-lbl { fill: var(--text); font-size: 13px; font-weight: 800; font-style: italic; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+.demo-svg .handle { cursor: grab; touch-action: none; }
+.demo-svg .handle:active { cursor: grabbing; }
+.demo-svg .handle .hit { fill: transparent; }
+.demo-svg .handle .pt { stroke: var(--surface); stroke-width: 2.5; filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.3)); }
+.demo-svg .drag { touch-action: none; }
+.demo-svg .pt.open { fill: var(--surface); stroke-width: 2.5; }
+.demo-svg .guide.solid { stroke-dasharray: none; }
+.demo-svg .guide.solid:not(.stroke-a, .stroke-b, .stroke-c) { stroke: var(--muted); }
+.demo-svg .guide.thin, .demo-svg .axis.thin { stroke-width: 0.8; }
+.demo-svg .shape { stroke: var(--text); stroke-width: 1.6; fill-opacity: 0.35; stroke-linejoin: round; }
+.demo-svg .shape.dashed { fill: none; stroke-dasharray: 5 4; stroke: var(--muted); }
+.demo-svg .shape.ghosty { fill-opacity: 0.25; stroke-dasharray: 4 3; }
+.demo-svg .angle-fill { fill-opacity: 0.45; stroke: var(--surface); stroke-width: 1; }
+.demo-svg .tile { stroke: none; }
+.demo-svg .tile.empty, .demo-svg .bar.empty { fill: var(--surface-2); }
+.demo-svg .bar { stroke: var(--surface); stroke-width: 1; }
+.demo-svg .bar-frame { fill: none; stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .brace { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.demo-svg .perim { fill: none; stroke: var(--demo-c); stroke-width: 3.5; stroke-linejoin: round; }
+.demo-svg .area-fill { fill: var(--demo-a); fill-opacity: 0.2; }
+.demo-svg .node { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .node.prime { fill: var(--demo-b); fill-opacity: 0.85; }
+.demo-svg .node-lbl { fill: var(--text); font-size: 11px; font-weight: 800; }
+.demo-svg .venn { fill-opacity: 0.16; stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .venn-title { fill: var(--text); font-size: 15px; font-weight: 800; }
+.demo-svg .venn-num { fill: var(--text); font-size: 13px; font-weight: 600; }
+.demo-svg .venn-num.on { fill: #fff; font-weight: 800; }
+.demo-svg .venn-hit { fill: var(--accent); }
+.demo-svg .set { fill: none; stroke: var(--border); stroke-width: 1.5; }
+.demo-svg .set.on { fill: var(--accent); fill-opacity: 0.1; stroke: var(--accent); }
+.demo-svg .jump { fill: none; stroke-width: 2.5; stroke-dasharray: 400; stroke-dashoffset: 400; animation: demo-draw 0.6s ease-out forwards; }
+@keyframes demo-draw { to { stroke-dashoffset: 0; } }
+.demo-svg .ray { stroke-width: 5; stroke-linecap: round; stroke-opacity: 0.85; }
+.demo-svg .ray.a { stroke: var(--demo-a); } .demo-svg .ray.b { stroke: var(--demo-b); } .demo-svg .ray.c { stroke: var(--demo-c); }
+.demo-svg .cup { stroke: var(--text); stroke-width: 1.2; fill-opacity: 0.8; }
+.demo-svg .step { stroke: var(--border); }
+.demo-svg .weight.x { fill: var(--demo-c); }
+.demo-svg .weight.one { fill: var(--demo-a); }
+.demo-svg .weight.neg { fill: var(--danger); }
+.demo-svg .beam { stroke: var(--text); stroke-width: 5; stroke-linecap: round; }
+.demo-svg .beam-post { stroke: var(--muted); stroke-width: 5; }
+.demo-svg .pan { fill: var(--surface-2); stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .algtile { stroke: var(--text); stroke-width: 1.2; }
+.demo-svg .algtile.pos { fill: color-mix(in srgb, var(--demo-c) 45%, var(--surface)); }
+.demo-svg .algtile.x { fill: color-mix(in srgb, var(--demo-b) 45%, var(--surface)); }
+.demo-svg .algtile.one { fill: color-mix(in srgb, var(--demo-a) 55%, var(--surface)); }
+.demo-svg .algtile.neg { fill: color-mix(in srgb, var(--danger) 45%, var(--surface)); }
+.demo-svg .protractor { fill: var(--accent); fill-opacity: 0.07; stroke: var(--accent); stroke-opacity: 0.5; }
+.demo-svg .ray-line { stroke: var(--text); stroke-width: 2.5; stroke-linecap: round; }
+.demo-svg .circle-fill { fill: var(--accent); fill-opacity: 0.08; stroke: var(--accent); stroke-width: 2.5; }
+.demo-svg .cons-line { stroke-width: 2; }
+.demo-svg .cons-arc { fill: none; stroke: var(--muted); stroke-width: 1.3; stroke-dasharray: 3 3; }
+.demo-svg .cons-arc.cur, .demo-svg .cons-line.cur { stroke: var(--accent); stroke-width: 2.4; stroke-dasharray: none; }
+.demo-svg .axis-sym { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 8 5; }
+.demo-svg .par-mark { fill: var(--accent); font-size: 18px; font-weight: 900; }
+.demo-svg .arc-thick { fill: none; stroke: var(--demo-c); stroke-width: 5; stroke-linecap: round; }
+.demo-svg .thin-line { stroke-width: 2; fill: none; }
+.demo-svg .graph-line { fill: none; }
+.demo-svg .graph-line.stroke-a { stroke: var(--demo-a); } .demo-svg .graph-line.stroke-b { stroke: var(--demo-b); } .demo-svg .graph-line.stroke-c { stroke: var(--demo-c); }
+.demo-svg .wall { fill: var(--surface-2); stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .ladder { stroke: var(--demo-a); stroke-width: 6; stroke-linecap: round; }
+.demo-svg .edge { stroke: var(--text); stroke-width: 1.8; fill: none; stroke-linejoin: round; }
+.demo-svg .edge.hidden { stroke-dasharray: 4 4; stroke-opacity: 0.55; }
+.cons-steps { padding-left: 1.3em; font-size: 0.9rem; color: var(--muted); }
+.cons-steps li.on { color: var(--text); font-weight: 700; }
+.cons-steps li.done { color: var(--text); }
+.eq-hist { font-size: 0.95rem; }
+.eq-steps { padding-left: 1.4em; margin: 4px 0 8px; }
+
+/* mestne vrednosti */
+.pv-table { display: grid; grid-template-columns: repeat(7, minmax(36px, 54px)); gap: 4px; justify-content: center; }
+.pv-col { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; border-radius: 10px; background: var(--surface-2); }
+.pv-col.on { background: color-mix(in srgb, var(--demo-a) 25%, var(--surface)); }
+.pv-head { font-size: 0.78rem; font-weight: 800; color: var(--muted); }
+.pv-digit { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.demo .pv-btn { min-height: 30px; width: 100%; padding: 0; border: 0; background: none; color: var(--accent); font-size: 0.8rem; }
+.pv-number { font-size: 1.6rem; font-weight: 800; text-align: center; letter-spacing: 0.02em; margin: 6px 0; font-variant-numeric: tabular-nums; }
+
+/* stotični kvadrat */
+.hundred { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; width: 100%; max-width: 420px; margin: 0 auto; }
+.demo .hcell { min-height: 0; aspect-ratio: 1; padding: 0; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); font-size: clamp(0.62rem, 2.6vw, 0.85rem); font-weight: 700; font-variant-numeric: tabular-nums; }
+.demo .hcell.on-a { background: var(--demo-a); color: #fff; border-color: transparent; }
+.demo .hcell.on-b { background: var(--demo-b); color: #fff; border-color: transparent; }
+.demo .hcell.on-c { background: var(--demo-c); color: #fff; border-color: transparent; }
+.demo .hcell.off { opacity: 0.3; text-decoration: line-through; }
+.demo .hcell.ring { box-shadow: 0 0 0 3px var(--accent); }
+
+/* statistika, telesa, funkcije */
+.data-editor { display: grid; gap: 6px; }
+.data-row { display: flex; align-items: center; gap: 8px; }
+.data-row > span:nth-child(2) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.data-row > b { min-width: 2.2ch; text-align: center; font-variant-numeric: tabular-nums; }
+.data-row .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: none; }
+.data-row button { min-width: 34px; }
+.demo-svg .pie-slice { stroke: var(--surface); stroke-width: 1.5; }
+.demo-svg .theory { stroke: var(--text); stroke-width: 2; stroke-dasharray: 5 3; }
+.demo-svg .rect-sum { fill: var(--demo-b); fill-opacity: 0.3; stroke: var(--demo-b); stroke-width: 1; }
+.demo-svg .rect-sum.neg { fill: var(--danger); stroke: var(--danger); }
+.demo-svg .band { fill: var(--accent); fill-opacity: 0.12; }
+.demo-svg .field { stroke: var(--muted); stroke-width: 1.2; stroke-linecap: round; opacity: 0.7; }
+.demo-svg .road { stroke: var(--muted); stroke-width: 8; stroke-linecap: round; opacity: 0.25; }
+.graf-eq { overflow-x: auto; }
+.demo-svg.solid3d { touch-action: none; cursor: grab; }
+.demo-svg.solid3d:active { cursor: grabbing; }
+.demo-svg .face { --face-col: var(--demo-a); fill: color-mix(in srgb, var(--face-col) var(--lit, 100%), #0b1020); stroke: var(--surface); stroke-width: 0.7; stroke-linejoin: round; }
+.demo-svg .face.base { --face-col: var(--demo-b); }
+.demo-svg .face.side2 { --face-col: var(--demo-a); }
+.demo-svg .face.smooth { stroke: color-mix(in srgb, var(--face-col) var(--lit, 100%), #0b1020); stroke-width: 0.5; }
+.demo-svg .face.sphere { --face-col: var(--demo-c); }
+.demo-stage > .graf-eq { flex-basis: 100%; text-align: center; margin: 0; }
+.demo-pick { margin-bottom: 12px; }
+.demo-sub { border-top: 1px solid var(--border); padding-top: 12px; }
+
+/* ---------- kemija ---------- */
+.demo-readout .bad-text { color: var(--danger); }
+.demo-counter { display: flex; align-items: center; gap: 8px; }
+.demo-counter .demo-slider-label { min-width: 90px; }
+.demo-counter .cnt-val { min-width: 2.2em; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.demo-svg .ghs { cursor: pointer; }
+.demo-svg .ghs-frame { fill: #fff; stroke: #e5484d; stroke-width: 6; stroke-linejoin: round; }
+.demo-svg .ghs.on .ghs-frame { stroke-width: 9; filter: drop-shadow(0 0 6px var(--accent)); }
+.demo-svg .ghs-ink { fill: #111; stroke: none; }
+.demo-svg .ghs-line { stroke: #111; stroke-width: 3; stroke-linecap: round; fill: none; }
+.demo-svg .ghs-bone { stroke: #111; stroke-width: 4; stroke-linecap: round; }
+.demo-svg .ghs-hole { fill: #fff; }
+.demo-svg .shell { fill: none; stroke: var(--border); stroke-width: 1.5; }
+.demo-svg .shell.last { stroke: color-mix(in srgb, var(--demo-c) 45%, var(--border)); stroke-dasharray: 4 3; }
+.demo-svg .electron-dot { fill: var(--accent); }
+.demo-svg .electron-dot.val { fill: var(--demo-c); }
+.demo-svg .proton { fill: var(--danger); stroke: var(--surface); stroke-width: 1; }
+.demo-svg .neutron { fill: var(--muted); stroke: var(--surface); stroke-width: 1; }
+.demo-svg.ptable { max-width: 100%; }
+.demo-svg .pt-cell { cursor: pointer; }
+.demo-svg .pt-bg { fill: var(--surface-2); stroke: var(--border); stroke-width: 0.6; }
+.demo-svg .pt-cell.sel .pt-bg { stroke: var(--text); stroke-width: 2.4; }
+.demo-svg .pt-z { font-size: 7.5px; fill: var(--muted); }
+.demo-svg .pt-sym { font-size: 13px; font-weight: 700; fill: var(--text); }
+.demo-svg .pt-legend { font-size: 9.5px; fill: var(--text); }
+.demo-svg .k-alkalijska, .demo-svg .g-1 { fill: color-mix(in srgb, #f59e0b 45%, var(--surface)); }
+.demo-svg .k-zemeljskoalkalijska, .demo-svg .g-2 { fill: color-mix(in srgb, #facc15 40%, var(--surface)); }
+.demo-svg .k-prehodna { fill: color-mix(in srgb, #fb7185 30%, var(--surface)); }
+.demo-svg .k-lantanoid { fill: color-mix(in srgb, #f472b6 25%, var(--surface)); }
+.demo-svg .k-aktinoid { fill: color-mix(in srgb, #c084fc 25%, var(--surface)); }
+.demo-svg .k-ostala, .demo-svg .g-13 { fill: color-mix(in srgb, #94a3b8 40%, var(--surface)); }
+.demo-svg .k-polkovina, .demo-svg .g-14 { fill: color-mix(in srgb, #2dd4bf 35%, var(--surface)); }
+.demo-svg .k-nekovina, .demo-svg .g-15 { fill: color-mix(in srgb, #4ade80 40%, var(--surface)); }
+.demo-svg .g-16 { fill: color-mix(in srgb, #60a5fa 35%, var(--surface)); }
+.demo-svg .k-halogen, .demo-svg .g-17 { fill: color-mix(in srgb, #a3e635 45%, var(--surface)); }
+.demo-svg .k-zlahtni, .demo-svg .g-18 { fill: color-mix(in srgb, #818cf8 40%, var(--surface)); }
+.demo-svg .k-neznano, .demo-svg .k-dim { fill: var(--surface-2); }
+.demo-svg .k-sel { fill: color-mix(in srgb, var(--accent) 45%, var(--surface)); }
+.demo-svg .trend-arrow { stroke: var(--text); stroke-width: 2; }
+.demo-svg .bond { stroke: var(--text); stroke-width: 1.8; stroke-linecap: round; }
+.demo-svg .bond.thick { stroke-width: 2.4; }
+.demo-svg .atom-lbl { font-weight: 700; }
+.demo-svg .mol-hl { fill: color-mix(in srgb, var(--demo-a) 30%, transparent); }
+.demo-svg .atom-ball { stroke: color-mix(in srgb, var(--text) 35%, transparent); stroke-width: 0.8; }
+.demo-svg .shared-pair { fill: color-mix(in srgb, var(--demo-a) 25%, transparent); stroke: var(--demo-a); stroke-width: 1; }
+.demo-svg .ion-m { fill: color-mix(in srgb, var(--accent) 22%, var(--surface)); stroke: var(--accent); stroke-width: 1.5; }
+.demo-svg .ion-x { fill: color-mix(in srgb, var(--demo-b) 22%, var(--surface)); stroke: var(--demo-b); stroke-width: 1.5; }
+.demo-svg .e-cloud { fill: color-mix(in srgb, var(--demo-c) 28%, transparent); stroke: var(--demo-c); stroke-width: 1; stroke-dasharray: 3 3; }
+.demo-svg .e-cloud.weak { fill: color-mix(in srgb, var(--demo-c) 8%, transparent); }
+.demo-svg .zone-a { fill: color-mix(in srgb, var(--demo-b) 40%, var(--surface)); }
+.demo-svg .zone-b { fill: color-mix(in srgb, var(--demo-c) 40%, var(--surface)); }
+.demo-svg .zone-c { fill: color-mix(in srgb, var(--demo-a) 45%, var(--surface)); }
+.demo-svg .ion-tile.cat { fill: color-mix(in srgb, var(--accent) 22%, var(--surface)); stroke: var(--accent); stroke-width: 1.5; }
+.demo-svg .ion-tile.an { fill: color-mix(in srgb, var(--danger) 18%, var(--surface)); stroke: var(--danger); stroke-width: 1.5; }
+.demo-svg .ox-chip { fill: var(--surface-2); stroke: var(--border); }
+.demo-svg .ox-chip.unk { fill: color-mix(in srgb, var(--demo-a) 25%, var(--surface)); stroke: var(--demo-a); stroke-width: 2; }
+.demo-svg .bar.on { stroke: var(--text); stroke-width: 2; }
+.demo-svg .liquid { stroke: none; }
+.demo-svg .glass { fill: color-mix(in srgb, var(--surface-2) 60%, transparent); stroke: var(--text); stroke-width: 1.5; }
+.demo-svg .bubble { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.demo-svg .metal { fill: #9aa5b8; stroke: var(--text); stroke-width: 1; }
+.demo-svg .atom-txt { font-weight: 700; font-size: 11px; }
+.demo-svg .salt-bridge { fill: none; stroke: color-mix(in srgb, var(--demo-a) 45%, var(--surface)); stroke-width: 12; stroke-linejoin: round; }
+.demo-svg .graph-line.dashed { stroke-dasharray: 6 4; }
+
+/* ---------- tekmovanja ---------- */
+.demo-svg .bad-box { stroke: var(--danger); stroke-width: 2; }
+.demo-svg .beaker.hot { stroke: var(--danger); stroke-width: 3; }
+.demo-svg .cell-light { fill: var(--surface); stroke: var(--border); cursor: pointer; }
+.demo-svg .cell-dark { fill: color-mix(in srgb, var(--text) 55%, var(--surface)); stroke: var(--border); cursor: pointer; }
+.demo-svg .cell-gone { fill: color-mix(in srgb, var(--danger) 18%, transparent); stroke: var(--border); stroke-dasharray: 3 3; cursor: pointer; }
+.demo-svg .domino { fill: color-mix(in srgb, var(--demo-a) 55%, transparent); stroke: var(--demo-a); stroke-width: 2; pointer-events: none; }
+.demo-svg .hit-area { fill: transparent; }
+.demo-svg .edge-red { stroke: var(--danger); cursor: pointer; }
+.demo-svg .edge-blue { stroke: var(--demo-b); cursor: pointer; }
+.demo-svg .edge-none { stroke: var(--border); stroke-dasharray: 4 4; cursor: pointer; }
+.demo-svg .edge-on { stroke: var(--muted); }
+.demo-svg .lone-pair { fill: color-mix(in srgb, var(--demo-c) 35%, transparent); stroke: var(--demo-c); stroke-width: 1; }
+.demo-svg .pulley { fill: var(--surface-2); stroke: var(--text); stroke-width: 2; }
+
+/* ---------- Referenčni material (Moj študij) ---------- */
+.tb-mode { flex-basis: 100%; }
+.tb-mode > button { display: inline-flex; align-items: center; gap: 6px; }
+.tb-mode svg.i { width: 18px; height: 18px; }
+.ref-intro { margin: 4px 0 10px; }
+.ref-filters { margin: 8px 0 14px; }
+.ref-courses { display: grid; gap: 14px; }
+.ref-course h2 { margin: 0 0 2px; font-size: 1.1rem; }
+.ref-area { margin: 0 0 8px; font-size: 0.9rem; }
+.ref-list { padding: 0; box-shadow: none; border: 0; background: none; }
+a.ref-row { text-decoration: none; align-items: flex-start; }
+a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ref-row .lr-text b { color: var(--accent); }
+.ref-row .ref-desc { color: var(--text); font-size: 0.92rem; margin-top: 2px; }
+.ref-badges { margin-top: 6px; align-items: center; }
+.ref-badge, .ref-lang { background: var(--surface-2); color: var(--muted); }
+.ref-license { font-size: 0.75rem; color: var(--muted); }
+.ref-row > svg.i { flex: none; width: 18px; height: 18px; margin-top: 4px; }
+.ref-more { margin-top: 6px; color: var(--accent); font-weight: 700; }
+@media (min-width: 1200px) {
+  .ref-courses { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+
+/* Simulacije: dovolj veliki cilji za prst, ponastavitev, vidni fokus za tipkovnico (docs/kakovost.md §3) */
+.demo button, .demo select { min-height: 36px; }
+.demo .demo-check { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; }
+.demo .demo-check input { width: 20px; height: 20px; }
+.demo .demo-reset { display: block; margin: 8px 0 0 auto; }
+.demo .drag:focus { outline: none; }
+.demo .drag:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.demo .drag:focus-visible .pt, .demo .drag:focus-visible circle:not(.hit) { stroke: var(--accent); stroke-width: 3; }
+/* Ozki zasloni (360 px): izbirni seznami in formule ne smejo razširiti strani */
+.demo-slider { grid-template-columns: 7.5em minmax(0, 1fr) 5.5em; }
+.demo select { max-width: 100%; min-width: 0; }
+.demo-readout { overflow-x: auto; max-width: 100%; }
+@media (max-width: 520px) {
+  .demo-slider { grid-template-columns: minmax(0, 1fr) 4.8em; }
+}
+.tb-browse { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px; }
+
+/* biologija: vnos zaporedja DNA (public/sim/bio.js) */
+.demo-dna { padding: 12px; }
+.demo-dna input { width: 100%; font: 600 1.15rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); }
+.demo-readout code { letter-spacing: 0.08em; white-space: nowrap; }
+
+/* Virtualni laboratorij (public/sim/lab*.js) */
+.lab .demo-stage { flex-direction: column; align-items: center; }
+.lab-meters { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; width: 100%; max-width: 420px; }
+.lab-lcd { display: flex; flex-direction: column; gap: 2px; padding: 6px 10px; border-radius: var(--radius-sm, 10px); background: var(--surface-2); border: 1px solid var(--border); min-width: 0; }
+.lab-lcd-name { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+.lab-lcd-screen { direction: ltr; display: flex; align-items: baseline; justify-content: flex-end; gap: 4px; padding: 4px 8px; border-radius: 6px; background: #c9d4b0; color: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; min-height: 2.1em; }
+.lab-lcd-val { font-size: clamp(1.05rem, 5.2vw, 1.35rem); font-weight: 700; letter-spacing: 0.04em; }
+.lab-lcd-unit { font-size: 0.85rem; font-weight: 700; }
+.lab-lcd.off .lab-lcd-screen { background: #9aa38c; }
+.lab-lcd-note { font-size: 0.74rem; color: var(--muted); min-height: 1.1em; overflow-wrap: anywhere; }
+.lab-row { display: grid; grid-template-columns: 7.5em 1fr; align-items: center; gap: 10px; font-weight: 600; }
+.lab-row .demo-seg { flex-wrap: wrap; }
+@media (max-width: 420px) { .lab-row { grid-template-columns: 1fr; gap: 4px; } }
+.lab-h { margin: 14px 0 6px; }
+.lab-table-wrap { max-height: 260px; overflow: auto; max-width: 100%; }
+/* Drsi okvir, ne tabela (.demo-table je sicer sam drsni vsebnik): glava ostane vidna pri vseh poskusih. */
+.lab-table-wrap > .lab-table:not(.lab-prev-table) { display: table; width: auto; max-width: none; overflow: visible; }
+.lab-table-wrap > .lab-table:not(.lab-prev-table) thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
+.lab-table { font-size: 0.88rem; }
+.lab-table :is(th, td) { padding: 6px 8px; }
+.lab-table td { font-variant-numeric: tabular-nums; text-align: right; }
+.lab-empty { font-size: 0.9rem; margin: 4px 0; }
+.lab-graph-wrap { margin: 10px 0 0; }
+.lab-graph-note { margin: 6px 0 0; font-size: 0.88rem; }
+.lab-graph-note:empty { display: none; }
+.lab-graph { max-width: 420px; display: block; margin: 0 auto; }
+.lab-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: center; font-size: 0.85rem; color: var(--muted); }
+.lab-leg { display: inline-flex; align-items: center; gap: 6px; }
+.lab-sym { display: inline-block; width: 10px; height: 10px; }
+.lab-sym.dot { border-radius: 50%; }
+.lab-sym.tri { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.bg-a { background: var(--demo-a); } .bg-b { background: var(--demo-b); }
+.demo-svg .lab-fit { fill: none; stroke-width: 2; stroke-dasharray: 6 4; }
+.demo-svg .lab-pt { stroke: var(--surface); stroke-width: 1.2; }
+.demo-svg .lab-trace { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.lab-fitout { font-size: 0.92rem; }
+.lab-log { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; }
+.lab-ev { padding: 6px 10px; border-radius: 8px; background: var(--surface-2); border-inline-start: 4px solid var(--border); }
+.lab-ev.ok { border-inline-start-color: var(--ok); }
+.lab-ev.warn { border-inline-start-color: var(--demo-a); }
+.lab-ev.bad { border-inline-start-color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, var(--surface-2)); }
+.lab-status { font-weight: 600; min-height: 1.4em; margin: 6px 0 0; }
+.lab-q { margin-top: 14px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+.lab-q h4 { margin: 0 0 4px; }
+.lab-opts { display: flex; flex-direction: column; gap: 6px; }
+.lab-opt { display: block; width: 100%; text-align: start; justify-content: flex-start; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); cursor: pointer; font: inherit; }
+.lab-opt.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 15%, transparent); }
+.lab-opt.bad { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+.lab-why { margin: 8px 0 0; }
+.lab-notes { margin-top: 12px; font-size: 0.9rem; }
+.lab-notes summary { cursor: pointer; font-weight: 600; padding: 9px 0; }
+.demo-svg .lab-wire { fill: none; stroke: var(--text); stroke-width: 2.4; stroke-linejoin: round; }
+.demo-svg .lab-node { fill: var(--text); }
+.demo-svg .lab-box { fill: var(--surface-2); stroke: var(--muted); stroke-width: 1.5; }
+.demo-svg .lab-led-off { fill: var(--border); }
+.demo-svg .lab-meter-body { fill: var(--surface); stroke: var(--text); stroke-width: 2.2; }
+.demo-svg .lab-broken { stroke: var(--danger); stroke-width: 2.5; }
+.demo-svg .lab-res { fill: #dcc9a0; stroke: #8a7650; stroke-width: 1.2; }
+.demo-svg .lab-burnt { fill: #2b2420; stroke: #000; }
+.demo-svg .lab-bulb { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.demo-svg .lab-filament { stroke: var(--text); stroke-width: 1.8; fill: none; }
+.demo-svg .lab-glow { fill: #ffd84d; }
+.demo-svg .lab-smoke { fill: #8b8f96; opacity: 0.55; animation: lab-smoke 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes lab-smoke { from { transform: translateY(0) scale(0.7); opacity: 0.6; } to { transform: translateY(-16px) scale(1.3); opacity: 0; } }
+.demo-svg .lab-glass { fill: color-mix(in srgb, var(--accent) 6%, transparent); stroke: var(--muted); stroke-width: 2; stroke-linejoin: round; }
+.demo-svg .lab-mark { stroke: var(--muted); stroke-width: 1.2; }
+.demo-svg .lab-liq { opacity: 0.75; }
+.demo-svg .lab-liq-voda, .demo-svg .lab-liq-hcl { fill: #bfe0f7; }
+.demo-svg .lab-liq-kis, .demo-svg .lab-liq-mesanica { fill: #efe3bf; }
+.demo-svg .lab-liq-limona { fill: #f1e07a; }
+.demo-svg .lab-foam { fill: #fbfbf6; stroke: #d8d8cc; stroke-width: 0.8; }
+.demo-svg .lab-powder { fill: #f7f7f2; stroke: #c9c9bd; stroke-width: 1; }
+.demo-svg .lab-bubble { fill: none; stroke: #6b8db0; stroke-width: 1; }
+.demo-svg .lab-milk { fill: #e9e8e0; }
+.demo-svg .lab-ppt { fill: #8f8c80; }
+.demo-svg .lab-foam-run { fill: none; stroke: #fbfbf6; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.demo-svg .lab-foam-run-edge { fill: none; stroke: #9a9a8c; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.demo-svg .lab-foam-b { fill: #fbfbf6; stroke: #9a9a8c; stroke-width: 0.8; }
+.demo-svg .lab-puddle { opacity: 0.9; stroke: #9a9a8c; stroke-width: 0.8; }
+.demo-svg .lab-stopper { fill: #7a5a44; }
+.demo-svg .lab-tube { fill: none; stroke: var(--muted); stroke-width: 3.5; stroke-linejoin: round; opacity: 0.8; }
+.demo-svg .lab-splint { stroke: #b8864b; stroke-width: 4; stroke-linecap: round; }
+.demo-svg .lab-flame { fill: #ff9b2f; stroke: #ffd36b; stroke-width: 1.5; }
+.demo-svg .lab-scale { stroke: var(--text); stroke-width: 2; }
+@media (prefers-reduced-motion: reduce) { .demo-svg .lab-smoke { animation: none; } }
+/* napisi na risbi ostanejo berljivi tudi pri 360 px (risba je pomanjšana na ~0,8) */
+.demo-svg:is(.lab-circuit, .lab-bench) .lbl.small { font-size: 13px; }
+.demo-svg:is(.lab-circuit, .lab-bench) .tick { font-size: 12px; }
+.demo-svg:is(.lab-circuit, .lab-bench) .tick.small { font-size: 11px; }
+/* dotik: vsaj 40 px */
+.lab button.small, .lab .demo-reset { min-height: 40px !important; }
+.demo.lab .demo-seg .seg-btn, .lab select, .lab .demo-check { min-height: 40px; }
+.lab .demo-slider input[type="range"] { height: 40px; }
+/* titracija (lab-titracija): koraki v okvirjih, vnos odčitka, dotik vsaj 44 px */
+.demo.demo-lab-titracija :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+/* elektrika (lab-vezava, lab-prevodnost, public/sim/lab-elektrika.js): isti okvir kot titracija */
+.demo:is(.demo-lab-vezava, .demo-lab-prevodnost) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-vezava, .demo-lab-prevodnost) .seg-btn { min-width: 44px; }
+.lab-vez-sum { font-size: 0.92rem; }
+.lab-vez-sum ul { margin: 4px 0; padding-inline-start: 1.2em; }
+.demo-svg .lab-socket { fill: var(--surface-2); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.demo-svg .lab-short { stroke: var(--danger); stroke-width: 4; stroke-linecap: round; }
+.demo-svg .lab-batt { fill: #2f6f4f; stroke: #1f4a35; stroke-width: 1.5; }
+.demo-svg .lab-batt-pole { fill: #b9a75a; }
+.demo-svg .lab-batt-t { fill: #fff; }
+.demo-svg .lab-fil-hot { stroke: #ff7a00; }
+.lab-table-wrap:has(> .lab-prev-table) { max-height: none; }
+.demo-svg .lab-led { fill: #f3c4c4; stroke: #9b2c2c; stroke-width: 1.5; }
+.demo-svg .lab-led.on { fill: #ff4d4d; }
+.demo-svg .lab-led-glow { fill: #ff6b6b; }
+.demo-svg .lab-plate { fill: #c46a32; stroke: #8a4a22; stroke-width: 1; }
+.demo-svg .lab-liq-cista { fill: #e3f1fb; }
+.demo-svg .lab-sample { stroke: var(--muted); stroke-width: 1; }
+.demo-svg .lab-clip { fill: #c0392b; stroke: #7d241b; stroke-width: 1; }
+.demo-svg .lab-magnet { fill: none; stroke: #c0392b; stroke-width: 7; stroke-linejoin: round; }
+.demo-svg .lab-rise { animation: lab-rise 1.4s linear infinite; transform-box: fill-box; }
+@keyframes lab-rise { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-24px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .demo-svg .lab-rise { animation: none; } }
+.lab-prev-table td, .lab-prev-table th[scope="row"] { text-align: start; font-variant-numeric: normal; }
+.lab-prev-table select { max-width: 9.5em; }
+/* telefon: vsaka snov je kartica (oznaka stolpca pred vrednostjo), da tabela ne drsi vstran */
+@container labtit (max-width: 600px) {
+  .lab-prev-table thead { display: none; }
+  .lab-prev-table, .lab-prev-table tbody { display: block; }
+  .lab-prev-table tr { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+  .lab-prev-table th[scope="row"] { grid-column: 1 / -1; padding: 2px 8px; }
+  .lab-prev-table td { padding: 0; font-size: 0.86rem; }
+  .lab-prev-table td::before { content: attr(data-l) ": "; color: var(--muted); }
+  .lab-prev-table td:last-child { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
+}
+.lab-prev-table tr.ok th { box-shadow: inset 4px 0 0 var(--ok); }
+.lab-prev-table tr.bad th { box-shadow: inset 4px 0 0 var(--danger); }
+/* Risba in koraki (.lab-tit-top): na širokem (Laboratorij na računalniku) risba levo in pripeta, koraki desno,
+   da med titracijo vidiš erlenmajerico in bireto. Pripetje velja le znotraj .lab-tit-top, zato ne prekrije tabele pod njim. */
+.lab-tit-top { display: flex; flex-wrap: wrap; align-items: flex-start; column-gap: 24px; }
+.lab-tit-top > * { flex: 1 1 100%; min-width: 0; }
+@container labtit (min-width: 800px) {
+  /* levi stolpec raste s širino (380 px pri 800, ~470 px v Laboratoriju na računalniku), kontrole ostanejo vsaj ~600 px */
+  .lab-tit-top > .demo-stage { flex: 0 0 clamp(380px, 42%, 500px); position: sticky; top: calc(var(--lab-vrh, 0px) + 8px); }
+  .lab-tit-top > .demo-controls { flex: 1 1 0; margin-top: 0; }
+  /* risba levo vedno cela na zaslonu (--lab-okno = višina drsnega dela; --lab-risba-h natančno izračuna lab.js) */
+  .lab-tit-top > .demo-stage { --lab-risba-h: max(240px, calc(var(--lab-okno, 100dvh) - 150px)); }
+  .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .demo-svg { max-height: var(--lab-risba-h); width: min(100%, calc(var(--lab-risba-h) * var(--lab-ar, 1.4))); }
+  /* merilniki pod risbo v levem stolpcu: največ trije v vrsti, da gre »−0,1 mA« ali »97,3 kPa« v okvir */
+  .demo.lab .lab-tit-top > .demo-stage .lab-meters { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); }
+  /* široko je risba že cela ob kontrolah: gumba ne rabimo (in ne prekrije risbe) */
+  .demo.lab:not(.lab-odpeto) .lab-pin { display: none; }
+}
+/* Na telefonu ostane risba vidna (j, 2026-11-04; docs/laboratorij.md »Na telefonu ostane risba vidna«), vsi poskusi (.demo.lab):
+   risba in kontrole sta v .lab-tit-top (lab.js → pripni). Ozko: risba z merilniki je pripeta na vrh drsnega dela (pod glavo
+   aplikacije), skupaj ~40–45 % vidne višine (--lab-okno), kontrole drsijo podnjo. Pripetje velja le znotraj .lab-tit-top,
+   zato tabela, graf in sklep pod njim niso pokriti. Telefon ležeče: risba levo pripeta, kontrole desno. Gumb »Pripni sliko«
+   (.lab-pin) pripetje izklopi (.lab-odpeto), pri zelo nizkem vidnem delu (odprta tipkovnica) ga izklopi lab.js (.lab-nizko). */
+.demo.lab { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+/* .lab-bench (Laboratorij) ima overflow-x: auto, ki bi pripetje izklopil; clip obreže enako brez drsnega vsebnika. */
+.lab-bench:has(> .demo.lab) { overflow-x: clip; }
+/* scrollIntoView in fokus postavita kontrolo pod pripeto risbo, ne podnjo (--lab-pin-h = višina pripetega dela, lab.js) */
+.demo.lab .lab-tit-top > .demo-controls * { scroll-margin-top: var(--lab-pin-h, 0px); }
+:where(.lab-tit-top > .demo-stage) { position: relative; } /* za gumb .lab-pin; brez prednosti pred pripetjem */
+.lab-pin {
+  position: absolute; top: 0; inset-inline-end: 0; z-index: 1; display: grid; place-items: center;
+  width: 44px; height: 44px; min-height: 44px !important; padding: 0 !important; border-radius: 50%;
+  border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--muted);
+}
+.lab-pin svg.i { width: 20px; height: 20px; }
+.lab-pin[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: var(--accent-soft); }
+.lab-pin[aria-pressed="false"] svg.i { transform: rotate(45deg); }
+.lab-pin:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media not ((orientation: landscape) and (max-height: 560px)) {
+@container labtit (max-width: 799.98px) {
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage {
+    --lab-risba-h: clamp(120px, calc(var(--lab-okno, 85dvh) * 0.36), 380px);
+    position: sticky; top: var(--lab-vrh, 0px); z-index: 3; gap: 6px; padding: 6px 0 8px;
+    background: var(--surface); border-radius: 0 0 12px 12px; transition: box-shadow 0.2s ease;
+  }
+  /* več merilnikov (dve vrsti): manjša risba, da skupaj ostane pod polovico zaslona */
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage:has(.lab-meters > :nth-child(4)) { --lab-risba-h: clamp(110px, calc(var(--lab-okno, 85dvh) * 0.28), 320px); }
+  .demo.lab .lab-tit-top > .demo-stage.lab-prilepljeno { box-shadow: 0 1px 0 var(--border), 0 10px 14px -10px rgba(0, 0, 0, 0.35); }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .demo-svg {
+    width: min(100%, calc(var(--lab-risba-h) * var(--lab-ar, 1.4))); max-height: var(--lab-risba-h); height: auto;
+  }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage + .demo-controls { margin-top: 8px; }
+}
+/* pripeti merilniki: nižji, da ostane več prostora risbi (vrednost ostane velika) */
+@container labtit (max-width: 799.98px) {
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters { gap: 4px 6px; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); max-width: 520px; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd { padding: 3px 7px; gap: 1px; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd-name { font-size: 0.72rem; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd-screen { min-height: 1.7em; padding: 1px 6px; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd-val { font-size: 1.08rem; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd-note { font-size: 0.7rem; min-height: 1.25em; line-height: 1.25; overflow-wrap: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; } /* do tri vrstice: »porcelanska skodelica s pokrovčkom«, »območje 200 mA« se ne odrežeta */
+}
+}
+/* Telefon ležeče (nizek zaslon): risba levo pripeta in cela vidna, kontrole desno. */
+@media (orientation: landscape) and (max-height: 560px) {
+  @container labtit (min-width: 520px) and (max-width: 799.98px) {
+    .lab-tit-top > .demo-stage { flex: 0 0 46%; }
+    .lab-tit-top > .demo-controls { flex: 1 1 0; margin-top: 0; }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage {
+      --lab-risba-h: max(110px, calc(var(--lab-okno, 70dvh) - 104px));
+      position: sticky; top: var(--lab-vrh, 0px); z-index: 3; gap: 6px; padding: 4px 0; background: var(--surface);
+    }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage:has(.lab-meters > :nth-child(4)) { --lab-risba-h: max(100px, calc(var(--lab-okno, 70dvh) - 172px)); }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .demo-svg { width: min(100%, calc(var(--lab-risba-h) * var(--lab-ar, 1.4))); max-height: var(--lab-risba-h); height: auto; }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-meters { gap: 4px; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-lcd { padding: 2px 6px; gap: 0; }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-lcd-name { font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-lcd-screen { min-height: 1.6em; padding: 1px 6px; }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-lcd-val { font-size: 1rem; }
+    .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-lcd-note { font-size: 0.68rem; min-height: 1.25em; line-height: 1.25; overflow-wrap: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  }
+}
+/* Široka risba (razmerje ≥ 1,55, lab.js → .lab-siroka: proga, vezje) na širokem: čez vso širino zgoraj in pripeta, ~45 % vidne
+   višine, merilniki desno od nje; kontrole pod njo v dveh stolpcih. V levem stolpcu (380 px) bi bila proga le ~380 × 160 px. */
+@container labtit (min-width: 800px) {
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage {
+    flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, calc(var(--lab-risba-h) * var(--lab-ar, 2))) minmax(180px, 250px); justify-content: center; align-content: center; align-items: center;
+    gap: 8px 20px; padding: 8px 52px 10px; z-index: 3; background: var(--surface); border-radius: 0 0 12px 12px; transition: box-shadow 0.2s ease;
+  }
+  .demo.lab.lab-siroka:not(.lab-odpeto) .lab-tit-top > .demo-stage { --lab-risba-h: clamp(200px, calc(var(--lab-okno, 85dvh) * 0.45 - 18px), 460px); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage:not(:has(> .lab-meters, > .lab-status)) { grid-template-columns: minmax(0, calc(var(--lab-risba-h) * var(--lab-ar, 2))); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage .demo-svg { width: 100%; max-width: none; max-height: var(--lab-risba-h); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage > .lab-slika { grid-column: 1; grid-row: 1 / span 6; justify-self: center; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage > :not(.lab-slika, .lab-pin) { grid-column: 2; margin: 0; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage .lab-meters { grid-template-columns: 1fr; max-width: none; }
+  /* trije merilniki ali več: v dveh stolpcih, da pripeti del ne preraste risbe */
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage:has(.lab-meters > :nth-child(3)) { grid-template-columns: minmax(0, calc(var(--lab-risba-h) * var(--lab-ar, 2))) minmax(300px, 420px); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(3)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage.lab-prilepljeno { box-shadow: 0 1px 0 var(--border), 0 10px 14px -10px rgba(0, 0, 0, 0.35); }
+  .demo.lab.lab-siroka:not(.lab-odpeto) .lab-pin { display: grid; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-controls { flex: 1 1 100%; display: block; columns: 2 320px; column-gap: 20px; margin-top: 12px; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-controls > * { break-inside: avoid; margin: 0 0 10px; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-controls > :is(.demo-seg, .demo-buttons) { width: fit-content; max-width: 100%; }
+}
+/* Odpeto: risba v polni velikosti in ne drsi s stranjo (tudi na širokem). */
+.demo.lab.lab-odpeto .lab-tit-top > .demo-stage { position: relative; top: auto; }
+@media (prefers-reduced-motion: reduce) { .demo.lab .lab-tit-top > .demo-stage { transition: none; } }
+.lab-tit-grp .demo-slider { max-width: 30rem; }
+.lab-tit-hint { margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
+.lab-tit-now { display: flex; align-items: center; gap: 10px; }
+.lab-tit-now .lab-status { margin: 0; }
+.lab-tit-swatch { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--muted); }
+@media (max-width: 480px) { .demo-lab-titracija .lab-table { font-size: 0.82rem; } .demo-lab-titracija .lab-table :is(th, td) { padding: 6px 5px; } }
+.demo-lab-titracija .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo-lab-titracija .lab-table th { white-space: normal; }
+.lab-tit-grp { border: 1px solid var(--border); border-radius: 12px; padding: 6px 12px 12px; margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.lab-tit-grp legend { font-weight: 800; padding: 0 4px; }
+.lab-tit-grp .demo-seg { align-self: flex-start; }
+.lab-tit-field { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.lab-tit-in { width: 9em; min-height: 44px; padding: 6px 10px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-variant-numeric: tabular-nums; }
+.lab-tit-in:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.lab-tit-sum { font-size: 0.92rem; margin: 6px 0; }
+.lab-tit-calc { margin: 8px 0; display: flex; flex-direction: column; gap: 8px; }
+.lab-tit-calc p { margin: 0; font-size: 0.9rem; }
+.demo-svg .lab-tit-bench { stroke: var(--muted); stroke-width: 2; }
+.demo-svg .lab-tit-rod { fill: #8d96a3; }
+.demo-svg .lab-tit-clamp { fill: #5f6773; }
+.demo-svg .lab-tit-tile { fill: #fff; stroke: #b9c2cf; stroke-width: 1; }
+.demo-svg .lab-tit-cock { fill: #3b82c4; }
+.demo-svg .lab-tit-none { fill: none; }
+.demo-svg .lab-tit-air { fill: #fff; stroke: #6b8db0; stroke-width: 1; }
+.demo-svg .lab-tit-electrode { fill: #e3e7ec; stroke: var(--muted); stroke-width: 1; }
+.demo-svg .lab-tit-bulb { fill: #cfd8e3; stroke: var(--muted); stroke-width: 1; }
+.demo-svg .lab-tit-ring { stroke: var(--text); stroke-width: 1.4; }
+.demo-svg .lab-tit-win { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+.demo-svg .lab-tit-menisk { fill: none; stroke: #2f6690; stroke-width: 2; }
+.demo-svg .lab-tit-gr { stroke: var(--text); stroke-width: 1.2; }
+.demo-svg .lab-tit-gr.big { stroke-width: 2; }
+.demo-svg .lab-tit-num { fill: var(--text); font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.demo-svg .lab-tit-eye { fill: #fff; stroke: #1f2933; stroke-width: 1.2; }
+.demo-svg .lab-tit-pupil { fill: #1f2933; } /* oko je vedno belo, zenica temna tudi v temnem načinu */
+.demo-svg .lab-tit-sight { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.demo-svg .lab-tit-stream { stroke: #8fbfe3; stroke-width: 2.2; }
+.demo-svg .lab-tit-drop { fill: #bfe0f7; stroke: #5d8db5; stroke-width: 0.8; }
+.demo-svg .lab-tit-sol { stroke: #8aa3bb; stroke-width: 0.7; }
+
+
+/* toplota (lab-grelnik, lab-mesanje, lab-faze, lab-ohlajanje; public/sim/lab-toplota.js): isti okvir kot titracija in elektrika */
+.demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) .seg-btn { min-width: 44px; }
+.demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.demo:is(.demo-lab-faze, .demo-lab-ohlajanje) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; } /* dolga imena (»porcelanska skodelica s pokrovčkom«, »Ljubljana (295 m), 97,8 kPa«) */
+.lab-top-calc { font-size: 0.92rem; overflow-wrap: anywhere; }
+.lab-top-calc p { margin: 4px 0; }
+.lab-top-calc ul { margin: 4px 0; padding-inline-start: 1.2em; color: var(--muted); }
+.lab-top-warn { padding: 6px 10px; border-radius: 8px; border-inline-start: 4px solid var(--demo-a); background: var(--surface-2); }
+@container labtit (max-width: 600px) { .demo-lab-mesanje .lab-table { font-size: 0.8rem; } .demo-lab-mesanje .lab-table :is(th, td) { padding: 6px 4px; white-space: normal; min-width: 3.2em; } }
+.demo-svg .lab-top-water { stroke: none; opacity: 0.9; }
+.demo-svg .lab-top-surface { stroke: #6b9cc3; stroke-width: 1.2; }
+.demo-svg .lab-top-bubble { fill: #fff; stroke: #6b9cc3; stroke-width: 0.8; }
+.demo-svg .lab-top-steam { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; }
+.demo-svg .lab-top-probe { stroke: #9aa3ad; stroke-width: 3.2; stroke-linecap: round; }
+.demo-svg .lab-top-handle { fill: #3f4752; }
+.demo-svg .lab-top-cable { fill: none; stroke: #3f4752; stroke-width: 2; }
+.demo-svg .lab-top-coil { fill: none; stroke: #8d96a3; stroke-width: 3.2; stroke-linecap: round; }
+.demo-svg .lab-top-coil.burnt { stroke: #2b2420; }
+.demo-svg .lab-top-lid { fill: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); stroke: var(--muted); stroke-width: 1.2; }
+.demo-svg .lab-top-rod { stroke: #a9c7de; stroke-width: 4; stroke-linecap: round; opacity: 0.9; }
+.demo-svg .lab-top-foam { fill: #f6f4ee; fill-opacity: 0.55; stroke: #b9b3a3; stroke-width: 1.5; stroke-linejoin: round; }
+.demo-svg .lab-top-foam-in { fill: none; stroke: #d8d2c3; stroke-width: 1; stroke-dasharray: 2 3; }
+.demo-svg .lab-top-plate { fill: #4a4f57; }
+.demo-svg .lab-top-plate-top { fill: #8a9099; }
+.demo-svg .lab-top-knob { fill: #d6dae0; stroke: #2f343b; stroke-width: 1.5; }
+.demo-svg .lab-top-ice { fill: #eef7fd; stroke: #8fb8d6; stroke-width: 1; opacity: 0.95; }
+.demo-svg .lab-top-salt { fill: #fff; stroke: #9aa3ad; stroke-width: 0.6; }
+.demo-svg .lab-top-thermos { fill: #b8c0c8; stroke: #6f7882; stroke-width: 1.5; }
+.demo-svg .lab-top-stopper { fill: #3f4752; }
+.demo-svg .lab-top-tea { fill: #b5712c; opacity: 0.85; }
+.demo-svg .lab-top-tea-in { opacity: 0.35; }
+.demo-svg .lab-top-porc { fill: #f7f5f0; stroke: #9a948a; stroke-width: 1.5; }
+.demo-svg .lab-top-porc-h { fill: none; stroke: #9a948a; stroke-width: 6; stroke-linecap: round; }
+.demo-svg .lab-top-enamel { fill: #4f7fb0; stroke: #2d5276; stroke-width: 1.5; }
+.demo-svg .lab-top-enamel-h { fill: none; stroke: #2d5276; stroke-width: 6; stroke-linecap: round; }
+
+/* optika (lab-lom, lab-leca; public/sim/lab-optika.js): isti okvir kot toplota */
+.demo:is(.demo-lab-lom, .demo-lab-leca) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-lom, .demo-lab-leca) .seg-btn { min-width: 44px; }
+.demo:is(.demo-lab-lom, .demo-lab-leca) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.demo:is(.demo-lab-lom, .demo-lab-leca) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-lom, .demo-lab-leca) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 10px; font: inherit; }
+.demo:is(.demo-lab-lom, .demo-lab-leca) .lab-table-wrap { max-width: 100%; max-height: 420px; contain: inline-size; }
+.demo:is(.demo-lab-lom, .demo-lab-leca) .lab-table th { white-space: normal; }
+@container labtit (max-width: 480px) {
+  .demo:is(.demo-lab-lom, .demo-lab-leca) .lab-table td { white-space: normal; } /* snov in smer (oz. leča) ostaneta vidni: brez njiju se vrstice zraka in snovi pomešajo */
+  .demo-lab-lom .lab-table td:nth-child(2) { min-width: 4.5em; }
+  .demo:is(.demo-lab-lom, .demo-lab-leca) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-lom, .demo-lab-leca) .lab-table :is(th, td) { padding: 6px 4px; }
+}
+.demo-svg .lab-opt-disc { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.5; }
+.demo-svg .lab-opt-tick { stroke: var(--text); stroke-width: 0.6; }
+.demo-svg .lab-opt-tick.big { stroke-width: 1.2; }
+.demo-svg .lab-opt-num { font-size: 9px !important; fill: var(--muted); }
+.demo-svg .lab-opt-normal { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 5 4; }
+.demo-svg .lab-opt-axis { stroke: var(--border); stroke-width: 1; }
+.demo-svg .lab-opt-lbl { fill: var(--muted); }
+.demo-svg .lab-opt-block { fill: #9fd3e6; fill-opacity: 0.38; stroke: #5f9db6; stroke-width: 1.5; }
+.demo-svg .lab-opt-block.bk7 { fill: #a9e0c4; stroke: #5aa483; }
+.demo-svg .lab-opt-block.voda { fill: #7fb6ea; fill-opacity: 0.45; stroke: #4f86bd; }
+.demo-svg .lab-opt-mirror { stroke: #c9d2dc; stroke-width: 3; }
+.demo-svg .lab-opt-mirror-back { fill: #4a5059; }
+.demo-svg .lab-opt-laser { fill: #3f4752; stroke: #20252b; stroke-width: 1; }
+.demo-svg .lab-opt-laser.on { stroke: #e0302a; stroke-width: 1.6; }
+.demo-svg .lab-opt-ray { stroke: #e0302a; stroke-width: 2; stroke-linecap: round; }
+.demo-svg .lab-opt-spot { fill: #ff4a3d; }
+.demo-svg .lab-opt-rail { fill: #b9c0c8; stroke: #7d8691; stroke-width: 1; }
+.demo-svg .lab-opt-rider { fill: #5f6773; }
+.demo-svg .lab-opt-post { stroke: #7d8691; stroke-width: 2; }
+.demo-svg .lab-opt-led { fill: #3f4752; }
+.demo-svg .lab-opt-arrow { fill: none; stroke: #f08a00; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.demo-svg .lab-opt-lens { fill: #9fd3e6; fill-opacity: 0.5; stroke: #5f9db6; stroke-width: 1.2; }
+.demo-svg .lab-opt-screen { fill: #f1efe8; stroke: #8f8a7e; stroke-width: 1; }
+.demo-svg .lab-opt-axisline { stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 3; }
+.demo-svg .lab-opt-beam { fill: none; stroke: #f08a00; stroke-width: 0.8; stroke-opacity: 0.7; }
+.demo-svg .lab-opt-screenview { fill: #ecebe4; stroke: #8f8a7e; stroke-width: 1.5; } /* bel zaslon je bel tudi v temnem načinu */
+.demo-svg .lab-opt-image { fill: none; stroke: #e46f00; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.demo-svg .lab-opt-patch { fill: #ffb347; }
+.demo-svg .lab-opt-loupe { fill: color-mix(in srgb, #9fd3e6 25%, var(--surface)); stroke: #5f9db6; stroke-width: 2; }
+.demo-svg .lab-opt-ink { fill: #3f4752; }
+.demo-svg .lab-opt-sharp { fill: #1d7a3a; font-weight: 700; }
+.demo-svg .lab-opt-screenview ~ .lab-scale { stroke: #3f4752; }
+/* silomer in uteži (lab-hooke, lab-gostota, lab-vzgon, lab-tlak; public/sim/lab-sile.js): isti okvir kot toplota */
+.demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .seg-btn { min-width: 44px; }
+.demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.demo:is(.demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table th { white-space: normal; }
+@media (max-width: 480px) { .demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table { font-size: 0.82rem; } .demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table :is(th, td) { padding: 6px 5px; } }
+/* ozek zaslon: tabela brez vodoravnega drsenja; skriti stolpci so izpeljani ali pa so v dnevniku (tabela: gostota iz literature, potopljeno: V_izp, levi/desni: Δh) */
+@container labtit (max-width: 480px) {
+  .demo:is(.demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table td { white-space: normal; }
+  .demo-lab-gostota .lab-table :is(th, td):nth-child(8), .demo-lab-vzgon .lab-table :is(th, td):nth-child(4), .demo-lab-tlak .lab-table :is(th, td):is(:nth-child(4), :nth-child(5)) { display: none; }
+  .demo.demo-lab-vzgon .lab-table :is(th, td) { padding-inline: 3px; }
+}
+.demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) select { background-color: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; }
+.lab-sil-uts { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+.lab-sil-ut[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); border-color: var(--accent); font-weight: 800; }
+.demo-svg .lab-sil-lupa-bg { fill: var(--surface); }
+.demo-svg .lab-sil-lupa-frame { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.demo-svg .lab-sil-tick { stroke: var(--text); stroke-width: 1; }
+.demo-svg .lab-sil-stand { fill: #5f6773; }
+.demo-svg .lab-sil-rod { fill: #8d96a3; }
+.demo-svg .lab-sil-ruler { fill: #f3e7c4; stroke: #a08a52; stroke-width: 1; }
+.demo-svg .lab-sil-ruler + .lab-sil-tick, .demo-svg .lab-sil-ruler ~ .lab-sil-tick { stroke: #3a3220; }
+.demo-svg .lab-sil-spring { fill: none; stroke: #6f7a87; stroke-width: 1.8; stroke-linejoin: round; }
+.demo-svg .lab-sil-spring.bent { stroke: #b0613a; stroke-dasharray: 5 2; }
+.demo-svg .lab-sil-needle { stroke: var(--danger, #c0392b); stroke-width: 2; stroke-linecap: round; }
+.demo-svg .lab-sil-hook { stroke: #5f6773; stroke-width: 1.6; fill: none; }
+.demo-svg .lab-sil-mass { fill: #c9a640; stroke: #7d6420; stroke-width: 1; }
+.demo-svg .lab-sil-balance { fill: #3f4752; }
+.demo-svg .lab-sil-plate { fill: #b8c0c8; }
+.demo-svg .lab-sil-foot { fill: color-mix(in srgb, var(--accent) 8%, var(--surface-2)); stroke: var(--muted); stroke-width: 1.2; }
+.demo-svg .lab-sil-sample { stroke: #2f343b; stroke-width: 1; }
+.demo-svg .lab-sil-aluminij { fill: #c8ced6; }
+.demo-svg .lab-sil-jeklo { fill: #7f8893; }
+.demo-svg .lab-sil-medenina { fill: #d4b048; }
+.demo-svg .lab-sil-baker { fill: #c4743f; }
+.demo-svg .lab-sil-les { fill: #d9b37c; }
+.demo-svg .lab-sil-plastika { fill: #e8e2d4; }
+.demo-svg .lab-sil-kamen { fill: #9a9187; }
+.demo-svg .lab-sil-tek { stroke: none; }
+.demo-svg .lab-sil-voda { fill: #a9d3f2; fill-opacity: 0.75; }
+.demo-svg .lab-sil-slana { fill: #8fc3e6; fill-opacity: 0.8; }
+.demo-svg .lab-sil-olje { fill: #f0cf5a; fill-opacity: 0.7; }
+.demo-svg .lab-sil-etanol { fill: #dcebf5; fill-opacity: 0.75; }
+.demo-svg .lab-sil-spill { stroke-width: 3; fill: none; stroke: #8fc3e6; }
+.demo-svg .lab-sil-wire { stroke: #5f6773; stroke-width: 1.2; }
+.demo-svg .lab-sil-ring { stroke: #2f343b; stroke-width: 1; }
+.demo-svg .lab-sil-meter { fill: color-mix(in srgb, var(--accent) 8%, var(--surface)); stroke: var(--muted); stroke-width: 1.5; }
+.demo-svg .lab-sil-inner { fill: #c9ced6; }
+.demo-svg .lab-sil-ringtop { fill: none; stroke: #5f6773; stroke-width: 2; }
+.demo-svg .lab-sil-funnel { fill: #c9ced6; stroke: #5f6773; stroke-width: 1.2; }
+.demo-svg .lab-sil-membrane { stroke: #b0613a; stroke-width: 3; }
+.demo-svg .lab-sil-tube { fill: none; stroke: #7f8893; stroke-width: 3; }
+.demo-svg .lab-sil-tube.leak { stroke-dasharray: 6 3; }
+.demo-svg .lab-sil-utube { fill: none; stroke: var(--muted); stroke-width: 2; }
+.demo-svg .lab-sil-utube-water { fill: none; stroke: #8fc3e6; stroke-width: 9; }
+/* indikatorji (lab-ph, lab-dokaz, lab-slina; public/sim/lab-indikatorji.js): isti okvir kot toplota */
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .seg-btn { min-width: 44px; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; } /* dolga imena vzorcev in preskusov */
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; } /* berljivo tudi v temnem načinu */
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) .lab-table td:nth-child(2) { min-width: 6.5em; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) .lab-table td { text-align: left; }
+.demo-lab-slina .lab-table td { text-align: center; }
+.lab-ind-key { margin: 0 0 8px; color: var(--text); }
+.lab-ind-key > span { white-space: nowrap; }
+@media (max-width: 480px) {
+  .demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.lab-ind-sw { display: inline-block; width: 1.1em; height: 1.1em; border-radius: 50%; border: 1px solid var(--muted); vertical-align: -0.2em; }
+.lab-ind-line, .lab-ind-grid { max-width: 420px; display: block; margin: 0 auto; }
+.demo-svg:is(.lab-ind-line, .lab-ind-grid) .tick.small { font-size: 12px; }
+.demo-svg:is(.lab-ind-line, .lab-ind-grid) .lbl.small { font-size: 12px; }
+.demo-svg .lab-warn { fill: var(--danger); font-size: 13px; font-weight: 700; }
+.demo-svg .lab-warn.small { font-size: 12px; }
+.demo-svg .lab-ind-liq { stroke: none; }
+.demo-svg .lab-ind-paper { fill: #f3efe2; stroke: #b9b3a3; stroke-width: 1; }
+.demo-svg .lab-ind-meter { fill: #3f4752; stroke: #2f343b; stroke-width: 1.5; }
+.demo-svg .lab-ind-rack { fill: #b08a5a; }
+.demo-svg .lab-ind-bath { stroke: var(--muted); stroke-width: 1; }
+.demo-svg .lab-ind-well { fill: #f7f7f5; stroke: #b9c2cf; stroke-width: 1.2; }
+.demo-svg .lab-ind-cell { stroke: var(--muted); stroke-width: 1; }
+.demo-svg .lab-ind-dot { stroke: var(--surface); stroke-width: 1.5; }
+.demo-svg .lab-ind-dot.kislo { fill: #c2334d; }
+.demo-svg .lab-ind-dot.nevtralno { fill: #3d8a4a; }
+.demo-svg .lab-ind-dot.bazicno { fill: #3566b5; }
+.demo-svg .lab-ind-dot.bad { stroke: var(--danger); stroke-width: 2.5; stroke-dasharray: 3 2; }
+.demo-svg .lab-ind-dotn { fill: #fff; font-size: 9px; font-weight: 700; }
+/* elektrokemija (lab-elektroliza, lab-galvanski, lab-kovine; public/sim/lab-elektrokemija.js): isti okvir kot indikatorji */
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) :is(button, select, .seg-btn, .demo-check, .layer-chip, input[type=range]) { min-height: 44px !important; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .seg-btn { min-width: 44px; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table { overflow: visible; } /* drsi okvir tabele, zato glava ostane vidna (sticky) */
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
+/* zaslon merilnika je tudi v RTL kot na napravi: število levo od enote; opomba se ravna po svojem besedilu */
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd-screen { direction: ltr; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) :is(.lab-lcd-note, .lab-lcd-name) { unicode-bidi: plaintext; }
+/* merilniki na telefonu: manjši robovi, da gre vrednost v zaslon in je risba nad kontrolami bližje */
+@container labtit (max-width: 440px) {
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-meters { gap: 6px; }
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd { padding: 5px 6px; }
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd-screen { padding: 3px 5px; gap: 3px; }
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd-val { font-size: 1.1rem; letter-spacing: 0.02em; }
+}
+@media (max-width: 480px) {
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.demo-lab-galvanski .lab-table td:nth-child(-n+4) { text-align: left; }
+.lab-ek-calc { margin: 8px 0; display: flex; flex-direction: column; gap: 6px; font-size: 0.92rem; }
+.lab-ek-calc p { margin: 0; }
+.lab-ek-grid-wrap { max-width: 100%; }
+.lab-ek-grid { min-width: 0; }
+.lab-ek-grid { width: 100%; table-layout: fixed; }
+.lab-ek-grid :is(td, th) { text-align: center; padding: 6px 2px; font-size: 0.86rem; overflow-wrap: anywhere; }
+.lab-ek-grid thead th { font-size: 0.72rem; line-height: 1.15; }
+.lab-ek-grid th:first-child { width: 3.2em; }
+.lab-ek-grid td.ok { box-shadow: inset 0 0 0 2px var(--ok); }
+.lab-ek-grid td.bad { box-shadow: inset 0 0 0 2px var(--danger); }
+.lab-ek-gridnote { font-size: 0.85rem; margin: 6px 0 0; }
+.lab-ek-mesta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 8px 0; }
+.demo-svg.lab-ek .lab-scale { fill: none; }
+.demo-svg .lab-ek-miza { fill: #1f2933; font-size: 11px; font-weight: 600; }
+.demo-svg .lab-ek-miza.small { font-size: 9px; }
+.demo-svg .lab-ek-halo { stroke: rgb(255 255 255 / 0.85); stroke-width: 2.5px; paint-order: stroke; stroke-linejoin: round; }
+.demo-svg .lab-ek-halo-bg { stroke: var(--bg); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round; }
+.demo-svg .lab-scale.lab-ek-mizacrta { stroke: #1f2933; }
+/* steklo: tanek temnejši rob (debelina stekla), bel odsev; tekočine brez obrobe */
+.demo-svg .lab-ek-glass { stroke: #7d93a5; stroke-width: 1; }
+.demo-svg .lab-ek-glass-in { fill: none; stroke: #7d93a5; stroke-width: 1; }
+.demo-svg .lab-ek-hl { fill: rgb(255 255 255 / 0.55); }
+.demo-svg .lab-ek-hl-line { fill: none; stroke: rgb(255 255 255 / 0.6); stroke-width: 1.6; stroke-linecap: round; }
+.demo-svg .lab-ek-liq { stroke: none; }
+.demo-svg .lab-ek-noev { pointer-events: none; }
+.demo-svg .lab-ek-menisk { fill: none; stroke: rgb(40 80 110 / 0.6); stroke-width: 0.8; }
+.demo-svg .lab-ek-tick { stroke: #26313c; stroke-width: 0.6; }
+.demo-svg .lab-ek-num { font-size: 7px; fill: var(--text); }
+.dark .demo-svg .lab-ek-tick { stroke: #e3e9ef; }
+.dark .demo-svg .lab-ek-glass, .dark .demo-svg .lab-ek-glass-in { stroke: #a7bccc; }
+/* mehurčki se dvigajo od elektrode ali kovine (hitrost ~15 cm/s); pri »manj gibanja« mirujejo, razporejeni po poti */
+.demo-svg .lab-ek-bub { stroke: rgb(90 120 145 / 0.55); stroke-width: 0.3; animation: lab-ek-up linear infinite; } /* polnilo: radialni preliv »mehur« v risbi */
+/* risba z ločeno plastjo za mehurčke (enaka velikost in viewBox); plast ne lovi dotikov */
+.lab-ek-risba { position: relative; width: 100%; max-width: 460px; }
+.lab-ek-risba > .demo-svg { display: block; width: 100%; max-width: none; }
+.lab-ek-risba > .lab-ek-ov { position: absolute; inset: 0; height: 100%; pointer-events: none; will-change: transform; }
+.demo-svg .lab-ek-bubst { stroke: rgb(90 120 145 / 0.55); stroke-width: 0.3; }
+@keyframes lab-ek-up { from { transform: translate(0, 0); opacity: 0.95; } 85% { opacity: 0.95; } to { transform: translate(var(--dx, 0px), var(--d)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .demo-svg .lab-ek-bub { animation: none; transform: translate(0, calc(var(--d) * var(--f))); } }
+.demo-svg .lab-ek-wire { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.demo-svg .lab-ek-wire.r { stroke: #c62828; }
+.demo-svg .lab-ek-wire.k { stroke: #1d1f22; }
+.dark .demo-svg .lab-ek-wire.k { stroke: #30353b; } /* črna izolacija z odsevom, da se vidi na temnem ozadju */
+.dark .demo-svg .lab-ek-wire-hl { stroke: rgb(255 255 255 / 0.4); }
+.demo-svg .lab-ek-wire-hl { fill: none; stroke: rgb(255 255 255 / 0.28); stroke-width: 0.7; stroke-linecap: round; transform: translate(-0.6px, -0.6px); }
+.demo-svg .lab-ek-clip.r { fill: #d32f2f; stroke: #7a1414; stroke-width: 0.6; }
+.demo-svg .lab-ek-clip.k { fill: #262626; stroke: #000; stroke-width: 0.6; }
+.demo-svg .lab-ek-lcdbg { fill: #b9c4a2; stroke: #6f7a5c; stroke-width: 0.6; }
+.demo-svg .lab-ek-lcdtxt { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; }
+.demo-svg .lab-ek-lcdunit { fill: #1d2414; font-weight: 700; }
+.demo-svg .lab-ek-jack { fill: #e9edf1; }
+.demo-svg .lab-ek-seg { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; font-weight: 700; }
+.demo-svg .lab-ek-seg.red { fill: #ff5a43; }
+.demo-svg .lab-ek-seg.grn { fill: #49e27c; }
+.demo-svg .lab-ek-panel { font-size: 7px; fill: #2c3238; font-weight: 600; }
+.demo-svg .lab-ek-tap { stroke: #dfe7ee; stroke-width: 3; stroke-linecap: round; }
+.demo-svg .lab-ek-splint { stroke: #b8864b; stroke-width: 2.5; stroke-linecap: round; }
+.demo-svg .lab-ek-flame { fill: #ffb43a; stroke: #ffe08a; stroke-width: 1; opacity: 0.92; }
+.demo-svg .lab-ek-pop { fill: #fff2c2; stroke: #ffb43a; stroke-width: 1.2; }
+.demo-svg .lab-ek-poptxt { font-size: 11px; font-weight: 800; fill: var(--danger); }
+.demo-svg .lab-ek-oxid { fill: rgb(115 112 100 / 0.38); }
+.demo-svg .lab-ek-most { fill: none; stroke: #cdbd96; stroke-width: 7; stroke-linejoin: round; }
+.demo-svg .lab-ek-most.suh { stroke: #f2ecda; }
+.demo-svg .lab-ek-most-rob { fill: none; stroke: rgb(110 90 50 / 0.45); stroke-width: 0.6; stroke-dasharray: 2 3; }
+.demo-svg .lab-ek-ucev { fill: none; stroke: #8aa0b2; stroke-width: 10; stroke-linejoin: round; }
+.demo-svg .lab-ek-ucev-gel { fill: none; stroke: #edf2f0; stroke-width: 7.5; stroke-linejoin: round; }
+.demo-svg .lab-ek-ucev-hl { fill: none; stroke: rgb(255 255 255 / 0.85); stroke-width: 1.2; transform: translate(-2px, -2px); }
+.demo-svg .lab-ek-spin { animation: lab-ek-spin 0.4s linear infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes lab-ek-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .demo-svg .lab-ek-spin { animation: none; } }
+.demo-svg .lab-ek-foam { fill: #ecebe2; stroke: #a9a99c; stroke-width: 0.7; }
+.demo-svg .lab-ek-foam-b { fill: #fbfbf7; stroke: #9d9d90; stroke-width: 0.45; }
+.demo-svg .lab-ek-spill { fill: none; stroke: #ecebe2; stroke-width: 4; stroke-linecap: round; }
+.demo-svg .lab-ek-spill-rob { fill: none; stroke: #9d9d90; stroke-width: 5.4; stroke-linecap: round; }
+.demo-svg .lab-ek-sonda { stroke: #aeb5bc; }
+.demo-svg .lab-ek-cevka { fill: none; stroke: #9aa9b5; stroke-width: 3; stroke-linejoin: round; }
+/* gibanje (lab-klanec, lab-prosti-pad, lab-newton2; public/sim/lab-gibanje.js): isti okvir kot elektrokemija */
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) :is(button, select, .seg-btn, .demo-check, .layer-chip, input[type=range]) { min-height: 44px !important; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .seg-btn { min-width: 44px; }
+.lab-bench:has(> :is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2)) { overflow-x: clip; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table { overflow: visible; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad) .lab-table td:nth-child(2) { text-align: left; }
+/* zaslon časovnika je tudi v RTL kot na napravi: število levo od enote */
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-lcd-screen { direction: ltr; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) :is(.lab-lcd-note, .lab-lcd-name) { unicode-bidi: plaintext; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .demo-svg :is(.lab-gib-lcdtxt, .lab-gib-cm, .lab-gib-st) { direction: ltr; unicode-bidi: plaintext; }
+@media (max-width: 480px) {
+  .demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.lab-gib-calc { margin: 8px 0; display: flex; flex-direction: column; gap: 6px; font-size: 0.92rem; }
+.lab-gib-calc p, .lab-gib-stanje { margin: 0; }
+.lab-gib-stanje { color: var(--text); }
+.demo-svg.lab-gib .lab-scale { fill: none; }
+.demo-svg .lab-gib-cm { font-size: 8px; fill: var(--text); }
+.demo-svg .lab-gib-st { font-size: 8px; font-weight: 700; fill: var(--text); }
+.demo-svg .lab-gib-slow { font-size: 10px; font-weight: 800; fill: var(--danger); letter-spacing: 0.06em; }
+.demo-svg .lab-gib-miza { stroke: #8d959d; stroke-width: 0.6; }
+.demo-svg .lab-gib-tla { fill: #b9a68a; }
+.dark .demo-svg .lab-gib-tla { fill: #5d5345; }
+.demo-svg .lab-gib-noga-miza { fill: #8d959d; }
+.demo-svg .lab-gib-noga { fill: #3a3f45; }
+.demo-svg .lab-gib-alu { stroke: #7d868f; stroke-width: 0.5; }
+.demo-svg .lab-gib-zleb { stroke: rgb(70 80 90 / 0.35); stroke-width: 0.6; }
+.demo-svg .lab-gib-crtica { stroke: #1f2933; stroke-width: 0.5; }
+.dark .demo-svg .lab-gib-trak ~ .lab-gib-crtica { stroke: #1f2933; }
+.demo-svg .lab-gib-pol { fill: #b7bec6; }
+.demo-svg .lab-gib-vzmet { fill: none; stroke: #b7bec6; stroke-width: 1.4; }
+.demo-svg .lab-gib-objemka { fill: #6b737c; }
+.demo-svg .lab-gib-oddajnik { fill: #5a1010; stroke: #c94a4a; stroke-width: 0.5; }
+.demo-svg .lab-gib-vrata-spr { fill: rgb(40 44 50 / 0.28); stroke: #22262b; stroke-width: 0.7; }
+.demo-svg .lab-gib-led { fill: #4a1414; stroke: #222; stroke-width: 0.5; }
+.demo-svg .lab-gib-led.on { fill: #ff3b30; stroke: #ffb3ad; }
+.demo-svg .lab-gib-telo { stroke: #173e72; stroke-width: 0.5; }
+.demo-svg .lab-gib-odsev { fill: rgb(255 255 255 / 0.35); }
+.demo-svg .lab-gib-kolo { fill: #202327; }
+.demo-svg .lab-gib-os { fill: #b7bec6; }
+.demo-svg .lab-gib-palica { stroke: #4b525a; stroke-width: 0.4; }
+.demo-svg .lab-gib-utez { stroke: #7d5f1e; stroke-width: 0.3; }
+.demo-svg .lab-gib-zast { fill: #f2f2f2; stroke: #30353b; stroke-width: 0.5; }
+.demo-svg .lab-gib-drog { stroke: #6b737c; stroke-width: 0.9; }
+.demo-svg .lab-gib-kavelj { fill: none; stroke: #30353b; stroke-width: 0.7; }
+.demo-svg .lab-gib-kvader { stroke: #8a6234; stroke-width: 0.5; }
+.demo-svg .lab-gib-podlozka { fill: #e9dfc4; stroke: #8a7a52; stroke-width: 0.4; }
+.demo-svg .lab-gib-kabel { fill: none; stroke: #2b2f34; stroke-width: 1; opacity: 0.75; }
+.dark .demo-svg .lab-gib-kabel { stroke: #9aa3ad; }
+.demo-svg .lab-gib-ohisje { stroke: #15181b; stroke-width: 0.6; }
+.demo-svg .lab-gib-panel { font-size: 6.5px; font-weight: 700; fill: #e3e8ee; letter-spacing: 0.05em; }
+.demo-svg .lab-gib-jack { fill: #d9a514; stroke: #15181b; stroke-width: 0.5; }
+.demo-svg .lab-gib-lcdbg { fill: #b9c4a2; stroke: #6f7a5c; stroke-width: 0.6; }
+.demo-svg .lab-gib-lcdtxt { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 9.5px; font-weight: 700; }
+.demo-svg .lab-gib-lupa-bg { fill: var(--surface); stroke: none; }
+.demo-svg .lab-gib-lupa-rob { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.demo-svg .lab-gib-zarek { stroke: #e53935; stroke-width: 1.2; stroke-dasharray: 3 2; }
+.demo-svg .lab-gib-clovek { fill: none; stroke: var(--muted); stroke-width: 6; stroke-linecap: round; opacity: 0.35; }
+.demo-svg .lab-gib-clovek-g { fill: var(--muted); opacity: 0.35; }
+.demo-svg .lab-gib-tuljava { fill: #b8642a; stroke: #6d3511; stroke-width: 0.6; }
+.demo-svg .lab-gib-klesce { fill: none; stroke: #4b525a; stroke-width: 1.6; stroke-linecap: round; }
+.demo-svg .lab-gib-trak { fill: #f4d03f; stroke: #a8842a; stroke-width: 0.4; }
+.demo-svg .lab-gib-vrata-pad { fill: none; stroke: #22262b; stroke-width: 3; stroke-linejoin: round; }
+.dark .demo-svg :is(.lab-gib-vrata-pad, .lab-gib-vrata-spr) { stroke: #69717a; }
+.demo-svg .lab-gib-posoda { fill: #6d8aa3; stroke: #3d5468; stroke-width: 0.5; }
+.demo-svg .lab-gib-krogla { stroke: rgb(0 0 0 / 0.35); stroke-width: 0.3; }
+.demo-svg .lab-gib-pero { fill: none; stroke: #8c7a64; stroke-width: 1.6; stroke-linecap: round; }
+.demo-svg .lab-gib-papir { fill: #f4ecd8; stroke: #a59572; stroke-width: 0.6; }
+.demo-svg .lab-gib-obris { fill: rgb(150 160 170 / 0.25); stroke: var(--text); stroke-width: 1; stroke-dasharray: 4 2; }
+.demo-svg .lab-gib-kriz { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+.demo-svg .lab-gib-nosilec { stroke: #4b525a; stroke-width: 2; }
+.demo-svg .lab-gib-skripec { fill: #d7dbe0; stroke: #4b525a; stroke-width: 1; }
+.demo-svg .lab-gib-vrvica { fill: none; stroke: #6b4a2b; stroke-width: 0.8; }
+.dark .demo-svg .lab-gib-vrvica { stroke: #d8b48a; }
+.demo-svg .lab-gib-drog-st { stroke: #59616a; stroke-width: 0.4; }
+
+/* elektromagnetizem (lab-elektromagnet, lab-sila-vodnik, lab-indukcija; public/sim/lab-magnetizem.js): isti okvir kot gibanje */
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) :is(button, select, .seg-btn, .demo-check, .layer-chip, input[type=range]) { min-height: 44px !important; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .seg-btn { min-width: 44px; }
+.lab-bench:has(> :is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija)) { overflow-x: clip; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table { overflow: visible; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd-screen { direction: ltr; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) :is(.lab-lcd-note, .lab-lcd-name) { unicode-bidi: plaintext; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .demo-svg :is(.lab-mag-lcdtxt, .lab-mag-lcdbig, .lab-mag-lcdbal, .lab-mag-seg, .lab-mag-ravnilo-st, .lab-mag-zaslon-txt) { direction: ltr; unicode-bidi: plaintext; }
+@container labtit (max-width: 440px) {
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-meters { gap: 6px; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd { padding: 5px 6px; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd-screen { padding: 3px 5px; gap: 3px; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd-val { font-size: 1.1rem; letter-spacing: 0.02em; }
+}
+@media (max-width: 480px) {
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.lab-mag-calc { margin: 8px 0; display: flex; flex-direction: column; gap: 6px; font-size: 0.92rem; overflow-wrap: anywhere; }
+.lab-mag-calc p { margin: 0; }
+.lab-mag-cap { margin: 6px 0 8px; font-size: 0.92rem; overflow-wrap: anywhere; }
+.lab-mag-trace-wrap { margin: 0; max-width: 460px; }
+.lab-mag-trace-wrap > .demo-svg { width: 100%; height: auto; display: block; }
+.demo-svg .lab-mag-sled { fill: none; stroke: var(--demo-a, #2563eb); stroke-width: 1.4; stroke-linejoin: round; }
+.demo-svg .lab-mag-vzorec { fill: var(--demo-a, #2563eb); }
+.demo-svg .lab-mag-ploscina { stroke: none; opacity: 0.22; }
+.demo-svg .lab-mag-ploscina.a { fill: var(--demo-b, #e11d48); }
+.demo-svg .lab-mag-ploscina.b { fill: var(--demo-c, #16a34a); }
+.demo-svg.lab-mag .lab-scale { fill: none; stroke: #1f2933; }
+.dark .demo-svg.lab-mag .lab-scale { stroke: #e3e9ef; }
+.demo-svg .lab-mag-miza { font-size: 8px; font-weight: 600; fill: #1f2933; }
+.demo-svg .lab-mag-mizarob { stroke: #8d959d; stroke-width: 0.6; }
+.demo-svg .lab-mag-oznaka { font-size: 7.5px; font-weight: 600; fill: var(--text); }
+.demo-svg .lab-mag-oznaka.halo { paint-order: stroke; stroke: var(--surface, #fff); stroke-width: 2.5px; stroke-linejoin: round; }
+.demo-svg .lab-mag-warn { font-size: 9px; font-weight: 800; fill: var(--danger); }
+.demo-svg .lab-mag-slow { font-size: 10px; font-weight: 800; fill: var(--danger); letter-spacing: 0.06em; }
+.demo-svg .lab-mag-wire { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.demo-svg .lab-mag-wire.r { stroke: #c62828; }
+.demo-svg .lab-mag-wire.k { stroke: #1d1f22; }
+.dark .demo-svg .lab-mag-wire.k { stroke: #3a4048; }
+.demo-svg .lab-mag-wire-hl { fill: none; stroke: rgb(255 255 255 / 0.28); stroke-width: 0.7; stroke-linecap: round; transform: translate(-0.6px, -0.6px); }
+.dark .demo-svg .lab-mag-wire-hl { stroke: rgb(255 255 255 / 0.4); }
+.demo-svg .lab-mag-clip.r { fill: #d32f2f; stroke: #7a1414; stroke-width: 0.6; }
+.demo-svg .lab-mag-clip.k { fill: #262626; stroke: #000; stroke-width: 0.6; }
+.dark .demo-svg .lab-mag-clip.k { fill: #3a3f46; stroke: #9aa3ad; }
+.demo-svg .lab-mag-lcdbg { fill: #b9c4a2; stroke: #6f7a5c; stroke-width: 0.6; }
+.demo-svg :is(.lab-mag-lcdtxt, .lab-mag-lcdbig, .lab-mag-lcdbal) { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; }
+.demo-svg .lab-mag-lcdbig { font-size: 15px; }
+.demo-svg .lab-mag-lcdbal { font-size: 11px; }
+.demo-svg .lab-mag-lcdunit { fill: #1d2414; font-weight: 700; font-size: 6.5px; }
+.demo-svg .lab-mag-jack { fill: #e9edf1; }
+.demo-svg .lab-mag-seg { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; font-weight: 700; }
+.demo-svg .lab-mag-seg.red { fill: #ff5a43; }
+.demo-svg .lab-mag-seg.grn { fill: #49e27c; }
+.demo-svg .lab-mag-panel { font-size: 7px; fill: #2c3238; font-weight: 600; }
+.demo-svg .lab-mag-panel-sv { font-size: 7px; fill: #e3e8ee; font-weight: 700; letter-spacing: 0.04em; }
+.demo-svg .lab-mag-panel-sv.small { font-size: 5.6px; letter-spacing: 0; }
+/* tuljava: baker, ovoji, lesk laka, tuljavnica */
+.demo-svg .lab-mag-navitje { stroke: #4d220e; stroke-width: 0.5; }
+.demo-svg .lab-mag-ovoj { stroke: rgb(70 28 8 / 0.55); stroke-width: 0.35; }
+.demo-svg .lab-mag-lesk { fill: rgb(255 240 225 / 0.28); }
+.demo-svg .lab-mag-vroce { fill: #ff3b1f; mix-blend-mode: multiply; }
+.demo-svg .lab-mag-prirobnica { stroke: #111; stroke-width: 0.4; }
+.demo-svg .lab-mag-nalepka { font-size: 4.2px; font-weight: 700; fill: #1d1f22; }
+.demo-svg .lab-mag-nalepka-bg { fill: #f4f1e6; stroke: #a59d86; stroke-width: 0.3; }
+.demo-svg .lab-mag-val { fill: none; stroke: #ff7a45; stroke-width: 0.9; stroke-linecap: round; }
+.demo-svg .lab-mag-jedro { stroke: #2c3036; stroke-width: 0.5; }
+.demo-svg .lab-mag-lamele { stroke: #2f343a; stroke-width: 0.5; }
+.demo-svg .lab-mag-lamela { stroke: rgb(30 34 40 / 0.35); stroke-width: 0.3; }
+.demo-svg .lab-mag-ploscica { fill: #f1efe6; stroke: #a59d86; stroke-width: 0.4; }
+.demo-svg .lab-mag-sonda { stroke: #555c64; stroke-width: 0.4; }
+.demo-svg .lab-mag-rocaj { stroke: #000; stroke-width: 0.4; }
+.demo-svg .lab-mag-kabel { fill: none; stroke: #2b2f34; stroke-width: 1.3; opacity: 0.85; }
+.dark .demo-svg .lab-mag-kabel { stroke: #9aa3ad; }
+.demo-svg .lab-mag-hall { fill: none; stroke: #ffb300; stroke-width: 0.8; stroke-dasharray: 1.2 1; }
+.demo-svg .lab-mag-hall-el { fill: #ffb300; stroke: #7a5400; stroke-width: 0.3; }
+.demo-svg .lab-mag-ravnilo { fill: #f4d03f; stroke: #a8842a; stroke-width: 0.4; }
+.demo-svg .lab-mag-ravnilo-crt { stroke: #2a2410; stroke-width: 0.4; }
+.demo-svg .lab-mag-ravnilo-st { font-size: 4.2px; font-weight: 700; fill: #2a2410; }
+.demo-svg .lab-mag-posoda { fill: rgb(200 220 235 / 0.35); stroke: #8aa0b2; stroke-width: 0.6; }
+.demo-svg .lab-mag-posoda-rob { fill: rgb(200 220 235 / 0.4); stroke: #8aa0b2; stroke-width: 0.6; }
+.demo-svg .lab-mag-sponka { fill: none; stroke: #9aa3ad; stroke-width: 0.55; stroke-linecap: round; }
+.dark .demo-svg .lab-mag-sponka { stroke: #d5dbe1; }
+.demo-svg .lab-mag-klada { stroke: #8a6234; stroke-width: 0.4; }
+.demo-svg .lab-mag-kompas-ohisje { fill: #c9a24b; stroke: #6d5420; stroke-width: 0.6; }
+.demo-svg .lab-mag-kompas-dial { fill: #fbfaf5; stroke: #6d5420; stroke-width: 0.5; }
+.demo-svg .lab-mag-kompas-crt { stroke: #333; stroke-width: 0.4; }
+.demo-svg .lab-mag-kompas-txt { font-size: 6px; font-weight: 700; fill: #222; }
+.demo-svg .lab-mag-igla-n { fill: #d32f2f; stroke: #7a1414; stroke-width: 0.3; }
+.demo-svg .lab-mag-igla-s { fill: #eef1f4; stroke: #555; stroke-width: 0.3; }
+.demo-svg .lab-mag-igla-bok { stroke: #d32f2f; stroke-width: 1; stroke-linecap: round; }
+.demo-svg .lab-mag-vodilo { fill: none; stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+/* tokovna tehtnica */
+.demo-svg .lab-mag-nosilec { stroke: #3d434a; stroke-width: 0.5; }
+.demo-svg .lab-mag-reza { fill: #15181b; }
+.demo-svg .lab-mag-pol { stroke: rgb(0 0 0 / 0.4); stroke-width: 0.3; }
+.demo-svg .lab-mag-pcb { stroke: #0f3d20; stroke-width: 0.5; }
+.demo-svg .lab-mag-vez { fill: none; stroke: #d39a5c; stroke-width: 1.8; stroke-linejoin: round; }
+.demo-svg .lab-mag-vez.lupa { stroke-width: 2.6; }
+.demo-svg .lab-mag-vez-hl { fill: none; stroke: rgb(255 240 210 / 0.6); stroke-width: 0.5; }
+.demo-svg .lab-mag-pcbtxt { font-size: 5.5px; font-weight: 700; fill: #e8f5e9; }
+.demo-svg .lab-mag-lupa-bg { fill: var(--surface); stroke: var(--muted); stroke-width: 1.2; }
+.demo-svg .lab-mag-polst { font-size: 6px; font-weight: 800; fill: #fff; }
+.demo-svg .lab-mag-meja { stroke: rgb(0 0 0 / 0.35); stroke-width: 0.5; }
+.demo-svg .lab-mag-bpuscica { stroke: #5b6b7a; stroke-width: 0.9; }
+.demo-svg .lab-mag-bfill { fill: #5b6b7a; }
+.dark .demo-svg .lab-mag-bpuscica { stroke: #b8c4cf; }
+.dark .demo-svg .lab-mag-bfill { fill: #b8c4cf; }
+.demo-svg .lab-mag-ipuscica { stroke: #c62828; stroke-width: 1.4; }
+.demo-svg .lab-mag-ifill { fill: #c62828; }
+.demo-svg .lab-mag-fkrog { fill: var(--surface); stroke: var(--accent, #2563eb); stroke-width: 1.2; }
+.demo-svg .lab-mag-fpika { fill: var(--accent, #2563eb); }
+.demo-svg .lab-mag-fkriz { fill: none; stroke: var(--accent, #2563eb); stroke-width: 1.2; }
+/* indukcija */
+.demo-svg .lab-mag-cev { stroke: #7d93a5; stroke-width: 0.8; }
+.dark .demo-svg .lab-mag-cev { stroke: #a7bccc; }
+.demo-svg .lab-mag-cev-hl { fill: rgb(255 255 255 / 0.55); }
+.demo-svg .lab-mag-pena { fill: #e4c84a; stroke: #a08a2a; stroke-width: 0.5; }
+.demo-svg .lab-mag-magnet { stroke: #5e646b; stroke-width: 0.4; }
+.demo-svg .lab-mag-npol { stroke: none; }
+.demo-svg .lab-mag-palcka { stroke: #8a6234; stroke-width: 0.3; }
+.demo-svg .lab-mag-dlan { stroke: #a86c4a; stroke-width: 0.6; }
+.demo-svg .lab-mag-prst { fill: none; stroke: #d9a07c; stroke-width: 3.6; stroke-linecap: round; }
+.demo-svg .lab-mag-zapestje { fill: none; stroke: #d9a07c; stroke-width: 11; stroke-linecap: round; }
+.demo-svg .lab-mag-mreza { stroke: rgb(120 170 200 / 0.18); stroke-width: 0.5; }
+.demo-svg .lab-mag-mreza.nic { stroke: rgb(160 200 230 / 0.45); }
+.demo-svg .lab-mag-zaslon-sled { fill: none; stroke: #ffd54f; stroke-width: 1.1; stroke-linejoin: round; }
+.demo-svg .lab-mag-zaslon-txt { font-size: 6px; fill: #b8d4e8; }
+.demo-svg .lab-mag-galv-st { font-size: 7px; font-weight: 700; fill: #222; }
+
+/* kratek video iz simulacije (public/gradiva.js) */
+.gr-video { width: min(760px, calc(100vw - 16px)); max-height: calc(100dvh - 16px); padding: 12px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); overflow-y: auto; }
+.gr-video::backdrop { background: rgba(12, 14, 30, 0.6); }
+.gr-video-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gr-video-head h2 { margin: 0; font-size: 1.1rem; }
+.gr-video-close { min-width: 40px; min-height: 40px; }
+.gr-video-sim .demo-reset { display: none; }
+/* V videu: izpis simulacije takoj pod sliko (na telefonu bi bil sicer pod drsniki), brez »Poskusi«. */
+.gr-video-sim:has(> .demo-stage), .gr-video-sim :has(> .demo-stage) { display: flex; flex-direction: column; }
+.gr-video-sim .demo-stage { order: 0; }
+.gr-video-sim .demo-readout { order: 1; }
+.gr-video-sim .demo-layers { order: 2; }
+.gr-video-sim .demo-controls { order: 3; }
+.gr-video-sim .demo-try { display: none; }
+/* podnapis in gumbi ostanejo vidni tudi na telefonu, ko je simulacija višja od zaslona */
+.gr-video-foot { position: sticky; bottom: -12px; margin: 0 -16px -12px; padding: 4px 16px 12px; background: var(--surface); border-top: 1px solid var(--border); }
+.gr-video-cap { min-height: 3.2em; margin: 8px 0; padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 10%, transparent); font-size: 1.02rem; }
+.gr-video-cap p { margin: 0; }
+.gr-video-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.gr-video-bar progress { flex: 1 1 120px; height: 8px; accent-color: var(--accent); }
+.gr-video-time { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 0.9rem; direction: ltr; unicode-bidi: isolate; }
+.gr-video-cap .katex { direction: ltr; unicode-bidi: isolate; }
+.gr-video-voice { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
+.gr-video-draft { margin: 6px 0 0; font-size: 0.85rem; }
+@media (prefers-reduced-motion: reduce) { .gr-video-cap { transition: none; } }
+
+/* Prikaz na grafu (public/sim/prikaz.js): skriti deli grafa; ročica s skrito piko se ne da vleči. */
+.demo.tg-off-accent .tg-graph :is(.stroke-accent, .fill-accent, .graph-line:not(.stroke-a, .stroke-b, .stroke-c, .stroke-ok, .stroke-danger, .stroke-muted, .stroke-text), .band, .handle:has(> .fill-accent)) { visibility: hidden; }
+.demo.tg-off-a .tg-graph :is(.stroke-a, .fill-a, .slope-tri, .slope-label, .pt-n, .area-fill, .ray.a, .handle:has(> .fill-a)) { visibility: hidden; }
+.demo.tg-off-b .tg-graph :is(.stroke-b, .fill-b, .pt-zero, .rect-sum:not(.neg), .ray.b, .vel, .handle:has(> .fill-b)) { visibility: hidden; }
+.demo.tg-off-c .tg-graph :is(.stroke-c, .fill-c, .ray.c, .perim, .arc-thick, .handle:has(> .fill-c)) { visibility: hidden; }
+.demo.tg-off-ok .tg-graph :is(.stroke-ok, .fill-ok, .handle:has(> .fill-ok)) { visibility: hidden; }
+.demo.tg-off-danger .tg-graph :is(.stroke-danger, .fill-danger, .rect-sum.neg, .handle:has(> .fill-danger)) { visibility: hidden; }
+.demo.tg-off-muted .tg-graph :is(.stroke-muted, .fill-muted, .guide:not(.stroke-a, .stroke-b, .stroke-c, .stroke-ok, .stroke-danger, .stroke-accent), .handle:has(> .fill-muted)) { visibility: hidden; }
+.demo.tg-off-marks .tg-graph :is(.amark) { visibility: hidden; }
+.demo.tg-off-grid .tg-graph :is(.grid) { visibility: hidden; }
+.demo-layers { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 2px 0 10px; }
+.demo-layers[hidden] { display: none; }
+.demo-layers-label { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-right: 2px; }
+.demo .layer-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; max-width: 100%; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer; overflow-wrap: anywhere; text-align: start; }
+.demo .layer-chip[aria-pressed="false"] { color: var(--muted); background: none; border-style: dashed; text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.demo .layer-chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.layer-sw { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--sw, var(--text)); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15); }
+.layer-chip[aria-pressed="false"] .layer-sw { background: none; box-shadow: inset 0 0 0 2px var(--sw, var(--muted)); }
+.layer-sw.sw-grid { border-radius: 3px; background: linear-gradient(var(--muted) 0 0) 50% 0 / 1.5px 100% no-repeat, linear-gradient(var(--muted) 0 0) 0 50% / 100% 1.5px no-repeat; box-shadow: inset 0 0 0 1.5px var(--muted); }
+.layer-sw.sw-marks { border-radius: 2px; width: 4px; background: var(--text); box-shadow: none; }
+.layer-chip[aria-pressed="false"] .layer-sw.sw-grid, .layer-chip[aria-pressed="false"] .layer-sw.sw-marks { opacity: 0.45; }
+
+/* Drsnik ↔ oznaka na grafu (kit.axisMark, kit.spanMark, kit.axisSlider) */
+.demo-svg .amark { --mk: var(--accent); }
+.demo-svg .amark-a { --mk: var(--demo-a); } .demo-svg .amark-b { --mk: var(--demo-b); } .demo-svg .amark-c { --mk: var(--demo-c); }
+.demo-svg .amark-ok { --mk: var(--ok); } .demo-svg .amark-danger { --mk: var(--danger); }
+.demo-svg .amark .hit { fill: transparent; }
+.demo-svg .amark-drop { stroke: var(--mk); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.demo-svg .amark-tick { stroke: var(--mk); stroke-width: 4; stroke-linecap: round; }
+.demo-svg .amark-ext { stroke: var(--mk); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+.demo-svg .amark-span { fill: none; stroke: var(--mk); stroke-width: 2.5; stroke-linecap: round; }
+.demo-svg .amark-knob { fill: var(--mk); stroke: var(--surface); stroke-width: 2; }
+.demo-svg .amark-lbl { fill: color-mix(in srgb, var(--mk) 62%, var(--text)); font-size: 12.5px; font-weight: 800; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.demo-svg .amark.drag, .demo-svg .amark-end.drag { cursor: ew-resize; touch-action: none; }
+.demo-svg .amark.drag:focus-visible .amark-tick, .demo-svg .amark-end.drag:focus-visible .amark-knob { stroke-width: 6; }
+.demo-slider-label .dot { margin-right: 6px; vertical-align: 0; }
+/* Os grafa teče od leve proti desni tudi v jezikih RTL: drsnik pod osjo in besedila na sliki zato ostanejo LTR. */
+[dir="rtl"] .demo-svg, .demo-slider.axis-slider { direction: ltr; }
+.demo-slider.axis-slider { --thumb: 22px; --slc: var(--accent); flex: 1 1 100%; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0 10px; }
+.demo-slider.axis-slider:has(.dot-a) { --slc: var(--demo-a); } .demo-slider.axis-slider:has(.dot-b) { --slc: var(--demo-b); } .demo-slider.axis-slider:has(.dot-c) { --slc: var(--demo-c); }
+.demo-slider.axis-slider input[type="range"] { grid-column: 1 / -1; grid-row: 1; justify-self: start; box-sizing: border-box; width: var(--ax-w, 100%); max-width: none; margin: 0 0 0 var(--ax-l, 0px); padding: 0; border: 0; height: 36px; background: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+.demo-slider.axis-slider input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--slc) 35%, var(--border)); }
+.demo-slider.axis-slider input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; box-sizing: border-box; width: var(--thumb); height: var(--thumb); margin-top: calc(3px - var(--thumb) / 2); border-radius: 50%; background: var(--slc); border: 3px solid var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / 0.35); }
+.demo-slider.axis-slider input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--slc) 35%, var(--border)); }
+.demo-slider.axis-slider input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: var(--thumb); height: var(--thumb); border-radius: 50%; background: var(--slc); border: 3px solid var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / 0.35); }
+.demo-slider.axis-slider input[type="range"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.demo-slider.axis-slider .demo-slider-label { grid-row: 2; grid-column: 1; font-size: 0.9rem; }
+.demo-slider.axis-slider output { grid-row: 2; grid-column: 2; text-align: left; }
+.lab-sym.line { width: 16px; height: 3px; border-radius: 2px; }
+.bg-c { background: var(--demo-c); }
+.lab-legend .layer-chip { font-size: 0.82rem; }
+.lab-legend .layer-chip[aria-pressed="false"] .lab-sym { opacity: 0.4; }
+
+/* Nastavitev z malo vrednostmi (kit.js slider, GUMBI_DO): gumbi namesto drsnika (j 2026-10-31). */
+.demo-slider.as-choice .demo-choice { grid-column: 2 / -1; justify-self: start; max-width: 100%; }
+.demo .demo-choice .seg-btn { min-width: 44px; min-height: 40px; font-variant-numeric: tabular-nums; }
+@media (max-width: 520px) { .demo-slider.as-choice .demo-choice { grid-column: 1 / -1; } }
+
+/* Laboratorij: kemijske reakcije (lab-hitrost, lab-energija, lab-plamenska; public/sim/lab-reakcije.js) */
+.demo-svg .lab-rk-lcd { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; }
+.demo-svg .lab-rk-lcdu { fill: #1d2414; font-size: 8px; font-weight: 700; }
+.demo-svg .lab-rk-panel { fill: #e9edf1; font-size: 7px; font-weight: 700; }
+.demo-svg .lab-rk-panel.w { fill: #ffffff; font-size: 8px; }
+.demo-svg .lab-rk-vata { fill: #fbfbf9; stroke: #c9cbc6; stroke-width: 0.5; }
+.demo-svg .lab-rk-pena { fill: rgb(120 128 135 / 0.55); }
+.demo-svg .lab-rk-skala { fill: #c9ced4; font-size: 9px; }
+.demo-svg .lab-rk-salt { stroke: none; }
+.lab-rk-eq { overflow-wrap: anywhere; }
+/* Plamen plapola (plast nad risbo se zamenja le, ko se plamen spremeni, zato animacija teče gladko); pri »manj gibanja« miruje. */
+.demo-svg .lab-rk-flame { animation: lab-rk-flick 0.22s ease-in-out infinite alternate; }
+.demo-svg .lab-rk-flame-s { animation-duration: 0.35s; }
+@keyframes lab-rk-flick { from { transform: scale(1, 1) skewX(0deg); } 50% { transform: scale(0.97, 1.03) skewX(1deg); } to { transform: scale(1.02, 0.96) skewX(-1.2deg); } }
+@media (prefers-reduced-motion: reduce) { .demo-svg .lab-rk-flame { animation: none; } }
+.lab-rk-tab .lab-table :is(td, th) { white-space: normal; overflow-wrap: normal; word-break: normal; hyphens: manual; } /* lomi le med besedami (ne »vzo|rec«); preširoka preglednica se pomika v .lab-table-wrap */
+.lab-rk-tab .lab-table td:first-child + td, .lab-rk-tab .lab-table th:first-child + th { min-width: 4.5em; }
+/* risba 4 : 3 na računalniku: zapolni levi stolpec (do 500 px) namesto splošnih 460 px */
+@container labtit (min-width: 800px) { .demo.lab .lab-tit-top > .demo-stage :is(.demo-svg.lab-rk, :has(> .demo-svg.lab-rk)) { max-width: none; } }

@@ -1,0 +1,553 @@
+{
+ "organ": "oko",
+ "vir": "Zrklo HuBMAP HRA (CC BY 4.0), očesne mišice in vidni živec Z-Anatomy (CC BY-SA 4.0), levo oko; izvoz scripts/atlas/izvozi-organe.py",
+ "tkiva": {
+  "beločnica": {
+   "barva": "#f2ede6",
+   "hrap": 0.32,
+   "lak": 0.75,
+   "lakHrap": 0.14,
+   "sijaj": 0.35,
+   "sijajBarva": "#ffffff",
+   "rob": 0.16,
+   "robBarva": "#ffd9cf",
+   "ao": 0.85,
+   "zrno": 0.03,
+   "f": 120,
+   "relief": 0.2,
+   "lise": 0.12,
+   "liseBarva": "#ffe0d6",
+   "rez": "#e6ddd0",
+   "senca": 0.3,
+   "sencaBarva": "#b98a80"
+  },
+  "roženica": {
+   "barva": "#f4fbff",
+   "hrap": 0.02,
+   "lak": 0.7,
+   "lakHrap": 0.02,
+   "prosojnost": 0.04,
+   "fresnel": 0.4,
+   "rob": 0,
+   "ao": 0.2,
+   "zrno": 0,
+   "relief": 0,
+   "spekular": 0.5
+  },
+  "šarenica": {
+   "barva": "#6f4a2c",
+   "hrap": 0.45,
+   "lak": 0.5,
+   "lakHrap": 0.2,
+   "sijaj": 0.3,
+   "sijajBarva": "#d8a46a",
+   "rob": 0.1,
+   "robBarva": "#b9844f",
+   "ao": 0.6,
+   "zrno": 0.12,
+   "f": 260,
+   "relief": 0.7,
+   "lise": 0.2,
+   "liseBarva": "#b98a4e",
+   "rez": "#4a2c1c",
+   "aoExp": 1.2,
+   "sarenica": {
+    "sredisce": [
+     0.0094,
+     -0.0014,
+     0.0255
+    ],
+    "os": [
+     0.0009,
+     0,
+     0.01
+    ],
+    "polmer": 0.0057,
+    "vlakna": 110
+   }
+  },
+  "leča": {
+   "barva": "#f1e4c2",
+   "hrap": 0.06,
+   "lak": 0.6,
+   "lakHrap": 0.05,
+   "prosojnost": 0.55,
+   "fresnel": 0.4,
+   "rob": 0.25,
+   "robBarva": "#fff0c8",
+   "ao": 0.5,
+   "zrno": 0,
+   "relief": 0,
+   "globina": true,
+   "brezReza": true
+  },
+  "mrežnica": {
+   "barva": "#e0896a",
+   "hrap": 0.78,
+   "lak": 0,
+   "lakHrap": 0.2,
+   "sijaj": 0,
+   "sijajBarva": "#ffc2a0",
+   "rob": 0.05,
+   "robBarva": "#ff9d7a",
+   "ao": 0,
+   "zrno": 0.05,
+   "f": 200,
+   "relief": 0.3,
+   "rez": "#d48064",
+   "aoExp": 2,
+   "spekular": 0.2,
+   "aoOkolje": 0,
+   "mreznicaZile": {
+    "disk": [
+     0.0061,
+     0.0004,
+     0.0044
+    ],
+    "sredisce": [
+     0.0085,
+     -0.0014,
+     0.0155
+    ],
+    "fovea": [
+     0.008,
+     -0.003,
+     0.0043
+    ]
+   },
+   "zile": 0.75,
+   "zileSirina": 0.00009,
+   "zileBarva": "#a8261f",
+   "zileBarva2": "#6a1216"
+  },
+  "steklovina": {
+   "barva": "#d6e9f0",
+   "hrap": 0.08,
+   "lak": 0.2,
+   "lakHrap": 0.05,
+   "prosojnost": 0.08,
+   "fresnel": 0.2,
+   "rob": 0.05,
+   "ao": 0.3,
+   "zrno": 0,
+   "relief": 0
+  },
+  "žilnica": {
+   "barva": "#6a2a26",
+   "hrap": 0.45,
+   "lak": 0.4,
+   "lakHrap": 0.25,
+   "sijaj": 0.3,
+   "sijajBarva": "#b4544a",
+   "rob": 0.12,
+   "robBarva": "#a8443a",
+   "ao": 0.8,
+   "zrno": 0.1,
+   "f": 220,
+   "relief": 0.3,
+   "rez": "#5a221f",
+   "aoExp": 1.4
+  },
+  "ciliarnik": {
+   "barva": "#5c2b25",
+   "hrap": 0.45,
+   "lak": 0.4,
+   "lakHrap": 0.25,
+   "rob": 0.1,
+   "ao": 0.8,
+   "zrno": 0.1,
+   "f": 200,
+   "rez": "#4b231e"
+  },
+  "vlakna": {
+   "barva": "#efe6d6",
+   "hrap": 0.3,
+   "lak": 0.5,
+   "rob": 0.1,
+   "ao": 0.6,
+   "zrno": 0.05,
+   "dvostransko": true
+  },
+  "živec": {
+   "barva": "#f0dfae",
+   "hrap": 0.38,
+   "lak": 0.45,
+   "lakHrap": 0.22,
+   "sijaj": 0.6,
+   "sijajBarva": "#fff4cc",
+   "rob": 0.15,
+   "robBarva": "#ffe9a8",
+   "ao": 0.8,
+   "zrno": 0.05,
+   "f": 140,
+   "relief": 0.3,
+   "rez": "#e6cf91"
+  },
+  "kita": {
+   "barva": "#ece7dc",
+   "hrap": 0.34,
+   "lak": 0.45,
+   "sijaj": 0.6,
+   "sijajBarva": "#ffffff",
+   "rob": 0.12,
+   "ao": 0.8,
+   "zrno": 0.05,
+   "f": 160,
+   "rez": "#ddd5c4"
+  },
+  "mišica": {
+   "barva": "#b4433b",
+   "hrap": 0.42,
+   "lak": 0.45,
+   "lakHrap": 0.25,
+   "sijaj": 0.7,
+   "sijajBarva": "#ff9c8c",
+   "rob": 0.18,
+   "robBarva": "#ff8072",
+   "ao": 0.85,
+   "zrno": 0.12,
+   "f": 140,
+   "relief": 0.6,
+   "rez": "#a0372f",
+   "senca": 0.35,
+   "sencaBarva": "#5a1a16"
+  },
+  "papila": {
+   "barva": "#f0d3a4",
+   "hrap": 0.7,
+   "spekular": 0.3,
+   "lak": 0,
+   "sijaj": 0,
+   "rob": 0.03,
+   "ao": 0,
+   "aoOkolje": 0,
+   "zrno": 0.04,
+   "f": 200,
+   "relief": 0.1,
+   "rez": "#e9cfa4"
+  }
+ },
+ "deli": [
+  {
+   "id": "belocnica",
+   "ime": "Beločnica",
+   "la": "Sclera",
+   "barva": "#e8ecf3",
+   "opis": "Čvrsta bela zunanja plast, ki varuje zrklo in mu daje obliko.",
+   "vozlisca": [
+    "sclera_L (HRA)"
+   ],
+   "tocke": {
+    "celota": [
+     0.0185,
+     0.006,
+     0.022
+    ],
+    "prerez": [
+     0.0087,
+     -0.0018,
+     0.0026
+    ]
+   }
+  },
+  {
+   "id": "rozenica",
+   "ime": "Roženica",
+   "la": "Cornea",
+   "barva": "#7dd3fc",
+   "opis": "Prozorno okence na sprednji strani očesa, ki najmočneje lomi svetlobo.",
+   "vozlisca": [
+    "cornea_L (HRA)"
+   ],
+   "tocke": {
+    "celota": [
+     0.0085,
+     -0.0018,
+     0.0295
+    ],
+    "prerez": [
+     0.0087,
+     -0.0018,
+     0.029
+    ]
+   }
+  },
+  {
+   "id": "sarenica",
+   "ime": "Šarenica",
+   "la": "Iris",
+   "barva": "#f2b84b",
+   "opis": "Obarvan obroč z mišicami, ki zoži ali razširi zenico in tako uravna svetlobo.",
+   "vozlisca": [
+    "iris_L (HRA)"
+   ],
+   "tocke": {
+    "celota": [
+     0.0045,
+     0.002,
+     0.0262
+    ]
+   }
+  },
+  {
+   "id": "leca",
+   "ime": "Leča",
+   "la": "Lens",
+   "barva": "#fde68a",
+   "opis": "Prozorna in prožna; spreminja debelino, da vidimo ostro blizu in daleč.",
+   "vozlisca": [
+    "lens_L (HRA)",
+    "suspensory_ligament_of_lens_L (HRA)"
+   ],
+   "tocke": {
+    "prerez": [
+     0.0141,
+     -0.0013,
+     0.0225
+    ]
+   }
+  },
+  {
+   "id": "steklovina",
+   "ime": "Steklovina",
+   "la": "Corpus vitreum",
+   "barva": "#a5f3fc",
+   "opis": "Prozoren žele, ki napolni notranjost zrkla in ohranja njegovo okroglo obliko.",
+   "vozlisca": [
+    "vitreous_humor_L (HRA)"
+   ],
+   "tocke": {
+    "prerez": [
+     0.0087,
+     -0.0018,
+     0.013
+    ]
+   }
+  },
+  {
+   "id": "mreznica",
+   "ime": "Mrežnica",
+   "la": "Retina",
+   "povecava": "organ-mreznica",
+   "barva": "#ff7a6b",
+   "opis": "Notranja plast s čutnicami (paličnicami in čepnicami), ki svetlobo spremenijo v živčne signale.",
+   "vozlisca": [
+    "optic_disc_L (HRA)",
+    "ora_serrata_of_retina_L (HRA)",
+    "retina_L (HRA)"
+   ],
+   "tocke": {
+    "prerez": [
+     0.0087,
+     -0.0122,
+     0.012
+    ]
+   }
+  },
+  {
+   "id": "zilnica",
+   "ime": "Žilnica",
+   "la": "Choroidea",
+   "barva": "#c084fc",
+   "opis": "Temna plast s krvnimi žilami, ki hrani mrežnico in vpija odvečno svetlobo.",
+   "vozlisca": [
+    "ciliary_body_L (HRA)",
+    "ciliary_processes_L (HRA)",
+    "optic_choroid_L (HRA)"
+   ],
+   "tocke": {
+    "prerez": [
+     0.0087,
+     0.0096,
+     0.012
+    ]
+   }
+  },
+  {
+   "id": "vidni-zivec",
+   "ime": "Vidni živec",
+   "la": "Nervus opticus",
+   "barva": "#facc15",
+   "opis": "Prenaša signale z mrežnice v možgane, kjer nastane slika.",
+   "vozlisca": [
+    "Optic nerve (II).l"
+   ],
+   "tocke": {
+    "celota": [
+     -0.006,
+     0.008,
+     -0.012
+    ]
+   }
+  },
+  {
+   "id": "misice",
+   "ime": "Očesne mišice",
+   "la": "Musculi bulbi",
+   "barva": "#5ccb91",
+   "opis": "Šest mišic, ki vrtijo zrklo, da lahko pogledamo gor, dol in vstran.",
+   "vozlisca": [
+    "Common tendinous ring.l",
+    "Inferior oblique muscle.l",
+    "Inferior rectus muscle.l",
+    "Lateral rectus muscle.l",
+    "Medial rectus muscle.l",
+    "Superior oblique muscle.l",
+    "Superior rectus muscle.l",
+    "Trochlea of superior oblique muscle.l"
+   ],
+   "tocke": {
+    "celota": [
+     0.0215,
+     -0.002,
+     0.012
+    ]
+   }
+  }
+ ],
+ "prerez": {
+  "ravnine": [
+   {
+    "n": [
+     -1,
+     0,
+     0
+    ],
+    "d": 0.0085
+   }
+  ]
+ },
+ "pogledi": {
+  "celota": {
+   "pogled": [
+    0.55,
+    0.22,
+    1
+   ],
+   "tocke": [
+    "rozenica",
+    "sarenica",
+    "belocnica",
+    "misice"
+   ],
+   "okvir": {
+    "sredisce": [
+     0.0085,
+     -0.0018,
+     0.0145
+    ],
+    "polmer": 0.48
+   },
+   "skrijTkiva": [
+    "leča",
+    "mrežnica",
+    "papila",
+    "vlakna"
+   ],
+   "tkiva": {
+    "žilnica": {
+     "barva": "#0b0605",
+     "dvostransko": true,
+     "sijaj": 0
+    },
+    "ciliarnik": {
+     "barva": "#0b0605",
+     "sijaj": 0
+    },
+    "steklovina": {
+     "barva": "#040202",
+     "prosojnost": 1,
+     "sijaj": 0,
+     "lak": 0
+    }
+   }
+  },
+  "prerez": {
+   "pogled": [
+    1,
+    0.25,
+    0.35
+   ],
+   "tocke": [
+    "leca",
+    "steklovina",
+    "mreznica",
+    "zilnica",
+    "belocnica",
+    "rozenica"
+   ],
+   "okvir": {
+    "sredisce": [
+     0.006,
+     0.001,
+     0.008
+    ],
+    "polmer": 0.55
+   },
+   "skrijDele": [
+    "misice"
+   ],
+   "tkiva": {
+    "steklovina": {
+     "prosojnost": 0.05,
+     "lak": 0,
+     "sijaj": 0
+    },
+    "mrežnica": {
+     "lak": 0.05,
+     "sijaj": 0
+    }
+   }
+  }
+ },
+ "podrobnosti": {
+  "naslov": "Oko",
+  "odseki": [
+   {
+    "naslov": "Zgradba",
+    "besedilo": "Zrklo ima premer okoli 2,4 centimetra. Njegovo steno sestavljajo tri plasti: zunaj čvrsta beločnica, ki spredaj preide v prozorno roženico, v sredini žilnica s krvnimi žilami in znotraj mrežnica s čutnicami. Za roženico je šarenica z odprtino – zenico, za njo pa leča. Notranjost zrkla napolnjuje prozorna steklovina. Zrklo vrti šest očesnih mišic, vidni živec pa ga povezuje z možgani."
+   },
+   {
+    "naslov": "Delovanje",
+    "besedilo": "Svetloba gre skozi roženico, zenico in lečo. Roženica in leča jo zbereta tako, da na mrežnici nastane ostra, a obrnjena in pomanjšana slika. Ko gledamo blizu, se leča odebeli, ko gledamo daleč, se splošči. Na mrežnici paličnice zaznavajo svetlobo tudi v mraku, čepnice pa barve in podrobnosti. Signale po vidnem živcu dobijo možgani, ki sliko obrnejo in jo sestavijo iz obeh očes."
+   },
+   {
+    "naslov": "Zanimivost",
+    "besedilo": "Kjer vidni živec zapusti zrklo, na mrežnici ni čutnic. To je slepa pega, ki je ne opazimo, ker možgani manjkajoči del slike zapolnijo z okolico in s sliko drugega očesa. V mrežnici vsakega očesa je okoli 120 milijonov paličnic in 6 milijonov čepnic."
+   },
+   {
+    "naslov": "Pogoste napake in bolezni",
+    "besedilo": "Pri kratkovidnosti je zrklo predolgo in slika nastane pred mrežnico, zato slabo vidimo na daleč; popravijo jo razpršilna leča v očalih ali kontaktne leče. Pri daljnovidnosti je zrklo prekratko in pomagajo zbiralne leče. Pri starejših se leča lahko skali (siva mrena) in jo zamenjajo z umetno. Pogosto je tudi vnetje očesne veznice, ki pordi in srbi."
+   },
+   {
+    "naslov": "Kako skrbiš zanje",
+    "besedilo": "Na močnem soncu in na snegu nosi sončna očala z UV-zaščito, pri delu z orodjem pa zaščitna očala. Pri branju in delu z zaslonom imej dovolj svetlobe in vsakih 20 minut za kakšnih 20 sekund poglej v daljavo. Ne drgni si oči z umazanimi rokami. Če slabše vidiš, pojdi k okulistu na pregled."
+   }
+  ]
+ },
+ "velikost": 0.0816,
+ "trikotniki": {
+  "racunalnik": 219979,
+  "telefon": 70019
+ },
+ "luci": [
+  {
+   "smer": [
+    0.6,
+    1,
+    1
+   ],
+   "moc": 1.1,
+   "barva": "#fff4ea"
+  },
+  {
+   "smer": [
+    -0.7,
+    0.3,
+    -1
+   ],
+   "moc": 0.5,
+   "barva": "#ffe0d8"
+  }
+ ]
+}

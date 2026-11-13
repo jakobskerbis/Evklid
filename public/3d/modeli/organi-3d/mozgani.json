@@ -1,0 +1,525 @@
+{
+ "organ": "mozgani",
+ "vir": "Skorja iz MRI (OpenNeuro ds000001, CC0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "tkiva": {
+  "skorja": {
+   "barva": "#d0706b",
+   "hrap": 0.3,
+   "lak": 1,
+   "lakHrap": 0.06,
+   "sijaj": 0.55,
+   "sijajBarva": "#ffc7bc",
+   "rob": 0.24,
+   "robBarva": "#ff9f90",
+   "ao": 1,
+   "zrno": 0.1,
+   "f": 18,
+   "relief": 0.6,
+   "lise": 0.28,
+   "liseBarva": "#e9b9ad",
+   "senca": 0.9,
+   "sencaBarva": "#681019",
+   "aoExp": 3,
+   "rez": "#c98a82",
+   "brazde": 0.85,
+   "brazdeBarva": "#a3222f",
+   "vrh": 0.3,
+   "vrhBarva": "#efbcae",
+   "lise2": 0.25,
+   "lise2Barva": "#d6aca6",
+   "lise2F": 10,
+   "zile": 0.75,
+   "zileBarva": "#a52838",
+   "zileBarva2": "#6a2552",
+   "zileSirina": 0.00034,
+   "zileF": 26,
+   "zileRaven": 0.51,
+   "brazdeMeja": [
+    0.5,
+    0.63
+   ]
+  },
+  "mali": {
+   "barva": "#8f463f",
+   "hrap": 0.38,
+   "lak": 0.9,
+   "lakHrap": 0.08,
+   "sijaj": 0.5,
+   "sijajBarva": "#ffbfb4",
+   "rob": 0.22,
+   "robBarva": "#ff9488",
+   "ao": 1,
+   "zrno": 0.07,
+   "f": 40,
+   "relief": 0.9,
+   "senca": 0.8,
+   "sencaBarva": "#3a1010",
+   "aoExp": 2.6,
+   "rez": "#c4847a",
+   "vrstni": 2,
+   "listi": 0.5,
+   "listiSredisce": [
+    0,
+    -0.036,
+    -0.03
+   ],
+   "listiRazmik": 0.0015
+  },
+  "deblo": {
+   "barva": "#d9aea0",
+   "hrap": 0.4,
+   "lak": 0.7,
+   "lakHrap": 0.1,
+   "sijaj": 0.5,
+   "sijajBarva": "#ffd0c4",
+   "rob": 0.2,
+   "robBarva": "#ffa898",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 16,
+   "relief": 0.3,
+   "senca": 0.45,
+   "sencaBarva": "#7a2a2a",
+   "rez": "#e9d9cc",
+   "aoExp": 1.8,
+   "vrstni": 2
+  },
+  "bela": {
+   "barva": "#efe2d6",
+   "hrap": 0.42,
+   "lak": 0.55,
+   "lakHrap": 0.22,
+   "sijaj": 0.4,
+   "sijajBarva": "#fff4ea",
+   "rob": 0.15,
+   "robBarva": "#ffe6d8",
+   "ao": 0.8,
+   "zrno": 0.04,
+   "f": 20,
+   "relief": 0.25,
+   "rez": "#f2ebe2",
+   "vrstni": 2
+  },
+  "medmozgani": {
+   "barva": "#bb7c77",
+   "hrap": 0.4,
+   "lak": 0.7,
+   "lakHrap": 0.1,
+   "sijaj": 0.45,
+   "sijajBarva": "#ffcdc4",
+   "rob": 0.2,
+   "robBarva": "#ffa496",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 16,
+   "relief": 0.3,
+   "senca": 0.45,
+   "sencaBarva": "#6a2424",
+   "rez": "#d9a79d",
+   "aoExp": 2.2,
+   "vrstni": 2
+  },
+  "sredina": {
+   "barva": "#cda39a",
+   "hrap": 0.5,
+   "lak": 0.25,
+   "lakHrap": 0.3,
+   "sijaj": 0.3,
+   "sijajBarva": "#ffd6cc",
+   "rob": 0.08,
+   "ao": 0.6,
+   "zrno": 0.05,
+   "f": 20,
+   "relief": 0.2,
+   "dvostransko": true,
+   "brezGlobine": true,
+   "brezIzbire": true,
+   "vrstni": 1,
+   "brezReza": true
+  }
+ },
+ "deli": [
+  {
+   "id": "celni",
+   "ime": "Čelni reženj",
+   "la": "Lobus frontalis",
+   "povecava": "celica-nevron",
+   "barva": "#ff7a6b",
+   "opis": "Z njim premišljujemo, se odločamo, govorimo in zavestno premikamo mišice.",
+   "vozlisca": [
+    "Frontal lobe (MRI).l",
+    "Frontal lobe (MRI).r"
+   ],
+   "tocke": {
+    "celota": [
+     0.05,
+     0.045,
+     0.045
+    ]
+   }
+  },
+  {
+   "id": "temenski",
+   "ime": "Temenski reženj",
+   "la": "Lobus parietalis",
+   "povecava": "celica-nevron",
+   "barva": "#f2b84b",
+   "opis": "Sprejema občutke dotika, toplote in bolečine ter ve, kje so deli telesa.",
+   "vozlisca": [
+    "Parietal lobe (MRI).l",
+    "Parietal lobe (MRI).r"
+   ],
+   "tocke": {
+    "celota": [
+     0.056,
+     0.058,
+     -0.035
+    ]
+   }
+  },
+  {
+   "id": "senceni",
+   "ime": "Senčni reženj",
+   "la": "Lobus temporalis",
+   "povecava": "celica-nevron",
+   "barva": "#6e9bff",
+   "opis": "Tu so središča za sluh in razumevanje govora; pomaga tudi pri spominu.",
+   "vozlisca": [
+    "Temporal lobe (MRI).l",
+    "Temporal lobe (MRI).r"
+   ],
+   "tocke": {
+    "celota": [
+     0.066,
+     -0.008,
+     -0.012
+    ]
+   }
+  },
+  {
+   "id": "zatilni",
+   "ime": "Zatilni reženj",
+   "la": "Lobus occipitalis",
+   "povecava": "celica-nevron",
+   "barva": "#c084fc",
+   "opis": "Obdeluje, kar vidimo: oblike, barve, razdalje in gibanje.",
+   "vozlisca": [
+    "Occipital lobe (MRI).l",
+    "Occipital lobe (MRI).r"
+   ],
+   "tocke": {
+    "celota": [
+     0.046,
+     0.006,
+     -0.074
+    ]
+   }
+  },
+  {
+   "id": "limbicni",
+   "ime": "Limbični reženj",
+   "la": "Lobus limbicus",
+   "povecava": "celica-nevron",
+   "barva": "#f472b6",
+   "opis": "Pas skorje na notranji strani poloble okoli žuljevega telesa (s pasasto vijugo); sodeluje pri čustvih, pozornosti in spominu.",
+   "vozlisca": [
+    "Limbic lobe (MRI).l",
+    "Limbic lobe (MRI).r"
+   ],
+   "tocke": {
+    "prerez": [
+     -0.002,
+     0.046,
+     0.028
+    ]
+   }
+  },
+  {
+   "id": "otok",
+   "ime": "Otok",
+   "la": "Insula",
+   "povecava": "celica-nevron",
+   "barva": "#fb923c",
+   "opis": "Skrit je globoko v stranski brazdi; sodeluje pri okusu in občutkih iz notranjosti telesa.",
+   "vozlisca": [
+    "Insula (MRI).l",
+    "Insula (MRI).r"
+   ]
+  },
+  {
+   "id": "mali",
+   "ime": "Mali možgani",
+   "la": "Cerebellum",
+   "barva": "#5ccb91",
+   "opis": "Usklajujejo gibe in skrbijo za ravnotežje, da so gibi natančni in gladki.",
+   "vozlisca": [
+    "Anterior quadrangular lobule.l",
+    "Anterior quadrangular lobule.r",
+    "Biventral lobule.l",
+    "Biventral lobule.r",
+    "Central lobule",
+    "Culmen",
+    "Declive",
+    "Flocculus.l",
+    "Flocculus.r",
+    "Folium of vermis",
+    "Gracile lobule.l",
+    "Gracile lobule.r",
+    "Inferior semilunar lobule.l",
+    "Inferior semilunar lobule.r",
+    "Lingula of cerebellum",
+    "Nodule of vermis",
+    "Peduncle of flocculus.l",
+    "Peduncle of flocculus.r",
+    "Posterior quadrangular lobule.l",
+    "Posterior quadrangular lobule.r",
+    "Pyramis of vermis",
+    "Superior cerebellar peduncle.l",
+    "Superior cerebellar peduncle.r",
+    "Superior semilunar lobule.l",
+    "Superior semilunar lobule.r",
+    "Tonsil of cerebellum.l",
+    "Tonsil of cerebellum.r",
+    "Tuber of vermis",
+    "Uvula of vermis",
+    "Wing of central lobule.l",
+    "Wing of central lobule.r"
+   ],
+   "tocke": {
+    "celota": [
+     0.044,
+     -0.043,
+     -0.05
+    ],
+    "prerez": [
+     -0.0055,
+     -0.02,
+     -0.03
+    ]
+   }
+  },
+  {
+   "id": "deblo",
+   "ime": "Možgansko deblo",
+   "la": "Truncus encephali",
+   "barva": "#2dd4bf",
+   "opis": "Povezuje možgane s hrbtenjačo in samodejno uravnava dihanje, srčni utrip in požiranje.",
+   "vozlisca": [
+    "Base of peduncle.l",
+    "Base of peduncle.r",
+    "Inferior colliculus.l",
+    "Inferior colliculus.r",
+    "Medulla oblongata.l",
+    "Medulla oblongata.r",
+    "Midbrain.l",
+    "Midbrain.r",
+    "Olive.l",
+    "Olive.r",
+    "Pons.l",
+    "Pons.r",
+    "Pyramid of medulla oblongata.l",
+    "Pyramid of medulla oblongata.r",
+    "Superior colliculus.l",
+    "Superior colliculus.r"
+   ],
+   "tocke": {
+    "celota": [
+     0.012,
+     -0.068,
+     -0.012
+    ],
+    "prerez": [
+     -0.002,
+     -0.03,
+     0
+    ]
+   }
+  },
+  {
+   "id": "zuljevo",
+   "ime": "Žuljevo telo",
+   "la": "Corpus callosum",
+   "barva": "#e8ecf3",
+   "opis": "Debel snop živčnih vlaken, po katerem si leva in desna polobla izmenjujeta sporočila. Pod njim sta obok (fornix) in sprednja komisura.",
+   "vozlisca": [
+    "Anterior commissure",
+    "Corpus callosum",
+    "Fornix.l",
+    "Fornix.r",
+    "Posterior commissure"
+   ],
+   "tocke": {
+    "prerez": [
+     -0.006,
+     0.03,
+     0
+    ]
+   }
+  },
+  {
+   "id": "talamus",
+   "ime": "Talamus",
+   "la": "Thalamus",
+   "barva": "#facc15",
+   "opis": "Prehodna postaja, skozi katero gredo skoraj vsa sporočila čutil na poti do skorje.",
+   "vozlisca": [
+    "Habenula",
+    "Lateral geniculate body.l",
+    "Lateral geniculate body.r",
+    "Medial geniculate body.l",
+    "Medial geniculate body.r",
+    "Thalamus.l",
+    "Thalamus.r"
+   ],
+   "tocke": {
+    "prerez": [
+     -0.001,
+     0.006,
+     -0.002
+    ]
+   }
+  },
+  {
+   "id": "hipotalamus",
+   "ime": "Hipotalamus",
+   "la": "Hypothalamus",
+   "barva": "#fda4af",
+   "opis": "Uravnava telesno temperaturo, lakoto in žejo ter s hormoni vodi hipofizo.",
+   "vozlisca": [
+    "Hypothalamus",
+    "Mamillary body.l",
+    "Mamillary body.r"
+   ],
+   "tocke": {
+    "prerez": [
+     -0.0096,
+     -0.007,
+     0.02
+    ]
+   }
+  },
+  {
+   "id": "krizisce",
+   "ime": "Križišče vidnih živcev",
+   "la": "Chiasma opticum",
+   "barva": "#fde68a",
+   "opis": "Tu se del vlaken iz obeh očes prekriža, zato vsaka polobla z obema očesoma vidi nasprotno polovico vidnega polja.",
+   "vozlisca": [
+    "Optic chiasm.l",
+    "Optic chiasm.r"
+   ]
+  }
+ ],
+ "prerez": {
+  "ravnine": [
+   {
+    "n": [
+     1,
+     0,
+     0
+    ],
+    "d": 0.0003
+   }
+  ]
+ },
+ "pogledi": {
+  "celota": {
+   "pogled": [
+    1,
+    0.1,
+    0.2
+   ],
+   "tocke": [
+    "celni",
+    "temenski",
+    "senceni",
+    "zatilni",
+    "mali",
+    "deblo"
+   ],
+   "okvir": {
+    "sredisce": [
+     0,
+     0,
+     0
+    ],
+    "polmer": 1.1
+   },
+   "skrijTkiva": [
+    "sredina"
+   ]
+  },
+  "prerez": {
+   "pogled": [
+    -1,
+    0.12,
+    -0.08
+   ],
+   "skrijStran": "r",
+   "tocke": [
+    "zuljevo",
+    "talamus",
+    "hipotalamus",
+    "limbicni",
+    "mali",
+    "deblo"
+   ],
+   "tkiva": {
+    "deblo": {
+     "lak": 0.25,
+     "sijaj": 0.3
+    }
+   }
+  }
+ },
+ "podrobnosti": {
+  "naslov": "Možgani",
+  "odseki": [
+   {
+    "naslov": "Zgradba",
+    "besedilo": "Možgani odraslega človeka tehtajo okoli 1,3 do 1,4 kilograma. Sestavljajo jih veliki možgani, mali možgani in možgansko deblo. Veliki možgani imajo levo in desno poloblo, ki ju povezuje žuljevo telo. Površino pokriva možganska skorja iz sive možganovine, debela le 2 do 4 milimetre in nagubana v vijuge in brazde; pod njo je bela možganovina iz živčnih vlaken. Vsaka polobla ima čelni, temenski, senčni in zatilni reženj."
+   },
+   {
+    "naslov": "Delovanje",
+    "besedilo": "Možgani sprejemajo sporočila čutil, jih povežejo s tem, kar že vemo, in pošiljajo ukaze mišicam in žlezam. V njih je okoli 86 milijard živčnih celic (nevronov), ki si sporočila podajajo z električnimi signali in kemičnimi prenašalci. Leva polobla v glavnem upravlja desno stran telesa, desna pa levo. Mali možgani skrbijo za ravnotežje in usklajene gibe, možgansko deblo pa za dihanje, srčni utrip in druge naloge, ki potekajo same od sebe."
+   },
+   {
+    "naslov": "Zanimivost",
+    "besedilo": "Možgani so le okoli 2 % telesne mase, porabijo pa približno petino energije, ki jo telo porabi v mirovanju. Če bi možgansko skorjo razgrnili, bi pokrila približno list časopisa (okoli 0,2 m²); nagubana se prilega v lobanjo."
+   },
+   {
+    "naslov": "Pogoste bolezni in poškodbe",
+    "besedilo": "Pretres možganov nastane ob udarcu v glavo: pojavijo se glavobol, slabost, zmedenost ali kratka nezavest, zato mora poškodovanca pregledati zdravnik. Možganska kap nastane, ko se žila v možganih zamaši ali poči in del možganov ostane brez kisika. Povešen kotiček ust, šibka roka ali nerazumljiv govor pomenijo, da je treba takoj poklicati 112. Pogoste so tudi migrena, epilepsija in pri starejših ljudeh demenca, na primer Alzheimerjeva bolezen."
+   },
+   {
+    "naslov": "Kako skrbiš zanje",
+    "besedilo": "Pri kolesarjenju, rolanju, smučanju in jahanju nosi čelado. Dovolj spanja (najstniki potrebujejo 8 do 10 ur), gibanje, raznolika hrana in pitje vode ti pomagajo pri učenju in pomnjenju. Alkohol, droge in kajenje možganom škodujejo, posebno dokler se še razvijajo, kar traja do približno 25. leta."
+   }
+  ]
+ },
+ "velikost": 0.2784,
+ "trikotniki": {
+  "racunalnik": 280458,
+  "telefon": 87099
+ },
+ "luci": [
+  {
+   "smer": [
+    0.8,
+    1,
+    0.7
+   ],
+   "moc": 0.9,
+   "barva": "#fff0e4"
+  },
+  {
+   "smer": [
+    -0.6,
+    0.5,
+    -1
+   ],
+   "moc": 0.55,
+   "barva": "#ffd6cc"
+  }
+ ]
+}

@@ -1,0 +1,126 @@
+/* Zbirke znanja in učni pass (public/zbirke-view.js). Barve redkosti: .gm-r-* v games.css. */
+.zb-back[hidden] { display: none !important; }
+#view-zbirke.zb-from-games > .me-back { display: none !important; }
+.zb-top { display: flex; gap: 18px; align-items: center; }
+.zb-me .avatar-svg { border-radius: 22px; border: 3px solid var(--text); display: block; }
+.zb-show { flex: 1; min-width: 0; }
+.zb-show h2, .zb-pass h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 1.1rem; }
+.zb-slots { display: flex; gap: 10px; }
+.zb-slot { width: 64px; height: 64px; border-radius: 14px; border: 2px dashed var(--border); display: grid; place-items: center; background: var(--surface-2); padding: 0; }
+.zb-slot.full { border: 2px solid #f59e0b; cursor: pointer; background: var(--surface); }
+.zb-slot .avatar-svg { border-radius: 10px; }
+.zb-intro { margin: 14px 2px; line-height: 1.45; }
+.small { font-size: 0.85rem; }
+
+.zb-pass { margin-bottom: 14px; }
+.zb-pass-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.zb-pass-head p { margin: 0; }
+.zb-tier { white-space: nowrap; font-size: 1.05rem; }
+.zb-bar { height: 12px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin: 12px 0 6px; border: 1px solid var(--border); }
+.zb-bar span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #22c55e, #84cc16); }
+.zb-next { margin: 0 0 10px; font-weight: 700; }
+.zb-track { list-style: none; display: flex; gap: 6px; padding: 4px 2px 10px; margin: 0; overflow-x: auto; scroll-snap-type: x proximity; }
+.zb-cell { flex: none; width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--surface-2); border: 2px solid var(--border); font-size: 0.8rem; font-weight: 700; color: var(--muted); scroll-snap-align: start; }
+.zb-cell.got { background: color-mix(in srgb, #22c55e 22%, var(--surface)); border-color: #22c55e; color: var(--text); }
+.zb-cell.now { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.zb-cell.reward { width: 46px; height: 46px; border-color: #f59e0b; padding: 0; overflow: hidden; }
+.zb-cell-btn { all: unset; box-sizing: border-box; display: grid; place-items: center; width: 100%; height: 100%; cursor: pointer; border-radius: 8px; }
+.zb-cell-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.zb-cell.reward:not(.got) .avatar-svg, .zb-cell.reward:not(.got) .zb-tile { filter: grayscale(1); opacity: 0.55; }
+.zb-cell .avatar-svg, .zb-cell .zb-tile { width: 40px; height: 40px; border-radius: 8px; }
+
+.zb-tabs { margin: 6px 0 12px; }
+.zb-tabs button { display: inline-flex; align-items: center; gap: 6px; }
+.zb-tabs button svg.i { width: 16px; height: 16px; }
+.zb-tabs small { opacity: 0.75; font-weight: 700; }
+.zb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.zb-sub { margin: 18px 2px 8px; font-size: 1rem; }
+/* Barva roba iz .gm-r-* (games.css); navadni predmeti sivo. */
+.zb-card.gm-r-common { border-color: color-mix(in srgb, var(--text) 22%, var(--surface)); }
+.zb-card { min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 6px 10px; border-radius: 16px; border-width: 3px; border-style: solid; background-color: var(--surface); color: var(--text); font: inherit; cursor: pointer; text-align: center; }
+.zb-card:hover { transform: translateY(-2px); }
+.zb-card:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+.zb-card.on { box-shadow: 0 0 0 3px #22c55e; }
+.zb-card b { font-size: 0.85rem; line-height: 1.15; overflow-wrap: anywhere; hyphens: auto; }
+.zb-card small { font-size: 0.76rem; font-weight: 700; color: var(--muted); }
+.zb-thumb { position: relative; display: block; }
+.zb-thumb .avatar-svg, .zb-thumb .zb-tile { display: block; border-radius: 12px; }
+.zb-locked .zb-thumb .avatar-svg, .zb-locked .zb-thumb .zb-tile { filter: grayscale(0.85); opacity: 0.62; }
+.zb-lock, .zb-star { position: absolute; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; }
+.zb-lock { left: -4px; top: -4px; background: var(--surface); border: 2px solid var(--border); color: var(--muted); }
+.zb-star { right: -4px; top: -4px; background: #f59e0b; color: #fff; }
+.zb-lock svg.i, .zb-star svg.i { width: 13px; height: 13px; }
+
+.zb-inspect:focus { outline: none; }
+/* Z odprtim »preglej« se da pomakniti tudi do zadnje vrste predmetov pod njim. */
+#zbirke-content:has(> .zb-inspect) { padding-bottom: 240px; }
+.zb-inspect { position: fixed; z-index: 60; left: 50%; bottom: 20px; transform: translateX(-50%); width: min(560px, calc(100vw - 24px)); display: flex; gap: 18px; align-items: center; box-shadow: 0 18px 50px rgba(15, 23, 42, 0.35); }
+button.ghost.zb-x { position: absolute; inset-inline-end: 4px; top: 4px; min-width: 44px; min-height: 44px; display: grid; place-items: center; padding: 0; }
+.zb-big .avatar-svg, .zb-big .zb-tile { display: block; border-radius: 20px; border: 3px solid var(--text); }
+.zb-info { min-width: 0; }
+.zb-info h2 { margin: 0; margin-inline-end: 44px; margin-bottom: 6px; font-size: 1.15rem; }
+.zb-info p { margin: 6px 0; display: flex; gap: 6px; align-items: flex-start; }
+.zb-info p > span:not(.gm-rtag) { min-width: 0; }
+.zb-info p svg.i { flex: none; width: 17px; height: 17px; margin-top: 2px; color: var(--muted); }
+.zb-need { font-weight: 600; }
+.zb-info .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+/* Jaz: kartica z avatarjem, vitrino in passom */
+.zb-me-card { width: 100%; padding: 10px 14px; gap: 12px; }
+.zb-me-av .avatar-svg { display: block; border-radius: 14px; }
+.zb-me-show { display: flex; gap: 4px; margin-left: auto; }
+.zb-me-show .avatar-svg, .zb-me-show .zb-tile { display: block; border-radius: 8px; }
+.zb-me-card .lr-text { min-width: 0; }
+.zb-me-card .lr-text small span { white-space: nowrap; }
+
+/* obvestilo o novem predmetu po nalogi */
+.zb-unlocked { width: 100%; border: 0; font: inherit; cursor: pointer; text-align: left; align-items: center; }
+.zb-unlocked .avatar-svg, .zb-unlocked .zb-tile { flex: none; border-radius: 8px; }
+.zb-unlocked > svg.i { margin-left: auto; }
+
+/* igre: gumb Zbirke ob avatarju, zaklenjeni predmeti za znanje v trgovini */
+.gm-me-row { display: inline-flex; gap: 10px; flex-wrap: wrap; }
+.gm-zb-ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #fde68a, #f59e0b); color: #78350f; }
+.gm-zb-ic svg.i { width: 26px; height: 26px; }
+.gm-earn .avatar-svg { filter: grayscale(1); opacity: 0.55; }
+.gm-earn-hint { display: flex; align-items: flex-start; gap: 6px; margin: 8px 2px 0; }
+.gm-earn-hint > svg.i { flex: none; margin-top: 2px; }
+.gm-earn-hint .text-btn { display: inline; padding: 0; min-height: 0; }
+.gm-item .secondary { width: 100%; justify-content: center; padding-inline: 6px; font-size: 0.85rem; }
+
+@media (max-width: 640px) {
+  .zb-top { flex-direction: column; text-align: center; }
+  .zb-show h2 { justify-content: center; }
+  .zb-slots { justify-content: center; }
+  .zb-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .zb-card .avatar-svg, .zb-card .zb-tile { width: 62px; height: 62px; }
+  .zb-inspect { flex-direction: column; text-align: center; max-height: 72vh; overflow-y: auto; }
+  .zb-info p, .zb-info .actions { justify-content: center; }
+  .zb-big .avatar-svg { width: 140px; height: 140px; }
+  .zb-me-show .avatar-svg, .zb-me-show .zb-tile { width: 28px; height: 28px; }
+}
+
+/* Spodnja vrstica (#tabbar) je vidna do 760 px in na tablici na dotik: »preglej« nad njo. */
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  #zbirke-content:has(> .zb-inspect) { padding-bottom: 380px; }
+  .zb-inspect { bottom: calc(76px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); max-height: calc(100dvh - 160px); overflow-y: auto; }
+}
+
+/* Pot znanja (okvirji redkosti so v games.css) */
+.zb-pot { margin-bottom: 12px; }
+.zb-pot p { margin: 0 0 6px; }
+
+/* Deljiva kartica (public/deli-kartico.js): predogled slike, nato Deli ali Prenesi. */
+.zb-share-btn { margin-top: 10px; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.zb-share { display: flex; gap: 18px; align-items: center; margin-top: 14px; }
+.zb-share img { flex: none; width: 216px; height: auto; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px color-mix(in srgb, var(--text) 18%, transparent); }
+.zb-share-info { min-width: 0; }
+.zb-share-info p { margin: 0 0 10px; }
+.zb-share-info .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.zb-share-info .actions button { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.dark .zb-share img { border-color: var(--border); box-shadow: none; }
+@media (max-width: 640px) {
+  .zb-share { flex-direction: column; text-align: center; }
+  .zb-share img { width: min(240px, 70vw); }
+  .zb-share-info .actions { justify-content: center; }
+}

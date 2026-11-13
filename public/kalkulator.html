@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Kalkulator</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <!-- Samostojni kalkulator (znanstveni, grafični, orodja, PSE) brez prijave, za WebView v mobilni aplikaciji.
+       Isti moduli kot okno kalkulatorja v public/app.js; strežnik ga streže na /kalkulator (server/mobile/calculator.js). -->
+  <script src="kalkulator-nastavi.js"></script>
+  <link rel="stylesheet" href="vendor/instrument-sans/index.css">
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="graph.css">
+  <link rel="stylesheet" href="touch.css">
+  <link rel="stylesheet" href="tipkovnica.css">
+  <link rel="stylesheet" href="drsniki.css">
+</head>
+<body class="calc-page graph-open">
+  <div id="graph-overlay" class="graph-overlay" role="main" aria-label="Kalkulator" data-i18n-aria="nav.graph">
+    <div class="go-head"><div class="seg calc-modes" role="tablist" aria-label="Vrsta kalkulatorja" data-i18n-aria="sc.modes"><button type="button" role="tab" data-calc-mode="sci"><i data-icon="calculator"></i><span data-i18n="sc.modeSci">Znanstveni</span></button><button type="button" role="tab" data-calc-mode="graph"><i data-icon="chart-spline"></i><span data-i18n="sc.modeGraph">Grafični</span></button><button type="button" role="tab" data-calc-mode="tools"><i data-icon="ruler"></i><span data-i18n="sc.toolsMode">Orodja</span></button><button type="button" role="tab" data-calc-mode="pse" title="Periodni sistem elementov" data-i18n-title="sc.pseTitle"><i data-icon="atom"></i><span data-i18n="sc.pseMode">PSE</span></button></div></div>
+    <div class="go-body" id="graph-overlay-body"></div>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+  <script src="vendor/katex/katex.min.js"></script>
+  <script type="module" src="zagon.js" data-moduli="kalkulator.js"></script>
+</body>
+</html>

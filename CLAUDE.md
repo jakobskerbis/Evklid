@@ -1,0 +1,9 @@
+# Evklid – notes for Claude
+
+- App name lives in `brand.json` (name, slug, env prefix, wordmark; earlier names under `legacy`). Every user-visible string and internal name uses the current name (env `EVKLID_*`, `data/<slug>.db`, localStorage `<slug>.*`, events `<slug>:*`). Rename = `node scripts/preimenuj.js <Ime>` then fix the declined forms it lists. Old names live only in compat code that reads `legacy` (server/env.js, db.js, gate.js, theme.js, posodobitev.js, bliznjice.js); `test/ime.test.js` fails on any old name. The GitHub repo is now `jakobskerbis/Evklid` (the old URL in `brand.json` → `legacy[].repo` redirects, and cloud sessions may still list the repo under that old name); only j's local folder keeps the first name. »Evklid« is also a maths word (Evklidov algoritem/izrek, simulation id `evklid`): never mass-replace it, and if the app is ever renamed again set that legacy entry's `match` so maths content is not flagged.
+
+- Quality first, then tokens: follow `docs/token-rules.md` (read it once per thread, not per agent).
+- Never read `server/university-extra.js` (1.1 MB) or `docs/predmetniki-*.md` whole; use `node scripts/lesson-topic.js <id>` and `grep -n`.
+- Lesson format: `content/lessons/README.md`; check with `node scripts/check-lesson.js -q <files>` (also recomputes numeric steps). Writer/reviewer prompts: `node scripts/lesson-brief.js [--review|--read] <ids>`.
+- Lessons are written and reviewed by Opus (or Fable), never Sonnet.
+- Every change is reviewed three times before merge (j, 2026-10-29): `docs/pregled.md` (pass 1 automatic incl. `node scripts/preveri-aplikacijo.cjs`, passes 2 and 3 by separate reviewer agents). Small fixes (≤ ~50 lines, nothing about money, AI cost, accounts, personal data, tutor prompt or content): pass 1 plus one reviewer (j, 2026-11-04; `docs/pregled.md` §1).

@@ -1,0 +1,81 @@
+/* Kviz v živo (public/kviz.js): okno čez ves zaslon; na projektorju velike črke. */
+.kv { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: 0; border: 0; background: var(--bg); color: var(--text); }
+.kv[open] { display: flex; flex-direction: column; }
+.kv::backdrop { background: var(--bg); }
+.kv-head { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface); }
+.kv-head h2 { flex: 1; margin: 0; font-size: 1.05rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kv-head h2:focus { outline: none; }
+.kv-timer { min-width: 2.4em; font-size: 1.6rem; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; color: var(--accent); }
+.kv-timer.low { color: var(--danger); }
+.kv-x { min-width: 44px; min-height: 44px; }
+.kv-body { flex: 1; overflow-y: auto; width: min(1100px, 100%); margin: 0 auto; padding: 16px; box-sizing: border-box; }
+.kv-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 10px 16px calc(10px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); border-top: 1px solid var(--border); background: var(--surface); }
+.kv-foot:empty { display: none; }
+.kv-foot button { min-height: 44px; }
+.kv-qn { margin: 0 0 6px; color: var(--muted); font-weight: 700; }
+.kv-q { font-size: 1.25rem; line-height: 1.5; }
+.kv-q p { margin: 0 0 8px; }
+.kv-q .katex, .kv-opts .katex, .kv-ans .katex { direction: ltr; unicode-bidi: isolate; }
+.kv-big { font-size: 1.4rem; font-weight: 700; text-align: center; margin: 24px 0 12px; }
+.kv-big.ok { color: var(--ok); }
+.kv-big.bad { color: var(--danger); }
+.kv-lobby { text-align: center; padding-top: 6vh; }
+.kv-count { font-size: 1.2rem; font-weight: 700; }
+.kv-nicks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.kv-nicks .code-chip { font-family: var(--font); letter-spacing: normal; }
+.kv-body > h3 { text-align: center; }
+.kv-c { text-align: center; }
+.kv-opts { list-style: none; margin: 12px 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.kv-opts li, .kv-opt { position: relative; display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-height: 56px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: inherit; font-size: 1.1rem; text-align: start; overflow: hidden; }
+.kv-opt { width: 100%; justify-content: flex-start; cursor: pointer; box-shadow: 0 var(--press) 0 var(--border); }
+.kv-opt:focus-visible { border-color: var(--accent); background: var(--accent-soft); }
+@media (hover: hover) { .kv-opt:hover { border-color: var(--accent); background: var(--accent-soft); } }
+.kv-l { flex: none; display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 800; }
+.kv-res li.ok { border-color: var(--ok); background: var(--ok-bg); }
+.kv-res li.ok .kv-l { background: var(--ok); color: var(--surface); }
+.kv-res li > span:nth-child(2) { flex: 1; z-index: 1; }
+.kv-ok { display: inline-flex; color: var(--ok); }
+.kv-res li b { z-index: 1; font-variant-numeric: tabular-nums; }
+.kv-bar { position: absolute; bottom: 0; inset-inline-start: 0; height: 4px; width: var(--w); background: var(--accent); }
+.kv-res li.ok .kv-bar { background: var(--ok); }
+.kv-sum { font-weight: 700; }
+.kv-sum .ok { color: var(--ok); }
+.kv-sum .bad { color: var(--danger); }
+.kv-ans { font-size: 1.15rem; text-align: center; }
+.kv-host .kv-ans { text-align: start; }
+.kv-sol { margin: 10px 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+.kv-sol summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+/* Lestvica v stolpcih po širini zaslona (projektor v razredu: brez praznih robov, j 2026-11-04). */
+.kv-board { list-style: none; margin: 8px auto; padding: 0; column-width: 360px; column-gap: 24px; }
+.kv-board li { break-inside: avoid; display: flex; align-items: baseline; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 1.1rem; }
+.kv-board li bdi { flex: 1; }
+.kv-board li.me { background: var(--accent-soft); border-radius: var(--radius-sm); }
+.kv-board small { color: var(--muted); }
+.kv-rank { min-width: 2em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.kv-form { align-items: center; gap: 8px; margin: 12px 0; }
+.kv-form input { flex: 1 1 140px; min-height: 48px; font-size: 1.15rem; }
+.kv-unit { font-weight: 700; }
+.kv-form button { min-height: 48px; }
+.kv-msg { min-height: 1.4em; color: var(--danger); }
+.kv-score { text-align: center; font-size: 1.15rem; font-weight: 700; }
+.kv-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; border-color: var(--accent); }
+.kv-card p { margin: 0; }
+.kv-card button { min-height: 44px; }
+/* Projektor: večje črke na velikem zaslonu. */
+@media (min-width: 1000px) {
+  .kv-host .kv-q { font-size: 1.9rem; }
+  .kv-host .kv-opts li { font-size: 1.5rem; min-height: 72px; }
+  .kv-host .kv-big { font-size: 2.2rem; }
+  .kv-host .kv-board li { font-size: 1.4rem; }
+  .kv-host .kv-timer { font-size: 2.4rem; }
+  .kv-host .kv-head h2 { font-size: 1.3rem; }
+  .kv-host .kv-qn, .kv-host .kv-nicks .code-chip { font-size: 1.2rem; }
+  .kv-host .kv-answered, .kv-host .kv-sum, .kv-host .kv-ans, .kv-host .kv-count { font-size: 1.5rem; }
+  .kv-host .kv-body > h3 { font-size: 1.6rem; }
+  .kv-host .kv-sol { font-size: 1.25rem; }
+}
+.tc-gr { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tc-gr button { min-height: 40px; }
+.form .tc-gr > label { flex-direction: row; align-items: center; gap: 8px; flex-basis: auto; }
+.form .tc-gr > label select { width: auto; }
+.form .tc-gr > label input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }

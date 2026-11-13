@@ -1,0 +1,119 @@
+/* Kotiček zanimanj (public/corner.js): seznam novic, oglasna deska / časopis čez cel zaslon, vprašalnik. */
+
+/* Barvi plute za oglasno desko sta podatkovni barvi (kot v igrah), z različico za temni način. */
+:root { --cork-a: #d2ad78; --cork-b: #b98d55; --pin-red: #d63b3b; }
+.dark { --cork-a: #4b3b27; --cork-b: #3b2e1f; --pin-red: #f06a6a; }
+
+.corner-head { display: flex; gap: 12px 16px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; margin-bottom: 12px; }
+.corner-head h1 { margin: 0 0 4px; }
+.corner-head p { margin: 0; }
+.corner-tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.corner-chips { margin: 4px 0 14px; }
+.corner-chips b { margin-inline-start: 4px; color: var(--accent); }
+.corner-note { display: flex; gap: 8px; align-items: center; color: var(--muted); margin: 0 0 12px; }
+.corner-sources { margin-top: 16px; }
+.corner-empty { text-align: center; padding: 28px 18px; }
+.corner-empty-art { font-size: 34px; letter-spacing: 6px; margin-bottom: 8px; }
+
+.corner-list { display: grid; gap: 12px; }
+@media (min-width: 1200px) { .corner-list { display: block; column-width: 380px; column-gap: 12px; } .corner-list .news-card { break-inside: avoid; margin-bottom: 12px; } }
+
+.news-card { display: flex; flex-direction: column; gap: 6px; }
+.news-card.card { margin: 0; }
+.news-card.is-pinned.card { border-color: var(--accent); }
+.news-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.news-int { font-weight: 800; color: var(--accent); }
+.news-lang { font-size: 11px; font-weight: 800; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border); color: var(--muted); }
+.news-card h3 { margin: 2px 0; font-size: 17px; line-height: 1.3; }
+.news-card h3 a { color: var(--text); text-decoration: none; }
+.news-card h3 a:hover { color: var(--accent); text-decoration: underline; }
+.news-sum { margin: 0; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere; }
+.news-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+.news-actions .text-btn { display: inline-flex; gap: 4px; align-items: center; margin-inline-start: auto; }
+.news-actions svg { width: 16px; height: 16px; }
+
+/* ---------- čez cel zaslon ---------- */
+body.corner-board-open { overflow: hidden; }
+.corner-board { position: fixed; inset: 0; z-index: 400; display: flex; flex-direction: column; background: var(--bg); color: var(--text); }
+.cb-top { display: flex; align-items: center; gap: 12px; padding: 10px 16px; padding-top: max(10px, var(--varno-zg, env(safe-area-inset-top, 0px))); border-bottom: 1px solid var(--border); background: var(--surface); }
+.cb-mast { display: flex; flex-direction: column; min-width: 0; margin-right: auto; }
+.cb-mast b { font-family: Georgia, "Times New Roman", serif; font-size: 24px; font-weight: 700; letter-spacing: 0.01em; line-height: 1.1; }
+.cb-mast small { color: var(--muted); }
+.cb-modes { flex: 0 0 auto; }
+.cb-modes svg { width: 16px; height: 16px; }
+.cb-close span { margin-inline-start: 4px; }
+.cb-chips { padding: 8px 16px 0; background: var(--bg); }
+.cb-chips .corner-chips { margin: 0 0 6px; }
+.cb-scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 16px 32px; padding-bottom: max(32px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+.cb-grid { column-gap: 22px; columns: 1; margin: 0 auto; }
+@media (min-width: 640px) { .cb-grid { columns: 2; } }
+@media (min-width: 1000px) { .cb-grid { columns: 3; } }
+@media (min-width: 1450px) { .cb-grid { columns: 4; } }
+.cb-grid .news-card { break-inside: avoid; margin: 0 0 18px; }
+.cb-empty { text-align: center; color: var(--muted); padding: 40px 0; }
+
+/* Časopis: papir, serifni naslovi, črte med članki, prvi članek čez vse stolpce. */
+.mode-paper .cb-scroll { background: var(--surface); }
+.mode-paper .cb-grid { column-rule: 1px solid var(--border); }
+.mode-paper .news-card { padding: 0 0 16px; border-bottom: 1px solid var(--border); }
+.mode-paper .news-card h3 { font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 700; }
+.mode-paper .news-sum { color: var(--text); font-family: Georgia, "Times New Roman", serif; font-size: 15.5px; }
+.mode-paper .news-card.lead { column-span: all; border-bottom: 3px double var(--border); padding-bottom: 20px; margin-bottom: 22px; }
+.mode-paper .news-card.lead h3 { font-size: clamp(26px, 4vw, 40px); line-height: 1.15; }
+.mode-paper .news-card.lead .news-sum { font-size: 18px; max-width: 75ch; }
+.mode-paper .news-card.is-pinned h3::before { content: "📌 "; }
+
+/* Oglasna deska: pluta, listki z bucikami, rahlo nagnjeni. */
+.mode-board .cb-scroll { background: radial-gradient(circle at 20% 30%, var(--cork-a) 0 1px, transparent 2px) 0 0 / 14px 14px, linear-gradient(135deg, var(--cork-a), var(--cork-b)); }
+.mode-board .news-card { position: relative; background: var(--surface); padding: 30px 16px 14px; border-radius: 4px; box-shadow: var(--shadow-lg); transform: rotate(var(--tilt, 0deg)); }
+.mode-board .news-card::before { content: ""; position: absolute; top: 7px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--muted); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35); }
+.mode-board .news-card.is-pinned::before { background: var(--pin-red); width: 18px; height: 18px; margin-left: -9px; }
+.mode-board .news-card.is-pinned { outline: 3px solid var(--accent); }
+@media (prefers-reduced-motion: reduce) { .mode-board .news-card { transform: none; } }
+
+@media (max-width: 640px) {
+  .cb-top { flex-wrap: wrap; gap: 8px; }
+  .cb-mast b { font-size: 20px; }
+  .cb-close span { display: none; }
+  .cb-modes { order: 3; width: 100%; }
+  .cb-modes > button { flex: 1; }
+  .mode-paper .cb-grid { column-rule: 0; }
+}
+
+/* ---------- vprašalnik ---------- */
+.iq-wrap { position: fixed; inset: 0; z-index: 450; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15, 23, 42, 0.5); overflow-y: auto; }
+.iq.card { width: min(640px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; margin: 0; }
+.iq h2 { margin: 0 0 6px; }
+.iq-step { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
+.iq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 14px 0 6px; }
+.iq-opt, .iq-level { display: flex; align-items: center; justify-content: flex-start; gap: 10px; text-align: start; min-height: 48px; padding: 8px 12px; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+.iq-opt:hover, .iq-level:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.iq-opt.on, .iq-level.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.iq-emoji { font-size: 22px; line-height: 1; }
+.iq-levels { display: grid; gap: 10px; margin: 14px 0; }
+.iq-level { padding: 14px; }
+.iq-level b, .iq-level small { display: block; }
+.iq-level small { color: var(--muted); font-weight: 600; margin-top: 2px; }
+.iq-custom { display: block; margin: 14px 0 6px; }
+.iq-custom input { width: 100%; }
+.iq .check { margin-top: 12px; }
+.iq-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 18px; }
+@media (max-width: 760px) {
+  .iq-wrap { align-items: flex-end; padding: 0; }
+  .iq.card { border-radius: 20px 20px 0 0; max-height: 92dvh; padding-bottom: max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+  .iq-grid { grid-template-columns: 1fr 1fr; }
+  .iq-actions > button { flex: 1; }
+}
+
+/* Ko ni novic: področja, ki jih še nimaš, kot ploščice čez vso širino (klik doda področje). */
+.corner-more h2 { font-size: 1.05rem; margin: 18px 0 10px; }
+.corner-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(150px, 16vw, 220px)), 1fr)); gap: 10px; }
+/* Ploščica: znak in + zgoraj, ime pod njima čez vso širino ploščice (ime se ne lomi sredi besede). */
+button.corner-tile {
+  display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; align-items: start; gap: 8px 6px;
+  margin: 0; padding: 12px 14px 14px; min-height: 96px; text-align: start; cursor: pointer; color: var(--text);
+}
+.corner-tile .ct-emoji { font-size: 26px; line-height: 1; }
+.corner-tile svg.i { width: 18px; height: 18px; color: var(--muted); }
+.corner-tile .ct-name { grid-column: 1 / -1; font-size: 0.95rem; font-weight: 600; line-height: 1.3; text-wrap: balance; overflow-wrap: break-word; hyphens: auto; } /* dolga beseda (ruščina na 360 px) se deli, ne gleda čez rob */
+@media (hover: hover) { button.corner-tile:hover { border-color: var(--accent); } button.corner-tile:hover svg.i { color: var(--accent); } }

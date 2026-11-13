@@ -1,0 +1,13 @@
+{
+  "viri": [
+    {
+      "id": "evklid-celice",
+      "ime": "3D modeli celic in virusov",
+      "avtor": "Evklid",
+      "opis": "Lastni modeli, zgrajeni s kodo po učbeniških podatkih o zgradbi in velikosti celic, organelov in virusov.",
+      "licenca": "CC BY-SA 4.0 (lastno delo)",
+      "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "datoteke": ["celice/*.js"]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# Samodejni predlogi posodobitev odvisnosti. Pregled: docs/varnost-podatkov.md, docs/pregled.md (»Samodejni pregledi brez AI«).
+# Ob ponedeljkih en PR na ekosistem (vse minor/patch skupaj); največ 3 odprti. Varnostni popravki ostanejo
+# ločeni PR-ji (privzeto Dependabota, ne spadajo v skupino).
+# Mobilna aplikacija (mobile/) ni vključena: Expo SDK posodabljamo skupaj, ne po paketih.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      actions-minor-patch:
+        update-types: [minor, patch]

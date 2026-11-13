@@ -1,0 +1,90 @@
+/* XP: raven, dnevni cilj, animacije in čestitke (public/xp-fx.js, docs/oblikovanje.md »XP«). */
+
+/* Zgornja vrstica: tanka vrstica napredka do naslednje ravni pod zneskom XP. */
+.stat.xp { position: relative; }
+.xp-lvl-bar { position: absolute; inset-inline: 10px; bottom: 2px; height: 3px; border-radius: 3px; overflow: hidden; background: color-mix(in srgb, var(--gold) 22%, transparent); }
+.xp-lvl-bar::after { content: ""; position: absolute; inset: 0; background: var(--gold); transform: scaleX(var(--lvl, 0)); transform-origin: left; transition: transform 0.6s ease; }
+[dir="rtl"] .xp-lvl-bar::after { transform-origin: right; }
+
+/* Raven z vrstico (kartica na Učni poti, stran Jaz, čestitka). */
+.lvl-row { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+.lvl-badge, .xp-cele-badge {
+  position: relative; display: grid; place-items: center; flex: none; width: 46px; height: 46px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); color: #fff;
+}
+.lvl-badge b { font-size: 1.2rem; font-weight: 900; line-height: 1; }
+.lvl-badge svg.i, .xp-cele-badge svg.i { position: absolute; inset-inline-end: -4px; bottom: -3px; width: 20px; height: 20px; color: var(--gold); fill: var(--gold); stroke: var(--surface); stroke-width: 1.5; }
+.lvl-main { min-width: 0; }
+.lvl-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 10px; margin-bottom: 6px; }
+.lvl-top b { font-weight: 900; }
+.lvl-top span { color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+.lvl-bar { height: 10px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+.lvl-bar i { display: block; height: 100%; border-radius: inherit; background: var(--gold); transform: scaleX(var(--p, 0)); transform-origin: left; animation: lvl-fill 0.8s 0.1s ease both; }
+[dir="rtl"] .lvl-bar i { transform-origin: right; }
+@keyframes lvl-fill { from { transform: scaleX(var(--from, 0)); } }
+
+.xp-stats .lvl-row { padding: 14px 20px 2px; }
+.xp-stats .stats-row { align-items: center; }
+.me-lvl { padding: 14px 16px; }
+
+/* Dnevni cilj: krog se polni z današnjim XP. */
+.goal-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.goal-ring {
+  position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  background: conic-gradient(var(--gold) calc(var(--p, 0) * 1%), var(--surface-2) 0);
+}
+.goal-ring::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--surface); }
+.goal-ring > * { position: relative; }
+.stats-row .goal-ring b { font-size: 0.95rem; }
+.goal-cell.done .goal-ring svg.i { width: 20px; height: 20px; color: var(--gold); stroke-width: 3; }
+
+/* Za kaj je bil XP (pod »Pravilno!«). */
+.xp-items { display: flex; flex-wrap: wrap; gap: 6px; margin: -2px 0 10px; }
+.xp-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--text); font-size: 0.82rem; font-weight: 800; animation: fade-up 0.3s ease both; }
+.xp-chip:nth-child(2) { animation-delay: 0.08s; }
+.xp-chip:nth-child(3) { animation-delay: 0.16s; }
+.xp-chip:nth-child(4) { animation-delay: 0.24s; }
+.xp-chip.goal { color: var(--muted); }
+.xp-chip svg.i { width: 15px; height: 15px; color: var(--gold); }
+
+/* Zvezdice letijo k zgornjemu znesku; »+15« pod njim, ko ni vira na zaslonu (igre v ozadju …). */
+.xp-fly { position: fixed; z-index: 70; pointer-events: none; transform: translate(-50%, -50%); }
+.xp-fly svg.i { width: 18px; height: 18px; color: var(--gold); fill: var(--gold); }
+.xp-plus { position: fixed; z-index: 70; pointer-events: none; transform: translateX(-50%); color: var(--gold); font-weight: 900; animation: xp-plus 1.3s ease both; }
+@keyframes xp-plus { 0% { opacity: 0; transform: translate(-50%, 6px) scale(0.8); } 25% { opacity: 1; transform: translate(-50%, 0) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, 14px); } }
+
+/* Pasica: dnevni cilj, mejnik. */
+.xp-banner {
+  position: fixed; z-index: 70; top: calc(12px + var(--varno-zg, env(safe-area-inset-top, 0px))); left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px; width: max-content; max-width: calc(100% - 32px); padding-block: 12px; padding-inline: 12px 18px;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  cursor: pointer; animation: xp-drop 0.3s ease both; transition: opacity 0.25s, transform 0.25s;
+}
+.xp-banner.out { opacity: 0; transform: translate(-50%, -8px); }
+.xp-banner > span:last-child { display: flex; flex-direction: column; }
+.xp-banner small { color: var(--muted); font-weight: 700; }
+.xp-banner-ic { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: color-mix(in srgb, var(--gold) 22%, var(--surface)); }
+.xp-banner-ic svg.i { width: 22px; height: 22px; color: var(--gold); }
+@keyframes xp-drop { from { opacity: 0; transform: translate(-50%, -12px); } }
+
+/* Čestitka ob novi ravni. */
+.xp-cele { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, var(--text) 45%, transparent); animation: fade-up 0.2s ease both; }
+.xp-cele-card {
+  position: relative; overflow: hidden; width: min(360px, 100%); padding: 28px 22px 22px; text-align: center;
+  background: var(--surface); color: var(--text); border-radius: var(--radius); box-shadow: var(--shadow-lg); animation: pop 0.4s ease both;
+}
+.xp-cele-badge { width: 84px; height: 84px; margin: 0 auto 12px; animation: xp-badge 0.6s 0.1s ease both; }
+.xp-cele-badge b { font-size: 2.1rem; font-weight: 900; line-height: 1; }
+.xp-cele-badge svg.i { width: 30px; height: 30px; inset-inline-end: -2px; bottom: -2px; }
+@keyframes xp-badge { 0% { transform: scale(0.4) rotate(-12deg); opacity: 0; } 60% { transform: scale(1.12) rotate(4deg); opacity: 1; } 100% { transform: none; } }
+.xp-cele-card h2 { margin: 0 0 4px; font-size: 1.5rem; }
+.xp-cele-card p { margin: 0 0 12px; font-weight: 600; }
+.xp-cele-card .lvl-bar { margin: 4px 0 8px; }
+.xp-cele-card .muted { font-size: 0.9rem; }
+.xp-cele-extra { display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 800 !important; }
+.xp-cele-extra svg.i { width: 18px; height: 18px; color: var(--gold); }
+.xp-cele-card button.primary { width: 100%; margin-top: 6px; }
+.xp-confetti { position: absolute; inset: 0; pointer-events: none; }
+.xp-cele-card > :not(.xp-confetti) { position: relative; z-index: 1; }
+.xp-confetti i { position: absolute; top: -14px; left: var(--x); width: 8px; height: 12px; border-radius: 2px; opacity: 0; animation: xp-fall 1.8s var(--d) ease-in both; }
+@keyframes xp-fall { 0% { opacity: 1; transform: translate(0, 0) rotate(0); } 85% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--drift), 460px) rotate(var(--r)); } }

@@ -1,0 +1,116 @@
+{
+  "_opis": "Viri 3D modelov za »Viri in licence« (public/3d/atlas.js) in test/atlas3d.test.js. Vrstica: { id, ime, avtor, opis, licenca, licencaUrl?, url?, datoteke? }; datoteke so vzorci poti glede na public/3d/modeli (npr. \"telo/*.glb\", \"celice/*.js\"; * ne prečka mape). Vsaka datoteka .glb in .js pod public/3d/modeli mora ustrezati vzorcu vira z licenco brez NC. Področje lahko doda public/3d/modeli/<podrocje>/viri.json v isti obliki ({ viri: [...], izkljuceno?: [...] }); atlas ga združi s tem seznamom. Licenca izpeljanih modelov telesa je CC BY-SA 4.0 (docs/3d.md).",
+  "viri": [
+    {
+      "id": "z-anatomy",
+      "ime": "Z-Anatomy",
+      "avtor": "Gauthier Kervyn in sodelavci",
+      "opis": "Odprti 3D atlas človeške anatomije. Iz njega so plasti telesa: koža, mišice, okostje, sklepi in vezi, organi, žile, živčevje in limfni sistem.",
+      "url": "https://www.z-anatomy.com",
+      "licenca": "CC BY-SA 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "datoteke": [
+        "telo/*.glb",
+        "telo-hd/*.glb",
+        "organi-3d/*.glb"
+      ]
+    },
+    {
+      "id": "bodyparts3d",
+      "ime": "BodyParts3D",
+      "avtor": "Database Center for Life Science (DBCLS), Japonska",
+      "opis": "Anatomska podatkovna zbirka, iz katere izhaja velik del modelov Z-Anatomy.",
+      "url": "https://lifesciencedb.jp/bp3d/",
+      "licenca": "CC BY-SA 2.1 JP",
+      "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+      "datoteke": [
+        "telo/*.glb",
+        "telo-hd/*.glb",
+        "organi-3d/*.glb"
+      ]
+    },
+    {
+      "id": "openneuro-ds000001",
+      "ime": "OpenNeuro ds000001 (fMRIPrep, FreeSurfer)",
+      "avtor": "OpenNeuro Preprocessing Team; izvorni podatki: ds000001 (Balloon Analog Risk-taking Task)",
+      "opis": "Površina možganske skorje (pialna površina obeh polobel) in globina brazd iz MRI ene anonimne prostovoljke ali prostovoljca (sub-01). Iz nje so vijuge in brazde v Organih v 3D: možgani; režnji po parcelaciji Desikan-Killiany.",
+      "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/dataset_description.json",
+      "licenca": "CC0 1.0",
+      "licencaUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "datoteke": [
+        "organi-3d/mozgani*.glb"
+      ]
+    },
+    {
+      "id": "hubmap-hra-oko",
+      "ime": "HuBMAP Human Reference Atlas: 3D referenčni organ Oko (VH moški, levo)",
+      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po podatkih Visible Human",
+      "opis": "Zrklo v Organih v 3D: oko (beločnica, roženica, šarenica, leča, mrežnica z vidnim diskom, žilnica, ciliarnik, zonularna vlakna, steklovina). Mišice, kite in vidni živec so iz Z-Anatomy; zrklo smo poravnali nanje.",
+      "url": "https://lod.humanatlas.io/ref-organ/eye-male-left",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/oko*.glb"
+      ]
+    },
+    {
+      "id": "hubmap-hra-ledvica",
+      "ime": "HuBMAP Human Reference Atlas: 3D referenčni organ Ledvica (VH moški, leva)",
+      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po podatkih Visible Human",
+      "opis": "Ledvica v Organih v 3D: ovojnica, skorja, ledvični stebrički, piramide in papile. Sečevod, ledvični žili in nadledvična žleza so iz Z-Anatomy; ledvico smo poravnali nanje. Ledvični meh s čašicami smo oblikovali sami, ker ga HRA nima, različice iz Z-Anatomy pa ne uporabljamo (morda licenca NC).",
+      "url": "https://lod.humanatlas.io/ref-organ/kidney-male-left",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/ledvica*.glb"
+      ]
+    },
+    {
+      "id": "evklid-telo",
+      "ime": "Evklid: prirejeni modeli telesa",
+      "avtor": "Evklid",
+      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Sami smo oblikovali ledvični meh s čašicami (Organi v 3D: ledvica) ter veje portalne vene in jetrnih ven v jetrih (Organi v 3D: jetra). Prirejene modele delimo pod isto licenco.",
+      "url": "https://evklid.app/3d",
+      "licenca": "CC BY-SA 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "datoteke": [
+        "telo/*.glb",
+        "telo-hd/*.glb",
+        "organi-3d/*.glb"
+      ]
+    },
+    {
+      "id": "evklid-koda",
+      "ime": "Evklid: modeli iz kode",
+      "avtor": "Evklid",
+      "opis": "Celice, molekule, polja in drugi modeli, narisani v kodi brez tujih modelov in slik.",
+      "licenca": "Lastno delo Evklida",
+      "datoteke": [
+        "*/*.js"
+      ]
+    },
+    {
+      "id": "three",
+      "ime": "three.js",
+      "avtor": "three.js authors",
+      "opis": "Knjižnica za izris 3D v brskalniku.",
+      "url": "https://threejs.org",
+      "licenca": "MIT",
+      "licencaUrl": "https://github.com/mrdoob/three.js/blob/dev/LICENSE"
+    },
+    {
+      "id": "polyhaven-studio",
+      "ime": "Studio Small 09 (Poly Haven)",
+      "avtor": "Sergej Majboroda",
+      "opis": "Fotografija studia s softboksi (HDRI), iz katere je svetloba in odsev na organih v 3D. Pomanjšana na 512 × 256.",
+      "url": "https://polyhaven.com/a/studio_small_09",
+      "licenca": "CC0 1.0",
+      "licencaUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "datoteke": ["okolje/*.hdr"]
+    }
+  ],
+  "izkljuceno": [
+    "Podrobni model notranjega ušesa »Anatomy of the Inner Ear« (University of Dundee, CC BY-NC-SA) ni uporabljen, ker licenca ne dovoli komercialne uporabe.",
+    "Podrobni model ledvice »Kidney« (Lissie Cowley, CC BY-NC) ni uporabljen, ker licenca ne dovoli komercialne uporabe."
+  ]
+}

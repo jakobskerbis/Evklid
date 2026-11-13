@@ -1,0 +1,238 @@
+/* Prijava staršev in zavihek Račun (account.js) */
+body.auth-mode .tabs, body.auth-mode .xp-badge, body.auth-mode .student-picker, body.auth-mode .tabbar { display: none !important; }
+.auth-box { max-width: 440px; margin: 24px auto 0; }
+.auth-brand { display: none; }
+@media (min-width: 1000px) {
+  /* Obrazec ima ozek stolpec, znak aplikacije vzame preostanek (desno od obrazca ni praznega pasu). */
+  .auth-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 48px; align-items: center; min-height: 100%; }
+  .auth-wrap > .auth-box { max-width: none; width: 100%; margin: 0; }
+  .auth-brand {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 16px; align-self: stretch; padding: 48px;
+    border-radius: var(--radius); color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
+  }
+  .auth-brand .logo { width: 72px; height: 72px; border-radius: 22px; background: rgb(255 255 255 / 0.18); box-shadow: none; }
+  .auth-brand .logo svg.i { width: 40px; height: 40px; }
+  .auth-brand .brand-name, .auth-brand .brand-name span { font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 900; line-height: 1.05; color: #fff; }
+  .auth-brand p { margin: 0; max-width: 28ch; font-size: clamp(1.1rem, 1.6vw, 1.45rem); line-height: 1.4; font-weight: 700; }
+}
+.auth-box h1 { margin-bottom: 4px; }
+.auth-links { text-align: center; font-size: 0.92rem; }
+a { color: var(--accent); }
+.form-error { color: var(--danger); margin: 0; font-size: 0.92rem; }
+.form label.check, label.check { flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 400; display: flex; }
+label.check input { margin-top: 4px; flex: none; width: 18px; height: 18px; }
+
+.plans { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.plans[hidden], .plan-row[hidden] { display: none; }
+.plan-who { border: 0; margin: 0; padding: 0; min-width: 0; }
+.plan-who legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+.plan-who-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+.plan-who-opts .plan { align-items: center; min-height: 44px; }
+.plan-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: stretch; }
+.plan-note { grid-column: 1 / -1; margin: 0; }
+#plan-rest { margin-top: 0; }
+.plan { display: flex; gap: 8px; align-items: flex-start; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; cursor: pointer; background: var(--bg); }
+.plan:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.plan input { margin-top: 4px; }
+.plan .muted { font-size: 0.8rem; }
+
+/* Darilne kode: koda, Kopiraj in stanje v eni vrstici (na ozkem zaslonu se prelomi) */
+.gift-list { list-style: none; padding: 0; margin: 0 0 8px; display: flex; flex-direction: column; gap: 8px; }
+.gift-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.child-list { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+.pill { display: inline-block; font-size: 0.8rem; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.pill.ok { color: var(--ok); }
+.pill.warn { color: var(--warn, #b45309); }
+details summary { cursor: pointer; color: var(--accent); margin: 4px 0 8px; }
+details .card { margin-top: 8px; }
+#view-account .form-actions { flex-wrap: wrap; margin-top: 8px; }
+#view-account .inline input { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); min-width: 0; }
+/* Pet zavihkov: na ozkem zaslonu se vrstica zavihkov pomika, stran ostane široka kot zaslon. */
+@media (max-width: 760px) {
+  .tabs { overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1 1 100%; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { white-space: nowrap; flex: none; padding: 8px 10px; }
+}
+.overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+.overlay-card { max-width: 420px; width: 100%; margin: 0; }
+/* Geslo profila: zaslon za odklep ali prvo geslo */
+#lock-overlay { z-index: 200; overflow-y: auto; align-items: flex-start; }
+.lock-card { margin: auto 0; display: flex; flex-direction: column; gap: 10px; }
+.lock-card > .pm-avatar { align-self: center; }
+.lock-card > h2 { text-align: center; margin: 0; overflow-wrap: anywhere; }
+.lock-card .form { gap: 10px; }
+.lock-card input[type="password"] { width: 100%; box-sizing: border-box; }
+.lock-card button { min-height: 44px; }
+/* summary ostane list-item (puščica kot pri »Imate aktivacijsko kodo?«), višina 44 px s paddingom */
+.lock-forgot summary, .profile-pw summary, .code-new summary, .gift-card summary, .promo-code summary { margin: 0; padding: 10px 0; line-height: 24px; }
+.lock-forgot .form { margin-top: 6px; }
+.lock-others-title { margin: 6px 0 0; }
+.lock-others { display: flex; flex-wrap: wrap; gap: 8px; }
+.lock-others button { overflow-wrap: anywhere; }
+.lock-logout { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.profile-pw { margin-top: 10px; }
+.warn { background: #fff4d6; color: #6b4e00; padding: 8px 10px; border-radius: 10px; font-size: 0.92rem; }
+.dark .warn { background: #3a3014; color: #f3d98a; }
+#ask-parent .form-actions { flex-wrap: wrap; }
+.whose-field { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.whose-field legend { font-weight: 600; margin-bottom: 4px; padding: 0; }
+/* Uporaba brez registracije */
+.guest-login { margin-top: 14px; }
+.guest-login summary { cursor: pointer; font-weight: 600; }
+/* Plačila: potrditvi, povezava za starše, skrbniške kode */
+.pay-consent { font-size: 0.9rem; margin: 6px 0; }
+.pay-link { margin-top: 10px; }
+.pay-link .inline { display: flex; flex-wrap: wrap; gap: 8px; }
+.pay-link .inline input { flex: 1 1 200px; }
+.pay-link button { min-height: 40px; }
+.code-list, .event-list { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 10px; }
+.code-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.code-row > div:first-child { min-width: 0; overflow-wrap: anywhere; }
+.code-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.code-actions button { min-height: 40px; }
+.event-list code { overflow-wrap: anywhere; }
+
+/* Skrbnik: merjenje v pilotu */
+.pilot-filters { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-bottom: 10px; }
+.pilot-filters label { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+.pilot-filters select { min-height: 40px; }
+.pilot-sum { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 4px; }
+.pilot-table th, .pilot-table td { padding: 4px 8px; text-align: end; white-space: nowrap; }
+.pilot-table th:first-child, .pilot-table td:first-child { text-align: start; }
+.pilot-scroll { overflow-x: auto; max-width: 100%; position: relative; }
+.pilot-scroll + .pilot-scroll { margin-top: 10px; }
+.rast-title { margin: 18px 0 8px; font-size: 1.05rem; }
+.pilot-table td { font-variant-numeric: tabular-nums; }
+/* »vsi učenci« je izbira, ne prazno polje: brez sivega videza */
+.pilot-filters .dd-btn.placeholder .dd-label { color: inherit; font-weight: inherit; }
+/* Skrbnik: naročila šol (server/sole.js) */
+.order-list { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 10px; }
+.order-row { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; display: grid; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.order-row .order-note { margin: 2px 0; white-space: pre-line; }
+.order-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 4px; }
+.order-ctl label { display: flex; align-items: center; gap: 6px; font-weight: 700; flex-wrap: wrap; }
+.order-ctl select, .order-ctl input { min-height: 40px; }
+.order-ctl input { padding: 6px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font: inherit; max-width: 100%; }
+.order-ctl a { min-height: 40px; display: inline-flex; align-items: center; }
+
+/* Nadgradnja na višjo stopnjo (zavihek Račun, j 2026-11-01) */
+.plan-upgrade {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.plan-upgrade .form-actions {
+  flex-wrap: wrap;
+}
+/* Garancija »Boljša ocena ali vrnemo denar« in »Podari Evklid« (garancija-ui.js) */
+.guarantee-line { display: flex; gap: 8px; align-items: flex-start; margin: 4px 0; }
+.guarantee-line svg { flex: none; color: var(--ok); margin-top: 3px; }
+.podari-count { font-weight: 600; }
+.gar-weeks { list-style: none; padding: 0; margin: 8px 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; max-width: 420px; }
+.gar-week { display: flex; align-items: center; justify-content: center; min-height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85em; color: var(--muted); }
+.gar-week.ok { color: var(--ok); border-color: currentColor; }
+.gar-week.miss { color: var(--danger); border-color: currentColor; }
+.gar-week.now { color: var(--text); border-color: var(--accent); border-width: 2px; }
+.gar-week svg { width: 18px; height: 18px; }
+.gar-card summary, .podari-card summary { padding: 10px 0; cursor: pointer; font-weight: 600; }
+.gar-card .form label.check input, .podari-card .form label.check input { min-height: 0; padding: 0; }
+
+/* Pristajalna stran za nove obiskovalce pred prijavo (pristajalna.js, j 2026-11-04). Čez vso širino:
+   uvod z zgledom pogovora, nato kartice v stolpcih (telefon 1, tablica 2, računalnik 3–4). */
+.land { display: flex; flex-direction: column; gap: clamp(32px, 5vw, 64px); }
+.land h2 { font-size: clamp(1.4rem, 2.4vw, 2rem); margin: 0 0 16px; }
+.land h3 { font-size: 1.1rem; margin: 12px 0 6px; }
+.land .card { margin: 0; }
+.land .card p { margin: 0; color: var(--muted); line-height: 1.5; }
+.land-hero {
+  display: grid; gap: 28px; align-items: center; padding: clamp(24px, 4vw, 56px);
+  border-radius: var(--radius); color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
+}
+.land-hero h1 { color: #fff; font-size: clamp(2rem, 4.2vw, 3.6rem); line-height: 1.08; font-weight: 900; margin: 10px 0 16px; overflow-wrap: anywhere; }
+.land-eyebrow { margin: 0; font-weight: 700; opacity: 0.92; }
+.land-lead { margin: 0 0 24px; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.5; max-width: 62ch; }
+.land-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.land-actions a { min-height: 48px; padding: 12px 24px; font-size: 1.05rem; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.land-hero .land-actions a.btn-primary { background: #fff; color: var(--hero-a); box-shadow: 0 var(--press) 0 rgb(0 0 0 / 0.2); }
+.land-hero .land-actions a.btn-secondary { background: transparent; color: #fff; border-color: rgb(255 255 255 / 0.7); }
+.land-actions a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+/* Obroba fokusa mora biti vidna na ozadju okrog gumba, ne na gumbu: na prelivu bela, v spodnjem pasu modra */
+.land-hero .land-actions a:focus-visible { outline-color: #fff; }
+.land-cta .land-actions a:focus-visible { outline-color: var(--accent); }
+.land-trial { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; font-weight: 600; }
+.land-trial svg { width: 18px; height: 18px; flex: none; }
+/* Pas pri vrhu: garancija (samo ko jo strežnik oglašuje) in tri dejstva; čez vso širino, na telefonu v stolpcu */
+.land-top { display: flex; flex-direction: column; gap: 10px; margin-bottom: calc(-1 * clamp(16px, 3.5vw, 44px)); }
+.land-gar { display: flex; align-items: center; gap: 14px; margin: 0; padding: 14px 18px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--accent); line-height: 1.45; }
+.land-gar-ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent); color: var(--accent-text); }
+.land-gar-ic svg { width: 24px; height: 24px; }
+.land-gar-text { min-width: 0; overflow-wrap: anywhere; }
+.land-gar b { display: block; font-size: 1.1rem; }
+.land-gar a { font-weight: 700; white-space: nowrap; display: inline-block; padding: 8px 0; margin: -8px 0; }
+.land-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px 16px; grid-template-columns: minmax(0, 1fr); font-weight: 700; }
+.land-facts li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.land-facts svg { flex: none; width: 18px; height: 18px; color: var(--accent); }
+@media (min-width: 700px) {
+  .land-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0 4px; }
+  .land-facts li { justify-content: center; text-align: center; }
+  .land-facts li:first-child { justify-content: flex-start; }
+  .land-facts li:last-child { justify-content: flex-end; }
+}
+/* Zgled pogovora: učenec desno, inštruktor levo (v RTL zrcaljeno) */
+.land-demo { margin: 0; padding: 16px; border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: 0 20px 50px rgb(0 0 0 / 0.25); min-width: 0; }
+.land-demo figcaption { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); }
+.land-demo figcaption .logo { width: 32px; height: 32px; border-radius: 10px; box-shadow: none; }
+.land-demo figcaption .logo svg.i { width: 18px; height: 18px; }
+.land-demo figcaption small { margin-inline-start: auto; color: var(--muted); }
+.land-demo ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.land-msg { max-width: 85%; padding: 10px 14px; border-radius: 16px; line-height: 1.4; overflow-wrap: anywhere; animation: land-in 0.4s both; animation-delay: calc(var(--i) * 0.3s); }
+.land-msg.me { align-self: flex-end; background: var(--accent); color: var(--accent-text); border-end-end-radius: 4px; }
+.land-msg.tutor { align-self: flex-start; background: var(--surface-2); border-end-start-radius: 4px; }
+@keyframes land-in { from { opacity: 0; transform: translateY(6px); } }
+/* Kartice */
+.land-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.land-grid > .card { padding: 20px; display: flex; flex-direction: column; min-width: 0; }
+.land-ic { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
+.land-ic svg { width: 22px; height: 22px; }
+.land-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: auto !important; padding-top: 14px; }
+.land-price b { font-size: 1.25rem; color: var(--text); }
+.land-note { margin: 12px 0 0; color: var(--muted); }
+.land-grid > .land-step { flex-direction: row; gap: 14px; align-items: flex-start; }
+.land-step h3 { margin-top: 6px; }
+.land-num { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-text); font-weight: 800; font-size: 1.1rem; }
+.land-more a { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: auto; padding-top: 8px; font-weight: 700; text-decoration: none; }
+.land-more a svg { width: 18px; height: 18px; }
+[dir="rtl"] .land-more a svg { transform: scaleX(-1); }
+.land-cta { text-align: center; padding: clamp(28px, 4vw, 48px) var(--rob-strani); border-radius: var(--radius); background: var(--accent-soft); }
+.land-cta .land-actions, .land-cta .land-trial { justify-content: center; }
+.land-cta .land-actions a.btn-secondary { background: var(--surface); }
+.land-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; font-size: 0.92rem; }
+.land-foot a { min-height: 40px; display: inline-flex; align-items: center; }
+@media (max-width: 520px) {
+  .land-actions a { flex: 1 1 100%; }
+}
+/* Telefon: ikona levo od naslova in opisa, da je kartic na zaslonu več */
+@media (max-width: 559px) {
+  .land-grid > .land-feat, .land-grid > .land-level, .land-grid > .land-more { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; padding: 16px; }
+  .land-feat > *:not(.land-ic), .land-level > *:not(.land-ic), .land-more > *:not(.land-ic) { grid-column: 2; }
+  .land-feat .land-ic, .land-level .land-ic, .land-more .land-ic { grid-row: 1 / span 2; width: 40px; height: 40px; }
+  .land-feat h3, .land-level h3, .land-more h3 { margin: 0 0 4px; }
+  .land-hero h1 { font-size: 2rem; }
+}
+@media (min-width: 560px) {
+  .land-feats, .land-mores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Tablica: tretja kartica »Za starše / šole / aplikacija« sama v vrsti zapolni vso širino */
+@media (min-width: 560px) and (max-width: 859px) {
+  .land-mores > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (min-width: 860px) {
+  .land-levels, .land-steps, .land-mores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 900px) {
+  .land-hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(32px, 4vw, 64px); }
+}
+@media (min-width: 1100px) {
+  .land-feats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+#view-auth h1[tabindex="-1"]:focus { outline: none; } /* fokus ob menjavi zaslona prijave je samo za bralnik zaslona */

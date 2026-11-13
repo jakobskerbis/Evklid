@@ -1,0 +1,29 @@
+# Posodobitev aplikacije brez nove gradnje (EAS Update): ob vsaki združitvi v main, ki spremeni kodo
+# aplikacije ali skupne datoteke s spletom, objavi novo različico JavaScripta na kanal "direct" (APK s
+# strani /prenesi). Telefoni jo prenesejo ob zagonu (src/lib/updates.ts). Dobijo jo samo gradnje z enako
+# domorodno kodo (runtimeVersion: fingerprint); za novo domorodno kodo je potreben nov APK.
+# Poti so od korena repozitorija. EXPO_PUBLIC_CHANNEL mora biti enak kot v profilu "direct" (eas.json),
+# sicer se prstni odtis razlikuje od gradnje in posodobitev ne pride na telefone.
+name: Posodobitev aplikacije
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "mobile/**"
+      - "brand.json"
+      - "public/i18n/**"
+      - "public/rich.js"
+      - "public/lesson-steps.js"
+      - "public/xp-levels.js"
+      - "server/practice/**"
+jobs:
+  objavi:
+    name: Objava na kanal direct
+    type: update
+    # Isto okolje spremenljivk EAS kot gradnja "direct" (distribution internal → preview), sicer se prstni odtis razlikuje.
+    environment: preview
+    env:
+      EXPO_PUBLIC_CHANNEL: direct
+    params:
+      channel: direct
+      platform: android

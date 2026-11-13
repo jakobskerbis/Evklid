@@ -1,0 +1,359 @@
+{
+ "organ": "srce",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "tkiva": {
+  "miokard": {
+   "barva": "#93362f",
+   "hrap": 0.34,
+   "lak": 0.85,
+   "lakHrap": 0.1,
+   "sijaj": 0.6,
+   "sijajBarva": "#ff9a8a",
+   "rob": 0.2,
+   "robBarva": "#ff6a5a",
+   "ao": 0.9,
+   "zrno": 0.1,
+   "f": 60,
+   "relief": 0.7,
+   "lise": 0.12,
+   "liseBarva": "#ffb0a0",
+   "masca": 0.6,
+   "mascaBarva": "#e7c46e",
+   "rez": "#8a3029",
+   "senca": 0.35,
+   "sencaBarva": "#4a1512",
+   "mascaZunaj": true,
+   "mascaF": 90,
+   "rezVlakna": 520
+  },
+  "zaklopka": {
+   "barva": "#eadfcc",
+   "hrap": 0.36,
+   "lak": 0.6,
+   "lakHrap": 0.2,
+   "sijaj": 0.5,
+   "sijajBarva": "#ffffff",
+   "rob": 0.15,
+   "robBarva": "#fff2e0",
+   "ao": 0.8,
+   "zrno": 0.05,
+   "f": 90,
+   "dvostransko": true
+  },
+  "arterija": {
+   "barva": "#c4312e",
+   "hrap": 0.3,
+   "lak": 0.75,
+   "lakHrap": 0.14,
+   "sijaj": 0.4,
+   "sijajBarva": "#ff9a90",
+   "rob": 0.2,
+   "robBarva": "#ff6458",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 80,
+   "relief": 0.3,
+   "rez": "#a92a28"
+  },
+  "vena": {
+   "barva": "#3b5ba8",
+   "hrap": 0.32,
+   "lak": 0.75,
+   "lakHrap": 0.14,
+   "sijaj": 0.4,
+   "sijajBarva": "#9db8ff",
+   "rob": 0.18,
+   "robBarva": "#6f93ff",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 80,
+   "relief": 0.3,
+   "rez": "#2f4b8c"
+  },
+  "pljucna": {
+   "barva": "#4566b8",
+   "hrap": 0.3,
+   "lak": 0.75,
+   "lakHrap": 0.14,
+   "sijaj": 0.4,
+   "sijajBarva": "#a6bdff",
+   "rob": 0.18,
+   "robBarva": "#7898ff",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 80,
+   "relief": 0.3,
+   "rez": "#36549c"
+  },
+  "pljucna-vena": {
+   "barva": "#b9343a",
+   "hrap": 0.3,
+   "lak": 0.75,
+   "lakHrap": 0.14,
+   "sijaj": 0.4,
+   "sijajBarva": "#ff9a96",
+   "rob": 0.2,
+   "robBarva": "#ff6466",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 80,
+   "relief": 0.3,
+   "rez": "#9c2a30"
+  }
+ },
+ "deli": [
+  {
+   "id": "desni-preddvor",
+   "ime": "Desni preddvor",
+   "la": "Atrium dextrum",
+   "barva": "#6e9bff",
+   "opis": "Sprejme kri brez kisika, ki se iz telesa vrača po votlih venah.",
+   "vozlisca": [
+    "Right atrium"
+   ]
+  },
+  {
+   "id": "desni-prekat",
+   "ime": "Desni prekat",
+   "la": "Ventriculus dexter",
+   "povecava": "celica-srcna-misicna",
+   "barva": "#38bdf8",
+   "opis": "Potiska kri brez kisika po pljučnem deblu v pljuča.",
+   "vozlisca": [
+    "Anterior papillary muscle of right ventricle",
+    "Inferior papillary muscle of right ventricle",
+    "Right ventricle",
+    "Septal papillary muscle of right ventricle"
+   ]
+  },
+  {
+   "id": "levi-preddvor",
+   "ime": "Levi preddvor",
+   "la": "Atrium sinistrum",
+   "barva": "#fb923c",
+   "opis": "Sprejme s kisikom bogato kri, ki priteče iz pljuč po pljučnih venah.",
+   "vozlisca": [
+    "Left atrium"
+   ]
+  },
+  {
+   "id": "levi-prekat",
+   "ime": "Levi prekat",
+   "la": "Ventriculus sinister",
+   "povecava": "celica-srcna-misicna",
+   "barva": "#ff7a6b",
+   "opis": "Ima najdebelejšo steno in stisne kri v aorto, od tam pa po vsem telesu.",
+   "vozlisca": [
+    "Inferior papillary muscle of left ventricle",
+    "Left ventricle"
+   ]
+  },
+  {
+   "id": "aorta",
+   "ime": "Aorta",
+   "la": "Aorta",
+   "barva": "#f43f5e",
+   "opis": "Največja arterija; vodi s kisikom bogato kri iz levega prekata v telo.",
+   "vozlisca": [
+    "Aortic arch",
+    "Ascending aorta",
+    "Thoracic aorta"
+   ]
+  },
+  {
+   "id": "pljucno-deblo",
+   "ime": "Pljučno deblo",
+   "la": "Truncus pulmonalis",
+   "barva": "#818cf8",
+   "opis": "Razcepi se v pljučni arteriji, ki neseta kri brez kisika v pljuča.",
+   "vozlisca": [
+    "Bifurcation of pulmonary trunk",
+    "Left pulmonary artery",
+    "Pulmonary trunk",
+    "Right pulmonary artery"
+   ]
+  },
+  {
+   "id": "votli-veni",
+   "ime": "Votli veni",
+   "la": "Venae cavae",
+   "barva": "#60a5fa",
+   "opis": "Zgornja in spodnja votla vena pripeljeta kri iz telesa v desni preddvor.",
+   "vozlisca": [
+    "Inferior vena cava (thoracic part)",
+    "Superior vena cava"
+   ]
+  },
+  {
+   "id": "pljucne-vene",
+   "ime": "Pljučne vene",
+   "la": "Venae pulmonales",
+   "barva": "#fda4af",
+   "opis": "Štiri vene, ki prinesejo s kisikom bogato kri iz pljuč v levi preddvor.",
+   "vozlisca": [
+    "Left inferior pulmonary vein",
+    "Left superior pulmonary vein",
+    "Right inferior pulmonary vein",
+    "Right superior pulmonary vein"
+   ]
+  },
+  {
+   "id": "vencne-arterije",
+   "ime": "Venčne arterije",
+   "la": "Arteriae coronariae",
+   "barva": "#facc15",
+   "opis": "Oskrbujejo srčno mišico s krvjo, ki ji prinaša kisik in hranila.",
+   "vozlisca": [
+    "Anterior interventricular artery",
+    "Circumflex artery of heart",
+    "Left coronary artery",
+    "Right coronary artery",
+    "Right inferolateral branch of right coronary artery"
+   ]
+  },
+  {
+   "id": "vencne-vene",
+   "ime": "Venčne vene",
+   "la": "Venae cordis",
+   "barva": "#a78bfa",
+   "opis": "Odvajajo kri iz srčne mišice in se zberejo v venčnem sinusu.",
+   "vozlisca": [
+    "Coronary sinus",
+    "Great cardiac vein",
+    "Inferior vein of left ventricle",
+    "Inferior vein of left ventricle (//Posterior '')",
+    "Middle cardiac vein"
+   ]
+  },
+  {
+   "id": "av-zaklopki",
+   "ime": "Jadrasti zaklopki",
+   "la": "Valvae atrioventriculares",
+   "barva": "#e8ecf3",
+   "opis": "Ležita med preddvoroma in prekatoma in se zapreta, ko se prekata stisneta.",
+   "vozlisca": [
+    "Inferior leaflet of right atrioventricular valve",
+    "Posterior leaflet of left atrioventricular valve",
+    "Septal leaflet of right atrioventricular valve"
+   ]
+  },
+  {
+   "id": "aortna-zaklopka",
+   "ime": "Aortna zaklopka",
+   "la": "Valva aortae",
+   "barva": "#fde68a",
+   "opis": "Žepasta zaklopka na izhodu levega prekata; kri ne more nazaj iz aorte.",
+   "vozlisca": [
+    "Left coronary leaflet",
+    "Non-coronary leaflet",
+    "Right coronary leaflet"
+   ]
+  },
+  {
+   "id": "pljucna-zaklopka",
+   "ime": "Pljučna zaklopka",
+   "la": "Valva trunci pulmonalis",
+   "barva": "#c4b5fd",
+   "opis": "Žepasta zaklopka na izhodu desnega prekata; kri ne more nazaj iz pljučnega debla.",
+   "vozlisca": [
+    "Anterior semilunar leaflet of pulmonary valve",
+    "Left semilunar leaflet of pulmonary valve",
+    "Right semilunar leaflet of pulmonary valve"
+   ]
+  }
+ ],
+ "prerez": {
+  "ravnine": [
+   {
+    "n": [
+     0,
+     0,
+     -1
+    ],
+    "d": 0.004
+   }
+  ]
+ },
+ "pogledi": {
+  "celota": {
+   "pogled": [
+    0.2,
+    0.12,
+    1
+   ],
+   "tocke": [
+    "levi-prekat",
+    "desni-prekat",
+    "desni-preddvor",
+    "aorta",
+    "pljucno-deblo",
+    "vencne-arterije"
+   ]
+  },
+  "prerez": {
+   "pogled": [
+    0.05,
+    0.1,
+    1
+   ],
+   "tocke": [
+    "levi-prekat",
+    "desni-prekat",
+    "levi-preddvor",
+    "desni-preddvor",
+    "av-zaklopki",
+    "aortna-zaklopka"
+   ]
+  }
+ },
+ "podrobnosti": {
+  "naslov": "Srce",
+  "odseki": [
+   {
+    "naslov": "Zgradba",
+    "besedilo": "Srce je votla mišica, veliko približno kot pest, in tehta okoli 300 gramov. Leži v prsnem košu med pljučema, nekoliko bolj na levi. Srčni pretin ga deli na desno in levo polovico, vsaka ima preddvor in prekat. Med preddvorom in prekatom je jadrasta zaklopka (na desni trolistna, na levi dvolistna ali mitralna), na izhodu iz prekatov pa žepasti zaklopki: pljučna in aortna. Steno srca gradi srčna mišica, ki jo s krvjo oskrbujejo venčne žile."
+   },
+   {
+    "naslov": "Delovanje",
+    "besedilo": "Srce deluje kot dvojna črpalka. Desna polovica sprejme kri brez kisika iz telesa po zgornji in spodnji votli veni in jo potisne po pljučnem deblu v pljuča (mali krvni obtok). Leva polovica sprejme s kisikom bogato kri iz pljučnih ven in jo stisne v aorto, od koder potuje po vsem telesu (veliki krvni obtok). Zaklopke se odpirajo samo v eno smer, zato kri ne teče nazaj; ko se zapirajo, jih slišimo kot srčne tone."
+   },
+   {
+    "naslov": "Zanimivost",
+    "besedilo": "V mirovanju srce utripne 60- do 80-krat na minuto in vsakič iztisne okoli 70 mililitrov krvi, v enem dnevu pa udari približno 100 000-krat. Stena levega prekata je približno trikrat debelejša od stene desnega, ker mora kri potisniti po vsem telesu. Srce ima svoj spodbujevalnik (sinusni vozel), zato bije tudi brez ukaza možganov."
+   },
+   {
+    "naslov": "Pogoste bolezni",
+    "besedilo": "Ko se venčne arterije zožijo zaradi oblog (ateroskleroza), dobi srčna mišica premalo kisika. Če se žila povsem zamaši, nastane srčni infarkt: močna bolečina za prsnico, ki lahko seva v levo roko ali čeljust – takoj pokliči 112. Pogosti so še povišan krvni tlak, motnje srčnega ritma in okvare zaklopk. Ob nenadnem zastoju srca rešujeta življenje takojšnje oživljanje in defibrilator (AED)."
+   },
+   {
+    "naslov": "Kako skrbiš zanj",
+    "besedilo": "Srce krepi gibanje, pri katerem se zadihaš; giblji se vsaj eno uro na dan. Pomagajo hrana z veliko zelenjave, sadja in polnozrnatih živil, manj soli, sladkorja in nasičenih maščob, dovolj spanja in obvladovanje stresa. Kajenje in elektronske cigarete škodujejo žilam in srcu."
+   }
+  ]
+ },
+ "velikost": 0.2259,
+ "trikotniki": {
+  "racunalnik": 297986,
+  "telefon": 89597
+ },
+ "luci": [
+  {
+   "smer": [
+    -0.5,
+    1,
+    0.9
+   ],
+   "moc": 1.15,
+   "barva": "#fff0e4"
+  },
+  {
+   "smer": [
+    0.8,
+    0.3,
+    -1
+   ],
+   "moc": 0.6,
+   "barva": "#ffd6cc"
+  }
+ ]
+}

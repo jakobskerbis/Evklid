@@ -1,0 +1,150 @@
+/* Urnik (public/schedule.js): stran Urnik in kartica »Danes imaš …« na Učni poti. */
+
+.sch-intro { margin: -4px 0 12px; }
+.sch-add { margin: 0 0 14px; }
+.sch-add button svg.i { width: 18px; height: 18px; }
+.sch-import { padding: 6px; }
+.sch-h { font-size: 1.1rem; margin: 22px 0 10px; }
+.sch-private, .sch-linked { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
+.sch-private svg.i, .sch-linked svg.i { width: 16px; height: 16px; flex: none; }
+.sch-private { flex-wrap: nowrap; align-items: flex-start; }
+.sch-private svg.i { margin-top: 2px; }
+.danger-text { color: var(--danger) !important; }
+
+/* Stran čez vso širino (j, 4. 11. 2026): uvod, uvoz, obrazec, testi in opomnik v stolpcih, pod njimi teden kot urnik
+   na steni čez vso širino. Mreža tedna se pokaže, ko je vsebnik dovolj širok (tudi v premičnem oknu). */
+.sch-body { display: grid; grid-template-columns: minmax(0, 1fr); container-type: inline-size; }
+/* ozko: kartice drug pod drugo, teden takoj za uvozom (pred testi in opomnikom) */
+.sch-top { display: contents; }
+.sch-top > :is(.sch-events, .sch-foot) { order: 2; }
+.sch-body > .sch-weekbox { order: 1; }
+#sch-panel:empty { display: none; }
+#sch-panel .sch-form { margin-bottom: 14px; }
+.sch-import, .sch-foot .sch-remind { margin-bottom: 14px; }
+.sch-foot .sch-remind { margin-top: 0; }
+.sch-events > .sch-h:first-child { margin-top: 0; }
+.sch-weekbox > .sch-h:first-child { margin-top: 10px; }
+.sch-grid { display: none; }
+@container (min-width: 640px) {
+  .sch-list { display: none; }
+  /* široko: kratke kartice (uvod, uvoz, testi, opomnik) v stolpcih nad urnikom */
+  .sch-top { display: block; columns: 340px 3; column-gap: 20px; }
+  .sch-top > * { break-inside: avoid; }
+  .sch-grid {
+    display: grid; grid-template-columns: 4.6em repeat(var(--sch-dni, 5), minmax(0, 1fr)); grid-template-rows: auto; grid-auto-rows: minmax(64px, auto); gap: 6px;
+  }
+}
+.sch-g-day { grid-row: 1; align-self: end; padding: 0 4px 2px; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.sch-g-day.today { color: var(--accent); }
+.sch-g-corner { grid-row: 1; grid-column: 1; }
+.sch-g-row { grid-column: 1; display: flex; flex-direction: column; justify-content: center; font-variant-numeric: tabular-nums; }
+.sch-g-row b { font-size: 0.9rem; }
+.sch-g-row small { font-size: 0.75rem; color: var(--muted); }
+.sch-g-cell { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sch-g-cell .sch-lesson { flex: 1; justify-content: center; }
+button.sch-g-add {
+  display: grid; place-items: center; margin: 0; padding: 0; min-height: 0; border-radius: 10px; cursor: pointer;
+  border: 1px dashed color-mix(in srgb, var(--muted) 40%, var(--border)); background: color-mix(in srgb, var(--surface) 55%, transparent); color: color-mix(in srgb, var(--muted) 45%, transparent); box-shadow: none;
+}
+button.sch-g-add.today { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+button.sch-g-add:hover, button.sch-g-add:focus-visible { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+button.sch-g-add svg.i { width: 20px; height: 20px; }
+@media (hover: none) { button.sch-g-add { color: var(--muted); } }
+.sch-time { direction: ltr; unicode-bidi: isolate; } /* 08:20–09:05 tudi v arabščini */
+
+/* teden v ozkem vsebniku: dnevi drug pod drugim (širši vsebnik pokaže mrežo zgoraj) */
+.sch-week { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.sch-day { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.sch-day.today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.sch-day h3 { margin: 0 0 2px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.sch-day.today h3 { color: var(--accent); }
+.sch-free { margin: 0; }
+button.sch-lesson {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: start; width: 100%; min-height: 44px;
+  padding: 8px 10px !important; border-radius: 10px; background: var(--accent-soft) !important; border: 1px solid transparent !important; color: var(--text); box-shadow: none !important;
+}
+button.sch-lesson:hover { border-color: var(--accent) !important; }
+.sch-lesson b { font-size: 0.95rem; line-height: 1.2; overflow-wrap: anywhere; }
+.sch-lesson small { font-size: 0.78rem; }
+.sch-time { font-size: 0.78rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* obrazci in predogled uvoza */
+.sch-form h2, .sch-preview h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.15rem; }
+.sch-form h2 svg.i, .sch-preview h2 svg.i { color: var(--accent); }
+.sch-times { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sch-form input[type="time"], .sch-form input[type="file"] { font-weight: 600; padding: 10px 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); min-height: 44px; }
+.sch-err:empty { display: none; }
+.sch-err { color: var(--danger); margin: 0; }
+.sch-preview h3 { font-size: 0.95rem; margin: 14px 0 6px; }
+.sch-checks { display: flex; flex-direction: column; gap: 6px; max-height: 50vh; overflow-y: auto; }
+.sch-checks label.check, .sch-remind label.check { align-items: flex-start; padding: 8px 10px; flex: none; }
+.sch-checks label.check input, .sch-remind label.check input { margin-top: 3px; }
+.sch-remind { padding: 12px; margin-top: 18px; }
+.sch-remind label.check { border: 0; }
+
+/* kartica na Učni poti */
+.sch-card { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.sch-card-empty { flex-direction: row; align-items: center; padding: 6px; gap: 4px; }
+.sch-card-empty .list-row { flex: 1; min-width: 0; }
+.sch-card-x { color: var(--muted); }
+button.sch-card-head { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 !important; min-height: 32px; background: none !important; border: 0 !important; box-shadow: none !important; color: var(--muted); }
+.sch-chips { flex-wrap: wrap; }
+.sch-chip { border: 1.5px solid var(--border); border-radius: 999px; padding: 6px 12px; font-size: 0.9rem; white-space: nowrap; background: var(--surface); }
+.sch-chip b { font-variant-numeric: tabular-nums; color: var(--muted); margin-right: 2px; }
+.sch-chip.next { border-color: var(--accent); background: var(--accent-soft); }
+.sch-chip.next b { color: var(--accent); }
+.sch-class { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; }
+.sch-next { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 0.92rem; }
+.sch-next svg.i { width: 16px; height: 16px; flex: none; }
+.sch-remind-row { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--accent-soft); border: 1.5px solid var(--accent); }
+.sch-remind-row .ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--surface); color: var(--accent); }
+.sch-remind-row p { margin: 2px 0 0; font-size: 0.88rem; }
+
+.sch-group-pick { margin: 10px 0 6px; }
+.sch-groups button { min-width: 44px; justify-content: center; }
+button.sch-lesson { justify-content: flex-start; }
+
+/* telefon: dnevi drug pod drugim, ure kot vrstice (čas levo) */
+@media (max-width: 760px) {
+  .sch-week { grid-template-columns: 1fr; }
+  button.sch-lesson { display: grid; grid-template-columns: 92px 1fr; column-gap: 10px; align-items: baseline; }
+  button.sch-lesson small { grid-column: 2; }
+  .sch-class { align-self: stretch; justify-content: center; }
+  .sch-remind-row { grid-template-columns: auto 1fr; }
+  .sch-remind-row button { grid-column: 1 / -1; }
+}
+/* Paket pred testom (pass-offer.js) */
+.pass-card { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.pass-card h3 { margin: 0; display: flex; align-items: center; gap: 8px; }
+.pass-options { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.pass-options .plan { display: flex; gap: 8px; align-items: flex-start; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; cursor: pointer; background: var(--bg); min-height: 44px; }
+.pass-options .plan:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.pass-options .plan input { margin-top: 4px; }
+.pass-card .form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pass-card .form-actions button { min-height: 44px; }
+/* summary ostane list-item (puščica kaže, da se odpre, kot v account.css), višina 44 px s paddingom */
+.pass-parent summary { cursor: pointer; margin: 0; padding: 10px 0; line-height: 24px; color: var(--accent); }
+.pass-parent-info { margin-bottom: 0; }
+.pass-parent-info a { display: inline-flex; align-items: center; min-height: 44px; }
+.pass-parent button { min-height: 44px; margin-top: 4px; }
+.pass-card label.check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9rem; }
+.pass-card label.check input { margin-top: 4px; flex: none; width: 18px; height: 18px; }
+.pass-pay { display: flex; flex-direction: column; gap: 8px; }
+.pass-card .pay-link .inline { display: flex; flex-wrap: wrap; gap: 8px; }
+.pass-card .pay-link input { flex: 1 1 200px; min-width: 0; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); }
+.pass-card .pay-link button { min-height: 40px; }
+@media (max-width: 480px) {
+  .pass-options { grid-template-columns: 1fr; }
+  .pass-card .form-actions button { flex: 1 1 100%; }
+}
+.pass-active { margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+
+/* kartica stopnje na Učni poti (public/zacetna.js): OŠ igre, SŠ matura, faks Moj študij z izpitnimi roki */
+.stage-exams-box { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--border); }
+.stage-exams { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.stage-exams li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.stage-exams .se-name { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.stage-exams .se-when { flex: none; color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+.stage-note { margin: 0; font-size: 0.92rem; }
+.stage-exams-box > button.secondary { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 40px !important; }
+.stage-exams-box > button.sch-card-head { min-height: 40px; }

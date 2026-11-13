@@ -1,0 +1,165 @@
+/* Lige, razredi in skupine prijateljev */
+.tier-0 { --tier: #c27c45; } /* bronasta */
+.tier-1 { --tier: #8d99ae; } /* srebrna */
+.tier-2 { --tier: #f5a524; } /* zlata */
+.tier-3 { --tier: #3b82f6; } /* safirna */
+.tier-4 { --tier: #e5484d; } /* rubinasta */
+.tier-5 { --tier: #16a05a; } /* smaragdna */
+.tier-6 { --tier: #7c6cff; } /* diamantna */
+
+.tier-badge { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: color-mix(in srgb, var(--tier) 18%, transparent); color: var(--tier); flex: none; }
+.tier-badge svg.i { width: 16px; height: 16px; }
+.tier-badge.big { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.22); color: #fff; }
+.tier-badge.big svg.i { width: 34px; height: 34px; }
+
+.league-hero { display: flex; gap: 16px; align-items: center; color: #fff; border: 0;
+  background: linear-gradient(135deg, var(--tier), color-mix(in srgb, var(--tier) 55%, var(--accent-grad))); }
+.league-hero h2 { margin: 0 0 4px; font-size: 1.3rem; }
+.league-hero .nick { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.league-hero .nick svg.i { width: 16px; height: 16px; }
+.league-hero .last { opacity: 0.9; font-size: 0.92rem; margin-top: 4px; }
+.league-hero button.ghost { color: #fff; background: rgba(255, 255, 255, 0.16); }
+.league-hero button.ghost:hover { background: rgba(255, 255, 255, 0.28); color: #fff; }
+
+.h-icon { display: flex; align-items: center; gap: 8px; }
+.h-icon svg.i { color: var(--accent); width: 20px; height: 20px; }
+.league-rule { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.league-rule svg.i { width: 15px; height: 15px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot.up { background: var(--ok); }
+.dot.down { background: var(--danger); }
+
+.league-board { list-style: none; padding: 0; margin: 8px 0 0; }
+.league-board li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius-sm); border-bottom: 0; margin-bottom: 4px; background: var(--surface-2); }
+.league-board li .who .avatar-svg { flex: none; vertical-align: middle; margin-right: 8px; border-radius: 8px; }
+.league-board li .who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.league-board li b { white-space: nowrap; }
+.league-board li .xp-unit { color: var(--muted); font-size: 0.8rem; }
+.league-board .rank { display: inline-grid; place-items: center; min-width: 26px; height: 26px; margin-right: 8px; border-radius: 50%; background: var(--surface); font-size: 0.85rem; color: var(--muted); font-weight: 800; }
+.league-board li:nth-child(1) .rank { background: var(--gold); color: #fff; }
+.league-board li.zone-up { background: var(--ok-bg); }
+.league-board li.zone-down { background: var(--danger-bg); }
+.league-board li.me { outline: 2px solid var(--accent); color: var(--text); }
+.league-board .you { font-size: 0.75rem; font-weight: 800; color: var(--accent-text); background: var(--accent); border-radius: 999px; padding: 1px 8px; margin-left: 4px; }
+.zone-mark { display: inline-flex; }
+.zone-mark svg.i { width: 16px; height: 16px; }
+.zone-up .zone-mark { color: var(--ok); transform: rotate(-90deg); }
+.zone-down .zone-mark { color: var(--danger); transform: rotate(-90deg); }
+
+.tier-row { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 14px; font-size: 0.85rem; color: var(--muted); }
+/* Prihodnje lige so bledejše samo z znakom; ime ostane v --muted, da je berljivo (prej 2,4 : 1). */
+.tier-row > span { display: inline-flex; align-items: center; gap: 6px; }
+.tier-row > span > .tier-badge { opacity: 0.55; }
+.tier-row > span.done > .tier-badge { opacity: 0.8; }
+.tier-row > span.cur { color: var(--text); font-weight: 800; }
+.tier-row > span.cur > .tier-badge { opacity: 1; }
+
+.league-empty { display: flex; gap: 12px; align-items: center; background: var(--accent-soft); border-radius: var(--radius-sm); padding: 12px 14px; }
+.league-empty svg.i { color: var(--accent); width: 28px; height: 28px; flex: none; }
+.league-empty p { margin: 0; }
+
+.group-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.group-head h2 { margin: 0; }
+.code-chip { font-family: ui-monospace, monospace; font-weight: 800; letter-spacing: 0.08em; background: var(--accent-soft); color: var(--accent); padding: 4px 10px; border-radius: 999px; }
+.code { font-family: ui-monospace, monospace; letter-spacing: 0.08em; }
+
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.row input { flex: 1; min-width: 160px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); }
+.row input:focus { border-color: var(--accent); outline: none; }
+.row button, button.ghost.small, button.secondary { display: inline-flex; align-items: center; gap: 6px; }
+.nick-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+
+/* Avatar je predstavnik učenca: večji ob rezultatu, velik v glavi lige; značke zmag (public/zbirke.js, zbirka »lige«). */
+.league-board li { padding: 6px 10px; }
+.league-board li .who { display: flex; align-items: center; }
+.league-board li .who .avatar-svg { border-radius: 12px; border: 2px solid color-mix(in srgb, var(--text) 18%, transparent); }
+.league-board li .nick-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.league-board li.me .avatar-svg { border-color: var(--accent); }
+.lg-hero-av { position: relative; flex: none; }
+.lg-hero-av .avatar-svg { display: block; border-radius: 20px; border: 3px solid rgba(255, 255, 255, 0.85); box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25); }
+.lg-hero-av .tier-badge.lg-tier { position: absolute; right: -10px; bottom: -8px; width: 38px; height: 38px; background: var(--tier); border: 3px solid #fff; }
+.lg-hero-av .tier-badge.lg-tier svg.i { width: 20px; height: 20px; }
+.lg-award { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 12px 6px 6px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, 0.22); color: inherit; font: inherit; font-weight: 700; cursor: pointer; text-align: left; }
+.lg-award .lg-badge { flex: none; background: #fff; border-radius: 50%; }
+.lg-wins { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.85rem; font-weight: 700; }
+.lg-win { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.9); cursor: pointer; }
+.lg-win:focus-visible, .lg-award:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.lg-win-rule { display: flex; align-items: center; gap: 6px; margin: 10px 0 0; }
+.lg-win-rule svg.i { width: 16px; height: 16px; flex: none; }
+.lg-me-row { margin-top: 6px; border-top: 2px dashed var(--border); padding-top: 6px; }
+.lg-period { margin: 4px 0 10px; }
+@media (max-width: 560px) {
+  .league-hero { flex-direction: column; text-align: center; }
+  .league-hero .nick, .lg-wins { justify-content: center; }
+}
+
+/* Stran za učitelje (ucitelj.js) in razredne naloge pri učencu (leagues.js) */
+.tc-h { margin: 22px 0 8px; font-size: 1.15rem; }
+.tc-warn { color: var(--danger); font-weight: 700; }
+.tc-body { margin-top: 12px; }
+.tc-body h3 { margin: 16px 0 6px; font-size: 1rem; }
+.tc-scroll { position: relative; overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+.tc-table th, .tc-table td { padding: 6px 8px; text-align: start; white-space: nowrap; vertical-align: middle; }
+.tc-table input.tc-label { min-width: 110px; max-width: 160px; min-height: 40px; padding: 6px 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface, transparent); color: inherit; font: inherit; }
+.tc-st { text-align: center; }
+.tc-st .tc-n { font-size: 0.8rem; margin-inline-start: 2px; color: var(--muted); }
+.tc-done svg.i { color: var(--ok, #16a34a); }
+.tc-started svg.i { color: var(--accent); }
+.tc-todo svg.i { color: var(--muted); }
+.tc-assign { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: tca; }
+.tc-assign li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); counter-increment: tca; }
+.tc-assign li > span::before { content: counter(tca) ". "; font-weight: 800; }
+.tc-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.tc-move { display: flex; align-items: center; gap: 6px; font-weight: 700; flex-wrap: wrap; }
+.tc-move select { min-height: 40px; padding: 6px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: inherit; font: inherit; font-weight: 600; }
+.tc-actions button.danger { margin-top: 0; }
+/* Dotik: najmanj 40 px (button.small je sicer 38 px) */
+#teacher-root button.small, .tc-actions button.small, .lg-tasks button.small, #league-content [data-leave] { min-height: 40px !important; }
+[dir="rtl"] [data-toggle] svg.i { transform: scaleX(-1); }
+#teacher-root details > summary { min-height: 40px; display: flex; align-items: center; cursor: pointer; }
+.lg-tasks { list-style: none; padding: 0; margin: 8px 0 12px; display: flex; flex-direction: column; gap: 8px; }
+.lg-tasks li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); }
+.lg-tasks li.done { background: var(--surface-2); } /* brez prosojnosti: sivo besedilo mora ostati AA */
+.lg-tasks li.done .st svg.i { color: var(--ok); }
+.lg-tasks .st { font-size: 0.85rem; color: var(--muted); }
+.lg-transfer { margin-top: 8px; }
+.tc-add { margin-top: 14px; padding-top: 12px; border-top: 1.5px solid var(--border); }
+.tc-offers { display: flex; align-items: center; gap: 8px; min-height: 40px; font-weight: 700; flex-basis: 100%; }
+.tc-offers input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+/* Vitrine v razredu (public/leagues.js, server/vitrina.js): vklop je privzeto izklopljen. */
+.lg-vit-toggle { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 8px 10px; margin: 4px 0 10px; border-radius: var(--radius-sm); background: var(--surface-2); cursor: pointer; }
+.lg-vit-toggle input { flex: none; width: 24px; height: 24px; margin: 2px 0 0; accent-color: var(--accent); }
+.lg-vit-toggle span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lg-vit-off { display: flex; align-items: center; gap: 6px; }
+.lg-vit-list { list-style: none; padding: 0; margin: 0 0 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 8px; }
+.lg-vit-list li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); background: var(--surface-2); min-width: 0; }
+.lg-vit-list li.me { outline: 2px solid var(--accent); }
+.lg-vit-who { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.lg-vit-who .avatar-svg { flex: none; border-radius: 12px; border: 2px solid color-mix(in srgb, var(--text) 18%, transparent); }
+.lg-vit-who > span { display: flex; flex-direction: column; min-width: 0; }
+.lg-vit-who .nick-name { overflow-wrap: anywhere; line-height: 1.2; }
+.lg-vit-who small { color: var(--muted); font-weight: 700; }
+.lg-vit-who .you { align-self: flex-start; font-size: 0.75rem; font-weight: 800; color: var(--accent-text); background: var(--accent); border-radius: 999px; padding: 1px 8px; }
+.lg-vit-items { display: flex; gap: 6px; flex: none; }
+.lg-vit-item { display: grid; place-items: center; width: 56px; height: 56px; min-height: 44px; padding: 0; border-radius: 12px; border: 3px solid color-mix(in srgb, var(--text) 22%, var(--surface)); background-color: var(--surface); cursor: pointer; }
+.lg-vit-item .avatar-svg, .lg-vit-item .zb-tile { display: block; width: 44px; height: 44px; border-radius: 8px; }
+.lg-vit-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.dark .lg-vit-item { background-color: var(--surface-2); }
+@media (max-width: 560px) {
+  .lg-vit-list { grid-template-columns: 1fr; }
+  .lg-vit-list li { flex-wrap: wrap; }
+  .lg-vit-who { flex-basis: 100%; }
+  .lg-vit-items { margin-inline-start: 64px; }
+}
+
+/* Čez vso širino (j, 4. 11. 2026): glava lige in tedenska lestvica čez vse stolpce, lestvica s 30 mesti v stolpcih
+   (prosta mesta so prazne vrstice: vidiš, koliko učencev še lahko pride v skupino); mesečna lestvica in skupine pod njima. */
+#league-content { columns: 400px 2; } /* pod lestvico največ dva stolpca, da ne ostane prazna desna polovica */
+#league-content > :is(.league-hero, .lg-weekly) { column-span: all; }
+.lg-weekly .league-board { columns: 300px; column-gap: 16px; }
+.lg-weekly .league-board > li { break-inside: avoid; min-height: 60px; }
+.league-board li.free { background: none; border: 1px dashed var(--border); color: var(--muted); }
+.league-board li.free .who { font-weight: 500; }
+.lg-weekly { container-type: inline-size; }
+@container (max-width: 640px) { .league-board li.free { display: none; } } /* na telefonu brez 29 praznih vrstic */

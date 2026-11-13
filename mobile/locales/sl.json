@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "NSCameraUsageDescription": "Kamero potrebujemo, da poslikaš nalogo in jo inštruktor razloži po korakih.",
+    "NSPhotoLibraryUsageDescription": "Fotografijo naloge, ki jo izbereš, odpremo, da jo inštruktor razloži."
+  }
+}
