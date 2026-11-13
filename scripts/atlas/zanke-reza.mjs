@@ -17,7 +17,8 @@ const rv = j.prerez.ravnine[0];
 const l = Math.hypot(...rv.n);
 const n = rv.n.map((x) => x / l), d = (rv.d || 0) / l;
 const hoce = tkiva ? new Set(tkiva.split(",")) : null;
-const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(ORGANI, `${organ}.glb`));
+// ZANKE_GLB: drug GLB istega organa (npr. surov izvoz z ORGANI_TEKSTURE=0 pred peko)
+const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(process.env.ZANKE_GLB || path.join(ORGANI, `${organ}.glb`));
 const out = [];
 for (const node of doc.getRoot().listNodes()) {
   const tkivo = node.getExtras()?.tkivo;

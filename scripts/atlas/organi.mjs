@@ -86,6 +86,8 @@ for (const organ of organi) {
   j.velikost = izvoz.velikost;
   // srce (srce_ct.py): štiriprostorska ravnina iz CT in prostorska tekstura reza (smer vlaken, maščoba) ob GLB
   if (izvoz.ravnina4 && j.prerez?.ravnine?.length) j.prerez.ravnine[0] = izvoz.ravnina4;
+  // mali možgani iz MRI: lističi (senčilnik) okoli fastigija
+  if (izvoz.fastigij && j.tkiva?.mali) j.tkiva.mali.listiSredisce = izvoz.fastigij;
   if (izvoz.volumen) {
     fs.copyFileSync(path.join(src, izvoz.volumen.slika), path.join(CILJ, `${organ}-volumen.png`));
     j.prerez = { ...(j.prerez || {}), volumen: { ...(j.prerez?.volumen || {}), ...izvoz.volumen, slika: `${organ}-volumen.png` } };

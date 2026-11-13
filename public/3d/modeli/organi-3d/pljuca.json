@@ -1,6 +1,6 @@
 {
  "organ": "pljuca",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; veje bronhijev in žil v pljučih so cevi iz središčnic Z-Anatomy (scripts/atlas/drevesa.py); izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Pljučni režnji iz CT (TotalSegmentator, CC BY 4.0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; veje bronhijev in žil v pljučih so cevi iz središčnic Z-Anatomy (scripts/atlas/drevesa.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "pljuca": {
    "hrap": 0.4,
@@ -452,10 +452,10 @@
    }
   ]
  },
- "velikost": 0.4326,
+ "velikost": 0.4333,
  "trikotniki": {
-  "racunalnik": 132378,
-  "telefon": 43202
+  "racunalnik": 164982,
+  "telefon": 55190
  },
  "luci": [
   {

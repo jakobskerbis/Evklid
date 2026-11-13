@@ -40,6 +40,62 @@ CRV = ("Lingula of cerebellum", "Central lobule", "Culmen", "Declive", "Folium o
 rnd = random.Random(11)
 d = json.load(open(VHOD))
 
+# Mali možgani iz MRI (en kos »Cerebellum (MRI)«, izvozi-organe.py mali_mri): presek črva se razdeli v režnjiče po kotih
+# okoli fastigija (tkiva.mali.listiSredisce v mozgani.json), meje so fisure iz scripts/atlas/mali-mozgani-mri.py (FISURE;
+# 0° nazaj, 90° gor). Nato kot prej: obris = unija režnjičev, glavna lamela v vsak režnjič.
+SEKTORJI = [("Lingula of cerebellum", 152, 200), ("Central lobule", 122, 152), ("Culmen", 84, 122), ("Declive", 50, 84),
+            ("Folium of vermis", 22, 50), ("Tuber of vermis", -8, 22), ("Pyramis of vermis", -48, -8),
+            ("Uvula of vermis", -104, -48), ("Nodule of vermis", -160, -104)]
+
+
+def _odrezi(poli, a, b):
+    """Sutherland–Hodgman: del mnogokotnika levo od usmerjene premice a→b."""
+    stran = lambda p: (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])
+    izh = []
+    for i, q in enumerate(poli):
+        p = poli[i - 1]; sp, sq = stran(p), stran(q)
+        if sq >= 0:
+            if sp < 0:
+                t = sp / (sp - sq); izh.append((p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])))
+            izh.append(q)
+        elif sp >= 0:
+            t = sp / (sp - sq); izh.append((p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])))
+    return izh
+
+
+def razdeli_crv(d):
+    import os
+    mali = [o for o in d if o["tkivo"] == "mali" and "(MRI)" in o["ime"]]
+    if not mali or any(o["ime"] in CRV for o in d):
+        return d
+    o = mali[0]
+    pot = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "public", "3d", "modeli", "organi-3d", "mozgani.json")
+    F3 = json.load(open(pot))["tkiva"]["mali"]["listiSredisce"]
+    O, U, V = o["O"], o["U"], o["V"]
+    dot = lambda a, b: sum(x * y for x, y in zip(a, b))
+    Fc = (dot([F3[i] - O[i] for i in range(3)], U), dot([F3[i] - O[i] for i in range(3)], V))
+    nazaj = (dot((0, 0, -1), U), dot((0, 0, -1), V)); gor = (dot((0, 1, 0), U), dot((0, 1, 0), V))
+    smer = lambda kot: (math.cos(math.radians(kot)) * nazaj[0] + math.sin(math.radians(kot)) * gor[0],
+                        math.cos(math.radians(kot)) * nazaj[1] + math.sin(math.radians(kot)) * gor[1])
+    R = 0.3
+    izh = [x for x in d if x is not o]
+    for ime, k0, k1 in SEKTORJI:
+        a = (Fc[0] + R * smer(k0)[0], Fc[1] + R * smer(k0)[1]); b = (Fc[0] + R * smer(k1)[0], Fc[1] + R * smer(k1)[1])
+        zanke = []
+        for z in o["zanke"]:
+            # klin = dve polravnini (Fc→a levo ali desno, odvisno od usmerjenosti nazaj×gor v ravnini)
+            lev = nazaj[0] * gor[1] - nazaj[1] * gor[0] > 0
+            p = _odrezi(z, Fc, a) if lev else _odrezi(z, a, Fc)
+            p = _odrezi(p, b, Fc) if lev else _odrezi(p, Fc, b)
+            if len(p) >= 3:
+                zanke.append([list(q) for q in p])
+        izh.append({"ime": ime, "tkivo": "mali", "zanke": zanke, "O": O, "U": U, "V": V})
+    print("črv iz MRI: režnjiči po kotih okoli fastigija", [(x["ime"], len(x["zanke"])) for x in izh if x["ime"] in CRV])
+    return izh
+
+
+d = razdeli_crv(d)
+
 
 def ploscina(z):
     return 0.5 * sum(z[i - 1][0] * z[i][1] - z[i][0] * z[i - 1][1] for i in range(len(z)))
@@ -356,6 +412,7 @@ if DEBLO:
         g = np.array(zamegli(m_im, 0.0025)).astype(np.float32) / 255
         return np.clip((g - 0.5) * 2, 0, 1)
 
+    kosi = []  # (maska, vrsta) za vrzeli med deli
     for ime, z in DEBLO:
         mi = maska([z]); mm = np.array(mi) > 127
         if not mm.any():
@@ -379,9 +436,14 @@ if DEBLO:
             # prečna vlakna mostu v sredinskem rezu: prerezani snopi (svetli otočki) med sivimi jedri mostu
             otocki = sred * 7 + 0.25 * np.sin(u * 2 * math.pi / 0.0019 + grob * 16)
             siva = np.clip(0.5 - otocki * 1.3, 0, 1) * baz
-            plast = plast * (1 - 0.30 * siva[..., None]) + np.array((196, 160, 146), np.float32) * 0.30 * siva[..., None]
+            plast = plast * (1 - 0.42 * siva[..., None]) + np.array((190, 150, 136), np.float32) * 0.42 * siva[..., None]
+            # prečna vlakna bazalnega dela: valovite proge čez most (v sredinskem rezu prerezani snopi tečejo levo-desno)
+            pv = (np.sin(u * 2 * math.pi / 0.0011 + grob * 6) * 0.5 + 0.5) ** 3 * baz
+            plast *= (1 - 0.06 * pv)[..., None]
             teg = (1 - baz)
-            plast = plast * (1 - 0.16 * teg[..., None]) + np.array((205, 180, 165), np.float32) * 0.16 * teg[..., None]
+            plast = plast * (1 - 0.24 * teg[..., None]) + np.array((206, 178, 162), np.float32) * 0.24 * teg[..., None]
+            meja = np.exp(-((tv - 0.40) / 0.012) ** 2)  # meja tegmentum | bazalni del (medialni lemnisk)
+            plast *= (1 - 0.10 * meja)[..., None]
         elif ime.startswith("Midbrain"):
             if c[0] < 0.004:  # tegmentum in možganski krak
                 gb = glob(mi)
@@ -389,6 +451,10 @@ if DEBLO:
                 plast = plast * (1 - 0.34 * sn[..., None]) + np.array((120, 92, 86), np.float32) * 0.34 * sn[..., None]
                 rj = np.exp(-(((u - 0.001) / 0.0026) ** 2 + ((tv - 0.42) / 0.16) ** 2) ** 1.6)  # rdeče jedro
                 plast = plast * (1 - 0.5 * rj[..., None]) + np.array((208, 142, 132), np.float32) * 0.5 * rj[..., None]
+                # sivina okoli akvedukta (akvedukt je vrzel med tegmentumom in tektumom, glej spodaj)
+                pag = np.exp(-((tv - 0.08) / 0.09) ** 2)
+                plast = plast * (1 - 0.30 * pag[..., None]) + np.array((200, 160, 148), np.float32) * 0.30 * pag[..., None]
+
             else:  # tektum: siva plast štirih gričkov
                 plast = plast * 0.55 + np.array((206, 176, 160), np.float32) * 0.45
                 plast *= (1 + 0.05 * np.sin(tv * 28))[..., None]
@@ -405,6 +471,23 @@ if DEBLO:
         gb = glob(mi)
         plast *= (0.9 + 0.1 * np.clip(gb * 3, 0, 1))[..., None]
         deblo[mm] = plast[mm]
+        kosi.append((mi, "tektum" if ime.startswith("Midbrain") and c[0] >= 0.004 else "tegmentum" if ime.startswith("Midbrain") else ime))
+    # šivi med deli debla (most | podaljšana hrbtenjača | srednji možgani): v pravem rezu ni vrzeli. Ozke vrzeli (< 0,8 mm)
+    # med deli zapolni barva sosednjih delov.
+    zaprto = np.array(zamegli(m_deblo_im, 0.0004)) > 100
+    # širše vrzeli (do ≈ 2,5 mm) med dvema deloma: med tektumom in tegmentumom je akvedukt (temen kanal), drugod tkivo
+    blizu = [(np.array(zamegli(mi, 0.0012)) > 30, vr) for mi, vr in kosi]
+    siroko = (np.array(zamegli(m_deblo_im, 0.0013)) > 90) & ~m_deblo & ~zaprto & ~M
+    st = sum(b.astype(np.int32) for b, _ in blizu) if blizu else 0
+    akv = siroko & (st >= 2) & np.any([b for b, vr in blizu if vr == "tektum"] or [np.zeros((N, N), bool)], 0) \
+        & np.any([b for b, vr in blizu if vr == "tegmentum"] or [np.zeros((N, N), bool)], 0)
+    zaprto = zaprto | (siroko & (st >= 2) & ~akv)
+    vrz = zaprto & ~m_deblo
+    if vrz.any():
+        utez = np.array(zamegli(Image.fromarray((m_deblo * 255).astype(np.uint8)), 0.0006)).astype(np.float32) / 255
+        vsota = np.stack([np.array(zamegli(Image.fromarray(np.clip(deblo[..., c] * m_deblo, 0, 255).astype(np.uint8)), 0.0006)).astype(np.float32) for c in range(3)], -1)
+        deblo[vrz] = vsota[vrz] / np.maximum(utez[vrz][..., None], 1e-3)
+        m_deblo = m_deblo | vrz
     # četrti prekat: šotorasta votlina med hrbtno stranjo debla in malimi možgani, vrh v fastigiju
     glavni = [z for _, z in DEBLO if abs(ploscina(z)) > 1e-4]
     hrbet = lambda y: max((q[0] for z in glavni for q in z if abs(q[1] - y) < 0.0015), default=None)
@@ -427,7 +510,9 @@ if DEBLO:
         slika = np.where(jm[..., None], np.array((232, 214, 196), np.float32), slika)
         prekat = prekat | jm
     slika = np.where(m_deblo[..., None], deblo, slika)
-    alfa = alfa | prekat | m_deblo
+    if akv.any():
+        slika = np.where(akv[..., None], np.array((118, 68, 64), np.float32), slika)
+    alfa = alfa | prekat | m_deblo | akv
 
 im = Image.fromarray(np.clip(slika, 0, 255).astype(np.uint8), "RGB").filter(ImageFilter.GaussianBlur(0.5))
 im.putalpha(Image.fromarray((alfa * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.6)))

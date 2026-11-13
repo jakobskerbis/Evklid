@@ -188,6 +188,26 @@
    "detajl": true,
    "aoTekstura": 0.5,
    "brezReza": true
+  },
+  "guba": {
+   "hrap": 0.46,
+   "lak": 0.5,
+   "lakHrap": 0.22,
+   "sijaj": 0.3,
+   "ao": 0.8,
+   "zrno": 0.05,
+   "f": 90,
+   "barva": "#b0675b",
+   "rez": "#d8c0ae",
+   "sijajBarva": "#ffffff",
+   "rob": 0.18,
+   "robBarva": "#e9b7a8",
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "brezReza": true,
+   "prosojnost": 0.62,
+   "dvostransko": true
   }
  },
  "deli": [
@@ -419,10 +439,10 @@
    }
   ]
  },
- "velikost": 0.3163,
+ "velikost": 0.3183,
  "trikotniki": {
-  "racunalnik": 122994,
-  "telefon": 32598
+  "racunalnik": 122988,
+  "telefon": 38354
  },
  "luci": [
   {

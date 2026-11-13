@@ -49,6 +49,11 @@ class Notranjost:
     def znotraj(self, p):
         return self.kje(p) >= 0
 
+    def ob_spranji(self, p, d=0.004):
+        """Točka je v špranji med dvema mrežama ali tik ob njej (dve mreži skoraj enako blizu)."""
+        ds = sorted(b.find_nearest(p)[3] for b in self.bvh)
+        return len(ds) > 1 and ds[1] - ds[0] < d and ds[0] < 3 * d
+
     def globina(self, p):
         d = self.vse.find_nearest(p)[3]
         return d if self.znotraj(p) else -d
@@ -292,12 +297,55 @@ def zapri_luknje(me, stranic=400):
     return len(rob), ostalo
 
 
+CT_REZNJI = {"Superior lobe of right lung": "lung_upper_lobe_right", "Middle lobe of right lung": "lung_middle_lobe_right",
+             "Inferior lobe of right lung": "lung_lower_lobe_right", "Superior lobe of left lung": "lung_upper_lobe_left",
+             "Inferior lobe of left lung": "lung_lower_lobe_left"}
+
+
+def _rezenj_iz_ct(rezn, cfg, tmp):
+    """Režnje Z-Anatomy zamenja s površinami režnjev iz CT (pljuca-ct.py). Vsako krilo posebej: afina preslikava (merilo po
+    oseh in premik) okvirja CT kril v okvir kril Z-Anatomy – bronhiji in žile Z-Anatomy ostanejo v svojih krilih."""
+    import os
+    import numpy as np
+    pot = os.path.join(cfg.get("_ct_mapa") or "", cfg.get("ct_rezenj") or "")
+    if not cfg.get("ct_rezenj") or not os.path.isfile(pot):
+        print("[organi] pljuča: režnji Z-Anatomy (ni datoteke CT)")
+        return []
+    d = np.load(pot)
+    cilj = cfg.get("drevesa", {}).get("rezenjTrikotnikov", 16000)
+    krila = []
+    for stran in ("right", "left"):
+        moji = [r for r in rezn if stran in r[0] and r[0] in CT_REZNJI]
+        if not moji:
+            continue
+        Z = np.array([list(v.co) for r in moji for v in r[1].vertices])
+        C = np.concatenate([d[CT_REZNJI[r[0]] + "_v"] for r in moji])
+        zl, zh, cl, ch = Z.min(0), Z.max(0), C.min(0), C.max(0)
+        k = (zh - zl) / (ch - cl)
+        for r in moji:
+            v = (d[CT_REZNJI[r[0]] + "_v"] - cl) * k + zl
+            me = bpy.data.meshes.new(r[0] + " ct"); me.from_pydata(v.tolist(), [], d[CT_REZNJI[r[0]] + "_f"].tolist())
+            bm = bmesh.new(); bm.from_mesh(me)
+            for _ in range(6):  # stopnice rezin CT
+                bmesh.ops.smooth_vert(bm, verts=bm.verts, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+            bm.to_mesh(me); bm.free()
+            r[1] = poenostavi(me, min(1.0, cilj / max(tris(me), 1)), tmp)
+        if "lung_" + stran + "_v" in d.files:
+            v = (d["lung_" + stran + "_v"] - cl) * k + zl
+            me = bpy.data.meshes.new("krilo " + stran); me.from_pydata(v.tolist(), [], d["lung_" + stran + "_f"].tolist())
+            krila.append(poenostavi(me, min(1.0, 30000 / max(tris(me), 1)), tmp))
+        print(f"[organi] pljuča {stran}: režnji iz CT ({d['osebek']}), merilo {[round(float(x), 3) for x in k]}")
+    return krila
+
+
 def pljucna_drevesa(osnovni, cfg, tmp):
     """Pljuča: režnji postanejo zaprta telesa; iz segmentnih vej Z-Anatomy zrastejo subsegmentne veje bronhijev, pljučnih
     arterij in ven do režnjičev (3 drevesa, vsako svoje točke privlaka). Telefon: iste veje brez najtanjših."""
     rezn = [r for r in osnovni if r[2] == "pljuca"]
     tel = cfg.setdefault("_telefon", {})
     nast = cfg.get("drevesa", {})
+    krila = _rezenj_iz_ct(rezn, cfg, tmp)
     for r in rezn:
         n, ost = zapri_luknje(r[1])
         # režnji po SUBSURF ob špranjah segajo v soseda: oglišča malo navznoter po normali (prej cfg »skrci«)
@@ -309,6 +357,9 @@ def pljucna_drevesa(osnovni, cfg, tmp):
         r[4] = "(lastno) " + r[4]
         print(f"[organi] {r[0]}: zaprtih robov {n}, ostane {ost}; trikotnikov {tris(r[1])} / {tris(tel[r[0]])}")
     notr = Notranjost([r[1] for r in rezn])
+    # krilo: cela pljuča brez špranj (CT). Veje Z-Anatomy niso iz istega telesa kot režnji in tečejo tudi čez špranje, zato
+    # se »v pljučih« presoja po krilu; brez CT po režnjih
+    krilo = Notranjost(krila) if len(krila) == 2 else notr
     rob = 0.004
     def dovoli(a, b):
         if notr.vse.find_nearest(b)[3] < rob:
@@ -318,14 +369,32 @@ def pljucna_drevesa(osnovni, cfg, tmp):
     # Veje Z-Anatomy v pljučih (tkiva »…-v«): cevi na novo iz središčnic krivulj (polne, 6–12 stranic; mreža krivulje ima
     # 28 stranic in bi jo poenostavitev na telefonu zmečkala), konec odrezan, kjer veja zapusti reženj.
     def v_reznju(p, r):
-        return notr.vse.find_nearest(p)[3] >= r + 0.0035 and notr.znotraj(p)
+        return krilo.vse.find_nearest(p)[3] >= r + 0.0035 and krilo.znotraj(p)
     stalne = {}
+    # hilus vsakega krila: povprečje korenin vej (konec, ki je bližje sredini); zunaj režnjev sme veja teči samo tam
+    kor = {1: [], -1: []}
+    for r in osnovni:
+        if r[2].endswith("-v"):
+            for P, R in cfg["_krivulje"].get(r[0], []):
+                k0 = min((Vector(P[0]), Vector(P[-1])), key=lambda q: abs(q.x))
+                kor[1 if k0.x > 0 else -1].append(k0)
+    hil = {z: (sum(t, Vector()) / len(t) if t else None) for z, t in kor.items()}
+    def ob_hilusu(p):
+        h = hil[1 if p.x > 0 else -1]
+        return h is not None and (p - h).length < nast.get("hilusPolmer", 0.03)
     for r in osnovni:
         if not r[2].endswith("-v"):
             continue
         sez = []
         for P, R in cfg["_krivulje"].get(r[0], []):
             P = [Vector(p) for p in P]; R = [max(x, 0.0007) for x in R]
+            if abs(P[0].x) > abs(P[-1].x):
+                P.reverse(); R.reverse()
+            # od korenine do prve točke, ki je zunaj režnjev in ni ob hilusu (veja bi štrlela skozi plevro)
+            zun = next((i for i, p in enumerate(P) if not ob_hilusu(p) and (not krilo.znotraj(p) or (krilo.vse.find_nearest(p)[3] < 0.008 and not notr.znotraj(p)))), len(P))  # tudi špranja tik pod plevro
+            P, R = P[:zun], R[:zun]
+            if len(P) < 2:
+                continue
             ok = [v_reznju(p, x) for p, x in zip(P, R)]
             if any(ok):  # distalni konec zunaj režnja odpade (korenina je pri hilusu: bližje središču obeh kril)
                 if abs(P[0].x) > abs(P[-1].x):
@@ -338,6 +407,13 @@ def pljucna_drevesa(osnovni, cfg, tmp):
                 P, R, ok = P[:zadnji + 1], R[:zadnji + 1], ok[:zadnji + 1]
             elif max(R) < 0.0022 and sum(abs(p.x) for p in P) / len(P) > 0.055:
                 continue  # tanka veja tik pod plevro, daleč od hilusa: v prerezu bi lebdela kot črtica
+            else:
+                # veja brez globoke točke (ves čas tik pod plevro ali ob hilusu): ostane do prve točke, kjer bi cev pogledala
+                # skozi plevro (globina pod površino krila manjša od polmera + 0,8 mm), razen ob hilusu
+                plitvo = next((i for i, (p, x) in enumerate(zip(P, R)) if not ob_hilusu(p) and krilo.vse.find_nearest(p)[3] < x + 0.0008), len(P))
+                P, R, ok = P[:plitvo], R[:plitvo], ok[:plitvo]
+                if len(P) < 2:
+                    continue
             dolz = sum((b_ - a_).length for a_, b_ in zip(P, P[1:]))
             if dolz < 0.008 and max(R) < 0.002:
                 continue  # kratek ostanek po obrezovanju
@@ -354,6 +430,22 @@ def pljucna_drevesa(osnovni, cfg, tmp):
         gol = [(P, R) for P, R, _ in sez]
         r[1] = mreza_vej(gol, r[0], kupole=(True, True)); tel[r[0]] = mreza_vej(gol, r[0] + " t", telefon=True, kupole=(True, True))
         r[4] = "(lastno) " + r[4]
+    for r in osnovni:
+        if r[2] in ("dihalna", "pljucna-arterija", "pljucna-vena") and not r[0].startswith("Trachea"):
+            bm = bmesh.new(); bm.from_mesh(r[1])
+            h_ = lambda q: hil[1 if q.x > 0 else -1]
+            # zunaj kril in bolj lateralno ali precej bolj zadaj od hilusa (medpljučje s sapnicama ostane)
+            proc = [v for v in bm.verts if h_(v.co) is not None and (abs(v.co.x) > abs(h_(v.co).x) + 0.005 or v.co.y > h_(v.co).y + 0.025) and abs(v.co.x) > 0.015
+                    and not ob_hilusu(v.co) and not krilo.znotraj(v.co)]
+            if proc:
+                bmesh.ops.delete(bm, geom=proc, context="VERTS")
+                rob_ = [e for e in bm.edges if len(e.link_faces) == 1]
+                if rob_:
+                    bmesh.ops.holes_fill(bm, edges=rob_, sides=0)
+                bmesh.ops.triangulate(bm, faces=bm.faces)
+                bm.to_mesh(r[1]); r[1].update()
+                print(f"[organi] {r[0]}: odrezanih {len(proc)} oglišč zunaj režnjev")
+            bm.free()
     print(f"[organi] veje v pljučih iz središčnic: {len(stalne)} delov, trikotnikov {sum(tris(r[1]) for r in osnovni if r[0] in stalne)} / {sum(tris(tel[i]) for i in stalne)}")
     izhod = []
     for seme, tkivo, del_, ime, r_list in ((11, "dihalna-v", "bronhiji", "Evklid subsegmental bronchi (lastno)", 0.00065),

@@ -85,6 +85,10 @@ ORGANI = {
         # pialno površino ene anonimne prostovoljke/prostovoljca (lh/rh.pial), režnji iz parcelacije aparc, globina brazd
         # (sulc) potemni senco okolice. Mapa z datotekami: --mri <mapa> (sub-01-lh.pial, …-lh.sulc, …-lh.aparc.annot).
         skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina"),
+        # Mali možgani iz segmentacije MRI istega osebka (aseg, oznake 7/8/46/47; scripts/atlas/mali-mozgani-mri.py): prava
+        # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Zgornja
+        # pedunkla Z-Anatomy ostaneta (vez z mezencefalonom). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
+        mali_mri=dict(delez=0.5, poravnava=0.0, ohrani=r"^Superior cerebellar peduncle"),
         poenostaviSkupaj=r"\(MRI\)\.([lr])$",  # režnji ene poloble so ena površina: brez razpok ob mejah režnjev
         tkiva=[
             (r"Cerebellum\.g", "mali"),
@@ -298,12 +302,18 @@ ORGANI = {
         jedro=r"lobe of (left|right) lung",
         skatla=[0.0, 0.0, 0.0, 0.0, 0.0, 0.045],
         krivulja=(6, 5),
-        debelina=[(r"^(?!\(lastno\)).*(Bronchi\.g|Pulmonary|pulmonary artery)", 0.0011)],
+        debelina=[(r"^(?!\(lastno\)).*(Bronchi\.g|Pulmonary|pulmonary artery)", 0.0011), (r"^Trachea( /|$)", 0.0012)],  # sapnik: stena, zgornji rob zaprt
+        # prerezani konci pljučnih arterij in ven ob hilusu: slepa svetlina 2,5 mm (levo pljučno arterijo je pogled v prerezu
+        # videl vzdolž osi kot tanek obroč v zraku)
+        slepiKonci=[(r"^(?!\(lastno\)).*(Pulmonary|pulmonary artery)", 0.0025)],
         # drevesa.pljucna_drevesa: režnji zaprti in v polni gostoti (prej jih je skupna poenostavitev stanjšala na ~2000
         # trikotnikov: natrgani robovi ob preponi), veje v pljučih iz središčnic (veje=True: še subsegmentne veje s
         # kolonizacijo prostora; v pljučih so bile videti kot ščetina ob čistem drevesu Z-Anatomy, zato izklopljeno). Te mreže
         # imajo svojo telefonsko različico (»nedotakni«), ostalo (sapnik, glavna bronhija, žile ob hilusu) dobi preostanek.
         dodaj=["pljucna_drevesa"], nedotakni=r"\(lastno\)",
+        # Režnji iz CT (TotalSegmentator dataset v1, osebek s0913, CC BY 4.0; scripts/atlas/pljuca-ct.py): prave ploskve
+        # režnjev s špranjami, poravnane na pljuča Z-Anatomy (ločeno levo in desno krilo). Brez datoteke ostanejo režnji Z-Anatomy.
+        ct_rezenj="totalseg/pljuca-v1.npz",
         drevesa=dict(veje=False, razmik=0.014, korak=0.004, vpliv=0.05, ubij=0.006, skrci=0.0007, rezenjTelefon=0.38, telefonListi=3),
         # Veje v pljučih (segmentni bronhiji in žile) imajo svoja tkiva: v celoti so skrite (konci bi štrleli skozi
         # površino režnjev), v prerezu vidne.
@@ -341,6 +351,7 @@ ORGANI = {
         dodaj=["ledvicni_meh", "ledvicne_zile"], nedotakni=r"Renal (vein|artery) \(lastno\)",
         meh_merilo=1.8,  # meh s čašicami iz metakroglic; ploskev ledvičnega sinusa (HRA hilum) potem izpustimo
         izpusti_po=r"hilum_of_kidney",
+        telefonSkrci=[(r"outer_cortex", 0.0005)],
         # Z-Anatomy nadledvična žleza je ob HRA ledvici (merilo 0,77) predebela (4,9 × 4,5 × 2,1 cm): 0,72× z dnom na ledvici.
         napihni=[(r"^Suprarenal", 0.72, "dno")],
         vkljuci=r"^(Kidney\.l|Ureter\.l|Suprarenal gland\.l|Left renal artery|Left renal vein|(Anterior|Posterior) branch of renal artery\.l)( /|$)",
@@ -364,7 +375,7 @@ ORGANI = {
         jedro=r"kidney_capsule",
         skatla=[0.03, 0.005, 0.01, 0.01, 0.035, 0.03],
         krivulja=(6, 5),
-        debelina=[(r"^Ureter", 0.0009)],
+        debelina=[],  # sečevod ima steno že iz ledvicni_meh (votla cev)
         tkiva=[(r"^Ureter", "secevod"), (r"artery", "arterija"), (r"vein", "vena"), (r"Suprarenal", "nadledvicna"), (r"", "skorja")],
         deli=[(r"^Ureter", "secevod"), (r"artery", "ledvicna-arterija"), (r"vein", "ledvicna-vena"), (r"Suprarenal", "nadledvicna")],
     ),
@@ -381,6 +392,7 @@ ORGANI = {
                 "jetra": dict(barva=(0.22, 0.06, 0.04), barva2=(0.16, 0.045, 0.032), lise=0.35, liseMera=0.035, hrap=0.26,
                               gube=0.00002, gubeMera=0.002, zilice=0.12, ziliceBarva=(0.13, 0.035, 0.025), ziliceMera=0.008, razdeli=0),
                 "vez": dict(barva=(0.66, 0.50, 0.44), barva2=(0.58, 0.42, 0.38), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
+                "guba": dict(barva=(0.62, 0.40, 0.36), barva2=(0.54, 0.33, 0.30), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 "zolcnik": dict(barva=(0.16, 0.26, 0.12), barva2=(0.10, 0.18, 0.09), lise=0.35, hrap=0.28, gube=0.00004, gubeMera=0.003, razdeli=1),
                 "zolcevod": dict(barva=(0.50, 0.50, 0.22), barva2=(0.42, 0.42, 0.18), lise=0.25, hrap=0.40, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "portalna": dict(barva=(0.38, 0.23, 0.27), barva2=(0.32, 0.19, 0.23), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
@@ -395,7 +407,7 @@ ORGANI = {
         # jetra_geometrija.jetra_deli: ena gladka površina (Z-Anatomy »Liver«), razrezana v štiri režnje brez vidnih šivov,
         # srpasta in obla vez, spodnja votla vena, portalna vena, jetrne vene, arterija in žolčni vodi kot drevesa (lastno).
         dodaj=["jetra_deli"], nedotakni=r"\(lastno\)",
-        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=2),
+        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1),
         tkiva=[(r"segment of liver", "jetra"), (r"^Gallbladder", "zolcnik"), (r"Bile duct|bile", "zolcevod"),
                (r"portal", "portalna"), (r"artery", "arterija"), (r"vein", "vena"), (r"", "jetra")],
         deli=[(r"\((V|VI|VII|VIII)\)", "desni-rezenj"), (r"\((II|III)\)", "levi-rezenj"), (r"\(IV\)", "kvadratni-rezenj"), (r"\(I\)", "repasti-rezenj"),
@@ -625,6 +637,99 @@ APARC_IME = {"celni": "Frontal lobe", "temenski": "Parietal lobe", "senceni": "T
              "limbicni": "Limbic lobe", "otok": "Insula", "sredina": "Medial wall"}
 
 
+def slepi_konci(me, glob):
+    """Odprte konce cevi zapre s slepo svetlino: ploščica »glob« navznoter (proti notranjim sosedom roba), 0,8 × polmer.
+    Vrne število zaprtih koncev."""
+    bm = bmesh.new(); bm.from_mesh(me)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
+    rob = [e for e in bm.edges if len(e.link_faces) == 1]
+    if not rob:
+        bm.free(); return 0
+    # zanke robov (povezane komponente)
+    vz = {}
+    for e in rob:
+        for v in e.verts:
+            vz.setdefault(v, []).append(e)
+    videno = set(); zanke = []
+    for v0 in vz:
+        if v0 in videno:
+            continue
+        sk = [v0]; videno.add(v0); i = 0
+        while i < len(sk):
+            for e in vz[sk[i]]:
+                o = e.other_vert(sk[i])
+                if o not in videno:
+                    videno.add(o); sk.append(o)
+            i += 1
+        zanke.append(sk)
+    n = 0
+    for sk in zanke:
+        if len(sk) < 5:
+            continue
+        c = sum((v.co for v in sk), Vector()) / len(sk)
+        nav = Vector()
+        rset = set(sk)
+        for v in sk:
+            for e in v.link_edges:
+                o = e.other_vert(v)
+                if o not in rset:
+                    nav += o.co - v.co
+        if nav.length < 1e-9:
+            continue
+        nav.normalize()
+        # zanka po vrsti (sosednji robovi)
+        red = [sk[0]]
+        while len(red) < len(sk):
+            nx = [e.other_vert(red[-1]) for e in vz[red[-1]] if e.other_vert(red[-1]) not in red[-2:]]
+            if not nx or nx[0] in red:
+                break
+            red.append(nx[0])
+        if len(red) < len(sk):
+            continue
+        # čep: ploščica v svetlini (0,8 × polmer, »glob« navznoter), obrnjena proti odprtini; SOLIDIFY (debelina) jo odebeli
+        # kot steno. Ne podaljšek roba: zavoj za 180° ob robu bi SOLIDIFY z enakomerno debelino raztegnil v igle.
+        nv = [bm.verts.new(c + (v.co - c) * 0.8 + nav * glob) for v in red]
+        f = bm.faces.new(nv)
+        if f.normal.dot(nav) > 0:
+            f.normal_flip()
+        n += 1
+    bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+    bm.to_mesh(me); bm.free(); me.update()
+    return n
+
+
+def mali_iz_mri(osnovni, mri, mm, lo, hi, tmp):
+    """Mali možgani iz segmentacije MRI istega osebka (scripts/atlas/mali-mozgani-mri.py → <osebek>-mali.npz) namesto
+    režnjičev Z-Anatomy. Preslikava kot skorja (RAS → Blender, škatla skorje MRI na škatlo skorje Z-Anatomy): mali možgani
+    sedijo pod zatilnim režnjem kot pri osebku. mali_mri.poravnava (0–1) doda delež premika, ki deblo MRI postavi na deblo
+    Z-Anatomy (sredina x; y in vrh z zgornjih 25 mm); 1,0 je mali možgane spustil 7 mm in pomaknil 9 mm naprej (vrzel pod
+    zatilnim režnjem), zato 0 – deblo Z-Anatomy se vseeno prilega (posnetek 2026-11-13). Vrne nove vrstice osnovni (brez
+    režnjičev Z-Anatomy) in fastigij (Blender, m)."""
+    import numpy as np
+    from drevesa import poenostavi
+    d = np.load(os.path.join(MRI, f"{mri['osebek']}-mali.npz"))
+    pre = lambda v: np.stack([-v[:, 0], -v[:, 1], v[:, 2]], 1) * 0.001
+    P = pre(np.concatenate([fs_povrsina(os.path.join(MRI, f"{mri['osebek']}-{h}.pial"))[0] for h in ("lh", "rh")]))
+    a, b = P.min(0), P.max(0); k = (np.array(hi) - np.array(lo)) / (b - a)
+    T = lambda v: (pre(v) - a) * k + np.array(lo)
+    D = T(d["deblo_v"])
+    Z = np.array([list(v.co) for r in osnovni if r[2] == "deblo" for v in r[1].vertices])
+    premik = np.zeros(3)
+    if len(Z):
+        zg = lambda X: X[X[:, 2] > X[:, 2].max() - 0.025]
+        premik = np.array([0.5 * (Z[:, 0].min() + Z[:, 0].max() - D[:, 0].min() - D[:, 0].max()),
+                           zg(Z)[:, 1].mean() - zg(D)[:, 1].mean(), Z[:, 2].max() - D[:, 2].max()]) * mm.get("poravnava", 1.0)
+    M = T(d["mali_v"]) + premik
+    F = T(d["fastigij"][None])[0] + premik
+    me = bpy.data.meshes.new("Cerebellum (MRI)"); me.from_pydata(M.tolist(), [], d["mali_f"].tolist())
+    me = poenostavi(me, mm.get("delez", 0.5), tmp)
+    ostane = re.compile(mm.get("ohrani", r"^$"))
+    stari = [r for r in osnovni if r[2] == "mali" and not ostane.search(r[0])]
+    print(f"[organi] mali možgani iz MRI ({mri['osebek']}): {tris(me)} trikotnikov namesto {len(stari)} režnjičev Z-Anatomy, "
+          f"premik na deblo {[round(float(x) * 1000, 1) for x in premik]} mm, fastigij {[round(float(x), 4) for x in F]}")
+    return [r for r in osnovni if r not in stari] + [["Cerebellum (MRI)", me, "mali", "mali", "Cerebellum (MRI)"]], F
+
+
 def skorja_iz_mri(mapa, m, lo, hi):
     """Vrstice osnovni za pialno skorjo obeh polobel, poravnano na škatlo [lo, hi] (Blender, metri)."""
     import numpy as np
@@ -650,8 +755,44 @@ def skorja_iz_mri(mapa, m, lo, hi):
         d = (v[:, 0] - sred) * zn
         m0, kk = 0.0004, 0.0005
         d = m0 + kk * np.logaddexp(0.0, (d - m0) / kk)
-        v[:, 0] = sred + zn * d
         dl = np.array([del_za.get(x) for x in lab], dtype=object)
+        # medialna stena 0,5 mm globlje od skorje: ob sredini sta obe stisnjeni na isto ravnino in sta se v prerezu
+        # prekrivali (raztrgane lise na orbitalni ploskvi)
+        d = d + 0.0005 * (dl == None)
+        v[:, 0] = sred + zn * d
+        # Neoznačena oglišča (aparc »unknown«): medialna stena je njihov največji povezani kos. Manjši otoki (npr. na
+        # orbitalni ploskvi čelnega režnja) so skorja brez oznake – dobijo oznako sosednjega režnja, sicer bi se v prerezu
+        # risali kot medialna stena (mat sivorjave lise sredi skorje).
+        brez = np.flatnonzero(dl == None)
+        if len(brez):
+            jeb = np.zeros(len(v), bool); jeb[brez] = True
+            rb = np.concatenate([t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]])
+            sos = {}
+            for x, y in rb[jeb[rb[:, 0]] & jeb[rb[:, 1]]].tolist():
+                sos.setdefault(x, []).append(y); sos.setdefault(y, []).append(x)
+            kosi_b = []; videno = set()
+            for x in brez.tolist():
+                if x in videno:
+                    continue
+                kos_b = [x]; videno.add(x); i_ = 0
+                while i_ < len(kos_b):
+                    for y in sos.get(kos_b[i_], ()):
+                        if y not in videno:
+                            videno.add(y); kos_b.append(y)
+                    i_ += 1
+                kosi_b.append(kos_b)
+            kosi_b.sort(key=len, reverse=True)
+            otoki = np.array([x for kb in kosi_b[1:] for x in kb], dtype=np.int64)
+            for _ in range(200):
+                if not len(otoki):
+                    break
+                jo = np.zeros(len(v), bool); jo[otoki] = True
+                m_ = jo[rb[:, 0]] & (dl[rb[:, 1]] != None) & ~jo[rb[:, 1]]
+                if not m_.any():
+                    break
+                dl[rb[m_, 0]] = dl[rb[m_, 1]]
+                otoki = otoki[dl[otoki] == None]
+            print(f"[organi] skorja MRI {stran}: neoznačenih {len(brez)}, medialna stena {len(kosi_b[0])}, otokov {len(kosi_b) - 1}")
         # globina brazde 0 (vrh vijuge) … 1 (dno brazde): sg za senco okolice, gl (širši razpon) za barvo v pregledovalniku
         sg = np.clip((sulc + 4.0) / 14.0, 0.0, 1.0)
         gl = np.clip((sulc + 9.0) / 22.0, 0.0, 1.0)
@@ -829,25 +970,42 @@ def ledvicni_meh(osnovni, cfg, tmp):
     kos = {}
     for v in ur.vertices:
         kos.setdefault(int(v.co.z / 0.0015), []).append(v.co)
-    sred_k = {i: sum(t, Vector()) / len(t) for i, t in kos.items()}
-    pol_k = {i: sum(((c - sred_k[i]).xy).length for c in t) / len(t) for i, t in kos.items()}
     kl = sorted(kos)
-    def ob(z):  # središče prereza pri višini z (povprečje sosednjih rezin) in polmer sečevoda
-        i = min(kl, key=lambda j: abs(j - z / 0.0015))
-        sos = [j for j in (i - 1, i, i + 1) if j in kos]
-        return sum((sred_k[j] for j in sos), Vector()) / len(sos), pol_sr
-    pol_sr = sorted(pol_k.values())[len(pol_k) // 2]  # ena mera za ves sečevod: poševno odrezan spodnji konec ima manjše povprečje
-    for v in ur.vertices:
-        c, r = ob(v.co.z)
-        w = min(1.0, max(0.0, (zr - v.co.z) / 0.014)); w = w * w * (3 - 2 * w)
-        f = 1 + (rt / max(r, 1e-6) - 1) * w
-        v.co.x = c.x + (v.co.x - c.x) * f; v.co.y = c.y + (v.co.y - c.y) * f
-    ur.update()
-    obroc = [v.co for v in ur.vertices if v.co.z > zr - 0.0005]
-    vrh = sum(obroc, Vector()) / len(obroc)
-    pod = [v.co for v in ur.vertices if zr - 0.007 < v.co.z < zr - 0.004]
-    vrh2 = sum(pod, Vector()) / len(pod) if pod else vrh - Vector((0, 0, 0.005))  # znotraj sečevoda: meh zamaši odrezan konec
-    ru = 1.2 * sum((c - vrh).length for c in obroc) / len(obroc)  # polmer krogle, da je površina meha ≈ zunanji polmer sečevoda
+    sred_k = {i: sum(kos[i], Vector()) / len(kos[i]) for i in kl}
+    for _ in range(3):  # zglajena os
+        sred_k = {i: sum((sred_k[j] for j in (i - 1, i, i + 1) if j in sred_k), Vector()) / sum(1 for j in (i - 1, i, i + 1) if j in sred_k) for i in kl}
+    def os_pri(z):  # točka osi in smer osi pri višini z
+        i = min(kl, key=lambda j: abs(j + 0.5 - z / 0.0015))
+        a, b = sred_k[max(kl[0], i - 2)] if max(kl[0], i - 2) in sred_k else sred_k[i], sred_k[min(kl[-1], i + 2)] if min(kl[-1], i + 2) in sred_k else sred_k[i]
+        t = (b - a).normalized() if (b - a).length > 1e-9 else Vector((0, 0, 1))
+        return sred_k[i], t
+    def precno(co):
+        c, t = os_pri(co.z); d = co - c
+        return c, t, d - t * d.dot(t)
+    pol_sr = sorted(precno(v.co)[2].length for v in ur.vertices)[len(ur.vertices) // 2]  # ena mera za ves sečevod
+    # Sečevod na novo kot votla cev s steno 0,9 mm (drevesa.cev) po zglajeni osi Z-Anatomy: Z-Anatomy ga je spodaj odrezala
+    # poševno z zarezo (odprt rob, ki ga holes_fill ni zaprl), stena iz SOLIDIFY pa je v prerezu dala kavelj. Prosti konec je
+    # raven prerez (obroč stene in svetlina, kot pri žilah); vrh ob mehu je lijak (polmer pol poti do mere Z-Anatomy).
+    from drevesa import cev, zgladi
+    zmin = min(v.co.z for v in ur.vertices) + 0.001
+    P, R = [], []
+    n_ = max(8, int((zr - zmin) / 0.003))
+    for i in range(n_ + 1):
+        z = zmin + (zr - zmin) * i / n_
+        c, _t = os_pri(z)
+        w = min(1.0, max(0.0, (zr - z) / 0.014)); w = 0.5 + 0.5 * w * w * (3 - 2 * w)
+        P.append(Vector((c.x, c.y, z))); R.append(pol_sr + (rt - pol_sr) * w)
+    P, R = zgladi(P, R, 6)  # os brez pregibov (rezine po 1,5 mm so pustile kolena)
+    P[-1] = P[-1] + (P[-1] - P[-2]).normalized() * 0.0005  # vrh tik nad ravnino zr (meh ga pokrije)
+    bm = bmesh.new(); cev(bm, P, R, 20, stena=cfg.get("secevod_stena", 0.0009))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(ur); bm.free(); ur.update()
+    for q in ur.polygons:
+        q.use_smooth = True
+    print(f"[organi] sečevod: votla cev {len(P)} obročev, polmer {round(rt * 1000, 2)}–{round(R[-1] * 1000, 2)} mm, dolžina {round((zr - zmin) * 1000)} mm")
+    vrh = P[-1]
+    vrh2 = P[-3] if len(P) > 3 else vrh - Vector((0, 0, 0.005))  # znotraj sečevoda: meh zamaši vrh cevi
+    ru = 0.98 * R[-1]  # meh tik znotraj vrha sečevoda: brez ovratnika na stiku
     zg = [p for p in pap if p.z >= C.z] or pap; sp = [p for p in pap if p.z < C.z] or pap
     M = {id(g): C.lerp(sum(g, Vector()) / len(g), 0.5) for g in (zg, sp)}
     k = cfg.get("meh_merilo", 1.0)
@@ -1093,6 +1251,10 @@ def izvozi(organ, cfg):
         hi = [max(vv.co[i] for r in zam for vv in r[1].vertices) for i in range(3)]
         osnovni = [r for r in osnovni if r[2] != mri.get("zamenjaj", "skorja")] + skorja_iz_mri(MRI, mri, lo, hi)
         print(f"[organi] {organ}: skorja iz MRI ({mri['osebek']}), zamenjanih {len(zam)} objektov")
+        mm = cfg.get("mali_mri")
+        if mm and os.path.isfile(os.path.join(MRI, f"{mri['osebek']}-mali.npz")):
+            osnovni, F = mali_iz_mri(osnovni, mri, mm, lo, hi, tmp)
+            cfg["_fastigij"] = [float(x) for x in F]
     hra = cfg.get("hra")
     if hra and HRA:
         osnovni = [r for r in osnovni if not re.search(hra["zamenjaj"], r[0])] + zrklo_hra(os.path.join(HRA, hra["datoteka"]), hra, osnovni, tmp)
@@ -1134,6 +1296,7 @@ def izvozi(organ, cfg):
         for row in osnovni: row.append(0)
         odlozi_stanje(os.environ["ORGANI_ODLOZI_PRED"], osnovni, cfg); return
     # lastne strukture (CC BY-SA, naše delo): ledvični meh s čašicami, veje jetrnih žil v jetrih
+    cfg["_ct_mapa"] = CT  # mapa s podatki CT (pljučni režnji)
     for ime_f in cfg.get("dodaj", []):
         osnovni += globals()[ime_f](osnovni, cfg, tmp)
     if cfg.get("izpusti_po"):
@@ -1200,6 +1363,13 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
                 nor = [v.normal.copy() for v in row[1].vertices]
                 for v, nn in zip(row[1].vertices, nor):
                     v.co -= nn * d
+    # slepiKonci: odprt konec cevi (prerezana žila ob hilusu) dobi slepo svetlino globine »glob«: ploščica v svetlini. Gledano vzdolž osi se tako ne vidi skozi cev (obroč v zraku), ampak prerezana žila s temno svetlino.
+    for rx, glob in cfg.get("slepiKonci", []):
+        for row in osnovni:
+            if re.search(rx, row[4]):
+                n_ = slepi_konci(row[1], glob)
+                if n_:
+                    print(f"[organi] {row[0]}: slepih koncev {n_}")
     # debelina: stena cevi (bronhiji, žile iz krivulj) navznoter, da je v prerezu obroč s svetlino in ne poln valj
     for rx, d in cfg.get("debelina", []):
         for row in osnovni:
@@ -1290,6 +1460,13 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
                 mod = no.modifiers.new("dec", "DECIMATE"); mod.ratio = max(rat, 150 / n); mod.use_collapse_triangulate = True
                 m2 = bpy.data.meshes.new_from_object(no.evaluated_get(bpy.context.evaluated_depsgraph_get()))
                 no.modifiers.clear(); no.data = m2
+            # telefonSkrci: (regex imena, metri): po poenostavitvi za telefon se zunanja oglišča (normala stran od težišča)
+            # umaknejo navznoter. Skorja ledvice tik pod ovojnico po poenostavitvi sicer ponekod pogleda skozi (črne pike).
+            for rx, dd in (cfg.get("telefonSkrci", []) if i == 1 else []):
+                if re.search(rx, ime):
+                    tz = sum((v.co for v in no.data.vertices), Vector()) / max(len(no.data.vertices), 1)
+                    for v, nn in [(v, v.normal.copy()) for v in no.data.vertices]:
+                        if (v.co - tz).dot(nn) > 0: v.co -= nn * dd
             for p in no.data.polygons:
                 p.use_smooth = True
             uveljavi_normale(no.data)  # režnji jeter: normale cele površine (atribut »norm_lastna«), brez šiva na meji
@@ -1342,6 +1519,9 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
         if n.z > 0:
             n = -n
         porocilo["ravnina4"] = {"n": [round(x, 4) for x in n], "d": round(-n.dot(sum(g, Vector()) / 3), 4)}
+    if cfg.get("_fastigij"):  # mali možgani iz MRI: središče lističev (tkiva.mali.listiSredisce) v glTF, središče organa 0
+        q = cfg["_fastigij"]
+        porocilo["fastigij"] = [round(q[0] - ctr.x, 5), round(q[2] - ctr.z, 5), round(-q[1] + ctr.y, 5)]
     if cfg.get("_volumen"):  # prostorska tekstura reza (srce_ct.volumen): lo v koordinatah glTF s središčem organa 0
         vm = dict(cfg["_volumen"]); c_ = (ctr.x, ctr.z, -ctr.y)
         vm["lo"] = [round(vm["lo"][k] - c_[k], 5) for k in range(3)]

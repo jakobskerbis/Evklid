@@ -126,6 +126,19 @@ def _pocisti(me, zlij=1.2e-5):
     if rob:
         bmesh.ops.holes_fill(bm, edges=rob, sides=0)
         plavuti()
+    # ostanek: rob s tremi ploskvami ali luknja, ki je holes_fill ne zapre (drobci < 1 mm ob stiku treh režnjev). Ploskve
+    # ob takem robu odpadejo, nastala luknja (nekaj trikotnikov) se zapre na novo.
+    for _ in range(4):
+        slabi = [e for e in bm.edges if len(e.link_faces) != 2]
+        if not slabi:
+            break
+        bmesh.ops.delete(bm, geom=list({f for e in slabi for v in e.verts for f in v.link_faces}), context="FACES")
+        bmesh.ops.delete(bm, geom=[e for e in bm.edges if not e.link_faces], context="EDGES")
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_edges], context="VERTS")
+        rob = [e for e in bm.edges if len(e.link_faces) == 1]
+        if rob:
+            bmesh.ops.holes_fill(bm, edges=rob, sides=0)
+        plavuti()
     bmesh.ops.triangulate(bm, faces=bm.faces)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     odprtih = sum(1 for e in bm.edges if len(e.link_faces) != 2)
@@ -237,7 +250,10 @@ def _rezi_reznje(L, seg, tmp, porta):
         v.co += nn * 0.0025
     rep = _bool(ost, rp, "INTERSECT", tmp); ost = _bool(ost, rp, "DIFFERENCE", tmp)
     # brez ravnine srpaste vezi: levi reženj je že odrezan, sovpadajoči ploskvi bi Boolovo operacijo pokvarili (luknje)
-    kv_pp = _polprostor([(n2, p2), (n3, porta)], sred)
+    # kvadratni reženj je samo kos pred porto: brez tretje ravnine (čelna, 4 mm za porto) je klin zajel tudi
+    # ločen kos za porto ob repastem režnju (10 × 20 × 63 mm; v učnih barvah kvadratni sredi desnega)
+    kv_pp = _polprostor([(n2, p2), (n3, porta), (Vector((0, 1, 0)), porta + Vector((0, 0.004, 0)))], sred)
+    print(f"[organi] jetra: porta {[round(x, 4) for x in porta]}, središče {[round(x, 4) for x in sred]}")
     kv = _bool(ost, kv_pp, "INTERSECT", tmp); desni = _bool(ost, kv_pp, "DIFFERENCE", tmp)
     for me in (levi, rep, kv, desni):
         _pocisti(me)
@@ -297,7 +313,7 @@ def _vez(L, n1, p1, telefon=False):
         d = d - n1 * d.dot(n1)
         return d.normalized()
     smer_o = v_ravnini(Vector((0, -0.5, -0.86)))  # obla vez: od zareze na spodnjem robu naprej in navzdol proti popku
-    h = 0.00045
+    h = 0.00028  # tanka dvojna guba potrebušnice; prosti rob se stanjša (mehak rob)
     bm = bmesh.new(); vrste = []
     for p, u in vz:
         loc, nor, fi, d = bvh.find_nearest(p)
@@ -305,10 +321,10 @@ def _vez(L, n1, p1, telefon=False):
         f = min(1.0, u / 0.3); f = f * f * (3 - 2 * f)
         d_ = (smer_o * (1 - f) + (o * 0.75 + Vector((0, -0.66, 0))) * f)
         d_ = v_ravnini(d_)
-        w = (0.004 + 0.020 * (1 - u) ** 1.3) * min(1.0, (1.02 - u) / 0.12)
+        w = (0.007 + 0.021 * (1 - u) ** 1.3) * min(1.0, (1.02 - u) / 0.12)
         a = p - o * 0.0012; q = a + d_ * w
         m = 3 if telefon else 5
-        vrste.append([[bm.verts.new(a.lerp(q, j / m) + n1 * zn * h * (1 if j < m else 0.45)) for j in range(m + 1)] for zn in (1, -1)])
+        vrste.append([[bm.verts.new(a.lerp(q, j / m) + n1 * zn * h * (1 - 0.75 * (j / m) ** 2)) for j in range(m + 1)] for zn in (1, -1)])
     for (a1, a2), (b1, b2) in zip(vrste, vrste[1:]):
         for j in range(len(a1) - 1):
             bm.faces.new([a1[j], a1[j + 1], b1[j + 1], b1[j]])
@@ -322,7 +338,7 @@ def _vez(L, n1, p1, telefon=False):
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     srp = bpy.data.meshes.new("srpasta"); bm.to_mesh(srp); bm.free()
     p0 = vz[0][0]
-    w0 = 0.004 + 0.020
+    w0 = 0.007 + 0.021
     P = [p0 - smer_o * 0.006 + Vector((0, 0.004, 0.003)), p0, p0 + smer_o * w0 * 0.5, p0 + smer_o * (w0 + 0.002) + Vector((0, -0.002, 0))]
     P, R = D.zgladi([P[0].lerp(P[1], i / 3) for i in range(3)] + [P[1].lerp(P[2], i / 4) for i in range(4)] + [P[2].lerp(P[3], i / 6) for i in range(7)], [0.0022] * 14, 1)
     bm = bmesh.new(); D.cev(bm, P, R, 6 if telefon else 12, kupola=False)
@@ -397,7 +413,7 @@ def jetra_deli(osnovni, cfg, tmp):
         if t_:
             tel["Falciform ligament (lastno)"] = srp; tel["Round ligament of liver (lastno)"] = obla
         else:
-            izhod.append(["Falciform ligament (lastno)", srp, "vez", "srpasta-vez", "Falciform ligament (lastno) / Evklid"])
+            izhod.append(["Falciform ligament (lastno)", srp, "guba", "srpasta-vez", "Falciform ligament (lastno) / Evklid"])
             izhod.append(["Round ligament of liver (lastno)", obla, "vez", "obla-vez", "Round ligament of liver (lastno) / Evklid"])
     # ---- spodnja votla vena
     notr = D.Notranjost([L])

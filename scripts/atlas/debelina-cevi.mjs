@@ -12,15 +12,10 @@ import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import * as G from "./zile-mreza.mjs";
 
 const MODELI = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public", "3d", "modeli");
-const ledvica = [
-  // raven: prosti konec (nasproti »prehod.pri«) je bil poševno odrezan z zarezo; zadnjih »raven« metrov se poravna v ravnino
-  [/^Ureter\.l$/, { polmer: 0.0021, prehod: { pri: [0.0, 0.006, -0.003], dolzina: 0.014 }, raven: 0.005 }],
-  // ledvični veni in arteriji da pravo mero že izvoz (drevesa.py, ledvicne_zile; 2026-11-12)
-];
+// ledvica (2026-11-13): sečevod dobi pravo mero in raven konec že pri izvozu (izvozi-organe.py, ledvicni_meh), ledvični
+// žili v drevesa.py – tanjšanje po peki je na mehu pustilo črno liso (del, ki je bil med peko skrit v debelem sečevodu)
 const oko = [[/^Optic nerve \(II\)\.l$/, { polmer: 0.00175 }]];
 export const NACRT = {
-  "organi-3d/ledvica.glb": ledvica,
-  "organi-3d/ledvica-telefon.glb": ledvica,
   "organi-3d/oko.glb": oko,
   "organi-3d/oko-telefon.glb": oko,
 };
