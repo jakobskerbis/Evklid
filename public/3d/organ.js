@@ -457,7 +457,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.kita ? `-ki${JSON.stringify(t.kita)}` : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
+  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}${t.listiKot ? `k${t.listiKot}` : ""}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.kita ? `-ki${JSON.stringify(t.kita)}` : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
   return ohraniSencilnik(m);
 }
 
@@ -622,7 +622,12 @@ function listiGLSL(t, merilo, izh) {
   const per = (t.listiRazmik ?? 0.0025) * merilo;
   return `{
           vec3 lC = vec3( ${fl(+c[0].toFixed(5))}, ${fl(+c[1].toFixed(5))}, ${fl(+c[2].toFixed(5))} );
-          float lF = length( ( vOrgPos - lC ) * vec3( 0.45, 1.0, 0.4 ) ) / ${per.toExponential(3)} + 0.35 * orgSum( vOrgPos * 18.0 );
+          ${
+            t.listiKot
+              ? // listiKot [m]: lističi kot pahljača okoli prečne osi skozi središče (fastigij): na zgornji, zadnji in spodnji ploskvi tečejo prečno (kot prave fisure), razmik listiRazmik na polmeru listiKot
+                `float lF = atan( vOrgPos.y - lC.y, -( vOrgPos.z - lC.z ) ) * ${((t.listiKot * merilo) / per).toExponential(3)} + 0.3 * orgSum( vOrgPos * 18.0 ) + 0.9 * orgSum( vOrgPos * 2.2 );`
+              : `float lF = length( ( vOrgPos - lC ) * vec3( 0.45, 1.0, 0.4 ) ) / ${per.toExponential(3)} + 0.35 * orgSum( vOrgPos * 18.0 );`
+          }
           float lW = fwidth( lF );
           float lD = abs( fract( lF ) - 0.5 ) * 2.0; // 0 sredi lističa, 1 v žlebu
           orgListi = smoothstep( 0.68 - lW, 0.98 + lW, lD ) * ( 1.0 - smoothstep( 0.25, 0.5, lW ) );
@@ -808,8 +813,8 @@ ${
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        float orgSl = clamp( 2.0 - length( fwidth( orgQ ) ) * 240.0, 0.0, 1.0 ); // drobni šum (60) zbledi, ko je celica pod ~3 px
-        diffuseColor.rgb *= 1.0 - ${fl(0.12 * sumMoc)} + ${fl(0.24 * sumMoc)} * mix( 0.5, orgSum( orgQ * 60.0 ), orgSl ) * orgSum( orgQ * 13.0 );
+        float orgDr = clamp( 2.0 - length( fwidth( orgQ ) ) * 240.0, 0.0, 1.0 ); // drobni šum (60) zbledi, ko je celica pod ~3 px
+        diffuseColor.rgb *= 1.0 - ${fl(0.12 * sumMoc)} + ${fl(0.24 * sumMoc)} * mix( 0.5, orgSum( orgQ * 60.0 ), orgDr ) * orgSum( orgQ * 13.0 );
         diffuseColor.rgb *= 1.0 - ${fl(0.09 * sumMoc)} * ( orgSum( orgQ * 7.0 ) - 0.5 ) * 2.0; // večje lise (prekrvavitev)
         ${t.rezVlakna && !vol ? "diffuseColor.rgb *= 0.9 + 0.2 * orgH;" : ""}${
           t.rezSnopi // krog 11: vzdolžno prerezan živec – snopiči vlaken vzdolž osi (rezSnopi { os, sirina (m), moc })

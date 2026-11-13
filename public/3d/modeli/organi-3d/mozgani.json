@@ -60,26 +60,25 @@
    "aoExp": 2.6,
    "rez": "#cf958a",
    "vrstni": 2,
-   "listi": 0.85,
+   "listi": 0.6,
    "listiSredisce": [
     0,
-    -0.03854,
+    -0.03855,
     -0.02108
    ],
-   "listiRazmik": 0.0015,
+   "listiRazmik": 0.0017,
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.7,
    "rezSum": 0.5,
    "rezPresek": {
-    "vrsta": 0,
-    "ovoj": true
+    "vrsta": 0
    },
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
      -0.01569,
-     -0.07435
+     -0.07436
     ],
     "mera": [
      0.07069,
@@ -87,7 +86,8 @@
     ],
     "izrez": true,
     "visina": 0.5
-   }
+   },
+   "listiKot": 0.03
   },
   "deblo": {
    "barva": "#e3c4b4",
@@ -112,14 +112,13 @@
    "aoTekstura": 0.7,
    "rezSum": 0.3,
    "rezPresek": {
-    "vrsta": 0,
-    "ovoj": true
+    "vrsta": 0
    },
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
      -0.01569,
-     -0.07435
+     -0.07436
     ],
     "mera": [
      0.07069,

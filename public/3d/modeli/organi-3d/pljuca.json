@@ -221,6 +221,33 @@
     "rob": 0.0003,
     "robBarva": "#e39a90"
    }
+  },
+  "hrustanec": {
+   "hrap": 0.42,
+   "lak": 0.5,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#f1ead8",
+   "rez": "#efe6d2",
+   "sijajBarva": "#ffffff",
+   "rob": 0.15,
+   "robBarva": "#fff4e0",
+   "relief": 0.2,
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#3b2622",
+    "rob": 0.0003,
+    "robBarva": "#f4eadb",
+    "stena": 0.0018
+   }
   }
  },
  "deli": [

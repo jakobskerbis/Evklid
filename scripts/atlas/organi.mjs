@@ -90,6 +90,8 @@ for (const organ of organi) {
   // srce (srce_ct.py): štiriprostorska ravnina iz CT in prostorska tekstura reza (smer vlaken, maščoba) ob GLB
   // »rocno«: ravnina, nastavljena ročno v JSON (srce: rez skozi aortni koren), ostane
   if (izvoz.ravnina4 && j.prerez?.ravnine?.length && !j.prerez.ravnine[0].rocno) j.prerez.ravnine[0] = izvoz.ravnina4;
+  // pljuča: čelna ravnina prereza skozi karino sapnika (bronhiji in žile ob hilusu v ravnini)
+  if (izvoz.karina && j.prerez?.ravnine?.length && !j.prerez.ravnine[0].rocno) j.prerez.ravnine[0] = { n: [0, 0, -1], d: +(izvoz.karina[2] + (j.prerez.karinaOdmik || 0)).toFixed(4) };
   // mali možgani iz MRI: lističi (senčilnik) okoli fastigija
   if (izvoz.fastigij && j.tkiva?.mali) j.tkiva.mali.listiSredisce = izvoz.fastigij;
   if (izvoz.volumen) {
