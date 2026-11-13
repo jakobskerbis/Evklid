@@ -1,6 +1,8 @@
 // Izris besedila z Markdownom in formulami (inštruktor, razlage, naloge, lekcije, kartice).
 // Knjižnice (marked, KaTeX, DOMPurify) so v brskalniku globalne; testi jih podajo sami.
 
+import { oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabela.js";
+
 const lib = (name) => globalThis[name];
 
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
@@ -61,7 +63,10 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       const inner = centerNumberColumns(body).replace(/@@MATH(\d+)@@/g, (m, i) =>
         math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].ctx) : m,
       );
-      return `<div class="md-table-wrap"><table class="md-table">${inner}</table></div>`;
+      const vod = vodoravnaTabela(inner);
+      if (vod) return vod;
+      const oznacena = oznaciStolpce(inner);
+      return `<div class="md-table-wrap"><table class="md-table${oznacena ? " md-stolpci" : ""}">${oznacena || inner}</table></div>`;
     });
     html = subHeadings(html);
     // Ločilo takoj za vrstično formulo (». , ; : ! ?«) ostane z njo v isti vrstici: pika se ne prelomi sama v novo vrstico

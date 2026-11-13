@@ -654,6 +654,21 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 [dir="rtl"] .sc-acts, [dir="rtl"] .sc-err { justify-content: flex-start; }
 [dir="rtl"] .sc-const { text-align: right; }
 
+/* ---------- tabele s tremi ali več stolpci v listu formul (Telo | Površina | Prostornina) ----------
+   Na telefonu se vrstica zloži v kartico: prvi stolpec je naslov, pod njim vsaka vrednost z imenom svojega stolpca
+   (data-label, public/vodoravna-tabela.js), da se tabela nikoli ne pomika vstran. */
+.fm-sec .md-table-wrap:has(> .md-stolpci) { container-type: inline-size; }
+@container (max-width: 560px) {
+  .fm-sec table.md-stolpci, .fm-sec .md-stolpci > tbody, .fm-sec .md-stolpci > tbody > tr, .fm-sec .md-stolpci > tbody > tr > td { display: block; }
+  .fm-sec table.md-stolpci { width: 100%; }
+  .fm-sec .md-stolpci > thead { display: none; }
+  .fm-sec .md-stolpci > tbody > tr + tr { border-top: 1px solid var(--border); }
+  .fm-sec .md-stolpci > tbody > tr > td { border: 0; padding: 6px 12px; background: none; text-align: start; }
+  .fm-sec .md-stolpci > tbody > tr > td:first-child { background: var(--surface-2); font-weight: 800; }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row > td { background: none; padding: 4px 0 12px; }
+  .fm-sec .md-stolpci td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+}
+
 /* ---------- interaktivne skice v karticah formul (public/skice/) ---------- */
 /* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */
 .fm-item.has-skica { grid-template-columns: minmax(0, 1fr); }
