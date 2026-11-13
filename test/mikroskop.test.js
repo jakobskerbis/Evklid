@@ -10,7 +10,7 @@ import {
 } from "../public/mikroskop/optika.js";
 import { BARVANJA, matrikaBarvil } from "../public/mikroskop/barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "../public/mikroskop/preparati/index.js";
-import { preparatAtlasa, preparatModela, MODELI_Z_MIKROSKOPOM } from "../public/mikroskop/mapa.js";
+import { preparatAtlasa, preparatModela, pogledDela, MODELI_Z_MIKROSKOPOM } from "../public/mikroskop/mapa.js";
 import { fragmentPreparata } from "../public/mikroskop/glsl.js";
 import { povecava, izracunajPogled, ZACETNO } from "../public/mikroskop/pogled.js";
 import sl from "../public/i18n/sl.js";
@@ -143,6 +143,62 @@ test("mikroskop: vsak model celice in organa ter vsak del iz preslikave obstaja"
   assert.equal(preparatModela("organ-srce", "aorta"), "arterija");
   assert.equal(preparatModela("organ-srce", "levi-prekat"), "srcna-misica");
   assert.equal(preparatModela("ne-obstaja"), null);
+});
+
+// j, 13. 11. 2026: »Gumb poglej pod mikroskopom pokaže za jedrce in osrednjo vakuolo isto stvar … Naj bo prilagojeno
+// vsakemu posameznemu organelu«
+test("mikroskop: vsak del celice odpre svoj pogled (preparat, povečava, snov pod kazalcem)", () => {
+  const pogled = (m, d) => pogledDela(m, d);
+  const r = (d) => pogled("celica-rastlinska", d);
+  assert.deepEqual(r("jedrce"), { p: "cebula", m: 6000, snov: [28] });
+  assert.deepEqual(r("vakuola"), { p: "cebula", m: 400, snov: [12] });
+  assert.equal(r("kloroplast").p, "list");
+  assert.notDeepEqual(r("jedrce"), r("vakuola"));
+  assert.equal(pogled("celica-zivalska", "mitohondrij").snov[0], 20);
+  assert.equal(pogled("celica-zivalska", "golgi").snov[0], 29);
+  assert.equal(pogled("celica-eritrocit", "hemoglobin").p, "kri");
+  assert.equal(pogled("virus-hiv", "rnk").snov[0], 31);
+  // vsak pogled ima obstoječ preparat in povečavo v obsegu mikroskopa; tudi deli brez posebne snovi dobijo pogled
+  for (const m of MODELI_Z_MIKROSKOPOM.filter((x) => /^(celica|virus)/.test(x))) {
+    for (const d of ["jedro", "jedrce", "mitohondrij", "membrana", "citoplazma", "ribosomi", "neznan-del"]) {
+      const v = pogled(m, d);
+      assert.ok(IDS.has(v.p), `${m}/${d} → ${v.p}`);
+      assert.ok(v.m >= 40 && v.m <= 5e7 && v.snov?.length, `${m}/${d}: ${JSON.stringify(v)}`);
+    }
+  }
+  // deli organov iz GLB ostanejo pri svojem preparatu
+  assert.deepEqual(pogled("organ-srce", "aorta"), { p: "arterija" });
+});
+
+// Pregled PR #643: rastline, bakterije, kvasovke in praživali nikoli ne skočijo v človeško tkivo, deli organov ostanejo
+// pri organu; preverjeno na vseh pravih delih 3D celic in procesov (public/3d/modeli/celice in procesi).
+test("mikroskop: pogled dela ostane v isti skupini živih bitij", () => {
+  const RASTLINSKI = new Set(["cebula", "list", "reza", "koren", "steblo"]);
+  const MIKROBNI = new Set(["bakterije", "kvasovke", "kapljica"]);
+  let preverjenih = 0;
+  for (const mapa of ["celice", "procesi"]) {
+    const indeks = fs.readFileSync(`public/3d/modeli/${mapa}/index.js`, "utf8");
+    for (const [, id, pot] of indeks.matchAll(/id: "([a-z0-9-]+)", pot: "\.\/([a-z0-9-]+\.js)"/g)) {
+      const osnova = pogledDela(id)?.p;
+      if (!osnova) continue;
+      const vir = fs.readFileSync(`public/3d/modeli/${mapa}/${pot}`, "utf8");
+      const vzorec = mapa === "celice" ? /del\("([a-z0-9-]+)"/g : /\bid: "([a-z0-9-]+)"/g; // procesi: deli kot { id: "…" }
+      for (const [, del] of vir.matchAll(vzorec)) {
+        if (del === id) continue;
+        const v = pogledDela(id, del);
+        assert.ok(IDS.has(v.p) && v.m >= 40 && v.m <= 5e7, `${id}/${del}: ${JSON.stringify(v)}`);
+        if (RASTLINSKI.has(osnova)) assert.ok(RASTLINSKI.has(v.p), `${id}/${del} → ${v.p}`);
+        if (MIKROBNI.has(osnova)) assert.equal(v.p, osnova, `${id}/${del} → ${v.p}`);
+        preverjenih++;
+      }
+    }
+  }
+  assert.ok(preverjenih > 300, `preverjenih ${preverjenih}`);
+  assert.deepEqual(pogledDela("organ-mesicki", "mesicki"), { p: "pljuca" });
+  assert.deepEqual(pogledDela("celica-bakterijska", "membrana").p, "bakterije");
+  assert.deepEqual(pogledDela("mitoza", "kromosomi"), { p: "koren", m: 1000, snov: [27] });
+  assert.equal(pogledDela("celica-nevron", "nisslova-telesca").p, "skorja");
+  assert.equal(pogledDela("celica-skeletno-misicno-vlakno", "z-linija").snov[0], 7);
 });
 
 test("mikroskop: prevodi gumbov v vseh jezikih in vstop iz lekcij", () => {

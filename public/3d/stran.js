@@ -5,7 +5,7 @@ import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
-import { preparatModela } from "/mikroskop/mapa.js";
+import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 
 const glavni = document.getElementById("k3-glavni");
 const vAplikaciji = !!window.ReactNativeWebView;
@@ -44,8 +44,15 @@ function nazaj() {
 // Povezava z zbirke: oznako »prišel z zbirke« dobi nov vnos v zgodovini (pushState), da nazaj() ve, da sme nazaj.
 // Hashchange se ob pushState ne sproži, zato usmerimo sami. Srednji klik ali Ctrl ostane navaden (nov zavihek).
 // »Poglej z mikroskopom« (atlas, model, zbirka): nov vnos v zgodovini, da Nazaj vrne tja, od koder smo prišli.
+// p: id preparata ali { p, m, snov } (mapa.js pogledDela: povečava in snov, na katero naj kaže kazalec).
 function odpriMikroskop(p) {
-  history.pushState({ k3Iz: "mikroskop" }, "", `#mikroskop${p ? `?p=${encodeURIComponent(p)}` : ""}`);
+  const c = typeof p === "string" ? { p } : p || {};
+  const q = new URLSearchParams();
+  if (c.p) q.set("p", c.p);
+  if (c.m) q.set("m", String(c.m));
+  if (c.snov?.length) q.set("s", c.snov.join(","));
+  const qs = q.toString();
+  history.pushState({ k3Iz: "mikroskop" }, "", `#mikroskop${qs ? `?${qs}` : ""}`);
   usmeri();
 }
 
@@ -367,8 +374,16 @@ async function mikroskop(param, moj) {
   const { odpriMikroskop: odpri } = await import("/mikroskop/mikroskop.js");
   if (moj !== zaporedje) return null;
   // Menjava preparata v mikroskopu: naslov se zamenja (Nazaj gre še vedno tja, od koder smo prišli).
-  const obPreparatu = (p) => history.replaceState(history.state, "", `#mikroskop?p=${encodeURIComponent(p)}`);
-  const m = await odpri(host, { preparat: param.p || null, zapri: nazaj, obPreparatu });
+  // Prvi preparat je tisti iz naslova: naslov ostane cel (m in s), da ponovno nalaganje ali deljena povezava pokažeta isti del.
+  let prvi = param.p || null;
+  const obPreparatu = (p) => {
+    const isti = p === prvi;
+    prvi = null;
+    if (!isti) history.replaceState(history.state, "", `#mikroskop?p=${encodeURIComponent(p)}`);
+  };
+  const snov = String(param.s || "").split(",").filter(Boolean).map(Number).filter(Number.isFinite);
+  const cilj = +param.m > 0 || snov.length ? { m: +param.m > 0 ? +param.m : null, snov } : null;
+  const m = await odpri(host, { preparat: param.p || null, cilj, zapri: nazaj, obPreparatu });
   if (moj !== zaporedje) {
     m.unici();
     return null;
@@ -467,7 +482,7 @@ async function model(id, param, moj) {
     usmeri();
   };
   // »Poglej z mikroskopom« v oknu dela: preparat za del (organi iz GLB) ali za model.
-  const mikroskop = prepModela ? { za: (delId) => preparatModela(id, delId), odpri: odpriMikroskop } : null;
+  const mikroskop = prepModela ? { za: (delId) => pogledDela(id, delId), odpri: odpriMikroskop } : null;
   return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop });
 }
 
