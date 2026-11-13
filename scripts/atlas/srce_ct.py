@@ -942,22 +942,48 @@ def srce_ct(osnovni, cfg, tmp):
     V2, masca, tr = relief(V, F, oz, epi, dl, Lc, h, stran_p)
     V2, pomik = zapolni_zlebove(V, V2, F, oz, epi)
     masca = np.maximum(masca, np.clip((pomik - 0.45e-3) / 0.35e-3, 0, 1))  # zapolnjen žleb = maščoba
-    _vencne_cevi(vencne, _bvh(V2, F[epi]), cfg.setdefault("_telefon", {}))
+    # Pravo srce HH229 (srce_hh229.py) namesto sten CT: zvito na steno CT, zato vsi drugi deli ostanejo na mestu; venčne
+    # žile in strukture ob endokardu se prenesejo na njegovo površino
+    hh = None
+    if cfg.get("_hh229") and os.path.exists(cfg["_hh229"]):
+        import srce_hh229
+        hh = srce_hh229.stena(cfg["_hh229"], dict(V2=V2, F=F, epi=epi, dl=dl, masca=masca, L=Lc), Polje, log=lambda x: print(x, flush=True))
+        bvh_he = _bvh(hh["V"], hh["F"][hh["epi"]]); bvh_hn = _bvh(hh["V"], hh["F"][~hh["epi"]])
+        for r in nove:
+            if re.search(PRENOS[1][0], r[0] + " " + r[2]):  # ob endokardu: s stene CT na endokard HH229
+                X = _tocke(r[1]); X2, _ = prenesi_na_steno(X, X, bvh_endo, bvh_he, bvh_hn, "endo", 0.010)
+                _nastavi(r[1], X2)
+    _vencne_cevi(vencne, bvh_he if hh else _bvh(V2, F[epi]), cfg.setdefault("_telefon", {}))
     cfg["_ct"] = dict(P=P, C=C, T=T, Fv=Fv, premik=premik, V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, masca=masca, L=Lc)
+    if os.environ.get("ORGANI_CT_ODLOZI"):  # razvoj srce_hh229: stene CT (po reliefu), deli, maščoba in oslonilne točke
+        np.savez(os.environ["ORGANI_CT_ODLOZI"], V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, stran=stran_p, masca=masca, tr=tr,
+                 L=np.array([Lc[x] for x in sorted(Lc)]), Limena=np.array(sorted(Lc)))
     # votline po reliefu (odebeljena stena LV): zaklopke, papilarne mišice in trabekule na novem endokardu
     lvF = F[((dl == 0) | ((dl == 1) & (stran_p == -1))) & ~epi]
     rvF = F[((dl == 2) | ((dl == 1) & (stran_p == 1))) & ~epi]
     bvh_lv = _bvh(V2, lvF); bvh_rv = _bvh(V2, rvF); bvh_epi2 = _bvh(V2, F[epi])
     tel = cfg.setdefault("_telefon", {})
-    nove += zaklopke_ct(P, C, T, premik, Lc, bvh_lv, bvh_rv, tel)
-    nove += pljucne_vene_ct(P, C, T, premik, Lc, tel, _bvh(V2, F[epi]))
-    nove += trabekule_ct(V2, lvF, rvF, Lc, nove, tel, tmp)
+    if hh is None:  # HH229 ima svoje zaklopke, tetive, papilarne mišice in trabekule (del istega zaprtega volumna)
+        nove += zaklopke_ct(P, C, T, premik, Lc, bvh_lv, bvh_rv, tel)
+    nove += pljucne_vene_ct(P, C, T, premik, Lc, tel, bvh_he if hh else _bvh(V2, F[epi]))
+    if hh is None:
+        nove += trabekule_ct(V2, lvF, rvF, Lc, nove, tel, tmp)
+    else:
+        nove = [r for r in nove if not r[0].startswith("Septomarginal trabecula")]
     smr = next((r for r in nove if r[0].startswith("Septomarginal trabecula")), None)
     pap = next((r for r in nove if r[0].startswith("Anterior papillary muscle of right ventricle")), None)
     if smr is not None and pap is not None:
         smr[1] = moderatorni_trak(_tocke(smr[1]), pap[1], bvh_rv, smr)
         _brez_mascobe(smr[1])
     # en zaprt volumen: poenostavimo skupaj (računalnik, telefon), nato razdelimo po delih (brez razpok med deli)
+    if hh is not None:
+        nove += _deli_iz_unije(hh["V"], hh["F"], hh["dl"], hh["epi"], hh["masca"], dict(cfg, ct=dict(cilj=cfg.get("hh229_cilj", (150_000, 30_000)))), tmp,
+                               ohrani=hh["ohrani"], deli=srce_hh229.DELI)
+        cfg["_tocke4"] = [Vector(Lc["konica"]), Vector(Lc["mitralna"]), Vector(Lc["trikuspidalna"])]
+        if cfg.get("_out"):
+            zile_m = [r[1] for r in nove if r[2].startswith("vencna-")]
+            cfg["_volumen"] = volumen(cfg["_ct"], os.path.join(cfg["_out"], "srce-volumen.png"), zile=zile_m)
+        return nove
     vrstice = _deli_iz_unije(V2, F, dl, epi, masca, cfg, tmp, ohrani=np.clip(tr / 1.2e-3, 0, 1))
     nove += vrstice
     Vu, Fu = levo_uho(P, C, T, premik, bvh_epi, Lc["mitralna"])
@@ -987,10 +1013,11 @@ def srce_ct(osnovni, cfg, tmp):
     return nove
 
 
-def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None):
+def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None, deli=None):
     """Unija sten → mreža z materialnim indeksom po delu, poenostavljena za računalnik in telefon (cfg['ct']['cilj']),
     razdeljena na vrstice; telefonske mreže v cfg['_telefon']. Maske PEKA (R maščoba, G zunaj) so na ogliščih."""
     cilj = cfg.get("ct", {}).get("cilj", (110_000, 30_000))
+    DELI_CT = deli or globals()["DELI_CT"]
     me = _mesh("ct-unija", V, F)
     me.polygons.foreach_set("material_index", dl.astype(np.int32))
     for _ in range(len(DELI_CT)):

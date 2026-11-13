@@ -1553,6 +1553,9 @@ def nalozi_stanje(pot, cfg):
 
 def izvozi_naprej(organ, cfg, osnovni, tmp):
     cfg["_ct_mapa"] = CT; cfg["_out"] = out
+    # pravo srce HH229 (scripts/atlas/srce-hh229.py → <mapa ob Startup.blend>/hh229/hh229-v1.npz); ORGANI_HH229=0: stene CT
+    if CT and os.environ.get("ORGANI_HH229") != "0":
+        cfg["_hh229"] = os.path.join(os.path.dirname(CT), "hh229", "hh229-v1.npz")
     # pozno: koraki na celotnem stanju (srce_ct: stene iz CT, poravnava ostalih delov nanje, pokrov reza)
     for ime_f in cfg.get("pozno", []):
         osnovni = globals()[ime_f](osnovni, cfg, tmp)

@@ -1,0 +1,193 @@
+# Pravo srce HH229 (Visible Heart Laboratories, CC BY 4.0; priprava scripts/atlas/srce-hh229.py → hh229-v1.npz) kot stena
+# srca namesto povprečnega CT (srce_ct.py). HH229 je en zaprt volumen s pravimi trabekulami, glavničastimi mišicami,
+# zaklopkami s tetivami in papilarnimi mišicami. Postopek (metri, okvir Blenderja kot srce_ct):
+#  1. oslonilne točke HH229 (središča 4 zaklopk iz modela zaklopk, konica) → podobnostna preslikava na oslonilne točke CT;
+#  2. gladko polje odmikov (srce_ct.Polje) na steno CT (epikard na epikard, endokard na endokard, v obe smeri), da ostanejo
+#     vsi drugi deli (žile, venčne žile, prevodni sistem, pogledi, ravnina reza, prostorska tekstura reza) na svojem mestu;
+#  3. oznake: del stene (DELI_CT) in stran (epikard/endokard) vsake ploskve HH229 po najbližji ploskvi CT z ujemajočo
+#     normalo, zglajeno z večinskim filtrom; zaklopke po bližini modela zaklopk.
+import os, numpy as np
+from scipy.spatial import cKDTree
+
+def normale_oglisc(V, F):
+    n = np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]])
+    N = np.zeros_like(V)
+    for k in range(3): np.add.at(N, F[:, k], n)
+    return N / (np.linalg.norm(N, axis=1)[:, None] + 1e-20)
+
+def umeyama(A, B):
+    ma, mb = A.mean(0), B.mean(0); X, Y = A - ma, B - mb
+    U, S, Vt = np.linalg.svd(Y.T @ X / len(A)); D = np.eye(3)
+    if np.linalg.det(U) * np.linalg.det(Vt) < 0: D[2, 2] = -1
+    R = U @ D @ Vt; s = (S * np.diag(D)).sum() / X.var(0).sum()
+    return s, R, mb - s * R @ ma
+
+def oslonilne(h):
+    """Središča zaklopk (težišče oboda = oglišča blizu ravnine obroča ni znano → težišče vseh oglišč zaklopke brez tetiv:
+    mediana) in konica: najbolj oddaljena točka srca od ravnine zaklopk na strani težišča srca."""
+    L = {k: np.median(h["V_" + k], axis=0) for k in ("aortna", "pljucna", "av_a", "av_b")}
+    # AV zaklopki: obroč = oglišča na strani aortne zaklopke (tetive in papilarne mišice visijo proti konici)
+    c4 = np.mean(list(L.values()), axis=0); V = h["V"]
+    _, _, Vt = np.linalg.svd(np.array(list(L.values())) - c4); n = Vt[2]
+    if (V.mean(0) - c4) @ n < 0: n = -n
+    for k in ("av_a", "av_b"):
+        X = h["V_" + k]; g = (X - c4) @ n
+        L[k] = X[g < np.quantile(g, 0.35)].mean(0)
+    c4 = np.mean(list(L.values()), axis=0)
+    g = (V - c4) @ n
+    L["konica"] = V[g > np.quantile(g, 0.9995)].mean(0)
+    return L, n
+
+def podobnost(h, Lc):
+    """Podobnostna preslikava HH229 → CT; AV zaklopki (a, b) priredi mitralni/trikuspidalni z manjšim ostankom."""
+    Lh, _ = oslonilne(h); naj = None
+    for a, b in (("av_a", "av_b"), ("av_b", "av_a")):
+        pari = [("aortna", "aortna"), ("pljucna", "pljucna"), (a, "mitralna"), (b, "trikuspidalna"), ("konica", "konica")]
+        A = np.array([Lh[x] for x, _ in pari]); B = np.array([Lc[y] for _, y in pari])
+        s, R, t = umeyama(A, B); ost = np.linalg.norm(s * A @ R.T + t - B, axis=1)
+        if naj is None or ost.mean() < naj[0]: naj = (ost.mean(), s, R, t, a, b, ost)
+    return naj
+
+def ujemi(X, Nx, kd, Y, Ny, k=12, do=0.016, kot=0.2):
+    """Najbližja točka Y z ujemajočo normalo (n·n > kot) med k sosedi; vrne indeks ali -1."""
+    d, i = kd.query(X, k=k, distance_upper_bound=do)
+    ok = np.isfinite(d); ii = np.where(ok, i, 0)
+    dot = np.einsum("nkj,nj->nk", Ny[ii], Nx); ok &= dot > kot
+    prvi = np.argmax(ok, axis=1)
+    return np.where(ok.any(1), ii[np.arange(len(X)), prvi], -1)
+
+class Poravnava:
+    def __init__(self, h, ct, Polje, koraki=((0.020, 3), (0.014, 3), (0.010, 2)), vzorcev=30000, log=print):
+        Lc = ct["L"]
+        ost, self.s, self.R, self.t, a, b, o5 = podobnost(h, Lc)
+        self.mitralna, self.trikuspidalna = a, b
+        log(f"[organi] srce_hh229: podobnost merilo {self.s:.3f}, ostanek oslonilnih točk {ost * 1000:.1f} mm (največ {o5.max() * 1000:.1f}); mitralna = {a}")
+        Vc, Fc = ct["V2"], ct["F"]; Nc = normale_oglisc(Vc, Fc); kdc = cKDTree(Vc)
+        Vh, Fh = h["V"], h["F"]; Nh0 = normale_oglisc(Vh, Fh)
+        rng = np.random.default_rng(3)
+        ih = rng.choice(len(Vh), vzorcev, replace=False); ic = rng.choice(len(Vc), vzorcev // 2, replace=False)
+        lo, hi = Vc.min(0) - 0.07, Vc.max(0) + 0.07
+        self.polja = []
+        Lh, _ = oslonilne(h)
+        A = np.array([Lh[x] for x in ("aortna", "pljucna", a, b, "konica")]); B = np.array([Lc[y] for y in ("aortna", "pljucna", "mitralna", "trikuspidalna", "konica")])
+        for sigma, krat in koraki:
+            for _ in range(krat):
+                Xh = self(Vh[ih]); Nx = Nh0[ih] @ self.R.T
+                j = ujemi(Xh, Nx, kdc, Vc, Nc); ok = j >= 0
+                X = [Xh[ok]]; D = [Vc[j[ok]] - Xh[ok]]; W = [np.ones(ok.sum())]
+                # obratno: točke CT → najbližje oglišče HH229 (na trenutni legi); odmik velja na legi HH229
+                Xall = self(Vh[::4]); kdh = cKDTree(Xall)
+                j2 = ujemi(Vc[ic], Nc[ic], kdh, Xall, Nh0[::4] @ self.R.T); ok2 = j2 >= 0
+                X.append(Xall[j2[ok2]]); D.append(Vc[ic][ok2] - Xall[j2[ok2]]); W.append(np.ones(ok2.sum()))
+                Ax = self(A); X.append(Ax); D.append(B - Ax); W.append(np.full(len(A), 40.0))
+                X, D, W = map(np.concatenate, (X, D, W))
+                self.polja.append(Polje(lo, hi, 0.002, sigma, X, D * 0.8, W, eps=5e-4))  # majhen eps: krni žil zunaj CT se premaknejo s steno (brez striga)
+            Xh = self(Vh[ih]); d, _ = kdc.query(Xh)
+            log(f"[organi] srce_hh229: polje σ {sigma * 1000:.0f} mm: razdalja HH229 → CT mediana {np.median(d) * 1000:.2f} mm, 90 % {np.quantile(d, 0.9) * 1000:.2f} mm, ujetih {ok.mean():.2f}")
+
+    def __call__(self, X):
+        X = self.s * np.asarray(X) @ self.R.T + self.t
+        for p in self.polja: X = X + p(X)
+        return X
+
+# Deli stene HH229: prvih 9 kot srce_ct.DELI_CT (isti indeksi kot razdeli_stene), nato deli, ki jih ima samo HH229.
+DELI = [
+    ("Left ventricle", "miokard", "levi-prekat"), ("Interventricular septum", "miokard", "medprekatni-pretin"),
+    ("Right ventricle", "miokard", "desni-prekat"), ("Conus arteriosus", "miokard", "conus-arteriosus"),
+    ("Left atrium", "miokard", "levi-preddvor"), ("Right atrium", "miokard", "desni-preddvor"),
+    ("Right auricle", "miokard", "desno-srcno-uho"), ("Root of aorta", "aorta", "aorta"),
+    ("Root of pulmonary trunk", "pljucna", "pljucno-deblo"),
+    ("Left atrioventricular valve (HH229)", "zaklopka", "av-zaklopki"), ("Right atrioventricular valve (HH229)", "zaklopka", "av-zaklopki"),
+    ("Semilunar cusps of aortic valve", "zep", "aortna-zaklopka"), ("Semilunar cusps of pulmonary valve", "zep", "pljucna-zaklopka"),
+    ("Trabeculae carneae of left ventricle (HH229)", "miokard", "trabekule-levega-prekata"),
+    ("Trabeculae carneae of right ventricle (HH229)", "miokard", "trabekule-desnega-prekata"),
+    ("Papillary muscles of left ventricle (HH229)", "miokard", "papilarne-misice"),
+    ("Papillary muscles of right ventricle (HH229)", "miokard", "papilarne-misice"),
+    ("Left auricle", "miokard", "levo-srcno-uho"),
+]
+ZAK = {"mitralna": 9, "trikuspidalna": 10, "aortna": 11, "pljucna": 12}
+
+def vecina(F, oz, n, krat=3, zakleni=None):
+    """Večinski filter oznak ploskev: glas vsake ploskve gre v njena oglišča, ploskev prevzame najpogostejšo oznako svojih
+    oglišč (meje med deli postanejo gladke, osamljene ploskve izginejo). `zakleni`: maska ploskev, ki se ne spremenijo."""
+    oz = oz.copy()
+    for _ in range(krat):
+        H = np.zeros((F.max() + 1, n), np.float32)
+        for k in range(3): np.add.at(H, (F[:, k], oz), 1.0)
+        nov = (H[F[:, 0]] + H[F[:, 1]] + H[F[:, 2]]).argmax(1)
+        oz = np.where(zakleni, oz, nov) if zakleni is not None else nov
+    return oz
+
+def zgladi(V, F, krat=120, lam=0.6):
+    """Laplaceovo glajenje (enakomerne uteži) – za mero izbočenosti trabekul."""
+    from scipy.sparse import coo_matrix
+    i = np.concatenate([F[:, 0], F[:, 1], F[:, 2], F[:, 1], F[:, 2], F[:, 0]]); j = np.concatenate([F[:, 1], F[:, 2], F[:, 0], F[:, 0], F[:, 1], F[:, 2]])
+    A = coo_matrix((np.ones(len(i), np.float32), (i, j)), shape=(len(V), len(V))).tocsr(); A.data[:] = 1.0
+    st = np.asarray(A.sum(1)).ravel() + 1e-9; X = V.copy()
+    for _ in range(krat): X = (1 - lam) * X + lam * (A @ X) / st[:, None]
+    return X
+
+def stena(pot, ct, Polje, log=print):
+    """HH229 na legi CT z oznakami. Vrne dict V, F, dl (indeks v DELI), epi (po ploskvi), masca in ohrani (po oglišču),
+    L (oslonilne točke zaklopk HH229 na novi legi)."""
+    h = dict(np.load(pot)); por = Poravnava(h, ct, Polje, log=log)
+    V = por(h["V"]); F = h["F"].astype(np.int64)
+    Vc, Fc = ct["V2"], ct["F"]
+    nf = np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]); nf /= np.linalg.norm(nf, axis=1)[:, None] + 1e-20
+    cf = V[F].mean(1)
+    nc = np.cross(Vc[Fc[:, 1]] - Vc[Fc[:, 0]], Vc[Fc[:, 2]] - Vc[Fc[:, 0]]); nc /= np.linalg.norm(nc, axis=1)[:, None] + 1e-20
+    cc = Vc[Fc].mean(1); kd = cKDTree(cc)
+    j = np.full(len(F), -1)
+    for a in range(0, len(F), 200000):  # po kosih (k sosedov × normala)
+        j[a:a + 200000] = ujemi(cf[a:a + 200000], nf[a:a + 200000], kd, cc, nc, k=16, do=0.02, kot=0.1)
+    brez = j < 0
+    j[brez] = kd.query(cf[brez])[1]
+    dl = ct["dl"][j].astype(np.int64); epi = ct["epi"][j].copy()
+    log(f"[organi] srce_hh229: {len(F)} ploskev, brez ujemajoče normale {brez.mean():.3f}, epikard {epi.mean():.2f}")
+    epi = vecina(F, epi.astype(np.int64), 2, 4).astype(bool)
+    dl = vecina(F, dl, len(DELI), 4)
+    # levo uho: del levega preddvora, ki štrli iz stene CT (CT ušesa nima) ob ustju ušesa
+    d_ct = cKDTree(Vc).query(cf)[0]
+    if "uho" in ct["L"]:
+        uho = (dl == 4) & (np.linalg.norm(cf - ct["L"]["uho"], axis=1) < 0.034) & (d_ct > 0.0025)
+        dl[uho] = 17; dl = vecina(F, dl, len(DELI), 3)
+    # trabekule: endokard prekatov, ki štrli iz zglajene ploskve; papilarne mišice: trabekule ob koncih tetiv
+    izb = np.linalg.norm(V - zgladi(V, F), axis=1)
+    izb_f = izb[F].mean(1)
+    lv = (~epi) & (dl == 0); rv = (~epi) & (dl == 2)
+    dl[lv & (izb_f > 0.0007)] = 13; dl[rv & (izb_f > 0.0007)] = 14
+    oz_zak = {}
+    for ime, vir in (("mitralna", por.mitralna), ("trikuspidalna", por.trikuspidalna), ("aortna", "aortna"), ("pljucna", "pljucna")):
+        Z = por(h["V_" + vir]); oz_zak[ime] = Z
+        d = cKDTree(Z).query(cf, distance_upper_bound=0.0012)[0]
+        dl[np.isfinite(d) & ~epi] = ZAK[ime]  # samo znotraj (obroč pljučne zaklopke v modelu zaklopk sega v steno debla)
+    c4 = np.mean([oz_zak[k].mean(0) for k in oz_zak], axis=0); os_ = ct["L"]["konica"] - c4; os_ /= np.linalg.norm(os_)
+    for ime, trab, pap in (("mitralna", 13, 15), ("trikuspidalna", 14, 16)):
+        Z = oz_zak[ime]; g = (Z - c4) @ os_; konci = Z[g > np.quantile(g, 0.8)]
+        d = cKDTree(konci).query(cf, distance_upper_bound=0.007)[0]
+        dl[np.isfinite(d) & ((dl == trab) | (dl == (0 if trab == 13 else 2)) | (dl == 1)) & ~epi & (izb_f > 0.0004)] = pap
+    dl = vecina(F, dl, len(DELI), 3)
+    # maščoba (maska barve) z najbližjega oglišča CT, samo zunaj
+    ke = np.zeros(len(V), bool)
+    for k in range(3): ke[F[epi, k]] = True
+    masca = np.where(ke, ct["masca"][cKDTree(Vc).query(V)[1]], 0.0)
+    ohrani = np.clip(izb / 0.0012, 0, 1)
+    zv = np.zeros(len(V), bool)
+    for k in range(3): zv[F[dl >= 9][:, k]] = True
+    ohrani = np.maximum(ohrani, np.where(zv, 0.8, 0.0))
+    log("[organi] srce_hh229: ploskve po delih " + ", ".join(f"{DELI[i][0][:22]} {n}" for i, n in enumerate(np.bincount(dl, minlength=len(DELI)))))
+    return dict(V=V, F=F, dl=dl, epi=epi, masca=masca, ohrani=ohrani, L={k: v.mean(0) for k, v in oz_zak.items()}, por=por, h=h)
+
+if __name__ == "__main__":  # razvoj: python3 srce_hh229.py <hh229-v1.npz> <ct-stene.npz> <izhod.npz>
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from srce_ct import Polje
+    h = dict(np.load(sys.argv[1])); c = np.load(sys.argv[2])
+    ct = dict(V2=c["V2"], F=c["F"], epi=c["epi"], dl=c["dl"], L={str(n): l for n, l in zip(c["Limena"], c["L"])})
+    ct["masca"] = c["masca"]
+    r = stena(sys.argv[1], ct, Polje)
+    sk = {"stene": (0, 1, 2, 3), "preddvora": (4, 5), "usesi": (6, 17), "korena": (7, 8), "zaklopke": (9, 10, 11, 12), "trabekule": (13, 14), "papilarne": (15, 16)}
+    iz = dict(V=r["V"], F=r["F"][:0])
+    for k, v in sk.items(): iz["V_" + k] = r["V"]; iz["F_" + k] = r["F"][np.isin(r["dl"], v)]
+    np.savez(sys.argv[3], **iz)
+    np.savez(sys.argv[3].replace(".npz", "-epi.npz"), V=r["V"], F=r["F"][:0], V_epi=r["V"], F_epi=r["F"][r["epi"]], V_endo=r["V"], F_endo=r["F"][~r["epi"]])
