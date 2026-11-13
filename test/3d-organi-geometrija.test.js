@@ -42,7 +42,7 @@ for (const dat of ["jetra.glb", "jetra-telefon.glb"]) {
   });
 }
 
-test("geometrija organov: jetra.json opisuje nove dele in prerez pusti drevesa cela", () => {
+test("geometrija organov: jetra.json opisuje nove dele in prerez pokaže prereze dreves (svetline), ne celih cevi", () => {
   const j = json("jetra");
   const po = Object.fromEntries(j.deli.map((x) => [x.id, x]));
   for (const id of ["spodnja-votla-vena", "srpasta-vez", "obla-vez"]) {
@@ -50,9 +50,10 @@ test("geometrija organov: jetra.json opisuje nove dele in prerez pusti drevesa c
     for (const k of ["ime", "la", "opisOs", "opis", "opisStudij"]) assert.ok(po[id][k] && po[id][k].length > 3, `${id}.${k}`);
     assert.ok(po[id].vozlisca?.length, `${id} nima vozlišč`);
   }
+  // ocena r5: cela drevesa na rezni ploskvi so bila »špageti«; zdaj se režejo, presek je stena in temna svetlina
   for (const t of ["portalna", "arterija", "vena", "zolcevod"]) {
-    assert.equal(j.tkiva[t].brezReza, true, `tkivo ${t} se v prerezu ne reže`);
-    assert.equal(j.tkiva[t].rezPresek, undefined, `tkivo ${t} nima pokrova prereza`);
+    assert.ok(!j.tkiva[t].brezReza, `tkivo ${t} se v prerezu reže`);
+    assert.ok(j.tkiva[t].rezPresek?.luknjaBarva && j.tkiva[t].rezPresek.rob > 0, `tkivo ${t}: presek s svetlino in steno`);
   }
   assert.deepEqual(j.pogledi.prerez.skrijDele, ["srpasta-vez", "obla-vez"]);
 });

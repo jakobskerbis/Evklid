@@ -4,13 +4,13 @@
  "tkiva": {
   "jetra": {
    "hrap": 0.3,
-   "lak": 0.6,
-   "lakHrap": 0.16,
-   "sijaj": 0.12,
+   "lak": 0.32,
+   "lakHrap": 0.3,
+   "sijaj": 0.06,
    "ao": 0.5,
    "zrno": 0.06,
    "f": 220,
-   "barva": "#7a2c22",
+   "barva": "#6c3127",
    "sijajBarva": "#ffb0a0",
    "rob": 0.05,
    "robBarva": "#ff8070",
@@ -60,32 +60,32 @@
   },
   "zolcnik": {
    "hrap": 0.3,
-   "lak": 0.85,
-   "lakHrap": 0.14,
-   "sijaj": 0.5,
+   "lak": 0.4,
+   "lakHrap": 0.22,
+   "sijaj": 0.25,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 120,
-   "barva": "#4f7a3a",
-   "sijajBarva": "#d8ffb0",
-   "rob": 0.2,
-   "robBarva": "#b8e080",
+   "barva": "#46521f",
+   "sijajBarva": "#c8d890",
+   "rob": 0.35,
+   "robBarva": "#8c9a3e",
    "rez": "#4a7030",
    "lise": 0.15,
-   "liseBarva": "#88b060",
+   "liseBarva": "#6a7a30",
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.6,
    "rezVotlina": {
-    "barva": "#8c8a3c",
-    "senca": "#2c3110",
+    "barva": "#5c6228",
+    "senca": "#1e230a",
     "globina": 0.012
    },
    "rezPresek": {
     "vrsta": 3,
     "samoRob": true,
     "rob": 0.0007,
-    "robBarva": "#a9ad6a"
+    "robBarva": "#7d8540"
    }
   },
   "zolcevod": {
@@ -106,7 +106,13 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 5,
+    "luknjaBarva": "#4a4f14",
+    "rob": 0.0003,
+    "robBarva": "#c9cf86",
+    "stena": 0.0005
+   }
   },
   "portalna": {
    "hrap": 0.36,
@@ -127,7 +133,13 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#3a1f52",
+    "rob": 0.0003,
+    "robBarva": "#c9b3e6",
+    "stena": 0.0006
+   }
   },
   "arterija": {
    "hrap": 0.36,
@@ -148,7 +160,13 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 5,
+    "luknjaBarva": "#5c1512",
+    "rob": 0.00035,
+    "robBarva": "#eab0a6",
+    "stena": 0.0005
+   }
   },
   "vena": {
    "hrap": 0.36,
@@ -169,7 +187,13 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#1d2c5c",
+    "rob": 0.00022,
+    "robBarva": "#bdc8e6",
+    "stena": 0.0006
+   }
   },
   "vez": {
    "hrap": 0.46,
@@ -439,10 +463,10 @@
    }
   ]
  },
- "velikost": 0.3182,
+ "velikost": 0.3142,
  "trikotniki": {
-  "racunalnik": 122258,
-  "telefon": 37900
+  "racunalnik": 121358,
+  "telefon": 37726
  },
  "luci": [
   {

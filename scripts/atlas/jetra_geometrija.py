@@ -306,9 +306,9 @@ def _vez(L, n1, p1, telefon=False):
         s.append(s[-1] + (b - a).length)
     korak = 0.006 if telefon else 0.003
     vz = []; t = 0.0
-    while t < s[-1]:
+    while t < s[-1] * 0.82:  # ne čez vrh kupole (od spredaj spodaj bi štrlela nad obris jeter)
         i = max(0, min(len(s) - 2, int(np.searchsorted(s, t)) - 1)); u = (t - s[i]) / max(s[i + 1] - s[i], 1e-9)
-        vz.append((lok[i].lerp(lok[i + 1], u), t / s[-1])); t += korak
+        vz.append((lok[i].lerp(lok[i + 1], u), t / (s[-1] * 0.82))); t += korak
     def v_ravnini(d):
         d = d - n1 * d.dot(n1)
         return d.normalized()
@@ -322,7 +322,8 @@ def _vez(L, n1, p1, telefon=False):
         d_ = (smer_o * (1 - f) + (o * 0.75 + Vector((0, -0.66, 0))) * f)
         d_ = v_ravnini(d_)
         # u = 0 ob zarezi: vez je tam odrezana 10 mm od jeter (prej 28 mm: z oblo vezjo v robu je visela pod jetri kot palica)
-        w = (0.007 + 0.021 * (1 - u) ** 1.3) * min(1.0, (1.02 - u) / 0.12) * min(1.0, 0.35 + 0.65 * u / 0.25)
+        # nižja guba (prej 7 mm na vrhu kupole: nad obrisom jeter je štrlela kot plavut), proti vrhu se izteče v 2 mm
+        w = (0.002 + 0.02 * (1 - u) ** 1.6) * min(1.0, (1.02 - u) / 0.2) * min(1.0, 0.35 + 0.65 * u / 0.25)
         a = p - o * 0.0012; q = a + d_ * w
         m = 3 if telefon else 5
         vrste.append([[bm.verts.new(a.lerp(q, j / m) + n1 * zn * h * (1 - 0.75 * (j / m) ** 2)) for j in range(m + 1)] for zn in (1, -1)])
@@ -339,10 +340,11 @@ def _vez(L, n1, p1, telefon=False):
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     srp = bpy.data.meshes.new("srpasta"); bm.to_mesh(srp); bm.free()
     p0 = vz[0][0]
-    w0 = (0.007 + 0.021) * 0.35
-    P = [p0 - smer_o * 0.006 + Vector((0, 0.004, 0.003)), p0, p0 + smer_o * w0 * 0.5, p0 + smer_o * (w0 + 0.002) + Vector((0, -0.002, 0))]
+    w0 = (0.002 + 0.02) * 0.35
+    # obla vez: kratek krn v prostem robu vezi (prej 10 mm pod jetri kot palica)
+    P = [p0 - smer_o * 0.006 + Vector((0, 0.004, 0.003)), p0, p0 + smer_o * w0 * 0.3, p0 + smer_o * w0 * 0.6]
     P, R = D.zgladi([P[0].lerp(P[1], i / 3) for i in range(3)] + [P[1].lerp(P[2], i / 4) for i in range(4)] + [P[2].lerp(P[3], i / 6) for i in range(7)], [0.0022] * 14, 1)
-    bm = bmesh.new(); D.cev(bm, P, R, 6 if telefon else 12, kupola=False)
+    bm = bmesh.new(); D.cev(bm, P, R, 6 if telefon else 12, kupola=True, zacetek_kupola=True)  # zaprta konca (ne prazna cev)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     obla = bpy.data.meshes.new("obla"); bm.to_mesh(obla); bm.free()
     for me in (srp, obla):
@@ -394,6 +396,9 @@ def jetra_deli(osnovni, cfg, tmp):
     if T[0].z > T[-1].z:
         T.reverse()
     porta = T[-1].copy()
+    # deblo portalne vene (in z njim arterija in žolčevod ob njem) le portaDeblo pod vrati (prej ves Z-Anatomy: snop
+    # vzporednih valjev pod jetri)
+    T = [p for p in T if p.z >= porta.z - nast.get("portaDeblo", 0.014)] or T[-2:]
     zb = [r[1] for r in osnovni if r[0] == "Gallbladder"][0]
     tel = cfg.setdefault("_telefon", {})
     izhod = []
@@ -425,16 +430,17 @@ def jetra_deli(osnovni, cfg, tmp):
             if P[0].z > P[-1].z:
                 P.reverse(); R.reverse()
             ivc += [(p, r) for p, r in zip(P, R) if not ivc or p.z > ivc[-1][0].z + 1e-4]
-    zlo = min(v.co.z for v in rim["I"].vertices) - 0.022; zhi = max(v.co.z for v in L.vertices) + 0.012
+    # krna le 6 mm pod repastim režnjem in nad kupolo (prej 22 in 12 mm: pod vrati je visela kot cev)
+    zlo = min(v.co.z for v in rim["I"].vertices) - nast.get("ivcSpodaj", 0.006); zhi = max(v.co.z for v in L.vertices) + nast.get("ivcZgoraj", 0.006)
     sred_ = sum((v.co for v in L.vertices), Vector()) / len(L.vertices)
-    def k_jetrom(p):  # votla vena leži v žlebu na zadnji strani jeter: 4 mm proti osi jeter
+    def k_jetrom(p):  # votla vena leži v žlebu na zadnji strani jeter (gola ploskev): ivcZleb proti osi jeter
         d = Vector((sred_.x - p.x, sred_.y - p.y, 0))
-        return p + d.normalized() * 0.004
+        return p + d.normalized() * nast.get("ivcZleb", 0.011)
     ivc = [(k_jetrom(p), max(r, 0.0105)) for p, r in ivc if zlo <= p.z <= zhi]
     iP, iR = [p for p, _ in ivc], [r for _, r in ivc]
     for t_ in (False, True):
         P_, R_ = D.redci(*D.zgladi(iP, iR, 2), (lambda r: 0.012) if t_ else (lambda r: 0.005))
-        bm = bmesh.new(); D.cev(bm, P_, R_, 12 if t_ else 24, stena=0.0014)
+        bm = bmesh.new(); D.cev(bm, P_, R_, 12 if t_ else 24, kupola=False)  # polna, ravno odrezana krna (prej odprta svetlina)
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
         me = bpy.data.meshes.new("ivc"); bm.to_mesh(me); bm.free()
         if t_:

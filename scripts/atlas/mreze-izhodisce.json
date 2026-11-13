@@ -2,9 +2,7 @@
  "opis": "Izhodišče pregleda mrež (scripts/atlas/preveri-mreze.mjs --izhodisce). Na del: [odprtiRobovi, luknje, nemnogoterni, obrnjene, navznoter, izrojeni, neTrikotniki]. test/3d-mreze.test.js pade, ko je kateri del slabši. Samo zmanjševati.",
  "modeli": {
   "organi-3d/jetra-telefon.glb": {},
-  "organi-3d/jetra.glb": {
-   "Right lobe of liver (lastno)": [0,0,0,0,0,1,0]
-  },
+  "organi-3d/jetra.glb": {},
   "organi-3d/ledvica-telefon.glb": {
    "kidney_capsule_L (HRA)": [13,3,2,0,0,0,0],
    "outer_cortex_of_kidney_L (HRA)": [8,2,0,0,0,0,0]
