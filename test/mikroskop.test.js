@@ -167,3 +167,56 @@ test("mikroskop: prevodi gumbov v vseh jezikih in vstop iz lekcij", () => {
   const index = fs.readFileSync(path.join(ROOT, "public", "sim", "index.js"), "utf8");
   assert.match(index, /mikroskop: \["\.\.\/mikroskop\/mikroskop\.js", "simMikroskop"\]/);
 });
+
+// Molekule (j, 13. 11. 2026): vsak preparat pokaže molekule, ki jih v njem najpogosteje najdemo, z imeni in vlogami.
+test("mikroskop: prizori molekul, membrane in značilna mesta se ujemajo s katalogom in shaderjem", async () => {
+  const { MOL, PRIZORI, MEMBRANE, ZNACILNO, ZNACILNA_TOCKA, S, prizor, uniformeMolekul, elementiMolekule } = await import("../public/mikroskop/molekule-vrste.js");
+  const { MOLEKULE } = await import("../public/mikroskop/molekule.js");
+  for (const [ime, [koda, ...mol]] of Object.entries(PRIZORI)) {
+    assert.ok(mol.length <= 6, `${ime}: največ 6 rež`);
+    for (const id of mol) if (id) assert.ok(MOL[id], `${ime}: ${id}`);
+    assert.match(MOLEKULE, new RegExp(`#define P_[A-Z0-9_]+ ${koda}\\b`), `${ime}: koda ${koda} v shaderju`);
+  }
+  for (const [ime, [, ...mol]] of Object.entries(MEMBRANE)) for (const id of mol) assert.ok(MOL[id], `${ime}: ${id}`);
+  for (const [id, m] of Object.entries(MOL)) {
+    assert.match(m.barva, /^#[0-9a-f]{6}$/i, id);
+    assert.ok(m.g >= 0 && Number.isInteger(m.at), id);
+    assert.ok(elementiMolekule(id).length > 0, `${id}: elementi`);
+  }
+  for (const [p, snovi] of Object.entries(ZNACILNO)) {
+    assert.ok(IDS.has(p), p);
+    for (const k of snovi) assert.ok(Number.isInteger(k), `${p}: ${k}`);
+  }
+  for (const [p, z] of Object.entries(ZNACILNA_TOCKA)) {
+    assert.ok(ZNACILNO[p], `${p}: točka brez snovi`);
+    assert.ok(z.length === 2 && z.every(Number.isFinite), p);
+  }
+  assert.deepEqual(Object.keys(ZNACILNO).sort(), Object.keys(ZNACILNA_TOCKA).sort());
+  // gojišče virusov ni krvna plazma; glava T4 ob repu nima gumbov Hoc
+  assert.equal(prizor({ snov: S.PLAZMA, tip: 0, r1: 0 }, "virus-hiv").ime, "voda");
+  // značilne molekule: kri → hemoglobin, mišica → miozin, T4 → DNK v glavi, rep → gp18, hrustanec → agrekan
+  const pr = (snov, prep, tip = 0, r1 = 0) => prizor({ snov, tip, r1 }, prep).mol;
+  assert.ok(pr(S.ERITROCIT, "kri").includes("hemoglobin"));
+  assert.ok(pr(S.MIOFIBRILA, "skeletna-misica").includes("miozin"));
+  assert.ok(pr(S.GENOM, "virus-t4", 7, 3.0).includes("dnk"));
+  assert.ok(pr(S.VIRUS, "virus-t4", 7, 3.1).includes("gp18"));
+  assert.ok(pr(S.MATRIKS, "hrustanec").includes("agrekan"));
+  const u = uniformeMolekul({ snov: S.GENOM, tip: 7, r1: 3.0 }, { snov: S.VAKUOLA, tip: 7, r1: 0 }, true, "virus-t4");
+  assert.equal(u.reze.length, 16);
+  assert.equal(u.barve3.length, 48);
+  assert.equal(u.gost.length, 16);
+  assert.ok(u.reze.includes("gp23"), "glavo T4 obdaja gp23");
+  // shader: oklepaji v ravnovesju, uniforme, ki jih nastavi upodobi.js
+  assert.equal((MOLEKULE.match(/\{/g) || []).length, (MOLEKULE.match(/\}/g) || []).length);
+  for (const un of ["uPA", "uPB", "uMemVrsta", "uZun", "uBodice", "uBarvaMol", "uGostMol", "uAtMol", "uIdPass"]) assert.match(MOLEKULE, new RegExp(`uniform \\w+ ${un}\\b`), un);
+  // imena in vloge v vseh jezikih, oznake na sliki in seznam pod njo
+  const dir = path.join(ROOT, "public", "i18n", "ui");
+  const jeziki = [["sl", sl], ...fs.readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => [f, json(`public/i18n/ui/${f}`)])];
+  for (const [j, d] of jeziki) {
+    for (const k of ["mk.molList", "mk.atomList"]) assert.ok(d[k], `${j}: ${k}`);
+    for (const id of Object.keys(MOL)) assert.ok(d[`mk.mol.${id}`] && d[`mk.molv.${id}`], `${j}: ${id}`);
+  }
+  const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
+  assert.match(ui, /mk-mol-oznaka/);
+  assert.match(ui, /ZNACILNO\[prep\.id\]/);
+});

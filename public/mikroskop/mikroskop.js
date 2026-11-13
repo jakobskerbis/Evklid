@@ -2,6 +2,7 @@
 // in finim vijakom, lučko in zaslonko, nad 1000× presevni elektronski mikroskop (TEM) do 50 000 000× (j, 12. 11. 2026),
 // pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
 // pri tkivih 3D sveta) in laboratorij (pogon simulacij »lab-mikroskop«). Besedila vsebine so slovenska kot pri 3D modelih.
+import { MOL, ELEMENTI, ZNACILNO, ZNACILNA_TOCKA, elementiMolekule } from "./molekule-vrste.js";
 import { ustvariUpodobitev } from "./upodobi.js";
 import { izracunajPogled, ZACETNO, povecava } from "./pogled.js";
 import { OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
@@ -18,6 +19,7 @@ const SNOVI = {
   12: "vakuola", 13: "koloid", 14: "krvna plazma", 15: "elastična vlakna", 16: "sluz", 17: "virus", 18: "sklenina",
   20: "mitohondrij", 21: "endoplazemski retikulum", 22: "ribosomi", 23: "glikogen", 24: "membrana (fosfolipidni dvosloj)",
   25: "kloroplast", 26: "zrnce (mešiček)", 27: "kromosomi", 28: "jedrce", 29: "Golgijev aparat", 30: "mikrovili",
+  31: "dedni zapis virusa (DNK ali RNK)",
 };
 const CELICE = {
   0: "celica", 1: "jetrna celica (hepatocit)", 2: "fibroblast", 3: "limfocit", 4: "nevron", 5: "žlezna celica", 6: "rastlinska celica",
@@ -121,7 +123,9 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   const bKapni = mk("button", "a3-pill mk-kapni");
   bKapni.type = "button";
   bKapni.hidden = true;
-  oder.append(platno, igla, oznaka, merilo, znacka, bKapni, nalaganje);
+  const oznakeMol = mk("div", "mk-mol-oznake"); // imena molekul na sliki (raven molekul in atomov)
+  oznakeMol.setAttribute("aria-hidden", "true");
+  oder.append(platno, oznakeMol, igla, oznaka, merilo, znacka, bKapni, nalaganje);
   const kazalec = mk("p", "mk-kazalec");
   kazalec.setAttribute("aria-live", "polite");
 
@@ -172,7 +176,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   bSem.addEventListener("click", () => {
     if (s.nacin === "sem") return;
     const m = omeji(povecava(s), MIN_M, SEM_MAX);
-    kTkivu();
+    kTkivu(true);
     s.nacin = "sem";
     s.m = m;
     narisi();
@@ -184,7 +188,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   bTem.addEventListener("click", () => {
     if (s.nacin === "tem") return;
     const m = omeji(Math.max(5000, povecava(s) * 5), MIN_M, MAX_M);
-    kTkivu();
+    kTkivu(true);
     s.nacin = "tem";
     s.m = m;
     narisi();
@@ -306,6 +310,13 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   const resnica = mk("p", "mk-resnica");
   secPodatki.append(tabela, resnica);
 
+  // molekule v vidnem polju z imeni in vlogo (j, 13. 11. 2026: »z poimenovanji«), pri atomih še legenda elementov
+  const secMol = sekcija(t("mk.molList"));
+  const seznamMol = mk("ul", "mk-mol-seznam");
+  const atomiMol = mk("div", "mk-mol-atomi");
+  secMol.append(seznamMol, atomiMol);
+  secMol.hidden = true;
+
   const secInfo = sekcija(t("mk.about"));
   const opis = mk("p", "mk-opis");
   const barvanje = mk("p", "mk-barvanje");
@@ -413,7 +424,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     }
     m = omeji(m, MIN_M, MAX_M);
     if (m > SVETLOBNI_MAX * 1.05) {
-      if (s.nacin !== "tem") kTkivu();
+      if (s.nacin !== "tem") kTkivu(true);
       s.nacin = "tem";
       s.m = m;
     } else {
@@ -425,21 +436,45 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     narisi({ izDrsnika });
   }
   // Ob začetku in prehodu na TEM: če je na sredini prazno stekelce, se premakni na najbližje tkivo (vidno polje TEM je ~30 µm).
-  function kTkivu() {
+  // Ob prehodu na elektronski mikroskop, dokler uporabnik ni sam premikal preparata, gre na značilno snov preparata
+  // (kri: eritrocit, mišica: miofibrila, T4: DNK v glavi), da so na ravni molekul vidne molekule, po katerih je preparat znan.
+  let rocno = false;
+  function kTkivu(znacilno = false) {
     if (!prep) return;
     const [x0, y0] = s.sredisce;
+    const zel = znacilno && !rocno ? ZNACILNO[prep.id] : null;
     const prazno = (o) => Math.round(o.snovT) === 0;
+    const ustreza = (o) => (zel ? zel.includes(Math.round(o.snov)) : !prazno(o));
     const c = upo.sonda([s.sredisce]);
-    if (!c || !prazno(c[0])) return;
-    for (const r of [3, 6, 12, 24, 48, 96]) {
-      const tocke = Array.from({ length: 8 }, (_, i) => [x0 + r * Math.cos((i * Math.PI) / 4), y0 + r * Math.sin((i * Math.PI) / 4)]);
-      const o = upo.sonda(tocke);
-      const i = o?.findIndex((t) => !prazno(t)) ?? -1;
-      if (i >= 0) {
-        s.sredisce = tocke[i];
-        return;
+    if (!c || ustreza(c[0])) return;
+    if (zel) {
+      // vnaprej izračunana točka globoko v značilni snovi; če je ni (spremenjena oblika), okolica točke, nato okolica sredine
+      const z = ZNACILNA_TOCKA[prep.id];
+      if (z && ustreza(upo.sonda([z])[0])) return void (s.sredisce = [...z]);
+      if (z && poisci(z[0], z[1], ustreza, 0.02, 1.3, 5)) return;
+      if (poisci(x0, y0, ustreza, 0.03, 1.25, 100)) return;
+    }
+    if (prazno(c[0])) poisci(x0, y0, (o) => !prazno(o), 3, 2, 100);
+  }
+  // Išče po krogih (polmer r0, r0·k, … do rMax µm, vsak krog zasukan; točke na krogu največ ~0,4 µm narazen, a vsaj 8 in
+  // največ 64) in premakne sredino na prvo ustrezno točko.
+  function poisci(x0, y0, ustreza, r0, k, rMax) {
+    for (let r = r0, j = 0; r <= rMax; r *= k, j++) {
+      const n = Math.min(64, Math.max(8, 8 * Math.ceil((2 * Math.PI * r) / 0.4 / 8)));
+      const tocke = Array.from({ length: n }, (_, i) => {
+        const f = ((i + 0.618 * j) * 2 * Math.PI) / n;
+        return [x0 + r * Math.cos(f), y0 + r * Math.sin(f)];
+      });
+      for (let a = 0; a < n; a += 8) {
+        const o = upo.sonda(tocke.slice(a, a + 8));
+        const i = o?.findIndex(ustreza) ?? -1;
+        if (i >= 0) {
+          s.sredisce = tocke[a + i];
+          return true;
+        }
       }
     }
+    return false;
   }
   const zoom = (f) => {
     if (s.nacin === "sem") return nastaviPovecavo(s.m * f);
@@ -487,8 +522,11 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     const r = izracunajPogled(upo, prep, s, nn, { hitro });
     r.v.zaslonN = N;
     r.v.cas = performance.now() / 1000;
+    const id = hitro ? null : idMolekul(r);
     upo.narisi(r.v);
     zadnji = { vp: r.vp, css, m: r.m, mol: r.mol };
+    if (hitro) oznakeMol.replaceChildren();
+    else posodobiMolekule(r, css, id);
     posodobiMerilo();
     if (hitro) {
       clearTimeout(polnaPozneje);
@@ -497,6 +535,99 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
         narisi();
       }, 160);
     } else posodobiKazalec();
+  }
+
+  // ---------- molekule z imeni ----------
+  // Senčilnik molekul v mreži K × K zapiše, katera molekula je kje (upo.idMolekul); za vsako molekulo poiščemo točko
+  // globoko v njej (največ sosedov iste molekule), tam je oznaka. Pod sliko je seznam z vlogo, pri atomih še elementi.
+  const K = 48;
+  // svetlost, defokus in šum ne premaknejo molekul: ob istem pogledu velja zadnja mreža
+  let idKljuc = "";
+  let idZadnji = null;
+  function idMolekul(r) {
+    if (!r.mol || r.mol.utez < 0.5) return null;
+    const U = r.mol.uniforme;
+    const kljuc = JSON.stringify([r.v.sredisce, r.v.umNaTocko, r.v.n, U.pA, U.pB, U.memVrsta, U.zun, U.mem, U.y0, U.n, U.fine, U.smer, U.faza, r.mol.reze]);
+    if (kljuc !== idKljuc) {
+      idZadnji = upo.idMolekul(r.v, K);
+      idKljuc = kljuc;
+    }
+    return idZadnji;
+  }
+  function posodobiMolekule(r, css, id) {
+    const reze = id ? r.mol.reze : null;
+    oznakeMol.replaceChildren();
+    secMol.hidden = !id;
+    if (!id) return;
+    const ime = (i, j) => {
+      const k = id[j * K + i] - 1;
+      return k >= 0 ? reze[k] : null;
+    };
+    const rob = oder.getBoundingClientRect();
+    const naZaslon = (i, j) => [rob.width / 2 + ((i + 0.5) / K - 0.5) * css, rob.height / 2 - ((j + 0.5) / K - 0.5) * css];
+    const vse = new Map();
+    for (let j = 0; j < K; j++)
+      for (let i = 0; i < K; i++) {
+        const m = ime(i, j);
+        if (!m) continue;
+        let e = vse.get(m);
+        if (!e) vse.set(m, (e = { n: 0, naj: -1, tocka: null }));
+        e.n++;
+        const [x, y] = naZaslon(i, j);
+        if (x < 40 || x > rob.width - 40 || y < 44 || y > rob.height - 44) continue; // oznaka naj bo na odru (izmeri se ob postavitvi)
+        let sos = 0;
+        for (let dj = -2; dj <= 2; dj++)
+          for (let di = -2; di <= 2; di++) if (ime(Math.min(K - 1, Math.max(0, i + di)), Math.min(K - 1, Math.max(0, j + dj))) === m) sos++;
+        const ocena = sos - 0.02 * Math.hypot(i - K / 2, j - K / 2);
+        if (ocena > e.naj) {
+          e.naj = ocena;
+          e.tocka = [x, y];
+        }
+      }
+    // večje najprej; voda le, če je prostor
+    const red = [...vse.entries()].sort((a, b) => (a[0] === "voda") - (b[0] === "voda") || b[1].n - a[1].n);
+    // oznako postavimo, izmerimo in obdržimo le, če je cela na odru in ne prekriva že postavljene
+    const postavljene = [];
+    for (const [m, e] of red) {
+      if (!e.tocka || postavljene.length >= 5) continue;
+      const o = mk("span", "mk-mol-oznaka");
+      const pika = mk("i", "");
+      pika.style.background = MOL[m].barva;
+      o.append(pika, document.createTextNode(t(`mk.mol.${m}`)));
+      o.style.left = `${e.tocka[0]}px`;
+      o.style.top = `${e.tocka[1]}px`;
+      oznakeMol.append(o);
+      const b = o.getBoundingClientRect();
+      const zunaj = b.left < rob.left + 4 || b.right > rob.right - 4 || b.top < rob.top + 36 || b.bottom > rob.bottom - 36;
+      const cez = postavljene.some((p) => b.left < p.right + 6 && p.left < b.right + 6 && b.top < p.bottom + 4 && p.top < b.bottom + 4);
+      if (zunaj || cez) o.remove();
+      else postavljene.push(b);
+    }
+    seznamMol.replaceChildren(
+      ...red.map(([m]) => {
+        const li = mk("li", "");
+        const pika = mk("i", "");
+        pika.style.background = MOL[m].barva;
+        li.append(pika, mk("b", "", t(`mk.mol.${m}`)), mk("span", "", t(`mk.molv.${m}`)));
+        return li;
+      }),
+    );
+    // atomi: pri manj kot ~0,06 nm na točko so molekule narisane iz atomov
+    const atomi = r.v.umNaTocko * 1000 < 0.06;
+    atomiMol.hidden = !atomi;
+    if (atomi) {
+      const el = [...new Set(red.flatMap(([m]) => elementiMolekule(m)))];
+      atomiMol.replaceChildren(
+        mk("h3", "mk-sek-naslov", t("mk.atomList")),
+        ...el.map((x) => {
+          const c = mk("span", "mk-el");
+          const pika = mk("i", "");
+          pika.style.background = ELEMENTI[x];
+          c.append(pika, document.createTextNode(x));
+          return c;
+        }),
+      );
+    }
   }
 
   function posodobiMerilo() {
@@ -524,7 +655,8 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     const celica = prep.imena?.[tip] ?? CELICE[tip] ?? "celica";
     const vCelici = snovT === 1 || snovT === 2 || snovT === 25 || snovT === 27;
     let ime;
-    if (tem && snovU >= 20 && snovU !== snovT) ime = `${SNOVI[snovU]} · ${celica}`;
+    if (tem && snovU === 31) ime = SNOVI[31];
+    else if (tem && snovU >= 20 && snovU !== snovT) ime = `${SNOVI[snovU]} · ${celica}`;
     else if (vCelici) ime = snovT === 1 ? celica : `${imeSnovi(snovT)} · ${celica}`;
     else ime = imeSnovi(snovT) || celica;
     return ime.charAt(0).toUpperCase() + ime.slice(1);
@@ -629,6 +761,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     if (zacetek) {
       s = { ...ZACETNO, grobi: 0, fini: 0, dzObj: 0, zarnica: s.zarnica ?? ZACETNO.zarnica, barve: s.barve };
       s.sredisce = [...(p.zacetek?.sredisce || [0, 0])];
+      rocno = false;
       const m0 = p.zacetek?.m || 40;
       if (m0 > SVETLOBNI_MAX) {
         s.nacin = "tem";
@@ -693,6 +826,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     if (!zadnji || kazalci.size !== 1) return;
     const kk = zadnji.vp / zadnji.css;
     s.sredisce = [s.sredisce[0] - dx * kk, s.sredisce[1] + dy * kk];
+    rocno = true;
     interakcija = 1;
     oznaka.hidden = true;
     narisi();
@@ -734,6 +868,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     if (smeri[e.key]) {
       e.preventDefault();
       s.sredisce = [s.sredisce[0] + smeri[e.key][0], s.sredisce[1] + smeri[e.key][1]];
+      rocno = true;
       narisi();
     } else if (e.key === "+" || e.key === "=") {
       e.preventDefault();
