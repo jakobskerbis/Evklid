@@ -1,6 +1,6 @@
 {
  "organ": "pljuca",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; veje bronhijev in žil v pljučih so cevi iz središčnic Z-Anatomy (scripts/atlas/drevesa.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "pljuca": {
    "hrap": 0.4,
@@ -85,13 +85,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7d5a52",
-    "rob": 0.0008,
-    "robBarva": "#eadcc6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "pljucna-arterija": {
    "hrap": 0.36,
@@ -112,13 +106,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#454b80",
-    "rob": 0.0006,
-    "robBarva": "#c3c9e6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "pljucna-vena": {
    "hrap": 0.36,
@@ -139,13 +127,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7a2a26",
-    "rob": 0.0005,
-    "robBarva": "#eab0a6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "dihalna-v": {
    "hrap": 0.34,
@@ -166,13 +148,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7d5a52",
-    "rob": 0.0008,
-    "robBarva": "#eadcc6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "pljucna-arterija-v": {
    "hrap": 0.36,
@@ -193,13 +169,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#454b80",
-    "rob": 0.0006,
-    "robBarva": "#c3c9e6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "pljucna-vena-v": {
    "hrap": 0.36,
@@ -220,13 +190,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7a2a26",
-    "rob": 0.0005,
-    "robBarva": "#eab0a6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   }
  },
  "deli": [
@@ -488,10 +452,10 @@
    }
   ]
  },
- "velikost": 0.4305,
+ "velikost": 0.4326,
  "trikotniki": {
-  "racunalnik": 164925,
-  "telefon": 40984
+  "racunalnik": 132378,
+  "telefon": 43202
  },
  "luci": [
   {

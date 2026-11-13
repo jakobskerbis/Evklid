@@ -1,6 +1,6 @@
 {
  "organ": "jetra",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; režnji, vezi, spodnja votla vena in veje žil ter žolčnih vodov so lastna geometrija Evklid (scripts/atlas/jetra_geometrija.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "jetra": {
    "hrap": 0.3,
@@ -39,7 +39,7 @@
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
-    "rob": 0.0014,
+    "rob": 0.0003,
     "povecaj": 1.004
    },
    "rezSum": 0.5,
@@ -106,13 +106,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#5c6124",
-    "rob": 0.0003,
-    "robBarva": "#b9bf78",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "portalna": {
    "hrap": 0.36,
@@ -122,24 +116,18 @@
    "ao": 0.85,
    "zrno": 0.05,
    "f": 70,
-   "barva": "#64449c",
+   "barva": "#8e4ec0",
    "rez": "#d3c6e4",
-   "sijajBarva": "#c8b0ff",
+   "sijajBarva": "#e0b8ff",
    "rob": 0.18,
-   "robBarva": "#a080ff",
+   "robBarva": "#c080ff",
    "relief": 0.25,
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#55407a",
-    "rob": 0.0008,
-    "robBarva": "#d3c6e4",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "arterija": {
    "hrap": 0.36,
@@ -160,13 +148,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7a2a26",
-    "rob": 0.0005,
-    "robBarva": "#eab0a6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "vena": {
    "hrap": 0.36,
@@ -176,7 +158,7 @@
    "ao": 0.85,
    "zrno": 0.05,
    "f": 70,
-   "barva": "#3c58a2",
+   "barva": "#3566c9",
    "rez": "#bdc8e6",
    "sijajBarva": "#9db8ff",
    "rob": 0.18,
@@ -187,13 +169,25 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#3c4a80",
-    "rob": 0.0005,
-    "robBarva": "#bdc8e6",
-    "stena": 0.0018
-   }
+   "brezReza": true
+  },
+  "vez": {
+   "hrap": 0.46,
+   "lak": 0.25,
+   "lakHrap": 0.22,
+   "sijaj": 0.2,
+   "ao": 0.8,
+   "zrno": 0.05,
+   "f": 90,
+   "barva": "#c9a394",
+   "rez": "#d8c0ae",
+   "sijajBarva": "#ffffff",
+   "rob": 0.15,
+   "robBarva": "#fff0e0",
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "brezReza": true
   }
  },
  "deli": [
@@ -207,10 +201,7 @@
    "opis": "Največji del jeter; v kirurgiji ga delijo na štiri segmente (V–VIII).",
    "opisStudij": "Anatomsko ga od levega loči srpasta vez; funkcionalna desna jetra (segmenti V–VIII, desna veja portalne vene in jetrne arterije) od levih loči Cantliejeva ravnina od žolčnika do spodnje votle vene. Spodaj se dotika desne ledvice, debelega črevesa in dvanajstnika.",
    "vozlisca": [
-    "Anterior lateral segment of liver (VI)",
-    "Anterior medial segment of liver (V)",
-    "Posterior lateral segment of liver (VII)",
-    "Posterior medial segment of liver (VIII)"
+    "Right lobe of liver (lastno)"
    ]
   },
   {
@@ -223,8 +214,7 @@
    "opis": "Tanjši reženj levo od srpaste vezi, ki sega nad želodec (segmenta II in III).",
    "opisStudij": "Anatomsko levo od srpaste vezi (lig. falciforme) in fissura ligamenti teretis; segmenta II in III. Funkcionalni levi del (po Cantliejevi ravnini) obsega še segment IV. Na spodnji strani ima vtis želodca (impressio gastrica).",
    "vozlisca": [
-    "Left anterior lateral segment of liver (III)",
-    "Left posterior lateral segment of liver (II)"
+    "Left lobe of liver (lastno)"
    ]
   },
   {
@@ -237,7 +227,7 @@
    "opis": "Majhen reženj ob žolčniku na spodnji strani jeter; z delom nad njim tvori segment IV.",
    "opisStudij": "Na visceralni strani med fossa vesicae biliaris, fissura ligamenti teretis in porta hepatis; skupaj z delom nad njim segment IV (IVb). Funkcionalno spada k levim jetrom, ker ga oskrbuje leva veja portalne vene.",
    "vozlisca": [
-    "Left medial segment of liver (IV)"
+    "Quadrate lobe of liver (lastno)"
    ]
   },
   {
@@ -250,7 +240,7 @@
    "opis": "Majhen reženj na zadnji strani jeter ob spodnji votli veni (segment I).",
    "opisStudij": "Segment I med fissura ligamenti venosi in sulcus venae cavae; kri dobiva iz obeh vej portalne vene in se odteka neposredno v spodnjo votlo veno. Zato pri Budd-Chiarijevem sindromu pogosto ostane ohranjen in se poveča.",
    "vozlisca": [
-    "Posterior segment of liver (I)"
+    "Caudate lobe of liver (lastno)"
    ]
   },
   {
@@ -274,7 +264,7 @@
    "opis": "Vod, ki odvaja žolč iz jeter in žolčnika v dvanajstnik.",
    "opisStudij": "Nastane iz ductus hepaticus communis in ductus cysticus; dolg 6–8 cm, premer do 6 mm. Poteka v lig. hepatoduodenale desno od jetrne arterije in pred portalno veno, nato za glavo trebušne slinavke; z ductus pancreaticus se izliva na papilla duodeni major (Vaterjeva ampula, Oddijeva zapiralka).",
    "vozlisca": [
-    "Bile duct"
+    "Bile ducts (lastno)"
    ]
   },
   {
@@ -286,8 +276,7 @@
    "opis": "Prinese v jetra kri iz želodca, črevesja in vranice, bogato s hranili.",
    "opisStudij": "Nastane za vratom trebušne slinavke iz v. mesenterica superior in v. splenica; dolga 6–8 cm. Daje okoli 75 % pretoka in polovico kisika jeter. Portokavalne anastomoze (požiralnik, rektum, popek) se pri portalni hipertenziji razširijo (varice, caput medusae).",
    "vozlisca": [
-    "Hepatic portal vein",
-    "Hepatic portal vein branches (lastno)"
+    "Hepatic portal vein and branches (lastno)"
    ]
   },
   {
@@ -299,8 +288,7 @@
    "opis": "Prinese v jetra s kisikom bogato kri iz trebušne aorte.",
    "opisStudij": "A. hepatica propria iz a. hepatica communis (truncus coeliacus); v lig. hepatoduodenale levo od žolčevoda. Daje okoli 25 % pretoka; razcepi se v desno in levo vejo, desna daje a. cystica. Pogoste različice: nadomestna desna iz a. mesenterica superior.",
    "vozlisca": [
-    "Common hepatic artery",
-    "Proper hepatic artery"
+    "Hepatic artery and branches (lastno)"
    ]
   },
   {
@@ -312,8 +300,43 @@
    "opis": "Odvedejo kri iz jeter v spodnjo votlo veno in naprej v srce.",
    "opisStudij": "Tri glavne (desna, srednja, leva) potekajo med segmenti in se tik pod prepono izlivajo v spodnjo votlo veno; nimajo zaklopk. Srednja leži v Cantliejevi ravnini. Manjše vene repastega režnja se izlivajo neposredno.",
    "vozlisca": [
-    "Hepatic vein branches (lastno)",
-    "Hepatic veins"
+    "Hepatic veins (lastno)"
+   ]
+  },
+  {
+   "id": "spodnja-votla-vena",
+   "ime": "Spodnja votla vena",
+   "la": "Vena cava inferior",
+   "barva": "#4f6fd0",
+   "opisOs": "Velika žila za jetri, ki vodi kri iz spodnjega dela telesa v srce.",
+   "opis": "Največja vena v telesu; teče v žlebu na zadnji strani jeter in sprejme kri iz jetrnih ven.",
+   "opisStudij": "Leži v sulcus venae cavae med repastim režnjem in golo ploskvijo (area nuda) jeter; tik pod prepono se vanjo izlijejo tri jetrne vene. Skozi foramen venae cavae prepone (Th8) vstopi v desni preddvor.",
+   "vozlisca": [
+    "Inferior vena cava (lastno)"
+   ]
+  },
+  {
+   "id": "srpasta-vez",
+   "ime": "Srpasta vez",
+   "la": "Ligamentum falciforme hepatis",
+   "barva": "#e9d8a6",
+   "opisOs": "Tanka vez, ki jetra pripenja na sprednjo trebušno steno in prepono.",
+   "opis": "Dvojna guba potrebušnice med jetri in sprednjo trebušno steno; na sprednji ploskvi loči desni in levi reženj.",
+   "opisStudij": "Duplikatura peritoneja od popka do jeter; na zgornji ploskvi se lista razmakneta v venčno vez (lig. coronarium), ki omejuje golo ploskev jeter. V prostem spodnjem robu poteka obla vez.",
+   "vozlisca": [
+    "Falciform ligament (lastno)"
+   ]
+  },
+  {
+   "id": "obla-vez",
+   "ime": "Obla jetrna vez",
+   "la": "Ligamentum teres hepatis",
+   "barva": "#d4a373",
+   "opisOs": "Vrvica v spodnjem robu srpaste vezi; ostanek žile, ki je pred rojstvom vodila kri iz posteljice.",
+   "opis": "Zabrazgotinjena popkovna vena: pred rojstvom je vodila s kisikom bogato kri iz posteljice do jeter.",
+   "opisStudij": "Obliterirana v. umbilicalis; poteka v prostem robu srpaste vezi od popka do fissura ligamenti teretis in do leve veje portalne vene. Pri portalni hipertenziji se ob njej odprejo paraumbilikalne vene (caput medusae).",
+   "vozlisca": [
+    "Round ligament of liver (lastno)"
    ]
   }
  ],
@@ -339,10 +362,10 @@
    "tocke": [
     "desni-rezenj",
     "levi-rezenj",
+    "srpasta-vez",
     "zolcnik",
-    "kvadratni-rezenj",
-    "portalna-vena",
-    "zolcevod"
+    "spodnja-votla-vena",
+    "obla-vez"
    ]
   },
   "prerez": {
@@ -352,16 +375,16 @@
     1
    ],
    "tocke": [
-    "desni-rezenj",
-    "levi-rezenj",
-    "kvadratni-rezenj",
-    "repasti-rezenj",
     "portalna-vena",
-    "jetrne-vene"
+    "jetrne-vene",
+    "jetrna-arterija",
+    "zolcevod",
+    "spodnja-votla-vena",
+    "zolcnik"
    ],
    "skrijDele": [
-    "zolcevod",
-    "jetrna-arterija"
+    "srpasta-vez",
+    "obla-vez"
    ],
    "tkiva": {
     "jetra": {
@@ -396,10 +419,10 @@
    }
   ]
  },
- "velikost": 0.3047,
+ "velikost": 0.3163,
  "trikotniki": {
-  "racunalnik": 164076,
-  "telefon": 41990
+  "racunalnik": 122994,
+  "telefon": 32598
  },
  "luci": [
   {

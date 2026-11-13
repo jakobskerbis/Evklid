@@ -147,7 +147,10 @@
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.7,
-   "rezVlakna": 3200
+   "rezVlakna": 3200,
+   "rezPresek": {
+    "vrsta": 1
+   }
   },
   "medmozgani": {
    "barva": "#bfa39c",
@@ -169,7 +172,10 @@
    "vrstni": 2,
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.7
+   "aoTekstura": 0.7,
+   "rezPresek": {
+    "vrsta": 0
+   }
   },
   "sredina": {
    "barva": "#cda39a",
@@ -599,8 +605,8 @@
  },
  "velikost": 0.2784,
  "trikotniki": {
-  "racunalnik": 165896,
-  "telefon": 47289
+  "racunalnik": 165907,
+  "telefon": 47300
  },
  "luci": [
   {

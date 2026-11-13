@@ -823,6 +823,26 @@ def ledvicni_meh(osnovni, cfg, tmp):
     bm = bmesh.new(); bm.from_mesh(ur)
     bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, zr), plane_no=(0, 0, 1), clear_outer=True)
     bm.to_mesh(ur); bm.free()
+    # Sečevod na pravo mero že tu (polmer ≈ 2,1 mm; Z-Anatomy ≈ 4 mm), s prehodom 14 mm pod mehom. Prej ga je tanjšal šele
+    # debelina-cevi.mjs po peki: del meha, ki je bil med peko skrit v debelem sečevodu, je ostal črn (senca okolice).
+    rt = cfg.get("secevod_polmer", 0.0021)
+    kos = {}
+    for v in ur.vertices:
+        kos.setdefault(int(v.co.z / 0.0015), []).append(v.co)
+    sred_k = {i: sum(t, Vector()) / len(t) for i, t in kos.items()}
+    pol_k = {i: sum(((c - sred_k[i]).xy).length for c in t) / len(t) for i, t in kos.items()}
+    kl = sorted(kos)
+    def ob(z):  # središče prereza pri višini z (povprečje sosednjih rezin) in polmer sečevoda
+        i = min(kl, key=lambda j: abs(j - z / 0.0015))
+        sos = [j for j in (i - 1, i, i + 1) if j in kos]
+        return sum((sred_k[j] for j in sos), Vector()) / len(sos), pol_sr
+    pol_sr = sorted(pol_k.values())[len(pol_k) // 2]  # ena mera za ves sečevod: poševno odrezan spodnji konec ima manjše povprečje
+    for v in ur.vertices:
+        c, r = ob(v.co.z)
+        w = min(1.0, max(0.0, (zr - v.co.z) / 0.014)); w = w * w * (3 - 2 * w)
+        f = 1 + (rt / max(r, 1e-6) - 1) * w
+        v.co.x = c.x + (v.co.x - c.x) * f; v.co.y = c.y + (v.co.y - c.y) * f
+    ur.update()
     obroc = [v.co for v in ur.vertices if v.co.z > zr - 0.0005]
     vrh = sum(obroc, Vector()) / len(obroc)
     pod = [v.co for v in ur.vertices if zr - 0.007 < v.co.z < zr - 0.004]
