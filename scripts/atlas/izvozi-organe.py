@@ -259,7 +259,7 @@ ORGANI = {
         gladi=r".",
         # mišice na zrklo HRA: narastišča premih mišic 5,5–7,7 mm za limbusom, kite, nič pod beločnico (oko_misice.py)
         dodaj=["ocesne_misice"],
-        ohrani=r"muscle",
+        ohrani=r"muscle", ohraniFaktor=(2.2, 6.0),  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
         # Krivulja vidnega živca se v Z-Anatomy začne pri leči: del znotraj zrkla odstranimo (sicer štrli v prerezu).
         znotraj=[(r"^Optic nerve", r"(?i)^sclera", 0.97)],
         krivulja=(6, 4),
@@ -1274,7 +1274,7 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
         r_cev = 1.0
         if oh:  # lastne cevi: blažja poenostavitev (oglata cev), ostalo dobi preostanek cilja
             ex = sum(tris(r[1]) for r in osnovni if oh.search(r[4]) and not nedot(r))
-            r_cev = min(1.0, 1.8 * ratio)
+            r_cev = min(1.0, cfg.get("ohraniFaktor", (1.8, 1.8))[i] * ratio)  # ohraniFaktor: (računalnik, telefon), privzeto 1,8
             ratio = min(1.0, max(0.05, (cilj_ - ex * r_cev) / max(skupaj_ - ex, 1)))
         # telefon=False: telefon brez tekstur (pri možganih je 1024-px peka na ~50k trikotnikih videti zmečkano)
         tk = tc if tc and (i == 0 or tc.get("telefon", True)) else None

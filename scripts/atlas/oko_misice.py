@@ -79,6 +79,18 @@ def _spodaj(hn):
     return hn - POD * (1 - _gladko(hn, EPS, 0.0015))
 
 
+def _zgladi(h, robovi, maska, krat=4):
+    """Laplaceovo glajenje polja višin po robovih mreže (samo oglišča v maski): brez gub, kjer mišica prečka drugo."""
+    n = len(h); e = robovi[maska[robovi[:, 0]] & maska[robovi[:, 1]]]
+    if not len(e):
+        return h
+    st = np.bincount(e.ravel(), minlength=n).astype(float)
+    for _ in range(krat):
+        acc = np.bincount(e[:, 0], weights=h[e[:, 1]], minlength=n) + np.bincount(e[:, 1], weights=h[e[:, 0]], minlength=n)
+        h = np.where(maska & (st > 0), 0.5 * h + 0.5 * acc / np.maximum(st, 1), h)
+    return h
+
+
 def _pisi_kito(me, k):
     at = me.attributes.get("KITA") or me.attributes.new("KITA", "FLOAT", "POINT")
     at.data.foreach_set("value", np.clip(k, 0, 1).astype(np.float32))
@@ -144,6 +156,7 @@ def ocesne_misice(osnovni, cfg, tmp):
         hn = np.where(vrh, hn, _spodaj(hn))
         ima = ~np.isnan(rs)
         rn = np.where(ima, rs + hn, r)
+        rn = np.where(ima & vrh, np.maximum(_zgladi(rn, robovi(me), ima & vrh, 4), rs + EPS), rn)
         me.vertices.foreach_set("co", (G + u * rn[:, None]).ravel()); me.update()
         if zg and T is not None:  # kita od škripca do narastišča
             it = int(np.argmin(np.linalg.norm(P - T, axis=1)))
@@ -193,6 +206,8 @@ def ocesne_misice(osnovni, cfg, tmp):
         w = w_az * _gladko(0.012 - h0, 0.0, 0.006)
         hn = np.where(vrh, hn, _spodaj(hn))
         rn = r + w * ((osn + hn) - r)
+        rn0 = rn
+        rn = np.maximum(_zgladi(rn, robovi(me), vrh & (w > 0.05), 6), rn0 - 0.0002)  # gube ob prečkanju poševne mišice
         rn = np.where(~np.isnan(rs) & vrh, np.maximum(rn, rs + EPS), rn)  # zgornja ploskev nikjer pod podlago
         me.vertices.foreach_set("co", (G + u2 * rn[:, None]).ravel()); me.update()
         k = 1 - _gladko(lok, KITA_DOLZINA[kljuc] - 0.001, KITA_DOLZINA[kljuc] + 0.002)
