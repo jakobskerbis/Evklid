@@ -158,3 +158,81 @@ for (const f of datoteke) {
     }
   });
 }
+
+// »Podrobnosti za faks« (V.ravenFaks, docs/3d.md): izklopljeno stikalo pusti celico enako, vklop doda faks dele z
+// besedili v proračunu trikotnikov in klicev (vsi prikazi), izklop vrne prvotne dele in besedila.
+const FAKS = {
+  "zivalska.js": ["membranske-beljakovine", "glikokaliks", "jedrna-lamina", "mtdna", "endosomi", "klatrinski-mesicki", "mikrotubuli", "aktinski-filamenti", "intermediarni-filamenti"],
+  "rastlinska.js": ["kloroplastna-dna", "plastoglobuli", "mtdna", "mikrotubuli", "aktinski-filamenti"],
+};
+for (const [f, novi] of Object.entries(FAKS)) {
+  test("celice: podrobnosti za faks v " + f, { skip }, async () => {
+    const m = await import(pathToFileURL(path.join(DIR, f)));
+    for (const kakovost of ["visoka", "nizka"]) {
+      const M = m.zgradi(THREE, { kakovost, gibanje: false });
+      const fk = M.nadzor.find((n) => n.id === "faks");
+      assert.ok(fk && fk.tip === "stikalo" && fk.vrednost === false, `${f}: stikalo faks, privzeto izklopljeno`);
+      const skriti = [];
+      M.group.traverse((o) => { if (!o.visible) skriti.push(o); });
+      const pred = M.deli.map((d) => `${d.id}|${d.ime}|${d.opis}`);
+      assert.ok(novi.every((id) => !pred.some((x) => x.startsWith(id + "|"))), `${f}: faks deli so skriti`);
+      const tri0 = stej(M.group).tri;
+      fk.ob(true);
+      const ids = M.deli.map((d) => d.id);
+      for (const id of novi) assert.ok(ids.includes(id), `${f}: faks del ${id}`);
+      assert.ok(M.deli.filter((d) => pred.includes(`${d.id}|${d.ime}|${d.opis}`)).length < pred.length / 2, `${f}: faks besedila`);
+      const pr = M.nadzor.find((n) => n.id === "prikaz");
+      for (const [v] of pr.moznosti) {
+        pr.ob(v);
+        const s = stej(M.group);
+        assert.ok(s.tri <= MEJE[kakovost] && s.klici <= KLICI, `${f} faks ${kakovost} ${v}: ${s.tri}/${s.klici}`);
+        preveriDele(`${f} faks ${v}`, M);
+      }
+      pr.ob(pr.vrednost);
+      // vklopljene učbeniške barve pobarvajo tudi faks dele in se ob izklopu vrnejo
+      const uc = M.nadzor.find((n) => n.id === "ucbenik");
+      const barva = () => M.deli.find((d) => d.id === "mtdna").meshes[0].material.color.getHexString();
+      const b0 = barva();
+      uc.ob(true);
+      assert.notEqual(barva(), b0, `${f}: učbeniška barva faks dela`);
+      uc.ob(false);
+      assert.equal(barva(), b0);
+      fk.ob(false);
+      assert.deepEqual(M.deli.map((d) => `${d.id}|${d.ime}|${d.opis}`), pred, `${f}: izklop vrne dele in besedila`);
+      assert.equal(stej(M.group).tri, tri0, `${f}: izklop vrne trikotnike`);
+      const zdaj = [];
+      M.group.traverse((o) => { if (!o.visible) zdaj.push(o); });
+      assert.deepEqual(zdaj, skriti, `${f}: izklop vrne vidnost`);
+      for (const d of M.deli) for (const x of d.meshes) assert.equal(x.userData.del, d.id, `${f}: userData.del ${d.id}`);
+      // zacetek iz faks lekcije vklopi stikalo že ob gradnji
+      const Z = m.zgradi(THREE, { kakovost, gibanje: false, zacetek: { faks: true } });
+      assert.ok(Z.nadzor.find((n) => n.id === "faks").vrednost && Z.deli.some((d) => d.id === "mtdna"), `${f}: zacetek faks`);
+      M.dispose(); Z.dispose();
+    }
+  });
+}
+
+test("celice: katalog – faks podrobnosti samo v faks lekcijah, faks lekcije o celici imajo 3D celico", { skip }, async () => {
+  const { SIM_TOPICS, simsForTopic } = await import("../public/sim/katalog.js");
+  const { simsFor } = await import("../server/textbook.js");
+  const idx = (await import(pathToFileURL(path.join(DIR, "index.js")))).default;
+  const pot = new Map(idx.map((e) => [e.id, e.pot]));
+  for (const tema of Object.keys(SIM_TOPICS)) {
+    for (const d of simsForTopic(tema)) {
+      const m3 = /^3d-(.+)$/.exec(d.id);
+      if (!m3 || !pot.has(m3[1])) continue;
+      const zac = d.opts.zacetek || {};
+      if (zac.faks) assert.ok(tema.startsWith("UNI-"), `${tema}: faks podrobnosti v šolski lekciji`);
+      if (!Object.keys(zac).length) continue;
+      const m = await import(pathToFileURL(path.join(DIR, pot.get(m3[1]))));
+      const M = m.zgradi(THREE, { kakovost: "nizka", gibanje: false, zacetek: zac });
+      for (const k of Object.keys(zac)) assert.ok(M.nadzor.some((n) => n.id === k), `${tema}: ${d.id} nima kontrole ${k}`);
+      M.dispose();
+    }
+  }
+  // lekcije, zaradi katerih je stikalo nastalo (j, 13. 11.), in ista tema v drugem programu (sameTopics, ista lekcija)
+  for (const tema of ["UNI-ULFKKT-NMOVZ/zgradba-celice", "UNI-ULBF-ABIOCEL/prokariontska-in-evkariontska-celica", "UNI-UMFNM-NBIOCEL/endomembranski-sistem", "UNI-ULBF-ASPLBOT/rastlinska-celica"]) {
+    const z = simsFor(tema).find((d) => /^3d-celica-(zivalska|rastlinska)$/.test(d.id));
+    assert.ok(z && z.opts.zacetek?.faks === true, `${tema}: živalska ali rastlinska celica s faks podrobnostmi`);
+  }
+});

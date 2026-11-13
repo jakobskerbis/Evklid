@@ -12,6 +12,7 @@
 //   V.vlakna(krivulje, r, barva)      → sijoča vlakna citoskeleta (ena mreža)
 //   V.posej(mesh, n, sito)            → naključne točke na površini mreže (po ploščini), z normalo
 //   V.beljakovine(tocke, barva, r)    → beljakovine na membrani (kepice, primerki)
+//   V.ravenFaks(deli, { … })          → stikalo »Podrobnosti za faks« (faks deli, besedila; glej opis pri funkciji)
 //   V.zdruzi(geos, barve)             → ena geometrija iz več
 
 // Skupna paleta: isti organel ima v vseh celicah isto barvo (j: vse povsod usklajeno).
@@ -55,6 +56,13 @@ export const BARVE = {
   kost: "#efe3c8",
   sluz: "#a8d8ff",
   bicek: "#f6e7b8",
+  // podrobnosti za faks (V.ravenFaks)
+  intermediarni: "#ff7f6e",
+  lamina: "#ffb0a3",
+  glikokaliks: "#7ff0b2",
+  endosom: "#f5a3c8",
+  klatrin: "#ff6a3d",
+  plastoglobul: "#ffe066",
 };
 
 // »Barve kot v učbeniku« (j, 12. 11.): klasične barve šolskih slik celice, svetlejše in bolj razločne med seboj. Ključ je
@@ -68,6 +76,10 @@ export const BARVE_UCBENIK = {
   stena: "#5c9e2e", "celicna-stena": "#5c9e2e", plazmodezme: "#a3c95a", nukleoid: "#e46aa6", plazmid: "#f29ac2",
   plazmidi: "#f29ac2", bicek: "#c9a46a", bicki: "#c9a46a", pili: "#d9c08a", kapsula: "#d8e6a0", migetalke: "#c9a46a",
   "skrobna-zrna": "#f2ecd6", "krcljiva-vakuola": "#7ccdf0", "prebavna-vakuola": "#e2b36c",
+  // deli, ki jih doda »Podrobnosti za faks«
+  mikrotubuli: "#6f8fd0", "aktinski-filamenti": "#d08a5a", "intermediarni-filamenti": "#e07a5f", "jedrna-lamina": "#f2a28f",
+  "membranske-beljakovine": "#8a5fc9", glikokaliks: "#7fcf8f", endosomi: "#e98fb8", "klatrinski-mesicki": "#e8743b",
+  mtdna: "#e46aa6", "kloroplastna-dna": "#e46aa6", plastoglobuli: "#f0d060",
 };
 
 export function videzCelic(THREE, { hi = true, odpad = [] } = {}) {
@@ -453,6 +465,42 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
     return el;
   }
 
+  // Stikalo »Podrobnosti za faks« (id `faks`, docs/3d.md »Podrobnosti za faks«). Izklopljeno pusti celico tako, kot je
+  // za OŠ in SŠ; faks lekcije ga vklopijo z zacetek: { faks: true }. Vklop pokaže mreže `mreze`, doda dele `dodaj`
+  // ([{ ...del, za: id dela, za katerim stoji na seznamu }]), zamenja dele `zamenjaj` ({ id: [novi deli] }, npr. citoskelet →
+  // mikrotubuli, aktinski in intermediarni filamenti) in besedila `opisi` ({ id: { ime?, opis } }). Seznam `deli` se
+  // spremeni na mestu (pregledovalnik ga po ob() prebere znova). ob(v) graditelja teče na koncu (vidnost, geometrija);
+  // ucbenik() vrne stikalo barveUcbenika, ki po preklopu znova pobarva dele, ki so prišli ali odšli.
+  function ravenFaks(deli, { mreze = [], dodaj = [], zamenjaj = {}, opisi = {}, ob = null, ucbenik = null } = {}) {
+    const osnovni = deli.slice(), besedila = new Map();
+    for (const d of osnovni) if (opisi[d.id]) besedila.set(d.id, { ime: d.ime, opis: d.opis });
+    for (const d of [...dodaj, ...Object.values(zamenjaj).flat()]) if (opisi[d.id]) besedila.set(d.id, { ime: d.ime, opis: d.opis });
+    function nastavi(v) {
+      const nov = [], ids = new Set(osnovni.map((d) => d.id));
+      for (const d of osnovni) {
+        nov.push(...(v && zamenjaj[d.id] ? zamenjaj[d.id] : [d]));
+        if (v) nov.push(...dodaj.filter((x) => x.za === d.id));
+      }
+      if (v) nov.push(...dodaj.filter((x) => !ids.has(x.za)));
+      for (const d of nov) {
+        for (const m of d.meshes) m.userData.del = d.id;
+        const b = besedila.get(d.id);
+        if (b) Object.assign(d, v ? { ime: opisi[d.id].ime || b.ime, opis: opisi[d.id].opis } : b);
+      }
+      deli.splice(0, deli.length, ...nov);
+      for (const m of mreze) m.visible = v;
+      ob?.(v);
+      const u = ucbenik?.();
+      if (u) u.ob(u.vrednost);
+    }
+    const el = {
+      tip: "stikalo", id: "faks", oznaka: "Podrobnosti za faks", vrednost: false,
+      ob(v) { el.vrednost = !!v; nastavi(el.vrednost); },
+    };
+    for (const m of mreze) m.visible = false;
+    return el;
+  }
+
   // Lipidni dvosloj v prerezu, narisan v senčilniku (kot pri živalski celici): glave fosfolipidov (kroglice), po dva
   // valovita repa, ponekod beljakovina čez ves dvosloj. Geometrija potrebuje atribut aRez = (s: dolžina vzdolž roba,
   // t: 0 zunaj … 1 znotraj); D = debelina v enotah modela. o = { glave, repi, beljakovina: barve (sRGB), delez: delež
@@ -523,5 +571,5 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
     return g;
   }
 
-  return { GLSL, vLuknji, barveUcbenika, hash, sum, fbm, rnd, sencilo, steklo, poglobi, poliraj, pike, zdruzi, vlakna, posej, beljakovine, dvoslojMat, prerezDvosloj, BARVE, BARVE_UCBENIK };
+  return { GLSL, vLuknji, barveUcbenika, ravenFaks, hash, sum, fbm, rnd, sencilo, steklo, poglobi, poliraj, pike, zdruzi, vlakna, posej, beljakovine, dvoslojMat, prerezDvosloj, BARVE, BARVE_UCBENIK };
 }
