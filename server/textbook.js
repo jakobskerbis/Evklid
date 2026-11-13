@@ -26,9 +26,11 @@ export const LESSONS_DIR = process.env.EVKLID_LESSONS || path.join(here, "..", "
 // je zapisano v public/sim/katalog.js; prikažemo samo že narejene.
 export function simsFor(topicId, lesson = loadLesson(topicId)) {
   const usable = (d) => hasEngine(d.id) && (d.id !== "zbirka" || (d.opts?.items || []).some((it) => hasEngine(it[0])));
-  // Regijska tema vzame simulacije svojih osnovnih tem (brez ponovitev).
+  // Regijska tema vzame simulacije svojih osnovnih tem, fakultetna še simulacije enake teme drugih programov (sameTopics),
+  // ki ima isto lekcijo (brez ponovitev).
   const seen = new Set();
   const list = baseTopicIds(topicId)
+    .flatMap((id) => [id, ...sameTopics(id).filter((x) => x !== id)]) // lastna tema prva (prva simulacija je za tisk)
     .flatMap((id) => simsForTopic(id))
     .filter((d) => usable(d) && !seen.has(d.id + JSON.stringify(d.opts)) && seen.add(d.id + JSON.stringify(d.opts)));
   const extra = lesson?.meta.demo;
