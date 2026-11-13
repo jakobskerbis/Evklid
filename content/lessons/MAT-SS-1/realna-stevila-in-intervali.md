@@ -166,7 +166,7 @@ $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 -
 
 - **»Absolutna vrednost vsote je vsota absolutnih vrednosti«: $|a + b| = |a| + |b|$.** To velja le, če imata $a$ in $b$ isti predznak (ali je eno od njiju $0$). Za $a = 3$, $b = -5$ je $|3 + (-5)| = |{-2}| = 2$, medtem ko je $|3| + |{-5}| = 8$. Pravilno: najprej izračunaj vsoto, nato ji vzemi absolutno vrednost. Splošno velja le $|a + b| \le |a| + |b|$.
 - **Odstranjevanje minusa po občutku: $|2 - 5| = 2 + 5 = 7$.** Absolutna vrednost ne spreminja znakov znotraj izraza. Pravilno: $2 - 5 = -3$, ta vrednost je negativna, zato jo zamenjaš z nasprotno: $|{-3}| = 3$.
-- **Pomešani smeri pri neenačbah: rešitev $|x| > 3$ zapišeš kot $(-3, 3)$.** Razdalja od $0$ večja od $3$ pomeni **zunaj** tega odseka. Pravilno: $|x| < 3$ je $(-3, 3)$, $|x| > 3$ pa je $(-\infty, -3) \cup (3, \infty)$.
+- **Pomešani smeri pri neenačbah (višja raven): rešitev $|x| > 3$ zapišeš kot $(-3, 3)$.** Razdalja od $0$ večja od $3$ pomeni **zunaj** tega odseka. Pravilno: $|x| < 3$ je $(-3, 3)$, $|x| > 3$ pa je $(-\infty, -3) \cup (3, \infty)$.
 - **Napačni oklepaji: $[2, \infty]$ za $x \ge 2$ ali $(2, 5)$ za $2 \le x \le 5$.** Znak $\infty$ ni število, zato mu sledi okrogel oklepaj: $[2, \infty)$. Pri $\le$ in $\ge$ piši oglat oklepaj, pri $<$ in $>$ okrogel. Pravilno: $2 \le x \le 5$ je $[2, 5]$.
 - **»Interval vsebuje le števila, ki jih vidiš«: $[3{,}5;\,5{,}1]$ beremo kot $3{,}5;\ 3{,}6;\ \dots;\ 5{,}1$.** Zapis z dvema krajiščema ni naštevanje. Interval vsebuje vsa realna števila med krajiščema, tudi $4{,}27$ ali $\sqrt{20}$. Pravilno: pri vsakem številu se vprašaj le, ali leži med krajiščema in ali je krajišče vključeno.
 
@@ -177,7 +177,7 @@ $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 -
 - Lastnosti: $|{-x}| = |x|$, $|ab| = |a||b|$, $|a + b| \le |a| + |b|$. Enačba $|x| = a$ ima za $a > 0$ rešitvi $\pm a$, za $a = 0$ le $x = 0$, za $a < 0$ je brez rešitve.
 - Intervali: $(a, b)$, $[a, b]$, $[a, b)$, $(a, b]$ in neomejeni. Okrogel oklepaj: krajišče ni vključeno. Oglat: je vključeno. Ob $\infty$ vedno okrogel.
 - Presek, unija in razlika intervalov: nariši na isto premico in preveri krajišča.
-- $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
+- (višja raven) $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
 
 ## Drugače: Kot zgodba (višja raven)
 

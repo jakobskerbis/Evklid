@@ -270,7 +270,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | primerja in razlikuje zapis in pomen izraza in enačbe ter spremenljivke in neznanke | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-1/linearne-enacbe` | delno – izraz/enačba in spremenljivka/neznanka nista izrecno primerjana |
 | sešteva in množi algebrske izraze | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
 | uporablja in utemelji pravili za kvadrat in kub dvočlenika | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
-| s pomočjo Pascalovega trikotnika določi pravila za višje potence dvočlenika in jih tudi uporablja | OR+VR | – | manjka – Pascalov trikotnik ni nikjer; le koeficienti 1, 3, 3, 1 |
+| s pomočjo Pascalovega trikotnika določi pravila za višje potence dvočlenika in jih tudi uporablja | OR+VR | – | manjka – Pascalov trikotnik le zgodovinsko omenjen v matematicna-indukcija; le koeficienti 1, 3, 3, 1 |
 | prepozna in uporablja ustrezni način razstavljanja danega izraza: izpostavljanje, razlika kvadratov, vsota in razlika kubov, Viètovo pravilo, razstavljanje štiričlenikov | OR+VR | `MAT-SS-1/razstavljanje-izrazov` | delno – vsota in razlika kubov manjkata |
 | razstavi izraze aⁿ ± bⁿ | **VR** | – | manjka |
 | računa z algebrskimi ulomki (vse štiri računske operacije in izrazi z oklepaji) | OR+VR | `MAT-SS-1/ulomljeni-izrazi` | da |
@@ -571,7 +571,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Definicija, lastnosti in graf logaritemske funkcije | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da |
 | Logaritem in pravila za računanje z logaritmi | OR+VR | `MAT-SS-2/logaritem` | da |
 | Desetiški in naravni logaritem | OR+VR | `MAT-SS-2/logaritem` | da |
-| Prehod k novi osnovi | **VR** | `MAT-SS-2/logaritem` | da – blok 6 in sorodna mesta označiti; Primer 3 b) ga uporablja |
+| Prehod k novi osnovi | **VR** | `MAT-SS-2/logaritem` | da – blok 6 (višja raven); Primer 3 b) ga uporablja |
 | Logaritemske enačbe | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da |
 | Branje logaritemske skale | **VR** | `MAT-SS-2/logaritem` | delno – pH in decibeli; branje logaritemske skale na osi grafa manjka |
 | Modeliranje primerov iz vsakdanjega življenja z logaritemsko funkcijo | **VR** | `MAT-SS-2/logaritem`, `MAT-SS-2/logaritemska-funkcija-in-enacbe` | delno – modeli podani (uglaševalnik, pH, dB); sestavljanja modela ni |
@@ -810,7 +810,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | Osnovni izrek kombinatorike, kombinatorično drevo | OR+VR | `MAT-SS-4/kombinatorika` | da |
-| Pravilo vsote | OR+VR | – | manjka |
+| Pravilo vsote | OR+VR | – | manjka – le en stavek v Pogostih napakah (seštevaš, kadar izbereš eno ali drugo) |
 | Permutacije | OR+VR | `MAT-SS-4/kombinatorika` | da |
 | Permutacije s ponavljanjem | OR+VR | – | manjka |
 | Variacije | OR+VR | `MAT-SS-4/kombinatorika` | da |

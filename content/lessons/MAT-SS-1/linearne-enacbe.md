@@ -215,7 +215,7 @@ Preverimo: leva stran je $\dfrac{2 \cdot 5{,}5 - 1}{4} = \dfrac{10}{4} = 2{,}5$,
 
 Zakaj smemo enačbo množiti ali deliti z istim številom, ki ni $0$? Če velja $A = B$, potem velja tudi $kA = kB$ za vsak $k$. To je očitno. Obratno, če velja $kA = kB$ in je $k \neq 0$, lahko obe strani delimo s $k$ in dobimo $A = B$. Zato sta enačbi **ekvivalentni**, imata iste rešitve. Če je $k = 0$, dobimo $0 = 0$ ne glede na $A$ in $B$, zato bi izgubili vso informacijo in dobili »rešitve«, ki jih prej ni bilo.
 
-Zato pri parametru ne smemo deliti z izrazom, ki je lahko $0$. V enačbi $(a-1)x = a-1$ je množenje s faktorjem $a - 1$ ekvivalentna preoblika samo, če je $a - 1 \neq 0$. Primer $a = 1$ je treba rešiti ločeno, neposredno iz enačbe.
+(višja raven) Zato pri parametru ne smemo deliti z izrazom, ki je lahko $0$. V enačbi $(a-1)x = a-1$ je množenje s faktorjem $a - 1$ ekvivalentna preoblika samo, če je $a - 1 \neq 0$. Primer $a = 1$ je treba rešiti ločeno, neposredno iz enačbe.
 
 Splošno: enačbo $ax = b$ rešujemo takole.
 

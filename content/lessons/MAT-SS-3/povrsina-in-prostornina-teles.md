@@ -203,7 +203,7 @@ Prostornino si predstavljaj kot plasti: prizma in valj sta zloženi iz enakih pl
 
 **Cavalierijevo načelo (višja raven):** če imata dve telesi enako višino in so vsi vzporedni preseki na isti višini enako veliki, imata enaki prostornini.
 
-**Prostornina krogle (višja raven).** Primerjaj polkroglo s polmerom $r$ in valj s polmerom $r$ in višino $r$, iz katerega izrezemo stožec (vrh v središču spodnje osnovne ploskve, osnovna ploskev je zgornji krog valja). Na višini $h$ nad osnovno ploskvijo:
+**Izpeljava prostornine krogle (višja raven).** Primerjaj polkroglo s polmerom $r$ in valj s polmerom $r$ in višino $r$, iz katerega izrezemo stožec (vrh v središču spodnje osnovne ploskve, osnovna ploskev je zgornji krog valja). Na višini $h$ nad osnovno ploskvijo:
 
 - presek polkrogle je krog s polmerom $\sqrt{r^2 - h^2}$, ploščina $\pi(r^2 - h^2)$,
 - presek "valja brez stožca" je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$.

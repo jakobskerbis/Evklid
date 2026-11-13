@@ -72,7 +72,7 @@ Iz razcepa na prafaktorje dobiš:
 
 - $D(a, b)$ je produkt prafaktorjev, ki nastopajo v *obeh* številih, vsakega z *manjšim* eksponentom,
 - $v(a, b)$ je produkt *vseh* prafaktorjev, ki nastopajo v vsaj enem številu, vsakega z *večjim* eksponentom,
-- za naravni števili $a$ in $b$ velja $D(a, b) \cdot v(a, b) = a \cdot b$.
+- (višja raven) za naravni števili $a$ in $b$ velja $D(a, b) \cdot v(a, b) = a \cdot b$.
 
 Zdaj znaš rešiti uganko s škržati. Števili $13$ in $17$ sta različni praštevili, zato sta tuji in $v(13, 17) = 13 \cdot 17 = 221$. Obe vrsti se spet pojavita hkrati leta $2024 + 221 = 2245$.
 
@@ -187,7 +187,7 @@ $147 = 7 \cdot 21 + 0$, zato je $D(1071, 462) = 21$. Res je $1\,071 = 21 \cdot 5
 - Deljenje z ostankom: $a = q \cdot b + r$ z $0 \le r < b$.
 - Praštevilo ima natanko dva pozitivna delitelja; $1$ ni praštevilo. Vsako število $n > 1$ je na en sam način produkt praštevil.
 - $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. Velja $D(a, b) \cdot v(a, b) = a \cdot b$.
-- Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
+- (višja raven) Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
 
 ## Drugače: Na sliki
 
