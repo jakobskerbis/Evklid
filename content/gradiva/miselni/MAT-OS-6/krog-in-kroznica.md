@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Središče
+  - Vse točke krožnice enako daleč od $S$
+- Krožnica in krog
+  - Krožnica je samo rob
+  - Krog je rob z notranjostjo
+- Polmer
+  - Od središča do krožnice, oznaka $r$
+  - Šestilo vedno nastaviš na polmer
+- Tetiva in premer
+  - Tetiva povezuje dve točki krožnice
+  - Premer je tetiva skozi središče
+  - Premer je najdaljša tetiva
+- Zveza med dolžinama
+  - $d = 2r$ in $r = \dfrac{d}{2}$
+  - Petrijevka: $d = 90\,\text{mm}$, $r = 45\,\text{mm}$
+- Lega točke
+  - $\lvert ST\rvert < r$: v krogu
+  - $\lvert ST\rvert = r$: na krožnici, sicer zunaj

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Celota
+  - Ustreza ji število $1$, cel trak
+  - Imenovalec: na koliko delov razdelimo
+- Del celote
+  - $\dfrac{a}{b}$ od $c$ je $c : b \cdot a$
+  - »Od« pomeni množenje
+  - $\dfrac{2}{5}$ od $30$ dni je $12$ dni
+- Celota iz dela
+  - Celota $= d : a \cdot b = d : \dfrac{a}{b}$
+  - $\dfrac{3}{8}$ ptic je $18$, vseh $48$
+  - Napaka: znani del pomnožiš z ulomkom
+- Najprej en del
+  - Del: deli z imenovalcem
+  - Celota: deli s števcem
+- Ostanek
+  - Ostane $1 - \dfrac{a}{b}$ celote
+- Del ostanka
+  - Ostanek je nova celota
+  - $\dfrac{1}{4}$ od $\dfrac{2}{3}$ celote je $\dfrac{1}{6}$ celote
+- Preverba
+  - Pri ulomku pod $1$ je del manjši od celote
+  - Odgovor v stavku

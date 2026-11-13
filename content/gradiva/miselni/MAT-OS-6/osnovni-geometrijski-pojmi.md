@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Točka in premica
+  - točka ima samo lego, oznaka $A$
+  - skozi dve različni točki natanko ena premica
+  - $A \in p$ leži, $D \notin p$ ne leži
+- Poltrak
+  - začetek v $A$, skozi $B$ brez konca
+  - poltrak $AB$ ni poltrak $BA$
+- Daljica
+  - dve krajišči, dolžina $|AB| = |BA|$
+  - ravnilo: krajišče na oznako $0$
+  - napaka: rob pulta ni premica, je daljica
+- Deli daljice
+  - $C$ na daljici: $|AB| = |AC| + |CB|$
+  - razpolovišče: $|AM| = \dfrac{|AB|}{2}$
+  - štiri točke na premici: $6$ daljic
+- Vzporednici
+  - $p \parallel q$: brez skupne točke, povsod enako narazen
+  - skozi točko zunaj premice natanko ena
+  - napaka: »na listu se ne sekata« še ni dovolj
+- Pravokotnici
+  - $p \perp q$: sekata se pod pravim kotom
+  - iz $a \parallel b$ in $c \perp a$ sledi $c \perp b$
+  - niso nujno vodoravna in navpična
+- Razdalja točke od premice
+  - dolžina pravokotne daljice
+  - najkrajša pot do premice
