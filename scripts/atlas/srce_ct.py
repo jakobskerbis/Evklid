@@ -947,8 +947,28 @@ def srce_ct(osnovni, cfg, tmp):
     hh = None
     if cfg.get("_hh229") and os.path.exists(cfg["_hh229"]):
         import srce_hh229
-        hh = srce_hh229.stena(cfg["_hh229"], dict(V2=V2, F=F, epi=epi, dl=dl, masca=masca, L=Lc), Polje, log=lambda x: print(x, flush=True))
+        pv_ct = pljucne_vene_ct(P, C, T, premik, Lc, cfg.setdefault("_telefon", {}), _bvh(V2, F[epi]))
+        cevi = []
+        for r in nove + pv_ct:  # cevi velikih žil (točke in normale): vanje se zložijo odrezani krni žil HH229
+            if r[2] in ("aorta", "pljucna", "vena", "pljucna-vena") and not r[0].startswith("Root of"):
+                me_ = r[1]; Xc = _tocke(me_); Fc_ = np.array([p.vertices[:3] for p in me_.polygons if len(p.vertices) >= 3])
+                Nc_ = np.zeros_like(Xc); nn = np.cross(Xc[Fc_[:, 1]] - Xc[Fc_[:, 0]], Xc[Fc_[:, 2]] - Xc[Fc_[:, 0]])
+                for k_ in range(3): np.add.at(Nc_, Fc_[:, k_], nn)
+                Nc_ /= np.linalg.norm(Nc_, axis=1)[:, None] + 1e-20
+                cc_ = Xc[Fc_].mean(1); nf_ = nn / (np.linalg.norm(nn, axis=1)[:, None] + 1e-20)
+                cevi.append((np.concatenate([Xc, cc_]), np.concatenate([Nc_, nf_])))
+        hh = srce_hh229.stena(cfg["_hh229"], dict(V2=V2, F=F, epi=epi, dl=dl, masca=masca, L=Lc), Polje, log=lambda x: print(x, flush=True), cevi=cevi)
         bvh_he = _bvh(hh["V"], hh["F"][hh["epi"]]); bvh_hn = _bvh(hh["V"], hh["F"][~hh["epi"]])
+        # votli veni: cev (zgrajena na ustju CT) na pravo ustje v steni HH229 (sicer je ob cevi luknja v steni preddvora)
+        bvh_h = _bvh(hh["V"], hh["F"]); c_ra = V2[F[(dl == 5) & ~epi]].mean((0, 1))
+        for rx, kljuc in ((r"^Inferior vena cava", "svv"), (r"^(Superior vena cava|(Right|Left) brachiocephalic vein|Azygos vein)", "zvv")):  # oznaki CT: svv spodnja, zvv zgornja
+            u = srce_hh229.ustje(bvh_h, c_ra, np.asarray(Lc[kljuc]))
+            if u is None:
+                print(f"[organi] srce_hh229: ustje {kljuc}: ni odprtine", flush=True); continue
+            print(f"[organi] srce_hh229: ustje {kljuc}: premik {np.linalg.norm(u[0] - Lc[kljuc]) * 1000:.1f} mm", flush=True)
+            for r in nove:
+                if re.search(rx, r[0]) or (kljuc == "svv" and r[0].startswith("Valve of inferior vena cava")):
+                    _nastavi(r[1], srce_hh229.premakni_na_ustje(_tocke(r[1]), c_ra, np.asarray(Lc[kljuc]), u[0]))
         for r in nove:
             if re.search(PRENOS[1][0], r[0] + " " + r[2]):  # ob endokardu: s stene CT na endokard HH229
                 X = _tocke(r[1]); X2, _ = prenesi_na_steno(X, X, bvh_endo, bvh_he, bvh_hn, "endo", 0.010)
@@ -965,7 +985,7 @@ def srce_ct(osnovni, cfg, tmp):
     tel = cfg.setdefault("_telefon", {})
     if hh is None:  # HH229 ima svoje zaklopke, tetive, papilarne mišice in trabekule (del istega zaprtega volumna)
         nove += zaklopke_ct(P, C, T, premik, Lc, bvh_lv, bvh_rv, tel)
-    nove += pljucne_vene_ct(P, C, T, premik, Lc, tel, bvh_he if hh else _bvh(V2, F[epi]))
+    nove += pv_ct if hh else pljucne_vene_ct(P, C, T, premik, Lc, tel, _bvh(V2, F[epi]))
     if hh is None:
         nove += trabekule_ct(V2, lvF, rvF, Lc, nove, tel, tmp)
     else:
@@ -1047,6 +1067,11 @@ def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None, deli=None):
                 vg.add(idx, float(val), "REPLACE")
             mod.vertex_group = "poenostavi"; mod.vertex_group_factor = 1.0
         m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+        for _ in range(4):  # uteži skupine zmanjšajo krčenje: razmerje popravimo do cilja (HH229: 1 M ploskev → cilj)
+            if deli is None or len(m2.polygons) <= 1.06 * c: break
+            mod.ratio *= c / len(m2.polygons)
+            bpy.data.meshes.remove(m2)
+            m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
         bpy.data.objects.remove(o)
         bm = bmesh.new(); bm.from_mesh(m2)
         for d, (ime, tkivo, del_) in enumerate(DELI_CT):

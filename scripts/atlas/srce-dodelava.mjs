@@ -48,7 +48,7 @@ export const TKIVA = [
   [/^Inferior vena cava/, "vena-spodnja"],
 ];
 // Deli, ki na telefonu dobijo UV ene točke.
-export const ENO_UV = /^Trabeculae carneae of (left|right) ventricle/;
+export const ENO_UV = /^Trabeculae carneae of (left|right) ventricle(?! \(HH229\))/; // HH229: trabekule so del stene s pečeno teksturo
 
 // Vgrez venčnih žil: os cevi toliko polmerov nad epikardom (0 = os na površini, 1 = cev leži na njej).
 // krog 10 srca (ocena k5: »venčne arterije ležijo na vrhu kot enakomerne svetlo rdeče cevi«): os 0,1 polmera pod površino
@@ -394,7 +394,7 @@ export function zakrpajStene(mreze) {
 
 // Notranje strukture (papilarne mišice, trabekule, prevodni sistem), ki na tankem mestu stene gledajo skozi epikard: oglišča zunaj
 // površine (ali manj kot POD pod njo) se premaknejo pod površino. Vrne število premaknjenih oglišč.
-const NOTRANJE = /papillary muscle|Trabeculae carneae|Septomarginal|Conducting system/;
+const NOTRANJE = /papillary muscle|Trabeculae carneae(?!.*\(HH229\))|Septomarginal|Conducting system/; // deli HH229 so ploskve iste zaprte stene (ne premikamo)
 // deli s tkivom stene, ki niso stena (ležijo v votlinah ali so naša dopolnitev): ne štejejo v površino epikarda
 const NI_STENA = /papillary|Trabecul|Septomarginal|pectinati|Crista|Limbus|\(lastno\)|^Left auricle$/;
 const POD = 0.0015;

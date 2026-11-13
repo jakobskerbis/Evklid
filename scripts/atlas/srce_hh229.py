@@ -57,12 +57,16 @@ def ujemi(X, Nx, kd, Y, Ny, k=12, do=0.016, kot=0.2):
     return np.where(ok.any(1), ii[np.arange(len(X)), prvi], -1)
 
 class Poravnava:
-    def __init__(self, h, ct, Polje, koraki=((0.020, 3), (0.014, 3), (0.010, 2)), vzorcev=30000, log=print):
+    def __init__(self, h, ct, Polje, koraki=((0.020, 3), (0.014, 3), (0.010, 2)), vzorcev=30000, log=print, cevi=None):
         Lc = ct["L"]
         ost, self.s, self.R, self.t, a, b, o5 = podobnost(h, Lc)
         self.mitralna, self.trikuspidalna = a, b
         log(f"[organi] srce_hh229: podobnost merilo {self.s:.3f}, ostanek oslonilnih točk {ost * 1000:.1f} mm (največ {o5.max() * 1000:.1f}); mitralna = {a}")
         Vc, Fc = ct["V2"], ct["F"]; Nc = normale_oglisc(Vc, Fc); kdc = cKDTree(Vc)
+        if cevi:  # cilj so tudi cevi velikih žil (do 3 cm od stene): krni žil HH229 pridejo na naše cevi (ustja ven, lok aorte)
+            Qc = np.concatenate([c[0] for c in cevi]); Nq = np.concatenate([c[1] for c in cevi])
+            blizu = kdc.query(Qc)[0] < 0.03
+            Vc = np.concatenate([Vc, Qc[blizu]]); Nc = np.concatenate([Nc, Nq[blizu]]); kdc = cKDTree(Vc)
         Vh, Fh = h["V"], h["F"]; Nh0 = normale_oglisc(Vh, Fh)
         rng = np.random.default_rng(3)
         ih = rng.choice(len(Vh), vzorcev, replace=False); ic = rng.choice(len(Vc), vzorcev // 2, replace=False)
@@ -127,10 +131,50 @@ def zgladi(V, F, krat=120, lam=0.6):
     for _ in range(krat): X = (1 - lam) * X + lam * (A @ X) / st[:, None]
     return X
 
-def stena(pot, ct, Polje, log=print):
+def skrij_krne(V, F, dl, d_ct, cevi, log=print):
+    """Krni žil HH229 (aorta z lokom, pljučno deblo, votli in pljučne vene; odrezani konci preparata) se zložijo v steno
+    naših cevi žil (srce_zile, pljucne_vene_ct), ki se nadaljujejo iz korenov CT: oglišče gre na najbližjo točko cevi,
+    δ pod njeno površino. Topologija ostane (zaprt volumen brez prostornine v steni cevi), zunaj se vidi samo naša cev."""
+    if not cevi: return V, np.zeros(len(V))
+    Q = np.concatenate([c[0] for c in cevi]); N = np.concatenate([c[1] for c in cevi])
+    d, i = cKDTree(Q).query(V)
+    zila = np.zeros(len(V), bool); preddvor = np.zeros(len(V), bool)
+    for k in range(3):
+        zila[F[np.isin(dl, (7, 8)), k]] = True; preddvor[F[np.isin(dl, (4, 5)), k]] = True
+    st = lambda x, a, b: np.clip((x - a) / (b - a), 0, 1) ** 2 * (3 - 2 * np.clip((x - a) / (b - a), 0, 1))
+    w = st(d_ct, 0.0025, 0.006) * (1 - st(d, 0.005, 0.009)) * (zila | preddvor)
+    w = np.maximum(w, st(d_ct, 0.006, 0.010) * zila)          # odmaknjeni deli krnov žil (lok, veje pljučnega debla)
+    w = np.maximum(w, st(d_ct, 0.009, 0.014) * preddvor * (d < 0.03))  # krni ven, ki štrlijo iz preddvorov
+    cilj = Q[i] - N[i] * 0.0005
+    log(f"[organi] srce_hh229: krni žil zloženi v cevi: {int((w > 0.5).sum())} oglišč")
+    return V + w[:, None] * (cilj - V), w
+
+def ustje(bvh, c, cilj, kot=38.0, n=3000, do=0.12):
+    """Ustje vene v steni HH229, gledano iz središča preddvora c proti pričakovanemu ustju `cilj`: smeri v stožcu, v
+    katerih žarek ne zadene stene (svetlina žile). Vrne (središče ustja, smer) ali None."""
+    from mathutils import Vector
+    a = (cilj - c) / np.linalg.norm(cilj - c)
+    rng = np.random.default_rng(5); D = rng.normal(size=(n, 3)); D /= np.linalg.norm(D, axis=1)[:, None]
+    D = D[D @ a > np.cos(np.radians(kot))]
+    t = np.array([(bvh.ray_cast(Vector(c), Vector(d), do)[3] or np.inf) for d in D])
+    ven = ~np.isfinite(t)
+    if ven.sum() < 5: return None
+    b = D[ven].mean(0); b /= np.linalg.norm(b)
+    rob = np.isfinite(t) & ((D @ b) > np.cos(np.radians(14)))
+    r = np.median(t[rob]) if rob.sum() > 3 else np.linalg.norm(cilj - c)
+    return c + b * r, b
+
+def premakni_na_ustje(X, c, staro, novo):
+    """Cev žile, zgrajena na ustju CT `staro`, se zasuka okoli središča preddvora c in premakne na ustje HH229 `novo`."""
+    a = (staro - c) / np.linalg.norm(staro - c); b = (novo - c) / np.linalg.norm(novo - c)
+    v = np.cross(a, b); cs = float(a @ b); K = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+    R = np.eye(3) + K + K @ K / (1 + cs)
+    return c + (X - c) @ R.T + b * (np.linalg.norm(novo - c) - np.linalg.norm(staro - c))
+
+def stena(pot, ct, Polje, log=print, cevi=None):
     """HH229 na legi CT z oznakami. Vrne dict V, F, dl (indeks v DELI), epi (po ploskvi), masca in ohrani (po oglišču),
     L (oslonilne točke zaklopk HH229 na novi legi)."""
-    h = dict(np.load(pot)); por = Poravnava(h, ct, Polje, log=log)
+    h = dict(np.load(pot)); por = Poravnava(h, ct, Polje, log=log, cevi=cevi)
     V = por(h["V"]); F = h["F"].astype(np.int64)
     Vc, Fc = ct["V2"], ct["F"]
     nf = np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]); nf /= np.linalg.norm(nf, axis=1)[:, None] + 1e-20
@@ -147,7 +191,12 @@ def stena(pot, ct, Polje, log=print):
     epi = vecina(F, epi.astype(np.int64), 2, 4).astype(bool)
     dl = vecina(F, dl, len(DELI), 4)
     # levo uho: del levega preddvora, ki štrli iz stene CT (CT ušesa nima) ob ustju ušesa
-    d_ct = cKDTree(Vc).query(cf)[0]
+    V, w_krn = skrij_krne(V, F, dl, cKDTree(Vc).query(V)[0], cevi, log)
+    # povsem zložene ploskve (list brez prostornine v steni cevi) odstranimo: robova ostaneta drug ob drugem v steni cevi
+    # (odprtina brez širine, število navitij ostane pravilno), poenostavitev pa ne dela z izrojenimi trikotniki
+    ost = ~(w_krn[F] > 0.97).all(1)
+    F, dl, epi = F[ost], dl[ost], epi[ost]; cf = V[F].mean(1)
+    d_ct = cKDTree(Vc).query(cf)[0]  # (po ploskvah na legi pred zlaganjem krnov: uho štrli iz stene CT)
     if "uho" in ct["L"]:
         uho = (dl == 4) & (np.linalg.norm(cf - ct["L"]["uho"], axis=1) < 0.034) & (d_ct > 0.0025)
         dl[uho] = 17; dl = vecina(F, dl, len(DELI), 3)
@@ -156,16 +205,18 @@ def stena(pot, ct, Polje, log=print):
     izb_f = izb[F].mean(1)
     lv = (~epi) & (dl == 0); rv = (~epi) & (dl == 2)
     dl[lv & (izb_f > 0.0007)] = 13; dl[rv & (izb_f > 0.0007)] = 14
-    oz_zak = {}
-    for ime, vir in (("mitralna", por.mitralna), ("trikuspidalna", por.trikuspidalna), ("aortna", "aortna"), ("pljucna", "pljucna")):
-        Z = por(h["V_" + vir]); oz_zak[ime] = Z
-        d = cKDTree(Z).query(cf, distance_upper_bound=0.0012)[0]
-        dl[np.isfinite(d) & ~epi] = ZAK[ime]  # samo znotraj (obroč pljučne zaklopke v modelu zaklopk sega v steno debla)
+    # zaklopke in papilarne mišice po bližini modela zaklopk (isti preparat): lističi in tetive do 26 mm pod obročem so
+    # zaklopka, globlje (glave in telesa papilarnih mišic, na katere se pripenjajo tetive) papilarne mišice
+    oz_zak = {k: por(h["V_" + v]) for k, v in (("mitralna", por.mitralna), ("trikuspidalna", por.trikuspidalna), ("aortna", "aortna"), ("pljucna", "pljucna"))}
     c4 = np.mean([oz_zak[k].mean(0) for k in oz_zak], axis=0); os_ = ct["L"]["konica"] - c4; os_ /= np.linalg.norm(os_)
-    for ime, trab, pap in (("mitralna", 13, 15), ("trikuspidalna", 14, 16)):
-        Z = oz_zak[ime]; g = (Z - c4) @ os_; konci = Z[g > np.quantile(g, 0.8)]
-        d = cKDTree(konci).query(cf, distance_upper_bound=0.007)[0]
-        dl[np.isfinite(d) & ((dl == trab) | (dl == (0 if trab == 13 else 2)) | (dl == 1)) & ~epi & (izb_f > 0.0004)] = pap
+    for ime, pap in (("mitralna", 15), ("trikuspidalna", 16), ("aortna", None), ("pljucna", None)):
+        Z = oz_zak[ime]
+        d = cKDTree(Z).query(cf, distance_upper_bound=0.0009)[0]; ob = np.isfinite(d) & ~epi  # samo znotraj
+        if pap is None:
+            dl[ob] = ZAK[ime]; continue
+        g = (Z - c4) @ os_; obroc = Z[g < np.quantile(g, 0.35)].mean(0)
+        glob = (cf - obroc) @ os_
+        dl[ob & (glob < 0.026)] = ZAK[ime]; dl[ob & (glob >= 0.026)] = pap
     dl = vecina(F, dl, len(DELI), 3)
     # maščoba (maska barve) z najbližjega oglišča CT, samo zunaj
     ke = np.zeros(len(V), bool)

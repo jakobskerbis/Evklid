@@ -49,6 +49,29 @@ def najvecja(V, F, delez=0.0):
     Fz = F[vz[F].all(1)]
     return V[vz], nov[Fz]
 
+def zapri(V, F):
+    """Zaprt volumen: zapolni luknje (robne zanke), odstrani ploskve na robovih s tremi ali več ploskvami, poenoti normale
+    (navzven). Rez (rez-stena.mjs, število navitij) potrebuje zaprto telo, sicer so na rezni ploskvi proge."""
+    me = bpy.data.meshes.new("hh"); me.from_pydata(V.tolist(), [], F.tolist())
+    bm = bmesh.new(); bm.from_mesh(me)
+    for krog in range(3):
+        slabi = [e for e in bm.edges if len(e.link_faces) > 2]
+        if slabi:
+            bmesh.ops.delete(bm, geom=list({f for e in slabi for f in e.link_faces}), context="FACES")
+        bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
+        bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+        rob = sum(e.is_boundary for e in bm.edges); nm = sum(not e.is_manifold for e in bm.edges)
+        print("zapri krog", krog, "robnih", rob, "nemanifoldnih", nm, flush=True)
+        if nm == 0: break
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    if bm.calc_volume(signed=True) < 0: bmesh.ops.reverse_faces(bm, faces=bm.faces)
+    print("prostornina cm3", round(bm.calc_volume(signed=True) / 1000, 1), flush=True)
+    bm.to_mesh(me); bm.free()
+    V2 = np.empty(len(me.vertices) * 3); me.vertices.foreach_get("co", V2)
+    F2 = np.empty(len(me.polygons) * 3, np.int32); me.polygons.foreach_get("vertices", F2)
+    return V2.reshape(-1, 3), F2.reshape(-1, 3)
+
 def umeyama(A, B, merilo=False):
     ca, cb = A.mean(0), B.mean(0); H = (A - ca).T @ (B - cb) / len(A)
     U, S, Vt = np.linalg.svd(H); d = np.sign(np.linalg.det(Vt.T @ U.T)); D = np.diag([1, 1, d])
@@ -68,6 +91,7 @@ if __name__ == "__main__":
     vhod, izhod = sys.argv[-2:]
     V, F = zdruzi(nalozi(os.path.join(vhod, "hh229", "scene.gltf")))
     V, F = zvari(V, F, 0.002); V, F = najvecja(V, F)
+    V, F = zapri(V, F)
     print("hh229", len(V), len(F), V.min(0).round(1), V.max(0).round(1), flush=True)
     vv = nalozi(os.path.join(vhod, "hh229_valves_vessels", "scene.gltf"))
     mat = sorted({d[0] for d in vv})
