@@ -8,7 +8,7 @@ Viri:
   - TotalSegmentator (koda in modeli »total«, »liver_segments«, Apache-2.0) na istem CT: Couinaudovi segmenti 1–8
     (repasti reženj = segment 1), spodnja votla vena, žolčnik (če ga bolnik ima).
 
-  python3 scripts/atlas/jetra-ct.py <mapa hva> <mapa msd> <izhod.npz> [primer, privzeto 374]
+  python3 scripts/atlas/jetra-ct.py <mapa hva> <mapa msd> <izhod.npz> [primer, privzeto 286]
 
   <mapa hva>: hp/hp_masks/hepatic_portalvessel_<p>.nii.gz, liver/liver_masks/liver_<p>.nii.gz (razpakirana zip-a)
   <mapa msd>: seg/liver_segment_<1..8>.nii.gz, total/{inferior_vena_cava,gallbladder}.nii.gz
@@ -27,7 +27,7 @@ from ct_orodja import drevo, povrsina, najv
 def main():
     import nibabel as nib
     from scipy import ndimage
-    hva, msd, izhod = sys.argv[1:4]; p = sys.argv[4] if len(sys.argv) > 4 else "374"
+    hva, msd, izhod = sys.argv[1:4]; p = sys.argv[4] if len(sys.argv) > 4 else "286"
     hp = nib.load(os.path.join(hva, "hp", "hp_masks", f"hepatic_portalvessel_{p}.nii.gz"))
     aff = hp.affine; korak = np.array(hp.header.get_zooms()[:3], float)
     h = np.asarray(hp.dataobj)

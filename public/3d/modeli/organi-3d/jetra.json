@@ -204,7 +204,7 @@
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
-   "barva": "#c9a394",
+   "barva": "#b98576",
    "rez": "#d8c0ae",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
@@ -216,13 +216,13 @@
   },
   "guba": {
    "hrap": 0.46,
-   "lak": 0.5,
+   "lak": 0.3,
    "lakHrap": 0.22,
    "sijaj": 0.3,
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
-   "barva": "#b0675b",
+   "barva": "#96584c",
    "rez": "#d8c0ae",
    "sijajBarva": "#ffffff",
    "rob": 0.18,
@@ -231,7 +231,7 @@
    "detajl": true,
    "aoTekstura": 0.5,
    "brezReza": true,
-   "prosojnost": 0.62,
+   "prosojnost": 0.55,
    "dvostransko": true
   }
  },

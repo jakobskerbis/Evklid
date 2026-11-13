@@ -170,8 +170,7 @@
     "vrsta": 4,
     "rob": 0.00035,
     "robBarva": "#efe2cc"
-   },
-   "rezOdmik": 0.012
+   }
   },
   "pljucna-arterija-v": {
    "hrap": 0.36,
@@ -196,8 +195,7 @@
     "vrsta": 4,
     "rob": 0.0003,
     "robBarva": "#aeb8e6"
-   },
-   "rezOdmik": 0.012
+   }
   },
   "pljucna-vena-v": {
    "hrap": 0.36,
@@ -222,8 +220,7 @@
     "vrsta": 4,
     "rob": 0.0003,
     "robBarva": "#e39a90"
-   },
-   "rezOdmik": 0.012
+   }
   },
   "hrustanec": {
    "hrap": 0.42,
@@ -378,11 +375,11 @@
   "ravnine": [
    {
     "n": [
-     0,
-     0,
-     -1
+     0.0608,
+     0.2587,
+     -0.964
     ],
-    "d": -0.0102
+    "d": -0.0211
    }
   ]
  },

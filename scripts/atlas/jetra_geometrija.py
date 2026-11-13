@@ -345,7 +345,7 @@ def _vez(L, n1, p1, telefon=False):
         return d.normalized()
     smer_o = v_ravnini(Vector((0, -0.5, -0.86)))  # obla vez: od zareze na spodnjem robu naprej in navzdol proti popku
     h = 0.00028  # tanka dvojna guba potrebušnice; prosti rob se stanjša (mehak rob)
-    bm = bmesh.new(); vrste = []
+    bm = bmesh.new(); vrste = []; prosti = []
     for p, u in vz:
         loc, nor, fi, d = bvh.find_nearest(p)
         o = v_ravnini(nor)
@@ -356,6 +356,7 @@ def _vez(L, n1, p1, telefon=False):
         # nižja guba (prej 7 mm na vrhu kupole: nad obrisom jeter je štrlela kot plavut), proti vrhu se izteče v 2 mm
         w = (0.002 + 0.02 * (1 - u) ** 1.6) * min(1.0, (1.02 - u) / 0.2) * min(1.0, 0.35 + 0.65 * u / 0.25)
         a = p - o * 0.0012; q = a + d_ * w
+        prosti.append((q.copy(), u))
         m = 3 if telefon else 5
         vrste.append([[bm.verts.new(a.lerp(q, j / m) + n1 * zn * h * (1 - 0.75 * (j / m) ** 2)) for j in range(m + 1)] for zn in (1, -1)])
     for (a1, a2), (b1, b2) in zip(vrste, vrste[1:]):
@@ -373,8 +374,17 @@ def _vez(L, n1, p1, telefon=False):
     p0 = vz[0][0]
     w0 = (0.002 + 0.02) * 0.35
     # obla vez: kratek krn v prostem robu vezi (prej 10 mm pod jetri kot palica)
-    P = [p0 - smer_o * 0.006 + Vector((0, 0.004, 0.003)), p0, p0 + smer_o * w0 * 0.3, p0 + smer_o * w0 * 0.6]
-    P, R = D.zgladi([P[0].lerp(P[1], i / 3) for i in range(3)] + [P[1].lerp(P[2], i / 4) for i in range(4)] + [P[2].lerp(P[3], i / 6) for i in range(7)], [0.0022] * 14, 1)
+    # obla vez teče v prostem robu srpaste vezi (spodnjih 45 % loka) do zareze in se tam potopi v razpoko (ocena n2: guba se
+    # ni nadaljevala v oblo vez, na spodnji ploskvi je štrlel bled krn)
+    Pq = [q for q, u in prosti if u <= 0.45][::-1]
+    if len(Pq) >= 4:
+        P = Pq + [p0 + Vector((0, 0.003, 0.002)), p0 + Vector((0, 0.007, 0.004))]
+        R = [0.0007 + 0.0011 * min(1.0, i / (0.5 * len(P))) for i in range(len(P))]
+        R[-1] = 0.0012; R[-2] = 0.0016
+        P, R = D.zgladi(P, R, 2)
+    else:
+        P = [p0 - smer_o * 0.006 + Vector((0, 0.004, 0.003)), p0, p0 + smer_o * w0 * 0.3, p0 + smer_o * w0 * 0.6]
+        P, R = D.zgladi([P[0].lerp(P[1], i / 3) for i in range(3)] + [P[1].lerp(P[2], i / 4) for i in range(4)] + [P[2].lerp(P[3], i / 6) for i in range(7)], [0.0022] * 14, 1)
     bm = bmesh.new(); D.cev(bm, P, R, 6 if telefon else 12, kupola=True, zacetek_kupola=True)  # zaprta konca (ne prazna cev)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     obla = bpy.data.meshes.new("obla"); bm.to_mesh(obla); bm.free()

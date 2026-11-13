@@ -1691,6 +1691,8 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
     if cfg.get("_karina"):  # pljuča: karina sapnika (glTF, središče organa 0) – čelna ravnina prereza gre skoznjo
         q = cfg["_karina"]
         porocilo["karina"] = [round(q[0] - ctr.x, 5), round(q[2] - ctr.z, 5), round(-q[1] + ctr.y, 5)]
+        if cfg.get("_karinaN"):  # normala ravnine dihalnega drevesa (glTF; kaže nazaj: sprednji del se odreže)
+            nb = cfg["_karinaN"]; porocilo["karinaN"] = [round(nb[0], 4), round(nb[2], 4), round(-nb[1], 4)]
     if cfg.get("_rezZanke"):  # preseki struktur HRA s sredinsko ravnino v koordinatah ravnine reza (x = y Blender, y = z Blender; središče organa 0)
         porocilo["rezZanke"] = {k: [[[round(p[0] - ctr.y, 6), round(p[1] - ctr.z, 6)] for p in z] for z in zz] for k, zz in cfg["_rezZanke"].items()}
     if cfg.get("_volumen"):  # prostorska tekstura reza (srce_ct.volumen): lo v koordinatah glTF s središčem organa 0

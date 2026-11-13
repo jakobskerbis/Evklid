@@ -282,4 +282,19 @@ def pljuca_ct(osnovni, cfg, tmp):
         Dr = Drevo(d[kljuc + "_P"], d[kljuc + "_R"], d[kljuc + "_S"])
         drevo_v_vrstice(Dr, None, tk, tk + "-v", del_, ime, tel_listi=nast.get("telListi", 2), tel_r=nast.get("telPolmer", 0.0011), rac_r=nast.get("racPolmer", 0.0))
     cfg["_karina"] = [float(x) for x in D.P[karina]]
+    # ravnina prereza skozi karino, v kateri leži dihalno drevo (sapnik, glavna in režnjska bronhija): bronhiji so v rezu
+    # prerezani po dolgem in se v ravnini vejijo (ocena n2: drevesa naj bodo prerezana v ravnini, ne da molijo iz nje).
+    # Normala = najmanjša glavna os debelih vej (uteži R²), nagib od čelne ravnine največ ravninaNagib (privzeto 35°).
+    deb = D.R >= nast.get("ravninaR", 0.002)
+    if deb.sum() >= 12:
+        Q = D.P[deb] - D.P[karina]; w = D.R[deb] ** 2
+        nrm = np.linalg.eigh((Q * w[:, None]).T @ Q)[1][:, 0]
+        nrm = nrm if nrm[1] > 0 else -nrm
+        kot = math.degrees(math.acos(min(1.0, abs(nrm[1]))))
+        naj = nast.get("ravninaNagib", 35.0)
+        if kot > naj:  # proti čelni normali (0, 1, 0)
+            t = math.radians(naj) / math.radians(kot)
+            nrm = nrm * t + np.array([0.0, 1.0, 0.0]) * (1 - t); nrm /= np.linalg.norm(nrm)
+        cfg["_karinaN"] = [float(x) for x in nrm]
+        print(f"[organi] ravnina dihalnega drevesa: normala {np.round(nrm, 3)}, nagib od čelne {kot:.0f}°")
     return vrstice
