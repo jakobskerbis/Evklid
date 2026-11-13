@@ -64,7 +64,7 @@ T tkivo(vec2 p, float px) {
     + 0.35 * (sum(p / 16.0 + 5.0) - 0.5);
   float razmik = 6.2832 * r / ns;
   float dsin = min(fract(u), 1.0 - fract(u)) * razmik;           // razdalja do osi sinusoida (µm)
-  // polširina sinusoida: svetlina je nepravilna, mestoma zaprta (le meja med ploščama), drugje 4–10 µm široka
+  // polširina sinusoida: svetlina je nepravilna, mestoma zaprta (le meja med ploščama), drugje do ~7 µm široka
   // (pravi sinusoidi so ozki, 4–7 µm, in skoraj nikoli široke bele reže)
   float sw = 0.4 + 2.8 * smoothstep(0.38, 0.8, sum(p / 15.0 + 7.0)) + 0.5 * (sum(p / 8.0 + 2.0) - 0.5);
   vec2 z = p;

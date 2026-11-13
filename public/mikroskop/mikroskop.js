@@ -77,7 +77,7 @@ function drsnik(ime, { min, max, vrednost, prikaz, ob }) {
   return { el: w, nastavi, inp };
 }
 
-// cilj (»Poglej z mikroskopom« pri delu 3D modela, mapa.js pogledDela): { m: povečava, snov: [S_*] } – mikroskop se odpre pri
+// cilj (»Poglej z mikroskopom« pri delu 3D modela, mapa.js pogledDela): { m: povečava, snov: [S_*], tocka? } – mikroskop se odpre pri
 // tej povečavi, sredina in kazalec pa na najbližjem mestu s to snovjo (npr. jedrce, vakuola, kloroplast).
 export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri = null, obPreparatu = null, vLekciji = false } = {}) {
   naloziCss();
@@ -950,9 +950,10 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   let ciljPorabljen = false; // cilj velja le za prvi preparat
   // snov ultrastrukture → snov tkiva, v kateri leži (S_* iz glsl.js): jedrce in kromatin v jedru, organeli v citoplazmi
   // Drobne tarče, ki jih iskanje po krogih zgreši (T-cevka v prerezu je obroček s premerom ~40 nm): vnaprej najdena
-  // točka na membrani T-cevke (snov 24) v mišicah. Izračunana s sondo na mreži 4 nm; ob spremembi oblike preparata jo
+  // točka na membrani T-cevke v mišicah (le za cilj z oznako tocka »cevke«, mapa.js) in na stranski sarkolemi srčne
+  // celice (snov 24 brez oznake: sarkolema, dezmosomi, presledkovni stiki). Izračunana s sondo na mreži 4 nm; ob spremembi oblike preparata jo
   // izračunaj znova (če ne ustreza več, ostane navadno iskanje).
-  const TOCKA_SNOVI = { "srcna-misica": { 24: [2.076, 0.752] }, "skeletna-misica": { 24: [0.204, 1.28] } };
+  const TOCKA_SNOVI = { "srcna-misica": { cevke: [2.076, 0.752], 24: [0.142, 2.706] }, "skeletna-misica": { cevke: [0.204, 1.28] } };
   const GOSTITELJ = { 28: [2], 27: [2], 20: [1], 21: [1], 22: [1], 26: [1], 29: [1], 23: [1], 32: [1] };
   let zadnjiId = null; // zadnji izbrani preparat (za obnovo po izgubi grafike)
   let zahteva = 0; // hitra menjava preparata: velja zadnja izbira, tudi če se prejšnja datoteka naloži pozneje
@@ -1001,7 +1002,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
         const o = upo.sonda([s.sredisce]);
         const rMax = Math.max(...(p.velikost || [2000]));
         rokIskanja = performance.now() + 250; // iskanje bere GPE: na počasnem telefonu največ ~¼ s
-        const tz = m0 > SVETLOBNI_MAX ? TOCKA_SNOVI[p.id]?.[c.snov[0]] : null;
+        const tz = m0 > SVETLOBNI_MAX ? TOCKA_SNOVI[p.id]?.[c.tocka || c.snov[0]] : null;
         if (o && !ustreza(o[0]) && tz && ustreza(upo.sonda([tz])[0])) s.sredisce = [...tz];
         else if (o && !ustreza(o[0])) {
           // drobne dele (jedrce, mitohondrij) najprej poišči v njihovem gostitelju (jedro, citoplazma), nato natančno v njem

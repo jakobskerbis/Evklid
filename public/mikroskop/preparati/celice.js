@@ -487,7 +487,8 @@ T tkivo(vec2 p, float px) {
     if (rr > 115.0) { Vor v = vor(p, 8.0, vec2(1.0), 0.0, 0.7); return rCelica(v, p, 2.2, rde, px); }       // vlakna
     if (rr > 45.0) {                                                 // floem: drobne celice z gosto vsebino (celice spremljevalke)
       Vor v = vor(p, 6.0, vec2(1.0), 0.0, 0.75); t = rCelica(v, p, 0.8, zel * 1.2, px);
-      if (t.snov != S_STENA) t.dye = zel * (h42(v.id).x < 0.4 ? 0.8 : 0.35);
+      // drobne celice floema so polne gostega citoplazme (sitaste cevi, celice spremljevalke), ne vakuole
+      if (t.snov != S_STENA) { t.snov = S_CITO; t.dye = zel * (h42(v.id).x < 0.4 ? 0.8 : 0.35); }
       return t;
     }
     if (rr > 28.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); v.c = p; return rCelica(v, p, 0.4, zel, px); }   // kambij

@@ -17,7 +17,7 @@ T tkivo(vec2 p, float px) {
   float rob = odsek(p, vec2(2600.0, 1400.0), 11.0);
   if (rob > 0.0) return t;
   // snopi (~40–100 µm) imajo vsak svoj val (»crimp«): perioda 20–55 µm, amplituda 1,5–4,5 µm; med njimi endotenon
-  // meja med snopi sledi valu vlaken (ni ravna črta)
+  // meja med snopi je valovita kot vlakna (ni ravna črta)
   float yb = p.y + 25.0 * (sum(vec2(p.x / 500.0, 2.0)) - 0.5) + 2.5 * sin(6.2832 * p.x / 34.0 + 2.0 * sum(p / 300.0));
   float bw = yb / 70.0 + 0.4 * (sum(vec2(p.x / 300.0, yb / 210.0)) - 0.5);
   float bi = floor(bw);

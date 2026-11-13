@@ -124,23 +124,25 @@ T tkivo(vec2 p, float px) {
   v.c += F.c; v.id += F.id * 97.0;
   vec4 h = h42(v.id);
   float vid = 1.0 - smoothstep(0.5, 1.1, px);
-  bool disk = abs(dot(v.nb, smer)) > 0.75;
+  // tudi kjer je pregrada prekinjena, celice sosednjih snopov ločuje endomizij (meja snopa šteje kot stranska meja celice)
+  float vr = min(v.rob, F.rob - sirF);
+  bool disk = v.rob <= F.rob - sirF && abs(dot(v.nb, smer)) > 0.75;
   // ob straneh tanek endomizij (večinoma komaj viden, mestoma širši s kapilaro), na koncih interkalarni disk
   float sir = smoothstep(0.55, 0.7, sum(p / 30.0 + 5.0));
   float rez = disk ? 0.0 : 0.55 + 1.1 * sir;
   t.snov = S_KOLAGEN; t.smer = smer;
   t.dye = vec3(0.05, mix(0.3, 0.2, sir) + 0.05 * sumL(p, 5.0, px), 0.0);
-  if (!disk && v.rob < rez) {
+  if (!disk && vr < rez) {
     vec4 kc = krogci(p, 9.0, 2.0, 2.8, 0.25, 11.0);
     if (kc.x < 0.0) { t.dye.y += 0.5; t.snov = S_ERITROCIT; t.meja = -kc.x; }
   }
-  float k = pokrij(rez - v.rob, px);
+  float k = pokrij(rez - vr, px);
   if (k <= 0.0) return t;
   float xs = dot(p, smer) + 40.0 * h.z;
   float prog = cos(6.2832 * xs / 2.2);
   T f = prazno();
   f.snov = S_MIOFIBRILA; f.tip = C_MISICA; f.smer = smer; f.r1 = xs - 1.1;
-  f.meja = v.rob - rez; f.cc = v.c; f.cid = v.id;
+  f.meja = vr - rez; f.cc = v.c; f.cid = v.id;
   f.dye = vec3(0.05, 0.5 + 0.08 * prog * vid + 0.06 * (sumL(p, 40.0, px) - 0.5), 0.0);
   // interkalarni disk: tanka temna stopničasta prečna črta
   float stop = 0.6 * step(0.5, fract(dot(p, vec2(-smer.y, smer.x)) / 5.0 + h.w));   // stopničasta črta
@@ -191,10 +193,11 @@ T tkivo(vec2 p, float px) {
     if (vl < 0.3 && sum(vec2(p.x / 40.0, dv / 6.0)) > 0.55) { t.dye *= 0.3; t.snov = S_PRAZNO; }
     vec2 qf = vec2(mod(p.x, 60.0) - 30.0 - 15.0 * (h12(vec2(floor(p.x / 60.0), 3.0)) - 0.5), dv - 0.4 * sirP * (h12(vec2(floor(p.x / 60.0), 4.0)) - 0.5));
     float jf = sdElipsa(qf, vec2(5.0, 1.0));
-    t.dye.x = mix(t.dye.x, 0.8, pokrij(jf, px));
+    float jk = pokrij(jf, px);
+    t.dye.x = mix(t.dye.x, 0.8, jk);
+    if (jk > 0.5) { t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = jf; t.jc = p - qf; t.cc = t.jc; }
     return t;
   }
-  t.dye = vec3(0.05, 0.22 + 0.05 * sumL(p, 6.0, px), 0.0);
   bool vzd = p.y > meja;
   Vor v = vor(p, 7.5, vzd ? vec2(9.0, 1.0) : vec2(1.0), vzd ? 0.05 : 0.0, 0.9);
   vec4 h = h42(v.id + (vzd ? 0.0 : 50.0));

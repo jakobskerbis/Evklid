@@ -204,7 +204,7 @@ const ORGANELI = [
   [/^citoplazma$/, (id) => (id === "celica-eritrocit" ? { p: "kri", m: 1000, snov: [S.ERITROCIT] } : null)],
   [/^citoskelet$/, (id) => (id === "celica-eritrocit" ? { p: "kri", m: 60000, snov: [S.MEMBRANA] } : null)],
   // T-cevke in odprt kanalikularni sistem trombocita sta uvihana celična membrana; gost cevast sistem je gladki ER
-  [/^(t-cevke|ocs)$/, () => ({ m: 60000, snov: [S.MEMBRANA] })],
+  [/^(t-cevke|ocs)$/, () => ({ m: 60000, snov: [S.MEMBRANA], tocka: "cevke" })], // tocka: mikroskop.js TOCKA_SNOVI
   // gost cevast sistem trombocita ostane v razmazu krvi (TEM trombocita), ne v jetrni celici
   [/^gost-cevast-sistem$/, () => ({ p: "kri", m: 30000, snov: [S.GER], ostane: true })],
   // Schwannove celice so v perifernem živcu
@@ -320,7 +320,7 @@ export function pogledDela(modelId, delId = null) {
     if (!v) v = OSTALO(modelId, p);
     const osnova = rastlina && v.m > 1000 && !v.p ? "cebula" : v.p || p;
     const n = nadomesti(osnova, v, /misic|vlakno/.test(modelId));
-    POGLEDI.set(kljuc, { p: n.p, m: v.m, snov: n.snov });
+    POGLEDI.set(kljuc, { p: n.p, m: v.m, snov: n.snov, ...(v.tocka && { tocka: v.tocka }) });
   }
   return POGLEDI.get(kljuc);
 }

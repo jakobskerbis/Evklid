@@ -283,7 +283,7 @@ T tkivo(vec2 p, float px) {
     float rp = sdElipsa(qc, vec2(0.52 * H, 0.66 * w)) + 0.6 * (sum(qc / 2.5 + hc.zw * 9.0) - 0.5);
     meja = max(meja, crta(rp, 0.3, px));
     t.meja = min(t.meja, abs(rp));
-    if (rp > 0.0) { parietalna = false; hc.x = 0.9; t.cid += vec2(0.0, 500.0); }   // vogal je sosednja celica
+    if (rp > 0.0) { parietalna = false; hc.x = 0.9; t.cid += vec2(0.0, 500.0 + 250.0 * sign(qc.y)); }   // vogala sta dve različni sosednji celici
   }
   float jd; vec2 jr; float jbarva = 0.9;
   if (parietalna) {
