@@ -9,8 +9,9 @@
 #     poševne mišice od škripca (trochlea) do narastišča, konec spodnje poševne.
 # Kliče izvozi-organe.py (cfg »dodaj«: ["ocesne_misice"]); vrstice = [ime, mesh, tkivo, del, veriga].
 import heapq, math, re
+import bmesh
 import numpy as np
-from mathutils import Vector
+from mathutils import Matrix, Vector
 from mathutils.bvhtree import BVHTree
 
 NARASTISCE = {"Medial": 0.0055, "Inferior": 0.0065, "Lateral": 0.0069, "Superior": 0.0077}  # m za limbusom
@@ -138,6 +139,20 @@ def ocesne_misice(osnovni, cfg, tmp):
 
     skripec = najdi(r"^Trochlea")
     T = _tocke(skripec[0][1]).mean(0) if skripec else None
+    if skripec:
+        # krog 7 (»škripec lebdi«): škripec je v naravi pritrjen na čelnico (fovea trochlearis). Kosti v modelu ni, zato
+        # dobi kratek vezivni pecelj proti stropu očnice (navzven od osi zrkla), raven odrezan – pritrdišče se bere.
+        me = skripec[0][1]; Pt = _tocke(me)
+        d = (T - G) - os_ * ((T - G) @ os_); d /= np.linalg.norm(d)
+        vel = float(np.linalg.norm(Pt - T, axis=1).max())
+        r1, r2, dol = 0.45 * vel, 0.8 * vel, 1.1 * vel
+        bm = bmesh.new(); bm.from_mesh(me)
+        z = Vector(d); x = z.orthogonal().normalized(); y = z.cross(x)
+        M = Matrix((x, y, z)).transposed().to_4x4(); M.translation = Vector(T + d * (0.25 * vel + dol / 2))
+        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=True, segments=20, radius1=r1, radius2=r2, depth=dol, matrix=M)
+        bm.to_mesh(me); bm.free(); me.update()
+        for p_ in me.polygons: p_.use_smooth = True
+        print(f"[oko] škripec: velikost {vel * 1000:.1f} mm, pecelj {dol * 1000:.1f} mm proti stropu očnice")
 
     def posevna(row, podlaga):
         """Poševna mišica na površino podlage; konec stanjšan v kito."""
@@ -199,15 +214,20 @@ def ocesne_misice(osnovni, cfg, tmp):
         h0 = r - np.where(np.isnan(rs0), R0, rs0)  # višina nad zrklom pred zasukom
         lok = lok0  # razdalja od narastišča po loku
         f = _gladko(lok, 0.0, KITA_DOLZINA[kljuc] + 0.004)
-        hn = EPS + np.maximum(h0, 0) * (0.12 + 0.88 * f)
+        # krog 7 (»temne črte ob robovih kit«): kita se proti stranskima robovoma in narastišču stanjša v pero (prej
+        # navpičen rob 0,45 mm = temna črta sence in obrisa); v trebuhu mišice (f → 1) brez stanjšanja
+        s2 = az2 * R0 * np.sin(tn); hw = SIRINA[kljuc] / 2 + 0.0003 * np.clip(lok, 0, 0.02) / 0.001
+        rob = 0.22 + 0.78 * (1 - _gladko(np.abs(s2) / hw, 0.5, 1.0))
+        rob_f = 1 - (1 - rob) * (1 - f)
+        hn = EPS + np.maximum(h0, 0) * (0.12 + 0.88 * f) * rob_f
         vrh = (_normale(me) * u).sum(1) > 0.3
-        hn = np.where(vrh & (lok < 0.02), np.maximum(hn, EPS + KITA_DEB * (0.4 + 0.6 * _gladko(lok, 0.0, 0.0015))), hn)
+        hn = np.where(vrh & (lok < 0.02), np.maximum(hn, EPS + KITA_DEB * (0.25 + 0.75 * _gladko(lok, 0.0, 0.002)) * rob), hn)
         osn = np.where(np.isnan(rs), np.where(np.isnan(rs_z), R0, rs_z), rs)
         w = w_az * _gladko(0.012 - h0, 0.0, 0.006)
         hn = np.where(vrh, hn, _spodaj(hn))
         rn = r + w * ((osn + hn) - r)
         rn0 = rn
-        rn = np.maximum(_zgladi(rn, robovi(me), vrh & (w > 0.05), 6), rn0 - 0.0002)  # gube ob prečkanju poševne mišice
+        rn = np.maximum(_zgladi(rn, robovi(me), vrh & (w > 0.05), 14), rn0 - 0.00035)  # gube ob prečkanju poševne mišice (krog 7: 6 → 14)
         rn = np.where(~np.isnan(rs) & vrh, np.maximum(rn, rs + EPS), rn)  # zgornja ploskev nikjer pod podlago
         me.vertices.foreach_set("co", (G + u2 * rn[:, None]).ravel()); me.update()
         k = 1 - _gladko(lok, KITA_DOLZINA[kljuc] - 0.001, KITA_DOLZINA[kljuc] + 0.002)

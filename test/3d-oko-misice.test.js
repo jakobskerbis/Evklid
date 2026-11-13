@@ -73,4 +73,7 @@ test("oko_misice.py: mere narastišč in kit iz literature, korak v izvozu", () 
   const izvoz = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "izvozi-organe.py"), "utf8");
   assert.match(izvoz, /dodaj=\["ocesne_misice"\]/);
   assert.match(fs.readFileSync(path.join(KOREN, "scripts", "atlas", "peka.py"), "utf8"), /r\.get\("kita"\)/);
+  // krog 7: kita stanjšana proti robovoma (brez temne črte), škripec s pecljem proti stropu očnice
+  assert.match(src, /rob = 0\.22 \+ 0\.78 \* \(1 - _gladko\(np\.abs\(s2\) \/ hw, 0\.5, 1\.0\)\)/);
+  assert.match(src, /bmesh\.ops\.create_cone\(bm, cap_ends=True/);
 });
