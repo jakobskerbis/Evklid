@@ -54,7 +54,7 @@ export function zamegljenost(obj, { dz = 0, zaslonka = 0.7, olje = true } = {}) 
   const dof = globinskaOstrina(obj, olje);
   const izven = Math.max(0, Math.abs(dz) - dof / 2);
   const sRaz = (izven * Math.tan(Math.asin(Math.min(0.99, na / n)))) / 2;
-  const sAber = obj.olje && !olje ? 1.6 : 0;
+  const sAber = obj.olje && !olje ? 1.0 : 0;
   return Math.hypot(sUklon, sRaz, sAber);
 }
 
@@ -105,7 +105,7 @@ export function oznakaDolzine(um) {
   const st = (x) => String(Math.round(x * 100) / 100).replace(".", ","); // največ dve decimalki (j, 12. 11. 2026)
   if (um >= 1000) return `${st(um / 1000)} mm`;
   if (um >= 1) return `${st(um)} µm`;
-  if (um >= 0.001) return `${st(um * 1000)} nm`;
+  if (um >= 0.001) return `${um >= 0.01 ? Math.round(um * 1000) : st(um * 1000)} nm`; // 335 nm, ne 335,5 nm
   return `${st(um * 1e4)} Å`;
 }
 // Povečava z ločili tisočic: 50 000 000×.

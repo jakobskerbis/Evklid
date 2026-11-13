@@ -25,10 +25,8 @@ const CELICE = {
   13: "gladka mišična celica", 14: "maščobna celica", 15: "levkocit", 16: "mišično vlakno", 17: "živčni izrastki",
   18: "fotoreceptor (paličnica ali čepnica)",
 };
-const RAVNI = {
-  tkivo: "tkivo", celice: "celice", "celice-blizu": "celice in jedra", organeli: "organeli", membrane: "membrane in makromolekule",
-  molekule: "molekule (model)", atomi: "atomi (model)",
-};
+// Ravni (optika.js raven()) in skupine izbirnika (preparati/index.js SKUPINE) se prevedejo s ključi mk.level.* in mk.group.*.
+const imeRavni = (rv) => (rv ? t(`mk.level.${rv}`) : "");
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -100,7 +98,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   naslov.append(nadnaslov, h1);
   const bIzberi = mk("button", "a3-pill mk-izberi");
   bIzberi.type = "button";
-  bIzberi.innerHTML = `${ikona("layers")}<span>Preparati</span>`;
+  bIzberi.innerHTML = `${ikona("layers")}<span>${t("mk.specimens")}</span>`;
   bIzberi.setAttribute("aria-haspopup", "dialog");
   vrh.append(naslov, bIzberi);
 
@@ -118,7 +116,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   const meriloNapis = mk("span", "");
   merilo.append(meriloCrta, meriloNapis);
   const znacka = mk("div", "mk-znacka");
-  const nalaganje = mk("div", "mk-nalaganje", "Pripravljam preparat …");
+  const nalaganje = mk("div", "mk-nalaganje", t("mk.loading"));
   // 100× brez olja: gumb kar na odru, da ga na telefonu ni treba iskati pod sliko
   const bKapni = mk("button", "a3-pill mk-kapni");
   bKapni.type = "button";
@@ -155,56 +153,56 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     plosca.append(sec);
     return sec;
   };
-  const secPov = sekcija("Povečava");
+  const secPov = sekcija(t("mk.magnification"));
   const revolver = mk("div", "mk-revolver");
   revolver.setAttribute("role", "group");
-  revolver.setAttribute("aria-label", "Objektiv");
+  revolver.setAttribute("aria-label", t("mk.objective"));
   const gumbiObj = OBJEKTIVI.map((o, i) => {
     const b = mk("button", "a3-pill mk-obj");
     b.type = "button";
-    b.innerHTML = `<b>${o.m}×</b><small>${o.olje ? "olje" : `NA ${dec(o.na)}`}</small>`;
+    b.innerHTML = `<b>${o.m}×</b><small>${o.olje ? t("mk.oilShort") : `NA ${dec(o.na)}`}</small>`;
     b.addEventListener("click", () => izberiObjektiv(i));
     revolver.append(b);
     return b;
   });
   const bTem = mk("button", "a3-pill mk-obj mk-tem");
   bTem.type = "button";
-  bTem.innerHTML = "<b>TEM</b><small>elektroni</small>";
+  bTem.innerHTML = `<b>TEM</b><small>${t("mk.electrons")}</small>`;
   bTem.addEventListener("click", () => {
     if (s.nacin !== "tem") nastaviPovecavo(Math.max(5000, povecava(s) * 5));
   });
   revolver.append(bTem);
   const logMin = Math.log(MIN_M), logMax = Math.log(MAX_M);
-  const dPov = drsnik("Skupna povečava", {
+  const dPov = drsnik(t("mk.total"), {
     min: 0, max: 1, vrednost: 0,
     prikaz: (u) => oznakaPovecave(Math.exp(logMin + u * (logMax - logMin))),
     ob: (u) => nastaviPovecavo(Math.exp(logMin + u * (logMax - logMin)), { izDrsnika: true }),
   });
   secPov.append(revolver, dPov.el);
 
-  const secLuc = sekcija("Svetlobni mikroskop");
-  const dGrobi = drsnik("Grobi vijak", { min: -150, max: 150, vrednost: 0, prikaz: (v) => `${dec(v)} µm`, ob: (v) => ((s.grobi = v), nastaviOstrino()) });
-  const dFini = drsnik("Fini vijak", { min: -8, max: 8, vrednost: 0, prikaz: (v) => `${dec(v)} µm`, ob: (v) => ((s.fini = v), nastaviOstrino()) });
-  const dLucka = drsnik("Lučka", { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), narisi()) });
-  const dZaslonka = drsnik("Zaslonka", { min: 0.05, max: 1, vrednost: s.zaslonka, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zaslonka = v), narisi()) });
+  const secLuc = sekcija(t("mk.light"));
+  const dGrobi = drsnik(t("mk.coarse"), { min: -150, max: 150, vrednost: 0, prikaz: (v) => `${dec(v)} µm`, ob: (v) => ((s.grobi = v), nastaviOstrino()) });
+  const dFini = drsnik(t("mk.fine"), { min: -8, max: 8, vrednost: 0, prikaz: (v) => `${dec(v)} µm`, ob: (v) => ((s.fini = v), nastaviOstrino()) });
+  const dLucka = drsnik(t("mk.lamp"), { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), narisi()) });
+  const dZaslonka = drsnik(t("mk.diaphragm"), { min: 0.05, max: 1, vrednost: s.zaslonka, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zaslonka = v), narisi()) });
   const vrstaOlje = mk("div", "mk-vrsta");
   const bOlje = mk("button", "a3-pill mk-stikalo");
   bOlje.type = "button";
   bOlje.setAttribute("aria-pressed", "false");
-  bOlje.innerHTML = `${ikona("droplet")}<span>Imerzijsko olje</span>`;
+  bOlje.innerHTML = `${ikona("droplet")}<span>${t("mk.oil")}</span>`;
   bOlje.addEventListener("click", () => {
     s.olje = !s.olje;
     narisi();
   });
-  bKapni.innerHTML = `${ikona("droplet")}<span>Kapni imerzijsko olje</span>`;
+  bKapni.innerHTML = `${ikona("droplet")}<span>${t("mk.addOil")}</span>`;
   bKapni.addEventListener("click", () => {
     s.olje = true;
     narisi();
   });
   const bIzostri = mk("button", "a3-pill");
   bIzostri.type = "button";
-  bIzostri.innerHTML = `${ikona("focus")}<span>Izostri</span>`;
-  bIzostri.title = "Fini in grobi vijak nastavi na ostrino";
+  bIzostri.innerHTML = `${ikona("focus")}<span>${t("mk.focus")}</span>`;
+  bIzostri.title = t("mk.focusTitle");
   bIzostri.addEventListener("click", () => {
     s.grobi = 0;
     s.fini = omeji(-s.dzObj, -8, 8);
@@ -217,12 +215,12 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   opozorilo.hidden = true;
   secLuc.append(dGrobi.el, dFini.el, dLucka.el, dZaslonka.el, vrstaOlje, opozorilo);
 
-  const secTem = sekcija("Elektronski mikroskop (TEM)");
-  const dDefokus = drsnik("Defokus", { min: -1, max: 1, vrednost: 0, prikaz: (v) => dec(v), ob: (v) => ((s.defokus = v), narisi()) });
-  const dSvetlost = drsnik("Snop elektronov", { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), narisi()) });
+  const secTem = sekcija(t("mk.electron"));
+  const dDefokus = drsnik(t("mk.defocus"), { min: -1, max: 1, vrednost: 0, prikaz: (v) => dec(v), ob: (v) => ((s.defokus = v), narisi()) });
+  const dSvetlost = drsnik(t("mk.beam"), { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), narisi()) });
   const bBarve = mk("button", "a3-pill mk-stikalo");
   bBarve.type = "button";
-  bBarve.innerHTML = `${ikona("sun")}<span>Model v barvah</span>`;
+  bBarve.innerHTML = `${ikona("sun")}<span>${t("mk.colors")}</span>`;
   bBarve.addEventListener("click", () => {
     s.barve = !s.barve;
     narisi();
@@ -234,7 +232,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   const resnica = mk("p", "mk-resnica");
   secPodatki.append(tabela, resnica);
 
-  const secInfo = sekcija("O preparatu");
+  const secInfo = sekcija(t("mk.about"));
   const opis = mk("p", "mk-opis");
   const barvanje = mk("p", "mk-barvanje");
   const naloga = mk("p", "mk-naloga");
@@ -245,14 +243,14 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   izbirnik.hidden = true;
   izbirnik.setAttribute("role", "dialog");
   izbirnik.setAttribute("aria-modal", "true");
-  izbirnik.setAttribute("aria-label", "Preparati");
+  izbirnik.setAttribute("aria-label", t("mk.specimens"));
   const izbOkno = mk("div", "mk-izb-okno");
   izbOkno.tabIndex = -1; // klik na prazno v oknu obdrži fokus v izbirniku, da Esc zapre izbirnik in ne mikroskopa (stran.js)
   const izbVrh = mk("div", "mk-izb-vrh");
   const iskanje = mk("input", "mk-iskanje");
   iskanje.type = "search";
-  iskanje.placeholder = "Išči preparat";
-  iskanje.setAttribute("aria-label", "Išči preparat");
+  iskanje.placeholder = t("mk.search");
+  iskanje.setAttribute("aria-label", t("mk.search"));
   const bZapriIzb = mk("button", "a3-krog a3-mali-krog");
   bZapriIzb.type = "button";
   bZapriIzb.innerHTML = ikona("x");
@@ -266,10 +264,10 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   function napolniIzbirnik() {
     const q = norm(iskanje.value.trim());
     izbSeznam.replaceChildren();
-    for (const [sk, ime] of SKUPINE) {
+    for (const [sk] of SKUPINE) {
       const v = PREPARATI.filter((p) => p.skupina === sk && (!q || norm(p.ime).includes(q)));
       if (!v.length) continue;
-      izbSeznam.append(mk("h3", "mk-izb-skupina", ime));
+      izbSeznam.append(mk("h3", "mk-izb-skupina", t(`mk.group.${sk}`)));
       const g = mk("div", "mk-izb-mreza");
       for (const p of v) {
         const b = mk("button", "mk-izb-gumb", p.ime);
@@ -455,8 +453,8 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     if (!prep || !zadnji) return;
     const ime = imeTocke(s.sredisce);
     const rv = raven(zadnji.m, s.nacin);
-    kazalec.textContent = ime ? `${s.nacin === "tem" ? "Na sredini" : "Kazalec"}: ${ime}` : "";
-    platno.setAttribute("aria-label", `${prep.ime}, ${oznakaPovecave(zadnji.m)}, ${RAVNI[rv] || rv}. ${kazalec.textContent}`);
+    kazalec.textContent = ime ? t(s.nacin === "tem" ? "mk.center" : "mk.pointer", { name: ime }) : "";
+    platno.setAttribute("aria-label", `${prep.ime}, ${oznakaPovecave(zadnji.m)}, ${imeRavni(rv)}. ${kazalec.textContent}`);
   }
   let skrijOznako = 0;
   function pokaziOznako(ex, ey, trajno) {
@@ -498,32 +496,28 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     const oljeBrezPotrebe = !tem && !obj.olje && s.olje;
     opozorilo.hidden = !brezOlja && !oljeBrezPotrebe;
     bKapni.hidden = !brezOlja;
-    opozorilo.textContent = brezOlja
-      ? "Objektiv 100× potrebuje kapljico imerzijskega olja med lečo in krovnim stekelcem. Brez olja je slika temnejša in mehka."
-      : oljeBrezPotrebe
-        ? "Olje uporabljaš samo s 100× objektivom. Pri drugih objektivih ga obriši z leče in stekelca."
-        : "";
+    opozorilo.textContent = brezOlja ? t("mk.noOil") : oljeBrezPotrebe ? t("mk.oilNotNeeded") : "";
     const utez = tem ? utezModela(m) : 0;
     bBarve.hidden = utez <= 0;
-    znacka.textContent = `${oznakaPovecave(m)}${tem ? " · TEM" : ` · objektiv ${obj.m}×`}`;
+    znacka.textContent = `${oznakaPovecave(m)} · ${tem ? "TEM" : t("mk.badgeObjective", { m: obj.m })}`;
     const vp = vidnoPolje(m, s.nacin);
     const vrstice = [
-      ["Povečava", tem ? oznakaPovecave(m) : `${obj.m}× · ${OKULAR}× = ${oznakaPovecave(m)}`],
-      ["Vidno polje", oznakaDolzine(vp)],
-      ["Ločljivost", tem ? "≈ 1,5 nm (omejuje jo rezina)" : `${oznakaDolzine(locljivost(obj, s.zaslonka, s.olje))} (Rayleigh)`],
+      [t("mk.magnification"), tem ? oznakaPovecave(m) : `${obj.m}× · ${OKULAR}× = ${oznakaPovecave(m)}`],
+      [t("mk.fieldOfView"), oznakaDolzine(vp)],
+      [t("mk.resolution"), tem ? t("mk.temResolution") : t("mk.rayleigh", { d: oznakaDolzine(locljivost(obj, s.zaslonka, s.olje)) })],
     ];
-    if (!tem) vrstice.push(["Globinska ostrina", oznakaDolzine(globinskaOstrina(obj, s.olje))]);
-    vrstice.push(["Kaj vidiš", RAVNI[raven(m, s.nacin)] || ""]);
+    if (!tem) vrstice.push([t("mk.depthOfField"), oznakaDolzine(globinskaOstrina(obj, s.olje))]);
+    vrstice.push([t("mk.whatYouSee"), imeRavni(raven(m, s.nacin))]);
     tabela.replaceChildren(...vrstice.flatMap(([a, b]) => [mk("dt", "", a), mk("dd", "", b)]));
     resnica.textContent = !tem
       ? m >= 1000
-        ? "Svetlobni mikroskop ne loči podrobnosti, manjših od približno 0,2 µm (polovica valovne dolžine svetlobe). Za večje povečave preklopi na elektronski mikroskop."
+        ? t("mk.truth.light")
         : ""
       : utez > 0
         ? (prep?.snovi?.[18] || prep?.snovi?.[4]) && /kost|zob/.test(prep.id)
-          ? "Od tu naprej je slika model. Kristale hidroksiapatita v kosti in sklenini visokoločljivi TEM res pokaže do vrst atomov, molekul v mehkem tkivu pa ne. Barve atomov so dogovorjene: O rdeča, Ca zelena, P oranžna, H bela."
-          : "Od tu naprej je slika model. V biološki rezini TEM ne loči posameznih molekul in atomov: rezina, kovinsko barvilo in poškodbe z elektroni omejijo ločljivost na 1–2 nm. Barve so dogovorjene (atomi: C siva, O rdeča, N modra, H bela, P oranžna)."
-        : "Elektronski mikroskop: slika je črno-bela, ker elektroni nimajo barve. Rezina je 70 nm tanka in kontrastirana s težkimi kovinami (uran, svinec), zato so membrane temne.";
+          ? t("mk.truth.crystal")
+          : t("mk.truth.model")
+        : t("mk.truth.tem");
     resnica.hidden = !resnica.textContent;
   }
 
@@ -560,8 +554,8 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     }
     const b = BARVANJA[p.barvanje] || BARVANJA.he;
     opis.textContent = p.opis || "";
-    barvanje.replaceChildren(mk("b", "", "Barvanje: "), `${b.ime}. ${b.opis}`);
-    naloga.replaceChildren(mk("b", "", "Poišči: "), p.isci || "");
+    barvanje.replaceChildren(mk("b", "", `${t("mk.staining")} `), `${b.ime}. ${b.opis}`);
+    naloga.replaceChildren(mk("b", "", `${t("mk.find")} `), p.isci || "");
     naloga.hidden = !p.isci;
     obPreparatu?.(p.id);
     narisi();
@@ -688,8 +682,9 @@ export function simMikroskop(el, opts = {}) {
   const gen = (el.__mikroskopGen = (el.__mikroskopGen || 0) + 1);
   const naloga = document.createElement("p");
   naloga.className = "demo-try";
-  naloga.innerHTML =
-    "<b>Preizkusi:</b> začni z objektivom 4×, poišči celico in jo s potegom postavi pod iglo. Preklopi na 10× in 40× ter izostri s finim vijakom. Pri 100× kapni olje, nato preklopi na TEM in povečuj do molekul in atomov.";
+  const napis = document.createElement("b");
+  napis.textContent = t("sc.try");
+  naloga.append(napis, " ", t("mk.tryText"));
   const box = document.createElement("div");
   el.append(naloga, box);
   odpriMikroskop(box, { preparat: opts.preparat || null, vLekciji: true })
@@ -697,6 +692,6 @@ export function simMikroskop(el, opts = {}) {
     .then((m) => (el.__mikroskopGen === gen ? (el.__mikroskop = m) : m.unici()))
     .catch((err) => {
     console.error("Mikroskop:", err);
-    box.textContent = "Mikroskopa ni bilo mogoče naložiti.";
+    box.textContent = t("mk.loadError");
   });
 }
