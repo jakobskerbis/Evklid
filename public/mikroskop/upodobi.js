@@ -100,7 +100,8 @@ function programVzporedno(gl, fs, ext) {
   return new Promise((ok, napaka) => {
     const cakaj = () => {
       try {
-        if (gl.getProgramParameter(g.p, ext.COMPLETION_STATUS_KHR)) ok(preveri(gl, g));
+        if (gl.isContextLost()) napaka(new Error("WebGL: kontekst izgubljen"));
+        else if (gl.getProgramParameter(g.p, ext.COMPLETION_STATUS_KHR)) ok(preveri(gl, g));
         else setTimeout(cakaj, 16);
       } catch (e) {
         napaka(e);
@@ -174,7 +175,7 @@ export function ustvariUpodobitev(platno) {
   let prepGlsl = "";
   const sonda = plavajoce ? tekstura(gl, [8, 2], true) : null;
   // Teksture po velikosti n: p (preparat, ostane, dokler se pogled ne spremeni), a in b (zamegljenost), m (molekule).
-  // Hranimo dve velikosti (hiter predogled in polna slika), da se ob vsakem prehodu ne ustvarjajo znova.
+  // Hranimo tri velikosti (polna slika in predogleda, med katerima skala niha), da se ob prehodih ne ustvarjajo znova.
   const kompleti = new Map();
   let T = null;
   const pripravi = (n) => {
@@ -186,7 +187,7 @@ export function ustvariUpodobitev(platno) {
     }
     T = { n, p: tekstura(gl, [n, n]), a: tekstura(gl, [n, n]), b: tekstura(gl, [n, n]), m: tekstura(gl, [n, n]) };
     kompleti.set(n, T);
-    while (kompleti.size > 2) {
+    while (kompleti.size > 3) {
       const [k, star] = kompleti.entries().next().value;
       for (const x of [star.p, star.a, star.b, star.m]) {
         gl.deleteTexture(x.t);
@@ -209,12 +210,13 @@ export function ustvariUpodobitev(platno) {
     plavajoce,
     // Preparat: { id, glsl } (preparati/*.js). Prevajanje traja (na telefonu tudi sekundo ali več), zato le ob menjavi
     // in, kjer gre, vzporedno: stran med tem ostane odzivna. Vrne obljubo.
-    async nastaviPreparat(p) {
+    // velja(): klicatelj še želi ta preparat (med nalaganjem ali prevajanjem ni izbral drugega ali zaprl mikroskopa)
+    async nastaviPreparat(p, velja = () => true) {
       const moja = ++zadnjaZahteva;
       if (prepId === p.id) return;
       const nov = await programVzporedno(gl, fragmentPreparata(p.glsl), vzporedno);
       // med prevajanjem je bil izbran drug preparat: velja zadnja izbira
-      if (moja !== zadnjaZahteva) return void gl.deleteProgram(nov.p);
+      if (moja !== zadnjaZahteva || !velja()) return void gl.deleteProgram(nov.p);
       if (prep) gl.deleteProgram(prep.p);
       if (prepSem) gl.deleteProgram(prepSem.p);
       prep = nov;

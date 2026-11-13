@@ -205,7 +205,10 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   const dPov = drsnik(t("mk.total"), {
     min: 0, max: 1, vrednost: 0,
     prikaz: (u) => oznakaPovecave(izU(u)),
-    ob: (u) => nastaviPovecavo(izU(u), { izDrsnika: true }),
+    ob: (u) => {
+      interakcija = 1; // med vlečenjem hiter predogled, polna slika po spustu
+      nastaviPovecavo(izU(u), { izDrsnika: true });
+    },
   });
   // gumba − in + ob drsniku (j, 13. 11. 2026): pri svetlobi menjata objektiv, pri TEM povečavo podvojita ali razpolovita
   const gumbPov = (ikonaIme, kljuc, f) => {
@@ -460,8 +463,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   }
   // Išče po krogih (polmer r0, r0·k, … do rMax µm, vsak krog zasukan; točke na krogu največ ~0,4 µm narazen, a vsaj 8 in
   // največ 64) in premakne sredino na prvo ustrezno točko.
+  let rokIskanja = Infinity;
   function poisci(x0, y0, ustreza, r0, k, rMax) {
-    for (let r = r0, j = 0; r <= rMax; r *= k, j++) {
+    for (let r = r0, j = 0; r <= rMax && performance.now() < rokIskanja; r *= k, j++) {
       const n = Math.min(64, Math.max(8, 8 * Math.ceil((2 * Math.PI * r) / 0.4 / 8)));
       const tocke = Array.from({ length: n }, (_, i) => {
         const f = ((i + 0.618 * j) * 2 * Math.PI) / n;
@@ -537,7 +541,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   const visinaPasu = (n, ss) => Math.max(8, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaVzorec * n * ss))));
   // hiter izris v nižji ločljivosti (med premikanjem in kot predogled); skala se prilagodi, da traja ~30 ms
   function predogled(css, N, n) {
-    const nn = Math.max(128, Math.round(n * skala));
+    const nn = Math.min(n, Math.max(128, 32 * Math.round((n * skala) / 32)));
+    if (nn === n) pKljuc = ""; // predogled v polni velikosti prepiše polno sliko
     const r = izracunajPogled(upo, prep, s, nn, { hitro: true });
     r.v.ss = r.v.ss || 1;
     r.v.zaslonN = N;
@@ -581,18 +586,18 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     // nov pogled: najprej predogled, razen če je polna slika tako ali tako hitra
     if (!msNaVzorec || msNaVzorec * n * n * r.v.ss > 2 * PAS_MS) predogled(css, N, n);
     pKljuc = "";
-    delo = { kljuc, r, css, y: 0, h: visinaPasu(n, r.v.ss) };
-    requestAnimationFrame(nadaljuj);
+    const d = (delo = { kljuc, r, css, y: 0, h: visinaPasu(n, r.v.ss) });
+    requestAnimationFrame(() => nadaljuj(d));
   }
-  function nadaljuj() {
-    const d = delo;
-    if (!zivo || !prep || !d) return;
+  // vsak izris ima svojo zanko pasov; ko ga zamenja nov pogled, se stara zanka ustavi (sicer bi se zanke kopičile)
+  function nadaljuj(d) {
+    if (!zivo || !prep || delo !== d) return;
     const v = d.r.v;
     const y1 = Math.min(v.n, d.y + d.h);
     izmeri(() => upo.narisiPreparat(v, d.y, y1), v.n * (y1 - d.y) * (v.ss || 1));
     d.y = y1;
     d.h = visinaPasu(v.n, v.ss || 1);
-    if (d.y < v.n) return void requestAnimationFrame(nadaljuj);
+    if (d.y < v.n) return void requestAnimationFrame(() => nadaljuj(d));
     delo = null;
     pKljuc = d.kljuc;
     koncaj(d.r, d.css);
@@ -827,13 +832,15 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     h1.textContent = p.ime;
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
     if (!zivo || moja !== zahteva) return;
+    const velja = () => zivo && moja === zahteva;
     try {
-      await upo.nastaviPreparat(p);
+      await upo.nastaviPreparat(p, velja);
     } catch (e) {
       nalaganje.hidden = true;
+      if (!velja()) return; // mikroskop zaprt ali izbran drug preparat med prevajanjem
       throw e;
     }
-    if (!zivo || moja !== zahteva) return;
+    if (!velja()) return;
     prep = p;
     nalaganje.hidden = true;
     if (zacetek) {
@@ -842,7 +849,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
       rocno = false;
       const c = cilj && !ciljPorabljen ? cilj : null;
       ciljPorabljen = true;
-      const m0 = c?.m || p.zacetek?.m || 40;
+      const m0 = Math.min(MAX_M, Math.max(MIN_M, c?.m || p.zacetek?.m || 40));
       if (m0 > SVETLOBNI_MAX) {
         s.nacin = "tem";
         s.m = m0;
@@ -857,6 +864,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
         const ustreza = (o) => c.snov.includes(Math.round(m0 > SVETLOBNI_MAX ? o.snov : o.snovT));
         const o = upo.sonda([s.sredisce]);
         const rMax = Math.max(...(p.velikost || [2000]));
+        rokIskanja = performance.now() + 250; // iskanje bere GPE: na počasnem telefonu največ ~¼ s
         if (o && !ustreza(o[0])) {
           // drobne dele (jedrce, mitohondrij) najprej poišči v njihovem gostitelju (jedro, citoplazma), nato natančno v njem
           const [x0, y0] = s.sredisce;
@@ -869,6 +877,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
             else kTkivu();
           }
         }
+        rokIskanja = Infinity;
         rocno = true; // ob prehodu na TEM ostane na tem delu, ne skoči na značilno snov preparata
       } else kTkivu(); // igla naj na začetku kaže na celico, ne na prazno stekelce
       dGrobi.nastavi(0);

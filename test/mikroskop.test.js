@@ -170,6 +170,37 @@ test("mikroskop: vsak del celice odpre svoj pogled (preparat, povečava, snov po
   assert.deepEqual(pogled("organ-srce", "aorta"), { p: "arterija" });
 });
 
+// Pregled PR #643: rastline, bakterije, kvasovke in praživali nikoli ne skočijo v človeško tkivo, deli organov ostanejo
+// pri organu; preverjeno na vseh pravih delih 3D celic in procesov (public/3d/modeli/celice in procesi).
+test("mikroskop: pogled dela ostane v isti skupini živih bitij", () => {
+  const RASTLINSKI = new Set(["cebula", "list", "reza", "koren", "steblo"]);
+  const MIKROBNI = new Set(["bakterije", "kvasovke", "kapljica"]);
+  let preverjenih = 0;
+  for (const mapa of ["celice", "procesi"]) {
+    const indeks = fs.readFileSync(`public/3d/modeli/${mapa}/index.js`, "utf8");
+    for (const [, id, pot] of indeks.matchAll(/id: "([a-z0-9-]+)", pot: "\.\/([a-z0-9-]+\.js)"/g)) {
+      const osnova = pogledDela(id)?.p;
+      if (!osnova) continue;
+      const vir = fs.readFileSync(`public/3d/modeli/${mapa}/${pot}`, "utf8");
+      const vzorec = mapa === "celice" ? /del\("([a-z0-9-]+)"/g : /\bid: "([a-z0-9-]+)"/g; // procesi: deli kot { id: "…" }
+      for (const [, del] of vir.matchAll(vzorec)) {
+        if (del === id) continue;
+        const v = pogledDela(id, del);
+        assert.ok(IDS.has(v.p) && v.m >= 40 && v.m <= 5e7, `${id}/${del}: ${JSON.stringify(v)}`);
+        if (RASTLINSKI.has(osnova)) assert.ok(RASTLINSKI.has(v.p), `${id}/${del} → ${v.p}`);
+        if (MIKROBNI.has(osnova)) assert.equal(v.p, osnova, `${id}/${del} → ${v.p}`);
+        preverjenih++;
+      }
+    }
+  }
+  assert.ok(preverjenih > 300, `preverjenih ${preverjenih}`);
+  assert.deepEqual(pogledDela("organ-mesicki", "mesicki"), { p: "pljuca" });
+  assert.deepEqual(pogledDela("celica-bakterijska", "membrana").p, "bakterije");
+  assert.deepEqual(pogledDela("mitoza", "kromosomi"), { p: "koren", m: 1000, snov: [27] });
+  assert.equal(pogledDela("celica-nevron", "nisslova-telesca").p, "skorja");
+  assert.equal(pogledDela("celica-skeletno-misicno-vlakno", "z-linija").snov[0], 7);
+});
+
 test("mikroskop: prevodi gumbov v vseh jezikih in vstop iz lekcij", () => {
   const kljuci = ["mk.title", "mk.open", "mk.start", "mk.hub", "mk.sem", "mk.surface", "mk.semResolution", "mk.level.povrsina", "mk.truth.sem"];
   for (const k of kljuci) assert.ok(sl[k], `sl ${k}`);

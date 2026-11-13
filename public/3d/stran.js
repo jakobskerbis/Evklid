@@ -374,7 +374,13 @@ async function mikroskop(param, moj) {
   const { odpriMikroskop: odpri } = await import("/mikroskop/mikroskop.js");
   if (moj !== zaporedje) return null;
   // Menjava preparata v mikroskopu: naslov se zamenja (Nazaj gre še vedno tja, od koder smo prišli).
-  const obPreparatu = (p) => history.replaceState(history.state, "", `#mikroskop?p=${encodeURIComponent(p)}`);
+  // Prvi preparat je tisti iz naslova: naslov ostane cel (m in s), da ponovno nalaganje ali deljena povezava pokažeta isti del.
+  let prvi = param.p || null;
+  const obPreparatu = (p) => {
+    const isti = p === prvi;
+    prvi = null;
+    if (!isti) history.replaceState(history.state, "", `#mikroskop?p=${encodeURIComponent(p)}`);
+  };
   const snov = String(param.s || "").split(",").filter(Boolean).map(Number).filter(Number.isFinite);
   const cilj = +param.m > 0 || snov.length ? { m: +param.m > 0 ? +param.m : null, snov } : null;
   const m = await odpri(host, { preparat: param.p || null, cilj, zapri: nazaj, obPreparatu });

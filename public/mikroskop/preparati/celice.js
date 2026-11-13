@@ -126,7 +126,7 @@ T tkivo(vec2 p, float px) {
       t.dye.x = mix(t.dye.x, 0.55 * kromatin(q, h.zw, px), k2);
       float jc = min(length(q - vec2(2.5, 1.5)) - 1.8, length(q + vec2(3.0, 0.5)) - 1.4 + 2.0 * step(0.5, h.y));
       t.dye.x += 0.6 * pokrij(jc, px) * k2;
-      if (k2 > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.jc = c; t.meja = 1e3; }   // jc: TEM riše jedrce in kromatin glede na središče
+      if (k2 > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.meja = 1e3; }
     }
     return t;
   }
