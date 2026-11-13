@@ -119,8 +119,8 @@ export const KEM_GROUPS = [
   ]],
   ["re", "tk.kem.re", [
     [" + ", " → ", " ⇌ ", " ← ", "↑", "↓", "Δ", "hν", "KAT", "e⁻"],
-    ["(s)", "(l)", "(g)", "(aq)", "ΔH", "ΔS", "ΔG", "°"],
-    ["°C", "kPa", "mol", "g/mol", "mol/L", "kJ/mol", "pH", "%"],
+    ["(s)", "(l)", "(g)", "(aq)", "ΔH", "ΔS", "ΔG", "°", "%"],
+    ["°C", "kPa", "mol", "g/mol", "mol/L", "kJ/mol", "pH"],
   ]],
   ["pse", "tk.kem.pse", []],
 ];

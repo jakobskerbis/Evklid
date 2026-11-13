@@ -57,8 +57,8 @@ export const GROUPS = {
       k("PO₄", "PO₄", "fosfat"), k("NH₄", "NH₄", "amonij"), k("HCO₃", "HCO₃", "hidrogenkarbonat"), k("MnO₄", "MnO₄", "permanganat"),
       k("(s)", "(s)", "trdno"), k("(l)", "(l)", "tekoče"), k("(g)", "(g)", "plinasto"), k("(aq)", "(aq)", "raztopljeno v vodi"),
       k("ΔH", "ΔH", "reakcijska entalpija"), k("ΔS", "ΔS", "sprememba entropije"), k("ΔG", "ΔG", "sprememba Gibbsove proste energije"), k("°", "°", "standardno stanje"),
-      k("°C", "°C", "stopinj Celzija"), k("kPa", "kPa", "kilopaskal"), k("mol", "mol", "mol"), k("g/mol", "g/mol", "molska masa"),
-      k("mol/L", "mol/L", "množinska koncentracija"), k("kJ/mol", "kJ/mol", "kilojoulov na mol"), k("pH", "pH", "pH"), k("%", "%", "odstotek"),
+      k("°C", "°C", "stopinja Celzija"), k("kPa", "kPa", "kilopaskal"), k("mol", "mol", "mol"), k("g/mol", "g/mol", "molska masa"),
+      k("mol/L", "mol/L", "množinska koncentracija"), k("kJ/mol", "kJ/mol", "kilojoul na mol"), k("pH", "pH", "pH"), k("%", "%", "odstotek"),
     ],
   },
 };

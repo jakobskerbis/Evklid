@@ -761,7 +761,7 @@
   "tk.kem.ion": "Ionen",
   "tk.kem.pse": "Alle Elemente",
   "tk.kem.cat": "Kat.",
-  "tk.kem.sub": "Index {n}",
+  "tk.kem.sub": "tiefgestellt {n}",
   "tk.kem.sup": "hochgestellt {n}",
   "tk.shift": "Großbuchstabe",
   "tk.space": "Leertaste (ziehen, um den Cursor zu bewegen)",

@@ -435,9 +435,11 @@ function loadElNames() {
   import("./graph/pse-data.js")
     .then((m) => {
       elNames = Object.fromEntries(m.ELEMENTS.map((e) => [e.sym, e]));
-      if (S.open && S.kemg === "pse" && !down) render();
+      // med pritiskom ne rišemo znova (tipka bi izginila izpod prsta): počakamo, da se prst dvigne
+      const again = () => S.open && S.kemg === "pse" && (down ? setTimeout(again, 250) : render());
+      again();
     })
-    .catch(() => {});
+    .catch(() => (elNames = null)); // brez povezave: ob naslednjem odprtju strani poskusimo znova
 }
 const elName = (sym) => {
   const e = elNames?.[sym];
@@ -470,12 +472,15 @@ function kemBody(inSym = false) {
     }
     if (c === "KAT") {
       const v = t("tk.kem.cat");
-      return key(v, { a: "lit", v }, { cls: v.length > 4 || (v.length > 2 && /[\u3040-\u9fff]/.test(v)) ? "word kem w15" : "sm", aria: sl ? `${v} ${d}` : v, tip: d });
+      return key(v, { a: "lit", v }, { cls: v.length > 4 || (v.length > 2 && /[\u3040-\u9fff]/.test(v)) ? `word kem ${v.length > 7 ? "w2 xs" : "w15"}` : "sm", aria: sl ? `${v} ${d}` : v, tip: d });
     }
     const label = c === "[@]" ? "[ ]" : c.trim();
+    // ena velikost v vrsti: skupine (NO₃ … MnO₄) vse »sm«, enote z ulomkom (g/mol …) »word kem« (dolge širše)
     const n = label.replace(/[₀-₉⁰-⁹⁺⁻]/g, "").length;
-    const cls = c === "·" ? "dot" : `${n > 4 ? "word kem" : n > 2 ? "sm" : ""}${/^ [+→⇌←] $/.test(c) ? "sym" : ""}`;
-    return key(label, { a: "ins", v: c }, { cls, aria: d && `${label} ${d}`, tip: d, html: chemLabel(label) });
+    const group = /[₀-₉]/.test(label) || label === "OH";
+    const cls = c === "·" ? "dot" : `${label.includes("/") ? "word kem" + (n > 5 ? " w15" : "") : group || n > 2 ? "sm" : ""}${/^ [+→⇌←] $/.test(c) ? "sym" : ""}`;
+    const aria = d && d !== label ? `${label} ${d}` : "";
+    return key(label, { a: "ins", v: c }, { cls, aria, tip: d !== label ? d : "", html: chemLabel(label) });
   };
   const row = (r) => `<div class="tk-row">${r.map(one).join("")}</div>`;
   let rows;
