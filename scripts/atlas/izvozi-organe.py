@@ -359,7 +359,7 @@ ORGANI = {
         # n5: oblika kril (drevesa.oblika_kril): zaobljene rebrne ploskve, stožčast vrh, vbočena baza z ostrim robom, srčna
         # vtisnina in zareza levo; pljučno deblo Z-Anatomy (spredaj pod lokom aorte) z razcepiščem v desno in levo arterijo
         drevesa=dict(veje=False, razmik=0.014, korak=0.004, vpliv=0.05, ubij=0.006, skrci=0.0007, rezenjTelefon=0.38, telefonListi=3,
-                     debloDolzina=0.04, oblika=dict(zaobli=1.0, zozi=0.46, zoziOd=0.3, kupola=0.018, rob=0.006, srce=(0.05, 0.012), lingula=0.02, bazaZozi=0.2)),
+                     debloDolzina=0.012, oblika=dict(zaobli=1.0, zozi=0.46, zoziOd=0.3, kupola=0.018, rob=0.006, srce=(0.05, 0.012), lingula=0.02, bazaZozi=0.2)),
         # Veje v pljučih (segmentni bronhiji in žile) imajo svoja tkiva: v celoti so skrite (konci bi štrleli skozi
         # površino režnjev), v prerezu vidne.
         tkiva=[

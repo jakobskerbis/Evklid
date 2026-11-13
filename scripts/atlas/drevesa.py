@@ -587,9 +587,10 @@ def pljucna_drevesa(osnovni, cfg, tmp):
         P = [a + os_ * 0.006]; n = 10
         for i in range(n):
             u = (i + 0.5) / n
-            d = (1 - u) * (-os_) + u * np.array([0.0, -0.25, -1.0]); d /= np.linalg.norm(d)
+            # n7: navzdol, naprej in medialno (proti sredini med kriloma; prej je bil podaljšek skrit za levim krilom)
+            d = (1 - u) * (-os_) + u * np.array([-0.6 * np.sign(a[0] - nast.get("sredinaX", 0.0)), -0.25, -1.0]); d /= np.linalg.norm(d)
             P.append(P[-1] + d * (dz + 0.006) / n)
-        P = [Vector(q) for q in P]; R = [r * (1.0 + 0.14 * i / n) for i in range(n + 1)]
+        P = [Vector(q) for q in P]; R = [r * (1.3 + 0.1 * i / n) for i in range(n + 1)]  # 1,3: pokrije odprti konec debla Z-Anatomy
         for t_ in (False, True):
             bm = bmesh.new(); cev(bm, P, R, 12 if t_ else 24, kupola=True)
             bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
