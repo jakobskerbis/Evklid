@@ -53,7 +53,8 @@ test("geometrija organov: jetra.json opisuje nove dele in prerez pokaže prereze
   // ocena r5: cela drevesa na rezni ploskvi so bila »špageti«; zdaj se režejo, presek je stena in temna svetlina
   for (const t of ["portalna", "arterija", "vena", "zolcevod"]) {
     assert.ok(!j.tkiva[t].brezReza, `tkivo ${t} se v prerezu reže`);
-    assert.ok(j.tkiva[t].rezPresek?.luknjaBarva && j.tkiva[t].rezPresek.rob > 0, `tkivo ${t}: presek s svetlino in steno`);
+    // krog n5: obroč s steno in svetlino (rezPresek.cev), neprerezane cevi niso na rezni ploskvi (samoPresek)
+    assert.ok(j.tkiva[t].rezPresek?.luknjaBarva && j.tkiva[t].rezPresek.robBarva && j.tkiva[t].rezPresek.cev, `tkivo ${t}: presek s svetlino in steno`);
   }
   assert.deepEqual(j.pogledi.prerez.skrijDele, ["srpasta-vez", "obla-vez"]);
 });
@@ -80,7 +81,7 @@ test("geometrija organov: pljuca.json v prerezu pokaže prereze dihalnega in ži
   const j = json("pljuca");
   for (const t of ["dihalna", "dihalna-v", "pljucna-arterija", "pljucna-arterija-v", "pljucna-vena", "pljucna-vena-v"]) {
     assert.ok(!j.tkiva[t].brezReza, t);
-    assert.ok(j.tkiva[t].rezPresek?.rob > 0, `${t}: presek s steno`);
+    assert.ok(j.tkiva[t].rezPresek?.rob > 0 || j.tkiva[t].rezPresek?.cev, `${t}: presek s steno`);
   }
 });
 

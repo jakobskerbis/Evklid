@@ -1002,7 +1002,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
             : ""
         }${
           vr
-            ? `\n if ( vOrgVr > 1.5 ) { diffuseColor.rgb = ${vec3(presek.luknjaBarva || "#200808")}; orgH = 0.0; } else if ( vOrgVr > 0.5 ) { diffuseColor.rgb = ${vec3(presek.robBarva || t.rez || "#cccccc")}; orgH = 0.6; }`
+            ? `\n if ( vOrgVr > 1.5 ) { diffuseColor.rgb = ${vec3(presek.luknjaBarva || "#200808")}${presek.cev ? " * mix( 1.7, 0.55, smoothstep( 0.0, 1.0, vOrgVr - 2.0 ) )" : ""}; orgH = 0.0; } else if ( vOrgVr > 0.5 ) { diffuseColor.rgb = ${vec3(presek.robBarva || t.rez || "#cccccc")}; orgH = 0.6; }`
             : ""
         }`,
       )
@@ -1024,7 +1024,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}${presek.cev ? "c" : ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
   return m;
 }
 
@@ -1195,6 +1195,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const leniRez = []; // gradnja presekov in votlin posameznih kosov, izvede se ob prvem prerezu
   const enaRavnina0 = !!ravnine && ravnine.seznam.length === 1 && !ravnine.presek;
   const votline = new Map(); // tkivo → material notranjosti votline (tkivo.rezVotlina)
+  const skritMat = new THREE.MeshBasicMaterial({ visible: false }); // mreža cevi v prerezu (rezPresek.samoPresek)
   const maskaMat = new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide }); // samo globina: odprtina votline v ploskvah reza
   const slike = []; // naslikane rezne ploskve (tkivo.rezSlika): naložijo se ob prvem prerezu
   const slikeTkiv = new Map(); // tkivo → { uniform, U, V, c0, lo, mera }: ista risba za ploskev reza v učnih barvah
@@ -1265,13 +1266,15 @@ export async function zgradiOrgan(ime, ctx = {}) {
         skleni: (t.rezPresek.skleni || 0) * s, // odprtina v mreži (hilus): obris se sklene z ravno črto do te širine (m)
         povecaj: t.rezPresek.povecaj ?? 1,
         rob: (t.rezPresek.rob ?? 0) * s, // metri → enote modela
+        // cev { delez, najm, najv [m], gladko }: presek cevi kot obroč s steno in svetlino, ki se proti sredini temni
+        cev: t.rezPresek.cev ? { ...t.rezPresek.cev, najm: (t.rezPresek.cev.najm ?? 0.00025) * s, najv: (t.rezPresek.cev.najv ?? 0.0014) * s } : null,
         trianguliraj,
       });
       if (r) {
         // malenkost pred ravnino (na odrezani strani), plasti druga pred drugo: brez migetanja globine
         const odmik = -(0.0004 + 0.0004 * (t.rezPresek.vrsta ?? 0));
         // svetlina cevi (vrsta 2) malenkost pred obrobami: stena sosednje veje iste žile ne riše črt čez svetlino (stik vej)
-        for (let i = 0; i < r.polozaji.length; i += 3) for (let c = 0; c < 3; c++) r.polozaji[i + c] += n[c] * (r.vrste[i / 3] === 2 ? odmik - 0.00015 : odmik);
+        for (let i = 0; i < r.polozaji.length; i += 3) for (let c = 0; c < 3; c++) r.polozaji[i + c] += n[c] * (r.vrste[i / 3] >= 2 ? odmik - 0.00015 : odmik);
         const g = new THREE.BufferGeometry();
         g.setAttribute("position", new THREE.BufferAttribute(r.polozaji, 3));
         g.setAttribute("normal", new THREE.BufferAttribute(Float32Array.from({ length: r.polozaji.length }, (_, i) => -n[i % 3]), 3));
@@ -1289,7 +1292,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
             slikeTkiv.set(k.tkivo, slika);
             for (const u of ucni.values()) if (u.tkivo === k.tkivo) u.presek = ucniPresekSlike(t, u.barva, slika);
           }
-          const pm = materialPokrova(t, ravZa(t), s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, slika });
+          const pm = materialPokrova(t, ravZa(t), s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, cev: !!t.rezPresek.cev, slika });
           pm.clippingPlanes = [];
           pm.side = THREE.DoubleSide;
           preseki.set(k.tkivo, pm);
@@ -1299,6 +1302,28 @@ export async function zgradiOrgan(ime, ctx = {}) {
         presek.renderOrder = (tk.vrstni ?? 0) + 0.01 * (t.rezPresek.vrsta ?? 0);
         presek.userData = { pokrov: true, presek: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
         mesh.add(presek);
+      }
+    }
+    // Odprta cev z dvojno steno (rezPresek.odprtaCev; sapnik, glavni in režnjski bronhiji): vzdolž prerezana cev pokaže svojo
+    // notranjo steno za ravnino (pravi 3D žleb s hrustančnimi obroči) – nevidna maska v obrisu cevi (ovojnica preseka
+    // vsakega vozlišča) drži rezne ploskve drugih tkiv (pljučni parenhim) stran od svetline.
+    if (enaRavnina && t.rezPresek?.odprtaCev) {
+      const rav = ravZa(t).seznam[0];
+      const n = rav.normal.toArray();
+      mesh.renderOrder = -3;
+      const r = presekMreze(k.geo.attributes.position.array, deliMreze(), n, rav.constant, { ovojDelov: true, trianguliraj });
+      if (r) {
+        const odmik = -(0.0004 + 0.0004 * ((t.rezPresek.vrsta ?? 0) - 0.5));
+        for (let i = 0; i < r.polozaji.length; i += 3) for (let c = 0; c < 3; c++) r.polozaji[i + c] += n[c] * odmik;
+        const g = new THREE.BufferGeometry();
+        g.setAttribute("position", new THREE.BufferAttribute(r.polozaji, 3));
+        g.setIndex(r.indeksi);
+        presekGeo.push(g);
+        const maska = new THREE.Mesh(g, maskaMat);
+        maska.raycast = () => {};
+        maska.renderOrder = -2;
+        maska.userData = { pokrov: true, maska: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+        mesh.add(maska);
       }
     }
     // Odprta votlina (tkivo.rezVotlina, ena ravnina): notranjost mreže (zadnje ploskve, osvetljene) in nevidna maska v obrisu
@@ -1360,6 +1385,12 @@ export async function zgradiOrgan(ime, ctx = {}) {
     for (const m of meshi) {
       m.visible = m.userData.stran !== skrijStran && !skrijTkiva.has(m.userData.tkivo) && !skrijDele.has(m.userData.del);
       for (const c of m.children) c.visible = rezi;
+      // rezPresek.samoPresek: v prerezu ostane od cevi le presek na ravnini (kot rezina); neprerezane cevi za ravnino ne
+      // ležijo čez rezno ploskev in ne štrlijo iz organa (ocena n4: »uncut tubes across the cut face«)
+      if (podatki.tkiva?.[m.userData.tkivo]?.rezPresek?.samoPresek) {
+        if (rezi) { if (m.material !== skritMat) { m.userData.matPrej = m.material; m.material = skritMat; } }
+        else if (m.material === skritMat) m.material = m.userData.matPrej;
+      }
     }
     // Nastavitve tkiv za ta pogled (npr. temna zenica: žilnica dvostransko in temnejša, leča skrita).
     const nast = p.tkiva || {};

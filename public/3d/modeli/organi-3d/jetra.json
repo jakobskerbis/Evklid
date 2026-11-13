@@ -76,16 +76,15 @@
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.6,
-   "rezVotlina": {
-    "barva": "#5c6228",
-    "senca": "#1e230a",
-    "globina": 0.012
-   },
    "rezPresek": {
     "vrsta": 3,
-    "samoRob": true,
-    "rob": 0.0007,
-    "robBarva": "#7d8540"
+    "cev": {
+     "delez": 0.1,
+     "najv": 0.0022,
+     "najm": 0.0012
+    },
+    "robBarva": "#a3ab62",
+    "luknjaBarva": "#3a4216"
    }
   },
   "zolcevod": {
@@ -108,10 +107,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 5,
-    "luknjaBarva": "#4a4f14",
-    "rob": 0.0003,
-    "robBarva": "#c9cf86",
-    "stena": 0.0005
+    "cev": {
+     "delez": 0.2
+    },
+    "robBarva": "#c3c98a",
+    "luknjaBarva": "#3f4514",
+    "samoPresek": true
    }
   },
   "portalna": {
@@ -135,10 +136,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "luknjaBarva": "#3a1f52",
-    "rob": 0.0003,
-    "robBarva": "#c9b3e6",
-    "stena": 0.0006
+    "cev": {
+     "delez": 0.2
+    },
+    "robBarva": "#b9aed0",
+    "luknjaBarva": "#2f2148",
+    "samoPresek": true
    }
   },
   "arterija": {
@@ -162,10 +165,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 5,
-    "luknjaBarva": "#5c1512",
-    "rob": 0.00035,
-    "robBarva": "#eab0a6",
-    "stena": 0.0005
+    "cev": {
+     "delez": 0.2
+    },
+    "robBarva": "#e2a79e",
+    "luknjaBarva": "#501412",
+    "samoPresek": true
    }
   },
   "vena": {
@@ -189,10 +194,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "luknjaBarva": "#1d2c5c",
-    "rob": 0.00022,
-    "robBarva": "#bdc8e6",
-    "stena": 0.0006
+    "cev": {
+     "delez": 0.2
+    },
+    "robBarva": "#aebad8",
+    "luknjaBarva": "#1c2850",
+    "samoPresek": true
    }
   },
   "vez": {

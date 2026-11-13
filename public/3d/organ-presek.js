@@ -210,6 +210,71 @@ export function trakVObris(z) {
   return izhod.length >= 3 ? izhod : null;
 }
 
+// Zglajen obris (Chaikin): vsak vogal se odreže na četrtinah stranic; šestkotni presek cevi telefona postane okrogel.
+export function zgladiZanko(z, koraki = 3, najvec = 128) {
+  // najprej brez točk na ravnih stranicah (diagonale trikotnikov na ploskvi cevi): rezanje vogalov deluje na prave vogale
+  let t = z.filter((p, i) => {
+    const o = z[(i + z.length - 1) % z.length], q = z[(i + 1) % z.length];
+    const ax = p[0] - o[0], ay = p[1] - o[1], bx = q[0] - p[0], by = q[1] - p[1];
+    return Math.abs(ax * by - ay * bx) > 0.12 * Math.hypot(ax, ay) * Math.hypot(bx, by);
+  });
+  if (t.length < 3) t = z;
+  for (let k = 0; k < koraki && t.length * 2 <= najvec; k++) {
+    const u = [];
+    for (let i = 0; i < t.length; i++) {
+      const a = t[i], b = t[(i + 1) % t.length];
+      u.push([a[0] * 0.75 + b[0] * 0.25, a[1] * 0.75 + b[1] * 0.25], [a[0] * 0.25 + b[0] * 0.75, a[1] * 0.25 + b[1] * 0.75]);
+    }
+    t = u;
+  }
+  return t;
+}
+
+// Obris, odmaknjen navznoter za w (zanka v nasprotni smeri urinega kazalca; odmik po simetrali kota, omejen v ostrih vogalih).
+export function odmakniZanko(z, w) {
+  const n = z.length, izhod = [];
+  for (let i = 0; i < n; i++) {
+    const o = z[(i + n - 1) % n], p = z[i], q = z[(i + 1) % n];
+    let ax = -(p[1] - o[1]), ay = p[0] - o[0], bx = -(q[1] - p[1]), by = q[0] - p[0];
+    const la = Math.hypot(ax, ay) || 1, lb = Math.hypot(bx, by) || 1;
+    ax /= la; ay /= la; bx /= lb; by /= lb;
+    let mx = ax + bx, my = ay + by;
+    const lm = Math.hypot(mx, my);
+    if (lm < 1e-6) { mx = ax; my = ay; } else { mx /= lm; my /= lm; }
+    const k = w / Math.max(0.6, mx * ax + my * ay);
+    izhod.push([p[0] + mx * k, p[1] + my * k]);
+  }
+  return izhod;
+}
+
+// Presek cevi (žila, bronhij, žolčnik) kot obroč: stena (vrsta 1) in svetlina, ki se od stene (vrsta 2) proti sredini
+// temni (vrsta 3) – bere se kot cev, ki gre v globino. Vhod: vse zanke tkiva; ostanejo le zunanji obrisi (notranja
+// stena dvojne cevi in veja v veji odpadeta: brez črtkanih obročev v svetlini). cev: { delez (stena kot delež
+// polmera), najm, najv (m, v enotah mreže), gladko (koraki glajenja obrisa) }.
+function cevniPresek(zanke, os, cev, trianguliraj, polozaji, indeksi, vrste) {
+  const { O, U, V } = os;
+  const tocka = (p, vr) => { for (let c = 0; c < 3; c++) polozaji.push(O[c] + p[0] * U[c] + p[1] * V[c]); vrste.push(vr); return polozaji.length / 3 - 1; };
+  const pl = zanke.map((z) => Math.abs(ploscina(z)));
+  const zunanje = zanke.filter((z, i) => !zanke.some((y, j) => i !== j && pl[j] > pl[i] && z.filter((q) => vZanki(q, y)).length > 0.8 * z.length));
+  for (let z of zunanje) {
+    if (ploscina(z) < 0) z = [...z].reverse();
+    z = zgladiZanko(z, cev.gladko ?? 3);
+    let obseg = 0;
+    for (let i = 0; i < z.length; i++) obseg += Math.hypot(z[(i + 1) % z.length][0] - z[i][0], z[(i + 1) % z.length][1] - z[i][1]);
+    const h = (2 * Math.abs(ploscina(z))) / Math.max(obseg, 1e-12); // srednja polširina (krog: polmer)
+    const w = Math.min(0.55 * h, Math.max(cev.najm ?? 0, Math.min(cev.najv ?? Infinity, (cev.delez ?? 0.2) * h)));
+    const notri = odmakniZanko(z, w), jedro = odmakniZanko(z, w + 0.5 * (h - w));
+    const m = z.length;
+    const a0 = z.map((p) => tocka(p, 1)), a1 = notri.map((p) => tocka(p, 1));
+    const b0 = notri.map((p) => tocka(p, 2)), b1 = jedro.map((p) => tocka(p, 3));
+    for (let i = 0; i < m; i++) {
+      const j = (i + 1) % m;
+      indeksi.push(a0[i], a0[j], a1[j], a0[i], a1[j], a1[i], b0[i], b0[j], b1[j], b0[i], b1[j], b1[i]);
+    }
+    for (const t of trianguliraj(jedro, [])) indeksi.push(b1[t[0]], b1[t[1]], b1[t[2]]);
+  }
+}
+
 // Zapolnjen presek: { polozaji: Float32Array (3D, na ravnini), indeksi: number[], vrste: Float32Array } ali null, če
 // ravnina mreže ne seka; os = { O, U, V } ravnine. vrste (na oglišče): 0 = ploskev preseka, 1 = obroba (rob), 2 = zapolnjena luknja (luknje).
 // idx: indeksi trikotnikov ali seznam takih polj (vsako zaprto telo posebej: zanke sosednjih teles se ne gnezdijo).
@@ -223,7 +288,7 @@ export function trakVObris(z) {
 // povecaj: faktor, s katerim se vsaka zanka poveča okoli svojega težišča (1,02: sosednji telesi se prekrijeta).
 // trianguliraj(obris, luknje) → [[a, b, c], …] z indeksi v obris, nato luknje po vrsti (kot THREE.ShapeUtils.triangulateShape).
 // najPloscina: zanke z manjšo ploščino odpadejo (drobir).
-export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7, skleni = 0, stena = 0 } = {}) {
+export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7, skleni = 0, stena = 0, cev = null, ovojDelov = false } = {}) {
   const polozaji = [];
   const indeksi = [];
   const vrste = []; // na oglišče: 0 ploskev, 1 obroba, 2 zapolnjena luknja
@@ -255,6 +320,17 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak 
     }
   };
   let os = null;
+  if (cev) {
+    // cevi: zanke vseh teles tkiva skupaj (zunanji obrisi), vsaka kot obroč s steno in svetlino
+    const vse = [];
+    for (const del of typeof idx[0] === "number" ? [idx] : idx) {
+      const r = zankePreseka(pos, del, n, d, 2e-5, skleni);
+      os = { O: r.O, U: r.U, V: r.V };
+      vse.push(...r.zanke.filter((z) => Math.abs(ploscina(z)) > najPloscina));
+    }
+    if (vse.length) cevniPresek(vse, os, cev, trianguliraj, polozaji, indeksi, vrste);
+    return indeksi.length ? { polozaji: new Float32Array(polozaji), indeksi, vrste: new Float32Array(vrste), os } : null;
+  }
   for (const del of typeof idx[0] === "number" ? [idx] : idx) {
     const { zanke, O, U, V } = zankePreseka(pos, del, n, d, 2e-5, skleni);
     os = { O, U, V };
@@ -265,6 +341,17 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak 
         const c = [z.reduce((a, p) => a + p[0], 0) / z.length, z.reduce((a, p) => a + p[1], 0) / z.length];
         return z.map((p) => [c[0] + (p[0] - c[0]) * povecaj, c[1] + (p[1] - c[1]) * povecaj]);
       });
+    }
+    if (ovojDelov) {
+      // izbočena ovojnica preseka vsakega telesa posebej: obris vzdolž prerezane odprte cevi z dvojno steno (dve steni,
+      // med njima svetlina) – maska, skozi katero se vidi notranjost cevi za ravnino (organ.js, rezPresek.odprtaCev)
+      if (dobre.length) {
+        const h = ovojnica(dobre.flat());
+        const z0 = polozaji.length / 3;
+        for (const p of h) { for (let c = 0; c < 3; c++) polozaji.push(O[c] + p[0] * U[c] + p[1] * V[c]); vrste.push(0); }
+        for (let i = 1; i + 1 < h.length; i++) indeksi.push(z0, z0 + i, z0 + i + 1);
+      }
+      continue;
     }
     if (trak) {
       // tanka odprta lupina: ena stran traku, sklenjena s tetivo čez odprtino, je ploskev; obroba po traku (lupina)

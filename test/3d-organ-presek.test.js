@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
-import { zankePreseka, presekMreze, ploscina, ovojnica, trakVObris } from "../public/3d/organ-presek.js";
+import { zankePreseka, presekMreze, ploscina, ovojnica, trakVObris, zgladiZanko, odmakniZanko } from "../public/3d/organ-presek.js";
 import { preberi } from "../scripts/atlas/zile-mreza.mjs";
 
 const KOREN = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -179,4 +179,58 @@ test("presek: »trak« (tanka odprta lupina, ledvična ovojnica ob hilusu) se za
   assert.ok(Math.abs(Math.abs(kot(o[0])) - 45) < 8 && Math.abs(Math.abs(kot(o[o.length - 1])) - 45) < 8, `robova ${kot(o[0]).toFixed(0)}°, ${kot(o[o.length - 1]).toFixed(0)}°`);
   // debel obris (pravo telo, ne lupina) ni trak
   assert.equal(trakVObris(zun), null);
+});
+
+// Krog n5: presek cevi kot obroč (stena + svetlina, ki se proti sredini temni), okrogel tudi pri šestkotni cevi telefona.
+function prizma(stranic, r, cx = 0, cy = 0) {
+  // zaprta prizma vzdolž z (−1 … 1) s središčem (cx, cy)
+  const pos = [], idx = [];
+  for (const z of [-1, 1]) for (let i = 0; i < stranic; i++) pos.push(cx + r * Math.cos((2 * Math.PI * i) / stranic), cy + r * Math.sin((2 * Math.PI * i) / stranic), z);
+  for (let i = 0; i < stranic; i++) {
+    const j = (i + 1) % stranic;
+    idx.push(i, j, stranic + j, i, stranic + j, stranic + i);
+  }
+  for (let i = 1; i + 1 < stranic; i++) idx.push(0, i + 1, i, stranic, stranic + i, stranic + i + 1);
+  return { pos: new Float32Array(pos), idx: new Uint32Array(idx) };
+}
+
+test("n5: zgladiZanko zaokroži šestkotnik, odmakniZanko odmakne navznoter", () => {
+  const sest = Array.from({ length: 6 }, (_, i) => [Math.cos((Math.PI * i) / 3), Math.sin((Math.PI * i) / 3)]);
+  // točke na stranicah (diagonale trikotnikov) ne smejo zavreti glajenja
+  const zDiag = sest.flatMap((p, i) => [p, [(p[0] + sest[(i + 1) % 6][0]) / 2, (p[1] + sest[(i + 1) % 6][1]) / 2]]);
+  const g = zgladiZanko(zDiag, 3);
+  assert.ok(g.length >= 40, `točk ${g.length}`);
+  const r = g.map((p) => Math.hypot(p[0], p[1]));
+  assert.ok(Math.max(...r) - Math.min(...r) < 0.06, `odstopanje od kroga ${(Math.max(...r) - Math.min(...r)).toFixed(3)} (šestkotnik 0,134)`);
+  const o = odmakniZanko(g, 0.2);
+  assert.ok(Math.abs(Math.abs(ploscina(o)) / Math.abs(ploscina(g)) - 0.64) < 0.05, "odmik 0,2 pri polmeru ≈ 1 zmanjša ploščino na ≈ 0,64");
+});
+
+test("n5: presekMreze cev – obroč s steno (1), svetlino (2) in temnim jedrom (3); veja v veji brez drugega obroča", () => {
+  const a = prizma(6, 1), b = prizma(6, 0.4, 0.1, 0);
+  const r = presekMreze(a.pos, a.idx, [0, 0, 1], 0, { cev: { delez: 0.2 }, trianguliraj: pahljaca });
+  assert.ok(r, "presek obstaja");
+  const vr = new Set(r.vrste);
+  for (const v of [1, 2, 3]) assert.ok(vr.has(v), `vrsta ${v}`);
+  assert.ok(!vr.has(0), "brez ploske ploskve");
+  // dve telesi, manjše v večjem (notranja stena dvojne cevi, veja v veji): ostane en obroč
+  const pos = new Float32Array([...a.pos, ...b.pos]);
+  const idxB = Uint32Array.from(b.idx, (i) => i + a.pos.length / 3);
+  const r2 = presekMreze(pos, [a.idx, idxB], [0, 0, 1], 0, { cev: { delez: 0.2 }, trianguliraj: pahljaca });
+  assert.equal(r2.polozaji.length, r.polozaji.length, "notranja zanka odpade");
+  // ovojDelov: maska vzdolž prerezane odprte cevi = izbočena ovojnica preseka vsakega telesa
+  const m = presekMreze(pos, [a.idx, idxB], [0, 0, 1], 0, { ovojDelov: true, trianguliraj: pahljaca });
+  assert.ok(m && m.indeksi.length >= 2 * 4 * 3 && new Set(m.vrste).size === 1);
+});
+
+test("n5: pregledovalnik in JSON – cevi kot obroči, neprerezane cevi skrite, odprt sapnik, žolčnik s steno", () => {
+  const src = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "3d", "organ.js"), "utf8");
+  for (const s of ["samoPresek", "skritMat", "odprtaCev", "ovojDelov: true", "presek.cev"]) assert.ok(src.includes(s), s);
+  const json = (o) => JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "3d", "modeli", "organi-3d", `${o}.json`), "utf8"));
+  const p = json("pljuca"), j = json("jetra");
+  for (const t of ["dihalna-v", "pljucna-arterija", "pljucna-arterija-v", "pljucna-vena", "pljucna-vena-v"]) assert.ok(p.tkiva[t].rezPresek.cev && p.tkiva[t].rezPresek.samoPresek, t);
+  assert.ok(p.tkiva.dihalna.rezPresek.odprtaCev && !p.tkiva.dihalna.rezPresek.samoPresek, "sapnik in glavni bronhiji: odprt žleb");
+  assert.ok(p.prerez.ravnine[0].rocno && Math.abs(p.prerez.ravnine[0].n[1]) > 0.1, "ravnina skozi sapnik in glavna bronhija (nagnjena)");
+  for (const t of ["portalna", "arterija", "vena", "zolcevod"]) assert.ok(j.tkiva[t].rezPresek.cev && j.tkiva[t].rezPresek.samoPresek, t);
+  assert.ok(j.tkiva.zolcnik.rezPresek.cev && !j.tkiva.zolcnik.rezVotlina, "žolčnik: stena in svetlina, brez steklene votline");
 });

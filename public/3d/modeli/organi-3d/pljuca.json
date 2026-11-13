@@ -87,10 +87,9 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "luknjaBarva": "#3b2622",
-    "rob": 0.0003,
-    "robBarva": "#f4eadb",
-    "stena": 0.0018
+    "rob": 0.0002,
+    "robBarva": "#efe2cc",
+    "odprtaCev": true
    }
   },
   "pljucna-arterija": {
@@ -114,10 +113,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "luknjaBarva": "#2e2b55",
-    "rob": 0.0003,
-    "robBarva": "#c0c8ee",
-    "stena": 0.0018
+    "cev": {
+     "delez": 0.22
+    },
+    "robBarva": "#b4bcdf",
+    "luknjaBarva": "#2b2a52",
+    "samoPresek": true
    }
   },
   "pljucna-vena": {
@@ -141,10 +142,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "luknjaBarva": "#5c1d1b",
-    "rob": 0.0003,
-    "robBarva": "#efb5aa",
-    "stena": 0.0018
+    "cev": {
+     "delez": 0.22
+    },
+    "robBarva": "#e9aea4",
+    "luknjaBarva": "#541a18",
+    "samoPresek": true
    }
   },
   "dihalna-v": {
@@ -168,8 +171,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "rob": 0.00035,
-    "robBarva": "#efe2cc"
+    "cev": {
+     "delez": 0.22
+    },
+    "robBarva": "#efe2cc",
+    "luknjaBarva": "#3b2622",
+    "samoPresek": true
    }
   },
   "pljucna-arterija-v": {
@@ -193,8 +200,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "rob": 0.0003,
-    "robBarva": "#aeb8e6"
+    "cev": {
+     "delez": 0.22
+    },
+    "robBarva": "#b4bcdf",
+    "luknjaBarva": "#2b2a52",
+    "samoPresek": true
    }
   },
   "pljucna-vena-v": {
@@ -218,8 +229,12 @@
    "rezLak": 0.4,
    "rezPresek": {
     "vrsta": 4,
-    "rob": 0.0003,
-    "robBarva": "#e39a90"
+    "cev": {
+     "delez": 0.22
+    },
+    "robBarva": "#e9aea4",
+    "luknjaBarva": "#541a18",
+    "samoPresek": true
    }
   }
  },
@@ -412,10 +427,11 @@
    {
     "n": [
      0,
-     0,
-     -1
+     0.2361,
+     -0.9717
     ],
-    "d": -0.024
+    "d": -0.03276,
+    "rocno": true
    }
   ]
  },
