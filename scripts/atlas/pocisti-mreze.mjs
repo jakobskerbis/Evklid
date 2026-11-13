@@ -12,6 +12,7 @@
 //   stisk      rob, ki si ga delijo štiri ploskve dveh lupin (notranja in zunanja stena žile se dotikata vzdolž roba):
 //              oglišča ene lupine odmakne za 12 µm, da je vsaka lupina zase mnogoterna (v žilo ne naredi luknje)
 //   navitje    obrne manjšino ploskev komponente, ki je navita drugače kot sosede (šarenica: 8 obrnjenih ploskev)
+//   igle       zasuka rob trikotnika s ploščino ~0 s sosedom (jetra: šivi režnjev po kvantizaciji)
 // Žile srca in jeter z debelino sten ureja scripts/atlas/popravi-zile.mjs; to orodje je za vse druge dele.
 // Po čiščenju: node scripts/atlas/preveri-mreze.mjs <filter> in izhodišče (docs/3d.md, »Mesh check«).
 import fs from "node:fs";
@@ -29,6 +30,9 @@ const MODELI = path.join(ROOT, "public", "3d", "modeli");
 // dvostranske trakove (pari trikotnikov z istimi oglišči), ki jih »blazinice« ne sme odstraniti.
 export const NACRT = {
   // pljuča in jetra (2026-11-12): cevi nastanejo kot zaprte mreže pri izvozu (drevesa.py), čiščenje ni več potrebno
+  // režnji jeter (2026-11-13): skupna kvantizacija (organi.mjs) splošči tanke trikotnike ob šivih režnjev v igle
+  "organi-3d/jetra.glb": [[/lobe of liver \(lastno\)$/, ["igle"]]],
+  "organi-3d/jetra-telefon.glb": [[/lobe of liver \(lastno\)$/, ["igle"]]],
   "organi-3d/oko.glb": [[/^iris_L/, ["izrojeni", "navitje"]]],
   "organi-3d/oko-telefon.glb": [[/^iris_L/, ["izrojeni", "navitje"]]],
 };
@@ -48,6 +52,53 @@ export function brezBlazinic(m) {
   }
   if (odstranjenih) { m.F = F; m.spremenjeno = true; }
   return odstranjenih;
+}
+
+// Igle: trikotnik s ploščino ~0 (oglišča na premici; kvantizacija splošči tanek trikotnik ob šivu režnjev) se zasuka s
+// sosedom čez najdaljši rob (A, B, C) + (B, A, D) → (C, A, D) + (C, D, B). Oglišča in robovi meje ostanejo, nič ne
+// odpade; zasuk le, če sta sosed in igla na istih izrisnih ogliščih (ne čez šiv UV) in nova trikotnika nista prepognjena.
+export function obrniIgle(m, krogov = 4) {
+  let n = 0;
+  const T = m.F.length / 3;
+  let lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+  for (let i = 0; i < m.P.length; i += 3) for (let c = 0; c < 3; c++) { lo[c] = Math.min(lo[c], m.P[i + c]); hi[c] = Math.max(hi[c], m.P[i + c]); }
+  const diag = Math.hypot(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]);
+  const minPl = (1e-5 * diag) ** 2 * 1e-2; // kot preveri-mreze.mjs
+  const p = (v) => [m.P[v * 3], m.P[v * 3 + 1], m.P[v * 3 + 2]];
+  const kriz = (a, b, c) => v3.cross(v3.sub(p(b), p(a)), v3.sub(p(c), p(a)));
+  const pl = (a, b, c) => Math.hypot(...kriz(a, b, c)) * 0.5;
+  for (let krog = 0; krog < krogov; krog++) {
+    const E = G.robovi(m);
+    const dotaknjen = new Uint8Array(T);
+    let ta = 0;
+    for (let f = 0; f < T; f++) {
+      if (dotaknjen[f]) continue;
+      const t = [m.F[f * 3], m.F[f * 3 + 1], m.F[f * 3 + 2]];
+      if (m.zvar[t[0]] === m.zvar[t[1]] || m.zvar[t[1]] === m.zvar[t[2]] || m.zvar[t[0]] === m.zvar[t[2]]) continue;
+      if (pl(...t) >= minPl) continue;
+      let k = 0, dl = -1;
+      for (let i = 0; i < 3; i++) { const d = v3.len(v3.sub(p(t[(i + 1) % 3]), p(t[i]))); if (d > dl) { dl = d; k = i; } }
+      const A = t[k], B = t[(k + 1) % 3], C = t[(k + 2) % 3];
+      const a = m.zvar[A], b = m.zvar[B];
+      const l = E.get(a < b ? a * 4294967296 + b : b * 4294967296 + a);
+      if (!l || l.length !== 2) continue;
+      const h = l.find((x) => ((x / 3) | 0) !== f);
+      if (h === undefined) continue;
+      const g = (h / 3) | 0, kk = h % 3;
+      if (dotaknjen[g]) continue;
+      if (m.F[g * 3 + kk] !== B || m.F[g * 3 + (kk + 1) % 3] !== A) continue; // šiv UV ali drugačno navijanje
+      const D = m.F[g * 3 + (kk + 2) % 3];
+      const ng = kriz(B, A, D), n1 = kriz(C, A, D), n2 = kriz(C, D, B);
+      if (v3.dot(n1, ng) <= 0 || v3.dot(n2, ng) <= 0 || pl(C, A, D) < minPl || pl(C, D, B) < minPl) continue;
+      m.F[f * 3] = C; m.F[f * 3 + 1] = A; m.F[f * 3 + 2] = D;
+      m.F[g * 3] = C; m.F[g * 3 + 1] = D; m.F[g * 3 + 2] = B;
+      dotaknjen[f] = dotaknjen[g] = 1; ta++;
+    }
+    n += ta;
+    if (!ta) break;
+  }
+  if (n) m.spremenjeno = true;
+  return n;
 }
 
 // Rob s 4 ploskvami, kjer se dotikata dve lupini: komponente določimo brez prehodov čez nemnogoterne robove; ploskve
@@ -112,7 +163,7 @@ export async function pocisti(pot, nacrt, { suho = false } = {}) {
     const m = G.preberi(node, prims[0]);
     const opombe = [];
     for (const k of koraki) {
-      const n = k === "izrojeni" ? G.brezIzrojenih(m) : k === "blazinice" ? brezBlazinic(m) : k === "stisk" ? razmakniStiske(m) : k === "navitje" ? G.usmeri(m, { samoNavitje: true }).obrnjene : 0;
+      const n = k === "izrojeni" ? G.brezIzrojenih(m) : k === "igle" ? obrniIgle(m) : k === "blazinice" ? brezBlazinic(m) : k === "stisk" ? razmakniStiske(m) : k === "navitje" ? G.usmeri(m, { samoNavitje: true }).obrnjene : 0;
       if (n) opombe.push(`${k} ${n}`);
       if (n && k === "stisk") G.zvari(m);
     }

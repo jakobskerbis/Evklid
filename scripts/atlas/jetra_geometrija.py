@@ -321,7 +321,8 @@ def _vez(L, n1, p1, telefon=False):
         f = min(1.0, u / 0.3); f = f * f * (3 - 2 * f)
         d_ = (smer_o * (1 - f) + (o * 0.75 + Vector((0, -0.66, 0))) * f)
         d_ = v_ravnini(d_)
-        w = (0.007 + 0.021 * (1 - u) ** 1.3) * min(1.0, (1.02 - u) / 0.12)
+        # u = 0 ob zarezi: vez je tam odrezana 10 mm od jeter (prej 28 mm: z oblo vezjo v robu je visela pod jetri kot palica)
+        w = (0.007 + 0.021 * (1 - u) ** 1.3) * min(1.0, (1.02 - u) / 0.12) * min(1.0, 0.35 + 0.65 * u / 0.25)
         a = p - o * 0.0012; q = a + d_ * w
         m = 3 if telefon else 5
         vrste.append([[bm.verts.new(a.lerp(q, j / m) + n1 * zn * h * (1 - 0.75 * (j / m) ** 2)) for j in range(m + 1)] for zn in (1, -1)])
@@ -338,7 +339,7 @@ def _vez(L, n1, p1, telefon=False):
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     srp = bpy.data.meshes.new("srpasta"); bm.to_mesh(srp); bm.free()
     p0 = vz[0][0]
-    w0 = 0.007 + 0.021
+    w0 = (0.007 + 0.021) * 0.35
     P = [p0 - smer_o * 0.006 + Vector((0, 0.004, 0.003)), p0, p0 + smer_o * w0 * 0.5, p0 + smer_o * (w0 + 0.002) + Vector((0, -0.002, 0))]
     P, R = D.zgladi([P[0].lerp(P[1], i / 3) for i in range(3)] + [P[1].lerp(P[2], i / 4) for i in range(4)] + [P[2].lerp(P[3], i / 6) for i in range(7)], [0.0022] * 14, 1)
     bm = bmesh.new(); D.cev(bm, P, R, 6 if telefon else 12, kupola=False)
