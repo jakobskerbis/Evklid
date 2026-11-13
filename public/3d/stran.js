@@ -408,17 +408,21 @@ async function model(id, param, moj) {
   if (sos && sos.n > 1) {
     const gumb = (m, smer) => {
       // Puščici (chevron) se ločita od gumba Nazaj (puščica); prejšnji je zrcaljen chevron-right.
-      const a = mk("a", `a3-krog k3-sosed${smer < 0 ? " k3-zrcali" : ""}`);
-      a.href = `#${encodeURIComponent(m.id)}`;
+      // V aplikaciji (in v okvirju »Uči se«) gumb, ne povezava: Android ob pritisku pokaže oblaček z naslovom in povezavo.
+      const gumbek = vAplikaciji || vgrajeno;
+      const cilj = `#${encodeURIComponent(m.id)}`;
+      const a = mk(gumbek ? "button" : "a", `a3-krog k3-sosed${smer < 0 ? " k3-zrcali" : ""}`);
+      if (gumbek) a.type = "button";
+      else a.href = cilj;
       a.innerHTML = icon("chevron-right");
       const opis = `${t(smer < 0 ? "a3.prevModel" : "a3.nextModel")}: ${m.naslov}`;
       a.setAttribute("aria-label", opis);
-      a.title = opis;
+      if (!gumbek) a.title = opis;
       // Zamenjava naslova: Nazaj iz modela gre še vedno na zbirko (ne po vseh ogledanih modelih).
       a.addEventListener("click", (e) => {
         if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         e.preventDefault();
-        history.replaceState(history.state, "", a.getAttribute("href"));
+        history.replaceState(history.state, "", cilj);
         usmeri();
       });
       return a;

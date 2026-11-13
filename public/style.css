@@ -103,6 +103,8 @@ h2 { font-size: 1.12rem; margin: 0 0 8px; font-weight: 800; }
 .pretest-note { margin: 8px 0 0; font-weight: 600; }
 .eyebrow { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 a { color: var(--accent); }
+/* Brez modrega odsvita ob dotiku (Android) po vsej aplikaciji; odziv dajo :hover/:active in :focus-visible. */
+html { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
 
 /* ---------- gumbi ---------- */

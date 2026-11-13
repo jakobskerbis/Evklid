@@ -29,8 +29,10 @@
 .uci-3d-area > h2 { font-size: 1.15rem; margin: 0 0 10px; }
 /* Atlas med področji ima enak razmik kot področje (ne prilepljen pod mrežo nad sabo). */
 .uci-3d-area + .uci-3d-atlas { margin-top: 24px; }
+/* Kartice 3D sveta so gumbi (uci-se.js): brez privzete pisave, sredinske poravnave in modrega odsvita ob dotiku. */
+.uci-3d-card, .uci-3d-atlas { width: 100%; font: inherit; text-align: start; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .uci-3d-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; }
-.uci-3d-card { display: flex; flex-direction: column; gap: 4px; min-width: 0; min-height: 96px; padding: 14px 16px; color: var(--text); text-decoration: none; }
+.uci-3d-card { display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; gap: 4px; min-width: 0; min-height: 96px; padding: 14px 16px; color: var(--text); text-decoration: none; }
 .uci-3d-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .uci-3d-card:focus-visible, .uci-3d-atlas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .uci-3d-grid > .uci-3d-card { margin: 0; }
