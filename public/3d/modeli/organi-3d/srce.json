@@ -322,6 +322,46 @@
     0.464
    ],
    "tekstura": false
+  },
+  "aorta-lok": {
+   "barva": "#b8453c",
+   "rez": "#d9c8b8",
+   "robBarva": "#ff9a8a",
+   "sijajBarva": "#f2b0a6",
+   "lak": 0.12,
+   "lakHrap": 0.78,
+   "sijaj": 0.14,
+   "sijajHrap": 0.75,
+   "spekular": 0.55,
+   "rob": 0.08,
+   "ao": 0.85,
+   "f": 80,
+   "zrno": 0.05,
+   "relief": 0.3,
+   "hrap": 0.58,
+   "odtenek": "#fbe3d8",
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
+  },
+  "pljucna-lok": {
+   "barva": "#4566b8",
+   "hrap": 0.58,
+   "lak": 0.12,
+   "lakHrap": 0.78,
+   "sijaj": 0.14,
+   "sijajBarva": "#a6bdff",
+   "rob": 0.08,
+   "robBarva": "#7898ff",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 80,
+   "relief": 0.3,
+   "rez": "#d2c2bc",
+   "odtenek": "#f3dcd6",
+   "sijajHrap": 0.75,
+   "spekular": 0.55,
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
   }
  },
  "deli": [
@@ -1093,7 +1133,11 @@
      -0.0049
     ],
     "polmer": 0.66
-   }
+   },
+   "skrijTkiva": [
+    "aorta-lok",
+    "pljucna-lok"
+   ]
   }
  },
  "podrobnosti": {

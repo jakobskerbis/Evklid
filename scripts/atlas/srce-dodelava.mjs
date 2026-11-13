@@ -38,6 +38,11 @@ export const TKIVA = [
   [/^Fossa ovalis$/, "guba"],
   // srčni ušesi (naša dopolnitev brez pečene teksture: v atlasu sta bili skoraj črni): mišica v tonu prekatov
   [/^(Left auricle|Right auricle \(lastno\))$/, "uho"],
+  // krog 5: rez skozi aortni koren pusti za ravnino le odrezek aortnega loka in leve pljučne arterije (lebdeča obroča
+  // nad srcem). Telesi dobita svoji tkivi (kopiji »aorta« in »pljucna« v srce.json), ki ju pogled prereza skrije
+  // (pogledi.prerez.skrijTkiva); korena iz CT (Root of aorta, Root of pulmonary trunk) ostaneta.
+  [/^Aorta$/, "aorta-lok"],
+  [/^Pulmonary trunk and left pulmonary artery$/, "pljucna-lok"],
 ];
 // Deli, ki na telefonu dobijo UV ene točke.
 export const ENO_UV = /^Trabeculae carneae of (left|right) ventricle/;

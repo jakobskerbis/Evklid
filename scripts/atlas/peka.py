@@ -25,7 +25,7 @@ from mathutils.bvhtree import BVHTree
 PRIVZETO = dict(barva=(0.5, 0.2, 0.18), barva2=(0.42, 0.14, 0.13), lise=0.35, liseMera=0.025, hrap=0.35, gube=0.00012, gubeMera=0.003,
                 vlakna=0.0, vlaknaMera=0.0012, masca=None, mascaBarva=(0.86, 0.66, 0.30), mascaPremik=0.0012, mascaNasip=0.0, mascaMera=0.004,
                 mascaHrap=0.42, zilice=0.0, ziliceBarva=(0.36, 0.06, 0.07), ziliceMera=0.012, notranja=None, notranjaHrap=0.22,
-                razdeli=2, robSvetel=0.0, vzdolz=0.0, vzdolzRazmik=0.0025, vasa=0.0, vasaBarva=(0.42, 0.06, 0.06))
+                razdeli=2, robSvetel=0.0, kita=None, kitaHrap=0.3, vzdolz=0.0, vzdolzRazmik=0.0025, vasa=0.0, vasaBarva=(0.42, 0.06, 0.06))
 
 
 def _r(tc, tkivo):
@@ -126,6 +126,9 @@ def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=3.4, mascaNajma
             R *= np.clip((G - 0.15) / 0.35, 0, 1)
         at = me.color_attributes.get("PEKA") or me.color_attributes.new("PEKA", "FLOAT_COLOR", "POINT")
         col = np.zeros((n, 4)); col[:, 0] = R; col[:, 1] = G; col[:, 3] = 1
+        kt = me.attributes.get("KITA")  # B = kita 0–1 (atribut oglišč KITA, npr. oko_misice.py): recept »kita« obarva belo
+        if kt is not None and kt.domain == "POINT" and len(kt.data) == n:
+            kb = np.zeros(n); kt.data.foreach_get("value", kb); col[:, 2] = kb
         at.data.foreach_set("color", col.ravel())
         vg = None  # skupina oglišč za premik maščobe (razdelitev jo prenese)
         print(f"[peka] maske {ime}: maščoba {float((R > 0.5).mean()):.0%}, votlina {float((G < 0.3).mean()):.0%}" if racunaj else "", end="\n" if racunaj else "")
@@ -222,6 +225,11 @@ def material_peke(tkivo, r, velikost):
     if r.get("notranja"):
         hx = N("ShaderNodeMix"); hx.data_type = "FLOAT"; L(rng(odprt, 0.45, 0.2), hx.inputs[0])
         hx.inputs[2].default_value = r["hrap"]; hx.inputs[3].default_value = r["notranjaHrap"]; hrap = hx.outputs[0]
+    if r.get("kita"):  # kita mišice (PEKA B): bela, sijoča, mehak prehod v mišico z drobnim šumom na meji
+        kb = rng(mul(sep.outputs[2], rng(sum_(0.006 * velikost, 3, 0.6, 4.4), 0.2, 0.8, 0.85, 1.15)), 0.3, 0.7)
+        c = mix(kb, c, mix(rng(sum_(0.01 * velikost, 2, 0.5, 6.3), 0.35, 0.7), r["kita"], tuple(x * 0.9 for x in r["kita"])))
+        hk = N("ShaderNodeMix"); hk.data_type = "FLOAT"; L(kb, hk.inputs[0]); L(hrap, hk.inputs[2]); hk.inputs[3].default_value = r["kitaHrap"]
+        hrap = hk.outputs[0]
     if r["masca"]:  # epikardialna maščoba: rumena, režnjičasta (atribut LOB iz visoke mreže), bolj hrapava
         lo = N("ShaderNodeAttribute"); lo.attribute_name = "LOB"
         sl = N("ShaderNodeSeparateColor"); L(lo.outputs["Color"], sl.inputs[0])
@@ -398,6 +406,8 @@ def shrani_delo(pot, objekti, vrstice, velikost, tc, px):
         for ime_ in ("PEKA", "OSI"):
             pk = o.data.color_attributes.get(ime_)
             if pk is not None: o.data.color_attributes.remove(pk)
+        kt = o.data.attributes.get("KITA")
+        if kt is not None: o.data.attributes.remove(kt)
     bpy.data.libraries.write(pot, set(objekti) | set(vir), fake_user=True, compress=True)
     for v in vir: bpy.data.objects.remove(v)
     ocena = {}

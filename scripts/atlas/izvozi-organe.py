@@ -30,6 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
 from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
+from oko_misice import ocesne_misice  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
 from srce_ct import srce_ct  # stene srca iz CT (Rodero 2021), poravnava ostalih delov nanje, maščoba, trabekule
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -149,7 +150,8 @@ ORGANI = {
                 "miokard": dict(barva=(0.24, 0.07, 0.05), barva2=(0.17, 0.05, 0.036), lise=0.45, hrap=0.56, gube=0.00016, gubeMera=0.004,
                                 vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.90, 0.66, 0.24), mascaBarva2=(0.92, 0.56, 0.17),
                                 # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
-                                mascaNasip=0.0010, mascaPremik=0.0022, mascaMera=0.010, mascaZleb=0.5, mascaHrap=0.36, kletka=0.009,
+                                # krog 5 (predaja: »temne gube med ploščami maščobe«): plitvejši režnjiči, svetlejši žleb med njimi
+                                mascaNasip=0.0010, mascaPremik=0.0015, mascaMera=0.010, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
@@ -243,7 +245,8 @@ ORGANI = {
                 "*": dict(barva=(0.80, 0.80, 0.80), barva2=(0.78, 0.78, 0.78), lise=0.0, hrap=0.2, gube=0.0, razdeli=0),
                 "beločnica": dict(barva=(0.82, 0.79, 0.73), barva2=(0.76, 0.66, 0.60), lise=0.25, liseMera=0.04, hrap=0.28,
                                   gube=0.00002, gubeMera=0.002, zilice=0.30, ziliceBarva=(0.58, 0.10, 0.08), ziliceMera=0.03, razdeli=1),
-                "mišica": dict(barva=(0.38, 0.09, 0.07), barva2=(0.29, 0.07, 0.05), lise=0.35, hrap=0.42, vlakna=0.00025, vlaknaMera=0.002, razdeli=1),
+                "mišica": dict(barva=(0.38, 0.09, 0.07), barva2=(0.29, 0.07, 0.05), lise=0.35, hrap=0.42, vlakna=0.00025, vlaknaMera=0.002, razdeli=1,
+                               kita=(0.84, 0.80, 0.72), kitaHrap=0.30),  # kite ob narastiščih (atribut KITA iz oko_misice.py)
                 "kita": dict(barva=(0.84, 0.80, 0.72), barva2=(0.76, 0.71, 0.63), lise=0.2, hrap=0.30, vlakna=0.00008, vlaknaMera=0.0015, razdeli=1),
                 "živec": dict(barva=(0.80, 0.72, 0.58), barva2=(0.72, 0.64, 0.50), lise=0.25, hrap=0.36, vlakna=0.00006, vlaknaMera=0.0015,
                               zilice=0.15, ziliceBarva=(0.55, 0.12, 0.10), ziliceMera=0.02, razdeli=1),
@@ -254,6 +257,9 @@ ORGANI = {
             },
         ),
         gladi=r".",
+        # mišice na zrklo HRA: narastišča premih mišic 5,5–7,7 mm za limbusom, kite, nič pod beločnico (oko_misice.py)
+        dodaj=["ocesne_misice"],
+        ohrani=r"muscle",
         # Krivulja vidnega živca se v Z-Anatomy začne pri leči: del znotraj zrkla odstranimo (sicer štrli v prerezu).
         znotraj=[(r"^Optic nerve", r"(?i)^sclera", 0.97)],
         krivulja=(6, 4),
