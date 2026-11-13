@@ -5,70 +5,105 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že poznaš točko, premico, poltrak in daljico ter veš, kaj pomeni pravokotnost. Pri pravokotnih premicah si že slišal za »pravi kot«, zdaj pa bomo kote spoznali natančno. Kote srečaš na vsakem koraku: ko odpreš vrata, ko na kolesu zaviješ v ovinek, ko pogledaš na uro ali ko razrežeš pico na enake kose. Kadar rečemo »odpri okno malo bolj« ali »zavij močno desno«, pravzaprav govorimo o velikosti kota.
+Fizioterapevtka meri kot v komolcu očetu in njegovi šestletni hčerki. Oba držita kozarec vode z enako pokrčeno roko. Kateri kot je večji? Skoraj vsak bi rekel: očetov, saj je njegova roka mnogo daljša. Kotomer pa pri obeh pokaže $90^\circ$.
 
-Da se pri tem natančno razumemo, potrebujemo skupno besedo (**kot**), skupno enoto (**stopinja**) in skupno orodje (**kotomer**). V tej lekciji se naučiš kote **označevati**, **meriti**, **risati** in **razvrščati** po velikosti. Brez tega ne gre pri načrtovanju stavb, pri navigaciji, pri računalniški grafiki, v naslednjih temah pa tudi ne pri konstrukcijah, krožnici in simetriji.
+Še ena nenavadna reč. Zdravnica pogleda dlan skozi povečevalno steklo, ki vse poveča trikrat. Črti na dlani sta videti trikrat daljši. Kot, pod katerim se sekata, pa ostane popolnoma enak.
+
+Kako je to mogoče? Odgovor se skriva v tem, kaj kot sploh je. Ko to razumeš, znaš kot izmeriti, narisati in poimenovati. Fizioterapevti s koti spremljajo, kako se koleno po poškodbi spet upogiba. Ti jih boš potreboval pri krogu, konstrukcijah in simetriji.
 
 ## Razlaga
 
-**1. Kaj je kot.** Dva poltraka, ki imata isto krajišče, delita ravnino na dva dela. Vsak od obeh delov je **kot**. Skupno krajišče poltrakov imenujemo **vrh** kota, poltraka pa sta **kraka** kota.
+**1. Mamljiva, a napačna ideja.** Oglej si kota na sliki.
 
-Kot zapišemo s tremi točkami: $\angle AVB$. Črka v sredini je vedno vrh $V$, črki $A$ in $B$ sta točki na krakih. Pogosto ga označimo kar z grško črko: $\alpha$ (alfa), $\beta$ (beta), $\gamma$ (gama). Kot običajno pokažemo z majhnim lokom med krakoma.
+:::risba skica
+opis: Dva kota drug ob drugem. Levi kot α ima dolga kraka, dolga 4 enote, in meri 40 stopinj. Desni kot β ima kratka kraka, dolga 1,5 enote, in meri 70 stopinj. Pri obeh vrhih je narisan majhen lok.
+območje: 0; 0 .. 9; 3,5
+črta: 0,5; 0,5 -> 4,5; 0,5 | modra
+črta: 0,5; 0,5 -> 3,56; 3,07 | modra
+črta: 1,4; 0,5 -> 1,39; 0,66 -> 1,35; 0,81 -> 1,28; 0,95 -> 1,19; 1,08
+napis: 1,82; 0,98 | α | desno
+črta: 6,5; 0,5 -> 8; 0,5 | oranžna
+črta: 6,5; 0,5 -> 7,01; 1,91 | oranžna
+črta: 7,1; 0,5 -> 7,08; 0,65 -> 7,03; 0,78 -> 6,95; 0,9 -> 6,84; 1 -> 6,71; 1,06
+napis: 7,32; 1,07 | β | desno
+:::
 
-**2. Enota stopinja.** Velikost kota merimo v **stopinjah**, znak je $^\circ$. Če poltrak zavrtimo za cel krog nazaj v začetno lego, je to **poln kot** in meri $360^\circ$. Ena stopinja je torej tristošestdesetinka polnega kota:
+Črti, ki sestavljata kot, imenujemo **kraka**. Oko najprej reče: levi kot je večji, saj sta njegova kraka dolga in zavzameta več papirja. Ali ima oko prav?
+
+:::premisli
+Kateri kot je večji, $\alpha$ ali $\beta$? Napovej, nato pomisli, kaj pravzaprav primerjaš: dolžino krakov ali razprtost.
+---
+Večji je $\beta$: meri $70^\circ$, $\alpha$ pa le $40^\circ$. Kraka kota $\beta$ sta bolj razprta, čeprav sta krajša. Dolžina krakov pri velikosti kota ne šteje.
+:::
+
+**2. Kaj je kot.** Dva poltraka, ki imata isto krajišče, delita ravnino na dva dela. Vsak od obeh delov je **kot**. Skupno krajišče poltrakov imenujemo **vrh** kota, poltraka pa sta **kraka** kota.
+
+Poltrak je neomejen. Na papirju narišemo le njegov začetni del, zato narisana dolžina kraka ni lastnost kota. **Velikost kota** pove samo, kako močno sta kraka razprta.
+
+Kot zapišemo s tremi točkami: $\angle AVB$. Črka v sredini je vedno vrh $V$, črki $A$ in $B$ sta točki na krakih. Pogosto ga označimo kar z grško črko: $\alpha$ (alfa), $\beta$ (beta), $\gamma$ (gama). Na sliki ga pokažemo z majhnim lokom med krakoma.
+
+**3. Enota stopinja.** Velikost kota merimo v **stopinjah**, znak je $^\circ$. Če poltrak zavrtimo okoli krajišča za cel krog nazaj v začetno lego, opiše **polni kot**, ki meri $360^\circ$. Ena stopinja je torej tristošestdesetinka polnega kota:
 
 $$1^\circ = \frac{1}{360} \text{ polnega kota}$$
 
-Pomembno: velikost kota **ni odvisna od dolžine krakov**. Kot z daljšima krakoma ni večji. Kot pove, koliko sta kraka razprta, ne kako sta dolga.
+:::premisli
+Zakaj lupa, ki sliko poveča trikrat, ne poveča tudi kota med črtama na dlani?
+---
+Lupa vsako črto podaljša, ne zasuka pa je. Kraka ostaneta enako razprta, zato kot ostane enak. Trikrat daljša sta le narisana dela krakov.
+:::
 
-**3. Vrste kotov.** Kote razvrščamo po velikosti:
+**4. Vrste kotov.** Kote razvrščamo po velikosti:
 
-| Vrsta kota | Velikost | Kako ga prepoznaš |
+| Vrsta | Velikost | Primer |
 |---|---|---|
-| ničelni | $0^\circ$ | kraka sovpadata |
-| ostri | med $0^\circ$ in $90^\circ$ | ožji od vogala lista |
-| pravi | $90^\circ$ | natanko vogal lista (geotrikotnika) |
-| topi | med $90^\circ$ in $180^\circ$ | širši od vogala lista, a manjši od ravne črte |
-| iztegnjeni | $180^\circ$ | kraka sestavljata premico |
-| izbočeni | med $180^\circ$ in $360^\circ$ | večji od iztegnjenega |
-| polni | $360^\circ$ | kraka sovpadata po celem obratu |
+| ničelni | $0^\circ$ | zaprte škarje |
+| ostri | med $0^\circ$ in $90^\circ$ | prsti v znaku V |
+| pravi | $90^\circ$ | komolec, ko nosiš pladenj |
+| topi | med $90^\circ$ in $180^\circ$ | rahlo pokrčeno koleno |
+| iztegnjeni | $180^\circ$ | iztegnjena roka v komolcu |
+| udrti | med $180^\circ$ in $360^\circ$ | zunanja stran komolca |
+| polni | $360^\circ$ | cel obrat na stolu |
 
-Pravi kot označimo s pikico ali kvadratkom ob vrhu. Če ni drugače rečeno, z zapisom $\angle AVB$ mislimo kot, ki ni večji od iztegnjenega.
+Pravi kot je meja med ostrimi in topimi koti, zato ni ne ostri ne topi. Označimo ga z lokom in piko v njem.
 
-**4. Merjenje s kotomerom.** Kotomer je navadno polkrožno merilo z lestvico od $0^\circ$ do $180^\circ$. Ima dve lestvici, ki gresta v nasprotni smeri. Postopek:
+Kraka vedno določata dva kota, ki skupaj merita $360^\circ$; če je eden ostri, pravi ali topi, je drugi udrti. Če ni drugače rečeno, z zapisom $\angle AVB$ mislimo kot, ki ni večji od iztegnjenega.
+
+**5. Merjenje s kotomerom.** Kotomer je polkrožno merilo z lestvico od $0^\circ$ do $180^\circ$ (ima ga tudi geotrikotnik). Ima dve lestvici, ki tečeta v nasprotnih smereh. Postopek:
 
 1. Središče kotomera (majhna zareza ali križec) položi na vrh kota.
 2. Ničelno črto kotomera položi na en krak kota.
-3. Preberi številko tam, kjer drugi krak seka lestvico. Uporabi tisto lestvico, ki se na prvem kraku začne z $0$.
-4. Če je krak prekratek, ga podaljšaj z ravnilom.
+3. Preberi številko tam, kjer drugi krak seka lestvico. Uporabi lestvico, ki se na prvem kraku začne z $0$.
+4. Če je krak prekratek, ga podaljšaj z ravnilom. Kot se pri tem ne spremeni.
 
-Pred merjenjem vedno oceni: je kot ostri ali topi? Če je topi, mora biti rezultat večji od $90^\circ$. To je najboljši preizkus, da si prebral pravo lestvico.
+Pred merjenjem vedno oceni: je kot ožji ali širši od vogala lista, ki je pravi kot? Če je širši, je topi in kotomer mora pokazati več kot $90^\circ$. To je najboljši preizkus, da si bral pravo lestvico.
 
-**5. Risanje kota.** Kot $\alpha = 70^\circ$ narišeš takole: nariši poltrak z vrhom $V$, kotomer položi kot pri merjenju, na lestvici poišči oznako $70$ in jo označi s piko. Nato nariši drugi poltrak od $V$ skozi piko.
+Udrti kot izmeriš posredno: izmeri drugi kot pri istih krakih in ga odštej od $360^\circ$.
 
-**6. Računanje s koti.** Dva kota sta **sosednja**, če imata skupen vrh in en skupen krak, ne prekrivata pa se. Njuna vsota je kot, ki ga skupaj zajemata. Ob tem uporabljamo tri znane velikosti:
+V simulaciji spodaj (»Kot in kotomer«) povleci krak tako, da bo kot topi, nato ga zavrti še čez $180^\circ$. Opazuj, pri kateri velikosti se spremeni ime kota in kako simulacija izmeri udrti kot.
 
-| Dogovor | Velikost |
-|---|---|
-| pravi kot | $90^\circ$ |
-| iztegnjeni kot | $180^\circ$ |
-| polni kot | $360^\circ$ |
+**6. Risanje kota.** Kot $\alpha = 70^\circ$ narišeš takole: nariši poltrak z vrhom $V$ in nanj položi kotomer kot pri merjenju. Na lestvici, ki se na poltraku začne z $0$, poišči $70$ in tam nariši piko. Nato nariši drugi poltrak od $V$ skozi piko.
 
-Kar manjka do iztegnjenega kota, izračunamo kot $180^\circ - \alpha$. Izbočeni kot, ki pripada istima krakoma kot kot $\alpha$ (kjer je $\alpha < 180^\circ$), je $360^\circ - \alpha$. Pri računih ne pozabi na enote: $38^\circ + 52^\circ = 90^\circ$.
+**7. Računanje s koti.** Dva kota sta **sosednja**, če imata skupen vrh in en skupen krak, ne prekrivata pa se. Njuna vsota je kot, ki ga skupaj zajemata: $\angle AVC = \angle AVB + \angle BVC$.
 
-Za vajo si pomagaj z listom papirja: vogal lista je pravi kot ($90^\circ$), če ga prepogneš tako, da se robova pokrijeta, dobiš kot $45^\circ$.
+Kar kotu $\alpha$ manjka do iztegnjenega kota, meri $180^\circ - \alpha$. Kraka kota $\alpha$ (kjer je $0^\circ < \alpha < 180^\circ$) določata še udrti kot, ki meri $360^\circ - \alpha$.
+
+Fizioterapevti pogosto ne zapišejo kota v kolenu, ampak **upogib** $u$: za koliko je koleno upognjeno iz iztegnjene lege. Kot med stegnom in golenjo je takrat
+
+$$\alpha = 180^\circ - u$$
+
+Večji upogib pomeni manjši kot.
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
 
-Dani so koti $35^\circ$, $90^\circ$, $128^\circ$, $180^\circ$ in $250^\circ$. Razvrsti vsakega med ostre, prave, tope, iztegnjene ali izbočene kote.
+Fizioterapevtka je v kartoteko zapisala pet kotov: $35^\circ$, $90^\circ$, $128^\circ$, $180^\circ$ in $250^\circ$ (zadnji je na zunanji strani pokrčenega komolca). Razvrsti vsakega med ostre, prave, tope, iztegnjene ali udrte kote.
 
-**Podatki:** koti $35^\circ$, $90^\circ$, $128^\circ$, $180^\circ$, $250^\circ$ (računanja ni, dani so samo koti)
+**Podatki:** koti $35^\circ$, $90^\circ$, $128^\circ$, $180^\circ$, $250^\circ$ (računanja ni, dane so samo velikosti)
 **Iščemo:** vrsto vsakega kota
 
 :::formula
-ostri: $0^\circ < \alpha < 90^\circ$; pravi: $\alpha = 90^\circ$; topi: $90^\circ < \alpha < 180^\circ$; iztegnjeni: $\alpha = 180^\circ$; izbočeni: $180^\circ < \alpha < 360^\circ$
+ostri: $0^\circ < \alpha < 90^\circ$; pravi: $\alpha = 90^\circ$; topi: $90^\circ < \alpha < 180^\circ$; iztegnjeni: $\alpha = 180^\circ$; udrti: $180^\circ < \alpha < 360^\circ$
 :::
 
 **Rešitev:**
@@ -77,157 +112,168 @@ ostri: $0^\circ < \alpha < 90^\circ$; pravi: $\alpha = 90^\circ$; topi: $90^\cir
 2. $90^\circ$: natanko toliko meri vogal lista, kot je pravi.
 3. $128^\circ$: velja $90^\circ < 128^\circ < 180^\circ$, kot je topi.
 4. $180^\circ$: kraka sestavljata premico, kot je iztegnjeni.
-5. $250^\circ$: velja $180^\circ < 250^\circ < 360^\circ$, kot je izbočeni.
-6. Odgovor: ostri, pravi, topi, iztegnjeni, izbočeni (po vrsti).
+5. $250^\circ$: velja $180^\circ < 250^\circ < 360^\circ$, kot je udrti.
+6. Odgovor: po vrsti so koti ostri, pravi, topi, iztegnjeni in udrti.
 
 ### Primer 2 (srednji)
 
-Kota $\angle AVB$ in $\angle BVC$ sta sosednja in imata skupen krak $VB$. Kot $\angle AVB$ meri $38^\circ$, kot $\angle BVC$ pa $52^\circ$. Kolikšen je kot $\angle AVC$ in kakšne vrste je? Kolikšen je izbočeni kot, ki pripada istima krakoma $VA$ in $VC$?
+Roka visi ob telesu. Vrh kota $V$ je v rami, krak $VA$ kaže ob trupu navzdol. Pri vaji bolnik roko dvigne vstran za $\angle AVB = 38^\circ$, nato še za $\angle BVC = 52^\circ$. Kolikšen je kot $\angle AVC$ med roko in trupom in kakšne vrste je? Koliko manjka, da bi bila roka navpično nad glavo (iztegnjeni kot)?
 
-**Podatki:** $\angle AVB = 38^\circ$, $\angle BVC = 52^\circ$, kota sta sosednja (skupni krak $VB$)
-**Iščemo:** $\angle AVC$, njegovo vrsto in izbočeni kot pri krakih $VA$, $VC$
+**Podatki:** $\angle AVB = 38^\circ$, $\angle BVC = 52^\circ$, kota sta sosednja (skupni krak $VB$), roka nad glavo pomeni $180^\circ$
+**Iščemo:** $\angle AVC$, njegovo vrsto in kot, ki manjka do $180^\circ$
 
 :::formula
-vsota sosednjih kotov: $\angle AVC = \angle AVB + \angle BVC$; izbočeni kot: $360^\circ - \alpha$
+vsota sosednjih kotov: $\angle AVC = \angle AVB + \angle BVC$; do iztegnjenega manjka $180^\circ - \angle AVC$
 :::
 
 **Rešitev:**
 
 1. Sosednja kota seštejemo: $\angle AVC = 38^\circ + 52^\circ = 90^\circ$.
-2. Kot meri $90^\circ$, zato je pravi.
-3. Izbočeni kot pri istih krakih: $360^\circ - 90^\circ = 270^\circ$.
-4. Preizkus: $90^\circ + 270^\circ = 360^\circ$, kar je polni kot.
-5. Odgovor: $\angle AVC = 90^\circ$ (pravi kot), izbočeni kot je $270^\circ$.
+2. Kot meri natanko $90^\circ$, zato je pravi: roka je vodoravna.
+3. Do iztegnjenega kota manjka $180^\circ - 90^\circ = 90^\circ$.
+4. Preizkus: $90^\circ + 90^\circ = 180^\circ$.
+5. Odgovor: roka in trup oklepata pravi kot $90^\circ$; do roke nad glavo manjka še $90^\circ$.
 
-### Primer 3 (težji)
+### Primer 3 (težji): zdaj ti
 
-Številčnica ure ima $12$ enakomerno razporejenih številk, polni krog pa meri $360^\circ$. Ura kaže natanko $7$:$00$, minutni kazalec kaže na številko $12$, urni na številko $7$. Kolikšen kot med kazalcema je manjši od iztegnjenega in kakšne vrste je?
+Po operaciji kolena fizioterapevtka zapiše: »upogib $65^\circ$«. Kolikšen je kot med stegnom in golenjo in kakšne vrste je? Po dveh tednih vaj je upogib za $30^\circ$ večji. Kolikšen je kot zdaj in kakšne vrste je?
 
-**Podatki:** $12$ enakih delov številčnice, polni kot $360^\circ$, čas $7$:$00$ (minutni kazalec na $12$, urni na $7$)
-**Iščemo:** kot med kazalcema, ki je manjši od $180^\circ$, in njegovo vrsto
+**Podatki:** prvi upogib $u_1 = 65^\circ$, drugi upogib je za $30^\circ$ večji, iztegnjena noga $= 180^\circ$
+**Iščemo:** kota $\alpha_1$ in $\alpha_2$ med stegnom in golenjo ter njuni vrsti
 
 :::formula
-kot med sosednjima številkama: $360^\circ : 12$; kot = število presledkov $\cdot$ kot med sosednjima številkama
+$\alpha = 180^\circ - u$
 :::
 
 **Rešitev:**
 
-1. Kot med dvema sosednjima številkama: $360^\circ : 12 = 30^\circ$.
-2. Od številke $12$ do številke $7$ v smeri urinih kazalcev je $7$ presledkov: $7 \cdot 30^\circ = 210^\circ$. To je izbočeni kot.
-3. V drugo smer je do številke $7$ le še $5$ presledkov: $5 \cdot 30^\circ = 150^\circ$.
-4. Preizkus: $210^\circ + 150^\circ = 360^\circ$.
-5. Kot, ki je manjši od $180^\circ$, meri $150^\circ$. Ker velja $90^\circ < 150^\circ < 180^\circ$, je topi.
-6. Odgovor: kazalca ob $7$:$00$ oklepata topi kot $150^\circ$ (izbočeni kot je $210^\circ$).
+1. Iztegnjena noga je iztegnjeni kot, $180^\circ$. Upogib pove, koliko od tega manjka.
+2. $\alpha_1 = 180^\circ - 65^\circ = 115^\circ$. Ker je $90^\circ < 115^\circ < 180^\circ$, je kot topi.
+3. Nov upogib: $u_2 = 65^\circ + 30^\circ = 95^\circ$.
+4. Izračunaj $\alpha_2$ sam in ugotovi, kakšne vrste je. Nato preveri:
+
+:::premisli
+Koliko meri $\alpha_2$ in kakšne vrste je?
+---
+$\alpha_2 = 180^\circ - 95^\circ = 85^\circ$. Ker je $85^\circ < 90^\circ$, je kot ostri. Upogib se je povečal, kot se je zmanjšal za $30^\circ$: $115^\circ - 30^\circ = 85^\circ$.
+:::
 
 ## Pogoste napake
 
-- **Branje napačne lestvice na kotomeru.** Razlog: kotomer ima dve lestvici in obe prikazujeta številke, ki so videti podobne. Pravilno: pred merjenjem oceni, ali je kot ostri ali topi, in beri tisto lestvico, ki se na kraku, ki leži na ničelni črti, začne z $0$. Ostri kot ne more imeti več kot $90^\circ$.
-- **Središče kotomera ni na vrhu.** Razlog: kotomer na kot hitro položimo »na oko«. Pravilno: središče kotomera mora ležati točno na vrhu $V$, ničelna črta pa na kraku. Če sta prestavljena le za milimeter ali dva, je rezultat lahko napačen za več stopinj.
-- **»Daljša kraka, večji kot.«** Razlog: večji kot je videti bolj »velik« na papirju. Pravilno: velikost kota je odvisna samo od tega, kako sta kraka razprta. Poltraka sta neskončno dolga, na papirju narišemo le del.
-- **Zamenjava topih in ostrih kotov.** Razlog: kota ne primerjaš z vogalom lista. Pravilno: ostri kot je ožji od pravega kota, topi je širši. Pravi kot ($90^\circ$) ni ne ostri ne topi, iztegnjeni kot ($180^\circ$) ni topi.
-- **Napačen zapis kota.** Razlog: ni jasno, katera točka je vrh. Pravilno: pri $\angle AVB$ je vrh vedno črka v sredini. Zapis $\angle AVB$ in $\angle VAB$ ne pomenita istega kota.
+- **»Daljša kraka, večji kot.«** Razlog: večja slika je videti »več«. Zakaj ne drži: kraka sta poltraka in nimata dolžine, narišemo le njun začetek. Pravilno: velikost kota je odvisna samo od razprtosti krakov. Daljša roka, povečana slika ali podaljšan krak kota ne spremenijo.
+- **Branje napačne lestvice.** Razlog: kotomer ima dve vrsti številk, ki sta videti podobni, zato topi kot $110^\circ$ prebereš kot $70^\circ$. Pravilno: središče na vrh, ničla na krak, beri lestvico, ki se na tem kraku začne z $0$. Pred tem oceni, ali je kot ostri ali topi.
+- **Pravi kot med ostrimi, iztegnjeni med topimi.** Razlog: meje si zapomniš kot »do $90^\circ$« in »do $180^\circ$«. Pravilno: ostri je strogo manjši od $90^\circ$, topi strogo med $90^\circ$ in $180^\circ$. Kot $90^\circ$ je pravi, $180^\circ$ iztegnjeni.
+- **Upogib zamenjaš s kotom.** Razlog: obe števili sta v stopinjah. Pri upogibu $40^\circ$ nekdo reče, da je kot v kolenu $40^\circ$ (ostri). Pravilno: kot je $180^\circ - 40^\circ = 140^\circ$, torej topi. Večji upogib pomeni manjši kot.
+- **Napačen zapis vrha.** Razlog: ni jasno, katera točka je vrh. Pravilno: pri $\angle AVB$ je vrh vedno srednja črka. Zapisa $\angle AVB$ in $\angle VAB$ ne pomenita istega kota.
 
 ## Povzetek
 
-- **Kot** sestavljata dva poltraka s skupnim krajiščem (vrh), poltraka sta kraka. Zapis: $\angle AVB$ ali $\alpha$.
-- Merimo ga v **stopinjah** s kotomerom; $1^\circ = \dfrac{1}{360}$ polnega kota.
-- Ostri: $0^\circ < \alpha < 90^\circ$; pravi: $90^\circ$; topi: $90^\circ < \alpha < 180^\circ$.
-- Iztegnjeni kot meri $180^\circ$, izbočeni je med $180^\circ$ in $360^\circ$, polni meri $360^\circ$.
-- Sosednja kota seštejemo: $\angle AVC = \angle AVB + \angle BVC$; do iztegnjenega manjka $180^\circ - \alpha$, do polnega $360^\circ - \alpha$.
-- Velikost kota ni odvisna od dolžine krakov.
-- Pri merjenju: središče na vrh, ničla na krak, beri pravo lestvico.
+- **Kot** sestavljata dva poltraka s skupnim krajiščem (vrh), poltraka sta kraka. Zapis: $\angle AVB$ (vrh je srednja črka) ali $\alpha$.
+- Velikost kota merimo v **stopinjah** s kotomerom; $1^\circ = \dfrac{1}{360}$ polnega kota. Ni odvisna od dolžine krakov.
+- Ničelni $0^\circ$; ostri med $0^\circ$ in $90^\circ$; pravi $90^\circ$; topi med $90^\circ$ in $180^\circ$; iztegnjeni $180^\circ$; udrti med $180^\circ$ in $360^\circ$; polni $360^\circ$.
+- Merjenje: središče na vrh, ničla na krak, beri lestvico, ki se na kraku začne z $0$; prej oceni vrsto kota. Udrti kot: $360^\circ$ minus drugi kot.
+- Sosednja kota seštejemo: $\angle AVC = \angle AVB + \angle BVC$. Do iztegnjenega manjka $180^\circ - \alpha$, udrti kot pri istih krakih meri $360^\circ - \alpha$.
+- Upogib kolena $u$ in kot v kolenu: $\alpha = 180^\circ - u$.
 
-## Drugače: Na sliki
+## Drugače: Kot zgodba
 
-Predstavljaj si vrsto narisanih kotov. Vsak ima vrh na sredini lista, prvi krak vodoravno v desno, drugi krak pa vsakič zavrtimo še malo naprej v nasprotni smeri urinih kazalcev:
+Maja si je pri košarki poškodovala koleno. Prvi dan po operaciji je fizioterapevtka na stegno in golen položila velik kotomer z dolgima krakoma (goniometer). Središče je bilo na kolenu, en krak ob stegnu, drugi ob goleni. Kot je meril $160^\circ$, upogib je bil torej $180^\circ - 160^\circ = 20^\circ$.
 
-| Kje je drugi krak | Kako je videti | Vrsta kota |
-|---|---|---|
-| tik ob prvem | kraka skoraj sovpadata | ostri (ozek) |
-| na pol poti do navpičnice | »polovica« vogala lista | ostri ($45^\circ$) |
-| natanko navpično | oblika črke L | pravi ($90^\circ$) |
-| poševno navzgor in nazaj | kot odprte škarje | topi |
-| vodoravno v nasprotno smer | ravna črta | iztegnjeni ($180^\circ$) |
-| pod vodoravnico, na levi | drugi krak je zavrten že mimo ravne črte | izbočeni |
+Majin brat, ki je visok skoraj dva metra, se je pošalil: »Če bi meril meni, bi bil kot večji, ker imam daljše noge.« Fizioterapevtka se je nasmehnila: »Daljše noge so kot daljša kraka. Koleno upogneš enako, kot ostane enak.«
 
-Kotomer si predstavljaj takole: vrh kota je na sredini ravne spodnje črte kotomera, en krak teče po ničelni črti, drugi krak pa preseka lestvico pri številki, ki jo preberemo. Pri vsakem kotu najprej preveri, ali je ožji, enak ali širši od vogala lista.
+Po dveh tednih je Maja koleno upognila bolj. Pripravnik je odčital $70^\circ$. Fizioterapevtka je samo pogledala nogo: »Koleno ni pokrčeno ožje od pravega kota, torej je kot topi. Bral si napačno lestvico.« Na drugi lestvici je pisalo $110^\circ$; upogib je bil $180^\circ - 110^\circ = 70^\circ$.
 
-## Drugače: Iz vsakdanjega življenja
-
-Kote srečaš vsak dan:
-
-- **Vrata.** Ko jih odpreš le malo, nastane ostri kot, na primer približno $45^\circ$. Ko jih odpreš tako, da stojijo pravokotno na steno, je kot $90^\circ$. Povsem odprta vrata na steno so $180^\circ$.
-- **Ura.** Kazalca ob $3$:$00$ oklepata pravi kot, ob $6$:$00$ iztegnjeni kot.
-- **Pica.** Razrezana na $8$ enakih kosov: vsak kos ima ob vrhu kot $360^\circ : 8 = 45^\circ$. Če pico razrežeš na $4$ enake kose, ima vsak kos pri vrhu pravi kot.
-- **Kolesar ali avto v ovinku.** Pri zavoju za $90^\circ$ se smer spremeni za pravi kot, pri blagem ovinku pa za manj kot $90^\circ$ (za ostri kot).
-- **Zasuk.** Če rečeš »obrni se za polovico kroga«, pomeni zasuk za $180^\circ$; če se obrneš na mestu cel krog, si se zavrtel za $360^\circ$.
-- **Streha.** Strma streha ima večji kot med strešino in vodoravnico kot položna.
-
-Besede iz vsakdanjega govora, na primer »pravi kot« ali »polni obrat«, imajo v matematiki natančen pomen.
+Majin cilj je bil sesti na stol, za kar potrebuje koleno upognjeno vsaj približno do pravega kota, $90^\circ$. Ko je kotomer pokazal $90^\circ$, je bil upogib tudi $180^\circ - 90^\circ = 90^\circ$, in Maja je prvič udobno sedla.
 
 ## Drugače: Korak za korakom s številkami
 
-**Naloga: izmeri kot $\angle AVB$, ki je ocenjen na približno $60^\circ$.**
+**Izmeri kot $\angle AVB$, ki je videti nekoliko ožji od vogala lista.**
 
-1. Oceni: kot je ožji od vogala lista, torej je ostri, nekje med $0^\circ$ in $90^\circ$.
-2. Središče kotomera položi na vrh $V$.
-3. Ničelno črto poravnaj s krakom $VA$.
-4. Poišči lestvico, ki se pri kraku $VA$ začne z $0$. Naj krak $VB$ seka lestvico pri številki $63$.
-5. Rezultat: $\angle AVB = 63^\circ$. Ocena je bila pravilna ($63^\circ < 90^\circ$).
+1. Oceni: kot je ožji od pravega, torej je ostri, med $0^\circ$ in $90^\circ$.
+2. Središče kotomera položi na vrh $V$, ničelno črto na krak $VA$.
+3. Beri lestvico, ki se pri kraku $VA$ začne z $0$. Krak $VB$ jo seka pri $63$.
+4. Rezultat: $\angle AVB = 63^\circ$. Ocena se ujema ($63^\circ < 90^\circ$).
 
-**Naloga: nariši kot $125^\circ$.**
+**Nariši kot $125^\circ$.**
 
-1. Oceni: $125^\circ$ je več kot $90^\circ$, kot bo torej topi.
-2. Nariši poltrak $VA$ in nanj položi kotomer (središče na $V$, ničla na $VA$).
-3. Na lestvici, ki se na kraku $VA$ začne z $0$, poišči $125$ in označi piko $B$.
-4. Skozi piko $B$ iz $V$ potegni drugi poltrak $VB$.
-5. Preveri: kot je širši od vogala lista, vendar manjši od ravne črte. Res je topi.
+1. Oceni: $125^\circ > 90^\circ$, kot bo topi.
+2. Nariši poltrak $VA$, nanj položi kotomer (središče na $V$, ničla na $VA$).
+3. Na lestvici, ki se na $VA$ začne z $0$, poišči $125$ in nariši piko $B$.
+4. Iz $V$ skozi $B$ potegni poltrak $VB$.
+5. Preveri: kot je širši od vogala lista in ožji od ravne črte. Res je topi.
+6. Do iztegnjenega kota manjka $180^\circ - 125^\circ = 55^\circ$. Preizkus: $125^\circ + 55^\circ = 180^\circ$.
 
-**Kot do iztegnjenega.** Če je $\alpha = 125^\circ$, do iztegnjenega kota manjka $180^\circ - 125^\circ = 55^\circ$. Preizkus: $125^\circ + 55^\circ = 180^\circ$.
-
-## Drugače: Bolj natančno
-
-**Kot kot zasuk.** Kot lahko gledamo tudi kot **zasuk**: poltrak, ki ga zavrtimo okrog njegovega krajišča do drugega poltraka. Ko poltrak zavrtimo za četrt kroga, dobimo pravi kot ($360^\circ : 4 = 90^\circ$), za pol kroga iztegnjeni kot ($360^\circ : 2 = 180^\circ$). Tako tudi vidiš, zakaj je kot lahko večji od iztegnjenega: poltrak se lahko vrti še naprej.
-
-**Zakaj ravno $360$?** Število $360$ ima veliko deliteljev (jih je $24$), zato lahko krog razdelimo na $2, 3, 4, 5, 6, 8, 9, 10, 12$ in še mnogo enakih delov in je vsak del celo število stopinj. Zato je delitev na $360$ stopinj priročna in se je ohranila vse do danes.
-
-**Manjše enote.** Če stopinja ni dovolj natančna, jo razdelimo na $60$ **kotnih minut** ($1^\circ = 60'$), minuto pa na $60$ **kotnih sekund** ($1' = 60''$). Tako je $0{,}5^\circ = 30'$. Za šolsko merjenje s kotomerom to ni potrebno, uporabljajo pa jih geodeti in astronomi.
-
-**Zapis.** Z oznako $\angle AVB$ praviloma mislimo kot, ki ni večji od iztegnjenega. Kadar želimo izbočeni kot, to posebej povemo (z lokom na sliki ali s številom stopinj).
-
-**Druge enote.** Stopinje niso edina enota za kote: pozneje, v srednji šoli, boš spoznal še radian. Za zdaj so stopinje povsem dovolj.
+**Izmeri udrti kot.** Kotomer ga ne zajame, zato izmeriš drugi kot pri istih krakih, na primer $110^\circ$. Udrti kot meri $360^\circ - 110^\circ = 250^\circ$.
 
 ## Preveri se
 
-? Kateri od teh kotov je topi?
-- $60^\circ$
-- $90^\circ$
-+ $135^\circ$
-- $180^\circ$
-> Topi kot je večji od $90^\circ$ in manjši od $180^\circ$. Kot $135^\circ$ ustreza temu, $90^\circ$ je pravi, $180^\circ$ iztegnjeni, $60^\circ$ pa ostri.
+? Fizioterapevtka zapiše: »Kot v komolcu meri $180^\circ$.« Kakšna je roka?
+- Pokrčena pod pravim kotom.
+~ Pravi kot meri $90^\circ$, ne $180^\circ$. Pri $180^\circ$ kraka ležita na isti premici.
++ Popolnoma iztegnjena: nadlaket in podlaket ležita na isti premici.
+- Povsem pokrčena, dlan se dotika rame.
+~ Takrat je kot v komolcu zelo majhen (ostri). Velik upogib pomeni majhen kot.
+> Kot $180^\circ$ je iztegnjeni kot: kraka sta nasprotna poltraka na isti premici, kot pri iztegnjeni roki.
 
-? Sosednja kota merita $70^\circ$ in $25^\circ$. Kakšne vrste je kot, ki ga skupaj zajemata?
-- ostri
-- pravi
-+ topi
-- iztegnjeni
-> Vsota je $70^\circ + 25^\circ = 95^\circ$. Ker velja $90^\circ < 95^\circ < 180^\circ$, je kot topi.
+? Razvrsti vrste kotov od najmanjšega do največjega.
+1. ostri kot
+2. pravi kot
+3. topi kot
+4. iztegnjeni kot
+5. udrti kot
+> Ostri je pod $90^\circ$, pravi $90^\circ$, topi med $90^\circ$ in $180^\circ$, iztegnjeni $180^\circ$, udrti nad $180^\circ$.
 
-? Koliko stopinj meri kot med dvema sosednjima številkama na številčnici ure?
-- $12^\circ$
-- $60^\circ$
-+ $30^\circ$
-- $360^\circ$
-> Številčnica ima $12$ enakih delov, polni kot meri $360^\circ$, zato je $360^\circ : 12 = 30^\circ$.
+? Na rentgenski sliki zdravnica izmeri kot $40^\circ$ med kostema. Kaj se zgodi s tem kotom, če sliko natisne dvakrat večjo?
+- Podvoji se na $80^\circ$.
+~ Podvojita se narisana dela krakov, razprtost ostane enaka. Velikost kota ni odvisna od dolžine krakov.
++ Ostane $40^\circ$.
+- Razpolovi se na $20^\circ$.
+~ Povečava kota ne zmanjša. Kraka sta le daljša, zasukana pa nista nič drugače.
+> Povečava podaljša kraka, ne spremeni pa njune razprtosti, zato kot ostane $40^\circ$.
 
-? Kot $\alpha = 110^\circ$ ima izbočeni kot pri istih krakih. Kolikšen je?
-- $70^\circ$
-+ $250^\circ$
-- $290^\circ$
-> Izbočeni kot je dopolnilo do polnega kota: $360^\circ - 110^\circ = 250^\circ$. Rezultat $70^\circ$ dobiš, če od iztegnjenega kota odšteješ $110^\circ$, $290^\circ$ pa, če odšteješ $70^\circ$ od $360^\circ$.
+? Na sliki poltrak $VB$ razdeli iztegnjeni kot na kota $\alpha$ in $\beta$. Kot $\alpha$ meri $125^\circ$. Koliko stopinj meri $\beta$?
+:::risba skica
+opis: Vodoravna premica z vrhom V na sredini. Iz V gre poltrak VB poševno levo navzgor. Kot α je med desnim delom premice in poltrakom, kot β med poltrakom in levim delom premice.
+območje: 0; 0 .. 10; 3,5
+črta: 0,5; 0,5 -> 9,5; 0,5 | modra
+črta: 5; 0,5 -> 3,28; 2,96 | modra
+črta: 5,6; 0,5 -> 5,56; 0,71 -> 5,45; 0,9 -> 5,28; 1,03 -> 5,07; 1,1 -> 4,85; 1,08 -> 4,66; 0,99
+točka: 5; 0,5 | V | pod
+točka: 3,28; 2,96 | B | levo
+napis: 5,51; 1,48 | α | desno
+napis: 4,02; 1,01 | β | levo
+:::
+= 55 °
+~ 235 | Odštel si od polnega kota ($360^\circ$). Kota skupaj sestavljata iztegnjeni kot, $180^\circ$.
+~ 125 | To je kot $\alpha$. Kota $\alpha$ in $\beta$ skupaj merita $180^\circ$.
+> $\alpha + \beta = 180^\circ$, zato je $\beta = 180^\circ - 125^\circ = 55^\circ$.
+
+? Fizioterapevt izmeri upogib kolena $40^\circ$. Koliko stopinj meri kot med stegnom in golenjo?
+= 140 °
+~ 40 | To je upogib, ne kot v kolenu. Kot dobiš tako, da upogib odšteješ od $180^\circ$.
+~ 50 | Odštel si od pravega kota. Iztegnjena noga meri $180^\circ$, ne $90^\circ$.
+~ 320 | Odštel si od polnega kota. Upogib se meri od iztegnjene noge, $180^\circ$.
+> $\alpha = 180^\circ - u = 180^\circ - 40^\circ = 140^\circ$; kot je topi.
+
+<<RACUN
+vrednost: 38+52 | 90
+vrednost: 180-90 | 90
+vrednost: 180-65 | 115
+vrednost: 65+30 | 95
+vrednost: 180-95 | 85
+vrednost: 115-30 | 85
+vrednost: 180-160 | 20
+vrednost: 180-110 | 70
+vrednost: 180-125 | 55
+vrednost: 360-110 | 250
+vrednost: 180-40 | 140
+>>
 
 :::simboli
-\alpha | kot | | ° | ostri do 90°, topi med 90° in 180°
-V | vrh kota | | | v zapisu ∠AVB je vrh srednja črka
-A, B, C | točke na krakih kotov | | | ∠AVB in ∠BVC imata skupni krak VB
+\alpha | kot (velikost kota) | | ^\circ | ostri pod $90^\circ$, topi med $90^\circ$ in $180^\circ$
+\alpha_1, \alpha_2 | kot med stegnom in golenjo (prej, potem) | \alpha = 180^\circ - u | ^\circ
+u | upogib kolena iz iztegnjene lege | | ^\circ | $u = 0^\circ$: noga iztegnjena
+u_1, u_2 | upogib kolena (prej, potem) | | ^\circ
+V | vrh kota | | | v zapisu $\angle AVB$ je vrh srednja črka
+A, B, C | točke na krakih kotov | | | $\angle AVB$ in $\angle BVC$ imata skupni krak $VB$
 :::

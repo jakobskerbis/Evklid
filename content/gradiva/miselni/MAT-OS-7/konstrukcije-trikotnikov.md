@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skladnost
+  - Trikotnika se natanko prekrijeta
+  - $\triangle ABC \cong \triangle A'B'C'$
+- Oznake
+  - Stranica leži nasproti istoimenskega oglišča
+  - $a = BC$, $b = AC$, $c = AB$
+- Izreki o skladnosti
+  - sss, sks, ksk
+  - ssk: kot nasproti daljše stranice
+  - Trije koti ne zadoščajo
+- Obstoj trikotnika
+  - $a + b > c$ za najdaljšo stranico $c$
+  - Dva kota skupaj manj kot $180^\circ$
+- Manjkajoči kot
+  - $\beta = 180^\circ - \alpha - \gamma$
+  - Nato izrek ksk
+- Postopek
+  - Skica, analiza, obstoj
+  - Opis, konstrukcija, diskusija
+- Koti s šestilom
+  - $60^\circ$ iz enakostraničnega trikotnika
+  - Razpolavljanje: $30^\circ$ in $45^\circ$

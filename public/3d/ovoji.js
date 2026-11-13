@@ -17,7 +17,7 @@ export function okvirDela(THREE, d, box = new THREE.Box3()) {
     if (!m) continue;
     m.updateWorldMatrix(true, true);
     m.traverseVisible((o) => {
-      if (!o.isMesh || (o.isInstancedMesh && o.count === 0)) return;
+      if (!(o.isMesh || o.isPoints) || (o.isInstancedMesh && o.count === 0)) return; // tudi točke (glikokaliks, ribosomi)
       const g = o.isInstancedMesh ? (o.boundingBox || (o.computeBoundingBox(), o.boundingBox)) : (o.geometry.boundingBox || (o.geometry.computeBoundingBox(), o.geometry.boundingBox));
       if (g) box.union(g.clone().applyMatrix4(o.matrixWorld));
     });

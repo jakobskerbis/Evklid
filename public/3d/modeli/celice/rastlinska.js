@@ -862,8 +862,100 @@ export function zgradi(THREE, ctx = {}) {
     "srednja-lamela": { tex: null },
   });
 
+  // ---------- podrobnosti za faks (stikalo »Podrobnosti za faks«; izklopljeno je celica enaka kot za OŠ in SŠ) ----------
+  // Zgrajeno po poliranju in z lastnim zaporedjem naključnih števil; dodane so le točke (brez trikotnikov) in pri visoki
+  // kakovosti jedrne pore z osmimi podenotami. Primerjava (ctx.lahka) stikala nima.
+  // Viri: Alberts in sod., Molecular Biology of the Cell, 7. izd. (2022); Taiz in sod., Plant Physiology and Development, 7. izd. (2022).
+  const fk = lahka ? null : faksPodrobnosti();
+  if (fk) nadzor.push(fk.stikalo);
   // stikalo »Barve kot v učbeniku« (skupno vsem celicam)
-  nadzor.push(V.barveUcbenika(deli, { vakuola: "#4aa6d8", "srednja-lamela": "#3f6a1e", tilakoidi: "#1d6b28", stroma: "#b9e08c", skrob: "#f2ecd6", er: "#4f95e8" }));
+  const ucb = V.barveUcbenika(deli, { vakuola: "#4aa6d8", "srednja-lamela": "#3f6a1e", tilakoidi: "#1d6b28", stroma: "#b9e08c", skrob: "#f2ecd6", er: "#4f95e8" });
+  nadzor.push(ucb);
+  if (fk && zac.faks) fk.stikalo.ob(true);
+
+  function faksPodrobnosti() {
+    let s2 = 5151;
+    const r2 = () => ((s2 = (s2 * 16807) % 2147483647) - 1) / 2147483646;
+    const M4f = new THREE.Matrix4();
+    // točke v lastnih koordinatah organela → v koordinatah celice za vsak primerek InstancedMesh
+    const vSvet = (im, lok) => {
+      const out = [];
+      for (let i = 0; i < im.count; i++) { im.getMatrixAt(i, M4f); for (const t of lok()) out.push(t.applyMatrix4(M4f)); }
+      return out;
+    };
+    // kloroplast: odprta četrtina (lokalno y > 0, z > 0) brez granov; tam se vidijo cpDNA, ribosomi 70S in plastoglobuli
+    const vStromi = (pogoj) => {
+      for (let p = 0; p < 200; p++) {
+        const t = v3((r2() * 2 - 1) * (KA - 0.02), r2() * (KC - 0.012), 0.004 + r2() * (KB - 0.02));
+        if ((t.x / (KA - KE - 0.006)) ** 2 + (t.y / (KC - KE - 0.006)) ** 2 + (t.z / (KB - KE - 0.006)) ** 2 < 1 && Math.hypot(t.x - SKR.x, t.z - SKR.z) > 0.03 && pogoj(t)) return t;
+      }
+      return v3(0, 0.01, 0.03);
+    };
+    const gruca = (c, n, r) => Array.from({ length: n }, () => c.clone().add(v3(r2() - 0.5, r2() - 0.5, r2() - 0.5).multiplyScalar(r)));
+    const cpDNA = V.pike(vSvet(kOvoj, () => [...gruca(vStromi((t) => t.x < -0.02), 7, 0.012), ...gruca(vStromi((t) => t.x > 0.02), 6, 0.011)]), B.dnk, 0.0042, 0.3, { lovi: true, prag: 0.004 });
+    const cpRib = V.pike(vSvet(kOvoj, () => Array.from({ length: hi ? 12 : 6 }, () => vStromi(() => true))), B.ribosomi, 0.0034, 0.3, { lovi: true, prag: 0.004 });
+    const plg = V.pike(vSvet(kOvoj, () => Array.from({ length: 3 }, () => vStromi((t) => t.y < 0.014))), B.plastoglobul, 0.0075, 0.25, { lovi: true, prag: 0.004 });
+    // mitohondrij (pomanjšan na 0,4): DNA in ribosomi v matriksu ob odprtini (smer mW)
+    const mtLok = () => [...[-0.034, 0.034].flatMap((y) => gruca(v3(mW.x * 0.012, y, mW.z * 0.012), 4, 0.008)), ...[0, 0.068, -0.068].map((y) => v3(mW.x * 0.014 + 0.006, y, mW.z * 0.014))]
+      .map((t) => { const u = t.y / (0.06 + 0.055); t.x += 0.032 * (u * u - 0.4); return t.multiplyScalar(0.4); });
+    const mtd = V.pike(vSvet(mit, mtLok), B.dnk, 0.0028, 0.3, { lovi: true, prag: 0.004 });
+    const mreze = [cpDNA, cpRib, plg, mtd];
+    group.add(...mreze);
+    // jedrne pore: obroč z osmimi podenotami (le pri visoki kakovosti, zaradi proračuna trikotnikov)
+    const poreGeo = pore.geometry, poreFaks = new THREE.TorusGeometry(0.0085, 0.0034, 4, 16);
+    {
+      const p = poreFaks.attributes.position, v = v3(), c = v3();
+      for (let i = 0; i < p.count; i++) {
+        v.fromBufferAttribute(p, i);
+        const a = Math.atan2(v.y, v.x);
+        c.set(Math.cos(a) * 0.0085, Math.sin(a) * 0.0085, 0);
+        v.sub(c).multiplyScalar(0.7 + 0.5 * (0.5 + 0.5 * Math.cos(8 * a))).add(c);
+        p.setXYZ(i, v.x, v.y, v.z);
+      }
+      poreFaks.computeVertexNormals();
+    }
+    const ime = (id) => deli.find((d) => d.id === id);
+    const tockaIz = (im) => { im.getMatrixAt(0, M4f); return v3().setFromMatrixPosition(M4f).toArray(); };
+    const cito = ime("citoskelet");
+    const cpD = { id: "kloroplastna-dna", ime: "Kloroplastna DNA in ribosomi", opis: "Več kopij cpDNA (okoli 120–160 kb, okoli 100–130 genov za fotosintezo in izražanje genov) in ribosomi 70S bakterijskega tipa. Zaporedja teh genov so najbližja cianobakterijskim, zato je kloroplast potomec endosimbiontske cianobakterije.", barva: B.dnk, meshes: [cpDNA, cpRib], tocka: ime("kloroplast").tocka, za: "skrob" };
+    const plgD = { id: "plastoglobuli", ime: "Plastoglobuli", opis: "Lipidne kapljice v stromi, pripete na tilakoide. Hranijo prenilkinone (tokoferol, plastokinon) in karotenoide; ob staranju lista in pri stresu se povečajo.", barva: B.plastoglobul, meshes: [plg], tocka: ime("kloroplast").tocka, za: "skrob" };
+    const mtD = { id: "mtdna", ime: "Mitohondrijska DNA in ribosomi", opis: "V matriksu sta mtDNA, ki je pri rastlinah veliko večja kot pri živalih (pri navadnem repnjakovcu okoli 367 kb, a le okoli 57 genov), in mitoribosomi bakterijskega tipa (okoli 78S). Lastni geni kažejo na endosimbiontski izvor.", barva: B.dnk, meshes: [mtd], tocka: mit.count ? tockaIz(mit) : ime("mitohondrij").tocka, za: "mitohondrij" };
+    const mtbD = { id: "mikrotubuli", ime: "Kortikalni mikrotubuli", opis: "Mikrotubuli (25 nm, iz α- in β-tubulina) tik pod membrano. Vzdolž njih se gibljejo rozete celulozne sintaze (poganja jih sama sinteza celuloze), zato so mikrofibrile vzporedne z mikrotubuli in celica se podaljšuje pravokotno nanje.", barva: B.citoskelet, meshes: [cito.meshes[0]], tocka: cito.tocka };
+    const zamenjaj = { citoskelet: [mtbD] };
+    if (cito.meshes[1]) zamenjaj.citoskelet.push({ id: "aktinski-filamenti", ime: "Aktinski filamenti", opis: "Snopi F-aktina skozi citoplazmo. Miozin XI po njih vleče organele (Golgijeve diktiosome, peroksisome, mitohondrije) in poganja citoplazemski tok, ki meša citosol.", barva: B.aktin, meshes: [cito.meshes[1]], tocka: akK[0].getPoint(0.5).toArray() });
+    const stikalo = V.ravenFaks(deli, {
+      mreze,
+      dodaj: [cpD, plgD, mtD],
+      zamenjaj,
+      opisi: {
+        "celicna-stena": { opis: "Primarna stena: celulozne mikrofibrile (spredejo jih rozete celulozne sintaze v membrani) v matriksu hemiceluloz (ksiloglukan) in pektinov iz Golgijevega aparata. Raztegljiva je, dokler celica raste." },
+        "srednja-lamela": { opis: "Plast pektinov, premreženih s Ca²⁺, ki zlepi steni sosednjih celic; nastane iz celične plošče pri citokinezi. Encimi, ki jo razgradijo, mehčajo zoreče sadje." },
+        plazmodezme: { opis: "Kanali skozi steno, obdani z membrano, ki povezujejo celice v simplast; v sredini je dezmotubul iz ER. Prosto prepuščajo majhne molekule (do okoli 1 kDa), nekatere beljakovine in RNA pa aktivno; kaloza jih zoži." },
+        membrana: { opis: "Tekoči mozaik fosfolipidov, sterolov in beljakovin. H⁺-ATPaza črpa protone iz celice in gradient poganja privzem ionov in sladkorjev; rozete celulozne sintaze v njej spredejo celulozo. V modelu je debelina povečana." },
+        citoplazma: { ime: "Citoplazma (citosol)", opis: "Tanka plast citosola med membrano in vakuolo, ki jo aktin in miozin XI ženeta v kroženje (citoplazemski tok). V citosolu potekata glikoliza in sinteza beljakovin na prostih ribosomih." },
+        vakuola: { opis: "Celični sok (pH okoli 5–5,5) hrani ione, sladkorje, organske kisline in barvila (antociane). Vakuola razgrajuje snovi in z osmozo ustvarja turgor, ki celico napne in poganja njeno rast." },
+        tonoplast: { opis: "Membrana vakuole z dvema protonskima črpalkama (V-ATPaza, V-PPaza), ki zakisata vakuolo, prenašalci, ki z gradientom H⁺ kopičijo snovi, in akvaporini (TIP), ki hitro prepuščajo vodo." },
+        jedro: { opis: "Hrani genom in ga loči od citoplazme: transkripcija in obdelava RNA (izrezovanje intronov) potekata v jedru, translacija pa zunaj, zato celica izražanje genov uravnava na več stopnjah." },
+        "jedrna-ovojnica": { ime: "Jedrna ovojnica in porni kompleksi", opis: "Dve membrani s perinuklearnim prostorom; zunanja je zvezna z ER. Porni kompleks (osemkratna simetrija, okoli 30 vrst nukleoporinov) prepušča majhne molekule, večje prenašajo importini in eksportini." },
+        nukleoplazma: { opis: "Notranjost jedra brez membranskih predelkov. Kromosomi v njej zasedajo ločena ozemlja, jedrce in druga jedrna telesca brez membrane pa zberejo beljakovine in RNA za posamezne naloge." },
+        kromatin: { opis: "DNA, navita na oktamere histonov v nukleosome (okoli vsakega oktamera 147 baznih parov). Rahli evkromatin se prepisuje, zgoščeni heterokromatin je utišan in pogosto leži ob jedrni ovojnici." },
+        jedrce: { opis: "Nastane ob genih za rRNA: RNA-polimeraza I prepisuje rRNA, ki se obdela in z ribosomskimi beljakovinami sestavi v podenoti 40S in 60S. Ti skozi jedrne pore odpotujeta v citoplazmo." },
+        er: { opis: "Zrnati del vnaša beljakovine med sintezo (SRP, translokon Sec61), jih zvije in glikozilira; gladki del izdeluje lipide. ER je zvezen z jedrno ovojnico in skozi plazmodezme s sosednjimi celicami." },
+        kloroplast: { opis: "Plastid z dvojno ovojnico: večino beljakovin uvozi iz citosola skozi kompleksa TOC in TIC, nekaj jih izdela sam po genih kloroplastne DNA. Nastal je iz endosimbiontske cianobakterije." },
+        tilakoidi: { opis: "Grana imajo večino fotosistema II, stromalni tilakoidi fotosistem I in ATP-sintazo. Svetlobne reakcije črpajo H⁺ v lumen tilakoidov; gradient poganja ATP-sintazo, ki izdeluje ATP." },
+        stroma: { opis: "Gosta raztopina encimov okoli tilakoidov, v kateri poteka Calvinov cikel: RuBisCO veže CO₂ na ribulozo-1,5-bisfosfat. V stromi so tudi kloroplastna DNA, ribosomi 70S in plastoglobuli." },
+        skrob: { opis: "Prehodni škrob: podnevi se kopiči iz produktov Calvinovega cikla, ponoči se razgradi do maltoze in glukoze, ki ju kloroplast izvozi v citosol za sintezo saharoze." },
+        golgi: { opis: "Številni diktiosomi (skladi cistern) se premikajo po aktinu. Poleg glikozilacije beljakovin izdelujejo hemiceluloze in pektine za steno; celuloze ne, to naredi celulozna sintaza v membrani." },
+        mitohondrij: { opis: "Kriste z dihalno verigo in ATP-sintazo, matriks s Krebsovim ciklom. Rastlinski mitohondriji imajo še alternativno oksidazo, v listih pa pri fotorespiraciji glicin pretvorijo v serin." },
+        peroksisom: { opis: "Listni peroksisom sodeluje pri fotorespiraciji: glikolat iz kloroplasta oksidira v glioksilat (nastali H₂O₂ razgradi katalaza) in ga pretvori v glicin, ki ga prevzame mitohondrij." },
+        ribosomi: { ime: "Ribosomi (80S)", opis: "Citoplazemski ribosomi 80S (podenoti 60S in 40S): prosti izdelujejo beljakovine za citosol in organele, vezani na ER za izločanje in membrane. V kloroplastih so ribosomi 70S, v mitohondrijih ribosomi bakterijskega tipa (pri rastlinah okoli 78S)." },
+        mesicki: { opis: "Mešički iz trans-Golgijeve mreže nesejo hemiceluloze, pektine in beljakovine stene do membrane in jih z eksocitozo izločijo. Pri delitvi se taki mešički zlijejo v celično ploščo." },
+      },
+      ucbenik: () => ucb,
+      ob: (v) => { if (hi) pore.geometry = v ? poreFaks : poreGeo; },
+    });
+    return { stikalo, geo: [poreGeo, poreFaks] };
+  }
 
   return {
     group,
@@ -879,6 +971,7 @@ export function zgradi(THREE, ctx = {}) {
     },
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
+      fk?.geo.forEach((g) => g.dispose());
       odpad.forEach((m) => m.dispose());
     },
   };

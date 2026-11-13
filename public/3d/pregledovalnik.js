@@ -248,6 +248,10 @@ export function odpriModel(el, mod, opts = {}) {
         if (c.emissive) {
           c.emissive = barva.clone();
           c.emissiveIntensity = 0.85;
+        } else if (c.isPointsMaterial) {
+          // točke nimajo emisije: svetlejše in večje, da se izbrani del (npr. glikokaliks, ribosomi) loči
+          c.color = new THREE.Color(1, 1, 1).lerp(barva, 0.35).multiplyScalar(1.8);
+          c.size = x.size * 1.6;
         }
         if (c.userData?.mokro) c.clearcoat = Math.min(c.clearcoat, 0.1); // učna barva brez mokrega laka (ostane > 0: isti program)
         return c;
@@ -396,7 +400,11 @@ export function odpriModel(el, mod, opts = {}) {
   }
 
   // Okno izbranega dela v plošči: barvna pika, ime, latinsko ime, opis, »Poglej pod povečavo«, ×.
+  // kaj kaže okno dela (deli() ga osveži, ko model po ob() zamenja del ali njegovo besedilo, npr. »Podrobnosti za faks«)
+  let prikazan = null;
+  const podpis = (d) => d && [d.ime, d.opis, d.barva, ...(d.meshes || []).map((m) => m?.geometry?.uuid)].join("|");
   function pokaziInfo(d, { izTapa = false, pomakni = false } = {}) {
+    prikazan = d ? { d, p: podpis(d) } : null;
     infoEl.replaceChildren();
     infoEl.hidden = !d;
     el.classList.toggle("k3-ima-info", !!d);
@@ -528,7 +536,14 @@ export function odpriModel(el, mod, opts = {}) {
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
     if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
-    else if (izbran) skrijObdajajoce(seznam.find((d) => d.id === izbran)); // nova faza: drugi ovoji
+    else if (izbran) {
+      const d = seznam.find((x) => x.id === izbran);
+      skrijObdajajoce(d); // nova faza: drugi ovoji
+      if (prikazan && (prikazan.d !== d || prikazan.p !== podpis(d))) { // isti id, drug del ali besedilo
+        obarvaj(d);
+        pokaziInfo(d, { pomakni: false });
+      }
+    }
     // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }

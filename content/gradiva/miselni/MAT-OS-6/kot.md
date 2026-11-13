@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Razprtost krakov
+  - Daljša kraka ne pomenita večjega kota
+  - Lupa ali povečava kota ne spremeni
+- Vrh in kraka
+  - Dva poltraka s skupnim krajiščem
+  - $\angle AVB$: vrh je srednja črka
+- Stopinja
+  - Polni kot meri $360^\circ$
+  - $1^\circ = \dfrac{1}{360}$ polnega kota
+- Vrste kotov
+  - Ostri pod $90^\circ$, pravi $90^\circ$, topi med $90^\circ$ in $180^\circ$
+  - Iztegnjeni $180^\circ$, udrti nad $180^\circ$, polni $360^\circ$
+- Merjenje s kotomerom
+  - Središče na vrh, ničla na krak
+  - Najprej oceni: ostri ali topi
+  - Udrti kot: $360^\circ$ minus drugi kot
+- Računanje s koti
+  - Sosednja kota seštejemo
+  - Do iztegnjenega manjka $180^\circ - \alpha$
+- Upogib kolena
+  - $\alpha = 180^\circ - u$
+  - Napaka: upogib $40^\circ$ ni kot $40^\circ$

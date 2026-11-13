@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kotna minuta
+  - $1^\circ = 60'$, $1' = 60''$
+  - Luna je široka približno $31'$
+- Pravilen zapis
+  - Minut od $0$ do $59$
+  - $62^\circ 73' = 63^\circ 13'$
+- Pretvarjanje
+  - Stopinje v minute: krat $60$
+  - $15{,}4^\circ = 15^\circ 24'$, ne $15^\circ 40'$
+- Seštevanje
+  - Stopinje in minute posebej
+  - $60'$ prenesi k stopinjam
+- Odštevanje
+  - Izposodi si stopinjo: $90^\circ = 89^\circ 60'$
+  - $90^\circ - 34^\circ 25' = 55^\circ 35'$
+- Množenje in deljenje
+  - Množi oba dela, nato uredi
+  - Ostanek stopinj pretvori v minute

@@ -5,54 +5,91 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Okrogle oblike so povsod: kolo, kovanec, pladenj, ura, krožnik, pokrov na loncu, vrtiljak na igrišču. Že znaš narisati kvadrat in pravokotnik, krog pa je drugačen: nima oglišč in nima ravnih stranic. Kako torej natančno povemo, kaj je krog? In kako ga narišemo, da bo res okrogel, ne samo »približno okrogel«?
+Kako bi okrog znamenja na koži narisal mejo, ki je povsod enako daleč od njegove sredine, na primer $1\,\text{cm}$? To mora znati dermatologinja, preden sumljivo znamenje izreže. V drugi ambulanti optik posveti v oko in izmeri zenico: čez sredino meri $4\,\text{mm}$.
 
-Odgovor je preprost: vse točke na robu kroga so enako daleč od ene same točke, **središča**. Na tej ideji temeljita šestilo in kolo. Če bi bila kolesa narejena drugače, bi se vozila tresla. V tej lekciji se naučiš poimenovati dele kroga in krožnice (**središče, polmer, premer, tetiva**), jih med seboj povezati in jih uporabiti pri računanju z dolžinami. Potrebovali jih boš pri konstrukcijah in pri vsem, kar vsebuje okrogle oblike.
+Na videz nimata nič skupnega: prvo je črta na koži, drugo črna odprtina v očesu. Obe pa skrivata isto idejo. Obstaja ena sama sredinska točka, rob pa je od nje povsod enako oddaljen. Pri znamenju poznamo razdaljo od sredine do roba, pri zenici razdaljo čez sredino. Kako sta ti dve dolžini povezani?
+
+Odgovor dajo štirje pojmi: **središče, polmer, premer in tetiva**. Z njimi boš risal s šestilom, pozneje pa računal obseg in ploščino kroga.
 
 ## Razlaga
 
-**1. Krožnica.** Na list zapičimo iglo šestila, svinčnik pa zavrtimo okrog nje, tako da se razmik med iglo in svinčnikom ne spremeni. Nastane črta, na kateri so vse točke enako oddaljene od točke, kjer je igla. Takšni črti pravimo **krožnica**.
+**1. Slika.** Na risbi so vsi štirje pojmi hkrati. Razložili jih bomo po vrsti.
 
-> **Krožnica** je množica vseh točk v ravnini, ki so od dane točke $S$ enako oddaljene. Točka $S$ je **središče** krožnice, razdalja $r$ je **polmer**.
+:::risba skica
+opis: Krožnica s središčem S. Navpična daljica AB gre skozi S od vrha do dna krožnice: to je premer. Daljica SC gre iz S vodoravno desno do krožnice: to je polmer. Daljica DE povezuje dve točki na levi strani krožnice in ne gre skozi S: to je tetiva. Točka T leži desno zgoraj, zunaj krožnice.
+območje: 0; 0 .. 10; 6
+krog: 5; 3 | 2,5 | modra
+črta: 5; 5,5 -> 5; 0,5 | oranžna
+črta: 5; 3 -> 7,5; 3 | zelena
+črta: 2,83; 4,25 -> 3,75; 0,83 | rdeča
+točka: 5; 3 | S | levo
+točka: 5; 5,5 | A | desno
+točka: 5; 0,5 | B | desno
+točka: 7,5; 3 | C | desno
+točka: 2,83; 4,25 | D | levo
+točka: 3,75; 0,83 | E | levo
+točka: 9; 4,6 | T | levo
+:::
 
-Krožnico s središčem $S$ in polmerom $r$ zapišemo $k(S, r)$. Na primer $k(S, 3\,\text{cm})$ je krožnica s središčem $S$ in polmerom $3\,\text{cm}$.
-
-**2. Krog.** Krožnica je samo črta (rob). Če ji dodamo še vse točke znotraj nje, dobimo **krog**. Krog je torej ploskev, krožnica pa njen rob. Ploščatemu kolutu iz kartona rečemo krog, njegovemu robu krožnica.
-
-**3. Polmer.** **Polmer** je daljica, ki povezuje središče s točko na krožnici (njeno dolžino prav tako imenujemo polmer). Vsi polmeri iste krožnice so enako dolgi. Dolžino polmera označimo z $r$. Če je $A$ točka na krožnici, je $|SA| = r$.
-
-**4. Tetiva in premer.** **Tetiva** je daljica, ki povezuje dve točki na krožnici. **Premer** je tetiva, ki poteka skozi središče. Njegovo dolžino označimo z $d$. Premer je sestavljen iz dveh polmerov, zato velja:
-
-$$d = 2r \qquad r = \frac{d}{2}$$
-
-Premer je ob tem **najdaljša tetiva** v krogu. Vsaka druga tetiva, ki ne gre skozi središče, je krajša od premera.
-
-| Pojem | Opis | Oznaka |
+| Na sliki | Ime | Oznaka |
 |---|---|---|
-| središče | točka, enako oddaljena od vseh točk krožnice | $S$ |
-| polmer | daljica od središča do točke na krožnici | $r$ |
-| tetiva | daljica med dvema točkama na krožnici | npr. $AB$ |
-| premer | tetiva skozi središče, $d = 2r$ | $d$ |
+| pika v sredini | središče | $S$ |
+| črta okoli $S$ | krožnica | $k$ |
+| črta od $S$ do $C$ | polmer | $r$ |
+| črta od $D$ do $E$ | tetiva | $DE$ |
+| črta $A$–$S$–$B$ | premer | $d$ |
 
-Dve točki na krožnici razdelita krožnico na dva dela, ki ju imenujemo **krožna loka**.
+**2. Krožnica in krog.** Okrogla (modra) črta okoli $S$ je **krožnica**: vse njene točke so od točke $S$ oddaljene enako, natanko za izbrano razdaljo. Točka $S$ je **središče**. Krožnica je samo črta, rob. Če ji dodamo še vse točke znotraj nje, dobimo **krog**, torej ploskev. Okrogel obliž je krog, njegov rob je krožnica.
 
-**5. Lega točke glede na krožnico.** Točko $T$ primerjamo s krožnico $k(S, r)$ tako, da izmerimo razdaljo $|ST|$ in jo primerjamo s polmerom:
+**3. Polmer.** **Polmer** je daljica od središča do točke na krožnici, na sliki $SC$. Tudi njeno dolžino imenujemo polmer in jo označimo z $r$. Vsi polmeri iste krožnice so enako dolgi, kot špice pri kolesu.
+
+**4. Tetiva in premer.** **Tetiva** je daljica, ki povezuje dve točki na krožnici, na sliki $DE$. **Premer** je tetiva, ki gre skozi središče, na sliki $AB$. Njegovo dolžino označimo z $d$.
+
+Dve točki na krožnici, na primer $D$ in $E$, razdelita krožnico na dva dela. Imenujemo ju **krožna loka**.
+
+V simulaciji spodaj (»Krog, krožnica in premica«) izberi »Premica in krožnica« in premico povleci tako, da seka krožnico. Nato jo počasi premikaj proti središču. Opazuj, kako se tetiva daljša in kdaj postane premer.
+
+:::premisli
+Primerjaj ravno pot od $D$ do $E$ z ovinkom od $D$ do $S$ in naprej do $E$. Katera tetiva je najdaljša možna in zakaj ne more biti nobena daljša?
+---
+Najdaljša je premer. Pot od $D$ do $E$ čez središče je dolga $r + r$. Ravna daljica $DE$ je najkrajša pot med točkama, zato ni daljša od $r + r$. Enako dolga je le, če gre skozi $S$, torej če je premer.
+:::
+
+**5. Od slike do zveze.** Na sliki premer $AB$ sestavljata dva polmera, $SA$ in $SB$. Zato je premer dvakrat daljši od polmera:
+
+$$d = 2r$$
+
+$$r = \frac{d}{2}$$
+
+Pri zenici s premerom $4\,\text{mm}$ je torej polmer $2\,\text{mm}$.
+
+**6. Risanje s šestilom.** Razmik med iglo in svinčnikom z ravnilom nastavi na polmer. Iglo zapiči v središče in svinčnik zavrti okrog nje. Igla in razmik se ne smeta premakniti, sicer točke niso enako oddaljene od središča.
+
+:::premisli
+Zenico s premerom $4\,\text{mm}$ želiš narisati povečano, s premerom $4\,\text{cm}$. Kaj dobiš, če šestilo razpreš na $4\,\text{cm}$?
+---
+Krožnico s polmerom $4\,\text{cm}$, torej s premerom $8\,\text{cm}$: dvakrat preveliko. Šestilo meri polmer, zato ga razpreš na $4\,\text{cm} : 2 = 2\,\text{cm}$.
+:::
+
+**7. Lega točke.** Točko $T$ primerjamo s krožnico tako, da razdaljo $|ST|$ (dolžino daljice $ST$) primerjamo s polmerom:
 
 | Razdalja | Lega točke $T$ |
 |---|---|
-| $\lvert ST\rvert < r$ | v notranjosti kroga |
+| $\lvert ST\rvert < r$ | v krogu, znotraj krožnice |
 | $\lvert ST\rvert = r$ | na krožnici |
 | $\lvert ST\rvert > r$ | zunaj kroga |
 
-**6. Risanje s šestilom.** Za krožnico $k(S, 3\,\text{cm})$ razmik med iglo in svinčnikom nastavimo na polmer $3\,\text{cm}$ (z ravnilom). Iglo zapičimo v točko $S$ in svinčnik zavrtimo okrog igle. Če poznamo premer, najprej izračunamo polmer, saj šestilo nastavimo na **polmer**, ne na premer.
+Na sliki je $T$ dlje od $S$ kot $C$, zato leži zunaj kroga.
+
+**8. Zapis.** Krožnico s središčem $S$ in polmerom $r$ zapišemo $k(S, r)$. Na primer $k(S, 3\,\text{cm})$ je krožnica s središčem $S$ in polmerom $3\,\text{cm}$.
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
 
-Polmer krožnice meri $4{,}5\,\text{cm}$. Kolikšen je njen premer?
+Okrogla elektroda za EKG, ki jo medicinska sestra prilepi na prsni koš, ima polmer $2{,}4\,\text{cm}$. Kolikšen je njen premer?
 
-**Podatki:** $r = 4{,}5\,\text{cm}$
+**Podatki:** $r = 2{,}4\,\text{cm}$
 **Iščemo:** premer $d$
 
 :::formula
@@ -61,144 +98,160 @@ $d = 2r$
 
 **Rešitev:**
 
-1. Vstavimo polmer: $d = 2 \cdot 4{,}5\,\text{cm} = 9\,\text{cm}$.
-2. Preizkus: polovica premera je $9\,\text{cm} : 2 = 4{,}5\,\text{cm}$, kar je res polmer.
-3. Odgovor: premer krožnice je $9\,\text{cm}$.
+1. Premer sestavljata dva polmera: $d = 2 \cdot 2{,}4\,\text{cm} = 4{,}8\,\text{cm}$.
+2. Preizkus: $4{,}8\,\text{cm} : 2 = 2{,}4\,\text{cm}$, kar je res polmer.
+3. Odgovor: premer elektrode je $4{,}8\,\text{cm}$.
 
 ### Primer 2 (srednji)
 
-Okrogla miza ima premer $1{,}2\,\text{m}$. Kolikšen je njen polmer v centimetrih? Kolikšna je dolžina najdaljše tetive, ki povezuje dve točki na robu mize?
+Okrogla petrijevka v bolnišničnem laboratoriju ima premer $9\,\text{cm}$. Kolikšen je njen polmer v milimetrih? Kako dolga je najdaljša ravna poteza, ki jo laborantka lahko potegne po dnu od roba do roba?
 
-**Podatki:** $d = 1{,}2\,\text{m}$
-**Iščemo:** polmer $r$ v $\text{cm}$ in dolžino najdaljše tetive
+**Podatki:** $d = 9\,\text{cm}$, $1\,\text{cm} = 10\,\text{mm}$
+**Iščemo:** polmer $r$ v $\text{mm}$ in dolžino najdaljše tetive
 
 :::formula
-$1\,\text{m} = 100\,\text{cm}$; $r = \dfrac{d}{2}$; najdaljša tetiva je premer
+$r = \dfrac{d}{2}$; najdaljša tetiva je premer
 :::
 
 **Rešitev:**
 
-1. Pretvorimo enote: $1{,}2\,\text{m} = 120\,\text{cm}$ (množimo s $100$).
-2. Polmer: $r = \dfrac{120\,\text{cm}}{2} = 60\,\text{cm}$.
-3. Najdaljša tetiva je premer, torej meri $120\,\text{cm}$ (to je $1{,}2\,\text{m}$).
-4. Preizkus: $2 \cdot 60\,\text{cm} = 120\,\text{cm}$.
-5. Odgovor: polmer mize je $60\,\text{cm}$, najdaljša tetiva meri $120\,\text{cm}$.
+1. Pretvorimo enote: $9\,\text{cm} = 90\,\text{mm}$ (množimo z $10$).
+2. Polmer je polovica premera: $r = \dfrac{90\,\text{mm}}{2} = 45\,\text{mm}$.
+3. Poteza od roba do roba je tetiva. Najdaljša tetiva je premer, torej $90\,\text{mm}$.
+4. Preizkus: $2 \cdot 45\,\text{mm} = 90\,\text{mm}$.
+5. Odgovor: polmer petrijevke je $45\,\text{mm}$, najdaljša poteza meri $90\,\text{mm}$.
 
-### Primer 3 (težji)
+### Primer 3 (težji): zdaj ti
 
-Krožnica $k$ ima premer $10\,\text{cm}$. Točka $A$ je od središča $S$ oddaljena $3{,}2\,\text{cm}$, točka $B$ je od njega oddaljena $5\,\text{cm}$, točka $C$ pa $6{,}4\,\text{cm}$. Kje leži vsaka točka glede na krožnico? Ali ima ta krog lahko tetivo dolžine $10{,}4\,\text{cm}$?
+Dermatologinja okrog znamenja s središčem $S$ zariše krožnico s premerom $2\,\text{cm}$; kar je v krogu, bo izrezala. Pegica $A$ je od $S$ oddaljena $0{,}6\,\text{cm}$, pegica $B$ $1\,\text{cm}$, pegica $C$ pa $1{,}3\,\text{cm}$. Kje leži vsaka pegica? Ali lahko naredi raven rez od roba do roba, dolg $2{,}2\,\text{cm}$?
 
-**Podatki:** $d = 10\,\text{cm}$, $|SA| = 3{,}2\,\text{cm}$, $|SB| = 5\,\text{cm}$, $|SC| = 6{,}4\,\text{cm}$, tetiva dolžine $10{,}4\,\text{cm}$ (vprašanje, ali obstaja)
-**Iščemo:** lego točk $A$, $B$, $C$ in ali tetiva dolžine $10{,}4\,\text{cm}$ obstaja
+**Podatki:** $d = 2\,\text{cm}$; $|SA| = 0{,}6\,\text{cm}$; $|SB| = 1\,\text{cm}$; $|SC| = 1{,}3\,\text{cm}$; rez od roba do roba $2{,}2\,\text{cm}$
+**Iščemo:** lego pegic $A$, $B$, $C$ in ali tak rez obstaja
 
 :::formula
-$r = \dfrac{d}{2}$; primerjava $\lvert ST\rvert$ z $r$ (manj: znotraj, enako: na krožnici, več: zunaj); vsaka tetiva je $\le d$
+$r = \dfrac{d}{2}$; primerjaj $\lvert ST\rvert$ z $r$; nobena tetiva ni daljša od $d$
 :::
 
 **Rešitev:**
 
-1. Polmer: $r = \dfrac{10\,\text{cm}}{2} = 5\,\text{cm}$.
-2. Točka $A$: $3{,}2\,\text{cm} < 5\,\text{cm}$, zato leži v notranjosti kroga.
-3. Točka $B$: $5\,\text{cm} = 5\,\text{cm}$, zato leži na krožnici.
-4. Točka $C$: $6{,}4\,\text{cm} > 5\,\text{cm}$, zato leži zunaj kroga.
-5. Najdaljša tetiva je premer, ki meri $10\,\text{cm}$. Ker je $10{,}4\,\text{cm} > 10\,\text{cm}$, tako dolga tetiva ne obstaja.
-6. Odgovor: $A$ je v krogu, $B$ na krožnici, $C$ zunaj kroga; tetive dolžine $10{,}4\,\text{cm}$ ni, ker je premer najdaljša tetiva in meri le $10\,\text{cm}$.
+1. Polmer: $r = \dfrac{2\,\text{cm}}{2} = 1\,\text{cm}$. S polmerom primerjamo razdalje, ker meri od središča do roba.
+2. Pegica $A$: $0{,}6\,\text{cm} < 1\,\text{cm}$, zato leži v krogu in bo izrezana.
+3. Pegica $B$: $1\,\text{cm} = 1\,\text{cm}$, zato leži na krožnici, natanko na črti reza.
+4. Za pegico $C$ in za rez odloči sam, nato preveri:
+
+:::premisli
+Kje leži pegica $C$? Ali obstaja rez od roba do roba, dolg $2{,}2\,\text{cm}$?
+---
+$1{,}3\,\text{cm} > 1\,\text{cm}$, zato je $C$ zunaj kroga in ostane. Rez od roba do roba je tetiva. Najdaljša tetiva je premer, $2\,\text{cm}$. Ker je $2{,}2\,\text{cm} > 2\,\text{cm}$, takega reza ni.
+:::
 
 ## Pogoste napake
 
-- **Mešanje kroga in krožnice.** Razlog: v vsakdanjem govoru obe besedi uporabljamo za »okroglo stvar«. Pravilno: krožnica je samo črta (rob), krog je rob skupaj z notranjostjo. Točka znotraj kroga ni na krožnici.
-- **Zamenjava polmera in premera.** Razlog: obe daljici sta pri krožnici, zato ju zlahka zamenjaš. Pravilno: premer je dvakrat daljši od polmera, $d = 2r$. Če poznaš premer, polmer dobiš z deljenjem z $2$, če poznaš polmer, premer dobiš z množenjem z $2$. Šestilo vedno nastavi na polmer.
-- **»Vsaka tetiva je premer.«** Razlog: tetiva in premer sta obe daljici med točkama na krožnici. Pravilno: premer je samo tista tetiva, ki gre skozi središče. Vsaka druga tetiva je krajša od premera.
-- **»Polmer je daljica od roba do roba.«** Razlog: pogled ti ostane na robu, središče pa spregledaš. Pravilno: polmer se vedno začne v središču in konča na krožnici. Daljica od roba do roba je tetiva, in samo če gre skozi središče, je premer.
-- **Premikanje igle med risanjem.** Razlog: igla se zmuzne ali pa šestilo popusti. Pravilno: igla ostane na mestu, razmik šestila se ne spremeni. Sicer črta ni krožnica, ker točke niso več enako oddaljene od središča.
+- **Mešanje kroga in krožnice.** Razlog: v vsakdanjem govoru obe besedi pomenita »nekaj okroglega«. Pravilno: krožnica je samo črta (rob), krog je rob skupaj z notranjostjo. Točka znotraj kroga ni na krožnici.
+- **Zamenjava polmera in premera.** Razlog: obe daljici sta pri krožnici. Pri premeru $4\,\text{mm}$ nekdo zapiše polmer $8\,\text{mm}$. Pravilno: $d = 2r$, premer je daljši. Iz premera dobiš polmer z deljenjem z $2$, iz polmera premer z množenjem z $2$. Šestilo vedno nastavi na polmer.
+- **»Vsaka tetiva je premer.«** Razlog: obe sta daljici med točkama na krožnici. Pravilno: premer je le tetiva skozi središče. Vsaka druga tetiva je krajša od premera.
+- **»Polmer je daljica od roba do roba.«** Razlog: pogled ostane na robu, središče spregledaš. Pravilno: polmer se vedno začne v središču. Daljica od roba do roba je tetiva.
+- **»Večji polmer, premer zraste le malo.«** Razlog: nekdo k premeru prišteje, kar je dodal polmeru. Pravilno: premer je vedno dvakratnik polmera. Če polmer podvojiš, se podvoji tudi premer; če polmer povečaš za $1\,\text{cm}$, se premer poveča za $2\,\text{cm}$.
 
 ## Povzetek
 
-- **Krožnica** $k(S, r)$ je množica točk, ki so od središča $S$ oddaljene za polmer $r$.
-- **Krog** je krožnica skupaj z notranjostjo.
+- **Krožnica** $k(S, r)$ je črta iz vseh točk, ki so od središča $S$ oddaljene za $r$. **Krog** je krožnica skupaj z notranjostjo.
 - **Polmer** je daljica od središča do točke na krožnici; vsi polmeri so enako dolgi.
 - **Tetiva** je daljica med dvema točkama na krožnici, **premer** je tetiva skozi središče.
-- Veljata zvezi $d = 2r$ in $r = \dfrac{d}{2}$.
-- Premer je najdaljša tetiva.
+- $d = 2r$ in $r = \dfrac{d}{2}$. Premer je najdaljša tetiva.
 - Lega točke $T$: $\lvert ST\rvert < r$ v krogu, $\lvert ST\rvert = r$ na krožnici, $\lvert ST\rvert > r$ zunaj kroga.
-- Šestilo nastavimo na polmer.
+- Šestilo nastavimo na polmer, igla je v središču.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Predstavljaj si krožnico, narisano s šestilom, z majhno piko v sredini. Pika je središče $S$. Na robu označi tri točke: $A$ (zgoraj), $B$ (spodaj, ravno nasproti $A$) in $C$ (desno).
+Krog je kot pašnik koze, privezane na količek.
 
-| Kaj narišeš | Kaj dobiš | Kako se imenuje |
-|---|---|---|
-| črta od pike v sredini do $C$ | kratka daljica | polmer $SC$ |
-| črta od $A$ do $B$ skozi piko | najdaljša daljica v krogu | premer $AB$ |
-| črta od $A$ do $C$ mimo pike | krajša daljica kot premer | tetiva $AC$ |
-| celoten rob | zaključena črta | krožnica |
-| rob in vse znotraj | obarvana ploskev | krog |
+- **Količek** je središče $S$.
+- **Napeta vrv** je polmer: kamorkoli koza gre, vrv je enako dolga.
+- Kjer koza hodi z napeto vrvjo, pusti v travi sled: to je **krožnica**.
+- Vsa trava, ki jo lahko popase, je **krog**.
+- Dve kozi z enako dolgima vrvema na istem količku se postavita na nasprotni strani. Narazen sta za dve dolžini vrvi: to je **premer**, $d = 2r$.
+- Ravna steza med dvema točkama na robu pašnika je **tetiva**. Najdaljša je tista, ki gre čez količek, torej čez sredino.
 
-Če v krog narišeš še več polmerov, se zvezdasto razpršijo od središča in so vsi enako dolgi, kot špice na kolesu. Premer vedno razreže krog na dva enaka dela, tetiva, ki ne gre skozi središče, pa na večji in manjši del.
+Analogija ima mejo: vrv se povesi, polmer pa je vedno raven in natanko enako dolg.
 
 ## Drugače: Iz vsakdanjega življenja
 
-- **Kolo.** Os kolesa je središče, vsaka špica je polmer, rob pnevmatike je krožnica. Kolo se vrti mirno, ker je rob povsod enako daleč od osi.
-- **Ruter z dosegom.** Predstavljaj si ruter, ki ima doseg $15\,\text{m}$. Telefon na razdalji $12\,\text{m}$ je v krogu dosega, na $15\,\text{m}$ je na robu, na $20\,\text{m}$ pa zunaj. To je natanko lega točke glede na krožnico.
-- **Koza na vrvi.** Koza je privezana na količek z vrvjo dolžine $3\,\text{m}$. Pase lahko na krogu s polmerom $3\,\text{m}$, najdlje pa seže do krožnice.
-- **Pica ali torta.** Rez čez sredino je premer, rez, ki sredine ne zadene, pa tetiva. Premer je vedno daljši od katerega koli drugega reza.
-- **Vrtiljak.** Sedež na robu je na krožnici, sedež bliže sredini je v notranjosti kroga. Oba krožita okoli iste osi, a sedež na robu prepotuje daljšo pot.
-
-## Drugače: Korak za korakom s številkami
-
-**Naloga: nariši krožnico $k(S, 3\,\text{cm})$ in vanjo dele.**
-
-1. Z ravnilom nastavi šestilo na razmik $3\,\text{cm}$.
-2. Iglo zapiči v točko $S$ in zavrti svinčnik. Nastane krožnica s polmerom $3\,\text{cm}$.
-3. Izberi točko $A$ na krožnici. Nariši polmer $SA$ in izmeri: $\lvert SA\rvert = 3\,\text{cm}$.
-4. Podaljšaj polmer $AS$ čez središče, dokler ne zadene krožnice v točki $B$. Daljica $AB$ je premer, njegova dolžina je $d = 2 \cdot 3\,\text{cm} = 6\,\text{cm}$. Preveri z ravnilom.
-5. Izberi tretjo točko $C$ na krožnici in nariši tetivo $AC$. Izmeri jo: njena dolžina je vedno med $0\,\text{cm}$ in $6\,\text{cm}$ (premer je najdaljša).
-6. Označi točko $T$ v razdalji $2\,\text{cm}$ od $S$: $2\,\text{cm} < 3\,\text{cm}$, zato je v krogu. Točka $U$ v razdalji $4\,\text{cm}$ je zunaj kroga, ker velja $4\,\text{cm} > 3\,\text{cm}$.
-
-**Če je podan premer:** pri $d = 8\,\text{cm}$ je $r = 8\,\text{cm} : 2 = 4\,\text{cm}$, šestilo nastaviš na $4\,\text{cm}$.
-
-## Drugače: Bolj natančno
-
-**Krožnica kot množica točk.** Strogo zapišemo: krožnica je množica $k(S, r) = \{T : \lvert ST\rvert = r\}$, krog pa $\{T : \lvert ST\rvert \le r\}$, pri čemer je $r > 0$. Razlika je le v znaku: pri krožnici »natanko enako«, pri krogu »manj ali enako«.
-
-**Ena beseda, dva pomena.** Besede *polmer*, *premer* in *tetiva* uporabljamo za daljico in tudi za njeno dolžino. Pri $d = 2r$ govorimo o dolžinah, pri zapisu »daljica $SA$ je polmer« o daljici.
-
-**Zakaj je premer najdaljša tetiva?** Naj bosta $A$ in $B$ točki na krožnici. Pot od $A$ do $B$ mimo središča $S$ je dolga $\lvert AS\rvert + \lvert SB\rvert = r + r = 2r$. Neposredna daljica $AB$ je najkrajša pot med točkama in zato ni daljša od te poti. Torej je $\lvert AB\rvert \le 2r$, enakost pa velja le, če leži $S$ na daljici $AB$, torej če je tetiva premer.
-
-**Povezava s kotom.** Polmera, ki ležita na istem premeru, se razhajata v nasprotnih smereh in tvorita iztegnjeni kot $180^\circ$. Tako se temi krog in kot povežeta.
-
-**Obseg in ploščina.** Koliko meri rob kroga (obseg) in koliko je velik krog (ploščina), boš spoznal v višjih razredih. Za to potrebuješ polmer in premer, ki ju zdaj obvladaš.
+- **Kolo.** Os je središče, vsaka špica polmer, rob pnevmatike krožnica. Kolo se vrti mirno, ker je rob povsod enako daleč od osi.
+- **Pica.** Rez čez sredino je premer, rez mimo sredine tetiva. Rez čez sredino razdeli pico na dve enaki polovici in je najdaljši.
+- **Ruter z dosegom $15\,\text{m}$.** Telefon na razdalji $12\,\text{m}$ je v krogu dosega, na $15\,\text{m}$ na robu, na $20\,\text{m}$ zunaj. To je lega točke glede na krožnico.
+- **Zenica.** V temi se zenica razširi, na svetlem zoži. Premer se spreminja, oblika pa ostane krog s središčem na sredini.
 
 ## Preveri se
 
-? Premer krožnice meri $14\,\text{cm}$. Kolikšen je njen polmer?
-- $28\,\text{cm}$
-- $14\,\text{cm}$
-+ $7\,\text{cm}$
-> Polmer je polovica premera: $r = 14\,\text{cm} : 2 = 7\,\text{cm}$. Odgovor $28\,\text{cm}$ dobiš, če premer podvojiš namesto razpoloviš.
+? Na sliki je krožnica s središčem $S$. Katera daljica je tetiva, ki ni premer?
+:::risba skica
+opis: Krožnica s središčem S. Daljica SF gre iz S desno navzgor do krožnice. Daljica AB gre navpično skozi S od vrha do dna krožnice. Daljica DE povezuje dve točki na levi strani krožnice in ne gre skozi S.
+območje: 0; 0 .. 10; 6
+krog: 5; 3 | 2,5 | modra
+črta: 5; 3 -> 7,17; 4,25
+črta: 5; 5,5 -> 5; 0,5
+črta: 2,83; 4,25 -> 3,75; 0,83
+točka: 5; 3 | S | levo
+točka: 7,17; 4,25 | F | desno
+točka: 5; 5,5 | A | desno
+točka: 5; 0,5 | B | desno
+točka: 2,83; 4,25 | D | levo
+točka: 3,75; 0,83 | E | levo
+:::
+- $SF$
+~ $SF$ ima eno krajišče v središču, zato je polmer. Tetiva ima obe krajišči na krožnici.
+- $AB$
+~ $AB$ je tetiva, a gre skozi središče, zato je premer.
++ $DE$
+> $DE$ povezuje dve točki na krožnici in ne gre skozi $S$: je tetiva, ki ni premer.
 
-? Katera daljica je med vsemi tetivami istega kroga vedno najdaljša?
-- polmer
-+ premer
-- tetiva, ki ne gre skozi središče
-> Premer je tetiva, ki gre skozi središče, in meri $2r$. Vsaka druga tetiva je krajša, polmer pa sploh ni tetiva, saj ima eno krajišče v središču.
+? Po cepljenju je rdečina na koži okrogla. Zdravnica izmeri, da je rob od sredine oddaljen $2{,}5\,\text{cm}$. Kolikšen je premer rdečine?
+= 5 cm
+~ 1,25 | Razpolovil si polmer. Premer je dvakrat daljši od polmera, zato množiš z $2$.
+~ 2,5 | To je polmer, razdalja od sredine do roba. Premer gre čez vso rdečino.
+> Razdalja od sredine do roba je polmer: $d = 2r = 2 \cdot 2{,}5\,\text{cm} = 5\,\text{cm}$.
 
-? Krožnica ima polmer $6\,\text{cm}$. Točka $T$ je od središča oddaljena $6{,}5\,\text{cm}$. Kje leži?
-- v notranjosti kroga
-- na krožnici
-+ zunaj kroga
-> Ker je $6{,}5\,\text{cm} > 6\,\text{cm}$, je točka od središča dlje kot polmer, zato leži zunaj kroga.
+? Narisati želiš krožnico s premerom $6\,\text{cm}$. Razvrsti korake po vrsti.
+1. Izračunaj polmer: $6\,\text{cm} : 2 = 3\,\text{cm}$.
+2. Z ravnilom razpri šestilo na $3\,\text{cm}$.
+3. Iglo šestila zapiči v središče $S$.
+4. Svinčnik zavrti okrog igle, ne da bi premaknil iglo.
+> Šestilo meri polmer, zato najprej izračunaš polmer. Nato nastaviš razmik, zapičiš iglo v središče in zavrtiš.
 
-? Katera trditev je pravilna?
-- Vsaka tetiva je premer.
-+ Krožnica je rob, krog pa vsebuje tudi notranjost.
-- Središče krožnice leži na krožnici.
-> Krožnica je samo črta, krog je krožnica skupaj z notranjostjo. Središče je v notranjosti kroga, ne na krožnici, in samo tetiva skozi središče je premer.
+? Kaj se zgodi s premerom krožnice, če njen polmer podvojiš?
+- Ostane enak.
+~ Premer je sestavljen iz dveh polmerov, zato se spremeni skupaj s polmerom.
+- Poveča se le za toliko, za kolikor se je povečal polmer.
+~ Povečata se oba polmera, ki sestavljata premer, zato premer zraste za dvakrat toliko.
++ Podvoji se.
+- Početveri se.
+~ Premer je $2r$: če $r$ podvojiš, se $2r$ podvoji, ne početveri.
+> $d = 2r$. Če je nov polmer $2r$, je nov premer $2 \cdot 2r = 4r$, kar je dvakrat več kot prej $2r$.
+
+? Najdaljša ravna črta, ki jo lahko narišeš po okroglem obližu, meri $7\,\text{cm}$. Koliko centimetrov je rob obliža oddaljen od njegovega središča?
+= 3,5 cm
+~ 7 | $7\,\text{cm}$ je najdaljša tetiva, torej premer. Razdalja od središča do roba je polmer, polovica premera.
+~ 14 | Podvojil si premer. Polmer dobiš z deljenjem z $2$.
+> Najdaljša tetiva je premer, $d = 7\,\text{cm}$. Rob je od središča oddaljen za polmer: $r = \dfrac{7\,\text{cm}}{2} = 3{,}5\,\text{cm}$.
+
+<<RACUN
+vrednost: 2*2.4 | 4.8
+vrednost: 90/2 | 45
+vrednost: 2*45 | 90
+vrednost: 2/2 | 1
+vrednost: 4/2 | 2
+vrednost: 2*4 | 8
+vrednost: 2*2.5 | 5
+vrednost: 6/2 | 3
+vrednost: 7/2 | 3.5
+enote: 9*cm | 90*mm
+>>
 
 :::simboli
-r | polmer krožnice | r = \frac{d}{2} | | razdalja od središča do krožnice
-d | premer krožnice | d = 2r | | najdaljša tetiva
-S | središče krožnice | |
-T | točka, ki jo primerjamo s krožnico | | | razdalja ST manjša od r: znotraj, enaka: na krožnici, večja: zunaj
+S | središče krožnice | | | vse točke krožnice so od $S$ enako daleč
+r | polmer | r = \frac{d}{2} | | razdalja od središča do krožnice
+d | premer | d = 2r | | najdaljša tetiva
+k | krožnica | | | zapis $k(S, r)$
+T | točka, ki jo primerjamo s krožnico | | | $\lvert ST\rvert < r$: v krogu; $= r$: na krožnici; $> r$: zunaj
 :::

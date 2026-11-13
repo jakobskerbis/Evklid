@@ -6,13 +6,13 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   OBJEKTIVI, MIN_M, MAX_M, SVETLOBNI_MAX, vidnoPolje, locljivost, globinskaOstrina, zamegljenost, raven, utezModela, merilce,
-  oznakaDolzine, oznakaPovecave,
+  oznakaDolzine, oznakaPovecave, SEM_MAX, SEM_LOCLJIVOST, globinskaOstrinaSem,
 } from "../public/mikroskop/optika.js";
 import { BARVANJA, matrikaBarvil } from "../public/mikroskop/barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "../public/mikroskop/preparati/index.js";
 import { preparatAtlasa, preparatModela, MODELI_Z_MIKROSKOPOM } from "../public/mikroskop/mapa.js";
 import { fragmentPreparata } from "../public/mikroskop/glsl.js";
-import { povecava, ZACETNO } from "../public/mikroskop/pogled.js";
+import { povecava, izracunajPogled, ZACETNO } from "../public/mikroskop/pogled.js";
 import sl from "../public/i18n/sl.js";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -59,6 +59,25 @@ test("mikroskop: ravni TEM od celic do atomov, model molekul šele nad ~800 000�
   assert.equal(oznakaDolzine(0.0002), "2 Å");
 });
 
+test("mikroskop: SEM (j, 13. 11. 2026) – vidno polje, globinska ostrina, ravni in uniforme", () => {
+  // slika 127 mm pri 1000× = 127 µm; ločljivost ~3 nm; do 300 000×
+  assert.equal(vidnoPolje(1000, "sem"), 127);
+  assert.equal(SEM_MAX, 300_000);
+  assert.ok(SEM_LOCLJIVOST >= 0.001 && SEM_LOCLJIVOST <= 0.01);
+  // globinska ostrina SEM je pri isti povečavi desetkrat do stokrat večja kot pri svetlobnem mikroskopu (Goldstein 2018)
+  assert.equal(globinskaOstrinaSem(1000), 40);
+  assert.ok(globinskaOstrinaSem(400) > 30 * globinskaOstrina(OBJEKTIVI[2]));
+  assert.equal(raven(100, "sem"), "tkivo");
+  assert.equal(raven(1000, "sem"), "celice");
+  assert.equal(raven(10_000, "sem"), "povrsina"); // SEM ne vidi jeder
+  assert.equal(raven(300_000, "sem"), "povrsina");
+  assert.equal(povecava({ ...ZACETNO, nacin: "sem", m: 2500 }), 2500);
+  const { v } = izracunajPogled(null, { barvanje: "he" }, { ...ZACETNO, nacin: "sem", m: 2500 }, 800);
+  assert.equal(v.nacin, 3);
+  assert.equal(v.elektroni, true);
+  assert.equal(v.krog, false);
+});
+
 test("mikroskop: vsak preparat obstaja, ima opis, barvanje in GLSL s funkcijo tkivo", async () => {
   assert.ok(PREPARATI.length >= 45);
   assert.ok(IDS.has(ZACETNI));
@@ -73,10 +92,11 @@ test("mikroskop: vsak preparat obstaja, ima opis, barvanje in GLSL s funkcijo tk
     assert.ok(BARVANJA[p.barvanje], `${e.id}: barvanje ${p.barvanje}`);
     assert.equal(matrikaBarvil(p.barvanje).length, 9);
     assert.match(p.glsl, /T\s+tkivo\s*\(\s*vec2\s+p\s*,\s*float\s+px\s*\)/, `${e.id}: tkivo()`);
-    const frag = fragmentPreparata(p.glsl);
-    assert.match(frag, /^#version 300 es/);
-    // oklepaji v senčilniku so uravnoteženi (napaka prevajanja bi sicer počakala na brskalnik)
-    for (const [a, b] of [["{", "}"], ["(", ")"]]) assert.equal(frag.split(a).length, frag.split(b).length, `${e.id}: ${a}${b}`);
+    // oklepaji v senčilniku (tudi v ločenem programu SEM) so uravnoteženi (napaka prevajanja bi sicer počakala na brskalnik)
+    for (const frag of [fragmentPreparata(p.glsl), fragmentPreparata(p.glsl, { sem: true })]) {
+      assert.match(frag, /^#version 300 es/);
+      for (const [a, b] of [["{", "}"], ["(", ")"]]) assert.equal(frag.split(a).length, frag.split(b).length, `${e.id}: ${a}${b}`);
+    }
   }
 });
 
@@ -126,13 +146,22 @@ test("mikroskop: vsak model celice in organa ter vsak del iz preslikave obstaja"
 });
 
 test("mikroskop: prevodi gumbov v vseh jezikih in vstop iz lekcij", () => {
-  const kljuci = ["mk.title", "mk.open", "mk.start", "mk.hub"];
+  const kljuci = ["mk.title", "mk.open", "mk.start", "mk.hub", "mk.sem", "mk.surface", "mk.semResolution", "mk.level.povrsina", "mk.truth.sem"];
   for (const k of kljuci) assert.ok(sl[k], `sl ${k}`);
   const dir = path.join(ROOT, "public", "i18n", "ui");
   for (const f of fs.readdirSync(dir).filter((f) => f.endsWith(".json"))) {
     const d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
     for (const k of kljuci) assert.ok(d[k], `${f}: ${k}`);
   }
+  // gumba − in + ob drsniku povečave (j, 13. 11. 2026), z oznakama za bralnike zaslona
+  const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
+  assert.match(ui, /gumbPov\("zoom-out", "a3\.zoomOut", 0\.5\)/);
+  assert.match(ui, /gumbPov\("zoom-in", "a3\.zoomIn", 2\)/);
+  assert.ok(sl["a3.zoomIn"] && sl["a3.zoomOut"]);
+  // trije načini: svetloba (objektivi), SEM in TEM
+  assert.match(ui, /mk-obj mk-sem/);
+  assert.match(sl["mk.electron"], /TEM/);
+  assert.match(sl["mk.sem"], /SEM/);
   const katalog = fs.readFileSync(path.join(ROOT, "public", "sim", "katalog.js"), "utf8");
   assert.ok((katalog.match(/\["mikroskop",/g) || []).length >= 4);
   const index = fs.readFileSync(path.join(ROOT, "public", "sim", "index.js"), "utf8");

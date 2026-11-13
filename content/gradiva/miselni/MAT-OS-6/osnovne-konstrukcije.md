@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Konstrukcija
+  - samo šestilo in ravnilo, brez merjenja
+  - razpona med korakom ne spreminjaj
+  - pomožnih lokov ne briši
+- Enako oddaljene točke
+  - presečišče enakih lokov okrog $A$ in $B$
+  - vse take točke ležijo na eni premici
+- Simetrala daljice
+  - skozi razpolovišče, pravokotna na daljico
+  - polmer $r > \dfrac{|AB|}{2}$, pri $7$ cm več kot $3{,}5$ cm
+  - napaka: različna polmera v $A$ in $B$
+- Pravokotnica
+  - lok okrog $T$ izreže $A$ in $B$ na $p$
+  - nato simetrala daljice $AB$
+  - najkrajša pot točke do premice
+- Simetrala kota
+  - prvi lok s središčem v vrhu $V$
+  - loka okrog $A$ in $B$ dasta $S$, poltrak $VS$
+  - vsak del meri $\dfrac{\alpha}{2}$, $110^\circ$ da $55^\circ$
+- Koti brez kotomera
+  - pravi kot razpolovljen: $45^\circ$
+  - $180^\circ - 45^\circ = 135^\circ$

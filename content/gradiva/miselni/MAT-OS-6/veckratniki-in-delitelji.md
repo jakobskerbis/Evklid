@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Večkratniki
+  - Skoki po premici: $4, 8, 12, \dots$
+  - Neskončno mnogo, najmanjši je število samo
+- Delitelji
+  - Deljenje brez ostanka
+  - Vedno $1$ in število samo
+- Pravokotniki in pari
+  - $24 = 4 \cdot 6$: $24$ je večkratnik $4$, $4$ je delitelj $24$
+  - Iskanje v parih, dokler se faktorja ne srečata
+- Zapis z množicami
+  - $V_4 = \{4, 8, 12, \dots\}$
+  - $D_{24} = \{1, 2, 3, 4, 6, 8, 12, 24\}$
+- Potenca
+  - $a^n$ je produkt $n$ enakih faktorjev $a$
+  - Tri oktave višje: $55 \cdot 2^3 = 440\,\mathrm{Hz}$
+- Vrstni red
+  - Potence pred množenjem
+  - $3 \cdot 2^3 = 24$
+- Pogoste pasti
+  - Napaka: $2^3 = 2 \cdot 3$
+  - Zamenjava večkratnika in delitelja

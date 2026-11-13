@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enaki imenovalci
+  - Večji števec, večji ulomek
+  - $\frac{2}{7} < \frac{5}{7}$
+- Enaki števci
+  - Manjši imenovalec, večji ulomek
+  - $\frac{3}{8} < \frac{3}{5}$
+  - Napaka: »večji imenovalec, večji ulomek«
+- Skupni imenovalec
+  - Najmanjši skupni večkratnik imenovalcev
+  - $\frac{5}{6} = \frac{15}{18}$, $\frac{7}{9} = \frac{14}{18}$
+  - Odgovor s prvotnima ulomkoma
+- Primerjava s polovico
+  - $\frac{a}{b} > \frac{1}{2}$, če je $2a > b$
+  - $\frac{5}{12} < \frac{1}{2} < \frac{4}{7}$
+- Urejanje
+  - Vse na skupni imenovalec, uredi števce
+  - $\frac{7}{12} < \frac{5}{8} < \frac{2}{3} < \frac{3}{4}$
+- Številska premica
+  - Večji ulomek leži bolj desno
+  - Razdelitev na skupni imenovalec

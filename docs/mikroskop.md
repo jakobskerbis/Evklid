@@ -1,7 +1,9 @@
 # Mikroskop
 
 Virtualni mikroskop od 40× do 50 000 000× (j, 12. 11. 2026: »Naj ima povečavo do 50000000«, »TEM«, »Naj bo možno vsako
-tkivo v 3D svetu pogledati z mikroskopom«). Svetlobni mikroskop do 1000×, nad tem presevni elektronski mikroskop (TEM).
+tkivo v 3D svetu pogledati z mikroskopom«). Trije načini (j, 13. 11. 2026: »optični, elektronski in TEM«): svetlobni
+mikroskop do 1000×, vrstični elektronski mikroskop (SEM, površina) od 40× do 300 000× in presevni elektronski mikroskop
+(TEM, rezina) do 50 000 000×. Ob drsniku povečave sta gumba − in + (tap en korak, držanje ponavlja).
 
 ## Kje je
 
@@ -15,10 +17,10 @@ tkivo v 3D svetu pogledati z mikroskopom«). Svetlobni mikroskop do 1000×, nad 
 | datoteka | vsebina |
 |---|---|
 | `mikroskop.js` | vmesnik: oder (platno, igla v okularju, oznaka pod kazalcem, merilce), plošča z nadzorom, izbirnik preparatov |
-| `optika.js` | objektivi, vidno polje, ločljivost, globinska ostrina, zamegljenost, ravni TEM (brez DOM, testi) |
+| `optika.js` | objektivi, vidno polje, ločljivost, globinska ostrina, zamegljenost, ravni TEM in SEM (brez DOM, testi) |
 | `pogled.js` | stanje → uniforme za izris |
 | `upodobi.js` | WebGL2: preparat → Gaussova zamegljenost → sloj molekul → sestava (okrogel okular ali TEM čez ves oder) |
-| `glsl.js` | skupni GLSL: šum, Voronoi celice, organeli, `ultra()` za TEM, membrane |
+| `glsl.js` | skupni GLSL: šum, Voronoi celice, organeli, `ultra()` za TEM, `semVisina()` za SEM, membrane |
 | `molekule.js` | sloj molekul in atomov (fosfolipidi, kolagen, DNK, hidroksiapatit …) |
 | `barvila.js` | barvanja kot Beer–Lambertova mešanica treh barvil (optične gostote) |
 | `mapa.js` | struktura atlasa ali model → preparat |
@@ -29,13 +31,16 @@ tkivo v 3D svetu pogledati z mikroskopom«). Svetlobni mikroskop do 1000×, nad 
 Objekt `{ id, ime, opis, barvanje, zacetek: { m, sredisce }, imena, snovi, isci, glsl }`. GLSL definira
 `T tkivo(vec2 p, float px)` (p v µm, px = µm na točko) in vrne snov, barvila, mejo, središče celice in jedra.
 TEM dobi isto `T` prek `ultra()`; posebnosti (diski paličic, prizme sklenine, virusi) gredo v
-`temPosebno(...)` z `#define IMA_TEM_POSEBNO`. Nov preparat: datoteka v `preparati/`, vrstica v `index.js`,
+`temPosebno(...)` z `#define IMA_TEM_POSEBNO`. SEM izračuna višino površine `semVisina()` iz istega `T`
+(posebnosti v `semPosebno(...)` z `#define IMA_SEM`). SEM je ločen program (`fragmentPreparata(koda, { sem: true })`),
+ki ga upodobi.js prevede šele ob prvem izrisu SEM, ker trikratni `tkivo()` sicer upočasni prevajanje in svetlobni način; preparat s prosto ležečimi celicami (razmaz, kapljica) začne GLSL
+z `#define SEM_PROSTE`, da so bakterije, kvasovke in levkociti kroglice ali valji na stekelcu. Nov preparat: datoteka v `preparati/`, vrstica v `index.js`,
 po potrebi pravilo v `mapa.js`; `test/mikroskop.test.js` preveri, da se prevede v pravilni obliki in da ima vsaka
 struktura atlasa in vsak model svoj preparat.
 
 ## Optika (kar je res)
 
-- Vidno polje: številka polja okularja 18 mm · 10 / M (svetloba), zaslon 160 mm / M (TEM).
+- Vidno polje: številka polja okularja 18 mm · 10 / M (svetloba), zaslon 160 mm / M (TEM), slika 127 mm / M (SEM).
 - Ločljivost: Rayleigh d = 1,22 λ / (NAobj + NAkond), λ = 0,55 µm; zaslonka določa NA kondenzorja.
 - Globinska ostrina n λ / NA²; razostritev zamegli sliko, objektivi so skoraj parfokalni (odmik ≤ 0,8 µm).
 - 100× brez imerzijskega olja: NA največ 0,95 in sferna aberacija, slika je mehka in temnejša (na odru se pokaže
@@ -43,6 +48,12 @@ struktura atlasa in vsak model svoj preparat.
 - TEM: rezina 70 nm, kontrast s težkimi kovinami, ločljivost biološkega vzorca ≈ 1–2 nm. Nad ~800 000× se slika
   postopoma prelije v model molekul in atomov; vmesnik to jasno pove (besedilo pod podatki), ker TEM posameznih
   molekul v mehkem tkivu ne loči. Pri kosti in zobu visokoločljivi TEM res pokaže mrežo kristala hidroksiapatita.
+
+- SEM: povečava se nanaša na sliko širine 127 mm; ločljivost ≈ 3 nm (zlata prevleka); globinska ostrina
+  D = 2 · (0,1 mm / M) / α z α = 5 mrad, torej mnogo večja kot pri svetlobnem mikroskopu. Svetlost je ponazoritev
+  sekundarnih elektronov: strme ploskve in robovi so svetli (robni učinek), detektor ob strani da senco, jame so temne.
+  Višina površine je izračunana iz preparata (eritrocit po Evansu in Fungu, celice v tkivu kot blazinice, vlakna kot
+  snopi, relief preloma je samopodoben), zato vmesnik pove, da je to ponazoritev.
 
 ## Viri
 
@@ -52,6 +63,10 @@ struktura atlasa in vsak model svoj preparat.
   Histol* 2001;23:291–299 (optične gostote barvil).
 - Murphy DB, Davidson MW. *Fundamentals of Light Microscopy and Electronic Imaging*, 2. izd. Wiley 2012 (ločljivost,
   globinska ostrina, imerzija).
+- Goldstein JI et al. *Scanning Electron Microscopy and X-Ray Microanalysis*, 4. izd. Springer 2018 (SEM, sekundarni
+  elektroni, robni učinek, globinska ostrina).
+- Evans E, Fung YC. Improved measurements of the erythrocyte geometry. *Microvasc Res* 1972;4:335–347 (oblika
+  eritrocita).
 - Williams DB, Carter CB. *Transmission Electron Microscopy*, 2. izd. Springer 2009 (TEM, kontrast, defokus).
 - Ke Z et al. Structures and distributions of SARS-CoV-2 spike proteins on intact virions. *Nature* 2020;588:498–502.
 - Briggs JAG, Kräusslich HG. The molecular architecture of HIV. *J Mol Biol* 2011;410:491–500.

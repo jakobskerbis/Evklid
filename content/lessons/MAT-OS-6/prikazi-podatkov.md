@@ -6,248 +6,353 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Vsak dan srečaš podatke: koliko je učencev v razredu, kakšna je bila včeraj temperatura, koliko točk je dosegla tvoja ekipa na tekmi, koliko gre kosov kruha na dan. Kadar so podatki zapisani vsi po vrsti, v dolgem besedilu ali na kupu listkov, jih težko pregledamo. Nihče ne vidi, katera številka je največja ali kako se stvari spreminjajo.
+Najprej uganka. Vremenar je dvajset dni zapored vsako jutro zapisal, kakšno je vreme. S pomeni sončno, O oblačno, D deževno:
 
-Zato podatke **uredimo** v preglednico in jih **narišemo** v obliki prikaza. Dobro narisan prikaz pove v nekaj sekundah to, kar bi v besedilu iskal minute. Pomaga ti pri šolskih nalogah, na primer pri naravoslovju in geografiji, pa tudi v časopisu, na spletu in pri odločanju: ali bo več glasov za izlet v Postojno ali na Bled?
+S, D, S, O, S, S, D, O, S, D, O, S, S, O, D, S, O, D, S, O
 
-V tej lekciji se boš naučil:
+Kakšnega vremena je bilo največ in koliko dni? Poskusi odgovoriti v desetih sekundah, preden bereš naprej.
 
-- podatke zbrati in urediti v **preglednici**,
-- jih narisati v **stolpčnem prikazu** in v **črtičnem prikazu**,
-- prikaze pravilno **brati** in razbrati, kar sprašuje naloga.
-
-Za računanje potrebuješ le seštevanje, odštevanje, množenje in deljenje, ki ga že znaš. Pri merilu na osi ti pomaga znanje o merskih enotah.
+Verjetno si začel šteti s prstom in se vmes zmedel. Podatki so pravilni, a na kupu. Ko jih uredimo, je odgovor viden takoj. Prav to delajo vremenarji, biologi, ki štejejo ptice, in vsak, ki želi iz številk hitro nekaj izvedeti.
 
 ## Razlaga
 
-**1. Podatki in zbiranje.** **Podatek** je zapisana informacija: ime ljubljenčka, število bratov in sester, temperatura, rezultat tekme. Podatke zbiramo z anketo (vprašamo ljudi), s štetjem (preštejemo avtomobile mimo šole) ali z merjenjem (vsak dan izmerimo temperaturo). Pri vsaki zbirki vedno vemo, kaj sprašujemo in koga smo vprašali.
+**1. Od kupa do štetja.** **Podatek** je zapisana informacija, na primer vreme enega dne. Podatke dobimo s štetjem, merjenjem ali anketo. Ko jih štejemo, za vsak podatek potegnemo eno črtico. Peto črtico potegnemo poševno čez prve štiri, da nastane **peterček**. Peterčke štejemo po pet, zato se ne zmotimo. Spodaj je tako preštet seznam iz uganke.
 
-Pogosto štejemo s črticami. Za vsak odgovor potegnemo eno črtico, pri petem odgovoru pa prve štiri črtice prečrtamo, tako da nastane »peterček«. Devet glasov za nogomet zapišemo kot en prečrtan peterček in še štiri črtice, šest glasov za košarko pa kot en peterček in še eno črtico:
+:::risba skica
+opis: Štetje s črticami. Sončno: en peterček (štiri navpične črtice, prečrtane s poševno) in še štiri črtice, skupaj 9. Oblačno: en peterček in ena črtica, skupaj 6. Deževno: en peterček, skupaj 5.
+območje: 0; 0,4 .. 7; 3,6
+enota: 40
+napis: 0,2; 3 | sončno | desno
+črta: 2,2; 2,7 -> 2,2; 3,3 | modra
+črta: 2,45; 2,7 -> 2,45; 3,3 | modra
+črta: 2,7; 2,7 -> 2,7; 3,3 | modra
+črta: 2,95; 2,7 -> 2,95; 3,3 | modra
+črta: 2,1; 2,75 -> 3,05; 3,25 | modra debelo
+črta: 3,5; 2,7 -> 3,5; 3,3 | modra
+črta: 3,75; 2,7 -> 3,75; 3,3 | modra
+črta: 4; 2,7 -> 4; 3,3 | modra
+črta: 4,25; 2,7 -> 4,25; 3,3 | modra
+napis: 6,2; 3 | 9 | desno
+napis: 0,2; 2 | oblačno | desno
+črta: 2,2; 1,7 -> 2,2; 2,3 | modra
+črta: 2,45; 1,7 -> 2,45; 2,3 | modra
+črta: 2,7; 1,7 -> 2,7; 2,3 | modra
+črta: 2,95; 1,7 -> 2,95; 2,3 | modra
+črta: 2,1; 1,75 -> 3,05; 2,25 | modra debelo
+črta: 3,5; 1,7 -> 3,5; 2,3 | modra
+napis: 6,2; 2 | 6 | desno
+napis: 0,2; 1 | deževno | desno
+črta: 2,2; 0,7 -> 2,2; 1,3 | modra
+črta: 2,45; 0,7 -> 2,45; 1,3 | modra
+črta: 2,7; 0,7 -> 2,7; 1,3 | modra
+črta: 2,95; 0,7 -> 2,95; 1,3 | modra
+črta: 2,1; 0,75 -> 3,05; 1,25 | modra debelo
+napis: 6,2; 1 | 5 | desno
+:::
 
-```
-nogomet:  ||||/  ||||    -> 9
-košarka:  ||||/  |       -> 6
-```
+Rešitev uganke: največ je bilo sončnih dni, $9$.
 
-Zapis v peterčkih nas varuje pred napakami pri štetju: peterčke hitro preštejemo po pet, posameznih črtic pa pri dolgem seznamu ne bi mogli zanesljivo prešteti.
+**2. Preglednica.** Carrollov diagram že poznaš: tabela, v katero vpišeš vsak element v pravo polje. **Preglednica** je tudi tabela, a z eno razliko. Vanjo ne pišemo posameznih elementov, ampak **koliko** jih je. V prvem stolpcu so **kategorije** (kaj štejemo), v drugem **števila** (kolikokrat se kategorija pojavi).
 
-**2. Preglednica.** **Preglednica** (tabela) je urejen zapis podatkov v vrsticah in stolpcih. V prvem stolpcu so **kategorije** (kaj štejemo ali merimo), v drugem **števila** (koliko jih je). Primer preglednice o priljubljenem športu v razredu:
-
-| Šport | Število učencev |
+| Vreme | Število dni |
 |---|---|
-| nogomet | $9$ |
-| košarka | $6$ |
-| plavanje | $5$ |
-| odbojka | $3$ |
-| atletika | $2$ |
-| **Skupaj** | $25$ |
+| sončno | $9$ |
+| oblačno | $6$ |
+| deževno | $5$ |
+| **Skupaj** | $20$ |
 
-Iz preglednice lahko že veliko razbereš: največ učencev ima rado nogomet, najmanj atletiko. Skupaj smo vprašali $9 + 6 + 5 + 3 + 2 = 25$ učencev. Vrstica »Skupaj« je tudi preizkus: ko vsota ne ustreza številu vprašanih, smo se nekje zmotili.
+Vrstica »Skupaj« je preizkus: $9 + 6 + 5 = 20$, toliko dni je vremenar opazoval.
 
-**3. Stolpčni prikaz.** V **stolpčnem prikazu** (stolpčnem diagramu) je vsaka kategorija narisana kot **stolpec**. Višina stolpca je sorazmerna s številom: večje število pomeni višji stolpec. Stolpčni prikaz je primeren, kadar primerjamo različne kategorije med seboj (šport, domače živali, barve).
+:::premisli
+Sošolec je preštel isti seznam in v vrstico »Skupaj« dobil $19$. Kaj mu ta vsota pove, čeprav ne vidiš njegovih črtic?
+---
+Da je en dan izpustil. Vsak dan ima natanko eno vreme, zato mora biti vsota enaka številu dni, $20$. Ponovno mora prešteti.
+:::
 
-Dober stolpčni prikaz ima:
+**3. Stolpčni prikaz.** Preglednica pove natančna števila, a primerjati jih moraš sam. **Stolpčni prikaz** pokaže ista števila kot sliko: vsaka kategorija dobi **stolpec**, njegova višina je enaka številu. Kar si v preglednici bral, zdaj vidiš.
 
-- **naslov**, ki pove, o čem je prikaz,
-- **vodoravno os** s kategorijami in **navpično os** s številkami,
-- **oznake osi** z enotami (na primer »število učencev«),
-- enako široke stolpce z enakimi razmiki,
-- navpično os, ki se začne pri $0$.
+:::risba stolpci
+opis: Stolpčni prikaz »Vreme v 20 dneh«. Na navpični osi je število dni od 0 do 9. Stolpci: sončno 9, oblačno 6, deževno 5.
+podnapis: Vreme v 20 dneh
+os: število dni
+korak: 1
+stolpec: sončno | 9
+stolpec: oblačno | 6
+stolpec: deževno | 5
+:::
 
-**4. Merilo.** Navpična os ima **merilo**: pove, koliko pomeni en kvadratek ali ena črtica na osi. Kadar so števila majhna, je merilo lahko $1$. Pri večjih številih ga povečamo, na primer $1$ kvadratek pomeni $4$ knjige. Višino stolpca potem dobimo z deljenjem:
+Dober stolpčni prikaz ima naslov, kategorije na **vodoravni osi**, števila na **navpični osi**, oznako osi (»število dni«), enako široke stolpce in navpično os, ki se začne pri $0$. Samo če se os začne pri $0$, je dvakrat višji stolpec res dvakrat večje število.
 
-$$\text{višina stolpca} = \text{vrednost} : \text{merilo}$$
+**4. Merilo.** Na kvadratkastem papirju en kvadratek ne pomeni vedno enega dneva. Pri večjih številih izberemo **merilo**, na primer $1$ kvadratek pomeni $2$ dneva. Višino stolpca v kvadratkih dobimo z deljenjem, vrednost iz višine pa z množenjem:
 
-Če podatki ne gredo v celo število kvadratkov, izberemo drugo merilo.
+$$\text{višina} = \text{vrednost} : \text{merilo}$$
 
-**5. Črtični prikaz.** Za podatke, ki se **spreminjajo skozi čas** (temperatura po dnevih, višina rastline po tednih, število obiskovalcev po mesecih), uporabimo **črtični prikaz** (črtni diagram). Za vsak čas narišemo točko na višini ustrezne vrednosti, točke pa povežemo z daljicami. Črta nam pokaže, kdaj vrednosti **naraščajo** (črta se dviguje), **padajo** (črta se spušča) ali so **stalne** (črta je vodoravna).
+$$\text{vrednost} = \text{višina} \cdot \text{merilo}$$
 
-Točke povezujemo samo tedaj, ko imajo vmesne vrednosti smisel. Temperatura se med dvema meritvama spreminja postopoma in ima ves čas neko vrednost, zato ima črta smisel (vmesne vrednosti na njej so le ocena). Pri številu učencev v različnih razredih pa vmesnega »razreda« ni, zato tam rišemo stolpce.
+**5. Črtični prikaz.** Primerjajmo ga s stolpčnim prikazom. Podobnost: vsaka kategorija ima svoje mesto na vodoravni osi, višina pove število. Razlika: namesto debelega stolpca narišemo tanko navpično **črtico** in na njen vrh piko. Bere se enako kot stolpčni prikaz. Ker so črtice tanke, gre na os veliko kategorij, na primer vsi dnevi v tednu.
 
-**6. Kako beremo prikaz.**
+:::risba graf
+opis: Črtični prikaz »Temperatura opoldne«. Na vodoravni osi so dnevi od ponedeljka do petka, na navpični stopinje Celzija od 0 do 20. Črtice so visoke: ponedeljek 12, torek 15, sreda 15, četrtek 18, petek 14. Vrhovi so povezani s črtkano črto.
+x: 0 .. 6 | 1 | dan
+y: 0 .. 20 | 2 | °C
+oznake: ne
+oznakax: 1 | pon
+oznakax: 2 | tor
+oznakax: 3 | sre
+oznakax: 4 | čet
+oznakax: 5 | pet
+oznakay: 0 | 0
+oznakay: 4 | 4
+oznakay: 8 | 8
+oznakay: 12 | 12
+oznakay: 16 | 16
+oznakay: 20 | 20
+črta: 1; 0 -> 1; 12 | modra debelo
+črta: 2; 0 -> 2; 15 | modra debelo
+črta: 3; 0 -> 3; 15 | modra debelo
+črta: 4; 0 -> 4; 18 | modra debelo
+črta: 5; 0 -> 5; 14 | modra debelo
+črta: 1; 12 -> 2; 15 -> 3; 15 -> 4; 18 -> 5; 14 | siva črtkano
+točka: 1; 12 | 12 | nad | modra
+točka: 2; 15 | 15 | nad | modra
+točka: 3; 15 | 15 | nad | modra
+točka: 4; 18 | 18 | nad | modra
+točka: 5; 14 | 14 | nad | modra
+:::
+
+Ko si kategorije sledijo **po času**, lahko vrhove po vrsti povežemo (na sliki črtkano). Povezava pokaže potek: kjer se dviga, vrednosti **naraščajo**, kjer se spušča, **padajo**, vodoravna pomeni, da so **enake**. Med torkom in sredo je vodoravna, ker je bilo oba dneva $15\,^\circ\text{C}$.
+
+:::premisli
+Na prikaz z vrstami ptic na krmilnici (sinice, vrabci, kosi) bi nekdo rad dodal črto, ki povezuje vrhove črtic. Ali ima ta črta smisel? Zakaj?
+---
+Nima. Med sinicami in vrabci ni nobene »vmesne« vrste in vrstni red vrst je izbran poljubno. Če ga zamenjaš, se črta spremeni, podatki pa ne. Vrhove povezujemo samo, kadar si kategorije sledijo po času.
+:::
+
+**6. Branje prikaza.** Kadar prikaz bereš, pojdi vedno po istem vrstnem redu:
 
 1. Preberi **naslov**: o čem govori prikaz?
-2. Preberi **oznaki osi** in **enoto**.
-3. Poglej **merilo**: koliko pomeni en kvadratek?
-4. Odčitaj vrednost: od vrha stolpca ali točke se premakni vodoravno do osi.
-5. Odgovori s stavkom in enoto.
+2. Preberi oznaki osi in **enoto**.
+3. Poišči **merilo**: koliko pomeni en kvadratek ali ena oznaka?
+4. Od vrha stolpca ali pike pojdi vodoravno do navpične osi in odčitaj vrednost.
+5. Odgovori s stavkom in enoto. »Za koliko več« pomeni odštevanje, »skupaj« seštevanje.
 
-Pri primerjavah računamo z razlikami: »za koliko več« pomeni odštevanje, »skupaj« pa seštevanje.
-
-Interaktivna simulacija spodaj (**Prikazi podatkov**) ti omogoča, da vnašaš podatke in opazuješ, kako se oblikuje stolpčni prikaz.
+V simulaciji spodaj (**Prikazi podatkov**) povečaj eno od števil za $1$. Opazuj, da zraste samo stolpec te kategorije, za natanko eno oznako na osi, ostali stolpci pa ostanejo enaki.
 
 ## Rešeni primeri
 
-### Primer 1 (lažji)
+### Primer 1: ptice na krmilnici
 
-V razredu so vprašali $25$ učencev po priljubljenem športu. Odgovori so v preglednici: nogomet $9$, košarka $6$, plavanje $5$, odbojka $3$, atletika $2$. Kateri šport je najbolj priljubljen? Za koliko več učencev ima rado nogomet kot odbojko? Preveri, ali se vsota ujema s številom vprašanih.
+Učenci so deset minut opazovali krmilnico in prešteli ptice. Preglednica: sinice $12$, vrabci $9$, ščinkavci $6$, kosi $3$. Koliko ptic so videli skupaj? Za koliko več je bilo sinic kot kosov in kolikokrat več?
 
-**Podatki:** število vprašanih $25$, nogomet $9$, košarka $6$, plavanje $5$, odbojka $3$, atletika $2$ (število učencev)
-**Iščemo:** najbolj priljubljen šport, razliko med nogometom in odbojko ter preizkus vsote
+**Podatki:** sinice $12$, vrabci $9$, ščinkavci $6$, kosi $3$ (število ptic v $10$ minutah)
+**Iščemo:** skupno število ptic, razliko in količnik med sinicami in kosi
 
 :::formula
-Najbolj priljubljena kategorija ima največje število. Razlika: $\text{večje število} - \text{manjše število}$. Skupaj: vsota vseh števil.
+Skupaj: vsota vseh števil. Za koliko več: $\text{večje} - \text{manjše}$. Kolikokrat več: $\text{večje} : \text{manjše}$.
 :::
 
 **Rešitev:**
 
-1. Največje število je $9$, zato je najbolj priljubljen nogomet.
-2. Razlika: $9 - 3 = 6$.
-3. Preizkus: $9 + 6 + 5 + 3 + 2 = 25$, kar je enako številu vprašanih.
-4. Odgovor: najbolj priljubljen je nogomet; nogomet ima rado za $6$ učencev več kot odbojka. Vsota se ujema ($25$ učencev).
+1. Skupaj seštejemo vse vrstice: $12 + 9 + 6 + 3 = 30$ ptic.
+2. Razlika pove »za koliko«: $12 - 3 = 9$.
+3. Količnik pove »kolikokrat«: $12 : 3 = 4$.
+4. Odgovor: videli so $30$ ptic; sinic je bilo za $9$ več kot kosov, to je $4$-krat toliko.
 
-### Primer 2 (srednji)
+### Primer 2: deževni dnevi na kvadratkastem papirju
 
-Štirje učenci so v mesecu prebrali knjige: Ana $12$, Bor $8$, Cene $20$, Dara $16$. Stolpčni prikaz rišemo na kvadratkast papir tako, da en kvadratek navpično pomeni $4$ knjige. Kako visok mora biti stolpec za vsakega učenca? Koliko knjig so prebrali skupaj?
+Vremenska postaja je naštela deževne dni: marec $8$, april $12$, maj $14$, junij $10$. Narisati želimo stolpčni prikaz, v katerem $1$ kvadratek pomeni $2$ dneva. Kako visoki so stolpci? Koliko deževnih dni je bilo v štirih mesecih?
 
-**Podatki:** Ana $12$ knjig, Bor $8$ knjig, Cene $20$ knjig, Dara $16$ knjig; merilo: $1$ kvadratek $= 4$ knjige
-**Iščemo:** višino vsakega stolpca v kvadratkih in skupno število knjig
+**Podatki:** marec $8$, april $12$, maj $14$, junij $10$ (deževnih dni); merilo: $1$ kvadratek $= 2$ dneva
+**Iščemo:** višino vsakega stolpca v kvadratkih in skupno število deževnih dni
 
 :::formula
-$\text{višina stolpca} = \text{vrednost} : \text{merilo}$
+$\text{višina} = \text{vrednost} : \text{merilo}$
 :::
 
 **Rešitev:**
 
-1. Ana: $12 : 4 = 3$ kvadratki.
-2. Bor: $8 : 4 = 2$ kvadratka.
-3. Cene: $20 : 4 = 5$ kvadratkov.
-4. Dara: $16 : 4 = 4$ kvadratki.
-5. Preizkus: najvišji stolpec je Cenetov, kar ustreza največjemu številu knjig. Skupaj: $12 + 8 + 20 + 16 = 56$ knjig.
-6. Odgovor: stolpci so visoki $3$, $2$, $5$ in $4$ kvadratke; učenci so skupaj prebrali $56$ knjig.
+1. Marec: $8 : 2 = 4$ kvadratki.
+2. April: $12 : 2 = 6$ kvadratkov.
+3. Maj: $14 : 2 = 7$ kvadratkov.
+4. Junij: $10 : 2 = 5$ kvadratkov.
+5. Preizkus: najvišji stolpec je majski, kar ustreza največjemu številu dni. Skupaj: $8 + 12 + 14 + 10 = 44$ dni.
+6. Odgovor: stolpci so visoki $4$, $6$, $7$ in $5$ kvadratkov; deževnih dni je bilo $44$.
 
-### Primer 3 (težji)
+### Primer 3: jutranje temperature
 
-Gregor je vsak dan ob osmih zjutraj izmeril temperaturo zraka. V ponedeljek je bilo $4\,^\circ\text{C}$, v torek $7\,^\circ\text{C}$, v sredo $9\,^\circ\text{C}$, v četrtek $9\,^\circ\text{C}$, v petek $6\,^\circ\text{C}$ in v soboto $2\,^\circ\text{C}$. Podatke je narisal v črtični prikaz. Katera dneva sta bila najtoplejša? Za koliko stopinj se razlikujeta najtoplejši in najhladnejši dan? Med katerima zaporednima dnevoma je temperatura najbolj padla in zakaj je tu primeren črtični prikaz?
+Gregor je vsak dan ob osmih zjutraj izmeril temperaturo zraka: ponedeljek $4\,^\circ\text{C}$, torek $7\,^\circ\text{C}$, sreda $9\,^\circ\text{C}$, četrtek $9\,^\circ\text{C}$, petek $6\,^\circ\text{C}$, sobota $2\,^\circ\text{C}$. Narisal je črtični prikaz in vrhove povezal. Za koliko stopinj se razlikujeta najtoplejše in najhladnejše jutro? Med katerima zaporednima dnevoma je temperatura najbolj padla?
 
-**Podatki:** ponedeljek $4\,^\circ\text{C}$, torek $7\,^\circ\text{C}$, sreda $9\,^\circ\text{C}$, četrtek $9\,^\circ\text{C}$, petek $6\,^\circ\text{C}$, sobota $2\,^\circ\text{C}$ (temperatura ob osmih zjutraj)
-**Iščemo:** najtoplejša dneva, razliko med največjo in najmanjšo temperaturo, največji padec med zaporednima dnevoma in zakaj je primeren črtični prikaz
+**Podatki:** pon $4\,^\circ\text{C}$, tor $7\,^\circ\text{C}$, sre $9\,^\circ\text{C}$, čet $9\,^\circ\text{C}$, pet $6\,^\circ\text{C}$, sob $2\,^\circ\text{C}$ (ob osmih zjutraj)
+**Iščemo:** razliko med največjo in najmanjšo temperaturo ter največji padec med zaporednima dnevoma
 
 :::formula
-Razlika zaporednih vrednosti: $\text{novejša} - \text{starejša}$ ($>0$ naraščanje, $<0$ padanje, $0$ stalno). Razpon: $\text{največja} - \text{najmanjša}$.
+Porast: $\text{novejša} - \text{starejša}$. Padec: $\text{starejša} - \text{novejša}$. Razpon: $\text{največja} - \text{najmanjša}$.
 :::
 
 **Rešitev:**
 
-1. Najvišja točka na prikazu je pri $9\,^\circ\text{C}$, to sta sreda in četrtek.
-2. Najnižja točka je pri $2\,^\circ\text{C}$ (sobota). Razlika: $9 - 2 = 7\,^\circ\text{C}$.
-3. Spremembe po dnevih: ponedeljek-torek $7 - 4 = +3$, torek-sreda $9 - 7 = +2$, sreda-četrtek $9 - 9 = 0$, četrtek-petek $6 - 9 = -3$, petek-sobota $2 - 6 = -4$.
-4. Največji padec je za $4\,^\circ\text{C}$, od petka do sobote. To je tudi najstrmejši spust črte.
-5. Črtični prikaz je primeren, ker se temperatura skozi čas spreminja in nas zanima potek: črta kaže naraščanje (do srede), mirovanje (od srede do četrtka) in padanje (od četrtka naprej).
-6. Odgovor: najtoplejša sta sreda in četrtek ($9\,^\circ\text{C}$); razlika med najtoplejšim in najhladnejšim dnem je $7\,^\circ\text{C}$; temperatura je najbolj padla od petka do sobote, za $4\,^\circ\text{C}$; črtični prikaz je primeren, ker prikazuje spreminjanje temperature skozi čas.
+1. Najvišji piki sta pri $9\,^\circ\text{C}$ (sreda in četrtek), najnižja pri $2\,^\circ\text{C}$ (sobota).
+2. Razpon: $9 - 2 = 7\,^\circ\text{C}$.
+3. Spremembe po dnevih: od ponedeljka do srede temperatura narašča ($7 - 4 = 3$, $9 - 7 = 2$), od srede do četrtka je enaka, nato pada: od četrtka do petka za $9 - 6 = 3$, od petka do sobote za $6 - 2 = 4$.
+4. Največji padec je za $4\,^\circ\text{C}$, od petka do sobote. Tam se povezava spušča najbolj strmo.
+5. Odgovor: najtoplejše in najhladnejše jutro se razlikujeta za $7\,^\circ\text{C}$; najbolj je temperatura padla od petka do sobote, za $4\,^\circ\text{C}$.
+
+### Primer 4: zdaj ti
+
+Na stolpčnem prikazu ptic na krmilnici $1$ kvadratek pomeni $5$ ptic. Stolpec za sinice je visok $7$ kvadratkov, stolpec za kose je za $3$ kvadratke nižji. Za koliko več sinic kot kosov je bilo?
+
+**Podatki:** merilo $1$ kvadratek $= 5$ ptic; sinice $7$ kvadratkov; kosi $3$ kvadratke manj
+**Iščemo:** razliko v številu ptic
+
+:::formula
+$\text{vrednost} = \text{višina} \cdot \text{merilo}$
+:::
+
+**Rešitev:**
+
+1. Sinice: $7 \cdot 5 = 35$ ptic.
+2. Stolpec za kose je visok $7 - 3 = 4$ kvadratke.
+3. Izračunaj sam število kosov in razliko, nato preveri:
+
+:::premisli
+Koliko je kosov in za koliko več je sinic?
+---
+Kosov je $4 \cdot 5 = 20$, sinic je za $35 - 20 = 15$ več. Krajše: razlika $3$ kvadratkov pomeni $3 \cdot 5 = 15$ ptic. Odgovor $3$ dobiš, če pozabiš na merilo.
+:::
 
 ## Pogoste napake
 
-- **Navpična os se ne začne pri $0$.** Učenec začne os pri $5$ ali pri $46$, da bi bil prikaz »večji«. Razlog: želi videti razlike. Posledica: kratek stolpec je videti nekajkrat nižji, kot je v resnici. Pravilno: stolpčni prikaz vedno začnemo pri $0$.
-- **Neenakomerno merilo.** Ob osi so razmaki različni: $0, 5, 10, 20, 25$. Razlog: nepozornost pri risanju. Posledica: višina stolpca ne pove prave vrednosti. Pravilno: vsak kvadratek pomeni isto število, zaporedna števila pri osi so $0, 5, 10, 15, 20, \dots$.
-- **Odčitek brez pogleda na merilo.** Učenec prešteje kvadratke in odgovori »6 učencev«, čeprav en kvadratek pomeni $5$ učencev. Razlog: pozabi na merilo. Pravilno: višino v kvadratkih pomnožimo z merilom, $6 \cdot 5 = 30$ učencev.
-- **Črtični prikaz za neprimerne podatke.** Učenec poveže točke za število učencev v različnih razredih. Razlog: misli, da je črta vedno lepša. Pravilno: črto uporabimo samo za podatke, ki se spreminjajo skozi čas; kategorije primerjamo s stolpci.
-- **Manjkajo naslov, oznake in enote.** Prikaz ima samo stolpce in številke. Razlog: mislimo, da je »vse jasno«. Posledica: nihče ne ve, kaj številke pomenijo. Pravilno: dodaj naslov, oznake osi in enoto.
+- **Odčitek brez merila.** Učenec prešteje $6$ kvadratkov in reče »$6$ ptic«, čeprav en kvadratek pomeni $5$ ptic. Kvadratki niso ptice, so le višina. Pravilno: višino pomnožimo z merilom, $6 \cdot 5 = 30$ ptic.
+- **Navpična os se ne začne pri $0$.** Učenec pri številih $48$ in $50$ začne os pri $46$, da bi se razlika bolje videla. Takrat višina stolpca ni več sorazmerna z vrednostjo in majhna razlika je videti ogromna. Pravilno: pri stolpčnem in črtičnem prikazu os začnemo pri $0$.
+- **Neenakomerne oznake na osi.** Ob osi piše $0, 5, 10, 20, 25$. Enak razmik pa mora pomeniti enako število, sicer višine lažejo. Pravilno: $0, 5, 10, 15, 20, 25$.
+- **Povezovanje kategorij, ki si ne sledijo po času.** Učenec poveže vrhove za vrste ptic, ker se mu črta zdi lepša. Črta bi kazala »naraščanje« med vrstami, ki ga ni. Pravilno: povezujemo le vrednosti, ki si sledijo v času.
+- **Prikaz brez naslova in oznak.** Narisani so le stolpci s številkami. Bralec ne ve, ali gre za dneve, ptice ali stopinje. Pravilno: naslov, oznaki osi in enota.
 
 ## Povzetek
 
-- Podatke zberemo (anketa, štetje, merjenje) in uredimo v **preglednico** s kategorijami in števili; vrstica »Skupaj« je preizkus.
-- **Stolpčni prikaz** primerja kategorije; višina stolpca je sorazmerna s številom, os se začne pri $0$.
-- **Črtični prikaz** kaže spreminjanje skozi čas: črta narašča, pada ali je vodoravna.
-- Višina stolpca: $\text{vrednost} : \text{merilo}$; vrednost iz višine: $\text{višina} \cdot \text{merilo}$.
-- Pri branju vedno preberi naslov, oznake osi, enoto in merilo.
-- »Za koliko več/manj« je razlika (odštevanje), »skupaj« je vsota.
+- Podatke preštejemo s črticami (peterčki) in zapišemo v **preglednico**: kategorija in število; vrstica »Skupaj« je preizkus.
+- **Stolpčni prikaz**: vsaka kategorija ima stolpec, višina je enaka številu; os se začne pri $0$.
+- **Črtični prikaz**: namesto stolpcev tanke črtice s piko na vrhu; bere se enako.
+- Kadar si kategorije sledijo po času, vrhove povežemo in vidimo naraščanje, padanje ali enake vrednosti.
+- Merilo: $\text{višina} = \text{vrednost} : \text{merilo}$ in $\text{vrednost} = \text{višina} \cdot \text{merilo}$.
+- Pri branju: naslov, osi, enota, merilo, odčitek, odgovor s stavkom.
 
 ## Drugače: Na sliki
 
-Stolpčni prikaz za podatke iz preglednice (višina stolpca pove število učencev):
+Dve vremenski postaji sta v enem letu našteli $48$ in $50$ deževnih dni. Ista števila sta spodaj narisana dvakrat. Levo se navpična os začne pri $0$, desno pri $46$.
 
-:::risba stolpci
-opis: Stolpčni prikaz »Priljubljen šport v razredu«. Na navpični osi je število učencev. Stolpci: nogomet 9, košarka 6, plavanje 5, odbojka 3, atletika 2.
-podnapis: Priljubljen šport v razredu
-os: število učencev
-korak: 2
-stolpec: nogomet | 9
-stolpec: košarka | 6
-stolpec: plavanje | 5
-stolpec: odbojka | 3
-stolpec: atletika | 2
+:::risba skica
+opis: Dva stolpčna prikaza istih števil 48 in 50. Levi ima os od 0: stolpca sta skoraj enako visoka. Desni ima os od 46: stolpec za 48 je visok 2 enoti, stolpec za 50 pa 4 enote, torej je videti dvakrat višji.
+območje: 0; 0 .. 11; 6,6
+enota: 25
+črta: 1; 0,9 -> 1; 6,2 | siva
+črta: 1; 0,9 -> 4,5; 0,9 | siva
+pravokotnik: 1,5; 0,9 .. 2,5; 5,7 | modra
+pravokotnik: 3; 0,9 .. 4; 5,9 | oranžna
+napis: 2; 5,7 | 48 | nad
+napis: 3,5; 5,9 | 50 | nad
+napis: 1; 0,9 | 0 | levo
+napis: 2,75; 0,9 | os od 0 | pod
+črta: 7; 0,9 -> 7; 6,2 | siva
+črta: 7; 0,9 -> 10,5; 0,9 | siva
+pravokotnik: 7,5; 0,9 .. 8,5; 2,9 | modra
+pravokotnik: 9; 0,9 .. 10; 4,9 | oranžna
+napis: 8; 2,9 | 48 | nad
+napis: 9,5; 4,9 | 50 | nad
+napis: 7; 0,9 | 46 | levo
+napis: 8,75; 0,9 | os od 46 | pod
 :::
 
-Najvišji stolpec je nogomet, najnižji atletika. Prikaz ti da občutek za velikost brez računanja. Kategorije so pod vodoravno osjo, števila ob navpični.
-
-Črtični prikaz si predstavljaj kot točke na mrežnem papirju. Vodoravno so dnevi, navpično temperature:
-
-| Dan | pon | tor | sre | čet | pet | sob |
-|---|---|---|---|---|---|---|
-| Temperatura [$^\circ\text{C}$] | $4$ | $7$ | $9$ | $9$ | $6$ | $2$ |
-
-Točke so na višinah $4, 7, 9, 9, 6, 2$. Ko jih povežeš, nastane črta, ki se najprej dviga (pon do sre), je potem vodoravna (sre do čet) in nato pada (čet do sob).
-
-V simulaciji spodaj spreminjaj številke in glej, kako se stolpci višajo in nižajo.
+Levo vidiš resnico: stolpca sta skoraj enaka, saj se števili razlikujeta le za $2$. Desno je stolpec za $50$ visok $50 - 46 = 4$ enote, stolpec za $48$ pa $48 - 46 = 2$ enoti. Desni stolpec je videti dvakrat višji, čeprav je deževnih dni le malo več. Zato stolpčni prikaz vedno začnemo pri $0$.
 
 ## Drugače: Iz vsakdanjega življenja
 
-**Vremenska napoved.** Na televiziji in v telefonu vidiš črtični prikaz temperatur za naslednjih nekaj dni. Če črta narašča, bo topleje, če pada, bo hladneje. Vodoravna črta pomeni, da se temperatura ne bo spremenila.
+**Vremenska napoved v telefonu.** Za naslednje dni pokaže temperature s pikami, povezanimi s črto. Če se dviga, bo topleje; če pada, bo hladneje. Dnevi si sledijo po času, zato ima povezava smisel.
 
-**Glasovanje za izlet.** Razred izbira med Postojnsko jamo, Bledom in Piranom. Učiteljica prešteje glasove in jih zapiše v preglednico. Ker želi, da vsi vidijo, kateri izlet je najbolj priljubljen, nariše stolpčni prikaz. Najvišji stolpec zmaga, kategorije pa med seboj primerjamo.
+**Vodostaj reke.** Hidrologi vsak dan zapišejo, kako visoko je reka. Ko po nalivu povezava strmo zraste, vedo, da prihaja visoka voda.
 
-**Rast fižola.** Fižolček v lončku mereš vsak teden in zapisuješ: $2\,\text{cm}$, $5\,\text{cm}$, $9\,\text{cm}$, $14\,\text{cm}$. To je preglednica merjenj skozi čas. S črtičnim prikazom takoj vidiš, da rastlina raste, in sicer vedno hitreje, kar izveš iz tega, da se črta vedno bolj strmo dviguje. (Rasti: $+3$, $+4$, $+5$ centimetrov na teden.)
+**Rast fižola.** Fižolček v lončku meriš vsak teden: $2\,\text{cm}$, $5\,\text{cm}$, $9\,\text{cm}$, $14\,\text{cm}$. Tedenski prirastki so $3$, $4$ in $5$ centimetrov, zato se povezava vsak teden dviga bolj strmo: rastlina raste vedno hitreje.
 
-Povsod je cilj enak: ne gledamo posameznih številk, ampak **celotno sliko**.
-
-## Drugače: Korak za korakom s številkami
-
-Nariši stolpčni prikaz iz teh podatkov: število avtomobilov, ki so v petih minutah peljali mimo šole: rdeči $15$, beli $20$, črni $10$, modri $5$.
-
-1. **Podatki v preglednico:** rdeči $15$, beli $20$, črni $10$, modri $5$. Skupaj: $15 + 20 + 10 + 5 = 50$ avtomobilov.
-2. **Izberi merilo.** Največje število je $20$. Če izberemo, da en kvadratek pomeni $5$ avtomobilov, bo najvišji stolpec visok $20 : 5 = 4$ kvadratke, kar se prilega na list. Vsa števila so deljiva s $5$, zato so višine cela števila.
-3. **Izračunaj višine:** rdeči $15 : 5 = 3$, beli $20 : 5 = 4$, črni $10 : 5 = 2$, modri $5 : 5 = 1$ kvadratek.
-4. **Nariši osi.** Vodoravna os: kategorije z enakimi razmiki. Navpična os: oznake $0, 5, 10, 15, 20$ (števila avtomobilov).
-5. **Nariši stolpce** enake širine z izračunanimi višinami.
-6. **Dodaj naslov** (»Barve avtomobilov mimo šole«) in oznako osi (»število avtomobilov«).
-7. **Preveri:** najvišji stolpec je beli ($20$), najnižji modri ($5$). Razlika med njima: $20 - 5 = 15$ avtomobilov.
-
-Ko prikaz bereš nazaj, postopek obrneš: stolpec je visok $3$ kvadratke, merilo je $5$, torej je vrednost $3 \cdot 5 = 15$.
-
-## Drugače: Bolj natančno
-
-**Vrste podatkov.** Pri stolpčnem prikazu so kategorije pogosto **opisni podatki** (barva, šport, žival), števila pa so **štetja**. Pri črtičnem prikazu je na vodoravni osi čas, pogosto neprekinjena količina, zato lahko točke povežemo.
-
-**Zakaj se os začne pri $0$.** Višina stolpca mora biti sorazmerna z vrednostjo: stolpec za dvakrat večjo vrednost mora biti dvakrat višji. To drži samo, če se os začne pri $0$. Primer: dva razreda imata $48$ in $50$ učencev. Če narišemo os od $46$, sta stolpca visoka $48 - 46 = 2$ in $50 - 46 = 4$ enoti. Drugi stolpec je videti dvakrat višji, čeprav je v resnici le za dva učenca večji. To je zavajajoč prikaz.
-
-**Izbira merila.** Merilo izberemo tako, da je največji stolpec dovolj velik, a se prilega na list, in tako da so vse višine lahko odčitati. Priročna merila so $1$, $2$, $5$, $10$, $20$ in podobno. Če izberemo merilo $3$, so oznake na osi $3, 6, 9, \dots$ in prikaz je težje brati.
-
-**Bralne napake.** Pri črtičnem prikazu je odčitek le na označenih točkah dober. Vrednosti med točkama so ocena, ne meritev. Pri branju je pomembna tudi strmina črte: bolj strma črta pomeni večjo spremembo v enem koraku. V Primeru 3 je padec od petka do sobote ($4\,^\circ\text{C}$) strmejši od padca od četrtka do petka ($3\,^\circ\text{C}$).
-
-**Pregled in preizkus.** Pri vsakem prikazu preveri, ali se vsota števil ujema s številom vseh podatkov in ali stolpci ustrezajo preglednici. Ta navada te obvaruje pred napakami pri prepisovanju in risanju.
+**Ptice na krmilnici.** Število sinic, vrabcev in kosov primerjaš s stolpci ali črticami, vrhov pa ne povežeš. Med vrstami ni časa, ki bi tekel.
 
 ## Preveri se
 
-? V preglednici so števila učencev po razredih: $7$, $5$, $9$ in $4$. Koliko učencev je skupaj?
-- $21$
-+ $25$
-- $26$
-> $7 + 5 + 9 + 4 = 25$. Odgovora $21$ in $26$ dobiš z napako pri seštevanju.
+? Katera trditev o prikazih podatkov je pravilna?
+- Vrhove črtic v črtičnem prikazu vedno povežemo s črto.
+~ Povezujemo samo vrednosti, ki si sledijo po času. Med vrstami ptic ali vrstami vremena ni »vmesnih« vrednosti.
++ V stolpčnem prikazu se navpična os začne pri $0$.
+- Širši stolpec pomeni večje število.
+~ Vsi stolpci so enako široki. Število pove samo višina.
+- Merilo pove, koliko podatkov smo zbrali skupaj.
+~ Merilo pove, koliko pomeni en kvadratek. Vse podatke skupaj dobiš z vsoto v preglednici.
+> Samo če se os začne pri $0$, je dvakrat višji stolpec res dvakrat večje število.
 
-? Na prikazu en kvadratek pomeni $5$ učencev. Stolpec je visok $6$ kvadratkov. Koliko učencev predstavlja?
-- $6$ učencev
-- $11$ učencev
-+ $30$ učencev
-> Višino pomnožimo z merilom: $6 \cdot 5 = 30$. Odgovor $6$ dobiš, če pozabiš na merilo, odgovor $11$ pa, če višini prišteješ merilo.
+? Na prikazu en kvadratek pomeni $5$ deževnih dni. Stolpec za leto 2025 je visok $6$ kvadratkov. Koliko deževnih dni prikazuje?
+= 30
+~ 6 | To je višina v kvadratkih. Pomnoži jo še z merilom.
+~ 11 | Višino in merilo si seštel. Vsak kvadratek pomeni $5$ dni, zato množimo.
+> $\text{vrednost} = \text{višina} \cdot \text{merilo} = 6 \cdot 5 = 30$ dni.
 
-? Temperature: ponedeljek $5\,^\circ\text{C}$, torek $8\,^\circ\text{C}$, sreda $8\,^\circ\text{C}$, četrtek $3\,^\circ\text{C}$. Med katerima dnevoma je črta v črtičnem prikazu vodoravna?
-- med ponedeljkom in torkom
-+ med torkom in sredo
-- med sredo in četrtkom
-> Črta je vodoravna, kadar sta zaporedni vrednosti enaki. To velja za torek in sredo, ko je bilo $8\,^\circ\text{C}$ oba dneva.
+? Poišči napako. Naloga: na prikazu $1$ kvadratek pomeni $2$ ptici, stolpec za sinice je visok $8$ kvadratkov, za kose $3$ kvadratke. Za koliko več je sinic? Rešitev: (1) sinic je $8 \cdot 2 = 16$; (2) kosov je $3$; (3) razlika je $16 - 3 = 13$. Kateri korak je napačen?
+- korak (1)
+~ Korak (1) je pravilen: višino $8$ si pomnožil z merilom $2$.
++ korak (2)
+- korak (3)
+~ Odštevanje $16 - 3 = 13$ je izračunano prav, le da je $3$ napačno število iz koraka (2).
+- nobeden
+~ Rezultat $13$ ni pravilen: kosov ni $3$, ampak $6$.
+> V koraku (2) je pozabljeno merilo: kosov je $3 \cdot 2 = 6$, razlika pa $16 - 6 = 10$.
 
-? Zakaj je zavajajoče, če se navpična os stolpčnega prikaza začne pri $46$, ne pri $0$?
-+ Majhne razlike so videti zelo velike.
-- Stolpci postanejo preširoki.
-- Števila na osi postanejo negativna.
-> Če se os ne začne pri $0$, višina stolpca ni več sorazmerna z vrednostjo, zato se razlike zdijo večje, kot so.
+? Z risbe odčitaj padavine in razvrsti mesece od najbolj do najmanj mokrega.
+:::risba stolpci
+opis: Stolpčni prikaz »Padavine v milimetrih«. Navpična os od 0 do 100 po 10. Januar 60, februar 45, marec 80, april 95.
+podnapis: Padavine v milimetrih
+os: padavine (mm)
+korak: 10
+stolpec: januar | 60
+stolpec: februar | 45
+stolpec: marec | 80
+stolpec: april | 95
+:::
+1. april
+2. marec
+3. januar
+4. februar
+> Višine so april $95\,\text{mm}$, marec $80\,\text{mm}$, januar $60\,\text{mm}$, februar $45\,\text{mm}$. Vrstni red na osi (po koledarju) ni vrstni red po velikosti.
+
+? V časopisu je stolpčni prikaz deževnih dni dveh mest: $48$ in $50$. Navpična os se začne pri $46$, zato je drugi stolpec videti dvakrat višji. Kaj je res?
+- Mesto s $50$ dnevi ima dvakrat več deževnih dni.
+~ Dvakrat višji je le stolpec, ker os ne začne pri $0$. Števili $48$ in $50$ se razlikujeta le za $2$.
++ Razlika je majhna, $2$ dneva; prikaz je zavajajoč.
+- Prikaz je pravilen, ker sta števili zapisani nad stolpcema.
+~ Zapisani števili sta prav, slika pa kaže napačno razmerje. Kdor gleda samo stolpce, se zmoti.
+> $50 - 48 = 2$. Ker os začne pri $46$, sta stolpca visoka $2$ in $4$ enote, zato je drugi videti dvakrat višji.
+
+<<RACUN
+vrednost: 9+6+5 | 20
+vrednost: 12+9+6+3 | 30
+vrednost: 12-3 | 9
+vrednost: 12/3 | 4
+vrednost: 8/2 | 4
+vrednost: 12/2 | 6
+vrednost: 14/2 | 7
+vrednost: 10/2 | 5
+vrednost: 8+12+14+10 | 44
+vrednost: 9-2 | 7
+vrednost: 6-2 | 4
+vrednost: 9-6 | 3
+vrednost: 7*5 | 35
+vrednost: 4*5 | 20
+vrednost: 35-20 | 15
+vrednost: 6*5 | 30
+vrednost: 16-3*2 | 10
+>>
 
 :::simboli
-\text{višina stolpca} | višina stolpca v kvadratkih | \text{višina stolpca} = \text{vrednost} : \text{merilo} | | vrednost iz višine: višina · merilo
-\text{vrednost} | podatek, ki ga stolpec prikazuje | | | na primer število knjig
-\text{merilo} | koliko pomeni en kvadratek na navpični osi | | | na primer 1 kvadratek = 4 knjige
-\text{večje število}, \text{manjše število} | večja in manjša od dveh primerjanih vrednosti | | | njuna razlika pove, za koliko je ena večja
-\text{novejša}, \text{starejša} | kasnejša in prejšnja od dveh zaporednih vrednosti | | | razlika > 0 naraščanje, < 0 padanje, 0 stalno
-\text{največja}, \text{najmanjša} | največja in najmanjša vrednost v podatkih | | | njuna razlika je razpon
+\text{višina} | višina stolpca v kvadratkih | \text{višina} = \text{vrednost} : \text{merilo} | | 
+\text{vrednost} | število, ki ga stolpec prikazuje | \text{vrednost} = \text{višina} \cdot \text{merilo} | | na primer število ptic
+\text{merilo} | koliko pomeni en kvadratek | | | na primer 1 kvadratek = 2 dneva
+\text{večje}, \text{manjše} | večje in manjše od primerjanih števil | | | 
+\text{novejša}, \text{starejša} | kasnejša in prejšnja izmerjena vrednost | | | pri padcu je starejša večja
+\text{največja}, \text{najmanjša} | največja in najmanjša vrednost | | | njuna razlika je razpon
 :::

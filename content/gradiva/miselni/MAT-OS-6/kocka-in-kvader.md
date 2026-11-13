@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deli telesa
+  - $6$ ploskev, $12$ robov, $8$ oglišč
+  - Kocka: vsi robovi enaki, $a = b = c$
+- Mreža
+  - Kocka: $6$ skladnih kvadratov, $11$ različnih mrež
+  - Napaka: kvadrat $2 \times 2$ ni del mreže kocke
+- Površina
+  - Ploščina mreže, enota $\text{cm}^2$
+  - Kocka: $P = 6 \cdot a^2$
+  - Kvader: $P = 2 \cdot (a \cdot b + a \cdot c + b \cdot c)$
+- Prostornina
+  - Plasti enotnih kock, enota $\text{cm}^3$
+  - Kvader: $V = a \cdot b \cdot c$, kocka: $V = a^3$
+- Enote prostornine
+  - $1\,\text{dm}^3 = 1000\,\text{cm}^3 = 1\,\text{l}$
+  - Napaka: pretvarjanje po $10$ ali $100$
+- Podvojeni robovi
+  - Površina $4$-krat večja
+  - Prostornina $8$-krat večja

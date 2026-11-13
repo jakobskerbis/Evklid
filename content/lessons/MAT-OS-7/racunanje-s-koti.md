@@ -5,11 +5,11 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Kote že znaš meriti s kotomerom, ločiš ostre, prave, tope in iztegnjene kote ter poznaš pare kotov: sokota skupaj merita $180^\circ$, komplementarna kota $90^\circ$, sovršna kota pa sta enaka.
+Poskus za jasen večer: iztegni roko in proti nebu pokaži mezinec. Na tej razdalji pokrije približno $1^\circ$ neba. Ko je Luna polna, jo poskusi skriti za mezinec. Skriješ jo v celoti in ob strani ostane še nekaj prostora. Luna je na nebu široka le približno pol stopinje.
 
-Do zdaj so bili koti večinoma merjeni v celih stopinjah. Ena stopinja pa je za marsikatero opravilo prevelika enota. Geodet, ki meri zemljišče, pilot, ki določa smer leta, ali mornar, ki odčitava zemljepisno širino, potrebujejo natančnejše meritve. Zato stopinjo razdelimo na manjše dele: **kotne minute**. Ljubljana na primer leži na zemljepisni širini približno $46^\circ 03'$.
+Šolski kotomer kaže cele stopinje, astronomom, pilotom in pomorščakom pa to ni dovolj. Zato stopinjo razdelimo na manjše dele, **kotne minute**. Navidezni premer Lune, torej kako široka je videti na nebu, je približno $31'$ (enaintrideset kotnih minut), Ljubljana leži na zemljepisni širini približno $46^\circ 03'$.
 
-V tej lekciji se boš naučil kote pretvarjati med stopinjami in minutami ter jih seštevati, odštevati, množiti in deliti z naravnim številom. Računanje je zelo podobno računanju s časom (ure in minute), ki ga že dobro poznaš.
+Že znaš kote meriti in poznaš pare kotov: sokota merita skupaj $180^\circ$, komplementarna kota $90^\circ$. Zdaj boš kote pretvarjal med stopinjami in minutami ter jih sešteval, odšteval, množil in delil z naravnim številom. Računaš podobno kot z urami in minutami.
 
 ## Razlaga
 
@@ -19,7 +19,7 @@ $$1^\circ = 60'$$
 
 Kot, ki meri $35$ stopinj in $48$ minut, zapišemo $35^\circ 48'$ in preberemo »petintrideset stopinj in oseminštirideset minut«.
 
-Za še natančnejše meritve minuto razdelimo na $60$ **kotnih sekund** ($1' = 60''$). V tej lekciji bomo računali samo s stopinjami in minutami.
+Za še natančnejše meritve minuto razdelimo na $60$ **kotnih sekund** ($1' = 60''$). Tu bomo računali samo s stopinjami in minutami.
 
 **2. Pravilen zapis.** V pravilnem zapisu je število minut vedno med $0$ in $59$. Če dobiš $60$ ali več minut, jih pretvoriš v stopinje:
 
@@ -41,9 +41,31 @@ $$62^\circ 73' = 62^\circ + 60' + 13' = 63^\circ 13'$$
 
 Obratno: $45' = \dfrac{45}{60}{}^\circ = 0{,}75^\circ$.
 
-**6. Seštevanje.** Seštejemo posebej stopinje in posebej minute. Če je minut $60$ ali več, $60'$ zamenjamo z $1^\circ$.
+**6. Seštevanje.** Poglej tri vsote. V srednjem stolpcu so stopinje in minute seštete vsake posebej:
 
-**7. Odštevanje.** Odštejemo posebej stopinje in posebej minute. Če je minut v zmanjševancu premalo, si »izposodimo« eno stopinjo in jo spremenimo v $60'$. Pogost primer: $90^\circ = 89^\circ 60'$ in $180^\circ = 179^\circ 60'$.
+| vsota | posebej | pravilen zapis |
+|---|---|---|
+| $10^\circ 20' + 5^\circ 15'$ | $15^\circ 35'$ | $15^\circ 35'$ |
+| $20^\circ 40' + 10^\circ 30'$ | $30^\circ 70'$ | $31^\circ 10'$ |
+| $15^\circ 45' + 15^\circ 15'$ | $30^\circ 60'$ | $31^\circ 0'$ |
+
+:::premisli
+V katerih vrsticah se zapis na koncu spremeni in zakaj? Napovej še, koliko je $40^\circ 59' + 1'$.
+---
+V drugi in tretji, ker je minut $60$ ali več. Vsakih $60'$ je $1^\circ$, zato jih prenesemo k stopinjam. $40^\circ 59' + 1' = 40^\circ 60' = 41^\circ 0'$.
+:::
+
+Pravilo: seštejemo posebej stopinje in posebej minute. Če je minut $60$ ali več, $60'$ zamenjamo z $1^\circ$.
+
+**7. Odštevanje.** Odštejemo posebej stopinje in posebej minute. Pri $50^\circ 10' - 20^\circ 40'$ pa minut zmanjka, saj $10' - 40'$ ne gre. Tedaj si »izposodimo« eno stopinjo in jo spremenimo v $60'$: $50^\circ 10' = 49^\circ 70'$.
+
+:::premisli
+Koliko je $180^\circ - 123^\circ 45'$? Namig: $180^\circ$ nima minut, zato najprej eno stopinjo razbij na $60'$.
+---
+$180^\circ = 179^\circ 60'$, zato je $179^\circ 60' - 123^\circ 45' = 56^\circ 15'$. Preizkus: $56^\circ 15' + 123^\circ 45' = 179^\circ 60' = 180^\circ$.
+:::
+
+Pogosta primera izposojanja: $90^\circ = 89^\circ 60'$ in $180^\circ = 179^\circ 60'$.
 
 **8. Množenje z naravnim številom.** Z istim številom pomnožimo stopinje in minute, nato zapis uredimo.
 
@@ -56,7 +78,7 @@ Obratno: $45' = \dfrac{45}{60}{}^\circ = 0{,}75^\circ$.
 | množenje | $2 \cdot 15^\circ 40'$ | $30^\circ 80' = 31^\circ 20'$ |
 | deljenje | $25^\circ 30' : 3$ | $24^\circ 90' : 3 = 8^\circ 30'$ |
 
-V interaktivni simulaciji spodaj (**Seštevanje kotov v stopinjah in minutah**) z drsniki nastaviš stopinje in minute dveh kotov ter opazuješ, kdaj se $60$ minut prelije v novo stopinjo.
+V simulaciji spodaj (**Seštevanje kotov v stopinjah in minutah**) z drsniki nastaviš stopinje in minute dveh kotov. Nastavi $35^\circ 40'$ in $54^\circ 20'$. Opazi, da je minut skupaj ravno $60$, zato vsota postane $90^\circ 0'$: kota sta komplementarna.
 
 ## Rešeni primeri
 
@@ -115,12 +137,36 @@ $\beta = 3 \cdot \alpha$, $\quad \gamma = 180^\circ - \beta$; pri deljenju ostan
 
 1. Množenje: $3 \cdot 24^\circ 38' = 72^\circ 114'$.
 2. Uredimo: $114' = 60' + 54' = 1^\circ 54'$, zato $\beta = 73^\circ 54'$.
-3. Sokot: $\gamma = 179^\circ 60' - 73^\circ 54' = 106^\circ 6'$.
+3. Sokot: $\gamma = 180^\circ - 73^\circ 54' = 179^\circ 60' - 73^\circ 54' = 106^\circ 6'$.
 4. Deljenje stopinj: $106 : 3 = 35$, ostanek $1$ (ker $3 \cdot 35 = 105$).
 5. Ostanek $1^\circ = 60'$ prištejemo minutam: $60' + 6' = 66'$.
 6. Deljenje minut: $66' : 3 = 22'$. Torej $\gamma : 3 = 35^\circ 22'$.
 7. Preverimo: $3 \cdot 35^\circ 22' = 105^\circ 66' = 106^\circ 6'$. ✓
 8. Odgovor: $\beta = 73^\circ 54'$, $\gamma = 106^\circ 6'$, tretjina kota $\gamma$ pa meri $35^\circ 22'$.
+
+### Primer 4 – zdaj ti
+
+Opoldne je Sonce najvišje na nebu. Na zemljepisni širini $\varphi$ je 21. junija opoldne na višini $90^\circ - \varphi + 23^\circ 26'$ nad obzorjem, 21. decembra pa na višini $90^\circ - \varphi - 23^\circ 26'$. Kot $23^\circ 26'$ je nagib zemeljske osi. Kako visoko je opoldansko Sonce v Ljubljani ($\varphi = 46^\circ 03'$) ob obeh dnevih? Za koliko je junija višje?
+
+**Podatki:** $\varphi = 46^\circ 03'$, nagib osi $\varepsilon = 23^\circ 26'$
+**Iščemo:** višino Sonca $h_1$ (21. junij), $h_2$ (21. december) in razliko $h_1 - h_2$
+
+:::formula
+$h_1 = 90^\circ - \varphi + \varepsilon$, $\quad h_2 = 90^\circ - \varphi - \varepsilon$
+:::
+
+**Rešitev:**
+
+1. Najprej skupni del: $90^\circ - 46^\circ 03' = 89^\circ 60' - 46^\circ 03' = 43^\circ 57'$. To je komplementarni kot kota $\varphi$.
+2. Junij: $h_1 = 43^\circ 57' + 23^\circ 26' = 66^\circ 83' = 67^\circ 23'$, ker je $83' = 1^\circ 23'$.
+3. December: odštej sam $h_2 = 43^\circ 57' - 23^\circ 26'$.
+4. Razlika: izračunaj $h_1 - h_2$; pri minutah si boš moral izposoditi stopinjo.
+
+:::premisli
+Koliko meri $h_2$ in kolikšna je razlika $h_1 - h_2$?
+---
+$h_2 = 43^\circ 57' - 23^\circ 26' = 20^\circ 31'$. Razlika: $67^\circ 23' - 20^\circ 31' = 66^\circ 83' - 20^\circ 31' = 46^\circ 52'$. To je ravno $2 \cdot 23^\circ 26' = 46^\circ 52'$, dvakratni nagib osi.
+:::
 
 ## Pogoste napake
 
@@ -139,12 +185,6 @@ $\beta = 3 \cdot \alpha$, $\quad \gamma = 180^\circ - \beta$; pri deljenju ostan
 - Seštevamo in odštevamo posebej stopinje in posebej minute; pri odštevanju po potrebi $1^\circ \to 60'$, npr. $180^\circ = 179^\circ 60'$.
 - Pri množenju pomnožimo oba dela in uredimo; pri deljenju ostanek stopinj pretvorimo v minute.
 - Sokot: $180^\circ - \alpha$, komplementarni kot: $90^\circ - \alpha$.
-
-## Drugače: Na sliki
-
-Predstavljaj si kotomer, ki ga povečaš pod lupo. Med dvema sosednjima črticama za stopinjo, recimo med $35^\circ$ in $36^\circ$, bi pod lupo zagledal še $60$ drobnih črtic. Vsaka predstavlja eno minuto. Kot $35^\circ 48'$ torej sega čez črtico za $35^\circ$ in še $48$ drobnih črtic naprej, malo čez tri četrtine poti do $36^\circ$.
-
-Ko seštevaš dva kota, si predstavljaj, da ju položiš drug ob drugega s skupnim temenom in skupnim krakom. Najprej se »zložijo« stopinje, nato drobne minute. Ko našteješ $60$ drobnih črtic, si prišel do naslednje cele stopinje. Tako $62^\circ 73'$ na kotomeru pomeni $63$ celih stopinj in še $13$ drobnih črtic. Prav to pokaže tudi interaktivna simulacija spodaj: ko vsota minut doseže $60$ ali več, izpiše pretvorbo $60' = 1^\circ$.
 
 ## Drugače: Iz vsakdanjega življenja
 
@@ -190,36 +230,92 @@ Pri pretvarjanju minut v decimalni zapis bodi previden. $45' = 0{,}75^\circ$ je 
 
 Zanimivost: ena kotna minuta zemljepisne širine ustreza na zemeljskem površju razdalji približno $1{,}85\,\text{km}$. Iz tega je nastala **navtična milja** ($1852\,\text{m}$), ki jo uporabljajo v pomorstvu in letalstvu.
 
+## Drugače: Kot zgodba
+
+Mornarka Maja pluje ponoči po Jadranu brez satelitske navigacije. S sekstantom izmeri, kako visoko nad obzorjem je Severnica. Iz meritve in tabele popravkov izračuna, da je na zemljepisni širini $43^\circ 48'$.
+
+Pristati želi v luki na širini $45^\circ 33'$, ki leži severno od nje. Koliko še? Maja odšteje $45^\circ 33' - 43^\circ 48'$. Minut je premalo ($33 < 48$), zato si izposodi stopinjo: $45^\circ 33' = 44^\circ 93'$. Razlika je $44^\circ 93' - 43^\circ 48' = 1^\circ 45'$.
+
+Ena kotna minuta zemljepisne širine je približno ena navtična milja ($1852\,\text{m}$). Ker je $1^\circ 45' = 105'$, je pred njo še približno $105$ navtičnih milj, to je okoli $194\,\text{km}$. Njen mlajši brat je računal kot z decimalnimi števili: $45{,}33 - 43{,}48 = 1{,}85$. Dobil je »$1^\circ 85'$«, takega zapisa pa ni, saj je minut vedno manj kot $60$.
+
 ## Preveri se
 
-? Koliko kotnih minut meri $1^\circ$?
-- $10'$
-- $100'$
-+ $60'$
-- $360'$
-> Stopinjo razdelimo na $60$ enakih delov: $1^\circ = 60'$.
+? Koliko kotnih minut je $0{,}7^\circ$? Vpiši število minut.
+= 42
+~ 70 | To bi veljalo, če bi imela stopinja $100$ minut. Ima jih $60$: $0{,}7 \cdot 60' = 42'$.
+~ 7 | Decimalke so desetinke stopinje, ne minute. $0{,}7^\circ$ je sedem desetin od $60'$.
+> $1^\circ = 60'$, zato je $0{,}7^\circ = 0{,}7 \cdot 60' = 42'$.
 
-? Koliko je $47^\circ 38' + 25^\circ 42'$?
-- $72^\circ 20'$
-+ $73^\circ 20'$
-- $74^\circ 20'$
-- $73^\circ 8'$
-> $72^\circ 80'$ uredimo: $80' = 1^\circ 20'$, zato je vsota $73^\circ 20'$. Odgovor $72^\circ 20'$ dobiš, če pozabiš prenesti stopinjo.
-
-? Koliko meri komplementarni kot kota $34^\circ 25'$?
+? Na sliki je pravi kot, razdeljen na dva dela. Koliko meri kot, označen z vprašajem?
+:::risba skica
+opis: Pravi kot z vrhom O med vodoravnim in navpičnim krakom. Notranji poltrak ga razdeli na dva kota: spodnji kot α ob vodoravnem kraku meri 34°25', zgornji kot ob navpičnem kraku je označen z vprašajem.
+območje: -0,8; -0,5 .. 5; 4,5
+enota: 50
+črta: 0; 0 -> 4,5; 0 | puščica
+črta: 0; 0 -> 0; 4,2 | puščica
+črta: 0; 0 -> 3,3; 2,26 | modra puščica
+napis: 1,6; 0,5 | α = 34°25' | desno
+napis: 0,5; 2 | ? | desno
+točka: 0; 0 | O | levo
+:::
 - $56^\circ 25'$
+~ Odštel si samo stopinje, minute pa prepisal. Pri $90^\circ$ ni minut, zato je $90^\circ = 89^\circ 60'$.
 + $55^\circ 35'$
 - $56^\circ 35'$
+~ Minute si odštel prav ($60' - 25' = 35'$), a pozabil, da si eno stopinjo izposodil: ostane $89^\circ$, ne $90^\circ$.
+- $145^\circ 35'$
+~ To je sokot, do $180^\circ$. Kota na sliki skupaj tvorita pravi kot, zato računaš do $90^\circ$.
 > $90^\circ - 34^\circ 25' = 89^\circ 60' - 34^\circ 25' = 55^\circ 35'$.
 
-? Kako zapišeš $15{,}4^\circ$ v stopinjah in minutah?
-- $15^\circ 4'$
-- $15^\circ 40'$
-+ $15^\circ 24'$
-> Decimalni del pomnožimo s $60$: $0{,}4 \cdot 60' = 24'$, torej $15{,}4^\circ = 15^\circ 24'$.
+? Razvrsti kote od najmanjšega do največjega.
+1. $15^\circ 20'$
+2. $15{,}4^\circ$
+3. $925'$
+4. $15^\circ 40'$
+> $15{,}4^\circ = 15^\circ 24'$, ker je $0{,}4 \cdot 60' = 24'$. $925' = 15^\circ 25'$, ker je $925 : 60 = 15$, ostanek $25$. Kdor $15{,}4^\circ$ bere kot $15^\circ 40'$, ga postavi na napačno mesto.
+
+? Trikratnik kota meri $106^\circ 6'$. Koliko meri kot?
+- $35^\circ 2'$
+~ Ostanek $1^\circ$ pri $106 : 3$ si zavrgel. Pretvori ga v $60'$: $(60' + 6') : 3 = 22'$.
++ $35^\circ 22'$
+- $318^\circ 18'$
+~ To je $3 \cdot 106^\circ 6'$. Iščemo kot, katerega trikratnik je $106^\circ 6'$, zato delimo s $3$.
+> $106^\circ 6' = 105^\circ 66'$; $105 : 3 = 35$ in $66' : 3 = 22'$. Preizkus: $3 \cdot 35^\circ 22' = 105^\circ 66' = 106^\circ 6'$.
+
+? Sonce je na nebu široko približno $32'$. Približno koliko Sončevih kolutov bi zložil v vrsto od obzorja do temena (točke naravnost nad glavo), to je čez $90^\circ$? Rezultat zaokroži na celo število.
+= 169 | 2
+~ 281 | Računal si, kot da ima stopinja $100'$. Pravilno: $90^\circ = 90 \cdot 60' = 5400'$.
+~ 3 | Stopinj ne smeš deliti z minutami. Najprej pretvori $90^\circ$ v minute.
+> $90^\circ = 5400'$ in $5400' : 32' = 168{,}75 \approx 169$.
+
+<<RACUN
+enako: 35+48/60+27+25/60 | 63+13/60
+vrednost: 35*60+48+27*60+25 | 3793
+enako: 180-(52+17/60) | 127+43/60
+enako: 90-(52+17/60) | 37+43/60
+enako: 3*(24+38/60) | 73+54/60
+enako: 180-(73+54/60) | 106+6/60
+enako: (106+6/60)/3 | 35+22/60
+enako: 90-(46+3/60) | 43+57/60
+enako: 43+57/60+23+26/60 | 67+23/60
+enako: 43+57/60-(23+26/60) | 20+31/60
+enako: 67+23/60-(20+31/60) | 46+52/60
+enako: 180-(123+45/60) | 56+15/60
+enako: 90-(34+25/60) | 55+35/60
+enako: 15.4 | 15+24/60
+enako: 925/60 | 15+25/60
+vrednost: 90*60/32 | 168.75
+enako: 45+33/60-(43+48/60) | 1+45/60
+vrednost: 105*1.852 | 194.46
+vrednost: 0.7*60 | 42
+>>
 
 :::simboli
-\alpha | dani kot | | ° | 1° = 60' (kotnih minut)
-\beta | sokot kota α | \beta = 180^\circ - \alpha | ° | v primeru 3: β = 3 · α
-\gamma | komplementarni kot kota α | \gamma = 90^\circ - \alpha | ° | v primeru 3 sokot kota β
+\alpha | dani kot | | ° | $1^\circ = 60'$ (kotnih minut)
+\beta | sokot kota $\alpha$ | \beta = 180^\circ - \alpha | ° | v primeru 3: $\beta = 3 \cdot \alpha$
+\gamma | komplementarni kot kota $\alpha$ | \gamma = 90^\circ - \alpha | ° | v primeru 3 sokot kota $\beta$
+\varphi | zemljepisna širina | | ° | Ljubljana: $46^\circ 03'$
+\varepsilon | nagib zemeljske osi | | ° | približno $23^\circ 26'$
+h_1 | višina opoldanskega Sonca 21. junija | h_1 = 90^\circ - \varphi + \varepsilon | °
+h_2 | višina opoldanskega Sonca 21. decembra | h_2 = 90^\circ - \varphi - \varepsilon | °
 :::
