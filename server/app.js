@@ -231,11 +231,13 @@ export function createApp(store, opts = {}) {
   // Odjemalci (spletna stran, aplikacija) kličejo samo kanonične poti. Dnevna meja vprašanj se poleg tega preverja
   // v obdelavi sporočila pred rezervacijo za klic AI (accounts.dailyBlock), zato je pot ne more obiti.
   app.use((req, _res, next) => {
-    const q = req.url.indexOf("?");
-    const pot = q < 0 ? req.url : req.url.slice(0, q);
+    // req.path (ne req.url): zahteva v absolutni obliki (»POST http://gostitelj/API/…«) ima req.url brez začetne »/«,
+    // usmerjevalnik pa jo vseeno ujema po poti. Taka zahteva na /api ni kanonična.
+    const pot = req.path;
+    const absolutna = !req.url.startsWith("/");
     // Samo oznaka: preverjanja računov (prijava 401, zaklep računa 403) veljajo tudi za take poti, nato 404
     // (server/accounts/index.js; brez računov vmesnik takoj za mountAccounts spodaj).
-    if (/^\/api(\/|$)/i.test(pot) && (!/^\/api(\/|$)/.test(pot) || /.\/$/.test(pot) || pot.includes("//"))) req.nekanonicnaApi = true;
+    if (/^\/api(\/|$)/i.test(pot) && (absolutna || !/^\/api(\/|$)/.test(pot) || /.\/$/.test(pot) || pot.includes("//"))) req.nekanonicnaApi = true;
     next();
   });
   mountOldLinkRedirect(app, opts.homeCheck);

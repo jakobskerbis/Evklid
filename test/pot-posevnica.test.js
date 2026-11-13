@@ -126,3 +126,22 @@ test("A1: nekanonične javne poti /api dobijo 404, kanonične delujejo", async (
     assert.equal((await call("/api/students")).status, 401);
   });
 });
+
+// A1 (pregled 2): zahteva v absolutni obliki (req.url brez začetne »/«) je nekanonična, tudi s pravilno potjo.
+test("A1: zahteva v absolutni obliki na /api dobi 404", async () => {
+  const net = await import("node:net");
+  await withServer(async ({ base }) => {
+    const { port } = new URL(base);
+    const surovo = (vrstica) =>
+      new Promise((ok, napaka) => {
+        const s = net.connect(Number(port), "127.0.0.1", () => s.write(`${vrstica}\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n`));
+        let out = "";
+        s.on("data", (d) => (out += d));
+        s.on("end", () => ok(Number(out.split(" ")[1])));
+        s.on("error", napaka);
+      });
+    assert.equal(await surovo("GET /api/config HTTP/1.1"), 200);
+    assert.equal(await surovo(`GET http://127.0.0.1:${port}/api/config HTTP/1.1`), 404);
+    assert.equal(await surovo(`GET http://127.0.0.1:${port}/API/config/ HTTP/1.1`), 404);
+  });
+});
