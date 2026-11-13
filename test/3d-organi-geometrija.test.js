@@ -19,8 +19,9 @@ const deli = (dat) => preveriGLB(path.join(ORGANI, dat));
 const najdi = (d, ime) => { const r = d.find((x) => x.ime === ime); assert.ok(r, `manjka vozlišče »${ime}«`); return r; };
 
 const REZNJI = ["Right lobe of liver (lastno)", "Left lobe of liver (lastno)", "Quadrate lobe of liver (lastno)", "Caudate lobe of liver (lastno)"];
-const JETRA_OSTALO = ["Inferior vena cava (lastno)", "Falciform ligament (lastno)", "Round ligament of liver (lastno)",
-  "Hepatic portal vein and branches (lastno)", "Hepatic artery and branches (lastno)", "Bile ducts (lastno)", "Hepatic veins (lastno)", "Gallbladder"];
+// krog n1: portalna vena, jetrne vene in spodnja votla vena so prava drevesa iz CT (HVA-CT), ne zrasla (lastno)
+const JETRA_OSTALO = ["Inferior vena cava (CT)", "Falciform ligament (lastno)", "Round ligament of liver (lastno)",
+  "Hepatic portal vein and branches (CT)", "Hepatic artery and branches (lastno)", "Bile ducts (lastno)", "Hepatic veins (CT)", "Gallbladder"];
 
 for (const dat of ["jetra.glb", "jetra-telefon.glb"]) {
   test(`geometrija organov: ${dat} ima štiri režnje ene površine, votlo veno, vezi in drevesa`, async () => {
@@ -33,7 +34,7 @@ for (const dat of ["jetra.glb", "jetra-telefon.glb"]) {
       assert.equal(r.navznoter, 0, `${ime}: obrnjen navznoter`);
     }
     for (const ime of JETRA_OSTALO) najdi(d, ime);
-    for (const ime of ["Hepatic portal vein and branches (lastno)", "Hepatic artery and branches (lastno)", "Bile ducts (lastno)", "Hepatic veins (lastno)"]) {
+    for (const ime of ["Hepatic portal vein and branches (CT)", "Hepatic artery and branches (lastno)", "Bile ducts (lastno)", "Hepatic veins (CT)"]) {
       const r = najdi(d, ime);
       assert.equal(r.odprtiRobovi, 0, `${ime}: cevi drevesa so zaprte`);
     }
@@ -68,9 +69,11 @@ for (const dat of ["pljuca.glb", "pljuca-telefon.glb"]) {
       assert.ok(r.odprtiRobovi <= 2, `${r.ime}: reženj ni zaprt (hilusna odprtina?), odprtih robov ${r.odprtiRobovi}`);
       assert.equal(r.navznoter, 0, r.ime);
     }
-    const veje = d.filter((x) => /segment|of (left|right) lung$/.test(x.ime) && !/lobe of/.test(x.ime));
-    assert.ok(veje.length >= 40, `veje v pljučih: ${veje.length}`);
+    // krog n1: drevesa iz CT so po eno vozlišče na drevo (zunaj pljuč in v pljučih), veje so zaprte cevi v njem
+    const veje = d.filter((x) => /\(CT\)$/.test(x.ime));
+    assert.equal(veje.length, 6, `drevesa iz CT: ${veje.map((x) => x.ime)}`);
     for (const v of veje) assert.equal(v.odprtiRobovi, 0, `${v.ime}: cev ni zaprta`);
+    assert.ok(veje.reduce((n, v) => n + v.komponente, 0) >= (dat.includes("telefon") ? 100 : 300), "veje v pljučih");
     const tris = d.reduce((s, x) => s + x.trikotniki, 0);
     assert.ok(tris <= (dat.includes("telefon") ? 90_000 : 300_000), `${dat}: ${tris} trikotnikov`);
   });
@@ -153,9 +156,9 @@ for (const dat of ["mozgani.glb", "mozgani-telefon.glb"]) {
 
 // Krog 2 (2026-11-13): mali možgani iz segmentacije MRI (aseg), kvadratni reženj jeter en kos, pljučni režnji iz CT.
 for (const dat of ["mozgani.glb", "mozgani-telefon.glb"]) {
-  test(`geometrija organov: ${dat} ima male možgane iz MRI kot eno zaprto telo namesto režnjičev Z-Anatomy`, async () => {
+  test(`geometrija organov: ${dat} ima male možgane kot eno zaprto telo namesto režnjičev Z-Anatomy`, async () => {
     const d = await deli(dat);
-    const m = najdi(d, "Cerebellum (MRI)");
+    const m = najdi(d, "Cerebellum (HRA)");  // krog n1: HRA Brain v1.4 (prej segmentacija MRI)
     assert.equal(m.zaprte, m.komponente, "mali možgani niso zaprti");
     assert.equal(m.komponente, 1, `kosov ${m.komponente}`);
     assert.equal(m.luknje, 0);

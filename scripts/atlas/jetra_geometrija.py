@@ -228,6 +228,36 @@ def uveljavi_normale(me):
     return True
 
 
+def _otoki_k_sosedu(me, sosed):
+    """Reženj je en kos: manjši ločeni kosi (zaprta telesa ob meji, npr. za porto) gredo k sosednjemu režnju."""
+    bm = bmesh.new(); bm.from_mesh(me)
+    videni, otoki = set(), []
+    for v in bm.verts:
+        if v.index in videni: continue
+        sklad, otok = [v], []
+        videni.add(v.index)
+        while sklad:
+            u = sklad.pop(); otok.append(u)
+            for e in u.link_edges:
+                w = e.other_vert(u)
+                if w.index not in videni:
+                    videni.add(w.index); sklad.append(w)
+        otoki.append(otok)
+    if len(otoki) < 2:
+        bm.free(); return me, sosed
+    otoki.sort(key=len, reverse=True)
+    mali = {v for o in otoki[1:] for v in o}
+    bs = bmesh.new(); bs.from_mesh(sosed)
+    nov = {v: bs.verts.new(v.co) for v in mali}
+    for f in bm.faces:
+        if f.verts[0] in mali:
+            bs.faces.new([nov[v] for v in f.verts])
+    bmesh.ops.delete(bm, geom=list(mali), context="VERTS")
+    print(f"[organi] jetra: {len(otoki) - 1} ločenih kosov režnja ({len(mali)} oglišč) k sosednjemu režnju")
+    bm.to_mesh(me); bm.free(); bs.to_mesh(sosed); bs.free(); me.update(); sosed.update()
+    return me, sosed
+
+
 def _rezi_reznje(L, seg, tmp, porta):
     """Cela površina L → štirje zaprti režnji. seg: {rimska številka: mreža segmenta}."""
     n1, p1 = _ravnina([seg["II"], seg["III"]], [seg["IV"]])
@@ -255,6 +285,7 @@ def _rezi_reznje(L, seg, tmp, porta):
     kv_pp = _polprostor([(n2, p2), (n3, porta), (Vector((0, 1, 0)), porta + Vector((0, 0.004, 0)))], sred)
     print(f"[organi] jetra: porta {[round(x, 4) for x in porta]}, središče {[round(x, 4) for x in sred]}")
     kv = _bool(ost, kv_pp, "INTERSECT", tmp); desni = _bool(ost, kv_pp, "DIFFERENCE", tmp)
+    kv, desni = _otoki_k_sosedu(kv, desni)
     for me in (levi, rep, kv, desni):
         _pocisti(me)
     print("[organi] jetra: nemnogoterih robov pred šivanjem", [_pocisti(me, 0.0) for me in (levi, rep, kv, desni)])
