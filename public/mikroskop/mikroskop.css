@@ -20,7 +20,9 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
 .mk-plosca { min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
 .mk-sekcija { background: var(--k3-povrsina); border: 1px solid var(--k3-rob); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 .mk-sek-naslov { margin: 0; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--k3-muted); }
-.mk-revolver { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+/* štirje objektivi v vrsti, SEM in TEM pod njimi (vsak čez dva stolpca): pri šestih v vrsti se »Oberfläche«, »поверхность« ne prilegajo */
+.mk-revolver { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.mk-revolver .mk-sem, .mk-revolver .mk-tem { grid-column: span 2; }
 .k3 .mk-obj { flex-direction: column; gap: 0; padding: 6px 4px; min-height: 52px; border-radius: 14px; line-height: 1.15; }
 .mk-obj b { font-size: 1rem; }
 .mk-obj small { font-size: 0.7rem; color: var(--k3-muted); font-weight: 500; }
@@ -102,6 +104,7 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
 
 /* RTL (npr. arabščina): vsebina mikroskopa je slovenska; vrednosti z enotami (100×, 0,00 µm, 1,8 mm) naj se ne obrnejo v »×100«, »µm 0,00« */
 .mk output, .mk-znacka, .mk-podatki dd, .mk-obj b { direction: ltr; unicode-bidi: isolate; text-align: match-parent; }
+.mk output { white-space: nowrap; } /* »5 190×« se ne sme prelomiti v dve vrstici ob dolgem napisu (de »Gesamtvergrößerung«) */
 .mk-opis, .mk-barvanje, .mk-naloga, .mk-resnica, .mk-kazalec, .mk-oznaka, .mk-opozorilo { unicode-bidi: plaintext; text-align: match-parent; }
 /* − drsnik + (povečava) */
 .mk-pov { display: flex; align-items: flex-end; gap: 8px; }

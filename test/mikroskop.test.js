@@ -69,7 +69,7 @@ test("mikroskop: SEM (j, 13. 11. 2026) – vidno polje, globinska ostrina, ravni
   assert.ok(globinskaOstrinaSem(400) > 30 * globinskaOstrina(OBJEKTIVI[2]));
   assert.equal(raven(100, "sem"), "tkivo");
   assert.equal(raven(1000, "sem"), "celice");
-  assert.equal(raven(10_000, "sem"), "celice-blizu");
+  assert.equal(raven(10_000, "sem"), "povrsina"); // SEM ne vidi jeder
   assert.equal(raven(300_000, "sem"), "povrsina");
   assert.equal(povecava({ ...ZACETNO, nacin: "sem", m: 2500 }), 2500);
   const { v } = izracunajPogled(null, { barvanje: "he" }, { ...ZACETNO, nacin: "sem", m: 2500 }, 800);
@@ -92,10 +92,11 @@ test("mikroskop: vsak preparat obstaja, ima opis, barvanje in GLSL s funkcijo tk
     assert.ok(BARVANJA[p.barvanje], `${e.id}: barvanje ${p.barvanje}`);
     assert.equal(matrikaBarvil(p.barvanje).length, 9);
     assert.match(p.glsl, /T\s+tkivo\s*\(\s*vec2\s+p\s*,\s*float\s+px\s*\)/, `${e.id}: tkivo()`);
-    const frag = fragmentPreparata(p.glsl);
-    assert.match(frag, /^#version 300 es/);
-    // oklepaji v senčilniku so uravnoteženi (napaka prevajanja bi sicer počakala na brskalnik)
-    for (const [a, b] of [["{", "}"], ["(", ")"]]) assert.equal(frag.split(a).length, frag.split(b).length, `${e.id}: ${a}${b}`);
+    // oklepaji v senčilniku (tudi v ločenem programu SEM) so uravnoteženi (napaka prevajanja bi sicer počakala na brskalnik)
+    for (const frag of [fragmentPreparata(p.glsl), fragmentPreparata(p.glsl, { sem: true })]) {
+      assert.match(frag, /^#version 300 es/);
+      for (const [a, b] of [["{", "}"], ["(", ")"]]) assert.equal(frag.split(a).length, frag.split(b).length, `${e.id}: ${a}${b}`);
+    }
   }
 });
 

@@ -118,6 +118,8 @@ export function ustvariUpodobitev(platno) {
   let mol = null; // prevede se ob prvi uporabi
   let prep = null;
   let prepId = null;
+  let prepSem = null; // SEM: ločen program preparata, preveden šele ob prvem izrisu SEM (glsl.js fragmentPreparata)
+  let prepGlsl = "";
   const sonda = plavajoce ? tekstura(gl, [8, 2], true) : null;
   let T = null; // { a, b, m } teksture velikosti n
   const pripravi = (n) => {
@@ -142,7 +144,10 @@ export function ustvariUpodobitev(platno) {
       if (prepId === p.id) return;
       const nov = program(gl, fragmentPreparata(p.glsl));
       if (prep) gl.deleteProgram(prep.p);
+      if (prepSem) gl.deleteProgram(prepSem.p);
       prep = nov;
+      prepSem = null;
+      prepGlsl = p.glsl;
       prepId = p.id;
     },
     // Sonda: snov in membrana v točkah (µm) na ravni TEM. Vrne [{ snov, meja, smer, snovT, tip, r1, jedro }].
@@ -167,13 +172,16 @@ export function ustvariUpodobitev(platno) {
       if (!prep) return;
       const n = v.n;
       pripravi(n);
-      gl.useProgram(prep.p);
-      gl.uniform2f(prep.u("uRes"), n, n);
-      gl.uniform2f(prep.u("uCenter"), v.sredisce[0], v.sredisce[1]);
-      gl.uniform1f(prep.u("uPx"), v.umNaTocko);
-      gl.uniform1i(prep.u("uNacin"), v.nacin ?? (v.tem ? 1 : 0));
-      gl.uniformMatrix3fv(prep.u("uBarvila"), false, v.barvila);
-      gl.uniform1f(prep.u("uDebelina"), v.debelina);
+      const nacin = v.nacin ?? (v.tem ? 1 : 0);
+      if (nacin === 3 && !prepSem) prepSem = program(gl, fragmentPreparata(prepGlsl, { sem: true }));
+      const pr = nacin === 3 ? prepSem : prep;
+      gl.useProgram(pr.p);
+      gl.uniform2f(pr.u("uRes"), n, n);
+      gl.uniform2f(pr.u("uCenter"), v.sredisce[0], v.sredisce[1]);
+      gl.uniform1f(pr.u("uPx"), v.umNaTocko);
+      gl.uniform1i(pr.u("uNacin"), nacin);
+      gl.uniformMatrix3fv(pr.u("uBarvila"), false, v.barvila);
+      gl.uniform1f(pr.u("uDebelina"), v.debelina);
       risi(T.a.f, n, n);
       // zamegljenost: vodoravno a → b, navpično b → a
       gl.useProgram(blur.p);

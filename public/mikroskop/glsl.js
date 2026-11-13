@@ -151,6 +151,7 @@ float odsek(vec2 p, vec2 r, float seme) {
 #define S_JEDRCE 28.0
 #define S_GOLGI 29.0
 #define S_MIKROVIL 30.0
+#define S_GENOM 31.0      // genom v virusu (le za sloj molekul: DNK faga T4, RNK SARS-CoV-2 in HIV)
 
 #define C_SPLOSNA 0.0
 #define C_HEPATOCIT 1.0
@@ -703,7 +704,7 @@ float semVisina(T t, vec2 p, float px) {
     // vlakna, snopi in snopi snopov; sumL dobi px v raztegnjenih koordinatah (prečno na vlakna)
     h += 0.35 * sumL(vec2(q.x * 3.0, q.y * 0.08), 0.5, 3.0 * px) + 1.0 * sumL(vec2(q.x * 0.5, q.y * 0.02), 1.0, 0.5 * px)
        + 3.0 * sumL(vec2(q.x * 0.08, q.y * 0.004), 1.0, 0.08 * px);
-    h += 0.012 * cos(6.2832 * q.y / 0.067) * (1.0 - smoothstep(0.008, 0.02, px)); // 67-nm progavost kolagena
+    h += 0.012 * cos(6.2832 * fract(q.y / 0.067)) * (1.0 - smoothstep(0.008, 0.02, px)); // 67-nm progavost kolagena (fract: cos velikega argumenta je na nekaterih GPE netočen)
   } else if (s == S_KOLAGEN || s == S_ELASTIN) {
     h += 0.25 * sumL(p, 0.9, px);
   }
@@ -718,17 +719,34 @@ float semVisina(T t, vec2 p, float px) {
 }
 `;
 
-// Sestavi senčilnik preparata: osnove + koda preparata + TEM + SEM + glavni del (svetloba, TEM, SEM ali sonda).
-export function fragmentPreparata(koda) {
+// Senčenje SEM v main(): sekundarni elektroni iz višine površine (semVisina) v točki in dveh sosednjih točkah.
+const SEM_SENCENJE = /* glsl */ ` else if (uNacin == 3) {
+    // SEM: sekundarni elektroni. Več jih uide s strmih ploskev in robov (1/cos θ), detektor ob strani da senco.
+    float e = 1.5 * uPx;                              // korak 1,5 točke: robni učinek je mehak pas, ne nazobčana črta
+    float h0 = semVisina(t, p, uPx);
+    float h1 = semVisina(tkivo(p + vec2(e, 0.0), uPx), p + vec2(e, 0.0), uPx);
+    float h2 = semVisina(tkivo(p + vec2(0.0, e), uPx), p + vec2(0.0, e), uPx);
+    vec3 n = normalize(vec3(h0 - h1, h0 - h2, e));
+    float strmo = clamp(1.0 / max(n.z, 0.05) - 1.0, 0.0, 3.0);
+    float det = dot(n, normalize(vec3(-0.45, 0.55, 0.7)));
+    float g = 0.16 + 0.17 * strmo + 0.42 * det;
+    g *= mix(0.45, 1.0, smoothstep(-1.5, -0.7, h0)); // stekelce med celicami je temnejše
+    o = vec4(vec3(clamp(g, 0.0, 1.0)), 1.0);
+  }`;
+
+// Sestavi senčilnik preparata: osnove + koda preparata + TEM + glavni del (svetloba, TEM ali sonda). SEM (sem: true) je
+// ločen program, ki ga upodobi.js prevede šele ob prvem izrisu SEM: trikratni tkivo() bi sicer podaljšal prevajanje
+// vsakega preparata in (pri programskem izrisu brez GPE) upočasnil tudi svetlobni mikroskop.
+export function fragmentPreparata(koda, { sem = false } = {}) {
   return `#version 300 es
 ${OSNOVE}
 ${koda}
 ${ULTRA}
-${SEM}
+${sem ? SEM : ""}
 uniform vec2 uRes;
 uniform vec2 uCenter;      // središče vidnega polja na stekelcu (µm)
 uniform float uPx;         // µm na slikovno točko
-uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda, 3 SEM
+uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda, 3 SEM (le v programu SEM)
 uniform vec2 uSonda[8];    // točke sonde (µm)
 uniform mat3 uBarvila;     // stolpci: OD-vektor (R, G, B) prvega, drugega in tretjega barvila
 uniform float uDebelina;   // jakost barvanja (debelina rezine)
@@ -748,19 +766,7 @@ void main() {
   if (uNacin == 1) {
     U u = ultra(t, p, uPx);
     o = vec4(vec3(exp(-2.0 * clamp(u.g, 0.0, 1.5))), 1.0);
-  } else if (uNacin == 3) {
-    // SEM: sekundarni elektroni. Več jih uide s strmih ploskev in robov (1/cos θ), detektor ob strani da senco.
-    float e = uPx;
-    float h0 = semVisina(t, p, uPx);
-    float h1 = semVisina(tkivo(p + vec2(e, 0.0), uPx), p + vec2(e, 0.0), uPx);
-    float h2 = semVisina(tkivo(p + vec2(0.0, e), uPx), p + vec2(0.0, e), uPx);
-    vec3 n = normalize(vec3(h0 - h1, h0 - h2, e));
-    float strmo = clamp(1.0 / max(n.z, 0.05) - 1.0, 0.0, 3.0);
-    float det = dot(n, normalize(vec3(-0.45, 0.55, 0.7)));
-    float g = 0.16 + 0.17 * strmo + 0.42 * det;
-    g *= mix(0.45, 1.0, smoothstep(-1.5, -0.7, h0)); // stekelce med celicami je temnejše
-    o = vec4(vec3(clamp(g, 0.0, 1.0)), 1.0);
-  } else {
+  }${sem ? SEM_SENCENJE : ""} else {
     vec3 od = uBarvila * t.dye * uDebelina;
     o = vec4(exp(-od), 1.0);
   }

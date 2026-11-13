@@ -32,7 +32,8 @@ Objekt `{ id, ime, opis, barvanje, zacetek: { m, sredisce }, imena, snovi, isci,
 `T tkivo(vec2 p, float px)` (p v µm, px = µm na točko) in vrne snov, barvila, mejo, središče celice in jedra.
 TEM dobi isto `T` prek `ultra()`; posebnosti (diski paličic, prizme sklenine, virusi) gredo v
 `temPosebno(...)` z `#define IMA_TEM_POSEBNO`. SEM izračuna višino površine `semVisina()` iz istega `T`
-(posebnosti v `semPosebno(...)` z `#define IMA_SEM`); preparat s prosto ležečimi celicami (razmaz, kapljica) začne GLSL
+(posebnosti v `semPosebno(...)` z `#define IMA_SEM`). SEM je ločen program (`fragmentPreparata(koda, { sem: true })`),
+ki ga upodobi.js prevede šele ob prvem izrisu SEM, ker trikratni `tkivo()` sicer upočasni prevajanje in svetlobni način; preparat s prosto ležečimi celicami (razmaz, kapljica) začne GLSL
 z `#define SEM_PROSTE`, da so bakterije, kvasovke in levkociti kroglice ali valji na stekelcu. Nov preparat: datoteka v `preparati/`, vrstica v `index.js`,
 po potrebi pravilo v `mapa.js`; `test/mikroskop.test.js` preveri, da se prevede v pravilni obliki in da ima vsaka
 struktura atlasa in vsak model svoj preparat.

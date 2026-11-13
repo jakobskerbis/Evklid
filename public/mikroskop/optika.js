@@ -90,7 +90,7 @@ export function raven(m, nacin) {
   if (nacin === "svetloba") return m < 100 ? "tkivo" : m < 400 ? "celice" : "celice-blizu";
   if (nacin === "sem") {
     const v = vidnoPolje(m, "sem");
-    return v > 600 ? "tkivo" : v > 60 ? "celice" : v > 2 ? "celice-blizu" : "povrsina";
+    return v > 600 ? "tkivo" : v > 60 ? "celice" : "povrsina"; // SEM vidi površino, ne jeder
   }
   const vp = vidnoPolje(m, "tem");
   if (vp > 15) return "celice";

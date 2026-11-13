@@ -180,7 +180,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   revolver.append(bSem);
   const bTem = mk("button", "a3-pill mk-obj mk-tem");
   bTem.type = "button";
-  bTem.innerHTML = `<b>TEM</b><small>${t("mk.electrons")}</small>`;
+  bTem.innerHTML = `<b>TEM</b><small>${t("mk.section")}</small>`;
   bTem.addEventListener("click", () => {
     if (s.nacin === "tem") return;
     const m = omeji(Math.max(5000, povecava(s) * 5), MIN_M, MAX_M);
@@ -407,7 +407,8 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   }
   function nastaviPovecavo(m, { izDrsnika = false } = {}) {
     if (s.nacin === "sem") {
-      s.m = omeji(m, MIN_M, SEM_MAX);
+      // pri robu (držanje −/+ se ustavi znotraj 1 %) točno 40× ali 300 000×, da se podatki ujemajo z oznako
+      s.m = m < MIN_M * 1.01 ? MIN_M : m > SEM_MAX * 0.99 ? SEM_MAX : m;
       return narisi({ izDrsnika });
     }
     m = omeji(m, MIN_M, MAX_M);
@@ -574,6 +575,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     secSem.hidden = !sem;
     if (sem && !brezDrsnika) dSnopSem.nastavi(s.zarnica);
     if (tem && !brezDrsnika) dSvetlost.nastavi(s.zarnica);
+    if (luc && !brezDrsnika) dLucka.nastavi(s.zarnica); // lučka, snop TEM in snop SEM so ista vrednost
     oder.classList.toggle("mk-tem", !luc);
     igla.hidden = !luc;
     bOlje.setAttribute("aria-pressed", String(s.olje));
