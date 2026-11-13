@@ -169,8 +169,12 @@ test("selecting a part hides the parts around it (wall, membrane, envelope) and 
   const src = fs.readFileSync(path.join(D3, "pregledovalnik.js"), "utf8");
   assert.match(src, /obarvaj\(d\);\s*skrijObdajajoce\(d\);/);
   assert.match(src, /for \(const \[o, maska\] of skrite\) o\.layers\.mask = maska;/, "restore first");
-  assert.match(src, /SMERI\.every\(/, "all six rays from outside must hit the shell");
-  assert.match(src, /prostornina\(okvirDela\(p, bP\)\) < vS \* 1\.25/, "the shell is bigger than the selected part");
+  // the rule itself lives in ovoji.js (behaviour tested in test/3d-ovoji.test.js)
+  assert.match(src, /mrezeOvojev\(THREE, model\.deli, d, \{ group: model\.group/);
+  const ov = fs.readFileSync(path.join(D3, "ovoji.js"), "utf8");
+  assert.match(ov, /if \(!zad\.length\) obdaja = false;/, "all six rays from outside must hit the shell");
+  assert.match(ov, /prostornina\(THREE, okvirDela\(THREE, p, bP\)\) < vS \* 1\.25/, "the shell is bigger than the selected part");
+  assert.match(ov, /pred \* 2 <= smeri\.length/, "the shell is reached before the selected part in most directions");
   assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"\) return;/, "biology only");
   assert.match(src, /obarvaj\(null\);[^\n]*\n\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
   assert.match(src, /o\.layers\.set\(SKRITA_PLAST\)/);
