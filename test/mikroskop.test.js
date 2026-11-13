@@ -167,6 +167,15 @@ test("mikroskop: vsak del celice odpre svoj pogled (preparat, povečava, snov po
   assert.equal(pogled("celica-srcna-misicna", "t-cevke").snov[0], 24);
   assert.equal(pogled("celica-levkociti", "zrnca").p, "kri");
   assert.equal(pogled("celica-nevron", "schwannova-celica").p, "zivec");
+  // progasta mišica: SR in T-cevke (triade) sta narisana v skeletni in srčni mišici, gosti cevasti sistem trombocita v krvi
+  for (const [m, p] of [["celica-skeletno-misicno-vlakno", "skeletna-misica"], ["celica-srcna-misicna", "srcna-misica"]]) {
+    assert.deepEqual(pogled(m, "sarkoplazemski-retikulum"), { p, m: 30000, snov: [32] }, m);
+  }
+  assert.equal(pogled("celica-skeletno-misicno-vlakno", "t-cevke").p, "skeletna-misica");
+  assert.equal(pogled("celica-skeletno-misicno-vlakno", "sarkolema").snov[0], 24);
+  const gcs = pogled("celica-trombocit", "gost-cevast-sistem");
+  assert.equal(gcs.p, "kri");
+  assert.equal(gcs.snov[0], 32);
   // vsak pogled ima obstoječ preparat in povečavo v obsegu mikroskopa; tudi deli brez posebne snovi dobijo pogled
   for (const m of MODELI_Z_MIKROSKOPOM.filter((x) => /^(celica|virus)/.test(x))) {
     for (const d of ["jedro", "jedrce", "mitohondrij", "membrana", "citoplazma", "ribosomi", "neznan-del"]) {

@@ -147,10 +147,14 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   }
   // Če telefon ponastavi grafiko (izgubljen kontekst WebGL, npr. po predolgem izrisu ali v ozadju), slika ne sme ostati
   // črna: ob obnovi se upodobitev in preparat pripravita znova.
+  // med izgubo ni risanja (izmerjeni časi bi bili ~0 in ob obnovi bi en sam pas zajel ves sloj molekul), časi se izmerijo znova
+  let izgubljen = false;
   platno.addEventListener("webglcontextlost", (e) => {
     e.preventDefault();
     if (!zivo) return;
+    izgubljen = true;
     delo = null;
+    msNaVzorec = msNaMol = 0;
     nalaganje.hidden = false;
   });
   platno.addEventListener("webglcontextrestored", () => {
@@ -160,11 +164,13 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     } catch {
       return;
     }
+    izgubljen = false;
     pKljuc = mKljuc = "";
+    msNaVzorec = msNaMol = 0;
     molZacet = false;
     idKljuc = "";
-    const id = prep?.id;
-    if (id) izberiPreparat(id, { zacetek: false }).catch(() => {});
+    const id = zadnjiId || prep?.id; // izguba med nalaganjem preparata: tisti, ki se je nalagal
+    if (id) izberiPreparat(id, { zacetek: id !== prep?.id }).catch(() => {});
     else nalaganje.hidden = true;
   });
   let prep = null;
@@ -212,8 +218,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   bTem.addEventListener("click", () => {
     if (s.nacin === "tem") return;
     const m = omeji(Math.max(5000, povecava(s) * 5), MIN_M, MAX_M);
+    s.nacin = "tem"; // pred iskanjem: sonda pri TEM ne zvija rezine, kot je ne slika
     kTkivu(true);
-    s.nacin = "tem";
     s.m = m;
     narisi();
   });
@@ -460,8 +466,10 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     }
     m = omeji(m, MIN_M, MAX_M);
     if (m > SVETLOBNI_MAX * 1.05) {
-      if (s.nacin !== "tem") kTkivu(true);
-      s.nacin = "tem";
+      if (s.nacin !== "tem") {
+        s.nacin = "tem";
+        kTkivu(true);
+      }
       s.m = m;
     } else {
       // svetlobni mikroskop ima samo štiri objektive: najbližji v logaritemskem smislu
@@ -557,6 +565,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   let skala = 0.4; // ločljivost predogleda glede na polno (0,15–0,75)
   let msNaVzorec = 0; // izmerjen čas preparata na vzorec (ms), 0 = še ne vemo
   let pKljuc = ""; // pogled, za katerega je preparat v polni ločljivosti v celoti narisan
+  let merjenNacin = "";
   let brezSS = false; // naprava je prepočasna za 4 vzorce na točko (do menjave preparata)
   let mKljuc = ""; // pogled, za katerega je sloj molekul v celoti narisan
   let msNaMol = 0; // izmerjen čas sloja molekul na točko (ms)
@@ -620,7 +629,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   }
   function izrisi() {
     cakaIzris = false;
-    if (!zivo || !prep) return;
+    if (!zivo || !prep || izgubljen) return;
     const { css, N, n } = velikost();
     if (interakcija === 0) kMolekuli(n);
     if (interakcija > 0) {
@@ -635,6 +644,11 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     }
     const r = izracunajPogled(upo, prep, s, n, { hitro: false });
     r.v.ss = r.v.ss || 1;
+    // hitrost se meri za vsak način posebej (TEM je na vzorec dražji od svetlobnega mikroskopa)
+    if (s.nacin !== merjenNacin) {
+      merjenNacin = s.nacin;
+      msNaVzorec = 0;
+    }
     // na počasni napravi štirje vzorci na točko ne odtehtajo čakanja (polna slika naj bo v manj kot ~1 s); hitrost se
     // izmeri s predogledom, odločitev velja do menjave preparata (sicer bi drsnik lučke lahko sprožil nov izris)
     if (r.v.ss > 1 && !msNaVzorec) predogled(css, N, n);
@@ -655,7 +669,12 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     const rabiP = kljuc !== pKljuc;
     const rabiM = !!mK && mK !== mKljuc;
     if (!rabiP && !rabiM) return koncaj(r, css);
-    if (delo && delo.kljuc === kljuc && delo.mK === mK) {
+    if (delo && delo.kljuc === kljuc && (delo.mK === mK || delo.faza === 0)) {
+      // med pasovi preparata se je spremenil le sloj molekul (barve, program pripravljen): preparat se ne začne znova
+      if (delo.mK !== mK) {
+        if (rabiM) mKljuc = "";
+        delo.mK = rabiM ? mK : "";
+      }
       // izris tega pogleda že teče: ob koncu naj velja zadnje stanje drsnikov
       delo.r = r;
       delo.css = css;
@@ -666,13 +685,13 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
       if (!msNaVzorec || msNaVzorec * n * n * r.v.ss > 2 * PAS_MS) predogled(css, N, n);
       pKljuc = "";
     }
-    mKljuc = "";
-    const d = (delo = { kljuc, mK, r, css, faza: rabiP ? 0 : 1, y: 0, h: rabiP ? visinaPasu(n, r.v.ss) : visinaPasuMol(n) });
+    if (rabiM) mKljuc = ""; // sloj molekul se nariše znova le, če se je spremenil (je ~100× dražji od preparata)
+    const d = (delo = { kljuc, mK: rabiM ? mK : "", r, css, faza: rabiP ? 0 : 1, y: 0, h: rabiP ? visinaPasu(n, r.v.ss) : visinaPasuMol(n) });
     requestAnimationFrame(() => nadaljuj(d));
   }
   // vsak izris ima svojo zanko pasov; ko ga zamenja nov pogled, se stara zanka ustavi (sicer bi se zanke kopičile)
   function nadaljuj(d) {
-    if (!zivo || !prep || delo !== d) return;
+    if (!zivo || !prep || izgubljen || delo !== d) return;
     const v = d.r.v;
     const y1 = Math.min(v.n, d.y + d.h);
     if (d.faza === 0) {
@@ -697,8 +716,11 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
       d.y = y1;
       d.h = visinaPasuMol(v.n);
       if (d.y < v.n) {
-        // sproti pokaži že narisani del (na počasnem telefonu traja celoten sloj nekaj sekund)
-        if (d.r.mol) upo.sestavi(v, d.r.mol.utez, d.y / v.n);
+        // sproti pokaži že narisani del (na počasnem telefonu traja celoten sloj nekaj sekund), največ ~8-krat na sekundo
+        if (d.r.mol && performance.now() - (d.sestavljeno || 0) > 120) {
+          upo.sestavi(v, d.r.mol.utez, d.y / v.n);
+          d.sestavljeno = performance.now();
+        }
         return void requestAnimationFrame(() => nadaljuj(d));
       }
       mKljuc = d.mK;
@@ -928,10 +950,11 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   let ciljPorabljen = false; // cilj velja le za prvi preparat
   // snov ultrastrukture → snov tkiva, v kateri leži (S_* iz glsl.js): jedrce in kromatin v jedru, organeli v citoplazmi
   const GOSTITELJ = { 28: [2], 27: [2], 20: [1], 21: [1], 22: [1], 26: [1], 29: [1], 23: [1], 32: [1] };
+  let zadnjiId = null; // zadnji izbrani preparat (za obnovo po izgubi grafike)
   let zahteva = 0; // hitra menjava preparata: velja zadnja izbira, tudi če se prejšnja datoteka naloži pozneje
   async function izberiPreparat(id, { zacetek = true } = {}) {
     const moja = ++zahteva;
-    brezSS = false;
+    zadnjiId = id;
     molM = 0;
     const p = await naloziPreparat(id);
     if (!p || !zivo || moja !== zahteva) return;
@@ -949,6 +972,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     }
     if (!velja()) return;
     prep = p;
+    brezSS = false; // po prevajanju: izris med prevajanjem ne sme odločiti za nov preparat
     nalaganje.hidden = true;
     if (zacetek) {
       s = { ...ZACETNO, grobi: 0, fini: 0, dzObj: 0, zarnica: s.zarnica ?? ZACETNO.zarnica, barve: s.barve };

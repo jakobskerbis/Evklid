@@ -118,7 +118,8 @@ function program(gl, fs) {
 }
 function programVzporedno(gl, fs, ext) {
   const g = zgradi(gl, fs);
-  if (!ext) return Promise.resolve().then(() => preveri(gl, g));
+  // brez razširitve prevajanje čaka ob prvem branju stanja: vsaj po naslednji sličici, da je predogled že na zaslonu
+  if (!ext) return new Promise((ok) => setTimeout(ok, 50)).then(() => preveri(gl, g));
   return new Promise((ok, napaka) => {
     const cakaj = () => {
       try {
@@ -174,6 +175,9 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
   let mol = null;
   let molObljuba = null;
   let idT = null; // majhna tekstura za prehod z režami molekul (oznake)
+  // zamegljenost se računa znova le, ko se je preparat ali sigma spremenil (sloj molekul se med risanjem sestavlja večkrat)
+  let pVer = 0;
+  let blurKljuc = "";
   const nastaviMol = (U, res, pxNm, idPass) => {
     gl.useProgram(mol.p);
     gl.uniform2f(mol.u("uRes"), res, res);
@@ -212,7 +216,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       kompleti.set(n, T);
       return;
     }
-    T = { n, p: tekstura(gl, [n, n]), a: tekstura(gl, [n, n]), b: tekstura(gl, [n, n]), m: tekstura(gl, [n, n]) };
+    T = { id: ++pVer, n, p: tekstura(gl, [n, n]), a: tekstura(gl, [n, n]), b: tekstura(gl, [n, n]), m: tekstura(gl, [n, n]) };
     kompleti.set(n, T);
     while (kompleti.size > 3) {
       const [k, star] = kompleti.entries().next().value;
@@ -274,6 +278,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       if (!prep) return;
       const n = v.n;
       pripravi(n);
+      pVer++;
       const nacin = v.nacin ?? (v.tem ? 1 : 0);
       if (nacin === 3 && !prepSem) prepSem = program(gl, fragmentPreparata(prepGlsl, { sem: true }));
       const pr = nacin === 3 ? prepSem : prep;
@@ -310,6 +315,9 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       const n = v.n;
       pripravi(n);
       // zamegljenost: vodoravno p → b, navpično b → a
+      const bk = `${pVer}|${T.id}|${v.sigma}`;
+      if (bk !== blurKljuc) {
+      blurKljuc = bk;
       gl.useProgram(blur.p);
       gl.uniform2f(blur.u("uVel"), n, n);
       gl.uniform1f(blur.u("uSigma"), v.sigma);
@@ -321,6 +329,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       gl.bindTexture(gl.TEXTURE_2D, T.b.t);
       gl.uniform2f(blur.u("uSmer"), 0, 1);
       risi(T.a.f, n, n);
+      }
       // molekule in atomi: sloj je že narisan (narisiMol), tu se le primeša
       const utez = mol && v.mol && molUtez > 0 ? molUtez : 0;
       // sestava na zaslon
@@ -353,8 +362,15 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     //       mol: null | { utez, uniforme }, svetlost, kontrast, topla, sum, krog }: celoten izris naenkrat
     narisi(v) {
       if (!prep) return;
+      // (le za orodja in preizkuse; mikroskop riše po pasovih) tudi tu molekule po pasovih, da GPE ne dobi predolgega izrisa
       api.narisiPreparat(v);
-      api.sestavi(v, api.narisiMol(v) ? v.mol.utez : 0);
+      let ima = false;
+      for (let y = 0; y < v.n; y += 32) {
+        ima = api.narisiMol(v, y, y + 32);
+        if (!ima) break;
+        api.pocakajMol();
+      }
+      api.sestavi(v, ima ? v.mol.utez : 0);
     },
     // Prevajanje programa molekul v ozadju. Vrne obljubo (true, ko je pripravljen; false ob napaki).
     pripraviMol() {
@@ -393,7 +409,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     // Kliči pred narisi: readPixels potem čaka le na majhen prehod k × k, ne na celoten izris molekul.
     idMolekul(v, k = 48) {
       if (!v.mol || !mol) return null;
-      if (!idT) idT = tekstura(gl, [k, k]);
+      if (!idT || idT.n[0] !== k) idT = tekstura(gl, [k, k]); // oznake (48) in iskanje molekule (64) rabita različno mrežo
       nastaviMol(v.mol.uniforme, k, (v.umNaTocko * 1000 * v.n) / k, 1);
       risi(idT.f, k, k);
       const px = new Uint8Array(k * k * 4);

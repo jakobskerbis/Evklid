@@ -93,6 +93,7 @@ export const srcna = {
   snovi: { 7: "miofibrile (aktin in miozin)", 3: "vezivo med celicami" },
   isci: "Pri 400× poišči interkalarne diske (temne stopničaste črte) in jedra v sredini celic.",
   glsl: /* glsl */ `
+#define DIADE_PRI_Z // srčna mišica: T-cevka ob črti Z z eno končno cisterno (diada), ne triada ob prehodu A–I
 T tkivo(vec2 p, float px) {
   T t = prazno();
   float rob = odsek(p, vec2(2400.0, 1600.0), 8.0);

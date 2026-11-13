@@ -205,7 +205,8 @@ const ORGANELI = [
   [/^citoskelet$/, (id) => (id === "celica-eritrocit" ? { p: "kri", m: 60000, snov: [S.MEMBRANA] } : null)],
   // T-cevke in odprt kanalikularni sistem trombocita sta uvihana celična membrana; gost cevast sistem je gladki ER
   [/^(t-cevke|ocs)$/, () => ({ m: 60000, snov: [S.MEMBRANA] })],
-  [/^gost-cevast-sistem$/, () => ({ m: 30000, snov: [S.GER] })],
+  // gost cevast sistem trombocita ostane v razmazu krvi (TEM trombocita), ne v jetrni celici
+  [/^gost-cevast-sistem$/, () => ({ p: "kri", m: 30000, snov: [S.GER], ostane: true })],
   // Schwannove celice so v perifernem živcu
   [/^schwannova-celica$/, () => ({ p: "zivec", m: 1000, snov: [S.JEDRO] })],
   // ---- jedro in dedni zapis
@@ -258,9 +259,9 @@ const ORGANELI = [
 const TEM_VSEBUJE = {
   [S.MITO]: "ustne cebula kvasovke skorja gladka-misica tanko-crevo kost mascevje modo jajcnik mreznica kapljica",
   [S.ER]: "ustne cebula tanko-crevo jajcnik",
-  [S.GER]: "jetra mascevje gladka-misica ledvica zelodec mreznica tanko-crevo zleza nadledvicna koren kvasovke",
+  [S.GER]: "jetra mascevje skeletna-misica srcna-misica gladka-misica ledvica zelodec mreznica tanko-crevo zleza nadledvicna koren kvasovke",
   [S.RIBOSOM]: "ustne cebula bakterije kvasovke skorja gladka-misica tanko-crevo kapljica",
-  [S.MEMBRANA]: "cebula kvasovke gladka-misica srcna-misica kri tanko-crevo kost",
+  [S.MEMBRANA]: "cebula kvasovke skeletna-misica srcna-misica gladka-misica kri tanko-crevo kost",
   [S.GRANULA]: "ustne cebula kvasovke skorja gladka-misica tanko-crevo modo jajcnik mreznica kapljica",
   [S.JEDRCE]: "ustne cebula skorja tanko-crevo mreznica",
   [S.GOLGI]: "cebula kvasovke skorja gladka-misica tanko-crevo kapljica",
@@ -285,6 +286,7 @@ const NADOMESTNA_SNOV = {
 function nadomesti(p, v, misica) {
   const ima = v.m > 1000 && TEM_VSEBUJE[v.snov?.[0]]?.split(" ");
   if (!ima || ima.includes(p)) return { p, snov: v.snov };
+  if (v.ostane) return { p, snov: [...v.snov, ...(NADOMESTNA_SNOV[v.snov[0]] || [S.CITO])] };
   const blizje = misica ? ["gladka-misica"] : p === "modo" ? ["jajcnik"] : []; // najprej soroden preparat
   const prednost = v.snov[0] === S.GER ? ["jetra"] : []; // gladki ER: najprej hepatocit
   const kandidati = RASTLINSKI_PREPARATI.has(p) ? ["cebula", "koren"] : MIKROBNI_PREPARATI.has(p) ? [] : [...blizje, ...prednost, ...ZIVALSKI_NADOMESTNI];

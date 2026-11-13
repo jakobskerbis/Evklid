@@ -183,9 +183,10 @@ T tkivo(vec2 p, float px) {
     t.snov = S_PLAZMA; t.dye = vec3(0.0, prox ? 0.08 : 0.02, 0.0);
     if (prox) {
       // ščetkasti rob: 1,5–2,5 µm širok svetlo rožnat, radialno progast pas ob svetlini, mestoma odtrgan
-      float sir = 1.5 + 1.0 * sum(vec2(a * 3.0, h.y * 9.0));
+      vec2 sm = vec2(cos(a), sin(a));                 // smer od središča (brez skoka pri a = ±π)
+      float sir = 1.5 + 1.0 * sum(sm * 1.5 + h.yz * 9.0);
       float bb = smoothstep(-sir - 0.4, -sir + 0.4, rlum) * (0.75 + 0.25 * smoothstep(0.35, 0.6, sum(q / 4.0 + h.zw * 5.0)));
-      float proge = 0.75 + 0.25 * sin(a * Rb * 2.6 + 3.0 * sumL(q, 0.8, px));
+      float proge = 0.75 + 0.25 * sin(a * floor(Rb * 2.6) + 3.0 * sumL(q, 0.8, px)); // celo število prog okoli svetline
       t.dye.y = mix(t.dye.y, 0.36 * proge, bb);
       if (bb > 0.5) t.snov = S_CITO;
     } else t.dye.y = mix(t.dye.y, 0.4, smoothstep(-1.5 * px, 0.0, rlum));   // gladek rob svetline

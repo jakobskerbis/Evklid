@@ -584,8 +584,9 @@ float izocrta(vec2 x) {
   vec2 g = vec2(sum(x + e) - sum(x - e), sum(x + e.yx) - sum(x - e.yx)) / 0.04;
   return abs(sum(x) - 0.5) / max(length(g), 0.08);
 }
-void gladkiER(inout U u, vec2 q, float ob, vec2 cid, float px) {
-  if (ob <= 0.0) return;
+// vrne bližino cevki (0..1): tam ni prostih ribosomov ali glikogena, sicer bi bil videti kot zrnati ER
+float gladkiER(inout U u, vec2 q, float ob, vec2 cid, float px) {
+  if (ob <= 0.0) return 0.0;
   float s = 0.22;
   vec2 o = fract(cid * 0.0137) * 97.0; // zamik šuma po celici (majhna števila: natančnost float)
   float d = min(izocrta(q / s + o) * s, izocrta(q / (0.8 * s) + o.yx + 11.3) * 0.8 * s);
@@ -595,6 +596,7 @@ void gladkiER(inout U u, vec2 q, float ob, vec2 cid, float px) {
   u.g = mix(mix(u.g, 0.14, lumen), 0.78, mem);
   if (lumen > 0.5) u.snov = S_GER;
   if (mem > 0.0) u.meja = min(u.meja, abs(d - sir));
+  return ob * (1.0 - smoothstep(sir, sir + 0.016, d));
 }
 
 // Zrna (lizosomi, sekretorna zrnca), lipidne kapljice, vezikli.
@@ -672,13 +674,14 @@ void organeli(inout U u, T t, vec2 p, float px) {
     if (h.z < (sinapsa ? 0.75 : 0.18)) zrno(z, q - (n2 + 0.25 + 0.5 * h.xy) * g2, sinapsa ? 0.02 : 0.025 + 0.025 * h.w, 0.22, 1.0, px);
   }
   // gladki ER v delih citoplazme brez drugih organelov (v hepatocitu skupaj z glikogenom)
+  float obCevki = 0.0;
   if (P.ser > 0.0 && z.snov == S_CITO) {
     float pol = t.tip == C_HEPATOCIT ? smoothstep(0.5, 0.62, sum(q / 1.3 + t.cid)) : smoothstep(0.78 - 0.5 * P.ser, 0.86 - 0.5 * P.ser, sum(q / 1.1 + t.cid * 1.7 + 5.0));
-    gladkiER(z, q, pol, t.cid, px);
+    obCevki = gladkiER(z, q, pol, t.cid, px);
   }
   // prosti ribosomi in glikogen (ne v svetlini gladkega ER)
   {
-    float zun = z.snov == S_GER ? 0.0 : 1.0;
+    float zun = z.snov == S_GER ? 0.0 : 1.0 - step(0.5, obCevki);
     float g3 = 0.045;
     vec2 n3 = floor(q / g3);
     vec4 h = h42(n3 + t.cid * 5.7);
@@ -781,13 +784,32 @@ void snovTEM(inout U u, T t, vec2 p, float px) {
     g = mix(g, 0.5, step(a, 0.17));                      // pas H
     g = mix(g, 0.75, crta(f, 0.012, px));                // črta M
     g = mix(g, 0.88, crta(a - 1.1, 0.04, px));           // črta Z
-    // meje miofibril (~1 µm) s sarkoplazemskim retiklom
+    // meje miofibril (~1 µm): ozka sarkoplazma s sarkoplazemskim retiklom (gladki ER: cevka vzdolž reže) in pri skeletni
+    // mišici triade ob prehodu A–I (T-cevka, uvihana membrana, med dvema končnima cisternama), pri srčni diade ob črti Z
     float v = (fract(z.y / 1.05 + 0.5 * sum(vec2(z.x * 0.1, 0.0))) - 0.5) * 1.05;
     float rez = crta(v, 0.035, px);
     g = mix(g, 0.18, rez);
+#ifdef DIADE_PRI_Z
+    float dxT = a - 1.1;
+    float cist = length(vec2(dxT + 0.05, v) / vec2(0.028, 0.05)) - 1.0;
+#else
+    float dxT = a - 0.8;
+    float cist = length(vec2(abs(dxT) - 0.05, v) / vec2(0.028, 0.05)) - 1.0;
+#endif
+    float srD = min(abs(v) - 0.016 * (1.0 + 0.3 * sin(z.x * 11.0)), cist * 0.028);
+    float tD = length(vec2(dxT, v)) - 0.018;
+    float srL = pokrij(srD, px) * step(0.0, tD), tL = pokrij(tD, px);
+    float srM = membrana(srD, px) * step(0.0, tD), tM = membrana(tD, px);
+    float rv = (1.0 - smoothstep(0.006, 0.02, px)); // pod ~150 000× se vidi le svetla reža
+    g = mix(g, 0.14, srL * rv);
+    g = mix(g, 0.36, tL * rv);
+    g = mix(g, 0.78, max(srM, tM) * rv);
+    if (srL > 0.5) u.snov = S_GER;
+    if (tM > 0.5) u.snov = S_MEMBRANA;
+    u.meja = min(u.meja, min(abs(srD), abs(tD)));
     // filamenti: debeli (myozin) 15 nm, tanki (aktin) med njimi
     float fil = 0.5 + 0.5 * cos(6.2832 * z.y / 0.022);
-    g += 0.12 * (fil - 0.5) * vid * (1.0 - rez);
+    g += 0.12 * (fil - 0.5) * vid * (1.0 - rez) * (1.0 - srL) * (1.0 - tL);
     if (L < 0.5) g = 0.45 + 0.15 * mix(0.0, sum(p / 0.012) - 0.5, vid);
     u.g = g;
   } else if (s == S_MIELIN) {
