@@ -1,0 +1,45 @@
+# Enkratno brisanje starih vej (j, 13. 11. 2026). Zažene se samo ročno: Actions → »Pobriši stare veje« → Run workflow.
+# Briše le veje iz .github/stare-veje.txt, ki so še na istem commitu kot ob pregledu in nimajo odprtega PR.
+# Po uporabi se ta datoteka in seznam odstranita z naslednjim PR.
+name: Pobriši stare veje
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: read
+concurrency:
+  group: pobrisi-stare-veje
+jobs:
+  pobrisi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github
+          persist-credentials: false
+      - name: Pobriši
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -u
+          ok=0; spr=0; pr=0; ni=0; nap=0; izbrisane=
+          while read -r veja sha; do
+            case "$veja" in ''|'#'*) continue;; esac
+            [ "$veja" = main ] && continue
+            if ! zdaj=$(gh api "repos/$REPO/git/ref/heads/$veja" -q .object.sha 2>err.txt); then
+              if grep -q "HTTP 404" err.txt; then ni=$((ni+1)); else echo "GitHub ni odgovoril, ostane: $veja"; nap=$((nap+1)); fi
+              continue
+            fi
+            if [ "$zdaj" != "$sha" ]; then echo "Spremenjena, ostane: $veja"; spr=$((spr+1)); continue; fi
+            # odprt PR iz te veje ali v to vejo (osnova) → ostane; ob napaki GitHuba tudi ostane
+            iz=$(gh api "repos/$REPO/pulls?state=open&head=${GITHUB_REPOSITORY_OWNER}:$veja" -q length || echo napaka)
+            v=$(gh api "repos/$REPO/pulls?state=open&base=$veja" -q length || echo napaka)
+            if [ "$iz" != "0" ] || [ "$v" != "0" ]; then echo "Odprt PR ali napaka pri preverjanju, ostane: $veja"; pr=$((pr+1)); continue; fi
+            if gh api -X DELETE "repos/$REPO/git/refs/heads/$veja" >/dev/null; then ok=$((ok+1)); izbrisane="$izbrisane $veja"; else echo "Napaka: $veja"; nap=$((nap+1)); fi
+          done < .github/stare-veje.txt
+          echo "Izbrisanih: $ok, spremenjenih (ostanejo): $spr, z odprtim PR (ostanejo): $pr, že izbrisanih: $ni, napak (ostanejo): $nap" | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "Izbrisane veje:"; for b in $izbrisane; do echo "- $b"; done; } | tee -a "$GITHUB_STEP_SUMMARY"
+          [ "$nap" = 0 ]
