@@ -168,7 +168,8 @@ T tkivo(vec2 p, float px) {
       t.dye = c.dye;
     }
   }
-  t.dye.x += 0.32 * smoothstep(14.0, 2.0, dg) * (1.0 - ploscat);
+  // teritorialni matriks: temnejši obroč okoli skupine, ki ugasne pred mejo celice Voronoja (sicer oglati robovi)
+  t.dye.x += 0.32 * smoothstep(14.0, 2.0, dg) * smoothstep(0.0, 9.0, v.rob) * (1.0 - ploscat);
   t.dye.x += 0.25 * crta(dg, 0.5, px);
   return t;
 }`,

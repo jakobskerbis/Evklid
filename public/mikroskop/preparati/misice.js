@@ -98,7 +98,23 @@ T tkivo(vec2 p, float px) {
   T t = prazno();
   float rob = odsek(p, vec2(2400.0, 1600.0), 8.0);
   if (rob > 0.0) return t;
-  float kot = -0.35 + 0.25 * (sum(p / 1500.0) - 0.5);
+  // snopi celic (fascikli, ~0,3 mm) tečejo v malo različnih smereh; med njimi je tanek, valovit in mestoma prekinjen
+  // perimizij (pri 40× in 100× se vidi kot svetle vijugaste reže)
+  vec2 pw = p + 70.0 * vec2(sum(p / 260.0) - 0.5, sum(p / 260.0 + 9.0) - 0.5) + 18.0 * vec2(sum(p / 60.0 + 3.0) - 0.5, sum(p / 60.0 + 5.0) - 0.5);
+  Vor F = vor(pw, 330.0, vec2(1.0, 1.6), -0.35, 0.9);
+  vec4 hF = h42(F.id + 31.0);
+  float kot = -0.35 + 0.25 * (sum(p / 1500.0) - 0.5) + 0.45 * (hF.x - 0.5) * smoothstep(0.0, 60.0, F.rob);
+  float sirF = (1.0 + 3.5 * hF.y) * smoothstep(0.35, 0.55, sum(pw / 140.0 + hF.zw * 7.0));
+  if (F.rob < sirF) {
+    t.snov = S_KOLAGEN; t.smer = vec2(-F.nb.y, F.nb.x);
+    t.dye = vec3(0.03 + 0.03 * sumL(p, 4.0, px), 0.16 + 0.1 * sumL(p, 9.0, px), 0.0) * (0.5 + 0.5 * smoothstep(0.0, 2.0, F.rob));
+    // redka sploščena jedra fibroblastov vzdolž pregrade
+    float xf = dot(pw - F.c, t.smer);
+    float ij = floor(xf / 40.0);
+    float jf = sdElipsa(vec2(xf - (ij + 0.5) * 40.0 - 10.0 * (h42(vec2(ij, hF.z)).x - 0.5), F.rob - 0.5 * sirF), vec2(4.0, 1.0));
+    t.dye.x = mix(t.dye.x, 0.8, pokrij(jf, px) * step(0.55, h42(vec2(ij, hF.w)).y));
+    return t;
+  }
   vec2 smer = vec2(cos(kot), sin(kot));
   Vor v = vor(p, 17.0, vec2(5.2, 1.0), -kot, 0.85);
   vec4 h = h42(v.id);
