@@ -9,7 +9,7 @@
 import bpy, bmesh, math, os, re
 import numpy as np
 from mathutils import Vector
-from drevesa import Notranjost, cev, zgladi, redci, st_stranic, taubin_bm, tris, poenostavi
+from drevesa import Notranjost, cev, zgladi, redci, st_stranic, taubin_bm, tris, poenostavi, zapri_luknje
 
 REZNJI = {"Superior lobe of right lung": ("upper_lobe_right", "desni-zgornji"), "Middle lobe of right lung": ("middle_lobe_right", "desni-srednji"),
           "Inferior lobe of right lung": ("lower_lobe_right", "desni-spodnji"), "Superior lobe of left lung": ("upper_lobe_left", "levi-zgornji"),
@@ -112,6 +112,23 @@ def _cevi(seznam, ime, telefon=False, obroci=None, casa=None, korak=None):
     return me
 
 
+def _zakrpaj(me, krogov=4):
+    """Drobne napake po poenostavitvi (reže z dvema robovoma, nemnogoteren rob): ploskve ob njih proč, luknja se zapolni."""
+    bm = bmesh.new(); bm.from_mesh(me)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
+    for _ in range(krogov):
+        slabi = {v for e in bm.edges if len(e.link_faces) != 2 for v in e.verts}
+        if not slabi:
+            break
+        bmesh.ops.delete(bm, geom=[f for f in bm.faces if any(v in slabi for v in f.verts)], context="FACES")
+        bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if len(e.link_faces) == 1], sides=0)
+        bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(me); bm.free(); me.update()
+    for p in me.polygons:
+        p.use_smooth = True
+
+
 def _afina(A, B):
     """Afina preslikava (najmanjši kvadrati) točk A → B."""
     A1 = np.concatenate([A, np.ones((len(A), 1))], 1)
@@ -190,7 +207,8 @@ def pljuca_ct(osnovni, cfg, tmp):
         T = _afina(A, B)
         print(f"[organi] sapnik HRA → CT: merilo {m_c / m_h:.3f}, ostanek {np.abs(T(A[:4]) - B[:4]).max() * 1000:.1f} mm")
         z_vrh = max(float(np.max([v[2] for k in REZNJI.values() for v in d[f'lung_{k[0]}_v'][::50]])) + nast.get("sapnikNad", 0.02), 0)
-        z_vrh = min(z_vrh, float(T(_tocke(H["VH_M_trachea"]))[:, 2].max()) - nast.get("sapnikOdrez", 0.008))  # pod zaprtim (koničastim) vrhom mreže HRA
+        # rez pod zadnjim hrustančnim obročem HRA: nad njim se gola cev mreže HRA zoži v konico
+        z_vrh = min(z_vrh, float(T(_tocke(H["VH_M_tracheal_cartilage"]))[:, 2].max()) - nast.get("sapnikOdrez", 0.005))
         def kos(kljuci, ime, stena, tkivo, del_, n_rt):
             bm = bmesh.new()
             for k in kljuci:
@@ -210,6 +228,9 @@ def pljuca_ct(osnovni, cfg, tmp):
             for p in me.polygons:
                 p.use_smooth = True
             rac[ime] = poenostavi(me, min(1.0, n_rt[0] / tris(me)), tmp); tel[ime] = poenostavi(me, min(1.0, n_rt[1] / tris(me)), tmp)
+            if not stena:  # obroči so zaprta telesa tudi po poenostavitvi (drobne luknje)
+                for m_ in (me, rac[ime], tel[ime]):
+                    _zakrpaj(m_)
             vrstice.append([ime, me, tkivo, del_, f"(lastno) {ime} / HRA"])
             print(f"[organi] {ime}: {tris(me)} / {tris(rac[ime])} / {tris(tel[ime])} trikotnikov")
         kos(["VH_M_trachea", "VH_M_carina"], "Trachea (HRA)", 0.0013, "dihalna", "sapnik", (9000, 2600))
