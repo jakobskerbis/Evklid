@@ -35,7 +35,9 @@ def main():
     M = lambda f: np.asarray(nib.load(os.path.join(msd, f)).dataobj) > 0
     # jetra: maska z žilami v njej, brez lukenj; po rezinah zaprta (stopnice 1,5 mm zgladi površina)
     L = ndimage.binary_fill_holes(ndimage.binary_closing(L | ((h > 0) & ndimage.binary_dilation(L, iterations=2)), iterations=2))
-    L = najv(L)
+    # spodnja votla vena ostane zunaj jeter (v svojem žlebu), sicer jo zapiranje maske pogoltne
+    ivc = M("total/inferior_vena_cava.nii.gz")
+    L = najv(L & ~ndimage.binary_dilation(ivc, iterations=1))
     izh = {"primer": p}
     izh["jetra_v"], izh["jetra_f"] = povrsina(L, aff, korak, glajenje=1.6)
     print("jetra", len(izh["jetra_v"]), "ml", round(L.sum() * np.prod(korak) / 1000))
@@ -61,8 +63,12 @@ def main():
     izh["portalna_P"], izh["portalna_R"], izh["portalna_S"] = P, R, S
     print("portalna vena: vozlišč", len(P), "korenin", int((S < 0).sum()), "polmer mm", round(float(R.max() * 1000), 1))
     # jetrne vene s spodnjo votlo veno (oznaka 2; votla vena TotalSegmentator jo podaljša nad in pod jetri): korenina = vrh
-    ivc = M("total/inferior_vena_cava.nii.gz")
-    m, kr, af = izo(najv((h == 2) | (ivc & (d_jetra <= 12.0))))
+    # votla vena cela (ne le del ob jetrih), od 12 mm pod repastim režnjem do 8 mm nad kupolo jeter
+    kk = np.arange(L.shape[2]); gor = aff[2, 2] > 0
+    k1 = np.flatnonzero(seg[0].any((0, 1))); kL = np.flatnonzero(L.any((0, 1)))
+    lo, hi = ((k1.min() - 12.0 / korak[2], kL.max() + 8.0 / korak[2]) if gor else (kL.min() - 8.0 / korak[2], k1.max() + 12.0 / korak[2]))
+    ivc = ivc & ((kk >= lo) & (kk <= hi))[None, None, :]
+    m, kr, af = izo(najv((h == 2) | ivc))
     m = najv(ndimage.binary_closing(m, iterations=1))
     P, R, S = drevo(m, kr, af, lambda P, r: P[:, 2] * 0.5 + r * 2.0, min_veja_mm=5.0)
     izh["vene_P"], izh["vene_R"], izh["vene_S"] = P, R, S

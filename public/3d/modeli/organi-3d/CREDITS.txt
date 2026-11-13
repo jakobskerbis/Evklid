@@ -11,13 +11,33 @@ srce.glb, srce-telefon.glb, srce-volumen.png, srce-stena.png, srce-stena-telefon
   CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Prirejeno (poravnava, deli, maščoba, trabekule).
   Ostali deli srca: Z-Anatomy (CC BY-SA 4.0) in lastna geometrija Evklid; vse vire navaja public/3d/viri.json.
 
-pljuca.glb, pljuca-telefon.glb (površine pljučnih režnjev s špranjami)
+pljuca.glb, pljuca-telefon.glb (režnji, pljučne arterije in vene, dihalno drevo; sapnik in glavna bronhija)
   Wasserthal J., Breit H.-C., Meyer M. T. et al., »TotalSegmentator: Robust Segmentation of 104 Anatomic Structures
   in CT Images«, Radiology: Artificial Intelligence 5(5): e230024 (2023); podatki TotalSegmentator dataset v1,
   https://doi.org/10.5281/zenodo.6802613, preiskava s0913, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
-  Prirejeno (marching cubes, glajenje, poenostavitev, poravnava na pljuča Z-Anatomy); izdelava scripts/atlas/pljuca-ct.py.
-  Bronhiji, žile in sapnik ob hilusu: Z-Anatomy (CC BY-SA 4.0) in lastna geometrija Evklid.
+  Maske režnjev (model total) ter pljučnih arterij, ven in dihalnih poti (model lung_vessels; koda in modela Apache-2.0).
+  Prirejeno (marching cubes, zaobljeni robovi, skelet in polmeri žil, cevi); izdelava scripts/atlas/pljuca-zile.py,
+  ct_orodja.py, pljuca_geometrija.py.
+  Sapnik, karina in glavna bronhija s hrustančnimi obroči: Human Reference Atlas (HuBMAP), 3D Reference Organs
+  Trachea v1.1 in Main Bronchus v1.1 (Visible Human Male), https://humanatlas.io/3d-reference-library, CC BY 4.0.
+  Prirejeno (afina poravnava na dihalno drevo CT, stena, poenostavitev).
 
 mozgani.glb, mozgani-telefon.glb (skorja in mali možgani)
   OpenNeuro ds000001, fMRIPrep/FreeSurfer, sub-01 (CC0 1.0): pialna površina (lh/rh.pial, sulc, aparc) in segmentacija
   aseg.mgz (mali možgani, oznake 7/8/46/47); izdelava scripts/atlas/mali-mozgani-mri.py in izvozi-organe.py.
+  Možgansko deblo, mali možgani, talamus, hipotalamus, forniks, žuljevo telo, češerika, vidno križišče in risba
+  sredinskega reza (mozgani-mali-rez.webp): Human Reference Atlas (HuBMAP), »Allen Human Reference Atlas – 3D, 2020«,
+  Brain v1.4 (Ding S.-L. et al., Allen Institute), https://doi.org/10.48539/HBM845.PKWL.756, CC BY 4.0.
+  Prirejeno (poravnava na skorjo FreeSurfer, združevanje struktur, glajenje, poenostavitev); izdelava
+  scripts/atlas/mozgani_hra.py in mozgani-rez-hra.py.
+
+jetra.glb, jetra-telefon.glb (površina jeter, režnji, portalna vena, jetrne vene, spodnja votla vena)
+  HVA-CT: Hepatic Venous Annotations CT, https://doi.org/10.5281/zenodo.19850108, primer 374, CC BY-SA 4.0
+  (https://creativecommons.org/licenses/by-sa/4.0/): maske jeter, intrahepatične portalne vene in jetrnih ven na CT
+  hepaticvessel_374 iz Medical Segmentation Decathlon Task08 HepaticVessel (Simpson A. L. et al., arXiv:1902.09063;
+  CC BY-SA 4.0). Couinaudovi segmenti in spodnja votla vena: TotalSegmentator (modela liver_segments in total,
+  Apache-2.0) na istem CT. Prirejeno (marching cubes, skelet in polmeri žil, cevi, režnji); izdelava
+  scripts/atlas/jetra-ct.py, ct_orodja.py, jetra_geometrija.py.
+  Deljenje pod enakimi pogoji: mreže v jetra.glb in jetra-telefon.glb so izpeljano delo in so na voljo pod CC BY-SA 4.0.
+  Žolčnik: Z-Anatomy (CC BY-SA 4.0), postavljen v ležišče (bolnik na CT ga nima); jetrna arterija in žolčni vodi:
+  lastna geometrija Evklid ob portalnih vejah.

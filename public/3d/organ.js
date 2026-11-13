@@ -996,7 +996,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
  vec4 sT = texture2D( orgSl, vec2( sUv.x, 1.0 - sUv.y ) );
  float sIn = step( 0.0, sUv.x ) * step( sUv.x, 1.0 ) * step( 0.0, sUv.y ) * step( sUv.y, 1.0 ) * sT.a;
  ${t.rezSlika?.izrez ? "if ( sIn < 0.5 ) discard; sIn = 1.0; // izrez: zunaj naslikanega obrisa ploskve ni (nazobčan obris listov, razpoke)" : ""}
- diffuseColor.rgb = mix( diffuseColor.rgb, sT.rgb * ( 0.94 + 0.12 * orgSum( orgQ * ${dm2(1200)} ) ), sIn );
+ ${t.rezUcna ? "diffuseColor.rgb = mix( diffuseColor.rgb, diffuseColor.rgb * ( 0.5 + 0.95 * dot( sT.rgb, vec3( 0.333 ) ) ), sIn ); // učne barve: risba le kot svetlost barve dela" : `diffuseColor.rgb = mix( diffuseColor.rgb, sT.rgb * ( 0.94 + 0.12 * orgSum( orgQ * ${dm2(1200)} ) ), sIn );`}
  orgH = mix( orgH, dot( sT.rgb, vec3( 0.333 ) ), sIn * ${fl(t.rezSlika?.visina ?? 0.5)} ); }`
             : ""
         }${
@@ -1023,7 +1023,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
   return m;
 }
 
@@ -1187,6 +1187,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const votline = new Map(); // tkivo → material notranjosti votline (tkivo.rezVotlina)
   const maskaMat = new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide }); // samo globina: odprtina votline v ploskvah reza
   const slike = []; // naslikane rezne ploskve (tkivo.rezSlika): naložijo se ob prvem prerezu
+  const slikeTkiv = new Map(); // tkivo → { uniform, U, V, c0, lo, mera }: ista risba za ploskev reza v učnih barvah
   const ucni = new Map(); // id dela → { mat, pokrov }: »Učne barve« (barve.js)
   // Del z »znotraj« (žila z enojno steno, npr. aorta) dobi svoj material tkiva: venčne žile istega tkiva so zaprte cevi.
   const znotrajDela = new Map((podatki.deli || []).filter((d) => d.znotraj).map((d) => [d.id, d.znotraj]));
@@ -1275,6 +1276,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
             prazna.needsUpdate = true;
             slika = { uniform: { value: prazna }, U: r.os.U, V: r.os.V, c0: [0, 1].map((i) => prostor.sredisce.reduce((a, x, c) => a + x * (i ? r.os.V : r.os.U)[c], 0)), lo: t.rezSlika.lo, mera: t.rezSlika.mera };
             slike.push({ uniform: slika.uniform, prazna, pot: t.rezSlika.slika, tex: null });
+            slikeTkiv.set(k.tkivo, slika);
+            for (const u of ucni.values()) if (u.tkivo === k.tkivo) u.presek = ucniPresekSlike(t, u.barva, slika);
           }
           const pm = materialPokrova(t, ravnine, s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, slika });
           pm.clippingPlanes = [];
@@ -1435,6 +1438,13 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const poId = new Map((podatki.deli || []).map((d) => [d.id, d]));
   const imaUcne = (podatki.deli || []).length > 1;
   let ucne = false;
+  // Ploskev reza z risbo (rezSlika) v učnih barvah: barva dela, risba le kot svetlost (listi malih možganov, snopi debla).
+  function ucniPresekSlike(tk, c, slika) {
+    const pm = materialPokrova({ rez: `#${c.clone().multiplyScalar(0.8).getHexString()}`, rezSum: 0, rezHrap: 1, rezLak: 0, rezRelief: 0, rezPresek: tk.rezPresek, rezSlika: tk.rezSlika, rezUcna: true }, ravnine, s, null, prostor.sredisce, { slika });
+    pm.clippingPlanes = [];
+    pm.side = THREE.DoubleSide;
+    return pm;
+  }
   const ucniZa = (id, tkivo) => {
     const kljuc = `${id}|${tkivo}`;
     if (!ucni.has(kljuc)) {
@@ -1479,7 +1489,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
         );
         presek.clippingPlanes = [];
         presek.side = THREE.DoubleSide;
-      } else presek = new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.DoubleSide });
+      } else if (tk.rezSlika && tk.rezPresek && slikeTkiv.has(tkivo)) presek = ucniPresekSlike(tk, c, slikeTkiv.get(tkivo));
+      else presek = new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.DoubleSide });
       ucni.set(kljuc, { mat: umat, pokrov, presek, tkivo, id, barva: c.clone() });
     }
     return ucni.get(kljuc);
