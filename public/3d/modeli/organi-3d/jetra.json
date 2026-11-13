@@ -39,9 +39,8 @@
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
-    "rob": 0.0004,
-    "povecaj": 1.004,
-    "robBarva": "#b06a58"
+    "rob": 0.0003,
+    "povecaj": 1.004
    },
    "rezSum": 0.25,
    "rezCelice": [
@@ -83,18 +82,10 @@
      "delez": 0.1,
      "najv": 0.0022,
      "najm": 0.0012,
-     "zleb": {
-      "barva": "#6f6a34",
-      "senca": "#23220c",
-      "globina": 0.012,
-      "lak": 0.12,
-      "hrap": 0.6,
-      "okolje": 0.25,
-      "sencaMoc": 0.88
-     }
+     "plosko": true
     },
-    "robBarva": "#989060",
-    "luknjaBarva": "#3a4216"
+    "robBarva": "#9c9464",
+    "luknjaBarva": "#3d3c14"
    }
   },
   "zolcevod": {
@@ -119,18 +110,12 @@
     "vrsta": 5,
     "cev": {
      "delez": 0.25,
-     "zleb": {
-      "barva": "#6a6630",
-      "senca": "#1e1c08",
-      "globina": 0.003,
-      "lak": 0.12,
-      "hrap": 0.6,
-      "okolje": 0.25,
-      "sencaMoc": 0.88
-     }
+     "plosko": true,
+     "najm": 0.0005,
+     "najv": 0.0022
     },
-    "robBarva": "#a39a70",
-    "luknjaBarva": "#3f4514"
+    "robBarva": "#aaa078",
+    "luknjaBarva": "#45441a"
    }
   },
   "portalna": {
@@ -155,19 +140,13 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.22,
-     "zleb": {
-      "barva": "#6e3c4c",
-      "senca": "#1e0a14",
-      "globina": 0.005,
-      "lak": 0.12,
-      "hrap": 0.6,
-      "okolje": 0.25,
-      "sencaMoc": 0.88
-     }
+     "delez": 0.2,
+     "plosko": true,
+     "najm": 0.0005,
+     "najv": 0.0022
     },
-    "robBarva": "#b08e8c",
-    "luknjaBarva": "#2f2148"
+    "robBarva": "#b89690",
+    "luknjaBarva": "#4c1e2a"
    }
   },
   "arterija": {
@@ -193,18 +172,12 @@
     "vrsta": 5,
     "cev": {
      "delez": 0.3,
-     "zleb": {
-      "barva": "#7a3030",
-      "senca": "#220808",
-      "globina": 0.002,
-      "lak": 0.12,
-      "hrap": 0.6,
-      "okolje": 0.25,
-      "sencaMoc": 0.88
-     }
+     "plosko": true,
+     "najm": 0.0005,
+     "najv": 0.0022
     },
-    "robBarva": "#c08a80",
-    "luknjaBarva": "#501412"
+    "robBarva": "#c79488",
+    "luknjaBarva": "#551a16"
    }
   },
   "vena": {
@@ -229,19 +202,13 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.16,
-     "zleb": {
-      "barva": "#6a3a44",
-      "senca": "#1c0a10",
-      "globina": 0.007,
-      "lak": 0.12,
-      "hrap": 0.6,
-      "okolje": 0.25,
-      "sencaMoc": 0.88
-     }
+     "delez": 0.2,
+     "plosko": true,
+     "najm": 0.0005,
+     "najv": 0.0022
     },
-    "robBarva": "#a8868a",
-    "luknjaBarva": "#1c2850"
+    "robBarva": "#b3908c",
+    "luknjaBarva": "#4a1c20"
    }
   },
   "vez": {
@@ -270,16 +237,16 @@
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
-   "barva": "#9c5a50",
+   "barva": "#8a4a40",
    "rez": "#d8c0ae",
    "sijajBarva": "#ffffff",
-   "rob": 0.08,
+   "rob": 0.04,
    "robBarva": "#c99a8c",
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.5,
    "brezReza": true,
-   "prosojnost": 0.5,
+   "prosojnost": 0.42,
    "dvostransko": true
   }
  },
@@ -437,11 +404,11 @@
   "ravnine": [
    {
     "n": [
-     0.1102,
-     0.2412,
-     -0.9642
+     0.056,
+     -0.3039,
+     -0.9511
     ],
-    "d": 0.0004
+    "d": 0.0189
    }
   ]
  },
@@ -512,10 +479,10 @@
    }
   ]
  },
- "velikost": 0.3119,
+ "velikost": 0.3075,
  "trikotniki": {
-  "racunalnik": 120494,
-  "telefon": 37274
+  "racunalnik": 120606,
+  "telefon": 37470
  },
  "luci": [
   {

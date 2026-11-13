@@ -1062,7 +1062,7 @@ ${zarezaSinusa(pir.sinus, tm, dm, dm2)}
             : ""
         }${
           vr
-            ? `\n if ( vOrgVr > 1.5 ) { diffuseColor.rgb = ${vec3(presek.luknjaBarva || "#200808")}${presek.cev ? " * mix( 1.7, 0.55, smoothstep( 0.0, 1.0, vOrgVr - 2.0 ) )" : ""}; orgH = 0.0; } else if ( vOrgVr > 0.5 ) { diffuseColor.rgb = ${vec3(presek.robBarva || t.rez || "#cccccc")}; orgH = 0.6; }`
+            ? `\n if ( vOrgVr > 1.5 ) { diffuseColor.rgb = ${vec3(presek.luknjaBarva || "#200808")}${presek.cev && !presek.plosko ? " * mix( 1.7, 0.55, smoothstep( 0.0, 1.0, vOrgVr - 2.0 ) )" : ""}; orgH = 0.0; } else if ( vOrgVr > 0.5 ) { diffuseColor.rgb = ${vec3(presek.robBarva || t.rez || "#cccccc")}; orgH = 0.6; }`
             : ""
         }`,
       )
@@ -1084,7 +1084,7 @@ ${zarezaSinusa(pir.sinus, tm, dm, dm2)}
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}${presek.cev ? "c" : ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezSlika?.gladko ? 1 : 0, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}${presek.plosko ? "f" : ""}${presek.cev ? "c" : ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezSlika?.gladko ? 1 : 0, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
   return m;
 }
 
@@ -1423,7 +1423,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
             slikeTkiv.set(k.tkivo, slika);
             for (const u of ucni.values()) if (u.tkivo === k.tkivo) u.presek = ucniPresekSlike(t, u.barva, slika);
           }
-          const pm = materialPokrova(t, ravZa(t), s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, cev: !!t.rezPresek.cev, slika });
+          const pm = materialPokrova(t, ravZa(t), s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, cev: !!t.rezPresek.cev, plosko: !!t.rezPresek.cev?.plosko, slika });
           pm.clippingPlanes = [];
           pm.side = THREE.DoubleSide;
           preseki.set(k.tkivo, pm);
@@ -1517,6 +1517,9 @@ export async function zgradiOrgan(ime, ctx = {}) {
     const skrijStran = p.skrijStran || null;
     const skrijTkiva = new Set(p.skrijTkiva || []);
     const skrijDele = new Set(p.skrijDele || []);
+    // skrijMreze: mreže teh delov v tem pogledu niso narisane, deli pa ostanejo na seznamu in jih je mogoče izbrati
+    // (možgani v prerezu: žuljevo telo, hipotalamus in križišče so na risbi rezne ploskve; ocena n6)
+    const skrijMreze = new Set(p.skrijMreze || []);
     // skupina v skrijDele skrije tudi svoje posamezne dele (venčne arterije → LAD, cirkumfleksna …; prej so ostali vidni)
     for (const d of podatki.deli || []) if (d.skupina && skrijDele.has(d.skupina)) skrijDele.add(d.id);
     const rezi = vPrerezu() && !!ravnine && p.rez !== false;
@@ -1529,7 +1532,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
       rezPlosca.mesh.material = ucne ? rezPlosca.ucna : rezPlosca.real;
     }
     for (const m of meshi) {
-      m.visible = m.userData.stran !== skrijStran && !skrijTkiva.has(m.userData.tkivo) && !skrijDele.has(m.userData.del);
+      m.visible = m.userData.stran !== skrijStran && !skrijTkiva.has(m.userData.tkivo) && !skrijDele.has(m.userData.del) && !skrijMreze.has(m.userData.del);
+      m.userData.naRisbi = skrijMreze.has(m.userData.del) && m.userData.stran !== skrijStran; // del ostane na seznamu
       for (const c of m.children) c.visible = rezi;
       // rezPresek.samoPresek: v prerezu ostane od cevi le presek na ravnini (kot rezina); neprerezane cevi za ravnino ne
       // ležijo čez rezno ploskev in ne štrlijo iz organa (ocena n4: »uncut tubes across the cut face«)
@@ -1703,7 +1707,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     const p = pogledi[pogled] || {};
     const tocke = new Set(p.tocke || []);
     deliPogleda = vsiDeli
-      .filter((x) => x.moje.some((m) => m.visible))
+      .filter((x) => x.moje.some((m) => m.visible || m.userData.naRisbi))
       .map((x) => ({
         id: x.d.id,
         ime: x.d.ime,

@@ -123,18 +123,10 @@
     "vrsta": 4,
     "cev": {
      "delez": 0.2,
-     "zleb": {
-      "barva": "#5c3a52",
-      "senca": "#190a18",
-      "globina": 0.004,
-      "lak": 0.12,
-      "hrap": 0.6,
-      "okolje": 0.25,
-      "sencaMoc": 0.88
-     }
+     "plosko": true
     },
     "robBarva": "#bfa3a6",
-    "luknjaBarva": "#2b2a52"
+    "luknjaBarva": "#24101c"
    }
   },
   "pljucna-vena": {
@@ -160,18 +152,10 @@
     "vrsta": 4,
     "cev": {
      "delez": 0.16,
-     "zleb": {
-      "barva": "#7a3232",
-      "senca": "#220a0a",
-      "globina": 0.004,
-      "lak": 0.12,
-      "hrap": 0.6,
-      "okolje": 0.25,
-      "sencaMoc": 0.88
-     }
+     "plosko": true
     },
     "robBarva": "#cfa69c",
-    "luknjaBarva": "#541a18"
+    "luknjaBarva": "#2c0c0c"
    }
   },
   "dihalna-v": {
