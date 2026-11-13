@@ -78,8 +78,9 @@ function identityToken(claims) {
   return `${input}.${crypto.sign("RSA-SHA256", Buffer.from(input), RSA.privateKey).toString("base64url")}`;
 }
 
-// Popravek je v ločenem PR #492 (prijava z Apple); tu ostane kot todo, dokler #492 ni združen.
-test("A3-3 Apple poveže vnaprej registriran nepotrjen račun lastnika: napadalčevo geslo ne sme odpreti lastnika", { todo: "popravek v PR #492" }, async () => {
+// Popravek je PR #492 (prijava z Apple). Od takrat ima povezava nepotrjenega računa dva koraka: prvi klic vrne
+// 400 need_signup (existing), drugi z datumom rojstva in strinjanjem račun poveže (točka 1.9).
+test("A3-3 Apple poveže vnaprej registriran nepotrjen račun lastnika: napadalčevo geslo ne sme odpreti lastnika", async () => {
   const prev = process.env.EVKLID_ADMIN_EMAILS;
   process.env.EVKLID_ADMIN_EMAILS = "lastnik@x.si";
   const store = openDb(":memory:");
@@ -116,8 +117,15 @@ test("A3-3 Apple poveže vnaprej registriran nepotrjen račun lastnika: napadal�
     assert.equal(reg.body.dev_verify_url, undefined, "brez razvojne povezave (popravek PR)");
     // Lastnik se prijavi z Apple (isti, pri Applu potrjen naslov).
     const owner = client({ "x-app-client": "ios/1.0.0", "x-app-device": crypto.randomBytes(24).toString("base64url") });
-    const a = await owner("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple-lastnik", email: "lastnik@x.si", email_verified: "true" }), nonce: NONCE } });
+    const token = identityToken({ sub: "apple-lastnik", email: "lastnik@x.si", email_verified: "true" });
+    const first = await owner("/api/auth/apple", { body: { identity_token: token, nonce: NONCE } });
+    assert.equal(first.status, 400, JSON.stringify(first.body));
+    assert.equal(first.body.need_signup, true);
+    assert.equal(first.body.existing, true, "račun z istim naslovom že obstaja");
+    assert.equal((await attacker("/api/account")).status, 200, "pred povezavo napadalčeva seja še velja (račun ni potrjen)");
+    const a = await owner("/api/auth/apple", { body: { identity_token: token, nonce: NONCE, accept_privacy: true, birth_date: "1985-04-12" } });
     assert.equal(a.status, 200, JSON.stringify(a.body));
+    assert.equal(a.body.parent.id, reg.body.parent.id, "povezan je isti račun");
     const row = store.db.prepare("SELECT email_verified_at FROM parents WHERE email = 'lastnik@x.si'").get();
     assert.ok(row.email_verified_at, "Apple je naslov potrdil");
     // Napadalec: njegova seja in geslo ne smeta več odpreti računa (zdaj potrjen račun lastnika = AI brez meje).
