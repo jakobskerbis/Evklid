@@ -14,6 +14,8 @@ import {
   splitSummary,
   cleanIcsUrl,
   fetchIcs,
+  privateIp,
+  ICS_MAX_BYTES,
   parseFmfLayers,
   scheduleView,
   schedulePrompt,
@@ -89,6 +91,35 @@ test("calendar links: https only, FMF page becomes the semester export, private 
   const ok = await fetchIcs("https://cal.example/a.ics", { fetchFn, lookup: async () => [{ address: "93.184.216.34" }] });
   assert.match(ok.text, /VCALENDAR/);
   assert.deepEqual(parseFmfLayers(`"Letnik: 1. letnik (M) (MAT-1)": "/layer_one/32/",`), [{ id: 32, label: "1. letnik (M) (MAT-1)" }]);
+});
+
+// Točka 1.3: IPv6 zapisi, ki nosijo zasebni IPv4 (tudi šestnajstiško), in NAT64; telo po kosih z mejo 3 MB.
+test("calendar links: IPv4-mapped (hex too), NAT64 and similar private forms are refused", async () => {
+  let fetched = 0;
+  const fetchFn = async () => (fetched++, new Response("BEGIN:VCALENDAR\nEND:VCALENDAR"));
+  for (const host of ["[::ffff:127.0.0.1]", "[::ffff:7f00:1]", "[::ffff:10.0.0.5]", "[::ffff:a00:5]", "[64:ff9b::7f00:1]", "[64:ff9b::a00:5]", "[::ffff:0:7f00:1]", "[2002:7f00:1::]", "[fe80::1]", "[::]"]) {
+    await assert.rejects(fetchIcs(`https://${host}/a.ics`, { fetchFn }), /ni javen/, host);
+  }
+  for (const address of ["::ffff:7f00:1", "64:ff9b::a9fe:a9fe", "::ffff:169.254.169.254", "fd12::1"]) {
+    await assert.rejects(fetchIcs("https://cal.example/a.ics", { fetchFn, lookup: async () => [{ address }] }), /ni javen/, address);
+  }
+  assert.equal(fetched, 0);
+  assert.equal(privateIp("2606:4700::1111"), false);
+  assert.equal(privateIp("::ffff:8.8.8.8"), false);
+});
+
+test("calendar download stops above 3 MB without reading the whole body", async () => {
+  const lookup = async () => [{ address: "93.184.216.34" }];
+  let pulled = 0;
+  const chunk = new Uint8Array(256 * 1024).fill(65);
+  const endless = () =>
+    new Response(new ReadableStream({ pull(c) { pulled++; c.enqueue(chunk); } }));
+  await assert.rejects(fetchIcs("https://cal.example/a.ics", { fetchFn: async () => endless(), lookup }), /prevelik/);
+  assert.ok(pulled <= 14, `prebranih kosov: ${pulled}`);
+  const declared = new Response("x", { headers: { "content-length": String(ICS_MAX_BYTES + 1) } });
+  await assert.rejects(fetchIcs("https://cal.example/a.ics", { fetchFn: async () => declared, lookup }), /prevelik/);
+  const ok = await fetchIcs("https://cal.example/a.ics", { fetchFn: async () => new Response("BEGIN:VCALENDAR\nX-ŠUM:č\nEND:VCALENDAR"), lookup });
+  assert.match(ok.text, /X-ŠUM:č/);
 });
 
 test("view and prompt: today, tomorrow and upcoming tests; private summary reaches the prompt below the cache line", () => {
