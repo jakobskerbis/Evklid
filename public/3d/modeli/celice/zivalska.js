@@ -715,7 +715,7 @@ export function zgradi(THREE, ctx = {}) {
     }
     const ifM = V.vlakna(ifK, 0.0032, B.intermediarni, { sij: 0.4, seg: hi ? 24 : 10, rad: hi ? 4 : 3 });
 
-    // porni kompleks: obroč z osmimi enakimi podenotami (osemštevna simetrija); le pri visoki kakovosti
+    // porni kompleks: obroč z osmimi enakimi podenotami (osemkratna simetrija); le pri visoki kakovosti
     const poreGeo = pore.geometry;
     const poreFaks = new THREE.TorusGeometry(0.016, 0.0062, 4, 16);
     {
@@ -825,16 +825,16 @@ export function zgradi(THREE, ctx = {}) {
     const ime = (id) => deli.find((d) => d.id === id);
     const tockaMesh = (m, i = 0) => { const M4 = new THREE.Matrix4(); m.getMatrixAt(i, M4); return new THREE.Vector3().setFromMatrixPosition(M4).toArray(); };
     const mem = ime("membrana"), cito = ime("citoskelet");
-    const membrana = { ...mem, opis: "Tekoči mozaik: lipidni dvosloj (okoli 5 nm) iz fosfolipidov in holesterola, v katerem se beljakovine bočno premikajo. Zunanja in notranja plast imata različne lipide (asimetrija). Debelina je povečana.", meshes: [memOut, memRob, pokrov] };
-    const beljD = nov("membranske-beljakovine", "Membranske beljakovine", "Integralne beljakovine prečkajo dvosloj (kanali, prenašalci, receptorji), periferne so le pripete na površino. Opravljajo večino nalog membrane in prispevajo okoli polovico njene mase.", B.beljakovine, [beljM, beljP], mem.tocka);
-    const gliD = nov("glikokaliks", "Glikokaliks", "Plašč oligosaharidnih verig na glikoproteinih in glikolipidih, samo na zunanji strani membrane. Varuje celico in sodeluje pri prepoznavanju celic (npr. antigeni krvnih skupin AB0).", B.glikokaliks, [gliM, gliP], [0.3, -0.36, 0.9], "membrana");
-    const klD = nov("klatrinski-mesicki", "Klatrinske jamice in mešički", "Pri endocitozi z receptorji se klatrin z adaptorjem AP2 sestavi v košarico (okoli 100 nm), ki uvihne membrano; dinamin mešiček odščipne. Tako celica privzame npr. LDL s holesterolom.", B.klatrin, [kl], tockaMesh(kl), "glikokaliks");
-    const mtD = nov("mtdna", "Mitohondrijska DNA in ribosomi", "V matriksu je več kopij krožne mtDNA (pri človeku 16 569 baznih parov, 37 genov) in mitoribosomi, sorodni bakterijskim (pri sesalcih 55S), zato nanje delujejo nekateri antibiotiki.", B.dnk, [mtd], ime("mitohondrij").tocka, "mitohondrij");
-    const enD = nov("endosomi", "Endosomi", "Razvrščevalnica snovi iz endocitoze. Zgodnji endosomi (pH okoli 6) vrnejo receptorje na membrano, ostalo dozori v pozni endosom z notranjimi mešički (multivezikularno telo), ki se zlije z lizosomom.", B.endosom, [zgM, mvtOvoj, mvtNotr], vidna(endT).toArray(), "lizosom");
-    const lamD = nov("jedrna-lamina", "Jedrna lamina", "Mreža intermediarnih filamentov iz laminov (A/C in B) pod notranjo jedrno membrano. Drži obliko jedra, nanjo sta pripeta porni kompleks in heterokromatin; mutacije laminov povzročajo npr. progerijo.", B.lamina, [lamina], naJedru(lamV.find((d) => d.dot(POG) < -0.3) || lamV[0]).toArray(), "jedrna-ovojnica");
-    const mtbD = nov("mikrotubuli", "Mikrotubuli", "Votle cevke (25 nm) iz 13 protofilamentov dimerov α- in β-tubulina. Plus konec dinamično raste in se krči; po njih kinezini nosijo tovor proti plus koncu, dineini proti centrosomu.", B.citoskelet, [cito.meshes[0]], cito.tocka);
+    const membrana = { ...mem, opis: "Tekoči mozaik: lipidni dvosloj (okoli 5 nm) iz fosfolipidov in holesterola, v katerem se beljakovine bočno premikajo. Zunanja in notranja plast imata različne lipide (asimetrija). V modelu je debelina povečana.", meshes: [memOut, memRob, pokrov] };
+    const beljD = nov("membranske-beljakovine", "Membranske beljakovine", "Integralne beljakovine (večinoma transmembranske) prečkajo dvosloj (kanali, prenašalci, receptorji), periferne so le pripete na površino. Opravljajo večino nalog membrane in prispevajo okoli polovico njene mase.", B.beljakovine, [beljM, beljP], mem.tocka);
+    const gliD = nov("glikokaliks", "Glikokaliks", "Plašč oligosaharidnih in polisaharidnih verig na glikoproteinih, proteoglikanih in glikolipidih, samo na zunanji strani membrane. Varuje celico in sodeluje pri prepoznavanju celic (npr. antigeni krvnih skupin AB0).", B.glikokaliks, [gliM, gliP], [0.3, -0.36, 0.9], "membrana");
+    const klD = nov("klatrinski-mesicki", "Klatrinske jamice in mešički", "Pri endocitozi z receptorji se klatrin z adaptorjem AP2 sestavi v košarico (okoli 100 nm), ki uvihne membrano; nastali mešiček odščipne beljakovina dinamin. Tako celica privzame npr. LDL s holesterolom.", B.klatrin, [kl], tockaMesh(kl), "glikokaliks");
+    const mtD = nov("mtdna", "Mitohondrijska DNA in ribosomi", "V matriksu je več kopij krožne mtDNA (pri človeku 16 569 baznih parov, 37 genov) in mitoribosomi bakterijskega tipa, zato nanje delujejo nekateri antibiotiki. Pri sesalcih imajo krajše rRNA in so 55S, ne 70S kot bakterijski.", B.dnk, [mtd], ime("mitohondrij").tocka, "mitohondrij");
+    const enD = nov("endosomi", "Endosomi", "Predelki za razvrščanje snovi iz endocitoze. Zgodnji endosom (pH okoli 6) vrne receptorje na membrano, nato dozori v pozni endosom z notranjimi mešički (multivezikularno telo), ki se zlije z lizosomom.", B.endosom, [zgM, mvtOvoj, mvtNotr], vidna(endT).toArray(), "lizosom");
+    const lamD = nov("jedrna-lamina", "Jedrna lamina", "Mreža intermediarnih filamentov iz laminov (A/C in B) pod notranjo jedrno membrano. Drži obliko jedra, nanjo so pripeti porni kompleksi in heterokromatin; mutacije lamina A povzročajo npr. progerijo.", B.lamina, [lamina], naJedru(lamV.find((d) => d.dot(POG) < -0.3) || lamV[0]).toArray(), "jedrna-ovojnica");
+    const mtbD = nov("mikrotubuli", "Mikrotubuli", "Votle cevke (25 nm) iz 13 protofilamentov dimerov α- in β-tubulina. Plus konec dinamično raste in se krči; po njih večina kinezinov nosi tovor proti plus koncu, dineini proti minus koncu (centrosomu).", B.citoskelet, [cito.meshes[0]], cito.tocka);
     const aktD = nov("aktinski-filamenti", "Aktinski filamenti", "Dvojna vijačnica F-aktina (okoli 7 nm). Pod membrano tvorijo celično skorjo, ki določa obliko celice; z miozinom omogočajo krčenje, gibanje celice in citokinezo.", B.aktin, [cito.meshes[1]], [0.3, -0.5, -0.6]);
-    const ifD = nov("intermediarni-filamenti", "Intermediarni filamenti", "Vrvi (okoli 10 nm) iz vlaknatih beljakovin, značilnih za tip celice (keratini v epitelih, vimentin, dezmin v mišicah). Nimajo polarnosti ne motorjev; celici dajejo natezno trdnost.", B.intermediarni, [ifM], ifK[0].getPoint(0.6).toArray());
+    const ifD = nov("intermediarni-filamenti", "Intermediarni filamenti", "Vrvi (okoli 10 nm) iz vlaknatih beljakovin, značilnih za tip celice (keratini v epitelih, vimentin v vezivnih celicah, dezmin v mišicah). Nimajo ne polarnosti ne motorjev; celici dajejo natezno trdnost.", B.intermediarni, [ifM], ifK[0].getPoint(0.6).toArray());
     const stikalo = V.ravenFaks(deli, {
       mreze,
       dodaj: [gliD, klD, mtD, enD, lamD],
@@ -842,9 +842,9 @@ export function zgradi(THREE, ctx = {}) {
       opisi: {
         citoplazma: { ime: "Citoplazma (citosol)", opis: "Citosol z organeli. Citosol je gosta raztopina (beljakovine do okoli 30 % mase), v kateri potekajo glikoliza, sinteza beljakovin na prostih ribosomih in večina signalnih poti." },
         jedro: { opis: "Hrani genom in ga loči od citoplazme: transkripcija in obdelava RNA (izrezovanje intronov) potekata v jedru, translacija pa zunaj, zato celica izražanje genov uravnava na več stopnjah." },
-        "jedrna-ovojnica": { ime: "Jedrna ovojnica in porni kompleksi", opis: "Dve membrani s perinuklearnim prostorom; zunanja je zvezna z zrnatim ER. Porni kompleks (okoli 120 nm, osemštevna simetrija, okoli 30 vrst nukleoporinov) prepušča majhne molekule, večje prenašajo importini in eksportini." },
+        "jedrna-ovojnica": { ime: "Jedrna ovojnica in porni kompleksi", opis: "Dve membrani s perinuklearnim prostorom; zunanja je zvezna z zrnatim ER. Porni kompleks (okoli 120 nm, osemkratna simetrija, okoli 30 vrst nukleoporinov) prepušča majhne molekule, večje prenašajo importini in eksportini." },
         nukleoplazma: { opis: "Notranjost jedra brez membranskih predelkov. Kromosomi v njej zasedajo ločena ozemlja, jedrce in druga jedrna telesca brez membrane pa zberejo beljakovine in RNA za posamezne naloge." },
-        kromatin: { opis: "DNA, navita na oktamere histonov v nukleosome (147 baznih parov na nukleosom). Rahli evkromatin se prepisuje, zgoščeni heterokromatin je utišan in leži pogosto ob jedrni lamini." },
+        kromatin: { opis: "DNA, navita na oktamere histonov v nukleosome (okoli vsakega oktamera 147 baznih parov). Rahli evkromatin se prepisuje, zgoščeni heterokromatin je utišan in pogosto leži ob jedrni lamini." },
         jedrce: { opis: "Nastane ob genih za rRNA: RNA-polimeraza I prepisuje rRNA, ki se obdela in z ribosomskimi beljakovinami sestavi v podenoti 40S in 60S. Ti skozi jedrne pore odpotujeta v citoplazmo." },
         "zrnati-er": { opis: "SRP pripelje ribosom, ki sintetizira beljakovino s signalnim zaporedjem, do translokona Sec61. Veriga med sintezo vstopa v lumen ali membrano ER, kjer se zvije, dobi disulfidne vezi in N-glikozilacijo." },
         "gladki-er": { opis: "Cevke brez ribosomov: sinteza fosfolipidov in steroidov, razstrupljanje s citokromi P450 (posebej v jetrih), shranjevanje Ca²⁺ (v mišicah sarkoplazemski retikulum)." },
@@ -853,7 +853,7 @@ export function zgradi(THREE, ctx = {}) {
         mitohondrij: { opis: "Zunanja membrana s porini, notranja nagubana v kriste z dihalno verigo in ATP-sintazo; v matriksu potekata Krebsov cikel in β-oksidacija. Lastna DNA in ribosomi podpirajo endosimbiontsko teorijo." },
         lizosom: { opis: "Več deset kislih hidrolaz deluje pri pH okoli 4,5–5, ki ga vzdržuje protonska črpalka V-ATPaza. Hidrolaze pridejo iz Golgija z oznako manoza-6-fosfat; lizosom razgradi snovi iz endocitoze in avtofagije." },
         peroksisom: { opis: "Organel z eno membrano: oksidaze tvorijo H₂O₂, katalaza ga razgradi. Oksidira zelo dolge maščobne kisline (β-oksidacija) in sodeluje pri sintezi plazmalogenov; beljakovine uvaža iz citosola." },
-        centrosom: { opis: "Glavni organizacijski center mikrotubulov: par centriol (vsaka iz devetih trojčkov mikrotubulov) obdaja pericentriolarni material z obroči γ-tubulina, iz katerih rastejo mikrotubuli." },
+        centrosom: { opis: "Glavni organizacijski center mikrotubulov: par centriol (vsaka iz devetih trojčkov mikrotubulov), ki ga obdaja pericentriolarni material z obroči γ-tubulina; iz njih rastejo mikrotubuli." },
         mesicki: { opis: "Mešički s plaščem COPII (ER → Golgi), COPI (nazaj) in klatrinom (TGN, membrana). Tarčno membrano prepoznajo z Rab GTPazami, proteini SNARE pa membrani zlijejo; tu prikazana pot je eksocitoza." },
       },
       ucbenik: () => ucb,
