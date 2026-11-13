@@ -867,16 +867,17 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
   // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor). Vrne telo odgovora 429 ali null.
-  // Kliče ga server/app.js v obdelavi sporočila, sinhrono z rezervacijo in štetjem vprašanja (točka A1).
-  function dailyBlock(studentId) {
+  // Kliče ga server/app.js v obdelavi sporočila, sinhrono z rezervacijo in štetjem vprašanja (točka A1); n = koliko
+  // vprašanj bo zahteva porabila (ustno spraševanje USTNO_QUESTIONS, server/ustno-api.js).
+  function dailyBlock(studentId, n = 1) {
     const r = rightsFor(studentId);
     if (!r.personal && (!r.school || r.schoolAiOut)) {
       const limit = freeDailyQuestions();
-      if (questionsToday(studentId) >= limit) return { ...freeBlock(studentId, "block.freeDaily", { n: limit }), limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) };
+      if (questionsToday(studentId) + n > limit) return { ...freeBlock(studentId, "block.freeDaily", { n: limit }), limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) };
       return null;
     }
     const limit = dailyLimitFor(studentId, r);
-    if (limit && questionsToday(studentId) >= limit) return { error: BLOCK_TEXT["block.daily"].replace("{n}", limit), code: "block.daily", params: { n: limit }, limit: true };
+    if (limit && questionsToday(studentId) + n > limit) return { error: BLOCK_TEXT["block.daily"].replace("{n}", limit), code: "block.daily", params: { n: limit }, limit: true };
     return null;
   }
   function questionsToday(studentId) {
@@ -984,16 +985,8 @@ export function mountAccounts(app, store, opts = {}) {
     // Ustno spraševanje (server/ustno-api.js) šteje kot USTNO_QUESTIONS vprašanj (j 10. 11.: 3 od 10 v brezplačnem paketu);
     // začne se le, če jih je danes še toliko na voljo. Samoocena (brez AI, /ustno/samoocena) ne šteje.
     if (s && req.method === "POST" && /^\/students\/\d+\/ustno\/zacni\/?$/i.test(req.path)) {
-      const r = rightsFor(studentId);
-      const free = !r.personal && (!r.school || r.schoolAiOut);
-      const limit = free ? freeDailyQuestions() : dailyLimitFor(studentId, r);
-      if (limit && questionsToday(studentId) + USTNO_QUESTIONS > limit) {
-        return res.status(429).json(
-          free
-            ? { ...freeBlock(studentId, "block.freeDaily", { n: limit }), limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) }
-            : { error: BLOCK_TEXT["block.daily"].replace("{n}", limit), code: "block.daily", params: { n: limit }, limit: true },
-        );
-      }
+      const dnevna = dailyBlock(studentId, USTNO_QUESTIONS); // isto preverjanje še enkrat ob štetju (server/ustno-api.js)
+      if (dnevna) return res.status(429).json(dnevna);
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
     // Z dokupljenim kreditom ta meja ne velja (poraba gre iz kredita, server/usage.js chargeCredit).
