@@ -354,7 +354,7 @@ def _vez(L, n1, p1, telefon=False):
         d_ = v_ravnini(d_)
         # u = 0 ob zarezi: vez je tam odrezana 10 mm od jeter (prej 28 mm: z oblo vezjo v robu je visela pod jetri kot palica)
         # nižja guba (prej 7 mm na vrhu kupole: nad obrisom jeter je štrlela kot plavut), proti vrhu se izteče v 2 mm
-        w = (0.002 + 0.02 * (1 - u) ** 1.6) * min(1.0, (1.02 - u) / 0.2) * min(1.0, 0.35 + 0.65 * u / 0.25)
+        w = (0.002 + 0.02 * (1 - u) ** 1.6) * min(1.0, (1.02 - u) / 0.2) * min(1.0, 0.1 + 0.9 * u / 0.3)  # ob zarezi le 2 mm (prej 8 mm: pod spodnjim robom je visel bled krn)
         a = p - o * 0.0012; q = a + d_ * w
         prosti.append((q.copy(), u))
         m = 3 if telefon else 5

@@ -19,7 +19,7 @@
    "relief": 0.25,
    "senca": 0.12,
    "sencaBarva": "#3a120c",
-   "rez": "#7e3327",
+   "rez": "#9a4534",
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.3,
@@ -41,18 +41,17 @@
     "polno": true,
     "rob": 0.0009,
     "povecaj": 1.004,
-    "robBarva": "#5a231c",
-    "skleni": 0.07
+    "robBarva": "#5a231c"
    },
    "rezSum": 0.5,
    "rezCelice": [
     {
      "mera": 0.0015,
-     "jedroMoc": 0.5,
-     "jedro": "#4d1712",
+     "jedroMoc": 0.4,
+     "jedro": "#6a241c",
      "jedroR": 0.16,
-     "moc": 0.45,
-     "stena": "#a05a4c",
+     "moc": 0.4,
+     "stena": "#b56a58",
      "sirina": 0.09,
      "vdolbina": 0.3,
      "zvitost": 0.25,
@@ -390,11 +389,11 @@
   "ravnine": [
    {
     "n": [
-     0,
-     0,
-     -1
+     0.2678,
+     0.5146,
+     -0.8145
     ],
-    "d": 0.012
+    "d": 0.0085
    }
   ]
  },
@@ -465,10 +464,10 @@
    }
   ]
  },
- "velikost": 0.341,
+ "velikost": 0.3382,
  "trikotniki": {
-  "racunalnik": 137834,
-  "telefon": 37898
+  "racunalnik": 126384,
+  "telefon": 35156
  },
  "luci": [
   {
