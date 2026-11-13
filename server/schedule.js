@@ -304,13 +304,81 @@ export function parseIcs(text, settings) {
 }
 
 // Naslov koledarja je od učenca: samo https (webcal → https), javni naslovi, največ 3 MB in 15 s.
-function privateIp(ip) {
-  if (net.isIPv4(ip)) {
-    const [a, b] = ip.split(".").map(Number);
-    return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224;
+export const ICS_MAX_BYTES = 3 * 1024 * 1024;
+
+function privateIpv4(ip) {
+  const [a, b, c] = ip.split(".").map(Number);
+  return (
+    a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) ||
+    (a === 100 && b >= 64 && b <= 127) || a >= 224 ||
+    (a === 192 && b === 0 && (c === 0 || c === 2)) || (a === 198 && (b === 18 || b === 19)) || (a === 198 && b === 51 && c === 100) || (a === 203 && b === 0 && c === 113)
+  );
+}
+
+// IPv6 v 8 skupin po 16 bitov (tudi oblika z IPv4 na koncu, npr. ::ffff:127.0.0.1); null, če ni veljaven naslov.
+function ipv6Groups(ip) {
+  let v = ip.toLowerCase().replace(/%.*$/, "");
+  const v4 = /(\d+\.\d+\.\d+\.\d+)$/.exec(v);
+  if (v4) {
+    if (!net.isIPv4(v4[1])) return null;
+    const [a, b, c, d] = v4[1].split(".").map(Number);
+    v = v.slice(0, -v4[1].length) + ((a << 8) | b).toString(16) + ":" + ((c << 8) | d).toString(16);
   }
-  const v = ip.toLowerCase();
-  return v === "::1" || v === "::" || v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe80") || v.startsWith("::ffff:") && privateIp(v.slice(7));
+  const halves = v.split("::");
+  if (halves.length > 2) return null;
+  const part = (h) => (h ? h.split(":") : []);
+  const head = part(halves[0]);
+  const tail = halves.length === 2 ? part(halves[1]) : [];
+  const fill = halves.length === 2 ? 8 - head.length - tail.length : 0;
+  if (fill < 0 || (halves.length === 1 && head.length !== 8)) return null;
+  const groups = [...head, ...Array(fill).fill("0"), ...tail].map((g) => (/^[0-9a-f]{1,4}$/.test(g) ? parseInt(g, 16) : NaN));
+  return groups.length === 8 && groups.every((g) => g >= 0) ? groups : null;
+}
+const v4From = (hi, lo) => [hi >> 8, hi & 255, lo >> 8, lo & 255].join(".");
+
+// Zasebni, posebni in prevajani naslovi. IPv6, ki nosi naslov IPv4 (preslikan ::ffff:…, združljiv ::a.b.c.d,
+// 6to4 2002::), se preveri po vgrajenem naslovu IPv4 v vseh zapisih (tudi šestnajstiško, ::ffff:7f00:1);
+// NAT64 (64:ff9b::/96, 64:ff9b:1::/48) in Teredo (2001::/32) sta zavrnjena v celoti (točka 1.3).
+export function privateIp(ip) {
+  if (net.isIPv4(ip)) return privateIpv4(ip);
+  const g = ipv6Groups(String(ip));
+  if (!g) return true; // česar ne razumemo, ni javno
+  const zeros = (n) => g.slice(0, n).every((x) => x === 0);
+  if (zeros(5) && g[5] === 0xffff) return privateIpv4(v4From(g[6], g[7])); // ::ffff:a.b.c.d
+  if (zeros(4) && g[4] === 0xffff && g[5] === 0) return privateIpv4(v4From(g[6], g[7])); // ::ffff:0:a.b.c.d (SIIT)
+  if (zeros(6)) return true; // ::, ::1 in zastareli ::a.b.c.d
+  if (g[0] === 0x64 && g[1] === 0xff9b) return true; // NAT64
+  if (g[0] === 0x2001 && g[1] === 0) return true; // Teredo
+  if (g[0] === 0x2002) return privateIpv4(v4From(g[1], g[2])); // 6to4
+  if ((g[0] & 0xfe00) === 0xfc00) return true; // fc00::/7 (ULA)
+  if ((g[0] & 0xffc0) === 0xfe80 || (g[0] & 0xffc0) === 0xfec0) return true; // povezava, star site-local
+  if ((g[0] & 0xff00) === 0xff00) return true; // multicast
+  if (g[0] === 0x2001 && g[1] === 0xdb8) return true; // dokumentacija
+  return false;
+}
+
+// Telo odgovora prebere po kosih in prekine, ko preseže mejo (ne prebere vsega v pomnilnik pred preverjanjem).
+export async function readLimited(res, max = ICS_MAX_BYTES) {
+  if (Number(res.headers?.get?.("content-length")) > max) throw new Error("Koledar je prevelik.");
+  if (!res.body?.getReader) {
+    const text = await res.text();
+    if (Buffer.byteLength(text) > max) throw new Error("Koledar je prevelik.");
+    return text;
+  }
+  const reader = res.body.getReader();
+  const chunks = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > max) {
+      await reader.cancel().catch(() => {});
+      throw new Error("Koledar je prevelik.");
+    }
+    chunks.push(value);
+  }
+  return new TextDecoder().decode(Buffer.concat(chunks));
 }
 
 export function cleanIcsUrl(url) {
@@ -340,8 +408,7 @@ export async function fetchIcs(url, { fetchFn = fetch, lookup = dns.lookup } = {
   if (addrs.some((a) => privateIp(a.address))) throw new Error("Ta naslov ni javen.");
   const res = await fetchFn(clean, { redirect: "error", signal: AbortSignal.timeout(15000), headers: { Accept: "text/calendar, text/plain;q=0.5" } });
   if (!res.ok) throw new Error(`Koledarja ni bilo mogoče prenesti (${res.status}).`);
-  const text = await res.text();
-  if (text.length > 3 * 1024 * 1024) throw new Error("Koledar je prevelik.");
+  const text = await readLimited(res);
   return { url: clean, text };
 }
 
