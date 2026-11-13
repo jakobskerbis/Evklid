@@ -179,3 +179,98 @@ export function preparatModela(modelId, delId = null) {
   return (delId && DELI[modelId]?.[delId]) || MODELI[modelId] || null;
 }
 export const MODELI_Z_MIKROSKOPOM = Object.keys(MODELI);
+
+// Pogled za »Poglej z mikroskopom« pri delu celice (j, 13. 11. 2026: »Naj bo prilagojeno vsakemu posameznemu
+// organelu«): preparat, povečava in snov, na katero kaže kazalec (mikroskop.js poišče najbližje tako mesto). Snovi so
+// kode S_* iz glsl.js; pri povečavi nad 1000× (TEM) velja snov ultrastrukture, pod njo snov tkiva.
+const S = {
+  PRAZNO: 0, CITO: 1, JEDRO: 2, KOLAGEN: 3, MINERAL: 4, ERITROCIT: 5, LIPID: 6, MIOFIBRILA: 7, MIELIN: 8, MATRIKS: 9,
+  KERATIN: 10, STENA: 11, VAKUOLA: 12, PLAZMA: 14, ELASTIN: 15, SLUZ: 16, VIRUS: 17, MITO: 20, ER: 21, RIBOSOM: 22,
+  GLIKOGEN: 23, MEMBRANA: 24, KLOROPLAST: 25, GRANULA: 26, KROMATIN: 27, JEDRCE: 28, GOLGI: 29, MIKROVIL: 30, GENOM: 31,
+};
+const RASTLINSKE = new Set(["celica-rastlinska", "celice-primerjava", "celica-palisadna", "celica-zapiralka", "celica-koreninski-lasek", "celica-ksilem-floem"]);
+const VIRUSI = new Set(["virus-bakteriofag-t4", "virus-sars-cov-2", "virus-hiv"]);
+// [vzorec id dela, (model, osnovni preparat) → { p?, m, snov }]: prvo ujemanje velja
+const ORGANELI = [
+  // ---- virusi: na ravni molekul (TEM), dedni zapis posebej
+  [/^(dnk|rnk|nukleokapsida|nukleokapsidni-protein|integraza|reverzna-transkriptaza|proteaza)$/, (id) => (VIRUSI.has(id) ? { m: 3e6, snov: [S.GENOM] } : null)],
+  [/./, (id) => (VIRUSI.has(id) ? { m: 1.5e6, snov: [S.VIRUS, S.GENOM] } : null)],
+  // ---- jedro in dedni zapis
+  [/^jedrce$/, () => ({ m: 6000, snov: [S.JEDRCE] })],
+  [/^(kromatin|kromosomi)$/, (id) => (id === "celica-koreninski-lasek" ? { p: "koren", m: 1000, snov: [S.KROMATIN] } : { m: 8000, snov: [S.KROMATIN, S.JEDRO] })],
+  [/^(jedrna-ovojnica|nukleoplazma)$/, () => ({ m: 15000, snov: [S.JEDRO, S.KROMATIN] })],
+  [/^(jedro|jedra|makronukleus|makronukleus-notranjost|mikronukleus|schwannova-celica|osteocit)$/, (id) => (RASTLINSKE.has(id) ? { p: "cebula", m: 400, snov: [S.JEDRO] } : { m: 1000, snov: [S.JEDRO] })],
+  [/^nukleoid|plazmidi$/, () => ({ m: 1000, snov: [S.CITO] })],
+  // ---- organeli, vidni le s TEM
+  [/mitohondrij/, () => ({ m: 12000, snov: [S.MITO] })],
+  [/^(golgi|golgijev-aparat)$/, () => ({ m: 20000, snov: [S.GOLGI] })],
+  [/^(er|zrnati-er|gladki-er|sarkoplazemski-retikulum|gost-cevast-sistem|nisslova-telesca|t-cevke|ocs)$/, () => ({ m: 20000, snov: [S.ER] })],
+  [/^(ribosomi|mrnk)$/, () => ({ m: 60000, snov: [S.RIBOSOM] })],
+  [/^glikogen$/, () => ({ p: "jetra", m: 30000, snov: [S.GLIKOGEN] })],
+  [/^(lizosomi?|peroksisomi?|mesicki|sinapticni-mesicki|zrnca|alfa-zrnca|gosta-zrnca|azurofilna-zrnca|kortikalna-zrnca|zaloge|paramilon|rumenjak|lipidne-kapljice|fagosom|prebavni-mehurcki|gosta-telesca|akrosom)$/, () => ({ m: 15000, snov: [S.GRANULA, S.LIPID] })],
+  [/^(mikrovili|aktin-mikrovilov|terminalna-mreza)$/, () => ({ p: "tanko-crevo", m: 10000, snov: [S.CITO] })],
+  [/^(membrana|sarkolema|kaveole|pelikula|zunanja-membrana|periplazma|glikokaliks|glikoforin|pas-3|receptorji|tesni-stiki|pasasti-stik|dezmosomi|presledkovni-stiki|bazalna-membrana|kanalcki|ovojnica)$/, () => ({ m: 60000, snov: [S.MEMBRANA] })],
+  [/^(citoskelet|aktin|keratin|vmesni-filamenti|miozin|obroc|centrosom|centriola|aksonema|dinein|oporna-vlakna|vlaknati-plasc|anulus|vezni-del|vreteno)$/, () => ({ m: 40000, snov: [S.CITO] })],
+  // ---- rastlinska celica (svetlobni mikroskop: povrhnjica čebule in list)
+  [/^(vakuola|tonoplast|krcljivi-mehurcek)$/, (id) => (RASTLINSKE.has(id) ? { p: id === "celica-zapiralka" ? "reza" : "cebula", m: 400, snov: [S.VAKUOLA] } : { m: 1000, snov: [S.VAKUOLA, S.GRANULA] })],
+  [/^(celicna-stena|stena|notranja-stena|mikrofibrile|odebelitve|piknje|kutikula)$/, (id) => (id === "celica-bakterijska" || id === "celica-kvasovka" ? { m: 60000, snov: [S.STENA] } : { p: RASTLINSKE.has(id) && id !== "celica-ksilem-floem" && id !== "celica-zapiralka" ? "cebula" : undefined, m: 400, snov: [S.STENA] })],
+  [/^(srednja-lamela|plazmodezme)$/, () => ({ m: 15000, snov: [S.STENA] })],
+  [/^(kloroplasti?|ocesna-pega)$/, (id) => (id === "celica-rastlinska" || id === "celice-primerjava" ? { p: "list", m: 1000, snov: [S.KLOROPLAST] } : { m: 1000, snov: [S.KLOROPLAST, S.CITO] })],
+  [/^(tilakoidi|stroma|skrob|plastidi)$/, () => ({ p: "list", m: 20000, snov: [S.KLOROPLAST] })],
+  // ---- citoplazma
+  [/^(citoplazma|sarkoplazma|endoplazma|ektoplazma|celicno-telo|notranji-clenek)$/, (id) => (RASTLINSKE.has(id) ? { p: "cebula", m: 400, snov: [S.CITO] } : { m: 1000, snov: [S.CITO, S.MIOFIBRILA] })],
+  // ---- tkiva in snovi okoli celic
+  [/^(miofibrile|interkalarni-disk|motoricna-ploscica)$/, () => ({ m: 1000, snov: [S.MIOFIBRILA] })],
+  [/^(mielinska-ovojnica|ranvierjev-zazemek)$/, () => ({ p: "zivec", m: 1000, snov: [S.MIELIN] })],
+  [/^(akson|koncne-razvejitve|aksonski-gric)$/, () => ({ p: "zivec", m: 400, snov: [S.CITO, S.MIELIN] })],
+  [/^(eritrociti?|hemoglobin|vdolbina)$/, () => ({ p: "kri", m: 1000, snov: [S.ERITROCIT] })],
+  [/^(kapljica|drobne-kapljice)$/, () => ({ p: "mascevje", m: 400, snov: [S.LIPID] })],
+  [/^vlakna$/, () => ({ p: "mascevje", m: 400, snov: [S.KOLAGEN] })],
+  [/^kapilara$/, () => ({ p: "mascevje", m: 400, snov: [S.ERITROCIT] })],
+  [/^(medcelicnina|lakuna|kanalikuli|sosednji-osteociti)$/, () => ({ m: 400, snov: [S.MINERAL] })],
+  [/^(sluz|zrnca-sluzi)$/, () => ({ m: 400, snov: [S.SLUZ] })],
+  [/^(zona|korona|perivitelinski-prostor)$/, () => ({ m: 400, snov: [S.MATRIKS, S.CITO] })],
+];
+// Snovi ultrastrukture, ki jih TEM nariše le v nekaterih preparatih (preverjeno s sondo mikroskopa, 13. 11. 2026);
+// če osnovni preparat snovi nima, pokaže isti organel preparat s spodnjega seznama (rastlinam najprej čebula).
+const TEM_VSEBUJE = {
+  [S.MITO]: "ustne cebula kvasovke skorja gladka-misica tanko-crevo kost mascevje modo jajcnik mreznica kapljica",
+  [S.ER]: "ustne cebula tanko-crevo jajcnik",
+  [S.RIBOSOM]: "ustne cebula bakterije kvasovke skorja gladka-misica tanko-crevo kapljica",
+  [S.MEMBRANA]: "cebula kvasovke gladka-misica skeletna-misica srcna-misica kri tanko-crevo kost",
+  [S.GRANULA]: "ustne cebula kvasovke skorja gladka-misica tanko-crevo modo jajcnik mreznica kapljica",
+  [S.JEDRCE]: "ustne cebula skorja tanko-crevo mreznica",
+  [S.GOLGI]: "cebula kvasovke skorja gladka-misica tanko-crevo kapljica",
+  [S.STENA]: "cebula bakterije kvasovke",
+};
+const NADOMESTNI = ["tanko-crevo", "ustne", "skorja", "gladka-misica", "jajcnik", "kvasovke"];
+function nadomesti(p, v, rastlina, misica) {
+  const ima = v.m > 1000 && TEM_VSEBUJE[v.snov?.[0]]?.split(" ");
+  if (!ima || ima.includes(p)) return p;
+  return [...(rastlina ? ["cebula"] : []), ...(misica ? ["gladka-misica"] : []), ...NADOMESTNI].find((x) => ima.includes(x)) || p;
+}
+// Deli brez posebne snovi (bički, sosednje celice, prevajalne cevi …): preparat celice pri 400× (bakterije, kvasovke in
+// praživali 1000×), kazalec na celici. Ksilem in floem: prevajalni snopič stebla.
+const OSTALO = (modelId, p) => {
+  if (modelId === "celica-ksilem-floem") return { m: 400, snov: [S.STENA] };
+  if (/bakterijska|kvasovka|ameba|paramecij|evglena|palicica/.test(modelId)) return { m: 1000, snov: [S.CITO, S.JEDRO, S.KLOROPLAST] };
+  return { m: 400, snov: [S.CITO, S.JEDRO, S.STENA, S.KLOROPLAST, S.VAKUOLA, S.MIOFIBRILA] };
+};
+const POGLEDI = new Map(); // izračunani pogledi (model|del)
+
+export function pogledDela(modelId, delId = null) {
+  const p = preparatModela(modelId, delId);
+  if (!p) return null;
+  if (!delId || DELI[modelId]?.[delId]) return { p };
+  const kljuc = `${modelId}|${delId}`;
+  if (!POGLEDI.has(kljuc)) {
+    let v = null;
+    for (const [re, f] of ORGANELI) if (re.test(delId) && (v = f(modelId))) break;
+    // rastlinske celice: organele, vidne s TEM, pokaže povrhnjica čebule (celice z jedrom in citoplazmo)
+    const rastlina = RASTLINSKE.has(modelId);
+    if (!v) v = OSTALO(modelId, p);
+    const osnova = rastlina && v.m > 1000 && !v.p ? "cebula" : v.p || p;
+    POGLEDI.set(kljuc, { p: nadomesti(osnova, v, rastlina, /misic|vlakno/.test(modelId)), m: v.m, snov: v.snov });
+  }
+  return POGLEDI.get(kljuc);
+}

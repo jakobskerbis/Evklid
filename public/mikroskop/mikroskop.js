@@ -77,7 +77,9 @@ function drsnik(ime, { min, max, vrednost, prikaz, ob }) {
   return { el: w, nastavi, inp };
 }
 
-export async function odpriMikroskop(el, { preparat = null, zapri = null, obPreparatu = null, vLekciji = false } = {}) {
+// cilj (»Poglej z mikroskopom« pri delu 3D modela, mapa.js pogledDela): { m: povečava, snov: [S_*] } – mikroskop se odpre pri
+// tej povečavi, sredina in kazalec pa na najbližjem mestu s to snovjo (npr. jedrce, vakuola, kloroplast).
+export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri = null, obPreparatu = null, vLekciji = false } = {}) {
   naloziCss();
   el.replaceChildren();
   el.classList.add("k3", "mk");
@@ -512,29 +514,96 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     cakaIzris = true;
     requestAnimationFrame(izrisi);
   }
+  // Izris v dveh korakih (j, 13. 11. 2026: »mikroskop je počasen«): ob spremembi pogleda takoj hiter predogled v nižji
+  // ločljivosti, nato polna slika po vodoravnih pasovih v ozadju (pas ~25 ms, med pasovi stran ostane odzivna in
+  // telefon ne zamrzne). Drsniki, ki preparata ne spremenijo (lučka, zaslonka, ostrina), le znova sestavijo že
+  // narisan preparat. Čas izrisa se meri, zato se predogled in pasovi prilagodijo hitrosti naprave.
   let polnaPozneje = 0;
+  let skala = 0.4; // ločljivost predogleda glede na polno
+  let msNaVzorec = 0; // izmerjen čas preparata na vzorec (ms), 0 = še ne vemo
+  let pKljuc = ""; // pogled, za katerega je preparat v polni ločljivosti v celoti narisan
+  let delo = null; // izris po pasovih, ki še teče: { kljuc, r, css, y, h }
+  const PAS_MS = 25;
+  const kljucPreparata = (v) => JSON.stringify([prep?.id, v.n, v.sredisce, v.umNaTocko, v.nacin, v.barvila, v.debelina, v.ss]);
+  function izmeri(fn, vzorcev) {
+    const t0 = performance.now();
+    fn();
+    upo.pocakaj();
+    const ms = performance.now() - t0;
+    const m = ms / Math.max(1, vzorcev);
+    msNaVzorec = msNaVzorec ? 0.6 * msNaVzorec + 0.4 * m : m;
+    return ms;
+  }
+  const visinaPasu = (n, ss) => Math.max(8, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaVzorec * n * ss))));
+  // hiter izris v nižji ločljivosti (med premikanjem in kot predogled); skala se prilagodi, da traja ~30 ms
+  function predogled(css, N, n) {
+    const nn = Math.max(128, Math.round(n * skala));
+    const r = izracunajPogled(upo, prep, s, nn, { hitro: true });
+    r.v.ss = r.v.ss || 1;
+    r.v.zaslonN = N;
+    r.v.cas = performance.now() / 1000;
+    const ms = izmeri(() => upo.narisiPreparat(r.v), nn * nn * (r.v.ss || 1));
+    upo.sestavi(r.v);
+    const f = Math.max(0.8, Math.min(1.25, Math.sqrt(30 / Math.max(1, ms))));
+    skala = Math.round(20 * Math.max(0.25, Math.min(0.75, skala * f))) / 20;
+    zadnji = { vp: r.vp, css, m: r.m, mol: r.mol };
+    oznakeMol.replaceChildren();
+    posodobiMerilo();
+  }
   function izrisi() {
     cakaIzris = false;
     if (!zivo || !prep) return;
     const { css, N, n } = velikost();
-    const hitro = interakcija > 0;
-    const nn = hitro ? Math.max(160, Math.round(n * 0.6)) : n;
-    const r = izracunajPogled(upo, prep, s, nn, { hitro });
-    r.v.zaslonN = N;
-    r.v.cas = performance.now() / 1000;
-    const id = hitro ? null : idMolekul(r);
-    upo.narisi(r.v);
-    zadnji = { vp: r.vp, css, m: r.m, mol: r.mol };
-    if (hitro) oznakeMol.replaceChildren();
-    else posodobiMolekule(r, css, id);
-    posodobiMerilo();
-    if (hitro) {
+    if (interakcija > 0) {
+      delo = null;
+      predogled(css, N, n);
       clearTimeout(polnaPozneje);
       polnaPozneje = setTimeout(() => {
         interakcija = 0;
         narisi();
       }, 160);
-    } else posodobiKazalec();
+      return;
+    }
+    const r = izracunajPogled(upo, prep, s, n, { hitro: false });
+    r.v.ss = r.v.ss || 1;
+    // na počasni napravi štirje vzorci na točko ne odtehtajo čakanja (polna slika naj bo v ~2 s)
+    if (r.v.ss > 1 && msNaVzorec && msNaVzorec * n * n * r.v.ss > 2000) r.v.ss = 1;
+    r.v.zaslonN = N;
+    r.v.cas = performance.now() / 1000;
+    const kljuc = kljucPreparata(r.v);
+    if (kljuc === pKljuc && upo.ima(n)) return koncaj(r, css);
+    if (delo && delo.kljuc === kljuc) {
+      // izris tega pogleda že teče: ob koncu naj velja zadnje stanje drsnikov
+      delo.r = r;
+      delo.css = css;
+      return;
+    }
+    // nov pogled: najprej predogled, razen če je polna slika tako ali tako hitra
+    if (!msNaVzorec || msNaVzorec * n * n * r.v.ss > 2 * PAS_MS) predogled(css, N, n);
+    pKljuc = "";
+    delo = { kljuc, r, css, y: 0, h: visinaPasu(n, r.v.ss) };
+    requestAnimationFrame(nadaljuj);
+  }
+  function nadaljuj() {
+    const d = delo;
+    if (!zivo || !prep || !d) return;
+    const v = d.r.v;
+    const y1 = Math.min(v.n, d.y + d.h);
+    izmeri(() => upo.narisiPreparat(v, d.y, y1), v.n * (y1 - d.y) * (v.ss || 1));
+    d.y = y1;
+    d.h = visinaPasu(v.n, v.ss || 1);
+    if (d.y < v.n) return void requestAnimationFrame(nadaljuj);
+    delo = null;
+    pKljuc = d.kljuc;
+    koncaj(d.r, d.css);
+  }
+  function koncaj(r, css) {
+    const id = idMolekul(r);
+    upo.sestavi(r.v);
+    zadnji = { vp: r.vp, css, m: r.m, mol: r.mol };
+    posodobiMolekule(r, css, id);
+    posodobiMerilo();
+    posodobiKazalec();
   }
 
   // ---------- molekule z imeni ----------
@@ -746,6 +815,9 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   }
 
   // ---------- preparat ----------
+  let ciljPorabljen = false; // cilj velja le za prvi preparat
+  // snov ultrastrukture → snov tkiva, v kateri leži (S_* iz glsl.js): jedrce in kromatin v jedru, organeli v citoplazmi
+  const GOSTITELJ = { 28: [2], 27: [2], 20: [1], 21: [1], 22: [1], 26: [1], 29: [1], 23: [1] };
   let zahteva = 0; // hitra menjava preparata: velja zadnja izbira, tudi če se prejšnja datoteka naloži pozneje
   async function izberiPreparat(id, { zacetek = true } = {}) {
     const moja = ++zahteva;
@@ -755,14 +827,22 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     h1.textContent = p.ime;
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
     if (!zivo || moja !== zahteva) return;
-    upo.nastaviPreparat(p);
+    try {
+      await upo.nastaviPreparat(p);
+    } catch (e) {
+      nalaganje.hidden = true;
+      throw e;
+    }
+    if (!zivo || moja !== zahteva) return;
     prep = p;
     nalaganje.hidden = true;
     if (zacetek) {
       s = { ...ZACETNO, grobi: 0, fini: 0, dzObj: 0, zarnica: s.zarnica ?? ZACETNO.zarnica, barve: s.barve };
       s.sredisce = [...(p.zacetek?.sredisce || [0, 0])];
       rocno = false;
-      const m0 = p.zacetek?.m || 40;
+      const c = cilj && !ciljPorabljen ? cilj : null;
+      ciljPorabljen = true;
+      const m0 = c?.m || p.zacetek?.m || 40;
       if (m0 > SVETLOBNI_MAX) {
         s.nacin = "tem";
         s.m = m0;
@@ -771,7 +851,26 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
         s.m = OBJEKTIVI[s.objektiv].m * OKULAR;
       }
       s.olje = s.objektiv === OBJEKTIVI.length - 1;
-      kTkivu(); // igla naj na začetku kaže na celico, ne na prazno stekelce
+      if (c?.snov?.length) {
+        // kazalec na izbrani del celice (organel): najbližje mesto s to snovjo, iskanje v vedno večjih krogih
+        // pri svetlobnem mikroskopu velja snov tkiva (vakuola, jedro, stena), pri TEM snov ultrastrukture (jedrce, mitohondrij)
+        const ustreza = (o) => c.snov.includes(Math.round(m0 > SVETLOBNI_MAX ? o.snov : o.snovT));
+        const o = upo.sonda([s.sredisce]);
+        const rMax = Math.max(...(p.velikost || [2000]));
+        if (o && !ustreza(o[0])) {
+          // drobne dele (jedrce, mitohondrij) najprej poišči v njihovem gostitelju (jedro, citoplazma), nato natančno v njem
+          const [x0, y0] = s.sredisce;
+          const gost = m0 > SVETLOBNI_MAX ? GOSTITELJ[c.snov[0]] : null;
+          const vGostu = gost && poisci(x0, y0, (x) => gost.includes(Math.round(x.snovT)), 0.5, 1.3, rMax);
+          const blizu = vGostu ? [...s.sredisce] : null;
+          const najden = (vGostu && poisci(blizu[0], blizu[1], ustreza, 0.02, 1.2, 25)) || poisci(x0, y0, ustreza, Math.max(0.02, 0.003 * vidnoPolje(s.m, s.nacin)), 1.3, rMax);
+          if (!najden) {
+            if (blizu) s.sredisce = blizu; // vsaj v gostitelju (jedro, citoplazma)
+            else kTkivu();
+          }
+        }
+        rocno = true; // ob prehodu na TEM ostane na tem delu, ne skoči na značilno snov preparata
+      } else kTkivu(); // igla naj na začetku kaže na celico, ne na prazno stekelce
       dGrobi.nastavi(0);
       dFini.nastavi(0);
       dDefokus.nastavi(0);

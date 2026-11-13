@@ -56,29 +56,58 @@ void main() {
   o = vec4(mix(vec3(0.0), clamp(c, 0.0, 1.0), rob), 1.0);
 }`;
 
-function program(gl, fs) {
+// Program iz senčilnika. Z vzporednim prevajanjem (KHR_parallel_shader_compile, večina telefonov) vrne obljubo, ki se
+// izpolni, ko je program preveden, in medtem ne blokira strani; sicer preveri takoj (kot prej).
+function zgradi(gl, fs) {
   const sh = (tip, src) => {
     const s = gl.createShader(tip);
     gl.shaderSource(s, src);
     gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+    return s;
+  };
+  const vs = sh(gl.VERTEX_SHADER, VS), fsh = sh(gl.FRAGMENT_SHADER, fs);
+  const p = gl.createProgram();
+  gl.attachShader(p, vs);
+  gl.attachShader(p, fsh);
+  gl.bindAttribLocation(p, 0, "a");
+  gl.linkProgram(p);
+  return { p, vs, fsh, src: fs };
+}
+function preveri(gl, g) {
+  if (!gl.getProgramParameter(g.p, gl.LINK_STATUS)) {
+    for (const s of [g.fsh, g.vs]) {
+      if (gl.getShaderParameter(s, gl.COMPILE_STATUS)) continue;
       const log = gl.getShaderInfoLog(s);
-      const vrstice = src.split("\n");
+      const vrstice = (s === g.fsh ? g.src : VS).split("\n");
       const m = /0:(\d+)/.exec(log || "");
       const okolica = m ? vrstice.slice(Math.max(0, +m[1] - 3), +m[1] + 2).join("\n") : "";
       throw new Error(`Senčilnik: ${log}\n${okolica}`);
     }
-    return s;
-  };
-  const p = gl.createProgram();
-  gl.attachShader(p, sh(gl.VERTEX_SHADER, VS));
-  gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
-  gl.bindAttribLocation(p, 0, "a");
-  gl.linkProgram(p);
-  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    throw new Error(gl.getProgramInfoLog(g.p));
+  }
+  gl.deleteShader(g.vs);
+  gl.deleteShader(g.fsh);
   const loc = {};
-  const u = (ime) => (ime in loc ? loc[ime] : (loc[ime] = gl.getUniformLocation(p, ime)));
-  return { p, u };
+  const u = (ime) => (ime in loc ? loc[ime] : (loc[ime] = gl.getUniformLocation(g.p, ime)));
+  return { p: g.p, u };
+}
+function program(gl, fs) {
+  return preveri(gl, zgradi(gl, fs));
+}
+function programVzporedno(gl, fs, ext) {
+  const g = zgradi(gl, fs);
+  if (!ext) return Promise.resolve().then(() => preveri(gl, g));
+  return new Promise((ok, napaka) => {
+    const cakaj = () => {
+      try {
+        if (gl.getProgramParameter(g.p, ext.COMPLETION_STATUS_KHR)) ok(preveri(gl, g));
+        else setTimeout(cakaj, 16);
+      } catch (e) {
+        napaka(e);
+      }
+    };
+    cakaj();
+  });
 }
 
 function tekstura(gl, n, plavajoca = false) {
@@ -144,28 +173,48 @@ export function ustvariUpodobitev(platno) {
   let prepSem = null; // SEM: ločen program preparata, preveden šele ob prvem izrisu SEM (glsl.js fragmentPreparata)
   let prepGlsl = "";
   const sonda = plavajoce ? tekstura(gl, [8, 2], true) : null;
-  let T = null; // { a, b, m } teksture velikosti n
+  // Teksture po velikosti n: p (preparat, ostane, dokler se pogled ne spremeni), a in b (zamegljenost), m (molekule).
+  // Hranimo dve velikosti (hiter predogled in polna slika), da se ob vsakem prehodu ne ustvarjajo znova.
+  const kompleti = new Map();
+  let T = null;
   const pripravi = (n) => {
-    if (T && T.n === n) return;
-    if (T) for (const x of [T.a, T.b, T.m]) {
-      gl.deleteTexture(x.t);
-      gl.deleteFramebuffer(x.f);
+    T = kompleti.get(n);
+    if (T) {
+      kompleti.delete(n);
+      kompleti.set(n, T);
+      return;
     }
-    T = { n, a: tekstura(gl, [n, n]), b: tekstura(gl, [n, n]), m: tekstura(gl, [n, n]) };
+    T = { n, p: tekstura(gl, [n, n]), a: tekstura(gl, [n, n]), b: tekstura(gl, [n, n]), m: tekstura(gl, [n, n]) };
+    kompleti.set(n, T);
+    while (kompleti.size > 2) {
+      const [k, star] = kompleti.entries().next().value;
+      for (const x of [star.p, star.a, star.b, star.m]) {
+        gl.deleteTexture(x.t);
+        gl.deleteFramebuffer(x.f);
+      }
+      kompleti.delete(k);
+    }
   };
   const risi = (fb, w, h) => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
     gl.viewport(0, 0, w, h);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
+  const vzporedno = gl.getExtension("KHR_parallel_shader_compile");
+  const piksel = new Uint8Array(4);
+  let zadnjaZahteva = 0;
 
-  return {
+  const api = {
     gl,
     plavajoce,
-    // Preparat: { id, glsl } (preparati/*.js). Prevajanje traja, zato le ob menjavi.
-    nastaviPreparat(p) {
+    // Preparat: { id, glsl } (preparati/*.js). Prevajanje traja (na telefonu tudi sekundo ali več), zato le ob menjavi
+    // in, kjer gre, vzporedno: stran med tem ostane odzivna. Vrne obljubo.
+    async nastaviPreparat(p) {
+      const moja = ++zadnjaZahteva;
       if (prepId === p.id) return;
-      const nov = program(gl, fragmentPreparata(p.glsl));
+      const nov = await programVzporedno(gl, fragmentPreparata(p.glsl), vzporedno);
+      // med prevajanjem je bil izbran drug preparat: velja zadnja izbira
+      if (moja !== zadnjaZahteva) return void gl.deleteProgram(nov.p);
       if (prep) gl.deleteProgram(prep.p);
       if (prepSem) gl.deleteProgram(prepSem.p);
       prep = nov;
@@ -189,9 +238,9 @@ export function ustvariUpodobitev(platno) {
         snovT: px[32 + i * 4], tip: px[32 + i * 4 + 1], r1: px[32 + i * 4 + 2], jedro: px[32 + i * 4 + 3],
       }));
     },
-    // v = { n, sredisce [µm], umNaTocko, tem, barvila (9 števil, stolpci), debelina, sigma (točke),
-    //       mol: null | { utez, uniforme }, svetlost, kontrast, topla, sum, krog }
-    narisi(v) {
+    // Preparat v teksturo p, le vrstice y0 ≤ y < y1 (izris po pasovih: dolg izris na telefonu razdelimo na več sličic,
+    // da stran ne zamrzne in GPU ne preseže časovne meje). Najdražji del celotnega izrisa.
+    narisiPreparat(v, y0 = 0, y1 = v.n) {
       if (!prep) return;
       const n = v.n;
       pripravi(n);
@@ -205,14 +254,38 @@ export function ustvariUpodobitev(platno) {
       gl.uniform1i(pr.u("uNacin"), nacin);
       gl.uniformMatrix3fv(pr.u("uBarvila"), false, v.barvila);
       gl.uniform1f(pr.u("uDebelina"), v.debelina);
-      risi(T.a.f, n, n);
-      // zamegljenost: vodoravno a → b, navpično b → a
+      gl.uniform1i(pr.u("uSS"), v.ss || 1);
+      const delno = y0 > 0 || y1 < n;
+      if (delno) {
+        gl.enable(gl.SCISSOR_TEST);
+        gl.scissor(0, y0, n, Math.max(0, Math.min(n, y1) - y0));
+      }
+      risi(T.p.f, n, n);
+      if (delno) gl.disable(gl.SCISSOR_TEST);
+    },
+    // Ali so teksture za velikost n še shranjene (sicer je treba preparat narisati znova).
+    ima(n) {
+      return kompleti.has(n);
+    },
+    // Počaka, da GPU konča dosedanje delo (en piksel iz teksture preparata): za merjenje časa pasu.
+    pocakaj() {
+      if (!T) return;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, T.p.f);
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, piksel);
+    },
+    // Iz že narisanega preparata (narisiPreparat za isti v.n): zamegljenost, molekule in sestava na zaslon. Poceni,
+    // zato drsniki (lučka, zaslonka, ostrina) ne rišejo preparata znova.
+    sestavi(v) {
+      if (!prep) return;
+      const n = v.n;
+      pripravi(n);
+      // zamegljenost: vodoravno p → b, navpično b → a
       gl.useProgram(blur.p);
       gl.uniform2f(blur.u("uVel"), n, n);
       gl.uniform1f(blur.u("uSigma"), v.sigma);
       gl.activeTexture(gl.TEXTURE0);
       gl.uniform1i(blur.u("uT"), 0);
-      gl.bindTexture(gl.TEXTURE_2D, T.a.t);
+      gl.bindTexture(gl.TEXTURE_2D, T.p.t);
       gl.uniform2f(blur.u("uSmer"), 1, 0);
       risi(T.b.f, n, n);
       gl.bindTexture(gl.TEXTURE_2D, T.b.t);
@@ -246,7 +319,17 @@ export function ustvariUpodobitev(platno) {
       gl.uniform1f(sestavi.u("uSum"), v.sum);
       gl.uniform1f(sestavi.u("uTEM"), v.elektroni ?? v.tem ? 1 : 0);
       gl.uniform1f(sestavi.u("uCas"), (v.cas || 0) % 100);
+      gl.uniform1f(sestavi.u("uLom"), v.lom || 0);
+      gl.uniform1f(sestavi.u("uLomD"), Math.max(1.5, 0.8 * (v.sigma || 0)) / n);
+      gl.uniform1f(sestavi.u("uKA"), v.krog ? 0.003 : 0);
       risi(null, W, H);
+    },
+    // v = { n, sredisce [µm], umNaTocko, tem, barvila (9 števil, stolpci), debelina, sigma (točke),
+    //       mol: null | { utez, uniforme }, svetlost, kontrast, topla, sum, krog }: celoten izris naenkrat
+    narisi(v) {
+      if (!prep) return;
+      api.narisiPreparat(v);
+      api.sestavi(v);
     },
     // Reže molekul v mreži k × k čez isto vidno polje kot izris v (za oznake z imeni): vrednost = reža + 1, 0 = nič.
     // Kliči pred narisi: readPixels potem čaka le na majhen prehod k × k, ne na celoten izris molekul.
@@ -266,4 +349,5 @@ export function ustvariUpodobitev(platno) {
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     },
   };
+  return api;
 }
