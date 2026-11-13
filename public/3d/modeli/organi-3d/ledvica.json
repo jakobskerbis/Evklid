@@ -700,11 +700,11 @@
     "piramide",
     "papile",
     "meh",
-    "ovojnica",
-    "secevod"
+    "ovojnica"
    ],
    "skrijDele": [
-    "papile"
+    "papile",
+    "secevod"
    ]
   }
  },
@@ -733,10 +733,10 @@
    }
   ]
  },
- "velikost": 0.1665,
+ "velikost": 0.1661,
  "trikotniki": {
-  "racunalnik": 159974,
-  "telefon": 40335
+  "racunalnik": 159968,
+  "telefon": 40329
  },
  "luci": [
   {
