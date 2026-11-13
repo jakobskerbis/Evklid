@@ -68,7 +68,7 @@ test("tabela s 3+ stolpci: vsaka celica ima ime svojega stolpca (narekovaj ubež
   assert.match(renderMd(TELESA, "html"), /<table class="md-stolpci">[\s\S]*<td data-label="Površina">/);
   assert.match(oznaciStolpce('<thead><tr><th>a "b"</th><th>c</th><th>d</th></tr></thead><tbody><tr><td>1</td><td align="center">2</td><td>3</td></tr></tbody>'), /<td data-label="a &quot;b&quot;">1<\/td><td align="center" data-label="c">2<\/td>/);
   assert.match(oznaciStolpce("<thead><tr><th>&lt;scr<b>ipt</b>x</th><th>c</th><th>d</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>3</td></tr></tbody>"), /data-label="&lt;scriptx"/);
-  assert.match(oznaciStolpce("<thead><tr><th><<b>i</b>>x</th><th>c</th><th>d</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>3</td></tr></tbody>"), /data-label="i&gt;x"/);
+  assert.match(oznaciStolpce("<thead><tr><th><<b>i</b>>x</th><th>c</th><th>d</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>3</td></tr></tbody>"), /data-label="x"/);
   assert.equal(oznaciStolpce("<thead><tr><th>a</th><th>b</th></tr></thead><tbody><tr><td>1</td><td>2</td></tr></tbody>"), null);
   // Stolpec z formulo v glavi ostane brez imena (KaTeX v atributu ni berljiv).
   const f = renderRich("| $x$ | ime | opis |\n|---|---|---|\n| $1$ | ena | prva |");

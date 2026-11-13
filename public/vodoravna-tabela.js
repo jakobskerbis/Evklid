@@ -54,14 +54,14 @@ export function obrnjenaTabela(inner) {
 // Besedilo celice je že HTML (& in < sta ubežana); v atributu ubežimo še narekovaj. Ostanek oznake po odstranjevanju
 // (npr. »<scr<b>ipt«) ne sme ostati: vsak preostali < ali > ubežimo.
 const ATRIBUT = (s) => s.replace(/"/g, "&quot;");
-const besedilo = (html) =>
-  html
-    .replace(/<[^>]+>/g, "")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+function besedilo(html) {
+  let s = html;
+  for (let prej = null; s !== prej; ) {
+    prej = s;
+    s = s.replace(/<[^<>]*>/g, "");
+  }
+  return s.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+}
 
 export function oznaciStolpce(inner) {
   const glava = inner.match(/<thead[^>]*>[\s\S]*?<\/thead>/)?.[0];
