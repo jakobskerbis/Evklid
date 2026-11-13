@@ -5,8 +5,8 @@
   "miokard": {
    "barva": "#93362f",
    "hrap": 0.34,
-   "lak": 0.28,
-   "lakHrap": 0.38,
+   "lak": 0.1,
+   "lakHrap": 0.6,
    "sijaj": 0.1,
    "sijajBarva": "#9a3a30",
    "rob": 0.05,
@@ -287,7 +287,8 @@
    "spekular": 0.3,
    "rez": "#b8b0a6",
    "rezLak": 0.6,
-   "rezLakHrap": 0.25
+   "rezLakHrap": 0.25,
+   "odtenek": "#ffe8dc"
   },
   "guba": {
    "barva": "#cf8f86",
@@ -309,8 +310,8 @@
   "uho": {
    "barva": "#783830",
    "hrap": 0.34,
-   "lak": 0.28,
-   "lakHrap": 0.38,
+   "lak": 0.1,
+   "lakHrap": 0.6,
    "sijaj": 0.1,
    "sijajBarva": "#9a3a30",
    "rob": 0.05,
