@@ -210,6 +210,11 @@ rd = rd * (0.95 + 0.08 * sum2(2.0)[..., None])
 # ------------------------------------------------------------------ skupna slika: mali možgani imajo prednost v svojem obrisu
 je_mali = ndimage.binary_dilation(CRV, iterations=int(1.2 * mm)) & ~(DEBLO & ~CRV)
 slika = np.where(je_mali[..., None], rgb, rd)
+# ozke razpoke med lističi niso izrez (v prerezu so bile črne črte tuša, ocena n1): pobarvane so kot žilnica v razpoki;
+# izrez ostane le zunanji obris in široke zareze
+ozke = je_mali & (alfa < 0.5) & ndimage.binary_closing(alfa >= 0.5, iterations=max(1, int(0.6 * mm)))
+slika = np.where(ozke[..., None], np.array([0.62, 0.40, 0.40]) * (0.92 + 0.1 * sum2(1.5)[..., None]), slika)
+alfa = np.where(ozke, 1.0, alfa)
 a = np.where(je_mali, alfa, 1.0) * ((megla(CRV, 0.8) > 0.02) | DEBLO_S)
 a = ndimage.gaussian_filter(a.astype(np.float32), 0.5)  # mehak rob razpok (brez stopnic)
 out = np.concatenate([np.clip(slika, 0, 1), a[..., None]], 2)

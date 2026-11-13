@@ -625,12 +625,12 @@ function listiGLSL(t, merilo, izh) {
           ${
             t.listiKot
               ? // listiKot [m]: lističi kot pahljača okoli prečne osi skozi središče (fastigij): na zgornji, zadnji in spodnji ploskvi tečejo prečno (kot prave fisure), razmik listiRazmik na polmeru listiKot
-                `float lF = atan( vOrgPos.y - lC.y, -( vOrgPos.z - lC.z ) ) * ${((t.listiKot * merilo) / per).toExponential(3)} + 0.3 * orgSum( vOrgPos * 18.0 ) + 0.9 * orgSum( vOrgPos * 2.2 );`
+                `float lF = atan( vOrgPos.y - lC.y, -( vOrgPos.z - lC.z ) ) * ${((t.listiKot * merilo) / per).toExponential(3)} + 0.3 * orgSum( vOrgPos * 18.0 ) + 1.7 * orgSum( vOrgPos * 2.2 ) + 0.8 * orgSum( vOrgPos * 5.5 );`  // neperiodično: razmik in potek lističev se spreminjata (brez moaréja)
               : `float lF = length( ( vOrgPos - lC ) * vec3( 0.45, 1.0, 0.4 ) ) / ${per.toExponential(3)} + 0.35 * orgSum( vOrgPos * 18.0 );`
           }
           float lW = fwidth( lF );
           float lD = abs( fract( lF ) - 0.5 ) * 2.0; // 0 sredi lističa, 1 v žlebu
-          orgListi = smoothstep( 0.68 - lW, 0.98 + lW, lD ) * ( 1.0 - smoothstep( 0.25, 0.5, lW ) );
+          orgListi = smoothstep( 0.68 - lW, 0.98 + lW, lD ) * ( 1.0 - smoothstep( 0.1, 0.3, lW ) );
           // medialna ploskev polobel ob sredini (vidna v prerezu ob črvu): lupine elipsoidov jo sekajo skoraj vzporedno,
           // zato so bile tam goste vodoravne proge kot stopnice (ocena r5) – tam lističi pojenjajo
           vec3 lN = normalize( cross( dFdx( vOrgPos ), dFdy( vOrgPos ) ) );

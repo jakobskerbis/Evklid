@@ -4,7 +4,7 @@
  "tkiva": {
   "jetra": {
    "hrap": 0.3,
-   "lak": 0.14,
+   "lak": 0.06,
    "lakHrap": 0.3,
    "sijaj": 0.06,
    "ao": 0.5,
@@ -19,7 +19,7 @@
    "relief": 0.25,
    "senca": 0.12,
    "sencaBarva": "#3a120c",
-   "rez": "#93392a",
+   "rez": "#7e3327",
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.3,
@@ -39,8 +39,9 @@
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
-    "rob": 0.0003,
-    "povecaj": 1.004
+    "rob": 0.0009,
+    "povecaj": 1.004,
+    "robBarva": "#5a231c"
    },
    "rezSum": 0.5,
    "rezCelice": [
@@ -60,13 +61,13 @@
   },
   "zolcnik": {
    "hrap": 0.3,
-   "lak": 0.3,
+   "lak": 0.25,
    "lakHrap": 0.22,
-   "sijaj": 0.25,
+   "sijaj": 0.15,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 120,
-   "barva": "#6a8433",
+   "barva": "#5c6b45",
    "sijajBarva": "#c8d890",
    "rob": 0.35,
    "robBarva": "#8c9a3e",

@@ -45,13 +45,13 @@
    },
    "rezCelice": [
     {
-     "mera": 0.0011,
-     "jedroMoc": 0.6,
+     "mera": 0.0019,
+     "jedroMoc": 0.42,
      "jedro": "#6b262b",
      "jedroR": 0.46,
-     "moc": 0.4,
+     "moc": 0.5,
      "stena": "#f2bdb4",
-     "sirina": 0.12,
+     "sirina": 0.2,
      "vdolbina": 0.8,
      "zvitost": 0.5,
      "ton": 0.1

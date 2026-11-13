@@ -429,12 +429,12 @@ ORGANI = {
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
                 # manj nasičena (ocena: prenasičena, enakomerno sijoča), hrapavejša
-                "jetra": dict(barva=(0.21, 0.075, 0.055), barva2=(0.155, 0.055, 0.042), lise=0.35, liseMera=0.035, hrap=0.52,
+                "jetra": dict(barva=(0.21, 0.075, 0.055), barva2=(0.155, 0.055, 0.042), lise=0.3, liseMera=0.035, hrap=0.62,
                               gube=0.00002, gubeMera=0.002, zilice=0.12, ziliceBarva=(0.13, 0.035, 0.025), ziliceMera=0.008, razdeli=0),
                 "vez": dict(barva=(0.66, 0.50, 0.44), barva2=(0.58, 0.42, 0.38), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 "guba": dict(barva=(0.62, 0.40, 0.36), barva2=(0.54, 0.33, 0.30), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 # temno olivno zelen (žolč skozi steno), ne svetlo zelen
-                "zolcnik": dict(barva=(0.20, 0.25, 0.08), barva2=(0.14, 0.18, 0.055), lise=0.35, hrap=0.40, gube=0.00004, gubeMera=0.003, razdeli=1),
+                "zolcnik": dict(barva=(0.17, 0.21, 0.13), barva2=(0.12, 0.16, 0.11), lise=0.35, hrap=0.42, gube=0.00004, gubeMera=0.003, razdeli=1),
                 "zolcevod": dict(barva=(0.50, 0.50, 0.22), barva2=(0.42, 0.42, 0.18), lise=0.25, hrap=0.40, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "portalna": dict(barva=(0.38, 0.23, 0.27), barva2=(0.32, 0.19, 0.23), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "arterija": dict(barva=(0.62, 0.34, 0.30), barva2=(0.55, 0.29, 0.26), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),

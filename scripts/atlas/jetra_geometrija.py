@@ -713,12 +713,14 @@ def jetra_ct(osnovni, cfg, tmp):
         os_ivc.append(max(ot, key=lambda o: st_ivc[o]))
     na_osi = set(os_ivc)
     iP, _ = V(Hv, os_ivc)
-    r0 = max(0.009, float(np.median([max(r_ivc[j], Hv.R[j]) for j in os_ivc])))
-    iR = [r0] * len(iP)
+    # polmer po maski votle vene (drseče povprečje) + 1 mm: cev zapolni svoj žleb v jetrih (ocena n1: ohlapna cev)
+    rr = np.array([max(r_ivc[j], Hv.R[j]) for j in os_ivc], float)
+    rr = np.convolve(np.pad(rr, 8, mode="edge"), np.ones(17) / 17, mode="valid")
+    iR = [max(0.0085, float(r) + 0.001) for r in rr]
     iP, iR = D.zgladi(iP, iR, 30)  # skelet v široki žili vijuga
     for t_ in (False, True):
-        P_, R_ = D.redci(*D.zgladi(iP, iR, 6), (lambda r: 0.012) if t_ else (lambda r: 0.005))
-        bm = bmesh.new(); D.cev(bm, P_, R_, 12 if t_ else 28, kupola=False, stena=0.0014)  # ravno odrezana, s svetlino
+        P_, R_ = D.redci(*D.zgladi(iP, iR, 6), (lambda r: 0.008) if t_ else (lambda r: 0.004))
+        bm = bmesh.new(); D.cev(bm, P_, R_, 20 if t_ else 32, kupola=False, stena=0.0014)  # ravno odrezana, s svetlino
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
         me = bpy.data.meshes.new("ivc"); bm.to_mesh(me); bm.free()
         for p in me.polygons: p.use_smooth = True

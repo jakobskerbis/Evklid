@@ -227,6 +227,19 @@ def mozgani_hra(osnovni, cfg, tmp, pot, lo, hi):
             # po izrezu še enkrat vokselska mreža: tanke lupine in zavihki ob izrezu bi se pri poenostavitvi zložili
             bm = _voksel(bm, voksel, tmp)
             _brez_votlin(bm)
+        if ime_v == "Brainstem (HRA)" and h.get("hrbtenjaca", 0.03) > 0:
+            # atlas HRA se konča pri podaljšani hrbtenjači: začetek hrbtenjače (zožena cev v smeri osi debla), da deblo v
+            # celem pogledu sega pod male možgane kot pri pravem preparatu (ocena n1: videti je bil le štrcelj)
+            from drevesa import cev
+            from mathutils import Vector
+            co = np.array([v.co[:] for v in bm.verts]); z0 = co[:, 2].min()
+            a_ = co[(co[:, 2] > z0 + 0.008) & (co[:, 2] < z0 + 0.012)].mean(0); kon = co[co[:, 2] < z0 + 0.003]
+            b_ = kon.mean(0); smer = (b_ - a_) / np.linalg.norm(b_ - a_)
+            r0 = float(np.linalg.norm((kon - b_)[:, :2], axis=1).mean()) * 1.25
+            dol = h.get("hrbtenjaca", 0.03)
+            P_ = [Vector(b_ + smer * (dol * i / 8 - 0.004)) for i in range(9)]
+            cev(bm, P_, [r0 * (1.0 - 0.22 * i / 8) for i in range(9)], 28, kupola=False)
+            bm = _voksel(bm, voksel, tmp)
         taubin_bm(bm, glajenje)
         # vrstica: gosta mreža (visoka mreža peke: normalna mapa nosi obliko), računalnik in telefon poenostavljena
         me = _poenostavi(bm.copy(), h.get("gosto", 12) * n_r, tmp, ime_v)

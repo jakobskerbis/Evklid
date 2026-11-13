@@ -38,8 +38,10 @@ def main():
     # spodnja votla vena ostane zunaj jeter (v svojem žlebu), sicer jo zapiranje maske pogoltne
     ivc = M("total/inferior_vena_cava.nii.gz")
     L = najv(L & ~ndimage.binary_dilation(ivc, iterations=1))
+    # jamice ob izstopu jetrnih ven (črna luknja na kupoli, ocena n1): zapiranje s kroglo 4 voksle, votla vena ostane zunaj
+    L = najv(ndimage.binary_fill_holes(ndimage.binary_closing(np.pad(L, 6), iterations=4)[6:-6, 6:-6, 6:-6]) & ~ivc)
     izh = {"primer": p}
-    izh["jetra_v"], izh["jetra_f"] = povrsina(L, aff, korak, glajenje=1.6)
+    izh["jetra_v"], izh["jetra_f"] = povrsina(L, aff, korak, glajenje=2.6)  # 2,6: brez stopnic rezin in drobnih grbin
     print("jetra", len(izh["jetra_v"]), "ml", round(L.sum() * np.prod(korak) / 1000))
     # segmenti: vsak voksel jeter dobi najbližji segment (TotalSegmentator pusti vrzeli ob žilah in robu)
     seg = [M(f"seg/liver_segment_{i}.nii.gz") for i in range(1, 9)]
@@ -54,8 +56,8 @@ def main():
     def izo(m):
         return np.repeat(m, kz, axis=2), korak / np.array([1, 1, kz]), aff @ np.diag([1, 1, 1.0 / kz, 1])
     d_jetra = ndimage.distance_transform_edt(~L, sampling=korak)  # mm od jeter (0 v jetrih)
-    # portalna vena: deblo do 22 mm pod vrati (vranična in zgornja mezenterična vena odpadeta), korenina = spodnji debeli konec
-    m, kr, af = izo((h == 1) & (d_jetra <= 22.0))
+    # portalna vena: deblo do 12 mm pod vrati (vranična in zgornja mezenterična vena odpadeta), korenina = spodnji debeli konec
+    m, kr, af = izo((h == 1) & (d_jetra <= 12.0))
     m = najv(ndimage.binary_closing(m, iterations=1))
     dj, _, _ = izo(d_jetra > 0)
     kor = lambda P, r: r * 1.0 - 0.15 * P[:, 2] + 6.0 * dj[tuple(np.clip(np.round((P - af[:3, 3]) / kr).astype(int), 0, np.array(m.shape) - 1).T)]
@@ -63,10 +65,10 @@ def main():
     izh["portalna_P"], izh["portalna_R"], izh["portalna_S"] = P, R, S
     print("portalna vena: vozlišč", len(P), "korenin", int((S < 0).sum()), "polmer mm", round(float(R.max() * 1000), 1))
     # jetrne vene s spodnjo votlo veno (oznaka 2; votla vena TotalSegmentator jo podaljša nad in pod jetri): korenina = vrh
-    # votla vena cela (ne le del ob jetrih), od 12 mm pod repastim režnjem do 8 mm nad kupolo jeter
+    # votla vena cela (ne le del ob jetrih), od 4 mm pod repastim režnjem do 8 mm nad kupolo jeter
     kk = np.arange(L.shape[2]); gor = aff[2, 2] > 0
     k1 = np.flatnonzero(seg[0].any((0, 1))); kL = np.flatnonzero(L.any((0, 1)))
-    lo, hi = ((k1.min() - 12.0 / korak[2], kL.max() + 8.0 / korak[2]) if gor else (kL.min() - 8.0 / korak[2], k1.max() + 12.0 / korak[2]))
+    lo, hi = ((k1.min() - 4.0 / korak[2], kL.max() + 8.0 / korak[2]) if gor else (kL.min() - 8.0 / korak[2], k1.max() + 4.0 / korak[2]))
     ivc = ivc & ((kk >= lo) & (kk <= hi))[None, None, :]
     m, kr, af = izo(najv((h == 2) | ivc))
     m = najv(ndimage.binary_closing(m, iterations=1))
