@@ -3,6 +3,9 @@
 //   sredinskega reza (mozgani-rez-hra.py), listi v pahljači (listiKot), rez z risbo tudi v učnih barvah (rezUcna);
 // – pljuča: režnji, arterije, vene in dihalno drevo iz enega CT (pljuca-zile.py, pljuca_geometrija.py), sapnik HRA;
 // – jetra: površina, portalna vena in jetrne vene s spodnjo votlo veno iz HVA-CT (jetra-ct.py, jetra_geometrija.jetra_ct).
+// Krog n4 (ocena n3: pljuča in jetra iz CT slabša od r5): objavljena pljuča in jetra so spet geometrija r5 (Z-Anatomy, režnji TS,
+// zrasla drevesa), različici CT ostaneta v orodjih kot možnost; možgani: iz HRA le bele sredinske strukture, deblo in
+// medmožgani Z-Anatomy, mali možgani MRI.
 // Test bere objavljene GLB-je in JSON; orodja CT preizkusi na umetnih maskah (če sta numpy in scipy na voljo).
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -21,7 +24,7 @@ const MEJE = { racunalnik: [6_291_456, 300_000], telefon: [1_992_294, 90_000] };
 
 test("n1: orodja se prevedejo in izvoz jih kliče", (t) => {
   const izvoz = beri("scripts", "atlas", "izvozi-organe.py");
-  for (const s of ["from mozgani_hra import", "from pljuca_geometrija import pljuca_ct", "jetra_ct", 'dodaj=["pljuca_ct"]', 'dodaj=["jetra_ct"]', "hra_mozgani=dict(", '"_racunalnik"'])
+  for (const s of ["from mozgani_hra import", "from pljuca_geometrija import pljuca_ct", "jetra_ct", 'dodaj=["pljucna_drevesa"]', 'dodaj=["jetra_deli"]', "hra_mozgani=dict(", "skupine=", "maliMri=True", '"_racunalnik"'])
     assert.ok(izvoz.includes(s), s);
   if (spawnSync("python3", ["--version"]).status !== 0) return t.skip("python3 ni na voljo");
   for (const f of ["ct_orodja.py", "ct_orodja_preizkus.py", "pljuca-zile.py", "jetra-ct.py", "mozgani_hra.py", "mozgani-rez-hra.py", "pljuca_geometrija.py", "jetra_geometrija.py"]) {
@@ -57,113 +60,77 @@ for (const [vrsta, pripona] of [["racunalnik", ""], ["telefon", "-telefon"]]) {
     }
   });
 
-  test(`n1: mozgani${pripona}.glb ima strukture HRA namesto malih možganov MRI`, async () => {
+
+  test(`n4: mozgani${pripona}.glb – bele sredinske strukture HRA, deblo Z-Anatomy, mali možgani MRI`, async () => {
     const d = await preveriGLB(path.join(ORGANI, `mozgani${pripona}.glb`));
-    for (const ime of ["Brainstem (HRA)", "Cerebellum (HRA)", "Corpus callosum (HRA)", "Fornix (HRA)", "Thalamus (HRA)", "Hypothalamus (HRA)"]) {
+    for (const ime of ["Corpus callosum (HRA)", "Fornix (HRA)", "Anterior commissure (HRA)", "Optic chiasm (HRA)"]) {
       const r = d.find((x) => x.ime === ime);
       assert.ok(r, `manjka ${ime}`);
       assert.equal(r.navznoter, 0, `${ime}: obrnjen navznoter`);
     }
-    for (const ime of ["Brainstem (HRA)", "Cerebellum (HRA)"]) assert.ok(d.find((x) => x.ime === ime).odprtiRobovi <= 2, `${ime} je zaprto telo`);
-    assert.ok(!d.some((x) => /Cerebellum \(MRI\)/.test(x.ime)), "mali možgani MRI so še v datoteki");
+    const mali = d.find((x) => x.ime === "Cerebellum (MRI)");
+    assert.ok(mali && mali.odprtiRobovi <= 2, "mali možgani MRI so zaprto telo");
+    // ocena n3: deblo HRA je raven valj z ločenim ponsom, mali možgani HRA brez fisur → nazaj Z-Anatomy / MRI
+    for (const ime of ["Brainstem (HRA)", "Cerebellum (HRA)", "Thalamus (HRA)"]) assert.ok(!d.some((x) => x.ime === ime), `${ime} je še v datoteki`);
+    for (const re of [/^Pons/, /^Medulla oblongata/, /^Midbrain/, /^Thalamus\.[lr]$/]) assert.ok(d.some((x) => re.test(x.ime)), `manjka ${re}`);
   });
 
-  test(`n1: pljuca${pripona}.glb – režnji, sapnik HRA z obroči in drevesa iz CT`, async () => {
-    const d = await preveriGLB(path.join(ORGANI, `pljuca${pripona}.glb`));
-    const rezn = d.filter((x) => /lobe of (left|right) lung$/.test(x.ime));
-    assert.equal(rezn.length, 5);
-    for (const r of rezn) {
-      assert.ok(r.odprtiRobovi <= 2, `${r.ime}: odprtih robov ${r.odprtiRobovi}`);
-      assert.equal(r.navznoter, 0, r.ime);
+  test(`n4: pljuca${pripona}.glb in jetra${pripona}.glb sta geometrija r5 (brez vozlišč CT)`, async () => {
+    for (const o of ["pljuca", "jetra"]) {
+      const d = await preveriGLB(path.join(ORGANI, `${o}${pripona}.glb`));
+      assert.ok(!d.some((x) => /\((CT|HRA)\)$/.test(x.ime)), `${o}: vozlišča CT/HRA`);
     }
-    for (const ime of ["Trachea (HRA)", "Tracheal cartilage (HRA)", "Main bronchi (HRA)", "Main bronchial cartilage (HRA)"]) assert.ok(d.find((x) => x.ime === ime), `manjka ${ime}`);
-    for (const ime of ["Bronchi (CT)", "Bronchi in lungs (CT)", "Pulmonary arteries (CT)", "Pulmonary arteries in lungs (CT)", "Pulmonary veins (CT)", "Pulmonary veins in lungs (CT)"]) {
-      const r = d.find((x) => x.ime === ime);
-      assert.ok(r, `manjka ${ime}`);
-      assert.ok(r.komponente >= (pripona ? 8 : 15), `${ime}: ${r.komponente} vej`);
-    }
-    assert.ok(!d.some((x) => /segment/i.test(x.ime)), "veje Z-Anatomy so še v datoteki");
-  });
-
-  test(`n1: jetra${pripona}.glb – drevesa HVA-CT, votla vena s svetlino, režnji`, async () => {
-    const d = await preveriGLB(path.join(ORGANI, `jetra${pripona}.glb`));
-    assert.equal(d.length, 12);
-    for (const ime of ["Right lobe of liver (lastno)", "Left lobe of liver (lastno)", "Quadrate lobe of liver (lastno)", "Caudate lobe of liver (lastno)"]) {
-      const r = d.find((x) => x.ime === ime);
-      assert.ok(r, `manjka ${ime}`);
-      assert.ok(r.odprtiRobovi <= 2 && r.luknje <= 1, `${ime}: odprti robovi ${r.odprtiRobovi}`);
-      assert.equal(r.navznoter, 0, ime);
-    }
-    for (const ime of ["Hepatic portal vein and branches (CT)", "Hepatic veins (CT)", "Hepatic artery and branches (lastno)", "Bile ducts (lastno)"]) {
-      const r = d.find((x) => x.ime === ime);
-      assert.ok(r, `manjka ${ime}`);
-      assert.equal(r.odprtiRobovi, 0, `${ime}: cevi so zaprte`);
-      assert.ok(r.komponente >= (pripona ? 10 : 30), `${ime}: ${r.komponente} vej`);
-    }
-    const ivc = d.find((x) => x.ime === "Inferior vena cava (CT)");
-    assert.ok(ivc, "manjka spodnja votla vena");
-    assert.equal(ivc.komponente, 1);
-    assert.equal(ivc.odprtiRobovi, 0, "votla cev s steno je zaprta mreža (zunanja in notranja ploskev, obroča na koncih)");
-    for (const ime of ["Gallbladder", "Falciform ligament (lastno)", "Round ligament of liver (lastno)"]) assert.ok(d.find((x) => x.ime === ime), `manjka ${ime}`);
   });
 }
 
-test("n1: JSON organov – deli kažejo na nova vozlišča, rez z risbo, tkivo hrustanca", () => {
+test("n4: JSON organov – deli kažejo na obstoječa vozlišča, rez z risbo, palete", () => {
   const m = json("mozgani");
   for (const t of ["mali", "deblo"]) {
     assert.equal(m.tkiva[t].rezPresek.vrsta, 0);
-    assert.ok(!m.tkiva[t].rezPresek.ovoj, `${t}: brez ovoja (pravi obris HRA)`);
     assert.ok(m.tkiva[t].rezSlika?.slika, `${t}: risba reza`);
   }
-  assert.ok(m.tkiva.mali.listiKot > 0, "listi malih možganov v pahljači");
   const vozl = (j) => new Set(j.deli.flatMap((x) => x.vozlisca || []));
-  assert.ok([...vozl(m)].some((v) => v.startsWith("Brainstem (HRA)")), "deblo HRA v delih možganov");
+  assert.ok([...vozl(m)].some((v) => v.startsWith("Corpus callosum (HRA)")), "žuljevo telo HRA v delih možganov");
+  assert.ok([...vozl(m)].some((v) => v.startsWith("Cerebellum (MRI)")), "mali možgani MRI v delih možganov");
   const p = json("pljuca");
-  assert.ok(p.tkiva.hrustanec, "tkivo hrustanec");
-  const vp = [...vozl(p)];
-  for (const ime of ["Trachea (HRA)", "Bronchi in lungs (CT)", "Pulmonary arteries in lungs (CT)", "Pulmonary veins (CT)"]) assert.ok(vp.some((v) => v.startsWith(ime)), `pljuca.json: ${ime}`);
+  // n3 → n4: drobnejši vzorec pljučnih mešičkov na rezu ostane, svetlina sapnika je temna
+  assert.ok(p.tkiva.pljuca.rezCelice[0].mera >= 0.0015 && p.tkiva.pljuca.rezCelice[0].jedroMoc <= 0.5, "vzorec mešičkov n3");
+  const temno = (h) => parseInt(h.slice(1, 3), 16) + parseInt(h.slice(3, 5), 16) + parseInt(h.slice(5, 7), 16);
+  assert.ok(temno(p.tkiva["dihalna-v"].rez) < 120, "temna svetlina sapnika");
   const j = json("jetra");
-  const vj = [...vozl(j)];
-  for (const ime of ["Hepatic portal vein and branches (CT)", "Hepatic veins (CT)", "Inferior vena cava (CT)", "Caudate lobe of liver (lastno)"]) assert.ok(vj.some((v) => v.startsWith(ime)), `jetra.json: ${ime}`);
-  for (const o of [m, p, j]) for (const d of o.deli) assert.ok(d.vozlisca?.length, `${o.id || ""} ${d.id}: del brez vozlišč`);
+  // ocena n3: cevi v hilusu naj ne bodo »bonbonske« učne barve – v realnem načinu zamolkle, sijaj kapsule mat
+  const nasic = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); return (Math.max(...c) - Math.min(...c)) / Math.max(...c); };
+  for (const t of ["vena", "portalna"]) assert.ok(nasic(j.tkiva[t].barva) < 0.5, `${t}: zamolkla barva`);
+  assert.ok(j.tkiva.jetra.lak <= 0.2, "jetra: brez plastičnega laka");
+  assert.ok(j.tkiva.jetra.rezCelice?.[0]?.mera > 0.001, "režnjiči na rezu jeter");
+  for (const [ime, o] of [["mozgani", m], ["pljuca", p], ["jetra", j]]) for (const d of o.deli) assert.ok(d.vozlisca?.length, `${ime} ${d.id}: del brez vozlišč`);
 });
 
 test("n1: pregledovalnik – risba reza v učnih barvah in pahljača listov", () => {
   const src = beri("public", "3d", "organ.js");
-  for (const s of ["rezUcna", "ucniPresekSlike", "slikeTkiv", "listiKot"]) assert.ok(src.includes(s), s);
+  for (const s of ["rezUcna", "ucniPresekSlike", "slikeTkiv", "listiKot", "rezOdmik", "const ravZa", "userData.ravnineRez"]) assert.ok(src.includes(s), s);
   assert.ok(!/float orgSl\b/.test(src), "lokalna spremenljivka ne sme zasenčiti vzorčevalnika orgSl");
 });
 
-test("n3: rez pljuč leži v ravnini dihalnega drevesa (brez odmika dreves), deblo z začetkom hrbtenjače", () => {
-  const src = beri("public", "3d", "organ.js");
-  for (const s of ["rezOdmik", "const ravZa", "userData.ravnineRez"]) assert.ok(src.includes(s), s); // možnost ostane
+test("n3/n4: možnosti CT ostanejo v orodjih (ravnina drevesa, začetek hrbtenjače), objavljena pljuča brez odmika dreves", () => {
   const p = json("pljuca");
-  // ocena n2: drevesa naj bodo prerezana v ravnini, ne da molijo iz nje – nobeno tkivo pljuč nima odmika
   for (const [t, tk] of Object.entries(p.tkiva)) assert.ok(!tk.rezOdmik, `${t}: brez rezOdmik`);
-  for (const t of ["dihalna-v", "pljucna-arterija-v", "pljucna-vena-v"]) assert.ok(!p.tkiva[t].brezReza && p.tkiva[t].rezPresek, `${t}: se reže (s presekom)`);
-  const n = p.prerez.ravnine[0].n;
-  assert.ok(Math.abs(Math.hypot(...n) - 1) < 0.01, "enotska normala");
-  const nagib = (Math.acos(Math.min(1, Math.abs(n[2]))) * 180) / Math.PI;
-  assert.ok(nagib > 3 && nagib <= 36, `ravnina dihalnega drevesa je nagnjena ${nagib.toFixed(0)}° od čelne`);
   for (const s of ['cfg["_karinaN"]', "ravninaNagib"]) assert.ok(beri("scripts", "atlas", "pljuca_geometrija.py").includes(s), s);
   assert.ok(beri("scripts", "atlas", "organi.mjs").includes("izvoz.karinaN"), "organi.mjs uporabi normalo ravnine");
-  assert.ok(beri("scripts", "atlas", "mozgani_hra.py").includes('h.get("hrbtenjaca"'), "začetek hrbtenjače v mozgani_hra.py");
+  const hra = beri("scripts", "atlas", "mozgani_hra.py");
+  for (const s of ['h.get("hrbtenjaca"', 'h.get("skupine"']) assert.ok(hra.includes(s), s);
   assert.ok(beri("scripts", "atlas", "mozgani-rez-hra.py").includes("ozke = je_mali"), "ozke razpoke niso izrez");
-  const j = json("jetra");
-  assert.ok(j.tkiva.jetra.rezCelice?.[0]?.mera > 0.001, "režnjiči na rezu jeter");
 });
 
-test("n1: viri – HRA, TotalSegmentator in HVA-CT (deljenje pod enakimi pogoji)", () => {
+test("n4: viri – HRA Brain za objavljene mreže, viri CT le kot možnost orodij", () => {
   const viri = JSON.parse(beri("public", "3d", "modeli", "organi", "viri.json"));
   const najdi = (re) => viri.find((v) => re.test(v.ime));
   const hra = najdi(/Brain, v1\.4/);
   assert.ok(hra && hra.licenca === "CC BY 4.0");
-  assert.ok(najdi(/Trachea v1\.1/)?.licenca === "CC BY 4.0");
   assert.match(najdi(/TotalSegmentator/).licenca, /CC BY 4\.0.*Apache-2\.0/);
-  const hva = najdi(/HVA-CT/);
-  assert.equal(hva.licenca, "CC BY-SA 4.0");
-  assert.match(hva.za, /Deljenje pod enakimi pogoji/);
   for (const v of viri) assert.ok(!/NC|ND/.test(v.licenca), `${v.ime}: licenca ${v.licenca}`);
   const cr = beri("public", "3d", "modeli", "organi-3d", "CREDITS.txt");
-  for (const re of [/HVA-CT/, /zenodo\.19850108/, /CC BY-SA 4\.0/, /Deljenje pod enakimi pogoji/, /Brain v1\.4/, /Trachea v1\.1/, /lung_vessels/, /liver_segments/]) assert.match(cr, re);
+  for (const re of [/Brain v1\.4/, /CC BY-SA 4\.0/, /Z-Anatomy/, /TotalSegmentator/]) assert.match(cr, re);
+  // objavljena jetra in pljuča n4 nimajo mrež iz HVA-CT: vir ne sme biti naveden kot vir objavljenih mrež
+  assert.ok(!najdi(/HVA-CT/) || /možnost|ni v objavljenih/i.test(najdi(/HVA-CT/).za), "HVA-CT le kot možnost");
 });

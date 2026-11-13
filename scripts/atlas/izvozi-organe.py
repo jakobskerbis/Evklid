@@ -98,7 +98,13 @@ ORGANI = {
         mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40),
         # Deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen Human Brain Reference Atlas, CC BY 4.0;
         # mozgani_hra.py; datoteka v mapi --hra). Brez datoteke ostanejo Z-Anatomy in mali možgani MRI.
-        hra_mozgani=dict(datoteka="3d-allen-m-brain.glb", zapri=dict(mali=0.0005), gosto=8), nedotakni=r"\(HRA\)",
+        # n4 (ocena n3: deblo HRA je raven valj z ločenim jajcem ponsa, mali možgani HRA gladki s »počesanimi« črtami, medmožgani
+        # HRA v rezu prekrivajoče se sive ploskve): iz HRA ostanejo le bele sredinske strukture (skupine); deblo s tektumom
+        # in medmožgani so spet Z-Anatomy, mali možgani spet iz MRI (prave fisure kot žlebovi). Vse skupine HRA: brez
+        # »skupine«, »zamenjaj« in »maliMri«.
+        hra_mozgani=dict(datoteka="3d-allen-m-brain.glb", zapri=dict(mali=0.0005), gosto=8,
+                         skupine=r"^(Corpus callosum|Fornix|Anterior commissure|Optic chiasm) ", zamenjaj=r"^bela$", maliMri=True),
+        nedotakni=r"\(HRA\)",
         poenostaviSkupaj=r"\(MRI\)\.([lr])$",  # režnji ene poloble so ena površina: brez razpok ob mejah režnjev
         tkiva=[
             (r"Cerebellum\.g", "mali"),
@@ -301,6 +307,9 @@ ORGANI = {
             (r"", "misice"),
         ],
     ),
+    # n4 (ocena n3: pljuča iz enega CT so bila slabša od r5): spet oblika r5 – režnji TotalSegmentator na pljučih Z-Anatomy,
+    # bronhiji in žile Z-Anatomy z lastnimi vejami (pljucna_drevesa). Različica iz enega CT ostane v kodi kot možnost:
+    # dodaj=["pljuca_ct"], pljuca_ct=dict(rezenj=(60000, 10000, 3300), telListi=2, racPolmer=0.00105), recept "hrustanec".
     "pljuca": dict(
         # Z-Anatomy: pet režnjev, sapnik, bronhiji do segmentnih in pljučne žile do segmentov. HRA (lung-male) ima lepše
         # bronhije s hrustančnimi obroči, a nima sapnika in žil, režnji so grobi segmenti (300–1400 trikotnikov), in
@@ -315,10 +324,9 @@ ORGANI = {
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
                 # vz2 (posnetek vz1: temne lise in brez vzorca režnjičev): svetlejša rožnata, mehkejše lise, svetlejši pretini
-                "pljuca": dict(barva=(0.66, 0.37, 0.37), barva2=(0.54, 0.29, 0.31), lise=0.30, liseMera=0.04, hrap=0.46,
-                               gube=0.00003, gubeMera=0.003, zilice=0.22, ziliceBarva=(0.42, 0.25, 0.27), ziliceMera=0.04, razdeli=0),  # gosta mreža režnja (60k) je že visoka mreža; hrap 0,46: brez bleščic na hrbtni strani
-                "dihalna": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.3, hrap=0.44, gube=0.00004, gubeMera=0.002, razdeli=0),  # sapnik HRA je že gost; razdelitev je pri peki vzela > 2,6 GB
-                "hrustanec": dict(barva=(0.86, 0.80, 0.70), barva2=(0.78, 0.71, 0.62), lise=0.25, hrap=0.40, gube=0.00002, gubeMera=0.002, razdeli=0),
+                "pljuca": dict(barva=(0.66, 0.37, 0.37), barva2=(0.54, 0.29, 0.31), lise=0.30, liseMera=0.04, hrap=0.32,
+                               gube=0.00003, gubeMera=0.003, zilice=0.22, ziliceBarva=(0.42, 0.25, 0.27), ziliceMera=0.04, razdeli=1),
+                "dihalna": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.3, hrap=0.44, gube=0.00004, gubeMera=0.002, razdeli=1),
                 "dihalna-v": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.2, hrap=0.44, gube=0.0, razdeli=0),
                 "pljucna-arterija": dict(barva=(0.44, 0.28, 0.30), barva2=(0.38, 0.23, 0.26), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
                 "pljucna-vena": dict(barva=(0.50, 0.26, 0.25), barva2=(0.43, 0.21, 0.21), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
@@ -342,12 +350,7 @@ ORGANI = {
         # trikotnikov: natrgani robovi ob preponi), veje v pljučih iz središčnic (veje=True: še subsegmentne veje s
         # kolonizacijo prostora; v pljučih so bile videti kot ščetina ob čistem drevesu Z-Anatomy, zato izklopljeno). Te mreže
         # imajo svojo telefonsko različico (»nedotakni«), ostalo (sapnik, glavna bronhija, žile ob hilusu) dobi preostanek.
-        # pljuca_geometrija.pljuca_ct (2026-11-13): vse iz enega telesa – režnji z zaobljenimi robovi, arterije, vene in
-        # dihalno drevo iz CT (TotalSegmentator lung_vessels; scripts/atlas/pljuca-zile.py → totalseg/pljuca-zile-v1.npz),
-        # sapnik in glavna bronhija s hrustančnimi obroči iz HRA (--hra: 3d-vh-m-trachea.glb, 3d-vh-m-main-bronchus.glb).
-        # Brez datoteke CT teče prejšnja pot (pljucna_drevesa: Z-Anatomy, nastavitve spodaj).
-        dodaj=["pljuca_ct"], nedotakni=r"\(lastno\)",
-        pljuca_ct=dict(rezenj=(60000, 10000, 3300), telListi=2, racPolmer=0.00105),
+        dodaj=["pljucna_drevesa"], nedotakni=r"\(lastno\)",
         # Režnji iz CT (TotalSegmentator dataset v1, osebek s0913, CC BY 4.0; scripts/atlas/pljuca-ct.py): prave ploskve
         # režnjev s špranjami, poravnane na pljuča Z-Anatomy (ločeno levo in desno krilo). Brez datoteke ostanejo režnji Z-Anatomy.
         ct_rezenj="totalseg/pljuca-v1.npz",
@@ -418,6 +421,8 @@ ORGANI = {
         tkiva=[(r"^Ureter", "secevod"), (r"artery", "arterija"), (r"vein", "vena"), (r"Suprarenal", "nadledvicna"), (r"", "skorja")],
         deli=[(r"^Ureter", "secevod"), (r"artery", "ledvicna-arterija"), (r"vein", "ledvicna-vena"), (r"Suprarenal", "nadledvicna")],
     ),
+    # n4 (ocena n3: jetra iz CT so bila slabša od r5): spet jetra Z-Anatomy z zraslimi drevesi (jetra_deli). Različica iz
+    # HVA-CT ostane v kodi kot možnost: dodaj=["jetra_ct"], nedotakni=r"\((lastno|CT)\)" (potrebuje totalseg/jetra-ct-v1.npz).
     "jetra": dict(
         # Z-Anatomy: jetra po segmentih (I–VIII), žolčnik, žolčevod, portalna vena, jetrna arterija in jetrne vene. HRA
         # (liver-male) ima gostejšo ovojnico, a nima žolčnika, portalne vene in jetrnih ven (samo vtisnine in vezi).
@@ -429,12 +434,12 @@ ORGANI = {
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
                 # manj nasičena (ocena: prenasičena, enakomerno sijoča), hrapavejša
-                "jetra": dict(barva=(0.21, 0.075, 0.055), barva2=(0.155, 0.055, 0.042), lise=0.3, liseMera=0.035, hrap=0.62,
+                "jetra": dict(barva=(0.21, 0.075, 0.055), barva2=(0.155, 0.055, 0.042), lise=0.35, liseMera=0.035, hrap=0.36,
                               gube=0.00002, gubeMera=0.002, zilice=0.12, ziliceBarva=(0.13, 0.035, 0.025), ziliceMera=0.008, razdeli=0),
                 "vez": dict(barva=(0.66, 0.50, 0.44), barva2=(0.58, 0.42, 0.38), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 "guba": dict(barva=(0.62, 0.40, 0.36), barva2=(0.54, 0.33, 0.30), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 # temno olivno zelen (žolč skozi steno), ne svetlo zelen
-                "zolcnik": dict(barva=(0.17, 0.21, 0.13), barva2=(0.12, 0.16, 0.11), lise=0.35, hrap=0.42, gube=0.00004, gubeMera=0.003, razdeli=1),
+                "zolcnik": dict(barva=(0.10, 0.12, 0.035), barva2=(0.065, 0.08, 0.025), lise=0.35, hrap=0.30, gube=0.00004, gubeMera=0.003, razdeli=1),
                 "zolcevod": dict(barva=(0.50, 0.50, 0.22), barva2=(0.42, 0.42, 0.18), lise=0.25, hrap=0.40, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "portalna": dict(barva=(0.38, 0.23, 0.27), barva2=(0.32, 0.19, 0.23), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "arterija": dict(barva=(0.62, 0.34, 0.30), barva2=(0.55, 0.29, 0.26), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
@@ -447,7 +452,7 @@ ORGANI = {
         gladi=r"segment of liver|Gallbladder",
         # jetra_geometrija.jetra_deli: ena gladka površina (Z-Anatomy »Liver«), razrezana v štiri režnje brez vidnih šivov,
         # srpasta in obla vez, spodnja votla vena, portalna vena, jetrne vene, arterija in žolčni vodi kot drevesa (lastno).
-        dodaj=["jetra_ct"], nedotakni=r"\((lastno|CT)\)",  # jetra_ct: CT (HVA-CT, TotalSegmentator); brez npz jetra_deli
+        dodaj=["jetra_deli"], nedotakni=r"\(lastno\)",
         jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1),
         tkiva=[(r"segment of liver", "jetra"), (r"^Gallbladder", "zolcnik"), (r"Bile duct|bile", "zolcevod"),
                (r"portal", "portalna"), (r"artery", "arterija"), (r"vein", "vena"), (r"", "jetra")],
@@ -1385,13 +1390,15 @@ def izvozi(organ, cfg):
         cfg["_sredinaX"] = 0.5 * (lo[0] + hi[0])
         mm = cfg.get("mali_mri")
         hm = cfg.get("hra_mozgani")
-        if hm and HRA and os.path.isfile(os.path.join(HRA, hm["datoteka"])):
-            osnovni, F = mozgani_hra(osnovni, cfg, tmp, os.path.join(HRA, hm["datoteka"]), lo, hi)
-            if F is not None:
-                cfg["_fastigij"] = [float(x) for x in F]
-        elif mm and os.path.isfile(os.path.join(MRI, f"{mri['osebek']}-mali.npz")):
+        je_hra = bool(hm and HRA and os.path.isfile(os.path.join(HRA, hm["datoteka"])))
+        # n4: mali možgani MRI ostanejo tudi ob HRA, kadar HRA ne da malih možganov (hra_mozgani.skupine brez »Cerebellum«)
+        if mm and os.path.isfile(os.path.join(MRI, f"{mri['osebek']}-mali.npz")) and (not je_hra or hm.get("maliMri")):
             osnovni, F = mali_iz_mri(osnovni, mri, mm, lo, hi, tmp)
             cfg["_fastigij"] = [float(x) for x in F]
+        if je_hra:
+            osnovni, F = mozgani_hra(osnovni, cfg, tmp, os.path.join(HRA, hm["datoteka"]), lo, hi)
+            if F is not None and "_fastigij" not in cfg:
+                cfg["_fastigij"] = [float(x) for x in F]
     hra = cfg.get("hra")
     if hra and HRA:
         osnovni = [r for r in osnovni if not re.search(hra["zamenjaj"], r[0])] + zrklo_hra(os.path.join(HRA, hra["datoteka"]), hra, osnovni, tmp)

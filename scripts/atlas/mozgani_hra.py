@@ -209,7 +209,10 @@ def mozgani_hra(osnovni, cfg, tmp, pot, lo, hi):
     print(f"[organi] HRA možgani: merilo {[round(float(x), 3) for x in K]}, premik {[round(float(x) * 1000, 1) for x in O]} mm")
     izrezi = [me for k, me in M.items() if re.search(IZREZI, k)]
     vrstice = []; cfg.setdefault("_telefon", {})
+    sk = re.compile(h.get("skupine", ""))  # n4: le izbrane skupine (ime vozlišča), ostalo ostane Z-Anatomy / MRI
     for ime_v, tkivo, d, rx, voksel, napihni, glajenje, (n_r, n_t) in SKUPINE:
+        if not sk.search(ime_v):
+            continue
         viri = [me for k, me in M.items() if re.search(rx, ime(k))]
         if not viri:
             print(f"[organi] HRA možgani: ni virov za {ime_v}"); continue
@@ -251,7 +254,7 @@ def mozgani_hra(osnovni, cfg, tmp, pot, lo, hi):
     x0 = sx + 0.0004
     cfg["_rezZanke"] = {}
     for k, me in M.items():
-        if re.search(REZ, k):
+        if re.search(REZ, k) and sk.search("Brainstem (HRA)"):  # naslikani rez HRA le, kadar je deblo iz HRA
             z = _zanke_reza(me, T, x0) or _zanke_reza(me, T, sx - 0.0004)
             if z:
                 cfg["_rezZanke"].setdefault(re.sub(r"_[LR]$", "", ime(k)), []).extend(z)

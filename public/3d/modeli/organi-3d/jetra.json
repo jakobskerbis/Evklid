@@ -4,8 +4,8 @@
  "tkiva": {
   "jetra": {
    "hrap": 0.3,
-   "lak": 0.06,
-   "lakHrap": 0.3,
+   "lak": 0.14,
+   "lakHrap": 0.42,
    "sijaj": 0.06,
    "ao": 0.5,
    "zrno": 0.06,
@@ -19,7 +19,7 @@
    "relief": 0.25,
    "senca": 0.12,
    "sencaBarva": "#3a120c",
-   "rez": "#9a4534",
+   "rez": "#93392a",
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.3,
@@ -39,35 +39,34 @@
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
-    "rob": 0.0009,
-    "povecaj": 1.004,
-    "robBarva": "#5a231c"
+    "rob": 0.0003,
+    "povecaj": 1.004
    },
    "rezSum": 0.5,
    "rezCelice": [
     {
-     "mera": 0.0015,
-     "jedroMoc": 0.4,
-     "jedro": "#6a241c",
-     "jedroR": 0.16,
-     "moc": 0.4,
-     "stena": "#b56a58",
-     "sirina": 0.09,
-     "vdolbina": 0.3,
-     "zvitost": 0.25,
-     "ton": 0.1
+     "mera": 0.0013,
+     "moc": 0.3,
+     "stena": "#b0644c",
+     "sirina": 0.1,
+     "jedroMoc": 0.3,
+     "jedro": "#5c1c14",
+     "jedroR": 0.2,
+     "ton": 0.08,
+     "zvitost": 0.4,
+     "vdolbina": 0.15
     }
    ]
   },
   "zolcnik": {
    "hrap": 0.3,
-   "lak": 0.25,
+   "lak": 0.28,
    "lakHrap": 0.22,
    "sijaj": 0.15,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 120,
-   "barva": "#5c6b45",
+   "barva": "#55633a",
    "sijajBarva": "#c8d890",
    "rob": 0.35,
    "robBarva": "#8c9a3e",
@@ -91,17 +90,17 @@
   },
   "zolcevod": {
    "hrap": 0.34,
-   "lak": 0.7,
+   "lak": 0.35,
    "lakHrap": 0.14,
    "sijaj": 0.45,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
-   "barva": "#8fa83a",
+   "barva": "#7a8650",
    "rez": "#b9bf78",
-   "sijajBarva": "#eaffb0",
-   "rob": 0.15,
-   "robBarva": "#d0f080",
+   "sijajBarva": "#dce4c0",
+   "rob": 0.08,
+   "robBarva": "#b8c490",
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.5,
@@ -117,17 +116,17 @@
   },
   "portalna": {
    "hrap": 0.36,
-   "lak": 0.7,
+   "lak": 0.35,
    "lakHrap": 0.14,
    "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.05,
    "f": 70,
-   "barva": "#8e4ec0",
+   "barva": "#6a5a86",
    "rez": "#d3c6e4",
-   "sijajBarva": "#e0b8ff",
-   "rob": 0.18,
-   "robBarva": "#c080ff",
+   "sijajBarva": "#cfc4dc",
+   "rob": 0.08,
+   "robBarva": "#a898c0",
    "relief": 0.25,
    "mapa": false,
    "detajl": true,
@@ -144,17 +143,17 @@
   },
   "arterija": {
    "hrap": 0.36,
-   "lak": 0.7,
+   "lak": 0.35,
    "lakHrap": 0.14,
    "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.05,
    "f": 70,
-   "barva": "#ad2521",
+   "barva": "#943a34",
    "rez": "#eab0a6",
-   "sijajBarva": "#ff9a90",
-   "rob": 0.2,
-   "robBarva": "#ff6458",
+   "sijajBarva": "#e8b0a8",
+   "rob": 0.1,
+   "robBarva": "#d08078",
    "relief": 0.25,
    "mapa": false,
    "detajl": true,
@@ -171,17 +170,17 @@
   },
   "vena": {
    "hrap": 0.36,
-   "lak": 0.7,
+   "lak": 0.35,
    "lakHrap": 0.14,
    "sijaj": 0.2,
    "ao": 0.85,
    "zrno": 0.05,
    "f": 70,
-   "barva": "#3566c9",
+   "barva": "#46557c",
    "rez": "#bdc8e6",
-   "sijajBarva": "#9db8ff",
-   "rob": 0.18,
-   "robBarva": "#6f93ff",
+   "sijajBarva": "#b4bcd4",
+   "rob": 0.08,
+   "robBarva": "#8494b8",
    "relief": 0.25,
    "mapa": false,
    "detajl": true,
@@ -204,7 +203,7 @@
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
-   "barva": "#b98576",
+   "barva": "#c9a394",
    "rez": "#d8c0ae",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
@@ -216,13 +215,13 @@
   },
   "guba": {
    "hrap": 0.46,
-   "lak": 0.3,
+   "lak": 0.5,
    "lakHrap": 0.22,
    "sijaj": 0.3,
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
-   "barva": "#96584c",
+   "barva": "#b0675b",
    "rez": "#d8c0ae",
    "sijajBarva": "#ffffff",
    "rob": 0.18,
@@ -231,7 +230,7 @@
    "detajl": true,
    "aoTekstura": 0.5,
    "brezReza": true,
-   "prosojnost": 0.55,
+   "prosojnost": 0.62,
    "dvostransko": true
   }
  },
@@ -321,7 +320,7 @@
    "opis": "Prinese v jetra kri iz želodca, črevesja in vranice, bogato s hranili.",
    "opisStudij": "Nastane za vratom trebušne slinavke iz v. mesenterica superior in v. splenica; dolga 6–8 cm. Daje okoli 75 % pretoka in polovico kisika jeter. Portokavalne anastomoze (požiralnik, rektum, popek) se pri portalni hipertenziji razširijo (varice, caput medusae).",
    "vozlisca": [
-    "Hepatic portal vein and branches (CT)"
+    "Hepatic portal vein and branches (lastno)"
    ]
   },
   {
@@ -345,7 +344,7 @@
    "opis": "Odvedejo kri iz jeter v spodnjo votlo veno in naprej v srce.",
    "opisStudij": "Tri glavne (desna, srednja, leva) potekajo med segmenti in se tik pod prepono izlivajo v spodnjo votlo veno; nimajo zaklopk. Srednja leži v Cantliejevi ravnini. Manjše vene repastega režnja se izlivajo neposredno.",
    "vozlisca": [
-    "Hepatic veins (CT)"
+    "Hepatic veins (lastno)"
    ]
   },
   {
@@ -357,7 +356,7 @@
    "opis": "Največja vena v telesu; teče v žlebu na zadnji strani jeter in sprejme kri iz jetrnih ven.",
    "opisStudij": "Leži v sulcus venae cavae med repastim režnjem in golo ploskvijo (area nuda) jeter; tik pod prepono se vanjo izlijejo tri jetrne vene. Skozi foramen venae cavae prepone (Th8) vstopi v desni preddvor.",
    "vozlisca": [
-    "Inferior vena cava (CT)"
+    "Inferior vena cava (lastno)"
    ]
   },
   {
@@ -389,11 +388,11 @@
   "ravnine": [
    {
     "n": [
-     0.2678,
-     0.5146,
-     -0.8145
+     0,
+     0,
+     -1
     ],
-    "d": 0.0086
+    "d": 0.012
    }
   ]
  },
@@ -464,10 +463,10 @@
    }
   ]
  },
- "velikost": 0.3381,
+ "velikost": 0.3142,
  "trikotniki": {
-  "racunalnik": 126364,
-  "telefon": 35128
+  "racunalnik": 121358,
+  "telefon": 37726
  },
  "luci": [
   {
