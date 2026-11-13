@@ -130,10 +130,11 @@ def povrsina(m, aff, korak, glajenje=1.5):
     """Maska → zglajena površina (marching cubes na 2× gostejši mreži), metri, x levo, y nazaj, z gor."""
     from scipy import ndimage
     from skimage import measure
-    polje = ndimage.zoom(np.pad(m, 4).astype(np.float32), 2, order=1)
+    ii = np.argwhere(m); a0 = np.maximum(ii.min(0) - 4, 0); b0 = np.minimum(ii.max(0) + 5, m.shape)  # izrez (pomnilnik)
+    polje = ndimage.zoom(np.pad(m[a0[0]:b0[0], a0[1]:b0[1], a0[2]:b0[2]], 4).astype(np.float32), 2, order=1)
     polje = ndimage.gaussian_filter(polje, glajenje / korak * 2)
     v, f, _, _ = measure.marching_cubes(polje, 0.5)
-    v = (v / 2.0 - 4 - 0.25) @ aff[:3, :3].T + aff[:3, 3]
+    v = (v / 2.0 - 4 - 0.25 + a0) @ aff[:3, :3].T + aff[:3, 3]
     v = v * np.array([-1, -1, 1]) / 1000.0
     if np.linalg.det(aff[:3, :3]) > 0:
         f = f[:, ::-1]
@@ -166,7 +167,7 @@ def main():
         odp = najv(odp)
         # oznaka režnja za vsak voksel odprtega krila: najbližji reženj
         moji = [k for k in REZNJI if k.endswith(stran)]
-        raz = np.stack([ndimage.distance_transform_edt(~rez[k]) for k in moji])
+        raz = np.stack([ndimage.distance_transform_edt(~rez[k]).astype(np.float32) for k in moji])
         ozn = raz.argmin(0)
         for i, k in enumerate(moji):
             v, f = povrsina(odp & (ozn == i), aff, korak)
