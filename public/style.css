@@ -336,14 +336,20 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 :where(.md-table, .table, .demo-table, .pse-tab, .doc table) [align="right"] { text-align: right; }
 /* Vodoravna tabela (public/vodoravna-tabela.js): stolpci kot tabela, ki se na ozkem zaslonu prelomijo v več vrstic
    namesto pomika vstran. Robovi se prekrivajo (−1 px), da je črta med celicami enojna kot v tabeli. */
-.md-vod { display: flex; flex-wrap: wrap; width: fit-content; max-width: 100%; margin: 10px 0; padding: 0 1px 1px 0; font-variant-numeric: tabular-nums; }
+.md-vod { display: flex; flex-wrap: wrap; row-gap: 8px; width: fit-content; max-width: 100%; margin: 10px 0; padding: 0 1px 1px 0; font-variant-numeric: tabular-nums; }
 .md-vod-st { display: flex; flex-direction: column; margin: 0 -1px -1px 0; border: 1px solid var(--border); background: var(--surface); color: var(--text); text-align: center; }
 .md-vod-c { display: flex; align-items: center; justify-content: center; min-height: 2.6em; padding: 6px 10px; }
 .md-vod-c + .md-vod-c { border-top: 1px solid var(--border); }
 .md-vod-c:last-child { flex: 1 0 auto; }
 .md-vod-v { min-height: 3.6em; }
 .md-vod-h { background: var(--surface-2); font-weight: 800; }
-.md-vod-leg { font-weight: 800; background: var(--surface-2); }
+.md-vod-leg { font-weight: 800; }
+.md-vod .katex { white-space: nowrap; font-size: 1.1em; }
+/* Vodoravna tabela z več vrsticami vrednosti (x | 0 | π/6 | … s sin, cos, tan): na ozkem mestu obrnjena, stolpci postanejo
+   vrstice (public/vodoravna-tabela.js obrnjenaTabela); na širokem ostane, kot jo je zapisal avtor. */
+.md-obrni { container-type: inline-size; }
+.md-obrni-ozka { display: none; }
+@container (max-width: 520px) { .md-obrni-siroka { display: none; } .md-obrni-ozka { display: block; } }
 
 /* Tabela iz Markdowna: tako široka kot vsebina; na ozkem zaslonu se pomika vstran, ne stisne.
    Kratke celice in formule se ne prelamljajo (ulomki ostanejo celi), daljše besedilo se. */

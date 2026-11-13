@@ -7,7 +7,7 @@ import { getPath, getTopic, topicOrder } from "./curriculum.js";
 import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheet, formulaSheetSections } from "./textbook.js";
 import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { splitFormulaCells } from "../public/rich.js";
-import { oznaciStolpce, vodoravnaTabela } from "../public/vodoravna-tabela.js";
+import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "../public/vodoravna-tabela.js";
 import { BRAND } from "./brand.js";
 
 const esc = (s) =>
@@ -45,6 +45,8 @@ export function renderMd(text, output = "htmlAndMathml") {
     .replace(/<table>([\s\S]*?)<\/table>/g, (m, inner) => {
       const vod = vodoravnaTabela(inner);
       if (vod) return vod;
+      const obrnjena = obrnjenaTabela(inner);
+      if (obrnjena) return `<div class="md-obrni"><div class="md-obrni-siroka">${m}</div><div class="md-obrni-ozka"><table>${obrnjena}</table></div></div>`;
       const oznacena = oznaciStolpce(inner);
       return oznacena ? `<table class="md-stolpci">${oznacena}</table>` : m;
     });
@@ -429,25 +431,27 @@ export function shell(title, content, css = "", total = 0) {
   tr:has(+ tr > td:first-child:empty) > td:first-child { border-bottom-color: transparent; }
   .sheet p { margin: 4px 0; }
   /* Vodoravna tabela (public/vodoravna-tabela.js): stolpci, ki se na ozkem zaslonu prelomijo v več vrstic. */
-  .md-vod { display: flex; flex-wrap: wrap; width: fit-content; max-width: 100%; margin: 8px 0; padding: 0 1px 1px 0; font-variant-numeric: tabular-nums; break-inside: avoid; }
+  .md-vod { display: flex; flex-wrap: wrap; row-gap: 6px; width: fit-content; max-width: 100%; margin: 8px 0; padding: 0 1px 1px 0; font-variant-numeric: tabular-nums; break-inside: avoid; }
   .md-vod-st { display: flex; flex-direction: column; margin: 0 -1px -1px 0; border: 1px solid #ccd3e0; text-align: center; }
-  .md-vod-c { display: flex; align-items: center; justify-content: center; min-height: 2.2em; padding: 2px 8px; }
+  .md-vod-c { display: flex; align-items: center; justify-content: center; min-height: 1.9em; padding: 2px 6px; }
   .md-vod-c + .md-vod-c { border-top: 1px solid #ccd3e0; }
   .md-vod-c:last-child { flex: 1 0 auto; }
-  .md-vod-v { min-height: 3.2em; }
-  .md-vod-h, .md-vod-leg { background: #eef2f9; font-weight: 700; }
-  /* Telefon: ime v prvem stolpcu se lahko prelomi, da gre tabela v širino zaslona. */
+  .md-vod-v { min-height: 2.6em; }
+  .md-vod-h { background: #eef2f9; } .md-vod-h, .md-vod-leg { font-weight: 700; }
+  /* Vodoravna tabela z več vrsticami vrednosti je na ozkem zaslonu obrnjena (public/vodoravna-tabela.js obrnjenaTabela). */
+  .md-obrni { container-type: inline-size; } .md-obrni-ozka { display: none; }
+  @container (max-width: 520px) { .md-obrni-siroka { display: none; } .md-obrni-ozka { display: block; } }
   /* Telefon: ime v prvem stolpcu se lahko prelomi; tabela s tremi ali več stolpci (rich.js oznaciStolpce) se zloži
      v kartice: prvi stolpec je naslov, pod njim vsaka vrednost z imenom svojega stolpca. */
   @media screen and (max-width: 600px) {
     .sheet td:first-child { white-space: normal; }
-    th, td { padding: 4px 6px; }
     .sheet table.md-stolpci, .sheet .md-stolpci > tbody, .sheet .md-stolpci > tbody > tr, .sheet .md-stolpci > tbody > tr > td { display: block; }
     .sheet .md-stolpci > thead { display: none; }
     .sheet .md-stolpci > tbody > tr { border: 1px solid #ccd3e0; margin: 0 0 -1px; break-inside: avoid; }
     .sheet .md-stolpci > tbody > tr > td { border: 0; padding: 3px 8px; }
     .sheet .md-stolpci > tbody > tr > td:first-child { background: #eef2f9; }
-    .sheet .md-stolpci td[data-label]:not(:first-child)::before { content: attr(data-label) ": "; color: #667089; font-weight: 600; }
+    .sheet .md-stolpci > tbody > tr > td:empty:not(:first-child) { display: none; }
+    .sheet .md-stolpci td[data-label]:not(:first-child, :empty)::before { content: attr(data-label) ": "; color: #667089; font-weight: 600; }
   }
   .part h1 { font-size: 2rem; margin: 30vh 0 6px; } .toc-part { margin: 16px 0 4px; font-size: 1.05rem; }
   .lesson h2 { font-size: 1.6rem; margin: 0 0 6px; }

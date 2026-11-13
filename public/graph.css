@@ -663,10 +663,12 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
   .fm-sec table.md-stolpci { width: 100%; }
   .fm-sec .md-stolpci > thead { display: none; }
   .fm-sec .md-stolpci > tbody > tr + tr { border-top: 1px solid var(--border); }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row { border-top: 0; }
   .fm-sec .md-stolpci > tbody > tr > td { border: 0; padding: 6px 12px; background: none; text-align: start; }
   .fm-sec .md-stolpci > tbody > tr > td:first-child { background: var(--surface-2); font-weight: 800; }
   .fm-sec .md-stolpci > tbody > tr.fm-skica-row > td { background: none; padding: 4px 0 12px; }
-  .fm-sec .md-stolpci td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+  .fm-sec .md-stolpci > tbody > tr > td:empty:not(:first-child) { display: none; }
+  .fm-sec .md-stolpci td[data-label]:not(:first-child, :empty)::before { content: attr(data-label); display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
 }
 
 /* ---------- interaktivne skice v karticah formul (public/skice/) ---------- */

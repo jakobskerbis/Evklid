@@ -8,7 +8,7 @@ import { createRequire } from "node:module";
 import { marked } from "marked";
 import katex from "katex";
 import { createRenderer } from "../public/rich.js";
-import { oznaciStolpce, vodoravnaTabela } from "../public/vodoravna-tabela.js";
+import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "../public/vodoravna-tabela.js";
 import { printFormulas, renderMd } from "../server/textbook-print.js";
 import { createApp } from "../server/app.js";
 import { openDb } from "../server/db.js";
@@ -21,23 +21,43 @@ test("vodoravna tabela postane stolpci: oznaka prva, vsak stolpec glava + vredno
   for (const html of [renderRich(MASE), renderMd(MASE, "html")]) {
     assert.ok(!/<table/.test(html), "ni več tabele");
     assert.equal((html.match(/class="md-vod-st/g) || []).length, 7);
-    assert.match(html, /^<div class="md-vod"><div class="md-vod-st md-vod-leg"><div class="md-vod-c md-vod-h">Element<\/div>/);
-    assert.match(html, /<div class="md-vod-st"><div class="md-vod-c md-vod-h">Mg<\/div><div class="md-vod-c">/);
+    assert.match(html, /^<div class="md-vod"><div class="md-vod-st md-vod-leg"><div class="md-vod-c md-vod-h"><span>Element<\/span><\/div>/);
+    assert.match(html, /<div class="md-vod-st"><div class="md-vod-c md-vod-h"><span>Mg<\/span><\/div><div class="md-vod-c"><span>/);
     assert.ok(!html.includes("md-vod-v"), "brez ulomkov ni višjih vrstic");
   }
   const g = renderRich("| Snov | voda | led | olje | aluminij | zrak |\n|---|---|---|---|---|---|\n| $\\rho\\,[\\frac{\\text{kg}}{\\text{m}^3}]$ | $1000$ | $920$ | $900$ | $2700$ | $1{,}3$ |");
   assert.equal((g.match(/md-vod-c md-vod-v/g) || []).length, 6, "vrstica z ulomkom je višja v vseh stolpcih");
 });
 
-test("vodoravna je le tabela z glavo, 6+ stolpci in največ tremi vrsticami vrednosti", () => {
+test("vodoravna je le tabela z glavo, 6+ stolpci in eno vrstico vrednosti (sicer bi prelomljeni stolpci ostali brez imen vrstic)", () => {
   const vrstica = (n, x) => `<tr>${Array.from({ length: n }, (_, i) => `<td>${x}${i}</td>`).join("")}</tr>`;
   const tab = (n, r) => `<thead><tr>${Array.from({ length: n }, (_, i) => `<th>h${i}</th>`).join("")}</tr></thead><tbody>${Array.from({ length: r }, () => vrstica(n, "v")).join("")}</tbody>`;
   assert.ok(vodoravnaTabela(tab(6, 1)));
-  assert.ok(vodoravnaTabela(tab(6, 3)));
+  assert.equal(vodoravnaTabela(tab(6, 2)), null, "2 vrstici vrednosti");
   assert.equal(vodoravnaTabela(tab(5, 1)), null, "5 stolpcev");
-  assert.equal(vodoravnaTabela(tab(6, 4)), null, "4 vrstice vrednosti");
+  // Atribut z »</td><td>« (starejši brskalniki ga po DOMPurify ne ubežijo) ne sme postati oznaka zunaj atributa.
+  const zlo = tab(6, 1).replace("<td>v1</td>", '<td><span title="</td><td><img src=x onerror=alert(1)>">v1</span></td>');
+  assert.equal(vodoravnaTabela(zlo), null);
   assert.equal(vodoravnaTabela(tab(8, 1).replace("<th>h0</th>", "<th></th>")), null, "brez oznake v prvem stolpcu");
   assert.equal(vodoravnaTabela(tab(8, 1).replace(/<\/?thead>/g, "")), null, "brez glave");
+  // Dve ali tri vrstice vrednosti: obrnjena tabela za ozek zaslon (stolpci postanejo vrstice).
+  assert.equal(obrnjenaTabela(tab(6, 1)), null);
+  assert.equal(obrnjenaTabela(tab(6, 4)), null);
+  assert.equal(obrnjenaTabela(zlo.replace("</tbody>", `${vrstica(6, "w")}</tbody>`)), null);
+  const o = obrnjenaTabela(tab(6, 2).replace(/<td>v0<\/td>/g, "<td>sin</td>"));
+  assert.match(o, /^<thead><tr><th>h0<\/th><th align="center">sin<\/th><th align="center">sin<\/th><\/tr><\/thead><tbody><tr><td>h1<\/td><td align="center">v1<\/td>/);
+  assert.equal((o.match(/<tr>/g) || []).length, 6);
+});
+
+test("vodoravna tabela s sin, cos, tan: na širokem kot jo je zapisal avtor, na ozkem obrnjena (aplikacija in tisk)", () => {
+  const TRIG = "| $x$ | $0$ | $\\frac{\\pi}{6}$ | $\\frac{\\pi}{4}$ | $\\frac{\\pi}{3}$ | $\\frac{\\pi}{2}$ |\n|---|---|---|---|---|---|\n| $\\sin x$ | $0$ | $\\frac{1}{2}$ | $\\frac{\\sqrt{2}}{2}$ | $\\frac{\\sqrt{3}}{2}$ | $1$ |\n| $\\cos x$ | $1$ | $\\frac{\\sqrt{3}}{2}$ | $\\frac{\\sqrt{2}}{2}$ | $\\frac{1}{2}$ | $0$ |";
+  for (const html of [renderRich(TRIG), renderMd(TRIG, "html")]) {
+    assert.match(html, /^<div class="md-obrni"><div class="md-obrni-siroka">[\s\S]*<\/div><div class="md-obrni-ozka">/);
+    assert.equal((html.match(/<table/g) || []).length, 2);
+  }
+  const css = fs.readFileSync(new URL("../public/style.css", import.meta.url), "utf8");
+  assert.match(css, /@container \(max-width: 520px\) \{ \.md-obrni-siroka \{ display: none; \} \.md-obrni-ozka \{ display: block; \} \}/);
+  assert.match(printFormulas("MAT-SS"), /\.md-obrni \{ container-type: inline-size; \}/);
 });
 
 test("tabela s 3+ stolpci: vsaka celica ima ime svojega stolpca (narekovaj ubežan), dvostolpčna ostane, kot je", () => {

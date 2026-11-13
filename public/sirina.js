@@ -485,7 +485,7 @@ function vrstica(el) {
   const vis = visina(el);
   const pisava = getComputedStyle(el).fontSize;
   for (let k of el.querySelectorAll(":scope .katex")) {
-    if (k.parentElement?.closest(".katex-display, table, .katex")) continue;
+    if (k.parentElement?.closest(".katex-display, table, .md-vod, .katex")) continue;
     if (prilagojene.get(k) === w && k.isConnected) continue;
     if (!el.closest(".textbook") && blok(k) !== el) continue; // formula v gnezdenem odstavku ima svoje mesto
     const tex = !izvirnik.has(k) && k.querySelector("annotation")?.textContent;
@@ -559,12 +559,13 @@ function blok(k) {
 function mestoFormule(k) {
   if (k.parentElement?.closest(".katex")) return null;
   const d = k.closest(".katex-display");
-  if (d) return d.parentElement?.closest(".katex-display, table") ? null : d;
+  if (d) return d.parentElement?.closest(".katex-display, table, .md-vod") ? null : d;
   const o = k.closest(OKVIRI);
   if (o) return o.parentElement?.closest(".katex-display") ? null : o;
   // .sk-chip: oznaka okna s podatki pod skico ima stalno postavitev (graph.css), ne zlagamo je in ne pomikamo.
+  // .md-vod: vodoravna tabela (public/vodoravna-tabela.js) je tabela v stolpcih; formule v njej ostanejo v polni velikosti.
   // .k3-izpis: izpis 3D modela prelomi KaTeX sam (vsaka formula v svoji vrstici), enako v aplikaciji in na strani /3d.
-  if (k.closest("table, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis")) return null;
+  if (k.closest("table, .md-vod, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis")) return null;
   if (k.closest(".textbook")) return k.parentElement?.closest(VRSTE) || null;
   return blok(k);
 }
@@ -639,7 +640,7 @@ export function prilagodiSirino(root, { vrstice = true } = {}) {
   if (!vrstice) return;
   const vrste = new Set();
   root.querySelectorAll(".katex").forEach((k) => {
-    if (k.closest(".katex-display, table")) return;
+    if (k.closest(".katex-display, table, .md-vod")) return;
     const o = k.closest(OKVIRI);
     if (o) return vrste.add(o);
     const p = k.parentElement?.closest(VRSTE);

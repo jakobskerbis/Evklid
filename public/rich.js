@@ -1,7 +1,7 @@
 // Izris besedila z Markdownom in formulami (inštruktor, razlage, naloge, lekcije, kartice).
 // Knjižnice (marked, KaTeX, DOMPurify) so v brskalniku globalne; testi jih podajo sami.
 
-import { oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabela.js";
+import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabela.js";
 
 const lib = (name) => globalThis[name];
 
@@ -65,6 +65,8 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       );
       const vod = vodoravnaTabela(inner);
       if (vod) return vod;
+      const obrnjena = obrnjenaTabela(inner);
+      if (obrnjena) return `<div class="md-obrni"><div class="md-obrni-siroka"><div class="md-table-wrap"><table class="md-table">${inner}</table></div></div><div class="md-obrni-ozka"><div class="md-table-wrap"><table class="md-table">${obrnjena}</table></div></div></div>`;
       const oznacena = oznaciStolpce(inner);
       return `<div class="md-table-wrap"><table class="md-table${oznacena ? " md-stolpci" : ""}">${oznacena || inner}</table></div>`;
     });
