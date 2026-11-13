@@ -426,3 +426,13 @@ test("A1: sočasna začetka ustnega spraševanja ne obideta dnevne meje", async 
     { ustnoFn: fakeModel(() => ({ points: [], followup: "", feedback: "" })).fn },
   );
 });
+
+test("oznaka »(višja raven)« iz učbenika ne pride v ustno vprašanje", async () => {
+  const { brezOznakeRavni, lessonQuestions } = await import("../server/ustno.js");
+  assert.equal(brezOznakeRavni("**6. Pravila (višja raven).** Besedilo"), "**6. Pravila.** Besedilo");
+  assert.equal(brezOznakeRavni("### Primer 3 (težji, višja raven): x"), "### Primer 3 (težji): x");
+  assert.equal(brezOznakeRavni("- (višja raven) Pri enačbi\n? (višja raven) Za katero"), "- Pri enačbi\n? Za katero");
+  const lesson = { sections: [{ title: "Pogoste napake", md: "- **Zamenjana pogoja (višja raven).** Napačno je, da $P(A \\mid B) = P(B \\mid A)$. Pogoja nista ista dogodka." }] };
+  const q = lessonQuestions("MAT-SS-4/verjetnost", lesson, "Verjetnost", { raw: true }).find((x) => x.vrsta === "napaka");
+  assert.ok(q && !/višja raven/.test(q.besedilo + q.vzorec), q?.besedilo);
+});

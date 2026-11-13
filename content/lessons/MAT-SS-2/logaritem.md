@@ -60,7 +60,7 @@ Zakaj za $\log_a (x + y)$ ni pravila? Namig: znaš vsoto $a^u + a^v$ zapisati ko
 Ne znaš: $2^1 + 2^3 = 10$, eksponenta za $10$ ($\log_2 10 \approx 3{,}32$) pa iz $1$ in $3$ ne dobiš s preprostim računom. Ker za vsoto potenc ni pravila, ga ni niti za logaritem vsote. Na primer $\log 20 \approx 1{,}30$, $\log 10 + \log 10 = 2$.
 :::
 
-**6. Prehod na novo osnovo.** Logaritem z osnovo $a$ lahko izrazimo z logaritmi s katerokoli drugo osnovo $c$ ($c > 0$, $c \ne 1$):
+**6. Prehod na novo osnovo (višja raven).** Logaritem z osnovo $a$ lahko izrazimo z logaritmi s katerokoli drugo osnovo $c$ ($c > 0$, $c \ne 1$):
 
 $$\log_a b = \frac{\log_c b}{\log_c a}.$$
 
@@ -163,7 +163,7 @@ $\log 0{,}4936 \approx -0{,}3066$ in $\log 0{,}88 \approx -0{,}0555$. Oba logari
 
 - **Logaritem vsote.** $\log (x + y) = \log x + \log y$ ne velja. Pravilo za vsoto logaritmov govori o **produktu**: $\log x + \log y = \log (xy)$. Preizkus: $\log (10 + 10) = \log 20 \approx 1{,}30$, $\log 10 + \log 10 = 2$. Za logaritem vsote ni posebnega pravila.
 - **Kvocient logaritmov namesto logaritma kvocienta.** $\dfrac{\log x}{\log y}$ ni enako $\log \dfrac{x}{y}$. Prvi izraz je po prehodu na novo osnovo $\log_y x$, drugi pa $\log x - \log y$. Primer: $\dfrac{\log 100}{\log 10} = 2$, a $\log \dfrac{100}{10} = 1$.
-- **Zamenjana števec in imenovalec pri prehodu.** $\log_2 8 = \dfrac{\log 2}{\log 8} = \dfrac{1}{3}$ je napačno. Logaritmand gre v števec, osnova v imenovalec: $\log_2 8 = \dfrac{\log 8}{\log 2} = 3$. Hitri preizkus smiselnosti: $2^3 = 8$.
+- **Zamenjana števec in imenovalec pri prehodu (višja raven).** $\log_2 8 = \dfrac{\log 2}{\log 8} = \dfrac{1}{3}$ je napačno. Logaritmand gre v števec, osnova v imenovalec: $\log_2 8 = \dfrac{\log 8}{\log 2} = 3$. Hitri preizkus smiselnosti: $2^3 = 8$.
 - **Kvadrat logaritma in logaritem kvadrata.** $\left(\log x\right)^2$ ni isto kot $\log x^2$. Pravilo $\log x^2 = 2\log x$ velja le, ko je eksponent na logaritmandu. Za $x = 1000$: $\left(\log 1000\right)^2 = 9$, $\log 1000^2 = 6$.
 - **Logaritem ničle ali negativnega števila.** $\log_2 0 = 0$ ali $\log_3 (-9) = -2$ ni res. Logaritmand mora biti pozitiven, ker nobena potenca s pozitivno osnovo ni $0$ ali negativna. Pazi tudi: $\log_a 1 = 0$, ne $1$, ker je $a^0 = 1$.
 
@@ -174,7 +174,7 @@ $\log 0{,}4936 \approx -0{,}3066$ in $\log 0{,}88 \approx -0{,}0555$. Oba logari
 - $\log b = \log_{10} b$ (desetiški), $\ln b = \log_{\mathrm{e}} b$ (naravni).
 - $\log_a (xy) = \log_a x + \log_a y$, $\;\log_a \dfrac{x}{y} = \log_a x - \log_a y$.
 - $\log_a x^n = n \log_a x$, posebej $\log_a \sqrt[n]{x} = \dfrac{1}{n}\log_a x$.
-- Prehod na novo osnovo: $\log_a b = \dfrac{\log_c b}{\log_c a} = \dfrac{\log b}{\log a}$.
+- Prehod na novo osnovo (višja raven): $\log_a b = \dfrac{\log_c b}{\log_c a} = \dfrac{\log b}{\log a}$.
 - Za logaritem vsote ali razlike ni pravila.
 
 ## Drugače: Na sliki
@@ -212,7 +212,7 @@ Logaritme uporabljamo povsod, kjer se količine razlikujejo za veliko velikostni
 2. Produkt v števcu: $\log_a x^3 + \log_a \sqrt{y} - \log_a z^2$.
 3. Potence: $\sqrt{y} = y^{\frac{1}{2}}$, zato dobimo $3\log_a x + \dfrac{1}{2}\log_a y - 2\log_a z$.
 
-**Izračunaj $\log_3 20$ z računalom.**
+**Izračunaj $\log_3 20$ z računalom (višja raven).**
 
 1. Če ima računalo le »log« in »ln«, uporabimo prehod na novo osnovo: $\log_3 20 = \dfrac{\log 20}{\log 3}$.
 2. $\log 20 \approx 1{,}30103$ in $\log 3 \approx 0{,}47712$.
@@ -226,7 +226,7 @@ Logaritme uporabljamo povsod, kjer se količine razlikujejo za veliko velikostni
 
 **Dokaz pravila za potenco.** Naj bo $u = \log_a x$, torej $x = a^u$. Potem je $x^n = \left(a^u\right)^n = a^{nu}$, zato je $\log_a x^n = nu = n\log_a x$. Pravilo za kvocient dobimo iz pravil za produkt in potenco: $\log_a \dfrac{x}{y} = \log_a \left(x \cdot y^{-1}\right) = \log_a x - \log_a y$.
 
-**Posledice prehoda na novo osnovo.** Če v formuli vzamemo $c = b$ (za $b \ne 1$), dobimo $\log_a b = \dfrac{1}{\log_b a}$. Prav tako velja $\log_{a^k} b = \dfrac{1}{k}\log_a b$, na primer $\log_4 8 = \dfrac{1}{2}\log_2 8 = \dfrac{3}{2}$, kar se ujema s Primerom 1. Ker so logaritmi z osnovo $a$ sorazmerni logaritmom z osnovo $c$ ($\log_a b = \dfrac{1}{\log_c a} \cdot \log_c b$ za vsak $b > 0$), je na računalu dovolj ena sama osnova.
+**Posledice prehoda na novo osnovo (višja raven).** Če v formuli vzamemo $c = b$ (za $b \ne 1$), dobimo $\log_a b = \dfrac{1}{\log_b a}$. Prav tako velja $\log_{a^k} b = \dfrac{1}{k}\log_a b$, na primer $\log_4 8 = \dfrac{1}{2}\log_2 8 = \dfrac{3}{2}$, kar se ujema s Primerom 1. Ker so logaritmi z osnovo $a$ sorazmerni logaritmom z osnovo $c$ ($\log_a b = \dfrac{1}{\log_c a} \cdot \log_c b$ za vsak $b > 0$), je na računalu dovolj ena sama osnova.
 
 ## Preveri se
 

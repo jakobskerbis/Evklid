@@ -80,7 +80,7 @@ $$A \cap B = (3, 5], \qquad A \cup B = [1, 8), \qquad A \setminus B = [1, 3].$$
 
 V simulaciji spodaj »Intervali, unija in presek« nastavi $A$ od $1$ do $5$ in $B$ od $3$ do $8$ ($B$ je tam vedno zaprt) ter izberi $\cap$. Nato izklopi »A vsebuje desno krajišče«. Opazuj, kako se presek iz $[3, 5]$ spremeni v $[3, 5)$: krajišče ostane v preseku le, če je v obeh intervalih.
 
-**5. Absolutna vrednost in intervali.** Kdor reši $|x| > 3$ kot $x > 3$, izgubi polovico rešitev: tudi $-4$ je od $0$ oddaljen za več kot $3$. Pogoj $|x - c| < r$ pomeni »$x$ je od $c$ oddaljen za manj kot $r$«. Zato leži $x$ na intervalu s središčem $c$ in polmerom $r$:
+**5. Absolutna vrednost in intervali (višja raven).** Kdor reši $|x| > 3$ kot $x > 3$, izgubi polovico rešitev: tudi $-4$ je od $0$ oddaljen za več kot $3$. Pogoj $|x - c| < r$ pomeni »$x$ je od $c$ oddaljen za manj kot $r$«. Zato leži $x$ na intervalu s središčem $c$ in polmerom $r$:
 
 - $|x - c| < r \iff c - r < x < c + r \iff x \in (c - r,\, c + r)$,
 - $|x - c| \le r \iff x \in [c - r,\, c + r]$,
@@ -137,7 +137,7 @@ $x \in A \cap B \iff x \in A \text{ in } x \in B$; $\;x \in A \cup B \iff x \in 
 5. Preverba s števili: $x = 1$ je v $A$, ni v $B$, torej je v razliki. Število $x = 4$ je v $B$, ni v $A$, torej je v uniji, ne pa v preseku.
 6. Odgovor: $A \cap B = (1, 4)$, $A \cup B = [-2, 6]$, $A \setminus B = [-2, 1]$.
 
-### Primer 3 (težji)
+### Primer 3 (težji, višja raven)
 
 Na izvidu piše, da je normalni srčni utrip odraslega v mirovanju od $60$ do $100$ utripov na minuto, obe meji vključno. (a) Zapiši območje kot interval. (b) Zapiši isti pogoj z absolutno vrednostjo v obliki $|x - c| \le r$. (c) Ali sta normalna utripa $58$ in $96$ utripov na minuto?
 
@@ -179,7 +179,7 @@ $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 -
 - Presek, unija in razlika intervalov: nariši na isto premico in preveri krajišča.
 - $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
 
-## Drugače: Kot zgodba
+## Drugače: Kot zgodba (višja raven)
 
 Medicinska sestra Nina dela nočno izmeno. Zdravnik ji je naročil: »Pokliči me, če se temperatura bolnika od $37\,°\text{C}$ razlikuje za več kot $0{,}5\,°\text{C}$.« Nina si navodilo zapiše po svoje: kliči, če je $|t - 37| > 0{,}5$.
 
@@ -187,7 +187,7 @@ Ob polnoči ima gospod Kovač $38{,}2\,°\text{C}$, gospa Novak pa $35{,}8\,°\t
 
 Ob dveh ima gospod Kovač $37{,}3\,°\text{C}$. Odmik je $|37{,}3 - 37| = 0{,}3$, kar ni več kot $0{,}5$, zato ne kliče. Na rob kartona si nariše številsko premico. Mirne vrednosti so $|t - 37| \le 0{,}5$, torej interval $[36{,}5;\,37{,}5]$ s polnima krožcema. Klicati mora, ko je temperatura v enem od dveh kosov zunaj njega: $(-\infty;\,36{,}5) \cup (37{,}5;\,\infty)$.
 
-## Drugače: Korak za korakom s številkami
+## Drugače: Korak za korakom s številkami (višja raven)
 
 Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 
@@ -221,7 +221,7 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 + $u < v < q < p$
 > Vrednosti so $p = 7$, $q = 2$, $u = -4$ in $v = 0$. Le $u$ je negativen, ker minus stoji pred absolutno vrednostjo.
 
-? Rešitev neenačbe $|x - 1| < 2$ je $(-1, 3)$. Kaj se zgodi z rešitvijo, če znak $<$ zamenjamo z $\ge$?
+? (višja raven) Rešitev neenačbe $|x - 1| < 2$ je $(-1, 3)$. Kaj se zgodi z rešitvijo, če znak $<$ zamenjamo z $\ge$?
 - Postane $[-1, 3]$.
 ~ Spremenil si le oklepaja. Znak $\ge$ pomeni »vsaj $2$ stran od $1$«, to pa je zunaj, ne med.
 - Postane $(-\infty, -1) \cup (3, \infty)$.
@@ -241,7 +241,7 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 ~ Obe absolutni vrednosti si izpustil: $-5 - (-2)$. Absolutna vrednost ni nikoli negativna.
 > Najprej $3 - 8 = -5$, torej $|{-5}| = 5$. Nato $|{-2}| = 2$. Rezultat je $5 - 2 = 3$.
 
-? Tableta mora vsebovati zdravilno učinkovino z maso $m$, za katero velja $|m - 250| \le 15$ (v mg). Katera tableta NE ustreza?
+? (višja raven) Tableta mora vsebovati zdravilno učinkovino z maso $m$, za katero velja $|m - 250| \le 15$ (v mg). Katera tableta NE ustreza?
 - $265\,\text{mg}$
 ~ Odmik je $|265 - 250| = 15$, kar je dovoljeno, saj znak $\le$ krajišče vključi.
 - $236\,\text{mg}$

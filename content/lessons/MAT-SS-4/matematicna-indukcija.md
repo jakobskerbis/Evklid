@@ -5,6 +5,8 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
+*(višja raven) Matematično indukcijo matura preverja samo na višji ravni.*
+
 V 16. stoletju je sicilijanski matematik Francesco Maurolico dokazoval lastnosti naravnih števil, med njimi to, da je vsota prvih lihih števil vedno popoln kvadrat. Ni se zadovoljil s tem, da je pravilo preveril za nekaj primerov. Pokazal je, da iz veljavnosti za eno število sledi veljavnost za naslednje. Stoletje kasneje je Blaise Pascal na enak način dokazoval lastnosti svojega trikotnika, ime **matematična indukcija** pa se je uveljavilo šele v 19. stoletju.
 
 Isto vprašanje dobi trener, ki pred treningom postavlja stožce v kvadrat. En stožec, nato okoli njega še $3$, da nastane kvadrat $2 \times 2$, nato še $5$ za kvadrat $3 \times 3$. Ali to deluje za vsak kvadrat, tudi $100 \times 100$? Preverjanje stotih primerov ni dokaz za vsa naravna števila. Indukcija je orodje, s katerim z dvema korakoma pokrijemo neskončno mnogo primerov.

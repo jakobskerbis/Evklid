@@ -53,7 +53,7 @@ Integral je $0$: graf je simetričen glede na izhodišče, del pod osjo je enako
 
 **6. Ploščina med krivuljama.** Če je na intervalu $[a, b]$ graf $g$ ves čas nad grafom $f$, je ploščina vmes $\int_a^b \bigl(g(x) - f(x)\bigr)\,dx$: zgornja minus spodnja. Tanek trak pri $x$ je namreč visok $g(x) - f(x)$, ne glede na to, kje leži os $x$.
 
-**7. Prostornina vrtenine.** Graf $f$ zavrtimo okoli osi $x$. Nastane **vrtenina**, telo kot vaza ali žoga. Predstavljaj si, da jo narežeš kot salamo na tanke rezine. Vsaka rezina je skoraj valj s polmerom $f(x)$ in debelino $dx$, njena prostornina je $\pi f(x)^2\,dx$. Seštejemo vse rezine:
+**7. Prostornina vrtenine (višja raven).** Graf $f$ zavrtimo okoli osi $x$. Nastane **vrtenina**, telo kot vaza ali žoga. Predstavljaj si, da jo narežeš kot salamo na tanke rezine. Vsaka rezina je skoraj valj s polmerom $f(x)$ in debelino $dx$, njena prostornina je $\pi f(x)^2\,dx$. Seštejemo vse rezine:
 
 $$V = \pi \int_a^b f(x)^2\,dx$$
 
@@ -100,7 +100,7 @@ Interval razdeli v ničli, nato $p = \left|\int_0^3 f(x)\,dx\right| + \left|\int
 5. Seštejemo: $p = 9 + \frac{7}{3} = \frac{34}{3} \approx 11{,}33$.
 6. Odgovor: ploščina je $\frac{34}{3}$. Integral čez cel interval bi dal le $-\frac{20}{3}$, ker se dela odštejeta.
 
-### Primer 3 (težji): prostornina žoge za ragbi
+### Primer 3 (težji, višja raven): prostornina žoge za ragbi
 
 Žoga za ragbi je dolga $30\,\mathrm{cm}$, na sredini ima premer $18\,\mathrm{cm}$. Njen obris opišemo s parabolo $f(x) = 9 - \frac{x^2}{25}$ za $-15 \le x \le 15$ (vse v centimetrih). Koliko litrov zraka je v žogi?
 
@@ -122,7 +122,7 @@ $V = \pi \int_{-15}^{15} f(x)^2\,dx$
 7. Ker je $1\,\mathrm{L} = 1000\,\mathrm{cm^3}$, je $V \approx 4{,}07\,\mathrm{L}$.
 8. Odgovor: v žogi je približno $4{,}1$ litra zraka.
 
-### Primer 4: zdaj ti
+### Primer 4 (višja raven): zdaj ti
 
 Na treningu imajo plastične stožce, visoke $30\,\mathrm{cm}$, s polmerom osnovne ploskve $10\,\mathrm{cm}$. Da jih veter ne odnese, jih napolnijo s peskom. Koliko peska gre v en stožec?
 
@@ -150,7 +150,7 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 - **Integral je kar ploščina.** »Izračunal sem $\int_0^4 f(x)\,dx$, to je ploščina.« Če graf prečka os, se deli pod osjo odštejejo (v Primeru 2 bi dobil $-\frac{20}{3}$ namesto $\frac{34}{3}$). Najprej poišči ničle, integriraj po delih in seštej absolutne vrednosti.
 - **Meji v napačnem vrstnem redu.** $F(a) - F(b)$ da nasprotno predznačen rezultat. Vedno je »zgornja minus spodnja«: $F(b) - F(a)$.
 - **$F(0)$ je vedno $0$.** Pri potencah drži, pri drugih funkcijah ne: za $F(x) = -\cos x$ je $F(0) = -1$, za $F(x) = e^x$ je $F(0) = 1$. Spodnjo mejo vedno izračunaj.
-- **Prostornina brez kvadrata.** Kdor piše $V = \pi \int_a^b f(x)\,dx$, rezini pripiše ploskev $\pi r$ namesto ploščine kroga $\pi r^2$. Rezina je valj s ploščino osnovne ploskve $\pi f(x)^2$, zato pride $f$ pod integral na kvadrat. Pomaga preizkus s stožcem: formula mora dati $\frac{\pi r^2 h}{3}$.
+- **Prostornina brez kvadrata (višja raven).** Kdor piše $V = \pi \int_a^b f(x)\,dx$, rezini pripiše ploskev $\pi r$ namesto ploščine kroga $\pi r^2$. Rezina je valj s ploščino osnovne ploskve $\pi f(x)^2$, zato pride $f$ pod integral na kvadrat. Pomaga preizkus s stožcem: formula mora dati $\frac{\pi r^2 h}{3}$.
 - **Pri ploščini med krivuljama spodnja minus zgornja.** Rezultat je negativen. Odštevaj vedno graf, ki je višje, minus graf, ki je nižje.
 
 ## Povzetek
@@ -159,7 +159,7 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 - Newton-Leibnizova formula: $\int_a^b f(x)\,dx = F(b) - F(a)$, kjer je $F$ katera koli primitivna funkcija; $C$ se izniči.
 - Integral šteje dele nad osjo s plusom, pod osjo z minusom. Za ploščino razdeli interval v ničlah in seštej absolutne vrednosti.
 - Ploščina med krivuljama: $\int_a^b (g - f)\,dx$, kjer je $g$ zgoraj.
-- Prostornina vrtenine okoli osi $x$: $V = \pi \int_a^b f(x)^2\,dx$.
+- (višja raven) Prostornina vrtenine okoli osi $x$: $V = \pi \int_a^b f(x)^2\,dx$.
 - Pot je integral hitrosti po času: $s = \int_{t_1}^{t_2} v(t)\,dt$.
 
 ## Drugače: Z analogijo
@@ -168,7 +168,7 @@ Predstavljaj si števec kilometrov v avtu in merilnik hitrosti. Merilnik hitrost
 
 Koliko si prevozil med dvema trenutkoma? Ne seštevaš hitrosti, ampak pogledaš števec na koncu in na začetku ter odšteješ: $F(b) - F(a)$. Pri tem je vseeno, ali je števec na začetku kazal $0$ ali $85\,000\,\mathrm{km}$. Ta začetna vrednost je konstanta $C$, ki se pri odštevanju izgubi.
 
-Prostornina vrtenine pa je kot kup kovancev različnih velikosti, naložen v stolpec. Vsak kovanec je tanek valj; prostornino stolpca dobiš, ko sešteješ ploščine vseh krogov, pomnožene z debelino kovanca.
+(višja raven) Prostornina vrtenine pa je kot kup kovancev različnih velikosti, naložen v stolpec. Vsak kovanec je tanek valj; prostornino stolpca dobiš, ko sešteješ ploščine vseh krogov, pomnožene z debelino kovanca.
 
 ## Drugače: Iz vsakdanjega življenja
 
@@ -176,7 +176,7 @@ Prostornina vrtenine pa je kot kup kovancev različnih velikosti, naložen v sto
 
 Podobno računa aplikacija za kolesarjenje porabljeno energijo: moč v vatih krat čas, seštevano vsako sekundo. Energija je ploščina pod grafom moči.
 
-Tudi pri vrtenini ni treba daleč: kozarec, vaza ali pokal za zmagovalca turnirja nastanejo na stružnici, ki obris vrti okoli osi. Količino vode, ki gre v pokal, izračunaš z $V = \pi \int_a^b f(x)^2\,dx$, kjer je $f$ notranji obris.
+(višja raven) Tudi pri vrtenini ni treba daleč: kozarec, vaza ali pokal za zmagovalca turnirja nastanejo na stružnici, ki obris vrti okoli osi. Količino vode, ki gre v pokal, izračunaš z $V = \pi \int_a^b f(x)^2\,dx$, kjer je $f$ notranji obris.
 
 ## Preveri se
 
@@ -198,7 +198,7 @@ Tudi pri vrtenini ni treba daleč: kozarec, vaza ali pokal za zmagovalca turnirj
 ~ Enake meje pomenijo enako širok lik, višine grafov pa so različne.
 > Na $(0, 1)$ leži graf $x^3$ pod grafom $x^2$, ta pa pod grafom $x$. Res: $I_3 = \frac{1}{4}$, $I_2 = \frac{1}{3}$, $I_1 = \frac{1}{2}$.
 
-? Kaj se zgodi s prostornino vrtenine, če vse vrednosti funkcije $f$ podvojiš (obris je dvakrat dlje od osi), meji pa ostaneta enaki?
+? (višja raven) Kaj se zgodi s prostornino vrtenine, če vse vrednosti funkcije $f$ podvojiš (obris je dvakrat dlje od osi), meji pa ostaneta enaki?
 - Podvoji se.
 ~ Tako bi bilo pri ploščini pod grafom. Pri vrtenini je pod integralom $f^2$, ne $f$.
 + Poveča se štirikrat.

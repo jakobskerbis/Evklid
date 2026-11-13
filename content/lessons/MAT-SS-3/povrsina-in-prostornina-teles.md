@@ -201,9 +201,9 @@ Prostornino si predstavljaj kot plasti: prizma in valj sta zloženi iz enakih pl
 
 **Zakaj tretjina?** Kocka z robom $a$ se da razdeliti na tri skladne štiristrane piramide, katerih vrh je v enem oglišču kocke. Vsaka ima osnovno ploskev $a^2$ in višino $a$. Torej je $V_{\text{piramide}} = \dfrac{a^3}{3} = \dfrac{a^2 \cdot a}{3}$. Splošen dokaz za poljubno piramido temelji na Cavalierijevem načelu.
 
-**Cavalierijevo načelo:** če imata dve telesi enako višino in so vsi vzporedni preseki na isti višini enako veliki, imata enaki prostornini.
+**Cavalierijevo načelo (višja raven):** če imata dve telesi enako višino in so vsi vzporedni preseki na isti višini enako veliki, imata enaki prostornini.
 
-**Prostornina krogle.** Primerjaj polkroglo s polmerom $r$ in valj s polmerom $r$ in višino $r$, iz katerega izrezemo stožec (vrh v središču spodnje osnovne ploskve, osnovna ploskev je zgornji krog valja). Na višini $h$ nad osnovno ploskvijo:
+**Prostornina krogle (višja raven).** Primerjaj polkroglo s polmerom $r$ in valj s polmerom $r$ in višino $r$, iz katerega izrezemo stožec (vrh v središču spodnje osnovne ploskve, osnovna ploskev je zgornji krog valja). Na višini $h$ nad osnovno ploskvijo:
 
 - presek polkrogle je krog s polmerom $\sqrt{r^2 - h^2}$, ploščina $\pi(r^2 - h^2)$,
 - presek "valja brez stožca" je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$.

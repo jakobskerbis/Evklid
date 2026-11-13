@@ -82,7 +82,7 @@ Denimo, da se plenilec škržatov množično pojavi vsaka $4$ leta. Napovej: kak
 Ujemanje se ponovi po $v$ obeh ciklov. Ker $4 \mid 16$, je $v(4, 16) = 16$: plenilec bi bil tam ob vsakem pojavu škržatov. Ker sta $4$ in $17$ tuji, je $v(4, 17) = 68$: plenilec bi ujel šele vsak četrti pojav. Praštevilski cikel se torej redko ujame s krajšimi cikli. To je ena od razlag biologov, ni pa dokončno potrjena.
 :::
 
-**8. Evklidov algoritem.** Če je $a = q \cdot b + r$, je $D(a, b) = D(b, r)$: vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$ (dokaz je v razdelku »Bolj natančno«). Deljenje z ostankom zato ponavljamo, dokler ne dobimo ostanka $0$. Zadnji ostanek, ki ni $0$, je $D(a, b)$. Na primer: $48 = 2 \cdot 18 + 12$, $18 = 1 \cdot 12 + 6$, $12 = 2 \cdot 6 + 0$, zato je $D(48, 18) = 6$.
+**8. Evklidov algoritem (višja raven).** Če je $a = q \cdot b + r$, je $D(a, b) = D(b, r)$: vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$ (dokaz je v razdelku »Bolj natančno«). Deljenje z ostankom zato ponavljamo, dokler ne dobimo ostanka $0$. Zadnji ostanek, ki ni $0$, je $D(a, b)$. Na primer: $48 = 2 \cdot 18 + 12$, $18 = 1 \cdot 12 + 6$, $12 = 2 \cdot 6 + 0$, zato je $D(48, 18) = 6$.
 
 V simulaciji spodaj (»Evklidov algoritem s kvadrati«) nastavi $a = 48$ in $b = 18$. Iz pravokotnika $48 \times 18$ se odrežeta dva kvadrata s stranico $18$, nato en s stranico $12$ in na koncu dva s stranico $6$. Opazi: stranica zadnjega kvadrata je $D(48, 18) = 6$.
 
@@ -148,7 +148,7 @@ Gozdarji bodo na poseko posadili sadike smreke. Če jih razporedijo v vrste po $
 5. Preverimo: $123 = 30 \cdot 4 + 3$, $123 = 24 \cdot 5 + 3$, $123 = 20 \cdot 6 + 3$.
 6. Odgovor: gozdarji imajo najmanj $123$ sadik.
 
-### Primer 4 – zdaj ti
+### Primer 4 (višja raven) – zdaj ti
 
 Z Evklidovim algoritmom določi $D(1071, 462)$, nato še $v(1071, 462)$.
 
@@ -197,13 +197,13 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 
 ## Drugače: Bolj natančno
 
-**Zakaj Evklidov algoritem deluje.** Naj bo $a = q \cdot b + r$. Vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$. Vsak skupni delitelj števil $b$ in $r$ deli tudi $a = q \cdot b + r$. Števili $a$, $b$ in števili $b$, $r$ imata torej iste skupne delitelje, zato tudi isti največji skupni delitelj. Ostanki padajo, zato po končno mnogo korakih pridemo do $0$.
+**Zakaj Evklidov algoritem deluje (višja raven).** Naj bo $a = q \cdot b + r$. Vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$. Vsak skupni delitelj števil $b$ in $r$ deli tudi $a = q \cdot b + r$. Števili $a$, $b$ in števili $b$, $r$ imata torej iste skupne delitelje, zato tudi isti največji skupni delitelj. Ostanki padajo, zato po končno mnogo korakih pridemo do $0$.
 
 **Praštevil je neskončno mnogo.** Denimo, da jih je končno mnogo: $p_1, p_2, \dots, p_n$. Poglej število $N = p_1 \cdot p_2 \cdots p_n + 1$. Pri deljenju z vsakim $p_i$ da ostanek $1$, torej ga nobeno od njih ne deli. Toda $N > 1$ ima nek prafaktor, ki je praštevilo, a ni nobeno od $p_1, \dots, p_n$. To je protislovje.
 
 **Merilo za $9$.** Ker je $1\,000 = 999 + 1$, $100 = 99 + 1$ in $10 = 9 + 1$, je $4\,536 = (4 \cdot 999 + 5 \cdot 99 + 3 \cdot 9) + (4 + 5 + 3 + 6)$. Prvi oklepaj je deljiv z $9$, zato odloča le vsota števk. Enako velja za $3$.
 
-**Zakaj $D \cdot v = a \cdot b$.** Če ima praštevilo v $a$ in $b$ eksponenta $\alpha$ in $\beta$, ima v $D$ manjšega, v $v$ pa večjega od njiju. Skupaj dasta $\alpha + \beta$, kot v produktu $a \cdot b$.
+**Zakaj $D \cdot v = a \cdot b$ (višja raven).** Če ima praštevilo v $a$ in $b$ eksponenta $\alpha$ in $\beta$, ima v $D$ manjšega, v $v$ pa večjega od njiju. Skupaj dasta $\alpha + \beta$, kot v produktu $a \cdot b$.
 
 ## Preveri se
 
