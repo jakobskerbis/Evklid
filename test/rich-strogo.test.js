@@ -78,6 +78,7 @@ const NAPAD3 = [
   "<svg><rect width=\"9\" height=\"9\" fill=\"url(https://napadalec.example/a.svg#p)\" stroke=\"u\\rl(https://napadalec.example/b.svg#p)\" mask=\"url('https://napadalec.example/c.svg#m')\" filter=\"url(#lokalni)\"/></svg>",
   "<svg><pattern href=\"https://napadalec.example/d.svg#p\"/><linearGradient xlink:href=\"https://napadalec.example/e.svg#g\"/></svg>",
   "<math><mglyph src=\"https://napadalec.example/f.png\"/></math>",
+  "<svg><rect fill=\"red\" mask=\"u\\72 l(https://napadalec.example/a.svg#m)\" filter=\"image-set('https://napadalec.example/b.png' 1x)\" clip-path=\"-webkit-image-set(url(https://napadalec.example/c.png) 1x)\"/></svg>",
 ].join("\n\n");
 
 test("A3 Pregled 3: napaka KaTeX ne vstavi surovega HTML; url() in href v SVG/MathML odstranjena", { skip: playwright ? false : "Playwright ni nameščen", timeout: 60000 }, async (t) => {

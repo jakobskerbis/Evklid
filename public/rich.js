@@ -26,8 +26,16 @@ const escHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<"
 const XHTML = "http://www.w3.org/1999/xhtml";
 const MEDIJI = new Set(["img", "source", "video", "audio", "track", "image", "use", "feimage", "iframe", "embed", "object", "mglyph"]);
 // url(…) v atributu (fill, stroke, mask, filter, clip-path, marker-*, cursor …) naloži tuj dokument SVG; dovoljen je le
-// sklic znotraj strani url(#…). Ubežne znake CSS (u\rl) najprej odstranimo.
-const tujUrl = (v) => /url\s*\(\s*['"]?\s*(?!#)/i.test(String(v).replace(/\\/g, ""));
+// sklic znotraj strani url(#…). Enako image-set(…), image(…), src(…), cross-fade(…), element(…). Ubežne znake CSS
+// (u\rl, u\72 l) najprej razrešimo.
+const odCss = (v) =>
+  String(v)
+    .replace(/\\([0-9a-f]{1,6})[ \t\r\n\f]?/gi, (_, h) => String.fromCodePoint(Math.min(parseInt(h, 16), 0x10ffff) || 0xfffd))
+    .replace(/\\([\s\S])/g, "$1");
+const tujUrl = (v) => {
+  const s = odCss(v);
+  return /url\s*\(\s*['"]?\s*(?!#)/i.test(s) || /(?:image-set|image|src|cross-fade|element)\s*\(/i.test(s);
+};
 export function ocistiStrogo(html, purify = lib("DOMPurify")) {
   const frag = purify.sanitize(html, { FORBID_TAGS: PREPOVEDANE_OZNAKE, FORBID_ATTR: PREPOVEDANI_ATRIBUTI, RETURN_DOM_FRAGMENT: true });
   for (const el of frag.querySelectorAll("*")) {
