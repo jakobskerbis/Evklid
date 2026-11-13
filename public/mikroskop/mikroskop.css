@@ -103,3 +103,8 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
 /* RTL (npr. arabščina): vsebina mikroskopa je slovenska; vrednosti z enotami (100×, 0,00 µm, 1,8 mm) naj se ne obrnejo v »×100«, »µm 0,00« */
 .mk output, .mk-znacka, .mk-podatki dd, .mk-obj b { direction: ltr; unicode-bidi: isolate; text-align: match-parent; }
 .mk-opis, .mk-barvanje, .mk-naloga, .mk-resnica, .mk-kazalec, .mk-oznaka, .mk-opozorilo { unicode-bidi: plaintext; text-align: match-parent; }
+/* − drsnik + (povečava) */
+.mk-pov { display: flex; align-items: flex-end; gap: 8px; }
+.mk-pov .mk-drsnik { flex: 1; }
+.k3 .mk-pov-gumb { flex: none; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.k3 .mk-pov-gumb:disabled { opacity: 0.4; cursor: default; }

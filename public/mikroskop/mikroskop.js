@@ -178,7 +178,54 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     prikaz: (u) => oznakaPovecave(Math.exp(logMin + u * (logMax - logMin))),
     ob: (u) => nastaviPovecavo(Math.exp(logMin + u * (logMax - logMin)), { izDrsnika: true }),
   });
-  secPov.append(revolver, dPov.el);
+  // gumba − in + ob drsniku (j, 13. 11. 2026): pri svetlobi menjata objektiv, pri TEM povečavo podvojita ali razpolovita
+  const gumbPov = (ikonaIme, kljuc, f) => {
+    const b = mk("button", "a3-krog mk-pov-gumb");
+    b.type = "button";
+    b.innerHTML = ikona(ikonaIme);
+    b.setAttribute("aria-label", t(kljuc));
+    b.title = t(kljuc);
+    // tap: en korak; držanje: po 0,4 s se korak ponavlja (pri TEM v manjših korakih, da je spreminjanje gladko)
+    let cakaj = 0, prej = 0, kazalecCas = -1e9;
+    const ustavi = () => {
+      clearTimeout(cakaj);
+      cakaj = prej = 0;
+    };
+    const korak = () => {
+      if (!zivo || !b.isConnected || b.disabled || document.hidden) return ustavi();
+      const zdaj = performance.now();
+      const dt = prej ? Math.min(0.5, (zdaj - prej) / 1000) : 0.04;
+      prej = zdaj;
+      const tem = s.nacin === "tem";
+      interakcija = 1; // med držanjem hitri izris v polovični ločljivosti, polni po spustu (kot kolesce)
+      // TEM: zvezno, ×10 na 1,5 s ne glede na hitrost naprave; svetloba: naslednji objektiv
+      zoom(tem ? Math.pow(10, ((f > 1 ? 1 : -1) * dt) / 1.5) : f);
+      cakaj = setTimeout(korak, s.nacin === "tem" ? 40 : 420); // način po koraku: ob prehodu TEM → svetloba naslednji objektiv šele čez 0,42 s
+    };
+    b.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0 || b.disabled) return;
+      e.preventDefault();
+      b.setPointerCapture?.(e.pointerId);
+      kazalecCas = performance.now();
+      ustavi();
+      zoom(f);
+      cakaj = setTimeout(korak, 400);
+    });
+    for (const ime of ["pointerup", "pointercancel", "lostpointercapture"]) b.addEventListener(ime, ustavi);
+    b.addEventListener("pointerup", () => (kazalecCas = performance.now()));
+    // klik brez kazalca: tipkovnica (Enter, preslednica) in bralniki zaslona (VoiceOver/TalkBack lahko pošljejo detail 1);
+    // klik takoj po pointerdown/pointerup je že narejen korak
+    b.addEventListener("click", () => {
+      if (performance.now() - kazalecCas > 1000) zoom(f);
+    });
+    b.addEventListener("contextmenu", (e) => e.preventDefault()); // dolgi pritisk na telefonu ne odpre menija
+    return b;
+  };
+  const bManj = gumbPov("zoom-out", "a3.zoomOut", 0.5);
+  const bVec = gumbPov("zoom-in", "a3.zoomIn", 2);
+  const vrstaPov = mk("div", "mk-pov");
+  vrstaPov.append(bManj, dPov.el, bVec);
+  secPov.append(revolver, vrstaPov);
 
   const secLuc = sekcija(t("mk.light"));
   const dGrobi = drsnik(t("mk.coarse"), { min: -150, max: 150, vrednost: 0, prikaz: (v) => `${dec(v)} µm`, ob: (v) => ((s.grobi = v), nastaviOstrino()) });
@@ -485,6 +532,8 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     gumbiObj.forEach((b, i) => b.setAttribute("aria-pressed", String(!tem && i === s.objektiv)));
     bTem.setAttribute("aria-pressed", String(tem));
     if (!brezDrsnika) dPov.nastavi((Math.log(m) - logMin) / (logMax - logMin));
+    bManj.disabled = m <= MIN_M * 1.01;
+    bVec.disabled = m >= MAX_M * 0.99;
     secLuc.hidden = tem;
     secTem.hidden = !tem;
     oder.classList.toggle("mk-tem", tem);
