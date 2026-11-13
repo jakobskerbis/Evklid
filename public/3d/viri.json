@@ -46,12 +46,24 @@
       "id": "hubmap-hra-oko",
       "ime": "HuBMAP Human Reference Atlas: 3D referenčni organ Oko (VH moški, levo)",
       "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po podatkih Visible Human",
-      "opis": "Zrklo v Organih v 3D: oko (beločnica, roženica, šarenica, leča, mrežnica z vidnim diskom, žilnica, ciliarnik, zonularna vlakna, steklovina). Mišice, kite in vidni živec so iz Z-Anatomy; zrklo smo poravnali nanje.",
+      "opis": "Zrklo v Organih v 3D: oko (beločnica, roženica, šarenica, leča, mrežnica z vidnim diskom, žilnica, ciliarnik, zonularna vlakna, steklovina). Vidni živec, kitni obroč in škripec so iz Z-Anatomy (zrklo smo poravnali nanje), očesne mišice so lastna geometrija Evklid po poteh mišic Z-Anatomy.",
       "url": "https://lod.humanatlas.io/ref-organ/eye-male-left",
       "licenca": "CC BY 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
       "datoteke": [
         "organi-3d/oko*.glb"
+      ]
+    },
+    {
+      "id": "sketchfab-realistic-human-eye",
+      "ime": "Realistic Human Eye",
+      "avtor": "Alexander Antipov (Dessen)",
+      "opis": "Fotografska tekstura šarenice in žilic beločnice na očesu v Organih v 3D (pomanjšana na 1024 × 1024, projicirana na zrklo HRA). This work is based on \"Realistic Human Eye\" (https://sketchfab.com/3d-models/realistic-human-eye-417cbd1aac554ea189966250b784ab6f) by Alexander Antipov (https://sketchfab.com/Dessen) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "url": "https://sketchfab.com/3d-models/realistic-human-eye-417cbd1aac554ea189966250b784ab6f",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/oko-foto.webp"
       ]
     },
     {
@@ -64,6 +76,19 @@
       "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
       "datoteke": [
         "organi-3d/ledvica*.glb"
+      ]
+    },
+    {
+      "id": "visibleheart-hh229",
+      "ime": "HH229 in HH229 Valves Vessels (Visible Heart Laboratories)",
+      "avtor": "VisibleHeartLabs (Visible Heart Laboratories, University of Minnesota)",
+      "opis": "Stena srca v Organih v 3D je pravo človeško srce HH229 (preparat, posnet z magnetno resonanco): oba prekata s pretinom, oba preddvora z ušesoma, trabekule, glavničaste mišice, zaklopke s tetivami in papilarne mišice kot en zaprt volumen. Model smo prilagodili (zvarili, zaprli luknje, z gladkim poljem odmikov poravnali na povprečno srce CT, poenostavili, razdelili na dele in zapekli teksture); model zaklopk in žil določa, katere ploskve so zaklopke in papilarne mišice. This work is based on \"HH229\" (https://sketchfab.com/3d-models/hh229-86edf8169e5f4ba6bfa798591266afa6) by VisibleHeartLabs (https://sketchfab.com/VisibleHeartLabs) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). This work is based on \"HH229 Valves Vessels\" (https://sketchfab.com/3d-models/hh229-valves-vessels-df4a149755444023aeb63629b76fd546) by VisibleHeartLabs (https://sketchfab.com/VisibleHeartLabs) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "url": "https://sketchfab.com/3d-models/hh229-86edf8169e5f4ba6bfa798591266afa6",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/srce*.glb",
+        "organi-3d/srce-stena*.png"
       ]
     },
     {

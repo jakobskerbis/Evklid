@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
 from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
-from oko_misice import ocesne_misice, kite_na_zrklo  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
+from oko_misice import ocesne_misice, kite_na_zrklo, ocesne_misice_lastne  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
 from jetra_geometrija import jetra_deli, jetra_ct, uveljavi_normale  # jetra: ena površina, režnji, vezi, votla vena, drevesa žil in žolčnih vodov
 from drevesa import pljucna_drevesa, ledvicne_zile  # pljuča: zaprti režnji, veje iz središčnic, subsegmentne veje (lastno)
 from pljuca_geometrija import pljuca_ct  # pljuča: režnji, žile in dihalno drevo iz CT (TotalSegmentator), sapnik z obroči iz HRA
@@ -153,7 +153,8 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)),  # krog 8: telefon 15k (pri 11k raztrgan levi preddvor v prerezu)
+        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)), hh229_cilj=(150_000, 28_000),  # m2: stena HH229 (trabekule, zaklopke, tetive v istem volumnu)
+         # krog 8: telefon 15k (pri 11k raztrgan levi preddvor v prerezu)
         nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
         # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
@@ -166,7 +167,7 @@ ORGANI = {
             # maščoba v žlebovih: stik zunanjih ploskev votlin (venčni in oba medprekatna žleba), ob venčnih žilah širša;
             # ob vejah na prosti steni prekatov le tanka sled (ne ob aorti, pljučnem deblu, pljučnih venah, lističih)
             maska=dict(zile=r"coronary (artery|sinus)|Coronary sinus|interventricular artery|Circumflex|cardiac vein|vein of left ventricle|branch of right coronary",
-                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.2),
+                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0048, zlebZila=0.0045, sled=0.2),  # m2: ožji pas (HH229 ima maščobo že v obliki)
             recepti={
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
@@ -176,7 +177,7 @@ ORGANI = {
                                 # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
                                 # krog 5 (predaja: »temne gube med ploščami maščobe«): plitvejši režnjiči, svetlejši žleb med njimi
                                 mascaNasip=0.0010, mascaPremik=0.0015, mascaMera=0.007, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
-                                mascaMeja=(0.05, 0.8), mascaSum=0.18,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
+                                mascaMeja=(0.12, 0.9), mascaSum=0.3,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
@@ -277,7 +278,7 @@ ORGANI = {
                 # siva tanjša sprednja stena, rumenkasto zadaj), drobne svetlo rdeče episkleralne žilice
                 "beločnica": dict(barva=(0.86, 0.81, 0.74), barva2=(0.80, 0.72, 0.66), lise=0.35, liseMera=0.04, hrap=0.34,
                                   gube=0.00002, gubeMera=0.002, zilice=0.22, ziliceBarva=(0.72, 0.28, 0.24), ziliceMera=0.03, razdeli=1),
-                "mišica": dict(barva=(0.38, 0.09, 0.07), barva2=(0.29, 0.07, 0.05), lise=0.35, hrap=0.42, vlakna=0.00025, vlaknaMera=0.002, razdeli=1,
+                "mišica": dict(barva=(0.40, 0.10, 0.08), barva2=(0.27, 0.06, 0.05), lise=0.3, hrap=0.44, vlakna=0.0, vzdolz=0.00007, vzdolzRazmik=0.00055, gube=0.00002, razdeli=1,
                                kita=(0.88, 0.84, 0.78), kitaHrap=0.30),  # krog 9: kita v tonu beločnice (zlije se z njo)  # kite ob narastiščih (atribut KITA iz oko_misice.py)
                 "kita": dict(barva=(0.86, 0.82, 0.75), barva2=(0.78, 0.73, 0.66), lise=0.2, hrap=0.30, vlakna=0.00008, vlaknaMera=0.0015, razdeli=1),
                 "živec": dict(barva=(0.80, 0.72, 0.58), barva2=(0.72, 0.64, 0.50), lise=0.25, hrap=0.36, vlakna=0.00006, vlaknaMera=0.0015,
@@ -290,8 +291,9 @@ ORGANI = {
         ),
         gladi=r".",
         # mišice na zrklo HRA: narastišča premih mišic 5,5–7,7 mm za limbusom, kite, nič pod beločnico (oko_misice.py)
-        dodaj=["ocesne_misice"], po_poenostavitvi=["kite_na_zrklo"],  # kite po poenostavitvi znova na zrklo (krog 10)
-        ohrani=r"muscle", ohraniFaktor=(2.2, 6.0),  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
+        # krog m1: mišice so lastna geometrija (ocesne_misice_lastne: čisti trakovi po anatomski poti, svoja telefonska
+        # mreža, brez poenostavitve); ocesne_misice ostane za šarenico in škripec, kite_na_zrklo ni več potreben
+        dodaj=["ocesne_misice", "ocesne_misice_lastne"], nedotakni=r"(rectus|oblique) muscle",  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
         # Krivulja vidnega živca se v Z-Anatomy začne pri leči: del znotraj zrkla odstranimo (sicer štrli v prerezu).
         znotraj=[(r"^Optic nerve", r"(?i)^sclera", 0.97)],
         krivulja=(6, 4),
@@ -393,11 +395,17 @@ ORGANI = {
         # drevesa.ledvicne_zile: ledvična vena in arterija na novo (lastno) do hilusa in v sinus; svoja telefonska mreža
         dodaj=["ledvicni_meh", "ledvicne_zile"], nedotakni=r"Renal (vein|artery) \(lastno\)",
         sredisce_brez=r"^Ureter",
-        meh_merilo=1.8,  # meh s čašicami iz metakroglic; ploskev ledvičnega sinusa (HRA hilum) potem izpustimo
+        meh_merilo=1.5, meh_jedro=0.0046,
+        # osi čaš = osi naslikanih piramid (ledvica.json rezPiramide.seznam, GLB x, y), po črki papile HRA
+        case=[("a", (-0.0008, -0.0014), (-0.5, 0.87)), ("b", (0.0016, 0.0007), (0.5, 0.87)), ("c", (0.0023, -0.0043), (0.92, 0.38)),
+              ("e", (0.0003, -0.0030), (1.0, -0.05)), ("g", (0.0005, 0.0043), (0.92, -0.38)), ("h", (0.0017, -0.0019), (0.45, -0.89)),
+              ("i", (-0.0037, -0.0019), (-0.4, -0.92))],
+        casa_osi=dict(a=(-0.9903, 0.1392), b=(-0.4384, 0.8988), c=(0.3746, 0.9272), d=(0.9135, 0.4067), e=(0.9945, 0.1045), f=(0.9135, -0.4067), g=(0.6428, -0.766), h=(0.1045, -0.9945), i=(-0.6157, -0.788)),  # meh s čašicami iz metakroglic; ploskev ledvičnega sinusa (HRA hilum) potem izpustimo
         izpusti_po=r"hilum_of_kidney",
         telefonSkrci=[(r"outer_cortex", 0.0005)],
         # Z-Anatomy nadledvična žleza je ob HRA ledvici (merilo 0,77) predebela (4,9 × 4,5 × 2,1 cm): 0,72× z dnom na ledvici.
         napihni=[(r"^Suprarenal", 0.72, "dno")],
+        zgladi_mrezo=[(r"^Suprarenal", 10, 0.5)],  # krog m1: brez grud (ocena: »lumpy ochre cap«)
         premakni=[(r"^Suprarenal", (0.0, -0.0075, -0.001))],
         vkljuci=r"^(Kidney\.l|Ureter\.l|Suprarenal gland\.l|Left renal artery|Left renal vein|(Anterior|Posterior) branch of renal artery\.l)( /|$)",
         cilj=(160_000, 40_000),
@@ -405,7 +413,10 @@ ORGANI = {
         # s progami, papile svetlejše; maščoba sinusa in nadledvična žleza rumeni; sečevod bledo rožnat.
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
-                "ovojnica": dict(barva=(0.27, 0.065, 0.05), barva2=(0.21, 0.05, 0.04), lise=0.30, hrap=0.26, gube=0.00002, gubeMera=0.002, razdeli=1),
+                # krog m1 (ocena: »glossy plastic exterior without capsule detail«): bolj mat, zvezdaste venule pod ovojnico
+                # (zilice), rahle vdolbine fetalne lobulacije (gube 0,06 mm na 5 mm) in drobna zrnatost
+                "ovojnica": dict(barva=(0.27, 0.07, 0.055), barva2=(0.19, 0.045, 0.04), lise=0.45, liseMera=0.018, hrap=0.52, gube=0.00006, gubeMera=0.005,
+                                 zilice=0.4, ziliceBarva=(0.17, 0.03, 0.035), ziliceMera=0.014, razdeli=1),
                 "skorja": dict(barva=(0.30, 0.085, 0.07), barva2=(0.23, 0.065, 0.055), lise=0.35, hrap=0.40, gube=0.00004, gubeMera=0.0012, razdeli=1),
                 "piramida": dict(barva=(0.25, 0.07, 0.07), barva2=(0.19, 0.05, 0.05), lise=0.4, hrap=0.40, vlakna=0.00008, vlaknaMera=0.002, razdeli=1),
                 "papila": dict(barva=(0.50, 0.24, 0.21), barva2=(0.42, 0.19, 0.17), lise=0.3, hrap=0.36, razdeli=1),
@@ -414,7 +425,8 @@ ORGANI = {
                 "secevod": dict(barva=(0.74, 0.58, 0.52), barva2=(0.66, 0.50, 0.46), lise=0.25, hrap=0.40, gube=0.00003, gubeMera=0.002, razdeli=1),
                 "arterija": dict(barva=(0.62, 0.34, 0.30), barva2=(0.55, 0.29, 0.26), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "vena": dict(barva=(0.36, 0.22, 0.26), barva2=(0.30, 0.18, 0.22), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
-                "nadledvicna": dict(barva=(0.78, 0.50, 0.16), barva2=(0.66, 0.40, 0.12), lise=0.4, hrap=0.46, gube=0.00006, gubeMera=0.003, razdeli=1),
+                "nadledvicna": dict(barva=(0.70, 0.52, 0.30), barva2=(0.62, 0.43, 0.24), lise=0.35, hrap=0.5, gube=0.00003, gubeMera=0.002,
+                                    zilice=0.25, ziliceBarva=(0.45, 0.2, 0.15), ziliceMera=0.01, razdeli=1),
             },
         ),
         jedro=r"kidney_capsule",
@@ -1202,10 +1214,16 @@ def ledvicni_meh(osnovni, cfg, tmp):
         x = os_pri(z).x + zamik * (1 - g) + lok * math.sin(math.pi * u)
         y = yr + 0.0002 + cfg.get("secevod_globina", 0.0024) * g
         w = min(1.0, max(0.0, (zr - z) / 0.012)); w = w * w * (3 - 2 * w)
-        P.append(Vector((x, y, z))); R.append(rt * (1.55 - 0.55 * w))  # lijak: vrh 1,55-krat širši
+        # lijak: vrh 1,55-krat širši; krog m1: fiziološka zožitev na pieloureteralnem stiku (≈ 14–20 mm pod mehom), pod
+        # njo rahlo vretenasta razširitev
+        zoz = 1.0 - cfg.get("secevod_zozitev", 0.26) * math.exp(-(((zr - z) - 0.017) / 0.006) ** 2) + 0.10 * math.exp(-(((zr - z) - 0.040) / 0.014) ** 2)
+        P.append(Vector((x, y, z))); R.append(rt * (1.75 - 0.75 * w) * zoz)
     P, R = zgladi(P, R, 6)
     P[-1] = P[-1] + (P[-1] - P[-2]).normalized() * 0.0005
-    bm = bmesh.new(); cev(bm, P, R, 20, stena=cfg.get("secevod_stena", 0.0006))
+    # krog m2: cev sečevoda se začne pri zadnji krogli meha (vrh2), ne 2 obroča više v svetlini meha (v rezu je bil v
+    # izhodu meha viden konec cevi); meh spodaj odpremo v svetlino sečevoda (glej spodaj), da je svetlina v rezu zvezna
+    P_cev, R_cev = (P[:-2], R[:-2]) if len(P) > 5 and cfg.get("secevod_stik", True) else (P, R)
+    bm = bmesh.new(); cev(bm, P_cev, R_cev, 20, stena=cfg.get("secevod_stena", 0.0006))
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     bm.to_mesh(ur); bm.free(); ur.update()
     for q in ur.polygons:
@@ -1213,26 +1231,115 @@ def ledvicni_meh(osnovni, cfg, tmp):
     print(f"[organi] sečevod: votla cev {len(P)} obročev, polmer {round(rt * 1000, 2)}–{round(R[-1] * 1000, 2)} mm, dolžina {round((zr - zmin) * 1000)} mm, lok {round(abs(lok) * 1000, 1)} mm")
     vrh = P[-1]
     vrh2 = P[-3] if len(P) > 3 else vrh - Vector((0, 0, 0.005))
-    ru = 0.98 * R[-1]
+    ru = 1.12 * R[-1]  # krog m1: krogle meha ob stiku širše od svetline sečevoda (sicer se meh pri manjšem merilu odtrga)
     zg = [p for p in pap if p.z >= C.z] or pap; sp = [p for p in pap if p.z < C.z] or pap
     M = {id(g): na_ravnino(C.lerp(sum(g, Vector()) / len(g), 0.5)) for g in (zg, sp)}
     k = cfg.get("meh_merilo", 1.0)
     t = []
+    # krog m1: papile HRA ležijo v gručah (2,5–5 mm narazen), čaše bi se zlile v kepo. Papili bliže od 3,5 mm dobita
+    # skupno čašo (sestavljena papila, na polih ledvice običajna), druge čaše se razmaknejo na ≥ casa_razmik (največ
+    # casa_premik od svoje papile; naslikani vrhovi piramid v ledvica.json so v središčih čaš: izpis »čaše«).
+    imena_p = [(re.search(r"_([a-z])( |$)", ime) or [None, "?"])[1] for ime, me, *_ in osnovni if "papilla" in ime]
+    Q = [na_ravnino(p) for p in pap]; Q0 = [q.copy() for q in Q]; skup = list(range(len(Q)))
+    for i in range(len(Q)):
+        for j in range(i):
+            if (Q0[i] - Q0[j]).length < 0.0035:
+                skup[i] = skup[j]
+    for s_ in set(skup):
+        cl = [i for i in range(len(Q)) if skup[i] == s_]; sr_ = sum((Q0[i] for i in cl), Vector()) / len(cl)
+        for i in cl:
+            Q[i] = sr_.copy(); Q0[i] = sr_.copy()
+    Dm, Pm = cfg.get("casa_razmik", 0.0084), cfg.get("casa_premik", 0.0052)
+    for _ in range(80):
+        for a_ in set(skup):
+            for b_ in set(skup):
+                if a_ < b_:
+                    d_ = Q[a_] - Q[b_]
+                    if d_.length < Dm:
+                        pr = d_.normalized() * (Dm - d_.length) * 0.5
+                        Q[a_] += pr; Q[b_] -= pr
+        for a_ in set(skup):
+            d_ = Q[a_] - Q0[a_]
+            if d_.length > Pm:
+                Q[a_] = Q0[a_] + d_.normalized() * Pm
+    for i in range(len(Q)):
+        Q[i] = Q[skup[i]]
+    osi = cfg.get("casa_osi", {})
+    def os_case(i, m):
+        cl = [j for j in range(len(Q)) if skup[j] == skup[i]]
+        o = sum((Vector((osi[imena_p[j]][0], 0, osi[imena_p[j]][1])) for j in cl if imena_p[j] in osi), Vector())
+        return o.normalized() if o.length > 1e-6 else (Q[i] - m).normalized()
+    print("[organi] čaše (Blender x, z; os x, z):", [(imena_p[i], round(Q[i].x, 5), round(Q[i].z, 5), round(os_case(i, Q[i] - Vector((1, 0, 0))).x, 3), round(os_case(i, Q[i] - Vector((1, 0, 0))).z, 3)) for i in range(len(Q))])
+    # krog m1: jedro meha malo lateralneje in manjše (medialno ob hilusu ostane maščoba sinusa, v katero vstopata žili)
+    lat = na_ravnino(pc) - na_ravnino(hc); lat.normalize()
+    C2 = na_ravnino(C) + lat * cfg.get("meh_lateralno", 0.0035)
+    # krog m1, drugi korak: izrecne čaše (cfg »case«: [(črka papile HRA, zamik v ravnini (x, z) v m, os (x, z))]): sedem
+    # čaš in piramid enakomerno okoli sinusa (zgoraj 2, lateralno 3, spodaj 2), vsaka ≤ 6 mm od svoje papile; z gručami
+    # papil HRA so se piramide v rezu zlile v liso brez ledvičnih stebrov. Seznam pap/Q/skup zamenjajo te čaše.
+    if cfg.get("case"):
+        po_crki = {c: na_ravnino(p_) for c, p_ in zip(imena_p, pap)}
+        Q = [po_crki[c] + Vector((dx, 0, dz)) for c, (dx, dz), _o in cfg["case"]]
+        osi_ = [Vector((o[0], 0, o[1])).normalized() for _c, _d, o in cfg["case"]]
+        imena_p = [c for c, _d, _o in cfg["case"]]; skup = list(range(len(Q))); pap = Q
+        os_case = lambda i, m: osi_[i]
+        zg = [p_ for p_ in pap if p_.z >= C.z] or pap; sp = [p_ for p_ in pap if p_.z < C.z] or pap
+        M = {id(g): na_ravnino(C.lerp(sum(g, Vector()) / len(g), 0.5)) for g in (zg, sp)}
+        print("[organi] čaše (Blender x, z; os x, z):", [(imena_p[i], round(Q[i].x, 5), round(Q[i].z, 5), round(osi_[i].x, 4), round(osi_[i].z, 4)) for i in range(len(Q))])
+    narejene = set()
     for g in (zg, sp):
         m = M[id(g)]
         for p in g:
+            i_p = next(i for i, x in enumerate(pap) if x is p)
+            if skup[i_p] in narejene:
+                continue
+            narejene.add(skup[i_p])
             # mala čašica: čaša v obliki črke U okoli vrha papile (vrh naslikane piramide je q, zaobljen 2,2 mm proti mehu):
             # venec majhnih krogel od forniksov ob straneh papile do dna čaše; v sredini ostane papila. Ozek vrat
             # (infundibulum) od dna čaše do velike čašice.
-            q = na_ravnino(p); u = (q - m).normalized(); v = u.cross(Vector((0, 1, 0))).normalized()
+            q = Q[i_p]; u = os_case(i_p, m); v = u.cross(Vector((0, 1, 0))).normalized()
             r_ = cfg.get("casa_polmer", 0.0034)
-            for a_, b_ in ((0.0006, 4.0), (-0.0018, 3.8), (-0.0042, 2.4), (-0.0052, 0.0)):
-                t += [(q + u * a_ + v * b_ * 0.001, r_), (q + u * a_ - v * b_ * 0.001, r_)] if b_ else [(q + u * a_, r_)]
-            t += _crta(q - u * 0.0052, m, 0.0034, 0.004, 0.0012)
-        t += _crta(m, C, 0.0028 * k, 0.0048 * k, 0.0012)
-    sred = C.lerp(vrh, 0.55)
-    t += _crta(C, sred, 0.0058 * k, 0.0034 * k, 0.0012) + _crta(sred, vrh, 0.0034 * k, ru, 0.001) + _crta(vrh, vrh2, ru, ru, 0.001)
+            if cfg.get("casa_vdolbina", True):
+                # krog m1: čaša = krogla za vrhom papile, v katero negativna krogla vtisne papilo (v rezu polmesec, ki
+                # objame zaobljen vrh piramide; forniksa ob straneh), nato ozek vrat (infundibulum) do velike čašice
+                # skleda (krogelna kapica) drobnih krogel okoli vrha papile: svetlina ≈ 1,2 mm, notranji rob na polmeru
+                # naslikanega vrha piramide (2,2 mm), odprta proti piramidi; forniksa segata ≈ 100° od osi
+                ra_, rk = cfg.get("casa_lok", 0.0042), cfg.get("casa_r", 0.0013)
+                w_ = u.cross(v).normalized()
+                for th in range(0, 116, 11):
+                    n_az = max(1, round(2 * math.pi * ra_ * math.sin(math.radians(th)) / 0.0008))
+                    for k_ in range(n_az):
+                        az = 2 * math.pi * k_ / n_az
+                        t.append((q + (-u * math.cos(math.radians(th)) + (v * math.cos(az) + w_ * math.sin(az)) * math.sin(math.radians(th))) * ra_, rk))
+                t += _crta(q - u * (ra_ + 0.0012), m, cfg.get("vrat_r", 0.0024), 0.0036, 0.0011)
+            else:
+                for a_, b_ in ((0.0006, 4.0), (-0.0018, 3.8), (-0.0042, 2.4), (-0.0052, 0.0)):
+                    t += [(q + u * a_ + v * b_ * 0.001, r_), (q + u * a_ - v * b_ * 0.001, r_)] if b_ else [(q + u * a_, r_)]
+                t += _crta(q - u * 0.0052, m, 0.0034, 0.004, 0.0012)
+        t += _crta(m, C2, 0.0028 * k, 0.0044 * k, 0.0012)
+    sred = C2.lerp(vrh, 0.55)
+    t += _crta(C2, sred, cfg.get("meh_jedro", 0.0058) * k, 0.0034 * k, 0.0012) + _crta(sred, vrh, 0.0034 * k, ru, 0.001) + _crta(vrh, vrh2, ru, ru, 0.001)
     me = _metakroglice(t, "meh", tmp)
+    if len(P) > 5 and cfg.get("secevod_stik", True):
+        # slepi konec meha v svetlini sečevoda odstranimo, rob luknje pa postavimo v sredino stene cevi: obris meha v
+        # rezu se konča v steni sečevoda (brez pregrade čez svetlino)
+        st_ = cfg.get("secevod_stena", 0.0006)
+        os_ = (P[-4] - P[-3]).normalized(); r_not = max(R[-3] - st_, R[-3] * 0.6); r_sr = 0.5 * (r_not + R[-3])
+        bm = bmesh.new(); bm.from_mesh(me)
+        def valj(co):
+            d_ = co - vrh2; s_ = d_.dot(os_); return s_, d_ - os_ * s_
+        notri = [v for v in bm.verts if valj(v.co)[0] > 0 and valj(v.co)[1].length < r_not + 0.0001]
+        proc = {f for v in notri for f in v.link_faces}
+        bmesh.ops.delete(bm, geom=list(proc), context="FACES")
+        rob = [v for v in bm.verts if v.is_boundary]
+        for v in rob:  # v sredino stene cevi ob najbližjem obroču (lijak sečevoda se navzdol oži: brez ovratnika zunaj cevi)
+            i_ = min(range(len(P) - 2), key=lambda i: (P[i] - v.co).length)
+            r_ = (v.co - P[i_]) - os_ * (v.co - P[i_]).dot(os_)
+            if r_.length > 1e-6:
+                v.co = v.co - r_ + r_.normalized() * 0.5 * (max(R[i_] - st_, R[i_] * 0.6) + R[i_])
+        print(f"[organi] stik meha in sečevoda: odstranjenih {len(proc)} ploskev meha, rob luknje {len(rob)} oglišč na polmeru {round(r_sr * 1000, 2)} mm")
+        bm.to_mesh(me); bm.free(); me.update()
+    print("[organi] ravnina meha (Blender y):", round(yr, 6))
+    print("[organi] meh škatla (Blender):", [round(min(v.co[i] for v in me.vertices), 5) for i in range(3)], [round(max(v.co[i] for v in me.vertices), 5) for i in range(3)])
     print(f"[organi] ledvični meh: {len(pap)} malih čašic, {tris(me)} trikotnikov")
     return [["Evklid renal pelvis and calyces (lastno)", me, "meh", "meh", "Evklid renal pelvis and calyces (lastno) / Evklid"]]
 
@@ -1525,6 +1632,14 @@ def izvozi(organ, cfg):
     cfg["_hra_mapa"] = HRA
     for ime_f in cfg.get("dodaj", []):
         osnovni += globals()[ime_f](osnovni, cfg, tmp)
+    # zgladi_mrezo [(regex, ponovitev, faktor)]: glajenje oglišč izvorne mreže (grudasta nadledvična žleza Z-Anatomy)
+    for rx, krat, fak in cfg.get("zgladi_mrezo", []):
+        for ime, me, *_ in osnovni:
+            if re.search(rx, ime):
+                bm = bmesh.new(); bm.from_mesh(me)
+                for _ in range(krat):
+                    bmesh.ops.smooth_vert(bm, verts=bm.verts, factor=fak, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+                bm.to_mesh(me); bm.free(); me.update()
     if cfg.get("izpusti_po"):
         osnovni = [r for r in osnovni if not re.search(cfg["izpusti_po"], r[0])]
     for row in osnovni:
@@ -1568,6 +1683,9 @@ def nalozi_stanje(pot, cfg):
 
 def izvozi_naprej(organ, cfg, osnovni, tmp):
     cfg["_ct_mapa"] = CT; cfg["_out"] = out
+    # pravo srce HH229 (scripts/atlas/srce-hh229.py → <mapa ob Startup.blend>/hh229/hh229-v1.npz); ORGANI_HH229=0: stene CT
+    if CT and os.environ.get("ORGANI_HH229") != "0":
+        cfg["_hh229"] = os.path.join(os.path.dirname(CT), "hh229", "hh229-v1.npz")
     # pozno: koraki na celotnem stanju (srce_ct: stene iz CT, poravnava ostalih delov nanje, pokrov reza)
     for ime_f in cfg.get("pozno", []):
         osnovni = globals()[ime_f](osnovni, cfg, tmp)

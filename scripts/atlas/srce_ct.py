@@ -645,7 +645,7 @@ def _vencne_v_zleb(vencne, bvh_epi, V, j_av, j_iv):
     return out
 
 
-def _vencne_cevi(vencne, bvh_povrsina, tel):
+def _vencne_cevi(vencne, bvh_povrsina, tel, dvig=0.25, debelina=1.0):
     """Okrogle venčne cevi na površini maščobe/epikarda: središče 0,25 R nad površino (žila napol v maščobi, ne nalepka),
     polmer se od začetka (debelejši konec) proti periferiji le tanjša, zadnjih 15 % se zoži na 45 %; vene ob arteriji
     razmaknjene; venčni sinus ≥ 2,8 mm polmera (debela vena v zadnjem venčnem žlebu)."""
@@ -666,14 +666,17 @@ def _vencne_cevi(vencne, bvh_povrsina, tel):
             R = np.minimum.accumulate(_gladi_pot(R[:, None], 4)[:, 0])
             if not vena or "Coronary sinus" not in r[0]:
                 t = np.linspace(0, 1, len(R)); R *= 1 - 0.55 * np.clip((t - 0.85) / 0.15, 0, 1)
-            R = np.maximum(R, 0.00045)
+            R = np.maximum(R, 0.00045) * debelina
+            if dvig > 0.25:  # pravo srce: poenostavljena stena odstopa do ≈ 0,5 mm, tanjše veje bi jih stena sekala v črtice
+                R = np.maximum(R, 0.0007)
+            dv = np.where(R >= 0.001, 1.0 if "Coronary sinus" in r[0] and dvig > 0.25 else dvig, 1.15 if dvig > 0.25 else dvig)
             for _ in range(2):
                 for i, c in enumerate(C):
                     q, nn, _, _ = bvh_povrsina.find_nearest(Vector(c))
                     if q is None:
                         continue
                     q, nn = np.array(q), np.array(nn)
-                    C[i] = q + nn * R[i] * 0.25
+                    C[i] = q + nn * R[i] * dv[i]  # tanke veje in venčni sinus na pravem srcu cele nad površino
                     if vena and kd_a is not None:  # vena ob arteriji, ne v njej
                         a_, j_, d_ = kd_a.find(Vector(C[i]))
                         if a_ is not None and d_ < R[i] + Ra[j_] + 0.0004:
@@ -681,6 +684,12 @@ def _vencne_cevi(vencne, bvh_povrsina, tel):
                             v_ = v_ / (np.linalg.norm(v_) + 1e-12) if np.linalg.norm(v_) > 1e-6 else np.cross(nn, [0, 0, 1.0])
                             C[i] = np.array(a_) + v_ * (R[i] + Ra[j_] + 0.0004)
                 C = _gladi_pot(C, 2)
+            if dvig > 0.25:  # pravo srce (HH229, grbinasta površina): po glajenju poti nobena točka globlje kot dvig·R
+                for i, c in enumerate(C):
+                    q, nn, _, _ = bvh_povrsina.find_nearest(Vector(c))
+                    if q is not None and (Vector(c) - q).dot(nn) < R[i] * dv[i]:
+                        C[i] = np.array(q) + np.array(nn) * R[i] * dv[i]
+                C = _gladi_pot(C, 1)
             V_, F_ = sz.cev_np(C, R, 7); zbirka.dodaj(V_, F_)
             V_, F_ = sz.cev_np(C[::3] if len(C) > 9 else C, R[::3] if len(C) > 9 else R, 5); zbirka_t.dodaj(V_, F_)
         me = r[1]
@@ -942,22 +951,83 @@ def srce_ct(osnovni, cfg, tmp):
     V2, masca, tr = relief(V, F, oz, epi, dl, Lc, h, stran_p)
     V2, pomik = zapolni_zlebove(V, V2, F, oz, epi)
     masca = np.maximum(masca, np.clip((pomik - 0.45e-3) / 0.35e-3, 0, 1))  # zapolnjen žleb = maščoba
-    _vencne_cevi(vencne, _bvh(V2, F[epi]), cfg.setdefault("_telefon", {}))
+    # Pravo srce HH229 (srce_hh229.py) namesto sten CT: zvito na steno CT, zato vsi drugi deli ostanejo na mestu; venčne
+    # žile in strukture ob endokardu se prenesejo na njegovo površino
+    hh = None
+    if cfg.get("_hh229") and os.path.exists(cfg["_hh229"]):
+        import srce_hh229
+        pv_ct = pljucne_vene_ct(P, C, T, premik, Lc, cfg.setdefault("_telefon", {}), _bvh(V2, F[epi]))
+        def zberi_cevi():  # cevi velikih žil (točke in normale): vanje se zložijo odrezani krni žil HH229
+            cevi = []
+            for r in nove + pv_ct:
+                if r[2] in ("aorta", "pljucna", "vena", "pljucna-vena") and not r[0].startswith("Root of"):
+                    me_ = r[1]; Xc = _tocke(me_); Fc_ = np.array([p.vertices[:3] for p in me_.polygons if len(p.vertices) >= 3])
+                    Nc_ = np.zeros_like(Xc); nn = np.cross(Xc[Fc_[:, 1]] - Xc[Fc_[:, 0]], Xc[Fc_[:, 2]] - Xc[Fc_[:, 0]])
+                    for k_ in range(3): np.add.at(Nc_, Fc_[:, k_], nn)
+                    Nc_ /= np.linalg.norm(Nc_, axis=1)[:, None] + 1e-20
+                    cc_ = Xc[Fc_].mean(1); nf_ = nn / (np.linalg.norm(nn, axis=1)[:, None] + 1e-20)
+                    cevi.append((np.concatenate([Xc, cc_]), np.concatenate([Nc_, nf_])))
+            return cevi
+        ct_hh = dict(V2=V2, F=F, epi=epi, dl=dl, masca=masca, L=Lc)
+        hh = srce_hh229.stena(cfg["_hh229"], ct_hh, Polje, log=lambda x: print(x, flush=True), cevi=zberi_cevi())
+        # votli veni: cev (zgrajena na ustju CT) na pravo ustje v steni HH229 in po potrebi razširjena do njegovega polmera;
+        # nato se stena zgradi še enkrat, da se krna ven zložita v cevi na NOVI legi (prej: luknja in raztrgan rob ob cevi)
+        bvh_h = _bvh(hh["V"], hh["F"]); c_ra = V2[F[(dl == 5) & ~epi]].mean((0, 1)); premaknjeno = False
+        for rx, kljuc in ((r"^Inferior vena cava", "svv"), (r"^(Superior vena cava|(Right|Left) brachiocephalic vein|Azygos vein)", "zvv")):  # oznaki CT: svv spodnja, zvv zgornja
+            u = srce_hh229.ustje(bvh_h, c_ra, np.asarray(Lc[kljuc]))
+            if u is None:
+                print(f"[organi] srce_hh229: ustje {kljuc}: ni odprtine", flush=True); continue
+            print(f"[organi] srce_hh229: ustje {kljuc}: premik {np.linalg.norm(u[0] - Lc[kljuc]) * 1000:.1f} mm, polmer {u[2] * 1000:.1f} mm", flush=True)
+            for r in nove:
+                if re.search(rx, r[0]) or (kljuc == "svv" and r[0].startswith("Valve of inferior vena cava")):
+                    X_ = srce_hh229.premakni_na_ustje(_tocke(r[1]), c_ra, np.asarray(Lc[kljuc]), u[0])
+                    if kljuc == "svv" and r[0].startswith("Inferior vena cava"):
+                        X_, k_ = srce_hh229.razsiri_cev(X_, u[2] * 1.08)
+                        print(f"[organi] srce_hh229: {r[0]}: cev razširjena ×{k_:.2f}", flush=True)
+                    _nastavi(r[1], X_); premaknjeno = True
+        if premaknjeno:
+            hh = srce_hh229.stena(cfg["_hh229"], ct_hh, Polje, log=lambda x: print(x, flush=True), cevi=zberi_cevi())
+        bvh_he = _bvh(hh["V"], hh["F"][hh["epi"]]); bvh_hn = _bvh(hh["V"], hh["F"][~hh["epi"]])
+        for r in nove:
+            if re.search(PRENOS[1][0], r[0] + " " + r[2]):  # ob endokardu: s stene CT na endokard HH229
+                X = _tocke(r[1]); X2, _ = prenesi_na_steno(X, X, bvh_endo, bvh_he, bvh_hn, "endo", 0.010)
+                _nastavi(r[1], X2)
+    if hh:  # HH229: žile više nad grbinasto površino in malo debelejše (ocena: »tanke venčne žile«, deli cevi pod steno)
+        _vencne_cevi(vencne, bvh_he, cfg.setdefault("_telefon", {}), dvig=cfg.get("hh229_zile_dvig", 0.62), debelina=cfg.get("hh229_zile_debelina", 1.2))
+        Xz = np.concatenate([_tocke(r[1]) for r, _ in vencne]) if vencne else None
+        hh["masca"] = srce_hh229.mascoba(hh["V"], hh["F"], hh["epi"], hh["masca"], Xz, log=lambda x: print(x, flush=True))
+    else:
+        _vencne_cevi(vencne, _bvh(V2, F[epi]), cfg.setdefault("_telefon", {}))
     cfg["_ct"] = dict(P=P, C=C, T=T, Fv=Fv, premik=premik, V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, masca=masca, L=Lc)
+    if os.environ.get("ORGANI_CT_ODLOZI"):  # razvoj srce_hh229: stene CT (po reliefu), deli, maščoba in oslonilne točke
+        np.savez(os.environ["ORGANI_CT_ODLOZI"], V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, stran=stran_p, masca=masca, tr=tr,
+                 L=np.array([Lc[x] for x in sorted(Lc)]), Limena=np.array(sorted(Lc)))
     # votline po reliefu (odebeljena stena LV): zaklopke, papilarne mišice in trabekule na novem endokardu
     lvF = F[((dl == 0) | ((dl == 1) & (stran_p == -1))) & ~epi]
     rvF = F[((dl == 2) | ((dl == 1) & (stran_p == 1))) & ~epi]
     bvh_lv = _bvh(V2, lvF); bvh_rv = _bvh(V2, rvF); bvh_epi2 = _bvh(V2, F[epi])
     tel = cfg.setdefault("_telefon", {})
-    nove += zaklopke_ct(P, C, T, premik, Lc, bvh_lv, bvh_rv, tel)
-    nove += pljucne_vene_ct(P, C, T, premik, Lc, tel, _bvh(V2, F[epi]))
-    nove += trabekule_ct(V2, lvF, rvF, Lc, nove, tel, tmp)
+    if hh is None:  # HH229 ima svoje zaklopke, tetive, papilarne mišice in trabekule (del istega zaprtega volumna)
+        nove += zaklopke_ct(P, C, T, premik, Lc, bvh_lv, bvh_rv, tel)
+    nove += pv_ct if hh else pljucne_vene_ct(P, C, T, premik, Lc, tel, _bvh(V2, F[epi]))
+    if hh is None:
+        nove += trabekule_ct(V2, lvF, rvF, Lc, nove, tel, tmp)
+    else:
+        nove = [r for r in nove if not r[0].startswith("Septomarginal trabecula")]
     smr = next((r for r in nove if r[0].startswith("Septomarginal trabecula")), None)
     pap = next((r for r in nove if r[0].startswith("Anterior papillary muscle of right ventricle")), None)
     if smr is not None and pap is not None:
         smr[1] = moderatorni_trak(_tocke(smr[1]), pap[1], bvh_rv, smr)
         _brez_mascobe(smr[1])
     # en zaprt volumen: poenostavimo skupaj (računalnik, telefon), nato razdelimo po delih (brez razpok med deli)
+    if hh is not None:
+        nove += _deli_iz_unije(hh["V"], hh["F"], hh["dl"], hh["epi"], hh["masca"], dict(cfg, ct=dict(cilj=cfg.get("hh229_cilj", (150_000, 30_000)))), tmp,
+                               ohrani=hh["ohrani"], deli=srce_hh229.DELI)
+        cfg["_tocke4"] = [Vector(Lc["konica"]), Vector(Lc["mitralna"]), Vector(Lc["trikuspidalna"])]
+        if cfg.get("_out"):
+            zile_m = [r[1] for r in nove if r[2].startswith("vencna-")]
+            cfg["_volumen"] = volumen(cfg["_ct"], os.path.join(cfg["_out"], "srce-volumen.png"), zile=zile_m)
+        return nove
     vrstice = _deli_iz_unije(V2, F, dl, epi, masca, cfg, tmp, ohrani=np.clip(tr / 1.2e-3, 0, 1))
     nove += vrstice
     Vu, Fu = levo_uho(P, C, T, premik, bvh_epi, Lc["mitralna"])
@@ -987,10 +1057,11 @@ def srce_ct(osnovni, cfg, tmp):
     return nove
 
 
-def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None):
+def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None, deli=None):
     """Unija sten → mreža z materialnim indeksom po delu, poenostavljena za računalnik in telefon (cfg['ct']['cilj']),
     razdeljena na vrstice; telefonske mreže v cfg['_telefon']. Maske PEKA (R maščoba, G zunaj) so na ogliščih."""
     cilj = cfg.get("ct", {}).get("cilj", (110_000, 30_000))
+    DELI_CT = deli or globals()["DELI_CT"]
     me = _mesh("ct-unija", V, F)
     me.polygons.foreach_set("material_index", dl.astype(np.int32))
     for _ in range(len(DELI_CT)):
@@ -1020,8 +1091,25 @@ def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None):
                 vg.add(idx, float(val), "REPLACE")
             mod.vertex_group = "poenostavi"; mod.vertex_group_factor = 1.0
         m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+        for _ in range(4):  # uteži skupine zmanjšajo krčenje: razmerje popravimo do cilja (HH229: 1 M ploskev → cilj)
+            if deli is None or len(m2.polygons) <= 1.06 * c: break
+            mod.ratio *= c / len(m2.polygons)
+            bpy.data.meshes.remove(m2)
+            m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
         bpy.data.objects.remove(o)
         bm = bmesh.new(); bm.from_mesh(m2)
+        if deli is not None:  # krog m2: po poenostavitvi je meja delov cikcak trikotnikov (žagast rob lističa zaklopke):
+            bm.faces.ensure_lookup_table(); bm.faces.index_update()  # ploskev z vsaj dvema sosedoma iste druge oznake prevzame njuno oznako
+            for _ in range(3):
+                nove_oz = {}
+                for f in bm.faces:
+                    sos = [g.material_index for e in f.edges for g in e.link_faces if g is not f]
+                    drugi = [x for x in sos if x != f.material_index]
+                    if len(sos) == 3 and len(drugi) >= 2 and drugi.count(drugi[0]) >= 2:
+                        nove_oz[f.index] = drugi[0]
+                for i_, x in nove_oz.items():
+                    bm.faces[i_].material_index = x
+                if not nove_oz: break
         for d, (ime, tkivo, del_) in enumerate(DELI_CT):
             b2 = bm.copy()
             bmesh.ops.delete(b2, geom=[f for f in b2.faces if f.material_index != d], context="FACES")

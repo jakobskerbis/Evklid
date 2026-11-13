@@ -71,7 +71,8 @@ test("oko_misice.py: mere narastišč in kit iz literature, korak v izvozu", () 
   const src = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "oko_misice.py"), "utf8");
   assert.match(src, /NARASTISCE = \{"Medial": 0\.0055, "Inferior": 0\.0065, "Lateral": 0\.0069, "Superior": 0\.0077\}/);
   const izvoz = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "izvozi-organe.py"), "utf8");
-  assert.match(izvoz, /dodaj=\["ocesne_misice"\]/);
+  assert.match(izvoz, /dodaj=\["ocesne_misice", "ocesne_misice_lastne"\]/); // m1: mišice so lastni trakovi (ocesne_misice_lastne)
+  assert.match(src, /^def ocesne_misice_lastne\(osnovni, cfg, tmp\):/m);
   assert.match(fs.readFileSync(path.join(KOREN, "scripts", "atlas", "peka.py"), "utf8"), /r\.get\("kita"\)/);
   // krog 7: kita stanjšana proti robovoma (brez temne črte); škripec pritrjen (krog 8: ploščica namesto peclja)
   assert.match(src, /rob = 0\.22 \+ 0\.78 \* \(1 - _gladko\(np\.abs\(s2\) \/ hw, 0\.5, 1\.0\)\)/);
@@ -80,4 +81,21 @@ test("oko_misice.py: mere narastišč in kit iz literature, korak v izvozu", () 
   assert.match(src, /kot = np\.sort\(np\.arctan2\(Q @ e2, Q @ e1\)\)/);
   assert.match(src, /ovoj = np\.maximum\(osn, _zgladi\(ovoj, robovi\(me\), m_ov, 1\)\)/);
   assert.equal((src.match(/hn = t_vrh \* hn \+ \(1 - t_vrh\) \* _spodaj\(hn\)/g) || []).length, 2);
+});
+
+test("oko: fotografska tekstura šarenice in beločnice (tkivo.foto) z navedenim virom", () => {
+  const oko = JSON.parse(fs.readFileSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "oko.json"), "utf8"));
+  const js = fs.readFileSync(path.join(KOREN, "public", "3d", "organ.js"), "utf8");
+  for (const k of ["function fotoGLSL", "function fotoSlika", "uniform sampler2D orgFoto"]) assert.ok(js.includes(k), k);
+  const s = oko.tkiva["šarenica"].foto, b = oko.tkiva["beločnica"].foto;
+  assert.equal(s.nacin, "disk");
+  assert.equal(b.nacin, "krogla");
+  assert.ok(b.kot1 > b.kot0 && b.uv1 > b.uv0 && b.uv1 <= 0.5, "beločnica: slika od limbusa navzven, znotraj slike");
+  assert.ok(s.uvPolmer > 0.1 && s.uvPolmer < 0.3 && Math.abs(s.polmer - oko.tkiva["šarenica"].sarenica.polmer) < 1e-4);
+  const slika = path.join(KOREN, "public", "3d", "modeli", "organi-3d", s.slika);
+  assert.ok(fs.statSync(slika).size < 60000, "tekstura je majhna (WebP)");
+  const viri = JSON.parse(fs.readFileSync(path.join(KOREN, "public", "3d", "viri.json"), "utf8")).viri;
+  const v = viri.find((x) => (x.datoteke || []).includes("organi-3d/oko-foto.webp"));
+  assert.ok(v && v.licenca === "CC BY 4.0" && /Alexander Antipov/.test(v.avtor) && /Realistic Human Eye/.test(v.opis));
+  assert.match(fs.readFileSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "CREDITS.txt"), "utf8"), /Realistic Human Eye.*\n.*\n.*Alexander Antipov|Alexander Antipov/);
 });

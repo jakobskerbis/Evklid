@@ -626,19 +626,33 @@ def ledvicne_zile(osnovni, cfg, tmp):
         P, _ = zgladi(P, [0] * len(P), 12)
         return P, [r0 + (r1 - r0) * i / (len(P) - 1) for i in range(len(P))]
     nast = cfg.get("zile", {})
-    rv, ra = nast.get("vena", 0.0048), nast.get("arterija", 0.0028)
+    rv, ra = nast.get("vena", 0.0039), nast.get("arterija", 0.0028)
     L = nast.get("dolzina", 0.036)
-    vena = [("deblo", pot([T(L, 0.0075, -0.001), T(L * 0.55, 0.0078, -0.002), T(0.008, 0.007, -0.001)], rv, rv * 0.94))]
-    for dz, rr in ((0.015, 0.6), (0.001, 0.66), (-0.014, 0.6)):
-        vena.append(("veja", pot([T(0.012, 0.0072, -0.001), T(0.002, 0.006, dz * 0.55), T(-0.012, 0.004, dz)], rv * rr, rv * rr * 0.75)))
-    art = [("deblo", pot([T(L + 0.003, -0.0005, 0.007), T(L * 0.6, 0.0, 0.0065), T(0.017, 0.0005, 0.005)], ra, ra * 0.95))]
-    for dz, db in ((0.017, 0.002), (0.004, 0.0025), (-0.012, 0.002)):  # sprednja veja: segmentne arterije pred mehom
-        art.append(("veja", pot([T(0.02, 0.0005, 0.0052), T(0.008, 0.0015, 0.004 + dz * 0.4), T(-0.01, db, dz)], ra * 0.62, ra * 0.45)))
-    art.append(("veja", pot([T(0.02, 0.0005, 0.0052), T(0.01, -0.005, 0.006), T(-0.008, -0.009, 0.004)], ra * 0.6, ra * 0.42)))  # zadnja veja za mehom
+    if nast.get("v_stebre", True):
+        # krog m1: žili v prerezu ostaneta celi (ledvica.json: brezReza) kot na učnem modelu: debli ležita pred ravnino
+        # reza (vena spredaj, arterija za njo in više), v hilusu zavijeta nazaj in se potopita v maščobo ledvičnega
+        # sinusa (konec za ravnino reza; veje v sinusu nariše senčilnik reza kot prerezane žile v maščobi). Prej je
+        # ravnina deblo arterije prerezala zunaj ledvice (obroč v zraku), vene v rezu ni bilo; cele veje pred mehom
+        # (poskus) so zakrile čašice.
+        yr = sum(p.y for p in pap) / len(pap) + cfg.get("meh_ravnina", 0.0004)
+        C = pc.lerp(hc, 0.45)
+        def Tp(a, f, c):  # medialno a, pred ravnino f, navzgor c
+            x = hc + m * a + gor * c; x.y = yr - f; return x
+        vena = [("deblo", pot([Tp(L, 0.0080, 0.0075), Tp(L * 0.6, 0.0082, 0.0075), Tp(0.016, 0.0074, 0.0075), Tp(0.008, 0.0030, 0.008), Tp(0.001, -0.0055, 0.0085)], rv, rv * 0.9))]
+        art = [("deblo", pot([Tp(L + 0.003, 0.0030, 0.0125), Tp(L * 0.6, 0.0032, 0.012), Tp(0.015, 0.0030, 0.012), Tp(0.008, 0.0005, 0.0125), Tp(0.001, -0.005, 0.013)], ra, ra * 0.9))]
+        cfg["_zile_brez_odmika"] = True
+    else:
+        vena = [("deblo", pot([T(L, 0.0075, -0.001), T(L * 0.55, 0.0078, -0.002), T(0.008, 0.007, -0.001)], rv, rv * 0.94))]
+        for dz, rr in ((0.015, 0.6), (0.001, 0.66), (-0.014, 0.6)):
+            vena.append(("veja", pot([T(0.012, 0.0072, -0.001), T(0.002, 0.006, dz * 0.55), T(-0.012, 0.004, dz)], rv * rr, rv * rr * 0.75)))
+        art = [("deblo", pot([T(L + 0.003, -0.0005, 0.007), T(L * 0.6, 0.0, 0.0065), T(0.017, 0.0005, 0.005)], ra, ra * 0.95))]
+        for dz, db in ((0.017, 0.002), (0.004, 0.0025), (-0.012, 0.002)):  # sprednja veja: segmentne arterije pred mehom
+            art.append(("veja", pot([T(0.02, 0.0005, 0.0052), T(0.008, 0.0015, 0.004 + dz * 0.4), T(-0.01, db, dz)], ra * 0.62, ra * 0.45)))
+        art.append(("veja", pot([T(0.02, 0.0005, 0.0052), T(0.01, -0.005, 0.006), T(-0.008, -0.009, 0.004)], ra * 0.6, ra * 0.42)))  # zadnja veja za mehom
     # žila ne sme v ledvični meh ali sečevod (v peki bi tam nastala črna lisa, v prerezu prekrivanje): točke osi, ki so
     # bližje od polmera + 1,2 mm, se odmaknejo (vena in sprednje veje naprej, zadnja veja arterije nazaj), nato glajenje
     ovire = [r[1] for r in osnovni if r[2] == "meh" or "Ureter" in r[0]]
-    if ovire:
+    if ovire and not cfg.get("_zile_brez_odmika"):
         ovir = Notranjost(ovire)
         def odmakni(P, R, smer):
             P = [p.copy() for p in P]
