@@ -140,19 +140,37 @@ def ocesne_misice(osnovni, cfg, tmp):
     skripec = najdi(r"^Trochlea")
     T = _tocke(skripec[0][1]).mean(0) if skripec else None
     if skripec:
-        # krog 7 (»škripec lebdi«): škripec je v naravi pritrjen na čelnico (fovea trochlearis). Kosti v modelu ni, zato
-        # dobi kratek vezivni pecelj proti stropu očnice (navzven od osi zrkla), raven odrezan – pritrdišče se bere.
+        # krog 8 (ocena krog 7: »škripec z lijakastim pecljem je videti kot žebljiček za golf«): škripec Z-Anatomy je
+        # vlaknasto-hrustančna zanka v obliki črke U, katere odprti konci so v naravi pritrjeni na čelnico (fovea
+        # trochlearis). Kosti v modelu ni, zato konca zanke povežemo s tanko ovalno vezivno ploščico (pokostnica ob
+        # jamici), ravno odrezano kot prerez živca – pritrdišče se bere, nič ne lebdi kot lijak.
         me = skripec[0][1]; Pt = _tocke(me)
-        d = (T - G) - os_ * ((T - G) @ os_); d /= np.linalg.norm(d)
-        vel = float(np.linalg.norm(Pt - T, axis=1).max())
-        r1, r2, dol = 0.45 * vel, 0.8 * vel, 1.1 * vel
+        so_ = najdi(r"^Superior oblique muscle")
+        if so_:  # os zanke = smer kite zgornje poševne mišice skozi škripec
+            Ps = _tocke(so_[0][1]); bl = Ps[np.linalg.norm(Ps - T, axis=1) < 0.006]
+            ax = np.linalg.svd(bl - bl.mean(0), full_matrices=False)[2][0] if len(bl) > 10 else os_
+        else:
+            ax = os_
+        ax = ax / np.linalg.norm(ax)
+        Q = Pt - T; Q = Q - np.outer(Q @ ax, ax)  # točke zanke v ravnini pravokotno na os
+        e1 = Q[np.argmax(np.linalg.norm(Q, axis=1))]; e1 /= np.linalg.norm(e1); e2 = np.cross(ax, e1)
+        kot = np.sort(np.arctan2(Q @ e2, Q @ e1)); vrz = np.diff(np.r_[kot, kot[0] + 2 * np.pi]); j = int(np.argmax(vrz))
+        km = kot[j] + vrz[j] / 2; d = e1 * math.cos(km) + e2 * math.sin(km)  # sredina odprtine U
+        dz = (T - G) - os_ * ((T - G) @ os_); dz /= np.linalg.norm(dz)
+        if d @ dz < -0.2:  # odprtina mora gledati proč od zrkla (proti steni očnice)
+            d = dz
+        h_ = Pt @ d; dol_ = Pt @ ax; pr = Pt @ np.cross(ax, d)
+        sir = float(pr.max() - pr.min()); vis = float(dol_.max() - dol_.min())
+        deb = 0.0006
         bm = bmesh.new(); bm.from_mesh(me)
-        z = Vector(d); x = z.orthogonal().normalized(); y = z.cross(x)
-        M = Matrix((x, y, z)).transposed().to_4x4(); M.translation = Vector(T + d * (0.25 * vel + dol / 2))
-        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=True, segments=20, radius1=r1, radius2=r2, depth=dol, matrix=M)
+        z = Vector(d); x = Vector(np.cross(ax, d)); y = Vector(ax)
+        M = Matrix((x, y, z)).transposed().to_4x4()
+        M.translation = Vector(T + d * (float(h_.max() - T @ d) - 0.0002 + deb / 2) + ax * float((dol_.max() + dol_.min()) / 2 - T @ ax))
+        M = M @ Matrix.Diagonal((0.5 * sir * 1.25, 0.5 * vis * 1.35, 1.0, 1.0))
+        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=28, radius1=1.0, radius2=0.97, depth=deb, matrix=M)
         bm.to_mesh(me); bm.free(); me.update()
         for p_ in me.polygons: p_.use_smooth = True
-        print(f"[oko] škripec: velikost {vel * 1000:.1f} mm, pecelj {dol * 1000:.1f} mm proti stropu očnice")
+        print(f"[oko] škripec: zanka {sir * 1000:.1f} × {vis * 1000:.1f} mm, ploščica ob odprtini (kot proti steni očnice {math.degrees(math.acos(np.clip(d @ dz, -1, 1))):.0f}°)")
 
     def posevna(row, podlaga):
         """Poševna mišica na površino podlage; konec stanjšan v kito."""
@@ -168,7 +186,10 @@ def ocesne_misice(osnovni, cfg, tmp):
         # konec poševne mišice je širok list: zgornja ploskev ≥ 0,6 mm nad podlago, da poenostavljena mreža telefona
         # (dolgi trikotniki) nikjer ne seka beločnice (nazobčan rob narastišča)
         hn = np.where(vrh & (gd < 0.02), np.maximum(hn, EPS + 0.0006), hn)
-        hn = np.where(vrh, hn, _spodaj(hn))
+        # krog 8 (»nazobčan rob mišice«): zgornja/spodnja ploskev ni več ostra izbira po normali (oglišča roba so
+        # skakala gor in dol = žagast rob), ampak zvezen prehod po kotu normale
+        t_vrh = _gladko((_normale(me) * u).sum(1), -0.1, 0.6)
+        hn = t_vrh * hn + (1 - t_vrh) * _spodaj(hn)
         ima = ~np.isnan(rs)
         rn = np.where(ima, rs + hn, r)
         rn = np.where(ima & vrh, np.maximum(_zgladi(rn, robovi(me), ima & vrh, 4), rs + EPS), rn)
@@ -224,7 +245,17 @@ def ocesne_misice(osnovni, cfg, tmp):
         hn = np.where(vrh & (lok < 0.02), np.maximum(hn, EPS + KITA_DEB * (0.25 + 0.75 * _gladko(lok, 0.0, 0.002)) * rob), hn)
         osn = np.where(np.isnan(rs), np.where(np.isnan(rs_z), R0, rs_z), rs)
         w = w_az * _gladko(0.012 - h0, 0.0, 0.006)
-        hn = np.where(vrh, hn, _spodaj(hn))
+        # krog 8 (ocena krog 7: »stopničast, naguban rob zunanje preme nad narastiščem spodnje poševne«): podlaga pod
+        # zgornjo ploskvijo je gladka ovojnica (napeta odeja čez rob spodnje mišice), ne stopnica po grobem obrisu
+        vrh0 = (_normale(me) * u).sum(1) > 0.3
+        ovoj = osn.copy(); m_ov = vrh0 & (w > 0.05)
+        for _ in range(40):
+            ovoj = np.maximum(osn, _zgladi(ovoj, robovi(me), m_ov, 1))
+        osn = np.where(vrh0, ovoj, osn)
+        # krog 8 (»nazobčan rob mišice«): zgornja/spodnja ploskev ni več ostra izbira po normali (oglišča roba so
+        # skakala gor in dol = žagast rob), ampak zvezen prehod po kotu normale
+        t_vrh = _gladko((_normale(me) * u).sum(1), -0.1, 0.6)
+        hn = t_vrh * hn + (1 - t_vrh) * _spodaj(hn)
         rn = r + w * ((osn + hn) - r)
         rn0 = rn
         rn = np.maximum(_zgladi(rn, robovi(me), vrh & (w > 0.05), 14), rn0 - 0.00035)  # gube ob prečkanju poševne mišice (krog 7: 6 → 14)

@@ -111,7 +111,7 @@
    "mreznicaZile": {
     "disk": [
      0.0059,
-     0.0,
+     0,
      0.0043
     ],
     "sredisce": [
@@ -564,10 +564,10 @@
    }
   ]
  },
- "velikost": 0.0824,
+ "velikost": 0.0821,
  "trikotniki": {
-  "racunalnik": 164782,
-  "telefon": 52604
+  "racunalnik": 164780,
+  "telefon": 52612
  },
  "luci": [
   {

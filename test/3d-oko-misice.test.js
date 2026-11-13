@@ -73,7 +73,11 @@ test("oko_misice.py: mere narastišč in kit iz literature, korak v izvozu", () 
   const izvoz = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "izvozi-organe.py"), "utf8");
   assert.match(izvoz, /dodaj=\["ocesne_misice"\]/);
   assert.match(fs.readFileSync(path.join(KOREN, "scripts", "atlas", "peka.py"), "utf8"), /r\.get\("kita"\)/);
-  // krog 7: kita stanjšana proti robovoma (brez temne črte), škripec s pecljem proti stropu očnice
+  // krog 7: kita stanjšana proti robovoma (brez temne črte); škripec pritrjen (krog 8: ploščica namesto peclja)
   assert.match(src, /rob = 0\.22 \+ 0\.78 \* \(1 - _gladko\(np\.abs\(s2\) \/ hw, 0\.5, 1\.0\)\)/);
   assert.match(src, /bmesh\.ops\.create_cone\(bm, cap_ends=True/);
+  // krog 8: ploščica ob odprtini zanke škripca (ne lijakast pecelj), gladka podlaga in zvezen prehod zgornje/spodnje ploskve
+  assert.match(src, /kot = np\.sort\(np\.arctan2\(Q @ e2, Q @ e1\)\)/);
+  assert.match(src, /ovoj = np\.maximum\(osn, _zgladi\(ovoj, robovi\(me\), m_ov, 1\)\)/);
+  assert.equal((src.match(/hn = t_vrh \* hn \+ \(1 - t_vrh\) \* _spodaj\(hn\)/g) || []).length, 2);
 });
