@@ -25,7 +25,7 @@ export function zgradi(THREE, ctx = {}) {
   const v3 = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 
   // ---------- obe celici ----------
-  const Z = zgradiZivalsko(THREE, { kakovost: ctx.kakovost, gibanje: ctx.gibanje });
+  const Z = zgradiZivalsko(THREE, { kakovost: ctx.kakovost, gibanje: ctx.gibanje, brezFaks: true });
   const R = zgradiRastlinsko(THREE, { kakovost: ctx.kakovost, gibanje: ctx.gibanje, lahka: true });
   const delZ = Object.fromEntries(Z.deli.map((d) => [d.id, d]));
   const delR = Object.fromEntries(R.deli.map((d) => [d.id, d]));

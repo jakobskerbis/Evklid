@@ -252,13 +252,21 @@ export function zgradi(THREE, ctx = {}) {
   const brcice = kit.vlakna(brcT, 0.0042, "#ffe08a", { sij: 0.3, seg: hi ? 24 : 10, rad: hi ? 5 : 3 });
 
   // ---------- repna cevka (9 nm, obroči gp19 s korakom 4 nm) ----------
+  // Cevka ima ozko režo proti gledalcu (kot okno v glavi), da se med vbrizgavanjem vidi DNK v njej (kjer je cevka zunaj
+  // plašča: v prerezu stene bakterije).
   const yN = yP - 0.055, yB = -0.47, CEV = 0.48;
-  const cevG = new THREE.CylinderGeometry(0.025, 0.025, CEV, q(16), Math.round(CEV / (hi ? 0.0057 : 0.0113)), false).translate(0, yN - CEV / 2, 0);
+  const RE = 1.3, thK = Math.atan2(KAM.x, KAM.z) + RE / 2, thL = Math.PI * 2 - RE;
+  const cevG = new THREE.CylinderGeometry(0.025, 0.025, CEV, q(16), Math.round(CEV / (hi ? 0.0057 : 0.0113)), true, thK, thL).translate(0, yN - CEV / 2, 0);
   deformiraj(cevG, (v) => { const k = 1 + 0.1 * Math.cos(((v.y - yN) / 0.0226) * Math.PI * 2); v.x *= k; v.z *= k; });
-  const cevka = new THREE.Mesh(zdruzi([cevG, new THREE.CylinderGeometry(0.025, 0.01, 0.028, q(16), 1).translate(0, yN - CEV - 0.014, 0)]), mat("#eef2ff", { roughness: 0.3 }));
+  const YC = yN - CEV - 0.028; // konica cevke (v koordinatah glave)
+  const cevka = new THREE.Mesh(zdruzi([cevG, new THREE.CylinderGeometry(0.025, 0.012, 0.028, q(16), 1, true, thK, thL).translate(0, yN - CEV - 0.014, 0)]), mat("#eef2ff", { roughness: 0.3, side: THREE.DoubleSide }));
+  // DNK na poti: od portala v vratu skozi vso cevko do konice (riše se le del, ki je trenutno v cevki)
+  const dnkCevKr = new THREE.LineCurve3(V(0, dnkTocke[0].y, 0), V(0, YC + 0.004, 0));
+  const segCev = Math.round(dnkCevKr.getLength() / (hi ? 0.006 : 0.012));
+  const dnkCev = new THREE.Mesh(new THREE.TubeGeometry(dnkCevKr, segCev, 0.0068, RADD, false), dnkMat);
 
   const glavaG = new THREE.Group();
-  for (const m of [glava, glavaIn, glavaRez, glavaPok, hexM, hexP, pentM, dnk, sredica, vrat, brcice, cevka]) { m.position.y = YH; glavaG.add(m); }
+  for (const m of [glava, glavaIn, glavaRez, glavaPok, hexM, hexP, pentM, dnk, sredica, dnkCev, vrat, brcice, cevka]) { m.position.y = YH; glavaG.add(m); }
   group.add(glavaG);
 
   // ---------- krčljivi plašč: 23 obročev po 6 podenot gp18 (138 beljakovin), vsak obroč zasukan za 17° ----------
@@ -274,9 +282,13 @@ export function zgradi(THREE, ctx = {}) {
 
   // ---------- bazalna plošča: šest klinov okoli pesta z iglo (gp5), zatiči za dolga vlakna ----------
   const aK = Math.atan2(KAM.z, KAM.x);
-  const bg = [new THREE.CylinderGeometry(0.13, 0.115, 0.03, 6, 1).rotateY(Math.PI / 2 - aK - Math.PI / 6).translate(0, yB - 0.035, 0), new THREE.CylinderGeometry(0.052, 0.045, 0.05, q(16)).translate(0, yB - 0.03, 0),
-    new THREE.CylinderGeometry(0.012, 0.004, 0.06, q(10)).translate(0, yB - 0.085, 0)];
-  const bb = ["#b8452f", "#d65a3e", "#ffd0a0"];
+  const bg = [new THREE.CylinderGeometry(0.13, 0.115, 0.03, 6, 1).rotateY(Math.PI / 2 - aK - Math.PI / 6).translate(0, yB - 0.035, 0), new THREE.CylinderGeometry(0.052, 0.045, 0.05, q(16)).translate(0, yB - 0.03, 0)];
+  const bb = ["#b8452f", "#d65a3e"];
+  // igla (gp5/gp27) sedi na konici cevke: ob krčenju jo cevka potisne skozi zunanjo membrano, v periplazmi (ob
+  // peptidoglikanu, ki ga gp5 razgradi) se odcepi in razpade
+  const YI = yB - 0.055; // vrh igle v mirovanju (pod pestom plošče)
+  const igla = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.004, 0.06, q(10)).translate(0, -0.03, 0), mat("#ffd0a0"));
+  igla.position.y = YI;
   const vog = [];
   for (let k = 0; k < 6; k++) {
     const a = aK + Math.PI / 6 + (k / 6) * Math.PI * 2, c = Math.cos(a), s = Math.sin(a);
@@ -286,7 +298,7 @@ export function zgradi(THREE, ctx = {}) {
     bg.push(kepaP(V(c * 0.115, yB - 0.058, s * 0.115), 0.018, k + 20)); bb.push("#e8603e"); // gp11 (sidrišče kratkega vlakna)
   }
   const plosca = new THREE.Mesh(zdruzi(bg, bb), mat(0xffffff, { vertexColors: true }));
-  group.add(plosca);
+  group.add(plosca, igla);
 
   // ---------- repna vlakna: dolga (gp34 + kolence gp35 + gp36/37 s konico), kratka (gp12) ----------
   const YS = -0.565; // vrh bakterijske stene
@@ -376,14 +388,15 @@ export function zgradi(THREE, ctx = {}) {
   const tGlava = najblizja(hexOst.map((e) => e.p), (x) => x.y > 0.12) || hexOst[0].p;
   const dGl = del("glava", "Glava (kapsida)", "Beljakovinski ovoj v obliki podaljšanega dvajsetploskovca iz 155 šesterčkov (kapsomer) in 11 peterčkov v ogliščih; v dvanajstem oglišču je vrat. Varuje DNK.", "#6f8cff",
     [glava, glavaIn, glavaRez, glavaPok, hexM, hexP, pentM], [tGlava.x, tGlava.y + YH, tGlava.z]);
-  const dDnk = del("dnk", "DNK", "Dedni zapis virusa: dolga dvojna vijačnica (okoli 169 000 parov baz), tesno navita v glavi; ob okužbi potuje skozi rep v bakterijo.", B.dnk, [dnk, sredica, dnkB], [0, YH, 0]);
+  const dDnk = del("dnk", "DNK", "Dedni zapis virusa: dolga dvojna vijačnica (okoli 169 000 parov baz), tesno navita v glavi; ob okužbi potuje skozi rep v bakterijo.", B.dnk, [dnk, sredica, dnkCev, dnkB], [0, YH, 0]);
+  dDnk.ovoj = false; // DNK ni ovoj nobenega dela (pregledovalnik je ne skrije, ko je izbran drug del)
   const dVr = del("vrat", "Vrat z ovratnikom", "Kratek vrat pod glavo, ki glavo povezuje z repom; skozi portal v njem DNK zapusti glavo.", "#8ea0ff", [vrat], [0.05, yP - 0.036 + YH, 0.07]);
   const tBr = brcT.map((c) => c.getPointAt(0.6)).sort((a, b) => b.dot(KAM) - a.dot(KAM))[0];
   const dBr = del("brcice", "Brčice (fibritin)", "Šest tankih vlaken na ovratniku; pomagajo pri sestavljanju repnih vlaken in jih zadržijo, dokler virus ne najde bakterije.", "#ffe08a", [brcice], [tBr.x, tBr.y + YH, tBr.z]);
   const tGl = dGl.tocka.slice(), tVr = dVr.tocka.slice(), tBrc = dBr.tocka.slice();
   const dPlasc = del("plasc", "Krčljivi plašč repa", "Ovoj iz 23 obročev s po šestimi beljakovinami, ki se vijejo okoli repne cevke; ob okužbi se skrči kot vzmet in potisne cevko skozi steno bakterije.", "#1fae96", [plasc], [0, 0, 0]);
   const dCev = del("cevka", "Repna cevka", "Votla cevka v repu, skozi katero DNK potuje iz glave v bakterijo; vidna je, ko se plašč skrči.", "#eef2ff", [cevka], [0, 0, 0]);
-  del("bazalna-plosca", "Bazalna plošča", "Šesterokotna plošča na koncu repa; ko vlakna najdejo bakterijo, sproži krčenje plašča. Igla v njenem središču načne steno bakterije.", "#ff7a5c", [plosca],
+  del("bazalna-plosca", "Bazalna plošča", "Šesterokotna plošča na koncu repa; ko vlakna najdejo bakterijo, sproži krčenje plašča. Igla v njenem središču prebode zunanjo membrano, njen encim pa načne plast peptidoglikana.", "#ff7a5c", [plosca, igla],
     V(Math.cos(aK) * 0.13, yB - 0.03, Math.sin(aK) * 0.13).toArray());
   const tv = V(Math.cos(vog[0]) * 0.52, (-0.29 + YS) / 2, Math.sin(vog[0]) * 0.52);
   del("dolga-vlakna", "Dolga repna vlakna", "Šest dolgih, v kolenu zalomljenih vlaken, s katerimi virus otipa bakterijo in prepozna beljakovine ter sladkorje na njeni površini.", "#ffc94a", [dolga], tv.toArray());
@@ -395,12 +408,19 @@ export function zgradi(THREE, ctx = {}) {
   const vsiDeli = deli.slice();
 
   // ---------- vbrizgavanje ----------
-  const L0 = YH + yN - yB, LK = 0.205, idxDnk = dnkGeo.index.count, nRad = RADD * 6;
-  let v = 0;
+  // 0 … 0,5: plašč se skrči (krajši in širši), glava s cevko se spusti, cevka prebode steno do celične membrane.
+  // 0,5 … 1: DNK zapušča glavo skozi portal, potuje po cevki (sprednji konec doseže konico, ko je izpraznjenih ~10 %
+  // glave) in se v citoplazmi nabira; ob koncu zapusti cevko še zadnji konec. Tako je DNK vedno nekje vidna.
+  const L0 = YH + yN - yB, LK = 0.205, idxDnk = dnkGeo.index.count, nRad = RADD * 6, idxCev = dnkCev.geometry.index.count;
+  const F = 0.1; // delež poti, ko je DNK že v cevki, v bakteriji pa še ne (in na koncu obratno)
+  const med = (x) => Math.min(1, Math.max(0, x));
+  let v = 0, ddZdaj = 0;
   function nastavi(x) {
     v = Math.min(1, Math.max(0, +x || 0));
     nadzor[0].vrednost = v;
-    const a = gladko(0, 0.5, v), dd = gladko(0.5, 1, v);
+    // DNK krene takoj, ko je plašč skrčen (brez mrtvega dela drsnika), in teče enakomerno
+    const a = gladko(0, 0.5, v), dd = med((v - 0.5) / 0.5);
+    ddZdaj = dd;
     const D = a * (L0 - LK), L = L0 - D;
     glavaG.position.y = -D;
     const rs = 1 + 0.36 * a;
@@ -411,22 +431,36 @@ export function zgradi(THREE, ctx = {}) {
     }
     plasc.instanceMatrix.needsUpdate = true;
     plasc.computeBoundingSphere();
-    const zc = Math.floor(dd * dnkSeg) * nRad;
+    // igla sedi na konici cevke (vmesni del je skrit v pestu plošče) in se spušča skupaj z njo; v periplazmi razpade
+    const yIg = YI - D;
+    igla.position.y = yIg;
+    const ki = 1 - gladko(-0.59, -0.63, yIg);
+    igla.scale.setScalar(Math.max(0.001, ki));
+    igla.visible = ki > 0.02;
+    // DNK v glavi (od portala naprej), v cevki in v bakteriji
+    const hd = med(dd / (1 - F)), cd = med((dd - F) / (1 - F));
+    const zc = Math.floor(hd * dnkSeg) * nRad;
     dnk.geometry.setDrawRange(zc, Math.max(0, idxDnk - zc));
     dnk.visible = zc < idxDnk;
-    const ks = Math.max(0.001, 1 - gladko(0.55, 0.95, dd));
+    // gosta sredica se manjša sorazmerno z izpraznjenim delom glave (prej je stala do polovice in glava je bila videti polna)
+    const ks = Math.max(0.001, Math.cbrt(1 - hd)); // prostornina sredice sorazmerna z DNK, ki je še v glavi
     sredica.scale.set(ks, ks, ks);
     sredica.visible = ks > 0.01;
-    dnkB.geometry.setDrawRange(0, Math.floor(dd * notSeg) * nRad);
-    dnkB.visible = dd > 0.005;
+    const c0 = Math.floor(med((dd - (1 - F)) / F) * segCev) * nRad, c1 = Math.floor(med(dd / F) * segCev) * nRad;
+    dnkCev.geometry.setDrawRange(c0, Math.max(0, Math.min(idxCev, c1) - c0));
+    dnkCev.visible = c1 > c0 && dd > 0.002 && dd < 0.998;
+    dnkB.geometry.setDrawRange(0, Math.floor(cd * notSeg) * nRad);
+    dnkB.visible = cd > 0.005;
     dPlasc.tocka = [Math.cos(az + 2) * 0.07 * rs, yB + L * 0.6, Math.sin(az + 2) * 0.07 * rs].map((x) => Math.round(x * 1000) / 1000);
     dCev.tocka = (a > 0.3 ? [KAM.x * 0.03, -0.66, KAM.z * 0.03] : [0.02, yB + 0.05, 0.03]);
-    const kj = dd < 0.995 ? dnkTocke[Math.min(dnkTocke.length - 1, Math.floor(dd * dnkTocke.length + dnkTocke.length * 0.02))] : null;
-    dDnk.tocka = kj ? [kj.x, kj.y + YH - D, kj.z] : vp[Math.floor(vp.length / 2)].toArray();
+    const kj = hd < 0.995 ? dnkTocke[Math.min(dnkTocke.length - 1, Math.floor(hd * dnkTocke.length + dnkTocke.length * 0.02))] : null;
+    dDnk.tocka = kj ? [kj.x, kj.y + YH - D, kj.z] : cd > 0.005 ? vp[Math.floor(vp.length / 2)].toArray() : [0, -0.66, 0];
     dGl.tocka = [tGl[0], tGl[1] - D, tGl[2]]; dVr.tocka = [tVr[0], tVr[1] - D, tVr[2]]; dBr.tocka = [tBrc[0], tBrc[1] - D, tBrc[2]];
     deli = vsiDeli.filter((x) => x !== dCev || a > 0.05);
   }
-  const faza = () => (v < 0.02 ? "Virus je pritrjen na bakterijo" : v < 0.5 ? "Plašč repa se krči, cevka prebija steno" : v < 0.98 ? "DNK potuje iz glave v bakterijo" : "Vsa DNK je v bakteriji, glava je prazna");
+  // Besedilo sledi istim mejam kot slika: krčenje do 0,5, nato DNK (glava → cevka → bakterija), konec, ko je tudi cevka prazna.
+  const faza = () => (v < 0.02 ? "Virus je z repnimi vlakni pritrjen na bakterijo" : v <= 0.5 ? "Plašč repa se krči, cevka prebija steno"
+    : ddZdaj < 0.998 ? (ddZdaj < 1 - F ? "DNK potuje iz glave skozi repno cevko v bakterijo" : "Zadnji del DNK potuje skozi cevko v bakterijo") : "Vsa DNK je v bakteriji, glava je prazna");
   const zaprta = (x) => { nadzor[2].vrednost = x; glavaPok.visible = hexP.visible = x === "zaprta"; };
   const nadzor = [
     { tip: "drsnik", id: "vbrizgavanje", oznaka: "Vbrizgavanje", min: 0, max: 1, korak: 0.01, vrednost: 0, ob: nastavi },

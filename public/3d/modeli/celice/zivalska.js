@@ -515,10 +515,11 @@ export function zgradi(THREE, ctx = {}) {
   del("mesicki", "Transportni mešički", "Mehurčki, ki prenašajo beljakovine od Golgijevega aparata do celične membrane in jih izločijo iz celice.", B.mesicki, [mesi], poti[0].a.clone().lerp(poti[0].b, 0.6).toArray());
 
   // ---------- nadzor ----------
+  let jeCela = false, jeFaks = false, vidnostFaks = () => {};
   const nadzor = [
     {
       tip: "izbira", id: "prikaz", oznaka: "Prikaz", moznosti: [["prerez", "Prerez"], ["cela", "Cela celica"]], vrednost: "prerez",
-      ob: (v) => { const cela = v === "cela"; pokrov.visible = cela; beljP.visible = cela; jPokrov.visible = cela; memRob.visible = !cela; },
+      ob: (v) => { const cela = v === "cela"; pokrov.visible = cela; beljP.visible = cela; jPokrov.visible = cela; memRob.visible = !cela; jeCela = cela; vidnostFaks(); },
     },
   ];
   if (ctx.zacetek && ctx.zacetek.prikaz) { nadzor[0].vrednost = ctx.zacetek.prikaz; nadzor[0].ob(ctx.zacetek.prikaz); }
@@ -655,8 +656,222 @@ export function zgradi(THREE, ctx = {}) {
     citoskelet: { tex: null },
     mesicki: { rf: 50, k: 0.6 },
   });
+  // ---------- podrobnosti za faks (stikalo »Podrobnosti za faks«; izklopljeno je celica enaka kot za OŠ in SŠ) ----------
+  // Zgrajeno po poliranju in z lastnim zaporedjem naključnih števil, zato se osnovna celica ne spremeni.
+  // Viri: Alberts in sod., Molecular Biology of the Cell, 7. izd. (2022); Lodish in sod., Molecular Cell Biology, 9. izd. (2021).
+  // primerjava.js (ctx.brezFaks) stikala nima: faks deli se tam ne zgradijo
+  const fk = ctx.brezFaks ? null : faksPodrobnosti();
+  if (fk) nadzor.push(fk.stikalo);
   // stikalo »Barve kot v učbeniku« (po poliranju, da shrani končne barve)
-  nadzor.push(V.barveUcbenika(deli));
+  const ucb = V.barveUcbenika(deli);
+  nadzor.push(ucb);
+  if (fk && ctx.zacetek && ctx.zacetek.faks) fk.stikalo.ob(true);
+
+  function faksPodrobnosti() {
+    let s2 = 4242;
+    const r2 = () => ((s2 = (s2 * 16807) % 2147483647) - 1) / 2147483646;
+    const v3 = (k) => new THREE.Vector3(r2() - 0.5, r2() - 0.5, r2() - 0.5).multiplyScalar(k);
+    const fd = []; // novi deli (za poliranje)
+    const nov = (id, ime, opis, barva, meshes, tocka, za) => { const d = { id, ime, opis, barva, meshes, tocka, za }; fd.push(d); return d; };
+    const zunajIzreza = (p, m = 0.04) => !vIzrezu(p, { x: m, y: -m, z: -m });
+
+    // jedrna lamina: mreža vlaken tik pod notranjo jedrno membrano (vidna skozi odprti osmi del jedra)
+    const lamV = [];
+    for (let p = 0; lamV.length < (hi ? 150 : 40) && p < 30000; p++) {
+      const d = v3(2);
+      if (d.length() > 1 || d.length() < 0.1) continue;
+      d.normalize();
+      if (!zunajIzreza(d, 0.06) || lamV.some((x) => x.distanceTo(d) < (hi ? 0.15 : 0.3))) continue;
+      lamV.push(d);
+    }
+    const naJedru = (d, k = 0.975) => d.clone().normalize().multiplyScalar(oblJ(d.clone().normalize()) * DJ * k).add(J);
+    const lamK = [], par = new Set();
+    lamV.forEach((a, i) => lamV.map((b, j) => [a.distanceTo(b), j]).filter(([, j]) => j !== i).sort((x, y) => x[0] - y[0]).slice(0, 3).forEach(([dd, j]) => {
+      const kl = Math.min(i, j) + "-" + Math.max(i, j);
+      if (par.has(kl) || dd > (hi ? 0.32 : 0.6)) return;
+      par.add(kl);
+      const m = a.clone().add(lamV[j]).multiplyScalar(0.5).add(v3(0.05));
+      lamK.push(new THREE.CatmullRomCurve3([naJedru(a), naJedru(m, 0.972), naJedru(lamV[j])]));
+    }));
+    const lamina = V.vlakna(lamK, 0.0024, B.lamina, { sij: 0.18, seg: hi ? 6 : 3, rad: 3 });
+
+    // intermediarni filamenti: valovite vrvi od jedrne ovojnice do membrane (vimentin, keratini)
+    const ifK = [];
+    for (let i = 0, p = 0; i < (hi ? 34 : 12) && p < 6000; p++) {
+      const d = v3(2).normalize();
+      const kon = d.clone().multiplyScalar(oblika(d) * DM * 0.965);
+      if (!zunajIzreza(kon, 0.03)) continue;
+      const d0 = d.clone().add(v3(0.7)).normalize();
+      const zac = J.clone().addScaledVector(d0, oblJ(d0) * 1.03);
+      const pts = [zac];
+      for (const u of [0.25, 0.5, 0.75]) {
+        const q2 = zac.clone().lerp(kon, u).add(v3(0.12));
+        if (q2.distanceTo(J) < RJ + 0.04) q2.sub(J).setLength(RJ + 0.04).add(J);
+        pts.push(q2);
+      }
+      pts.push(kon);
+      if (pts.slice(1).some((x) => predJedrom(x, 0.95))) continue;
+      ifK.push(new THREE.CatmullRomCurve3(pts));
+      i++;
+    }
+    const ifM = V.vlakna(ifK, 0.0032, B.intermediarni, { sij: 0.4, seg: hi ? 24 : 10, rad: hi ? 4 : 3 });
+
+    // porni kompleks: obroč z osmimi enakimi podenotami (osemkratna simetrija); le pri visoki kakovosti
+    const poreGeo = pore.geometry;
+    const poreFaks = new THREE.TorusGeometry(0.016, 0.0062, 4, 16);
+    {
+      const p = poreFaks.attributes.position, v = new THREE.Vector3(), c = new THREE.Vector3();
+      for (let i = 0; i < p.count; i++) {
+        v.fromBufferAttribute(p, i);
+        const a = Math.atan2(v.y, v.x);
+        c.set(Math.cos(a) * 0.016, Math.sin(a) * 0.016, 0);
+        v.sub(c).multiplyScalar(0.7 + 0.5 * (0.5 + 0.5 * Math.cos(8 * a))).add(c);
+        p.setXYZ(i, v.x, v.y, v.z);
+      }
+      poreFaks.computeVertexNormals();
+    }
+    // pri nizki kakovosti dobijo ribosomi osmerec namesto dvajsetca (prostor za faks dele v proračunu trikotnikov)
+    const ribGeoF = new THREE.OctahedronGeometry(0.0074, 0).scale(1, 0.82, 1.12);
+
+    // glikokaliks: kratke razvejane verige sladkorjev nad zunanjo stranjo membrane (točke, brez trikotnikov)
+    function verige(mesh, n) {
+      const out = [];
+      for (const t of V.posej(mesh, n)) {
+        const nn = t.n.clone().normalize(), tan = v3(1).cross(nn).normalize(), p = t.p.clone().addScaledVector(nn, 0.014);
+        const dol = 3 + Math.floor(r2() * 3);
+        for (let j = 0; j < dol; j++) {
+          out.push(p.clone());
+          if (j === 1 && r2() < 0.7) out.push(p.clone().addScaledVector(nn, 0.004).addScaledVector(tan, 0.0062), p.clone().addScaledVector(nn, 0.008).addScaledVector(tan, 0.0115));
+          p.addScaledVector(nn, 0.0058).addScaledVector(tan, (r2() - 0.5) * 0.004);
+        }
+      }
+      return out;
+    }
+    const gliM = V.pike(verige(memOut, hi ? 420 : 140), B.glikokaliks, 0.0058, 0.35, { lovi: true, prag: 0.005 });
+    const gliP = V.pike(verige(pokrov, hi ? 140 : 45), B.glikokaliks, 0.0058, 0.35, { lovi: true, prag: 0.005 });
+
+    // prostor za nove organele: stran od jedra z ER, mitohondrijev, Golgija in gladkega ER, ne pred jedrom
+    const zasedeno = [], M4 = new THREE.Matrix4();
+    for (const [m, rr] of [[liz.m, 0.046], [per.m, 0.034]]) for (let i = 0; i < m.count; i++) { m.getMatrixAt(i, M4); zasedeno.push({ p: new THREE.Vector3().setFromMatrixPosition(M4), r: rr }); }
+    zasedeno.push({ p: C.clone(), r: 0.08 });
+    const prosto = (p, rr) => p.length() < 0.78 && p.distanceTo(J) > RJ + 0.2 + rr && p.distanceTo(golgi.position) > 0.22 + rr &&
+      !mitPol.some((m) => m.p.distanceTo(p) < 0.12 + rr) && !vozl.some((c) => c.distanceTo(p) < 0.06 + rr) && !predJedrom(p, 1.0) &&
+      !zasedeno.some((z) => z.p.distanceTo(p) < z.r + rr + 0.03);
+    function mesto(rr, sito = () => true) {
+      for (let p = 0; p < 4000; p++) {
+        const c = v3(1.7);
+        if (prosto(c, rr) && sito(c)) { zasedeno.push({ p: c, r: rr }); return c; }
+      }
+      return null;
+    }
+
+    // endosomi: zgodnji (nepravilni mehurčki pod membrano) in multivezikularna telesa (pozni endosomi z notranjimi mešički)
+    const zgGeo = new THREE.SphereGeometry(0.026, q(14), q(10));
+    {
+      const p = zgGeo.attributes.position, v = new THREE.Vector3();
+      for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); v.x *= 1.35; v.multiplyScalar(1 + 0.18 * sum(v.x * 60 + 4, v.y * 60, v.z * 60)); p.setXYZ(i, v.x, v.y, v.z); }
+      zgGeo.computeVertexNormals();
+    }
+    const nZg = hi ? 7 : 4, zgM = new THREE.InstancedMesh(zgGeo, mat(B.endosom, { roughness: 0.25, clearcoat: 0.9 }), nZg);
+    const endT = [];
+    for (let i = 0; i < nZg; i++) {
+      const c = mesto(0.035, (x) => x.length() > 0.6) || new THREE.Vector3(0.5, -0.3, -0.3);
+      endT.push(c);
+      o.position.copy(c); o.rotation.set(r2() * 3, r2() * 3, r2() * 3); o.scale.setScalar(0.85 + r2() * 0.35); o.updateMatrix(); zgM.setMatrixAt(i, o.matrix);
+    }
+    o.scale.setScalar(1);
+    const nMvt = hi ? 3 : 2, mvtR = 0.05;
+    const mvtOvoj = new THREE.InstancedMesh(new THREE.SphereGeometry(mvtR, q(18), q(12)), V.steklo(mat(B.endosom), { a: 0.32, rob: B.endosom, rk: 1.2, rf: 30 }), nMvt);
+    const nNotr = hi ? 9 : 6;
+    const mvtNotr = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.0095, hi ? 1 : 0), mat(B.endosom, { roughness: 0.3, clearcoat: 0.8 }), nMvt * nNotr);
+    for (let i = 0, k2 = 0; i < nMvt; i++) {
+      const c = mesto(mvtR, (x) => x.length() > 0.45) || new THREE.Vector3(0.35, -0.45, 0.2);
+      endT.push(c);
+      o.position.copy(c); o.rotation.set(0, 0, 0); o.updateMatrix(); mvtOvoj.setMatrixAt(i, o.matrix);
+      for (let j = 0; j < nNotr; j++) {
+        const d = v3(2).normalize().multiplyScalar(mvtR * (0.25 + 0.45 * r2()));
+        o.position.copy(c).add(d); o.updateMatrix(); mvtNotr.setMatrixAt(k2++, o.matrix);
+      }
+    }
+
+    // klatrinske jamice in mešički: mnogokotne košarice tik pod membrano (nekatere še napol v membrani)
+    const nKl = hi ? 22 : 8;
+    const kl = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.017, hi ? 1 : 0), mat(B.klatrin, { roughness: 0.45, clearcoat: 0.5, flatShading: true }), nKl);
+    const klT = [];
+    for (let i = 0, p = 0; i < nKl && p < 5000; p++) {
+      const d = v3(2).normalize();
+      if (!zunajIzreza(d.clone().multiplyScalar(0.9), 0.05) || klT.some((x) => x.distanceTo(d) < 0.12)) continue;
+      const c = d.clone().multiplyScalar(oblika(d) * DM - (i % 5 < 2 ? 0.006 : 0.024));
+      klT.push(c.clone().normalize());
+      o.position.copy(c); o.rotation.set(r2() * 3, r2() * 3, r2() * 3); o.updateMatrix(); kl.setMatrixAt(i++, o.matrix);
+    }
+
+    // mitohondrijska DNA (krožne molekule) in mitoribosomi v matriksu, na istih mestih kot mitohondriji
+    const mtG = [], mtB = [], H = 0.12 / 2 + 0.055, aW = Math.atan2(mW.x, mW.z);
+    const vMito = (g, y, dx) => {
+      g.rotateY(aW).translate(mW.x * 0.012 + dx, y, mW.z * 0.012);
+      const p = g.attributes.position;
+      for (let i = 0; i < p.count; i++) { const t = p.getY(i) / H; p.setX(i, p.getX(i) + 0.032 * (t * t - 0.4)); }
+      return g;
+    };
+    for (const y of hi ? [-0.034, 0.034] : [0.0]) { mtG.push(vMito(new THREE.TorusGeometry(0.0075, 0.0017, 3, hi ? 12 : 8), y, -0.004)); mtB.push(B.dnk); }
+    for (const [y, dx] of hi ? [[0, 0.01], [0, -0.012], [-0.068, 0.004], [0.068, -0.004]] : [[0.034, 0], [-0.034, 0.004]]) {
+      mtG.push(vMito(new THREE.IcosahedronGeometry(0.0048, 0), y, dx)); mtB.push(B.ribosomi);
+    }
+    const mtd = new THREE.InstancedMesh(zdruzi(mtG, mtB), mat(0xffffff, { vertexColors: true, roughness: 0.3, clearcoat: 0.7, emissive: new THREE.Color(0x401020) }), nMit);
+    mtd.instanceMatrix.array.set(mit.instanceMatrix.array);
+
+    const mreze = [lamina, ifM, gliM, gliP, zgM, mvtOvoj, mvtNotr, kl, mtd];
+    group.add(...mreze);
+    const ime = (id) => deli.find((d) => d.id === id);
+    const tockaMesh = (m, i = 0) => { const M4 = new THREE.Matrix4(); m.getMatrixAt(i, M4); return new THREE.Vector3().setFromMatrixPosition(M4).toArray(); };
+    const mem = ime("membrana"), cito = ime("citoskelet");
+    const membrana = { ...mem, opis: "Tekoči mozaik: lipidni dvosloj (okoli 5 nm) iz fosfolipidov in holesterola, v katerem se beljakovine bočno premikajo. Zunanja in notranja plast imata različne lipide (asimetrija). V modelu je debelina povečana.", meshes: [memOut, memRob, pokrov] };
+    const beljD = nov("membranske-beljakovine", "Membranske beljakovine", "Integralne beljakovine (večinoma transmembranske) prečkajo dvosloj (kanali, prenašalci, receptorji), periferne so le pripete na površino. Opravljajo večino nalog membrane in prispevajo okoli polovico njene mase.", B.beljakovine, [beljM, beljP], mem.tocka);
+    const gliD = nov("glikokaliks", "Glikokaliks", "Plašč oligosaharidnih in polisaharidnih verig na glikoproteinih, proteoglikanih in glikolipidih, samo na zunanji strani membrane. Varuje celico in sodeluje pri prepoznavanju celic (npr. antigeni krvnih skupin AB0).", B.glikokaliks, [gliM, gliP], [0.3, -0.36, 0.9], "membrana");
+    const klD = nov("klatrinski-mesicki", "Klatrinske jamice in mešički", "Pri endocitozi z receptorji se klatrin z adaptorjem AP2 sestavi v košarico (okoli 100 nm), ki uvihne membrano; nastali mešiček odščipne beljakovina dinamin. Tako celica privzame npr. LDL s holesterolom.", B.klatrin, [kl], tockaMesh(kl), "glikokaliks");
+    const mtD = nov("mtdna", "Mitohondrijska DNA in ribosomi", "V matriksu je več kopij krožne mtDNA (pri človeku 16 569 baznih parov, 37 genov) in mitoribosomi bakterijskega tipa, zato nanje delujejo nekateri antibiotiki. Pri sesalcih imajo krajše rRNA in so 55S, ne 70S kot bakterijski.", B.dnk, [mtd], ime("mitohondrij").tocka, "mitohondrij");
+    const enD = nov("endosomi", "Endosomi", "Predelki za razvrščanje snovi iz endocitoze. Zgodnji endosom (pH okoli 6) vrne receptorje na membrano, nato dozori v pozni endosom z notranjimi mešički (multivezikularno telo), ki se zlije z lizosomom.", B.endosom, [zgM, mvtOvoj, mvtNotr], vidna(endT).toArray(), "lizosom");
+    const lamD = nov("jedrna-lamina", "Jedrna lamina", "Mreža intermediarnih filamentov iz laminov (A/C in B) pod notranjo jedrno membrano. Drži obliko jedra, nanjo so pripeti porni kompleksi in heterokromatin; mutacije lamina A povzročajo npr. progerijo.", B.lamina, [lamina], naJedru(lamV.find((d) => d.dot(POG) < -0.3) || lamV[0]).toArray(), "jedrna-ovojnica");
+    const mtbD = nov("mikrotubuli", "Mikrotubuli", "Votle cevke (25 nm) iz 13 protofilamentov dimerov α- in β-tubulina. Plus konec dinamično raste in se krči; po njih večina kinezinov nosi tovor proti plus koncu, dineini proti minus koncu (centrosomu).", B.citoskelet, [cito.meshes[0]], cito.tocka);
+    const aktD = nov("aktinski-filamenti", "Aktinski filamenti", "Dvojna vijačnica F-aktina (okoli 7 nm). Pod membrano tvorijo celično skorjo, ki določa obliko celice; z miozinom omogočajo krčenje, gibanje celice in citokinezo.", B.aktin, [cito.meshes[1]], akt[0].getPoint(0.5).toArray());
+    const ifD = nov("intermediarni-filamenti", "Intermediarni filamenti", "Vrvi (okoli 10 nm) iz vlaknatih beljakovin, značilnih za tip celice (keratini v epitelih, vimentin v vezivnih celicah, dezmin v mišicah). Nimajo ne polarnosti ne motorjev; celici dajejo natezno trdnost.", B.intermediarni, [ifM], ifK[0].getPoint(0.6).toArray());
+    const stikalo = V.ravenFaks(deli, {
+      mreze,
+      dodaj: [gliD, klD, mtD, enD, lamD],
+      zamenjaj: { membrana: [membrana, beljD], citoskelet: [mtbD, aktD, ifD] },
+      opisi: {
+        citoplazma: { ime: "Citoplazma (citosol)", opis: "Citosol z organeli. Citosol je gosta raztopina (beljakovine do okoli 30 % mase), v kateri potekajo glikoliza, sinteza beljakovin na prostih ribosomih in večina signalnih poti." },
+        jedro: { opis: "Hrani genom in ga loči od citoplazme: transkripcija in obdelava RNA (izrezovanje intronov) potekata v jedru, translacija pa zunaj, zato celica izražanje genov uravnava na več stopnjah." },
+        "jedrna-ovojnica": { ime: "Jedrna ovojnica in porni kompleksi", opis: "Dve membrani s perinuklearnim prostorom; zunanja je zvezna z zrnatim ER. Porni kompleks (okoli 120 nm, osemkratna simetrija, okoli 30 vrst nukleoporinov) prepušča majhne molekule, večje prenašajo importini in eksportini." },
+        nukleoplazma: { opis: "Notranjost jedra brez membranskih predelkov. Kromosomi v njej zasedajo ločena ozemlja, jedrce in druga jedrna telesca brez membrane pa zberejo beljakovine in RNA za posamezne naloge." },
+        kromatin: { opis: "DNA, navita na oktamere histonov v nukleosome (okoli vsakega oktamera 147 baznih parov). Rahli evkromatin se prepisuje, zgoščeni heterokromatin je utišan in pogosto leži ob jedrni lamini." },
+        jedrce: { opis: "Nastane ob genih za rRNA: RNA-polimeraza I prepisuje rRNA, ki se obdela in z ribosomskimi beljakovinami sestavi v podenoti 40S in 60S. Ti skozi jedrne pore odpotujeta v citoplazmo." },
+        "zrnati-er": { opis: "SRP pripelje ribosom, ki sintetizira beljakovino s signalnim zaporedjem, do translokona Sec61. Veriga med sintezo vstopa v lumen ali membrano ER, kjer se zvije, dobi disulfidne vezi in N-glikozilacijo." },
+        "gladki-er": { opis: "Cevke brez ribosomov: sinteza fosfolipidov in steroidov, razstrupljanje s citokromi P450 (posebej v jetrih), shranjevanje Ca²⁺ (v mišicah sarkoplazemski retikulum)." },
+        ribosomi: { ime: "Ribosomi (80S)", opis: "Ribosom 80S iz podenot 60S in 40S (rRNA in okoli 80 beljakovin). Prosti izdelujejo beljakovine za citosol, jedro in mitohondrije, vezani na ER za izločanje in membrane; več na eni mRNA tvori polisom." },
+        golgi: { opis: "Sklad cistern od cis strani (proti ER) do trans strani in trans-Golgijeve mreže (TGN). Beljakovine se na poti glikozilirajo, v TGN pa razvrstijo v mešičke za membrano, izločanje ali lizosome (manoza-6-fosfat)." },
+        mitohondrij: { opis: "Zunanja membrana s porini, notranja nagubana v kriste z dihalno verigo in ATP-sintazo; v matriksu potekata Krebsov cikel in β-oksidacija. Lastna DNA in ribosomi podpirajo endosimbiontsko teorijo." },
+        lizosom: { opis: "Več deset kislih hidrolaz deluje pri pH okoli 4,5–5, ki ga vzdržuje protonska črpalka V-ATPaza. Hidrolaze pridejo iz Golgija z oznako manoza-6-fosfat; lizosom razgradi snovi iz endocitoze in avtofagije." },
+        peroksisom: { opis: "Organel z eno membrano: oksidaze tvorijo H₂O₂, katalaza ga razgradi. Oksidira zelo dolge maščobne kisline (β-oksidacija) in sodeluje pri sintezi plazmalogenov; beljakovine uvaža iz citosola." },
+        centrosom: { opis: "Glavni organizacijski center mikrotubulov: par centriol (vsaka iz devetih trojčkov mikrotubulov), ki ga obdaja pericentriolarni material z obroči γ-tubulina; iz njih rastejo mikrotubuli." },
+        mesicki: { opis: "Mešički s plaščem COPII (ER → Golgi), COPI (nazaj) in klatrinom (TGN, membrana). Tarčno membrano prepoznajo z Rab GTPazami, proteini SNARE pa membrani zlijejo; tu prikazana pot je eksocitoza." },
+      },
+      ucbenik: () => ucb,
+      ob: (v) => {
+        jeFaks = v;
+        if (hi) pore.geometry = v ? poreFaks : poreGeo;
+        else rib.geometry = v ? ribGeoF : ribGeo;
+        vidnostFaks();
+      },
+    });
+    vidnostFaks = () => { gliM.visible = jeFaks; gliP.visible = jeFaks && jeCela; };
+    vidnostFaks();
+    // le nove mreže (drugi klic poliraj na celi skupini bi znova obdelal že polirane materiale)
+    const samoNove = { traverse: (f) => mreze.forEach((m) => m.traverse(f)) };
+    V.poliraj(samoNove, fd.filter((d) => d.meshes.every((m) => mreze.includes(m))), { endosomi: { tex: "zrna", rf: 45, k: 0.8, b: 0.2 }, "klatrinski-mesicki": { tex: null }, mtdna: { tex: null }, "jedrna-lamina": { tex: null }, "intermediarni-filamenti": { tex: null } });
+    return { stikalo, geo: [poreGeo, poreFaks, ribGeo, ribGeoF] };
+  }
 
   return {
     group,
@@ -671,6 +886,7 @@ export function zgradi(THREE, ctx = {}) {
     },
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
+      fk?.geo.forEach((g) => g.dispose());
       odpad.forEach((m) => m.dispose());
     },
   };

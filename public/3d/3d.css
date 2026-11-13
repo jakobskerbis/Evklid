@@ -276,9 +276,16 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-model-telo .k3-pregled { border-radius: 18px; }
 .k3-model-telo .k3-oder-ovoj { height: clamp(320px, 62vh, 760px); }
 @media (max-width: 480px) {
-  .k3-model-vrh { gap: 8px; }
-  /* Ime modela ob štirih gumbih: dve vrstici namesto »Geometrijska …«. */
-  .k3-model-vrh h1 { font-size: 1.05rem; line-height: 1.2; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+  /* Ob štirih gumbih ostane imenu v isti vrstici le ~90 px (»Bakteriofa/g«, »Kostna celica (osteo…«): gumbi in
+     področje v prvi vrstici, ime modela čez vso širino pod njimi, prelom le med besedami. */
+  .k3-model-vrh:not(.mk-vrh) { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "nazaj nad desno" "ime ime ime"; column-gap: 8px; row-gap: 6px; }
+  .k3-model-vrh:not(.mk-vrh) > .a3-krog { grid-area: nazaj; }
+  .k3-model-vrh:not(.mk-vrh) .k3-model-naslov { display: contents; }
+  .k3-model-vrh:not(.mk-vrh) .k3-nadnaslov { grid-area: nad; min-width: 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .k3-model-vrh:not(.mk-vrh) .k3-model-desno { grid-area: desno; }
+  .k3-model-vrh:not(.mk-vrh) h1 { grid-area: ime; font-size: 1.15rem; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: break-word; }
+  .mk-vrh { gap: 8px; }
+  .mk-vrh h1 { font-size: 1.05rem; line-height: 1.2; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: break-word; }
   .k3-model-desno .a3-krog { width: 40px; height: 40px; min-height: 40px; }
   .k3-model-stevec { display: none; }
 }
