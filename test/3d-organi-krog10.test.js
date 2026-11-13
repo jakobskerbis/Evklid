@@ -41,7 +41,7 @@ test("srce-dodelava: sploščenje epikarda ima enako širino pri gosti in redki 
 test("oko: kite na zrklo po poenostavitvi in na visoki mreži, brez dvostranske mišice", () => {
   const m = beri("scripts", "atlas", "oko_misice.py");
   const kita = +m.match(/^KITA_ODMIK = ([\d.]+)/m)[1];
-  assert.ok(kita >= 0.0002 && kita <= 0.0003, `kita ${kita * 1000} mm nad beločnico`);
+  assert.ok(kita >= 0.0001 && kita <= 0.0003, `kita ${kita * 1000} mm nad beločnico`); // krog 11: 0,15 mm
   assert.match(m, /^def kite_na_zrklo\(objekti, cfg\):/m);
   assert.match(m, /^PAHLJACA = 0\.\d+/m, "kita se proti narastišču rahlo razširi");
   for (const ime of ["Superior oblique", "Inferior oblique", "Lateral rectus", "Medial rectus", "Superior rectus", "Inferior rectus"])
@@ -72,11 +72,12 @@ test("oko.json, organ.js: limbus, zamik žilnice, rez skozi vidni živec, leča 
   assert.match(dod, /barva2: "#[0-9a-f]{6}"/);
 });
 
-test("srce: debelejša arterijska vez, pokrov aorte in pljučnih ven v tonu stene, žilice na velikih žilah", () => {
+test("srce: debelejša arterijska vez, pokrov aorte in pljučnih ven v tonu stene, velike žile brez šivov žilic", () => {
   const z = beri("scripts", "atlas", "srce_zile.py");
   const [, r, raz, spl] = z.match(/^VEZ_R, VEZ_RAZSIR, VEZ_SPLOSCI = ([\d.]+), ([\d.]+), ([\d.]+)/m).map(Number);
   assert.ok(r >= 0.002 && r + raz >= 0.003 && spl <= 0.3, "vrvica Ø ≥ 4 mm, ob stenah širša, rahlo sploščena");
   const s = json("srce.json");
   assert.notEqual(s.tkiva.aorta.rez, "#d9c8b8", "pokrov aorte ni bleda lisa v pretinu");
-  for (const k of ["aorta-lok", "pljucna-lok", "vena"]) assert.ok(s.tkiva[k].zile > 0, `${k}: žilice stene`);
+  // krog 11: žilice senčilnika so na UV-šivih velikih žil risale »sestavljanko« (ocena k5), zato jih ni; ostanejo lise
+  for (const k of ["aorta-lok", "pljucna-lok", "vena"]) assert.ok(!s.tkiva[k].zile && s.tkiva[k].lise > 0, `${k}: brez žilic, z lisami`);
 });
