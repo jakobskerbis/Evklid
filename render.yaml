@@ -51,7 +51,7 @@ services:
         value: "1"
       # Ciljna meritev natančnosti po vsaki objavi (server/meritev-po-objavi.js): največ 1 $ na zagon in 15 $ na teden.
       - key: EVKLID_MERITEV_PO_OBJAVI
-        value: "1"
+        value: "0"   # j 13. 11.: premor do ponedeljka 16. 11. (ročne meritve W46 niso v knjigi), nato spet "1"
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
