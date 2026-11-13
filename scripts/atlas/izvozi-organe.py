@@ -871,6 +871,34 @@ def skorja_iz_mri(mapa, m, lo, hi):
         pas = d < m0 + w
         d = np.where(pas, m0 + (d - dmin) * w / (m0 + w - dmin), d)
         dl = np.array([del_za.get(x) for x in lab], dtype=object)
+        ime_o = np.array(lab, dtype=object)
+        if m.get("zatilniCrta", True) and (dl == "zatilni").any():
+            # n4 (ocena n3: zatilni reženj le majhna kapa, temenski skoraj do zatilnega pola): na stranski ploskvi aparc
+            # nima meje zatilnega režnja, zato jo določi učbeniška črta od vrha parietookcipitalne brazde (sprednji zgornji
+            # rob kuneusa) do preokcipitalne zareze (≈ 4,5 cm pred zatilnim polom na spodnjem robu); stranska območja
+            # temenskega in senčnega režnja za to črto postanejo zatilni reženj. Medialna stran ostane po aparc.
+            occ = dl == "zatilni"
+            s_y = 1.0 if v[occ, 1].mean() > v[dl == "celni", 1].mean() else -1.0
+            yp = v[:, 1] * s_y  # večji = bolj zadaj
+            kun = np.flatnonzero(ime_o == "cuneus")
+            vrh = kun[v[kun, 2] >= np.quantile(v[kun, 2], 0.9)]
+            vrh = vrh[yp[vrh] <= np.quantile(yp[vrh], 0.3)]
+            A = np.array([yp[vrh].mean(), v[vrh, 2].mean()])
+            pol = float(yp[occ].max()); yb = pol - m.get("zatilniZareza", 0.045)
+            pas_b = np.abs(yp - yb) < 0.003
+            B = np.array([yb, float(np.quantile(v[pas_b, 2], 0.02))])
+            stran_f = lambda Y, Z: (Y - A[0]) * (B[1] - A[1]) - (Z - A[1]) * (B[0] - A[0])
+            zn_p = np.sign(stran_f(pol, 0.5 * (A[1] + B[1])))
+            stranska = np.isin(ime_o, ["superiorparietal", "inferiorparietal", "supramarginal", "middletemporal", "inferiortemporal", "bankssts", "superiortemporal"])
+            nov = stranska & (stran_f(yp, v[:, 2]) * zn_p > 0) & (d > 0.012)
+            dl[nov] = "zatilni"
+            print(f"[organi] skorja MRI {stran}: zatilni reženj po črti POS–zareza: +{int(nov.sum())} oglišč (prej {int(occ.sum())}); A {A.round(4)}, B {B.round(4)}")
+        # n4 (ocena n3: oranžna lisa ob hipotalamusu v učnih barvah): oznaka »insula« ob sredinski ravnini (< 18 mm) ni otok,
+        # temveč subkalozno polje medialne ploskve → limbični reženj
+        otok_m = (dl == "otok") & (d < m.get("otokOdSredine", 0.018))
+        if otok_m.any():
+            dl[otok_m] = "limbicni"
+            print(f"[organi] skorja MRI {stran}: {int(otok_m.sum())} oglišč »insula« ob sredini → limbični reženj")
         # Neoznačena oglišča (aparc »unknown«): medialna stena je njihov največji povezani kos. Manjši otoki (npr. na
         # orbitalni ploskvi čelnega režnja) so skorja brez oznake – dobijo oznako sosednjega režnja, sicer bi se v prerezu
         # risali kot medialna stena (mat sivorjave lise sredi skorje).

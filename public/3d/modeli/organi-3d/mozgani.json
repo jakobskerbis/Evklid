@@ -47,7 +47,7 @@
    "hrap": 0.38,
    "lak": 0.22,
    "lakHrap": 0.16,
-   "sijaj": 0.16,
+   "sijaj": 0.25,
    "sijajBarva": "#ffbfb4",
    "rob": 0.22,
    "robBarva": "#ff9488",
@@ -60,41 +60,41 @@
    "aoExp": 2.6,
    "rez": "#cf958a",
    "vrstni": 2,
-   "listi": 0.6,
+   "listi": 0.85,
    "listiSredisce": [
-    0,
-    -0.02661,
-    -0.02108
+    -0.0014,
+    -0.02931,
+    -0.02715
    ],
-   "listiRazmik": 0.0028,
+   "listiRazmik": 0.0015,
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.7,
    "rezSum": 0.5,
    "rezPresek": {
-    "vrsta": 0
+    "vrsta": 0,
+    "ovoj": true
    },
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.01569,
-     -0.06242
+     -0.02432,
+     -0.08189
     ],
     "mera": [
-     0.07069,
-     0.07069
+     0.08243,
+     0.08243
     ],
     "izrez": true,
     "visina": 0.5
-   },
-   "listiKot": 0.03
+   }
   },
   "deblo": {
    "barva": "#e3c4b4",
    "hrap": 0.4,
    "lak": 0.25,
    "lakHrap": 0.16,
-   "sijaj": 0.18,
+   "sijaj": 0.28,
    "sijajBarva": "#ffd0c4",
    "rob": 0.2,
    "robBarva": "#ffa898",
@@ -112,18 +112,20 @@
    "aoTekstura": 0.7,
    "rezSum": 0.3,
    "rezPresek": {
-    "vrsta": 0
+    "vrsta": 0,
+    "ovoj": true
    },
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.01569,
-     -0.06242
+     -0.02432,
+     -0.08189
     ],
     "mera": [
-     0.07069,
-     0.07069
+     0.08243,
+     0.08243
     ],
+    "izrez": true,
     "visina": 0.2
    }
   },
@@ -326,7 +328,7 @@
    "opis": "Usklajujejo gibe in skrbijo za ravnotežje, da so gibi natančni in gladki.",
    "opisStudij": "Vermis in hemisferi; trije režnji (anterior, posterior, flocculonodularis); skorja s Purkinjejevimi celicami, globoka jedra (dentatus, emboliformis, globosus, fastigii). S deblom ga vežejo trije pari pedunculi cerebellares. Okvara: ataksija na isti strani, intencijski tremor, dismetrija.",
    "vozlisca": [
-    "Cerebellum (HRA)"
+    "Cerebellum (MRI)"
    ],
    "tocke": {
     "celota": [
@@ -350,7 +352,22 @@
    "opis": "Povezuje možgane s hrbtenjačo in samodejno uravnava dihanje, srčni utrip in požiranje.",
    "opisStudij": "Srednji možgani, most in podaljšana hrbtenjača; jedra možganskih živcev III–XII (spinalni del XI je v vratni hrbtenjači), retikularna formacija (budnost), središča za dihanje in krvni obtok, poti (piramidna proga, lemniscus medialis). Križanje piramid na meji s hrbtenjačo.",
    "vozlisca": [
-    "Brainstem (HRA)"
+    "Base of peduncle.l",
+    "Base of peduncle.r",
+    "Inferior colliculus.l",
+    "Inferior colliculus.r",
+    "Medulla oblongata.l",
+    "Medulla oblongata.r",
+    "Midbrain.l",
+    "Midbrain.r",
+    "Olive.l",
+    "Olive.r",
+    "Pons.l",
+    "Pons.r",
+    "Pyramid of medulla oblongata.l",
+    "Pyramid of medulla oblongata.r",
+    "Superior colliculus.l",
+    "Superior colliculus.r"
    ],
    "tocke": {
     "celota": [
@@ -376,8 +393,7 @@
    "vozlisca": [
     "Anterior commissure (HRA)",
     "Corpus callosum (HRA)",
-    "Fornix (HRA)",
-    "Septum pellucidum (HRA)"
+    "Fornix (HRA)"
    ],
    "tocke": {
     "prerez": [
@@ -396,8 +412,13 @@
    "opis": "Prehodna postaja, skozi katero gredo skoraj vsa sporočila čutil na poti do skorje.",
    "opisStudij": "Parno jajčasto jedro diencefalona ob tretjem ventriklu; jedra: VPL/VPM (tip), corpus geniculatum laterale (vid) in mediale (sluh), VL/VA (motorika), sprednje (Papezov krog), pulvinar. Vonj gre v skorjo mimo talamusa. Adhesio interthalamica pri 70–80 % ljudi.",
    "vozlisca": [
-    "Pineal body (HRA)",
-    "Thalamus (HRA)"
+    "Habenula",
+    "Lateral geniculate body.l",
+    "Lateral geniculate body.r",
+    "Medial geniculate body.l",
+    "Medial geniculate body.r",
+    "Thalamus.l",
+    "Thalamus.r"
    ],
    "tocke": {
     "prerez": [
@@ -416,7 +437,9 @@
    "opis": "Uravnava telesno temperaturo, lakoto in žejo ter s hormoni vodi hipofizo.",
    "opisStudij": "Pod talamusom ob dnu tretjega ventrikla; jedra: supraopticus in paraventricularis (ADH, oksitocin v nevrohipofizo), suprachiasmaticus (cirkadiani ritem), arcuatus (sproščajoči hormoni po portalnem obtoku v adenohipofizo), mamilarna telesca.",
    "vozlisca": [
-    "Hypothalamus (HRA)"
+    "Hypothalamus",
+    "Mamillary body.l",
+    "Mamillary body.r"
    ],
    "tocke": {
     "prerez": [
@@ -549,10 +572,10 @@
    }
   ]
  },
- "velikost": 0.2836,
+ "velikost": 0.2784,
  "trikotniki": {
-  "racunalnik": 209998,
-  "telefon": 57998
+  "racunalnik": 210701,
+  "telefon": 60043
  },
  "luci": [
   {

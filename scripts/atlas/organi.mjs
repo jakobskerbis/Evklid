@@ -47,7 +47,7 @@ for (const organ of organi) {
       // test/3d-organi-glb.test.js), znižamo kakovost po korakih (najprej osnovna in normalna, ORM že nizko).
       // Zadnji koraki telefona zmanjšajo slike (px), ker pri nizki kakovosti WebP nastanejo bloki (srce n8: CT stene).
       const lestev = pripona
-        ? [[86, 70, 84], [80, 66, 78], [82, 66, 80, 896], [82, 66, 80, 832], [82, 66, 80, 800], [80, 62, 78, 800], [82, 66, 80, 768], [76, 60, 74, 768]] // 800 px: srce krog 7 (rob pod mejo po dodelavi)
+        ? [[86, 70, 84], [80, 66, 78], [82, 66, 80, 896], [82, 66, 80, 832], [82, 66, 80, 800], [80, 62, 78, 800], [82, 66, 80, 768], [76, 60, 74, 768], [76, 60, 74, 704], [74, 58, 72, 640]] // 800 px: srce krog 7 (rob pod mejo po dodelavi)
         : [[90, 82, 95], [84, 76, 90], [78, 72, 85], [72, 66, 80], [78, 72, 85, 1792], [78, 72, 85, 1536], [75, 70, 83, 1536], [72, 68, 81, 1536]]; // zadnji dve: srce krog 5 (dodelava po izvozu doda ≈ 0,4 MiB) // zadnja: manjše slike (srce n11: geometrija 207k ≈ 5,2 MiB)
       // srce: dodelava po izvozu (srce-dodelava.mjs) telefonu spremeni velikost: krog 7 +25–35 kB (meja nižje); od kroga 8
       // (CT stene telefona 15k, epikard ena raven zgostitve, trabekule en UV) ≈ −110 kB, zato meja 96 KiB višje
