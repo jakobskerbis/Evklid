@@ -281,7 +281,9 @@ T tkivo(vec2 p, float px) {
   if (parietalna && kapa < 0.5) {
     vec2 qc = vec2(dl - 0.58 * H, (fract(su) - 0.5) * w);
     float rp = sdElipsa(qc, vec2(0.52 * H, 0.66 * w)) + 0.6 * (sum(qc / 2.5 + hc.zw * 9.0) - 0.5);
-    if (rp > 0.0) { parietalna = false; hc.x = 0.9; meja = max(meja, crta(rp, 0.3, px)); }
+    meja = max(meja, crta(rp, 0.3, px));
+    t.meja = min(t.meja, abs(rp));
+    if (rp > 0.0) { parietalna = false; hc.x = 0.9; t.cid += vec2(0.0, 500.0); }   // vogal je sosednja celica
   }
   float jd; vec2 jr; float jbarva = 0.9;
   if (parietalna) {

@@ -401,14 +401,14 @@ T tkivo(vec2 p, float px) {
   float rn = min(4.4, 0.78 * min(cw, 0.5 * hh)) * (0.84 + 0.26 * h.x);   // jedra niso vsa enako velika
   float ph = h.z;
   if (mer < 0.5 || ph > 0.15) {
-    vec2 qn = q - vec2(1.6 * (h.y - 0.5) * mer, 0.25 * hh * (h.w - 0.5) * (1.0 - mer) + 1.6 * (h.w - 0.5) * mer);
+    vec2 qn = q - vec2(min(1.6, 0.3 * cw) * (h.y - 0.5) * mer, 0.25 * hh * (h.w - 0.5) * (1.0 - mer) + min(1.6, 0.3 * cw) * (h.w - 0.5) * mer);
     qn *= vec2(1.0 + 0.18 * (h.z - 0.5), 1.0 - 0.18 * (h.z - 0.5));     // in ne vsa okrogla
     float dj = length(qn) - rn + 0.3 * (sum(qn / 1.5 + h.xy * 9.0) - 0.5);
     if (dj < px) {
       float k = pokrij(dj, px);
       // orcein obarva vse jedro zrnato vijolično; jedrce je le malo temnejše
       t.dye.x = mix(t.dye.x, 0.32 + 0.45 * kromatin(qn, h.xy, px) + 0.25 * pokrij(length(qn - vec2(0.8, 0.6)) - 1.1, px), k);
-      if (k > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.jc = t.cc + vec2(1.6 * (h.y - 0.5) * mer, 0.25 * hh * (h.w - 0.5) * (1.0 - mer) + 1.6 * (h.w - 0.5) * mer); }
+      if (k > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.jc = t.cc + vec2(min(1.6, 0.3 * cw) * (h.y - 0.5) * mer, 0.25 * hh * (h.w - 0.5) * (1.0 - mer) + min(1.6, 0.3 * cw) * (h.w - 0.5) * mer); }
     }
     return t;
   }

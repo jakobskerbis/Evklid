@@ -949,6 +949,10 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   // ---------- preparat ----------
   let ciljPorabljen = false; // cilj velja le za prvi preparat
   // snov ultrastrukture → snov tkiva, v kateri leži (S_* iz glsl.js): jedrce in kromatin v jedru, organeli v citoplazmi
+  // Drobne tarče, ki jih iskanje po krogih zgreši (T-cevka v prerezu je obroček s premerom ~40 nm): vnaprej najdena
+  // točka na membrani T-cevke (snov 24) v mišicah. Izračunana s sondo na mreži 4 nm; ob spremembi oblike preparata jo
+  // izračunaj znova (če ne ustreza več, ostane navadno iskanje).
+  const TOCKA_SNOVI = { "srcna-misica": { 24: [2.076, 0.752] }, "skeletna-misica": { 24: [0.204, 1.28] } };
   const GOSTITELJ = { 28: [2], 27: [2], 20: [1], 21: [1], 22: [1], 26: [1], 29: [1], 23: [1], 32: [1] };
   let zadnjiId = null; // zadnji izbrani preparat (za obnovo po izgubi grafike)
   let zahteva = 0; // hitra menjava preparata: velja zadnja izbira, tudi če se prejšnja datoteka naloži pozneje
@@ -997,7 +1001,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
         const o = upo.sonda([s.sredisce]);
         const rMax = Math.max(...(p.velikost || [2000]));
         rokIskanja = performance.now() + 250; // iskanje bere GPE: na počasnem telefonu največ ~¼ s
-        if (o && !ustreza(o[0])) {
+        const tz = m0 > SVETLOBNI_MAX ? TOCKA_SNOVI[p.id]?.[c.snov[0]] : null;
+        if (o && !ustreza(o[0]) && tz && ustreza(upo.sonda([tz])[0])) s.sredisce = [...tz];
+        else if (o && !ustreza(o[0])) {
           // drobne dele (jedrce, mitohondrij) najprej poišči v njihovem gostitelju (jedro, citoplazma), nato natančno v njem
           const [x0, y0] = s.sredisce;
           const gost = m0 > SVETLOBNI_MAX ? GOSTITELJ[c.snov[0]] : null;

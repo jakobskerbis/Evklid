@@ -103,20 +103,25 @@ T tkivo(vec2 p, float px) {
   vec2 pw = p + 70.0 * vec2(sum(p / 260.0) - 0.5, sum(p / 260.0 + 9.0) - 0.5) + 18.0 * vec2(sum(p / 60.0 + 3.0) - 0.5, sum(p / 60.0 + 5.0) - 0.5);
   Vor F = vor(pw, 330.0, vec2(1.0, 1.6), -0.35, 0.9);
   vec4 hF = h42(F.id + 31.0);
-  float kot = -0.35 + 0.25 * (sum(p / 1500.0) - 0.5) + 0.45 * (hF.x - 0.5) * smoothstep(0.0, 60.0, F.rob);
-  float sirF = (1.0 + 3.5 * hF.y) * smoothstep(0.35, 0.55, sum(pw / 140.0 + hF.zw * 7.0));
+  float kot = -0.35 + 0.25 * (sum(p / 1500.0) - 0.5) + 0.45 * (hF.x - 0.5);
+  // širina in prekinitve pregrade so odvisne le od položaja, zato se obe strani pregrade ujemata
+  float sirF = (1.0 + 3.5 * sum(pw / 90.0 + 2.0)) * smoothstep(0.35, 0.55, sum(pw / 140.0 + 7.0));
   if (F.rob < sirF) {
     t.snov = S_KOLAGEN; t.smer = vec2(-F.nb.y, F.nb.x);
     t.dye = vec3(0.03 + 0.03 * sumL(p, 4.0, px), 0.16 + 0.1 * sumL(p, 9.0, px), 0.0) * (0.5 + 0.5 * smoothstep(0.0, 2.0, F.rob));
     // redka sploščena jedra fibroblastov vzdolž pregrade
     float xf = dot(pw - F.c, t.smer);
     float ij = floor(xf / 40.0);
-    float jf = sdElipsa(vec2(xf - (ij + 0.5) * 40.0 - 10.0 * (h42(vec2(ij, hF.z)).x - 0.5), F.rob - 0.5 * sirF), vec2(4.0, 1.0));
-    t.dye.x = mix(t.dye.x, 0.8, pokrij(jf, px) * step(0.55, h42(vec2(ij, hF.w)).y));
+    vec4 hj = h42(vec2(ij, F.id.x * 13.0 + F.id.y));
+    float jf = sdElipsa(vec2(xf - (ij + 0.5) * 40.0 - 10.0 * (hj.x - 0.5), F.rob - 0.5 * sirF), vec2(4.0, 1.0));
+    t.dye.x = mix(t.dye.x, 0.8, pokrij(jf, px) * step(0.55, hj.y));
     return t;
   }
   vec2 smer = vec2(cos(kot), sin(kot));
-  Vor v = vor(p, 17.0, vec2(5.2, 1.0), -kot, 0.85);
+  // mreža celic se v vsakem snopu zasuka okoli njegovega središča (ne okoli izhodišča stekelca), da celice ob pregradi
+  // niso stisnjene v trske
+  Vor v = vor(p - F.c, 17.0, vec2(5.2, 1.0), -kot, 0.85);
+  v.c += F.c; v.id += F.id * 97.0;
   vec4 h = h42(v.id);
   float vid = 1.0 - smoothstep(0.5, 1.1, px);
   bool disk = abs(dot(v.nb, smer)) > 0.75;
