@@ -1203,6 +1203,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
     const skrijStran = p.skrijStran || null;
     const skrijTkiva = new Set(p.skrijTkiva || []);
     const skrijDele = new Set(p.skrijDele || []);
+    // skupina v skrijDele skrije tudi svoje posamezne dele (venčne arterije → LAD, cirkumfleksna …; prej so ostali vidni)
+    for (const d of podatki.deli || []) if (d.skupina && skrijDele.has(d.skupina)) skrijDele.add(d.id);
     const rezi = vPrerezu() && !!ravnine && p.rez !== false;
     if (rezi && leniRez.length) {
       for (const f of leniRez.splice(0)) f();

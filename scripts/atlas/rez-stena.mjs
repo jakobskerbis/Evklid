@@ -164,6 +164,7 @@ async function glavni() {
   if (!j.prerez?.volumen) throw new Error(`${organ}.json: prerez.volumen manjka`);
   // brez pokrova in deli, ki jih pogled prereza skrije (pogledi.prerez.skrijDele): ne štejejo ne v steno ne v druga telesa
   const brez = new Set([...(j.prerez.brezPokrova || []), ...(j.pogledi?.prerez?.skrijDele || [])]);
+  for (const d of j.deli || []) if (d.skupina && brez.has(d.skupina)) brez.add(d.id); // skupina skrije tudi svoje dele (kot organ.js)
   // B: notranji deli stene v votlinah (prerez.volumen.brezMasce, regularni izraz imen vozlišč: papilarne mišice,
   // trabekule); prostorska tekstura ima v votlinah naključno »maščobo«, zato je bil njihov prerez bel
   const brezMasce = j.prerez.volumen.brezMasce ? new RegExp(j.prerez.volumen.brezMasce) : null;

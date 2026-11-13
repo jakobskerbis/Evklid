@@ -48,3 +48,12 @@ test("organi.mjs: telefon srca ima rezervo za dodelavo in korak 800 px pred 768 
   const glb = fs.statSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "srce-telefon.glb")).size;
   assert.ok(glb <= 1992294, `srce-telefon.glb ${glb} B`);
 });
+
+test("skrijDele: skupina skrije tudi svoje dele (organ.js in rez-stena.mjs), venčne žile v prerezu skrite", () => {
+  assert.match(beri("public", "3d", "organ.js"), /if \(d\.skupina && skrijDele\.has\(d\.skupina\)\) skrijDele\.add\(d\.id\)/);
+  assert.match(beri("scripts", "atlas", "rez-stena.mjs"), /if \(d\.skupina && brez\.has\(d\.skupina\)\) brez\.add\(d\.id\)/);
+  const j = JSON.parse(beri("public", "3d", "modeli", "organi-3d", "srce.json"));
+  const skrij = new Set(j.pogledi.prerez.skrijDele);
+  const vencne = j.deli.filter((d) => d.skupina === "vencne-arterije" || d.skupina === "vencne-vene");
+  assert.ok(vencne.length >= 6 && skrij.has("vencne-arterije") && skrij.has("vencne-vene"));
+});
