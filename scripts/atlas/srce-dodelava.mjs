@@ -260,6 +260,8 @@ export function zgosti(mreze, sme) {
 // se izračunajo na novo (ploščinsko uteženo, čez šive). Vrne { oglisc, rob (povprečna dolžina roba, m), korakov }.
 // splosci (0–1): izbokline nad zelo zglajeno površino (maščobne blazine iz CT, ki štrlijo iz obrisa srca in so v
 // prerezu videti kot kocke maščobe ob robu) se za ta delež znižajo; vdolbine ostanejo.
+const SPLOSCI_ROB = 0.00217; // povprečni rob epikarda računalnika po dveh ravneh zgostitve (m), za katerega velja 300 korakov sploščenja
+export const korakiSploscenja = (rob) => Math.max(30, Math.min(300, Math.round(300 * (SPLOSCI_ROB / Math.max(rob, 1e-6)) ** 2)));
 export function zgladi(mreze, premicno, korakov = 0, splosci = 0) {
   const h = 1e-4;
   const cel = new Map();
@@ -311,7 +313,11 @@ export function zgladi(mreze, premicno, korakov = 0, splosci = 0) {
       }
     });
     const izhod = P;
-    for (let i = 0; i < 300; i++) { P = korak(0.5); P = korak(-0.505); } // ozek prepustni pas: ostane samo oblika srca brez blazin
+    // ozek prepustni pas: ostane samo oblika srca brez blazin. Krog 9 (ocena: »zavihki stene levega preddvora na rezu
+    // telefona«): glajenje po sosedih zgladi tem širše, čim daljši so robovi; telefon (ena raven zgostitve, rob ≈ 5,8 mm
+    // namesto 2,2 mm) je s 300 koraki sploščil preddvora za do 9 mm, skozi 2 mm steno (obrnjena stena, pol prostornine).
+    // Število korakov zato pade s kvadratom roba (enaka širina glajenja kot na računalniku).
+    for (let i = 0, n = korakiSploscenja(rob); i < n; i++) { P = korak(0.5); P = korak(-0.505); }
     const gladka = P;
     let znizanih = 0, najvec = 0;
     P = izhod.map((p, u) => {

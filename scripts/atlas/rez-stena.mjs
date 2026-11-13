@@ -20,6 +20,7 @@ import * as G from "./zile-mreza.mjs";
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const MAPA = path.join(ROOT, "public", "3d", "modeli", "organi-3d");
 const PODVZORCI = 4; // podvzorcev na voksel v y in z
+const OBRNJENA_STENA = 0.004; // najdaljši odsek z negativnim navitjem, ki še šteje kot (obrnjena) stena (m)
 const SDF = 0.003; // obseg predznačene razdalje v kanalu R (m): 0 = 3 mm zunaj stene, 1 = 3 mm v steni
 
 function crc32(buf) {
@@ -123,7 +124,10 @@ export function delezStene(tri, { lo, korak, n }) {
       const prej = nav;
       nav += zn[zad[q]];
       if (nav < 0) negativnih++;
-      if (prej > 0 && q > 0) {
+      // krog 9 (ocena: »bledi zavihki stene levega preddvora na rezu telefona«): tanka stena preddvora se pri
+      // poenostavitvi telefonske mreže ponekod obrne (endokard pride čez epikard), navitje je tam −1. Kratek odsek z
+      // negativnim navitjem (< OBRNJENA_STENA) je zato obrnjena stena, ne votlina med odprtimi deli mreže.
+      if (q > 0 && (prej > 0 || (prej < 0 && xs[zad[q]] - xs[zad[q - 1]] < OBRNJENA_STENA))) {
         // odsek [x0, x1] je v tkivu
         const x0 = (xs[zad[q - 1]] - lo[0]) / korak, x1 = (xs[zad[q]] - lo[0]) / korak;
         for (let i = Math.max(0, Math.floor(x0)); i <= Math.min(n[0] - 1, Math.floor(x1)); i++) {

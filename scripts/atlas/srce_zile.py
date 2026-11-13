@@ -300,6 +300,7 @@ def zapri_luknjo(me, najmanj_tock=40, stena=0.003, obrocev=12, korakov=40):
 
 
 # ---------- glavno ----------
+VEZ_R, VEZ_RAZSIR, VEZ_SPLOSCI = 0.0022, 0.0013, 0.2  # arterijska vez: polmer sredi, razširitev ob stenah, sploščenost
 VELIKE = r"^(Ascending aorta|Aortic arch|Thoracic aorta|Brachiocephalic trunk|Left common carotid artery|Left subclavian artery|Pulmonary trunk|" \
          r"Bifurcation of pulmonary trunk|(Left|Right) pulmonary artery|Superior vena cava|Inferior vena cava \(thoracic part\)|" \
          r"(Left|Right) (superior|inferior) pulmonary vein)$"
@@ -688,14 +689,17 @@ def srce_zile(osnovni, cfg, tmp):
             a, b = A + d * Ra_ * 0.7, aorta_P[i] - d * aorta_R[i] * 0.7
             Pl, _ = prevzorci([a, b], [0.002, 0.002], 0.0008)
             L_ = _dolzine(Pl); L_[-1] = max(L_[-1], 1e-6)
-            Rl = [0.0017 + 0.0016 * abs(2 * x / L_[-1] - 1) ** 2.2 for x in L_]
+            # krog 9 (ocena krog 8: »vez od zadaj pretanka«): čvrsta vezivna vrvica Ø ≈ 4,4 mm, ki se ob izstopu iz
+            # stene obeh žil zaobljeno razširi (Ø ≈ 7 mm, eksponentni prehod 1,8 mm), presek rahlo ovalen (4,4 × 3,5 mm)
+            xa, xb = 0.3 * Ra_, L_[-1] - 0.3 * aorta_R[i]
+            Rl = [VEZ_R + VEZ_RAZSIR * min(1.0, max(math.exp(-(x - xa) / 0.0018), math.exp(-(xb - x) / 0.0018))) for x in L_]
             z = _Osi(bmesh.new())
-            cev_polna(z, Pl, Rl, 12)
-            # sploščena vrvica: širina ≈ 4 mm, debelina ≈ 2 mm (stisnemo v smeri pravokotno na lok in vez)
+            cev_polna(z, Pl, Rl, 16)
+            # rahlo sploščena vrvica (stisnemo v smeri pravokotno na lok in vez)
             ax = (b - a).normalized(); ploska = ax.cross(Vector((0, 0, 1))).normalized() if abs(ax.z) < 0.9 else Vector((1, 0, 0))
             for v in z.bm.verts:
                 q = v.co - a; q = q - ax * q.dot(ax)
-                v.co = v.co - ploska * q.dot(ploska) * 0.62  # ≈ 4,6 × 1,8 mm (B2-12)
+                v.co = v.co - ploska * q.dot(ploska) * VEZ_SPLOSCI  # ≈ 4,4 × 3,5 mm (B2-12)
             vrstica("Ligamentum arteriosum", z, "vez", "arterijska-vez", "Aortic arch / Aorta.g")
             print(f"[organi] srce: arterijska vez {(b - a).length * 1000:.1f} mm")
         else:

@@ -125,14 +125,22 @@
    "rob": 0.12,
    "robBarva": "#ff6458",
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.14,
    "f": 80,
-   "relief": 0.3,
+   "relief": 0.9,
    "rez": "#a92a28",
    "sijajHrap": 0.65,
    "spekular": 0.75,
    "rezLak": 0.6,
-   "rezLakHrap": 0.25
+   "rezLakHrap": 0.25,
+   "lise": 0.2,
+   "liseBarva": "#f6dccb",
+   "zile": 0.4,
+   "zileBarva": "#a84a42",
+   "zileBarva2": "#7e3448",
+   "zileSirina": 0.00018,
+   "zileF": 30,
+   "zileMaska": 4
   },
   "vena": {
    "barva": "#3b5ba8",
@@ -144,15 +152,23 @@
    "rob": 0.08,
    "robBarva": "#6f93ff",
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.14,
    "f": 80,
-   "relief": 0.3,
+   "relief": 0.9,
    "rez": "#5a2e34",
    "odtenek": "#ffffff",
    "sijajHrap": 0.75,
    "spekular": 0.55,
    "rezLak": 0.6,
-   "rezLakHrap": 0.25
+   "rezLakHrap": 0.25,
+   "lise": 0.2,
+   "liseBarva": "#f6dccb",
+   "zile": 0.4,
+   "zileBarva": "#6e3a52",
+   "zileBarva2": "#7e3448",
+   "zileSirina": 0.00018,
+   "zileF": 30,
+   "zileMaska": 4
   },
   "pljucna": {
    "barva": "#4566b8",
@@ -164,15 +180,23 @@
    "rob": 0.08,
    "robBarva": "#7898ff",
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.14,
    "f": 80,
-   "relief": 0.3,
+   "relief": 0.9,
    "rez": "#d2c2bc",
    "odtenek": "#f3dcd6",
    "sijajHrap": 0.75,
    "spekular": 0.55,
    "rezLak": 0.6,
-   "rezLakHrap": 0.25
+   "rezLakHrap": 0.25,
+   "lise": 0.2,
+   "liseBarva": "#f6dccb",
+   "zile": 0.4,
+   "zileBarva": "#a84a42",
+   "zileBarva2": "#7e3448",
+   "zileSirina": 0.00018,
+   "zileF": 30,
+   "zileMaska": 4
   },
   "pljucna-vena": {
    "barva": "#a3304a",
@@ -196,7 +220,7 @@
   },
   "aorta": {
    "barva": "#b8453c",
-   "rez": "#d9c8b8",
+   "rez": "#c98b7c",
    "robBarva": "#ff9a8a",
    "sijajBarva": "#f2b0a6",
    "lak": 0.12,
@@ -207,12 +231,20 @@
    "rob": 0.08,
    "ao": 0.85,
    "f": 80,
-   "zrno": 0.05,
-   "relief": 0.3,
+   "zrno": 0.14,
+   "relief": 0.9,
    "hrap": 0.58,
    "odtenek": "#fbe3d8",
    "rezLak": 0.6,
-   "rezLakHrap": 0.25
+   "rezLakHrap": 0.25,
+   "lise": 0.2,
+   "liseBarva": "#f6dccb",
+   "zile": 0.4,
+   "zileBarva": "#a84a42",
+   "zileBarva2": "#7e3448",
+   "zileSirina": 0.00018,
+   "zileF": 30,
+   "zileMaska": 4
   },
   "vencna-arterija": {
    "barva": "#d3302a",
@@ -384,7 +416,7 @@
   },
   "aorta-lok": {
    "barva": "#b8453c",
-   "rez": "#d9c8b8",
+   "rez": "#c98b7c",
    "robBarva": "#ff9a8a",
    "sijajBarva": "#f2b0a6",
    "lak": 0.12,
@@ -395,12 +427,20 @@
    "rob": 0.08,
    "ao": 0.85,
    "f": 80,
-   "zrno": 0.05,
-   "relief": 0.3,
+   "zrno": 0.14,
+   "relief": 0.9,
    "hrap": 0.58,
    "odtenek": "#fbe3d8",
    "rezLak": 0.6,
-   "rezLakHrap": 0.25
+   "rezLakHrap": 0.25,
+   "lise": 0.2,
+   "liseBarva": "#f6dccb",
+   "zile": 0.4,
+   "zileBarva": "#a84a42",
+   "zileBarva2": "#7e3448",
+   "zileSirina": 0.00018,
+   "zileF": 30,
+   "zileMaska": 4
   },
   "pljucna-lok": {
    "barva": "#4566b8",
@@ -412,15 +452,23 @@
    "rob": 0.08,
    "robBarva": "#7898ff",
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.14,
    "f": 80,
-   "relief": 0.3,
+   "relief": 0.9,
    "rez": "#d2c2bc",
    "odtenek": "#f3dcd6",
    "sijajHrap": 0.75,
    "spekular": 0.55,
    "rezLak": 0.6,
-   "rezLakHrap": 0.25
+   "rezLakHrap": 0.25,
+   "lise": 0.2,
+   "liseBarva": "#f6dccb",
+   "zile": 0.4,
+   "zileBarva": "#a84a42",
+   "zileBarva2": "#7e3448",
+   "zileSirina": 0.00018,
+   "zileF": 30,
+   "zileMaska": 4
   },
   "vena-spodnja": {
    "barva": "#3b5ba8",
@@ -1204,7 +1252,7 @@
      "barva": "#f0a59a"
     },
     "pljucna-vena": {
-     "barva": "#f6c9c0"
+     "barva": "#d0968a"
     }
    },
    "okvir": {
@@ -1249,8 +1297,8 @@
  },
  "velikost": 0.2633,
  "trikotniki": {
-  "racunalnik": 244972,
-  "telefon": 69431
+  "racunalnik": 245172,
+  "telefon": 69381
  },
  "luci": [
   {
