@@ -33,6 +33,7 @@ from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s s
 from oko_misice import ocesne_misice, kite_na_zrklo  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
 from jetra_geometrija import jetra_deli, uveljavi_normale  # jetra: ena površina, režnji, vezi, votla vena, drevesa žil in žolčnih vodov
 from drevesa import pljucna_drevesa, ledvicne_zile  # pljuča: zaprti režnji, veje iz središčnic, subsegmentne veje (lastno)
+from mozgani_hra import mozgani_hra  # možgani: deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen, CC BY 4.0)
 from srce_ct import srce_ct  # stene srca iz CT (Rodero 2021), poravnava ostalih delov nanje, maščoba, trabekule
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -80,9 +81,9 @@ ORGANI = {
                 "mali": dict(barva=(0.56, 0.31, 0.28), barva2=(0.45, 0.23, 0.21), lise=0.35, hrap=0.46, gube=0.00003, gubeMera=0.0015,
                              zilice=0.15, ziliceBarva=(0.40, 0.06, 0.06), ziliceMera=0.010, razdeli=0),  # MRI: že gosta
                 "deblo": dict(barva=(0.64, 0.52, 0.45), barva2=(0.56, 0.44, 0.39), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002,
-                              zilice=0.12, ziliceBarva=(0.45, 0.08, 0.07), razdeli=1),
-                "bela": dict(barva=(0.80, 0.75, 0.66), barva2=(0.73, 0.67, 0.58), lise=0.2, hrap=0.46, gube=0.00002, gubeMera=0.002, razdeli=1),
-                "medmozgani": dict(barva=(0.62, 0.48, 0.43), barva2=(0.54, 0.40, 0.36), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
+                              zilice=0.12, ziliceBarva=(0.45, 0.08, 0.07), razdeli=0),
+                "bela": dict(barva=(0.80, 0.75, 0.66), barva2=(0.73, 0.67, 0.58), lise=0.2, hrap=0.46, gube=0.00002, gubeMera=0.002, razdeli=0),
+                "medmozgani": dict(barva=(0.62, 0.48, 0.43), barva2=(0.54, 0.40, 0.36), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
             },
         ),
         # Skorja iz MRI (OpenNeuro ds000001 fMRIPrep/FreeSurfer, CC0): Z-Anatomy vijuge (tkivo »skorja«) zamenjamo s
@@ -94,6 +95,9 @@ ORGANI = {
         # glajenje: Taubin (krogi) proti stopnicam vokslov; zgornja pedunkla Z-Anatomy nista več ohranjena (od zadaj je bil
         # med malimi možgani MRI in deblom viden temen plavajoč kos)
         mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40),
+        # Deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen Human Brain Reference Atlas, CC BY 4.0;
+        # mozgani_hra.py; datoteka v mapi --hra). Brez datoteke ostanejo Z-Anatomy in mali možgani MRI.
+        hra_mozgani=dict(datoteka="3d-allen-m-brain.glb", zapri=dict(mali=0.0005), gosto=8), nedotakni=r"\(HRA\)",
         poenostaviSkupaj=r"\(MRI\)\.([lr])$",  # režnji ene poloble so ena površina: brez razpok ob mejah režnjev
         tkiva=[
             (r"Cerebellum\.g", "mali"),
@@ -1371,7 +1375,12 @@ def izvozi(organ, cfg):
         # središče organa v x na sredini Z-Anatomy (rez je tam): škatla skorje MRI po strigu ni več simetrična
         cfg["_sredinaX"] = 0.5 * (lo[0] + hi[0])
         mm = cfg.get("mali_mri")
-        if mm and os.path.isfile(os.path.join(MRI, f"{mri['osebek']}-mali.npz")):
+        hm = cfg.get("hra_mozgani")
+        if hm and HRA and os.path.isfile(os.path.join(HRA, hm["datoteka"])):
+            osnovni, F = mozgani_hra(osnovni, cfg, tmp, os.path.join(HRA, hm["datoteka"]), lo, hi)
+            if F is not None:
+                cfg["_fastigij"] = [float(x) for x in F]
+        elif mm and os.path.isfile(os.path.join(MRI, f"{mri['osebek']}-mali.npz")):
             osnovni, F = mali_iz_mri(osnovni, mri, mm, lo, hi, tmp)
             cfg["_fastigij"] = [float(x) for x in F]
     hra = cfg.get("hra")
@@ -1531,7 +1540,7 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
     velikost = (hi - lo).length
     for _, me, *_ in osnovni:
         me.transform(Matrix.Translation(-ctr))
-    for me in cfg.get("_telefon", {}).values():  # telefonske mreže sten CT (srce_ct): isti premik
+    for me in list(cfg.get("_telefon", {}).values()) + list(cfg.get("_racunalnik", {}).values()):  # lastne poenostavljene mreže: isti premik
         me.transform(Matrix.Translation(-ctr))
     # del brez zadetka: najbližji del iz »blizina« (po središčih)
     def sred(me):
@@ -1564,7 +1573,8 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
         ratio = min(1.0, cilj / max(skupaj, 1))
         oh = re.compile(cfg["ohrani"]) if cfg.get("ohrani") else None
         ned = re.compile(cfg["nedotakni"]) if cfg.get("nedotakni") else None  # že poenostavljeno (stene CT): ratio 1
-        tel = cfg.get("_telefon", {}) if i == 1 else {}
+        # _telefon / _racunalnik: lastne poenostavljene mreže vrstic »nedotakni« (vrstica sama ostane gosta: visoka mreža peke)
+        tel = cfg.get("_telefon", {}) if i == 1 else cfg.get("_racunalnik", {})
         nedot = lambda r: ned is not None and ned.search(r[4])
         ex_n = sum(tris(tel.get(r[0], r[1])) for r in osnovni if nedot(r))
         cilj_ = max(cilj - ex_n, cilj * 0.2); skupaj_ = max(skupaj - sum(tris(r[1]) for r in osnovni if nedot(r)), 1)
@@ -1670,6 +1680,8 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
     if cfg.get("_fastigij"):  # mali možgani iz MRI: središče lističev (tkiva.mali.listiSredisce) v glTF, središče organa 0
         q = cfg["_fastigij"]
         porocilo["fastigij"] = [round(q[0] - ctr.x, 5), round(q[2] - ctr.z, 5), round(-q[1] + ctr.y, 5)]
+    if cfg.get("_rezZanke"):  # preseki struktur HRA s sredinsko ravnino v koordinatah ravnine reza (x = y Blender, y = z Blender; središče organa 0)
+        porocilo["rezZanke"] = {k: [[[round(p[0] - ctr.y, 6), round(p[1] - ctr.z, 6)] for p in z] for z in zz] for k, zz in cfg["_rezZanke"].items()}
     if cfg.get("_volumen"):  # prostorska tekstura reza (srce_ct.volumen): lo v koordinatah glTF s središčem organa 0
         vm = dict(cfg["_volumen"]); c_ = (ctr.x, ctr.z, -ctr.y)
         vm["lo"] = [round(vm["lo"][k] - c_[k], 5) for k in range(3)]

@@ -62,9 +62,9 @@
    "vrstni": 2,
    "listi": 0.85,
    "listiSredisce": [
-    -0.0014,
-    -0.02931,
-    -0.02715
+    0,
+    -0.03854,
+    -0.02108
    ],
    "listiRazmik": 0.0015,
    "mapa": false,
@@ -78,12 +78,12 @@
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.02432,
-     -0.08189
+     -0.01569,
+     -0.07435
     ],
     "mera": [
-     0.08243,
-     0.08243
+     0.07069,
+     0.07069
     ],
     "izrez": true,
     "visina": 0.5
@@ -118,14 +118,13 @@
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.02432,
-     -0.08189
+     -0.01569,
+     -0.07435
     ],
     "mera": [
-     0.08243,
-     0.08243
+     0.07069,
+     0.07069
     ],
-    "izrez": true,
     "visina": 0.2
    }
   },
@@ -328,7 +327,7 @@
    "opis": "Usklajujejo gibe in skrbijo za ravnotežje, da so gibi natančni in gladki.",
    "opisStudij": "Vermis in hemisferi; trije režnji (anterior, posterior, flocculonodularis); skorja s Purkinjejevimi celicami, globoka jedra (dentatus, emboliformis, globosus, fastigii). S deblom ga vežejo trije pari pedunculi cerebellares. Okvara: ataksija na isti strani, intencijski tremor, dismetrija.",
    "vozlisca": [
-    "Cerebellum (MRI)"
+    "Cerebellum (HRA)"
    ],
    "tocke": {
     "celota": [
@@ -352,22 +351,7 @@
    "opis": "Povezuje možgane s hrbtenjačo in samodejno uravnava dihanje, srčni utrip in požiranje.",
    "opisStudij": "Srednji možgani, most in podaljšana hrbtenjača; jedra možganskih živcev III–XII (spinalni del XI je v vratni hrbtenjači), retikularna formacija (budnost), središča za dihanje in krvni obtok, poti (piramidna proga, lemniscus medialis). Križanje piramid na meji s hrbtenjačo.",
    "vozlisca": [
-    "Base of peduncle.l",
-    "Base of peduncle.r",
-    "Inferior colliculus.l",
-    "Inferior colliculus.r",
-    "Medulla oblongata.l",
-    "Medulla oblongata.r",
-    "Midbrain.l",
-    "Midbrain.r",
-    "Olive.l",
-    "Olive.r",
-    "Pons.l",
-    "Pons.r",
-    "Pyramid of medulla oblongata.l",
-    "Pyramid of medulla oblongata.r",
-    "Superior colliculus.l",
-    "Superior colliculus.r"
+    "Brainstem (HRA)"
    ],
    "tocke": {
     "celota": [
@@ -391,11 +375,10 @@
    "opis": "Snop vlaken, po katerem si polobli izmenjujeta sporočila; pod njim je obok (fornix), spredaj spodaj sprednja komisura.",
    "opisStudij": "Največja komisura (okoli 200 milijonov aksonov): rostrum, genu, truncus, splenium. Pod njim septum pellucidum in fornix. Po kalozotomiji se pokaže »razcepljeni možgani« (Sperry).",
    "vozlisca": [
-    "Anterior commissure",
-    "Corpus callosum",
-    "Fornix.l",
-    "Fornix.r",
-    "Posterior commissure"
+    "Anterior commissure (HRA)",
+    "Corpus callosum (HRA)",
+    "Fornix (HRA)",
+    "Septum pellucidum (HRA)"
    ],
    "tocke": {
     "prerez": [
@@ -414,13 +397,8 @@
    "opis": "Prehodna postaja, skozi katero gredo skoraj vsa sporočila čutil na poti do skorje.",
    "opisStudij": "Parno jajčasto jedro diencefalona ob tretjem ventriklu; jedra: VPL/VPM (tip), corpus geniculatum laterale (vid) in mediale (sluh), VL/VA (motorika), sprednje (Papezov krog), pulvinar. Vonj gre v skorjo mimo talamusa. Adhesio interthalamica pri 70–80 % ljudi.",
    "vozlisca": [
-    "Habenula",
-    "Lateral geniculate body.l",
-    "Lateral geniculate body.r",
-    "Medial geniculate body.l",
-    "Medial geniculate body.r",
-    "Thalamus.l",
-    "Thalamus.r"
+    "Pineal body (HRA)",
+    "Thalamus (HRA)"
    ],
    "tocke": {
     "prerez": [
@@ -439,9 +417,7 @@
    "opis": "Uravnava telesno temperaturo, lakoto in žejo ter s hormoni vodi hipofizo.",
    "opisStudij": "Pod talamusom ob dnu tretjega ventrikla; jedra: supraopticus in paraventricularis (ADH, oksitocin v nevrohipofizo), suprachiasmaticus (cirkadiani ritem), arcuatus (sproščajoči hormoni po portalnem obtoku v adenohipofizo), mamilarna telesca.",
    "vozlisca": [
-    "Hypothalamus",
-    "Mamillary body.l",
-    "Mamillary body.r"
+    "Hypothalamus (HRA)"
    ],
    "tocke": {
     "prerez": [
@@ -460,8 +436,7 @@
    "opis": "Tu se del vlaken iz obeh očes prekriža, zato vsaka polobla z obema očesoma vidi nasprotno polovico vidnega polja.",
    "opisStudij": "Prekrižajo se vlakna nosnih polovic mrežnic (okoli 53 %); za križiščem tractus opticus do corpus geniculatum laterale. Pritisk tumorja hipofize od spodaj povzroči bitemporalno hemianopsijo.",
    "vozlisca": [
-    "Optic chiasm.l",
-    "Optic chiasm.r"
+    "Optic chiasm (HRA)"
    ]
   }
  ],
@@ -575,10 +550,10 @@
    }
   ]
  },
- "velikost": 0.2784,
+ "velikost": 0.27,
  "trikotniki": {
-  "racunalnik": 165890,
-  "telefon": 46618
+  "racunalnik": 164998,
+  "telefon": 43998
  },
  "luci": [
   {
