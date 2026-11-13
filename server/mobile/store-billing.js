@@ -191,10 +191,11 @@ export function mountStoreBilling(app, ctx, opts = {}) {
     const existing = row("apple", String(tx.originalTransactionId));
     const mine = !existing?.parent_id || existing.parent_id === p.id;
     if (mine && isOlder(tx)) return res.json({ ok: true, older: true, conflict: null, account: accountView(req, getParent(p.id)) });
-    if (mine) notePurchase(tx);
     const out = apply("apple", String(tx.originalTransactionId), appleState(tx), p.id);
     if (out.error) return res.status(400).json({ error: out.error });
     if (out.conflict === "other_account") return res.status(409).json({ error: "Ta nakup pripada drugemu računu Evklid.", other_account: true });
+    // Šele po uspešnem zapisu: neznan izdelek (400) ne sme premakniti oznake najnovejšega nakupa.
+    if (mine) notePurchase(tx);
     res.json({ ok: true, conflict: out.conflict || null, account: accountView(req, getParent(p.id)) });
   });
 
