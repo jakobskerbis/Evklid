@@ -667,13 +667,16 @@ def _vencne_cevi(vencne, bvh_povrsina, tel, dvig=0.25, debelina=1.0):
             if not vena or "Coronary sinus" not in r[0]:
                 t = np.linspace(0, 1, len(R)); R *= 1 - 0.55 * np.clip((t - 0.85) / 0.15, 0, 1)
             R = np.maximum(R, 0.00045) * debelina
+            if dvig > 0.25:  # pravo srce: poenostavljena stena odstopa do ≈ 0,5 mm, tanjše veje bi jih stena sekala v črtice
+                R = np.maximum(R, 0.0007)
+            dv = np.where(R >= 0.001, 1.0 if "Coronary sinus" in r[0] and dvig > 0.25 else dvig, 1.15 if dvig > 0.25 else dvig)
             for _ in range(2):
                 for i, c in enumerate(C):
                     q, nn, _, _ = bvh_povrsina.find_nearest(Vector(c))
                     if q is None:
                         continue
                     q, nn = np.array(q), np.array(nn)
-                    C[i] = q + nn * R[i] * (dvig if R[i] >= 0.001 or dvig <= 0.25 else 0.95)  # tanke veje na pravem srcu skoraj cele nad površino
+                    C[i] = q + nn * R[i] * dv[i]  # tanke veje in venčni sinus na pravem srcu cele nad površino
                     if vena and kd_a is not None:  # vena ob arteriji, ne v njej
                         a_, j_, d_ = kd_a.find(Vector(C[i]))
                         if a_ is not None and d_ < R[i] + Ra[j_] + 0.0004:
@@ -684,9 +687,8 @@ def _vencne_cevi(vencne, bvh_povrsina, tel, dvig=0.25, debelina=1.0):
             if dvig > 0.25:  # pravo srce (HH229, grbinasta površina): po glajenju poti nobena točka globlje kot dvig·R
                 for i, c in enumerate(C):
                     q, nn, _, _ = bvh_povrsina.find_nearest(Vector(c))
-                    dv_ = dvig if R[i] >= 0.001 else 0.95
-                    if q is not None and (Vector(c) - q).dot(nn) < R[i] * dv_:
-                        C[i] = np.array(q) + np.array(nn) * R[i] * dv_
+                    if q is not None and (Vector(c) - q).dot(nn) < R[i] * dv[i]:
+                        C[i] = np.array(q) + np.array(nn) * R[i] * dv[i]
                 C = _gladi_pot(C, 1)
             V_, F_ = sz.cev_np(C, R, 7); zbirka.dodaj(V_, F_)
             V_, F_ = sz.cev_np(C[::3] if len(C) > 9 else C, R[::3] if len(C) > 9 else R, 5); zbirka_t.dodaj(V_, F_)
@@ -1096,6 +1098,18 @@ def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None, deli=None):
             m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
         bpy.data.objects.remove(o)
         bm = bmesh.new(); bm.from_mesh(m2)
+        if deli is not None:  # krog m2: po poenostavitvi je meja delov cikcak trikotnikov (žagast rob lističa zaklopke):
+            bm.faces.ensure_lookup_table(); bm.faces.index_update()  # ploskev z vsaj dvema sosedoma iste druge oznake prevzame njuno oznako
+            for _ in range(3):
+                nove_oz = {}
+                for f in bm.faces:
+                    sos = [g.material_index for e in f.edges for g in e.link_faces if g is not f]
+                    drugi = [x for x in sos if x != f.material_index]
+                    if len(sos) == 3 and len(drugi) >= 2 and drugi.count(drugi[0]) >= 2:
+                        nove_oz[f.index] = drugi[0]
+                for i_, x in nove_oz.items():
+                    bm.faces[i_].material_index = x
+                if not nove_oz: break
         for d, (ime, tkivo, del_) in enumerate(DELI_CT):
             b2 = bm.copy()
             bmesh.ops.delete(b2, geom=[f for f in b2.faces if f.material_index != d], context="FACES")

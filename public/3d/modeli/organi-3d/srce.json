@@ -1103,9 +1103,9 @@
   "volumen": {
    "slika": "srce-volumen.png",
    "lo": [
-    -0.06681,
-    -0.09919,
-    -0.05556
+    -0.06676,
+    -0.09922,
+    -0.05579
    ],
    "korak": 0.00125,
    "n": [
@@ -1122,9 +1122,9 @@
     "slika": "srce-stena.png",
     "telefon": "srce-stena-telefon.png",
     "lo": [
-     -0.06725,
-     -0.10552,
-     -0.05975
+     -0.0673,
+     -0.10549,
+     -0.06011
     ],
     "korak": 0.001,
     "n": [
@@ -1259,10 +1259,10 @@
    }
   ]
  },
- "velikost": 0.2706,
+ "velikost": 0.2709,
  "trikotniki": {
-  "racunalnik": 224359,
-  "telefon": 55278
+  "racunalnik": 224403,
+  "telefon": 55288
  },
  "luci": [
   {
