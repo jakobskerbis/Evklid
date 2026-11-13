@@ -34,6 +34,8 @@ export const MOL = {
   mioglobin: b("#d9636b", 0.55, A.belj),
   nevrofilament: b("#e3b56a", 0.5, A.belj),
   keratin: b("#e6c08c", 0.55, A.belj),
+  dezmin: b("#d8a878", 0.55, A.belj),
+  vilin: b("#9cc8a0", 0.55, A.belj),
   nukleosom: b("#6f88d8", 0.6, A.belj),
   dnk: b("#f0b33c", 0.7, A.dnk),
   rnapol: b("#b48ee0", 0.55, A.belj),
@@ -79,6 +81,7 @@ export const MOL = {
   mbp: b("#e88a60", 0.5, A.belj),
   membelj: b("#f0a050", 0.55, A.belj),
   atpsintaza: b("#f0a050", 0.55, A.belj),
+  porin: b("#e8a868", 0.55, A.belj),
   pas3: b("#f0a050", 0.55, A.belj),
   crpalka: b("#f0a050", 0.55, A.belj),
   smola: b("#ece7da", 0.05, A.smola),
@@ -93,6 +96,7 @@ export const MOL = {
   mprot: b("#a080d0", 0.55, A.belj),
   env: b("#e05a4a", 0.6, A.belj),
   p24: b("#d880a0", 0.65, A.belj),
+  ma: b("#c890d8", 0.6, A.belj),
   rt: b("#8fc0e8", 0.55, A.belj),
   virbelj: b("#d88aa0", 0.65, A.belj),
 };
@@ -126,6 +130,7 @@ export const PRIZORI = {
   koloid: [25, "voda", "tiroglobulin"],
   granula: [26, "voda", "sekret"],
   er: [27, "voda", "bip", "novo"],
+  golgi: [27, "voda", "sekret", "novo"],
   mielin: [28, "voda", "fosfolipid", "holesterol", "mbp"],
   smola: [29, "smola"],
   t4dnk: [30, "voda", "dnk"],
@@ -135,7 +140,7 @@ export const PRIZORI = {
   hivJedro: [34, "voda", "rnkvir", "rt"],
   hivMatriks: [35, "voda", "p24"],
   virus: [36, "voda", "virbelj"],
-  mikrovil: [37, "voda", "ribosom", "aktin", "mikrotubul", "encimi", null],
+  mikrovil: [37, "voda", null, "aktin", null, "vilin", null],
 };
 // membrane: koda (uMemVrsta) in molekule v režah 12–15
 export const MEMBRANE = {
@@ -153,18 +158,18 @@ export const S = {
   ER: 21, RIBOSOM: 22, GLIKOGEN: 23, MEMBRANA: 24, KLOROPLAST: 25, GRANULA: 26, KROMATIN: 27, JEDRCE: 28, GOLGI: 29,
   MIKROVIL: 30, GENOM: 31,
 };
-const C = { NEVRON: 4, RASTLINSKA: 6, BAKTERIJA: 7, KERATINOCIT: 9, KVASOVKA: 11, MISICA: 16, NEVRIT: 17 };
+const C = { GLADKA: 13, NEVRON: 4, RASTLINSKA: 6, BAKTERIJA: 7, KERATINOCIT: 9, KVASOVKA: 11, MISICA: 16, NEVRIT: 17 };
 
 // Značilna snov preparata (TEM, sonda): ob prehodu na elektronski mikroskop gre pogled na najbližjo tako točko,
 // da so na ravni molekul vidne molekule, po katerih je preparat znan (mikroskop.js kTkivu). Ni ga, kjer je sredina že značilna.
 export const ZNACILNO = {
   kri: [S.ERITROCIT], "skeletna-misica": [S.MIOFIBRILA], "srcna-misica": [S.MIOFIBRILA], "gladka-misica": [S.CITO],
   "virus-t4": [S.GENOM], "virus-sars": [S.GENOM], "virus-hiv": [S.GENOM], bakterije: [S.CITO], kvasovke: [S.CITO],
-  ustne: [S.CITO], list: [S.KLOROPLAST], steblo: [S.CITO, S.KLOROPLAST], koren: [S.CITO], reza: [S.CITO, S.STENA],
+  ustne: [S.CITO], list: [S.KLOROPLAST], steblo: [S.CITO, S.KLOROPLAST], koren: [S.KROMATIN, S.JEDRO], reza: [S.CITO, S.STENA],
   jetra: [S.GLIKOGEN, S.CITO], bezgavka: [S.KROMATIN, S.JEDRO], jajcnik: [S.CITO], modo: [S.KROMATIN, S.JEDRO],
   zleza: [S.GRANULA], scitnica: [S.KOLOID], koza: [S.KERATIN], zivec: [S.MIELIN], "bela-snov": [S.MIELIN],
-  "mali-mozgani": [S.CITO], pljuca: [S.CITO], sapnik: [S.CITO], zelodec: [S.SLUZ, S.CITO], "tanko-crevo": [S.MIKROVIL],
-  "debelo-crevo": [S.SLUZ, S.CITO], mehur: [S.CITO], arterija: [S.ELASTIN], vena: [S.CITO, S.KOLAGEN], zob: [S.SKLENINA],
+  "mali-mozgani": [S.CITO], pljuca: [S.CITO], sapnik: [S.SLUZ, S.CITO], zelodec: [S.SLUZ, S.CITO], "tanko-crevo": [S.MIKROVIL],
+  "debelo-crevo": [S.SLUZ, S.CITO], mehur: [S.CITO], arterija: [S.ELASTIN], vena: [S.KOLAGEN, S.CITO], zob: [S.SKLENINA],
 };
 // virusi (r1 v celice.js): 1 SARS-CoV-2, 2 HIV, 3 T4 (3,0 glava, 3,1 rep, 3,2 vlakna)
 const virus = (r1) => Math.round(r1 * 10) / 10;
@@ -173,7 +178,7 @@ const SNOV_PRIZOR = {
   [S.PRAZNO]: "smola", [S.CITO]: "cito", [S.JEDRO]: "jedro", [S.KOLAGEN]: "kolagen", [S.MINERAL]: "kost", [S.ERITROCIT]: "kri",
   [S.LIPID]: "lipid", [S.MIOFIBRILA]: "miofibrila", [S.MIELIN]: "mielin", [S.MATRIKS]: "matriks", [S.KERATIN]: "keratin",
   [S.STENA]: "stenaR", [S.VAKUOLA]: "voda", [S.KOLOID]: "koloid", [S.PLAZMA]: "plazma", [S.ELASTIN]: "elastin",
-  [S.SLUZ]: "sluz", [S.VIRUS]: "virus", [S.SKLENINA]: "sklenina", [S.MITO]: "mito", [S.ER]: "er", [S.GOLGI]: "er",
+  [S.SLUZ]: "sluz", [S.VIRUS]: "virus", [S.SKLENINA]: "sklenina", [S.MITO]: "mito", [S.ER]: "er", [S.GOLGI]: "golgi",
   [S.RIBOSOM]: "ribosom", [S.GLIKOGEN]: "glikogen", [S.MEMBRANA]: "cito", [S.KLOROPLAST]: "kloroplast",
   [S.GRANULA]: "granula", [S.KROMATIN]: "kromatin", [S.JEDRCE]: "jedrce", [S.MIKROVIL]: "mikrovil", [S.GENOM]: "t4dnk",
 };
@@ -191,6 +196,7 @@ export function prizor(o, prep) {
   if (ime === "cito" || ime === "mikrovil") {
     if (tip === C.NEVRON || tip === C.NEVRIT) mol[5] = "nevrofilament";
     if (tip === C.KERATINOCIT) mol[5] = "keratin";
+    if (tip === C.GLADKA) mol[5] = "dezmin";
     if (tip === C.MISICA || prep === "srcna-misica" || prep === "skeletna-misica") mol[4] = "mioglobin";
   }
   if (ime === "matriks" && prep === "hrustanec") mol.splice(1, 3, "agrekan", "hialuronan", "kolagen2");
@@ -210,11 +216,14 @@ export function membrana(a, b, prep) {
   if (notri(a) && notri(b)) return kaj(va === 2 || vb === 2 ? "p24" : "rob");
   if (notri(a) || notri(b)) {
     const hiv = (notri(a) ? va : vb) === 2;
-    return { ...kaj("ovojnica", hiv ? ["fosfolipid", "env", null] : ["fosfolipid", "spike", "mprot"]), bodice: hiv ? 34 : 16 };
+    return { ...kaj("ovojnica", hiv ? ["fosfolipid", "env", "ma"] : ["fosfolipid", "spike", "mprot"]), bodice: hiv ? 60 : 16 };
   }
   const ob = (s) => a.snov === s || b.snov === s;
-  const bel = ob(S.MITO) ? "atpsintaza" : ob(S.KLOROPLAST) ? "fotosistem" : ob(S.ERITROCIT) ? "pas3"
-    : [C.NEVRON, C.NEVRIT].includes(a.tip) || prep === "zivec" ? "crpalka" : "membelj";
+  // ATP-sintaza le v notranji membrani mitohondrija (na obeh straneh matriks), fotosistem le v tilakoidi; zunanja membrana in
+  // ovojnica kloroplasta mejita na citoplazmo
+  const obe = (s) => a.snov === s && b.snov === s;
+  const bel = obe(S.MITO) ? "atpsintaza" : ob(S.MITO) ? "porin" : obe(S.KLOROPLAST) ? "fotosistem" : ob(S.ERITROCIT) ? "pas3"
+    : [C.NEVRON, C.NEVRIT].includes(a.tip) || [C.NEVRON, C.NEVRIT].includes(b.tip) ? "crpalka" : "membelj";
   return kaj("dvosloj", ["fosfolipid", "holesterol", bel]);
 }
 

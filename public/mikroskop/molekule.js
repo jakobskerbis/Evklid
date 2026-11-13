@@ -447,15 +447,16 @@ M prizor(int P, float b, vec2 x, float y, float px) {
     vlakna(m, x, px, 32.0, 0.12, vec2(1.0, 0.0), 4.0, V_FIB, b + 3.0, 41.0);
     raztopina(m, x, px, 9.0, vec4(b + 1.0, b + 2.0, -1.0, -1.0), vec4(0.3, 0.36, 0.0, 0.0), ivec4(O_SRCE, O_Y, 0, 0), vec4(3.8, 6.5, 0.0, 0.0), vec4(-1.0), 5.0);
   } else if (P == P_CITO || P == P_MIKROVIL) {
-    // voda, ribosom, aktin, mikrotubul, encimi (ali mioglobin), vmesni filament (nevrofilament, keratin) ali nič
-    raztopina(m, x, px, 7.5, vec4(b + 4.0, -1.0, -1.0, -1.0), vec4(0.5, 0.0, 0.0, 0.0), ivec4(O_KEPA, 0, 0, 0), vec4(2.6, 0.0, 0.0, 0.0), vec4(-1.0), 7.0);
+    // citoplazma: voda, ribosom, aktin, mikrotubul, encimi (ali mioglobin), vmesni filament (nevrofilament, keratin, dezmin) ali nič;
+    // mikrovil: voda, –, aktin (snop vzdolž resice), –, vilin in fimbrin (povezujeta snop); ribosomov in mikrotubulov ni
+    raztopina(m, x, px, 7.5, vec4(b + 4.0, -1.0, -1.0, -1.0), vec4(P == P_MIKROVIL ? 0.3 : 0.5, 0.0, 0.0, 0.0), ivec4(O_KEPA, 0, 0, 0), vec4(2.6, 0.0, 0.0, 0.0), vec4(-1.0), 7.0);
     if (P == P_MIKROVIL) vlakna(m, x, px, 11.0, 0.95, uSmer, 0.04, V_AKTIN, b + 2.0, 9.0);
     else {
       vlakna(m, x, px, 45.0, 0.45, vec2(1.0, 0.0), 4.0, V_AKTIN, b + 2.0, 9.0);
       vlakna(m, x, px, 40.0, 0.4, vec2(1.0, 0.0), 4.0, V_IF, b + 5.0, 13.0);
       vlakna(m, x, px, 130.0, 0.3, vec2(1.0, 0.0), 4.0, V_MT, b + 3.0, 11.0);
     }
-    raztopina(m, x, px, 40.0, vec4(b + 1.0, -1.0, -1.0, -1.0), vec4(0.3, 0.0, 0.0, 0.0), ivec4(O_RIBOSOM, 0, 0, 0), vec4(12.0, 0.0, 0.0, 0.0), vec4(-1.0), 15.0);
+    if (P != P_MIKROVIL) raztopina(m, x, px, 40.0, vec4(b + 1.0, -1.0, -1.0, -1.0), vec4(0.3, 0.0, 0.0, 0.0), ivec4(O_RIBOSOM, 0, 0, 0), vec4(12.0, 0.0, 0.0, 0.0), vec4(-1.0), 15.0);
   } else if (P == P_BAKTERIJA) {
     // voda, ribosom, encimi, DNK (nukleoid); bakterija nima mikrotubulov
     raztopina(m, x, px, 6.5, vec4(b + 2.0, -1.0, -1.0, -1.0), vec4(0.6, 0.0, 0.0, 0.0), ivec4(O_KEPA, 0, 0, 0), vec4(2.4, 0.0, 0.0, 0.0), vec4(-1.0), 7.0);
@@ -689,14 +690,20 @@ void membranaMol(inout M m, vec2 x, float y, float px) {
       if (hb.x < 0.45) slikaj(m, 14.0, sdKepa(vec2((fract(u / 24.0) - 0.5) * 24.0, y) * vec2(1.0, 0.75), 3.0, hb.y), z, px);
     } else {
       // beljakovina M v ovojnici in bodice na zunanji strani (razmik uBodice)
+      // SARS-CoV-2 (uBodice < 30): beljakovina M v ovojnici, bodica S ~20 nm s pecljem;
+      // HIV: matriksna beljakovina MA (p17) kot plast pod ovojnico, Env redek (7–14 na virion) in nizek (~11 nm)
       float yo = y * uZun;
-      vec4 hm = h42(vec2(floor(u / 9.0), 7.0));
-      if (hm.x < 0.5) slikaj(m, 14.0, sdElipsa(vec2(mod(u, 9.0) - 4.5, y), vec2(1.3, 2.6)), z, px);
+      bool hiv = uBodice > 30.0;
+      if (hiv) slikaj(m, 14.0, length(vec2(mod(u, 3.4) - 1.7, yo + 3.6)) - 1.35, z, px);
+      else {
+        vec4 hm = h42(vec2(floor(u / 9.0), 7.0));
+        if (hm.x < 0.5) slikaj(m, 14.0, sdElipsa(vec2(mod(u, 9.0) - 4.5, y), vec2(1.3, 2.6)), z, px);
+      }
       vec4 hs = h42(vec2(floor(u / uBodice), 9.0));
       if (hs.x < 0.75) {
         vec2 q = vec2(mod(u, uBodice) - 0.5 * uBodice, yo);
-        float d = sdOdsek(q, vec2(0.0, 2.0), vec2(0.0, 11.0)) - 1.0;
-        d = min(d, sdElipsa(q - vec2(0.0, 15.5), vec2(4.5, 5.0)));
+        float d = hiv ? sdOdsek(q, vec2(0.0, 2.0), vec2(0.0, 5.0)) - 1.2 : sdOdsek(q, vec2(0.0, 2.0), vec2(0.0, 11.0)) - 1.0;
+        d = min(d, hiv ? sdElipsa(q - vec2(0.0, 8.0), vec2(5.0, 3.8)) : sdElipsa(q - vec2(0.0, 15.5), vec2(4.5, 5.0)));
         slikaj(m, 13.0, d, q, px);
       }
     }
