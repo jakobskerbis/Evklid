@@ -5,6 +5,7 @@
 // CSS del (modri blisk ob dotiku, -webkit-touch-callout, -webkit-user-drag) je v style.css in 3d/3d.css.
 let dotik = false;
 addEventListener("pointerdown", (e) => (dotik = e.pointerType !== "mouse"), { capture: true, passive: true });
+addEventListener("keydown", () => (dotik = false), { capture: true, passive: true }); // tipka za meni na prenosniku z zaslonom na dotik
 const povezava = (e) => e.target instanceof Element && e.target.closest("a[href]");
 for (const ime of ["contextmenu", "dragstart"])
   addEventListener(

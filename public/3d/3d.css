@@ -21,7 +21,7 @@
 }
 /* pridržana povezava: brez oblačka s povezavo (public/dotik.js, style.css) */
 html { -webkit-tap-highlight-color: transparent; }
-.k3 a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; }
+@media (pointer: coarse) { .k3 a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; } }
 .k3 *,
 .k3 *::before,
 .k3 *::after { box-sizing: border-box; }

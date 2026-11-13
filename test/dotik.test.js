@@ -12,10 +12,10 @@ const PUB = path.resolve("public");
 test("CSS: no tap highlight anywhere, links have no callout or drag; zagon.js loads dotik.js", () => {
   const css = fs.readFileSync(path.join(PUB, "style.css"), "utf8");
   assert.match(css, /html \{ -webkit-tap-highlight-color: transparent; \}/);
-  assert.match(css, /a\[href\] \{ -webkit-touch-callout: none; -webkit-user-drag: none; \}/);
+  assert.match(css, /@media \(pointer: coarse\) \{ a\[href\] \{ -webkit-touch-callout: none; -webkit-user-drag: none; \} \}/);
   const k3 = fs.readFileSync(path.join(PUB, "3d/3d.css"), "utf8");
   assert.match(k3, /html \{ -webkit-tap-highlight-color: transparent; \}/);
-  assert.match(k3, /\.k3 a\[href\] \{ -webkit-touch-callout: none; -webkit-user-drag: none; \}/);
+  assert.match(k3, /@media \(pointer: coarse\) \{ \.k3 a\[href\] \{ -webkit-touch-callout: none; -webkit-user-drag: none; \} \}/);
   assert.match(fs.readFileSync(path.join(PUB, "zagon.js"), "utf8"), /^import "\.\/dotik\.js";/m);
 });
 
@@ -65,6 +65,14 @@ test("touch long-press on a link: context menu and drag are blocked; mouse keeps
     assert.equal(await press("p", "touch", "contextmenu"), false, "dotik izven povezave ostane");
     assert.equal(await press("k", "mouse", "contextmenu"), false, "miška: desni klik ostane");
     assert.equal(await press("k", "mouse", "dragstart"), false, "miška: vlečenje ostane");
+    await press("k", "touch", "pointerdown");
+    await p.keyboard.press("Shift");
+    const meni = await p.evaluate(() => {
+      const e = new MouseEvent("contextmenu", { bubbles: true, cancelable: true });
+      document.getElementById("k").dispatchEvent(e);
+      return e.defaultPrevented;
+    });
+    assert.equal(meni, false, "tipka za meni po dotiku ostane");
   } finally {
     await ctx.close();
     server.close();
