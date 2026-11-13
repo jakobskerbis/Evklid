@@ -535,7 +535,7 @@ export const bakterije = {
   imena: { 7: "bakterija" },
   snovi: { 11: "celična stena bakterije" },
   isci: "Pri 1000× z oljem poišči vijolične koke v grozdih in rožnate paličke. Pri TEM primerjaj steni: debelo pri grampozitivnih, dve membrani pri gramnegativnih.",
-  glsl: MIKROB_TEM + /* glsl */ `
+  glsl: "#define SEM_PROSTE\n" + MIKROB_TEM + /* glsl */ `
 T tkivo(vec2 p, float px) {
   T t = prazno();
   if (odsek(p, vec2(500.0, 350.0), 59.0) > 0.0) return t;
@@ -582,7 +582,7 @@ export const kvasovke = {
   imena: { 11: "kvasovka" },
   snovi: { 11: "celična stena kvasovke", 12: "vakuola" },
   isci: "Poišči kvasovko z brstom. Koliko celic je mrtvih (modrih)?",
-  glsl: MIKROB_TEM + /* glsl */ `
+  glsl: "#define SEM_PROSTE\n" + MIKROB_TEM + /* glsl */ `
 T tkivo(vec2 p, float px) {
   T t = prazno();
   if (odsek(p, vec2(600.0, 420.0), 61.0) > 0.0) return t;
@@ -619,7 +619,7 @@ export const kapljica = {
   imena: { 12: "pražival", 6: "celica alge" },
   snovi: { 25: "kloroplast", 12: "voda ali vakuola", 11: "celična stena alge" },
   isci: "Poišči copatkarja in njegovo veliko jedro, utripajoči vakuoli in migetalke. Pri evgleni poišči rdečo očesno pego in bičeka.",
-  glsl: RASTLINSKA + /* glsl */ `
+  glsl: "#define SEM_PROSTE\n" + RASTLINSKA + /* glsl */ `
 T voda(vec2 p, float px) {
   T t = prazno();
   t.snov = S_VAKUOLA;

@@ -650,16 +650,85 @@ U ultra(T t, vec2 p, float px) {
 }
 `;
 
-// Sestavi senčilnik preparata: osnove + koda preparata + TEM + glavni del (svetloba, TEM ali sonda).
+// SEM (vrstični elektronski mikroskop): višina površine v µm iz snovi tkiva. Preparat je prelomljen in prevlečen z
+// zlatom; celice so izbočene (prosto ležeče, npr. krvničke in bakterije, bolj kot celice v tkivu), svetline in
+// posušena tekočina so nižje, vlakna so rebrasta. Posebne oblike doda preparat s semPosebno (#define IMA_SEM).
+const SEM = /* glsl */ `
+float semVisina(T t, vec2 p, float px) {
+  float zrno = 0.004 * sumL(p, 0.012, px); // zlata prevleka, zrna ~10 nm
+  if (t.snov == S_PRAZNO && t.meja > 100.0 && dot(t.dye, vec3(1.0)) < 0.08) return -1.6 + 0.15 * sumL(p, 40.0, px) + zrno; // stekelce
+  float s = t.snov;
+  // relief prelomne ploskve: približno samopodoben (višina raste z valovno dolžino), zato je tekstura vidna pri vsaki
+  // povečavi; hrapavost je odvisna od snovi, zato se meje med tkivi vidijo kot stopnice
+  float hr = s == S_KOLAGEN || s == S_ELASTIN ? 1.0 : s == S_MINERAL || s == S_SKLENINA ? 1.3 : s == S_KERATIN ? 0.8
+    : s == S_MIOFIBRILA ? 0.7 : s == S_PLAZMA || s == S_KOLOID || s == S_SLUZ ? 0.15 : s == S_LIPID ? 0.25 : 0.5;
+  float h = 0.7 * sumL(p, 70.0, px) + hr * (0.08 * sumL(p, 0.8, px) + 0.3 * sumL(p, 3.0, px) + 1.2 * sumL(p, 12.0, px) + 4.0 * sumL(p, 48.0, px));
+#ifdef SEM_PROSTE
+  float jama = 0.9;  // razmaz: plazma je tanka plast na stekelcu
+#else
+  float jama = 3.0;  // svetlina žile, žleze ali alveola je globoka jama v prelomu
+#endif
+  if (s == S_PLAZMA || s == S_SLUZ || s == S_PRAZNO) h -= jama;
+  else if (s == S_VAKUOLA || s == S_KOLOID || s == S_LIPID) h -= 0.9;
+#ifdef SEM_PROSTE
+  // preparat s prosto ležečimi celicami (razmaz, kapljica): celice so kroglice na stekelcu
+  bool prosta = t.tip == C_BAKTERIJA || t.tip == C_KVASOVKA || t.tip == C_LEVKOCIT || t.tip == C_LIMFOCIT || t.tip == C_PRAZIVAL;
+#else
+  bool prosta = false;
+#endif
+  if (s == S_ERITROCIT && t.meja < 100.0) {
+    // dvojno vbočena ploščica (Evans in Fung 1972): debelina D/2 · √(1−x²)(0,207 + 2,003x² − 1,123x⁴)
+    float r = length(p - t.cc);
+    float R = max(t.meja + r, 0.5);
+    float x = min(r / R, 1.0);
+    return -0.9 + 0.5 * sumL(p, 70.0, px) + R * sqrt(max(1.0 - x * x, 0.0)) * (0.207 + 2.003 * x * x - 1.123 * x * x * x * x) + zrno;
+  } else if (t.meja < 100.0 && prosta) {
+    // prosta celica (bakterija, kvasovka, levkocit, pražival): krogla ali valj; od zunaj ne vidiš notranjosti
+    // mikrobi (mikrob v celice.js) imajo v smer.x razdaljo do površine; meja je lahko do vakuole ali jedra
+    bool mikr = t.tip == C_BAKTERIJA || t.tip == C_KVASOVKA;
+    float dm = mikr ? -t.smer.x : t.meja;
+    float W = t.tip == C_BAKTERIJA ? 0.5 : max(dm + length(p - t.cc), 0.3);
+    float m = min(max(dm, 0.0), W);
+    return -0.9 + 0.3 * sumL(p, 70.0, px) + 0.9 * sqrt(max(m * (2.0 * W - m), 0.0)) + 0.06 * sumL(p, 0.35, px) + zrno;
+  } else if (t.meja < 100.0) {
+    // celica v tkivu: blazinica, zaobljena ob robu (λ), med celicami žleb; jedro malo izbočeno
+    float lam = 1.2;
+    h += 0.8 * lam * (1.0 - exp(-max(t.meja, 0.0) / lam)) - 0.6;
+    if (t.jedro < 0.0) h += 0.35 * smoothstep(0.0, 2.0, -t.jedro);
+  }
+  float ls = length(t.smer);
+  if ((s == S_KOLAGEN || s == S_ELASTIN || s == S_MIOFIBRILA || s == S_MIELIN || s == S_KERATIN) && ls > 0.3) {
+    vec2 sm = t.smer / ls;
+    vec2 q = vec2(dot(p, vec2(-sm.y, sm.x)), dot(p, sm));
+    // vlakna, snopi in snopi snopov; sumL dobi px v raztegnjenih koordinatah (prečno na vlakna)
+    h += 0.35 * sumL(vec2(q.x * 3.0, q.y * 0.08), 0.5, 3.0 * px) + 1.0 * sumL(vec2(q.x * 0.5, q.y * 0.02), 1.0, 0.5 * px)
+       + 3.0 * sumL(vec2(q.x * 0.08, q.y * 0.004), 1.0, 0.08 * px);
+    h += 0.012 * cos(6.2832 * q.y / 0.067) * (1.0 - smoothstep(0.008, 0.02, px)); // 67-nm progavost kolagena
+  } else if (s == S_KOLAGEN || s == S_ELASTIN) {
+    h += 0.25 * sumL(p, 0.9, px);
+  }
+  if (s == S_MINERAL || s == S_SKLENINA) h += 0.5 * sumL(p, 2.5, px) + 0.15 * sumL(p, 0.3, px);
+  if (s == S_STENA) h += 0.4;
+  if (s == S_MIKROVIL) h += 0.4 * sumL(p, 0.12, px);
+  if (s == S_VIRUS) h += 0.05;
+#ifdef IMA_SEM
+  semPosebno(h, t, p, px);
+#endif
+  return h + zrno;
+}
+`;
+
+// Sestavi senčilnik preparata: osnove + koda preparata + TEM + SEM + glavni del (svetloba, TEM, SEM ali sonda).
 export function fragmentPreparata(koda) {
   return `#version 300 es
 ${OSNOVE}
 ${koda}
 ${ULTRA}
+${SEM}
 uniform vec2 uRes;
 uniform vec2 uCenter;      // središče vidnega polja na stekelcu (µm)
 uniform float uPx;         // µm na slikovno točko
-uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda
+uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda, 3 SEM
 uniform vec2 uSonda[8];    // točke sonde (µm)
 uniform mat3 uBarvila;     // stolpci: OD-vektor (R, G, B) prvega, drugega in tretjega barvila
 uniform float uDebelina;   // jakost barvanja (debelina rezine)
@@ -679,6 +748,18 @@ void main() {
   if (uNacin == 1) {
     U u = ultra(t, p, uPx);
     o = vec4(vec3(exp(-2.0 * clamp(u.g, 0.0, 1.5))), 1.0);
+  } else if (uNacin == 3) {
+    // SEM: sekundarni elektroni. Več jih uide s strmih ploskev in robov (1/cos θ), detektor ob strani da senco.
+    float e = uPx;
+    float h0 = semVisina(t, p, uPx);
+    float h1 = semVisina(tkivo(p + vec2(e, 0.0), uPx), p + vec2(e, 0.0), uPx);
+    float h2 = semVisina(tkivo(p + vec2(0.0, e), uPx), p + vec2(0.0, e), uPx);
+    vec3 n = normalize(vec3(h0 - h1, h0 - h2, e));
+    float strmo = clamp(1.0 / max(n.z, 0.05) - 1.0, 0.0, 3.0);
+    float det = dot(n, normalize(vec3(-0.45, 0.55, 0.7)));
+    float g = 0.16 + 0.17 * strmo + 0.42 * det;
+    g *= mix(0.45, 1.0, smoothstep(-1.5, -0.7, h0)); // stekelce med celicami je temnejše
+    o = vec4(vec3(clamp(g, 0.0, 1.0)), 1.0);
   } else {
     vec3 od = uBarvila * t.dye * uDebelina;
     o = vec4(exp(-od), 1.0);

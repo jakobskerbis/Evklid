@@ -20,7 +20,7 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
 .mk-plosca { min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
 .mk-sekcija { background: var(--k3-povrsina); border: 1px solid var(--k3-rob); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 .mk-sek-naslov { margin: 0; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--k3-muted); }
-.mk-revolver { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.mk-revolver { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
 .k3 .mk-obj { flex-direction: column; gap: 0; padding: 6px 4px; min-height: 52px; border-radius: 14px; line-height: 1.15; }
 .mk-obj b { font-size: 1rem; }
 .mk-obj small { font-size: 0.7rem; color: var(--k3-muted); font-weight: 500; }

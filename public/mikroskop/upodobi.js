@@ -171,7 +171,7 @@ export function ustvariUpodobitev(platno) {
       gl.uniform2f(prep.u("uRes"), n, n);
       gl.uniform2f(prep.u("uCenter"), v.sredisce[0], v.sredisce[1]);
       gl.uniform1f(prep.u("uPx"), v.umNaTocko);
-      gl.uniform1i(prep.u("uNacin"), v.tem ? 1 : 0);
+      gl.uniform1i(prep.u("uNacin"), v.nacin ?? (v.tem ? 1 : 0));
       gl.uniformMatrix3fv(prep.u("uBarvila"), false, v.barvila);
       gl.uniform1f(prep.u("uDebelina"), v.debelina);
       risi(T.a.f, n, n);
@@ -226,7 +226,7 @@ export function ustvariUpodobitev(platno) {
       gl.uniform1f(sestavi.u("uKontrast"), v.kontrast);
       gl.uniform1f(sestavi.u("uTopla"), v.topla);
       gl.uniform1f(sestavi.u("uSum"), v.sum);
-      gl.uniform1f(sestavi.u("uTEM"), v.tem ? 1 : 0);
+      gl.uniform1f(sestavi.u("uTEM"), v.elektroni ?? v.tem ? 1 : 0);
       gl.uniform1f(sestavi.u("uCas"), (v.cas || 0) % 100);
       risi(null, W, H);
     },
