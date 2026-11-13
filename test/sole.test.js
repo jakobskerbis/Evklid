@@ -7,6 +7,7 @@ import { pilotReport } from "../server/pilot.js";
 import { SCHOOL_LICENCE_PRICES } from "../server/schools.js";
 import { validateOrder, predracunHtml, CONSENT_TEXT } from "../server/sole.js";
 import { BRAND } from "../server/brand.js";
+import { createRequire } from "node:module";
 
 const NOW = new Date("2026-10-30T10:00:00Z");
 const good = (over = {}) => ({
@@ -209,6 +210,51 @@ test("school orders with accounts: public form, admin only for an admin parent",
     for (let i = 0; i < 4; i++) assert.equal((await post(base, good({ startDate: nextYear }), { "cf-connecting-ip": `10.0.0.${i}` })).status, 201);
     assert.equal((await post(base, good({ startDate: nextYear }), { "cf-connecting-ip": "10.0.0.99" })).status, 429);
   } finally {
+    server.close();
+  }
+});
+
+// Točka 1.5: CSP (script-src 'self') blokira vrinjene skripte in onclick; gumb »Natisni« mora delati prek datoteke.
+const require = createRequire(import.meta.url);
+let playwright = null;
+for (const p of ["playwright", process.env.PLAYWRIGHT, "/opt/npm-tools/node_modules/playwright"].filter(Boolean)) {
+  try {
+    playwright = require(p);
+    break;
+  } catch {}
+}
+test("predračun: brez vrinjenih skript, gumb Natisni pod CSP odpre tiskanje", { skip: playwright ? false : "Playwright ni nameščen", timeout: 60000 }, async (t) => {
+  const html = predracunHtml({ id: 7, school: "OŠ", address: "", registration_no: "", tax_id: "", budget_user: 0, budget_code: null, contact: "", email: "a@b.si", phone: "", plan: "pilot", students: 3, price_eur: 1, start_date: "2027-09-01", note: "" }, NOW);
+  assert.doesNotMatch(html, /\son[a-z]+\s*=/i, "brez atributov on…=");
+  assert.doesNotMatch(html, /<script(?![^>]*\ssrc=)[^>]*>/i, "brez vrinjenih skript");
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const store = openDb(":memory:");
+  const app = createApp(store, { scheduler: false, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    assert.equal((await post(base, good({ startDate: nextYear }))).status, 201);
+    const id = store.db.prepare("SELECT id FROM school_orders").get().id;
+    const page = await browser.newPage();
+    const blocked = [];
+    page.on("console", (m) => /Content Security Policy/i.test(m.text()) && blocked.push(m.text()));
+    await page.addInitScript(() => {
+      window.__natisnjeno = 0;
+      window.print = () => window.__natisnjeno++;
+    });
+    const res = await page.goto(`${base}/api/admin/school-orders/${id}/predracun`);
+    assert.equal(res.status(), 200);
+    assert.match(res.headers()["content-security-policy"] || "", /script-src 'self'/);
+    await page.click("#natisni");
+    await page.waitForFunction(() => window.__natisnjeno === 1, null, { timeout: 5000 });
+    assert.deepEqual(blocked, []);
+  } finally {
+    await browser.close();
     server.close();
   }
 });
