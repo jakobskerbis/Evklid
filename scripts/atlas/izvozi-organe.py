@@ -23,14 +23,14 @@
 #     računalnik px[0] (2048), telefon ima svojo poenostavitev, svoj atlas in peko px[1] (1024);
 #  6. senca okolice (AO z žarki) ostane v COLOR_0 za velike gube; organi.mjs nato dedup + kvantizacija.
 # Meje: računalnik ≤ 6 MB, telefon ≤ 2 MB (test/3d-organi-glb.test.js). Peka možganov traja ≈ 3 min.
-import bpy, bmesh, json, os, re, sys, math, random
+import bpy, bmesh, json, os, re, sys, math, random, types
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
 from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
-from oko_misice import ocesne_misice  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
+from oko_misice import ocesne_misice, kite_na_zrklo  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
 from srce_ct import srce_ct  # stene srca iz CT (Rodero 2021), poravnava ostalih delov nanje, maščoba, trabekule
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -267,7 +267,7 @@ ORGANI = {
         ),
         gladi=r".",
         # mišice na zrklo HRA: narastišča premih mišic 5,5–7,7 mm za limbusom, kite, nič pod beločnico (oko_misice.py)
-        dodaj=["ocesne_misice"],
+        dodaj=["ocesne_misice"], po_poenostavitvi=["kite_na_zrklo"],  # kite po poenostavitvi znova na zrklo (krog 10)
         ohrani=r"muscle", ohraniFaktor=(2.2, 6.0),  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
         # Krivulja vidnega živca se v Z-Anatomy začne pri leči: del znotraj zrkla odstranimo (sicer štrli v prerezu).
         znotraj=[(r"^Optic nerve", r"(?i)^sclera", 0.97)],
@@ -1271,6 +1271,10 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
         peka.maske(osnovni, velikost, ms.get("zile", "^$"), set(ms.get("tkiva", [])), votline_rx=ms.get("votline"),
                    **{k: ms[k] for k in ("zleb", "zlebZila", "sled") if k in ms})
     slike = None
+    # isti popravek najprej na izvirnikih: so visoka mreža peke (shrani_delo), sicer bi peka na položeno kito
+    # projicirala staro obliko (normale in senca obrnjene plošče)
+    for ime_f in cfg.get("po_poenostavitvi", []):
+        globals()[ime_f]([types.SimpleNamespace(name=r[0], data=r[1]) for r in osnovni], cfg)
     for i, (cilj, pripona) in enumerate(zip(cfg["cilj"], ("", "-telefon"))):
         ratio = min(1.0, cilj / max(skupaj, 1))
         oh = re.compile(cfg["ohrani"]) if cfg.get("ohrani") else None
@@ -1309,6 +1313,8 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
             no.data.materials.clear(); no.data.materials.append(material(tkivo, slike))
             no["tkivo"] = tkivo; no["del"] = d or ""
             objekti.append(no)
+        for ime_f in cfg.get("po_poenostavitvi", []):  # popravki na končni (poenostavljeni) mreži, pred UV in peko
+            globals()[ime_f](objekti, cfg)
         if tk and tk.get("pbr"):  # skupna pot (peka.py): vsaka mreža svoj UV atlas; peka po delih v ločenih procesih
             for o in objekti: o["ime"] = o.name
             peka.uv_atlas(objekti, tc, tc.get("px", (2048, 1024))[i])

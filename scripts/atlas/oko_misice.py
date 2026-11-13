@@ -19,6 +19,8 @@ KITA_DOLZINA = {"Medial": 0.0037, "Inferior": 0.0055, "Lateral": 0.0088, "Superi
 SIRINA = {"Medial": 0.0103, "Inferior": 0.0098, "Lateral": 0.0092, "Superior": 0.0106}  # širina narastišča (m)
 EPS = 0.00015  # najmanjša višina nad beločnico (m): nad napako poenostavljene krogle, brez utripanja globine
 POD = 0.0004  # spodnja ploskev kite toliko pod površino beločnice (stena je debela ≈ 1 mm)
+SO_KITA_PRED = 0.008  # zgornja poševna: kita sega toliko pred škripec (proti trebuhu, m)
+SKRIPEC_PODSTAVEK = 0.0014  # višina vezivnega podstavka škripca (m)
 KITA_DEB = 0.00045  # debelina kite ob narastišču (m)
 # krog 9 (ocena: »preme mišice se končajo z ravnim trdim rezom«): narastišče je rahlo usločeno (konveksno naprej, robova
 # kite KRIV m bolj zadaj kot sredina), kita se proti narastišču stanjša skoraj v nič (pero, ki se zlije z beločnico)
@@ -167,16 +169,18 @@ def ocesne_misice(osnovni, cfg, tmp):
             d = dz
         h_ = Pt @ d; dol_ = Pt @ ax; pr = Pt @ np.cross(ax, d)
         sir = float(pr.max() - pr.min()); vis = float(dol_.max() - dol_.min())
-        deb = 0.0006
+        # krog 10 (ocena: »škripec ni pritrjen, ploščica kot risalni žebljiček«): namesto tanke ploščice nizek vezivni
+        # podstavek, ki se iz odprtine zanke (začne 0,4 mm v njej) razširi proti steni očnice in je tam ravno odrezan
+        deb = SKRIPEC_PODSTAVEK
         bm = bmesh.new(); bm.from_mesh(me)
         z = Vector(d); x = Vector(np.cross(ax, d)); y = Vector(ax)
         M = Matrix((x, y, z)).transposed().to_4x4()
-        M.translation = Vector(T + d * (float(h_.max() - T @ d) - 0.0002 + deb / 2) + ax * float((dol_.max() + dol_.min()) / 2 - T @ ax))
-        M = M @ Matrix.Diagonal((0.5 * sir * 1.25, 0.5 * vis * 1.35, 1.0, 1.0))
-        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=28, radius1=1.0, radius2=0.97, depth=deb, matrix=M)
+        M.translation = Vector(T + d * (float(h_.max() - T @ d) - 0.0004 + deb / 2) + ax * float((dol_.max() + dol_.min()) / 2 - T @ ax))
+        M = M @ Matrix.Diagonal((0.5 * sir * 1.05, 0.5 * vis * 1.1, 1.0, 1.0))
+        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=28, radius1=0.8, radius2=1.12, depth=deb, matrix=M)
         bm.to_mesh(me); bm.free(); me.update()
         for p_ in me.polygons: p_.use_smooth = True
-        print(f"[oko] škripec: zanka {sir * 1000:.1f} × {vis * 1000:.1f} mm, ploščica ob odprtini (kot proti steni očnice {math.degrees(math.acos(np.clip(d @ dz, -1, 1))):.0f}°)")
+        print(f"[oko] škripec: zanka {sir * 1000:.1f} × {vis * 1000:.1f} mm, podstavek ob odprtini (kot proti steni očnice {math.degrees(math.acos(np.clip(d @ dz, -1, 1))):.0f}°)")
 
     def posevna(row, podlaga):
         """Poševna mišica na površino podlage; konec stanjšan v kito."""
@@ -202,7 +206,8 @@ def ocesne_misice(osnovni, cfg, tmp):
         me.vertices.foreach_set("co", (G + u * rn[:, None]).ravel()); me.update()
         if zg and T is not None:  # kita od škripca do narastišča
             it = int(np.argmin(np.linalg.norm(P - T, axis=1)))
-            k = 1 - _gladko(gd, gd[it] - 0.003, gd[it] + 0.001)
+            # krog 10: zgornja poševna postane kita ≈ 1 cm pred škripcem (skozi zanko gre kita, ne rdeč trebuh)
+            k = 1 - _gladko(gd, gd[it] + SO_KITA_PRED, gd[it] + SO_KITA_PRED + 0.004)
         else:
             k = 1 - _gladko(gd, 0.0015, 0.004)
         _pisi_kito(me, k)
@@ -307,3 +312,77 @@ def ocesne_misice(osnovni, cfg, tmp):
         posevna(io, _bvh(osnova + ([ir[1]] if ir else [])))
     if lr: prema(lr, _bvh(osnova + ([io[1]] if io else [])))
     return []
+
+
+# Krog 10 (ocena krog 9: »ploščate trde bele plošče kit štrlijo iz zrkla«): tanka kita (dve ploskvi 0,2–0,5 mm narazen)
+# se pri poenostavitvi mreže (DECIMATE) ponekod obrne navznoter: zgornja ploskev (normala navzven) pristane pod
+# spodnjo, beločnica jo prekrije in pokaže svojo pečeno senco mišice (siv pravokotnik ob narastišču zunanje preme).
+# Zato se kite po poenostavitvi znova položijo na podlago (beločnica in mišice pod njo, isti vrstni red plasti kot
+# zgoraj), na končni mreži, ki gre v GLB: ploskev, katere navitje gleda navzven, je zgornja (KITA_ODMIK nad podlago),
+# navznoter spodnja (SPOD_ODMIK pod podlago), oglišča z obema vrstama ploskev so rob kite (ROB_ODMIK: pero, ki se
+# zlije z beločnico). Velja samo blizu podlage (višina < ZOVOJ, mehko od ZOVOJ0) in na kitah (atribut KITA, če je).
+# Navitje se ne spreminja: po premiku je kita spet pravilna plošča (preverjeno: brez obrnjenih zunanjih ploskev).
+KITA_ODMIK = 0.00025
+ROB_ODMIK = 0.00003
+SPOD_ODMIK = 0.0001
+ZOVOJ, ZOVOJ0 = 0.0020, 0.0012
+PAHLJACA = 0.12
+PLASTI = [("Superior oblique muscle", []), ("Superior rectus muscle", ["Superior oblique muscle"]),
+          ("Inferior rectus muscle", []), ("Medial rectus muscle", []),
+          ("Inferior oblique muscle", ["Inferior rectus muscle"]), ("Lateral rectus muscle", ["Inferior oblique muscle"])]
+
+
+def _stran_oglisc(P, T, G):
+    """Delež ploskev ob oglišču, katerih navitje gleda stran od središča G (1 zgornja, 0 spodnja ploskev)."""
+    a, b, c = P[T[:, 0]], P[T[:, 1]], P[T[:, 2]]
+    n = np.cross(b - a, c - a); s = (a + b + c) / 3 - G
+    ven = ((n * s).sum(1) > 0).astype(float)
+    gor = np.zeros(len(P)); vse = np.zeros(len(P))
+    for k in range(3):
+        gor += np.bincount(T[:, k], weights=ven, minlength=len(P)); vse += np.bincount(T[:, k], minlength=len(P))
+    return np.where(vse > 0, gor / np.maximum(vse, 1), 0.5)
+
+
+def kite_na_zrklo(objekti, cfg):
+    po = lambda ime: next((o for o in objekti if o.name.startswith(ime)), None)
+    bel = next((o for o in objekti if re.match(r"(?i)sclera", o.name)), None)
+    roz = next((o for o in objekti if re.match(r"(?i)cornea", o.name)), None)
+    if not bel:
+        return
+    S = _tocke(bel.data); G = (S.min(0) + S.max(0)) / 2
+    for ime, pod in PLASTI:
+        o = po(ime)
+        if o is None:
+            continue
+        me = o.data; me.calc_loop_triangles()
+        T = np.empty(len(me.loop_triangles) * 3, dtype=np.int32); me.loop_triangles.foreach_get("vertices", T); T = T.reshape(-1, 3)
+        P = _tocke(me); d = P - G; r = np.linalg.norm(d, axis=1); u = d / r[:, None]
+        podlaga = _bvh([bel.data] + ([roz.data] if roz else []) + [po(p).data for p in pod if po(p) is not None])
+        rs = _zunanji_polmer(podlaga, G, u)
+        # pahljača: v pasu ob zrklu se kita proti narastišču rahlo razširi (za PAHLJACA na samem narastišču)
+        wz = _gladko(ZOVOJ - (r - np.where(np.isnan(rs), np.inf, rs)), 0.0, ZOVOJ - ZOVOJ0); z0 = wz > 0.5
+        if z0.sum() > 20 and (~z0).sum() > 20:
+            c = u[z0].mean(0); c /= np.linalg.norm(c)
+            Q = u - np.outer(u @ c, c)
+            a = np.linalg.svd(Q[z0] - Q[z0].mean(0), full_matrices=False)[2][0]
+            if (Q[~z0] @ a).mean() > (Q[z0] @ a).mean():  # a kaže od trebuha proti narastišču
+                a = -a
+            b = np.cross(c, a); sa = Q @ a; lb = Q @ b; lb0 = lb[z0].mean()
+            t = _gladko(sa, np.percentile(sa[z0], 10), sa[z0].max()) * wz
+            u = u + np.outer((lb - lb0) * PAHLJACA * t, b); u /= np.linalg.norm(u, axis=1)[:, None]
+            rs = _zunanji_polmer(podlaga, G, u)
+        ok = ~np.isnan(rs)
+        h = np.where(ok, r - np.where(ok, rs, 0), np.inf)
+        gor = _stran_oglisc(P, T, G)
+        odmik = np.where(gor > 0.99, KITA_ODMIK, np.where(gor < 0.01, -SPOD_ODMIK, ROB_ODMIK))
+        # pero: zgornja oglišča ob robu kite nižje (dva koraka glajenja odmika po robovih samo med zgornjimi in robnimi)
+        e = np.empty(len(me.edges) * 2, dtype=np.int32); me.edges.foreach_get("vertices", e); e = e.reshape(-1, 2)
+        zg = gor > 0.01; e = e[zg[e[:, 0]] & zg[e[:, 1]]]
+        st = np.bincount(e.ravel(), minlength=len(P)).astype(float)
+        for _ in range(2):
+            acc = np.bincount(e[:, 0], weights=odmik[e[:, 1]], minlength=len(P)) + np.bincount(e[:, 1], weights=odmik[e[:, 0]], minlength=len(P))
+            odmik = np.where(zg & (st > 0), 0.5 * odmik + 0.5 * acc / np.maximum(st, 1), odmik)
+        w = _gladko(ZOVOJ - h, 0.0, ZOVOJ - ZOVOJ0) * ok
+        rn = r + w * (np.where(ok, rs, r) + odmik - r)
+        me.vertices.foreach_set("co", (G + u * rn[:, None]).ravel()); me.update()
+        print(f"[oko] {o.name}: kita na podlago, {int((w > 0.5).sum())} oglišč (zgornjih {int(((w > 0.5) & (gor > 0.99)).sum())})")

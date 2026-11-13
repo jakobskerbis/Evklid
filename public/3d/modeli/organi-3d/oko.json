@@ -24,7 +24,7 @@
    "zile": 0.45,
    "zileBarva": "#c4685e",
    "zileBarva2": "#a8464c",
-   "zileSirina": 0.00005,
+   "zileSirina": 5e-05,
    "zileF": 16,
    "zileMaska": 9
   },
@@ -42,20 +42,21 @@
    "spekular": 0.5,
    "tekstura": false,
    "limbus": {
-    "barva": "#9a9086",
-    "moc": 0.55,
+    "barva": "#a9b1bb",
+    "barva2": "#e9e4dc",
+    "moc": 0.5,
     "sredisce": [
      0.00827,
-     -0.00151,
+     -0.00165,
      0.01463
     ],
     "os": [
-     0.0642,
-     0.0543,
+     0.0643,
+     0.0542,
      0.9965
     ],
-    "r0": 0.0053,
-    "r1": 0.00595
+    "r0": 0.005,
+    "r1": 0.0061
    },
    "zrcalo": true
   },
@@ -105,8 +106,8 @@
    "zrno": 0,
    "relief": 0,
    "globina": true,
-   "brezReza": true,
-   "tekstura": false
+   "tekstura": false,
+   "rez": "#ece2c4"
   },
   "mrežnica": {
    "barva": "#dc7a52",
@@ -128,7 +129,7 @@
    "mreznicaZile": {
     "disk": [
      0.00575,
-     0.00072,
+     0.00058,
      0.00436
     ],
     "sredisce": [
@@ -143,7 +144,7 @@
     ]
    },
    "zile": 0.75,
-   "zileSirina": 0.00009,
+   "zileSirina": 9e-05,
    "zileBarva": "#a8261f",
    "zileBarva2": "#6a1216",
    "tekstura": false
@@ -215,13 +216,13 @@
    "konec": {
     "sredisce": [
      -0.00821,
-     0.00862,
+     0.00848,
      -0.01802
     ],
     "os": [
      -0.3618,
      0.2901,
-     -0.8859
+     -0.886
     ],
     "polmer": 0.00175
    },
@@ -229,7 +230,7 @@
    "zile": 0.5,
    "zileBarva": "#b85a4c",
    "zileBarva2": "#8f3a42",
-   "zileSirina": 0.00006
+   "zileSirina": 6e-05
   },
   "kita": {
    "barva": "#ece7dc",
@@ -246,7 +247,7 @@
   "mišica": {
    "barva": "#b4433b",
    "hrap": 0.42,
-   "lak": 0.45,
+   "lak": 0.4,
    "lakHrap": 0.25,
    "sijaj": 0.7,
    "sijajBarva": "#ff9c8c",
@@ -261,7 +262,18 @@
    "sencaBarva": "#5a1a16",
    "detajl": true,
    "aoTekstura": 0.4,
-   "dvostransko": true
+   "kita": {
+    "barva": "#ece6de",
+    "hrap": 0.32,
+    "lak": 1,
+    "rob": 0.16,
+    "robBarva": "#ffd9cf",
+    "meja": [
+     0.35,
+     0.62
+    ],
+    "svetlost": 0.6
+   }
   },
   "papila": {
    "barva": "#f0d3a4",
@@ -299,9 +311,9 @@
      0.02204
     ],
     "prerez": [
-     0.0087,
-     -0.00147,
-     0.00264
+     0.00704,
+     -0.00164,
+     0.00276
     ]
    }
   },
@@ -323,9 +335,9 @@
      0.02954
     ],
     "prerez": [
-     0.0087,
-     -0.00147,
-     0.02904
+     0.00952,
+     -0.0014,
+     0.02898
     ]
    }
   },
@@ -362,9 +374,9 @@
    ],
    "tocke": {
     "prerez": [
-     0.0141,
-     -0.00097,
-     0.02254
+     0.00866,
+     -0.00102,
+     0.02289
     ]
    }
   },
@@ -381,9 +393,9 @@
    ],
    "tocke": {
     "prerez": [
-     0.0087,
-     -0.00147,
-     0.01304
+     0.00802,
+     -0.00154,
+     0.01309
     ]
    }
   },
@@ -403,9 +415,9 @@
    ],
    "tocke": {
     "prerez": [
-     0.0087,
-     -0.01187,
-     0.01204
+     0.01365,
+     -0.01022,
+     0.01163
     ]
    }
   },
@@ -424,9 +436,9 @@
    ],
    "tocke": {
     "prerez": [
-     0.0087,
-     0.00993,
-     0.01204
+     0.00164,
+     0.00795,
+     0.0126
     ]
    }
   },
@@ -480,11 +492,11 @@
   "ravnine": [
    {
     "n": [
-     -1,
-     0,
-     0
+     -0.8293,
+     -0.5525,
+     0.0835
     ],
-    "d": 0.0083
+    "d": 0.0048
    }
   ]
  },
@@ -521,12 +533,14 @@
      "barva": "#0b0605",
      "dvostransko": true,
      "sijaj": 0,
-     "ucnaBarva": "#0b0605"
+     "ucnaBarva": "#0b0605",
+     "zamik": 4
     },
     "ciliarnik": {
      "barva": "#0b0605",
      "sijaj": 0,
-     "ucnaBarva": "#0b0605"
+     "ucnaBarva": "#0b0605",
+     "zamik": 4
     },
     "steklovina": {
      "barva": "#040202",
@@ -542,9 +556,9 @@
   },
   "prerez": {
    "pogled": [
-    1,
-    0.25,
-    0.35
+    0.708,
+    0.753,
+    0.341
    ],
    "tocke": [
     "leca",
@@ -556,12 +570,12 @@
    ],
    "okvir": {
     "sredisce": [
-     0.0058,
-     0.00093,
-     0.00794
+     0.0068,
+     0.0015,
+     0.0112
     ],
-    "polmer": 0.55,
-    "polmerTelefon": 0.68
+    "polmer": 0.54,
+    "polmerTelefon": 0.52
    },
    "skrijDele": [
     "misice"
@@ -608,7 +622,7 @@
    }
   ]
  },
- "velikost": 0.0824,
+ "velikost": 0.0825,
  "trikotniki": {
   "racunalnik": 164780,
   "telefon": 52612

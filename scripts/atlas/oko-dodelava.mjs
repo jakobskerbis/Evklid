@@ -182,8 +182,9 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
   if (roz) {
     const mb = G.preberi(belocnica, belPrim), mr = G.preberi(roz, roz.getMesh().listPrimitives()[0]);
     const ok = okvirZrkla(mb.W, mr.W);
-    // limbus za senčilnik roženice (tkiva.roženica.limbus): siv obroč na prehodu, r0..r1 od osi zrkla
-    limb = { sredisce: ok.O.map((x) => +x.toFixed(5)), os: ok.os.map((x) => +x.toFixed(4)), r0: +(LIMBUS - 0.0006).toFixed(5), r1: +(LIMBUS + 0.00005).toFixed(5) };
+    // limbus za senčilnik roženice (tkiva.roženica.limbus): mehak modrikasto siv prehod v beločnico (krog 10, ocena:
+    // »bled siv obroč«), r0..r1 od osi zrkla: širši pas (0,9 mm) in zunanji del v barvi beločnice (barva2)
+    limb = { sredisce: ok.O.map((x) => +x.toFixed(5)), os: ok.os.map((x) => +x.toFixed(4)), r0: +(LIMBUS - 0.0009).toFixed(5), r1: +(LIMBUS + 0.0002).toFixed(5) };
     const l = limbus(mb, mr, ok);
     if (l) {
       por0.push(`limbus: odprtina beločnice ${(l.rRob * 1000).toFixed(2)} → ${(LIMBUS * 1000).toFixed(2)} mm, ${l.premaknjenih} oglišč`);
@@ -238,7 +239,7 @@ async function glavni() {
     if (suho) continue;
     if (kljuc === "racunalnik" && (r.konec || r.limbus)) {
       if (r.konec) podatki.tkiva["živec"].konec = r.konec;
-      if (r.limbus && podatki.tkiva["roženica"]) podatki.tkiva["roženica"].limbus = { barva: "#9a9086", moc: 0.55, ...(podatki.tkiva["roženica"].limbus || {}), ...r.limbus };
+      if (r.limbus && podatki.tkiva["roženica"]) podatki.tkiva["roženica"].limbus = { barva: "#a9b1bb", barva2: "#e9e4dc", moc: 0.5, ...(podatki.tkiva["roženica"].limbus || {}), ...r.limbus };
       if (r.disk && podatki.tkiva["mrežnica"]?.mreznicaZile) podatki.tkiva["mrežnica"].mreznicaZile.disk = r.disk.map((x) => +x.toFixed(5));
     }
     const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(MAPA, ime));
