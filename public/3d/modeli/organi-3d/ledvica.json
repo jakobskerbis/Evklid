@@ -1,0 +1,336 @@
+{
+ "organ": "ledvica",
+ "vir": "HuBMAP Human Reference Atlas (CC BY 4.0; ovojnica, skorja, piramide, papile, ledvični sinus) in Z-Anatomy (CC BY-SA 4.0; sečevod, ledvični žili, nadledvična žleza); izvoz scripts/atlas/izvozi-organe.py",
+ "tkiva": {
+  "ovojnica": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#8f3a2f",
+   "sijajBarva": "#ffb0a0",
+   "rob": 0.2,
+   "robBarva": "#ff8070",
+   "relief": 0.25,
+   "lise": 0.1,
+   "liseBarva": "#c06050",
+   "rez": "#d9c2b0",
+   "senca": 0.3,
+   "sencaBarva": "#4a1510"
+  },
+  "skorja": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#9c4434",
+   "rez": "#b4553f",
+   "sijajBarva": "#ffb0a0"
+  },
+  "piramida": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#6d2622",
+   "rez": "#7a2a28",
+   "rezVlakna": 900,
+   "sijajBarva": "#ff9a90"
+  },
+  "papila": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#c48676",
+   "rez": "#c48676",
+   "sijajBarva": "#ffd0c0"
+  },
+  "secevod": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#e3cdb0",
+   "rez": "#d8bc98",
+   "sijajBarva": "#ffffff"
+  },
+  "arterija": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#c4312e",
+   "rez": "#a92a28",
+   "sijajBarva": "#ff9a90",
+   "rob": 0.2,
+   "robBarva": "#ff6458"
+  },
+  "vena": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#3b5ba8",
+   "rez": "#2f4b8c",
+   "sijajBarva": "#9db8ff",
+   "rob": 0.18,
+   "robBarva": "#6f93ff"
+  },
+  "nadledvicna": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 110,
+   "barva": "#d49a3a",
+   "rez": "#c9802c",
+   "sijajBarva": "#ffe0a0",
+   "lise": 0.2,
+   "liseBarva": "#e8b860"
+  },
+  "meh": {
+   "hrap": 0.38,
+   "lak": 0.6,
+   "lakHrap": 0.18,
+   "sijaj": 0.4,
+   "ao": 0.8,
+   "zrno": 0.05,
+   "f": 90,
+   "barva": "#ead9b4",
+   "rez": "#f3e6c6",
+   "sijajBarva": "#ffffff",
+   "rob": 0.15,
+   "robBarva": "#fff4dc"
+  }
+ },
+ "deli": [
+  {
+   "id": "ovojnica",
+   "ime": "Ledvična ovojnica",
+   "la": "Capsula fibrosa",
+   "barva": "#c08a7a",
+   "opis": "Tanka, čvrsta vezivna plast, ki obdaja ledvico in jo varuje.",
+   "vozlisca": [
+    "kidney_capsule_L (HRA)"
+   ]
+  },
+  {
+   "id": "skorja",
+   "povecava": "organ-nefron",
+   "ime": "Ledvična skorja",
+   "la": "Cortex renalis",
+   "barva": "#f08060",
+   "opis": "Zunanja plast z ledvičnimi telesci, kjer se iz krvi precedi primarni seč.",
+   "vozlisca": [
+    "outer_cortex_of_kidney_L (HRA)",
+    "renal_column_L (HRA)"
+   ]
+  },
+  {
+   "id": "piramide",
+   "povecava": "organ-nefron",
+   "ime": "Ledvične piramide (sredica)",
+   "la": "Pyramides renales",
+   "barva": "#e04050",
+   "opis": "Progaste piramide sredice s cevkami, ki seč zgostijo in ga vodijo k papilam.",
+   "vozlisca": [
+    "renal_pyramid_L_a (HRA)",
+    "renal_pyramid_L_b (HRA)",
+    "renal_pyramid_L_c (HRA)",
+    "renal_pyramid_L_d (HRA)",
+    "renal_pyramid_L_e (HRA)",
+    "renal_pyramid_L_f (HRA)",
+    "renal_pyramid_L_g (HRA)",
+    "renal_pyramid_L_h (HRA)",
+    "renal_pyramid_L_i (HRA)"
+   ]
+  },
+  {
+   "id": "papile",
+   "ime": "Ledvične papile",
+   "la": "Papillae renales",
+   "barva": "#f0b0a0",
+   "opis": "Vrhovi piramid, iz katerih kaplja seč v ledvične čašice.",
+   "vozlisca": [
+    "renal_papilla_L_a (HRA)",
+    "renal_papilla_L_b (HRA)",
+    "renal_papilla_L_c (HRA)",
+    "renal_papilla_L_d (HRA)",
+    "renal_papilla_L_e (HRA)",
+    "renal_papilla_L_f (HRA)",
+    "renal_papilla_L_g (HRA)",
+    "renal_papilla_L_h (HRA)",
+    "renal_papilla_L_i (HRA)"
+   ]
+  },
+  {
+   "id": "meh",
+   "vozlisca": [
+    "Evklid renal pelvis and calyces (lastno)"
+   ],
+   "ime": "Ledvični meh in čašice",
+   "la": "Pelvis renalis, calices renales",
+   "barva": "#f2d060",
+   "opis": "Čašice objemajo papile in zbirajo seč, ki se steka v ledvični meh in naprej v sečevod."
+  },
+  {
+   "id": "secevod",
+   "ime": "Sečevod",
+   "la": "Ureter",
+   "barva": "#e8d8b0",
+   "opis": "Mišična cev, ki seč iz ledvičnega meha s krčenjem potiska v sečni mehur.",
+   "vozlisca": [
+    "Ureter.l"
+   ]
+  },
+  {
+   "id": "ledvicna-arterija",
+   "ime": "Ledvična arterija",
+   "la": "Arteria renalis",
+   "barva": "#ff5a5a",
+   "opis": "Pripelje kri iz aorte; skozi ledvici steče okoli petina vse krvi iz srca.",
+   "vozlisca": [
+    "Anterior branch of renal artery.l",
+    "Left renal artery",
+    "Posterior branch of renal artery.l"
+   ]
+  },
+  {
+   "id": "ledvicna-vena",
+   "ime": "Ledvična vena",
+   "la": "Vena renalis",
+   "barva": "#6e9bff",
+   "opis": "Odvede prečiščeno kri iz ledvice v spodnjo votlo veno.",
+   "vozlisca": [
+    "Left renal vein"
+   ]
+  },
+  {
+   "id": "nadledvicna",
+   "ime": "Nadledvična žleza",
+   "la": "Glandula suprarenalis",
+   "barva": "#ffb84a",
+   "opis": "Žleza z notranjim izločanjem na vrhu ledvice; izloča adrenalin in kortizol.",
+   "vozlisca": [
+    "Suprarenal gland.l"
+   ]
+  }
+ ],
+ "prerez": {
+  "ravnine": [
+   {
+    "n": [
+     0,
+     0,
+     -1
+    ],
+    "d": -0.005
+   }
+  ]
+ },
+ "pogledi": {
+  "celota": {
+   "pogled": [
+    -0.35,
+    0.1,
+    1
+   ],
+   "tocke": [
+    "ovojnica",
+    "secevod",
+    "ledvicna-arterija",
+    "ledvicna-vena",
+    "nadledvicna"
+   ]
+  },
+  "prerez": {
+   "pogled": [
+    -0.1,
+    0.05,
+    1
+   ],
+   "tocke": [
+    "skorja",
+    "piramide",
+    "papile",
+    "meh",
+    "ovojnica",
+    "secevod"
+   ]
+  }
+ },
+ "podrobnosti": {
+  "naslov": "Ledvica",
+  "odseki": [
+   {
+    "naslov": "Zgradba",
+    "besedilo": "Ledvici sta parna organa v obliki fižola, dolgi okoli 11 centimetrov, ki ležita ob hrbtenici pod trebušno prepono. Vsaka tehta približno 150 gramov. Če ledvico prerežeš, vidiš svetlejšo zunanjo skorjo in temnejšo notranjo sredico, ki jo sestavlja 8 do 18 progastih piramid. Med piramidami segajo v globino ledvični stebrički iz skorje. Na notranji strani so ledvična vrata, kjer vstopa ledvična arterija, izstopata pa ledvična vena in sečevod."
+   },
+   {
+    "naslov": "Delovanje",
+    "besedilo": "Osnovna enota ledvice je nefron; vsaka ledvica jih ima okoli milijon. V ledvičnem telescu v skorji se iz krvi precedi voda z raztopljenimi snovmi (primarni seč), v enem dnevu okoli 180 litrov. V ledvičnih cevkah se večina vode, glukoza in soli vrnejo v kri, v seču pa ostanejo odpadne snovi, kot je sečnina. Iz papil kaplja seč v čašice in ledvični meh, sečevod pa ga odvede v sečni mehur. Ledvici tako uravnavata tudi količino vode in soli v telesu ter krvni tlak."
+   },
+   {
+    "naslov": "Zanimivost",
+    "besedilo": "Skozi ledvici vsako minuto steče več kot liter krvi, kar je okoli petina vse krvi, ki jo iztisne srce. Od 180 litrov primarnega seča na dan ostane le približno poldrugi liter seča. Človek lahko zdravo živi tudi z eno samo ledvico, zato je ledvica organ, ki ga živ darovalec lahko podari bližnjemu."
+   },
+   {
+    "naslov": "Pogoste bolezni",
+    "besedilo": "Ledvični kamni nastanejo, ko se snovi iz seča izločijo kot trdi kristali; ko kamen potuje po sečevodu, povzroči hude krčevite bolečine. Bakterije, ki pridejo po sečilih navzgor, lahko povzročijo vnetje ledvic z vročino in bolečino v ledvenem delu. Dolgotrajno povišan krvni tlak in sladkorna bolezen počasi okvarjata nefrone. Ko ledvici odpovesta, kri čisti naprava za dializo ali pa bolnik dobi presajeno ledvico."
+   },
+   {
+    "naslov": "Kako skrbiš zanju",
+    "besedilo": "Pij dovolj vode, največ navadne, posebej ko je vroče ali se veliko gibaš; svetel seč pomeni, da piješ dovolj. Jej manj soli in manj sladkih pijač, saj sol zvišuje krvni tlak. Seča ne zadržuj predolgo. Zdravila proti bolečinam jemlji samo po navodilih, ker jih izločata ledvici, ki ju preveliki odmerki lahko okvarijo."
+   }
+  ]
+ },
+ "velikost": 0.1667,
+ "trikotniki": {
+  "racunalnik": 199968,
+  "telefon": 75011
+ },
+ "luci": [
+  {
+   "smer": [
+    -0.5,
+    1,
+    0.9
+   ],
+   "moc": 1.15,
+   "barva": "#fff0e4"
+  },
+  {
+   "smer": [
+    0.8,
+    0.3,
+    -1
+   ],
+   "moc": 0.6,
+   "barva": "#ffd6cc"
+  }
+ ]
+}

@@ -1,0 +1,70 @@
+# Render Blueprint: v Renderju izberi New > Blueprint in poveži ta repozitorij.
+# Navodila: docs/objava.md
+services:
+  - type: web
+    name: evklid
+    runtime: node
+    region: frankfurt          # najbližje Sloveniji
+    plan: starter              # trajni disk ni na voljo v brezplačnem paketu
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: false          # objava v mirnem trenutku: .github/workflows/render-posodobitev.yml
+    disk:
+      name: evklid-data
+      mountPath: /var/data     # baza učencev ostane ob vsaki posodobitvi
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"                # node:sqlite brez zastavice šele od 22.13
+      - key: EVKLID_DB
+        value: /var/data/evklid.db
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: EVKLID_PASSWORD
+        sync: false
+      - key: EVKLID_DATA_KEY       # šifriranje pogovorov v bazi (docs/varnost-podatkov.md); kopija v upravitelju gesel!
+        sync: false
+      - key: EVKLID_ACCOUNTS
+        value: "1"
+      - key: EVKLID_BASE_URL
+        sync: false
+      - key: EVKLID_ADMIN_EMAILS
+        sync: false
+      # Člani pilota (docs/stroski-ai.md »Pilot in lastnik«): e-naslovi z vejicami, zadnji dan pilota.
+      - key: EVKLID_PILOT_EMAILS
+        sync: false
+      - key: EVKLID_PILOT_DO
+        value: "2026-12-15"
+      # Ključ za tedenski izvoz kozmetike (GET /api/kozmetika/export, docs/kozmetika-posodobitve.md).
+      - key: EVKLID_EXPORT_TOKEN
+        generateValue: true
+      - key: EVKLID_DAILY_QUESTIONS
+        value: "0"
+      - key: EVKLID_FREE_DAILY_QUESTIONS
+        value: "10"
+      - key: EVKLID_STUDENT_MONTHLY_USD
+        value: "1.5"
+      - key: EVKLID_MONTHLY_BUDGET_USD
+        value: "200"
+      - key: EVKLID_LIVE_CHECK_DAILY_USD   # pregled z zmogljivejšim modelom, vsi učenci skupaj na dan (j 11. 11.: 1 $ med pilotom; SŠ polovica)
+        value: "1"
+      # Ciljna meritev natančnosti po vsaki objavi (server/meritev-po-objavi.js): največ 1 $ na zagon in 15 $ na teden.
+      - key: EVKLID_MERITEV_PO_OBJAVI
+        value: "0"   # j 13. 11.: premor do ponedeljka 16. 11. (ročne meritve W46 niso v knjigi), nato spet "1"
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        sync: false
+      - key: EVKLID_KOPIJE_S3_URL
+        sync: false
+      - key: EVKLID_KOPIJE_S3_BUCKET
+        sync: false
+      - key: EVKLID_KOPIJE_S3_KEY_ID
+        sync: false
+      - key: EVKLID_KOPIJE_S3_SECRET
+        sync: false

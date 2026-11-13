@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{name}} za šole</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <meta name="description" content="Šolska licenca {{name}}: brezplačen učiteljski račun, razredi in razredne naloge. Plačilo z e-računom prek UJP.">
+  <!-- Strežnik (server/sole.js) vstavi {{…}}: ime iz brand.json, cene iz server/schools.js (SCHOOL_LICENCE_PRICES). -->
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="vendor/instrument-sans/index.css">
+  <link rel="stylesheet" href="vendor/nunito/index.css">
+  <link rel="stylesheet" href="vendor/ibm-plex-sans/index.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="tipkovnica.css">
+  <style>
+    body { display: block; }
+    .doc { max-width: 880px; margin: 0 auto; padding: 20px 16px 64px; }
+    .doc h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); line-height: 1.15; margin: 8px 0 10px; }
+    .doc h2 { margin: 36px 0 12px; font-size: 1.25rem; }
+    .doc ul li, .doc ol li { margin: 6px 0; }
+    .lead { font-size: 1.08rem; color: var(--text); max-width: 60ch; }
+    a { color: var(--accent); }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 4px; }
+    .cta { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 20px; border-radius: var(--radius-sm); font-weight: 700; text-decoration: none; border: 1.5px solid var(--accent); }
+    .doc a.cta.main { background: var(--accent); color: var(--accent-text, #fff); }
+    .doc a.cta.alt { background: var(--surface); color: var(--accent); }
+    .who { color: var(--muted); font-size: 0.95rem; margin: 0; }
+    .grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    .tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+    .tile h3 { margin: 0 0 4px; font-size: 1rem; }
+    .tile p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .price { display: flex; flex-direction: column; gap: 6px; }
+    .price .amt { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1.1; }
+    .price .per { color: var(--muted); font-size: 0.9rem; }
+    .price.best { border-color: var(--accent); background: var(--accent-soft); }
+    .steps { counter-reset: s; list-style: none; padding: 0; display: grid; gap: 10px; }
+    .steps li { counter-increment: s; position: relative; padding: 12px 14px 12px 52px; margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+    .steps li::before { content: counter(s); position: absolute; left: 14px; top: 12px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-text, #fff); font-weight: 800; display: grid; place-items: center; font-size: 0.9rem; }
+    .faq details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0 14px; margin-bottom: 8px; }
+    .faq summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
+    .faq details p { margin: 0 0 12px; }
+    .order { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 16px; }
+    .order fieldset { margin: 0; min-width: 0; }
+    .order .two { display: grid; gap: 14px; grid-template-columns: 1fr; }
+    .order input:not([type="checkbox"]):not([type="radio"]), .order textarea, .order select { width: 100%; box-sizing: border-box; font: inherit; }
+    .order label .lbl { display: flex; gap: 6px; flex-wrap: wrap; align-items: baseline; }
+    .order textarea { min-height: 96px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); resize: vertical; }
+    .order label .opt { font-weight: 400; color: var(--muted); }
+    .order label.check { flex-direction: row; font-weight: 600; align-items: flex-start; padding: 10px 12px; }
+    .order [hidden] { display: none; }
+    .order label.check input { flex: none; margin-top: 2px; }
+    .order .plans label.radio { min-height: 44px; }
+    .order .plans label.radio input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+    .estimate { margin: 0; font-weight: 700; }
+    .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+    .ok-box { border: 1.5px solid var(--ok); border-radius: var(--radius); padding: 14px 16px; background: var(--surface); }
+    .form-error { color: var(--danger); font-weight: 700; margin: 0; }
+    .small { font-size: 0.9rem; }
+    .order button.primary { min-height: 48px; width: 100%; }
+    @media (min-width: 700px) {
+      .grid.g2 { grid-template-columns: 1fr 1fr; }
+      .grid.g3 { grid-template-columns: repeat(3, 1fr); }
+      [data-pilot-full="1"] .grid.g3 { grid-template-columns: 1fr 1fr; } /* brez pilotne ploščice dve enako široki */
+      .order { padding: 24px; }
+      .order .two { grid-template-columns: 1fr 1fr; }
+      .order button.primary { width: auto; align-self: flex-start; min-width: 200px; }
+    }
+    [data-pilot-full="1"] .pilot-only { display: none; }
+  </style>
+</head>
+<body>
+<main class="doc" data-pilot-full="{{pilot.full}}">
+  <p><a href="/">← {{name}}</a></p>
+  <p class="who">Za ravnatelje, učitelje in računovodstvo</p>
+  <h1>{{name}} za šole</h1>
+  <p class="lead">Inštruktor AI za matematiko, fiziko in kemijo po slovenskem učnem načrtu. Učitelj odpre razred, dodeli teme in vidi, kako razred napreduje. Šola plača z e-računom prek UJP.</p>
+  <div class="cta-row">
+    <a class="cta main" href="#narocilo">Naročilo ali povpraševanje</a>
+    <a class="cta alt" href="/ucitelj.html">Brezplačen učiteljski račun</a>
+  </div>
+
+  <h2>Kaj dobi učitelj</h2>
+  <div class="grid g2">
+    <div class="tile"><h3>Brezplačen učiteljski račun</h3><p>Učitelj za svoj račun ne plača ničesar, tudi brez šolske licence. <a href="/ucitelj.html">Odprite učiteljski račun</a></p></div>
+    <div class="tile"><h3>Razredi</h3><p>Razred odprete v nekaj sekundah, učenci se pridružijo s kodo razreda.</p></div>
+    <div class="tile"><h3>Pregled razreda</h3><p>Pri vsaki dodeljeni temi vidite, kdo jo je že opravil in kdo potrebuje pomoč.</p></div>
+    <div class="tile"><h3>Razredne naloge</h3><p>Razredu dodelite teme z učne poti; učenci rešujejo naloge s takojšnjim preverjanjem in namigi.</p></div>
+    <div class="tile"><h3>Izvoz CSV</h3><p>Rezultate razreda prenesete v preglednico z enim klikom.</p></div>
+    <div class="tile"><h3>Zasebnost učencev</h3><p>Učitelj vidi samo razredne naloge in lige razreda, nikoli zasebnih pogovorov z inštruktorjem.</p></div>
+  </div>
+  <p class="small">Prehod učenca na drugo šolo in izvoz njegovega napredka sta vedno brezplačna. Učenci z licenco dobijo vse vsebine predmetov, ki jih licenca zajema, in {{dailyQuestions}}.</p>
+
+  <h2>Cene</h2>
+  <div class="grid g3">
+    <div class="tile price"><h3>Licenca za razrede</h3><span class="amt">{{price.class}}</span><span class="per">na učenca na leto</span><p>Za posamezne razrede ali predmete.</p></div>
+    <div class="tile price best"><h3>Cela šola</h3><span class="amt">{{price.school}}</span><span class="per">na učenca na leto</span><p>Za vse učence šole, po nižji ceni na učenca.</p></div>
+    <div class="tile price pilot-only"><h3>Pilotna šola</h3><span class="amt">{{price.pilot}}</span><span class="per">na učenca na leto, za {{pilot.years}} leti</span><p>Samo za prvih {{pilot.max}} šol, ki z nami preizkusijo {{name}} in nam povedo, kaj naj izboljšamo.</p></div>
+  </div>
+  <p class="small">Cena velja za vsakega učenca, ki ga licenca zajema. Končni znesek bo naveden na predračunu.</p>
+
+  <section id="podari" hidden>
+    <h2>Podari {{name}}</h2>
+    <p>Učenci, ki si naročnine ne morejo privoščiti, dobijo kodo za {{podari.months}} mesece brezplačne uporabe. Kode pošljemo šoli, učence pa izbere šola sama: o dohodkih ne sprašujemo nikogar, na profilu učenca ni nobene oznake. Mesece podarijo starši in drugi odrasli, ki uporabljajo {{name}}, del pa jih podarimo mi.</p>
+    <p class="small" id="podari-count" hidden>Podarjenih mesecev: <b data-podari="months"></b> · že v uporabi: <b data-podari="used"></b></p>
+  </section>
+
+  <h2>Kako poteka plačilo</h2>
+  <ol class="steps">
+    <li><b>Naročilo.</b> Šola izpolni obrazec spodaj; številko naročilnice, če jo ima, vpiše v opombo.</li>
+    <li><b>Predračun ali pogodba.</b> Pripravimo predračun (ali pogodbo, če jo šola potrebuje) s številom učencev in ceno.</li>
+    <li><b>E-račun prek UJP.</b> E-račun (e-SLOG) izstavimo prek ponudnika e-računov, ki ga pošlje v UJP (Uprava RS za javna plačila).</li>
+    <li><b>Plačilo na TRR.</b> Šola plača na transakcijski račun v 30 dneh.</li>
+  </ol>
+  <p class="small">Za e-račun potrebujemo matično in davčno številko šole, pri proračunskih uporabnikih pa še šifro proračunskega uporabnika. Vse to vpišete v obrazec.</p>
+
+  <h2>Pogosta vprašanja</h2>
+  <div class="faq">
+    <details><summary>Kdo je upravljavec osebnih podatkov učencev?</summary>
+      <p>Pri šolski licenci je šola upravljavec osebnih podatkov, {{name}} pa obdelovalec, ki podatke obdeluje samo po navodilih šole. Pred začetkom skupaj podpišemo pogodbo o obdelavi osebnih podatkov (28. člen Splošne uredbe o varstvu podatkov). Podrobno: <a href="/zasebnost.html">Obvestilo o varstvu osebnih podatkov</a>.</p></details>
+    <details><summary>Ali učitelj vidi pogovore učencev z inštruktorjem?</summary>
+      <p>Ne. Učitelj vidi samo rezultate pri temah, ki jih je dodelil razredu, in lestvico lige razreda. Zasebni pogovori, druge teme in ostali podatki iz profila učenca ostanejo zasebni.</p></details>
+    <details><summary>Ali lahko najprej preizkusimo?</summary>
+      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. <span class="pilot-only">Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</span></p></details>
+    <details><summary>Kaj se zgodi, ko učenec zamenja šolo?</summary>
+      <p>Učenec svoj napredek prenese na novo šolo ali ga izvozi. Oboje je vedno brezplačno, tudi brez licence.</p></details>
+    <details><summary>Kako dolgo velja licenca?</summary>
+      <p>Licenca velja 12 mesecev od dogovorjenega začetka.<span class="pilot-only"> Pilotna cena velja {{pilot.years}} leti.</span></p></details>
+  </div>
+
+  <h2 id="narocilo">Naročilo ali povpraševanje</h2>
+  <p class="small">Oddaja obrazca šole ne zavezuje k ničemur. Odgovorimo vam s predračunom ali z vprašanji.</p>
+  <div class="order" id="order-box">
+    <form id="order-form" class="form" novalidate data-prices="{{prices}}" data-max-students="{{maxStudents}}">
+      <fieldset>
+        <legend>Šola</legend>
+        <div class="form">
+          <label>Ime šole <input name="school" required maxlength="150" autocomplete="organization"></label>
+          <label>Naslov <input name="address" required maxlength="200" autocomplete="street-address" placeholder="npr. Šolska ulica 1, 1000 Ljubljana"></label>
+          <div class="two">
+            <label>Matična številka <input name="registrationNo" required inputmode="numeric" maxlength="12" pattern="[0-9 ]{7,12}" placeholder="7 ali 10 števk"></label>
+            <label>Davčna številka <input name="taxId" required maxlength="12" placeholder="npr. SI12345678"></label>
+          </div>
+          <label class="check"><input type="checkbox" name="budgetUser" id="budget-user"> <span>Šola je proračunski uporabnik (prejema e-račune prek UJP)</span></label>
+          <label id="budget-code-row" hidden>Šifra proračunskega uporabnika <input name="budgetCode" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" placeholder="5 števk"></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Kontaktna oseba</legend>
+        <div class="form">
+          <label>Ime in priimek <input name="contact" required maxlength="100" autocomplete="name"></label>
+          <div class="two">
+            <label>E-naslov <input name="email" type="email" required maxlength="200" autocomplete="email"></label>
+            <label><span class="lbl">Telefon <span class="opt">(neobvezno)</span></span> <input name="phone" type="tel" maxlength="30" autocomplete="tel"></label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="plans">
+        <legend>Paket</legend>
+        <label class="radio"><input type="radio" name="plan" value="class" required> Licenca za razrede ({{price.class}} na učenca na leto)</label>
+        <label class="radio"><input type="radio" name="plan" value="school" checked> Cela šola ({{price.school}} na učenca na leto)</label>
+        <label class="radio pilot-only"><input type="radio" name="plan" value="pilot"> Pilotna šola ({{price.pilot}} na učenca na leto, za {{pilot.years}} leti)</label>
+      </fieldset>
+      <div class="two">
+        <label>Okvirno število učencev <input name="students" type="number" inputmode="numeric" min="1" max="{{maxStudents}}" required></label>
+        <label>Želeni začetek <input name="startDate" type="date" required></label>
+      </div>
+      <p class="estimate" id="estimate" aria-live="polite"></p>
+      <label><span class="lbl">Opomba <span class="opt">(neobvezno)</span></span> <textarea name="note" maxlength="{{maxNote}}" placeholder="npr. razredi in predmeti, ali potrebujete pogodbo, številka naročilnice"></textarea></label>
+      <label class="hp" aria-hidden="true">Spletna stran <input name="website" tabindex="-1" autocomplete="off"></label>
+      <label class="check"><input type="checkbox" name="consent" required> <span>{{consent}}</span></label>
+      <p class="form-error" role="alert" hidden></p>
+      <button class="primary" type="submit">Pošlji</button>
+      <p class="small muted">Podatke uporabimo samo za odgovor na to naročilo in za predračun. Samodejnih sporočil ne pošiljamo.</p>
+    </form>
+  </div>
+</main>
+<script src="/sole.js"></script>
+<script type="module" src="/zagon.js" data-moduli="/tipkovnica-strani.js /vir.js"></script>
+</body>
+</html>

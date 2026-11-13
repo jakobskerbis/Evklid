@@ -1,0 +1,979 @@
+/* Skupni gradniki videza (glej docs/oblikovanje.md). Barve samo iz spremenljivk v style.css.
+   Nove dele aplikacije sestavi iz teh gradnikov, ne iz novih različic istega. */
+
+/* ---------- spustni meni (dropdown.js zamenja vsak <select>) ---------- */
+.dd { position: relative; display: inline-flex; min-width: 0; max-width: 100%; }
+.dd > select { position: absolute; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.dd-btn {
+  display: flex !important; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; min-width: 0; min-height: 44px; padding: 9px 12px 9px 14px !important;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface);
+  color: var(--text); font-weight: 700; text-align: start; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.dd-btn:hover:not(:disabled) { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.dd-btn:disabled { opacity: 0.55; cursor: default; }
+.dd-btn.placeholder .dd-label { color: var(--muted); font-weight: 600; }
+.dd-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-chev { flex: none; width: 20px !important; height: 20px !important; margin: 0 !important; fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.18s; }
+.dd.open .dd-btn { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent); }
+.dd.open .dd-chev { transform: rotate(180deg); }
+
+.dd-list {
+  position: fixed; z-index: 300; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-lg); padding: 6px; outline: none;
+  animation: dd-in 0.14s ease; transform-origin: top center;
+}
+.dd-list.up { transform-origin: bottom center; }
+@keyframes dd-in { from { opacity: 0; transform: translateY(-4px) scale(0.98); } to { opacity: 1; transform: none; } }
+.dd-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 44px; padding: 9px 12px; border-radius: var(--radius-sm); cursor: pointer;
+  font-weight: 700; color: var(--text); line-height: 1.3;
+}
+.dd-opt.active { background: var(--surface-2); }
+.dd-opt[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
+.dd-opt[aria-disabled="true"] { color: var(--muted); opacity: 0.6; cursor: default; }
+.dd-check { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; }
+.dd-opt[aria-selected="true"] .dd-check { visibility: visible; }
+.dd-group {
+  padding: 10px 12px 4px; font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+}
+.dd-group:not(:first-child) { margin-top: 4px; border-top: 1px solid var(--border); padding-top: 12px; }
+.dd-opt[hidden], .dd-group[hidden] { display: none; }
+/* Iskalnik v dolgem seznamu (npr. jeziki) ostane na vrhu med pomikanjem. */
+.dd-search { position: sticky; top: -6px; z-index: 1; margin: -6px -6px 4px; padding: 8px; background: var(--surface); border-bottom: 1px solid var(--border); }
+.dd-search input { width: 100%; min-height: 40px; }
+.dd-search + .dd-group { border-top: 0; margin-top: 0; }
+/* Seznam z iskalnikom leži čez gumb: okence je na mestu gumba in pokaže izbrano možnost,
+   seznam se pomika pod njim (dropdown.js, place(…, true)). */
+.dd-list.over { transform-origin: top center; }
+.dd-list.over .dd-search { padding: 6px var(--dd-pad-e, 6px) 8px var(--dd-pad-s, 6px); }
+.dd-list.over .dd-search input {
+  box-sizing: border-box; height: var(--dd-field-h, 44px); min-height: 0; padding: 0 40px 0 14px; margin: 0;
+  border: 1.5px solid var(--accent); border-radius: var(--radius-sm); background: var(--bg); color: var(--text);
+  font: inherit; font-weight: 700; outline: none;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.dd-search.has-value input::placeholder { color: var(--text); opacity: 1; font-weight: 700; }
+.dd-search .dd-check { position: absolute; right: calc(var(--dd-pad-e, 6px) + 14px); top: calc(6px + var(--dd-field-h, 44px) / 2 - 9px); color: var(--accent); pointer-events: none; }
+.dd-search input:placeholder-shown + .dd-check { visibility: visible; }
+[dir="rtl"] .dd-list.over .dd-search input { padding: 0 14px 0 40px; }
+[dir="rtl"] .dd-search .dd-check { right: auto; left: calc(var(--dd-pad-s, 6px) + 14px); }
+.dd-group.dd-empty { border-top: 0; margin-top: 0; }
+.dd-search input::-webkit-search-cancel-button { display: none; }
+
+/* Meni čez celo širino (učna pot, obrazci) */
+.path-head .dd, .form label .dd, .form .dd { display: flex; width: 100%; }
+.path-head .dd-btn { min-height: 50px; font-size: 1.02rem; font-weight: 800; }
+.form .dd-btn { background: var(--bg); }
+
+/* ---------- preklopnik (segmented control): .seg > button(.active) ---------- */
+.seg {
+  display: inline-flex; max-width: 100%; overflow-x: auto; scrollbar-width: none;
+  background: var(--surface-2); border-radius: 999px; padding: 4px; gap: 2px;
+}
+.seg::-webkit-scrollbar { display: none; }
+.seg > button {
+  flex: 1 1 0; min-width: max-content; border: 0 !important; background: none !important; border-radius: 999px !important;
+  padding: 8px 16px !important; min-height: 40px; font-weight: 800; color: var(--muted); white-space: nowrap;
+  box-shadow: none; transition: background 0.15s, color 0.15s;
+}
+.seg > button:hover:not(.active) { color: var(--text); }
+.seg > button.active { background: var(--surface) !important; color: var(--accent); box-shadow: var(--shadow); }
+
+/* ---------- filtrirni žetoni: .chip-row > button(.active) ---------- */
+.chip-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip-row > a, .chip-row > button {
+  flex: none; display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px !important;
+  border: 1.5px solid var(--border) !important; border-radius: 999px !important; background: var(--surface) !important;
+  color: var(--text); font-weight: 700; font-size: 0.9rem; text-decoration: none; white-space: nowrap;
+}
+.chip-row > a:hover, .chip-row > button:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)) !important; }
+.chip-row > a.active, .chip-row > button.active { border-color: var(--accent) !important; background: var(--accent-soft) !important; color: var(--accent); }
+
+/* ---------- izbrana možnost (kartica / potrditveno polje) ---------- */
+.lp-opt.on, label.check:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+
+/* ---------- povezava v obliki gumba ---------- */
+a.btn-primary, a.btn-secondary, label.btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px;
+  border-radius: var(--radius-sm); font-weight: 800; text-decoration: none;
+}
+a.btn-primary { background: var(--accent); color: var(--accent-text); box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--accent) 65%, #000); }
+a.btn-primary:active { transform: translateY(calc(var(--press) * 0.66)); box-shadow: 0 calc(var(--press) / 3) 0 color-mix(in srgb, var(--accent) 65%, #000); }
+a.btn-secondary, label.btn-secondary { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
+a.btn-secondary:hover, label.btn-secondary:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
+
+@media (max-width: 760px) {
+  .seg { display: flex; width: 100%; }
+  .seg > button { padding: 8px 12px !important; }
+  /* Gumbi na telefonu zapolnijo vrstico, da niso različno široki. */
+  .actions > button, .actions > a.btn-primary, .actions > a.btn-secondary { flex: 1 1 auto; }
+}
+
+/* ---------- Nastavitve → Videz (appearance.js) ---------- */
+.seg > button svg.i { width: 18px; height: 18px; margin-inline-end: 6px; }
+.seg > button { display: inline-flex; align-items: center; justify-content: center; }
+@media (max-width: 480px) { .seg > button svg.i { display: none; } }
+.ap-row { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+.ap-row .actions { margin-top: 4px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch {
+  position: relative; display: grid; place-items: center; width: 40px; height: 40px; min-height: 0 !important; padding: 0 !important;
+  border-radius: 50% !important; border: 3px solid var(--surface) !important; background: var(--sw) !important; cursor: pointer;
+  box-shadow: 0 0 0 1.5px var(--border); transition: transform 0.12s, box-shadow 0.12s; color: #fff;
+}
+.swatch:hover { transform: scale(1.08); }
+.swatch.on { box-shadow: 0 0 0 3px var(--accent); }
+.swatch.on::after {
+  content: ""; width: 12px; height: 7px; border: solid #fff; border-width: 0 0 3px 3px; transform: translateY(-2px) rotate(-45deg);
+}
+.swatch.custom { background: conic-gradient(#ef4444, #f59e0b, #22c55e, #06b6d4, #6366f1, #d946ef, #ef4444) !important; }
+.swatch.custom.on { background: var(--sw) !important; }
+.swatch.custom svg.i { width: 18px; height: 18px; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5)); }
+.swatch.custom.on svg.i { display: none; }
+.swatch input, .color-dot input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: 0; padding: 0; }
+.color-rows { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.form .color-row, .color-row {
+  display: flex; flex-direction: row; align-items: center; gap: 12px; min-height: 52px; padding: 6px 8px 6px 8px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-weight: 700;
+}
+.color-row:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.color-dot { position: relative; flex: none; width: 36px; height: 36px; border-radius: 10px; background: var(--sw); box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.12); }
+.color-name { flex: 1; }
+.color-row button.ghost { min-height: 36px; padding: 6px !important; }
+
+/* ---------- seznam povezav: .list-card > button.list-row ---------- */
+.list-card { padding: 6px; }
+.list-row {
+  display: flex; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 10px 12px !important;
+  border: 0 !important; background: none !important; border-radius: var(--radius-sm) !important; text-align: start; color: var(--text);
+}
+.list-row:hover { background: var(--surface-2) !important; }
+.list-row + .list-row { border-top: 1px solid var(--border) !important; border-radius: 0 !important; }
+.list-row .ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
+.list-row .ic svg.i { width: 22px; height: 22px; }
+.list-row .lr-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.list-row .lr-text small { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+.list-row > svg.i { color: var(--muted); }
+/* Vodič po aplikaciji v Nastavitvah (app.js, public/vodic.js): seznam v kartici Pomoč. */
+.help-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.guide-list { margin-top: 12px; padding: 0; }
+.guide-list .guide-intro { margin: 0 0 6px; }
+.guide-list div.list-row:hover { background: none !important; }
+.guide-list .list-row .lr-text small { font-weight: 500; line-height: 1.4; }
+
+/* ---------- Jaz (profil na telefonu) ---------- */
+/* Kartica s profilom je gumb: odpre Nastavitve (šola in letnik, račun). */
+.me-head { display: flex; align-items: center; gap: 16px; width: 100%; text-align: start; color: var(--text); font: inherit; cursor: pointer; }
+.me-head:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.me-head:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+.me-head > svg.i { flex: none; color: var(--muted); }
+.me-who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.me-name { font-size: 1.55rem; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.me-level { margin-top: 2px; }
+.flash-target { animation: flash-target 1.6s ease; }
+@keyframes flash-target { 0%, 40% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 60%, transparent); } 100% { box-shadow: var(--shadow); } }
+.me-avatar {
+  flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; color: #fff; font-size: 1.8rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.me-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.me-stats .card { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 12px; align-items: center; padding: 14px 16px; }
+.me-stats .stat-ic { grid-row: 1 / 3; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--surface-2); }
+.me-stats .stat-ic svg.i { width: 22px; height: 22px; }
+.me-stats .stat-ic.xp svg.i { color: var(--gold); fill: var(--gold); }
+.me-stats .stat-ic.streak svg.i { color: #ff7a1a; fill: #ffb21a; }
+.me-stats b { font-size: 1.35rem; font-weight: 900; line-height: 1.1; }
+.me-stats span:last-child { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+
+/* ---------- široki zasloni: več stolpcev, da je več informacij hkrati na pregledu ----------
+   Enako na tablici ležeče (na dotik, od 1000 px); ožji stolpci zanjo so v touch.css. */
+@media (min-width: 1200px), (min-width: 1000px) and (hover: none) and (pointer: coarse) {
+  /* Učna pot: levo izbira, trening in načini (ostanejo vidni), desno sklopi in teme. */
+  #view-path { display: grid; grid-template-columns: var(--split-path, minmax(360px, 440px)) minmax(0, 1fr); gap: 0 28px; align-items: start; align-content: start; }
+  /* Na nizkem zaslonu stolpec ne sme biti višji od okna, sicer zadnja kartica ni dosegljiva: dobi svoj drsnik. */
+  #view-path > .path-side { position: sticky; top: 0; max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; margin: -6px; padding: 6px; }
+  #view-path .hero { grid-template-columns: auto 1fr; }
+  #view-path .hero button.primary { grid-column: 1 / -1; width: 100%; }
+  #view-path .modes { grid-template-columns: 1fr; gap: 8px; }
+  #view-path .modes button { flex-direction: row; align-items: center; gap: 12px; padding: 10px 14px; }
+  #view-path .modes .ic { margin: 0; }
+  #view-path .modes .m-name { flex: none; }
+  #view-path .modes .m-sub { margin-inline-start: auto; text-align: end; }
+  #path-content .unit { margin-bottom: 16px; }
+
+  /* Tema: levo naloga, desno razlaga, ki ostane vidna med reševanjem. */
+  body:not(.pad-open) .topic-grid {
+    display: grid; grid-template-columns: minmax(0, 1.05fr) var(--split-topic, minmax(0, 1fr)); grid-template-areas: "head expl" "practice expl"; grid-template-rows: auto 1fr;
+    gap: 0 24px; align-items: start;
+  }
+  body:not(.pad-open) .topic-grid > .topic-head { grid-area: head; }
+  body:not(.pad-open) .topic-grid > .explanation { grid-area: expl; position: sticky; top: 0; max-height: calc(100dvh - 150px); overflow-y: auto; }
+  body:not(.pad-open) .topic-grid > #practice { grid-area: practice; }
+  body:not(.pad-open) .topic-grid > #practice > .task:first-child { margin-top: 0; }
+
+  /* Serija nalog (trening, ponavljanje …): desno razlaga teme trenutne naloge. */
+  body:not(.pad-open) .session-grid:has(> aside:not([hidden])) { display: grid; grid-template-columns: minmax(0, 1.05fr) var(--split-topic, minmax(0, 1fr)); gap: 0 24px; align-items: start; }
+  .session-grid > aside { position: sticky; top: 0; max-height: calc(100dvh - 150px); overflow-y: auto; }
+
+  /* Lekcija: besedilo levo, poskusi desno (pritrjeni, da so vidni med branjem). */
+  .tb-lesson-grid.has-side { display: grid; grid-template-columns: minmax(0, 1fr) var(--split-lesson, minmax(420px, 42%)); gap: 0 28px; align-items: start; }
+  .tb-lesson-grid.has-side .tb-side { position: sticky; top: 0; max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; padding-bottom: 8px; }
+  /* Krogi lekcije po korakih segajo čez oba stolpca; poskusi desno se končajo nad njimi. */
+  .tb-lesson-grid.has-side:has(+ .tb-stepper) .tb-side { max-height: calc(100dvh - 206px); }
+  .tb-side .demo-values { grid-template-columns: 1fr 1fr; }
+  .tb-lesson-grid.has-side .tb-side .demo-svg { max-width: 100%; max-height: 46dvh; width: auto; display: block; margin: 0 auto; }
+
+  /* Kazalo učbenika: sklopi v stolpcih, kolikor jih gre v širino. */
+  .tb-part { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0 16px; align-items: start; }
+  .tb-part > .tb-part-head { grid-column: 1 / -1; }
+
+  /* Ostale strani s karticami: stolpci, kolikor jih gre v širino. */
+  /* Napredek ima le 3–4 kartice: vrstica s flex-wrap, da na širokem zaslonu ne ostane prazen četrti stolpec. */
+  #view-progress { display: flex; flex-wrap: wrap; gap: 0 16px; align-items: flex-start; align-content: flex-start; }
+  #view-progress > * { flex: 1 1 440px; min-width: 0; }
+  #view-progress > :is(h1, .prog-akt) { flex-basis: 100%; } /* koledar aktivnosti čez vso širino */
+  #view-progress > .me-back { flex: 0 0 auto; } /* sam v prvi vrstici, naslov se prelomi pod njim */
+}
+@media (min-width: 1700px) {
+  /* Zelo širok zaslon: razlaga ostane ob nalogi tudi, ko je odprta plošča za vnos. */
+  body.pad-open .topic-grid {
+    display: grid; grid-template-columns: minmax(0, 1fr) var(--split-topic, minmax(0, 1fr)); grid-template-areas: "head expl" "practice expl"; grid-template-rows: auto 1fr; gap: 0 24px; align-items: start;
+  }
+  body.pad-open .topic-grid > .topic-head { grid-area: head; }
+  body.pad-open .topic-grid > .explanation { grid-area: expl; position: sticky; top: 0; max-height: calc(100dvh - 150px); overflow-y: auto; }
+  body.pad-open .topic-grid > #practice { grid-area: practice; }
+}
+/* Razlaga ob seriji nalog je samo za široke zaslone (na telefonu bi bila predolga). */
+@media (max-width: 999px), (max-width: 1199px) and (hover: hover), (max-width: 1199px) and (pointer: fine) { #session-side { display: none !important; } }
+body.pad-open #session-side { display: none !important; }
+@media (min-width: 1700px) {
+  body.pad-open #session-side:not([hidden]) { display: block !important; }
+  body.pad-open .session-grid:has(> aside:not([hidden])) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 24px; align-items: start; }
+}
+
+/* ---------- izbira jezika (language.js) ---------- */
+.lang-field { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
+.lang-field .dd { display: flex; width: 100%; }
+.lang-field .dd-btn { background: var(--bg); }
+.lang-field .i { width: 18px; height: 18px; vertical-align: -3px; }
+.onb-lang { margin: 4px 0 2px; }
+.lang-ui-note { margin: 6px 0 0; }
+/* Od desne proti levi (arabščina, perzijščina, urdujščina): puščice nazaj/naprej kažejo v smer branja.
+   Izjemi: tipka kazalca v kalkulatorju (izraz je vedno od leve proti desni) in zasukana puščica napredovanja v ligi. */
+[dir="rtl"] svg.i-dir { transform: scaleX(-1); }
+/* Puščica »naprej« v vrsticah seznama in glavah kartic (npr. Urnik, kartica stopnje na Učni poti). */
+[dir="rtl"] .list-row > svg.i[data-i="chevron-right"], [dir="rtl"] button.sch-card-head > svg.i[data-i="chevron-right"] { transform: scaleX(-1); }
+[dir="rtl"] .gc-key svg.i-dir, [dir="rtl"] .zone-mark svg.i-dir { transform: none; }
+
+/* ---------- Šolski sistem (regijski profili) ---------- */
+.system-field { margin-bottom: 8px; }
+
+/* ---------- Brez povezave ---------- */
+.offline-banner { border-radius: var(--radius-sm); margin: 0 0 12px; padding: 9px 12px; }
+.offline-banner .i { width: 18px; height: 18px; flex: none; }
+
+/* ---------- Lahki način (varčevanje s podatki, šibki telefoni) ----------
+   Sistemska pisava (spletna se ne prenese), brez animacij, senc in zamegljevanja. */
+html.lite body,
+html.lite .fig text,
+html.lite .fig .nums text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+html.lite *,
+html.lite *::before,
+html.lite *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+html.lite .card,
+html.lite .topbar,
+html.lite .tabs { box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
+/* ---------- Slogi (Nastavitve → Videz → Slog; theme.js nastavi data-style na <html>) ----------
+   Čist je privzeti (style.css :root). Igriv: Nunito, bolj zaobljen, »pritisnjeni« gumbi s spodnjo senco.
+   Zgodovinski slogi (Antični, Renesansa, Hiša modrosti, Indija …)
+   so v public/theme.js → ERAS; theme.js nastavi data-era in spremenljivke spodaj. Barve slogov izračuna theme.js. */
+:root[data-style="igriv"] {
+  --font: "Nunito Variable", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 22px;
+  --radius-sm: 14px;
+  --press: 3px;
+  --shadow: 0 4px 0 rgba(31, 26, 46, 0.07);
+}
+:root.dark[data-style="igriv"] { --shadow: 0 4px 0 rgba(0, 0, 0, 0.3); }
+/* Zgodovinski slogi (data-era; docs/oblikovanje.md → »Zgodovinski slogi«). Nevsiljivo (j, 2026-10-30): enobarvno
+   ozadje, besedilo ostane v --font, pisava sloga (--era-font iz theme.js) samo za h1, naslove sklopov na Učni poti in
+   ime ob logotipu; en pas vzorca samo na kartici dejstev; risbe obdobja le kot zelo bleda tapeta ozadja (»Tapeta« spodaj). */
+:root[data-era] {
+  --font-head: var(--era-font), Georgia, "Times New Roman", serif;
+  --radius: 16px;
+  --radius-sm: 11px;
+  --shadow: 0 1px 2px color-mix(in srgb, var(--text) 8%, transparent);
+}
+:root.dark[data-era] { --shadow: none; }
+:where(:root[data-era]) :is(h1, .unit-title h2),
+:root[data-era] .brand-name { font-family: var(--font-head); font-weight: 650; letter-spacing: 0; font-size-adjust: ex-height 0.46; }
+:root[data-era] .brand-name { font-size: 1.32rem; font-weight: 700; }
+/* Naslov pogovora ima overflow: hidden; serifna pisava obdobja ima višje črke, zato višja vrstica (j: odrezan napis). */
+:root[data-era] .chat-head h1 { line-height: 1.45; padding-block: 2px; }
+/* Lahki način: brez spletne pisave tudi za naslove. */
+html.lite[data-era] { --font-head: Georgia, "Times New Roman", serif; }
+
+/* Tapeta (zgodovinski slogi; j, 2026-10-30: »naj bodo ti simboli v stilu tapet«): risbe iz obdobja (stebri, sestilo,
+   astrolab, lotos …) kot ploščica, ki se brez šivov ponavlja po vsem ozadju (public/eras/<slog>/tapeta.svg, --tapeta iz
+   theme.js; sestavi jo scripts/tapeta.js iz motivov sloga: pikčasta rombasta rešetka, v vsakem rombu en motiv,
+   na križiščih rozete). En nepremičen sloj za vsebino (position: fixed, se ne riše znova ob drsenju) v barvi besedila;
+   kartice ostanejo polne. theme.js preveri kontrast besedila tudi na tapeti (MOTIF ≥ --wall-c, test). */
+:root[data-era] { --wall-c: color-mix(in srgb, var(--text) 6%, transparent); --wall-s: 300px; }
+:root[data-era] .view::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--wall-c);
+  -webkit-mask: var(--tapeta) repeat center top / var(--wall-s) var(--wall-s);
+  mask: var(--tapeta) repeat center top / var(--wall-s) var(--wall-s);
+}
+/* Telefon: manjša ploščica in tanjše črte, zato malo močneje (MOTIF to pokrije). */
+@media (max-width: 700px) { :root[data-era] { --wall-s: 210px; --wall-c: color-mix(in srgb, var(--text) 7%, transparent); } }
+html.lite[data-era] .view::before { display: none; }
+@media (prefers-reduced-transparency: reduce), (forced-colors: active), print {
+  :root[data-era] .view::before { display: none; }
+}
+
+/* Okvir (zgodovinski slogi; j, 2026-10-30: »spremeni označene površine v skladu s temo«): zgornja in spodnja vrstica,
+   seznam pogovorov, spustni meniji in okenca imajo barvo obdobja (--menu-* iz ERAS[…].menu, menuAccent), glave
+   zaslonov in vrstica za pisanje --bar, obvestila --banner. Vse barve izračuna in preveri theme.js (besedilo 7:1,
+   sivo in poudarek 4,5:1, tudi na tapeti seznama pogovorov in na žetonih), zato veljajo tudi lastne barve.
+   Pas obdobja (--band, isti kot na kartici dejstev) teče ob spodnjem robu zgornje vrstice, ob robu seznama pogovorov
+   in ob zgornjem robu vrstice za pisanje in spodnje vrstice; okenca imajo zgoraj črto v barvi pasu. Polje za pisanje
+   ostane čisto (--surface). */
+:root[data-era] { --accent-text-base: var(--accent-text); }
+:root[data-era] :is(.topbar, .tabbar, .sidebar, .dd-list, .quick-pop, .profile-pop, .usage-pop) {
+  --surface: var(--menu, var(--surface-base)); --text: var(--menu-text, var(--text-base)); --muted: var(--menu-muted, var(--muted-base));
+  --surface-2: var(--menu-2, var(--surface-2-base)); --border: var(--menu-border, var(--border-base));
+  --accent: var(--menu-accent, var(--accent-base)); --accent-soft: var(--menu-accent-soft, var(--accent-soft-base));
+  --accent-text: var(--menu-accent-text, var(--accent-text-base));
+  color: var(--text);
+}
+:root[data-era] :is(.topbar, .tabbar, .composer)::after, :root[data-era] .chat-view .sidebar::after {
+  content: ""; position: absolute; inset-inline: 0; height: var(--edge-h, var(--band-h)); pointer-events: none; background: var(--edge-c, var(--band-c));
+  -webkit-mask: var(--band) repeat-x left center / var(--edge-w, var(--band-w)) var(--edge-h, var(--band-h)); mask: var(--band) repeat-x left center / var(--edge-w, var(--band-w)) var(--edge-h, var(--band-h));
+}
+:root[data-era] .topbar { border-bottom: 0; padding-bottom: calc(10px + var(--edge-h, var(--band-h))); }
+:root[data-era] .topbar::after { bottom: 3px; }
+:root[data-era] .tabbar { border-top: 0; padding-top: calc(6px + var(--edge-h, var(--band-h))); }
+:root[data-era] .tabbar::after { top: 2px; }
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) { :root[data-era] .topbar { padding-bottom: calc(8px + var(--edge-h, var(--band-h))); } }
+:root[data-era] :is(.quick-pop, .profile-pop, .usage-pop, .dd-list, .overlay-card, .iq.card) { border-top: 3px solid var(--edge-c, var(--band-c)); }
+/* Žetoni (XP, niz dni, stanje pogovora) v odtenku poudarka. */
+/* Kartica Današnji trening: neobvezen tanek okvir v barvi obdobja (ERAS[…].light/dark.hero[2], Egipt zlato).
+   Okvir je ::after in ne outline, ker outline ostane oglat; vogal je vzporeden z zaobljenim vogalom kartice (--radius). */
+:root[data-era] .hero { position: relative; }
+:root[data-era] .hero::after { content: ""; position: absolute; inset: 7px; border: 1.5px solid var(--hero-line, transparent); border-radius: max(calc(var(--radius) - 7px), 4px); pointer-events: none; }
+@media (forced-colors: active) { :root[data-era] .hero::after { content: none; } }
+:root[data-era] .stat { background: var(--accent-soft); }
+:root[data-era] .chip { background: var(--accent-soft); color: var(--accent); }
+/* Iskalnik v spustnem seznamu: privzeto belo polje bi na temnem meniju dobilo svetlo besedilo menija. */
+:root[data-era] .dd-search input { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; }
+:root[data-era] .dd-search input::placeholder { color: var(--muted); opacity: 1; }
+/* Obvestila: ton obdobja (pergament, zlato, žafran …) namesto rumene, ikona v poudarku. */
+:root[data-era] .banner { background: var(--banner, var(--surface)); color: var(--text); border-bottom: 1px solid color-mix(in srgb, var(--edge-c, var(--band-c)) 55%, transparent); }
+:root[data-era] .banner > svg.i { flex: none; color: var(--accent); }
+:root[data-era] .offline-banner { border: 1px solid var(--border); }
+/* Glava klepeta in vrstica za pisanje. */
+:root[data-era] .chat-head { background: var(--bar, var(--surface)); }
+/* Vrstica za pisanje je brez okna tudi v slogih obdobij (j, 2026-11-04): brez pasu in podlage, le tanka črta. */
+:root[data-era] .composer { position: relative; border-top: 0; background: transparent; }
+:root[data-era] .composer::after, :root[data-frieze] .composer::after { display: none; }
+/* Seznam pogovorov: tapeta (gostejša, v barvi besedila menija) in navpičen pas ob robu. Drsi samo seznam, zato
+   tapeta in pas ostaneta na mestu. Na telefonu je odprt seznam absoluten (style.css: .sidebar.open). */
+:root[data-era] .chat-view .sidebar {
+  flex-direction: column; overflow: hidden; isolation: isolate; border-inline-end: 0; padding-inline-end: calc(14px + var(--edge-h, var(--band-h)));
+  --wall-m: color-mix(in srgb, var(--text) 6%, transparent);
+}
+@media (min-width: 761px) { :root[data-era] .chat-view .sidebar { display: flex; position: relative; } }
+:root[data-era] .chat-view .sidebar.open { display: flex; }
+:root[data-era] .chat-view .sidebar > .primary { flex: none; }
+:root[data-era] .chat-view .sidebar > #conversation-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+:root[data-era] .chat-view .sidebar::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: var(--wall-m);
+  -webkit-mask: var(--tapeta) repeat left top / 240px 240px; mask: var(--tapeta) repeat left top / 240px 240px;
+}
+/* Pas je vodoraven vzorec, zasukan za 90° ob končni rob (v RTL levo). */
+:root[data-era] .chat-view .sidebar::after { inset-inline: auto; top: 0; left: calc(100% - 2px); width: 200vh; transform-origin: 0 0; transform: rotate(90deg); }
+:root[data-era][dir="rtl"] .chat-view .sidebar::after { left: calc(var(--edge-h, var(--band-h)) + 2px); }
+html.lite[data-era] .chat-view .sidebar::before { display: none; }
+@media (prefers-reduced-transparency: reduce) { :root[data-era] .chat-view .sidebar::before { display: none; } }
+@media (forced-colors: active), print {
+  :root[data-era] :is(.topbar, .tabbar, .composer)::after, :root[data-era] .chat-view .sidebar::before, :root[data-era] .chat-view .sidebar::after { display: none; }
+  :root[data-era] .topbar { border-bottom: 1px solid; }
+  :root[data-era] .tabbar { border-top: 1px solid; }
+  :root[data-era] .chat-view .sidebar { border-inline-end: 1px solid; }
+}
+
+/* Pisani pas (ERAS[…].frieze; theme.js → --frieze in data-frieze): pas v barvah obdobja (Egipt: friz kheker nad
+   pasom pisanih pravokotnikov, svetlo s črno obrobo, temno z zlato) kot slika namesto enobarvne maske, na kartici
+   dejstev, ob robovih okvirja in v arhitravu pročelja. Z lastnim poudarkom, ob forced-colors in pri tisku ostane maska. */
+@media screen and (forced-colors: none) {
+  :root[data-frieze] .gr-fact::before { background: var(--frieze) repeat-x 0 0 / var(--band-w) var(--band-h); -webkit-mask: none; mask: none; }
+  :root[data-frieze] :is(.topbar, .tabbar, .composer)::after, :root[data-frieze] .chat-view .sidebar::after {
+    background: var(--frieze) repeat-x left center / var(--edge-w) var(--edge-h); -webkit-mask: none; mask: none;
+  }
+  :root[data-frieze][data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent::after {
+    top: 5px; height: 16px; background: var(--frieze) repeat-x left center / auto 16px; -webkit-mask: none; mask: none;
+  }
+}
+
+/* ---------- Klepet obdobja (ERAS[…].chat; docs/oblikovanje.md → »Klepet obdobja«) ----------
+   theme.js nastavi atribute iz ERAS[slog].chat: data-tutor-surface (mehurček inštruktorja), data-user-shape (mehurček
+   učenca), data-chat-frame (okvir pozdrava v praznem klepetu), data-composer (polje za pisanje). Vsaka vrednost je
+   samostojen videz, ki ga lahko vzame tudi drug slog. Barve so spremenljivke iz theme.js (--paper, --paper-2,
+   --paper-fibre, --wood), kontrast preveri check(). Samo na zaslonu brez forced-colors: tisk in visok kontrast
+   dobita navaden klepet; lahki način brez stebrov in pilona. */
+.empty-hall { display: contents; }
+.t-part { display: none; }
+@media screen and (forced-colors: none) {
+  /* Papirus: list s tankimi vlakni (vodoravna in navpična plast), zgoraj in spodaj zvit rob, pod zgornjim dvojna
+     črta. Besedilo ostane --font (7:1 tudi na vlaknih), pisava obdobja samo za naslove v odgovoru. Temno:
+     črnofiguralna keramika (temna glazura, robovi v terakoti). */
+  :root[data-tutor-surface="papirus"] { --roll-c: var(--wood); --rule-c: color-mix(in srgb, var(--wood) 45%, var(--paper)); }
+  :root.dark[data-tutor-surface="papirus"] { --roll-c: var(--accent); --rule-c: color-mix(in srgb, var(--accent) 55%, var(--paper)); }
+  :root[data-tutor-surface="papirus"] .msg.assistant {
+    --surface: var(--paper); --surface-2: var(--paper-2); --border: color-mix(in srgb, var(--roll-c) 28%, var(--paper));
+    padding: 26px 18px 20px; border-radius: 5px; border-color: var(--border);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--roll-c) 62%, var(--paper)), color-mix(in srgb, var(--roll-c) 22%, var(--paper)) 45%, color-mix(in srgb, var(--roll-c) 46%, var(--paper))) top / 100% 8px no-repeat,
+      linear-gradient(0deg, color-mix(in srgb, var(--roll-c) 62%, var(--paper)), color-mix(in srgb, var(--roll-c) 22%, var(--paper)) 45%, color-mix(in srgb, var(--roll-c) 46%, var(--paper))) bottom / 100% 8px no-repeat,
+      linear-gradient(var(--rule-c), var(--rule-c)) left 10px top 12px / calc(100% - 20px) 1px no-repeat,
+      linear-gradient(var(--rule-c), var(--rule-c)) left 10px top 15px / calc(100% - 20px) 1px no-repeat,
+      repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--paper-fibre) 55%, transparent) 3px 4px, transparent 4px 9px, color-mix(in srgb, var(--paper-fibre) 35%, transparent) 9px 10px, transparent 10px 17px, color-mix(in srgb, var(--paper-fibre) 50%, transparent) 17px 18px, transparent 18px 22px),
+      repeating-linear-gradient(90deg, transparent 0 40px, color-mix(in srgb, var(--paper-fibre) 30%, transparent) 40px 58px, transparent 58px 97px, color-mix(in srgb, var(--paper-fibre) 20%, transparent) 97px 109px),
+      var(--paper);
+  }
+  :root[data-tutor-surface="papirus"] .msg.assistant :is(h1, h2, h3, h4, h5, h6) { font-family: var(--font-head); font-weight: 650; letter-spacing: 0; line-height: 1.3; margin: 0.7em 0 0.3em; }
+  :root[data-tutor-surface="papirus"] .msg.assistant :is(h1, h2) { font-size: 1.2em; }
+  :root[data-tutor-surface="papirus"] .msg.assistant :is(h3, h4, h5, h6) { font-size: 1.08em; }
+  :root[data-tutor-surface="papirus"] .msg.assistant pre { border: 1px solid var(--border); }
+  :root[data-tutor-surface="papirus"] .msg.assistant blockquote { background: var(--paper-2); }
+  /* Pika »piše …« postane trstično pero (poševna črta s konico); utripa kot prej, brez gibanja ob reduced-motion. */
+  :root[data-tutor-surface="papirus"] .msg.assistant.typing > :last-child:not(ul, ol)::after,
+  :root[data-tutor-surface="papirus"] .msg.assistant.typing > :is(ul, ol):last-child > li:last-child::after {
+    width: 3px; height: 1.05em; margin-inline-start: 7px; vertical-align: -0.2em; border-radius: 1px;
+    clip-path: polygon(0 0, 100% 0, 100% 74%, 50% 100%, 0 74%); transform: skewX(-20deg);
+  }
+  :root[dir="rtl"][data-tutor-surface="papirus"] .msg.assistant.typing > :last-child:not(ul, ol)::after,
+  :root[dir="rtl"][data-tutor-surface="papirus"] .msg.assistant.typing > :is(ul, ol):last-child > li:last-child::after { transform: skewX(20deg); }
+
+  /* Ostrakon: črepinja iz žgane gline v barvi poudarka (besedilo --user-text iz theme.js), nepravilni a zaobljeni
+     vogali (logične lastnosti, v RTL zrcaljeni), rahel svetel rob zgoraj in temnejši spodaj. */
+  :root[data-user-shape="ostrakon"] .msg.user {
+    border-start-start-radius: 22px 15px; border-start-end-radius: 13px 19px; border-end-end-radius: 5px 7px; border-end-start-radius: 17px 24px;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent), inset 0 -2px 0 color-mix(in srgb, #000 16%, transparent);
+  }
+
+  /* Stavba ob pozdravu: v Antičnem tempelj (data-chat-frame="stebri"), v drugih zgodovinskih slogih stavba iz obdobja
+     (data-chat-frame="stavba", ERAS[…].building: Tadž Mahal, kupola Firenc, ivan) z istimi deli in razporeditvijo;
+     pas pod streho (.t-ent) je neobvezen. Spodaj opis templa.
+     Pročelje templa ob pozdravu (ERAS[…].arch.temple, deli iz theme.js temple() kot vrstični SVG): zatrep s
+     timpanonom (v njem ikona inštruktorja kot ščit), zobci, friz z meandrom, arhitrav, jonski stebri (2, na širokem
+     4) in tri stopnice. Pozdrav in predlogi stojijo med stebroma, kartica dejstev pod stopnicami v širini templa.
+     Ozko (< 540 px): samo zatrep, entablatura in stopnice. Barve iz --edge-c in --surface (temno, lastne barve). */
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .messages:has(.t-roof) { container: hram / inline-size; padding-block: 6px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) { width: min(100%, 640px); max-width: none; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) {
+    --t-line: color-mix(in srgb, var(--edge-c) 82%, var(--surface));
+    --t-fill: color-mix(in srgb, var(--edge-c) 7%, var(--surface));
+    --t-tint: color-mix(in srgb, var(--edge-c) 16%, var(--surface));
+    --t-wall: color-mix(in srgb, var(--edge-c) 5%, var(--bg));
+    --t-c: 50px; --t-o: 0px; --t-og: 0px;
+    display: grid; width: 100%; padding: 0;
+    grid-template-columns: 2.5% var(--t-o) var(--t-og) var(--t-c) minmax(0, 1fr) var(--t-c) var(--t-og) var(--t-o) 2.5%;
+    grid-template-rows: auto auto auto auto 1fr auto;
+  }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof)::before { content: ""; grid-area: 3 / 2 / 6 / 9; background: linear-gradient(color-mix(in srgb, var(--edge-c) 12%, transparent), transparent 22px), var(--t-wall); }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall .t-part { display: block; pointer-events: none; }
+  .empty-hall .t-part * { vector-effect: non-scaling-stroke; }
+  .empty-hall .t-part svg, .empty-hall svg.t-part { overflow: visible; fill: none; stroke: var(--t-line); stroke-width: 1.5px; stroke-linejoin: round; }
+  .empty-hall .t-part .f { fill: var(--t-fill); }
+  .empty-hall .t-part .n { stroke: none; }
+  .empty-hall .t-part .t { fill: var(--t-tint); }
+  .empty-hall .t-part .l { stroke-width: 1px; stroke-opacity: 0.6; }
+  .empty-hall .t-part .s { fill: var(--t-line); stroke: none; }
+  .empty-hall .t-part .v { stroke-width: 1px; stroke-opacity: 0.85; }
+  .empty-hall .t-part .d { stroke-width: 4.5px; stroke-dasharray: 4.5 3.5; stroke-opacity: 0.75; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-roof { grid-area: 1 / 1 / 2 / -1; width: 100%; height: auto; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-ent { grid-area: 2 / 2 / 3 / -2; position: relative; height: 26px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-ent svg { width: 100%; height: 100%; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-ent::after {
+    content: ""; position: absolute; inset-inline: 3px; top: 7.5px; height: 8px; background: var(--t-line);
+    -webkit-mask: var(--band) repeat-x center / auto 8px; mask: var(--band) repeat-x center / auto 8px;
+  }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col { grid-row: 3 / 6; display: flex; flex-direction: column; align-items: center; min-height: 0; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col .t-shaft { flex: 1; width: 22px; min-height: 40px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t1 { grid-column: 2; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t2 { grid-column: 4; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t3 { grid-column: 6; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t4 { grid-column: 8; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4) { display: none; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-steps { grid-area: 6 / 1 / 7 / -1; width: 100%; height: 16px; }
+  /* Ikona inštruktorja kot okrogel ščit sredi timpanona (rob v barvi črte, okrog pas timpanona). */
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .tutor-avatar.big {
+    grid-area: 1 / 1 / 2 / -1; justify-self: center; align-self: end; margin-bottom: max(6.6% - 0.5 * var(--t-badge), 1.4% + 8px);
+    --t-badge: clamp(26px, 6cqi, 40px); width: var(--t-badge); height: var(--t-badge); border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--t-tint), 0 0 0 4.5px var(--t-line);
+  }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .tutor-avatar.big svg.i { width: 62%; height: 62%; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { grid-column: 5; margin-inline: 14px; width: auto; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > p.big { grid-row: 3; margin-top: 14px; margin-bottom: 2px; line-height: 1.25; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > p:not(.big) { grid-row: 4; margin-block: 0; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > .ideas { grid-row: 5; margin-top: 10px; margin-bottom: 14px; gap: 6px; }
+  /* Predlogi kot ploščice v vrsti (kratki v isto vrsto), da je pročelje nizko; ozko spet en pod drugim. */
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .ideas { flex-flow: row wrap; justify-content: center; align-content: flex-start; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .idea { flex: 1 1 auto; padding-block: 8px; text-align: center; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) .gr-chat { margin: 8px 0 0; }
+  /* Široko: štirje stebri (ozka zunanja medstebrja, pozdrav v širokem srednjem). */
+  @container hram (min-width: 1000px) {
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) { width: min(100%, 800px); }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) { --t-o: var(--t-c); --t-og: 26px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { margin-inline: 10px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4) { display: flex; }
+  }
+  /* Ozko (telefon): zatrep, entablatura in stopnice čez vso širino (isti rob kot glava, kartica dejstev in vrstica za
+     pisanje); stebra sta ozka bleda risba na zunanjem robu (pod zatrepom do stopnic). Pozdrav in predlogi stojijo
+     v templu med njima, z odmikom vsaj 8 px od stebrov (j, 2026-10-31: besedilo ne gre čez tempelj). Enakomeren
+     ritem: 20 px do pozdrava, 16 px do predlogov, 18 px do stopnic, 16 px do kartice dejstev. */
+  @container hram (max-width: 539.98px) {
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) { --t-c: 0px; grid-template-columns: 0 0 0 0 minmax(0, 1fr) 0 0 0 0; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4), :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof)::before { display: none; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t2, .t-col.t3) { grid-column: 5; width: 24px; opacity: 0.55; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t2 { justify-self: start; margin-inline-start: 2px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t3 { justify-self: end; margin-inline-end: 2px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col :is(.t-cap, .t-base) { width: 100%; height: auto; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col .t-shaft { width: 11px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { position: relative; z-index: 1; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { margin-inline: 34px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > p.big { margin-top: 20px; margin-bottom: 6px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > .ideas { margin-block: 16px 18px; gap: 8px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .ideas { flex-flow: column nowrap; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .idea { text-align: start; padding: 11px 12px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) .gr-chat { margin-top: 16px; }
+  }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea {
+    position: relative; border-width: 1px; border-radius: 5px;
+    box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--text) 6%, transparent);
+    background:
+      radial-gradient(ellipse 60% 140% at 12% 0%, color-mix(in srgb, var(--text) 4%, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 120% at 85% 100%, color-mix(in srgb, var(--text) 3%, transparent), transparent 70%),
+      var(--surface);
+  }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea::after {
+    content: ""; position: absolute; inset-inline: 14px; bottom: 3px; height: 6px; opacity: 0; transition: opacity 0.15s; background: var(--edge-c, var(--band-c));
+    --m: var(--band) repeat-x left center / calc(var(--band-w) * 0.75) calc(var(--band-h) * 0.75); -webkit-mask: var(--m); mask: var(--m);
+  }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea:is(:hover, :focus-visible)::after { opacity: 1; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+
+  /* Pilon (Egipt; j, 2026-11-04: stebri samo v antiki, drugi slogi stavbo iz obdobja): pozdrav pred templjem s
+     pilonom (ERAS[…].building.front, ena risba iz theme.js temple() z nespremenljivim razmerjem 600 : 262). Stolpa
+     sta široka skoraj kot visoka (venec kavetto, torus, vdolbini z drogovoma), vmes nižji portal s podboji; v
+     odprtini vrat stoji ikona inštruktorja (zaobljen kvadrat), pozdrav in predlogi so pod stavbo, kartica dejstev
+     pod njimi. Stavba je nizka (največ 28 % višine zaslona), da so predlogi vidni tudi na 1100 × 800. Črte v
+     --edge-c (obrobe poslikav), kamen v peščenjaku iz --wood (v temnem les na temno rjavi, ne na modri
+     podlagi, da ni siv), odprtina temnejša. Brez stebrov in
+     verskih znamenj. --p-h = višina risbe (širina pozdrava × 262/600, omejena), iz nje mesto in velikost ikone. */
+  :root[data-chat-frame="pilon"]:not(.lite) .messages:has(.t-front) { container: pilon / inline-size; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-front) { width: min(100%, 700px); max-width: none; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) {
+    --t-line: color-mix(in srgb, var(--edge-c) 82%, var(--surface));
+    --t-fill: color-mix(in srgb, var(--wood) 12%, var(--surface));
+    --t-tint: color-mix(in srgb, var(--wood) 24%, var(--surface));
+    --t-door: color-mix(in srgb, var(--wood) 42%, var(--surface));
+    --p-h: min(min(100cqi, 700px) * 0.4367, max(140px, 28svh));
+    --p-a: clamp(26px, var(--p-h) * 0.19, 46px);
+    display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; padding: 0;
+  }
+  :root.dark[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) {
+    --t-fill: color-mix(in srgb, var(--wood) 36%, #17120b);
+    --t-tint: color-mix(in srgb, var(--wood) 46%, #17120b);
+    --t-door: color-mix(in srgb, #000 35%, var(--surface));
+  }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-front { display: block; grid-area: 1 / 1; width: 100%; height: var(--p-h); pointer-events: none; }
+  .empty-hall .t-part .o { fill: var(--t-door); }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big {
+    grid-area: 1 / 1; justify-self: center; align-self: end; position: relative;
+    width: var(--p-a); height: var(--p-a); border-radius: 22%; margin-bottom: calc(var(--p-h) * 0.229 - var(--p-a) / 2);
+    box-shadow: 0 0 0 2px var(--t-door), 0 0 0 3.5px var(--t-line);
+  }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big svg.i { width: 58%; height: 58%; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p.big { margin: 14px 0 4px; line-height: 1.25; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p:not(.big) { margin: 0; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .ideas { margin-top: 14px; gap: 8px; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea {
+    border-width: 1px; border-radius: 5px; text-wrap: balance;
+    box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--wood) 16%, transparent);
+  }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-front) .gr-chat { margin-top: 18px; }
+  /* Širše (vsebnik ≥ 600 px): predlogi kot ploščice v vrsti, da je pozdrav nižji. */
+  @container pilon (min-width: 600px) {
+    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .ideas { flex-flow: row wrap; justify-content: center; }
+    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea { flex: 1 1 auto; padding-block: 9px; text-align: center; }
+  }
+
+  /* Voščena tablica: brez okvirja (j, 2026-11-04: vrstica brez okna), le lesena črta (--wood, 3:1) nad poljem. */
+  :root[data-composer="vosek"] .composer-row { border-top: 2px solid var(--wood); }
+  :root[data-composer="vosek"] .composer-row:focus-within { border-top-color: var(--accent); }
+}
+
+/* ---------- Arhitektura (ERAS[…].arch; theme.js nastavi data-arch in --arch-*) ----------
+   Okvir kot stavba (j, 2026-10-30: »naj zgleda, kot da stebri podpirajo menije«): zgornja vrstica je preklada
+   (venec, friz s pasom obdobja, arhitrav z dvema letvama), na računalniku jo nosita stebra ob robovih klepeta (ob
+   seznamu pogovorov in na koncu klepeta) in steber ob stranskem stolpcu Učne poti; vrstica za pisanje in spodnja
+   vrstica na telefonu sta stilobat (stopnici nad pasom); okenca in spustni seznami imajo kapitela na zgornjih
+   vogalih. Deli so slike iz theme.js v barvi pasu (--arch-* na ozadju, --arch-*-m na meniju), nikoli čez besedilo ali
+   gumbe (vsak steber ima svoj odmik). Na telefonu brez stebrov; lahki način, tisk in forced-colors brez arhitekture. */
+@media screen and (forced-colors: none) {
+  :root[data-arch]:not(.lite) { --arch-line: color-mix(in srgb, var(--edge-c) 70%, var(--surface)); }
+  :root[data-arch]:not(.lite) :is(.topbar, .tabbar) { background-repeat: no-repeat; background-size: 100% 1px; }
+  :root[data-arch]:not(.lite) .topbar {
+    padding-bottom: calc(10px + 9px + var(--edge-h, var(--band-h)));
+    background-image: linear-gradient(var(--arch-line), var(--arch-line)), linear-gradient(var(--arch-line), var(--arch-line)), linear-gradient(var(--arch-line), var(--arch-line));
+    background-position: left bottom 0, left bottom 3px, left bottom calc(8px + var(--edge-h, var(--band-h)));
+  }
+  :root[data-arch]:not(.lite) .topbar::after { bottom: 6px; }
+  :root[data-arch]:not(.lite) .tabbar {
+    background-image: linear-gradient(var(--arch-line), var(--arch-line)), linear-gradient(var(--arch-line), var(--arch-line));
+    background-position: left top, left top 3px;
+  }
+  :root[data-arch]:not(.lite) .tabbar { padding-top: calc(12px + var(--edge-h, var(--band-h))); }
+  :root[data-arch]:not(.lite) .tabbar::after { top: 6px; }
+  /* Vrstica za pisanje je brez stilobata (j, 2026-11-04: brez okna, več prostora za vsebino). */
+  @media (max-width: 760px) {
+    :root[data-arch]:not(.lite) .topbar { padding-bottom: calc(8px + 9px + var(--edge-h, var(--band-h))); }
+  }
+  /* Kapitela na zgornjih vogalih okenc in spustnih seznamov (pod 3 px črto v barvi pasu). */
+  :root[data-arch]:not(.lite) :is(.quick-pop, .profile-pop, .usage-pop, .dd-list) {
+    background-image: var(--arch-cap-m), var(--arch-cap-m); background-repeat: no-repeat; background-size: 20px 13px;
+    background-position: left 3px top, right 3px top;
+  }
+  /* Stebri ob klepetu (samo v glavnem oknu, ne v premičnem/pripetem oknu): steber v seznamu pogovorov ob robu
+     (namesto navpičnega pasu) in steber na koncu klepeta; kapitela sta tik pod preklado. Samo s klepetom »stebri«
+     (antika; j, 2026-11-04: »Stebri v inštruktorju so bili mišljeni samo za staro Grčijo«). */
+  @media (min-width: 761px) {
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar {
+      padding-inline-end: 32px;
+      background-image: var(--arch-cap-m), var(--arch-base-m), var(--arch-shaft-m); background-repeat: no-repeat, no-repeat, repeat-y;
+      background-size: 20px 13px, 20px 10px, 20px 8px; background-position: right 2px top, right 2px bottom, right 2px top;
+    }
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar::after { display: none; }
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar::before { inset-inline-end: 24px; }
+  }
+  @media (min-width: 1000px) {
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view > .chat {
+      padding-inline-end: 24px;
+      background: var(--arch-cap) right 2px top / 20px 13px no-repeat, var(--arch-base) right 2px bottom / 20px 10px no-repeat, var(--arch-shaft) right 2px top / 20px 8px repeat-y;
+    }
+    :root[dir="rtl"][data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view > .chat { background-position: left 2px top, left 2px bottom, left 2px top; }
+  }
+  @media (min-width: 761px) {
+    :root[dir="rtl"][data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar { background-position: left 2px top, left 2px bottom, left 2px top; }
+  }
+  /* Učna pot na širokem zaslonu: steber ob stranskem stolpcu (v presledku med stolpcema); ne v oknu ali ob pripetem
+     oknu (tam je pot en stolpec, okna.css → @container okno). */
+  @media (min-width: 1200px), (min-width: 1000px) and (hover: none) and (pointer: coarse) {
+    :root[data-arch]:not(.lite) body:not(.docked) > #view-path > .path-side {
+      margin-inline-end: -26px; padding-inline-end: 32px;
+      background: var(--arch-cap) right 2px top / 20px 13px no-repeat, var(--arch-base) right 2px bottom / 20px 10px no-repeat, var(--arch-shaft) right 2px top / 20px 8px repeat-y;
+    }
+    :root[dir="rtl"][data-arch]:not(.lite) body:not(.docked) > #view-path > .path-side { background-position: left 2px top, left 2px bottom, left 2px top; }
+  }
+}
+
+/* Vsi slogi razen Igriv: brez prelivov in senc pod logotipom in kartico Današnji trening. */
+:root:not([data-style="igriv"]) .logo { box-shadow: none; }
+:root:not([data-style="igriv"]) h1, :root:not([data-style="igriv"]) h2 { font-weight: 700; }
+
+/* ---------- Pridih stare Grčije (vsi slogi; docs/oblikovanje.md) ----------
+   Logotip: Evklidovi Elementi I.1 (ikona »elementi«). Pas vzorca (privzeto meander, grški ključ) iz maske SVG
+   samo na vrhu kompaktne kartice dejstev (public/greek.js; prazen klepet in dno Učne poti), torej največ en pas
+   na zaslon. Zgodovinski slog zamenja pas, ikono in dejstva (theme.js → ERAS). Barva je spremenljivka, zato sledi
+   svetlemu/temnemu načinu in lastnim barvam. */
+:root {
+  --band: url("/eras/antik/meander.svg");
+  --band-w: 8px;
+  --band-h: 8px;
+  --band-c: color-mix(in srgb, var(--accent) 30%, var(--border));
+  --glyph: url("/eras/antik/ikona.svg");
+}
+.logo svg.i { width: 26px; height: 26px; }
+.gr-fact {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 4px;
+  width: 100%; margin: 0 0 16px; padding: calc(var(--band-h) + 2px) 2px 12px 14px; padding-inline: 14px 2px; text-align: start;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.gr-fact::before {
+  content: ""; position: absolute; inset-inline: 0; top: 0; height: var(--band-h); background: var(--band-c);
+  -webkit-mask: var(--band) repeat-x 0 0 / var(--band-w) var(--band-h); mask: var(--band) repeat-x 0 0 / var(--band-w) var(--band-h);
+}
+/* Naslov in gumb »Drugo dejstvo« v eni vrsti, besedilo čez vso širino pod njima. */
+.gr-body { display: contents; }
+.gr-fact .eyebrow { grid-column: 1; grid-row: 1; margin: 0; display: flex; align-items: center; gap: 6px; }
+/* Majhna ikona obdobja (steber, sestilo, zvezda, lotos …) pred naslovom kartice. */
+.gr-fact .eyebrow::before {
+  content: ""; flex: none; width: 15px; height: 15px; background: var(--band-c);
+  -webkit-mask: var(--glyph) center / contain no-repeat; mask: var(--glyph) center / contain no-repeat;
+}
+@media (forced-colors: active) { .gr-fact .eyebrow::before { background: CanvasText; } }
+.gr-fact .gr-next { grid-column: 2; grid-row: 1; color: var(--muted); }
+.gr-fact .gr-next:hover { color: var(--accent); }
+.gr-text { grid-column: 1 / -1; margin: 0; padding-inline-end: 12px; font-size: 0.92rem; line-height: 1.45; }
+.empty:has(.gr-chat) { max-width: 560px; }
+.empty .gr-chat { margin: 14px 0 0; }
+.empty .gr-chat .gr-text { font-size: 0.88rem; line-height: 1.4; }
+/* Nizek zaslon: prazen klepet brez drsnika (manjši pozdrav in razmiki, kartica ostane). */
+@media (max-height: 860px) {
+  .empty:has(.gr-chat) .tutor-avatar.big { width: 44px; height: 44px; border-radius: 14px; }
+  .empty:has(.gr-chat) .tutor-avatar.big svg.i { width: 22px; height: 22px; }
+  .empty:has(.gr-chat) p.big { margin-top: 6px; font-size: 1.35rem; }
+  .empty:has(.gr-chat) .ideas { margin-top: 8px; gap: 6px; }
+  .empty .gr-chat { margin-top: 10px; padding-bottom: 10px; }
+}
+
+/* Izbira sloga v Nastavitve → Videz */
+/* Izbira sloga: dva stolpca; zgodovinski slogi pod lastnim manjšim naslovom. Na telefonu je vzorec nad imenom. */
+.style-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.style-group { grid-column: 1 / -1; margin: 6px 0 -2px; font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+.style-card { display: flex !important; justify-content: flex-start !important; align-items: center; gap: 12px; text-align: start; padding: 12px 14px !important; min-height: 64px !important; }
+.style-card.on { border-color: var(--accent) !important; background: var(--accent-soft) !important; }
+.style-sw { display: flex; flex: none; }
+.style-sw i { width: 18px; height: 30px; border: 1px solid var(--border); }
+.style-sw i:first-child { border-radius: 8px 0 0 8px; }
+.style-sw i:last-child { border-radius: 0 8px 8px 0; }
+.style-txt { display: flex; flex-direction: column; line-height: 1.25; }
+.style-txt b { font-size: 1.02rem; }
+.style-txt small { color: var(--muted); font-weight: 500; }
+@media (max-width: 560px) {
+  .style-cards { gap: 8px; }
+  .style-card { flex-direction: column; align-items: flex-start !important; gap: 8px; padding: 10px 12px !important; }
+  .style-sw i { width: 16px; height: 14px; }
+  .style-sw i:first-child { border-radius: 6px 0 0 6px; }
+  .style-sw i:last-child { border-radius: 0 6px 6px 0; }
+  .style-txt b { font-size: 0.98rem; }
+  .style-txt small { font-size: 0.78rem; line-height: 1.3; }
+}
+
+/* ---------- Klikljive formule (public/formula-info.js) ---------- */
+/* Formule so vedno od leve proti desni, tudi v arabščini (sicer m/V = ρ postane obrnjeno). */
+.katex { direction: ltr; unicode-bidi: isolate; }
+/* Formula v svojem okviru (simulacija, namig, zbirka) se ne prelomi sama sredi izraza: preširoko zloži
+   sirina.js pri enačajih (j 2026-11-04: »To naj velja za vse enačbe«). */
+/* Formula sredi besedila se nikjer ne prelomi sredi izraza (j 2026-11-08): ne za minusom, plusom, oklepajem. Cela
+   gre v naslednjo vrstico; če je širša od vrstice, jo zloži pri enačajih ali pomanjša sirina.js. Velja povsod
+   (naloge, kvizi, igre, kartice, skeniranje, laboratorij, klepet), ne le v učbeniku. Polja za vnos (math-field,
+   tipkovnica) in SVG so zunaj tega: njihove formule se ne izrisujejo kot besedilo. */
+.katex:not(svg .katex) { white-space: nowrap; }
+:is(p, li, dd, dt, blockquote, h1, h2, h3, h4, label, .task-text, .msg, .bubble, .choice, .tb-opt, .tb-q) .katex:not(.katex-display > .katex, svg .katex, .katex .katex) { display: inline-block; text-indent: 0; margin-block: -0.15em; }
+/* Visoka ali zložena formula (sirina.js) je blok v svoji vrstici, v vsakem bloku z besedilom enako kot v učbeniku;
+   v okvirjih s formulo (simulacija, zbirka) ostane, kot je. V gumbu odgovora ostane znotraj gumba, na sredini. */
+.katex.tb-zlozena:not(.katex-display > .katex, :is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex, svg .katex) { display: block; width: fit-content; max-width: 100%; margin: 6px 0; }
+.choice .katex.tb-zlozena { margin-inline: auto; }
+.katex.tb-dolga { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; padding: 2px 0 4px; }
+:is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex { white-space: nowrap; }
+/* Zložena formula: KaTeX-ov stolpec »aligned« seže 2 px čez desni rob (.vlist-s), kar bi okvir naredilo drsen. */
+.katex.tb-zlozena { padding-right: 2px; }
+/* Ulomki in indeksi: nevidni KaTeX-ovi okvirji (vlist, pstrut) prekrivajo imenovalec, zato dotik
+   simbola pod ulomkovo črto ni prišel do njega. Dotik dobijo samo klikljive oznake. */
+.katex .vlist { pointer-events: none; }
+.katex [data-fx], .katex [data-fx] * { pointer-events: auto; }
+.katex .pstrut { pointer-events: none !important; }
+/* Klikljiv znak je napisan modro, brez podčrte (j, 30. 10.: čistejši videz). */
+[data-fx][role="button"] { cursor: pointer; border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em; color: var(--accent); background-image: none; }
+[data-fx][role="button"]:hover, [data-fx].fx-open { background: var(--accent-soft); }
+[data-fx][role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+/* Ista črka z drugim pomenom na isti strani (a kot realni del z in a kot pospešek) ima svojo barvo,
+   da se pred dotikom vidi, katera je katera (formula-card.js claimMarks). Barve --fx-tone-N so v style.css
+   (Čist) in theme.js tonesOf (drugi slogi, lasten poudarek): kontrast ≥ 4,5, prvi ton nasproti poudarka. */
+[data-fx][role="button"][data-fx-tone="1"], .fx-pop[data-tone="1"] .fx-title .katex { color: var(--fx-tone-1); }
+[data-fx][role="button"][data-fx-tone="2"], .fx-pop[data-tone="2"] .fx-title .katex { color: var(--fx-tone-2); }
+[data-fx][role="button"][data-fx-tone="3"], .fx-pop[data-tone="3"] .fx-title .katex { color: var(--fx-tone-3); }
+[data-fx][role="button"][data-fx-tone]:hover, [data-fx][data-fx-tone].fx-open { background: color-mix(in srgb, currentColor 14%, transparent); }
+.fx-pop {
+  position: absolute; z-index: 1200; background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+  padding: 12px 14px; padding-inline-end: 48px; font-size: 0.93rem; line-height: 1.45; display: grid; gap: 6px;
+}
+/* Fokus gre v okno ob odprtju s tipko (Enter); obroba je na ✕, ne na celem oknu. */
+.fx-pop:focus { outline: none; }
+.fx-pop .fx-title { display: flex; align-items: baseline; gap: 8px; color: var(--accent); }
+.fx-pop .fx-title b { color: var(--text); font-size: 1rem; min-width: 0; }
+.fx-pop .fx-title .katex { font-size: 1.25em; color: var(--accent); flex: none; }
+.fx-pop .fx-line { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.fx-pop .fx-k { color: var(--muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-width: 62px; }
+.fx-pop .fx-un, .fx-pop .fx-sub span { color: var(--muted); }
+.fx-pop .fx-sub { padding-inline-start: 70px; font-size: 0.9rem; }
+.fx-pop .fx-parts { display: flex; gap: 8px; align-items: flex-start; }
+.fx-pop .fx-parts ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.fx-pop .fx-parts li { display: grid; grid-template-columns: minmax(1.6em, auto) 1fr; column-gap: 8px; align-items: baseline; }
+.fx-pop .fx-parts li > .katex { color: var(--accent); }
+.fx-pop .fx-parts .fx-un { white-space: nowrap; }
+.fx-pop .fx-note { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--border); padding-top: 6px; }
+.fx-pop .fx-close { position: absolute; top: 4px; inset-inline-end: 4px; width: 40px; height: 40px; min-height: 40px !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--muted); font-size: 1.3rem; line-height: 1; }
+.fx-pop .fx-close:hover { color: var(--text); background: var(--surface-2) !important; }
+@media (max-width: 760px) { .fx-pop .fx-sub { padding-inline-start: 0; } .fx-pop .fx-parts { flex-direction: column; gap: 3px; } }
+/* Telefon: okno pomena je spodnji list nad spodnjim menijem (formula-info.js place), nikoli čez formulo. */
+.fx-pop.fx-sheet {
+  position: fixed; left: 0; right: 0; width: auto; top: auto; max-height: min(55vh, 420px); overflow-y: auto;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0; border-bottom: 0; padding: 16px 18px; padding-inline-end: 52px;
+  padding-bottom: calc(14px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+}
+
+/* ---------- Cilj in opomnik (public/goal.js) ---------- */
+.goal-field .goal-box, #settings-goal { display: grid; gap: 10px; margin-top: 8px; }
+.goal-chips { flex-wrap: wrap; }
+.goal-date-row { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.goal-date { display: grid; gap: 6px; }
+.goal-date input[type="date"] { min-height: 44px; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: inherit; }
+.goal-countdown { margin: 0; color: var(--accent); font-weight: 700; min-height: 1.2em; }
+.goal-countdown:empty { display: none; }
+.goal-reminder-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+.goal-reminder-row .gr-text { display: grid; gap: 2px; }
+/* Stikalo (vklop/izklop): <button class="switch" role="switch" aria-checked> */
+.switch { flex: none; position: relative; width: 52px !important; height: 30px; min-height: 30px !important; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background: var(--border) !important; transition: background 0.2s; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); transition: transform 0.2s; }
+.switch[aria-checked="true"] { background: var(--accent) !important; }
+.switch[aria-checked="true"]::after { transform: translateX(22px); }
+.goal-line { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 8px; margin: 0 0 12px; font-weight: 700; line-height: 1.35; }
+.goal-line .gl-ic { color: var(--accent); display: inline-flex; }
+.goal-line .gl-edit { margin: 0; padding: 4px 0; font-size: 0.92rem; }
+.goal-reminder { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 12px; border: 1.5px solid color-mix(in srgb, var(--accent) 35%, var(--border)); background: var(--accent-soft); }
+.goal-reminder .gr-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-text); }
+.goal-reminder .gr-body { flex: 1; display: grid; gap: 4px; min-width: 0; }
+.goal-reminder .gr-head { display: flex; justify-content: space-between; gap: 8px; font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+.goal-reminder .actions { margin-top: 6px; }
+.goal-card { display: grid; gap: 12px; }
+.goal-card .goal-line { margin: 0; }
+.goal-card .goal-reminder { margin: 0; padding: 12px; border-radius: var(--radius-sm); }
+.goal-chip { border: 0; cursor: pointer; color: var(--warm); background: color-mix(in srgb, var(--warm) 12%, var(--surface)); }
+.goal-chip b { color: var(--text); font-weight: 700; }
+@media (max-width: 1439px) { .goal-chip { display: none !important; } }
+@media (max-width: 760px) {
+  .goal-reminder-row { align-items: flex-start; }
+  .goal-date-row > * { flex: 1 1 100%; }
+  .goal-line { font-size: 0.95rem; }
+  .goal-reminder .actions { flex-wrap: nowrap; }
+  .goal-reminder .actions button.ghost { flex: none !important; width: auto !important; }
+}
+
+/* Strežnik ni dosegljiv ob odprtju (public/app.js bootFailed) */
+.boot-down { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: var(--bg); }
+.boot-down .card { max-width: 360px; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.boot-down .card svg { width: 40px; height: 40px; color: var(--muted, #8b949e); }
+.boot-down p { margin: 0; }
+/* prazna aplikacija pod sporočilom: ne sprejme fokusa (Tab) in je bralnik zaslona ne bere.
+   Razred na <body> namesto »body:has(> #boot-down)«: tak :has je ob vsakem pritisku tipke na novo
+   preračunal slog vse strani (zaviralo je Evklidovo tipkovnico). */
+body.boot-down-on > :not(#boot-down) { visibility: hidden; }
+
+/* ---------- besedilo vedno vidno (public/razpri.js) ----------
+   Vnos, naloga ali odgovor, ki nima prostora, se pokaže v celoti v oknu nad vsebino (mirno: rahel dvig in prikaz). */
+.razpri {
+  position: fixed; z-index: 58; left: 50%; transform: translateX(-50%); width: min(640px, calc(100vw - 24px));
+  display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  animation: razpri-in 0.22s ease-out;
+}
+@keyframes razpri-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); } }
+@media (prefers-reduced-motion: reduce) { .razpri { animation: none; } }
+.razpri-head { display: flex; align-items: center; gap: 8px; padding-block: 4px; padding-inline: 16px 4px; border-block-end: 1px solid var(--border); flex: none; }
+.razpri-head b { flex: 1; min-width: 0; font-size: 0.9rem; color: var(--accent); }
+.razpri-x { flex: none; width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--muted); border-radius: var(--radius-sm); cursor: pointer; }
+.razpri-x:hover, .razpri-x:focus-visible { background: var(--surface-2); color: var(--text); }
+.razpri-body { overflow-y: auto; overscroll-behavior: contain; padding: 12px 16px 16px; line-height: 1.55; overflow-wrap: anywhere; }
+.razpri-body > :first-child { margin-top: 0; }
+.razpri-body > :last-child { margin-bottom: 0; }
+/* Polje v oknu nima svojega okvirja: fokus pokaže okvir kartice. */
+.razpri:focus-within { border-color: var(--accent); box-shadow: var(--shadow-lg), 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent); }
+.razpri-area {
+  flex: 1; min-height: 120px; width: 100%; resize: none; border: 0; outline: none; padding: 12px 16px 16px;
+  background: var(--surface); color: var(--text); font: inherit; line-height: 1.5;
+}
+
+/* Naslov pogovora na telefonu: ena vrstica s tropičjem (j, 2026-10-31); oznake pogovora so v svoji vrstici pod njim
+   (touch.css, j 2026-11-04). */
+@media (max-width: 760px) {
+  .chat-head { gap: 8px; }
+  .chat-head h1 { min-width: 0; font-size: 1rem; line-height: 1.25; }
+  .chat-head .icon-only { flex: none; }
+  .composer-row.multi { flex-wrap: wrap; row-gap: 2px; }
+  .composer-row.multi #input { order: -1; flex: 1 1 100%; padding-inline: 10px; }
+  .composer-row.multi .mic-btn { margin-inline-start: auto; }
+}
+
+/* ---------- Brez praznih robov (j 2026-11-04) ----------
+   »Če je ob straneh zaslona na katerem koli delu Evklida prazen prostor, naj se prikaz spremeni, da ga izkoristi.«
+   Pogledi segajo čez vso širino okna (rob --rob-strani). Kartice strani se razvrstijo v stolpce širine vsaj 400 px,
+   kolikor jih gre: telefon in tablica pokončno 1, računalnik 2–4. Stolpci se računajo iz širine vsebnika (column-width,
+   auto-fill), zato veljajo tudi v premičnem oknu. Vsaka kartica ostane cela v enem stolpcu. */
+.kolone, .set-cols, #view-me .list-card, #exams-content, #competition-content, #league-content, #path-content {
+  column-width: 400px; column-gap: 20px;
+}
+:is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > * { break-inside: avoid; }
+/* Nastavitve: največ trije stolpci, na širokem zaslonu na sredini skupaj z naslovom (j, 4. 11. 2026). */
+.set-cols { columns: 400px 3; }
+#view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
+:is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
+#exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
+/* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */
+/* Vrstice vedno po vsebini: pogled ima stalno višino (drsi), zato bi jih mreža sicer stisnila do min-height
+   (gumb s profilom na 44 px, velika ikona J bi segla čez kartico Raven; telefon, j 4. 11. 2026). */
+#view-me { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 0 16px; align-content: start; grid-auto-rows: max-content; }
+#view-me > :is(.list-card, .me-back, h1) { grid-column: 1 / -1; }
+#view-me .list-card .list-row { break-inside: avoid; }
+/* Mnenje: ocene levo, besedila desno (obrazec v stolpcih namesto vrstice čez ves zaslon). */
+.fb-form.form { display: block; column-width: 400px; column-gap: 32px; }
+.fb-form.form > * { break-inside: avoid; }
+.fb-form.form > * + * { margin-top: 14px; }
+.fb-form.form > h2 { break-after: avoid; }
+.fb-form.form { columns: 400px 2; } /* največ dva stolpca: ocene | besedila */
+.fb-form.form > .fb-hint { break-after: avoid; }
+/* Prazen klepet (brez stavbe obdobja): pozdrav in predlogi čez več prostora, predlogi v vrsti. */
+:root:not([data-chat-frame]) #messages > .empty { max-width: min(100%, 960px); width: 100%; }
+:root:not([data-chat-frame]) #messages > .empty .ideas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+/* Nov profil: pozdrav, jezik in ime levo, šolanje desno. */
+#onboard-form.form { display: block; columns: 400px 2; column-gap: 32px; }
+#onboard-form.form > * { break-inside: avoid; }
+#onboard-form.form > * + * { margin-top: 14px; }
+#onboard-form.form > :is(h1, p) { break-after: avoid; }
+
+/* ---------- Koledar aktivnosti in pregledi (public/aktivnost.js; Napredek, Jaz, j 2026-11-04) ----------
+   En kvadratek na dan za zadnje leto; v ozkem vsebniku (telefon, majhno okno) zadnjih 26 tednov.
+   Stolpec ima 8 celic (oznaka meseca + 7 dni), zato skrijemo prvih 27 stolpcev s :nth-child. */
+.hm { container-type: inline-size; }
+.hm-grid { display: grid; grid-template-rows: auto repeat(7, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; }
+@container (max-width: 560px) { .hm-grid > :nth-child(-n + 216) { display: none; } }
+.hm-d { display: block; aspect-ratio: 1; min-width: 0; border-radius: 3px; background: var(--surface-2); }
+.hm-d.l1 { background: color-mix(in srgb, var(--accent) 45%, var(--surface-2)); }
+.hm-d.l2 { background: color-mix(in srgb, var(--accent) 60%, var(--surface-2)); }
+.hm-d.l3 { background: color-mix(in srgb, var(--accent) 80%, var(--surface-2)); }
+.hm-d.l4 { background: var(--accent); }
+.hm-d.future { background: none; }
+.hm-d.today { outline: 1.5px solid var(--accent); outline-offset: 1px; }
+.hm-m { height: 1.2em; font-size: 0.72rem; line-height: 1.2; color: var(--muted); white-space: nowrap; overflow: visible; }
+.hm-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin-top: 10px; font-size: 0.86rem; color: var(--muted); }
+.hm-legend { display: inline-flex; align-items: center; gap: 3px; }
+.hm-legend .hm-d { width: 13px; }
+.wk-bars { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; height: 170px; }
+.wk { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; min-width: 0; }
+.wk span { display: block; width: 100%; height: calc((100% - 38px) * var(--h, 0)); min-height: 2px; border-radius: 4px 4px 0 0; background: var(--accent); }
+.wk b { font-size: 0.72rem; font-weight: 700; color: var(--muted); min-height: 1em; }
+.wk small { font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+#prog-weeks { container-type: inline-size; }
+@container (max-width: 520px) { .wk:nth-child(even):not(:last-child) small { visibility: hidden; } } /* na telefonu vsak drugi datum */
+.tp-bar { display: block; height: 4px; margin-top: 4px; border-radius: 2px; overflow: hidden; background: color-mix(in srgb, var(--danger) 70%, transparent); }
+.tp-bar i { display: block; height: 100%; background: var(--ok); }
+/* Jaz: pod povezavami koledar aktivnosti čez vso širino, Nadaljuj in testi ob njem. */
+#view-me > .me-overview { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+.me-overview > .card { flex: 1 1 360px; min-width: 0; margin: 0; }
+.me-overview > .me-akt { flex-basis: 100%; }
+.me-overview h2 { margin: 0 0 10px; font-size: 1.05rem; }
+.me-ov-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.me-overview .list-card { box-shadow: none; border: 0; padding: 0; background: none; columns: auto; }

@@ -1,0 +1,213 @@
+/* Evklidova tipkovnica (public/tipkovnica.js). Barve samo iz spremenljivk sloga (docs/oblikovanje.md). */
+.tk {
+  --tk-key: var(--surface);
+  --tk-fn: color-mix(in srgb, var(--surface-2) 82%, var(--text) 10%);
+  --tk-board: var(--surface-2);
+  --tk-ink: var(--text);
+  --tk-dim: color-mix(in srgb, var(--muted) 70%, var(--text));
+  /* --tk-vv: del zaslona, ki ga spodaj prekrije brskalnik (spodnja vrstica naslova); --tk-dvig: tipke dvignjene od roba za potezo domov */
+  --tk-dvig: 8px;
+  position: fixed; left: 0; right: 0; bottom: var(--tk-vv, 0px); z-index: 500;
+  background: var(--tk-board); color: var(--tk-ink); border-top: 1px solid var(--border);
+  padding: 6px max(4px, env(safe-area-inset-right)) calc(var(--tk-dvig) + var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(4px, env(safe-area-inset-left));
+  font-family: var(--font); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.tk[hidden] { display: none !important; }
+/* telefon in tablica: spodnja vrsta tipk ne sme biti na robu, kjer je poteza za domov (kot pri tipkovnici telefona);
+   skupaj vsaj 26px, pri varnem robu (iPhone 34px) le 8px nad njim */
+@media (pointer: coarse) {
+  .tk { --tk-dvig: max(8px, calc(26px - var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
+  /* črke (ABC) kot tipkovnica telefona (j, 1. 11.): višje tipke, večji razmik med vrstami, spodaj pas s ⌄;
+     ostale plasti (123, f(x), Σ, Kem) ohranijo svojo obliko */
+  .tk.tk-abc { --tk-dvig: 56px; }
+  .tk-rows[data-layer="abc"] { gap: 10px; min-height: calc(4 * 50px + 3 * 10px); }
+  .tk-rows[data-layer="abc"] .tk-row { gap: 5px; }
+  .tk-rows[data-layer="abc"] .tk-k { height: 50px; min-height: 50px; }
+  .tk-rows[data-layer="abc"] .tk-k:not(.fn):not(.go):not(.space) { font-size: 1.3rem; }
+  .tk.tk-abc .tk-hide { position: absolute; inset-inline-start: 4px; bottom: calc((var(--tk-dvig) + 40px) / -2); min-height: 40px; }
+}
+/* zgodovinski slogi: plošča v barvi menija obdobja */
+:root[data-era] .tk { --tk-board: var(--menu, var(--surface-2)); --tk-ink: var(--menu-text, var(--text)); --tk-dim: color-mix(in srgb, var(--menu-muted, var(--muted)) 70%, var(--menu-text, var(--text))); --tk-fn: color-mix(in srgb, var(--menu, var(--surface-2)) 80%, var(--menu-text, var(--text)) 14%); border-top-color: var(--menu-border, var(--border)); }
+/* Enter na plošči v barvi menija: poudarek menija (v Hiši modrosti in Indiji je plošča temna kot poudarek okna) */
+.tk-k.go { background: var(--menu-accent, var(--accent)); color: var(--menu-accent-text, var(--accent-text)); box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--menu-accent, var(--accent)) 60%, var(--text)); }
+/* temni zgodovinski slogi: okno in meni sta skoraj enake barve, tipke malo svetlejše od plošče */
+:root.dark[data-era] .tk { --tk-key: color-mix(in srgb, var(--surface) 90%, var(--text)); }
+.tk-in { position: relative; max-width: 640px; margin: 0 auto; display: grid; gap: 6px; }
+.tk-ctx { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-height: 32px; padding: 0 2px; }
+.tk-ctx::-webkit-scrollbar { display: none; }
+.tk-chip { flex: none; min-height: 32px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: 700 0.86rem var(--font); padding: 4px 12px; border-radius: 99px; cursor: pointer; box-shadow: none; }
+.tk-chip.unit { border-color: var(--accent); color: var(--accent); }
+.tk-ctx.words .tk-chip { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tk-tabs { display: flex; align-items: center; gap: 4px; min-height: 36px; }
+.tk-tablist { display: flex; gap: 3px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.tk-tab, .tk-hide { border: 0; background: none; color: var(--tk-dim); font: 800 0.84rem var(--font); min-height: 36px; padding: 4px 11px; border-radius: var(--radius-sm); cursor: pointer; box-shadow: none; flex: none; }
+/* izbrana plast: tudi črta spodaj, ne samo barva (v temnih zgodovinskih slogih je ozadje skoraj enako plošči) */
+.tk-tab.on { background: var(--surface); color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent), 0 var(--press) 0 var(--tk-fn); }
+.tk-hide { margin-inline-start: auto; min-width: 44px; display: grid; place-items: center; font-size: 1rem; }
+.tk-rows { display: grid; gap: 6px; min-height: calc(4 * 44px + 3 * 6px); align-content: start; }
+.tk-row { display: flex; gap: 4px; justify-content: center; }
+/* Tipke vedno od leve proti desni, tudi v RTL: tako so na tipkovnici telefona (arabščina ض levo zgoraj), matematika
+   se piše od leve, oklepaji in < > pa se v RTL ne zrcalijo (prej je tipka z napisom »(« vstavila »)«). V RTL se zrcalijo samo zavihki. */
+.tk-row, .tk-grid { direction: ltr; }
+.tk-grid { display: grid; grid-template-columns: repeat(var(--cols, 6), minmax(0, 1fr)); gap: 6px 4px; }
+.tk-scroll { max-height: calc(3 * 44px + 2 * 6px); overflow-y: auto; overscroll-behavior: contain; }
+.tk-sub { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.tk-sub::-webkit-scrollbar, .tk-tablist::-webkit-scrollbar { display: none; }
+.tk-subtab { flex: none; min-height: 32px; border: 1px solid var(--border); background: var(--tk-key); color: var(--text); font: 700 0.8rem var(--font); padding: 3px 10px; border-radius: 99px; cursor: pointer; box-shadow: none; }
+.tk-subtab.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+.tk-k {
+  flex: 1 1 0; min-width: 0; height: 44px; min-height: 44px; border: 0; padding: 0; position: relative; cursor: pointer;
+  border-radius: var(--radius-sm); background: var(--tk-key); color: var(--text); font: 500 1.15rem var(--font);
+  display: grid; place-items: center; box-shadow: 0 var(--press) 0 var(--tk-fn); white-space: nowrap; overflow: hidden;
+}
+.tk-k.fn { background: var(--tk-fn); color: var(--tk-ink); font-size: 0.95rem; font-weight: 700; }
+.tk-k.sm { font-size: 0.92rem; }
+/* f(x) → Algebra: ukaz z besedo (poenostavi, simplify) mora biti ves viden na telefonu (5 stolpcev) */
+.tk-k.word { font-size: 0.8rem; letter-spacing: -0.01em; }
+.tk-k.dig { font-size: 1.25rem; font-weight: 600; }
+.tk-k.sym { font-size: 1.05rem; font-weight: 700; }
+/* naboj: ◌ s pravim nadpisom (⁺ v pisavi je videti kot +) */
+/* indeks (spodaj) in naboj ali nadpis (zgoraj) ob ◌: števka velika in krepka (j, 13. 11.: števke so bile premajhne),
+   lega spodaj/zgoraj pove, ali je indeks ali naboj */
+.tk-k.chg { font-weight: 700; }
+.tk-k.chg .tk-chg-i { display: inline-flex; align-items: center; white-space: nowrap; line-height: 1; }
+/* ◌ je v pisavi droben: namesto njega črtkan okvirček (»mesto za simbol«), znak ostane za bralnike zaslona skrit */
+.tk-k.chg .tk-chg-b { display: inline-block; box-sizing: border-box; width: 0.72rem; height: 0.95rem; border: 1.5px dashed color-mix(in srgb, var(--text) 50%, transparent); border-radius: 4px; color: transparent; font-size: 0; overflow: hidden; }
+.tk-k.chg :is(sub, sup) { position: relative; font-size: 1.12rem; font-weight: 800; line-height: 1; vertical-align: baseline; margin-inline-start: 1px; }
+.tk-k.chg sub { top: 0.42em; }
+.tk-k.chg sup { top: -0.48em; }
+.tk-k.chg.two sup { font-size: 0.95rem; letter-spacing: -0.03em; margin-inline-start: 0; }
+/* kemijski napisi (NO₃, H₂O, e⁻): indeks in nadpis v berljivi velikosti, ne drobni znaki pisave */
+.tk-k:not(.chg) :is(sub, sup) { font-size: 0.78em; line-height: 0; font-weight: inherit; }
+.tk-k:not(.chg) sub { vertical-align: -0.28em; }
+.tk-k:not(.chg) sup { vertical-align: 0.5em; }
+/* Vsi elementi: izbrana začetnica */
+/* začetnice so videti kot čipi (obroba, brez polnila), elementi spodaj kot prave tipke: »C« začetnica ≠ »C« ogljik */
+.tk-k.letter { font-size: 1rem; background: transparent; border: 1px solid var(--border); box-shadow: none; color: var(--tk-dim); }
+.tk-k.dot { font-size: 1.7rem; font-weight: 800; }
+.tk-k.word.kem { font-size: 0.92rem; }
+@media (max-width: 500px) { .tk-k.word.kem { font-size: 0.8rem; letter-spacing: -0.03em; } .tk-k.word.kem.xs { font-size: 0.66rem; letter-spacing: -0.04em; } }
+.tk-k.letter.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+/* Σ → Kemija: strani kemije v drugi, nižji vrsti čipov pod skupinami Σ */
+.tk-sub2 .tk-subtab { min-height: 30px; padding-block: 2px; font-size: 0.76rem; }
+.tk-k.go { background: var(--accent); color: var(--accent-text); font-size: 0.95rem; font-weight: 800; box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--accent) 60%, var(--text)); }
+.tk-k.go.txt { padding: 0 6px; }
+.tk-k.shift.on { background: var(--surface); color: var(--accent); }
+.tk-k.shift.lock { box-shadow: inset 0 -3px 0 var(--accent); }
+/* prazen rob krajše vrste črk (a–l kot Gboard); flex-grow je v slogu elementa (pol tipke na vsaki strani) */
+.tk-pad { flex: 0 1 0; min-width: 0; }
+.tk-k.w15 { flex-grow: 1.5; } .tk-k.w2 { flex-grow: 2.2; } .tk-k.w3 { flex-grow: 3; } .tk-k.w5 { flex-grow: 5; }
+.tk-grid .tk-k { width: 100%; }
+/* poteg po tipki (različice, preslednica) ne premika strani; v mreži, ki se pomika, ostane navpični poteg */
+.tk-k { touch-action: none; }
+.tk-scroll .tk-k { touch-action: pan-y; }
+.tk-k svg.i { width: 1.25em; height: 1.25em; }
+.tk-k .tk-v { position: absolute; top: 2px; inset-inline-end: 4px; font-size: 0.6rem; line-height: 1; color: var(--muted); font-weight: 700; }
+.tk-k:active, .tk-k.down { filter: brightness(0.9); transform: translateY(calc(var(--press) * 0.6)); box-shadow: none; }
+.tk-k:focus-visible, .tk-tab:focus-visible, .tk-hide:focus-visible, .tk-chip:focus-visible, .tk-subtab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tk-pop { position: absolute; z-index: 3; display: flex; gap: 3px; padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+.tk-pop button { width: 38px; height: 44px; border: 0; border-radius: 6px; background: var(--surface-2); color: var(--text); font: 500 1.1rem var(--font); cursor: pointer; padding: 0; box-shadow: none; }
+.tk-pop button:hover, .tk-pop button.on, .tk-pop button:focus-visible { background: var(--accent); color: var(--accent-text); }
+
+/* Nastavitve → Vnos */
+.tk-set-checks { display: grid; gap: 14px; margin-top: 16px; }
+.tk-set label small { font-weight: 400; }
+
+/* telefon: ožje razmike, da gre 11 črk v vrsto */
+@media (max-width: 380px) {
+  .tk-row { gap: 3px; }
+  .tk-k { font-size: 1.05rem; }
+  .tk-tab, .tk-hide { padding-inline: 8px; }
+}
+/* Zaslon se umakne nad tipkovnico; spodnja vrstica in pasovi so med pisanjem skriti (prej body.gc-kp). */
+body.tk-open { padding-bottom: calc(var(--tk-h, 0px) + var(--tk-vv, 0px)); box-sizing: border-box; }
+body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--tk-h, 0px) + var(--tk-vv, 0px)); }
+@media (max-width: 860px), (hover: none) and (pointer: coarse) {
+  body.tk-open :is(.tabbar, #mock-banner, #test-notice, #offline-banner, #view-graph .me-back) { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-k:active, .tk-k.down { transform: none; }
+}
+@media (forced-colors: active) {
+  .tk { border-top: 1px solid CanvasText; }
+  .tk-k, .tk-chip, .tk-subtab, .tk-tab, .tk-pop button { border: 1px solid ButtonText; forced-color-adjust: auto; }
+  .tk-tab.on, .tk-subtab.on, .tk-k.shift.on { outline: 2px solid Highlight; }
+  .tk-k.go { background: ButtonText; color: ButtonFace; }
+  .tk-prev { border: 1px solid ButtonText; }
+}
+.tk-say { inset-inline: 8px; bottom: calc(100% + 6px); padding: 8px 12px; font-size: 0.86rem; color: var(--text); }
+.tk-chip.paste { font-weight: 800; color: var(--accent); }
+/* tablica (j, 2. 11.: »Tipkovnica je v obliki za telefon«): čez celo širino kot tipkovnica iPada,
+   višje in širše tipke; ⌄ ostane v vrstici zavihkov, zato spodaj ni praznega pasu */
+@media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
+  .tk { --tk-dvig: max(12px, calc(20px - var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
+  .tk.tk-abc { --tk-dvig: max(12px, calc(20px - var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
+  .tk-in { max-width: none; margin: 0; padding-inline: 8px; gap: 8px; }
+  .tk-row, .tk-grid { gap: 8px; }
+  .tk-k { height: 56px; min-height: 56px; font-size: 1.25rem; border-radius: 10px; }
+  .tk-rows[data-layer="abc"] { gap: 10px; min-height: calc(4 * 64px + 3 * 10px); }
+  .tk-rows[data-layer="abc"] .tk-row { gap: 8px; }
+  .tk-rows[data-layer="abc"] .tk-k { height: 64px; min-height: 64px; }
+  .tk-rows[data-layer="abc"] .tk-k:not(.fn):not(.go):not(.space) { font-size: 1.5rem; }
+  .tk.tk-abc .tk-hide { position: static; min-height: 44px; }
+  .tk-tab { font-size: 1rem; }
+}
+/* vrstice zavihkov, skupin in čipov: brez drsnika (j, 2. 11.); bledenje roba (drsniki.css) ostane kot namig */
+.tk .drs[class] { background-image: none; scrollbar-width: none; }
+.tk :is(.tk-ctx, .tk-tablist, .tk-sub)::-webkit-scrollbar { display: none; }
+@media (pointer: coarse) { .tk .tk-ctx { padding-bottom: 0; } }
+/* animacije kot Gboard (j, 3. 11.), v Evklidovi pisavi in barvah: povečana tipka nad prstom, tipka ob
+   pritisku le potemni (brez pogrezanja), različice in plošča se pokažejo z blagim vzponom */
+.tk-prev { position: absolute; z-index: 4; display: grid; place-items: center; pointer-events: none; background: var(--tk-key, var(--surface)); color: var(--tk-ink, var(--text)); font: 500 1.9rem var(--font); border-radius: 10px; box-shadow: 0 4px 14px color-mix(in srgb, #000 22%, transparent); }
+.tk-prev:not(.on) { display: none; }
+/* povečana črka se pokaže takoj ob dotiku (j, 4. 11.: »veliko hitreje«): brez prehoda ob prikazu, le kratko
+   bledenje ob dvigu prsta */
+.tk-prev.out { opacity: 0; transition: opacity 60ms linear; }
+.tk-pop { animation: tk-pop-in 90ms ease-out; transform-origin: 50% 100%; }
+@keyframes tk-pop-in { from { opacity: 0; transform: scale(0.9); } }
+.tk:not([hidden]) { animation: tk-up 160ms cubic-bezier(0.2, 0, 0, 1); }
+@keyframes tk-up { from { transform: translateY(24px); opacity: 0.6; } }
+@media (pointer: coarse) {
+  .tk-rows[data-layer="abc"] .tk-k.down { transform: none; filter: brightness(0.86); transition: filter 0s; }
+  .tk-rows[data-layer="abc"] .tk-k { transition: filter 120ms ease-out; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-pop, .tk:not([hidden]) { animation: none; }
+}
+/* drsenje po črkah: sled prsta (barva poudarka, v zgodovinskih slogih poudarek menija) bledi ~200 ms po dvigu */
+.tk-trail { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+.tk-trail.out { opacity: 0; transition: opacity 200ms linear; }
+.tk-rows[data-layer="abc"] { touch-action: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tk-trail.out { transition: none; }
+}
+/* Vse plasti iste višine (kot Gboard): menjava ABC / 123 / f(x) / Σ / Kem ne premakne strani (j, 4. 11.:
+   »tipkovnica je okorna«). Odvečni prostor gre enakomerno med vrste, Kem dobi višje tipke. Polje z eno samo
+   plastjo (npr. samo številke) ostane nizko. Na telefonu ABC spodaj nosi pas s ⌄ (--tk-dvig), zato so druge
+   plasti za razliko pasu višje. */
+.tk-multi .tk-rows { min-height: 244px; align-content: space-between; }
+.tk-multi .tk-rows[data-layer="abc"] { gap: 10px; }
+.tk-multi .tk-rows[data-layer="abc"] .tk-k { height: 50px; min-height: 50px; }
+@media (pointer: coarse) {
+  .tk-multi .tk-rows { min-height: calc(4 * 50px + 3 * 10px + 56px - var(--tk-dvig)); }
+  .tk-multi .tk-rows[data-layer="abc"] { min-height: calc(4 * 50px + 3 * 10px); }
+}
+@media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
+  .tk-multi .tk-rows, .tk-multi .tk-rows[data-layer="abc"] { min-height: 312px; }
+  .tk-multi .tk-rows[data-layer="abc"] .tk-k { height: 64px; min-height: 64px; }
+  .tk-hide { min-height: 44px; }
+  /* f(x) in Σ: tri cele vrste višjih tipk (56px), ne dve in pol z drsnikom ob praznem pasu */
+  .tk-scroll { max-height: calc(3 * 56px + 2 * 8px); }
+}
+/* Kemija: tri vrste tipk in spodnja vrsta morajo biti enako visoke kot druge plasti (zavihek Kem: vrsta strani;
+   Σ → Kemija: še vrsta skupin Σ, zato nižje tipke). Računalnik 244px, telefon 260px, tablica 312px (glej zgoraj). */
+.tk-rows[data-kem="sym"] .tk-k { height: 38px; min-height: 38px; }
+@media (pointer: coarse) {
+  .tk-multi .tk-rows[data-kem="kem"] .tk-k { height: 50px; min-height: 50px; }
+  .tk-multi .tk-rows[data-kem="sym"] .tk-k { height: 42px; min-height: 42px; }
+}
+@media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
+  .tk-multi .tk-rows[data-kem="kem"] .tk-k { height: 62px; min-height: 62px; }
+  .tk-multi .tk-rows[data-kem="sym"] .tk-k { height: 52px; min-height: 52px; }
+}

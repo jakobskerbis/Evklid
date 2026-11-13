@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "NSCameraUsageDescription": "The camera is used to photograph a maths or science problem so the tutor can explain it step by step.",
+    "NSPhotoLibraryUsageDescription": "The photo of a problem you pick is opened so the tutor can explain it."
+  }
+}

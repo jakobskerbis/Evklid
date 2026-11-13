@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Evklid</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="vendor/instrument-sans/index.css">
+  <link rel="stylesheet" href="vendor/nunito/index.css">
+  <link rel="stylesheet" href="vendor/ibm-plex-sans/index.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="tipkovnica.css">
+  <link rel="stylesheet" href="account.css">
+  <style>
+    body { display: block; }
+    .doc { max-width: 560px; margin: 0 auto; padding: 24px 16px 60px; }
+    .doc .card { margin-top: 16px; }
+    .pay-sum { display: flex; flex-direction: column; gap: 4px; }
+    .pay-price { font-size: 1.6rem; font-weight: 700; }
+    .doc form { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+    .doc input[type="email"] { width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: inherit; font: inherit; }
+    .doc button.primary { min-height: 44px; }
+    .ok-mark { color: var(--ok); }
+  </style>
+</head>
+<body>
+<main class="doc" id="pay-root">
+  <p><a href="/">← Evklid</a></p>
+  <h1 data-i18n="payp.title">Plačilo za Evklid</h1>
+  <p class="muted" id="pay-status" data-i18n="common.loading">Nalagam …</p>
+</main>
+<script type="module" src="/zagon.js" data-moduli="placaj.js /tipkovnica-strani.js /vir.js"></script>
+</body>
+</html>

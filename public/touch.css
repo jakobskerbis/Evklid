@@ -1,0 +1,169 @@
+/* Telefon in tablica (glej docs/oblikovanje.md, razdelek »Telefon in tablica«).
+   Barve samo iz spremenljivk v style.css. Pravila za široke zaslone (računalnik) so v ui.css. */
+
+/* Ko zgornjih zavihkov ni (spodnja vrstica ali odprta plošča za vnos), sta XP in učenec desno. */
+.xp-badge { margin-inline-start: auto; }
+
+/* Nazaj na »Jaz« s podstrani (Napredek, Lige, Nastavitve, Račun): samo ob spodnji vrstici. */
+.me-back { display: none !important; }
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  .me-back { display: inline-flex !important; }
+}
+
+/* ---------- tablica na dotik: spodnja vrstica z napisi namesto samih ikon zgoraj ---------- */
+@media (min-width: 761px) and (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  .topbar { padding: 10px 20px; gap: 12px; }
+  .brand-name { display: inline; }
+  .stat .xp-unit { display: inline; }
+  .tabbar { justify-content: center; padding: 6px 16px calc(6px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+  .tabbar .tab { max-width: 150px; font-size: 0.8rem; }
+  .tabbar .tab:not(.active) span { display: block; }
+  /* Gumbi na dotik vsaj 44 px. */
+  button.ghost, .text-btn { min-height: 44px; }
+}
+
+/* ---------- plošča za vnos ---------- */
+/* Plošča spodaj (telefon in tablica pokončno; telefon ležeče ima ploščo ob strani). */
+@media (max-width: 599px), (max-width: 899px) and (min-height: 501px) {
+  /* Dovolj prostora pod nalogo, da jo lahko pomaknemo na vrh, nad ploščo. */
+  body.pad-open #view-topic { padding-bottom: max(calc(var(--pad-h, 0px) + 20px), 75dvh); }
+  body.pad-open .task { padding-top: 6px; }
+}
+.task-text > :first-child { margin-top: 0; }
+/* Odprta plošča ima svoje polje in Preveri: vrstico z vnosom v kartici naloge takrat skrijemo
+   (telefon, tablica; na računalniku z miško ostane za tipkovnico). */
+@media (max-width: 599px), (max-width: 899px) and (min-height: 501px), (hover: none) and (pointer: coarse) {
+  body.pad-open .task .answer-row { display: none; }
+}
+/* Tablica pokončno: plošča je spodaj čez celo širino, tipke in platno pa ne preširoki. */
+@media (min-width: 600px) and (max-width: 899px) and (min-height: 501px) {
+  .pad > * { width: 100%; max-width: 640px; margin-left: auto !important; margin-right: auto !important; }
+}
+
+/* ---------- telefon: posamezni glavni gumbi čez celo širino, kot v .actions ---------- */
+@media (max-width: 760px) {
+  .form-actions > button.primary { flex: 1; }
+  .contest-card > button.primary { width: 100%; }
+  .back { min-height: 44px; }
+  /* Dolg namig v polju klepeta naj ne gre v drugo vrstico. */
+  #input::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+.contest-card > .field-label { display: block; margin-top: 18px; }
+
+/* ---------- tablica ležeče (na dotik, 1000–1199 px): dva stolpca kot na računalniku ----------
+   Sama postavitev je v ui.css (isti pogoj); tu samo ožji stolpci. */
+@media (min-width: 1000px) and (max-width: 1199px) and (hover: none) and (pointer: coarse) {
+  .tb-lesson-grid.has-side { grid-template-columns: minmax(0, 1fr) var(--split-lesson, minmax(360px, 42%)); gap: 0 20px; }
+  #view-path { grid-template-columns: var(--split-path, minmax(320px, 380px)) minmax(0, 1fr); gap: 0 20px; }
+  /* Levi stolpec je na tablici višji od zaslona: pripet bi skril spodnje načine. */
+  #view-path > .path-side { position: static; max-height: none; overflow: visible; }
+}
+
+/* ---------- Inštruktor na telefonu in tablici na dotik: glava klepeta na vrhu zaslona (j, 2026-10-31) ----------
+   Zgornja vrstica (logotip, števci, profil) in obvestili »Preizkusni način« / »Testna verzija« so v klepetu skriti
+   (vsi slogi); profil in nastavitve so pod »Jaz«, obvestili ostaneta na drugih zaslonih. Samo ko je klepet glavni
+   pogled (ne v oknu ali listu). Glava dobi odmik za zarezo zaslona (safe-area). Obvestilo »Brez povezave« je samo na
+   Učni poti, klepet ima svoje (#chat-off). */
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  body:has(> #view-chat:not([hidden]):not(.in-okno)) > :is(.topbar, #mock-banner, #test-notice) { display: none; }
+  body > #view-chat:not(.in-okno) .chat-head { padding-top: max(10px, var(--varno-zg, env(safe-area-inset-top, 0px))); }
+  body > #view-chat:not(.in-okno) .sidebar.open { padding-top: calc(72px + var(--varno-zg, env(safe-area-inset-top, 0px))); }
+}
+
+/* Telefon, Inštruktor: enak rob 16 px za glavo, klepet in vrstico za pisanje; gumbi v glavi enako veliki in enako
+   razmaknjeni (meni brez okvirja kot Skeniraj in Kalkulator); manjši razmiki v vrstici za pisanje, da namig ostane
+   berljiv (app.js ga skrajša za zadnjo celo besedo). */
+@media (max-width: 760px) {
+  .chat-head { padding-inline: 16px; gap: 6px; }
+  .chat-head > .icon-only { width: 40px; min-width: 40px; height: 40px; min-height: 40px; display: inline-grid; place-items: center; }
+  .chat-head > :is(#toggle-sidebar, .chat-back) { border-color: transparent; background: none; box-shadow: none; }
+  body > #view-chat:not(.in-okno) .chat-head > .chat-back, .in-okno .chat-head > #toggle-sidebar { margin-inline-start: -8px; }
+  .chat-head > .chat-calc { margin-inline-end: -8px; }
+  .chat-head h1 { white-space: nowrap; text-overflow: ellipsis; }
+  /* Oznake pogovora v svoji vrstici pod naslovom, cele in berljive (j 2026-11-04: prej »Mat…«, »…lekci«); če jih je
+     več, kot gre v vrstico, se vrstica pomika vstran. Odprt seznam pogovorov jih skrije (glava spet ena vrstica). */
+  .chat-head { flex-wrap: wrap; row-gap: 2px; }
+  .chat-head #chat-state {
+    order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow-x: auto; scrollbar-width: none;
+    margin-inline: -16px; padding: 0 16px 4px;
+  }
+  .chat-head #chat-state::-webkit-scrollbar { display: none; }
+  .chat-head #chat-state .chip { display: inline-flex; max-width: none; overflow: visible; }
+  .chat-head #chat-state .chip-pick .dd-btn { min-height: 40px; } /* dovolj velik za prst */
+  .chat-head #chat-state .chip-btn { min-height: 40px; padding-inline: 12px !important; order: -1; } /* »Preberi lekcijo« prvi, vedno viden */
+  .chat-head #chat-state:empty, .chat-view:has(.sidebar.open) #chat-state { display: none; }
+  .messages { padding-inline: 16px; }
+  .composer { padding-inline: 16px; }
+  .composer-row { gap: 2px; }
+  .composer-row #input { padding-inline: 6px; }
+}
+
+/* ---------- Spodnja vrstica se umakne pri branju in gledanju (j, 2026-10-31) ----------
+   Telefon in tablica na dotik, vsi slogi: v klepetu z inštruktorjem (prazen ali s sporočili), v temi (lekcija, naloge,
+   vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika, v odprtem poskusu Laboratorija (več prostora
+   za pripeto risbo, docs/laboratorij.md) in v kalkulatorju (cel pogled). Igra med
+   igranjem, tipkovnica kalkulatorja, plošča za vnos, Oglasna deska in video gradiv jo že prekrijejo ali skrijejo.
+   Vrstica je takrat pritrjena pod spodnjim robom (ne vzame prostora); poteg navzdol ali kolešček gor jo pokaže
+   (body.tb-peek, app.js), poteg navzgor skrije; v lekciji Učbenika se pokaže samo ob robu (poteg navzgor na dnu
+   ali navzdol na vrhu, j 2026-11-04) ali ko drsenje udari v vrh ali dno. Na teh zaslonih je v glavi gumb Nazaj. app.js iz position: fixed
+   prepozna, da se vrstica umika, zato pogoje pišemo samo tu. */
+.chat-back { display: none; }
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  body:is(:has(> #view-chat:not([hidden]):not(.in-okno)), :has(> #view-topic:not([hidden]):not(.in-okno)),
+    :has(> #view-cards:not([hidden]):not(.in-okno)), :has(> #view-graph:not([hidden]):not(.in-okno)),
+    :has(> #view-uci:not([hidden]):not(.in-okno) > #view-textbook:not([hidden]) .tb-lesson-grid),
+    :has(> #view-uci:not([hidden]):not(.in-okno) > #view-lab.lab-open:not([hidden]))) > .tabbar {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 30;
+    transform: translateY(var(--tb-y, 100%)); visibility: var(--tb-vis, hidden);
+    transition: transform 0.22s ease, visibility 0s linear var(--tb-vd, 0.22s);
+  }
+  body.tb-peek, body:has(> #tour:not([hidden])) { --tb-y: 0%; --tb-vis: visible; --tb-vd: 0s; }
+  /* Klepet: gumb Nazaj v glavi; vrstica za pisanje na dnu z odmikom za varno območje, pokazana vrstica jo dvigne. */
+  body > #view-chat:not(.in-okno) .chat-back { display: inline-grid; place-items: center; }
+  body > #view-chat:not(.in-okno) .composer { padding-bottom: max(10px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
+  body.tb-peek > #view-chat:not(.in-okno) .composer { padding-bottom: 10px; margin-bottom: var(--tabbar-h, 0px); }
+  /* Krogi lekcije (Nazaj · 1/12 · Naprej) plavajo na dnu: odmik za varno območje, pokazana vrstica jih dvigne.
+     Dvig je samo premik (transform, enako kot vrstica), brez spremembe postavitve: če se med hitrim drsenjem z zamahom
+     spremeni odmik pogleda ali višina krogov, jih Android lahko ne postavi znova in ostanejo previsoko sredi
+     besedila (j 2026-11-04, tudi po #391). Krogi se ustavijo 12 px nad vrstico in gredo z njo (0,22 s).
+     Kratek korak: krogi so vedno na dnu pogleda (stolpec, margin-top: auto), sicer bi jih dvig potisnil v besedilo. */
+  body > #view-uci:not(.in-okno) > #view-textbook:has(> .tb-stepper) { display: flex; flex-direction: column; }
+  body > #view-uci:not(.in-okno) > #view-textbook .tb-stepper {
+    --tb-step-pb: max(12px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px))));
+    margin-top: auto; padding-bottom: var(--tb-step-pb); transition: transform 0.22s ease;
+  }
+  body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { transform: translateY(calc(var(--tb-step-pb) - 12px - var(--tabbar-h, 0px))); }
+}
+@media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
+
+/* Pogled je lahko v spodnji vrstici (npr. Tekmovanja ali NPZ in matura): takrat brez »← Jaz«. */
+.me-back[hidden] { display: none !important; }
+
+/* Gumbi z izbirami pod odgovorom inštruktorja: glavni cilj dotika, 44 px (docs/oblikovanje.md). */
+@media (hover: none) and (pointer: coarse) {
+  .choice-row .choice-btn { min-height: 44px !important; }
+}
+
+/* Koš v seznamu pogovorov: brisanje je z enim dotikom (brez potrditve), zato je na dotik vedno viden,
+   dovolj velik in odmaknjen od naslova (prej je bil neviden, a se ga je dalo zadeti). */
+@media (hover: none) {
+  #conversation-list li { gap: 12px; }
+  #conversation-list li button { opacity: 0.8; min-width: 40px; min-height: 40px !important; margin-block: -8px; display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* ---------- odziv na dotik (j 6. 11. 2026: »da bo Evklid deloval bolj odzivno«) ----------
+   - brez zakasnitve dotika in povečave ob dvojnem tapu na vsem, kar se tapne (:where = brez prednosti,
+     zato lastna pravila, npr. touch-action: none na platnih in drsnikih, ostanejo),
+   - vidna povratna informacija takoj ob pritisku (< 50 ms): rahel pritisk (scale, ločen od transform,
+     zato se ne tepe z obstoječimi premiki gumbov). Gumbi z lastnim :active (tipkovnica, kalkulator, igre)
+     ga ne dobijo še enkrat. Ob »manj gibanja« (prefers-reduced-motion) brez pomika, samo potemnitev. */
+:where(button, a[href], summary, label, select, [role="button"], [role="tab"], [role="link"], [role="menuitem"], [role="option"], .tab, .node) {
+  touch-action: manipulation;
+}
+:where(button, summary, [role="button"], [role="tab"], [role="menuitem"], [role="option"], .tab):not(:disabled, [aria-disabled="true"], .tk-k, .sc-key, .gm-tile, .gm-btn, .gm-key, .gm-me, .choice, .primary, .modes button):active {
+  scale: 0.97;
+  filter: brightness(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(button, summary, [role="button"], [role="tab"], [role="menuitem"], [role="option"], .tab):active { scale: none; }
+}

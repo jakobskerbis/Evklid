@@ -1,0 +1,33 @@
+/* Drsne vrstice (public/drsniki.js, j 2026-11-01): ko je v vrstici več, kot gre na zaslon, rob, za katerim
+   je še kaj, zbledi, pod vrstico pa je tanek drsnik v barvi poudarka. Maska šteje le prosojnost, zato #000.
+   Kjer je drsnik namenoma skrit (vrstice čipov in zavihkov), ostane skrit: :where() ima ničelno prednost. */
+:root { --drs-rob: 36px; }
+:where(.drs) { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 60%, transparent) transparent; }
+:where(.drs)::-webkit-scrollbar { height: 6px; }
+:where(.drs)::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--accent) 60%, transparent); border-radius: 3px; }
+:where(.drs)::-webkit-scrollbar-track { background: transparent; }
+
+.drs.drs-k { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); }
+.drs.drs-z { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); }
+.drs.drs-z.drs-k { -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--drs-rob), #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to right, transparent, #000 var(--drs-rob), #000 calc(100% - var(--drs-rob)), transparent); }
+.drs.drs-rtl.drs-k:not(.drs-z) { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); }
+.drs.drs-rtl.drs-z:not(.drs-k) { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); }
+
+@media print { .drs { -webkit-mask-image: none !important; mask-image: none !important; } }
+
+/* Na telefonu se drsnik pokaže šele med pomikanjem, zato pod vrstico narišemo svojega: bleda sled čez vso
+   širino in krepkejši del, ki kaže, kateri del vrstice je viden (--drs-d dolžina, --drs-x položaj iz
+   drsniki.js). Ozadje okvirja, ki se pomika, ostane na mestu, vsebina pa drsi čezenj. [class] dvigne
+   prednost nad ».x { background: … }«. */
+@media (pointer: coarse) {
+  .drs[class] {
+    background-image: linear-gradient(color-mix(in srgb, var(--accent) 75%, transparent), color-mix(in srgb, var(--accent) 75%, transparent)), linear-gradient(color-mix(in srgb, var(--accent) 16%, transparent), color-mix(in srgb, var(--accent) 16%, transparent));
+    background-repeat: no-repeat;
+    background-size: calc(var(--drs-d, 0.5) * 100%) 3px, 100% 3px;
+    background-position: var(--drs-x, 0%) 100%, 0 100%;
+  }
+  /* Tabela ali žetoni segajo do spodnjega roba okvirja in bi črto prekrili: prostor zanjo je vedno (brez skoka ob »drs«). */
+  .md-table-wrap { padding-bottom: 6px; margin-bottom: 4px; }
+  .tk-ctx { padding-bottom: 6px; }
+  .chip-row { padding-bottom: 7px; }
+}

@@ -1,0 +1,36 @@
+{
+  "_opis": "Ime aplikacije na enem mestu. Za novo ime: node scripts/preimenuj.js <Ime> (glej skript). Prejšnja imena (legacy) ostanejo zaradi prenosa nastavitev, baze, piškotkov in bližnjic; test/ime.test.js prepreči, da bi se vrnila v kodo.",
+  "name": "Evklid",
+  "slug": "evklid",
+  "env": "EVKLID",
+  "wordmark": [
+    "Evkli",
+    "d"
+  ],
+  "domain": "evklid.app",
+  "repo": "jakobskerbis/evklid",
+  "app": {
+    "_opis": "Mobilna aplikacija (mobile/). Id-ji (bundle_id, product_prefix, projekt EAS) so po objavi v App Store in Google Play trajni: ob preimenovanju jih ne spreminjaj.",
+    "bundle_id": "app.evklid",
+    "product_prefix": "evklid",
+    "eas_project_id": "e341b072-b300-47f9-9945-8d28433478a6",
+    "expo_owner": "evklid.app"
+  },
+  "legacy": [
+    {
+      "name": "Kompreno",
+      "slug": "kompreno",
+      "env": "KOMPRENO",
+      "until": "2026-10-29",
+      "match": "kompren"
+    },
+    {
+      "name": "STEMMind",
+      "slug": "stemmind",
+      "env": "STEMMIND",
+      "repo": "jakobskerbis/stemmind",
+      "until": "2026-10-29",
+      "match": "stem\\s?minds?"
+    }
+  ]
+}

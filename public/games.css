@@ -1,0 +1,521 @@
+/* ---------- IGRE (public/games/) ---------- */
+/* Videz »stare flash igre«: debele temne obrobe, risankasti prelivi, krepka pisava, izbočeni gumbi. */
+:root { --gm-ink: #1b1b2f; --gm-font: "Arial Rounded MT Bold", "Trebuchet MS", "Arial Black", system-ui, sans-serif; }
+/* Ploščice in prizori iger imajo svoje barve (kot simulacije in lige); okvir in gumbi so iz spremenljivk. */
+#view-games { width: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 20px var(--rob-strani) 40px; }
+#view-games > .me-back { margin-bottom: 8px; }
+.gm-portal { margin: 0 auto; }
+.gm-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.gm-top h1 { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; }
+.gm-top h1 svg.i { width: 30px; height: 30px; color: var(--accent); }
+.gm-top p { margin: 0; }
+.gm-search { display: flex; align-items: center; gap: 8px; min-width: min(320px, 100%); padding: 0 12px; border: 1px solid var(--border); border-radius: 99px; background: var(--surface); color: var(--muted); }
+.gm-search input { flex: 1; min-height: 44px; border: 0; background: none; color: var(--text); font: inherit; outline: none; }
+.gm-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.gm-areas, .gm-kinds { margin: 6px 0; }
+.gm-sec { margin-top: 20px; }
+.gm-sec h2 { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; margin: 0 0 10px; }
+.gm-dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+.gm-count { margin-inline-start: 4px; padding: 1px 9px; border-radius: 99px; background: var(--surface-2); color: var(--muted); font-size: 0.8rem; }
+.gm-none { margin-top: 24px; }
+
+.gm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .gm-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; } }
+.gm-tile {
+  position: relative; aspect-ratio: 1; padding: 0; border: 3px solid var(--gm-ink); border-radius: 18px; overflow: hidden; cursor: pointer; color: #fff;
+  background: linear-gradient(140deg, var(--a), var(--b)); box-shadow: 0 5px 0 var(--gm-ink), 0 10px 18px rgba(20, 33, 61, 0.16);
+  transition: transform 0.12s ease, box-shadow 0.12s ease; text-align: start;
+}
+.gm-tile::before { content: ""; position: absolute; inset: 0; opacity: 0.35; pointer-events: none; }
+.gm-k-meteor::before { background: radial-gradient(circle at 20% 30%, #fff 1.5px, transparent 2px) 0 0 / 26px 26px, radial-gradient(circle at 70% 80%, #fff 1px, transparent 1.5px) 0 0 / 18px 18px; }
+.gm-k-balloons::before { background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 30%, transparent 32%) 0 0 / 40px 48px; }
+.gm-k-runner::before { background: repeating-linear-gradient(90deg, transparent 0 22px, rgba(255, 255, 255, 0.4) 22px 26px); }
+.gm-k-sorter::before { background: repeating-linear-gradient(45deg, transparent 0 14px, rgba(255, 255, 255, 0.3) 14px 18px); }
+.gm-k-maze::before { opacity: 0.5; background: linear-gradient(90deg, #60a5fa 3px, transparent 3px) 0 0 / 28px 28px, linear-gradient(#60a5fa 3px, transparent 3px) 14px 0 / 28px 28px; }
+.gm-k-castle::before { background: linear-gradient(rgba(0, 0, 0, 0.35) 2px, transparent 2px) 0 0 / 40px 18px, linear-gradient(90deg, rgba(0, 0, 0, 0.35) 2px, transparent 2px) 0 0 / 40px 36px; }
+.gm-k-snake::before { background: linear-gradient(90deg, rgba(15, 56, 15, 0.6) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(rgba(15, 56, 15, 0.6) 1px, transparent 1px) 0 0 / 12px 12px; }
+.gm-k-frog::before { background: repeating-radial-gradient(circle at 30% 70%, transparent 0 10px, rgba(255, 255, 255, 0.35) 10px 12px); }
+.gm-k-moles::before { background: radial-gradient(ellipse 14px 6px, rgba(0, 0, 0, 0.5) 90%, transparent 100%) 0 0 / 44px 40px; }
+.gm-k-heli::before { background: linear-gradient(90deg, transparent 0 60%, rgba(0, 0, 0, 0.3) 60% 72%, transparent 72%) 0 0 / 46px 100%; }
+.gm-k-bricks::before { background: linear-gradient(rgba(255, 255, 255, 0.35) 3px, transparent 3px) 0 0 / 30px 16px, linear-gradient(90deg, rgba(255, 255, 255, 0.35) 3px, transparent 3px) 0 0 / 30px 16px; }
+.gm-k-invaders::before { opacity: 0.45; background: radial-gradient(#fff 1px, transparent 1.5px) 0 0 / 16px 16px, linear-gradient(90deg, #4ade80 6px, transparent 6px) 4px 6px / 30px 26px; }
+.gm-k-lander::before { opacity: 0.5; background: linear-gradient(170deg, transparent 75%, #4ade80 75% 77%, transparent 77%), radial-gradient(#fff 1px, transparent 1.5px) 0 0 / 20px 20px; }
+.gm-k-bubbles::before { background: radial-gradient(circle, transparent 50%, rgba(255, 255, 255, 0.5) 52% 58%, transparent 60%) 0 0 / 34px 34px; }
+.gm-k-cannon::before { background: radial-gradient(circle at 20% 80%, rgba(0, 0, 0, 0.35) 8px, transparent 9px), repeating-radial-gradient(circle at 20% 80%, transparent 0 18px, rgba(255, 255, 255, 0.3) 18px 20px); }
+.gm-k-crane::before { background: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.3) 0 8px, transparent 8px 16px) 0 0 / 100% 14px no-repeat, linear-gradient(90deg, transparent 48%, rgba(0, 0, 0, 0.3) 48% 52%, transparent 52%); }
+.gm-k-marble::before { background: radial-gradient(circle, rgba(0, 0, 0, 0.45) 6px, transparent 7px) 0 0 / 38px 38px, repeating-linear-gradient(0deg, transparent 0 7px, rgba(255, 255, 255, 0.15) 7px 9px); }
+.gm-k-jumper::before { background: linear-gradient(rgba(255, 255, 255, 0.45) 5px, transparent 5px) 0 0 / 46px 30px; }
+.gm-k-orb::before { background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.5), transparent 45%); }
+.gm-k-diner::before { background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.35) 0 14px, transparent 14px 28px); }
+.gm-k-hills::before { background: radial-gradient(ellipse 40px 18px at 50% 100%, rgba(255, 255, 255, 0.4) 98%, transparent) 0 100% / 60px 40px repeat-x; }
+.gm-k-pet::before { background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 4px, transparent 5px) 0 0 / 22px 22px; }
+.gm-k-catcher::before { background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 6px, transparent 7px) 0 0 / 36px 52px, radial-gradient(circle, rgba(255, 255, 255, 0.3) 4px, transparent 5px) 18px 26px / 36px 52px; }
+.gm-k-pairs::before { background: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 3px, transparent 3px) 0 0 / 30px 40px, linear-gradient(rgba(255, 255, 255, 0.3) 3px, transparent 3px) 0 0 / 30px 40px; }
+.gm-k-slicer::before { background: repeating-linear-gradient(-35deg, transparent 0 22px, rgba(255, 255, 255, 0.4) 22px 25px); }
+.gm-k-water::before { background: radial-gradient(circle at 50% 0, transparent 8px, rgba(255, 255, 255, 0.35) 9px 11px, transparent 12px) 0 0 / 26px 14px; }
+.gm-k-mines::before { background: linear-gradient(45deg, rgba(255, 255, 255, 0.18) 25%, transparent 25% 75%, rgba(255, 255, 255, 0.18) 75%) 0 0 / 24px 24px, linear-gradient(45deg, rgba(255, 255, 255, 0.18) 25%, transparent 25% 75%, rgba(255, 255, 255, 0.18) 75%) 12px 12px / 24px 24px; }
+.gm-k-blocks::before { background: linear-gradient(90deg, rgba(255, 255, 255, 0.16) 2px, transparent 2px) 0 0 / 20px 20px, linear-gradient(0deg, rgba(255, 255, 255, 0.16) 2px, transparent 2px) 0 0 / 20px 20px; }
+.gm-k-match::before { background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.22) 5px, transparent 6px) 0 0 / 22px 22px; }
+.gm-k-impostor::before { background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 1px, transparent 1.5px) 0 0 / 18px 18px, radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 1px, transparent 1.5px) 9px 7px / 26px 26px; }
+.gm-k-numline::before { background: linear-gradient(rgba(255, 255, 255, 0.45) 0 0) 0 62% / 100% 3px no-repeat, repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.45) 0 2px, transparent 2px 16px) 0 58% / 100% 14px no-repeat, repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0 3px, transparent 3px 80px) 0 56% / 100% 24px no-repeat; }
+.gm-k-typed::before { background: linear-gradient(90deg, transparent 0 4px, rgba(255, 255, 255, 0.16) 4px) 0 0 / 22px 22px, linear-gradient(transparent 0 4px, rgba(255, 255, 255, 0.16) 4px) 0 0 / 22px 22px; }
+.gm-k-tiles::before { background: linear-gradient(90deg, transparent 0 6px, rgba(255, 255, 255, 0.2) 6px 30px, transparent 30px) 0 0 / 36px 30px, linear-gradient(transparent 0 6px, rgba(255, 255, 255, 0.12) 6px 24px, transparent 24px) 0 0 / 36px 30px; }
+.gm-k-order::before { background: linear-gradient(rgba(255, 255, 255, 0.28) 0 0) 12% 22% / 30% 9px no-repeat, linear-gradient(rgba(255, 255, 255, 0.28) 0 0) 12% 42% / 50% 9px no-repeat, linear-gradient(rgba(255, 255, 255, 0.28) 0 0) 12% 62% / 70% 9px no-repeat, linear-gradient(rgba(255, 255, 255, 0.28) 0 0) 12% 82% / 88% 9px no-repeat; }
+.gm-k-cards::before { background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.12) 0 6px, transparent 6px 14px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.12) 0 6px, transparent 6px 14px); }
+.gm-tile::after { content: ""; position: absolute; left: 6%; right: 6%; top: 4%; height: 38%; border-radius: 14px 14px 50% 50% / 14px 14px 30% 30%; background: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0)); pointer-events: none; }
+.gm-tile:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: 0 8px 0 var(--gm-ink), 0 14px 26px rgba(20, 33, 61, 0.22); }
+.gm-tile:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--gm-ink); }
+.gm-tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.gm-glyph {
+  position: absolute; inset: 10% 6% 34%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--gm-font); font-size: clamp(1.6rem, 5.5vw, 2.6rem); font-weight: 900; line-height: 1; white-space: nowrap;
+  -webkit-text-stroke: 1.5px var(--gm-ink); paint-order: stroke fill; text-shadow: 2px 2px 0 var(--gm-ink), 4px 4px 0 rgba(0, 0, 0, 0.35); transform: rotate(-4deg);
+}
+.gm-kind { position: absolute; top: 8px; left: 8px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 10px; background: rgba(0, 0, 0, 0.25); }
+.gm-kind svg.i { width: 16px; height: 16px; }
+.gm-best { position: absolute; top: 8px; right: 8px; display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 99px; background: rgba(0, 0, 0, 0.32); font-size: 0.72rem; font-weight: 800; }
+.gm-best svg.i { width: 12px; height: 12px; color: #fde047; }
+/* Igra na označeni poti: zlat rob in kompas (vse igre so odprte, označene so priporočene). */
+.gm-tile.gm-path { border-color: #facc15; box-shadow: 0 5px 0 var(--gm-ink), 0 0 0 3px var(--gm-ink), 0 10px 18px rgba(20, 33, 61, 0.16); }
+.gm-pathmark { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #facc15; color: var(--gm-ink); border: 2px solid var(--gm-ink); }
+.gm-pathmark svg.i { width: 14px; height: 14px; }
+.gm-path .gm-best { top: 36px; }
+.gm-pathhint { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; font-size: 0.9rem; color: var(--muted, #475569); }
+.gm-pathhint svg.i { flex: none; width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: #facc15; color: var(--gm-ink); border: 2px solid var(--gm-ink); }
+/* Igre iz otroštva (childhood.js): vabilo k vprašalniku, razdelek z izbranimi igrami, vprašalnik */
+.gm-kidask { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 4px 0 14px; padding: 12px 14px; border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: var(--radius-sm, 12px); background: var(--accent-soft); }
+.gm-kid-ic { font-size: 1.5rem; line-height: 1; }
+.gm-kidask-t { flex: 1 1 220px; min-width: 0; }
+.gm-kidask-t b, .gm-kidask-t small { display: block; }
+.gm-kidask-t small { color: var(--muted); font-weight: 600; margin-top: 2px; }
+.gm-kidask-b { display: flex; gap: 8px; flex-wrap: wrap; }
+.gm-kidlink { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 0.9rem; }
+.gm-kidedit { display: inline-flex; align-items: center; gap: 4px; margin-inline-start: auto; padding: 4px 10px; font-size: 0.85rem; }
+.gm-kidedit svg.i { width: 15px; height: 15px; }
+.gm-kidq .iq-opt > span:last-child { min-width: 0; }
+.gm-kidto { display: flex; align-items: center; gap: 3px; margin-top: 2px; color: var(--muted); font-size: 0.78rem; font-weight: 600; }
+.gm-kidto svg.i { flex: none; width: 12px; height: 12px; }
+.iq-opt.on .gm-kidto { color: inherit; }
+.gm-kidnew .gm-tile { animation: gm-kidpop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+.gm-kidnew .gm-tile:nth-child(2n) { animation-delay: 0.06s; }
+.gm-kidnew .gm-tile:nth-child(3n) { animation-delay: 0.12s; }
+@keyframes gm-kidpop { from { transform: scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
+.gm-own { margin: 16px 0 4px; }
+.gm-own label { display: block; margin-bottom: 6px; }
+.gm-own-row { display: flex; gap: 8px; }
+.gm-own-row input { flex: 1; min-width: 0; }
+.gm-own-row button { display: inline-flex; align-items: center; gap: 4px; flex: none; }
+.gm-own-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.gm-own-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; border: 2px solid var(--border); border-radius: var(--radius-sm, 12px); }
+.gm-own-list li span { min-width: 0; }
+.gm-own-list b, .gm-own-list small { display: block; overflow-wrap: anywhere; }
+.gm-own-list small { color: var(--muted); font-weight: 600; }
+.gm-own-list button { flex: none; padding: 4px 8px; }
+.gm-trends { margin: 0 0 12px; padding: 10px 14px; }
+.gm-trends summary { cursor: pointer; font-weight: 800; padding: 8px 0; }
+.gm-trends h3 { margin: 12px 0 4px; font-size: 0.95rem; }
+.gm-trends ol { margin: 0; padding-inline-start: 22px; }
+.gm-trends button { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; }
+.gm-wishlink { margin-inline-end: 8px; }
+.gm-rate { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin: 10px 0 2px; font-weight: 700; }
+.gm-rate button { min-width: 48px; min-height: 44px; font-size: 1.35rem; line-height: 1; border: 2px solid var(--border); border-radius: 12px; }
+.gm-rate button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.gm-rate small { flex-basis: 100%; min-height: 1.2em; text-align: center; color: var(--muted); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .gm-kidnew .gm-tile { animation: none; } }
+/* Zaklenjena igra: siva, s ključavnico; klik pokaže, kako jo odkleneš. */
+.gm-tile.gm-locked { filter: grayscale(0.85) brightness(0.82); }
+.gm-lock { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: rgba(0, 0, 0, 0.5); border: 3px solid var(--gm-ink); }
+.gm-lock svg.i { width: 21px; height: 21px; color: #fff; }
+.gm-lockcard { max-width: 560px; margin: 24px auto; }
+.gm-lockcard h2 { display: flex; align-items: center; gap: 8px; }
+.gm-lockcard .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.gm-check-q { font-size: 1.35rem; font-weight: 800; margin: 10px 0 14px; }
+.gm-check-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gm-check-opts button { font-size: 1.1rem; min-height: 52px; }
+.gm-check-opts button.gm-right { background: #16a34a; color: #fff; border-color: #15803d; }
+.gm-check-opts button.gm-wrong { background: #dc2626; color: #fff; border-color: #b91c1c; }
+.gm-check-fb { min-height: 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; font-weight: 700; }
+.gm-check-res { font-size: 1.15rem; font-weight: 700; }
+.gm-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 7px 9px 8px; background: linear-gradient(transparent, rgba(0, 0, 0, 0.55) 35%); display: flex; flex-direction: column; }
+.gm-name b { font-family: var(--gm-font); font-size: 0.86rem; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; hyphens: auto; }
+.gm-name small { font-size: 0.72rem; opacity: 0.9; font-weight: 700; }
+@media (max-width: 760px) {
+  .gm-name { padding: 5px 7px 6px; }
+  .gm-name b { font-size: 0.76rem; }
+  .gm-name small { font-size: 0.66rem; }
+  .gm-kind { width: 24px; height: 24px; top: 6px; left: 6px; }
+}
+
+/* igra */
+.gm-host { height: 100%; }
+body.gm-on #view-games { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+body.gm-on #view-games > .me-back, body.gm-on .tabbar, body.gm-on #mock-banner, body.gm-on #test-notice, body.gm-on #offline-banner { display: none !important; }
+body.gm-on #games-content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+body.gm-on .gm-host { flex: 1; min-height: 0; }
+.gm-play { height: 100%; min-height: 360px; display: flex; flex-direction: column; background: var(--bg); }
+.gm-hud { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 55%), linear-gradient(90deg, var(--gm-a), var(--gm-b)); color: #fff; border-bottom: 3px solid var(--gm-ink); font-family: var(--gm-font); }
+.gm-btn { flex-shrink: 0; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 2px solid var(--gm-ink); border-radius: 14px; background: linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.12)); color: #fff; box-shadow: 0 3px 0 var(--gm-ink); }
+.gm-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--gm-ink); }
+.gm-btn:hover { background: rgba(255, 255, 255, 0.3); }
+.gm-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.gm-qbox { flex: 1; min-width: 0; text-align: center; }
+.gm-q { font-size: clamp(1.05rem, 3.4vw, 1.6rem); font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; -webkit-text-stroke: 1px var(--gm-ink); paint-order: stroke fill; text-shadow: 0 2px 0 var(--gm-ink); }
+/* naloga in odgovori: smer po vsebini (račun »2/4 − 2/5« ostane LTR tudi v arabščini, besedilo v arabščini RTL) */
+.gm-q, .gm-fb, .gm-mist li > * { unicode-bidi: plaintext; }
+.gm-fb { min-height: 1.2em; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.gm-fb svg.i { width: 15px; height: 15px; }
+.gm-fb.ok { color: #bbf7d0; }
+.gm-fb.bad { color: #fecaca; }
+.gm-fb.hint { color: #fde68a; }
+.gm-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-weight: 800; font-size: 0.9rem; }
+.gm-score { display: inline-flex; align-items: center; gap: 4px; }
+.gm-score svg.i { width: 16px; height: 16px; color: #fde047; }
+.gm-lives { display: inline-flex; gap: 1px; min-height: 14px; }
+.gm-lives svg.i { width: 14px; height: 14px; color: #fecaca; fill: #ef4444; stroke: #fff; }
+.gm-timer { height: 8px; background: rgba(0, 0, 0, 0.18); border-bottom: 2px solid var(--gm-ink); }
+.gm-timer i { display: block; height: 100%; background: linear-gradient(90deg, #f97316, #facc15); transform-origin: left; }
+.gm-stage { position: relative; flex: 1; min-height: 0; touch-action: none; user-select: none; -webkit-user-select: none; }
+.gm-stage canvas { display: block; touch-action: none; outline: none; }
+/* Okvir prizora v barvi teme (tekstura sveta, svetloba in vinjeta pridejo iz games/slog.js; vrstic čez prizor ni več: šle so čez številke). */
+.gm-stage::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 38%, transparent), inset 0 12px 22px -14px rgba(0, 0, 0, 0.55); }
+.gm-overlay { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 16px; background: rgba(10, 15, 30, 0.45); overflow-y: auto; }
+.gm-overlay[hidden] { display: none; }
+.gm-card { width: min(440px, 100%); padding: 22px; border: 3px solid var(--gm-ink); border-radius: 22px; background: var(--surface); color: var(--text); box-shadow: 0 6px 0 var(--gm-ink), var(--shadow-lg); text-align: center; }
+.gm-card h2, .gm-card h3, .gm-big { font-family: var(--gm-font); }
+.gm-card .primary.big { border: 3px solid var(--gm-ink); border-radius: 16px; box-shadow: 0 4px 0 var(--gm-ink); background-image: linear-gradient(rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 55%); font-family: var(--gm-font); text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35); }
+.gm-card .primary.big:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gm-ink); }
+/* naslovna kartica s sončnimi žarki */
+.gm-title { position: relative; overflow: hidden; isolation: isolate; }
+.gm-title::before { content: ""; position: absolute; inset: -60%; z-index: -1; opacity: 0.07; background: repeating-conic-gradient(from 0deg, var(--gm-a) 0deg 10deg, transparent 10deg 20deg); }
+.gm-story { margin: 6px 0 10px; line-height: 1.45; }
+.gm-how { padding: 8px 10px; border-radius: var(--radius-sm); background: var(--surface-2); font-size: 0.92rem; text-wrap: pretty; } /* brez osamljenega »4.« v zadnji vrstici */
+.gm-pace { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-weight: 800; }
+.gm-pace .seg button { min-height: 44px; }
+
+.gm-card h2 { margin: 6px 0 8px; }
+.gm-card p { margin: 6px 0; }
+.gm-card .primary.big, .gm-card .actions button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+.gm-card .actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.gm-card-ic { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(140deg, var(--gm-a), var(--gm-b)); color: #fff; }
+.gm-card-ic svg.i { width: 32px; height: 32px; }
+.gm-big { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 2.4rem; font-weight: 900; }
+.gm-big svg.i { width: 34px; height: 34px; color: var(--gold); }
+.gm-record { color: var(--gold); font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.gm-xp { color: var(--gold); }
+.gm-mist { margin-top: 12px; text-align: start; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface-2); }
+.gm-mist ul { list-style: none; margin: 6px 0 0; padding: 0; }
+.gm-mist li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-top: 1px solid var(--border); font-size: 0.92rem; }
+.gm-mist li:first-child { border-top: 0; }
+.gm-mist li b { color: var(--ok); white-space: nowrap; }
+/* Gumbi igre pod prizorom (engine.ui: številčnica, premikanje po premici); premica in številke ostanejo LTR. */
+.gm-ui { padding: 8px 10px calc(8px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); background: linear-gradient(90deg, var(--gm-a), var(--gm-b)); border-top: 3px solid var(--gm-ink); font-family: var(--gm-font); }
+.gm-ui[inert] { opacity: 0.55; }
+.gm-key { min-width: 0; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; border: 3px solid var(--gm-ink); border-radius: 14px; background: linear-gradient(#fff, #fef3c7); color: #1b1b2f; font: 900 1.5rem/1 var(--gm-font); box-shadow: 0 4px 0 var(--gm-ink); cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.gm-key:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gm-ink); }
+.gm-key:hover { border-color: var(--gm-ink); } /* ne splošni rob gumba ob lebdenju (na telefonu ostane po tapu) */
+.gm-key:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.gm-key svg.i { width: 24px; height: 24px; }
+.gm-key-op { background: linear-gradient(#e0f2fe, #bae6fd); }
+.gm-key-del { background: linear-gradient(#ffedd5, #fdba74); }
+.gm-key-ok { background: linear-gradient(#86efac, #22c55e); font-size: 1.25rem; }
+.gm-pad { direction: ltr; display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; max-width: 460px; margin: 0 auto; }
+.gm-pad .gm-wide { grid-column: span 2; }
+.gm-pad .gm-span2 { grid-row: span 2; }
+.gm-pad .gm-span3 { grid-row: span 3; }
+.gm-nl { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 10px; max-width: 460px; margin: 0 auto; }
+.gm-nl .gm-key { min-height: 52px; }
+.gm-tl { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; max-width: 460px; margin: 0 auto; }
+.gm-tl .gm-key { min-height: 52px; font-size: 1.15rem; }
+/* besedilna naloga je v celoti na tabli v prizoru: v glavi največ 2 vrstici, da glava ne poskakuje (bralnik prebere vse) */
+.gm-has-ui .gm-q { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+/* Sestavi enačbo, Razvrsti: v glavi je navodilo (besedilo, ne račun), zato manjša pisava in do 3 vrstice, da ga ozek telefon ne odreže */
+.gm-has-ui:has(.gm-tl) .gm-q { font-size: clamp(0.92rem, 2.9vw, 1.35rem); line-height: 1.15; -webkit-line-clamp: 3; line-clamp: 3; }
+.gm-calm .gm-ui { border-top: 0; }
+.gm-calm .gm-key { border: 1px solid rgba(15, 23, 42, 0.25); border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2); font-family: var(--font); font-weight: 700; }
+.gm-calm .gm-key:active { transform: none; box-shadow: none; background: #f1f5f9; }
+.gm-calm .gm-key:hover { border-color: rgba(15, 23, 42, 0.25); }
+.gm-calm .gm-key-op { background: #f0f9ff; }
+.gm-calm .gm-key-del { background: #fff7ed; }
+.gm-calm .gm-key-ok { background: #16a34a; color: #fff; }
+/* visok telefon: večje tipke (lažje z eno roko), prizor ima še vedno dovolj prostora */
+@media (max-width: 600px) and (min-height: 820px) { .gm-pad .gm-key { min-height: 58px; } .gm-nl .gm-key, .gm-tl .gm-key { min-height: 60px; } }
+/* telefon položeno: gumbi ob strani prizora, da prizor ne postane trak */
+@media (orientation: landscape) and (max-height: 560px) {
+  /* telefon ležeče: med igro brez zgornje vrstice aplikacije (igra ima svojo glavo z nazaj in premorom), igra se ne sme odrezati */
+  body.gm-on .topbar { display: none; }
+  .gm-play { min-height: 0; }
+  .gm-play.gm-has-ui { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 36%); grid-template-rows: auto auto minmax(0, 1fr); }
+  .gm-has-ui > .gm-hud, .gm-has-ui > .gm-timer { grid-column: 1 / -1; }
+  .gm-has-ui > .gm-stage { grid-column: 1; grid-row: 3; }
+  .gm-has-ui > .gm-ui { grid-column: 2; grid-row: 3; display: flex; flex-direction: column; justify-content: center; border-top: 0; border-left: 3px solid var(--gm-ink); overflow-y: auto; }
+  .gm-has-ui .gm-key { min-height: 40px; font-size: 1.2rem; }
+  .gm-has-ui .gm-pad { gap: 5px; width: 100%; }
+  .gm-has-ui .gm-nl { grid-template-columns: 1fr 1fr; width: 100%; }
+  .gm-has-ui .gm-nl .gm-key-ok { grid-column: 1 / -1; grid-row: 2; }
+  .gm-has-ui .gm-tl { grid-template-columns: 1fr; width: 100%; }
+}
+@media (max-width: 480px) {
+  .gm-hud { gap: 6px; padding: 6px; }
+  .gm-btn { width: 40px; height: 44px; border-radius: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .gm-tile, .gm-tile:hover { transition: none; transform: none; } }
+.dark { --gm-ink: #0b0b16; }
+
+/* Moj avatar in trgovina (kovanci iz iger, brez pravega denarja) */
+.gm-me { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 16px; border: 3px solid var(--gm-ink); background: var(--surface, #fff); box-shadow: 0 4px 0 var(--gm-ink); cursor: pointer; text-align: left; color: inherit; }
+.gm-me:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gm-ink); }
+.gm-me .avatar-svg { border-radius: 12px; }
+.gm-me span { display: flex; flex-direction: column; line-height: 1.2; }
+.gm-me small, .gm-coinbig { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; }
+.gm-me small svg.i, .gm-coinbig svg.i, .gm-coins svg.i, .gm-item small svg.i { width: 15px; height: 15px; color: #ca8a04; }
+.gm-coinbig { font-size: 1.3rem; margin: 4px 0; }
+.gm-shop-top { display: flex; gap: 18px; align-items: center; margin: 10px 0 14px; }
+.gm-shop-me .avatar-svg { border-radius: 24px; border: 3px solid var(--gm-ink); box-shadow: 0 6px 0 var(--gm-ink); }
+.gm-shop-top h1 { margin: 0; }
+.gm-shop-msg { font-weight: 800; color: #16a34a; }
+.gm-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; margin-top: 12px; }
+.gm-item { display: flex; flex-direction: column; align-items: stretch; gap: 6px; padding: 6px 6px 8px; border-radius: 16px; border: 3px solid #cbd5e1; background: var(--surface, #fff); }
+.gm-item-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 2px; border: 0; background: none; color: inherit; cursor: pointer; font: inherit; }
+.gm-item .primary { width: 100%; justify-content: center; padding-inline: 6px; font-size: 0.85rem; }
+.gm-item > p { margin: 0; text-align: center; font-size: 0.78rem; font-weight: 700; }
+.gm-item .avatar-svg { border-radius: 12px; }
+.gm-item b { font-size: 0.82rem; line-height: 1.15; text-align: center; }
+.gm-item small { display: inline-flex; align-items: center; gap: 3px; font-weight: 700; font-size: 0.78rem; }
+.gm-item.on { box-shadow: 0 0 0 3px #22c55e; }
+.gm-item.sel { transform: translateY(-3px); box-shadow: 0 0 0 3px var(--accent, #2563eb); }
+/* Okvir po redkosti (trgovina, zbirke): višja redkost ima bogatejši okvir. Od legendarnih naprej je rob
+   preliv (border-box), od kozmičnih se vrti, večni še utripa in ima znak ∞. Sij je filter, da ostane
+   box-shadow za »oblečeno« in »izbrano«. */
+@property --gm-spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes gm-spin { to { --gm-spin: 360deg; } }
+@keyframes gm-pulse { 50% { filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.75)); } }
+.gm-r-rare, .zb-card.gm-r-rare { border-color: #3b82f6; background-image: linear-gradient(160deg, rgba(59, 130, 246, 0.13), transparent 55%); }
+.gm-r-epic, .zb-card.gm-r-epic { border-color: #a855f7; background-image: linear-gradient(160deg, rgba(168, 85, 247, 0.18), transparent 60%); }
+:is(.gm-item, .zb-card, .gm-fresh-item):is(.gm-r-legendary, .gm-r-mythic, .gm-r-cosmic, .gm-r-eternal) {
+  position: relative;
+  border-color: transparent;
+  background: var(--gm-tint) padding-box, linear-gradient(var(--surface, #fff), var(--surface, #fff)) padding-box, var(--gm-edge) border-box;
+  filter: drop-shadow(0 0 5px var(--gm-glow));
+}
+.gm-r-legendary {
+  --gm-edge: linear-gradient(135deg, #fde68a, #f59e0b 35%, #b45309 60%, #fde047);
+  --gm-tint: linear-gradient(160deg, rgba(253, 224, 71, 0.28), transparent 60%);
+  --gm-glow: rgba(245, 158, 11, 0.4);
+}
+.gm-r-mythic {
+  --gm-edge: linear-gradient(135deg, #fb7185, #e11d48 40%, #a855f7 75%, #f0abfc);
+  --gm-tint: linear-gradient(160deg, rgba(244, 63, 94, 0.22), rgba(168, 85, 247, 0.16) 45%, transparent 75%);
+  --gm-glow: rgba(225, 29, 72, 0.45);
+}
+.gm-r-cosmic {
+  --gm-edge: conic-gradient(from var(--gm-spin, 0deg), #22d3ee, #6366f1, #a855f7, #0ea5e9, #e0f2fe, #22d3ee);
+  --gm-tint: radial-gradient(1.5px 1.5px at 18% 22%, #a5b4fc 99%, transparent), radial-gradient(1.5px 1.5px at 82% 14%, #67e8f9 99%, transparent), radial-gradient(1.5px 1.5px at 88% 70%, #c4b5fd 99%, transparent), linear-gradient(160deg, rgba(99, 102, 241, 0.3), rgba(34, 211, 238, 0.14) 55%, transparent 85%);
+  --gm-glow: rgba(56, 189, 248, 0.55);
+}
+.gm-r-eternal {
+  --gm-edge: conic-gradient(from var(--gm-spin, 0deg), #f87171, #fbbf24, #4ade80, #22d3ee, #818cf8, #f472b6, #f87171);
+  --gm-tint: radial-gradient(circle at 50% 0, rgba(253, 224, 71, 0.4), transparent 60%), linear-gradient(160deg, rgba(244, 114, 182, 0.16), rgba(34, 211, 238, 0.16));
+  --gm-glow: rgba(250, 204, 21, 0.55);
+}
+:is(.gm-item, .zb-card, .gm-fresh-item).gm-r-cosmic { animation: gm-spin 6s linear infinite; }
+:is(.gm-item, .zb-card, .gm-fresh-item).gm-r-eternal { border-width: 4px; animation: gm-spin 3.5s linear infinite, gm-pulse 2.4s ease-in-out infinite; }
+:is(.gm-item, .zb-card, .gm-fresh-item):is(.gm-r-cosmic, .gm-r-eternal)::after {
+  content: "✦"; position: absolute; top: -9px; right: -9px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  font-size: 0.8rem; font-weight: 900; color: #fff; background: linear-gradient(135deg, #6366f1, #22d3ee); border: 2px solid var(--surface, #fff); pointer-events: none;
+}
+:is(.gm-item, .zb-card, .gm-fresh-item).gm-r-eternal::after { content: "∞"; font-size: 0.95rem; color: #1f2937; background: conic-gradient(#f87171, #fbbf24, #4ade80, #22d3ee, #818cf8, #f472b6, #f87171); }
+@media (prefers-reduced-motion: reduce) {
+  :is(.gm-item, .zb-card, .gm-fresh-item):is(.gm-r-cosmic, .gm-r-eternal) { animation: none; }
+}
+/* Oznaka »Novo« (tedenske posodobitve; isNew/isNewDate v public/avatar.js). Tudi za nove vrste iger. */
+.gm-item, .zb-card, .gm-fresh-item { position: relative; }
+.gm-new { position: absolute; top: -8px; left: -8px; z-index: 1; padding: 1px 7px; border-radius: 99px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em; color: #fff; background: #15803d; border: 2px solid var(--surface, #fff); pointer-events: none; } /* #15803d: bel napis 5,0 : 1 (AA); #16a34a je bil 3,3 : 1 */
+.gm-new-dot { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; background: #16a34a; vertical-align: middle; }
+/* nova vrsta igre: ploščica ima overflow: hidden, zato oznaka znotraj, desno od ikone vrste igre */
+.gm-tile > .gm-new { top: 10px; left: auto; inset-inline-start: 46px; }
+.gm-fresh { margin: 12px 0 0; padding: 12px 14px; }
+.gm-fresh h2, .gm-wish h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 1.05rem; }
+.gm-fresh-row { display: flex; gap: 10px; overflow-x: auto; padding: 12px 12px 6px 4px; }
+.gm-fresh-item { flex: none; display: flex; flex-direction: column; align-items: center; gap: 3px; width: 84px; padding: 6px 4px; border-radius: 14px; border: 3px solid #cbd5e1; background: var(--surface, #fff); color: inherit; font: inherit; font-size: 0.74rem; font-weight: 700; line-height: 1.15; text-align: center; cursor: pointer; }
+.gm-fresh-item .avatar-svg { border-radius: 10px; }
+.gm-wish { margin-top: 16px; padding: 12px 14px; }
+.gm-wish p { margin: 0 0 8px; }
+.gm-wish-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.gm-wish-form input { flex: 1 1 220px; min-height: 44px; }
+.gm-rtag { padding: 1px 8px; border-radius: 99px; border: 2px solid; font-size: 0.8rem; font-weight: 800; }
+.gm-rtag.gm-r-common, .gm-rtag.gm-r-free { border-color: #94a3b8; }
+.gm-rtag.gm-r-rare { color: color-mix(in srgb, #2563eb 60%, var(--text, #111)); }
+.gm-rtag.gm-r-epic { color: color-mix(in srgb, #9333ea 60%, var(--text, #111)); }
+.gm-rtag.gm-r-legendary { border-color: #f59e0b; color: color-mix(in srgb, #b45309 60%, var(--text, #111)); }
+.gm-rtag.gm-r-mythic { border-color: #e11d48; color: color-mix(in srgb, #be123c 60%, var(--text, #111)); }
+.gm-rtag.gm-r-cosmic { border-color: #38bdf8; color: #fff; background: linear-gradient(90deg, #4338ca, #0891b2); }
+.gm-rtag.gm-r-eternal { border-color: transparent; color: #1f2937; background: linear-gradient(90deg, #fca5a5, #fde68a, #86efac, #67e8f9, #a5b4fc, #f9a8d4); }
+@media (max-width: 560px) {
+  .gm-shop-top { flex-direction: column; text-align: center; }
+  .gm-shop-top .actions { justify-content: center; }
+  .gm-items { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .gm-item .avatar-svg { width: 64px; height: 64px; }
+}
+
+/* Strani mreže iger (60 na stran, j 2026-10-30: manj zatikanja na tablici) */
+.gm-pager { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; margin: 24px 0 8px; }
+.gm-pager button { min-width: 44px; min-height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-weight: 800; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.gm-pager button.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.gm-pager button:disabled { opacity: 0.4; cursor: default; }
+.gm-pager .gm-gap { color: var(--muted); padding: 0 2px; }
+[dir="rtl"] .gm-pager svg.i { transform: scaleX(-1); }
+
+/* Srednja šola in fakulteta (stage.js, j 2. 11. 2026): iste igre v resnejšem videzu: običajna pisava,
+   tanke obrobe, brez izbočenih senc, nagnjenih črk in sijaja, umirjene barve ploščic. OŠ ostane igriva. */
+.gm-calm { --gm-font: var(--font); }
+.gm-calm .gm-tile { border: 1px solid color-mix(in srgb, var(--gm-ink) 35%, transparent); border-radius: 12px; box-shadow: var(--shadow-sm, 0 1px 3px rgba(20, 33, 61, 0.14)); filter: saturate(0.6) brightness(0.92); }
+.gm-calm .gm-tile::before { opacity: 0.15; }
+.gm-calm .gm-tile::after { display: none; }
+.gm-calm .gm-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(20, 33, 61, 0.2); }
+.gm-calm .gm-tile:active { transform: none; box-shadow: none; }
+.gm-calm .gm-tile.gm-path { border-color: #facc15; box-shadow: 0 0 0 2px #facc15; }
+.gm-calm .gm-glyph { font-weight: 700; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); transform: none; }
+.gm-calm .gm-name b { font-weight: 700; }
+.gm-calm .gm-hud { background: linear-gradient(90deg, var(--gm-a), var(--gm-b)); border-bottom: 0; }
+.gm-calm .gm-q { font-weight: 700; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+.gm-calm .gm-btn { border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 10px; background: rgba(255, 255, 255, 0.16); box-shadow: none; }
+.gm-calm .gm-btn:active { transform: none; box-shadow: none; }
+.gm-calm .gm-timer { border-bottom: 0; }
+.gm-calm .gm-stage::after { background: none; }
+.gm-calm :is(.gm-card, .gm-me) { border: 1px solid var(--border); border-radius: var(--radius, 16px); box-shadow: var(--shadow-lg); }
+.gm-calm .gm-card .primary.big { border: 0; border-radius: var(--radius-sm, 12px); box-shadow: none; background-image: none; text-shadow: none; }
+.gm-calm .gm-card .primary.big:active { transform: none; }
+.gm-calm .gm-title::before { display: none; }
+.gm-calm .gm-big { font-weight: 700; }
+.gm-calm .gm-kidnew .gm-tile { animation: none; }
+
+/* ---------- Dnevna uganka (public/games/daily-view.js) ---------- */
+.gm-daily { margin: 4px 0 14px; padding: 14px 16px; border: 3px solid var(--gm-ink); border-radius: 18px; background: var(--surface); box-shadow: 0 5px 0 var(--gm-ink); }
+.gm-dz-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.gm-dz-ic { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border: 3px solid var(--gm-ink); border-radius: 14px; background: linear-gradient(140deg, #8b5cf6, #2563eb); color: #fff; }
+.gm-dz-ic svg.i { width: 26px; height: 26px; }
+.gm-dz-ic.big { width: 64px; height: 64px; margin: 0 auto 8px; }
+.gm-dz-ic.big svg.i { width: 34px; height: 34px; }
+.gm-dz-ht { flex: 1 1 200px; min-width: 0; }
+.gm-dz-ht h2 { margin: 0; font-size: 1.2rem; font-family: var(--gm-font); }
+.gm-dz-ht p { margin: 2px 0 0; color: var(--muted); font-size: 0.92rem; }
+.gm-dz-ht p b { color: var(--text); }
+.gm-dz-streak { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; background: color-mix(in srgb, var(--warm) 14%, transparent); color: var(--warm); font-weight: 800; font-size: 0.9rem; white-space: nowrap; }
+.gm-dz-streak svg.i { width: 18px; height: 18px; }
+.gm-dz-row { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; margin-top: 12px; }
+.gm-dz-levels > button { display: inline-flex; align-items: center; gap: 4px; }
+.gm-dz-levels svg.i { width: 16px; height: 16px; }
+.gm-dz-st { flex: 1 1 140px; color: var(--muted); font-weight: 700; font-size: 0.92rem; }
+.gm-dz-go { display: inline-flex; align-items: center; gap: 4px; }
+@media (max-width: 520px) { .gm-dz-row .seg { width: 100%; } .gm-dz-go { width: 100%; justify-content: center; } }
+
+.gm-dz { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.gm-dz > .card { margin: 0; padding: 16px; }
+.gm-dz-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+#view-games.gm-dz-open > .me-back { display: none !important; }
+.gm-dz-bar h1 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.4rem; font-family: var(--gm-font); line-height: 1.15; }
+.gm-dz-bar h1 > svg.i { width: 30px; height: 30px; flex: none; color: var(--accent); }
+.gm-dz-bar h1 > span { display: flex; flex-direction: column; }
+.gm-dz-back { display: inline-flex; align-items: center; gap: 6px; }
+.gm-dz-date { color: var(--muted); font: 700 0.9rem/1.3 var(--font); }
+.gm-dz > .seg { align-self: flex-start; }
+.gm-dz-intro { text-align: center; }
+.gm-dz-intro p { margin: 6px 0; }
+.gm-dz-intro .primary.big { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; }
+.gm-dz-rules { font-size: 0.9rem; }
+.gm-dz-meta { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.gm-dz-clock { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 99px; background: var(--surface-2); font-variant-numeric: tabular-nums; }
+.gm-dz-clock b { min-width: 4.5ch; text-align: end; }
+.gm-dz-pen { color: var(--danger); font-weight: 800; }
+.gm-dz-q { margin: 6px 0 10px; font-size: 1.08rem; font-weight: 700; line-height: 1.4; }
+.gm-dz-seq { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 8px 0; }
+.gm-dz-seq span, .gm-dz-pyr span { display: grid; place-items: center; min-width: 52px; height: 48px; padding: 0 10px; border: 2px solid var(--gm-ink); border-radius: 12px; background: #fef3c7; color: #1b1b2f; font: 800 1.3rem/1 var(--gm-font); font-variant-numeric: tabular-nums; }
+.gm-dz-seq .gm-dz-ask, .gm-dz-pyr .gm-dz-ask { border-style: dashed; border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.gm-dz-eq { margin: 8px 0; text-align: center; font: 800 clamp(1.4rem, 6vw, 2rem)/1.5 var(--gm-font); font-variant-numeric: tabular-nums; }
+.gm-dz-box { display: inline-block; min-width: 1.6em; margin-inline: 0.12em; padding: 0 6px; border: 2px dashed var(--accent); border-radius: 10px; background: var(--accent-soft); color: var(--accent); line-height: 1.3; }
+.gm-dz-pyr { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 8px 0; }
+.gm-dz-pyr > div { display: flex; gap: 6px; }
+.gm-dz-pyr span { width: 64px; min-width: 0; padding: 0; }
+.gm-dz-pyr .gm-dz-empty { background: var(--surface-2); border-color: color-mix(in srgb, var(--gm-ink) 35%, transparent); }
+@media (max-width: 400px) { .gm-dz-pyr span { width: 56px; } }
+.gm-dz-input { min-height: 52px; margin: 6px auto; max-width: 260px; display: grid; place-items: center; border: 2px dashed var(--accent); border-radius: 12px; background: var(--accent-soft); color: var(--accent); font: 800 1.6rem/1 var(--gm-font); font-variant-numeric: tabular-nums; }
+.gm-dz-msg { min-height: 1.4em; margin: 4px 0; text-align: center; color: var(--danger); font-weight: 700; }
+.gm-dz-msg:empty { min-height: 0; margin: 0; }
+.gm-dz-hints { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.gm-dz-hints li { padding: 8px 12px; border-inline-start: 4px solid var(--gold); border-radius: var(--radius-sm); background: var(--surface-2); }
+.gm-dz-pad { --gm-a: #8b5cf6; --gm-b: #2563eb; border: 3px solid var(--gm-ink); border-radius: 16px; padding: 8px; }
+.gm-dz-side { display: contents; }
+.gm-dz-nw { white-space: nowrap; }
+.gm-dz-acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; margin: 4px 0 12px; }
+.gm-dz-pad .gm-key { min-height: 46px; }
+/* telefon ležeče: med reševanjem brez glave aplikacije in obvestil, da gre vse na en zaslon */
+@media (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+  body:has(.gm-dz-play) :is(.topbar, .tabbar, #mock-banner, #test-notice) { display: none !important; }
+  .gm-dz-pad .gm-key { min-height: 40px; }
+  .gm-dz { max-width: none; }
+}
+/* dovolj širok prostor za igre (tudi ležeč telefon, ne pa ozko plavajoče okno): tipkovnica desno ob uganki */
+#games-content { container-type: inline-size; }
+@container (min-width: 600px) {
+  .gm-dz:has(.gm-dz-play) { max-width: 1400px; gap: 8px 16px; flex-flow: row wrap; align-items: center; }
+  .gm-dz:has(.gm-dz-play) > .seg { width: auto; margin-inline-start: auto; }
+  .gm-dz > .gm-dz-play { flex: 1 1 100%; }
+  .gm-dz:has(.gm-dz-play) .gm-dz-bar { flex-direction: row; align-items: center; gap: 12px; }
+  .gm-dz:has(.gm-dz-play) .gm-dz-bar h1 { font-size: 1.1rem; }
+  .gm-dz:has(.gm-dz-play) .gm-dz-bar h1 > svg.i { width: 24px; height: 24px; }
+  .gm-dz > .gm-dz-play { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 40%); column-gap: 14px; align-items: start; padding: 10px 12px; }
+  .gm-dz-play > * { grid-column: 1; }
+  .gm-dz-play > .gm-dz-side { grid-column: 2; grid-row: 1 / span 6; align-self: center; display: flex; flex-direction: column-reverse; gap: 8px; }
+  .gm-dz-side .gm-dz-pad { padding: 6px; }
+  .gm-dz-play .gm-dz-q { margin: 2px 0 6px; }
+  .gm-dz-play .gm-dz-acts { margin: 4px 0 0; }
+  .gm-dz-play .gm-pad { gap: 5px; }
+}
+.gm-dz-acts button { display: inline-flex; align-items: center; gap: 6px; }
+.gm-dz-res { text-align: center; }
+.gm-dz-res p { margin: 6px 0; }
+.gm-dz-big { display: flex; align-items: center; justify-content: center; gap: 10px; font: 900 1.6rem/1.2 var(--gm-font); }
+.gm-dz-big svg.i { width: 32px; height: 32px; color: var(--gold); }
+.gm-dz-res.no .gm-dz-big svg.i { color: var(--muted); }
+.gm-dz-time b { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+.gm-dz-time small { color: var(--muted); }
+.gm-dz-place { font-weight: 800; color: var(--accent); }
+.gm-dz-res .gm-dz-streak { margin: 4px auto; }
+.gm-dz-how h2, .gm-dz-lb h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 1.1rem; }
+.gm-dz-how h2 svg.i { color: var(--gold); }
+.gm-dz-lb h2 svg.i { color: var(--gold); }
+.gm-dz-steps { margin: 8px 0; padding-inline-start: 1.4em; display: flex; flex-direction: column; gap: 4px; }
+.gm-dz-math { font-variant-numeric: tabular-nums; font-weight: 700; }
+.gm-dz-steps li.gm-dz-math { text-align: start; }
+.gm-dz-ans { margin: 8px 0 0; color: var(--ok); }
+.gm-dz-board { list-style: none; margin: 0; padding: 0; }
+.gm-dz-board li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-top: 1px solid var(--border); }
+.gm-dz-board li:first-child { border-top: 0; }
+.gm-dz-board li.me { border-radius: var(--radius-sm); background: var(--accent-soft); }
+.gm-dz-board .avatar-svg { flex: none; border-radius: 10px; }
+.gm-dz-rank { width: 2ch; text-align: end; font-weight: 900; color: var(--muted); font-variant-numeric: tabular-nums; }
+.gm-dz-nick { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.gm-dz-nick em { font-style: normal; font-size: 0.8rem; padding: 1px 8px; border-radius: 99px; background: var(--accent); color: var(--accent-text); }
+.gm-dz-board b { font-variant-numeric: tabular-nums; }
+.gm-dz-mine { margin-top: 6px; border-top: 2px dashed var(--border) !important; }
+/* SŠ in fakulteta: umirjen videz */
+.gm-calm .gm-daily { border: 1px solid var(--border); border-radius: var(--radius, 16px); box-shadow: var(--shadow-lg); }
+.gm-calm .gm-dz-ic { border: 0; border-radius: 12px; }
+.gm-calm :is(.gm-dz-ht h2, .gm-dz-bar h1, .gm-dz-big) { font-family: var(--font); }
+.gm-calm .gm-dz-seq span, .gm-calm .gm-dz-pyr span { border-width: 1px; border-color: var(--border); background: var(--surface); color: var(--text); font-family: var(--font); }
+.gm-calm .gm-dz-seq .gm-dz-ask, .gm-calm .gm-dz-pyr .gm-dz-ask { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.gm-calm .gm-dz-pyr .gm-dz-empty { background: var(--surface-2); }
+.gm-calm :is(.gm-dz-eq, .gm-dz-input) { font-family: var(--font); }
+.gm-calm .gm-dz-pad { border: 0; background: var(--surface-2); }
+/* »Ponovi šibke teme« (index.js weakSec) in merjenje v pilotu (pilotCard) */
+.gm-weak-ic { display: inline-grid; place-items: center; color: var(--accent); }
+.gm-weak-ic svg.i { width: 22px; height: 22px; }
+.gm-weaknote { margin: -4px 0 10px; font-size: 0.9rem; }
+.gm-weakitem { display: flex; flex-direction: column; min-width: 0; }
+.gm-weakitem .gm-tile { width: 100%; }
+.gm-why { margin: 8px 2px 0; color: var(--muted); font-size: 0.8rem; font-weight: 700; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
+.gm-plsum { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin: 10px 0; padding: 0; }
+.gm-plsum li { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm, 12px); background: var(--surface); }
+.gm-plsum b { font-size: 1.25rem; }
+.gm-plsum span { color: var(--muted); font-size: 0.82rem; font-weight: 600; line-height: 1.25; }
+.gm-pltable { width: 100%; font-size: 0.88rem; }

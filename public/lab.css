@@ -1,0 +1,55 @@
+/* Laboratorij (#view-lab v »Uči se«, public/laboratorij.js): seznam poskusov po predmetih, poskus čez celo širino. */
+.lab-intro { margin: 0 0 18px; }
+/* Predmeti z enim poskusom stojijo drug ob drugem (auto-fit: brez prazne tretje kolone), predmet z več poskusi čez vso širino (kartice v mreži). */
+.lab-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 26px 14px; align-items: start; }
+.lab-group { min-width: 0; }
+.lab-group.many { grid-column: 1 / -1; }
+.lab-group:not(.many) .lab-grid { grid-template-columns: 1fr; }
+.lab-group > h2 { font-size: 1.15rem; margin: 0 0 10px; }
+.lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; }
+
+.lab-card { display: flex; flex-direction: column; gap: 10px; padding: 16px; min-width: 0; }
+.lab-card-head { display: flex; align-items: center; gap: 12px; }
+.lab-card-head .ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
+.lab-card-head .ic svg.i { width: 22px; height: 22px; }
+.lab-card-head h3 { flex: 1; min-width: 0; margin: 0; font-size: 1.05rem; line-height: 1.3; overflow-wrap: anywhere; }
+.lab-lock { flex: none; color: var(--muted); display: inline-flex; }
+.lab-desc { margin: 0; line-height: 1.45; }
+.lab-card .lab-desc { color: var(--muted); }
+.lab-card.locked { border-style: dashed; }
+
+.lab-topics-label { display: flex; align-items: center; gap: 6px; margin: 2px 0 0; font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.lab-topics-label svg.i { width: 16px; height: 16px; }
+.lab-topics { display: flex; flex-wrap: wrap; gap: 8px; }
+.lab-topic {
+  display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0;
+  min-height: 44px; max-width: 100%; padding: 5px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  font: inherit; text-align: start; cursor: pointer;
+}
+.lab-topic:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.lab-topic:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lab-topic small { color: var(--muted); font-weight: 700; font-size: 0.75rem; }
+.lab-topic span { font-weight: 700; font-size: 0.9rem; overflow-wrap: anywhere; }
+.lab-topic.mine { border-color: var(--accent); background: var(--accent-soft); }
+.lab-topic.mine small, .lab-topic.mine span { color: var(--accent); }
+.lab-start { align-self: flex-start; min-height: 44px; margin-top: auto; display: inline-flex; align-items: center; gap: 8px; }
+
+/* Odprt poskus: naslov seznama se skrije, poskus dobi vso širino. */
+.lab-view.lab-open > .lab-h1 { display: none !important; }
+.lab-stage { display: flex; flex-direction: column; gap: 12px; }
+.lab-back { align-self: flex-start; min-height: 44px; }
+/* Ikona ob prvi vrstici naslova (na telefonu gre naslov v dve vrstici). */
+.lab-title { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-size: 1.35rem; line-height: 1.3; }
+.lab-title svg.i { color: var(--accent); flex: none; margin-top: 0.075em; }
+.lab-bench { padding: 14px; min-width: 0; overflow-x: auto; }
+.lab-locked h2 { display: flex; align-items: flex-start; gap: 8px; font-size: 1.05rem; line-height: 1.35; margin: 0 0 6px; }
+.lab-locked h2 svg.i { flex: none; margin-top: 0.1em; }
+.lab-locked p { margin: 0 0 12px; }
+.lab-foot { display: flex; flex-direction: column; gap: 8px; }
+
+@media (max-width: 480px) {
+  .lab-card { padding: 14px; }
+  .lab-bench { padding: 10px; }
+  .lab-start { align-self: stretch; justify-content: center; }
+}

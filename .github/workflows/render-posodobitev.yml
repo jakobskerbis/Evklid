@@ -1,0 +1,57 @@
+# Render: nova različica Evklida, ko nihče ne uporablja aplikacije. Tek se začne ob vsaki združitvi
+# v main in počaka na miren trenutek (preverja vsakih 5 min); novejša združitev ga zamenja.
+# Urnik vsako uro je le rezerva (GitHub urnike pogosto zamakne za ure).
+# Pravila v scripts/render-objava.js: miren strežnik → objava takoj; med uporabo največ 3 ure
+# čakanja; med objavama vsaj 1 ura (ponovni zagon s trajnim diskom pomeni ~1 minuto izpada).
+# Deluje, ko je v GitHubu nastavljena skrivnost RENDER_DEPLOY_HOOK (Render > evklid > Settings > Deploy Hook).
+# Ročni zagon (Actions > Render > Run workflow) objavi takoj. Navodila: docs/posodobitve.md
+name: Render
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: render-objava
+  cancel-in-progress: true
+jobs:
+  objavi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 215
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            scripts/render-objava.js
+            server/brand.js
+            brand.json
+            package.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      # Zadnja sprožena objava (da neuspele objave ne ponavlja ob vsakem teku).
+      - uses: actions/cache/restore@v6
+        with:
+          path: .render-objava.json
+          key: render-objava-${{ github.run_id }}
+          restore-keys: render-objava-
+      - name: Objavi, če je čas
+        id: objava
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ROCNO: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
+          # Tudi urnik čaka: novi tek (cancel-in-progress) prekine čakajočega, zato mora čakati naprej sam.
+          CAKAJ: ${{ github.event_name != 'workflow_dispatch' && '1' || '0' }}
+        run: node scripts/render-objava.js
+      - uses: actions/cache/save@v6
+        # always(): shrani tudi, če novejši tek prekliče ta tek takoj po sprožitvi.
+        if: always() && steps.objava.outputs.sprozeno == '1'
+        with:
+          path: .render-objava.json
+          key: render-objava-${{ github.run_id }}
