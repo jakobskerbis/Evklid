@@ -69,10 +69,13 @@ ORGANI = {
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
                 # vz2 (posnetek vz1: bled, plastičen, brazde brez kontrasta): toplejša rožnata, bolj mat, več žilic
+                # brez gub (visoka mreža = nizka, normalna mapa nevtralna; relief nariše pregledovalnik) in kletka 0,001
+                # (0,3 mm): ob sredini (tesne plasti gyrus rectus) je premik gub vzdolž nestalnih normal nagubal visoko mrežo
+                # in normalna mapa je na orbitalni ploskvi risala sive bleščeče lise
                 "skorja": dict(barva=(0.62, 0.35, 0.31), barva2=(0.50, 0.25, 0.23), lise=0.40, liseMera=0.03, hrap=0.46,
-                               gube=0.00004, gubeMera=0.002, zilice=0.32, ziliceBarva=(0.42, 0.06, 0.06), ziliceMera=0.012, razdeli=0),
+                               gube=0.0, zilice=0.32, ziliceBarva=(0.42, 0.06, 0.06), ziliceMera=0.012, razdeli=0, kletka=0.001),
                 # skorja in sredina iz MRI sta že goste (pialna površina): brez razdelitve (pomnilnik prenosnika)
-                "sredina": dict(barva=(0.58, 0.44, 0.40), barva2=(0.50, 0.36, 0.33), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
+                "sredina": dict(barva=(0.58, 0.44, 0.40), barva2=(0.50, 0.36, 0.33), lise=0.25, hrap=0.42, gube=0.0, razdeli=0, kletka=0.001),
                 "mali": dict(barva=(0.56, 0.31, 0.28), barva2=(0.45, 0.23, 0.21), lise=0.35, hrap=0.46, gube=0.00003, gubeMera=0.0015,
                              zilice=0.15, ziliceBarva=(0.40, 0.06, 0.06), ziliceMera=0.010, razdeli=0),  # MRI: že gosta
                 "deblo": dict(barva=(0.64, 0.52, 0.45), barva2=(0.56, 0.44, 0.39), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002,
@@ -733,10 +736,7 @@ def mali_iz_mri(osnovni, mri, mm, lo, hi, tmp):
     import numpy as np
     from drevesa import poenostavi
     d = np.load(os.path.join(MRI, f"{mri['osebek']}-mali.npz"))
-    pre = lambda v: np.stack([-v[:, 0], -v[:, 1], v[:, 2]], 1) * 0.001
-    P = pre(np.concatenate([fs_povrsina(os.path.join(MRI, f"{mri['osebek']}-{h}.pial"))[0] for h in ("lh", "rh")]))
-    a, b = P.min(0), P.max(0); k = (np.array(hi) - np.array(lo)) / (b - a)
-    T = lambda v: (pre(v) - a) * k + np.array(lo)
+    T = mri_preslikava(MRI, mri["osebek"], lo, hi)
     D = T(d["deblo_v"])
     Z = np.array([list(v.co) for r in osnovni if r[2] == "deblo" for v in r[1].vertices])
     premik = np.zeros(3)
@@ -755,36 +755,76 @@ def mali_iz_mri(osnovni, mri, mm, lo, hi, tmp):
     return [r for r in osnovni if r not in stari] + [["Cerebellum (MRI)", me, "mali", "mali", "Cerebellum (MRI)"]], F
 
 
+def sredinska_ravnina(vl, vr, celica=0.01, okno=0.007):
+    """Sredinska ravnina med polobloma (Blender, metri; leva polobla X > 0): X = a0 + b·Y + c·Z. V vsaki celici (Y, Z)
+    sredina med medialnim robom leve (0,5. percentil X) in desne (99,5. percentil X), kjer sta si robova blizu (reža med
+    −4 in +6 mm: tam se polobli soočata čez veliko fisuro); utežena najmanjša kvadrata."""
+    import numpy as np
+    vse = np.concatenate([vl, vr])
+    lo, hi = vse.min(0), vse.max(0)
+    A, B, W = [], [], []
+    for y in np.arange(lo[1], hi[1], celica):
+        ml_y = np.abs(vl[:, 1] - y) < okno; mr_y = np.abs(vr[:, 1] - y) < okno
+        for z in np.arange(lo[2], hi[2], celica):
+            ml = ml_y & (np.abs(vl[:, 2] - z) < okno); mr = mr_y & (np.abs(vr[:, 2] - z) < okno)
+            if ml.sum() < 20 or mr.sum() < 20:
+                continue
+            xl, xr = np.percentile(vl[ml, 0], 0.5), np.percentile(vr[mr, 0], 99.5)
+            if -0.004 < xl - xr < 0.006:
+                A.append((1.0, y, z)); B.append(0.5 * (xl + xr)); W.append(min(ml.sum(), mr.sum()))
+    if len(A) < 6:
+        return 0.5 * (vl[:, 0].min() + vr[:, 0].max()), 0.0, 0.0
+    w = np.sqrt(np.array(W, float))
+    a0, b, c = np.linalg.lstsq(np.array(A) * w[:, None], np.array(B) * w, rcond=None)[0]
+    print(f"[organi] skorja MRI: sredinska ravnina X = {a0 * 1000:.2f} mm + {b:.4f} Y + {c:.4f} Z ({len(A)} celic)")
+    return a0, b, c
+
+
+def mri_preslikava(mapa, osebek, lo, hi):
+    """Preslikava RAS (mm, tkr kot *.pial) → Blender (m) za skorjo in male možgane MRI: os (levo +X, spredaj −Y, gor +Z),
+    strig na sredinsko ravnino, škatla skorje MRI na škatlo [lo, hi] skorje Z-Anatomy, sredina MRI na sredino škatle.
+    Glava v skenerju je rahlo zasukana (sub-01: sredina med polobloma gre od x ≈ −1 mm zadaj do x ≈ +3 mm spredaj); brez
+    striga je ravnina skozi sredino škatle sekala sprednji del leve poloble – orbitalna ploskev in gyrus rectus sta se
+    ob omejitvi na svojo stran sredine prepognila v sive raztrgane lise v prerezu."""
+    import numpy as np
+    pre = lambda v: np.stack([-v[:, 0], -v[:, 1], v[:, 2]], 1) * 0.001
+    vl, vr = (pre(fs_povrsina(os.path.join(mapa, f"{osebek}-{h}.pial"))[0]) for h in ("lh", "rh"))
+    a0, nb, nc = sredinska_ravnina(vl, vr)
+    strig = lambda v: v - np.outer(a0 + nb * v[:, 1] + nc * v[:, 2], (1.0, 0.0, 0.0))
+    P = strig(np.concatenate([vl, vr]))
+    a, b = P.min(0), P.max(0)
+    lo = np.array(lo, float); hi = np.array(hi, float)
+    k = (hi - lo) / (b - a)
+    zamik = np.array((0.5 * (lo[0] + hi[0]) - ((0.0 - a[0]) * k[0] + lo[0]), 0.0, 0.0))  # X = 0 po strigu → sredina
+    return lambda v: (strig(pre(v)) - a) * k + lo + zamik
+
+
 def skorja_iz_mri(mapa, m, lo, hi):
     """Vrstice osnovni za pialno skorjo obeh polobel, poravnano na škatlo [lo, hi] (Blender, metri)."""
     import numpy as np
     del_za = {ime: d for d, s in APARC_DELI.items() for ime in s.split()}
+    T = mri_preslikava(mapa, m["osebek"], lo, hi)
     hem = {}
     for h, stran in (("lh", "l"), ("rh", "r")):
         v, t = fs_povrsina(os.path.join(mapa, f"{m['osebek']}-{h}.pial"))
         sulc = fs_krivulja(os.path.join(mapa, f"{m['osebek']}-{h}.sulc"))
         lab = fs_oznake(os.path.join(mapa, f"{m['osebek']}-{h}.aparc.annot"))
-        v = np.stack([-v[:, 0], -v[:, 1], v[:, 2]], 1) * 0.001  # RAS (mm) → Blender: levo +X, spredaj -Y, gor +Z
-        hem[stran] = (v, t, sulc, lab)
-    vse = np.concatenate([h[0] for h in hem.values()])
-    a, b = vse.min(0), vse.max(0)
-    lo = np.array(lo); hi = np.array(hi)
-    k = (hi - lo) / (b - a)
+        hem[stran] = (T(v), t, sulc, lab)
     vrstice = []
     sred = 0.5 * (lo[0] + hi[0])  # sredinska ravnina (Z-Anatomy je simetrična, rez v prerezu je tu)
     for stran, (v, t, sulc, lab) in hem.items():
-        v = (v - a) * k + lo
-        # Polobla ostane na svoji strani sredine (vsaj 0,4 mm): MRI polobli se ob sredini dotikata in prekrivata, zato bi ju
-        # rez na x = 0 razrezal v drobce (luknje v prerezu). Mehka meja: daleč od sredine se nič ne spremeni.
+        # Polobla ostane na svoji strani sredine (vsaj 1,6 mm; ravnina prereza je 0,4 mm od sredine): MRI polobli se ob
+        # sredini dotikata, rez bi ju razrezal v drobce. Pas [najmanjši d, m0 + w] se linearno stisne na [m0, m0 + w]
+        # (naklon ~1/3): plasti površine, ki so segale čez sredino, ostanejo razmaknjene. Prejšnja mehka meja (softplus)
+        # jih je stisnila na isto ravnino; peka normal je tam zadela sosednjo plast in normalna mapa je na orbitalni
+        # ploskvi risala sive bleščeče lise. Dlje od sredine se nič ne spremeni.
         zn = 1.0 if stran == "l" else -1.0
         d = (v[:, 0] - sred) * zn
-        m0, kk = 0.0004, 0.0005
-        d = m0 + kk * np.logaddexp(0.0, (d - m0) / kk)
+        m0, w = 0.0016, 0.002
+        dmin = min(float(d.min()), m0)
+        pas = d < m0 + w
+        d = np.where(pas, m0 + (d - dmin) * w / (m0 + w - dmin), d)
         dl = np.array([del_za.get(x) for x in lab], dtype=object)
-        # medialna stena 0,5 mm globlje od skorje: ob sredini sta obe stisnjeni na isto ravnino in sta se v prerezu
-        # prekrivali (raztrgane lise na orbitalni ploskvi)
-        d = d + 0.0005 * (dl == None)
-        v[:, 0] = sred + zn * d
         # Neoznačena oglišča (aparc »unknown«): medialna stena je njihov največji povezani kos. Manjši otoki (npr. na
         # orbitalni ploskvi čelnega režnja) so skorja brez oznake – dobijo oznako sosednjega režnja, sicer bi se v prerezu
         # risali kot medialna stena (mat sivorjave lise sredi skorje).
@@ -818,6 +858,10 @@ def skorja_iz_mri(mapa, m, lo, hi):
                 dl[rb[m_, 0]] = dl[rb[m_, 1]]
                 otoki = otoki[dl[otoki] == None]
             print(f"[organi] skorja MRI {stran}: neoznačenih {len(brez)}, medialna stena {len(kosi_b[0])}, otokov {len(kosi_b) - 1}")
+        # medialna stena 0,5 mm globlje od skorje: ob sredini sta obe stisnjeni na isto ravnino in sta se v prerezu
+        # prekrivali (po prenosu oznak: otoki skorje ostanejo na površini)
+        d = d + 0.0005 * (dl == None)
+        v[:, 0] = sred + zn * d
         # globina brazde 0 (vrh vijuge) … 1 (dno brazde): sg za senco okolice, gl (širši razpon) za barvo v pregledovalniku
         sg = np.clip((sulc + 4.0) / 14.0, 0.0, 1.0)
         gl = np.clip((sulc + 9.0) / 22.0, 0.0, 1.0)
@@ -1276,6 +1320,8 @@ def izvozi(organ, cfg):
         hi = [max(vv.co[i] for r in zam for vv in r[1].vertices) for i in range(3)]
         osnovni = [r for r in osnovni if r[2] != mri.get("zamenjaj", "skorja")] + skorja_iz_mri(MRI, mri, lo, hi)
         print(f"[organi] {organ}: skorja iz MRI ({mri['osebek']}), zamenjanih {len(zam)} objektov")
+        # središče organa v x na sredini Z-Anatomy (rez je tam): škatla skorje MRI po strigu ni več simetrična
+        cfg["_sredinaX"] = 0.5 * (lo[0] + hi[0])
         mm = cfg.get("mali_mri")
         if mm and os.path.isfile(os.path.join(MRI, f"{mri['osebek']}-mali.npz")):
             osnovni, F = mali_iz_mri(osnovni, mri, mm, lo, hi, tmp)
@@ -1411,6 +1457,8 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
         for vv in me.vertices:
             lo = Vector(map(min, lo, vv.co)); hi = Vector(map(max, hi, vv.co))
     ctr = (lo + hi) / 2
+    if cfg.get("_sredinaX") is not None:
+        ctr.x = cfg["_sredinaX"]
     velikost = (hi - lo).length
     for _, me, *_ in osnovni:
         me.transform(Matrix.Translation(-ctr))

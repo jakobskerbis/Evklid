@@ -111,7 +111,8 @@ test("geometrija organov: Python orodja se prevedejo in izvoz jih kliče", (t) =
   const izvoz = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "izvozi-organe.py"), "utf8");
   for (const fn of ["pljucna_drevesa", "ledvicne_zile", "jetra_deli", "uveljavi_normale"]) assert.ok(izvoz.includes(fn), fn);
   if (py.status !== 0) return t.skip("python3 ni na voljo");
-  for (const f of ["drevesa.py", "jetra_geometrija.py", "mali-mozgani-rez.py"]) {
+  for (const fn of ["mali_iz_mri", "slepi_konci", "ct_rezenj"]) assert.ok(izvoz.includes(fn), fn);
+  for (const f of ["drevesa.py", "jetra_geometrija.py", "mali-mozgani-rez.py", "mali-mozgani-mri.py", "pljuca-ct.py"]) {
     const src = path.join(KOREN, "scripts", "atlas", f);
     const r = spawnSync("python3", ["-c", "import ast,sys; ast.parse(open(sys.argv[1], encoding='utf8').read())", src]);
     assert.equal(r.status, 0, `${f}: ${r.stderr}`);
@@ -148,3 +149,86 @@ for (const dat of ["mozgani.glb", "mozgani-telefon.glb"]) {
     }
   });
 }
+
+// Krog 2 (2026-11-13): mali možgani iz segmentacije MRI (aseg), kvadratni reženj jeter en kos, pljučni režnji iz CT.
+for (const dat of ["mozgani.glb", "mozgani-telefon.glb"]) {
+  test(`geometrija organov: ${dat} ima male možgane iz MRI kot eno zaprto telo namesto režnjičev Z-Anatomy`, async () => {
+    const d = await deli(dat);
+    const m = najdi(d, "Cerebellum (MRI)");
+    assert.equal(m.zaprte, m.komponente, "mali možgani niso zaprti");
+    assert.equal(m.komponente, 1, `kosov ${m.komponente}`);
+    assert.equal(m.luknje, 0);
+    assert.ok(!d.some((x) => /^(Culmen|Declive|Tuber of vermis|Biventral lobule)/.test(x.ime)), "režnjiči Z-Anatomy so še v datoteki");
+  });
+}
+
+test("geometrija organov: sredinska ravnina MRI (strig zasukane glave) iz medialnih robov polobel", (t) => {
+  const izvoz = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "izvozi-organe.py"), "utf8");
+  for (const fn of ["def sredinska_ravnina", "def mri_preslikava", "T = mri_preslikava(MRI"]) assert.ok(izvoz.includes(fn), fn);
+  const np_ = spawnSync("python3", ["-c", "import numpy"]);
+  if (np_.status !== 0) return t.skip("python3 z numpy ni na voljo");
+  // umetni polobli: sredina X = 1 mm + 0,03·Y + 0,02·Z, reža 1 mm; ravnina mora priti nazaj
+  const prog = `
+import re, sys, numpy as np
+src = open(sys.argv[1], encoding="utf8").read()
+exec(re.search(r"def sredinska_ravnina.*?return a0, b, c\\n", src, re.S).group(0))
+g = np.random.default_rng(1)
+Y, Z = g.uniform(-0.08, 0.08, 40000), g.uniform(-0.03, 0.06, 40000)
+x0 = 0.001 + 0.03 * Y + 0.02 * Z
+vl = np.c_[x0 + 0.0005 + g.uniform(0, 0.06, len(Y)), Y, Z]
+vr = np.c_[x0 - 0.0005 - g.uniform(0, 0.06, len(Y)), Y, Z]
+a0, b, c = sredinska_ravnina(vl, vr)
+print(round(a0 * 1000, 2), round(b, 3), round(c, 3))`;
+  const r = spawnSync("python3", ["-c", prog, path.join(KOREN, "scripts", "atlas", "izvozi-organe.py")], { encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  const [a0, b, c] = r.stdout.trim().split("\n").pop().split(" ").map(Number);
+  assert.ok(Math.abs(a0 - 1) < 0.3 && Math.abs(b - 0.03) < 0.005 && Math.abs(c - 0.02) < 0.005, r.stdout);
+});
+
+for (const dat of ["mozgani.glb", "mozgani-telefon.glb"]) {
+  test(`geometrija organov: ${dat} – polobli MRI ostaneta vsaka na svoji strani reza (brez prepognjenih lis)`, async () => {
+    const { NodeIO } = await import("@gltf-transform/core");
+    const { ALL_EXTENSIONS } = await import("@gltf-transform/extensions");
+    const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(ORGANI, dat));
+    const ravnina = -json("mozgani").prerez.ravnine[0].d; // rez x = 0,4 mm
+    for (const node of doc.getRoot().listNodes()) {
+      const m = node.getName().match(/\(MRI\)\.([lr])$/);
+      if (!node.getMesh() || !m) continue;
+      const M = node.getWorldMatrix(), v = [0, 0, 0];
+      let naj = m[1] === "l" ? Infinity : -Infinity;
+      for (const prim of node.getMesh().listPrimitives()) {
+        const pos = prim.getAttribute("POSITION");
+        for (let i = 0; i < pos.getCount(); i++) {
+          pos.getElement(i, v);
+          const x = M[0] * v[0] + M[4] * v[1] + M[8] * v[2] + M[12];
+          naj = m[1] === "l" ? Math.min(naj, x) : Math.max(naj, x);
+        }
+      }
+      // ≥ 1 mm od ravnine reza: bliže je pokrov reza risal sive lise čez medialno ploskev
+      if (m[1] === "l") assert.ok(naj > ravnina + 0.001, `${node.getName()}: x = ${naj}`);
+      else assert.ok(naj < -0.0014, `${node.getName()}: x = ${naj}`);
+    }
+  });
+}
+
+test("geometrija organov: lističi malih možganov krožijo okoli fastigija iz izvoza", () => {
+  const c = json("mozgani").tkiva.mali.listiSredisce;
+  assert.equal(c.length, 3);
+  assert.ok(Math.abs(c[0]) < 0.004, `fastigij ni na sredini: x = ${c[0]}`);
+});
+
+for (const dat of ["jetra.glb", "jetra-telefon.glb"]) {
+  test(`geometrija organov: ${dat} – kvadratni reženj je en kos (brez pasu za porto)`, async () => {
+    const r = najdi(await deli(dat), "Quadrate lobe of liver (lastno)");
+    assert.equal(r.komponente, 1, `kosov ${r.komponente}`);
+  });
+}
+
+test("geometrija organov: viri pljučnih režnjev (TotalSegmentator) in malih možganov (aseg) so navedeni", () => {
+  const viri = JSON.parse(fs.readFileSync(path.join(KOREN, "public", "3d", "viri.json"), "utf8")).viri;
+  const ts = viri.find((v) => v.id === "totalsegmentator");
+  assert.ok(ts && ts.licenca === "CC BY 4.0" && ts.datoteke.includes("organi-3d/pljuca*.glb"));
+  assert.match(viri.find((v) => v.id === "openneuro-ds000001").opis, /Mali možgani/);
+  const cr = fs.readFileSync(path.join(ORGANI, "CREDITS.txt"), "utf8");
+  assert.match(cr, /TotalSegmentator/); assert.match(cr, /aseg/);
+});

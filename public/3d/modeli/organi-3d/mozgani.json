@@ -1,6 +1,6 @@
 {
  "organ": "mozgani",
- "vir": "Skorja iz MRI (OpenNeuro ds000001, CC0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Skorja in mali možgani iz MRI (OpenNeuro ds000001, CC0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "skorja": {
    "barva": "#d58076",
@@ -62,9 +62,9 @@
    "vrstni": 2,
    "listi": 0.5,
    "listiSredisce": [
-    0,
-    -0.036,
-    -0.03
+    -0.0014,
+    -0.02931,
+    -0.02715
    ],
    "listiRazmik": 0.0015,
    "mapa": false,
@@ -78,12 +78,12 @@
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.01963,
+     -0.02426,
      -0.08189
     ],
     "mera": [
-     0.08146,
-     0.08146
+     0.08232,
+     0.08232
     ],
     "izrez": true,
     "visina": 0.5
@@ -118,12 +118,12 @@
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.01963,
+     -0.02426,
      -0.08189
     ],
     "mera": [
-     0.08146,
-     0.08146
+     0.08232,
+     0.08232
     ],
     "izrez": true,
     "visina": 0.2
@@ -328,37 +328,9 @@
    "opis": "Usklajujejo gibe in skrbijo za ravnotežje, da so gibi natančni in gladki.",
    "opisStudij": "Vermis in hemisferi; trije režnji (anterior, posterior, flocculonodularis); skorja s Purkinjejevimi celicami, globoka jedra (dentatus, emboliformis, globosus, fastigii). S deblom ga vežejo trije pari pedunculi cerebellares. Okvara: ataksija na isti strani, intencijski tremor, dismetrija.",
    "vozlisca": [
-    "Anterior quadrangular lobule.l",
-    "Anterior quadrangular lobule.r",
-    "Biventral lobule.l",
-    "Biventral lobule.r",
-    "Central lobule",
-    "Culmen",
-    "Declive",
-    "Flocculus.l",
-    "Flocculus.r",
-    "Folium of vermis",
-    "Gracile lobule.l",
-    "Gracile lobule.r",
-    "Inferior semilunar lobule.l",
-    "Inferior semilunar lobule.r",
-    "Lingula of cerebellum",
-    "Nodule of vermis",
-    "Peduncle of flocculus.l",
-    "Peduncle of flocculus.r",
-    "Posterior quadrangular lobule.l",
-    "Posterior quadrangular lobule.r",
-    "Pyramis of vermis",
+    "Cerebellum (MRI)",
     "Superior cerebellar peduncle.l",
-    "Superior cerebellar peduncle.r",
-    "Superior semilunar lobule.l",
-    "Superior semilunar lobule.r",
-    "Tonsil of cerebellum.l",
-    "Tonsil of cerebellum.r",
-    "Tuber of vermis",
-    "Uvula of vermis",
-    "Wing of central lobule.l",
-    "Wing of central lobule.r"
+    "Superior cerebellar peduncle.r"
    ],
    "tocke": {
     "celota": [
@@ -605,8 +577,8 @@
  },
  "velikost": 0.2784,
  "trikotniki": {
-  "racunalnik": 165907,
-  "telefon": 47300
+  "racunalnik": 165908,
+  "telefon": 46640
  },
  "luci": [
   {

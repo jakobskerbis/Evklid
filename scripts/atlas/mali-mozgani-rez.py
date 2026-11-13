@@ -428,18 +428,19 @@ if DEBLO:
         t_lo, t_hi = np.percentile(t[mm], 1), np.percentile(t[mm], 99)
         tv = (t - t_lo) / max(t_hi - t_lo, 1e-9)  # 0 dorzalno … 1 ventralno
         plast = np.zeros((N, N, 3), np.float32) + osnova
-        # vzdolžni snopi vlaken: drobne proge vzdolž osi
-        proge = np.sin(t * 2 * math.pi / 0.00055 + grob * 9) * 0.5 + fin
-        plast *= (1 + 0.035 * proge)[..., None]
+        # vzdolžni snopi vlaken: komaj vidne nepravilne proge vzdolž osi (pravilne proge so delovale kot shema) in
+        # mehko marmoriranje (svež rez ni enakomeren)
+        proge = (np.sin(t * 2 * math.pi / 0.00055 + grob * 14) * 0.5) * np.clip(0.5 + sred * 5, 0, 1) + fin
+        plast *= (1 + 0.016 * proge + 0.07 * grob + 0.03 * sred)[..., None]
         if ime.startswith("Pons") and abs(ploscina(z)) > 1e-4:
             baz = np.clip((tv - 0.40) / 0.06, 0, 1)  # bazalni del mostu (ventralno)
             # prečna vlakna mostu v sredinskem rezu: prerezani snopi (svetli otočki) med sivimi jedri mostu
-            otocki = sred * 7 + 0.25 * np.sin(u * 2 * math.pi / 0.0019 + grob * 16)
+            otocki = sred * 7 + fin * 2 + 0.07 * np.sin(u * 2 * math.pi / 0.0019 + grob * 16)
             siva = np.clip(0.5 - otocki * 1.3, 0, 1) * baz
             plast = plast * (1 - 0.42 * siva[..., None]) + np.array((190, 150, 136), np.float32) * 0.42 * siva[..., None]
             # prečna vlakna bazalnega dela: valovite proge čez most (v sredinskem rezu prerezani snopi tečejo levo-desno)
-            pv = (np.sin(u * 2 * math.pi / 0.0011 + grob * 6) * 0.5 + 0.5) ** 3 * baz
-            plast *= (1 - 0.06 * pv)[..., None]
+            pv = (np.sin(u * 2 * math.pi / 0.0011 + grob * 10 + sred * 4) * 0.5 + 0.5) ** 3 * baz * np.clip(0.45 + sred * 4, 0, 1)
+            plast *= (1 - 0.035 * pv)[..., None]
             teg = (1 - baz)
             plast = plast * (1 - 0.24 * teg[..., None]) + np.array((206, 178, 162), np.float32) * 0.24 * teg[..., None]
             meja = np.exp(-((tv - 0.40) / 0.012) ** 2)  # meja tegmentum | bazalni del (medialni lemnisk)
@@ -457,7 +458,7 @@ if DEBLO:
 
             else:  # tektum: siva plast štirih gričkov
                 plast = plast * 0.55 + np.array((206, 176, 160), np.float32) * 0.45
-                plast *= (1 + 0.05 * np.sin(tv * 28))[..., None]
+                plast *= (1 + 0.015 * np.sin(tv * 28 + grob * 8))[..., None]
         elif ime.startswith("Medulla"):
             pir = np.clip((tv - 0.74) / 0.08, 0, 1) if abs(ploscina(z)) > 1e-4 else 0  # piramida: bel snop ventralno
             if not isinstance(pir, int):
