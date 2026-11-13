@@ -200,7 +200,7 @@ const ORGANELI = [
   [/^(kromatin|kromosomi)$/, (id) => (id === "celica-koreninski-lasek" ? { p: "koren", m: 1000, snov: [S.KROMATIN] } : { m: 8000, snov: [S.KROMATIN, S.JEDRO] })],
   [/^(jedrna-ovojnica|nukleoplazma)$/, () => ({ m: 15000, snov: [S.JEDRO, S.KROMATIN] })],
   [/^(jedro|jedra|makronukleus|makronukleus-notranjost|mikronukleus|schwannova-celica|osteocit)$/, (id) => (RASTLINSKE.has(id) ? { p: "cebula", m: 400, snov: [S.JEDRO] } : { m: 1000, snov: [S.JEDRO] })],
-  [/^nukleoid|plazmidi$/, () => ({ m: 1000, snov: [S.CITO] })],
+  [/^(nukleoid|plazmidi)$/, () => ({ m: 1000, snov: [S.CITO] })],
   // ---- organeli, vidni le s TEM
   [/mitohondrij/, () => ({ m: 12000, snov: [S.MITO] })],
   [/^(golgi|golgijev-aparat)$/, () => ({ m: 20000, snov: [S.GOLGI] })],
