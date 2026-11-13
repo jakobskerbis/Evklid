@@ -43,6 +43,12 @@ export function gitAuthEnv(key = token(), env = process.env) {
   };
 }
 
+// Okolje za vse ukaze git: z ključem, če je nastavljen, in brez vprašanj za prijavo (posodobitev teče
+// v ozadju, okna ali vprašanja nihče ne vidi; git takoj javi napako in izpišemo, kaj vpisati).
+export function gitEnv(key = token(), env = process.env) {
+  return { ...gitAuthEnv(key, env), GIT_TERMINAL_PROMPT: "0", GCM_INTERACTIVE: "never" };
+}
+
 // Jasno sporočilo, ko GitHub zavrne dostop (zaseben repozitorij).
 export function accessMessage(status, hasKey = !!token()) {
   if (![401, 403, 404].includes(status)) return `GitHub ni odgovoril (${status})`;
@@ -214,7 +220,7 @@ export function supervisorChanged(changed) {
 }
 
 function git(root, ...args) {
-  return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], env: gitAuthEnv() }).trim();
+  return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], env: gitEnv() }).trim();
 }
 
 async function latestSha() {

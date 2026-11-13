@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { filesFromTarball, planChanges, applyChanges, rollback, readState, needsRestart, supervisorChanged, MARKER, githubHeaders, gitAuthEnv, accessMessage, tarballUrl, update } from "../scripts/posodobitev.js";
+import { filesFromTarball, planChanges, applyChanges, rollback, readState, needsRestart, supervisorChanged, MARKER, githubHeaders, gitAuthEnv, gitEnv, accessMessage, tarballUrl, update } from "../scripts/posodobitev.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
@@ -189,6 +189,13 @@ test("zaseben repozitorij: ključ samo v glavi, brez ključa vse kot prej", () =
     execFileSync("git", ["ls-remote", "https://127.0.0.1:1/x.git"], { env: gitAuthEnv(KEY, env), stdio: ["ignore", "pipe", "pipe"] });
   } catch (x) { err = `${x.message}\n${x.stderr}`; }
   assert.ok(err && !err.includes(KEY) && !err.includes(Buffer.from(`x-access-token:${KEY}`).toString("base64")));
+  // git nikoli ne sprašuje za prijavo (z ključem ali brez), ključ pa doda samo, če je nastavljen
+  for (const key of ["", KEY]) {
+    const g = gitEnv(key, env);
+    assert.equal(g.GIT_TERMINAL_PROMPT, "0");
+    assert.equal(g.GCM_INTERACTIVE, "never");
+    assert.equal(!!g.GIT_CONFIG_COUNT, !!key);
+  }
   assert.match(accessMessage(404, false), /EVKLID_GITHUB_TOKEN/);
   assert.match(accessMessage(401, true), /zavrnil ključ/);
   assert.equal(accessMessage(500, false), "GitHub ni odgovoril (500)");
