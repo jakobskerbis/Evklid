@@ -5,6 +5,7 @@ import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
+import { preparatModela } from "/mikroskop/mapa.js";
 
 const glavni = document.getElementById("k3-glavni");
 const vAplikaciji = !!window.ReactNativeWebView;
@@ -42,6 +43,12 @@ function nazaj() {
 }
 // Povezava z zbirke: oznako »prišel z zbirke« dobi nov vnos v zgodovini (pushState), da nazaj() ve, da sme nazaj.
 // Hashchange se ob pushState ne sproži, zato usmerimo sami. Srednji klik ali Ctrl ostane navaden (nov zavihek).
+// »Poglej z mikroskopom« (atlas, model, zbirka): nov vnos v zgodovini, da Nazaj vrne tja, od koder smo prišli.
+function odpriMikroskop(p) {
+  history.pushState({ k3Iz: "mikroskop" }, "", `#mikroskop${p ? `?p=${encodeURIComponent(p)}` : ""}`);
+  usmeri();
+}
+
 function izZbirke(e) {
   if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
@@ -187,6 +194,20 @@ async function zbirka(param) {
     }
     return z;
   };
+  // Mikroskop (j, 12. 11. 2026): svetlobni in elektronski, vsi preparati; kartica pod atlasom.
+  const mikroskopKartica = () => {
+    const z = mk("a", "k3-zvezda k3-zvezda-mk");
+    z.href = "#mikroskop";
+    z.addEventListener("click", izZbirke);
+    const ic = mk("span", "k3-zvezda-ic");
+    ic.innerHTML = icon("microscope");
+    const besedilo = mk("div", "");
+    besedilo.append(mk("h2", "", t("mk.title")), mk("p", "", t("mk.hub")));
+    const odpri = mk("span", "a3-pill a3-glavni");
+    odpri.innerHTML = `${icon("microscope")}<span>${t("mk.start")}</span>`;
+    z.append(ic, besedilo, odpri);
+    return z;
+  };
   const mreza = (seznam, opts) => {
     const g = mk("div", "k3-mreza");
     for (const m of seznam) g.append(kartica(m, opts));
@@ -247,9 +268,10 @@ async function zbirka(param) {
       const n = zadetki.length + (atlasZadetek && (izbrano === "vse" || izbrano === "telo") ? 1 : 0);
       deli.push(mk("p", "k3-zadetki", n ? t("a3.results", { n }) : t("a3.noModels", { q })));
       if (atlasZadetek && (izbrano === "vse" || izbrano === "telo")) deli.push(atlasKartica());
+      if (izbrano === "vse" && najdi([{ id: "mikroskop", naslov: t("mk.title"), opis: t("mk.hub"), podrocjeIme: "" }], q).length) deli.push(mikroskopKartica());
       if (zadetki.length) deli.push(mreza(zadetki, { nadnaslov: true }));
     } else if (izbrano === "vse") {
-      deli.push(atlasKartica());
+      deli.push(atlasKartica(), mikroskopKartica());
       const vsi = new Map(modeli.map((m) => [m.id, m]));
       const nedavni = (beri(NEDAVNO, []) || []).map((id) => vsi.get(id)).filter(Boolean);
       if (nedavni.length) deli.push(polica(t("a3.recent"), nedavni, { nadnaslov: true }));
@@ -328,7 +350,7 @@ async function atlas(param, moj) {
   glavni.replaceChildren(host);
   const { odpriAtlas } = await import("./atlas.js");
   if (moj !== zaporedje) return null;
-  const a = await odpriAtlas(host, { zapri: nazaj });
+  const a = await odpriAtlas(host, { zapri: nazaj, mikroskop: odpriMikroskop });
   if (moj !== zaporedje) {
     a.unici();
     return null;
@@ -336,6 +358,22 @@ async function atlas(param, moj) {
   if (param.izberi) a.izberiIzSeznama(param.izberi);
   window.__atlas = a; // za preizkuse (scripts/posnetki-3d.cjs)
   return a;
+}
+
+async function mikroskop(param, moj) {
+  document.title = t("mk.title");
+  const host = mk("div", "");
+  glavni.replaceChildren(host);
+  const { odpriMikroskop: odpri } = await import("/mikroskop/mikroskop.js");
+  if (moj !== zaporedje) return null;
+  // Menjava preparata v mikroskopu: naslov se zamenja (Nazaj gre še vedno tja, od koder smo prišli).
+  const obPreparatu = (p) => history.replaceState(history.state, "", `#mikroskop?p=${encodeURIComponent(p)}`);
+  const m = await odpri(host, { preparat: param.p || null, zapri: nazaj, obPreparatu });
+  if (moj !== zaporedje) {
+    m.unici();
+    return null;
+  }
+  return m;
 }
 
 async function model(id, param, moj) {
@@ -388,6 +426,16 @@ async function model(id, param, moj) {
     const st = mk("span", "k3-model-stevec", t("a3.position", { i: sos.i + 1, n: sos.n }));
     desno.append(gumb(sos.prej, -1), st, gumb(sos.potem, 1));
   }
+  const prepModela = preparatModela(id);
+  if (prepModela) {
+    const mb = mk("button", "a3-krog k3-mikroskop");
+    mb.type = "button";
+    mb.innerHTML = icon("microscope");
+    mb.setAttribute("aria-label", t("mk.open"));
+    mb.title = t("mk.open");
+    mb.addEventListener("click", () => odpriMikroskop(prepModela));
+    desno.append(mb);
+  }
   if (document.fullscreenEnabled && !vAplikaciji && !vgrajeno) {
     const fs = mk("button", "a3-krog k3-cel-zaslon");
     fs.type = "button";
@@ -418,7 +466,9 @@ async function model(id, param, moj) {
     history.pushState({ k3Iz: "povecava" }, "", `#${encodeURIComponent(cilj)}`);
     usmeri();
   };
-  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava });
+  // »Poglej z mikroskopom« v oknu dela: preparat za del (organi iz GLB) ali za model.
+  const mikroskop = prepModela ? { za: (delId) => preparatModela(id, delId), odpri: odpriMikroskop } : null;
+  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop });
 }
 
 async function usmeri() {
@@ -429,7 +479,7 @@ async function usmeri() {
   aktivno = null;
   const { id, param } = razberi();
   try {
-    const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : await model(id, param, moj);
+    const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : id === "mikroskop" ? await mikroskop(param, moj) : await model(id, param, moj);
     if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
   } catch (err) {
     console.error("3D:", err);

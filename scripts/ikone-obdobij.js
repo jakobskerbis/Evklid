@@ -26,7 +26,7 @@ export const ZNAKI = [
   // grafični kalkulator (orodja in vrste funkcij)
   "house", "table", "wrench", "activity", "chart-area", "chart-spline", "flower", "infinity", "spline", "square-function",
   // 3D atlas in modeli (temni oder brez slogov obdobij)
-  "ellipsis", "eye-off", "scissors", "box", "bone", "rotate-3d", "focus",
+  "ellipsis", "eye-off", "scissors", "box", "bone", "rotate-3d", "focus", "microscope",
   // varnostno okno (public/nujno.js): telefon je povsod enak in takoj prepoznaven
   "phone",
   // logotip
