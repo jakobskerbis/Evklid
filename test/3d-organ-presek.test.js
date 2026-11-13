@@ -102,6 +102,9 @@ test("presek ledvice: ravnina iz JSON seka skorjo, ovojnico in meh; piramide so 
   const n = rv.n.map((x) => x / l), d = (rv.d || 0) / l;
   for (const t of ["ovojnica", "skorja", "meh"]) assert.ok(j.tkiva[t].rezPresek, `tkivo ${t}: rezPresek`);
   assert.ok(j.tkiva.meh.rezVotlina, "meh: odprta votlina");
+  // ovojnica je ob hilusu odprta lupina: trak do tetive čez hilus, ne izbočena ovojnica (štrlel je rumen trikotnik maščobe)
+  assert.ok(j.tkiva.ovojnica.rezPresek.trak && !j.tkiva.ovojnica.rezPresek.ovoj, "ledvična ovojnica: trak namesto izbočene ovojnice");
+  assert.ok(j.tkiva.nadledvicna.rezPresek, "nadledvična žleza ima presek");
   const stozci = j.tkiva.skorja.rezPiramide.seznam;
   assert.ok(stozci.length >= 8 && stozci.length <= 12, `piramid ${stozci.length}`);
   assert.deepEqual(j.tkiva.ovojnica.rezPiramide.seznam, stozci, "ovojnica in skorja rišeta iste piramide");

@@ -352,11 +352,13 @@ ORGANI = {
         ),
         # drevesa.ledvicne_zile: ledvična vena in arterija na novo (lastno) do hilusa in v sinus; svoja telefonska mreža
         dodaj=["ledvicni_meh", "ledvicne_zile"], nedotakni=r"Renal (vein|artery) \(lastno\)",
+        sredisce_brez=r"^Ureter",
         meh_merilo=1.8,  # meh s čašicami iz metakroglic; ploskev ledvičnega sinusa (HRA hilum) potem izpustimo
         izpusti_po=r"hilum_of_kidney",
         telefonSkrci=[(r"outer_cortex", 0.0005)],
         # Z-Anatomy nadledvična žleza je ob HRA ledvici (merilo 0,77) predebela (4,9 × 4,5 × 2,1 cm): 0,72× z dnom na ledvici.
         napihni=[(r"^Suprarenal", 0.72, "dno")],
+        premakni=[(r"^Suprarenal", (0.0, -0.0075, -0.001))],
         vkljuci=r"^(Kidney\.l|Ureter\.l|Suprarenal gland\.l|Left renal artery|Left renal vein|(Anterior|Posterior) branch of renal artery\.l)( /|$)",
         cilj=(160_000, 40_000),
         # Pečene PBR teksture (videz): ovojnica gladka, sijoča, rdeče rjava; skorja zrnata (glomeruli), piramide temnejše
@@ -1001,12 +1003,14 @@ def zrklo_hra(pot, h, osnovni, tmp):
 
 
 def _metakroglice(tocke, ime, tmp, locljivost=0.0006):
-    """Mreža iz metakroglic [(točka, polmer)]: gladka organska oblika (ledvični meh in čašice)."""
+    """Mreža iz metakroglic [(točka, polmer[, negativna])]: gladka organska oblika (ledvični meh in čašice)."""
     # Blender ne dovoli ločljivosti metakroglic pod ~5 mm: gradimo v 10-kratnem merilu in pomanjšamo.
     M = 10.0
     mb = bpy.data.metaballs.new(ime); mb.resolution = mb.render_resolution = locljivost * M; mb.threshold = 0.6
-    for co, r in tocke:
-        el = mb.elements.new(); el.co = co * M; el.radius = r * M; el.stiffness = 2.0
+    for co, r, *neg in tocke:  # (točka, polmer[, True = negativna krogla: vdolbina])
+        el = mb.elements.new(); el.co = co * M; el.radius = abs(r) * M; el.stiffness = 2.0
+        if neg and neg[0]:
+            el.use_negative = True
     o = bpy.data.objects.new(ime, mb); tmp.objects.link(o)
     me = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
     bpy.data.objects.remove(o)
@@ -1029,64 +1033,72 @@ def ledvicni_meh(osnovni, cfg, tmp):
     ur = next(me for ime, me, *_ in osnovni if ime.startswith("Ureter"))
     pc = sum(pap, Vector()) / len(pap)
     C = pc.lerp(hc, 0.45)
-    # Zgornji del sečevoda Z-Anatomy vodi v njen (izključeni) meh mimo ledvice HRA: odrežemo ga 12 mm pod mehom,
-    # meh se nadaljuje do novega vrha sečevoda.
-    zr = C.z - 0.012
+    # Ravnina prereza (pregledovalnik: GLB z = −0,005 m) leži v globini (Blender y) povprečja papil + meh_ravnina; male in
+    # velike čašice so na njej (kot naslikane piramide, rezPiramide: vrh piramide = papila, projicirana na ravnino), da rez
+    # pokaže vsako čašico, ki objame svojo papilo.
+    yr = sum(p.y for p in pap) / len(pap) + cfg.get("meh_ravnina", 0.0004)
+    na_ravnino = lambda v: Vector((v.x, yr, v.z))
+    # Sečevod: vrh (pieloureteralni stik) tik pod hilusom, medialno od meha. Z-Anatomy ga vodi v njen (izključeni) meh
+    # pred ledvico (v prerezu odrezan): os vzamemo samo za smer navzdol, globino damo malo za ravnino reza (rez pokaže
+    # lijak meha v svetlino sečevoda, spodaj cel sečevod), z rahlim lokom (sečevod ni raven).
+    zr = C.z - cfg.get("secevod_vrh", 0.016)
     bm = bmesh.new(); bm.from_mesh(ur)
     bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, zr), plane_no=(0, 0, 1), clear_outer=True)
     bm.to_mesh(ur); bm.free()
-    # Sečevod na pravo mero že tu (polmer ≈ 2,1 mm; Z-Anatomy ≈ 4 mm), s prehodom 14 mm pod mehom. Prej ga je tanjšal šele
-    # debelina-cevi.mjs po peki: del meha, ki je bil med peko skrit v debelem sečevodu, je ostal črn (senca okolice).
-    rt = cfg.get("secevod_polmer", 0.0021)
+    rt = cfg.get("secevod_polmer", 0.0016)
     kos = {}
     for v in ur.vertices:
         kos.setdefault(int(v.co.z / 0.0015), []).append(v.co)
     kl = sorted(kos)
     sred_k = {i: sum(kos[i], Vector()) / len(kos[i]) for i in kl}
-    for _ in range(3):  # zglajena os
+    for _ in range(6):  # zglajena os
         sred_k = {i: sum((sred_k[j] for j in (i - 1, i, i + 1) if j in sred_k), Vector()) / sum(1 for j in (i - 1, i, i + 1) if j in sred_k) for i in kl}
-    def os_pri(z):  # točka osi in smer osi pri višini z
-        i = min(kl, key=lambda j: abs(j + 0.5 - z / 0.0015))
-        a, b = sred_k[max(kl[0], i - 2)] if max(kl[0], i - 2) in sred_k else sred_k[i], sred_k[min(kl[-1], i + 2)] if min(kl[-1], i + 2) in sred_k else sred_k[i]
-        t = (b - a).normalized() if (b - a).length > 1e-9 else Vector((0, 0, 1))
-        return sred_k[i], t
-    def precno(co):
-        c, t = os_pri(co.z); d = co - c
-        return c, t, d - t * d.dot(t)
-    pol_sr = sorted(precno(v.co)[2].length for v in ur.vertices)[len(ur.vertices) // 2]  # ena mera za ves sečevod
-    # Sečevod na novo kot votla cev s steno 0,9 mm (drevesa.cev) po zglajeni osi Z-Anatomy: Z-Anatomy ga je spodaj odrezala
-    # poševno z zarezo (odprt rob, ki ga holes_fill ni zaprl), stena iz SOLIDIFY pa je v prerezu dala kavelj. Prosti konec je
-    # raven prerez (obroč stene in svetlina, kot pri žilah); vrh ob mehu je lijak (polmer pol poti do mere Z-Anatomy).
+    def os_pri(z):
+        return sred_k[min(kl, key=lambda j: abs(j + 0.5 - z / 0.0015))]
     from drevesa import cev, zgladi
     zmin = min(v.co.z for v in ur.vertices) + 0.001
+    x_vrh = C.x + (os_pri(zr).x - C.x) * cfg.get("secevod_medialno", 0.55)
+    zamik = x_vrh - os_pri(zr).x
+    lok = cfg.get("secevod_lok", 0.004) * (1 if os_pri(zmin).x > os_pri(zr).x else -1)
     P, R = [], []
-    n_ = max(8, int((zr - zmin) / 0.003))
+    n_ = max(10, int((zr - zmin) / 0.003))
     for i in range(n_ + 1):
         z = zmin + (zr - zmin) * i / n_
-        c, _t = os_pri(z)
-        w = min(1.0, max(0.0, (zr - z) / 0.014)); w = 0.5 + 0.5 * w * w * (3 - 2 * w)
-        P.append(Vector((c.x, c.y, z))); R.append(pol_sr + (rt - pol_sr) * w)
-    P, R = zgladi(P, R, 6)  # os brez pregibov (rezine po 1,5 mm so pustile kolena)
-    P[-1] = P[-1] + (P[-1] - P[-2]).normalized() * 0.0005  # vrh tik nad ravnino zr (meh ga pokrije)
-    bm = bmesh.new(); cev(bm, P, R, 20, stena=cfg.get("secevod_stena", 0.0009))
+        u = (zr - z) / (zr - zmin)  # 0 vrh, 1 spodaj
+        g = min(1.0, u / 0.35); g = g * g * (3 - 2 * g)
+        x = os_pri(z).x + zamik * (1 - g) + lok * math.sin(math.pi * u)
+        y = yr + 0.0002 + cfg.get("secevod_globina", 0.0024) * g
+        w = min(1.0, max(0.0, (zr - z) / 0.012)); w = w * w * (3 - 2 * w)
+        P.append(Vector((x, y, z))); R.append(rt * (1.55 - 0.55 * w))  # lijak: vrh 1,55-krat širši
+    P, R = zgladi(P, R, 6)
+    P[-1] = P[-1] + (P[-1] - P[-2]).normalized() * 0.0005
+    bm = bmesh.new(); cev(bm, P, R, 20, stena=cfg.get("secevod_stena", 0.0006))
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     bm.to_mesh(ur); bm.free(); ur.update()
     for q in ur.polygons:
         q.use_smooth = True
-    print(f"[organi] sečevod: votla cev {len(P)} obročev, polmer {round(rt * 1000, 2)}–{round(R[-1] * 1000, 2)} mm, dolžina {round((zr - zmin) * 1000)} mm")
+    print(f"[organi] sečevod: votla cev {len(P)} obročev, polmer {round(rt * 1000, 2)}–{round(R[-1] * 1000, 2)} mm, dolžina {round((zr - zmin) * 1000)} mm, lok {round(abs(lok) * 1000, 1)} mm")
     vrh = P[-1]
-    vrh2 = P[-3] if len(P) > 3 else vrh - Vector((0, 0, 0.005))  # znotraj sečevoda: meh zamaši vrh cevi
-    ru = 0.98 * R[-1]  # meh tik znotraj vrha sečevoda: brez ovratnika na stiku
+    vrh2 = P[-3] if len(P) > 3 else vrh - Vector((0, 0, 0.005))
+    ru = 0.98 * R[-1]
     zg = [p for p in pap if p.z >= C.z] or pap; sp = [p for p in pap if p.z < C.z] or pap
-    M = {id(g): C.lerp(sum(g, Vector()) / len(g), 0.5) for g in (zg, sp)}
+    M = {id(g): na_ravnino(C.lerp(sum(g, Vector()) / len(g), 0.5)) for g in (zg, sp)}
     k = cfg.get("meh_merilo", 1.0)
     t = []
     for g in (zg, sp):
         m = M[id(g)]
         for p in g:
-            t += [(p, 0.0034 * k)] + _crta(p, m, 0.0022 * k, 0.0026 * k, 0.0012)[1:]
+            # mala čašica: čaša v obliki črke U okoli vrha papile (vrh naslikane piramide je q, zaobljen 2,2 mm proti mehu):
+            # venec majhnih krogel od forniksov ob straneh papile do dna čaše; v sredini ostane papila. Ozek vrat
+            # (infundibulum) od dna čaše do velike čašice.
+            q = na_ravnino(p); u = (q - m).normalized(); v = u.cross(Vector((0, 1, 0))).normalized()
+            r_ = cfg.get("casa_polmer", 0.0034)
+            for a_, b_ in ((0.0006, 4.0), (-0.0018, 3.8), (-0.0042, 2.4), (-0.0052, 0.0)):
+                t += [(q + u * a_ + v * b_ * 0.001, r_), (q + u * a_ - v * b_ * 0.001, r_)] if b_ else [(q + u * a_, r_)]
+            t += _crta(q - u * 0.0052, m, 0.0034, 0.004, 0.0012)
         t += _crta(m, C, 0.0028 * k, 0.0048 * k, 0.0012)
-    t += _crta(C, C.lerp(vrh, 0.5), 0.0058 * k, 0.004 * k, 0.0012) + _crta(C.lerp(vrh, 0.5), vrh, 0.004 * k, ru, 0.001) + _crta(vrh, vrh2, ru, ru, 0.001)
+    sred = C.lerp(vrh, 0.55)
+    t += _crta(C, sred, 0.0058 * k, 0.0034 * k, 0.0012) + _crta(sred, vrh, 0.0034 * k, ru, 0.001) + _crta(vrh, vrh2, ru, ru, 0.001)
     me = _metakroglice(t, "meh", tmp)
     print(f"[organi] ledvični meh: {len(pap)} malih čašic, {tris(me)} trikotnikov")
     return [["Evklid renal pelvis and calyces (lastno)", me, "meh", "meh", "Evklid renal pelvis and calyces (lastno) / Evklid"]]
@@ -1428,6 +1440,12 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
                     c.z = min(v.co.z for v in row[1].vertices)
                 for v in row[1].vertices:
                     v.co = c + (v.co - c) * f
+    # premakni: (regex, (dx, dy, dz)) premik celega telesa v metrih (Blender). Nadledvična žleza Z-Anatomy leži za ravnino
+    # reza ledvice (−17…−2 mm): naprej na zgornji pol, da jo rez preseka kot skorjo in sredico.
+    for rx, d in cfg.get("premakni", []):
+        for row in osnovni:
+            if re.search(rx, row[0]):
+                row[1].transform(Matrix.Translation(Vector(d)))
     # skrci: (regex, metri) premik oglišč navznoter po normali. Režnji pljuč po SUBSURF na vbočenih špranjah segajo v
     # soseda (prekrivanje ~mm); faktor okoli težišča tega ne odpravi.
     for rx, d in cfg.get("skrci", []):
@@ -1455,7 +1473,11 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
                     p.use_smooth = True
     # središče in velikost organa
     lo = Vector((1e9,) * 3); hi = Vector((-1e9,) * 3)
-    for _, me, *_ in osnovni:
+    # sredisce_brez: deli, ki ne štejejo v škatlo središča (ledvica: sečevod, da premik sečevoda ne premakne ravnine reza
+    # in koordinat naslikanih piramid v ledvica.json)
+    for ime_, me, *_ in osnovni:
+        if cfg.get("sredisce_brez") and re.search(cfg["sredisce_brez"], ime_):
+            continue
         for vv in me.vertices:
             lo = Vector(map(min, lo, vv.co)); hi = Vector(map(max, hi, vv.co))
     ctr = (lo + hi) / 2
