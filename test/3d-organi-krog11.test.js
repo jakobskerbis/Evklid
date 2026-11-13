@@ -76,7 +76,7 @@ test("oko: kite brez stopnice, učne barve, prerezan živec, mrežnične arkade"
   assert.ok(o.tkiva["mišica"].kita.aoMoc > 0, "kita brez temnega obrisa senčenja");
   assert.ok(o.tkiva["živec"].rezSnopi?.os?.length === 3 && o.tkiva["živec"].rezZamik < 0, "rez živca: snopiči, pokrov pred beločnico");
   assert.ok(o.tkiva["mrežnica"].mreznicaZile.zil >= 8);
-  assert.ok(o.pogledi.celota.okvir.polmer >= 0.8, "pogled od zadaj ne odreže mišic");
+  assert.ok(o.pogledi.celota.okvir.polmer >= 1, "pogled od zadaj ne odreže mišic");
   const js = beri("public", "3d", "organ.js");
   for (const k of ["ucnaRob", "ucnaGladko", "kita?.aoMoc", "t.rezSnopi", "t.rezZamik", "z.arkade"]) assert.ok(js.includes(k), k);
   assert.ok(!/osrednja arterija \(rdeča\)/.test(js), "konec živca pri vidnem kanalu brez osrednje arterije in vene");
