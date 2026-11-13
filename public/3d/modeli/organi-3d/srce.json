@@ -75,7 +75,8 @@
     "globinaDo": 0.0045,
     "mascaGlobina": 0.006,
     "endoHrap": 0.32
-   }
+   },
+   "rezVlaknaKontrast": 1.5
   },
   "zaklopka": {
    "barva": "#e8c9ad",
@@ -1117,7 +1118,7 @@
    "slika": "srce-volumen.png",
    "lo": [
     -0.067,
-    -0.10281,
+    -0.1029,
     -0.056
    ],
    "korak": 0.00125,
@@ -1136,8 +1137,8 @@
     "telefon": "srce-stena-telefon.png",
     "lo": [
      -0.06729,
-     -0.10317,
-     -0.05595
+     -0.10312,
+     -0.05596
     ],
     "korak": 0.001,
     "n": [
@@ -1269,10 +1270,10 @@
    }
   ]
  },
- "velikost": 0.2633,
+ "velikost": 0.2632,
  "trikotniki": {
-  "racunalnik": 245186,
-  "telefon": 69365
+  "racunalnik": 246154,
+  "telefon": 69580
  },
  "luci": [
   {

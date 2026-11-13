@@ -404,6 +404,7 @@ LASTNE = {
     "Medial rectus": (0.0100, 0.0036), "Lateral rectus": (0.0092, 0.0030), "Superior rectus": (0.0100, 0.0030), "Inferior rectus": (0.0096, 0.0032),
 }
 ROB_POD = 0.00012
+KONEC = lambda s, L: 1.0 - 0.72 * _gl(s, L - 0.004, L - 0.0003)  # zašiljen konec traku ob izvoru (krog m4)
 
 
 def _gl(x, a, b):
@@ -564,8 +565,10 @@ def ocesne_misice_lastne(osnovni, cfg, tmp):
         C, s_lok = lok(I, O)
         L = np.linalg.norm(np.diff(C, axis=0), axis=1).sum()
         kd = KITA_DOLZINA[kl.split()[0]]; wi = SIRINA[kl.split()[0]]
-        sir = lambda s, wi=wi, wb=wb, L=L: (wi + (wb - wi) * _gl(s, 0.004, 0.014) - (wb - 0.0042) * _gl(s, L - 0.016, L)) * (0.8 + 0.2 * _gl(s, 0, 0.002))
-        deb = lambda s, kd=kd, tb=tb, L=L: 0.00004 + 0.0003 * _gl(s, 0, 0.003) + (tb - 0.00034) * _gl(s, kd, kd + 0.017) - (tb - 0.0017) * _gl(s, L - 0.02, L)
+        sir = lambda s, wi=wi, wb=wb, L=L: (wi + (wb - wi) * _gl(s, 0.004, 0.014) - (wb - 0.0042) * _gl(s, L - 0.016, L)) * (0.8 + 0.2 * _gl(s, 0, 0.002)) * KONEC(s, L)
+        # krog m4 (ocena: »kita kot ploska bela nalepka«, »ravno odrezani valji na izvoru«): kita ima debelino 0,75 mm
+        # (ovalen presek, rob se stanjša v beločnico), izvor se zašili v kitni obroč (KONEC)
+        deb = lambda s, kd=kd, tb=tb, L=L: (0.00013 + 0.00062 * _gl(s, 0, 0.0025) + (tb - 0.00075) * _gl(s, kd, kd + 0.017) - (tb - 0.0017) * _gl(s, L - 0.02, L)) * KONEC(s, L)
         pri_ = lambda s, s_lok=s_lok: 1 - _gl(s, s_lok - 0.001, s_lok + 0.006)
         kit = lambda s, kd=kd, L=L: max(1 - _gl(s, kd - 0.0012, kd + 0.0012), _gl(s, L - 0.004, L - 0.0015))
         poti[kl] = (C, deb)
@@ -585,8 +588,8 @@ def ocesne_misice_lastne(osnovni, cfg, tmp):
         C = np.vstack([C1[:-8], rep])
         dC = np.r_[0, np.cumsum(np.linalg.norm(np.diff(C, axis=0), axis=1))]; L = dC[-1]
         sT = dC[len(C1) - 8] + 0.0012  # dolžina do škripca
-        sir = lambda s, sT=sT, L=L: 0.0095 - (0.0095 - 0.0019) * _gl(s, 0.003, min(0.016, sT - 0.003)) + (0.0056 - 0.0019) * _gl(s, sT + SO_KITA_PRED * 0.6, sT + 0.02) - (0.0056 - 0.003) * _gl(s, L - 0.012, L)
-        deb = lambda s, sT=sT, L=L: 0.00006 + 0.00028 * _gl(s, 0, 0.002) + (0.0015 - 0.00034) * _gl(s, 0.006, min(0.016, sT - 0.003)) + (0.0034 - 0.0015) * _gl(s, sT + SO_KITA_PRED * 0.6, sT + 0.02) - (0.0034 - 0.0016) * _gl(s, L - 0.012, L)
+        sir = lambda s, sT=sT, L=L: (0.0095 - (0.0095 - 0.0019) * _gl(s, 0.003, min(0.016, sT - 0.003)) + (0.0056 - 0.0019) * _gl(s, sT + SO_KITA_PRED * 0.6, sT + 0.02) - (0.0056 - 0.003) * _gl(s, L - 0.012, L)) * KONEC(s, L)
+        deb = lambda s, sT=sT, L=L: (0.00012 + 0.00048 * _gl(s, 0, 0.002) + (0.0015 - 0.0006) * _gl(s, 0.006, min(0.016, sT - 0.003)) + (0.0034 - 0.0015) * _gl(s, sT + SO_KITA_PRED * 0.6, sT + 0.02) - (0.0034 - 0.0016) * _gl(s, L - 0.012, L)) * KONEC(s, L)
         pri_ = lambda s, s_lok=s_lok: 1 - _gl(s, s_lok - 0.001, s_lok + 0.004)
         kit = lambda s, sT=sT, L=L: max(1 - _gl(s, sT + SO_KITA_PRED - 0.002, sT + SO_KITA_PRED + 0.002), _gl(s, L - 0.004, L - 0.0015))
         izdelaj(r"^Superior oblique muscle", C, I, sir, deb, pri_, kit, 0.0012)
@@ -598,15 +601,109 @@ def ocesne_misice_lastne(osnovni, cfg, tmp):
         O = P[m_ >= np.percentile(m_, 95)].mean(0)
         # izvor Z-Anatomy je ob zrklu HRA predaleč (trak je visel ≈ 2 cm pred zrklo): največ 6,5 mm od površine zrkla
         dO = np.linalg.norm(O - G)
-        O = G + (O - G) / dO * min(dO, R0 + 0.0065)
+        # krog m4 (ocena: »prosto viseč lok«): izvor 3,2 mm od površine, trak leži ob zrklu skoraj do izvora
+        O = G + (O - G) / dO * min(dO, R0 + 0.0032)
         th = math.radians(113); az = math.radians(14)
         I = math.cos(th) * a + math.sin(th) * (-math.cos(az) * med - math.sin(az) * gor)
         dvig = lambda u: 0.0027 * float(_gl(u, 0.22, 0.5))
         C, s_lok = lok(I, O, dvig=dvig, deb0=0.0004)
         L = np.linalg.norm(np.diff(C, axis=0), axis=1).sum()
-        sir = lambda s, L=L: (0.0088 - 0.0016 * _gl(s, 0.004, 0.012) - 0.0034 * _gl(s, L - 0.012, L)) * (0.8 + 0.2 * _gl(s, 0, 0.002))
-        deb = lambda s, L=L: 0.00006 + 0.0004 * _gl(s, 0, 0.002) + 0.0017 * _gl(s, 0.002, 0.012) - 0.0006 * _gl(s, L - 0.008, L)
-        pri_ = lambda s, s_lok=s_lok: 1 - _gl(s, 0.2 * s_lok, 0.42 * s_lok)
+        sir = lambda s, L=L: (0.0088 - 0.0016 * _gl(s, 0.004, 0.012) - 0.0034 * _gl(s, L - 0.012, L)) * (0.8 + 0.2 * _gl(s, 0, 0.002)) * KONEC(s, L)
+        deb = lambda s, L=L: (0.00012 + 0.0006 * _gl(s, 0, 0.002) + 0.0015 * _gl(s, 0.002, 0.012) - 0.0006 * _gl(s, L - 0.008, L)) * KONEC(s, L)
+        pri_ = lambda s, s_lok=s_lok: 1 - _gl(s, 0.55 * s_lok, 0.92 * s_lok)
         kit = lambda s, L=L: max(1 - _gl(s, 0.001, 0.003), _gl(s, L - 0.003, L - 0.001))
         izdelaj(r"^Inferior oblique muscle", C, I, sir, deb, pri_, kit, 0.0012)
     return []
+
+
+def oko_dodatki_m4(osnovni, cfg, tmp):
+    """Krog m4: (1) duralna ovojnica vidnega živca – votel rokav okoli živca Z-Anatomy, ob zrklu lijakasto razširjen v
+    beločnico (čist stik), zadaj krajši od živca (živec gleda iz ovojnice); (2) ekskavacija papile (cup) – sredina
+    papile HRA pomaknjena nazaj v živec; (3) zonule kot fina vlakna – namesto širokih žarkov HRA tanke nitke od
+    ciliarnika do ekvatorja leče (spredaj, ekvator, zadaj). Vse lastno delo."""
+    import bpy, random
+    from drevesa import cev, zgladi
+    def najdi(rx):
+        return [r for r in osnovni if re.search(rx, r[0])]
+    bel = najdi(r"(?i)^sclera"); roz = najdi(r"(?i)^cornea")
+    if not bel or not roz:
+        return []
+    S = _tocke(bel[0][1]); G = (S.min(0) + S.max(0)) / 2
+    a = _tocke(roz[0][1]).mean(0) - G; a /= np.linalg.norm(a)
+    tel = cfg.setdefault("_telefon", {})
+    nove = []
+    # ---- (1) ovojnica živca
+    ziv = najdi(r"^Optic nerve")
+    if ziv:
+        X = _tocke(ziv[0][1]); d = np.linalg.norm(X - G, axis=1)
+        kos = np.floor((d - d.min()) / 0.0008).astype(int)
+        P, R, kosi = [], [], []
+        for k in range(kos.max() + 1):
+            Q = X[kos == k]
+            if len(Q) < 6:
+                continue
+            P.append(Q.mean(0)); kosi.append(Q)
+        if len(P) > 8:
+            Pn = np.array(P); Tg = np.gradient(Pn, axis=0); Tg /= np.linalg.norm(Tg, axis=1)[:, None]
+            for c, t, Q in zip(Pn, Tg, kosi):  # polmer: razdalja oglišč od osi (pravokotno na smer živca), 90. percentil
+                dq = Q - c; R.append(float(np.percentile(np.linalg.norm(dq - np.outer(dq @ t, t), axis=1), 90)))
+            P = [Vector(p) for p in P]
+            P, R = zgladi(P, R, 6)
+            L = np.r_[0, np.cumsum([(P[i + 1] - P[i]).length for i in range(len(P) - 1)])]
+            n = int(np.searchsorted(L, L[-1] - 0.0016))  # ovojnica se konča 1,6 mm pred prerezanim koncem živca
+            Ps = P[:n]; rm = float(np.median(R))
+            Rs = [min(max(R[i], rm * 0.9), rm * 1.15) + 0.00055 + 0.0019 * (1 - float(_gl(L[i], 0.0, 0.0048))) ** 1.5 for i in range(n)]
+            for t_ in (False, True):
+                bm = bmesh.new(); cev(bm, Ps, Rs, 12 if t_ else 28, stena=0.0003)
+                bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+                me = bpy.data.meshes.new("Dural sheath (lastno)" + (" t" if t_ else "")); bm.to_mesh(me); bm.free()
+                for q in me.polygons:
+                    q.use_smooth = True
+                if t_:
+                    tel["Dural sheath (lastno)"] = me
+                else:
+                    nove.append(["Dural sheath (lastno)", me, "kita", "vidni-zivec", "Dural sheath (lastno) / Evklid"])
+            print(f"[oko] duralna ovojnica živca: {n} obročev, polmer živca {rm * 1000:.2f} mm, ovojnice {Rs[-1] * 1000:.2f} mm, ob zrklu {Rs[0] * 1000:.2f} mm")
+    # ---- (2) ekskavacija papile
+    pap = najdi(r"optic_disc")
+    if pap:
+        me = pap[0][1]; X = _tocke(me); c = X.mean(0); ven = (c - G) / np.linalg.norm(c - G)
+        rad = np.linalg.norm((X - c) - np.outer((X - c) @ ven, ven), axis=1); r0 = 0.5 * float(np.percentile(rad, 98))
+        w = np.clip(1 - (rad / r0) ** 2, 0, 1) ** 2
+        X2 = X + np.outer(w * cfg.get("papila_cup", 0.00038), ven)
+        me.vertices.foreach_set("co", X2.ravel()); me.update()
+        print(f"[oko] ekskavacija papile: polmer {r0 * 1000:.2f} mm, globina {cfg.get('papila_cup', 0.00038) * 1000:.2f} mm, premaknjenih {int((w > 0).sum())} oglišč")
+    # ---- (3) zonule
+    lec = najdi(r"lens_L"); sus = najdi(r"suspensory")
+    if lec and sus:
+        Xl = _tocke(lec[0][1]); Lc = Xl.mean(0)
+        ax = (Xl - Lc) @ a; rl_ = np.linalg.norm((Xl - Lc) - np.outer(ax, a), axis=1); rl = float(rl_.max()); zl = float(ax[rl_ > 0.97 * rl].mean())
+        Xs = _tocke(sus[0][1]); axs = (Xs - Lc) @ a; rs = np.linalg.norm((Xs - Lc) - np.outer(axs, a), axis=1)
+        ro = float(np.percentile(rs, 97)); zo = float(axs[rs > 0.9 * ro].mean())
+        e1 = np.cross(a, [0.0, 0.0, 1.0]); e1 /= np.linalg.norm(e1); e2 = np.cross(a, e1)
+        for t_ in (False, True):
+            rnd = random.Random(7); N = 96 if t_ else 210; rv = 0.00005 if t_ else 0.000032
+            V, F = [], []
+            for k in range(N):
+                f0 = 2 * math.pi * (k + rnd.uniform(-0.3, 0.3)) / N; f1 = f0 + rnd.uniform(-0.035, 0.035)
+                t = (k % 3) - 1  # −1 zadaj, 0 ekvator, 1 spredaj
+                A = Lc + a * (zl + t * 0.00055) + (e1 * math.cos(f0) + e2 * math.sin(f0)) * rl * (0.992 - 0.05 * abs(t))
+                B = Lc + a * (zo - t * 0.00025 + rnd.uniform(-0.0003, 0.0003)) + (e1 * math.cos(f1) + e2 * math.sin(f1)) * ro * rnd.uniform(0.95, 1.0)
+                tg = (B - A) / np.linalg.norm(B - A); u = np.cross(tg, a); u /= np.linalg.norm(u); v = np.cross(tg, u)
+                i0 = len(V)
+                for q in (A, B):
+                    for j in range(3):
+                        V.append(q + (u * math.cos(2 * math.pi * j / 3) + v * math.sin(2 * math.pi * j / 3)) * rv)
+                for j in range(3):
+                    j1 = (j + 1) % 3
+                    F.append((i0 + j, i0 + j1, i0 + 3 + j1, i0 + 3 + j))
+                F.append((i0 + 2, i0 + 1, i0)); F.append((i0 + 3, i0 + 4, i0 + 5))
+            me = bpy.data.meshes.new(sus[0][0] + (" t" if t_ else ""))
+            me.from_pydata([tuple(p) for p in V], [], F); me.update()
+            bm = bmesh.new(); bm.from_mesh(me); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(me); bm.free()
+            if t_:
+                tel[sus[0][0]] = me
+            else:
+                sus[0][1] = me
+        print(f"[oko] zonule: 210 / 96 vlaken, leča r {rl * 1000:.2f} mm, ciliarnik r {ro * 1000:.2f} mm")
+    return nove

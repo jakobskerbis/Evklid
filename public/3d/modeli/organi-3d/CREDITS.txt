@@ -41,3 +41,15 @@ oko-foto.webp (fotografska tekstura šarenice in žilic beločnice; projicira jo
   (https://sketchfab.com/3d-models/realistic-human-eye-417cbd1aac554ea189966250b784ab6f) by Alexander Antipov
   (https://sketchfab.com/Dessen) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/).
   Prirejeno: difuzna tekstura pomanjšana na 1024 × 1024 (WebP).
+
+oko.glb, oko-telefon.glb
+  Zrklo: HuBMAP HRA (CC BY 4.0); živec, škripec in kitni obroč: Z-Anatomy (CC BY-SA 4.0); očesne mišice, duralna
+  ovojnica vidnega živca (Dural sheath (lastno)) in vlakna leče (zonule): lastna geometrija Evklid
+  (scripts/atlas/oko_misice.py). Deljenje pod enakimi pogoji: izpeljane mreže so na voljo pod CC BY-SA 4.0; vse vire
+  navaja public/3d/viri.json.
+
+ledvica.glb, ledvica-telefon.glb
+  Ledvica: HuBMAP HRA (CC BY 4.0); sečevod (os): Z-Anatomy (CC BY-SA 4.0); ledvični meh s čašicami, ledvična arterija
+  in vena z vejami (Renal artery/vein (lastno)) in nadledvična žleza: lastna geometrija Evklid
+  (scripts/atlas/izvozi-organe.py, scripts/atlas/drevesa.py). Deljenje pod enakimi pogoji: CC BY-SA 4.0; vse vire
+  navaja public/3d/viri.json.

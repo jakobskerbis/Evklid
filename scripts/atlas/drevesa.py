@@ -604,6 +604,54 @@ def pljucna_drevesa(osnovni, cfg, tmp):
     return izhod
 
 
+def zlij_cevi(sez, stena, voksel, delez, tmp, ime):
+    """Žilno drevo kot ENO votlo telo (krog m4): sez = [(P, R, faktor stene)], prva pot je deblo. Zunanja ploskev je unija
+    cevi (voksel remesh), svetlina unija notranjih cevi (obrnjene normale): v razcepišču ni sten vej v svetlini debla
+    (ločene votle cevi so bile v rezu preplet obročev). Začetek debla je prerezan (obroč stene in odprta svetlina)."""
+    P0 = sez[0][0]; t0 = (P0[1] - P0[0]).normalized(); co = P0[0] + t0 * 0.0004
+    casa = 0.0016  # globina slepe svetline na prerezanem koncu debla
+    def telo(notranje):
+        bm = bmesh.new()
+        for k, (P, R, f) in enumerate(sez):
+            Rn = [max(r - stena * f, r * 0.5) for r in R] if notranje else R
+            Pn = P
+            if notranje and k and len(P) > 4:
+                Pn, Rn = P[:-2], Rn[:-2]  # svetlina veje se konča pred koncem stene
+            if notranje and not k:  # svetlina debla je zaprta votlina: začne se za dnom čaše na prerezanem koncu
+                i0 = next(i for i, p in enumerate(P) if (p - co).dot(t0) > casa + 0.0007)
+                Pn, Rn = P[i0:], Rn[i0:]
+            cev(bm, Pn, Rn, 20, kupola=True, zacetek_kupola=not (notranje and not k))
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        m = bpy.data.meshes.new("_z"); bm.to_mesh(m); bm.free()
+        o = bpy.data.objects.new("_z", m); tmp.objects.link(o)
+        mod = o.modifiers.new("r", "REMESH"); mod.mode = "VOXEL"; mod.voxel_size = voksel; mod.adaptivity = 0.0
+        m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+        bpy.data.objects.remove(o)
+        return m2
+    bm = bmesh.new()
+    for notranje in (False, True):
+        b2 = bmesh.new(); b2.from_mesh(telo(notranje))
+        bmesh.ops.smooth_vert(b2, verts=b2.verts, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+        if notranje:
+            bmesh.ops.reverse_faces(b2, faces=b2.faces)
+        else:
+            # prerezan konec debla: raven rez, obroč stene in čaša (slepa svetlina) – od zunaj je videti odprta žila,
+            # svetlina pa ostane zaprta votlina (obris v ravnini reza ima luknjo: rezPresek jo nariše kot svetlino)
+            bmesh.ops.bisect_plane(b2, geom=b2.verts[:] + b2.edges[:] + b2.faces[:], plane_co=co, plane_no=-t0, clear_outer=True)
+            rob = [e for e in b2.edges if e.is_boundary]
+            r = bmesh.ops.edgeloop_fill(b2, edges=rob)
+            pokrov = [f for f in r["faces"]]
+            r2 = bmesh.ops.inset_region(b2, faces=pokrov, thickness=stena, depth=0.0, use_even_offset=True)
+            for v in {v for f in pokrov for v in f.verts}:
+                v.co += t0 * casa
+            bmesh.ops.recalc_face_normals(b2, faces=b2.faces)
+        m = bpy.data.meshes.new("_z2"); b2.to_mesh(m); b2.free(); bm.from_mesh(m)
+    me = bpy.data.meshes.new(ime); bm.to_mesh(me); bm.free()
+    me = poenostavi(me, delez, tmp); me.name = ime
+    print(f"[organi] {ime}: zlito drevo {len(sez)} cevi, voksel {voksel * 1000:.2f} mm, trikotnikov {tris(me)}")
+    return me
+
+
 def ledvicne_zile(osnovni, cfg, tmp):
     """Ledvična arterija in vena (lastno): Z-Anatomy žili ob ledvici HRA ne segata do hilusa (vena je bila kratek obroč
     v zraku, arterija sploščena). Od spredaj nazaj: vena, arterija, ledvični meh. Vena nastane v sinusu iz treh pritokov,
@@ -644,6 +692,18 @@ def ledvicne_zile(osnovni, cfg, tmp):
         # bile preplet obročev sten) – prerezane segmentne veje v maščobi nariše senčilnik (sinus.zile)
         art = [("deblo", pot([Tp(L + 0.003, 0, ca + 0.0015), Tp(L * 0.55, 0, ca + 0.0008), Tp(0.012, 0, ca), Tp(ea + 0.004, 0, ca), Tp(ea, -0.0035, ca + 0.001)], ra, ra * 0.85))]
         vena = [("deblo", pot([Tp(L, 0, cv - 0.0015), Tp(L * 0.55, 0, cv - 0.0008), Tp(0.013, 0, cv), Tp(ev + 0.004, 0, cv), Tp(ev, -0.004, cv - 0.001)], rv, rv * 0.85))]
+        if nast.get("veje_sinus", True):
+            # krog m4: segmentne veje kot geometrija, zlite z deblom v eno votlo telo (zlij_cevi). Arterija: zgornja
+            # veja v ravnini reza v maščobo zgornjega dela sinusa, zadnja veja za mehom (v rezu odprtina v zadnji steni).
+            # Vena: spodnji pritok pred mehom (v celem pogledu viden v hilusu, v rezu prerezan v spodnji maščobi sinusa),
+            # zgornji pritok za arterijo.
+            art = [("deblo", pot([Tp(L + 0.003, 0, ca + 0.0015), Tp(L * 0.55, 0, ca + 0.0008), Tp(0.012, 0, ca), Tp(0.004, 0, ca), Tp(0.0022, 0, ca + 0.0003)], ra, ra * 0.9)),
+                   ("veja", pot([Tp(0.0045, 0, ca), Tp(0.0015, 0, ca + 0.0022), Tp(-0.0005, 0, ca + 0.0045), Tp(-0.0022, 0, ca + 0.0063), Tp(-0.003, -0.002, ca + 0.0075)], ra * 0.62, ra * 0.3)),
+                   ("veja", pot([Tp(0.0045, 0, ca), Tp(0.002, -0.0015, ca - 0.0006), Tp(0.0, -0.0045, ca - 0.0015), Tp(-0.003, -0.007, ca - 0.0025)], ra * 0.6, ra * 0.4))]
+            vena = [("deblo", pot([Tp(L, 0, cv - 0.0015), Tp(L * 0.55, 0, cv - 0.0008), Tp(0.013, 0, cv), Tp(ev + 0.004, 0, cv), Tp(ev + 0.0015, 0, cv)], rv, rv * 0.9)),
+                    ("veja", pot([Tp(ev + 0.004, 0, cv), Tp(ev + 0.0015, 0.003, cv - 0.0025), Tp(0.0015, 0.006, cv - 0.006), Tp(-0.0015, 0.004, cv - 0.0095), Tp(-0.003, 0.0, cv - 0.011), Tp(-0.004, -0.003, cv - 0.012)], rv * 0.6, rv * 0.35)),
+                    ("veja", pot([Tp(ev + 0.004, 0, cv), Tp(ev + 0.0012, -0.002, cv + 0.0008), Tp(ev - 0.001, -0.0055, cv + 0.0025), Tp(-0.002, -0.008, cv + 0.005)], rv * 0.55, rv * 0.35))]
+            cfg["_zile_zlij"] = True
         cfg["_zile_brez_odmika"] = True
     elif nast.get("v_stebre", True):
         # krog m1: žili v prerezu ostaneta celi (ledvica.json: brezReza) kot na učnem modelu: debli ležita pred ravnino
@@ -687,6 +747,13 @@ def ledvicne_zile(osnovni, cfg, tmp):
     izhod = []
     for ime, tkivo, del_, sez, stena in (("Renal vein (lastno)", "vena", "ledvicna-vena", vena, 0.0007), ("Renal artery (lastno)", "arterija", "ledvicna-arterija", art, 0.001)):
         for t_ in (False, True):
+            if cfg.get("_zile_zlij"):
+                me = zlij_cevi([(P, R, 1.0 if vrsta == "deblo" else 0.7) for vrsta, (P, R) in sez], stena, 0.0005 if t_ else 0.0003, 0.3 if t_ else 0.22, tmp, ime + (" t" if t_ else ""))
+                if t_:
+                    tel[ime] = me
+                else:
+                    izhod.append([ime, me, tkivo, del_, ime + " / Evklid"])
+                continue
             bm = bmesh.new()
             for vrsta, (P, R) in sez:
                 P2, R2 = redci(P, R, (lambda r: max(0.004, 2.2 * r)) if t_ else (lambda r: max(0.0015, 0.8 * r)))

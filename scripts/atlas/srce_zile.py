@@ -774,6 +774,21 @@ def srce_zile(osnovni, cfg, tmp):
         z = _Osi(bmesh.new())
         # zgornja: zgornji konec odprt, nadaljujeta ga brahiocefalični veni (brez pokrova in stopnice, B2-N4)
         cev_stena(z, P, R, 0.0012, 24, zacetek_odprt=ime.startswith("Superior"), konec_odprt=True)
+        if not ime.startswith("Superior"):
+            # krog m4 (ocena: »luknja v steni desnega preddvora«): skozi ustje spodnje votle vene se je iz preddvora
+            # videlo ozadje. Svetlina dobi dno 3 mm za prerezanim koncem (od zunaj: prerezana žila s plitvo svetlino, iz
+            # preddvora: temna svetlina vene), obojestransko.
+            okv_ = _okvirji(P); i_ = next((i for i, x in enumerate(_dolzine(P)) if x >= 0.003), 1)
+            ri_ = max(R[i_] - 0.0012, R[i_] * 0.55) + 0.0002
+            def plosca_(q):  # zaprta tanka plošča (dve ploskvi in rob): brez odprtih robov
+                c_ = z.v(q, 0.0, 0.0, 0.0)
+                return c_, [z.v(q + (okv_[i_][1] * math.cos(2 * math.pi * k / 24) + okv_[i_][2] * math.sin(2 * math.pi * k / 24)) * ri_, 0.0, 2 * math.pi * k / 24, ri_) for k in range(24)]
+            (ca_, oa_), (cb_, ob_) = plosca_(P[i_]), plosca_(P[i_] + okv_[i_][0] * 0.0004)
+            for k in range(24):
+                k1 = (k + 1) % 24
+                z.f([ca_, oa_[k1], oa_[k]], [(2.3, 0.0), (2.4, 0.05), (2.4, 0.0)])
+                z.f([cb_, ob_[k], ob_[k1]], [(2.3, 0.0), (2.4, 0.0), (2.4, 0.05)])
+                z.f([oa_[k], oa_[k1], ob_[k1], ob_[k]], [(2.3, 0.0), (2.4, 0.0), (2.4, 0.05), (2.3, 0.05)])
         vrstica(ime, z, "vena", "votli-veni", "Systemic veins.g")
         kave[ime] = (P, R)
     # ---- levi preddvor: zapri luknjo v zadnji steni, nato štiri pljučne vene
@@ -853,7 +868,13 @@ def srce_zile(osnovni, cfg, tmp):
                 R = [max(r * 1.3, 0.0032) for r in R]
             else:
                 R = [max(r * 1.0, 0.0005) for r in R]
-            P, R = prevzorci(P, R, lambda r: min(max(r * 1.6, 0.0011), 0.003))
+            # krog m4 (ocena: »venčni sinus kot niz temnih grč«): debele vene v venčnem žlebu so ena gladka cev – polmer
+            # zglajen vzdolž žile, gostejši obroči, več stranic (prej 8-kotnik z obroči na 3 mm)
+            debela = (not arterija) and max(R) > 0.0022
+            if debela:
+                for _ in range(12):
+                    R = [R[0]] + [(R[i - 1] + 2 * R[i] + R[i + 1]) / 4 for i in range(1, len(R) - 1)] + [R[-1]]
+            P, R = prevzorci(P, R, (lambda r: min(max(r * 0.45, 0.0009), 0.0015)) if debela else (lambda r: min(max(r * 1.6, 0.0011), 0.003)))
             # dvig nad površino: središčnica na višini 0,3 r nad epikardom (glajeno vzdolž)
             dv = []
             for p, r in zip(P, R):
@@ -866,7 +887,7 @@ def srce_zile(osnovni, cfg, tmp):
             for _ in range(3):
                 dv = [dv[0]] + [(dv[i - 1] + dv[i] * 2 + dv[i + 1]) / 4 for i in range(1, len(dv) - 1)] + [dv[-1]]
             P = [p + d for p, d in zip(P, dv)]
-            seg = 8 if max(R) > 0.0012 else 6
+            seg = 14 if debela else 8 if max(R) > 0.0012 else 6
             cev_polna(z, P, R, seg)
         tk = "vencna-arterija" if arterija else "vencna-vena"
         vrstica(ime, z, tk, DEL_VENCNE.get(ime, "vencne-arterije" if arterija else "vencne-vene"), "Arteries of heart.g" if arterija else "Cardiac veins.g")

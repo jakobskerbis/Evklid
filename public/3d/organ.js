@@ -743,7 +743,7 @@ vec4 orgStena( vec3 p ) {
 }
 `;
 
-// Zareza hilusa (rezPiramide.sinus.zareza [a x, y, z, b x, y, z, lok, val] v m): odprta mreža ovojnice ima ob hilusu raven
+// Zareza hilusa (rezPiramide.sinus.zareza [a x, y, z, b x, y, z, lok, val, do] v m; do (neobvezno, delež a→b): od tam do b loka ni – maščoba sega do roba): odprta mreža ovojnice ima ob hilusu raven
 // rob, zato bi bila maščoba sinusa na pokrovu odrezana v ravni črti. Med točkama a in b (konca obrisa ovojnice v ravnini
 // reza) maščobo omeji lok, vbočen za »lok« proti notranjosti (prva kapsula sinusa), z režnjastim robom (val); zunaj ni pokrova.
 function zarezaSinusa(sinus, tm, dm, dm2) {
@@ -757,6 +757,7 @@ function zarezaSinusa(sinus, tm, dm, dm2) {
   return `     { vec3 zA = vec3( ${tm(a)} ); vec3 zB = vec3( ${tm(b)} ) - zA; float zT = dot( pW - zA, zB ) / dot( zB, zB );
        float zS = dot( pW - zA, vec3( ${n.map((x) => f(x / nl)).join(", ")} ) );
        float zO = ${dm(z[6] ?? 0.002)} * 4.0 * zT * ( 1.0 - zT ) + ${dm(z[7] ?? 0.0006)} * sin( 3.14159 * clamp( zT, 0.0, 1.0 ) ) * ( orgSum( orgQ * ${dm2(1 / (2.5 * (sinus.mera ?? 0.0016)))} + 2.3 ) * 2.0 - 1.0 );
+       ${z[8] != null ? `zO *= 1.0 - smoothstep( ${f(z[8] - 0.12)}, ${f(z[8])}, zT );` : ""}
        if ( zT > 0.0 && zT < 1.0 && zS < zO ) discard; }`;
 }
 
@@ -921,6 +922,7 @@ ${
           orgS1 = clamp( 0.5 + orgS1 * orgWs, 0.0, 1.0 ); orgS2 = clamp( 0.5 + orgS2 * orgWs, 0.0, 1.0 );
           float orgL1 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 4) / merilo).toPrecision(4))}, 0.0, 1.0 ), orgL2 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 19.2) / merilo).toPrecision(4))}, 0.0, 1.0 ); // celica šuma pod ~3 px zbledi (mrežni šum ob Nyquistu nariše pravilno mrežo pik, krog 7)
           float orgVl = mix( 0.5, orgS1, orgL1 ) * 0.6 + mix( 0.5, orgS2, orgL2 ) * 0.4;
+          ${t.rezVlaknaKontrast ? `orgVl = clamp( ( orgVl - 0.5 ) * ${fl(t.rezVlaknaKontrast)} + 0.5, 0.0, 1.0 ); // krog m4: izrazitejši snopi vlaken na rezu` : ""}
           // višina za izbočenost: odvod dFdx/dFdy je stalen v bloku 2 × 2 piksla, zato vzorec, ožji od ~8 px, nariše mrežo
           // svetlih pik (krog 7); za normalo vzamemo samo širše pasove (barva ohrani drobna vlakna)
           float orgVlH = mix( 0.5, orgS1, clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 8) / merilo).toPrecision(4))}, 0.0, 1.0 ) ) * 0.6 + mix( 0.5, orgS2, clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 25.6) / merilo).toPrecision(4))}, 0.0, 1.0 ) ) * 0.4;
@@ -1097,7 +1099,7 @@ ${
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}${presek.plosko ? "f" : ""}${presek.cev ? "c" : ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezSlika?.gladko ? 1 : 0, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}${t.rezVlaknaKontrast ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}${presek.plosko ? "f" : ""}${presek.cev ? "c" : ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezSlika?.gladko ? 1 : 0, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
   return m;
 }
 
@@ -1400,7 +1402,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
         // cev.zleb { barva, senca, globina [m], … kot rezVotlina }: cev je zares prerezana – na ravnini ostane le stena
         // (obroč), svetlina je odprtina (maska v globini), skoznjo se vidi osvetljena notranja stena cevi za ravnino
         // (zadnje ploskve mreže, z globino temnejše). Prej ploska temna zapolnitev (ocena n5: »rentgenska prevleka«).
-        const zleb = t.rezPresek.cev?.zleb;
+        const zleb = t.rezPresek.cev?.zleb || t.rezPresek.zleb; // rezPresek.zleb (krog m4): isto za vzdolž prerezano votlo žilo z zaprto svetlino (luknja obrisa)
         if (zleb) {
           const stena = [], luknja = [];
           for (let i = 0; i < r.indeksi.length; i += 3) (r.vrste[r.indeksi[i]] >= 2 ? luknja : stena).push(r.indeksi[i], r.indeksi[i + 1], r.indeksi[i + 2]);
