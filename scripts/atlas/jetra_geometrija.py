@@ -634,7 +634,13 @@ def jetra_ct(osnovni, cfg, tmp):
     bm = bmesh.new(); bm.from_mesh(cela); D.taubin_bm(bm, nast.get("glajenje", 40)); bm.to_mesh(cela); bm.free()
     rimske = ("I", "II", "III", "IV", "V", "VI", "VII", "VIII")
     rim = {r: _np_mreza("seg " + r, Z[f"seg{i + 1}_v"], Z[f"seg{i + 1}_f"]) for i, r in enumerate(rimske)}
-    zb = [r[1] for r in osnovni if r[0] == "Gallbladder"][0]
+    zb_vr = [r for r in osnovni if r[0] == "Gallbladder"][0]
+    zb_ct = "zolcnik_v" in Z.files  # žolčnik istega telesa (TotalSegmentator), sicer Z-Anatomy v ležišču
+    if zb_ct:
+        zb_vr[1] = _gosti(_np_mreza("zolcnik ct", Z["zolcnik_v"], Z["zolcnik_f"]), tmp, nast.get("zolcnik", 3000))
+        bm = bmesh.new(); bm.from_mesh(zb_vr[1]); D.taubin_bm(bm, 10); bm.to_mesh(zb_vr[1]); bm.free()
+        print(f"[organi] jetra CT: žolčnik iz CT, {D.tris(zb_vr[1])} trikotnikov")
+    zb = zb_vr[1]
     tel = cfg.setdefault("_telefon", {})
     izhod = []
     def vrstica(ime, me, me_t, tkivo, del_):
@@ -658,6 +664,19 @@ def jetra_ct(osnovni, cfg, tmp):
         i = ot[0]
     vrata = Vector(Pv.P[i]); porta = vrata.copy()
     print(f"[organi] jetra CT: vrata {[round(x, 4) for x in vrata]}, portalna {len(Pv.P)} vozlišč, vene {len(Hv.P)}")
+    # ravnina prereza skozi jetrna vrata, v kateri ležijo debele veje portalne vene (deblo, desna in leva veja): v rezu so
+    # prerezane po dolgem in se vejijo (ocena n2: prerezi žil naj se berejo kot drevo). Nagib od čelne ravnine ≤ ravninaNagib.
+    deb = Pv.R >= nast.get("ravninaR", 0.003)
+    if deb.sum() >= 12:
+        Q = Pv.P[deb] - np.array(vrata); w = Pv.R[deb] ** 2
+        nrm = np.linalg.eigh((Q * w[:, None]).T @ Q)[1][:, 0]
+        nrm = nrm if nrm[1] > 0 else -nrm
+        kot = math.degrees(math.acos(min(1.0, abs(nrm[1])))); naj = nast.get("ravninaNagib", 35.0)
+        if kot > naj:
+            t_ = math.radians(naj) / math.radians(kot)
+            nrm = nrm * t_ + np.array([0.0, 1.0, 0.0]) * (1 - t_); nrm /= np.linalg.norm(nrm)
+        cfg["_karina"] = [float(x) for x in vrata]; cfg["_karinaN"] = [float(x) for x in nrm]
+        print(f"[organi] ravnina portalnega drevesa: normala {np.round(nrm, 3)}, nagib od čelne {kot:.0f}°")
     # ---- režnji
     pov = nast.get("povrsina", (56000, 14000))
     L = _gosti(cela, tmp, pov[0]); Lt = _gosti(cela, tmp, pov[1])
@@ -694,7 +713,8 @@ def jetra_ct(osnovni, cfg, tmp):
         sez_t = _spremljevalke(p_vse_t, smer.normalized(), delez, r0, r1, nast.get("triadaR", 0.0015) * 1.5)
         if tkivo == "zolcevod":
             n2, p2 = _ravnina([rim["IV"]], [rim["V"], rim["VIII"]])
-            zb = _zolcnik_v_lezisce(zb, L, notr, vrata, n2, p2)
+            if not zb_ct:
+                zb = _zolcnik_v_lezisce(zb, L, notr, vrata, n2, p2)
             vrat = min((v.co for v in zb.vertices), key=lambda c: (c - porta).length)
             zc = sum((v.co for v in zb.vertices), Vector()) / len(zb.vertices)
             gl = max(sez, key=lambda x: max(x[1]))[0]

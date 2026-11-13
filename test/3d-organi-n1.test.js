@@ -134,17 +134,23 @@ test("n1: pregledovalnik – risba reza v učnih barvah in pahljača listov", ()
   assert.ok(!/float orgSl\b/.test(src), "lokalna spremenljivka ne sme zasenčiti vzorčevalnika orgSl");
 });
 
-test("n2: drevesa v pljučih molijo iz rezne ploskve (rezOdmik), deblo z začetkom hrbtenjače", () => {
+test("n3: rez pljuč leži v ravnini dihalnega drevesa (brez odmika dreves), deblo z začetkom hrbtenjače", () => {
   const src = beri("public", "3d", "organ.js");
-  for (const s of ["rezOdmik", "const ravZa", "userData.ravnineRez"]) assert.ok(src.includes(s), s);
+  for (const s of ["rezOdmik", "const ravZa", "userData.ravnineRez"]) assert.ok(src.includes(s), s); // možnost ostane
   const p = json("pljuca");
-  for (const t of ["dihalna-v", "pljucna-arterija-v", "pljucna-vena-v"]) {
-    assert.ok(p.tkiva[t].rezOdmik > 0.005 && p.tkiva[t].rezOdmik < 0.03, `${t}: rezOdmik ${p.tkiva[t].rezOdmik}`);
-    assert.ok(!p.tkiva[t].brezReza && p.tkiva[t].rezPresek, `${t}: še vedno se reže (s presekom)`);
-  }
-  for (const t of ["pljuca", "dihalna", "hrustanec"]) assert.ok(!p.tkiva[t].rezOdmik, `${t}: reže se na glavni ravnini`);
+  // ocena n2: drevesa naj bodo prerezana v ravnini, ne da molijo iz nje – nobeno tkivo pljuč nima odmika
+  for (const [t, tk] of Object.entries(p.tkiva)) assert.ok(!tk.rezOdmik, `${t}: brez rezOdmik`);
+  for (const t of ["dihalna-v", "pljucna-arterija-v", "pljucna-vena-v"]) assert.ok(!p.tkiva[t].brezReza && p.tkiva[t].rezPresek, `${t}: se reže (s presekom)`);
+  const n = p.prerez.ravnine[0].n;
+  assert.ok(Math.abs(Math.hypot(...n) - 1) < 0.01, "enotska normala");
+  const nagib = (Math.acos(Math.min(1, Math.abs(n[2]))) * 180) / Math.PI;
+  assert.ok(nagib > 3 && nagib <= 36, `ravnina dihalnega drevesa je nagnjena ${nagib.toFixed(0)}° od čelne`);
+  for (const s of ['cfg["_karinaN"]', "ravninaNagib"]) assert.ok(beri("scripts", "atlas", "pljuca_geometrija.py").includes(s), s);
+  assert.ok(beri("scripts", "atlas", "organi.mjs").includes("izvoz.karinaN"), "organi.mjs uporabi normalo ravnine");
   assert.ok(beri("scripts", "atlas", "mozgani_hra.py").includes('h.get("hrbtenjaca"'), "začetek hrbtenjače v mozgani_hra.py");
   assert.ok(beri("scripts", "atlas", "mozgani-rez-hra.py").includes("ozke = je_mali"), "ozke razpoke niso izrez");
+  const j = json("jetra");
+  assert.ok(j.tkiva.jetra.rezCelice?.[0]?.mera > 0.001, "režnjiči na rezu jeter");
 });
 
 test("n1: viri – HRA, TotalSegmentator in HVA-CT (deljenje pod enakimi pogoji)", () => {

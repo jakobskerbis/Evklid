@@ -32,12 +32,12 @@ mozgani.glb, mozgani-telefon.glb (skorja in mali možgani)
   scripts/atlas/mozgani_hra.py in mozgani-rez-hra.py.
 
 jetra.glb, jetra-telefon.glb (površina jeter, režnji, portalna vena, jetrne vene, spodnja votla vena)
-  HVA-CT: Hepatic Venous Annotations CT, https://doi.org/10.5281/zenodo.19850108, primer 374, CC BY-SA 4.0
+  HVA-CT: Hepatic Venous Annotations CT, https://doi.org/10.5281/zenodo.19850108, primer 286, CC BY-SA 4.0
   (https://creativecommons.org/licenses/by-sa/4.0/): maske jeter, intrahepatične portalne vene in jetrnih ven na CT
-  hepaticvessel_374 iz Medical Segmentation Decathlon Task08 HepaticVessel (Simpson A. L. et al., arXiv:1902.09063;
+  hepaticvessel_286 iz Medical Segmentation Decathlon Task08 HepaticVessel (Simpson A. L. et al., arXiv:1902.09063;
   CC BY-SA 4.0). Couinaudovi segmenti in spodnja votla vena: TotalSegmentator (modela liver_segments in total,
   Apache-2.0) na istem CT. Prirejeno (marching cubes, skelet in polmeri žil, cevi, režnji); izdelava
   scripts/atlas/jetra-ct.py, ct_orodja.py, jetra_geometrija.py.
   Deljenje pod enakimi pogoji: mreže v jetra.glb in jetra-telefon.glb so izpeljano delo in so na voljo pod CC BY-SA 4.0.
-  Žolčnik: Z-Anatomy (CC BY-SA 4.0), postavljen v ležišče (bolnik na CT ga nima); jetrna arterija in žolčni vodi:
+  Žolčnik: TotalSegmentator na istem CT (če ga bolnik nima, Z-Anatomy, CC BY-SA 4.0, v ležišču); jetrna arterija in žolčni vodi:
   lastna geometrija Evklid ob portalnih vejah.

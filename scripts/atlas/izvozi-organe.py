@@ -65,7 +65,7 @@ ORGANI = {
                  r"Amygdal|Hippocamp|Claustrum|Internal capsule|External capsule|Extreme capsule|Basal forebrain|Septal|Indusium|"
                  r"tract\b(?!.*Optic)|fasciculus|Grey matter of|Tegmentum of pons|Reticular|Substantia nigra|Red nucleus|Medial longitudinal|"
                  r"Central canal|Central grey|Area postrema|Locus|Raphe|Vestibular|Cochlear|Solitary|Trigeminal|Olivary",
-        cilj=(165_000, 44_000),
+        cilj=(210_000, 58_000),  # n3: telesa HRA vzamejo ~50k / 17k, skorja dobi nazaj svoj delež (prej fasete na čelu)
         # Pečene PBR teksture (videz, j 10. 11.): sveži možgani rožnato sivi, pialne žilice, vlažna pia mater. Telefon ima
         # svojo peko 1024 px (rtx.py in peci.py zahtevata delovno datoteko za obe mreži). vz1: 240k / 70k = 6,6 / 2,3 MiB
         # (geometrija z UV ≈ 25 B na trikotnik) → 165k / 44k, da teksture ostanejo v polni ločljivosti pod mejo 6 / 1,9 MB.
@@ -90,7 +90,7 @@ ORGANI = {
         # Skorja iz MRI (OpenNeuro ds000001 fMRIPrep/FreeSurfer, CC0): Z-Anatomy vijuge (tkivo »skorja«) zamenjamo s
         # pialno površino ene anonimne prostovoljke/prostovoljca (lh/rh.pial), režnji iz parcelacije aparc, globina brazd
         # (sulc) potemni senco okolice. Mapa z datotekami: --mri <mapa> (sub-01-lh.pial, …-lh.sulc, …-lh.aparc.annot).
-        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina"),
+        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina", glajenjeMej=24),
         # Mali možgani iz segmentacije MRI istega osebka (aseg, oznake 7/8/46/47; scripts/atlas/mali-mozgani-mri.py): prava
         # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
         # glajenje: Taubin (krogi) proti stopnicam vokslov; zgornja pedunkla Z-Anatomy nista več ohranjena (od zadaj je bil
@@ -924,7 +924,9 @@ def skorja_iz_mri(mapa, m, lo, hi):
             acc = np.stack([np.bincount(e[:, 0], weights=I[e[:, 1], j], minlength=len(v)) for j in range(len(lob))], 1)
             I = 0.5 * I + 0.5 * acc / np.maximum(st, 1)[:, None]
         dl = np.where(dl != None, np.array(lob, dtype=object)[I.argmax(1)], dl)
-        tri_del = dl[t[:, 0]]
+        # trikotnik dobi reženj večine svojih oglišč (prej prvega oglišča: žagast rob v učnih barvah)
+        tl = dl[t]
+        tri_del = np.where(tl[:, 1] == tl[:, 2], tl[:, 1], tl[:, 0])
         for d in list(APARC_DELI) + ["sredina"]:
             if d == "sredina":  # medialna stena (rez FreeSurfer med polobloma): zapolni luknjo v prerezu, ni del
                 if not m.get("sredina"):

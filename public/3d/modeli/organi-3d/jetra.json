@@ -41,21 +41,22 @@
     "polno": true,
     "rob": 0.0009,
     "povecaj": 1.004,
-    "robBarva": "#5a231c"
+    "robBarva": "#5a231c",
+    "skleni": 0.07
    },
    "rezSum": 0.5,
    "rezCelice": [
     {
-     "mera": 0.0013,
-     "moc": 0.3,
-     "stena": "#b0644c",
-     "sirina": 0.1,
-     "jedroMoc": 0.3,
-     "jedro": "#5c1c14",
-     "jedroR": 0.2,
-     "ton": 0.08,
-     "zvitost": 0.4,
-     "vdolbina": 0.15
+     "mera": 0.0015,
+     "jedroMoc": 0.5,
+     "jedro": "#4d1712",
+     "jedroR": 0.16,
+     "moc": 0.45,
+     "stena": "#a05a4c",
+     "sirina": 0.09,
+     "vdolbina": 0.3,
+     "zvitost": 0.25,
+     "ton": 0.1
     }
    ]
   },
