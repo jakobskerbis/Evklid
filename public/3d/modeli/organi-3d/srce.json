@@ -32,14 +32,14 @@
    "rezMasca": "#e3bf74",
    "rezVlaknaCt": 1000,
    "rezTkivoMoc": 0.2,
-   "rezVlaknaMoc": 1.6,
+   "rezVlaknaMoc": 1.15,
    "rezSum": 0.22,
    "rezHrap": 0.42,
    "rezLak": 0.55,
    "rezLakHrap": 0.3,
    "rezMascaMeja": [
-    0.2,
-    0.46
+    0.36,
+    0.62
    ],
    "rezRelief": 0.0002,
    "rezVlaknaOs": [
@@ -344,14 +344,14 @@
    "rezMasca": "#e3bf74",
    "rezVlaknaCt": 1000,
    "rezTkivoMoc": 0.2,
-   "rezVlaknaMoc": 1.6,
+   "rezVlaknaMoc": 1.15,
    "rezSum": 0.22,
    "rezHrap": 0.42,
    "rezLak": 0.55,
    "rezLakHrap": 0.3,
    "rezMascaMeja": [
-    0.2,
-    0.46
+    0.36,
+    0.62
    ],
    "rezRelief": 0.0002,
    "rezVlaknaOs": [
@@ -1176,7 +1176,11 @@
    ],
    "skrijDele": [
     "prevodni-sistem"
-   ]
+   ],
+   "okvir": {
+    "polmer": 1,
+    "polmerTelefon": 1.14
+   }
   },
   "prerez": {
    "pogled": [
