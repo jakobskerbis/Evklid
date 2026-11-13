@@ -74,7 +74,10 @@ Nad ~800 000× (TEM) se slika prelije v ponazoritev molekul, ki jih v izbranem p
   najglobljo vidno točko in pokaže do 5 imen brez prekrivanja; pod sliko je seznam z vlogo (`mk.mol.*`, `mk.molv.*`
   v vseh jezikih). Pri atomih (pod 0,06 nm na točko) je še legenda elementov (barve CPK).
 - Značilno mesto (`ZNACILNO`): ob prehodu na SEM ali TEM, dokler uporabnik preparata ni sam premikal, gre pogled na
-  najbližjo značilno snov (kri: eritrocit, mišica: miofibrila, T4/SARS/HIV: dedni zapis v virusu, jetra: glikogen …).
+  vnaprej izračunano točko globoko v značilni snovi (`ZNACILNA_TOCKA`: kri → eritrocit, mišica → miofibrila, T4/SARS/HIV →
+  dedni zapis v virusu, arterija → elastična membrana …). Točke so izračunane z mrežo sond (256 × 256, korak 0,25 µm, pri
+  virusih 4 nm) kot najbližje mesto, ki je vsaj 1 µm (virusi 20 nm) od roba snovi. Če se oblika preparata spremeni in točka
+  ne ustreza več, mikroskop išče v njeni okolici (do 5 µm) in nato okoli sredine (do 100 µm).
 
 Viri: PDB 2HHB (hemoglobin), 1AO6 (albumin), 1IGT (mišji IgG2a), 1KX5 (nukleosom), 2MYS (miozin), 5VF3 (gp23 T4),
 6VXX (S SARS-CoV-2); Goodsell, *The Machinery of Life* (2009); Alberts, *Molecular Biology of the Cell*, 7. izd.

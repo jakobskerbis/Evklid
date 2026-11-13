@@ -248,9 +248,11 @@ export function ustvariUpodobitev(platno) {
       gl.uniform1f(sestavi.u("uCas"), (v.cas || 0) % 100);
       risi(null, W, H);
     },
-    // Reže molekul v mreži k × k čez isto vidno polje kot zadnji izris (za oznake z imeni): vrednost = reža + 1, 0 = nič.
+    // Reže molekul v mreži k × k čez isto vidno polje kot izris v (za oznake z imeni): vrednost = reža + 1, 0 = nič.
+    // Kliči pred narisi: readPixels potem čaka le na majhen prehod k × k, ne na celoten izris molekul.
     idMolekul(v, k = 48) {
-      if (!v.mol || !mol) return null;
+      if (!v.mol) return null;
+      if (!mol) mol = program(gl, MOLEKULE);
       if (!idT) idT = tekstura(gl, [k, k]);
       nastaviMol(v.mol.uniforme, k, (v.umNaTocko * 1000 * v.n) / k, 1);
       risi(idT.f, k, k);

@@ -170,7 +170,7 @@ test("mikroskop: prevodi gumbov v vseh jezikih in vstop iz lekcij", () => {
 
 // Molekule (j, 13. 11. 2026): vsak preparat pokaže molekule, ki jih v njem najpogosteje najdemo, z imeni in vlogami.
 test("mikroskop: prizori molekul, membrane in značilna mesta se ujemajo s katalogom in shaderjem", async () => {
-  const { MOL, PRIZORI, MEMBRANE, ZNACILNO, S, prizor, uniformeMolekul, elementiMolekule } = await import("../public/mikroskop/molekule-vrste.js");
+  const { MOL, PRIZORI, MEMBRANE, ZNACILNO, ZNACILNA_TOCKA, S, prizor, uniformeMolekul, elementiMolekule } = await import("../public/mikroskop/molekule-vrste.js");
   const { MOLEKULE } = await import("../public/mikroskop/molekule.js");
   for (const [ime, [koda, ...mol]] of Object.entries(PRIZORI)) {
     assert.ok(mol.length <= 6, `${ime}: največ 6 rež`);
@@ -187,6 +187,13 @@ test("mikroskop: prizori molekul, membrane in značilna mesta se ujemajo s katal
     assert.ok(IDS.has(p), p);
     for (const k of snovi) assert.ok(Number.isInteger(k), `${p}: ${k}`);
   }
+  for (const [p, z] of Object.entries(ZNACILNA_TOCKA)) {
+    assert.ok(ZNACILNO[p], `${p}: točka brez snovi`);
+    assert.ok(z.length === 2 && z.every(Number.isFinite), p);
+  }
+  assert.deepEqual(Object.keys(ZNACILNO).sort(), Object.keys(ZNACILNA_TOCKA).sort());
+  // gojišče virusov ni krvna plazma; glava T4 ob repu nima gumbov Hoc
+  assert.equal(prizor({ snov: S.PLAZMA, tip: 0, r1: 0 }, "virus-hiv").ime, "voda");
   // značilne molekule: kri → hemoglobin, mišica → miozin, T4 → DNK v glavi, rep → gp18, hrustanec → agrekan
   const pr = (snov, prep, tip = 0, r1 = 0) => prizor({ snov, tip, r1 }, prep).mol;
   assert.ok(pr(S.ERITROCIT, "kri").includes("hemoglobin"));

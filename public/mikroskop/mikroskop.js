@@ -2,7 +2,7 @@
 // in finim vijakom, lučko in zaslonko, nad 1000× presevni elektronski mikroskop (TEM) do 50 000 000× (j, 12. 11. 2026),
 // pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
 // pri tkivih 3D sveta) in laboratorij (pogon simulacij »lab-mikroskop«). Besedila vsebine so slovenska kot pri 3D modelih.
-import { MOL, ELEMENTI, ZNACILNO, elementiMolekule } from "./molekule-vrste.js";
+import { MOL, ELEMENTI, ZNACILNO, ZNACILNA_TOCKA, elementiMolekule } from "./molekule-vrste.js";
 import { ustvariUpodobitev } from "./upodobi.js";
 import { izracunajPogled, ZACETNO, povecava } from "./pogled.js";
 import { OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
@@ -447,12 +447,20 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     const ustreza = (o) => (zel ? zel.includes(Math.round(o.snov)) : !prazno(o));
     const c = upo.sonda([s.sredisce]);
     if (!c || ustreza(c[0])) return;
-    if (zel && poisci(x0, y0, ustreza, 0.03, 1.25, 16)) return;
-    if (prazno(c[0])) poisci(x0, y0, (o) => !prazno(o), 3, 2, 8);
+    if (zel) {
+      // vnaprej izračunana točka globoko v značilni snovi; če je ni (spremenjena oblika), okolica točke, nato okolica sredine
+      const z = ZNACILNA_TOCKA[prep.id];
+      if (z && ustreza(upo.sonda([z])[0])) return void (s.sredisce = [...z]);
+      if (z && poisci(z[0], z[1], ustreza, 0.02, 1.3, 5)) return;
+      if (poisci(x0, y0, ustreza, 0.03, 1.25, 100)) return;
+    }
+    if (prazno(c[0])) poisci(x0, y0, (o) => !prazno(o), 3, 2, 100);
   }
-  // Išče po krogih (polmer r0, r0·k, … do 100 µm, n smeri, vsak krog zasukan) in premakne sredino na prvo ustrezno točko.
-  function poisci(x0, y0, ustreza, r0, k, n) {
-    for (let r = r0, j = 0; r <= 100; r *= k, j++) {
+  // Išče po krogih (polmer r0, r0·k, … do rMax µm, vsak krog zasukan; točke na krogu največ ~0,4 µm narazen, a vsaj 8 in
+  // največ 64) in premakne sredino na prvo ustrezno točko.
+  function poisci(x0, y0, ustreza, r0, k, rMax) {
+    for (let r = r0, j = 0; r <= rMax; r *= k, j++) {
+      const n = Math.min(64, Math.max(8, 8 * Math.ceil((2 * Math.PI * r) / 0.4 / 8)));
       const tocke = Array.from({ length: n }, (_, i) => {
         const f = ((i + 0.618 * j) * 2 * Math.PI) / n;
         return [x0 + r * Math.cos(f), y0 + r * Math.sin(f)];
@@ -514,10 +522,11 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     const r = izracunajPogled(upo, prep, s, nn, { hitro });
     r.v.zaslonN = N;
     r.v.cas = performance.now() / 1000;
+    const id = hitro ? null : idMolekul(r);
     upo.narisi(r.v);
     zadnji = { vp: r.vp, css, m: r.m, mol: r.mol };
     if (hitro) oznakeMol.replaceChildren();
-    else posodobiMolekule(r, css);
+    else posodobiMolekule(r, css, id);
     posodobiMerilo();
     if (hitro) {
       clearTimeout(polnaPozneje);
@@ -532,9 +541,21 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   // Senčilnik molekul v mreži K × K zapiše, katera molekula je kje (upo.idMolekul); za vsako molekulo poiščemo točko
   // globoko v njej (največ sosedov iste molekule), tam je oznaka. Pod sliko je seznam z vlogo, pri atomih še elementi.
   const K = 48;
-  function posodobiMolekule(r, css) {
-    const reze = r.mol && r.mol.utez >= 0.5 ? r.mol.reze : null;
-    const id = reze ? upo.idMolekul(r.v, K) : null;
+  // svetlost, defokus in šum ne premaknejo molekul: ob istem pogledu velja zadnja mreža
+  let idKljuc = "";
+  let idZadnji = null;
+  function idMolekul(r) {
+    if (!r.mol || r.mol.utez < 0.5) return null;
+    const U = r.mol.uniforme;
+    const kljuc = JSON.stringify([r.v.sredisce, r.v.umNaTocko, r.v.n, U.pA, U.pB, U.memVrsta, U.zun, U.mem, U.y0, U.n, U.fine, U.smer, U.faza, r.mol.reze]);
+    if (kljuc !== idKljuc) {
+      idZadnji = upo.idMolekul(r.v, K);
+      idKljuc = kljuc;
+    }
+    return idZadnji;
+  }
+  function posodobiMolekule(r, css, id) {
+    const reze = id ? r.mol.reze : null;
     oznakeMol.replaceChildren();
     secMol.hidden = !id;
     if (!id) return;
@@ -553,7 +574,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
         if (!e) vse.set(m, (e = { n: 0, naj: -1, tocka: null }));
         e.n++;
         const [x, y] = naZaslon(i, j);
-        if (x < 60 || x > rob.width - 60 || y < 44 || y > rob.height - 44) continue; // oznaka mora biti cela na odru
+        if (x < 40 || x > rob.width - 40 || y < 44 || y > rob.height - 44) continue; // oznaka naj bo na odru (izmeri se ob postavitvi)
         let sos = 0;
         for (let dj = -2; dj <= 2; dj++)
           for (let di = -2; di <= 2; di++) if (ime(Math.min(K - 1, Math.max(0, i + di)), Math.min(K - 1, Math.max(0, j + dj))) === m) sos++;
@@ -565,11 +586,10 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       }
     // večje najprej; voda le, če je prostor
     const red = [...vse.entries()].sort((a, b) => (a[0] === "voda") - (b[0] === "voda") || b[1].n - a[1].n);
+    // oznako postavimo, izmerimo in obdržimo le, če je cela na odru in ne prekriva že postavljene
     const postavljene = [];
     for (const [m, e] of red) {
       if (!e.tocka || postavljene.length >= 5) continue;
-      if (postavljene.some(([x, y]) => Math.abs(x - e.tocka[0]) < 130 && Math.abs(y - e.tocka[1]) < 34)) continue;
-      postavljene.push(e.tocka);
       const o = mk("span", "mk-mol-oznaka");
       const pika = mk("i", "");
       pika.style.background = MOL[m].barva;
@@ -577,6 +597,11 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       o.style.left = `${e.tocka[0]}px`;
       o.style.top = `${e.tocka[1]}px`;
       oznakeMol.append(o);
+      const b = o.getBoundingClientRect();
+      const zunaj = b.left < rob.left + 4 || b.right > rob.right - 4 || b.top < rob.top + 36 || b.bottom > rob.bottom - 36;
+      const cez = postavljene.some((p) => b.left < p.right + 6 && p.left < b.right + 6 && b.top < p.bottom + 4 && p.top < b.bottom + 4);
+      if (zunaj || cez) o.remove();
+      else postavljene.push(b);
     }
     seznamMol.replaceChildren(
       ...red.map(([m]) => {

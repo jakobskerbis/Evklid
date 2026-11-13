@@ -168,8 +168,20 @@ export const ZNACILNO = {
   ustne: [S.CITO], list: [S.KLOROPLAST], steblo: [S.CITO, S.KLOROPLAST], koren: [S.KROMATIN, S.JEDRO], reza: [S.CITO, S.STENA],
   jetra: [S.GLIKOGEN, S.CITO], bezgavka: [S.KROMATIN, S.JEDRO], jajcnik: [S.CITO], modo: [S.KROMATIN, S.JEDRO],
   zleza: [S.GRANULA], scitnica: [S.KOLOID], koza: [S.KERATIN], zivec: [S.MIELIN], "bela-snov": [S.MIELIN],
-  "mali-mozgani": [S.CITO], pljuca: [S.CITO], sapnik: [S.SLUZ, S.CITO], zelodec: [S.SLUZ, S.CITO], "tanko-crevo": [S.MIKROVIL],
+  "mali-mozgani": [S.CITO], pljuca: [S.CITO], sapnik: [S.SLUZ, S.CITO], zelodec: [S.SLUZ, S.CITO], "tanko-crevo": [S.CITO],
   "debelo-crevo": [S.SLUZ, S.CITO], mehur: [S.CITO], arterija: [S.ELASTIN], vena: [S.KOLAGEN, S.CITO], zob: [S.SKLENINA],
+};
+// Točka (µm) blizu začetne sredine, kjer je značilna snov vsaj ~1 µm od roba (pri virusih ~20 nm), da je na ravni molekul
+// vidna le ona. Izračunano z mrežo sond (docs/mikroskop.md »Molekule«); ob spremembi oblike preparata jo preračunaj.
+export const ZNACILNA_TOCKA = {
+  kri: [400.9, 0.9], "skeletna-misica": [-0.1, -1.1], "srcna-misica": [-0.1, 0.4], "gladka-misica": [-2.4, 59.9],
+  "virus-t4": [-0.094, 0.554], "virus-sars": [0.046, -0.118], "virus-hiv": [1.95, 2.434], bakterije: [18.9, -4.4],
+  kvasovke: [3.9, 24.6], ustne: [3.4, 6.6], list: [-17.9, 21.1], steblo: [-10.1, -11.9], koren: [-3.1, -799.9],
+  reza: [0.6, -4.4], jetra: [-4.9, -4.4], bezgavka: [3.6, 2.1], jajcnik: [12.1, -1.9], modo: [-5.6, 5.6],
+  zleza: [-31.9, -31.9], scitnica: [-1.1, 2.6], koza: [30.9, 285.1], zivec: [-8.1, -946.4],
+  "bela-snov": [-30.4, -31.9], "mali-mozgani": [2.4, 7.6], pljuca: [7.4, -16.6], sapnik: [-9.6, 1123.6],
+  zelodec: [7.9, 900.4], "tanko-crevo": [-5.6, 398.9], "debelo-crevo": [6.1, 796.1], mehur: [-11.6, 1181.6],
+  arterija: [-740.3, 508.8], vena: [1132.3, 554.3], zob: [-13.6, 346.6],
 };
 // virusi (r1 v celice.js): 1 SARS-CoV-2, 2 HIV, 3 T4 (3,0 glava, 3,1 rep, 3,2 vlakna)
 const virus = (r1) => Math.round(r1 * 10) / 10;
@@ -191,6 +203,7 @@ export function prizor(o, prep) {
   if (snov === S.GENOM) ime = v === 1 ? "sarsRnp" : v === 2 ? "hivJedro" : "t4dnk";
   if (snov === S.VIRUS) ime = v === 2 ? "hivMatriks" : v === 3.1 ? "t4rep" : v === 3.2 ? "t4vlakno" : "virus";
   if ((snov === S.CITO || snov === S.MEMBRANA) && (tip === C.BAKTERIJA)) ime = "bakterija";
+  if (snov === S.PLAZMA && (prep === "virus-sars" || prep === "virus-hiv")) ime = "voda"; // gojišče celične kulture, ne krvna plazma
   if (snov === S.STENA) ime = tip === C.BAKTERIJA ? "stenaB" : tip === C.KVASOVKA ? "stenaK" : "stenaR";
   const [koda, ...mol] = PRIZORI[ime];
   if (ime === "cito" || ime === "mikrovil") {
@@ -211,6 +224,7 @@ export function membrana(a, b, prep) {
   const va = virus(a.r1), vb = virus(b.r1);
   const zun = notri(a) && !notri(b) ? -1 : 1;
   const kaj = (ime, mol) => ({ ime, koda: MEMBRANE[ime][0], mol: mol || MEMBRANE[ime].slice(1), zun, bodice: 16 });
+  if (notri(a) && notri(b) && va >= 3 && vb >= 3) return kaj("rob"); // glava ob repu: gumbi Hoc niso med DNK
   if ((a.snov === S.GENOM && va >= 3 && va < 3.05) || (b.snov === S.GENOM && vb >= 3 && vb < 3.05)) return kaj("t4");
   if ((a.snov === S.VIRUS && va > 3.05) || (b.snov === S.VIRUS && vb > 3.05)) return kaj("rob");
   if (notri(a) && notri(b)) return kaj(va === 2 || vb === 2 ? "p24" : "rob");
