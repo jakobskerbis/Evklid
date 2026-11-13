@@ -58,13 +58,15 @@ function izZbirke(e) {
 
 // Gumb »3D svet« ob napaki (model ne obstaja, ni WebGL): na zbirko, v okvirju aplikacije pa zapre okvir (zbirka v
 // okvirju nima poti nazaj, Esc tam ne deluje).
-function naZbirko(b) {
-  b.href = "#";
-  if (vgrajeno)
-    b.addEventListener("click", (e) => {
-      e.preventDefault();
-      starsu({ tip: "zapri3d" });
-    });
+// V okvirju je gumb, ne povezava (Android ob pritisku na povezavo pokaže oblaček z naslovom in povezavo).
+function naZbirko() {
+  const b = mk(vgrajeno ? "button" : "a", "a3-pill");
+  if (!vgrajeno) b.href = "#";
+  else {
+    b.type = "button";
+    b.addEventListener("click", () => starsu({ tip: "zapri3d" }));
+  }
+  return b;
 }
 
 // Področja v izbirniku zbirke: »telo« združi atlas, organe in organske sisteme; ikona za kartico brez sličice.
@@ -382,8 +384,7 @@ async function model(id, param, moj) {
   if (!mod) {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t("a3.notFound")));
-    const b = mk("a", "a3-pill");
-    naZbirko(b);
+    const b = naZbirko();
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);
@@ -490,8 +491,7 @@ async function usmeri() {
     if (moj !== zaporedje) return;
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
-    const b = mk("a", "a3-pill");
-    naZbirko(b);
+    const b = naZbirko();
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);

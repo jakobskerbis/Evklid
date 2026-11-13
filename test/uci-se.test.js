@@ -239,4 +239,7 @@ test("3D svet: kartice so gumbi brez povezave in brez modrega odsvita ob dotiku"
   const stran = read("public/3d/stran.js");
   assert.match(stran, /mk\(gumbek \? "button" : "a", `a3-krog k3-sosed/);
   assert.match(stran, /const gumbek = vAplikaciji \|\| vgrajeno;/);
+  // Gumb »3D svet« na zaslonu napake je v okvirju prav tako gumb.
+  assert.match(stran, /function naZbirko\(\) \{\n  const b = mk\(vgrajeno \? "button" : "a", "a3-pill"\);/);
+  assert.doesNotMatch(stran, /mk\("a", "a3-pill"\);\n\s*naZbirko/);
 });
