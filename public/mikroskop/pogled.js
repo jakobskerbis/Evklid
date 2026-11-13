@@ -1,6 +1,7 @@
 // Iz stanja mikroskopa izračuna, kaj in kako narisati (upodobi.js narisi): vidno polje, zamegljenost, svetlost in pri
 // največjih povečavah model molekul (sonda izmeri snov in membrano v središču). Brez DOM, a potrebuje upodobitev za sondo.
 import { matrikaBarvil, BARVANJA } from "./barvila.js";
+import { uniformeMolekul } from "./molekule-vrste.js";
 import { OBJEKTIVI, OKULAR, vidnoPolje, zamegljenost, svetlost, kontrast, TEM_LOCLJIVOST, SEM_LOCLJIVOST, utezModela } from "./optika.js";
 
 export const ZACETNO = {
@@ -32,19 +33,16 @@ function sondaModela(upo, c, m) {
   const d0 = o.meja; // µm, razdalja do najbližje membrane
   const vp = vidnoPolje(m, "tem");
   const mem = d0 < vp ? 1 : 0;
-  let b = o.snov;
-  let a = o.snov;
+  let sa = o, sb = o;
   if (mem) {
     // snov na drugi strani in na tej strani (središče je lahko v sami membrani)
-    const [onkraj, tu] = upo.sonda([
+    [sb, sa] = upo.sonda([
       [c[0] - n[0] * (d0 + 0.012), c[1] - n[1] * (d0 + 0.012)],
       [c[0] - n[0] * (d0 - 0.012), c[1] - n[1] * (d0 - 0.012)],
     ]);
-    b = onkraj.snov;
-    a = tu.snov;
   }
-  if (a === 24) a = 1; // S_MEMBRANA → citoplazma
-  if (b === 24) b = 1;
+  // snov (ultrastruktura TEM), vrsta celice in r1 (vrsta virusa) za izbiro pravih molekul (molekule-vrste.js)
+  const strana = (x) => ({ snov: Math.round(x.snov) === 24 ? 1 : Math.round(x.snov), tip: Math.round(x.tip), r1: x.r1 }); // S_MEMBRANA → citoplazma
   let smer = o.smer;
   const ls = Math.hypot(smer[0], smer[1]);
   const smerL = ls > 0.5 ? 1 : 0;
@@ -53,8 +51,8 @@ function sondaModela(upo, c, m) {
   return {
     sonda: o,
     fine: [mod(c[0]), mod(c[1])],
-    a,
-    b,
+    stranA: strana(sa),
+    stranB: strana(sb),
     mem,
     y0: d0 * 1000,
     n,
@@ -81,7 +79,10 @@ export function izracunajPogled(upo, preparat, s, n, { hitro = false } = {}) {
   const utez = tem ? utezModela(m) : 0;
   if (utez > 0 && !hitro) {
     const u = sondaModela(upo, s.sredisce, m);
-    if (u) mol = { utez, uniforme: { ...u, barve: s.barve ? 1 : 0 } };
+    if (u) {
+      const mu = uniformeMolekul(u.stranA, u.stranB, u.mem, preparat.id);
+      mol = { utez, uniforme: { ...u, ...mu, barve: s.barve ? 1 : 0 }, reze: mu.reze };
+    }
   }
   const obj = OBJEKTIVI[s.objektiv];
   return {

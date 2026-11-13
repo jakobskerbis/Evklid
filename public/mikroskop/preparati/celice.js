@@ -758,6 +758,9 @@ void temPosebno(inout U u, T t, vec2 p, float px) {
     float steb = step(0.045, rho) * step(rho, 0.06) * pokrij(lok - 0.003, px);
     float glava = pokrij(length(vec2(lok, rho - 0.063)) - 0.007, px);
     u.g = max(u.g, 0.6 * max(steb, glava));
+    // za sloj molekul: ovojnica je meja, v njej RNK z beljakovino N, zunaj (tudi med bodicami) gojišče
+    u.meja = abs(rho - 0.045);
+    u.snov = rho < 0.045 ? S_GENOM : S_VAKUOLA;
   } else if (t.r1 == V_HIV) {
     u.g = 0.15;
     u.g = mix(u.g, 0.85, membrana(rho - 0.055, px));
@@ -766,15 +769,24 @@ void temPosebno(inout U u, T t, vec2 p, float px) {
     u.g = max(u.g, 0.55 * env);
     if (t.meja > 1.5) {
       u.g = mix(u.g, 0.7, crta(rho - 0.045, 0.006, px));               // nezrel virus: plašč beljakovine Gag
+      u.meja = abs(rho - 0.055);
+      u.snov = rho < 0.055 ? S_VIRUS : S_VAKUOLA;
     } else {
       vec2 q = rot(t.cid.x * 6.2832) * z;
       float w = mix(0.012, 0.03, clamp((q.x + 0.04) / 0.08, 0.0, 1.0));
       float jedro = max(abs(q.y) - w, abs(q.x) - 0.042);
       u.g = mix(u.g, 0.45 + 0.2 * sumL(q, 0.008, px), pokrij(jedro, px));
       u.g = mix(u.g, 0.85, crta(jedro, 0.002, px));
+      // za sloj molekul: meji sta ovojnica in stena stožčastega jedra (p24); v jedru RNK
+      u.meja = min(abs(rho - 0.055), abs(jedro));
+      u.snov = rho > 0.055 ? S_VAKUOLA : jedro < 0.0 ? S_GENOM : S_VIRUS;
     }
   } else {
-    u.g = t.meja < 0.5 ? 0.85 : (t.meja < 1.5 ? 0.7 : 0.55);         // glava z DNK, rep, vlakna
+    // T4: r1 = 3,0 glava z DNK, 3,1 rep, 3,2 vlakna; t.meja je razdalja do roba dela (µm)
+    float del = floor((t.r1 - V_T4) * 10.0 + 0.5);
+    u.g = del < 0.5 ? 0.85 : (del < 1.5 ? 0.7 : 0.55);
+    u.meja = t.meja;
+    u.snov = del < 0.5 ? S_GENOM : S_VIRUS;
   }
 }
 `;
@@ -841,8 +853,10 @@ T tkivo(vec2 p, float px) {
                    length(fx - vec2(0.07, 0.043) - clamp(dot(fx - vec2(0.07, 0.043), vec2(0.03, -0.043)) / 0.002749, 0.0, 1.0) * vec2(0.03, -0.043)));
     float dmin = min(min(rep, plosca), min(glava, vl - 0.002));
     if (dmin < 0.0) {
-      t.snov = S_VIRUS; t.r1 = V_T4; t.jc = p; t.cid = vec2(ki, 1.0); t.jedro = 1e3;
-      t.meja = glava < 0.0 ? 0.0 : (min(rep, plosca) < 0.0 ? 1.0 : 2.0);
+      t.snov = S_VIRUS; t.jc = p; t.cid = vec2(ki, 1.0); t.jedro = 1e3;
+      float del = glava < 0.0 ? 0.0 : (min(rep, plosca) < 0.0 ? 1.0 : 2.0);
+      t.r1 = V_T4 + 0.1 * del;                                         // 3,0 glava, 3,1 rep, 3,2 vlakna (molekule-vrste.js)
+      t.meja = -(del < 0.5 ? glava : del < 1.5 ? min(rep, plosca) : vl - 0.002);
       return t;
     }
   }

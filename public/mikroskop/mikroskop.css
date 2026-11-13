@@ -111,3 +111,19 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
 .mk-pov .mk-drsnik { flex: 1; }
 .k3 .mk-pov-gumb { flex: none; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .k3 .mk-pov-gumb:disabled { opacity: 0.4; cursor: default; }
+
+/* imena molekul na sliki in seznam pod njo */
+.mk-mol-oznake { position: absolute; inset: 0; pointer-events: none; }
+.mk-mol-oznaka {
+  position: absolute; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 6px; max-width: 46%;
+  padding: 3px 9px; border-radius: 999px; background: rgba(11, 15, 22, 0.78); color: #f2f4f8; border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.8rem; font-weight: 600; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; unicode-bidi: plaintext;
+}
+.mk-mol-oznaka i, .mk-mol-seznam i, .mk-el i { flex: none; width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.5); }
+.mk-mol-seznam { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; line-height: 1.35; }
+.mk-mol-seznam li { display: grid; grid-template-columns: 10px auto; column-gap: 8px; align-items: baseline; unicode-bidi: plaintext; }
+.mk-mol-seznam li i { align-self: center; }
+.mk-mol-seznam li span { grid-column: 2; color: var(--k3-muted); font-size: 0.85rem; }
+.mk-mol-atomi { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; border-top: 1px solid var(--k3-rob); padding-top: 8px; }
+.mk-mol-atomi h3 { flex-basis: 100%; }
+.mk-el { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; font-size: 0.88rem; }

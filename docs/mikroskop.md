@@ -21,7 +21,8 @@ mikroskop do 1000×, vrstični elektronski mikroskop (SEM, površina) od 40× do
 | `pogled.js` | stanje → uniforme za izris |
 | `upodobi.js` | WebGL2: preparat → Gaussova zamegljenost → sloj molekul → sestava (okrogel okular ali TEM čez ves oder) |
 | `glsl.js` | skupni GLSL: šum, Voronoi celice, organeli, `ultra()` za TEM, `semVisina()` za SEM, membrane |
-| `molekule.js` | sloj molekul in atomov (fosfolipidi, kolagen, DNK, hidroksiapatit …) |
+| `molekule.js` | sloj molekul in atomov: 37 prizorov (`P_*`), membrane, atomi po elementih, prehod ID za oznake |
+| `molekule-vrste.js` | katalog 75 molekul (barva, gostota TEM, atomi), prizori po snovi, membrane, značilna mesta preparatov |
 | `barvila.js` | barvanja kot Beer–Lambertova mešanica treh barvil (optične gostote) |
 | `mapa.js` | struktura atlasa ali model → preparat |
 | `preparati/` | 47 preparatov; `index.js` je seznam (id, datoteka, izvoz, ime, skupina) |
@@ -54,6 +55,27 @@ struktura atlasa in vsak model svoj preparat.
   sekundarnih elektronov: strme ploskve in robovi so svetli (robni učinek), detektor ob strani da senco, jame so temne.
   Višina površine je izračunana iz preparata (eritrocit po Evansu in Fungu, celice v tkivu kot blazinice, vlakna kot
   snopi, relief preloma je samopodoben), zato vmesnik pove, da je to ponazoritev.
+
+## Molekule (j, 13. 11. 2026)
+
+Nad ~800 000× (TEM) se slika prelije v ponazoritev molekul, ki jih v izbranem preparatu na tem mestu res najdemo
+(slog D. Goodsella: obrisi molekul v pravem merilu, ne posnetek).
+
+- Sonda (`pogled.js`) da snov in vrsto celice na obeh straneh najbližje membrane. `molekule-vrste.js` iz tega izbere prizor
+  (`prizor`: kri → hemoglobin s hemom in karboanhidrazo, plazma → albumin, IgG, fibrinogen, mišica → miozin, aktin, titin,
+  glava T4 → DNK v kapsidi gp23 s Hoc, rep → gp18/gp19, hrustanec → agrekan, hialuronan, kolagen II …) in membrano
+  (dvosloj z ATP-sintazo v mitohondriju, fotosistemom v kloroplastu, pas 3 v eritrocitu, črpalko Na⁺/K⁺ v nevronu;
+  ovojnica s trni pri SARS-CoV-2 (S, razmik ~16 nm) in HIV (Env, ~34 nm)).
+- Reže: 0–5 stran A, 6–11 stran B, 12–15 membrana. Barve, gostote TEM in vrsta atomov gredo v shader kot uniforme
+  (`uBarvaMol`, `uGostMol`, `uAtMol`), prizora kot `uPA`/`uPB`.
+- Oznake: upodobi.js nariše prehod ID (48 × 48, reža + 1 v rdečem kanalu), mikroskop.js za vsako molekulo izbere
+  najglobljo vidno točko in pokaže do 5 imen brez prekrivanja; pod sliko je seznam z vlogo (`mk.mol.*`, `mk.molv.*`
+  v vseh jezikih). Pri atomih (pod 0,06 nm na točko) je še legenda elementov (barve CPK).
+- Značilno mesto (`ZNACILNO`): ob prehodu na SEM ali TEM, dokler uporabnik preparata ni sam premikal, gre pogled na
+  najbližjo značilno snov (kri: eritrocit, mišica: miofibrila, T4/SARS/HIV: dedni zapis v virusu, jetra: glikogen …).
+
+Viri: PDB 2HHB (hemoglobin), 1AO6 (albumin), 1IGT (IgG), 1KX5 (nukleosom), 2MYS (miozin), 5VF3 (gp23 T4),
+6VXX (S SARS-CoV-2); Goodsell, *The Machinery of Life* (2009); Alberts, *Molecular Biology of the Cell*, 7. izd.
 
 ## Viri
 

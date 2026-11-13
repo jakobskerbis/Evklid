@@ -116,6 +116,29 @@ export function ustvariUpodobitev(platno) {
   const blur = program(gl, BLUR);
   const sestavi = program(gl, SESTAVI);
   let mol = null; // prevede se ob prvi uporabi
+  let idT = null; // majhna tekstura za prehod z režami molekul (oznake)
+  const nastaviMol = (U, res, pxNm, idPass) => {
+    gl.useProgram(mol.p);
+    gl.uniform2f(mol.u("uRes"), res, res);
+    gl.uniform1f(mol.u("uPxNm"), pxNm);
+    gl.uniform2f(mol.u("uFine"), U.fine[0], U.fine[1]);
+    gl.uniform1f(mol.u("uMem"), U.mem);
+    gl.uniform1f(mol.u("uY0"), U.y0);
+    gl.uniform2f(mol.u("uN"), U.n[0], U.n[1]);
+    gl.uniform2f(mol.u("uSmer"), U.smer[0], U.smer[1]);
+    gl.uniform1f(mol.u("uSmerL"), U.smerL);
+    gl.uniform1f(mol.u("uFaza"), U.faza);
+    gl.uniform1f(mol.u("uBarve"), U.barve);
+    gl.uniform1f(mol.u("uPA"), U.pA);
+    gl.uniform1f(mol.u("uPB"), U.pB);
+    gl.uniform1f(mol.u("uMemVrsta"), U.memVrsta);
+    gl.uniform1f(mol.u("uZun"), U.zun);
+    gl.uniform1f(mol.u("uBodice"), U.bodice);
+    gl.uniform3fv(mol.u("uBarvaMol"), U.barve3);
+    gl.uniform1fv(mol.u("uGostMol"), U.gost);
+    gl.uniform1fv(mol.u("uAtMol"), U.at);
+    gl.uniform1i(mol.u("uIdPass"), idPass);
+  };
   let prep = null;
   let prepId = null;
   let prepSem = null; // SEM: ločen program preparata, preveden šele ob prvem izrisu SEM (glsl.js fragmentPreparata)
@@ -199,20 +222,7 @@ export function ustvariUpodobitev(platno) {
       let utez = 0;
       if (v.mol && v.mol.utez > 0) {
         if (!mol) mol = program(gl, MOLEKULE);
-        gl.useProgram(mol.p);
-        gl.uniform2f(mol.u("uRes"), n, n);
-        const U = v.mol.uniforme;
-        gl.uniform1f(mol.u("uPxNm"), v.umNaTocko * 1000);
-        gl.uniform2f(mol.u("uFine"), U.fine[0], U.fine[1]);
-        gl.uniform1f(mol.u("uA"), U.a);
-        gl.uniform1f(mol.u("uB"), U.b);
-        gl.uniform1f(mol.u("uMem"), U.mem);
-        gl.uniform1f(mol.u("uY0"), U.y0);
-        gl.uniform2f(mol.u("uN"), U.n[0], U.n[1]);
-        gl.uniform2f(mol.u("uSmer"), U.smer[0], U.smer[1]);
-        gl.uniform1f(mol.u("uSmerL"), U.smerL);
-        gl.uniform1f(mol.u("uFaza"), U.faza);
-        gl.uniform1f(mol.u("uBarve"), U.barve);
+        nastaviMol(v.mol.uniforme, n, v.umNaTocko * 1000, 0);
         risi(T.m.f, n, n);
         utez = v.mol.utez;
       }
@@ -237,6 +247,18 @@ export function ustvariUpodobitev(platno) {
       gl.uniform1f(sestavi.u("uTEM"), v.elektroni ?? v.tem ? 1 : 0);
       gl.uniform1f(sestavi.u("uCas"), (v.cas || 0) % 100);
       risi(null, W, H);
+    },
+    // Reže molekul v mreži k × k čez isto vidno polje kot zadnji izris (za oznake z imeni): vrednost = reža + 1, 0 = nič.
+    idMolekul(v, k = 48) {
+      if (!v.mol || !mol) return null;
+      if (!idT) idT = tekstura(gl, [k, k]);
+      nastaviMol(v.mol.uniforme, k, (v.umNaTocko * 1000 * v.n) / k, 1);
+      risi(idT.f, k, k);
+      const px = new Uint8Array(k * k * 4);
+      gl.readPixels(0, 0, k, k, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      const r = new Uint8Array(k * k);
+      for (let i = 0; i < k * k; i++) r[i] = px[i * 4];
+      return r;
     },
     unici() {
       gl.getExtension("WEBGL_lose_context")?.loseContext();
