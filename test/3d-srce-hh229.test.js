@@ -72,18 +72,14 @@ test("srce HH229: izvoz, dodelava in srce.json ga uporabljajo; vir je naveden", 
   assert.match(beri("scripts", "atlas", "rez-stena.mjs"), /odprtih žarkov/);
   const pri = beri("scripts", "atlas", "srce-hh229.py");
   for (const k of ["def zapri(", "holes_fill", "hh229-v1.npz"]) assert.ok(pri.includes(k), k);
+  // krog m3: HH229 je možnost recepta (ORGANI_HH229=1), privzeto ostanejo stene CT z lastnimi zaklopkami (srce m1)
+  assert.match(izv, /os\.environ\.get\("ORGANI_HH229"\) == "1"/);
+  assert.match(beri("scripts", "atlas", "organi.mjs"), /process\.env\.ORGANI_HH229 === "1" \? 96 : -96/);
   const j = JSON.parse(beri("public", "3d", "modeli", "organi-3d", "srce.json"));
-  const vol = j.prerez.volumen;
-  assert.equal(vol.epikardPravi, true);
-  // zaklopke HH229 so ploskve istega zaprtega volumna kot stena: štejejo v steno reza (sicer proge na rezni ploskvi)
-  for (const ime of ["Left atrioventricular valve (HH229)", "Right atrioventricular valve (HH229)", "Semilunar cusps of aortic valve", "Semilunar cusps of pulmonary valve"])
-    assert.ok(vol.stenaVozlisca.includes(ime), ime);
-  assert.equal(vol.votlo, undefined, "ušesi sta del pravega volumna (ne votli dopolnitvi)");
-  assert.ok(!j.pogledi.prerez.skrijDele.includes("levo-srcno-uho"));
-  for (const ime of ["Left ventricle", "Right ventricle", "Left atrium", "Right atrium", "Left auricle", "Right auricle", "Papillary muscles of left ventricle (HH229)", "Trabeculae carneae of right ventricle (HH229)"])
-    assert.ok(j.vozlisca?.[ime] || Object.values(j.vozlisca || {}).length === 0 || JSON.stringify(j).includes(ime), ime);
+  assert.ok(!j.prerez.volumen.epikardPravi, "privzeto srce ni HH229");
+  assert.ok(j.pogledi.prerez.skrijDele.includes("levo-srcno-uho"));
+  // privzeti modeli ne vsebujejo HH229: vir ni v seznamu virov, vrstice za navedbo so v docs/3d.md (za možnost)
   const viri = JSON.parse(beri("public", "3d", "viri.json")).viri;
-  const v = viri.find((x) => /HH229/.test(x.ime));
-  assert.ok(v && v.licenca === "CC BY 4.0" && /VisibleHeartLabs/.test(v.opis) && (v.datoteke || []).includes("organi-3d/srce*.glb"));
-  assert.match(beri("public", "3d", "modeli", "organi-3d", "CREDITS.txt"), /"HH229".*VisibleHeartLabs|VisibleHeartLabs/s);
+  assert.ok(!viri.some((x) => /HH229/.test(x.ime)));
+  assert.match(beri("docs", "3d.md"), /This work is based on "HH229".*VisibleHeartLabs.*CC-BY-4\.0/s);
 });

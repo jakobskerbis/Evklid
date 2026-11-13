@@ -153,7 +153,7 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)), hh229_cilj=(150_000, 28_000),  # m2: stena HH229 (trabekule, zaklopke, tetive v istem volumnu)
+        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)), hh229_cilj=(150_000, 28_000),  # možnost ORGANI_HH229=1: stena HH229 (trabekule, zaklopke, tetive v istem volumnu)
          # krog 8: telefon 15k (pri 11k raztrgan levi preddvor v prerezu)
         nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
@@ -167,7 +167,7 @@ ORGANI = {
             # maščoba v žlebovih: stik zunanjih ploskev votlin (venčni in oba medprekatna žleba), ob venčnih žilah širša;
             # ob vejah na prosti steni prekatov le tanka sled (ne ob aorti, pljučnem deblu, pljučnih venah, lističih)
             maska=dict(zile=r"coronary (artery|sinus)|Coronary sinus|interventricular artery|Circumflex|cardiac vein|vein of left ventricle|branch of right coronary",
-                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0048, zlebZila=0.0045, sled=0.2),  # m2: ožji pas (HH229 ima maščobo že v obliki)
+                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.2),
             recepti={
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
@@ -177,7 +177,7 @@ ORGANI = {
                                 # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
                                 # krog 5 (predaja: »temne gube med ploščami maščobe«): plitvejši režnjiči, svetlejši žleb med njimi
                                 mascaNasip=0.0010, mascaPremik=0.0015, mascaMera=0.007, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
-                                mascaMeja=(0.12, 0.9), mascaSum=0.3,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
+                                mascaMeja=(0.05, 0.8), mascaSum=0.18,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
@@ -1683,8 +1683,9 @@ def nalozi_stanje(pot, cfg):
 
 def izvozi_naprej(organ, cfg, osnovni, tmp):
     cfg["_ct_mapa"] = CT; cfg["_out"] = out
-    # pravo srce HH229 (scripts/atlas/srce-hh229.py → <mapa ob Startup.blend>/hh229/hh229-v1.npz); ORGANI_HH229=0: stene CT
-    if CT and os.environ.get("ORGANI_HH229") != "0":
+    # pravo srce HH229 (scripts/atlas/srce-hh229.py → <mapa ob Startup.blend>/hh229/hh229-v1.npz); ORGANI_HH229=1: stena iz pravega srca
+    # (možnost recepta; privzeto stene povprečnega srca CT – ocena kroga m2: zaklopke, trabekule in baza žil so z njimi čistejše)
+    if CT and os.environ.get("ORGANI_HH229") == "1":
         cfg["_hh229"] = os.path.join(os.path.dirname(CT), "hh229", "hh229-v1.npz")
     # pozno: koraki na celotnem stanju (srce_ct: stene iz CT, poravnava ostalih delov nanje, pokrov reza)
     for ime_f in cfg.get("pozno", []):

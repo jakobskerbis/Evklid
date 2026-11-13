@@ -32,14 +32,14 @@
    "rezMasca": "#e3bf74",
    "rezVlaknaCt": 1000,
    "rezTkivoMoc": 0.2,
-   "rezVlaknaMoc": 1.15,
+   "rezVlaknaMoc": 2.4,
    "rezSum": 0.22,
    "rezHrap": 0.42,
    "rezLak": 0.55,
    "rezLakHrap": 0.3,
    "rezMascaMeja": [
-    0.36,
-    0.62
+    0.9,
+    0.99
    ],
    "rezRelief": 0.0002,
    "rezVlaknaOs": [
@@ -344,14 +344,14 @@
    "rezMasca": "#e3bf74",
    "rezVlaknaCt": 1000,
    "rezTkivoMoc": 0.2,
-   "rezVlaknaMoc": 1.15,
+   "rezVlaknaMoc": 2.4,
    "rezSum": 0.22,
    "rezHrap": 0.42,
    "rezLak": 0.55,
    "rezLakHrap": 0.3,
    "rezMascaMeja": [
-    0.36,
-    0.62
+    0.9,
+    0.99
    ],
    "rezRelief": 0.0002,
    "rezVlaknaOs": [
@@ -530,7 +530,8 @@
    "barva": "#60a5fa",
    "opis": "Izboklina desnega preddvora, ki prekriva koren aorte; od znotraj z glavničastimi mišicami.",
    "vozlisca": [
-    "Right auricle"
+    "Right auricle",
+    "Right auricle (lastno)"
    ],
    "skupina": "desni-preddvor",
    "ucnaBarva": "#93b8f5",
@@ -914,8 +915,11 @@
    "barva": "#f472b6",
    "opis": "Mišični stebrički v prekatih; prek tetiv držijo lističe jadrastih zaklopk, da se ne obrnejo v preddvor.",
    "vozlisca": [
-    "Papillary muscles of left ventricle (HH229)",
-    "Papillary muscles of right ventricle (HH229)"
+    "Anterior papillary muscle of right ventricle",
+    "Anterolateral papillary muscle of left ventricle",
+    "Inferior papillary muscle of left ventricle",
+    "Inferior papillary muscle of right ventricle",
+    "Septal papillary muscle of right ventricle"
    ],
    "ucnaBarva": "#f472b6",
    "opisOs": "Mišični stebrički v prekatih, ki držijo zaklopke.",
@@ -927,7 +931,9 @@
    "la": "Trabeculae carneae",
    "barva": "#c084fc",
    "opis": "Mišični grebeni na notranji steni prekatov; v desnem prekatu je med njimi tudi septomarginalna trabekula.",
-   "vozlisca": [],
+   "vozlisca": [
+    "Septomarginal trabecula (lastno)"
+   ],
    "ucnaBarva": "#b07cf0",
    "opisOs": "Mišične gubice na notranji steni prekatov.",
    "opisStudij": "Trabeculae carneae: grebeni, mostički in papilarne mišice; septomarginalna trabekula nese desni krak prevodnega sistema do sprednje papilarne mišice."
@@ -939,7 +945,7 @@
    "barva": "#c084fc",
    "opis": "Drobni mišični grebeni v spodnjem delu in konici levega prekata.",
    "vozlisca": [
-    "Trabeculae carneae of left ventricle (HH229)"
+    "Trabeculae carneae of left ventricle (lastno)"
    ],
    "skupina": "trabekule",
    "ucnaBarva": "#b5372d",
@@ -953,7 +959,7 @@
    "barva": "#a78bfa",
    "opis": "Grobi mišični grebeni desnega prekata; med njimi je septomarginalna trabekula.",
    "vozlisca": [
-    "Trabeculae carneae of right ventricle (HH229)"
+    "Trabeculae carneae of right ventricle (lastno)"
    ],
    "skupina": "trabekule",
    "ucnaBarva": "#2c5fc4",
@@ -977,8 +983,15 @@
    "barva": "#e8ecf3",
    "opis": "Trolistna na desni in dvolistna (mitralna) na levi; tetive jih držijo, ko se prekata stisneta.",
    "vozlisca": [
-    "Left atrioventricular valve (HH229)",
-    "Right atrioventricular valve (HH229)"
+    "Anterior leaflet of left atrioventricular valve",
+    "Anterior leaflet of right atrioventricular valve",
+    "Chordae tendineae of mitral valve",
+    "Chordae tendineae of tricuspid valve",
+    "Fibrous ring of mitral valve",
+    "Fibrous ring of tricuspid valve",
+    "Inferior leaflet of right atrioventricular valve",
+    "Posterior leaflet of left atrioventricular valve",
+    "Septal leaflet of right atrioventricular valve"
    ],
    "ucnaBarva": "#f3ead2",
    "opisOs": "Zaklopki med preddvoroma in prekatoma; kri spustita samo naprej.",
@@ -1103,9 +1116,9 @@
   "volumen": {
    "slika": "srce-volumen.png",
    "lo": [
-    -0.06676,
-    -0.09922,
-    -0.05579
+    -0.067,
+    -0.10281,
+    -0.056
    ],
    "korak": 0.00125,
    "n": [
@@ -1122,15 +1135,15 @@
     "slika": "srce-stena.png",
     "telefon": "srce-stena-telefon.png",
     "lo": [
-     -0.0673,
-     -0.10549,
-     -0.06011
+     -0.06729,
+     -0.10317,
+     -0.05595
     ],
     "korak": 0.001,
     "n": [
      135,
-     149,
-     120
+     130,
+     113
     ],
     "ploscice": [
      11,
@@ -1140,14 +1153,10 @@
    },
    "stenaVozlisca": [
     "Root of aorta",
-    "Root of pulmonary trunk",
-    "Left atrioventricular valve (HH229)",
-    "Right atrioventricular valve (HH229)",
-    "Semilunar cusps of aortic valve",
-    "Semilunar cusps of pulmonary valve"
+    "Root of pulmonary trunk"
    ],
    "brezMasce": "papillary|Trabecul|Septomarginal",
-   "epikardPravi": true
+   "votlo": "^(Left auricle|Right auricle \\(lastno\\))$"
   }
  },
  "pogledi": {
@@ -1194,7 +1203,8 @@
     "brahiocefalicni-veni",
     "brahiocefalicno-deblo",
     "leva-skupna-karotida",
-    "leva-podkljucnicna-arterija"
+    "leva-podkljucnicna-arterija",
+    "levo-srcno-uho"
    ],
    "tkiva": {
     "miokard": {
@@ -1259,10 +1269,10 @@
    }
   ]
  },
- "velikost": 0.2709,
+ "velikost": 0.2633,
  "trikotniki": {
-  "racunalnik": 224403,
-  "telefon": 55288
+  "racunalnik": 245186,
+  "telefon": 69365
  },
  "luci": [
   {

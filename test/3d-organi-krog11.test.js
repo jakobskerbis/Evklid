@@ -93,5 +93,5 @@ test("srce: venčne arterije vgreznjene in zožene, lističi vlaknati, pernata m
   assert.ok(parseInt(s["vencna-arterija"].barva.slice(1, 3), 16) < 0xc0, "venčna arterija temnejša");
   const pk = beri("scripts", "atlas", "peka.py"), iz = beri("scripts", "atlas", "izvozi-organe.py");
   assert.ok(pk.includes('r.get("mascaSum"') && pk.includes('r.get("mascaMeja"'));
-  assert.match(iz, /mascaMeja=\(0\.\d+, 0\.\d+\), mascaSum=0\.\d+/); // krog m2: (0,12, 0,9) na pravem srcu HH229
+  assert.match(iz, /mascaMeja=\(0\.\d+, 0\.\d+\), mascaSum=0\.\d+/);
 });

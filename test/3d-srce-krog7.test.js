@@ -35,17 +35,16 @@ test("srce_ct.py: maščoba v žlebovih tanjša, rob dosega pojenja, votli veni 
   assert.match(ct, /h\[vv\] = np\.minimum\(h\[vv\], 0\.0016\)/);
 });
 
-test("srce.json: levo srčno uho je od kroga m2 del stene pravega srca (HH229) in v prerezu ostane", () => {
+test("srce.json: levo srčno uho v prerezu skrito (poševen prerez votle vrečke je bil nemiren)", () => {
   const j = JSON.parse(beri("public", "3d", "modeli", "organi-3d", "srce.json"));
-  // do kroga m1 je bilo uho lastna votla vrečka, v prerezu skrita (nemiren poševen prerez); zdaj je del zaprtega volumna stene
-  assert.ok(j.prerez.volumen.epikardPravi && !j.pogledi.prerez.skrijDele.includes("levo-srcno-uho"));
+  assert.ok(j.pogledi.prerez.skrijDele.includes("levo-srcno-uho")); // z možnostjo ORGANI_HH229=1 je uho del stene in ostane
   assert.ok(j.deli.some((d) => d.id === "levo-srcno-uho"), "del ostane v seznamu (celota)");
 });
 
 test("organi.mjs: telefon srca ima mejo po dodelavi in korak 800 px pred 768 px", () => {
   const src = beri("scripts", "atlas", "organi.mjs");
   // krog 8: dodelava telefon zmanjša (ena raven zgostitve epikarda, trabekule en UV), meja je zato višja
-  assert.match(src, /organ === "srce" && pripona \? 96 \* 1024 : 0/);
+  assert.match(src, /organ === "srce" && pripona \? \(process\.env\.ORGANI_HH229 === "1" \? 96 : -96\) \* 1024 : 0/);
   assert.match(src, /\[82, 66, 80, 800\], \[80, 62, 78, 800\], \[82, 66, 80, 768\]/);
   const glb = fs.statSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "srce-telefon.glb")).size;
   assert.ok(glb <= 1992294, `srce-telefon.glb ${glb} B`);

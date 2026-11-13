@@ -53,7 +53,7 @@ for (const organ of organi) {
       // (CT stene telefona 15k, epikard ena raven zgostitve, trabekule en UV) ≈ −110 kB, zato meja 96 KiB višje; krog m2
       // (stena iz pravega srca HH229, prerez.volumen.epikardPravi: dodelava epikarda ne gladi več, popravi-zile doda
       // trikotnike žil) ≈ +90 kB, zato meja 96 KiB nižje
-      const meja = (pripona ? 2 : 6) * 1024 * 1024 * (pripona ? 0.95 : 0.97) - (organ === "srce" && pripona ? 96 * 1024 : 0);
+      const meja = (pripona ? 2 : 6) * 1024 * 1024 * (pripona ? 0.95 : 0.97) - (organ === "srce" && pripona ? (process.env.ORGANI_HH229 === "1" ? 96 : -96) * 1024 : 0); // HH229 (možnost): 96 KiB nižje, stene CT: 96 KiB višje
       const r = path.join(src, `${organ}${pripona}.r.glb`);
       for (const [k, [qb, qo, qn, px]] of lestev.entries()) {
         if (px) gt("resize", q, r, "--width", String(px), "--height", String(px));
