@@ -63,7 +63,7 @@
    "listi": 0.6,
    "listiSredisce": [
     0,
-    -0.03855,
+    -0.02661,
     -0.02108
    ],
    "listiRazmik": 0.0028,
@@ -78,7 +78,7 @@
     "slika": "mozgani-mali-rez.webp",
     "lo": [
      -0.01569,
-     -0.07436
+     -0.06242
     ],
     "mera": [
      0.07069,
@@ -118,7 +118,7 @@
     "slika": "mozgani-mali-rez.webp",
     "lo": [
      -0.01569,
-     -0.07436
+     -0.06242
     ],
     "mera": [
      0.07069,
@@ -549,7 +549,7 @@
    }
   ]
  },
- "velikost": 0.27,
+ "velikost": 0.2836,
  "trikotniki": {
   "racunalnik": 164998,
   "telefon": 43998
