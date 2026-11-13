@@ -106,7 +106,8 @@ test("presek ledvice: ravnina iz JSON seka skorjo, ovojnico in meh; piramide so 
   assert.ok(j.tkiva.ovojnica.rezPresek.trak && !j.tkiva.ovojnica.rezPresek.ovoj, "ledvična ovojnica: trak namesto izbočene ovojnice");
   assert.ok(j.tkiva.nadledvicna.rezPresek, "nadledvična žleza ima presek");
   const stozci = j.tkiva.skorja.rezPiramide.seznam;
-  assert.ok(stozci.length >= 8 && stozci.length <= 12, `piramid ${stozci.length}`);
+  // krog m1: v eni frontalni ravnini je prerezanih 6–8 piramid (vseh je 8–18); sedem, da med njimi ostanejo ledvični stebri
+  assert.ok(stozci.length >= 7 && stozci.length <= 12, `piramid ${stozci.length}`);
   assert.deepEqual(j.tkiva.ovojnica.rezPiramide.seznam, stozci, "ovojnica in skorja rišeta iste piramide");
   for (const f of ["ledvica.glb", "ledvica-telefon.glb"]) {
     const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(ORGANI, f));

@@ -379,6 +379,9 @@ ORGANI = {
         sredisce_brez=r"^Ureter",
         meh_merilo=1.5, meh_jedro=0.0046,
         # osi čaš = osi naslikanih piramid (ledvica.json rezPiramide.seznam, GLB x, y), po črki papile HRA
+        case=[("a", (-0.0008, -0.0014), (-0.5, 0.87)), ("b", (0.0016, 0.0007), (0.5, 0.87)), ("c", (0.0023, -0.0043), (0.92, 0.38)),
+              ("e", (0.0003, -0.0030), (1.0, -0.05)), ("g", (0.0005, 0.0043), (0.92, -0.38)), ("h", (0.0017, -0.0019), (0.45, -0.89)),
+              ("i", (-0.0037, -0.0019), (-0.4, -0.92))],
         casa_osi=dict(a=(-0.9903, 0.1392), b=(-0.4384, 0.8988), c=(0.3746, 0.9272), d=(0.9135, 0.4067), e=(0.9945, 0.1045), f=(0.9135, -0.4067), g=(0.6428, -0.766), h=(0.1045, -0.9945), i=(-0.6157, -0.788)),  # meh s čašicami iz metakroglic; ploskev ledvičnega sinusa (HRA hilum) potem izpustimo
         izpusti_po=r"hilum_of_kidney",
         telefonSkrci=[(r"outer_cortex", 0.0005)],
@@ -1114,7 +1117,7 @@ def ledvicni_meh(osnovni, cfg, tmp):
         # lijak: vrh 1,55-krat širši; krog m1: fiziološka zožitev na pieloureteralnem stiku (≈ 14–20 mm pod mehom), pod
         # njo rahlo vretenasta razširitev
         zoz = 1.0 - cfg.get("secevod_zozitev", 0.26) * math.exp(-(((zr - z) - 0.017) / 0.006) ** 2) + 0.10 * math.exp(-(((zr - z) - 0.040) / 0.014) ** 2)
-        P.append(Vector((x, y, z))); R.append(rt * (1.55 - 0.55 * w) * zoz)
+        P.append(Vector((x, y, z))); R.append(rt * (1.75 - 0.75 * w) * zoz)
     P, R = zgladi(P, R, 6)
     P[-1] = P[-1] + (P[-1] - P[-2]).normalized() * 0.0005
     bm = bmesh.new(); cev(bm, P, R, 20, stena=cfg.get("secevod_stena", 0.0006))
@@ -1125,7 +1128,7 @@ def ledvicni_meh(osnovni, cfg, tmp):
     print(f"[organi] sečevod: votla cev {len(P)} obročev, polmer {round(rt * 1000, 2)}–{round(R[-1] * 1000, 2)} mm, dolžina {round((zr - zmin) * 1000)} mm, lok {round(abs(lok) * 1000, 1)} mm")
     vrh = P[-1]
     vrh2 = P[-3] if len(P) > 3 else vrh - Vector((0, 0, 0.005))
-    ru = 1.3 * R[-1]  # krog m1: krogle meha ob stiku širše od svetline sečevoda (sicer se meh pri manjšem merilu odtrga)
+    ru = 1.12 * R[-1]  # krog m1: krogle meha ob stiku širše od svetline sečevoda (sicer se meh pri manjšem merilu odtrga)
     zg = [p for p in pap if p.z >= C.z] or pap; sp = [p for p in pap if p.z < C.z] or pap
     M = {id(g): na_ravnino(C.lerp(sum(g, Vector()) / len(g), 0.5)) for g in (zg, sp)}
     k = cfg.get("meh_merilo", 1.0)
@@ -1167,6 +1170,18 @@ def ledvicni_meh(osnovni, cfg, tmp):
     # krog m1: jedro meha malo lateralneje in manjše (medialno ob hilusu ostane maščoba sinusa, v katero vstopata žili)
     lat = na_ravnino(pc) - na_ravnino(hc); lat.normalize()
     C2 = na_ravnino(C) + lat * cfg.get("meh_lateralno", 0.0035)
+    # krog m1, drugi korak: izrecne čaše (cfg »case«: [(črka papile HRA, zamik v ravnini (x, z) v m, os (x, z))]): sedem
+    # čaš in piramid enakomerno okoli sinusa (zgoraj 2, lateralno 3, spodaj 2), vsaka ≤ 6 mm od svoje papile; z gručami
+    # papil HRA so se piramide v rezu zlile v liso brez ledvičnih stebrov. Seznam pap/Q/skup zamenjajo te čaše.
+    if cfg.get("case"):
+        po_crki = {c: na_ravnino(p_) for c, p_ in zip(imena_p, pap)}
+        Q = [po_crki[c] + Vector((dx, 0, dz)) for c, (dx, dz), _o in cfg["case"]]
+        osi_ = [Vector((o[0], 0, o[1])).normalized() for _c, _d, o in cfg["case"]]
+        imena_p = [c for c, _d, _o in cfg["case"]]; skup = list(range(len(Q))); pap = Q
+        os_case = lambda i, m: osi_[i]
+        zg = [p_ for p_ in pap if p_.z >= C.z] or pap; sp = [p_ for p_ in pap if p_.z < C.z] or pap
+        M = {id(g): na_ravnino(C.lerp(sum(g, Vector()) / len(g), 0.5)) for g in (zg, sp)}
+        print("[organi] čaše (Blender x, z; os x, z):", [(imena_p[i], round(Q[i].x, 5), round(Q[i].z, 5), round(osi_[i].x, 4), round(osi_[i].z, 4)) for i in range(len(Q))])
     narejene = set()
     for g in (zg, sp):
         m = M[id(g)]

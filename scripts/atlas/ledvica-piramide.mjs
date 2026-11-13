@@ -14,7 +14,7 @@ const ORGANI = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..
 const a = process.argv.slice(2);
 const dnevnik = fs.readFileSync(a[0], "utf8");
 const skorja = a.includes("--skorja") ? +a[a.indexOf("--skorja") + 1] : 0.0088;
-const case_ = [...dnevnik.match(/\[organi\] čaše[^\n]*/)[0].matchAll(/\('([a-z])', ([-\d.e]+), ([-\d.e]+), ([-\d.e]+), ([-\d.e]+)\)/g)].map((m) => ({ crka: m[1], x: +m[2], z: +m[3], ox: +m[4], oz: +m[5] }));
+const case_ = [...dnevnik.match(/\[organi\] čaše[^\n]*/g).at(-1).matchAll(/\('([a-z])', ([-\d.e]+), ([-\d.e]+), ([-\d.e]+), ([-\d.e]+)\)/g)].map((m) => ({ crka: m[1], x: +m[2], z: +m[3], ox: +m[4], oz: +m[5] }));
 const sk = dnevnik.match(/meh škatla \(Blender\): \[([^\]]+)\] \[([^\]]+)\]/);
 const lo = sk[1].split(",").map(Number), hi = sk[2].split(",").map(Number);
 const p = path.join(ORGANI, "ledvica.json");
@@ -52,16 +52,16 @@ function doObrisa(o, s) { // najdaljši zadetek žarka o + t s z obrisom ovojnic
   }
   return naj;
 }
-const crke = "abcdefghi";
-const sez = j.tkiva.skorja.rezPiramide.seznam.map((c, i) => {
-  const k = case_.find((x) => x.crka === crke[i]);
-  if (!k) return c;
-  const o = [+(k.x + dx).toFixed(5), +(k.z + dy).toFixed(5), +zr.toFixed(5)];
-  const os = [c[3], c[4], c[5]];
+// po ena piramida na čašo (vrstni red izpisa izvoza); polkot in polmer vrha kot doslej (prvi stožec v JSON)
+const vz = j.tkiva.skorja.rezPiramide.seznam[0];
+const kot = a.includes("--polkot") ? +a[a.indexOf("--polkot") + 1] : 0.42;
+const sez = case_.map((k) => {
+  const o = [+(k.x + dx).toFixed(5), +(k.z + dy).toFixed(5), zr];
+  const l = Math.hypot(k.ox, k.oz), os = [+(k.ox / l).toFixed(4), +(k.oz / l).toFixed(4), 0];
   const d = doObrisa(o, os);
-  const dol = d > 0 ? Math.min(0.0195, Math.max(0.0075, d - skorja)) : c[6];
-  console.log(crke[i], o.map((x) => (x * 1000).toFixed(1)).join(", "), "do obrisa", (d * 1000).toFixed(1), "mm → dolžina", (dol * 1000).toFixed(1));
-  return [...o, ...os, +dol.toFixed(4), c[7], c[8]];
+  const dol = d > 0 ? Math.min(0.0195, Math.max(0.0075, d - skorja)) : 0.014;
+  console.log(k.crka, o.map((x) => (x * 1000).toFixed(1)).join(", "), "do obrisa", (d * 1000).toFixed(1), "mm → dolžina", (dol * 1000).toFixed(1));
+  return [...o, ...os, +dol.toFixed(4), kot, vz[8] ?? 0.0027];
 });
 if (!a.includes("--suho")) {
   j.tkiva.skorja.rezPiramide.seznam = sez;
