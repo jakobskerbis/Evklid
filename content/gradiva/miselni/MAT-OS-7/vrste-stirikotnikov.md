@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Paralelogram
+  - Dva para vzporednih stranic
+  - Nasprotna kota enaka, sosednja skupaj $180^\circ$
+  - Diagonali se razpolavljata
+- Posebni paralelogrami
+  - Pravokotnik ima prave kote in enako dolgi diagonali
+  - Romb ima enake stranice in pravokotni diagonali
+  - Kvadrat je pravokotnik in romb
+- Trapez
+  - Vsaj en par vzporednih stranic, osnovnici
+  - Kota ob kraku skupaj $180^\circ$
+  - Pogosta napaka: seštevati kota ob osnovnici
+- Enakokraki trapez
+  - Kraka enaka in nevzporedna
+  - Kota ob osnovnici enaka, diagonali enako dolgi
+- Deltoid
+  - Dva para enakih sosednjih stranic
+  - Os simetrije je diagonala $AC$
+  - Diagonali pravokotni, $\beta = \delta$
+- Družina likov
+  - Vsak kvadrat je romb, obratno ne
+  - Romb je paralelogram in deltoid
+- Vsota kotov
+  - $\alpha + \beta + \gamma + \delta = 360^\circ$
+  - Dva trikotnika po $180^\circ$

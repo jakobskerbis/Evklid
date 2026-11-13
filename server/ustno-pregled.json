@@ -1805,6 +1805,20 @@
    "o": "I",
    "r": "sklic na zgodbo s kisom"
   },
+  "MAT-OS-6/kocka-in-kvader#p1": {
+   "h": "a945f47e95e8",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
+  "MAT-OS-6/kot#p1": {
+   "h": "c9191f66f233",
+   "o": "D"
+  },
+  "MAT-OS-6/krog-in-kroznica#p0": {
+   "h": "fb10935ff0b7",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
   "MAT-OS-6/merske-enote#p0": {
    "h": "8ff63b550deb",
    "o": "D"
@@ -1823,6 +1837,15 @@
    "o": "I",
    "r": "pravokotnik 4 × 3 ni podan"
   },
+  "MAT-OS-6/osnovne-konstrukcije#p1": {
+   "h": "07409e6d6892",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
+  "MAT-OS-6/osnovni-geometrijski-pojmi#p1": {
+   "h": "22063a2f2b1b",
+   "o": "D"
+  },
   "MAT-OS-6/preproste-neenacbe#p0": {
    "h": "9217c538930f",
    "o": "I",
@@ -1837,6 +1860,16 @@
    "o": "I",
    "r": "neenačba ni podana"
   },
+  "MAT-OS-6/prikazi-podatkov#p0": {
+   "h": "f4306601ff9e",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
+  "MAT-OS-6/prikazi-podatkov#p1": {
+   "h": "34faf7900d3e",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
   "MAT-OS-6/racunanje-z-decimalnimi-stevili#p0": {
    "h": "e01b296bc1fa",
    "o": "D"
@@ -1844,6 +1877,19 @@
   "MAT-OS-6/racunanje-z-decimalnimi-stevili#p1": {
    "h": "db89d6cd2912",
    "o": "D"
+  },
+  "MAT-OS-6/simetrija#p1": {
+   "h": "9d22877259d9",
+   "o": "D"
+  },
+  "MAT-OS-6/ulomek-kot-del-celote#p0": {
+   "h": "11c0f5b4f309",
+   "o": "D"
+  },
+  "MAT-OS-6/veckratniki-in-delitelji#p0": {
+   "h": "094439b689c0",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
   },
   "MAT-OS-6/zapis-in-urejanje-velikih-stevil#p1": {
    "h": "81800a5c042b",
@@ -1865,6 +1911,11 @@
    "h": "8819fa41d48f",
    "o": "I",
    "r": "paralelogram ni podan"
+  },
+  "MAT-OS-7/konstrukcije-trikotnikov#p0": {
+   "h": "b7bdc937284c",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
   },
   "MAT-OS-7/mnozenje-in-deljenje-ulomkov#p1": {
    "h": "251ae4b613c3",
@@ -1904,6 +1955,24 @@
    "o": "I",
    "r": "»na primeru zemljevida«: sklic na primer iz lekcije"
   },
+  "MAT-OS-7/primerjanje-in-urejanje-ulomkov#p0": {
+   "h": "f6b21696e387",
+   "o": "D"
+  },
+  "MAT-OS-7/primerjanje-in-urejanje-ulomkov#p1": {
+   "h": "9c33553f1c04",
+   "o": "D"
+  },
+  "MAT-OS-7/primerjanje-in-urejanje-ulomkov#p2": {
+   "h": "0f001cbf3fb4",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
+  "MAT-OS-7/razmerje#p1": {
+   "h": "57c61ac0bc1d",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
   "MAT-OS-7/razsirjanje-in-krajsanje-ulomkov#p0": {
    "h": "d6fde82e8afe",
    "o": "D"
@@ -1930,6 +1999,15 @@
    "o": "I",
    "r": "sklic na anketo iz lekcije"
   },
+  "MAT-OS-7/ulomki-v-besedilnih-nalogah#p0": {
+   "h": "2249fcf053de",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
+  },
+  "MAT-OS-7/ulomki-v-besedilnih-nalogah#p1": {
+   "h": "df6e81b32238",
+   "o": "D"
+  },
   "MAT-OS-7/vrste-kotov-in-pari-kotov#p1": {
    "h": "0a3b75e0ae9e",
    "o": "I",
@@ -1938,6 +2016,11 @@
   "MAT-OS-7/vrste-trikotnikov-in-notranji-koti#p0": {
    "h": "50d996495c05",
    "o": "D"
+  },
+  "MAT-OS-7/znacilne-tocke-trikotnika#p0": {
+   "h": "2213b8c6fc77",
+   "o": "I",
+   "r": "sklic na zgodbo, sliko ali korak lekcije"
   },
   "MAT-OS-8/algebrski-izrazi#p1": {
    "h": "8b43d1df5b57",

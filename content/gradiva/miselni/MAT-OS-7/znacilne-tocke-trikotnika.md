@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Več sredin
+  - Višina in težiščnica sta različni črti
+  - Vsaka vrsta črt ima svoje presečišče
+- Višine
+  - Pravokotno na nasprotno stranico ali podaljšek
+  - Nosilke se sekajo v višinski točki $V$
+- Težiščnice
+  - Do razpolovišča nasprotne stranice
+  - Težišče $T$: $|AT| = \frac{2}{3}\, t_a$
+  - Napaka: težišče na polovici težiščnice
+- Simetrale stranic
+  - Sekajo se v $O$
+  - Očrtana krožnica skozi oglišča, polmer $R$
+- Simetrale kotov
+  - Sekajo se v $S$
+  - Včrtana krožnica, polmer $r$ do stranice
+  - Napaka: šestilo do oglišča
+- Lega točk
+  - $T$ in $S$ vedno znotraj
+  - $O$ in $V$ zunaj pri topokotnem
+  - Pravokotni: $V$ v oglišču pravega kota, $R = \frac{c}{2}$

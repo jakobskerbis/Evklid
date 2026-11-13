@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Razmerje
+  - $a : b$, beremo »a proti b«
+  - Vrstni red členov je pomemben
+- Vrednost razmerja
+  - Razmerje $a : b$ ima vrednost $\dfrac{a}{b}$
+  - $3 : 4$ ima vrednost $0{,}75$
+- Razširjanje in krajšanje
+  - Oba člena z istim številom $k \neq 0$
+  - Napaka: prištevanje ali odštevanje členov
+- Okrajšano razmerje
+  - Oba člena deli z $D(a, b)$
+  - $12 : 18 = 2 : 3$
+- Ista enota
+  - $50\,\text{cm} : 2\,\text{m} = 1 : 4$
+  - Decimalna števila in ulomke razširi
+- Deljenje v razmerju
+  - En del je $c : (a + b)$
+  - $45$ € v razmerju $2 : 3$ da $18$ € in $27$ €
+  - Prvi dobi $\dfrac{a}{a + b}$ celote
+- Znana le ena sestavina
+  - Njeno količino deli z njenim številom delov
+  - Modra $3$ deli $= 1200\,\text{ml}$, en del $400\,\text{ml}$

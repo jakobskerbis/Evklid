@@ -5,206 +5,266 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že poznaš dele trikotnika: oglišča $A$, $B$, $C$, stranice $a$, $b$, $c$ in notranje kote $\alpha$, $\beta$, $\gamma$. Veš, da stranica $a$ leži nasproti oglišča $A$ in da je vsota notranjih kotov $180^\circ$. Z ravnilom, šestilom in kotomerom znaš narisati daljico dane dolžine, prenesti kot, narisati pravokotnico in simetralo kota.
+Naredi poskus. Iz kartona izreži tri trakove, dolge $6\,\text{cm}$, $8\,\text{cm}$ in $10\,\text{cm}$. Konce speni s sponkami v trikotnik in ga postavi pokonci: dobiš preprosto stojalo za telefon. Poskusi ga stisniti v drugo obliko. Ne gre, trikotnik iz treh trakov je **tog**. Sošolec naj iz enako dolgih trakov naredi svojega. Položi ju drugega na drugega: natanko se prekrijeta.
 
-Zdaj vse to združimo. Iz nekaj podatkov bomo **natančno načrtali trikotnik**. Pri tem se bomo vprašali: koliko podatkov sploh potrebujemo, da je trikotnik določen? Odgovor dajo **izreki o skladnosti**. Načrtovanje trikotnikov potrebujejo tesarji, ki sestavljajo ostrešje, inženirji pri gradnji mostov in geodeti, ki merijo zemljišča: če poznajo tri prave podatke, lahko trikotnik prenesejo na papir ali na teren.
+Nato poskusi s trakovi $3\,\text{cm}$, $4\,\text{cm}$ in $8\,\text{cm}$. Konca krajših trakov se ne stakneta, trikotnika ni.
+
+Iz poskusa sledita dve vprašanji. Koliko in katere mere moraš sošolcu poslati v sporočilu, da bo izdelal natanko tako stojalo? In kdaj trikotnik z danimi merami sploh obstaja? Odgovore dajo **izreki o skladnosti**, z njimi pa trikotnik tudi natančno **načrtaš** z ravnilom in šestilom.
 
 ## Razlaga
 
-**1. Skladna trikotnika.** Trikotnika sta **skladna**, če se dasta natančno prekriti (s premikom, zasukom ali prezrcaljenjem). Skladna trikotnika imata enako dolge istoležne stranice in enako velike istoležne kote. Zapišemo $\triangle ABC \cong \triangle A'B'C'$.
+**1. Trije koti proti trem stranicam.** Iz lekcije o notranjih kotih veš, da je $\alpha + \beta + \gamma = 180^\circ$. Če sošolcu pošlješ samo kote, na primer $90^\circ$, $60^\circ$ in $30^\circ$, bo njegovo stojalo enake oblike, a lahko pol manjše ali dvakrat večje. Koti določijo obliko, velikosti pa ne. Tri stranice pa, kot je pokazal poskus, določijo oboje.
 
-**2. Izreki o skladnosti.** Ni treba primerjati vseh šestih podatkov. Dovolj so trije, če so pravi:
+:::premisli
+Sošolec ti pošlje dve stranici, $8\,\text{cm}$ in $10\,\text{cm}$, ne pa tretje. Napovej: ali lahko iz tega narediš natanko njegovo stojalo?
+---
+Ne. Trakova lahko spneš pod različnimi koti in vsakič dobiš drug trikotnik. Manjka še en podatek: tretja stranica ali kot med trakovoma.
+:::
 
-| Izrek | Trikotnika se ujemata v … | Primer podatkov |
+**2. Skladna trikotnika.** Trikotnika, ki se natanko prekrijeta (tudi po premiku, zasuku ali prezrcaljenju), sta **skladna**. Zapišemo $\triangle ABC \cong \triangle A'B'C'$. Skladna trikotnika imata enako dolge istoležne stranice in enako velike istoležne kote. **Istoležni** so tisti, ki se pri prekrivanju pokrijejo. Pri tem velja oznaka: stranica $a$ leži **nasproti** oglišča $A$, torej $a = BC$, $b = AC$, $c = AB$.
+
+**3. Izreki o skladnosti.** Vseh šestih podatkov ni treba primerjati. Dovolj so trije, če so pravi:
+
+| izrek | trikotnika se ujemata v … | primer |
 |---|---|---|
 | **sss** | vseh treh stranicah | $a$, $b$, $c$ |
 | **sks** | dveh stranicah in kotu **med njima** | $b$, $c$, $\alpha$ |
-| **ksk** | eni stranici in **obeh priležnih kotih** | $c$, $\alpha$, $\beta$ |
-| **ssk** | dveh stranicah in kotu, ki leži **nasproti daljše** od njiju | $a$, $b$, $\alpha$, kjer je $a > b$ |
+| **ksk** | stranici in **obeh kotih ob njej** | $c$, $\alpha$, $\beta$ |
+| **ssk** | dveh stranicah in kotu **nasproti daljše** | $a$, $b$, $\alpha$; $a > b$ |
 
-Če se trikotnika ujemata v takih treh podatkih, sta skladna. Zato ti trije podatki **določajo** trikotnik: vsak trikotnik, ki ga načrtaš iz njih, je enak (skladen) vsem drugim.
+Ti trije podatki **določajo** trikotnik: vsak trikotnik, ki ga načrtaš iz njih, je skladen z vsemi drugimi. Trije koti niso med izreki.
 
-Pozor: trije koti ne določajo trikotnika. Trikotnik s koti $60^\circ$, $60^\circ$, $60^\circ$ je lahko majhen ali velik.
+**4. Kot med stranicama ali nasproti.** Izreka sks in ssk sta si podobna, razlikujeta pa se v legi kota. Pri sks kot leži med danima stranicama in natanko določi razdaljo med njunima koncema. Pri ssk kot leži nasproti ene od stranic. Če je ta stranica krajša od druge, lahko nastaneta **dva različna** trikotnika (slika v razdelku »Drugače: Na sliki«). Zato mora biti kot nasproti daljše stranice.
 
-**3. Kdaj trikotnik obstaja.** Ni vsaka trojica podatkov primerna.
+**5. Kdaj trikotnik obstaja.** Za kote že poznaš pogoj: dva dana kota skupaj merita manj kot $180^\circ$. Za stranice velja **trikotniška neenakost**: krajši stranici sta skupaj daljši od najdaljše. Pri trakovih iz poskusa je $3 + 4 = 7 < 8$, zato se ne stakneta. Pri $c$ kot najdaljši stranici:
 
-- **Trikotniška neenakost:** vsota dolžin poljubnih dveh stranic je večja od dolžine tretje stranice. Dovolj je preveriti, ali sta krajši stranici skupaj daljši od najdaljše.
-- **Vsota kotov:** dva dana kota morata skupaj meriti manj kot $180^\circ$.
+$$a + b > c$$
 
-**4. Če kota nista priležna dani stranici.** Če je dana na primer stranica $c$ in kota $\alpha$ in $\gamma$, najprej izračunaš tretji kot: $\beta = 180^\circ - \alpha - \gamma$. Tako dobiš stranico $c$ in oba priležna kota ($\alpha$ in $\beta$) in uporabiš izrek ksk.
+Zakaj je tako, pokaže konstrukcija sss. Oglišče $C$ je od $A$ oddaljeno $b$, od $B$ pa $a$. Zato leži hkrati na krožnici okoli $A$ s polmerom $b$ in na krožnici okoli $B$ s polmerom $a$:
 
-**5. Kako se lotimo načrtovalne naloge.**
+:::risba skica
+opis: Daljica AB dolžine 6. Okoli A je črtkana krožnica s polmerom 4, okoli B črtkana krožnica s polmerom 5. Krožnici se sekata v točki C nad daljico in v točki C' pod njo. Trikotnik ABC je narisan polno.
+območje: -4,5; -5,5 .. 11,5; 5,5
+enota: 19
+krog: 0; 0 | 4 | črtkano siva
+krog: 6; 0 | 5 | črtkano siva
+lik: 0; 0 -> 6; 0 -> 2,25; 3,31 | modra zaprto
+točka: 0; 0 | A | levo
+točka: 6; 0 | B | desno
+točka: 2,25; 3,31 | C | nad
+točka: 2,25; -3,31 | C' | pod
+napis: 3; 0 | c = 6 | pod
+:::
 
-1. **Skica.** Prostoročno nariši poljuben trikotnik, označi oglišča v nasprotni smeri urnega kazalca ($A$, $B$, $C$) in z barvo poudari dane podatke.
-2. **Analiza.** Ugotovi, kateri izrek o skladnosti uporabiš in s katerim podatkom začneš (navadno z dano stranico).
-3. **Preverjanje obstoja.** Preveri trikotniško neenakost ali vsoto kotov.
-4. **Opis konstrukcije.** Po korakih zapiši, kaj boš naredil.
-5. **Konstrukcija.** Z ostrim svinčnikom, ravnilom in šestilom (po potrebi s kotomerom) natančno načrtaj trikotnik. Pomožnih črt ne briši.
-6. **Diskusija.** Koliko rešitev ima naloga? Kadar so podatki po enem od izrekov, je rešitev ena (trikotnik, ki ga dobiš na drugi strani dane stranice, je z njim skladen).
+Če je $a + b$ premalo v primerjavi s $c$, krožnici ne sežeta druga do druge, se ne sekata in trikotnika ni.
 
-**6. Koti brez kotomera.** Kot $60^\circ$ dobiš tako, da okoli temena zarišeš lok, ki seka krak v točki $T$, nato pa okoli $T$ z istim polmerom še en lok. Poltrak iz temena skozi presečišče obeh lokov oklepa s krakom kot $60^\circ$ (teme, $T$ in presečišče lokov so oglišča enakostraničnega trikotnika). Z razpolavljanjem dobiš $30^\circ$ iz $60^\circ$ in $45^\circ$ iz pravega kota.
+:::premisli
+Dve stranici merita $3\,\text{cm}$ in $4\,\text{cm}$. Napovej, kako dolga je lahko tretja.
+---
+Več kot $4 - 3 = 1\,\text{cm}$ in manj kot $3 + 4 = 7\,\text{cm}$. Pri $7\,\text{cm}$ ali več je $3 + 4$ premalo, da bi se krajši stranici staknili nad najdaljšo. Pri $1\,\text{cm}$ ali manj je najdaljša stranica $4\,\text{cm}$, krajši pa skupaj merita največ $1 + 3 = 4\,\text{cm}$, kar je premalo. Pri točno $1\,\text{cm}$ ali $7\,\text{cm}$ se »trikotnik« splošči v daljico.
+:::
 
-V interaktivni simulaciji spodaj (**Konstrukcije trikotnikov**) si lahko konstrukcije sss, sks in ksk ogledaš korak za korakom in spreminjaš podatke.
+**6. Kot, ki ni ob dani stranici.** Če sta dana $c$, $\alpha$ in $\gamma$, kota $\gamma$ ne moreš nanesti na daljico $AB$, ker leži nasproti nje. Najprej izračunaj tretji kot:
+
+$$\beta = 180^\circ - \alpha - \gamma$$
+
+Nato imaš stranico $c$ in oba kota ob njej, $\alpha$ in $\beta$, ter uporabiš izrek ksk.
+
+**7. Postopek načrtovanja.** 1) **Skica:** prostoročno nariši trikotnik, oglišča $A$, $B$, $C$ v nasprotni smeri urnega kazalca, poudari dane podatke. 2) **Analiza:** kateri izrek velja in s katero stranico začneš. 3) **Obstoj:** trikotniška neenakost ali vsota kotov. 4) **Opis** korakov. 5) **Konstrukcija** z ostrim svinčnikom, ravnilom in šestilom; pomožnih črt ne briši. 6) **Diskusija:** koliko rešitev ima naloga. Trikotnik na drugi strani dane stranice je skladen s prvim, zato imajo podatki, ki ustrezajo izreku o skladnosti, eno samo rešitev.
+
+**8. Koti s šestilom.** Kot $60^\circ$: okoli temena zariši lok, ki seka krak v točki $T$; okoli $T$ z istim polmerom zariši drugi lok. Poltrak skozi presečišče lokov oklepa s krakom $60^\circ$, saj teme, $T$ in presečišče tvorijo enakostranični trikotnik. Z razpolavljanjem dobiš $30^\circ$ iz $60^\circ$ in $45^\circ$ iz pravega kota.
+
+V simulaciji spodaj (»Konstrukcije trikotnikov«) izberi konstrukcijo sss in skrajšaj eno stranico. Opazuj, pri kateri dolžini se loka nehata sekati.
 
 ## Rešeni primeri
 
-### Primer 1 (lažji)
+### Primer 1: kje je telefon
 
-Načrtaj trikotnik $ABC$ s stranicami $a = 5\,\text{cm}$, $b = 4\,\text{cm}$ in $c = 6\,\text{cm}$.
+Oddajnika mobilnega omrežja $A$ in $B$ sta $6\,\text{km}$ narazen. Omrežje iz signala oceni, da je telefon od $A$ oddaljen $4\,\text{km}$, od $B$ pa $5\,\text{km}$. Na zemljevidu, kjer $1\,\text{cm}$ pomeni $1\,\text{km}$, načrtaj, kje je lahko telefon.
 
-**Podatki:** $a = 5\,\text{cm}$, $b = 4\,\text{cm}$, $c = 6\,\text{cm}$
-**Iščemo:** konstrukcijo trikotnika $ABC$ (izrek sss)
+**Podatki:** $AB = 6\,\text{km}$, $AC = 4\,\text{km}$, $BC = 5\,\text{km}$, merilo $1\,\text{cm}$ za $1\,\text{km}$; na zemljevidu $c = 6\,\text{cm}$, $b = 4\,\text{cm}$, $a = 5\,\text{cm}$ (telefon je oglišče $C$)
+**Iščemo:** lego oglišča $C$ (izrek sss)
 
 :::formula
-Trikotniška neenakost: krajši stranici skupaj morata biti daljši od najdaljše, $a + b > c$.
+Trikotniška neenakost: $a + b > c$, kjer je $c$ najdaljša stranica.
 :::
 
 **Rešitev:**
 
-1. Preverimo obstoj: najdaljša stranica je $c = 6\,\text{cm}$; $a + b = 5\,\text{cm} + 4\,\text{cm} = 9\,\text{cm} > 6\,\text{cm}$. Trikotnik obstaja.
-2. Izrek: dane so tri stranice, zato je to izrek sss in rešitev je ena.
-3. Načrtamo stranico $c = AB = 6\,\text{cm}$.
-4. Okoli oglišča $A$ zarišemo lok s polmerom $b = 4\,\text{cm}$, ker je $b = AC$.
-5. Okoli oglišča $B$ zarišemo lok s polmerom $a = 5\,\text{cm}$, ker je $a = BC$.
-6. Presečišče lokov nad daljico $AB$ je oglišče $C$. Povežemo $C$ z $A$ in z $B$.
-7. Odgovor: dobimo en trikotnik $ABC$ (presečišče pod daljico da skladen, prezrcaljen trikotnik).
+1. Obstoj: najdaljša je $c = 6\,\text{cm}$, $a + b = 5 + 4 = 9\,\text{cm} > 6\,\text{cm}$. Trikotnik obstaja.
+2. Načrtamo $AB = 6\,\text{cm}$.
+3. Okoli $A$ zarišemo lok s polmerom $b = 4\,\text{cm}$, ker je $b = AC$.
+4. Okoli $B$ zarišemo lok s polmerom $a = 5\,\text{cm}$, ker je $a = BC$.
+5. Loka se sekata v dveh točkah, $C$ nad daljico in $C'$ pod njo. Trikotnika $ABC$ in $ABC'$ sta skladna (zrcalna).
+6. Odgovor: trikotnik je po izreku sss en sam, telefon pa je lahko na dveh mestih, zrcalno glede na $AB$. Da omrežje ugotovi, na katerem, potrebuje še tretji oddajnik.
 
-### Primer 2 (srednji)
+### Primer 2: dve stranici in kot med njima
 
-Načrtaj trikotnik $ABC$, v katerem je $b = 4\,\text{cm}$, $c = 5\,\text{cm}$ in $\alpha = 60^\circ$. Kot konstruiraj s šestilom.
+Načrtaj trikotnik $ABC$ z $b = 4\,\text{cm}$, $c = 5\,\text{cm}$ in $\alpha = 60^\circ$. Kot konstruiraj s šestilom.
 
-**Podatki:** $b = 4\,\text{cm}$, $c = 5\,\text{cm}$, $\alpha = 60^\circ$, kot konstruiramo s šestilom
+**Podatki:** $b = 4\,\text{cm}$, $c = 5\,\text{cm}$, $\alpha = 60^\circ$; kot s šestilom
 **Iščemo:** konstrukcijo trikotnika $ABC$
 
 :::formula
-Izrek sks: dve stranici in kot med njima določajo trikotnik. Kot $\alpha$ leži pri oglišču $A$, med stranicama $b = AC$ in $c = AB$.
+Izrek sks: kot $\alpha$ je pri $A$, med stranicama $b = AC$ in $c = AB$.
 :::
 
 **Rešitev:**
 
-1. Analiza: kot $\alpha$ je pri oglišču $A$, kjer se stikata stranici $b$ in $c$. Je torej kot med danima stranicama, uporabimo izrek sks. Ker je $\alpha < 180^\circ$, trikotnik obstaja.
+1. Analiza: kot $\alpha$ leži pri $A$, kjer se stikata $b$ in $c$, torej med danima stranicama. To je izrek sks, rešitev je ena.
 2. Načrtamo $c = AB = 5\,\text{cm}$.
-3. V oglišču $A$ konstruiramo kot $60^\circ$: lok okoli $A$ seka $AB$ v točki $T$; lok z istim polmerom okoli $T$ seka prvi lok v točki $S$. Poltrak $AS$ je krak kota $\alpha = 60^\circ$.
-4. Na krak od $A$ nanesemo $b = 4\,\text{cm}$ (lok okoli $A$ s polmerom $4\,\text{cm}$) in dobimo oglišče $C$.
-5. Povežemo $C$ z $B$.
-6. Preverimo z merjenjem: stranica $a$ meri približno $4{,}6\,\text{cm}$.
-7. Odgovor: naloga ima eno rešitev, trikotnik $ABC$ s stranicama $4\,\text{cm}$ in $5\,\text{cm}$ ter vmesnim kotom $60^\circ$.
+3. V $A$ konstruiramo $60^\circ$: lok okoli $A$ seka $AB$ v $T$, lok z istim polmerom okoli $T$ seka prvi lok v $S$. Poltrak $AS$ je krak kota.
+4. Na krak od $A$ nanesemo $b = 4\,\text{cm}$ in dobimo $C$. Povežemo $C$ z $B$.
+5. Odgovor: dobimo en trikotnik; z merjenjem je $a \approx 4{,}6\,\text{cm}$.
 
-### Primer 3 (težji)
+### Primer 3: kot nasproti dane stranice
 
-Načrtaj trikotnik $ABC$, v katerem je $c = 6\,\text{cm}$, $\alpha = 45^\circ$ in $\gamma = 75^\circ$. Kota konstruiraj s šestilom.
+Načrtaj trikotnik $ABC$ s $c = 6\,\text{cm}$, $\alpha = 45^\circ$ in $\gamma = 75^\circ$. Kota konstruiraj s šestilom.
 
-**Podatki:** $c = 6\,\text{cm}$, $\alpha = 45^\circ$, $\gamma = 75^\circ$, kota konstruiramo s šestilom
+**Podatki:** $c = 6\,\text{cm}$, $\alpha = 45^\circ$, $\gamma = 75^\circ$; kota s šestilom
 **Iščemo:** kot $\beta$ in konstrukcijo trikotnika $ABC$
 
 :::formula
-$\alpha + \beta + \gamma = 180^\circ \;\Rightarrow\; \beta = 180^\circ - \alpha - \gamma$; nato izrek ksk (stranica $c$ in priležna kota $\alpha$, $\beta$).
+$\beta = 180^\circ - \alpha - \gamma$, nato izrek ksk ($c$, $\alpha$, $\beta$).
 :::
 
 **Rešitev:**
 
-1. Analiza: stranici $c = AB$ sta priležna kota $\alpha$ (pri $A$) in $\beta$ (pri $B$). Kot $\gamma$ leži nasproti stranice $c$, zato ga ne moremo neposredno nanesti na $AB$.
-2. Izračunamo $\beta$: $\beta = 180^\circ - 45^\circ - 75^\circ = 60^\circ$.
-3. Preverimo obstoj: $\alpha + \beta = 45^\circ + 60^\circ = 105^\circ < 180^\circ$. Trikotnik obstaja.
-4. Načrtamo $c = AB = 6\,\text{cm}$.
-5. V oglišču $A$ konstruiramo pravokotnico na $AB$ in pravi kot razpolovimo: dobimo krak kota $\alpha = 45^\circ$.
-6. V oglišču $B$ konstruiramo kot $\beta = 60^\circ$ na isto stran daljice $AB$.
-7. Kraka se sekata v oglišču $C$.
-8. Preverimo s kotomerom: kot pri $C$ meri $75^\circ$. Z merjenjem dobimo še $a \approx 4{,}4\,\text{cm}$ in $b \approx 5{,}4\,\text{cm}$.
-9. Odgovor: $\beta = 60^\circ$; naloga ima po izreku ksk eno rešitev.
+1. Analiza: ob stranici $c = AB$ ležita $\alpha$ (pri $A$) in $\beta$ (pri $B$). Kot $\gamma$ je nasproti $c$, zato ga na $AB$ ne moremo nanesti.
+2. Načrtamo $AB = 6\,\text{cm}$.
+3. V $A$ načrtamo pravokotnico na $AB$ in pravi kot razpolovimo: dobimo krak kota $45^\circ$.
+4. Izračunaj $\beta$, preveri obstoj in dokončaj konstrukcijo, nato primerjaj:
+
+:::premisli
+Koliko meri $\beta$ in kako dokončaš trikotnik?
+---
+$\beta = 180^\circ - 45^\circ - 75^\circ = 60^\circ$. Ker je $\alpha + \beta = 105^\circ < 180^\circ$, trikotnik obstaja. V $B$ konstruiraš $60^\circ$ na isto stran $AB$; kraka se sekata v $C$. Preizkus s kotomerom: kot pri $C$ meri $75^\circ$. Izmeriš še $a \approx 4{,}4\,\text{cm}$ in $b \approx 5{,}4\,\text{cm}$.
+:::
 
 ## Pogoste napake
 
-- **Stranica na napačnem mestu.** Učenec pri sss okoli $A$ zariše lok s polmerom $a$. Razlog: zamenja oznake, saj je $a$ »pri« črki $A$. Pravilno: stranica $a$ leži **nasproti** oglišča $A$, torej $a = BC$ in $b = AC$. Lok okoli $A$ ima polmer $b$, lok okoli $B$ pa polmer $a$.
-- **Kot ni med danima stranicama.** Pri podatkih $b$, $c$, $\alpha$ učenec nanese kot $\alpha$ v oglišče $B$. Razlog: ne pogleda na skico. Pravilno: kot $\alpha$ je vedno pri oglišču $A$, kjer se stikata $b$ in $c$. Najprej nariši skico in nanjo vpiši podatke.
-- **Neobstoječ trikotnik.** Učenec poskuša načrtati trikotnik s stranicami $3\,\text{cm}$, $4\,\text{cm}$ in $8\,\text{cm}$ in loka se ne sekata. Razlog: ni preveril trikotniške neenakosti. Pravilno: $3 + 4 = 7 < 8$, zato trikotnik ne obstaja. Preverjanje naredi pred risanjem.
-- **Kot nasproti dane stranice.** Pri $c$, $\alpha$, $\gamma$ učenec poskuša nanesti $\gamma$ v oglišče $B$. Razlog: nanese kot, ki ni priležen stranici $c$. Pravilno: najprej izračunaj $\beta = 180^\circ - \alpha - \gamma$, nato uporabi izrek ksk s $c$, $\alpha$ in $\beta$.
-- **Trije koti kot podatek.** Učenec misli, da koti $50^\circ$, $60^\circ$, $70^\circ$ določajo en sam trikotnik. Razlog: tri podatke zameša z izreki o skladnosti. Pravilno: brez vsaj ene stranice je takih trikotnikov neskončno mnogo (različno velikih).
+- **Stranica na napačnem mestu.** Pri sss učenec okoli $A$ zariše lok s polmerom $a$, ker je $a$ »pri« črki $A$. Stranica $a$ leži nasproti $A$: $a = BC$. Lok okoli $A$ ima polmer $b$, okoli $B$ polmer $a$.
+- **Kot ni med danima stranicama.** Pri $b$, $c$, $\alpha$ učenec nanese $\alpha$ v $B$. Kot $\alpha$ je vedno pri $A$, kjer se stikata $b$ in $c$. Pomaga skica s podatki.
+- **Neobstoječ trikotnik.** Učenec riše s stranicami $3$, $4$ in $8\,\text{cm}$ in loka se ne sekata. Ni preveril, da je $3 + 4 = 7 < 8$. Preveri pred risanjem.
+- **Kot nasproti stranice nanesen ob njej.** Pri $c$, $\alpha$, $\gamma$ učenec nanese $\gamma$ v $B$. Najprej izračunaj $\beta = 180^\circ - \alpha - \gamma$, nato uporabi ksk.
+- **Trije koti kot dovolj podatkov.** Učenec misli, da koti $50^\circ$, $60^\circ$, $70^\circ$ določajo en trikotnik, ker so podatki trije. Brez stranice je takih trikotnikov neskončno, različno velikih.
 
 ## Povzetek
 
-- Skladna trikotnika se dasta prekriti: $\triangle ABC \cong \triangle A'B'C'$.
-- Izreki o skladnosti: **sss**, **sks** (kot med stranicama), **ksk** (oba priležna kota), **ssk** (kot nasproti daljše stranice).
+- Skladna trikotnika se natanko prekrijeta: $\triangle ABC \cong \triangle A'B'C'$.
+- Izreki o skladnosti: sss; sks (kot med stranicama); ksk (oba kota ob stranici); ssk (kot nasproti daljše stranice). Trije koti trikotnika ne določajo.
 - Stranica $a$ leži nasproti oglišča $A$: $a = BC$, $b = AC$, $c = AB$.
-- Trikotniška neenakost: $a + b > c$, $a + c > b$, $b + c > a$.
-- Vsota kotov: $\alpha + \beta + \gamma = 180^\circ$; manjkajoči kot izračunaj pred konstrukcijo.
-- Postopek: skica, analiza, preverjanje obstoja, opis konstrukcije, konstrukcija, diskusija.
+- Obstoj: krajši stranici skupaj daljši od najdaljše; dva kota skupaj manj kot $180^\circ$.
+- Kot nasproti dane stranice: najprej $\beta = 180^\circ - \alpha - \gamma$, nato ksk.
+- Postopek: skica, analiza, obstoj, opis, konstrukcija, diskusija.
 
 ## Drugače: Na sliki
 
-Predstavljaj si konstrukcijo sss kot igro dveh krožnic. Na list položiš najdaljšo stranico, daljico $AB$ dolžine $c$. Okoli oglišča $A$ zarišeš krožnico s polmerom $b$: vse točke na njej so od $A$ oddaljene točno $b$. Okoli oglišča $B$ zarišeš krožnico s polmerom $a$. Oglišče $C$ mora biti na obeh krožnicah hkrati, zato ga najdeš v njunem presečišču.
+Zakaj pri ssk kot leži nasproti **daljše** stranice? Vzemimo $c = 6\,\text{cm}$, $\alpha = 30^\circ$ in $a = 4\,\text{cm}$, ki je krajša od $c$. V $A$ nanesemo kot $30^\circ$, okoli $B$ zarišemo krožnico s polmerom $a$:
 
-Če sta polmera premajhna, se krožnici ne sekata: trikotnik ne obstaja. Če sta ravno tako dolga, da se krožnici le dotikata na daljici $AB$, je $a + b = c$ in »trikotnik« se splošči v daljico. Šele ko je $a + b > c$, se krožnici sekata v dveh točkah, ena nad daljico in ena pod njo. Oba trikotnika sta zrcalni sliki in sta skladna. V interaktivni simulaciji spodaj lahko podatke spreminjaš in opazuješ, kdaj se loka nehata sekati.
+:::risba skica
+opis: Daljica AB dolžine 6, iz A poltrak pod kotom 30 stopinj. Okoli B črtkana krožnica s polmerom 4 seka poltrak v dveh točkah, C₁ bližje A in C₂ dlje od A. Obe točki sta z B povezani z daljico.
+območje: -1; -4,5 .. 10,5; 6
+enota: 26
+krog: 6; 0 | 4 | črtkano siva
+črta: 0; 0 -> 6; 0 | debelo
+črta: 0; 0 -> 9,5; 5,48 | modra
+črta: 6; 0 -> 2,21; 1,28 | oranžna
+črta: 6; 0 -> 6,79; 3,92 | oranžna
+točka: 0; 0 | A | levo
+točka: 6; 0 | B | pod
+točka: 2,21; 1,28 | C_1 | nad
+točka: 6,79; 3,92 | C_2 | levo
+napis: 1,3; 0,35 | 30° | desno
+:::
+
+Krožnica seka krak v **dveh** točkah. Trikotnika $ABC_1$ in $ABC_2$ imata enake tri podatke, a nista skladna: kot pri $C_1$ je top, pri $C_2$ pa oster. Če je $a$ daljša od $c$, na primer $7\,\text{cm}$, krožnica seka krak le v eni točki in trikotnik je en sam. Če je $a$ krajša od $3\,\text{cm}$, kolikor je $B$ oddaljena od kraka, krožnica kraka ne doseže in trikotnika ni.
 
 ## Drugače: Iz vsakdanjega življenja
 
-Vzemi tri slamice ali palčke različnih dolžin in jih z vrvico poveži v trikotnik. Ko ga sestaviš, ga ne moreš več »zviti« v drugačno obliko: trikotnik s tremi danimi stranicami je **tog**. Prav zato so ostrešja, žerjavi, mostovi in kolesarski okvirji sestavljeni iz trikotnikov. Štirikotnik iz štirih palčk pa se brez težav nagne in spremeni obliko.
+Stojalo za telefon iz poskusa ostane trdno, ker je trikotnik iz treh danih stranic tog (izrek sss). Okvir iz štirih trakov se brez težav nagne. Zato so ostrešja, žerjavi, mostovi in okvirji koles sestavljeni iz trikotnikov.
 
-Izrek sks srečaš pri šestilu: kraka imata stalno dolžino, in ko nastaviš kot med njima, je razdalja med konicama natanko določena. Isti kot vedno da isto razdaljo. Izrek ksk uporabljajo geodeti: če poznajo razdaljo med dvema točkama in z obeh točk izmerijo kot proti oddaljenemu stolpu, natančno vedo, kje stolp stoji, ne da bi do njega hodili.
+Zložljivo stojalo za tablico ima dve nogi stalne dolžine in tečaj med njima. Ko tečaj nastaviš na izbrani kot, je razdalja med koncema nog natanko določena: to je izrek sks. Isti kot vedno da isto razdaljo, zato stojalo vsakič stoji enako.
 
-## Drugače: Korak za korakom s številkami
-
-Vzemimo podatke $a = 7\,\text{cm}$, $\beta = 50^\circ$, $\gamma = 70^\circ$ in pojdimo po receptu.
-
-1. **Skica:** nariši poljuben trikotnik, označi $A$, $B$, $C$ v nasprotni smeri urnega kazalca. Stranica $a$ je $BC$, kota $\beta$ in $\gamma$ sta pri ogliščih $B$ in $C$.
-2. **Analiza:** stranici $a$ sta priležna prav kota $\beta$ in $\gamma$. To je izrek ksk.
-3. **Obstoj:** $\beta + \gamma = 50^\circ + 70^\circ = 120^\circ < 180^\circ$. ✓ (Tretji kot bo $\alpha = 60^\circ$.)
-4. **Opis konstrukcije:**
-   - načrtaj $a = BC = 7\,\text{cm}$,
-   - v $B$ nanesi kot $50^\circ$,
-   - v $C$ na isto stran nanesi kot $70^\circ$,
-   - presečišče krakov je oglišče $A$.
-5. **Konstrukcija:** izvedi korake s kotomerom in ravnilom.
-6. **Diskusija:** podatki ustrezajo izreku ksk, rešitev je ena.
-
-Če bi bil dan kot $\beta = 120^\circ$ in $\gamma = 70^\circ$, bi bila vsota $190^\circ$ in kraka se ne bi sekala. Naloga ne bi imela rešitve.
-
-## Drugače: Bolj natančno
-
-Zakaj pri izreku ssk zahtevamo, da kot leži **nasproti daljše** stranice? Poglejmo dva primera.
-
-Naj bo $c = 6\,\text{cm}$ in $\alpha = 30^\circ$. Načrtamo $AB$, v $A$ nanesemo kot $30^\circ$ in okoli $B$ zarišemo lok s polmerom $a$. Kjer lok seka krak, je oglišče $C$.
-
-- Če je $a = 7\,\text{cm}$, torej daljša od $c$, lok seka krak samo v eni točki. Trikotnik je en sam.
-- Če je $a = 4\,\text{cm}$, torej krajša od $c$, lok seka krak v **dveh** točkah. Dobimo dva različna trikotnika, ki **nista** skladna: eden ima pri $C$ ostri kot, drugi topi.
-- Če bi bila $a$ še krajša (manjša od $3\,\text{cm}$, kolikor je oddaljena točka $B$ od kraka), lok kraka sploh ne bi dosegel in trikotnik ne bi obstajal.
-
-Ker lahko dve stranici in kot nasproti krajše od njiju dajo dva različna trikotnika, taka trojica podatkov ne določa trikotnika. Zato izrek ssk velja le, ko kot leži nasproti daljše od obeh danih stranic.
+Izrek ksk uporabljajo geodeti in mornarji: poznajo razdaljo med dvema točkama in z obeh izmerijo kot proti oddaljenemu stolpu. Tako vedo, kje stolp stoji, ne da bi šli do njega.
 
 ## Preveri se
 
-? Iz katerih treh daljic lahko sestaviš trikotnik?
-- $3\,\text{cm}$, $4\,\text{cm}$, $8\,\text{cm}$
-- $2\,\text{cm}$, $5\,\text{cm}$, $7\,\text{cm}$
-+ $4\,\text{cm}$, $5\,\text{cm}$, $8\,\text{cm}$
-- $1\,\text{cm}$, $2\,\text{cm}$, $4\,\text{cm}$
-> Krajši stranici morata biti skupaj daljši od najdaljše: $4 + 5 = 9 > 8$. Pri $2 + 5 = 7$ je vsota enaka tretji stranici, zato se trikotnik splošči v daljico.
-
-? Dani so $a$, $b$ in $\gamma$. Po katerem izreku načrtaš trikotnik?
+? Na skici so označeni dani podatki. Po katerem izreku so določili trikotnik?
+:::risba skica
+opis: Trikotnik ABC. Stranica AB je označena s c = 5 cm, stranica AC z b = 4 cm, kot pri oglišču A s 60 stopinjami. Drugi podatki niso označeni.
+območje: -1,5; -1 .. 6; 4,2
+enota: 40
+lik: 0; 0 -> 5; 0 -> 2; 3,46 | modra zaprto
+točka: 0; 0 | A | levo
+točka: 5; 0 | B | desno
+točka: 2; 3,46 | C | nad
+napis: 2,5; 0 | c = 5 cm | pod
+napis: 1; 1,9 | b = 4 cm | levo
+napis: 0,6; 0,3 | 60° | desno
+:::
 - sss
+~ Tretja stranica ni dana; namesto nje je dan kot.
 + sks
 - ksk
-> Kot $\gamma$ leži pri oglišču $C$, med stranicama $a = BC$ in $b = AC$. To je kot med danima stranicama, torej izrek sks.
+~ Pri ksk je dana ena stranica in dva kota ob njej. Tu sta dani dve stranici in en kot.
+- ssk
+~ Pri ssk kot leži nasproti ene od stranic. Kot $60^\circ$ je pri $A$, kjer se stikata obe dani stranici, torej med njima.
+> Kot $\alpha = 60^\circ$ leži pri oglišču $A$, med stranicama $b$ in $c$: to je izrek sks.
 
-? Koliko trikotnikov lahko načrtaš s podatki $c = 4\,\text{cm}$, $\alpha = 100^\circ$, $\beta = 90^\circ$?
-+ nobenega
-- enega
-- dva
-- neskončno mnogo
-> $\alpha + \beta = 190^\circ$, kar je več od $180^\circ$. Kraka kotov se ne sekata, zato trikotnik ne obstaja.
+? Načrtaj trikotnik z $b = 6\,\text{cm}$, $c = 8\,\text{cm}$ in $\alpha = 90^\circ$ (stojalo iz poskusa). Izmeri stranico $a$.
+= 10 cm | 0,2
+~ 14 | Stranici si seštel. Po trikotniški neenakosti je $a$ krajša od $b + c$.
+~ 2 | To je razlika $c - b$. Stranica $a$ je daljša od nje.
+> Pri pravem kotu med $6\,\text{cm}$ in $8\,\text{cm}$ izmeriš $a = 10\,\text{cm}$, kar je ravno tretji trak iz poskusa: isti podatki sks dajo isti trikotnik.
 
-? Pri katerih podatkih je trikotnik po izreku ssk natanko določen?
-+ $a = 6\,\text{cm}$, $b = 4\,\text{cm}$, $\alpha = 50^\circ$
-- $a = 4\,\text{cm}$, $b = 6\,\text{cm}$, $\alpha = 30^\circ$
-- $a = 3\,\text{cm}$, $b = 6\,\text{cm}$, $\alpha = 40^\circ$
-> Kot $\alpha$ leži nasproti stranice $a$. Samo v prvem primeru je $a$ daljša od $b$. V drugem primeru obstajata dva neskladna trikotnika, v tretjem pa nobeden.
+? Zakaj koti $50^\circ$, $60^\circ$ in $70^\circ$ ne določajo enega samega trikotnika?
+- Ker njihova vsota ni $180^\circ$.
+~ Seštej: $50^\circ + 60^\circ + 70^\circ = 180^\circ$, tak trikotnik obstaja.
+- Ker trikotnik s takimi koti ni mogoč.
+~ Vsota je $180^\circ$ in noben kot ni prevelik, zato obstaja.
++ Ker imajo lahko trikotniki s temi koti različno dolge stranice.
+- Ker trije podatki nikoli ne zadoščajo.
+~ Pri sss, sks, ksk in ssk zadoščajo trije pravi podatki; med njimi je vedno vsaj ena stranica.
+> Koti določijo obliko, ne velikosti. Trikotnik s temi koti je lahko majhen ali velik, vsi pa niso skladni.
+
+? Dve stranici trikotnika merita $4\,\text{cm}$ in $7\,\text{cm}$. Koliko centimetrov največ meri tretja, če je njena dolžina celo število centimetrov?
+= 10 cm
+~ 11 | Pri $4 + 7 = 11$ se trikotnik splošči v daljico. Tretja mora biti krajša od vsote.
+~ 3 | To je razlika $7 - 4$, spodnja meja. Vprašanje sprašuje po največji dolžini.
+> Tretja stranica mora biti krajša od $4 + 7 = 11\,\text{cm}$, zato je največja cela dolžina $10\,\text{cm}$.
+
+? Oddajnika $A$ in $B$ sta $8\,\text{km}$ narazen. Omrežje oceni, da je telefon $3\,\text{km}$ od $A$ in $4\,\text{km}$ od $B$. Kaj sledi?
+- Telefon je na dveh mestih, zrcalno glede na $AB$.
+~ To velja, ko se krožnici sekata. Tu se ne, ker je $3 + 4 < 8$.
+- Telefon leži na daljici $AB$.
+~ Tako bi bilo pri $3 + 4 = 8$. Tu je vsota manjša.
++ Takega položaja ni, ena od ocen je napačna.
+- Telefon je na natanko enem mestu.
+~ Ena sama lega bi pomenila, da se krožnici dotikata. Ne dotikata se, saj je $3 + 4 < 8$.
+> $3 + 4 = 7 < 8$: krožnici okoli $A$ in $B$ se ne sekata, trikotnik ne obstaja. Omrežje mora razdaljo izmeriti znova.
 
 :::simboli
-A, B, C | oglišča trikotnika | |
-a | stranica nasproti oglišča A | | | a = BC
-b | stranica nasproti oglišča B | | | b = AC
-c | stranica nasproti oglišča C | | | c = AB; vedno a + b > c
-\alpha | notranji kot pri oglišču A | | °
-\beta | notranji kot pri oglišču B | \beta = 180^\circ - \alpha - \gamma | °
-\gamma | notranji kot pri oglišču C | | °
+A, B, C | oglišča trikotnika | | |
+a | stranica nasproti oglišča $A$ | | cm | $a = BC$
+b | stranica nasproti oglišča $B$ | | cm | $b = AC$
+c | stranica nasproti oglišča $C$ | | cm | $c = AB$; najdaljša v $a + b > c$
+\alpha | notranji kot pri oglišču $A$ | | °
+\beta | notranji kot pri oglišču $B$ | \beta = 180^\circ - \alpha - \gamma | °
+\gamma | notranji kot pri oglišču $C$ | | °
 :::
+
+<<RACUN
+vrednost: 5+4 | 9
+vrednost: 180-45-75 | 60
+vrednost: 45+60 | 105
+vrednost: sqrt(4^2+5^2-2*4*5*cos(60°)) | 4.6
+vrednost: 6*sin(45°)/sin(75°) | 4.4
+vrednost: 6*sin(60°)/sin(75°) | 5.4
+vrednost: sqrt(6^2+8^2) | 10
+vrednost: 3+4 | 7
+vrednost: 4+7 | 11
+vrednost: 7-4 | 3
+vrednost: 50+60+70 | 180
+vrednost: 6*sin(30°) | 3
+>>
