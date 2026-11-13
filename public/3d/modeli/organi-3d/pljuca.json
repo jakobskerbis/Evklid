@@ -370,6 +370,7 @@
     "Anterior segmental artery of right lung",
     "Apical segmental artery of left lung",
     "Apical segmental artery of right lung",
+    "Bifurcation of pulmonary trunk",
     "Inferior lingular artery of left lung",
     "Inferior lobar artery of right lung",
     "Lateral basal segmental artery of left lung",
@@ -384,6 +385,7 @@
     "Posterior basal segmental artery of right lung",
     "Posterior segmental artery of left lung",
     "Posterior segmental artery of right lung",
+    "Pulmonary trunk",
     "Right pulmonary artery",
     "Superior lingular artery of left lung",
     "Superior lobar artery of right lung",
@@ -497,10 +499,10 @@
    }
   ]
  },
- "velikost": 0.4307,
+ "velikost": 0.4316,
  "trikotniki": {
-  "racunalnik": 165000,
-  "telefon": 55324
+  "racunalnik": 163642,
+  "telefon": 54318
  },
  "luci": [
   {

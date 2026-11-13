@@ -1198,6 +1198,45 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const skritMat = new THREE.MeshBasicMaterial({ visible: false }); // mreža cevi v prerezu (rezPresek.samoPresek)
   const maskaMat = new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide }); // samo globina: odprtina votline v ploskvah reza
   const slike = []; // naslikane rezne ploskve (tkivo.rezSlika): naložijo se ob prvem prerezu
+  // Risba celega reza (prerez.slika { slika, ucna, lo, mera } [m, koordinate ravnine kot rezSlika]; možgani: rezina MRI,
+  // scripts/atlas/mozgani-rez-mri.py): ena ploskev na ravnini reza pred preseki tkiv, prozorna zunaj narisanega obrisa.
+  let rezPlosca = null;
+  if (enaRavnina0 && podatki.prerez?.slika?.slika) leniRez.push(() => {
+    const ps = podatki.prerez.slika;
+    const rav = ravnine.seznam[0];
+    const n = rav.normal.toArray();
+    const kriz = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const u = kriz(Math.abs(n[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0], n), lu = Math.hypot(...u);
+    const U = u.map((x) => x / lu), V = kriz(n, U);
+    const c0 = [U, V].map((os) => prostor.sredisce.reduce((a, x, c) => a + x * os[c], 0));
+    const odmik = -(0.0004 + 0.0004 * 9);
+    const poz = [];
+    for (const [x, y] of [[0, 0], [1, 0], [1, 1], [0, 1]]) {
+      const px = ps.lo[0] + x * ps.mera[0], py = ps.lo[1] + y * ps.mera[1];
+      for (let c = 0; c < 3; c++) poz.push(U[c] * (px - c0[0]) * s + V[c] * (py - c0[1]) * s + n[c] * (-rav.constant + odmik));
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(poz, 3));
+    g.setAttribute("normal", new THREE.Float32BufferAttribute([0, 1, 2, 3].flatMap(() => n.map((x) => -x)), 3));
+    g.setIndex([0, 1, 2, 0, 2, 3]);
+    presekGeo.push(g);
+    const mat1 = (pot) => {
+      const prazna = new THREE.DataTexture(new Uint8Array([0, 0, 0, 0]), 1, 1);
+      prazna.needsUpdate = true;
+      const slika = { uniform: { value: prazna }, U, V, c0, lo: ps.lo, mera: ps.mera };
+      slike.push({ uniform: slika.uniform, prazna, pot, tex: null });
+      const m = materialPokrova({ rez: "#e6d6c6", rezSum: ps.sum ?? 0.25, rezLak: ps.lak ?? 0.3, rezSlika: { ...ps, izrez: true, visina: ps.visina ?? 0.25 }, rezPresek: { vrsta: 0 } }, ravnine, s, null, prostor.sredisce, { slika });
+      m.clippingPlanes = [];
+      m.side = THREE.DoubleSide;
+      return m;
+    };
+    const real = mat1(ps.slika);
+    const mesh = new THREE.Mesh(g, real);
+    mesh.raycast = () => {};
+    mesh.renderOrder = 50;
+    group.add(mesh);
+    rezPlosca = { mesh, real, ucna: ps.ucna ? mat1(ps.ucna) : real };
+  });
   const slikeTkiv = new Map(); // tkivo → { uniform, U, V, c0, lo, mera }: ista risba za ploskev reza v učnih barvah
   const ucni = new Map(); // id dela → { mat, pokrov }: »Učne barve« (barve.js)
   // Del z »znotraj« (žila z enojno steno, npr. aorta) dobi svoj material tkiva: venčne žile istega tkiva so zaprte cevi.
@@ -1381,6 +1420,10 @@ export async function zgradiOrgan(ime, ctx = {}) {
     if (rezi && leniRez.length) {
       for (const f of leniRez.splice(0)) f();
       if (ucne) barvePokrovov();
+    }
+    if (rezPlosca) {
+      rezPlosca.mesh.visible = rezi;
+      rezPlosca.mesh.material = ucne ? rezPlosca.ucna : rezPlosca.real;
     }
     for (const m of meshi) {
       m.visible = m.userData.stran !== skrijStran && !skrijTkiva.has(m.userData.tkivo) && !skrijDele.has(m.userData.del);

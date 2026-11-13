@@ -320,7 +320,45 @@ def taubin_bm(bm, krogi=30, lam=0.5, mu=-0.53):
         v.co = q
 
 
-def _rezenj_iz_ct(rezn, cfg, tmp):
+def oblika_kril(P, stran, zl, zh, hil, o):
+    """Krog n5 (ocena n4: »boxy silhouette, slab bases, no cardiac notch«): gladka preslikava točk enega pljučnega krila
+    (N×3, Blender: x levo bolnika, y nazaj, z gor) v učbeniško obliko. Ista preslikava velja za režnje, krilo in
+    središčnice vej, zato drevesa ostanejo v režnjih. zl, zh: okvir krila; hil: hilus (tam je premik 0, da se veje
+    ujemajo z bronhiji in žilami medpljučja). o: zaobli (kvadrat → krog v vodoravnem prerezu, lateralno), zoži (delež
+    zožitve vrha), kupola / rob (m: dvig sredine baze / spust oboda → vbočena baza z ostrim spodnjim robom), srce (m:
+    srčna vtisnina na medialni ploskvi spredaj spodaj; levo zareza z lingulo pod njo)."""
+    import numpy as np
+    P = np.asarray(P, float); Q = P.copy()
+    zl = np.asarray(zl, float); zh = np.asarray(zh, float)
+    sg = 1.0 if stran == "left" else -1.0
+    c = 0.5 * (zl + zh); h = 0.5 * (zh - zl)
+    ss = lambda a, b, x: (lambda t: t * t * (3 - 2 * t))(np.clip((x - a) / (b - a), 0.0, 1.0))
+    t = (P[:, 2] - zl[2]) / (zh[2] - zl[2])
+    u = (P[:, 0] - c[0]) / h[0]; v = (P[:, 1] - c[1]) / h[1]
+    uc, vc = np.clip(u, -1, 1), np.clip(v, -1, 1)
+    # (a) zaobljene rebrne ploskve: vogali vodoravnega prereza navznoter (medialna stran ostane bolj ravna)
+    k = o.get("zaobli", 0.7)
+    ku = np.where(sg * u > 0, k, 0.3 * k)
+    u2 = u * np.sqrt(1 - ku * vc * vc / 2); v2 = v * np.sqrt(1 - k * uc * uc / 2)
+    # (b) stožec: nad 40 % višine se prerez oži proti vrhu, vrh se pomakne medialno in nazaj
+    w = ss(0.4, 1.0, t) ** 1.3
+    sk = 1 - o.get("zozi", 0.34) * w
+    u2 = u2 * sk - sg * 0.22 * w; v2 = v2 * sk + 0.10 * w
+    Q[:, 0] = c[0] + u2 * h[0]; Q[:, 1] = c[1] + v2 * h[1]
+    # (c) baza: sredina gor, obod dol (kupola prepone, oster spodnji rob)
+    r2 = np.clip(uc * uc + vc * vc, 0, 1)
+    wz = np.where(t < 0.5, (1 - np.clip(t, 0, 0.5) / 0.5) ** 2, 0.0)
+    Q[:, 2] += (o.get("kupola", 0.022) * (1 - r2) - o.get("rob", 0.010) * r2 * r2) * wz
+    # (d) srčna vtisnina / zareza: medialna ploskev spredaj se med 12 % in 50 % višine umakne lateralno
+    N = o.get("srce", (0.028, 0.010))[0 if stran == "left" else 1]
+    Q[:, 0] += sg * N * np.exp(-((t - o.get("srceT", 0.30)) / 0.15) ** 2) * np.exp(-((vc + 1) / 0.95) ** 2) * np.exp(-((sg * uc + 1) / 0.75) ** 2)
+    if hil is not None:
+        g = ss(0.012, 0.05, np.linalg.norm(P - np.asarray(hil, float), axis=1))
+        Q = P + (Q - P) * g[:, None]
+    return Q
+
+
+def _rezenj_iz_ct(rezn, cfg, tmp, oblika=None):
     """Režnje Z-Anatomy zamenja s površinami režnjev iz CT (pljuca-ct.py). Vsako krilo posebej: afina preslikava (merilo po
     oseh in premik) okvirja CT kril v okvir kril Z-Anatomy – bronhiji in žile Z-Anatomy ostanejo v svojih krilih."""
     import os
@@ -340,8 +378,11 @@ def _rezenj_iz_ct(rezn, cfg, tmp):
         C = np.concatenate([d[CT_REZNJI[r[0]] + "_v"] for r in moji])
         zl, zh, cl, ch = Z.min(0), Z.max(0), C.min(0), C.max(0)
         k = (zh - zl) / (ch - cl)
+        if oblika is not None:
+            oblika["okvir"][stran] = (zl.copy(), zh.copy())
+        ob = (lambda q: oblika_kril(q, stran, zl, zh, oblika["hil"].get(stran), oblika["nast"])) if oblika is not None else (lambda q: q)
         for r in moji:
-            v = (d[CT_REZNJI[r[0]] + "_v"] - cl) * k + zl
+            v = ob((d[CT_REZNJI[r[0]] + "_v"] - cl) * k + zl)
             me = bpy.data.meshes.new(r[0] + " ct"); me.from_pydata(v.tolist(), [], d[CT_REZNJI[r[0]] + "_f"].tolist())
             bm = bmesh.new(); bm.from_mesh(me)
             # stopnice rezin CT in nagubane baze (krog 3: »baze nagubane namesto gladke kupole prepone«): Taubinovo glajenje
@@ -351,7 +392,7 @@ def _rezenj_iz_ct(rezn, cfg, tmp):
             bm.to_mesh(me); bm.free()
             r[1] = poenostavi(me, min(1.0, cilj / max(tris(me), 1)), tmp)
         if "lung_" + stran + "_v" in d.files:
-            v = (d["lung_" + stran + "_v"] - cl) * k + zl
+            v = ob((d["lung_" + stran + "_v"] - cl) * k + zl)
             me = bpy.data.meshes.new("krilo " + stran); me.from_pydata(v.tolist(), [], d["lung_" + stran + "_f"].tolist())
             krila.append(poenostavi(me, min(1.0, 30000 / max(tris(me), 1)), tmp))
         print(f"[organi] pljuča {stran}: režnji iz CT ({d['osebek']}), merilo {[round(float(x), 3) for x in k]}")
@@ -364,7 +405,32 @@ def pljucna_drevesa(osnovni, cfg, tmp):
     rezn = [r for r in osnovni if r[2] == "pljuca"]
     tel = cfg.setdefault("_telefon", {})
     nast = cfg.get("drevesa", {})
-    krila = _rezenj_iz_ct(rezn, cfg, tmp)
+    # n5: učbeniška oblika kril (drevesa.oblika): ista preslikava za režnje, krilo in središčnice vej v pljučih
+    oblika = None
+    if nast.get("oblika") is not None:
+        kor0 = {"left": [], "right": []}
+        for r in osnovni:
+            if r[2].endswith("-v"):
+                for P, R in cfg["_krivulje"].get(r[0], []):
+                    k0 = min((Vector(P[0]), Vector(P[-1])), key=lambda q: abs(q.x))
+                    kor0["left" if k0.x > 0 else "right"].append(k0)
+        oblika = dict(nast=nast["oblika"], okvir={}, hil={z: (tuple(sum(t, Vector()) / len(t)) if t else None) for z, t in kor0.items()})
+    krila = _rezenj_iz_ct(rezn, cfg, tmp, oblika)
+    if oblika is not None and oblika["okvir"]:
+        import numpy as np
+        n_k = 0
+        for r in osnovni:
+            if r[2].endswith("-v"):
+                nove = []
+                for P, R in cfg["_krivulje"].get(r[0], []):
+                    P = np.array([tuple(p) for p in P], float)
+                    stran = "left" if P[:, 0].mean() > 0 else "right"
+                    if stran in oblika["okvir"]:
+                        P = oblika_kril(P, stran, *oblika["okvir"][stran], oblika["hil"].get(stran), oblika["nast"]); n_k += 1
+                    nove.append(([tuple(p) for p in P], R))
+                if nove:
+                    cfg["_krivulje"][r[0]] = nove
+        print(f"[organi] pljuča: oblika kril {oblika['nast']}, preslikanih krivulj vej {n_k}")
     for r in rezn:
         n, ost = zapri_luknje(r[1])
         # režnji po SUBSURF ob špranjah segajo v soseda: oglišča malo navznoter po normali (prej cfg »skrci«)

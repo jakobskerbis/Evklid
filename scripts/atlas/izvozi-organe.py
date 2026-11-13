@@ -90,12 +90,12 @@ ORGANI = {
         # Skorja iz MRI (OpenNeuro ds000001 fMRIPrep/FreeSurfer, CC0): Z-Anatomy vijuge (tkivo »skorja«) zamenjamo s
         # pialno površino ene anonimne prostovoljke/prostovoljca (lh/rh.pial), režnji iz parcelacije aparc, globina brazd
         # (sulc) potemni senco okolice. Mapa z datotekami: --mri <mapa> (sub-01-lh.pial, …-lh.sulc, …-lh.aparc.annot).
-        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina", glajenjeMej=24),
+        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina", glajenjeMej=12, silvij=0.007, zatilniZareza=0.05),
         # Mali možgani iz segmentacije MRI istega osebka (aseg, oznake 7/8/46/47; scripts/atlas/mali-mozgani-mri.py): prava
         # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
         # glajenje: Taubin (krogi) proti stopnicam vokslov; zgornja pedunkla Z-Anatomy nista več ohranjena (od zadaj je bil
         # med malimi možgani MRI in deblom viden temen plavajoč kos)
-        mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40),
+        mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40, deblo=True),
         # Deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen Human Brain Reference Atlas, CC BY 4.0;
         # mozgani_hra.py; datoteka v mapi --hra). Brez datoteke ostanejo Z-Anatomy in mali možgani MRI.
         # n4 (ocena n3: deblo HRA je raven valj z ločenim jajcem ponsa, mali možgani HRA gladki s »počesanimi« črtami, medmožgani
@@ -314,7 +314,7 @@ ORGANI = {
         # Z-Anatomy: pet režnjev, sapnik, bronhiji do segmentnih in pljučne žile do segmentov. HRA (lung-male) ima lepše
         # bronhije s hrustančnimi obroči, a nima sapnika in žil, režnji so grobi segmenti (300–1400 trikotnikov), in
         # poravnava drevesa iz drugega telesa v režnje Z-Anatomy bi se ob hilusu videla (2026-11-04).
-        vkljuci=r"/ Lungs\.g( |$)|^Trachea( /|$)|/ Bronchi\.g( |$)|^(Left|Right) pulmonary artery( /|$)|/ (Left|Right) pulmonary artery( |$)|"
+        vkljuci=r"/ Lungs\.g( |$)|^Trachea( /|$)|/ Bronchi\.g( |$)|^(Left|Right) pulmonary artery( /|$)|/ (Left|Right) pulmonary artery( |$)|^(Pulmonary trunk|Bifurcation of pulmonary trunk)( /|$)|"
                 r"/ Pulmonary veins\.g( |$)",
         # desna spodnja pljučna vena Z-Anatomy je le 8 mm krn ob levem preddvoru (tudi po skrajšanju je visel med pljučema)
         izkljuci=r"\?\?\?|^Right inferior pulmonary vein( /|$)",
@@ -354,11 +354,14 @@ ORGANI = {
         # Režnji iz CT (TotalSegmentator dataset v1, osebek s0913, CC BY 4.0; scripts/atlas/pljuca-ct.py): prave ploskve
         # režnjev s špranjami, poravnane na pljuča Z-Anatomy (ločeno levo in desno krilo). Brez datoteke ostanejo režnji Z-Anatomy.
         ct_rezenj="totalseg/pljuca-v1.npz",
-        drevesa=dict(veje=False, razmik=0.014, korak=0.004, vpliv=0.05, ubij=0.006, skrci=0.0007, rezenjTelefon=0.38, telefonListi=3),
+        # n5: oblika kril (drevesa.oblika_kril): zaobljene rebrne ploskve, stožčast vrh, vbočena baza z ostrim robom, srčna
+        # vtisnina in zareza levo; pljučno deblo Z-Anatomy (spredaj pod lokom aorte) z razcepiščem v desno in levo arterijo
+        drevesa=dict(veje=False, razmik=0.014, korak=0.004, vpliv=0.05, ubij=0.006, skrci=0.0007, rezenjTelefon=0.38, telefonListi=3,
+                     oblika=dict(zaobli=0.7, zozi=0.34, kupola=0.018, rob=0.006, srce=(0.028, 0.010))),
         # Veje v pljučih (segmentni bronhiji in žile) imajo svoja tkiva: v celoti so skrite (konci bi štrleli skozi
         # površino režnjev), v prerezu vidne.
         tkiva=[
-            (r"lobe of", "pljuca"), (r"^[^/]*segment[^/]*/.*Bronchi\.g", "dihalna-v"), (r"^Trachea|Bronchi\.g", "dihalna"),
+            (r"^(Pulmonary trunk|Bifurcation of pulmonary trunk)", "pljucna-arterija"), (r"lobe of", "pljuca"), (r"^[^/]*segment[^/]*/.*Bronchi\.g", "dihalna-v"), (r"^Trachea|Bronchi\.g", "dihalna"),
             (r"^[^/]*(segment|of (left|right) lung)[^/]*/.*(artery|arteries)", "pljucna-arterija-v"),
             (r"^[^/]*(segment|of (left|right) lung)[^/]*/.*vein", "pljucna-vena-v"),
             (r"artery|arteries", "pljucna-arterija"), (r"vein", "pljucna-vena"), (r"", "dihalna"),
@@ -367,7 +370,7 @@ ORGANI = {
             (r"^Superior lobe of right", "desni-zgornji"), (r"^Middle lobe", "desni-srednji"), (r"^Inferior lobe of right", "desni-spodnji"),
             (r"^Superior lobe of left", "levi-zgornji"), (r"^Inferior lobe of left", "levi-spodnji"),
             (r"^Trachea", "sapnik"), (r"Bronchi\.g", "bronhiji"),
-            (r"artery|arteries", "pljucne-arterije"), (r"vein", "pljucne-vene"),
+            (r"artery|arteries|^Pulmonary trunk|^Bifurcation of pulmonary trunk", "pljucne-arterije"), (r"vein", "pljucne-vene"),
         ],
     ),
     "ledvica": dict(
@@ -798,7 +801,19 @@ def mali_iz_mri(osnovni, mri, mm, lo, hi, tmp):
     stari = [r for r in osnovni if r[2] == "mali" and not ostane.search(r[0])]
     print(f"[organi] mali možgani iz MRI ({mri['osebek']}): {tris(me)} trikotnikov namesto {len(stari)} režnjičev Z-Anatomy, "
           f"premik na deblo {[round(float(x) * 1000, 1) for x in premik]} mm, fastigij {[round(float(x), 4) for x in F]}")
-    return [r for r in osnovni if r not in stari] + [["Cerebellum (MRI)", me, "mali", "mali", "Cerebellum (MRI)"]], F
+    nove = [["Cerebellum (MRI)", me, "mali", "mali", "Cerebellum (MRI)"]]
+    if mm.get("deblo"):
+        # n5: tudi možgansko deblo iz segmentacije istega osebka (aseg 16): rezna ploskev je rezina MRI tega osebka
+        # (mozgani-rez-mri.py), deblo Z-Anatomy bi ob njej štrlelo izza risbe
+        from drevesa import taubin_bm
+        md = bpy.data.meshes.new("Brainstem (MRI)"); md.from_pydata((D + premik).tolist(), [], d["deblo_f"].tolist())
+        bm = bmesh.new(); bm.from_mesh(md); taubin_bm(bm, mm.get("debloGlajenje", 40)); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(md); bm.free()
+        for pl in md.polygons:
+            pl.use_smooth = True
+        stari += [r for r in osnovni if r[2] == "deblo"]
+        nove.append(["Brainstem (MRI)", md, "deblo", "deblo", "Brainstem (MRI)"])
+        print(f"[organi] možgansko deblo iz MRI: {tris(md)} trikotnikov namesto {sum(1 for r in stari if r[2] == 'deblo')} objektov Z-Anatomy")
+    return [r for r in osnovni if r not in stari] + nove, F
 
 
 def sredinska_ravnina(vl, vr, celica=0.01, okno=0.007):
@@ -850,6 +865,9 @@ def skorja_iz_mri(mapa, m, lo, hi):
     import numpy as np
     del_za = {ime: d for d, s in APARC_DELI.items() for ime in s.split()}
     T = mri_preslikava(mapa, m["osebek"], lo, hi)
+    # n5: afina preslikava RAS (mm, tkr) → Blender (m) kot matrika 3×4 za risbo reza iz MRI (mozgani-rez-mri.py)
+    _o = T(np.zeros((1, 3)))[0]
+    m["_afina"] = np.column_stack([T(np.eye(3)[i][None] * 100.0)[0] - _o for i in range(3)] + [_o * 100.0]) / 100.0
     hem = {}
     for h, stran in (("lh", "l"), ("rh", "r")):
         v, t = fs_povrsina(os.path.join(mapa, f"{m['osebek']}-{h}.pial"))
@@ -893,6 +911,26 @@ def skorja_iz_mri(mapa, m, lo, hi):
             nov = stranska & (stran_f(yp, v[:, 2]) * zn_p > 0) & (d > 0.012)
             dl[nov] = "zatilni"
             print(f"[organi] skorja MRI {stran}: zatilni reženj po črti POS–zareza: +{int(nov.sum())} oglišč (prej {int(occ.sum())}); A {A.round(4)}, B {B.round(4)}")
+        if m.get("silvij", 0) > 0:
+            # n5 (ocena n4: »no Sylvian fissure, temporal pole not free«): pialna površina živega človeka (MRI) ima stransko
+            # brazdo zaprto – operkuli se dotikajo, zato je bila videti kot navadna brazda. Kot pri fiksiranem preparatu
+            # se senčni reženj zasuka navzdol okoli zadnjega konca brazde (pol se spusti za »silvij« m): brazda se odpre,
+            # senčni pol je prost. Utež (senčna območja 1, insula delno) se zgladi po površini, da se dno brazde raztegne.
+            from scipy import sparse
+            w_s = np.isin(ime_o, ["superiortemporal", "middletemporal", "inferiortemporal", "bankssts", "fusiform", "transversetemporal",
+                                  "temporalpole", "entorhinal", "parahippocampal"]).astype(float)
+            w_s[ime_o == "insula"] = 0.3
+            ii = np.concatenate([t[:, 0], t[:, 1], t[:, 2], t[:, 1], t[:, 2], t[:, 0]]); jj = np.concatenate([t[:, 1], t[:, 2], t[:, 0], t[:, 0], t[:, 1], t[:, 2]])
+            A_s = sparse.csr_matrix((np.ones(len(ii)), (ii, jj)), shape=(len(v), len(v))); A_s.data[:] = 1.0
+            st_s = np.maximum(np.asarray(A_s.sum(1)).ravel(), 1)
+            for _ in range(m.get("silvijGlajenje", 25)):
+                w_s = 0.5 * w_s + 0.5 * (A_s @ w_s) / st_s
+            s_y = 1.0 if v[dl == "zatilni", 1].mean() > v[dl == "celni", 1].mean() else -1.0
+            yp = v[:, 1] * s_y
+            pol_s = float(yp[ime_o == "temporalpole"].min()) if (ime_o == "temporalpole").any() else float(yp[dl == "senceni"].min())
+            a_s = np.clip((pol_s + m.get("silvijDolzina", 0.08) - yp) / m.get("silvijDolzina", 0.08), 0.0, 1.0)
+            v[:, 2] -= m["silvij"] * w_s * a_s
+            print(f"[organi] skorja MRI {stran}: stranska brazda odprta, senčni pol −{m['silvij'] * 1000:.0f} mm (premaknjenih {int((w_s * a_s > 0.05).sum())} oglišč)")
         # n4 (ocena n3: oranžna lisa ob hipotalamusu v učnih barvah): oznaka »insula« ob sredinski ravnini (< 18 mm) ni otok,
         # temveč subkalozno polje medialne ploskve → limbični reženj
         otok_m = (dl == "otok") & (d < m.get("otokOdSredine", 0.018))
@@ -1722,6 +1760,10 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
         if n.z > 0:
             n = -n
         porocilo["ravnina4"] = {"n": [round(x, 4) for x in n], "d": round(-n.dot(sum(g, Vector()) / 3), 4)}
+    if cfg.get("skorja_mri", {}).get("_afina") is not None:  # RAS (mm) → glTF (m, središče organa 0): risba reza iz MRI
+        Ab = cfg["skorja_mri"]["_afina"]
+        porocilo["mriAfina"] = [[round(float(x), 8) for x in (Ab[0] - [0, 0, 0, ctr.x])], [round(float(x), 8) for x in (Ab[2] - [0, 0, 0, ctr.z])],
+                                [round(float(x), 8) for x in (-Ab[1] + [0, 0, 0, ctr.y])]]
     if cfg.get("_fastigij"):  # mali možgani iz MRI: središče lističev (tkiva.mali.listiSredisce) v glTF, središče organa 0
         q = cfg["_fastigij"]
         porocilo["fastigij"] = [round(q[0] - ctr.x, 5), round(q[2] - ctr.z, 5), round(-q[1] + ctr.y, 5)]
