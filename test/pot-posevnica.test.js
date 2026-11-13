@@ -46,7 +46,7 @@ async function withServer(fn) {
     return { status: res.status, body: type.includes("json") ? await res.json() : await res.text() };
   };
   try {
-    await fn({ call, calls, store });
+    await fn({ call, calls, store, base, jar });
   } finally {
     server.close();
   }
@@ -55,7 +55,7 @@ async function withServer(fn) {
 test("1.1: poševnica na koncu poti ne obide dnevne meje vprašanj", async () => {
   process.env.EVKLID_FREE_DAILY_QUESTIONS = "2";
   try {
-    await withServer(async ({ call, calls, store }) => {
+    await withServer(async ({ call, calls, store, base, jar }) => {
       const reg = await call("/api/auth/register", { method: "POST", body: { email: "posevnica@primer.si", password: "geslo1234", accept_privacy: true, birth_date: "1985-04-12" } });
       assert.equal(reg.status, 201);
       const mail = calls.filter((c) => c.host === "api.resend.com").at(-1);
@@ -63,16 +63,21 @@ test("1.1: poševnica na koncu poti ne obide dnevne meje vprašanj", async () =>
       const kid = (await call("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 10, consent: true } })).body;
       store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run(); // brezplačni paket
       const conv = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
-      const ask = (suffix, t) => call(`/api/conversations/${conv.id}/messages${suffix}`, { method: "POST", body: { text: t } });
+      const ask = (suffix, t, prefix = "/api") => call(`${prefix}/conversations/${conv.id}/messages${suffix}`, { method: "POST", body: { text: t } });
 
       // Pot s poševnico deluje kot prej in šteje v mejo.
       assert.equal((await ask("/", "prvo")).status, 200);
       assert.equal((await ask("", "drugo")).status, 200);
-      for (const suffix of ["", "/", "//", "/?x=1"]) {
-        const r = await ask(suffix, "tretje");
-        assert.equal(r.status, 429, `messages${suffix}`);
-        assert.equal(r.body.code, "block.freeDaily", `messages${suffix}`);
+      for (const prefix of ["/api", "/API", "/Api"]) {
+        for (const suffix of ["", "/", "//", "/?x=1"]) {
+          const r = await ask(suffix, "tretje", prefix);
+          assert.equal(r.status, 429, `${prefix}…/messages${suffix}`);
+          assert.equal(r.body.code, "block.freeDaily", `${prefix}…/messages${suffix}`);
+        }
       }
+      // Odgovor API z velikimi črkami v predponi tudi ne gre v predpomnilnik.
+      const res = await fetch(`${base}/API/conversations/${conv.id}`, { headers: { cookie: Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; ") } });
+      assert.equal(res.headers.get("cache-control"), "no-store");
       const n = store.db.prepare("SELECT COUNT(*) AS n FROM messages WHERE conversation_id = ? AND role = 'user'").get(conv.id).n;
       assert.equal(n, 2);
     });

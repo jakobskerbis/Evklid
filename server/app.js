@@ -223,14 +223,18 @@ export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
   app.disable("x-powered-by");
-  // Usmerjevalnik Expressa pot s poševnico na koncu ujema kot pot brez nje (/messages/ = /messages), vmesniki
-  // pred potmi (dnevna meja vprašanj, mesečna meja AI, lastništvo, zaklep računa, opravila po izbrisu) pa
-  // req.path preverjajo z regularnimi izrazi in so poševnico spregledali. Zato jo pri /api odrežemo, preden
-  // pot kdorkoli prebere: vsi vidijo isto pot kot usmerjevalnik (točka 1.1).
+  // Usmerjevalnik Expressa pot s poševnico na koncu ujema kot pot brez nje (/messages/ = /messages) in predpono
+  // brez ozira na velike črke (/API = /api), vmesniki pred potmi (dnevna meja vprašanj, mesečna meja AI,
+  // lastništvo, zaklep računa, opravila po izbrisu, Cache-Control) pa req.path preverjajo z regularnimi izrazi
+  // in so oboje spregledali. Zato pri /api predpono zapišemo z malimi črkami in poševnice na koncu odrežemo,
+  // preden pot kdorkoli prebere: vsi vidijo isto pot kot usmerjevalnik (točka 1.1).
   app.use((req, _res, next) => {
     const q = req.url.indexOf("?");
     const pot = q < 0 ? req.url : req.url.slice(0, q);
-    if (pot.length > 5 && pot.startsWith("/api/") && pot.endsWith("/")) req.url = pot.replace(/\/+$/, "") + (q < 0 ? "" : req.url.slice(q));
+    if (/^\/api(\/|$)/i.test(pot)) {
+      const cista = ("/api" + pot.slice(4)).replace(/(.)\/+$/, "$1");
+      if (cista !== pot) req.url = cista + (q < 0 ? "" : req.url.slice(q));
+    }
     next();
   });
   securityHeaders(app);
