@@ -1603,6 +1603,26 @@ export function mountAccounts(app, store, opts = {}) {
     res.status(201).json({ url: `${baseUrl(req)}/?gost=${inv.token}`, expires_at: inv.expires_at, max_uses: inv.max_uses });
   });
 
+  // Točka 1.4: koliko posrednikov je pred strežnikom (Render, Cloudflare)? `trust proxy` (zgoraj) določa, kateri
+  // naslov iz X-Forwarded-For Express vzame za req.ip, na katerem temeljijo vse omejitve poskusov po IP.
+  // Skrbnik tu vidi, kaj strežnik dejansko prejme; vrednost trust proxy se spremeni šele po potrditvi lastnika.
+  app.get("/api/admin/omrezje", (req, res) => {
+    if (!req.parent?.is_admin) return res.status(403).json({ error: "Samo za skrbnika." });
+    const xff = String(req.headers["x-forwarded-for"] || "");
+    const chain = xff.split(",").map((x) => x.trim()).filter(Boolean);
+    res.json({
+      trust_proxy: app.get("trust proxy"),
+      ip: req.ip,
+      ips: req.ips,
+      x_forwarded_for: xff || null,
+      skokov_v_x_forwarded_for: chain.length,
+      neposredni_naslov: req.socket.remoteAddress || null,
+      cf_connecting_ip: req.headers["cf-connecting-ip"] || null,
+      x_real_ip: req.headers["x-real-ip"] || null,
+      x_forwarded_proto: req.headers["x-forwarded-proto"] || null,
+    });
+  });
+
   // Cene in preizkus za stran za starše (starsi.html), brez prijave.
   app.get("/api/account/prices", (req, res) => {
     const country = String(req.query.country || "").toUpperCase();
