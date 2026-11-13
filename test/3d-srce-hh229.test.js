@@ -83,3 +83,18 @@ test("srce HH229: izvoz, dodelava in srce.json ga uporabljajo; vir je naveden", 
   assert.ok(!viri.some((x) => /HH229/.test(x.ime)));
   assert.match(beri("docs", "3d.md"), /This work is based on "HH229".*VisibleHeartLabs.*CC-BY-4\.0/s);
 });
+
+test("srce m4: gladek venčni sinus, dno spodnje votle vene, glajenje oznak delov, kontrast vlaken (možnost)", () => {
+  const zile = fs.readFileSync(path.join(KOREN, "scripts/atlas/srce_zile.py"), "utf8");
+  assert.match(zile, /debela = \(not arterija\) and max\(R\) > 0\.0022/);
+  assert.match(zile, /seg = 14 if debela else/);
+  assert.match(zile, /def plosca_\(q\)/);
+  const ct = fs.readFileSync(path.join(KOREN, "scripts/atlas/srce_ct.py"), "utf8");
+  assert.match(ct, /def zgladi_oznake\(nV, F, dl, krat=14\)/);
+  assert.match(ct, /dl = zgladi_oznake\(len\(V\), F, dl/);
+  const dod = fs.readFileSync(path.join(KOREN, "scripts/atlas/srce-dodelava.mjs"), "utf8");
+  assert.match(dod, /export const DEBELE = /);
+  assert.match(dod, /export function vgrezni\(m, povrsina, vgrez = VGREZ, h = 0\.003, krogov = 6\)/);
+  const organ = fs.readFileSync(path.join(KOREN, "public/3d/organ.js"), "utf8");
+  assert.match(organ, /t\.rezVlaknaKontrast \?/);
+});

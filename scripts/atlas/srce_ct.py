@@ -1057,11 +1057,35 @@ def srce_ct(osnovni, cfg, tmp):
     return nove
 
 
+def zgladi_oznake(nV, F, dl, krat=14):
+    """Krog m4 (ocena: »ravna, a nazobčana meja desni preddvor / prekat v učnih barvah«): oznake delov sten iz CT imajo
+    na meji stopnice vokslov. Za vsako oznako se delež ploskev na ogliščih zgladi po sosedih (krat korakov ≈ 2 mm),
+    ploskev dobi oznako z največjim zglajenim deležem: meja postane gladka črta, ploščine delov ostanejo."""
+    F = np.asarray(F); dl = np.asarray(dl); oz = np.unique(dl)
+    E = np.concatenate([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]]); E = np.unique(np.sort(E, 1), axis=0)
+    st = np.zeros(nV); np.add.at(st, E[:, 0], 1); np.add.at(st, E[:, 1], 1); st = np.maximum(st, 1)
+    naj = np.full(len(F), -1.0); nova = dl.copy()
+    for o in oz:
+        s = np.zeros(nV); n = np.zeros(nV)
+        for k in range(3):
+            np.add.at(s, F[:, k], (dl == o) * 1.0); np.add.at(n, F[:, k], 1.0)
+        s /= np.maximum(n, 1)
+        for _ in range(krat):
+            a = np.zeros(nV); np.add.at(a, E[:, 0], s[E[:, 1]]); np.add.at(a, E[:, 1], s[E[:, 0]])
+            s = 0.5 * s + 0.5 * a / st
+        f = s[F].mean(1)
+        bolje = f > naj; naj[bolje] = f[bolje]; nova[bolje] = o
+    print(f"[organi] srce_ct: glajenje oznak delov: {int((nova != dl).sum())} od {len(F)} ploskev zamenja del", flush=True)
+    return nova.astype(dl.dtype)
+
+
 def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None, deli=None):
     """Unija sten → mreža z materialnim indeksom po delu, poenostavljena za računalnik in telefon (cfg['ct']['cilj']),
     razdeljena na vrstice; telefonske mreže v cfg['_telefon']. Maske PEKA (R maščoba, G zunaj) so na ogliščih."""
     cilj = cfg.get("ct", {}).get("cilj", (110_000, 30_000))
     DELI_CT = deli or globals()["DELI_CT"]
+    if deli is None and cfg.get("ct", {}).get("gladi_oznake", 14):
+        dl = zgladi_oznake(len(V), F, dl, cfg.get("ct", {}).get("gladi_oznake", 14))
     me = _mesh("ct-unija", V, F)
     me.polygons.foreach_set("material_index", dl.astype(np.int32))
     for _ in range(len(DELI_CT)):
@@ -1098,7 +1122,7 @@ def _deli_iz_unije(V, F, dl, epi, masca, cfg, tmp, ohrani=None, deli=None):
             m2 = bpy.data.meshes.new_from_object(o.evaluated_get(bpy.context.evaluated_depsgraph_get()))
         bpy.data.objects.remove(o)
         bm = bmesh.new(); bm.from_mesh(m2)
-        if deli is not None:  # krog m2: po poenostavitvi je meja delov cikcak trikotnikov (žagast rob lističa zaklopke):
+        if True:  # krog m2 (HH229), krog m4 tudi stene CT: po poenostavitvi je meja delov cikcak trikotnikov (žagast rob lističa zaklopke, meja preddvor/prekat):
             bm.faces.ensure_lookup_table(); bm.faces.index_update()  # ploskev z vsaj dvema sosedoma iste druge oznake prevzame njuno oznako
             for _ in range(3):
                 nove_oz = {}
@@ -1391,7 +1415,10 @@ def obrezi_v_srcu(vrstice, V, F, epi):
             if q is None:
                 continue
             s_ = (c - q).dot(n)
-            if s_ < -0.0002 or (not epi[fi] and s_ > 0.0008):
+            # krog m4 (ocena: »luknja v steni desnega preddvora«): med robom cevi spodnje votle vene in odprtino stene CT je
+            # bila reža (skoznjo se je videlo ozadje) – cev votlih ven sega 3 mm v steno (prej 0,2 mm)
+            glob_ = 0.003 if r[0].startswith("Inferior vena cava") else 0.0002
+            if s_ < -glob_ or (not epi[fi] and s_ > 0.0008):
                 dele.append(f_)
         if dele and len(dele) < len(bm.faces) * 0.6:
             bmesh.ops.delete(bm, geom=dele, context="FACES")

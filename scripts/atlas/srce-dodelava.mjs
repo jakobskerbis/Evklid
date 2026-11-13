@@ -54,6 +54,7 @@ export const ENO_UV = /^Trabeculae carneae of (left|right) ventricle(?! \(HH229\
 // krog 10 srca (ocena k5: »venčne arterije ležijo na vrhu kot enakomerne svetlo rdeče cevi«): os 0,1 polmera pod površino
 // (≈ 45 % premera vidnega), arterija je napol v maščobi žleba
 export const VGREZ = -0.1;
+export const DEBELE = /^(Coronary sinus|Great cardiac vein)/; // krog m4: ena gladka žila v žlebu (prej temne »grče«)
 const ZILA = /^vencna-(arterija|vena)$/;
 
 // Mreža trikotnikov epikarda za iskanje najbližje točke (celice velikosti h).
@@ -94,11 +95,11 @@ export function mrezaTrikotnikov(tri, h) {
 }
 
 // Premik oglišč žile (m: mreža iz G.preberi) na enakomerno globino. Vrne { premaknjenih, najvecji (m) }.
-export function vgrezni(m, povrsina, vgrez = VGREZ) {
+export function vgrezni(m, povrsina, vgrez = VGREZ, h = 0.003, krogov = 6) {
   const W = m.W;
   const s = W.map((p) => povrsina(p, 0.012));
-  // sosedje v krogli 3 mm (ves prerez cevi in kos vzdolž nje): povprečje = lega osi, razpon = premer
-  const h = 0.003;
+  // sosedje v krogli h (3 mm; ves prerez cevi in kos vzdolž nje): povprečje = lega osi, razpon = premer. Debela žila
+  // (venčni sinus, Ø ≈ 6,5 mm) potrebuje večjo kroglo (DEBELE), sicer krogla ne zajame prereza in cev postane grčasta.
   const cel = new Map();
   W.forEach((p, w) => { const k = p.map((v) => Math.floor(v / h)).join(","); let l = cel.get(k); if (!l) cel.set(k, (l = [])); l.push(w); });
   const premik = W.map((p, w) => {
@@ -122,7 +123,7 @@ export function vgrezni(m, povrsina, vgrez = VGREZ) {
   const sos = W.map(() => new Set());
   for (let f = 0; f < m.F.length; f += 3) for (let k = 0; k < 3; k++) { const a = m.zvar[m.F[f + k]], b = m.zvar[m.F[f + (k + 1) % 3]]; sos[a].add(b); sos[b].add(a); }
   let P = premik.map((v) => v || [0, 0, 0]);
-  for (let krog = 0; krog < 6; krog++) {
+  for (let krog = 0; krog < krogov; krog++) {
     P = P.map((v, w) => {
       const a = [v[0], v[1], v[2]];
       for (const u of sos[w]) { a[0] += P[u][0]; a[1] += P[u][1]; a[2] += P[u][2]; }
@@ -651,7 +652,8 @@ export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [
       for (const node of zile) {
         const prim = node.getMesh().listPrimitives()[0];
         const m = G.preberi(node, prim);
-        const r = vgrezni(m, povrsina);
+        const debela = DEBELE.test(node.getName());
+        const r = debela ? vgrezni(m, povrsina, VGREZ, 0.0075, 24) : vgrezni(m, povrsina);
         porocilo.push(`${node.getName()}: vgreznjena (${r.premaknjenih} oglišč, največ ${(r.najvecji * 1000).toFixed(1)} mm)`);
         if (suho) continue;
         if (m.spremenjeno) G.zapisi(doc, node, prim, m);
