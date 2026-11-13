@@ -1,10 +1,10 @@
 // Iz stanja mikroskopa izračuna, kaj in kako narisati (upodobi.js narisi): vidno polje, zamegljenost, svetlost in pri
 // največjih povečavah model molekul (sonda izmeri snov in membrano v središču). Brez DOM, a potrebuje upodobitev za sondo.
 import { matrikaBarvil, BARVANJA } from "./barvila.js";
-import { OBJEKTIVI, OKULAR, vidnoPolje, zamegljenost, svetlost, kontrast, TEM_LOCLJIVOST, utezModela } from "./optika.js";
+import { OBJEKTIVI, OKULAR, vidnoPolje, zamegljenost, svetlost, kontrast, TEM_LOCLJIVOST, SEM_LOCLJIVOST, utezModela } from "./optika.js";
 
 export const ZACETNO = {
-  nacin: "svetloba", // ali "tem"
+  nacin: "svetloba", // ali "sem" (vrstični) ali "tem" (presevni elektronski mikroskop)
   objektiv: 0, // indeks v OBJEKTIVI
   m: 40, // skupna povečava (pri svetlobi = objektiv × okular)
   sredisce: [0, 0], // µm
@@ -17,7 +17,7 @@ export const ZACETNO = {
 };
 
 export function povecava(s) {
-  return s.nacin === "tem" ? s.m : OBJEKTIVI[s.objektiv].m * OKULAR;
+  return s.nacin === "tem" || s.nacin === "sem" ? s.m : OBJEKTIVI[s.objektiv].m * OKULAR;
 }
 
 // Membrana in snov ob središču (za model molekul). Vrne uniforme ali null.
@@ -67,11 +67,13 @@ function sondaModela(upo, c, m) {
 // Vrne { v (za narisi), mol (uniforme modela ali null), vp, sredisce }.
 export function izracunajPogled(upo, preparat, s, n, { hitro = false } = {}) {
   const tem = s.nacin === "tem";
+  const sem = s.nacin === "sem";
   const m = povecava(s);
   const vp = vidnoPolje(m, s.nacin);
   const um = vp / n;
   let sigmaUm;
-  if (tem) sigmaUm = Math.hypot(TEM_LOCLJIVOST * 0.45, Math.abs(s.defokus) * vp * 0.02);
+  if (sem) sigmaUm = SEM_LOCLJIVOST * 0.45; // globinska ostrina je velika: vsa površina je ostra
+  else if (tem) sigmaUm = Math.hypot(TEM_LOCLJIVOST * 0.45, Math.abs(s.defokus) * vp * 0.02);
   else sigmaUm = zamegljenost(OBJEKTIVI[s.objektiv], { dz: s.dz, zaslonka: s.zaslonka, olje: s.olje });
   const sigma = Math.max(0, sigmaUm / um);
   const barv = BARVANJA[preparat.barvanje] || BARVANJA.he;
@@ -91,15 +93,18 @@ export function izracunajPogled(upo, preparat, s, n, { hitro = false } = {}) {
       sredisce: s.sredisce,
       umNaTocko: um,
       tem,
+      nacin: sem ? 3 : tem ? 1 : 0, // uNacin v senčilniku preparata
+      elektroni: tem || sem,
       barvila: matrikaBarvil(preparat.barvanje),
       debelina: barv.moc,
       sigma: Math.min(sigma, 38),
       mol,
-      svetlost: tem ? 0.9 + 0.5 * s.zarnica : svetlost(obj, s.zarnica, s.zaslonka, s.olje),
-      kontrast: tem ? 1.15 : kontrast(s.zaslonka),
-      topla: tem ? 0 : Math.max(0, 0.55 - s.zarnica * 0.6),
-      sum: tem ? (mol ? 0.02 : 0.09) : 0.012,
-      krog: !tem,
+      svetlost: tem || sem ? 0.9 + 0.5 * s.zarnica : svetlost(obj, s.zarnica, s.zaslonka, s.olje),
+      kontrast: tem ? 1.15 : sem ? 1.0 : kontrast(s.zaslonka),
+      topla: tem || sem ? 0 : Math.max(0, 0.55 - s.zarnica * 0.6),
+      // šum: SEM pri šibkem snopu bolj šumi (manj elektronov na točko)
+      sum: tem ? (mol ? 0.02 : 0.09) : sem ? 0.05 + 0.08 * (1 - s.zarnica) : 0.012,
+      krog: !tem && !sem,
     },
   };
 }

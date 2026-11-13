@@ -125,7 +125,7 @@ export const kri = {
   imena: { 15: "levkocit", 3: "limfocit" },
   snovi: { 5: "eritrocit (rdeča krvnička)", 14: "krvna plazma" },
   isci: "Pri 400× poišči levkocite: nevtrofilec ima jedro z več režnji, limfocit okroglo temno jedro. Trombociti so drobne vijolične pike.",
-  glsl: /* glsl */ `
+  glsl: "#define SEM_PROSTE\n" + /* glsl */ `
 // Levkocit vrste v (0 nevtrofilec, 1 limfocit, 2 monocit, 3 eozinofilec, 4 bazofilec) s središčem c in semenom h.
 T levkocit(vec2 p, vec2 c, vec4 h, float px) {
   T t = prazno();

@@ -1,11 +1,13 @@
 // Optika mikroskopa (docs/mikroskop.md »Optics«): čisti izračuni brez DOM, da jih preverijo testi (test/mikroskop.test.js).
 // Svetlobni mikroskop: okular 10×, številka vidnega polja 18 mm, štirje objektivi (akromati), λ = 550 nm.
 // TEM: povečava se nanaša na fluorescenčni zaslon premera 160 mm.
+// SEM (vrstični elektronski mikroskop): povečava se nanaša na sliko širine 127 mm (dogovor proizvajalcev, Goldstein 2018).
 
 export const LAMBDA = 0.55; // µm, zelena svetloba (oko je tu najbolj občutljivo)
 export const OKULAR = 10;
 export const FN = 18; // mm, številka vidnega polja okularja
 export const TEM_ZASLON = 160; // mm
+export const SEM_ZASLON = 127; // mm
 export const N_OLJE = 1.515;
 export const OBJEKTIVI = [
   // parfokal: koliko µm je slika pri menjavi objektiva iz ostrine (resnični objektivi niso povsem parfokalni)
@@ -21,7 +23,9 @@ export const MAX_M = 5e7;
 
 // Premer vidnega polja (µm) pri skupni povečavi m.
 export function vidnoPolje(m, nacin = "svetloba") {
-  return nacin === "tem" ? (TEM_ZASLON * 1000) / m : (FN * 1000 * OKULAR) / m;
+  if (nacin === "tem") return (TEM_ZASLON * 1000) / m;
+  if (nacin === "sem") return (SEM_ZASLON * 1000) / m;
+  return (FN * 1000 * OKULAR) / m;
 }
 
 // Učinkovita numerična apertura objektiva: 100× brez olja ne more preseči ~0,95 in ima veliko sferno aberacijo.
@@ -72,10 +76,22 @@ export function kontrast(zaslonka) {
 
 // TEM: ločljivost tanke biološke rezine je omejena z vzorcem (~1,5 nm), ne z elektronsko optiko.
 export const TEM_LOCLJIVOST = 0.0015; // µm
+// SEM: ločljivost ~3 nm (volframova katoda, biološki vzorec z zlato prevleko); šolski SEM gre do ~300 000×
+export const SEM_MAX = 300000;
+export const SEM_LOCLJIVOST = 0.003; // µm
+export const SEM_APERTURA = 0.005; // rad, polovični kot snopa
+// Globinska ostrina SEM (µm): D = 2·r/α, kjer je r = 0,1 mm / M najmanjša zamegljenost, ki jo oko opazi na sliki.
+export function globinskaOstrinaSem(m) {
+  return (2 * 100) / (m * SEM_APERTURA);
+}
 
 // Kaj se pri dani velikosti vidnega polja (µm) vidi: raven prikaza.
 export function raven(m, nacin) {
   if (nacin === "svetloba") return m < 100 ? "tkivo" : m < 400 ? "celice" : "celice-blizu";
+  if (nacin === "sem") {
+    const v = vidnoPolje(m, "sem");
+    return v > 600 ? "tkivo" : v > 60 ? "celice" : "povrsina"; // SEM vidi površino, ne jeder
+  }
   const vp = vidnoPolje(m, "tem");
   if (vp > 15) return "celice";
   if (vp > 1.5) return "organeli";

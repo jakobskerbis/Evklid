@@ -4,7 +4,7 @@
 // pri tkivih 3D sveta) in laboratorij (pogon simulacij »lab-mikroskop«). Besedila vsebine so slovenska kot pri 3D modelih.
 import { ustvariUpodobitev } from "./upodobi.js";
 import { izracunajPogled, ZACETNO, povecava } from "./pogled.js";
-import { OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, vidnoPolje, locljivost, globinskaOstrina, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
+import { OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
 import { BARVANJA } from "./barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "./preparati/index.js";
 import { t } from "/i18n.js";
@@ -165,18 +165,41 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     revolver.append(b);
     return b;
   });
+  // SEM (vrstični elektronski mikroskop, j 13. 11. 2026): površina v 3D videzu, povečava zvezno do SEM_MAX
+  const bSem = mk("button", "a3-pill mk-obj mk-sem");
+  bSem.type = "button";
+  bSem.innerHTML = `<b>SEM</b><small>${t("mk.surface")}</small>`;
+  bSem.addEventListener("click", () => {
+    if (s.nacin === "sem") return;
+    const m = omeji(povecava(s), MIN_M, SEM_MAX);
+    kTkivu();
+    s.nacin = "sem";
+    s.m = m;
+    narisi();
+  });
+  revolver.append(bSem);
   const bTem = mk("button", "a3-pill mk-obj mk-tem");
   bTem.type = "button";
-  bTem.innerHTML = `<b>TEM</b><small>${t("mk.electrons")}</small>`;
+  bTem.innerHTML = `<b>TEM</b><small>${t("mk.section")}</small>`;
   bTem.addEventListener("click", () => {
-    if (s.nacin !== "tem") nastaviPovecavo(Math.max(5000, povecava(s) * 5));
+    if (s.nacin === "tem") return;
+    const m = omeji(Math.max(5000, povecava(s) * 5), MIN_M, MAX_M);
+    kTkivu();
+    s.nacin = "tem";
+    s.m = m;
+    narisi();
   });
   revolver.append(bTem);
-  const logMin = Math.log(MIN_M), logMax = Math.log(MAX_M);
+  // drsnik je logaritemski; pri SEM sega do SEM_MAX, sicer (svetloba in TEM skupaj) do MAX_M
+  const zvezno = () => s.nacin === "tem" || s.nacin === "sem";
+  const najvec = () => (s.nacin === "sem" ? SEM_MAX : MAX_M);
+  const logMin = Math.log(MIN_M);
+  const izU = (u) => Math.exp(logMin + u * (Math.log(najvec()) - logMin));
+  const vU = (m) => (Math.log(m) - logMin) / (Math.log(najvec()) - logMin);
   const dPov = drsnik(t("mk.total"), {
     min: 0, max: 1, vrednost: 0,
-    prikaz: (u) => oznakaPovecave(Math.exp(logMin + u * (logMax - logMin))),
-    ob: (u) => nastaviPovecavo(Math.exp(logMin + u * (logMax - logMin)), { izDrsnika: true }),
+    prikaz: (u) => oznakaPovecave(izU(u)),
+    ob: (u) => nastaviPovecavo(izU(u), { izDrsnika: true }),
   });
   // gumba − in + ob drsniku (j, 13. 11. 2026): pri svetlobi menjata objektiv, pri TEM povečavo podvojita ali razpolovita
   const gumbPov = (ikonaIme, kljuc, f) => {
@@ -196,11 +219,11 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       const zdaj = performance.now();
       const dt = prej ? Math.min(0.5, (zdaj - prej) / 1000) : 0.04;
       prej = zdaj;
-      const tem = s.nacin === "tem";
+      const tem = zvezno();
       interakcija = 1; // med držanjem hitri izris v polovični ločljivosti, polni po spustu (kot kolesce)
       // TEM: zvezno, ×10 na 1,5 s ne glede na hitrost naprave; svetloba: naslednji objektiv
       zoom(tem ? Math.pow(10, ((f > 1 ? 1 : -1) * dt) / 1.5) : f);
-      cakaj = setTimeout(korak, s.nacin === "tem" ? 40 : 420); // način po koraku: ob prehodu TEM → svetloba naslednji objektiv šele čez 0,42 s
+      cakaj = setTimeout(korak, zvezno() ? 40 : 420); // način po koraku: ob prehodu TEM → svetloba naslednji objektiv šele čez 0,42 s
     };
     b.addEventListener("pointerdown", (e) => {
       if (e.button !== 0 || b.disabled) return;
@@ -273,6 +296,10 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     narisi();
   });
   secTem.append(dDefokus.el, dSvetlost.el, bBarve);
+
+  const secSem = sekcija(t("mk.sem"));
+  const dSnopSem = drsnik(t("mk.beam"), { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), narisi()) });
+  secSem.append(dSnopSem.el);
 
   const secPodatki = sekcija(null);
   const tabela = mk("dl", "mk-podatki");
@@ -369,7 +396,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   }
   function izberiObjektiv(i) {
     const prej = OBJEKTIVI[s.objektiv];
-    if (s.nacin === "tem") {
+    if (s.nacin !== "svetloba") {
       s.nacin = "svetloba";
     } else if (i !== s.objektiv) {
       s.dzObj += OBJEKTIVI[i].parfokal - prej.parfokal;
@@ -379,6 +406,11 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     nastaviOstrino();
   }
   function nastaviPovecavo(m, { izDrsnika = false } = {}) {
+    if (s.nacin === "sem") {
+      // pri robu (držanje −/+ se ustavi znotraj 1 %) točno 40× ali 300 000×, da se podatki ujemajo z oznako
+      s.m = m < MIN_M * 1.01 ? MIN_M : m > SEM_MAX * 0.99 ? SEM_MAX : m;
+      return narisi({ izDrsnika });
+    }
     m = omeji(m, MIN_M, MAX_M);
     if (m > SVETLOBNI_MAX * 1.05) {
       if (s.nacin !== "tem") kTkivu();
@@ -410,6 +442,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     }
   }
   const zoom = (f) => {
+    if (s.nacin === "sem") return nastaviPovecavo(s.m * f);
     if (s.nacin === "tem") {
       if (f < 1 && s.m * f < SVETLOBNI_MAX * 1.05) return izberiObjektiv(OBJEKTIVI.length - 1);
       return nastaviPovecavo(s.m * f);
@@ -431,7 +464,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       platno.height = H;
     }
     // svetlobni: okrogel okular v krajši stranici; TEM: kvadratna slika pokrije ves oder (daljšo stranico), da ni praznih robov
-    const pokrij = s.nacin === "tem";
+    const pokrij = zvezno();
     const css = pokrij ? Math.max(r.width, r.height) : Math.min(r.width, r.height);
     const N = pokrij ? Math.max(W, H) : Math.min(W, H);
     const cap = N > 1100 ? 1024 : 768;
@@ -500,7 +533,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     if (!prep || !zadnji) return;
     const ime = imeTocke(s.sredisce);
     const rv = raven(zadnji.m, s.nacin);
-    kazalec.textContent = ime ? t(s.nacin === "tem" ? "mk.center" : "mk.pointer", { name: ime }) : "";
+    kazalec.textContent = ime ? t(zvezno() ? "mk.center" : "mk.pointer", { name: ime }) : "";
     platno.setAttribute("aria-label", `${prep.ime}, ${oznakaPovecave(zadnji.m)}, ${imeRavni(rv)}. ${kazalec.textContent}`);
   }
   let skrijOznako = 0;
@@ -528,37 +561,47 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
   // ---------- nadzor (prikaz stanja) ----------
   function posodobiNadzor({ brezDrsnika = false } = {}) {
     const tem = s.nacin === "tem";
+    const sem = s.nacin === "sem";
+    const luc = !tem && !sem;
     const m = povecava(s);
-    gumbiObj.forEach((b, i) => b.setAttribute("aria-pressed", String(!tem && i === s.objektiv)));
+    gumbiObj.forEach((b, i) => b.setAttribute("aria-pressed", String(luc && i === s.objektiv)));
     bTem.setAttribute("aria-pressed", String(tem));
-    if (!brezDrsnika) dPov.nastavi((Math.log(m) - logMin) / (logMax - logMin));
+    bSem.setAttribute("aria-pressed", String(sem));
+    if (!brezDrsnika) dPov.nastavi(vU(m));
     bManj.disabled = m <= MIN_M * 1.01;
-    bVec.disabled = m >= MAX_M * 0.99;
-    secLuc.hidden = tem;
+    bVec.disabled = m >= najvec() * 0.99;
+    secLuc.hidden = !luc;
     secTem.hidden = !tem;
-    oder.classList.toggle("mk-tem", tem);
-    igla.hidden = tem;
+    secSem.hidden = !sem;
+    if (sem && !brezDrsnika) dSnopSem.nastavi(s.zarnica);
+    if (tem && !brezDrsnika) dSvetlost.nastavi(s.zarnica);
+    if (luc && !brezDrsnika) dLucka.nastavi(s.zarnica); // lučka, snop TEM in snop SEM so ista vrednost
+    oder.classList.toggle("mk-tem", !luc);
+    igla.hidden = !luc;
     bOlje.setAttribute("aria-pressed", String(s.olje));
     bBarve.setAttribute("aria-pressed", String(s.barve));
     const obj = OBJEKTIVI[s.objektiv];
-    const brezOlja = !tem && obj.olje && !s.olje;
-    const oljeBrezPotrebe = !tem && !obj.olje && s.olje;
+    const brezOlja = luc && obj.olje && !s.olje;
+    const oljeBrezPotrebe = luc && !obj.olje && s.olje;
     opozorilo.hidden = !brezOlja && !oljeBrezPotrebe;
     bKapni.hidden = !brezOlja;
     opozorilo.textContent = brezOlja ? t("mk.noOil") : oljeBrezPotrebe ? t("mk.oilNotNeeded") : "";
     const utez = tem ? utezModela(m) : 0;
     bBarve.hidden = utez <= 0;
-    znacka.textContent = `${oznakaPovecave(m)} · ${tem ? "TEM" : t("mk.badgeObjective", { m: obj.m })}`;
+    znacka.textContent = `${oznakaPovecave(m)} · ${tem ? "TEM" : sem ? "SEM" : t("mk.badgeObjective", { m: obj.m })}`;
     const vp = vidnoPolje(m, s.nacin);
     const vrstice = [
-      [t("mk.magnification"), tem ? oznakaPovecave(m) : `${obj.m}× · ${OKULAR}× = ${oznakaPovecave(m)}`],
+      [t("mk.magnification"), luc ? `${obj.m}× · ${OKULAR}× = ${oznakaPovecave(m)}` : oznakaPovecave(m)],
       [t("mk.fieldOfView"), oznakaDolzine(vp)],
-      [t("mk.resolution"), tem ? t("mk.temResolution") : t("mk.rayleigh", { d: oznakaDolzine(locljivost(obj, s.zaslonka, s.olje)) })],
+      [t("mk.resolution"), tem ? t("mk.temResolution") : sem ? t("mk.semResolution") : t("mk.rayleigh", { d: oznakaDolzine(locljivost(obj, s.zaslonka, s.olje)) })],
     ];
-    if (!tem) vrstice.push([t("mk.depthOfField"), oznakaDolzine(globinskaOstrina(obj, s.olje))]);
+    if (luc) vrstice.push([t("mk.depthOfField"), oznakaDolzine(globinskaOstrina(obj, s.olje))]);
+    if (sem) vrstice.push([t("mk.depthOfField"), oznakaDolzine(globinskaOstrinaSem(m))]);
     vrstice.push([t("mk.whatYouSee"), imeRavni(raven(m, s.nacin))]);
     tabela.replaceChildren(...vrstice.flatMap(([a, b]) => [mk("dt", "", a), mk("dd", "", b)]));
-    resnica.textContent = !tem
+    resnica.textContent = sem
+      ? t("mk.truth.sem")
+      : !tem
       ? m >= 1000
         ? t("mk.truth.light")
         : ""
@@ -637,7 +680,7 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       const [a, b] = [...kazalci.values()];
       const f = Math.hypot(a.x - b.x, a.y - b.y) / Math.max(1, zacetekPinch.d);
       interakcija = 1;
-      if (s.nacin === "tem" || zacetekPinch.m * f > SVETLOBNI_MAX * 1.05) nastaviPovecavo(zacetekPinch.m * f);
+      if (zvezno() || zacetekPinch.m * f > SVETLOBNI_MAX * 1.05) nastaviPovecavo(zacetekPinch.m * f);
       else if (f > zacetekPinch.korak * 1.6) {
         zacetekPinch.korak *= 1.6;
         zoom(2);
@@ -670,10 +713,10 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     "wheel",
     (e) => {
       e.preventDefault();
-      if (s.nacin === "tem") {
+      if (zvezno()) {
         interakcija = 1;
         const f = Math.exp(-omeji(e.deltaY, -120, 120) * 0.004);
-        if (f < 1 && s.m * f < SVETLOBNI_MAX * 1.05) return izberiObjektiv(OBJEKTIVI.length - 1);
+        if (s.nacin === "tem" && f < 1 && s.m * f < SVETLOBNI_MAX * 1.05) return izberiObjektiv(OBJEKTIVI.length - 1);
         return nastaviPovecavo(s.m * f);
       }
       kolesce += e.deltaY;
@@ -694,10 +737,10 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       narisi();
     } else if (e.key === "+" || e.key === "=") {
       e.preventDefault();
-      zoom(s.nacin === "tem" ? 1.5 : 2);
+      zoom(zvezno() ? 1.5 : 2);
     } else if (e.key === "-" || e.key === "_") {
       e.preventDefault();
-      zoom(s.nacin === "tem" ? 1 / 1.5 : 0.5);
+      zoom(zvezno() ? 1 / 1.5 : 0.5);
     }
   });
   const ro = new ResizeObserver(() => narisi());
