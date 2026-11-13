@@ -224,3 +224,22 @@ test("Back: experiment opened from a lesson returns to the lesson, otherwise to 
   assert.equal(u.uciBack(once), false);
   assert.equal(u.uciTab(), "lab");
 });
+
+// j, 13. 11. 2026: ob pritisku na kartico atlasa je Android pokazal modri okvir in oblaček z naslovom in povezavo.
+// Kartice 3D sveta so zato gumbi brez povezave, odsvit ob dotiku je po vsej aplikaciji prozoren, puščici
+// prejšnji/naslednji v 3D pregledovalniku pa sta v aplikaciji (in v okvirju »Uči se«) prav tako gumba.
+test("3D svet: kartice so gumbi brez povezave in brez modrega odsvita ob dotiku", () => {
+  const js = read("public/uci-se.js");
+  assert.match(js, /<button type="button" class="card uci-3d-atlas"/);
+  assert.match(js, /<button type="button" class="card uci-3d-card/);
+  assert.doesNotMatch(js, /<a [^>]*uci-3d-(atlas|card)/);
+  assert.doesNotMatch(js, /href="\/3d#/);
+  assert.match(read("public/style.css"), /html \{ -webkit-tap-highlight-color: transparent; \}/);
+  assert.match(read("public/uci.css"), /\.uci-3d-card, \.uci-3d-atlas \{[^}]*text-align: start;[^}]*-webkit-tap-highlight-color: transparent;/);
+  const stran = read("public/3d/stran.js");
+  assert.match(stran, /mk\(gumbek \? "button" : "a", `a3-krog k3-sosed/);
+  assert.match(stran, /const gumbek = vAplikaciji \|\| vgrajeno;/);
+  // Gumb »3D svet« na zaslonu napake je v okvirju prav tako gumb.
+  assert.match(stran, /function naZbirko\(\) \{\n  const b = mk\(vgrajeno \? "button" : "a", "a3-pill"\);/);
+  assert.doesNotMatch(stran, /mk\("a", "a3-pill"\);\n\s*naZbirko/);
+});
