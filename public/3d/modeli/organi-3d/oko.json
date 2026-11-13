@@ -24,7 +24,7 @@
    "zile": 0.7,
    "zileBarva": "#c4685e",
    "zileBarva2": "#a8464c",
-   "zileSirina": 5e-05,
+   "zileSirina": 0.00005,
    "zileF": 16,
    "zileMaska": 9,
    "lise2": 0.18,
@@ -154,7 +154,7 @@
     "zil": 8
    },
    "zile": 0.75,
-   "zileSirina": 9e-05,
+   "zileSirina": 0.00009,
    "zileBarva": "#a8261f",
    "zileBarva2": "#6a1216",
    "tekstura": false
@@ -240,7 +240,7 @@
    "zile": 0.5,
    "zileBarva": "#b85a4c",
    "zileBarva2": "#8f3a42",
-   "zileSirina": 6e-05,
+   "zileSirina": 0.00006,
    "rezSnopi": {
     "os": [
      -0.508,
@@ -540,7 +540,7 @@
      -0.00187,
      0.01444
     ],
-    "polmer": 1.0,
+    "polmer": 1,
     "polmerTelefon": 0.8
    },
    "skrijTkiva": [

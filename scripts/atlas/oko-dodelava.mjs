@@ -184,7 +184,7 @@ export function zapriRezo(mn, mz, O, { izven = null, ovira = null } = {}) {
   for (let k = 0; k < 3; k++) g = g.map((x, i) => { if (!x) return 0; const v = sos[i].filter((j) => g[j] > 0); return v.length ? 0.5 * x + 0.5 * v.reduce((s, j) => s + g[j], 0) / v.length : x; });
   let st = 0;
   const W = mn.W.map((p, i) => {
-    const d = reza[i] > 0 ? g[i] + PREKRIVANJE : 0;
+    const d = reza[i] > 0 ? Math.min(g[i], reza[i]) + PREKRIVANJE : 0; // nikoli dlje od lastne reže (luknja na telefonu)
     if (d <= 0) return p;
     st++;
     return G.v3.add(p, G.v3.mul(G.v3.norm(G.v3.sub(p, O)), d));
