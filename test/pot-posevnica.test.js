@@ -85,3 +85,19 @@ test("1.1: poševnica na koncu poti ne obide dnevne meje vprašanj", async () =>
     delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
   }
 });
+
+// Velike črke v poti: Express jih pri ujemanju ne loči, preverjanja v vmesnikih pa morajo veljati enako
+// (izbris profila se zapiše v profile_changes, ki omejuje menjavo profilov; opravila po izbrisu).
+test("1.1: izbris profila z velikimi črkami v poti se zapiše kot izbris", async () => {
+  await withServer(async ({ call, calls, store }) => {
+    const reg = await call("/api/auth/register", { method: "POST", body: { email: "crke@primer.si", password: "geslo1234", accept_privacy: true, birth_date: "1985-04-12" } });
+    assert.equal(reg.status, 201);
+    const mail = calls.filter((c) => c.host === "api.resend.com").at(-1);
+    await call(/\/api\/auth\/verify\?token=[\w-]+/.exec(mail.body.text)[0]);
+    const kid = (await call("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 10, consent: true } })).body;
+    const del = await call(`/api/STUDENTS/${kid.id}/`, { method: "DELETE" });
+    assert.equal(del.status, 200, JSON.stringify(del.body));
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM students WHERE id = ?").get(kid.id).n, 0);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM profile_changes WHERE kind = 'deleted' AND student_id = ?").get(kid.id).n, 1);
+  });
+});

@@ -903,7 +903,7 @@ export function mountAccounts(app, store, opts = {}) {
     if (lockable(p) && ownerOnly(req.path, req.method) && !accountLocks.touch(p.id, req.deviceId)) {
       return res.status(403).json({ error: "Za to vpiši geslo računa.", account_locked: true });
     }
-    if (p.is_guest && /^\/billing\//.test(req.path)) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
+    if (p.is_guest && /^\/billing\//i.test(req.path)) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
     if (p.is_guest && !guestAllowed(p)) return res.status(401).json({ error: "Uporaba brez računa ni več mogoča. Ustvari račun, da obdržiš napredek.", login: true, guest_off: true });
     // Porabo AI vidi samo skrbnik ali kdor aplikacijo odpre na računalniku, kjer teče strežnik.
     if (/^\/usage(\/|$)/i.test(req.path) && !p.is_admin && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
@@ -939,11 +939,11 @@ export function mountAccounts(app, store, opts = {}) {
     // Skrbnik (is_admin: EVKLID_ADMIN_EMAILS s potrjenim naslovom ali zastavica v bazi) ima profile lahko
     // odprte na več napravah hkrati (j, 4. 11.).
     if (studentId !== null) {
-      const own = s && /^\/students\/\d+\/?$/.test(req.path);
+      const own = s && /^\/students\/\d+\/?$/i.test(req.path);
       if (own && req.method === "DELETE") {
         devices.logChange(p.id, "deleted", studentId);
         guests.snapshot(studentId);
-      } else if (c && req.method === "DELETE" && /^\/conversations\/\d+\/?$/.test(req.path)) {
+      } else if (c && req.method === "DELETE" && /^\/conversations\/\d+\/?$/i.test(req.path)) {
         guests.snapshotConversation(Number(c[1]), studentId);
       } else {
         const takeover = !!p.is_admin || (req.method === "POST" && req.path === `/students/${studentId}/claim`);

@@ -260,7 +260,7 @@ export function createApp(store, opts = {}) {
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
   app.use((req, res, next) => {
-    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/.test(req.path)) {
+    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/i.test(req.path)) {
       res.on("finish", () => {
         if (res.statusCode < 300) for (const fn of afterDelete) fn();
       });
