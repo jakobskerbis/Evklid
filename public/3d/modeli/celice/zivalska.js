@@ -659,12 +659,13 @@ export function zgradi(THREE, ctx = {}) {
   // ---------- podrobnosti za faks (stikalo »Podrobnosti za faks«; izklopljeno je celica enaka kot za OŠ in SŠ) ----------
   // Zgrajeno po poliranju in z lastnim zaporedjem naključnih števil, zato se osnovna celica ne spremeni.
   // Viri: Alberts in sod., Molecular Biology of the Cell, 7. izd. (2022); Lodish in sod., Molecular Cell Biology, 9. izd. (2021).
-  const fk = faksPodrobnosti();
-  nadzor.push(fk.stikalo);
+  // primerjava.js (ctx.brezFaks) stikala nima: faks deli se tam ne zgradijo
+  const fk = ctx.brezFaks ? null : faksPodrobnosti();
+  if (fk) nadzor.push(fk.stikalo);
   // stikalo »Barve kot v učbeniku« (po poliranju, da shrani končne barve)
   const ucb = V.barveUcbenika(deli);
   nadzor.push(ucb);
-  if (ctx.zacetek && ctx.zacetek.faks) fk.stikalo.ob(true);
+  if (fk && ctx.zacetek && ctx.zacetek.faks) fk.stikalo.ob(true);
 
   function faksPodrobnosti() {
     let s2 = 4242;
@@ -692,7 +693,7 @@ export function zgradi(THREE, ctx = {}) {
       const m = a.clone().add(lamV[j]).multiplyScalar(0.5).add(v3(0.05));
       lamK.push(new THREE.CatmullRomCurve3([naJedru(a), naJedru(m, 0.972), naJedru(lamV[j])]));
     }));
-    const lamina = V.vlakna(lamK, 0.0021, B.lamina, { sij: 0.35, seg: hi ? 6 : 3, rad: 3 });
+    const lamina = V.vlakna(lamK, 0.0024, B.lamina, { sij: 0.18, seg: hi ? 6 : 3, rad: 3 });
 
     // intermediarni filamenti: valovite vrvi od jedrne ovojnice do membrane (vimentin, keratini)
     const ifK = [];
@@ -746,8 +747,8 @@ export function zgradi(THREE, ctx = {}) {
       }
       return out;
     }
-    const gliM = V.pike(verige(memOut, hi ? 420 : 140), B.glikokaliks, 0.0058, 0.35);
-    const gliP = V.pike(verige(pokrov, hi ? 140 : 45), B.glikokaliks, 0.0058, 0.35);
+    const gliM = V.pike(verige(memOut, hi ? 420 : 140), B.glikokaliks, 0.0058, 0.35, { lovi: true, prag: 0.005 });
+    const gliP = V.pike(verige(pokrov, hi ? 140 : 45), B.glikokaliks, 0.0058, 0.35, { lovi: true, prag: 0.005 });
 
     // prostor za nove organele: stran od jedra z ER, mitohondrijev, Golgija in gladkega ER, ne pred jedrom
     const zasedeno = [], M4 = new THREE.Matrix4();
@@ -833,7 +834,7 @@ export function zgradi(THREE, ctx = {}) {
     const enD = nov("endosomi", "Endosomi", "Predelki za razvrščanje snovi iz endocitoze. Zgodnji endosom (pH okoli 6) vrne receptorje na membrano, nato dozori v pozni endosom z notranjimi mešički (multivezikularno telo), ki se zlije z lizosomom.", B.endosom, [zgM, mvtOvoj, mvtNotr], vidna(endT).toArray(), "lizosom");
     const lamD = nov("jedrna-lamina", "Jedrna lamina", "Mreža intermediarnih filamentov iz laminov (A/C in B) pod notranjo jedrno membrano. Drži obliko jedra, nanjo so pripeti porni kompleksi in heterokromatin; mutacije lamina A povzročajo npr. progerijo.", B.lamina, [lamina], naJedru(lamV.find((d) => d.dot(POG) < -0.3) || lamV[0]).toArray(), "jedrna-ovojnica");
     const mtbD = nov("mikrotubuli", "Mikrotubuli", "Votle cevke (25 nm) iz 13 protofilamentov dimerov α- in β-tubulina. Plus konec dinamično raste in se krči; po njih večina kinezinov nosi tovor proti plus koncu, dineini proti minus koncu (centrosomu).", B.citoskelet, [cito.meshes[0]], cito.tocka);
-    const aktD = nov("aktinski-filamenti", "Aktinski filamenti", "Dvojna vijačnica F-aktina (okoli 7 nm). Pod membrano tvorijo celično skorjo, ki določa obliko celice; z miozinom omogočajo krčenje, gibanje celice in citokinezo.", B.aktin, [cito.meshes[1]], [0.3, -0.5, -0.6]);
+    const aktD = nov("aktinski-filamenti", "Aktinski filamenti", "Dvojna vijačnica F-aktina (okoli 7 nm). Pod membrano tvorijo celično skorjo, ki določa obliko celice; z miozinom omogočajo krčenje, gibanje celice in citokinezo.", B.aktin, [cito.meshes[1]], akt[0].getPoint(0.5).toArray());
     const ifD = nov("intermediarni-filamenti", "Intermediarni filamenti", "Vrvi (okoli 10 nm) iz vlaknatih beljakovin, značilnih za tip celice (keratini v epitelih, vimentin v vezivnih celicah, dezmin v mišicah). Nimajo ne polarnosti ne motorjev; celici dajejo natezno trdnost.", B.intermediarni, [ifM], ifK[0].getPoint(0.6).toArray());
     const stikalo = V.ravenFaks(deli, {
       mreze,
@@ -885,7 +886,7 @@ export function zgradi(THREE, ctx = {}) {
     },
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
-      fk.geo.forEach((g) => g.dispose());
+      fk?.geo.forEach((g) => g.dispose());
       odpad.forEach((m) => m.dispose());
     },
   };

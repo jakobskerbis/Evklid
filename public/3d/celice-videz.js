@@ -58,7 +58,7 @@ export const BARVE = {
   bicek: "#f6e7b8",
   // podrobnosti za faks (V.ravenFaks)
   intermediarni: "#ff7f6e",
-  lamina: "#ffb0a3",
+  lamina: "#ff8f80",
   glikokaliks: "#7ff0b2",
   endosom: "#f5a3c8",
   klatrin: "#ff6a3d",
@@ -301,6 +301,13 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
     odpad.push(m);
     const pt = new THREE.Points(g, m);
     if (!o.lovi) pt.raycast = () => {};
+    else if (o.prag) { // ožji prag zadetka kot privzetih 0,02 (goste drobne točke ne prestrežejo tapa na sosednji del)
+      pt.raycast = (rc, zadetki) => {
+        const t = rc.params.Points.threshold;
+        rc.params.Points.threshold = o.prag;
+        try { THREE.Points.prototype.raycast.call(pt, rc, zadetki); } finally { rc.params.Points.threshold = t; }
+      };
+    }
     return pt;
   }
 
@@ -481,7 +488,20 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
         nov.push(...(v && zamenjaj[d.id] ? zamenjaj[d.id] : [d]));
         if (v) nov.push(...dodaj.filter((x) => x.za === d.id));
       }
-      if (v) nov.push(...dodaj.filter((x) => !ids.has(x.za)));
+      if (v) { // za drugim dodanim delom (npr. klatrinske jamice za glikokaliksom), sicer na konec
+        const ostali = dodaj.filter((x) => !ids.has(x.za));
+        for (let n = ostali.length; n && ostali.length; n--) {
+          for (const x of [...ostali]) {
+            const i = nov.findIndex((d) => d.id === x.za);
+            if (i < 0) continue;
+            let j = i + 1;
+            while (j < nov.length && dodaj.includes(nov[j]) && nov[j].za === x.za) j++;
+            nov.splice(j, 0, x);
+            ostali.splice(ostali.indexOf(x), 1);
+          }
+        }
+        nov.push(...ostali);
+      }
       for (const d of nov) {
         for (const m of d.meshes) m.userData.del = d.id;
         const b = besedila.get(d.id);

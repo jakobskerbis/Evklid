@@ -30,7 +30,7 @@ export function simsFor(topicId, lesson = loadLesson(topicId)) {
   // ki ima isto lekcijo (brez ponovitev).
   const seen = new Set();
   const list = baseTopicIds(topicId)
-    .flatMap((id) => sameTopics(id))
+    .flatMap((id) => [id, ...sameTopics(id).filter((x) => x !== id)]) // lastna tema prva (prva simulacija je za tisk)
     .flatMap((id) => simsForTopic(id))
     .filter((d) => usable(d) && !seen.has(d.id + JSON.stringify(d.opts)) && seen.add(d.id + JSON.stringify(d.opts)));
   const extra = lesson?.meta.demo;

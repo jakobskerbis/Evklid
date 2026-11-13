@@ -892,13 +892,13 @@ export function zgradi(THREE, ctx = {}) {
       return v3(0, 0.01, 0.03);
     };
     const gruca = (c, n, r) => Array.from({ length: n }, () => c.clone().add(v3(r2() - 0.5, r2() - 0.5, r2() - 0.5).multiplyScalar(r)));
-    const cpDNA = V.pike(vSvet(kOvoj, () => [...gruca(vStromi((t) => t.x < -0.02), 7, 0.012), ...gruca(vStromi((t) => t.x > 0.02), 6, 0.011)]), B.dnk, 0.0042, 0.3);
-    const cpRib = V.pike(vSvet(kOvoj, () => Array.from({ length: hi ? 12 : 6 }, () => vStromi(() => true))), B.ribosomi, 0.0034, 0.3);
-    const plg = V.pike(vSvet(kOvoj, () => Array.from({ length: 3 }, () => vStromi((t) => t.y < 0.014))), B.plastoglobul, 0.0075, 0.25);
+    const cpDNA = V.pike(vSvet(kOvoj, () => [...gruca(vStromi((t) => t.x < -0.02), 7, 0.012), ...gruca(vStromi((t) => t.x > 0.02), 6, 0.011)]), B.dnk, 0.0042, 0.3, { lovi: true, prag: 0.004 });
+    const cpRib = V.pike(vSvet(kOvoj, () => Array.from({ length: hi ? 12 : 6 }, () => vStromi(() => true))), B.ribosomi, 0.0034, 0.3, { lovi: true, prag: 0.004 });
+    const plg = V.pike(vSvet(kOvoj, () => Array.from({ length: 3 }, () => vStromi((t) => t.y < 0.014))), B.plastoglobul, 0.0075, 0.25, { lovi: true, prag: 0.004 });
     // mitohondrij (pomanjšan na 0,4): DNA in ribosomi v matriksu ob odprtini (smer mW)
     const mtLok = () => [...[-0.034, 0.034].flatMap((y) => gruca(v3(mW.x * 0.012, y, mW.z * 0.012), 4, 0.008)), ...[0, 0.068, -0.068].map((y) => v3(mW.x * 0.014 + 0.006, y, mW.z * 0.014))]
       .map((t) => { const u = t.y / (0.06 + 0.055); t.x += 0.032 * (u * u - 0.4); return t.multiplyScalar(0.4); });
-    const mtd = V.pike(vSvet(mit, mtLok), B.dnk, 0.0028, 0.3);
+    const mtd = V.pike(vSvet(mit, mtLok), B.dnk, 0.0028, 0.3, { lovi: true, prag: 0.004 });
     const mreze = [cpDNA, cpRib, plg, mtd];
     group.add(...mreze);
     // jedrne pore: obroč z osmimi podenotami (le pri visoki kakovosti, zaradi proračuna trikotnikov)

@@ -138,7 +138,7 @@ for (const f of datoteke) {
         if (n.tip === "izpis") { assert.equal(typeof n.vrednost(), "string"); continue; }
         assert.equal(typeof n.ob, "function", `${f}: nadzor ${n.id}.ob`);
         if (n.tip === "gumb") { n.ob(); continue; }
-        if (n.tip === "stikalo") { n.ob(!n.vrednost); n.ob(n.vrednost); continue; }
+        if (n.tip === "stikalo") { const v = n.vrednost; n.ob(!v); n.ob(v); continue; }
         if (n.tip === "izbira") {
           for (const [v] of n.moznosti) {
             n.ob(v);
@@ -180,6 +180,9 @@ for (const [f, novi] of Object.entries(FAKS)) {
       fk.ob(true);
       const ids = M.deli.map((d) => d.id);
       for (const id of novi) assert.ok(ids.includes(id), `${f}: faks del ${id}`);
+      assert.equal(new Set(ids).size, ids.length, `${f}: podvojen del`);
+      for (const d of M.deli) for (const x of d.meshes) assert.equal(x.userData.del, d.id, `${f}: faks userData.del ${d.id}`);
+      if (f === "zivalska.js") assert.ok(ids.indexOf("klatrinski-mesicki") === ids.indexOf("glikokaliks") + 1, `${f}: vrstni red (za)`);
       assert.ok(M.deli.filter((d) => pred.includes(`${d.id}|${d.ime}|${d.opis}`)).length < pred.length / 2, `${f}: faks besedila`);
       const pr = M.nadzor.find((n) => n.id === "prikaz");
       for (const [v] of pr.moznosti) {
@@ -235,4 +238,17 @@ test("celice: katalog – faks podrobnosti samo v faks lekcijah, faks lekcije o 
     const z = simsFor(tema).find((d) => /^3d-celica-(zivalska|rastlinska)$/.test(d.id));
     assert.ok(z && z.opts.zacetek?.faks === true, `${tema}: živalska ali rastlinska celica s faks podrobnostmi`);
   }
+});
+
+test("celice: primerjava ne zgradi faks delov živalske celice", { skip }, async () => {
+  const m = await import(pathToFileURL(path.join(DIR, "primerjava.js")));
+  const tocke = (M) => { let n = 0; M.group.traverseVisible((o) => { if (o.isPoints) n += o.geometry.attributes.position.count; }); return n; };
+  const M = m.zgradi(THREE, { kakovost: "nizka", gibanje: false });
+  const n0 = tocke(M);
+  const poudari = M.nadzor.find((n) => n.tip === "izbira");
+  for (const [v] of poudari.moznosti) poudari.ob(v);
+  poudari.ob(poudari.vrednost);
+  assert.equal(tocke(M), n0, "vidne točke se po »Poudari« ne smejo spremeniti (skrit glikokaliks)");
+  assert.ok(!M.nadzor.some((n) => n.id === "faks"));
+  M.dispose?.();
 });
