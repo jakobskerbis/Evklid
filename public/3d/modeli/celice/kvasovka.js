@@ -252,6 +252,20 @@ export function zgradi(THREE, ctx = {}) {
   const bCit = new THREE.Mesh(bC.g, citMat);
   const vrat = new THREE.Mesh(new THREE.TorusGeometry(RNK, 0.011, q(8), q(40)).rotateY(Math.PI / 2), mat(0xf4e8c8, { roughness: 0.4, clearcoat: 0.7 }));
   group.add(bStena, bRez, bMem, bCit, vrat);
+  // Notranja stran vratu: trak od notranjega roba matične celice do notranjega roba brsta. Brez njega je med njima
+  // ostala reža (zunanja stena se od znotraj ne riše), skozi katero se je videlo ven (j, 13. 11.: »luknja pri brstenju«).
+  const ovrG = new THREE.BufferGeometry();
+  ovrG.setAttribute("position", new THREE.BufferAttribute(new Float32Array(2 * (nK + 1) * 3), 3));
+  {
+    const idx = [];
+    for (let j = 0; j < nK; j++) { const a = j, b2 = j + nK + 1; idx.push(a, a + 1, b2, b2, a + 1, b2 + 1); }
+    ovrG.setIndex(idx);
+  }
+  const ovratnik = new THREE.Mesh(ovrG, mat(0x3d3180, { roughness: 0.62, clearcoat: 0.25, sheen: 0.35, sheenColor: new THREE.Color(0x8d7ee0), side: THREE.DoubleSide }));
+  // Pregrada (primarni septum iz hitina): ob koncu brstenja zapre vrat kot zaslonka; ko se razcepi, se brst odcepi, na
+  // matični celici ostane brazgotina (Cabib in sod. 2001, Lesage in Bussey 2006).
+  const septum = new THREE.Mesh(new THREE.BufferGeometry(), mat(0xf4e8c8, { roughness: 0.4, clearcoat: 0.7, side: THREE.DoubleSide }));
+  group.add(ovratnik, septum);
 
   // ---------- brazgotine po prejšnjih brstih ----------
   const brz = [[2.3, 1.85], [2.75, 2.85], [1.25, 2.35]];
@@ -472,11 +486,14 @@ export function zgradi(THREE, ctx = {}) {
   del("celicna-stena", "Celična stena", "Čvrsta plast iz glukanov in nekaj hitina; na zunanji strani (v prerezu temnejši pas) so manoproteini, ki štrlijo kot puh. Celico ščiti in ji daje obliko. Debelina je povečana.", STENA, [mStena, mRez, bRez, vrat, manM, manB],
     vrtTocka(P0, n1 + 6, Math.PI * 0.62, 0, sumF, v3()).toArray());
   del("membrana", "Celična membrana", "Dvosloj fosfolipidov tik pod steno, ki uravnava prehod snovi v celico in iz nje; tanjši je od stene. Debelina je povečana.", B.dvosloj, [mMem, bMem], vrtTocka(P0, Math.round(n1 * 0.55), 0.03, (ZS + ZM) / 2, sumF, v3()).toArray());
-  del("citoplazma", "Citoplazma", "Tekočina v celici z ribosomi in organeli; v njej poteka tudi alkoholno vrenje, pri katerem iz sladkorja nastaneta alkohol in ogljikov dioksid.", "#5b4bb0", [mCit, bCit],
+  del("citoplazma", "Citoplazma", "Tekočina v celici z ribosomi in organeli; v njej poteka tudi alkoholno vrenje, pri katerem iz sladkorja nastaneta alkohol in ogljikov dioksid.", "#5b4bb0", [mCit, bCit, ovratnik],
     vrtTocka(P0, Math.round(n1 * 0.6), Math.PI * 1.3, ZC + 0.003, sumF, v3()).toArray());
   const brstDel = { id: "brst", ime: "Brst (hčerinska celica)", opis: "Izboklina, ki zraste iz matične celice; ko je dovolj velika in dobi svoje jedro, se odcepi kot nova kvasovka.", barva: "#ecd6a0", meshes: [bStena], tocka: [0, 0, 0] };
   bStena.userData.del = "brst";
   deli.push(brstDel);
+  const septumDel = { id: "septum", ime: "Pregrada v vratu (septum)", opis: "Ob koncu brstenja celica v vratu zgradi pregrado iz hitina, ki loči obe citoplazmi. Ko se pregrada razcepi, se brst odcepi; na matični celici ostane brazgotina.", barva: "#f4e8c8", meshes: [septum], tocka: [0, 0, 0] };
+  septum.userData.del = "septum";
+  deli.push(septumDel);
   del("brazgotine", "Brazgotine po brstenju", "Obročki iz hitina na steni matične celice: vsak ostane po enem odcepljenem brstu, zato po njih preštejemo, kolikokrat je celica brstela.", "#f4e8c8", [brzM], brzT[0].toArray());
   const jedroDel = { id: "jedro", ime: "Jedro", opis: "Hrani DNK. Pri brstenju se podaljša skozi vrat brsta in razdeli; eno jedro ostane v matični celici, drugo preide v brst.", barva: B.jedro, meshes: [jM, jH, most], tocka: [0, 0, 0] };
   for (const m of jedroDel.meshes) m.userData.del = "jedro";
@@ -508,7 +525,14 @@ export function zgradi(THREE, ctx = {}) {
     const xt = vratX(rn);
     const Pm = profMati(rn);
     mS.posodobi(Pm); mC.posodobi(Pm);
-    bStena.visible = bRez.visible = bMem.visible = bCit.visible = vrat.visible = brstG.visible = aktin.visible = vez.visible = ima;
+    bStena.visible = bRez.visible = bMem.visible = bCit.visible = vrat.visible = ovratnik.visible = brstG.visible = aktin.visible = vez.visible = ima;
+    // pregrada raste od roba vratu proti sredini, ko je jedro razdeljeno
+    const sp = gladko(0.9, 1, b), rZ = Math.max(0.005, rn - ZS * 0.6);
+    septum.visible = ima && sp > 0.01;
+    if (septum.visible) {
+      septum.geometry.dispose();
+      septum.geometry = new THREE.RingGeometry(Math.max(0, rZ * (1 - sp)), rZ, q(40), 1).rotateY(Math.PI / 2).translate(xt, 0, 0);
+    }
     if (ima) {
       const Bp = profBrst(Math.max(s, 0.02), rn);
       const zs = Math.min(1, s * 2.5);
@@ -516,12 +540,20 @@ export function zgradi(THREE, ctx = {}) {
       bRez.geometry.dispose(); bRez.geometry = stenaRez(Bp.P, zs);
       bMem.geometry.dispose(); bMem.geometry = memRez(Bp.P, zs);
       vrat.position.set(xt, 0, 0); vrat.scale.setScalar(rn / RNK);
+      const op = ovrG.attributes.position, iM = Pm.p.length - 1;
+      for (let j = 0; j <= nK; j++) {
+        const th = (j / nK) * Math.PI * 2;
+        vrtTocka(Pm, iM, th, ZC, sumF, tmp); op.setXYZ(j, tmp.x, tmp.y, tmp.z);
+        vrtTocka(Bp.P, 0, th, ZC * zs, sumF, tmp); op.setXYZ(j + nK + 1, tmp.x, tmp.y, tmp.z);
+      }
+      op.needsUpdate = true;
+      ovrG.computeVertexNormals(); ovrG.computeBoundingSphere();
       Bc.set(Bp.Bx, 0, 0);
       brstG.position.copy(Bc); brstG.scale.setScalar(Math.max(s, 0.02));
       brstDel.tocka = [Bc.x + ABb * s * 0.35, RBb * s * 0.55, RBb * s * 0.75 - 0.02].map((x) => Math.round(x * 1000) / 1000);
     }
     // jedro: v pozni fazi se podaljša skozi vrat in razdeli
-    const t = gladko(0.55, 0.97, b);
+    const t = gladko(0.55, 0.9, b);
     const rj = RJ * (1 - 0.2 * t);
     const cilj = Bc.clone().add(v3(-0.03, 0, 0));
     const vratP = v3(xt, 0, 0);
@@ -544,9 +576,12 @@ export function zgradi(THREE, ctx = {}) {
     jedroDel.tocka = pM.clone().add(v3(-0.06, rj * 0.75, rj * 0.55)).toArray().map((x) => Math.round(x * 1000) / 1000);
     group.updateMatrixWorld(true);
     jcDel.tocka = group.worldToLocal(jc.localToWorld(jcT.clone())).toArray().map((x) => Math.round(x * 1000) / 1000);
-    deli = vsiDeli.filter((d) => (d !== brstDel && d.id !== "aktin") || ima);
+    septumDel.tocka = [Math.round(xt * 1000) / 1000, Math.round(rn * 0.45 * 1000) / 1000, Math.round(rn * 0.45 * 1000) / 1000];
+    deli = vsiDeli.filter((d) => ((d !== brstDel && d.id !== "aktin") || ima) && (d !== septumDel || septum.visible));
   }
-  const faza = () => (b < 0.03 ? "Celica še ne brsti" : b < 0.55 ? "Brst raste" : b < 0.97 ? "Jedro potuje v brst in se deli" : "Brst ima svoje jedro; kmalu se odcepi");
+  // meje kot v nastavi(): jedro do 0,9, pregrada 0,9 … 1
+  const faza = () => (b < 0.03 ? "Celica še ne brsti" : b < 0.55 ? "Brst raste" : b < 0.9 ? "Jedro potuje v brst in se deli"
+    : b < 0.99 ? "Vrat se zapira s pregrado iz hitina" : "Brst ima svoje jedro, vrat je zaprt; kmalu se odcepi");
   const nadzor = [
     { tip: "drsnik", id: "brstenje", oznaka: "Brstenje", min: 0, max: 1, korak: 0.01, vrednost: 0.5, ob: nastavi },
     { tip: "izpis", id: "faza", oznaka: "Faza", vrednost: faza },
@@ -582,6 +617,7 @@ export function zgradi(THREE, ctx = {}) {
     "celicna-stena": { tex: "zrna", rf: 60, k: 1.4, b: 0.24, s: 0.18, lisa: 0.12, f: 5 },
     brst: { tex: "zrna", rf: 70, k: 1.2, b: 0.2, lisa: 0.1, f: 6 },
     brazgotine: { tex: "gube", rf: 120, k: 1.2, b: 0.25 },
+    septum: { tex: "zrna", rf: 90, k: 1.1, b: 0.22 },
     citoplazma: { tex: "fino", rf: 50, k: 1.1, b: 0.24, lisa: 0.22, f: 6,
       ao: (p) => 0.8 + 0.2 * Math.min(1, Math.max(0, 0.5 + 0.6 * (-(p.x - M.x) + p.y + p.z) / (Math.hypot(p.x - M.x, p.y, p.z) * 1.732 || 1))) },
     vakuola: { tex: "zrna", rf: 50, k: 0.8, b: 0.18, lisa: 0.08, f: 5 },
@@ -597,7 +633,7 @@ export function zgradi(THREE, ctx = {}) {
     aktin: { tex: null },
   });
   // stikalo »Barve kot v učbeniku« (po poliranju, da shrani končne barve)
-  nadzor.push(V.barveUcbenika(vsiDeli, { "celicna-stena": "#c99a55", brst: "#e3c58a", brazgotine: "#8a6430", er: "#4f95e8", "lipidne-kapljice": "#f5c842", peroksisomi: "#bcd83a", aktin: "#d94f4f" }));
+  nadzor.push(V.barveUcbenika(vsiDeli, { "celicna-stena": "#c99a55", brst: "#e3c58a", brazgotine: "#8a6430", septum: "#8a6430", er: "#4f95e8", "lipidne-kapljice": "#f5c842", peroksisomi: "#bcd83a", aktin: "#d94f4f" }));
 
   return {
     group,

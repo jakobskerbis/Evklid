@@ -5,6 +5,7 @@
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { skoziLupino } from "./izbira.js";
+import { mrezeOvojev, okvirDela as okvirDelaVSvetu } from "./ovoji.js";
 import { t } from "/i18n.js";
 import { napisPoskusa } from "../sim/napis-poskusa.js";
 import { icon } from "/icons.js";
@@ -347,63 +348,21 @@ export function odpriModel(el, mod, opts = {}) {
   }
 
   // Izbrani del: deli, ki ga res obdajajo (celična stena, membrana, ovojnica ...), postanejo nevidni, da se izbrani
-  // vidi (j, 4. 11.). »Obdaja« = vseh šest žarkov od zunaj (±x, ±y, ±z) proti središču izbranega zadene ploskev tega
-  // dela (tudi skrit pokrov izreza), preden pride do središča; razpršeni deli (ribosomi, silnice, pasovi, vijačnica DNK) tega ne izpolnijo.
-  // Ovoj mora biti tudi večji od izbranega. Skrijemo s plastjo 31, ki je kamera in tap ne vidita; model sam še naprej
+  // vidi (j, 4. 11.); pravilo je v ovoji.js. Skrijemo s plastjo 31, ki je kamera in tap ne vidita; model sam še naprej
   // upravlja `visible`. Samo biologija (celice, virusi, organi): pri fiziki, kemiji in matematiki so »ovoji« (silnice,
   // lupine, telesa) snov učenja.
   const SKRITA_PLAST = 31;
   const skrite = new Map(); // object → izvirna maska plasti
   const _rc = new THREE.Raycaster();
-  const SMERI = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].map((v) => new THREE.Vector3(...v));
-  function okvirDela(d, box) {
-    box.makeEmpty();
-    for (const m of d.meshes || []) {
-      if (!m) continue;
-      m.updateWorldMatrix(true, true);
-      m.traverseVisible((o) => {
-        if (!o.isMesh || (o.isInstancedMesh && o.count === 0)) return;
-        const g = o.isInstancedMesh ? (o.boundingBox || (o.computeBoundingBox(), o.boundingBox)) : (o.geometry.boundingBox || (o.geometry.computeBoundingBox(), o.geometry.boundingBox));
-        if (g) box.union(g.clone().applyMatrix4(o.matrixWorld));
-      });
-    }
-    return box;
-  }
-  const prostornina = (b) => {
-    const v = b.getSize(new THREE.Vector3());
-    return Math.max(v.x, 1e-6) * Math.max(v.y, 1e-6) * Math.max(v.z, 1e-6);
-  };
+  function okvirDela(d, box) { return okvirDelaVSvetu(THREE, d, box); }
   function skrijObdajajoce(d) {
     for (const [o, maska] of skrite) o.layers.mask = maska;
     skrite.clear();
-    if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO") return;
-    const izbrane = new Set();
-    for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
-    const bS = okvirDela(d, new THREE.Box3());
-    if (bS.isEmpty() || !model.group) return;
-    const c = bS.getCenter(new THREE.Vector3());
-    const vS = prostornina(bS);
-    const bP = new THREE.Box3();
-    const R = new THREE.Box3().setFromObject(model.group).getBoundingSphere(new THREE.Sphere()).radius * 2 + 1;
-    const izvor = new THREE.Vector3();
-    for (const p of model.deli) {
-      if (p === d || !p.meshes?.length) continue;
-      if (prostornina(okvirDela(p, bP)) < vS * 1.25) continue; // ovoj je večji od izbranega
-      const mreze = [];
-      // tudi skrite mreže dela: skrit »pokrov« izreza sklene lupino (celica, HIV), da jo žarek iz izreza zadene
-      for (const m of p.meshes) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) mreze.push(o); });
-      if (!mreze.length) continue;
-      const obdaja = SMERI.every((s) => {
-        _rc.set(izvor.copy(c).addScaledVector(s, R), s.clone().negate());
-        _rc.far = R;
-        return _rc.intersectObjects(mreze, false).length > 0;
-      });
-      if (!obdaja) continue;
-      for (const o of mreze) {
-        if (skrite.has(o)) continue;
-        skrite.set(o, o.layers.mask);
-        o.layers.set(SKRITA_PLAST);
-      }
+    if (!d || !model?.deli || !model.group || (info.predmet || "BIO") !== "BIO") return;
+    for (const o of mrezeOvojev(THREE, model.deli, d, { group: model.group, raycaster: _rc })) {
+      if (skrite.has(o)) continue;
+      skrite.set(o, o.layers.mask);
+      o.layers.set(SKRITA_PLAST);
     }
   }
 
