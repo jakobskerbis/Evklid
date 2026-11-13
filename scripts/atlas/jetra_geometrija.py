@@ -344,6 +344,9 @@ def _lok_vezi(L, n1, p1):
     return lok
 
 
+SIRINA_VEZI = 0.011  # največja širina srpaste vezi (m); n5: 20 mm je bilo od spredaj videti kot bleda deska
+
+
 def _vez(L, n1, p1, telefon=False):
     """Srpasta vez (dvojna guba, debela 1,2 mm) in obla vez na njenem prostem spodnjem robu."""
     bvh = BVHTree.FromPolygons([v.co for v in L.vertices], [p.vertices for p in L.polygons])
@@ -370,7 +373,7 @@ def _vez(L, n1, p1, telefon=False):
         d_ = v_ravnini(d_)
         # u = 0 ob zarezi: vez je tam odrezana 10 mm od jeter (prej 28 mm: z oblo vezjo v robu je visela pod jetri kot palica)
         # nižja guba (prej 7 mm na vrhu kupole: nad obrisom jeter je štrlela kot plavut), proti vrhu se izteče v 2 mm
-        w = (0.002 + 0.02 * (1 - u) ** 1.6) * min(1.0, (1.02 - u) / 0.2) * min(1.0, 0.1 + 0.9 * u / 0.3)  # ob zarezi le 2 mm (prej 8 mm: pod spodnjim robom je visel bled krn)
+        w = (0.002 + SIRINA_VEZI * (1 - u) ** 1.6) * min(1.0, (1.02 - u) / 0.2) * min(1.0, 0.1 + 0.9 * u / 0.3)  # ob zarezi le 2 mm (prej 8 mm: pod spodnjim robom je visel bled krn)
         a = p - o * 0.0012; q = a + d_ * w
         prosti.append((q.copy(), u))
         m = 3 if telefon else 5
@@ -394,9 +397,10 @@ def _vez(L, n1, p1, telefon=False):
     # ni nadaljevala v oblo vez, na spodnji ploskvi je štrlel bled krn)
     Pq = [q for q, u in prosti if u <= 0.45][::-1]
     if len(Pq) >= 4:
-        P = Pq + [p0 + Vector((0, 0.003, 0.002)), p0 + Vector((0, 0.007, 0.004))]
-        R = [0.0007 + 0.0011 * min(1.0, i / (0.5 * len(P))) for i in range(len(P))]
-        R[-1] = 0.0012; R[-2] = 0.0016
+        # n6 (ocena n5: »loose pale worm« na spodnji ploskvi): obla vez ostane v prostem robu gube in se konča ob zarezi
+        P = Pq + [p0 + Vector((0, 0.0015, 0.001))]
+        R = [0.0006 + 0.0007 * min(1.0, i / (0.5 * len(P))) for i in range(len(P))]
+        R[-1] = 0.0008
         P, R = D.zgladi(P, R, 2)
     else:
         P = [p0 - smer_o * 0.006 + Vector((0, 0.004, 0.003)), p0, p0 + smer_o * w0 * 0.3, p0 + smer_o * w0 * 0.6]
@@ -466,6 +470,30 @@ def jetra_deli(osnovni, cfg, tmp):
     L = _gosti(cela, tmp, nast.get("povrsina", (56000, 14000))[0]); Lt = _gosti(cela, tmp, nast.get("povrsina", (56000, 14000))[1])
     rez, (n1, p1) = _rezi_reznje(L, rim, tmp, porta)
     rez_t, _ = _rezi_reznje(Lt, rim, tmp, porta)
+    if nast.get("repastiZleb", 0) > 0 and "I" in rim:
+        # n6 (ocena n5: brez obrisa repastega režnja in razpoke venskega ligamenta): plitev žleb vzdolž meje segmenta I
+        # (Z-Anatomy) na površini jeter. Oddaljenost od meje ≈ |d(I) − d(drugi segmenti)|; premik v notranjost z Gaussom.
+        # Po rezanju režnjev (premaknjena površina je Boolove operacije pokvarila); premik je funkcija položaja, zato se
+        # robovi sosednjih režnjev še ujemajo. Samo oglišča na zunanji površini (notranje stene med režnji ostanejo).
+        mk = lambda me: BVHTree.FromPolygons([v.co for v in me.vertices], [q.vertices for q in me.polygons])
+        bI = mk(rim["I"]); bO = [mk(me) for k, me in rim.items() if k != "I"]
+        gl, sg = nast["repastiZleb"], nast.get("repastiZlebSirina", 0.003)
+        for Lx, rz in ((L, rez), (Lt, rez_t)):
+            bL = mk(Lx); st = 0
+            for me in rz.values():
+                for v in me.vertices:
+                    loc, nor, _, dL = bL.find_nearest(v.co)
+                    if loc is None or dL > 0.0003:
+                        continue
+                    dI = bI.find_nearest(v.co)[3]
+                    if dI is None or dI > 4 * sg:
+                        continue
+                    dO = min((b.find_nearest(v.co)[3] or 1.0) for b in bO)
+                    u = math.exp(-((dI - dO) / sg) ** 2)
+                    if u > 0.02:
+                        v.co = v.co - nor * gl * u; st += 1
+                me.update()
+            print(f"[organi] jetra: žleb ob repastem režnju, {st} oglišč, globina {gl * 1000:.1f} mm")
     for k, ime, del_ in (("desni", "Right lobe of liver (lastno)", "desni-rezenj"), ("levi", "Left lobe of liver (lastno)", "levi-rezenj"),
                          ("kvadratni", "Quadrate lobe of liver (lastno)", "kvadratni-rezenj"), ("repasti", "Caudate lobe of liver (lastno)", "repasti-rezenj")):
         vrstica(ime, rez[k], rez_t[k], "jetra", del_)
@@ -710,8 +738,50 @@ def jetra_ct(osnovni, cfg, tmp):
     # ---- režnji
     pov = nast.get("povrsina", (56000, 14000))
     L = _gosti(cela, tmp, pov[0]); Lt = _gosti(cela, tmp, pov[1])
+    if nast.get("repastiZleb", 0) > 0 and "I" in rim:
+        # n6 (ocena n5: brez obrisa repastega režnja in razpoke venskega ligamenta): plitev žleb vzdolž meje segmenta I
+        # (Z-Anatomy) na površini jeter. Oddaljenost od meje ≈ |d(I) − d(drugi segmenti)|; premik v notranjost z Gaussom.
+        bI = BVHTree.FromPolygons([v.co for v in rim["I"].vertices], [q.vertices for q in rim["I"].polygons])
+        bO = [BVHTree.FromPolygons([v.co for v in me.vertices], [q.vertices for q in me.polygons]) for k, me in rim.items() if k != "I"]
+        gl, sg = nast["repastiZleb"], nast.get("repastiZlebSirina", 0.003)
+        for Lx in (L, Lt):
+            st = 0
+            for v in Lx.vertices:
+                dI = bI.find_nearest(v.co)[3]
+                if dI is None or dI > 4 * sg:
+                    continue
+                dO = min((b.find_nearest(v.co)[3] or 1.0) for b in bO)
+                u = math.exp(-((dI - dO) / sg) ** 2)
+                if u > 0.02:
+                    v.co = v.co - v.normal * gl * u; st += 1
+            Lx.update()
+            print(f"[organi] jetra: žleb ob repastem režnju, {st} oglišč, globina {gl * 1000:.1f} mm")
     rez, (n1, p1) = _rezi_reznje(L, rim, tmp, porta)
     rez_t, _ = _rezi_reznje(Lt, rim, tmp, porta)
+    if nast.get("repastiZleb", 0) > 0 and "I" in rim:
+        # n6 (ocena n5: brez obrisa repastega režnja in razpoke venskega ligamenta): plitev žleb vzdolž meje segmenta I
+        # (Z-Anatomy) na površini jeter. Oddaljenost od meje ≈ |d(I) − d(drugi segmenti)|; premik v notranjost z Gaussom.
+        # Po rezanju režnjev (premaknjena površina je Boolove operacije pokvarila); premik je funkcija položaja, zato se
+        # robovi sosednjih režnjev še ujemajo. Samo oglišča na zunanji površini (notranje stene med režnji ostanejo).
+        mk = lambda me: BVHTree.FromPolygons([v.co for v in me.vertices], [q.vertices for q in me.polygons])
+        bI = mk(rim["I"]); bO = [mk(me) for k, me in rim.items() if k != "I"]
+        gl, sg = nast["repastiZleb"], nast.get("repastiZlebSirina", 0.003)
+        for Lx, rz in ((L, rez), (Lt, rez_t)):
+            bL = mk(Lx); st = 0
+            for me in rz.values():
+                for v in me.vertices:
+                    loc, nor, _, dL = bL.find_nearest(v.co)
+                    if loc is None or dL > 0.0003:
+                        continue
+                    dI = bI.find_nearest(v.co)[3]
+                    if dI is None or dI > 4 * sg:
+                        continue
+                    dO = min((b.find_nearest(v.co)[3] or 1.0) for b in bO)
+                    u = math.exp(-((dI - dO) / sg) ** 2)
+                    if u > 0.02:
+                        v.co = v.co - nor * gl * u; st += 1
+                me.update()
+            print(f"[organi] jetra: žleb ob repastem režnju, {st} oglišč, globina {gl * 1000:.1f} mm")
     for rr_ in (rez, rez_t):  # drobne luknje po šivanju mej (≤ 8 robov) se zapolnijo: reženj je zaprto telo
         for me_ in rr_.values():
             bm = bmesh.new(); bm.from_mesh(me_)

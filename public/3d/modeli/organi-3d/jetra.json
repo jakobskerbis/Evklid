@@ -3,10 +3,10 @@
  "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; režnji, vezi, spodnja votla vena in veje žil ter žolčnih vodov so lastna geometrija Evklid (scripts/atlas/jetra_geometrija.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "jetra": {
-   "hrap": 0.3,
-   "lak": 0.14,
-   "lakHrap": 0.42,
-   "sijaj": 0.06,
+   "hrap": 0.52,
+   "lak": 0.04,
+   "lakHrap": 0.6,
+   "sijaj": 0.03,
    "ao": 0.5,
    "zrno": 0.06,
    "f": 220,
@@ -39,22 +39,23 @@
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
-    "rob": 0.0003,
-    "povecaj": 1.004
+    "rob": 0.0004,
+    "povecaj": 1.004,
+    "robBarva": "#b06a58"
    },
-   "rezSum": 0.5,
+   "rezSum": 0.25,
    "rezCelice": [
     {
-     "mera": 0.0013,
-     "moc": 0.3,
-     "stena": "#b0644c",
-     "sirina": 0.1,
-     "jedroMoc": 0.3,
-     "jedro": "#5c1c14",
-     "jedroR": 0.2,
-     "ton": 0.08,
-     "zvitost": 0.4,
-     "vdolbina": 0.15
+     "mera": 0.0016,
+     "moc": 0.55,
+     "stena": "#c98a70",
+     "sirina": 0.13,
+     "jedroMoc": 0.55,
+     "jedro": "#4a120c",
+     "jedroR": 0.16,
+     "ton": 0.16,
+     "zvitost": 0.35,
+     "vdolbina": 0.3
     }
    ]
   },
@@ -245,13 +246,13 @@
   },
   "vez": {
    "hrap": 0.46,
-   "lak": 0.25,
+   "lak": 0.1,
    "lakHrap": 0.22,
    "sijaj": 0.2,
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
-   "barva": "#c9a394",
+   "barva": "#b08878",
    "rez": "#d8c0ae",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
@@ -263,22 +264,22 @@
   },
   "guba": {
    "hrap": 0.46,
-   "lak": 0.5,
+   "lak": 0.2,
    "lakHrap": 0.22,
    "sijaj": 0.3,
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
-   "barva": "#b0675b",
+   "barva": "#9c5a50",
    "rez": "#d8c0ae",
    "sijajBarva": "#ffffff",
-   "rob": 0.18,
-   "robBarva": "#e9b7a8",
+   "rob": 0.08,
+   "robBarva": "#c99a8c",
    "mapa": false,
    "detajl": true,
    "aoTekstura": 0.5,
    "brezReza": true,
-   "prosojnost": 0.62,
+   "prosojnost": 0.5,
    "dvostransko": true
   }
  },
@@ -436,11 +437,11 @@
   "ravnine": [
    {
     "n": [
-     0.1445,
-     -0.1397,
-     -0.9796
+     0.1102,
+     0.2412,
+     -0.9642
     ],
-    "d": 0.0089
+    "d": 0.0004
    }
   ]
  },
@@ -511,10 +512,10 @@
    }
   ]
  },
- "velikost": 0.3144,
+ "velikost": 0.3119,
  "trikotniki": {
-  "racunalnik": 120662,
-  "telefon": 37392
+  "racunalnik": 120494,
+  "telefon": 37274
  },
  "luci": [
   {
