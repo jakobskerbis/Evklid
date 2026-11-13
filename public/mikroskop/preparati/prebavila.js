@@ -29,8 +29,8 @@ T globje(vec2 p, float g, float px) {
     t.snov = S_CITO; t.tip = C_GLADKA; t.meja = v.rob; t.cc = v.c; t.jc = v.c; t.cid = v.id;
     t.dye = vec3(0.07, 0.52 + 0.05 * (sumL(p, 30.0, px) - 0.5), 0.0);
     vec2 q = p - v.c;
-    float dj = vzd ? sdKapsula(q - vec2(8.0 * (h.x - 0.5), 0.0), 6.0 + 2.0 * h.w, 1.2) : length(q) - 1.3;
-    if (h.y < (vzd ? 0.5 : 0.3)) { float jk = pokrij(dj, px); t.dye.x = mix(t.dye.x, 0.75 * kromatin(q, h.zw, px), jk); t.jedro = dj; if (jk > 0.5) t.snov = S_JEDRO; }
+    float dj = vzd ? jedroGladke(q - vec2(8.0 * (h.x - 0.5), 0.0), 5.5 + 2.0 * h.w, 1.4, h.wzyx) : length(q) - 1.3;
+    if (h.y < (vzd ? 0.5 : 0.3)) { float jk = pokrij(dj, px); t.dye.x = mix(t.dye.x, 0.85 * kromatin(q, h.zw, px), jk); t.jedro = dj; if (jk > 0.5) t.snov = S_JEDRO; }
     return t;
   }
   if (g <= 640.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.1, 0.3, 0.0); return t; }        // med plastema (živčni pletež)

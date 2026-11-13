@@ -180,10 +180,21 @@ T tkivo(vec2 p, float px) {
   T t = prazno();
   float rob = odsek(p, vec2(2200.0, 1500.0), 9.0);
   if (rob > 0.0) return t;
-  float meja = 25.0 * (sum(vec2(p.x / 300.0, 1.0)) - 0.5);
+  float meja = 25.0 * (sum(vec2(p.x / 300.0, 1.0)) - 0.5) + 8.0 * (sum(vec2(p.x / 70.0, 3.0)) - 0.5);
   t.snov = S_KOLAGEN; t.smer = vec2(1, 0);
+  // pas veziva med plastema: različno širok, z valovitimi kolagenskimi vlakni, režami in jedri fibroblastov
+  float sirP = 8.0 + 18.0 * sum(vec2(p.x / 170.0, 5.0));
+  float dv = p.y - meja;
+  if (abs(dv) < sirP) {
+    float vl = sumL(vec2(p.x * 0.15, dv + 2.0 * sin(p.x / 9.0)), 1.6, px);
+    t.dye = vec3(0.04, 0.24 + 0.16 * vl, 0.0);
+    if (vl < 0.3 && sum(vec2(p.x / 40.0, dv / 6.0)) > 0.55) { t.dye *= 0.3; t.snov = S_PRAZNO; }
+    vec2 qf = vec2(mod(p.x, 60.0) - 30.0 - 15.0 * (h12(vec2(floor(p.x / 60.0), 3.0)) - 0.5), dv - 0.4 * sirP * (h12(vec2(floor(p.x / 60.0), 4.0)) - 0.5));
+    float jf = sdElipsa(qf, vec2(5.0, 1.0));
+    t.dye.x = mix(t.dye.x, 0.8, pokrij(jf, px));
+    return t;
+  }
   t.dye = vec3(0.05, 0.22 + 0.05 * sumL(p, 6.0, px), 0.0);
-  if (abs(p.y - meja) < 22.0) return t;               // tanek pas veziva med plastema
   bool vzd = p.y > meja;
   Vor v = vor(p, 7.5, vzd ? vec2(9.0, 1.0) : vec2(1.0), vzd ? 0.05 : 0.0, 0.9);
   vec4 h = h42(v.id + (vzd ? 0.0 : 50.0));
@@ -194,9 +205,9 @@ T tkivo(vec2 p, float px) {
   vec2 q = vzd ? rot(0.05) * (p - v.c) : p - v.c;
   if (vzd) {
     if (h.y < 0.55) {
-      float dj = sdKapsula(q - vec2(10.0 * (h.x - 0.5), 0.0), 6.5 + 2.5 * h.w, 1.35) + 0.15 * (sum(q * 1.5 + h.zw * 9.0) - 0.5);
+      float dj = jedroGladke(q - vec2(10.0 * (h.x - 0.5), 0.0), 6.0 + 2.5 * h.w, 1.5, h.wzyx);
       float jk = pokrij(dj, px);
-      f.dye.x = mix(f.dye.x, 0.55 * kromatin(q, h.zw, px), jk);
+      f.dye.x = mix(f.dye.x, 0.8 * kromatin(q, h.zw, px), jk);
       if (jk > 0.5) { f.snov = S_JEDRO; f.jedro = dj; f.jc = v.c + vec2(10.0 * (h.x - 0.5), 0.0); }
       else f.jedro = dj;
     }
