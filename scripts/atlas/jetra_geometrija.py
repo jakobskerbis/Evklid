@@ -546,6 +546,7 @@ def jetra_deli(osnovni, cfg, tmp):
     k = deblo(vozli, porta, (v_vrata - porta).normalized() if (v_vrata - porta).length > 1e-5 else Vector((0, 0, 1)), max((v_vrata - porta).length, 0.004), rp, rp * 0.95, len(vozli) - 1)
     deblo(vozli, vozli[k]["p"], Vector((-1, 0.2, 0.3)).normalized(), 0.024, rp * 0.85, rp * 0.72, k)
     deblo(vozli, vozli[k]["p"], Vector((1, -0.35, 0.12)).normalized(), 0.02, rp * 0.72, rp * 0.6, k)
+    porta_razcep = vozli[k]["p"].copy()
     n_stalnih = len(vozli)
     rnd = random.Random(5)
     rasti_ = lambda vz, raz, ub: D.rasti(vz, D.privlaki(notr, raz, rob + 0.002, rnd), nast.get("korak", 0.004), nast.get("vpliv", 0.05), ub, dovoli, vztrajnost=0.5)
@@ -593,6 +594,19 @@ def jetra_deli(osnovni, cfg, tmp):
     me = D.mreza_vej(v_deb + D.veje(vozli, ot, 1), "vene"); me_t = D.mreza_vej(v_deb + D.veje(vozli, ot, nast.get("telefonListi", 3)), "vene t", telefon=True)
     vrstica("Hepatic veins (lastno)", me, me_t, "vena", "jetrne-vene")
     print(f"[organi] jetrne vene: {len(vozli)} vozlišč, {D.tris(me)} / {D.tris(me_t)} trikotnikov")
+    if nast.get("ravninaDreves", True):
+        # n5: ravnina prereza skozi stičišče jetrnih ven na spodnji votli veni, deblo desne jetrne vene in razcepišče
+        # portalne vene: v rezu so vzdolž prerezana debla (vene se stekajo v votlo veno, portalna vena se razcepi od vrat)
+        import numpy as np
+        tocke = [pc, pc + Vector((-0.85, -0.25, -0.45)).normalized() * 0.035, pc + Vector((0.8, -0.5, -0.2)).normalized() * 0.028,
+                 porta_razcep, porta_razcep + Vector((-1, 0.2, 0.3)).normalized() * 0.024, porta_razcep + Vector((1, -0.35, 0.12)).normalized() * 0.02]
+        Q = np.array([tuple(q) for q in tocke]); c_ = Q.mean(0)
+        nr = Vector(np.linalg.svd(Q - c_)[2][2].tolist())  # ravnina najmanjših kvadratov skozi debla ven in portalne veje
+        if nr.y < 0:
+            nr = -nr
+        cfg["_karina"] = [float(x) for x in c_]; cfg["_karinaN"] = [float(x) for x in nr]
+        odm = [round(abs(float((Vector(q) - Vector(c_.tolist())).dot(nr))) * 1000, 1) for q in Q]
+        print(f"[organi] jetra: ravnina prereza skozi debla jetrnih ven in portalne veje, normala {[round(x, 3) for x in nr]}, odmiki točk {odm} mm")
     # izvirni segmenti, cela površina in krivulje Z-Anatomy odpadejo (ostane žolčnik)
     osnovni[:] = [r for r in osnovni if r[0] == "Gallbladder"]
     return izhod
@@ -734,7 +748,7 @@ def jetra_ct(osnovni, cfg, tmp):
     print(f"[organi] portalna vena: {D.tris(me)} / {D.tris(me_t)} trikotnikov")
     # ---- jetrna arterija in žolčni vodi ob portalnih vejah (portalna triada)
     p_vse = veje(Pv, None, max(rmin, 0.0012), 1); p_vse_t = veje(Pv, None, max(rmin_t, 0.002), nast.get("telefonListi", 2))
-    for ime, tkivo, del_, smer, delez, r0, r1 in (("Hepatic artery and branches (lastno)", "arterija", "jetrna-arterija", Vector((0.62, -0.78, 0.05)), 0.36, 0.00055, 0.0021),
+    for ime, tkivo, del_, smer, delez, r0, r1 in (("Hepatic artery and branches (lastno)", "arterija", "jetrna-arterija", Vector((0.62, -0.78, 0.05)), 0.36, 0.00055, 0.0026),
                                                   ("Bile ducts (lastno)", "zolcevod", "zolcevod", Vector((-0.62, -0.78, 0.05)), 0.45, 0.0006, 0.003)):
         sez = _spremljevalke(p_vse, smer.normalized(), delez, r0, r1, nast.get("triadaR", 0.0015))
         sez_t = _spremljevalke(p_vse_t, smer.normalized(), delez, r0, r1, nast.get("triadaR", 0.0015) * 1.5)
