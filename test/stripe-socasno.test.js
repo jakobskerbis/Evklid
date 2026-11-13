@@ -57,3 +57,29 @@ test("A7 prevzem, ki ga je pustil padli proces (starejši od 5 minut), se lahko 
     server.close();
   }
 });
+
+test("A7 napaka z besedilom »v obdelavi …« dogodka ne zaklene; ponovitev ga obdela", async () => {
+  const store = openDb(":memory:");
+  let poskus = 0;
+  const fetchFn = async (url) => {
+    if (new URL(url).pathname.startsWith("/v1/charges/")) {
+      poskus++;
+      if (poskus === 1) return { ok: false, status: 500, json: async () => ({ error: { message: "v obdelavi 99999999999999" } }) };
+      return { ok: true, status: 200, json: async () => ({ id: "ch_1", customer: "cus_ni_v_bazi", invoice: null }) };
+    }
+    return { ok: true, status: 200, json: async () => ({}) };
+  };
+  const app = createApp(store, { accounts: true, scheduler: false, fetchFn, webhookSecret: SECRET, stripeKey: "sk_test_x", log: { error() {}, warn() {}, info() {} } });
+  const server = app.listen(0);
+  const url = `http://127.0.0.1:${server.address().port}/api/stripe/webhook`;
+  const raw = JSON.stringify({ id: "evt_napaka", type: "charge.dispute.created", data: { object: { id: "dp_2", charge: "ch_1", payment_intent: "pi_ni_v_bazi" } } });
+  const poslji = () => fetch(url, { method: "POST", headers: { "content-type": "application/json", "stripe-signature": signWebhook(raw, SECRET) }, body: raw }).then((r) => r.status);
+  try {
+    assert.equal(await poslji(), 500);
+    assert.match(store.db.prepare("SELECT error FROM billing_events WHERE id = 'evt_napaka'").get().error, /^napaka: v obdelavi/);
+    assert.equal(await poslji(), 200);
+    assert.ok(store.db.prepare("SELECT processed_at FROM billing_events WHERE id = 'evt_napaka'").get().processed_at);
+  } finally {
+    server.close();
+  }
+});

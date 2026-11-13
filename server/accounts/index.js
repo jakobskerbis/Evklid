@@ -2475,18 +2475,20 @@ export function mountAccounts(app, store, opts = {}) {
       return res.status(400).json({ error: "Neveljaven JSON." });
     }
     const id = typeof event.id === "string" && event.id ? event.id.slice(0, 100) : null;
+    let oznaka = null; // oznaka prevzema te dostave (točka A7)
     if (id) {
       db.prepare("INSERT OR IGNORE INTO billing_events (id, type) VALUES (?, ?)").run(id, String(event.type || "").slice(0, 100));
       // Točka A7: dogodek prevzamemo atomarno (en stavek UPDATE). Druga sočasna dostava istega dogodka ga ne obdela še
       // enkrat, ampak dobi 409 in jo Stripe ponovi pozneje. Prevzem, star več kot PREVZEM_MS (proces je med obdelavo
       // padel), se lahko prevzame znova; oznaka je v stolpcu error, zato shema ostane ista.
       const zdaj = Date.now();
+      oznaka = `${PREVZEM} ${zdaj}`;
       const prevzet = db
         .prepare(
           `UPDATE billing_events SET error = ? WHERE id = ? AND processed_at IS NULL
              AND (error IS NULL OR error NOT LIKE '${PREVZEM} %' OR CAST(substr(error, ${PREVZEM.length + 2}) AS INTEGER) < ?)`,
         )
-        .run(`${PREVZEM} ${zdaj}`, id, zdaj - PREVZEM_MS).changes;
+        .run(oznaka, id, zdaj - PREVZEM_MS).changes;
       if (!prevzet) {
         if (db.prepare("SELECT processed_at FROM billing_events WHERE id = ?").get(id)?.processed_at) return res.json({ received: true, duplicate: true });
         return res.status(409).json({ error: "Dogodek je že v obdelavi." });
@@ -2498,7 +2500,9 @@ export function mountAccounts(app, store, opts = {}) {
       res.json({ received: true });
     } catch (err) {
       log.error?.("[evklid] webhook:", event.type, err.message);
-      if (id) db.prepare("UPDATE billing_events SET error = ? WHERE id = ?").run(String(err.message).slice(0, 300), id);
+      // Predpona »napaka:« loči sporočilo od oznake prevzema (sporočilo »v obdelavi …« dogodka ne sme zakleniti).
+      // Samo če je prevzem še naš: dolga obdelava, ki jo je po PREVZEM_MS prevzela druga dostava, ne pobriše njene oznake.
+      if (id) db.prepare("UPDATE billing_events SET error = ? WHERE id = ? AND error = ?").run(`napaka: ${String(err.message).slice(0, 290)}`, id, oznaka);
       res.status(500).json({ error: "Napaka pri obdelavi." });
     }
   });

@@ -29,6 +29,7 @@ export class Mailer {
         method: "POST",
         headers: { Authorization: `Bearer ${this.key}`, "Content-Type": "application/json" },
         body: JSON.stringify({ from: this.from, to: [to], subject, html, text }),
+        signal: AbortSignal.timeout(30_000), // obdelava dogodka Stripe ne sme čakati na pošto dlje od prevzema (točka A7)
       });
     } catch (err) {
       this.failed(`omrežje: ${err.message}`);

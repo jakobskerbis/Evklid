@@ -41,7 +41,9 @@ export class Stripe {
       init.headers["Content-Type"] = "application/x-www-form-urlencoded";
       init.body = formEncode(params).toString();
     }
-    const res = await this.fetch(url, init);
+    // Največ 60 s na klic (točka A7): obdelava dogodka Stripe mora končati precej pred PREVZEM_MS (5 min), sicer bi
+    // jo ponovna dostava prevzela in izvedla še enkrat (privzeta meja fetch je 300 s za glave in 300 s za telo).
+    const res = await this.fetch(url, { ...init, signal: AbortSignal.timeout(60_000) });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
       const err = new Error(body?.error?.message || `Stripe ${res.status}`);
