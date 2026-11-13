@@ -4,7 +4,7 @@
  "tkiva": {
   "jetra": {
    "hrap": 0.3,
-   "lak": 0.32,
+   "lak": 0.14,
    "lakHrap": 0.3,
    "sijaj": 0.06,
    "ao": 0.5,
@@ -60,13 +60,13 @@
   },
   "zolcnik": {
    "hrap": 0.3,
-   "lak": 0.4,
+   "lak": 0.3,
    "lakHrap": 0.22,
    "sijaj": 0.25,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 120,
-   "barva": "#46521f",
+   "barva": "#6a8433",
    "sijajBarva": "#c8d890",
    "rob": 0.35,
    "robBarva": "#8c9a3e",
@@ -320,7 +320,7 @@
    "opis": "Prinese v jetra kri iz želodca, črevesja in vranice, bogato s hranili.",
    "opisStudij": "Nastane za vratom trebušne slinavke iz v. mesenterica superior in v. splenica; dolga 6–8 cm. Daje okoli 75 % pretoka in polovico kisika jeter. Portokavalne anastomoze (požiralnik, rektum, popek) se pri portalni hipertenziji razširijo (varice, caput medusae).",
    "vozlisca": [
-    "Hepatic portal vein and branches (lastno)"
+    "Hepatic portal vein and branches (CT)"
    ]
   },
   {
@@ -344,7 +344,7 @@
    "opis": "Odvedejo kri iz jeter v spodnjo votlo veno in naprej v srce.",
    "opisStudij": "Tri glavne (desna, srednja, leva) potekajo med segmenti in se tik pod prepono izlivajo v spodnjo votlo veno; nimajo zaklopk. Srednja leži v Cantliejevi ravnini. Manjše vene repastega režnja se izlivajo neposredno.",
    "vozlisca": [
-    "Hepatic veins (lastno)"
+    "Hepatic veins (CT)"
    ]
   },
   {
@@ -356,7 +356,7 @@
    "opis": "Največja vena v telesu; teče v žlebu na zadnji strani jeter in sprejme kri iz jetrnih ven.",
    "opisStudij": "Leži v sulcus venae cavae med repastim režnjem in golo ploskvijo (area nuda) jeter; tik pod prepono se vanjo izlijejo tri jetrne vene. Skozi foramen venae cavae prepone (Th8) vstopi v desni preddvor.",
    "vozlisca": [
-    "Inferior vena cava (lastno)"
+    "Inferior vena cava (CT)"
    ]
   },
   {
@@ -463,10 +463,10 @@
    }
   ]
  },
- "velikost": 0.3142,
+ "velikost": 0.3424,
  "trikotniki": {
-  "racunalnik": 121358,
-  "telefon": 37726
+  "racunalnik": 135088,
+  "telefon": 36948
  },
  "luci": [
   {

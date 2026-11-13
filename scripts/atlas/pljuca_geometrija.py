@@ -189,13 +189,16 @@ def pljuca_ct(osnovni, cfg, tmp):
                       c_ct - normala(c_ct, D.P[konec_d], D.P[konec_l]) * m_c])
         T = _afina(A, B)
         print(f"[organi] sapnik HRA → CT: merilo {m_c / m_h:.3f}, ostanek {np.abs(T(A[:4]) - B[:4]).max() * 1000:.1f} mm")
-        z_vrh = max(float(np.max([v[2] for k in REZNJI.values() for v in d[f'lung_{k[0]}_v'][::50]])) + nast.get("sapnikNad", 0.035), 0)
+        z_vrh = max(float(np.max([v[2] for k in REZNJI.values() for v in d[f'lung_{k[0]}_v'][::50]])) + nast.get("sapnikNad", 0.02), 0)
         def kos(kljuci, ime, stena, tkivo, del_, n_rt):
             bm = bmesh.new()
             for k in kljuci:
                 m = H[k].copy(); m.vertices.foreach_set("co", T(_tocke(m)).ravel()); bm.from_mesh(m)
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
             bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, z_vrh), plane_no=(0, 0, 1), clear_outer=True)
+            if not stena:  # prerezani obroči: zaprta ploskev reza (raven vrh sapnika)
+                bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
+                bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 4])
             bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
             me = bpy.data.meshes.new(ime); bm.to_mesh(me); bm.free()
             if stena:  # odprta lupina HRA → cev s steno (svetlina ostane odprta: prerezan vrh sapnika)

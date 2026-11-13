@@ -31,7 +31,7 @@ import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tki
 from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
 from oko_misice import ocesne_misice, kite_na_zrklo  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
-from jetra_geometrija import jetra_deli, uveljavi_normale  # jetra: ena površina, režnji, vezi, votla vena, drevesa žil in žolčnih vodov
+from jetra_geometrija import jetra_deli, jetra_ct, uveljavi_normale  # jetra: ena površina, režnji, vezi, votla vena, drevesa žil in žolčnih vodov
 from drevesa import pljucna_drevesa, ledvicne_zile  # pljuča: zaprti režnji, veje iz središčnic, subsegmentne veje (lastno)
 from pljuca_geometrija import pljuca_ct  # pljuča: režnji, žile in dihalno drevo iz CT (TotalSegmentator), sapnik z obroči iz HRA
 from mozgani_hra import mozgani_hra  # možgani: deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen, CC BY 4.0)
@@ -429,12 +429,12 @@ ORGANI = {
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
                 # manj nasičena (ocena: prenasičena, enakomerno sijoča), hrapavejša
-                "jetra": dict(barva=(0.21, 0.075, 0.055), barva2=(0.155, 0.055, 0.042), lise=0.35, liseMera=0.035, hrap=0.36,
+                "jetra": dict(barva=(0.21, 0.075, 0.055), barva2=(0.155, 0.055, 0.042), lise=0.35, liseMera=0.035, hrap=0.52,
                               gube=0.00002, gubeMera=0.002, zilice=0.12, ziliceBarva=(0.13, 0.035, 0.025), ziliceMera=0.008, razdeli=0),
                 "vez": dict(barva=(0.66, 0.50, 0.44), barva2=(0.58, 0.42, 0.38), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 "guba": dict(barva=(0.62, 0.40, 0.36), barva2=(0.54, 0.33, 0.30), lise=0.2, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 # temno olivno zelen (žolč skozi steno), ne svetlo zelen
-                "zolcnik": dict(barva=(0.10, 0.12, 0.035), barva2=(0.065, 0.08, 0.025), lise=0.35, hrap=0.30, gube=0.00004, gubeMera=0.003, razdeli=1),
+                "zolcnik": dict(barva=(0.20, 0.25, 0.08), barva2=(0.14, 0.18, 0.055), lise=0.35, hrap=0.40, gube=0.00004, gubeMera=0.003, razdeli=1),
                 "zolcevod": dict(barva=(0.50, 0.50, 0.22), barva2=(0.42, 0.42, 0.18), lise=0.25, hrap=0.40, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "portalna": dict(barva=(0.38, 0.23, 0.27), barva2=(0.32, 0.19, 0.23), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 "arterija": dict(barva=(0.62, 0.34, 0.30), barva2=(0.55, 0.29, 0.26), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
@@ -447,7 +447,7 @@ ORGANI = {
         gladi=r"segment of liver|Gallbladder",
         # jetra_geometrija.jetra_deli: ena gladka površina (Z-Anatomy »Liver«), razrezana v štiri režnje brez vidnih šivov,
         # srpasta in obla vez, spodnja votla vena, portalna vena, jetrne vene, arterija in žolčni vodi kot drevesa (lastno).
-        dodaj=["jetra_deli"], nedotakni=r"\(lastno\)",
+        dodaj=["jetra_ct"], nedotakni=r"\((lastno|CT)\)",  # jetra_ct: CT (HVA-CT, TotalSegmentator); brez npz jetra_deli
         jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1),
         tkiva=[(r"segment of liver", "jetra"), (r"^Gallbladder", "zolcnik"), (r"Bile duct|bile", "zolcevod"),
                (r"portal", "portalna"), (r"artery", "arterija"), (r"vein", "vena"), (r"", "jetra")],

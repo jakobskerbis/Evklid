@@ -9,7 +9,7 @@
 #    ob njej jetrna arterija in žolčni vodi (portalna triada), žolčnikov vod, skupni žolčevod; drevesa: drevesa.py;
 #  - srpasta vez (tanka guba potrebušnice v ravnini med levim in desnim režnjem) z oblo vezjo na prostem robu.
 # Telefon: ista geometrija z manj trikotniki (cfg['_telefon']).
-import bpy, bmesh, math, random
+import bpy, bmesh, math, os, random
 import numpy as np
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
@@ -537,5 +537,161 @@ def jetra_deli(osnovni, cfg, tmp):
     vrstica("Hepatic veins (lastno)", me, me_t, "vena", "jetrne-vene")
     print(f"[organi] jetrne vene: {len(vozli)} vozlišč, {D.tris(me)} / {D.tris(me_t)} trikotnikov")
     # izvirni segmenti, cela površina in krivulje Z-Anatomy odpadejo (ostane žolčnik)
+    osnovni[:] = [r for r in osnovni if r[0] == "Gallbladder"]
+    return izhod
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Jetra iz enega telesa (CT): površina in segmenti TotalSegmentator, prava drevesa portalne vene in jetrnih ven HVA-CT
+# (scripts/atlas/jetra-ct.py → npz). Režnji, vezi in spremljevalke (arterija, žolčni vodi) kot pri jetra_deli.
+
+def _np_mreza(ime, v, f):
+    me = bpy.data.meshes.new(ime); me.from_pydata(np.asarray(v, float).tolist(), [], np.asarray(f).tolist()); me.update()
+    return me
+
+
+def _zolcnik_v_lezisce(zb, L, notr, vrata, n2, p2):
+    """Žolčnik Z-Anatomy (bolnik na CT ga nima) v ležišče: vrat ob jetrnih vratih, svod ob spodnjem robu med IV in V."""
+    co = np.array([v.co[:] for v in zb.vertices])
+    c = co.mean(0); u, s, vt = np.linalg.svd(co - c, full_matrices=False)
+    os_ = vt[0]; t = (co - c) @ os_
+    # vrat = ožji konec (manjši povprečni odmik od osi v zadnji petini)
+    def sirina(m):
+        q = co[m] - c; return float(np.linalg.norm(q - np.outer(q @ os_, os_), axis=1).mean())
+    if sirina(t > np.quantile(t, 0.8)) < sirina(t < np.quantile(t, 0.2)):
+        os_ = -os_; t = -t
+    vrat = c + os_ * t.min(); dol = float(t.max() - t.min())
+    # cilj: svod = najnižja sprednja točka jeter ob ravnini IV | V; vrat = 18 mm od vrat proti svodu, na spodnji ploskvi
+    ob = [v.co for v in L.vertices if abs((v.co - p2).dot(n2)) < 0.008]
+    F = min(ob, key=lambda q: q.y * 0.8 + q.z)
+    N = vrata.lerp(F, min(0.4, 0.022 / max((F - vrata).length, 1e-6)))
+    a = (F - N).normalized()
+    R = Vector(os_).rotation_difference(a).to_matrix()
+    merilo = min(1.0, max(0.75, ((F - N).length + 0.012) / dol))
+    for v in zb.vertices:
+        v.co = N + (R @ (v.co - Vector(vrat))) * merilo
+    # iz jeter: navzdol in naprej, dokler ni v jetrih le še tretjina (ležišče)
+    ven = Vector((0, -0.35, -1)).normalized()
+    for _ in range(40):
+        if sum(1 for v in zb.vertices if notr.znotraj(v.co)) <= 0.3 * len(zb.vertices):
+            break
+        for v in zb.vertices:
+            v.co += ven * 0.001
+    zb.update()
+    return zb
+
+
+def jetra_ct(osnovni, cfg, tmp):
+    from pljuca_geometrija import Drevo
+    nast = cfg.get("jetra", {})
+    pot = os.path.join(cfg.get("_ct_mapa") or "", nast.get("datoteka", "totalseg/jetra-ct-v1.npz"))
+    if not os.path.exists(pot):
+        print(f"[organi] jetra: ni {pot} – jetra Z-Anatomy z zraslimi drevesi")
+        return jetra_deli(osnovni, cfg, tmp)
+    Z = np.load(pot)
+    cela = _np_mreza("jetra ct", Z["jetra_v"], Z["jetra_f"])
+    bm = bmesh.new(); bm.from_mesh(cela); D.taubin_bm(bm, nast.get("glajenje", 40)); bm.to_mesh(cela); bm.free()
+    rimske = ("I", "II", "III", "IV", "V", "VI", "VII", "VIII")
+    rim = {r: _np_mreza("seg " + r, Z[f"seg{i + 1}_v"], Z[f"seg{i + 1}_f"]) for i, r in enumerate(rimske)}
+    zb = [r[1] for r in osnovni if r[0] == "Gallbladder"][0]
+    tel = cfg.setdefault("_telefon", {})
+    izhod = []
+    def vrstica(ime, me, me_t, tkivo, del_):
+        tel[ime] = me_t
+        izhod.append([ime, me, tkivo, del_, ime + " / HVA-CT, TotalSegmentator"])
+    # ---- drevesa (m)
+    Pv = Drevo(Z["portalna_P"], Z["portalna_R"], Z["portalna_S"]); Hv = Drevo(Z["vene_P"], Z["vene_R"], Z["vene_S"])
+    def glavna(Dr, i, pogoj=lambda o: True):  # pot po najdebelejšem otroku
+        pot_ = [i]
+        while True:
+            ot = [o for o in Dr.otroci[pot_[-1]] if pogoj(o)]
+            if not ot: return pot_
+            pot_.append(max(ot, key=lambda o: Dr.R[o] + 0.02 * Dr.dol[o]))
+    kor = int(np.flatnonzero(Pv.S < 0)[0])
+    # jetrna vrata: prvi razcep portalne vene z dvema dolgima poddrevesoma
+    i = kor
+    while True:
+        ot = sorted(Pv.otroci[i], key=lambda o: -Pv.dol[o])
+        if len(ot) >= 2 and Pv.dol[ot[1]] > nast.get("vrataVeja", 0.05) or not ot:
+            break
+        i = ot[0]
+    vrata = Vector(Pv.P[i]); porta = vrata.copy()
+    print(f"[organi] jetra CT: vrata {[round(x, 4) for x in vrata]}, portalna {len(Pv.P)} vozlišč, vene {len(Hv.P)}")
+    # ---- režnji
+    pov = nast.get("povrsina", (56000, 14000))
+    L = _gosti(cela, tmp, pov[0]); Lt = _gosti(cela, tmp, pov[1])
+    rez, (n1, p1) = _rezi_reznje(L, rim, tmp, porta)
+    rez_t, _ = _rezi_reznje(Lt, rim, tmp, porta)
+    for k, ime, del_ in (("desni", "Right lobe of liver (lastno)", "desni-rezenj"), ("levi", "Left lobe of liver (lastno)", "levi-rezenj"),
+                         ("kvadratni", "Quadrate lobe of liver (lastno)", "kvadratni-rezenj"), ("repasti", "Caudate lobe of liver (lastno)", "repasti-rezenj")):
+        tel[ime] = rez_t[k]
+        izhod.append([ime, rez[k], "jetra", del_, ime + " / TotalSegmentator (CT MSD hepaticvessel)"])
+        print(f"[organi] {ime}: {D.tris(rez[k])} / {D.tris(rez_t[k])} trikotnikov")
+    for t_, Lx in ((False, L), (True, Lt)):
+        srp, obla = _vez(Lx, n1, p1, t_)
+        if t_:
+            tel["Falciform ligament (lastno)"] = srp; tel["Round ligament of liver (lastno)"] = obla
+        else:
+            izhod.append(["Falciform ligament (lastno)", srp, "guba", "srpasta-vez", "Falciform ligament (lastno) / Evklid"])
+            izhod.append(["Round ligament of liver (lastno)", obla, "vez", "obla-vez", "Round ligament of liver (lastno) / Evklid"])
+    notr = D.Notranjost([L])
+    V = lambda Dr, idx: ([Vector(Dr.P[j]) for j in idx], [float(Dr.R[j]) for j in idx])
+    rmin, rmin_t = nast.get("vejaR", (0.0008, 0.0016))
+    def veje(Dr, zacetki, r, listi):
+        return [V(Dr, v) for v in Dr.veje(zacetki, najmanj_listov=listi, najmanj_r=r)]
+    # ---- portalna vena: deblo (zunaj jeter votlo: prerezana svetlina) in veje
+    stena = lambda r: 0.0009 if r > 0.0045 else 0.0
+    me = D.mreza_vej(veje(Pv, None, rmin, 1), "portalna", stena=stena)
+    me_t = D.mreza_vej(veje(Pv, None, rmin_t, nast.get("telefonListi", 2)), "portalna t", telefon=True, stena=stena)
+    vrstica("Hepatic portal vein and branches (CT)", me, me_t, "portalna", "portalna-vena")
+    print(f"[organi] portalna vena: {D.tris(me)} / {D.tris(me_t)} trikotnikov")
+    # ---- jetrna arterija in žolčni vodi ob portalnih vejah (portalna triada)
+    p_vse = veje(Pv, None, max(rmin, 0.0012), 1); p_vse_t = veje(Pv, None, max(rmin_t, 0.002), nast.get("telefonListi", 2))
+    for ime, tkivo, del_, smer, delez, r0, r1 in (("Hepatic artery and branches (lastno)", "arterija", "jetrna-arterija", Vector((0.62, -0.78, 0.05)), 0.36, 0.00055, 0.0021),
+                                                  ("Bile ducts (lastno)", "zolcevod", "zolcevod", Vector((-0.62, -0.78, 0.05)), 0.45, 0.0006, 0.003)):
+        sez = _spremljevalke(p_vse, smer.normalized(), delez, r0, r1, nast.get("triadaR", 0.0015))
+        sez_t = _spremljevalke(p_vse_t, smer.normalized(), delez, r0, r1, nast.get("triadaR", 0.0015) * 1.5)
+        if tkivo == "zolcevod":
+            n2, p2 = _ravnina([rim["IV"]], [rim["V"], rim["VIII"]])
+            zb = _zolcnik_v_lezisce(zb, L, notr, vrata, n2, p2)
+            vrat = min((v.co for v in zb.vertices), key=lambda c: (c - porta).length)
+            zc = sum((v.co for v in zb.vertices), Vector()) / len(zb.vertices)
+            gl = max(sez, key=lambda x: max(x[1]))[0]
+            cilj = min(gl, key=lambda q: abs(q.z - (porta.z - 0.012)))
+            a = vrat + (zc - vrat).normalized() * 0.003
+            m1 = a.lerp(cilj, 0.35) + Vector((0, -0.003, 0.004)); m2 = a.lerp(cilj, 0.7) + Vector((0.002, 0.002, 0.003))
+            cP = [a, m1, m2, cilj + Vector((0, 0, 0.004)), cilj - Vector((0, 0, 0.002))]
+            cP = [cP[i].lerp(cP[i + 1], j / 4) for i in range(4) for j in range(4)] + [cP[-1]]
+            cyst = (cP, [0.0016] * len(cP))
+            sez.append(cyst); sez_t.append(cyst)
+        me = D.mreza_vej(sez, ime, kupole=(True, True)); me_t = D.mreza_vej(sez_t, ime + " t", telefon=True, kupole=(True, True))
+        tel[ime] = me_t
+        izhod.append([ime, me, tkivo, del_, ime + " / Evklid ob portalnih vejah HVA-CT"])
+        print(f"[organi] {ime}: {len(sez)} vej, {D.tris(me)} / {D.tris(me_t)} trikotnikov")
+    # ---- spodnja votla vena (deblo drevesa jetrnih ven: od vrha navzdol po najdebelejšem otroku) in jetrne vene vanjo
+    kor = int(np.flatnonzero(Hv.S < 0)[0])
+    v_ivc = Z["vene_ivc"]; r_ivc = Z["vene_ivcR"]
+    os_ivc = glavna(Hv, kor, lambda o: bool(v_ivc[o]))
+    na_osi = set(os_ivc)
+    iP, _ = V(Hv, os_ivc)
+    r0 = max(0.009, float(np.median([max(r_ivc[j], Hv.R[j]) for j in os_ivc])))
+    iR = [r0] * len(iP)
+    iP, iR = D.zgladi(iP, iR, 30)  # skelet v široki žili vijuga
+    for t_ in (False, True):
+        P_, R_ = D.redci(*D.zgladi(iP, iR, 6), (lambda r: 0.012) if t_ else (lambda r: 0.005))
+        bm = bmesh.new(); D.cev(bm, P_, R_, 12 if t_ else 28, kupola=False, stena=0.0014)  # ravno odrezana, s svetlino
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        me = bpy.data.meshes.new("ivc"); bm.to_mesh(me); bm.free()
+        for p in me.polygons: p.use_smooth = True
+        if t_:
+            tel["Inferior vena cava (CT)"] = me
+        else:
+            izhod.append(["Inferior vena cava (CT)", me, "vena", "spodnja-votla-vena", "Inferior vena cava (CT) / HVA-CT, TotalSegmentator"])
+    zac = [o for i in os_ivc for o in Hv.otroci[i] if o not in na_osi]
+    def od_stene(sez):  # veja se začne v osi votle vene: začetek ostane (vstopi v steno), a s polmerom veje
+        return sez
+    me = D.mreza_vej(od_stene(veje(Hv, zac, rmin, 1)), "vene"); me_t = D.mreza_vej(od_stene(veje(Hv, zac, rmin_t, nast.get("telefonListi", 2))), "vene t", telefon=True)
+    vrstica("Hepatic veins (CT)", me, me_t, "vena", "jetrne-vene")
+    print(f"[organi] votla vena {len(os_ivc)} vozlišč, jetrne vene: {len(zac)} pritokov, {D.tris(me)} / {D.tris(me_t)} trikotnikov")
     osnovni[:] = [r for r in osnovni if r[0] == "Gallbladder"]
     return izhod

@@ -14,8 +14,8 @@ Viri:
   <mapa msd>: seg/liver_segment_<1..8>.nii.gz, total/{inferior_vena_cava,gallbladder}.nii.gz
               (TotalSegmentator -i hepaticvessel_<p>.nii.gz -o seg -ta liver_segments; -o total -rs …)
 
-Izhod (m, x levo bolnika, y nazaj, z gor): jetra_v/f, seg<i>_v/f, drevesi portalna_* in vene_* (P, R, S), vrata (razcep
-portalne vene), zolcnik_v/f (če je večji od 5 ml).
+Izhod (m, x levo bolnika, y nazaj, z gor): jetra_v/f, seg<i>_v/f, drevesi portalna_* in vene_* (P, R, S; vene_ivc = vozlišče
+v spodnji votli veni), zolcnik_v/f (če je večji od 5 ml).
 """
 import os, sys
 import numpy as np
@@ -66,6 +66,11 @@ def main():
     m = najv(ndimage.binary_closing(m, iterations=1))
     P, R, S = drevo(m, kr, af, lambda P, r: P[:, 2] * 0.5 + r * 2.0, min_veja_mm=5.0)
     izh["vene_P"], izh["vene_R"], izh["vene_S"] = P, R, S
+    # vozlišča v spodnji votli veni (maska TotalSegmentator, razširjena 3 mm) in njen polmer tam: os votle vene v izvozu
+    ijk = np.round((np.c_[P * np.array([-1, -1, 1]) * 1000.0, np.ones(len(P))] @ np.linalg.inv(aff).T)[:, :3]).astype(int)
+    ijk = tuple(np.clip(ijk, 0, np.array(ivc.shape) - 1).T)
+    izh["vene_ivc"] = ndimage.binary_dilation(ivc, iterations=3)[ijk]
+    izh["vene_ivcR"] = (ndimage.distance_transform_edt(ivc, sampling=korak)[ijk] / 1000.0).astype(np.float32)
     print("jetrne vene: vozlišč", len(P), "korenin", int((S < 0).sum()), "polmer mm", round(float(R.max() * 1000), 1))
     zb = M("total/gallbladder.nii.gz")
     if zb.sum() * np.prod(korak) / 1000 > 5:

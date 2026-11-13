@@ -325,7 +325,8 @@
    "opis": "Cev s hrustančnimi obroči v obliki črke C, ki vodi zrak iz grla do pljuč.",
    "opisStudij": "Dolg 10–12 cm, 16–20 hrustančnih obročev oblike C, zadaj m. trachealis; od C6 do razcepa (carina) v višini T4–T5 (Louisov kot). Sluznica: večvrstni migetalčni epitel z vrčastimi celicami (mukociliarno čiščenje).",
    "vozlisca": [
-    "Trachea"
+    "Trachea (HRA)",
+    "Tracheal cartilage (HRA)"
    ]
   },
   {
@@ -337,34 +338,10 @@
    "opis": "Sapnik se razcepi v dva glavna bronhija, ki se v pljučih razvejita kot drevo.",
    "opisStudij": "Glavni, lobarni (desno 3, levo 2), segmentni bronhi; okoli 23 generacij do alveolov. Hrustanec se izgubi v bronhiolih (premer pod 1 mm), terminalni bronhioli so konec prevodnega dela, respiratorni bronhioli začetek dihalnega.",
    "vozlisca": [
-    "(Anteromedial basal segmental bronchus of left lung)",
-    "Anterior basal segmental bronchus of left lung (BVIII)",
-    "Anterior basal segmental bronchus of right lung (BVIII)",
-    "Anterior segmental bronchus of left lung (BIII)",
-    "Anterior segmental bronchus of right lung (BIII)",
-    "Apical segmental bronchus of right lung (BI)",
-    "Apicoposterior segmental bronchus of left lung (BI+BII)",
-    "Inferior lingular segmental bronchus of left lung (BV)",
-    "Intermediate bronchus.r",
-    "Lateral basal segmental bronchus of left lung (BIX)",
-    "Lateral basal segmental bronchus of right lung (BIX)",
-    "Lateral segmental bronchus of right lung (BIV)",
-    "Left inferior lobar bronchus",
-    "Left main bronchus",
-    "Left superior lobar bronchus",
-    "Medial basal segmental bronchus of left lung (BVII)",
-    "Medial basal segmental bronchus of right lung (BVII)",
-    "Medial segmental bronchus of right lung (BV)",
-    "Middle lobar bronchus.r",
-    "Posterior basal segmental bronchus of left lung (BX)",
-    "Posterior basal segmental bronchus of right lung (BX)",
-    "Posterior segmental bronchus of right lung (BII)",
-    "Right inferior lobar bronchus",
-    "Right main bronchus",
-    "Right superior lobar bronchus",
-    "Superior lingular segmental bronchus of left lung (BIV)",
-    "Superior segmental bronchus of left lung (BVI)",
-    "Superior segmental bronchus of right lung (BVI)"
+    "Bronchi (CT)",
+    "Bronchi in lungs (CT)",
+    "Main bronchi (HRA)",
+    "Main bronchial cartilage (HRA)"
    ]
   },
   {
@@ -376,31 +353,8 @@
    "opis": "Pripeljejo kri z malo kisika iz desnega prekata srca v pljuča.",
    "opisStudij": "Truncus pulmonalis se pod aortnim lokom razcepi v desno (za ascendentno aorto in zgornjo votlo veno) in levo pljučno arterijo; spremljajo bronhe do segmentov. Nizek tlak (okoli 25/10 mmHg); pri hipoksiji se zožijo (Euler-Liljestrandov refleks).",
    "vozlisca": [
-    "Anterior basal segmental artery of left lung",
-    "Anterior basal segmental artery of right lung",
-    "Anterior segmental artery of left lung",
-    "Anterior segmental artery of right lung",
-    "Apical segmental artery of left lung",
-    "Apical segmental artery of right lung",
-    "Inferior lingular artery of left lung",
-    "Inferior lobar artery of right lung",
-    "Lateral basal segmental artery of left lung",
-    "Lateral basal segmental artery of right lung",
-    "Lateral segmental artery of right lung",
-    "Left pulmonary artery",
-    "Medial basal segmental artery of left lung",
-    "Medial basal segmental artery of right lung",
-    "Medial segmental artery of right lung",
-    "Middle lobar artery of right lung",
-    "Posterior basal segmental artery of left lung",
-    "Posterior basal segmental artery of right lung",
-    "Posterior segmental artery of left lung",
-    "Posterior segmental artery of right lung",
-    "Right pulmonary artery",
-    "Superior lingular artery of left lung",
-    "Superior lobar artery of right lung",
-    "Superior segmental artery of left lung",
-    "Superior segmental artery of right lung"
+    "Pulmonary arteries (CT)",
+    "Pulmonary arteries in lungs (CT)"
    ]
   },
   {
@@ -412,25 +366,8 @@
    "opis": "Odvedejo s kisikom bogato kri iz pljuč v levi preddvor srca.",
    "opisStudij": "Običajno štiri (zgornja in spodnja na vsaki strani) v levi preddvor; potekajo med segmenti (intersegmentno), ne ob bronhih. Mišični rokavi ob ustjih so izvor atrijske fibrilacije (izolacija pljučnih ven).",
    "vozlisca": [
-    "Anterior vein of left lung",
-    "Anterior vein of right lung",
-    "Apical vein of right lung",
-    "Apicoposterior vein of left lung",
-    "Inferior basal vein of left lung",
-    "Inferior basal vein of right lung",
-    "Inferior lingular vein of left lung",
-    "Lateral vein of right lung",
-    "Left inferior pulmonary vein",
-    "Left superior pulmonary vein",
-    "Lingular vein of left lung",
-    "Medial vein of right lung",
-    "Posterior vein of right lung",
-    "Right superior pulmonary vein",
-    "Superior basal vein of left lung",
-    "Superior basal vein of right lung",
-    "Superior lingular vein of left lung",
-    "Superior vein of left lung",
-    "Superior vein of right lung"
+    "Pulmonary veins (CT)",
+    "Pulmonary veins in lungs (CT)"
    ]
   }
  ],
@@ -442,7 +379,7 @@
      0,
      -1
     ],
-    "d": -0.024
+    "d": -0.0102
    }
   ]
  },
@@ -508,10 +445,10 @@
    }
   ]
  },
- "velikost": 0.4307,
+ "velikost": 0.4682,
  "trikotniki": {
-  "racunalnik": 165000,
-  "telefon": 55324
+  "racunalnik": 154504,
+  "telefon": 44612
  },
  "luci": [
   {
