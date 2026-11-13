@@ -10,6 +10,8 @@ import { checkIdentities } from "./lesson-identity.js";
 import { najdiNastevanja } from "./nastevanje.js";
 import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn, SYMBOLS, SUBJECT_TABLES } from "../public/formula-data.js";
 
+export const LESSON_STATES = ["osnutek", "preverjeno", "pregledano"];
+
 const REQUIRED = [
   [/^zakaj/i, "Zakaj se tega učimo"],
   [/^razlag/i, "Razlaga"],
@@ -31,9 +33,16 @@ export function checkLessonSource(src, topicId) {
   const lesson = parseLesson(src);
   const { meta, sections, alternatives, checks } = lesson;
 
-  if (!meta.stanje) err("v glavi manjka »stanje: osnutek« ali »stanje: pregledano«");
-  else if (!/^(osnutek|pregledano)$/.test(meta.stanje)) err(`stanje »${meta.stanje}« ni osnutek ali pregledano`);
+  // Stanja (j 2026-11-13): osnutek → preverjeno (račune sta preverila program in AI) → pregledano (pregledal človek).
+  if (!meta.stanje) err("v glavi manjka »stanje: osnutek«, »stanje: preverjeno« ali »stanje: pregledano«");
+  else if (!LESSON_STATES.includes(meta.stanje)) err(`stanje »${meta.stanje}« ni osnutek, preverjeno ali pregledano`);
   if (/opus|sonnet|haiku|fable|claude|gpt/i.test(meta.avtor || "")) err("v glavi ne navajaj imena modela, piši »avtor: AI«");
+  // »pregledal:« je ime učitelja (človeka), ki je lekcijo pregledal; AI tu ni pregledovalec.
+  // Meje besed po Unicode (\b je samo ASCII: »Ana Čaić« bi sicer veljala za AI).
+  if (/(?<![\p{L}\p{N}])(ai|opus|sonnet|haiku|fable|claude|gpt|program)(?![\p{L}\p{N}])/iu.test(meta.pregledal || "")) err("»pregledal:« je samo za človeka; pregled AI je stanje »preverjeno«");
+  if (meta.pregledal != null && !meta.pregledal) warn("polje »pregledal:« je prazno");
+  if (meta.stanje === "pregledano" && !meta.pregledal) warn("lekcija s stanjem »pregledano« naj ima v glavi »pregledal: <ime učitelja>«");
+  if (meta.pregledal && meta.stanje !== "pregledano") warn("lekcija ima »pregledal:«, stanje pa ni »pregledano«");
 
   for (const [re, name] of REQUIRED) if (!sections.some((s) => re.test(s.title))) err(`manjka razdelek »## ${name}«`);
   if (alternatives.length < 2) err(`premalo razdelkov »## Drugače: …« (${alternatives.length}, vsaj 2)`);

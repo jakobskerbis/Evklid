@@ -11,9 +11,10 @@ aplikacija spremembo pobere ob naslednjem odprtju lekcije.
 
 ```markdown
 ---
-stanje: osnutek        # osnutek | pregledano (osnutek pokaže opozorilo učencu)
+stanje: osnutek        # osnutek | preverjeno | pregledano (glej »Stanje lekcije« spodaj)
 demo: pitagora         # neobvezno: dodatna simulacija (simulacije za vsako temo so v public/sim/katalog.js)
 avtor: učitelj / AI    # neobvezno, za evidenco
+pregledal: Ana Novak   # neobvezno: učitelj (človek), ki je lekcijo pregledal; samo pri »pregledano«
 ---
 
 ## Zakaj se tega učimo
@@ -76,6 +77,18 @@ v | hitrost | v = \frac{s}{t} | m/s
 t | čas | | s
 :::
 ```
+
+## Stanje lekcije
+
+| `stanje:` | Kdaj | Kaj vidi učenec |
+|---|---|---|
+| `osnutek` | lekcija je napisana, pregledi še niso končani | rumeno opozorilo »Osnutek: lekcijo mora še pregledati učitelj …« |
+| `preverjeno` | `check-lesson.js` je brez napak (preračunani računi) in pregledovalci AI so lekcijo pregledali | modro opombo »Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. …« |
+| `pregledano` | lekcijo je pregledal učitelj (človek) | nič |
+
+`pregledano` je samo za lekcije, ki jih je pregledal človek; njegovo ime zapiši v `pregledal:` (učencu se ne izpiše).
+AI ni nikoli `pregledal:` (`check-lesson.js` to javi kot napako); pregled AI je stanje `preverjeno`. Nova lekcija
+ostane `osnutek`, dokler niso končani vsi trije pregledi (`docs/pregled.md` §2).
 
 ## Preveri se: vrste vprašanj
 

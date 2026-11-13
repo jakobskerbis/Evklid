@@ -53,6 +53,12 @@ test("z/s before numbers and letters follows Slovenian spelling", () => {
   assert.deepEqual(["R", "t", "k", "I", "pet", "dve"].map(zs), ["z", "s", "s", "z", "s", "z"]);
 });
 
+test("povzetek na eni strani bere stanje lekcije iz glave (stanje: …)", () => {
+  // Prej je bral neobstoječe polje in opombo »še pregleduje učitelj« kazal tudi pri pregledanih lekcijah.
+  assert.equal(summaryParts("MAT-SS-4/statistika").status, "preverjeno");
+  assert.equal(summaryParts(OHM).status, "osnutek");
+});
+
 test("one-page summary: mind map from the lesson summary, mistakes and formulas", () => {
   const p = summaryParts(OHM);
   assert.ok(p.branches.length >= 3 && p.branches.length <= 8);
