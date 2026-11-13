@@ -389,13 +389,14 @@ export function zgradi(THREE, ctx = {}) {
   const dGl = del("glava", "Glava (kapsida)", "Beljakovinski ovoj v obliki podaljšanega dvajsetploskovca iz 155 šesterčkov (kapsomer) in 11 peterčkov v ogliščih; v dvanajstem oglišču je vrat. Varuje DNK.", "#6f8cff",
     [glava, glavaIn, glavaRez, glavaPok, hexM, hexP, pentM], [tGlava.x, tGlava.y + YH, tGlava.z]);
   const dDnk = del("dnk", "DNK", "Dedni zapis virusa: dolga dvojna vijačnica (okoli 169 000 parov baz), tesno navita v glavi; ob okužbi potuje skozi rep v bakterijo.", B.dnk, [dnk, sredica, dnkCev, dnkB], [0, YH, 0]);
+  dDnk.ovoj = false; // DNK ni ovoj nobenega dela (pregledovalnik je ne skrije, ko je izbran drug del)
   const dVr = del("vrat", "Vrat z ovratnikom", "Kratek vrat pod glavo, ki glavo povezuje z repom; skozi portal v njem DNK zapusti glavo.", "#8ea0ff", [vrat], [0.05, yP - 0.036 + YH, 0.07]);
   const tBr = brcT.map((c) => c.getPointAt(0.6)).sort((a, b) => b.dot(KAM) - a.dot(KAM))[0];
   const dBr = del("brcice", "Brčice (fibritin)", "Šest tankih vlaken na ovratniku; pomagajo pri sestavljanju repnih vlaken in jih zadržijo, dokler virus ne najde bakterije.", "#ffe08a", [brcice], [tBr.x, tBr.y + YH, tBr.z]);
   const tGl = dGl.tocka.slice(), tVr = dVr.tocka.slice(), tBrc = dBr.tocka.slice();
   const dPlasc = del("plasc", "Krčljivi plašč repa", "Ovoj iz 23 obročev s po šestimi beljakovinami, ki se vijejo okoli repne cevke; ob okužbi se skrči kot vzmet in potisne cevko skozi steno bakterije.", "#1fae96", [plasc], [0, 0, 0]);
   const dCev = del("cevka", "Repna cevka", "Votla cevka v repu, skozi katero DNK potuje iz glave v bakterijo; vidna je, ko se plašč skrči.", "#eef2ff", [cevka], [0, 0, 0]);
-  del("bazalna-plosca", "Bazalna plošča", "Šesterokotna plošča na koncu repa; ko vlakna najdejo bakterijo, sproži krčenje plašča. Igla v njenem središču načne steno bakterije.", "#ff7a5c", [plosca, igla],
+  del("bazalna-plosca", "Bazalna plošča", "Šesterokotna plošča na koncu repa; ko vlakna najdejo bakterijo, sproži krčenje plašča. Igla v njenem središču prebode zunanjo membrano, njen encim pa načne plast peptidoglikana.", "#ff7a5c", [plosca, igla],
     V(Math.cos(aK) * 0.13, yB - 0.03, Math.sin(aK) * 0.13).toArray());
   const tv = V(Math.cos(vog[0]) * 0.52, (-0.29 + YS) / 2, Math.sin(vog[0]) * 0.52);
   del("dolga-vlakna", "Dolga repna vlakna", "Šest dolgih, v kolenu zalomljenih vlaken, s katerimi virus otipa bakterijo in prepozna beljakovine ter sladkorje na njeni površini.", "#ffc94a", [dolga], tv.toArray());
@@ -430,10 +431,10 @@ export function zgradi(THREE, ctx = {}) {
     }
     plasc.instanceMatrix.needsUpdate = true;
     plasc.computeBoundingSphere();
-    // igla: cevka jo doseže, ko prepotuje vrzel do nje, potem jo potiska pred sabo; v periplazmi razpade
-    const yKon = YC + YH - D, yIg = Math.min(YI, yKon);
+    // igla sedi na konici cevke (vmesni del je skrit v pestu plošče) in se spušča skupaj z njo; v periplazmi razpade
+    const yIg = YI - D;
     igla.position.y = yIg;
-    const ki = 1 - gladko(-0.57, -0.62, yIg);
+    const ki = 1 - gladko(-0.59, -0.63, yIg);
     igla.scale.setScalar(Math.max(0.001, ki));
     igla.visible = ki > 0.02;
     // DNK v glavi (od portala naprej), v cevki in v bakteriji
@@ -442,7 +443,7 @@ export function zgradi(THREE, ctx = {}) {
     dnk.geometry.setDrawRange(zc, Math.max(0, idxDnk - zc));
     dnk.visible = zc < idxDnk;
     // gosta sredica se manjša sorazmerno z izpraznjenim delom glave (prej je stala do polovice in glava je bila videti polna)
-    const ks = Math.max(0.001, Math.sqrt(1 - hd));
+    const ks = Math.max(0.001, Math.cbrt(1 - hd)); // prostornina sredice sorazmerna z DNK, ki je še v glavi
     sredica.scale.set(ks, ks, ks);
     sredica.visible = ks > 0.01;
     const c0 = Math.floor(med((dd - (1 - F)) / F) * segCev) * nRad, c1 = Math.floor(med(dd / F) * segCev) * nRad;
@@ -459,7 +460,7 @@ export function zgradi(THREE, ctx = {}) {
   }
   // Besedilo sledi istim mejam kot slika: krčenje do 0,5, nato DNK (glava → cevka → bakterija), konec, ko je tudi cevka prazna.
   const faza = () => (v < 0.02 ? "Virus je z repnimi vlakni pritrjen na bakterijo" : v <= 0.5 ? "Plašč repa se krči, cevka prebija steno"
-    : ddZdaj < 0.998 ? "DNK potuje iz glave skozi repno cevko v bakterijo" : "Vsa DNK je v bakteriji, glava je prazna");
+    : ddZdaj < 0.998 ? (ddZdaj < 1 - F ? "DNK potuje iz glave skozi repno cevko v bakterijo" : "Zadnji del DNK potuje skozi cevko v bakterijo") : "Vsa DNK je v bakteriji, glava je prazna");
   const zaprta = (x) => { nadzor[2].vrednost = x; glavaPok.visible = hexP.visible = x === "zaprta"; };
   const nadzor = [
     { tip: "drsnik", id: "vbrizgavanje", oznaka: "Vbrizgavanje", min: 0, max: 1, korak: 0.01, vrednost: 0, ob: nastavi },

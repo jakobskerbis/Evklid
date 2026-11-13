@@ -34,17 +34,33 @@ test("ovoji: lupina okoli izbranega se skrije, vsebina znotraj izbranega pa ne",
 });
 
 const t4 = THREE ? await import("../public/3d/modeli/celice/virus-t4.js") : null;
+const ziv = THREE ? await import("../public/3d/modeli/celice/zivalska.js") : null;
+
+test("ovoji: v pravi celici se membrana še vedno skrije okoli jedra in mitohondrijev", { skip }, () => {
+  const M = ziv.zgradi(THREE, { kakovost: "nizka" });
+  M.group.updateMatrixWorld(true);
+  const id = (x) => M.deli.find((d) => d.id === x);
+  const mem = M.deli.find((d) => /membrana/.test(d.id) && !/jedr/.test(d.id));
+  assert.ok(mem, "živalska celica ima membrano");
+  for (const x of ["jedro", "mitohondriji"]) {
+    const d = id(x) || M.deli.find((p) => p.id.startsWith(x.slice(0, 6)));
+    assert.ok(d, x);
+    assert.ok(skrijeId(M.deli, d, M.group).includes(mem.id), `${d.id}: membrana se skrije`);
+  }
+});
 const kv = THREE ? await import("../public/3d/modeli/celice/kvasovka.js") : null;
 
-test("bakteriofag T4: z izbrano glavo DNK med vbrizgavanjem ostane vidna", { skip }, () => {
+test("bakteriofag T4: ne glede na izbrani del DNK med vbrizgavanjem ostane vidna", { skip }, () => {
   for (const kakovost of ["visoka", "nizka"]) {
     const M = t4.zgradi(THREE, { kakovost });
     const vb = M.nadzor.find((c) => c.id === "vbrizgavanje");
     for (let v = 0; v <= 1.0001; v += 0.05) {
       vb.ob(v);
       M.group.updateMatrixWorld(true);
-      const glava = M.deli.find((d) => d.id === "glava");
-      assert.ok(!skrijeId(M.deli, glava, M.group).includes("dnk"), `${kakovost} v=${v.toFixed(2)}: DNK ne sme biti »ovoj« glave`);
+      for (const d of M.deli) {
+        if (d.id === "dnk") continue;
+        assert.ok(!skrijeId(M.deli, d, M.group).includes("dnk"), `${kakovost} v=${v.toFixed(2)}, izbran ${d.id}: DNK ne sme biti »ovoj«`);
+      }
     }
     vb.ob(0.1);
     M.group.updateMatrixWorld(true);

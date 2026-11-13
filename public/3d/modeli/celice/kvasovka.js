@@ -167,6 +167,7 @@ export function zgradi(THREE, ctx = {}) {
       p.needsUpdate = true;
       g.setIndex(cela); g.computeVertexNormals(); g.setIndex(zdaj);
       g.computeBoundingSphere();
+      g.computeBoundingBox(); // raycast izloča po okviru: brez tega tap zgreši zrasel brst
     };
     posodobi(P);
     return { g, posodobi, rez: (da) => { zdaj = da ? izrez : cela; g.setIndex(zdaj); } };
@@ -262,7 +263,7 @@ export function zgradi(THREE, ctx = {}) {
     ovrG.setIndex(idx);
   }
   const ovratnik = new THREE.Mesh(ovrG, mat(0x3d3180, { roughness: 0.62, clearcoat: 0.25, sheen: 0.35, sheenColor: new THREE.Color(0x8d7ee0), side: THREE.DoubleSide }));
-  // Pregrada (primarni septum iz hitina): ob koncu brstenja zapre vrat kot zaslonka; ko se razcepi, se brst odcepi, na
+  // Pregrada (primarni septum iz hitina): ob koncu brstenja zapre vrat kot zaslonka; ko jo hitinaza razgradi, se brst odcepi, na
   // matični celici ostane brazgotina (Cabib in sod. 2001, Lesage in Bussey 2006).
   const septum = new THREE.Mesh(new THREE.BufferGeometry(), mat(0xf4e8c8, { roughness: 0.4, clearcoat: 0.7, side: THREE.DoubleSide }));
   group.add(ovratnik, septum);
@@ -491,7 +492,7 @@ export function zgradi(THREE, ctx = {}) {
   const brstDel = { id: "brst", ime: "Brst (hčerinska celica)", opis: "Izboklina, ki zraste iz matične celice; ko je dovolj velika in dobi svoje jedro, se odcepi kot nova kvasovka.", barva: "#ecd6a0", meshes: [bStena], tocka: [0, 0, 0] };
   bStena.userData.del = "brst";
   deli.push(brstDel);
-  const septumDel = { id: "septum", ime: "Pregrada v vratu (septum)", opis: "Ob koncu brstenja celica v vratu zgradi pregrado iz hitina, ki loči obe citoplazmi. Ko se pregrada razcepi, se brst odcepi; na matični celici ostane brazgotina.", barva: "#f4e8c8", meshes: [septum], tocka: [0, 0, 0] };
+  const septumDel = { id: "septum", ime: "Pregrada v vratu (septum)", opis: "Ob koncu brstenja celica v vratu zgradi pregrado iz hitina, ki loči obe citoplazmi. Ko encim hitinaza pregrado razgradi, se brst odcepi; na matični celici ostane brazgotina.", barva: "#f4e8c8", meshes: [septum], tocka: [0, 0, 0] };
   septum.userData.del = "septum";
   deli.push(septumDel);
   del("brazgotine", "Brazgotine po brstenju", "Obročki iz hitina na steni matične celice: vsak ostane po enem odcepljenem brstu, zato po njih preštejemo, kolikokrat je celica brstela.", "#f4e8c8", [brzM], brzT[0].toArray());
@@ -547,7 +548,7 @@ export function zgradi(THREE, ctx = {}) {
         vrtTocka(Bp.P, 0, th, ZC * zs, sumF, tmp); op.setXYZ(j + nK + 1, tmp.x, tmp.y, tmp.z);
       }
       op.needsUpdate = true;
-      ovrG.computeVertexNormals(); ovrG.computeBoundingSphere();
+      ovrG.computeVertexNormals(); ovrG.computeBoundingSphere(); ovrG.computeBoundingBox(); // okvir za tap in ovoje
       Bc.set(Bp.Bx, 0, 0);
       brstG.position.copy(Bc); brstG.scale.setScalar(Math.max(s, 0.02));
       brstDel.tocka = [Bc.x + ABb * s * 0.35, RBb * s * 0.55, RBb * s * 0.75 - 0.02].map((x) => Math.round(x * 1000) / 1000);
@@ -573,6 +574,7 @@ export function zgradi(THREE, ctx = {}) {
       most.quaternion.setFromUnitVectors(v3(0, 1, 0), tmp.copy(pD).sub(pM).normalize());
       most.scale.set(rm, dl, rm);
     }
+    else most.scale.setScalar(1e-4); // skrit most ne sme ostati »ovoj« (žarki pregledovalnika zadenejo tudi skrite mreže)
     jedroDel.tocka = pM.clone().add(v3(-0.06, rj * 0.75, rj * 0.55)).toArray().map((x) => Math.round(x * 1000) / 1000);
     group.updateMatrixWorld(true);
     jcDel.tocka = group.worldToLocal(jc.localToWorld(jcT.clone())).toArray().map((x) => Math.round(x * 1000) / 1000);
