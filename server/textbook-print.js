@@ -119,7 +119,7 @@ export function lessonHtml(t, lesson, n) {
 
 const today = () => new Date().toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" });
 const NOTE = `<p class="muted small">Interaktivni poskusi, simulacije, sprotno preverjanje in vaje so na voljo v aplikaciji Evklid.
-        Lekcije, ki jih učitelj še ni pregledal, so lahko še popravljene.</p>`;
+        Lekcije, ki jih učitelj še ni pregledal, se lahko še spremenijo.</p>`;
 
 // Celoten učbenik predmeta (npr. MAT-OS): deli so razredi oziroma letniki.
 export function printBook(bookKey) {

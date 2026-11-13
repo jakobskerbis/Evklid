@@ -49,6 +49,7 @@ test("checkLessonSource: stanja osnutek / preverjeno / pregledano in polje pregl
   assert.equal(st("stanje: pregledano").warnings.length, 1, "pregledano brez imena učitelja je opozorilo");
   assert.equal(st("stanje: preverjeno\npregledal: Ana Novak").warnings.length, 1, "ime učitelja brez stanja pregledano");
   for (const ai of ["AI", "Claude Opus", "program"]) assert.equal(st(`stanje: pregledano\npregledal: ${ai}`).errors.length, 1, `AI ni pregledovalec: ${ai}`);
+  for (const ime of ["Kaia Kos", "Mihael Zupan", "Ana Čaić"]) assert.deepEqual(st(`stanje: pregledano\npregledal: ${ime}`).errors, [], `človek: ${ime}`);
   assert.equal(parseLesson(src("stanje: pregledano\npregledal: Ana Novak")).meta.pregledal, "Ana Novak");
 });
 

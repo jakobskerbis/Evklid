@@ -83,7 +83,7 @@ t | čas | | s
 | `stanje:` | Kdaj | Kaj vidi učenec |
 |---|---|---|
 | `osnutek` | lekcija je napisana, pregledi še niso končani | rumeno opozorilo »Osnutek: lekcijo mora še pregledati učitelj …« |
-| `preverjeno` | `check-lesson.js` je brez napak (preračunani računi) in AI-pregledovalci so lekcijo pregledali | modro opombo »Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. …« |
+| `preverjeno` | `check-lesson.js` je brez napak (preračunani računi) in pregledovalci AI so lekcijo pregledali | modro opombo »Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. …« |
 | `pregledano` | lekcijo je pregledal učitelj (človek) | nič |
 
 `pregledano` je samo za lekcije, ki jih je pregledal človek; njegovo ime zapiši v `pregledal:` (učencu se ne izpiše).

@@ -38,7 +38,8 @@ export function checkLessonSource(src, topicId) {
   else if (!LESSON_STATES.includes(meta.stanje)) err(`stanje »${meta.stanje}« ni osnutek, preverjeno ali pregledano`);
   if (/opus|sonnet|haiku|fable|claude|gpt/i.test(meta.avtor || "")) err("v glavi ne navajaj imena modela, piši »avtor: AI«");
   // »pregledal:« je ime učitelja (človeka), ki je lekcijo pregledal; AI tu ni pregledovalec.
-  if (/\b(ai|opus|sonnet|haiku|fable|claude|gpt|program)\b/i.test(meta.pregledal || "")) err("»pregledal:« je samo za človeka; pregled AI je stanje »preverjeno«");
+  // Meje besed po Unicode (\b je samo ASCII: »Ana Čaić« bi sicer veljala za AI).
+  if (/(?<![\p{L}\p{N}])(ai|opus|sonnet|haiku|fable|claude|gpt|program)(?![\p{L}\p{N}])/iu.test(meta.pregledal || "")) err("»pregledal:« je samo za človeka; pregled AI je stanje »preverjeno«");
   if (meta.pregledal != null && !meta.pregledal) warn("polje »pregledal:« je prazno");
   if (meta.stanje === "pregledano" && !meta.pregledal) warn("lekcija s stanjem »pregledano« naj ima v glavi »pregledal: <ime učitelja>«");
   if (meta.pregledal && meta.stanje !== "pregledano") warn("lekcija ima »pregledal:«, stanje pa ni »pregledano«");
