@@ -71,7 +71,7 @@ test("oko_misice.py: mere narastišč in kit iz literature, korak v izvozu", () 
   const src = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "oko_misice.py"), "utf8");
   assert.match(src, /NARASTISCE = \{"Medial": 0\.0055, "Inferior": 0\.0065, "Lateral": 0\.0069, "Superior": 0\.0077\}/);
   const izvoz = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "izvozi-organe.py"), "utf8");
-  assert.match(izvoz, /dodaj=\["ocesne_misice", "ocesne_misice_lastne"\]/); // m1: mišice so lastni trakovi (ocesne_misice_lastne)
+  assert.match(izvoz, /dodaj=\["ocesne_misice", "ocesne_misice_lastne"(, "oko_dodatki_m4")?\]/); // m1: mišice so lastni trakovi (ocesne_misice_lastne)
   assert.match(src, /^def ocesne_misice_lastne\(osnovni, cfg, tmp\):/m);
   assert.match(fs.readFileSync(path.join(KOREN, "scripts", "atlas", "peka.py"), "utf8"), /r\.get\("kita"\)/);
   // krog 7: kita stanjšana proti robovoma (brez temne črte); škripec pritrjen (krog 8: ploščica namesto peclja)

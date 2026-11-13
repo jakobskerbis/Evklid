@@ -48,7 +48,7 @@ test("oko: kite na zrklo po poenostavitvi in na visoki mreži, brez dvostranske 
     assert.ok(m.includes(`("${ime} muscle"`), `${ime} v PLASTI`);
   const izv = beri("scripts", "atlas", "izvozi-organe.py");
   // m1: mišice so lastna geometrija (trakovi z vgrajeno kito), kite_na_zrklo ostane za izvirnike Z-Anatomy
-  assert.match(izv, /dodaj=\["ocesne_misice", "ocesne_misice_lastne"\], nedotakni=r"\(rectus\|oblique\) muscle"/);
+  assert.match(izv, /dodaj=\["ocesne_misice", "ocesne_misice_lastne"(, "oko_dodatki_m4")?\], nedotakni=r"\(rectus\|oblique\) muscle/);
   assert.match(izv, /types\.SimpleNamespace\(name=r\[0\], data=r\[1\]\) for r in osnovni/, "isti popravek na izvirnikih (visoka mreža peke)");
   const oko = json("oko.json");
   const mis = oko.tkiva["mišica"];
