@@ -159,14 +159,15 @@ function mountOldLinkRedirect(app, homeCheck) {
 }
 
 // Varnostne glave (helmet). CSP: samo lastne skripte (brez vrinjenih), slogi tudi vrinjeni (KaTeX, style=),
-// slike tudi z drugih strani https (kotiček z novicami), blob: za fotografije s kamere in posnetke.
+// slike samo lastne, data: in blob: (fotografije s kamere, posnetki); točka A3: nobena slika z drugih strani
+// (kotiček z novicami slik nima, besedilo od modela in učencev jih ne sme naložiti, public/rich.js).
 // Plačilo (Stripe) in portal sta navadni preusmeritvi (location.href), zato ju CSP ne omejuje.
 // Mobilna aplikacija (Expo) uporablja API in svoj WebView z lokalnim HTML, zato je CSP ne zadeva.
 export const CSP = {
   "default-src": ["'self'"],
   "script-src": ["'self'"],
   "style-src": ["'self'", "'unsafe-inline'"],
-  "img-src": ["'self'", "data:", "blob:", "https:"],
+  "img-src": ["'self'", "data:", "blob:"],
   "font-src": ["'self'", "data:"],
   "connect-src": ["'self'"],
   "media-src": ["'self'", "blob:"],
