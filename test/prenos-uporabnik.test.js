@@ -42,3 +42,15 @@ test("A4 telo: gzip in br se razširita, meja velja po razširjanju (bomba gzip)
   await assert.rejects(beriTok(odziv(bomba, { "content-encoding": "gzip" }), PRENOS_MAX), (e) => e.code === "PREVELIK");
   await assert.rejects(beriTok(odziv(Buffer.alloc(PRENOS_MAX + 1, 65)), PRENOS_MAX), (e) => e.code === "PREVELIK");
 });
+
+// Pregled 2: telo, ki še teče (brez Content-Length), se ustavi z razlogom »prevelik«, ne »prekinjen«.
+test("A4 telo brez dolžine, ki še teče, nad mejo: PREVELIK", async () => {
+  const { IncomingMessage } = await import("node:http");
+  const { Socket } = await import("node:net");
+  const res = new IncomingMessage(new Socket());
+  res.headers = {};
+  const p = beriTok(res, 1024);
+  res.push(Buffer.alloc(800, 65));
+  res.push(Buffer.alloc(800, 65)); // tok ostane odprt (brez push(null))
+  await assert.rejects(p, (e) => e.code === "PREVELIK");
+});

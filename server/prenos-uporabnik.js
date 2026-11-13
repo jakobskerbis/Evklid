@@ -110,10 +110,11 @@ export function beriTok(res, max) {
     const tok = enc === "gzip" || enc === "x-gzip" ? res.pipe(zlib.createGunzip()) : enc === "br" ? res.pipe(zlib.createBrotliDecompress()) : enc === "deflate" ? res.pipe(zlib.createInflate()) : res;
     const kosi = [];
     let velikost = 0;
+    // Najprej zavrne s pravim razlogom: res.destroy() takoj sproži »aborted«, ki bi sicer zavrnil s »prekinjen«.
     const konec = (err) => {
+      ne(err);
       res.destroy();
       if (tok !== res) tok.destroy();
-      ne(err);
     };
     tok.on("data", (d) => {
       velikost += d.length;
