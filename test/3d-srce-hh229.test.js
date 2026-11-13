@@ -40,6 +40,15 @@ c = np.array([0.0, 0.0, 0.0]); st = np.array([0.03, 0.0, 0.0]); no = np.array([0
 X = np.array([st, st + [0.01, 0.002, 0.0], st + [0.0, 0.004, 0.003]])
 Y = s.premakni_na_ustje(X, c, st, no)
 print(np.allclose(Y[0], no, atol=1e-9), np.allclose(np.linalg.norm(Y[1] - Y[2]), np.linalg.norm(X[1] - X[2])))
+# krog m2: gladek šum 0–1, razširitev cevi okoli osi, maščoba samo v pasu CT in ob žili
+rng = np.random.default_rng(2); P = rng.uniform(0, 0.1, (5000, 3)); w = np.clip(s.valovi(P, 0.011), 0, 1)
+print(0.3 < float(w.mean()) < 0.7, float(w.std()) > 0.1)
+th = np.linspace(0, 2 * np.pi, 40, endpoint=False); C = np.concatenate([np.c_[0.004 * np.cos(th), 0.004 * np.sin(th), np.full(40, z)] for z in np.linspace(0, 0.03, 12)])
+C2, k = s.razsiri_cev(C, 0.006)
+print(abs(k - 1.5) < 1e-6, np.allclose(np.linalg.norm(C2[:, :2], axis=1), 0.006, atol=1e-6), s.razsiri_cev(C, 0.002)[1] == 1.0)
+m0 = (V[:, 0] < 6).astype(float); Vm = V * 0.004
+m = s.mascoba(Vm, F, np.ones(len(F), bool), m0, np.array([[0.008, y, 0.0] for y in np.linspace(0, 0.044, 30)]), log=lambda x: None)
+print(float(m[m0 < 0.5].max()) == 0.0, float(m[np.abs(Vm[:, 0] - 0.008) < 0.0015].min()) > 0.5, float(m.max()) <= 1.0)
 `;
   const r = spawnSync("python3", ["-c", prog, path.join(KOREN, "scripts", "atlas")], { encoding: "utf8" });
   assert.equal(r.status, 0, r.stderr);
@@ -47,6 +56,9 @@ print(np.allclose(Y[0], no, atol=1e-9), np.allclose(np.linalg.norm(Y[1] - Y[2]),
   assert.equal(v[0], "av_b av_a True True", "mitralna = av_b (zamenjani zaklopki prepozna), merilo in ostanek");
   assert.equal(v[1], "0 1", "osamljena oznaka izgine, zaklenjena ostane");
   assert.equal(v[2], "True True");
+  assert.equal(v[3], "True True", "valovi: gladek šum");
+  assert.equal(v[4], "True True True", "razsiri_cev: polmer do ustja, nikoli ožje");
+  assert.equal(v[5], "True True True", "mascoba: nič zunaj pasu CT, polna ob žili");
 });
 
 test("srce HH229: izvoz, dodelava in srce.json ga uporabljajo; vir je naveden", () => {
@@ -55,6 +67,9 @@ test("srce HH229: izvoz, dodelava in srce.json ga uporabljajo; vir je naveden", 
   assert.match(izv, /cfg\["_hh229"\] = /);
   assert.match(izv, /hh229_cilj=\(\d+_000, \d+_000\)/);
   assert.match(dod, /epikardPravi/);
+  // krog m2: žile nad pravo površino, maščoba ob žilah, cev votle vene na pravem ustju pred drugim zlaganjem krnov
+  for (const k of ["hh229_zile_dvig", "srce_hh229.mascoba(", "srce_hh229.razsiri_cev(", "if premaknjeno:"]) assert.ok(ct.includes(k), k);
+  assert.match(beri("scripts", "atlas", "rez-stena.mjs"), /odprtih žarkov/);
   const pri = beri("scripts", "atlas", "srce-hh229.py");
   for (const k of ["def zapri(", "holes_fill", "hh229-v1.npz"]) assert.ok(pri.includes(k), k);
   const j = JSON.parse(beri("public", "3d", "modeli", "organi-3d", "srce.json"));

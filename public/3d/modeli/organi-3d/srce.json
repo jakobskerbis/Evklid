@@ -1104,8 +1104,8 @@
    "slika": "srce-volumen.png",
    "lo": [
     -0.06681,
-    -0.09927,
-    -0.05544
+    -0.09919,
+    -0.05556
    ],
    "korak": 0.00125,
    "n": [
@@ -1123,8 +1123,8 @@
     "telefon": "srce-stena-telefon.png",
     "lo": [
      -0.06725,
-     -0.1056,
-     -0.05963
+     -0.10552,
+     -0.05975
     ],
     "korak": 0.001,
     "n": [
@@ -1261,8 +1261,8 @@
  },
  "velikost": 0.2706,
  "trikotniki": {
-  "racunalnik": 224273,
-  "telefon": 55263
+  "racunalnik": 224359,
+  "telefon": 55278
  },
  "luci": [
   {

@@ -673,7 +673,7 @@ def _vencne_cevi(vencne, bvh_povrsina, tel, dvig=0.25, debelina=1.0):
                     if q is None:
                         continue
                     q, nn = np.array(q), np.array(nn)
-                    C[i] = q + nn * R[i] * dvig
+                    C[i] = q + nn * R[i] * (dvig if R[i] >= 0.001 or dvig <= 0.25 else 0.95)  # tanke veje na pravem srcu skoraj cele nad površino
                     if vena and kd_a is not None:  # vena ob arteriji, ne v njej
                         a_, j_, d_ = kd_a.find(Vector(C[i]))
                         if a_ is not None and d_ < R[i] + Ra[j_] + 0.0004:
@@ -684,8 +684,9 @@ def _vencne_cevi(vencne, bvh_povrsina, tel, dvig=0.25, debelina=1.0):
             if dvig > 0.25:  # pravo srce (HH229, grbinasta površina): po glajenju poti nobena točka globlje kot dvig·R
                 for i, c in enumerate(C):
                     q, nn, _, _ = bvh_povrsina.find_nearest(Vector(c))
-                    if q is not None and (Vector(c) - q).dot(nn) < R[i] * dvig:
-                        C[i] = np.array(q) + np.array(nn) * R[i] * dvig
+                    dv_ = dvig if R[i] >= 0.001 else 0.95
+                    if q is not None and (Vector(c) - q).dot(nn) < R[i] * dv_:
+                        C[i] = np.array(q) + np.array(nn) * R[i] * dv_
                 C = _gladi_pot(C, 1)
             V_, F_ = sz.cev_np(C, R, 7); zbirka.dodaj(V_, F_)
             V_, F_ = sz.cev_np(C[::3] if len(C) > 9 else C, R[::3] if len(C) > 9 else R, 5); zbirka_t.dodaj(V_, F_)
@@ -954,27 +955,37 @@ def srce_ct(osnovni, cfg, tmp):
     if cfg.get("_hh229") and os.path.exists(cfg["_hh229"]):
         import srce_hh229
         pv_ct = pljucne_vene_ct(P, C, T, premik, Lc, cfg.setdefault("_telefon", {}), _bvh(V2, F[epi]))
-        cevi = []
-        for r in nove + pv_ct:  # cevi velikih žil (točke in normale): vanje se zložijo odrezani krni žil HH229
-            if r[2] in ("aorta", "pljucna", "vena", "pljucna-vena") and not r[0].startswith("Root of"):
-                me_ = r[1]; Xc = _tocke(me_); Fc_ = np.array([p.vertices[:3] for p in me_.polygons if len(p.vertices) >= 3])
-                Nc_ = np.zeros_like(Xc); nn = np.cross(Xc[Fc_[:, 1]] - Xc[Fc_[:, 0]], Xc[Fc_[:, 2]] - Xc[Fc_[:, 0]])
-                for k_ in range(3): np.add.at(Nc_, Fc_[:, k_], nn)
-                Nc_ /= np.linalg.norm(Nc_, axis=1)[:, None] + 1e-20
-                cc_ = Xc[Fc_].mean(1); nf_ = nn / (np.linalg.norm(nn, axis=1)[:, None] + 1e-20)
-                cevi.append((np.concatenate([Xc, cc_]), np.concatenate([Nc_, nf_])))
-        hh = srce_hh229.stena(cfg["_hh229"], dict(V2=V2, F=F, epi=epi, dl=dl, masca=masca, L=Lc), Polje, log=lambda x: print(x, flush=True), cevi=cevi)
-        bvh_he = _bvh(hh["V"], hh["F"][hh["epi"]]); bvh_hn = _bvh(hh["V"], hh["F"][~hh["epi"]])
-        # votli veni: cev (zgrajena na ustju CT) na pravo ustje v steni HH229 (sicer je ob cevi luknja v steni preddvora)
-        bvh_h = _bvh(hh["V"], hh["F"]); c_ra = V2[F[(dl == 5) & ~epi]].mean((0, 1))
+        def zberi_cevi():  # cevi velikih žil (točke in normale): vanje se zložijo odrezani krni žil HH229
+            cevi = []
+            for r in nove + pv_ct:
+                if r[2] in ("aorta", "pljucna", "vena", "pljucna-vena") and not r[0].startswith("Root of"):
+                    me_ = r[1]; Xc = _tocke(me_); Fc_ = np.array([p.vertices[:3] for p in me_.polygons if len(p.vertices) >= 3])
+                    Nc_ = np.zeros_like(Xc); nn = np.cross(Xc[Fc_[:, 1]] - Xc[Fc_[:, 0]], Xc[Fc_[:, 2]] - Xc[Fc_[:, 0]])
+                    for k_ in range(3): np.add.at(Nc_, Fc_[:, k_], nn)
+                    Nc_ /= np.linalg.norm(Nc_, axis=1)[:, None] + 1e-20
+                    cc_ = Xc[Fc_].mean(1); nf_ = nn / (np.linalg.norm(nn, axis=1)[:, None] + 1e-20)
+                    cevi.append((np.concatenate([Xc, cc_]), np.concatenate([Nc_, nf_])))
+            return cevi
+        ct_hh = dict(V2=V2, F=F, epi=epi, dl=dl, masca=masca, L=Lc)
+        hh = srce_hh229.stena(cfg["_hh229"], ct_hh, Polje, log=lambda x: print(x, flush=True), cevi=zberi_cevi())
+        # votli veni: cev (zgrajena na ustju CT) na pravo ustje v steni HH229 in po potrebi razširjena do njegovega polmera;
+        # nato se stena zgradi še enkrat, da se krna ven zložita v cevi na NOVI legi (prej: luknja in raztrgan rob ob cevi)
+        bvh_h = _bvh(hh["V"], hh["F"]); c_ra = V2[F[(dl == 5) & ~epi]].mean((0, 1)); premaknjeno = False
         for rx, kljuc in ((r"^Inferior vena cava", "svv"), (r"^(Superior vena cava|(Right|Left) brachiocephalic vein|Azygos vein)", "zvv")):  # oznaki CT: svv spodnja, zvv zgornja
             u = srce_hh229.ustje(bvh_h, c_ra, np.asarray(Lc[kljuc]))
             if u is None:
                 print(f"[organi] srce_hh229: ustje {kljuc}: ni odprtine", flush=True); continue
-            print(f"[organi] srce_hh229: ustje {kljuc}: premik {np.linalg.norm(u[0] - Lc[kljuc]) * 1000:.1f} mm", flush=True)
+            print(f"[organi] srce_hh229: ustje {kljuc}: premik {np.linalg.norm(u[0] - Lc[kljuc]) * 1000:.1f} mm, polmer {u[2] * 1000:.1f} mm", flush=True)
             for r in nove:
                 if re.search(rx, r[0]) or (kljuc == "svv" and r[0].startswith("Valve of inferior vena cava")):
-                    _nastavi(r[1], srce_hh229.premakni_na_ustje(_tocke(r[1]), c_ra, np.asarray(Lc[kljuc]), u[0]))
+                    X_ = srce_hh229.premakni_na_ustje(_tocke(r[1]), c_ra, np.asarray(Lc[kljuc]), u[0])
+                    if kljuc == "svv" and r[0].startswith("Inferior vena cava"):
+                        X_, k_ = srce_hh229.razsiri_cev(X_, u[2] * 1.08)
+                        print(f"[organi] srce_hh229: {r[0]}: cev razširjena ×{k_:.2f}", flush=True)
+                    _nastavi(r[1], X_); premaknjeno = True
+        if premaknjeno:
+            hh = srce_hh229.stena(cfg["_hh229"], ct_hh, Polje, log=lambda x: print(x, flush=True), cevi=zberi_cevi())
+        bvh_he = _bvh(hh["V"], hh["F"][hh["epi"]]); bvh_hn = _bvh(hh["V"], hh["F"][~hh["epi"]])
         for r in nove:
             if re.search(PRENOS[1][0], r[0] + " " + r[2]):  # ob endokardu: s stene CT na endokard HH229
                 X = _tocke(r[1]); X2, _ = prenesi_na_steno(X, X, bvh_endo, bvh_he, bvh_hn, "endo", 0.010)

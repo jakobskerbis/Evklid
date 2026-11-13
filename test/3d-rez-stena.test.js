@@ -45,3 +45,17 @@ test("rez-stena: rezine zložijo kanale v ploščice z robom; PNG ima pravi podp
   const png = pngRGB(r.w, r.h, r.slika);
   assert.deepEqual([...png.subarray(0, 4)], [137, 80, 78, 71]);
 });
+
+test("rez-stena (krog m2): žarki skozi odprtino mreže ne pustijo proge – izpuščeni so, vrstica dobi delež sosed", () => {
+  const n = [8, 8, 8], mreza = { lo: [0, 0, 0], korak: 1, n };
+  const cela = kocka(2, 6);
+  assert.equal(delezStene(cela, mreza).odprtih, 0);
+  // kocki manjka majhen trikotnik na ploskvi x = 6 (odprtina): žarki skozenj se ne končajo z navitjem 0
+  const tri = Array.from(cela);
+  tri.push(...[6, 3.1, 3.1, 6, 3.9, 3.1, 6, 3.1, 3.9]); // dodaten trikotnik z normalo +x (dvojni izstop = neuravnotežen žarek)
+  const r = delezStene(Float64Array.from(tri), mreza);
+  assert.ok(r.odprtih > 0, "neuravnoteženi žarki so prešteti");
+  const v = (x, y, z) => r.delez[(z * n[1] + y) * n[0] + x];
+  assert.ok(Math.abs(v(4, 3, 3) - 1) < 1e-6, "v kocki ostane stena");
+  assert.ok(v(7, 3, 3) < 1e-6 && v(0, 3, 3) < 1e-6, "zunaj kocke ni proge");
+});

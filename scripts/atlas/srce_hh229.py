@@ -176,9 +176,9 @@ def mascoba(V, F, epi, m0, Xz, log=print):
     d_rob = cKDTree(V[zunaj]).query(V)[0] if zunaj.any() else np.full(len(V), 0.01)
     d_z = cKDTree(Xz).query(V)[0] if Xz is not None and len(Xz) else np.full(len(V), 1.0)
     s1 = np.clip(valovi(V, 0.011, 3), 0, 1); s2 = np.clip(valovi(V, 0.0045, 8), 0, 1)
-    sir = 0.0030 + 0.0040 * s1 + 0.0012 * (s2 - 0.5)                 # polovična širina pasu ob žili
+    sir = 0.0030 + 0.0040 * s1 + 0.0024 * (s2 - 0.5)                 # polovična širina pasu ob žili
     ob_zili = np.clip((sir - d_z) / 0.0012, 0, 1)
-    jedro = np.clip((d_rob - (0.0042 + 0.0030 * (1 - s1) + 0.0010 * (s2 - 0.5))) / 0.0012, 0, 1)  # sredina žleba brez žile
+    jedro = np.clip((d_rob - (0.0042 + 0.0030 * (1 - s1) + 0.0022 * (s2 - 0.5))) / 0.0012, 0, 1)  # sredina žleba brez žile
     m = np.where(pas, np.maximum(ob_zili, jedro), 0.0)
     log(f"[organi] srce_hh229: maščoba {float((m[ke] > 0.5).mean()):.1%} epikarda (pas CT {float(pas[ke].mean()):.1%})")
     return m
@@ -196,7 +196,16 @@ def ustje(bvh, c, cilj, kot=38.0, n=3000, do=0.12):
     b = D[ven].mean(0); b /= np.linalg.norm(b)
     rob = np.isfinite(t) & ((D @ b) > np.cos(np.radians(14)))
     r = np.median(t[rob]) if rob.sum() > 3 else np.linalg.norm(cilj - c)
-    return c + b * r, b
+    # polmer ustja: kot, do katerega žarki uhajajo (85. percentil), na razdalji ustja
+    kot_u = np.percentile(np.arccos(np.clip(D[ven] @ b, -1, 1)), 85)
+    return c + b * r, b, float(r * np.tan(kot_u))
+
+def razsiri_cev(X, polmer, najvec=1.7):
+    """Cev (oglišča X) razširi okoli njene osi (glavna smer oglišč), da je srednji polmer vsaj `polmer`. Vrne (X, faktor)."""
+    c = X.mean(0); _, _, vt = np.linalg.svd(X - c, full_matrices=False); n = vt[0]
+    t = (X - c) @ n; rad = (X - c) - np.outer(t, n); r0 = float(np.median(np.linalg.norm(rad, axis=1)))
+    k = float(np.clip(polmer / max(r0, 1e-6), 1.0, najvec))
+    return c + np.outer(t, n) + rad * k, k
 
 def premakni_na_ustje(X, c, staro, novo):
     """Cev žile, zgrajena na ustju CT `staro`, se zasuka okoli središča preddvora c in premakne na ustje HH229 `novo`."""
@@ -255,6 +264,31 @@ def stena(pot, ct, Polje, log=print, cevi=None):
         glob = (cf - obroc) @ os_
         dl[ob & (glob < 0.026)] = ZAK[ime]; dl[ob & (glob >= 0.026)] = pap
     dl = vecina(F, dl, len(DELI), 6)
+    # gladke meje zaklopk (prej žagast rob lističa ob steni): oznako »zaklopka« razmažemo po mreži in odrežemo pri 0,5;
+    # tanke tetive in robovi lističev (štrlijo iz zglajene ploskve) ostanejo, kakor so
+    from scipy.sparse import coo_matrix
+    a_ = np.concatenate([F[:, 0], F[:, 1], F[:, 2], F[:, 1], F[:, 2], F[:, 0]]); b_ = np.concatenate([F[:, 1], F[:, 2], F[:, 0], F[:, 0], F[:, 1], F[:, 2]])
+    A = coo_matrix((np.ones(len(a_), np.float32), (a_, b_)), shape=(len(V), len(V))).tocsr(); A.data[:] = 1.0
+    st_ = np.asarray(A.sum(1)).ravel() + 1e-9
+    for z in (9, 10, 11, 12):
+        je = dl == z
+        if not je.any(): continue
+        u = np.zeros(len(V), np.float32); st_f = np.zeros(len(V), np.float32)
+        for k in range(3): np.add.at(u, F[:, k], je.astype(np.float32)); np.add.at(st_f, F[:, k], 1.0)
+        u /= np.maximum(st_f, 1)
+        for _ in range(30): u = 0.5 * u + 0.5 * (A @ u) / st_
+        gl = u[F].mean(1) > 0.5
+        tanko = je & (izb_f > 0.0012)
+        stena_ = np.isin(dl, (0, 1, 2, 3, 4, 5, 13, 14)) & ~epi
+        dl[gl & stena_] = z                                   # zapolni zajede
+        nazaj = je & ~gl & ~tanko                              # odreži zobce
+        if nazaj.any():
+            drugi = np.where(np.isin(dl, (9, 10, 11, 12)), -1, dl)  # najbližja oznaka stene: večina sosedov brez zaklopk
+            H = np.zeros((len(V), len(DELI)), np.float32)
+            ok = drugi >= 0
+            for k in range(3): np.add.at(H, (F[ok, k], drugi[ok]), 1.0)
+            for _ in range(8): H = H + (A @ H) * 0.5
+            dl[nazaj] = (H[F[nazaj, 0]] + H[F[nazaj, 1]] + H[F[nazaj, 2]]).argmax(1)
     # maščoba (maska barve) z najbližjega oglišča CT, samo zunaj
     ke = np.zeros(len(V), bool)
     for k in range(3): ke[F[epi, k]] = True
