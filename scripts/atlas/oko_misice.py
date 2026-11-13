@@ -20,6 +20,12 @@ SIRINA = {"Medial": 0.0103, "Inferior": 0.0098, "Lateral": 0.0092, "Superior": 0
 EPS = 0.00015  # najmanjša višina nad beločnico (m): nad napako poenostavljene krogle, brez utripanja globine
 POD = 0.0004  # spodnja ploskev kite toliko pod površino beločnice (stena je debela ≈ 1 mm)
 KITA_DEB = 0.00045  # debelina kite ob narastišču (m)
+# krog 9 (ocena: »preme mišice se končajo z ravnim trdim rezom«): narastišče je rahlo usločeno (konveksno naprej, robova
+# kite KRIV m bolj zadaj kot sredina), kita se proti narastišču stanjša skoraj v nič (pero, ki se zlije z beločnico)
+KRIV = 0.0012
+KITA_PERO = 0.05  # delež debeline kite tik ob narastišču
+# spodnja poševna mišica: Z-Anatomy ima tanek trak; trebuh odebelimo okoli srednjice (Ø ≈ 5–6 mm sredi)
+IO_TREBUH = 1.8
 
 
 def _tocke(me):
@@ -209,14 +215,16 @@ def ocesne_misice(osnovni, cfg, tmp):
         kljuc = row[0].split()[0]
         me = row[1]; P = _tocke(me); r, u, th = polarno(P)
         th_min = float(np.percentile(th, 0.5))
-        th_n = th_l + NARASTISCE[kljuc] / R0
-        # zasuk po poldnevniku: [th_min, th_e] → [th_n, th_e]
-        tn = np.where(th < th_e, th_n + (np.maximum(th, th_min) - th_min) * (th_e - th_n) / (th_e - th_min), th)
         pr = u - np.outer(u @ os_, os_); prn = np.linalg.norm(pr, axis=1); pr = pr / np.maximum(prn, 1e-9)[:, None]
         # širina kite: ob narastišču največ SIRINA (pahljača z ostrimi vogali → raven trak); stisk azimuta okoli srednjice
         spredaj = th < math.radians(95)
         sr = pr[spredaj].mean(0); sr /= np.linalg.norm(sr); pre = np.cross(os_, sr)
         az = np.arctan2(pr @ pre, pr @ sr)
+        # usločeno narastišče: polarni kot narastišča raste proti robovoma kite (az normiran na sprednji del mišice)
+        a_max = max(float(np.percentile(np.abs(az[spredaj]), 98)), 1e-6) if spredaj.any() else 1.0
+        th_n = th_l + (NARASTISCE[kljuc] + KRIV * np.clip(az / a_max, -1.2, 1.2) ** 2) / R0
+        # zasuk po poldnevniku: [th_min, th_e] → [th_n, th_e]
+        tn = np.where(th < th_e, th_n + (np.maximum(th, th_min) - th_min) * (th_e - th_n) / (th_e - th_min), th)
         lok0 = (tn - th_n) * R0
         s = az * R0 * np.sin(tn)
         meje = np.linspace(0, 0.02, 11); fak = np.ones(10)
@@ -242,7 +250,7 @@ def ocesne_misice(osnovni, cfg, tmp):
         rob_f = 1 - (1 - rob) * (1 - f)
         hn = EPS + np.maximum(h0, 0) * (0.12 + 0.88 * f) * rob_f
         vrh = (_normale(me) * u).sum(1) > 0.3
-        hn = np.where(vrh & (lok < 0.02), np.maximum(hn, EPS + KITA_DEB * (0.25 + 0.75 * _gladko(lok, 0.0, 0.002)) * rob), hn)
+        hn = np.where(vrh & (lok < 0.02), np.maximum(hn, EPS + KITA_DEB * (KITA_PERO + (1 - KITA_PERO) * _gladko(lok, 0.0, 0.003)) * rob), hn)
         osn = np.where(np.isnan(rs), np.where(np.isnan(rs_z), R0, rs_z), rs)
         w = w_az * _gladko(0.012 - h0, 0.0, 0.006)
         # krog 8 (ocena krog 7: »stopničast, naguban rob zunanje preme nad narastiščem spodnje poševne«): podlaga pod
@@ -278,6 +286,24 @@ def ocesne_misice(osnovni, cfg, tmp):
     if sr_: prema(sr_, _bvh(osnova + ([so[1]] if so else [])))
     if ir: prema(ir, zrklo)
     if mr: prema(mr, zrklo)
-    if io: posevna(io, _bvh(osnova + ([ir[1]] if ir else [])))
+    if io:
+        # trebuh spodnje poševne: odmik od srednjice (središča pasov po geodetski razdalji od narastišča) se poveča
+        me = io[1]; P = _tocke(me); rr_ = np.linalg.norm(P - G, axis=1)
+        go = _geodezija(P, robovi(me), np.nonzero(rr_ > rr_.max() - 0.001)[0]); go = np.where(np.isinf(go), 0, go); gd = go.max() - go
+        pas = np.floor(gd / 0.001).astype(int); C_ = np.zeros((pas.max() + 1, 3)); n_ = np.bincount(pas, minlength=pas.max() + 1)
+        for c in range(3):
+            C_[:, c] = np.bincount(pas, weights=P[:, c], minlength=pas.max() + 1) / np.maximum(n_, 1)
+        # Z-Anatomy ima trak nagubano površino (odebelitev bi gube povečala): najprej Laplaceovo glajenje položajev
+        e_ = robovi(me); st_ = np.bincount(e_.ravel(), minlength=len(P)).astype(float)
+        for _ in range(8):
+            acc = np.stack([np.bincount(e_[:, 0], weights=P[e_[:, 1], c], minlength=len(P)) + np.bincount(e_[:, 1], weights=P[e_[:, 0], c], minlength=len(P)) for c in range(3)], 1)
+            P = np.where((st_ > 0)[:, None], 0.5 * P + 0.5 * acc / np.maximum(st_, 1)[:, None], P)
+        for c in range(3):
+            C_[:, c] = np.bincount(pas, weights=P[:, c], minlength=pas.max() + 1) / np.maximum(n_, 1)
+        k_ = 1 + (IO_TREBUH - 1) * _gladko(gd, 0.004, 0.012) * (1 - _gladko(gd, gd.max() - 0.006, gd.max()))
+        P2 = C_[pas] + (P - C_[pas]) * k_[:, None]
+        me.vertices.foreach_set("co", P2.ravel()); me.update()
+        print(f"[oko] spodnja poševna: trebuh odebeljen ×{IO_TREBUH}")
+        posevna(io, _bvh(osnova + ([ir[1]] if ir else [])))
     if lr: prema(lr, _bvh(osnova + ([io[1]] if io else [])))
     return []
