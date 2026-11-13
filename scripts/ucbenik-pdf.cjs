@@ -89,6 +89,8 @@ const READ_DOM = () => {
     const c = el.cloneNode(true);
     // Opis risbe (<title> v SVG) bere bralnik zaslona, v PDF se ne izpiše.
     c.querySelectorAll(".katex, .katex-display, svg title").forEach((k) => k.replaceWith(" "));
+    // Bloki in napisi risb so v PDF ločene besede; textContent bi jih brez presledka zlepil (»enačbeŠkatle«).
+    c.querySelectorAll("p, li, div, h1, h2, h3, h4, h5, h6, tr, td, th, dt, dd, caption, figcaption, summary, blockquote, br, svg, svg text").forEach((b) => b.after(" "));
     return c.textContent.replace(/\s+/g, " ").trim();
   };
   // Neizrisan Markdown (tabela, krepko, ograja bloka) zunaj skic <pre> in formul.
