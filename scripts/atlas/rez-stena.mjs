@@ -20,6 +20,7 @@ import * as G from "./zile-mreza.mjs";
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const MAPA = path.join(ROOT, "public", "3d", "modeli", "organi-3d");
 const PODVZORCI = 4; // podvzorcev na voksel v y in z
+const SDF = 0.003; // obseg predznačene razdalje v kanalu R (m): 0 = 3 mm zunaj stene, 1 = 3 mm v steni
 
 function crc32(buf) {
   let c = ~0;
@@ -29,8 +30,8 @@ function crc32(buf) {
   }
   return ~c >>> 0;
 }
-// Slika RGB 8 bitov (px: 3 bajti na piko) → PNG (brez odvisnosti).
-export function pngRGB(w, h, px) {
+// Slika RGB 8 bitov (px: 3 bajti na piko) → PNG (brez odvisnosti); k = 4: RGBA.
+export function pngRGB(w, h, px, k = 3) {
   const kos = (tip, d) => {
     const b = Buffer.alloc(12 + d.length);
     b.writeUInt32BE(d.length, 0);
@@ -43,9 +44,29 @@ export function pngRGB(w, h, px) {
   ihdr.writeUInt32BE(w, 0);
   ihdr.writeUInt32BE(h, 4);
   ihdr[8] = 8; // globina
-  ihdr[9] = 2; // RGB
-  const surovo = Buffer.alloc((w * 3 + 1) * h);
-  for (let y = 0; y < h; y++) Buffer.from(px.buffer, px.byteOffset + y * w * 3, w * 3).copy(surovo, y * (w * 3 + 1) + 1);
+  ihdr[9] = k === 4 ? 6 : 2; // RGBA | RGB
+  // filter vrstice (PNG: 0 brez, 1 Sub, 2 Up, 4 Paeth): izbran po najmanjši vsoti |bajt| (gladka razdalja se tako stisne)
+  const L = w * k, surovo = Buffer.alloc((L + 1) * h);
+  const vr = (y) => Buffer.from(px.buffer, px.byteOffset + y * L, L);
+  const paeth = (a, b, c) => { const p = a + b - c, pa = Math.abs(p - a), pb = Math.abs(p - b), pc = Math.abs(p - c); return pa <= pb && pa <= pc ? a : pb <= pc ? b : c; };
+  const kand = [Buffer.alloc(L), Buffer.alloc(L), Buffer.alloc(L), Buffer.alloc(L)];
+  for (let y = 0; y < h; y++) {
+    const r = vr(y), g = y ? vr(y - 1) : Buffer.alloc(L);
+    let naj = 0, najV = Infinity;
+    [0, 1, 2, 4].forEach((f, fi) => {
+      const o = kand[fi];
+      let v = 0;
+      for (let i = 0; i < L; i++) {
+        const a = i >= k ? r[i - k] : 0, b = g[i], c = i >= k ? g[i - k] : 0;
+        const x = (r[i] - (f === 0 ? 0 : f === 1 ? a : f === 2 ? b : paeth(a, b, c))) & 255;
+        o[i] = x;
+        v += x < 128 ? x : 256 - x;
+      }
+      if (v < najV) { najV = v; naj = fi; }
+    });
+    surovo[y * (L + 1)] = [0, 1, 2, 4][naj];
+    kand[naj].copy(surovo, y * (L + 1) + 1);
+  }
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), kos("IHDR", ihdr), kos("IDAT", zlib.deflateSync(surovo, { level: 9 })), kos("IEND", Buffer.alloc(0))]);
 }
 
@@ -115,21 +136,66 @@ export function delezStene(tri, { lo, korak, n }) {
   return { delez, zadetkov: st, negativnih };
 }
 
+// Krog 8 (ocena: »enakomerna lososova ploskev s svetlim sijem ob vsakem robu«): predznačena razdalja do površine stene in
+// stran najbližje površine, za plasti na pokrovu reza (epikard, miokard, endokard) v pravih milimetrih. Vrne
+// { razdalja (+ v steni, metri, omejeno na ±D), epi (1 = najbližja ploskev je epikard: žarek iz trikotnika v smeri
+// normale ne zadene stene; 0 = stena votline) }. Trikotnik se razširi na voksle v svoji škatli ± D (točna razdalja
+// točka–trikotnik); predznak iz deleža (delez > 0,5 = v steni).
+export function razdaljaStene(tri, { lo, korak, n }, delez, D = 0.003, jeEpi = null) {
+  const N = n[0] * n[1] * n[2];
+  const raz = new Float32Array(N).fill(D);
+  const epi = new Float32Array(N).fill(0.5);
+  const nt = tri.length / 9;
+  for (let t = 0; t < nt; t++) {
+    const k = t * 9;
+    const a = [tri[k], tri[k + 1], tri[k + 2]], b = [tri[k + 3], tri[k + 4], tri[k + 5]], c = [tri[k + 6], tri[k + 7], tri[k + 8]];
+    const e = jeEpi ? jeEpi[t] : 0.5;
+    const i0 = [0, 1, 2].map((q) => Math.max(0, Math.floor((Math.min(a[q], b[q], c[q]) - D - lo[q]) / korak - 0.5)));
+    const i1 = [0, 1, 2].map((q) => Math.min(n[q] - 1, Math.ceil((Math.max(a[q], b[q], c[q]) + D - lo[q]) / korak - 0.5)));
+    for (let z = i0[2]; z <= i1[2]; z++) for (let y = i0[1]; y <= i1[1]; y++) for (let x = i0[0]; x <= i1[0]; x++) {
+      const v = (z * n[1] + y) * n[0] + x;
+      const p = [lo[0] + (x + 0.5) * korak, lo[1] + (y + 0.5) * korak, lo[2] + (z + 0.5) * korak];
+      const q = G.najblizjaNaTrikotniku(p, a, b, c);
+      const d = Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]);
+      if (d < raz[v]) { raz[v] = d; epi[v] = e; }
+    }
+  }
+  for (let v = 0; v < N; v++) if (delez[v] <= 0.5) raz[v] = -raz[v];
+  return { razdalja: raz, epi };
+}
+
+// Epikard ali stena votline za vsak trikotnik (1 / 0): žarek iz težišča v smeri normale ne zadene / zadene stene.
+export function epikardniTrikotniki(tri) {
+  const bvh = new G.BVH(tri);
+  const nt = tri.length / 9;
+  const r = new Float32Array(nt);
+  for (let t = 0; t < nt; t++) {
+    const k = t * 9;
+    const a = [tri[k], tri[k + 1], tri[k + 2]], b = [tri[k + 3], tri[k + 4], tri[k + 5]], c = [tri[k + 6], tri[k + 7], tri[k + 8]];
+    const nn = G.v3.norm(G.v3.cross(G.v3.sub(b, a), G.v3.sub(c, a)));
+    if (G.v3.len(nn) < 0.5) { r[t] = 0.5; continue; }
+    const s = [(a[0] + b[0] + c[0]) / 3 + nn[0] * 2e-4, (a[1] + b[1] + c[1]) / 3 + nn[1] * 2e-4, (a[2] + b[2] + c[2]) / 3 + nn[2] * 2e-4];
+    r[t] = bvh.zarek(s, nn, 1) < 0 ? 1 : 0;
+  }
+  return r;
+}
+
 // Rezine z enim vokslom roba (kot <organ>-volumen.png): slika ploscice[0] × ploscice[1] ploščic velikosti (nx + 2) × (ny + 2).
 // kanali: [delež R, delež G] (Float32Array ali null).
 export function rezine(kanali, n) {
   const px = Math.ceil(Math.sqrt(n[2]));
   const py = Math.ceil(n[2] / px);
   const tw = n[0] + 2, th = n[1] + 2;
-  const slika = new Uint8Array(px * tw * py * th * 3);
+  const K = kanali.length > 3 ? 4 : 3;
+  const slika = new Uint8Array(px * tw * py * th * K);
   for (let z = 0; z < n[2]; z++) {
     const ox = (z % px) * tw, oy = Math.floor(z / px) * th;
     for (let y = 0; y < th; y++) for (let x = 0; x < tw; x++) {
       const vx = Math.min(n[0] - 1, Math.max(0, x - 1)), vy = Math.min(n[1] - 1, Math.max(0, y - 1));
-      for (let c = 0; c < kanali.length; c++) if (kanali[c]) slika[((oy + y) * px * tw + ox + x) * 3 + c] = Math.round(255 * Math.min(1, kanali[c][(z * n[1] + vy) * n[0] + vx]));
+      for (let c = 0; c < kanali.length; c++) if (kanali[c]) slika[((oy + y) * px * tw + ox + x) * K + c] = Math.round(255 * Math.min(1, Math.max(0, kanali[c][(z * n[1] + vy) * n[0] + vx])));
     }
   }
-  return { slika, w: px * tw, h: py * th, ploscice: [px, py] };
+  return { slika, w: px * tw, h: py * th, ploscice: [px, py], kanalov: K };
 }
 
 // Trikotniki vozlišč, ki jih izbere `izberi(extras, ime)`.
@@ -194,14 +260,17 @@ async function glavni() {
     }
     const r = delezStene(tri, mreza);
     const triB = brezMasce || votlo ? await trikotniki(path.join(MAPA, `${organ}${pripona}.glb`), jeBrezMasce) : [];
-    const s = rezine([r.delez, triDrugo.length ? delezStene(triDrugo, mreza).delez : null, triB.length ? delezStene(triB, mreza).delez : null], mreza.n);
-    fs.writeFileSync(path.join(MAPA, meta[kljuc]), pngRGB(s.w, s.h, s.slika));
+    // R: predznačena razdalja (0,5 = površina stene, ±SDF m → 1 / 0), A: stran najbližje površine (epikard 1)
+    const rd = razdaljaStene(tri, mreza, r.delez, SDF, epikardniTrikotniki(tri));
+    const R = rd.razdalja.map((d) => 0.5 + d / (2 * SDF));
+    const s = rezine([R, triDrugo.length ? delezStene(triDrugo, mreza).delez : null, triB.length ? delezStene(triB, mreza).delez : null, rd.epi], mreza.n);
+    fs.writeFileSync(path.join(MAPA, meta[kljuc]), pngRGB(s.w, s.h, s.slika, s.kanalov));
     mreza.ploscice = s.ploscice;
     let polnih = 0;
     for (const v of r.delez) if (v > 0.5) polnih++;
     console.log(`${meta[kljuc]}: ${s.w} × ${s.h} px, ${(fs.statSync(path.join(MAPA, meta[kljuc])).size / 1024).toFixed(0)} kB; trikotnikov ${tri.length / 9}, zadetkov ${r.zadetkov}, negativno navitje ${r.negativnih}, tkivo ${(polnih * korak ** 3 * 1e6).toFixed(0)} cm³`);
   }
-  j.prerez.volumen.stena = { ...meta, lo: mreza.lo, korak, n: mreza.n, ploscice: mreza.ploscice };
+  j.prerez.volumen.stena = { ...meta, lo: mreza.lo, korak, n: mreza.n, ploscice: mreza.ploscice, sdf: SDF };
   fs.writeFileSync(pot, JSON.stringify(j, null, 1) + "\n");
 }
 
