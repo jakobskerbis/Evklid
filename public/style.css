@@ -80,6 +80,8 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { height: 100%; overscroll-behavior-y: none; } /* brez osveževanja s potegom med pisanjem */
+/* Brez modrega okna ob dotiku na Androidu nikjer v aplikaciji (j, 13. 11. 2026); povratni odziv dajo :active slogi. */
+html { -webkit-tap-highlight-color: transparent; }
 body {
   margin: 0;
   background: var(--bg);

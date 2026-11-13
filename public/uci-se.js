@@ -169,18 +169,20 @@ async function show3d() {
     .sort((a, b) => Number(b.mine) - Number(a.mine));
   // Atlas telesa je biologija: na vrhu za biologijo in naravoslovje (ali če učenčev predmet nima modelov), sicer za njegovimi področji.
   const atlasFirst = ["BIO", "NAR"].includes(mine) || !PREDMETI.includes(mine) || !skupine.some((g) => g.mine);
-  const atlas = `<a class="card uci-3d-atlas" href="/3d#atlas" data-k3="atlas" data-k3-title="${esc(t("a3.title"))}">
+  // Gumbi, ne povezave (j, 13. 11. 2026): povezava v aplikaciji na Androidu ob dotiku pokaže oblaček z naslovom in
+  // povezavo ter modro okno; kartica odpre 3D čez cel zaslon in ne potrebuje naslova strani.
+  const atlas = `<button type="button" class="card uci-3d-atlas" data-k3="atlas" data-k3-title="${esc(t("a3.title"))}">
       <span class="uci-3d-atlas-ic">${icon("bone") || icon("box")}</span>
       <span class="uci-3d-atlas-txt"><small class="eyebrow">${esc(t("a3.eyebrow"))}</small><b>${esc(t("a3.title"))}</b><span>${esc(t("a3.hubAtlas"))}</span></span>
       <span class="uci-3d-open">${icon("box")}<span>${esc(t("a3.open"))}</span></span>
-    </a>`;
+    </button>`;
   const area = (g) => `<section class="uci-3d-area">
       <h2>${esc(tr(`a3.area.${g.p}`, g.p))}</h2>
       <div class="uci-3d-grid">${g.list
         .map(
-          (m) => `<a class="card uci-3d-card${m.predmet === mine ? " mine" : ""}" href="/3d#${encodeURIComponent(m.id)}" data-k3="${esc(m.id)}" data-k3-title="${esc(m.naslov)}">
+          (m) => `<button type="button" class="card uci-3d-card${m.predmet === mine ? " mine" : ""}" data-k3="${esc(m.id)}" data-k3-title="${esc(m.naslov)}">
           <small class="uci-3d-subj">${esc(predmetIme(m.predmet))}</small><b dir="auto">${esc(m.naslov)}</b>${m.opis ? `<small dir="auto">${esc(m.opis)}</small>` : ""}
-        </a>`,
+        </button>`,
         )
         .join("")}</div>
     </section>`;
@@ -191,11 +193,7 @@ async function show3d() {
   box.innerHTML = `<p class="muted uci-3d-sub">${esc(t("a3.hubSub"))}</p>${parts.join("")}`;
   hub = { key };
   box.querySelectorAll("[data-k3]").forEach((a) =>
-    a.addEventListener("click", (e) => {
-      if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // nov zavihek ostane navaden
-      e.preventDefault();
-      open3d(a.dataset.k3, a.dataset.k3Title || "");
-    }),
+    a.addEventListener("click", () => open3d(a.dataset.k3, a.dataset.k3Title || "")),
   );
 }
 

@@ -192,3 +192,14 @@ test("model page header on phones: name on its own full-width row, never broken 
   // mikroskop uporablja iste razrede, a ima svojo glavo (v lekciji brez gumba Nazaj): ostane v eni vrstici
   assert.match(blok, /\.mk-vrh \{ gap: 8px; \}/);
 });
+
+test("Uči se → 3D svet: cards are buttons (no link preview bubble or blue tap box on Android)", () => {
+  const js = fs.readFileSync(path.join(D3, "..", "uci-se.js"), "utf8");
+  const css = fs.readFileSync(path.join(D3, "..", "uci.css"), "utf8");
+  const style = fs.readFileSync(path.join(D3, "..", "style.css"), "utf8");
+  assert.match(js, /<button type="button" class="card uci-3d-atlas" data-k3="atlas"/);
+  assert.match(js, /<button type="button" class="card uci-3d-card/);
+  assert.doesNotMatch(js, /<a [^>]*uci-3d-(card|atlas)|href="\/3d#/);
+  assert.match(css, /\.uci-3d-card, \.uci-3d-atlas \{[^}]*-webkit-tap-highlight-color: transparent/);
+  assert.match(style, /^html \{ -webkit-tap-highlight-color: transparent; \}/m);
+});

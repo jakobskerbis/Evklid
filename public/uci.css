@@ -29,6 +29,10 @@
 .uci-3d-area > h2 { font-size: 1.15rem; margin: 0 0 10px; }
 /* Atlas med področji ima enak razmik kot področje (ne prilepljen pod mrežo nad sabo). */
 .uci-3d-area + .uci-3d-atlas { margin-top: 24px; }
+/* Kartici sta gumba (ne povezavi): brez oblačka s povezavo in modrega okna ob dotiku na Androidu (j, 13. 11. 2026). */
+/* Splošni slog gumbov (style.css) jih centrira: tu spet kot kartica (atlas spodaj postavi align-items: center sam). */
+.uci-3d-card, .uci-3d-atlas { width: 100%; align-items: normal; justify-content: normal; font: inherit; line-height: inherit; text-align: start; transition: none; cursor: pointer; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+.uci-3d-card:active, .uci-3d-atlas:active { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
 .uci-3d-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; }
 .uci-3d-card { display: flex; flex-direction: column; gap: 4px; min-width: 0; min-height: 96px; padding: 14px 16px; color: var(--text); text-decoration: none; }
 .uci-3d-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }

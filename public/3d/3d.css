@@ -245,6 +245,9 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   display: flex; flex-direction: column; min-width: 0; border-radius: 18px; overflow: hidden; border: 1px solid var(--k3-rob);
   background: var(--k3-povrsina); color: inherit; text-decoration: none; transition: border-color 0.15s, transform 0.15s;
 }
+/* Kartice zbirke ostanejo povezave (srednji klik odpre nov zavihek), a dotik na telefonu ne vleče povezave in ne kaže
+   oblačka z naslovom in povezavo (j, 13. 11. 2026). */
+.k3-kartica, .k3-zvezda { -webkit-touch-callout: none; -webkit-user-drag: none; }
 .k3-kartica:hover { border-color: #3a4760; }
 .k3-kartica:hover .k3-slicica img { transform: scale(1.04); }
 .k3-kartica:focus-visible { outline-offset: 3px; }
