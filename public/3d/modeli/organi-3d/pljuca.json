@@ -89,7 +89,15 @@
     "vrsta": 4,
     "rob": 0.0002,
     "robBarva": "#efe2cc",
-    "odprtaCev": true
+    "odprtaCev": {
+     "barva": "#e0a093",
+     "senca": "#5a2a24",
+     "globina": 0.011,
+     "lak": 0.25,
+     "hrap": 0.5,
+     "okolje": 0.3,
+     "sencaMoc": 0.7
+    }
    }
   },
   "pljucna-arterija": {
@@ -114,11 +122,19 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.22
+     "delez": 0.2,
+     "zleb": {
+      "barva": "#5c3a52",
+      "senca": "#190a18",
+      "globina": 0.004,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#b4bcdf",
-    "luknjaBarva": "#2b2a52",
-    "samoPresek": true
+    "robBarva": "#bfa3a6",
+    "luknjaBarva": "#2b2a52"
    }
   },
   "pljucna-vena": {
@@ -143,11 +159,19 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.22
+     "delez": 0.16,
+     "zleb": {
+      "barva": "#7a3232",
+      "senca": "#220a0a",
+      "globina": 0.004,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#e9aea4",
-    "luknjaBarva": "#541a18",
-    "samoPresek": true
+    "robBarva": "#cfa69c",
+    "luknjaBarva": "#541a18"
    }
   },
   "dihalna-v": {
@@ -172,11 +196,20 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.22
+     "delez": 0.24,
+     "najRazteg": 5,
+     "zleb": {
+      "barva": "#b98478",
+      "senca": "#3a1c18",
+      "globina": 0.003,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#efe2cc",
-    "luknjaBarva": "#3b2622",
-    "samoPresek": true
+    "robBarva": "#e2d2ba",
+    "luknjaBarva": "#3b2622"
    }
   },
   "pljucna-arterija-v": {
@@ -201,11 +234,19 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.22
+     "delez": 0.2,
+     "zleb": {
+      "barva": "#5c3a52",
+      "senca": "#190a18",
+      "globina": 0.004,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#b4bcdf",
-    "luknjaBarva": "#2b2a52",
-    "samoPresek": true
+    "robBarva": "#bfa3a6",
+    "luknjaBarva": "#2b2a52"
    }
   },
   "pljucna-vena-v": {
@@ -230,11 +271,19 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.22
+     "delez": 0.16,
+     "zleb": {
+      "barva": "#7a3232",
+      "senca": "#220a0a",
+      "globina": 0.004,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#e9aea4",
-    "luknjaBarva": "#541a18",
-    "samoPresek": true
+    "robBarva": "#cfa69c",
+    "luknjaBarva": "#541a18"
    }
   }
  },

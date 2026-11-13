@@ -262,6 +262,9 @@ function cevniPresek(zanke, os, cev, trianguliraj, polozaji, indeksi, vrste) {
     let obseg = 0;
     for (let i = 0; i < z.length; i++) obseg += Math.hypot(z[(i + 1) % z.length][0] - z[i][0], z[(i + 1) % z.length][1] - z[i][1]);
     const h = (2 * Math.abs(ploscina(z))) / Math.max(obseg, 1e-12); // srednja polširina (krog: polmer)
+    // najRazteg: zelo podolgovat obris (drobna veja, prerezana vzdolž: dolžina / širina nad mejo) odpade – na rezu je bil
+    // videti kot črna palica (ocena n5, desni spodnji reženj pljuč)
+    if (cev.najRazteg && obseg / (4 * Math.max(h, 1e-12)) > cev.najRazteg) continue;
     const w = Math.min(0.55 * h, Math.max(cev.najm ?? 0, Math.min(cev.najv ?? Infinity, (cev.delez ?? 0.2) * h)));
     const notri = odmakniZanko(z, w), jedro = odmakniZanko(z, w + 0.5 * (h - w));
     const m = z.length;

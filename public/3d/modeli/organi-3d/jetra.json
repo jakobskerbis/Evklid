@@ -81,9 +81,18 @@
     "cev": {
      "delez": 0.1,
      "najv": 0.0022,
-     "najm": 0.0012
+     "najm": 0.0012,
+     "zleb": {
+      "barva": "#6f6a34",
+      "senca": "#23220c",
+      "globina": 0.012,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#a3ab62",
+    "robBarva": "#989060",
     "luknjaBarva": "#3a4216"
    }
   },
@@ -108,11 +117,19 @@
    "rezPresek": {
     "vrsta": 5,
     "cev": {
-     "delez": 0.2
+     "delez": 0.25,
+     "zleb": {
+      "barva": "#6a6630",
+      "senca": "#1e1c08",
+      "globina": 0.003,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#c3c98a",
-    "luknjaBarva": "#3f4514",
-    "samoPresek": true
+    "robBarva": "#a39a70",
+    "luknjaBarva": "#3f4514"
    }
   },
   "portalna": {
@@ -137,11 +154,19 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.2
+     "delez": 0.22,
+     "zleb": {
+      "barva": "#6e3c4c",
+      "senca": "#1e0a14",
+      "globina": 0.005,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#b9aed0",
-    "luknjaBarva": "#2f2148",
-    "samoPresek": true
+    "robBarva": "#b08e8c",
+    "luknjaBarva": "#2f2148"
    }
   },
   "arterija": {
@@ -166,11 +191,19 @@
    "rezPresek": {
     "vrsta": 5,
     "cev": {
-     "delez": 0.2
+     "delez": 0.3,
+     "zleb": {
+      "barva": "#7a3030",
+      "senca": "#220808",
+      "globina": 0.002,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#e2a79e",
-    "luknjaBarva": "#501412",
-    "samoPresek": true
+    "robBarva": "#c08a80",
+    "luknjaBarva": "#501412"
    }
   },
   "vena": {
@@ -195,11 +228,19 @@
    "rezPresek": {
     "vrsta": 4,
     "cev": {
-     "delez": 0.2
+     "delez": 0.16,
+     "zleb": {
+      "barva": "#6a3a44",
+      "senca": "#1c0a10",
+      "globina": 0.007,
+      "lak": 0.12,
+      "hrap": 0.6,
+      "okolje": 0.25,
+      "sencaMoc": 0.88
+     }
     },
-    "robBarva": "#aebad8",
-    "luknjaBarva": "#1c2850",
-    "samoPresek": true
+    "robBarva": "#a8868a",
+    "luknjaBarva": "#1c2850"
    }
   },
   "vez": {

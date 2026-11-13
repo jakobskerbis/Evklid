@@ -228,9 +228,30 @@ test("n5: pregledovalnik in JSON – cevi kot obroči, neprerezane cevi skrite, 
   for (const s of ["samoPresek", "skritMat", "odprtaCev", "ovojDelov: true", "presek.cev"]) assert.ok(src.includes(s), s);
   const json = (o) => JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "3d", "modeli", "organi-3d", `${o}.json`), "utf8"));
   const p = json("pljuca"), j = json("jetra");
-  for (const t of ["dihalna-v", "pljucna-arterija", "pljucna-arterija-v", "pljucna-vena", "pljucna-vena-v"]) assert.ok(p.tkiva[t].rezPresek.cev && p.tkiva[t].rezPresek.samoPresek, t);
+  for (const t of ["dihalna-v", "pljucna-arterija", "pljucna-arterija-v", "pljucna-vena", "pljucna-vena-v"]) assert.ok(p.tkiva[t].rezPresek.cev?.zleb?.senca && !p.tkiva[t].rezPresek.samoPresek, t); // n6: zares prerezane (žleb), ne skrite
   assert.ok(p.tkiva.dihalna.rezPresek.odprtaCev && !p.tkiva.dihalna.rezPresek.samoPresek, "sapnik in glavni bronhiji: odprt žleb");
   assert.ok(p.prerez.ravnine[0].rocno && Math.abs(p.prerez.ravnine[0].n[1]) > 0.1, "ravnina skozi sapnik in glavna bronhija (nagnjena)");
-  for (const t of ["portalna", "arterija", "vena", "zolcevod"]) assert.ok(j.tkiva[t].rezPresek.cev && j.tkiva[t].rezPresek.samoPresek, t);
+  for (const t of ["portalna", "arterija", "vena", "zolcevod"]) assert.ok(j.tkiva[t].rezPresek.cev?.zleb?.senca && !j.tkiva[t].rezPresek.samoPresek, t);
   assert.ok(j.tkiva.zolcnik.rezPresek.cev && !j.tkiva.zolcnik.rezVotlina, "žolčnik: stena in svetlina, brez steklene votline");
+});
+
+test("n6: cev.najRazteg izpusti vzdolž prerezano drobno vejo, pregledovalnik riše žleb (svetlina = odprtina z notranjo steno)", () => {
+  // valj polmera 1 vzdolž osi x, dolg 40, presekan z ravnino z = 0: obris je trak 40 × 2 (razteg ≈ 10)
+  const pos = [], idx = [], N = 16;
+  for (const x of [-20, 20]) for (let i = 0; i < N; i++) pos.push(x, Math.cos((2 * Math.PI * (i + 0.5)) / N), Math.sin((2 * Math.PI * (i + 0.5)) / N));
+  pos.push(-20, 0, 0, 20, 0, 0);
+  for (let i = 0; i < N; i++) { const j = (i + 1) % N; idx.push(i, j, N + j, i, N + j, N + i, 2 * N, j, i, 2 * N + 1, N + i, N + j); }
+  const KOREN = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const klic = (cev) => presekMreze(Float32Array.from(pos), Uint16Array.from(idx), [0, 0, 1], 0, { cev, trianguliraj: pahljaca });
+  const cel = klic({ delez: 0.2 });
+  assert.ok(cel && cel.indeksi.length > 0, "brez meje obris ostane");
+  const brez = klic({ delez: 0.2, najRazteg: 5 });
+  assert.ok(!brez || brez.indeksi.length === 0, "podolgovat obris odpade");
+  const src = fs.readFileSync(path.join(KOREN, "public", "3d", "organ.js"), "utf8");
+  for (const n of ["cev?.zleb", "spredaj", "|odprta"]) assert.ok(src.includes(n), n);
+  const p = JSON.parse(fs.readFileSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "pljuca.json"), "utf8"));
+  assert.equal(typeof p.tkiva.dihalna.rezPresek.odprtaCev, "object", "sapnik: notranja stena žleba v svoji barvi");
+  assert.ok(p.tkiva["dihalna-v"].rezPresek.cev.najRazteg > 0);
+  const j = JSON.parse(fs.readFileSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "jetra.json"), "utf8"));
+  assert.ok(j.tkiva.zolcnik.rezPresek.cev.zleb, "žolčnik: stena in odprta votlina");
 });

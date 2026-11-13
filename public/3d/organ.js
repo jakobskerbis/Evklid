@@ -1031,17 +1031,21 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
 // Notranjost prerezane votline (tkivo.rezVotlina { barva, hrap, lak, globina [m], senca, sencaMoc, okolje, vrsta }):
 // zadnje ploskve mreže, osvetljene kot vlažna notranja stena (ledvični meh in čašice: v votlino se vidi), z globino temnejše.
 // Ploskve drugih tkiv na ravnini reza v obrisu votline zakrije nevidna maska (zgradiOrgan), zato je votlina odprta.
-function materialVotline(v, ravnina, merilo) {
+// spredaj (odprta cev z dvojno steno: sapnik): notranja stena so sprednje ploskve, obrnjene proti odrezani polovici –
+// narišemo le te (čez mrežo cevi, z njeno teksturo in normalno mapo: hrustančni obroči ostanejo), zunanja stena ostane.
+function materialVotline(v, ravnina, merilo, spredaj = null) {
   const m = new THREE.MeshPhysicalMaterial({
+    ...(spredaj ? { map: spredaj.map || null, normalMap: spredaj.normalMap || null, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 } : {}),
     color: new THREE.Color(v.barva || "#e6d3c2"),
     roughness: v.hrap ?? 0.36,
     metalness: 0,
     clearcoat: v.lak ?? 0.6,
     clearcoatRoughness: 0.18,
     envMapIntensity: v.okolje ?? 0.55,
-    side: THREE.BackSide,
+    side: spredaj ? THREE.FrontSide : THREE.BackSide,
     clippingPlanes: [ravnina],
   });
+  if (spredaj?.normalMap && spredaj.normalScale) m.normalScale.copy(spredaj.normalScale);
   const g = (v.globina ?? 0.006) * merilo;
   m.onBeforeCompile = (sh) => {
     sh.uniforms.orgRv = { value: new THREE.Vector4(ravnina.normal.x, ravnina.normal.y, ravnina.normal.z, ravnina.constant) };
@@ -1053,12 +1057,13 @@ function materialVotline(v, ravnina, merilo) {
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        { float orgGl = clamp( ( dot( orgRv.xyz, vOrgW ) + orgRv.w ) / ${g.toExponential(4)}, 0.0, 1.0 ); // globina za ravnino reza
+        { ${spredaj ? "if ( dot( normalize( vNormal ), normalize( ( viewMatrix * vec4( -orgRv.xyz, 0.0 ) ).xyz ) ) < 0.08 ) discard; // le notranja stena žleba" : ""}
+          float orgGl = clamp( ( dot( orgRv.xyz, vOrgW ) + orgRv.w ) / ${g.toExponential(4)}, 0.0, 1.0 ); // globina za ravnino reza
           diffuseColor.rgb *= 0.92 + 0.16 * orgSum( vOrgW * ${fl(+(900 / merilo).toPrecision(4))} );
           diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(v.senca || "#7a4a3c")}, ${fl(v.sencaMoc ?? 0.75)} * smoothstep( 0.0, 1.0, orgGl ) ); }`,
       );
   };
-  m.customProgramCacheKey = () => `org-votlina-${JSON.stringify(v)}-${g}`;
+  m.customProgramCacheKey = () => `org-votlina-${spredaj ? "s" : ""}${JSON.stringify(v)}-${g}`;
   return m;
 }
 
@@ -1318,6 +1323,32 @@ export async function zgradiOrgan(ime, ctx = {}) {
         g.setAttribute("position", new THREE.BufferAttribute(r.polozaji, 3));
         g.setAttribute("normal", new THREE.BufferAttribute(Float32Array.from({ length: r.polozaji.length }, (_, i) => -n[i % 3]), 3));
         g.setAttribute("orgVr", new THREE.BufferAttribute(r.vrste, 1));
+        // cev.zleb { barva, senca, globina [m], … kot rezVotlina }: cev je zares prerezana – na ravnini ostane le stena
+        // (obroč), svetlina je odprtina (maska v globini), skoznjo se vidi osvetljena notranja stena cevi za ravnino
+        // (zadnje ploskve mreže, z globino temnejše). Prej ploska temna zapolnitev (ocena n5: »rentgenska prevleka«).
+        const zleb = t.rezPresek.cev?.zleb;
+        if (zleb) {
+          const stena = [], luknja = [];
+          for (let i = 0; i < r.indeksi.length; i += 3) (r.vrste[r.indeksi[i]] >= 2 ? luknja : stena).push(r.indeksi[i], r.indeksi[i + 1], r.indeksi[i + 2]);
+          r.indeksi = stena;
+          if (luknja.length) {
+            const gm = new THREE.BufferGeometry();
+            gm.setAttribute("position", g.attributes.position);
+            gm.setIndex(luknja);
+            presekGeo.push(gm);
+            const maska = new THREE.Mesh(gm, maskaMat);
+            maska.raycast = () => {};
+            maska.renderOrder = -2;
+            maska.userData = { pokrov: true, maska: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+            mesh.add(maska);
+            if (!votline.has(k.tkivo)) votline.set(k.tkivo, materialVotline(zleb, rav, s));
+            const v = new THREE.Mesh(k.geo, votline.get(k.tkivo));
+            v.raycast = () => {};
+            v.renderOrder = -3;
+            v.userData = { pokrov: true, votlina: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+            mesh.add(v);
+          }
+        }
         g.setIndex(r.indeksi);
         presekGeo.push(g);
         if (!preseki.has(k.tkivo)) {
@@ -1350,6 +1381,17 @@ export async function zgradiOrgan(ime, ctx = {}) {
       const rav = ravZa(t).seznam[0];
       const n = rav.normal.toArray();
       mesh.renderOrder = -3;
+      // notranja stena žleba v svoji barvi (sluznica) in z globino temnejša: brez tega je bil žleb videti kot neprerezana
+      // izbočena cev na ravnini (ocena n5)
+      if (typeof t.rezPresek.odprtaCev === "object") {
+        const kl = k.tkivo + "|odprta";
+        if (!votline.has(kl)) votline.set(kl, materialVotline(t.rezPresek.odprtaCev, rav, s, { map: mesh.material.map, normalMap: mesh.material.normalMap, normalScale: mesh.material.normalScale }));
+        const v = new THREE.Mesh(k.geo, votline.get(kl));
+        v.raycast = () => {};
+        v.renderOrder = -2.9;
+        v.userData = { pokrov: true, votlina: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+        mesh.add(v);
+      }
       const r = presekMreze(k.geo.attributes.position.array, deliMreze(), n, rav.constant, { ovojDelov: true, trianguliraj });
       if (r) {
         const odmik = -(0.0004 + 0.0004 * ((t.rezPresek.vrsta ?? 0) - 0.5));
