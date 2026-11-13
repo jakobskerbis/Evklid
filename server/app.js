@@ -223,6 +223,16 @@ export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
   app.disable("x-powered-by");
+  // Usmerjevalnik Expressa pot s poševnico na koncu ujema kot pot brez nje (/messages/ = /messages), vmesniki
+  // pred potmi (dnevna meja vprašanj, mesečna meja AI, lastništvo, zaklep računa, opravila po izbrisu) pa
+  // req.path preverjajo z regularnimi izrazi in so poševnico spregledali. Zato jo pri /api odrežemo, preden
+  // pot kdorkoli prebere: vsi vidijo isto pot kot usmerjevalnik (točka 1.1).
+  app.use((req, _res, next) => {
+    const q = req.url.indexOf("?");
+    const pot = q < 0 ? req.url : req.url.slice(0, q);
+    if (pot.length > 5 && pot.startsWith("/api/") && pot.endsWith("/")) req.url = pot.replace(/\/+$/, "") + (q < 0 ? "" : req.url.slice(q));
+    next();
+  });
   securityHeaders(app);
   mountOldLinkRedirect(app, opts.homeCheck);
   app.get("/healthz", (_req, res) => res.send("ok")); // za gostovanje, brez gesla
