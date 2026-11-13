@@ -22,10 +22,25 @@ function lokalno(v) {
     return false;
   }
 }
+const escHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const XHTML = "http://www.w3.org/1999/xhtml";
+const MEDIJI = new Set(["img", "source", "video", "audio", "track", "image", "use", "feimage", "iframe", "embed", "object", "mglyph"]);
+// url(…) v atributu (fill, stroke, mask, filter, clip-path, marker-*, cursor …) naloži tuj dokument SVG; dovoljen je le
+// sklic znotraj strani url(#…). Ubežne znake CSS (u\rl) najprej odstranimo.
+const tujUrl = (v) => /url\s*\(\s*['"]?\s*(?!#)/i.test(String(v).replace(/\\/g, ""));
 export function ocistiStrogo(html, purify = lib("DOMPurify")) {
   const frag = purify.sanitize(html, { FORBID_TAGS: PREPOVEDANE_OZNAKE, FORBID_ATTR: PREPOVEDANI_ATRIBUTI, RETURN_DOM_FRAGMENT: true });
-  for (const el of frag.querySelectorAll("img, source, video, audio, track, image, use, feImage, iframe, embed, object")) {
-    for (const a of NASLOVI_SLIK) if (el.hasAttribute(a) && !lokalno(el.getAttribute(a))) el.removeAttribute(a);
+  for (const el of frag.querySelectorAll("*")) {
+    const ime = el.localName.toLowerCase();
+    const medij = MEDIJI.has(ime);
+    // SVG in MathML (razen povezave <a>): naslov samo #… ali, pri slikah in virih, z iste strani.
+    const tuji = el.namespaceURI !== XHTML && ime !== "a";
+    for (const { name, value } of [...el.attributes]) {
+      const naslov = NASLOVI_SLIK.includes(name.toLowerCase());
+      if (naslov && medij && !lokalno(value)) el.removeAttribute(name);
+      else if (naslov && tuji && !medij && !String(value).trim().startsWith("#")) el.removeAttribute(name);
+      else if (tujUrl(value)) el.removeAttribute(name);
+    }
   }
   const ovoj = frag.ownerDocument.createElement("div");
   ovoj.append(frag);
@@ -58,7 +73,9 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       try {
         return katex.renderToString(tex, { ...plain, displayMode: display });
       } catch {
-        return tex;
+        // Ne ParseError (npr. RangeError ob zelo globokem gnezdenju): formula je bila skrita pred čiščenjem, zato
+        // gre surov TeX na stran samo kot izpisano besedilo (sicer bi bil v njem lahko poljuben HTML).
+        return escHtml(tex);
       }
     }
   }

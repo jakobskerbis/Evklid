@@ -68,3 +68,56 @@ test("A3: renderRich odstrani zunanje slike, sloge in obrazce; povezave in lastn
     server.close();
   }
 });
+
+// Pregled 3: (1) formula, ob kateri KaTeX vrže napako, ki ni ParseError (RangeError ob globokem gnezdenju), je bila
+// skrita pred čiščenjem in je šla na stran kot surov HTML; zdaj je izpisana kot besedilo. (2) url(…) v atributih SVG
+// (fill, mask, filter …) in href na drugih elementih SVG/MathML ne naložita tujega dokumenta.
+const NAPAD3 = [
+  "$$x<meta http-equiv=\"refresh\" content=\"1;url=https://napadalec.example/m\"><form><button>B</button></form><img src=x onerror=\"window.__xss=1\">$$",
+  "in $y<b id=\"vrinjen\">b</b>$",
+  "<svg><rect width=\"9\" height=\"9\" fill=\"url(https://napadalec.example/a.svg#p)\" stroke=\"u\\rl(https://napadalec.example/b.svg#p)\" mask=\"url('https://napadalec.example/c.svg#m')\" filter=\"url(#lokalni)\"/></svg>",
+  "<svg><pattern href=\"https://napadalec.example/d.svg#p\"/><linearGradient xlink:href=\"https://napadalec.example/e.svg#g\"/></svg>",
+  "<math><mglyph src=\"https://napadalec.example/f.png\"/></math>",
+].join("\n\n");
+
+test("A3 Pregled 3: napaka KaTeX ne vstavi surovega HTML; url() in href v SVG/MathML odstranjena", { skip: playwright ? false : "Playwright ni nameščen", timeout: 60000 }, async (t) => {
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const store = openDb(":memory:");
+  const app = createApp(store, { scheduler: false, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const page = await browser.newPage();
+    const zunanje = [];
+    page.on("request", (r) => r.url().includes("napadalec.example") && zunanje.push(r.url()));
+    await page.goto(`${base}/o-evklidu.html`);
+    await page.addScriptTag({ url: "/vendor/dompurify/purify.min.js" });
+    await page.addScriptTag({ url: "/vendor/marked/lib/marked.umd.js" });
+    const { html, xss, vrinjen } = await page.evaluate(async (src) => {
+      const { createRenderer } = await import("/rich.js");
+      // KaTeX, ki pri vsaki formuli vrže RangeError (kot pri preglobokem gnezdenju).
+      const r = createRenderer({ katex: { renderToString: () => { throw new RangeError("Maximum call stack size exceeded"); } } });
+      const out = r.renderRich(src);
+      const box = document.createElement("div");
+      box.innerHTML = out;
+      document.body.append(box);
+      await new Promise((ok) => setTimeout(ok, 300));
+      return { html: out, xss: window.__xss ?? null, vrinjen: !!document.getElementById("vrinjen") };
+    }, NAPAD3);
+    assert.equal(xss, null, "onerror se ni izvedel");
+    assert.equal(vrinjen, false, "HTML iz formule ni element");
+    assert.doesNotMatch(html, /<(meta|form|button|img)\b/i, html);
+    assert.match(html, /&lt;meta http-equiv=/, "formula je izpisana kot besedilo");
+    assert.doesNotMatch(html, /napadalec\.example\/[a-f]\./, html);
+    assert.match(html, /filter="url\(#lokalni\)"/, "url(#…) ostane");
+    assert.deepEqual(zunanje, []);
+  } finally {
+    await browser.close();
+    server.close();
+  }
+});
