@@ -5,10 +5,10 @@
   "pljuca": {
    "hrap": 0.4,
    "lak": 0.55,
-   "lakHrap": 0.25,
+   "lakHrap": 0.32,
    "sijaj": 0.5,
    "ao": 0.5,
-   "zrno": 0.07,
+   "zrno": 0.045,
    "f": 160,
    "barva": "#d88d88",
    "sijajBarva": "#ffd0c8",
@@ -16,7 +16,7 @@
    "robBarva": "#ffb0a8",
    "lise": 0.3,
    "liseBarva": "#b06468",
-   "relief": 0.5,
+   "relief": 0.2,
    "senca": 0.25,
    "sencaBarva": "#6a2a30",
    "rez": "#c96f6c",
@@ -454,8 +454,8 @@
  },
  "velikost": 0.4333,
  "trikotniki": {
-  "racunalnik": 164982,
-  "telefon": 55190
+  "racunalnik": 164984,
+  "telefon": 55186
  },
  "luci": [
   {

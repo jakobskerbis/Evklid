@@ -74,7 +74,7 @@ ORGANI = {
                 # skorja in sredina iz MRI sta že goste (pialna površina): brez razdelitve (pomnilnik prenosnika)
                 "sredina": dict(barva=(0.58, 0.44, 0.40), barva2=(0.50, 0.36, 0.33), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=0),
                 "mali": dict(barva=(0.56, 0.31, 0.28), barva2=(0.45, 0.23, 0.21), lise=0.35, hrap=0.46, gube=0.00003, gubeMera=0.0015,
-                             zilice=0.15, ziliceBarva=(0.40, 0.06, 0.06), ziliceMera=0.010, razdeli=1),
+                             zilice=0.15, ziliceBarva=(0.40, 0.06, 0.06), ziliceMera=0.010, razdeli=0),  # MRI: že gosta
                 "deblo": dict(barva=(0.64, 0.52, 0.45), barva2=(0.56, 0.44, 0.39), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.002,
                               zilice=0.12, ziliceBarva=(0.45, 0.08, 0.07), razdeli=1),
                 "bela": dict(barva=(0.80, 0.75, 0.66), barva2=(0.73, 0.67, 0.58), lise=0.2, hrap=0.46, gube=0.00002, gubeMera=0.002, razdeli=1),
@@ -305,7 +305,7 @@ ORGANI = {
         debelina=[(r"^(?!\(lastno\)).*(Bronchi\.g|Pulmonary|pulmonary artery)", 0.0011), (r"^Trachea( /|$)", 0.0012)],  # sapnik: stena, zgornji rob zaprt
         # prerezani konci pljučnih arterij in ven ob hilusu: slepa svetlina 2,5 mm (levo pljučno arterijo je pogled v prerezu
         # videl vzdolž osi kot tanek obroč v zraku)
-        slepiKonci=[(r"^(?!\(lastno\)).*(Pulmonary|pulmonary artery)", 0.0025)],
+        slepiKonci=[(r"^Left pulmonary artery", 0.004, 0.014), (r"^(?!\(lastno\))(?!Left pulmonary artery).*(Pulmonary|pulmonary artery)", 0.0025)],
         # drevesa.pljucna_drevesa: režnji zaprti in v polni gostoti (prej jih je skupna poenostavitev stanjšala na ~2000
         # trikotnikov: natrgani robovi ob preponi), veje v pljučih iz središčnic (veje=True: še subsegmentne veje s
         # kolonizacijo prostora; v pljučih so bile videti kot ščetina ob čistem drevesu Z-Anatomy, zato izklopljeno). Te mreže
@@ -637,11 +637,36 @@ APARC_IME = {"celni": "Frontal lobe", "temenski": "Parietal lobe", "senceni": "T
              "limbicni": "Limbic lobe", "otok": "Insula", "sredina": "Medial wall"}
 
 
-def slepi_konci(me, glob):
+def slepi_konci(me, glob, skrajsaj=0.0):
     """Odprte konce cevi zapre s slepo svetlino: ploščica »glob« navznoter (proti notranjim sosedom roba), 0,8 × polmer.
-    Vrne število zaprtih koncev."""
+    skrajsaj > 0: najbolj sredinski konec (najmanjši |x|) se najprej skrajša za toliko metrov – rez pravokotno na os cevi,
+    samo v okolici konca (leva pljučna arterija: prvi del teče naprej proti deblu in je bil v prerezu viden vzdolž osi
+    kot obroč; po skrajšanju gleda rez proti sredini). Vrne število zaprtih koncev."""
     bm = bmesh.new(); bm.from_mesh(me)
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
+    if skrajsaj > 0:
+        rob = [e for e in bm.edges if len(e.link_faces) == 1]
+        if rob:
+            # najbolj sredinski konec: oglišča roba blizu tistega z najmanjšim |x|
+            v0 = min({v for e in rob for v in e.verts}, key=lambda v: abs(v.co.x))
+            zan = {v for e in rob for v in e.verts if (v.co - v0.co).length < 0.04}
+            c = sum((v.co for v in zan), Vector()) / len(zan)
+            pol = max((v.co - c).length for v in zan)
+            nav = Vector()
+            for v in zan:
+                for e in v.link_edges:
+                    o = e.other_vert(v)
+                    if o not in zan:
+                        nav += o.co - v.co
+            # os cevi: od konca do težišča oglišč v krogli »skrajsaj« (ne smer prvega obroča)
+            blizu = [v.co for v in bm.verts if (v.co - c).length < skrajsaj * 1.3]
+            os_ = (sum(blizu, Vector()) / len(blizu) - c) if blizu else nav
+            os_ = os_.normalized() if os_.length > 1e-9 else nav.normalized()
+            q = c + os_ * skrajsaj
+            okolica = [f for f in bm.faces if (f.calc_center_median() - c).length < skrajsaj + 2.5 * pol]
+            geom = list({x for f in okolica for x in list(f.verts) + list(f.edges)}) + okolica
+            bmesh.ops.bisect_plane(bm, geom=geom, plane_co=q, plane_no=-os_, clear_outer=True)
+            bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
     rob = [e for e in bm.edges if len(e.link_faces) == 1]
     if not rob:
         bm.free(); return 0
@@ -1364,10 +1389,10 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
                 for v, nn in zip(row[1].vertices, nor):
                     v.co -= nn * d
     # slepiKonci: odprt konec cevi (prerezana žila ob hilusu) dobi slepo svetlino globine »glob«: ploščica v svetlini. Gledano vzdolž osi se tako ne vidi skozi cev (obroč v zraku), ampak prerezana žila s temno svetlino.
-    for rx, glob in cfg.get("slepiKonci", []):
+    for rx, glob, *sk in cfg.get("slepiKonci", []):
         for row in osnovni:
             if re.search(rx, row[4]):
-                n_ = slepi_konci(row[1], glob)
+                n_ = slepi_konci(row[1], glob, sk[0] if sk else 0.0)
                 if n_:
                     print(f"[organi] {row[0]}: slepih koncev {n_}")
     # debelina: stena cevi (bronhiji, žile iz krivulj) navznoter, da je v prerezu obroč s svetlino in ne poln valj
