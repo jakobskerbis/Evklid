@@ -188,7 +188,8 @@ T tkivo(vec2 p, float px) {
   }
   if (d < 64.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.03, 0.6 + 0.04 * sumL(p, 3.0, px), 0.0); return t; }   // Bowmanova plast
   if (d < 530.0) {                                                                                         // stroma
-    float g = d - 64.0 + 1.5 * (sum(vec2(p.x / 250.0, d / 80.0)) - 0.5);
+    // lamele so rahlo valovite (pri rezanju se stroma malo nabere)
+    float g = d - 64.0 + 1.5 * (sum(vec2(p.x / 250.0, d / 80.0)) - 0.5) + 2.5 * (sum(vec2(p.x / 70.0, d / 140.0) + 4.0) - 0.5);
     float lam = floor(g / 2.0);
     float lv = (fract(g / 2.0) - 0.5) * 2.0;
     vec4 h = h42(vec2(lam, floor(p.x / 600.0 + 0.5 * h12(vec2(lam, 1.0)))));
@@ -196,7 +197,9 @@ T tkivo(vec2 p, float px) {
     t.smer = h.x < 0.5 ? vec2(1.0, 0.0) : vec2(0.0);
     t.dye = vec3(0.03, 0.5 + 0.06 * (h.y - 0.5), 0.0);
     // razpoke med lamelami (artefakt priprave)
-    float raz = step(0.86, h.z) * crta(abs(lv) - 0.98, 0.25, px) * smoothstep(0.3, 0.6, sum(vec2(p.x / 60.0, lam)));
+    // redke, različno široke in na koncih zožene razpoke (prej goste ravne bele črtice)
+    float sirR = 0.1 + 0.45 * smoothstep(0.45, 0.8, sum(vec2(p.x / 90.0, lam * 0.37)));
+    float raz = step(0.93, h.z) * crta(abs(lv) - 0.98, sirR, px) * smoothstep(0.45, 0.6, sum(vec2(p.x / 60.0, lam)));
     t.dye.y *= 1.0 - 0.85 * raz;
     if (raz > 0.5) t.snov = S_PRAZNO;
     // keratociti: ploščata jedra med lamelami

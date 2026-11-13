@@ -165,6 +165,10 @@ test("mikroskop: vsak del celice odpre svoj pogled (preparat, povečava, snov po
   assert.equal(pogled("celica-gladka-misicna", "sarkoplazemski-retikulum").snov[0], 32);
   // T-cevke so uvihana membrana, zrnca levkocitov se vidijo v razmazu krvi, Schwannove celice so v živcu
   assert.equal(pogled("celica-srcna-misicna", "t-cevke").snov[0], 24);
+  // vnaprej najdena točka T-cevke velja le za T-cevke (oznaka tocka), ne za sarkolemo ali druge membrane
+  assert.equal(pogled("celica-srcna-misicna", "t-cevke").tocka, "cevke");
+  assert.equal(pogled("celica-srcna-misicna", "sarkolema").tocka, undefined);
+  assert.equal(pogled("celica-skeletno-misicno-vlakno", "sarkolema").tocka, undefined);
   assert.equal(pogled("celica-levkociti", "zrnca").p, "kri");
   assert.equal(pogled("celica-nevron", "schwannova-celica").p, "zivec");
   // progasta mišica: SR in T-cevke (triade) sta narisana v skeletni in srčni mišici, gosti cevasti sistem trombocita v krvi

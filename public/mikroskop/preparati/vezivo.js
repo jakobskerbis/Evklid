@@ -17,7 +17,8 @@ T tkivo(vec2 p, float px) {
   float rob = odsek(p, vec2(2600.0, 1400.0), 11.0);
   if (rob > 0.0) return t;
   // snopi (~40–100 µm) imajo vsak svoj val (»crimp«): perioda 20–55 µm, amplituda 1,5–4,5 µm; med njimi endotenon
-  float yb = p.y + 25.0 * (sum(vec2(p.x / 500.0, 2.0)) - 0.5);
+  // meja med snopi je valovita kot vlakna (ni ravna črta)
+  float yb = p.y + 25.0 * (sum(vec2(p.x / 500.0, 2.0)) - 0.5) + 2.5 * sin(6.2832 * p.x / 34.0 + 2.0 * sum(p / 300.0));
   float bw = yb / 70.0 + 0.4 * (sum(vec2(p.x / 300.0, yb / 210.0)) - 0.5);
   float bi = floor(bw);
   vec4 hb = h42(vec2(bi, 7.0));
@@ -26,7 +27,9 @@ T tkivo(vec2 p, float px) {
   float val = A * sin(fz);
   float y = p.y + val;
   float dval = A * 6.2832 / per * cos(fz);
-  float endo = crta((fract(bw) - 0.5) * 70.0 - 35.0 * sign(fract(bw) - 0.5), 0.8 + 1.5 * hb.w, px);
+  // endotenon: tanka reža med snopi, mestoma razprta, drugje sklenjena
+  float endo = crta((fract(bw) - 0.5) * 70.0 - 35.0 * sign(fract(bw) - 0.5), 0.5 + 1.6 * hb.w * sum(vec2(p.x / 80.0, bi)), px)
+    * smoothstep(0.3, 0.5, sum(vec2(p.x / 110.0, bi * 1.7)));
   vec2 smer = normalize(vec2(1.0, -dval));
   t.snov = S_KOLAGEN; t.smer = smer;
   float vid = 1.0 - smoothstep(0.4, 1.0, px);
@@ -168,7 +171,8 @@ T tkivo(vec2 p, float px) {
       t.dye = c.dye;
     }
   }
-  t.dye.x += 0.32 * smoothstep(14.0, 2.0, dg) * (1.0 - ploscat);
+  // teritorialni matriks: temnejši obroč okoli skupine, ki ugasne pred mejo celice Voronoja (sicer oglati robovi)
+  t.dye.x += 0.32 * smoothstep(14.0, 2.0, dg) * smoothstep(0.0, 9.0, v.rob) * (1.0 - ploscat);
   t.dye.x += 0.25 * crta(dg, 0.5, px);
   return t;
 }`,

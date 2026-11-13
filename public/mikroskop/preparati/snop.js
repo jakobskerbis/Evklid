@@ -47,7 +47,7 @@ T medija(vec2 q, float r, float th, vec2 seme, float px) {
   t.dye = vec3(0.07, 0.5 + 0.05 * (sumL(z, 20.0, px) - 0.5) - 0.1 * crta(v.rob, 0.25, px), 0.0);
   if (h.y < 0.5) {
     vec2 lz = z - v.c;
-    float dj = sdKapsula(lz, 5.5 + 2.0 * h.w, 1.1) + 0.15 * (sum(lz + h.zw * 9.0) - 0.5);
+    float dj = jedroGladke(lz, 5.0 + 2.0 * h.w, 1.3, h.wzyx);
     float jk = pokrij(dj, px);
     t.dye.x = mix(t.dye.x, 0.85 * kromatin(lz, h.zw, px), jk);
     t.jedro = dj;
@@ -64,9 +64,10 @@ T arterija(vec2 p, float px) {
   float Ra = Rm + 170.0;
   T t = prazno();
   if (r < Rl) {
+    // svetlina: obarjene beljakovine plazme so bledo rožnate, eritrocitov je malo (kri se pri pripravi večinoma izpere)
     t.snov = S_PLAZMA;
-    t.dye = vec3(0.0, 0.05, 0.0);
-    vec4 e = krogci(q, 7.2, 3.2, 3.7, smoothstep(0.55, 0.75, sum(q / 90.0)) * 0.85, 31.0);
+    t.dye = vec3(0.0, 0.07 + 0.06 * sumL(q, 25.0, px) * smoothstep(0.4, 0.7, sum(q / 140.0 + 3.0)), 0.0);
+    vec4 e = krogci(q, 7.2, 3.2, 3.7, smoothstep(0.6, 0.78, sum(q / 90.0)) * 0.8, 31.0);
     if (e.x < 0.0) { t.dye.y = 0.72; t.snov = S_ERITROCIT; t.meja = -e.x; }
     return t;
   }
@@ -105,8 +106,9 @@ T vena(vec2 p, float px) {
   float dl = sdElipsa(q, vec2(650.0, 330.0)) + 60.0 * (sum(q / 260.0) - 0.5);
   T t = prazno();
   if (dl < 0.0) {
-    t.snov = S_PLAZMA; t.dye = vec3(0.0, 0.06, 0.0);
-    vec4 e = krogci(q, 7.0, 3.2, 3.7, 0.92, 41.0);
+    // v veni ostane več krvi kot v arteriji, a v kupih in progah, ne enakomerno do roba
+    t.snov = S_PLAZMA; t.dye = vec3(0.0, 0.08 + 0.06 * sumL(q, 25.0, px), 0.0);
+    vec4 e = krogci(q, 7.0, 3.2, 3.7, 0.9 * smoothstep(0.42, 0.62, sum(q / 110.0) + 0.15 * (sum(q / 30.0 + 5.0) - 0.5)), 41.0);
     if (e.x < 0.0) { t.dye.y = 0.74 - 0.15 * smoothstep(1.5, 0.0, length(q - e.yz)); t.snov = S_ERITROCIT; t.meja = -e.x; }
     return t;
   }
@@ -162,7 +164,7 @@ T zivec(vec2 p, float px, out bool v) {
     if (h.y < 0.9 && r < R) {
       if (r < ra) {
         t.snov = S_CITO; t.tip = C_NEVRON; t.meja = ra - r; t.cc = CN + F[i].xy + c; t.cid = a.id + float(i) * 17.0; t.jedro = 1e3;
-        t.dye = vec3(0.06, 0.38, 0.0);
+        t.dye = vec3(0.1, 0.46, 0.0);   // akson je drobna temneje rožnata pika v sredini svetlega obroča
       } else {
         t.snov = S_MIELIN; t.r1 = r - ra; t.cc = CN + F[i].xy + c;
         float nk = crta(sin(atan(lz.y, lz.x) * 7.0 + h.z * 9.0 + r * 1.5), 0.12, px);
@@ -171,11 +173,12 @@ T zivec(vec2 p, float px, out bool v) {
       }
     }
     // jedra Schwannovih celic (polmesec ob mielinu)
-    if (h.z < 0.38 && r > R && r < R + 2.2) {
+    // v prerezu je jedro le ob vsakem ~8. vlaknu (jedro je dolgo ~15 µm, internodij ~1 mm)
+    if (h.z < 0.13 && r > R && r < R + 2.2) {
       float kot = atan(lz.y, lz.x) - h.w * 6.28;
       float b = abs(atan(sin(kot), cos(kot)));
-      float dj = sdElipsa(vec2(b * R, r - R - 1.1), vec2(3.8, 1.2));
-      if (dj < 0.0) { t.dye = vec3(0.9, 0.15, 0.0); t.snov = S_JEDRO; t.jedro = dj; t.tip = C_GLIJA; }
+      float dj = sdElipsa(vec2(b * R, r - R - 1.0), vec2(2.9, 1.0));
+      if (dj < px) { float jk = pokrij(dj, px); t.dye = mix(t.dye, vec3(0.85 * kromatin(lz, h.zw, px), 0.15, 0.0), jk); if (jk > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.tip = C_GLIJA; } }
     }
     return t;
   }

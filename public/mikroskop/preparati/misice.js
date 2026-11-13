@@ -98,28 +98,51 @@ T tkivo(vec2 p, float px) {
   T t = prazno();
   float rob = odsek(p, vec2(2400.0, 1600.0), 8.0);
   if (rob > 0.0) return t;
-  float kot = -0.35 + 0.25 * (sum(p / 1500.0) - 0.5);
+  // snopi celic (fascikli, ~0,3 mm) tečejo v malo različnih smereh; med njimi je tanek, valovit in mestoma prekinjen
+  // perimizij (pri 40× in 100× se vidi kot svetle vijugaste reže)
+  vec2 pw = p + 70.0 * vec2(sum(p / 260.0) - 0.5, sum(p / 260.0 + 9.0) - 0.5) + 18.0 * vec2(sum(p / 60.0 + 3.0) - 0.5, sum(p / 60.0 + 5.0) - 0.5);
+  Vor F = vor(pw, 330.0, vec2(1.0, 1.6), -0.35, 0.9);
+  vec4 hF = h42(F.id + 31.0);
+  float kot = -0.35 + 0.25 * (sum(p / 1500.0) - 0.5) + 0.45 * (hF.x - 0.5);
+  // širina in prekinitve pregrade so odvisne le od položaja, zato se obe strani pregrade ujemata
+  float sirF = (1.0 + 3.5 * sum(pw / 90.0 + 2.0)) * smoothstep(0.35, 0.55, sum(pw / 140.0 + 7.0));
+  if (F.rob < sirF) {
+    t.snov = S_KOLAGEN; t.smer = vec2(-F.nb.y, F.nb.x);
+    t.dye = vec3(0.03 + 0.03 * sumL(p, 4.0, px), 0.16 + 0.1 * sumL(p, 9.0, px), 0.0) * (0.5 + 0.5 * smoothstep(0.0, 2.0, F.rob));
+    // redka sploščena jedra fibroblastov vzdolž pregrade
+    float xf = dot(pw - F.c, t.smer);
+    float ij = floor(xf / 40.0);
+    vec4 hj = h42(vec2(ij, F.id.x * 13.0 + F.id.y));
+    float jf = sdElipsa(vec2(xf - (ij + 0.5) * 40.0 - 10.0 * (hj.x - 0.5), F.rob - 0.5 * sirF), vec2(4.0, 1.0));
+    t.dye.x = mix(t.dye.x, 0.8, pokrij(jf, px) * step(0.55, hj.y));
+    return t;
+  }
   vec2 smer = vec2(cos(kot), sin(kot));
-  Vor v = vor(p, 17.0, vec2(5.2, 1.0), -kot, 0.85);
+  // mreža celic se v vsakem snopu zasuka okoli njegovega središča (ne okoli izhodišča stekelca), da celice ob pregradi
+  // niso stisnjene v trske
+  Vor v = vor(p - F.c, 17.0, vec2(5.2, 1.0), -kot, 0.85);
+  v.c += F.c; v.id += F.id * 97.0;
   vec4 h = h42(v.id);
   float vid = 1.0 - smoothstep(0.5, 1.1, px);
-  bool disk = abs(dot(v.nb, smer)) > 0.75;
+  // tudi kjer je pregrada prekinjena, celice sosednjih snopov ločuje endomizij (meja snopa šteje kot stranska meja celice)
+  float vr = min(v.rob, F.rob - sirF);
+  bool disk = v.rob <= F.rob - sirF && abs(dot(v.nb, smer)) > 0.75;
   // ob straneh tanek endomizij (večinoma komaj viden, mestoma širši s kapilaro), na koncih interkalarni disk
   float sir = smoothstep(0.55, 0.7, sum(p / 30.0 + 5.0));
   float rez = disk ? 0.0 : 0.55 + 1.1 * sir;
   t.snov = S_KOLAGEN; t.smer = smer;
   t.dye = vec3(0.05, mix(0.3, 0.2, sir) + 0.05 * sumL(p, 5.0, px), 0.0);
-  if (!disk && v.rob < rez) {
+  if (!disk && vr < rez) {
     vec4 kc = krogci(p, 9.0, 2.0, 2.8, 0.25, 11.0);
     if (kc.x < 0.0) { t.dye.y += 0.5; t.snov = S_ERITROCIT; t.meja = -kc.x; }
   }
-  float k = pokrij(rez - v.rob, px);
+  float k = pokrij(rez - vr, px);
   if (k <= 0.0) return t;
   float xs = dot(p, smer) + 40.0 * h.z;
   float prog = cos(6.2832 * xs / 2.2);
   T f = prazno();
   f.snov = S_MIOFIBRILA; f.tip = C_MISICA; f.smer = smer; f.r1 = xs - 1.1;
-  f.meja = v.rob - rez; f.cc = v.c; f.cid = v.id;
+  f.meja = vr - rez; f.cc = v.c; f.cid = v.id;
   f.dye = vec3(0.05, 0.5 + 0.08 * prog * vid + 0.06 * (sumL(p, 40.0, px) - 0.5), 0.0);
   // interkalarni disk: tanka temna stopničasta prečna črta
   float stop = 0.6 * step(0.5, fract(dot(p, vec2(-smer.y, smer.x)) / 5.0 + h.w));   // stopničasta črta
@@ -159,10 +182,22 @@ T tkivo(vec2 p, float px) {
   T t = prazno();
   float rob = odsek(p, vec2(2200.0, 1500.0), 9.0);
   if (rob > 0.0) return t;
-  float meja = 25.0 * (sum(vec2(p.x / 300.0, 1.0)) - 0.5);
+  float meja = 25.0 * (sum(vec2(p.x / 300.0, 1.0)) - 0.5) + 8.0 * (sum(vec2(p.x / 70.0, 3.0)) - 0.5);
   t.snov = S_KOLAGEN; t.smer = vec2(1, 0);
-  t.dye = vec3(0.05, 0.22 + 0.05 * sumL(p, 6.0, px), 0.0);
-  if (abs(p.y - meja) < 22.0) return t;               // tanek pas veziva med plastema
+  // pas veziva med plastema: različno širok, z valovitimi kolagenskimi vlakni, režami in jedri fibroblastov
+  float sirP = 8.0 + 18.0 * sum(vec2(p.x / 170.0, 5.0));
+  float dv = p.y - meja;
+  if (abs(dv) < sirP) {
+    float vl = sumL(vec2(p.x * 0.15, dv + 2.0 * sin(p.x / 9.0)), 1.6, px);
+    t.dye = vec3(0.04, 0.24 + 0.16 * vl, 0.0);
+    if (vl < 0.3 && sum(vec2(p.x / 40.0, dv / 6.0)) > 0.55) { t.dye *= 0.3; t.snov = S_PRAZNO; }
+    vec2 qf = vec2(mod(p.x, 60.0) - 30.0 - 15.0 * (h12(vec2(floor(p.x / 60.0), 3.0)) - 0.5), dv - 0.4 * sirP * (h12(vec2(floor(p.x / 60.0), 4.0)) - 0.5));
+    float jf = sdElipsa(qf, vec2(5.0, 1.0));
+    float jk = pokrij(jf, px);
+    t.dye.x = mix(t.dye.x, 0.8, jk);
+    if (jk > 0.5) { t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = jf; t.jc = p - qf; t.cc = t.jc; }
+    return t;
+  }
   bool vzd = p.y > meja;
   Vor v = vor(p, 7.5, vzd ? vec2(9.0, 1.0) : vec2(1.0), vzd ? 0.05 : 0.0, 0.9);
   vec4 h = h42(v.id + (vzd ? 0.0 : 50.0));
@@ -173,9 +208,9 @@ T tkivo(vec2 p, float px) {
   vec2 q = vzd ? rot(0.05) * (p - v.c) : p - v.c;
   if (vzd) {
     if (h.y < 0.55) {
-      float dj = sdKapsula(q - vec2(10.0 * (h.x - 0.5), 0.0), 6.5 + 2.5 * h.w, 1.35) + 0.15 * (sum(q * 1.5 + h.zw * 9.0) - 0.5);
+      float dj = jedroGladke(q - vec2(10.0 * (h.x - 0.5), 0.0), 6.0 + 2.5 * h.w, 1.5, h.wzyx);
       float jk = pokrij(dj, px);
-      f.dye.x = mix(f.dye.x, 0.55 * kromatin(q, h.zw, px), jk);
+      f.dye.x = mix(f.dye.x, 0.8 * kromatin(q, h.zw, px), jk);
       if (jk > 0.5) { f.snov = S_JEDRO; f.jedro = dj; f.jc = v.c + vec2(10.0 * (h.x - 0.5), 0.0); }
       else f.jedro = dj;
     }

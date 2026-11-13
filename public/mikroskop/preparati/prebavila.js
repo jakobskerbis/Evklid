@@ -29,8 +29,8 @@ T globje(vec2 p, float g, float px) {
     t.snov = S_CITO; t.tip = C_GLADKA; t.meja = v.rob; t.cc = v.c; t.jc = v.c; t.cid = v.id;
     t.dye = vec3(0.07, 0.52 + 0.05 * (sumL(p, 30.0, px) - 0.5), 0.0);
     vec2 q = p - v.c;
-    float dj = vzd ? sdKapsula(q - vec2(8.0 * (h.x - 0.5), 0.0), 6.0 + 2.0 * h.w, 1.2) : length(q) - 1.3;
-    if (h.y < (vzd ? 0.5 : 0.3)) { float jk = pokrij(dj, px); t.dye.x = mix(t.dye.x, 0.75 * kromatin(q, h.zw, px), jk); t.jedro = dj; if (jk > 0.5) t.snov = S_JEDRO; }
+    float dj = vzd ? jedroGladke(q - vec2(8.0 * (h.x - 0.5), 0.0), 5.5 + 2.0 * h.w, 1.4, h.wzyx) : length(q) - 1.3;
+    if (h.y < (vzd ? 0.5 : 0.3)) { float jk = pokrij(dj, px); t.dye.x = mix(t.dye.x, 0.85 * kromatin(q, h.zw, px), jk); t.jedro = dj; if (jk > 0.5) t.snov = S_JEDRO; }
     return t;
   }
   if (g <= 640.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.1, 0.3, 0.0); return t; }        // med plastema (živčni pletež)
@@ -251,7 +251,7 @@ T tkivo(vec2 p, float px) {
     return t;
   }
   float rq = length(bq);
-  float rl = blum ? 0.5 + 1.5 * smoothstep(0.45, 0.85, sum(vec2(bk, d / 40.0))) : 0.0;   // svetlina je ozka reža, mestoma zaprta
+  float rl = blum ? 1.8 * smoothstep(0.55, 0.9, sum(vec2(bk, d / 40.0))) : 0.0;   // svetlina je ozka reža, mestoma zaprta
   if (rq < rl) { T t = prazno(); t.snov = S_PLAZMA; t.dye = vec3(0.03, 0.24, 0.0); return t; }
   float H = bR - rl;
   float dl = rq - rl;
@@ -276,6 +276,15 @@ T tkivo(vec2 p, float px) {
   t.cc = p - os * (dl - 0.5 * H); t.jc = t.cc;
   float meja = max(crta(lat, 0.3, px), crta(-best, 0.35, px));
   bool parietalna = hc.x < mix(0.5, 0.2, dno) * (1.0 - 0.6 * zg);
+  // parietalna celica je okrogla do trikotna in se izboči proti bazi; v vogalih traku so sosednje (glavne) celice,
+  // zato ni videti vrst pravokotnih opek
+  if (parietalna && kapa < 0.5) {
+    vec2 qc = vec2(dl - 0.58 * H, (fract(su) - 0.5) * w);
+    float rp = sdElipsa(qc, vec2(0.52 * H, 0.66 * w)) + 0.6 * (sum(qc / 2.5 + hc.zw * 9.0) - 0.5);
+    meja = max(meja, crta(rp, 0.3, px));
+    t.meja = min(t.meja, abs(rp));
+    if (rp > 0.0) { parietalna = false; hc.x = 0.9; t.cid += vec2(0.0, 500.0 + 250.0 * sign(qc.y)); }   // vogala sta dve različni sosednji celici
+  }
   float jd; vec2 jr; float jbarva = 0.9;
   if (parietalna) {
     // parietalna celica: rožnata, svetlo zrnata citoplazma, okroglo jedro v sredini (»jajce na oko«)
@@ -297,7 +306,7 @@ T tkivo(vec2 p, float px) {
   vec3 jdv = vec3(dj, ql);
   // vsaka celica je malo drugače obarvana, meje so tanke svetle črte
   t.dye *= 0.92 + 0.16 * hc.y;   // manjše razlike med sosednjimi celicami: ni »šahovnice«
-  t.dye *= 1.0 - 0.45 * meja * (1.0 - smoothstep(0.6, 1.4, px));
+  t.dye *= 1.0 - 0.3 * meja * (1.0 - smoothstep(0.6, 1.4, px));   // meje celic so v H-E komaj vidne
   t.jedro = jdv.x;
   float jk = pokrij(jdv.x, px) * step(0.1, hc.w);
   t.dye.x = mix(t.dye.x, jbarva * kromatin(jdv.yz, hc.zw, px), jk);

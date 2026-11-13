@@ -6,14 +6,18 @@
 // Rastlinska celica iz Voronoijeve mreže v: stena polovične debeline sw (v.rob = razdalja do srednje lamele), tanek sloj
 // citoplazme in vakuola. kd = barvilo stene (vec3).
 const RASTLINSKA = /* glsl */ `
-T rCelica(Vor v, vec2 p, float sw, vec3 kd, float px) {
+T rCelicaA(Vor v, vec2 p, float sw, vec3 kd, float px, float aa) {
   T t = prazno();
   t.cid = v.id; t.cc = v.c; t.jc = v.c; t.tip = C_SPLOSNA;
   // stena ni povsod enako debela in obarvana; srednja lamela med sosednima celicama je malo temnejša
   float swl = sw * (0.75 + 0.5 * sum(p / 9.0 + v.id * 3.0));
-  if (v.rob < swl) {
+  // aa > 0 (velike celice parenhima): pri majhni povečavi je stena tanjša od slikovne točke; narišemo jo vsaj aa ·
+  // točko široko in sorazmerno svetlejšo (enaka količina barvila), da se ne izgubi ali razpade v pike, kot se tudi
+  // v okularju ne. Pri drobnih celicah (list, kloroplasti) bi široka stena prekrila vsebino, zato tam aa = 0.
+  float swv = max(swl, aa * px);
+  if (v.rob < swv) {
     t.snov = S_STENA; t.smer = vec2(-v.nb.y, v.nb.x); t.r1 = v.rob;
-    t.dye = kd * (0.7 + 0.3 * sumL(p, 2.0, px)) * (0.8 + 0.35 * crta(v.rob, 0.25, px));
+    t.dye = kd * (0.7 + 0.3 * sumL(p, 2.0, px)) * (0.8 + 0.35 * crta(v.rob, 0.25, px)) * (swl / swv);
     return t;
   }
   sw = swl;
@@ -22,6 +26,7 @@ T rCelica(Vor v, vec2 p, float sw, vec3 kd, float px) {
   t.snov = S_VAKUOLA; t.meja = m - 1.2; t.dye = vec3(0.0);
   return t;
 }
+T rCelica(Vor v, vec2 p, float sw, vec3 kd, float px) { return rCelicaA(v, p, sw, kd, px, 0.0); }
 // Kloroplast z dolgo osjo sm, središčem c in polosjo r (svetlobni prikaz + podatki za TEM). Vrne true, če p leži v njem.
 bool kloroplastL(inout T t, vec2 p, vec2 c, vec2 sm, float r, float px) {
   vec2 z = mat2(sm.x, -sm.y, sm.y, sm.x) * (p - c);
@@ -393,16 +398,17 @@ T tkivo(vec2 p, float px) {
   // vakuole v coni podaljševanja
   float vak = smoothstep(-650.0, 200.0, p.y);
   if (vak > 0.0 && dw > 1.6 && sum(q / 5.0 + h.zw * 9.0) < vak * 0.9 + 0.1 * (1.0 - vak)) { t.snov = S_VAKUOLA; t.meja = dw - 1.6; t.dye = vec3(0.015, 0.02, 0.0); }
-  float rn = min(4.4, 0.78 * min(cw, 0.5 * hh));
+  float rn = min(4.4, 0.78 * min(cw, 0.5 * hh)) * (0.84 + 0.26 * h.x);   // jedra niso vsa enako velika
   float ph = h.z;
   if (mer < 0.5 || ph > 0.15) {
-    vec2 qn = q - vec2(0.0, 0.25 * hh * (h.w - 0.5) * (1.0 - mer));
+    vec2 qn = q - vec2(min(1.6, 0.3 * cw) * (h.y - 0.5) * mer, 0.25 * hh * (h.w - 0.5) * (1.0 - mer) + min(1.6, 0.3 * cw) * (h.w - 0.5) * mer);
+    qn *= vec2(1.0 + 0.18 * (h.z - 0.5), 1.0 - 0.18 * (h.z - 0.5));     // in ne vsa okrogla
     float dj = length(qn) - rn + 0.3 * (sum(qn / 1.5 + h.xy * 9.0) - 0.5);
     if (dj < px) {
       float k = pokrij(dj, px);
       // orcein obarva vse jedro zrnato vijolično; jedrce je le malo temnejše
       t.dye.x = mix(t.dye.x, 0.32 + 0.45 * kromatin(qn, h.xy, px) + 0.25 * pokrij(length(qn - vec2(0.8, 0.6)) - 1.1, px), k);
-      if (k > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.jc = t.cc + vec2(0.0, 0.25 * hh * (h.w - 0.5) * (1.0 - mer)); }
+      if (k > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.jc = t.cc + vec2(min(1.6, 0.3 * cw) * (h.y - 0.5) * mer, 0.25 * hh * (h.w - 0.5) * (1.0 - mer) + min(1.6, 0.3 * cw) * (h.w - 0.5) * mer); }
     }
     return t;
   }
@@ -475,10 +481,16 @@ T tkivo(vec2 p, float px) {
   float k = floor(th / (6.2832 / 18.0) + 0.5);
   float s = (th - k * 6.2832 / 18.0) * r;
   float rr = r - 1150.0;
-  float sb = sdElipsa(vec2(s, rr), vec2(115.0, 190.0));
+  // snopič je kapljičast: ksilem se proti strženu zoži
+  float sb = sdElipsa(vec2(s / (0.6 + 0.4 * smoothstep(-190.0, 40.0, rr)), rr), vec2(115.0, 190.0));
   if (sb < 0.0) {
     if (rr > 115.0) { Vor v = vor(p, 8.0, vec2(1.0), 0.0, 0.7); return rCelica(v, p, 2.2, rde, px); }       // vlakna
-    if (rr > 45.0) { Vor v = vor(p, 7.0, vec2(1.0), 0.0, 0.75); return rCelica(v, p, 0.5, zel, px); }       // floem
+    if (rr > 45.0) {                                                 // floem: drobne celice z gosto vsebino (celice spremljevalke)
+      Vor v = vor(p, 6.0, vec2(1.0), 0.0, 0.75); t = rCelica(v, p, 0.8, zel * 1.2, px);
+      // drobne celice floema so polne gostega citoplazme (sitaste cevi, celice spremljevalke), ne vakuole
+      if (t.snov != S_STENA) { t.snov = S_CITO; t.dye = zel * (h42(v.id).x < 0.4 ? 0.8 : 0.35); }
+      return t;
+    }
     if (rr > 28.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); v.c = p; return rCelica(v, p, 0.4, zel, px); }   // kambij
     vec4 x = krogci(p, 34.0, 9.0, 17.0, 0.7, 87.0);                 // ksilem
     if (x.x < 0.0) { t.snov = S_PRAZNO; t.meja = -x.x; return t; }
@@ -491,7 +503,10 @@ T tkivo(vec2 p, float px) {
   float vel = r > 1210.0 ? 38.0 : (r > 950.0 ? 30.0 : 70.0);
   Vor v = vor(p, vel, vec2(1.0), 0.0, 0.85);
   if (v.rob < 1.4 && v.d < 0.3 * vel && sum(p / 7.0) > 0.62) return t;
-  return rCelica(v, p, r > 1210.0 ? 0.9 : 1.2, zel, px);
+  // hitro zelena obarva celulozne stene parenhima izrazito modrozeleno; v celicah ostane bled ostanek citoplazme
+  t = rCelicaA(v, p, r > 1210.0 ? 1.4 : 1.8, zel * 1.35, px, 0.7);
+  if (t.snov == S_VAKUOLA) t.dye = zel * 0.035 * (0.6 + 0.8 * sumL(p, 6.0, px));
+  return t;
 }`,
 };
 

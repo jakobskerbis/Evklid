@@ -81,12 +81,12 @@ T tkivo(vec2 p, float px) {
   // folikli so okrogli: rob celice Voronoi zaobljen s krogom; v kotih med folikli ostane vezivo s kapilarami
   vec2 qf = w - v.c;
   float rq = length(qf);
-  float dc = 72.0 * (0.9 + 0.3 * h.z) - rq;
+  float dc = 82.0 * (0.85 + 0.4 * h.z) - rq;   // folikli so tesno skupaj; vezivo ostane le v nekaterih kotih
   vec2 nv = dc < v.rob ? qf / max(rq, 1e-3) : v.nb;
   float rb = min(v.rob, dc);
   if (rb < pre) {
     t.snov = S_KOLAGEN; t.dye = vec3(0.05, 0.36, 0.0);
-    vec4 e = krogci(p, 9.0, 2.6, 3.0, 0.35, 5.0);
+    vec4 e = krogci(p, 9.0, 2.6, 3.0, 0.25, 5.0);
     if (e.x < 0.0) { t.dye.y = 0.72; t.snov = S_ERITROCIT; t.meja = -e.x; }
     return t;
   }
@@ -239,8 +239,8 @@ T tkivo(vec2 p, float px) {
   t.snov = S_CITO; t.tip = C_GLADKA; t.meja = v.rob; t.cc = v.c; t.jc = v.c; t.cid = v.id;
   t.dye = vec3(0.07, 0.52, 0.0);
   vec2 q = rot(kot) * (p - v.c);
-  float dj = vzd ? sdKapsula(q, 6.0 + 2.0 * h.w, 1.2) : length(q) - 1.3;
-  if (h.y < (vzd ? 0.5 : 0.3)) { float jk = pokrij(dj, px); t.dye.x = mix(t.dye.x, 0.75 * kromatin(q, h.zw, px), jk); t.jedro = dj; if (jk > 0.5) t.snov = S_JEDRO; }
+  float dj = vzd ? jedroGladke(q, 5.5 + 2.0 * h.w, 1.4, h.wzyx) : length(q) - 1.3;
+  if (h.y < (vzd ? 0.5 : 0.3)) { float jk = pokrij(dj, px); t.dye.x = mix(t.dye.x, 0.85 * kromatin(q, h.zw, px), jk); t.jedro = dj; if (jk > 0.5) t.snov = S_JEDRO; }
   return t;
 }`,
 };

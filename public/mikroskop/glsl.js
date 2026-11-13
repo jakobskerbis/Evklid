@@ -55,6 +55,16 @@ float crta(float d, float w, float px) {                                        
 }
 float sdElipsa(vec2 p, vec2 r) { float k = length(p / r); return (k - 1.0) * min(r.x, r.y) * (k < 1.0 ? 1.0 : min(1.0, k)); }
 float sdKapsula(vec2 p, float L, float r) { p.x = max(abs(p.x) - L, 0.0); return length(p) - r; }
+// Jedro gladke mišične celice (vzdolžni rez): podolgovato kot cigara, z zaobljenimi konci, rahlo ukrivljeno in različno
+// nagnjeno; v skrčenih celicah nagubano kot zamašek (pri pravih preparatih nikoli ravne enake črtice)
+float jedroGladke(vec2 q, float L, float r, vec4 h) {
+  vec4 g = fract(h * vec4(7.31, 13.7, 5.13, 11.9) + h.yzwx * 3.7);   // neodvisno od izbire jedra in dolžine pri klicatelju
+  q = rot(0.18 * (g.x - 0.5)) * q;
+  q.y -= 0.012 * (g.y - 0.5) * q.x * q.x;
+  q.y -= step(0.8, g.z) * 0.3 * sin(q.x * 1.7);
+  float t = clamp(abs(q.x) / (L + r), 0.0, 1.0);
+  return sdKapsula(q, L, r * (1.0 - 0.35 * t * t)) + 0.12 * (sum(q * 1.4 + h.zw * 9.0) - 0.5);
+}
 float sdKrog(vec2 p, float r) { return length(p) - r; }
 float sdPravok(vec2 p, vec2 b) { vec2 d = abs(p) - b; return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0); }
 

@@ -64,13 +64,14 @@ T tkivo(vec2 p, float px) {
     + 0.35 * (sum(p / 16.0 + 5.0) - 0.5);
   float razmik = 6.2832 * r / ns;
   float dsin = min(fract(u), 1.0 - fract(u)) * razmik;           // razdalja do osi sinusoida (µm)
-  // polširina sinusoida: svetlina je nepravilna, mestoma zaprta (le meja med ploščama), drugje 4–10 µm široka
-  float sw = 0.4 + 4.6 * smoothstep(0.38, 0.8, sum(p / 15.0 + 7.0)) + 0.7 * (sum(p / 8.0 + 2.0) - 0.5);
+  // polširina sinusoida: svetlina je nepravilna, mestoma zaprta (le meja med ploščama), drugje do ~7 µm široka
+  // (pravi sinusoidi so ozki, 4–7 µm, in skoraj nikoli široke bele reže)
+  float sw = 0.4 + 2.8 * smoothstep(0.38, 0.8, sum(p / 15.0 + 7.0)) + 0.5 * (sum(p / 8.0 + 2.0) - 0.5);
   vec2 z = p;
   Vor v = vor(p, 23.0, vec2(1.0, 1.0), 0.0, 0.75);
   vec4 h = h42(v.id);
   if (dsin < sw) {
-    t.snov = S_PLAZMA; t.dye = vec3(0.01, 0.05 + 0.06 * sumL(p, 2.0, px), 0.0);
+    t.snov = S_PLAZMA; t.dye = vec3(0.01, 0.09 + 0.07 * sumL(p, 2.0, px), 0.0);
     // sploščena jedra endotelijskih in Kupfferjevih celic ob steni, posamezni eritrociti
     vec2 smer = normalize(vec2(-q.y, q.x) * 0.0 + q);
     vec4 kj = krogci(p, 26.0, 1.0, 1.0, 0.55, 23.0);
@@ -87,7 +88,7 @@ T tkivo(vec2 p, float px) {
   t.jc = t.cc;
   // citoplazma zrnato rožnata (mitohondriji, ER), mestoma svetlejša (glikogen); meje celic so le tanke svetlejše črte
   t.dye = vec3(0.1 + 0.04 * sumL(z, 2.0, px), 0.5 + 0.12 * (smoothstep(0.35, 0.75, sumL(z, 0.9, px)) - 0.5) - 0.1 * smoothstep(0.6, 0.8, sum(z / 7.0 + h.xy)), 0.0);
-  t.dye.y -= 0.1 * crta(v.rob, 0.25, px);
+  t.dye.y -= 0.16 * crta(v.rob, 0.3, px);   // meje hepatocitov so pri 400× vidne kot tanke svetle črte
   t.dye.y -= 0.14 * crta(dsin - sw, 0.3, px) * smoothstep(1.2, 0.6, sw);   // zaprt sinusoid: le svetla meja med ploščama
   vec2 jq = z - cz;
   float dj = length(jq - vec2(h.x - 0.5, h.y - 0.5) * 3.0) - 4.2;
@@ -258,8 +259,9 @@ T tkivo(vec2 p, float px) {
   vec2 w = p + 55.0 * vec2(sum(p / 130.0) - 0.5, sum(p / 130.0 + 5.0) - 0.5) + 12.0 * vec2(sum(p / 40.0 + 2.0) - 0.5, sum(p / 40.0 + 8.0) - 0.5);
   Vor v = vor(w, 150.0, vec2(1.0), 0.0, 1.0);
   float sp = sum(p / 40.0);
-  float sir = 2.0 + 2.5 * sp + 9.0 * smoothstep(0.62, 0.9, sum(w / 60.0 + 4.0));   // mestoma odebeljeni vozli pregrad
-  sir += 0.14 * max(0.0, v.d - 88.0);                // zaobljeni vogali alveolov (trikotni vozli, kjer se stikajo tri pregrade)
+  // pregrada je večinoma le 3–6 µm debela (kapilara med dvema tankima pnevmocitoma), mestoma odebeljen vozel
+  float sir = 1.4 + 1.8 * sp + 6.0 * smoothstep(0.66, 0.92, sum(w / 60.0 + 4.0));
+  sir += 0.1 * max(0.0, v.d - 92.0);                 // zaobljeni vogali alveolov (trikotni vozli, kjer se stikajo tri pregrade)
   float odp = sum(w / 70.0 + 13.0);
   // prosti konec pregrade je zaobljen in rahlo odebeljen (gumb), ne odrezan (pregled PR #644)
   float Rk = sir * (1.0 + 0.6 * smoothstep(0.58, 0.63, odp));
