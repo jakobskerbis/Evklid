@@ -133,6 +133,11 @@ test("mikroskop: prevodi gumbov v vseh jezikih in vstop iz lekcij", () => {
     const d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
     for (const k of kljuci) assert.ok(d[k], `${f}: ${k}`);
   }
+  // gumba − in + ob drsniku povečave (j, 13. 11. 2026), z oznakama za bralnike zaslona
+  const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
+  assert.match(ui, /gumbPov\("zoom-out", "a3\.zoomOut", 0\.5\)/);
+  assert.match(ui, /gumbPov\("zoom-in", "a3\.zoomIn", 2\)/);
+  assert.ok(sl["a3.zoomIn"] && sl["a3.zoomOut"]);
   const katalog = fs.readFileSync(path.join(ROOT, "public", "sim", "katalog.js"), "utf8");
   assert.ok((katalog.match(/\["mikroskop",/g) || []).length >= 4);
   const index = fs.readFileSync(path.join(ROOT, "public", "sim", "index.js"), "utf8");
