@@ -54,6 +54,17 @@ variables > Actions kot skrivnost `RENDER_DEPLOY_HOOK`.
 |---|---|
 | `EVKLID_POSODOBITEV_MINUTE=15` | Kako pogosto preveri (v minutah). |
 | `EVKLID_POSODOBITEV=0` | Izklopi samodejne posodobitve. |
+| `EVKLID_GITHUB_TOKEN=` | Samo če je repozitorij na GitHubu zaseben. Brez ključa posodobitve zasebnega repozitorija ne delujejo (v oknu piše, kaj vpisati). |
+
+### Ključ za zaseben repozitorij
+
+1. GitHub → klikni svojo sliko → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.
+2. Repository access: **Only select repositories** → samo `Evklid`.
+3. Permissions → Repository permissions → **Contents: Read-only**. Nič drugega.
+4. Ključ kopiraj v `.env` na vsakem računalniku z Evklidom: `EVKLID_GITHUB_TOKEN=github_pat_…`.
+5. Preden poteče, naredi novega in ga zamenjaj v `.env`.
+
+Ključ gre samo v glavo zahteve za GitHub (pri git prek `GIT_CONFIG_*` v okolju), nikoli v ukaz ali izpis.
 
 ## Kako deluje (za razvijalce)
 
