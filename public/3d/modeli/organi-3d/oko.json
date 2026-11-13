@@ -15,18 +15,21 @@
    "zrno": 0.03,
    "f": 120,
    "relief": 0.2,
-   "lise": 0.12,
-   "liseBarva": "#ffe0d6",
+   "lise": 0.22,
+   "liseBarva": "#e4e9f4",
    "rez": "#f4f0ea",
    "senca": 0.3,
    "sencaBarva": "#b98a80",
    "detajl": true,
-   "zile": 0.45,
+   "zile": 0.7,
    "zileBarva": "#c4685e",
    "zileBarva2": "#a8464c",
    "zileSirina": 5e-05,
    "zileF": 16,
-   "zileMaska": 9
+   "zileMaska": 9,
+   "lise2": 0.18,
+   "lise2Barva": "#f6e6d6",
+   "lise2F": 5
   },
   "roženica": {
    "barva": "#f4fbff",
@@ -42,9 +45,9 @@
    "spekular": 0.5,
    "tekstura": false,
    "limbus": {
-    "barva": "#a9b1bb",
+    "barva": "#c3cad3",
     "barva2": "#e9e4dc",
-    "moc": 0.5,
+    "moc": 0.38,
     "sredisce": [
      0.00827,
      -0.00165,
@@ -58,7 +61,12 @@
     "r0": 0.005,
     "r1": 0.0061
    },
-   "zrcalo": true
+   "zrcalo": true,
+   "ucnaProsojnost": 1,
+   "ucnaRob": [
+    0.05,
+    0.8
+   ]
   },
   "šarenica": {
    "barva": "#6f4a2c",
@@ -91,14 +99,15 @@
     "polmer": 0.0062,
     "vlakna": 110
    },
-   "tekstura": false
+   "tekstura": false,
+   "ucnaGladko": true
   },
   "leča": {
-   "barva": "#f1e4c2",
+   "barva": "#efdcae",
    "hrap": 0.06,
    "lak": 0.6,
    "lakHrap": 0.05,
-   "prosojnost": 0.55,
+   "prosojnost": 1,
    "fresnel": 0.4,
    "rob": 0.25,
    "robBarva": "#fff0c8",
@@ -107,7 +116,7 @@
    "relief": 0,
    "globina": true,
    "tekstura": false,
-   "rez": "#ece2c4"
+   "rez": "#ecd9a2"
   },
   "mrežnica": {
    "barva": "#dc7a52",
@@ -141,7 +150,8 @@
      0.0078,
      -0.00307,
      0.00424
-    ]
+    ],
+    "zil": 8
    },
    "zile": 0.75,
    "zileSirina": 9e-05,
@@ -215,14 +225,14 @@
    "detajl": true,
    "konec": {
     "sredisce": [
-     -0.00821,
-     0.00848,
-     -0.01802
+     -0.00818,
+     0.00847,
+     -0.01805
     ],
     "os": [
-     -0.3618,
-     0.2901,
-     -0.886
+     -0.3514,
+     0.2865,
+     -0.8913
     ],
     "polmer": 0.00175
    },
@@ -230,7 +240,17 @@
    "zile": 0.5,
    "zileBarva": "#b85a4c",
    "zileBarva2": "#8f3a42",
-   "zileSirina": 6e-05
+   "zileSirina": 6e-05,
+   "rezSnopi": {
+    "os": [
+     -0.508,
+     0.287,
+     -0.814
+    ],
+    "sirina": 0.00035,
+    "moc": 0.18
+   },
+   "rezZamik": -6
   },
   "kita": {
    "barva": "#ece7dc",
@@ -263,16 +283,17 @@
    "detajl": true,
    "aoTekstura": 0.4,
    "kita": {
-    "barva": "#ece6de",
+    "barva": "#f2ede6",
     "hrap": 0.32,
     "lak": 1,
     "rob": 0.16,
     "robBarva": "#ffd9cf",
     "meja": [
-     0.35,
-     0.62
+     0.38,
+     0.6
     ],
-    "svetlost": 0.6
+    "svetlost": 0.6,
+    "aoMoc": 1
    }
   },
   "papila": {
@@ -519,7 +540,7 @@
      -0.00187,
      0.01444
     ],
-    "polmer": 0.66,
+    "polmer": 0.8,
     "polmerTelefon": 0.8
    },
    "skrijTkiva": [
@@ -548,9 +569,6 @@
      "sijaj": 0,
      "lak": 0,
      "ucnaBarva": "#040202"
-    },
-    "roženica": {
-     "ucnaProsojnost": 0.1
     }
    }
   },
@@ -593,6 +611,9 @@
     "roženica": {
      "prosojnost": 0.3,
      "barva": "#eaf4fa"
+    },
+    "vlakna": {
+     "prosojnost": 0.45
     }
    }
   }
@@ -624,8 +645,8 @@
  },
  "velikost": 0.0825,
  "trikotniki": {
-  "racunalnik": 164780,
-  "telefon": 52612
+  "racunalnik": 165036,
+  "telefon": 52792
  },
  "luci": [
   {

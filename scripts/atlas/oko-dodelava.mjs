@@ -25,9 +25,13 @@ export const POLMER = 0.00175; // 3,5 mm debel živec z ovojnicami
 const sredina = (W) => { const c = [0, 0, 0]; for (const p of W) for (let k = 0; k < 3; k++) c[k] += p[k] / W.length; return c; };
 
 // Os živca: kubična Bézierjeva krivulja od papile (iz zrkla naravnost ven) do točke za kitnim obročem, z rahlim S.
+// Krog 11 (ocena k5: »siv pravokoten blok in ločen bled obroč, kjer se živec stika z zrklom«): živec se začne tik za
+// mrežnico (ZAC_ZIVCA) in gre skozi kanal beločnice (lamina cribrosa); prvi ≈ 3 mm osi so gosto vzorčeni, da polmer
+// (polmerZivca) sledi kanalu.
+export const ZAC_ZIVCA = 0.0003;
 export function osZivca(papila, zrklo, obroc, n) {
   const d0 = G.v3.norm(G.v3.sub(papila, zrklo));
-  const zac = G.v3.add(papila, G.v3.mul(d0, 0.0011)); // začetek v beločnici za papilo (ne sega v zrklo)
+  const zac = G.v3.add(papila, G.v3.mul(d0, ZAC_ZIVCA)); // začetek za mrežnico, v kanalu beločnice (ne sega v steklovino)
   const dE = G.v3.norm(G.v3.sub(obroc, zac));
   const kon = G.v3.add(obroc, G.v3.mul(dE, 0.004)); // 4 mm za obročem: vhod v vidni kanal
   const s = G.v3.norm(G.v3.cross(dE, [0, 1, 0]));
@@ -35,15 +39,28 @@ export function osZivca(papila, zrklo, obroc, n) {
   const b1 = G.v3.add(G.v3.add(zac, G.v3.mul(d0, 0.33 * l)), G.v3.mul(s, 0.07 * l));
   const b2 = G.v3.add(G.v3.sub(kon, G.v3.mul(dE, 0.33 * l)), G.v3.mul(s, -0.07 * l));
   const t = [];
-  for (let i = 0; i <= n; i++) {
-    const u = i / n, v = 1 - u;
+  const us = [0, 0.004, 0.008, 0.013, 0.018, 0.024, 0.031, 0.04, 0.05, 0.062, 0.076];
+  for (let i = 1; i <= n; i++) if (i / n > us[us.length - 1] + 0.3 / n) us.push(i / n);
+  for (const u of us) {
+    const v = 1 - u;
     t.push([0, 1, 2].map((c) => v * v * v * zac[c] + 3 * v * v * u * b1[c] + 3 * v * u * u * b2[c] + u * u * u * kon[c]));
   }
   return t;
 }
 
-// Cev okoli osi (vzporedni prenos okvirja), z ravnima pokrovoma. Vrne { P: [[x,y,z]], N: [[x,y,z]], F: [i…] }.
+// Polmer živca po dolžini s (m) od začetka: v odprtini mrežnice in ob notranji ploskvi beločnice 1,25 mm, skozi kanal beločnice (lamina cribrosa) zožen na
+// 0,95 mm (pravi živec ≈ 1,5–1,9 mm), za beločnico (mielin, ovojnice) se razširi na POLMER (3,5 mm).
+export function polmerZivca(s) {
+  const g = (a, b) => { const t = Math.min(1, Math.max(0, (s - a) / (b - a))); return t * t * (3 - 2 * t); };
+  return 0.00125 + (0.00095 - 0.00125) * g(0.00005, 0.0004) + (POLMER - 0.00095) * g(0.0014, 0.0024);
+}
+
+// Cev okoli osi (vzporedni prenos okvirja), z ravnima pokrovoma. polmer: število ali funkcija dolžine od začetka osi.
+// Vrne { P: [[x,y,z]], N: [[x,y,z]], F: [i…] }.
 export function cev(os, polmer, stranic) {
+  const rs = [];
+  let dl = 0;
+  for (let i = 0; i < os.length; i++) { if (i) dl += G.v3.dist(os[i], os[i - 1]); rs.push(typeof polmer === "function" ? polmer(dl) : polmer); }
   const P = [], N = [], F = [];
   let x = null;
   const tang = (i) => G.v3.norm(G.v3.sub(os[Math.min(os.length - 1, i + 1)], os[Math.max(0, i - 1)]));
@@ -54,7 +71,7 @@ export function cev(os, polmer, stranic) {
     for (let j = 0; j < stranic; j++) {
       const a = (2 * Math.PI * j) / stranic;
       const n = G.v3.add(G.v3.mul(x, Math.cos(a)), G.v3.mul(y, Math.sin(a)));
-      P.push(G.v3.add(os[i], G.v3.mul(n, polmer)));
+      P.push(G.v3.add(os[i], G.v3.mul(n, rs[i])));
       N.push(n);
     }
   }
@@ -137,6 +154,48 @@ export function limbus(mb, mr, okvir, rL = LIMBUS) {
   return { rRob, premaknjenih: st };
 }
 
+// Krog 11 (ocena k5: »črne proge med žilnico in beločnico« v prerezu): HRA žilnica ponekod stoji do 1,3 mm od
+// notranje ploskve beločnice, mrežnica do 0,7 mm od žilnice (skozi režo se vidi temna notranjost). Vsako oglišče
+// notranje lupine (mn) se premakne radialno (iz središča O) za režo do zunanje lupine (mz) v svoji smeri: za
+// oglišče zunanje ploskve lupine je reža razdalja do mz, za oglišče notranje ploskve razdalja do mz manj debelina
+// lupine v tej smeri (zadetek lastne mreže); oglišče, ki je že v zunanji lupini (za zadetkom ni izstopa), ostane. Reža se zgladi po robovih med premaknjenimi oglišči (3-krat), lupina ostane enako debela in se
+// ustavi 0,03 mm pred zunanjo (PREKRIVANJE < 0: tanka mrežnica bi se sicer skrila za žilnico); ovira (beločnica pri mrežnici): kjer je pred zunanjo lupino, oglišče ostane. Brez spremembe: reža < 0,03 mm, > NAJVEC_REZE ali brez zadetka. Vrne
+// število premaknjenih oglišč.
+export const PREKRIVANJE = -0.00003, NAJVEC_REZE = 0.002;
+export function zapriRezo(mn, mz, O, { izven = null, ovira = null } = {}) {
+  const trik = (m) => { const t = []; for (const i of m.F) t.push(m.P[i * 3], m.P[i * 3 + 1], m.P[i * 3 + 2]); return new G.BVH(Float64Array.from(t)); };
+  const bz = trik(mz), bn = trik(mn), bo = ovira && trik(ovira);
+  const reza = mn.W.map((p) => {
+    if (izven && izven(p)) return 0;
+    const u = G.v3.norm(G.v3.sub(p, O)), o = G.v3.add(p, G.v3.mul(u, 2e-6));
+    const tz = bz.zarek(o, u, NAJVEC_REZE + 0.0016);
+    if (tz < 0) return 0;
+    // oglišče že v zunanji lupini (zadetek je izstop skozi njeno zunanjo ploskev): za njim ni več zadetka
+    if (bz.zarek(G.v3.add(o, G.v3.mul(u, tz + 2e-6)), u, 0.004) < 0) return 0;
+    // ovira (beločnica za mrežnico): lupina ne gre čeznjo, kjer zunanja (žilnica) leži za njo
+    if (bo) { const to = bo.zarek(o, u, tz); if (to > 0) return 0; }
+    const ts = bn.zarek(o, u, 0.0016);
+    const g = ts > 0 && ts < tz ? tz - ts : tz;
+    return g > 0.00003 && g < NAJVEC_REZE ? g : 0;
+  });
+  const sos = mn.W.map(() => []);
+  for (const kl of G.robovi(mn).keys()) { const a = Math.floor(kl / 4294967296), b = kl % 4294967296; sos[a].push(b); sos[b].push(a); }
+  let g = reza;
+  for (let k = 0; k < 3; k++) g = g.map((x, i) => { if (!x) return 0; const v = sos[i].filter((j) => g[j] > 0); return v.length ? 0.5 * x + 0.5 * v.reduce((s, j) => s + g[j], 0) / v.length : x; });
+  let st = 0;
+  const W = mn.W.map((p, i) => {
+    const d = reza[i] > 0 ? g[i] + PREKRIVANJE : 0;
+    if (d <= 0) return p;
+    st++;
+    return G.v3.add(p, G.v3.mul(G.v3.norm(G.v3.sub(p, O)), d));
+  });
+  for (let r = 0; r < mn.zvar.length; r++) { const w = W[mn.zvar[r]]; mn.P[r * 3] = w[0]; mn.P[r * 3 + 1] = w[1]; mn.P[r * 3 + 2] = w[2]; }
+  const N = (mn.W = W, G.normaleZvarjenih(mn)), nor = mn.A.get("NORMAL");
+  if (nor) for (let r = 0; r < mn.zvar.length; r++) for (let c = 0; c < 3; c++) nor.d[r * 3 + c] = N[mn.zvar[r]][c];
+  mn.spremenjeno = true;
+  return st;
+}
+
 // Papila: čep HRA (debel ≈ 1 mm, v prerezu dvignjen »kovanec«) se splošči: oglišča, ki ležijo bliže središču zrkla
 // kot notranja ploskev mrežnice v svoji smeri (žarek iz središča), gredo 0,02 mm pred to ploskev. Vrne središče čepa.
 export function sploscPapilo(mp, mm, O) {
@@ -191,6 +250,18 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
       if (!suho) { G.zapisi(doc, belocnica, belPrim, mb); G.zapisi(doc, roz, roz.getMesh().listPrimitives()[0], mr); }
     }
   }
+  // reže med lupinami (beločnica ← žilnica ← mrežnica), pred papilo (ta se splošči na premaknjeno mrežnico); ne ob
+  // papili (kanal živca, 2 mm)
+  const zil = vozl(/^optic_choroid/);
+  if (zil && mrez && roz) {
+    const O = okvirZrkla(W(belocnica), W(roz)).O, pc = sredina(W(papila));
+    const izven = (p) => G.v3.dist(p, pc) < 0.002;
+    const zp = zil.getMesh().listPrimitives()[0], rp = mrez.getMesh().listPrimitives()[0];
+    const mbz = G.preberi(belocnica, belPrim), mz = G.preberi(zil, zp), mrz = G.preberi(mrez, rp);
+    const s1 = zapriRezo(mz, mbz, O, { izven }), s2 = zapriRezo(mrz, mz, O, { izven, ovira: mbz });
+    por0.push(`reže: žilnica ${s1}, mrežnica ${s2} oglišč do sosednje lupine`);
+    if (!suho) { G.zapisi(doc, zil, zp, mz); G.zapisi(doc, mrez, rp, mrz); }
+  }
   let disk = null;
   if (mrez) {
     const pp = papila.getMesh().listPrimitives()[0];
@@ -201,7 +272,7 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
     if (!suho) { G.zapisi(doc, papila, pp, mp); papila.setExtras({ ...(papila.getExtras() || {}), tkivo: "mrežnica" }); }
   }
   const os = osZivca(disk || sredina(W(papila)), sredina(W(belocnica)), sredina(W(obroc)), telefon ? 14 : 28);
-  const c = cev(os, POLMER, telefon ? 10 : 16);
+  const c = cev(os, polmerZivca, telefon ? 10 : 16);
   const prim = zivec.getMesh().listPrimitives()[0];
   const m = G.preberi(zivec, prim);
   // vir atributov: oglišče stare mreže najbližje sredini osi (stran od zrkla in od kavlja)
@@ -239,7 +310,7 @@ async function glavni() {
     if (suho) continue;
     if (kljuc === "racunalnik" && (r.konec || r.limbus)) {
       if (r.konec) podatki.tkiva["živec"].konec = r.konec;
-      if (r.limbus && podatki.tkiva["roženica"]) podatki.tkiva["roženica"].limbus = { barva: "#a9b1bb", barva2: "#e9e4dc", moc: 0.5, ...(podatki.tkiva["roženica"].limbus || {}), ...r.limbus };
+      if (r.limbus && podatki.tkiva["roženica"]) podatki.tkiva["roženica"].limbus = { barva: "#c3cad3", barva2: "#e9e4dc", moc: 0.38, ...(podatki.tkiva["roženica"].limbus || {}), ...r.limbus };
       if (r.disk && podatki.tkiva["mrežnica"]?.mreznicaZile) podatki.tkiva["mrežnica"].mreznicaZile.disk = r.disk.map((x) => +x.toFixed(5));
     }
     const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(MAPA, ime));

@@ -322,8 +322,11 @@ def ocesne_misice(osnovni, cfg, tmp):
 # navznoter spodnja (SPOD_ODMIK pod podlago), oglišča z obema vrstama ploskev so rob kite (ROB_ODMIK: pero, ki se
 # zlije z beločnico). Velja samo blizu podlage (višina < ZOVOJ, mehko od ZOVOJ0) in na kitah (atribut KITA, če je).
 # Navitje se ne spreminja: po premiku je kita spet pravilna plošča (preverjeno: brez obrnjenih zunanjih ploskev).
-KITA_ODMIK = 0.00025
-ROB_ODMIK = 0.00003
+# Krog 11 (ocena k5: »kite so še nalepljene plošče z dvignjenimi robovi«): nižja kita (0,15 mm) in rob 0,04 mm POD
+# površino beločnice, odmik se gladi 5-krat po zgornjih/robnih robovih: kita se brez stopnice zlije v beločnico.
+KITA_ODMIK = 0.00015
+ROB_ODMIK = -0.00004
+GLAJENJE_ODMIKA = 5
 SPOD_ODMIK = 0.0001
 ZOVOJ, ZOVOJ0 = 0.0020, 0.0012
 PAHLJACA = 0.12
@@ -375,11 +378,11 @@ def kite_na_zrklo(objekti, cfg):
         h = np.where(ok, r - np.where(ok, rs, 0), np.inf)
         gor = _stran_oglisc(P, T, G)
         odmik = np.where(gor > 0.99, KITA_ODMIK, np.where(gor < 0.01, -SPOD_ODMIK, ROB_ODMIK))
-        # pero: zgornja oglišča ob robu kite nižje (dva koraka glajenja odmika po robovih samo med zgornjimi in robnimi)
+        # pero: zgornja oglišča ob robu kite nižje (GLAJENJE_ODMIKA korakov glajenja odmika po robovih samo med zgornjimi in robnimi)
         e = np.empty(len(me.edges) * 2, dtype=np.int32); me.edges.foreach_get("vertices", e); e = e.reshape(-1, 2)
         zg = gor > 0.01; e = e[zg[e[:, 0]] & zg[e[:, 1]]]
         st = np.bincount(e.ravel(), minlength=len(P)).astype(float)
-        for _ in range(2):
+        for _ in range(GLAJENJE_ODMIKA):
             acc = np.bincount(e[:, 0], weights=odmik[e[:, 1]], minlength=len(P)) + np.bincount(e[:, 1], weights=odmik[e[:, 0]], minlength=len(P))
             odmik = np.where(zg & (st > 0), 0.5 * odmik + 0.5 * acc / np.maximum(st, 1), odmik)
         w = _gladko(ZOVOJ - h, 0.0, ZOVOJ - ZOVOJ0) * ok
