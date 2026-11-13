@@ -63,6 +63,7 @@ def main():
     ap.add_argument("--preskoci", action="store_true", help="preskoči že izrisane")
     a = ap.parse_args(argv)
     izhod = os.path.abspath(a.izhod)
+    napake = []
     for slog in a.slog.split(","):
         for ident in a.id.split(","):
             ident = ident.strip()
@@ -74,6 +75,9 @@ def main():
                 import traceback
                 traceback.print_exc()
                 print("IKONE napaka:", slog, ident, e, flush=True)
+                napake.append(f"{slog}/{ident}")
+    if napake:  # z --python-exit-code 1 Blender konča z 1, izrisi.sh se ustavi pred pretvorbo
+        raise SystemExit("IKONE neuspešne: " + ", ".join(napake))
 
 
 main()

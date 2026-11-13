@@ -1188,6 +1188,8 @@ def m_molekule_zivljenja2():
     koren_rot(0, 0, 0)
 
 
+# m_telo, m_mikrobi, m_procesi, m_celice_telesa, m_druge_celice, m_enocelicarji in m_molekule_zivljenja so
+# prejšnje različice (en sam motiv); j je 13. 11. izbral vsebinsko jasnejše sestave (…2), stare ostanejo za primerjavo.
 MOTIVI = {
     # id: (skupina, funkcija, delež kadra)
     "biologija": ("bio", m_biologija, 0.8),
@@ -1223,7 +1225,7 @@ MOTIVI = {
     "vesolje": ("fiz", m_vesolje, 0.86),
 }
 
-DREVO = [  # (id, starš) za pregledno sliko
+DREVO = [  # (id, starš): zgradba drevesa; test/3d-ikone-drevo.test.js preveri, da pokrije vse MOTIVI
     ("biologija", None), ("kemija", None), ("fizika-vesolje", None), ("matematika", None),
     ("telo", "biologija"), ("mikrobi", "biologija"), ("rastline", "biologija"), ("procesi", "biologija"),
     ("atlas", "telo"), ("organi", "telo"), ("celice-telesa", "telo"),

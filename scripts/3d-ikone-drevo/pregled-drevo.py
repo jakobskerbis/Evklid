@@ -37,8 +37,12 @@ SK.update({"kemija": "kem", "atom": "kem", "molekule-kristali": "kem", "molekule
 mapa, izhod = sys.argv[1], sys.argv[2]
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONTB = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-f = ImageFont.truetype(FONT, 17)
-fb = ImageFont.truetype(FONTB, 19)
+try:
+    f = ImageFont.truetype(FONT, 17)
+    fb = ImageFont.truetype(FONTB, 19)
+except OSError:  # brez pisave DejaVu (ni Linux)
+    f = ImageFont.load_default(17)
+    fb = ImageFont.load_default(19)
 I, P, LEVO, VR = 168, 18, 250, 222
 W = LEVO + 4 * (I + P) + P
 H = len(VRSTE) * VR + 20

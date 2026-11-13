@@ -23,7 +23,8 @@ test("ikone drevesa: 31 motivov in 6 slogov", () => {
 });
 
 test("ikone drevesa: drevo v motivi.py pokrije vse motive", () => {
-  const drevo = [...motivi.slice(motivi.indexOf("DREVO = [")).matchAll(/\("([a-z-]+)", (None|"[a-z-]+")\)/g)].map((m) => m[1]);
+  const zacetek = motivi.indexOf("DREVO = [");
+  const drevo = [...motivi.slice(zacetek, motivi.indexOf("\n]", zacetek)).matchAll(/\("([a-z-]+)", (None|"[a-z-]+")\)/g)].map((m) => m[1]);
   assert.deepEqual([...drevo].sort(), [...IDS].sort());
 });
 
