@@ -221,36 +221,50 @@ test("App Store purchase gives the plan, other account is refused, refund notifi
   });
 });
 
-// Točka 1.2: po vračilu star podpisan nakup (isti JWS) naročnine ne oživi; nov nakup z novejšim podpisom jo.
-test("Apple: after REFUND the same signed purchase stays canceled, a newer one is accepted", async () => {
+// Točka 1.2: po vračilu star podpisan nakup (isti JWS) naročnine ne oživi; nov nakup jo. Starejša transakcija
+// (iOS jih ob zagonu dostavi po vrsti) ne prepiše novejšega obdobja.
+test("Apple: after REFUND the same signed purchase stays canceled, a new purchase and older redeliveries behave", async () => {
   await withServer(async ({ appClient, adult, store, base }) => {
     const c = appClient();
     const p = await adult(c);
     const token = (await c("/api/billing/store")).body.account_token;
-    const old = appleJws(tx({ appAccountToken: token, signedDate: Date.now() - 60_000 }));
-    const first = await c("/api/billing/apple", { body: { signed_transaction: old } });
-    assert.equal(first.status, 200, JSON.stringify(first.body));
-    // Ponovno pošiljanje istega nakupa, dokler je naročnina dejavna, deluje kot prej (»Obnovi nakupe«).
-    assert.equal((await c("/api/billing/apple", { body: { signed_transaction: old } })).status, 200);
-
-    const note = { notificationType: "REFUND", data: { bundleId: BUNDLE_ID, signedTransactionInfo: appleJws(tx({ appAccountToken: token, revocationDate: Date.now(), signedDate: Date.now() })) } };
-    const r = await fetch(`${base}/webhooks/app-store`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ signedPayload: appleJws(note) }) });
-    assert.equal(r.status, 200);
+    const post = (jws) => c("/api/billing/apple", { body: { signed_transaction: jws } });
     const status = () => store.db.prepare("SELECT sub_status FROM parents WHERE id = ?").get(p.id).sub_status;
-    assert.equal(status(), "canceled");
+    const notify = (type, t) =>
+      fetch(`${base}/webhooks/app-store`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ signedPayload: appleJws({ notificationType: type, data: { bundleId: BUNDLE_ID, signedTransactionInfo: appleJws(t) } }) }) });
+    const DAY = 86400000;
+    const oct = tx({ appAccountToken: token, transactionId: "2000000010", expiresDate: Date.now() - 2 * DAY, signedDate: Date.now() - 32 * DAY });
+    const nov = tx({ appAccountToken: token, transactionId: "2000000011", expiresDate: Date.now() + 28 * DAY, signedDate: Date.now() - 2 * DAY });
 
-    const again = await c("/api/billing/apple", { body: { signed_transaction: old } });
+    // Novejše obdobje, nato iOS znova dostavi starejšo transakcijo: ostane dejavno (prej jo je prepisala).
+    assert.equal((await post(appleJws(nov))).status, 200);
+    const older = await post(appleJws(oct));
+    assert.equal(older.status, 200);
+    assert.equal(older.body.older, true);
+    assert.equal(status(), "active");
+    // Isti nakup znova (»Obnovi nakupe«) deluje kot prej.
+    assert.equal((await post(appleJws(nov))).status, 200);
+
+    // Vračilo starejšega obdobja: obvestilo naročnino konča, trenutni (plačani) nakup jo znova vklopi.
+    assert.equal((await notify("REFUND", { ...oct, revocationDate: Date.now() })).status, 200);
+    assert.equal(status(), "canceled");
+    assert.equal((await post(appleJws(nov))).status, 200);
+    assert.equal(status(), "active");
+
+    // Vračilo trenutnega obdobja: isti podpisani nakup ostane zavrnjen, tudi brez datuma podpisa.
+    assert.equal((await notify("REFUND", { ...nov, revocationDate: Date.now(), signedDate: Date.now() })).status, 200);
+    assert.equal(status(), "canceled");
+    const again = await post(appleJws(nov));
     assert.equal(again.status, 409);
     assert.equal(again.body.revoked, true);
+    assert.equal((await post(appleJws({ ...nov, signedDate: undefined }))).status, 409);
     assert.equal(status(), "canceled");
-    assert.equal(store.db.prepare("SELECT status FROM store_subscriptions WHERE original_id = '1000000001'").get().status, "expired");
-    // Brez datuma podpisa nakup ne velja za novejšega.
-    assert.equal((await c("/api/billing/apple", { body: { signed_transaction: appleJws(tx({ appAccountToken: token })) } })).status, 409);
+    // Zakasnelo obvestilo za vrnjeno transakcijo je ne vklopi.
+    assert.equal((await notify("DID_RENEW", nov)).status, 200);
     assert.equal(status(), "canceled");
 
-    // Nov nakup (novejši podpis): naročnina spet dejavna.
-    const fresh = appleJws(tx({ appAccountToken: token, transactionId: "2000000002", signedDate: Date.now() + 5_000 }));
-    const renewed = await c("/api/billing/apple", { body: { signed_transaction: fresh } });
+    // Nov nakup (nova transakcija): naročnina spet dejavna.
+    const renewed = await post(appleJws(tx({ appAccountToken: token, transactionId: "2000000012", expiresDate: Date.now() + 30 * DAY, signedDate: Date.now() })));
     assert.equal(renewed.status, 200, JSON.stringify(renewed.body));
     assert.equal(status(), "active");
   });

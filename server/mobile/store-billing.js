@@ -79,19 +79,6 @@ export function appleState(tx, renewal = null, now = Date.now()) {
   };
 }
 
-// Aplikacija lahko pošlje star podpisan nakup (iz predpomnilnika naprave ali namerno), ki ne ve za poznejše vračilo
-// ali preklic. Naročnine, ki je shranjena kot nedejavna (vračilo, potek, neuspela obnova), tak nakup ne sme oživiti:
-// sprejmemo samo transakcijo, ki jo je Apple podpisal po zadnji spremembi shranjenega stanja (točka 1.2).
-// Nov nakup ali obnova ima novejši podpis in gre skozi; nakup drugega računa zavrne apply (other_account).
-const LIVE = new Set(["active", "grace", "pending"]);
-export function staleRevival(existing, tx, state, parentId) {
-  if (!existing || LIVE.has(existing.status) || !LIVE.has(state.status)) return false;
-  if (existing.parent_id && parentId && existing.parent_id !== parentId) return false;
-  const stored = Date.parse(String(existing.updated_at).replace(" ", "T") + "Z");
-  const signed = Number(tx.signedDate) || 0; // Apple ga vedno pošlje; brez njega nakupa ne štejemo za novejšega
-  return !(signed > stored);
-}
-
 export function mountStoreBilling(app, ctx, opts = {}) {
   const { db, getParent, accountView } = ctx;
   const env = opts.env || process.env;
@@ -116,6 +103,13 @@ export function mountStoreBilling(app, ctx, opts = {}) {
   };
   const parentByToken = (t) => (t ? db.prepare("SELECT * FROM parents WHERE store_account_token = ?").get(String(t).toLowerCase()) : null);
   const row = (provider, id) => db.prepare("SELECT * FROM store_subscriptions WHERE provider = ? AND original_id = ?").get(provider, id);
+  // Vrnjene in preklicane transakcije Apple (obvestilo REFUND/REVOKE ali revocationDate v podpisani transakciji):
+  // ključ v tabeli kv po id transakcije, vrednost je čas preklica pri Applu (brez spremembe sheme).
+  const revokedKey = (tx) => `apple_preklicano:${String(tx.transactionId)}`;
+  const markRevoked = (tx) => {
+    if (tx?.transactionId) db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(revokedKey(tx), String(Number(tx.revocationDate) || Date.now()));
+  };
+  const isRevoked = (tx) => !!(tx?.transactionId && db.prepare("SELECT 1 FROM kv WHERE key = ?").get(revokedKey(tx)));
 
   // Zapiše stanje naročnine iz trgovine in posodobi naročnino starša.
   // Vrne { ok } ali { conflict } (naročnina pripada drugemu računu ali starš že plačuje prek Stripa).
@@ -176,11 +170,15 @@ export function mountStoreBilling(app, ctx, opts = {}) {
     if (tx.bundleId !== BUNDLE_ID) return res.status(400).json({ error: "Nakup ni iz te aplikacije." });
     if (tx.environment === "Sandbox" && !testOk(p)) return res.status(400).json({ error: TEST_REFUSED, test_purchase: true });
     if (tx.appAccountToken && tx.appAccountToken.toLowerCase() !== accountToken(p)) return res.status(409).json({ error: "Ta nakup pripada drugemu računu Evklid.", other_account: true });
-    const state = appleState(tx);
-    if (staleRevival(row("apple", String(tx.originalTransactionId)), tx, state, p.id)) {
-      return res.status(409).json({ error: "Ta nakup ni več veljaven (vrnjen, preklican ali potekel). Če si naročnino kupil znova, čez nekaj minut izberi »Obnovi nakupe«.", revoked: true });
-    }
-    const out = apply("apple", String(tx.originalTransactionId), state, p.id);
+    // Točka 1.2: star podpisan nakup (iz predpomnilnika naprave ali namerno poslan) ne ve za poznejše vračilo.
+    // Vrnjena ali preklicana transakcija naročnine ne vklopi več; transakcija za starejše obdobje od shranjenega
+    // stanja ga ne prepiše (iOS ob zagonu znova dostavi nezaključene nakupe po vrsti, najprej starejše).
+    if (tx.revocationDate) markRevoked(tx);
+    else if (isRevoked(tx)) return res.status(409).json({ error: "Ta nakup je bil vrnjen ali preklican.", revoked: true });
+    const existing = row("apple", String(tx.originalTransactionId));
+    const older = existing && (!existing.parent_id || existing.parent_id === p.id) && Number(tx.expiresDate) < Date.parse(existing.expires_at);
+    if (older) return res.json({ ok: true, older: true, conflict: null, account: accountView(req, getParent(p.id)) });
+    const out = apply("apple", String(tx.originalTransactionId), appleState(tx), p.id);
     if (out.error) return res.status(400).json({ error: out.error });
     if (out.conflict === "other_account") return res.status(409).json({ error: "Ta nakup pripada drugemu računu Evklid.", other_account: true });
     res.json({ ok: true, conflict: out.conflict || null, account: accountView(req, getParent(p.id)) });
@@ -227,6 +225,8 @@ export function mountStoreBilling(app, ctx, opts = {}) {
     if (note.data.bundleId !== BUNDLE_ID || tx.bundleId !== BUNDLE_ID) return res.status(400).json({ error: "Napačna aplikacija." });
     const state = appleState(tx, renewal);
     if (["REFUND", "REVOKE"].includes(note.notificationType)) state.status = "expired";
+    if (["REFUND", "REVOKE"].includes(note.notificationType) || tx.revocationDate) markRevoked(tx);
+    else if (isRevoked(tx)) state.status = "expired"; // zakasnelo ali ponovljeno obvestilo za že vrnjeno transakcijo
     if (note.notificationType === "DID_FAIL_TO_RENEW" && state.status === "expired") state.status = note.subtype === "GRACE_PERIOD" ? "grace" : "billing_retry";
     // Testni nakup posodobi samo naročnino, ki jo je strežnik že sprejel (testni račun).
     if (tx.environment === "Sandbox" && !row("apple", String(tx.originalTransactionId))) return res.json({ ok: true });
