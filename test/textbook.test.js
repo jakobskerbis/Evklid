@@ -5,7 +5,7 @@ import path from "node:path";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { getTopic, listPaths, topicOrder, sameTopics } from "../server/curriculum.js";
-import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions } from "../server/textbook.js";
+import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions, formulaSheetSections } from "../server/textbook.js";
 import { checkLessonSource } from "../server/lesson-check.js";
 import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
 import { hasEngine } from "../public/sim/index.js";
@@ -230,7 +230,19 @@ test("textbook API and PDF page", async () => {
     assert.match(sheetHtml, /class="katex"/);
     assert.doesNotMatch(sheetHtml, /katex-error/);
     assert.match(await (await fetch(`${base}/ucbenik/MAT-OS-8/formule`)).text(), /Matematika: formule in konstante/);
-    assert.equal((await fetch(`${base}/ucbenik/MAT-TEK/formule`)).status, 404);
+    // Tekmovalni učbeniki imajo list kot šolski: gumb v kazalu, stran in tisk.
+    for (const k of ["MAT-TEK", "FIZ-TEK", "KEM-TEK"]) {
+      assert.equal(books.find((b) => b.key === k).formulas, true, k);
+      assert.ok(formulaSheetSections(k)?.sections.length, k);
+    }
+    const tekSheet = await fetch(`${base}/ucbenik/MAT-TEK/formule`);
+    assert.equal(tekSheet.status, 200);
+    const tekHtml = await tekSheet.text();
+    assert.match(tekHtml, /Matematika: formule in konstante/);
+    assert.match(tekHtml, /Tekmovanja in olimpijade/);
+    assert.doesNotMatch(tekHtml, /katex-error/);
+    assert.match(await (await fetch(`${base}/ucbenik/FIZ-TEK-SS/formule`)).text(), /Fizika: formule in konstante/);
+    assert.equal((await fetch(`${base}/ucbenik/BIO-SS/formule`)).status, 404);
     const hits = await (await fetch(`${base}/api/textbook/search?q=ohm`)).json();
     assert.equal(hits[0].id, "FIZ-OS-9/upor-in-ohmov-zakon");
 
