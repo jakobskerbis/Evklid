@@ -344,7 +344,7 @@ def _lok_vezi(L, n1, p1):
     return lok
 
 
-SIRINA_VEZI = 0.011  # največja širina srpaste vezi (m); n5: 20 mm je bilo od spredaj videti kot bleda deska
+SIRINA_VEZI = 0.006  # največja širina srpaste vezi (m); n5: 20 mm je bilo od spredaj videti kot bleda deska
 
 
 def _vez(L, n1, p1, telefon=False):
@@ -483,15 +483,16 @@ def jetra_deli(osnovni, cfg, tmp):
             for me in rz.values():
                 for v in me.vertices:
                     loc, nor, _, dL = bL.find_nearest(v.co)
-                    if loc is None or dL > 0.0003:
+                    if loc is None or dL > 0.012:
                         continue
+                    glob = math.exp(-(dL / 0.005) ** 2)  # n7: tudi stene med režnji tik pod površino (prej raztrgani robovi)
                     dI = bI.find_nearest(v.co)[3]
                     if dI is None or dI > 4 * sg:
                         continue
                     dO = min((b.find_nearest(v.co)[3] or 1.0) for b in bO)
                     u = math.exp(-((dI - dO) / sg) ** 2)
                     if u > 0.02:
-                        v.co = v.co - nor * gl * u; st += 1
+                        v.co = v.co - nor * gl * u * glob; st += 1
                 me.update()
             print(f"[organi] jetra: žleb ob repastem režnju, {st} oglišč, globina {gl * 1000:.1f} mm")
     for k, ime, del_ in (("desni", "Right lobe of liver (lastno)", "desni-rezenj"), ("levi", "Left lobe of liver (lastno)", "levi-rezenj"),
@@ -517,15 +518,32 @@ def jetra_deli(osnovni, cfg, tmp):
             ivc += [(p, r) for p, r in zip(P, R) if not ivc or p.z > ivc[-1][0].z + 1e-4]
     # krna le 6 mm pod repastim režnjem in nad kupolo (prej 22 in 12 mm: pod vrati je visela kot cev)
     zlo = min(v.co.z for v in rim["I"].vertices) - nast.get("ivcSpodaj", 0.006); zhi = max(v.co.z for v in L.vertices) + nast.get("ivcZgoraj", 0.006)
+    ZHI_IVC = [None]
     sred_ = sum((v.co for v in L.vertices), Vector()) / len(L.vertices)
     def k_jetrom(p):  # votla vena leži v žlebu na zadnji strani jeter (gola ploskev): ivcZleb proti osi jeter
         d = Vector((sred_.x - p.x, sred_.y - p.y, 0))
         return p + d.normalized() * nast.get("ivcZleb", 0.011)
     ivc = [(k_jetrom(p), max(r, 0.0105)) for p, r in ivc if zlo <= p.z <= zhi]
+    if nast.get("ivcPodKupolo", True) and len(ivc) > 3:
+        # n7 (ocena n6: votla vena štrli nad jetra kot škatla in se od spredaj kaže skozi kupolo): krn se konča 5 mm nad
+        # površino jeter nad svojo osjo (žarek navzgor iz sredine cevi), ne nad najvišjo točko kupole
+        bL_ = BVHTree.FromPolygons([v.co for v in L.vertices], [q.vertices for q in L.polygons])
+        sr = ivc[len(ivc) // 2][0]
+        zadetki = []
+        z0 = sr.z
+        for _ in range(8):
+            h = bL_.ray_cast(Vector((sr.x, sr.y, z0)), Vector((0, 0, 1)))
+            if h[0] is None:
+                break
+            zadetki.append(h[0].z); z0 = h[0].z + 0.0005
+        if zadetki:
+            vrh = max(zadetki) + nast.get("ivcNadJetri", 0.005)
+            ivc = [(p, r) for p, r in ivc if p.z <= vrh] or ivc
+            print(f"[organi] jetra: votla vena do {vrh:.4f} (površina jeter nad osjo {max(zadetki):.4f}, kupola {zhi - nast.get('ivcZgoraj', 0.006):.4f})")
     iP, iR = [p for p, _ in ivc], [r for _, r in ivc]
     for t_ in (False, True):
         P_, R_ = D.redci(*D.zgladi(iP, iR, 2), (lambda r: 0.012) if t_ else (lambda r: 0.005))
-        bm = bmesh.new(); D.cev(bm, P_, R_, 12 if t_ else 24, kupola=False)  # polna, ravno odrezana krna (prej odprta svetlina)
+        bm = bmesh.new(); D.cev(bm, P_, R_, 12 if t_ else 24, kupola=True, zacetek_kupola=True)  # n7: zaobljena konca (ocena n6: ploščat pokrov kot škatla)
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
         me = bpy.data.meshes.new("ivc"); bm.to_mesh(me); bm.free()
         if t_:
@@ -628,6 +646,11 @@ def jetra_deli(osnovni, cfg, tmp):
         import numpy as np
         tocke = [pc, pc + Vector((-0.85, -0.25, -0.45)).normalized() * 0.035, pc + Vector((0.8, -0.5, -0.2)).normalized() * 0.028,
                  porta_razcep, porta_razcep + Vector((-1, 0.2, 0.3)).normalized() * 0.024, porta_razcep + Vector((1, -0.35, 0.12)).normalized() * 0.02]
+        if nast.get("ravninaZolcnik", True):
+            # n7 (ocena n6: žolčnika ni v rezu): ravnina gre tudi skozi telo žolčnika; sotočje ven, portalni razcep in
+            # žolčnik imajo trojno utež (ravnina skoraj natanko skoznje), konci debel enojno
+            zc = sum((v.co for v in zb.vertices), Vector()) / len(zb.vertices)
+            tocke = tocke + [pc, pc, porta_razcep, porta_razcep, zc, zc, zc]
         Q = np.array([tuple(q) for q in tocke]); c_ = Q.mean(0)
         nr = Vector(np.linalg.svd(Q - c_)[2][2].tolist())  # ravnina najmanjših kvadratov skozi debla ven in portalne veje
         if nr.y < 0:
@@ -771,15 +794,16 @@ def jetra_ct(osnovni, cfg, tmp):
             for me in rz.values():
                 for v in me.vertices:
                     loc, nor, _, dL = bL.find_nearest(v.co)
-                    if loc is None or dL > 0.0003:
+                    if loc is None or dL > 0.012:
                         continue
+                    glob = math.exp(-(dL / 0.005) ** 2)  # n7: tudi stene med režnji tik pod površino (prej raztrgani robovi)
                     dI = bI.find_nearest(v.co)[3]
                     if dI is None or dI > 4 * sg:
                         continue
                     dO = min((b.find_nearest(v.co)[3] or 1.0) for b in bO)
                     u = math.exp(-((dI - dO) / sg) ** 2)
                     if u > 0.02:
-                        v.co = v.co - nor * gl * u; st += 1
+                        v.co = v.co - nor * gl * u * glob; st += 1
                 me.update()
             print(f"[organi] jetra: žleb ob repastem režnju, {st} oglišč, globina {gl * 1000:.1f} mm")
     for rr_ in (rez, rez_t):  # drobne luknje po šivanju mej (≤ 8 robov) se zapolnijo: reženj je zaprto telo

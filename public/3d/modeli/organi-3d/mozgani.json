@@ -20,7 +20,7 @@
    "senca": 0.85,
    "sencaBarva": "#6a1420",
    "aoExp": 3,
-   "rez": "#cfa59a",
+   "rez": "#c59a90",
    "brazde": 0.85,
    "brazdeBarva": "#9c2230",
    "vrh": 0.42,
@@ -40,7 +40,9 @@
    ],
    "mapa": false,
    "detajl": true,
-   "aoTekstura": 0.7
+   "aoTekstura": 0.7,
+   "rezSum": 0.05,
+   "rezLak": 0.1
   },
   "mali": {
    "barva": "#a85850",
@@ -444,7 +446,7 @@
    ],
    "sum": 0,
    "gladko": true,
-   "visina": 0.12
+   "visina": 0.0
   }
  },
  "pogledi": {
@@ -496,7 +498,9 @@
      "aoTekstura": 0.12
     },
     "skorja": {
-     "aoTekstura": 0.12
+     "aoTekstura": 0.12,
+     "lak": 0.08,
+     "sijaj": 0.08
     },
     "mali": {
      "aoTekstura": 0.12
@@ -518,13 +522,13 @@
      "sijaj": 0
     }
    },
-   "skrijDele": [
+   "skrijTkiva": [
+    "sredina"
+   ],
+   "skrijMreze": [
     "hipotalamus",
     "krizisce",
     "zuljevo"
-   ],
-   "skrijTkiva": [
-    "sredina"
    ]
   }
  },

@@ -172,9 +172,9 @@ test("n6: možgani – parasagitalna ravnina reza, risba 2048 px brez šuma, pre
   const r = m.prerez.ravnine[0];
   assert.ok(r.rocno && r.d <= -0.004 && r.d >= -0.008, `ravnina ${r.d}`);
   assert.ok(m.prerez.slika.gladko && m.prerez.slika.sum === 0, "risba brez šuma");
-  for (const d of ["hipotalamus", "krizisce", "zuljevo"]) assert.ok(m.pogledi.prerez.skrijDele.includes(d), d);
+  for (const d of ["hipotalamus", "krizisce", "zuljevo"]) assert.ok(m.pogledi.prerez.skrijMreze.includes(d) && !(m.pogledi.prerez.skrijDele || []).includes(d), d); // n7: deli ostanejo na seznamu
   const rez = beri("scripts", "atlas", "mozgani-rez-mri.py");
-  for (const n of ["REZ_SREDINA", "CETRTI_DELEZ", "zgornji_pas", "cisterne", "neozn", "REZ_PX"]) assert.ok(rez.includes(n), n);
+  for (const n of ["REZ_SREDINA", "CETRTI_DELEZ", "zgornji_pas", "cisterne", "neozn", "REZ_PX", "sotor", "zrast"]) assert.ok(rez.includes(n), n);
   assert.ok(beri("public", "3d", "organ.js").includes("rezSlika?.gladko"));
 });
 
@@ -184,6 +184,15 @@ test("n6: jetra in pljuča – orodja (žleb ob repastem režnju, ožja srpasta 
   const d = beri("scripts", "atlas", "drevesa.py");
   for (const n of ["debloDolzina", "lingula", "bazaZozi", "Pulmonary trunk (lastno)"]) assert.ok(d.includes(n), n);
   const j = json("jetra");
-  assert.ok(j.tkiva.jetra.lak <= 0.08 && j.tkiva.jetra.rezPresek.robBarva, "jetra: mat kapsula, rob kapsule na rezu");
+  assert.ok(j.tkiva.jetra.lak <= 0.08 && !j.tkiva.jetra.rezPresek.robBarva, "jetra: mat kapsula; n7: brez roba okoli vsakega režnja (črte med režnji na rezu)");
   assert.ok(j.tkiva.jetra.rezCelice[0].moc >= 0.45, "režnjiči na rezu");
+});
+
+test("n7: orodja – žolčnik v ravnini prereza jeter, votla vena pod kupolo, pljučno deblo medialno, deli na risbi ostanejo na seznamu", () => {
+  const g = beri("scripts", "atlas", "jetra_geometrija.py");
+  for (const n of ["ravninaZolcnik", "ivcPodKupolo", "ivcNadJetri"]) assert.ok(g.includes(n), n);
+  assert.ok(beri("scripts", "atlas", "drevesa.py").includes("sredinaX"));
+  const src = beri("public", "3d", "organ.js");
+  for (const n of ["skrijMreze", "naRisbi"]) assert.ok(src.includes(n), n);
+  assert.ok(beri("scripts", "atlas", "izvozi-organe.py").includes("zatilniNaprej"));
 });

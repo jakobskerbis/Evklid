@@ -236,10 +236,10 @@ test("n5: pregledovalnik in JSON – cevi kot obroči, neprerezane cevi skrite, 
   for (const s of ["samoPresek", "skritMat", "odprtaCev", "ovojDelov: true", "presek.cev"]) assert.ok(src.includes(s), s);
   const json = (o) => JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "3d", "modeli", "organi-3d", `${o}.json`), "utf8"));
   const p = json("pljuca"), j = json("jetra");
-  for (const t of ["dihalna-v", "pljucna-arterija", "pljucna-arterija-v", "pljucna-vena", "pljucna-vena-v"]) assert.ok(p.tkiva[t].rezPresek.cev?.zleb?.senca && !p.tkiva[t].rezPresek.samoPresek, t); // n6: zares prerezane (žleb), ne skrite
+  for (const t of ["dihalna-v", "pljucna-arterija", "pljucna-arterija-v", "pljucna-vena", "pljucna-vena-v"]) assert.ok((p.tkiva[t].rezPresek.cev?.zleb?.senca || p.tkiva[t].rezPresek.cev?.plosko) && !p.tkiva[t].rezPresek.samoPresek, t); // n6: žleb pri drobnih vejah; n7: velike žile ploska svetlina s steno
   assert.ok(p.tkiva.dihalna.rezPresek.odprtaCev && !p.tkiva.dihalna.rezPresek.samoPresek, "sapnik in glavni bronhiji: odprt žleb");
   assert.ok(p.prerez.ravnine[0].rocno && Math.abs(p.prerez.ravnine[0].n[1]) > 0.1, "ravnina skozi sapnik in glavna bronhija (nagnjena)");
-  for (const t of ["portalna", "arterija", "vena", "zolcevod"]) assert.ok(j.tkiva[t].rezPresek.cev?.zleb?.senca && !j.tkiva[t].rezPresek.samoPresek, t);
+  for (const t of ["portalna", "arterija", "vena", "zolcevod"]) assert.ok(j.tkiva[t].rezPresek.cev?.plosko && j.tkiva[t].rezPresek.luknjaBarva && !j.tkiva[t].rezPresek.samoPresek, t); // n7 (ocena n6: »glass tubes«): ploska svetlina s steno
   assert.ok(j.tkiva.zolcnik.rezPresek.cev && !j.tkiva.zolcnik.rezVotlina, "žolčnik: stena in svetlina, brez steklene votline");
 });
 
@@ -261,5 +261,6 @@ test("n6: cev.najRazteg izpusti vzdolž prerezano drobno vejo, pregledovalnik ri
   assert.equal(typeof p.tkiva.dihalna.rezPresek.odprtaCev, "object", "sapnik: notranja stena žleba v svoji barvi");
   assert.ok(p.tkiva["dihalna-v"].rezPresek.cev.najRazteg > 0);
   const j = JSON.parse(fs.readFileSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "jetra.json"), "utf8"));
-  assert.ok(j.tkiva.zolcnik.rezPresek.cev.zleb, "žolčnik: stena in odprta votlina");
+  assert.ok(j.tkiva.zolcnik.rezPresek.cev.plosko, "žolčnik: stena in ploska svetlina");
+  assert.ok(src.includes("presek.plosko"), "ploska svetlina brez preliva");
 });

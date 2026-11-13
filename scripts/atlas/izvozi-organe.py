@@ -90,7 +90,7 @@ ORGANI = {
         # Skorja iz MRI (OpenNeuro ds000001 fMRIPrep/FreeSurfer, CC0): Z-Anatomy vijuge (tkivo »skorja«) zamenjamo s
         # pialno površino ene anonimne prostovoljke/prostovoljca (lh/rh.pial), režnji iz parcelacije aparc, globina brazd
         # (sulc) potemni senco okolice. Mapa z datotekami: --mri <mapa> (sub-01-lh.pial, …-lh.sulc, …-lh.aparc.annot).
-        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina", glajenjeMej=5, silvij=0.007, zatilniZareza=0.065),
+        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina", glajenjeMej=1, silvij=0.007, zatilniZareza=0.075, zatilniNaprej=0.014),
         # Mali možgani iz segmentacije MRI istega osebka (aseg, oznake 7/8/46/47; scripts/atlas/mali-mozgani-mri.py): prava
         # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
         # glajenje: Taubin (krogi) proti stopnicam vokslov; zgornja pedunkla Z-Anatomy nista več ohranjena (od zadaj je bil
@@ -359,7 +359,7 @@ ORGANI = {
         # n5: oblika kril (drevesa.oblika_kril): zaobljene rebrne ploskve, stožčast vrh, vbočena baza z ostrim robom, srčna
         # vtisnina in zareza levo; pljučno deblo Z-Anatomy (spredaj pod lokom aorte) z razcepiščem v desno in levo arterijo
         drevesa=dict(veje=False, razmik=0.014, korak=0.004, vpliv=0.05, ubij=0.006, skrci=0.0007, rezenjTelefon=0.38, telefonListi=3,
-                     debloDolzina=0.04, oblika=dict(zaobli=0.85, zozi=0.42, zoziOd=0.3, kupola=0.018, rob=0.006, srce=(0.036, 0.010), lingula=0.012, bazaZozi=0.12)),
+                     debloDolzina=0.012, oblika=dict(zaobli=1.0, zozi=0.46, zoziOd=0.3, kupola=0.018, rob=0.006, srce=(0.05, 0.012), lingula=0.02, bazaZozi=0.2)),
         # Veje v pljučih (segmentni bronhiji in žile) imajo svoja tkiva: v celoti so skrite (konci bi štrleli skozi
         # površino režnjev), v prerezu vidne.
         tkiva=[
@@ -468,7 +468,7 @@ ORGANI = {
         # jetra_geometrija.jetra_deli: ena gladka površina (Z-Anatomy »Liver«), razrezana v štiri režnje brez vidnih šivov,
         # srpasta in obla vez, spodnja votla vena, portalna vena, jetrne vene, arterija in žolčni vodi kot drevesa (lastno).
         dodaj=["jetra_deli"], nedotakni=r"\(lastno\)",
-        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1, portaDeblo=0.046, ivcZleb=0.021, repastiZleb=0.003),  # n5: vrata vidna od zadaj, vena v žlebu
+        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1, portaDeblo=0.046, ivcZleb=0.018, repastiZleb=0.003),  # n5: vrata vidna od zadaj, vena v žlebu
         tkiva=[(r"segment of liver", "jetra"), (r"^Gallbladder", "zolcnik"), (r"Bile duct|bile", "zolcevod"),
                (r"portal", "portalna"), (r"artery", "arterija"), (r"vein", "vena"), (r"", "jetra")],
         deli=[(r"\((V|VI|VII|VIII)\)", "desni-rezenj"), (r"\((II|III)\)", "levi-rezenj"), (r"\(IV\)", "kvadratni-rezenj"), (r"\(I\)", "repasti-rezenj"),
@@ -928,7 +928,7 @@ def skorja_iz_mri(mapa, m, lo, hi):
             kun = np.flatnonzero(ime_o == "cuneus")
             vrh = kun[v[kun, 2] >= np.quantile(v[kun, 2], 0.9)]
             vrh = vrh[yp[vrh] <= np.quantile(yp[vrh], 0.3)]
-            A = np.array([yp[vrh].mean(), v[vrh, 2].mean()])
+            A = np.array([yp[vrh].mean() - m.get("zatilniNaprej", 0.0), v[vrh, 2].mean()])  # zatilniNaprej: zgornja točka črte naprej (n7)
             pol = float(yp[occ].max()); yb = pol - m.get("zatilniZareza", 0.045)
             pas_b = np.abs(yp - yb) < 0.003
             B = np.array([yb, float(np.quantile(v[pas_b, 2], 0.02))])

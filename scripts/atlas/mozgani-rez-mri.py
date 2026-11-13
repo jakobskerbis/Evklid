@@ -19,7 +19,7 @@ import numpy as np
 
 SKUPINE = {  # skupina → oznake aseg
     "likvor": [24], "stranski": [4, 5, 43, 44, 31, 63], "tretji": [14], "cetrti": [15],
-    "bela": [2, 41, 77], "krizisce": [85], "zuljevo": [251, 252, 253, 254, 255], "skorja": [3, 42], "maliBela": [7, 46],
+    "bela": [2, 41, 77], "krizisce": [85], "zuljevo": [250, 251, 252, 253, 254, 255], "skorja": [3, 42], "maliBela": [7, 46],
     "maliSiva": [8, 47], "deblo": [16], "talamus": [10, 49], "hipotalamus": [28, 60],
     "jedra": [11, 12, 13, 17, 18, 26, 50, 51, 52, 53, 54, 58], "neozn": [],  # neozn: tkivo v brain.mgz brez oznake aseg (dno 3. prekata)
 }
@@ -103,8 +103,8 @@ def main():
     vol = {k: np.isin(A, v) for k, v in SKUPINE.items() if v}
     # tkivo brez oznake: v brain.mgz svetlo, v aseg 0, največ 6 mm od medmožganov / 3. prekata / križišča (dno 3. prekata,
     # lijak, križišče vidnih živcev); drugje je to ostanek ovojnic
-    blizu = ndimage.binary_dilation(vol["hipotalamus"] | vol["tretji"] | vol["krizisce"] | vol["talamus"], iterations=6)
-    vol["neozn"] = (A == 0) & (T1 > 45) & blizu
+    blizu = ndimage.binary_dilation(vol["hipotalamus"] | vol["tretji"] | vol["krizisce"] | vol["talamus"], structure=np.ones((3, 3, 3), bool), iterations=4)
+    vol["neozn"] = ndimage.binary_opening((A == 0) & (T1 > 55) & blizu)  # n7: brez ravnih robov romba in drobirja
     verj = {k: ndimage.gaussian_filter(vol[k].astype(np.float32), 0.7) for k in kljuci}
     sloji = {}
     for ime, x in (("sredina", x0), ("para", x1)):
@@ -120,14 +120,35 @@ def main():
     skupina = np.argmax(Pk, 0)
     # ploskev reza je tkivo in prekati; likvor zunaj možganov (brazde, cisterne za deblom in pod malimi možgani) je
     # prozoren – za njim je prava površina ohranjene poloble (n5: cisterna je bila črna reža do podaljšane hrbtenjače)
-    # 4. prekat: aseg ga vodi navzdol do cisterne za podaljšano hrbtenjačo (n5: dolga črna reža); prekat je le zgornji,
-    # šotorasti del (CETRTI_DELEZ višine oznake), spodaj je odprt v cisterno → prozorno kot drug likvor zunaj možganov
+    # 4. prekat (n7, ocena n6: »black straight-edged square hole«): aseg ga vodi kot dolgo režo do cisterne. Narišemo šotor:
+    # dno ob možganskem deblu (zgornjih CETRTI_DELEZ višine oznake), streha se v loku dvigne do vrha (fastigij) na sredini
+    # višine in se spet spusti. Ostanek oznake nad koncem šotora je tkivo malih možganov, pod njim odprtina v cisterno.
     cet = Pk[K["cetrti"]] > 0.5
+    sotor = np.zeros_like(cet)
     if cet.any():
-        y_lo, y_hi = PY[cet].min(), PY[cet].max()
-        cisterna = cet & (PY < y_hi - float(os.environ.get("CETRTI_DELEZ", 0.45)) * (y_hi - y_lo))
-        Pk[K["likvor"]] = np.where(cisterna, Pk[K["cetrti"]] + Pk[K["likvor"]], Pk[K["likvor"]])
-        Pk[K["cetrti"]] = np.where(cisterna, 0.0, Pk[K["cetrti"]])
+        vr = np.flatnonzero(cet.any(1)); r0 = int(vr.min()); r1 = r0 + int(float(os.environ.get("CETRTI_DELEZ", 0.72)) * (vr.max() - vr.min()))
+        sir = [int(np.ptp(np.flatnonzero(cet[r])) + 1) if cet[r].any() else 0 for r in range(r0, r1 + 1)]
+        wmax = max(max(sir), mm(6.0))
+        c_lo, c_hi = np.flatnonzero(cet.any(0))[[0, -1]]
+        deblo_levo = Pk[K["deblo"]][r0:r1 + 1, max(0, c_lo - mm(8)):c_lo].mean() > Pk[K["deblo"]][r0:r1 + 1, c_hi:c_hi + mm(8)].mean()
+        for r in range(r0, r1 + 1):
+            cols = np.flatnonzero(cet[r])
+            if not len(cols):
+                continue
+            u = (r - r0) / max(1, r1 - r0)
+            w = max(2, int(wmax * (1 - abs(2 * u - 1) ** 1.6)))
+            if deblo_levo:
+                sotor[r, cols.min():cols.min() + w] = True
+            else:
+                sotor[r, max(0, cols.max() - w):cols.max() + 1] = True
+        sotor = ndimage.gaussian_filter(sotor.astype(np.float32), mm(0.45)) > 0.5
+        ostanek = cet & ~sotor
+        zgoraj = ostanek & (np.arange(n)[:, None] <= r1)
+        Pk[K["maliSiva"]] = np.where(zgoraj, 1.0, Pk[K["maliSiva"]])
+        Pk[K["likvor"]] = np.where(ostanek & ~zgoraj, 1.0, Pk[K["likvor"]])
+        Pk[K["cetrti"]] = np.where(ostanek, 0.0, Pk[K["cetrti"]])
+        Pk[:, sotor] = 0.0; Pk[K["cetrti"]][sotor] = 1.0
+        I = np.where(zgoraj | sotor, 76.0, I)
         skupina = np.argmax(Pk, 0)
     trdno = (Pk.sum(0) - Pk[K["likvor"]]) > 0.5
     trdno = ndimage.binary_opening(trdno, iterations=mm(0.25))
@@ -135,16 +156,14 @@ def main():
     if st > 1:  # drobni otoki (ostanki ovojnic) odpadejo
         vel = ndimage.sum(trdno, oznake, range(1, st + 1))
         trdno = np.isin(oznake, 1 + np.flatnonzero(vel > 0.002 * trdno.sum()))
-    # majhne zaprte cisterne ob sredinskih strukturah (za ploščo štirih gričev, pod žuljevim telesom) so temne vdolbine,
-    # ne okna: skoznje so se videli odrezani kosi mrež za ravnino
-    luknje = ndimage.binary_fill_holes(trdno) & ~trdno
-    oz, st = ndimage.label(luknje)
-    cisterne = np.zeros_like(trdno)
-    if st:
-        ob_sredini = ndimage.binary_dilation(iz_sredine, iterations=mm(1.5))
-        vel = ndimage.sum(luknje, oz, range(1, st + 1)); dotik = ndimage.maximum(ob_sredini, oz, range(1, st + 1))
-        cisterne = np.isin(oz, 1 + np.flatnonzero((vel < 25.0 * mm(1.0) ** 2) & (dotik > 0)))
-        trdno |= cisterne
+    # cisterne ob sredinskih strukturah (za ploščo štirih gričev, med deblom in malimi možgani, pod hipotalamusom) so
+    # zasenčene vdolbine, ne okna (n6: skoznje so se videle rezne ploskve mrež 6 mm globlje – »stopnice«, modra lisa
+    # senčnega režnja): zaprtje s polmerom 3,5 mm v pasu 5 mm ob sredinskih strukturah
+    r_z = mm(3.5)
+    zaprto = ndimage.distance_transform_edt(ndimage.distance_transform_edt(~trdno) <= r_z) > r_z
+    cisterne = zaprto & ~trdno & ndimage.binary_dilation(iz_sredine, iterations=mm(5))
+    cisterne = ndimage.binary_opening(cisterne, iterations=mm(0.3))
+    trdno |= cisterne
     alfa = ndimage.gaussian_filter(trdno.astype(np.float32), 0.8)
     # prekati (n6, ocena n5: »ena sama črna votlina, hidrocefalus«): v sredinski ravnini je stranski prekat za prosojno
     # pregrado (septum pellucidum) – narišemo pregrado in ozko režo pod žuljevim telesom; 3. prekat je reža v sredini,
@@ -155,9 +174,17 @@ def main():
     tretji = Pk[K["tretji"]] > 0.5
     disk = lambda r: (np.hypot(*np.mgrid[-r:r + 1, -r:r + 1]) <= r)
     siroki = ndimage.binary_opening(tretji, structure=disk(mm(1.2)))
-    temno = cisterne | (Pk[K["cetrti"]] > 0.5) | (tretji & ~siroki) | zgornji_pas(stranski, 0.7) | zgornji_pas(siroki, 0.8)
+    # n7 (ocena n6: »thin black ink lines«): pregrada (septum pellucidum) sivo rožnata, da se pod njo loči beli lok forniksa;
+    # široki del 3. prekata je zasenčena vdolbina (stena talamusa v senci) z medtalamično zrastjo (adhesio interthalamica)
+    # kot svetlejšim ovalom na sredini; akvedukt in šotor 4. prekata temna
+    zrast = np.zeros_like(siroki)
+    if siroki.sum() > mm(3.0) ** 2:
+        rr, cc = np.nonzero(siroki); r_c, c_c = rr.mean(), cc.mean()
+        zrast = siroki & ((((np.arange(n)[:, None] - r_c) / mm(2.6)) ** 2 + ((np.arange(n)[None, :] - c_c) / mm(3.8)) ** 2) <= 1.0)
+    temno = (Pk[K["cetrti"]] > 0.5) | (tretji & ~siroki) | zgornji_pas(stranski, 0.7)
     p_temno = np.clip(ndimage.gaussian_filter(temno.astype(np.float32), 1.0) * 1.15, 0, 1)
-    I = np.where(stranski, 92.0, np.where(siroki, 79.0 + 0.08 * (I - 40.0), I))
+    p_temno = np.maximum(p_temno, ndimage.gaussian_filter(0.62 * cisterne + 0.5 * (siroki & ~zrast), 1.5))
+    I = np.where(cisterne, 70.0, np.where(stranski, 70.0, np.where(siroki, 80.0, I)))
     I = ndimage.gaussian_filter(I, 0.7)
     # mali možgani: skorja nekoliko bolj rožnata, drevo bele možganovine (arbor vitae) iz T1 z večjim kontrastom
     mali = gladko(0.4, 0.6, Pk[K["maliSiva"]] + Pk[K["maliBela"]])
@@ -196,7 +223,7 @@ def main():
     ucna = ucna * (1 - p_temno[..., None]) + hexrgb("#1c1a22")[None, None] * p_temno[..., None]
     b2 = shrani(ucna, "mozgani-rez-ucne.webp", 88)
     org["prerez"]["slika"] = {"slika": "mozgani-rez.webp", "ucna": "mozgani-rez-ucne.webp", "lo": [round(float(lo[0]), 5), round(float(lo[1]), 5)],
-                              "mera": [round(mera, 5), round(mera, 5)], "sum": 0, "gladko": True, "visina": 0.12}
+                              "mera": [round(mera, 5), round(mera, 5)], "sum": 0, "gladko": True, "visina": 0.0}
     json.dump(org, open(pot_json, "w"), ensure_ascii=False, indent=1)
     print(f"rez iz MRI: sredinska ravnina x = {x0 * 1000:.1f} mm, ravnina vijug {x1 * 1000:.1f} mm, {n} px, {mera / n * 1000:.2f} mm/px, lo {lo.round(4)}, mera {mera:.4f}; "
           f"{b1} B in {b2} B; delež sredinske ravnine {iz_sredine.mean():.2f}")
