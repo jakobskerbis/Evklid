@@ -227,6 +227,14 @@ const vec3 = (c) => {
   return `vec3(${fl(+b.r.toFixed(4))}, ${fl(+b.g.toFixed(4))}, ${fl(+b.b.toFixed(4))})`;
 };
 
+// zamik (tkivo ali pogled, krog 10): globinski zamik notranje plasti, ki se tik pod površino dotika zunanje (žilnica
+// pod beločnico na poenostavljeni mreži telefona: črne pikice v beločnici); zunanja plast tam zmaga v testu globine.
+function zamakni(m, z) {
+  m.polygonOffset = z > 0;
+  m.polygonOffsetFactor = z;
+  m.polygonOffsetUnits = z;
+}
+
 // Material s pomnjenim videzom tudi v kopiji (pregledovalnik ob izbiri dela material klonira in mu doda sij).
 function ohraniSencilnik(m) {
   const clone = m.clone.bind(m);
@@ -365,7 +373,8 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${GLSL_SUM}${celice || t.konec ? GLSL_CEL : ""}`)
       .replace(
         "#include <color_fragment>",
-        `float orgAO = mix( 1.0, pow( vOrgAO, ${fl(t.aoExp ?? 1.6)} ), ${fl(ao)} );
+        `${t.kita ? kitaGLSL(t.kita) : "float orgKita = 0.0;"}
+        float orgAO = mix( 1.0, pow( vOrgAO, ${fl(t.aoExp ?? 1.6)} ), ${fl(ao)} );
         diffuseColor.rgb *= orgAO;${t.znotraj ? ` if ( !gl_FrontFacing ) diffuseColor.rgb *= ${fl(t.znotraj)}; // notranjost cevi (žile) temnejša` : ""} // barve oglišč so podatki (R senca okolice, G globina brazde), ne množilnik barve
         float orgFw = length( fwidth( vOrgPos ) );
         float orgLod = clamp( 1.5 - orgFw * ${fl(f)} * 2.0, 0.0, 1.0 );
@@ -397,7 +406,9 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       .replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
-        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * ${pbr ? "0.08" : "0.25"}, 0.04, 1.0 );`,
+        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * ${pbr ? "0.08" : "0.25"}, 0.04, 1.0 );${
+          t.kita ? `\n        roughnessFactor = mix( roughnessFactor, ${fl(t.kita.hrap ?? 0.32)}, orgKita );` : ""
+        }`,
       )
       .replace(
         "#include <normal_fragment_maps>",
@@ -417,7 +428,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       )
       .replace(
         "#include <aomap_fragment>",
-        `#include <aomap_fragment>
+        `#include <aomap_fragment>${t.kita ? `\n        #ifdef USE_CLEARCOAT\n        material.clearcoat *= 1.0 - ${fl(1 - (t.kita.lak ?? 0.5))} * orgKita;\n        #endif` : ""}
         {
           float orgNV = saturate( dot( geometryNormal, geometryViewDir ) );
           float orgAOo = mix( 1.0, vOrgAO, ${fl(t.aoOkolje ?? 1)} ); // aoOkolje 0: brez zapečene sence v okolici (enakomerna mrežnica)
@@ -429,7 +440,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       .replace(
         "#include <opaque_fragment>",
         `float orgFr = 1.0 - saturate( abs( dot( normalize( normal ), normalize( vViewPosition ) ) ) );
-        outgoingLight += ${vec3(t.robBarva || t.barva || "#ffffff")} * ${fl(rob)} * pow( orgFr, 1.8 ) * mix( 1.0, vOrgAO, ${fl(t.aoOkolje ?? 1)} );
+        outgoingLight += ${t.kita ? `mix( ${vec3(t.robBarva || t.barva || "#ffffff")} * ${fl(rob)}, ${vec3(t.kita.robBarva || "#ffffff")} * ${fl(t.kita.rob ?? 0.1)}, orgKita )` : `${vec3(t.robBarva || t.barva || "#ffffff")} * ${fl(rob)}`} * pow( orgFr, 1.8 ) * mix( 1.0, vOrgAO, ${fl(t.aoOkolje ?? 1)} );
         ${
           presevnoList || presevnoMasca
             ? `#ifdef USE_ENVMAP
@@ -446,8 +457,21 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
+  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.kita ? `-ki${JSON.stringify(t.kita)}` : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
   return ohraniSencilnik(m);
+}
+
+// kita (tkivo mišice, krog 10): kita ob narastišču je v pečeni barvi bela (recept »kita«, atribut KITA). Ista snov kot
+// mišica (lak, rob, hrapavost) jo je risala kot sivkasto sijočo ploščo z rožnatim robom ob beločnici. Delež kite iz
+// nasičenosti teksture (bela kita malo, rdeča mišica zelo nasičena: meja [s0, s1]) prevzame barvo, hrapavost, lak in
+// rob beločnice, zato se pero kite zlije z beločnico. { barva, hrap, lak (delež laka mišice), rob, robBarva, meja, moc }
+function kitaGLSL(k) {
+  const [s0, s1] = k.meja || [0.3, 0.55];
+  return `float orgKita = 0.0;
+        { vec3 kC = diffuseColor.rgb; float kMx = max( max( kC.r, kC.g ), kC.b ); float kMn = min( min( kC.r, kC.g ), kC.b );
+          orgKita = ${fl(k.moc ?? 1)} * ( 1.0 - smoothstep( ${fl(s0)}, ${fl(s1)}, ( kMx - kMn ) / max( kMx, 1e-4 ) ) ) * smoothstep( 0.04, 0.16, kMx );
+          float kL = dot( kC, vec3( 0.2126, 0.7152, 0.0722 ) );
+          diffuseColor.rgb = mix( kC, ${vec3(k.barva || "#efe9e1")} * clamp( kL / ${fl(k.svetlost ?? 0.6)}, 0.85, 1.08 ), orgKita ); }`;
 }
 
 // Žilice mehke možganske ovojnice (samo senčilnik, enako na telefonu in računalniku): izočrte, širina v metrih,
@@ -526,7 +550,7 @@ function limbusGLSL(t, merilo, izh, del) {
   const r = `{ vec3 lA = normalize( ${v3(z.os, true)} ); vec3 lD = vOrgPos - ${v3(z.sredisce)}; lD -= lA * dot( lD, lA );
           float lT = smoothstep( ${fl(+(z.r0 * merilo).toFixed(6))}, ${fl(+(z.r1 * merilo).toFixed(6))}, length( lD ) ); lT *= lT;`;
   return del === "barva"
-    ? `${r} diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(z.barva || "#e6e3dd")}, lT ); }`
+    ? `${r} diffuseColor.rgb = mix( diffuseColor.rgb, ${z.barva2 ? `mix( ${vec3(z.barva || "#e6e3dd")}, ${vec3(z.barva2)}, smoothstep( 0.45, 1.0, lT ) )` : vec3(z.barva || "#e6e3dd")}, lT ); }`
     : `${r} diffuseColor.a = mix( diffuseColor.a, ${fl(z.moc ?? 0.9)}, lT ); }`;
 }
 
@@ -838,9 +862,13 @@ ${
               ? `{ // plasti stene na rezu (krog 8, slog-vzor srce-prerez-1): endokard tanka bleda sijoča črta, pod njim svetlejši
           // subendokardni pas, sredina stene temnejša z vlakni, epikard tanka prosojna bleda plast nad mišico ali maščobo
           float orgAa = max( fwidth( orgDd ), ${dm(0.00004)} );
-          float orgLe = ( 1.0 - smoothstep( ${dm(pl.endo?.sirina ?? 0.00025)} - orgAa, ${dm(pl.endo?.sirina ?? 0.00025)} + orgAa, orgDd ) ) * ( 1.0 - orgEp );
-          float orgLs = ( 1.0 - smoothstep( ${dm((pl.subendo?.sirina ?? 0.0012) * 0.35)}, ${dm(pl.subendo?.sirina ?? 0.0012)}, orgDd ) ) * ( 1.0 - orgEp );
-          float orgLp = ( 1.0 - smoothstep( ${dm(pl.epi?.sirina ?? 0.0003)} - orgAa, ${dm(pl.epi?.sirina ?? 0.0003)} + orgAa, orgDd ) ) * orgEp;
+          // krog 9 (ocena: »bledi zavihki stene levega preddvora na rezu telefona«): tanka stena preddvorov (1–2 mm) je
+          // tanjša od voksla razdalje, zato je razdalja ponekod globoko negativna (»zunaj stene«), čeprav mreža steno
+          // ima; tam bi bil cel pokrov endokard + subendokard (bled zavihek). Pod −0,3 mm plasti ugasnejo, ostane mišica.
+          float orgZn = smoothstep( ${dm(-0.0006)}, ${dm(-0.0003)}, orgDd );
+          float orgLe = ( 1.0 - smoothstep( ${dm(pl.endo?.sirina ?? 0.00025)} - orgAa, ${dm(pl.endo?.sirina ?? 0.00025)} + orgAa, orgDd ) ) * ( 1.0 - orgEp ) * orgZn;
+          float orgLs = ( 1.0 - smoothstep( ${dm((pl.subendo?.sirina ?? 0.0012) * 0.35)}, ${dm(pl.subendo?.sirina ?? 0.0012)}, orgDd ) ) * ( 1.0 - orgEp ) * orgZn;
+          float orgLp = ( 1.0 - smoothstep( ${dm(pl.epi?.sirina ?? 0.0003)} - orgAa, ${dm(pl.epi?.sirina ?? 0.0003)} + orgAa, orgDd ) ) * orgEp * orgZn;
           diffuseColor.rgb *= 1.0 - ${fl(pl.globina ?? 0.2)} * smoothstep( ${dm(pl.globinaOd ?? 0.0008)}, ${dm(pl.globinaDo ?? 0.004)}, orgDd ) * ( 1.0 - orgFa );
           diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(pl.subendo?.barva || "#c06a5e")}, ${fl(pl.subendo?.moc ?? 0.3)} * orgLs * ( 1.0 - orgFa ) );
           diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(pl.endo?.barva || "#efd2c6")}, ${fl(pl.endo?.moc ?? 0.75)} * orgLe );
@@ -1311,6 +1339,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       mm.clearcoat = o.lak ?? mm.userData.osnova.clearcoat;
       mm.clearcoatRoughness = o.lakHrap ?? mm.userData.osnova.lakHrap; // npr. prerez: gladek moker endokard
       if (mm.aoMap) mm.aoMapIntensity = o.aoTekstura ?? t.aoTekstura ?? 1; // pogled lahko omili pečeno senco (prerez: ploskve, ki jih je pri peki zakrivala odrezana polovica)
+      zamakni(mm, o.zamik ?? t.zamik ?? 0);
       const op = o.prosojnost ?? t.prosojnost ?? 1;
       const side = o.dvostransko ?? (t.dvostransko || kljuc !== tk) ? THREE.DoubleSide : THREE.FrontSide;
       if (mm.opacity !== op || mm.side !== side) {
@@ -1327,6 +1356,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       u.mat.color.copy(u.barva);
       if (o.ucnaBarva) u.mat.color.set(o.ucnaBarva); // pogled: npr. temna notranjost zrkla skozi zenico tudi v učnih barvah
       if (o.svetlost) u.mat.color.multiplyScalar(o.svetlost);
+      zamakni(u.mat, o.zamik ?? t.zamik ?? 0);
       const op = o.ucnaProsojnost ?? t.ucnaProsojnost ?? o.prosojnost ?? t.prosojnost ?? 1; // ucnaProsojnost: roženica v učnih barvah vidna
       const side = o.dvostransko ?? (t.dvostransko || znotrajDela.has(u.id)) ? THREE.DoubleSide : THREE.FrontSide;
       if (u.mat.opacity !== op || u.mat.side !== side) {
