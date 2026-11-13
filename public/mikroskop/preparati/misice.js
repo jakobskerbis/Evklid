@@ -25,7 +25,7 @@ T tkivo(vec2 p, float px) {
   float W = 47.0;
   float i = floor(wy / W);
   // meja med vlaknoma i in i+1 je rahlo valovita (vlakna niso povsem enako debela po vsej dolžini)
-  #define MEJA_VL(n) ((n + 1.0) * W + 16.0 * (h12(vec2(n, 8.0)) - 0.5) + 7.0 * (sum(vec2(z.x / 170.0, n * 3.1)) - 0.5))
+  #define MEJA_VL(n) (((n) + 1.0) * W + 16.0 * (h12(vec2((n), 8.0)) - 0.5) + 7.0 * (sum(vec2(z.x / 170.0, (n) * 3.1)) - 0.5))
   float e1 = MEJA_VL(i);
   float e0 = MEJA_VL(i - 1.0);
   if (wy > e1) { i += 1.0; e0 = e1; e1 = MEJA_VL(i); }
@@ -63,7 +63,7 @@ T tkivo(vec2 p, float px) {
     float kk = floor(z.x / 30.0);
     for (int d = -1; d <= 1; d++) {
       float m = kk + float(d);
-      vec4 g = h42(vec2(m, i * 2.0 + float(sgn)));
+      vec4 g = h42(vec2(m, i * 3.0 + float(sgn)));   // ×3: zgornja jedra vlakna i niso zrcalna spodnjim vlakna i+1
       if (g.z > 0.6) continue;
       vec2 c = vec2((m + 0.5 + 0.6 * (g.x - 0.5)) * 30.0, yj);
       vec2 q = vec2(z.x, wy) - c;
@@ -123,12 +123,13 @@ T tkivo(vec2 p, float px) {
   // interkalarni disk: tanka temna stopničasta prečna črta
   float stop = 0.6 * step(0.5, fract(dot(p, vec2(-smer.y, smer.x)) / 5.0 + h.w));   // stopničasta črta
   // v.rob je v smeri vlakna stisnjen (vor z raztegom 5,2), zato je prava razdalja do diska 5,2 · v.rob
-  if (disk) f.dye += vec3(0.16, 0.22, 0.0) * crta(5.2 * v.rob - 0.4 - stop, 0.3, px);
+  // disk je znak, ki ga učenec išče: ~1 µm debel, temno eozinofilen (pregled PR #644: prej skoraj neviden pri 400×)
+  if (disk) f.dye += vec3(0.24, 0.4, 0.0) * crta(5.2 * v.rob - 0.6 - stop, 0.55, px);
   // osrednje jedro s svetlim okoljem
   vec2 q = rot(-kot) * (p - v.c);
   q.x += 6.0 * (h.x - 0.5);
   float halo = sdElipsa(q, vec2(9.5, 2.7));
-  f.dye.y -= 0.18 * pokrij(halo, px * 2.0 + 0.6);
+  f.dye.y -= 0.24 * pokrij(halo, px * 2.0 + 0.6);
   if (h.y < 0.75) {
     float dj = sdElipsa(q, vec2(5.2 + 1.2 * h.w, 2.0)) + 0.2 * (sum(q + h.zw * 9.0) - 0.5);
     float jk = pokrij(dj, px);

@@ -154,21 +154,23 @@ T tkivo(vec2 p, float px) {
     if (d < d1) { d2 = d1; d1 = d; c1 = c; id1 = id; th1 = th; k1 = k; } else if (d < d2) d2 = d;
   }
   vec4 h = h42(id1);
+  // cevke so okrogle (ne mnogokotniki): kjer so sosede daleč, je med njimi intersticij (pregled PR #644)
+  float Rt = 24.5 + 4.0 * h12(id1 + 5.0);
   // vezivo je tanko, v kotih med cevkami širše (tam so peritubulne kapilare z eritrociti)
   float vez = 1.0 + 1.0 * smoothstep(0.5, 0.8, sum(p / 23.0 + 4.0)) + 0.4 * max(0.0, d1 - 30.0);
-  float stena = 0.5 * (d2 - d1);                  // približna razdalja do meje cevke (µm)
+  float stena = min(0.5 * (d2 - d1), Rt - d1);     // približna razdalja do meje cevke (µm)
   if (stena < vez) {
     t.snov = S_KOLAGEN; t.dye = vec3(0.06, 0.34, 0.0);
     vec4 e = krogci(p, 6.0, 2.6, 3.0, 0.75, 13.0);
     if (e.x < 0.0 && stena > 0.4 && (vez > 1.8 || sum(p / 45.0 + 11.0) > 0.58)) { t.dye.y = 0.75; t.snov = S_ERITROCIT; t.meja = -e.x; }
     // jedra fibroblastov in endotelija v intersticiju
-    vec4 fj = krogci(p, 11.0, 1.4, 1.9, 0.5, 15.0);
+    vec4 fj = krogci(p, 11.0, 1.4, 1.9, 0.3, 15.0);
     if (fj.x < 0.0) { t.dye.x = 0.85; t.snov = S_JEDRO; t.jedro = fj.x; }
     return t;
   }
   bool prox = h.x < 0.78;
   vec2 q = rot(th1) * (p - c1) / vec2(k1, 1.0);  // krajevni prostor cevke (krožna)
-  float Rb = 0.5 * (d1 + d2);                      // polmer do meje v tej smeri (krajevne enote)
+  float Rb = min(0.5 * (d1 + d2), Rt);             // polmer do meje v tej smeri (krajevne enote)
   float f = d1 / Rb;                                // 0 v središču, 1 na meji
   float a = atan(q.y, q.x);
   // svetlina: proksimalne nepravilna, zvezdasta, mestoma skoraj zaprta; distalne okrogla in odprta
@@ -178,13 +180,20 @@ T tkivo(vec2 p, float px) {
   fl += 0.05 * (sum(p / 3.0 + h.zw * 9.0) - 0.5);
   float rlum = (f - fl) * Rb;                       // razdalja od svetline (µm, približno)
   if (rlum < 0.0) {
-    t.snov = S_PLAZMA; t.dye = vec3(0.0, prox ? 0.1 : 0.02, 0.0);
-    if (prox) t.dye.y += 0.12 * smoothstep(-4.0, -0.5, rlum) * sumL(q * vec2(1.0, 3.0), 0.6, px);   // odtrgani ščetkasti rob
+    t.snov = S_PLAZMA; t.dye = vec3(0.0, prox ? 0.08 : 0.02, 0.0);
+    if (prox) {
+      // ščetkasti rob: 1,5–2,5 µm širok svetlo rožnat, radialno progast pas ob svetlini, mestoma odtrgan
+      float sir = 1.5 + 1.0 * sum(vec2(a * 3.0, h.y * 9.0));
+      float bb = smoothstep(-sir - 0.4, -sir + 0.4, rlum) * (0.75 + 0.25 * smoothstep(0.35, 0.6, sum(q / 4.0 + h.zw * 5.0)));
+      float proge = 0.75 + 0.25 * sin(a * Rb * 2.6 + 3.0 * sumL(q, 0.8, px));
+      t.dye.y = mix(t.dye.y, 0.36 * proge, bb);
+      if (bb > 0.5) t.snov = S_CITO;
+    } else t.dye.y = mix(t.dye.y, 0.4, smoothstep(-1.5 * px, 0.0, rlum));   // gladek rob svetline
     return t;
   }
   // celice po obodu: okroglo jedro, meje med celicami komaj vidne (proksimalne) ali jasne (distalne)
   float w = prox ? 11.0 : 8.5;
-  float R0 = 0.5 * SC * (0.85 + 0.3 * h12(id1 + 3.0));
+  float R0 = min(0.5 * SC * (0.85 + 0.3 * h12(id1 + 3.0)), Rt);
   float n = max(5.0, floor(6.2832 * R0 * sqrt(0.5 * (k1 * k1 + 1.0)) * (0.5 + 0.5 * fl0) / w + 0.5));
   float u = (a / 6.2832 + 0.5) * n + 0.25 * (sum(vec2(f * 6.0, h.x * 9.0)) - 0.5);
   float ci = floor(u);
@@ -251,7 +260,10 @@ T tkivo(vec2 p, float px) {
   float sir = 2.0 + 2.5 * sp + 9.0 * smoothstep(0.62, 0.9, sum(w / 60.0 + 4.0));   // mestoma odebeljeni vozli pregrad
   sir += 0.14 * max(0.0, v.d - 88.0);                // zaobljeni vogali alveolov (trikotni vozli, kjer se stikajo tri pregrade)
   float odp = sum(w / 70.0 + 13.0);
-  sir *= smoothstep(0.66, 0.6, odp) + 1.6 * smoothstep(0.6, 0.63, odp) * smoothstep(0.66, 0.63, odp);
+  // prosti konec pregrade je zaobljen in rahlo odebeljen (gumb), ne odrezan (pregled PR #644)
+  float Rk = sir * (1.0 + 0.6 * smoothstep(0.58, 0.63, odp));
+  float dE = (0.66 - odp) * 140.0;                   // približna razdalja do konca (µm)
+  sir = dE >= Rk ? Rk : sqrt(max(0.0, dE * (2.0 * Rk - dE)));
   if (v.rob > sir) {
     // zrak; občasen alveolarni makrofag
     vec4 m = krogci(p, 140.0, 8.0, 10.0, 0.12, 31.0);

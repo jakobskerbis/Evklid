@@ -228,11 +228,11 @@ T tkivo(vec2 p, float px) {
   if (d < 92.0) {
     Vor v = vor(p + vec2(0.0, 3.0 * sin(p.x / 7.0)), 11.5, vec2(1.0, 6.0), 0.0, 0.45);
     float rob = min(v.rob, min(d - 21.0, 92.0 - d) * 1.0 + 0.0);
-    if (v.rob < 1.2 && sum(vec2(p.x / 6.0, p.y / 25.0)) > 0.5) return t;   // ozki zračni prostori med stebričastimi celicami
+    if (v.rob < 1.2 && sum(vec2(p.x / 6.0, p.y / 25.0)) > 0.64) return t;   // ozki zračni prostori med stebričastimi celicami (redki)
     v.rob = rob;
     T c = rCelica(v, p, 0.4, sten, px);
-    // kloroplasti ob stenah, v zgornjem in spodnjem delu celice pa jih vidimo od zgoraj (okrogle ploščice)
-    if (c.snov != S_STENA && rob > 0.6 && (rob < 3.4 || sum(p / 6.0 + 2.0) > 0.55)) {
+    // kloroplasti v vrsti ob stenah dolgih stebričastih celic; sredina celice (vakuola) je svetla (pregled PR #644)
+    if (c.snov != S_STENA && rob > 0.6 && rob < 3.4) {
       vec4 kk = krogci(p, 2.9, 1.0, 1.0, 0.95, 79.0);
       kloroplastL(c, p, kk.yz, abs(v.nb.x) > 0.5 ? vec2(0.0, 1.0) : vec2(1.0, 0.0), 2.1 + 0.4 * fract(kk.w * 1.37), px);
     }

@@ -251,7 +251,7 @@ T tkivo(vec2 p, float px) {
     return t;
   }
   float rq = length(bq);
-  float rl = blum ? 1.3 * smoothstep(0.45, 0.85, sum(vec2(bk, d / 40.0))) : 0.0;   // svetlina je ozka reža, mestoma zaprta
+  float rl = blum ? 0.5 + 1.5 * smoothstep(0.45, 0.85, sum(vec2(bk, d / 40.0))) : 0.0;   // svetlina je ozka reža, mestoma zaprta
   if (rq < rl) { T t = prazno(); t.snov = S_PLAZMA; t.dye = vec3(0.03, 0.24, 0.0); return t; }
   float H = bR - rl;
   float dl = rq - rl;
@@ -290,13 +290,13 @@ T tkivo(vec2 p, float px) {
   } else {
     // glavna celica: bazofilna (modro-vijolična) zrnata citoplazma, okroglo jedro blizu baze
     t.dye = vec3(0.36 + 0.12 * dno + 0.16 * sumL(p, 0.9, px), 0.24, 0.0);
-    jd = 0.74; jr = vec2(2.3, 2.3);
+    jd = 0.84; jr = vec2(2.3, 2.3);   // jedro ob bazi (pregled PR #644)
   }
   vec2 ql = kapa > 0.5 ? qv - (hc.zw - 0.5) * 2.0 : vec2(dl - jd * H - (hc.z - 0.5) * 2.0, (fract(su) - 0.5) * w - (hc.w - 0.5) * 2.0);
   float dj = sdElipsa(ql, jr) + 0.12 * (sum(ql * 1.4 + hc.zw * 9.0) - 0.5);
   vec3 jdv = vec3(dj, ql);
   // vsaka celica je malo drugače obarvana, meje so tanke svetle črte
-  t.dye *= 0.85 + 0.3 * hc.y;
+  t.dye *= 0.92 + 0.16 * hc.y;   // manjše razlike med sosednjimi celicami: ni »šahovnice«
   t.dye *= 1.0 - 0.45 * meja * (1.0 - smoothstep(0.6, 1.4, px));
   t.jedro = jdv.x;
   float jk = pokrij(jdv.x, px) * step(0.1, hc.w);

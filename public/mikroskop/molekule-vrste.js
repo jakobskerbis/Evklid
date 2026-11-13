@@ -80,6 +80,7 @@ export const MOL = {
   holesterol: b("#f2d36b", 0.45, A.smola),
   mbp: b("#e88a60", 0.5, A.belj),
   membelj: b("#f0a050", 0.55, A.belj),
+  p450: b("#d0704a", 0.6, A.belj),
   atpsintaza: b("#f0a050", 0.55, A.belj),
   porin: b("#e8a868", 0.55, A.belj),
   pas3: b("#f0a050", 0.55, A.belj),
@@ -130,6 +131,7 @@ export const PRIZORI = {
   koloid: [25, "voda", "tiroglobulin"],
   granula: [26, "voda", "sekret"],
   er: [27, "voda", "bip", "novo"],
+  ger: [27, "voda", "bip", null], // gladki ER: brez ribosomov, zato brez nastajajočih beljakovin
   golgi: [27, "voda", "sekret", "novo"],
   mielin: [28, "voda", "fosfolipid", "holesterol", "mbp"],
   smola: [29, "smola"],
@@ -156,7 +158,7 @@ export const S = {
   PRAZNO: 0, CITO: 1, JEDRO: 2, KOLAGEN: 3, MINERAL: 4, ERITROCIT: 5, LIPID: 6, MIOFIBRILA: 7, MIELIN: 8, MATRIKS: 9,
   KERATIN: 10, STENA: 11, VAKUOLA: 12, KOLOID: 13, PLAZMA: 14, ELASTIN: 15, SLUZ: 16, VIRUS: 17, SKLENINA: 18, MITO: 20,
   ER: 21, RIBOSOM: 22, GLIKOGEN: 23, MEMBRANA: 24, KLOROPLAST: 25, GRANULA: 26, KROMATIN: 27, JEDRCE: 28, GOLGI: 29,
-  MIKROVIL: 30, GENOM: 31,
+  MIKROVIL: 30, GENOM: 31, GER: 32,
 };
 const C = { GLADKA: 13, NEVRON: 4, RASTLINSKA: 6, BAKTERIJA: 7, KERATINOCIT: 9, KVASOVKA: 11, MISICA: 16, NEVRIT: 17 };
 
@@ -193,6 +195,7 @@ const SNOV_PRIZOR = {
   [S.SLUZ]: "sluz", [S.VIRUS]: "virus", [S.SKLENINA]: "sklenina", [S.MITO]: "mito", [S.ER]: "er", [S.GOLGI]: "golgi",
   [S.RIBOSOM]: "ribosom", [S.GLIKOGEN]: "glikogen", [S.MEMBRANA]: "cito", [S.KLOROPLAST]: "kloroplast",
   [S.GRANULA]: "granula", [S.KROMATIN]: "kromatin", [S.JEDRCE]: "jedrce", [S.MIKROVIL]: "mikrovil", [S.GENOM]: "t4dnk",
+  [S.GER]: "ger",
 };
 
 // Prizor za snov na eni strani: { ime, koda, mol: [id | null] }. o = { snov, tip, r1 } iz sonde, prep = id preparata.
@@ -236,7 +239,8 @@ export function membrana(a, b, prep) {
   // ATP-sintaza le v notranji membrani mitohondrija (na obeh straneh matriks), fotosistem le v tilakoidi; zunanja membrana in
   // ovojnica kloroplasta mejita na citoplazmo
   const obe = (s) => a.snov === s && b.snov === s;
-  const bel = obe(S.MITO) ? "atpsintaza" : ob(S.MITO) ? "porin" : obe(S.KLOROPLAST) ? "fotosistem" : ob(S.ERITROCIT) ? "pas3"
+  // citokrom P450 (razstrupljanje, steroidi) je v membrani gladkega ER
+  const bel = obe(S.MITO) ? "atpsintaza" : ob(S.MITO) ? "porin" : obe(S.KLOROPLAST) ? "fotosistem" : ob(S.ERITROCIT) ? "pas3" : ob(S.GER) ? "p450"
     : [C.NEVRON, C.NEVRIT].includes(a.tip) || [C.NEVRON, C.NEVRIT].includes(b.tip) ? "crpalka" : "membelj";
   return kaj("dvosloj", ["fosfolipid", "holesterol", bel]);
 }

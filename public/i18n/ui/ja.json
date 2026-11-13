@@ -3394,6 +3394,8 @@
   "mk.molv.atpsintaza": "ATPをつくる回転モーター",
   "mk.mol.atpsintaza": "ATP合成酵素",
   "mk.molv.membelj": "膜を貫くチャネルやポンプ",
+  "mk.mol.p450": "シトクロムP450",
+  "mk.molv.p450": "薬や毒を分解し、ステロイドづくりを助ける",
   "mk.mol.membelj": "膜タンパク質",
   "mk.molv.mbp": "ミエリンの層どうしを接着する",
   "mk.mol.mbp": "ミエリン塩基性タンパク質",

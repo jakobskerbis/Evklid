@@ -152,6 +152,7 @@ float odsek(vec2 p, vec2 r, float seme) {
 #define S_GOLGI 29.0
 #define S_MIKROVIL 30.0
 #define S_GENOM 31.0      // genom v virusu (le za sloj molekul: DNK faga T4, RNK SARS-CoV-2 in HIV)
+#define S_GER 32.0        // gladki endoplazemski retikulum (mreža cevk brez ribosomov)
 
 #define C_SPLOSNA 0.0
 #define C_HEPATOCIT 1.0
@@ -504,26 +505,26 @@ float membrana(float d, float px) {
   return mix(list2, ena, smoothstep(0.0008, 0.0025, px));
 }
 
-struct Profil { float mito; float rer; float golgi; float gran; float rib; float glik; float lip; float kerat; };
+struct Profil { float mito; float rer; float golgi; float gran; float rib; float glik; float lip; float kerat; float ser; };
 Profil profil(float tip) {
-  if (tip == C_HEPATOCIT) return Profil(0.55, 0.35, 0.1, 0.12, 0.5, 0.8, 0.06, 0.0);
-  if (tip == C_FIBROBLAST) return Profil(0.18, 0.55, 0.15, 0.05, 0.4, 0.0, 0.02, 0.0);
-  if (tip == C_LIMFOCIT) return Profil(0.12, 0.05, 0.03, 0.04, 0.9, 0.0, 0.0, 0.0);
-  if (tip == C_NEVRON) return Profil(0.4, 0.55, 0.15, 0.08, 0.6, 0.0, 0.0, 0.0);
-  if (tip == C_ZLEZNA) return Profil(0.25, 0.6, 0.2, 0.45, 0.5, 0.0, 0.0, 0.0);
-  if (tip == C_RASTLINSKA) return Profil(0.15, 0.1, 0.06, 0.0, 0.3, 0.0, 0.03, 0.0);
-  if (tip == C_RESICE) return Profil(0.5, 0.2, 0.12, 0.08, 0.4, 0.0, 0.03, 0.0);
-  if (tip == C_KERATINOCIT) return Profil(0.12, 0.08, 0.04, 0.05, 0.4, 0.0, 0.0, 0.7);
-  if (tip == C_GLIJA) return Profil(0.2, 0.2, 0.06, 0.05, 0.4, 0.0, 0.0, 0.0);
-  if (tip == C_KVASOVKA) return Profil(0.2, 0.15, 0.05, 0.0, 0.7, 0.3, 0.1, 0.0);
-  if (tip == C_PRAZIVAL) return Profil(0.3, 0.15, 0.08, 0.3, 0.5, 0.0, 0.08, 0.0);
-  if (tip == C_GLADKA) return Profil(0.2, 0.05, 0.03, 0.0, 0.2, 0.05, 0.0, 0.35);
-  if (tip == C_ADIPOCIT) return Profil(0.1, 0.05, 0.02, 0.0, 0.2, 0.0, 0.0, 0.0);
-  if (tip == C_LEVKOCIT) return Profil(0.12, 0.1, 0.05, 0.6, 0.4, 0.15, 0.0, 0.0);
-  if (tip == C_MISICA) return Profil(0.6, 0.0, 0.0, 0.0, 0.2, 0.3, 0.05, 0.0);
-  if (tip == C_NEVRIT) return Profil(0.35, 0.0, 0.0, 0.0, 0.05, 0.0, 0.0, 0.0);
-  if (tip == C_BAKTERIJA) return Profil(0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
-  return Profil(0.3, 0.25, 0.1, 0.1, 0.45, 0.0, 0.03, 0.0);
+  if (tip == C_HEPATOCIT) return Profil(0.55, 0.35, 0.1, 0.12, 0.5, 0.8, 0.06, 0.0, 0.55);
+  if (tip == C_FIBROBLAST) return Profil(0.18, 0.55, 0.15, 0.05, 0.4, 0.0, 0.02, 0.0, 0.04);
+  if (tip == C_LIMFOCIT) return Profil(0.12, 0.05, 0.03, 0.04, 0.9, 0.0, 0.0, 0.0, 0.02);
+  if (tip == C_NEVRON) return Profil(0.4, 0.55, 0.15, 0.08, 0.6, 0.0, 0.0, 0.0, 0.1);
+  if (tip == C_ZLEZNA) return Profil(0.25, 0.6, 0.2, 0.45, 0.5, 0.0, 0.0, 0.0, 0.08);
+  if (tip == C_RASTLINSKA) return Profil(0.15, 0.1, 0.06, 0.0, 0.3, 0.0, 0.03, 0.0, 0.06);
+  if (tip == C_RESICE) return Profil(0.5, 0.2, 0.12, 0.08, 0.4, 0.0, 0.03, 0.0, 0.15);
+  if (tip == C_KERATINOCIT) return Profil(0.12, 0.08, 0.04, 0.05, 0.4, 0.0, 0.0, 0.7, 0.03);
+  if (tip == C_GLIJA) return Profil(0.2, 0.2, 0.06, 0.05, 0.4, 0.0, 0.0, 0.0, 0.06);
+  if (tip == C_KVASOVKA) return Profil(0.2, 0.15, 0.05, 0.0, 0.7, 0.3, 0.1, 0.0, 0.06);
+  if (tip == C_PRAZIVAL) return Profil(0.3, 0.15, 0.08, 0.3, 0.5, 0.0, 0.08, 0.0, 0.06);
+  if (tip == C_GLADKA) return Profil(0.2, 0.05, 0.03, 0.0, 0.2, 0.05, 0.0, 0.35, 0.1);
+  if (tip == C_ADIPOCIT) return Profil(0.1, 0.05, 0.02, 0.0, 0.2, 0.0, 0.0, 0.0, 0.4); // gladki ER v pasu citoplazme (izdelava maščob)
+  if (tip == C_LEVKOCIT) return Profil(0.12, 0.1, 0.05, 0.6, 0.4, 0.15, 0.0, 0.0, 0.03);
+  if (tip == C_MISICA) return Profil(0.6, 0.0, 0.0, 0.0, 0.2, 0.3, 0.05, 0.0, 0.0);
+  if (tip == C_NEVRIT) return Profil(0.35, 0.0, 0.0, 0.0, 0.05, 0.0, 0.0, 0.0, 0.0);
+  if (tip == C_BAKTERIJA) return Profil(0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+  return Profil(0.3, 0.25, 0.1, 0.1, 0.45, 0.0, 0.03, 0.0, 0.06);
 }
 
 // Mitohondrij v lokalnem sistemu (os x vzdolž): ovojnica (dve membrani), kriste, gost matriks.
@@ -572,6 +573,28 @@ void cisterne(inout U u, vec2 z, float L, float n, float raz, float rib, float k
   u.g = g;
   if (lumen > 0.5) u.snov = rib > 0.0 ? S_ER : S_GOLGI;
   if (mem > 0.0) u.meja = min(u.meja, abs(abs(v) - sir));
+}
+
+// Gladki endoplazemski retikulum: gosta mreža razvejanih in povezanih cevk (premer ~40–50 nm) brez ribosomov, v delih
+// citoplazme (ob = delež). Največ ga je v hepatocitih (ob glikogenu: razstrupljanje, presnova glikogena) in v celicah, ki
+// izdelujejo steroide ali lipide. Cevke so dve prepleteni izočrti šuma, zato se stikajo kot v pravi mreži.
+// razdalja (v enotah x) do izočrte šuma sum(x) = 0,5 (deljeno z naklonom, da so cevke povsod enako široke)
+float izocrta(vec2 x) {
+  vec2 e = vec2(0.02, 0.0);
+  vec2 g = vec2(sum(x + e) - sum(x - e), sum(x + e.yx) - sum(x - e.yx)) / 0.04;
+  return abs(sum(x) - 0.5) / max(length(g), 0.08);
+}
+void gladkiER(inout U u, vec2 q, float ob, vec2 cid, float px) {
+  if (ob <= 0.0) return;
+  float s = 0.22;
+  vec2 o = fract(cid * 0.0137) * 97.0; // zamik šuma po celici (majhna števila: natančnost float)
+  float d = min(izocrta(q / s + o) * s, izocrta(q / (0.8 * s) + o.yx + 11.3) * 0.8 * s);
+  float sir = 0.022;
+  float lumen = pokrij(d - sir, px) * ob;
+  float mem = membrana(d - sir, px) * ob;
+  u.g = mix(mix(u.g, 0.14, lumen), 0.78, mem);
+  if (lumen > 0.5) u.snov = S_GER;
+  if (mem > 0.0) u.meja = min(u.meja, abs(d - sir));
 }
 
 // Zrna (lizosomi, sekretorna zrnca), lipidne kapljice, vezikli.
@@ -648,20 +671,26 @@ void organeli(inout U u, T t, vec2 p, float px) {
     vec4 h = h42(n2 + t.cid * 3.3 + 0.5);
     if (h.z < (sinapsa ? 0.75 : 0.18)) zrno(z, q - (n2 + 0.25 + 0.5 * h.xy) * g2, sinapsa ? 0.02 : 0.025 + 0.025 * h.w, 0.22, 1.0, px);
   }
-  // prosti ribosomi in glikogen
+  // gladki ER v delih citoplazme brez drugih organelov (v hepatocitu skupaj z glikogenom)
+  if (P.ser > 0.0 && z.snov == S_CITO) {
+    float pol = t.tip == C_HEPATOCIT ? smoothstep(0.5, 0.62, sum(q / 1.3 + t.cid)) : smoothstep(0.78 - 0.5 * P.ser, 0.86 - 0.5 * P.ser, sum(q / 1.1 + t.cid * 1.7 + 5.0));
+    gladkiER(z, q, pol, t.cid, px);
+  }
+  // prosti ribosomi in glikogen (ne v svetlini gladkega ER)
   {
+    float zun = z.snov == S_GER ? 0.0 : 1.0;
     float g3 = 0.045;
     vec2 n3 = floor(q / g3);
     vec4 h = h42(n3 + t.cid * 5.7);
     float gostota = P.rib * 0.35;
     float vid = 1.0 - smoothstep(0.004, 0.012, px);
-    float rib = step(h.z, gostota) * pokrij(length(q - (n3 + 0.2 + 0.6 * h.xy) * g3) - 0.0115, px) * vid;
+    float rib = step(h.z, gostota) * pokrij(length(q - (n3 + 0.2 + 0.6 * h.xy) * g3) - 0.0115, px) * vid * zun;
     z.g = mix(z.g, 0.82, rib) + gostota * 0.12 * (1.0 - vid);
     if (rib > 0.5 && z.snov == S_CITO) z.snov = S_RIBOSOM;
     if (P.glik > 0.0) {
       float pol = smoothstep(0.55, 0.7, sum(q / 1.3 + t.cid));
       vec4 hg = h42(n3 + t.cid * 2.1 + 9.0);
-      float gl = step(hg.z, P.glik * 0.7 * pol) * pokrij(length(q - (n3 + 0.2 + 0.6 * hg.xy) * g3) - 0.013, px) * vid;
+      float gl = step(hg.z, P.glik * 0.7 * pol) * pokrij(length(q - (n3 + 0.2 + 0.6 * hg.xy) * g3) - 0.013, px) * vid * zun;
       z.g = mix(z.g, 0.9, gl) + P.glik * pol * 0.1 * (1.0 - vid);
       if (gl > 0.5) z.snov = S_GLIKOGEN;
     }
@@ -922,6 +951,7 @@ uniform vec2 uRes;
 uniform vec2 uCenter;      // središče vidnega polja na stekelcu (µm)
 uniform float uPx;         // µm na slikovno točko
 uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda, 3 SEM (le v programu SEM)
+uniform int uSondaZvij;    // sonda: 1 = vrstica tkiva z zvijanjem rezine (svetlobni, SEM), 0 = brez (TEM, kot slika)
 uniform vec2 uSonda[8];    // točke sonde (µm)
 uniform mat3 uBarvila;     // stolpci: OD-vektor (R, G, B) prvega, drugega in tretjega barvila
 uniform float uDebelina;   // jakost barvanja (debelina rezine)
@@ -963,35 +993,35 @@ vec4 svetloba(T t, vec2 p) {
   return vec4(exp(-od), faza(t));
 }
 void main() {
-  if (uNacin == 2) {
-    int i = int(gl_FragCoord.x);
-    vec2 p = uSonda[min(i, 7)];
-    p += zvij(p, 0.0005);
-    T t = tkivo(p, 0.0005);
-    U u = ultra(t, p, 0.0005);
-    o = gl_FragCoord.y < 1.0 ? vec4(u.snov, u.meja, t.smer) : vec4(t.snov, t.tip, t.r1, t.jedro);
+  // tkivo() je v senčilniku poklicano le enkrat (zanka): vsak klic se razvije v celotno kodo preparata, zato bi dodatni
+  // klici podaljšali prevajanje in upočasnili vsako sliko (pregled PR #644)
+  bool sonda = uNacin == 2;
+  bool vrsticaTem = sonda && gl_FragCoord.y < 1.0;
+  float px = sonda ? 0.0005 : uPx;
+  vec2 p = sonda ? uSonda[min(int(gl_FragCoord.x), 7)] : uCenter + (gl_FragCoord.xy - 0.5 * uRes) * uPx;
+  // zvijanje reza velja za svetlobni mikroskop in SEM; TEM (in vrstica TEM sonde) brez njega, ker so organeli manjši od valov
+  if (uNacin != 1 && !vrsticaTem && !(sonda && uSondaZvij == 0)) p += zvij(p, px);
+  // Oko in kamera seštejeta svetlobo s celotne slikovne točke: pri majhni povečavi (uSS = 4) štirje vzorci v točki,
+  // da drobne strukture (limfociti, vlakna) ne dajo šuma iz posameznih pik.
+  int n = uNacin == 0 && uSS > 1 ? 4 : 1;
+  vec4 v = vec4(0.0);
+  T t;
+  for (int k = 0; k < 4; k++) {
+    if (k >= n) break;
+    vec2 dq = n == 1 ? vec2(0.0) : uPx * (k == 0 ? vec2(0.125, 0.375) : k == 1 ? vec2(-0.375, 0.125) : k == 2 ? vec2(0.375, -0.125) : vec2(-0.125, -0.375));
+    t = tkivo(p + dq, px);
+    if (uNacin == 0) v += svetloba(t, p + dq);
+  }
+  if (uNacin == 0) { o = v / float(n); return; }
+  if (sonda && !vrsticaTem) { o = vec4(t.snov, t.tip, t.r1, t.jedro); return; }
+  if (sonda || uNacin == 1) {
+    U u = ultra(t, p, px);
+    o = sonda ? vec4(u.snov, u.meja, t.smer) : vec4(vec3(exp(-2.0 * clamp(u.g, 0.0, 1.5))), 1.0);
     return;
   }
-  vec2 off = (gl_FragCoord.xy - 0.5 * uRes) * uPx;
-  vec2 p = uCenter + off;
-  p += zvij(p, uPx);
-  if (uNacin == 0 && uSS > 1) {
-    // Oko in kamera seštejeta svetlobo s celotne slikovne točke: pri majhni povečavi (uSS = 4) štirje vzorci v točki,
-    // da drobne strukture (limfociti, vlakna) ne dajo šuma iz posameznih pik.
-    vec4 v = vec4(0.0);
-    for (int k = 0; k < 4; k++) {
-      vec2 dq = uPx * (k == 0 ? vec2(0.125, 0.375) : k == 1 ? vec2(-0.375, 0.125) : k == 2 ? vec2(0.375, -0.125) : vec2(-0.125, -0.375));
-      v += svetloba(tkivo(p + dq, uPx), p + dq);
-    }
-    o = 0.25 * v;
-    return;
-  }
-  T t = tkivo(p, uPx);
-  if (uNacin == 1) {
-    U u = ultra(t, p, uPx);
-    o = vec4(vec3(exp(-2.0 * clamp(u.g, 0.0, 1.5))), 1.0);
+  if (false) {
   }${sem ? SEM_SENCENJE : ""} else {
-    o = svetloba(t, p);
+    o = vec4(1.0);   // SEM riše ločen program (fragmentPreparata(koda, { sem: true }))
   }
 }`;
 }

@@ -190,15 +190,20 @@ T tkivo(vec2 p, float px) {
   float dt = length(rot(ht.x * 6.0) * (p - tv.c) * vec2(1.0, 1.4)) - 1.1 - 0.4 * ht.y;
   // eritrociti: 7,5 µm, svetlejša sredina (dvojno vbočena ploščica). Vsak je svoja ploščica: kjer se dve prekrivata,
   // se barva sešteje in rob spodnje ostane viden (v tankem delu razmaza se skoraj ne dotikajo).
-  float S = 8.6;
-  vec2 n0 = floor(p / S);
+  // Dve med seboj zasukani mreži z naključno lego v vsakem polju: krvničke niso v vrstah ali stolpcih (pregled PR #644).
+  float S = 12.2;
   float vsota = 0.0, robovi = 0.0, najR = 1e3;
   vec2 najC = vec2(0.0); float najW = 0.0;
+  for (int pl = 0; pl < 2; pl++) {
+  mat2 M = pl == 0 ? mat2(1.0) : rot(0.71);
+  vec2 o = pl == 0 ? vec2(0.0) : vec2(5.3, 2.9);
+  vec2 pp = M * p + o;
+  vec2 n0 = floor(pp / S);
   for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
     vec2 k = n0 + vec2(i, j);
-    vec4 he = h42(k + 0.37);
+    vec4 he = h42(k + 0.37 + 91.0 * float(pl));
     if (he.w > gost) continue;
-    vec2 c = (k + 0.5 + 0.45 * (he.xy - 0.5)) * S;
+    vec2 c = transpose(M) * ((k + 0.5 + 0.9 * (he.xy - 0.5)) * S - o);
     float R = 3.35 + 0.45 * he.z;
     vec2 q = p - c;
     // ne povsem okrogli (±6 %)
@@ -211,10 +216,11 @@ T tkivo(vec2 p, float px) {
     float deb = 0.28 + 0.72 * smoothstep(0.12, 0.8, rr) - 0.08 * smoothstep(0.85, 1.0, rr);
     vsota += k1 * ((0.36 + 0.07 * (he.z - 0.5)) * deb + 0.04 * sumL(q, 1.2, px));
     robovi += crta(de, 0.25, px);
-    if (de < najR) { najR = de; najC = c; najW = dot(k, vec2(7.0, 13.0)) + he.z; }
+    if (de < najR) { najR = de; najC = c; najW = dot(k, vec2(7.0, 13.0)) + he.z + 0.5 * float(pl); }
+  }
   }
   if (vsota > 0.0 || robovi > 0.0) {
-    t.dye = vec3(0.02, t.dye.y + min(vsota, 0.85) + 0.1 * min(robovi, 1.5), 0.0);
+    t.dye = vec3(0.02, t.dye.y + min(vsota, 0.85) + 0.05 * min(robovi, 1.5), 0.0);
     if (najR < 0.0) { t.snov = S_ERITROCIT; t.meja = -najR; t.cc = najC; t.cid = vec2(najW, 1.0); }
   }
   if (ht.z < 0.12 && dt < px) {

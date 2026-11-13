@@ -3487,6 +3487,8 @@
   "mk.molv.atpsintaza": "obrotowy silnik wytwarzający ATP",
   "mk.mol.atpsintaza": "Syntaza ATP",
   "mk.molv.membelj": "kanał lub pompa w poprzek błony",
+  "mk.mol.p450": "Cytochrom P450",
+  "mk.molv.p450": "rozkłada leki i trucizny oraz pomaga wytwarzać steroidy",
   "mk.mol.membelj": "Białko błonowe",
   "mk.molv.mbp": "skleja warstwy mieliny",
   "mk.mol.mbp": "Zasadowe białko mieliny",

@@ -12,7 +12,7 @@ import { BARVANJA, matrikaBarvil } from "../public/mikroskop/barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "../public/mikroskop/preparati/index.js";
 import { preparatAtlasa, preparatModela, pogledDela, MODELI_Z_MIKROSKOPOM } from "../public/mikroskop/mapa.js";
 import { fragmentPreparata } from "../public/mikroskop/glsl.js";
-import { povecava, izracunajPogled, ZACETNO } from "../public/mikroskop/pogled.js";
+import { povecava, izracunajPogled, ZACETNO, najblizjaMolekula, fino } from "../public/mikroskop/pogled.js";
 import sl from "../public/i18n/sl.js";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -158,6 +158,15 @@ test("mikroskop: vsak del celice odpre svoj pogled (preparat, povečava, snov po
   assert.equal(pogled("celica-zivalska", "golgi").snov[0], 29);
   assert.equal(pogled("celica-eritrocit", "hemoglobin").p, "kri");
   assert.equal(pogled("virus-hiv", "rnk").snov[0], 31);
+  // gladki ER je svoj organel (j, 13. 11. 2026: gumb je odprl zrnati ER ustne sluznice): v živalski celici jetra
+  assert.deepEqual(pogled("celica-zivalska", "gladki-er"), { p: "jetra", m: 30000, snov: [32] });
+  assert.equal(pogled("celica-zivalska", "zrnati-er").snov[0], 21);
+  assert.equal(pogled("celica-epitelna", "gladki-er").p, "tanko-crevo"); // enterocit ima svoj gladki ER
+  assert.equal(pogled("celica-gladka-misicna", "sarkoplazemski-retikulum").snov[0], 32);
+  // T-cevke so uvihana membrana, zrnca levkocitov se vidijo v razmazu krvi, Schwannove celice so v živcu
+  assert.equal(pogled("celica-srcna-misicna", "t-cevke").snov[0], 24);
+  assert.equal(pogled("celica-levkociti", "zrnca").p, "kri");
+  assert.equal(pogled("celica-nevron", "schwannova-celica").p, "zivec");
   // vsak pogled ima obstoječ preparat in povečavo v obsegu mikroskopa; tudi deli brez posebne snovi dobijo pogled
   for (const m of MODELI_Z_MIKROSKOPOM.filter((x) => /^(celica|virus)/.test(x))) {
     for (const d of ["jedro", "jedrce", "mitohondrij", "membrana", "citoplazma", "ribosomi", "neznan-del"]) {
@@ -275,4 +284,23 @@ test("mikroskop: prizori molekul, membrane in značilna mesta se ujemajo s katal
   const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
   assert.match(ui, /mk-mol-oznaka/);
   assert.match(ui, /ZNACILNO\[prep\.id\]/);
+});
+
+test("mikroskop: pri atomih se sredina premakne na najbližjo molekulo, ne ostane v vodi (j, 13. 11. 2026)", () => {
+  const k = 16;
+  const reze = ["voda", "miozin", "aktin"];
+  const id = new Uint8Array(k * k).fill(1); // povsod voda
+  assert.equal(najblizjaMolekula(id, k, reze), null, "le voda: ni premika");
+  for (let j = 0; j < k; j++) for (let i = 11; i < 15; i++) id[j * k + i] = 2; // miozin desno od sredine
+  const [dx, dy] = najblizjaMolekula(id, k, reze);
+  assert.ok(dx >= 3.5 && dx <= 5.5 && Math.abs(dy) < 1, `premik v miozin: ${dx}, ${dy}`);
+  const id2 = new Uint8Array(k * k).fill(3); // sredina je že v aktinu
+  assert.equal(najblizjaMolekula(id2, k, reze), null);
+  const id3 = new Uint8Array(k * k); // prazno (0 = ni molekule)
+  assert.equal(najblizjaMolekula(id3, k, reze), null);
+  // šiv sveta molekul ni blizu okroglih števil (začetki preparatov, npr. arterija pri y = 150 µm)
+  for (const x of [0, 0.5, 1, 2, 4, 150, -1100, 900, 1150.9]) {
+    const f = fino(x);
+    assert.ok(f > 100 && f < 3900, `${x} µm → ${f} nm`);
+  }
 });

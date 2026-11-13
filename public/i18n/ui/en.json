@@ -3506,6 +3506,8 @@
   "mk.molv.mbp": "glues the layers of myelin together",
   "mk.mol.membelj": "Membrane protein",
   "mk.molv.membelj": "a channel or pump across the membrane",
+  "mk.mol.p450": "Cytochrome P450",
+  "mk.molv.p450": "breaks down drugs and toxins and helps make steroids",
   "mk.mol.atpsintaza": "ATP synthase",
   "mk.molv.atpsintaza": "a rotary motor that makes ATP",
   "mk.mol.pas3": "Cl⁻/HCO₃⁻ exchanger (band 3)",

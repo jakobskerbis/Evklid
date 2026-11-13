@@ -186,7 +186,7 @@ export const MODELI_Z_MIKROSKOPOM = Object.keys(MODELI);
 const S = {
   PRAZNO: 0, CITO: 1, JEDRO: 2, KOLAGEN: 3, MINERAL: 4, ERITROCIT: 5, LIPID: 6, MIOFIBRILA: 7, MIELIN: 8, MATRIKS: 9,
   KERATIN: 10, STENA: 11, VAKUOLA: 12, PLAZMA: 14, ELASTIN: 15, SLUZ: 16, VIRUS: 17, MITO: 20, ER: 21, RIBOSOM: 22,
-  GLIKOGEN: 23, MEMBRANA: 24, KLOROPLAST: 25, GRANULA: 26, KROMATIN: 27, JEDRCE: 28, GOLGI: 29, MIKROVIL: 30, GENOM: 31,
+  GLIKOGEN: 23, MEMBRANA: 24, KLOROPLAST: 25, GRANULA: 26, KROMATIN: 27, JEDRCE: 28, GOLGI: 29, MIKROVIL: 30, GENOM: 31, GER: 32,
 };
 const RASTLINSKE = new Set(["celica-rastlinska", "celice-primerjava", "celica-palisadna", "celica-zapiralka", "celica-koreninski-lasek", "celica-ksilem-floem"]);
 const VIRUSI = new Set(["virus-bakteriofag-t4", "virus-sars-cov-2", "virus-hiv"]);
@@ -197,19 +197,33 @@ const ORGANELI = [
   // ---- virusi: na ravni molekul (TEM), dedni zapis posebej
   [/^(dnk|rnk|nukleokapsida|nukleokapsidni-protein|integraza|reverzna-transkriptaza|proteaza)$/, (id) => (VIRUSI.has(id) ? { m: 3e6, snov: [S.GENOM] } : null)],
   [/./, (id) => (VIRUSI.has(id) ? { m: 1.5e6, snov: [S.VIRUS, S.GENOM] } : null)],
+  // ---- krvne celice in mišična vlakna: deli, ki bi sicer odprli napačno tkivo (preverjeno za vse dele, 13. 11. 2026)
+  // zrnca levkocitov in trombocitov se vidijo v razmazu krvi (svetlobni mikroskop), ne v drugem tkivu
+  [/^(zrnca|azurofilna-zrnca|alfa-zrnca|gosta-zrnca|fagosom)$/, (id) => (id === "celica-levkociti" || id === "celica-trombocit" ? { p: "kri", m: 1000, snov: [S.CITO, S.JEDRO] } : null)],
+  // eritrocit: citoplazma je hemoglobin, mreža spektrina je tik pod membrano
+  [/^citoplazma$/, (id) => (id === "celica-eritrocit" ? { p: "kri", m: 1000, snov: [S.ERITROCIT] } : null)],
+  [/^citoskelet$/, (id) => (id === "celica-eritrocit" ? { p: "kri", m: 60000, snov: [S.MEMBRANA] } : null)],
+  // T-cevke in odprt kanalikularni sistem trombocita sta uvihana celična membrana; gost cevast sistem je gladki ER
+  [/^(t-cevke|ocs)$/, () => ({ m: 60000, snov: [S.MEMBRANA] })],
+  [/^gost-cevast-sistem$/, () => ({ m: 30000, snov: [S.GER] })],
+  // Schwannove celice so v perifernem živcu
+  [/^schwannova-celica$/, () => ({ p: "zivec", m: 1000, snov: [S.JEDRO] })],
   // ---- jedro in dedni zapis
   [/^jedrce$/, () => ({ m: 6000, snov: [S.JEDRCE] })],
   // kromosomi pri delitvi: šolski poskus je vršiček korena (mitoza) oziroma modo (mejoza) pod svetlobnim mikroskopom
   [/^(kromatin|kromosomi|centromera|kinetohor|bivalent|hiazma)$/, (id) => (id === "celica-koreninski-lasek" || id === "mitoza" ? { p: "koren", m: 1000, snov: [S.KROMATIN] } : id === "mejoza" ? { p: "modo", m: 1000, snov: [S.KROMATIN, S.JEDRO] } : { m: 8000, snov: [S.KROMATIN, S.JEDRO] })],
   [/^(jedrna-ovojnica|nukleoplazma)$/, () => ({ m: 15000, snov: [S.JEDRO, S.KROMATIN] })],
-  [/^(jedro|jedra|makronukleus|makronukleus-notranjost|mikronukleus|schwannova-celica|osteocit)$/, (id) => (RASTLINSKE.has(id) ? { p: "cebula", m: 400, snov: [S.JEDRO] } : { m: 1000, snov: [S.JEDRO] })],
+  [/^(jedro|jedra|makronukleus|makronukleus-notranjost|mikronukleus|osteocit)$/, (id) => (RASTLINSKE.has(id) ? { p: "cebula", m: 400, snov: [S.JEDRO] } : { m: 1000, snov: [S.JEDRO] })],
   [/^(nukleoid|plazmidi)$/, () => ({ m: 1000, snov: [S.CITO] })],
   // ---- organeli, vidni le s TEM
   [/mitohondrij/, () => ({ m: 12000, snov: [S.MITO] })],
   // Nisslova telesca so klasičen prikaz s svetlobnim mikroskopom (bazofilna zrnca v telesu nevrona)
   [/^nisslova-telesca$/, () => ({ p: "skorja", m: 1000, snov: [S.CITO, S.JEDRO] })],
   [/^(golgi|golgijev-aparat)$/, () => ({ m: 20000, snov: [S.GOLGI] })],
-  [/^(er|zrnati-er|gladki-er|sarkoplazemski-retikulum|gost-cevast-sistem|t-cevke|ocs)$/, () => ({ m: 20000, snov: [S.ER] })],
+  // gladki ER (mreža cevk brez ribosomov) je drug organel kot zrnati (j, 13. 11. 2026: gumb je odprl zrnati ER ustne
+  // sluznice); splošna živalska celica ga pokaže v hepatocitu, kjer ga je največ. Sarkoplazemski retikulum je gladki ER.
+  [/^(gladki-er|sarkoplazemski-retikulum)$/, (id) => (id === "celica-zivalska" ? { p: "jetra", m: 30000, snov: [S.GER] } : { m: 30000, snov: [S.GER] })],
+  [/^(er|zrnati-er)$/, () => ({ m: 20000, snov: [S.ER] })],
   [/^(ribosomi|mrnk)$/, () => ({ m: 60000, snov: [S.RIBOSOM] })],
   [/^glikogen$/, () => ({ p: "jetra", m: 30000, snov: [S.GLIKOGEN] })],
   [/^(lizosomi?|peroksisomi?|mesicki|sinapticni-mesicki|zrnca|alfa-zrnca|gosta-zrnca|azurofilna-zrnca|kortikalna-zrnca|zaloge|paramilon|rumenjak|lipidne-kapljice|fagosom|prebavni-mehurcki|gosta-telesca|akrosom)$/, () => ({ m: 15000, snov: [S.GRANULA, S.LIPID] })],
@@ -244,15 +258,16 @@ const ORGANELI = [
 const TEM_VSEBUJE = {
   [S.MITO]: "ustne cebula kvasovke skorja gladka-misica tanko-crevo kost mascevje modo jajcnik mreznica kapljica",
   [S.ER]: "ustne cebula tanko-crevo jajcnik",
+  [S.GER]: "jetra mascevje gladka-misica ledvica zelodec mreznica tanko-crevo zleza nadledvicna koren kvasovke",
   [S.RIBOSOM]: "ustne cebula bakterije kvasovke skorja gladka-misica tanko-crevo kapljica",
-  [S.MEMBRANA]: "cebula kvasovke gladka-misica skeletna-misica srcna-misica kri tanko-crevo kost",
+  [S.MEMBRANA]: "cebula kvasovke gladka-misica srcna-misica kri tanko-crevo kost",
   [S.GRANULA]: "ustne cebula kvasovke skorja gladka-misica tanko-crevo modo jajcnik mreznica kapljica",
   [S.JEDRCE]: "ustne cebula skorja tanko-crevo mreznica",
   [S.GOLGI]: "cebula kvasovke skorja gladka-misica tanko-crevo kapljica",
   [S.STENA]: "cebula bakterije kvasovke",
 };
-// Nadomestni preparat ostane v isti skupini živih bitij: rastline → čebula; živali → mišica (pri mišičnih celicah), črevo,
-// ustna sluznica, možganska skorja, jajčnik (modu najprej jajčnik); bakterije, kvasovke in praživali ostanejo na svojem preparatu (človeško
+// Nadomestni preparat ostane v isti skupini živih bitij: rastline → čebula, nato vršiček korena; živali → mišica (pri mišičnih celicah), črevo,
+// ustna sluznica, možganska skorja, jajčnik (modu najprej jajčnik, gladkemu ER najprej jetra); bakterije, kvasovke in praživali ostanejo na svojem preparatu (človeško
 // tkivo bi učenca zavedlo), kazalec pa pokaže najbližjo snov, ki jo preparat ima (NADOMESTNA_SNOV).
 const RASTLINSKI_PREPARATI = new Set(["cebula", "list", "reza", "koren", "steblo"]);
 const MIKROBNI_PREPARATI = new Set(["bakterije", "kvasovke", "kapljica"]);
@@ -261,6 +276,7 @@ const NADOMESTNA_SNOV = {
   [S.JEDRCE]: [S.JEDRO, S.KROMATIN],
   [S.MEMBRANA]: [S.STENA, S.CITO],
   [S.ER]: [S.CITO],
+  [S.GER]: [S.ER, S.CITO],
   [S.GOLGI]: [S.CITO],
   [S.RIBOSOM]: [S.CITO],
   [S.GRANULA]: [S.CITO],
@@ -270,7 +286,8 @@ function nadomesti(p, v, misica) {
   const ima = v.m > 1000 && TEM_VSEBUJE[v.snov?.[0]]?.split(" ");
   if (!ima || ima.includes(p)) return { p, snov: v.snov };
   const blizje = misica ? ["gladka-misica"] : p === "modo" ? ["jajcnik"] : []; // najprej soroden preparat
-  const kandidati = RASTLINSKI_PREPARATI.has(p) ? ["cebula"] : MIKROBNI_PREPARATI.has(p) ? [] : [...blizje, ...ZIVALSKI_NADOMESTNI];
+  const prednost = v.snov[0] === S.GER ? ["jetra"] : []; // gladki ER: najprej hepatocit
+  const kandidati = RASTLINSKI_PREPARATI.has(p) ? ["cebula", "koren"] : MIKROBNI_PREPARATI.has(p) ? [] : [...blizje, ...prednost, ...ZIVALSKI_NADOMESTNI];
   const q = kandidati.find((x) => ima.includes(x));
   return q ? { p: q, snov: v.snov } : { p, snov: [...v.snov, ...(NADOMESTNA_SNOV[v.snov[0]] || [S.CITO])] };
 }
