@@ -5,9 +5,9 @@
   "skorja": {
    "barva": "#d58076",
    "hrap": 0.3,
-   "lak": 1,
-   "lakHrap": 0.06,
-   "sijaj": 0.55,
+   "lak": 0.4,
+   "lakHrap": 0.16,
+   "sijaj": 0.28,
    "sijajBarva": "#ffc7bc",
    "rob": 0.24,
    "robBarva": "#ff9f90",
@@ -28,7 +28,7 @@
    "lise2": 0.25,
    "lise2Barva": "#d6aca6",
    "lise2F": 10,
-   "zile": 0.35,
+   "zile": 0,
    "zileBarva": "#a52838",
    "zileBarva2": "#6a2552",
    "zileSirina": 0.0003,
@@ -45,9 +45,9 @@
   "mali": {
    "barva": "#a85850",
    "hrap": 0.38,
-   "lak": 0.9,
-   "lakHrap": 0.08,
-   "sijaj": 0.5,
+   "lak": 0.4,
+   "lakHrap": 0.16,
+   "sijaj": 0.25,
    "sijajBarva": "#ffbfb4",
    "rob": 0.22,
    "robBarva": "#ff9488",
@@ -60,7 +60,7 @@
    "aoExp": 2.6,
    "rez": "#cf958a",
    "vrstni": 2,
-   "listi": 0.5,
+   "listi": 0.85,
    "listiSredisce": [
     -0.0014,
     -0.02931,
@@ -78,12 +78,12 @@
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.02426,
+     -0.02432,
      -0.08189
     ],
     "mera": [
-     0.08232,
-     0.08232
+     0.08243,
+     0.08243
     ],
     "izrez": true,
     "visina": 0.5
@@ -92,9 +92,9 @@
   "deblo": {
    "barva": "#e3c4b4",
    "hrap": 0.4,
-   "lak": 0.7,
-   "lakHrap": 0.1,
-   "sijaj": 0.5,
+   "lak": 0.4,
+   "lakHrap": 0.16,
+   "sijaj": 0.28,
    "sijajBarva": "#ffd0c4",
    "rob": 0.2,
    "robBarva": "#ffa898",
@@ -118,12 +118,12 @@
    "rezSlika": {
     "slika": "mozgani-mali-rez.webp",
     "lo": [
-     -0.02426,
+     -0.02432,
      -0.08189
     ],
     "mera": [
-     0.08232,
-     0.08232
+     0.08243,
+     0.08243
     ],
     "izrez": true,
     "visina": 0.2
@@ -155,9 +155,9 @@
   "medmozgani": {
    "barva": "#bfa39c",
    "hrap": 0.4,
-   "lak": 0.7,
-   "lakHrap": 0.1,
-   "sijaj": 0.45,
+   "lak": 0.4,
+   "lakHrap": 0.16,
+   "sijaj": 0.28,
    "sijajBarva": "#ffcdc4",
    "rob": 0.2,
    "robBarva": "#ffa496",
@@ -328,9 +328,7 @@
    "opis": "Usklajujejo gibe in skrbijo za ravnotežje, da so gibi natančni in gladki.",
    "opisStudij": "Vermis in hemisferi; trije režnji (anterior, posterior, flocculonodularis); skorja s Purkinjejevimi celicami, globoka jedra (dentatus, emboliformis, globosus, fastigii). S deblom ga vežejo trije pari pedunculi cerebellares. Okvara: ataksija na isti strani, intencijski tremor, dismetrija.",
    "vozlisca": [
-    "Cerebellum (MRI)",
-    "Superior cerebellar peduncle.l",
-    "Superior cerebellar peduncle.r"
+    "Cerebellum (MRI)"
    ],
    "tocke": {
     "celota": [
@@ -538,9 +536,11 @@
     },
     "medmozgani": {
      "aoTekstura": 0.12,
-     "barva": "#b9aca6",
+     "barva": "#ad918b",
      "lak": 0.12,
-     "sijaj": 0.1
+     "sijaj": 0.1,
+     "lise": 0.35,
+     "liseBarva": "#c7a59c"
     },
     "sredina": {
      "aoTekstura": 0.12,
@@ -577,8 +577,8 @@
  },
  "velikost": 0.2784,
  "trikotniki": {
-  "racunalnik": 165908,
-  "telefon": 46640
+  "racunalnik": 165890,
+  "telefon": 46618
  },
  "luci": [
   {

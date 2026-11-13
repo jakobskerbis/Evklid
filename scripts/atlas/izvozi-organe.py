@@ -73,7 +73,7 @@ ORGANI = {
                 # (0,3 mm): ob sredini (tesne plasti gyrus rectus) je premik gub vzdolž nestalnih normal nagubal visoko mrežo
                 # in normalna mapa je na orbitalni ploskvi risala sive bleščeče lise
                 "skorja": dict(barva=(0.62, 0.35, 0.31), barva2=(0.50, 0.25, 0.23), lise=0.40, liseMera=0.03, hrap=0.46,
-                               gube=0.0, zilice=0.32, ziliceBarva=(0.42, 0.06, 0.06), ziliceMera=0.012, razdeli=0, kletka=0.001),
+                               gube=0.0, zilice=0.14, ziliceBarva=(0.42, 0.06, 0.06), ziliceMera=0.012, razdeli=0, kletka=0.001),
                 # skorja in sredina iz MRI sta že goste (pialna površina): brez razdelitve (pomnilnik prenosnika)
                 "sredina": dict(barva=(0.58, 0.44, 0.40), barva2=(0.50, 0.36, 0.33), lise=0.25, hrap=0.42, gube=0.0, razdeli=0, kletka=0.001),
                 "mali": dict(barva=(0.56, 0.31, 0.28), barva2=(0.45, 0.23, 0.21), lise=0.35, hrap=0.46, gube=0.00003, gubeMera=0.0015,
@@ -89,9 +89,10 @@ ORGANI = {
         # (sulc) potemni senco okolice. Mapa z datotekami: --mri <mapa> (sub-01-lh.pial, …-lh.sulc, …-lh.aparc.annot).
         skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina"),
         # Mali možgani iz segmentacije MRI istega osebka (aseg, oznake 7/8/46/47; scripts/atlas/mali-mozgani-mri.py): prava
-        # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Zgornja
-        # pedunkla Z-Anatomy ostaneta (vez z mezencefalonom). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
-        mali_mri=dict(delez=0.5, poravnava=0.0, ohrani=r"^Superior cerebellar peduncle"),
+        # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
+        # glajenje: Taubin (krogi) proti stopnicam vokslov; zgornja pedunkla Z-Anatomy nista več ohranjena (od zadaj je bil
+        # med malimi možgani MRI in deblom viden temen plavajoč kos)
+        mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40),
         poenostaviSkupaj=r"\(MRI\)\.([lr])$",  # režnji ene poloble so ena površina: brez razpok ob mejah režnjev
         tkiva=[
             (r"Cerebellum\.g", "mali"),
@@ -757,6 +758,9 @@ def mali_iz_mri(osnovni, mri, mm, lo, hi, tmp):
     M = T(d["mali_v"]) + premik
     F = T(d["fastigij"][None])[0] + premik
     me = bpy.data.meshes.new("Cerebellum (MRI)"); me.from_pydata(M.tolist(), [], d["mali_f"].tolist())
+    if mm.get("glajenje"):  # stopnice vokslov (1 mm) iz segmentacije: Taubin brez krčenja (posnetek: proge na polobli)
+        from drevesa import taubin_bm
+        bm = bmesh.new(); bm.from_mesh(me); taubin_bm(bm, mm["glajenje"]); bm.to_mesh(me); bm.free()
     me = poenostavi(me, mm.get("delez", 0.5), tmp)
     ostane = re.compile(mm.get("ohrani", r"^$"))
     stari = [r for r in osnovni if r[2] == "mali" and not ostane.search(r[0])]
@@ -885,6 +889,14 @@ def skorja_iz_mri(mapa, m, lo, hi):
             acc = np.bincount(e[:, 0], weights=lp[e[:, 1]], minlength=len(v))
             lp = 0.5 * lp + 0.5 * acc / np.maximum(st, 1)
         kl = np.clip(0.5 + (sulc - lp) / 10.0, 0.0, 1.0)
+        # meje režnjev: oznake aparc so po ogliščih nazobčane (posnetek učnih barv: razcefrane stopničaste meje); vsak
+        # reženj kot delež sosedov, glajeno »glajenjeMej« korakov, oglišče dobi največjega (medialna stena ostane)
+        lob = list(APARC_DELI)
+        I = np.stack([(dl == x).astype(np.float64) for x in lob], 1)
+        for _ in range(m.get("glajenjeMej", 6)):
+            acc = np.stack([np.bincount(e[:, 0], weights=I[e[:, 1], j], minlength=len(v)) for j in range(len(lob))], 1)
+            I = 0.5 * I + 0.5 * acc / np.maximum(st, 1)[:, None]
+        dl = np.where(dl != None, np.array(lob, dtype=object)[I.argmax(1)], dl)
         tri_del = dl[t[:, 0]]
         for d in list(APARC_DELI) + ["sredina"]:
             if d == "sredina":  # medialna stena (rez FreeSurfer med polobloma): zapolni luknjo v prerezu, ni del

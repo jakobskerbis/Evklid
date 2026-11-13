@@ -233,3 +233,39 @@ test("geometrija organov: viri pljučnih režnjev (TotalSegmentator) in malih mo
   const cr = fs.readFileSync(path.join(ORGANI, "CREDITS.txt"), "utf8");
   assert.match(cr, /TotalSegmentator/); assert.match(cr, /aseg/);
 });
+
+// Krog 5 (2026-11-13): Taubinovo glajenje (stopnice vokslov MRI in CT), ravno odrezan vrh sapnika, središče ledvice brez
+// sečevoda (koordinate reza v ledvica.json), glajenje mej režnjev MRI, sečevod in čašice v ravnini reza.
+test("geometrija organov: krog 5 – orodja v izvozu (taubin_bm, ravnoOdrezi, sredisce_brez, glajenjeMej, čaše)", (t) => {
+  const izvoz = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "izvozi-organe.py"), "utf8");
+  const drevesa = fs.readFileSync(path.join(KOREN, "scripts", "atlas", "drevesa.py"), "utf8");
+  for (const s of ['cfg.get("ravnoOdrezi"', 'cfg.get("sredisce_brez")', 'sredisce_brez=r"^Ureter"', 'm.get("glajenjeMej"', 'mm.get("glajenje")', "use_negative", "na_ravnino("])
+    assert.ok(izvoz.includes(s), s);
+  assert.ok(drevesa.includes("def taubin_bm(") && drevesa.includes("taubin_bm(bm, cfg.get(\"drevesa\", {}).get(\"ctGlajenje\""), "taubin_bm v drevesa.py");
+  const np_ = spawnSync("python3", ["-c", "import numpy"]);
+  if (np_.status !== 0) return t.skip("python3 z numpy ni na voljo");
+  // Taubin na stopnicah: hrapavost pade, prostornina (srednji polmer) ostane
+  const prog = `
+import re, sys, types, numpy as np
+src = open(sys.argv[1], encoding="utf8").read()
+exec(re.search(r"def taubin_bm.*?v\\.co = q\\n", src, re.S).group(0))
+class V:
+    def __init__(s, i, co): s.index, s.co = i, co
+class E:
+    def __init__(s, a, b): s.verts = (a, b)
+class Seznam(list):
+    def ensure_lookup_table(s): pass
+    def index_update(s): pass
+n = 400
+vs = Seznam(V(i, (np.cos(2 * np.pi * i / n) * (1 + 0.05 * (i % 2)), np.sin(2 * np.pi * i / n) * (1 + 0.05 * (i % 2)), 0.0)) for i in range(n))
+bm = types.SimpleNamespace(verts=vs, edges=[E(vs[i], vs[(i + 1) % n]) for i in range(n)])
+r0 = np.array([np.hypot(*v.co[:2]) for v in vs])
+taubin_bm(bm, 30)
+r1 = np.array([np.hypot(*np.asarray(v.co)[:2]) for v in vs])
+print(round(r0.std(), 4), round(r1.std(), 4), round(r0.mean(), 3), round(r1.mean(), 3))`;
+  const r = spawnSync("python3", ["-c", prog, path.join(KOREN, "scripts", "atlas", "drevesa.py")], { encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  const [s0, s1, m0, m1] = r.stdout.trim().split("\n").pop().split(" ").map(Number);
+  assert.ok(s1 < s0 * 0.2, `stopnice ostanejo: ${s0} → ${s1}`);
+  assert.ok(Math.abs(m1 - m0) < 0.02, `skrčenje: ${m0} → ${m1}`);
+});
