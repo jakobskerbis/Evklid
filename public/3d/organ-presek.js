@@ -166,11 +166,56 @@ export function ovojnica(tocke) {
   return [...pol(t), ...pol(t.reverse())];
 }
 
+// Tanek trak → zapolnjen obris. Presek tanke odprte lupine (ledvična ovojnica, odprta ob hilusu) je ena zanka, ki gre
+// po eni strani lupine do roba odprtine in po drugi nazaj. Vsaka točka ima nasproti sebe par (druga stran lupine); vsota
+// ločnih dolžin točke in para je skoraj stalna (zrcaljenje ob obeh robovih odprtine), robova sta pri polovici te vsote.
+// Vrne eno stran traku od roba do roba (mnogokotnik, ki ga tetiva čez odprtino sklene) ali null, če zanka ni tanek trak.
+export function trakVObris(z) {
+  const n = z.length;
+  if (n < 8) return null;
+  const s = [0];
+  for (let i = 1; i <= n; i++) s.push(s[i - 1] + Math.hypot(z[i % n][0] - z[i - 1][0], z[i % n][1] - z[i - 1][1]));
+  const L = s[n];
+  const obseg = L;
+  // tanek trak: povprečna širina 2·ploščina/obseg je majhna glede na velikost
+  if ((2 * Math.abs(ploscina(z))) / obseg > obseg * 0.01) return null;
+  const okno = 0.04 * L;
+  const pari = [];
+  for (let i = 0; i < n; i++) {
+    let naj = Infinity, sj = 0;
+    for (let j = 0; j < n; j++) {
+      let ds = Math.abs(s[i] - s[j]);
+      ds = Math.min(ds, L - ds);
+      if (ds < okno) continue;
+      const d = Math.hypot(z[i][0] - z[j][0], z[i][1] - z[j][1]);
+      if (d < naj) { naj = d; sj = s[j]; }
+    }
+    pari.push([naj, s[i] + sj]);
+  }
+  const meja = [...pari.map((p) => p[0])].sort((a, b) => a - b)[Math.floor(n / 2)] * 3;
+  let cx = 0, cy = 0;
+  for (const [d, v] of pari) if (d <= meja) { cx += Math.cos((2 * Math.PI * v) / L); cy += Math.sin((2 * Math.PI * v) / L); }
+  const c = ((Math.atan2(cy, cx) / (2 * Math.PI)) * L + L) % L;
+  const a = c / 2;
+  // od roba odprtine (ločna dolžina a) po vrsti do drugega roba (a + L/2)
+  const od = (i) => (s[i] - a + 2 * L) % L;
+  let i0 = 0;
+  for (let i = 1; i < n; i++) if (od(i) < od(i0)) i0 = i;
+  const izhod = [];
+  for (let k = 0; k < n; k++) {
+    const i = (i0 + k) % n;
+    if (od(i) > L / 2) break;
+    izhod.push(z[i]);
+  }
+  return izhod.length >= 3 ? izhod : null;
+}
+
 // Zapolnjen presek: { polozaji: Float32Array (3D, na ravnini), indeksi: number[], vrste: Float32Array } ali null, če
 // ravnina mreže ne seka; os = { O, U, V } ravnine. vrste (na oglišče): 0 = ploskev preseka, 1 = obroba (rob), 2 = zapolnjena luknja (luknje).
 // idx: indeksi trikotnikov ali seznam takih polj (vsako zaprto telo posebej: zanke sosednjih teles se ne gnezdijo).
 // polno: samo zunanji obrisi brez lukenj (lupina z votlino postane polna ploskev).
 // ovoj: ena sama ploskev, izbočena ovojnica vseh zank (podlaga pod drugimi plastmi).
+// trak: presek tanke odprte lupine (zanka tja in nazaj) zapolni do tetive čez odprtino (trakVObris), ne do izbočene ovojnice.
 // rob: polovična širina obrobe vzdolž vsakega obrisa (enote mreže; zapre špranjo med sosednjima telesoma iste plasti).
 // luknje: luknje preseka (svetlina cevi z dvojno steno) dobijo svojo ploskev (vrsta 2) namesto praznine; obris brez lukenj
 // (polna cev) je ves svetlina (vrsta 2), njegovo steno nariše obroba (rob).
@@ -178,7 +223,7 @@ export function ovojnica(tocke) {
 // povecaj: faktor, s katerim se vsaka zanka poveča okoli svojega težišča (1,02: sosednji telesi se prekrijeta).
 // trianguliraj(obris, luknje) → [[a, b, c], …] z indeksi v obris, nato luknje po vrsti (kot THREE.ShapeUtils.triangulateShape).
 // najPloscina: zanke z manjšo ploščino odpadejo (drobir).
-export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7, skleni = 0, stena = 0 } = {}) {
+export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7, skleni = 0, stena = 0 } = {}) {
   const polozaji = [];
   const indeksi = [];
   const vrste = []; // na oglišče: 0 ploskev, 1 obroba, 2 zapolnjena luknja
@@ -220,6 +265,17 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, luknj
         const c = [z.reduce((a, p) => a + p[0], 0) / z.length, z.reduce((a, p) => a + p[1], 0) / z.length];
         return z.map((p) => [c[0] + (p[0] - c[0]) * povecaj, c[1] + (p[1] - c[1]) * povecaj]);
       });
+    }
+    if (trak) {
+      // tanka odprta lupina: ena stran traku, sklenjena s tetivo čez odprtino, je ploskev; obroba po traku (lupina)
+      for (const z of dobre) {
+        const o = trakVObris(z) || z;
+        const zacetek = polozaji.length / 3;
+        for (const p of o) { for (let c = 0; c < 3; c++) polozaji.push(O[c] + p[0] * U[c] + p[1] * V[c]); vrste.push(0); }
+        for (const t of trianguliraj(o, [])) indeksi.push(zacetek + t[0], zacetek + t[1], zacetek + t[2]);
+        if (rob > 0) obroba(z, os);
+      }
+      continue;
     }
     if (ovoj) {
       vseZanke.push(...dobre);
