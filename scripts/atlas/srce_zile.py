@@ -300,6 +300,7 @@ def zapri_luknjo(me, najmanj_tock=40, stena=0.003, obrocev=12, korakov=40):
 
 
 # ---------- glavno ----------
+VENCNA_ZOZITEV = 0.4  # venčne arterije: zožitev od začetka do konca veje
 VEZ_R, VEZ_RAZSIR, VEZ_SPLOSCI = 0.0022, 0.0013, 0.2  # arterijska vez: polmer sredi, razširitev ob stenah, sploščenost
 VELIKE = r"^(Ascending aorta|Aortic arch|Thoracic aorta|Brachiocephalic trunk|Left common carotid artery|Left subclavian artery|Pulmonary trunk|" \
          r"Bifurcation of pulmonary trunk|(Left|Right) pulmonary artery|Superior vena cava|Inferior vena cava \(thoracic part\)|" \
@@ -843,7 +844,11 @@ def srce_zile(osnovni, cfg, tmp):
                 while len(P) > 2 and v_aorti(P[-1]):
                     P, R = P[:-1], R[:-1]
             if arterija:  # anatomske debeline: deblo ≈ 4 mm, veje se tanjšajo, najtanjše ≈ 1,1 mm
-                R = [max(r * 1.08, 0.00055) for r in R]
+                # krog 10 srca (ocena k5: »enakomerne svetlo rdeče cevi«): vsaka veja se proti koncu zoži za VENCNA_ZOZITEV
+                # (smer: debelejši konec krivulje je začetek)
+                Ls = _dolzine(P); q = max(1, len(R) // 4)
+                obr = sum(R[:q]) < sum(R[-q:])
+                R = [max(r * 1.08 * (1 - VENCNA_ZOZITEV * ((Ls[-1] - l) if obr else l) / max(Ls[-1], 1e-6)), 0.00055) for r, l in zip(R, Ls)]
             elif ime == "Coronary sinus":
                 R = [max(r * 1.3, 0.0032) for r in R]
             else:

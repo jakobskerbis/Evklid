@@ -153,7 +153,8 @@ ORGANI = {
                                 vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.90, 0.66, 0.24), mascaBarva2=(0.92, 0.56, 0.17),
                                 # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
                                 # krog 5 (predaja: »temne gube med ploščami maščobe«): plitvejši režnjiči, svetlejši žleb med njimi
-                                mascaNasip=0.0010, mascaPremik=0.0015, mascaMera=0.010, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
+                                mascaNasip=0.0010, mascaPremik=0.0015, mascaMera=0.007, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
+                                mascaMeja=(0.05, 0.8), mascaSum=0.18,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum

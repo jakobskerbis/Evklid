@@ -51,7 +51,9 @@ export const TKIVA = [
 export const ENO_UV = /^Trabeculae carneae of (left|right) ventricle/;
 
 // Vgrez venčnih žil: os cevi toliko polmerov nad epikardom (0 = os na površini, 1 = cev leži na njej).
-export const VGREZ = 0.2;
+// krog 10 srca (ocena k5: »venčne arterije ležijo na vrhu kot enakomerne svetlo rdeče cevi«): os 0,1 polmera pod površino
+// (≈ 45 % premera vidnega), arterija je napol v maščobi žleba
+export const VGREZ = -0.1;
 const ZILA = /^vencna-(arterija|vena)$/;
 
 // Mreža trikotnikov epikarda za iskanje najbližje točke (celice velikosti h).

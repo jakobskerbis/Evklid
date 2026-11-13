@@ -56,9 +56,9 @@
    "aoTekstura": 0.7,
    "rezPlasti": {
     "endo": {
-     "barva": "#dcab9e",
+     "barva": "#d39a8c",
      "sirina": 0.00018,
-     "moc": 0.42
+     "moc": 0.22
     },
     "subendo": {
      "barva": "#c97666",
@@ -68,7 +68,7 @@
     "epi": {
      "barva": "#c98f78",
      "sirina": 0.0003,
-     "moc": 0.32
+     "moc": 0.2
     },
     "globina": 0.3,
     "globinaOd": 0.0009,
@@ -78,41 +78,41 @@
    }
   },
   "zaklopka": {
-   "barva": "#efd3c3",
+   "barva": "#e8c9ad",
    "hrap": 0.36,
-   "lak": 0.55,
+   "lak": 0.35,
    "lakHrap": 0.3,
-   "sijaj": 0.35,
+   "sijaj": 0.22,
    "sijajBarva": "#ffffff",
-   "rob": 0.28,
-   "robBarva": "#fff0e6",
+   "rob": 0.1,
+   "robBarva": "#f0d2b8",
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
    "dvostransko": true,
    "sijajHrap": 0.6,
-   "spekular": 0.75,
+   "spekular": 0.55,
    "tekstura": false,
-   "prosojnost": 0.74,
+   "prosojnost": 0.88,
    "globina": true
   },
   "zep": {
-   "barva": "#f0dacb",
+   "barva": "#ebcfb6",
    "hrap": 0.36,
-   "lak": 0.55,
+   "lak": 0.35,
    "lakHrap": 0.3,
-   "sijaj": 0.3,
+   "sijaj": 0.2,
    "sijajBarva": "#ffffff",
-   "rob": 0.28,
-   "robBarva": "#fff3ea",
+   "rob": 0.1,
+   "robBarva": "#f2d8c0",
    "ao": 0.8,
    "zrno": 0.05,
    "f": 90,
    "dvostransko": true,
    "sijajHrap": 0.6,
-   "spekular": 0.75,
+   "spekular": 0.55,
    "tekstura": false,
-   "prosojnost": 0.62,
+   "prosojnost": 0.8,
    "globina": true
   },
   "arterija": {
@@ -134,13 +134,7 @@
    "rezLak": 0.6,
    "rezLakHrap": 0.25,
    "lise": 0.2,
-   "liseBarva": "#f6dccb",
-   "zile": 0.4,
-   "zileBarva": "#a84a42",
-   "zileBarva2": "#7e3448",
-   "zileSirina": 0.00018,
-   "zileF": 30,
-   "zileMaska": 4
+   "liseBarva": "#f6dccb"
   },
   "vena": {
    "barva": "#3b5ba8",
@@ -162,13 +156,7 @@
    "rezLak": 0.6,
    "rezLakHrap": 0.25,
    "lise": 0.2,
-   "liseBarva": "#f6dccb",
-   "zile": 0.4,
-   "zileBarva": "#6e3a52",
-   "zileBarva2": "#7e3448",
-   "zileSirina": 0.00018,
-   "zileF": 30,
-   "zileMaska": 4
+   "liseBarva": "#f6dccb"
   },
   "pljucna": {
    "barva": "#4566b8",
@@ -190,13 +178,7 @@
    "rezLak": 0.6,
    "rezLakHrap": 0.25,
    "lise": 0.2,
-   "liseBarva": "#f6dccb",
-   "zile": 0.4,
-   "zileBarva": "#a84a42",
-   "zileBarva2": "#7e3448",
-   "zileSirina": 0.00018,
-   "zileF": 30,
-   "zileMaska": 4
+   "liseBarva": "#f6dccb"
   },
   "pljucna-vena": {
    "barva": "#a3304a",
@@ -238,19 +220,13 @@
    "rezLak": 0.6,
    "rezLakHrap": 0.25,
    "lise": 0.2,
-   "liseBarva": "#f6dccb",
-   "zile": 0.4,
-   "zileBarva": "#a84a42",
-   "zileBarva2": "#7e3448",
-   "zileSirina": 0.00018,
-   "zileF": 30,
-   "zileMaska": 4
+   "liseBarva": "#f6dccb"
   },
   "vencna-arterija": {
-   "barva": "#d3302a",
+   "barva": "#a82a25",
    "rez": "#b82a26",
-   "robBarva": "#ff6a5a",
-   "sijajBarva": "#ff9a90",
+   "robBarva": "#d0584a",
+   "sijajBarva": "#e08478",
    "lak": 0.15,
    "lakHrap": 0.62,
    "sijaj": 0.14,
@@ -264,7 +240,7 @@
    "hrap": 0.42,
    "rezLak": 0.6,
    "rezLakHrap": 0.25,
-   "odtenek": "#cc665a"
+   "odtenek": "#b8665c"
   },
   "vencna-vena": {
    "barva": "#3e3a8c",
@@ -434,13 +410,7 @@
    "rezLak": 0.6,
    "rezLakHrap": 0.25,
    "lise": 0.2,
-   "liseBarva": "#f6dccb",
-   "zile": 0.4,
-   "zileBarva": "#a84a42",
-   "zileBarva2": "#7e3448",
-   "zileSirina": 0.00018,
-   "zileF": 30,
-   "zileMaska": 4
+   "liseBarva": "#f6dccb"
   },
   "pljucna-lok": {
    "barva": "#4566b8",
@@ -462,13 +432,7 @@
    "rezLak": 0.6,
    "rezLakHrap": 0.25,
    "lise": 0.2,
-   "liseBarva": "#f6dccb",
-   "zile": 0.4,
-   "zileBarva": "#a84a42",
-   "zileBarva2": "#7e3448",
-   "zileSirina": 0.00018,
-   "zileF": 30,
-   "zileMaska": 4
+   "liseBarva": "#f6dccb"
   },
   "vena-spodnja": {
    "barva": "#3b5ba8",
@@ -1171,7 +1135,7 @@
     "telefon": "srce-stena-telefon.png",
     "lo": [
      -0.06729,
-     -0.10312,
+     -0.10317,
      -0.05595
     ],
     "korak": 0.001,
@@ -1253,6 +1217,12 @@
     },
     "pljucna-vena": {
      "barva": "#d0968a"
+    },
+    "vena-spodnja": {
+     "barva": "#4a2228",
+     "dvostransko": true,
+     "sijaj": 0,
+     "lak": 0
     }
    },
    "okvir": {
@@ -1265,8 +1235,7 @@
    },
    "skrijTkiva": [
     "aorta-lok",
-    "pljucna-lok",
-    "vena-spodnja"
+    "pljucna-lok"
    ]
   }
  },
@@ -1297,8 +1266,8 @@
  },
  "velikost": 0.2633,
  "trikotniki": {
-  "racunalnik": 245172,
-  "telefon": 69381
+  "racunalnik": 245186,
+  "telefon": 69365
  },
  "luci": [
   {

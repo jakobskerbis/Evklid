@@ -10,7 +10,7 @@
 #      organi.mjs jih stisne v WebP (baza q90 / telefon q86, ORM q82 / telefon q70, normala q95 / telefon q84) in izvoz glTF jih zapiše kot baseColorTexture,
 #      normalTexture, occlusionTexture in metallicRoughnessTexture (ena slika ORM).
 # Recept tkiva (cfg tekstura.recepti[<tkivo>]): barva, barva2 (lise), lise (moč), maščoba po maski (masca moč,
-# mascaBarva/mascaBarva2, mascaNasip = blazinica, mascaPremik = višina režnja, mascaMera = velikost režnja, mascaZleb =
+# mascaBarva/mascaBarva2, mascaMeja (prehod maske), mascaSum (šum meje), mascaNasip = blazinica, mascaPremik = višina režnja, mascaMera = velikost režnja, mascaZleb =
 # barva žleba med režnji, mascaHrap), gube (premik, merilo), vlakna (premik, merilo), zilice (moč, barva), hrap,
 # notranja/notranjaHrap (endokard), kletka (razdalja žarkov peke, sicer tekstura.kletka); žile z atributom OSI
 # (srce_zile.py: R = dolžina vzdolž žile, G/B = cos/sin kota okoli osi, A = polmer): vzdolz (višina vzdolžnih gub
@@ -237,7 +237,12 @@ def material_peke(tkivo, r, velikost):
         mc = mix(rng(sum_(0.03 * velikost, 2, 0.5, 9.1), 0.35, 0.7), r["mascaBarva"], r.get("mascaBarva2", r["mascaBarva"]))
         mb = N("ShaderNodeMix"); mb.data_type = "RGBA"; mb.blend_type = "MULTIPLY"; mb.inputs[0].default_value = 1.0
         L(mc, mb.inputs[6]); L(rng(sl.outputs[0], 0.0, 0.9, r.get("mascaZleb", 0.6), 1.0), mb.inputs[7])
-        mm = mul(rng(masca, 0.15, 0.55), r["masca"])  # tanka sled ob vejah (R ≈ 0,2) ostane komaj vidna
+        # krog 10 srca (ocena k5: »ploske okraste lise s trdim robom«): mascaMeja = širina prehoda maske, mascaSum = šum
+        # na meji (pernat, režnjičast rob namesto obrisa maske CT)
+        mz = N("ShaderNodeMath"); mz.operation = "ADD"; L(masca, mz.inputs[0])
+        L(rng(sum_(0.012 * velikost, 4, 0.6, 7.7), 0.25, 0.75, -r.get("mascaSum", 0.0), r.get("mascaSum", 0.0)), mz.inputs[1])
+        mlo, mhi = r.get("mascaMeja", (0.15, 0.55))
+        mm = mul(rng(mz.outputs[0], mlo, mhi), r["masca"])  # tanka sled ob vejah (R ≈ 0,2) ostane komaj vidna
         mm = mul(mm, rng(sum_(0.012 * velikost, 3, 0.6, 5.5), 0.25, 0.55, 0.6, 1.0))
         c = mix(mm, c, mb.outputs[2])
         hx = N("ShaderNodeMix"); hx.data_type = "FLOAT"; L(mm, hx.inputs[0]); L(hrap, hx.inputs[2]); hx.inputs[3].default_value = r["mascaHrap"]
