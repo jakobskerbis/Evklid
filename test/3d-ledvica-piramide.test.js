@@ -42,7 +42,7 @@ test("ledvica-piramide: stožci v JSON – enotske osi v ravnini reza, enaki za 
 
 test("ledvica m2: zareza hilusa v ravnini reza, meh odprt v sečevod brez pregrade, mat žilni debli", () => {
   const sin = j.tkiva.ovojnica.rezPiramide.sinus, rv = j.prerez.ravnine[0];
-  assert.equal(sin.zareza.length, 8);
+  assert.ok(sin.zareza.length === 8 || sin.zareza.length === 9); // m4: neobvezna 9. vrednost »do«
   for (const i of [2, 5]) assert.ok(Math.abs(sin.zareza[i] * rv.n[2] + rv.d) < 2e-5, "zareza leži v ravnini reza");
   assert.ok(Math.hypot(sin.zareza[3] - sin.zareza[0], sin.zareza[4] - sin.zareza[1]) > 0.02, "zareza sega čez ves hilus");
   assert.ok(j.tkiva.meh.rezPresek.skleni >= 0.004 && j.tkiva.meh.rezPresek.skleniBrezRoba === true);
@@ -74,4 +74,46 @@ test("ledvica m3: žilni debli prerezani v ravnini reza, ločne žile ob piramid
   const organ = fs.readFileSync(path.join(KOREN, "public/3d/organ.js"), "utf8");
   assert.match(organ, /pir\.locne/);
   assert.match(organ, /locne: null/); // učne barve: brez žilnih črt
+});
+
+test("ledvica m4: žili sta zlito votlo drevo z vejami (svetlina je luknja obrisa), polmesečasta nadledvičnica, sečevod v ravnini reza", async () => {
+  const { NodeIO } = await import("@gltf-transform/core");
+  const { ALL_EXTENSIONS } = await import("@gltf-transform/extensions");
+  const { zankePreseka, ploscina } = await import("../public/3d/organ-presek.js");
+  const { preberi } = await import("../scripts/atlas/zile-mreza.mjs");
+  const drevesa = fs.readFileSync(path.join(KOREN, "scripts/atlas/drevesa.py"), "utf8");
+  assert.match(drevesa, /def zlij_cevi\(/);
+  assert.match(drevesa, /nast\.get\("veje_sinus", True\)/);
+  const izvoz = fs.readFileSync(path.join(KOREN, "scripts/atlas/izvozi-organe.py"), "utf8");
+  assert.match(izvoz, /def nadledvicnica_lastna\(/);
+  assert.match(izvoz, /dodaj=\["ledvicni_meh", "ledvicne_zile", "nadledvicnica_lastna"\]/);
+  assert.match(izvoz, /secevod_globina=0\.0/);
+  const organ = fs.readFileSync(path.join(KOREN, "public/3d/organ.js"), "utf8");
+  assert.match(organ, /t\.rezPresek\.cev\?\.zleb \|\| t\.rezPresek\.zleb/);
+  for (const t of ["arterija", "vena"]) assert.ok(j.tkiva[t].rezPresek.zleb && j.tkiva[t].rezPresek.luknjaBarva, `${t}: odprta svetlina v rezu`);
+  assert.ok(j.tkiva.meh.rezVotlina.lak > 0 && j.tkiva.meh.rezVotlina.sencaMoc >= 0.75, "notranjost meha ni ploska");
+  const rv = j.prerez.ravnine[0];
+  for (const f of ["ledvica.glb", "ledvica-telefon.glb"]) {
+    const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(KOREN, "public/3d/modeli/organi-3d", f));
+    let zil = 0;
+    for (const node of doc.getRoot().listNodes()) {
+      if (!node.getMesh() || !/^Renal (artery|vein) \(lastno\)/.test(node.getName())) continue;
+      zil++;
+      const m = preberi(node, node.getMesh().listPrimitives()[0]);
+      const { zanke } = zankePreseka(m.P, m.F, rv.n, rv.d, 1e-6, 0);
+      const pl = zanke.map((z) => ploscina(z));
+      const naj = Math.max(...pl.map(Math.abs));
+      // zunanji obris debla in v njem svetlina (druga največja zanka), ki sega skoraj po vsej dolžini: prerezana vzdolž
+      const ur = pl.map(Math.abs).sort((x, y) => y - x);
+      assert.ok(ur.length >= 2 && ur[0] === naj && ur[1] > 0.3 * naj, `${f}: ${node.getName()} ploščine ${pl.map((p) => (p * 1e6).toFixed(1))}`);
+    }
+    assert.equal(zil, 2, f);
+    // nadledvičnica: polmesec (dolga in ploska), ne kapa: razmerje najdaljša / najkrajša stranica škatle
+    const nad = doc.getRoot().listNodes().find((n) => n.getMesh() && /^Suprarenal/.test(n.getName()));
+    const P = preberi(nad, nad.getMesh().listPrimitives()[0]).P;
+    const lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9];
+    for (let i = 0; i < P.length; i++) { lo[i % 3] = Math.min(lo[i % 3], P[i]); hi[i % 3] = Math.max(hi[i % 3], P[i]); }
+    const d = hi.map((x, i) => x - lo[i]).sort((a, b) => a - b);
+    assert.ok(d[2] / d[0] > 3 && d[0] < 0.012, `${f}: nadledvičnica ${d.map((x) => (x * 1000).toFixed(1))} mm`);
+  }
 });

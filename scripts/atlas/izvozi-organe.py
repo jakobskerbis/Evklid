@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
 from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
-from oko_misice import ocesne_misice, kite_na_zrklo, ocesne_misice_lastne  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
+from oko_misice import ocesne_misice, kite_na_zrklo, ocesne_misice_lastne, oko_dodatki_m4  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
 from jetra_geometrija import jetra_deli, jetra_ct, uveljavi_normale  # jetra: ena površina, režnji, vezi, votla vena, drevesa žil in žolčnih vodov
 from drevesa import pljucna_drevesa, ledvicne_zile  # pljuča: zaprti režnji, veje iz središčnic, subsegmentne veje (lastno)
 from pljuca_geometrija import pljuca_ct  # pljuča: režnji, žile in dihalno drevo iz CT (TotalSegmentator), sapnik z obroči iz HRA
@@ -167,7 +167,7 @@ ORGANI = {
             # maščoba v žlebovih: stik zunanjih ploskev votlin (venčni in oba medprekatna žleba), ob venčnih žilah širša;
             # ob vejah na prosti steni prekatov le tanka sled (ne ob aorti, pljučnem deblu, pljučnih venah, lističih)
             maska=dict(zile=r"coronary (artery|sinus)|Coronary sinus|interventricular artery|Circumflex|cardiac vein|vein of left ventricle|branch of right coronary",
-                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.2),
+                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0055, zlebZila=0.0045, sled=0.2),  # krog m4: ožji pas maščobe (v žlebovih, ne čez stene)
             recepti={
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
@@ -176,8 +176,9 @@ ORGANI = {
                                 vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.90, 0.66, 0.24), mascaBarva2=(0.92, 0.56, 0.17),
                                 # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
                                 # krog 5 (predaja: »temne gube med ploščami maščobe«): plitvejši režnjiči, svetlejši žleb med njimi
-                                mascaNasip=0.0010, mascaPremik=0.0015, mascaMera=0.007, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
-                                mascaMeja=(0.05, 0.8), mascaSum=0.18,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
+                                mascaNasip=0.0013, mascaPremik=0.0015, mascaMera=0.007, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
+                                mascaMeja=(0.10, 0.85), mascaSum=0.18,  # krog m4: blazinica višja (žile ležijo v njej), rob malo ožji
+                                 # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
@@ -267,7 +268,7 @@ ORGANI = {
         vkljuci=r"^(Sclera|Cornea|Iris|Lens|Retina|Vitreous body|Posterior segment of eyeball|Anterior segment of eyeball|Zonular fibres|Optic nerve \(II\)|"
                 r"(Superior|Inferior|Medial|Lateral) rectus muscle|(Superior|Inferior) oblique muscle|Trochlea of superior oblique muscle|Common tendinous ring)\.l( /|$)",
         izkljuci=r"Anterior chamber",
-        cilj=(165_000, 40_000),
+        cilj=(165_000, 52_000),  # krog m4: telefon 52k (prej 40k: stopničast rob beločnice in žilnice v prerezu)
         # Pečene PBR teksture (videz): beločnica porcelanasto bela z drobnimi episkleralnimi žilicami, mišice rdeče z vlakni,
         # kite in živec sijoče bele; prozorna in s senčilnikom risana tkiva (roženica, leča, steklovina, šarenica, mrežnica)
         # dobijo nevtralen recept, pregledovalnik jih izključi s »tekstura: false« v oko.json.
@@ -293,7 +294,7 @@ ORGANI = {
         # mišice na zrklo HRA: narastišča premih mišic 5,5–7,7 mm za limbusom, kite, nič pod beločnico (oko_misice.py)
         # krog m1: mišice so lastna geometrija (ocesne_misice_lastne: čisti trakovi po anatomski poti, svoja telefonska
         # mreža, brez poenostavitve); ocesne_misice ostane za šarenico in škripec, kite_na_zrklo ni več potreben
-        dodaj=["ocesne_misice", "ocesne_misice_lastne"], nedotakni=r"(rectus|oblique) muscle",  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
+        dodaj=["ocesne_misice", "ocesne_misice_lastne", "oko_dodatki_m4"], nedotakni=r"(rectus|oblique) muscle|Dural sheath|suspensory",  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
         # Krivulja vidnega živca se v Z-Anatomy začne pri leči: del znotraj zrkla odstranimo (sicer štrli v prerezu).
         znotraj=[(r"^Optic nerve", r"(?i)^sclera", 0.97)],
         krivulja=(6, 4),
@@ -393,7 +394,7 @@ ORGANI = {
             deli=[(r"capsule", "ovojnica"), (r"cortex|column", "skorja"), (r"pyramid", "piramide"), (r"papilla", "papile"), (r"hilum", "sinus")],
         ),
         # drevesa.ledvicne_zile: ledvična vena in arterija na novo (lastno) do hilusa in v sinus; svoja telefonska mreža
-        dodaj=["ledvicni_meh", "ledvicne_zile"], nedotakni=r"Renal (vein|artery) \(lastno\)",
+        dodaj=["ledvicni_meh", "ledvicne_zile", "nadledvicnica_lastna"], nedotakni=r"Renal (vein|artery) \(lastno\)",
         sredisce_brez=r"^Ureter",
         meh_merilo=1.5, meh_jedro=0.0046, vrat_r=0.0019,  # m3: ožji vratovi malih čaš (čaša kot skodelica, ne enakomerna »makaronska« cev)
         # osi čaš = osi naslikanih piramid (ledvica.json rezPiramide.seznam, GLB x, y), po črki papile HRA
@@ -404,9 +405,10 @@ ORGANI = {
         izpusti_po=r"hilum_of_kidney",
         telefonSkrci=[(r"outer_cortex", 0.0005)],
         # Z-Anatomy nadledvična žleza je ob HRA ledvici (merilo 0,77) predebela (4,9 × 4,5 × 2,1 cm): 0,72× z dnom na ledvici.
-        napihni=[(r"^Suprarenal", 0.72, "dno")],
-        zgladi_mrezo=[(r"^Suprarenal", 10, 0.5)],  # krog m1: brez grud (ocena: »lumpy ochre cap«)
-        premakni=[(r"^Suprarenal", (0.0, -0.0075, -0.001))],
+        # krog m4: nadledvična žleza lastna (nadledvicnica_lastna: polmesec ob zgornjem medialnem robu ledvice); prej
+        # Z-Anatomy 0,72× z dnom na ledvici (bleda kapa čez zgornji pol). secevod_globina 0: os sečevoda ostane v
+        # ravnini reza (svetlina je v rezu zvezna od meha navzdol, brez zaprtega žepa pod stikom).
+        secevod_globina=0.0, stik_ru=1.05, secevod_medialno=0.52,
         vkljuci=r"^(Kidney\.l|Ureter\.l|Suprarenal gland\.l|Left renal artery|Left renal vein|(Anterior|Posterior) branch of renal artery\.l)( /|$)",
         cilj=(160_000, 40_000),
         # Pečene PBR teksture (videz): ovojnica gladka, sijoča, rdeče rjava; skorja zrnata (glomeruli), piramide temnejše
@@ -1231,7 +1233,7 @@ def ledvicni_meh(osnovni, cfg, tmp):
     print(f"[organi] sečevod: votla cev {len(P)} obročev, polmer {round(rt * 1000, 2)}–{round(R[-1] * 1000, 2)} mm, dolžina {round((zr - zmin) * 1000)} mm, lok {round(abs(lok) * 1000, 1)} mm")
     vrh = P[-1]
     vrh2 = P[-3] if len(P) > 3 else vrh - Vector((0, 0, 0.005))
-    ru = 1.12 * R[-1]  # krog m1: krogle meha ob stiku širše od svetline sečevoda (sicer se meh pri manjšem merilu odtrga)
+    ru = cfg.get("stik_ru", 1.12) * R[-1]  # krog m1: krogle meha ob stiku širše od svetline sečevoda (sicer se meh pri manjšem merilu odtrga)
     zg = [p for p in pap if p.z >= C.z] or pap; sp = [p for p in pap if p.z < C.z] or pap
     M = {id(g): na_ravnino(C.lerp(sum(g, Vector()) / len(g), 0.5)) for g in (zg, sp)}
     k = cfg.get("meh_merilo", 1.0)
@@ -1342,6 +1344,47 @@ def ledvicni_meh(osnovni, cfg, tmp):
     print("[organi] meh škatla (Blender):", [round(min(v.co[i] for v in me.vertices), 5) for i in range(3)], [round(max(v.co[i] for v in me.vertices), 5) for i in range(3)])
     print(f"[organi] ledvični meh: {len(pap)} malih čašic, {tris(me)} trikotnikov")
     return [["Evklid renal pelvis and calyces (lastno)", me, "meh", "meh", "Evklid renal pelvis and calyces (lastno) / Evklid"]]
+
+
+def nadledvicnica_lastna(osnovni, cfg, tmp):
+    """Leva nadledvična žleza kot polmesec (krog m4, ocena: »pale plastic cap«): sploščeno telo ob zgornjem medialnem
+    robu ledvice, najdebelejše v sredini, s stanjšanima krakoma (zgornji čez pol, spodnji proti hilusu), v globini na
+    ravnini reza (rez pokaže skorjo in sredico). Zamenja mrežo Z-Anatomy (ime vrstice ostane)."""
+    from mathutils.bvhtree import BVHTree
+    vr = next((r for r in osnovni if r[0].startswith("Suprarenal")), None)
+    ovoj = next((me for ime, me, *_ in osnovni if "capsule" in ime), None)
+    if vr is None or ovoj is None:
+        return []
+    pap = [sum((v.co for v in me.vertices), Vector()) / len(me.vertices) for ime, me, *_ in osnovni if "papilla" in ime]
+    hil = next(me for ime, me, *_ in osnovni if "hilum" in ime)
+    hc = sum((v.co for v in hil.vertices), Vector()) / len(hil.vertices)
+    pc = sum(pap, Vector()) / len(pap)
+    yr = sum(p.y for p in pap) / len(pap) + cfg.get("meh_ravnina", 0.0004)
+    m = hc - pc; m.y = 0; m.z = 0; m.normalize(); gor = Vector((0, 0, 1))
+    V = [v.co for v in ovoj.vertices]
+    zmax = max(v.z for v in V); zmin = min(v.z for v in V)
+    K = Vector((sum(v.x for v in V) / len(V), yr, zmax - 0.32 * (zmax - zmin)))  # središče zgornjega pola
+    bvh = BVHTree.FromPolygons([tuple(v) for v in V], [tuple(p.vertices) for p in ovoj.polygons])
+    n = cfg.get("nadledvicnica", {})
+    k0, k1 = math.radians(n.get("kot0", -12)), math.radians(n.get("kot1", 78)); rmax = n.get("polmer", 0.0062)
+    t = []; N = 26
+    for i in range(N + 1):
+        u = i / N; kot = k0 + (k1 - k0) * u
+        d = gor * math.cos(kot) + m * math.sin(kot)
+        hit = bvh.ray_cast(K + d * 0.2, -d)[0]
+        if hit is None:
+            continue
+        r = rmax * (0.34 + 0.66 * math.sin(math.pi * (0.08 + 0.84 * u)) ** 1.3)
+        t.append((Vector(hit) + d * r * 0.62, r))
+    me = _metakroglice(t, "nadledvicna", tmp, locljivost=0.0005)
+    sp = n.get("splosci", 0.5)
+    for v in me.vertices:  # sploščena spredaj–zadaj, simetrično na ravnino reza
+        v.co.y = yr - 0.0006 + (v.co.y - yr) * sp
+    for q in me.polygons:
+        q.use_smooth = True
+    vr[1] = me
+    print(f"[organi] nadledvična žleza (lastno): polmesec {len(t)} krogel, največji polmer {rmax * 1000:.1f} mm, {tris(me)} trikotnikov")
+    return []
 
 
 def material(ime, slike=None):
