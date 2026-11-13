@@ -53,8 +53,15 @@ export function obrnjenaTabela(inner) {
 // (list formul: public/graph.css, tisk: server/textbook-print.js). Vrne novo notranjost ali null.
 // Besedilo celice je že HTML (& in < sta ubežana); v atributu ubežimo še narekovaj. Ostanek oznake po odstranjevanju
 // (npr. »<scr<b>ipt«) ne sme ostati: vsak preostali < ali > ubežimo.
-const ATRIBUT = (s) => s.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const besedilo = (html) => html.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+const ATRIBUT = (s) => s.replace(/"/g, "&quot;");
+const besedilo = (html) =>
+  html
+    .replace(/<[^>]+>/g, "")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
 export function oznaciStolpce(inner) {
   const glava = inner.match(/<thead[^>]*>[\s\S]*?<\/thead>/)?.[0];
