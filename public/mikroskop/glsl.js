@@ -152,6 +152,7 @@ float odsek(vec2 p, vec2 r, float seme) {
 #define S_GOLGI 29.0
 #define S_MIKROVIL 30.0
 #define S_GENOM 31.0      // genom v virusu (le za sloj molekul: DNK faga T4, RNK SARS-CoV-2 in HIV)
+#define S_GER 32.0        // gladki endoplazemski retikulum (mreža cevk brez ribosomov)
 
 #define C_SPLOSNA 0.0
 #define C_HEPATOCIT 1.0
@@ -216,23 +217,55 @@ void jedroV(inout T t, vec2 p, vec2 o, vec2 r, float kot, float moc, float px) {
 // Jedro pri globini jd·H (0 apikalno, 1 bazalno), podolgovato pri visokih celicah. Vrne T celice (snov S_CITO/S_JEDRO).
 T epitel(float d, float s, float H, float w, float jd, float tip, vec2 seme, vec2 p, vec2 os, float px) {
   T t = prazno();
-  float i = floor(s / w);
+  // meje celic niso ravnilo: širina celic niha, meje so rahlo nagnjene in vijugajo z globino
+  float sw = s + w * 0.6 * (sum(vec2(s / (2.3 * w), d / (1.6 * max(H, 4.0))) + seme * 7.0) - 0.5);
+  float i = floor(sw / w);
   vec4 h = h42(vec2(i, 0.0) + seme);
-  float ls = (fract(s / w) - 0.5) * w;
+  float ls = (fract(sw / w) - 0.5) * w;
   t.snov = S_CITO; t.tip = tip; t.cid = vec2(i, 0.0) + seme;
   t.meja = min(min(0.5 * w - abs(ls), d), H - d);
   t.cc = p + os * (d - 0.5 * H) - vec2(-os.y, os.x) * ls;
-  t.dye = vec3(0.07, 0.4 + 0.08 * (sumL(vec2(s, d), 3.0, px) - 0.5), 0.0);
-  t.dye.y -= 0.12 * crta(0.5 * w - abs(ls), 0.2, px);
-  vec2 q = vec2(ls, d - jd * H - 0.6 * (h.x - 0.5) * min(H * 0.2, 3.0));
-  vec2 r = vec2(min(0.32 * w, 3.0), clamp(0.22 * H, 0.32 * w, 6.5));
+  t.dye = vec3(0.07, (0.4 + 0.08 * (sumL(vec2(s, d), 3.0, px) - 0.5)) * (0.9 + 0.2 * h.y), 0.0);
+  // meje so tanke in mestoma neopazne
+  t.dye.y -= 0.09 * crta(0.5 * w - abs(ls), 0.2, px) * smoothstep(0.3, 0.6, sum(vec2(s / 4.0, d / 5.0) + seme * 3.0));
+  // jedra niso v ravni vrsti: pri visokih celicah se višina precej razlikuje, nekatera so prerezana le ob robu
+  vec2 q = vec2(ls - (h.y - 0.5) * 0.15 * w, d - jd * H - (h.x - 0.5) * min(H * 0.28, 6.0));
+  float zr = h.w < 0.18 ? 0.65 : 1.0;
+  vec2 r = zr * vec2(min(0.32 * w, 3.0), clamp(0.22 * H, 0.32 * w, 6.5));
   float dj = sdElipsa(q, r) + 0.15 * (sum(q * 1.2 + h.zw * 9.0) - 0.5);
   t.jedro = dj;
   t.jc = t.cc + os * (jd * H - 0.5 * H);
   float jk = pokrij(dj, px);
-  t.dye.x = mix(t.dye.x, 0.85 * kromatin(q, h.zw, px), jk);
+  t.dye.x = mix(t.dye.x, (zr < 1.0 ? 0.6 : 0.85) * kromatin(q, h.zw, px), jk);
   if (jk > 0.5) t.snov = S_JEDRO;
   return t;
+}
+
+// Vrčasta celica v epiteliju (d globina od površine, s lega vzdolž nje, H višina epitelija, w širina celice): svetel
+// kelih s penasto sluzjo nad jedrom, ozek vrat proti svetlini, obdan s tankim rožnatim robom (stisnjene sosednje celice).
+// Delež celic »delez«. Vrne true in nastavi t, če je točka v kelihu.
+bool vrcasta(inout T t, float d, float s, float H, float w, float delez, vec2 seme, float px) {
+  // isti (vijugasti) stolpec kot epitel(), da vrč ne seka sosednjih celic
+  float sw = s + w * 0.6 * (sum(vec2(s / (2.3 * w), d / (1.6 * max(H, 4.0))) + seme * 7.0) - 0.5);
+  float i = floor(sw / w);
+  vec4 h = h42(vec2(i, 0.0) + seme);
+  if (h.z >= delez) return false;
+  float lsv = (fract(sw / w) - 0.5) * w;
+  float sir = min(0.5 * w * (0.85 + 0.25 * h.y), 0.48 * w);
+  float vis = min(H * 0.25, 8.0);
+  float dk = sdElipsa(vec2(lsv, d - H * 0.32), vec2(sir, vis));
+  if (d < H * 0.1) dk = max(dk, abs(lsv) - 0.16 * w);
+  // ozek vrat od površine do vrha vrča, skozi katerega se sluz izliva
+  dk = min(dk, max(max(abs(lsv) - 0.16 * w, -d), d - (H * 0.32 - vis) - 0.5));
+  if (dk >= 0.0) return false;
+  t = prazno();
+  t.snov = S_SLUZ; t.tip = C_ZLEZNA; t.cid = vec2(i, 0.0) + seme;
+  t.meja = -dk;
+  t.cc = vec2(i * w, 0.0); t.jc = t.cc;
+  float pena = sumL(vec2(s, d) + h.zw * 20.0, 0.7, px);
+  t.dye = vec3(0.16 + 0.16 * smoothstep(0.45, 0.8, pena), 0.06 + 0.04 * pena, 0.0);
+  t.dye.y += 0.3 * crta(dk, 0.35, px);
+  return true;
 }
 
 // Prečni prerez cevke (žleza, ledvična cevka, folikel): svetlina polmera rl, epitelij do polmera R. q glede na središče.
@@ -243,17 +276,133 @@ T cevka(vec2 q, float rl, float R, float w, float jd, float tip, vec2 seme, vec2
   return epitel(r - rl, atan(q.y, q.x) * ref, max(R - rl, 2.0), w, jd, tip, seme, p, q / max(r, 1e-3), px);
 }
 
+// Prerez zvitih cevastih žlez (želodec, žleze v podsluznici …): tesno zloženi profili (Voronoi velikosti s µm,
+// raztegnjen za a, zasukan za kot), vsak profil je cevka iz ene plasti celic okoli ozke svetline; med profili tanka
+// lamina proprija (rez µm). Celice so razporejene po obodu, enakomerno po dolžini oboda (širina w µm), in segajo od
+// svetline do baze. Specimen sam odloči, kakšna je celica (P.hc), jedro postavi s profilJedro (f: 0 svetlina, 1 baza).
+struct Prof { bool v; vec2 id; vec4 h; float rob; float rr; vec2 c; mat2 R; vec2 ax; float Rs; float tc; vec4 hc; vec2 cid; float lat; };
+Prof profil(vec2 p, float s, vec2 a, float kot, float rez, float w, float seme) {
+  Prof P;
+  vec2 z = p + 0.35 * s * (vec2(fbm(p / (1.7 * s) + seme, 2), fbm(p / (1.7 * s) + seme + 5.0, 2)) - 0.5) * 2.0;
+  Vor v = vor(z, s, a, kot, 0.9);
+  P.id = v.id; P.h = h42(v.id + seme);
+  P.rob = v.rob - rez * (0.5 + 1.0 * P.h.w) - 0.6 * rez * (sum(p / 11.0 + seme) - 0.5);
+  P.v = P.rob > 0.0;
+  P.c = v.c; P.R = rot(kot);
+  P.ax = a / min(a.x, a.y);
+  vec2 qs = (P.R * (z - v.c)) / P.ax;                  // v tem prostoru je profil približno krog
+  float rq = length(qs);
+  P.Rs = rq + max(P.rob, 0.0) + 1e-3;
+  P.rr = rq / P.Rs;
+  // dolžina loka elipse s polosema A, B: s(t) ≈ (A+B)/2·t + (B−A)/4·sin 2t
+  float A = P.Rs * P.ax.x, B = P.Rs * P.ax.y;
+  float t = atan(qs.y, qs.x);
+  float O = 3.1416 * (A + B);
+  float sl = 0.5 * (A + B) * t + 0.25 * (B - A) * sin(2.0 * t) + 0.5 * O;
+  float n = max(5.0, floor(O / w + 0.5));
+  float u = sl / O * n + 0.15 * (sum(vec2(P.rr * 2.0, P.h.x * 9.0 + t)) - 0.5);
+  float i = mod(floor(u), n);
+  P.lat = (0.5 - abs(fract(u) - 0.5)) * O / n;
+  P.cid = vec2(i, 0.0) + 7.0 * v.id; P.hc = h42(P.cid + seme);
+  // kot sredine celice (obrat s(t) z eno Newtonovo iteracijo)
+  float sc = (i + 0.5) / n * O - 0.5 * O;
+  float tc = sc / (0.5 * (A + B));
+  tc -= (0.5 * (A + B) * tc + 0.25 * (B - A) * sin(2.0 * tc) - sc) / (0.5 * (A + B) + 0.5 * (B - A) * cos(2.0 * tc));
+  P.tc = tc;
+  return P;
+}
+// Točka na osi celice profila pri deležu f (0 svetlina, 1 baza), v µm.
+vec2 profilTocka(Prof P, float f) {
+  return P.c + transpose(P.R) * (vec2(cos(P.tc), sin(P.tc)) * f * P.Rs * P.ax);
+}
+// Razdalja do jedra (polosi r: r.x radialno, r.y po obodu) na deležu f; vrne (razdalja, q za kromatin).
+vec3 profilJedro(Prof P, vec2 p, float f, vec2 r) {
+  vec2 q = p - profilTocka(P, f);
+  vec2 o = transpose(P.R) * normalize(vec2(cos(P.tc), sin(P.tc)) / P.ax);   // normala oboda (radialna smer)
+  vec2 ql = vec2(dot(q, o), dot(q, vec2(-o.y, o.x)));
+  float d = sdElipsa(ql, r) + 0.12 * (sum(ql * 1.4 + P.hc.zw * 9.0) - 0.5);
+  return vec3(d, ql);
+}
+
+// Acinusi žleze, tesno zloženi (Voronoi, velikost s µm): piramidne celice okoli majhne svetline. serozni 1 = serozni
+// (bazalno vijolična citoplazma, okroglo jedro, ob svetlini rožnata zrnca zimogena), 0 = mukozni (svetla penasta
+// citoplazma, jedro sploščeno ob bazi, večja svetlina), < 0 = mešana. Med acinusi tanka vezivna reža. Vrne T (S_CITO/S_JEDRO/S_SLUZ).
+T acinus(vec2 p, float s, float serozni, float seme, float px) {
+  T t = prazno();
+  Vor v = vor(p + 0.25 * s * (vec2(sum(p / (2.0 * s) + seme), sum(p / (2.0 * s) + seme + 4.0)) - 0.5), s, vec2(1.0), seme, 0.85);
+  vec4 ha = h42(v.id + seme);
+  float rez = 0.3 + 0.45 * ha.w;
+  float rp = smoothstep(0.35, 0.6, sum(p / 9.0 + seme));                 // reža je mestoma odprta, drugod le rožnata črta
+  if (v.rob < rez) { t.snov = S_KOLAGEN; t.dye = vec3(0.03, mix(mix(0.34, 0.16, rp), 0.3, smoothstep(0.4, 1.4, px)), 0.0); return t; }
+  if (serozni < 0.0) serozni = step(0.6, ha.y);                          // mešana žleza: posamezni acinusi so serozni
+  vec2 c = v.c + 0.12 * s * (ha.xy - 0.5);
+  vec2 q = p - c;
+  float rq = length(q);
+  float rr = rq / (rq + v.rob);                                 // 0 v svetlini, 1 ob bazi
+  float rl = mix(0.2, 0.05 * step(ha.z, 0.35), serozni) * (0.7 + 0.6 * ha.z);
+  if (rr < rl) { t.snov = serozni > 0.5 ? S_PLAZMA : S_SLUZ; t.dye = vec3(0.04 * (1.0 - serozni), 0.06, 0.0); return t; }
+  float n = max(5.0, floor(6.283 * (rq + v.rob) * 0.6 / 8.5 + 0.5));
+  float a = atan(q.y, q.x) / 6.283 + 0.5 + 0.08 * (sum(vec2(rr * 2.0, ha.x * 9.0)) - 0.5);
+  float i = floor(a * n);
+  vec4 h = h42(vec2(i, 0.0) + v.id * 7.0 + seme);
+  float ac = (i + 0.5) / n * 6.283 - 3.1416;
+  vec2 smer = vec2(cos(ac), sin(ac));
+  t.snov = S_CITO; t.tip = C_ZLEZNA; t.cid = vec2(i, 0.0) + v.id * 7.0;
+  t.meja = min(v.rob - rez, 6.283 * rq / n * (0.5 - abs(fract(a * n) - 0.5)));
+  float Rb = rq + v.rob;
+  t.cc = c + smer * Rb * 0.6; t.jc = c + smer * Rb * (serozni > 0.5 ? 0.72 : 0.9);
+  float meja = crta(t.meja, 0.18, px);
+  if (serozni > 0.5) {
+    // bazalno bazofilna (zrnati ER), apikalno eozinofilna zrnca zimogena
+    float baz = smoothstep(0.45, 0.7, rr);
+    t.dye = vec3(0.08 + 0.3 * baz, 0.3 + 0.08 * sumL(p, 1.5, px), 0.0);
+    vec4 z = krogci(p, 1.2, 0.38, 0.55, 0.9 * (1.0 - smoothstep(0.38, 0.58, rr)), seme + 3.0);
+    if (z.x < 0.0) t.dye = mix(t.dye, vec3(0.03, 0.72, 0.0), pokrij(z.x, px));
+    t.dye.y += 0.25 * (1.0 - baz) * smoothstep(0.6, 1.2, px);   // zrnca pri majhni povečavi kot rožnat pas
+  } else {
+    float pena = sumL(p + ha.xy * 30.0, 0.8, px);
+    t.dye = vec3(0.17 + 0.12 * smoothstep(0.4, 0.75, pena), 0.1 + 0.05 * pena, 0.0);
+    t.snov = S_SLUZ;
+  }
+  t.dye.y += 0.12 * meja;
+  // jedro: seroznim okroglo nad bazo, mukoznim sploščeno ob bazi
+  vec2 qj = vec2(dot(p - t.jc, smer), dot(p - t.jc, vec2(-smer.y, smer.x)));
+  qj.y -= 0.6 * (h.y - 0.5) * 6.283 * rq / n * 0.4;
+  float dj = serozni > 0.5 ? sdElipsa(qj, vec2(2.6, 2.4) * (0.9 + 0.2 * h.x)) : sdElipsa(qj, vec2(1.0, 3.2));
+  dj += 0.15 * (sum(qj * 1.3 + h.zw * 9.0) - 0.5);
+  t.jedro = dj;
+  float jk = pokrij(dj, px) * step(0.12, h.w);
+  t.dye.x = mix(t.dye.x, 1.05 * kromatin(qj, h.zw, px), jk);
+  t.dye.y *= 1.0 - 0.5 * jk;
+  if (jk > 0.5) t.snov = S_JEDRO;
+  return t;
+}
+
 // Večskladni ploščati epitelij: d = globina od površine (0..H). Celice so bazalno majhne in temne, proti površini
 // ploščate; rozen = poroženevajoč (koža): vrhnja plast brez jeder, pod njo zrnati sloj.
 T vecskladni(float d, float s, float H, float rozen, vec2 seme, float px) {
   T t = prazno();
   float f = clamp(d / H, 0.0, 1.0);                // 0 površina, 1 bazalno
-  float hc = mix(1.6, 7.5, f);
-  float D = (log(1.6 + 5.9 * f) - log(1.6)) / 5.9 * H;   // ∫ dd / hc
-  Vor v = voronoi(vec2(s / mix(26.0, 9.0, f), D / 1.0 * 0.95) + seme, 0.75);
-  vec4 h = h42(v.id);
-  t.snov = S_CITO; t.tip = C_KERATINOCIT; t.cid = v.id;
-  t.meja = v.rob * min(mix(26.0, 9.0, f), hc);
+  // višina celic hc raste od 1,6 µm na površini do 8 µm v spodnji polovici (trnasti in bazalni sloj sta mnogokotna)
+  float g = min(f / 0.45, 1.0);
+  float hc = 1.6 + 6.4 * g;
+  float K = 0.45 * H / 6.4;
+  float D1 = K * log(5.0);
+  float D = f < 0.45 ? K * log(1.0 + 4.0 * g) : D1 + (f - 0.45) * H / 8.0;   // ∫ dd / hc: število plasti od površine
+  // celice v plasteh (meje plasti so valovite); širina celic v plasti je stalna, zato se celice ne pahljačasto
+  // raztegnejo daleč od izhodišča
+  float Dw = D * 0.95 + 0.3 * (sum(vec2(s / 12.0, D * 0.7) + seme) - 0.5) + 0.25 * (sum(vec2(s / 4.5, D * 1.3) + seme + 3.0) - 0.5);
+  float j = floor(Dw);
+  float Dc = (j + 0.5) / 0.95;
+  float fj = clamp(Dc < D1 ? 0.45 * (exp(Dc / K) - 1.0) / 4.0 : 0.45 + (Dc - D1) * 8.0 / H, 0.0, 1.0);
+  float gj = min(fj / 0.45, 1.0);
+  float sc = mix(26.0, 10.0, gj) * (1.0 - 0.15 * smoothstep(0.85, 1.0, fj)), hcj = 1.6 + 6.4 * gj;
+  vec4 hr = h42(vec2(j, 0.0) + seme);
+  float xx = s / sc + hr.x * 9.0 + 0.35 * (sum(vec2(s / (2.0 * sc), j * 1.7) + seme) - 0.5) + 0.3 * (sum(vec2(s / sc, Dw * 1.1) + seme + 6.0) - 0.5);
+  float i = floor(xx);
+  vec4 h = h42(vec2(i, j) + seme);
+  t.snov = S_CITO; t.tip = C_KERATINOCIT; t.cid = vec2(i, j) + seme;
+  t.meja = min((0.5 - abs(fract(xx) - 0.5)) * sc, (0.5 - abs(fract(Dw) - 0.5)) * hcj);
   t.cc = vec2(0.0); t.jc = vec2(0.0);
   t.dye = vec3(0.08 + 0.12 * f * f, 0.42 - 0.1 * f + 0.05 * (sumL(vec2(s, d), 4.0, px) - 0.5), 0.0);
   t.dye.y -= 0.1 * crta(t.meja, 0.3, px) * (1.0 - smoothstep(0.0, 0.4, f));
@@ -267,13 +416,13 @@ T vecskladni(float d, float s, float H, float rozen, vec2 seme, float px) {
   }
   float zrn = rozen * smoothstep(0.12, 0.17, f) * (1.0 - smoothstep(0.22, 0.28, f));
   t.dye.x += 0.9 * zrn * smoothstep(0.55, 0.7, sumL(vec2(s, d), 0.6, px));
-  vec2 c = (v.c - seme) * vec2(mix(26.0, 9.0, f), 1.0);
-  vec2 q = vec2(s - c.x, (D * 0.95 - (v.c.y - seme.y)) * hc);
-  vec2 r = vec2(mix(5.0, 3.0, f), mix(1.2, 2.8, f));
+  vec2 q = vec2((fract(xx) - 0.5 - 0.2 * (h.x - 0.5)) * sc, (fract(Dw) - 0.5 - 0.15 * (h.y - 0.5)) * hcj);
+  vec2 r = vec2(min(mix(5.0, 3.0, g), 0.34 * sc), min(mix(1.2, 2.8, g), 0.42 * hcj)) * (0.9 + 0.2 * h.z);
   float dj = sdElipsa(q, r) + 0.2 * (sum(q + h.zw * 9.0) - 0.5);
   t.jedro = dj;
   t.cc = -q; t.jc = -q;                            // odmik središča v (s, d); vSvet ga prenese v ravnino rezine
-  float jk = pokrij(dj, px) * step(0.15, f);
+  // brez poroženevanja imajo jedra tudi najvišje (sploščene) celice; pri koži jih poroženela plast nima
+  float jk = pokrij(dj, px) * mix(1.0, step(0.15, f), rozen) * step(0.08, h.w);
   t.dye.x = mix(t.dye.x, mix(0.6, 1.0, f) * kromatin(q, h.zw, px), jk);
   if (jk > 0.5) t.snov = S_JEDRO;
   return t;
@@ -291,6 +440,33 @@ T vSvet(T e, vec2 p, vec2 tv, vec2 nv) {
   e.cc = p + e.cc.x * tv + e.cc.y * nv;
   e.jc = p + e.jc.x * tv + e.jc.y * nv;
   return e;
+}
+
+// Snopi kolagena v HE (eozin): podolgovati valoviti snopi širine ~w, večinoma v smeri os, prepleteni z drugo družino
+// snopov pod kotom; med njimi svetle reže (skrčki ob pripravi). rahl 0 = gosto vezivo, 1 = rahlo (veliko praznega).
+// Vrne vec2(gostota eozina, reža 0..1).
+vec2 kolagen(vec2 p, vec2 os, float w, float gost, float rahl, float seme, float px) {
+  vec2 z = p + 3.0 * w * (vec2(fbm(p / (10.0 * w) + seme, 2), fbm(p / (10.0 * w) + seme + 5.0, 2)) - 0.5) * 2.0;
+  vec2 a = vec2(dot(z, os), dot(z, vec2(-os.y, os.x)));
+  float f = fbm(vec2(a.x / (5.0 * w), a.y / (1.4 * w)) + seme, 2);
+  float g2 = sum(vec2(a.x / (3.0 * w), a.y / w) + seme + 9.0);
+  // reže so valovite izočrte (več ravni) zvitega raztegnjenega šuma, mestoma prekinjene; v rahlem vezivu so široke
+  float iz = abs(fract(f * 5.0 + 0.5) - 0.5) / 5.0;
+  float sir = 0.012 + 0.03 * rahl;
+  float reza = smoothstep(sir, 0.35 * sir, iz) * smoothstep(0.35 - 0.2 * rahl, 0.5 - 0.2 * rahl, g2);
+  // rahlo vezivo: tanka valovita vlakna (izočrte med režami) na svetli podlagi, mestoma snopiči
+  float rahlo = 0.75 * smoothstep(0.5, 0.95, rahl);
+  if (rahlo > 0.0) {
+    float iz2 = abs(fract(f * 7.0 + 0.25) - 0.5) / 7.0;
+    float fib = smoothstep(0.022, 0.007, iz2) * (0.55 + 0.45 * smoothstep(0.3, 0.6, g2));
+    fib = max(fib, 0.8 * smoothstep(0.6, 0.7, fbm(vec2(a.x / (4.0 * w), a.y / (0.9 * w)) + seme + 3.0, 2)));
+    reza = mix(reza, (1.0 - fib) * (0.62 + 0.38 * smoothstep(0.45, 0.75, g2)), rahlo);
+  }
+  reza = mix(reza, 0.3 * rahl + 0.35 * rahlo, smoothstep(0.15 * w, 0.6 * w, px));   // pri majhni povečavi se reže zabrišejo
+  float vlak = sum(vec2(a.x / 6.0, a.y / 0.7) + seme);                        // fina vlakenca v snopu
+  vlak = mix(vlak, 0.5, smoothstep(0.3, 0.8, px));
+  float g = gost * (0.85 + 0.3 * f) + 0.07 * (vlak - 0.5);
+  return vec2(g * (1.0 - 0.82 * reza), reza);
 }
 
 // Krvna žila (prečni prerez) s polmerom r: tanka stena z endotelijem, v svetlini eritrociti. q glede na središče.
@@ -329,26 +505,26 @@ float membrana(float d, float px) {
   return mix(list2, ena, smoothstep(0.0008, 0.0025, px));
 }
 
-struct Profil { float mito; float rer; float golgi; float gran; float rib; float glik; float lip; float kerat; };
+struct Profil { float mito; float rer; float golgi; float gran; float rib; float glik; float lip; float kerat; float ser; };
 Profil profil(float tip) {
-  if (tip == C_HEPATOCIT) return Profil(0.55, 0.35, 0.1, 0.12, 0.5, 0.8, 0.06, 0.0);
-  if (tip == C_FIBROBLAST) return Profil(0.18, 0.55, 0.15, 0.05, 0.4, 0.0, 0.02, 0.0);
-  if (tip == C_LIMFOCIT) return Profil(0.12, 0.05, 0.03, 0.04, 0.9, 0.0, 0.0, 0.0);
-  if (tip == C_NEVRON) return Profil(0.4, 0.55, 0.15, 0.08, 0.6, 0.0, 0.0, 0.0);
-  if (tip == C_ZLEZNA) return Profil(0.25, 0.6, 0.2, 0.45, 0.5, 0.0, 0.0, 0.0);
-  if (tip == C_RASTLINSKA) return Profil(0.15, 0.1, 0.06, 0.0, 0.3, 0.0, 0.03, 0.0);
-  if (tip == C_RESICE) return Profil(0.5, 0.2, 0.12, 0.08, 0.4, 0.0, 0.03, 0.0);
-  if (tip == C_KERATINOCIT) return Profil(0.12, 0.08, 0.04, 0.05, 0.4, 0.0, 0.0, 0.7);
-  if (tip == C_GLIJA) return Profil(0.2, 0.2, 0.06, 0.05, 0.4, 0.0, 0.0, 0.0);
-  if (tip == C_KVASOVKA) return Profil(0.2, 0.15, 0.05, 0.0, 0.7, 0.3, 0.1, 0.0);
-  if (tip == C_PRAZIVAL) return Profil(0.3, 0.15, 0.08, 0.3, 0.5, 0.0, 0.08, 0.0);
-  if (tip == C_GLADKA) return Profil(0.2, 0.05, 0.03, 0.0, 0.2, 0.05, 0.0, 0.35);
-  if (tip == C_ADIPOCIT) return Profil(0.1, 0.05, 0.02, 0.0, 0.2, 0.0, 0.0, 0.0);
-  if (tip == C_LEVKOCIT) return Profil(0.12, 0.1, 0.05, 0.6, 0.4, 0.15, 0.0, 0.0);
-  if (tip == C_MISICA) return Profil(0.6, 0.0, 0.0, 0.0, 0.2, 0.3, 0.05, 0.0);
-  if (tip == C_NEVRIT) return Profil(0.35, 0.0, 0.0, 0.0, 0.05, 0.0, 0.0, 0.0);
-  if (tip == C_BAKTERIJA) return Profil(0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
-  return Profil(0.3, 0.25, 0.1, 0.1, 0.45, 0.0, 0.03, 0.0);
+  if (tip == C_HEPATOCIT) return Profil(0.55, 0.35, 0.1, 0.12, 0.5, 0.8, 0.06, 0.0, 0.55);
+  if (tip == C_FIBROBLAST) return Profil(0.18, 0.55, 0.15, 0.05, 0.4, 0.0, 0.02, 0.0, 0.04);
+  if (tip == C_LIMFOCIT) return Profil(0.12, 0.05, 0.03, 0.04, 0.9, 0.0, 0.0, 0.0, 0.02);
+  if (tip == C_NEVRON) return Profil(0.4, 0.55, 0.15, 0.08, 0.6, 0.0, 0.0, 0.0, 0.1);
+  if (tip == C_ZLEZNA) return Profil(0.25, 0.6, 0.2, 0.45, 0.5, 0.0, 0.0, 0.0, 0.08);
+  if (tip == C_RASTLINSKA) return Profil(0.15, 0.1, 0.06, 0.0, 0.3, 0.0, 0.03, 0.0, 0.06);
+  if (tip == C_RESICE) return Profil(0.5, 0.2, 0.12, 0.08, 0.4, 0.0, 0.03, 0.0, 0.15);
+  if (tip == C_KERATINOCIT) return Profil(0.12, 0.08, 0.04, 0.05, 0.4, 0.0, 0.0, 0.7, 0.03);
+  if (tip == C_GLIJA) return Profil(0.2, 0.2, 0.06, 0.05, 0.4, 0.0, 0.0, 0.0, 0.06);
+  if (tip == C_KVASOVKA) return Profil(0.2, 0.15, 0.05, 0.0, 0.7, 0.3, 0.1, 0.0, 0.06);
+  if (tip == C_PRAZIVAL) return Profil(0.3, 0.15, 0.08, 0.3, 0.5, 0.0, 0.08, 0.0, 0.06);
+  if (tip == C_GLADKA) return Profil(0.2, 0.05, 0.03, 0.0, 0.2, 0.05, 0.0, 0.35, 0.1);
+  if (tip == C_ADIPOCIT) return Profil(0.1, 0.05, 0.02, 0.0, 0.2, 0.0, 0.0, 0.0, 0.4); // gladki ER v pasu citoplazme (izdelava maščob)
+  if (tip == C_LEVKOCIT) return Profil(0.12, 0.1, 0.05, 0.6, 0.4, 0.15, 0.0, 0.0, 0.03);
+  if (tip == C_MISICA) return Profil(0.6, 0.0, 0.0, 0.0, 0.2, 0.3, 0.05, 0.0, 0.0);
+  if (tip == C_NEVRIT) return Profil(0.35, 0.0, 0.0, 0.0, 0.05, 0.0, 0.0, 0.0, 0.0);
+  if (tip == C_BAKTERIJA) return Profil(0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+  return Profil(0.3, 0.25, 0.1, 0.1, 0.45, 0.0, 0.03, 0.0, 0.06);
 }
 
 // Mitohondrij v lokalnem sistemu (os x vzdolž): ovojnica (dve membrani), kriste, gost matriks.
@@ -397,6 +573,30 @@ void cisterne(inout U u, vec2 z, float L, float n, float raz, float rib, float k
   u.g = g;
   if (lumen > 0.5) u.snov = rib > 0.0 ? S_ER : S_GOLGI;
   if (mem > 0.0) u.meja = min(u.meja, abs(abs(v) - sir));
+}
+
+// Gladki endoplazemski retikulum: gosta mreža razvejanih in povezanih cevk (premer ~40–50 nm) brez ribosomov, v delih
+// citoplazme (ob = delež). Največ ga je v hepatocitih (ob glikogenu: razstrupljanje, presnova glikogena) in v celicah, ki
+// izdelujejo steroide ali lipide. Cevke so dve prepleteni izočrti šuma, zato se stikajo kot v pravi mreži.
+// razdalja (v enotah x) do izočrte šuma sum(x) = 0,5 (deljeno z naklonom, da so cevke povsod enako široke)
+float izocrta(vec2 x) {
+  vec2 e = vec2(0.02, 0.0);
+  vec2 g = vec2(sum(x + e) - sum(x - e), sum(x + e.yx) - sum(x - e.yx)) / 0.04;
+  return abs(sum(x) - 0.5) / max(length(g), 0.08);
+}
+// vrne bližino cevki (0..1): tam ni prostih ribosomov ali glikogena, sicer bi bil videti kot zrnati ER
+float gladkiER(inout U u, vec2 q, float ob, vec2 cid, float px) {
+  if (ob <= 0.0) return 0.0;
+  float s = 0.22;
+  vec2 o = fract(cid * 0.0137) * 97.0; // zamik šuma po celici (majhna števila: natančnost float)
+  float d = min(izocrta(q / s + o) * s, izocrta(q / (0.8 * s) + o.yx + 11.3) * 0.8 * s);
+  float sir = 0.022;
+  float lumen = pokrij(d - sir, px) * ob;
+  float mem = membrana(d - sir, px) * ob;
+  u.g = mix(mix(u.g, 0.14, lumen), 0.78, mem);
+  if (lumen > 0.5) u.snov = S_GER;
+  if (mem > 0.0) u.meja = min(u.meja, abs(d - sir));
+  return ob * (1.0 - smoothstep(sir, sir + 0.016, d));
 }
 
 // Zrna (lizosomi, sekretorna zrnca), lipidne kapljice, vezikli.
@@ -473,20 +673,27 @@ void organeli(inout U u, T t, vec2 p, float px) {
     vec4 h = h42(n2 + t.cid * 3.3 + 0.5);
     if (h.z < (sinapsa ? 0.75 : 0.18)) zrno(z, q - (n2 + 0.25 + 0.5 * h.xy) * g2, sinapsa ? 0.02 : 0.025 + 0.025 * h.w, 0.22, 1.0, px);
   }
-  // prosti ribosomi in glikogen
+  // gladki ER v delih citoplazme brez drugih organelov (v hepatocitu skupaj z glikogenom)
+  float obCevki = 0.0;
+  if (P.ser > 0.0 && z.snov == S_CITO) {
+    float pol = t.tip == C_HEPATOCIT ? smoothstep(0.5, 0.62, sum(q / 1.3 + t.cid)) : smoothstep(0.78 - 0.5 * P.ser, 0.86 - 0.5 * P.ser, sum(q / 1.1 + t.cid * 1.7 + 5.0));
+    obCevki = gladkiER(z, q, pol, t.cid, px);
+  }
+  // prosti ribosomi in glikogen (ne v svetlini gladkega ER)
   {
+    float zun = z.snov == S_GER ? 0.0 : 1.0 - step(0.5, obCevki);
     float g3 = 0.045;
     vec2 n3 = floor(q / g3);
     vec4 h = h42(n3 + t.cid * 5.7);
     float gostota = P.rib * 0.35;
     float vid = 1.0 - smoothstep(0.004, 0.012, px);
-    float rib = step(h.z, gostota) * pokrij(length(q - (n3 + 0.2 + 0.6 * h.xy) * g3) - 0.0115, px) * vid;
+    float rib = step(h.z, gostota) * pokrij(length(q - (n3 + 0.2 + 0.6 * h.xy) * g3) - 0.0115, px) * vid * zun;
     z.g = mix(z.g, 0.82, rib) + gostota * 0.12 * (1.0 - vid);
     if (rib > 0.5 && z.snov == S_CITO) z.snov = S_RIBOSOM;
     if (P.glik > 0.0) {
       float pol = smoothstep(0.55, 0.7, sum(q / 1.3 + t.cid));
       vec4 hg = h42(n3 + t.cid * 2.1 + 9.0);
-      float gl = step(hg.z, P.glik * 0.7 * pol) * pokrij(length(q - (n3 + 0.2 + 0.6 * hg.xy) * g3) - 0.013, px) * vid;
+      float gl = step(hg.z, P.glik * 0.7 * pol) * pokrij(length(q - (n3 + 0.2 + 0.6 * hg.xy) * g3) - 0.013, px) * vid * zun;
       z.g = mix(z.g, 0.9, gl) + P.glik * pol * 0.1 * (1.0 - vid);
       if (gl > 0.5) z.snov = S_GLIKOGEN;
     }
@@ -577,13 +784,32 @@ void snovTEM(inout U u, T t, vec2 p, float px) {
     g = mix(g, 0.5, step(a, 0.17));                      // pas H
     g = mix(g, 0.75, crta(f, 0.012, px));                // črta M
     g = mix(g, 0.88, crta(a - 1.1, 0.04, px));           // črta Z
-    // meje miofibril (~1 µm) s sarkoplazemskim retiklom
+    // meje miofibril (~1 µm): ozka sarkoplazma s sarkoplazemskim retiklom (gladki ER: cevka vzdolž reže) in pri skeletni
+    // mišici triade ob prehodu A–I (T-cevka, uvihana membrana, med dvema končnima cisternama), pri srčni diade ob črti Z
     float v = (fract(z.y / 1.05 + 0.5 * sum(vec2(z.x * 0.1, 0.0))) - 0.5) * 1.05;
     float rez = crta(v, 0.035, px);
     g = mix(g, 0.18, rez);
+#ifdef DIADE_PRI_Z
+    float dxT = a - 1.1;
+    float cist = length(vec2(dxT + 0.05, v) / vec2(0.028, 0.05)) - 1.0;
+#else
+    float dxT = a - 0.8;
+    float cist = length(vec2(abs(dxT) - 0.05, v) / vec2(0.028, 0.05)) - 1.0;
+#endif
+    float srD = min(abs(v) - 0.016 * (1.0 + 0.3 * sin(z.x * 11.0)), cist * 0.028);
+    float tD = length(vec2(dxT, v)) - 0.018;
+    float srL = pokrij(srD, px) * step(0.0, tD), tL = pokrij(tD, px);
+    float srM = membrana(srD, px) * step(0.0, tD), tM = membrana(tD, px);
+    float rv = (1.0 - smoothstep(0.006, 0.02, px)); // pod ~150 000× se vidi le svetla reža
+    g = mix(g, 0.14, srL * rv);
+    g = mix(g, 0.36, tL * rv);
+    g = mix(g, 0.78, max(srM, tM) * rv);
+    if (srL > 0.5) u.snov = S_GER;
+    if (tM > 0.5) u.snov = S_MEMBRANA;
+    u.meja = min(u.meja, min(abs(srD), abs(tD)));
     // filamenti: debeli (myozin) 15 nm, tanki (aktin) med njimi
     float fil = 0.5 + 0.5 * cos(6.2832 * z.y / 0.022);
-    g += 0.12 * (fil - 0.5) * vid * (1.0 - rez);
+    g += 0.12 * (fil - 0.5) * vid * (1.0 - rez) * (1.0 - srL) * (1.0 - tL);
     if (L < 0.5) g = 0.45 + 0.15 * mix(0.0, sum(p / 0.012) - 0.5, vid);
     u.g = g;
   } else if (s == S_MIELIN) {
@@ -747,28 +973,77 @@ uniform vec2 uRes;
 uniform vec2 uCenter;      // središče vidnega polja na stekelcu (µm)
 uniform float uPx;         // µm na slikovno točko
 uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda, 3 SEM (le v programu SEM)
+uniform int uSondaZvij;    // sonda: 1 = vrstica tkiva z zvijanjem rezine (svetlobni, SEM), 0 = brez (TEM, kot slika)
 uniform vec2 uSonda[8];    // točke sonde (µm)
 uniform mat3 uBarvila;     // stolpci: OD-vektor (R, G, B) prvega, drugega in tretjega barvila
 uniform float uDebelina;   // jakost barvanja (debelina rezine)
+uniform int uSS;           // vzorcev na slikovno točko (svetlobni mikroskop): 1 ali 4
 out vec4 o;
+// Resnični videz (j, 13. 11. 2026): v naravi ni popolnih črt. Rahlo zvijanje ravnine (~3,5 % valovne dolžine na treh
+// merilih: 40, 10 in 2,5 µm) vzame strukturam risarsko pravilnost; ista funkcija velja za sliko in sondo.
+vec2 zvij(vec2 p, float px) {
+  vec2 w = vec2(0.0);
+  float l = 40.0;
+  for (int i = 0; i < 3; i++) {
+    float k = 1.0 - smoothstep(0.12 * l, 0.4 * l, px);
+    float f = float(i) * 3.1;
+    w += k * 0.07 * l * (vec2(sum(p / l + f), sum(p / l + vec2(7.7, 2.3) + f)) - 0.5);
+    l *= 0.25;
+  }
+  return w;
+}
+// Fazni zamik (0..1) za lom svetlobe na robovih (upodobi.js SESTAVI: Laplace ob defokusu). Lomni količnik snovi glede na
+// okolico: lipid, mineral, stena in eritrocit močno lomijo, vakuola in plazma skoraj nič.
+float faza(T t) {
+  float s = t.snov;
+  float f = s == S_PRAZNO ? 0.0 : s == S_VAKUOLA || s == S_PLAZMA ? 0.12 : s == S_SLUZ || s == S_MATRIKS ? 0.25
+    : s == S_LIPID || s == S_MINERAL || s == S_MIELIN || s == S_SKLENINA ? 1.0 : s == S_STENA || s == S_ERITROCIT ? 0.85
+    : s == S_JEDRCE || s == S_KROMATIN || s == S_KLOROPLAST || s == S_GRANULA || s == S_KERATIN || s == S_ELASTIN ? 0.75
+    : s == S_JEDRO ? 0.6 : 0.45;
+  return clamp(f + 0.15 * (t.dye.x + t.dye.y), 0.0, 1.0);
+}
+// Prepuščena svetloba (rgb) in fazni zamik (a) v točki p svetlobnega mikroskopa.
+vec4 svetloba(T t, vec2 p) {
+  // barvilo se nikoli ne vpije povsem enakomerno: velike lise (debelina rezine, ~0,4 mm), drobna zrnatost (~0,4 µm)
+  // in rahlo različen delež posameznih barvil; podlaga (stekelce, krovno steklo, medij) skoraj nič ne vpije
+  vec3 d = t.dye * (0.8 + 0.4 * fbm(p / 420.0, 3)) * (vec3(0.92) + 0.16 * vec3(sum(p / 260.0 + 3.0), sum(p / 260.0 + 9.0), 0.5));
+  d *= 0.88 + 0.24 * sumL(p, 0.45, uPx);
+  // eozin (drugo barvilo) v citoplazmi in medceličnini ni enakomeren: lise ~10 µm in vlaknata zrnatost ~1,5 µm
+  // (eritrociti in stene so enakomerni)
+  if (t.snov != S_ERITROCIT && t.snov != S_STENA) d.y *= (0.7 + 0.6 * fbm(p / 10.0, 2)) * (0.85 + 0.3 * sumL(p * vec2(1.0, 0.45), 1.5, uPx));
+  vec3 od = uBarvila * d * uDebelina + vec3(0.012, 0.014, 0.02);
+  return vec4(exp(-od), faza(t));
+}
 void main() {
-  if (uNacin == 2) {
-    int i = int(gl_FragCoord.x);
-    vec2 p = uSonda[min(i, 7)];
-    T t = tkivo(p, 0.0005);
-    U u = ultra(t, p, 0.0005);
-    o = gl_FragCoord.y < 1.0 ? vec4(u.snov, u.meja, t.smer) : vec4(t.snov, t.tip, t.r1, t.jedro);
+  // tkivo() je v senčilniku poklicano le enkrat (zanka): vsak klic se razvije v celotno kodo preparata, zato bi dodatni
+  // klici podaljšali prevajanje in upočasnili vsako sliko (pregled PR #644)
+  bool sonda = uNacin == 2;
+  bool vrsticaTem = sonda && gl_FragCoord.y < 1.0;
+  float px = sonda ? 0.0005 : uPx;
+  vec2 p = sonda ? uSonda[min(int(gl_FragCoord.x), 7)] : uCenter + (gl_FragCoord.xy - 0.5 * uRes) * uPx;
+  // zvijanje reza velja za svetlobni mikroskop in SEM; TEM (in vrstica TEM sonde) brez njega, ker so organeli manjši od valov
+  if (uNacin != 1 && !vrsticaTem && !(sonda && uSondaZvij == 0)) p += zvij(p, px);
+  // Oko in kamera seštejeta svetlobo s celotne slikovne točke: pri majhni povečavi (uSS = 4) štirje vzorci v točki,
+  // da drobne strukture (limfociti, vlakna) ne dajo šuma iz posameznih pik.
+  int n = uNacin == 0 && uSS > 1 ? 4 : 1;
+  vec4 v = vec4(0.0);
+  T t;
+  for (int k = 0; k < 4; k++) {
+    if (k >= n) break;
+    vec2 dq = n == 1 ? vec2(0.0) : uPx * (k == 0 ? vec2(0.125, 0.375) : k == 1 ? vec2(-0.375, 0.125) : k == 2 ? vec2(0.375, -0.125) : vec2(-0.125, -0.375));
+    t = tkivo(p + dq, px);
+    if (uNacin == 0) v += svetloba(t, p + dq);
+  }
+  if (uNacin == 0) { o = v / float(n); return; }
+  if (sonda && !vrsticaTem) { o = vec4(t.snov, t.tip, t.r1, t.jedro); return; }
+  if (sonda || uNacin == 1) {
+    U u = ultra(t, p, px);
+    o = sonda ? vec4(u.snov, u.meja, t.smer) : vec4(vec3(exp(-2.0 * clamp(u.g, 0.0, 1.5))), 1.0);
     return;
   }
-  vec2 off = (gl_FragCoord.xy - 0.5 * uRes) * uPx;
-  vec2 p = uCenter + off;
-  T t = tkivo(p, uPx);
-  if (uNacin == 1) {
-    U u = ultra(t, p, uPx);
-    o = vec4(vec3(exp(-2.0 * clamp(u.g, 0.0, 1.5))), 1.0);
+  if (false) {
   }${sem ? SEM_SENCENJE : ""} else {
-    vec3 od = uBarvila * t.dye * uDebelina;
-    o = vec4(exp(-od), 1.0);
+    o = vec4(1.0);   // SEM riše ločen program (fragmentPreparata(koda, { sem: true }))
   }
 }`;
 }

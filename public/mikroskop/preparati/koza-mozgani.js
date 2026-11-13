@@ -70,11 +70,12 @@ T tkivo(vec2 p, float px) {
     // usnjica: papilarna (rahla) in retikularna (gosta) plast
     float rahlo = 1.0 - smoothstep(60.0, 140.0, g);
     t.snov = S_KOLAGEN; t.smer = normalize(vec2(sum(p / 80.0) - 0.5, sum(p / 80.0 + 4.0) - 0.5) + 1e-3);
-    vec2 z = rot(t.smer.x * 3.0) * p;
-    float vl = 0.5 + 0.5 * sin(z.y * 0.4 + 3.0 * sum(z / 30.0));
-    t.dye = vec3(0.04, mix(0.42 + 0.2 * mix(0.5, vl, 1.0 - smoothstep(0.5, 2.0, px)), 0.25, rahlo), 0.0);
-    t.dye.y *= 1.0 - 0.6 * smoothstep(0.62, 0.7, sum(p / 22.0 + 6.0)) * (1.0 - rahlo);
-    vec4 f = krogci(p, 30.0, 1.0, 1.0, 0.45 + 0.4 * rahlo, 19.0);
+    // retikularna usnjica: debeli valoviti snopi kolagena v različnih smereh, med njimi svetle reže (skrčki ob
+    // pripravi); papilarna plast je rahla iz tankih vlaken
+    vec2 kg = kolagen(p, normalize(vec2(1.0, 0.35 * (sum(p / 500.0) - 0.5))), mix(22.0, 6.0, rahlo), 0.47, rahlo * 0.8, 3.0, px);
+    t.dye = vec3(0.04, mix(kg.x, 0.26 * (1.0 - 0.6 * kg.y), rahlo), 0.0);
+    if (kg.y > 0.6) t.snov = S_PRAZNO;
+    vec4 f = krogci(p, 30.0, 1.0, 1.0, 0.25 + 0.55 * rahlo, 19.0);
     vec2 q = p - f.yz;
     float dj = sdElipsa(rot(f.w) * q, vec2(4.0, 1.1));
     if (dj < px) { t.dye.x += 0.9 * pokrij(dj, px); if (dj < 0.0) { t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = dj; t.jc = f.yz; t.cc = f.yz; t.cid = vec2(f.w, 1.0); } }
@@ -144,15 +145,24 @@ T tkivo(vec2 p, float px) {
   // nevroni: velikost po plasteh (II–III manjše, V velike piramidne)
   float vel = d < 220.0 ? 0.0 : d < 900.0 ? 0.7 : d < 1150.0 ? 0.5 : 1.0;
   vec4 n = krogci(p, 55.0, 1.0, 1.0, d < 220.0 ? 0.05 : 0.55, 7.0);
-  vec2 q = p - n.yz;
   vec4 h = h42(vec2(n.w, 1.0));
+  // piramidne celice niso enake: rahlo nagnjene, nepravilnega obrisa, z zvitim vršnim in kratkimi bazalnimi dendriti
+  vec2 q = rot(0.45 * (h.y - 0.5)) * (p - n.yz);
   float R = mix(7.0, 15.0, vel) * (0.75 + 0.5 * h.x);
-  // trikotno telo z vrhom proti površini in vršni dendrit
   vec2 z = q / R;
-  float tri = max(abs(z.x) * 0.95 + z.y * 0.55 - 0.65, -z.y - 0.75);
-  float sd = tri * R * 0.8 + 0.6 * (sum(q * 0.3 + h.zw * 9.0) - 0.5);
-  float den = max(abs(q.x + 0.06 * q.y) - mix(1.6, 0.4, clamp(q.y / (5.0 * R), 0.0, 1.0)), max(-q.y, q.y - 6.0 * R));
+  float tri = max(abs(z.x) * (0.85 + 0.25 * h.z) + z.y * 0.55 - 0.65, -z.y - 0.7 - 0.15 * (h.w - 0.5));
+  float sd = tri * R * 0.8 + 0.12 * R * (sum(q / (0.5 * R) + h.zw * 9.0) - 0.5);
+  float L = (3.0 + 4.0 * h.w) * R;
+  float dx = q.x + 0.06 * q.y + 0.25 * R * sin(q.y / (1.7 * R) + 6.28 * h.z) * smoothstep(0.0, 2.0 * R, q.y);
+  float den = max(abs(dx) - mix(0.22 * R, 0.35, clamp(q.y / L, 0.0, 1.0)), max(-q.y, q.y - L));
+  for (int b = -1; b <= 1; b += 2) {
+    vec2 bq = rot(float(b) * (0.9 + 0.4 * h.x)) * (q - vec2(float(b) * 0.55 * R, -0.65 * R));
+    den = min(den, max(abs(bq.x) - mix(0.15 * R, 0.3, clamp(-bq.y / (1.6 * R), 0.0, 1.0)), max(bq.y, -bq.y - 1.6 * R)));
+  }
   sd = min(sd, den);
+  // skrčitveni svetel rob okoli telesa (pogost artefakt fiksacije)
+  float hal = (h.y > 0.35 && tri < 0.2) ? smoothstep(0.5 + 1.0 * h.x, 0.0, sd) * step(0.0, sd) : 0.0;
+  if (hal > 0.0) { t.dye.y *= 1.0 - 0.6 * hal; t.dye.x *= 1.0 - 0.5 * hal; if (hal > 0.7) t.snov = S_PRAZNO; }
   if (sd < px) {
     float k = pokrij(sd, px);
     T c = prazno();
@@ -210,12 +220,21 @@ T tkivo(vec2 p, float px) {
   t.dye = vec3(0.05, 0.3 + 0.08 * mix(0.5, vl, vid), 0.0);
   t.dye.y *= 1.0 - 0.5 * smoothstep(0.66, 0.72, sumL(z * vec2(0.3, 1.0), 4.0, px)) * vid;     // »vakuole« (izprani mielin)
   // vrste oligodendrocitov
-  float i = floor(z.y / 26.0);
+  // vrste oligodendrocitov med snopi aksonov: valovite, prekinjene verige 3–10 jeder; vmes posamezni astrociti
+  float zy = z.y + 10.0 * (sum(vec2(z.x / 90.0, 4.0)) - 0.5);
+  float i = floor(zy / 26.0);
   vec2 oc = vec2(z.x, (i + 0.5) * 26.0);
-  float j = floor(z.x / 11.0);
+  float j = floor(z.x / 10.0);
   vec4 g = h42(vec2(j, i));
-  if (g.z < 0.5) {
-    vec2 q = vec2(z.x - (j + 0.5) * 11.0, z.y - oc.y - 4.0 * (g.x - 0.5));
+  vec4 as = krogci(z, 45.0, 3.2, 4.0, 0.35, 12.0);
+  if (as.x < px) {
+    float k = pokrij(as.x, px);
+    t.dye.x = mix(t.dye.x, 0.55 * kromatin(z - as.yz, vec2(as.w), px), k);
+    if (as.x < 0.0) { t.snov = S_JEDRO; t.tip = C_GLIJA; t.jedro = as.x; t.cid = vec2(as.w, 12.0); t.meja = -as.x; }
+    return t;
+  }
+  if (g.z < 0.75 * smoothstep(0.42, 0.5, sum(vec2(z.x / 70.0, i * 1.7)))) {
+    vec2 q = vec2(z.x - (j + 0.5 + 0.3 * (g.w - 0.5)) * 10.0, zy - oc.y - 5.0 * (g.x - 0.5));
     float dj = length(q) - 2.6;
     float halo = length(q) - 4.6;
     t.dye.y *= 1.0 - 0.7 * pokrij(halo, px);
@@ -245,7 +264,7 @@ T tkivo(vec2 p, float px) {
   float rob = odsek(p, vec2(2600.0, 1700.0), 19.0);
   if (rob > 0.0) return prazno();
   // lističi (folije): globina od površine lističa
-  float f = p.y + 260.0 * sin(p.x / 330.0) ;
+  float f = p.y + 260.0 * sin(p.x / 330.0 + 0.8 * (fbm(vec2(p.x / 900.0, 1.0), 2) - 0.5)) + 140.0 * (fbm(p / 600.0 + 2.0, 2) - 0.5);
   float per = 1300.0;
   float k = floor(f / per);
   float d = abs(f - (k + 0.5) * per);           // 0 = sredina (bela snov), 650 = površina
@@ -253,6 +272,31 @@ T tkivo(vec2 p, float px) {
   T t = prazno();
   float vid = 1.0 - smoothstep(0.4, 1.2, px);
   if (d < 8.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.08, 0.45, 0.0); return t; }
+  if (d > 290.0 && d < 400.0) {
+    // Purkinjeve celice v eni vrsti na meji: telo v obliki bučke sega v obe sosednji plasti, debel dendrit proti površini
+    float s = p.x;
+    float i = floor(s / 60.0);
+    vec4 h = h42(vec2(i, k));
+    vec2 q = vec2(s - (i + 0.5) * 60.0 - 14.0 * (h.x - 0.5), d - 348.0 - 6.0 * (h.z - 0.5));
+    if (h.y < 0.8) {
+      float sd = sdElipsa(q, vec2(14.0 + 3.0 * h.w, 19.0)) + 1.5 * (sum(q / 6.0 + h.zw) - 0.5);
+      float den = max(abs(q.x + 0.15 * q.y * (h.w - 0.5)) - mix(4.5, 1.0, clamp(-q.y / 55.0, 0.0, 1.0)), max(q.y + 10.0, -q.y - 55.0));
+      sd = min(sd, den);
+      if (sd < 0.0) {
+        T c = prazno();
+        c.snov = S_CITO; c.tip = C_NEVRON; c.meja = -sd; c.cc = p - q; c.jc = c.cc; c.cid = vec2(i, k);
+        c.dye = vec3(0.3 + 0.3 * smoothstep(0.45, 0.7, sumL(q, 1.0, px)), 0.45, 0.0);
+        float dj = length(q - vec2(0.0, 3.0)) - 7.0;
+        c.jedro = dj;
+        float jk = pokrij(dj, px);
+        // mehurčasto (svetlo vijoličasto) jedro z izrazitim temnim jedrcem
+        c.dye = mix(c.dye, vec3(0.32 + 0.1 * sumL(q, 0.8, px), 0.22, 0.0), jk);
+        c.dye.x += 1.0 * pokrij(length(q - vec2(1.5, 4.0)) - 1.8, px) * jk;
+        if (jk > 0.5) c.snov = S_JEDRO;
+        return c;
+      }
+    }
+  }
   if (d < 330.0) {
     // molekularna plast
     t.snov = S_CITO; t.tip = C_NEVRIT;
@@ -264,27 +308,10 @@ T tkivo(vec2 p, float px) {
     return t;
   }
   if (d < 360.0) {
-    // Purkinjeve celice v eni vrsti
-    float s = p.x;
-    float i = floor(s / 60.0);
-    vec4 h = h42(vec2(i, k));
-    vec2 q = vec2(s - (i + 0.5) * 60.0 - 10.0 * (h.x - 0.5), d - 345.0);
-    if (h.y < 0.8) {
-      float sd = sdElipsa(q, vec2(17.0, 22.0)) + 1.5 * (sum(q / 6.0 + h.zw) - 0.5);
-      if (sd < 0.0) {
-        T c = prazno();
-        c.snov = S_CITO; c.tip = C_NEVRON; c.meja = -sd; c.cc = p - q; c.jc = c.cc; c.cid = vec2(i, k);
-        c.dye = vec3(0.3 + 0.3 * smoothstep(0.45, 0.7, sumL(q, 1.0, px)), 0.45, 0.0);
-        float dj = length(q) - 7.0;
-        c.jedro = dj;
-        float jk = pokrij(dj, px);
-        c.dye = mix(c.dye, vec3(0.2, 0.15, 0.0), jk);
-        c.dye.x += 1.0 * pokrij(length(q - vec2(1.5, 1.0)) - 1.8, px) * jk;
-        if (jk > 0.5) c.snov = S_JEDRO;
-        return c;
-      }
-    }
+    // ozek pas med plastema (Bergmannova glija, košarice)
     t.snov = S_CITO; t.tip = C_NEVRIT; t.dye = vec3(0.08, 0.36, 0.0);
+    vec4 g = krogci(p, 14.0, 2.4, 3.0, 0.5, 6.0);
+    if (g.x < 0.0) { t.dye.x = 0.9; t.snov = S_JEDRO; t.tip = C_GLIJA; t.jedro = g.x; t.jc = g.yz; t.cc = g.yz; }
     return t;
   }
   if (d < 600.0) {

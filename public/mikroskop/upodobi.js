@@ -29,16 +29,38 @@ precision highp float;
 uniform sampler2D uT; uniform sampler2D uM;
 uniform vec2 uZaslon; uniform float uN;       // velikost platna, velikost slike (kvadrat, točke)
 uniform float uMol;                            // utež sloja molekul
+uniform float uMolDo;                          // sloj molekul je narisan do te višine (uv), višje velja preparat
 uniform float uKrog;                           // 1 = okrogel okular, 0 = kvadratni zaslon TEM
 uniform float uSvetlost, uKontrast, uTopla, uSum, uTEM, uCas;
+uniform float uLom, uLomD;                     // lom svetlobe na robovih (predznak = smer defokusa), razmik vzorcev (uv)
+uniform float uKA;                             // barvna napaka objektiva na robu polja (svetlobni mikroskop)
 out vec4 o;
 float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233)) + uCas) * 43758.5453); }
 void main() {
   vec2 f = gl_FragCoord.xy - 0.5 * uZaslon;
   vec2 uv = f / uN + 0.5;
   float r = length(f) / (0.5 * uN);
-  vec3 c = texture(uT, uv).rgb;
-  if (uMol > 0.0) c = mix(c, texture(uM, uv).rgb, uMol);
+  vec4 tc = texture(uT, uv);
+  vec3 c = tc.rgb;
+  // akromatski objektiv: na robu polja sta rdeča in modra slika malo različno veliki (barvni robovi)
+  if (uKA > 0.0) {
+    vec2 a = (uv - 0.5) * uKA * r * r;
+    c.r = texture(uT, uv + a).r;
+    c.b = texture(uT, uv - a).b;
+  }
+  // lom svetlobe (enačba prenosa jakosti, I ≈ I0 (1 − Δz/k · ∇²φ)): celice v vodi imajo ob robu svetel in temen rob, ki
+  // se ob vrtenju mikrovijaka zamenjata; v alfa kanalu je fazni zamik preparata (glsl.js faza)
+  if (uLom != 0.0) {
+    // glajen Laplace (razlika dveh povprečij), da drobne strukture na meji ločljivosti ne dajo belih pik
+    float D = uLomD;
+    float zn = 0.2 * (tc.a + texture(uT, uv + vec2(0.6, 0.6) * D).a + texture(uT, uv + vec2(-0.6, 0.6) * D).a
+      + texture(uT, uv + vec2(0.6, -0.6) * D).a + texture(uT, uv + vec2(-0.6, -0.6) * D).a);
+    float zu = 0.0;
+    for (int k = 0; k < 8; k++) { float a = float(k) * 0.7854; zu += texture(uT, uv + 1.6 * D * vec2(cos(a), sin(a))).a; }
+    float lap = zu / 8.0 - zn;
+    c *= clamp(1.0 + uLom * lap, 0.35, 1.6);
+  }
+  if (uMol > 0.0 && uv.y <= uMolDo) c = mix(c, texture(uM, uv).rgb, uMol);
   // kontrast okoli sive 0,82 (svetlo ozadje stekelca ostane svetlo), svetlost, barva žarnice
   c = clamp((c - 0.82) * uKontrast + 0.82, 0.0, 1.0);
   c *= uSvetlost;
@@ -49,7 +71,7 @@ void main() {
   float rob;
   if (uKrog > 0.5) {
     rob = 1.0 - smoothstep(0.985, 1.0, r);
-    c *= 1.0 - 0.22 * smoothstep(0.55, 1.0, r) * smoothstep(0.55, 1.0, r);
+    c *= 1.0 - 0.1 * smoothstep(0.5, 1.0, r) * smoothstep(0.5, 1.0, r); // Köhlerjeva osvetlitev: polje je skoraj enakomerno
   } else {
     rob = 1.0; // slika TEM pokrije ves oder (zaobljene robove da oder)
   }
@@ -96,7 +118,8 @@ function program(gl, fs) {
 }
 function programVzporedno(gl, fs, ext) {
   const g = zgradi(gl, fs);
-  if (!ext) return Promise.resolve().then(() => preveri(gl, g));
+  // brez razširitve prevajanje čaka ob prvem branju stanja: vsaj po naslednji sličici, da je predogled že na zaslonu
+  if (!ext) return new Promise((ok) => setTimeout(ok, 50)).then(() => preveri(gl, g));
   return new Promise((ok, napaka) => {
     const cakaj = () => {
       try {
@@ -127,7 +150,8 @@ function tekstura(gl, n, plavajoca = false) {
   return { t, f, n };
 }
 
-export function ustvariUpodobitev(platno) {
+// temSonda(): ali je zdaj TEM (sonda naj tedaj vrne tkivo brez zvijanja rezine, kot ga kaže slika TEM)
+export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
   const gl = platno.getContext("webgl2", { antialias: false, alpha: false, preserveDrawingBuffer: true, powerPreference: "high-performance" });
   if (!gl) {
     const e = new Error("webgl2");
@@ -145,8 +169,15 @@ export function ustvariUpodobitev(platno) {
 
   const blur = program(gl, BLUR);
   const sestavi = program(gl, SESTAVI);
-  let mol = null; // prevede se ob prvi uporabi
+  // Program molekul je velik (~40 kB): na telefonu bi sinhrono prevajanje ob prvem prehodu nad ~1 000 000× zamrznilo
+  // stran (j, 13. 11. 2026: »nad 1200000x se okno mikroskopa zatrokira«). Zato se prevede v ozadju (pripraviMol); dokler
+  // ni pripravljen ali če se ne prevede, je slika brez sloja molekul.
+  let mol = null;
+  let molObljuba = null;
   let idT = null; // majhna tekstura za prehod z režami molekul (oznake)
+  // zamegljenost se računa znova le, ko se je preparat ali sigma spremenil (sloj molekul se med risanjem sestavlja večkrat)
+  let pVer = 0;
+  let blurKljuc = "";
   const nastaviMol = (U, res, pxNm, idPass) => {
     gl.useProgram(mol.p);
     gl.uniform2f(mol.u("uRes"), res, res);
@@ -185,7 +216,7 @@ export function ustvariUpodobitev(platno) {
       kompleti.set(n, T);
       return;
     }
-    T = { n, p: tekstura(gl, [n, n]), a: tekstura(gl, [n, n]), b: tekstura(gl, [n, n]), m: tekstura(gl, [n, n]) };
+    T = { id: ++pVer, n, p: tekstura(gl, [n, n]), a: tekstura(gl, [n, n]), b: tekstura(gl, [n, n]), m: tekstura(gl, [n, n]) };
     kompleti.set(n, T);
     while (kompleti.size > 3) {
       const [k, star] = kompleti.entries().next().value;
@@ -232,6 +263,7 @@ export function ustvariUpodobitev(platno) {
       tocke.slice(0, 8).forEach((t, i) => arr.set(t, i * 2));
       gl.uniform2fv(prep.u("uSonda"), arr);
       gl.uniform1i(prep.u("uNacin"), 2);
+      gl.uniform1i(prep.u("uSondaZvij"), temSonda() ? 0 : 1);
       risi(sonda.f, 8, 2);
       const px = new Float32Array(8 * 2 * 4);
       gl.readPixels(0, 0, 8, 2, gl.RGBA, gl.FLOAT, px);
@@ -246,6 +278,7 @@ export function ustvariUpodobitev(platno) {
       if (!prep) return;
       const n = v.n;
       pripravi(n);
+      pVer++;
       const nacin = v.nacin ?? (v.tem ? 1 : 0);
       if (nacin === 3 && !prepSem) prepSem = program(gl, fragmentPreparata(prepGlsl, { sem: true }));
       const pr = nacin === 3 ? prepSem : prep;
@@ -277,11 +310,14 @@ export function ustvariUpodobitev(platno) {
     },
     // Iz že narisanega preparata (narisiPreparat za isti v.n): zamegljenost, molekule in sestava na zaslon. Poceni,
     // zato drsniki (lučka, zaslonka, ostrina) ne rišejo preparata znova.
-    sestavi(v) {
+    sestavi(v, molUtez = 0, molDo = 1) {
       if (!prep) return;
       const n = v.n;
       pripravi(n);
       // zamegljenost: vodoravno p → b, navpično b → a
+      const bk = `${pVer}|${T.id}|${v.sigma}`;
+      if (bk !== blurKljuc) {
+      blurKljuc = bk;
       gl.useProgram(blur.p);
       gl.uniform2f(blur.u("uVel"), n, n);
       gl.uniform1f(blur.u("uSigma"), v.sigma);
@@ -293,14 +329,9 @@ export function ustvariUpodobitev(platno) {
       gl.bindTexture(gl.TEXTURE_2D, T.b.t);
       gl.uniform2f(blur.u("uSmer"), 0, 1);
       risi(T.a.f, n, n);
-      // molekule in atomi
-      let utez = 0;
-      if (v.mol && v.mol.utez > 0) {
-        if (!mol) mol = program(gl, MOLEKULE);
-        nastaviMol(v.mol.uniforme, n, v.umNaTocko * 1000, 0);
-        risi(T.m.f, n, n);
-        utez = v.mol.utez;
       }
+      // molekule in atomi: sloj je že narisan (narisiMol), tu se le primeša
+      const utez = mol && v.mol && molUtez > 0 ? molUtez : 0;
       // sestava na zaslon
       gl.useProgram(sestavi.p);
       gl.activeTexture(gl.TEXTURE0);
@@ -314,6 +345,7 @@ export function ustvariUpodobitev(platno) {
       gl.uniform2f(sestavi.u("uZaslon"), W, H);
       gl.uniform1f(sestavi.u("uN"), v.zaslonN || Math.min(W, H));
       gl.uniform1f(sestavi.u("uMol"), utez);
+      gl.uniform1f(sestavi.u("uMolDo"), molDo);
       gl.uniform1f(sestavi.u("uKrog"), v.krog ? 1 : 0);
       gl.uniform1f(sestavi.u("uSvetlost"), v.svetlost);
       gl.uniform1f(sestavi.u("uKontrast"), v.kontrast);
@@ -330,15 +362,54 @@ export function ustvariUpodobitev(platno) {
     //       mol: null | { utez, uniforme }, svetlost, kontrast, topla, sum, krog }: celoten izris naenkrat
     narisi(v) {
       if (!prep) return;
+      // (le za orodja in preizkuse; mikroskop riše po pasovih) tudi tu molekule po pasovih, da GPE ne dobi predolgega izrisa
       api.narisiPreparat(v);
-      api.sestavi(v);
+      let ima = false;
+      for (let y = 0; y < v.n; y += 32) {
+        ima = api.narisiMol(v, y, y + 32);
+        if (!ima) break;
+        api.pocakajMol();
+      }
+      api.sestavi(v, ima ? v.mol.utez : 0);
+    },
+    // Prevajanje programa molekul v ozadju. Vrne obljubo (true, ko je pripravljen; false ob napaki).
+    pripraviMol() {
+      if (!molObljuba)
+        molObljuba = programVzporedno(gl, MOLEKULE, vzporedno).then(
+          (p) => ((mol = p), true),
+          (e) => {
+            console.warn("Mikroskop: sloj molekul ni na voljo", e?.message?.slice(0, 200));
+            return false;
+          },
+        );
+      return molObljuba;
+    },
+    molPripravljen() {
+      return !!mol;
+    },
+    // Sloj molekul v pasu vrstic y0..y1 (kot narisiPreparat): tudi pri atomih je izris po delih, zato grafični procesor
+    // telefona nikoli ne dobi enega predolgega izrisa (ta lahko ponastavi grafiko in pusti črno sliko).
+    narisiMol(v, y0 = 0, y1 = v.n) {
+      if (!mol || !v.mol) return false;
+      const n = v.n;
+      pripravi(n);
+      nastaviMol(v.mol.uniforme, n, v.umNaTocko * 1000, 0);
+      gl.enable(gl.SCISSOR_TEST);
+      gl.scissor(0, y0, n, Math.max(0, Math.min(n, y1) - y0));
+      risi(T.m.f, n, n);
+      gl.disable(gl.SCISSOR_TEST);
+      return true;
+    },
+    pocakajMol() {
+      if (!T) return;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, T.m.f);
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, piksel);
     },
     // Reže molekul v mreži k × k čez isto vidno polje kot izris v (za oznake z imeni): vrednost = reža + 1, 0 = nič.
     // Kliči pred narisi: readPixels potem čaka le na majhen prehod k × k, ne na celoten izris molekul.
     idMolekul(v, k = 48) {
-      if (!v.mol) return null;
-      if (!mol) mol = program(gl, MOLEKULE);
-      if (!idT) idT = tekstura(gl, [k, k]);
+      if (!v.mol || !mol) return null;
+      if (!idT || idT.n[0] !== k) idT = tekstura(gl, [k, k]); // oznake (48) in iskanje molekule (64) rabita različno mrežo
       nastaviMol(v.mol.uniforme, k, (v.umNaTocko * 1000 * v.n) / k, 1);
       risi(idT.f, k, k);
       const px = new Uint8Array(k * k * 4);

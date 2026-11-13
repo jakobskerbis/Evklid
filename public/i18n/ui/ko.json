@@ -3394,6 +3394,8 @@
   "mk.molv.atpsintaza": "ATP를 만드는 회전 모터",
   "mk.mol.atpsintaza": "ATP 합성 효소",
   "mk.molv.membelj": "막을 가로지르는 통로나 펌프",
+  "mk.mol.p450": "사이토크롬 P450",
+  "mk.molv.p450": "약물과 독소를 분해하고 스테로이드 합성을 돕는다",
   "mk.mol.membelj": "막 단백질",
   "mk.molv.mbp": "말이집 층을 서로 붙임",
   "mk.mol.mbp": "말이집 염기성 단백질",

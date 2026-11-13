@@ -3394,6 +3394,8 @@
   "mk.molv.atpsintaza": "製造ATP的旋轉馬達",
   "mk.mol.atpsintaza": "ATP合成酶",
   "mk.molv.membelj": "貫穿膜的通道或幫浦",
+  "mk.mol.p450": "細胞色素P450",
+  "mk.molv.p450": "分解藥物和毒素，並幫助合成類固醇",
   "mk.mol.membelj": "膜蛋白",
   "mk.molv.mbp": "把髓鞘各層黏在一起",
   "mk.mol.mbp": "髓鞘鹼性蛋白",

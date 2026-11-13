@@ -3507,6 +3507,8 @@
   "mk.molv.mbp": "colle les couches de myéline",
   "mk.mol.membelj": "Protéine membranaire",
   "mk.molv.membelj": "un canal ou une pompe à travers la membrane",
+  "mk.mol.p450": "Cytochrome P450",
+  "mk.molv.p450": "dégrade les médicaments et les toxines et aide à fabriquer les stéroïdes",
   "mk.mol.atpsintaza": "ATP synthase",
   "mk.molv.atpsintaza": "un moteur rotatif qui fabrique l’ATP",
   "mk.mol.pas3": "Échangeur Cl⁻/HCO₃⁻ (bande 3)",

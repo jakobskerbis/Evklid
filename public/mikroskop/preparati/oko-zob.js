@@ -294,7 +294,7 @@ T tkivo(vec2 p, float px) {
     float hs = sin(u / 32.0 + e / 140.0 + 2.0 * sum(vec2(u / 200.0, e / 300.0)));
     float hsb = smoothstep(-0.2, 0.2, hs) * (1.0 - smoothstep(450.0, 750.0, p.y - ydej));   // Hunter-Schregerjevi pasovi v notranjem delu
     float ret = crta(abs(fract((p.x * 0.45 + e * 0.9 + 20.0 * sum(vec2(p.x / 150.0, e / 150.0))) / 35.0) - 0.5) * 35.0, 0.9, px);
-    t.dye = vec3(0.2 + 0.1 * hsb + 0.25 * ret * step(0.25, sum(vec2(p.x / 400.0, e / 400.0))), 0.04, 0.0);
+    t.dye = vec3(0.27 + 0.05 * hsb + 0.2 * ret * step(0.25, sum(vec2(p.x / 400.0, e / 400.0))), 0.04, 0.0);
     t.dye.y += 0.12 * crta(pr - 2.5, 0.35, px) * vid;
     return t;
   }
@@ -310,10 +310,14 @@ T tkivo(vec2 p, float px) {
   t.snov = S_MINERAL; t.smer = normalize(gr);      // kolagenska vlakenca dentina pravokotno na kanalčke
   t.dye = vec3(0.2 + 0.05 * sumL(p, 40.0, px), 0.05, 0.0);
   t.dye.x += 0.05 * crta(abs(fract((ydej - p.y) / 18.0) - 0.5) * 18.0, 0.5, px);      // prirastne črte (von Ebner)
+  // kanalčki (razmik 6 µm) se rišejo le, ko so večji od točke; sicer povprečna temnejša barva (brez moiréja)
   float al = abs(lw);
-  if (al < rk) { t.snov = S_PRAZNO; t.dye = vec3(0.65, 0.15, 0.0); t.meja = rk - al; return t; }
-  if (al < rk + 0.6) { t.dye.x -= 0.08; t.dye.y += 0.06; t.r1 = -1.0; }                 // peritubularni dentin
-  t.dye.x = mix(0.36, t.dye.x, vid);                                                    // pri majhni povečavi povprečje
+  float vk = 1.0 - smoothstep(0.45, 1.3, px * (1.6 - 0.6 * f));
+  float kk = pokrij(al - rk, max(px, 0.15)) * vk;
+  if (al < rk + 0.6) { t.dye.x -= 0.08 * vk; t.dye.y += 0.06 * vk; t.r1 = -1.0; }        // peritubularni dentin
+  t.dye.x += (1.0 - vk) * (0.45 * (2.0 * rk / 6.0) + 0.1 * (sum(vec2(w / 14.0, f * 9.0)) - 0.5)); // povprečje in snopi kanalčkov
+  t.dye = mix(t.dye, vec3(0.65, 0.15, 0.0), kk);
+  if (kk > 0.5) { t.snov = S_PRAZNO; t.meja = rk - al; }
   return t;
 }
 void temPosebno(inout U u, T t, vec2 p, float px) {

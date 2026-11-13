@@ -3537,6 +3537,8 @@
   "mk.molv.mbp": "lijepi slojeve mijelina",
   "mk.mol.membelj": "Membranska bjelančevina",
   "mk.molv.membelj": "kanal ili crpka kroz membranu",
+  "mk.mol.p450": "Citokrom P450",
+  "mk.molv.p450": "razgrađuje lijekove i otrove te pomaže u stvaranju steroida",
   "mk.mol.atpsintaza": "ATP-sintaza",
   "mk.molv.atpsintaza": "okretni motor koji stvara ATP",
   "mk.mol.pas3": "Izmjenjivač Cl⁻/HCO₃⁻ (traka 3)",

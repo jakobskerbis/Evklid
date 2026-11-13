@@ -9,11 +9,14 @@ const RASTLINSKA = /* glsl */ `
 T rCelica(Vor v, vec2 p, float sw, vec3 kd, float px) {
   T t = prazno();
   t.cid = v.id; t.cc = v.c; t.jc = v.c; t.tip = C_SPLOSNA;
-  if (v.rob < sw) {
+  // stena ni povsod enako debela in obarvana; srednja lamela med sosednima celicama je malo temnejša
+  float swl = sw * (0.75 + 0.5 * sum(p / 9.0 + v.id * 3.0));
+  if (v.rob < swl) {
     t.snov = S_STENA; t.smer = vec2(-v.nb.y, v.nb.x); t.r1 = v.rob;
-    t.dye = kd * (0.85 + 0.15 * sumL(p, 2.0, px));
+    t.dye = kd * (0.7 + 0.3 * sumL(p, 2.0, px)) * (0.8 + 0.35 * crta(v.rob, 0.25, px));
     return t;
   }
+  sw = swl;
   float m = v.rob - sw;
   if (m < 1.2) { t.snov = S_CITO; t.meja = min(m, 1.2 - m); t.dye = vec3(0.0, 0.05, 0.0); return t; }
   t.snov = S_VAKUOLA; t.meja = m - 1.2; t.dye = vec3(0.0);
@@ -22,7 +25,7 @@ T rCelica(Vor v, vec2 p, float sw, vec3 kd, float px) {
 // Kloroplast z dolgo osjo sm, središčem c in polosjo r (svetlobni prikaz + podatki za TEM). Vrne true, če p leži v njem.
 bool kloroplastL(inout T t, vec2 p, vec2 c, vec2 sm, float r, float px) {
   vec2 z = mat2(sm.x, -sm.y, sm.y, sm.x) * (p - c);
-  float d = sdElipsa(z, vec2(r, 0.45 * r));
+  float d = sdElipsa(z, vec2(r, 0.62 * r));       // lečast, od strani malo sploščen
   if (d > px) return false;
   float k = pokrij(d, px);
   t.dye = mix(t.dye, vec3(0.75 + 0.25 * sumL(z, 0.45, px), 0.08, 0.0), k);
@@ -50,6 +53,7 @@ T tkivo(vec2 p, float px) {
     float fk = float(k);
     vec2 w = p + fk * vec2(37.0, 53.0);
     w += 7.0 * vec2(sum(w / 45.0) - 0.5, sum(w / 45.0 + 7.0) - 0.5);
+    w += 3.0 * vec2(sum(w / 13.0 + 3.0) - 0.5, sum(w / 13.0 + 11.0) - 0.5); // robovi niso ravni: tanke celice se zvijejo
     Vor v = vor(w, 80.0, vec2(1.0), 0.0, 0.85);
     vec4 h = h42(v.id + fk * 17.0);
     if (h.x > 0.55 - fk * 0.2) continue;
@@ -57,8 +61,11 @@ T tkivo(vec2 p, float px) {
     float m = v.rob - g;
     if (m < 0.0) continue;
     t.snov = S_CITO; t.tip = C_KERATINOCIT; t.meja = m; t.cc = p - (w - v.c); t.cid = v.id + fk * 17.0;
-    float guba = crta((sum(w / 22.0 + h.zw * 5.0) - 0.5) * 22.0, 0.35, px) * step(0.5, h.w);
-    t.dye = vec3(0.17 + 0.06 * sumL(w, 2.0, px) + 0.3 * guba + 0.25 * crta(m, 0.5, px), 0.06 * crta(m, 0.8, px), 0.0);
+    // gube: tanke temnejše črte, največ ob robu, kjer se tanka celica prepogne; citoplazma drobno zrnata (keratohialin)
+    float guba = crta((sum(w / 22.0 + h.zw * 5.0) - 0.5) * 22.0, 0.22, px) * step(0.5, h.w) * (0.4 + 0.6 * smoothstep(0.35, 0.65, sum(w / 30.0 + 4.0)));
+    guba = max(guba, 0.8 * crta(m - 4.0 - 3.0 * sum(w / 9.0 + fk), 0.25, px) * step(0.45, sum(w / 40.0 + 2.0)));
+    float zrno = 0.05 * sumL(w, 2.0, px) + 0.05 * sumL(w, 0.6, px);
+    t.dye = vec3(0.13 + zrno + 0.22 * guba + 0.25 * crta(m, 0.5, px) + 0.05 * smoothstep(12.0, 0.0, m), 0.06 * crta(m, 0.8, px), 0.0);
     jedroV(t, p, (h.zw - 0.5) * 10.0, vec2(4.3, 3.5), h.z * 6.0, 1.0, px);
     vec4 b = krogci(p, 1.7, 0.35, 0.45, 0.35 * smoothstep(0.55, 0.7, sum(p / 25.0 + fk * 3.0)), 61.0 + fk);
     if (b.x < px && t.snov != S_JEDRO) {
@@ -165,7 +172,7 @@ T tkivo(vec2 p, float px) {
   if (p.y > yt || p.y < yb) return t;
   float d = yt - p.y;            // globina od zgoraj
   float db = p.y - yb;           // višina od spodaj
-  vec3 sten = vec3(0.0, 0.3, 0.0);
+  vec3 sten = vec3(0.0, 0.2, 0.0);              // nebarvane stene so le blede sence
   // povrhnjici s kutikulo
   if (d < 3.0 || db < 2.5) { t.snov = S_LIPID; t.dye = vec3(0.04, 0.3, 0.0); return t; }
   // listna reža v spodnji povrhnjici in podrežna votlina nad njo
@@ -221,24 +228,27 @@ T tkivo(vec2 p, float px) {
   if (d < 92.0) {
     Vor v = vor(p + vec2(0.0, 3.0 * sin(p.x / 7.0)), 11.5, vec2(1.0, 6.0), 0.0, 0.45);
     float rob = min(v.rob, min(d - 21.0, 92.0 - d) * 1.0 + 0.0);
-    if (rob < 0.6 && sum(p / 4.0) > 0.55) return t;                  // drobni zračni prostori med celicami
+    if (v.rob < 1.2 && sum(vec2(p.x / 6.0, p.y / 25.0)) > 0.64) return t;   // ozki zračni prostori med stebričastimi celicami (redki)
     v.rob = rob;
     T c = rCelica(v, p, 0.4, sten, px);
-    if (c.snov != S_STENA && rob > 0.7 && rob < 4.6) {
-      vec4 kk = krogci(p, 3.4, 1.0, 1.0, 0.95, 79.0);
-      kloroplastL(c, p, kk.yz, abs(v.nb.x) > 0.5 ? vec2(0.0, 1.0) : vec2(1.0, 0.0), 2.2, px);
+    // kloroplasti v vrsti ob stenah dolgih stebričastih celic; sredina celice (vakuola) je svetla (pregled PR #644)
+    if (c.snov != S_STENA && rob > 0.6 && rob < 3.4) {
+      vec4 kk = krogci(p, 2.9, 1.0, 1.0, 0.95, 79.0);
+      kloroplastL(c, p, kk.yz, abs(v.nb.x) > 0.5 ? vec2(0.0, 1.0) : vec2(1.0, 0.0), 2.1 + 0.4 * fract(kk.w * 1.37), px);
     }
     return c;
   }
   // gobasto tkivo z velikimi zračnimi prostori
   Vor v = vor(p, 24.0, vec2(1.0, 0.8), 0.0, 0.9);
-  float g = 3.5 + 6.0 * sum(p / 18.0 + 5.0);
-  if (v.rob < g) return t;
-  v.rob -= g;
+  // celice gobastega tkiva so zaobljene in različno velike, med njimi veliki zračni prostori
+  float g = 1.2 + 4.0 * sum(p / 18.0 + 5.0);
+  float zr = min(v.rob, 10.0 - 0.6 * v.d);                             // zaobljeni vogali
+  if (zr < g) return t;
+  v.rob = zr - g;
   T c = rCelica(v, p, 0.4, sten, px);
   if (c.snov != S_STENA && v.rob > 0.7 && v.rob < 4.0) {
-    vec4 kk = krogci(p, 4.2, 1.0, 1.0, 0.6, 81.0);
-    kloroplastL(c, p, kk.yz, normalize(vec2(-v.nb.y, v.nb.x) + 1e-4), 2.0, px);
+    vec4 kk = krogci(p, 3.6, 1.0, 1.0, 0.7, 81.0);
+    kloroplastL(c, p, kk.yz, normalize(vec2(-v.nb.y, v.nb.x) + 1e-4), 1.9 + 0.4 * fract(kk.w * 1.37), px);
   }
   return c;
 }`,
@@ -307,7 +317,7 @@ float cIdx(float y) {
   if (y < -500.0) return y / 14.0;
   return -500.0 / 14.0 + (log(14.0 + 0.09 * (y + 500.0)) - log(14.0)) / 0.09;
 }
-T stenaK(T t, float dw, vec2 sm) { t.snov = S_STENA; t.smer = sm; t.r1 = dw; t.dye = vec3(0.06, 0.42, 0.0); return t; }
+T stenaK(T t, float dw, vec2 sm) { t.snov = S_STENA; t.smer = sm; t.r1 = dw; t.dye = vec3(0.05, 0.3, 0.0); return t; }
 T tkivo(vec2 p, float px) {
   T t = prazno();
   if (p.y > 1650.0 - 80.0 * sum(vec2(p.x / 60.0, 1.0))) return t;
@@ -356,14 +366,17 @@ T tkivo(vec2 p, float px) {
     return t;
   }
   // vzdolžne vrste celic, ki se proti vršičku zožijo
-  float u = p.x * 420.0 / max(R, 40.0);
+  // vrste niso ravnila: rahlo vijugajo, celice v vsaki vrsti so različno dolge
+  float u = p.x * 420.0 / max(R, 40.0) + 5.0 * (sum(vec2(p.y / 70.0, p.x / 90.0)) - 0.5) + 2.0 * (sum(vec2(p.y / 23.0, p.x / 31.0) + 4.0) - 0.5);
   float fw = 13.0;
   float fi = floor(u / fw);
   float sk = R / 420.0;
   float lu = (fract(u / fw) - 0.5) * fw * sk;
   float cw = 0.5 * fw * sk;
   vec4 hf = h42(vec2(fi, 3.0));
-  float cc = cIdx(p.y) + hf.x;
+  // prečne stene so rahlo poševne in ukrivljene, celice v vrsti so različno dolge
+  float lu0 = (fract(u / fw) - 0.5);
+  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, p.y / 35.0)) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
   float ci = floor(cc);
   float hh = p.y < -500.0 ? 14.0 : 14.0 + 0.09 * (p.y + 500.0);
   float lv = (fract(cc) - 0.5) * hh;
@@ -372,8 +385,8 @@ T tkivo(vec2 p, float px) {
   vec2 cid = vec2(fi, ci);
   vec4 h = h42(cid);
   t.cid = cid; t.tip = C_SPLOSNA; t.cc = p - vec2(lu, lv); t.jc = t.cc;
-  if (dw < 0.45) return stenaK(t, dw, dx < dy ? vec2(0.0, 1.0) : vec2(1.0, 0.0));
-  t.snov = S_CITO; t.meja = dw - 0.45;
+  if (dw < 0.3) return stenaK(t, dw, dx < dy ? vec2(0.0, 1.0) : vec2(1.0, 0.0));
+  t.snov = S_CITO; t.meja = dw - 0.3;
   t.dye = vec3(0.07 + 0.04 * sumL(p, 1.2, px), 0.09, 0.0);
   float mer = 1.0 - smoothstep(-640.0, -420.0, p.y);
   vec2 q = vec2(lu, lv);
@@ -387,7 +400,8 @@ T tkivo(vec2 p, float px) {
     float dj = length(qn) - rn + 0.3 * (sum(qn / 1.5 + h.xy * 9.0) - 0.5);
     if (dj < px) {
       float k = pokrij(dj, px);
-      t.dye.x = mix(t.dye.x, 0.5 * kromatin(qn, h.xy, px) + 0.9 * pokrij(length(qn - vec2(0.8, 0.6)) - 1.2, px), k);
+      // orcein obarva vse jedro zrnato vijolično; jedrce je le malo temnejše
+      t.dye.x = mix(t.dye.x, 0.32 + 0.45 * kromatin(qn, h.xy, px) + 0.25 * pokrij(length(qn - vec2(0.8, 0.6)) - 1.1, px), k);
       if (k > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.jc = t.cc + vec2(0.0, 0.25 * hh * (h.w - 0.5) * (1.0 - mer)); }
     }
     return t;
@@ -434,7 +448,7 @@ export const steblo = {
   barvanje: "safranin",
   velikost: [1600, 1600],
   zacetek: { m: 40, sredisce: [0, 0] },
-  sredisceBlizu: [0, 1120],
+  sredisceBlizu: [-200, 1133],
   imena: { 0: "rastlinska celica" },
   snovi: { 11: "celična stena", 12: "vakuola", 0: "svetlina cevi ksilema", 6: "kutikula" },
   isci: "Poišči prevajalni snopič: rdeče cevi ksilema, zelen floem in rdečo kapo vlaken. Med ksilemom in floemom je kambij iz ploščatih celic.",
@@ -477,7 +491,7 @@ T tkivo(vec2 p, float px) {
   float vel = r > 1210.0 ? 38.0 : (r > 950.0 ? 30.0 : 70.0);
   Vor v = vor(p, vel, vec2(1.0), 0.0, 0.85);
   if (v.rob < 1.4 && v.d < 0.3 * vel && sum(p / 7.0) > 0.62) return t;
-  return rCelica(v, p, 0.7, zel, px);
+  return rCelica(v, p, r > 1210.0 ? 0.9 : 1.2, zel, px);
 }`,
 };
 

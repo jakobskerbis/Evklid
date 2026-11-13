@@ -3481,6 +3481,8 @@
   "mk.molv.atpsintaza": "otáčivý motor, který vyrábí ATP",
   "mk.mol.atpsintaza": "ATP-syntáza",
   "mk.molv.membelj": "kanál nebo pumpa přes membránu",
+  "mk.mol.p450": "Cytochrom P450",
+  "mk.molv.p450": "odbourává léky a jedy a pomáhá tvořit steroidy",
   "mk.mol.membelj": "Membránová bílkovina",
   "mk.molv.mbp": "slepuje vrstvy myelinu",
   "mk.mol.mbp": "Základní bílkovina myelinu",

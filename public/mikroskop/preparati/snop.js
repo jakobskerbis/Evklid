@@ -20,12 +20,13 @@ T okolica(vec2 p, float px) {
   float mast = smoothstep(0.45, 0.6, sum(p / 500.0 + 3.0));
   if (mast > 0.5) {
     t.snov = S_LIPID; t.tip = C_ADIPOCIT; t.meja = v.rob; t.cc = v.c; t.cid = v.id;
-    t.dye = vec3(0.0, 0.5 * crta(v.rob, 0.7, px), 0.0);
+    t.dye = vec3(0.01, 0.45 * crta(v.rob, max(0.7, 0.45 * px), px), 0.0);
     return t;
   }
   t.snov = S_KOLAGEN; t.smer = normalize(vec2(sum(p / 60.0) - 0.5, sum(p / 60.0 + 4.0) - 0.5) + 1e-3);
-  float vl = smoothstep(0.45, 0.75, sum(rot(1.0) * p / 9.0)) * 0.7 + 0.3 * sumL(p, 3.0, px);
-  t.dye = vec3(0.04, 0.12 + 0.3 * vl, 0.0);
+  vec2 kg = kolagen(p, t.smer, 8.0, 0.36, 0.8, 6.0, px);
+  t.dye = vec3(0.04, kg.x, 0.0);
+  if (kg.y > 0.6) t.snov = S_PRAZNO;
   vec4 f = krogci(p, 40.0, 1.0, 1.0, 0.5, 21.0);
   vec2 q = p - f.yz;
   float dj = sdElipsa(rot(f.w) * q, vec2(4.5, 1.1));
@@ -90,8 +91,10 @@ T arterija(vec2 p, float px) {
   if (r < Ra + 60.0 * (sum(vec2(th * 4.0, 3.0)) - 0.5)) {
     t = okolica(p, px);
     if (t.snov == S_LIPID) { t.snov = S_KOLAGEN; }
-    t.dye.y = 0.25 + 0.3 * smoothstep(0.4, 0.7, sum(rot(th) * p / 7.0)) ;
+    // adventicija: gosti krožni snopi kolagena
     t.smer = vec2(-q.y, q.x) / r;
+    vec2 kg = kolagen(p, t.smer, 6.0, 0.5, 0.3, 8.0, px);
+    if (t.snov != S_JEDRO) { t.dye.y = kg.x; if (kg.y > 0.6) t.snov = S_PRAZNO; }
     return t;
   }
   return okolica(p, px);
@@ -116,7 +119,8 @@ T vena(vec2 p, float px) {
   if (dl < 150.0) {
     t = okolica(p, px);
     if (t.snov == S_LIPID) t.snov = S_KOLAGEN;
-    t.dye.y = 0.25 + 0.25 * smoothstep(0.4, 0.7, sum(q / 8.0));
+    vec2 kg = kolagen(p, normalize(vec2(-q.y, q.x) + 1e-3), 6.0, 0.48, 0.35, 10.0, px);
+    if (t.snov != S_JEDRO) { t.dye.y = kg.x; if (kg.y > 0.6) t.snov = S_PRAZNO; }
     // vzdolžni snopi gladkih mišic v adventiciji (prečno prerezani)
     if (sum(q / 40.0 + 2.0) > 0.66) { t.dye = vec3(0.1, 0.48, 0.0); t.snov = S_CITO; t.tip = C_GLADKA; }
     return t;
@@ -138,37 +142,40 @@ T zivec(vec2 p, float px, out bool v) {
     if (df > 9.0) continue;
     T t = prazno();
     if (df > 0.0) {
-      // perinevrij: plasti sploščenih celic, gosto rožnat
+      // perinevrij: tanke plasti sploščenih celic; ob notranji strani se snopič pri pripravi rad odmakne (svetla reža)
+      float odmik = 2.5 * smoothstep(0.4, 0.7, sum(z / 90.0 + float(i) * 3.0));
+      if (df < odmik) return t;
       t.snov = S_KOLAGEN; t.smer = vec2(-z.y, z.x) / length(z);
-      t.dye = vec3(0.12 + 0.5 * crta(sin(df * 1.9), 0.25, px), 0.6, 0.0);
+      t.dye = vec3(0.06 + 0.5 * crta(sin(df * 1.6 + 3.0 * sum(z / 40.0)), 0.2, px) * (1.0 - smoothstep(0.5, 1.2, px)), 0.46, 0.0);
       return t;
     }
     // aksoni z mielinom
-    Vor a = vor(z, 8.0, vec2(1.0), 0.0, 0.85);
+    Vor a = vor(z, 7.0, vec2(1.0), 0.0, 0.85);
     vec4 h = h42(a.id + float(i) * 17.0);
-    float R = 1.3 + 2.4 * h.x * h.x + 0.6;
+    float R = 1.2 + 2.2 * h.x * h.x + 0.5;
     vec2 c = a.c;
     vec2 lz = z - c;
     float r = length(lz);
     float ra = 0.62 * R;
     t.snov = S_KOLAGEN; t.smer = vec2(0.0);
-    t.dye = vec3(0.05, 0.3 + 0.05 * sumL(z, 1.0, px), 0.0);   // endonevrij
-    if (h.y < 0.75 && r < R) {
+    t.dye = vec3(0.06, 0.34 + 0.08 * sumL(z, 1.0, px), 0.0);   // endonevrij: rožnata vlakenca
+    if (h.y < 0.9 && r < R) {
       if (r < ra) {
         t.snov = S_CITO; t.tip = C_NEVRON; t.meja = ra - r; t.cc = CN + F[i].xy + c; t.cid = a.id + float(i) * 17.0; t.jedro = 1e3;
-        t.dye = vec3(0.12, 0.42, 0.0);
+        t.dye = vec3(0.06, 0.38, 0.0);
       } else {
         t.snov = S_MIELIN; t.r1 = r - ra; t.cc = CN + F[i].xy + c;
         float nk = crta(sin(atan(lz.y, lz.x) * 7.0 + h.z * 9.0 + r * 1.5), 0.12, px);
-        t.dye = vec3(0.02, 0.05 + 0.22 * nk * (1.0 - smoothstep(0.2, 0.6, px)), 0.0);
+        // mielin se pri parafinskem rezu raztopi: ostane svetel prostor z nežno rožnato mrežico (nevrokeratin)
+        t.dye = vec3(0.02, 0.13 + 0.2 * nk * (1.0 - smoothstep(0.2, 0.6, px)) + 0.08 * sumL(lz * 3.0, 1.0, px), 0.0);
       }
     }
     // jedra Schwannovih celic (polmesec ob mielinu)
-    if (h.z < 0.25 && r > R && r < R + 1.8) {
+    if (h.z < 0.38 && r > R && r < R + 2.2) {
       float kot = atan(lz.y, lz.x) - h.w * 6.28;
       float b = abs(atan(sin(kot), cos(kot)));
-      float dj = sdElipsa(vec2(b * R, r - R - 0.9), vec2(3.5, 0.8));
-      if (dj < 0.0) { t.dye = vec3(0.85, 0.15, 0.0); t.snov = S_JEDRO; t.jedro = dj; t.tip = C_GLIJA; }
+      float dj = sdElipsa(vec2(b * R, r - R - 1.1), vec2(3.8, 1.2));
+      if (dj < 0.0) { t.dye = vec3(0.9, 0.15, 0.0); t.snov = S_JEDRO; t.jedro = dj; t.tip = C_GLIJA; }
     }
     return t;
   }

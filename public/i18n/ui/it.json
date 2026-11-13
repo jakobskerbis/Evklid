@@ -3507,6 +3507,8 @@
   "mk.molv.mbp": "incolla tra loro gli strati di mielina",
   "mk.mol.membelj": "Proteina di membrana",
   "mk.molv.membelj": "un canale o una pompa attraverso la membrana",
+  "mk.mol.p450": "Citocromo P450",
+  "mk.molv.p450": "degrada farmaci e tossine e aiuta a produrre gli steroidi",
   "mk.mol.atpsintaza": "ATP sintasi",
   "mk.molv.atpsintaza": "un motore rotante che produce ATP",
   "mk.mol.pas3": "Scambiatore Cl⁻/HCO₃⁻ (banda 3)",

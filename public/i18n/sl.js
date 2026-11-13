@@ -3734,6 +3734,8 @@ export default {
   "mk.molv.mbp": "zlepi plasti mielina",
   "mk.mol.membelj": "Membranska beljakovina",
   "mk.molv.membelj": "kanal ali črpalka skozi membrano",
+  "mk.mol.p450": "Citokrom P450",
+  "mk.molv.p450": "razgrajuje zdravila in strupe ter pomaga izdelovati steroide",
   "mk.mol.atpsintaza": "ATP-sintaza",
   "mk.molv.atpsintaza": "vrteči se motor, ki izdeluje ATP",
   "mk.mol.pas3": "Izmenjevalec Cl⁻/HCO₃⁻ (pas 3)",

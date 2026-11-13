@@ -3506,6 +3506,8 @@
   "mk.molv.mbp": "verklebt die Myelinschichten",
   "mk.mol.membelj": "Membranprotein",
   "mk.molv.membelj": "ein Kanal oder eine Pumpe durch die Membran",
+  "mk.mol.p450": "Cytochrom P450",
+  "mk.molv.p450": "baut Medikamente und Gifte ab und hilft beim Aufbau von Steroiden",
   "mk.mol.atpsintaza": "ATP-Synthase",
   "mk.molv.atpsintaza": "ein Drehmotor, der ATP herstellt",
   "mk.mol.pas3": "Cl⁻/HCO₃⁻-Austauscher (Bande 3)",

@@ -19,8 +19,18 @@ T tkivo(vec2 p, float px) {
   float rob = odsek(p, vec2(2400.0, 1500.0), 31.0);
   if (rob > 0.0) return t;
   // pregrade med režnji
-  Vor L = vor(p, 600.0, vec2(1.0), 0.0, 0.9);
-  if (L.rob < 12.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.04, 0.4, 0.0); return t; }
+  // pregrade so valovite, različno debele, z režo ob robu
+  vec2 pw = p + 60.0 * (vec2(fbm(p / 300.0, 2), fbm(p / 300.0 + 7.0, 2)) - 0.5) * 2.0;
+  Vor L = vor(pw, 600.0, vec2(1.0), 0.0, 0.9);
+  float pd = 4.0 + 14.0 * sum(pw / 250.0);
+  if (L.rob < pd) {
+    vec2 kg = kolagen(p, L.nb.yx * vec2(1.0, -1.0), 6.0, 0.45, 0.3, 2.0, px);
+    t.snov = S_KOLAGEN; t.dye = vec3(0.04, kg.x * (1.0 - 0.8 * crta(pd - L.rob, 1.0, px)), 0.0);
+    vec4 f = krogci(p, 22.0, 2.0, 2.0, 0.5, 13.0);
+    float df = sdElipsa(rot(f.w) * (p - f.yz), vec2(4.0, 1.0));
+    if (df < 0.0) { t.dye.x = 0.85; t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = df; }
+    return t;
+  }
   // Langerhansov otoček
   vec4 o = krogci(p, 700.0, 85.0, 130.0, 0.55, 3.0);
   if (o.x < 0.0) {
@@ -36,19 +46,14 @@ T tkivo(vec2 p, float px) {
     if (jk > 0.5) t.snov = S_JEDRO;
     return t;
   }
-  // acinusi
-  vec4 a = krogci(p, 34.0, 15.0, 19.0, 0.97, 7.0);
-  if (a.x > 0.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.04, 0.18, 0.0); return t; }
-  vec2 q = p - a.yz;
-  float r = length(q);
-  float R = r - a.x;
-  T e = cevka(q, 1.6, R, 9.0, 0.78, C_ZLEZNA, vec2(a.w, 7.0), p, px);
-  float f = clamp((r - 1.6) / (R - 1.6), 0.0, 1.0);
-  if (e.snov != S_JEDRO && r > 1.6) {
-    e.dye.x = 0.15 + 0.5 * smoothstep(0.45, 0.85, f);
-    e.dye.y = 0.25 + 0.5 * (1.0 - smoothstep(0.3, 0.6, f)) * (0.6 + 0.4 * smoothstep(0.5, 0.7, sumL(q, 0.7, px)));
-    if (f < 0.45) e.snov = S_CITO;
+  // acinusi: tesno zloženi, med njimi le tanke vezivne reže; mestoma izvodilo
+  vec4 iz = krogci(p, 260.0, 10.0, 16.0, 0.5, 9.0);
+  if (iz.x < 0.0) {
+    vec2 q = p - iz.yz; float r = length(q);
+    return cevka(q, 4.0, r - iz.x, 7.0, 0.6, C_ZLEZNA, vec2(iz.w, 9.0), p, px);
   }
+  if (iz.x < 6.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.04, 0.42, 0.0); return t; }
+  T e = acinus(p, 34.0, 1.0, 7.0, px);
   return e;
 }`,
 };
@@ -121,13 +126,31 @@ T tkivo(vec2 p, float px) {
   if (rob > 0.0 || p.y > ys) return t;
   float d = ys - p.y;
   if (d < 25.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.05, 0.55, 0.0); return t; }
-  float plast = d < 140.0 ? 0.0 : d < 780.0 ? 1.0 : d < 1000.0 ? 2.0 : 3.0;
+  // meje med plastmi niso ravne
+  float dn = d + 40.0 * (fbm(p / 260.0 + 2.0, 2) - 0.5) * 2.0;
+  float plast = dn < 140.0 ? 0.0 : dn < 780.0 ? 1.0 : dn < 1000.0 ? 2.0 : 3.0;
   vec2 a = plast == 1.0 ? vec2(1.0, 3.0) : vec2(1.0);
   Vor v = vor(p, plast == 1.0 ? 15.0 : 13.0, a, 0.0, 0.8);
   vec4 h = h42(v.id);
-  // trakovi celic med sinusoidi
-  float trak = plast == 1.0 ? abs(fract(p.x / 34.0) - 0.5) * 34.0 : 100.0;
-  if (trak < 2.5 || (plast != 1.0 && sum(p / 25.0) > 0.68)) { t.snov = S_PLAZMA; t.dye = vec3(0.0, 0.2, 0.0); return t; }
+  // sinusoidi: v glomeruloznem sloju okoli obokanih skupin celic, v fascikularnem med ravnimi trakovi (1–2 celici,
+  // rahlo valoviti, mestoma povezani), v retikularnem in sredici mreža
+  float sin0 = 100.0;
+  if (plast == 0.0) { Vor g = vor(p + 10.0 * (vec2(sum(p / 30.0), sum(p / 30.0 + 4.0)) - 0.5), 42.0, vec2(1.6, 1.0), 0.0, 0.9); sin0 = g.rob; }
+  else if (plast == 1.0) {
+    float xs = p.x + 14.0 * (sum(vec2(p.x / 90.0, p.y / 160.0)) - 0.5) * 2.0;
+    float per = 34.0;
+    sin0 = abs(fract(xs / per) - 0.5) * per;
+    if (h12(vec2(floor(xs / per), floor(p.y / 70.0))) < 0.2) sin0 = max(sin0, 3.0 * step(abs(fract(p.y / 70.0) - 0.5) * 70.0, 6.0)) ;
+  } else {
+    float m = fbm(p / (plast == 2.0 ? 30.0 : 55.0) + 3.0, 2);
+    sin0 = abs(m - 0.5) * (plast == 2.0 ? 130.0 : 260.0);
+  }
+  if (sin0 < 2.5 + (plast == 3.0 ? 1.5 : 0.0)) {
+    t.snov = S_PLAZMA; t.dye = vec3(0.02, 0.12, 0.0);
+    vec4 e = krogci(p, 8.0, 3.2, 3.6, 0.35, 21.0);
+    if (e.x < 0.0) { t.snov = S_ERITROCIT; t.dye = vec3(0.02, 0.75, 0.0); t.meja = -e.x; }
+    return t;
+  }
   t.snov = S_CITO; t.tip = C_ZLEZNA; t.meja = v.rob; t.cc = v.c; t.jc = v.c; t.cid = v.id;
   float pena = plast == 1.0 ? smoothstep(0.45, 0.6, sumL(p, 1.6, px)) : 0.0;
   t.dye = plast == 3.0 ? vec3(0.35, 0.3, 0.0) : plast == 2.0 ? vec3(0.1, 0.62, 0.0) : vec3(0.08, 0.45 - 0.25 * pena, 0.0);
@@ -164,10 +187,12 @@ T tkivo(vec2 p, float px) {
   if (d < H) {
     if (d < 16.0) {
       // dežnikaste celice
+      // dežnikaste celice so različno široke (20–36 µm)
       float w = 28.0;
-      float i = floor(p.x / w);
+      float xs = p.x + 0.45 * w * (sum(vec2(p.x / 45.0, 3.0)) - 0.5) * 2.0;
+      float i = floor(xs / w);
       vec4 h = h42(vec2(i, 1.0));
-      float lx = (fract(p.x / w) - 0.5) * w;
+      float lx = (fract(xs / w) - 0.5) * w;
       float kupola = 16.0 - 6.0 * (lx / (0.5 * w)) * (lx / (0.5 * w));
       if (d < 16.0 - kupola) return t;
       t.snov = S_CITO; t.cc = vec2((i + 0.5) * w, ys - 8.0); t.jc = t.cc; t.cid = vec2(i, 1.0); t.meja = min(0.5 * w - abs(lx), 16.0 - d);
@@ -183,16 +208,29 @@ T tkivo(vec2 p, float px) {
   }
   if (d < H + 260.0) {
     t.snov = S_KOLAGEN; t.smer = vec2(1.0, 0.0);
-    t.dye = vec3(0.04, 0.25 + 0.2 * smoothstep(0.45, 0.7, sum(p / 9.0)), 0.0);
-    vec4 f = krogci(p, 28.0, 1.4, 2.0, 0.5, 9.0);
-    if (f.x < 0.0) { t.dye.x = 0.85; t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = f.x; }
+    vec2 kg = kolagen(p, vec2(1.0, 0.0), 8.0, 0.4, 0.6, 9.0, px);
+    t.dye = vec3(0.04, kg.x, 0.0);
+    if (kg.y > 0.6) t.snov = S_PRAZNO;
+    vec4 f = krogci(p, 28.0, 2.0, 2.0, 0.5, 9.0);
+    float df = sdElipsa(rot(0.5 * (fract(f.w * 1.37) - 0.5)) * (p - f.yz), vec2(4.5, 1.0));
+    if (df < px) { float k = pokrij(df, px); t.dye.x = mix(t.dye.x, 0.85, k); if (k > 0.5) { t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = df; } }
     vec4 z = krogci(p, 200.0, 8.0, 18.0, 0.5, 11.0);
     zila(t, p - z.yz, length(p - z.yz) - z.x, 3.0, vec2(z.w), px);
     return t;
   }
   // snopi gladkih mišic v različnih smereh
-  Vor s = vor(p, 160.0, vec2(1.0), 0.0, 0.9);
-  if (s.rob < 10.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.04, 0.3, 0.0); return t; }
+  // snopi so zaobljeni, med njimi različno široke vezivne pregrade z režami
+  vec2 pw = p + 45.0 * (vec2(fbm(p / 220.0, 2), fbm(p / 220.0 + 5.0, 2)) - 0.5) * 2.0;
+  pw += 22.0 * (vec2(sum(p / 60.0 + 1.0), sum(p / 60.0 + 8.0)) - 0.5) * 2.0;
+  Vor s = vor(pw, 190.0, vec2(1.0), 0.0, 1.0);
+  float sp = sum(pw / 150.0 + 2.0);
+  float pd = 2.0 + 12.0 * sp * sp;
+  if (s.rob < pd) {
+    vec2 kg = kolagen(p, vec2(s.nb.y, -s.nb.x), 5.0, 0.4, 0.4, 4.0, px);
+    t.snov = kg.y > 0.6 ? S_PRAZNO : S_KOLAGEN; t.dye = vec3(0.04, kg.x, 0.0);
+    t.dye.y *= 1.0 - 0.8 * crta(s.rob - pd, 1.2, px);       // skrček ob robu snopa
+    return t;
+  }
   vec4 hs = h42(s.id);
   bool vzd = hs.x < 0.6;
   float kot = hs.y * 3.14;
@@ -223,45 +261,87 @@ T tkivo(vec2 p, float px) {
   T t = prazno();
   float rob = odsek(p, vec2(2400.0, 1500.0), 35.0);
   if (rob > 0.0) return t;
-  vec4 c = krogci(p, 230.0, 90.0, 105.0, 1.0, 3.0);
-  if (c.x > 0.0) {
-    // intersticij z Leydigovimi celicami
-    t.snov = S_KOLAGEN; t.dye = vec3(0.04, 0.2, 0.0);
-    vec4 l = krogci(p, 16.0, 5.0, 7.0, smoothstep(10.0, 25.0, c.x) * 0.7, 5.0);
-    if (l.x < 0.0) {
-      t.snov = S_CITO; t.tip = C_ZLEZNA; t.meja = -l.x; t.cc = l.yz; t.jc = l.yz; t.cid = vec2(l.w);
-      t.dye = vec3(0.08, 0.65, 0.0);
-      float dj = length(p - l.yz) - 2.8;
-      t.jedro = dj; if (dj < 0.0) { t.dye.x = 0.8; t.snov = S_JEDRO; }
+  // cevke so prerezane pod različnimi koti (okrogle do ovalne), obris ni povsem gladek
+  vec4 c = krogci(p, 230.0, 96.0, 108.0, 1.0, 3.0);
+  vec4 hc = h42(vec2(c.w, 3.0));
+  vec2 q0 = p - c.yz;
+  vec2 qq = rot(hc.x * 3.14) * q0;
+  float asp = 0.8 + 0.2 * hc.y;
+  float r = length(vec2(qq.x, qq.y / asp)) * (1.0 + 0.03 * (sum(q0 / 25.0 + hc.zw * 7.0) - 0.5));
+  float R = length(q0) - c.x;                    // polmer kroga (cevka se v drugi smeri skrči na asp·R)
+  vec2 q = q0;
+  if (c.x > 0.0 || r > R) {
+    // intersticij z Leydigovimi celicami v skupinah in kapilarami
+    float dz = c.x > 0.0 ? c.x : (r - R) * asp;
+    t.snov = S_KOLAGEN; t.dye = vec3(0.05, 0.24 + 0.06 * sumL(p, 3.0, px), 0.0);
+    // Leydigove celice: skupine mnogokotnih rožnatih celic z okroglim jedrom
+    float sk = smoothstep(0.55, 0.65, sum(p / 40.0)) * smoothstep(3.0, 9.0, dz);
+    Vor l = vor(p, 13.0, vec2(1.0), 0.0, 0.8);
+    vec4 hl = h42(l.id);
+    if (hl.x < sk * 1.2 && l.rob > 0.25) {
+      t.snov = S_CITO; t.tip = C_ZLEZNA; t.meja = l.rob; t.cc = l.c; t.jc = l.c; t.cid = l.id;
+      t.dye = vec3(0.09, 0.46 + 0.1 * sumL(p, 1.0, px), 0.0);
+      float dj = length(p - l.c - 1.5 * (hl.zw - 0.5)) - 2.6;
+      t.jedro = dj; float jk = pokrij(dj, px); t.dye.x = mix(t.dye.x, 0.85 * kromatin(p - l.c, hl.zw, px), jk); if (jk > 0.5) t.snov = S_JEDRO;
+    } else if (hl.y < 0.06) {
+      vec2 fq = rot(hl.z * 3.14) * (p - l.c);
+      float df = sdElipsa(fq, vec2(4.0, 1.0));
+      if (df < 0.0) { t.dye.x = 0.8; t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = df; }
     }
     return t;
   }
-  vec2 q = p - c.yz;
-  float r = length(q);
-  float R = r - c.x;
-  float d = R - r;                               // globina od stene cevke
-  if (d < 4.0) { t.snov = S_KOLAGEN; t.dye = vec3(0.1 + 0.6 * step(0.9, fract(atan(q.y, q.x) * 12.0)), 0.5, 0.0); return t; }
-  float lum = R - 70.0 + 10.0 * (sum(q / 20.0) - 0.5);
-  if (r < lum) {
-    // svetlina z repki spermijev
-    float rep = crta(sin(atan(q.y, q.x) * 40.0 + r * 0.3), 0.05, px) * step(lum - 25.0, r);
-    t.dye = vec3(0.05, 0.25 * rep, 0.0);
+  float d = (R - r) * mix(asp, 1.0, 0.5);        // globina od stene cevke
+  if (d < 4.0) {
+    // ovojnica cevke: kolagen in sploščena jedra mioidnih celic
+    t.snov = S_KOLAGEN; t.dye = vec3(0.06, 0.5, 0.0);
+    float a = atan(qq.y, qq.x) * R;
+    float ln = (fract(a / 28.0 + hc.z) - 0.5) * 28.0;
+    float dj = sdElipsa(vec2(ln, d - 2.0), vec2(6.0, 0.9));
+    float jk = pokrij(dj, px) * step(0.35, h12(vec2(floor(a / 28.0 + hc.z), c.w)));
+    t.dye.x = mix(t.dye.x, 0.8, jk); if (jk > 0.5) { t.snov = S_JEDRO; t.tip = C_FIBROBLAST; t.jedro = dj; }
     return t;
   }
-  // plasti spolnih celic: velikost in videz jedra po globini
-  float f = clamp((d - 4.0) / 62.0, 0.0, 1.0);
-  float s = mix(9.0, 6.5, f);
-  Vor v = vor(q, s, vec2(1.0), 0.0, 0.7);
-  vec4 h = h42(v.id + c.w);
-  t.snov = S_CITO; t.tip = C_ZLEZNA; t.meja = v.rob; t.cc = c.yz + v.c; t.jc = t.cc; t.cid = v.id + c.w;
-  t.dye = vec3(0.1, 0.38, 0.0);
+  float lum = R - 74.0 + 22.0 * (fbm(q / 22.0 + hc.zw * 5.0, 2) - 0.5);
+  if (r < lum) {
+    // svetlina: tu in tam tanki valoviti repki spermijev
+    float rep = crta(fbm(q / 14.0 + hc.zw * 9.0, 2) - 0.5, 0.012, px / 14.0) * step(lum - 30.0, r) * step(0.4, sum(q / 30.0));
+    t.dye = vec3(0.03, 0.07 + 0.3 * rep, 0.0); t.snov = S_PLAZMA;
+    return t;
+  }
+  // plasti spolnih celic od baze proti svetlini (vsaka plast ima svojo stalno velikost celic, da se celice ne
+  // raztegnejo): spermatogoniji in Sertolijeve celice ob bazi, največji primarni spermatociti z grudasto
+  // kromatino, majhni bledi okrogli spermatidi, ob svetlini temne podolgovate glavice zrelih spermatid
+  float f = clamp((d - 4.0) / 62.0, 0.0, 1.0) + 0.06 * (sum(q / 18.0 + hc.zw * 3.0) - 0.5);
+  float b = f < 0.16 ? 0.0 : f < 0.55 ? 1.0 : f < 0.8 ? 2.0 : 3.0;
+  float sc = b == 0.0 ? 8.0 : b == 1.0 ? 11.0 : b == 2.0 ? 6.5 : 4.2;
+  Vor v = vor(q + b * 37.0, sc, vec2(1.0), 0.0, 0.75);
+  v.c -= b * 37.0;
+  vec4 h = h42(v.id + c.w + b * 11.0);
+  t.snov = S_CITO; t.tip = C_ZLEZNA; t.meja = v.rob; t.cc = c.yz + v.c; t.jc = t.cc; t.cid = v.id + c.w + b * 11.0;
+  t.dye = vec3(0.1, 0.36 + 0.06 * sumL(q, 2.0, px), 0.0);
   vec2 jq = q - v.c;
-  float rj = f < 0.2 ? 2.8 : f < 0.6 ? 3.8 : f < 0.85 ? 2.2 : 1.4;
-  float dj = (f > 0.85 ? sdElipsa(jq, vec2(1.6, 0.9)) : length(jq) - rj) + 0.2 * (sum(jq + h.zw * 9.0) - 0.5);
+  vec2 rad = normalize(v.c + 1e-3);
+  vec2 lq = vec2(dot(jq, rad), dot(jq, vec2(-rad.y, rad.x)));     // x v smeri proti steni
+  float dj, kr;
+  if (b == 0.0) {
+    bool sert = h.y < 0.35;
+    dj = sert ? sdElipsa(lq, vec2(3.6, 2.4)) : length(jq) - 2.7;
+    kr = sert ? 0.45 + 0.9 * pokrij(length(lq) - 0.8, px) : 1.0 * kromatin(jq, h.zw, px);
+  } else if (b == 1.0) {
+    dj = length(jq) - (4.0 + 0.6 * h.x);
+    kr = 0.4 + 0.8 * smoothstep(0.55, 0.68, sum(jq * 1.4 + h.xy * 9.0));   // grudasta, nitasta kromatina
+  } else if (b == 2.0) {
+    dj = length(jq) - 2.2;
+    kr = 0.55 + 0.25 * kromatin(jq, h.zw, px);
+  } else {
+    dj = sdElipsa(lq + vec2(0.0, 0.0), vec2(1.7, 0.8));
+    kr = 1.45;
+    if (h.y > 0.7) dj = 1e3;
+  }
+  dj += 0.2 * (sum(jq + h.zw * 9.0) - 0.5);
   t.jedro = dj;
   float jk = pokrij(dj, px);
-  float kr = f > 0.2 && f < 0.6 ? 0.55 + 0.6 * smoothstep(0.55, 0.7, sum(jq * 1.6 + h.xy * 9.0)) : 1.0 * kromatin(jq, h.zw, px);
-  t.dye.x = mix(t.dye.x, kr * (f > 0.85 ? 1.4 : 1.0), jk);
+  t.dye.x = mix(t.dye.x, kr, jk);
   if (jk > 0.5) t.snov = S_JEDRO;
   return t;
 }`,

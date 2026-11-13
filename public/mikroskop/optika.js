@@ -69,6 +69,15 @@ export function svetlost(obj, zarnica, zaslonka, olje = true) {
   const brezOlja = obj.olje && !olje ? 0.6 : 1;
   return zarnica * (0.3 + 0.7 * z * z) * (PREPUSTNOST[obj.m] ?? 1) * brezOlja * 2.6;
 }
+// Lom svetlobe na robovih (fazni predmeti v svetlem polju): jakost in predznak za upodobi.js (uLom). Po enačbi prenosa
+// jakosti je sprememba svetlosti sorazmerna z odmikom od ostrine; oko je navadno malo pod ostrino (0,3 globinske ostrine),
+// zato so robovi rahlo vidni tudi pri ostri sliki. Zaprta zaslonka kondenzorja (bolj usmerjena svetloba) robove poudari.
+// vlaga: 1 celice v vodi (moker preparat), ~0,5 posušen razmaz, ~0,2 rezina v balzamu (lomni količnik skoraj enak).
+export function lomSvetlobe(obj, dz, zaslonka, vlaga, olje = true) {
+  const dof = globinskaOstrina(obj, olje);
+  const z = Math.max(-2.5, Math.min(2.5, (dz + 0.3 * dof) / dof));
+  return 4 * vlaga * z * (1.4 - 0.8 * Math.max(0.05, Math.min(1, zaslonka)));
+}
 // Kontrast: zaprta zaslonka poveča kontrast (in globinsko ostrino), a zmanjša ločljivost.
 export function kontrast(zaslonka) {
   return 1 + 0.6 * (1 - Math.max(0.05, Math.min(1, zaslonka)));

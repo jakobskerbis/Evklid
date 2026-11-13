@@ -3419,6 +3419,8 @@
   "mk.molv.atpsintaza": "forgó motor, amely ATP-t készít",
   "mk.mol.atpsintaza": "ATP-szintáz",
   "mk.molv.membelj": "csatorna vagy pumpa a membránon át",
+  "mk.mol.p450": "Citokróm P450",
+  "mk.molv.p450": "lebontja a gyógyszereket és a mérgeket, és segít szteroidokat előállítani",
   "mk.mol.membelj": "Membránfehérje",
   "mk.molv.mbp": "összeragasztja a mielinrétegeket",
   "mk.mol.mbp": "Mielin bázikus fehérje",
