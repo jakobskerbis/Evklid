@@ -31,8 +31,8 @@ const MODELI = path.join(ROOT, "public", "3d", "modeli");
 export const NACRT = {
   // pljuča in jetra (2026-11-12): cevi nastanejo kot zaprte mreže pri izvozu (drevesa.py), čiščenje ni več potrebno
   // režnji jeter (2026-11-13): skupna kvantizacija (organi.mjs) splošči tanke trikotnike ob šivih režnjev v igle
-  "organi-3d/jetra.glb": [[/lobe of liver \(lastno\)$/, ["igle"]]],
-  "organi-3d/jetra-telefon.glb": [[/lobe of liver \(lastno\)$/, ["igle"]]],
+  "organi-3d/jetra.glb": [[/lobe of liver \(lastno\)$/, ["izrojeni", "igle"]]],
+  "organi-3d/jetra-telefon.glb": [[/lobe of liver \(lastno\)$/, ["izrojeni", "igle"]]],
   "organi-3d/oko.glb": [[/^iris_L/, ["izrojeni", "navitje"]]],
   "organi-3d/oko-telefon.glb": [[/^iris_L/, ["izrojeni", "navitje"]]],
 };
@@ -56,10 +56,10 @@ export function brezBlazinic(m) {
 
 // Igle: trikotnik s ploščino ~0 (oglišča na premici; kvantizacija splošči tanek trikotnik ob šivu režnjev) se zasuka s
 // sosedom čez najdaljši rob (A, B, C) + (B, A, D) → (C, A, D) + (C, D, B). Oglišča in robovi meje ostanejo, nič ne
-// odpade; zasuk le, če sta sosed in igla na istih izrisnih ogliščih (ne čez šiv UV) in nova trikotnika nista prepognjena.
+// odpade; zasuk le, če nova trikotnika nista prepognjena. Čez šiv UV (sosed ima svoja izrisna oglišča) igla odpade in
+// sosed se razdeli v njenem srednjem oglišču.
 export function obrniIgle(m, krogov = 4) {
   let n = 0;
-  const T = m.F.length / 3;
   let lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
   for (let i = 0; i < m.P.length; i += 3) for (let c = 0; c < 3; c++) { lo[c] = Math.min(lo[c], m.P[i + c]); hi[c] = Math.max(hi[c], m.P[i + c]); }
   const diag = Math.hypot(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]);
@@ -68,7 +68,7 @@ export function obrniIgle(m, krogov = 4) {
   const kriz = (a, b, c) => v3.cross(v3.sub(p(b), p(a)), v3.sub(p(c), p(a)));
   const pl = (a, b, c) => Math.hypot(...kriz(a, b, c)) * 0.5;
   for (let krog = 0; krog < krogov; krog++) {
-    const E = G.robovi(m);
+    const E = G.robovi(m), T = m.F.length / 3;
     const dotaknjen = new Uint8Array(T);
     let ta = 0;
     for (let f = 0; f < T; f++) {
@@ -76,23 +76,49 @@ export function obrniIgle(m, krogov = 4) {
       const t = [m.F[f * 3], m.F[f * 3 + 1], m.F[f * 3 + 2]];
       if (m.zvar[t[0]] === m.zvar[t[1]] || m.zvar[t[1]] === m.zvar[t[2]] || m.zvar[t[0]] === m.zvar[t[2]]) continue;
       if (pl(...t) >= minPl) continue;
-      let k = 0, dl = -1;
-      for (let i = 0; i < 3; i++) { const d = v3.len(v3.sub(p(t[(i + 1) % 3]), p(t[i]))); if (d > dl) { dl = d; k = i; } }
-      const A = t[k], B = t[(k + 1) % 3], C = t[(k + 2) % 3];
-      const a = m.zvar[A], b = m.zvar[B];
-      const l = E.get(a < b ? a * 4294967296 + b : b * 4294967296 + a);
-      if (!l || l.length !== 2) continue;
-      const h = l.find((x) => ((x / 3) | 0) !== f);
-      if (h === undefined) continue;
-      const g = (h / 3) | 0, kk = h % 3;
-      if (dotaknjen[g]) continue;
-      if (m.F[g * 3 + kk] !== B || m.F[g * 3 + (kk + 1) % 3] !== A) continue; // šiv UV ali drugačno navijanje
-      const D = m.F[g * 3 + (kk + 2) % 3];
-      const ng = kriz(B, A, D), n1 = kriz(C, A, D), n2 = kriz(C, D, B);
-      if (v3.dot(n1, ng) <= 0 || v3.dot(n2, ng) <= 0 || pl(C, A, D) < minPl || pl(C, D, B) < minPl) continue;
-      m.F[f * 3] = C; m.F[f * 3 + 1] = A; m.F[f * 3 + 2] = D;
-      m.F[g * 3] = C; m.F[g * 3 + 1] = D; m.F[g * 3 + 2] = B;
-      dotaknjen[f] = dotaknjen[g] = 1; ta++;
+      // najprej najdaljši rob (oglišče na sredi premice), sicer še ostala dva
+      const red = [0, 1, 2].sort((i, j) => v3.len(v3.sub(p(t[(j + 1) % 3]), p(t[j]))) - v3.len(v3.sub(p(t[(i + 1) % 3]), p(t[i]))));
+      for (const k of red) {
+        const A = t[k], B = t[(k + 1) % 3], C = t[(k + 2) % 3];
+        const a = m.zvar[A], b = m.zvar[B];
+        const l = E.get(a < b ? a * 4294967296 + b : b * 4294967296 + a);
+        if (!l || l.length !== 2) continue;
+        const h = l.find((x) => ((x / 3) | 0) !== f);
+        if (h === undefined) continue;
+        const g = (h / 3) | 0, kk = h % 3;
+        if (dotaknjen[g]) continue;
+        const Bg = m.F[g * 3 + kk], Ag = m.F[g * 3 + (kk + 1) % 3], D = m.F[g * 3 + (kk + 2) % 3];
+        if (m.zvar[Bg] !== b || m.zvar[Ag] !== a) continue; // drugačno navijanje
+        const c = m.zvar[C], d = m.zvar[D];
+        if (c === d || E.has(c < d ? c * 4294967296 + d : d * 4294967296 + c)) continue; // rob C–D že obstaja (nemnogoteren)
+        if (Bg !== B || Ag !== A) {
+          // šiv UV: sosed ima na robu svoja izrisna oglišča. Igla odpade, sosed se razdeli v točki C (novo oglišče na
+          // njegovi strani šiva, UV vmes), tako da robova igle (B–C, C–A) dobita par v B–M in M–A.
+          const AB = v3.sub(p(B), p(A)), L2 = v3.dot(AB, AB);
+          if (!(L2 > 0)) continue;
+          const u = v3.dot(v3.sub(p(C), p(A)), AB) / L2;
+          if (!(u > 1e-3 && u < 1 - 1e-3)) continue;
+          const ng = kriz(Bg, Ag, D), n1 = kriz(Bg, C, D), n2 = kriz(C, Ag, D);
+          if (v3.dot(n1, ng) <= 0 || v3.dot(n2, ng) <= 0 || pl(Bg, C, D) < minPl || pl(C, Ag, D) < minPl) continue;
+          const M = G.dodajOglisce(m, p(C), [[Ag, 1 - u], [Bg, u]]);
+          m.F[g * 3] = Bg; m.F[g * 3 + 1] = M; m.F[g * 3 + 2] = D;
+          m.F.push(M, Ag, D);
+          m.F[f * 3] = m.F[f * 3 + 1] = m.F[f * 3 + 2] = -1; // odstranjena po krogu
+          dotaknjen[f] = dotaknjen[g] = 1; ta++;
+          break;
+        }
+        const ng = kriz(B, A, D), n1 = kriz(C, A, D), n2 = kriz(C, D, B);
+        if (v3.dot(n1, ng) <= 0 || v3.dot(n2, ng) <= 0 || pl(C, A, D) < minPl || pl(C, D, B) < minPl) continue;
+        m.F[f * 3] = C; m.F[f * 3 + 1] = A; m.F[f * 3 + 2] = D;
+        m.F[g * 3] = C; m.F[g * 3 + 1] = D; m.F[g * 3 + 2] = B;
+        dotaknjen[f] = dotaknjen[g] = 1; ta++;
+        break;
+      }
+    }
+    if (m.F.includes(-1)) {
+      const F = [];
+      for (let i = 0; i < m.F.length; i += 3) if (m.F[i] !== -1) F.push(m.F[i], m.F[i + 1], m.F[i + 2]);
+      m.F = F;
     }
     n += ta;
     if (!ta) break;
