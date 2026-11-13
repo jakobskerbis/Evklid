@@ -570,6 +570,7 @@ function temnenjeGLSL(o, merilo, tkivo) {
 // (Visible Woman, Courtesy of the U.S. National Library of Medicine) za miokard in maščobo, zrcaljeno ponovljeni. Vzorec je
 // odvisen samo od točke v prostoru, zato je rez v vsaki ravnini enak in enako oster (čelni, bočni, prečni, prosti).
 // Vlakna: šum v ravnini, pravokotni na vlakno (vzdolž vlakna stalen): rez vzdolž vlaken kaže proge, prečni rez pike.
+const CELICA_VLAKEN = 0.003; // m: celica s stalno smerjo vlaken na pokrovu reza (materialPokrova)
 const GLSL_VOL = `
 uniform sampler2D orgVol; uniform vec3 orgVolN; uniform vec2 orgVolP; uniform vec3 orgVolLo; uniform float orgVolK;
 uniform sampler2D orgTk; uniform float orgTkK;
@@ -715,7 +716,8 @@ ${
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        diffuseColor.rgb *= 1.0 - ${fl(0.12 * sumMoc)} + ${fl(0.24 * sumMoc)} * orgSum( orgQ * 60.0 ) * orgSum( orgQ * 13.0 );
+        float orgSl = clamp( 2.0 - length( fwidth( orgQ ) ) * 240.0, 0.0, 1.0 ); // drobni šum (60) zbledi, ko je celica pod ~3 px
+        diffuseColor.rgb *= 1.0 - ${fl(0.12 * sumMoc)} + ${fl(0.24 * sumMoc)} * mix( 0.5, orgSum( orgQ * 60.0 ), orgSl ) * orgSum( orgQ * 13.0 );
         diffuseColor.rgb *= 1.0 - ${fl(0.09 * sumMoc)} * ( orgSum( orgQ * 7.0 ) - 0.5 ) * 2.0; // večje lise (prekrvavitev)
         ${t.rezVlakna && !vol ? "diffuseColor.rgb *= 0.9 + 0.2 * orgH;" : ""}${
           vol && t.rezRavna
@@ -725,20 +727,38 @@ ${
         { // pravo tkivo (Visible Woman) in smer vlaken iz CT: miokard rdeče rjav z vlakni, maščoba rumena z režnjiči
           vec3 orgF = orgV4.rgb * 2.0 - 1.0; float orgFl = length( orgF ); orgF = orgFl > 0.2 ? orgF / orgFl : vec3( 0.0, 1.0, 0.0 );
           vec3 orgNm0 = normalize( cross( dFdx( orgQm ), dFdy( orgQm ) ) );
-          ${
-            t.rezVlaknaOs
-              ? `// rezVlaknaOs (vzdolžna os organa): vzorec se raztegne vzdolž projekcije vlakna na ravnino reza, kjer vlakno
-          // ravnino prebada (prej pikčast šum), pa vzdolž osi: rezna ploskev se bere kot snopi vlaken
-          vec3 orgNm = normalize( cross( dFdx( orgQm ), dFdy( orgQm ) ) );
-          vec3 orgOs = vec3( ${t.rezVlaknaOs.map((x) => fl(+x.toFixed(4))).join(", ")} ); orgOs = normalize( orgOs - orgNm * dot( orgOs, orgNm ) );
-          vec3 orgFp = orgF - orgNm * dot( orgF, orgNm ); orgFp = normalize( orgFp * ( dot( orgFp, orgOs ) < 0.0 ? -1.0 : 1.0 ) + 0.6 * orgOs );
-          vec3 orgPq = orgQm - orgFp * dot( orgQm, orgFp ) * 0.93;`
-              : "vec3 orgPq = orgQm - orgF * dot( orgQm, orgF );"
-          }
+          // Vzorec vlaken: šum v koordinatah, stisnjenih vzdolž vlakna. Smer vlakna se od piksla do piksla rahlo spreminja,
+          // projekcija absolutne lege (ročica več cm) pa to spremembo pomnoži – prej je nastala pravilna mreža svetlih pik
+          // (krog 7). Zato je smer stalna znotraj celice ${CELICA_VLAKEN * 1000} mm (vzorčena v središču celice na ravnini reza), ročica je
+          // razdalja do središča celice, dve zamaknjeni mreži celic pa se prelivata (utež 0 na robu celice = brez šivov).
+          // rezVlaknaOs (vzdolžna os organa): kjer vlakno ravnino prebada, se vzorec raztegne vzdolž osi (snopi, ne pike).
+          ${t.rezVlaknaOs ? `vec3 orgOs = vec3( ${t.rezVlaknaOs.map((x) => fl(+x.toFixed(4))).join(", ")} ); orgOs = normalize( orgOs - orgNm0 * dot( orgOs, orgNm0 ) );` : ""}
           float orgFw2 = length( fwidth( orgQm ) );
-          float orgS1 = orgSum( orgPq * ${fl(+(vlCt / merilo).toPrecision(4))} ), orgS2 = orgSum( orgPq * ${fl(+((vlCt * 3.2) / merilo).toPrecision(4))} );
-          float orgL1 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 3) / merilo).toPrecision(4))}, 0.0, 1.0 ), orgL2 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 9.6) / merilo).toPrecision(4))}, 0.0, 1.0 );
+          float orgS1 = 0.0, orgS2 = 0.0, orgWs = 0.0, orgW2 = 0.0;
+          for ( int orgI = 0; orgI < 2; orgI ++ ) {
+            vec3 orgCg = orgQm / ${dm(CELICA_VLAKEN)} + float( orgI ) * 0.5;
+            vec3 orgCf = fract( orgCg ), orgCt = 1.0 - abs( 2.0 * orgCf - 1.0 );
+            float orgCw = orgCt.x * orgCt.y * orgCt.z + 1e-4;
+            vec3 orgCc = ( floor( orgCg ) + 0.5 - float( orgI ) * 0.5 ) * ${dm(CELICA_VLAKEN)};
+            orgCc -= orgNm0 * dot( orgCc - orgQm, orgNm0 );
+            vec3 orgFc = orgVolumen( orgCc ).rgb * 2.0 - 1.0; float orgFcl = length( orgFc ); orgFc = orgFcl > 0.2 ? orgFc / orgFcl : orgF;
+            ${
+              t.rezVlaknaOs
+                ? `vec3 orgFp = orgFc - orgNm0 * dot( orgFc, orgNm0 ); orgFp = normalize( orgFp * ( dot( orgFp, orgOs ) < 0.0 ? -1.0 : 1.0 ) + 0.6 * orgOs );
+            vec3 orgPq = orgQm - orgFp * dot( orgQm - orgCc, orgFp ) * 0.93;`
+                : "vec3 orgPq = orgQm - orgFc * dot( orgQm - orgCc, orgFc );"
+            }
+            orgS1 += orgCw * ( orgSum( orgPq * ${fl(+(vlCt / merilo).toPrecision(4))} ) - 0.5 ); orgS2 += orgCw * ( orgSum( orgPq * ${fl(+((vlCt * 3.2) / merilo).toPrecision(4))} ) - 0.5 );
+            orgWs += orgCw; orgW2 += orgCw * orgCw;
+          }
+          orgWs = 1.0 / mix( orgWs, sqrt( orgW2 ), 0.7 ); // preliv dveh neodvisnih vzorcev ohrani kontrast
+          orgS1 = clamp( 0.5 + orgS1 * orgWs, 0.0, 1.0 ); orgS2 = clamp( 0.5 + orgS2 * orgWs, 0.0, 1.0 );
+          float orgL1 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 4) / merilo).toPrecision(4))}, 0.0, 1.0 ), orgL2 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 19.2) / merilo).toPrecision(4))}, 0.0, 1.0 ); // celica šuma pod ~3 px zbledi (mrežni šum ob Nyquistu nariše pravilno mrežo pik, krog 7)
           float orgVl = mix( 0.5, orgS1, orgL1 ) * 0.6 + mix( 0.5, orgS2, orgL2 ) * 0.4;
+          // višina za izbočenost: odvod dFdx/dFdy je stalen v bloku 2 × 2 piksla, zato vzorec, ožji od ~8 px, nariše mrežo
+          // svetlih pik (krog 7); za normalo vzamemo samo širše pasove (barva ohrani drobna vlakna)
+          float orgVlH = mix( 0.5, orgS1, clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 8) / merilo).toPrecision(4))}, 0.0, 1.0 ) ) * 0.6 + mix( 0.5, orgS2, clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 25.6) / merilo).toPrecision(4))}, 0.0, 1.0 ) ) * 0.4;
+          float orgTkL = clamp( orgTkK / ( 96.0 * max( orgFw2, 1e-9 ) ) - 1.0, 0.0, 1.0 ); // kocka tkiva: 48 vzorcev na rob
           vec3 orgMi = ${vec3(t.rez || "#7a2a20")} * mix( vec3( 1.0 ), orgTkivo( orgQm, 0.0 ) / ${vec3(t.rezTkivoMio || "#5d3125")}, ${fl(t.rezTkivoMoc ?? 1)} );
           vec3 orgMaT = orgTkivo( orgQm, 1.0 );
           vec3 orgMa = ${vec3(t.rezMasca || "#d8b060")} * orgMaT / ${vec3(t.rezTkivoMasca || "#af9361")};
@@ -759,7 +779,7 @@ ${
           orgEndo = orgEl; }`
               : ""
           }
-          orgH = mix( orgVl, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgFa );
+          orgH = mix( orgVlH, mix( 0.5, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgTkL ), orgFa );
         }`
             : ""
         }${
@@ -870,7 +890,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov6-${st ? "s" : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
   return m;
 }
 
