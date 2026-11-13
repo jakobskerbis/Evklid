@@ -317,7 +317,7 @@ ORGANI = {
                 # vz2 (posnetek vz1: temne lise in brez vzorca režnjičev): svetlejša rožnata, mehkejše lise, svetlejši pretini
                 "pljuca": dict(barva=(0.66, 0.37, 0.37), barva2=(0.54, 0.29, 0.31), lise=0.30, liseMera=0.04, hrap=0.46,
                                gube=0.00003, gubeMera=0.003, zilice=0.22, ziliceBarva=(0.42, 0.25, 0.27), ziliceMera=0.04, razdeli=0),  # gosta mreža režnja (60k) je že visoka mreža; hrap 0,46: brez bleščic na hrbtni strani
-                "dihalna": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.3, hrap=0.44, gube=0.00004, gubeMera=0.002, razdeli=1),
+                "dihalna": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.3, hrap=0.44, gube=0.00004, gubeMera=0.002, razdeli=0),  # sapnik HRA je že gost; razdelitev je pri peki vzela > 2,6 GB
                 "hrustanec": dict(barva=(0.86, 0.80, 0.70), barva2=(0.78, 0.71, 0.62), lise=0.25, hrap=0.40, gube=0.00002, gubeMera=0.002, razdeli=0),
                 "dihalna-v": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.2, hrap=0.44, gube=0.0, razdeli=0),
                 "pljucna-arterija": dict(barva=(0.44, 0.28, 0.30), barva2=(0.38, 0.23, 0.26), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),

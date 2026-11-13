@@ -671,7 +671,15 @@ def jetra_ct(osnovni, cfg, tmp):
     # ---- spodnja votla vena (deblo drevesa jetrnih ven: od vrha navzdol po najdebelejšem otroku) in jetrne vene vanjo
     kor = int(np.flatnonzero(Hv.S < 0)[0])
     v_ivc = Z["vene_ivc"]; r_ivc = Z["vene_ivcR"]
-    os_ivc = glavna(Hv, kor, lambda o: bool(v_ivc[o]))
+    # os votle vene: od vrha navzdol vedno v poddrevo z največ vozlišči v votli veni (najdebelejši otrok zavije v jetrno veno)
+    st_ivc = np.array(v_ivc, int)
+    for j in range(len(Hv.P) - 1, -1, -1):
+        if Hv.S[j] >= 0: st_ivc[Hv.S[j]] += st_ivc[j]
+    os_ivc = [kor]
+    while True:
+        ot = [o for o in Hv.otroci[os_ivc[-1]] if v_ivc[o] and st_ivc[o] > 0]
+        if not ot: break
+        os_ivc.append(max(ot, key=lambda o: st_ivc[o]))
     na_osi = set(os_ivc)
     iP, _ = V(Hv, os_ivc)
     r0 = max(0.009, float(np.median([max(r_ivc[j], Hv.R[j]) for j in os_ivc])))

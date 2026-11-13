@@ -190,6 +190,7 @@ def pljuca_ct(osnovni, cfg, tmp):
         T = _afina(A, B)
         print(f"[organi] sapnik HRA → CT: merilo {m_c / m_h:.3f}, ostanek {np.abs(T(A[:4]) - B[:4]).max() * 1000:.1f} mm")
         z_vrh = max(float(np.max([v[2] for k in REZNJI.values() for v in d[f'lung_{k[0]}_v'][::50]])) + nast.get("sapnikNad", 0.02), 0)
+        z_vrh = min(z_vrh, float(T(_tocke(H["VH_M_trachea"]))[:, 2].max()) - nast.get("sapnikOdrez", 0.008))  # pod zaprtim (koničastim) vrhom mreže HRA
         def kos(kljuci, ime, stena, tkivo, del_, n_rt):
             bm = bmesh.new()
             for k in kljuci:
