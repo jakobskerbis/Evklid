@@ -308,6 +308,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
     m.depthWrite = true;
   }
   if (ravnine && !t.brezReza) m.clippingPlanes = ravnine.seznam;
+  if (t.rezOdmik && ravnine?.seznam.length && !t.brezReza) m.userData.ravnineRez = ravnine.seznam;
   m.clipIntersection = !!ravnine?.presek;
   // Zapečene teksture: osnovna barva je množilnik barve tkiva (gube temnejše, žilice), normalna mapa nosi drobni relief;
   // isto mapo dobi lak (mokri odsevi sledijo gubam).
@@ -1176,6 +1177,15 @@ export async function zgradiOrgan(ime, ctx = {}) {
       }
     : null;
   const brezRavnin = { seznam: [], presek: false };
+  // tkivo.rezOdmik [m]: tkivo se reže na ravnini, premaknjeni za toliko pred glavno ravnino (drevesa bronhijev in žil
+  // v pljučih molijo iz rezne ploskve kot pri preparatu: v rezu se vidi razvejanje, ne le posamezni prerezi; ocena n1)
+  const ravOdmik = new Map();
+  const ravZa = (t) => {
+    const o = t?.rezOdmik || 0;
+    if (!ravnine || !o) return ravnine;
+    if (!ravOdmik.has(o)) ravOdmik.set(o, { ...ravnine, seznam: ravnine.seznam.map((p) => new THREE.Plane(p.normal.clone(), p.constant + o * s)) });
+    return ravOdmik.get(o);
+  };
   if (ravnine) ravnine.prazno = [];
 
   const materiali = new Map();
@@ -1194,7 +1204,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const mat = (tkivo, del) => {
     const zn = znotrajDela.get(del);
     const kljuc = zn ? `${tkivo}#z` : tkivo;
-    if (!materiali.has(kljuc)) materiali.set(kljuc, materialTkiva({ ...(podatki.tkiva?.[tkivo] || {}), kljuc: tkivo, ...(zn ? { znotraj: zn } : {}) }, visoka, ravnine || brezRavnin, teksture, s, studio, prostor.sredisce));
+    if (!materiali.has(kljuc)) materiali.set(kljuc, materialTkiva({ ...(podatki.tkiva?.[tkivo] || {}), kljuc: tkivo, ...(zn ? { znotraj: zn } : {}) }, visoka, ravZa(podatki.tkiva?.[tkivo]) || brezRavnin, teksture, s, studio, prostor.sredisce));
     return materiali.get(kljuc);
   };
   const proxyMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
@@ -1241,7 +1251,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     const trianguliraj = (obris, luknje) => THREE.ShapeUtils.triangulateShape(obris.map((q) => new THREE.Vector2(q[0], q[1])), luknje.map((l) => l.map((q) => new THREE.Vector2(q[0], q[1]))));
     const deliMreze = () => ((idx) => (k.obsegi || [[0, idx.length]]).map(([a, st]) => idx.subarray(a, a + st)))(k.geo.index.array);
     if (enaRavnina && t.rezPresek) {
-      const rav = ravnine.seznam[0];
+      const rav = ravZa(t).seznam[0];
       const n = rav.normal.toArray();
       // robBarva: obroba v svoji barvi (stena žile, ovojnica); luknjaBarva: zapolnjene luknje (temna svetlina cevi z dvojno
       // steno); samoRob: brez ploskve (stena votline, glej rezVotlina)
@@ -1279,7 +1289,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
             slikeTkiv.set(k.tkivo, slika);
             for (const u of ucni.values()) if (u.tkivo === k.tkivo) u.presek = ucniPresekSlike(t, u.barva, slika);
           }
-          const pm = materialPokrova(t, ravnine, s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, slika });
+          const pm = materialPokrova(t, ravZa(t), s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, slika });
           pm.clippingPlanes = [];
           pm.side = THREE.DoubleSide;
           preseki.set(k.tkivo, pm);
@@ -1295,7 +1305,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     // preseka, ki v globino zapiše ravnino reza malo pred ploskvami drugih tkiv (vrsta nižja od maske) – tam ostane odprtina.
     // Vrstni red risanja: notranjost in mreža votline (−3), maska (−2), nato pokrovi in ploskve reza.
     if (enaRavnina && t.rezVotlina) {
-      const rav = ravnine.seznam[0];
+      const rav = ravZa(t).seznam[0];
       const n = rav.normal.toArray();
       if (!votline.has(k.tkivo)) votline.set(k.tkivo, materialVotline(t.rezVotlina, rav, s));
       const v = new THREE.Mesh(k.geo, votline.get(k.tkivo));
@@ -1321,7 +1331,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     }
     });
     if (!(enaRavnina0 && (t.rezPresek || t.rezVotlina)) && ravnine && !t.brezReza && !t.dvostransko && !znotrajDela.has(k.del) && (t.prosojnost ?? 1) >= 1 && !(prerez.brezPokrova || []).includes(k.del)) {
-      if (!pokrovi.has(k.tkivo)) pokrovi.set(k.tkivo, materialPokrova(t, ravnine, s, vol, prostor.sredisce));
+      if (!pokrovi.has(k.tkivo)) pokrovi.set(k.tkivo, materialPokrova(t, ravZa(t), s, vol, prostor.sredisce));
       const p = new THREE.Mesh(k.geo, pokrovi.get(k.tkivo));
       p.raycast = () => {};
       p.renderOrder = tk.vrstni ? tk.vrstni - 0.5 : -1; // pokrov pred svojo mrežo (in za ozadjem z manjšim vrstnim redom)
@@ -1396,7 +1406,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       for (const mm of [...materiali.values(), ...[...ucni.values()].flatMap((u) => [u.mat, u.pokrov])]) {
         if (!mm.clippingPlanes?.length && !mm.userData.rezan) continue;
         mm.userData.rezan = true;
-        mm.clippingPlanes = rezi ? ravnine.seznam : [];
+        mm.clippingPlanes = rezi ? mm.userData.ravnineRez || ravnine.seznam : [];
         mm.needsUpdate = true;
       }
     }
@@ -1458,7 +1468,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
       const reze = !!ravnine && !tk.brezReza;
       // ucnaGladko (tkivo): brez normalne teksture (šarenica ne »plastelin«); ucnaRob [a0, a1]: prosojnost po Fresnelu
       // (roženica: obarvan rob kupole, sredina skoraj prozorna, zenica ostane črna; krog 11)
-      const umat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: tk.ucnaGladko ? null : teksture?.normalMap || null, clippingPlanes: rezi && reze ? ravnine.seznam : [], depthWrite: narava.depthWrite });
+      const umat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: tk.ucnaGladko ? null : teksture?.normalMap || null, clippingPlanes: rezi && reze ? ravZa(tk).seznam : [], depthWrite: narava.depthWrite });
+      if (tk.rezOdmik && reze) umat.userData.ravnineRez = ravZa(tk).seznam;
       if (teksture?.normalScale && !tk.ucnaGladko) umat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6);
       if (tk.ucnaRob) {
         const [a0, a1] = tk.ucnaRob;
@@ -1475,7 +1486,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       const pokrov =
         ravnine && vol && tk.rezVolumen
           ? materialPokrova({ ...tk, rez: `#${c.clone().multiplyScalar(0.62).getHexString()}`, rezVlakna: 0, rezRavna: true }, ravnine, s, vol, prostor.sredisce)
-          : new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.BackSide, clippingPlanes: ravnine ? ravnine.seznam : [], clipIntersection: !!ravnine?.presek });
+          : new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.BackSide, clippingPlanes: ravnine ? ravZa(tk).seznam : [], clipIntersection: !!ravnine?.presek });
       // pravi presek (rezPresek): enobarvna ploskev na ravnini, brez rezanja
       // piramide na ploskvi skorje (rezPiramide.del): v učnih barvah enobarvne v barvi svojega dela
       let presek;

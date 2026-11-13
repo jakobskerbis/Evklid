@@ -170,7 +170,8 @@
     "vrsta": 4,
     "rob": 0.00035,
     "robBarva": "#efe2cc"
-   }
+   },
+   "rezOdmik": 0.012
   },
   "pljucna-arterija-v": {
    "hrap": 0.36,
@@ -195,7 +196,8 @@
     "vrsta": 4,
     "rob": 0.0003,
     "robBarva": "#aeb8e6"
-   }
+   },
+   "rezOdmik": 0.012
   },
   "pljucna-vena-v": {
    "hrap": 0.36,
@@ -220,7 +222,8 @@
     "vrsta": 4,
     "rob": 0.0003,
     "robBarva": "#e39a90"
-   }
+   },
+   "rezOdmik": 0.012
   },
   "hrustanec": {
    "hrap": 0.42,
