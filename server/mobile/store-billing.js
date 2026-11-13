@@ -79,6 +79,19 @@ export function appleState(tx, renewal = null, now = Date.now()) {
   };
 }
 
+// Aplikacija lahko pošlje star podpisan nakup (iz predpomnilnika naprave ali namerno), ki ne ve za poznejše vračilo
+// ali preklic. Naročnine, ki je shranjena kot nedejavna (vračilo, potek, neuspela obnova), tak nakup ne sme oživiti:
+// sprejmemo samo transakcijo, ki jo je Apple podpisal po zadnji spremembi shranjenega stanja (točka 1.2).
+// Nov nakup ali obnova ima novejši podpis in gre skozi; nakup drugega računa zavrne apply (other_account).
+const LIVE = new Set(["active", "grace", "pending"]);
+export function staleRevival(existing, tx, state, parentId) {
+  if (!existing || LIVE.has(existing.status) || !LIVE.has(state.status)) return false;
+  if (existing.parent_id && parentId && existing.parent_id !== parentId) return false;
+  const stored = Date.parse(String(existing.updated_at).replace(" ", "T") + "Z");
+  const signed = Number(tx.signedDate) || 0; // Apple ga vedno pošlje; brez njega nakupa ne štejemo za novejšega
+  return !(signed > stored);
+}
+
 export function mountStoreBilling(app, ctx, opts = {}) {
   const { db, getParent, accountView } = ctx;
   const env = opts.env || process.env;
@@ -163,7 +176,11 @@ export function mountStoreBilling(app, ctx, opts = {}) {
     if (tx.bundleId !== BUNDLE_ID) return res.status(400).json({ error: "Nakup ni iz te aplikacije." });
     if (tx.environment === "Sandbox" && !testOk(p)) return res.status(400).json({ error: TEST_REFUSED, test_purchase: true });
     if (tx.appAccountToken && tx.appAccountToken.toLowerCase() !== accountToken(p)) return res.status(409).json({ error: "Ta nakup pripada drugemu računu Evklid.", other_account: true });
-    const out = apply("apple", String(tx.originalTransactionId), appleState(tx), p.id);
+    const state = appleState(tx);
+    if (staleRevival(row("apple", String(tx.originalTransactionId)), tx, state, p.id)) {
+      return res.status(409).json({ error: "Ta nakup ni več veljaven (vrnjen, preklican ali potekel). Če si naročnino kupil znova, čez nekaj minut izberi »Obnovi nakupe«.", revoked: true });
+    }
+    const out = apply("apple", String(tx.originalTransactionId), state, p.id);
     if (out.error) return res.status(400).json({ error: out.error });
     if (out.conflict === "other_account") return res.status(409).json({ error: "Ta nakup pripada drugemu računu Evklid.", other_account: true });
     res.json({ ok: true, conflict: out.conflict || null, account: accountView(req, getParent(p.id)) });
