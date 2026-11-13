@@ -11,11 +11,11 @@
 //   math    polje za matematiko (velja tudi pri nastavitvi »Samo za matematiko«); own: polje ima svoje tipke
 import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
-import { GROUPS, symGroups, chemFormat } from "./symbols.js";
+import { GROUPS, symGroups, chemFormat, ELEMENT_SYMBOLS } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
-  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
+  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
@@ -44,7 +44,7 @@ let lastProfile; // f(x) odpre skupino poglavja samo ob novem poglavju; učenče
 let words = null; // seznam za predloge (naloži se, ko so predlogi vklopljeni)
 let starts = null; // predlogi, ko se beseda še ne piše
 
-const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, kemg: "el", sys: null, explicit: false };
+const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, kemg: "el", kemL: "C", sys: null, explicit: false };
 let board = null;
 let keys = []; // data-k → dejanje
 
@@ -407,39 +407,101 @@ function symHtml() {
   const s = studentSettings() || {};
   const all = symGroups(stopnja(s), s.subject, S.layers.some((l) => layerId(l) === "kem"));
   if (!all.includes(S.symg)) S.symg = all[0];
+  const tabs = subtabs(all.map((g) => [g, symName(g)]), S.symg, "symg");
+  // Σ → Kemija: iste strani kot zavihek »Kem« (j, 13. 11.), strani v drugi, nižji vrsti čipov
+  if (S.symg === "kemija") return tabs + kemBody(true);
   const sl = currentLang() === "sl";
-  return `${subtabs(all.map((g) => [g, symName(g)]), S.symg, "symg")}
+  return `${tabs}
     <div class="tk-grid tk-scroll" style="--cols:6">${GROUPS[S.symg].keys.map((k) => key(k.label, { a: "ins", v: k.ins }, { cls: "sym", aria: sl && k.title ? k.title : "" })).join("")}</div>
     <div class="tk-row">${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
 }
 
-function kemHtml() {
+// ---------- kemija ----------
+
+const SUB_D = "₀₁₂₃₄₅₆₇₈₉";
+const SUP_D = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "−" };
+/** Napis s pravimi (večjimi) indeksi in nadpisi: »NO₃« → NO<sub>3</sub>, »e⁻« → e<sup>−</sup>; drobni ₃ v pisavi se ne bere. */
+function chemLabel(s) {
+  // ovito v <span>: tipka je mreža (place-items), sicer bi bil indeks pod besedilom
+  return "<span>" + esc(s)
+    .replace(/[₀-₉]+/g, (m) => `<sub>${[...m].map((c) => SUB_D.indexOf(c)).join("")}</sub>`)
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+/g, (m) => `<sup>${[...m].map((c) => SUP_D[c]).join("")}</sup>`) + "</span>";
+}
+// imena elementov za aria-label in namig na strani »Vsi elementi« (naložijo se ob prvem odprtju strani)
+let elNames = null;
+function loadElNames() {
+  if (elNames) return;
+  elNames = {};
+  import("./graph/pse-data.js")
+    .then((m) => {
+      elNames = Object.fromEntries(m.ELEMENTS.map((e) => [e.sym, e]));
+      // med pritiskom ne rišemo znova (tipka bi izginila izpod prsta): počakamo, da se prst dvigne
+      const again = () => S.open && S.kemg === "pse" && (down ? setTimeout(again, 250) : render());
+      again();
+    })
+    .catch(() => (elNames = null)); // brez povezave: ob naslednjem odprtju strani poskusimo znova
+}
+const elName = (sym) => {
+  const e = elNames?.[sym];
+  return e ? (currentLang() === "sl" ? e.sl : e.en) : "";
+};
+
+/**
+ * Kemijska tipkovnica: strani (Snovi, Ioni, Reakcije, Vsi elementi), tri vrste tipk in spodnja vrsta.
+ * inSym: v Σ (pod čipi skupin), sicer zavihek »Kem«. Oboje je enako (j, 13. 11.).
+ */
+function kemBody(inSym = false) {
   if (!KEM_GROUPS.some(([id]) => id === S.kemg)) S.kemg = KEM_GROUPS[0][0];
   const g = KEM_GROUPS.find(([id]) => id === S.kemg);
+  S.kemView = inSym ? "sym" : "kem";
   // opisi tipk (oborina, plin, kristalna voda …) iz GROUPS.kemija; v slovenščini, kot v Σ
   const sl = currentLang() === "sl";
   const opis = new Map(GROUPS.kemija.keys.filter((k) => k.title).map((k) => [k.ins, k.title]));
-  const PLAIN = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "−" };
   const one = (c) => {
-    const d = sl ? opis.get(c.trim()) || "" : "";
-    if (KEM_CHARGE.test(c)) {
-      // naboj: nadpisan ob ◌, da ni videti kot » + « med snovmi
-      const n = [...c].map((x) => PLAIN[x]).join("");
-      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup></span>` });
+    const d = sl ? opis.get(c) || opis.get(c.trim()) || "" : "";
+    if (KEM_CHARGE.test(c) || /^[⁰¹²³⁴⁵⁶⁷⁸⁹]$/.test(c)) {
+      // naboj ali nadpisana števka: ◌ z nadpisom, da ni videti kot » + « med snovmi ali navadna števka
+      const n = [...c].map((x) => SUP_D[x]).join("");
+      const aria = KEM_CHARGE.test(c) ? (d ? `${d} ${n}` : n) : t("tk.kem.sup", { n });
+      return key(c, { a: "ins", v: c }, { cls: `chg up${n.length > 1 ? " two" : ""}`, aria, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup></span>` });
     }
     if (/^[₀-₉]$/.test(c)) {
-      // indeks: ◌ z indeksom (kot naboj), da se vidi, da je indeks in ne številka
-      const n = String("₀₁₂₃₄₅₆₇₈₉".indexOf(c));
-      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sub>${n}</sub></span>` });
+      // indeks: ◌ z indeksom spodaj (kot naboj), da se vidi, da je indeks in ne številka
+      const n = String(SUB_D.indexOf(c));
+      return key(c, { a: "ins", v: c }, { cls: "chg dn", aria: t("tk.kem.sub", { n }), tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sub>${n}</sub></span>` });
     }
-    const label = c.trim();
-    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${c === " + " ? "sym" : ""}`, aria: d && `${label} ${d}`, tip: d });
+    if (c === "KAT") {
+      const v = t("tk.kem.cat");
+      return key(v, { a: "lit", v }, { cls: v.length > 4 || (v.length > 2 && /[\u3040-\u9fff]/.test(v)) ? `word kem ${v.length > 7 ? "w2 xs" : "w15"}` : "sm", aria: sl ? `${v} ${d}` : v, tip: d });
+    }
+    const label = c === "[@]" ? "[ ]" : c.trim();
+    // ena velikost v vrsti: skupine (NO₃ … MnO₄) vse »sm«, enote z ulomkom (g/mol …) »word kem« (dolge širše)
+    const n = label.replace(/[₀-₉⁰-⁹⁺⁻]/g, "").length;
+    const group = /[₀-₉]/.test(label) || label === "OH";
+    const cls = c === "·" ? "dot" : `${label.includes("/") ? "word kem" + (n > 5 ? " w15" : "") : group || n > 2 ? "sm" : ""}${/^ [+→⇌←] $/.test(c) ? "sym" : ""}`;
+    const aria = d && d !== label ? `${label} ${d}` : "";
+    return key(label, { a: "ins", v: c }, { cls, aria, tip: d !== label ? d : "", html: chemLabel(label) });
   };
   const row = (r) => `<div class="tk-row">${r.map(one).join("")}</div>`;
-  return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg")}
-    ${g[2].map(row).join("")}
-    <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
+  let rows;
+  if (S.kemg === "pse") {
+    // vsi elementi: začetnica, nato vsi elementi s to začetnico (po vrstnem številu)
+    loadElNames();
+    const letter = (c) => {
+      const on = c === S.kemL;
+      const i = keys.push({ a: "kemL", v: c }) - 1;
+      return `<button type="button" class="tk-k fn letter${on ? " on" : ""}" data-k="${i}" aria-pressed="${on}">${c}</button>`;
+    };
+    const syms = ELEMENT_SYMBOLS.filter((x) => x[0] === S.kemL);
+    const el = (x) => key(x, { a: "ins", v: x }, { cls: "el", aria: [x, elName(x)].filter(Boolean).join(" "), tip: elName(x) });
+    rows = KEM_LETTERS.map((r) => `<div class="tk-row">${r.map(letter).join("")}</div>`).join("") + `<div class="tk-row tk-els">${syms.map(el).join("")}</div>`;
+  } else rows = g[2].map(row).join("");
+  const page = subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg").replace('class="tk-sub"', `class="tk-sub${inSym ? " tk-sub2" : ""}"`);
+  return `${page}
+    ${rows}
+    <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat"), html: chemLabel("H₂O") })}${bsKey("fn")}${goKey()}</div>`;
 }
+const kemHtml = () => kemBody(false);
 
 function customHtml(L) {
   const cells = L.keys.map((k) => key(k[0], { a: "ins", v: k[1] ?? k[0] }, { cls: /^[0-9.,]$/.test(k[0]) ? "dig" : "sm", aria: k[2] || "" })).join("");
@@ -450,12 +512,13 @@ function customHtml(L) {
 function render() {
   if (!board || !S.open) return;
   keys = [];
+  S.kemView = null;
   const L = layerObj(S.layer);
   S.layer = layerId(L);
   const body = typeof L === "object" ? customHtml(L) : { abc: abcHtml, num: numHtml, fx: fxHtml, sym: symHtml, kem: kemHtml }[S.layer]?.() || abcHtml();
   const c = ctxChips();
   const ctx = c.html || (prefs.words && S.layer === "abc" && words) || reserveCtx() ? `<div class="tk-ctx${c.words ? " words" : ""}"${c.glide ? ' data-g="1"' : ""}>${c.html}</div>` : "";
-  board.innerHTML = `<div class="tk-in${S.layers.length > 1 ? " tk-multi" : ""}">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}">${body}</div></div>`;
+  board.innerHTML = `<div class="tk-in${S.layers.length > 1 ? " tk-multi" : ""}">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}"${S.kemView ? ` data-kem="${S.kemView}"` : ""}>${body}</div></div>`;
   // razred namesto ».tk:has(…)«: :has na plošči je ob vsakem pritisku na novo preračunal slog vseh tipk
   board.classList.toggle("tk-abc", S.layer === "abc");
   for (const cv of [trail?.cv, fading]) {
@@ -769,6 +832,7 @@ function act(a) {
   if (a.a === "fxg") return (S.fxg = a.v), render();
   if (a.a === "symg") return (S.symg = a.v), render();
   if (a.a === "kemg") return (S.kemg = a.v), render();
+  if (a.a === "kemL") return (S.kemL = a.v), render();
   if (a.a === "hide") return hideKeyboard({ blur: true });
   if (a.a === "globe") return toSystem();
   if (a.a === "sh") {

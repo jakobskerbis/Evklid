@@ -29,7 +29,6 @@
 /* zgodovinski slogi: plošča v barvi menija obdobja */
 :root[data-era] .tk { --tk-board: var(--menu, var(--surface-2)); --tk-ink: var(--menu-text, var(--text)); --tk-dim: color-mix(in srgb, var(--menu-muted, var(--muted)) 70%, var(--menu-text, var(--text))); --tk-fn: color-mix(in srgb, var(--menu, var(--surface-2)) 80%, var(--menu-text, var(--text)) 14%); border-top-color: var(--menu-border, var(--border)); }
 /* Enter na plošči v barvi menija: poudarek menija (v Hiši modrosti in Indiji je plošča temna kot poudarek okna) */
-:root[data-era] .tk-k.chg sub { font-size: 0.9rem; line-height: 1; margin: 0.75em 0 0 1px; vertical-align: baseline; }
 .tk-k.go { background: var(--menu-accent, var(--accent)); color: var(--menu-accent-text, var(--accent-text)); box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--menu-accent, var(--accent)) 60%, var(--text)); }
 /* temni zgodovinski slogi: okno in meni sta skoraj enake barve, tipke malo svetlejše od plošče */
 :root.dark[data-era] .tk { --tk-key: color-mix(in srgb, var(--surface) 90%, var(--text)); }
@@ -68,13 +67,30 @@
 .tk-k.word { font-size: 0.8rem; letter-spacing: -0.01em; }
 .tk-k.dig { font-size: 1.25rem; font-weight: 600; }
 .tk-k.sym { font-size: 1.05rem; font-weight: 700; }
-/* Kem: indeksi ₂ ₃ ⁺ ²⁻ so v pisavi drobni, zato večji napis */
-.tk-rows[data-layer="kem"] .tk-k.sub { font-size: 1.6rem; }
 /* naboj: ◌ s pravim nadpisom (⁺ v pisavi je videti kot +) */
+/* indeks (spodaj) in naboj ali nadpis (zgoraj) ob ◌: števka velika in krepka (j, 13. 11.: števke so bile premajhne),
+   lega spodaj/zgoraj pove, ali je indeks ali naboj */
 .tk-k.chg { font-weight: 700; }
-.tk-k.chg .tk-chg-i { display: inline-flex; align-items: flex-start; white-space: nowrap; line-height: 1; }
-.tk-k.chg .tk-chg-b { color: var(--muted); font-weight: 400; font-size: 1.35rem; }
-.tk-k.chg sup { font-size: 0.85rem; line-height: 1; margin: -0.35em 0 0 1px; vertical-align: baseline; }
+.tk-k.chg .tk-chg-i { display: inline-flex; align-items: center; white-space: nowrap; line-height: 1; }
+/* ◌ je v pisavi droben: namesto njega črtkan okvirček (»mesto za simbol«), znak ostane za bralnike zaslona skrit */
+.tk-k.chg .tk-chg-b { display: inline-block; box-sizing: border-box; width: 0.72rem; height: 0.95rem; border: 1.5px dashed color-mix(in srgb, var(--text) 50%, transparent); border-radius: 4px; color: transparent; font-size: 0; overflow: hidden; }
+.tk-k.chg :is(sub, sup) { position: relative; font-size: 1.12rem; font-weight: 800; line-height: 1; vertical-align: baseline; margin-inline-start: 1px; }
+.tk-k.chg sub { top: 0.42em; }
+.tk-k.chg sup { top: -0.48em; }
+.tk-k.chg.two sup { font-size: 0.95rem; letter-spacing: -0.03em; margin-inline-start: 0; }
+/* kemijski napisi (NO₃, H₂O, e⁻): indeks in nadpis v berljivi velikosti, ne drobni znaki pisave */
+.tk-k:not(.chg) :is(sub, sup) { font-size: 0.78em; line-height: 0; font-weight: inherit; }
+.tk-k:not(.chg) sub { vertical-align: -0.28em; }
+.tk-k:not(.chg) sup { vertical-align: 0.5em; }
+/* Vsi elementi: izbrana začetnica */
+/* začetnice so videti kot čipi (obroba, brez polnila), elementi spodaj kot prave tipke: »C« začetnica ≠ »C« ogljik */
+.tk-k.letter { font-size: 1rem; background: transparent; border: 1px solid var(--border); box-shadow: none; color: var(--tk-dim); }
+.tk-k.dot { font-size: 1.7rem; font-weight: 800; }
+.tk-k.word.kem { font-size: 0.92rem; }
+@media (max-width: 500px) { .tk-k.word.kem { font-size: 0.8rem; letter-spacing: -0.03em; } .tk-k.word.kem.xs { font-size: 0.66rem; letter-spacing: -0.04em; } }
+.tk-k.letter.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+/* Σ → Kemija: strani kemije v drugi, nižji vrsti čipov pod skupinami Σ */
+.tk-sub2 .tk-subtab { min-height: 30px; padding-block: 2px; font-size: 0.76rem; }
 .tk-k.go { background: var(--accent); color: var(--accent-text); font-size: 0.95rem; font-weight: 800; box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--accent) 60%, var(--text)); }
 .tk-k.go.txt { padding: 0 6px; }
 .tk-k.shift.on { background: var(--surface); color: var(--accent); }
@@ -176,13 +192,22 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
 @media (pointer: coarse) {
   .tk-multi .tk-rows { min-height: calc(4 * 50px + 3 * 10px + 56px - var(--tk-dvig)); }
   .tk-multi .tk-rows[data-layer="abc"] { min-height: calc(4 * 50px + 3 * 10px); }
-  .tk-multi .tk-rows[data-layer="kem"] .tk-k { height: 54px; min-height: 54px; }
 }
 @media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
   .tk-multi .tk-rows, .tk-multi .tk-rows[data-layer="abc"] { min-height: 312px; }
   .tk-multi .tk-rows[data-layer="abc"] .tk-k { height: 64px; min-height: 64px; }
-  .tk-multi .tk-rows[data-layer="kem"] .tk-k { height: 66px; min-height: 66px; }
   .tk-hide { min-height: 44px; }
   /* f(x) in Σ: tri cele vrste višjih tipk (56px), ne dve in pol z drsnikom ob praznem pasu */
   .tk-scroll { max-height: calc(3 * 56px + 2 * 8px); }
+}
+/* Kemija: tri vrste tipk in spodnja vrsta morajo biti enako visoke kot druge plasti (zavihek Kem: vrsta strani;
+   Σ → Kemija: še vrsta skupin Σ, zato nižje tipke). Računalnik 244px, telefon 260px, tablica 312px (glej zgoraj). */
+.tk-rows[data-kem="sym"] .tk-k { height: 38px; min-height: 38px; }
+@media (pointer: coarse) {
+  .tk-multi .tk-rows[data-kem="kem"] .tk-k { height: 50px; min-height: 50px; }
+  .tk-multi .tk-rows[data-kem="sym"] .tk-k { height: 42px; min-height: 42px; }
+}
+@media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
+  .tk-multi .tk-rows[data-kem="kem"] .tk-k { height: 62px; min-height: 62px; }
+  .tk-multi .tk-rows[data-kem="sym"] .tk-k { height: 52px; min-height: 52px; }
 }

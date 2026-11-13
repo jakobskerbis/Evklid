@@ -99,20 +99,35 @@ export const FX_GROUPS = [
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
 export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" };
 
-// Kemija: dva podzavihka (kot Σ), da zavihek ostane enako visok kot drugi: »Snovi« (elementi in indeksi) in »Reakcije«
-// (» + « med snovmi, puščice (» → «, » ⇌ « s presledkoma, napis tipke brez; ↑ ↓ brez), naboji, agregatna stanja). Tu je vse, kar je imel prej tudi čip »Kemija« v Σ (j, 5. 11.:
-// kemija je bila dvakrat); čip se v Σ ne pokaže več, kjer je zavihek »Kem« (symbols.js symGroups). Napisa podzavihkov
-// sta ključa i18n (tk.kem.el, tk.kem.re); tipka »H₂O« v spodnji vrstici je oblikovanje formule v polju (tk.chemFormat).
-// Naboji so na tipkah izrisani nadpisano ob ◌ (tipkovnica.js), da se ločijo od » + « med snovmi.
+// Kemija (j, 13. 11.: »Izboljšaj tipkovnico za kemijo«): štiri strani, vsaka tri vrste, enake v zavihku »Kem« in v Σ → Kemija
+// (tipkovnica.js kemBody). »Snovi«: pogosti elementi in indeksi (₂, spodaj); »Ioni«: naboji (²⁺, zgoraj), skupine (SO₄),
+// nadpisane števke (¹⁴C, 1s²); »Reakcije«: » + « in puščice s presledkoma, ↑ ↓, pogoji (Δ, hν, kat.), agregatna stanja,
+// termodinamika in enote; »Vsi elementi«: začetnica, nato vsi elementi s to začetnico (KEM_LETTERS, symbols.js ELEMENT_SYMBOLS).
+// Napisi strani so ključi i18n (tk.kem.*); »KAT« je katalizator v jeziku učenca (tk.kem.cat). Indeksi in naboji so na tipkah
+// izrisani ob ◌ (spodaj ali zgoraj), da se ločijo od navadnih števk in od » + « med snovmi. Tipka »H₂O« v spodnji vrstici
+// je oblikovanje formule v polju (tk.chemFormat).
 export const KEM_GROUPS = [
   ["el", "tk.kem.el", [
-    ["H", "C", "N", "O", "S", "Cl", "Na", "K", "Ca", "Fe"],
-    ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"],
+    ["H", "C", "N", "O", "S", "P", "Cl", "Na", "K", "Ca"],
+    ["Mg", "Al", "Fe", "Cu", "Zn", "Ag", "F", "Br", "I", "Si"],
+    ["₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "₀"],
+  ]],
+  ["ion", "tk.kem.ion", [
+    ["⁺", "⁻", "²⁺", "²⁻", "³⁺", "³⁻", "⁴⁺", "⁴⁻", "·", "[@]"],
+    ["OH", "NO₃", "SO₄", "CO₃", "PO₄", "NH₄", "HCO₃", "MnO₄"],
+    ["¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁰"],
   ]],
   ["re", "tk.kem.re", [
-    [" + ", " → ", " ⇌ ", "↑", "↓", "Δ", "ΔH", "·", "°C", "e⁻"],
-    ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻", "(aq)", "(s)", "(l)", "(g)"],
+    [" + ", " → ", " ⇌ ", " ← ", "↑", "↓", "Δ", "hν", "KAT", "e⁻"],
+    ["(s)", "(l)", "(g)", "(aq)", "ΔH", "ΔS", "ΔG", "°", "%"],
+    ["°C", "kPa", "mol", "g/mol", "mol/L", "kJ/mol", "pH"],
   ]],
+  ["pse", "tk.kem.pse", []],
+];
+/** Strani »Vsi elementi«: začetnice simbolov (brez J in Q, s katerima se ne začne noben element), dve vrsti. */
+export const KEM_LETTERS = [
+  ["A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M"],
+  ["N", "O", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
 ];
 /** Naboj (⁺, ²⁻, …): na tipki nadpisan ob ◌, da ni videti kot » + « ali »−«. */
 export const KEM_CHARGE = /^[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/;
