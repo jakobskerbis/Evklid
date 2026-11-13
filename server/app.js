@@ -223,6 +223,20 @@ export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
   app.disable("x-powered-by");
+  // Usmerjevalnik Expressa pot s poševnico na koncu ujema kot pot brez nje (/messages/ = /messages) in predpono
+  // brez ozira na velike črke (/API = /api), vmesniki pred potmi (dnevna meja vprašanj, mesečna meja AI,
+  // lastništvo, zaklep računa, opravila po izbrisu, Cache-Control) pa req.path preverjajo z regularnimi izrazi
+  // in so oboje spregledali. Zato pri /api predpono zapišemo z malimi črkami in poševnice na koncu odrežemo,
+  // preden pot kdorkoli prebere: vsi vidijo isto pot kot usmerjevalnik (točka 1.1).
+  app.use((req, _res, next) => {
+    const q = req.url.indexOf("?");
+    const pot = q < 0 ? req.url : req.url.slice(0, q);
+    if (/^\/api(\/|$)/i.test(pot)) {
+      const cista = ("/api" + pot.slice(4)).replace(/(.)\/+$/, "$1");
+      if (cista !== pot) req.url = cista + (q < 0 ? "" : req.url.slice(q));
+    }
+    next();
+  });
   securityHeaders(app);
   mountOldLinkRedirect(app, opts.homeCheck);
   app.get("/healthz", (_req, res) => res.send("ok")); // za gostovanje, brez gesla
@@ -246,7 +260,7 @@ export function createApp(store, opts = {}) {
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
   app.use((req, res, next) => {
-    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/.test(req.path)) {
+    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/i.test(req.path)) {
       res.on("finish", () => {
         if (res.statusCode < 300) for (const fn of afterDelete) fn();
       });
