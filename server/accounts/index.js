@@ -2462,6 +2462,9 @@ export function mountAccounts(app, store, opts = {}) {
     }
   }
 
+  // Oznaka prevzema dogodka Stripe (točka A7) in čas, po katerem velja prevzem za opuščen.
+  const PREVZEM = "v obdelavi";
+  const PREVZEM_MS = 5 * 60 * 1000;
   app.post("/api/stripe/webhook", express.raw({ type: "*/*", limit: "1mb" }), async (req, res) => {
     const raw = Buffer.isBuffer(req.body) ? req.body.toString("utf8") : "";
     if (!verifyWebhook(raw, req.get("stripe-signature"), webhookSecret)) return res.status(400).json({ error: "Neveljaven podpis." });
@@ -2474,8 +2477,20 @@ export function mountAccounts(app, store, opts = {}) {
     const id = typeof event.id === "string" && event.id ? event.id.slice(0, 100) : null;
     if (id) {
       db.prepare("INSERT OR IGNORE INTO billing_events (id, type) VALUES (?, ?)").run(id, String(event.type || "").slice(0, 100));
-      const seen = db.prepare("SELECT processed_at FROM billing_events WHERE id = ?").get(id);
-      if (seen?.processed_at) return res.json({ received: true, duplicate: true });
+      // Točka A7: dogodek prevzamemo atomarno (en stavek UPDATE). Druga sočasna dostava istega dogodka ga ne obdela še
+      // enkrat, ampak dobi 409 in jo Stripe ponovi pozneje. Prevzem, star več kot PREVZEM_MS (proces je med obdelavo
+      // padel), se lahko prevzame znova; oznaka je v stolpcu error, zato shema ostane ista.
+      const zdaj = Date.now();
+      const prevzet = db
+        .prepare(
+          `UPDATE billing_events SET error = ? WHERE id = ? AND processed_at IS NULL
+             AND (error IS NULL OR error NOT LIKE '${PREVZEM} %' OR CAST(substr(error, ${PREVZEM.length + 2}) AS INTEGER) < ?)`,
+        )
+        .run(`${PREVZEM} ${zdaj}`, id, zdaj - PREVZEM_MS).changes;
+      if (!prevzet) {
+        if (db.prepare("SELECT processed_at FROM billing_events WHERE id = ?").get(id)?.processed_at) return res.json({ received: true, duplicate: true });
+        return res.status(409).json({ error: "Dogodek je že v obdelavi." });
+      }
     }
     try {
       await handleEvent(event);
