@@ -2,7 +2,7 @@
 // server/schedule.js). Samo https na vratih 443, brez uporabniškega imena in gesla, samo javni naslovi, brez
 // preusmeritev, z mejo velikosti (tudi po razširjanju gzip/br) in časa.
 // Naslov se preveri tudi ob samem povezovanju (lookup v https.request), ne samo pred njim: DNS rebinding (ob drugem
-// poizvedovanju drug, zaseben odgovor) zato ne pomaga. Napake imajo code: ZASEBNI, NI_NASLOVA, PREVELIK, STATUS, NASLOV.
+// poizvedovanju drug, zaseben odgovor) zato ne pomaga. Napake imajo code: ZASEBNI, NI_NASLOVA, PREVELIK, STATUS, NASLOV, CAS (rok).
 import https from "node:https";
 import net from "node:net";
 import zlib from "node:zlib";
@@ -138,19 +138,28 @@ export async function prenesiJavno(url, { max = PRENOS_MAX, timeoutMs = 15000, h
   }
   if (u.protocol !== "https:" || u.username || u.password || (u.port && u.port !== "443")) throw napaka("NASLOV", "Povezava mora biti javni naslov https.");
   const host = u.hostname.replace(/^\[|\]$/g, "");
+  // En rok za vse: tudi počasno iskanje naslova (DNS) šteje v čas prenosa.
+  const signal = AbortSignal.timeout(timeoutMs);
   if (net.isIP(host)) {
     if (privateIp(host)) throw napaka("ZASEBNI", "Ta naslov ni javen.");
-  } else await javniNaslovi(host, lookup); // prej, za jasno sporočilo; ob povezovanju še enkrat
+  } else {
+    // prej, za jasno sporočilo; ob povezovanju še enkrat
+    const potekel = new Promise((_, ne) => signal.addEventListener("abort", () => ne(napaka("CAS", "Prenos je trajal predolgo.")), { once: true }));
+    await Promise.race([javniNaslovi(host, lookup), potekel]);
+  }
+  if (signal.aborted) throw napaka("CAS", "Prenos je trajal predolgo.");
   if (fetchFn) {
-    const res = await fetchFn(u.toString(), { redirect: "error", signal: AbortSignal.timeout(timeoutMs), headers });
+    const res = await fetchFn(u.toString(), { redirect: "error", signal, headers });
     if (!res.ok) throw napaka("STATUS", `Strežnik je odgovoril ${res.status}.`, { status: res.status });
     return readLimited(res, max);
   }
   return new Promise((ok, ne) => {
-    const req = https.request(u, { method: "GET", headers: { "accept-encoding": "gzip, deflate, br", ...headers }, lookup: pripetLookup(lookup), signal: AbortSignal.timeout(timeoutMs) }, (res) => {
+    let odgovor = false;
+    const req = https.request(u, { method: "GET", headers: { "accept-encoding": "gzip, deflate, br", ...headers }, lookup: pripetLookup(lookup), signal }, (res) => {
+      odgovor = true;
       // Preusmeritev ne sledimo (cilj bi šel mimo preverjanja); vsak odgovor razen 2xx je napaka.
       if (res.statusCode < 200 || res.statusCode >= 300) {
-        res.resume();
+        res.destroy(); // ne beremo naprej (neskončno telo bi sicer teklo do roka)
         return ne(napaka("STATUS", `Strežnik je odgovoril ${res.statusCode}.`, { status: res.statusCode }));
       }
       if (Number(res.headers["content-length"]) > max) {
@@ -160,6 +169,16 @@ export async function prenesiJavno(url, { max = PRENOS_MAX, timeoutMs = 15000, h
       beriTok(res, max).then(ok, ne);
     });
     req.on("error", ne);
+    // 101 (menjava protokola): ni odgovora, ni napake; brez tega obljuba ne bi bila nikoli razrešena.
+    req.on("upgrade", (res, sock) => {
+      odgovor = true;
+      sock.destroy();
+      ne(napaka("STATUS", `Strežnik je odgovoril ${res.statusCode}.`, { status: res.statusCode }));
+    });
+    // Zaprto brez odgovora in brez napake: zavrni (po odgovoru telo obravnava beriTok).
+    req.on("close", () => {
+      if (!odgovor) ne(napaka("STATUS", "Prenos je bil prekinjen."));
+    });
     req.end();
   });
 }

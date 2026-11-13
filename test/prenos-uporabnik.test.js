@@ -54,3 +54,38 @@ test("A4 telo brez dolžine, ki še teče, nad mejo: PREVELIK", async () => {
   res.push(Buffer.alloc(800, 65)); // tok ostane odprt (brez push(null))
   await assert.rejects(p, (e) => e.code === "PREVELIK");
 });
+
+// Pregled 3: odgovor 101 (menjava protokola) in zaprta povezava brez odgovora morata obljubo zavrniti
+// (prej je ostala nerazrešena, zahteva uvoza koledarja pa je visela).
+test("A4 odgovor 101 in zaprta povezava brez odgovora: napaka, ne visenje", async () => {
+  const https = (await import("node:https")).default;
+  const { EventEmitter } = await import("node:events");
+  const prej = https.request;
+  const lookup = async () => [{ address: "93.184.216.34", family: 4 }];
+  const lazni = (dogodek) => () => {
+    const req = new EventEmitter();
+    req.end = () =>
+      setImmediate(() => {
+        if (dogodek === "upgrade") req.emit("upgrade", { statusCode: 101 }, { destroy() {} });
+        req.emit("close");
+      });
+    return req;
+  };
+  const rok = (p) => Promise.race([p, new Promise((_, ne) => setTimeout(() => ne(new Error("obljuba ni razrešena")), 1000))]);
+  try {
+    https.request = lazni("upgrade");
+    await assert.rejects(rok(prenesiJavno("https://upgrade.example.invalid/a", { lookup })), (e) => e.code === "STATUS" && e.status === 101);
+    https.request = lazni("close");
+    await assert.rejects(rok(prenesiJavno("https://zaprto.example.invalid/a", { lookup })), (e) => e.code === "STATUS");
+  } finally {
+    https.request = prej;
+  }
+});
+
+// Pregled 3: rok velja tudi za iskanje naslova (počasen DNS ne podaljša prenosa čez timeoutMs).
+test("A4 počasno iskanje naslova: rok prenosa velja že med njim", async () => {
+  const zacetek = Date.now();
+  const lookup = () => new Promise((ok) => setTimeout(() => ok([{ address: "93.184.216.34", family: 4 }]), 3000).unref());
+  await assert.rejects(prenesiJavno("https://pocasen.example.invalid/a", { lookup, timeoutMs: 100 }), (e) => e.code === "CAS");
+  assert.ok(Date.now() - zacetek < 1500, `trajalo ${Date.now() - zacetek} ms`);
+});
