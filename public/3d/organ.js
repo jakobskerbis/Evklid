@@ -671,7 +671,7 @@ function materialPokrova(t, ravnine, merilo = 1, vol = null, izh = [0, 0, 0], pr
           (vr ? "\nvOrgVr = orgVr;" : "") +
           (vol ? "\nvOrgM = transformed; vOrgCm = orgCmU;" : ""),
       );
-    const pars = `#include <common>\nvarying vec3 vOrgW;\nuniform mat4 projectionMatrix;\nuniform vec4 orgRav[ ${n} ];\nvec3 orgQ; vec3 orgNw; float orgH;\n${vr ? "varying float vOrgVr;\n" : ""}${sl ? "uniform sampler2D orgSl;\n" : ""}${GLSL_SUM}${rezCelice || pir?.sinus ? GLSL_CEL : ""}${
+    const pars = `#include <common>\nvarying vec3 vOrgW;\nuniform mat4 projectionMatrix;\nuniform vec4 orgRav[ ${n} ];\nvec3 orgQ; vec3 orgNw; float orgH; float orgEndo = 0.0;\n${vr ? "varying float vOrgVr;\n" : ""}${sl ? "uniform sampler2D orgSl;\n" : ""}${GLSL_SUM}${rezCelice || pir?.sinus ? GLSL_CEL : ""}${
       vol ? `\nvarying vec3 vOrgM; varying vec3 vOrgCm; vec3 orgQm; vec4 orgV4;\n${GLSL_VOL}${st ? GLSL_STENA : ""}` : ""
     }`;
     sh.fragmentShader = sh.fragmentShader
@@ -724,6 +724,7 @@ ${
             ? `
         { // pravo tkivo (Visible Woman) in smer vlaken iz CT: miokard rdeče rjav z vlakni, maščoba rumena z režnjiči
           vec3 orgF = orgV4.rgb * 2.0 - 1.0; float orgFl = length( orgF ); orgF = orgFl > 0.2 ? orgF / orgFl : vec3( 0.0, 1.0, 0.0 );
+          vec3 orgNm0 = normalize( cross( dFdx( orgQm ), dFdy( orgQm ) ) );
           ${
             t.rezVlaknaOs
               ? `// rezVlaknaOs (vzdolžna os organa): vzorec se raztegne vzdolž projekcije vlakna na ravnino reza, kjer vlakno
@@ -744,6 +745,20 @@ ${
           orgMi *= ${fl(1 - 0.14 * (t.rezVlaknaMoc ?? 1))} + ${fl(0.28 * (t.rezVlaknaMoc ?? 1))} * orgVl;
           float orgFa = smoothstep( ${fl((t.rezMascaMeja || [0.17, 0.37])[0])}, ${fl((t.rezMascaMeja || [0.17, 0.37])[1])}, orgV4.a )${st ? " * ( 1.0 - smoothstep( 0.25, 0.6, orgSt3.z ) )" : ""}; // A: maščoba 0–0,6, venčna žila 1; stena.b: papilarne mišice in trabekule v votlini niso maščoba
           diffuseColor.rgb = mix( orgMi, orgMa, orgFa );
+          ${
+            st && t.rezEndokard
+              ? `{ // rezEndokard { barva, moc, sirina (m), globina }: tanka bleda sijoča črta endokarda/epikarda ob robu stene (delež
+          // stene 0,5–1 ob robu voksla) in mehko senčenje v globino stene (4 vzorci deleža stene ± sirina v ravnini reza):
+          // sredina stene temnejša, ob votlini svetlejša – rezna ploskev ni enakomerna nalepka
+          vec3 orgEa = normalize( cross( orgNm0, vec3( 0.31, 0.77, 0.55 ) ) ), orgEb = cross( orgNm0, orgEa );
+          float orgEs = ${dm(t.rezEndokard.sirina ?? 0.0022)};
+          float orgE4 = 0.25 * ( orgStena( orgQm + orgEa * orgEs ).x + orgStena( orgQm - orgEa * orgEs ).x + orgStena( orgQm + orgEb * orgEs ).x + orgStena( orgQm - orgEb * orgEs ).x );
+          float orgEl = ( 1.0 - smoothstep( 0.6, 0.93, orgSt3.x ) ) * ( 1.0 - orgFa );
+          diffuseColor.rgb *= 1.0 - ${fl(t.rezEndokard.globina ?? 0.22)} * smoothstep( 0.55, 1.0, orgE4 );
+          diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(t.rezEndokard.barva || "#e9b9a8")}, ${fl(t.rezEndokard.moc ?? 0.6)} * orgEl );
+          orgEndo = orgEl; }`
+              : ""
+          }
           orgH = mix( orgVl, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgFa );
         }`
             : ""
@@ -837,6 +852,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
             : ""
         }`,
       )
+      .replace("#include <roughnessmap_fragment>", `#include <roughnessmap_fragment>${st && t.rezEndokard ? "\n roughnessFactor = mix( roughnessFactor, 0.22, orgEndo );" : ""}`)
       .replace(
         "#include <normal_fragment_begin>",
         `#include <normal_fragment_begin>
@@ -854,7 +870,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
   return m;
 }
 

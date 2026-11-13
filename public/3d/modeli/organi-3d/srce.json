@@ -19,7 +19,7 @@
    "liseBarva": "#ffb0a0",
    "masca": 0.6,
    "mascaBarva": "#e7c46e",
-   "rez": "#c2625a",
+   "rez": "#8e3128",
    "senca": 0.35,
    "sencaBarva": "#4a1512",
    "mascaZunaj": true,
@@ -30,10 +30,10 @@
    "spekular": 0.7,
    "rezVolumen": true,
    "rezMasca": "#e2c98f",
-   "rezVlaknaCt": 1400,
-   "rezTkivoMoc": 0.12,
-   "rezVlaknaMoc": 1.4,
-   "rezSum": 0.08,
+   "rezVlaknaCt": 1000,
+   "rezTkivoMoc": 0.45,
+   "rezVlaknaMoc": 1,
+   "rezSum": 0.22,
    "rezHrap": 0.42,
    "rezLak": 0.75,
    "rezLakHrap": 0.22,
@@ -46,7 +46,13 @@
     0.677,
     -0.571,
     0.464
-   ]
+   ],
+   "rezEndokard": {
+    "barva": "#e2a898",
+    "moc": 0.62,
+    "sirina": 0.0024,
+    "globina": 0.24
+   }
   },
   "zaklopka": {
    "barva": "#efd3c3",
