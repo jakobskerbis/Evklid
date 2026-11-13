@@ -177,7 +177,17 @@
      "pretini": "#b89a5a",
      "mera": 0.0016,
      "zile": 0.55,
-     "zileMera": 0.0045
+     "zileMera": 0.0045,
+     "zareza": [
+      -0.0075,
+      0.0001,
+      0.00084,
+      0.0015,
+      -0.0254,
+      0.00084,
+      0.0012,
+      0.0014
+     ]
     },
     "notranjaR0": 0.14,
     "notranjaR1": 0.55
@@ -388,10 +398,10 @@
    }
   },
   "arterija": {
-   "hrap": 0.36,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.2,
+   "hrap": 0.5,
+   "lak": 0.22,
+   "lakHrap": 0.45,
+   "sijaj": 0.1,
    "ao": 0.85,
    "zrno": 0.05,
    "f": 70,
@@ -416,10 +426,10 @@
    "brezReza": true
   },
   "vena": {
-   "hrap": 0.36,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.2,
+   "hrap": 0.5,
+   "lak": 0.22,
+   "lakHrap": 0.45,
+   "sijaj": 0.1,
    "ao": 0.85,
    "zrno": 0.05,
    "f": 70,
@@ -493,7 +503,9 @@
     "vrsta": 3,
     "samoRob": true,
     "rob": 0.0006,
-    "robBarva": "#f0e2cf"
+    "robBarva": "#f0e2cf",
+    "skleni": 0.006,
+    "skleniBrezRoba": true
    }
   }
  },
@@ -706,7 +718,7 @@
  },
  "velikost": 0.1341,
  "trikotniki": {
-  "racunalnik": 159974,
+  "racunalnik": 159977,
   "telefon": 40319
  },
  "luci": [

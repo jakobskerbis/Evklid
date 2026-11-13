@@ -737,6 +737,23 @@ vec4 orgStena( vec3 p ) {
 }
 `;
 
+// Zareza hilusa (rezPiramide.sinus.zareza [a x, y, z, b x, y, z, lok, val] v m): odprta mreža ovojnice ima ob hilusu raven
+// rob, zato bi bila maščoba sinusa na pokrovu odrezana v ravni črti. Med točkama a in b (konca obrisa ovojnice v ravnini
+// reza) maščobo omeji lok, vbočen za »lok« proti notranjosti (prva kapsula sinusa), z režnjastim robom (val); zunaj ni pokrova.
+function zarezaSinusa(sinus, tm, dm, dm2) {
+  const z = sinus.zareza;
+  if (!z) return "";
+  const a = z.slice(0, 3), b = z.slice(3, 6), c = sinus.kapsule[0].slice(0, 3);
+  const ab = b.map((x, i) => x - a[i]), ac = c.map((x, i) => x - a[i]);
+  const k = (ab[0] * ac[0] + ab[1] * ac[1] + ab[2] * ac[2]) / (ab[0] * ab[0] + ab[1] * ab[1] + ab[2] * ab[2]);
+  const n = ac.map((x, i) => x - k * ab[i]), nl = Math.hypot(...n) || 1;
+  const f = (x) => (Number.isInteger(x) ? x.toFixed(1) : String(+x.toFixed(5)));
+  return `     { vec3 zA = vec3( ${tm(a)} ); vec3 zB = vec3( ${tm(b)} ) - zA; float zT = dot( pW - zA, zB ) / dot( zB, zB );
+       float zS = dot( pW - zA, vec3( ${n.map((x) => f(x / nl)).join(", ")} ) );
+       float zO = ${dm(z[6] ?? 0.002)} * 4.0 * zT * ( 1.0 - zT ) + ${dm(z[7] ?? 0.0006)} * sin( 3.14159 * clamp( zT, 0.0, 1.0 ) ) * ( orgSum( orgQ * ${dm2(1 / (2.5 * (sinus.mera ?? 0.0016)))} + 2.3 ) * 2.0 - 1.0 );
+       if ( zT > 0.0 && zT < 1.0 && zS < zO ) discard; }`;
+}
+
 // rezCelice (plasti celičnega vzorca, glej celiceGLSL): jetrni režnjiči, pljučna goba, ledvična telesca v skorji.
 // rezZarki { sredisce [m], sredisce2 [m] (neobvezno: os od sredisce do sredisce2 namesto točke), visina (relief prog 0–1), gostota, moc, barva, notranja, notranjaMoc, r0, r1 [m] }: žarkaste proge iz središča (ledvične
 // piramide: zbiralca tečejo proti papili v ledvičnem sinusu) in svetlejša notranja sredica bliže središču (r0 → r1).
@@ -997,6 +1014,7 @@ ${
 ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec3 sB = vec3( ${tm(c.slice(3, 6))} ) - sA; sD = min( sD, length( pW - sA - sB * clamp( dot( pW - sA, sB ) / max( dot( sB, sB ), 1e-9 ), 0.0, 1.0 ) ) - ${dm(c[6])} ); }`).join("\n")}
    float sM = ( 1.0 - smoothstep( - pAa, pAa, sD ) ) * ( 1.0 - pM );
    if ( sM > 0.0 ) {
+${zarezaSinusa(pir.sinus, tm, dm, dm2)}
      vec3 fX = orgQ * ${dm2(1 / (pir.sinus.mera ?? 0.0016))}; fX += 0.6 * ( vec3( orgSum( fX * 1.9 ), orgSum( fX * 1.9 + 5.2 ), orgSum( fX * 1.9 + 9.7 ) ) - 0.5 );
      vec3 fC = orgCel( fX );
      vec3 sC = ${vec3(pir.sinus.barva || "#e0c27c")} * ( 0.88 + 0.24 * fC.z );
@@ -1289,6 +1307,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
         brezPloskve: !!t.rezPresek.samoRob,
         stena: (t.rezPresek.stena || 0) * s, // ozek obris brez lukenj je stena (vzdolž prerezana odprta cev), ne svetlina (m)
         skleni: (t.rezPresek.skleni || 0) * s, // odprtina v mreži (hilus): obris se sklene z ravno črto do te širine (m)
+        skleniBrezRoba: !!t.rezPresek.skleniBrezRoba, // ta ravna črta brez obrobe (odprtina v sosednjo svetlino)
         povecaj: t.rezPresek.povecaj ?? 1,
         rob: (t.rezPresek.rob ?? 0) * s, // metri → enote modela
         trianguliraj,
@@ -1338,7 +1357,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
       v.userData = { pokrov: true, votlina: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
       mesh.add(v);
       mesh.renderOrder = -3;
-      const r = presekMreze(k.geo.attributes.position.array, deliMreze(), n, rav.constant, { polno: true, trianguliraj });
+      const r = presekMreze(k.geo.attributes.position.array, deliMreze(), n, rav.constant, { polno: true, trianguliraj, skleni: (t.rezPresek?.skleni || 0) * s });
       if (r) {
         const odmik = -(0.0004 + 0.0004 * (t.rezVotlina.vrsta ?? (t.rezPresek?.vrsta ?? 0) - 0.5));
         for (let i = 0; i < r.polozaji.length; i += 3) for (let c = 0; c < 3; c++) r.polozaji[i + c] += n[c] * odmik;

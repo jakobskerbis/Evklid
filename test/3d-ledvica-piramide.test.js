@@ -39,3 +39,18 @@ test("ledvica-piramide: stožci v JSON – enotske osi v ravnini reza, enaki za 
   for (let a = 0; a < sez.length; a++) for (let b = a + 1; b < sez.length; b++)
     assert.ok(Math.hypot(sez[a][0] - sez[b][0], sez[a][1] - sez[b][1]) > 0.005, `vrhova ${a} in ${b}`);
 });
+
+test("ledvica m2: zareza hilusa v ravnini reza, meh odprt v sečevod brez pregrade, mat žilni debli", () => {
+  const sin = j.tkiva.ovojnica.rezPiramide.sinus, rv = j.prerez.ravnine[0];
+  assert.equal(sin.zareza.length, 8);
+  for (const i of [2, 5]) assert.ok(Math.abs(sin.zareza[i] * rv.n[2] + rv.d) < 2e-5, "zareza leži v ravnini reza");
+  assert.ok(Math.hypot(sin.zareza[3] - sin.zareza[0], sin.zareza[4] - sin.zareza[1]) > 0.02, "zareza sega čez ves hilus");
+  assert.ok(j.tkiva.meh.rezPresek.skleni >= 0.004 && j.tkiva.meh.rezPresek.skleniBrezRoba === true);
+  for (const t of ["arterija", "vena"]) assert.ok(j.tkiva[t].lak <= 0.25 && j.tkiva[t].hrap >= 0.45, `${t} ni lakirana`);
+  const organ = fs.readFileSync(path.join(KOREN, "public/3d/organ.js"), "utf8");
+  assert.match(organ, /function zarezaSinusa\(/);
+  assert.match(organ, /skleniBrezRoba: !!t\.rezPresek\.skleniBrezRoba/);
+  const izvoz = fs.readFileSync(path.join(KOREN, "scripts/atlas/izvozi-organe.py"), "utf8");
+  assert.match(izvoz, /secevod_stik/);
+  assert.match(izvoz, /stik meha in sečevoda: odstranjenih/);
+});

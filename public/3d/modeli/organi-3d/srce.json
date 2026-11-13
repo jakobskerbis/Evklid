@@ -530,8 +530,7 @@
    "barva": "#60a5fa",
    "opis": "Izboklina desnega preddvora, ki prekriva koren aorte; od znotraj z glavničastimi mišicami.",
    "vozlisca": [
-    "Right auricle",
-    "Right auricle (lastno)"
+    "Right auricle"
    ],
    "skupina": "desni-preddvor",
    "ucnaBarva": "#93b8f5",
@@ -915,11 +914,8 @@
    "barva": "#f472b6",
    "opis": "Mišični stebrički v prekatih; prek tetiv držijo lističe jadrastih zaklopk, da se ne obrnejo v preddvor.",
    "vozlisca": [
-    "Anterior papillary muscle of right ventricle",
-    "Anterolateral papillary muscle of left ventricle",
-    "Inferior papillary muscle of left ventricle",
-    "Inferior papillary muscle of right ventricle",
-    "Septal papillary muscle of right ventricle"
+    "Papillary muscles of left ventricle (HH229)",
+    "Papillary muscles of right ventricle (HH229)"
    ],
    "ucnaBarva": "#f472b6",
    "opisOs": "Mišični stebrički v prekatih, ki držijo zaklopke.",
@@ -931,9 +927,7 @@
    "la": "Trabeculae carneae",
    "barva": "#c084fc",
    "opis": "Mišični grebeni na notranji steni prekatov; v desnem prekatu je med njimi tudi septomarginalna trabekula.",
-   "vozlisca": [
-    "Septomarginal trabecula (lastno)"
-   ],
+   "vozlisca": [],
    "ucnaBarva": "#b07cf0",
    "opisOs": "Mišične gubice na notranji steni prekatov.",
    "opisStudij": "Trabeculae carneae: grebeni, mostički in papilarne mišice; septomarginalna trabekula nese desni krak prevodnega sistema do sprednje papilarne mišice."
@@ -945,7 +939,7 @@
    "barva": "#c084fc",
    "opis": "Drobni mišični grebeni v spodnjem delu in konici levega prekata.",
    "vozlisca": [
-    "Trabeculae carneae of left ventricle (lastno)"
+    "Trabeculae carneae of left ventricle (HH229)"
    ],
    "skupina": "trabekule",
    "ucnaBarva": "#b5372d",
@@ -959,7 +953,7 @@
    "barva": "#a78bfa",
    "opis": "Grobi mišični grebeni desnega prekata; med njimi je septomarginalna trabekula.",
    "vozlisca": [
-    "Trabeculae carneae of right ventricle (lastno)"
+    "Trabeculae carneae of right ventricle (HH229)"
    ],
    "skupina": "trabekule",
    "ucnaBarva": "#2c5fc4",
@@ -983,15 +977,8 @@
    "barva": "#e8ecf3",
    "opis": "Trolistna na desni in dvolistna (mitralna) na levi; tetive jih držijo, ko se prekata stisneta.",
    "vozlisca": [
-    "Anterior leaflet of left atrioventricular valve",
-    "Anterior leaflet of right atrioventricular valve",
-    "Chordae tendineae of mitral valve",
-    "Chordae tendineae of tricuspid valve",
-    "Fibrous ring of mitral valve",
-    "Fibrous ring of tricuspid valve",
-    "Inferior leaflet of right atrioventricular valve",
-    "Posterior leaflet of left atrioventricular valve",
-    "Septal leaflet of right atrioventricular valve"
+    "Left atrioventricular valve (HH229)",
+    "Right atrioventricular valve (HH229)"
    ],
    "ucnaBarva": "#f3ead2",
    "opisOs": "Zaklopki med preddvoroma in prekatoma; kri spustita samo naprej.",
@@ -1116,9 +1103,9 @@
   "volumen": {
    "slika": "srce-volumen.png",
    "lo": [
-    -0.067,
-    -0.10281,
-    -0.056
+    -0.06681,
+    -0.09927,
+    -0.05544
    ],
    "korak": 0.00125,
    "n": [
@@ -1135,15 +1122,15 @@
     "slika": "srce-stena.png",
     "telefon": "srce-stena-telefon.png",
     "lo": [
-     -0.06729,
-     -0.10317,
-     -0.05595
+     -0.06725,
+     -0.1056,
+     -0.05963
     ],
     "korak": 0.001,
     "n": [
      135,
-     130,
-     113
+     149,
+     120
     ],
     "ploscice": [
      11,
@@ -1153,10 +1140,14 @@
    },
    "stenaVozlisca": [
     "Root of aorta",
-    "Root of pulmonary trunk"
+    "Root of pulmonary trunk",
+    "Left atrioventricular valve (HH229)",
+    "Right atrioventricular valve (HH229)",
+    "Semilunar cusps of aortic valve",
+    "Semilunar cusps of pulmonary valve"
    ],
    "brezMasce": "papillary|Trabecul|Septomarginal",
-   "votlo": "^(Left auricle|Right auricle \\(lastno\\))$"
+   "epikardPravi": true
   }
  },
  "pogledi": {
@@ -1203,8 +1194,7 @@
     "brahiocefalicni-veni",
     "brahiocefalicno-deblo",
     "leva-skupna-karotida",
-    "leva-podkljucnicna-arterija",
-    "levo-srcno-uho"
+    "leva-podkljucnicna-arterija"
    ],
    "tkiva": {
     "miokard": {
@@ -1269,10 +1259,10 @@
    }
   ]
  },
- "velikost": 0.2633,
+ "velikost": 0.2706,
  "trikotniki": {
-  "racunalnik": 245186,
-  "telefon": 69365
+  "racunalnik": 224273,
+  "telefon": 55263
  },
  "luci": [
   {

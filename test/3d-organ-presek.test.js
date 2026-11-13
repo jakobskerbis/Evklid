@@ -122,7 +122,7 @@ test("presek ledvice: ravnina iz JSON seka skorjo, ovojnico in meh; piramide so 
         papile.push(c);
         continue;
       }
-      const { zanke } = zankePreseka(m.P, m.F, n, d, 1e-6);
+      const { zanke } = zankePreseka(m.P, m.F, n, d, 1e-6, j.tkiva[tk].rezPresek.skleni || 0); // meh je spodaj odprt v sečevod (krog m2)
       assert.ok(zanke.some((z) => Math.abs(ploscina(z)) > 2e-6), `${f}: ${node.getName()} brez preseka`);
     }
     // vrh vsakega stožca leži ob papili modela (≤ 6 mm), dolžina in polkot sta v mejah prave piramide
@@ -158,6 +158,13 @@ test("presek: odprta mreža (odprtina v plašču) da zanko le s »skleni«; ozek
   assert.ok([...b.vrste].every((v) => v === 0));
   const c = presekMreze(pos, idx, [0, 0, 1], 0, { luknje: true, stena: 0.0018, trianguliraj: tri });
   assert.ok([...c.vrste].every((v) => v === 2));
+  // skleniBrezRoba (krog m2, ledvični meh odprt v sečevod): ravna črta čez odprtino nima obrobe, drugi odseki jo imajo
+  const zRob = presekMreze(pos, odprt, [0, 0, 1], 0, { skleni: 0.03, rob: 0.0005, brezPloskve: true, trianguliraj: tri });
+  const brezRoba = presekMreze(pos, odprt, [0, 0, 1], 0, { skleni: 0.03, rob: 0.0005, brezPloskve: true, skleniBrezRoba: true, trianguliraj: tri });
+  assert.ok(brezRoba.polozaji.length < zRob.polozaji.length, "en odsek obrobe manj");
+  const naOdprtini = (r) => { let n = 0; for (let i = 0; i < r.polozaji.length; i += 3) if (r.polozaji[i] > 0.0203) n++; return n; };
+  assert.ok(naOdprtini(zRob) > 0, "z obrobo je odsek čez odprtino narisan");
+  assert.equal(naOdprtini(brezRoba), 0, "zunaj odprtine (x > 0,02) ni obrobe");
 });
 
 test("presek: »trak« (tanka odprta lupina, ledvična ovojnica ob hilusu) se zapolni do tetive čez odprtino, ne do ovojnice", () => {

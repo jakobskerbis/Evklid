@@ -142,7 +142,7 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)), hh229_cilj=(185_000, 40_000),  # m2: stena HH229 (trabekule, zaklopke, tetive v istem volumnu)
+        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)), hh229_cilj=(150_000, 28_000),  # m2: stena HH229 (trabekule, zaklopke, tetive v istem volumnu)
          # krog 8: telefon 15k (pri 11k raztrgan levi preddvor v prerezu)
         nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
@@ -156,7 +156,7 @@ ORGANI = {
             # maščoba v žlebovih: stik zunanjih ploskev votlin (venčni in oba medprekatna žleba), ob venčnih žilah širša;
             # ob vejah na prosti steni prekatov le tanka sled (ne ob aorti, pljučnem deblu, pljučnih venah, lističih)
             maska=dict(zile=r"coronary (artery|sinus)|Coronary sinus|interventricular artery|Circumflex|cardiac vein|vein of left ventricle|branch of right coronary",
-                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.2),
+                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0048, zlebZila=0.0045, sled=0.2),  # m2: ožji pas (HH229 ima maščobo že v obliki)
             recepti={
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
@@ -166,7 +166,7 @@ ORGANI = {
                                 # n11 (ocena n10: »bež-kaki oblak brez režnjičev in sijaja«): nasičeno rumeno oranžna, izrazitejši režnjiči, vlažna
                                 # krog 5 (predaja: »temne gube med ploščami maščobe«): plitvejši režnjiči, svetlejši žleb med njimi
                                 mascaNasip=0.0010, mascaPremik=0.0015, mascaMera=0.007, mascaZleb=0.74, mascaHrap=0.36, kletka=0.009,
-                                mascaMeja=(0.05, 0.8), mascaSum=0.18,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
+                                mascaMeja=(0.12, 0.9), mascaSum=0.3,  # krog 10 srca: pernat režnjičast rob maščobe (ne ploska lisa)
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
                 # Velike žile (srce_zile): adventicija z rahlimi vzdolžnimi gubami (vzdolz, po atributu OSI), vasa vasorum
@@ -1121,7 +1121,10 @@ def ledvicni_meh(osnovni, cfg, tmp):
         P.append(Vector((x, y, z))); R.append(rt * (1.75 - 0.75 * w) * zoz)
     P, R = zgladi(P, R, 6)
     P[-1] = P[-1] + (P[-1] - P[-2]).normalized() * 0.0005
-    bm = bmesh.new(); cev(bm, P, R, 20, stena=cfg.get("secevod_stena", 0.0006))
+    # krog m2: cev sečevoda se začne pri zadnji krogli meha (vrh2), ne 2 obroča više v svetlini meha (v rezu je bil v
+    # izhodu meha viden konec cevi); meh spodaj odpremo v svetlino sečevoda (glej spodaj), da je svetlina v rezu zvezna
+    P_cev, R_cev = (P[:-2], R[:-2]) if len(P) > 5 and cfg.get("secevod_stik", True) else (P, R)
+    bm = bmesh.new(); cev(bm, P_cev, R_cev, 20, stena=cfg.get("secevod_stena", 0.0006))
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     bm.to_mesh(ur); bm.free(); ur.update()
     for q in ur.polygons:
@@ -1217,6 +1220,25 @@ def ledvicni_meh(osnovni, cfg, tmp):
     sred = C2.lerp(vrh, 0.55)
     t += _crta(C2, sred, cfg.get("meh_jedro", 0.0058) * k, 0.0034 * k, 0.0012) + _crta(sred, vrh, 0.0034 * k, ru, 0.001) + _crta(vrh, vrh2, ru, ru, 0.001)
     me = _metakroglice(t, "meh", tmp)
+    if len(P) > 5 and cfg.get("secevod_stik", True):
+        # slepi konec meha v svetlini sečevoda odstranimo, rob luknje pa postavimo v sredino stene cevi: obris meha v
+        # rezu se konča v steni sečevoda (brez pregrade čez svetlino)
+        st_ = cfg.get("secevod_stena", 0.0006)
+        os_ = (P[-4] - P[-3]).normalized(); r_not = max(R[-3] - st_, R[-3] * 0.6); r_sr = 0.5 * (r_not + R[-3])
+        bm = bmesh.new(); bm.from_mesh(me)
+        def valj(co):
+            d_ = co - vrh2; s_ = d_.dot(os_); return s_, d_ - os_ * s_
+        notri = [v for v in bm.verts if valj(v.co)[0] > 0 and valj(v.co)[1].length < r_not + 0.0001]
+        proc = {f for v in notri for f in v.link_faces}
+        bmesh.ops.delete(bm, geom=list(proc), context="FACES")
+        rob = [v for v in bm.verts if v.is_boundary]
+        for v in rob:  # v sredino stene cevi ob najbližjem obroču (lijak sečevoda se navzdol oži: brez ovratnika zunaj cevi)
+            i_ = min(range(len(P) - 2), key=lambda i: (P[i] - v.co).length)
+            r_ = (v.co - P[i_]) - os_ * (v.co - P[i_]).dot(os_)
+            if r_.length > 1e-6:
+                v.co = v.co - r_ + r_.normalized() * 0.5 * (max(R[i_] - st_, R[i_] * 0.6) + R[i_])
+        print(f"[organi] stik meha in sečevoda: odstranjenih {len(proc)} ploskev meha, rob luknje {len(rob)} oglišč na polmeru {round(r_sr * 1000, 2)} mm")
+        bm.to_mesh(me); bm.free(); me.update()
     print("[organi] ravnina meha (Blender y):", round(yr, 6))
     print("[organi] meh škatla (Blender):", [round(min(v.co[i] for v in me.vertices), 5) for i in range(3)], [round(max(v.co[i] for v in me.vertices), 5) for i in range(3)])
     print(f"[organi] ledvični meh: {len(pap)} malih čašic, {tris(me)} trikotnikov")

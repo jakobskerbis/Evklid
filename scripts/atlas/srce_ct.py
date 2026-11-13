@@ -645,7 +645,7 @@ def _vencne_v_zleb(vencne, bvh_epi, V, j_av, j_iv):
     return out
 
 
-def _vencne_cevi(vencne, bvh_povrsina, tel):
+def _vencne_cevi(vencne, bvh_povrsina, tel, dvig=0.25, debelina=1.0):
     """Okrogle venčne cevi na površini maščobe/epikarda: središče 0,25 R nad površino (žila napol v maščobi, ne nalepka),
     polmer se od začetka (debelejši konec) proti periferiji le tanjša, zadnjih 15 % se zoži na 45 %; vene ob arteriji
     razmaknjene; venčni sinus ≥ 2,8 mm polmera (debela vena v zadnjem venčnem žlebu)."""
@@ -666,14 +666,14 @@ def _vencne_cevi(vencne, bvh_povrsina, tel):
             R = np.minimum.accumulate(_gladi_pot(R[:, None], 4)[:, 0])
             if not vena or "Coronary sinus" not in r[0]:
                 t = np.linspace(0, 1, len(R)); R *= 1 - 0.55 * np.clip((t - 0.85) / 0.15, 0, 1)
-            R = np.maximum(R, 0.00045)
+            R = np.maximum(R, 0.00045) * debelina
             for _ in range(2):
                 for i, c in enumerate(C):
                     q, nn, _, _ = bvh_povrsina.find_nearest(Vector(c))
                     if q is None:
                         continue
                     q, nn = np.array(q), np.array(nn)
-                    C[i] = q + nn * R[i] * 0.25
+                    C[i] = q + nn * R[i] * dvig
                     if vena and kd_a is not None:  # vena ob arteriji, ne v njej
                         a_, j_, d_ = kd_a.find(Vector(C[i]))
                         if a_ is not None and d_ < R[i] + Ra[j_] + 0.0004:
@@ -681,6 +681,12 @@ def _vencne_cevi(vencne, bvh_povrsina, tel):
                             v_ = v_ / (np.linalg.norm(v_) + 1e-12) if np.linalg.norm(v_) > 1e-6 else np.cross(nn, [0, 0, 1.0])
                             C[i] = np.array(a_) + v_ * (R[i] + Ra[j_] + 0.0004)
                 C = _gladi_pot(C, 2)
+            if dvig > 0.25:  # pravo srce (HH229, grbinasta površina): po glajenju poti nobena točka globlje kot dvig·R
+                for i, c in enumerate(C):
+                    q, nn, _, _ = bvh_povrsina.find_nearest(Vector(c))
+                    if q is not None and (Vector(c) - q).dot(nn) < R[i] * dvig:
+                        C[i] = np.array(q) + np.array(nn) * R[i] * dvig
+                C = _gladi_pot(C, 1)
             V_, F_ = sz.cev_np(C, R, 7); zbirka.dodaj(V_, F_)
             V_, F_ = sz.cev_np(C[::3] if len(C) > 9 else C, R[::3] if len(C) > 9 else R, 5); zbirka_t.dodaj(V_, F_)
         me = r[1]
@@ -973,7 +979,12 @@ def srce_ct(osnovni, cfg, tmp):
             if re.search(PRENOS[1][0], r[0] + " " + r[2]):  # ob endokardu: s stene CT na endokard HH229
                 X = _tocke(r[1]); X2, _ = prenesi_na_steno(X, X, bvh_endo, bvh_he, bvh_hn, "endo", 0.010)
                 _nastavi(r[1], X2)
-    _vencne_cevi(vencne, bvh_he if hh else _bvh(V2, F[epi]), cfg.setdefault("_telefon", {}))
+    if hh:  # HH229: žile više nad grbinasto površino in malo debelejše (ocena: »tanke venčne žile«, deli cevi pod steno)
+        _vencne_cevi(vencne, bvh_he, cfg.setdefault("_telefon", {}), dvig=cfg.get("hh229_zile_dvig", 0.62), debelina=cfg.get("hh229_zile_debelina", 1.2))
+        Xz = np.concatenate([_tocke(r[1]) for r, _ in vencne]) if vencne else None
+        hh["masca"] = srce_hh229.mascoba(hh["V"], hh["F"], hh["epi"], hh["masca"], Xz, log=lambda x: print(x, flush=True))
+    else:
+        _vencne_cevi(vencne, _bvh(V2, F[epi]), cfg.setdefault("_telefon", {}))
     cfg["_ct"] = dict(P=P, C=C, T=T, Fv=Fv, premik=premik, V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, masca=masca, L=Lc)
     if os.environ.get("ORGANI_CT_ODLOZI"):  # razvoj srce_hh229: stene CT (po reliefu), deli, maščoba in oslonilne točke
         np.savez(os.environ["ORGANI_CT_ODLOZI"], V=V, V2=V2, F=F, oz=oz, epi=epi, dl=dl, stran=stran_p, masca=masca, tr=tr,

@@ -147,7 +147,41 @@ def skrij_krne(V, F, dl, d_ct, cevi, log=print):
     w = np.maximum(w, st(d_ct, 0.009, 0.014) * preddvor * (d < 0.03))  # krni ven, ki štrlijo iz preddvorov
     cilj = Q[i] - N[i] * 0.0005
     log(f"[organi] srce_hh229: krni žil zloženi v cevi: {int((w > 0.5).sum())} oglišč")
-    return V + w[:, None] * (cilj - V), w
+    X = V + w[:, None] * (cilj - V)
+    # prehodni pas med steno in zloženim krnom (0 < w < 1) zgladimo: brez zmečkanih zavihkov in žagastega ovratnika ob cevi
+    m = (w > 0.02) & (w < 0.995)
+    if m.any():
+        from scipy.sparse import coo_matrix
+        a = np.concatenate([F[:, 0], F[:, 1], F[:, 2], F[:, 1], F[:, 2], F[:, 0]]); b = np.concatenate([F[:, 1], F[:, 2], F[:, 0], F[:, 0], F[:, 1], F[:, 2]])
+        A = coo_matrix((np.ones(len(a), np.float32), (a, b)), shape=(len(V), len(V))).tocsr(); A.data[:] = 1.0
+        A = A[m]; st_ = np.asarray(A.sum(1)).ravel() + 1e-9
+        for _ in range(25): X[m] = 0.4 * X[m] + 0.6 * (A @ X) / st_[:, None]
+    return X, w
+
+def valovi(X, dolzina, seme=3, n=7):
+    """Gladek šum 0–1 v prostoru (vsota sinusnih valov naključnih smeri z valovno dolžino okoli `dolzina`)."""
+    rng = np.random.default_rng(seme); K = rng.normal(size=(n, 3)); K /= np.linalg.norm(K, axis=1)[:, None]
+    K *= (2 * np.pi / (dolzina * rng.uniform(0.7, 1.4, n)))[:, None]; f = rng.uniform(0, 2 * np.pi, n)
+    return 0.5 + 0.5 * np.sin(X @ K.T + f).mean(1) * 1.9
+
+def mascoba(V, F, epi, m0, Xz, log=print):
+    """Maska epikardialne maščobe na pravem srcu. m0 (maska sten CT) je enakomerno širok pas ob žlebovih (na HH229 kot
+    naslikan rumen križ); tu je maščoba ob venčnih žilah v žlebovih (neenakomerno širok pas 3–7 mm ob žili) in v jedru
+    žleba, kjer žile ni (prekinjeni otoki), rob pa valovit. Xz: točke venčnih žil. Vrne masko 0–1 po ogliščih."""
+    ke = np.zeros(len(V), bool)
+    for k in range(3): ke[F[epi, k]] = True
+    pas = ke & (m0 > 0.5)
+    if not pas.any(): return np.zeros(len(V))
+    zunaj = ke & ~pas
+    d_rob = cKDTree(V[zunaj]).query(V)[0] if zunaj.any() else np.full(len(V), 0.01)
+    d_z = cKDTree(Xz).query(V)[0] if Xz is not None and len(Xz) else np.full(len(V), 1.0)
+    s1 = np.clip(valovi(V, 0.011, 3), 0, 1); s2 = np.clip(valovi(V, 0.0045, 8), 0, 1)
+    sir = 0.0030 + 0.0040 * s1 + 0.0012 * (s2 - 0.5)                 # polovična širina pasu ob žili
+    ob_zili = np.clip((sir - d_z) / 0.0012, 0, 1)
+    jedro = np.clip((d_rob - (0.0042 + 0.0030 * (1 - s1) + 0.0010 * (s2 - 0.5))) / 0.0012, 0, 1)  # sredina žleba brez žile
+    m = np.where(pas, np.maximum(ob_zili, jedro), 0.0)
+    log(f"[organi] srce_hh229: maščoba {float((m[ke] > 0.5).mean()):.1%} epikarda (pas CT {float(pas[ke].mean()):.1%})")
+    return m
 
 def ustje(bvh, c, cilj, kot=38.0, n=3000, do=0.12):
     """Ustje vene v steni HH229, gledano iz središča preddvora c proti pričakovanemu ustju `cilj`: smeri v stožcu, v
@@ -191,7 +225,8 @@ def stena(pot, ct, Polje, log=print, cevi=None):
     epi = vecina(F, epi.astype(np.int64), 2, 4).astype(bool)
     dl = vecina(F, dl, len(DELI), 4)
     # levo uho: del levega preddvora, ki štrli iz stene CT (CT ušesa nima) ob ustju ušesa
-    V, w_krn = skrij_krne(V, F, dl, cKDTree(Vc).query(V)[0], cevi, log)
+    d_v = cKDTree(Vc).query(V)[0]
+    V, w_krn = skrij_krne(V, F, dl, d_v, cevi, log)
     # povsem zložene ploskve (list brez prostornine v steni cevi) odstranimo: robova ostaneta drug ob drugem v steni cevi
     # (odprtina brez širine, število navitij ostane pravilno), poenostavitev pa ne dela z izrojenimi trikotniki
     ost = ~(w_krn[F] > 0.97).all(1)
@@ -204,7 +239,9 @@ def stena(pot, ct, Polje, log=print, cevi=None):
     izb = np.linalg.norm(V - zgladi(V, F), axis=1)
     izb_f = izb[F].mean(1)
     lv = (~epi) & (dl == 0); rv = (~epi) & (dl == 2)
-    dl[lv & (izb_f > 0.0007)] = 13; dl[rv & (izb_f > 0.0007)] = 14
+    tr_ = np.where(lv & (izb_f > 0.0007), 1, np.where(rv & (izb_f > 0.0007), 2, 0))
+    tr_ = vecina(F, tr_, 3, 6, zakleni=~(lv | rv))  # večje sklenjene zaplate (učne barve brez konfetov)
+    dl[lv & (tr_ == 1)] = 13; dl[rv & (tr_ == 2)] = 14
     # zaklopke in papilarne mišice po bližini modela zaklopk (isti preparat): lističi in tetive do 26 mm pod obročem so
     # zaklopka, globlje (glave in telesa papilarnih mišic, na katere se pripenjajo tetive) papilarne mišice
     oz_zak = {k: por(h["V_" + v]) for k, v in (("mitralna", por.mitralna), ("trikuspidalna", por.trikuspidalna), ("aortna", "aortna"), ("pljucna", "pljucna"))}
@@ -217,7 +254,7 @@ def stena(pot, ct, Polje, log=print, cevi=None):
         g = (Z - c4) @ os_; obroc = Z[g < np.quantile(g, 0.35)].mean(0)
         glob = (cf - obroc) @ os_
         dl[ob & (glob < 0.026)] = ZAK[ime]; dl[ob & (glob >= 0.026)] = pap
-    dl = vecina(F, dl, len(DELI), 3)
+    dl = vecina(F, dl, len(DELI), 6)
     # maščoba (maska barve) z najbližjega oglišča CT, samo zunaj
     ke = np.zeros(len(V), bool)
     for k in range(3): ke[F[epi, k]] = True
@@ -226,6 +263,10 @@ def stena(pot, ct, Polje, log=print, cevi=None):
     zv = np.zeros(len(V), bool)
     for k in range(3): zv[F[dl >= 9][:, k]] = True
     ohrani = np.maximum(ohrani, np.where(zv, 0.8, 0.0))
+    # meje med deli (zaklopka – stena, trabekule – stena …) naj poenostavitev ohrani: gladek rob barve namesto žagastega
+    lo_ = np.full(len(V), 99); hi_ = np.full(len(V), -1)
+    for k in range(3): np.minimum.at(lo_, F[:, k], dl); np.maximum.at(hi_, F[:, k], dl)
+    ohrani = np.maximum(ohrani, np.where(hi_ > lo_, 1.0, 0.0))
     log("[organi] srce_hh229: ploskve po delih " + ", ".join(f"{DELI[i][0][:22]} {n}" for i, n in enumerate(np.bincount(dl, minlength=len(DELI)))))
     return dict(V=V, F=F, dl=dl, epi=epi, masca=masca, ohrani=ohrani, L={k: v.mean(0) for k, v in oz_zak.items()}, por=por, h=h)
 

@@ -111,14 +111,20 @@ export function delezStene(tri, { lo, korak, n }) {
   }
   const delez = new Float32Array(n[0] * n[1] * n[2]);
   const utez = 1 / (S * S * korak);
-  let negativnih = 0;
+  let negativnih = 0, odprtih = 0;
   const zad = [];
+  // krog m2: žarek, ki se ne konča z navitjem 0 (zadel je rob odprtine v mreži ali natanko rob trikotnika), ne šteje:
+  // vrstica vokslov se uteži s preostalimi podvzorci (prej je tak žarek čez ves rez pustil tanko progo napačne stene)
+  const slabih = new Uint8Array(n[1] * n[2]);
   for (let k = 0; k < nz; k++) for (let j = 0; j < ny; j++) {
     zad.length = 0;
     for (let i = glava[k * ny + j]; i >= 0; i = nasl[i]) zad.push(i);
     if (!zad.length) continue;
     zad.sort((a, b) => xs[a] - xs[b]);
     const vr = (Math.floor(k / S) * n[1] + Math.floor(j / S)) * n[0];
+    let vsota = 0;
+    for (let q = 0; q < zad.length; q++) vsota += zn[zad[q]];
+    if (vsota !== 0) { odprtih++; slabih[vr / n[0]]++; continue; }
     let nav = 0;
     for (let q = 0; q < zad.length; q++) {
       const prej = nav;
@@ -137,7 +143,21 @@ export function delezStene(tri, { lo, korak, n }) {
       }
     }
   }
-  return { delez, zadetkov: st, negativnih };
+  // vrstice z izpuščenimi žarki: delež iz preostalih podvzorcev; brez veljavnega podvzorca povprečje sosednjih vrstic
+  const prazne = [];
+  for (let v = 0; v < slabih.length; v++) {
+    if (!slabih[v]) continue;
+    if (slabih[v] >= S * S) { prazne.push(v); continue; }
+    const f = (S * S) / (S * S - slabih[v]);
+    for (let i = 0; i < n[0]; i++) delez[v * n[0] + i] *= f;
+  }
+  for (const v of prazne) {
+    const j = v % n[1], k = (v - j) / n[1];
+    const sos = [[j - 1, k], [j + 1, k], [j, k - 1], [j, k + 1]].filter(([a, b]) => a >= 0 && b >= 0 && a < n[1] && b < n[2] && slabih[b * n[1] + a] < S * S);
+    if (!sos.length) continue;
+    for (let i = 0; i < n[0]; i++) delez[v * n[0] + i] = sos.reduce((a, [x, y]) => a + delez[(y * n[1] + x) * n[0] + i], 0) / sos.length;
+  }
+  return { delez, zadetkov: st, negativnih, odprtih };
 }
 
 // Krog 8 (ocena: »enakomerna lososova ploskev s svetlim sijem ob vsakem robu«): predznačena razdalja do površine stene in
@@ -272,7 +292,7 @@ async function glavni() {
     mreza.ploscice = s.ploscice;
     let polnih = 0;
     for (const v of r.delez) if (v > 0.5) polnih++;
-    console.log(`${meta[kljuc]}: ${s.w} × ${s.h} px, ${(fs.statSync(path.join(MAPA, meta[kljuc])).size / 1024).toFixed(0)} kB; trikotnikov ${tri.length / 9}, zadetkov ${r.zadetkov}, negativno navitje ${r.negativnih}, tkivo ${(polnih * korak ** 3 * 1e6).toFixed(0)} cm³`);
+    console.log(`${meta[kljuc]}: ${s.w} × ${s.h} px, ${(fs.statSync(path.join(MAPA, meta[kljuc])).size / 1024).toFixed(0)} kB; trikotnikov ${tri.length / 9}, zadetkov ${r.zadetkov}, negativno navitje ${r.negativnih}, odprtih žarkov ${r.odprtih}, tkivo ${(polnih * korak ** 3 * 1e6).toFixed(0)} cm³`);
   }
   j.prerez.volumen.stena = { ...meta, lo: mreza.lo, korak, n: mreza.n, ploscice: mreza.ploscice, sdf: SDF };
   fs.writeFileSync(pot, JSON.stringify(j, null, 1) + "\n");

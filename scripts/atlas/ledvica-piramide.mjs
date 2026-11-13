@@ -39,6 +39,7 @@ console.log("ravnina z =", zr, "(prej d =", rv.d, ")");
 rv.d = +(-zr * rv.n[2]).toFixed(5);
 for (const t of Object.values(j.tkiva)) for (const k of ["sredisce", "sredisce2"]) if (t.rezZarki?.[k]) t.rezZarki[k][2] = zr;
 for (const c of j.tkiva.ovojnica.rezPiramide.sinus?.kapsule || []) c[2] = c[5] = zr;
+if (j.tkiva.ovojnica.rezPiramide.sinus?.zareza) j.tkiva.ovojnica.rezPiramide.sinus.zareza[2] = j.tkiva.ovojnica.rezPiramide.sinus.zareza[5] = zr; // zareza hilusa (krog m2)
 const { zanke } = zankePreseka(ovoj.P, ovoj.F, [0, 0, 1], -zr, 1e-6);
 const dalj = [];
 for (const z of zanke) for (let i = 0; i < z.length; i++) dalj.push([z[i], z[(i + 1) % z.length]]);

@@ -138,7 +138,7 @@ export function zankePreseka(pos, idx, n, d, zvar = 2e-5, skleni = 0) {
           if (b < naj) { naj = b; kdo = i; obrni = true; }
         }
         if (kdo < 0) {
-          if (naj <= skleni && z.length >= 3) zanke.push(z);
+          if (naj <= skleni && z.length >= 3) { z.sklep = true; zanke.push(z); } // sklep: zadnji odsek (konec → začetek) je ravna črta čez odprtino
           break;
         }
         if (naj > skleni) break;
@@ -223,7 +223,7 @@ export function trakVObris(z) {
 // povecaj: faktor, s katerim se vsaka zanka poveča okoli svojega težišča (1,02: sosednji telesi se prekrijeta).
 // trianguliraj(obris, luknje) → [[a, b, c], …] z indeksi v obris, nato luknje po vrsti (kot THREE.ShapeUtils.triangulateShape).
 // najPloscina: zanke z manjšo ploščino odpadejo (drobir).
-export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7, skleni = 0, stena = 0 } = {}) {
+export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak = false, luknje: zapolniLuknje = false, brezPloskve = false, povecaj = 1, rob = 0, trianguliraj, najPloscina = 1e-7, skleni = 0, stena = 0, skleniBrezRoba = false } = {}) {
   const polozaji = [];
   const indeksi = [];
   const vrste = []; // na oglišče: 0 ploskev, 1 obroba, 2 zapolnjena luknja
@@ -234,6 +234,8 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak 
       const p = z[a], q = z[(a + 1) % z.length];
       const l = Math.hypot(q[0] - p[0], q[1] - p[1]);
       if (l < 1e-9) continue;
+      // skleniBrezRoba: ravna črta čez odprtino mreže (skleni) nima obrobe (meh, odprt v sečevod: brez pregrade čez svetlino)
+      if (skleniBrezRoba && z.sklep && a === z.length - 1) continue;
       const nx = (-(q[1] - p[1]) / l) * rob, ny = ((q[0] - p[0]) / l) * rob;
       const i0 = polozaji.length / 3;
       for (const [x, y] of [[p[0] + nx, p[1] + ny], [p[0] - nx, p[1] - ny], [q[0] - nx, q[1] - ny], [q[0] + nx, q[1] + ny]]) {
@@ -244,7 +246,7 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak 
       // zaobljen stik s prejšnjim odsekom: trikotnika od oglišča do obeh robov (brez zareze na zunanji strani ovinka)
       const o = z[(a + z.length - 1) % z.length];
       const lo = Math.hypot(p[0] - o[0], p[1] - o[1]);
-      if (lo < 1e-9) continue;
+      if (lo < 1e-9 || (skleniBrezRoba && z.sklep && a === 0)) continue;
       const mx = (-(p[1] - o[1]) / lo) * rob, my = ((p[0] - o[0]) / lo) * rob;
       const j0 = polozaji.length / 3;
       for (const [x, y] of [[p[0], p[1]], [p[0] + mx, p[1] + my], [p[0] + nx, p[1] + ny], [p[0] - mx, p[1] - my], [p[0] - nx, p[1] - ny]]) {
@@ -263,7 +265,7 @@ export function presekMreze(pos, idx, n, d, { polno = false, ovoj = false, trak 
       // vsaka zanka malo večja okoli svojega težišča: sosednji telesi iste plasti se prekrijeta (brez špranje med njima)
       dobre = dobre.map((z) => {
         const c = [z.reduce((a, p) => a + p[0], 0) / z.length, z.reduce((a, p) => a + p[1], 0) / z.length];
-        return z.map((p) => [c[0] + (p[0] - c[0]) * povecaj, c[1] + (p[1] - c[1]) * povecaj]);
+        return Object.assign(z.map((p) => [c[0] + (p[0] - c[0]) * povecaj, c[1] + (p[1] - c[1]) * povecaj]), { sklep: z.sklep });
       });
     }
     if (trak) {
