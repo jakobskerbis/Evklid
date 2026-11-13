@@ -186,13 +186,13 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
     b.setAttribute("aria-label", t(kljuc));
     b.title = t(kljuc);
     // tap: en korak; držanje: po 0,4 s se korak ponavlja (pri TEM v manjših korakih, da je spreminjanje gladko)
-    let cakaj = 0, prej = 0;
+    let cakaj = 0, prej = 0, kazalecCas = -1e9;
     const ustavi = () => {
       clearTimeout(cakaj);
       cakaj = prej = 0;
     };
     const korak = () => {
-      if (!zivo || !b.isConnected || b.disabled) return ustavi();
+      if (!zivo || !b.isConnected || b.disabled || document.hidden) return ustavi();
       const zdaj = performance.now();
       const dt = prej ? Math.min(0.5, (zdaj - prej) / 1000) : 0.04;
       prej = zdaj;
@@ -200,19 +200,23 @@ export async function odpriMikroskop(el, { preparat = null, zapri = null, obPrep
       interakcija = 1; // med držanjem hitri izris v polovični ločljivosti, polni po spustu (kot kolesce)
       // TEM: zvezno, ×10 na 1,5 s ne glede na hitrost naprave; svetloba: naslednji objektiv
       zoom(tem ? Math.pow(10, ((f > 1 ? 1 : -1) * dt) / 1.5) : f);
-      cakaj = setTimeout(korak, tem ? 40 : 420);
+      cakaj = setTimeout(korak, s.nacin === "tem" ? 40 : 420); // način po koraku: ob prehodu TEM → svetloba naslednji objektiv šele čez 0,42 s
     };
     b.addEventListener("pointerdown", (e) => {
       if (e.button !== 0 || b.disabled) return;
       e.preventDefault();
       b.setPointerCapture?.(e.pointerId);
+      kazalecCas = performance.now();
       ustavi();
       zoom(f);
       cakaj = setTimeout(korak, 400);
     });
     for (const ime of ["pointerup", "pointercancel", "lostpointercapture"]) b.addEventListener(ime, ustavi);
-    b.addEventListener("click", (e) => {
-      if (e.detail === 0) zoom(f); // tipkovnica (Enter, preslednica); miška in prst gresta skozi pointerdown
+    b.addEventListener("pointerup", () => (kazalecCas = performance.now()));
+    // klik brez kazalca: tipkovnica (Enter, preslednica) in bralniki zaslona (VoiceOver/TalkBack lahko pošljejo detail 1);
+    // klik takoj po pointerdown/pointerup je že narejen korak
+    b.addEventListener("click", () => {
+      if (performance.now() - kazalecCas > 1000) zoom(f);
     });
     b.addEventListener("contextmenu", (e) => e.preventDefault()); // dolgi pritisk na telefonu ne odpre menija
     return b;
