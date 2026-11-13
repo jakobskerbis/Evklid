@@ -43,6 +43,9 @@ export const TKIVA = [
   // (pogledi.prerez.skrijTkiva); korena iz CT (Root of aorta, Root of pulmonary trunk) ostaneta.
   [/^Aorta$/, "aorta-lok"],
   [/^Pulmonary trunk and left pulmonary artery$/, "pljucna-lok"],
+  // krog 8: ustje spodnje votle vene je skozi odprtino v steni desnega preddvora v prerezu kazalo zmečkane drobce
+  // lijakastega konca cevi; kopija »vena«, ki jo pogled prereza skrije: ustje je čista temna odprtina
+  [/^Inferior vena cava/, "vena-spodnja"],
 ];
 // Deli, ki na telefonu dobijo UV ene točke.
 export const ENO_UV = /^Trabeculae carneae of (left|right) ventricle/;
@@ -415,6 +418,110 @@ export function potopi(m, povrsina, vidno = null) {
   return st;
 }
 
+// Površina sten za krog 8 (ocena: »črne pike« na zadnji ploskvi, rožnate pike ob ostrem robu desnega prekata in temni
+// drobci spodnje votle vene v desnem preddvoru): vsi trikotniki stene z normalo, lastnikom (ime vozlišča) in oznako,
+// ali je trikotnik epikard (žarek iz sredine v smeri normale ne zadene stene) ali stena votline (endokard).
+// mreze: [G.preberi(...)], imena: [ime vozlišča]. Vrne { najblizja(p, doseg) → { tocka, n, d, t } | null, bvh, zunanji, lastnik }.
+export function povrsinaSten(mreze, imena) {
+  const tri = [];
+  const lastnik = [];
+  mreze.forEach((m, k) => { for (let f = 0; f < m.F.length; f += 3) { for (let c = 0; c < 3; c++) { const i = m.F[f + c]; tri.push(m.P[i * 3], m.P[i * 3 + 1], m.P[i * 3 + 2]); } lastnik.push(imena[k]); } });
+  const T = Float64Array.from(tri);
+  const bvh = new G.BVH(T);
+  const n = T.length / 9;
+  const N = new Float64Array(n * 3);
+  const zunanji = new Uint8Array(n);
+  for (let t = 0; t < n; t++) {
+    const k = t * 9;
+    const a = [T[k], T[k + 1], T[k + 2]], b = [T[k + 3], T[k + 4], T[k + 5]], c = [T[k + 6], T[k + 7], T[k + 8]];
+    const nn = G.v3.norm(G.v3.cross(G.v3.sub(b, a), G.v3.sub(c, a)));
+    N.set(nn, t * 3);
+    const s = G.v3.mul(G.v3.add(G.v3.add(a, b), c), 1 / 3);
+    zunanji[t] = G.v3.len(nn) > 0.5 && bvh.zarek(G.v3.add(s, G.v3.mul(nn, 2e-4)), nn, 1) < 0 ? 1 : 0;
+  }
+  const h = 0.004;
+  const cel = new Map();
+  for (let t = 0; t < n; t++) {
+    const k = t * 9;
+    const lo = [0, 1, 2].map((c) => Math.floor(Math.min(T[k + c], T[k + 3 + c], T[k + 6 + c]) / h));
+    const hi = [0, 1, 2].map((c) => Math.floor(Math.max(T[k + c], T[k + 3 + c], T[k + 6 + c]) / h));
+    for (let x = lo[0]; x <= hi[0]; x++) for (let y = lo[1]; y <= hi[1]; y++) for (let z = lo[2]; z <= hi[2]; z++) {
+      const kk = `${x},${y},${z}`;
+      let l = cel.get(kk);
+      if (!l) cel.set(kk, (l = []));
+      l.push(t);
+    }
+  }
+  const najblizja = (p, doseg) => {
+    const c = p.map((v) => Math.floor(v / h));
+    const R = Math.ceil(doseg / h);
+    let bd = doseg, naj = null;
+    const videni = new Set();
+    for (let x = c[0] - R; x <= c[0] + R; x++) for (let y = c[1] - R; y <= c[1] + R; y++) for (let z = c[2] - R; z <= c[2] + R; z++) {
+      for (const t of cel.get(`${x},${y},${z}`) || []) {
+        if (videni.has(t)) continue;
+        videni.add(t);
+        const k = t * 9;
+        const q = G.najblizjaNaTrikotniku(p, [T[k], T[k + 1], T[k + 2]], [T[k + 3], T[k + 4], T[k + 5]], [T[k + 6], T[k + 7], T[k + 8]]);
+        const d = G.v3.dist(p, q);
+        if (d < bd) { bd = d; naj = { tocka: q, t }; }
+      }
+    }
+    if (!naj) return null;
+    const nn = [N[naj.t * 3], N[naj.t * 3 + 1], N[naj.t * 3 + 2]];
+    return { ...naj, n: nn, d: G.v3.dot(G.v3.sub(p, naj.tocka), nn) };
+  };
+  return { najblizja, bvh, zunanji, lastnik };
+}
+
+// Notranji deli (papilarne mišice, trabekule …), vidni od zunaj: oglišče leži na zunanji strani najbližjega epikardnega
+// trikotnika (ali manj kot POD pod njim) in žarek iz oglišča v smeri te normale ne zadene stene (nič ga ne pokrije).
+// Premakne se POD pod ravnino trikotnika. Ponovljivo (premaknjena oglišča so pod steno). Vrne število premaknjenih.
+export function potopiVidne(m, sten) {
+  let st = 0;
+  const premik = m.W.map((p) => {
+    const q = sten.najblizja(p, 0.004);
+    if (!q || !sten.zunanji[q.t] || q.d < -POD * 0.9) return null;
+    if (sten.bvh.zarek(G.v3.add(p, G.v3.mul(q.n, 1e-5)), q.n, 1) >= 0) return null;
+    st++;
+    return G.v3.mul(q.n, -(q.d + POD));
+  });
+  if (!st) return 0;
+  for (let r = 0; r < m.zvar.length; r++) {
+    const v = premik[m.zvar[r]];
+    if (!v) continue;
+    m.P[r * 3] += v[0]; m.P[r * 3 + 1] += v[1]; m.P[r * 3 + 2] += v[2];
+  }
+  m.spremenjeno = true;
+  G.zvari(m);
+  return st;
+}
+
+// Ustje votle vene v preddvoru: lijakasti konec cevi (z robom stene žile) je segal skozi endokard v votlino desnega
+// preddvora (temni ploščati drobci ob zaklopki spodnje votle vene v prerezu). Krog 8, prvi poskus: oglišča potisniti
+// pod endokard; sploščen lijak se je zložil v prekrivajoče se drobce (štirje zadetki na isti globini). Zdaj se
+// trikotniki žile, ki imajo vsaj dve oglišči na strani votline najbližje stene preddvora (endokard, lastnik
+// `lastnik`, do VGREZ_KAVA pod njim), odstranijo: cev se konča v steni, ustje je odprtina. Ponovljivo (ostanek je
+// pod endokardom). Vrne število odstranjenih trikotnikov.
+export const VGREZ_KAVA = 0.0004;
+export function kavaVSteno(m, sten, lastnik = /^Right (atrium|auricle)$/) {
+  const vVotlini = m.W.map((p) => {
+    const q = sten.najblizja(p, 0.006);
+    return !!q && !sten.zunanji[q.t] && lastnik.test(sten.lastnik[q.t]) && q.d > -VGREZ_KAVA;
+  });
+  const F = [];
+  let st = 0;
+  for (let f = 0; f < m.F.length; f += 3) {
+    const n = vVotlini[m.zvar[m.F[f]]] + vVotlini[m.zvar[m.F[f + 1]]] + vVotlini[m.zvar[m.F[f + 2]]];
+    if (n >= 2) { st++; continue; }
+    F.push(m.F[f], m.F[f + 1], m.F[f + 2]);
+  }
+  if (!st) return 0;
+  m.F = F;
+  m.spremenjeno = true;
+  return st;
+}
+
 // Združi oglišča z enakimi surovimi vrednostmi atributov iz `kljuci` (drugi atributi: vrednost prvega oglišča).
 // atributi: { ime: { a: TypedArray, n: velikost elementa } }, indeksi: TypedArray. Vrne { atributi, indeksi, n }.
 export function zvari(atributi, indeksi, kljuci) {
@@ -485,9 +592,10 @@ export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [
       const prims = deli.map((n) => n.getMesh().listPrimitives()[0]);
       const mreze = deli.map((n, i) => G.preberi(n, prims[i]));
       if (!pogoj) {
-        // epikard: najprej zgostitev (dve ravni: rob ≈ 7 mm → ≈ 2 mm)
+        // epikard: najprej zgostitev (dve ravni: rob ≈ 7 mm → ≈ 2 mm; telefon od kroga 8 ena raven: CT stene telefona
+        // imajo 15k trikotnikov namesto 11k in druga raven bi GLB potisnila čez 2 MiB)
         let novih = 0;
-        for (let raven = 0; raven < 2; raven++) novih += zgosti(mreze, zunanjaOglisca(mreze).map((z, i) => (stenaVozlisca.includes(deli[i].getName()) ? z.map(() => false) : z)));
+        for (let raven = 0; raven < (telefon ? 1 : 2); raven++) novih += zgosti(mreze, zunanjaOglisca(mreze).map((z, i) => (stenaVozlisca.includes(deli[i].getName()) ? z.map(() => false) : z)));
         porocilo.push(`epikard: zgoščen, ${novih} novih trikotnikov`);
       }
       const zun = pogoj ? null : zunanjaOglisca(mreze); // epikard: samo zunanja oglišča sten, korena žil ostaneta
@@ -547,6 +655,25 @@ export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [
         porocilo.push(`${node.getName()}: ${st} oglišč pod epikard`);
         if (!suho) G.zapisi(doc, node, prim, m);
       }
+    }
+  }
+  // krog 8: vidni prodori notranjih delov skozi epikard in konec votle vene v votlini preddvora (ponovljivo, vsakič)
+  {
+    const stena = new Set(stenaVozlisca);
+    const deli = doc.getRoot().listNodes().filter((n) => n.getMesh() && !NI_STENA.test(n.getName()) && (tkiva[n.getExtras()?.tkivo]?.rezVolumen || stena.has(n.getName())));
+    const sten = povrsinaSten(deli.map((n) => G.preberi(n, n.getMesh().listPrimitives()[0])), deli.map((n) => n.getName()));
+    for (const node of doc.getRoot().listNodes()) {
+      const ime = node.getName();
+      const notranji = NOTRANJE.test(ime) || /pectinati|Crista terminalis|Limbus/.test(ime);
+      const kava = /^Inferior vena cava/.test(ime); // zgornja: ustje nad ravnino reza, premik je tam nihal med tankima stenama
+      if (!node.getMesh() || !(notranji || kava)) continue;
+      const prim = node.getMesh().listPrimitives()[0];
+      const m = G.preberi(node, prim);
+      let st = 0;
+      for (let krog = 0, x = 1; krog < 6 && x; krog++) st += x = notranji ? potopiVidne(m, sten) : kavaVSteno(m, sten); // do mirovanja (ponovni zagon ne spremeni nič)
+      if (!st) continue;
+      porocilo.push(`${ime}: ${st} ${notranji ? "oglišč vidnih od zunaj pod epikard" : "trikotnikov konca v votlini preddvora odstranjenih"}`);
+      if (!suho) G.zapisi(doc, node, prim, m);
     }
   }
   for (const node of doc.getRoot().listNodes()) {

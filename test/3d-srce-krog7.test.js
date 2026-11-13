@@ -41,9 +41,10 @@ test("srce.json: levo srčno uho v prerezu skrito (poševen prerez votle vrečke
   assert.ok(j.deli.some((d) => d.id === "levo-srcno-uho"), "del ostane v seznamu (celota)");
 });
 
-test("organi.mjs: telefon srca ima rezervo za dodelavo in korak 800 px pred 768 px", () => {
+test("organi.mjs: telefon srca ima mejo po dodelavi in korak 800 px pred 768 px", () => {
   const src = beri("scripts", "atlas", "organi.mjs");
-  assert.match(src, /organ === "srce" && pripona \? 28 \* 1024 : 0/);
+  // krog 8: dodelava telefon zmanjša (ena raven zgostitve epikarda, trabekule en UV), meja je zato višja
+  assert.match(src, /organ === "srce" && pripona \? -96 \* 1024 : 0/);
   assert.match(src, /\[82, 66, 80, 800\], \[80, 62, 78, 800\], \[82, 66, 80, 768\]/);
   const glb = fs.statSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "srce-telefon.glb")).size;
   assert.ok(glb <= 1992294, `srce-telefon.glb ${glb} B`);

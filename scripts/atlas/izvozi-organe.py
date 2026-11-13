@@ -131,7 +131,8 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(78_000, 11_000)), nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
+        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)),  # krog 8: telefon 15k (pri 11k raztrgan levi preddvor v prerezu)
+        nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
         # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.
         stena={"Left ventricle": 0.0028, "Right ventricle": 0.0008},
@@ -161,22 +162,27 @@ ORGANI = {
                 # pljučne vene rdeče-vijolične, žile z vensko krvjo (pljučno deblo in arteriji, votli veni, srčne vene)
                 # temno vijolično-rdeče kot skozi tanko steno, brez modre (modra samo v učnih barvah).
                 # aorta in pljučno deblo: debela elastična stena, na preparatu smetanasto bela do rožnato siva (ne rdeča)
-                "aorta": dict(barva=(0.74, 0.58, 0.50), barva2=(0.66, 0.50, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
-                              vzdolz=0.00009, vzdolzRazmik=0.0028, vasa=0.45, vasaBarva=(0.55, 0.22, 0.20)),
-                "pljucna": dict(barva=(0.74, 0.58, 0.50), barva2=(0.66, 0.50, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
-                                vzdolz=0.00008, vzdolzRazmik=0.0028, vasa=0.4, vasaBarva=(0.50, 0.20, 0.22)),
-                "vena": dict(barva=(0.42, 0.27, 0.28), barva2=(0.36, 0.22, 0.24), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
-                             vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.22, 0.05, 0.10)),
+                # krog 8 (ocena: »gladke mat cevi, aorta bež, votli veni lila«): vse velike žile v isti družini tonov kot
+                # srce (rožnato rdeče rjava adventicija), arterije svetlejše, vene temnejše (kri skozi tanko steno); lisasta
+                # adventicija (lise), izrazitejše vzdolžne gube in vasa vasorum
+                "aorta": dict(barva=(0.66, 0.40, 0.34), barva2=(0.55, 0.31, 0.27), lise=0.5, hrap=0.58, gube=0.00006, gubeMera=0.0018, razdeli=1,
+                              vzdolz=0.00012, vzdolzRazmik=0.0024, vasa=0.6, vasaBarva=(0.50, 0.12, 0.10)),
+                "pljucna": dict(barva=(0.64, 0.38, 0.33), barva2=(0.53, 0.30, 0.27), lise=0.5, hrap=0.58, gube=0.00006, gubeMera=0.0018, razdeli=1,
+                                vzdolz=0.00011, vzdolzRazmik=0.0024, vasa=0.55, vasaBarva=(0.48, 0.12, 0.12)),
+                "vena": dict(barva=(0.42, 0.20, 0.20), barva2=(0.34, 0.15, 0.16), lise=0.45, hrap=0.46, gube=0.00006, gubeMera=0.0018, razdeli=1,
+                             vzdolz=0.00009, vzdolzRazmik=0.0022, vasa=0.4, vasaBarva=(0.26, 0.05, 0.08)),
                 # pljučne vene: tanka stena, temno rdeče rjave (kri skozi steno), ne magenta (ocena n8)
-                "pljucna-vena": dict(barva=(0.46, 0.28, 0.27), barva2=(0.40, 0.23, 0.23), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
-                                     vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
+                "pljucna-vena": dict(barva=(0.46, 0.23, 0.21), barva2=(0.38, 0.18, 0.17), lise=0.45, hrap=0.46, gube=0.00006, gubeMera=0.0018, razdeli=1,
+                                     vzdolz=0.00009, vzdolzRazmik=0.0022, vasa=0.4, vasaBarva=(0.40, 0.05, 0.08)),
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
                 # n10: arterije bledo rožnato bele (debela stena), vene temne modro vijolične (kri skozi tanko steno)
                 # n11 (ocena n10: »bele/kremaste nalepke«): bledo rožnato rjave (sveža arterija s krvjo za debelo steno)
                 "vencna-arterija": dict(barva=(0.60, 0.33, 0.29), barva2=(0.54, 0.28, 0.25), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1,
                                         vzdolz=0.00002, vzdolzRazmik=0.0012),
                 # vezivo (arterijska vez, dno ovalne kotanje, pars membranacea): mat sivobelo, brez sijaja
-                "vez": dict(barva=(0.62, 0.58, 0.53), barva2=(0.55, 0.50, 0.46), lise=0.25, hrap=0.78, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                # krog 8: vezivni trak v tonu adventicije (rožnato rjavkast, vzdolžna vlakna), ne siva kovina
+                "vez": dict(barva=(0.68, 0.48, 0.42), barva2=(0.58, 0.40, 0.35), lise=0.35, hrap=0.72, gube=0.00004, gubeMera=0.0012, razdeli=1,
+                            vzdolz=0.00008, vzdolzRazmik=0.0008),
                 # prevodni sistem (shema): rumen kot v atlasih, rahlo svetleč
                 "prevodni": dict(barva=(0.78, 0.62, 0.10), barva2=(0.70, 0.52, 0.08), lise=0.15, hrap=0.4, gube=0.00002, gubeMera=0.0015, razdeli=1),
                 "vencna-vena": dict(barva=(0.25, 0.16, 0.26), barva2=(0.20, 0.12, 0.21), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
@@ -244,11 +250,13 @@ ORGANI = {
         tekstura=dict(pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             recepti={
                 "*": dict(barva=(0.80, 0.80, 0.80), barva2=(0.78, 0.78, 0.78), lise=0.0, hrap=0.2, gube=0.0, razdeli=0),
-                "beločnica": dict(barva=(0.82, 0.79, 0.73), barva2=(0.76, 0.66, 0.60), lise=0.25, liseMera=0.04, hrap=0.28,
-                                  gube=0.00002, gubeMera=0.002, zilice=0.30, ziliceBarva=(0.58, 0.10, 0.08), ziliceMera=0.03, razdeli=1),
+                # krog 9 (ocena: »ploska bela plastika, žilice kot razpoke«): toplo umazano bela, rahlo lisasta (modrikasto
+                # siva tanjša sprednja stena, rumenkasto zadaj), drobne svetlo rdeče episkleralne žilice
+                "beločnica": dict(barva=(0.86, 0.81, 0.74), barva2=(0.80, 0.72, 0.66), lise=0.35, liseMera=0.04, hrap=0.34,
+                                  gube=0.00002, gubeMera=0.002, zilice=0.22, ziliceBarva=(0.72, 0.28, 0.24), ziliceMera=0.03, razdeli=1),
                 "mišica": dict(barva=(0.38, 0.09, 0.07), barva2=(0.29, 0.07, 0.05), lise=0.35, hrap=0.42, vlakna=0.00025, vlaknaMera=0.002, razdeli=1,
-                               kita=(0.84, 0.80, 0.72), kitaHrap=0.30),  # kite ob narastiščih (atribut KITA iz oko_misice.py)
-                "kita": dict(barva=(0.84, 0.80, 0.72), barva2=(0.76, 0.71, 0.63), lise=0.2, hrap=0.30, vlakna=0.00008, vlaknaMera=0.0015, razdeli=1),
+                               kita=(0.88, 0.84, 0.78), kitaHrap=0.30),  # krog 9: kita v tonu beločnice (zlije se z njo)  # kite ob narastiščih (atribut KITA iz oko_misice.py)
+                "kita": dict(barva=(0.86, 0.82, 0.75), barva2=(0.78, 0.73, 0.66), lise=0.2, hrap=0.30, vlakna=0.00008, vlaknaMera=0.0015, razdeli=1),
                 "živec": dict(barva=(0.80, 0.72, 0.58), barva2=(0.72, 0.64, 0.50), lise=0.25, hrap=0.36, vlakna=0.00006, vlaknaMera=0.0015,
                               zilice=0.15, ziliceBarva=(0.55, 0.12, 0.10), ziliceMera=0.02, razdeli=1),
                 "žilnica": dict(barva=(0.10, 0.04, 0.03), barva2=(0.16, 0.05, 0.04), lise=0.4, hrap=0.45, razdeli=1),

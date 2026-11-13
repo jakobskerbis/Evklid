@@ -5,11 +5,11 @@
   "miokard": {
    "barva": "#93362f",
    "hrap": 0.34,
-   "lak": 0.5,
-   "lakHrap": 0.5,
+   "lak": 0.28,
+   "lakHrap": 0.38,
    "sijaj": 0.1,
    "sijajBarva": "#9a3a30",
-   "rob": 0.1,
+   "rob": 0.05,
    "robBarva": "#ff6a5a",
    "ao": 0.75,
    "zrno": 0.1,
@@ -19,7 +19,7 @@
    "liseBarva": "#ffb0a0",
    "masca": 0.6,
    "mascaBarva": "#e7c46e",
-   "rez": "#8e3128",
+   "rez": "#93362c",
    "senca": 0.35,
    "sencaBarva": "#4a1512",
    "mascaZunaj": true,
@@ -29,17 +29,17 @@
    "sijajHrap": 0.7,
    "spekular": 0.7,
    "rezVolumen": true,
-   "rezMasca": "#e2c98f",
+   "rezMasca": "#e3bf74",
    "rezVlaknaCt": 1000,
    "rezTkivoMoc": 0.2,
-   "rezVlaknaMoc": 1.3,
+   "rezVlaknaMoc": 1.6,
    "rezSum": 0.22,
    "rezHrap": 0.42,
-   "rezLak": 0.75,
-   "rezLakHrap": 0.22,
+   "rezLak": 0.55,
+   "rezLakHrap": 0.3,
    "rezMascaMeja": [
-    0.22,
-    0.4
+    0.2,
+    0.46
    ],
    "rezRelief": 0.0002,
    "rezVlaknaOs": [
@@ -53,7 +53,29 @@
     "sirina": 0.0024,
     "globina": 0.24
    },
-   "aoTekstura": 0.7
+   "aoTekstura": 0.7,
+   "rezPlasti": {
+    "endo": {
+     "barva": "#dcab9e",
+     "sirina": 0.00018,
+     "moc": 0.42
+    },
+    "subendo": {
+     "barva": "#c97666",
+     "sirina": 0.0015,
+     "moc": 0.22
+    },
+    "epi": {
+     "barva": "#c98f78",
+     "sirina": 0.0003,
+     "moc": 0.32
+    },
+    "globina": 0.3,
+    "globinaOd": 0.0009,
+    "globinaDo": 0.0045,
+    "mascaGlobina": 0.006,
+    "endoHrap": 0.32
+   }
   },
   "zaklopka": {
    "barva": "#efd3c3",
@@ -287,11 +309,11 @@
   "uho": {
    "barva": "#783830",
    "hrap": 0.34,
-   "lak": 0.5,
-   "lakHrap": 0.5,
+   "lak": 0.28,
+   "lakHrap": 0.38,
    "sijaj": 0.1,
    "sijajBarva": "#9a3a30",
-   "rob": 0.1,
+   "rob": 0.05,
    "robBarva": "#ff6a5a",
    "ao": 0.9,
    "zrno": 0.1,
@@ -301,7 +323,7 @@
    "liseBarva": "#ffb0a0",
    "masca": 0,
    "mascaBarva": "#e7c46e",
-   "rez": "#8e3128",
+   "rez": "#93362c",
    "senca": 0.25,
    "sencaBarva": "#4a1512",
    "mascaZunaj": true,
@@ -310,17 +332,17 @@
    "sijajHrap": 0.7,
    "spekular": 0.7,
    "rezVolumen": true,
-   "rezMasca": "#e2c98f",
+   "rezMasca": "#e3bf74",
    "rezVlaknaCt": 1000,
    "rezTkivoMoc": 0.2,
-   "rezVlaknaMoc": 1.3,
+   "rezVlaknaMoc": 1.6,
    "rezSum": 0.22,
    "rezHrap": 0.42,
-   "rezLak": 0.75,
-   "rezLakHrap": 0.22,
+   "rezLak": 0.55,
+   "rezLakHrap": 0.3,
    "rezMascaMeja": [
-    0.22,
-    0.4
+    0.2,
+    0.46
    ],
    "rezRelief": 0.0002,
    "rezVlaknaOs": [
@@ -335,7 +357,29 @@
     "sirina": 0.0024,
     "globina": 0.24
    },
-   "detajl": true
+   "detajl": true,
+   "rezPlasti": {
+    "endo": {
+     "barva": "#dcab9e",
+     "sirina": 0.00018,
+     "moc": 0.42
+    },
+    "subendo": {
+     "barva": "#c97666",
+     "sirina": 0.0015,
+     "moc": 0.22
+    },
+    "epi": {
+     "barva": "#c98f78",
+     "sirina": 0.0003,
+     "moc": 0.32
+    },
+    "globina": 0.3,
+    "globinaOd": 0.0009,
+    "globinaDo": 0.0045,
+    "mascaGlobina": 0.006,
+    "endoHrap": 0.32
+   }
   },
   "aorta-lok": {
    "barva": "#b8453c",
@@ -372,6 +416,26 @@
    "relief": 0.3,
    "rez": "#d2c2bc",
    "odtenek": "#f3dcd6",
+   "sijajHrap": 0.75,
+   "spekular": 0.55,
+   "rezLak": 0.6,
+   "rezLakHrap": 0.25
+  },
+  "vena-spodnja": {
+   "barva": "#3b5ba8",
+   "hrap": 0.5,
+   "lak": 0.18,
+   "lakHrap": 0.78,
+   "sijaj": 0.14,
+   "sijajBarva": "#9db8ff",
+   "rob": 0.08,
+   "robBarva": "#6f93ff",
+   "ao": 0.85,
+   "zrno": 0.05,
+   "f": 80,
+   "relief": 0.3,
+   "rez": "#5a2e34",
+   "odtenek": "#ffffff",
    "sijajHrap": 0.75,
    "spekular": 0.55,
    "rezLak": 0.6,
@@ -511,7 +575,7 @@
     "Left auricle"
    ],
    "skupina": "levi-preddvor",
-   "ucnaBarva": "#f7a08f",
+   "ucnaBarva": "#e5604b",
    "opisOs": "Majhen žepek levega preddvora ob pljučnem deblu.",
    "opisStudij": "Auricula sinistra: ozka, prstasta, s pectinati; najpogostejše mesto strdkov pri atrijski fibrilaciji."
   },
@@ -961,7 +1025,7 @@
    "vozlisca": [
     "Ligamentum arteriosum"
    ],
-   "ucnaBarva": "#cbd5e1",
+   "ucnaBarva": "#d8bfa0",
    "opisOs": "Majhen trak med aorto in pljučno arterijo. Pred rojstvom je bil to odprt vod.",
    "opisStudij": "Lig. arteriosum je ostanek ductus arteriosus (Botalli); ob njem n. laryngeus recurrens sinister zavije pod lok."
   },
@@ -1070,7 +1134,8 @@
     "ploscice": [
      11,
      11
-    ]
+    ],
+    "sdf": 0.003
    },
    "stenaVozlisca": [
     "Root of aorta",
@@ -1125,8 +1190,8 @@
    ],
    "tkiva": {
     "miokard": {
-     "lak": 0.7,
-     "lakHrap": 0.35
+     "lak": 0.18,
+     "lakHrap": 0.6
     },
     "zaklopka": {
      "svetlost": 1.05
@@ -1151,7 +1216,8 @@
    },
    "skrijTkiva": [
     "aorta-lok",
-    "pljucna-lok"
+    "pljucna-lok",
+    "vena-spodnja"
    ]
   }
  },
@@ -1182,8 +1248,8 @@
  },
  "velikost": 0.2633,
  "trikotniki": {
-  "racunalnik": 243392,
-  "telefon": 73495
+  "racunalnik": 244972,
+  "telefon": 69431
  },
  "luci": [
   {

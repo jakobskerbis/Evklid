@@ -12,7 +12,7 @@
 # Vsaka cev dobi lasten valjasti UV (»uvLastni«: brez šiva Smart UV čez žilo) in atribut OSI (R = dolžina vzdolž žile v m,
 # G/B = cos/sin kota okoli osi, A = polmer): peka.py iz njega naredi vzdolžne gube adventicije in vasa vasorum.
 # Kliče izvozi-organe.py (cfg »dodaj«: [..., "srce_zile"], krivulje v cfg["_krivulje"]); koordinate Blenderjeve (m, Z gor).
-import bmesh, math, re
+import bmesh, math, random, re
 import numpy as np
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
@@ -683,9 +683,14 @@ def srce_zile(osnovni, cfg, tmp):
         d = (aorta_P[i] - A).normalized()
         a, b = A + d * Ra_ * 0.85, aorta_P[i] - d * aorta_R[i] * 0.85
         if 0.003 < (b - a).length < 0.03:
-            Pl, Rl = prevzorci([a, b], [0.0024, 0.0022], 0.001)
+            # krog 8 (ocena: »siva kovinska palčka«): kratek vezivni trak, ki se na obeh koncih razširi v steno žil
+            # (Ø ≈ 3,4 mm sredi, ≈ 6,5 mm ob narastiščih), konca segata 0,7 polmera v steni (brez vidnega roba)
+            a, b = A + d * Ra_ * 0.7, aorta_P[i] - d * aorta_R[i] * 0.7
+            Pl, _ = prevzorci([a, b], [0.002, 0.002], 0.0008)
+            L_ = _dolzine(Pl); L_[-1] = max(L_[-1], 1e-6)
+            Rl = [0.0017 + 0.0016 * abs(2 * x / L_[-1] - 1) ** 2.2 for x in L_]
             z = _Osi(bmesh.new())
-            cev_polna(z, Pl, Rl, 10)
+            cev_polna(z, Pl, Rl, 12)
             # sploščena vrvica: širina ≈ 4 mm, debelina ≈ 2 mm (stisnemo v smeri pravokotno na lok in vez)
             ax = (b - a).normalized(); ploska = ax.cross(Vector((0, 0, 1))).normalized() if abs(ax.z) < 0.9 else Vector((1, 0, 0))
             for v in z.bm.verts:
@@ -898,13 +903,53 @@ def srce_zile(osnovni, cfg, tmp):
         if len(cr) > 5:
             z = _Osi(bmesh.new()); cev_polna(z, cr, [0.0022 * (0.7 + 0.3 * math.sin(math.pi * i / (len(cr) - 1))) for i in range(len(cr))], 8)
             vrstica("Crista terminalis", z, "miokard", "mejni-greben", "Right atrium / Heart.g")
+            # krog 8 (ocena: »enakomerno razmaknjene prečke lestve«): nepravilen razmik (2–6 mm), različna debelina
+            # (Ø 1,2–3 mm) in dolžina (12–26 mm), rahlo vijugasta pot, nekatere se razcepijo v tanjšo vejo, ki se
+            # pridruži sosedu (mreža grebenov kot na preparatu); ponovljivo (stalno seme)
             z = _Osi(bmesh.new()); n_p = 0
-            spr = Vector((0, -1, 0.35)).normalized()
-            for k in range(1, len(cr) - 1, max(1, len(cr) // 9)):
-                pot = [cr[k]] + [na_steno(cr[k] + spr * 0.0035 * i + Vector((0, 0, 0.001 * i)), 0.0011) for i in range(1, 7)]
-                pot = [q for q in pot if q is not None]
-                if len(pot) > 3:
-                    cev_polna(z, pot, [0.0012 * (1 - 0.45 * i / (len(pot) - 1)) for i in range(len(pot))], 6); n_p += 1
+            rng = random.Random(8)
+            spr0 = Vector((0, -1, 0.35)).normalized()
+            dl_cr = _dolzine(cr); L_cr = dl_cr[-1]
+
+            def na_cristi(x):
+                i = int(np.searchsorted(dl_cr, x)); i = min(max(i, 1), len(cr) - 1)
+                f = (x - dl_cr[i - 1]) / max(dl_cr[i] - dl_cr[i - 1], 1e-9)
+                return cr[i - 1].lerp(cr[i], f)
+
+            def greben(q0, smer, dolzina, r0, korak=0.0028):
+                pot = [q0]; d = smer.normalized()
+                for i in range(1, max(3, int(dolzina / korak)) + 1):
+                    nrm = (pot[-1] - c_ra).normalized(); bok = d.cross(nrm).normalized()
+                    d = (d + bok * rng.uniform(-0.16, 0.16)).normalized()
+                    q = na_steno(pot[-1] + d * korak, r0 * 0.6)
+                    if q is None:
+                        break
+                    pot.append(q)
+                if len(pot) < 4:
+                    return None
+                n_ = len(pot) - 1; nab = rng.uniform(0.25, 0.6)
+                rr = [r0 * (1 - 0.55 * i / n_) * (1 + 0.18 * math.exp(-((i / n_ - nab) / 0.18) ** 2)) for i in range(len(pot))]
+                return pot, rr
+
+            x = rng.uniform(0.002, 0.004)
+            while x < L_cr - 0.003:
+                q0 = na_cristi(x)
+                nrm = (q0 - c_ra).normalized()
+                kot = rng.uniform(-0.45, 0.45)  # ± 26° okoli normale stene
+                smer = (spr0 * math.cos(kot) + nrm.cross(spr0).normalized() * math.sin(kot)).normalized()
+                r0 = rng.uniform(0.0006, 0.0015)
+                g = greben(q0, smer, rng.uniform(0.012, 0.026), r0)
+                if g:
+                    cev_polna(z, g[0], g[1], 6); n_p += 1
+                    if rng.random() < 0.5 and len(g[0]) > 5:  # veja: odcepi se pod kotom ≈ 35° proti sosedu
+                        j = rng.randint(2, len(g[0]) - 3)
+                        d0 = (g[0][j + 1] - g[0][j]).normalized(); nrm = (g[0][j] - c_ra).normalized()
+                        sk = math.radians(rng.choice((-1, 1)) * rng.uniform(28, 45))
+                        dv = (d0 * math.cos(sk) + nrm.cross(d0).normalized() * math.sin(sk)).normalized()
+                        v = greben(g[0][j], dv, rng.uniform(0.005, 0.011), g[1][j] * 0.62, 0.0022)
+                        if v:
+                            cev_polna(z, v[0], v[1], 6); n_p += 1
+                x += rng.uniform(0.002, 0.0065) + r0
             if n_p:
                 vrstica("Musculi pectinati", z, "miokard", "glavnicaste-misice", "Right atrium / Heart.g")
         if la:
