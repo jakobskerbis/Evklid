@@ -189,13 +189,18 @@ function expr(s) {
     if ((m = /^\\(?:overline|bar)(?![a-zA-Z])/.exec(rest))) {
       // \bar z je konjugirano kompleksno število; drugače (povprečje x, daljica AB) preberemo črto nad znakom.
       const [a, j] = group(s, i + m[0].length);
-      push(/^\s*[zw](?:_\{?\w+\}?)?\s*$/.test(a) ? `konjugirano ${expr(a)}` : `${expr(a)} s črto`);
+      const complex = /[zw]/.test(a) && /^[zw\d\s_{}+\-]*(?:\\cdot[zw\d\s_{}+\-]*)*$/.test(a);
+      push(/^\s*[zw](?:_\{?\w+\}?)?\s*$/.test(a) ? `konjugirano ${expr(a)}` : complex ? `konjugirana vrednost ${expr(a)}` : `${expr(a)} s črto`);
       i = j;
       lastNumber = null;
       continue;
     }
-    // \operatorname{Re} je realni del (\mathrm{Re} v fiziki pomeni Reynoldsovo število, zato ostane, kot je).
-    if ((m = /^\\operatorname\s*\{?\s*(Re|Im)\s*\}?(?![a-zA-Z])/.exec(rest))) {
+    // Re z, Im z: realni in imaginarni del. \mathrm{Re} brez spremenljivke za njim (Re = …) je v fiziki Reynoldsovo število.
+    if (
+      (m = /^\\operatorname\s*\{?\s*(Re|Im)\s*\}?(?![a-zA-Z])(?:\s*\\[,;:!])?/.exec(rest)) ||
+      (m = /^\\mathrm\s*\{\s*(Im)\s*\}(?:\s*\\[,;:!])?/.exec(rest)) ||
+      (m = /^\\mathrm\s*\{\s*(Re)\s*\}(?:\s*\\[,;:!])?(?=\s*(?:[a-zA-Z(]|\\(?!(?:approx|le|ge|leq|geq|ne|neq|lt|gt|sim)(?![a-zA-Z]))[a-zA-Z]))/.exec(rest))
+    ) {
       push(m[1] === "Re" ? "realni del" : "imaginarni del");
       i += m[0].length;
       lastNumber = null;

@@ -15,6 +15,9 @@ test("complex numbers and sets are read aloud (bug report: lesson read-aloud)", 
   assert.equal(speakTex("\\mathbb{N} \\subset \\mathbb{Z}"), "N je podmnožica Z");
   assert.equal(speakTex("x \\in \\mathbb{R}"), "x je element R");
   assert.equal(speakTex("\\bar x = 5"), "x s črto je enako 5");
+  assert.equal(speakTex("\\mathrm{Re}\\,z = a"), "realni del z je enako a");
+  assert.equal(speakTex("\\mathrm{Im}\\,z"), "imaginarni del z");
+  assert.equal(speakTex("\\overline{z_1 + z_2}"), "konjugirana vrednost z 1 plus z 2");
   // \mathrm{Re} je v fiziki Reynoldsovo število: ne beremo ga kot realni del.
   assert.doesNotMatch(speakTex("\\mathrm{Re} = 2000"), /realni del/);
 });
