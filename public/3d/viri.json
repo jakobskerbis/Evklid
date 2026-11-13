@@ -78,6 +78,19 @@
       ]
     },
     {
+      "id": "visibleheart-hh229",
+      "ime": "HH229 in HH229 Valves Vessels (Visible Heart Laboratories)",
+      "avtor": "VisibleHeartLabs (Visible Heart Laboratories, University of Minnesota)",
+      "opis": "Stena srca v Organih v 3D je pravo človeško srce HH229 (preparat, posnet z magnetno resonanco): oba prekata s pretinom, oba preddvora z ušesoma, trabekule, glavničaste mišice, zaklopke s tetivami in papilarne mišice kot en zaprt volumen. Model smo prilagodili (zvarili, zaprli luknje, z gladkim poljem odmikov poravnali na povprečno srce CT, poenostavili, razdelili na dele in zapekli teksture); model zaklopk in žil določa, katere ploskve so zaklopke in papilarne mišice. This work is based on \"HH229\" (https://sketchfab.com/3d-models/hh229-86edf8169e5f4ba6bfa798591266afa6) by VisibleHeartLabs (https://sketchfab.com/VisibleHeartLabs) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). This work is based on \"HH229 Valves Vessels\" (https://sketchfab.com/3d-models/hh229-valves-vessels-df4a149755444023aeb63629b76fd546) by VisibleHeartLabs (https://sketchfab.com/VisibleHeartLabs) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "url": "https://sketchfab.com/3d-models/hh229-86edf8169e5f4ba6bfa798591266afa6",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/srce*.glb",
+        "organi-3d/srce-stena*.png"
+      ]
+    },
+    {
       "id": "rodero-2021-povprecno-srce",
       "ime": "Povprečno srce 20 zdravih odraslih (povprečna oblika iz CT)",
       "avtor": "Cristobal Rodero, Marina Strocchi, Maciej Marciniak et al. (King's College London): »Linking statistical shape models and simulated function in the healthy adult human heart«, PLOS Computational Biology 17(4): e1008851, 2021",

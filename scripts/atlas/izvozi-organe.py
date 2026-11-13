@@ -142,7 +142,8 @@ ORGANI = {
         # Stene vseh votlin iz povprečnega CT srca (srce_ct.py, Rodero et al. 2021, CC BY 4.0): pravi obris in debeline
         # (LV ≈ 10 mm, pretin zvezno s steno LV, RV ≈ 4 mm), en zaprt volumen (rez v vsaki ravnini poln). Deli Z-Anatomy
         # (zaklopke, tetive, papilarne mišice, žile) so poravnani nanj; stene CT so že poenostavljene (»nedotakni«).
-        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)),  # krog 8: telefon 15k (pri 11k raztrgan levi preddvor v prerezu)
+        pozno=["srce_ct"], ct=dict(cilj=(78_000, 15_000)), hh229_cilj=(185_000, 40_000),  # m2: stena HH229 (trabekule, zaklopke, tetive v istem volumnu)
+         # krog 8: telefon 15k (pri 11k raztrgan levi preddvor v prerezu)
         nedotakni=r"\(CT\)|\(lastno, CT",  # n10: zaklopke, papilarne mišice, krni ven imajo svojo telefonsko mrežo
         # Stena prekatov odebeljena navznoter (srce_geometrija.odebeli_steno): vir LV ≈ 9,2 mm, RV ≈ 3,0 mm → ≈ 12 mm
         # in ≈ 3,8 mm (učbeniško LV 10–15 mm, RV 3–5 mm, razmerje ≈ 3×); zunanji obris in žile ostanejo.

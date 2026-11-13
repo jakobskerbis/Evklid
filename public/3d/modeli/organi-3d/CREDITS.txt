@@ -27,3 +27,15 @@ oko-foto.webp (fotografska tekstura šarenice in žilic beločnice; projicira jo
   (https://sketchfab.com/3d-models/realistic-human-eye-417cbd1aac554ea189966250b784ab6f) by Alexander Antipov
   (https://sketchfab.com/Dessen) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/).
   Prirejeno: difuzna tekstura pomanjšana na 1024 × 1024 (WebP).
+
+srce.glb, srce-telefon.glb, srce-stena.png, srce-stena-telefon.png (stena srca: pravo srce HH229 – prekata, preddvora,
+ušesi, trabekule, zaklopke s tetivami, papilarne mišice)
+  This work is based on "HH229" (https://sketchfab.com/3d-models/hh229-86edf8169e5f4ba6bfa798591266afa6) by
+  VisibleHeartLabs (https://sketchfab.com/VisibleHeartLabs) licensed under CC-BY-4.0
+  (http://creativecommons.org/licenses/by/4.0/).
+  This work is based on "HH229 Valves Vessels"
+  (https://sketchfab.com/3d-models/hh229-valves-vessels-df4a149755444023aeb63629b76fd546) by VisibleHeartLabs
+  (https://sketchfab.com/VisibleHeartLabs) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/).
+  Prirejeno: zvarjeno, zaprte luknje, z gladkim poljem odmikov poravnano na povprečno srce CT (Rodero et al. 2021),
+  poenostavljeno, razdeljeno na dele, krni žil zloženi v cevi žil Evklid, zapečene teksture; izdelava
+  scripts/atlas/srce-hh229.py, srce_hh229.py, izvozi-organe.py.

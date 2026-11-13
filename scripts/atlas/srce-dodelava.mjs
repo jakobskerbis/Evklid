@@ -572,7 +572,7 @@ export function tockaUV(uv, barva, nb, indeksi) {
   return naj;
 }
 
-export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [] } = {}) {
+export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [], epikardPravi = false } = {}) {
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
   const doc = await io.read(datoteka);
   const telefon = /-telefon\.glb$/.test(datoteka);
@@ -597,6 +597,9 @@ export async function dodelaj(datoteka, tkiva, { suho = false, stenaVozlisca = [
     ];
     for (const [ime, deli, pogoj, korakov, splosci] of skupine) {
       if (!deli.length || deli.every((n) => n.getExtras().zglajeno)) continue;
+      // epikardPravi (srce.json → prerez.volumen.epikardPravi): stena je pravo srce HH229 (srce_hh229.py); površina in
+      // ušesi so resnični, brez zgoščevanja, glajenja in sploščitve (ti so popravljali oglate stene iz CT)
+      if (epikardPravi && (!pogoj || deli.some((n) => /auricle/.test(n.getName())))) continue;
       const prims = deli.map((n) => n.getMesh().listPrimitives()[0]);
       const mreze = deli.map((n, i) => G.preberi(n, prims[i]));
       if (!pogoj) {
@@ -743,7 +746,7 @@ async function glavni() {
   for (const [f, kljuc] of [["srce.glb", "racunalnik"], ["srce-telefon.glb", "telefon"]]) {
     const d = path.join(MAPA, f);
     const b0 = fs.statSync(d).size;
-    const r = await dodelaj(d, j.tkiva, { suho, stenaVozlisca: j.prerez?.volumen?.stenaVozlisca || [] });
+    const r = await dodelaj(d, j.tkiva, { suho, stenaVozlisca: j.prerez?.volumen?.stenaVozlisca || [], epikardPravi: !!j.prerez?.volumen?.epikardPravi });
     console.log(`${f}: oglišč ${r.prej} → ${r.potem}, ${(b0 / 1048576).toFixed(2)} → ${(fs.statSync(d).size / 1048576).toFixed(2)} MiB${r.porocilo.length ? "" : " (brez sprememb)"}`);
     for (const v of r.porocilo) console.log(`   ${v}`);
     st[kljuc] = r.trikotnikov;
