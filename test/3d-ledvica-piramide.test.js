@@ -54,3 +54,24 @@ test("ledvica m2: zareza hilusa v ravnini reza, meh odprt v sečevod brez pregra
   assert.match(izvoz, /secevod_stik/);
   assert.match(izvoz, /stik meha in sečevoda: odstranjenih/);
 });
+
+test("ledvica m3: žilni debli prerezani v ravnini reza, ločne žile ob piramidah, ožji vratovi čaš, nadledvičnica s skorjo in sredico", () => {
+  const drevesa = fs.readFileSync(path.join(KOREN, "scripts/atlas/drevesa.py"), "utf8");
+  assert.match(drevesa, /nast\.get\("v_ravnini", True\)/);
+  assert.match(drevesa, /_zile_brez_odmika/);
+  const izvoz = fs.readFileSync(path.join(KOREN, "scripts/atlas/izvozi-organe.py"), "utf8");
+  assert.match(izvoz, /vrat_r=0\.0019/);
+  // debli se v prerezu režeta (prej brezReza: cela valja čez ploskev reza)
+  for (const t of ["arterija", "vena"]) assert.ok(!j.tkiva[t].brezReza, `${t} se reže`);
+  for (const t of ["skorja", "ovojnica"]) {
+    const l = j.tkiva[t].rezPiramide.locne;
+    assert.ok(l && l.odmik > 0 && l.razmik > 0 && l.sirina > 0 && l.sirina < 0.0004, `${t} ima ločne žile`);
+    assert.ok(/^#/.test(l.arterija) && /^#/.test(l.vena) && l.arterija !== l.vena);
+  }
+  const n = j.tkiva.nadledvicna;
+  assert.ok(n.rezPresek.polno === true && n.rezPresek.robBarva && n.rezPresek.robBarva !== n.rez, "rumena skorja, rjava sredica");
+  assert.ok(j.tkiva.ovojnica.lak === 0 && j.tkiva.ovojnica.hrap >= 0.7, "ovojnica ni lakirana");
+  const organ = fs.readFileSync(path.join(KOREN, "public/3d/organ.js"), "utf8");
+  assert.match(organ, /pir\.locne/);
+  assert.match(organ, /locne: null/); // učne barve: brez žilnih črt
+});

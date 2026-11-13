@@ -628,7 +628,23 @@ def ledvicne_zile(osnovni, cfg, tmp):
     nast = cfg.get("zile", {})
     rv, ra = nast.get("vena", 0.0039), nast.get("arterija", 0.0028)
     L = nast.get("dolzina", 0.036)
-    if nast.get("v_stebre", True):
+    if nast.get("v_ravnini", True):
+        # krog m3 (ocena: »žili sta cela valja čez rez, brez vej v sinus«): osi debel ležita V ravnini reza (prerez ju
+        # razpolovi po dolgem: stena in svetlina), arterija zgoraj, vena pod njo, obe vstopita skozi hilus v maščobo
+        # sinusa medialno od meha in se tam potopita za ravnino; medlobarne in ločne
+        # žile ob piramidah nariše senčilnik reza (rezPiramide.locne). Debli sta v ravnini tanjši (hilus je ozek).
+        yr = sum(p.y for p in pap) / len(pap) + cfg.get("meh_ravnina", 0.0004)
+        rv, ra = nast.get("vena_r", 0.0030), nast.get("arterija_r", 0.0022)
+        def Tp(a, f, c):  # medialno a, pred ravnino f (negativno: za ravnino), navzgor c
+            x = hc + m * a + gor * c; x.y = yr - f; return x
+        ca, cv = nast.get("arterija_c", 0.0050), nast.get("vena_c", -0.0020)
+        ea, ev = nast.get("arterija_a", -0.0005), nast.get("vena_a", 0.0045)
+        # deblo se v maščobi sinusa upogne za ravnino (odprt konec svetline v globino); ločenih cevi vej ni (v rezu so
+        # bile preplet obročev sten) – prerezane segmentne veje v maščobi nariše senčilnik (sinus.zile)
+        art = [("deblo", pot([Tp(L + 0.003, 0, ca + 0.0015), Tp(L * 0.55, 0, ca + 0.0008), Tp(0.012, 0, ca), Tp(ea + 0.004, 0, ca), Tp(ea, -0.0035, ca + 0.001)], ra, ra * 0.85))]
+        vena = [("deblo", pot([Tp(L, 0, cv - 0.0015), Tp(L * 0.55, 0, cv - 0.0008), Tp(0.013, 0, cv), Tp(ev + 0.004, 0, cv), Tp(ev, -0.004, cv - 0.001)], rv, rv * 0.85))]
+        cfg["_zile_brez_odmika"] = True
+    elif nast.get("v_stebre", True):
         # krog m1: žili v prerezu ostaneta celi (ledvica.json: brezReza) kot na učnem modelu: debli ležita pred ravnino
         # reza (vena spredaj, arterija za njo in više), v hilusu zavijeta nazaj in se potopita v maščobo ledvičnega
         # sinusa (konec za ravnino reza; veje v sinusu nariše senčilnik reza kot prerezane žile v maščobi). Prej je

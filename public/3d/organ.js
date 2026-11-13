@@ -769,6 +769,7 @@ function zarezaSinusa(sinus, tm, dm, dm2) {
 // osnovi 0–1), sinus { kapsule: [[a x, y, z, b x, y, z, r] …] (m), barva, pretini, zile, mera, zileMera } }: ledvične piramide kot stožci v prostoru
 // (rez v ravnini je njihov pravi presek) na ploskvi skorje; med njimi ostanejo ledvični stebri. sinus: maščoba ledvičnega
 // sinusa in hilusa (unija kapsul okoli daljic a–b) s prerezanimi vejami žil; del in osnovaDel: dela za učne barve. Brez teh nastavitev se pokrov ne spremeni.
+// locne { odmik, razmik, sirina (m), od (delež dolžine piramide), arterija, vena, moc }: medlobarne in ločne žile kot tanki črti ob obrisu piramid.
 // presek (pravi presek, rezPresek): { robBarva, luknjaBarva (barvi obrobe in zapolnjenih lukenj; atribut orgVr), slika:
 // { uniform, c0, lo, mera, U, V } (naslikana rezna ploskev, tkivo.rezSlika: RGB barva, A moč) }.
 function materialPokrova(t, ravnine, merilo = 1, vol = null, izh = [0, 0, 0], presek = null) {
@@ -1042,6 +1043,18 @@ ${zarezaSinusa(pir.sinus, tm, dm, dm2)}
     : ""
 }
  diffuseColor.rgb = mix( diffuseColor.rgb, pC, pM );
+${
+  pir.locne
+    ? ` { // medlobarne in ločne žile (krog m3): tanki črti ob obrisu piramide (arterija bliže, vena dlje), ne ob vrhu v čaši
+   float lE = max( length( fwidth( orgQ ) ), 1e-6 ); float lT = smoothstep( ${fl(pir.locne.od ?? 0.32)}, ${fl((pir.locne.od ?? 0.32) + 0.12)}, pT );
+   float lP = 0.75 + 0.25 * orgSum( orgQ * ${dm2(900)} ); // rahlo neenakomerna debelina
+   float lA = ( 1.0 - smoothstep( ${dm((pir.locne.sirina ?? 0.00016))} * lP - lE, ${dm((pir.locne.sirina ?? 0.00016))} * lP + lE, abs( pD - ${dm(pir.locne.odmik ?? 0.00045)} ) ) ) * lT;
+   float lV = ( 1.0 - smoothstep( ${dm((pir.locne.sirina ?? 0.00016) * 1.25)} * lP - lE, ${dm((pir.locne.sirina ?? 0.00016) * 1.25)} * lP + lE, abs( pD - ${dm((pir.locne.odmik ?? 0.00045) + (pir.locne.razmik ?? 0.00042))} ) ) ) * lT;
+   diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(pir.locne.vena || "#4a4f9a")}, lV * ${fl(pir.locne.moc ?? 0.8)} );
+   diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(pir.locne.arterija || "#b0302a")}, lA * ${fl(pir.locne.moc ?? 0.8)} );
+ }`
+    : ""
+}
  orgH = mix( orgH, mix( 0.5, pS, ${fl(pir.visina ?? 0.35)} ), pM );
  ${
    pir.zile
@@ -1672,7 +1685,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
         const cp = hex(ucnaBarva(poId.get(tk.rezPiramide.del) || poId.get(id), poId));
         const cs = tk.rezPiramide.sinus ? hex(ucnaBarva(poId.get(tk.rezPiramide.sinus.del) || poId.get(id), poId)) : null;
         presek = materialPokrova(
-          { rez: tk.rezPiramide.osnovaDel ? hex(ucnaBarva(poId.get(tk.rezPiramide.osnovaDel) || poId.get(id), poId)) : hex(c), rezSum: 0, rezHrap: 1, rezLak: 0, rezRelief: 0, rezPiramide: { ...tk.rezPiramide, barva: cp, notranja: cp, proge: cp, moc: 0, zile: 0, visina: 0, sinus: cs ? { ...tk.rezPiramide.sinus, barva: cs, pretini: cs, zile: 0 } : null } },
+          { rez: tk.rezPiramide.osnovaDel ? hex(ucnaBarva(poId.get(tk.rezPiramide.osnovaDel) || poId.get(id), poId)) : hex(c), rezSum: 0, rezHrap: 1, rezLak: 0, rezRelief: 0, rezPiramide: { ...tk.rezPiramide, barva: cp, notranja: cp, proge: cp, moc: 0, zile: 0, visina: 0, locne: null, sinus: cs ? { ...tk.rezPiramide.sinus, barva: cs, pretini: cs, zile: 0 } : null } },
           ravnine, s, null, prostor.sredisce,
         );
         presek.clippingPlanes = [];

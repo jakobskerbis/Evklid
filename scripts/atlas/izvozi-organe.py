@@ -395,7 +395,7 @@ ORGANI = {
         # drevesa.ledvicne_zile: ledvična vena in arterija na novo (lastno) do hilusa in v sinus; svoja telefonska mreža
         dodaj=["ledvicni_meh", "ledvicne_zile"], nedotakni=r"Renal (vein|artery) \(lastno\)",
         sredisce_brez=r"^Ureter",
-        meh_merilo=1.5, meh_jedro=0.0046,
+        meh_merilo=1.5, meh_jedro=0.0046, vrat_r=0.0019,  # m3: ožji vratovi malih čaš (čaša kot skodelica, ne enakomerna »makaronska« cev)
         # osi čaš = osi naslikanih piramid (ledvica.json rezPiramide.seznam, GLB x, y), po črki papile HRA
         case=[("a", (-0.0008, -0.0014), (-0.5, 0.87)), ("b", (0.0016, 0.0007), (0.5, 0.87)), ("c", (0.0023, -0.0043), (0.92, 0.38)),
               ("e", (0.0003, -0.0030), (1.0, -0.05)), ("g", (0.0005, 0.0043), (0.92, -0.38)), ("h", (0.0017, -0.0019), (0.45, -0.89)),

@@ -3,10 +3,10 @@
  "vir": "HuBMAP Human Reference Atlas (CC BY 4.0; ovojnica, skorja, piramide, papile, ledvični sinus) in Z-Anatomy (CC BY-SA 4.0; sečevod, nadledvična žleza); ledvični meh s čašicami ter ledvična vena in arterija so lastna geometrija Evklid (scripts/atlas/drevesa.py); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "ovojnica": {
-   "hrap": 0.64,
-   "lak": 0.06,
+   "hrap": 0.8,
+   "lak": 0,
    "lakHrap": 0.48,
-   "sijaj": 0.05,
+   "sijaj": 0.03,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
@@ -15,7 +15,7 @@
    "rob": 0.2,
    "robBarva": "#ff8070",
    "relief": 0.25,
-   "lise": 0.18,
+   "lise": 0.3,
    "liseBarva": "#c06050",
    "rez": "#b8634a",
    "senca": 0.3,
@@ -63,7 +63,7 @@
     "osnovaDel": "skorja",
     "seznam": [
      [
-      0.00377,
+      0.00329,
       0.01372,
       0.00084,
       -0.4983,
@@ -74,7 +74,7 @@
       0.0027
      ],
      [
-      0.00999,
+      0.00951,
       0.01646,
       0.00084,
       0.4983,
@@ -85,7 +85,7 @@
       0.0027
      ],
      [
-      0.0136,
+      0.01312,
       0.00926,
       0.00084,
       0.9243,
@@ -96,7 +96,7 @@
       0.0027
      ],
      [
-      0.01664,
+      0.01616,
       -0.00436,
       0.00084,
       0.9988,
@@ -107,7 +107,7 @@
       0.0027
      ],
      [
-      0.01295,
+      0.01247,
       -0.01602,
       0.00084,
       0.9243,
@@ -118,7 +118,7 @@
       0.0027
      ],
      [
-      0.01263,
+      0.01215,
       -0.02368,
       0.00084,
       0.4512,
@@ -129,7 +129,7 @@
       0.0027
      ],
      [
-      0.00659,
+      0.00611,
       -0.02863,
       0.00084,
       -0.3987,
@@ -140,16 +140,16 @@
       0.0027
      ]
     ],
-    "barva": "#8a2c2a",
-    "notranja": "#e6b9a4",
-    "proge": "#cf8a76",
-    "gostota": 46,
-    "moc": 0.55,
+    "barva": "#7e2624",
+    "notranja": "#d49a86",
+    "proge": "#d9937e",
+    "gostota": 58,
+    "moc": 0.8,
     "zile": 0.3,
     "zileBarva": "#6e2420",
     "val": 0.0008,
     "visina": 0.3,
-    "mehko": 0.0003,
+    "mehko": 0.00012,
     "zaobljeno": 0.0035,
     "sinus": {
      "del": "ovojnica",
@@ -189,8 +189,17 @@
       0.0014
      ]
     },
-    "notranjaR0": 0.14,
-    "notranjaR1": 0.55
+    "notranjaR0": 0.1,
+    "notranjaR1": 0.42,
+    "locne": {
+     "odmik": 0.00045,
+     "razmik": 0.00045,
+     "sirina": 0.00017,
+     "od": 0.34,
+     "arterija": "#b0302a",
+     "vena": "#4a4f9a",
+     "moc": 0.85
+    }
    },
    "celice": [
     {
@@ -251,7 +260,7 @@
     "osnovaDel": "skorja",
     "seznam": [
      [
-      0.00377,
+      0.00329,
       0.01372,
       0.00084,
       -0.4983,
@@ -262,7 +271,7 @@
       0.0027
      ],
      [
-      0.00999,
+      0.00951,
       0.01646,
       0.00084,
       0.4983,
@@ -273,7 +282,7 @@
       0.0027
      ],
      [
-      0.0136,
+      0.01312,
       0.00926,
       0.00084,
       0.9243,
@@ -284,7 +293,7 @@
       0.0027
      ],
      [
-      0.01664,
+      0.01616,
       -0.00436,
       0.00084,
       0.9988,
@@ -295,7 +304,7 @@
       0.0027
      ],
      [
-      0.01295,
+      0.01247,
       -0.01602,
       0.00084,
       0.9243,
@@ -306,7 +315,7 @@
       0.0027
      ],
      [
-      0.01263,
+      0.01215,
       -0.02368,
       0.00084,
       0.4512,
@@ -317,7 +326,7 @@
       0.0027
      ],
      [
-      0.00659,
+      0.00611,
       -0.02863,
       0.00084,
       -0.3987,
@@ -328,19 +337,28 @@
       0.0027
      ]
     ],
-    "barva": "#8a2c2a",
-    "notranja": "#e6b9a4",
-    "proge": "#cf8a76",
-    "gostota": 46,
-    "moc": 0.55,
+    "barva": "#7e2624",
+    "notranja": "#d49a86",
+    "proge": "#d9937e",
+    "gostota": 58,
+    "moc": 0.8,
     "zile": 0.3,
     "zileBarva": "#6e2420",
     "val": 0.0008,
     "visina": 0.3,
-    "mehko": 0.0003,
+    "mehko": 0.00012,
     "zaobljeno": 0.0035,
-    "notranjaR0": 0.14,
-    "notranjaR1": 0.55
+    "notranjaR0": 0.1,
+    "notranjaR1": 0.42,
+    "locne": {
+     "odmik": 0.00045,
+     "razmik": 0.00045,
+     "sirina": 0.00017,
+     "od": 0.34,
+     "arterija": "#b0302a",
+     "vena": "#4a4f9a",
+     "moc": 0.85
+    }
    }
   },
   "piramida": {
@@ -386,14 +404,14 @@
    "mapa": false,
    "detajl": true,
    "rezVotlina": {
-    "barva": "#e3ccb2",
-    "senca": "#c79f88",
+    "barva": "#d2b79c",
+    "senca": "#a8826c",
     "globina": 0.006
    },
    "rezPresek": {
     "vrsta": 3,
     "samoRob": true,
-    "rob": 0.0005,
+    "rob": 0.00038,
     "robBarva": "#f0e2cf"
    }
   },
@@ -422,8 +440,7 @@
     "rob": 0.0003,
     "robBarva": "#e58477",
     "stena": 0.0018
-   },
-   "brezReza": true
+   }
   },
   "vena": {
    "hrap": 0.5,
@@ -450,8 +467,7 @@
     "rob": 0.0002,
     "robBarva": "#93a3dd",
     "stena": 0.0018
-   },
-   "brezReza": true
+   }
   },
   "nadledvicna": {
    "hrap": 0.34,
@@ -462,7 +478,7 @@
    "zrno": 0.06,
    "f": 110,
    "barva": "#c9a468",
-   "rez": "#d2ad6c",
+   "rez": "#6e3d2c",
    "sijajBarva": "#ffe0a0",
    "lise": 0.15,
    "liseBarva": "#dcc08a",
@@ -471,8 +487,8 @@
    "rezPresek": {
     "vrsta": -2,
     "polno": true,
-    "rob": 0.0004,
-    "robBarva": "#a8701f"
+    "rob": 0.0011,
+    "robBarva": "#d8ad3e"
    }
   },
   "meh": {
@@ -491,9 +507,9 @@
    "mapa": false,
    "detajl": true,
    "rezVotlina": {
-    "barva": "#e3ccb2",
-    "senca": "#c79f88",
-    "sencaMoc": 0.5,
+    "barva": "#d2b79c",
+    "senca": "#a8826c",
+    "sencaMoc": 0.7,
     "globina": 0.007,
     "hrap": 0.9,
     "lak": 0,
@@ -502,7 +518,7 @@
    "rezPresek": {
     "vrsta": 3,
     "samoRob": true,
-    "rob": 0.0006,
+    "rob": 0.00038,
     "robBarva": "#f0e2cf",
     "skleni": 0.006,
     "skleniBrezRoba": true
@@ -716,7 +732,7 @@
    }
   ]
  },
- "velikost": 0.1341,
+ "velikost": 0.1335,
  "trikotniki": {
   "racunalnik": 159977,
   "telefon": 40319
