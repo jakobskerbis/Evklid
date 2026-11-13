@@ -389,3 +389,224 @@ def kite_na_zrklo(objekti, cfg):
         rn = r + w * (np.where(ok, rs, r) + odmik - r)
         me.vertices.foreach_set("co", (G + u * rn[:, None]).ravel()); me.update()
         print(f"[oko] {o.name}: kita na podlago, {int((w > 0.5).sum())} oglišč (zgornjih {int(((w > 0.5) & (gor > 0.99)).sum())})")
+
+
+# ---------- Krog m1: lastna geometrija očesnih mišic ----------
+# Ocena k6: »ragged torn fringes, white flaps at insertions, flat red without fibre texture«. Mreže Z-Anatomy (BodyParts3D)
+# so tanke nagubane lupine, ki se po prileganju na zrklo HRA in poenostavitvi trgajo ob robovih. Zato šest mišic zgradimo
+# na novo kot čiste zaprte trakove (leča v prerezu) po anatomski poti: izvor (skupni kitni obroč oziroma dno očnice) →
+# ravno do dotikališča z zrklom → lok po beločnici do narastišča (Tillauxova spirala). Iz mrež Z-Anatomy vzamemo samo
+# lego: poldnevnik vsake preme mišice, središče kitnega obroča, škripec, izvor spodnje poševne. Spodnja ploskev traku na
+# zrklu sledi beločnici (žarek), rob je 0,12 mm pod njeno površino (čista presečnica, brez resic), kita se proti
+# narastišču stanjša v pero. Atributa oglišč: KITA (bela kita v peki) in OSI (vlakna vzdolž mišice: recept »vzdolz«).
+LASTNE = {
+    #                       širina trebuha, debelina trebuha (m)
+    "Medial rectus": (0.0100, 0.0036), "Lateral rectus": (0.0092, 0.0030), "Superior rectus": (0.0100, 0.0030), "Inferior rectus": (0.0096, 0.0032),
+}
+ROB_POD = 0.00012
+
+
+def _gl(x, a, b):
+    t = np.clip((np.asarray(x, dtype=float) - a) / (b - a), 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def _pot(tocke, korak=0.0004):
+    """Lomljenka → gosta gladka pot (Chaikin 3×, nato enakomerno po dolžini)."""
+    P = np.asarray(tocke, dtype=float)
+    for _ in range(3):
+        Q = [P[0]]
+        for i in range(len(P) - 1):
+            Q += [0.75 * P[i] + 0.25 * P[i + 1], 0.25 * P[i] + 0.75 * P[i + 1]]
+        Q.append(P[-1]); P = np.array(Q)
+    d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(P, axis=0), axis=1))]
+    s = np.arange(0, d[-1], korak)
+    return np.stack([np.interp(s, d, P[:, c]) for c in range(3)], 1)
+
+
+def _trak(C, N0, sir, deb, prileg, kita, zrklo, G, R0, ns, nv, kriv=0.0):
+    """Zaprt trak vzdolž poti C (od narastišča). sir/deb/prileg/kita: funkcije dolžine s (m). N0: normala na začetku
+    (od zrkla). Vrne (oglišča, ploskve, KITA, OSI)."""
+    d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(C, axis=0), axis=1))]
+    L = d[-1]
+    # okvirji z vzporednim prenosom od narastišča
+    T = np.gradient(C, axis=0); T /= np.linalg.norm(T, axis=1)[:, None]
+    Nn = np.empty_like(C); n = N0 - T[0] * (N0 @ T[0]); Nn[0] = n / np.linalg.norm(n)
+    for i in range(1, len(C)):
+        n = Nn[i - 1] - T[i] * (Nn[i - 1] @ T[i]); Nn[i] = n / np.linalg.norm(n)
+    def pri(s):
+        s = np.clip(s, 0, L)
+        return (np.stack([np.interp(s, d, C[:, c]) for c in range(3)], -1), np.stack([np.interp(s, d, T[:, c]) for c in range(3)], -1),
+                np.stack([np.interp(s, d, Nn[:, c]) for c in range(3)], -1))
+    # vrstice: gosteje ob narastišču (pero kite)
+    u = np.linspace(0, 1, ns); S = L * (0.35 * u + 0.65 * u * u)
+    V, Kt, Os = [], [], []
+    idx_sp, idx_zg = [], []
+    for i, s in enumerate(S):
+        vr_sp, vr_zg = [], []
+        for j in range(nv + 1):
+            x = 2 * j / nv - 1  # −1 … 1 čez širino
+            w = float(sir(s)); t = float(deb(s))
+            se = s + kriv * x * x * (1 - _gl(s, 0, 0.006))  # ukrivljena črta narastišča (robova bolj zadaj)
+            w = float(sir(se)); t = float(deb(se)); k = float(prileg(se))
+            c, tt, nn = pri(se); b = np.cross(tt, nn); b /= np.linalg.norm(b); nn = np.cross(b, tt)
+            v = x * w / 2; prof = math.sqrt(max(0.0, 1 - x * x))
+            sp = c + b * v - nn * (t / 2) * prof; zg = c + b * v + nn * (t / 2) * prof
+            if k > 0:
+                dd = c + b * v - G; dd /= np.linalg.norm(dd)
+                rs = _zunanji_polmer(zrklo, G, dd[None])[0]
+                rs = R0 if not np.isfinite(rs) else rs
+                sp_c = G + dd * (rs - ROB_POD); zg_c = sp_c + dd * (t * prof)
+                sp = k * sp_c + (1 - k) * sp; zg = k * zg_c + (1 - k) * zg
+            kt = float(kita(se))
+            os_ = (s, math.cos(math.pi * x), math.sin(math.pi * x), w / (2 * math.pi))
+            vr_sp.append(len(V)); V.append(sp); Kt.append(kt); Os.append(os_)
+            if 0 < j < nv:
+                vr_zg.append(len(V)); V.append(zg); Kt.append(kt); Os.append(os_)
+        idx_sp.append(vr_sp); idx_zg.append([vr_sp[0]] + vr_zg + [vr_sp[-1]])
+    F = []
+    for i in range(ns - 1):
+        for j in range(nv):
+            F.append((idx_sp[i][j], idx_sp[i + 1][j], idx_sp[i + 1][j + 1], idx_sp[i][j + 1]))
+            F.append((idx_zg[i][j], idx_zg[i][j + 1], idx_zg[i + 1][j + 1], idx_zg[i + 1][j]))
+    for i in (0, ns - 1):  # konca: trak ploskev med spodnjo in zgornjo vrstico
+        for j in range(nv):
+            q = (idx_sp[i][j], idx_sp[i][j + 1], idx_zg[i][j + 1], idx_zg[i][j])
+            q = tuple(dict.fromkeys(q))
+            if len(q) >= 3:
+                F.append(q)
+    return np.array(V), F, np.array(Kt), np.array(Os)
+
+
+def _mreza_traku(ime, V, F, Kt, Os):
+    import bpy
+    me = bpy.data.meshes.new(ime)
+    me.from_pydata([tuple(v) for v in V], [], F); me.update()
+    bm = bmesh.new(); bm.from_mesh(me); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(me); bm.free()
+    for p in me.polygons:
+        p.use_smooth = True
+    _pisi_kito(me, Kt)
+    at = me.color_attributes.new("OSI", "FLOAT_COLOR", "POINT")
+    at.data.foreach_set("color", np.asarray(Os, dtype=np.float32).ravel())
+    return me
+
+
+def ocesne_misice_lastne(osnovni, cfg, tmp):
+    def najdi(rx):
+        return [r for r in osnovni if re.search(rx, r[0])]
+    bel = najdi(r"(?i)^sclera"); roz = najdi(r"(?i)^cornea")
+    if not bel or not roz:
+        return []
+    S = _tocke(bel[0][1]); Cc = _tocke(roz[0][1])
+    G = (S.min(0) + S.max(0)) / 2
+    a = Cc.mean(0) - G; a /= np.linalg.norm(a)
+    zrklo = _bvh([bel[0][1], roz[0][1]])
+    dS = np.linalg.norm(S - G, axis=1); cosS = ((S - G) @ a) / dS
+    R0 = float(np.percentile(dS, 90))
+    th_l = float(np.arccos(np.percentile(cosS[dS > np.percentile(dS, 50)], 99.8)))
+    obroc = najdi(r"^Common tendinous ring")
+    Rg = _tocke(obroc[0][1]).mean(0) if obroc else G - a * 0.03
+    # poldnevniki premih mišic iz Z-Anatomy (točke ob zrklu, pravokotno na os)
+    e = {}
+    for kl in LASTNE:
+        r = najdi("^" + kl + " muscle")
+        if not r:
+            continue
+        P = _tocke(r[0][1]); bl = P[np.linalg.norm(P - G, axis=1) < R0 + 0.004]
+        v = (bl if len(bl) > 20 else P).mean(0) - G; v -= a * (v @ a); e[kl] = v / np.linalg.norm(v)
+    gor = e["Superior rectus"] - e["Inferior rectus"]; gor /= np.linalg.norm(gor)
+    med = e["Medial rectus"] - e["Lateral rectus"]; med -= gor * (med @ gor); med /= np.linalg.norm(med)
+    e = {"Superior rectus": gor, "Inferior rectus": -gor, "Medial rectus": med, "Lateral rectus": -med}
+    tel = cfg.setdefault("_telefon", {})
+    poti = {}
+
+    def lok(I, O, dvig=lambda u: 0.0, deb0=0.0004):
+        """Pot od narastišča (smer I) po velikem krogu do dotikališča in ravno do izvora O."""
+        x = (O - G) / np.linalg.norm(O - G); y = I - x * (I @ x); y /= np.linalg.norm(y)
+        aI = math.acos(np.clip(I @ x, -1, 1))
+        P = []
+        kot = aI; n = 0
+        while True:
+            dd = math.cos(kot) * x + math.sin(kot) * y
+            rs = _zunanji_polmer(zrklo, G, dd[None])[0]; rs = R0 if not np.isfinite(rs) else rs
+            u = (aI - kot) / max(aI, 1e-6)
+            r = rs + deb0 / 2 + dvig(u)
+            p = G + dd * r; P.append(p); n += 1
+            # dotikališče: premica do O je tangentna (kot med smerjo poti in smerjo do O majhen)
+            if kot <= math.acos(np.clip(r / np.linalg.norm(O - G), -1, 1)) or kot < 0.02:
+                break
+            kot -= 0.0004 / r
+        s_lok = n * 0.0004
+        ravno = np.linalg.norm(O - P[-1])
+        for i in range(1, int(ravno / 0.0004) + 1):
+            P.append(P[-1] + (O - P[-1]) / np.linalg.norm(O - P[-1]) * 0.0004)
+        return np.array(P), s_lok
+
+    def izdelaj(ime_rx, C, N0, sir, deb, prileg, kita, kriv):
+        vr = najdi(ime_rx)
+        if not vr:
+            return
+        row = vr[0]
+        for t_ in (False, True):
+            V, F, Kt, Os = _trak(C, N0, sir, deb, prileg, kita, zrklo, G, R0, 34 if t_ else 76, 8 if t_ else 22, kriv)
+            me = _mreza_traku(row[0] + (" t" if t_ else ""), V, F, Kt, Os)
+            if t_:
+                tel[row[0]] = me
+            else:
+                row[1] = me
+        print(f"[oko] lastna mišica {row[0]}: dolžina {np.linalg.norm(np.diff(C, axis=0), axis=1).sum() * 1000:.0f} mm, {len(row[1].polygons) * 2} trikotnikov")
+
+    # preme mišice
+    for kl, (wb, tb) in LASTNE.items():
+        th_i = th_l + NARASTISCE[kl.split()[0]] / R0
+        I = math.cos(th_i) * a + math.sin(th_i) * e[kl]
+        O = Rg + e[kl] * 0.0028
+        C, s_lok = lok(I, O)
+        L = np.linalg.norm(np.diff(C, axis=0), axis=1).sum()
+        kd = KITA_DOLZINA[kl.split()[0]]; wi = SIRINA[kl.split()[0]]
+        sir = lambda s, wi=wi, wb=wb, L=L: (wi + (wb - wi) * _gl(s, 0.004, 0.014) - (wb - 0.0042) * _gl(s, L - 0.016, L)) * (0.8 + 0.2 * _gl(s, 0, 0.002))
+        deb = lambda s, kd=kd, tb=tb, L=L: 0.00004 + 0.0003 * _gl(s, 0, 0.003) + (tb - 0.00034) * _gl(s, kd, kd + 0.017) - (tb - 0.0017) * _gl(s, L - 0.02, L)
+        pri_ = lambda s, s_lok=s_lok: 1 - _gl(s, s_lok - 0.001, s_lok + 0.006)
+        kit = lambda s, kd=kd, L=L: max(1 - _gl(s, kd - 0.0012, kd + 0.0012), _gl(s, L - 0.004, L - 0.0015))
+        poti[kl] = (C, deb)
+        izdelaj("^" + kl + " muscle", C, I, sir, deb, pri_, kit, 0.0016)
+
+    # zgornja poševna: trebuh od kitnega obroča do škripca (zgoraj medialno), kita skozi škripec nazaj in lateralno pod
+    # zgornjo premo do narastišča za ekvatorjem
+    skripec = najdi(r"^Trochlea")
+    if skripec and najdi(r"^Superior oblique muscle"):
+        Tt = _tocke(skripec[0][1]).mean(0)
+        th = math.radians(101); az = math.radians(22)
+        I = math.cos(th) * a + math.sin(th) * (math.cos(az) * gor - math.sin(az) * med)
+        C1, s_lok = lok(I, Tt, deb0=0.0003)
+        O = Rg + (gor + med) / np.linalg.norm(gor + med) * 0.0034 + a * 0.001
+        # ovinek skozi škripec: gladko iz kite v trebuh
+        rep = _pot([C1[-8], Tt + (Tt - C1[-8]) / np.linalg.norm(Tt - C1[-8]) * 0.0006, Tt + (O - Tt) / np.linalg.norm(O - Tt) * 0.003, O])
+        C = np.vstack([C1[:-8], rep])
+        dC = np.r_[0, np.cumsum(np.linalg.norm(np.diff(C, axis=0), axis=1))]; L = dC[-1]
+        sT = dC[len(C1) - 8] + 0.0012  # dolžina do škripca
+        sir = lambda s, sT=sT, L=L: 0.0095 - (0.0095 - 0.0019) * _gl(s, 0.003, min(0.016, sT - 0.003)) + (0.0056 - 0.0019) * _gl(s, sT + SO_KITA_PRED * 0.6, sT + 0.02) - (0.0056 - 0.003) * _gl(s, L - 0.012, L)
+        deb = lambda s, sT=sT, L=L: 0.00006 + 0.00028 * _gl(s, 0, 0.002) + (0.0015 - 0.00034) * _gl(s, 0.006, min(0.016, sT - 0.003)) + (0.0034 - 0.0015) * _gl(s, sT + SO_KITA_PRED * 0.6, sT + 0.02) - (0.0034 - 0.0016) * _gl(s, L - 0.012, L)
+        pri_ = lambda s, s_lok=s_lok: 1 - _gl(s, s_lok - 0.001, s_lok + 0.004)
+        kit = lambda s, sT=sT, L=L: max(1 - _gl(s, sT + SO_KITA_PRED - 0.002, sT + SO_KITA_PRED + 0.002), _gl(s, L - 0.004, L - 0.0015))
+        izdelaj(r"^Superior oblique muscle", C, I, sir, deb, pri_, kit, 0.0012)
+
+    # spodnja poševna: od dna očnice spredaj medialno pod spodnjo premo (dvignjena za njeno debelino) lateralno in nazaj
+    io = najdi(r"^Inferior oblique muscle")
+    if io:
+        P = _tocke(io[0][1]); m_ = (P - G) @ med
+        O = P[m_ >= np.percentile(m_, 95)].mean(0)
+        # izvor Z-Anatomy je ob zrklu HRA predaleč (trak je visel ≈ 2 cm pred zrklo): največ 6,5 mm od površine zrkla
+        dO = np.linalg.norm(O - G)
+        O = G + (O - G) / dO * min(dO, R0 + 0.0065)
+        th = math.radians(113); az = math.radians(14)
+        I = math.cos(th) * a + math.sin(th) * (-math.cos(az) * med - math.sin(az) * gor)
+        dvig = lambda u: 0.0027 * float(_gl(u, 0.22, 0.5))
+        C, s_lok = lok(I, O, dvig=dvig, deb0=0.0004)
+        L = np.linalg.norm(np.diff(C, axis=0), axis=1).sum()
+        sir = lambda s, L=L: (0.0088 - 0.0016 * _gl(s, 0.004, 0.012) - 0.0034 * _gl(s, L - 0.012, L)) * (0.8 + 0.2 * _gl(s, 0, 0.002))
+        deb = lambda s, L=L: 0.00006 + 0.0004 * _gl(s, 0, 0.002) + 0.0017 * _gl(s, 0.002, 0.012) - 0.0006 * _gl(s, L - 0.008, L)
+        pri_ = lambda s, s_lok=s_lok: 1 - _gl(s, 0.2 * s_lok, 0.42 * s_lok)
+        kit = lambda s, L=L: max(1 - _gl(s, 0.001, 0.003), _gl(s, L - 0.003, L - 0.001))
+        izdelaj(r"^Inferior oblique muscle", C, I, sir, deb, pri_, kit, 0.0012)
+    return []

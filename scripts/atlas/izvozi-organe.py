@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
 from srce_geometrija import srce_dodatki, srce_razdeli  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s steno iz središčnic krivulj Z-Anatomy
-from oko_misice import ocesne_misice, kite_na_zrklo  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
+from oko_misice import ocesne_misice, kite_na_zrklo, ocesne_misice_lastne  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
 from jetra_geometrija import jetra_deli, uveljavi_normale  # jetra: ena površina, režnji, vezi, votla vena, drevesa žil in žolčnih vodov
 from drevesa import pljucna_drevesa, ledvicne_zile  # pljuča: zaprti režnji, veje iz središčnic, subsegmentne veje (lastno)
 from srce_ct import srce_ct  # stene srca iz CT (Rodero 2021), poravnava ostalih delov nanje, maščoba, trabekule
@@ -266,7 +266,7 @@ ORGANI = {
                 # siva tanjša sprednja stena, rumenkasto zadaj), drobne svetlo rdeče episkleralne žilice
                 "beločnica": dict(barva=(0.86, 0.81, 0.74), barva2=(0.80, 0.72, 0.66), lise=0.35, liseMera=0.04, hrap=0.34,
                                   gube=0.00002, gubeMera=0.002, zilice=0.22, ziliceBarva=(0.72, 0.28, 0.24), ziliceMera=0.03, razdeli=1),
-                "mišica": dict(barva=(0.38, 0.09, 0.07), barva2=(0.29, 0.07, 0.05), lise=0.35, hrap=0.42, vlakna=0.00025, vlaknaMera=0.002, razdeli=1,
+                "mišica": dict(barva=(0.40, 0.10, 0.08), barva2=(0.27, 0.06, 0.05), lise=0.3, hrap=0.44, vlakna=0.0, vzdolz=0.00007, vzdolzRazmik=0.00055, gube=0.00002, razdeli=1,
                                kita=(0.88, 0.84, 0.78), kitaHrap=0.30),  # krog 9: kita v tonu beločnice (zlije se z njo)  # kite ob narastiščih (atribut KITA iz oko_misice.py)
                 "kita": dict(barva=(0.86, 0.82, 0.75), barva2=(0.78, 0.73, 0.66), lise=0.2, hrap=0.30, vlakna=0.00008, vlaknaMera=0.0015, razdeli=1),
                 "živec": dict(barva=(0.80, 0.72, 0.58), barva2=(0.72, 0.64, 0.50), lise=0.25, hrap=0.36, vlakna=0.00006, vlaknaMera=0.0015,
@@ -279,8 +279,9 @@ ORGANI = {
         ),
         gladi=r".",
         # mišice na zrklo HRA: narastišča premih mišic 5,5–7,7 mm za limbusom, kite, nič pod beločnico (oko_misice.py)
-        dodaj=["ocesne_misice"], po_poenostavitvi=["kite_na_zrklo"],  # kite po poenostavitvi znova na zrklo (krog 10)
-        ohrani=r"muscle", ohraniFaktor=(2.2, 6.0),  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
+        # krog m1: mišice so lastna geometrija (ocesne_misice_lastne: čisti trakovi po anatomski poti, svoja telefonska
+        # mreža, brez poenostavitve); ocesne_misice ostane za šarenico in škripec, kite_na_zrklo ni več potreben
+        dodaj=["ocesne_misice", "ocesne_misice_lastne"], nedotakni=r"(rectus|oblique) muscle",  # telefon: mišice ≈ 10k trikotnikov (pri 1,8 je bil rob narastišč nazobčan)
         # Krivulja vidnega živca se v Z-Anatomy začne pri leči: del znotraj zrkla odstranimo (sicer štrli v prerezu).
         znotraj=[(r"^Optic nerve", r"(?i)^sclera", 0.97)],
         krivulja=(6, 4),
