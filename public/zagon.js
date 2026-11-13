@@ -4,6 +4,8 @@
 // (WebKit 242740): ko več modulov hkrati uvaža modul s top-level await, nekateri stečejo prezgodaj ali
 // sploh ne. V slovenščini ni bilo kaj čakati, v drugih jezikih pa se je aplikacija ustavila na pol
 // (prevedena besedila brez ikon, seznamov in vsebine). Zato čaka samo ta modul, ki ga nihče ne uvaža.
+import "./dotik.js"; // pridržana povezava: brez oblačka in menija (public/dotik.js)
+
 const tag = document.querySelector("script[data-moduli]");
 const mods = (tag?.dataset.moduli || "").split(/\s+/).filter(Boolean).map((m) => new URL(m, document.baseURI).href);
 // Najprej prenos modulov strani (brez izvajanja), hkrati s prevodi: brez čakanja v vrsti.
