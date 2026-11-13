@@ -186,7 +186,27 @@ function expr(s) {
       i = j;
       continue;
     }
-    if ((m = /^\\(?:mathrm|text|textrm|mathit|operatorname|mathbf|boldsymbol|vec|overline|bar)/.exec(rest))) {
+    if ((m = /^\\(?:overline|bar)(?![a-zA-Z])/.exec(rest))) {
+      // \bar z je konjugirano kompleksno število; drugače (povprečje x, daljica AB) preberemo črto nad znakom.
+      const [a, j] = group(s, i + m[0].length);
+      const complex = /[zw]/.test(a) && /^[zw\d\s_{}+\-]*(?:\\cdot[zw\d\s_{}+\-]*)*$/.test(a);
+      push(/^\s*[zw](?:_\{?\w+\}?)?\s*$/.test(a) ? `konjugirano ${expr(a)}` : complex ? `konjugirana vrednost ${expr(a)}` : `${expr(a)} s črto`);
+      i = j;
+      lastNumber = null;
+      continue;
+    }
+    // Re z, Im z: realni in imaginarni del. \mathrm{Re} brez spremenljivke za njim (Re = …) je v fiziki Reynoldsovo število.
+    if (
+      (m = /^\\operatorname\s*\{?\s*(Re|Im)\s*\}?(?![a-zA-Z])(?:\s*\\[,;:!])?/.exec(rest)) ||
+      (m = /^\\mathrm\s*\{\s*(Im)\s*\}(?:\s*\\[,;:!])?/.exec(rest)) ||
+      (m = /^\\mathrm\s*\{\s*(Re)\s*\}(?:\s*\\[,;:!])?(?=\s*(?:[a-zA-Z(]|\\(?!(?:approx|le|ge|leq|geq|ne|neq|lt|gt|sim)(?![a-zA-Z]))[a-zA-Z]))/.exec(rest))
+    ) {
+      push(m[1] === "Re" ? "realni del" : "imaginarni del");
+      i += m[0].length;
+      lastNumber = null;
+      continue;
+    }
+    if ((m = /^\\(?:mathrm|text|textrm|mathit|operatorname|mathbf|boldsymbol|vec)/.exec(rest))) {
       const [a, j] = group(s, i + m[0].length);
       const sym = a.replace(/\\Omega/g, "Ω").replace(/\\%/g, "%").replace(/\^\{?(\d)\}?/, "^$1");
       // Brez števila pred njim je en sam velik znak simbol (kemijski element C, O, H), ne enota.
@@ -218,6 +238,7 @@ function expr(s) {
     if ((m = /^\\(ge|geq)(?![a-zA-Z])/.exec(rest))) { push("je večje ali enako"); i += m[0].length; continue; }
     if ((m = /^\\(Rightarrow|implies|to|rightarrow|longrightarrow)(?![a-zA-Z])/.exec(rest))) { push(m[1] === "to" || m[1] === "rightarrow" || m[1] === "longrightarrow" ? "v" : "torej"); i += m[0].length; continue; }
     if ((m = /^\\(pm)(?![a-zA-Z])/.exec(rest))) { push("plus minus"); i += m[0].length; continue; }
+    if ((m = /^\\(subset|subseteq|in)(?![a-zA-Z])/.exec(rest))) { push(m[1] === "in" ? "je element" : "je podmnožica"); i += m[0].length; lastNumber = null; continue; }
     if ((m = /^\\(sin|cos|tan|log|ln)(?![a-zA-Z])/.exec(rest))) { push({ sin: "sinus", cos: "kosinus", tan: "tangens", log: "logaritem", ln: "naravni logaritem" }[m[1]]); i += m[0].length; continue; }
     if ((m = /^\\(Omega)(?![a-zA-Z])/.exec(rest))) { push(lastNumber != null ? unitWord("Ω", lastNumber) : "ohm"); i += m[0].length; lastNumber = null; continue; }
     if ((m = /^\\%/.exec(rest))) { push(unitWord("%", lastNumber) || "odstotkov"); i += 2; lastNumber = null; continue; }
