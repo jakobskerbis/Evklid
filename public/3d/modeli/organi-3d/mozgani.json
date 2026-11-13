@@ -63,7 +63,7 @@
    "listi": 0.85,
    "listiSredisce": [
     -0.0014,
-    -0.03886,
+    -0.03885,
     -0.02715
    ],
    "listiRazmik": 0.0015,
@@ -427,7 +427,8 @@
      0,
      0
     ],
-    "d": -0.0004
+    "d": -0.006,
+    "rocno": true
    }
   ],
   "slika": {
@@ -435,12 +436,15 @@
    "ucna": "mozgani-rez-ucne.webp",
    "lo": [
     -0.09349,
-    -0.07418
+    -0.07417
    ],
    "mera": [
     0.18736,
     0.18736
-   ]
+   ],
+   "sum": 0,
+   "gladko": true,
+   "visina": 0.12
   }
  },
  "pogledi": {
@@ -513,7 +517,15 @@
      "lak": 0,
      "sijaj": 0
     }
-   }
+   },
+   "skrijDele": [
+    "hipotalamus",
+    "krizisce",
+    "zuljevo"
+   ],
+   "skrijTkiva": [
+    "sredina"
+   ]
   }
  },
  "podrobnosti": {

@@ -166,3 +166,24 @@ test("n5: jetra – ravnina prereza skozi debla jetrnih ven in portalne veje, vo
   assert.ok(Math.abs(r.n[2]) > 0.9, `normala ${r.n}`);
   assert.ok(j.tkiva.zolcnik.rezPresek.cev && !j.tkiva.zolcnik.rezVotlina, "žolčnik na rezu s steno");
 });
+
+test("n6: možgani – parasagitalna ravnina reza, risba 2048 px brez šuma, prekati kot reže, skriti deli za risbo", () => {
+  const m = json("mozgani");
+  const r = m.prerez.ravnine[0];
+  assert.ok(r.rocno && r.d <= -0.004 && r.d >= -0.008, `ravnina ${r.d}`);
+  assert.ok(m.prerez.slika.gladko && m.prerez.slika.sum === 0, "risba brez šuma");
+  for (const d of ["hipotalamus", "krizisce", "zuljevo"]) assert.ok(m.pogledi.prerez.skrijDele.includes(d), d);
+  const rez = beri("scripts", "atlas", "mozgani-rez-mri.py");
+  for (const n of ["REZ_SREDINA", "CETRTI_DELEZ", "zgornji_pas", "cisterne", "neozn", "REZ_PX"]) assert.ok(rez.includes(n), n);
+  assert.ok(beri("public", "3d", "organ.js").includes("rezSlika?.gladko"));
+});
+
+test("n6: jetra in pljuča – orodja (žleb ob repastem režnju, ožja srpasta vez, podaljšano pljučno deblo, lingula)", () => {
+  const g = beri("scripts", "atlas", "jetra_geometrija.py");
+  for (const n of ["repastiZleb", "SIRINA_VEZI"]) assert.ok(g.includes(n), n);
+  const d = beri("scripts", "atlas", "drevesa.py");
+  for (const n of ["debloDolzina", "lingula", "bazaZozi", "Pulmonary trunk (lastno)"]) assert.ok(d.includes(n), n);
+  const j = json("jetra");
+  assert.ok(j.tkiva.jetra.lak <= 0.08 && j.tkiva.jetra.rezPresek.robBarva, "jetra: mat kapsula, rob kapsule na rezu");
+  assert.ok(j.tkiva.jetra.rezCelice[0].moc >= 0.45, "režnjiči na rezu");
+});

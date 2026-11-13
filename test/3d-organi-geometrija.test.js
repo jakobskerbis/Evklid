@@ -193,7 +193,7 @@ for (const dat of ["mozgani.glb", "mozgani-telefon.glb"]) {
     const { NodeIO } = await import("@gltf-transform/core");
     const { ALL_EXTENSIONS } = await import("@gltf-transform/extensions");
     const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(ORGANI, dat));
-    const ravnina = -json("mozgani").prerez.ravnine[0].d; // rez x = 0,4 mm
+    const ravnina = 0.0004; // sredina med polobloma (rez sam je od n6 parasagitalen, 6 mm v ohranjeni polobli)
     for (const node of doc.getRoot().listNodes()) {
       const m = node.getName().match(/\(MRI\)\.([lr])$/);
       if (!node.getMesh() || !m) continue;

@@ -90,12 +90,12 @@ ORGANI = {
         # Skorja iz MRI (OpenNeuro ds000001 fMRIPrep/FreeSurfer, CC0): Z-Anatomy vijuge (tkivo »skorja«) zamenjamo s
         # pialno površino ene anonimne prostovoljke/prostovoljca (lh/rh.pial), režnji iz parcelacije aparc, globina brazd
         # (sulc) potemni senco okolice. Mapa z datotekami: --mri <mapa> (sub-01-lh.pial, …-lh.sulc, …-lh.aparc.annot).
-        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina", glajenjeMej=12, silvij=0.007, zatilniZareza=0.05),
+        skorja_mri=dict(osebek="sub-01", zamenjaj="skorja", gladi=1, sulc=0.45, sredina="sredina", glajenjeMej=5, silvij=0.007, zatilniZareza=0.065),
         # Mali možgani iz segmentacije MRI istega osebka (aseg, oznake 7/8/46/47; scripts/atlas/mali-mozgani-mri.py): prava
         # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
         # glajenje: Taubin (krogi) proti stopnicam vokslov; zgornja pedunkla Z-Anatomy nista več ohranjena (od zadaj je bil
         # med malimi možgani MRI in deblom viden temen plavajoč kos)
-        mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40, deblo=True, gube=35),
+        mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=90, deblo=True, gube=25),
         # Deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen Human Brain Reference Atlas, CC BY 4.0;
         # mozgani_hra.py; datoteka v mapi --hra). Brez datoteke ostanejo Z-Anatomy in mali možgani MRI.
         # n4 (ocena n3: deblo HRA je raven valj z ločenim jajcem ponsa, mali možgani HRA gladki s »počesanimi« črtami, medmožgani
@@ -357,7 +357,7 @@ ORGANI = {
         # n5: oblika kril (drevesa.oblika_kril): zaobljene rebrne ploskve, stožčast vrh, vbočena baza z ostrim robom, srčna
         # vtisnina in zareza levo; pljučno deblo Z-Anatomy (spredaj pod lokom aorte) z razcepiščem v desno in levo arterijo
         drevesa=dict(veje=False, razmik=0.014, korak=0.004, vpliv=0.05, ubij=0.006, skrci=0.0007, rezenjTelefon=0.38, telefonListi=3,
-                     oblika=dict(zaobli=0.7, zozi=0.34, kupola=0.018, rob=0.006, srce=(0.028, 0.010))),
+                     debloDolzina=0.04, oblika=dict(zaobli=0.85, zozi=0.42, zoziOd=0.3, kupola=0.018, rob=0.006, srce=(0.036, 0.010), lingula=0.012, bazaZozi=0.12)),
         # Veje v pljučih (segmentni bronhiji in žile) imajo svoja tkiva: v celoti so skrite (konci bi štrleli skozi
         # površino režnjev), v prerezu vidne.
         tkiva=[
@@ -456,7 +456,7 @@ ORGANI = {
         # jetra_geometrija.jetra_deli: ena gladka površina (Z-Anatomy »Liver«), razrezana v štiri režnje brez vidnih šivov,
         # srpasta in obla vez, spodnja votla vena, portalna vena, jetrne vene, arterija in žolčni vodi kot drevesa (lastno).
         dodaj=["jetra_deli"], nedotakni=r"\(lastno\)",
-        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1, portaDeblo=0.046, ivcZleb=0.015),  # n5: vrata vidna od zadaj, vena v žlebu
+        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1, portaDeblo=0.046, ivcZleb=0.021, repastiZleb=0.003),  # n5: vrata vidna od zadaj, vena v žlebu
         tkiva=[(r"segment of liver", "jetra"), (r"^Gallbladder", "zolcnik"), (r"Bile duct|bile", "zolcevod"),
                (r"portal", "portalna"), (r"artery", "arterija"), (r"vein", "vena"), (r"", "jetra")],
         deli=[(r"\((V|VI|VII|VIII)\)", "desni-rezenj"), (r"\((II|III)\)", "levi-rezenj"), (r"\(IV\)", "kvadratni-rezenj"), (r"\(I\)", "repasti-rezenj"),

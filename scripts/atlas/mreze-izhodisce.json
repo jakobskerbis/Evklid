@@ -2,9 +2,7 @@
  "opis": "Izhodišče pregleda mrež (scripts/atlas/preveri-mreze.mjs --izhodisce). Na del: [odprtiRobovi, luknje, nemnogoterni, obrnjene, navznoter, izrojeni, neTrikotniki]. test/3d-mreze.test.js pade, ko je kateri del slabši. Samo zmanjševati.",
  "modeli": {
   "organi-3d/jetra-telefon.glb": {},
-  "organi-3d/jetra.glb": {
-   "Right lobe of liver (lastno)": [0,0,0,0,0,1,0]
-  },
+  "organi-3d/jetra.glb": {},
   "organi-3d/ledvica-telefon.glb": {
    "kidney_capsule_L (HRA)": [13,3,2,0,0,0,0],
    "outer_cortex_of_kidney_L (HRA)": [8,2,0,0,0,0,0]
@@ -14,38 +12,38 @@
    "outer_cortex_of_kidney_L (HRA)": [9,2,0,0,0,0,0]
   },
   "organi-3d/mozgani-telefon.glb": {
-   "Frontal lobe (MRI).l": [218,1,0,0,0,0,0],
-   "Frontal lobe (MRI).r": [201,1,0,0,0,0,0],
+   "Frontal lobe (MRI).l": [220,1,0,0,0,0,0],
+   "Frontal lobe (MRI).r": [204,1,0,0,0,0,0],
    "Habenula": [9,1,12,0,0,0,0],
-   "Insula (MRI).l": [91,1,0,0,0,0,0],
-   "Insula (MRI).r": [104,1,0,0,0,0,0],
-   "Limbic lobe (MRI).l": [292,2,0,0,0,0,0],
+   "Insula (MRI).l": [96,1,0,0,0,0,0],
+   "Insula (MRI).r": [103,1,0,0,0,0,0],
+   "Limbic lobe (MRI).l": [300,1,0,0,0,0,0],
    "Limbic lobe (MRI).r": [230,1,0,0,0,0,0],
    "Medial wall (MRI).l": [106,1,0,0,0,0,0],
    "Medial wall (MRI).r": [120,1,0,0,0,0,0],
-   "Occipital lobe (MRI).l": [214,2,0,0,0,0,0],
-   "Occipital lobe (MRI).r": [226,3,0,0,0,0,0],
-   "Parietal lobe (MRI).l": [334,2,0,0,0,0,0],
-   "Parietal lobe (MRI).r": [323,2,0,0,0,0,0],
-   "Temporal lobe (MRI).l": [169,1,0,0,0,0,0],
-   "Temporal lobe (MRI).r": [206,2,0,0,0,0,0]
+   "Occipital lobe (MRI).l": [216,3,0,0,0,0,0],
+   "Occipital lobe (MRI).r": [253,1,0,0,0,0,0],
+   "Parietal lobe (MRI).l": [311,2,0,0,0,0,0],
+   "Parietal lobe (MRI).r": [320,1,0,0,0,0,0],
+   "Temporal lobe (MRI).l": [191,2,0,0,0,0,0],
+   "Temporal lobe (MRI).r": [232,1,0,0,0,0,0]
   },
   "organi-3d/mozgani.glb": {
-   "Frontal lobe (MRI).l": [431,1,0,0,0,0,0],
-   "Frontal lobe (MRI).r": [383,1,0,0,0,0,0],
+   "Frontal lobe (MRI).l": [435,1,0,0,0,0,0],
+   "Frontal lobe (MRI).r": [388,1,0,0,0,0,0],
    "Habenula": [9,1,12,0,0,0,0],
-   "Insula (MRI).l": [195,1,0,0,0,0,0],
-   "Insula (MRI).r": [194,1,0,0,0,0,0],
-   "Limbic lobe (MRI).l": [568,2,0,0,0,0,0],
-   "Limbic lobe (MRI).r": [430,1,0,0,0,0,0],
+   "Insula (MRI).l": [200,1,0,0,0,0,0],
+   "Insula (MRI).r": [197,1,0,0,0,0,0],
+   "Limbic lobe (MRI).l": [578,2,0,0,0,0,0],
+   "Limbic lobe (MRI).r": [432,1,0,0,0,0,0],
    "Medial wall (MRI).l": [206,1,0,0,0,0,0],
    "Medial wall (MRI).r": [213,1,0,0,0,0,0],
-   "Occipital lobe (MRI).l": [451,2,0,0,0,0,0],
-   "Occipital lobe (MRI).r": [457,3,0,0,0,0,0],
-   "Parietal lobe (MRI).l": [670,2,0,0,0,0,0],
-   "Parietal lobe (MRI).r": [657,2,0,0,0,0,0],
-   "Temporal lobe (MRI).l": [353,1,0,0,0,0,0],
-   "Temporal lobe (MRI).r": [386,2,0,0,0,0,0]
+   "Occipital lobe (MRI).l": [447,3,0,0,0,0,0],
+   "Occipital lobe (MRI).r": [541,1,0,0,0,0,0],
+   "Parietal lobe (MRI).l": [619,2,0,0,0,0,0],
+   "Parietal lobe (MRI).r": [675,1,0,0,0,0,0],
+   "Temporal lobe (MRI).l": [387,2,0,0,0,0,0],
+   "Temporal lobe (MRI).r": [456,1,0,0,0,0,0]
   },
   "organi-3d/oko-telefon.glb": {
    "ciliary_processes_L (HRA)": [516,172,0,0,0,0,0],

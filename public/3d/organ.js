@@ -997,7 +997,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
  vec4 sT = texture2D( orgSl, vec2( sUv.x, 1.0 - sUv.y ) );
  float sIn = step( 0.0, sUv.x ) * step( sUv.x, 1.0 ) * step( 0.0, sUv.y ) * step( sUv.y, 1.0 ) * sT.a;
  ${t.rezSlika?.izrez ? "if ( sIn < 0.5 ) discard; sIn = 1.0; // izrez: zunaj naslikanega obrisa ploskve ni (nazobčan obris listov, razpoke)" : ""}
- ${t.rezUcna ? "diffuseColor.rgb = mix( diffuseColor.rgb, diffuseColor.rgb * ( 0.5 + 0.95 * dot( sT.rgb, vec3( 0.333 ) ) ), sIn ); // učne barve: risba le kot svetlost barve dela" : `diffuseColor.rgb = mix( diffuseColor.rgb, sT.rgb * ( 0.94 + 0.12 * orgSum( orgQ * ${dm2(1200)} ) ), sIn );`}
+ ${t.rezUcna ? "diffuseColor.rgb = mix( diffuseColor.rgb, diffuseColor.rgb * ( 0.5 + 0.95 * dot( sT.rgb, vec3( 0.333 ) ) ), sIn ); // učne barve: risba le kot svetlost barve dela" : t.rezSlika?.gladko ? "diffuseColor.rgb = mix( diffuseColor.rgb, sT.rgb, sIn ); // gladko: brez drobnega šuma čez sliko (rezina MRI, ocena n5)" : `diffuseColor.rgb = mix( diffuseColor.rgb, sT.rgb * ( 0.94 + 0.12 * orgSum( orgQ * ${dm2(1200)} ) ), sIn );`}
  orgH = mix( orgH, dot( sT.rgb, vec3( 0.333 ) ), sIn * ${fl(t.rezSlika?.visina ?? 0.5)} ); }`
             : ""
         }${
@@ -1024,7 +1024,7 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}${presek.cev ? "c" : ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
+  m.customProgramCacheKey = () => `org-pokrov7-${st ? "s" : ""}${pl ? `p${JSON.stringify(pl)}${st.sdf}` : ""}${t.rezEndokard ? JSON.stringify(t.rezEndokard) : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}${presek.cev ? "c" : ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez, t.rezSlika?.gladko ? 1 : 0, t.rezUcna ? 1 : 0])}` : ""}${t.rezSnopi ? `-sn${JSON.stringify(t.rezSnopi)}` : ""}`;
   return m;
 }
 
