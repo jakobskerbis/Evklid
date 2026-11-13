@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { filesFromTarball, planChanges, applyChanges, rollback, readState, needsRestart, supervisorChanged, MARKER } from "../scripts/posodobitev.js";
+import { filesFromTarball, planChanges, applyChanges, rollback, readState, needsRestart, supervisorChanged, MARKER, githubHeaders, gitAuthEnv, gitEnv, accessMessage, tarballUrl, update } from "../scripts/posodobitev.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
@@ -165,4 +165,61 @@ test("Render: objava, ko je strežnik miren, med uporabo največ 3 ure čakanja,
   assert.equal(pendingSince(vrsta, "m2"), Date.parse("2026-10-30T08:00:00Z"));
   assert.equal(pendingSince([c("a", "2026-10-30T07:00:00Z", "x")], "a"), Date.parse("2026-10-30T07:00:00Z"));
   assert.equal(pendingSince([]), null);
+});
+
+test("zaseben repozitorij: ključ samo v glavi, brez ključa vse kot prej", () => {
+  const KEY = "github_pat_SKRIVNO123";
+  assert.equal(githubHeaders("").Authorization, undefined);
+  assert.equal(githubHeaders(KEY).Authorization, `Bearer ${KEY}`);
+  assert.equal(githubHeaders(KEY, { Accept: "x" }).Accept, "x");
+  assert.equal(tarballUrl("a/b", "s", ""), "https://codeload.github.com/a/b/tar.gz/s");
+  assert.equal(tarballUrl("a/b", "s", KEY), "https://api.github.com/repos/a/b/tarball/s");
+  assert.ok(!tarballUrl("a/b", "s", KEY).includes(KEY));
+  const env = { PATH: process.env.PATH, HOME: os.tmpdir() };
+  assert.equal(gitAuthEnv("", env), env);
+  const e = gitAuthEnv(KEY, { ...env, GIT_CONFIG_COUNT: "1", GIT_CONFIG_KEY_0: "a.b", GIT_CONFIG_VALUE_0: "c" });
+  assert.equal(e.GIT_CONFIG_COUNT, "2");
+  assert.equal(e.GIT_CONFIG_KEY_0, "a.b");
+  // git ključ res uporabi za github.com (samo tam), v argumentih ga ni in napaka ga ne izpiše
+  const header = execFileSync("git", ["config", "--get-urlmatch", "http.extraheader", "https://github.com/x/y"],
+    { env: gitAuthEnv(KEY, env), encoding: "utf8" }).trim();
+  assert.equal(header, `Authorization: Basic ${Buffer.from(`x-access-token:${KEY}`).toString("base64")}`);
+  let err = "";
+  try {
+    execFileSync("git", ["ls-remote", "https://127.0.0.1:1/x.git"], { env: gitAuthEnv(KEY, env), stdio: ["ignore", "pipe", "pipe"] });
+  } catch (x) { err = `${x.message}\n${x.stderr}`; }
+  assert.ok(err && !err.includes(KEY) && !err.includes(Buffer.from(`x-access-token:${KEY}`).toString("base64")));
+  // git nikoli ne sprašuje za prijavo (z ključem ali brez), ključ pa doda samo, če je nastavljen
+  for (const key of ["", KEY]) {
+    const g = gitEnv(key, env);
+    assert.equal(g.GIT_TERMINAL_PROMPT, "0");
+    assert.equal(g.GCM_INTERACTIVE, "never");
+    assert.equal(!!g.GIT_CONFIG_COUNT, !!key);
+  }
+  assert.match(accessMessage(404, false), /EVKLID_GITHUB_TOKEN/);
+  assert.match(accessMessage(401, true), /zavrnil ključ/);
+  assert.equal(accessMessage(500, false), "GitHub ni odgovoril (500)");
+});
+
+test("zaseben repozitorij: posodobitev pošlje ključ in ob 404 pove, kaj vpisati", async () => {
+  const KEY = "github_pat_SKRIVNO456";
+  const old = { fetch: globalThis.fetch, key: process.env.EVKLID_GITHUB_TOKEN };
+  const seen = [];
+  globalThis.fetch = async (url, opts = {}) => { seen.push({ url: String(url), auth: opts.headers?.Authorization }); return new Response("", { status: 404 }); };
+  try {
+    for (const key of ["", KEY]) {
+      seen.length = 0;
+      if (key) process.env.EVKLID_GITHUB_TOKEN = key; else delete process.env.EVKLID_GITHUB_TOKEN;
+      const log = [];
+      const r = await update({ root: tmp(), say: (m) => log.push(m), install: false });
+      assert.ok(r.error);
+      assert.match(r.error, key ? /zavrnil ključ/ : /EVKLID_GITHUB_TOKEN/);
+      assert.ok(seen.length > 0 && seen.every((s) => s.url.startsWith("https://api.github.com/")));
+      assert.ok(seen.every((s) => s.auth === (key ? `Bearer ${KEY}` : undefined)));
+      assert.ok(!log.join("\n").includes(KEY) && !r.error.includes(KEY));
+    }
+  } finally {
+    globalThis.fetch = old.fetch;
+    if (old.key === undefined) delete process.env.EVKLID_GITHUB_TOKEN; else process.env.EVKLID_GITHUB_TOKEN = old.key;
+  }
 });

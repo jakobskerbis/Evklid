@@ -20,6 +20,42 @@ export const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), ".."
 export const REPOS = [...new Set([process.env.EVKLID_REPO, BRAND.repo, ...LEGACY.map((l) => l.repo)].filter(Boolean))];
 export let REPO = REPOS[0];
 export const BRANCH = process.env.EVKLID_VEJA || "main";
+// Zaseben repozitorij: neobvezen ključ GitHub (fine-grained, samo ta repo, Contents: Read-only).
+// Brez ključa vse deluje kot pri javnem repozitoriju. Ključ gre samo v glavo, nikoli v ukaz ali izpis.
+const token = () => (process.env.EVKLID_GITHUB_TOKEN || "").trim();
+
+// Glave za GitHub API (z ključem, če je nastavljen).
+export function githubHeaders(key = token(), extra = {}) {
+  const h = { "User-Agent": "evklid-posodobitev", ...extra };
+  if (key) h.Authorization = `Bearer ${key}`;
+  return h;
+}
+
+// Okolje za git: ključ kot glava HTTP prek GIT_CONFIG_* (ni v argumentih, zato ga napaka ne izpiše).
+export function gitAuthEnv(key = token(), env = process.env) {
+  if (!key) return env;
+  const n = Number(env.GIT_CONFIG_COUNT) || 0;
+  return {
+    ...env,
+    GIT_CONFIG_COUNT: String(n + 1),
+    [`GIT_CONFIG_KEY_${n}`]: "http.https://github.com/.extraheader",
+    [`GIT_CONFIG_VALUE_${n}`]: `Authorization: Basic ${Buffer.from(`x-access-token:${key}`).toString("base64")}`,
+  };
+}
+
+// Okolje za vse ukaze git: z ključem, če je nastavljen, in brez vprašanj za prijavo (posodobitev teče
+// v ozadju, okna ali vprašanja nihče ne vidi; git takoj javi napako in izpišemo, kaj vpisati).
+export function gitEnv(key = token(), env = process.env) {
+  return { ...gitAuthEnv(key, env), GIT_TERMINAL_PROMPT: "0", GCM_INTERACTIVE: "never" };
+}
+
+// Jasno sporočilo, ko GitHub zavrne dostop (zaseben repozitorij).
+export function accessMessage(status, hasKey = !!token()) {
+  if (![401, 403, 404].includes(status)) return `GitHub ni odgovoril (${status})`;
+  return hasKey
+    ? `GitHub je zavrnil ključ (${status}): EVKLID_GITHUB_TOKEN v .env ni veljaven, je potekel ali nima dostopa do tega repozitorija (docs/posodobitve.md)`
+    : `GitHub ne najde repozitorija (${status}); če je zaseben, v .env vpiši EVKLID_GITHUB_TOKEN (docs/posodobitve.md)`;
+}
 // Zagonske datoteke (.bat, .command) prepišemo le, če so že v »varni« obliki (imajo to oznako):
 // Windows in bash bereta skripto sproti, zato bi prepis stare oblike med tekom zmedel okno.
 export const MARKER = `${BRAND.env}-SAMOPOSODOBITEV`;
@@ -184,30 +220,35 @@ export function supervisorChanged(changed) {
 }
 
 function git(root, ...args) {
-  return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+  return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], env: gitEnv() }).trim();
 }
 
 async function latestSha() {
   let res;
   for (const repo of REPOS) {
     res = await fetch(`https://api.github.com/repos/${repo}/commits/${BRANCH}`, {
-      headers: { Accept: "application/vnd.github.sha", "User-Agent": "evklid-posodobitev" },
+      headers: githubHeaders(token(), { Accept: "application/vnd.github.sha" }),
       signal: AbortSignal.timeout(20000),
     });
     if (res.status !== 404) { REPO = repo; break; }
   }
-  if (!res.ok) throw new Error(`GitHub ni odgovoril (${res.status})`);
+  if (!res.ok) throw new Error(accessMessage(res.status));
   const sha = (await res.text()).trim();
   if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error("GitHub je vrnil neznan odgovor");
   return sha;
 }
 
+// Brez ključa neposredno s codeload; s ključem prek API (preusmeri na kratkotrajno povezavo brez ključa).
+export function tarballUrl(repo, sha, key = token()) {
+  return key ? `https://api.github.com/repos/${repo}/tarball/${sha}` : `https://codeload.github.com/${repo}/tar.gz/${sha}`;
+}
+
 async function download(sha) {
-  const res = await fetch(`https://codeload.github.com/${REPO}/tar.gz/${sha}`, {
-    headers: { "User-Agent": "evklid-posodobitev" },
+  const res = await fetch(tarballUrl(REPO, sha), {
+    headers: githubHeaders(),
     signal: AbortSignal.timeout(5 * 60 * 1000),
   });
-  if (!res.ok) throw new Error(`prenos ni uspel (${res.status})`);
+  if (!res.ok) throw new Error([401, 403, 404].includes(res.status) ? accessMessage(res.status) : `prenos ni uspel (${res.status})`);
   return Buffer.from(await res.arrayBuffer());
 }
 
@@ -219,7 +260,12 @@ function gitMode(root) {
 async function updateGit(root, say) {
   if (git(root, "rev-parse", "--abbrev-ref", "HEAD") !== BRANCH) return { changed: false, reason: `mapa ni na veji ${BRANCH}` };
   if (git(root, "status", "--porcelain", "--untracked-files=no")) return { changed: false, reason: "v mapi so neshranjene spremembe" };
-  git(root, "fetch", "--quiet", "origin", BRANCH);
+  try {
+    git(root, "fetch", "--quiet", "origin", BRANCH);
+  } catch (e) {
+    if (/\b(401|403|404)\b|not found|authentication|could not read username/i.test(String(e.stderr || e.message))) throw new Error(accessMessage(404));
+    throw e;
+  }
   const local = git(root, "rev-parse", "HEAD");
   const remote = git(root, "rev-parse", `origin/${BRANCH}`);
   const state = readState(root);
