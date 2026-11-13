@@ -253,6 +253,22 @@ def _otoki_k_sosedu(me, sosed):
         if f.verts[0] in mali:
             bs.faces.new([nov[v] for v in f.verts])
     bmesh.ops.delete(bm, geom=list(mali), context="VERTS")
+    # otok se zlije s sosedom v eno zaprto telo: zvari oglišča na skupni steni, podvojene stene (isti trije vogali) proč,
+    # ostanke (robovi z ≠ 2 ploskvama) izreži in zapolni
+    bmesh.ops.remove_doubles(bs, verts=bs.verts, dist=2e-5)
+    po = {}
+    for f in bs.faces:
+        po.setdefault(frozenset(v.index for v in f.verts), []).append(f)
+    bmesh.ops.delete(bs, geom=[f for fs in po.values() if len(fs) > 1 for f in fs], context="FACES")
+    for _ in range(4):
+        slabi = {v for e in bs.edges if len(e.link_faces) != 2 for v in e.verts}
+        if not slabi:
+            break
+        bmesh.ops.delete(bs, geom=[f for f in bs.faces if any(v in slabi for v in f.verts)], context="FACES")
+        bmesh.ops.holes_fill(bs, edges=[e for e in bs.edges if len(e.link_faces) == 1], sides=0)
+        bmesh.ops.triangulate(bs, faces=[f for f in bs.faces if len(f.verts) > 3])
+    bmesh.ops.delete(bs, geom=[v for v in bs.verts if not v.link_faces], context="VERTS")
+    bmesh.ops.recalc_face_normals(bs, faces=bs.faces)
     print(f"[organi] jetra: {len(otoki) - 1} ločenih kosov režnja ({len(mali)} oglišč) k sosednjemu režnju")
     bm.to_mesh(me); bm.free(); bs.to_mesh(sosed); bs.free(); me.update(); sosed.update()
     return me, sosed
@@ -682,6 +698,17 @@ def jetra_ct(osnovni, cfg, tmp):
     L = _gosti(cela, tmp, pov[0]); Lt = _gosti(cela, tmp, pov[1])
     rez, (n1, p1) = _rezi_reznje(L, rim, tmp, porta)
     rez_t, _ = _rezi_reznje(Lt, rim, tmp, porta)
+    for rr_ in (rez, rez_t):  # drobne luknje po šivanju mej (≤ 8 robov) se zapolnijo: reženj je zaprto telo
+        for me_ in rr_.values():
+            bm = bmesh.new(); bm.from_mesh(me_)
+            rob_ = [e for e in bm.edges if len(e.link_faces) == 1]
+            if rob_:
+                bmesh.ops.holes_fill(bm, edges=rob_, sides=8)
+                bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+                bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+                print(f"[organi] jetra: luknja režnja zapolnjena ({len(rob_)} robov, ostane {sum(1 for e in bm.edges if len(e.link_faces) == 1)})")
+                bm.to_mesh(me_); me_.update()
+            bm.free()
     for k, ime, del_ in (("desni", "Right lobe of liver (lastno)", "desni-rezenj"), ("levi", "Left lobe of liver (lastno)", "levi-rezenj"),
                          ("kvadratni", "Quadrate lobe of liver (lastno)", "kvadratni-rezenj"), ("repasti", "Caudate lobe of liver (lastno)", "repasti-rezenj")):
         tel[ime] = rez_t[k]

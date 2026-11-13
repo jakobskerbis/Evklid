@@ -393,7 +393,7 @@
      0.5146,
      -0.8145
     ],
-    "d": 0.0085
+    "d": 0.0086
    }
   ]
  },
@@ -464,10 +464,10 @@
    }
   ]
  },
- "velikost": 0.3382,
+ "velikost": 0.3381,
  "trikotniki": {
-  "racunalnik": 126384,
-  "telefon": 35156
+  "racunalnik": 126364,
+  "telefon": 35128
  },
  "luci": [
   {
