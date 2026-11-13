@@ -76,11 +76,11 @@ for (const dat of ["pljuca.glb", "pljuca-telefon.glb"]) {
   });
 }
 
-test("geometrija organov: pljuca.json v prerezu pusti dihalno in žilno drevo celo", () => {
+test("geometrija organov: pljuca.json v prerezu pokaže prereze dihalnega in žilnega drevesa (ne celih cevi na rezu)", () => {
   const j = json("pljuca");
   for (const t of ["dihalna", "dihalna-v", "pljucna-arterija", "pljucna-arterija-v", "pljucna-vena", "pljucna-vena-v"]) {
-    assert.equal(j.tkiva[t].brezReza, true, t);
-    assert.equal(j.tkiva[t].rezPresek, undefined, t);
+    assert.ok(!j.tkiva[t].brezReza, t);
+    assert.ok(j.tkiva[t].rezPresek?.rob > 0, `${t}: presek s steno`);
   }
 });
 

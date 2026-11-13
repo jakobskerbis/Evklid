@@ -75,7 +75,7 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#eadcc6",
+   "rez": "#e6d6bd",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
@@ -85,7 +85,13 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#3b2622",
+    "rob": 0.0003,
+    "robBarva": "#f4eadb",
+    "stena": 0.0018
+   }
   },
   "pljucna-arterija": {
    "hrap": 0.36,
@@ -96,7 +102,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#46589f",
-   "rez": "#c3c9e6",
+   "rez": "#9aa3d4",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
@@ -106,7 +112,13 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#2e2b55",
+    "rob": 0.0003,
+    "robBarva": "#c0c8ee",
+    "stena": 0.0018
+   }
   },
   "pljucna-vena": {
    "hrap": 0.36,
@@ -117,7 +129,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#eab0a6",
+   "rez": "#e3a094",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -127,7 +139,13 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#5c1d1b",
+    "rob": 0.0003,
+    "robBarva": "#efb5aa",
+    "stena": 0.0018
+   }
   },
   "dihalna-v": {
    "hrap": 0.34,
@@ -138,7 +156,7 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#eadcc6",
+   "rez": "#4a2d29",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
@@ -148,7 +166,11 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "rob": 0.00035,
+    "robBarva": "#efe2cc"
+   }
   },
   "pljucna-arterija-v": {
    "hrap": 0.36,
@@ -159,7 +181,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#46589f",
-   "rez": "#c3c9e6",
+   "rez": "#3b3568",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
@@ -169,7 +191,11 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "rob": 0.0003,
+    "robBarva": "#aeb8e6"
+   }
   },
   "pljucna-vena-v": {
    "hrap": 0.36,
@@ -180,7 +206,7 @@
    "zrno": 0.05,
    "f": 70,
    "barva": "#ad2521",
-   "rez": "#eab0a6",
+   "rez": "#6b2523",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -190,7 +216,11 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "brezReza": true
+   "rezPresek": {
+    "vrsta": 4,
+    "rob": 0.0003,
+    "robBarva": "#e39a90"
+   }
   }
  },
  "deli": [
@@ -368,7 +398,6 @@
     "Lingular vein of left lung",
     "Medial vein of right lung",
     "Posterior vein of right lung",
-    "Right inferior pulmonary vein",
     "Right superior pulmonary vein",
     "Superior basal vein of left lung",
     "Superior basal vein of right lung",
@@ -452,10 +481,10 @@
    }
   ]
  },
- "velikost": 0.4333,
+ "velikost": 0.4307,
  "trikotniki": {
-  "racunalnik": 164984,
-  "telefon": 55186
+  "racunalnik": 165000,
+  "telefon": 55324
  },
  "luci": [
   {

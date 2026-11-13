@@ -302,6 +302,24 @@ CT_REZNJI = {"Superior lobe of right lung": "lung_upper_lobe_right", "Middle lob
              "Inferior lobe of left lung": "lung_lower_lobe_left"}
 
 
+def taubin_bm(bm, krogi=30, lam=0.5, mu=-0.53):
+    """Taubinovo glajenje (λ|μ) oglišč bmesh: zgladi stopnice brez krčenja prostornine."""
+    import numpy as np
+    bm.verts.ensure_lookup_table(); bm.verts.index_update()
+    P = np.array([v.co[:] for v in bm.verts], dtype=np.float64)
+    E = np.array([(e.verts[0].index, e.verts[1].index) for e in bm.edges], dtype=np.int64)
+    if not len(E):
+        return
+    st = np.maximum(np.bincount(E.ravel(), minlength=len(P)), 1).astype(np.float64)[:, None]
+    for _ in range(krogi):
+        for k in (lam, mu):
+            S = np.zeros_like(P)
+            np.add.at(S, E[:, 0], P[E[:, 1]]); np.add.at(S, E[:, 1], P[E[:, 0]])
+            P += k * (S / st - P)
+    for v, q in zip(bm.verts, P):
+        v.co = q
+
+
 def _rezenj_iz_ct(rezn, cfg, tmp):
     """Režnje Z-Anatomy zamenja s površinami režnjev iz CT (pljuca-ct.py). Vsako krilo posebej: afina preslikava (merilo po
     oseh in premik) okvirja CT kril v okvir kril Z-Anatomy – bronhiji in žile Z-Anatomy ostanejo v svojih krilih."""
@@ -326,8 +344,9 @@ def _rezenj_iz_ct(rezn, cfg, tmp):
             v = (d[CT_REZNJI[r[0]] + "_v"] - cl) * k + zl
             me = bpy.data.meshes.new(r[0] + " ct"); me.from_pydata(v.tolist(), [], d[CT_REZNJI[r[0]] + "_f"].tolist())
             bm = bmesh.new(); bm.from_mesh(me)
-            for _ in range(6):  # stopnice rezin CT
-                bmesh.ops.smooth_vert(bm, verts=bm.verts, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+            # stopnice rezin CT in nagubane baze (krog 3: »baze nagubane namesto gladke kupole prepone«): Taubinovo glajenje
+            # brez krčenja (prej 6 krogov Laplacea)
+            taubin_bm(bm, cfg.get("drevesa", {}).get("ctGlajenje", 30))
             bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
             bm.to_mesh(me); bm.free()
             r[1] = poenostavi(me, min(1.0, cilj / max(tris(me), 1)), tmp)

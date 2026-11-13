@@ -285,7 +285,8 @@ ORGANI = {
         # poravnava drevesa iz drugega telesa v režnje Z-Anatomy bi se ob hilusu videla (2026-11-04).
         vkljuci=r"/ Lungs\.g( |$)|^Trachea( /|$)|/ Bronchi\.g( |$)|^(Left|Right) pulmonary artery( /|$)|/ (Left|Right) pulmonary artery( |$)|"
                 r"/ Pulmonary veins\.g( |$)",
-        izkljuci=r"\?\?\?",
+        # desna spodnja pljučna vena Z-Anatomy je le 8 mm krn ob levem preddvoru (tudi po skrajšanju je visel med pljučema)
+        izkljuci=r"\?\?\?|^Right inferior pulmonary vein( /|$)",
         cilj=(165_000, 40_000),
         # Pečene PBR teksture (videz): plevra vlažna in sijoča, pljučno tkivo rožnato sivo z mrežo režnjičev (interlobularni
         # pretini kot drobne temnejše meje) in ponekod sivimi pegami; hrustanec sapnika in bronhijev smetanasto rožnat.
@@ -308,7 +309,12 @@ ORGANI = {
         debelina=[(r"^(?!\(lastno\)).*(Bronchi\.g|Pulmonary|pulmonary artery)", 0.0011), (r"^Trachea( /|$)", 0.0012)],  # sapnik: stena, zgornji rob zaprt
         # prerezani konci pljučnih arterij in ven ob hilusu: slepa svetlina 2,5 mm (levo pljučno arterijo je pogled v prerezu
         # videl vzdolž osi kot tanek obroč v zraku)
-        slepiKonci=[(r"^Left pulmonary artery", 0.004, 0.014), (r"^(?!\(lastno\))(?!Left pulmonary artery).*(Pulmonary|pulmonary artery)", 0.0025)],
+        # krog 3: konci zaprti tik ob robu (0,4 mm; globlja ploščica je bila videti kot votel štrcelj), sredinski konci glavnih
+        # pljučnih ven skrajšani za 6 mm (desna spodnja je za hilusom visela v zraku)
+        slepiKonci=[(r"^Left pulmonary artery", 0.0004, 0.014),
+                    (r"^(Left|Right) (superior|inferior) pulmonary vein", 0.0004, 0.006),
+                    (r"^(?!\(lastno\))(?!Left pulmonary artery)(?!(Left|Right) (superior|inferior) pulmonary vein).*(Pulmonary|pulmonary artery)", 0.0004)],
+        ravnoOdrezi=[(r"^Trachea( /|$)", 0.004)],
         # drevesa.pljucna_drevesa: režnji zaprti in v polni gostoti (prej jih je skupna poenostavitev stanjšala na ~2000
         # trikotnikov: natrgani robovi ob preponi), veje v pljučih iz središčnic (veje=True: še subsegmentne veje s
         # kolonizacijo prostora; v pljučih so bile videti kot ščetina ob čistem drevesu Z-Anatomy, zato izklopljeno). Te mreže
@@ -1454,6 +1460,17 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
                 nor = [v.normal.copy() for v in row[1].vertices]
                 for v, nn in zip(row[1].vertices, nor):
                     v.co -= nn * d
+    # ravnoOdrezi: (regex, metri) – zgornji konec dela (sapnik) ravno odrezan za toliko pod najvišjo točko: rob obročev
+    # Z-Anatomy je bil po obrezu na škatlo nazobčan; debelina nato naredi čist obroč stene
+    for rx, odmik in cfg.get("ravnoOdrezi", []):
+        for row in osnovni:
+            if re.search(rx, row[4]):
+                me = row[1]; zv = max(v.co.z for v in me.vertices) - odmik
+                bm = bmesh.new(); bm.from_mesh(me)
+                bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, zv), plane_no=(0, 0, 1), clear_outer=True)
+                bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+                bm.to_mesh(me); bm.free(); me.update()
+                print(f"[organi] {row[0]}: ravno odrezan {odmik * 1000:.1f} mm pod vrhom")
     # slepiKonci: odprt konec cevi (prerezana žila ob hilusu) dobi slepo svetlino globine »glob«: ploščica v svetlini. Gledano vzdolž osi se tako ne vidi skozi cev (obroč v zraku), ampak prerezana žila s temno svetlino.
     for rx, glob, *sk in cfg.get("slepiKonci", []):
         for row in osnovni:
