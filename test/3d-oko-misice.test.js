@@ -99,3 +99,18 @@ test("oko: fotografska tekstura šarenice in beločnice (tkivo.foto) z navedenim
   assert.ok(v && v.licenca === "CC BY 4.0" && /Alexander Antipov/.test(v.avtor) && /Realistic Human Eye/.test(v.opis));
   assert.match(fs.readFileSync(path.join(KOREN, "public", "3d", "modeli", "organi-3d", "CREDITS.txt"), "utf8"), /Realistic Human Eye.*\n.*\n.*Alexander Antipov|Alexander Antipov/);
 });
+
+test("oko m4: duralna ovojnica živca, ekskavacija papile, zonule kot vlakna, kite z debelino", async () => {
+  const fs2 = await import("node:fs"); const path2 = await import("node:path"); const { fileURLToPath } = await import("node:url");
+  const K = path2.join(path2.dirname(fileURLToPath(import.meta.url)), "..");
+  const py = fs2.readFileSync(path2.join(K, "scripts/atlas/oko_misice.py"), "utf8");
+  assert.match(py, /def oko_dodatki_m4\(osnovni, cfg, tmp\)/);
+  assert.match(py, /KONEC = lambda s, L:/);
+  assert.match(py, /"Dural sheath \(lastno\)", me, "kita", "vidni-zivec"/);
+  const iz = fs2.readFileSync(path2.join(K, "scripts/atlas/izvozi-organe.py"), "utf8");
+  assert.match(iz, /nedotakni=r"\(rectus\|oblique\) muscle\|Dural sheath\|suspensory"/);
+  assert.match(iz, /cilj=\(165_000, 52_000\)/);
+  const j = JSON.parse(fs2.readFileSync(path2.join(K, "public/3d/modeli/organi-3d/oko.json"), "utf8"));
+  const zivec = j.deli.find((d) => d.id === "vidni-zivec");
+  assert.ok(zivec.vozlisca.includes("Dural sheath (lastno)"), "ovojnica je del vidnega živca");
+});

@@ -404,7 +404,7 @@ LASTNE = {
     "Medial rectus": (0.0100, 0.0036), "Lateral rectus": (0.0092, 0.0030), "Superior rectus": (0.0100, 0.0030), "Inferior rectus": (0.0096, 0.0032),
 }
 ROB_POD = 0.00012
-KONEC = lambda s, L: 1.0 - 0.82 * _gl(s, L - 0.004, L - 0.0003)  # zašiljen konec traku ob izvoru (krog m4)
+KONEC = lambda s, L: 1.0 - 0.72 * _gl(s, L - 0.004, L - 0.0003)  # zašiljen konec traku ob izvoru (krog m4)
 
 
 def _gl(x, a, b):
@@ -652,7 +652,7 @@ def oko_dodatki_m4(osnovni, cfg, tmp):
             L = np.r_[0, np.cumsum([(P[i + 1] - P[i]).length for i in range(len(P) - 1)])]
             n = int(np.searchsorted(L, L[-1] - 0.0016))  # ovojnica se konča 1,6 mm pred prerezanim koncem živca
             Ps = P[:n]; rm = float(np.median(R))
-            Rs = [min(max(R[i], rm * 0.9), rm * 1.15) + 0.00055 + 0.0011 * (1 - float(_gl(L[i], 0.0, 0.0032))) ** 2 for i in range(n)]
+            Rs = [min(max(R[i], rm * 0.9), rm * 1.15) + 0.00055 + 0.0019 * (1 - float(_gl(L[i], 0.0, 0.0048))) ** 1.5 for i in range(n)]
             for t_ in (False, True):
                 bm = bmesh.new(); cev(bm, Ps, Rs, 12 if t_ else 28, stena=0.0003)
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces)

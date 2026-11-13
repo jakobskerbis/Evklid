@@ -24,7 +24,7 @@
    "zile": 0.7,
    "zileBarva": "#c4685e",
    "zileBarva2": "#a8464c",
-   "zileSirina": 5e-05,
+   "zileSirina": 0.00005,
    "zileF": 16,
    "zileMaska": 9,
    "lise2": 0.18,
@@ -201,7 +201,7 @@
     "pegaBarva": "#7c2f1c"
    },
    "zile": 0.75,
-   "zileSirina": 9e-05,
+   "zileSirina": 0.00009,
    "zileBarva": "#a8261f",
    "zileBarva2": "#6a1216",
    "tekstura": false
@@ -287,7 +287,7 @@
    "zile": 0.5,
    "zileBarva": "#b85a4c",
    "zileBarva2": "#8f3a42",
-   "zileSirina": 6e-05,
+   "zileSirina": 0.00006,
    "rezSnopi": {
     "os": [
      -0.508,
@@ -520,6 +520,7 @@
    "opis": "Prenaša signale z mrežnice v možgane, kjer nastane slika.",
    "opisStudij": "Okoli 1,2 milijona aksonov ganglijskih celic; dolg okoli 5 cm, deli: intraokularni, orbitni, kanalni, intrakranialni. Obdan z možganskimi ovojnicami, zato se zvišan intrakranialni tlak vidi kot edem papile. Ni pravi periferni živec (mielin oligodendrocitov).",
    "vozlisca": [
+    "Dural sheath (lastno)",
     "Optic nerve (II).l"
    ],
    "tocke": {
@@ -588,7 +589,7 @@
      -0.00136,
      0.01468
     ],
-    "polmer": 1.0,
+    "polmer": 1,
     "polmerTelefon": 0.95
    },
    "skrijTkiva": [
@@ -697,10 +698,10 @@
    }
   ]
  },
- "velikost": 0.0822,
+ "velikost": 0.082,
  "trikotniki": {
-  "racunalnik": 165165,
-  "telefon": 40254
+  "racunalnik": 164989,
+  "telefon": 51996
  },
  "luci": [
   {
