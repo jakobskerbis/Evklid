@@ -2,8 +2,9 @@
 // Kode živijo v tabeli promo_codes; skrbnik jih ustvari in izklopi v zavihku Račun.
 // Koda iz .env se ob zagonu vpiše oziroma posodobi (dnevi, število uporab, profili, model),
 // izklop iz zavihka Račun pa ostane tudi po ponovnem zagonu.
-// Nastavitve v .env: EVKLID_PROMO_CODE (privzeto EVKLID3X), EVKLID_PROMO_LIMIT (100),
-// EVKLID_PROMO_DAYS (90 = 3 meseci), EVKLID_PROMO_SEATS (1 otrok). EVKLID_PROMO_CODE=off kode iz .env ne doda.
+// Nastavitve v .env: EVKLID_PROMO_CODE (privzeto brez kode, točka A2: koda v javnem repozitoriju ne sme biti
+// aktivna sama od sebe), EVKLID_PROMO_LIMIT (100), EVKLID_PROMO_DAYS (90 = 3 meseci), EVKLID_PROMO_SEATS (1 otrok).
+// EVKLID_PROMO_CODE=off ali prazno: kode iz .env ni, prej vpisana koda iz .env se ob zagonu izklopi (unovčenja ostanejo).
 // EVKLID_PROMO_MODEL: zmogljivejši model za imetnike kode, privzeto »sonnet« (j 2026-10-30): Sonnet
 // ob 2. zaporedni »Razloži podrobneje«, Opus šele ob 3.; »opus« omejitev izklopi.
 // Vsak račun porabi največ eno aktivacijsko kodo (dve kodi se ne seštevata).
@@ -14,7 +15,7 @@ export const CODE_RE = /^[A-Z0-9-]{4,30}$/;
 export const MODEL_CAPS = ["sonnet"]; // null = brez omejitve (Opus)
 
 export function promoConfig(env = process.env) {
-  const code = String(env.EVKLID_PROMO_CODE ?? "EVKLID3X").trim().toUpperCase();
+  const code = String(env.EVKLID_PROMO_CODE ?? "").trim().toUpperCase();
   const num = (v, def) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Math.floor(Number(v)) : def);
   return {
     code: code === "OFF" || code === "" ? null : code,
