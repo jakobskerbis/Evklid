@@ -179,3 +179,16 @@ test("selecting a part hides the parts around it (wall, membrane, envelope) and 
   assert.match(src, /obarvaj\(null\);[^\n]*\n\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
   assert.match(src, /o\.layers\.set\(SKRITA_PLAST\)/);
 });
+
+test("model page header on phones: name on its own full-width row, never broken mid-word", () => {
+  const css = fs.readFileSync(path.join(D3, "3d.css"), "utf8");
+  const blok = css.slice(css.indexOf("@media (max-width: 480px) {\n  /* Ob štirih gumbih"), css.indexOf("@media (max-width: 359px)"));
+  assert.ok(blok.length > 0, "phone block for the model header exists");
+  // ob štirih gumbih je imelo ime le ~90 px (»Bakteriofa/g T4«)
+  assert.match(blok, /\.k3-model-vrh:not\(\.mk-vrh\) \{ display: grid;[^}]*grid-template-areas: "nazaj nad desno" "ime ime ime";/);
+  assert.match(blok, /\.k3-model-vrh:not\(\.mk-vrh\) \.k3-model-naslov \{ display: contents; \}/);
+  assert.match(blok, /\.k3-model-vrh:not\(\.mk-vrh\) h1 \{ grid-area: ime;/);
+  assert.doesNotMatch(blok, /overflow-wrap: anywhere|word-break: break-all/, "words break only when one alone is wider than the line");
+  // mikroskop uporablja iste razrede, a ima svojo glavo (v lekciji brez gumba Nazaj): ostane v eni vrstici
+  assert.match(blok, /\.mk-vrh \{ gap: 8px; \}/);
+});
