@@ -56,7 +56,10 @@ export function lessonLinks(demos) {
     const m3 = /^3d-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(d.id);
     if (m3 && !seen.has(d.id)) {
       seen.add(d.id);
-      out.push({ kind: "3d", id: m3[1], title: bare(d.title) });
+      // Začetne vrednosti iz kataloga (npr. faks lekcije: `zacetek: { faks: true }`) gredo z gumbom »Poglej v 3D«
+      // v naslov /3d#<id>?faks=1, da se model odpre enako kot v lekciji.
+      const z = Object.entries(d.opts?.zacetek || {}).filter(([k, v]) => /^[a-z][a-z0-9-]*$/i.test(k) && v != null && v !== false);
+      out.push({ kind: "3d", id: m3[1], title: bare(d.title), ...(z.length ? { zacetek: Object.fromEntries(z.map(([k, v]) => [k, v === true ? "1" : String(v)])) } : {}) });
     }
   }
   return out;
