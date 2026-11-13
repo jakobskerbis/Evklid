@@ -174,14 +174,14 @@ export const ZNACILNO = {
 // Točka (µm) blizu začetne sredine, kjer je značilna snov vsaj ~1 µm od roba (pri virusih ~20 nm), da je na ravni molekul
 // vidna le ona. Izračunano z mrežo sond (docs/mikroskop.md »Molekule«); ob spremembi oblike preparata jo preračunaj.
 export const ZNACILNA_TOCKA = {
-  kri: [400.9, 0.9], "skeletna-misica": [-0.1, -1.1], "srcna-misica": [-0.1, 0.4], "gladka-misica": [-2.4, 59.9],
-  "virus-t4": [-0.094, 0.554], "virus-sars": [0.046, -0.118], "virus-hiv": [1.95, 2.434], bakterije: [18.9, -4.4],
-  kvasovke: [3.9, 24.6], ustne: [3.4, 6.6], list: [-17.9, 21.1], steblo: [-10.1, -11.9], koren: [-3.1, -799.9],
-  reza: [0.6, -4.4], jetra: [-4.9, -4.4], bezgavka: [3.6, 2.1], jajcnik: [12.1, -1.9], modo: [-5.6, 5.6],
-  zleza: [-31.9, -31.9], scitnica: [-1.1, 2.6], koza: [30.9, 285.1], zivec: [-8.1, -946.4],
-  "bela-snov": [-30.4, -31.9], "mali-mozgani": [2.4, 7.6], pljuca: [7.4, -16.6], sapnik: [-9.6, 1123.6],
-  zelodec: [7.9, 900.4], "tanko-crevo": [-5.6, 398.9], "debelo-crevo": [6.1, 796.1], mehur: [-11.6, 1181.6],
-  arterija: [-740.3, 508.8], vena: [1132.3, 554.3], zob: [-13.6, 346.6],
+  kri: [899.9, -0.1], "skeletna-misica": [-0.1, -0.1], "srcna-misica": [-0.1, -0.1], "gladka-misica": [-1.9, 59.6],
+  "virus-t4": [-0.042, 0.09], "virus-sars": [0.246, -0.006], "virus-hiv": [-1.206, 2.334], bakterije: [-5.4, -28.9],
+  kvasovke: [1.6, -2.4], ustne: [3.9, 7.4], list: [-20.1, 19.1], steblo: [-10.1, -11.9], koren: [-3.1, -799.4],
+  reza: [0.1, -5.1], jetra: [-0.4, -0.4], bezgavka: [3.1, 1.6], jajcnik: [8.1, -8.9], modo: [-8.1, -7.1],
+  zleza: [-29.1, -31.9], scitnica: [-0.9, 2.1], koza: [29.9, 283.9], zivec: [-14.6, -973.1],
+  "bela-snov": [-30.1, -31.9], "mali-mozgani": [-4.9, -4.9], pljuca: [7.4, -16.6], sapnik: [-0.1, 1150.9],
+  zelodec: [-0.9, 899.9], "tanko-crevo": [2.1, 399.6], "debelo-crevo": [10.6, 802.4], mehur: [-3.4, 1182.6],
+  arterija: [-739.3, 507.3], vena: [1122.8, 558.3], zob: [-15.4, 346.6],
 };
 // virusi (r1 v celice.js): 1 SARS-CoV-2, 2 HIV, 3 T4 (3,0 glava, 3,1 rep, 3,2 vlakna)
 const virus = (r1) => Math.round(r1 * 10) / 10;

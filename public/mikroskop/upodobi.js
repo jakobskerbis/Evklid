@@ -31,13 +31,34 @@ uniform vec2 uZaslon; uniform float uN;       // velikost platna, velikost slike
 uniform float uMol;                            // utež sloja molekul
 uniform float uKrog;                           // 1 = okrogel okular, 0 = kvadratni zaslon TEM
 uniform float uSvetlost, uKontrast, uTopla, uSum, uTEM, uCas;
+uniform float uLom, uLomD;                     // lom svetlobe na robovih (predznak = smer defokusa), razmik vzorcev (uv)
+uniform float uKA;                             // barvna napaka objektiva na robu polja (svetlobni mikroskop)
 out vec4 o;
 float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233)) + uCas) * 43758.5453); }
 void main() {
   vec2 f = gl_FragCoord.xy - 0.5 * uZaslon;
   vec2 uv = f / uN + 0.5;
   float r = length(f) / (0.5 * uN);
-  vec3 c = texture(uT, uv).rgb;
+  vec4 tc = texture(uT, uv);
+  vec3 c = tc.rgb;
+  // akromatski objektiv: na robu polja sta rdeča in modra slika malo različno veliki (barvni robovi)
+  if (uKA > 0.0) {
+    vec2 a = (uv - 0.5) * uKA * r * r;
+    c.r = texture(uT, uv + a).r;
+    c.b = texture(uT, uv - a).b;
+  }
+  // lom svetlobe (enačba prenosa jakosti, I ≈ I0 (1 − Δz/k · ∇²φ)): celice v vodi imajo ob robu svetel in temen rob, ki
+  // se ob vrtenju mikrovijaka zamenjata; v alfa kanalu je fazni zamik preparata (glsl.js faza)
+  if (uLom != 0.0) {
+    // glajen Laplace (razlika dveh povprečij), da drobne strukture na meji ločljivosti ne dajo belih pik
+    float D = uLomD;
+    float zn = 0.2 * (tc.a + texture(uT, uv + vec2(0.6, 0.6) * D).a + texture(uT, uv + vec2(-0.6, 0.6) * D).a
+      + texture(uT, uv + vec2(0.6, -0.6) * D).a + texture(uT, uv + vec2(-0.6, -0.6) * D).a);
+    float zu = 0.0;
+    for (int k = 0; k < 8; k++) { float a = float(k) * 0.7854; zu += texture(uT, uv + 1.6 * D * vec2(cos(a), sin(a))).a; }
+    float lap = zu / 8.0 - zn;
+    c *= clamp(1.0 + uLom * lap, 0.35, 1.6);
+  }
   if (uMol > 0.0) c = mix(c, texture(uM, uv).rgb, uMol);
   // kontrast okoli sive 0,82 (svetlo ozadje stekelca ostane svetlo), svetlost, barva žarnice
   c = clamp((c - 0.82) * uKontrast + 0.82, 0.0, 1.0);
@@ -49,7 +70,7 @@ void main() {
   float rob;
   if (uKrog > 0.5) {
     rob = 1.0 - smoothstep(0.985, 1.0, r);
-    c *= 1.0 - 0.22 * smoothstep(0.55, 1.0, r) * smoothstep(0.55, 1.0, r);
+    c *= 1.0 - 0.1 * smoothstep(0.5, 1.0, r) * smoothstep(0.5, 1.0, r); // Köhlerjeva osvetlitev: polje je skoraj enakomerno
   } else {
     rob = 1.0; // slika TEM pokrije ves oder (zaobljene robove da oder)
   }

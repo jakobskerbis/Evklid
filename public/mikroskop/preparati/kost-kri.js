@@ -18,7 +18,7 @@ T tkivo(vec2 p, float px) {
   if (rob > 0.0) return t;
   Vor v = vor(p, 230.0, vec2(1.0), 0.3, 0.9);
   vec4 h = h42(v.id);
-  float R = 80.0 + 40.0 * h.x;
+  float R = min(100.0 + 35.0 * h.x, v.d + v.rob - 4.0);   // osteoni so tesno zloženi, med njimi le ozki pasovi intersticijskih lamel
   vec2 q = p - v.c;
   float r = length(q) * (1.0 + 0.1 * (sum(q / 55.0 + h.zw * 9.0) - 0.5));
   float rc = 11.0 + 13.0 * h.y;
@@ -32,7 +32,8 @@ T tkivo(vec2 p, float px) {
   }
   if (rob > -130.0) { rr = -rob + 4.0; lc = vec2(0.0, rr); osteon = false; }
   // matriks: eozin z rahlimi lamelami (5,5 µm)
-  float lam = sin(6.2832 * rr / 5.5 + 2.5 * sum(lc / 30.0)) * (0.6 + 0.4 * sum(lc / 20.0 + 3.0));
+  // lamele: v osteonu pravilni obroči, med osteoni (intersticijske lamele, ostanki starih osteonov) šibke in nepravilne
+  float lam = sin(6.2832 * rr / 5.5 + (osteon ? 2.5 : 9.0) * sum(lc / 30.0)) * (0.6 + 0.4 * sum(lc / 20.0 + 3.0)) * (osteon ? 1.0 : 0.35);
   float vid = 1.0 - smoothstep(1.5, 3.0, px);
   t.snov = S_MINERAL;
   t.dye = vec3(0.06 + 0.03 * sumL(p, 30.0, px), 0.42 + 0.05 * lam * vid + 0.08 * (sumL(p, 90.0, px) - 0.5), 0.0);
@@ -121,7 +122,7 @@ export const kri = {
   opis: "Tanka plast krvi na stekelcu, obarvana po Giemsi. Največ je eritrocitov brez jedra; med njimi so redki levkociti z jedrom in drobni trombociti.",
   barvanje: "giemsa",
   velikost: [3000, 900],
-  zacetek: { m: 400, sredisce: [400, 0] },
+  zacetek: { m: 400, sredisce: [900, 0] },
   imena: { 15: "levkocit", 3: "limfocit" },
   snovi: { 5: "eritrocit (rdeča krvnička)", 14: "krvna plazma" },
   isci: "Pri 400× poišči levkocite: nevtrofilec ima jedro z več režnji, limfocit okroglo temno jedro. Trombociti so drobne vijolične pike.",
@@ -173,7 +174,7 @@ T tkivo(vec2 p, float px) {
   float rob = odsek(p, vec2(3000.0, 900.0), 5.0);
   if (rob > 0.0) return t;
   // debelina razmaza: levo gosto (kupčki), desno redko (pernati rob)
-  float gost = clamp(0.95 - 0.35 * (p.x + 3000.0) / 6000.0, 0.45, 0.97);
+  float gost = clamp(0.92 - 0.5 * (p.x + 3000.0) / 6000.0, 0.38, 0.95);
   t.snov = S_PLAZMA;
   t.dye = vec3(0.0, 0.03 + 0.02 * sumL(p, 20.0, px), 0.0);
   // levkociti: mreža 140 µm, en na celico z verjetnostjo 0,45
@@ -187,22 +188,40 @@ T tkivo(vec2 p, float px) {
   Vor tv = vor(p, 16.0, vec2(1.0), 0.0, 0.9);
   vec4 ht = h42(tv.id + 9.0);
   float dt = length(rot(ht.x * 6.0) * (p - tv.c) * vec2(1.0, 1.4)) - 1.1 - 0.4 * ht.y;
-  // eritrociti: 7,5 µm, svetlejša sredina (dvojno vbočena ploščica)
-  vec4 e = krogci(p, 7.4, 3.3, 3.85, gost, 0.0);
-  vec2 q = p - e.yz;
-  float R = length(q) - e.x;
-  float de = e.x + 0.18 * (sum(q * 1.3 + e.w) - 0.5);
-  if (de < px) {
-    float rr = length(q) / R;
-    float k = pokrij(de, px);
-    float deb = 0.32 + 0.68 * smoothstep(0.1, 0.78, rr);
-    t.dye = mix(t.dye, vec3(0.02, 0.6 * deb + 0.05 * sumL(q, 1.2, px), 0.0), k);
-    t.dye.y += 0.12 * crta(de, 0.25, px);
-    if (k > 0.5) { t.snov = S_ERITROCIT; t.meja = -de; t.cc = e.yz; t.cid = vec2(e.w, 1.0); }
+  // eritrociti: 7,5 µm, svetlejša sredina (dvojno vbočena ploščica). Vsak je svoja ploščica: kjer se dve prekrivata,
+  // se barva sešteje in rob spodnje ostane viden (v tankem delu razmaza se skoraj ne dotikajo).
+  float S = 8.6;
+  vec2 n0 = floor(p / S);
+  float vsota = 0.0, robovi = 0.0, najR = 1e3;
+  vec2 najC = vec2(0.0); float najW = 0.0;
+  for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
+    vec2 k = n0 + vec2(i, j);
+    vec4 he = h42(k + 0.37);
+    if (he.w > gost) continue;
+    vec2 c = (k + 0.5 + 0.45 * (he.xy - 0.5)) * S;
+    float R = 3.35 + 0.45 * he.z;
+    vec2 q = p - c;
+    // ne povsem okrogli (±6 %)
+    vec2 qe = rot(he.x * 6.28) * q * vec2(1.0 + 0.12 * (he.y - 0.5), 1.0 - 0.12 * (he.y - 0.5));
+    float de = length(qe) - R + 0.18 * (sum(q * 1.3 + he.w * 7.0) - 0.5);
+    if (de > px) continue;
+    float rr = length(qe) / R;
+    float k1 = pokrij(de, px);
+    // debelina: sredina ~1 µm, rob ~2,5 µm, zato je sredina svetla
+    float deb = 0.28 + 0.72 * smoothstep(0.12, 0.8, rr) - 0.08 * smoothstep(0.85, 1.0, rr);
+    vsota += k1 * ((0.36 + 0.07 * (he.z - 0.5)) * deb + 0.04 * sumL(q, 1.2, px));
+    robovi += crta(de, 0.25, px);
+    if (de < najR) { najR = de; najC = c; najW = dot(k, vec2(7.0, 13.0)) + he.z; }
+  }
+  if (vsota > 0.0 || robovi > 0.0) {
+    t.dye = vec3(0.02, t.dye.y + min(vsota, 0.85) + 0.1 * min(robovi, 1.5), 0.0);
+    if (najR < 0.0) { t.snov = S_ERITROCIT; t.meja = -najR; t.cc = najC; t.cid = vec2(najW, 1.0); }
   }
   if (ht.z < 0.12 && dt < px) {
     float k = pokrij(dt, px);
-    t.dye = mix(t.dye, vec3(0.75 * smoothstep(0.4, 0.7, sumL(p - tv.c, 0.4, px)) + 0.25, 0.1, 0.2), k);
+    // trombocit: svetlo modrikast rob (hialomera) in vijolična zrnca v sredini (granulomera)
+    float zr = smoothstep(0.45, 0.7, sumL(p - tv.c, 0.3, px)) * smoothstep(0.2, -0.6, dt);
+    t.dye = mix(t.dye, vec3(0.22 + 0.8 * zr, 0.08, 0.25), k);
     if (k > 0.5) { t.snov = S_CITO; t.tip = C_LEVKOCIT; t.meja = -dt; t.cc = tv.c; t.cid = tv.id; }
   }
   return t;

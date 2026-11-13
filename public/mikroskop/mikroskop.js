@@ -5,7 +5,7 @@
 import { MOL, ELEMENTI, ZNACILNO, ZNACILNA_TOCKA, elementiMolekule } from "./molekule-vrste.js";
 import { ustvariUpodobitev } from "./upodobi.js";
 import { izracunajPogled, ZACETNO, povecava } from "./pogled.js";
-import { OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
+import { svetlost, OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
 import { BARVANJA } from "./barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "./preparati/index.js";
 import { t } from "/i18n.js";
@@ -262,7 +262,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   const secLuc = sekcija(t("mk.light"));
   const dGrobi = drsnik(t("mk.coarse"), { min: -150, max: 150, vrednost: 0, prikaz: (v) => `${dec(v)} µm`, ob: (v) => ((s.grobi = v), nastaviOstrino()) });
   const dFini = drsnik(t("mk.fine"), { min: -8, max: 8, vrednost: 0, prikaz: (v) => `${dec(v)} µm`, ob: (v) => ((s.fini = v), nastaviOstrino()) });
-  const dLucka = drsnik(t("mk.lamp"), { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), narisi()) });
+  const dLucka = drsnik(t("mk.lamp"), { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), (lucRocno = true), narisi()) });
   const dZaslonka = drsnik(t("mk.diaphragm"), { min: 0.05, max: 1, vrednost: s.zaslonka, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zaslonka = v), narisi()) });
   const vrstaOlje = mk("div", "mk-vrsta");
   const bOlje = mk("button", "a3-pill mk-stikalo");
@@ -419,7 +419,16 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     }
     s.objektiv = i;
     s.m = OBJEKTIVI[i].m * OKULAR;
+    samodejnaLucka();
     nastaviOstrino();
+  }
+  // Kot v laboratoriju: dokler lučke ne nastaviš sam, je ob vsakem objektivu nastavljena tako, da je podlaga skoraj bela
+  // (pri večjem objektivu pride skozi manj svetlobe, zato lučka močneje sveti).
+  let lucRocno = false;
+  function samodejnaLucka() {
+    if (lucRocno || s.nacin !== "svetloba") return;
+    const polna = svetlost(OBJEKTIVI[s.objektiv], 1, s.zaslonka, s.olje);
+    s.zarnica = Math.max(0.05, Math.min(1, 0.95 / polna));
   }
   function nastaviPovecavo(m, { izDrsnika = false } = {}) {
     if (s.nacin === "sem") {
@@ -523,7 +532,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   // telefon ne zamrzne). Drsniki, ki preparata ne spremenijo (lučka, zaslonka, ostrina), le znova sestavijo že
   // narisan preparat. Čas izrisa se meri, zato se predogled in pasovi prilagodijo hitrosti naprave.
   let polnaPozneje = 0;
-  let skala = 0.4; // ločljivost predogleda glede na polno
+  let skala = 0.4; // ločljivost predogleda glede na polno (0,15–0,75)
   let msNaVzorec = 0; // izmerjen čas preparata na vzorec (ms), 0 = še ne vemo
   let pKljuc = ""; // pogled, za katerega je preparat v polni ločljivosti v celoti narisan
   let delo = null; // izris po pasovih, ki še teče: { kljuc, r, css, y, h }
@@ -538,10 +547,12 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     msNaVzorec = msNaVzorec ? 0.6 * msNaVzorec + 0.4 * m : m;
     return ms;
   }
-  const visinaPasu = (n, ss) => Math.max(8, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaVzorec * n * ss))));
+  const visinaPasu = (n, ss) => Math.max(4, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaVzorec * n * ss))));
   // hiter izris v nižji ločljivosti (med premikanjem in kot predogled); skala se prilagodi, da traja ~30 ms
   function predogled(css, N, n) {
-    const nn = Math.min(n, Math.max(128, 32 * Math.round((n * skala) / 32)));
+    // ko je hitrost naprave že izmerjena, skala takoj ustreza ~30 ms (zahtevnejši preparati so lahko večkrat počasnejši)
+    if (msNaVzorec) skala = Math.round(20 * Math.max(0.15, Math.min(0.75, Math.sqrt(30 / (msNaVzorec * n * n))))) / 20;
+    const nn = Math.min(n, Math.max(96, 32 * Math.round((n * skala) / 32)));
     if (nn === n) pKljuc = ""; // predogled v polni velikosti prepiše polno sliko
     const r = izracunajPogled(upo, prep, s, nn, { hitro: true });
     r.v.ss = r.v.ss || 1;
@@ -550,7 +561,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     const ms = izmeri(() => upo.narisiPreparat(r.v), nn * nn * (r.v.ss || 1));
     upo.sestavi(r.v);
     const f = Math.max(0.8, Math.min(1.25, Math.sqrt(30 / Math.max(1, ms))));
-    skala = Math.round(20 * Math.max(0.25, Math.min(0.75, skala * f))) / 20;
+    skala = Math.round(20 * Math.max(0.15, Math.min(0.75, skala * f))) / 20;
     zadnji = { vp: r.vp, css, m: r.m, mol: r.mol };
     oznakeMol.replaceChildren();
     posodobiMerilo();
@@ -858,6 +869,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
         s.m = OBJEKTIVI[s.objektiv].m * OKULAR;
       }
       s.olje = s.objektiv === OBJEKTIVI.length - 1;
+      samodejnaLucka();
       if (c?.snov?.length) {
         // kazalec na izbrani del celice (organel): najbližje mesto s to snovjo, iskanje v vedno večjih krogih
         // pri svetlobnem mikroskopu velja snov tkiva (vakuola, jedro, stena), pri TEM snov ultrastrukture (jedrce, mitohondrij)
