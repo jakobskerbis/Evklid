@@ -608,7 +608,7 @@ async function renderLesson(topicId) {
         .map((k) =>
           k.kind === "lab"
             ? `<button type="button" class="tb-link" data-tb-lab="${esc(k.key)}" aria-label="${esc(t("tb.openLab", { title: k.title }))}">${ic("flask-conical")}<span><small>${esc(t("tb.inLab"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`
-            : `<button type="button" class="tb-link" data-tb-3d="${esc(k.id)}" data-title="${esc(k.title)}" aria-label="${esc(t("tb.open3d", { title: k.title }))}">${ic("box")}<span><small>${esc(t("tb.in3d"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`,
+            : `<button type="button" class="tb-link" data-tb-3d="${esc(k.id)}" data-title="${esc(k.title)}"${k.zacetek ? ` data-zacetek="${esc(new URLSearchParams(k.zacetek).toString())}"` : ""} aria-label="${esc(t("tb.open3d", { title: k.title }))}">${ic("box")}<span><small>${esc(t("tb.in3d"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`,
         )
         .join("")}</div>`
     : "";
@@ -675,7 +675,10 @@ async function renderLesson(topicId) {
   });
   box.querySelectorAll("[data-tb-lab]").forEach((b) => b.addEventListener("click", () => ctx.openLab?.(b.dataset.tbLab)));
   // getAttribute: »data-tb-3d« v dataset ni »tb3d« (vezaj pred števko ostane, ključ je »tb-3d«).
-  box.querySelectorAll("[data-tb-3d]").forEach((b) => b.addEventListener("click", () => ctx.open3d?.(b.getAttribute("data-tb-3d"), b.dataset.title)));
+  // data-zacetek: začetne vrednosti modela iz kataloga (faks lekcije: faks=1), open3d jih doda v naslov /3d#<id>?…
+  box.querySelectorAll("[data-tb-3d]").forEach((b) =>
+    b.addEventListener("click", () => ctx.open3d?.(b.getAttribute("data-tb-3d"), b.dataset.title, b.dataset.zacetek ? Object.fromEntries(new URLSearchParams(b.dataset.zacetek)) : null)),
+  );
   box.querySelectorAll(".tb-demo-mount").forEach((m) => {
     const d = demos[Number(m.dataset.sim)];
     mountSim(d.id, m, d.opts);
