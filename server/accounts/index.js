@@ -865,6 +865,21 @@ export function mountAccounts(app, store, opts = {}) {
     return freeBudgetInfo(studentId)?.error ?? null;
   }
 
+  // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
+  // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor). Vrne telo odgovora 429 ali null.
+  // Kliče ga server/app.js v obdelavi sporočila, sinhrono z rezervacijo in štetjem vprašanja (točka A1); n = koliko
+  // vprašanj bo zahteva porabila (ustno spraševanje USTNO_QUESTIONS, server/ustno-api.js).
+  function dailyBlock(studentId, n = 1) {
+    const r = rightsFor(studentId);
+    if (!r.personal && (!r.school || r.schoolAiOut)) {
+      const limit = freeDailyQuestions();
+      if (questionsToday(studentId) + n > limit) return { ...freeBlock(studentId, "block.freeDaily", { n: limit }), limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) };
+      return null;
+    }
+    const limit = dailyLimitFor(studentId, r);
+    if (limit && questionsToday(studentId) + n > limit) return { error: BLOCK_TEXT["block.daily"].replace("{n}", limit), code: "block.daily", params: { n: limit }, limit: true };
+    return null;
+  }
   function questionsToday(studentId) {
     const scope = quotaScope(studentId);
     return guests.questionsToday(scope.ids, scope.net);
@@ -895,14 +910,17 @@ export function mountAccounts(app, store, opts = {}) {
   // preverjanje spodaj (zaklep računa, OWNER_ONLY), da otrok na skrbnikovi napravi ne vidi prijav mimo zaklepa.
   const SESSIONLESS = [/^\/kozmetika\/prijave\/izvoz$/, /^\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
   const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
+  // Nekanonična pot /api (server/app.js, točka A1): 404, le zaklenjen račun ostane 403 (enako kot kanonična pot).
+  const ni = (res) => res.status(404).json({ error: "Pot ne obstaja." });
   app.use("/api", (req, res, next) => {
-    if (PUBLIC.some((re) => re.test(req.path))) return next();
-    if (!req.parent && SESSIONLESS.some((re) => re.test(req.path))) return next();
+    if (PUBLIC.some((re) => re.test(req.path))) return req.nekanonicnaApi ? ni(res) : next();
+    if (!req.parent && SESSIONLESS.some((re) => re.test(req.path))) return req.nekanonicnaApi ? ni(res) : next();
     const p = req.parent;
-    if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
+    if (!p) return req.nekanonicnaApi ? ni(res) : res.status(401).json({ error: "Prijavi se.", login: true });
     if (lockable(p) && ownerOnly(req.path, req.method) && !accountLocks.touch(p.id, req.deviceId)) {
       return res.status(403).json({ error: "Za to vpiši geslo računa.", account_locked: true });
     }
+    if (req.nekanonicnaApi) return ni(res);
     if (p.is_guest && /^\/billing\//i.test(req.path)) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
     if (p.is_guest && !guestAllowed(p)) return res.status(401).json({ error: "Uporaba brez računa ni več mogoča. Ustvari račun, da obdržiš napredek.", login: true, guest_off: true });
     // Porabo AI vidi samo skrbnik ali kdor aplikacijo odpre na računalniku, kjer teče strežnik.
@@ -958,44 +976,17 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
 
-    // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
-    // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor).
+    // Dnevna meja vprašanj inštruktorju (dailyBlock zgoraj). Tu samo zgodnja zavrnitev pred drugimi preverjanji; meja
+    // velja v obdelavi sporočila (server/app.js), ne glede na obliko poti (točka A1).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
-      const r = rightsFor(studentId);
-      if (!r.personal && (!r.school || r.schoolAiOut)) {
-        const limit = freeDailyQuestions();
-        if (questionsToday(studentId) >= limit) {
-          return res.status(429).json({
-            ...freeBlock(studentId, "block.freeDaily", { n: limit }),
-            limit: true,
-            upgrade: !!guests.netOf(studentId) || upsell(studentId),
-          });
-        }
-      } else {
-        const limit = dailyLimitFor(studentId, r);
-        if (limit && questionsToday(studentId) >= limit) {
-          return res.status(429).json({
-            error: BLOCK_TEXT["block.daily"].replace("{n}", limit),
-            code: "block.daily",
-            params: { n: limit },
-            limit: true,
-          });
-        }
-      }
+      const dnevna = dailyBlock(studentId);
+      if (dnevna) return res.status(429).json(dnevna);
     }
     // Ustno spraševanje (server/ustno-api.js) šteje kot USTNO_QUESTIONS vprašanj (j 10. 11.: 3 od 10 v brezplačnem paketu);
     // začne se le, če jih je danes še toliko na voljo. Samoocena (brez AI, /ustno/samoocena) ne šteje.
     if (s && req.method === "POST" && /^\/students\/\d+\/ustno\/zacni\/?$/i.test(req.path)) {
-      const r = rightsFor(studentId);
-      const free = !r.personal && (!r.school || r.schoolAiOut);
-      const limit = free ? freeDailyQuestions() : dailyLimitFor(studentId, r);
-      if (limit && questionsToday(studentId) + USTNO_QUESTIONS > limit) {
-        return res.status(429).json(
-          free
-            ? { ...freeBlock(studentId, "block.freeDaily", { n: limit }), limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) }
-            : { error: BLOCK_TEXT["block.daily"].replace("{n}", limit), code: "block.daily", params: { n: limit }, limit: true },
-        );
-      }
+      const dnevna = dailyBlock(studentId, USTNO_QUESTIONS); // isto preverjanje še enkrat ob štetju (server/ustno-api.js)
+      if (dnevna) return res.status(429).json(dnevna);
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
     // Z dokupljenim kreditom ta meja ne velja (poraba gre iz kredita, server/usage.js chargeCredit).
@@ -2596,6 +2587,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { dropForeignAccess, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { ageOfStudent, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

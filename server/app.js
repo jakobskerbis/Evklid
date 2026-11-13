@@ -223,21 +223,23 @@ export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
   app.disable("x-powered-by");
+  securityHeaders(app);
   // Usmerjevalnik Expressa pot s poševnico na koncu ujema kot pot brez nje (/messages/ = /messages) in predpono
-  // brez ozira na velike črke (/API = /api), vmesniki pred potmi (dnevna meja vprašanj, mesečna meja AI,
-  // lastništvo, zaklep računa, opravila po izbrisu, Cache-Control) pa req.path preverjajo z regularnimi izrazi
-  // in so oboje spregledali. Zato pri /api predpono zapišemo z malimi črkami in poševnice na koncu odrežemo,
-  // preden pot kdorkoli prebere: vsi vidijo isto pot kot usmerjevalnik (točka 1.1).
+  // brez ozira na velike črke (/API = /api), vmesniki pred potmi (meje, lastništvo, zaklep računa, opravila po
+  // izbrisu, Cache-Control) pa req.path preverjajo z regularnimi izrazi. Točka A1: nekanonične poti /api (predpona
+  // z velikimi črkami, poševnica na koncu, prazen del poti »//«) dobijo 404, preden pridejo do katerekoli poti.
+  // Odjemalci (spletna stran, aplikacija) kličejo samo kanonične poti. Dnevna meja vprašanj se poleg tega preverja
+  // v obdelavi sporočila pred rezervacijo za klic AI (accounts.dailyBlock), zato je pot ne more obiti.
   app.use((req, _res, next) => {
-    const q = req.url.indexOf("?");
-    const pot = q < 0 ? req.url : req.url.slice(0, q);
-    if (/^\/api(\/|$)/i.test(pot)) {
-      const cista = ("/api" + pot.slice(4)).replace(/(.)\/+$/, "$1");
-      if (cista !== pot) req.url = cista + (q < 0 ? "" : req.url.slice(q));
-    }
+    // req.path (ne req.url): zahteva v absolutni obliki (»POST http://gostitelj/API/…«) ima req.url brez začetne »/«,
+    // usmerjevalnik pa jo vseeno ujema po poti. Taka zahteva na /api ni kanonična.
+    const pot = req.path;
+    const absolutna = !req.url.startsWith("/");
+    // Samo oznaka: preverjanja računov (prijava 401, zaklep računa 403) veljajo tudi za take poti, nato 404
+    // (server/accounts/index.js; brez računov vmesnik takoj za mountAccounts spodaj).
+    if (/^\/api(\/|$)/i.test(pot) && (absolutna || !/^\/api(\/|$)/.test(pot) || /.\/$/.test(pot) || pot.includes("//"))) req.nekanonicnaApi = true;
     next();
   });
-  securityHeaders(app);
   mountOldLinkRedirect(app, opts.homeCheck);
   app.get("/healthz", (_req, res) => res.send("ok")); // za gostovanje, brez gesla
   // Brskalniki, Google in zaznamki iščejo /favicon.ico tudi brez <link rel="icon">: pošljemo logotip (scripts/logotip.cjs).
@@ -269,6 +271,7 @@ export function createApp(store, opts = {}) {
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
+  app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi
   if (gateNeeded()) app.use(passwordGate(process.env.EVKLID_PASSWORD)); // skupno geslo (samo brez računov, glej gate.js)
   mountWebApp(app); // manifest v jeziku vmesnika, povezava za Google Play
@@ -754,6 +757,11 @@ export function createApp(store, opts = {}) {
     const conv = loadConversation(req, res);
     if (!conv) return;
     const student = store.getStudent(conv.student_id);
+    // Dnevna meja vprašanj (točka A1) se preverja tu, v obdelavi sporočila, ne po obliki poti v vmesniku. Od tod do
+    // rezervacije za klic AI in store.logQuestion spodaj ni nobenega await (razen na poteh, ki vrnejo odgovor), zato
+    // je ne obide nobena oblika poti in ne dve sočasni sporočili v različnih pogovorih.
+    const dnevna = accounts?.dailyBlock?.(student.id);
+    if (dnevna) return res.status(429).json(dnevna);
 
     const text = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
     const image = req.body?.image;
