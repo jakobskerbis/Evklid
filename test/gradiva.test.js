@@ -8,6 +8,17 @@ import { officialPapers } from "../server/exams.js";
 
 const OHM = "FIZ-OS-9/upor-in-ohmov-zakon";
 
+test("complex numbers and sets are read aloud (bug report: lesson read-aloud)", () => {
+  assert.equal(speakTex("\\bar z = a - bi"), "konjugirano z je enako a minus b i");
+  assert.equal(speakTex("\\operatorname{Re} z = a"), "realni del z je enako a");
+  assert.equal(speakTex("\\operatorname{Im} z = b"), "imaginarni del z je enako b");
+  assert.equal(speakTex("\\mathbb{N} \\subset \\mathbb{Z}"), "N je podmnožica Z");
+  assert.equal(speakTex("x \\in \\mathbb{R}"), "x je element R");
+  assert.equal(speakTex("\\bar x = 5"), "x s črto je enako 5");
+  // \mathrm{Re} je v fiziki Reynoldsovo število: ne beremo ga kot realni del.
+  assert.doesNotMatch(speakTex("\\mathrm{Re} = 2000"), /realni del/);
+});
+
 test("formulas are read aloud in Slovenian", () => {
   assert.equal(speakTex("I = \\dfrac{U}{R}"), "I je enako U deljeno z R");
   assert.equal(speakTex("t = \\frac{s}{t}"), "t je enako s deljeno s t");
