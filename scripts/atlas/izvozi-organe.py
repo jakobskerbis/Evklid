@@ -33,6 +33,7 @@ from srce_zile import srce_zile, krivulje_objekta  # žile srca: zaprte cevi s s
 from oko_misice import ocesne_misice, kite_na_zrklo  # očesne mišice Z-Anatomy, prilegane na zrklo HRA (Tillauxova spirala, kite)
 from jetra_geometrija import jetra_deli, uveljavi_normale  # jetra: ena površina, režnji, vezi, votla vena, drevesa žil in žolčnih vodov
 from drevesa import pljucna_drevesa, ledvicne_zile  # pljuča: zaprti režnji, veje iz središčnic, subsegmentne veje (lastno)
+from pljuca_geometrija import pljuca_ct  # pljuča: režnji, žile in dihalno drevo iz CT (TotalSegmentator), sapnik z obroči iz HRA
 from mozgani_hra import mozgani_hra  # možgani: deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen, CC BY 4.0)
 from srce_ct import srce_ct  # stene srca iz CT (Rodero 2021), poravnava ostalih delov nanje, maščoba, trabekule
 
@@ -317,6 +318,7 @@ ORGANI = {
                 "pljuca": dict(barva=(0.66, 0.37, 0.37), barva2=(0.54, 0.29, 0.31), lise=0.30, liseMera=0.04, hrap=0.32,
                                gube=0.00003, gubeMera=0.003, zilice=0.22, ziliceBarva=(0.42, 0.25, 0.27), ziliceMera=0.04, razdeli=1),
                 "dihalna": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.3, hrap=0.44, gube=0.00004, gubeMera=0.002, razdeli=1),
+                "hrustanec": dict(barva=(0.86, 0.80, 0.70), barva2=(0.78, 0.71, 0.62), lise=0.25, hrap=0.40, gube=0.00002, gubeMera=0.002, razdeli=0),
                 "dihalna-v": dict(barva=(0.74, 0.60, 0.55), barva2=(0.66, 0.50, 0.47), lise=0.2, hrap=0.44, gube=0.0, razdeli=0),
                 "pljucna-arterija": dict(barva=(0.44, 0.28, 0.30), barva2=(0.38, 0.23, 0.26), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
                 "pljucna-vena": dict(barva=(0.50, 0.26, 0.25), barva2=(0.43, 0.21, 0.21), lise=0.3, hrap=0.42, gube=0.00003, gubeMera=0.002, razdeli=1),
@@ -340,7 +342,12 @@ ORGANI = {
         # trikotnikov: natrgani robovi ob preponi), veje v pljučih iz središčnic (veje=True: še subsegmentne veje s
         # kolonizacijo prostora; v pljučih so bile videti kot ščetina ob čistem drevesu Z-Anatomy, zato izklopljeno). Te mreže
         # imajo svojo telefonsko različico (»nedotakni«), ostalo (sapnik, glavna bronhija, žile ob hilusu) dobi preostanek.
-        dodaj=["pljucna_drevesa"], nedotakni=r"\(lastno\)",
+        # pljuca_geometrija.pljuca_ct (2026-11-13): vse iz enega telesa – režnji z zaobljenimi robovi, arterije, vene in
+        # dihalno drevo iz CT (TotalSegmentator lung_vessels; scripts/atlas/pljuca-zile.py → totalseg/pljuca-zile-v1.npz),
+        # sapnik in glavna bronhija s hrustančnimi obroči iz HRA (--hra: 3d-vh-m-trachea.glb, 3d-vh-m-main-bronchus.glb).
+        # Brez datoteke CT teče prejšnja pot (pljucna_drevesa: Z-Anatomy, nastavitve spodaj).
+        dodaj=["pljuca_ct"], nedotakni=r"\(lastno\)",
+        pljuca_ct=dict(rezenj=(60000, 11000, 3300), telListi=2),
         # Režnji iz CT (TotalSegmentator dataset v1, osebek s0913, CC BY 4.0; scripts/atlas/pljuca-ct.py): prave ploskve
         # režnjev s špranjami, poravnane na pljuča Z-Anatomy (ločeno levo in desno krilo). Brez datoteke ostanejo režnji Z-Anatomy.
         ct_rezenj="totalseg/pljuca-v1.npz",
@@ -1425,6 +1432,7 @@ def izvozi(organ, cfg):
         odlozi_stanje(os.environ["ORGANI_ODLOZI_PRED"], osnovni, cfg); return
     # lastne strukture (CC BY-SA, naše delo): ledvični meh s čašicami, veje jetrnih žil v jetrih
     cfg["_ct_mapa"] = CT  # mapa s podatki CT (pljučni režnji)
+    cfg["_hra_mapa"] = HRA
     for ime_f in cfg.get("dodaj", []):
         osnovni += globals()[ime_f](osnovni, cfg, tmp)
     if cfg.get("izpusti_po"):
