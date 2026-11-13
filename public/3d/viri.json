@@ -33,12 +33,13 @@
       "id": "openneuro-ds000001",
       "ime": "OpenNeuro ds000001 (fMRIPrep, FreeSurfer)",
       "avtor": "OpenNeuro Preprocessing Team; izvorni podatki: ds000001 (Balloon Analog Risk-taking Task)",
-      "opis": "Površina možganske skorje (pialna površina obeh polobel) in globina brazd iz MRI ene anonimne prostovoljke ali prostovoljca (sub-01). Iz nje so vijuge in brazde v Organih v 3D: možgani; režnji po parcelaciji Desikan-Killiany. Mali možgani so iz segmentacije istega MRI (aseg: oblika polobel, črva in tonzil).",
+      "opis": "Površina možganske skorje (pialna površina obeh polobel) in globina brazd iz MRI ene anonimne prostovoljke ali prostovoljca (sub-01). Iz nje so vijuge in brazde v Organih v 3D: možgani; režnji po parcelaciji Desikan-Killiany. Mali možgani in možgansko deblo so iz segmentacije istega MRI (aseg: oblika polobel, črva, tonzil in debla). Rezna ploskev sredinskega prereza je obarvana rezina iste preiskave (brain.mgz z oznakami aseg: siva in bela možganovina, prekati, talamus, drevo življenja).",
       "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/dataset_description.json",
       "licenca": "CC0 1.0",
       "licencaUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "datoteke": [
-        "organi-3d/mozgani*.glb"
+        "organi-3d/mozgani*.glb",
+        "organi-3d/mozgani-rez*.webp"
       ]
     },
     {
@@ -107,15 +108,14 @@
       "id": "evklid-telo",
       "ime": "Evklid: prirejeni modeli telesa",
       "avtor": "Evklid",
-      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Sami smo oblikovali ledvični meh s čašicami (Organi v 3D: ledvica), s programom izrisali shematsko rezno ploskev malih možganov in možganskega debla po obrisih iz iste zbirke (Organi v 3D: možgani), veje portalne vene in jetrnih ven v jetrih (Organi v 3D: jetra) ter lističe zaklopk s tetivami, papilarne mišice, trabekule ter velike in venčne žile srca kot cevi s steno (Organi v 3D: srce). Prirejene modele delimo pod isto licenco.",
+      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Sami smo oblikovali ledvični meh s čašicami (Organi v 3D: ledvica), veje portalne vene in jetrnih ven v jetrih (Organi v 3D: jetra) ter lističe zaklopk s tetivami, papilarne mišice, trabekule ter velike in venčne žile srca kot cevi s steno (Organi v 3D: srce). Prirejene modele delimo pod isto licenco.",
       "url": "https://evklid.app/3d",
       "licenca": "CC BY-SA 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "datoteke": [
         "telo/*.glb",
         "telo-hd/*.glb",
-        "organi-3d/*.glb",
-        "organi-3d/mozgani-mali-rez.webp"
+        "organi-3d/*.glb"
       ]
     },
     {

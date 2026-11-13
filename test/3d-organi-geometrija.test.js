@@ -97,15 +97,16 @@ for (const dat of ["ledvica.glb", "ledvica-telefon.glb"]) {
   });
 }
 
-test("geometrija organov: slika prereza malih možganov obstaja in je vezana na črva in deblo", () => {
+test("geometrija organov: slika prereza možganov (rezina MRI) obstaja in je vezana na prerez", () => {
   const j = json("mozgani");
-  for (const t of ["mali", "deblo"]) {
-    const s = j.tkiva[t].rezSlika;
-    assert.equal(s.slika, "mozgani-mali-rez.webp");
-    assert.equal(s.lo.length, 2); assert.equal(s.mera.length, 2);
+  const s = j.prerez.slika;
+  assert.equal(s.slika, "mozgani-rez.webp"); assert.equal(s.ucna, "mozgani-rez-ucne.webp");
+  assert.equal(s.lo.length, 2); assert.equal(s.mera.length, 2);
+  for (const f of [s.slika, s.ucna]) {
+    const v = fs.statSync(path.join(ORGANI, f)).size;
+    assert.ok(v > 15_000 && v < 400_000, `velikost slike ${f}: ${v}`);
   }
-  const v = fs.statSync(path.join(ORGANI, "mozgani-mali-rez.webp")).size;
-  assert.ok(v > 40_000 && v < 400_000, `velikost slike ${v}`);
+  assert.ok(!fs.existsSync(path.join(ORGANI, "mozgani-mali-rez.webp")), "stara risba malih možganov");
 });
 
 test("geometrija organov: Python orodja se prevedejo in izvoz jih kliče", (t) => {

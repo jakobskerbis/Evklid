@@ -95,7 +95,7 @@ ORGANI = {
         # oblika poloble, črva in tonzil, glavne fisure kot žlebovi; lističe nariše senčilnik (tkiva.mali.listi). Brez <osebek>-mali.npz ostanejo režnjiči Z-Anatomy.
         # glajenje: Taubin (krogi) proti stopnicam vokslov; zgornja pedunkla Z-Anatomy nista več ohranjena (od zadaj je bil
         # med malimi možgani MRI in deblom viden temen plavajoč kos)
-        mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40, deblo=True),
+        mali_mri=dict(delez=0.5, poravnava=0.0, glajenje=40, deblo=True, gube=35),
         # Deblo, mali možgani in sredinske strukture iz HRA brain v1.4 (Allen Human Brain Reference Atlas, CC BY 4.0;
         # mozgani_hra.py; datoteka v mapi --hra). Brez datoteke ostanejo Z-Anatomy in mali možgani MRI.
         # n4 (ocena n3: deblo HRA je raven valj z ločenim jajcem ponsa, mali možgani HRA gladki s »počesanimi« črtami, medmožgani
@@ -456,7 +456,7 @@ ORGANI = {
         # jetra_geometrija.jetra_deli: ena gladka površina (Z-Anatomy »Liver«), razrezana v štiri režnje brez vidnih šivov,
         # srpasta in obla vez, spodnja votla vena, portalna vena, jetrne vene, arterija in žolčni vodi kot drevesa (lastno).
         dodaj=["jetra_deli"], nedotakni=r"\(lastno\)",
-        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1),
+        jetra=dict(povrsina=(70000, 18000), razmikPortalna=0.013, razmikVene=0.016, telefonListi=1, portaDeblo=0.046, ivcZleb=0.015),  # n5: vrata vidna od zadaj, vena v žlebu
         tkiva=[(r"segment of liver", "jetra"), (r"^Gallbladder", "zolcnik"), (r"Bile duct|bile", "zolcevod"),
                (r"portal", "portalna"), (r"artery", "arterija"), (r"vein", "vena"), (r"", "jetra")],
         deli=[(r"\((V|VI|VII|VIII)\)", "desni-rezenj"), (r"\((II|III)\)", "levi-rezenj"), (r"\(IV\)", "kvadratni-rezenj"), (r"\(I\)", "repasti-rezenj"),
@@ -797,6 +797,21 @@ def mali_iz_mri(osnovni, mri, mm, lo, hi, tmp):
         from drevesa import taubin_bm
         bm = bmesh.new(); bm.from_mesh(me); taubin_bm(bm, mm["glajenje"]); bm.to_mesh(me); bm.free()
     me = poenostavi(me, mm.get("delez", 0.5), tmp)
+    if mm.get("gube"):
+        # n5: po poenostavitvi ostanejo na poloblah ravne ostre gube (rob dveh rezin segmentacije); čeznje gre šiv UV in
+        # peka tam zgreši visoko mrežo → bleda črta čez poloblo (ocena n4). Oglišča ob gubah (z dvema obročema) zgladimo.
+        bm = bmesh.new(); bm.from_mesh(me); bm.normal_update()
+        for _ in range(3):
+            ostri = {v for e in bm.edges if len(e.link_faces) == 2 and e.calc_face_angle(0.0) > math.radians(mm["gube"]) for v in e.verts}
+            if not ostri:
+                break
+            for _ in range(2):
+                ostri |= {e.other_vert(v) for v in ostri for e in v.link_edges}
+            for _ in range(8):
+                bmesh.ops.smooth_vert(bm, verts=list(ostri), factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+            bm.normal_update()
+        print(f"[organi] mali možgani: zglajene gube nad {mm['gube']}°, zadnji krog {len(ostri)} oglišč")
+        bm.to_mesh(me); bm.free()
     ostane = re.compile(mm.get("ohrani", r"^$"))
     stari = [r for r in osnovni if r[2] == "mali" and not ostane.search(r[0])]
     print(f"[organi] mali možgani iz MRI ({mri['osebek']}): {tris(me)} trikotnikov namesto {len(stari)} režnjičev Z-Anatomy, "

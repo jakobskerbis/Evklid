@@ -63,7 +63,7 @@
    "listi": 0.85,
    "listiSredisce": [
     -0.0014,
-    -0.02931,
+    -0.03886,
     -0.02715
    ],
    "listiRazmik": 0.0015,
@@ -72,21 +72,7 @@
    "aoTekstura": 0.7,
    "rezSum": 0.5,
    "rezPresek": {
-    "vrsta": 0,
-    "ovoj": true
-   },
-   "rezSlika": {
-    "slika": "mozgani-mali-rez.webp",
-    "lo": [
-     -0.02432,
-     -0.08189
-    ],
-    "mera": [
-     0.08243,
-     0.08243
-    ],
-    "izrez": true,
-    "visina": 0.5
+    "vrsta": 0
    }
   },
   "deblo": {
@@ -112,21 +98,7 @@
    "aoTekstura": 0.7,
    "rezSum": 0.3,
    "rezPresek": {
-    "vrsta": 0,
-    "ovoj": true
-   },
-   "rezSlika": {
-    "slika": "mozgani-mali-rez.webp",
-    "lo": [
-     -0.02432,
-     -0.08189
-    ],
-    "mera": [
-     0.08243,
-     0.08243
-    ],
-    "izrez": true,
-    "visina": 0.2
+    "vrsta": 0
    }
   },
   "bela": {
@@ -352,22 +324,7 @@
    "opis": "Povezuje možgane s hrbtenjačo in samodejno uravnava dihanje, srčni utrip in požiranje.",
    "opisStudij": "Srednji možgani, most in podaljšana hrbtenjača; jedra možganskih živcev III–XII (spinalni del XI je v vratni hrbtenjači), retikularna formacija (budnost), središča za dihanje in krvni obtok, poti (piramidna proga, lemniscus medialis). Križanje piramid na meji s hrbtenjačo.",
    "vozlisca": [
-    "Base of peduncle.l",
-    "Base of peduncle.r",
-    "Inferior colliculus.l",
-    "Inferior colliculus.r",
-    "Medulla oblongata.l",
-    "Medulla oblongata.r",
-    "Midbrain.l",
-    "Midbrain.r",
-    "Olive.l",
-    "Olive.r",
-    "Pons.l",
-    "Pons.r",
-    "Pyramid of medulla oblongata.l",
-    "Pyramid of medulla oblongata.r",
-    "Superior colliculus.l",
-    "Superior colliculus.r"
+    "Brainstem (MRI)"
    ],
    "tocke": {
     "celota": [
@@ -478,7 +435,7 @@
    "ucna": "mozgani-rez-ucne.webp",
    "lo": [
     -0.09349,
-    -0.06463
+    -0.07418
    ],
    "mera": [
     0.18736,
@@ -584,10 +541,10 @@
    }
   ]
  },
- "velikost": 0.2784,
+ "velikost": 0.2678,
  "trikotniki": {
-  "racunalnik": 210701,
-  "telefon": 60043
+  "racunalnik": 210605,
+  "telefon": 59257
  },
  "luci": [
   {

@@ -61,7 +61,7 @@ for (const [vrsta, pripona] of [["racunalnik", ""], ["telefon", "-telefon"]]) {
   });
 
 
-  test(`n4: mozgani${pripona}.glb – bele sredinske strukture HRA, deblo Z-Anatomy, mali možgani MRI`, async () => {
+  test(`n4/n5: mozgani${pripona}.glb – bele sredinske strukture HRA, deblo in mali možgani MRI, medmožgani Z-Anatomy`, async () => {
     const d = await preveriGLB(path.join(ORGANI, `mozgani${pripona}.glb`));
     for (const ime of ["Corpus callosum (HRA)", "Fornix (HRA)", "Anterior commissure (HRA)", "Optic chiasm (HRA)"]) {
       const r = d.find((x) => x.ime === ime);
@@ -72,7 +72,11 @@ for (const [vrsta, pripona] of [["racunalnik", ""], ["telefon", "-telefon"]]) {
     assert.ok(mali && mali.odprtiRobovi <= 2, "mali možgani MRI so zaprto telo");
     // ocena n3: deblo HRA je raven valj z ločenim ponsom, mali možgani HRA brez fisur → nazaj Z-Anatomy / MRI
     for (const ime of ["Brainstem (HRA)", "Cerebellum (HRA)", "Thalamus (HRA)"]) assert.ok(!d.some((x) => x.ime === ime), `${ime} je še v datoteki`);
-    for (const re of [/^Pons/, /^Medulla oblongata/, /^Midbrain/, /^Thalamus\.[lr]$/]) assert.ok(d.some((x) => re.test(x.ime)), `manjka ${re}`);
+    // n5: deblo iz segmentacije istega osebka (aseg 16), da se ujema z rezino MRI na rezni ploskvi; deblo Z-Anatomy odpade
+    const deblo = d.find((x) => x.ime === "Brainstem (MRI)");
+    assert.ok(deblo && deblo.odprtiRobovi === 0 && deblo.navznoter === 0, "možgansko deblo MRI je zaprto telo");
+    for (const re of [/^Pons/, /^Medulla oblongata/, /^Midbrain/]) assert.ok(!d.some((x) => re.test(x.ime)), `${re} Z-Anatomy je še v datoteki`);
+    assert.ok(d.some((x) => /^Thalamus\.[lr]$/.test(x.ime)), "manjka talamus");
   });
 
   test(`n4: pljuca${pripona}.glb in jetra${pripona}.glb sta geometrija r5 (brez vozlišč CT)`, async () => {
@@ -85,9 +89,16 @@ for (const [vrsta, pripona] of [["racunalnik", ""], ["telefon", "-telefon"]]) {
 
 test("n4: JSON organov – deli kažejo na obstoječa vozlišča, rez z risbo, palete", () => {
   const m = json("mozgani");
+  // n5: rezna ploskev možganov je ena slika čez ves prerez (rezina MRI istega osebka), ne risba le na malih možganih
   for (const t of ["mali", "deblo"]) {
     assert.equal(m.tkiva[t].rezPresek.vrsta, 0);
-    assert.ok(m.tkiva[t].rezSlika?.slika, `${t}: risba reza`);
+    assert.ok(!m.tkiva[t].rezSlika, `${t}: stara risba reza`);
+  }
+  const ps = m.prerez.slika;
+  assert.ok(ps && ps.lo.length === 2 && ps.mera.length === 2 && ps.mera[0] > 0.15 && ps.mera[0] < 0.25, "prerez.slika z mero v metrih");
+  for (const f of [ps.slika, ps.ucna]) {
+    const v = fs.statSync(path.join(ORGANI, f)).size;
+    assert.ok(v > 15_000 && v < 400_000, `${f}: ${v} B`);
   }
   const vozl = (j) => new Set(j.deli.flatMap((x) => x.vozlisca || []));
   assert.ok([...vozl(m)].some((v) => v.startsWith("Corpus callosum (HRA)")), "žuljevo telo HRA v delih možganov");
@@ -133,4 +144,25 @@ test("n4: viri – HRA Brain za objavljene mreže, viri CT le kot možnost orodi
   for (const re of [/Brain v1\.4/, /CC BY-SA 4\.0/, /Z-Anatomy/, /TotalSegmentator/]) assert.match(cr, re);
   // objavljena jetra in pljuča n4 nimajo mrež iz HVA-CT: vir ne sme biti naveden kot vir objavljenih mrež
   assert.ok(!najdi(/HVA-CT/) || /možnost|ni v objavljenih/i.test(najdi(/HVA-CT/).za), "HVA-CT le kot možnost");
+});
+
+test("n5: možgani – orodja za Silvijevo brazdo, deblo MRI in rezino MRI; pregledovalnik riše sliko prereza", () => {
+  const izv = beri("scripts", "atlas", "izvozi-organe.py");
+  for (const n of ["silvij=", "silvijDolzina", "deblo=True", "gube=", "mriAfina", "Brainstem (MRI)"]) assert.ok(izv.includes(n), n);
+  const rez = beri("scripts", "atlas", "mozgani-rez-mri.py");
+  for (const n of ["brain.mgz", "aseg.mgz", "mriAfina", "mozgani-rez-ucne.webp"]) assert.ok(rez.includes(n), n);
+  const py = spawnSync("python3", ["-c", "import ast,sys; ast.parse(open(sys.argv[1], encoding='utf8').read())", path.join(ATLAS, "mozgani-rez-mri.py")]);
+  if (py.status !== null && !py.error) assert.equal(py.status, 0, String(py.stderr));
+  const src = beri("public", "3d", "organ.js");
+  for (const n of ["rezPlosca", "prerez.slika"]) assert.ok(src.includes(n), n);
+});
+
+test("n5: jetra – ravnina prereza skozi debla jetrnih ven in portalne veje, votla vena v žlebu", () => {
+  const g = beri("scripts", "atlas", "jetra_geometrija.py");
+  for (const n of ["ravninaDreves", "_karinaN", "ivcZleb", "portaDeblo"]) assert.ok(g.includes(n), n);
+  const j = json("jetra");
+  const r = j.prerez.ravnine[0];
+  // ravnina je frontalna (normala pretežno spredaj–zadaj v glTF: os z), ne več vodoravna skozi vrata
+  assert.ok(Math.abs(r.n[2]) > 0.9, `normala ${r.n}`);
+  assert.ok(j.tkiva.zolcnik.rezPresek.cev && !j.tkiva.zolcnik.rezVotlina, "žolčnik na rezu s steno");
 });
