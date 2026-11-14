@@ -10,6 +10,8 @@ import { createApp } from "../server/app.js";
 import { modeSwitchNote } from "../server/nacin.js";
 import { paperContext } from "../server/paper-context.js";
 import { lessonNote } from "../server/lekcija-za-vprasanje.js";
+import { isHiddenNote } from "../server/skrite-opombe.js";
+import { transcript } from "../server/povzetek.js";
 
 const hidden = (msg) => msg.content.filter((b) => b.type === "text").map((b) => b.text);
 
@@ -23,6 +25,9 @@ test("modeSwitchNote: le ob dejanski zamenjavi, z novim načinom", () => {
   assert.match(n, /mode=B in META/);
   assert.match(n, /Never mention this note/);
   assert.match(modeSwitchNote("B", "A"), /follow the rules of način A/);
+  // Skrita opomba: povzetek, sodba kode o prejšnji nalogi in preizkusni način (»system prompt« → ščit) je ne berejo kot učenčevo besedilo.
+  assert.ok(isHiddenNote(n));
+  assert.doesNotMatch(transcript([{ role: "user", content: [{ type: "text", text: n }, { type: "text", text: "Reši 2x = 4" }] }]), /nacin|switched/);
 });
 
 test("opombi pole in lekcije: pri načinu B ne zadržita rešitve", () => {
