@@ -61,8 +61,17 @@ function odpriMikroskop(p) {
 function izZbirke(e) {
   if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
+  // Mesto na zbirki shranimo v njen vnos v zgodovini: Nazaj (z modela ali iz podveje) vrne na isto mesto.
+  history.replaceState({ ...history.state, pomik: glavni.scrollTop }, "");
   history.pushState({ k3Iz: "hub" }, "", e.currentTarget.getAttribute("href"));
   usmeri();
+}
+// Naslov zbirke na veji v (»biologija/telo«) z iskanjem q; prazno = koren (ohrani ?vgrajeno ipd.).
+function naslovZbirke(v, q = "") {
+  const u = new URLSearchParams();
+  if (v) u.set("v", v);
+  if (q) u.set("q", q);
+  return u.toString() ? `#?${u}` : location.pathname + location.search;
 }
 
 // Gumb »3D svet« ob napaki (model ne obstaja, ni WebGL): na zbirko, v okvirju aplikacije pa zapre okvir (zbirka v
@@ -95,8 +104,6 @@ function zapomni(id) {
 }
 // Slog aplikacije (theme.js shrani nastavitve v »evklid.theme«; /3d ga ne naloži): nabor ikon vej drevesa.
 const slogAplikacije = () => slogIkon(beri("evklid.theme", {})?.style);
-// Pomnjenje mesta na zbirki: ob vrnitvi z modela (Nazaj) se stran odpre na istem mestu.
-let pomik = 0;
 
 async function zbirka(param) {
   document.title = t("a3.hubTitle");
@@ -150,15 +157,11 @@ async function zbirka(param) {
   const poId = new Map(modeli.map((m) => [m.id, m]));
   const obstaja = new Set([...poId.keys(), "atlas"]);
   const veje = poPoti(param.v);
+  // Veja brez modelov (strežnik nekega področja nima): pokažemo najbližjo višjo, ki jih ima.
+  while (veje.length && !modeliVeje(veje[veje.length - 1], obstaja).length) veje.pop();
   const potId = veje.map((v) => v.id).join("/");
-
   // Stanje v naslovu (#?v=biologija/telo&q=…), da Nazaj z modela vrne isto vejo; iskanje naslov zamenja.
-  const naslovZbirke = (v, q = "") => {
-    const u = new URLSearchParams();
-    if (v) u.set("v", v);
-    if (q) u.set("q", q);
-    return u.toString() ? `#?${u}` : location.pathname + location.search;
-  };
+  if (potId !== (param.v || "")) history.replaceState(history.state, "", naslovZbirke(potId, param.q || ""));
   const shrani = () => history.replaceState(history.state, "", naslovZbirke(potId, vnos.value.trim()));
 
   const kartica = (m, { nadnaslov = false } = {}) => {
@@ -264,6 +267,7 @@ async function zbirka(param) {
 
   // Drevo (public/3d/drevo.js): pot zgoraj, pod njo veje kot ikone ali, na zadnji veji, modeli kot kartice.
   const skupina = veje[0]?.sk;
+  const ZNAKI = { bio: "droplet", kem: "atom", fiz: "zap", mat: "box" };
   const ime = (id) => t(`a3.tree.${id}`);
   const ikone = [];
   const veja = (v) => {
@@ -280,6 +284,11 @@ async function zbirka(param) {
     img.width = img.height = 256;
     img.dataset.veja = v.id;
     img.src = ikonaVeje(v.id, slogAplikacije());
+    // Brez povezave in ikona še ni v predpomnilniku: znak skupine namesto prazne ploščice.
+    img.addEventListener("error", () => {
+      img.remove();
+      ovoj.insertAdjacentHTML("afterbegin", icon(ZNAKI[v.sk || skupina] || "box"));
+    });
     ikone.push(img);
     ovoj.append(img);
     const n = modeliVeje(v, obstaja).length;
@@ -305,14 +314,19 @@ async function zbirka(param) {
       return a;
     };
     if (veje.length) {
-      deli.push(korak(t("a3.hubTitle"), ""));
+      // Korak in ločilo za njim v enem kosu: ob prelomu vrstice »›« ostane na koncu prejšnje vrstice.
+      const kos = (el) => {
+        const s = mk("span", "");
+        s.append(el, mk("span", "k3-drevo-loc", "›"));
+        return s;
+      };
+      deli.push(kos(korak(t("a3.hubTitle"), "")));
       veje.forEach((v, i) => {
-        deli.push(mk("span", "k3-drevo-loc", "›"));
-        if (i < veje.length - 1) deli.push(korak(ime(v.id), veje.slice(0, i + 1).map((x) => x.id).join("/")));
+        if (i < veje.length - 1) deli.push(kos(korak(ime(v.id), veje.slice(0, i + 1).map((x) => x.id).join("/"))));
         else {
-          const b = mk("b", "", ime(v.id));
+          const b = mk("b", "k3-drevo-zdaj", ime(v.id));
           b.setAttribute("aria-current", "page");
-          b.style.color = BARVE[skupina] || "";
+          b.tabIndex = -1; // fokus po premiku po drevesu
           deli.push(b);
         }
       });
@@ -337,7 +351,11 @@ async function zbirka(param) {
     } else {
       narisiPot();
       const zdaj = veje[veje.length - 1];
-      if (zdaj?.modeli) deli.push(mreza(zdaj.modeli.map((id) => poId.get(id)).filter(Boolean)));
+      if (zdaj?.modeli) {
+        const g = mreza(zdaj.modeli.map((id) => poId.get(id)).filter(Boolean));
+        g.classList.add("k3-veja-modeli");
+        deli.push(g);
+      }
       else {
         const g = mk("div", "k3-drevo");
         for (const v of zdaj ? zdaj.otroci : DREVO) if (modeliVeje(v, obstaja).length) g.append(veja(v));
@@ -369,15 +387,16 @@ async function zbirka(param) {
     }
   });
   narisi();
-  // Vrnitev z modela: isto mesto na zbirki (sicer vrh, tudi ob premiku po drevesu).
-  const nazajNa = pomik; // rAF teče po spodnji ponastavitvi, zato vrednost vzamemo zdaj
+  // Vrnitev (Nazaj z modela, atlasa, mikroskopa ali iz podveje): isto mesto, shranjeno v vnosu zgodovine; sicer vrh.
+  const nazajNa = +history.state?.pomik || 0;
   if (nazajNa) requestAnimationFrame(() => glavni.scrollTo({ top: nazajNa }));
   else glavni.scrollTo({ top: 0 });
-  pomik = 0;
+  // Premik naprej po drevesu: fokus na novo mesto, da tipkovnica in bralnik zaslona ne začneta na vrhu.
+  if (!nazajNa && !vnos.value.trim() && history.state?.k3Iz === "hub" && (!document.activeElement || document.activeElement === document.body))
+    (potNav.querySelector(".k3-drevo-zdaj") || vsebina.querySelector(".k3-veja"))?.focus({ preventScroll: true });
   return {
     unici() {
       removeEventListener("storage", obSlogu);
-      pomik = razberi().id ? glavni.scrollTop : 0; // na model ali atlas: zapomnimo; na drugo vejo: na vrh
     },
   };
 }
@@ -556,10 +575,21 @@ addEventListener("hashchange", usmeri);
 // Esc v modelu ali atlasu: nazaj na zbirko. Na window, da pridejo najprej na vrsto atlas in pregledovalnik (zaprejo
 // list, kviz ali izbiro in pokličejo preventDefault); v polju za vnos (iskanje) Esc ostane polju.
 addEventListener("keydown", (e) => {
-  if (e.key !== "Escape" || e.defaultPrevented || !razberi().id) return;
+  if (e.key !== "Escape" || e.defaultPrevented) return;
   if (e.target instanceof Element && e.target.closest("input, textarea, select, [contenteditable]")) return;
-  e.preventDefault();
-  nazaj();
+  const { id, param } = razberi();
+  if (id) {
+    e.preventDefault();
+    nazaj();
+  } else if (param.v && !param.q) {
+    // Zbirka na veji: Esc gre za vejo višje (kot Nazaj na telefonu).
+    e.preventDefault();
+    if (history.state?.k3Iz === "hub") history.back();
+    else {
+      history.replaceState(history.state, "", naslovZbirke(param.v.split("/").slice(0, -1).join("/")));
+      usmeri();
+    }
+  }
 });
 usmeri();
 
