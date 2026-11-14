@@ -63,6 +63,7 @@ export function setUciTab(name) {
 /** Izris vidnega zavihka (ob prikazu pogleda »Uči se« v glavnem delu ali v premičnem oknu). */
 export function showUci() {
   setUciTab(tab);
+  D?.odprto?.(tab === "textbook" ? "lekcije" : tab === "lab" ? "laboratorij" : "svet3d"); // B2: odprtje dela (public/app.js)
   if (tab === "textbook") return D?.showTextbook();
   if (tab === "lab") return D?.showLab();
   return show3d();
@@ -203,6 +204,7 @@ async function show3d() {
 export function open3d(id, title = "", param = null) {
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id || "")) return;
   const q = param ? new URLSearchParams(Object.entries(param).filter(([, v]) => v)).toString() : "";
+  D?.odprto?.("svet3d"); // B2: atlas ali model iz lekcije ali zbirke
   close3d();
   const el = document.createElement("div");
   el.className = "uci-3d-full";

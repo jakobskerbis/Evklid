@@ -413,8 +413,25 @@ document.addEventListener("visibilitychange", () => {
   if (installed && !busy && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
 });
 window.addEventListener("pagehide", saveSnapshot);
+// Točka B2 (pilot): odprtje dela aplikacije se zabeleži na strežniku (server/odpiranje-delov.js) največ enkrat na dan,
+// del in profil; strežnik hrani samo prvi in zadnji dan ter število dni. Brez povezave ali 5xx: poskusi ob naslednjem odprtju.
+const DEL_POGLEDA = { chat: "instruktor", topic: "vadnica", cards: "vadnica", exams: "vadnica", competition: "vadnica", games: "igre" };
+const odprtoDanes = new Set();
+let brezStetja = false; // zadnji zaslon in okna, obnovljena ob zagonu, niso odprtje (učenec jih ni odprl sam)
+function odprto(del) {
+  const id = state.student?.id;
+  if (!id || !del || brezStetja) return;
+  const k = `${id}:${del}:${new Date().toISOString().slice(0, 10)}`;
+  if (odprtoDanes.has(k)) return;
+  odprtoDanes.add(k);
+  const ne = () => odprtoDanes.delete(k);
+  fetch(`/api/students/${id}/odprto`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ del }), keepalive: true })
+    .then((r) => r.ok || r.status < 500 || ne()) // 4xx (npr. profil odprt drugje) se ne popravi s ponovitvijo
+    .catch(ne);
+}
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
+  odprto(DEL_POGLEDA[name]);
   if (name === "me") renderMe();
   if (name === "settings") {
     fillSettingsForm();
@@ -4864,6 +4881,7 @@ initUci({
   showTextbook,
   showLab,
   stopReading,
+  odprto,
   askTutor: (text) => {
     showView("chat");
     fillInput(text);
@@ -4977,7 +4995,14 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     const mark = apiSeq; // klici do sem so od profila in Učne poti
     const other = z || (first && START_VIEW && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
-    if (z) await openStartScreen(z);
+    if (z) {
+      brezStetja = true;
+      try {
+        await openStartScreen(z);
+      } finally {
+        brezStetja = false;
+      }
+    }
     finishStart(other ? mark : null);
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
@@ -4986,7 +5011,14 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
       startDone(); // viden pogled, sicer fokus ne gre v polje (B1)
       box.focus();
     }
-    if (first) restoreWindows();
+    if (first) {
+      brezStetja = true;
+      try {
+        restoreWindows();
+      } finally {
+        brezStetja = false;
+      }
+    }
     first = false;
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
