@@ -65,6 +65,8 @@ $$\frac{2x}{x-1} \cdot \frac{x^2-1}{4x^2} = \frac{2x}{x-1} \cdot \frac{(x-1)(x+1
 
 Okrajšali smo $x-1$ in $2x$, saj je $4x^2 = 2x \cdot 2x$. Pogoja sta $x \neq 1$ in $x \neq 0$.
 
+Primer deljenja: $\dfrac{x^2-1}{x} : \dfrac{x+1}{x^2} = \dfrac{(x-1)(x+1)}{x} \cdot \dfrac{x^2}{x+1} = x(x-1)$. Pogoja sta $x \neq 0$ in $x \neq -1$; drugi je potreben, ker z ulomkom, ki je enak $0$, ne delimo.
+
 **5. Seštevanje in odštevanje.** Ulomka z enakim imenovalcem seštejemo (odštejemo) števca:
 
 $$\frac{A}{C} \pm \frac{B}{C} = \frac{A \pm B}{C}.$$
@@ -82,7 +84,7 @@ Primer: $\dfrac{1}{x} + \dfrac{1}{x+2} = \dfrac{(x+2) + x}{x(x+2)} = \dfrac{2x+2
 :::premisli
 Pri $\dfrac{1}{x} + \dfrac{1}{x^2}$ vzemi za skupni imenovalec kar zmnožek $x \cdot x^2 = x^3$. Ali je rezultat napačen? Zakaj je vseeno boljši $x^2$?
 ---
-Ker je $x^2$ že deljiv z $x$, je to najmanjši skupni večkratnik. Z njim takoj dobiš $\dfrac{x+1}{x^2}$. Z $x^3$ dobiš $\dfrac{x^2+x}{x^3}$, ki ga moraš še okrajšati z $x$, da prideš do istega rezultata.
+Rezultat ni napačen, pot je le daljša. Ker je $x^2$ že deljiv z $x$, je to najmanjši skupni večkratnik. Z njim takoj dobiš $\dfrac{x+1}{x^2}$. Z $x^3$ dobiš $\dfrac{x^2+x}{x^3}$, ki ga moraš še okrajšati z $x$, da prideš do istega rezultata.
 :::
 
 ## Rešeni primeri

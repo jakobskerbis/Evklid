@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -91,7 +91,7 @@ Dvojiški zapis nekega števila se konča z dvema ničlama. Kaj zagotovo veš o 
 Deljivo je s $4$. Vse mestne vrednosti od tretjega mesta naprej ($4$, $8$, $16$ …) so večkratniki števila $4$, zadnji dve mesti pa ne prispevata ničesar.
 :::
 
-**7. Zakaj računalniki.** Elektronsko vezje najzanesljiveje loči dve stanji: napetost je ali je ni, impulz pride ali ne pride. Šum v signalu z Marsa lahko popači »malo napetosti« v »srednjo«, težko pa spremeni »nič« v »vse«. Zato sonde, telefoni in računalniki števila zapisujejo dvojiško. Z $k$ biti zapišeš števila od $0$ do $2^k - 1$, to je $2^k$ različnih števil, tako kot ima množica s $k$ elementi $2^k$ podmnožic: vsak bit je odločitev »da ali ne«.
+**7. Zakaj računalniki.** Elektronsko vezje najzanesljiveje loči dve stanji: napetost je ali je ni, impulz pride ali ne pride. Šum v signalu z Marsa lahko popači »malo napetosti« v »srednjo«, težko pa spremeni »nič« v »vse«. Zato sonde, telefoni in računalniki števila zapisujejo dvojiško. S $k$ biti zapišeš števila od $0$ do $2^k - 1$, to je $2^k$ različnih števil, tako kot ima množica s $k$ elementi $2^k$ podmnožic: vsak bit je odločitev »da ali ne«.
 
 ## Rešeni primeri
 
@@ -194,7 +194,7 @@ $10 = 8 + 2$, torej $58 = 32 + 16 + 8 + 2$. Mesta $4$ in $1$ dobita ničlo: $111
 - Iz dvojiškega v desetiški: seštej mestne vrednosti nad enicami.
 - Iz desetiškega v dvojiški: (a) vsota največjih potenc $2$, manjkajoče potence dobijo $0$; (b) zaporedno deljenje z $2$ po izreku $a = q \cdot b + r$, ostanke beri od spodaj navzgor.
 - Zadnja števka je ostanek pri deljenju z $2$: $0$ pri sodem, $1$ pri lihem številu.
-- Z $k$ biti zapišeš števila od $0$ do $2^k - 1$.
+- S $k$ biti zapišeš števila od $0$ do $2^k - 1$.
 
 ## Drugače: Korak za korakom s številkami
 

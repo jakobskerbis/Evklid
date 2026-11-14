@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -72,7 +72,7 @@ Zdaj lahko odgovorimo še na drugo vprašanje reševalcev. Oddajnik, enako oddal
 :::premisli
 Ali je lahko $R$ manjši od polovice najdaljše stranice? Zakaj?
 ---
-Ne more. Vsaka stranica je tetiva očrtane krožnice, tetiva pa ni nikoli daljša od premera $2R$. Zato je $R \ge \dfrac{c}{2}$ za najdaljšo stranico $c$; enakost velja le, ko je $c$ premer, torej pri pravokotnem trikotniku.
+Ne more. Vsaka stranica je tetiva očrtane krožnice (daljica med dvema točkama krožnice), tetiva pa ni nikoli daljša od premera $2R$. Zato je $R \ge \dfrac{c}{2}$ za najdaljšo stranico $c$. Enakost velja le, ko je $c$ premer, torej pri pravokotnem trikotniku.
 :::
 
 ## Rešeni primeri

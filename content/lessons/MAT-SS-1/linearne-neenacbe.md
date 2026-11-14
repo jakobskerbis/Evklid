@@ -24,7 +24,7 @@ Tudi tu dobimo **množico rešitev**, ki jo zapišemo kot **interval**. Pri line
 
 *Hitro preveri:* ali je $4x + 1 \ge 0$ linearna neenačba? (Da: $x$ je v prvi potenci.)
 
-**2. Rešitev** je vsako število, ki neenačbo spremeni v resničen izrek. Pri $x + 1 > 3$ so rešitve $2{,}5$; $3$; $10$ … in sicer vsa števila, večja od $2$. Rešitev je torej neskončno mnogo.
+**2. Rešitev** je vsako število, ki neenačbo spremeni v pravilno izjavo. Pri $x + 1 > 3$ so rešitve $2{,}5$; $3$; $10$ … in sicer vsa števila, večja od $2$. Rešitev je torej neskončno mnogo.
 
 *Hitro preveri:* ali je $x = 2$ rešitev neenačbe $x + 1 > 3$? (Ne: $3 > 3$ ne drži.)
 
@@ -59,7 +59,7 @@ $x = -5$ je rešitev, ker $5 > 3$. $x = 0$ ni, ker $0 > 3$ ne drži. Rešitve so
 
 *Hitro preveri:* kako zapišeš $x \le 7$? ($(-\infty, 7]$.)
 
-**5. Poseben primer.** Pri neenačbi $0 \cdot x < 5$ ali $0 \cdot x > 5$ po poenostavitvi nastane neenačba brez $x$. Če je resnična, je rešitev vsako realno število $(-\infty, \infty)$; če ni, rešitev ni (prazna množica).
+**5. Poseben primer.** Včasih členi z $x$ pri poenostavitvi odpadejo in ostane neenačba brez $x$, na primer $0 \cdot x < 5$ ali $0 \cdot x > 5$. Če je resnična, je rešitev vsako realno število $(-\infty, \infty)$; če ni, rešitev ni (prazna množica).
 
 :::premisli
 Ima neenačba $2x + 1 < 2x - 3$ kakšno rešitev? Napovej, preden poenostaviš.
@@ -285,6 +285,7 @@ Samo števila, manjša od $-3$, ustrezajo, kar se ujema z rešitvijo. Če bi zna
 
 :::simboli
 x | neznanka (v besedilnih nalogah število letev) | | |
-a | koeficient pri $x$ | | | njegov predznak odloči, ali se znak obrne
-b | število na desni strani | | |
+a | koeficient pri $x$ | | | njegov predznak odloči, ali se znak obrne; v preglednici intervalov je $a$ krajišče
+b | število na desni strani neenačbe $ax < b$ | | | v obliki $ax + b < c$ je $b$ prosti člen na levi
+c | število na desni strani neenačbe $ax + b < c$ | | | v dokazu obrnitve znaka negativno število, s katerim množimo
 :::

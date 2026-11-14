@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -46,7 +46,7 @@ $$D = (b - k)^2 - 4a(c - n)$$
 | $D = 0$ | eno (dotikališče) | tangenta |
 | $D < 0$ | nobenega | mimobežnica |
 
-Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$, zato je pobočje sekanta parabole. Za vsako absciso izračunamo še ordinato, ker je presečišče točka, ne število.
+Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$ in pobočje je sekanta parabole. Za vsako absciso izračunamo še ordinato, ker je presečišče točka, ne število.
 
 :::premisli
 Laro zanima premica $y = 0{,}5x + n$, ki jo dvigujemo (večamo $n$). Kaj se dogaja s presečiščema in z diskriminanto? Napovej.

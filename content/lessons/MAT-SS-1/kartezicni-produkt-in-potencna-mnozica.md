@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -325,7 +325,9 @@ a, b | elementa (komponenti para) | | | $a \in A$, $b \in B$
 c, d | komponenti drugega para | | |
 X | podmnožica množice $A$ | X \subseteq A | | element potenčne množice $\mathcal{P}(A)$
 n | število elementov množice $A$ | | | moč množice $A$
-K | množica krajev | | |
+K | množica krajev (Primer 1) ali koča, točka na zemljevidu (Primer 3) | | |
+R | gozdni rezervat (Primer 3) | R = [2, 5] \times [1, 3] | |
+I | izvir, točka na zemljevidu (Primer 3) | | |
 S | množica stolpcev zemljevida | | | v razlagi (točka 2)
 V | množica prevozov (Primer 1) ali vrstic zemljevida (razlaga) | | |
 k, v | kraj in prevoz | | | $k \in K$, $v \in V$

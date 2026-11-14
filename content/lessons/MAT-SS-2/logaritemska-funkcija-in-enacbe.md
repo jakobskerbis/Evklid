@@ -26,7 +26,7 @@ V levem stolpcu vsak korak navzdol pomnoži z $2$, v desnem pa prišteje $1$. Mn
 :::premisli
 Koliko oktav nad A je ton s frekvenco $3520\,\mathrm{Hz}$? In kaj bi morala aplikacija pokazati pri $0\,\mathrm{Hz}$?
 ---
-Ker je $3520 : 440 = 8 = 2^3$, je ton $3$ oktave nad A. Pri $0\,\mathrm{Hz}$ ni nobenega odgovora: potenca $2^x$ je vedno pozitivna, zato nobeno število oktav ne da frekvence $0$. Logaritem nič (in negativnega števila) ne obstaja.
+Ker je $3520 : 440 = 8 = 2^3$, je ton $3$ oktave nad A. Pri $0\,\mathrm{Hz}$ ni nobenega odgovora: potenca $2^x$ je vedno pozitivna, zato nobeno število oktav ne da frekvence $0$. Logaritem števila $0$ (in negativnega števila) ne obstaja.
 :::
 
 **2. Od tabele do grafa.** Izpustimo glasbo in vzemimo kar $y = \log_2 x$. Vrednosti preberemo iz potenc števila $2$:

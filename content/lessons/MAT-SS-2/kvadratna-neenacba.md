@@ -264,4 +264,6 @@ D | diskriminanta | D = b^2 - 4ac | |
 x_{1,2} | ničli kvadratne funkcije | x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} | |
 x_1, x_2 | manjša in večja ničla | | | $x_1 < x_2$
 v | hitrost avtomobila (neznanka v Primeru 3) | | km/h | poraba $p(v)$ v L na 100 km
+p | poraba goriva pri hitrosti $v$ | p(v) = 0{,}001v^2 - 0{,}16v + 11 | | v litrih na $100\,\mathrm{km}$
+h | nadmorska višina ceste | h(x) = 1600 - 25x^2 | m | $x$ je oddaljenost od vrha prelaza v km
 :::

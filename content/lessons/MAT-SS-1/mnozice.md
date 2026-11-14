@@ -32,7 +32,7 @@ Oba zapisa opisujeta isto množico. Vrstni red in ponavljanje elementov ne štej
 
 Vsaka množica je podmnožica same sebe ($A \subseteq A$), prazna množica pa je podmnožica vsake množice ($\emptyset \subseteq A$). Pazi na razliko: znak $\in$ povezuje *element* z množico, znak $\subseteq$ pa *množico* z množico. Zato je $2 \in \{1, 2, 3\}$, toda $\{2\} \subseteq \{1, 2, 3\}$.
 
-(višja raven) Množica z $n$ elementi ima natanko $2^n$ podmnožic. Množica $\{a, b\}$ ima podmnožice $\emptyset$, $\{a\}$, $\{b\}$ in $\{a, b\}$, torej $2^2 = 4$.
+Vse podmnožice množice $A$ skupaj sestavljajo njeno **potenčno množico** $\mathcal{P}(A)$. Množica $\{a, b\}$ ima podmnožice $\emptyset$, $\{a\}$, $\{b\}$ in $\{a, b\}$, zato je $\mathcal{P}(\{a, b\}) = \{\emptyset, \{a\}, \{b\}, \{a, b\}\}$. (višja raven) Množica z $n$ elementi ima natanko $2^n$ podmnožic, tu $2^2 = 4$.
 
 :::premisli
 Zakaj je prazna množica podmnožica vsake množice $A$? Pomagaj si z implikacijo »če $x \in \emptyset$, potem $x \in A$«.
@@ -161,7 +161,7 @@ $9 + 6 + 5 = 20$. Sodelovalo je $36$ dijakov, natanko eno vrsto aplikacij jih up
 ## Povzetek
 
 - Množico določajo njeni elementi; zapišemo jo z naštevanjem $\{\dots\}$ ali z lastnostjo $\{x \mid \dots\}$. Velja $a \in A$ ali $a \notin A$.
-- $A \subseteq B$ pomeni, da je vsak element množice $A$ tudi v $B$. Vedno velja $A \subseteq A$ in $\emptyset \subseteq A$; množica z $n$ elementi ima $2^n$ podmnožic.
+- $A \subseteq B$ pomeni, da je vsak element množice $A$ tudi v $B$. Vedno velja $A \subseteq A$ in $\emptyset \subseteq A$. Vse podmnožice sestavljajo potenčno množico $\mathcal{P}(A)$; (višja raven) množica z $n$ elementi ima $2^n$ podmnožic.
 - Operacije: $A \cup B$ (v $A$ ali v $B$), $A \cap B$ (v $A$ in v $B$), $A \setminus B$ (v $A$, ne v $B$), $A^c$ (v $\mathcal{U}$, ne v $A$).
 - Množici sta disjunktni, če je $A \cap B = \emptyset$. Razlika ni zamenljiva, unija in presek sta.
 - (višja raven) De Morgan: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$.
@@ -179,7 +179,7 @@ Predstavljaj si pravokotnik, ki pomeni $\mathcal{U}$, in v njem dva kroga, ki se
 | desni krog brez prekrivanja | v $B$, ne v $A$ | $B \setminus A$ |
 | pravokotnik zunaj obeh krogov | v nobeni | $(A \cup B)^c$ |
 
-Vsaka operacija je pobarvanje nekaj teh območij. Unija pobarva oba kroga v celoti, to je tri območja. Presek pobarva samo lečo. Razlika $A \setminus B$ pobarva levi krog brez leče. Komplement $A^c$ pobarva vse, kar je zunaj levega kroga: desni krog brez leče in zunanje območje.
+Vsaka operacija je pobarvanje nekaj teh območij. Unija pobarva oba kroga v celoti, to so tri območja. Presek pobarva samo lečo. Razlika $A \setminus B$ pobarva levi krog brez leče. Komplement $A^c$ pobarva vse, kar je zunaj levega kroga: desni krog brez leče in zunanje območje.
 
 Zdaj lahko De Morganovo pravilo preprosto *vidiš*. Množica $(A \cup B)^c$ je zunanje območje. Množica $A^c \cap B^c$ je tisto, kar je hkrati zunaj levega in zunaj desnega kroga, torej spet zunanje območje. Če je $A \subseteq B$, leži krog $A$ cel znotraj kroga $B$. Disjunktni množici sta kroga, ki se ne prekrivata. Pri treh krogih nastane sedem območij znotraj krogov in osmo zunaj njih.
 
@@ -193,7 +193,7 @@ Pomisli na iskanje po spletu ali na filtre v spletni trgovini. Vsak filter dolo�
 
 Nov filter, dodan z »in«, števila zadetkov nikoli ne poveča: presek je del vsake od množic, iz katerih nastane.
 
-Galerija na telefonu deluje enako. »Videi s tega leta« so presek dveh množic, »fotografije brez lokacije« pa komplement v množici vseh fotografij.
+Galerija na telefonu deluje enako. »Letošnji videi« so presek dveh množic, »fotografije brez lokacije« pa komplement v množici vseh fotografij.
 
 ## Preveri se
 
@@ -251,6 +251,7 @@ Galerija na telefonu deluje enako. »Videi s tega leta« so presek dveh množic,
 A, B | množici | | | moč množice je število njenih elementov
 x | element množice | | |
 X | poljubna množica | | |
+n | število elementov množice | | | množica z $n$ elementi ima $2^n$ podmnožic
 c | oznaka komplementa (v $A^c$) | | | elementi univerzalne množice, ki niso v $A$
 K | dijaki, ki uporabljajo aplikacije za klepet | | | Primer 3
 V | dijaki, ki uporabljajo aplikacije za kratke videe | | | Primer 3

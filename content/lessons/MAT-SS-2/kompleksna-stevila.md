@@ -86,6 +86,8 @@ $$\frac{a + bi}{c + di} = \frac{(a + bi)(c - di)}{c^2 + d^2}$$
 
 To je isti postopek kot racionalizacija imenovalca s konjugiranim izrazom pri korenih.
 
+Enako izračunamo **obratno vrednost** števila $z \ne 0$: $\dfrac{1}{z} = \dfrac{\bar{z}}{z \cdot \bar{z}}$. Na primer $\dfrac{1}{3 + 4i} = \dfrac{3 - 4i}{25} = \dfrac{3}{25} - \dfrac{4}{25}\,i$.
+
 V simulaciji spodaj (»Kompleksna števila v ravnini«) izberi množenje in točko $w$ postavi v $(0, 1)$, torej $w = i$. Premikaj točko $z$ in opazuj: $z \cdot w$ je vedno $z$, zasukan za pravi kot v levo, z enako absolutno vrednostjo. Nato izberi $\bar{z}$ in poglej zrcaljenje čez realno os.
 
 ## Rešeni primeri
@@ -282,4 +284,6 @@ b | imaginarni del | b = \mathrm{Im}\,z | | realno število, ne $bi$
 c | realni del drugega števila | | |
 d | imaginarni del drugega števila | | |
 z_1, z_2 | kompleksni števili (v primeru 3 premika) | | | pri deljenju $z_2 \ne 0$
+w | drugo kompleksno število: v primeru 2 količnik, v simulaciji drugi faktor | | |
+n | eksponent potence $i^n$ | | | naravno število
 :::

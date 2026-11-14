@@ -293,7 +293,7 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 ~ Sešteti moraš števili s predznakoma, $-3 + 5 = 2$, ne $3 + 5$.
 > $(x - 3)(x + 5) = x^2 + 5x - 3x - 15 = x^2 + 2x - 15$.
 
-? Pravokotna njiva ima ploščino $(x^2 - x - 12)\,\mathrm{m}^2$, ena stranica meri $(x + 3)\,\mathrm{m}$. Koliko meri druga?
+? Pravokotna njiva ima ploščino $(x^2 - x - 12)\,\mathrm{m}^2$, kjer je $x > 4$, ena stranica meri $(x + 3)\,\mathrm{m}$. Koliko meri druga?
 - $(x + 4)\,\mathrm{m}$
 ~ Preveril si le $3 \cdot 4 = 12$ brez predznaka. $(x + 3)(x + 4) = x^2 + 7x + 12$.
 - $(x - 2)\,\mathrm{m}$

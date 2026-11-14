@@ -55,7 +55,7 @@ Pravili za množenje in deljenje veljata samo, kadar imata potenci **isto osnovo
 
 $$a^{-n} = \frac{1}{a^n}.$$
 
-Razlog: izračunajmo $a^2 : a^5$. Po pravilu za deljenje je rezultat $a^{2-5} = a^{-3}$. Če pa ulomek $\dfrac{a \cdot a}{a \cdot a \cdot a \cdot a \cdot a}$ skrajšamo, dobimo $\dfrac{1}{a^3}$. Obe poti se ujemata, če je $a^{-3} = \dfrac{1}{a^3}$. Negativni eksponent torej **ne naredi števila negativnega**, ampak vzame obratno vrednost. Primeri: $2^{-3} = \dfrac{1}{8}$, $10^{-2} = \dfrac{1}{100} = 0{,}01$ in $(-2)^{-3} = \dfrac{1}{(-2)^3} = -\dfrac{1}{8}$.
+Razlog: izračunajmo $a^2 : a^5$. Po pravilu za deljenje je rezultat $a^{2-5} = a^{-3}$. Če pa ulomek $\dfrac{a \cdot a}{a \cdot a \cdot a \cdot a \cdot a}$ skrajšamo, dobimo $\dfrac{1}{a^3}$. Obe poti se ujemata, če je $a^{-3} = \dfrac{1}{a^3}$. Negativni eksponent torej **ne naredi števila negativnega**, ampak vzame obratno vrednost. Posebej je $a^{-1} = \dfrac{1}{a}$ obratna vrednost števila $a$. Primeri: $2^{-3} = \dfrac{1}{8}$, $10^{-2} = \dfrac{1}{100} = 0{,}01$ in $(-2)^{-3} = \dfrac{1}{(-2)^3} = -\dfrac{1}{8}$.
 
 Tabela nadaljuje vzorec s turnirja: vsak korak navzdol po eksponentu vrednost razpolovi.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -255,7 +255,7 @@ Naj bo $X$ število uspehov v $n$ neodvisnih poskusih. Dogodki $X = 0$, $X = 1$,
 
 $$P(X = k) = \binom{n}{k}p^k q^{n-k}$$
 
-Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da smo zajeli vse izide. Takemu $X$ pravimo, da je **binomsko porazdeljen**. Najbolj verjetna vrednost leži blizu $n \cdot p$: pri Maji je $5 \cdot 0{,}8 = 4$ in res je $P_5(4) = 0{,}4096$ največja od vseh verjetnosti $P_5(k)$. Več o tem boš srečal pri statistiki.
+Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da smo zajeli vse izide. Takemu $X$ pravimo, da je **binomsko porazdeljen**. Najbolj verjetna vrednost leži blizu $n \cdot p$: pri Maji je $5 \cdot 0{,}8 = 4$ in res je $P_5(4) = 0{,}4096$ največja od vseh verjetnosti $P_5(k)$. Več o tem boš srečal pri študiju statistike.
 
 ## Preveri se
 
@@ -299,7 +299,7 @@ Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da s
 5. Rezultat odštej od $1$.
 > Najprej preveriš, ali formula sploh velja, nato podatke, nasprotni dogodek, njegovo verjetnost in na koncu $1 - q^n$.
 
-? S seznama predvajanja naključno izberemo $4$ skladbe; vsaka je v duru z verjetnostjo $p = 0{,}5$. Na risbi so verjetnosti $P_4(k)$, da je v duru natanko $k$ skladb. Z risbe odčitaj in izračunaj verjetnost, da so vsaj $3$ v duru.
+? Radio zapored predvaja $4$ skladbe; vsaka je, neodvisno od drugih, v duru z verjetnostjo $p = 0{,}5$. Na risbi so verjetnosti $P_4(k)$, da je v duru natanko $k$ skladb. Z risbe odčitaj in izračunaj verjetnost, da so vsaj $3$ v duru.
 :::risba stolpci
 opis: Stolpčni prikaz verjetnosti P₄(k) v odstotkih za p = 0,5. k = 0: 6,25 %; k = 1: 25 %; k = 2: 37,5 %; k = 3: 25 %; k = 4: 6,25 %.
 podnapis: Verjetnost k uspehov v 4 poskusih (p = 0,5)
@@ -311,7 +311,7 @@ stolpec: k = 2 | 37,5
 stolpec: k = 3 | 25
 stolpec: k = 4 | 6,25
 :::
-= 0,3125 | 0,0001
+= 0,3125 | 0,005
 ~ 0,25 | To je samo $k = 3$. »Vsaj $3$« pomeni še $k = 4$.
 ~ 0,6875 | To je $k = 2$, $3$ in $4$, torej »vsaj $2$«.
 ~ 0,0625 | To je samo $k = 4$. Prišteti moraš še $k = 3$.

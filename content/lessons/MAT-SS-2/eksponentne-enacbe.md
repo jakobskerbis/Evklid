@@ -191,7 +191,7 @@ Predstavljaj si graf funkcije $y = 2^x$ in nekaj njegovih točk:
 
 Reševati enačbo $2^x = 8$ pomeni na grafu poiskati točko, ki ima **višino** $8$, in prebrati njeno **absciso**. Nariši vodoravno premico $y = 8$: krivuljo seka natanko v eni točki, $(3, 8)$, zato je $x = 3$. Ker krivulja ves čas raste, presečišče ne more biti več kot eno; ker krivulja leži nad osjo $x$, premica $y = -4$ krivulje sploh ne seka, zato enačba $2^x = -4$ nima rešitve.
 
-Pri uvedbi nove spremenljivke si lahko predstavljaš dva koraka: najprej poiščeš višine $t$, ki rešijo kvadratno enačbo, nato pa za vsako pozitivno višino narišeš vodoravno premico in prebereš abscisi presečišč. Negativne višine na grafu sploh ne obstajajo. V interaktivni simulaciji spodaj premikaj vodoravno premico in opazuj, kje seka krivuljo.
+Pri uvedbi nove spremenljivke si lahko predstavljaš dva koraka: najprej poiščeš višine $t$, ki rešijo kvadratno enačbo, nato pa za vsako pozitivno višino narišeš vodoravno premico in prebereš absciso presečišča. Negativne višine na grafu sploh ne obstajajo. V interaktivni simulaciji spodaj premikaj vodoravno premico in opazuj, kje seka krivuljo.
 
 ## Drugače: Z analogijo
 
@@ -284,4 +284,5 @@ t | nova neznanka | t = a^x | | $t > 0$, ker je $a^x > 0$
 t_{1,2} | rešitvi kvadratne enačbe za $t$ | t_{1,2} = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} | | negativno rešitev zavržemo
 b | linearni koeficient kvadratne enačbe za $t$ | | | v točki 8 druga osnova potence, v grafičnem pogledu desna stran $y = b$
 c | prosti člen kvadratne enačbe za $t$ | | | v enačbi $a^x = c$ desna stran
+D | diskriminanta kvadratne enačbe za $t$ | D = b^2 - 4ac | |
 :::

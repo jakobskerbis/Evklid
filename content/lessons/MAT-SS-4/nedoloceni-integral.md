@@ -366,6 +366,7 @@ b | konstantni faktor pred drugim členom | |
 v | hitrost sredine strune | v(t) = 6\cos(3t) | mm/s
 y | odmik strune od ravnovesne lege | y(t) = \int v(t)\,dt | mm
 t | čas | | s | pri bobnarju v minutah
+N | število odigranih udarcev | | | odvod $N'(t)$ je tempo
 d | oznaka diferenciala v $dx$, $du$, $dt$ | | | pove, po kateri spremenljivki integriramo
 e | Eulerjevo število | e \approx 2{,}718 | | osnova naravnega logaritma
 :::

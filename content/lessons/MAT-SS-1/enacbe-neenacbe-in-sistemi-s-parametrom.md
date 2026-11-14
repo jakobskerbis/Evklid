@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -162,7 +162,7 @@ zamenjava: iz prve enačbe $x = 2 - my$, vstavi v drugo; dobiš enačbo $Ay = B$
 
 ### Primer 4: zdaj ti
 
-Bolnik ima v krvi $30\,\text{mg}$ zdravila. Vsako uro se količina spremeni za $a\,\text{mg}$. Nad $45\,\text{mg}$ bi zdravilo škodilo. Koliko časa je bolnik varen, odvisno od $a$? Koliko ur je to pri $a = 5$?
+Bolnik ima v krvi $30\,\text{mg}$ zdravila. Vsako uro se količina spremeni za $a\,\text{mg}$. Nad $45\,\text{mg}$ bi zdravilo škodilo. Koliko časa je bolnik varen glede na vrednost $a$? Koliko ur je to pri $a = 5$?
 
 **Podatki:** začetna količina $30\,\text{mg}$, sprememba $a\,\text{mg}$ na uro, meja $45\,\text{mg}$, $t \ge 0$
 **Iščemo:** čas $t$, ko je količina največ $45\,\text{mg}$, glede na $a$; vrednost pri $a = 5$
@@ -225,7 +225,7 @@ Pri neenačbi je razlog za obrat znaka tale: če je $a < 0$, neenačbo $ax > b$ 
 + $-2x < 6$
 - $-\dfrac{x}{3} > 1$
 ~ Pomnožiš z $-3$ in obrneš znak: $x < -3$.
-> Prve tri imajo rešitev $x < -3$. Pri $-2x < 6$ deljenje z $-2$ obrne znak in da $x > -3$.
+> Ostale tri imajo rešitev $x < -3$. Pri $-2x < 6$ deljenje z $-2$ obrne znak in da $x > -3$.
 
 ? Na sliki sta premici sistema $y = mx + 1$ in $y = -2x + 3$ pri $m = 0$. Parameter $m$ spreminja le naklon modre polne premice $y = mx + 1$. Za kateri $m$ sistem nima rešitve?
 :::risba graf

@@ -2230,12 +2230,8 @@
    "r": "nadaljevanje primera iz lekcije, samo ni razumljivo"
   },
   "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga#p1": {
-   "h": "e19c050e1f82",
-   "o": "D",
-   "k": [
-    "Ne more. Vsaka stranica je tetiva očrtane krožnice, tetiva pa ni nikoli daljša od premera $2R$",
-    "Zato je $R \\ge \\dfrac{c}{2}$ za najdaljšo stranico $c$"
-   ]
+   "h": "1792a5833b11",
+   "o": "D"
   },
   "MAT-SS-1/linearna-funkcija#p0": {
    "h": "e1795da45718",
@@ -2372,7 +2368,7 @@
    "o": "D"
   },
   "MAT-SS-1/ulomljeni-izrazi#p1": {
-   "h": "16ad2710b1ad",
+   "h": "2a815d891e88",
    "o": "D"
   },
   "MAT-SS-2/eksponentna-funkcija#p1": {

@@ -288,7 +288,7 @@ $$a^2 + b^2 = c \cdot c_a + c \cdot c_b = c\,(c_a + c_b) = c \cdot c = c^2.$$
 
 :::simboli
 a, b, c | stranice trikotnika | | | pri višini na hipotenuzo: a, b kateti, c hipotenuza
-a', b', c' | istoležne stranice podobnega trikotnika | | |
+a', b', c' | ustrezne (istoležne) stranice podobnega trikotnika | | |
 k | koeficient podobnosti | k = \frac{a'}{a} | | k > 1: večji trikotnik, k < 1: manjši
 c_a | odsek hipotenuze ob kateti a | | | a² = c · c_a
 c_b | odsek hipotenuze ob kateti b | | | b² = c · c_b

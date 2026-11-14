@@ -252,7 +252,7 @@ Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsa
 + Preverjanje trditve za sto naključno izbranih števil.
 - Izpeljava trditve za $n + 1$ iz trditve za $n$.
 ~ To je indukcijski korak, osrednji del dokaza.
-> Preverjanje primerov je koristno za domnevo, ni pa del dokaza: tudi sto pravilnih primerov ne zagotovi sto prvega.
+> Preverjanje primerov je koristno za domnevo, ni pa del dokaza: tudi sto pravilnih primerov ne zagotovi stoprvega.
 
 ? Koliko potez najmanj potrebuješ za Hanojski stolp s $7$ ploščicami?
 - $128$

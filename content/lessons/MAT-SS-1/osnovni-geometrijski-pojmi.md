@@ -16,7 +16,7 @@ Nato na rešetko v pečici, katere žice so vzporedne, položi raven nož pošev
 - skozi dve različni točki gre natanko ena premica,
 - dve različni premici imata največ eno skupno točko.
 
-**2. Poltrak in daljica.** Točka $A$ na premici jo razdeli na dva **poltraka** z izhodiščem $A$. Del premice med točkama $A$ in $B$ (z obema krajiščema) je **daljica** $AB$. Njeno dolžino označimo $|AB|$, razdalja med točkama $A$ in $B$ je prav ta dolžina. Razlika je v koncih: premica nima krajišča, poltrak ima eno, daljica dve. Zato lahko izmerimo samo dolžino daljice. Rez noža po pici od roba do roba je daljica, ne premica. **Razpolovišče** daljice je točka na njej, ki je enako oddaljena od obeh krajišč.
+**2. Poltrak in daljica.** Točka $A$ na premici jo razdeli na dva **poltraka** z izhodiščem $A$. Del premice med točkama $A$ in $B$ (z obema krajiščema) je **daljica** $AB$, premica skozi $A$ in $B$ pa njena **nosilka**. Dolžino daljice označimo $|AB|$, razdalja med točkama $A$ in $B$ je prav ta dolžina. Razlika je v koncih: premica nima krajišča, poltrak ima eno, daljica dve. Zato lahko izmerimo samo dolžino daljice. Rez noža po pici od roba do roba je daljica, ne premica. **Razpolovišče** daljice je točka na njej, ki je enako oddaljena od obeh krajišč.
 
 **3. Medsebojna lega dveh premic v ravnini.** Pri sistemih linearnih enačb si videl, da se dve premici v koordinatnem sistemu sekata, sta vzporedni ali sovpadata. Enake tri možnosti veljajo za vsaki dve premici v ravnini, tudi brez koordinat. Lego zdaj ugotovimo brez računa, s skupnimi točkami:
 
@@ -35,7 +35,7 @@ Premici $p$ in $q$ sta obe pravokotni na premico $r$ (vse tri ležijo v isti rav
 Sta vzporedni (ali sovpadata). Če bi se sekali v točki $T$, bi skozi $T$ potekali dve različni pravokotnici na $r$, skozi točko pa gre na dano premico samo ena pravokotnica.
 :::
 
-**4. Razdalja točke od premice.** Najkrajša pot od točke $T$ do premice $p$ je po pravokotnici na $p$ skozi $T$. Dolžina te daljice je **razdalja točke od premice**. Vsaka točka premice $q \parallel p$ je od $p$ enako oddaljena, ta razdalja je **razdalja med vzporednicama**.
+**4. Razdalja točke od premice.** Najkrajša pot od točke $T$ do premice $p$ je po pravokotnici na $p$ skozi $T$. Točka, kjer pravokotnica seka $p$, je **pravokotna projekcija** točke $T$ na $p$. Dolžina daljice od $T$ do nje je **razdalja točke od premice**. Vsaka točka premice $q \parallel p$ je od $p$ enako oddaljena, ta razdalja je **razdalja med vzporednicama**.
 
 **5. Simetrala daljice.** **Simetrala daljice** je premica, ki je pravokotna na daljico in gre skozi njeno razpolovišče. Vse njene točke so enako oddaljene od obeh krajišč.
 
@@ -48,7 +48,7 @@ Sta vzporedni (ali sovpadata). Če bi se sekali v točki $T$, bi skozi $T$ potek
 | pravi | $90^\circ$ |
 | topi | med $90^\circ$ in $180^\circ$ |
 | iztegnjeni | $180^\circ$ |
-| izbočeni | med $180^\circ$ in $360^\circ$ |
+| udrti | med $180^\circ$ in $360^\circ$ |
 | polni | $360^\circ$ |
 
 **7. Stopinje, minute, sekunde.** Kot pri času, kjer ima ura $60$ minut, delimo stopinjo na $60$ kotnih minut, minuto pa na $60$ kotnih sekund: $1^\circ = 60'$, $1' = 60''$. Tako kot $1\,\text{h}\,30\,\text{min}$ ni $1{,}3\,\text{h}$, tudi to ni decimalni zapis: kot $37^\circ 42'$ je $37^\circ$ in še $42$ minut, torej $37{,}7^\circ$ (ker je $42 : 60 = 0{,}7$), ne $37{,}42^\circ$. Pri seštevanju vsakih $60$ minut prenesemo v eno stopinjo: $48^\circ 35' + 27^\circ 40' = 75^\circ 75' = 76^\circ 15'$. Pri odštevanju si po potrebi »izposodimo« stopinjo: $90^\circ = 89^\circ 60'$.

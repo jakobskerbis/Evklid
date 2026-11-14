@@ -129,6 +129,7 @@ Iz ene enačbe izrazimo neznanko (npr. $y = 11 - 2x$) in jo vstavimo v drugo ena
 Naravovarstvenik na travniku ob reki prešteje štorklje in srne. Skupaj imajo $14$ glav in $44$ nog. Koliko je štorkelj in koliko srn?
 
 **Podatki:** število glav $14$, število nog $44$; štorklja ima $2$ nogi, srna $4$
+
 **Iščemo:** število štorkelj $x$ in število srn $y$
 
 :::formula

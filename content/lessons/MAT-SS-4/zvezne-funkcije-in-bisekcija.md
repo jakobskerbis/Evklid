@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -136,7 +136,7 @@ Sredina intervala: $c = \dfrac{a + b}{2}$. Obdrži polovico, kjer imata vrednost
 
 Prenosnik stane $1000$ €. Trgovina ponuja plačilo v treh letnih obrokih po $370$ €, prvi obrok čez eno leto. Kolikšna je letna obrestna mera $p$, na desetinko odstotka?
 
-**Podatki:** dolg $G_0 = 1000$ €, $3$ obroki po $a = 370$ € na koncu vsakega leta, obrestno obrestovanje
+**Podatki:** dolg $1000$ €, $3$ obroki po $370$ € na koncu vsakega leta, obrestno obrestovanje
 **Iščemo:** obrestno mero $p$ (na $0{,}1$ %)
 
 :::formula
@@ -385,6 +385,8 @@ a, b | krajišči intervala | | |
 c | sredina intervala oz. ničla | c = \frac{a + b}{2} | |
 d_n | dolžina intervala po $n$ korakih | d_n = \frac{b - a}{2^n} | |
 n | število korakov bisekcije | | |
+m | najmanjša vrednost funkcije na $[a, b]$ | | |
+M | največja vrednost funkcije na $[a, b]$ | | |
 r | obrestovalni faktor | r = 1 + \frac{p}{100} | – |
 p | letna obrestna mera | | \% | v odstotkih
 g | pomožna funkcija, katere ničlo iščemo | g(x) = x^3 - 3x - 1 | |

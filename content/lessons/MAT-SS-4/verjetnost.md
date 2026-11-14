@@ -13,7 +13,7 @@ Ugodne in vse izide štejemo s kombinatoriko. Pri jajcih pa se zgodita *dve stva
 
 ## Razlaga
 
-**1. Dogodki.** Poskus ima množico možnih izidov, imenujemo jo **vzorčni prostor**. **Dogodek** je skupina izidov (podmnožica). Pri metu kocke je dogodek $A$: »padlo je sodo število« $= \{2, 4, 6\}$. Dogodek z enim samim izidom, na primer »padla je šestica« $= \{6\}$, je **elementarni dogodek**.
+**1. Dogodki.** **Poskus** je dejanje z naključnim izidom (met kocke). Množica njegovih možnih izidov je **vzorčni prostor**. **Dogodek** je skupina izidov (podmnožica). Pri metu kocke je dogodek $A$: »padlo je sodo število« $= \{2, 4, 6\}$. Dogodek z enim samim izidom, na primer »padla je šestica« $= \{6\}$, je **elementarni dogodek**.
 
 - **Gotov dogodek** se zgodi vedno: $P = 1$.
 - **Nemogoč dogodek** se ne zgodi nikoli: $P = 0$.

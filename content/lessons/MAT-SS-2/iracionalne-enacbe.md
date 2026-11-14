@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -77,7 +77,7 @@ Ne izgine. Leva stran je vsota: $(\sqrt{x} + 1)^2 = x + 2\sqrt{x} + 1$. Dvojni z
 **7. Enačbe $x^n = a$ (osnovna in višja raven).** Ta del matura preverja na obeh ravneh. Preprosto enačbo s potenco rešimo na dva načina.
 
 - **S korenjenjem.** Pri lihem $n$ ima enačba eno rešitev, $x = \sqrt[n]{a}$, tudi za negativen $a$: enačba $x^3 = 8$ da $x = \sqrt[3]{8} = 2$, enačba $x^3 = -27$ da $x = -3$. Pri sodem $n$ in $a > 0$ sta rešitvi dve, $x = \pm\sqrt[n]{a}$: enačba $x^4 = 16$ da $x = 2$ ali $x = -2$. Pri sodem $n$ in $a < 0$ realne rešitve ni.
-- **Z razstavljanjem.** Vse prenesemo na levo in razstavimo. Za razliko kubov velja $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ (preveriš z množenjem). Enačba $x^3 - 8 = 0$ postane $(x - 2)(x^2 + 2x + 4) = 0$. Drugi faktor dopolnimo do popolnega kvadrata: $x^2 + 2x + 4 = (x + 1)^2 + 3 \ge 3$, zato ni nikoli nič, zato je $x = 2$ edina rešitev. Enačba $x^4 - 16 = 0$ postane $(x^2 - 4)(x^2 + 4) = 0$, po še eni razliki kvadratov $(x - 2)(x + 2)(x^2 + 4) = 0$, kar da $x = 2$ in $x = -2$.
+- **Z razstavljanjem.** Vse prenesemo na levo in razstavimo. Za razliko kubov velja $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ (preveriš z množenjem). Enačba $x^3 - 8 = 0$ postane $(x - 2)(x^2 + 2x + 4) = 0$. Drugi faktor dopolnimo do popolnega kvadrata: $x^2 + 2x + 4 = (x + 1)^2 + 3 \ge 3$, torej ni nikoli nič in je $x = 2$ edina rešitev. Enačba $x^4 - 16 = 0$ postane $(x^2 - 4)(x^2 + 4) = 0$, po še eni razliki kvadratov $(x - 2)(x + 2)(x^2 + 4) = 0$, kar da $x = 2$ in $x = -2$.
 
 Oba načina dasta iste rešitve. Razstavljanje pokaže, *zakaj* ima soda potenca dve rešitvi: razlika kvadratov da faktorja $x - 2$ in $x + 2$.
 

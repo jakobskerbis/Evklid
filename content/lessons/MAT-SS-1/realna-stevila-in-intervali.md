@@ -17,7 +17,7 @@ Na laboratorijskem izvidu krvi ima vsaka vrednost ob sebi **referenčno območje
 
 $$\mathbb{R} = \mathbb{Q} \cup \mathbb{I}, \qquad \mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}.$$
 
-Vsakemu realnemu številu pripada natanko ena točka na številski premici in vsaki točki natanko eno realno število. Za računanje in primerjanje veljajo ista pravila kot pri racionalnih številih.
+Vsakemu realnemu številu pripada natanko ena točka na številski premici in vsaki točki natanko eno realno število. Številski premici zato rečemo tudi **realna os**. Za računanje in primerjanje veljajo ista pravila kot pri racionalnih številih.
 
 Koren naravnega števila je celo število, če je število popoln kvadrat ($\sqrt{9} = 3$, $\sqrt{16} = 4$), sicer je iracionalen ($\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$). Iracionalnega števila ne moremo zapisati natančno z decimalkami, zato računamo s približki. Ocenimo $\sqrt{2}$: ker je $1{,}41^2 = 1{,}9881$ in $1{,}42^2 = 2{,}0164$, velja $1{,}41 < \sqrt{2} < 1{,}42$.
 

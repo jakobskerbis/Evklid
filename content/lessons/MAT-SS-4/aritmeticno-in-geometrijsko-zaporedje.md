@@ -77,7 +77,7 @@ Pri $q = 1$ so vsi členi enaki $a_1$, zato je $S_n = n \cdot a_1$.
 
 *Preveri:* koliko je $1 + 2 + 4 + 8 + 16$ po formuli? *(Odgovor: $\frac{2^5 - 1}{2 - 1} = 31$.)*
 
-V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom večjim od $1$ opazi, da so razmiki med sosednjimi točkami vedno večji.
+V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom, večjim od $1$, opazi, da so razmiki med sosednjimi točkami vedno večji.
 
 **7. Zaporedje po vzorcu.** Pri nalogi »nadaljuj zaporedje« iščemo pravilo, ki ga izpolnjujejo vsi dani členi. Iz nekaj primerov sklepamo na splošno pravilo: temu rečemo **induktivno sklepanje**. Pomagajo vprašanja po vrsti:
 

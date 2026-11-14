@@ -34,7 +34,7 @@ $$-2x(3x^2 - x + 4) = -6x^3 + 2x^2 - 8x$$
 
 $$(a + b)(c + d) = ac + ad + bc + bd.$$
 
-Na primer $(2x + 3)(x - 5) = 2x^2 - 10x + 3x - 15 = 2x^2 - 7x - 15$. Če ima prvi mnogočlenik $m$ členov, drugi pa $n$, je pred združevanjem $m \cdot n$ členov; pri dveh dvočlenikih jih je torej štiri.
+Na primer $(2x + 3)(x - 5) = 2x^2 - 10x + 3x - 15 = 2x^2 - 7x - 15$. Če ima prvi mnogočlenik $m$ členov, drugi pa $n$, je pred združevanjem $m \cdot n$ členov; pri dveh dvočlenikih so torej štirje.
 
 **6. Kvadrat dvočlenika.** Vrnimo se k pekaču. Primerjajmo kvadrat vsote z vsoto kvadratov pri nekaj parih števil:
 
@@ -176,7 +176,7 @@ $6 \cdot 100 - 12 \cdot 10 + 8 = 600 - 120 + 8 = 488$. Preizkus: $1000 - 512 = 4
 - **»$(a + b)^2 = a^2 + b^2$« in »$(a + b)^3 = a^3 + b^3$«.** Razlog: kvadrat pomeni množenje oklepaja s samim seboj, pri čemer nastaneta še mešana člena. Preizkus: $(2 + 3)^2 = 25$, vendar $2^2 + 3^2 = 13$. Pravilno: $(a + b)^2 = a^2 + 2ab + b^2$ in $(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$.
 - **Napačen predznak pri kvadratu razlike: »$(x - 3)^2 = x^2 - 9$« ali »$x^2 - 6x - 9$«.** Razlog: minus je le pri srednjem členu, saj je $(-3)^2 = +9$. Izraz $x^2 - 9$ je rezultat zmnožka $(x - 3)(x + 3)$, kar je drug primer. Pravilno: $(x - 3)^2 = x^2 - 6x + 9$.
 - **Minus pred oklepajem: »$5x - (2x - 3) = 3x - 3$«.** Razlog: minus spremeni predznak vsakemu členu v oklepaju, torej tudi zadnjemu. Pravilno: $5x - (2x - 3) = 5x - 2x + 3 = 3x + 3$.
-- **Člena nista pomnožena vsak z vsakim: »$(x + 2)(x + 3) = x^2 + 6$«.** Razlog: pomnožila sta se le prva in zadnja člena. Pravilno: pomnožimo vse štiri pare, $(x + 2)(x + 3) = x^2 + 3x + 2x + 6 = x^2 + 5x + 6$. Namig: pred združevanjem preštej člene, pri dveh dvočlenikih jih mora biti štiri.
+- **Člena nista pomnožena vsak z vsakim: »$(x + 2)(x + 3) = x^2 + 6$«.** Razlog: pomnožila sta se le prva in zadnja člena. Pravilno: pomnožimo vse štiri pare, $(x + 2)(x + 3) = x^2 + 3x + 2x + 6 = x^2 + 5x + 6$. Namig: pred združevanjem preštej člene, pri dveh dvočlenikih morajo biti štirje.
 - **Mešanje vsote in zmnožka enočlenikov: »$3x + 2x^2 = 5x^3$« ali »$3x \cdot 2x = 6x$«.** Razlog: seštevamo samo podobne člene, pri množenju pa se eksponenti iste spremenljivke seštejejo ($x \cdot x = x^2$). Pravilno: $3x + 2x^2$ ni mogoče poenostaviti, $3x + 2x = 5x$ in $3x \cdot 2x = 6x^2$.
 
 ## Povzetek
@@ -219,7 +219,7 @@ Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$.
 ~ Zdi se, da je $(x + 3)^2 = x^2 + 9$, a ob dveh robovih ostaneta še dva pravokotnika.
 + $x^2$, $3x$, $3x$ in $9$
 - $x^2$, $3x$ in $9$
-~ Pravokotnika sta dva, en ob desnem in en ob spodnjem robu, zato je srednji člen $2 \cdot 3x = 6x$.
+~ Pravokotnika sta dva, eden ob desnem in eden ob spodnjem robu, zato je srednji člen $2 \cdot 3x = 6x$.
 - $x^2$, $6$, $6$ in $9$
 ~ Pravokotnik ima stranici $x$ in $3$, zato je njegova ploščina $3x$, ne $2 \cdot 3$.
 > Deli so kvadrat $x \cdot x$, dva pravokotnika $x \cdot 3$ in kvadratek $3 \cdot 3$. Skupaj $(x + 3)^2 = x^2 + 6x + 9$.

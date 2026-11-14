@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -435,4 +435,6 @@ a | poljubno realno število pod absolutno vrednostjo | |
 f | funkcija | |
 C | cena parkiranja | | €
 t | čas parkiranja | | h
+c | stalna vrednost na desni strani enačbe $f(x) = c$ (višina vodoravne premice) | |
+T | temperatura v pečici | | ^\circ\mathrm{C}
 :::
