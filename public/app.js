@@ -4791,6 +4791,7 @@ initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
   leaveView: (name) => {
+    if (name === "chat" && currentView !== "chat") leaveChat(); // zaprto okno inštruktorja: od tu teče 10 min
     if (name === "uci") {
       stopReading();
       leaveUci();
