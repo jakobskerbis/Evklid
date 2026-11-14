@@ -284,20 +284,15 @@ Limita je ena sama: če bi imelo zaporedje limiti $L_1 \ne L_2$, bi izbrali $\va
 + $b$, $c$, $a$
 > Po deljenju z najvišjo potenco dobiš $\lim b_n = \dfrac{1}{2}$, $\lim c_n = 2$ in $\lim a_n = 3$.
 
-? Kolikšna je $\lim\limits_{n \to \infty} \dfrac{5n^2 - 2}{2n^2 + n}$?
-- $1$
-~ Toliko je člen $a_1$, »neskončno deljeno z neskončno« pa ni $1$. Deli z $n^2$.
-+ $\dfrac{5}{2}$
-- Limite ni, ker števec raste čez vse meje.
-~ Enako hitro raste tudi imenovalec. Po deljenju z $n^2$ dobiš ulomek, ki ima limito.
-> Delimo z $n^2$: $\dfrac{5 - \frac{2}{n^2}}{2 + \frac{1}{n}} \to \dfrac{5}{2}$.
+? (brez računala) Kolikšna je $\lim\limits_{n \to \infty} \dfrac{5n^2 - 2}{2n^2 + n}$? Vpiši kot decimalno število.
+= 2,5 | 0,01
+~ 1 | Toliko je člen $a_1$, »neskončno deljeno z neskončno« pa ni $1$. Deli z $n^2$.
+> Delimo z $n^2$: $\dfrac{5 - \frac{2}{n^2}}{2 + \frac{1}{n}} \to \dfrac{5}{2} = 2{,}5$. Števec raste čez vse meje, a enako hitro tudi imenovalec, zato limita obstaja.
 
-? Prvo uro poti zaradi gneče prevoziš le $60\,\text{km}$, nato vsako uro $90\,\text{km}$. Povprečna hitrost po $n$ urah je $v_n = 90 - \dfrac{30}{n}$ (v km/h) in ima limito $90\,\text{km/h}$. Od katere ure naprej je za manj kot $2\,\text{km/h}$ pod limito?
-- Od $15$. ure naprej.
-~ Pri $n = 15$ je razlika $\dfrac{30}{15} = 2$, kar ni manj kot $2$. Rob okolice ne spada v okolico.
-+ Od $16$. ure naprej.
-- Od $60$. ure naprej.
-~ To je $30 \cdot 2$. Iz $\dfrac{30}{n} < 2$ sledi $n > \dfrac{30}{2}$, ne $n > 30 \cdot 2$.
+? Prvo uro poti zaradi gneče prevoziš le $60\,\text{km}$, nato vsako uro $90\,\text{km}$. Povprečna hitrost po $n$ urah je $v_n = 90 - \dfrac{30}{n}$ (v km/h) in ima limito $90\,\text{km/h}$. Od katere ure naprej je za manj kot $2\,\text{km/h}$ pod limito? Vpiši $n$.
+= 16
+~ 15 | Pri $n = 15$ je razlika $\dfrac{30}{15} = 2$, kar ni manj kot $2$. Rob okolice ne spada v okolico.
+~ 60 | To je $30 \cdot 2$. Iz $\dfrac{30}{n} < 2$ sledi $n > \dfrac{30}{2}$, ne $n > 30 \cdot 2$.
 > $|v_n - 90| = \dfrac{30}{n} < 2$ velja za $n > 15$, torej od $n = 16$ naprej.
 
 <<RACUN

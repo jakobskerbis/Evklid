@@ -309,13 +309,12 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 ~ Če se vrneš k $x$ pred integriranjem, imaš spet prvotni integral in nisi nič pridobil.
 > Najprej novo spremenljivko in $du = g'(x)\,dx$, nato integral po $u$, na koncu nazaj k $x$.
 
-? (višja raven) Kaj se zgodi z rezultatom $\int \cos(kx)\,dx$, če $k$ podvojiš, z $2$ na $4$?
-- Faktor pred sinusom se podvoji, z $2$ na $4$.
-~ Tako bi bilo pri odvajanju: $\bigl(\sin(kx)\bigr)' = k\cos(kx)$. Pri integriranju s $k$ deliš.
-- Rezultat ostane $\sin(kx) + C$, spremeni se le $k$ v sinusu.
-~ Tu je pozabljen $du = k\,dx$. Odvod $\sin(4x)$ je $4\cos(4x)$, ne $\cos(4x)$.
-+ Faktor pred sinusom se razpolovi, z $\frac{1}{2}$ na $\frac{1}{4}$.
-> $\int \cos(kx)\,dx = \dfrac{\sin(kx)}{k} + C$: večji $k$ pomeni manjši faktor $\dfrac{1}{k}$.
+? (višja raven) (brez računala) Pri $k = 2$ je $\int \cos(2x)\,dx = \frac{1}{2}\sin(2x) + C$. Če $k$ podvojiš na $4$, dobiš $\int \cos(4x)\,dx = a\sin(4x) + C$. Koliko je faktor $a$? Vpiši kot decimalno število.
+= 0,25 | 0,01
+~ 4 | Tako bi bilo pri odvajanju: $\bigl(\sin(kx)\bigr)' = k\cos(kx)$. Pri integriranju s $k$ deliš.
+~ 0,5 | To je faktor pri $k = 2$, ki je ostal enak. Pri $k = 4$ deliš s $4$, ne z $2$.
+~ 1 | Faktor $\frac{1}{2}$ se ne podvoji skupaj s $k$. Tudi $\int \cos(4x)\,dx = \sin(4x) + C$ ne velja (pozabljen $du = 4\,dx$): odvod $\sin(4x)$ je $4\cos(4x)$, ne $\cos(4x)$.
+> $\int \cos(kx)\,dx = \dfrac{\sin(kx)}{k} + C$: večji $k$ pomeni manjši faktor $\dfrac{1}{k}$. Faktor se razpolovi, z $\frac{1}{2}$ na $a = \frac{1}{4} = 0{,}25$.
 
 ? Koliko je $\int \left(x^2 + \dfrac{1}{x}\right) dx$ za $x \ne 0$?
 - $2x - \dfrac{1}{x^2} + C$
@@ -325,12 +324,10 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 + $\dfrac{x^3}{3} + \ln\lvert x\rvert + C$
 > $\int x^2\,dx = \dfrac{x^3}{3}$ in $\int \dfrac{1}{x}\,dx = \ln\lvert x\rvert$; konstanto dodamo enkrat.
 
-? Bobnar začne s tempom $80$ udarcev na minuto in pospešuje, tempo je $80 + 20t$ ($t$ v minutah). Koliko udarcev odigra v prvih $3$ minutah?
-- $140$
-~ To je tempo ob $t = 3$, torej hitrost, ne število udarcev.
-- $420$
-~ To dobiš, če ves čas računaš s končnim tempom ($140 \cdot 3$) ali pri $20t$ pozabiš deliti z $2$. Tempo je na začetku manjši.
-+ $330$
+? (brez računala) Bobnar začne s tempom $80$ udarcev na minuto in pospešuje, tempo je $80 + 20t$ ($t$ v minutah). Koliko udarcev odigra v prvih $3$ minutah?
+= 330
+~ 140 | To je tempo ob $t = 3$, torej hitrost, ne število udarcev.
+~ 420 | To dobiš, če ves čas računaš s končnim tempom ($140 \cdot 3$) ali pri $20t$ pozabiš deliti z $2$. Tempo je na začetku manjši.
 > $N(t) = 80t + 10t^2 + C$, $N(0) = 0$ da $C = 0$; $N(3) = 240 + 90 = 330$.
 
 <<RACUN

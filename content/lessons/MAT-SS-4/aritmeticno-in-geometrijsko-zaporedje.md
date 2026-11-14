@@ -296,12 +296,10 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 ~ Absolutne vrednosti res rastejo, sami členi pa ne: $5, -10, 20, -40$. Zaporedje je alternirajoče.
 > Od $a_1$ do $a_n$ je $n - 1$ množenj s $q$; pri $n = 1$ formula da $a_1 \cdot q^0 = a_1$.
 
-? Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
-- $49$
-~ To je $4 + 15 \cdot 3$. Korakov je le $14$, ker prvi člen že imaš.
-+ $46$
-- $4 \cdot 3^{14}$
-~ Tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
+? (brez računala) Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
+= 46
+~ 49 | To je $4 + 15 \cdot 3$. Korakov je le $14$, ker prvi člen že imaš.
+~ 19131876 | To je $4 \cdot 3^{14}$: tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
 > $a_{15} = 4 + 14 \cdot 3 = 46$.
 
 ? Maja je vsoto $1 + 3 + 9 + 27 + 81$ izračunala takole: $\dfrac{5}{2} \cdot (1 + 81) = 205$. Kje je napaka?

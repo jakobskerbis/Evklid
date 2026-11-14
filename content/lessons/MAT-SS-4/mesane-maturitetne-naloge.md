@@ -303,20 +303,16 @@ Razlog je število parov $\binom{n}{2} = \frac{n(n-1)}{2}$, ki raste s kvadratom
 ~ Vsaka od $10$ novih ekip odigra več kot eno tekmo, kar $2 \cdot 19 = 38$ tekem.
 > $V_{20}^2 = 20 \cdot 19 = 380$, $V_{10}^2 = 10 \cdot 9 = 90$. Število tekem raste približno s kvadratom števila ekip.
 
-? (višja raven) Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno?
-- $1{,}4$
-~ To je $0{,}7 + 0{,}7$. Verjetnost ne more biti večja od $1$; dogodka nista nezdružljiva.
-- $0{,}49$
-~ To je verjetnost, da zadene **obe**, ne vsaj eno.
-+ $0{,}91$
+? (višja raven) Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno? Vpiši kot decimalno število.
+= 0,91 | 0,001
+~ 1,4 | To je $0{,}7 + 0{,}7$. Verjetnost ne more biti večja od $1$; dogodka nista nezdružljiva.
+~ 0,49 | To je verjetnost, da zadene **obe**, ne vsaj eno.
 > Nasprotni dogodek: zgreši obe, $0{,}3 \cdot 0{,}3 = 0{,}09$. Torej $1 - 0{,}09 = 0{,}91$.
 
-? Višina žoge je $h(t) = -5t^2 + 15t$ ($h$ v m, $t$ v s). Kolikšna je največja višina?
-- $1{,}5\,\mathrm{m}$
-~ $1{,}5$ je čas vrha v sekundah iz $h'(t) = -10t + 15 = 0$. Vstavi ga še v $h(t)$.
-- $22{,}5\,\mathrm{m}$
-~ To je le $15 \cdot 1{,}5$; pozabil si člen $-5t^2$.
-+ $11{,}25\,\mathrm{m}$
+? (brez računala) Višina žoge je $h(t) = -5t^2 + 15t$ ($h$ v m, $t$ v s). Kolikšna je največja višina (v metrih)?
+= 11,25 m | 0,01
+~ 1,5 | $1{,}5$ je čas vrha v sekundah iz $h'(t) = -10t + 15 = 0$. Vstavi ga še v $h(t)$.
+~ 22,5 | To je le $15 \cdot 1{,}5$; pozabil si člen $-5t^2$.
 > $h'(t) = -10t + 15 = 0$ da $t = 1{,}5\,\mathrm{s}$; $h(1{,}5) = -11{,}25 + 22{,}5 = 11{,}25\,\mathrm{m}$.
 
 :::simboli

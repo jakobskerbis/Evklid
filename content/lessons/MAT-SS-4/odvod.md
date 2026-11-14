@@ -358,14 +358,11 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 ~ To je povprečna hitrost na razmiku $h = 1$. Odvod je limita takih količnikov, ko gre $h \to 0$.
 > Odvod je limita smernih koeficientov sekant, ko gre $h \to 0$, torej smerni koeficient tangente.
 
-? Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?
-- $9$
-~ To je $f(1) = 4 - 2 + 7$. Vrednost funkcije ni odvod.
-- $17$
-~ Konstanta $7$ je ostala. Njen odvod je $0$.
-- $0$
-~ Tako dobiš, če najprej vstaviš $x = 1$ in nato odvajaš število. Najprej odvajaj, nato vstavi.
-+ $10$
+? (brez računala) Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?
+= 10 | 0,01
+~ 9 | To je $f(1) = 4 - 2 + 7$. Vrednost funkcije ni odvod.
+~ 17 | Konstanta $7$ je ostala. Njen odvod je $0$.
+~ 0 | Tako dobiš, če najprej vstaviš $x = 1$ in nato odvajaš število. Najprej odvajaj, nato vstavi.
 > $f'(x) = 12x^2 - 2$, zato je $f'(1) = 12 - 2 = 10$.
 
 ? Ana je zapisala: $(x^2 \sin x)' = 2x \cos x$. Kje je napaka?
@@ -402,7 +399,7 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 ~ To ne velja: že pri $x \cdot x$ dobiš $1 \cdot 1 = 1$, pravi odvod pa je $2x$.
 > Prvi faktor gre proti $f'(a)$. Odvedljiva funkcija je zvezna, zato gre $g(a + h)$ proti $g(a)$. Limita produkta je produkt limit.
 
-? (višja raven) (brez računala) Iz odvoda funkcije $\cos x$ s pravilom za kvocient izpelji odvod funkcije $f(x) = \dfrac{1}{\cos x}$. Koliko je $f'\!\left(\frac{\pi}{6}\right)$?
+? (višja raven) (brez računala) Iz odvoda funkcije $\cos x$ s pravilom za kvocient izpelji odvod funkcije $f(x) = \dfrac{1}{\cos x}$. Koliko je $f'\!\left(\frac{\pi}{6}\right)$? Zaokroži na dve decimalki.
 = 0,67 | 0,01
 ~ -0,67 | Odvod kosinusa je $-\sin x$, zato je števec $0 \cdot \cos x - 1 \cdot (-\sin x) = \sin x$, brez minusa.
 ~ 0,58 | To je $\frac{\sin x}{\cos x}$. V imenovalcu je $\cos^2 x$, kvadrat imenovalca.

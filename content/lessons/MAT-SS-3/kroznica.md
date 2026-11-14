@@ -362,11 +362,18 @@ Naloga: lega premice $y = x + 1$ in krožnice $x^2 + y^2 = 13$.
 ~ Na robu bi bila, če bi bilo $x^2 + y^2 = 9$; tu je $8$.
 > Kmetija je $\sqrt{8} \approx 2{,}83\,\mathrm{km}$ od vzletišča, torej znotraj kroga z enačbo roba $x^2 + y^2 = 9$.
 
-? Koliko skupnih točk imata krožnica $x^2 + y^2 = 25$ in hiperbola $y = \frac{12}{x}$? Vpiši število (brez računala).
+? (brez računala) Koliko skupnih točk imata krožnica $x^2 + y^2 = 25$ in hiperbola $y = \frac{12}{x}$? Vpiši število.
 = 4
 ~ 2 | Upošteval si le pozitivna $x$. Za $x = -3$ in $x = -4$ dobiš točki na drugi veji hiperbole.
 ~ 0 | Kvadratna enačba za $x^2$ ima rešitvi $9$ in $16$, obe pozitivni.
 > Vstavimo $y = \frac{12}{x}$ in pomnožimo z $x^2$: $x^4 - 25x^2 + 144 = 0$, torej $x^2 = 9$ ali $x^2 = 16$. Točke so $(3, 4)$, $(4, 3)$, $(-3, -4)$ in $(-4, -3)$.
+
+? (brez računala) Krožnica s središčem $S(2, -1)$ gre skozi točko $T(-4, 7)$. Koliko meri njen polmer?
+= 10 | 0,01
+~ 100 | To je $r^2 = 6^2 + 8^2$. Polmer je koren te vsote.
+~ 14 | Razdalja ni vsota razlik koordinat $6 + 8$. Razliki kvadriraš, sešteješ in koreniš.
+~ 6,32 | Koordinati središča si prištel namesto odštel: $(-4 + 2)^2 + (7 - 1)^2 = 40$. Pravilno je $(-4 - 2)^2 + (7 - (-1))^2$.
+> Polmer je razdalja $|ST|$: $r = \sqrt{(-4 - 2)^2 + (7 + 1)^2} = \sqrt{36 + 64} = \sqrt{100} = 10$.
 
 <<RACUN
 vrednost: sqrt((5+1)^2 + (-4-4)^2) | 10

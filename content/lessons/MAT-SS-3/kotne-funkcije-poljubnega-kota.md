@@ -314,12 +314,10 @@ Radian je naravna enota: na krožnici s polmerom $r$ je dolžina loka pri sredi�
 ~ Radian je kot, pri katerem je lok dolg kot polmer. To je približno $57{,}3^\circ$.
 > Gibljivi krak seka enotsko krožnico v $T(\cos\alpha, \sin\alpha)$: sinus je koordinata $y$, kosinus koordinata $x$.
 
-? Koliko je $\cos 120^\circ$?
-- $\frac12$
-~ To je $\cos 60^\circ$ brez predznaka. Kot $120^\circ$ je v II. kvadrantu, kjer je kosinus negativen.
-+ $-\frac12$
-- $-\frac{\sqrt3}{2}$
-~ Predznak je pravilen, vrednost pa je $\sin 60^\circ$, ne $\cos 60^\circ$. Zamenjal si sinus in kosinus.
+? (brez računala) Koliko je $\cos 120^\circ$? Vpiši decimalno število.
+= -0,5 | 0,001
+~ 0,5 | To je $\cos 60^\circ$ brez predznaka. Kot $120^\circ$ je v II. kvadrantu, kjer je kosinus negativen.
+~ -0,87 | Predznak je pravilen, absolutna vrednost pa je $\sin 60^\circ = \frac{\sqrt3}{2} \approx 0{,}87$, ne $\cos 60^\circ$. Zamenjal si sinus in kosinus.
 > Pripadajoči ostri kot je $60^\circ$, $\cos 60^\circ = \frac12$, v II. kvadrantu je kosinus negativen: $\cos 120^\circ = -\frac12$.
 
 ? Luka je računal $\sin 300^\circ$: »(1) Kot je v IV. kvadrantu. (2) Pripadajoči ostri kot je $360^\circ - 300^\circ = 60^\circ$. (3) Torej je $\sin 300^\circ = \frac{\sqrt3}{2}$.« Kje je napaka?
@@ -347,6 +345,11 @@ Radian je naravna enota: na krožnici s polmerom $r$ je dolžina loka pri sredi�
 - Kalkulator je v načinu DEG, zato je rezultat napačen.
 ~ V načinu DEG bi dobil prav $\sin 30^\circ = 0{,}5$. Napačen rezultat da ravno drugi način.
 > V načinu RAD kalkulator število $30$ razume kot $30\,\text{rad}$, in $\sin 30 \approx -0{,}988$. Preklopi na DEG ali kot pretvori v radiane: $30^\circ = \frac{\pi}{6}$.
+
+? (brez računala) Koliko je $\tan 225^\circ$?
+= 1 | 0,01
+~ -1 | Kot $225^\circ$ je v III. kvadrantu. Tam sta sinus in kosinus negativna, njun količnik pa je pozitiven.
+> Pripadajoči ostri kot je $225^\circ - 180^\circ = 45^\circ$ in $\tan 45^\circ = 1$. V III. kvadrantu je tangens pozitiven, zato $\tan 225^\circ = 1$.
 
 <<RACUN
 vrednost: sin(7*pi/4) | -sqrt(2)/2
