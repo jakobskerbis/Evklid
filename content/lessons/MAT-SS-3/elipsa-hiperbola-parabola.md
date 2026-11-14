@@ -75,6 +75,17 @@ $$y^2 = 2px$$
 
 V tabeli je $p = 2$, zato velja $y^2 = 4x$. Če parabolo zasučeš, da je os navpična, dobiš $x^2 = 2py$, torej znani graf kvadratne funkcije $y = \frac{x^2}{2p}$.
 
+Parabola se lahko odpira v štiri smeri. Kvadrirana spremenljivka pove os: pri $y^2$ je os parabole os $x$, pri $x^2$ os $y$. Brez minusa pred $2p$ je parabola odprta v desno oziroma navzgor, minus obrne smer v levo oziroma navzdol. Število $p > 0$ je še vedno razdalja med goriščem in vodnico.
+
+| enačba | gorišče | vodnica |
+|---|---|---|
+| $y^2 = 2px$ | $\left(\frac{p}{2}, 0\right)$ | $x = -\frac{p}{2}$ |
+| $y^2 = -2px$ | $\left(-\frac{p}{2}, 0\right)$ | $x = \frac{p}{2}$ |
+| $x^2 = 2py$ | $\left(0, \frac{p}{2}\right)$ | $y = -\frac{p}{2}$ |
+| $x^2 = -2py$ | $\left(0, -\frac{p}{2}\right)$ | $y = \frac{p}{2}$ |
+
+Graf $y = -\frac{x^2}{8}$ zapišemo kot $x^2 = -8y$: parabola je odprta navzdol, $2p = 8$, torej $p = 4$. Gorišče je $(0, -2)$, vodnica $y = 2$. Preizkus s točko $(4, -2)$: do gorišča je $4$, do vodnice $2 - (-2) = 4$.
+
 Žarki, vzporedni z osjo, se na paraboli odbijejo v gorišče. Zato je sprejemnik satelitske antene v gorišču, žarnica žarometa pa v gorišču pošilja vzporeden snop.
 
 **4. Pregled na eni sliki.**
@@ -86,6 +97,35 @@ V tabeli je $p = 2$, zato velja $y^2 = 4x$. Če parabolo zasučeš, da je os nav
 | parabola: do $F$ = do vodnice | $y^2 = 2px$ |
 
 V simulaciji spodaj »Elipsa, hiperbola in parabola« izberi elipso in povleci točko $T$ po obrisu. Opazuj vsoto $r_1 + r_2$: ostane enaka. Nato nastavi $b = a$ in poglej, kaj postane elipsa.
+
+**5. Krivulje drugega reda.** V enačbah krožnice, elipse, hiperbole in parabole nastopata $x$ in $y$ največ na drugo potenco. Zato stožnicam rečemo tudi **krivulje drugega reda**. Njihov splošni algebrski zapis je enačba druge stopnje
+
+$$Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$$
+
+kjer vsaj eno od števil $A$, $B$, $C$ ni $0$. Člen $Bxy$ nastopi le pri zasukanih oseh, na primer pri hiperboli $xy = 12$, ki je graf $y = \frac{12}{x}$. Pri elipsi in hiperboli člena $Dx$ in $Ey$ premakneta središče (naslednja lekcija). Pri $B = 0$ in središču oziroma temenu v izhodišču vrsto krivulje prebereš iz kvadratov:
+
+- $x^2$ in $y^2$ z enakima predznakoma: elipsa (na primer $4x^2 + 9y^2 - 36 = 0$), pri $A = C$ krožnica;
+- $x^2$ in $y^2$ z nasprotnima predznakoma: hiperbola (na primer $9x^2 - 16y^2 - 144 = 0$);
+- en kvadrat in linearni člen druge spremenljivke: parabola (na primer $y^2 - 4x = 0$).
+
+Krivulje ne da vsaka taka enačba: $x^2 + y^2 + 4 = 0$ nima nobene točke, $x^2 + y^2 = 0$ je le točka $(0, 0)$, $x^2 - y^2 = 0$ sta premici $y = \pm x$.
+
+**6. Konstrukcija s šestilom (višja raven).** Točke stožnice dobiš iz definicije z ravnilom in šestilom.
+
+- Elipsa (gorišči $F_1$, $F_2$, vsota $2a$): izberi polmer $r$ med $a - e$ in $a + e$. Loka okoli $F_1$ s polmerom $r$ in okoli $F_2$ s polmerom $2a - r$ se sekata v dveh točkah elipse.
+- Hiperbola (razlika $2a$): izberi $r > e - a$. Loka okoli $F_2$ s polmerom $r$ in okoli $F_1$ s polmerom $r + 2a$ dasta dve točki desne veje. Z zamenjanima goriščema dobiš levo vejo.
+- Parabola (gorišče $F$, vodnica): na strani gorišča nariši vzporednico vodnice na razdalji $r > \frac{p}{2}$. Lok okoli $F$ s polmerom $r$ jo seka v dveh točkah parabole.
+
+Z več polmeri dobiš dovolj točk, ki jih povežeš z gladko krivuljo.
+
+**7. Risanje z računalnikom (višja raven).** Brezplačna programa GeoGebra in Desmos narišeta stožnico kar iz enačbe.
+
+- V vnosno vrstico vpiši enačbo, na primer »x^2/16 - y^2/9 = 1«. Strešica pomeni potenco, poševnica ulomek.
+- Pri »x^2/a^2 + y^2/b^2 = 1« program ponudi drsnika za $a$ in $b$. Opazuj, kako se elipsa splošči ali pri $a = b$ postane krožnica.
+- GeoGebra nariše stožnico tudi iz gorišč in polosi $a$ oziroma iz gorišča in vodnice $v$: »Elipsa(F_1, F_2, 5)«, »Hiperbola(F_1, F_2, 4)«, »Parabola(F, v)« (angleško Ellipse, Hyperbola, Parabola).
+- Klik na presečišče dveh krivulj izpiše njegove koordinate.
+
+Program je za preverjanje in raziskovanje; postopek moraš znati zapisati sam.
 
 ## Rešeni primeri
 
@@ -171,6 +211,51 @@ Kje je sprejemnik?
 $p = \frac{1600}{20} = 80$, gorišče je pri $\frac{p}{2} = 40$. Sprejemnik mora biti $40\,\mathrm{cm}$ pred temenom, na osi antene.
 :::
 
+### Primer 5 (višja raven): hiperbola s šestilom
+
+Hiperbolo z goriščema $F_1(-5, 0)$ in $F_2(5, 0)$ ter razliko razdalj $8$ konstruiraj po točkah. Za polmer vzemi $r = 6$. Izračunaj koordinati dobljenih točk in preveri, da ležita na hiperboli $\frac{x^2}{16} - \frac{y^2}{9} = 1$.
+
+**Podatki:** $F_1(-5, 0)$, $F_2(5, 0)$, $2a = 8$, $r = 6$
+**Iščemo:** polmera lokov in točki $T_1$, $T_2$
+
+:::formula
+$r_2 = r$, $r_1 = r + 2a$, pogoj $r > e - a$; krožnica s središčem $F_2$: $(x - 5)^2 + y^2 = r_2^2$
+:::
+
+**Rešitev:**
+
+1. Pogoj: $e - a = 5 - 4 = 1$ in $6 > 1$, zato se loka sekata.
+2. Okoli $F_2$ zarišemo lok s polmerom $6$, okoli $F_1$ lok s polmerom $6 + 8 = 14$. Za presečišči je $r_1 - r_2 = 14 - 6 = 8$, zato ležita na desni veji.
+3. Račun: enačbi krožnic $(x - 5)^2 + y^2 = 36$ in $(x + 5)^2 + y^2 = 196$ odštejemo in dobimo $20x = 160$, torej $x = 8$.
+4. Iz prve enačbe: $y^2 = 36 - 9 = 27$, zato $y = \pm\sqrt{27} \approx \pm 5{,}20$.
+5. Preizkus: $\frac{64}{16} - \frac{27}{9} = 4 - 3 = 1$. Točki ležita na hiperboli.
+6. Z računalnikom: v GeoGebro vpiši hiperbolo in obe krožnici. Klik na presečišče pokaže $(8;\; 5{,}2)$.
+
+:::risba graf
+opis: Hiperbola x²/16 − y²/9 = 1 z goriščema F₁(−5, 0) in F₂(5, 0). Okoli F₂ je zarisan oranžen lok s polmerom 6, okoli F₁ zelen lok s polmerom 14. Loka se sekata v točkah T₁(8; 5,20) in T₂(8; −5,20) na desni veji. Črtkani daljici povezujeta T₁ z goriščema, dolgi sta 14 in 6.
+x: -6 .. 10 | 1 | x
+y: -7 .. 7 | 1 | y
+enako: da
+f: 3/4*sqrt(x^2 - 16) | modra debelo | 4 .. 10
+f: -3/4*sqrt(x^2 - 16) | modra debelo | 4 .. 10
+f: 3/4*sqrt(x^2 - 16) | modra debelo | -6 .. -4
+f: -3/4*sqrt(x^2 - 16) | modra debelo | -6 .. -4
+f: sqrt(36 - (x - 5)^2) | oranžna | 6,5 .. 9,5
+f: -sqrt(36 - (x - 5)^2) | oranžna | 6,5 .. 9,5
+f: sqrt(196 - (x + 5)^2) | zelena | 7,5 .. 9
+f: -sqrt(196 - (x + 5)^2) | zelena | 7,5 .. 9
+črta: -5; 0 -> 8; 5,196 | siva črtkano
+črta: 5; 0 -> 8; 5,196 | siva črtkano
+napis: 1,5; 2,6 | 14 | nad
+napis: 6,5; 2,6 | 6 | desno
+točka: -5; 0 | F_1 | pod
+točka: 5; 0 | F_2 | pod
+točka: 8; 5,196 | T_1 | desno
+točka: 8; -5,196 | T_2 | desno
+:::
+
+7. Odgovor: loka s polmeroma $6$ (okoli $F_2$) in $14$ (okoli $F_1$) dasta točki $T_1(8;\; 5{,}20)$ in $T_2(8;\; -5{,}20)$.
+
 ## Pogoste napake
 
 - **Imenovalec namesto polosi.** Pri $\frac{x^2}{25} + \frac{y^2}{9} = 1$ nekdo vzame $a = 25$. Pod $x^2$ je $a^2$, zato je $a = \sqrt{25} = 5$.
@@ -183,7 +268,9 @@ $p = \frac{1600}{20} = 80$, gorišče je pri $\frac{p}{2} = 40$. Sprejemnik mora
 
 - Elipsa: vsota razdalj do gorišč je $2a$; enačba $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$; $e = \sqrt{a^2 - b^2}$, $\varepsilon = \frac{e}{a}$ med $0$ in $1$; pri $a = b$ krožnica.
 - Hiperbola: absolutna razlika razdalj do gorišč je $2a$; enačba $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$; $e = \sqrt{a^2 + b^2}$; asimptoti $y = \pm \frac{b}{a} x$; dve veji.
-- Parabola: točke so enako oddaljene od gorišča in vodnice; enačba $y^2 = 2px$, gorišče $\left(\frac{p}{2}, 0\right)$, vodnica $x = -\frac{p}{2}$.
+- Parabola: točke so enako oddaljene od gorišča in vodnice; enačba $y^2 = 2px$, gorišče $\left(\frac{p}{2}, 0\right)$, vodnica $x = -\frac{p}{2}$. Odprta v levo: $y^2 = -2px$; navzgor ali navzdol: $x^2 = \pm 2py$.
+- Stožnice so krivulje drugega reda: $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$.
+- (višja raven) Konstrukcija po točkah: loka iz gorišč s polmeroma $r$ in $2a - r$ (elipsa) ali $r$ in $r + 2a$ (hiperbola). GeoGebra in Desmos rišeta iz enačbe.
 - Polosi preberi kot korena imenovalcev; večji imenovalec pove, na kateri osi sta gorišči elipse.
 - Graf $y = \frac{c}{x}$ je zasukana hiperbola, graf kvadratne funkcije je parabola.
 
@@ -340,6 +427,30 @@ Elipse najdeš v orbitah planetov (Sonce je v enem gorišču) in v ovalnih ogled
 ~ Iz temena bi se žarki razpršili. Vzporeden snop dobiš le iz gorišča.
 > Iz $2p = 6$ je $p = 3$, gorišče je pri $\frac{p}{2} = 1{,}5$, torej $1{,}5\,\mathrm{cm}$ od temena.
 
+? Parabola ima enačbo $x^2 = -10y$. Vpiši ordinato njenega gorišča (brez računala).
+= -2,5
+~ 2,5 | Minus pred $2p$: parabola je odprta navzdol, gorišče je pod temenom.
+~ -5 | To je $-p$. Gorišče je pri polovici, $-\frac{p}{2}$.
+> $2p = 10$, $p = 5$. Parabola je odprta navzdol, zato je gorišče $\left(0, -\frac{p}{2}\right) = (0;\; -2{,}5)$, vodnica pa $y = 2{,}5$.
+
+? Enačba $x^2 + Cy^2 - 16 = 0$ opisuje hiperbolo z imaginarno polosjo $b = 2$. Vpiši $C$.
+= -4
+~ 4 | Pri $C = 4$ imata kvadrata enaka predznaka: to je elipsa.
+~ -0,25 | Obrnil si ulomek. Po deljenju s $16$ je pod $y^2$ imenovalec $-\frac{16}{C}$, ki mora biti $b^2 = 4$.
+> Hiperbola: $\frac{x^2}{16} - \frac{y^2}{4} = 1$. Pomnožimo s $16$: $x^2 - 4y^2 - 16 = 0$, torej $C = -4$.
+
+? (višja raven) Hiperbolo z razliko razdalj do gorišč $2a = 6$ konstruiraš s šestilom. Okoli gorišča $F_2$ zarišeš lok s polmerom $4$. Kolikšen polmer vzameš za lok okoli $F_1$, da dobiš točki desne veje?
+= 10
+~ 2 | Polmera morata imeti razliko $6$, ne vsote $6$.
+~ 7 | Prištel si $a = 3$. Razlika razdalj je $2a = 6$.
+> Za točke desne veje je $r_1 - r_2 = 2a$, zato $r_1 = 4 + 6 = 10$.
+
+? (višja raven) V Desmos vpišeš $\frac{x^2}{9} - \frac{y^2}{b^2} = 1$ in premikaš drsnik za $b$. Pri katerem $b > 0$ sta asimptoti premici $y = x$ in $y = -x$?
+= 3
+~ 9 | $9$ je $a^2$. Naklon asimptot je $\frac{b}{a}$, ne $\frac{b^2}{a^2}$.
+~ 1 | Naklon $1$ pomeni $\frac{b}{a} = 1$, torej $b = a$, ne $b = 1$.
+> Naklon asimptot je $\frac{b}{a} = 1$, zato $b = a = 3$.
+
 <<RACUN
 resi: (-4)^2 = 2*p*2 | p | 4
 vrednost: sqrt((2-2)^2 + (-4)^2) | 4
@@ -358,6 +469,18 @@ vrednost: sqrt(8^2 + 6^2) - sqrt(0^2 + 6^2) | 4
 vrednost: 4^2/4 - 6^2/12 | 1
 enako: (x-4)^2 + y^2 - (x+4)^2 | y^2 - 16*x
 vrednost: 16*4 | 64
+vrednost: (-4)^2 + 8*(-2) | 0
+vrednost: sqrt(4^2 + (-2+2)^2) | 4
+vrednost: 2 - (-2) | 4
+vrednost: -(10/2)/2 | -2.5
+enako: 16*(x^2/16 - y^2/4 - 1) | x^2 - 4*y^2 - 16
+vrednost: 4 + 6 | 10
+enako: (x+5)^2 - (x-5)^2 | 20*x
+resi: 20*x = 160 | x | 8
+vrednost: 36 - (8-5)^2 | 27
+vrednost: sqrt(27) | 5.20
+vrednost: sqrt((8+5)^2 + 27) | 14
+vrednost: 64/16 - 27/9 | 1
 >>
 
 :::simboli
@@ -368,6 +491,8 @@ e | linearna ekscentričnost | | | razdalja gorišča od središča
 \varepsilon | numerična ekscentričnost | \varepsilon = \frac{e}{a} | – | pri elipsi med $0$ in $1$
 r_1, r_2 | razdalji točke do gorišč $F_1$ in $F_2$ | | |
 p | parameter parabole | | | razdalja med goriščem in vodnico
-F | gorišče parabole | | | $F\left(\frac{p}{2}, 0\right)$
+F | gorišče parabole | | | $F\left(\frac{p}{2}, 0\right)$; v splošni enačbi (blok 5) prosti člen
 F_1, F_2 | gorišči elipse oz. hiperbole | | | $(\pm e, 0)$
+A, B, C, D, E | koeficienti splošne enačbe druge stopnje | | | $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$; tu je $F$ prosti člen, ne gorišče; v Nalogah 1 in 3 sta $A$ in $B$ točki
+r | polmer loka pri konstrukciji s šestilom | | | v Primeru 5 $r = 6$
 :::

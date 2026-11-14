@@ -36,7 +36,13 @@ Napovej, ob katerih sekundah v prvih $120\,\text{s}$ telefon iz uvoda pokaže $0
 Ob $5\,\text{s}$, $25\,\text{s}$, $65\,\text{s}$ in $85\,\text{s}$. To so koti $30^\circ$, $150^\circ$, $390^\circ$ in $510^\circ$, deljeni s $6^\circ$ na sekundo.
 :::
 
-**3. Kalkulator in arkus funkcije.** Kot, ki ga ponudi kalkulator (tipka $\sin^{-1}$), imenujemo **arkus sinus**: $\arcsin a$ je tisti kot med $-90^\circ$ in $90^\circ$, katerega sinus je $a$. Temu kotu rečemo **osnovna rešitev** $x_1$. Podobno je $\arccos a$ kot med $0^\circ$ in $180^\circ$, $\arctan a$ pa kot med $-90^\circ$ in $90^\circ$.
+**3. Kalkulator in arkus funkcije.** Kot, ki ga ponudi kalkulator (tipka $\sin^{-1}$), imenujemo **arkus sinus**: $\arcsin a$ je tisti kot med $-90^\circ$ in $90^\circ$, katerega sinus je $a$. Temu kotu rečemo **osnovna rešitev** $x_1$. Podobno je $\arccos a$ tisti kot med $0^\circ$ in $180^\circ$, katerega kosinus je $a$. Pri obeh funkcijah mora veljati $-1 \le a \le 1$. $\arctan a$ pa je tisti kot med $-90^\circ$ in $90^\circ$ (brez krajišč), katerega tangens je $a$; tu je $a$ lahko katerokoli realno število. Funkcijam $\arcsin$, $\arccos$ in $\arctan$ rečemo **krožne funkcije**.
+
+*Vrednosti brez kalkulatorja.* Pri znanih vrednostih ($0$, $\frac{1}{2}$, $\frac{\sqrt{2}}{2}$, $\frac{\sqrt{3}}{2}$, $1$, pri tangensu še $\frac{\sqrt{3}}{3}$ in $\sqrt{3}$) poiščeš kot v tabeli kotnih funkcij. Nato preveriš, ali leži v pravem intervalu. Tako je $\arcsin\frac{\sqrt{3}}{2} = 60^\circ$, $\arccos 0 = 90^\circ$ in $\arctan 1 = 45^\circ$.
+
+*Negativna števila.* Tu se funkcije razlikujejo. Arkus sinus in arkus tangens vrneta negativen kot v IV. kvadrantu: $\arcsin\left(-\frac{1}{2}\right) = -30^\circ$, $\arctan(-1) = -45^\circ$. Velja $\arcsin(-a) = -\arcsin a$ in $\arctan(-a) = -\arctan a$. Arkus kosinus pa nikoli ne vrne negativnega kota. Točka z negativno koordinato $x$ in kotom med $0^\circ$ in $180^\circ$ leži v II. kvadrantu, zato je $\arccos(-a) = 180^\circ - \arccos a$. Na primer $\arccos\left(-\frac{1}{2}\right) = 180^\circ - 60^\circ = 120^\circ$.
+
+*Radiani in kalkulator.* V radianih je $\arcsin\frac{1}{2} = \frac{\pi}{6}$ in $\arccos\left(-\frac{1}{2}\right) = \frac{2\pi}{3}$. Kalkulator v načinu DEG vrne stopinje, v načinu RAD radiane: $\arccos 0{,}3 \approx 72{,}54^\circ \approx 1{,}266$.
 
 **4. Pravila za vse tri funkcije.** Vzorec iz tabele velja splošno.
 
@@ -68,7 +74,7 @@ Samo eno, $x = 90^\circ$. Premica $y = 1$ se krožnice le dotakne. Druga družin
 
 $$\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$$
 
-Produkt je $0$, ko je vsaj en faktor $0$, zato dobimo dve enostavni enačbi (Primer 5).
+Produkt je $0$, ko je vsaj en faktor $0$, zato dobimo dve enostavni enačbi (Primer 6).
 
 Kadar nastopata kota $x$ in $\frac{x}{2}$, vse zapišemo s polovičnim kotom. V enačbi $1 + \cos x = \cos\frac{x}{2}$ po formuli polovičnega kota zamenjamo $1 + \cos x = 2\cos^2\frac{x}{2}$, prenesemo na levo in izpostavimo: $\cos\frac{x}{2}\left(2\cos\frac{x}{2} - 1\right) = 0$.
 
@@ -157,7 +163,26 @@ Katere so vse rešitve na $[0^\circ, 360^\circ)$?
 $\cos x = 0$: $x = 90^\circ$ in $x = 270^\circ$. $\sin x = \frac{1}{2}$: $x = 30^\circ$ in $x = 150^\circ$. Skupaj štiri rešitve: $30^\circ$, $90^\circ$, $150^\circ$, $270^\circ$.
 :::
 
-### Primer 5 (višja raven): vsota sinusov
+### Primer 5: vrednosti krožnih funkcij
+
+Brez kalkulatorja izračunaj $\arcsin\left(-\dfrac{\sqrt{3}}{2}\right)$, $\arccos\left(-\dfrac{\sqrt{2}}{2}\right)$ in $\arctan\left(-\dfrac{\sqrt{3}}{3}\right)$ v stopinjah in radianih. S kalkulatorjem nato izračunaj še $\arccos(-0{,}3)$ na stotinko stopinje.
+
+**Podatki:** vrednosti $-\frac{\sqrt{3}}{2}$, $-\frac{\sqrt{2}}{2}$, $-\frac{\sqrt{3}}{3}$ in $-0{,}3$
+**Iščemo:** kote v stopinjah in radianih
+
+:::formula
+$\arcsin$ in $\arctan$: kot med $-90^\circ$ in $90^\circ$; $\arccos$: kot med $0^\circ$ in $180^\circ$; $\arccos(-a) = 180^\circ - \arccos a$
+:::
+
+**Rešitev:**
+
+1. $\sin 60^\circ = \frac{\sqrt{3}}{2}$, zato je $\arcsin\left(-\frac{\sqrt{3}}{2}\right) = -60^\circ = -\frac{\pi}{3}$. Kot leži med $-90^\circ$ in $90^\circ$.
+2. $\cos 45^\circ = \frac{\sqrt{2}}{2}$. Za negativno vrednost vzamemo kot v II. kvadrantu: $\arccos\left(-\frac{\sqrt{2}}{2}\right) = 180^\circ - 45^\circ = 135^\circ = \frac{3\pi}{4}$. Kot $-45^\circ$ bi bil napačen, ker ni med $0^\circ$ in $180^\circ$.
+3. $\tan 30^\circ = \frac{\sqrt{3}}{3}$, zato je $\arctan\left(-\frac{\sqrt{3}}{3}\right) = -30^\circ = -\frac{\pi}{6}$.
+4. Kalkulator v načinu DEG: $\arccos(-0{,}3) \approx 107{,}46^\circ$. Preverba z zvezo: $180^\circ - \arccos 0{,}3 \approx 180^\circ - 72{,}54^\circ = 107{,}46^\circ$. ✓
+5. Odgovor: $-60^\circ = -\frac{\pi}{3}$, $135^\circ = \frac{3\pi}{4}$, $-30^\circ = -\frac{\pi}{6}$ in $\arccos(-0{,}3) \approx 107{,}46^\circ$.
+
+### Primer 6 (višja raven): vsota sinusov
 
 Reši enačbo $\sin 3x + \sin x = \cos x$ na $[0^\circ, 360^\circ)$.
 
@@ -191,6 +216,7 @@ $\sin\alpha + \sin\beta = 2\sin\dfrac{\alpha + \beta}{2}\cos\dfrac{\alpha - \bet
 - $\cos x = a$: $x = \pm x_1 + k \cdot 360^\circ$, $x_1 = \arccos a$.
 - $\tan x = a$: $x = x_1 + k \cdot 180^\circ$, $x_1 = \arctan a$.
 - Za $|a| > 1$ enačbi s sinusom in kosinusom nimata rešitev.
+- Krožne funkcije: $\arcsin a$ in $\arctan a$ sta kota med $-90^\circ$ in $90^\circ$, $\arccos a$ je kot med $0^\circ$ in $180^\circ$. Velja $\arcsin(-a) = -\arcsin a$, $\arctan(-a) = -\arctan a$, $\arccos(-a) = 180^\circ - \arccos a$.
 - V radianih $360^\circ \to 2\pi$, $180^\circ \to \pi$. Pri $\sin(bx) = a$ najprej reši za $bx$, nato deli z $b$.
 - Kotnih funkcij ne krajšaj, ampak izpostavi.
 - (višja raven) Vsoto sinusov ali kosinusov spremeni v produkt in vsak faktor izenači z $0$. Pri kotih $x$ in $\frac{x}{2}$ vse zapiši s polovičnim kotom ($1 + \cos x = 2\cos^2\frac{x}{2}$).
@@ -344,7 +370,28 @@ Drugi popravek: doda še kot $180^\circ - 30^\circ = 150^\circ$. Zdaj telefon za
 ~ To sta le časa v prvem obratu. V $24\,\text{s}$ naredi telefon dva obrata.
 > $\sin x = -0{,}5$ da $x = 210^\circ$, $330^\circ$, $570^\circ$, $690^\circ$. Deljeno s $30^\circ$ na sekundo: $7$, $11$, $19$ in $23\,\text{s}$.
 
+? (brez računala) Izračunaj $\arccos\left(-\dfrac{\sqrt{3}}{2}\right)$. Rezultat vpiši v stopinjah.
+= 150
+~ -30 | Arkus kosinus nikoli ne vrne negativnega kota. Vrne kot med $0^\circ$ in $180^\circ$.
+~ 30 | Kosinus kota $30^\circ$ je pozitiven, $\frac{\sqrt{3}}{2}$. Za negativno vrednost potrebuješ kot v II. kvadrantu.
+~ 210 | Tudi $\cos 210^\circ = -\frac{\sqrt{3}}{2}$, a $210^\circ$ ni med $0^\circ$ in $180^\circ$.
+> $\cos 30^\circ = \frac{\sqrt{3}}{2}$, zato je $\arccos\left(-\frac{\sqrt{3}}{2}\right) = 180^\circ - 30^\circ = 150^\circ$.
+
 <<RACUN
+vrednost: asin(sqrt(3)/2)*180/pi | 60
+vrednost: acos(0)*180/pi | 90
+vrednost: atan(1)*180/pi | 45
+vrednost: asin(-1/2)*180/pi | -30
+vrednost: atan(-1)*180/pi | -45
+vrednost: acos(-1/2)*180/pi | 120
+vrednost: acos(-1/2) | 2*pi/3
+vrednost: acos(0.3)*180/pi | 72.54
+vrednost: acos(0.3) | 1.266
+vrednost: asin(-sqrt(3)/2) | -pi/3
+vrednost: acos(-sqrt(2)/2) | 3*pi/4
+vrednost: atan(-sqrt(3)/3) | -pi/6
+vrednost: acos(-0.3)*180/pi | 107.46
+vrednost: acos(-sqrt(3)/2)*180/pi | 150
 enako: sin(3*x)+sin(x) | 2*sin(2*x)*cos(x)
 resi: sin(3*x)+sin(x)=cos(x) | x | pi/2+k*pi, pi/12+k*pi, 5*pi/12+k*pi
 enako: 1+cos(x) | 2*cos(x/2)^2
@@ -366,7 +413,7 @@ resi: cos(3*x/2)+cos(x/2)=1+cos(x) | x | 4*k*pi, pi+2*k*pi, 4*pi/3+4*k*pi, -4*pi
 
 :::simboli
 x | kot zasuka (neznanka) | |
-a | desna stran enačbe (dana vrednost) | |
+a | desna stran enačbe (dana vrednost); število, katerega arkus računamo | |
 x_1 | osnovna rešitev | x_1 = \arcsin a | | pri kosinusu $\arccos a$, pri tangensu $\arctan a$
 k | poljubno celo število | | – | $k \in \mathbb{Z}$
 u | napetost v vtičnici | u = 325\,\text{V} \cdot \sin(100\pi t) | V

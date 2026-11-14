@@ -70,6 +70,38 @@ Dolžina ne more biti negativna. Pri $k = -2$ je puščica dvakrat daljša, le o
 
 Odpri simulacijo »Seštevanje in množenje vektorjev« spodaj in vleci konca vektorjev $\vec a$ in $\vec b$. Poskusi doseči, da je $|\vec a + \vec b| = |\vec a| + |\vec b|$, nato da je $\vec a + \vec b$ ničelni vektor. Pri izbiri $k \cdot \vec a$ premikaj drsnik čez $0$ in opazuj, kdaj se puščica obrne.
 
+**Koordinatni sistem in krajevni vektor.** Pravokotni koordinatni sistem v ravnini sestavljata dve pravokotni številski premici, os $x$ in os $y$, s skupnim izhodiščem $O$ in enako enoto. V prostoru dodamo tretjo os $z$, pravokotno na obe: osi $x$ in $y$ ležita na tleh, os $z$ kaže navzgor. Točka v prostoru ima tri koordinate, na primer $T(x, y, z)$.
+
+**Krajevni vektor** točke $T$ je vektor $\vec r_T = \overrightarrow{OT}$ od izhodišča do točke. Njegove komponente so kar koordinate točke. Žoga iz uvodnega primera ima na koncu krajevni vektor $(15, 9)$. Vektor med dvema točkama je razlika krajevnih vektorjev:
+
+$$\overrightarrow{AB} = \vec r_B - \vec r_A$$
+
+Dron vzleti s tal v točki $A(1, 2, 0)$ in prileti v točko $B(4, 6, 12)$, koordinate so v metrih. Njegov premik je $\overrightarrow{AB} = (4 - 1,\ 6 - 2,\ 12 - 0) = (3, 4, 12)$, dolg $\sqrt{9 + 16 + 144} = 13\,\mathrm{m}$.
+
+**Baza.** Vektorja $\vec a$ in $\vec b$ v ravnini, ki nista kolinearna, tvorita **bazo ravnine**. Vsak vektor ravnine lahko zapišemo kot linearno kombinacijo $k\vec a + m\vec b$, in to na en sam način. Števili $k$ in $m$ sta koeficienta vektorja v tej bazi. V prostoru bazo tvorijo trije vektorji, ki niso koplanarni: narisani iz iste točke ne ležijo v isti ravnini. Vsak vektor prostora je potem na en sam način enak $k\vec a + m\vec b + n\vec c$. Najbolj priročna je **standardna baza** iz enotskih vektorjev v smereh osi; v njej so koeficienti kar komponente $a_x$, $a_y$, $a_z$ (glej »Bolj natančno«). Primer 4 spodaj razvije vektor $(9, 4)$ po bazi $(1, 2)$, $(3, -1)$.
+
+**Razstavljanje sile na dani smeri.** Seštevanje lahko obrnemo. Dani sta sila $\vec F$ in dve smeri. Skozi začetek sile narišemo premici v teh smereh, skozi konico pa vzporednici z njima. Nastane paralelogram, katerega stranici sta **komponenti** sile, $\vec F_1$ in $\vec F_2$:
+
+$$\vec F = \vec F_1 + \vec F_2$$
+
+To je razvoj sile po bazi iz vektorjev v danih smereh. Dva vlačilca vlečeta ladjo v smereh $(3, 1)$ in $(1, 2)$, skupna sila mora biti $\vec F = (50, 50)\,\mathrm{kN}$. Na sliki je ena enota $10\,\mathrm{kN}$:
+
+:::risba skica
+opis: Sila F od izhodišča O do točke (5, 5), ena enota je 10 kN. Sivi črtkani premici skozi O kažeta smeri vlačilcev, v smeri (3, 1) in v smeri (1, 2). Iz konice sile gresta črtkani vzporednici do točk (3, 1) in (2, 4). Nastane paralelogram s stranicama F₁ od O do (3, 1) in F₂ od O do (2, 4); sila F je njegova diagonala.
+območje: -0,5; -0,5 .. 6,5; 5,8
+enota: 40
+mreža: da
+črta: 0; 0 -> 6; 2 | siva črtkano
+črta: 0; 0 -> 2,8; 5,6 | siva črtkano
+črta: 3; 1 -> 5; 5 -> 2; 4 | siva črtkano
+puščica: 0; 0 -> 3; 1 | F_1 | pod | modra
+puščica: 0; 0 -> 2; 4 | F_2 | levo | oranžna
+puščica: 0; 0 -> 5; 5 | F | desno | zelena
+točka: 0; 0 | O | levo
+:::
+
+S slike odčitamo $\vec F_1 = (30, 10)\,\mathrm{kN}$ in $\vec F_2 = (20, 40)\,\mathrm{kN}$; računsko to preveri Primer 5. Kadar sta smeri pravokotni, je vsaka komponenta pravokotna projekcija sile na svojo smer.
+
 ## Rešeni primeri
 
 ### Primer 1: Dva teka in podaja
@@ -150,6 +182,25 @@ Kolikšna sta $k$ in $m$?
 $k + 3(2k - 4) = 9$, torej $7k = 21$ in $k = 3$. Potem je $m = 2 \cdot 3 - 4 = 2$. Preizkus: $3 \cdot (1, 2) + 2 \cdot (3, -1) = (3 + 6,\ 6 - 2) = (9, 4)$. Lik naredi tri korake in dva skoka.
 :::
 
+### Primer 5: dva vlačilca
+
+Ladjo morata vlačilca premakniti s skupno silo $\vec F = (50, 50)\,\mathrm{kN}$. Prvi vleče v smeri $\vec a = (3, 1)$, drugi v smeri $\vec b = (1, 2)$. S kolikšno silo mora vleči vsak?
+
+**Podatki:** $\vec F = (50, 50)\,\mathrm{kN}$, smeri $\vec a = (3, 1)$ in $\vec b = (1, 2)$
+**Iščemo:** komponenti $\vec F_1 = k\vec a$ in $\vec F_2 = m\vec b$ ter njuni velikosti
+
+:::formula
+$\vec F = k\vec a + m\vec b$, po komponentah: $k a_x + m b_x = F_x$ in $k a_y + m b_y = F_y$
+:::
+
+**Rešitev:**
+
+1. Komponenta $x$: $3k + m = 50$, od tod $m = 50 - 3k$.
+2. Komponenta $y$: $k + 2m = 50$. Vstavimo: $k + 100 - 6k = 50$, torej $5k = 50$ in $k = 10$. Potem je $m = 50 - 30 = 20$.
+3. Komponenti: $\vec F_1 = 10 \cdot (3, 1) = (30, 10)\,\mathrm{kN}$ in $\vec F_2 = 20 \cdot (1, 2) = (20, 40)\,\mathrm{kN}$. Preizkus: $(30 + 20,\ 10 + 40) = (50, 50)$.
+4. Velikosti: $|\vec F_1| = \sqrt{30^2 + 10^2} = \sqrt{1000} \approx 31{,}6\,\mathrm{kN}$ in $|\vec F_2| = \sqrt{20^2 + 40^2} = \sqrt{2000} \approx 44{,}7\,\mathrm{kN}$.
+5. Odgovor: prvi vlačilec vleče s silo približno $31{,}6\,\mathrm{kN}$, drugi s silo približno $44{,}7\,\mathrm{kN}$. Skupaj je to $76{,}3\,\mathrm{kN}$, ladja pa dobi le $|\vec F| = \sqrt{5000} \approx 70{,}7\,\mathrm{kN}$. Ker vlečeta vsak malo vstran, se del truda izniči, kot pri saneh.
+
 ## Pogoste napake
 
 - **Dolžini se kar seštejeta.** Napačno: $|\vec a + \vec b| = |\vec a| + |\vec b|$, zato bi dve sili po $300\,\mathrm{N}$ dali $600\,\mathrm{N}$. To velja le za enako usmerjena vektorja. Seštej komponente in šele nato izračunaj dolžino.
@@ -165,6 +216,8 @@ $k + 3(2k - 4) = 9$, torej $7k = 21$ in $k = 3$. Potem je $m = 2 \cdot 3 - 4 = 2
 - Dolžina: $|\vec a| = \sqrt{a_x^2 + a_y^2 + a_z^2}$; v ravnini brez $a_z$.
 - $|\vec a + \vec b| \le |\vec a| + |\vec b|$; enakost le pri enako usmerjenih vektorjih.
 - $k < 0$ obrne usmerjenost, $|k\vec a| = |k| \cdot |\vec a|$; $\vec a - \vec b = \vec a + (-\vec b)$.
+- Krajevni vektor $\vec r_T = \overrightarrow{OT}$ ima za komponente koordinate točke $T$; $\overrightarrow{AB} = \vec r_B - \vec r_A$.
+- Bazo ravnine tvorita dva nekolinearna vektorja, bazo prostora trije nekoplanarni. Razstavljanje sile na dani smeri je razvoj po bazi (paralelogram).
 
 ## Za maturo
 
@@ -308,6 +361,17 @@ Vsa sledijo iz pravil za realna števila, ker računamo po komponentah.
 ~ To je $|\vec v|^2$. Pozabil si koreniti.
 > $\vec v = (2;\ 1{,}5)\,\mathrm{m/s}$, zato je $|\vec v| = \sqrt{2^2 + 1{,}5^2} = \sqrt{6{,}25} = 2{,}5\,\mathrm{m/s}$.
 
+? (brez računala) Točki imata koordinati $A(2, -1, 3)$ in $B(5, 3, 3)$. Kolikšna je razdalja med njima, torej $|\overrightarrow{AB}|$?
+= 5
+~ 9,43 | Krajevna vektorja si seštel. Vektor $\overrightarrow{AB}$ je razlika $\vec r_B - \vec r_A$.
+~ 6,56 | To je dolžina krajevnega vektorja točke $B$, torej razdalja $B$ od izhodišča.
+> $\overrightarrow{AB} = \vec r_B - \vec r_A = (3, 4, 0)$, zato je $|\overrightarrow{AB}| = \sqrt{9 + 16 + 0} = 5$.
+
+? Silo $\vec F = (8, 1)\,\mathrm{N}$ razstavimo na smeri baznih vektorjev $\vec a = (2, 1)$ in $\vec b = (1, -1)$, torej $\vec F = k\vec a + m\vec b$. Koliko je $k$?
+= 3
+~ 2 | To je $m$, koeficient pred $\vec b$. Iz $2k + m = 8$ in $k - m = 1$ sledi $3k = 9$.
+> Po komponentah: $2k + m = 8$ in $k - m = 1$. Seštejemo: $3k = 9$, torej $k = 3$ in $m = 2$. Preizkus: $3 \cdot (2, 1) + 2 \cdot (1, -1) = (8, 1)$.
+
 <<RACUN
 resi: 9=-3*k | k | -3
 resi: 6=-3*p | p | -2
@@ -323,6 +387,16 @@ vrednost: 2*2-2*1 | 2
 vrednost: 2*2+1 | 5
 resi: k+m=5, k-m=1 | k, m | k=3, m=2
 vrednost: 3*1+2*(-1) | 1
+vrednost: sqrt(3^2+4^2+12^2) | 13
+resi: 3*k+m=50, k+2*m=50 | k, m | k=10, m=20
+vrednost: sqrt(30^2+10^2) | 31.6
+vrednost: sqrt(20^2+40^2) | 44.7
+vrednost: sqrt(1000)+sqrt(2000) | 76.3
+vrednost: sqrt(50^2+50^2) | 70.7
+vrednost: sqrt(3^2+4^2+0^2) | 5
+vrednost: sqrt(7^2+2^2+6^2) | 9.43
+vrednost: sqrt(5^2+3^2+3^2) | 6.56
+resi: 2*k+m=8, k-m=1 | k, m | k=3, m=2
 >>
 
 :::simboli
@@ -330,11 +404,17 @@ vrednost: 3*1+2*(-1) | 1
 a_x, a_y, a_z | komponente vektorja $\vec a$ | | | premik vzdolž osi $x$, $y$, $z$
 b_x, b_y, b_z | komponente vektorja $\vec b$ | | |
 c_x, c_y | komponenti vektorja $\vec c$ | | |
-k, m | skalarja (realni števili) | | – | v primeru 4 število korakov in skokov
+k, m, n | skalarji (realna števila), koeficienti v bazi | | – | v primeru 4 število korakov in skokov, v primeru 5 koeficienta pred smerema vlačilcev
 \vec s | skupni premik | | m | $\lvert\vec s\rvert$ je razdalja od začetne točke; v primeru 1 je $\vec s = 2\vec a + \vec b$, v primeru 2 $\vec a + 2\vec b$, v primeru 3 $t\vec v$
 s_x, s_y, s_z | komponente premika $\vec s$ | | m |
 \vec v | hitrost kajaka glede na breg | \vec v = \vec v_k + \vec v_r | m/s |
 \vec v_k | hitrost kajaka glede na vodo | | m/s |
 \vec v_r | hitrost reke | | m/s |
 t | čas prečkanja | | s |
+O | izhodišče koordinatnega sistema | |
+\vec r_T, \vec r_A, \vec r_B | krajevni vektor točke $T$, $A$, $B$ | \vec r_T = \overrightarrow{OT} | | komponente so koordinate točke
+A, B | točki (pri dronu začetna in končna lega) | | | $\overrightarrow{AB} = \vec r_B - \vec r_A$
+\vec F | sila (v primeru 5 skupna sila vlačilcev) | \vec F = \vec F_1 + \vec F_2 | kN | pri saneh skupna sila atletov v N
+\vec F_1, \vec F_2 | komponenti sile v danih smereh | | kN | pri saneh sili atletov v N
+F_x, F_y | komponenti sile $\vec F$ | | kN |
 :::

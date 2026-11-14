@@ -37,6 +37,8 @@ Prva le eno točko, izhodišče $(0, 0)$: vsota dveh kvadratov je $0$ samo, če 
 
 Če to narediš s splošnima $D$ in $E$, dobiš: središče je v točki $S\!\left(-\frac{D}{2}, -\frac{E}{2}\right)$ in velja $r^2 = \frac{D^2}{4} + \frac{E^2}{4} - F$. Krožnica obstaja le, če je ta vrednost pozitivna.
 
+Enačba krožnice je enačba druge stopnje v $x$ in $y$, zato krožnico imenujemo **krivulja drugega reda**. Krivulje drugega reda so tudi elipsa, hiperbola in parabola iz naslednje lekcije. Krožnico prepoznaš po tem, da imata $x^2$ in $y^2$ enak koeficient in ni člena z $xy$. Enačbo $2x^2 + 2y^2 - 8x = 0$ najprej deliš z $2$: $x^2 + y^2 - 4x = 0$. Dopolnjevanje do kvadrata da $(x - 2)^2 + y^2 = 4$.
+
 **4. Kje leži točka.** Koordinate točke vstaviš v levo stran središčne oblike in rezultat primerjaš z $r^2$. Manj pomeni, da je točka znotraj kroga. Enako pomeni, da leži na krožnici. Več pomeni, da je zunaj.
 
 **5. Premica in krožnica.** Premica in krožnica imata lahko dve, eno ali nobene skupne točke. Skupne točke so rešitve sistema obeh enačb. Iz enačbe premice izraziš $y$ in ga vstaviš v enačbo krožnice. Dobiš kvadratno enačbo za $x$. Njena diskriminanta pove lego, ne da bi enačbo sploh rešil. Isto pove razdalja $d$ od središča do premice, ki jo primerjaš s polmerom $r$:
@@ -60,6 +62,13 @@ Premica gre skozi središče krožnice. Koliko skupnih točk ima s krožnico? Za
 ---
 Natanko dve. Razdalja od središča do premice je $d = 0$, kar je manj od vsakega polmera, zato je premica sekanta. Presečišči sta krajišči premera.
 :::
+
+**7. Presečišča z drugimi krivuljami.** Skupne točke krožnice s katerokoli krivuljo iščeš enako kot s premico: rešiš sistem obeh enačb. Enako dobiš presečišča premice s parabolo $y = ax^2 + bx + c$ ali s hiperbolo $y = \frac{k}{x}$ in presečišča dveh stožnic, tudi elipse in hiperbole iz naslednje lekcije. Dve krivulji drugega reda imata lahko do štiri skupne točke.
+
+- Pri paraboli $y = ax^2$ izraziš $x^2 = \frac{y}{a}$ in ga vstaviš v enačbo krožnice. Dobiš kvadratno enačbo za $y$.
+- Pri dveh krožnicah enačbi odšteješ. Kvadrata se odštejeta in ostane premica skozi obe presečišči. Nato nadaljuješ kot v bloku 5.
+
+Vsako rešitev utemelji. Pri paraboli rešitev za $y$, pri kateri je $x^2$ negativen, ne da nobene točke. Rešitev s pozitivnim $x^2$ da dve točki, simetrični glede na os $y$, rešitev z $x^2 = 0$ eno samo. Primerjaj s skico: koliko presečišč vidiš, toliko jih mora dati račun.
 
 ## Rešeni primeri
 
@@ -145,6 +154,39 @@ Kakšna je diskriminanta in kaj pove?
 Diskriminanta je $14^2 - 4 \cdot 49 = 0$, zato je premica tangenta. Rešitev je $x = 7$, iz premice $y = 5$. Pot se območja signala le dotakne v točki $(7, 5)$. Preveriš lahko s skalarnim produktom: $\overrightarrow{ST} = (4, 3)$ je pravokoten na smer premice $(3, -4)$, ker je $4 \cdot 3 + 3 \cdot (-4) = 0$.
 :::
 
+### Primer 5: krožnica in parabola
+
+Določi skupne točke krožnice $x^2 + y^2 = 25$ in parabole $y = \frac{4}{9}x^2$. Utemelji, zakaj ena od rešitev računa ne da točke.
+
+**Podatki:** krožnica $x^2 + y^2 = 25$, parabola $y = \frac{4}{9}x^2$
+**Iščemo:** skupne točke krožnice in parabole
+
+:::formula
+Iz parabole $x^2 = \frac{9y}{4}$ vstavi v enačbo krožnice; vsak $y$ da točke le, če je $x^2 \ge 0$.
+:::
+
+**Rešitev:**
+
+1. Iz enačbe parabole: $x^2 = \frac{9y}{4}$.
+2. Vstavimo v krožnico in pomnožimo s $4$: $9y + 4y^2 = 100$, torej enačba $4y^2 + 9y - 100 = 0$.
+3. Diskriminanta: $9^2 + 4 \cdot 4 \cdot 100 = 1681 = 41^2$, zato $y = \frac{-9 \pm 41}{8}$. Rešitvi sta $y_1 = 4$ in $y_2 = -6{,}25$.
+4. Pri $y_1 = 4$ je $x^2 = 9$, torej $x = 3$ ali $x = -3$.
+5. Pri $y_2 = -6{,}25$ bi bil $x^2$ negativen. Ta rešitev ne da točke: parabola ne seže pod os $x$, krožnica pa sploh ne seže do $y = -6{,}25$.
+6. Preizkus za $(3, 4)$: $3^2 + 4^2 = 25$ in $\frac{4}{9} \cdot 9 = 4$.
+
+:::risba graf
+opis: Krožnica s središčem v izhodišču in polmerom 5 ter parabola y = 4x²/9 s temenom v izhodišču, odprta navzgor. Sekata se v točkah P₁(3, 4) in P₂(−3, 4). Spodaj krožnica seže le do y = −5.
+x: -7 .. 7 | 1 | x
+y: -6 .. 9 | 1 | y
+enako: da
+krog: 0; 0 | 5 | modra debelo
+f: 4/9*x^2 | oranžna debelo | -4,5 .. 4,5
+točka: 3; 4 | P_1 | desno
+točka: -3; 4 | P_2 | levo
+:::
+
+7. Odgovor: krožnica in parabola imata dve skupni točki, $P_1(3, 4)$ in $P_2(-3, 4)$. Rešitev $y = -6{,}25$ ne ustreza, ker bi zahtevala $x^2 < 0$.
+
 ## Pogoste napake
 
 - **Napačen predznak središča.** Iz $(x + 2)^2 + (y - 3)^2 = 16$ kdo prebere $S(2, -3)$. V enačbi je razlika $x - p$, zato $x + 2$ pomeni $p = -2$. Pravilno: $S(-2, 3)$.
@@ -161,6 +203,7 @@ Diskriminanta je $14^2 - 4 \cdot 49 = 0$, zato je premica tangenta. Rešitev je 
 - Lega točke: levo stran primerjaj z $r^2$ (manj znotraj, enako na krožnici, več zunaj).
 - Lega premice: vstavi premico v krožnico; diskriminanta pozitivna – sekanta, $0$ – tangenta, negativna – mimobežnica. Enako pove primerjava razdalje $d$ središča od premice s polmerom.
 - Tangenta je pravokotna na polmer v dotikališču.
+- Krožnica je krivulja drugega reda. Presečišča z drugo krivuljo dobiš kot rešitve sistema; vsako rešitev preveri (pri $x^2 < 0$ ni točke).
 
 ## Za maturo
 
@@ -319,6 +362,12 @@ Naloga: lega premice $y = x + 1$ in krožnice $x^2 + y^2 = 13$.
 ~ Na robu bi bila, če bi bilo $x^2 + y^2 = 9$; tu je $8$.
 > Kmetija je $\sqrt{8} \approx 2{,}83\,\mathrm{km}$ od vzletišča, torej znotraj kroga z enačbo roba $x^2 + y^2 = 9$.
 
+? Koliko skupnih točk imata krožnica $x^2 + y^2 = 25$ in hiperbola $y = \frac{12}{x}$? Vpiši število (brez računala).
+= 4
+~ 2 | Upošteval si le pozitivna $x$. Za $x = -3$ in $x = -4$ dobiš točki na drugi veji hiperbole.
+~ 0 | Kvadratna enačba za $x^2$ ima rešitvi $9$ in $16$, obe pozitivni.
+> Vstavimo $y = \frac{12}{x}$ in pomnožimo z $x^2$: $x^4 - 25x^2 + 144 = 0$, torej $x^2 = 9$ ali $x^2 = 16$. Točke so $(3, 4)$, $(4, 3)$, $(-3, -4)$ in $(-4, -3)$.
+
 <<RACUN
 vrednost: sqrt((5+1)^2 + (-4-4)^2) | 10
 enako: (x-2)^2 + y^2 - 25 | x^2 - 4*x + y^2 - 21
@@ -340,6 +389,15 @@ vrednost: (5-1)^2 + (-5+2)^2 | 25
 enako: 3*(y+1) - 4*(x-8) | 3*y - 4*x + 35
 vrednost: (4/3)*(-3/4) | -1
 enako: (x-1)^2 + y^2 + 4 | x^2 + y^2 - 2*x + 5
+enako: (2*x^2 + 2*y^2 - 8*x)/2 | (x-2)^2 + y^2 - 4
+enako: 4*(9*y/4 + y^2 - 25) | 4*y^2 + 9*y - 100
+vrednost: 9^2 + 4*4*100 | 1681
+resi: 4*y^2 + 9*y - 100 = 0 | y | -25/4, 4
+vrednost: 9*4/4 | 9
+vrednost: 3^2 + 4^2 | 25
+vrednost: 4/9*9 | 4
+enako: x^2*(x^2 + (12/x)^2 - 25) | x^4 - 25*x^2 + 144
+resi: z^2 - 25*z + 144 = 0 | z | 9, 16
 >>
 
 :::simboli

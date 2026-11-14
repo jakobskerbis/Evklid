@@ -80,6 +80,19 @@ Lahko. Asimptota je $y = 2$ (enaki stopnji, $\frac{2}{1}$), in $h(-1) = \frac{2 
 
 Preveri se še v simulaciji »Racionalna funkcija: poli in asimptote«. Premikaj ničlo proti polu, dokler je ne postaviš točno nanj. Kaj se zgodi z grafom in z navpično asimptoto? Nato ničlo spet odmakni od pola, nastavi stopnjo pola na $2$ in opazuj, kam gresta veji ob polu in kam se premakne vodoravna asimptota.
 
+**Racionalne enačbe.** Enačbi, v kateri neznanka nastopa v imenovalcu, rečemo **racionalna enačba**. Vprašanje iz uvoda obrnimo: s kolikšno hitrostjo $v$ moraš sestopiti, da bo povprečna hitrost $5\,\mathrm{km/h}$? Rešiti moramo $\dfrac{6v}{v + 3} = 5$.
+
+1. *Pogoji.* Z ničlo ne smemo deliti, zato $v + 3 \ne 0$, torej $v \ne -3$. Pogoje zapiši, preden karkoli preoblikuješ.
+2. *Odpravimo ulomke.* Obe strani pomnožimo s skupnim imenovalcem $v + 3$: $6v = 5(v + 3) = 5v + 15$.
+3. *Rešimo* enačbo brez ulomkov: $v = 15$.
+4. *Preizkus.* Število $15$ ustreza pogoju $v \ne -3$. Res: $\frac{6 \cdot 15}{18} = 5$. Sestopiti moraš s hitrostjo $15\,\mathrm{km/h}$.
+
+Pri več ulomkih vse imenovalce najprej razcepi. **Najmanjši skupni imenovalec** vsebuje vsak faktor tolikokrat, kolikorkrat se največkrat pojavi v enem imenovalcu. Pogoji izločijo ničle vseh imenovalcev. Preostala realna števila tvorijo definicijsko območje enačbe.
+
+Zakaj je preizkus nujen? Množenje z izrazom, ki je lahko enak $0$, ni ekvivalentno preoblikovanje. Pomnožena enačba ima vse rešitve prvotne, lahko pa še kakšno več. Število, ki reši pomnoženo enačbo, a je ničla kakega imenovalca, je **navidezna rešitev** in jo zavržemo. Primer: $\dfrac{x}{x - 2} = \dfrac{2}{x - 2}$, pogoj $x \ne 2$. Po množenju z $x - 2$ dobimo $x = 2$, kar pogoj prepoveduje. Enačba nima rešitve. Na grafu vidiš isto: razlika leve in desne strani je $\frac{x - 2}{x - 2}$, torej premica $y = 1$ z luknjo pri $x = 2$, ki osi $x$ nikjer ne seka.
+
+Tudi uganka iz uvoda je racionalna enačba. Iz $\dfrac{6v}{v + 3} = 6$ po množenju dobimo $6v = 6v + 18$, torej $0 = 18$. To ne velja za noben $v$, zato povprečja $6\,\mathrm{km/h}$ res ne dosežeš: $y = 6$ je vodoravna asimptota, ki je graf nikjer ne doseže.
+
 ## Rešeni primeri
 
 ### Primer 1: ena ničla, en pol
@@ -149,6 +162,27 @@ Kolikšna je hitrost $v$?
 $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora biti večja od $3\,\mathrm{km/h}$, zato je $v = 9\,\mathrm{km/h}$. Preizkus: $t(9) = \dfrac{216}{72} = 3\,\mathrm{h}$.
 :::
 
+### Primer 4: racionalna enačba z navidezno rešitvijo
+
+Reši enačbo $\dfrac{x}{x - 1} - \dfrac{2}{x + 1} = \dfrac{4}{x^2 - 1}$.
+
+**Podatki:** enačba $\dfrac{x}{x - 1} - \dfrac{2}{x + 1} = \dfrac{4}{x^2 - 1}$
+**Iščemo:** vse realne rešitve
+
+:::formula
+Pogoji: imenovalci $\ne 0$; obe strani pomnožimo z najmanjšim skupnim imenovalcem; preizkus s pogoji
+:::
+
+**Rešitev:**
+
+1. Razcep: $x^2 - 1 = (x - 1)(x + 1)$. Najmanjši skupni imenovalec je $(x - 1)(x + 1)$.
+2. Pogoji: $x \ne 1$ in $x \ne -1$.
+3. Pomnožimo s $(x - 1)(x + 1)$: $x(x + 1) - 2(x - 1) = 4$.
+4. Odpravimo oklepaje: $x^2 + x - 2x + 2 = 4$, torej $x^2 - x - 2 = 0$.
+5. Razcep: $(x - 2)(x + 1) = 0$, kandidata sta $x = 2$ in $x = -1$.
+6. Preizkus s pogoji: $x = -1$ je ničla imenovalca, zato je navidezna rešitev. Za $x = 2$: leva stran je $\frac{2}{1} - \frac{2}{3} = \frac{4}{3}$, desna $\frac{4}{3}$.
+7. Odgovor: enačba ima eno rešitev, $x = 2$.
+
 ## Pogoste napake
 
 - **Pol zamenjaš z ničlo.** Pri $f(x) = \dfrac{x - 5}{x + 2}$ kdo reče, da je pol $5$. Ničle dá števec, pole imenovalec: ničla je $5$, pol $-2$.
@@ -156,6 +190,7 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 - **Asimptota iz prostih členov ali vedno $y = 0$.** Pri $\dfrac{3x + 1}{x - 2}$ asimptota ni $y = -\frac{1}{2}$ (prosta člena) in ne $y = 0$, ampak $y = 3$. Pri enakih stopnjah deliš vodilna koeficienta.
 - **»Graf asimptote nikoli ne seka.«** To velja za navpično, kjer funkcija ni definirana. Vodoravno lahko seka, kot $h(-1) = 2$ v razlagi.
 - **Rešitev enačbe brez smisla v nalogi.** Pri čolnu je $v = -1$ rešitev enačbe, ne pa naloge. Vedno preveri, katere vrednosti dovoljuje vsebina.
+- **Brez pogojev pri racionalni enačbi.** V primeru 4 kvadratna enačba da tudi $x = -1$, ki pa je ničla imenovalca. Popravek: pogoje zapiši na začetku in vsako rešitev na koncu preveri z njimi.
 
 ## Povzetek
 
@@ -164,6 +199,7 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 - Pol lihe stopnje: veji na nasprotnih straneh; pol sode stopnje: obe v isto smer. Pri polu je navpična asimptota.
 - Vodoravna asimptota: števec nižji $\Rightarrow y = 0$; enaki stopnji $\Rightarrow y = \frac{a_n}{b_n}$; števec višji za $1$ $\Rightarrow$ poševna asimptota (količnik pri deljenju).
 - Graf vodoravno asimptoto lahko seka, navpične nikoli.
+- Racionalna enačba: pogoji (imenovalci $\ne 0$), množenje z najmanjšim skupnim imenovalcem, rešitev, preizkus. Kandidat, ki je ničla kakega imenovalca, je navidezna rešitev.
 
 ## Za maturo
 
@@ -286,7 +322,20 @@ Primer je $f(x) = \frac{x^2 - 1}{x - 1}$, ki pri $x = 1$ ni definirana. Po kraj�
 ~ To je $20 \cdot 2 + 4$. Iz $\frac{20}{v - 4} = 2$ sledi $v - 4 = \frac{20}{2}$, ne $20 \cdot 2$.
 > $\dfrac{20}{v - 4} = 2$, torej $v - 4 = 10$ in $v = 14\,\mathrm{km/h}$.
 
+? (brez računala) Reši enačbo $\dfrac{x}{x - 3} - \dfrac{1}{x} = \dfrac{3}{x^2 - 3x}$. Vpiši njeno rešitev.
+= 1
+~ 0 | Število $0$ reši pomnoženo enačbo $x^2 - x = 0$, a je ničla imenovalcev $x$ in $x^2 - 3x$: navidezna rešitev.
+~ 3 | Pri $x = 3$ je imenovalec $x - 3$ enak $0$. Pogoja sta $x \ne 0$ in $x \ne 3$.
+> Pogoja: $x \ne 0$, $x \ne 3$. Množimo z $x(x - 3)$: $x^2 - (x - 3) = 3$, torej $x^2 - x = 0$ in $x = 0$ ali $x = 1$. Število $0$ je ničla imenovalca, ostane $x = 1$.
+
 <<RACUN
+resi: 6*v/(v+3)=5 | v | 15
+resi: x/(x-2)=2/(x-2) | x | none
+resi: 6*v/(v+3)=6 | v | none
+resi: x/(x-1)-2/(x+1)=4/(x^2-1) | x | 2
+resi: x^2-x-2=0 | x | -1, 2
+resi: x/(x-3)-1/x=3/(x^2-3*x) | x | 1
+resi: x^2-x=0 | x | 0, 1
 enako: (x^2-3*x+4)/(x-1) | x-2+2/(x-1)
 limita: (x^2-3*x+4)/(x-1)-(x-2) | x | oo | 0
 enako: (x^2-4*x+3)/(x^2-2*x) | (x-1)*(x-3)/(x*(x-2))
