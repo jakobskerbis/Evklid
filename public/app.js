@@ -621,10 +621,9 @@ function backStep(wasOverlay) {
     closePad();
     return true;
   }
-  // Plast v kalkulatorju (plošča funkcij ali konstant, meni vrstice grafa, povečan graf): Nazaj zapre samo njo.
-  if (calcBack()) return true;
+  // Kalkulator čez cel zaslon: najprej plast v njem (plošča funkcij ali konstant, meni vrstice grafa, povečan graf), nato okno.
   if (calcOverlayOpen()) {
-    closeCalcOverlay({ fromBack: true });
+    if (!calcBack()) closeCalcOverlay({ fromBack: true });
     return true;
   }
   if (cornerBack()) return true;
@@ -647,6 +646,8 @@ function backStep(wasOverlay) {
     setSidebar(false); // seznam pogovorov na telefonu
     return true;
   }
+  // Plast v pogledu Kalkulator; šele za 3D in drugimi plastmi, ki ga prekrijejo.
+  if (currentView === "graph" && calcBack()) return true;
   // Podstran pogleda: lekcija → kazalo, poskus → seznam, igra → seznam iger …
   if (currentView === "uci" && uciBack({ textbookBack, labBack })) return true;
   if (currentView === "games" && gamesBack()) return true;
