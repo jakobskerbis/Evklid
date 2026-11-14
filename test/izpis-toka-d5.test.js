@@ -1,5 +1,5 @@
 // Točka D5 (master brief j 13. 11.): med pretakanjem odgovora se dokončani bloki ne izrisujejo znova, formule KaTeX so
-// v predpomnilniku, izris je največ enkrat na sličico, končni izris pa je cel in takoj (enak kot prej).
+// v predpomnilniku, izris je največ enkrat na sličico, končni izris pa je cel in takoj (enak kot ob ponovnem odprtju).
 // Zagon: node --test test/izpis-toka-d5.test.js
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -101,4 +101,11 @@ test("D5 pacer: končni izris je označen (izriše se takoj, gumbi pod odgovorom
   await p.done;
   assert.deepEqual(klici.at(-1), ["Ena dva tri.", true]);
   assert.ok(klici.slice(0, -1).every(([, k]) => !k));
+});
+
+test("D5 končni izris: zadnja vrstica tabele brez nove vrstice ostane (kot ob ponovnem odprtju pogovora)", () => {
+  const { renderRich } = createRenderer({ marked, katex, sanitize: (h) => h });
+  const tabela = "| a | b |\n|---|---|\n| 1 | 2 |\n| 3 | 4 |";
+  assert.match(renderRich(tabela), /<td[^>]*>3<\/td>/, "končni izris (chatRich) pokaže zadnjo vrstico");
+  assert.doesNotMatch(renderRich(streamSafe(tabela)), /<td[^>]*>3<\/td>/, "med tokom je nedokončana vrstica skrita");
 });

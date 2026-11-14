@@ -3,7 +3,8 @@
 // - dokončani bloki (odstavki, ločeni s prazno vrstico) se izrišejo enkrat in ostanejo v predpomnilniku,
 //   znova se izriše samo zadnji blok;
 // - največ en izris na sličico (requestAnimationFrame), končni izris takoj (gumbi pod odgovorom pridejo za njim).
-// Končni izris je vedno izris celega besedila naenkrat, enak kot prej.
+// Končni izris je izris celega besedila naenkrat, enak kot ob ponovnem odprtju pogovora (chatRich(besedilo)); prej je šel
+// še skozi streamSafe, ki je npr. odrezal zadnjo vrstico tabele brez nove vrstice na koncu.
 
 const OZNAKA_SEZNAMA = /^(\d{1,9}[.)]|[-*+])(\s|$)/;
 
