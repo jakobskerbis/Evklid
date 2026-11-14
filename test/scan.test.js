@@ -5,7 +5,7 @@ import path from "node:path";
 import SL from "../public/i18n/sl.js";
 import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
-import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, READ_PROMPT } from "../server/scan.js";
+import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, READ_PROMPT, readLangLine } from "../server/scan.js";
 import { answerParts } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -362,4 +362,12 @@ test("AI answer as a list of facts is shown one fact per line (j's screenshot 4.
   assert.deepEqual(answerParts("D_f=(0,\\infty), Z_f=\\mathbb{R}, \\text{ničla } x=1, \\text{naraščajoča}"), ["D_f=(0,\\infty)", "Z_f=\\mathbb{R}", "\\text{ničla } x=1", "\\text{naraščajoča}"]);
   assert.deepEqual(answerParts("x\\in\\{2,3,4\\}, y\\in\\{1,2,3\\}"), ["x\\in\\{2,3,4\\}", "y\\in\\{1,2,3\\}"]);
   for (const one of ["x\\in[-5,\\infty)", "T(7,2)", "x=2{,}5", "f(x)=\\frac{1}{x}, x\\neq 0", "x_1=2,5, x_2=3", "x=1, 2, 3, y=0"]) assert.equal(answerParts(one).length, 1, one);
+});
+
+// j 14. 11. 2026: besede v »Podatki« so bile v angleščini, iskana količina pa med podatki.
+test("photo reading writes the words of the data in the app language and keeps what is asked apart", () => {
+  assert.match(readLangLine("sl"), /slovenščina/);
+  assert.match(readLangLine("de"), /German/);
+  assert.match(READ_PROMPT, /never data/);
+  assert.match(READ_PROMPT, /Iskano:/);
 });
