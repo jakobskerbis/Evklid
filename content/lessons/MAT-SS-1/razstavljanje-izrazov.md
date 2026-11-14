@@ -89,6 +89,12 @@ Obe sta negativni. Produkt $12$ je pozitiven, zato imata števili enak predznak.
 3. Vsak nastali faktor preglej, ali ga je mogoče razstaviti naprej.
 4. Naredi preizkus z množenjem.
 
+**6. Razcepna enačba.** Razcep pomaga tudi pri enačbah. Produkt je enak $0$ natanko tedaj, ko je enak $0$ vsaj en faktor: iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$. Enačba je **razcepna**, če jo lahko zapišemo tako, da je na desni $0$, na levi pa produkt faktorjev. Rešiš jo v treh korakih: vse člene prenesi na levo, levo stran razstavi, vsak faktor izenači z $0$.
+
+Primer: $x^3 = x^2 + 6x$. Na levo: $x^3 - x^2 - 6x = 0$. Izpostavimo $x$: $x(x^2 - x - 6) = 0$. Števili z vsoto $-1$ in produktom $-6$ sta $2$ in $-3$, zato je $x(x + 2)(x - 3) = 0$. Rešitve so $x_1 = 0$, $x_2 = -2$ in $x_3 = 3$. Preizkus pri $x = 3$: leva stran je $27$, desna $9 + 18 = 27$.
+
+Pazi na dve pasti. Enačbe ne deli z $x$, ker bi izgubil rešitev $x = 0$. Sklep »vsaj en faktor je $0$« velja le, ko je produkt $0$: iz $x(x + 2) = 15$ ne sledi $x = 15$. Najprej zapiši $x^2 + 2x - 15 = 0$, torej $(x + 5)(x - 3) = 0$ in $x_1 = -5$, $x_2 = 3$. Več razcepnih enačb, tudi takih, kjer člene združiš v pare, rešuješ pri kvadratni enačbi.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -194,6 +200,7 @@ Prvi oklepaj je $x + 3 - x + 3 = 6$, drugi $2x$, zato je razlika $6 \cdot 2x = 1
 - Popolni kvadrat: $a^2 \pm 2ab + b^2 = (a \pm b)^2$.
 - Vietovo pravilo: $x^2 + px + q = (x+a)(x+b)$, kjer je $a + b = p$ in $a \cdot b = q$.
 - Vrstni red: skupni faktor, nato obrazec glede na število členov, nato preglej vse faktorje in na koncu preizkus.
+- Razcepna enačba: vse na levo, levo stran razstavi, vsak faktor izenači z $0$ (produkt je $0$ natanko tedaj, ko je $0$ vsaj en faktor).
 
 ## Za maturo
 
@@ -361,6 +368,12 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 + $(x - 4)\,\mathrm{m}$
 > Iščemo $b$ z $3 + b = -1$ in $3 \cdot b = -12$, torej $b = -4$. Preizkus: $(x + 3)(x - 4) = x^2 - x - 12$.
 
+? (brez računala) Vpiši največjo rešitev enačbe $x^2 - 3x = 28$.
+= 7
+~ 31 | Iz $x(x - 3) = 28$ si sklepal $x = 28$ ali $x - 3 = 28$. Sklep »vsaj en faktor je $0$« velja le, ko je na desni $0$.
+~ 4 | Števili $-4$ in $7$ imata vsoto $3$, ne $-3$. Pravi sta $4$ in $-7$, zato je $(x + 4)(x - 7) = 0$.
+> Na levo: $x^2 - 3x - 28 = 0$. Števili z vsoto $-3$ in produktom $-28$ sta $4$ in $-7$, zato je $(x + 4)(x - 7) = 0$. Rešitvi sta $-4$ in $7$, večja je $7$.
+
 <<RACUN
 enako: x^4-13*x^2+36 | (x^2-4)*(x^2-9)
 enako: x^4-13*x^2+36 | (x-2)*(x+2)*(x-3)*(x+3)
@@ -372,10 +385,22 @@ resi: x^3-2*x^2-4*x+8=0 | x | -2, 2
 vrednost: 2500*54 | 135000
 vrednost: 52^3-2*52^2-4*52+8 | 135000
 vrednost: 50^2*54 | 135000
+enako: x^3-x^2-6*x | x*(x+2)*(x-3)
+resi: x^3=x^2+6*x | x | -2, 0, 3
+vrednost: 3^2+6*3 | 27
+enako: x^2+2*x-15 | (x+5)*(x-3)
+resi: x*(x+2)=15 | x | -5, 3
+enako: x^2-3*x-28 | (x+4)*(x-7)
+resi: x^2-3*x=28 | x | -4, 7
+vrednost: 7*(7-3) | 28
+vrednost: 28+3 | 31
+vrednost: -4+7 | 3
 >>
 
 :::simboli
-x, y | spremenljivki | | |
+x, y | spremenljivki | | | v razcepni enačbi (6. točka razlage) je $x$ neznanka
+x_1, x_2, x_3 | rešitve razcepne enačbe | | |
+A, B | faktorja produkta v razcepni enačbi | | | iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$
 a, b | števili z vsoto $p$ in zmnožkom $q$ (Vietovo pravilo) | | | v $ab + ac$ je $a$ skupni faktor, v $a^2 - b^2$ osnovi, v primeru 1 spremenljivki
 c, d | členi v oklepaju po izpostavljanju | | | v $x^2 + c$ je $c$ pozitivno število
 p | koeficient pri $x$ v tričleniku | p = a + b | |

@@ -13,13 +13,46 @@ Deljivost, praštevila, največji skupni delitelj $D$ in najmanjši skupni večk
 
 ## Razlaga
 
-**1. Naravna števila.** Množico naravnih števil pišemo $\mathbb{N} = \{1, 2, 3, \dots\}$, z ničlo pa $\mathbb{N}_0 = \{0, 1, 2, 3, \dots\}$. Vsota in produkt dveh naravnih števil sta spet naravni števili, razlika pa ne vedno: $3 - 5$ ni naravno število.
+**1. Naravna števila.** Množico naravnih števil pišemo $\mathbb{N} = \{1, 2, 3, \dots\}$, z ničlo pa $\mathbb{N}_0 = \{0, 1, 2, 3, \dots\}$. Vsota in produkt dveh naravnih števil sta spet naravni števili, razlika pa ne vedno: $3 - 5$ ni naravno število. Z naravnimi števili **štejemo** (v razredu je $28$ dijakov) in **urejamo** po vrsti ($3.$ mesto na tekmi).
 
 *Preveri:* Ali je $0$ naravno število? (Ne, $0 \in \mathbb{N}_0$, $0 \notin \mathbb{N}$.)
 
-**2. Cela števila.** Množica celih števil je $\mathbb{Z} = \{\dots, -3, -2, -1, 0, 1, 2, 3, \dots\}$ in velja $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$. Vsako celo število $a$ ima nasprotno število $-a$, za katero je $a + (-a) = 0$. **Absolutna vrednost** $|a|$ je razdalja števila $a$ od $0$ na številski premici, na primer $|-5| = 5$. V $\mathbb{Z}$ lahko vedno seštevamo, odštevamo in množimo, deliti pa ne vedno ($7 : 2$ ni celo število). Odštevanje je prištevanje nasprotnega števila: $a - (-b) = a + b$. Produkt dveh števil z enakim predznakom je pozitiven, z različnima predznakoma pa negativen.
+**2. Cela števila.** Množica celih števil je $\mathbb{Z} = \{\dots, -3, -2, -1, 0, 1, 2, 3, \dots\}$ in velja $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$.
+
+Cela števila vpeljemo iz dveh razlogov. Računski razlog: v $\mathbb{N}$ odštevanje ne uspe vedno, enačba $x + 5 = 3$ nima naravne rešitve, v $\mathbb{Z}$ pa ima rešitev $x = -2$. Praktični razlog: mnoge količine merimo od izbrane ničle v dve smeri. Temperatura $-6\,°\text{C}$ je pod lediščem, stanje na računu $-40$ € je dolg, $-2$. nadstropje garaže je pod pritličjem, gladina Mrtvega morja leži približno $430\,\text{m}$ pod morsko gladino (nadmorska višina $-430\,\text{m}$).
+
+Vsako celo število $a$ ima nasprotno število $-a$, za katero je $a + (-a) = 0$. **Absolutna vrednost** $|a|$ je razdalja števila $a$ od $0$ na številski premici, na primer $|-5| = 5$. Na **številski premici** izberemo točko $0$ in enoto. Pozitivna števila nanašamo v desno, negativna v levo. Nasprotni števili ležita na različnih straneh ničle, enako daleč od nje:
+
+:::risba premica
+opis: Številska premica s celimi števili od −6 do 6. Označeni sta točki −4 in 4. Loka iz 0 kažeta, da sta obe od 0 oddaljeni za 4 enote, −4 v levo in 4 v desno.
+od: -6
+do: 6
+točka: -4 | | modra
+točka: 4 | | modra
+skok: 0 -> -4 | 4 enote
+skok: 0 -> 4 | 4 enote
+:::
+
+Od dveh celih števil je večje tisto, ki leži bolj desno, zato je $-5 < -2$. V $\mathbb{Z}$ lahko vedno seštevamo, odštevamo in množimo, deliti pa ne vedno ($7 : 2$ ni celo število). Odštevanje je prištevanje nasprotnega števila: $a - (-b) = a + b$. Produkt dveh števil z enakim predznakom je pozitiven, z različnima predznakoma pa negativen.
 
 *Preveri:* Koliko je $|-7| + (-7)$? ($7 + (-7) = 0$.)
+
+**Zakoni računskih operacij.** Za vsa cela števila $a$, $b$ in $c$ (torej tudi za naravna) velja:
+
+- zamenljivost (komutativnost): $a + b = b + a$ in $a \cdot b = b \cdot a$,
+- združevalnost (asociativnost): $(a + b) + c = a + (b + c)$ in $(a \cdot b) \cdot c = a \cdot (b \cdot c)$,
+- nevtralna elementa: $a + 0 = a$ in $a \cdot 1 = a$,
+- **razčlenitev** (distributivnost), ki povezuje seštevanje in množenje: $a \cdot (b + c) = a \cdot b + a \cdot c$.
+
+Zakone utemeljimo na primerih. Pike v pravokotniku s $3$ vrsticami po $4$ pike lahko preštejemo tudi po stolpcih: $4$ stolpci po $3$ pike. Zato je $3 \cdot 4 = 4 \cdot 3$. Pravokotnik $6 \times 13$ razrežemo na $6 \times 10$ in $6 \times 3$, zato je $6 \cdot 13 = 6 \cdot 10 + 6 \cdot 3 = 78$. Enako se izide z negativnimi števili: $(-7) + 12 = 12 + (-7) = 5$, $\big((-2) \cdot 5\big) \cdot 7 = -70 = (-2) \cdot (5 \cdot 7)$ in $(-4) \cdot (10 + 3) = -40 + (-12) = -52 = (-4) \cdot 13$.
+
+Odštevanje in deljenje nista ne zamenljivi ne združevalni. Za vsako trditev zadošča en protiprimer: $5 - 3 = 2$, a $3 - 5 = -2$; $8 : 2 = 4$, a $2 : 8$ ni celo število; $(10 - 4) - 3 = 3$, a $10 - (4 - 3) = 9$; $(24 : 4) : 2 = 3$, a $24 : (4 : 2) = 12$. Zato razliko raje zapišemo kot vsoto z nasprotnim številom, za katero zakoni veljajo: $10 - 4 - 3 = 10 + (-4) + (-3)$.
+
+:::premisli
+Zakaj je $(-1) \cdot (-1) = 1$? Izračunaj $(-1) \cdot \big(1 + (-1)\big)$ na dva načina.
+---
+Ker je $1 + (-1) = 0$, je izraz enak $0$. Po razčlenitvi je enak $(-1) \cdot 1 + (-1) \cdot (-1) = -1 + (-1) \cdot (-1)$. Iz $-1 + (-1) \cdot (-1) = 0$ sledi $(-1) \cdot (-1) = 1$. Pravilo »minus krat minus je plus« je torej posledica zakonov.
+:::
 
 **3. Deljivost.** Celo število $a \neq 0$ **deli** celo število $b$, zapisano $a \mid b$, če obstaja tako celo število $k$, da je $b = k \cdot a$. Pravimo tudi, da je $a$ *delitelj* števila $b$ in da je $b$ *večkratnik* števila $a$. Na primer $4 \mid 28$, ker je $28 = 7 \cdot 4$, in $-3 \mid 12$, ker je $12 = (-4) \cdot (-3)$, medtem ko $7 \nmid 30$. Veljajo naslednje lastnosti:
 
@@ -171,6 +204,24 @@ Kolikšna sta $D(1071, 462)$ in $v(1071, 462)$?
 $147 = 7 \cdot 21 + 0$, zato je $D(1071, 462) = 21$. Res je $1\,071 = 21 \cdot 51$ in $462 = 21 \cdot 22$. Ker je $1\,071 : 21 = 51$, je $v = \dfrac{1\,071 \cdot 462}{21} = 51 \cdot 462 = 23\,562$.
 :::
 
+### Primer 5: Spretno računanje z zakoni
+
+Brez računala izračunaj $A = (-25) \cdot 37 \cdot 4$, $B = (-38) + 57 + (-62) + 43$ in $C = (-19) \cdot 99$. Pri vsakem koraku navedi zakon, ki ga uporabiš.
+
+**Podatki:** $A = (-25) \cdot 37 \cdot 4$, $B = (-38) + 57 + (-62) + 43$, $C = (-19) \cdot 99$
+**Iščemo:** vrednosti $A$, $B$ in $C$ ter uporabljene zakone
+
+:::formula
+$a + b = b + a$, $\; a \cdot b = b \cdot a$, $\; (a + b) + c = a + (b + c)$, $\; (a \cdot b) \cdot c = a \cdot (b \cdot c)$, $\; a \cdot (b + c) = a \cdot b + a \cdot c$
+:::
+
+**Rešitev:**
+
+1. $A$: z zamenljivostjo zamenjamo faktorja $37$ in $4$, z združevalnostjo najprej zmnožimo $(-25) \cdot 4$: $A = \big((-25) \cdot 4\big) \cdot 37 = (-100) \cdot 37 = -3\,700$.
+2. $B$: z zamenljivostjo in združevalnostjo seštevanja združimo seštevance v okrogla števila: $B = \big((-38) + (-62)\big) + (57 + 43) = -100 + 100 = 0$.
+3. $C$: zapišemo $99 = 100 + (-1)$ in uporabimo razčlenitev: $C = (-19) \cdot 100 + (-19) \cdot (-1) = -1\,900 + 19 = -1\,881$.
+4. Odgovor: $A = -3\,700$, $B = 0$ in $C = -1\,881$.
+
 ## Pogoste napake
 
 - **»Število 1 je praštevilo« in »vsa liha števila so praštevila«.** Razlog: praštevilo mora imeti natanko dva pozitivna delitelja, število $1$ ima en sam delitelj, število $9$ pa tri ($1$, $3$ in $9$). Pravilno: preštej delitelje. Liha števila $9$, $15$ in $21$ so sestavljena.
@@ -182,6 +233,7 @@ $147 = 7 \cdot 21 + 0$, zato je $D(1071, 462) = 21$. Res je $1\,071 = 21 \cdot 5
 ## Povzetek
 
 - $\mathbb{N} = \{1, 2, 3, \dots\}$, $\mathbb{N}_0 = \mathbb{N} \cup \{0\}$, $\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}$ in $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$.
+- Seštevanje in množenje sta zamenljivi in združevalni, povezuje ju razčlenitev $a \cdot (b + c) = a \cdot b + a \cdot c$. Odštevanje in deljenje nista zamenljivi.
 - $a \mid b$ pomeni, da obstaja celo število $k$ z $b = k \cdot a$. Če $a \mid b$ in $a \mid c$, potem $a \mid (b \pm c)$.
 - Merila: $2$ (zadnja števka), $3$ in $9$ (vsota števk), $4$ (zadnji dve števki), $5$ (zadnja števka), $8$ (zadnje tri števke). Sestavljeno merilo (npr. za $6$) velja le za tuja delitelja.
 - Deljenje z ostankom: $a = q \cdot b + r$ z $0 \le r < b$.
@@ -335,7 +387,27 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 + Ob 13.00.
 > $15 = 3 \cdot 5$ in $20 = 2^2 \cdot 5$, zato je $v(15, 20) = 2^2 \cdot 3 \cdot 5 = 60$ minut, torej ena ura.
 
+? (brez računala) Z razčlenitvijo izračunaj $(-23) \cdot 101$.
+= -2323
+~ -2300 | Pomnožil si le s $100$. Ker je $101 = 100 + 1$, prištej še $(-23) \cdot 1$.
+~ 2323 | Produkt negativnega in pozitivnega števila je negativen.
+> $(-23) \cdot 101 = (-23) \cdot 100 + (-23) \cdot 1 = -2\,300 + (-23) = -2\,323$.
+
 <<RACUN
+vrednost: (-25)*37*4 | -3700
+vrednost: (-38)+57+(-62)+43 | 0
+vrednost: (-19)*99 | -1881
+vrednost: (-19)*100+(-19)*(-1) | -1881
+vrednost: (-23)*101 | -2323
+vrednost: 6*10+6*3 | 78
+vrednost: (-4)*(10+3) | -52
+vrednost: (-2)*(5*7) | -70
+vrednost: (-7)+12 | 5
+vrednost: 8/2 | 4
+vrednost: (10-4)-3 | 3
+vrednost: 10-(4-3) | 9
+vrednost: (24/4)/2 | 3
+vrednost: 24/(4/2) | 12
 vrednost: 5+3+1+7+2 | 18
 vrednost: 72/4 | 18
 vrednost: 53172/36 | 1477
@@ -359,6 +431,7 @@ vrednost: lcm(154, 44) | 308
 :::simboli
 a | celo število; pri $a \mid b$ delitelj, pri deljenju z ostankom deljenec | a = q \cdot b + r | |
 b | celo število; pri $a \mid b$ večkratnik, pri deljenju z ostankom delitelj (naravno število) | | |
+c | celo število (v zakonih računskih operacij in pri deljivosti) | | |
 q | količnik | | |
 r | ostanek | | | $0 \le r < b$
 D | največji skupni delitelj | | | $D \cdot v = a \cdot b$

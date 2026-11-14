@@ -25,13 +25,30 @@ Opaziš vzorec? Neznanko vsakič osamimo tako, da »odstranjujemo« člene okrog
 
 V simulaciji spodaj (»Linearne enačbe«) z obeh skodelic tehtnice odstrani enako število uteži in opazuj, da ostane v ravnovesju. Nato vzemi utež samo z ene strani: ravnovesje se poruši, enačba ne velja več.
 
-**1. Kaj je linearna enačba.** Linearna enačba z eno neznanko $x$ je enačba, ki jo lahko z ekvivalentnimi preoblikami prevedemo na obliko
+**1. Izraz in enačba, spremenljivka in neznanka.** Primerjaj zapisa $3x + 250$ in $3x + 250 = 430$. Prvi je **izraz**: števila in črke, povezani z računskimi operacijami, brez enačaja. Izraz ničesar ne trdi. Pove le, kako iz števila $x$ izračunaš novo število. Drugi zapis je **enačba**: dva izraza, povezana z enačajem. Enačba je trditev »leva stran je enaka desni«. Pri danem $x$ je resnična ali neresnična. Ta enačba velja pri eni vrednosti $x$, pri drugih ne:
+
+| $x$ | vrednost izraza $3x + 250$ | enačba $3x + 250 = 430$ |
+|---|---|---|
+| $50$ | $400$ | ne velja |
+| $60$ | $430$ | velja |
+| $70$ | $460$ | ne velja |
+
+V izrazu je $x$ **spremenljivka**: vstaviš lahko katerokoli število in vsakič dobiš vrednost izraza. V enačbi je ista črka **neznanka**: iščemo tista števila, pri katerih je enačba resnična. Ta števila so **rešitve** enačbe, tu je edina rešitev $x = 60$. Enačba torej vpraša, pri katerem $x$ ima izraz na levi vrednost $430$.
+
+Razliko opaziš tudi pri računanju:
+
+- Izraz **poenostavimo** ali izračunamo njegovo vrednost. Vrednost se pri nobenem $x$ ne sme spremeniti, zato smemo izraz zamenjati le z enakim izrazom: $2(x + 3) = 2x + 6$.
+- Enačbo **rešimo**. Ohraniti moramo le njene rešitve, zato smemo obe strani spremeniti na enak način (3. točka). Enačbo $4x + 6 = 10$ smemo deliti z $2$: enačba $2x + 3 = 5$ ima isto rešitev $x = 1$. Izraza $4x + 6$ pa ne smemo »deliti z $2$«, saj $2x + 3$ ni enak izraz: pri $x = 1$ ima prvi vrednost $10$, drugi $5$.
+
+Enačba, ki je resnična pri vsakem $x$, na primer $2(x + 3) = 2x + 6$, je **identiteta**. Pove, da sta izraza na obeh straneh enaka. Enačba $x + 1 = x$ pa ni resnična pri nobenem $x$, zato nima rešitve (5. točka).
+
+**2. Kaj je linearna enačba.** Linearna enačba z eno neznanko $x$ je enačba, ki jo lahko z ekvivalentnimi preoblikami prevedemo na obliko
 
 $$ax = b,$$
 
 kjer sta $a$ in $b$ števili. Neznanka nastopa samo v prvi potenci ($x$, ne $x^2$ in ne $\frac{1}{x}$).
 
-**2. Ekvivalentne preoblike.** Enačbi ostane rešitev ista, če:
+**3. Ekvivalentne preoblike.** Enačbi ostane rešitev ista, če:
 
 - na obeh straneh prištejemo ali odštejemo isto število ali izraz,
 - obe strani pomnožimo ali delimo z istim številom, **različnim od $0$**,
@@ -45,7 +62,7 @@ Zakaj ne smemo obeh strani pomnožiti z $0$? Kaj bi se zgodilo z enačbo $x + 25
 Dobili bi $0 = 0$, kar velja za vsak $x$. Nova enačba bi imela drugačne rešitve (vsa števila) kot prvotna (samo $180$), zato to ni ekvivalentna preoblika.
 :::
 
-**3. Postopek reševanja.**
+**4. Postopek reševanja.**
 
 1. Odpri oklepaje.
 2. Če so v enačbi ulomki, vse člene pomnoži s skupnim imenovalcem, da jih odpraviš.
@@ -54,7 +71,7 @@ Dobili bi $0 = 0$, kar velja za vsak $x$. Nova enačba bi imela drugačne rešit
 5. Deli z $a$ (če $a \ne 0$).
 6. **Preveri** z vstavitvijo v prvotno enačbo.
 
-**4. Koliko rešitev ima enačba $ax = b$?**
+**5. Koliko rešitev ima enačba $ax = b$?**
 
 - Če je $a \neq 0$: natanko ena rešitev, $x = \dfrac{b}{a}$.
 - Če je $a = 0$ in $b \neq 0$: enačba $0 \cdot x = b$ **nima rešitve** (npr. $0 = 4$ ni res).
@@ -66,7 +83,7 @@ Napovej, preden računaš: koliko rešitev ima enačba $2x + 3 = 2x + 5$?
 Nobene. Ko na obeh straneh odštejemo $2x$, ostane $3 = 5$, kar ni res. To je oblika $0 \cdot x = 2$: leva stran je za vsak $x$ za $2$ manjša od desne.
 :::
 
-**5. Enačbe s parametrom (višja raven).** Včasih v enačbi poleg $x$ nastopa še črka, npr. $a$ ali $m$, ki predstavlja neko poljubno, a fiksno število. Tej črki rečemo **parameter**. Za vsako vrednost parametra dobimo drugo enačbo, zato rešitev običajno zapišemo kot formulo in ločimo primere.
+**6. Enačbe s parametrom (višja raven).** Včasih v enačbi poleg $x$ nastopa še črka, npr. $a$ ali $m$, ki predstavlja neko poljubno, a fiksno število. Tej črki rečemo **parameter**. Za vsako vrednost parametra dobimo drugo enačbo, zato rešitev običajno zapišemo kot formulo in ločimo primere.
 
 Primer: $mx + 1 = 3x + 5$. Člene z $x$ prenesemo na levo: $mx - 3x = 5 - 1$, torej $(m-3)x = 4$.
 
@@ -174,6 +191,7 @@ $6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150
 
 ## Povzetek
 
+- Izraz ničesar ne trdi, pri danem $x$ ima le vrednost; $x$ je v njem spremenljivka. Enačba je trditev, da sta dva izraza enaka, in je pri danem $x$ resnična ali neresnična; $x$ je v njej neznanka, iščemo vrednosti $x$, pri katerih je resnična.
 - Linearno enačbo z ekvivalentnimi preoblikami prevedemo na $ax = b$.
 - Postopek: odpri oklepaje, odpravi ulomke (množenje s skupnim imenovalcem), zberi člene z $x$ na eni strani, poenostavi, deli z $a$, preveri.
 - Za $a \neq 0$ je rešitev $x = \dfrac{b}{a}$. Za $a = 0$, $b \neq 0$ rešitve ni. Za $a = 0$, $b = 0$ je rešitev vsako realno število.
@@ -306,6 +324,12 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 
 ## Preveri se
 
+? (brez računala) Izraz $5x - 2$ ima pri $x = 4$ vrednost $18$. Pri katerem $x$ ima vrednost $33$? Vpiši rešitev enačbe $5x - 2 = 33$.
+= 7
+~ 163 | Število $33$ si vstavil namesto $x$ in izračunal vrednost izraza. V enačbi je $x$ neznanka: iščeš $x$, pri katerem je izraz enak $33$.
+~ 6,2 | Pri prenosu $-2$ nisi spremenil predznaka: $5x = 33 - 2$. Pravilno je $5x = 33 + 2$.
+> Prištejemo $2$: $5x = 35$, torej $x = 7$. Preizkus: $5 \cdot 7 - 2 = 33$. Izraz ima vrednost pri vsakem $x$, enačba pa je resnična le pri $x = 7$.
+
 ? Reši enačbo $5x - 7 = 3x + 9$.
 - $x = 1$
 ~ Pri prenosu $-7$ nisi spremenil predznaka: $2x = 9 - 7$. Pravilno je $2x = 9 + 7$.
@@ -351,7 +375,7 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 > Deljenje z $a - 1$ je ekvivalentna preoblika samo za $a \ne 1$. Pri $a = 1$ dobimo $0 \cdot x = 0$, kar velja za vsak $x$.
 
 :::simboli
-x | neznanka | | |
+x | neznanka | | | v izrazu (1. točka razlage) spremenljivka
 a | koeficient pri neznanki | | | pri a ≠ 0 je rešitev x = b/a; v Primeru 3 in v vprašanjih je $a$ parameter
 b | znano število na desni strani | | |
 m | parameter | | | poljubno, a fiksno število
@@ -381,4 +405,17 @@ vrednost: 4/(1+1) | 2
 vrednost: 4/(3+1) | 1
 resi: 2*x+3=11 | x | 4
 enako: (m-1)/(m^2-1) | 1/(m+1)
+vrednost: 3*50+250 | 400
+vrednost: 3*60+250 | 430
+vrednost: 3*70+250 | 460
+resi: 3*x+250=430 | x | 60
+enako: 2*(x+3) | 2*x+6
+resi: 4*x+6=10 | x | 1
+resi: 2*x+3=5 | x | 1
+vrednost: 4*1+6 | 10
+vrednost: 2*1+3 | 5
+vrednost: 5*4-2 | 18
+resi: 5*x-2=33 | x | 7
+vrednost: 5*33-2 | 163
+resi: 5*x=33-2 | x | 31/5
 >>

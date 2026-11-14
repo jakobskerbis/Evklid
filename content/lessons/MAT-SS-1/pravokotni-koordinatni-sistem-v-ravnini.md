@@ -87,6 +87,52 @@ Ploščina pade na $0$. Trikotnik se splošči v daljico. Formula da $0$ natanko
 
 Napoved preizkusi v simulaciji »Razdalja, razpolovišče in ploščina trikotnika« spodaj: izberi »Ploščina trikotnika« in vleci točko $C$, dokler ploščina ne postane $0$. Kje je takrat $C$ glede na daljico $AB$?
 
+**Množice točk ob pogojih.** Kvadrant je množica točk, ki jo opišemo s pogoji: I. kvadrant so vse točke $T(x, y)$, za katere je $x > 0$ in $y > 0$. Pogoj lahko velja tudi samo za eno koordinato:
+
+- $x = 2$: vse točke s prvo koordinato $2$. To je navpična premica skozi $(2, 0)$. Podobno je $y = c$ vodoravna premica.
+- $x \ge 2$: točke na tej premici in desno od nje. Taki množici rečemo **polravnina**. Pogoj $x < 2$ da polravnino levo od premice, brez nje.
+- $|y| < 2$: to je isto kot $-2 < y < 2$, zato dobimo **pas** med vodoravnicama $y = -2$ in $y = 2$, brez njiju.
+- $|x| \ge 3$: to je $x \le -3$ ali $x \ge 3$, torej dve polravnini, levo in desno od pasu $|x| < 3$.
+
+Dogovor za risanje: množico osenčimo, njen rob pa narišemo z debelo črto. Rob, ki spada zraven ($\le$, $\ge$), je poln, rob, ki ne spada zraven ($<$, $>$), pa črtkan. Kjer senca seže do roba slike, se množica nadaljuje: tanka siva črta tam ni rob množice.
+
+:::risba graf
+opis: Pas |y| < 2: osenčen vodoravni pas med premicama y = −2 in y = 2. Obe premici sta črtkani, ker ne spadata zraven. Pas se na levo in desno nadaljuje čez rob slike.
+x: -4 .. 4
+y: -3 .. 3
+enako: da
+pravokotnik: -4; -2 .. 4; 2 | siva črtkano
+črta: -4; 2 -> 4; 2 | modra črtkano debelo
+črta: -4; -2 -> 4; -2 | modra črtkano debelo
+napis: 3; 2 | y = 2 | nad
+napis: 3; -2 | y = −2 | pod
+podnapis: Množica točk z |y| < 2
+:::
+
+Pogoje pogosto povežemo. Pri »in« mora točka izpolniti vse pogoje hkrati, zato narišemo **presek** območij. Pri »ali« zadošča en pogoj, zato narišemo **unijo**. Vzemimo $1 \le x < 4$ in $y > -1$. Prvi pogoj da navpični pas med $x = 1$ (polna črta) in $x = 4$ (črtkana), drugi odreže vse pod vodoravnico $y = -1$ (črtkana). Ostane pas, ki se nadaljuje navzgor. Oglišče $(1, -1)$ leži na polni črti, a ne spada zraven, ker zanj ne velja $y > -1$. Zato ga narišemo kot prazen krožec.
+
+:::risba graf
+opis: Množica 1 ≤ x < 4 in y > −1: osenčen navpični pas med x = 1 in x = 4, ki se začne nad premico y = −1 in sega navzgor čez rob slike. Levi rob x = 1 je poln, desni rob x = 4 in spodnji rob y = −1 sta črtkana. V oglišču (1, −1) je prazen krožec.
+x: -1 .. 6
+y: -2 .. 4
+enako: da
+pravokotnik: 1; -1 .. 4; 4 | siva črtkano
+črta: 1; -1 -> 1; 4 | modra debelo
+črta: 4; 4 -> 4; -1 -> 1; -1 | modra črtkano debelo
+krog: 1; -1 | 0,12 | ozadje modra
+napis: 1; 3 | x = 1 | desno
+napis: 4; 3 | x = 4 | desno
+napis: 2,5; -1 | y = −1 | pod
+:::
+
+Pri **odčitavanju** gremo v obratni smeri. Navpični robovi dajo pogoje za $x$, vodoravni za $y$. Polna črta pomeni $\le$ ali $\ge$, črtkana $<$ ali $>$.
+
+:::premisli
+Kakšna je množica točk z $|x| < 1$ in $|y| < 1$? Kaj pa, če »in« zamenjaš z »ali«?
+---
+Pri »in« je to kvadrat s stranico $2$ in središčem v izhodišču, brez roba: presek navpičnega in vodoravnega pasu. Pri »ali« je to unija obeh pasov, torej križ, ki se razteza v vse štiri smeri.
+:::
+
 ## Rešeni primeri
 
 ### Primer 1: razdalja med stebroma
@@ -183,6 +229,44 @@ Koliko je $y_B$? Preveri še, ali je razpolovišče novih krajišč res $(3, 0)$
 Iz $2 + y_B = 0$ dobimo $y_B = -2$, torej $B(7, -2)$. Preizkus: $\dfrac{-1 + 7}{2} = 3$ in $\dfrac{2 + (-2)}{2} = 0$. Drži.
 :::
 
+### Primer 5: množica točk ob pogojih
+
+Nariši množico $M$ vseh točk $T(x, y)$, za katere velja $-1 \le x < 3$ in $|y| \le 2$. Ugotovi, ali točke $A(3, 0)$, $B(-1, -2)$ in $C(1, 3)$ ležijo v $M$, in izračunaj ploščino množice $M$.
+
+**Podatki:** pogoja $-1 \le x < 3$ in $|y| \le 2$; točke $A(3, 0)$, $B(-1, -2)$, $C(1, 3)$
+**Iščemo:** sliko množice $M$, ali $A$, $B$, $C$ ležijo v $M$, ploščino $M$
+
+:::formula
+$|y| \le b$ pomeni $-b \le y \le b$. Pri »in« vzamemo presek. Rob z $\le$ ali $\ge$ je poln, rob z $<$ ali $>$ črtkan.
+:::
+
+**Rešitev:**
+
+1. Drugi pogoj zapišemo brez absolutne vrednosti: $-2 \le y \le 2$.
+2. Prvi pogoj da navpični pas med $x = -1$ in $x = 3$, drugi vodoravni pas med $y = -2$ in $y = 2$. Presek je pravokotnik.
+3. Robovi: $x = -1$, $y = -2$ in $y = 2$ spadajo zraven (polna črta), $x = 3$ ne (črtkana). Oglišči $(3, 2)$ in $(3, -2)$ zato nista v $M$.
+
+:::risba graf
+opis: Množica M je osenčen pravokotnik od x = −1 do x = 3 in od y = −2 do y = 2. Levi, zgornji in spodnji rob so polni, desni rob x = 3 je črtkan, v ogliščih (3, 2) in (3, −2) sta prazna krožca. Točka A(3, 0) leži na črtkanem robu, točka B(−1, −2) v polnem levem spodnjem oglišču, točka C(1, 3) nad pravokotnikom.
+x: -2 .. 5
+y: -3 .. 4
+enako: da
+pravokotnik: -1; -2 .. 3; 2 | siva črtkano
+črta: 3; 2 -> -1; 2 -> -1; -2 -> 3; -2 | modra debelo
+črta: 3; -2 -> 3; 2 | modra črtkano debelo
+krog: 3; 2 | 0,12 | ozadje modra
+krog: 3; -2 | 0,12 | ozadje modra
+točka: 3; 0 | A(3, 0) | nad desno | rdeča
+točka: -1; -2 | B(−1, −2) | pod levo | zelena
+točka: 1; 3 | C(1, 3) | desno | rdeča
+:::
+
+4. Točka $A(3, 0)$: $3 < 3$ ne velja, zato $A \notin M$, čeprav leži na robu pravokotnika.
+5. Točka $B(-1, -2)$: $-1 \le -1 < 3$ in $|-2| = 2 \le 2$, oba pogoja veljata, zato $B \in M$.
+6. Točka $C(1, 3)$: $|3| = 3 > 2$, zato $C \notin M$.
+7. Ploščina: pravokotnik je širok $3 - (-1) = 4$ in visok $2 - (-2) = 4$, zato meri ploščina $4 \cdot 4 = 16$. Robovi so črte brez širine, zato na ploščino ne vplivajo.
+8. Odgovor: $M$ je pravokotnik na sliki brez desnega roba; $B \in M$, $A \notin M$, $C \notin M$; ploščina je $16$ kvadratnih enot.
+
 ## Pogoste napake
 
 Večina napak ni v formulah, ampak v predznakih in vrstnem redu.
@@ -192,6 +276,7 @@ Večina napak ni v formulah, ampak v predznakih in vrstnem redu.
 - **Razpolovišče kot polovica razlike.** $\dfrac{x_B - x_A}{2}$ je polovica dolžine v smeri $x$, ne koordinata sredine. Sredina je povprečje: krajišči **seštej** in deli z $2$.
 - **Ploščina brez polovice ali z negativnim predznakom.** Izraz $u_1 v_2 - u_2 v_1$ je ploščina paralelograma s predznakom, zato je lahko negativen. Ploščina trikotnika je **polovica** njegove **absolutne vrednosti**.
 - **Zamenjane koordinate.** $T(3, -2)$ pomeni najprej $3$ v smeri $x$, nato $-2$ v smeri $y$. Točka $(-2, 3)$ je povsem druga točka.
+- **Pogoj za $x$ narisan vodoravno.** Pogoj $x \ge 2$ omeji točke levo in desno, zato je njegov rob navpična premica $x = 2$, ne vodoravna. Pri $|y| < 2$ ne pozabi na spodnjo mejo $y > -2$.
 
 ## Povzetek
 
@@ -200,6 +285,7 @@ Večina napak ni v formulah, ampak v predznakih in vrstnem redu.
 - Razpolovišče: $S_{AB}\left(\dfrac{x_A + x_B}{2}, \dfrac{y_A + y_B}{2}\right)$, povprečje koordinat krajišč. Iz $A$ in $S_{AB}$ dobiš $B$ z $x_B = 2x_S - x_A$, $y_B = 2y_S - y_A$.
 - Ploščina trikotnika: $u_1, u_2$ in $v_1, v_2$ sta premika od $A$ do $B$ in do $C$; $S = \frac{1}{2}|u_1 v_2 - u_2 v_1|$. Preizkus: očrtan pravokotnik minus trije robni trikotniki.
 - Ploščina $0$ pomeni, da so točke kolinearne.
+- Množica točk ob pogojih: $x \ge a$ je polravnina, $|y| < b$ pas $-b < y < b$; pri »in« vzamemo presek, pri »ali« unijo. Rob z $\le$, $\ge$ je poln, z $<$, $>$ črtkan.
 - Negativne koordinate piši v oklepaje.
 
 ## Za maturo
@@ -328,6 +414,34 @@ Pri ploščini je izraz $u_1 v_2 - u_2 v_1$ ploščina paralelograma, ki ga nape
 ~ Točka $A(-1, -1)$ je v III. kvadrantu. Kvadrant tudi sicer ne pove, ali so točke na premici.
 > $u_1 = 2$, $u_2 = 3$, $v_1 = 6$, $v_2 = 9$; $S = \frac{1}{2}|2 \cdot 9 - 3 \cdot 6| = 0$. Točke so kolinearne, vrvica gre skozi vse tri.
 
+? Kateri pogoj opisuje osenčeno množico točk na sliki?
+:::risba graf
+opis: Osenčen navpični pas med premicama x = −2 in x = 1, ki se navzgor in navzdol nadaljuje čez rob slike. Levi rob x = −2 je črtkan, desni rob x = 1 je poln.
+x: -4 .. 3
+y: -3 .. 3
+enako: da
+pravokotnik: -2; -3 .. 1; 3 | siva črtkano
+črta: -2; -3 -> -2; 3 | modra črtkano debelo
+črta: 1; -3 -> 1; 3 | modra debelo
+napis: -2; 2 | x = −2 | levo
+napis: 1; 2 | x = 1 | desno
+:::
+- $-2 \le x < 1$
+~ Zamenjal si robova. Poln je desni rob $x = 1$, zato tam velja $\le$; levi rob je črtkan, zato $x > -2$.
++ $-2 < x \le 1$
+- $-2 < y \le 1$
+~ Robova sta navpični premici, ki omejujeta $x$, ne $y$. Pogoj za $y$ bi dal vodoravni pas.
+- $x > -2$ ali $x \le 1$
+~ Pri »ali« zadošča en pogoj, to pa izpolni vsaka točka ravnine. Za pas potrebuješ »in«.
+> Pas leži med navpičnicama, zato je pogoj za $x$. Levi rob je črtkan ($x > -2$), desni poln ($x \le 1$).
+
+? (brez računala) Koliko točk s celoštevilskima koordinatama leži v množici točk z $-1 \le x < 3$ in $|y| < 2$?
+= 12
+~ 25 | Štel si vse robove: $x = 3$ ne spada zraven ($x < 3$), prav tako ne $y = \pm 2$ ($|y| < 2$).
+~ 20 | Štel si tudi $y = -2$ in $y = 2$. Pri $|y| < 2$ so dovoljeni le $y = -1, 0, 1$.
+~ 15 | Štel si tudi $x = 3$, a pogoj je $x < 3$. Prva koordinata je lahko $-1$, $0$, $1$ ali $2$.
+> Za $x$ pridejo v poštev $-1$, $0$, $1$, $2$ (štiri vrednosti), za $y$ pa $-1$, $0$, $1$ (tri vrednosti). Vseh točk je $4 \cdot 3 = 12$.
+
 <<RACUN
 resi: (x-2)^2+(5-(-1))^2=100 | x | -6, 10
 vrednost: 100-36 | 64
@@ -339,6 +453,9 @@ enako: sqrt((-3-7)^2+(8-3)^2) | 5*sqrt(5)
 vrednost: abs(8*11-6*(-2))/2 | 50
 vrednost: 2*50/10 | 10
 vrednost: sqrt((3-(-3))^2+(0-8)^2) | 10
+neenacba: abs(y)<2 | y | (-2, 2)
+vrednost: (3-(-1))*(2-(-2)) | 16
+vrednost: 4*3 | 12
 >>
 
 :::simboli
@@ -356,5 +473,7 @@ y_S | druga koordinata razpolovišča | y_S = \frac{y_A + y_B}{2} | |
 u_1, u_2 | premik od $A$ do $B$ | u_1 = x_B - x_A | | $u_2 = y_B - y_A$
 v_1, v_2 | premik od $A$ do $C$ | v_1 = x_C - x_A | | $v_2 = y_C - y_A$
 S | ploščina trikotnika | S = \frac{1}{2}\left\lvert u_1 v_2 - u_2 v_1 \right\rvert | | kvadratne enote; $0$ pri kolinearnih točkah
-V | količina lazure | V = \frac{S}{6\,\text{m}^2} \cdot 1\,\text{L} | L | 
+V | količina lazure | V = \frac{S}{6\,\text{m}^2} \cdot 1\,\text{L} | L |
+b | meja v pogoju $\lvert y \rvert \le b$ ali $\lvert y \rvert < b$ | | | $\lvert y \rvert \le b$ pomeni $-b \le y \le b$
+M | množica točk, podana s pogoji | | | 
 :::

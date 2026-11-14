@@ -13,7 +13,7 @@ S črkami tak premislek naredimo za vse pekače naenkrat. Črke potenciramo in m
 
 ## Razlaga
 
-**1. Algebrski izraz in njegova vrednost.** Algebrski izraz je izraz iz števil in črk (**spremenljivk**), povezanih z računskimi operacijami. Njegovo **vrednost** dobimo, če namesto črk vstavimo števila. Vzemimo izraz $3x^2 - 5x + 2$. Pri $x = 2$ je njegova vrednost $3 \cdot 4 - 10 + 2 = 4$. Pri $x = -1$ je $3 \cdot (-1)^2 - 5 \cdot (-1) + 2 = 3 + 5 + 2 = 10$. Negativno število pri vstavljanju vedno zapiši v oklepaju.
+**1. Algebrski izraz in njegova vrednost.** Algebrski izraz je izraz iz števil in črk (**spremenljivk**), povezanih z računskimi operacijami. Njegovo **vrednost** dobimo, če namesto črk vstavimo števila. Vzemimo izraz $3x^2 - 5x + 2$. Pri $x = 2$ je njegova vrednost $3 \cdot 4 - 10 + 2 = 4$. Pri $x = -1$ je $3 \cdot (-1)^2 - 5 \cdot (-1) + 2 = 3 + 5 + 2 = 10$. Negativno število pri vstavljanju vedno zapiši v oklepaju. Izraz nima enačaja in ničesar ne trdi; šele enačba, na primer $3x^2 - 5x + 2 = 4$, je trditev, v kateri je črka neznanka (izraz in enačbo podrobneje primerjamo pri linearnih enačbah).
 
 **2. Enočlenik.** Enočlenik je zmnožek števila in potenc spremenljivk, na primer $-4a^2b^3$. Število $-4$ je **koeficient**, **stopnja** enočlenika pa je vsota eksponentov: $2 + 3 = 5$. Enočlenika sta **podobna**, če imata enak **spremenljivi del** (vse, kar ostane, ko odmisliš koeficient): $5ab$ in $-2ab$ sta podobna, $5ab$ in $5a^2b$ pa nista.
 
@@ -338,7 +338,7 @@ vrednost: 3*5^2+7*5+1 | 111
 >>
 
 :::simboli
-x | spremenljivka | | |
+x | spremenljivka | | | v enačbi (1. točka razlage) neznanka
 a, b, c, d | členi v obrazcih (števila ali izrazi) | | | v Primeru 3 je $a$ tudi rob kocke
 p, q, r | členi izraza v oklepaju | | | pravilo za minus pred oklepajem
 V | prostornina skorje (Primer 3) | V = x^3 - (x - 2)^3 | cm^3 | $x$ je rob kocke sira v cm

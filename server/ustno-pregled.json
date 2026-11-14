@@ -2406,6 +2406,10 @@
    "o": "D"
   },
   "MAT-SS-1/naravna-in-cela-stevila#p1": {
+   "h": "f6058c06fc6a",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p2": {
    "h": "1645ed1f6603",
    "o": "D"
   },
@@ -2414,10 +2418,14 @@
    "o": "D"
   },
   "MAT-SS-1/naravna-in-cela-stevila#p4": {
-   "h": "11a2a251e9a6",
+   "h": "339bcf9ca894",
    "o": "D"
   },
   "MAT-SS-1/naravna-in-cela-stevila#p5": {
+   "h": "11a2a251e9a6",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p6": {
    "h": "0e1dd785d3d3",
    "o": "D"
   },
@@ -2497,15 +2505,23 @@
    "h": "496257bbd0a0",
    "o": "D"
   },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p2": {
+   "h": "26e8824ffb71",
+   "o": "D"
+  },
   "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p3": {
    "h": "3790627ced11",
    "o": "D"
   },
   "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p4": {
-   "h": "39d3f21437cc",
+   "h": "3790627ced11",
    "o": "D"
   },
   "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p5": {
+   "h": "39d3f21437cc",
+   "o": "D"
+  },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p6": {
    "h": "a67c4c1ced42",
    "o": "D"
   },

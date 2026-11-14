@@ -79,6 +79,43 @@ $$S = \frac{a r}{2} + \frac{b r}{2} + \frac{c r}{2} = r \cdot s$$
 
 Od tod $r = \dfrac{S}{s}$.
 
+**8. Večkotniki.** Lik, ki ga omejuje sklenjena lomljena črta iz $n$ daljic ($n \ge 3$), ki sama sebe ne seka, je **$n$-kotnik**. Ima $n$ oglišč, $n$ stranic in $n$ notranjih kotov $\alpha_1, \alpha_2, \ldots, \alpha_n$. Daljica med dvema nesosednjima ogliščema je **diagonala**. Obravnavamo konveksne večkotnike: vsak notranji kot je manjši od $180^\circ$.
+
+*Vsota notranjih kotov.* Iz enega oglišča potegnemo vse diagonale. Razrežejo $n$-kotnik na $n - 2$ trikotnikov, petkotnik na primer na tri:
+
+:::risba skica
+opis: Pravilni petkotnik ABCDE. Iz oglišča A gresta diagonali AC in AD, ki ga razdelita na tri trikotnike, označene z 1, 2 in 3.
+območje: -2,5; -2,2 .. 2,5; 2,5
+enota: 50
+lik: -1,18; -1,62 -> 1,18; -1,62 -> 1,9; 0,62 -> 0; 2 -> -1,9; 0,62 | modra
+črta: -1,18; -1,62 -> 1,9; 0,62 | oranžna črtkano
+črta: -1,18; -1,62 -> 0; 2 | oranžna črtkano
+točka: -1,18; -1,62 | A | pod levo
+točka: 1,18; -1,62 | B | pod desno
+točka: 1,9; 0,62 | C | desno
+točka: 0; 2 | D | nad
+točka: -1,9; 0,62 | E | levo
+napis: 0,63; -0,87 | 1 | sredina | oranžna debelo
+napis: 0,24; 0,33 | 2 | sredina | oranžna debelo
+napis: -1,03; 0,33 | 3 | sredina | oranžna debelo
+:::
+
+Koti teh trikotnikov skupaj sestavijo natanko notranje kote večkotnika, zato je
+
+$$\alpha_1 + \alpha_2 + \ldots + \alpha_n = (n - 2) \cdot 180^\circ$$
+
+Štirikotnik ima vsoto $360^\circ$, petkotnik $3 \cdot 180^\circ = 540^\circ$, šestkotnik $720^\circ$.
+
+*Zunanji koti.* Pri vsakem oglišču sta notranji in zunanji kot sokota, vseh $n$ parov skupaj meri $n \cdot 180^\circ$. Odštejemo vsoto notranjih: $n \cdot 180^\circ - (n - 2) \cdot 180^\circ = 360^\circ$. **Vsota zunanjih kotov je vedno $360^\circ$**, ne glede na $n$: ko obhodiš večkotnik, se zasukaš za en cel obrat.
+
+*Diagonale.* Iz vsakega oglišča gre $n - 3$ diagonal (ne do sebe in ne do obeh sosedov). Pri $n$ ogliščih je to $n(n - 3)$, a vsako diagonalo smo šteli dvakrat, enkrat z vsakega krajišča:
+
+$$d_n = \frac{n(n - 3)}{2}$$
+
+Petkotnik ima $5$ diagonal, šestkotnik $\dfrac{6 \cdot 3}{2} = 9$.
+
+*Pravilni večkotnik* ima vse stranice enako dolge in vse notranje kote enake. Pravilni trikotnik je enakostranični, pravilni štirikotnik kvadrat. Ker so koti enaki, meri notranji kot $\varphi = \dfrac{(n - 2) \cdot 180^\circ}{n}$, zunanji pa $\varphi' = \dfrac{360^\circ}{n}$. Pri pravilnem šestkotniku je $\varphi' = 60^\circ$ in $\varphi = 120^\circ$.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -163,6 +200,26 @@ Kateri sta meji?
 $7 - 4 = 3$ in $7 + 4 = 11$, zato je $3\,\text{km} < c < 11\,\text{km}$. Razdalja $9\,\text{km}$ je torej mogoča, $12\,\text{km}$ pa ne.
 :::
 
+### Primer 5: okno v obliki pravilnega večkotnika
+
+Okno v stolpu ima obliko pravilnega večkotnika. Mizar je izmeril, da vsak njegov notranji kot meri $140^\circ$. Koliko oglišč in koliko diagonal ima okno? Kolikšna je vsota njegovih notranjih kotov?
+
+**Podatki:** pravilni večkotnik, notranji kot $\varphi = 140^\circ$
+**Iščemo:** število oglišč $n$, število diagonal $d_n$, vsoto notranjih kotov
+
+:::formula
+Zunanji kot $\varphi' = 180^\circ - \varphi = \dfrac{360^\circ}{n}$; $\;d_n = \dfrac{n(n - 3)}{2}$; vsota notranjih kotov je $(n - 2) \cdot 180^\circ$.
+:::
+
+**Rešitev:**
+
+1. Zunanji kot je sokot notranjega: $\varphi' = 180^\circ - 140^\circ = 40^\circ$.
+2. Vsi zunanji koti so enaki in skupaj merijo $360^\circ$, zato je $n = \dfrac{360^\circ}{40^\circ} = 9$. Okno je devetkotnik.
+3. Diagonale: $d_9 = \dfrac{9 \cdot 6}{2} = 27$.
+4. Vsota notranjih kotov: $(9 - 2) \cdot 180^\circ = 7 \cdot 180^\circ = 1260^\circ$.
+5. Preizkus: devet kotov po $140^\circ$ da $9 \cdot 140^\circ = 1260^\circ$, kar se ujema.
+6. Odgovor: okno je pravilni devetkotnik s $27$ diagonalami, vsota notranjih kotov je $1260^\circ$.
+
 ## Pogoste napake
 
 - **Kot, ki ni med stranicama, pri SKS.** Trikotnika se ujemata v dveh stranicah in nekem kotu, zato »sta skladna«. Razlog napake: kot nasproti ene od stranic ne določa trikotnika enolično. Pravilno: pri SKS mora biti kot natanko med znanima stranicama. Če kot leži nasproti ene od njiju, uporabi SsK in preveri, da leži nasproti **daljše** od obeh stranic.
@@ -180,6 +237,7 @@ $7 - 4 = 3$ in $7 + 4 = 11$, zato je $3\,\text{km} < c < 11\,\text{km}$. Razdalj
 - Težiščnice se sekajo v težišču, ki deli težiščnico $2:1$ od oglišča; višine se sekajo v višinski točki.
 - Včrtana krožnica: $r = \dfrac{S}{s}$; v pravokotnem trikotniku je $R = \dfrac{c}{2}$.
 - Pitagorov izrek v pravokotnem trikotniku: $a^2 + b^2 = c^2$.
+- $n$-kotnik: vsota notranjih kotov $(n - 2) \cdot 180^\circ$, vsota zunanjih $360^\circ$, diagonal $\frac{n(n - 3)}{2}$; pravilni $n$-kotnik ima zunanji kot $\frac{360^\circ}{n}$.
 
 ## Za maturo
 
@@ -314,6 +372,13 @@ V simulaciji »Značilne točke trikotnika« spreminjaj obliko trikotnika in pri
 + v presečišču simetral stranic
 > Točke simetrale stranice so enako oddaljene od njenih krajišč, zato je presečišče simetral (središče očrtane krožnice) enako oddaljeno od vseh treh računalnikov.
 
+? (brez računala) Koliko diagonal ima osemkotnik?
+= 20
+~ 40 | To je $8 \cdot 5$: vsako diagonalo si štel dvakrat, enkrat z vsakega krajišča. Deli še z $2$.
+~ 28 | To so vse daljice med oglišči, $\frac{8 \cdot 7}{2}$. Mednje spada tudi $8$ stranic, ki niso diagonale.
+~ 5 | Toliko diagonal gre iz enega oglišča ($8 - 3$). Oglišč pa je $8$.
+> Iz vsakega oglišča gre $8 - 3 = 5$ diagonal, vseh skupaj je $d_8 = \dfrac{8 \cdot 5}{2} = 20$.
+
 :::simboli
 \alpha, \beta, \gamma | notranji koti trikotnika | | |
 \gamma' | zunanji kot pri oglišču C | \gamma' = 180^\circ - \gamma = \alpha + \beta | |
@@ -329,6 +394,11 @@ T | težišče | | | deli težiščnico v razmerju $2:1$ od oglišča
 C | oglišče trikotnika | | | v Primeru 3 oglišče s pravim kotom
 t_c | težiščnica iz oglišča C | | |
 v_c | višina na stranico c | S = \frac{c \cdot v_c}{2} | |
+n | število oglišč (in stranic) večkotnika | | |
+\alpha_1, \alpha_2, \alpha_n | notranji koti $n$-kotnika | | | vsota $(n - 2) \cdot 180^\circ$
+d_n | število diagonal $n$-kotnika | d_n = \frac{n(n - 3)}{2} | |
+\varphi | notranji kot pravilnega $n$-kotnika | \varphi = \frac{(n - 2) \cdot 180^\circ}{n} | | v Primeru 2 kot pri oglišču $F$ trikotnika $DEF$
+\varphi' | zunanji kot pravilnega $n$-kotnika | \varphi' = \frac{360^\circ}{n} | |
 :::
 
 <<RACUN
@@ -341,4 +411,12 @@ vrednost: 10*sqrt(24)/2 | 24.49
 vrednost: (10+7+7)/2 | 12
 vrednost: 5*sqrt(24)/12 | 2.04
 vrednost: 2*sqrt(24)/3 | 3.27
+vrednost: 180-140 | 40
+vrednost: 360/40 | 9
+vrednost: 9*(9-3)/2 | 27
+vrednost: (9-2)*180 | 1260
+vrednost: 9*140 | 1260
+vrednost: 8*(8-3)/2 | 20
+vrednost: 6*(6-3)/2 | 9
+vrednost: (6-2)*180/6 | 120
 >>
