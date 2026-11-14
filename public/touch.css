@@ -134,6 +134,14 @@
   }
   body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { transform: translateY(calc(var(--tb-step-pb) - 12px - var(--tabbar-h, 0px))); }
 }
+/* ---------- Spodnja vrstica se po 5 s neuporabe skrije (j, 2026-11-14; public/noga.js) ----------
+   Na zaslonih, kjer je vrstica v postavitvi (Učna pot, Uči se, Tekmovanja, Jaz …): body.tb-mir jo pritrdi pod spodnji
+   rob (vsebina dobi njen prostor), body.tb-vraca jo ob uporabi pripelje nazaj (0,22 s), nato je spet v postavitvi.
+   Zasloni za branje zgoraj imajo močnejše pravilo (--tb-y) in ostanejo po starem. */
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  body:is(.tb-mir, .tb-vraca) > .tabbar { position: fixed; inset-inline: 0; bottom: 0; z-index: 30; transition: transform 0.22s ease; }
+  body.tb-mir > .tabbar { transform: translateY(100%); visibility: hidden; transition: transform 0.22s ease, visibility 0s linear 0.22s; }
+}
 @media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
 
 /* Pogled je lahko v spodnji vrstici (npr. Tekmovanja ali NPZ in matura): takrat brez »← Jaz«. */
