@@ -272,7 +272,7 @@ function showView(name) {
     leaveUci(); // atlas ali model čez cel zaslon (3D svet)
   }
   syncHistory(name);
-  if (currentView === "chat" && name !== "chat") markChat(); // odhod iz inštruktorja: od tu teče 10 min
+  if (currentView === "chat" && name !== "chat" && !isFloating("chat")) leaveChat(); // odhod iz inštruktorja: od tu teče 10 min
   if (name !== currentView) prevView = currentView;
   currentView = name;
   syncCompetitionTab();
@@ -407,7 +407,7 @@ async function openStartScreen(z) {
   else showView(z.v);
 }
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden" && (currentView === "chat" || isFloating("chat"))) markChat();
+  if (document.visibilityState === "hidden" && (currentView === "chat" || isFloating("chat"))) leaveChat();
   if (document.visibilityState === "hidden") return saveSnapshot();
   // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
   const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
@@ -1229,7 +1229,7 @@ function chatStillFresh(convTopic) {
   const seen = readRec(chatSeenKey());
   if (!seen || !(Date.now() - seen.t < CHAT_FRESH_MS)) return false;
   const tp = readRec(chatTopicKey());
-  return !(convTopic && tp && tp.t > seen.t && tp.id !== convTopic);
+  return !(convTopic && tp && tp.t >= seen.t && tp.id !== convTopic);
 }
 // Ob zagonu: id pogovora, ki naj ostane odprt, ali null (nov pogovor).
 function chatKeepId() {
@@ -1237,10 +1237,19 @@ function chatKeepId() {
   const conv = seen?.conv && state.conversations.find((c) => c.id === seen.conv);
   return conv && chatStillFresh(conv.path_topic ?? null) ? conv.id : null;
 }
-// Inštruktor se prikaže: zastarel pogovor zamenja nov (razen z nedokončanim besedilom v polju).
+// Inštruktor se prikaže: zastarel pogovor zamenja nov (razen z nedokončanim besedilom v polju ali med odgovorom).
+// Samo ob vrnitvi (chatAway): klik zavihka ali okna, ko je učenec že v inštruktorju, pogovora ne zamenja.
+let chatAway = true;
+function leaveChat() {
+  markChat();
+  chatAway = true;
+}
 function freshChatIfStale() {
-  if (!state.student || !state.conversationId) return; // nov pogovor je že odprt (ali se profil še nalaga)
-  if ($("#input")?.value.trim()) return markChat();
+  if (!state.student) return; // profil se še nalaga
+  const back = chatAway;
+  chatAway = false;
+  if (!state.conversationId) return; // nov pogovor je že odprt
+  if (!back || state.sending || $("#input")?.value.trim()) return markChat();
   if (!chatStillFresh(state.convTopic)) {
     state.conversationId = null;
     state.convTopic = null;
@@ -1565,6 +1574,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
   } finally {
     state.sending = false;
     $("#send").disabled = false;
+    if (currentView === "chat" || isFloating("chat")) markChat(); // učenec je v pogovoru: 10 min teče od zdaj
   }
 }
 
@@ -3126,9 +3136,9 @@ function setBack(view) {
 async function openTopic(topicId) {
   const tp = await api(`/api/topic?id=${encodeURIComponent(topicId)}&lang=${encodeURIComponent(state.student?.settings?.language || "")}`);
   state.topic = tp;
-  markTopic(tp?.id || topicId);
   state.topicFx = true;
   showView("topic");
+  markTopic(tp?.id || topicId); // po showView: tema, odprta iz pogovora, je za odhodom iz inštruktorja
   // Pogled teme se drsi sam in si zapomni mesto: nova tema se vedno odpre na vrhu (»Nova snov« drugič, #view-topic).
   const vt = $("#view-topic");
   if (vt) vt.scrollTop = 0;
