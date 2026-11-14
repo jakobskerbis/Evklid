@@ -78,7 +78,7 @@ export function sourceVisitCounter(db) {
 const hasTable = (db, name) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(name);
 
 // Profili skrbnika (EVKLID_ADMIN_EMAILS ali zastavica is_admin) se ne štejejo: to so preizkusi, ne učenci.
-function adminStudentIds(db, adminEmails = []) {
+export function adminStudentIds(db, adminEmails = []) {
   if (!hasTable(db, "parents")) return new Set();
   const cols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
   if (!cols.includes("parent_id")) return new Set();

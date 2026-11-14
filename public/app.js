@@ -413,8 +413,24 @@ document.addEventListener("visibilitychange", () => {
   if (installed && !busy && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
 });
 window.addEventListener("pagehide", saveSnapshot);
+// Točka B2 (pilot): odprtje dela aplikacije se zabeleži na strežniku (server/odpiranje-delov.js) največ enkrat na dan,
+// del in profil; strežnik hrani samo prvi in zadnji dan ter število dni. Napaka ali brez povezave: poskusi ob naslednjem odprtju.
+const DEL_POGLEDA = { chat: "instruktor", topic: "vadnica", cards: "vadnica", exams: "vadnica", competition: "vadnica", games: "igre" };
+const odprtoDanes = new Set();
+function odprto(del) {
+  const id = state.student?.id;
+  if (!id || !del) return;
+  const k = `${id}:${del}:${new Date().toISOString().slice(0, 10)}`;
+  if (odprtoDanes.has(k)) return;
+  odprtoDanes.add(k);
+  const ne = () => odprtoDanes.delete(k);
+  fetch(`/api/students/${id}/odprto`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ del }), keepalive: true })
+    .then((r) => r.ok || ne())
+    .catch(ne);
+}
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
+  odprto(DEL_POGLEDA[name]);
   if (name === "me") renderMe();
   if (name === "settings") {
     fillSettingsForm();
@@ -4864,6 +4880,7 @@ initUci({
   showTextbook,
   showLab,
   stopReading,
+  odprto,
   askTutor: (text) => {
     showView("chat");
     fillInput(text);

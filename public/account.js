@@ -1244,11 +1244,12 @@ async function loadPilot(days = 30, school = "", focusId = "") {
   const seq = ++pilotSeq;
   const out = $("#pilot-out");
   if (!out) return;
-  let r, g;
+  let r, g, o;
   try {
     const qs = `days=${days}${school ? `&school=${school}` : ""}`;
     // Rast in vračanje (server/rast.js) je dodatek: če ne uspe, kartica pokaže vsaj merjenje v pilotu.
-    [r, g] = await Promise.all([api(`/api/admin/pilot?${qs}`), api(`/api/admin/rast?${qs}`).catch(() => null)]);
+    // B2: odpiranje delov aplikacije (server/odpiranje-delov.js), prav tako dodatek.
+    [r, g, o] = await Promise.all([api(`/api/admin/pilot?${qs}`), api(`/api/admin/rast?${qs}`).catch(() => null), api(`/api/admin/deli?${qs}`).catch(() => null)]);
     if (seq !== pilotSeq) return;
   } catch (err) {
     out.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
@@ -1276,12 +1277,26 @@ async function loadPilot(days = 30, school = "", focusId = "") {
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.day"))}</th><th scope="col">${esc(t("pilot.questions"))}</th><th scope="col">${esc(t("pilot.askers"))}</th><th scope="col">${esc(t("pilot.ai"))}</th><th scope="col">${esc(t("pilot.parents"))}</th></tr></thead>
       <tbody>${[...r.rows].reverse().map((d) => `<tr><td>${esc(day(d.day))}</td><td>${nf(d.questions)}</td><td>${nf(d.askers)}</td><td>${eur(d.aiUsd * rate, 3)}</td><td>${nf(d.visits.starsi + d.visits.placaj)}</td></tr>`).join("")}</tbody></table></div>
     <p class="muted small">${esc(t("pilot.note"))}</p>
-    ${g ? growthHtml(g, loc) : ""}`;
+    ${g ? growthHtml(g, loc) : ""}
+    ${o ? deliHtml(o, loc) : ""}`;
   // Kartica se izriše znova: fokus ostane na izbiri, ki jo je uporabnik spremenil (tipkovnica).
   if (focusId) setTimeout(() => $(`#${focusId}`)?.focus());
   const reload = (e) => loadPilot($("#pilot-days").value, $("#pilot-school")?.value || "", e.target.id);
   $("#pilot-days").addEventListener("change", reload);
   $("#pilot-school")?.addEventListener("change", reload);
+}
+
+// Skrbnik, točka B2: kateri deli aplikacije se odpirajo in ali se isti učenec vrača (server/odpiranje-delov.js).
+const IME_DELA = { lekcije: "nav.textbook", vadnica: "pn.i.practice", instruktor: "nav.chat", svet3d: "a3.hubTitle", laboratorij: "nav.lab", igre: "nav.games" };
+function deliHtml(o, loc) {
+  const nf = (x) => Number(x).toLocaleString(loc);
+  const pc = (x) => (x == null ? "–" : Number(x).toLocaleString(loc, { style: "percent", maximumFractionDigits: 0 }));
+  const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
+  return `<h4>${esc(t("deli.title"))}</h4>
+    <ul class="pilot-sum"><li><b>${nf(o.ucenci)}</b> ${esc(t("deli.students"))}</li></ul>
+    <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("deli.part")}${th("deli.opened")}${th("deli.returned")}</tr></thead>
+      <tbody>${o.deli.map((d) => `<tr><td>${esc(Object.hasOwn(IME_DELA, d.del) ? t(IME_DELA[d.del]) : d.del)}</td><td>${nf(d.odprli)} (${pc(d.delez)})</td><td>${d.odprli ? `${nf(d.vrnili)} (${pc(d.delezVrnili)})` : "–"}</td></tr>`).join("")}</tbody></table></div>
+    <p class="muted small">${esc(t("deli.note"))}</p>`;
 }
 
 // Skrbnik: rast in vračanje (server/rast.js): prva naloga v 24 urah, vrnitev naslednji dan in po 7 dneh, viri, tedni.
