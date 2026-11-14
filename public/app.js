@@ -15,6 +15,7 @@ import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, o
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
+import { nastaviNogo } from "./noga.js";
 import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH } from "./okna.js";
 import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profile-menu.js";
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
@@ -475,7 +476,8 @@ function initView(name) {
 // nazaj gor) ali kolešček gor jo pokaže (body.tb-peek), poteg navzgor jo spet skrije; v lekciji Učbenika samo ob
 // robu (lessonEdge) ali ko drsenje udari v vrh ali dno. Med pisanjem (odprta tipkovnica) se ne pokaže. Na vseh teh zaslonih je v glavi gumb Nazaj.
 const tabbarEl = $("#tabbar");
-const barAuto = () => !!tabbarEl && getComputedStyle(tabbarEl).position === "fixed";
+// Vrstica, ki je zaradi neuporabe (body.tb-mir) ali vrnitve iz nje (tb-vraca) pritrjena, ni zaslon za branje (noga.js).
+const barAuto = () => !!tabbarEl && !document.body.matches(".tb-mir, .tb-vraca") && getComputedStyle(tabbarEl).position === "fixed";
 const typing = () => !!document.activeElement?.matches?.('textarea, [contenteditable="true"], input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"])');
 const NO_SWIPE = "#tabbar, canvas, input[type=range], .pad, .graph-slot, .demo, .okno, .tour";
 function peekBar(on) {
@@ -539,6 +541,8 @@ document.addEventListener("scroll", (e) => {
 document.addEventListener("focusin", () => document.body.classList.contains("tb-peek") && typing() && peekBar(false));
 // Odprta lekcija v Učbeniku (vrstica se umakne) ali nazaj na kazalo: pogled ostane isti, vsebina se zamenja.
 new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#view-textbook"), { childList: true });
+// Po 5 s neuporabe se vrstica skrije (j 2026-11-14), kjer ni že drugače določeno (public/noga.js).
+nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(false) });
 $("#chat-back").addEventListener("click", () => showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).

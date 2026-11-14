@@ -69,12 +69,12 @@ function canFloat(name) {
 }
 
 // Višina spodnje vrstice za liste (--tabbar-h). Pri branju se vrstica umakne (position: fixed, touch.css) in šteje
-// samo, ko je pokazana (body.tb-peek, app.js).
+// samo, ko je pokazana (body.tb-peek, app.js) ali se vrača po neuporabi (body.tb-vraca, noga.js).
 export function syncTabbarH() {
   const bar = $("#tabbar");
   if (!bar) return;
   const cs = getComputedStyle(bar);
-  const shown = cs.display !== "none" && (cs.position !== "fixed" || document.body.classList.contains("tb-peek"));
+  const shown = cs.display !== "none" && (cs.position !== "fixed" || document.body.matches(".tb-peek, .tb-vraca"));
   document.documentElement.style.setProperty("--tabbar-h", `${shown ? bar.offsetHeight : 0}px`);
 }
 
