@@ -622,7 +622,7 @@ const skiceIo = () =>
 export function createFormulas(root, opts) {
   const { t } = opts;
   const SUBJ = ["MAT", "FIZ", "KEM"];
-  const LVL = { OS: "lp.os", SS: "lp.ss", UNI: "lp.uni" };
+  const LVL = { OS: "lp.os", SS: "lp.ss", TEK: "nav.competition", UNI: "lp.uni" }; // TEK: listi za tekmovanja (j 14. 11. 2026)
   const BOOKS = SUBJ.flatMap((s) => Object.keys(LVL).map((l) => `${s}-${l}`));
   let book = null;
   let lastKey = null; // list, ki ga je nazadnje izbral reload() (predmet in stopnja učenca)
