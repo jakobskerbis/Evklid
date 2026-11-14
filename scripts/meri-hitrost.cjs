@@ -354,7 +354,10 @@ function table(all) {
   return lines.join("\n");
 }
 
-(async () => {
+// Pomožne funkcije in nastavitve omejitev uporabi tudi scripts/meritev-zmogljivosti.mjs (prvo odprtje, Faza 0).
+module.exports = { DEVICES, SLOW_4G, cdpSetup, freePort, PAGE_MERI };
+
+if (require.main === module) (async () => {
   const { base, srv, dir } = await startServer();
   const browser = await chromium.launch();
   const all = {};
