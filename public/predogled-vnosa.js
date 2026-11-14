@@ -6,7 +6,7 @@
 // - Večvrstično polje (vmesni koraki) ima izris pod seboj kot doslej.
 // Vrednost polja ostane nespremenjena (preverjanje odgovora dobi točno to, kar je napisano). Prazno mesto (»()/()«) je
 // okvirček. Klepet (svoj izris nad poljem) in kalkulator (sprotni izračun) imata svoje.
-import { splitFormulas, hasFormula, varnaMesta, delisKazalcem, brisiNazaj, OZNAKA } from "./vnos-formul.js";
+import { splitFormulas, hasFormula, varnaMesta, delisKazalcem, brisiNazaj, brisiNaprej, OZNAKA } from "./vnos-formul.js";
 
 // Polja s svojim izrisom: klepet (#formula-preview), kalkulator (sprotni izračun pod vnosom), skeniraj (.scan-preview);
 // iskalnik spustnega seznama (ikona kljukice je sosed polja: .dd-search input + .dd-check).
@@ -292,14 +292,14 @@ export function initPredogledVnosa(prvo) {
   document.addEventListener("focusout", (e) => queueMicrotask(() => izr(e.target)), true);
   document.addEventListener("selectionchange", () => izr(document.activeElement), true);
   document.addEventListener("keyup", (e) => izr(e.target), true);
-  // ⌫ s tipkovnico računalnika: znak zgradbe (»)/(«) formule ne razbije (kot ⌫ Evklidove tipkovnice).
+  // ⌫ in Del s tipkovnico računalnika: znak zgradbe (»)/(«) formule ne razbije (kot ⌫ Evklidove tipkovnice).
   document.addEventListener(
     "keydown",
     (e) => {
       const f = e.target;
-      if (e.key !== "Backspace" || e.ctrlKey || e.metaKey || e.altKey || !f?.classList?.contains("vnos-izrisan")) return;
+      if (!/^(?:Backspace|Delete)$/.test(e.key) || e.ctrlKey || e.metaKey || e.altKey || !f?.classList?.contains("vnos-izrisan")) return;
       if (f.selectionStart !== f.selectionEnd) return;
-      const out = brisiNazaj(f.value, f.selectionStart);
+      const out = (e.key === "Delete" ? brisiNaprej : brisiNazaj)(f.value, f.selectionStart);
       if (!out) return;
       e.preventDefault();
       urediNazaj(f, out);

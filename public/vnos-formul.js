@@ -218,6 +218,11 @@ function zgradbe(s) {
         const k = closeAt(s, j + 1);
         if (k > 0) out.push({ od: i, do: k, reze: [[i + 1, j - 1], [j + 2, k - 1]] });
       }
+      // Telo integrala: ∫ (x) dx, ∫_(0)^(1) (x) dx
+      const d = j > 0 ? s.slice(j).match(/^\s*d[a-zA-Z](?![\p{L}])/u) : null;
+      if (d && /∫(?:[_^]\([^()]*\))*\s*$/.test(s.slice(0, i))) {
+        out.push({ od: i, do: j + d[0].length, reze: [[i + 1, j - 1]] });
+      }
     } else if ((ROOT[c] || c === "^" || c === "_" || c === "∫") && s[i + 1] === "(") {
       const j = closeAt(s, i + 1);
       if (j < 0) continue;
@@ -243,6 +248,20 @@ function zgradbe(s) {
  * ⌫ na mestu p v zapisu formule. Znak zgradbe (oklepaj, »/«, »√«, »^«) se ne zbriše posamič: prazna zgradba (»()/()«)
  * izgine cela, sicer kazalec skoči v prejšnje mesto (iz imenovalca na konec števca). null: navaden ⌫.
  */
+/** Delete (tipka Del) na mestu p: znak zgradbe se ne zbriše posamič; prazna zgradba izgine, sicer kazalec v naslednje
+ * mesto (iz števca v imenovalec). null: navaden Delete. */
+export function brisiNaprej(src, p) {
+  const s = String(src ?? "");
+  if (p >= s.length || !hasFormula(s)) return null;
+  const z = zgradbe(s)
+    .filter((g) => g.od <= p && p < g.do && !g.reze.some(([a, b]) => a <= p && p < b))
+    .sort((a, b) => a.do - a.od - (b.do - b.od))[0];
+  if (!z) return null;
+  if (z.reze.every(([a, b]) => !s.slice(a, b).trim())) return { value: s.slice(0, z.od) + s.slice(z.do), caret: z.od };
+  const nasl = z.reze.find(([a]) => a > p);
+  return { value: s, caret: nasl ? nasl[0] : z.do };
+}
+
 export function brisiNazaj(src, p) {
   const s = String(src ?? "");
   const i = p - 1;

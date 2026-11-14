@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import katex from "katex";
-import { splitFormulas, toTex, hasFormula, varnaMesta, brisiNazaj, delisKazalcem, OZNAKA } from "../public/vnos-formul.js";
+import { splitFormulas, toTex, hasFormula, varnaMesta, brisiNazaj, brisiNaprej, delisKazalcem, OZNAKA } from "../public/vnos-formul.js";
 import { TUTOR_CHIPS, applyTemplate } from "../public/tipkovnica-data.js";
 
 // Ulomki, integrali, zaporedja in vsote v klepetu z inštruktorjem (j, 4. 11.): zapis s tipk se izriše kot formula.
@@ -105,4 +105,12 @@ test("brisiNazaj: prazen ulomek izgine cel, iz imenovalca skok v števec, navade
   assert.deepEqual(brisiNazaj("√(2)", 2), { value: "√(2)", caret: 0 });
   assert.equal(brisiNazaj("(3)/(4)", 2), null, "števka 3 se zbriše kot vsak znak");
   assert.equal(brisiNazaj("1/5", 3), null, "brez zapisa formule navaden ⌫");
+});
+
+test("brisiNazaj v telesu integrala in brisiNaprej (Del): zgradba ostane cela", () => {
+  assert.deepEqual(brisiNazaj("∫ () dx", 3), { value: "∫ ", caret: 2 });
+  assert.deepEqual(brisiNazaj("∫_(0)^(1) (x) dx", 11), { value: "∫_(0)^(1) (x) dx", caret: 10 });
+  assert.deepEqual(brisiNaprej("(1)/(2)", 2), { value: "(1)/(2)", caret: 5 });
+  assert.deepEqual(brisiNaprej("π()/()", 1), { value: "π", caret: 1 });
+  assert.equal(brisiNaprej("(1)/(2)", 1), null, "števka se zbriše kot vsak znak");
 });
