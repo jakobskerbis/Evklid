@@ -569,6 +569,10 @@ function placeBubble() {
     }
     if (spot) break;
   }
+  // Ob tipkah ali seznamu kalkulatorja ni prostega mesta (telefon ležeče, tipke čez ves zaslon): mehurček se skrije,
+  // dokler se mesto ne sprosti (obrat, drug način ali pogled; j 14. 11. 2026). Klepet ostane v spodnji vrstici.
+  bubble.classList.toggle("umaknjen", !spot && clear.length > 0);
+  if (!spot && clear.length) return;
   // Ni prostega mesta: mehurček ne gre na tipke kalkulatorja, raje na drugo okno.
   if (!spot) {
     const calc = wins.get("graph")?.el.getBoundingClientRect();
