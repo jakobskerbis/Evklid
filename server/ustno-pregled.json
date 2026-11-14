@@ -2437,8 +2437,25 @@
    "h": "256339ef08d0",
    "o": "D"
   },
+  "MAT-SS-4/anuitete-in-amortizacijski-nacrt#p1": {
+   "h": "909b2ce042bd",
+   "o": "I",
+   "r": "brez zgodbe lekcije ne pove, da gre za posojilo 4000 € z anuitetami"
+  },
   "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#p1": {
    "h": "f25347d6a8cf",
+   "o": "D"
+  },
+  "MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p0": {
+   "h": "c656657e4a56",
+   "o": "D"
+  },
+  "MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p1": {
+   "h": "9e78eb7cc41d",
+   "o": "D"
+  },
+  "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#p1": {
+   "h": "f3d544bcbf80",
    "o": "D"
   },
   "MAT-SS-4/kombinatorika#p1": {
@@ -2470,6 +2487,23 @@
    "h": "8c2b741d545d",
    "o": "D"
   },
+  "MAT-SS-4/odvedljivost-in-implicitni-odvod#p0": {
+   "h": "864e60c615d1",
+   "o": "D"
+  },
+  "MAT-SS-4/statisticna-naloga#p0": {
+   "h": "de4c45638172",
+   "o": "D"
+  },
+  "MAT-SS-4/statisticna-naloga#p1": {
+   "h": "3c5f777022a3",
+   "o": "D",
+   "k": [
+    "Povezanost lahko pojasni tretja spremenljivka, na primer velikost vasi ali število hiš",
+    "Lahko gre tudi za naključje pri malo letih",
+    "Podatki pokažejo le, da količini skupaj rasteta"
+   ]
+  },
   "MAT-SS-4/statistika#p1": {
    "h": "37cb46c15df3",
    "o": "D"
@@ -2487,6 +2521,10 @@
    "h": "f360a8bdfeb5",
    "o": "I",
    "r": "zaporedje ni podano"
+  },
+  "MAT-SS-4/zvezne-funkcije-in-bisekcija#p0": {
+   "h": "fadeadf10be1",
+   "o": "D"
   },
   "MAT-TEK-OS/deljivost-in-ostanki#p1": {
    "h": "c4f6f62990b4",
