@@ -138,6 +138,8 @@ export class Leagues {
         joined_at TEXT NOT NULL DEFAULT (datetime('now')),
         PRIMARY KEY (class_id, student_id)
       );
+      -- D1: razredi enega učenca (lestvica, sporočilo, lekcija); primarni ključ se začne s class_id.
+      CREATE INDEX IF NOT EXISTS idx_class_members_student ON class_members(student_id);
     `);
     const cols = this.db.prepare("PRAGMA table_info(classes)").all().map((c) => c.name);
     if (!cols.includes("owner_parent_id")) this.db.exec("ALTER TABLE classes ADD COLUMN owner_parent_id INTEGER");

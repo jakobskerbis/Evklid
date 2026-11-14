@@ -23,6 +23,7 @@ import { initSubjectSwitch } from "./subject-switch.js";
 import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower, openLessonId } from "./textbook.js";
 import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
+import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
@@ -272,6 +273,7 @@ function showView(name) {
     leaveUci(); // atlas ali model čez cel zaslon (3D svet)
   }
   syncHistory(name);
+  if (currentView === "chat" && name !== "chat" && !isFloating("chat")) leaveChat(); // odhod iz inštruktorja: od tu teče 10 min
   if (name !== currentView) prevView = currentView;
   currentView = name;
   syncCompetitionTab();
@@ -406,6 +408,7 @@ async function openStartScreen(z) {
   else showView(z.v);
 }
 document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden" && (currentView === "chat" || isFloating("chat"))) leaveChat();
   if (document.visibilityState === "hidden") return saveSnapshot();
   // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
   const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
@@ -433,6 +436,7 @@ function odprto(del) {
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
   odprto(DEL_POGLEDA[name]);
+  if (name === "chat") freshChatIfStale();
   if (name === "me") renderMe();
   if (name === "settings") {
     fillSettingsForm();
@@ -984,7 +988,9 @@ async function selectStudent(id) {
   sendOffline();
   state.conversationId = null;
   await loadConversations();
-  if (state.conversations.length) await openConversation(state.conversations[0].id);
+  // Nov pogovor ob odprtju (j 2026-11-14): zadnji pogovor samo, če je bil učenec v inštruktorju pred manj kot 10 min.
+  const keep = chatKeepId();
+  if (keep) await openConversation(keep, { mark: false });
   else renderEmptyChat();
   if (!$("#view-settings").hidden) fillSettingsForm();
   if (!$("#view-progress").hidden) loadProgress();
@@ -1198,10 +1204,69 @@ async function setChatFx(conv) {
 }
 const chatRich = (text) => withFormulaSubject(state.chatFx?.subject || state.student?.settings?.subject || "MAT", () => renderRich(text), state.chatFx?.symbols, topicScope(state.chatFx?.topic));
 
-async function openConversation(id) {
+// Nov pogovor v inštruktorju (j 2026-11-14): ko je učenec 10 min ali več zunaj inštruktorja (tudi z zaprto
+// aplikacijo) ali je medtem odprl drugo temo, kot je tema pogovora, se inštruktor odpre na novem pogovoru.
+// Stari pogovori ostanejo v seznamu »Pogovori«; nedokončano vprašanje v polju se nikoli ne izgubi.
+const CHAT_FRESH_MS = 10 * 60 * 1000;
+const chatSeenKey = () => `evklid.chatSeen.${state.student?.id}`;
+const chatTopicKey = () => `evklid.chatTopic.${state.student?.id}`;
+const readRec = (k) => {
+  try {
+    return JSON.parse(localStorageGet(k) || "null");
+  } catch {
+    return null;
+  }
+};
+// Učenec je (bil) v inštruktorju: čas in odprti pogovor.
+function markChat() {
+  if (state.student) localStorageSet(chatSeenKey(), JSON.stringify({ t: Date.now(), conv: state.conversationId }));
+}
+// Odprta tema (učna pot, lekcija): za pravilo »druga tema«.
+function markTopic(id) {
+  if (state.student && id) localStorageSet(chatTopicKey(), JSON.stringify({ id, t: Date.now() }));
+}
+// Ali pogovor po pravilu ostane (zadnji obisk pred manj kot 10 min in vmes ni bila odprta druga tema).
+function chatStillFresh(convTopic) {
+  const seen = readRec(chatSeenKey());
+  if (!seen || !(Date.now() - seen.t < CHAT_FRESH_MS)) return false;
+  const tp = readRec(chatTopicKey());
+  return !(convTopic && tp && tp.t >= seen.t && tp.id !== convTopic);
+}
+// Ob zagonu: id pogovora, ki naj ostane odprt, ali null (nov pogovor).
+function chatKeepId() {
+  const seen = readRec(chatSeenKey());
+  const conv = seen?.conv && state.conversations.find((c) => c.id === seen.conv);
+  return conv && chatStillFresh(conv.path_topic ?? null) ? conv.id : null;
+}
+// Inštruktor se prikaže: zastarel pogovor zamenja nov (razen z nedokončanim besedilom v polju ali med odgovorom).
+// Samo ob vrnitvi (chatAway): klik zavihka ali okna, ko je učenec že v inštruktorju, pogovora ne zamenja.
+let chatAway = true;
+function leaveChat() {
+  markChat();
+  chatAway = true;
+}
+function freshChatIfStale() {
+  if (!state.student) return; // profil se še nalaga
+  const back = chatAway;
+  chatAway = false;
+  if (!state.conversationId) return; // nov pogovor je že odprt
+  if (!back || state.sending || $("#input")?.value.trim()) return markChat();
+  if (!chatStillFresh(state.convTopic)) {
+    state.conversationId = null;
+    state.convTopic = null;
+    state.chatFx = null;
+    renderConversationList();
+    renderEmptyChat();
+    refreshBubble();
+  }
+  markChat();
+}
+
+async function openConversation(id, { mark = true } = {}) {
   const conv = await api(`/api/conversations/${id}`);
   state.conversationId = conv.id;
   state.convTopic = conv.topic?.id || null;
+  if (mark) markChat();
   await setChatFx(conv);
   if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
   $("#chat-title").textContent = conv.title;
@@ -1359,15 +1424,17 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     const takoj = lokalnoNujno(text);
     if (takoj?.vrsta !== "pogovor") showNujno(takoj, { before: bubble });
     const box = $("#messages");
-    const paint = (shown) => {
+    // D5: med izpisom dokončani bloki iz predpomnilnika in največ en izris na sličico; končni izris cel in takoj.
+    const izrisBlokov = createIzrisBlokov(chatRich);
+    const paint = enIzrisNaSlicico((shown, koncno) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
+      bubble.innerHTML = (koncno ? chatRich(shown) : izrisBlokov(streamSafe(shown))) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
       // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
       if (atBottom && nujnoEl?.isConnected) box.scrollTop = Math.min(box.scrollTop, box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8);
-    };
-    paint("");
+    });
+    paint("", true);
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
     pacer = createPacer(currentPace(), paint);
     state.pacer = pacer;
@@ -1510,6 +1577,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
   } finally {
     state.sending = false;
     $("#send").disabled = false;
+    if (currentView === "chat" || isFloating("chat")) markChat(); // učenec je v pogovoru: 10 min teče od zdaj
   }
 }
 
@@ -3073,6 +3141,7 @@ async function openTopic(topicId) {
   state.topic = tp;
   state.topicFx = true;
   showView("topic");
+  markTopic(tp?.id || topicId); // po showView: tema, odprta iz pogovora, je za odhodom iz inštruktorja
   // Pogled teme se drsi sam in si zapomni mesto: nova tema se vedno odpre na vrhu (»Nova snov« drugič, #view-topic).
   const vt = $("#view-topic");
   if (vt) vt.scrollTop = 0;
@@ -4762,6 +4831,7 @@ initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
   leaveView: (name) => {
+    if (name === "chat" && currentView !== "chat") leaveChat(); // zaprto okno inštruktorja: od tu teče 10 min
     if (name === "uci") {
       stopReading();
       leaveUci();

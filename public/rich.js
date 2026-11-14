@@ -61,6 +61,19 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
   const clean = sanitize || ((html) => ocistiStrogo(html));
   const plain = { throwOnError: false, strict: "ignore" };
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
+  // D5: predpomnilnik izrisov KaTeX (isti TeX in iste možnosti → isti HTML). Med pretakanjem odgovora se iste formule
+  // izrišejo znova ob vsakem koraku; tako samo prvič. Neuspešen izris (throwOnError) se ne shrani.
+  const izrisi = new Map();
+  const NAJVEC_IZRISOV = 500;
+  const izris = (tex, opts, display) => {
+    const kljuc = `${opts === trusted ? "t" : "p"}${display ? "D" : "i"}${tex}`;
+    let h = izrisi.get(kljuc);
+    if (h !== undefined) return h;
+    h = katex.renderToString(tex, { ...opts, ...(opts === trusted ? { throwOnError: true } : {}), displayMode: display });
+    if (izrisi.size >= NAJVEC_IZRISOV) izrisi.delete(izrisi.keys().next().value);
+    izrisi.set(kljuc, h);
+    return h;
+  };
 
   // Označena formula, ki je KaTeX ne zna izrisati, se izriše neoznačena (nikoli rdeč surov LaTeX).
   // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
@@ -72,14 +85,14 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
         const annotated = annotate(tex, o);
         if (annotated !== tex) {
           try {
-            return katex.renderToString(annotated, { ...trusted, throwOnError: true, displayMode: display });
+            return izris(annotated, trusted, display);
           } catch { /* spodaj brez oznak */ }
         }
       }
-      return katex.renderToString(tex, { ...plain, displayMode: display });
+      return izris(tex, plain, display);
     } catch {
       try {
-        return katex.renderToString(tex, { ...plain, displayMode: display });
+        return izris(tex, plain, display);
       } catch {
         // Ne ParseError (npr. RangeError ob zelo globokem gnezdenju): formula je bila skrita pred čiščenjem, zato
         // gre surov TeX na stran samo kot izpisano besedilo (sicer bi bil v njem lahko poljuben HTML).

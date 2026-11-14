@@ -145,7 +145,7 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 
 /* ---------- mehurček inštruktorja ---------- */
 .chat-bubble { position: fixed; z-index: 46; width: 56px; height: 56px; touch-action: none; }
-.chat-bubble[hidden] { display: none; }
+.chat-bubble[hidden], .chat-bubble.umaknjen { display: none; }
 .chat-bubble:not(.dragging) { transition: left 0.18s ease-out, top 0.18s ease-out; }
 .cb-main {
   position: relative; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;

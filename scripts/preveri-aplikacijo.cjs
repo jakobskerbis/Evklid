@@ -705,6 +705,17 @@ async function chat(p, label) {
   }
 }
 
+// Mehurček inštruktorja: imena delov kalkulatorja, ki jih prekrije (prazno, če je skrit ali nič ne prekrije).
+const covers = () => {
+  const b = document.getElementById("chat-bubble");
+  if (!b || b.hidden) return "";
+  const r = b.getBoundingClientRect();
+  return [...document.querySelectorAll("#view-graph :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)")]
+    .filter((el) => el.offsetParent)
+    .filter((el) => { const q = el.getBoundingClientRect(); return r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top; })
+    .map((el) => el.className.split(" ")[0])
+    .join(", ");
+};
 async function calculator(p, label) {
   await tab(p, "graph");
   await expectVisible(p, "#view-graph #graph-slot > *", "kalkulator");
@@ -713,18 +724,23 @@ async function calculator(p, label) {
     const empty = await p.locator("#graph-slot").evaluate((s) => !s.innerText.trim() && !s.querySelector("canvas,svg"));
     if (empty) throw new Error(`kalkulator »${mode}« je prazen`);
     // Mehurček inštruktorja (po pogovoru) ne prekrije tipk, vnosa ali seznama grafa (okna.js KEEP_CLEAR, pilot 14. 11. 2026).
-    const covered = await p.evaluate(() => {
-      const b = document.getElementById("chat-bubble");
-      if (!b || b.hidden) return "";
-      const r = b.getBoundingClientRect();
-      return [...document.querySelectorAll("#view-graph :is(.sc-keys, .sc-entry, .gc-panel)")]
-        .filter((el) => el.offsetParent)
-        .filter((el) => { const q = el.getBoundingClientRect(); return r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top; })
-        .map((el) => el.className.split(" ")[0])
-        .join(", ");
-    });
+    const covered = await p.evaluate(covers);
     if (covered) throw new Error(`mehurček inštruktorja prekrije ${covered} v kalkulatorju »${mode}«`);
     await screen(p, `kalkulator-${mode}-${label}`);
+    // Telefon ležeče: tipke so čez ves zaslon, zato se mehurček skrije namesto da bi pokril tipko (j 14. 11. 2026).
+    if (mode === "sci" && p.viewportSize().width < 760) {
+      const size = p.viewportSize();
+      await p.setViewportSize({ width: size.height, height: size.width });
+      let lez;
+      try {
+        await settle(p, 300);
+        lez = await p.evaluate(covers);
+      } finally {
+        await p.setViewportSize(size);
+        await settle(p, 300);
+      }
+      if (lez) throw new Error(`mehurček inštruktorja ležeče prekrije ${lez} v kalkulatorju`);
+    }
   }
   // Znanstveni: izračun.
   await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
@@ -1444,8 +1460,10 @@ async function uciPhone(p) {
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (over > 1) throw new Error(`Uči se → ${v}: vodoravno drsenje (${over} px)`);
   }
-  await expectVisible(p, "#view-3d .uci-3d-card", "kartice 3D sveta", 8000);
+  await expectVisible(p, "#view-3d .uci-3d-veja", "veje drevesa 3D sveta", 8000);
   await screen(p, "uci-3d");
+  await click(p, '#view-3d .uci-3d-veja[data-pot="matematika"]', { wait: 300 });
+  await expectVisible(p, "#view-3d .uci-3d-card", "modeli v veji Matematika", 8000);
   await click(p, "#view-3d .uci-3d-card", { wait: 300 });
   // Okvir je istega izvora in si deli glavno nit: gradnja prizora (swiftshader) lahko za nekaj sekund ustavi strani.
   await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(async () => {

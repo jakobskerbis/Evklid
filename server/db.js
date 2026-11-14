@@ -360,6 +360,14 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
+  // D1 (hitrost, j 13. 11.): indeksi za poizvedbe po profilu, ki so brez njih brale celo tabelo ali ves mesec porabe
+  // (meritev 13. 11.: docs/meritve). Po vseh migracijah, ker obnova tabele events zgoraj ohrani samo idx_events_student.
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_conv_student ON conversations(student_id, updated_at);
+    CREATE INDEX IF NOT EXISTS idx_usage_student ON usage(student_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_tasks_session ON tasks(session_id);
+    CREATE INDEX IF NOT EXISTS idx_events_conv ON events(conversation_id, id);
+  `);
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
@@ -471,6 +479,10 @@ export class Store {
       .run(conversationId, role, sealJson(apiContent), seal(displayText), hasImage ? 1 : 0);
     this.touchConversation(conversationId);
     return Number(r.lastInsertRowid);
+  }
+  // Ali ima pogovor kakšno sporočilo (D3: brez nalaganja in odšifriranja vseh sporočil, tudi fotografij).
+  hasMessages(conversationId) {
+    return !!this.db.prepare("SELECT EXISTS(SELECT 1 FROM messages WHERE conversation_id = ?) AS e").get(conversationId).e;
   }
   listMessages(conversationId) {
     return this.db

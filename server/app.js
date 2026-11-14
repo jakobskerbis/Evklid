@@ -1,5 +1,6 @@
 // HTTP strežnik Evklid: API + statični vmesnik.
 import "./env.js";
+import { createPomnilnik } from "./pomnilnik.js";
 import { mountMeritevPoObjavi } from "./meritev-po-objavi.js";
 import express from "express";
 import helmet from "helmet";
@@ -258,9 +259,12 @@ export function createApp(store, opts = {}) {
   let ustno = null; // ustno spraševanje (server/ustno-api.js): stikalo starša za glas velja tudi v klepetu
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
+  // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
+  const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
+  app.locals.pomnilnik = pomnilnik;
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje() });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -886,7 +890,8 @@ export function createApp(store, opts = {}) {
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
     const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
-    const isFirst = store.listMessages(conv.id).length === 0;
+    // D3: praznost z EXISTS; zgodovino pogovora naložimo (in odšifriramo) samo enkrat, spodaj (prior).
+    const isFirst = !store.hasMessages(conv.id);
     // Prvo vprašanje prostega pogovora: povzetek ujemajoče se lekcije iz učbenika kot skrita opomba
     // (server/lekcija-za-vprasanje.js). Shranjen s sporočilom, zato se začetek zgodovine ne spreminja.
     let lesson = null;
@@ -899,7 +904,8 @@ export function createApp(store, opts = {}) {
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
-    const prior = staleImages(store.apiHistory(conv.id));
+    const zgodovina = store.apiHistory(conv.id);
+    const prior = staleImages(zgodovina);
     const reserveFor = (m, fallback = true) =>
       replyReserveUsd({
         fallback,
@@ -1038,8 +1044,10 @@ export function createApp(store, opts = {}) {
       if (note) send("delta", { text: note });
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
-      // Zgodovina tu že vsebuje trenutno sporočilo (shranjeno zgoraj), zato +1: njegova slika ostane vedno.
-      const fullHistory = staleImages(store.apiHistory(conv.id), LIMITS.historyImageTurns() + 1);
+      // Zgodovina z zdaj shranjenim sporočilom, isto kot ponovno branje iz baze: med branjem zgoraj in tem mestom ni
+      // nobenega await (vmes ne more pisati nobena druga zahteva), pogovor pa je tudi zaseden (busy). +1: slika
+      // trenutnega sporočila ostane vedno.
+      const fullHistory = staleImages([...zgodovina, { role: "user", content: userContent }], LIMITS.historyImageTurns() + 1);
       const shortDeep = deep && !routed.boosted;
       let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
       // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
