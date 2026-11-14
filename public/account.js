@@ -1293,10 +1293,10 @@ function deliHtml(o, loc) {
   const pc = (x) => (x == null ? "–" : Number(x).toLocaleString(loc, { style: "percent", maximumFractionDigits: 0 }));
   const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
   return `<h4>${esc(t("deli.title"))}</h4>
-    <ul class="pilot-sum"><li><b>${nf(o.ucenci)}</b> ${esc(t("deli.students"))}</li></ul>
+    ${o.ucenci != null ? `<ul class="pilot-sum"><li><b>${nf(o.ucenci)}</b> ${esc(t("deli.students"))}</li></ul>` : ""}
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("deli.part")}${th("deli.opened")}${th("deli.returned")}</tr></thead>
-      <tbody>${o.deli.map((d) => `<tr><td>${esc(Object.hasOwn(IME_DELA, d.del) ? t(IME_DELA[d.del]) : d.del)}</td><td>${nf(d.odprli)} (${pc(d.delez)})</td><td>${d.odprli ? `${nf(d.vrnili)} (${pc(d.delezVrnili)})` : "–"}</td></tr>`).join("")}</tbody></table></div>
-    <p class="muted small">${esc(t("deli.note"))}</p>`;
+      <tbody>${o.deli.map((d) => `<tr><td>${esc(Object.hasOwn(IME_DELA, d.del) ? t(IME_DELA[d.del]) : d.del)}</td><td>${d.odprli != null ? `${nf(d.odprli)} (${pc(d.delez)})` : "–"}</td><td>${d.odprli != null ? `${nf(d.vrnili)} (${pc(d.delezVrnili)})` : "–"}</td></tr>`).join("")}</tbody></table></div>
+    <p class="muted small">${esc(t("deli.note"))} ${esc(t("deli.few", { n: o.minStudents }))}</p>`;
 }
 
 // Skrbnik: rast in vračanje (server/rast.js): prva naloga v 24 urah, vrnitev naslednji dan in po 7 dneh, viri, tedni.

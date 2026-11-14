@@ -48,6 +48,16 @@ test("B2 splet: odprti deli aplikacije se zabeležijo enkrat na dan", opts, asyn
     for (let i = 0; i < 50 && deli().join() !== pricakovano.join(); i++) await p.waitForTimeout(100);
     assert.deepEqual(deli(), pricakovano);
     assert.equal(zahtev, 5, "ponovno odprtje istega dne ne pošlje zahteve");
+    // Ponovno odprtje aplikacije na zadnjem zaslonu (Inštruktor, zacetek.js): obnovljen zaslon ni odprtje.
+    zahtev = 0;
+    await p.goto(base + "/");
+    await p.waitForSelector('.tab[data-view="chat"].active', { timeout: 60000 });
+    await p.waitForTimeout(1500);
+    assert.equal(zahtev, 0, "obnovljen zadnji zaslon ne šteje");
+    await klik('.tab[data-view="games"]');
+    await klik('.tab[data-view="chat"]');
+    for (let i = 0; i < 30 && zahtev < 2; i++) await p.waitForTimeout(100);
+    assert.equal(zahtev, 2, "po obnovi se odprtja štejejo kot prej");
     assert.deepEqual(napake, []);
   } finally {
     await ctx.close();

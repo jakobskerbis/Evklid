@@ -2,12 +2,14 @@
 // Na profil in del hranimo samo prvi dan, zadnji dan in število dni z odprtjem (brez ur, naprave, IP ali piškotkov).
 // Skrbnik vidi le skupna števila po delih, brez imen. Vrstice se po MAX_DNI dneh brez odprtja izbrišejo,
 // z izbrisom profila pa takoj (tuji ključ). Izvoz podatkov jih zajame sam (server/accounts, exportOtherTables).
+// Pri manj kot MIN_STUDENTS učencih skrbnik ne vidi števil (kot server/games.js), da se ne da sklepati na posameznika.
 import { schoolStudents } from "./schools.js";
 import { adminStudentIds } from "./rast.js";
+import { MIN_STUDENTS } from "./games.js";
 
-// Deli aplikacije, ki jih štejemo (public/odprto.js mora imeti iste oznake).
+// Deli aplikacije, ki jih štejemo (public/app.js DEL_POGLEDA in public/uci-se.js morata imeti iste oznake).
 export const DELI = ["lekcije", "vadnica", "instruktor", "svet3d", "laboratorij", "igre"];
-const MAX_DNI = 120;
+export const MAX_DNI = 120; // brisanje: server/zasebnost.js runRetention (dnevno) in ob poročilu
 const DAY = 86400000;
 const isoDay = (t) => new Date(t).toISOString().slice(0, 10);
 
@@ -28,13 +30,15 @@ export function zabeleziOdprtje(db, studentId, del, now = Date.now()) {
   const dan = isoDay(now);
   db.prepare(
     `INSERT INTO odpiranje_delov (student_id, del, prvi, zadnji, dni) VALUES (?, ?, ?, ?, 1)
-     ON CONFLICT (student_id, del) DO UPDATE SET dni = dni + (excluded.zadnji > zadnji), zadnji = max(zadnji, excluded.zadnji)`,
+     ON CONFLICT (student_id, del) DO UPDATE SET dni = dni + 1, zadnji = excluded.zadnji WHERE excluded.zadnji > odpiranje_delov.zadnji`,
   ).run(studentId, del, dan, dan);
   return true;
 }
 
 // Poročilo za zadnjih `days` dni (danes vključno): koliko učencev je del odprlo v obdobju, koliko od njih ga je
-// odprlo vsaj dva različna dneva (vrnili so se) in delež med učenci, ki so v obdobju odprli kateri koli del.
+// odprlo vsaj dva različna dneva od prvega odprtja (vrnili so se; prvi dan je lahko pred obdobjem) in delež med učenci,
+// ki so v obdobju odprli kateri koli del. Del z manj kot MIN_STUDENTS učenci in obdobje z manj kot MIN_STUDENTS učenci
+// sta brez števil (null).
 export function porociloDelov(db, { days = 30, schoolId = null, now = Date.now(), adminEmails = [] } = {}) {
   migrateOdpiranje(db);
   const n = Math.min(MAX_DNI, Math.max(1, Math.floor(Number(days)) || 30));
@@ -54,18 +58,24 @@ export function porociloDelov(db, { days = 30, schoolId = null, now = Date.now()
     if (r.dni >= 2) v.vrnili++;
   }
   const delez = (a, b) => (b ? Math.round((a / b) * 1000) / 1000 : null);
+  const dovolj = ucenci.size >= MIN_STUDENTS;
   return {
     from,
     to: today,
     days: n,
-    ucenci: ucenci.size,
-    deli: [...po.values()].map((v) => ({ ...v, delez: delez(v.odprli, ucenci.size), delezVrnili: delez(v.vrnili, v.odprli) })),
+    minStudents: MIN_STUDENTS,
+    ucenci: dovolj ? ucenci.size : null,
+    deli: [...po.values()].map((v) =>
+      dovolj && v.odprli >= MIN_STUDENTS
+        ? { ...v, delez: delez(v.odprli, ucenci.size), delezVrnili: delez(v.vrnili, v.odprli) }
+        : { del: v.del, odprli: null, vrnili: null, delez: null, delezVrnili: null },
+    ),
   };
 }
 
 export function mountOdpiranje(app, store, { loadStudent, accounts, isLocalRequest, adminEmails = [] }) {
   migrateOdpiranje(store.db);
-  // Odjemalec (public/odprto.js) pokliče ob odprtju dela; največ enkrat na dan in del.
+  // Odjemalec (public/app.js odprto) pokliče ob odprtju dela; največ enkrat na dan in del.
   app.post("/api/students/:id/odprto", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
