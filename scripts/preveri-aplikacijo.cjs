@@ -712,12 +712,24 @@ async function calculator(p, label) {
     await click(p, `#view-graph [data-calc-mode="${mode}"]`, { wait: 400 });
     const empty = await p.locator("#graph-slot").evaluate((s) => !s.innerText.trim() && !s.querySelector("canvas,svg"));
     if (empty) throw new Error(`kalkulator »${mode}« je prazen`);
+    // Mehurček inštruktorja (po pogovoru) ne prekrije tipk, vnosa ali seznama grafa (okna.js KEEP_CLEAR, pilot 14. 11. 2026).
+    const covered = await p.evaluate(() => {
+      const b = document.getElementById("chat-bubble");
+      if (!b || b.hidden) return "";
+      const r = b.getBoundingClientRect();
+      return [...document.querySelectorAll("#view-graph :is(.sc-keys, .sc-entry, .gc-panel)")]
+        .filter((el) => el.offsetParent)
+        .filter((el) => { const q = el.getBoundingClientRect(); return r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top; })
+        .map((el) => el.className.split(" ")[0])
+        .join(", ");
+    });
+    if (covered) throw new Error(`mehurček inštruktorja prekrije ${covered} v kalkulatorju »${mode}«`);
     await screen(p, `kalkulator-${mode}-${label}`);
   }
   // Znanstveni: izračun.
   await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
   // Tipka Nazaj ob odprti plošči funkcij (⋯) in ob povečanem grafu (telefon) zapre samo to plast, kalkulator ostane
-  // (j, 14. 11. 2026). Klik prek DOM: na telefonu tipko ⋯ lahko prekrije mehurček klepeta.
+  // (j, 14. 11. 2026). Klik prek DOM, kot drugje v tem pregledu.
   const layers = [
     ["sci", '#view-graph .sc-key[data-ins="#more"]', "#view-graph .sc.sc-panel-open", "plošča funkcij"],
     ["graph", '#view-graph [data-act="expand"]', "#view-graph .gc.gc-full", "povečan graf"],

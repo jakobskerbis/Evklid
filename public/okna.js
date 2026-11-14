@@ -541,7 +541,10 @@ function flyToDrop() {
     dismissBubble();
   }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220);
 }
-// Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno): najbližje prosto mesto ob robu,
+// Deli glavnega pogleda, ki se z drsenjem ne premaknejo izpod mehurčka: tipke in vnos znanstvenega kalkulatorja,
+// seznam grafičnega (na telefonu spodnja polovica). Mehurček jih ne prekrije (pilot 14. 11. 2026).
+const KEEP_CLEAR = "body > main.view:not([hidden]):not(.in-okno) :is(.sc-keys, .sc-entry, .gc-panel)";
+// Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno) ne KEEP_CLEAR: najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
 function placeBubble() {
   const size = 56;
@@ -554,7 +557,8 @@ function placeBubble() {
   if (st && st.offsetParent) hi = Math.max(lo, Math.min(hi, a.bottom - st.offsetHeight - size));
   const y0 = Math.min(Math.max(Math.round((bstate.y ?? 0.72) * window.innerHeight - size / 2), lo), hi);
   const xOf = (side) => (side === "left" ? 12 : window.innerWidth - size - 12);
-  const rects = [...wins.values()].map((w) => w.el.getBoundingClientRect());
+  const clear = [...document.querySelectorAll(KEEP_CLEAR)].filter((el) => el.offsetParent);
+  const rects = [...wins.values()].map((w) => w.el).concat(clear).map((el) => el.getBoundingClientRect());
   const free = (x, y) => !rects.some((r) => x < r.right + 4 && x + size > r.left - 4 && y < r.bottom + 4 && y + size > r.top - 4);
   let spot = null;
   for (const side of [pref, pref === "left" ? "right" : "left"]) {
