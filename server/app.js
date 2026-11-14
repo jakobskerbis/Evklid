@@ -62,7 +62,7 @@ import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
-import { mountGames, notePathActivity } from "./games.js";
+import { mountGames, notePathActivity, schoolYear } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
 import { mountLab } from "./laboratorij.js";
 import { Avatars, mountAvatar } from "./avatar.js";
@@ -1636,7 +1636,7 @@ export function createApp(store, opts = {}) {
     if (!key) return res.json({ key: null, message: "Tekmovanja so na voljo za osnovno in srednjo šolo." });
     res.json({
       ...competitionInfo(key),
-      ...progress.pathView(s.id, key),
+      ...progress.pathView(s.id, key, schoolYear(s.settings)),
       defaultKey,
       history: progress.contestHistory(s.id, key),
       openContest: progress.openContest(s.id, key),
@@ -1678,14 +1678,14 @@ export function createApp(store, opts = {}) {
   app.post("/api/students/:id/competition-training", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startCompetition(s.id, String(req.body?.path || ""));
+    const out = progress.startCompetition(s.id, String(req.body?.path || ""), schoolYear(s.settings));
     if (!out) return res.status(400).json({ error: "Za to tekmovanje še ni nalog." });
     res.json(out);
   });
   app.post("/api/students/:id/contest", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startContest(s.id, String(req.body?.path || ""));
+    const out = progress.startContest(s.id, String(req.body?.path || ""), schoolYear(s.settings));
     if (!out) return res.status(400).json({ error: "Za to tekmovanje še ni nalog." });
     res.json(out);
   });
