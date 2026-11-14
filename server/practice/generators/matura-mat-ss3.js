@@ -3,9 +3,10 @@
 // premaknjeni legi in tangente, racionalne neenačbe.
 // Merila: docs/kakovost.md §2. Vsi rezultati so izračunani v kodi iz istih števil, ki jih vidi dijak.
 // Izvirne naloge, ne prepisane maturitetne.
-import { NAMES, g } from "../rng.js";
+import { g } from "../rng.js";
 import { gcd, roundHalfUp } from "../check.js";
-import { choicesWhy, tx } from "./mat.js";
+import { tx } from "./mat.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
 
 const P = "mat-ss3-matura-";
 const T = (s) => `MAT-SS-3/${s}`;
@@ -13,43 +14,6 @@ const DEG = Math.PI / 180;
 const RAD = 180 / Math.PI;
 
 // ---------- pomožne funkcije ----------
-// Okrajšan ulomek s pozitivnim imenovalcem.
-function fr(n, d) {
-  if (d < 0) {
-    n = -n;
-    d = -d;
-  }
-  const k = gcd(Math.abs(n), d) || 1;
-  return [n / k, d / k];
-}
-const sameAt = (a, b, d) => Math.abs(roundHalfUp(a, d ?? 6) - roundHalfUp(b, d ?? 6)) < 1e-9;
-function cleanMistakes(value, decimals, mistakes) {
-  const ms = [];
-  for (const m of mistakes) {
-    if (!m || !Number.isFinite(m.value)) continue;
-    if (sameAt(m.value, value, decimals)) continue;
-    if (ms.some((x) => sameAt(x.value, m.value, decimals))) continue;
-    ms.push(m);
-  }
-  return ms.slice(0, 3);
-}
-// Številski odgovor; napake, ki bi se ujemale s pravilnim odgovorom ali med seboj, izpustimo.
-function num(value, decimals = null, mistakes = [], unit = null) {
-  const a = { type: "number", value, decimals, mistakes: cleanMistakes(value, decimals, mistakes) };
-  if (unit) a.unit = unit;
-  return a;
-}
-// Okrajšan ulomek kot odgovor (napake po vrednosti).
-function frA(n, d, mistakes = []) {
-  const [a, b] = fr(n, d);
-  return { type: "fraction", num: a, den: b, mistakes: cleanMistakes(a / b, 9, mistakes) };
-}
-// Ulomek v TeX (okrajšan): 3/4 → \frac{3}{4}, -6/3 → -2.
-function ft(n, d) {
-  const [a, b] = fr(n, d);
-  if (b === 1) return `${a}`;
-  return `${a < 0 ? "-" : ""}\\frac{${Math.abs(a)}}{${b}}`;
-}
 // Večkratnik π v TeX: piT(5, 6) → \frac{5\pi}{6}, piT(-1, 2) → -\frac{\pi}{2}.
 function piT(n, d) {
   const [a, b] = fr(n, d);
@@ -58,7 +22,6 @@ function piT(n, d) {
   const m = Math.abs(a) === 1 ? "" : Math.abs(a);
   return b === 1 ? `${s}${m}\\pi` : `${s}\\frac{${m}\\pi}{${b}}`;
 }
-const sg = (c) => (c < 0 ? `- ${tx(-c)}` : `+ ${tx(c)}`);
 // x - a: xm(3) → "x - 3", xm(-2) → "x + 2", xm(0) → "x".
 const xm = (a, v = "x") => (a === 0 ? v : `${v} ${sg(-a)}`);
 const sqr = (a, v = "x") => (a === 0 ? `${v}^2` : `(${xm(a, v)})^2`);
@@ -74,8 +37,6 @@ function comb(terms) {
   return s || "0";
 }
 const le = (a, b, v = "x") => comb([[a, v], [b, ""]]);
-const pickAns = (r, correct, wrongs) => ({ type: "choice", ...choicesWhy(r, correct, wrongs) });
-const name = (r) => r.pick(NAMES);
 const ap = (x, d) => (Math.abs(roundHalfUp(x, d) - x) < 1e-9 ? "=" : "\\approx");
 const dg = (x, d = 1) => `${tx(x, d)}^\\circ`;
 const cm = (x) => `${tx(x)}\\ \\mathrm{cm}`;
@@ -1715,19 +1676,4 @@ function lineT(kn, kd, nn, nd) {
   return a === 0 ? kx : `${kx} ${a < 0 ? "-" : "+"} ${ft(Math.abs(nn), nd)}`;
 }
 
-// Odgovor 0 je pogosto trivialen; tak primer zavržemo, razen kjer je 0 namenoma možen
-// odgovor (zeroOk). Tudi null (neprimerna kombinacija števil) ponovimo tukaj.
-const isZero = (a) => (a.type === "number" && Math.abs(a.value) < 1e-12) || (a.type === "fraction" && a.num === 0);
-export const MATURA_MAT_SS3 = GENS.map((gn) => ({
-  ...gn,
-  gen(level, r, topic) {
-    let t = null;
-    for (let i = 0; i < 60; i++) {
-      t = gn.gen(level, r, topic);
-      if (t && (t.zeroOk || !isZero(t.answer))) break;
-    }
-    if (!t || (!t.zeroOk && isZero(t.answer))) return null;
-    const { zeroOk, ...task } = t;
-    return task;
-  },
-}));
+export const MATURA_MAT_SS3 = wrapGens(GENS);

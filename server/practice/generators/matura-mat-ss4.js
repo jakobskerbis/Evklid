@@ -1,55 +1,18 @@
 // Generatorji za teme 4. letnika gimnazije, ki so prišle z maturitetno potjo (MAT-SS-4).
 // Merila: docs/kakovost.md §2. Vsi rezultati so izračunani v kodi iz istih (zaokroženih)
 // števil, ki jih vidi dijak. Izvirne naloge, ne prepisane maturitetne.
-import { NAMES, g, nOf } from "../rng.js";
-import { gcd, roundHalfUp } from "../check.js";
-import { choicesWhy, tx } from "./mat.js";
+import { g, nOf } from "../rng.js";
+import { roundHalfUp } from "../check.js";
+import { tx } from "./mat.js";
+import { num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
 
 const P = "mat-ss4-matura-";
 const T = (s) => `MAT-SS-4/${s}`;
 
 // ---------- pomožne funkcije ----------
-// Okrajšan ulomek s pozitivnim imenovalcem.
-function fr(n, d) {
-  if (d < 0) {
-    n = -n;
-    d = -d;
-  }
-  const k = gcd(n, d);
-  return [n / k, d / k];
-}
-const sameAt = (a, b, d) => Math.abs(roundHalfUp(a, d ?? 6) - roundHalfUp(b, d ?? 6)) < 1e-9;
-function cleanMistakes(value, decimals, mistakes) {
-  const ms = [];
-  for (const m of mistakes) {
-    if (!m || !Number.isFinite(m.value)) continue;
-    if (sameAt(m.value, value, decimals)) continue;
-    if (ms.some((x) => sameAt(x.value, m.value, decimals))) continue;
-    ms.push(m);
-  }
-  return ms.slice(0, 3);
-}
-// Številski odgovor; napake, ki bi se ujemale s pravilnim odgovorom ali med seboj, izpustimo.
-function num(value, decimals = null, mistakes = [], unit = null) {
-  const a = { type: "number", value, decimals, mistakes: cleanMistakes(value, decimals, mistakes) };
-  if (unit) a.unit = unit;
-  return a;
-}
 const eur = (value, mistakes = []) => ({ ...num(value, 2, mistakes, "€"), unitAlternatives: ["eur", "evrov", "evra"] });
-// Okrajšan ulomek kot odgovor (napake po vrednosti).
-function frA(n, d, mistakes = []) {
-  const [a, b] = fr(n, d);
-  return { type: "fraction", num: a, den: b, mistakes: cleanMistakes(a / b, 9, mistakes) };
-}
-// Ulomek v TeX (okrajšan): 3/4 → \frac{3}{4}, -6/3 → -2.
-function ft(n, d) {
-  const [a, b] = fr(n, d);
-  if (b === 1) return `${a}`;
-  return `${a < 0 ? "-" : ""}\\frac{${Math.abs(a)}}{${b}}`;
-}
 // Negativen izraz v oklepaju: pt("-3") → "(-3)".
 const pt = (s) => (String(s).startsWith("-") ? `(${s})` : `${s}`);
-const sg = (c) => (c < 0 ? `- ${tx(-c)}` : `+ ${tx(c)}`);
 function poly(cs, v = "x") {
   const n = cs.length - 1;
   let s = "";
@@ -82,8 +45,6 @@ const ap = (x, d) => (Math.abs(roundHalfUp(x, d) - x) < 1e-9 ? "=" : "\\approx")
 const txr = (x, d) => tx(roundHalfUp(x, d));
 const iv = (a, b) => (Number.isInteger(a) && Number.isInteger(b) ? `[${tx(a)}, ${tx(b)}]` : `[${tx(a)}; ${tx(b)}]`);
 // Izbirni odgovor z razlago vsake napačne možnosti: wrongs = [[možnost, "zakaj"], ...].
-const pickAns = (r, correct, wrongs) => ({ type: "choice", ...choicesWhy(r, correct, wrongs) });
-const name = (r) => r.pick(NAMES);
 const fact = (n) => (n <= 1 ? 1 : n * fact(n - 1));
 const C = (n, k) => (k < 0 || k > n ? 0 : Math.round(fact(n) / (fact(k) * fact(n - k))));
 const V = (n, k) => Math.round(fact(n) / fact(n - k));
@@ -1807,19 +1768,4 @@ const GENS = [
   },
 ];
 
-// Odgovor 0 je pogosto trivialen; tak primer zavržemo, razen kjer je 0 namenoma možen
-// odgovor (zeroOk). Tudi null (neprimerna kombinacija števil) ponovimo tukaj.
-const isZero = (a) => (a.type === "number" && Math.abs(a.value) < 1e-12) || (a.type === "fraction" && a.num === 0);
-export const MATURA_MAT_SS4 = GENS.map((gn) => ({
-  ...gn,
-  gen(level, r, topic) {
-    let t = null;
-    for (let i = 0; i < 60; i++) {
-      t = gn.gen(level, r, topic);
-      if (t && (t.zeroOk || !isZero(t.answer))) break;
-    }
-    if (!t) return null;
-    const { zeroOk, ...task } = t;
-    return task;
-  },
-}));
+export const MATURA_MAT_SS4 = wrapGens(GENS, { dropZero: false });

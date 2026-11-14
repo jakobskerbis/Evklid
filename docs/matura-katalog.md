@@ -22,9 +22,9 @@ krajših strukturiranih nalog (5–8 točk, skupaj 40). Višja raven: na vsaki p
 
 ## Povzetek pokritosti
 
-Postavk (vsebin in ciljev): 513. Pokrito (»da«): 393, delno: 92, manjka: 23, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 61, delno 15, manjka 11).
+Postavk (vsebin in ciljev): 513. Pokrito (»da«): 402, delno: 89, manjka: 17, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 65, delno 14, manjka 8).
 
-Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, 4. in 3. letnik: 14. 11. 2026).
+Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, 4., 3. in 2. letnik: 14. 11. 2026).
 
 ### Manjka
 
@@ -39,20 +39,14 @@ Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); 
 | 4.4 Algebrski izrazi, enačbe in neenačbe | Linearna neenačba s parametrom | VR |
 | 4.4 Algebrski izrazi, enačbe in neenačbe | razstavi izraze aⁿ ± bⁿ | VR |
 | 4.4 Algebrski izrazi, enačbe in neenačbe | obravnava preproste linearne neenačbe s parametrom | VR |
-| 4.5 Potence in koreni | Iracionalne enačbe | VR |
-| 4.5 Potence in koreni | prepozna iracionalno enačbo ter reši in utemelji korake pri reševanju iracionalnih enačb in interpretira rezultate | VR |
 | 4.6 Geometrija v ravnini in prostoru | Vzporedni premik, zrcaljenje, vrtež, orientacija trikotnika | OR+VR |
 | 4.6 Geometrija v ravnini in prostoru | Načrtovalne naloge | OR+VR |
 | 4.6 Geometrija v ravnini in prostoru | načrta geometrijske like z geometrijskim orodjem | OR+VR |
 | 4.6 Geometrija v ravnini in prostoru | (načrta geometrijske like) tudi s programi za dinamično geometrijo | VR |
-| 4.10 Funkcije (splošno) | nariše graf stopničaste funkcije | OR+VR |
 | 4.10.1 Linearna funkcija | Kot med premicama | OR+VR |
 | 4.10.1 Linearna funkcija | Gaussova eliminacijska metoda | VR |
 | 4.10.1 Linearna funkcija | Sistem linearnih neenačb | VR |
 | 4.10.1 Linearna funkcija | izračuna kot med premicama | OR+VR |
-| 4.10.4 Kvadratna funkcija | Presečišče dveh parabol | OR+VR |
-| 4.10.4 Kvadratna funkcija | Sistem kvadratnih neenačb | VR |
-| 4.17 Statistika | uporabi znanje o delu s podatki v celovitem postopku empiričnega preiskovanja (izbere temo, postavi preiskovalno vprašanje, zbere podatke, jih uredi in strukturira, analizira, prikaže in interpretira rezultate) | OR+VR |
 
 ## Oznaka višje ravni v lekcijah
 
@@ -244,7 +238,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Potence s celim eksponentom | OR+VR | `MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti` | da |
 | n-ti koreni | OR+VR | `MAT-SS-2/koreni` | da |
 | Potence z racionalnim eksponentom | OR+VR | `MAT-SS-2/potence-z-racionalnimi-eksponenti` | da |
-| Iracionalne enačbe | **VR** | – | manjka – le mimogrede √(x + 4) = 2 v funkcije-in-njihove-lastnosti |
+| Iracionalne enačbe | **VR** | `MAT-SS-2/iracionalne-enacbe` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
@@ -253,14 +247,14 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | razloži pomen zapisov a⁻¹ in a⁻ⁿ | OR+VR | `MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti` | da |
 | uporablja pravila za računanje s kvadratnimi koreni | OR+VR | `MAT-SS-2/koreni` | da |
 | reši kvadratno enačbo x² = a, a > 0, z razstavljanjem in s korenjenjem | OR+VR | `MAT-SS-2/kvadratna-enacba` | delno – korenjenje da; reševanje z razstavljanjem (razlika kvadratov) ni prikazano |
-| primerja in utemeljuje reševanje preprostih enačb xⁿ = a (a ∈ ℝ, n ∈ ℕ) v množici realnih števil s korenjenjem in z razstavljanjem | OR+VR | `MAT-SS-2/koreni` | delno – sod/lih n razložen; primerjava korenjenja in razstavljanja manjka |
+| primerja in utemeljuje reševanje preprostih enačb xⁿ = a (a ∈ ℝ, n ∈ ℕ) v množici realnih števil s korenjenjem in z razstavljanjem | OR+VR | `MAT-SS-2/koreni`, `MAT-SS-2/iracionalne-enacbe` | da – C3 (14. 11. 2026) |
 | razloži in uporablja zvezo √(x²) = \|x\| | OR+VR | `MAT-SS-2/koreni` | da |
 | računa kubične korene realnih števil natančno (na pamet) in z računalom | OR+VR | `MAT-SS-2/koreni` | delno – na pamet da; računanje z računalom ni prikazano |
 | razlikuje med določilnimi pogoji za obstoj n-tega korena realnega števila (glede na korenski eksponent in korenjenec) | OR+VR | `MAT-SS-2/koreni` | da |
 | spretno uporablja računalo za računanje n-tih korenov | OR+VR | `MAT-SS-2/koreni` | delno – uporaba računala za n-te korene ni prikazana |
 | preoblikuje zapis n-tega korena v zapis potence z racionalnim eksponentom | OR+VR | `MAT-SS-2/potence-z-racionalnimi-eksponenti` | da |
 | povezuje in primerja reševanje nalog z n-timi koreni z reševanjem s potencami z racionalnim eksponentom | OR+VR | `MAT-SS-2/potence-z-racionalnimi-eksponenti` | da |
-| prepozna iracionalno enačbo ter reši in utemelji korake pri reševanju iracionalnih enačb in interpretira rezultate | **VR** | – | manjka |
+| prepozna iracionalno enačbo ter reši in utemelji korake pri reševanju iracionalnih enačb in interpretira rezultate | **VR** | `MAT-SS-2/iracionalne-enacbe` | da – C3 (14. 11. 2026) |
 
 
 ### 4.6 Geometrija v ravnini in prostoru
@@ -401,8 +395,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | nariše, analizira graf funkcije s pomočjo vzporednega premika in raztega | OR+VR | `MAT-SS-2/transformacije-grafov` | da |
 | uporablja vzporedni premik, zrcaljenja in raztege pri reševanju problemskih nalog | OR+VR | `MAT-SS-2/transformacije-grafov` | da |
 | ugotovi obstoj inverzne funkcije na preprostih primerih, zapiše njen predpis in nariše graf inverzne funkcije k dani funkciji | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da |
-| analizira predpis in nariše graf funkcije z absolutno vrednostjo | **VR** | `MAT-SS-2/transformacije-grafov` | delno – le a\|x − p\| + q s transformacijami; obravnava po primerih manjka |
-| nariše graf stopničaste funkcije | OR+VR | – | manjka |
+| analizira predpis in nariše graf funkcije z absolutno vrednostjo | **VR** | `MAT-SS-2/transformacije-grafov`, `MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije` | da – C3 (14. 11. 2026) |
+| nariše graf stopničaste funkcije | OR+VR | `MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije` | da – C3 (14. 11. 2026) |
 | razloži pojem limite v dani točki na ustrezno izbranih primerih, ki so grafične, tabelarične ali analitične prezentacije funkcij | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da |
 | izračuna limito funkcije in razloži pomen dobljene limitne vrednosti | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da |
 | razloži pomen limite v neskončnosti | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da |
@@ -479,10 +473,10 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Uporaba kvadratne funkcije – ekstremalni problemi | **VR** | `MAT-SS-2/kvadratna-funkcija`, `MAT-SS-4/uporaba-odvoda` | delno – le teme v Primerih 2–3; sestavljanje funkcije šele v uporaba-odvoda Primer 3 |
 | Viètovi pravili | OR+VR | `MAT-SS-2/kvadratna-enacba` | da |
 | Kvadratna enačba | OR+VR | `MAT-SS-2/kvadratna-enacba` | da |
-| Presečišče parabole in premice | OR+VR | `MAT-SS-2/kvadratna-funkcija` | delno – le vodoravna premica (Primera 2, 3); splošna premica manjka |
-| Presečišče dveh parabol | OR+VR | – | manjka |
+| Presečišče parabole in premice | OR+VR | `MAT-SS-2/kvadratna-funkcija`, `MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb` | da – C3 (14. 11. 2026) |
+| Presečišče dveh parabol | OR+VR | `MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb` | da – C3 (14. 11. 2026) |
 | Kvadratna neenačba | OR+VR | `MAT-SS-2/kvadratna-neenacba` | da |
-| Sistem kvadratnih neenačb | **VR** | – | manjka |
+| Sistem kvadratnih neenačb | **VR** | `MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb` | da – C3 (14. 11. 2026) |
 | Modeliranje primerov iz vsakdanjega življenja s kvadratno funkcijo | **VR** | `MAT-SS-2/kvadratna-funkcija`, `MAT-SS-2/kvadratna-neenacba`, `MAT-SS-2/kvadratna-enacba` | da – model iz meritev v kvadratna-funkcija Primer 3; mešano z OR, brez oznake |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
@@ -831,5 +825,5 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | izračuna, oceni in interpretira srednjo vrednost, modus in mediano kot mere osredinjenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | ocenjuje preproste povezave med statističnimi spremenljivkami | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | izračuna, oceni in interpretira variacijski razmik, standardni odklon in medčetrtinski razmik kot mere razpršenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
-| uporabi znanje o delu s podatki v celovitem postopku empiričnega preiskovanja (izbere temo, postavi preiskovalno vprašanje, zbere podatke, jih uredi in strukturira, analizira, prikaže in interpretira rezultate) | OR+VR | – | manjka |
+| uporabi znanje o delu s podatki v celovitem postopku empiričnega preiskovanja (izbere temo, postavi preiskovalno vprašanje, zbere podatke, jih uredi in strukturira, analizira, prikaže in interpretira rezultate) | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 

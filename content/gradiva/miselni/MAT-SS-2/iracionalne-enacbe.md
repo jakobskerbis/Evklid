@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Iracionalna enačba
+  - neznanka pod korenom: $\sqrt{x + 6} = x$
+  - $\sqrt{2} \cdot x = 3$ ni iracionalna
+- Osamitev korena
+  - koren sam na eni strani
+  - napaka: kvadriranje vsote po členih
+- Pogoja
+  - $\sqrt{A} = B$: $A \ge 0$ in $B \ge 0$
+  - koren je vedno nenegativen
+- Kvadriranje
+  - iz $a^2 = b^2$ sledi $a = b$ ali $a = -b$
+  - ni ekvivalentno preoblikovanje
+- Preizkus
+  - navidezna rešitev: $x = -2$ pri $\sqrt{x + 6} = x$
+  - na grafu presečišče z $y = -\sqrt{x + 6}$
+- Dva korena
+  - osami, kvadriraj, osami, kvadriraj
+  - $(p + q)^2 = p^2 + 2pq + q^2$
+- Enačba $x^n = a$ (obe ravni)
+  - lihi $n$: $x = \sqrt[n]{a}$
+  - sodi $n$, $a > 0$: $x = \pm\sqrt[n]{a}$
+  - razstavljanje: $x^4 - 16 = (x - 2)(x + 2)(x^2 + 4)$
+- Rezultat v besedilu
+  - telesna površina: $m = \dfrac{3600\,S^2}{h}$
+  - nesmiseln kandidat odpade

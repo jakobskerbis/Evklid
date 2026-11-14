@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Stopničasta funkcija
+  - stalna na intervalih, med njimi skok
+  - štručke po 300 g: $n = \left\lfloor \frac{m}{300} \right\rfloor$
+- Polna pika in prazen krožec
+  - polna pika: točka je na grafu
+  - na skoku je polna natanko ena
+- Celi del
+  - največje celo število, ki ni večje od $x$
+  - $\lfloor -2{,}7 \rfloor = -3$, ne $-2$
+- Tarife
+  - »vsaka začeta ura«: polna pika desno
+  - vrednost: višina stopnice nad $x$
+- Absolutna vrednost po primerih
+  - (višja raven) ničle izrazov razdelijo os
+  - (višja raven) $|x - 1| + |x + 2|$: korito z dnom $3$
+- $|f(x)|$ proti $f(|x|)$
+  - (višja raven) $|f(x)|$: del pod osjo navzgor
+  - (višja raven) $f(|x|)$: desno polovico prezrcališ na levo
+- Enačbe z grafa
+  - (višja raven) premica $y = c$, presečišča so rešitve
+  - (višja raven) $|x^2 - 4| = 3$: štiri rešitve
