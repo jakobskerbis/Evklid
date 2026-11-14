@@ -222,7 +222,7 @@ Natančno navedi prvi zakon termodinamike in dokaži, da za reverzibilno adiabat
 1. Če zaprt sistem preide iz stanja 1 v stanje 2 in prejme toploto $Q$ in delo $A$, je $\Delta W_n = Q + A$; za majhno spremembo $\mathrm{d}W_n = \delta Q + \delta A$.
 2. Za idealni plin je $\mathrm{d}W_n = nC_V\,\mathrm{d}T$; pri reverzibilni spremembi je $\delta A = -p\,\mathrm{d}V$, pri adiabatni $\delta Q = 0$.
 3. Torej $nC_V\,\mathrm{d}T = -p\,\mathrm{d}V$. Iz $pV = nRT$ diferenciramo $p\,\mathrm{d}V + V\,\mathrm{d}p = nR\,\mathrm{d}T$ in izločimo $\mathrm{d}T$: $C_V(p\,\mathrm{d}V + V\,\mathrm{d}p) = -Rp\,\mathrm{d}V$.
-4. Z $C_V + R = C_p$ dobimo $C_pp\,\mathrm{d}V + C_VV\,\mathrm{d}p = 0$, torej $\kappa\frac{\mathrm{d}V}{V} + \frac{\mathrm{d}p}{p} = 0$.
+4. S $C_V + R = C_p$ dobimo $C_pp\,\mathrm{d}V + C_VV\,\mathrm{d}p = 0$, torej $\kappa\frac{\mathrm{d}V}{V} + \frac{\mathrm{d}p}{p} = 0$.
 5. Integracija: $\kappa\ln V + \ln p = \text{konst.}$, torej $pV^\kappa = \text{konst.}$
 6. Naklon: iz 4. koraka je za adiabato $\frac{\mathrm{d}p}{\mathrm{d}V} = -\kappa\frac{p}{V}$, iz $pV = \text{konst.}$ za izotermo $-\frac{p}{V}$. Ker je $\kappa = C_p/C_V > 1$, je adiabata v isti točki $\kappa$-krat bolj strma.
 7. Fizikalno: pri adiabatnem razširjanju plin opravlja delo na račun notranje energije, se ohlaja, zato tlak pade hitreje kot pri stalni temperaturi.

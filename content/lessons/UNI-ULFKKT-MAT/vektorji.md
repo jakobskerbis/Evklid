@@ -81,7 +81,7 @@ $(\vec{b}, \vec{a}, \vec{c}) = (\vec{b} \times \vec{a}) \cdot \vec{c} = -(\vec{a
 
 $$\vec{r} = \vec{r}_0 + t\,\vec{s}, \quad t \in \mathbb{R}, \qquad \text{oziroma} \qquad \frac{x - x_0}{s_1} = \frac{y - y_0}{s_2} = \frac{z - z_0}{s_3}.$$
 
-Prvi zapis je **parametrični** (vektorski), drugi **kanonični**. Premica skozi točki $A$ in $B$ ima smerni vektor $\overrightarrow{AB}$.
+Prvi zapis je **parametrični** (vektorski), drugi **kanonični** (če je kateri $s_i = 0$, mora biti ustrezni števec enak $0$). Premica skozi točki $A$ in $B$ ima smerni vektor $\overrightarrow{AB}$.
 
 **6. Ravnina.** Ravnino določata točka $T_0$ in **normala** $\vec{n} = (a, b, c)$, pravokotna na ravnino. Za vsako točko $T$ ravnine je $\vec{n} \cdot (\vec{r} - \vec{r}_0) = 0$, kar da
 
@@ -93,7 +93,7 @@ $$d(T_1, \Sigma) = \frac{|ax_1 + by_1 + cz_1 - d|}{\sqrt{a^2 + b^2 + c^2}}.$$
 
 *Izpeljava:* naj bo $T_0$ poljubna točka ravnine. Razdalja je dolžina projekcije vektorja $\overrightarrow{T_0T_1}$ na normalo, torej $\frac{|\vec{n} \cdot (\vec{r}_1 - \vec{r}_0)|}{|\vec{n}|}$; ker je $\vec{n} \cdot \vec{r}_0 = d$, je števec enak $|ax_1 + by_1 + cz_1 - d|$.
 
-Kot med dvema ravninama je kot med normalama; kot $\alpha$ med premico in ravnino izračunamo iz $\sin\alpha = \dfrac{|\vec{s} \cdot \vec{n}|}{|\vec{s}|\,|\vec{n}|}$.
+Kot med dvema ravninama je kot med normalama (če je ta top, vzamemo njegov suplement); kot $\alpha$ med premico in ravnino izračunamo iz $\sin\alpha = \dfrac{|\vec{s} \cdot \vec{n}|}{|\vec{s}|\,|\vec{n}|}$.
 
 **7. Medsebojna lega premic in razdalja točke do premice.** Premici s smernima vektorjema $\vec{s}_1$ in $\vec{s}_2$ skozi točki $T_1$ in $T_2$ sta lahko:
 
@@ -290,7 +290,7 @@ Premica torej prebode ravnino v točki $(-2, 4, -5)$ pod kotom približno $9{,}6
 
 ## Drugače: Bolj natančno
 
-**Cauchy-Schwarzeva neenakost.** $|\vec{a} \cdot \vec{b}| \le |\vec{a}|\,|\vec{b}|$, z enakostjo natanko za vzporedna vektorja. Za neničelna vektorja je zato kvocient $\frac{\vec{a} \cdot \vec{b}}{|\vec{a}||\vec{b}|}$ vedno v $[-1, 1]$ in kot je dobro definiran tudi v $\mathbb{R}^n$, kjer si ga ne moremo predstavljati.
+**Cauchy-Schwarzeva neenakost.** $|\vec{a} \cdot \vec{b}| \le |\vec{a}|\,|\vec{b}|$, z enakostjo natanko za vzporedna vektorja (ali ko je kateri ničeln). Za neničelna vektorja je zato kvocient $\frac{\vec{a} \cdot \vec{b}}{|\vec{a}||\vec{b}|}$ vedno v $[-1, 1]$ in kot je dobro definiran tudi v $\mathbb{R}^n$, kjer si ga ne moremo predstavljati.
 
 **Lagrangeova identiteta.** $|\vec{a} \times \vec{b}|^2 = |\vec{a}|^2|\vec{b}|^2 - (\vec{a} \cdot \vec{b})^2$. Ker je desna stran enaka $|\vec{a}|^2|\vec{b}|^2(1 - \cos^2\varphi)$, sledi $|\vec{a} \times \vec{b}| = |\vec{a}||\vec{b}|\sin\varphi$. Identiteto preveriš z razpisom komponent.
 

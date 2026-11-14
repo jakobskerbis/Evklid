@@ -163,7 +163,7 @@ Prištej $2n + 1$ obema stranema predpostavke: $1 + 3 + \dots + (2n-1) + (2n+1) 
 
 ## Pogoste napake
 
-- **Supremum je vedno element množice.** Napačno sklepanje: »$\sup [0, 1)$ ne obstaja, ker $1$ ni v množici.« Supremum je najmanjša zgornja meja in je lahko zunaj množice. V množici ni le *maksimum*. Popravek: ločuj $\sup$ in $\max$.
+- **Supremum je vedno element množice.** Napačno sklepanje: »$\sup [0, 1)$ ne obstaja, ker $1$ ni v množici.« Supremum je najmanjša zgornja meja in je lahko zunaj množice. V množici mora ležati le *maksimum*. Popravek: ločuj $\sup$ in $\max$.
 - **Katerakoli zgornja meja je supremum.** »$\sup [0, 1) = 2$, ker je $2$ zgornja meja.« Res je meja, ni pa najmanjša: tudi $1{,}5$ je meja. Popravek: preveri še pogoj z $\varepsilon$.
 - **Pogoj z $\varepsilon$ za en sam $\varepsilon$.** Kdor pokaže, da obstaja element nad $0{,}99$, še ni dokazal, da je $1$ supremum. Pogoj mora veljati za **vsak** $\varepsilon > 0$, zato $n$ izrazimo z $\varepsilon$.
 - **Indukcija brez baze.** »Če $n > n + 1$, potem $n + 1 > n + 2$« je pravilen korak, trditev pa je za vsak $n$ napačna. Korak sam ničesar ne dokaže. Popravek: vedno preveri bazo.
@@ -261,6 +261,6 @@ n_0 | začetna vrednost indukcije | | | trditev velja za vse n ≥ n₀
 T | trditev, odvisna od n | | | T(n) ⇒ T(n+1) je indukcijski korak
 A | množica realnih števil
 a | element množice A
-M | supremum (najmanjša zgornja meja) množice A | M = \sup A
+M | zgornja meja množice A; najmanjša zgornja meja je supremum | a \le M | | M = sup A, če je M najmanjša zgornja meja
 \varepsilon | poljubno majhno pozitivno število | | | ε > 0
 :::

@@ -101,7 +101,7 @@ Razmerje $\kappa = C_p/C_V$ (adiabatni eksponent) je $5/3 \approx 1{,}67$ za eno
 
 ### Primer 1 (lažji)
 
-Za alpinistično odpravo na osemtisočak napolnijo jeklenko s prostornino $20\,\mathrm{L}$; vsebuje kisik pod tlakom $150\,\mathrm{bar}$ pri temperaturi $20\,^\circ\mathrm{C}$. Kolikšna sta množina in masa kisika? Kolikšno prostornino bi ta kisik zavzel pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$? Kisik obravnavaj kot idealni plin.
+Za bazni tabor alpinistične odprave na osemtisočak napolnijo jeklenko s prostornino $20\,\mathrm{L}$; vsebuje kisik pod tlakom $150\,\mathrm{bar}$ pri temperaturi $20\,^\circ\mathrm{C}$. Kolikšna sta množina in masa kisika? Kolikšno prostornino bi ta kisik zavzel pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$? Kisik obravnavaj kot idealni plin.
 
 **Podatki:** $V = 20\,\mathrm{L} = 0{,}020\,\mathrm{m^3}$, $p = 150\,\mathrm{bar} = 1{,}50 \cdot 10^7\,\mathrm{Pa}$, $T = 293{,}15\,\mathrm{K}$, $M(\mathrm{O_2}) = 32\,\mathrm{g/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$; normalni pogoji $T_0 = 273{,}15\,\mathrm{K}$, $p_0 = 101\,325\,\mathrm{Pa}$
 **Iščemo:** množino $n$, maso $m$, prostornino $V_0$ pri normalnih pogojih
@@ -260,7 +260,7 @@ V diagramu $p(V)$ so izoterme hiperbole $p = nRT/V$; izoterma pri višji tempera
 
 **Osmozni tlak.** Za razredčene raztopine velja van 't Hoffova enačba $\Pi = cRT$ (oblika plinske enačbe $p = \frac{n}{V}RT$); z osmometrijo določajo molske mase polimerov in beljakovin.
 
-**Ločevanje izotopov in difuzija.** Hitrost izlivanja plina skozi drobne pore je sorazmerna z $v_{\text{ef}} \propto 1/\sqrt{M}$. Pri plinastem $\mathrm{UF_6}$ se izotopa urana razlikujeta le za faktor $\sqrt{352/349} \approx 1{,}004$, zato so difuzijske obogatitvene naprave potrebovale več sto zaporednih stopenj.
+**Ločevanje izotopov in difuzija.** Hitrost izlivanja plina skozi drobne pore je sorazmerna z $v_{\text{ef}} \propto 1/\sqrt{M}$. Pri plinastem $\mathrm{UF_6}$ se hitrosti molekul z izotopoma urana razlikujeta le za faktor $\sqrt{352/349} \approx 1{,}004$, zato so difuzijske obogatitvene naprave potrebovale več kot tisoč zaporednih stopenj.
 
 ## Drugače: Korak za korakom s številkami
 

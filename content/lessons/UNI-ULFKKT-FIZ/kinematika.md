@@ -84,7 +84,7 @@ Za met z vodoravnih tal in pristanek na isti višini veljajo:
 
 $$t_{\text{let}} = \frac{2v_0\sin\alpha}{g}, \qquad h_{\max} = \frac{v_0^2\sin^2\alpha}{2g}, \qquad D = \frac{v_0^2\sin 2\alpha}{g}.$$
 
-*Izpeljava.* Pristanek: $y = 0$ da $t(v_0\sin\alpha - \tfrac{1}{2}gt) = 0$, rešitev $t \ne 0$ je $t_{\text{let}}$. Vrh: $v_y = 0$ pri $t = t_{\text{let}}/2$, vstavimo v $y(t)$ in dobimo $h_{\max}$. Domet: $D = v_0\cos\alpha \cdot t_{\text{let}} = 2v_0^2\sin\alpha\cos\alpha/g$. Ker je $\sin 2\alpha \le 1$ z enakostjo pri $2\alpha = 90^\circ$, je domet največji pri $\alpha = 45^\circ$, koti $\alpha$ in $90^\circ - \alpha$ pa dasta enak domet. V najvišji točki je $v_y = 0$, hitrost pa ni nič: ostane $v_x$.
+*Izpeljava.* Pristanek: $y = 0$ da $t(v_0\sin\alpha - \tfrac{1}{2}gt) = 0$, rešitev $t \ne 0$ je $t_{\text{let}}$. Vrh: $v_y = 0$ pri $t = t_{\text{let}}/2$, vstavimo v $y(t)$ in dobimo $h_{\max}$. Domet: $D = v_0\cos\alpha \cdot t_{\text{let}} = 2v_0^2\sin\alpha\cos\alpha/g$. Ker je $\sin 2\alpha \le 1$ z enakostjo pri $2\alpha = 90^\circ$, je domet največji pri $\alpha = 45^\circ$, kota $\alpha$ in $90^\circ - \alpha$ pa dasta enak domet. V najvišji točki je $v_y = 0$, hitrost pa ni nič: ostane $v_x$.
 
 ### Kroženje in relativno gibanje
 

@@ -62,7 +62,7 @@ Zakaj so triploidni potomci skoraj vedno neplodni? Pomagaj si z mejozo.
 V mejozi I se homologni kromosomi združijo v pare. Pri treh kopijah vsakega kromosoma ostane eden brez para in naključno odide na eno stran. Gamete dobijo neuravnoteženo število kromosomov in večinoma niso sposobne za oploditev. Tetraploid in diploid sta zato v eni generaciji ločeni vrsti.
 :::
 
-**Filogenija.** Ker vse vrste izvirajo iz skupnih prednikov, njihovo sorodnost narišemo kot **filogenetsko drevo**. Vrhovi vej so današnje vrste. Vsako **vozlišče** je skupni prednik vrst nad njim. Koren je najstarejši skupni prednik vseh vrst na drevesu.
+**Filogenija.** Ker vse vrste izvirajo iz skupnih prednikov, njihovo sorodnost narišemo kot **filogenetsko drevo**. Vrhovi vej so današnje vrste. Vsako **vozlišče** je skupni prednik vrst, ki izhajajo iz njega. Koren je zadnji skupni prednik vseh vrst na drevesu (najstarejše vozlišče).
 
 ```
         ┌──── zebra
@@ -278,7 +278,7 @@ Zakon $\dfrac{p_t}{q_t} = \dfrac{p_0}{q_0}\left(\dfrac{w_R}{w_S}\right)^t$ iz ra
 ~ To je le opis slike in je točen.
 + Korak (2)
 - Korak (3)
-~ A je pod X, D pod Y, zato je njun najmlajši skupni prednik res koren.
+~ A izhaja iz X, D iz Y, zato je njun najmlajši skupni prednik res koren.
 > Sorodnost beremo po najmlajšem skupnem vozlišču. B in C se srečata šele v korenu, B in A pa že v X.
 
 ? Na golf igrišču so deset let škropili travo z istim herbicidom proti plevelu. Zdaj se enoletna latovka po škropljenju ne posuši več. Katera razlaga je najboljša?

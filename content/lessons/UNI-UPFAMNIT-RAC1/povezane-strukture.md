@@ -44,7 +44,7 @@ Vozlišča so lahko raztresena kjerkoli po pomnilniku, kot členi verige, ki le�
 :::premisli
 Tabela in seznam imata vsak po $6$ elementov. Koliko elementov moraš premakniti, ko vstaviš novega **na začetek**, in koliko, ko ga vstaviš **na konec** (v tabeli je na koncu še prostor)?
 ---
-Na začetek: v tabeli $6$ premikov, v seznamu nič, le $2$ kazalca. Na konec: v tabeli nič, v seznamu pa moraš najprej $5$-krat slediti kazalcem do zadnjega vozlišča (razen če si hraniš še kazalec na konec). Nobena struktura ni hitrejša pri vsem.
+Na začetek: v tabeli $6$ premikov, v seznamu nič, le $2$ kazalca. Na konec: v tabeli nič, v seznamu pa moraš najprej $6$-krat slediti kazalcem do zadnjega vozlišča (razen če si hraniš še kazalec na konec). Nobena struktura ni hitrejša pri vsem.
 :::
 
 **4. Alokacija pomnilnika.** Alokacija pomeni, da program od sistema dobi kos pomnilnika. Tabelo navadno ustvarimo naenkrat, z znano velikostjo, zato dobi en sam blok. Če se napolni, je ne moremo podaljšati na mestu, ker je za njo morda že nekaj drugega. Treba je zahtevati večji blok in vse prepisati.
@@ -63,7 +63,7 @@ V urejevalniku besedil vtipkaš »a«, nato »b«, nato »c« in dvakrat pritisn
 Ostane »a«. Razveljaviti želimo najprej **zadnjo** spremembo. To je LIFO, torej sklad. Vrsta bi najprej preklicala najstarejšo spremembo, recimo prvo vtipkano besedo, kar ni tisto, kar uporabnik pričakuje.
 :::
 
-**7. Drevo: več naslednikov.** Seznam ima v vsakem vozlišču en kazalec. Če vozlišču dovolimo več kazalcev, dobimo **drevo**. Vozlišča, na katera kaže neko vozlišče, so njegovi **otroci**, ono pa je njihov **starš**. Edino vozlišče brez starša je **koren**, vozlišča brez otrok so **listi**.
+**7. Drevo: več naslednikov.** Seznam ima v vsakem vozlišču en kazalec. Če vozlišču dovolimo več kazalcev, dobimo **drevo**. Vozlišča, na katera kaže neko vozlišče, so njegovi **otroci**, ono pa je njihov **starš**. Vsako vozlišče ima natanko enega starša, le **koren** ga nima; vozlišča brez otrok so **listi**.
 
 **Višina** drevesa je število povezav na najdaljši poti od korena do lista. Če ima vsako vozlišče največ dva otroka, je to **dvojiško drevo**.
 
@@ -116,7 +116,7 @@ Arhitekt hišo opiše kot drevo. Hiša ima $3$ nadstropja, vsako nadstropje ima 
 **Iščemo:** število vozlišč, število listov, višino drevesa
 
 :::formula
-Vozlišča štejemo po ravneh: število na ravni $=$ število na prejšnji ravni $\cdot$ število otrok. Listi so vozlišča na zadnji ravni, višina je število povezav od korena do lista.
+Vozlišča štejemo po ravneh: število na ravni $=$ število na prejšnji ravni $\cdot$ število otrok. Listi so vozlišča brez otrok (tukaj vsa na zadnji ravni), višina je število povezav od korena do lista.
 :::
 
 **Rešitev:**
@@ -172,7 +172,7 @@ Seznam: $1000 \cdot (4 + 8) = 12000\,\mathrm{B}$. To je $3$-krat več kot tabela
 Nariši pomnilnik kot dolg trak predalčkov z naslovi.
 
 - **Tabela** je en strnjen pas predalčkov, recimo od $1000$ do $1012$. Puščic ni, sosed je vedno tik ob tebi.
-- **Seznam** so trije predalčki na naslovih $1040$, $1008$ in $1100$. V vsakem je število in puščica na naslednji predalček. Puščice skačejo naprej in nazaj po traku.
+- **Seznam** so trije predalčki na naslovih $1040$, $1024$ in $1100$. V vsakem je število in puščica na naslednji predalček. Puščice skačejo naprej in nazaj po traku.
 - **Sklad** nariši navpično: stolpec škatel, roka sega le do zgornje.
 - **Vrsta** je vodoravna cev: vstopa se desno, izstopa levo.
 - **Drevo** nariši obrnjeno: koren zgoraj, iz njega veje navzdol do listov.

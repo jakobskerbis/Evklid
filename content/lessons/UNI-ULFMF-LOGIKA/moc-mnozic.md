@@ -116,7 +116,7 @@ Linearna funkcija, ki krajišče $0$ pošlje v $2$ in $1$ v $5$: $f(x) = 3x + 2$
 3. Surjektivnost: za $y \in (2, 5)$ je $x = \frac{y - 2}{3} \in (0, 1)$ in $f(x) = y$.
 4. $f(0{,}2) = 3 \cdot 0{,}2 + 2 = 2{,}6$.
 5. $f^{-1}(4{,}1) = \dfrac{4{,}1 - 2}{3} = 0{,}7$.
-6. Ker je $(2, 5) \sim (0, 1)$ in je $(0, 1)$ neštevna, je neštevna tudi $(2, 5)$. Če bi bila $(2, 5)$ števna, bi kompozitum z $f$ naštel tudi $(0, 1)$.
+6. Ker je $(2, 5) \sim (0, 1)$ in je $(0, 1)$ neštevna, je neštevna tudi $(2, 5)$. Če bi bila $(2, 5)$ števna, bi kompozitum njenega naštetja z $f^{-1}$ naštel tudi $(0, 1)$.
 7. Odgovor: intervala sta enako močna z bijekcijo $f(x) = 3x + 2$; $f(0{,}2) = 2{,}6$, v $4{,}1$ se preslika $0{,}7$; $(2, 5)$ je neštevna.
 
 ### Primer 3 (težji): diagonalno štetje parov
@@ -176,7 +176,7 @@ Kot unija dveh števnih množic bi bila $\mathbb{R}$ števna. To nasprotuje Cant
 
 - $A \sim B$ (enako močni), če obstaja bijekcija $A \to B$. Za $A \not\sim B$ moraš izključiti vse funkcije.
 - Števno neskončna: $A \sim \mathbb{N}$, moč $\aleph_0$; števna = končna ali števno neskončna = elemente lahko naštejemo v zaporedje.
-- Števne so: sodih števil, $\mathbb{Z}$ ($0, 1, -1, 2, -2, \dots$), $\mathbb{N} \times \mathbb{N}$ (diagonale), $\mathbb{Q}$. Podmnožica, končna unija in produkt števnih množic so števni.
+- Števne so: množica sodih števil, $\mathbb{Z}$ ($0, 1, -1, 2, -2, \dots$), $\mathbb{N} \times \mathbb{N}$ (diagonale), $\mathbb{Q}$. Podmnožica, končna unija in produkt števnih množic so števni.
 - Neštevne so: $(0, 1)$ (Cantorjev diagonalni argument), $\mathbb{R}$, vsak interval $(a, b)$, iracionalna števila; moč $\mathbb{R}$ je kontinuum $\mathfrak{c}$.
 - Neskončna množica je lahko enako močna s svojo pravo podmnožico.
 - $|A| \le |B|$ pomeni injekcijo $A \to B$; iz $|A| \le |B|$ in $|B| \le |A|$ sledi $|A| = |B|$.
@@ -187,7 +187,7 @@ Hotel ima sobe $1, 2, 3, \dots$ in vse so zasedene. Pride nov gost. Receptor vsa
 
 Pride avtobus z neskončno gosti $b_1, b_2, \dots$. Gost iz sobe $n$ se preseli v sobo $2n$, gost $b_k$ dobi sobo $2k - 1$. Spet so vsi nastanjeni. To je unija dveh števnih množic.
 
-Pride pa avtobus, v katerem ima vsak potnik za ime neskončno zaporedje ničel in enic. Takih potnikov ne moreš nastaniti, tudi v prazen hotel ne. Če bi jih razporedil po sobah, bi diagonalni potnik (v $k$-tem mestu ravno obratno od gosta v sobi $k$) ostal na cesti. To je neštevna množica.
+Pride pa avtobus, v katerem ima vsak potnik za ime neskončno zaporedje ničel in enic. Takih potnikov ne moreš nastaniti, tudi v prazen hotel ne. Če bi jih razporedil po sobah, bi diagonalni potnik (na $k$-tem mestu ravno obratno od gosta v sobi $k$) ostal na cesti. To je neštevna množica.
 
 ## Drugače: Korak za korakom s številkami
 

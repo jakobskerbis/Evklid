@@ -69,7 +69,7 @@ Splošna oblika je *ukaz, stikala, argumenti*, ločeni s presledki. **Stikalo** 
 
 *Vzorec namesto izbiranja.* Z miško klikneš vsako datoteko posebej. V ukazni vrstici napišeš **vzorec**: zvezdica `*` pomeni »poljubno zaporedje znakov«. Ukaz `mv *.fits surovi/` premakne vse datoteke s končnico `.fits` (zapis za astronomske posnetke) naenkrat.
 
-*Natančnost.* Raziskovalec odpusti marsikaj. Ukazna vrstica ne. Velike in male črke so različne (`Slike` ni `slike`), presledek pa loči argumente. Ime s presledkom zato zapiši v narekovaje: `cd "nocno nebo"`.
+*Natančnost.* Raziskovalec odpusti marsikaj. Ukazna vrstica ne. Velike in male črke so na Linuxu različne (`Slike` ni `slike`), presledek pa loči argumente. Ime s presledkom zato zapiši v narekovaje: `cd "nocno nebo"`.
 
 :::premisli
 V imeniku so `m31.fits`, `m42.fits` in `m42.png`. Katere datoteke zajame vzorec `m42.*` in katere `*.fits`?
@@ -228,7 +228,7 @@ Ukaz `..` je korak navzgor v hierarhiji: od Lune k Zemlji, od Zemlje k Soncu. Sk
 - Datoteke, izbrisane z `rm`, gredo najprej v koš.
 ~ Pri `rm` koša ni, datoteka je izbrisana takoj in dokončno.
 - `Meritve.csv` in `meritve.csv` sta ista datoteka.
-~ Velike in male črke so v imenih različne, zato sta to dve različni imeni.
+~ Velike in male črke so v imenih na Linuxu različne, zato sta to dve različni imeni.
 > `..` je starš trenutnega imenika; `cd ..` te premakne eno raven navzgor.
 
 ? V imeniku je $5$ datotek `.fits`, $4$ datoteke `.png` in $2$ datoteki `.txt`. Izvedeš `rm *.png`. Koliko datotek nato izpiše `ls`?

@@ -114,7 +114,7 @@ Razmerje $\frac{r_\mathrm{K}}{r_\mathrm{A}}$: $0{,}225$–$0{,}414$ da $4$; $0{,
 1. MgO: $\frac{0{,}072}{0{,}140} = 0{,}514$, v območju za $6$; vsak Mg je v oktaedru šestih kisikov (struktura NaCl).
 2. $\mathrm{SiO_2}$: $\frac{0{,}040}{0{,}140} = 0{,}286$, v območju za $4$; to je tetraeder $\mathrm{SiO_4}$.
 3. CsCl: $\frac{0{,}170}{0{,}181} = 0{,}939$, v območju za $8$; Cs je v središču kocke osmih Cl.
-4. Odgovor: koordinacijska števila so $6$, $4$ in $8$. Napovedi se ujemajo z izmerjenimi strukturami; pri razmerjih blizu meje (npr. $\mathrm{Al_2O_3}$) je pravilo le okvirno.
+4. Odgovor: koordinacijska števila so $6$, $4$ in $8$. Napovedi se ujemajo z izmerjenimi strukturami; pravilo pa je le okvirno in včasih odpove (npr. $\mathrm{Al_2O_3}$: razmerje okoli $0{,}38$ napove $4$, dejansko število je $6$).
 
 ### Primer 2
 
@@ -242,7 +242,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 - **Elektronika.** Podlage tiskanih vezij za močnostno elektroniko so iz $\mathrm{Al_2O_3}$ ali AlN (izolator, dobro prevaja toploto). Piezoelektrična keramika PZT je v ultrazvočnih senzorjih, merilnikih tlaka in vbrizgalnih šobah.
 - **Merilna tehnika.** Senzor kisika v izpušnem sistemu avtomobila (lambda sonda) je iz $\mathrm{ZrO_2}$, ki pri visoki temperaturi prevaja kisikove ione.
 - **Medicina.** Zobne krone in glave umetnih kolkov so iz $\mathrm{ZrO_2}$ in $\mathrm{Al_2O_3}$: obstojni, biokompatibilni in trdi.
-- **Letalstvo in promet.** Najnovejša potniška letala imajo okoli polovico strukturne mase iz ogljikovih kompozitov. Zavorni koluti športnih avtomobilov so iz ogljika, ojačenega s SiC (CMC). Lopatice vetrnih elektrarn so iz steklenih vlaken v smoli.
+- **Letalstvo in promet.** Najnovejša potniška letala imajo okoli polovico strukturne mase iz ogljikovih kompozitov. Zavorni koluti športnih avtomobilov so iz SiC, ojačenega z ogljikovimi vlakni (CMC). Lopatice vetrnih elektrarn so iz steklenih vlaken v smoli.
 - **Kontrola kakovosti.** Ker lom določa najdaljša razpoka, keramične in kompozitne dele pregledujejo z ultrazvokom in rentgensko tomografijo; razslojitev laminata je glavna napaka, ki jo iščejo.
 
 ## Drugače: Bolj natančno
@@ -275,7 +275,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 ~ Kompozit vzdolž vlaken ima več kot trikrat večje razmerje od aluminija.
 > $\frac{E}{\rho}$: kompozit $89$, jeklo $26{,}8$, aluminij $25{,}9$ (v $\mathrm{GPa\,cm^3/g}$).
 
-? Kaj se zgodi z natezno trdnostjo keramičnega dela, če največja površinska razpoka zraste za štirikrat?
+? Kaj se zgodi z natezno trdnostjo keramičnega dela, če se največja površinska razpoka podaljša na štirikratno dolžino?
 - Trdnost se zmanjša na četrtino.
 ~ Trdnost je obratno sorazmerna s korenom dolžine razpoke, ne z dolžino.
 + Trdnost se zmanjša na polovico.

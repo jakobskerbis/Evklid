@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Naredi poskus. Iz kartona izreži tri trakove, dolge $6\,\text{cm}$, $8\,\text{cm}$ in $10\,\text{cm}$. Konce speni s sponkami v trikotnik in ga postavi pokonci: dobiš preprosto stojalo za telefon. Poskusi ga stisniti v drugo obliko. Ne gre, trikotnik iz treh trakov je **tog**. Sošolec naj iz enako dolgih trakov naredi svojega. Položi ju drugega na drugega: natanko se prekrijeta.
+Naredi poskus. Iz kartona izreži tri trakove, dolge $6\,\text{cm}$, $8\,\text{cm}$ in $10\,\text{cm}$. Konce spni s sponkami v trikotnik in ga postavi pokonci: dobiš preprosto stojalo za telefon. Poskusi ga stisniti v drugo obliko. Ne gre, trikotnik iz treh trakov je **tog**. Sošolec naj iz enako dolgih trakov naredi svojega. Položi ju drugega na drugega: natanko se prekrijeta.
 
 Nato poskusi s trakovi $3\,\text{cm}$, $4\,\text{cm}$ in $8\,\text{cm}$. Konca krajših trakov se ne stakneta, trikotnika ni.
 

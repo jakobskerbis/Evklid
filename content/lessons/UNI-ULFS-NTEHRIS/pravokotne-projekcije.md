@@ -126,7 +126,7 @@ Dimetrija: $c' = \tfrac{1}{2} c$; izometrija: $B = (a + c)\cos 30^\circ$, $H = h
 
 ### Primer 4: zdaj ti
 
-Powerbank ima naris v obliki pravokotnika $90\,\mathrm{mm} \times 20\,\mathrm{mm}$ (širina × višina), tloris pa $90\,\mathrm{mm} \times 60\,\mathrm{mm}$ (širina × globina). Kakšen je pogled z leve in kam ga postaviš v evropski postavitvi?
+Prenosna baterija (powerbank) ima naris v obliki pravokotnika $90\,\mathrm{mm} \times 20\,\mathrm{mm}$ (širina × višina), tloris pa $90\,\mathrm{mm} \times 60\,\mathrm{mm}$ (širina × globina). Kakšen je pogled z leve in kam ga postaviš v evropski postavitvi?
 
 **Podatki:** naris $90 \times 20\,\mathrm{mm}$, tloris $90 \times 60\,\mathrm{mm}$, metoda E
 **Iščemo:** mere in lego stranskega risa

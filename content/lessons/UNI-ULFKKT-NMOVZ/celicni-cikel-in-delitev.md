@@ -33,7 +33,7 @@ Po S fazi je vsak kromosom iz dveh enakih molekul DNA, **sestrskih kromatid**. S
 | po mejozi I (npr. metafaza II) | $n = 23$ | $46$ | $2c$ |
 | po mejozi II | $23$ | $23$ | $c$ |
 
-Za interfazo sledi **faza M**: jedrska delitev (mitoza ali mejoza) in delitev citoplazme (**citokineza**).
+Za interfazo sledi **faza M**: delitev jedra (mitoza ali mejoza) in delitev citoplazme (**citokineza**).
 
 **Mitoza: kopija enaka izvirniku.** Mitoza iz ene diploidne celice naredi dve enaki diploidni celici.
 
@@ -184,7 +184,7 @@ Anafaza mitoze: $48$ kromosomov z eno kromatido, skupaj $48$ kromatid (vsaka kro
 
 ## Povzetek
 
-- Celični cikel: G1 → S (podvojevanje DNA) → G2 → M (jedrska delitev in citokineza).
+- Celični cikel: G1 → S (podvojevanje DNA) → G2 → M (delitev jedra in citokineza).
 - Po S fazi ima kromosom dve sestrski kromatidi, ki ju drži kohezin; število kromosomov ostane, DNA se podvoji ($2c \to 4c$).
 - Mitoza: separaza razreže kohezin, sestrske kromatide se ločijo; nastaneta dve enaki diploidni celici.
 - Mejoza: ena S faza, dve delitvi. Mejoza I (parjenje, prekrižanje, ločitev homologov) razpolovi število kromosomov; mejoza II loči sestrske kromatide. Nastanejo štiri različne haploidne celice; neodvisno razporejanje da $2^n$ kombinacij.
@@ -219,7 +219,7 @@ Rž ima $2n = 14$, celica v G1 vsebuje približno $16\,\mathrm{pg}$ DNA. (a) Kol
 
 ### Naloga 2
 
-Utemelji, zakaj se v anafazi I ločita homologna kromosoma, sestrski kromatidi pa ostaneta skupaj, in zakaj zato mejoza I razpolovi število kromosomov, mejoza II pa ne. Nato opiši, kako kontrolna točka delitvenega vretena prepreči anafazo, dokler en sam kinetohor ni pripet.
+Utemelji, zakaj se v anafazi I ločita homologna kromosoma, sestrski kromatidi pa ostaneta skupaj, in zakaj zato mejoza I razpolovi število kromosomov, mejoza II pa ne. Nato opiši, kako kontrolna točka delitvenega vretena prepreči anafazo, dokler je vsaj en kinetohor še nepripet.
 
 **Rešitev:**
 
@@ -268,7 +268,7 @@ Na en pol gre cel debel »X«, na drugega cel tanek; v mejozi II se »X« razpre
 ~ Kromosomi so v profazi že podvojeni, vidni postanejo, ker se zgostijo. DNA se podvoji v S fazi.
 + V G2 ima vsak kromosom dve sestrski kromatidi, število kromosomov pa je enako kot v G1.
 - Kontrolna točka G1/S sama popravi poškodovano DNA.
-~ Kontrolna točka cikel le ustavi (npr. p53 → p21 zavre CDK); popravijo ga popravljalni encimi.
+~ Kontrolna točka cikel le ustavi (npr. p53 → p21 zavre CDK); DNA popravijo popravljalni encimi.
 - Mejoza I loči sestrski kromatidi, mejoza II pa homologna kromosoma.
 ~ Vrstni red je obraten: v mejozi I se ločita homologa, v mejozi II sestrski kromatidi.
 > S faza podvoji DNA, ne kromosomov: v G2 je $46$ kromosomov s po dvema kromatidama.

@@ -77,7 +77,7 @@ Plastenka. Pri hitrem ohlajanju verige nimajo časa, da bi se zložile, zato ost
 
 Čista kovina se pri segrevanju stali pri eni sami temperaturi. Pri polimerih sta pomembni dve:
 
-**Definicija.** **Temperatura steklastega prehoda** $T_g$ je temperatura, pod katero so segmenti verig v amorfnih področjih zamrznjeni (polimer je trd in krhek kot steklo), nad njo pa se lahko segmenti vrtijo okoli vezi (polimer je usnjat ali gumijast). Pri $T_g$ se skokovito spremenita toplotna kapaciteta in temperaturni razteznostni koeficient, modul pa pade za dva do tri velikostne rede. **Tališče** $T_m$ je temperatura, pri kateri se stalijo kristalna področja; amorfni polimer ga nima.
+**Definicija.** **Temperatura steklastega prehoda** $T_g$ je temperatura, pod katero so segmenti verig v amorfnih področjih zamrznjeni (polimer je trd in krhek kot steklo), nad njo pa se lahko segmenti vrtijo okoli vezi (polimer je usnjat ali gumijast). Pri $T_g$ se skokovito spremenita toplotna kapaciteta in temperaturni razteznostni koeficient, modul pa pade za okoli tri velikostne rede. **Tališče** $T_m$ je temperatura, pri kateri se stalijo kristalna področja; amorfni polimer ga nima.
 
 Pri mnogih polimerih je $T_g$ (v kelvinih) med polovico in dvema tretjinama $T_m$. Primeri: PE $T_g \approx -120\,^\circ\mathrm{C}$, $T_m \approx 135\,^\circ\mathrm{C}$; PP $-10$ in $165\,^\circ\mathrm{C}$; PET $75$ in $255\,^\circ\mathrm{C}$; PS (ataktni) $T_g \approx 100\,^\circ\mathrm{C}$ brez tališča; PVC $T_g \approx 80\,^\circ\mathrm{C}$. PE je pri sobni temperaturi nad $T_g$, zato je žilav in upogljiv; PS je pod $T_g$, zato je trd in krhek kot lonček za jogurt.
 
@@ -113,13 +113,13 @@ Iz enačbe za $G$ razloži uganko iz uvoda: zakaj se raztegnjen gumijast trak pr
 $G$ je sorazmeren s temperaturo $T$. Ko trak segrejemo, se sila pri isti dolžini poveča; ker utež ostane enaka, se trak skrči, dokler se sila ne izenači s težo. Toplotno gibanje verige bolj zvija in povečuje njihovo entropijo. Pri jeklu ni tega učinka, ker je njegova elastičnost energijska.
 :::
 
-**Druge lastnosti.** Polimeri so dobri električni in toplotni izolatorji ($\lambda$ okoli $0{,}2\,\mathrm{W/(m\,K)}$), imajo okoli desetkrat večji temperaturni raztezek od jekla, so kemijsko odporni, a jih razgrajujejo UV svetloba, kisik pri povišani temperaturi in nekatera topila; večina gori. Lastnosti prilagodimo z **dodatki**: mehčala (PVC za kable), stabilizatorji proti UV, polnila in vlakna (steklena vlakna v PA).
+**Druge lastnosti.** Polimeri so dobri električni in toplotni izolatorji (toplotna prevodnost okoli $0{,}2\,\mathrm{W/(m\,K)}$), imajo okoli desetkrat večji temperaturni raztezek od jekla, so kemijsko odporni, a jih razgrajujejo UV svetloba, kisik pri povišani temperaturi in nekatera topila; večina gori. Lastnosti prilagodimo z **dodatki**: mehčala (PVC za kable), stabilizatorji proti UV, polnila in vlakna (steklena vlakna v PA).
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
 
-Proizvajalec cevi kupuje polietilen s številskim povprečjem molske mase $140\,000\,\mathrm{g/mol}$. Kolikšna je povprečna stopnja polimerizacije? Koliko ponavljajočih se enot ima povprečna veriga PVC s $M_n = 100\,000\,\mathrm{g/mol}$? Molske mase: $\mathrm{C}$ $12{,}011\,\mathrm{g/mol}$; $\mathrm{H}$ $1{,}008\,\mathrm{g/mol}$; $\mathrm{Cl}$ $35{,}45\,\mathrm{g/mol}$.
+Proizvajalec cevi kupuje polietilen s številskim povprečjem molske mase $140\,000\,\mathrm{g/mol}$. Kolikšna je povprečna stopnja polimerizacije? Koliko ponavljajočih se enot ima povprečna veriga PVC z $M_n = 100\,000\,\mathrm{g/mol}$? Molske mase: $\mathrm{C}$ $12{,}011\,\mathrm{g/mol}$; $\mathrm{H}$ $1{,}008\,\mathrm{g/mol}$; $\mathrm{Cl}$ $35{,}45\,\mathrm{g/mol}$.
 
 **Podatki:** $M_n(\mathrm{PE}) = 140\,000\,\mathrm{g/mol}$, $M_n(\mathrm{PVC}) = 100\,000\,\mathrm{g/mol}$, ponavljajoči se enoti $\mathrm{C_2H_4}$ in $\mathrm{C_2H_3Cl}$, $M(\mathrm{C}) = 12{,}011\,\mathrm{g/mol}$, $M(\mathrm{H}) = 1{,}008\,\mathrm{g/mol}$, $M(\mathrm{Cl}) = 35{,}45\,\mathrm{g/mol}$
 **Iščemo:** stopnji polimerizacije $n_\mathrm{PE}$ in $n_\mathrm{PVC}$
@@ -305,7 +305,7 @@ Zamrežen polimer (elastomer) ostane na vodoravnem gumijastem delu, termoplast s
 
 **Cevi za vodo in plin.** Cevi iz PE-HD (PE 100) dimenzioniramo po **najmanjši zahtevani trdnosti** po $50$ letih pri $20\,^\circ\mathrm{C}$, ki jo določijo s preizkusi lezenja pri več temperaturah in ekstrapolacijo. Zato je dovoljeni tlak cevi občutno nižji, kot bi kazala kratkotrajna natezna trdnost.
 
-**Brizganje in kalupi.** Delno kristalinični termoplasti se pri ohlajanju bolj skrčijo (PP, PA okoli $1$ do $2\,\%$) kot amorfni (PS, PC okoli $0{,}5\,\%$), zato morajo biti kalupi za njih večji. Hitrost ohlajanja v kalupu določa kristaliničnost in s tem togost izdelka.
+**Brizganje in kalupi.** Delno kristalinični termoplasti se pri ohlajanju bolj skrčijo (PP, PA okoli $1$ do $2\,\%$) kot amorfni (PS, PC okoli $0{,}5\,\%$), zato morajo biti kalupi zanje večji. Hitrost ohlajanja v kalupu določa kristaliničnost in s tem togost izdelka.
 
 **Kompozitne konstrukcije.** Lopatice vetrnic, deli letal in čolni so iz epoksidne ali poliestrske smole s steklenimi ali ogljikovimi vlakni. Duromerna matrica drži vlakna in prenaša obremenitev nanje; temperatura uporabe mora biti precej pod $T_g$ utrjene smole, ki jo kontrolirajo z diferenčno dinamično kalorimetrijo (DSC).
 
@@ -327,7 +327,7 @@ Zamrežen polimer (elastomer) ostane na vodoravnem gumijastem delu, termoplast s
 + Pri $T_g$ postanejo segmenti verig v amorfnih področjih gibljivi in modul močno pade.
 - Popolnoma kristalen polimer ima izrazitejši $T_g$ kot amorfen.
 ~ Steklasti prehod je lastnost amorfne faze; več kristaliničnosti pomeni šibkejši prehod, popolnoma kristalen polimer ga ne bi imel.
-> Pod $T_g$ so segmenti zamrznjeni in polimer je steklast; nad njim se lahko vrtijo okoli vezi, modul pade za dva do tri velikostne rede.
+> Pod $T_g$ so segmenti zamrznjeni in polimer je steklast; nad njim se lahko vrtijo okoli vezi, modul pade za okoli tri velikostne rede.
 
 ? Polipropilen ima molsko maso ponavljajoče enote $42{,}08\,\mathrm{g/mol}$. Kolikšna je stopnja polimerizacije vzorca z $M_n = 210\,000\,\mathrm{g/mol}$?
 - okoli $8{,}8 \cdot 10^6$

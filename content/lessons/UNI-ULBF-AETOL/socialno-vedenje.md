@@ -23,7 +23,7 @@ Da. Polsorojenec nosi četrtino njenih genov: $3 \cdot 0{,}25 = 0{,}75$ točke, 
 
 **Od primera k pojmom.** V primeru smo uporabili tri ideje, ki jih zdaj poimenujemo.
 
-**Altruizem** (v biološkem smislu) je vedenje, pri katerem izvajalec zmanjša svojo neposredno uspešnost (število lastnih potomcev), prejemnik pa jo poveča. Namen ali občutki pri tem niso pomembni, štejejo posledice za razmnoževanje. Hamilton je socialne interakcije razvrstil po učinku na oba udeleženca:
+**Altruizem** (v biološkem smislu) je vedenje, pri katerem izvajalec zmanjša svojo neposredno uspešnost (število lastnih potomcev), prejemniku pa jo poveča. Namen ali občutki pri tem niso pomembni, štejejo posledice za razmnoževanje. Hamilton je socialne interakcije razvrstil po učinku na oba udeleženca:
 
 | | prejemnik pridobi | prejemnik izgubi |
 |---|---|---|
@@ -32,7 +32,7 @@ Da. Polsorojenec nosi četrtino njenih genov: $3 \cdot 0{,}25 = 0{,}75$ točke, 
 
 **Koeficient sorodnosti** $r$ je verjetnost, da ima sorodnik na nekem mestu v genomu isti alel kot jaz, podedovan od skupnega prednika. Pri diploidnih živalih velja: starš in potomec $0{,}5$, polna sorojenca $0{,}5$, polsorojenca $0{,}25$, teta in nečakinja $0{,}25$, bratranca $0{,}125$.
 
-**Sorodstvena selekcija** je izbor genov prek uspeha sorodnikov, ki nosijo kopije istih genov. Osebek gene ne prenaša le z lastnimi potomci (*neposredna uspešnost*), ampak tudi s pomočjo sorodnikom (*posredna uspešnost*). Vsota obeh je **celokupna uspešnost** (*inclusive fitness*).
+**Sorodstvena selekcija** je izbor genov prek uspeha sorodnikov, ki nosijo kopije istih genov. Osebek genov ne prenaša le z lastnimi potomci (*neposredna uspešnost*), ampak tudi s pomočjo sorodnikom (*posredna uspešnost*). Vsota obeh je **celokupna uspešnost** (*inclusive fitness*).
 
 **Hamiltonovo pravilo.** Gen za altruistično vedenje se v populaciji širi, če velja
 
@@ -42,7 +42,7 @@ Tu je $C$ število lastnih potomcev, ki jih izvajalec izgubi, $B$ število dodat
 
 Živali ne računajo. Pravilo opisuje, kateri geni se širijo. V praksi osebki sorodnike prepoznajo po posrednih znakih: kdo je odraščal v istem gnezdu, kako diši, kako se oglaša.
 
-**Altruizem med nesorodniki.** Tudi nesorodniki si včasih pomagajo, če se uslugo vrne. To je **vzajemni altruizem**: netopirji vampirji delijo kri s sosedom, ki jim je pomagal prejšnjo noč. Deluje le pri osebkih, ki se pogosto srečujejo in si zapomnijo, kdo je goljufal.
+**Altruizem med nesorodniki.** Tudi nesorodniki si včasih pomagajo, če se usluga vrne. To je **vzajemni altruizem**: netopirji vampirji delijo kri s sosedom, ki jim je pomagal prejšnjo noč. Deluje le pri osebkih, ki se pogosto srečujejo in si zapomnijo, kdo je goljufal.
 
 **Evsocialnost** je najvišja stopnja socialnosti. Izpolnjeni morajo biti trije pogoji:
 
@@ -50,9 +50,9 @@ Tu je $C$ število lastnih potomcev, ki jih izvajalec izgubi, $B$ število dodat
 2. prekrivanje vsaj dveh odraslih generacij v koloniji,
 3. delitev razmnoževalnega dela: nekateri osebki se razmnožujejo, drugi so (skoraj) neplodni.
 
-Evsocialni so mnogi kožekrilci (mravlje, nekatere čebele in ose), vsi termiti, gola podgana (*Heterocephalus glaber*) in nekatere vrste kozic.
+Evsocialni so mnogi kožekrilci (mravlje, nekatere čebele in ose), vsi termiti, goli peskar (*Heterocephalus glaber*) in nekatere vrste kozic.
 
-**Haplodiploidija.** Pri kožekrilcih se samice razvijejo iz oplojenih jajčec (diploidne), samci iz neoplojenih (haploidni). Oče ima en sam niz kromosomov, zato vse hčere od njega dobijo enako polovico genoma. Na očetovi polovici imata sestri zagotovo isti alel, na materini le v polovici primerov. Sestri sta si zato v sorodu z $r = 0{,}75$, s hčero pa bi bila delavka le $0{,}5$. Vzgoja sester bi tako prinesla več kopij genov kot vzgoja hčera.
+**Haplodiploidija.** Pri kožekrilcih se samice razvijejo iz oplojenih jajčec (diploidne), samci iz neoplojenih (haploidni). Oče ima en sam niz kromosomov, zato vse hčere od njega dobijo enako polovico genoma. Na očetovi polovici imata sestri zagotovo isti alel, na materini le v polovici primerov. Sestri sta si zato v sorodu z $r = 0{,}75$, s hčerjo pa bi bila delavka le $0{,}5$. Vzgoja sester bi tako prinesla več kopij genov kot vzgoja hčera.
 
 :::premisli
 Matica se pari z dvema samcema in vsak oplodi polovico jajčec. Napovej: ali so delavke v povprečju še vedno bolj sorodne sestram kot lastnim hčeram?
@@ -144,7 +144,7 @@ Bratje: $4 \cdot 0{,}25 = 1$ točka, skupaj $3 + 1 = 4$. Lastni potomci: $8 \cdo
 - **»Za dobro vrste.«** Študent razloži, da se delavke žrtvujejo, ker to koristi vrsti. Toda gen, ki osebek žrtvuje za *katerikoli* osebek vrste, bi izpodrinili sebični aleli. Altruizem se širi zato, ker pomoč dobijo nosilci istih alelov, torej sorodniki. Pomembna je sorodnost $r$, ne pripadnost vrsti.
 - **$r$ kot delež skupnih genov.** »Človek in šimpanz imata skupnih $98\,\%$ genov, torej $r = 0{,}98$.« Ne: $r$ meri verjetnost istega alela *zaradi skupnega nedavnega prednika*, nad povprečjem populacije. Za brata je $0{,}5$, ne $0{,}999$.
 - **Primerjava $B$ s $C$ brez $r$.** »Korist $3$ je večja od cene $1$, zato se vedno izplača.« Pri bratrancu je $rB = 0{,}125 \cdot 3$, kar je manj od $1$. Korist moraš vedno pomnožiti s sorodnostjo.
-- **»Haplodiploidija razloži evsocialnost.«** Termiti in gole podgane so diploidni in evsocialni, mnogo haplodiploidnih os pa ni. Poleg tega so bratje delavki sorodni le z $0{,}25$, matice pa se pogosto parijo z več samci. Danes imata večjo težo izvorna monogamija matic in ekološki pogoji (dragoceno gnezdo, ki ga je vredno braniti).
+- **»Haplodiploidija razloži evsocialnost.«** Termiti in goli peskarji so diploidni in evsocialni, mnogo haplodiploidnih os pa ni. Poleg tega so bratje delavki sorodni le z $0{,}25$, matice pa se pogosto parijo z več samci. Danes imata večjo težo izvorna monogamija matic in ekološki pogoji (dragoceno gnezdo, ki ga je vredno braniti).
 - **»Žival oceni sorodnost in se odloči.«** Hamiltonovo pravilo opisuje izbor genov čez generacije, ne zavestnega računa. Mehanizmi so preprosti: domačnost, vonj, skupno gnezdo.
 
 ## Povzetek
@@ -190,14 +190,14 @@ Pri $k = 1$ je $0{,}75$, pri $k = 2$ je $0{,}5$, pri $k = 10$ le $0{,}3$. Pri me
 
 ## Preveri se
 
-? Pri golih podganah se v koloniji razmnožuje ena sama samica, več generacij skupaj skrbi za mladiče, večina osebkov pa se nikoli ne razmnoži. Kateri pojem opisuje tako organizacijo?
+? Pri golih peskarjih se v koloniji razmnožuje ena sama samica, več generacij skupaj skrbi za mladiče, večina osebkov pa se nikoli ne razmnoži. Kateri pojem opisuje tako organizacijo?
 - vzajemni altruizem
 ~ Vzajemni altruizem je izmenjava uslug med (pogosto nesorodnimi) osebki, ne zgradba kolonije s kastami.
 - sorodstvena selekcija
 ~ Sorodstvena selekcija je mehanizem, ki lahko razloži nastanek kolonije, ne ime za samo organizacijo.
 + evsocialnost
 - haplodiploidija
-~ Haplodiploidija je način določanja spola pri kožekrilcih. Gole podgane so diploidne.
+~ Haplodiploidija je način določanja spola pri kožekrilcih. Goli peskarji so diploidni.
 > Izpolnjeni so vsi trije pogoji evsocialnosti: skupna skrb za zarod, prekrivanje generacij in delitev razmnoževalnega dela.
 
 ? Razvrsti sorodnike diploidne živali po koeficientu sorodnosti od največjega do najmanjšega.

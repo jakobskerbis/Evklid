@@ -192,7 +192,7 @@ Mikrotubul v poskusu raste s hitrostjo $1{,}2\,\mu\mathrm m/\mathrm{min}$ štiri
 1. (a) Dolžina: $L = 1{,}2 \cdot 4 = 4{,}8\,\mu\mathrm m$. Razpad: $4{,}8 / 15 = 0{,}32\,\mathrm{min} = 19{,}2\,\mathrm s$.
 2. (b) Hitrost rasti v nanometrih: $1{,}2\,\mu\mathrm m/\mathrm{min} = 1200 / 60 = 20\,\mathrm{nm/s}$. Na en protofilament je to $20 / 8 = 2{,}5$ dimera na sekundo, na $13$ protofilamentov $2{,}5 \cdot 13 = 32{,}5$ dimera na sekundo.
 3. (c) Mikrotubul ima $1625$ dimerov na mikrometer (Primer 1), torej $4{,}8 \cdot 1625 = 7800$ dimerov. Hidrolizira se $7800$ molekul GTP.
-4. (d) Sproščanje: $7800 / 19{,}2 \approx 406$ dimerov na sekundo, okoli dvanajstkrat hitreje od pritrjevanja.
+4. (d) Sproščanje: $7800 / 19{,}2 \approx 406$ dimerov na sekundo, $12{,}5$-krat hitreje od pritrjevanja.
 5. Pomen: hitri razpad omogoči, da se vreteno v sekundah preuredi; energijo zanj je mikrotubul »shranil« v napetosti tubulina z GDP.
 6. Odgovor: (a) $4{,}8\,\mu\mathrm m$, $19{,}2\,\mathrm s$; (b) $32{,}5$ dimera na sekundo; (c) $7800$; (d) okoli $406$ na sekundo.
 

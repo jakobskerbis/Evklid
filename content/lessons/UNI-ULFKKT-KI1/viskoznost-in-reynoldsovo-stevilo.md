@@ -13,7 +13,7 @@ Bernoullijeva enačba trenja ne pozna. V ceveh, črpalkah, reaktorjih in žilah 
 
 ### Slika 1: plasti med ploščama
 
-**Viskoznost kot notranje trenje.** Vzemi tanko plast tekočine med dvema vzporednima ploščama. Spodnja plošča miruje, zgornjo vlečemo s stalno hitrostjo. Tekočina se drži obeh plošč: ob spodnji miruje, ob zgornji se giblje z njo. Vmes se plasti tekočine drsajo druga ob drugi, vsaka nekoliko hitreje od tiste pod njo.
+**Viskoznost kot notranje trenje.** Vzemi tanko plast tekočine med dvema vzporednima ploščama. Spodnja plošča miruje, zgornjo vlečemo s stalno hitrostjo. Tekočina se drži obeh plošč: ob spodnji miruje, ob zgornji se giblje z njo. Vmes plasti tekočine drsijo druga ob drugi, vsaka nekoliko hitreje od tiste pod njo.
 
 Diagram v besedah (prerez, hitrost plasti je dolžina puščice):
 
@@ -173,7 +173,7 @@ $v = \dfrac{\mathrm{Re}\, \mu}{\rho\, D}$, $Q = v \cdot \dfrac{\pi D^2}{4}$, $\D
 6. Tok je laminaren, zato smemo uporabiti Hagen-Poiseuillov zakon: $\Delta p = \dfrac{32 \cdot 0{,}001 \cdot 2{,}0 \cdot 0{,}2104}{0{,}010^2}\,\mathrm{Pa} \approx 135\,\mathrm{Pa}$.
 7. Ta padec mora dati hidrostatični tlak stolpca vode: $h = \dfrac{\Delta p}{\rho g} = \dfrac{134{,}7}{998 \cdot 9{,}81}\,\mathrm{m} \approx 0{,}0138\,\mathrm{m}$.
 8. Hitrost v osi je pri laminarnem toku dvakratnik povprečne: $v_\mathrm{max} = 2 \cdot 0{,}2104\,\mathrm{m/s} \approx 0{,}421\,\mathrm{m/s}$.
-9. Odgovor: laminarni tok dobimo le pri pretoku pod približno $1\,\mathrm{L/min}$; tlačni padec je tedaj okoli $135\,\mathrm{Pa}$, za kar zadošča gladina le $1{,}4\,\mathrm{cm}$ nad iztokom, voda v osi pa teče z $0{,}42\,\mathrm{m/s}$. Zato voda v ceveh skoraj vedno teče turbulentno.
+9. Odgovor: laminarni tok dobimo le pri pretoku pod približno $1\,\mathrm{L/min}$; tlačni padec je tedaj okoli $135\,\mathrm{Pa}$, za kar zadošča gladina le $1{,}4\,\mathrm{cm}$ nad iztokom, voda v osi pa teče z $0{,}42\,\mathrm{m/s}$. (Zanemarjena kinetična energija curka, pri paraboličnem profilu $\rho \bar v^2$, bi dodala še okoli $44\,\mathrm{Pa}$ oziroma dobre $4\,\mathrm{mm}$ višine.) Zato voda v ceveh skoraj vedno teče turbulentno.
 
 ### Primer 4: zdaj ti
 
@@ -261,7 +261,7 @@ Natančno navedi pogoje in izpelji profil hitrosti laminarnega toka v ravni okro
 
 - **Kapilarni viskozimeter.** V Ubbelohdejevem ali Ostwaldovem viskozimetru odmerjena prostornina kapljevine laminarno izteče skozi kapilaro pod lastno težo. Po Hagen-Poiseuillu je čas iztekanja sorazmeren s kinematično viskoznostjo, $\nu = K t$, konstanto $K$ pa umerimo s standardom znane viskoznosti. Tako merijo viskoznost olj in raztopin polimerov.
 - **Rotacijski viskozimeter in reometer.** Merita navor pri znani strižni hitrosti (valja ali stožec in plošča, Couettov tok). Iz krivulje $\tau$ v odvisnosti od $\mathrm{d}v/\mathrm{d}y$ ugotovimo, ali je vzorec newtonski; tako preverjajo barve, kreme in taline polimerov.
-- **Cevovodi in črpalke.** Inženir najprej izračuna Re, saj od njega zavisi koeficient trenja in s tem tlačni padec ter moč črpalke. Viskozna olja črpajo ogreta, da se $\mu$ zmanjša.
+- **Cevovodi in črpalke.** Inženir najprej izračuna Re, saj je od njega odvisen koeficient trenja in s tem tlačni padec ter moč črpalke. Viskozna olja črpajo ogreta, da se $\mu$ zmanjša.
 - **Toplotni prenosniki.** Načrtujemo jih za turbulentni tok (običajno $\mathrm{Re} > 10^4$), ker vrtinci prenašajo toploto do stene veliko bolje kot laminarne plasti.
 - **Mikrofluidika in kromatografija.** V kanalih širine okoli $100\,\mu\mathrm{m}$ je Re običajno pod $1$, zato se dva vzporedna tokova mešata le z difuzijo, kar izkoriščajo laboratoriji na čipu. Tudi skozi polnilo kromatografske kolone teče mobilna faza laminarno, zato tlačni padec raste sorazmerno s pretokom.
 

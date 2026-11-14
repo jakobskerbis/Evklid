@@ -120,7 +120,7 @@ Na računu so cene $4$ €, $7$ € in $9$ €. Sledi rekurzivni funkciji `vsota
 
 **Rešitev:**
 
-1. Klici gredo navzdol: `vsota([4, 7, 9])`, `vsota([7, 9])`, `vsota([9])`, `vsota([])`. To so $4$ klici, eden več kot je cen, ker se ustavimo šele pri praznem računu.
+1. Klici gredo navzdol: `vsota([4, 7, 9])`, `vsota([7, 9])`, `vsota([9])`, `vsota([])`. To so $4$ klici, eden več, kot je cen, ker se ustavimo šele pri praznem računu.
 2. Najgloblji klic vrne $0$.
 3. `vsota([9])` vrne $9 + 0 = 9$.
 4. `vsota([7, 9])` vrne $7 + 9 = 16$.

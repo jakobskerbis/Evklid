@@ -813,7 +813,7 @@
    "o": "D"
   },
   "FIZ-OS-8/tlak#p0": {
-   "h": "256aa0a286c0",
+   "h": "822e7c20a3de",
    "o": "D"
   },
   "FIZ-OS-8/trenje-in-upor#p1": {
@@ -867,12 +867,12 @@
    "o": "D"
   },
   "FIZ-OS-9/moc-in-izkoristek#p1": {
-   "h": "afc4e51a1afd",
+   "h": "34e0e8e05435",
    "o": "D",
    "r": "izkoristek 20 % ni podan",
    "k": [
     "Delo je enako, a ga opraviš v krajšem času, zato je moč večja",
-    "Pri večji moči zato v vsaki sekundi nastane več toplote, kot je telo sproti odda okolici"
+    "Pri večji moči zato v vsaki sekundi nastane več toplote, kot jo telo sproti odda okolici"
    ]
   },
   "FIZ-OS-9/newtonovi-zakoni#p0": {
@@ -1309,7 +1309,7 @@
    "r": "vprašanje ne pove, katero enačbo"
   },
   "KEM-OS-8/nekovine#p0": {
-   "h": "4fff63818321",
+   "h": "c0764443d096",
    "o": "D"
   },
   "KEM-OS-8/nekovine#p1": {
@@ -1421,6 +1421,11 @@
   "KEM-OS-9/nafta-in-zemeljski-plin#p1": {
    "h": "f63a17bcdb82",
    "o": "D"
+  },
+  "KEM-OS-9/ogljik-in-organske-spojine#p2": {
+   "h": "b08e29d28707",
+   "o": "I",
+   "r": "formula izobutana ni podana, sklic na zemljevid iz lekcije"
   },
   "KEM-OS-9/ogljikovi-hidrati#p1": {
    "h": "3c49b5755029",
@@ -1829,7 +1834,7 @@
    "r": "sklic na diagram iz lekcije"
   },
   "MAT-OS-6/mnozice-in-diagrami#p1": {
-   "h": "abc8faceb944",
+   "h": "def683ec393e",
    "o": "D"
   },
   "MAT-OS-6/obseg-in-ploscina-pravokotnika-in-kvadrata#p0": {
@@ -1995,7 +2000,7 @@
    ]
   },
   "MAT-OS-7/tortni-prikaz#p1": {
-   "h": "f647c5073b67",
+   "h": "5efdf03406e2",
    "o": "I",
    "r": "sklic na anketo iz lekcije"
   },
@@ -2014,7 +2019,7 @@
    "r": "sklic na zgodbo z ulico in progo"
   },
   "MAT-OS-7/vrste-trikotnikov-in-notranji-koti#p0": {
-   "h": "50d996495c05",
+   "h": "f1e392238c2c",
    "o": "D"
   },
   "MAT-OS-7/znacilne-tocke-trikotnika#p0": {
@@ -2098,7 +2103,7 @@
    "o": "D"
   },
   "MAT-OS-9/besedilne-naloge#p1": {
-   "h": "d7706a49fa56",
+   "h": "c6a423eb15a3",
    "o": "D"
   },
   "MAT-OS-9/graf-linearne-funkcije#p0": {
@@ -3079,7 +3084,7 @@
    "r": "pojmi ne odgovarjajo na vprašano, pravokotnik 8 × 2 ni podan"
   },
   "MAT-TEK-OS/ploscine-z-razrezom-in-dopolnjevanjem#p1": {
-   "h": "ccfae60a9485",
+   "h": "44f1333e1540",
    "o": "D"
   },
   "MAT-TEK-OS/prastevila-in-delitelji-v-nalogah#p0": {
@@ -3549,8 +3554,9 @@
    "o": "D"
   },
   "UNI-ULBF-AANAT/anatomsko-izrazoslovje#p1": {
-   "h": "9dfcec8930ef",
-   "o": "D"
+   "h": "5c1789bd3a2b",
+   "o": "D",
+   "r": "enaka odločitev kot prej; odgovor zdaj najprej pove, kje se tekočina zbere"
   },
   "UNI-ULBF-AANAT/anatomsko-izrazoslovje#p2": {
    "h": "f3a4a765d96f",
@@ -3598,8 +3604,9 @@
    "o": "D"
   },
   "UNI-ULBF-AANAT/zivcevje#p1": {
-   "h": "b5ad362f0cd0",
-   "o": "D"
+   "h": "3232e58cc8f1",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-AANAT/zivcevje#p2": {
    "h": "685a26eafed3",
@@ -3698,12 +3705,14 @@
    "o": "D"
   },
   "UNI-ULBF-AMIKRO/zgradba-prokariontske-celice#p0": {
-   "h": "3c1cc57a2b7e",
-   "o": "D"
+   "h": "0f89ee46fdc1",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-AMIKRO/zgradba-prokariontske-celice#p1": {
-   "h": "0d869a708c84",
-   "o": "D"
+   "h": "b6c93a9c0e8e",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-ASPLBOT/korenina#p0": {
    "h": "55a019c23b62",
@@ -3787,8 +3796,9 @@
    "r": "sklic na troje tal iz lekcije"
   },
   "UNI-ULBF-CSPLPOLJ/obdelava-tal#p0": {
-   "h": "01427d9a5fe5",
-   "o": "D"
+   "h": "1fd6b1c5d623",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-CSPLPOLJ/obdelava-tal#p1": {
    "h": "f7f9e8d4fce5",
@@ -3816,12 +3826,14 @@
    "o": "D"
   },
   "UNI-ULFE-MERITVE/osciloskop#p1": {
-   "h": "1fb56f6bfe7b",
-   "o": "D"
+   "h": "89d1b86a6076",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULFE-OE1/kapacitivnost#p0": {
-   "h": "f54fd0d221a2",
-   "o": "D"
+   "h": "03facc9a266e",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULFE-OE1/kapacitivnost#p1": {
    "h": "aae5d06b16e6",
@@ -4083,8 +4095,9 @@
    "o": "D"
   },
   "UNI-ULFKKT-MAT/ekstremi-funkcij-vec-spremenljivk#p0": {
-   "h": "aed81ea191ae",
-   "o": "D"
+   "h": "d4c09887a47d",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULFKKT-MAT/ekstremi-funkcij-vec-spremenljivk#p1": {
    "h": "f81c068de21f",
@@ -4235,8 +4248,9 @@
    "r": "sklic na program iz lekcije"
   },
   "UNI-ULFKKT-NOSNPROG/slovarji-in-mnozice#p0": {
-   "h": "17edc21a971c",
-   "o": "D"
+   "h": "d43903c3efd9",
+   "o": "D",
+   "r": "kot prej; popravljen le predlog v odgovoru"
   },
   "UNI-ULFKKT-NOSNPROG/slovarji-in-mnozice#p1": {
    "h": "2b7fdf48f9db",
@@ -4307,7 +4321,7 @@
    "o": "D"
   },
   "UNI-ULFKKT-ORG1/aromatske-spojine#p2": {
-   "h": "b6a066973942",
+   "h": "3ad23cdf9221",
    "o": "I",
    "r": "reakcija ni podana"
   },
@@ -4639,8 +4653,9 @@
    "o": "D"
   },
   "UNI-ULFS-TERMO/krozni-procesi#p1": {
-   "h": "9dacf15b8ad0",
-   "o": "D"
+   "h": "db68c2a0aeb3",
+   "o": "D",
+   "r": "kot prej; le zapis Joulov"
   },
   "UNI-ULNTF-MMEHMAT/utrujanje-in-lezenje#p1": {
    "h": "fce596e131de",
@@ -4804,8 +4819,9 @@
    "o": "D"
   },
   "UNI-UMFS-MAT2/lahke-kovine#p1": {
-   "h": "bb7c2cb2b51e",
-   "o": "D"
+   "h": "67645857206c",
+   "o": "D",
+   "r": "kot prej; jasnejša ubeseditev vprašanja"
   },
   "UNI-UMFS-MAT2/vrste-jekel-in-litin#p0": {
    "h": "cc9c4f36d229",
@@ -4816,8 +4832,14 @@
    "o": "D"
   },
   "UNI-UMFS-MEH1/notranje-sile-v-nosilcih#p1": {
-   "h": "98e6de0dd6e5",
-   "o": "D"
+   "h": "781655654901",
+   "o": "D",
+   "r": "kot prej; dodani pojem o prečni sili ni vprašan",
+   "k": [
+    "V vpetju. Moment v prerezu je sila krat ročica do prereza",
+    "Pod silo je ročica nič, v vpetju pa je najdaljša, enaka dolžini konzole",
+    "Zato je v vpetju $|M|$ največji"
+   ]
   },
   "UNI-UMFS-MEH1/tezisce#p0": {
    "h": "94a16c9ded10",
@@ -4828,8 +4850,9 @@
    "o": "D"
   },
   "UNI-UMFS-MEH2/primerjalne-napetosti#p0": {
-   "h": "bc225fed3801",
-   "o": "D"
+   "h": "587f7e446396",
+   "o": "D",
+   "r": "kot prej; le spol besede špaget"
   },
   "UNI-UMFS-MEH2/ravninsko-napetostno-stanje#p0": {
    "h": "4112389cd1f2",

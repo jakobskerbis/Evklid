@@ -9,7 +9,7 @@ Bunsen in Kirchhoff sta v 19. stoletju opazila, da vsak element v plamenu seva s
 
 Na koncu boš znal:
 
-- kaj so **orbitale** in kako izgledajo,
+- kaj so **orbitale** in kakšne oblike so,
 - kaj pomenijo **kvantna števila** $n$, $l$, $m_l$ in $m_s$ ter katere kombinacije so dovoljene,
 - zapisati **elektronsko konfiguracijo** atomov in ionov po izgradnem načelu, Paulijevem načelu in Hundovem pravilu,
 - razložiti izjeme (krom, baker) in konfiguracije ionov prehodnih kovin.
@@ -84,7 +84,7 @@ O:  1s [↑↓]  2s [↑↓]  2p [↑↓][↑ ][↑ ]    -> 2 nesparjena elektro
 
 **Valenčni elektroni** so elektroni v zunanji lupini (pri prehodnih kovinah še elektroni $(n-1)d$). Atom z nesparjenimi elektroni je **paramagneten** (privlači ga magnetno polje), atom z vsemi sparjenimi pa **diamagneten**.
 
-**9. Izjeme in ioni.** Polzasedena ($d^5$) in povsem zasedena ($d^{10}$) podlupina sta posebej stabilni, zato ima krom konfiguracijo $[\mathrm{Ar}]\,3d^5\,4s^1$ (ne $3d^4\,4s^2$) in baker $[\mathrm{Ar}]\,3d^{10}\,4s^1$. Pri tvorbi kationov prehodnih kovin atom **najprej odda elektrone $4s$**, šele nato $3d$, ker je pri teh elementih $3d$ že pod $4s$ (zakaj, pove razdelek »Bolj natančno«): $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$, ne $[\mathrm{Ar}]\,3d^4\,4s^2$. Pri anionih elektrone dodajamo v prvo nezasedeno orbitalo: $\mathrm{Cl^-}$ je $[\mathrm{Ne}]\,3s^2\,3p^6$, izoelektronski z argonom.
+**9. Izjeme in ioni.** Polzasedena ($d^5$) in povsem zasedena ($d^{10}$) podlupina sta posebej stabilni, zato ima krom konfiguracijo $[\mathrm{Ar}]\,3d^5\,4s^1$ (ne $3d^4\,4s^2$) in baker $[\mathrm{Ar}]\,3d^{10}\,4s^1$. Pri tvorbi kationov prehodnih kovin atom **najprej odda elektrone $4s$**, šele nato $3d$, ker je pri teh elementih $3d$ že pod $4s$ (zakaj, pove razdelek »Bolj natančno«): $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$, ne $[\mathrm{Ar}]\,3d^4\,4s^2$. Pri anionih elektrone dodajamo v najnižjo še ne polno podlupino: $\mathrm{Cl^-}$ je $[\mathrm{Ne}]\,3s^2\,3p^6$, izoelektronski z argonom.
 
 ## Rešeni primeri
 
@@ -298,7 +298,7 @@ kar za $Z = 1$ da $-2{,}179 \cdot 10^{-18}\,\mathrm{J}/n^2$. Pri vodiku je energ
 + $[\mathrm{Ar}]\,3d^5\,4s^1$
 - $[\mathrm{Ar}]\,3d^6$
 ~ Število elektronov se ujema, a $4s$ v atomu ni prazna; konfiguracija brez $4s$ velja za ione, ne za nevtralen atom.
-> Krom je izjema: polzasedena podlupina $3d^5$ s šestimi nesparjenimi elektroni ima nižjo energijo kot $3d^4\,4s^2$.
+> Krom je izjema: konfiguracija s polzasedeno podlupino $3d^5$ in šestimi nesparjenimi elektroni ima nižjo energijo kot $3d^4\,4s^2$.
 
 ? Koliko nesparjenih elektronov ima atom dušika ($1s^2\,2s^2\,2p^3$)?
 - $1$

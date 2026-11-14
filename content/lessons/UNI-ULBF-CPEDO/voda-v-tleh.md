@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Paradoks z vrta: v glinenih tleh s $25\,\%$ vode (po prostornini) paradižnik vene. V peščenih tleh z le $10\,\%$ vode isti paradižnik stoji pokonci. Več vode, a rastlina žejna?
+Paradoks z vrta: v glinastih tleh s $25\,\%$ vode (po prostornini) paradižnik vene. V peščenih tleh z le $10\,\%$ vode isti paradižnik stoji pokonci. Več vode, a rastlina žejna?
 
 Podoben paradoks pozna medicina. Brodolomec je obdan z morjem, pa vendar umira od žeje. Morska voda je tako slana, da telo za izločanje soli porabi več vode, kot jo je dobilo. Voda je tam, ni pa **dostopna**.
 

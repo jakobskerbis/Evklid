@@ -177,7 +177,7 @@ $\tau = RC$, $U_C(t) = U_0\,e^{-t/\tau}$
 :::premisli
 Kolikšna je napetost na kondenzatorju po $3{,}0\,\mathrm{s}$?
 ---
-$U_C = 12\,\mathrm{V} \cdot e^{-1{,}36} \approx 12\,\mathrm{V} \cdot 0{,}256 \approx 3{,}1\,\mathrm{V}$. Ker je $3{,}0\,\mathrm{s}$ nekaj več kot $\tau$, je ostalo nekaj manj kot $37\,\%$ začetne napetosti.
+$U_C = 12\,\mathrm{V} \cdot e^{-1{,}36} \approx 12\,\mathrm{V} \cdot 0{,}256 \approx 3{,}1\,\mathrm{V}$. Ker je $3{,}0\,\mathrm{s}$ nekaj več kot $\tau$, je ostalo manj kot $37\,\%$ začetne napetosti, okoli $26\,\%$.
 :::
 
 ## Pogoste napake
@@ -269,7 +269,7 @@ Tangenta na krivuljo $U_C(t)$ v izhodišču seka asimptoto ravno pri $t = \tau$:
 
 **Celična membrana kot RC vezje.** Lipidni dvosloj je tanek izolator med prevodnima raztopinama, torej kondenzator s specifično kapaciteto okoli $1\,\mu\mathrm{F/cm^2}$. Ionski kanali so upori vzporedno z njim (mirujoča membrana: reda $1\,\mathrm{k}\Omega\,\mathrm{cm^2}$), zato je $\tau \approx 1\,\mathrm{ms}$. Gonilne napetosti so Nernstovi potenciali, mirovni potencial pa dobimo s Kirchhoffovimi zakoni za veje s kanali za $\mathrm{K^+}$, $\mathrm{Na^+}$ in $\mathrm{Cl^-}$.
 
-**Konduktometrija.** Prevodnost raztopine je sorazmerna s koncentracijo in gibljivostjo ionov. Pri titraciji močne kisline z bazo najprej pada (hitri $\mathrm{H_3O^+}$ zamenjajo počasnejši kationi), za ekvivalentno točko spet narašča. Merilnik uporablja izmenično napetost, da se elektrodi ne polarizirata.
+**Konduktometrija.** Prevodnost raztopine je sorazmerna s koncentracijo in gibljivostjo ionov. Pri titraciji močne kisline z bazo najprej pada (hitre ione $\mathrm{H_3O^+}$ zamenjajo počasnejši kationi baze), za ekvivalentno točko spet narašča. Merilnik uporablja izmenično napetost, da se elektrodi ne polarizirata.
 
 **Merilni instrumenti.** Voltmeter z notranjim uporom $10\,\mathrm{M}\Omega$ na uporu $1\,\mathrm{M}\Omega$ tvori vzporedno vezavo z $0{,}91\,\mathrm{M}\Omega$ in meritev popači; pri pH-elektrodi z uporom stekla reda $100\,\mathrm{M}\Omega$ zato potrebujemo merilnik z vhodnim uporom nad $10^{12}\,\Omega$.
 
@@ -339,8 +339,10 @@ Q | električni naboj | | C | na kondenzatorju Q = CU
 t | čas | | s
 n | število nosilcev naboja na enoto prostornine | | m^{-3}
 e_0 | osnovni naboj | | C | 1,602 · 10⁻¹⁹ C
-v | hitrost potovanja nosilcev naboja | v = \frac{I}{n e_0 S} | m/s | zelo majhna, reda mm/s
+v | hitrost potovanja nosilcev naboja | v = \frac{I}{n e_0 S} | m/s | zelo majhna, reda 0,1 mm/s
 S | presek vodnika | | m^2
+j | gostota električnega toka | j = \frac{I}{S} | A/m^2
+\sigma | specifična prevodnost snovi | \sigma = \frac{1}{\zeta} | 1/(Ω m)
 U | električna napetost | U = RI | V
 U_1, U_2 | gonilni napetosti virov v vezju | | V
 U_C | napetost na kondenzatorju | U_C = \frac{Q}{C} | V | pri polnjenju $U_C = U_g(1 - e^{-t/\tau})$

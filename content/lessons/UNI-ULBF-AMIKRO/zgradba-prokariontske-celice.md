@@ -86,7 +86,7 @@ Rezultat: gram-pozitivne so vijolične, gram-negativne rožnate. Barvanje je zan
 :::premisli
 Laborant pri barvanju pozabi na korak z etanolom. Kakšne barve bodo na koncu *E. coli* in *S. aureus*? Kaj pa, če etanol drži na stekelcu predolgo?
 ---
-Brez razbarvanja kompleks ostane v obeh, zato sta obe vijolični in safranin se ne opazi: vse je »gram-pozitivno«. Predolgo razbarvanje izpere kompleks tudi iz gram-pozitivnih, zato so obe rožnati. Zato v vsako serijo damo kontrolni preparat z znanima bakterijama.
+Brez razbarvanja kompleks ostane v obeh, zato sta obe vijolični in safranin se ne opazi: vse je »gram-pozitivno«. Predolgo razbarvanje izpere kompleks tudi iz gram-pozitivnih, zato sta obe rožnati. Zato v vsako serijo damo kontrolni preparat z znanima bakterijama.
 :::
 
 **Izjeme.** **Mikobakterije** (povzročitelj tuberkuloze) imajo v steni voskaste **mikolne kisline**, vezane na arabinogalaktan; barvila slabo sprejmejo, a jih ob segrevanju zadržijo tudi pri razbarvanju s kislim alkoholom. Imenujemo jih **acidorezistentne** in barvamo po Ziehl-Neelsenu. **Mikoplazme** stene nimajo; njihovo membrano utrjujejo steroli, nanje penicilin ne deluje. **Arheje** nimajo peptidoglikana; nekatere imajo **psevdomurein** (namesto NAM N-acetiltalozaminuronska kislina, vez $\beta(1\to3)$, odporen proti lizocimu), mnoge le beljakovinsko **plast S**.
@@ -122,12 +122,12 @@ Bazalno telo gram-negativne bakterije (zunaj zgoraj):
 
 Obroča L in P sta ležaja, skozi katera se vrti os. Gram-pozitivne bakterije nimajo zunanje membrane, zato imajo le obroče MS in C. **Statorji** so kanalčki za protone, pritrjeni na steno; ko protoni tečejo skoznje po protonski gonilni sili, potiskajo rotor. Motor *E. coli* se vrti s frekvenco okoli $100\,\mathrm{Hz}$ in za en obrat porabi okoli tisoč protonov. Nekatere morske vibrije namesto protonov uporabljajo $\mathrm{Na^+}$.
 
-**Razporeditev** bičkov je razločevalni znak: monotrih (en biček na polu, *Vibrio*), lofotrih (šop na polu), amfitrih (na obeh polih), peritrih (po vsej površini, *E. coli*, *Salmonella*). Spirohete imajo **endoflagele** v periplazmi in se zvijajo kot zamašek.
+**Razporeditev** bičkov je razločevalni znak: monotrih (en biček na polu, *Vibrio*), lofotrih (šop na polu), amfitrih (na obeh polih), peritrih (po vsej površini, *E. coli*, *Salmonella*). Spirohete imajo **endoflagele** v periplazmi in se zvijajo kot odpirač za zamaške.
 
 **Gibanje in kemotaksa.** Ko se motorji peritrihe vrtijo v nasprotni smeri urinega kazalca (gledano od zunaj), se bički zvijejo v šop in celica plava naravnost (**tek**, okoli $1\,\mathrm{s}$). Ko se nekaj motorjev obrne, se šop razpleta in celica se **prekucne** (okoli $0{,}1\,\mathrm{s}$) v naključno novo smer. Receptorji v membrani primerjajo koncentracijo privlačila zdaj in pred kratkim; kadar raste, so prekucnitve redkejše. Tako celica z naključnim sprehodom vendarle napreduje proti hrani.
 
 :::premisli
-Bakterija plava v vodi s hitrostjo $30\,\mu\mathrm{m/s}$. Kaj se zgodi, ko motor nenadoma ustavi: ali celica, kot čoln, še nekaj časa drsi naprej?
+Bakterija plava v vodi s hitrostjo $30\,\mu\mathrm{m/s}$. Kaj se zgodi, ko se motor nenadoma ustavi: ali celica, kot čoln, še nekaj časa drsi naprej?
 ---
 Ne. Za tako majhno telo so viskozne sile ogromne v primerjavi z vztrajnostjo, zato se ustavi praktično takoj, na razdalji, manjši od premera atoma (Primer 3). Bakterija ne more »zamahniti in drseti«; poganjati se mora neprestano in z gibanjem, ki ni simetrično v času, kot je vrtenje vijaka.
 :::
@@ -150,7 +150,7 @@ Zgradba od zunaj navznoter:
 
 - **Sredica** vsebuje DNA, ribosome in encime, a le $10$ do $25\,\%$ vode, zato so encimi neaktivni in odporni proti vročini.
 - **Kalcijev dipikolinat** (Ca-DPA) obsega okoli $10\,\%$ suhe mase spore; veže vodo in stabilizira DNA.
-- **Majhne kisletopne beljakovine** (SASP) ovijejo DNA in jo varujejo pred UV in vročino.
+- **Majhne, v kislini topne beljakovine** (SASP) ovijejo DNA in jo varujejo pred UV in vročino.
 - **Korteks** je ohlapno prečno povezan peptidoglikan, ki sredico stisne in vzdržuje njeno nizko vsebnost vode.
 - **Plašč** iz beljakovin zadrži encime in kemikalije.
 
@@ -371,7 +371,7 @@ Bakterijo si predstavljaj kot **balon v mreži**. Membrana je balon: tanek, nape
 - (1)
 ~ Kristal vijolično res obarva vse celice, ne glede na zgradbo stene.
 - (2)
-~ Jod res deluje kot jedkalo in z barvilom tvori velik kompleks.
+~ Jod res deluje kot lužilo in z barvilom tvori velik kompleks.
 + (3)
 - (4)
 ~ Safranin res obarva celice, ki so pri razbarvanju izgubile kompleks, torej gram-negativne.

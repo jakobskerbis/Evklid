@@ -63,7 +63,7 @@ $$\tau(z) = \frac{3T}{2bh}\left(1 - \frac{4z^2}{h^2}\right), \qquad \tau_{max} =
 Za poln krog je največja napetost (na nevtralni osi) $\tau_{max} = \frac{4}{3}\,\frac{T}{A}$, za tanko okroglo cev $\tau_{max} = 2\,\frac{T}{A}$.
 
 :::premisli
-Pravokotni leseni nosilec obrnemo s pokončne lege ($b = 10\,\mathrm{cm}$, $h = 20\,\mathrm{cm}$) v ležečo ($b = 20\,\mathrm{cm}$, $h = 10\,\mathrm{cm}$). Kako se spremenita največja normalna in največja strižna napetost pri istem $M$ in $T$?
+Pravokotni leseni nosilec obrnemo iz pokončne lege ($b = 10\,\mathrm{cm}$, $h = 20\,\mathrm{cm}$) v ležečo ($b = 20\,\mathrm{cm}$, $h = 10\,\mathrm{cm}$). Kako se spremenita največja normalna in največja strižna napetost pri istem $M$ in $T$?
 ---
 Strižna ostane enaka: $\tau_{max} = 1{,}5\,T/A$ je odvisna le od ploščine. Normalna se podvoji, ker se odpornostni moment $bh^2/6$ razpolovi. Strig in upogib se na obliko prereza odzivata različno.
 :::
@@ -78,7 +78,7 @@ $$q = \tau\,b = \frac{T\,S_y}{I_y}.$$
 
 Enota je $\mathrm{N/m}$ (ali $\mathrm{N/mm}$). Če spoj tvorijo vijaki ali žeblji z nosilnostjo $F_1$ na kos, mora biti razmik med njimi največ $s = F_1/q$.
 
-**Tankostenski prerezi.** V steni debeline $t$ si strižni tok $q = \tau t$ predstavljamo kot tok vode po cevi, ki teče vzdolž srednjice stene. V I-profilu teče v pasovih vodoravno, od prostih robov proti stojini, v stojini pa navpično; v stičišču se tokova seštejeta. Stojina prenese skoraj vso prečno silo, zato je dober približek $\tau \approx T/(h_s t_s)$.
+**Tankostenski prerezi.** V steni debeline $t$ si strižni tok $q = \tau t$ predstavljamo kot tok vode po cevi, ki teče vzdolž srednjice stene. V I-profilu teče v pasovih vodoravno in narašča od nič na prostih robovih proti stojini, v stojini pa navpično; v stičišču se tokova obeh polovic pasu seštejeta. Stojina prenese skoraj vso prečno silo, zato je dober približek $\tau \approx T/(h_s t_s)$.
 
 :::premisli
 Zakaj je pri I-profilu strižna napetost v pasu tik ob stojini mnogo manjša kot v stojini tik pod pasom, čeprav je statični moment na obeh mestih skoraj enak?
@@ -271,7 +271,7 @@ Tok iz obeh polovic pasu se v stičišču zlije v stojino, kot dva pritoka v rek
 - Strižna napetost je največja na zgornjem in spodnjem robu.
 ~ Na robu je strig nič, ker na prosti ploskvi ni strižne obtežbe; največje so tam normalne napetosti.
 + Strižna napetost je največja na nevtralni osi in znaša $1{,}5\,T/A$.
-> Iz $\tau = TS_y/(I_y b)$: $S_y$ je največji na nevtralni osi, kjer je odrezani del največji.
+> Iz $\tau = TS_y/(I_y b)$: $S_y$ je največji pri rezu na nevtralni osi (deli onkraj nje bi ga že zmanjševali), širina $b$ pa je povsod enaka.
 
 ? Pravokotni nosilec $8\,\mathrm{cm} \times 25\,\mathrm{cm}$ ima prečno silo $20\,\mathrm{kN}$. Kolikšna je največja strižna napetost?
 - $1{,}0\,\mathrm{MPa}$

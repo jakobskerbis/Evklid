@@ -19,7 +19,7 @@ Jekel je več tisoč. Kdor zna brati oznake, iz risbe razbere lastnosti, iz kata
 4. Število za simboli je delež prvega elementa, pomnožen s faktorjem. Za krom je faktor $4$, zato $\frac{4}{4} = 1\,\%\ \mathrm{Cr}$. Molibden nima števila: njegov delež je majhen in v oznaki ni podan.
 5. Številska oznaka istega jekla je **1.7225**. Prva enica pomeni jeklo, naslednji dve števki skupino, zadnji dve zaporedno številko.
 
-Ogljik $0{,}42\,\%$ omogoča kaljenje, krom in molibden povečata prekaljivost. Tako jeklo kalimo in popuščamo (**poboljšamo**) za gredi, vijake in zobnike. Iz petih znakov smo dobili sestavo in uporabo. Zdaj pravila posplošimo.
+Ogljik $0{,}42\,\%$ omogoča kaljenje, krom in molibden povečata prekaljivost. Tako jeklo kalimo in popuščamo (**poboljšamo**) za gredi, vijake in zobnike. Iz ene kratke oznake smo dobili sestavo in uporabo. Zdaj pravila posplošimo.
 
 **Definicija.** **Jeklo** je zlitina železa z ogljikom, ki ima manj kot okoli $2\,\%$ ogljika (natančneje $2{,}06\,\%$ po diagramu železo–cementit; v anglosaških virih $2{,}11\,\%$) in je preoblikovalna. **Litina** ima več ogljika, običajno $2{,}5$ do $4\,\%$; ne kujemo je, temveč ulivamo.
 
@@ -55,7 +55,7 @@ Med strojna jekla sodijo še **poboljšana** jekla ($0{,}3$ do $0{,}5\,\%$ C, na
 **Orodna jekla** potrebujejo trdoto in odpornost proti obrabi, zato imajo več ogljika in karbidotvornih elementov.
 - Za delo v hladnem: X153CrMoV12 (1.2379), za rezila in štance.
 - Za delo v vročem: X40CrMoV5-1 (1.2344), za kalupe za tlačno litje, ker ohrani trdnost pri visoki temperaturi.
-- Hitrorezna: HS6-5-2 (1.3343), za svedre in rezkarje; trdota ostane tudi pri rdečem žaru rezalnega roba.
+- Hitrorezna: HS6-5-2 (1.3339), za svedre in rezkarje; trdota ostane tudi pri rdečem žaru rezalnega roba.
 
 **Nerjavna jekla** (SIST EN 10088) imajo vsaj $10{,}5\,\%$ kroma in največ $1{,}2\,\%$ ogljika. Krom na površini tvori tanko plast kromovega oksida, ki se ob poškodbi sama obnovi (**pasivacija**). Po mikrostrukturi:
 - **avstenitna**, X5CrNi18-10 (1.4301): nikelj ohrani ploskovno centrirano mrežo, jeklo je žilavo, nemagnetno, dobro varivo, a se ne da kaliti;
@@ -122,7 +122,7 @@ Nizkolegirano: $\%\mathrm{C} = \frac{\text{prvo število}}{100}$, delež element
 2. 42CrMo4: $0{,}42\,\%$ C, $1\,\%$ Cr, nekaj Mo. Poboljšano jeklo za gredi.
 3. X5CrNi18-10: črka X, zato $0{,}05\,\%$ C, $18\,\%$ Cr, $10\,\%$ Ni. Avstenitno nerjavno jeklo (1.4301), primerno za stik s hrano.
 4. HS6-5-2: hitrorezno jeklo s $6\,\%$ W, $5\,\%$ Mo, $2\,\%$ V (krom okoli $4\,\%$ v oznaki ni zapisan).
-5. Odgovor: cementacijsko, poboljšano, avstenitno nerjavno in hitrorezno jeklo; od zobnika do svedra raste delež legirnih elementov, ker raste zahteva po trdoti ali odpornosti.
+5. Odgovor: cementacijsko, poboljšano, avstenitno nerjavno in hitrorezno jeklo; pri pokrovu in svedru je delež legirnih elementov veliko večji kot pri zobniku in gredi, ker je večja zahteva po korozijski odpornosti ali po trdoti v vročem.
 
 ### Primer 3 (težji, izpitna raven): varivost dveh jekel
 
@@ -170,7 +170,7 @@ $\mathrm{CE}_\mathrm{L} \approx 3{,}4 + 0{,}733 = 4{,}13\,\%$, kar je pod $4{,}3
 
 ## Pogoste napake
 
-- **»Število v S235 je ogljik.«** Pri skupini 1 število pomeni najmanjšo mejo tečenja v $\mathrm{MPa}$, ne sestave. Ogljik je stokratnik prvega števila le pri skupini 2 (C45, 42CrMo4).
+- **»Število v S235 je ogljik.«** Pri skupini 1 število pomeni najmanjšo mejo tečenja v $\mathrm{MPa}$, ne sestave. Prvo število je stokratnik deleža ogljika le pri skupini 2 (C45, 42CrMo4).
 - **Faktor pozabljen.** Kdor iz 42CrMo4 prebere »$4\,\%$ kroma«, pozabi deliti s faktorjem $4$; prav je $1\,\%$. Pri X-oznakah faktorjev ni.
 - **»Nerjavno jeklo ne rjavi nikoli.«** Pasivna plast se poškoduje v kloridih (morska voda, sol za posipanje) ali v rezah in špranjah. Za morje izberemo jeklo z molibdenom (X2CrNiMo17-12-2) ali dupleks.
 - **»Siva litina je trdna, ker je trda.«** Trdota ni trdnost v nategu. Lamelni grafit dela zareze, zato je siva litina v nategu krhka; za udarne obremenitve izberemo nodularno litino.
@@ -215,7 +215,7 @@ Utemelji, zakaj je X5CrNi18-10 nerjavno, nemagnetno in ga ni mogoče utrditi s k
 
 **Rešitev:**
 
-1. Obe jekli imata več kot $10{,}5\,\%$ kroma (18 oziroma 13 %), zato na površini nastane pasivna plast kromovega oksida: obe sta nerjavni.
+1. Obe jekli imata več kot $10{,}5\,\%$ kroma ($18$ oziroma $13\,\%$), zato na površini nastane pasivna plast kromovega oksida: obe sta nerjavni.
 2. X5CrNi18-10 ima $10\,\%$ niklja. Nikelj stabilizira avstenit (ploskovno centrirana kubična mreža) do sobne temperature. Avstenit je paramagneten, zato jeklo ni magnetno.
 3. Ker ostane avstenitno pri vseh temperaturah, ob ohlajanju ni premene v martenzit; poleg tega ima le $0{,}05\,\%$ C. Kaljenje ga ne utrdi; utrdimo ga lahko le s hladnim preoblikovanjem.
 4. X20Cr13 nima niklja, pri visoki temperaturi je avstenitno, pri sobni pa feritno-karbidno. Ob hitrem ohlajanju avstenit preide v martenzit; $0{,}20\,\%$ C da dovolj trdote.

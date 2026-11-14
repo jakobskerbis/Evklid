@@ -280,7 +280,7 @@ Dva termometra primerjamo na šestih vzorcih; razlike (termometer A minus termom
 3. Kvadrati odmikov: $0$; $0{,}04$; $0{,}01$; $0{,}01$; $0{,}04$; $0$, vsota $0{,}10$; $s_d = \sqrt{0{,}10/5} \approx 0{,}141\,\mathrm{K}$.
 4. $t = 0{,}30/(0{,}141/\sqrt 6) \approx 0{,}30/0{,}0577 \approx 5{,}20$.
 5. $|t| = 5{,}20 > 2{,}571$: $H_0$ zavrnemo. $95\,\%$ interval za $\mu_d$ je $0{,}30 \pm 2{,}571 \cdot 0{,}0577 \approx 0{,}30 \pm 0{,}15$, torej $[0{,}15; 0{,}45]\,\mathrm{K}$.
-6. Parni test odstrani razlike med vzorci (en je toplejši, drugi hladnejši), ki bi pri primerjavi neodvisnih vzorcev povečale razpršenost in skrile majhen sistematični odmik.
+6. Parni test odstrani razlike med vzorci (eden je toplejši, drugi hladnejši), ki bi pri primerjavi neodvisnih vzorcev povečale razpršenost in skrile majhen sistematični odmik.
 7. Odgovor: termometer A kaže sistematično višje, za okoli $0{,}3\,\mathrm{K}$ (med $0{,}15$ in $0{,}45\,\mathrm{K}$).
 
 ## Drugače: Z analogijo
@@ -309,7 +309,7 @@ Pet meritev upora: $99{,}6$; $100{,}4$; $100{,}1$; $99{,}8$ in $100{,}6\,\Omega$
 6. **Testna statistika:** $t = (100{,}1 - 100{,}0)/0{,}184 \approx 0{,}54$.
 7. **Odločitev:** $|t| = 0{,}54 < 2{,}776$, $H_0$ ne zavrnemo.
 8. **Interval:** $100{,}1 \pm 2{,}776 \cdot 0{,}184 \approx 100{,}1 \pm 0{,}51$, torej $[99{,}59; 100{,}61]\,\Omega$; vsebuje $100{,}0$, kar se ujema z odločitvijo.
-9. **Pomen:** podatki ne kažejo odstopanja, a interval je širok – z le petimi meritvami bi zlahka spregledali tudi odstopanje $0{,}4\,\Omega$ (to je le okoli $2{,}2$ standardni napaki, manj od kritične vrednosti $2{,}776$).
+9. **Pomen:** podatki ne kažejo odstopanja, a interval je širok – z le petimi meritvami bi zlahka spregledali tudi odstopanje $0{,}4\,\Omega$ (to je le okoli $2{,}2$ standardne napake, manj od kritične vrednosti $2{,}776$).
 
 ## Preveri se
 

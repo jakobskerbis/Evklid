@@ -27,7 +27,7 @@ Oba prizora skrivata isto zamisel: **mehka vsebina pritiska na trden, a prožen 
 
 Vakuola zavzame v odrasli celici do $90\,\%$ prostornine. Citoplazma s plastidi je zato le tanka plast ob steni.
 
-**2. Celična stena.** Celuloza je dolga veriga glukoznih enot. Več sto verig se poveže v vlakence, **mikrofibrilo**. Mikrofibrile so vpete v gel iz hemiceluloz in pektinov, podobno kot jeklene palice v betonu. Mlada celica ima le **primarno steno**, ki se med rastjo še raztegne. Ko celica neha rasti, nekatere celice od znotraj naložijo **sekundarno steno**, pogosto prepojeno z ligninom. Lignin je trd in vodoodporen; les je skoraj samo sekundarna stena odmrlih celic.
+**2. Celična stena.** Celuloza je dolga veriga glukoznih enot. Nekaj deset verig se poveže v vlakence, **mikrofibrilo**. Mikrofibrile so vpete v gel iz hemiceluloz in pektinov, podobno kot jeklene palice v betonu. Mlada celica ima le **primarno steno**, ki se med rastjo še raztegne. Ko celica neha rasti, nekatere celice od znotraj naložijo **sekundarno steno**, pogosto prepojeno z ligninom. Lignin je trd in vodoodporen; les je skoraj samo sekundarna stena odmrlih celic.
 
 Stena prepušča vodo in majhne raztopljene snovi; sosednje celice povezujejo tanki kanali citoplazme, **plazmodezme**. Selektivna meja je membrana pod steno.
 
@@ -168,7 +168,7 @@ $\Psi_\mathrm{p} = 0 - (-0{,}8\,\mathrm{MPa}) = 0{,}8\,\mathrm{MPa}$. Razmerje: 
 - Rastlinsko celico od živalske ločijo celična stena, velika osrednja vakuola in plastidi.
 - Celična stena: srednja lamela (pektini), primarna stena (celulozne mikrofibrile v gelu hemiceluloz in pektinov), v nekaterih celicah sekundarna stena z ligninom; sosednje celice povezujejo plazmodezme. Stena je prepustna, selektivna je membrana.
 - Vakuola (tonoplast, celični sok) zavzame do $90\,\%$ celice, z osmozo vpija vodo in ustvari turgor; hrani zaloge, barvila, odpadne snovi in razgrajuje dele celice.
-- Izguba vode: turgor pade, rastlina oveni, ob hujši izgubi plazmoliza.
+- Izguba vode: turgor pade, rastlina oveni; v bolj koncentrirani zunanji raztopini plazmoliza.
 - Plastidi imajo dvojno membrano in lastno DNA, nastanejo iz proplastidov: kloroplasti (fotosinteza, tilakoidi, grana, stroma), kromoplasti (karotenoidi), amiloplasti (škrob), etioplasti (v temi).
 - $\Psi = \Psi_\mathrm{s} + \Psi_\mathrm{p}$; voda teče od višjega k nižjemu $\Psi$; čista voda ima $\Psi = 0$; $\Psi_\mathrm{s} \approx -cRT$.
 
@@ -195,7 +195,7 @@ Meja primerjave: tlak v celici je okrog desetkrat večji kot v žogi.
 
 ## Preveri se
 
-? Med dolgim vročim turnirjem trava ob robu igrišča oveni. Pod mikroskopom vidiš, da se je vsebina celic odmaknila od celične stene, stena pa je ostala na mestu. Kako se imenuje ta pojav?
+? Travo ob robu igrišča pomotoma zalijejo s premočno raztopino gnojila in oveni. Pod mikroskopom vidiš, da se je vsebina celic odmaknila od celične stene, stena pa je ostala na mestu. Kako se imenuje ta pojav?
 - turgor
 ~ Turgor je tlak vsebine na steno. Tu je vsebina od stene odstopila, turgorja ni več.
 + plazmoliza

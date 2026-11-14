@@ -251,7 +251,7 @@ Kaj prebere `sort` in kako je prav?
 - Lupina vrstico razčleni na besede, naredi razširitve (`~`, <code>&#36;IME</code>, <code>&#36;(…)</code>, `*`, `?`, `[…]`), uredi preusmeritve in zažene program.
 - Pravice `rwx` za lastnika, skupino in ostale; osmiško $r = 4$, $w = 2$, $x = 1$; `x` na imeniku pomeni vstop; umask odvzame bite od `666` oziroma `777`.
 - Opisniki: $0$ stdin, $1$ stdout, $2$ stderr. `>` izprazni, `>>` doda, `2>` napake, `> f 2>&1` oboje; preusmeritve od leve proti desni.
-- Cev `a | b` poveže stdout z stdin, procesa tečeta hkrati; filtri `grep`, `cut`, `sort`, `uniq -c`, `wc`, `head`, `tail`.
+- Cev `a | b` poveže stdout s stdin, procesa tečeta hkrati; filtri `grep`, `cut`, `sort`, `uniq -c`, `wc`, `head`, `tail`.
 - Izhodni status v <code>&#36;?</code>, $0$ je uspeh; `&&` in `||`; status cevi je status zadnjega ukaza.
 
 ## Za izpit
@@ -308,7 +308,7 @@ Natančno opiši, kako bash obdela vrstico `ls -l ~/podatki/*.csv > seznam.txt 2
 3. Preusmeritve od leve proti desni: opisnik $1$ se odpre na `seznam.txt` (datoteka se izprazni); `2>&1` naredi opisnik $2$ kopijo opisnika $1$, torej tudi `seznam.txt`.
 4. Lupina zažene `ls` z argumenti `-l` in razširjenimi imeni. `ls` sam ne vidi ne `~`, ne `*`, ne preusmeritev.
 5. Pri `2>&1 > seznam.txt` se najprej $2$ kopira na trenutni cilj $1$, to je zaslon; šele nato $1$ kaže na datoteko. Napake gredo na zaslon, seznam v datoteko.
-6. Brisanje: `rm` spremeni imenik `podatki` (odstrani vnos), zato je potreben `w` in `x` na `~/podatki` ter `x` na vseh imenikih nad njim. Pravice datoteke same niso pomembne (`rm` le vpraša, če datoteka nima `w`). Izjema je imenik z lepljivim bitom (`t`, npr. `/tmp`): tam sme datoteko izbrisati le njen lastnik ali lastnik imenika.
+6. Brisanje: `rm` spremeni imenik `podatki` (odstrani vnos), zato sta potrebna `w` in `x` na `~/podatki` ter `x` na vseh imenikih nad njim. Pravice datoteke same niso pomembne (`rm` le vpraša, če datoteka nima `w`). Izjema je imenik z lepljivim bitom (`t`, npr. `/tmp`): tam sme datoteko izbrisati le njen lastnik ali lastnik imenika.
 
 ## Drugače: Na sliki
 

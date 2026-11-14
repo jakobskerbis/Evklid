@@ -125,11 +125,11 @@ $e_0U = \tfrac{1}{2}mv^2$, $r = \dfrac{mv}{e_0B} = \dfrac{1}{B}\sqrt{\dfrac{2mU}
 
 **Rešitev:**
 
-1. $m_{12} = 12 \cdot 1{,}66 \cdot 10^{-27}\,\mathrm{kg} \approx 1{,}99 \cdot 10^{-26}\,\mathrm{kg}$.
-2. Delo električnega polja $e_0U$ se pretvori v kinetično energijo, zato $v_{12} = \sqrt{2e_0U/m_{12}} = \sqrt{2 \cdot 1{,}602 \cdot 10^{-19} \cdot 2000/1{,}99 \cdot 10^{-26}}\,\mathrm{m/s} \approx 1{,}79 \cdot 10^5\,\mathrm{m/s}$.
-3. Lorentzova sila opravlja vlogo centripetalne sile: $r_{12} = m_{12}v_{12}/(e_0B) = 1{,}99 \cdot 10^{-26} \cdot 1{,}79 \cdot 10^5/(1{,}602 \cdot 10^{-19} \cdot 0{,}20)\,\mathrm{m} \approx 0{,}1115\,\mathrm{m}$ (natančneje $0{,}11152\,\mathrm{m}$).
-4. Ker je $r \propto \sqrt{m}$: $r_{13} = r_{12}\sqrt{13/12} \approx 0{,}11608\,\mathrm{m}$.
-5. Ioni zadenejo detektor po polovici kroga, torej na razdalji premera od vstopa: $\Delta x = 2(0{,}11608 - 0{,}11152)\,\mathrm{m} \approx 9{,}1\,\mathrm{mm}$.
+1. $m_{12} = 12 \cdot 1{,}66 \cdot 10^{-27}\,\mathrm{kg} = 1{,}992 \cdot 10^{-26}\,\mathrm{kg}$.
+2. Delo električnega polja $e_0U$ se pretvori v kinetično energijo, zato $v_{12} = \sqrt{2e_0U/m_{12}} = \sqrt{2 \cdot 1{,}602 \cdot 10^{-19} \cdot 2000/1{,}992 \cdot 10^{-26}}\,\mathrm{m/s} \approx 1{,}794 \cdot 10^5\,\mathrm{m/s}$.
+3. Lorentzova sila opravlja vlogo centripetalne sile: $r_{12} = m_{12}v_{12}/(e_0B) = 1{,}992 \cdot 10^{-26} \cdot 1{,}794 \cdot 10^5/(1{,}602 \cdot 10^{-19} \cdot 0{,}20)\,\mathrm{m} \approx 0{,}1115\,\mathrm{m}$ (natančneje $0{,}11151\,\mathrm{m}$).
+4. Ker je $r \propto \sqrt{m}$: $r_{13} = r_{12}\sqrt{13/12} \approx 0{,}11606\,\mathrm{m}$.
+5. Ioni zadenejo detektor po polovici kroga, torej na razdalji premera od vstopa: $\Delta x = 2(0{,}11606 - 0{,}11151)\,\mathrm{m} \approx 9{,}1\,\mathrm{mm}$.
 6. Odgovor: ion $\mathrm{^{12}C^+}$ ima hitrost okoli $1{,}8 \cdot 10^5\,\mathrm{m/s}$ in kroži s polmerom $11{,}2\,\mathrm{cm}$, ion $\mathrm{^{13}C^+}$ s polmerom $11{,}6\,\mathrm{cm}$; izotopa zadeneta detektor približno $9\,\mathrm{mm}$ narazen.
 
 ### Primer 3 (težji)

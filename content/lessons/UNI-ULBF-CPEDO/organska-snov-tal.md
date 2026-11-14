@@ -107,7 +107,7 @@ $\mathrm{C/N_{mešanice}} = \dfrac{m_\mathrm{C,1} + m_\mathrm{C,2}}{m_\mathrm{N,
 3. Razmerje: $\dfrac{13{,}8}{0{,}45} \approx 30{,}7$. Seštevamo mase, ker mikroorganizmi »vidijo« ves ogljik in ves dušik v kupu.
 4. Odgovor: C/N mešanice je približno $31$, kar je malo nad pragom. Kup se bo razkrajal, a sprva počasi.
 
-### Primer 3 (težji): koliko dušika vzame zastirka
+### Primer 3 (težji): koliko dušika vzame žagovina
 
 Po gradnji hiše lastnik na gredo s $50\,\mathrm{m^2}$ vdela $100\,\mathrm{kg}$ suhe žagovine ($50\,\%$ C, $0{,}1\,\%$ N). V prvi sezoni se razgradi $30\,\%$ njenega ogljika in sprosti $30\,\%$ njenega dušika. Mikroorganizmi vgradijo tretjino razgrajenega ogljika v biomaso s C/N $= 8$. Koliko dušika vzamejo iz tal na kvadratni meter?
 
@@ -169,7 +169,7 @@ $5 - 0{,}25 = 0{,}55\,x - 0{,}44\,x$, torej $4{,}75 = 0{,}11\,x$ in $x \approx 4
 
 ## Drugače: Na sliki
 
-Sledi poti enega kilograma ogljika iz žagovine (puščice berejo od zgoraj navzdol):
+Sledi poti enega kilograma ogljika iz žagovine (puščice beri od zgoraj navzdol):
 
 ```
         svež ostanek (1 kg C)

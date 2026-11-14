@@ -50,7 +50,7 @@ Kaj je skupno vsem trem? Koliko števil da `range(2, 6)` in katero število manj
 Začetno število je vključeno, končno ni. `range(2, 6)` da $6 - 2 = 4$ števila, manjka $6$. Torej `range(4, 7)` izpiše `4 5 6`. Če začetka ne napišeš, se šteje od $0$.
 :::
 
-To je pravilo: **`range(a, b)` da cela števila od $a$ do $b - 1$, skupaj $b - a$ števil.** `range(n)` je kratko za `range(0, n)` in da natanko $n$ ponovitev.
+To je pravilo: **`range(a, b)` da cela števila od $a$ do $b - 1$, skupaj $b - a$ števil (če je $a < b$; sicer je obseg prazen).** `range(n)` je kratko za `range(0, n)` in da natanko $n$ ponovitev.
 
 Zanka lahko gre tudi skozi **seznam** (vrednosti v oglatih oklepajih, ločene z vejicami):
 

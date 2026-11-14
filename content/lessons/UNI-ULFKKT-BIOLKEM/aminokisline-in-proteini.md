@@ -44,7 +44,7 @@ Kislina $\mathrm{HA}$ odda proton in nastane konjugirana baza $\mathrm{A^-}$. Pr
 
 $$\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log\frac{[\mathrm{A^-}]}{[\mathrm{HA}]}$$
 
-*Izpeljava.* Konstanta kisline je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$. Logaritmiramo in pomnožimo z $-1$: $-\log[\mathrm{H^+}] = -\log K_\mathrm{a} - \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$, kar je enačba zgoraj z $\mathrm{pH} = -\log[\mathrm{H^+}]$ in $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$. Iz nje sledi delež deprotonirane oblike $\alpha = \dfrac{[\mathrm{A^-}]}{[\mathrm{HA}] + [\mathrm{A^-}]} = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$. **Povprečni naboj** molekule je vsota prispevkov vseh skupin: kisla skupina prispeva $-\alpha$, bazična (npr. $-\mathrm{NH_3^+}$) pa $+(1 - \alpha)$.
+*Izpeljava.* Konstanta kisline je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$. Logaritmiramo in pomnožimo z $-1$: $-\log[\mathrm{H^+}] = -\log K_\mathrm{a} + \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$, kar je enačba zgoraj z $\mathrm{pH} = -\log[\mathrm{H^+}]$ in $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$. Iz nje sledi delež deprotonirane oblike $\alpha = \dfrac{[\mathrm{A^-}]}{[\mathrm{HA}] + [\mathrm{A^-}]} = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$. **Povprečni naboj** molekule je vsota prispevkov vseh skupin: kisla skupina prispeva $-\alpha$, bazična (npr. $-\mathrm{NH_3^+}$) pa $+(1 - \alpha)$.
 
 ### Izoelektrična točka
 
@@ -256,7 +256,7 @@ $$\frac{[\mathrm{H_2A}][\mathrm{H^+}]}{K_1} = \frac{K_R[\mathrm{H_2A}]}{[\mathrm
 
 Zato je pravilo »dva sosednja $\mathrm{p}K$« približek, ki je dober, kadar so ostale vrednosti $\mathrm{p}K$ daleč.
 
-**Puferska kapaciteta.** Aminokislina najbolje pufrira v območju $\mathrm{p}K \pm 1$, ne pri $\mathrm{pI}$. Med proteini v krvi pufrira predvsem hemoglobin s svojimi histidini, ker je njegov $\mathrm{p}K_R$ blizu $7$.
+**Puferska kapaciteta.** Aminokislina najbolje pufrira v območju $\mathrm{p}K \pm 1$, ne pri $\mathrm{pI}$. Med proteini v krvi pufrira predvsem hemoglobin s svojimi histidini, ker je njihov $\mathrm{p}K_R$ blizu $7$.
 
 **$\mathrm{p}K$ v proteinu.** Tabelirane vrednosti veljajo za proste aminokisline. V proteinu jih okolica premakne: v hidrofobnem žepu ali ob istoimenskem naboju je nabita oblika skupine manj ugodna. Tako ima npr. Lys v aktivnem mestu acetoacetat-dekarboksilaze $\mathrm{p}K$ okoli $6$.
 

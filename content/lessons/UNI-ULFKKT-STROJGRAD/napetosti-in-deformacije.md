@@ -62,7 +62,7 @@ $$\Delta L = \frac{F L_0}{E A}.$$
 
 To je točno vzorec iz meritev; iz njih bi dobili $E = F L_0/(A\,\Delta L) = 200\,\mathrm{GPa}$. Zmnožek $EA$ je **osna togost** prereza. Če se sila ali prerez spreminjata vzdolž palice, palico razdelimo na kratke dele $\mathrm{d}x$ in seštejemo: $\Delta L = \int_0^{L_0} \frac{N(x)}{E A(x)}\,\mathrm{d}x$, kjer je $N(x)$ osna sila v prerezu $x$.
 
-**Dva materiala v istem prerezu.** Kadar silo $F$ skupaj nosita dva toga povezana dela iz različnih snovi (jeklo v betonu, cev z jedrom), sama ravnotežna enačba $N_1 + N_2 = F$ ne pove, kako se sila razdeli. Ker sta dela sprijeta, imata isto deformacijo $\varepsilon$; s Hookovim zakonom je $N_i = E_iA_i\,\varepsilon$, torej $F = \varepsilon\,(E_1A_1 + E_2A_2)$. Sila se razdeli v razmerju osnih togosti $E_iA_i$, razmerje napetosti pa je $\sigma_1/\sigma_2 = E_1/E_2$. Splošni postopek za take statično nedoločene primere obravnava lekcija o osni obremenitvi.
+**Dva materiala v istem prerezu.** Kadar silo $F$ skupaj nosita dva togo povezana dela iz različnih snovi (jeklo v betonu, cev z jedrom), sama ravnotežna enačba $N_1 + N_2 = F$ ne pove, kako se sila razdeli. Ker sta dela sprijeta, imata isto deformacijo $\varepsilon$; s Hookovim zakonom je $N_i = E_iA_i\,\varepsilon$, torej $F = \varepsilon\,(E_1A_1 + E_2A_2)$. Sila se razdeli v razmerju osnih togosti $E_iA_i$, razmerje napetosti pa je $\sigma_1/\sigma_2 = E_1/E_2$. Splošni postopek za take statično nedoločene primere obravnava lekcija o osni obremenitvi.
 
 **Toplotna deformacija.** Deformacijo povzroči tudi sprememba temperature, $\varepsilon_T = \alpha\,\Delta T$ ($\alpha$ je temperaturni razteznostni koeficient); kaj se zgodi, ko je palica vpeta in se ne more raztegniti, obravnava lekcija o osni obremenitvi.
 
@@ -95,7 +95,7 @@ Skica diagrama za konstrukcijsko jeklo:
  +---------------------------> ε
 ```
 
-Iz preizkušanca po pretrgu izmerimo še **raztezek po pretrgu** $A = (L_u - L_0)/L_0$ (oznaka iz standarda; ne zamenjaj je s prerezom) in **kontrakcijo** $Z = (A_0 - A_u)/A_0$; oba merita **duktilnost**, sposobnost plastične deformacije (žilavost je nekaj drugega: energija, ki jo material porabi do pretrga). Duktilni materiali (jeklo, aluminij) pred pretrgom opazno tečejo in »opozorijo«; krhki (litoželezo, steklo, beton v nategu) se pretrgajo skoraj brez plastične deformacije.
+Iz preizkušanca po pretrgu izmerimo še **raztezek po pretrgu** $A = (L_u - L_0)/L_0$ (oznaka iz standarda; ne zamenjaj je s prerezom) in **kontrakcijo** $Z = (A_0 - A_u)/A_0$; oba merita **duktilnost**, sposobnost plastične deformacije (žilavost je nekaj drugega: energija, ki jo material porabi do pretrga). Duktilni materiali (jeklo, aluminij) pred pretrgom opazno tečejo in »opozorijo«; krhki (siva litina, steklo, beton v nategu) se pretrgajo skoraj brez plastične deformacije.
 
 Okvirne vrednosti:
 
@@ -260,7 +260,7 @@ Okrogel preizkušanec iz jekla ima začetni premer $d_0 = 10{,}0\,\mathrm{mm}$ i
 
 ### Naloga 2
 
-Opiši in skiciraj diagram napetost–deformacija za konstrukcijsko jeklo in za krhek material (npr. litoželezo). Natančno definiraj mejo proporcionalnosti, mejo tečenja $R_e$, dogovorno mejo $R_{p0{,}2}$ in natezno trdnost $R_m$. Razloži, zakaj inženirska napetost po doseženi $R_m$ pada, čeprav material ne postane šibkejši. Utemelji, zakaj dopustno napetost za jeklo računamo iz $R_e$, za krhke materiale iz $R_m$, in zakaj je pri krhkih varnostni faktor večji.
+Opiši in skiciraj diagram napetost–deformacija za konstrukcijsko jeklo in za krhek material (npr. sivo litino). Natančno definiraj mejo proporcionalnosti, mejo tečenja $R_e$, dogovorno mejo $R_{p0{,}2}$ in natezno trdnost $R_m$. Razloži, zakaj inženirska napetost po doseženi $R_m$ pada, čeprav material ne postane šibkejši. Utemelji, zakaj dopustno napetost za jeklo računamo iz $R_e$, za krhke materiale iz $R_m$, in zakaj je pri krhkih varnostni faktor večji.
 
 **Rešitev:**
 
@@ -302,7 +302,7 @@ Jeklena žica premera $2{,}0\,\mathrm{mm}$ in dolžine $3{,}0\,\mathrm{m}$ nosi 
 
 **Napetostni tenzor.** V splošnem napetost v točki ni en sam vektor: na vsako ploskvico skozi točko deluje drugačna napetost. Opiše jo simetrična matrika $3 \times 3$ (tenzor napetosti) s tremi normalnimi in tremi strižnimi komponentami. Hookov zakon za izotropen material poveže šest komponent napetosti s šestimi komponentami deformacije prek dveh konstant, $E$ in $\nu$. Enoosni zakon $\sigma = E\varepsilon$ je poseben primer.
 
-**Mejna stanja namesto dopustne napetosti.** Sodobni standardi za projektiranje konstrukcij (evrokodi) namesto enega varnostnega faktorja uporabljajo delne faktorje: obtežbe povečajo (npr. stalne s $1{,}35$, spremenljive z $1{,}5$), trdnost materiala zmanjšajo (npr. jeklo z $\gamma_{M0} = 1{,}0$, beton z $1{,}5$). Ideja je ista kot pri dopustni napetosti, a negotovost obtežbe in materiala sta ločeni.
+**Mejna stanja namesto dopustne napetosti.** Sodobni standardi za projektiranje konstrukcij (evrokodi) namesto enega varnostnega faktorja uporabljajo delne faktorje: obtežbe povečajo (npr. stalne s $1{,}35$, spremenljive z $1{,}5$), trdnost materiala zmanjšajo (npr. jeklo z $\gamma_{M0} = 1{,}0$, beton z $1{,}5$). Ideja je ista kot pri dopustni napetosti, a negotovosti obtežbe in materiala sta ločeni.
 
 **Biološka tkiva.** Kite in vezi imajo diagram v obliki črke J: na začetku se ravnajo valovita kolagenska vlakna in je tkivo mehko, nato postane skoraj linearno. Zato $E$ za tkiva podajamo za linearni del, njihova trdnost pa je odvisna od hitrosti obremenjevanja (viskoelastičnost).
 

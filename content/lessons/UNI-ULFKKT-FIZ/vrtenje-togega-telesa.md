@@ -155,7 +155,7 @@ $J_1\omega_1 = J_2\omega_2$, $\omega = 2\pi\nu$, $W_k = \tfrac{1}{2}J\omega^2 = 
 
 **Rešitev:**
 
-1. Teža in sila ležaja imata nosilke vzdolž osi ali skozi njo, zato nimata navora okoli navpične osi. Vrtilna količina se ohranja.
+1. Teža in sila ležaja sta vzporedni z osjo ali imata nosilko skozi njo, zato nimata navora okoli navpične osi. Vrtilna količina se ohranja.
 2. $\nu_2 = \nu_1 J_1/J_2 = 0{,}50\,\mathrm{s^{-1}} \cdot 6{,}0/2{,}0 = 1{,}5\,\mathrm{s^{-1}}$.
 3. Za energijo potrebujemo kotni hitrosti v $\mathrm{s^{-1}}$, ne obratov na sekundo: $\omega_1 = 2\pi \cdot 0{,}50\,\mathrm{s^{-1}} = \pi\,\mathrm{s^{-1}} \approx 3{,}14\,\mathrm{s^{-1}}$, $\omega_2 = 3\pi\,\mathrm{s^{-1}} \approx 9{,}42\,\mathrm{s^{-1}}$.
 4. $W_{k1} = \tfrac{1}{2} \cdot 6{,}0 \cdot 3{,}14^2\,\mathrm{J} \approx 29{,}6\,\mathrm{J}$, $W_{k2} = \tfrac{1}{2} \cdot 2{,}0 \cdot 9{,}42^2\,\mathrm{J} \approx 88{,}8\,\mathrm{J}$.

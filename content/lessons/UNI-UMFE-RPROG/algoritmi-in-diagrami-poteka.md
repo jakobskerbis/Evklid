@@ -182,7 +182,7 @@ Pred zanko: $\text{vsota} = 0$, $n = 0$, beri $x$. Zanka, dokler $x \ge 0$: pri�
 - $x = -1$: pogoj ne velja, izhod iz zanke.
 
 4. $n = 4 \neq 0$, zato izpiše povprečje $\frac{43}{4} = 10{,}75$ in največjo vrednost $15$.
-5. Posebni primer: če je že prvi vhod $-1$, zanka se ne izvede, $n = 0$. Brez odločitve po zanki bi algoritem delil z nič.
+5. Posebni primer: če je že prvi vhod $-1$, se zanka ne izvede, $n = 0$. Brez odločitve po zanki bi algoritem delil z nič.
 6. Program, ki smo ga zagnali:
 
 ```python
@@ -256,7 +256,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Enačba $x^3 - x - 2 = 0$ ima ničlo na intervalu $[1, 2]$, ker je $f(1) = -2 < 0$ in $f(2) = 4 > 0$. **Bisekcija**: dokler je dolžina intervala vsaj $0{,}1$, izračunaj sredino $s$; če imata $f(a)$ in $f(s)$ različna predznaka (ali je $f(s) = 0$), postavi $b \leftarrow s$, sicer $a \leftarrow s$. Na koncu izpiši sredino intervala. (a) Opiši diagram poteka. (b) Sestavi sledilno tabelo za $a = 1$, $b = 2$. (c) Za koliko se lahko približek najbolj razlikuje od prave ničle?
+Zvezna funkcija $f(x) = x^3 - x - 2$ ima ničlo na intervalu $[1, 2]$, ker je $f(1) = -2 < 0$ in $f(2) = 4 > 0$. **Bisekcija**: dokler je dolžina intervala vsaj $0{,}1$, izračunaj sredino $s$; če imata $f(a)$ in $f(s)$ različna predznaka (ali je $f(s) = 0$), postavi $b \leftarrow s$, sicer $a \leftarrow s$. Na koncu izpiši sredino intervala. (a) Opiši diagram poteka. (b) Sestavi sledilno tabelo za $a = 1$, $b = 2$. (c) Za koliko se lahko približek najbolj razlikuje od prave ničle?
 
 **Rešitev:**
 
@@ -342,7 +342,7 @@ Navigacija v avtu dela enako. Na vsakem križišču preveri pogoj (»sem že na 
 + korak 3, ker je rezultat $a = 12$, ne $b$
 > Ko je $b = 0$, je največji skupni delitelj v $a$: $D = 12$.
 
-? Termostat v rastlinjaku vsako minuto izmeri temperaturo. Če je pod $18\,°\mathrm{C}$, vklopi grelec, sicer ga izklopi. Katera struktura opisuje to delovanje?
+? Termostat v rastlinjaku vsako minuto izmeri temperaturo. Če je pod $18\,^\circ\mathrm{C}$, vklopi grelec, sicer ga izklopi. Katera struktura opisuje to delovanje?
 - samo zaporedje
 ~ Zaporedje ne izbira med dvema možnostma in se ne ponavlja.
 - samo odločitev

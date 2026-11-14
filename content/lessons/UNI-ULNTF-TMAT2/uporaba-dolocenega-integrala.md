@@ -171,7 +171,7 @@ Predstavljaj si tri slike, narisane ena pod drugo.
 - **Vrtenina.** Isti pravokotnik se zavrti okoli osi $x$ in postane tanek kovanec s polmerom $f(x)$. Če je spodaj še $g$, ima kovanec luknjo s polmerom $g(x)$, kot podložka. Kup kovancev od $a$ do $b$ je telo.
 - **Lok.** Na krivulji je kratek poševen odsek. Pod njim je pravokoten trikotnik: vodoravna kateta $dx$, navpična $f'(x)\,dx$, hipotenuza je odsek. Nanizane hipotenuze dajo krivuljo.
 
-Pri vseh treh je integral le stroj, ki sešteje neskončno tankih kosov. Razlikuje se samo to, kaj je en kos.
+Pri vseh treh je integral le stroj, ki sešteje neskončno mnogo tankih kosov. Razlikuje se samo to, kaj je en kos.
 
 ## Drugače: Bolj natančno
 

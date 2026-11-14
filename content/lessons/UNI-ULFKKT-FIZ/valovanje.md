@@ -11,9 +11,9 @@ Christian Doppler je predlagal, da gibanje zvezde spremeni barvo njene svetlobe.
 
 ### Kaj potuje, ko potuje val?
 
-Zamikajoča predstava je, da val nese snov s seboj: da zvok »priteče« od zvočnika do ušesa kot pihljaj zraka. Pobarvaj košček vrvi in pošlji po njej val: košček poskoči gor in dol in se vrne na svoje mesto. Potuje **motnja** in z njo energija, snov pa le niha okoli svoje lege. Valovanje je torej način, kako se energija širi po prostoru, ne da bi se snov premaknila z enega kraja na drugega.
+Zapeljiva predstava je, da val nese snov s seboj: da zvok »priteče« od zvočnika do ušesa kot pihljaj zraka. Pobarvaj košček vrvi in pošlji po njej val: košček poskoči gor in dol in se vrne na svoje mesto. Potuje **motnja** in z njo energija, snov pa le niha okoli svoje lege. Valovanje je torej način, kako se energija širi po prostoru, ne da bi se snov premaknila z enega kraja na drugega.
 
-**1. Vrste valovanja.** Pri **transverzalnem** valovanju delci nihajo pravokotno na smer širjenja (val na vrvi, svetloba). Pri **longitudinalnem** nihajo vzdolž smeri širjenja (zvok v plinih in tekočinah, kjer se izmenjujejo zgoščine in razredčine). V trdninah se lahko širita obe vrsti z različnima hitrostma.
+**1. Vrste valovanja.** Pri **transverzalnem** valovanju delci nihajo pravokotno na smer širjenja (val na vrvi; pri svetlobi tako nihata električno in magnetno polje). Pri **longitudinalnem** nihajo vzdolž smeri širjenja (zvok v plinih in tekočinah, kjer se izmenjujejo zgoščine in razredčine). V trdninah se lahko širita obe vrsti z različnima hitrostma.
 
 ### Opis in hitrost
 
@@ -232,7 +232,7 @@ Navedi predpostavke in izpelji valovno enačbo za napeto struno. Dokaži, da je 
 
 ### Naloga 3
 
-Utemelji, ali opazovalec sliši enako frekvenco, če se izvir z hitrostjo $v$ približuje mirujočemu opazovalcu ali pa se opazovalec z enako hitrostjo približuje mirujočemu izviru (zrak miruje). Odgovor podpri z izračunom za $v = 34\,\mathrm{m/s}$, $c = 340\,\mathrm{m/s}$.
+Utemelji, ali opazovalec sliši enako frekvenco, če se izvir s hitrostjo $v$ približuje mirujočemu opazovalcu ali pa se opazovalec z enako hitrostjo približuje mirujočemu izviru (zrak miruje). Odgovor podpri z izračunom za $v = 34\,\mathrm{m/s}$, $c = 340\,\mathrm{m/s}$.
 
 **Rešitev:**
 

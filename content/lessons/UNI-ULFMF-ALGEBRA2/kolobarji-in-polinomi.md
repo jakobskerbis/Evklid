@@ -24,7 +24,7 @@ Isto vprašanje se pojavi pri polinomih: kdaj gre deljenje brez ostanka, koliko 
 
 **2. Kolobar.** **Kolobar** je množica $R$ z dvema operacijama, $+$ in $\cdot$, pri čemer je $(R, +)$ Abelova grupa, množenje je asociativno in velja distributivnost $a(b + c) = ab + ac$, $(a + b)c = ac + bc$. Večinoma bomo delali s **komutativnimi kolobarji z enico** ($ab = ba$, obstaja $1$). Primeri: cela števila $\mathbb{Z}$; ostanki $\mathbb{Z}_n = \{0, 1, \dots, n-1\}$ z računanjem po modulu $n$; polinomi $R[x]$ s koeficienti iz $R$. Kvadratne matrike tvorijo kolobar, ki ni komutativen.
 
-**3. Kje se je zalomilo.** Element $a \neq 0$ je **delitelj niča**, če obstaja $b \neq 0$ z $ab = 0$. V $\mathbb{Z}_{12}$ sta to na primer $3$ in $4$ (tri velike terce). Kolobar brez deliteljev niča (in z $1 \neq 0$) je **cel kolobar**. Element $a$ je **obrnljiv** (enota), če obstaja $b$ z $ab = 1$.
+**3. Kje se je zalomilo.** Element $a \neq 0$ je **delitelj niča**, če obstaja $b \neq 0$ z $ab = 0$. V $\mathbb{Z}_{12}$ sta to na primer $3$ in $4$ (tri velike terce). Komutativen kolobar brez deliteljev niča (in z $1 \neq 0$) je **cel kolobar**. Element $a$ je **obrnljiv** (enota), če obstaja $b$ z $ab = 1$.
 
 Kateri intervali obiščejo vseh $12$ tonov? Tisti, ki so v $\mathbb{Z}_{12}$ obrnljivi. Korak $k$ obišče $12/\gcd(k, 12)$ različnih tonov:
 
@@ -122,7 +122,7 @@ $x^2 - 1 = (x - 1)(x + 1)$; v polju iz $ab = 0$ sledi $a = 0$ ali $b = 0$
 1. V $\mathbb{Z}_{15}$ iščemo $x$, da $15 \mid (x - 1)(x + 1)$. Ker je $15 = 3 \cdot 5$, mora $3$ deliti enega od faktorjev, $5$ pa tudi enega, ne nujno istega. Ustrezajo $x = 1, 4, 11, 14$: na primer $(4 - 1)(4 + 1) = 3 \cdot 5 = 15$.
 2. Pri $x = 4$ in $x = 11$ noben faktor ni deljiv s $15$; produkt je nič zaradi deliteljev niča ($3 \cdot 5$ oz. $10 \cdot 12 = 120 = 8 \cdot 15$).
 3. $\mathbb{Z}_{17}$ je polje, ker je $17$ praštevilo. Iz $(x - 1)(x + 1) \equiv 0$ sledi $x \equiv 1$ ali $x \equiv -1 \equiv 16$.
-4. Odgovor: v $\mathbb{Z}_{15}$ ima polinom štiri ničle ($1, 4, 11, 14$), v $\mathbb{Z}_{17}$ natanko dve ($1, 16$). Trditev drži le v celem kolobarju, $\mathbb{Z}_{15}$ pa to ni.
+4. Odgovor: v $\mathbb{Z}_{15}$ ima polinom štiri ničle ($1, 4, 11, 14$), v $\mathbb{Z}_{17}$ natanko dve ($1, 16$). Trditev je zagotovljena le v celem kolobarju (z $1 \neq -1$), $\mathbb{Z}_{15}$ pa to ni.
 
 ### Primer 4 – zdaj ti
 

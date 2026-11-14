@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-V vrečki zmečkaj nekaj jagod z žličko detergenta za posodo in ščepcem soli, precedi in po robu kozarca nalij mrzel alkohol. Na meji tekočin se v nekaj minutah pokažejo bele, sluzaste niti: DNA, vidna s prostim očesom. Bakterija *E. coli* ima v svoji DNA približno $4{,}6$ milijona baznih parov. Prepisati jih mora pred vsako delitvijo, vsakih $20$ do $40$ minut, in to skoraj brez napake.
+V vrečki zmečkaj nekaj jagod z žličko detergenta za posodo in ščepcem soli, precedi in po robu kozarca nalij mrzel alkohol. Na meji tekočin se v nekaj minutah pokažejo bele, sluzaste niti: DNA, vidna s prostim očesom. Bakterija *E. coli* ima v svoji DNA približno $4{,}6$ milijona baznih parov. Podvojiti jih mora pred vsako delitvijo, vsakih $20$ do $40$ minut, in to skoraj brez napake.
 
 Natančno kopijo omogoča zgradba: verigi se ujemata kot ključ in ključavnica, zato vsaka nosi navodilo za drugo.
 
@@ -35,7 +35,7 @@ Veriga ima dva različna konca: na enem je prost 5'-fosfat, na drugem prosta 3'-
 
 ### Blok 3: dvojna vijačnica DNA
 
-V celici DNA tvori dve verigi, ovite druga okoli druge v desnosučno vijačnico (oblika B). Pomembna so tri pravila:
+V celici DNA tvori dve verigi, oviti druga okoli druge v desnosučno vijačnico (oblika B). Pomembna so tri pravila:
 
 - Verigi sta **antiparalelni**: ena teče $5' \to 3'$, druga ob njej $3' \to 5'$.
 - Baze se parijo **komplementarno**: A s T z dvema vodikovima vezema, G s C s tremi.
@@ -179,12 +179,12 @@ Kromosom *E. coli* je krožen in ima $4{,}6 \cdot 10^6$ baznih parov. Podvajanje
 **Iščemo:** čas podvajanja $t$, število fragmentov $n_\mathrm{F}$ in primerjev, potrebno hitrost $v'$
 
 :::formula
-Vsaka vilica prepiše polovico kromosoma: $t = \dfrac{N/2}{v}$, $\quad n_\mathrm{F} = \dfrac{2 \cdot N/2}{l}$, $\quad v' = \dfrac{N/2}{t'}$
+Vsaka vilica podvoji polovico kromosoma: $t = \dfrac{N/2}{v}$, $\quad n_\mathrm{F} = \dfrac{2 \cdot N/2}{l}$, $\quad v' = \dfrac{N/2}{t'}$
 :::
 
 **Rešitev:**
 
-1. Vilici se odpravita v nasprotnih smereh in se srečata na drugi strani kroga, zato vsaka prepiše polovico: $\dfrac{4{,}6 \cdot 10^6\,\text{bp}}{2} = 2{,}3 \cdot 10^6\,\text{bp}$.
+1. Vilici se odpravita v nasprotnih smereh in se srečata na drugi strani kroga, zato vsaka podvoji polovico: $\dfrac{4{,}6 \cdot 10^6\,\text{bp}}{2} = 2{,}3 \cdot 10^6\,\text{bp}$.
 2. Čas: $t = \dfrac{2{,}3 \cdot 10^6\,\text{bp}}{1000\,\text{bp/s}} = 2300\,\text{s}$.
 3. V minutah: $2300 / 60 \approx 38{,}3$, torej približno $38\,\text{min}$.
 4. V vsaki vilici je ena nova veriga zaostajajoča, ker sta matrici antiparalelni; dolga je toliko kot pot vilice, $2{,}3 \cdot 10^6\,\text{nt}$.
@@ -201,13 +201,13 @@ Kromosom 1 človeka ima približno $2{,}5 \cdot 10^8$ baznih parov. Vilica pri e
 **Iščemo:** najmanjše število izvorov $n$
 
 :::formula
-Vsak izvor v času $t$ prepiše $2 \cdot v \cdot t$ baznih parov: $n = \dfrac{N}{2 \cdot v \cdot t}$
+Vsak izvor v času $t$ podvoji $2 \cdot v \cdot t$ baznih parov: $n = \dfrac{N}{2 \cdot v \cdot t}$
 :::
 
 **Rešitev:**
 
 1. Čas v sekundah: $8 \cdot 3600 = 28800$, torej $t = 28\,800\,\text{s}$.
-2. En izvor z dvema vilicama prepiše $2 \cdot 50 \cdot 28800 = 2880000$, torej $2{,}88 \cdot 10^6\,\text{bp}$.
+2. En izvor z dvema vilicama podvoji $2 \cdot 50 \cdot 28800 = 2880000$, torej $2{,}88 \cdot 10^6\,\text{bp}$.
 3. Izračunaj $n$ sam in razmisli, kako zaokrožiti.
 
 :::premisli

@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Dietetičarka sestavlja bolniku jedilnik: vsaka porcija živila prinese določeno količino beljakovin, maščob in ogljikovih hidratov. Dvojna porcija prinese dvakrat toliko, dve živili skupaj pa vsoto svojih prispevkov. Radiolog na zaslonu zavrti rentgensko sliko okoli središča za $90^\circ$: dve puščici, narisani na sliko, lahko sešteje pred vrtenjem ali po njem in dobi isto, enako velja za raztegnitev puščice za faktor $2$. Krožnik in rentgenska slika nimata nič skupnega, obe preslikavi pa ohranjata seštevanje in množenje s skalarjem; takim pravimo **linearne**. Enako se obnašata odvajanje polinomov, $(p + q)' = p' + q'$ in $(\lambda p)' = \lambda p'$, ter množenje z matriko, $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}$. Vsako linearno preslikavo zapišemo z **matriko preslikave**, zato se računanje z njimi prevede na računanje z matrikami. Spoznaš še **jedro** in **sliko** preslikave ter kako se matrika spremeni, ko **zamenjamo bazo**.
+Dietetičarka sestavlja bolniku jedilnik: vsaka porcija živila prinese določeno količino beljakovin, maščob in ogljikovih hidratov. Dvojna porcija prinese dvakrat toliko, dve živili skupaj pa vsoto svojih prispevkov. Radiolog na zaslonu zavrti rentgensko sliko okoli središča za $90^\circ$: dve puščici, narisani na sliko, lahko sešteje pred vrtenjem ali po njem in dobi isto, enako velja za raztegnitev puščice za faktor $2$. Krožnik in rentgenska slika nimata nič skupnega, obe preslikavi pa ohranjata seštevanje in množenje s skalarjem; takim pravimo **linearne**. Enako se obnašata odvajanje polinomov, $(p + q)' = p' + q'$ in $(\lambda p)' = \lambda p'$, ter množenje z matriko, $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}$. Vsako linearno preslikavo med končnorazsežnima prostoroma zapišemo z **matriko preslikave**, zato se računanje z njimi prevede na računanje z matrikami. Spoznaš še **jedro** in **sliko** preslikave ter kako se matrika spremeni, ko **zamenjamo bazo**.
 
 ## Razlaga
 
@@ -57,7 +57,7 @@ $$[L(u)]_C = A\,[u]_B.$$
 
 ### Jedro in slika
 
-Na mreži: če se paralelogram sploči, se vsaj ena cela premica vektorjev zlije v izhodišče. **Jedro** preslikave je $\ker L = \{u \in U : L(u) = \mathbf{0}\}$, vse kar se »zbriše«. **Slika** je $\operatorname{im} L = \{L(u) : u \in U\}$, vse kar preslikava doseže. Jedro je podprostor v $U$, slika pa podprostor v $V$.
+Na mreži: če se paralelogram sploči, se vsaj ena cela premica vektorjev zlije v izhodišče. **Jedro** preslikave je $\ker L = \{u \in U : L(u) = \mathbf{0}\}$, vse, kar se »zbriše«. **Slika** je $\operatorname{im} L = \{L(u) : u \in U\}$, vse, kar preslikava doseže. Jedro je podprostor v $U$, slika pa podprostor v $V$.
 
 Za $L(\mathbf{x}) = A\mathbf{x}$ je jedro množica rešitev homogenega sistema $A\mathbf{x} = \mathbf{0}$. Slika je ogrinjača stolpcev matrike $A$, ker je $A\mathbf{x} = x_1 \mathbf{a}_1 + \ldots + x_n \mathbf{a}_n$.
 
@@ -78,7 +78,7 @@ Kar jedro »vzame«, slika »izgubi«. Vsota je vedno $3$. S simboli: za $L\colo
 
 $$\dim \ker L + \dim \operatorname{im} L = \dim U.$$
 
-Število $\dim \operatorname{im} L$ je **rang** preslikave in je enak rangu njene matrike.
+Število $\dim \operatorname{im} L$ je **rang** preslikave in je enako rangu njene matrike.
 
 :::premisli
 Ali obstaja injektivna linearna preslikava $\mathbb{R}^3 \to \mathbb{R}^2$? Zakaj?
@@ -116,7 +116,7 @@ $j$-ti stolpec matrike $= L(e_j)$; $\;L(\mathbf{x}) = A\mathbf{x}$
 **Rešitev:**
 
 1. $L(e_1) = L(1, 0, 0) = (1, 0)$, $L(e_2) = L(0, 1, 0) = (-1, 1)$, $L(e_3) = L(0, 0, 1) = (0, -1)$.
-2. Sliki zložimo v stolpce: $A = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$, velikost $2 \times 3$, ker gre $\mathbb{R}^3 \to \mathbb{R}^2$.
+2. Slike zložimo v stolpce: $A = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$, velikost $2 \times 3$, ker gre $\mathbb{R}^3 \to \mathbb{R}^2$.
 3. $A \cdot (2, 5, 1) = (1 \cdot 2 - 1 \cdot 5 + 0 \cdot 1,\ 0 \cdot 2 + 1 \cdot 5 - 1 \cdot 1) = (-3, 4)$.
 4. Preizkus neposredno po predpisu: $L(2, 5, 1) = (2 - 5,\ 5 - 1) = (-3, 4)$, se ujema.
 5. Odgovor: $A = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$ in $L(2, 5, 1) = (-3, 4)$.
@@ -241,7 +241,7 @@ Torej $\dim \operatorname{im} L = n - k$. Posledica za $L\colon U \to U$: $L$ je
 
 **Kompozitum.** Če imata $L$ in $K$ matriki $A$ in $B$ v ustreznih bazah, ima $K \circ L$ matriko $BA$. Zato je množenje matrik definirano tako, kot je.
 
-**Izpeljava $A' = P^{-1}AP$.** Iz $[u]_B = P[u]_{B'}$ in $[L(u)]_B = A[u]_B$ dobimo $[L(u)]_{B'} = P^{-1}[L(u)]_B = P^{-1}AP\,[u]_{B'}$. Matriki $A$ in $A'$ sta **podobni**. Podobne matrike imajo enako determinanto in rang, saj opisujeta isto preslikavo.
+**Izpeljava $A' = P^{-1}AP$.** Iz $[u]_B = P[u]_{B'}$ in $[L(u)]_B = A[u]_B$ dobimo $[L(u)]_{B'} = P^{-1}[L(u)]_B = P^{-1}AP\,[u]_{B'}$. Matriki $A$ in $A'$ sta **podobni**. Podobne matrike imajo enako determinanto in rang, saj opisujejo isto preslikavo.
 
 ## Preveri se
 

@@ -69,13 +69,13 @@ Izhlapevanje se zmanjša. Laski in jamica zadržijo plast mirnega, vlažnega zra
 
 **Blok 7: metamorfoze listov.** Ko list prevzame drugo nalogo, se spremeni tudi oblika: **vitice** graha za oprijemanje, **trni** kaktusa in češmina za obrambo in manj izhlapevanja, mesnate **luske** čebulice za shranjevanje, lovilni listi **rosike** za lov žuželk.
 
-*Preveri:* So bodice kaktusa listi ali stebla? (Listi; zeleno, mesnato telo kaktusa je steblo.)
+*Preveri:* So trni kaktusa listi ali stebla? (Listi; zeleno, mesnato telo kaktusa je steblo.)
 
 ## Rešeni primeri
 
 ### Primer 1: odtis z lakom za nohte
 
-Na spodnjo stran lista bršljana namažeš tanko plast prozornega laka, ga posušiš in odlepiš z lepilnim trakom. Pod mikroskopom omejiš kvadratno polje s stranico $0{,}5\,\mathrm{mm}$ in v njem presteješ $45$ rež. Kolikšna je gostota rež?
+Na spodnjo stran lista fižola namažeš tanko plast prozornega laka, ga posušiš in odlepiš z lepilnim trakom. Pod mikroskopom omejiš kvadratno polje s stranico $0{,}5\,\mathrm{mm}$ in v njem presteješ $45$ rež. Kolikšna je gostota rež?
 
 **Podatki:** stranica polja $a = 0{,}5\,\mathrm{mm}$, število rež $N = 45$
 **Iščemo:** gostoto rež $g$ (rež na $\mathrm{mm^2}$)
@@ -125,13 +125,13 @@ Kserofitni znaki: manj izhlapevanja (kutikula, ugreznjene reže, laski) in odpor
 
 1. Debela kutikula in večplastna povrhnjica zmanjšata izhlapevanje skozi površino, ko so reže zaprte.
 2. Reže v jamicah z laski imajo nad seboj miren vlažen zrak, zato izhlapi manj vode tudi, ko so odprte.
-3. Sklerenhim drži list v obliki, ko turgor pade, zato list na suši ne ovene in se ne zmečka.
+3. Sklerenhim drži list v obliki, ko turgor pade, zato list na suši ne oveni in se ne zmečka.
 4. Palisade na obeh straneh kažejo na močno svetlobo z obeh smeri, kar je značilno za sončna, odprta rastišča.
 5. Odgovor: rastlina je kserofit sončnih, suhih rastišč (tak list ima npr. oleander); vse lastnosti varčujejo z vodo, palisade pa izkoristijo obilico svetlobe.
 
 ### Primer 4: zdaj ti
 
-Na odtisu z lista lipe vidiš krožno vidno polje s premerom $0{,}4\,\mathrm{mm}$. V njem presteješ $30$ rež. Kolikšna je gostota rež? Zaokroži na cele.
+Na odtisu s spodnje strani lista lipe vidiš krožno vidno polje s premerom $0{,}4\,\mathrm{mm}$. V njem presteješ $30$ rež. Kolikšna je gostota rež? Zaokroži na cele.
 
 **Podatki:** premer polja $d = 0{,}4\,\mathrm{mm}$, $N = 30$
 **Iščemo:** gostoto $g$
@@ -188,7 +188,7 @@ Puščice: CO₂ vstopa spodaj skozi režo in se po praznih prostorih razširi d
 
 **Difuzija.** Pretok vodne pare je sorazmeren z razliko koncentracij med skoraj nasičeno podrežno votlinico in okolico ter obratno sorazmeren z uporom poti. Mejna plast mirnega zraka, jamice in laski povečajo upor.
 
-**Drugi tipi listov.** Listi trav so pogosto izobilateralni, z enakim mezofilom in režami na obeh straneh. Pri C₄ rastlinah (koruza) žile obdaja venec celic žilnega ovoja s kloroplasti (**Kranzova anatomija**). Peščene trave imajo reže v žlebovih, ki jih ob suši zaprejo **sklepne celice**, ko se list zvije.
+**Drugi tipi listov.** Listi trav so pogosto izobilateralni, z enakim mezofilom in režami na obeh straneh. Pri C₄ rastlinah (koruza) žile obdaja venec celic žilnega ovoja s kloroplasti (**anatomija tipa Kranz**, iz nem. *Kranz* »venec«). Peščene trave imajo reže v žlebovih, ki jih ob suši zaprejo **sklepne celice**, ko se list zvije.
 
 ## Preveri se
 

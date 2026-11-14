@@ -48,7 +48,7 @@ $100$-krat. Ležeče: $b = 30$, $h = 3$, pokonci: $b = 3$, $h = 30$. Razmerje je
 
 $$I_y = I_{y_T} + a^2 A$$
 
-Tu je $I_{y_T}$ vztrajnostni moment glede na vzporedno os skozi težišče ploskve, $a$ razdalja med osema in $A$ ploščina. Člen $a^2 A$ je vedno pozitiven, zato je težiščna os tista, glede na katero je $I$ najmanjši.
+Tu je $I_{y_T}$ vztrajnostni moment glede na vzporedno os skozi težišče ploskve, $a$ razdalja med osema in $A$ ploščina. Člen $a^2 A$ je vedno pozitiven, zato je med vsemi vzporednimi osmi težiščna os tista, glede na katero je $I$ najmanjši.
 
 Pri sestavljenem prerezu (T, I, L, U) izrek uporabimo za vsak del posebej. Najprej določimo skupno težišče, nato vsak del prenesemo nanj in seštejemo.
 
@@ -195,7 +195,7 @@ $h^2 = \dfrac{6 \cdot 20}{20} = 6\,\mathrm{mm^2}$, $h \approx 2{,}45\,\mathrm{mm
 - $I_y = \int_A z^2\,\mathrm{d}A$: razdalja na kvadrat, vedno pozitiven, enota $\mathrm{mm^4}$. Pravokotnik: $\dfrac{b h^3}{12}$.
 - Steinerjev izrek: $I_y = I_{y_T} + a^2 A$. Težiščna os da najmanjši $I$. Pri sestavljenih prerezih najprej skupno težišče, nato vsak del s svojim $a^2 A$.
 - Deviacijski moment $I_{yz} = \int_A y z\,\mathrm{d}A$ je lahko negativen; pri simetrijski osi je $0$.
-- Glavni osi: $I_{yz} = 0$; $I_{1,2} = I_s \pm R$, kot iz $\tan 2\varphi_0 = \dfrac{2 I_{yz}}{I_z - I_y}$, z preizkusom, katera os nosi $I_1$.
+- Glavni osi: $I_{yz} = 0$; $I_{1,2} = I_s \pm R$, kot iz $\tan 2\varphi_0 = \dfrac{2 I_{yz}}{I_z - I_y}$, s preizkusom, katera os nosi $I_1$.
 - Odpornostni moment $W = \dfrac{I}{e_{\max}}$, $\sigma_{\max} = \dfrac{M}{W}$. Pravokotnik: $\dfrac{b h^2}{6}$; če prerez ni simetričen glede na nevtralno os, je merodajen manjši $W$.
 
 ## Drugače: Na sliki
@@ -215,9 +215,9 @@ Prerez si predstavljaj kot kup vodoravnih trakov. Vsak trak dobi »glas« sorazm
 
 Zunanja trakova prispevata devetkrat toliko kot trakova ob osi, čeprav so vsi enako široki. Zato I-profil »odreže« sredino in jo prestavi na rob.
 
-Glavne osi si predstavljaj kot kazalec, ki ga vrtiš okrog težišča. Ko ga obrneš za $\varphi$, se $I_{y'}$ spreminja kot točka na krogu s središčem $I_s$ in polmerom $R$. Najvišja točka kroga je $I_1$, najnižja $I_2$. Enak krog boš srečal pri napetostih (Mohrov krog).
+Glavne osi si predstavljaj kot kazalec, ki ga vrtiš okrog težišča. Ko ga obrneš za $\varphi$, se $I_{y'}$ spreminja kot točka na krogu s središčem $I_s$ in polmerom $R$. Skrajna desna točka kroga je $I_1$, skrajna leva $I_2$. Enak krog boš srečal pri napetostih (Mohrov krog).
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 - **Ravnilo in telefon.** Telefon s prerezom $75\,\mathrm{mm} \times 8\,\mathrm{mm}$ ima pri upogibu čez ploščato stran $I = 3200\,\mathrm{mm^4}$, čez rob pa $2{,}81 \cdot 10^5\,\mathrm{mm^4}$, skoraj $88$-krat več. Zato se telefoni v zadnjem žepu upognejo »ploščato«, nikoli čez rob.
 - **Rebra na ohišju.** Plastično ohišje polnilnika ali usmerjevalnika ima na notranji strani tanka rebra. Odmaknejo material od osi in povečajo $I$ z malo dodane mase.

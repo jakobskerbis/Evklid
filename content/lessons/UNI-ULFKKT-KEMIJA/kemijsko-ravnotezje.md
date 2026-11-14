@@ -248,8 +248,8 @@ Za reakcijo $\mathrm{N_2O_4(g) \rightleftharpoons 2\,NO_2(g)}$ je pri $298\,\mat
 2. Pretvorba v $K_c$ ($\Delta n = 1$): $RT = 0{,}083\,14 \cdot 350 = 29{,}10$, $K_c = \dfrac{4{,}57}{29{,}10} = 0{,}157$.
 3. Preglednica: $c_0(\mathrm{N_2O_4}) = 0{,}0200\,\mathrm{mol/L}$; v ravnotežju $[\mathrm{N_2O_4}] = 0{,}0200 - x$, $[\mathrm{NO_2}] = 2x$.
 4. Enačba: $\dfrac{4x^2}{0{,}0200 - x} = 0{,}157$, urejeno $4x^2 + 0{,}157\,x - 0{,}003\,14 = 0$.
-5. $x = \dfrac{-0{,}157 + \sqrt{0{,}157^2 + 16 \cdot 0{,}003\,14}}{8} = \dfrac{-0{,}157 + 0{,}2737}{8} = 0{,}01458\,\mathrm{mol/L}$; negativna rešitev nima pomena.
-6. Stopnja disociacije: $\alpha = \dfrac{0{,}01458}{0{,}0200} = 0{,}729$.
+5. $x = \dfrac{-0{,}157 + \sqrt{0{,}157^2 + 16 \cdot 0{,}003\,14}}{8} = \dfrac{-0{,}157 + 0{,}2737}{8} = 0{,}014\,58\,\mathrm{mol/L}$; negativna rešitev nima pomena.
+6. Stopnja disociacije: $\alpha = \dfrac{0{,}014\,58}{0{,}0200} = 0{,}729$.
 7. Skupna koncentracija plina: $0{,}0200 - x + 2x = 0{,}0346\,\mathrm{mol/L}$, skupni tlak $p = cRT = 0{,}0346 \cdot 29{,}10 = 1{,}01\,\mathrm{bar}$.
 8. Preizkus s parcialnimi tlaki: $p(\mathrm{NO_2}) = 0{,}0292 \cdot 29{,}10 = 0{,}849\,\mathrm{bar}$; $p(\mathrm{N_2O_4}) = 0{,}005\,42 \cdot 29{,}10 = 0{,}158\,\mathrm{bar}$; $0{,}849^2/0{,}158 \approx 4{,}56 \approx K_p$.
 9. Odgovor: pri $350\,\mathrm{K}$ razpade $72{,}9\,\%$ $\mathrm{N_2O_4}$, skupni tlak v ravnotežju je približno $1{,}01\,\mathrm{bar}$.
@@ -294,7 +294,7 @@ Le Chatelierovo načelo si predstavljaj kot tehtnico z vzmetjo: če na eno stran
 
 **Kontaktni postopek za žveplovo kislino.** Oksidacija $\mathrm{2\,SO_2 + O_2 \rightleftharpoons 2\,SO_3}$ ($\Delta_\mathrm{r}H^\circ \approx -198\,\mathrm{kJ/mol}$) teče na katalizatorju $\mathrm{V_2O_5}$ v več zaporednih plasteh. Plin med plastmi hladijo, ker pri nižji temperaturi $K$ naraste, uporabljajo presežek zraka (več $\mathrm{O_2}$), vmesna absorpcija $\mathrm{SO_3}$ pa odstrani produkt; tako presežejo $99\,\%$ pretvorbe.
 
-**Gravimetrija.** Oborino kalcijevega oksalata $\mathrm{CaC_2O_4}$ spiramo z razredčeno raztopino amonijevega oksalata, ne s čisto vodo: oksalatni ion $\mathrm{C_2O_4^{2-}}$ je skupen oborini in raztopini, zato poveča $Q$ za raztapljanje $\mathrm{CaC_2O_4(s) \rightleftharpoons Ca^{2+} + C_2O_4^{2-}}$ in premakne ravnotežje v levo in zmanjša izgube, amonijev oksalat pa pri žarjenju razpade.
+**Gravimetrija.** Oborino kalcijevega oksalata $\mathrm{CaC_2O_4}$ spiramo z razredčeno raztopino amonijevega oksalata, ne s čisto vodo: oksalatni ion $\mathrm{C_2O_4^{2-}}$ je skupen oborini in raztopini, zato poveča $Q$ za raztapljanje $\mathrm{CaC_2O_4(s) \rightleftharpoons Ca^{2+} + C_2O_4^{2-}}$ in premakne ravnotežje v levo, kar zmanjša izgube, amonijev oksalat pa pri žarjenju razpade.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -370,7 +370,7 @@ Q | kvocient reakcije | | – | enaka oblika kot K, a s trenutnimi koncentracija
 R | splošna plinska konstanta | | J/(mol K) | s tlaki v barih 0,083 14 L bar/(mol K)
 T | absolutna temperatura | | K
 T_1, T_2 | temperaturi, pri katerih primerjamo konstanti | | K
-\Delta n | razlika množin plinastih produktov in reaktantov | \Delta n = (c + d) - (a + b) | – | šteje le plinaste snovi
+\Delta n | razlika vsot koeficientov plinastih produktov in reaktantov | \Delta n = (c + d) - (a + b) | – | šteje le plinaste snovi
 \Delta_\mathrm{r} | sprememba pri reakciji (reakcijska količina) | | | ΔᵣG: reakcijska Gibbsova energija, ΔᵣH°: reakcijska entalpija
 G | Gibbsova energija | | kJ/mol | ΔᵣG: reakcijska Gibbsova energija; spontano, ko je negativna
 H | entalpija | | kJ/mol | ΔᵣH°: standardna reakcijska entalpija

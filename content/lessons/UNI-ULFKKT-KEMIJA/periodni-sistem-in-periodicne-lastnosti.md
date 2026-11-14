@@ -7,7 +7,7 @@ avtor: AI
 
 Zakaj baterije telefonov uporabljajo litij in ne natrija, ki ga je v morju na tone? Odgovor je v legi obeh kovin: litij je najlažja kovina, njegov ion je drobcen in zlahka potuje med plastmi grafita. Iz lege elementa brez merjenja napovemo velikost atoma, kako lahko odda elektron in kako močno v vezi vleče elektrone. Tako je Mendelejev napovedal lastnosti galija in germanija, še preden so ju odkrili.
 
-Periodične lastnosti boš rabil ves študij: pri polarnosti vezi, redoks reakcijah, spektroskopiji in kristalih.
+Periodične lastnosti boš potreboval ves študij: pri polarnosti vezi, redoks reakcijah, spektroskopiji in kristalih.
 
 Na koncu boš iz elektronske konfiguracije in **efektivnega naboja jedra** utemeljil trende **polmerov**, **ionizacijske energije** in **elektronegativnosti**.
 
@@ -51,7 +51,7 @@ približno $140$, $133$, $102$, $72$ in $54\,\mathrm{pm}$.
 
 $$\mathrm{X(g) \longrightarrow X^+(g) + e^-}, \qquad \Delta H \approx I_1 > 0.$$
 
-Navajamo jo v $\mathrm{kJ/mol}$ ali v $\mathrm{eV}$ na atom. Trend je obraten od polmera: vzdolž periode **narašča**, navzdol po skupini **pada**. Najmanjšo $I_1$ imajo alkalijske kovine ($\mathrm{K}$: $419\,\mathrm{kJ/mol}$), največjo žlahtni plini ($\mathrm{He}$: $2372\,\mathrm{kJ/mol}$).
+Navajamo jo v $\mathrm{kJ/mol}$ ali v $\mathrm{eV}$ na atom. Trend je obraten od polmera: vzdolž periode **narašča**, navzdol po skupini **pada**. Najmanjšo $I_1$ imajo alkalijske kovine ($\mathrm{Cs}$: $376\,\mathrm{kJ/mol}$), največjo žlahtni plini ($\mathrm{He}$: $2372\,\mathrm{kJ/mol}$).
 
 Prve ionizacijske energije elementov 2. periode ($\mathrm{kJ/mol}$):
 
@@ -350,5 +350,5 @@ E | energija za odstranitev treh elektronov | E = I_1 + I_2 + I_3 | kJ/mol
 \chi | elektronegativnost | | –
 \Delta\chi | razlika elektronegativnosti vezanih atomov | \Delta\chi = \lvert\chi_\mathrm{A} - \chi_\mathrm{B}\rvert | – | večja Δχ pomeni bolj ionsko vez
 \chi_\mathrm{A}, \chi_\mathrm{B} | elektronegativnosti vezanih atomov A in B | | –
-D | disociacijska energija vezi | | eV | npr. D(A−B) za vez med A in B
+D | disociacijska energija vezi | | kJ/mol | npr. D(A−B) za vez med A in B
 :::

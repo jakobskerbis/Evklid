@@ -58,7 +58,7 @@ Iz tega sledi, da je vsota $f(x) = \sum a_n (x-a)^{n}$ neskončnokrat odvedljiva
 
 $$\sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^{n}.$$
 
-Pri $a = 0$ ji pravimo tudi Maclaurinova vrsta. Njena delna vsota $T_n$ je Taylorjev polinom. Napako opiše Lagrangeov ostanek (posledica izreka o srednji vrednosti):
+Pri $a = 0$ ji pravimo tudi Maclaurinova vrsta. Njena delna vsota $T_n$ je Taylorjev polinom. Če je $f$ med $a$ in $x$ $(n+1)$-krat odvedljiva, napako opiše Lagrangeov ostanek (posledica izreka o srednji vrednosti):
 
 $$f(x) - T_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}$$
 
@@ -114,7 +114,7 @@ $\dfrac{1}{1-q} = \sum\limits_{n=0}^{\infty} q^{n}$ za $|q|<1$; integriranje po 
 1. Vstavimo $q = -x^{2}$: $f(x) = \sum_{n=0}^{\infty} (-1)^{n} x^{2n} = 1 - x^{2} + x^{4} - \dots$. Odvajati ni bilo treba, ker je razvoj enoličen.
 2. Pogoj $|q| < 1$ pomeni $x^{2} < 1$, torej $R = 1$.
 3. Integriramo po členih od $0$ do $x$: $\arctan x = \sum_{n=0}^{\infty} (-1)^{n}\dfrac{x^{2n+1}}{2n+1}$, prav tako z $R = 1$.
-4. Razlog za $R = 1$ je v kompleksni ravnini: $1 + z^{2} = 0$ pri $z = \pm i$. Tam ima $f$ pol, ki je od središča oddaljen $1$. Krog konvergence se ne more razširiti čez pol.
+4. Razlog za $R = 1$ je v kompleksni ravnini: $1 + z^{2} = 0$ pri $z = \pm i$. Tam ima $f$ pol, ki je od središča oddaljen za $1$. Krog konvergence se ne more razširiti čez pol.
 5. Odgovor: $f(x) = \sum (-1)^{n} x^{2n}$ in $\arctan x = \sum (-1)^{n}\frac{x^{2n+1}}{2n+1}$, obe z $R = 1$; polmer omejujeta kompleksni točki $\pm i$.
 
 ### Primer 3 (težji): koncentracija zdravila
@@ -183,7 +183,7 @@ Predstavljaj si mikroskop, izostren na eno točko preparata, v središče $a$. V
 
 Vidno polje mikroskopa pa je okroglo in ima rob: to je konvergenčni polmer. Rob postavi najbližja »napaka v preparatu«, točka, kjer funkcija odpove. Lahko je skrita v drugi ravnini, kot pola $\pm i$ pri $\frac{1}{1+x^{2}}$. Na realni osi ju ne vidiš, a vidno polje vseeno omejita. Pri $e^{x}$, $\sin x$ in $\cos x$ napak ni nikjer, zato je vidno polje neomejeno.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 Kratek čas po injekciji koncentracija zdravila pada skoraj premočrtno: $c \approx c_0(1 - kt)$. To je Taylorjev polinom stopnje $1$, linearni približek $f(a) + f'(a)(x - a)$. Po daljšem času pa premica pade pod nič, prava krivulja $c_0 e^{-kt}$ pa se le počasi približuje ničli. Zato programi, ki računajo odmerke, ne uporabljajo enega polinoma za vse čase. Čas razdelijo na kratke korake in na vsakem uporabijo nekaj členov vrste, kjer je ostanek zanesljivo majhen.
 
@@ -210,7 +210,7 @@ Kratek čas po injekciji koncentracija zdravila pada skoraj premočrtno: $c \app
 ? Zakaj Maclaurinova vrsta funkcije $\frac{1}{1+x^{2}}$ divergira pri $x = 2$, čeprav je $f(2) = 0{,}2$?
 - Ker $f$ v točki $x = 1$ ni odvedljiva.
 ~ $f$ je odvedljiva povsod na $\mathbb{R}$; težava ni na realni osi.
-+ Ker ima $f$ v kompleksni ravnini pola $\pm i$, oddaljena od središča $1$, zato je $R = 1$.
++ Ker ima $f$ v kompleksni ravnini pola $\pm i$, ki sta od središča oddaljena za $1$, zato je $R = 1$.
 - Ker ima vsaka potenčna vrsta konvergenčni polmer $1$.
 ~ Vrsta za $e^{x}$ ima $R = \infty$, vrsta $\sum 2^{n}x^{n}$ pa $R = \frac12$.
 > Krog konvergence sega do najbližje točke, kjer funkcija odpove; za $\frac{1}{1+z^{2}}$ sta to $\pm i$.

@@ -11,7 +11,7 @@ Prvo vprašanje je v 3. stoletju pr. n. št. raziskoval Arhimed. Za trikotno plo
 
 ## Razlaga
 
-Zamikajoča misel je, da ima trikotnik eno samo sredino in da je vseeno, kako jo iščeš: iz oglišča narišeš črto »naravnost dol« na nasprotno stranico ali pa do njene sredine. Poglej sliko.
+Mamljiva misel je, da ima trikotnik eno samo sredino in da je vseeno, kako jo iščeš: iz oglišča narišeš črto »naravnost dol« na nasprotno stranico ali pa do njene sredine. Poglej sliko.
 
 :::risba skica
 opis: Ostrokotni trikotnik ABC z vodoravno stranico AB dolžine 8. Oglišče C je zgoraj, bližje B. Iz C vodita dve daljici do stranice AB: prva navpično, pravokotno na AB, z napisom v z indeksom c; druga do sredine M stranice AB, z napisom t z indeksom c. Daljici pristaneta v različnih točkah. Daljici AM in MB merita po 4.
@@ -56,7 +56,7 @@ Krožnica s središčem $O$ in polmerom $R$ gre skozi vsa tri oglišča. To je t
 Ne. Oglišče je od $S$ dlje kot stranice, zato taka krožnica seka stranice in sega iz trikotnika. Polmer včrtane krožnice je razdalja od $S$ do dotikališča, ne do oglišča.
 :::
 
-**Kje ležijo točke.** Tretja napačna misel je, da je vsaka »sredina« znotraj trikotnika. Težiščnice in simetrale notranjih kotov ležijo v celoti v trikotniku, zato sta $T$ in $S$ vedno notri. Višine in simetrale stranic pa lahko uidejo ven.
+**Kje ležijo točke.** Tretja napačna misel je, da je vsaka »sredina« znotraj trikotnika. Težiščnice in simetrale notranjih kotov potekajo od oglišča do nasprotne stranice po notranjosti trikotnika, zato sta $T$ in $S$ vedno notri. Višine in simetrale stranic pa lahko uidejo ven.
 
 :::premisli
 Oglišče $C$ potegneš tako, da kot $\gamma$ postane top. Napovej: ali središče očrtane krožnice ostane v trikotniku? Če ne, čez katero stranico zdrsne ven?
@@ -136,7 +136,7 @@ V pravokotnem trikotniku je $O$ na razpolovišču hipotenuze, $R = \dfrac{c}{2}$
 3. Kateti sta pravokotni, zato je vsaka višina na drugo; obe gresta skozi $C$. Višinska točka je $V = C$.
 4. Težiščnica $t_c$ povezuje $C$ z razpoloviščem $C_1$ hipotenuze, ki je ravno točka $O$. Torej je $t_c = |CO| = 6\,\text{km}$.
 5. Težišče deli težiščnico v razmerju $2 : 1$: $|CT| = \dfrac{2}{3} \cdot 6\,\text{km} = 4\,\text{km}$.
-6. Odgovor: baza naj stoji na sredini daljice med bolnišnicama $A$ in $B$, od vsake bolnišnice bo $6\,\text{km}$. Višinska točka je v $C$, težišče je od $C$ oddaljeno $4\,\text{km}$.
+6. Odgovor: baza naj stoji na sredini daljice med bolnišnicama $A$ in $B$, od vsake bolnišnice bo oddaljena $6\,\text{km}$. Višinska točka je v $C$, težišče je od $C$ oddaljeno $4\,\text{km}$.
 
 ### Primer 4 – zdaj ti
 
@@ -171,7 +171,7 @@ $|TB_1|$ je en del, torej $7\,\text{cm}$. Težiščnica ima tri dele: $t_b = 3 \
 
 ## Povzetek
 
-- Višine (pravokotnice iz oglišča na nasprotno stranico) se sekajo v višinski točki $V$.
+- Nosilke višin (pravokotnic iz oglišča na nasprotno stranico ali njen podaljšek) se sekajo v višinski točki $V$.
 - Težiščnice (iz oglišča do sredine nasprotne stranice) se sekajo v težišču $T$, ki jih deli v razmerju $2 : 1$ od oglišča: $|AT| = \dfrac{2}{3}\, t_a$.
 - Simetrale stranic se sekajo v središču $O$ očrtane krožnice: $|OA| = |OB| = |OC| = R$.
 - Simetrale kotov se sekajo v središču $S$ včrtane krožnice; polmer $r$ je razdalja od $S$ do stranice.

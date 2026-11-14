@@ -230,7 +230,7 @@ Preizkus je kontrola celotnega postopka. Če smo kje naredili napako, bo vstavit
 
 ? Brez natančnega računanja oceni: kateremu številu je enaka rešitev enačbe $\dfrac{x}{3}+\dfrac{x}{4}=7$?
 - približno $2$
-~ Tretjina in četrtina nekega števila bi dali le približno $1$. Za vsoto $7$ mora biti $x$ veliko večji.
+~ Tretjina in četrtina števila $2$ bi dali le približno $1$. Za vsoto $7$ mora biti $x$ veliko večji.
 + $12$
 - približno $50$
 ~ Tretjina od $50$ je že več kot $16$, kar je več od $7$. To število je preveliko.

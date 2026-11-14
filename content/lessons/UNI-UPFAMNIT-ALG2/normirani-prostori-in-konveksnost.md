@@ -167,7 +167,7 @@ $K$ je konveksna, če $tx + (1-t)y \in K$ za vse $x, y \in K$, $t \in [0, 1]$
 
 **Rešitev:**
 
-1. Za protiprimer zadošča en par točk in en $t$. Vzemi točki $u = (2, 0)$ in $v = (-2, 0)$; obe ležita v $P$, ker je pri obeh $x^2 + y^2 = 4$.
+1. Za protiprimer zadošča en par točk in en $t$. Vzemi točki $(2, 0)$ in $(-2, 0)$; obe ležita v $P$, ker je pri obeh $x^2 + y^2 = 4$.
 2. Vzemi $t = \tfrac12$, izračunaj razpolovišče in preveri, ali leži v $P$.
 
 :::premisli
@@ -178,7 +178,7 @@ Razpolovišče je $(0, 0)$, kjer je $x^2 + y^2 = 0 < 1$, torej $(0, 0) \notin P$
 
 ## Pogoste napake
 
-- **»$\|A\|_2$ je največja lastna vrednost $A$.«** To velja le za simetrične matrike. Za $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ sta obe lastni vrednosti $1$, a $\|A\|_2 = \tfrac{1 + \sqrt5}{2} \approx 1{,}618$. Prava pot je prek $A^{\mathsf T}A$.
+- **»$\|A\|_2$ je največja lastna vrednost $A$.«** Za simetrične matrike je $\|A\|_2$ res največja absolutna vrednost lastne vrednosti, v splošnem pa ne. Za $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ sta obe lastni vrednosti $1$, a $\|A\|_2 = \tfrac{1 + \sqrt5}{2} \approx 1{,}618$. Prava pot je prek $A^{\mathsf T}A$.
 - **Zamenjava stolpcev in vrstic.** $\|A\|_1$ je največja vsota po stolpcih, $\|A\|_\infty$ po vrsticah. Pomnilo: indeks $1$ stoji pokonci kot stolpec.
 - **»$\det Q = \pm 1$, torej je izometrija.«** Matrika $\operatorname{diag}(2, \tfrac12)$ ima determinanto $1$, a vektor $(1, 0)$ podaljša na dolžino $2$. Odloča pogoj $Q^{\mathsf T}Q = I$.
 - **»Vsaka izometrija je linearna.«** Premik $x \mapsto x + b$ ohranja razdalje, izhodišča pa ne. Splošna izometrija je $Qx + b$.

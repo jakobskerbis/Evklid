@@ -18,7 +18,7 @@ stanje: osnutek
   - trdnost šele s staranjem
 - Vrh in prestaranje
   - rezanje drobnih izločkov
-  - obidenje grobih (Orowan)
+  - obhod grobih (Orowan)
 - Magnezij
   - heksagonalna mreža, tlačno litje AZ91
   - korozija, vnetljivi ostružki

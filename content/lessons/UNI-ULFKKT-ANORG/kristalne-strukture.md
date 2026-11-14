@@ -50,7 +50,7 @@ Ko vstavimo zvezo med $a$ in $r$, se $r$ pokrajša. Za fcc je $r = a\sqrt2/4$, t
 |---|---|---|---|
 | sc | 1 | 6 | $\pi/6 \approx 0{,}524$ |
 | bcc | 2 | 8 | $\pi\sqrt3/8 \approx 0{,}680$ |
-| fcc, hcp | 4 | 12 | $\pi/(3\sqrt2) \approx 0{,}740$ |
+| fcc (hcp: enaka KŠ in $f$) | 4 | 12 | $\pi/(3\sqrt2) \approx 0{,}740$ |
 
 Vrednost $0{,}74$ je natanko meja s frnikolami iz uvoda.
 
@@ -183,7 +183,7 @@ $r_+ \approx 357{,}1 - 181 = 176\,\mathrm{pm}$, razmerje $\approx 0{,}97$. To je
 
 - Osnovna celica je najmanjši del s polno simetrijo kristala, ki z zlaganjem da cel kristal; kubično opiše rob $a$.
 - Deleži: oglišče $\tfrac18$, rob $\tfrac14$, ploskev $\tfrac12$, notranjost $1$.
-- sc: $Z=1$, $a=2r$, KŠ 6, $f=0{,}524$. bcc: $Z=2$, $a\sqrt3=4r$, KŠ 8, $f=0{,}680$. fcc/hcp: $Z=4$, $a\sqrt2=4r$, KŠ 12, $f=0{,}740$.
+- sc: $Z=1$, $a=2r$, KŠ 6, $f=0{,}524$. bcc: $Z=2$, $a\sqrt3=4r$, KŠ 8, $f=0{,}680$. fcc: $Z=4$, $a\sqrt2=4r$, KŠ 12, $f=0{,}740$ (hcp: enaka KŠ in $f$).
 - Gostota: $\rho = Z M/(N_\mathrm{A} a^3)$, $a$ v cm.
 - Ionski kristali: razmerje $r_+/r_-$ določa KŠ (4, 6, 8). NaCl: fcc anionov, kationi v oktaedrskih luknjah, $Z=4$, $a = 2(r_+ + r_-)$. CsCl: preprosta kubična, $Z=1$, $a\sqrt3 = 2(r_+ + r_-)$.
 
@@ -258,7 +258,7 @@ Izpeljava gostote zloga: v $f = Z \cdot \tfrac43\pi r^3 / a^3$ vstavimo $r$, izr
 
 **Idealni hcp.** V hcp leži atom plasti B nad središčem trikotnika treh atomov plasti A; vsi štirje tvorijo pravilni tetraeder z robom $2r = a$. Višina tetraedra je $a\sqrt{2/3}$, razmik med plastema A je dvakratna višina, zato $c/a = 2\sqrt{2/3} = \sqrt{8/3} \approx 1{,}633$. Kovine z razmerjem blizu tega (Mg $1{,}62$) so skoraj idealne krogle; Zn ($1{,}86$) in Cd odstopata.
 
-**Izbirna pravila za uklon.** Pri bcc se odboji s lihim $h + k + l$ izničijo, ker sredinski atom leži na pol poti med ravninami in sipa v protifazi. Zato je prvi uklon bcc $(110)$, ne $(100)$. Pri fcc se pojavijo le odboji z $h, k, l$ vsi lihi ali vsi sodi: $(111)$, $(200)$, $(220)$. Iz zaporedja uklonov tako določimo vrsto celice.
+**Izbirna pravila za uklon.** Pri bcc se odboji z lihim $h + k + l$ izničijo, ker sredinski atom leži na pol poti med ravninami in sipa v protifazi. Zato je prvi uklon bcc $(110)$, ne $(100)$. Pri fcc se pojavijo le odboji z $h, k, l$ vsi lihi ali vsi sodi: $(111)$, $(200)$, $(220)$. Iz zaporedja uklonov tako določimo vrsto celice.
 
 **Keplerjeva domneva.** Da $\pi/(3\sqrt2)$ ni le najgostejši zlog med mrežami, ampak med vsemi razporeditvami enakih krogel, je dokazal T. Hales (1998) z računalnikom; formalno preverjen dokaz je bil objavljen leta 2017.
 

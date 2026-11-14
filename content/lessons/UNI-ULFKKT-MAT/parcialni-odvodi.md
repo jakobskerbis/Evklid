@@ -10,7 +10,7 @@ Večina količin v naravi je odvisna od več spremenljivk hkrati. Tlak idealnega
 Pri funkciji ene spremenljivke odvod pove, kako hitro se funkcija spreminja. Pri funkciji več spremenljivk pa se lahko vprašamo: kako hitro se spreminja, če spremenimo **samo eno** spremenljivko, druge pa držimo pri miru? Odgovor je **parcialni odvod**. Iz parcialnih odvodov sestavimo še:
 
 - **totalni diferencial**, s katerim ocenimo spremembo funkcije, ko se spremenijo vse spremenljivke hkrati, in izračunamo, kako se napake meritev prenesejo v rezultat,
-- **gradient**, vektor, ki kaže smer najhitrejšega naraščanja (npr. smer, v kateri se snov najhitreje segreva ali v katero difundira),
+- **gradient**, vektor, ki kaže smer najhitrejšega naraščanja (npr. smer, v kateri temperatura najhitreje narašča; toplota in snov pri difuziji tečeta v nasprotni smeri gradienta),
 - **verižno pravilo**, ko so spremenljivke same odvisne od drugih spremenljivk, na primer od časa.
 
 Parcialni odvodi so jezik termodinamike, fizikalne kemije, transportnih pojavov in optimizacije.

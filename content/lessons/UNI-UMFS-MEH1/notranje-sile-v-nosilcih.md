@@ -9,11 +9,11 @@ Zobni mostiček nadomesti manjkajoči zob. Na obeh koncih sloni na sosednjih zob
 
 Druga slika: reševalca neseta pacienta na nosilih. Vsak drži en konec droga, teža pacienta pa pritiska na sredino. Če je drog prešibak, se upogne in zlomi na sredini, ne pri rokah reševalcev.
 
-Mostiček in nosila sta si na pogled zelo različna, skrivata pa isto vprašanje. **Kaj se dogaja v notranjosti nosilca** med podporama in kje je najbolj obremenjen? Ravnotežje celega telesa pove le reakcije v podporah. Za dimenzioniranje kosti, vsadka ali droga pa moraš vedeti, kakšne sile in momenti delujejo v vsakem prerezu. To so **notranje sile**.
+Mostiček in nosila so si na pogled zelo različni, skrivajo pa isto vprašanje. **Kaj se dogaja v notranjosti nosilca** med podporama in kje je najbolj obremenjen? Ravnotežje celega telesa pove le reakcije v podporah. Za dimenzioniranje kosti, vsadka ali droga pa moraš vedeti, kakšne sile in momenti delujejo v vsakem prerezu. To so **notranje sile**.
 
 ## Razlaga
 
-**1. Miselni rez.** Nosilec v mislih prerežemo na mestu $x$. Leva polovica sama zase ne bi bila v ravnotežju: nanjo delujeta reakcija in morda del bremena. Desna polovica jo drži preko prereza. Vpliv desnega dela nadomestimo s tremi notranjimi veličinami:
+**1. Miselni rez.** Nosilec v mislih prerežemo na mestu $x$. Levi del sam zase ne bi bil v ravnotežju: nanj delujeta reakcija in morda del bremena. Desni del ga drži preko prereza. Vpliv desnega dela nadomestimo s tremi notranjimi veličinami:
 
 - **osna sila** $N$ deluje vzdolž osi nosilca; pozitivna je, ko prerez *vleče* (nateg), negativna, ko ga tlači;
 - **prečna sila** $T$ deluje pravokotno na os, v ravnini prereza (ponekod jo označijo s $Q$);
@@ -51,7 +51,7 @@ Iz stolpca $T$. Levo od sile je $T = 450\,\text{N}$ in $M$ zraste za $450\,\text
 :::premisli
 Konzolo obremenimo s silo na prostem koncu. Kje bi pričakoval, da se zlomi, in zakaj ne pod silo?
 ---
-V vpetju. Moment v prerezu je sila krat ročica do prereza. Pod silo je ročica nič, v vpetju pa je najdaljša, enaka dolžini konzole. Zato sta v vpetju $|T|$ in $|M|$ največja.
+V vpetju. Moment v prerezu je sila krat ročica do prereza. Pod silo je ročica nič, v vpetju pa je najdaljša, enaka dolžini konzole. Zato je v vpetju $|M|$ največji; $|T|$ je vzdolž vse konzole enaka sili.
 :::
 
 **6. Osna sila.** Če ima breme vodoravno komponento, jo mora prenesti nepomična podpora. Del nosilca med to podporo in bremenom je tedaj nategnjen ali stisnjen. Diagram $N$ je pogosto le pravokotnik na delu nosilca.
@@ -156,7 +156,7 @@ Na sredini, kjer $T$ skoči s $+125$ na $-125\,\text{N}$: $M_{\max} = 125\,\text
 
 - **»Konzola je najbolj obremenjena pod bremenom.«** Pod silo je ročica do prereza nič, zato je tam $M = 0$. Največji $|M|$ je v vpetju. Vedno vprašaj: kako dolga je ročica od sile do *tega* prereza?
 - **Skok v diagramu $M$ pod točkovno silo.** Točkovna sila naredi skok v $T$, v $M$ pa le prelom (oster vrh). Skok v $M$ povzroči šele zunanji točkovni moment (par sil).
-- **Celotna zvezna obremenitev v vsakem rezu.** Kdor vzame $qL$ s ročico $L/2$ ne glede na lego reza, dobi pri prostoležečem nosilcu $qL^2/2$ ali $qL^2/4$ namesto $qL^2/8$. V rez šteje le del $q$ na izbrani strani, z ročico do središča tega dela.
+- **Celotna zvezna obremenitev v vsakem rezu.** Kdor vzame $qL$ z ročico $L/2$ ne glede na lego reza, dobi pri prostoležečem nosilcu $qL^2/2$ ali $qL^2/4$ namesto $qL^2/8$. V rez šteje le del $q$ na izbrani strani, z ročico do središča tega dela.
 - **Sile z obeh strani reza hkrati.** Če pri $T$ seštevaš sile levo in desno od reza, dobiš vedno nič, ker je cel nosilec v ravnotežju. Izberi *en* del in ne pozabi reakcij na njem.
 - **Pozabljena osna sila.** Pri poševnem bremenu vodoravna komponenta ne vpliva na $M$, napne pa del nosilca do nepomične podpore. Diagram $N$ je del rešitve.
 
@@ -229,7 +229,7 @@ Izrežimo kratek kos nosilca dolžine $\mathrm{d}x$ brez točkovnih sil. Levo de
 - $1800\,\text{N·m}$
 ~ To je $qL^2/2$: vzel si celo breme $qL$ z ročico $L/2$ in pozabil na reakcijo.
 - $900\,\text{N·m}$
-~ To je $qL^2/4$: upošteval si reakcijo, a celotno breme namesto polovice levo od sredine.
+~ To je $qL^2/4$: upošteval si le reakcijo $qL/2$ z ročico $L/2$ in pozabil odšteti moment bremena levo od sredine.
 + $450\,\text{N·m}$
 - $600\,\text{N·m}$
 ~ To je reakcija $qL/2$ v newtonih, ne moment.

@@ -152,7 +152,7 @@ Za rob terase potrebuješ $18\,\text{m}$ letve. Letve prodajajo le cele, po $2{,
 
 **Rešitev:**
 
-1. $\dfrac{18}{2{,}5} = 7{,}2$ letve. Sedem letev ni dovolj, del letve pa ne moreš kupiti.
+1. $\dfrac{18}{2{,}5} = 7{,}2$ letve. Sedem letev ni dovolj, dela letve pa ne moreš kupiti.
 2. Zato zaokrožimo navzgor, ne po pravilih zaokroževanja.
 3. Dokončaj sam, nato preveri:
 

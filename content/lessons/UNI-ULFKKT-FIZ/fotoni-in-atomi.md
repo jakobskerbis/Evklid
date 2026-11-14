@@ -17,7 +17,7 @@ Pot vodi od **fotona** in **fotoefekta** prek **de Brogliejeve valovne dolžine*
 
 Vzemimo ultravijolično svetlobo UV-B z valovno dolžino $300\,\mathrm{nm}$. Njena frekvenca je $\nu = c/\lambda = 3{,}00 \cdot 10^8/3{,}00 \cdot 10^{-7}\,\mathrm{Hz} = 1{,}00 \cdot 10^{15}\,\mathrm{Hz}$, en obrok energije pa je zmnožek frekvence in Planckove konstante $h$ (natančneje jo vpeljemo spodaj): $h\nu = 6{,}626 \cdot 10^{-34} \cdot 1{,}00 \cdot 10^{15}\,\mathrm{J} \approx 6{,}6 \cdot 10^{-19}\,\mathrm{J} \approx 4{,}1\,\mathrm{eV}$. To je dovolj za prekinitev ali preureditev kemijske vezi v DNK. Infrardeče sevanje radiatorja ima valovno dolžino okoli $10\,\mu\mathrm{m}$, njegov obrok je zato več kot tridesetkrat manjši, okoli $0{,}12\,\mathrm{eV}$, in molekule le segreje. Iz tega primera sledi splošno pravilo.
 
-**1. Foton.** Svetloba z frekvenco $\nu$ izmenjuje energijo s snovjo v obrokih, **fotonih**, z energijo
+**1. Foton.** Svetloba s frekvenco $\nu$ izmenjuje energijo s snovjo v obrokih, **fotonih**, z energijo
 
 $$W_f = h\nu = \frac{hc}{\lambda},$$
 
@@ -88,7 +88,7 @@ $$\frac{1}{\lambda} = R_\infty\left(\frac{1}{n^2} - \frac{1}{m^2}\right), \qquad
 
 Prehodi na $n = 1$ tvorijo **Lymanovo serijo** (ultravijolično), na $n = 2$ **Balmerjevo** (vidno: rdeča črta $656\,\mathrm{nm}$, modrozelena $486\,\mathrm{nm}$, vijolični $434$ in $410\,\mathrm{nm}$), na $n = 3$ **Paschenovo** (infrardečo).
 
-**6. Bohrov model in kaj je pravilno.** *Bohrova postulata:* (1) elektron kroži okoli jedra le po stacionarnih krožnicah, na katerih je vrtilna količina $m_evr = n\hbar$ ($\hbar = h/2\pi$; enakovredno: na obseg gre $n$ de Brogliejevih valovnih dolžin), in pri tem ne seva; (2) pri prehodu med stacionarnima stanjema atom izseva ali absorbira foton s $h\nu = W_m - W_n$. *Izpeljava* (jedro miruje, ker je $m_p \gg m_e$): Coulombova sila je centripetalna, $\frac{e_0^2}{4\pi\varepsilon_0r^2} = \frac{m_ev^2}{r}$. Z $v = n\hbar/(m_er)$ dobimo $r_n = \frac{4\pi\varepsilon_0\hbar^2}{m_ee_0^2}\,n^2$. Iz sile je $W_k = \frac{1}{2}m_ev^2 = \frac{e_0^2}{8\pi\varepsilon_0r}$, s $W_p = -\frac{e_0^2}{4\pi\varepsilon_0r}$ pa $W_n = -\frac{e_0^2}{8\pi\varepsilon_0r_n} = -\frac{m_ee_0^4}{8\varepsilon_0^2h^2}\,\frac{1}{n^2}$. To so pravilne energije in polmeri $r_n = n^2r_1$ z $r_1 = 0{,}0529\,\mathrm{nm}$. Sodobna kvantna mehanika (Schrödingerjeva enačba) da iste energije, a elektrona ne opiše s tirom, temveč z **orbitalo**, ki pove verjetnost, kje ga najdemo. Pri atomih z več elektroni so nivoji odvisni še od drugih kvantnih števil, kar razloži zgradbo periodnega sistema.
+**6. Bohrov model in kaj je pravilno.** *Bohrova postulata:* (1) elektron kroži okoli jedra le po stacionarnih krožnicah, na katerih je vrtilna količina $m_evr = n\hbar$ ($\hbar = h/2\pi$; enakovredno: na obseg gre $n$ de Brogliejevih valovnih dolžin), in pri tem ne seva; (2) pri prehodu med stacionarnima stanjema atom izseva ali absorbira foton s $h\nu = W_m - W_n$. *Izpeljava* (jedro miruje, ker je $m_p \gg m_e$): Coulombova sila je centripetalna, $\frac{e_0^2}{4\pi\varepsilon_0r^2} = \frac{m_ev^2}{r}$. Z $v = n\hbar/(m_er)$ dobimo $r_n = \frac{4\pi\varepsilon_0\hbar^2}{m_ee_0^2}\,n^2$. Iz sile je $W_k = \frac{1}{2}m_ev^2 = \frac{e_0^2}{8\pi\varepsilon_0r}$, z $W_p = -\frac{e_0^2}{4\pi\varepsilon_0r}$ pa $W_n = -\frac{e_0^2}{8\pi\varepsilon_0r_n} = -\frac{m_ee_0^4}{8\varepsilon_0^2h^2}\,\frac{1}{n^2}$. To so pravilne energije in polmeri $r_n = n^2r_1$ z $r_1 = 0{,}0529\,\mathrm{nm}$. Sodobna kvantna mehanika (Schrödingerjeva enačba) da iste energije, a elektrona ne opiše s tirom, temveč z **orbitalo**, ki pove verjetnost, kje ga najdemo. Pri atomih z več elektroni so nivoji odvisni še od drugih kvantnih števil, kar razloži zgradbo periodnega sistema.
 
 ## Rešeni primeri
 
@@ -105,10 +105,10 @@ $W_f = hc/\lambda$, $p = h/\lambda$, $N = Pt/W_f$
 
 **Rešitev:**
 
-1. $W_f = 6{,}626 \cdot 10^{-34} \cdot 3{,}00 \cdot 10^8/5{,}00 \cdot 10^{-7}\,\mathrm{J} \approx 3{,}97 \cdot 10^{-19}\,\mathrm{J}$; to je energija enega obroka svetlobe dane valovne dolžine.
-2. V elektronvoltih: $W_f = 3{,}97 \cdot 10^{-19}/1{,}602 \cdot 10^{-19}\,\mathrm{eV} \approx 2{,}48\,\mathrm{eV}$ (preizkus: $1240/500 = 2{,}48$ ✓).
+1. $W_f = 6{,}626 \cdot 10^{-34} \cdot 3{,}00 \cdot 10^8/5{,}00 \cdot 10^{-7}\,\mathrm{J} \approx 3{,}98 \cdot 10^{-19}\,\mathrm{J}$; to je energija enega obroka svetlobe dane valovne dolžine.
+2. V elektronvoltih: $W_f = 3{,}98 \cdot 10^{-19}/1{,}602 \cdot 10^{-19}\,\mathrm{eV} \approx 2{,}48\,\mathrm{eV}$ (preizkus: $1240/500 = 2{,}48$ ✓).
 3. $p = 6{,}626 \cdot 10^{-34}/5{,}00 \cdot 10^{-7}\,\mathrm{kg\,m/s} \approx 1{,}33 \cdot 10^{-27}\,\mathrm{kg\,m/s}$.
-4. $N = 1{,}0 \cdot 10^{-3}\,\mathrm{J}/3{,}97 \cdot 10^{-19}\,\mathrm{J} \approx 2{,}5 \cdot 10^{15}$, ker laser v sekundi odda energijo $Pt$ v obrokih po $W_f$.
+4. $N = 1{,}0 \cdot 10^{-3}\,\mathrm{J}/3{,}98 \cdot 10^{-19}\,\mathrm{J} \approx 2{,}5 \cdot 10^{15}$, ker laser v sekundi odda energijo $Pt$ v obrokih po $W_f$.
 5. Odgovor: foton ima energijo okoli $2{,}5\,\mathrm{eV}$ ($4{,}0 \cdot 10^{-19}\,\mathrm{J}$) in gibalno količino $1{,}3 \cdot 10^{-27}\,\mathrm{kg\,m/s}$; laser odda okoli $2{,}5 \cdot 10^{15}$ fotonov na sekundo.
 
 ### Primer 2
@@ -170,7 +170,7 @@ $W_{k,\max} = \dfrac{hc}{\lambda} - A_i$, $e_0U_z = W_{k,\max}$, $\lambda_0 = \d
 
 1. Energija fotona: $W_f = 1240\,\mathrm{eV\,nm}/300\,\mathrm{nm} \approx 4{,}13\,\mathrm{eV}$; valovno dolžino pustimo v nanometrih, ker je $hc$ v $\mathrm{eV\,nm}$.
 2. Največja kinetična energija: $W_{k,\max} = e_0U_z = 2{,}00\,\mathrm{eV}$, ker zaporna napetost ravno ustavi najhitrejše elektrone (naboj $e_0$ pri napetosti $2{,}00\,\mathrm{V}$ da $2{,}00\,\mathrm{eV}$).
-3. Izračunaj sam izstopno delo in mejno valovno dolžino ter ju primerjaj z $650\,\mathrm{nm}$.
+3. Izračunaj sam izstopno delo in mejno valovno dolžino ter ju primerjaj s $650\,\mathrm{nm}$.
 
 :::premisli
 Kolikšna sta $A_i$ in $\lambda_0$ in ali rdeča svetloba izbija elektrone?
@@ -192,7 +192,7 @@ $A_i = W_f - W_{k,\max} \approx 4{,}13 - 2{,}00 = 2{,}13\,\mathrm{eV}$, $\lambda
 - Foton: $W_f = h\nu = hc/\lambda$, $p = h/\lambda$; $hc \approx 1240\,\mathrm{eV\,nm}$.
 - Fotoefekt: $W_{k,\max} = h\nu - A_i$, mejna frekvenca $\nu_0 = A_i/h$, zaporna napetost $e_0U_z = W_{k,\max}$; jakost svetlobe vpliva le na število elektronov.
 - De Brogliejeva valovna dolžina: $\lambda = h/p = h/\sqrt{2mW_k}$; elektron pri napetosti $U$: $\lambda \approx 1{,}23\,\mathrm{nm}/\sqrt{U/\mathrm{V}}$.
-- Energijski nivoji: atom seva ali absorbira foton z $h\nu = W_m - W_n$; spekter je črtast.
+- Energijski nivoji: atom seva ali absorbira foton s $h\nu = W_m - W_n$; spekter je črtast.
 - Vodik: $W_n = -13{,}6\,\mathrm{eV}/n^2$; Lymanova serija ($n = 1$, UV), Balmerjeva ($n = 2$, vidna), Paschenova ($n = 3$, IR).
 
 ## Za izpit
@@ -213,7 +213,7 @@ Svetloba vodikove spektralne svetilke pada na fotokatodo iz kalija z izstopnim d
 
 1. Energije fotonov so $W_m - W_2 = 13{,}6\,(1/4 - 1/m^2)\,\mathrm{eV}$: za $m = 3$ $1{,}89\,\mathrm{eV}$ ($656\,\mathrm{nm}$), za $m = 4$ $2{,}55\,\mathrm{eV}$ ($486\,\mathrm{nm}$), za $m = 5$ $2{,}86\,\mathrm{eV}$ ($434\,\mathrm{nm}$), za $m = 6$ $3{,}02\,\mathrm{eV}$ ($410\,\mathrm{nm}$).
 2. Mejna valovna dolžina kalija: $\lambda_0 = 1240/2{,}30\,\mathrm{nm} \approx 539\,\mathrm{nm}$. Elektrone izbijajo črte $486$, $434$ in $410\,\mathrm{nm}$; rdeča $656\,\mathrm{nm}$ jih ne, ne glede na jakost, ker en foton preda energijo enemu elektronu.
-3. Zaporno napetost določajo najhitrejši elektroni, torej najenergijskejši fotoni ($410\,\mathrm{nm}$): $W_{k,\max} = 3{,}02 - 2{,}30 = 0{,}72\,\mathrm{eV}$, $U_z = 0{,}72\,\mathrm{V}$.
+3. Zaporno napetost določajo najhitrejši elektroni, torej fotoni z največjo energijo ($410\,\mathrm{nm}$): $W_{k,\max} = 3{,}02 - 2{,}30 = 0{,}72\,\mathrm{eV}$, $U_z = 0{,}72\,\mathrm{V}$.
 4. Gibalna količina: $p = \sqrt{2m_eW_{k,\max}} = \sqrt{2 \cdot 9{,}11 \cdot 10^{-31} \cdot 0{,}72 \cdot 1{,}602 \cdot 10^{-19}}\,\mathrm{kg\,m/s} \approx 4{,}58 \cdot 10^{-25}\,\mathrm{kg\,m/s}$; energijo smo pretvorili v joule.
 5. $\lambda_e = h/p = 6{,}626 \cdot 10^{-34}/4{,}58 \cdot 10^{-25}\,\mathrm{m} \approx 1{,}45 \cdot 10^{-9}\,\mathrm{m}$ (preizkus: $1{,}23/\sqrt{0{,}72}\,\mathrm{nm} \approx 1{,}45\,\mathrm{nm}$ ✓).
 6. Meja Balmerjeve serije je prehod z $m \to \infty$ na $n = 2$; foton nosi $3{,}40\,\mathrm{eV}$, kar je tudi ionizacijska energija iz $n = 2$, in ima $\lambda_{\infty 2} = 1240/3{,}40\,\mathrm{nm} \approx 365\,\mathrm{nm}$ (bližnji UV).

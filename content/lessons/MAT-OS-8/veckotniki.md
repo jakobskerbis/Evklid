@@ -7,7 +7,7 @@ avtor: AI
 
 Poglej satovje v čebeljem panju: celice so šestkotniki, ki se tesno stikajo brez vrzeli. Ploščice v kopalnici so pogosto kvadrati ali šestkotniki, prometni znak STOP pa je osemkotnik. Zakaj čebele ne gradijo petkotnih celic? Odgovor se skriva v velikosti kotov.
 
-Trikotnik in štirikotnik že poznaš: vsota notranjih kotov trikotnika je $180^\circ$, štirikotnika $360^\circ$. V tej lekciji to razširiš na poljubne večkotnike. Izračunal boš vsoto njihovih kotov, število diagonal in velikost kota v pravilnem večkotniku.
+Trikotnik in štirikotnik že poznaš: vsota notranjih kotov trikotnika je $180^\circ$, štirikotnika $360^\circ$. Zdaj to razširiš na poljubne večkotnike. Izračunal boš vsoto njihovih kotov, število diagonal in velikost kota v pravilnem večkotniku.
 
 ## Razlaga
 

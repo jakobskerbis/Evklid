@@ -42,7 +42,7 @@ Mesto bi bilo zapisano pri vsakem igralcu kluba posebej. Ob selitvi bi ga morali
 
 **Imena delov.** Tabeli v relacijskem modelu rečemo **relacija**. Vrstica je **zapis** (ena stvar iz sveta, npr. en igralec). Stolpec je **atribut** (ena lastnost, npr. goli). Vsak atribut ima **domeno**, to je nabor dovoljenih vrednosti: goli so cela števila od $0$ naprej, ime je besedilo.
 
-**Ključi.** **Primarni ključ** je atribut, ki vsak zapis enolično določi. V tabeli igralcev je to `id_igralca`: dva igralca se lahko imenujeta Ana, številke $101$ pa ima le eden. **Tuji ključ** je atribut, ki kaže na primarni ključ druge tabele. `id_kluba` v tabeli igralcev je tuji ključ. Baza ne dovoli vpisati igralca s številko kluba, ki je ni v tabeli klubov.
+**Ključi.** **Primarni ključ** je atribut (ali skupina atributov), ki vsak zapis enolično določi. V tabeli igralcev je to `id_igralca`: dva igralca se lahko imenujeta Ana, številke $101$ pa ima le eden. **Tuji ključ** je atribut, ki kaže na primarni ključ druge tabele. `id_kluba` v tabeli igralcev je tuji ključ. Baza ne dovoli vpisati igralca s številko kluba, ki je ni v tabeli klubov.
 
 En klub ima več igralcev, vsak igralec pa en klub. Taki povezavi rečemo **ena proti mnogo** ($1 : N$). Tuji ključ je vedno na strani »mnogo«.
 
@@ -104,7 +104,7 @@ Trener želi seznam igralcev z vsaj $9$ goli, od najboljšega navzdol. Kaj vrne 
 
 Vodstvo lige želi za vsak klub vedeti, koliko igralcev ima in koliko golov so skupaj dali.
 
-**Podatki:** tabela `Igralci`; klub $1$: goli $7$, $3$, $10$; klub $2$: goli $12$, $5$; klub $3$: gol $9$
+**Podatki:** tabela `Igralci`; klub $1$: goli $7$, $3$, $10$; klub $2$: goli $12$, $5$; klub $3$: goli $9$
 **Iščemo:** število igralcev in vsoto golov za vsak klub
 
 :::formula
@@ -254,7 +254,7 @@ Aplikacija za vsak tvoj klik sestavi tak ukaz, ga pošlje bazi na strežniku in 
 ~ Vrstice se ne seštejejo, ampak vsaka vrstica ene tabele dobi par z vsako vrstico druge.
 + $18$
 - $3$
-~ Rezultat ni manjši od nobene od tabel; vsak igralec se pojavi s vsakim klubom.
+~ Rezultat ni manjši od nobene od tabel; vsak igralec se pojavi z vsakim klubom.
 > Brez pogoja dobimo vse pare: $6 \cdot 3 = 18$ vrstic. Šele `ON i.id_kluba = k.id_kluba` jih zmanjša na $6$ pravih.
 
 :::simboli

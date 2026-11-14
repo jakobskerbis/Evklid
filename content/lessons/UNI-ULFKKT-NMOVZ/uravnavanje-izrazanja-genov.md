@@ -65,7 +65,7 @@ Laktoza odpre vrata, pomanjkanje glukoze prižge luč.
 
 **Evkarionti: transkripcijski dejavniki.** Tinine ledvične celice operonov nimajo: vsak gen ima svoj promotor in svojo mRNA. RNA-polimeraza II, ki prepisuje gene za beljakovine, se na promotor sama ne veže; potrebuje **splošne transkripcijske dejavnike**; eden od njih prepozna zaporedje TATA v promotorju. Brez njih ni prepisa pri nobenem genu.
 
-Katere gene celica prepiše, odločajo **specifični transkripcijski dejavniki**. To so beljakovine z dvema deloma: **domeno, ki veže DNA** (prepozna kratko zaporedje, pogosto $6$–$10$ baznih parov), in **aktivacijsko domeno**, ki pritegne dele prepisovalnega kompleksa. Vežejo se na uravnalna zaporedja DNA: aktivatorji na **ojačevalce**, represorji na **utiševalce**. Ta zaporedja so lahko tisoče baznih parov stran od gena. DNA se pri tem zanka, da se vezani dejavnik dotakne kompleksa na promotorju.
+Katere gene celica prepiše, odločajo **specifični transkripcijski dejavniki**. To so beljakovine z dvema deloma: **domeno, ki veže DNA** (prepozna kratko zaporedje, pogosto $6$–$10$ baznih parov), in **aktivacijsko domeno**, ki pritegne dele prepisovalnega kompleksa. Vežejo se na uravnalna zaporedja DNA: aktivatorji na **ojačevalce**, represorji na **utiševalce**. Ta zaporedja so lahko tisoče baznih parov stran od gena. DNA se pri tem zvije v zanko, da se vezani dejavnik dotakne kompleksa na promotorju.
 
 Gen ima več vezavnih mest in se prepiše šele ob pravi kombinaciji dejavnikov, ki jo ima le določeno tkivo ob določenem signalu (**kombinacijski nadzor**).
 
@@ -81,7 +81,7 @@ Ker posnemajo višinske priprave brez višine. HIF se kopiči tudi ob normalni k
 
 ### Primer 1: kakav po tekmi
 
-Po tekmi Luka spije kakav z mlekom. V debelem črevesu je za *E. coli* veliko laktoze, glukozo pa so že porabile druge bakterije. V kakšnem stanju sta represor in CAP in kako močno se prepisuje *lac*?
+Po tekmi Luka, ki laktozo slabo prebavlja, spije kakav z mlekom. V debelem črevesu je za *E. coli* veliko laktoze, glukozo pa so že porabile druge bakterije. V kakšnem stanju sta represor in CAP in kako močno se prepisuje *lac*?
 
 **Podatki:** laktoza je prisotna, glukoze ni
 **Iščemo:** stanje represorja, stanje CAP in jakost prepisa

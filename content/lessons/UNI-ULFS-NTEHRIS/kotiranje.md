@@ -49,7 +49,7 @@ Vsaka kota ima štiri dele. Skica (ni v merilu):
 - **Omejilo** konča kotirno črto: puščica (na strojniških risbah polna, z vrhom okoli $15^\circ$), poševna črtica pod $45^\circ$ (gradbene risbe) ali pika (v tesni verigi).
 - **Kotirno število** (tudi kotirna številka) je zapisano nad kotirno črto, na sredini, in se bere od spodaj ali z desne strani risbe.
 
-Česa ne smemo: robov, osi ali središčnic ne uporabljamo kot kotirne črte; kotirne črte se ne smejo sekati s pomožnimi, če se temu lahko izognemo; ne kotiramo do nevidnih (črtkanih) robov, ker je mera tam nejasna. Kjer je prostora malo, puščice obrnemo navzven ali kotirno število zapišemo ob podaljšani kotirni črti.
+Česa ne smemo: robov, osi ali središčnic ne uporabljamo kot kotirne črte; kotirne črte se ne smejo sekati s pomožnimi, če se temu lahko izognemo; ne kotiramo do nevidnih (črtkanih) robov, ker je mera tam nejasna. Kjer je prostora malo, puščice narišemo z zunanje strani ali kotirno število zapišemo ob podaljšani kotirni črti.
 
 Pred kotirno število pišemo simbole, ki povedo vrsto oblike:
 
@@ -97,7 +97,7 @@ Kotirna črta za kot je **krožni lok** s središčem v temenu kota, pomožni ko
 
 $$C = \frac{D - d}{L}$$
 
-imenujemo **koniciteta** oziroma konus in ga zapišemo kot $1 : x$ s simbolom konusa. Pri $C = 1 : 10$ se premer na vsakih $10\,\mathrm{mm}$ dolžine zmanjša za $1\,\mathrm{mm}$. Kot konusa $\alpha$ je kot med nasprotnima površinskima črtama stožca, zato velja
+imenujemo **koničnost** oziroma konus in ga zapišemo kot $1 : x$ s simbolom konusa. Pri $C = 1 : 10$ se premer na vsakih $10\,\mathrm{mm}$ dolžine zmanjša za $1\,\mathrm{mm}$. Kot konusa $\alpha$ je kot med nasprotnima površinskima črtama stožca, zato velja
 
 $$\tan\frac{\alpha}{2} = \frac{D - d}{2L}$$
 
@@ -165,7 +165,7 @@ $d = D - C L$; dolžina, ki je razlika dveh mer, ima odstopanje $\Delta_1 + \Del
 1. (a) $d = 29{,}2 - 0{,}1 \cdot 32 = 26{,}0\,\mathrm{mm}$.
 2. (b) Konus je razlika mer: $L = 40 - 8 = 32\,\mathrm{mm}$. Najdaljši je, ko je kos najdaljši in glava najkrajša: $40{,}1 - 7{,}9 = 32{,}2\,\mathrm{mm}$.
 3. Najkrajši je, ko je kos najkrajši in glava najdaljša: $39{,}9 - 8{,}1 = 31{,}8\,\mathrm{mm}$. Dolžina konusa je v mejah $32 \pm 0{,}2\,\mathrm{mm}$, dvakrat širših od drugih mer.
-4. Manjši premer pri konusu $1 : 10$ določata $D$ in $L$. Če ga strugar izračuna sam in zaokroži, se spremeni koniciteta: zamašek z drugačnim konusom se grla dotika le na enem obroču in ne tesni. Tudi pri pravi koniciteti je konus občutljiv: ker je $\Delta l = \Delta D / C$, vsakih $0{,}1\,\mathrm{mm}$ odstopanja premera premakne lego zamaška v grlu za $1\,\mathrm{mm}$. Zato konus podamo z razmerjem in ga strugar ne računa.
+4. Manjši premer pri konusu $1 : 10$ določata $D$ in $L$. Če ga strugar izračuna sam in zaokroži, se spremeni koničnost: zamašek z drugačnim konusom se grla dotika le na enem obroču in ne tesni. Tudi pri pravi koničnosti je konus občutljiv: ker je $\Delta l = \Delta D / C$, vsakih $0{,}1\,\mathrm{mm}$ odstopanja premera premakne lego zamaška v grlu za $1\,\mathrm{mm}$. Zato konus podamo z razmerjem in ga strugar ne računa.
 5. (c) Funkcijski meri sta konus in večji premer, zato ju kotiramo neposredno: $L = 32$, $\varnothing 29{,}2$ in konus $1 : 10$ s simbolom (ali $\varnothing 26$, ne obojega). Glavo kotiramo z $8$ od naležne ploskve, skupno dolžino zapišemo kot pomožno mero $(40)$.
 6. Odgovor: manjši premer je $26{,}0\,\mathrm{mm}$; prvotna risba je dopuščala konus od $31{,}8$ do $32{,}2\,\mathrm{mm}$. Pravilno kotiranje poda konus neposredno in skupno dolžino le kot pomožno mero.
 
@@ -193,7 +193,7 @@ $y = 40 \cdot \sin 60^\circ \approx 34{,}64\,\mathrm{mm}$, torej vrtina pri $(20
 
 ## Pogoste napake
 
-- **Zaprta veriga.** Kotirani vsi odseki in še skupna dolžina. Ena mera je odveč in si lahko nasprotujeta. Popravek: en odsek izpusti ali ga zapiši kot pomožno mero v oklepaju.
+- **Zaprta veriga.** Kotirani vsi odseki in še skupna dolžina. Ena mera je odveč in mere si lahko nasprotujejo. Popravek: en odsek izpusti ali ga zapiši kot pomožno mero v oklepaju.
 - **Funkcijska mera kot rezultat.** Mera, ki šteje, je izračunana iz dveh drugih, zato ima seštevek njunih odstopanj. Popravek: funkcijsko mero kotiraj neposredno, nefunkcijsko pusti kot ostanek.
 - **Kotiranje do nevidnega roba.** Mera do črtkane črte je nejasna. Popravek: izberi pogled ali prerez, kjer je rob viden.
 - **Kot konusa in naklon zamenjana.** Študent pri konusu $1 : 10$ vzame kot $\arctan 0{,}1$. Popravek: pri konusu je $\tan\frac{\alpha}{2} = \frac{C}{2}$, pri naklonu pa ni deljenja z $2$.
@@ -236,7 +236,7 @@ Utemelji, zakaj veriga mer na risbi ne sme biti zaprta. Pojasni, kaj je pomožna
 **Rešitev:**
 
 1. Vsaka izdelana mera odstopa od nazivne v svojih mejah. V zaprti verigi je ena mera določena z ostalimi, zato sta lahko zahtevi zanjo protislovni: kos, ki izpolni vse odseke, lahko krši skupno mero.
-2. Rešitev je, da en člen verige ostane nekotiran ali je **pomožna mera** v oklepaju, na primer $(40)$. Pomožna mera je informacija za berilca in se ne preverja.
+2. Rešitev je, da en člen verige ostane nekotiran ali je **pomožna mera** v oklepaju, na primer $(40)$. Pomožna mera je informacija za bralca risbe in se ne preverja.
 3. Funkcijska mera, izračunana kot razlika dveh mer, dobi seštevek njunih odstopanj (izpeljava za verigo). Primer: konus zamaška kot $40 - 8$ ima $\pm 0{,}2$ namesto $\pm 0{,}1$.
 4. Zato izberemo za ostanek verige nefunkcijsko mero, funkcijske pa kotiramo neposredno od funkcijske baze.
 
@@ -261,13 +261,13 @@ Kotirajmo ploščico $90 \times 50$ s tremi vrtinami $\varnothing 8$ po vrsti, o
 3. *Sistem.* Vzporedno ali z naraščajočimi merami: $0$, $20$, $45$, $70$ na eni kotirni črti. Odstopanje vsake vrtine je ena mera.
 4. *Višina vrtin.* Vse so na isti višini, $25\,\mathrm{mm}$ od spodnjega roba: ena mera zadošča, saj so na isti osi.
 5. *Premer.* $3 \times \varnothing 8$, enkrat, ne pri vsaki vrtini.
-6. *Obris.* $90$ in $50$. Desni ostanek $90 - 70 = 20$ ne kotiramo, ker bi zaprl verigo.
+6. *Obris.* $90$ in $50$. Desnega ostanka $90 - 70 = 20$ ne kotiramo, ker bi zaprl verigo.
 
 Rezultat: sedem števil na risbi ($90$, $50$, $20$, $45$, $70$, $25$, $3 \times \varnothing 8$) opiše ploščico popolno in brez protislovja.
 
 ## Drugače: Uporaba v stroki
 
-- *Strojna delavnica.* Strugar iz kotiranega konusa takoj vidi, za koliko zasuka suport. Če je konus podan s kotom v decimalnih stopinjah, ga pretvori v minute, ker ima skala na suportu razdelke v stopinjah in minutah.
+- *Strojna delavnica.* Strugar iz kotiranega konusa takoj vidi, za koliko zasuka suport. Če je konus podan s kotom v decimalnih stopinjah, ga pretvori v stopinje in minute, ker ima skala na suportu razdelke v stopinjah, natančnejša tudi v minutah.
 - *Kontrola kakovosti.* Kontrolor meri od iste baze, kot je kotirana. Pri vzporednem kotiranju zato postavi kos na referenčno ploskev na merilni plošči in meri vse lege od nje.
 - *CNC in CAD.* Koordinatno kotiranje se neposredno prevede v program stroja. Sodobni modelirniki prenesejo mere iz 3D modela na risbo, a izbira baz in funkcijskih mer ostane konstruktorjeva odločitev.
 - *Laboratorijska oprema.* Brušeni spoji, zamaški in pipe imajo standardiziran konus $1 : 10$, zato se deli različnih proizvajalcev prilegajo. Risba novega dela mora konus kotirati enako, kot ga določa standard.
@@ -332,7 +332,7 @@ Statistični račun dovoli širša odstopanja posameznih mer in s tem cenejšo i
 \Delta_\Sigma | največje odstopanje na koncu verige | \Delta_\Sigma = \Delta_1 + \Delta_2 + \ldots + \Delta_n | mm
 \Delta_1, \Delta_2, \Delta_n | odstopanja posameznih mer | | mm
 \Delta_\mathrm{s} | statistična ocena odstopanja verige | | mm
-C | konus (koniciteta) | C = \frac{D - d}{L} | – | zapis $1 : x$
+C | konus (koničnost) | C = \frac{D - d}{L} | – | zapis $1 : x$
 D | večji premer konusa | | mm
 d | manjši premer konusa | d = D - C L | mm
 L | dolžina konusa | | mm

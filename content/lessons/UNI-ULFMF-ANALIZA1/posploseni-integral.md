@@ -45,7 +45,7 @@ $$\int_1^\infty \frac{dx}{x^p} \ \text{konvergira} \iff p > 1 .$$
 
 ### Neskončno visok lik
 
-Nariši še $y = \frac{1}{\sqrt x}$ na $(0, 1]$. Krivulja je zvezna, a ob osi $y$ se dvigne čez vse meje: lik je tokrat neskončno visok, ne dolg. Točki, kjer funkcija ni omejena (tu $x = 0$), rečemo **singularnost**. Ideja je enaka kot pri zastavici: od singularnosti se odmaknemo za $\varepsilon > 0$ in pošljemo $\varepsilon \to 0^+$:
+Nariši še $y = \frac{1}{\sqrt x}$ na $(0, 1]$. Krivulja je zvezna, a ob osi $y$ se dvigne čez vse meje: lik je tokrat neskončno visok, ne dolg. Točki, v okolici katere funkcija ni omejena (tu $x = 0$), rečemo **singularnost**. Ideja je enaka kot pri zastavici: od singularnosti se odmaknemo za $\varepsilon > 0$ in pošljemo $\varepsilon \to 0^+$:
 
 $$\int_a^b f(x)\,dx = \lim_{\varepsilon \to 0^+} \int_{a+\varepsilon}^b f(x)\,dx ,$$
 
@@ -167,7 +167,7 @@ $\int_1^b e^{-x}\,dx = e^{-1} - e^{-b} \to e^{-1} = \frac1e \approx 0{,}368$. In
 
 ## Pogoste napake
 
-- **Singularnost v notranjosti spregledaš.** Napačno: $\int_{-1}^1 \frac{dx}{x^2} = \left[-\frac1x\right]_{-1}^1 = -2$. Negativna ploščina pozitivne funkcije je že znak, da je nekaj narobe. Newton-Leibnizova formula velja le, če je funkcija na celem intervalu zvezna. Pravilno: razdeli v $0$; $\int_0^1 \frac{dx}{x^2}$ divergira, zato divergira ves integral.
+- **Singularnost v notranjosti spregledaš.** Napačno: $\int_{-1}^1 \frac{dx}{x^2} = \left[-\frac1x\right]_{-1}^1 = -2$. Negativna ploščina pozitivne funkcije je že znak, da je nekaj narobe. Newton-Leibnizove formule ne smemo uporabiti, če funkcija na intervalu ni omejena (zadošča pa, da je na celem zaprtem intervalu zvezna). Pravilno: razdeli v $0$; $\int_0^1 \frac{dx}{x^2}$ divergira, zato divergira ves integral.
 - **Simetrična limita.** Napačno: $\int_{-\infty}^\infty x\,dx = \lim_{a\to\infty}\int_{-a}^a x\,dx = 0$. Meji morata iti v neskončnost neodvisno. Pravilno: $\int_0^\infty x\,dx$ divergira, zato divergira ves integral.
 - **»Funkcija gre proti 0, torej integral konvergira.«** Pogoj ni zadosten: $\frac1x \to 0$, a $\int_1^\infty \frac{dx}{x}$ divergira. Pravilno: primerjaj s $\frac1{x^p}$ in preveri, ali je $p > 1$.
 - **Zamenjaš smer pravila za potence.** Pri $\infty$ konvergira za $p > 1$, pri $0$ pa za $p < 1$. Kdor si zapomni samo »$p > 1$«, napačno sklepa, da $\int_0^1 \frac{dx}{\sqrt x}$ divergira. Pravilno: pri $0$ želimo, da funkcija ne raste prehitro, torej majhen $p$.

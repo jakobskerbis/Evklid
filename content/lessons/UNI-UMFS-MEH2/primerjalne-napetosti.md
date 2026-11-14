@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Vzemi suho špageto, primi jo za oba konca in jo zvijaj, dokler ne poči. Poglej lom: ni raven prečni prerez, ampak poševna vijačnica, približno pod $45^\circ$ na os. Nato drugo špageto samo upogni. Ta poči skoraj naravnost.
+Vzemi suh špaget, primi ga za oba konca in ga zvijaj, dokler ne poči. Poglej lom: ni raven prečni prerez, ampak poševna vijačnica, približno pod $45^\circ$ na os. Nato drug špaget samo upogni. Ta poči skoraj naravnost.
 
-Pri zvijanju v prerezu deluje le strižna napetost $\tau$, špageta pa je počila po ploskvi, kjer strižna napetost ni največja. Gred kuhinjskega robota hkrati upogibamo in zvijamo, stena sifona za smetano je napeta v dveh smereh. Iz nateznega preizkusa pa poznamo le eno število, mejo tečenja. Kako primerjati tako zapleteno stanje z enim številom? Odgovor dajo **hipoteze o porušitvi** in **primerjalne napetosti**.
+Pri zvijanju v prerezu deluje le strižna napetost $\tau$, špaget pa je počil po ploskvi, kjer strižna napetost ni največja. Gred kuhinjskega robota hkrati upogibamo in zvijamo, stena sifona za smetano je napeta v dveh smereh. Iz nateznega preizkusa pa poznamo le eno število, mejo tečenja. Kako primerjati tako zapleteno stanje z enim številom? Odgovor dajo **hipoteze o porušitvi** in **primerjalne napetosti**.
 
 ## Razlaga
 
@@ -34,9 +34,9 @@ $$\sigma_{\mathrm{pr}} = \sigma_1$$
 Pri čistem zvijanju sta glavni napetosti $\sigma_1 = \tau$ in $\sigma_3 = -\tau$.
 
 :::premisli
-Na kateri ploskvi deluje $\sigma_1 = \tau$ pri čistem zvijanju (spomni se Mohrovega kroga)? Zakaj je zato špageta počila po vijačnici pod $45^\circ$ in ne po prečnem prerezu, kjer je strižna napetost največja?
+Na kateri ploskvi deluje $\sigma_1 = \tau$ pri čistem zvijanju (spomni se Mohrovega kroga)? Zakaj je zato špaget počil po vijačnici pod $45^\circ$ in ne po prečnem prerezu, kjer je strižna napetost največja?
 ---
-Ker je krhka. Ne zanima jo strig, ampak natezna napetost. Največja natezna napetost $\sigma_1 = \tau$ pri čistem zvijanju deluje pravokotno na ploskve pod $45^\circ$, zato razpoka sledi njim in se ovije v vijačnico.
+Ker je krhek. Ne zanima ga strig, ampak natezna napetost. Največja natezna napetost $\sigma_1 = \tau$ pri čistem zvijanju deluje pravokotno na ploskve pod $45^\circ$, zato razpoka sledi njim in se ovije v vijačnico.
 :::
 
 **Korak 5 – duktilne snovi: Tresca.** Jeklo teče, ker kristalne ravnine zdrsnejo druga po drugi. Zdrs povzroča strig. Tresca zato trdi: tečenje se začne, ko največja strižna napetost doseže vrednost iz nateznega preizkusa. V vsakem stanju je $\tau_{\max} = \dfrac{\sigma_1 - \sigma_3}{2}$, pri preizkusu pa $\tau_{\max} = \dfrac{R_e}{2}$. Ko polovici izenačimo:
@@ -208,12 +208,12 @@ kjer je $G$ strižni modul. Pri enoosnem nategu je $u_d = \dfrac{\sigma^2}{6G}$.
 ~ To je rezultat po Tresci, $2\tau$. Von Mises da manj.
 > $\sigma_{\mathrm{pr,M}} = \sqrt{3}\,\tau \approx 1{,}73 \cdot 50 \approx 87\,\mathrm{MPa}$.
 
-? Zakaj se suha špageta pri zvijanju zlomi po vijačnici pod $45^\circ$?
+? Zakaj se suh špaget pri zvijanju zlomi po vijačnici pod $45^\circ$?
 - Ker je strižna napetost pri torziji največja na ploskvah pod $45^\circ$.
 ~ Pri čisti torziji je strig največji v prečnem in vzdolžnem prerezu. Pod $45^\circ$ je največja normalna napetost.
 + Ker je krhka in poči po ploskvi, na katero deluje največja natezna napetost $\sigma_1 = \tau$.
 - Ker po Tresci duktilne snovi tečejo pod $45^\circ$.
-~ Špageta ni duktilna: ne teče, ampak takoj poči. Tresca opisuje tečenje duktilnih kovin.
+~ Špaget ni duktilen: ne teče, ampak takoj poči. Tresca opisuje tečenje duktilnih kovin.
 > Pri čisti torziji je $\sigma_1 = \tau$ na ploskvi pod $45^\circ$. Krhka snov sledi največjemu nategu, zato razpoka zavije v vijačnico.
 
 ? V gredi je upogibna napetost $\sigma = 120\,\mathrm{MPa}$, dopustna napetost je $150\,\mathrm{MPa}$. Kolikšna je največja dopustna strižna napetost $\tau$ po Tresci?

@@ -7,7 +7,7 @@ avtor: AI
 
 Uganka za začetek. V kavnem aparatu vodo spusti elektromagnetni ventil: tuljava je navita na železno jedro, v katerem je majhna zračna reža. Ko steče tok, polje v reži pritegne železno kotvico in ventil se odpre. Silnice tečejo $100\,\mathrm{mm}$ po železu in le $1\,\mathrm{mm}$ po zraku. Relativna permeabilnost železa je $2000$.
 
-Ugani, preden bereš naprej: kateri del poti "porabi" večino amperskih ovojev tuljave? Sto milimetrov železa ali en milimeter zraka? Oceni tudi delež.
+Ugani, preden bereš naprej: kateri del poti »porabi« večino amperskih ovojev tuljave? Sto milimetrov železa ali en milimeter zraka? Oceni tudi delež.
 
 Podobna uganka visi na kuhinjski steni. Magnetni nosilec trdno drži nož, ki se ga dotika. Če vmes zatakneš zloženo kuhinjsko krpo, nož zdrsne.
 
@@ -21,7 +21,7 @@ Model sestavimo iz majhnih kosov. Za vsakim je kratko vprašanje. Odgovori nanj,
 
 $$\Theta = N I$$
 
-Enota je amper; v praksi rečemo "amperski ovoji". Tuljava ima v magnetnem krogu vlogo vira napetosti.
+Enota je amper; v praksi rečemo »amperski ovoji«. Tuljava ima v magnetnem krogu vlogo vira napetosti.
 
 *Preveri:* tuljava s $400$ ovoji, po kateri teče $0{,}5\,\mathrm A$, ima $\Theta = {?}$ *(Odgovor: $200\,\mathrm A$.)*
 
@@ -60,7 +60,7 @@ $$\Theta = (R_{\mathrm{Fe}} + R_\delta)\,\Phi$$
 
 To je drugi Kirchhoffov zakon v magnetni obliki: vsota magnetnih padcev po zanki je enaka vzbujanju.
 
-Zdaj nazaj k uganki. Pri enakem preseku sta upora v razmerju dolžin, deljenih z $\mu_{\mathrm{r}}$. Železo z dolžino $100\,\mathrm{mm}$ in $\mu_{\mathrm{r}} = 2000$ ima enak magnetni upor kot $0{,}05\,\mathrm{mm}$ zraka. Reža $1\,\mathrm{mm}$ je torej "dvajsetkrat daljša" od vsega železa.
+Zdaj nazaj k uganki. Pri enakem preseku sta upora v razmerju dolžin, deljenih z $\mu_{\mathrm{r}}$. Železo z dolžino $100\,\mathrm{mm}$ in $\mu_{\mathrm{r}} = 2000$ ima enak magnetni upor kot $0{,}05\,\mathrm{mm}$ zraka. Reža $1\,\mathrm{mm}$ je torej »dvajsetkrat daljša« od vsega železa.
 
 :::premisli
 Kolikšen delež amperskih ovojev porabi reža iz uganke? Napovej, nato preveri z razmerjem uporov.
@@ -126,7 +126,7 @@ $\Phi = B A$, $R_{\mathrm{Fe}} = \dfrac{l_{\mathrm{Fe}}}{\mu_0 \mu_{\mathrm{r}} 
 3. Upor železa: $R_{\mathrm{Fe}} = \dfrac{0{,}1}{4\pi \cdot 10^{-7} \cdot 2000 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 3{,}979 \cdot 10^{5}\,\mathrm{A/Wb}$, kar je dvajsetina upora reže.
 4. Vzbujanje: $\Theta = (3{,}979 \cdot 10^{5} + 7{,}958 \cdot 10^{6}) \cdot 5 \cdot 10^{-5}\,\mathrm A \approx 417{,}8\,\mathrm A$. Od tega reža porabi $397{,}9\,\mathrm A$, železo le $19{,}9\,\mathrm A$.
 5. Ovoji: $N = \dfrac{417{,}8\,\mathrm A}{0{,}25\,\mathrm A} \approx 1671{,}1$. Navzgor zaokrožimo, da gostota v reži ne pade pod zahtevano.
-6. Odgovor: potrebujemo približno $418\,\mathrm A$ amperskih ovojev, torej tuljavo z vsaj $1672$ ovoji. Skoraj vse ovoje "porabi" milimetrska reža.
+6. Odgovor: potrebujemo približno $418\,\mathrm A$ amperskih ovojev, torej tuljavo z vsaj $1672$ ovoji. Skoraj vse ovoje »porabi« milimetrska reža.
 
 ### Primer 3: jedro oblike E (razvejani krog)
 
@@ -176,9 +176,9 @@ Na srednjem stebru je padec $2 \cdot 10^{5} \cdot 2 \cdot 10^{-3}\,\mathrm A = 4
 
 ## Pogoste napake
 
-- **»Železa je največ, torej prevlada.«** Učenec primerja geometrijski dolžini $100\,\mathrm{mm}$ in $1\,\mathrm{mm}$. Ker je $\mu_{\mathrm{r}}$ železa nekaj tisoč, je magnetni upor železa velikokrat manjši. Popravek: železo pretvori v enakovredno dolžino zraka $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ in šele nato primerjaj.
+- **»Železa je največ, torej prevlada.«** Študent primerja geometrijski dolžini $100\,\mathrm{mm}$ in $1\,\mathrm{mm}$. Ker je $\mu_{\mathrm{r}}$ železa nekaj tisoč, je magnetni upor železa velikokrat manjši. Popravek: železo pretvori v enakovredno dolžino zraka $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ in šele nato primerjaj.
 - **V razcepišču sešteva gostote $B$.** Če imajo stebri različne preseke, so tudi gostote različne. Ohranja se pretok, ne gostota. Popravek: Kirchhoffov zakon zapiši za $\Phi$, gostoto v vsakem stebru izračunaj posebej z $B = \Phi/A$.
-- **Celo vzbujanje na stranski steber.** Učenec deli $\Theta$ kar z $R_1$ in pozabi, da del magnetne napetosti porabi srednji steber. Tako dobi v veji več pretoka, kot ga je v celem krogu. Popravek: najprej skupni upor in skupni pretok, nato padec $V_{\mathrm{p}}$ na vzporedni veji.
+- **Celo vzbujanje na stranski steber.** Študent deli $\Theta$ kar z $R_1$ in pozabi, da del magnetne napetosti porabi srednji steber. Tako dobi v veji več pretoka, kot ga je v celem krogu. Popravek: najprej skupni upor in skupni pretok, nato padec $V_{\mathrm{p}}$ na vzporedni veji.
 - **Brez ovojev ali brez pretvorbe enot.** Kdor vzame $\Theta = I$, dobi $N$-krat premajhen pretok. Kdor vstavi presek v $\mathrm{cm^2}$, se zmoti za faktor $10^{4}$. Popravek: $\Theta = N I$ ter $1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$, $1\,\mathrm{mm} = 10^{-3}\,\mathrm m$.
 - **Stalni $\mu_{\mathrm{r}}$ pri vsaki gostoti.** Rezultat $B = 2{,}5\,\mathrm T$ v železu ni mogoč, ker je železo že nasičeno. Popravek: preveri $B$; nad približno $1{,}5\,\mathrm T$ vzemi krivuljo magnetenja.
 

@@ -39,7 +39,7 @@ Superpozicija velja za tokove in napetosti, *ne pa za moč*, ker je moč kvadrat
 - $U_\mathrm{Th}$ napetost odprtih sponk (brez bremena);
 - $R_\mathrm{Th}$ upornost med sponkama, ko so vsi neodvisni viri izklopljeni.
 
-**Izpeljava.** Breme nadomestimo s tokovnim virom $I$, ki vleče isti tok iz sponk. Vezje je zdaj linearno z viri vezja in virom $I$. Po superpoziciji je napetost sponk $U = U' + U''$. Del $U'$ prispevajo notranji viri pri $I = 0$; to je napetost odprtih sponk, $U' = U_\mathrm{Th}$. Del $U''$ prispeva le $I$ pri izklopljenih notranjih virih; takrat je vezje pasivno (upori in morebitni krmiljeni viri) in se s sponk vidi kot upornost $R_\mathrm{Th}$, zato $U'' = -R_\mathrm{Th} I$. Skupaj:
+**Izpeljava.** Breme nadomestimo s tokovnim virom $I$, ki vleče isti tok iz sponk. Vezje je zdaj linearno z viri vezja in virom $I$. Po superpoziciji je napetost sponk $U = U' + U''$. Del $U'$ prispevajo notranji viri pri $I = 0$; to je napetost odprtih sponk, $U' = U_\mathrm{Th}$. Del $U''$ prispeva le $I$ pri izklopljenih notranjih virih; takrat je vezje brez neodvisnih virov (upori in morebitni krmiljeni viri) in se s sponk vidi kot upornost $R_\mathrm{Th}$, zato $U'' = -R_\mathrm{Th} I$. Skupaj:
 
 $$U = U_\mathrm{Th} - R_\mathrm{Th} I.$$
 
@@ -118,7 +118,7 @@ $U_\mathrm{A} = U_\mathrm{A}' + U_\mathrm{A}''$; $U_\mathrm{A}' = U_1\dfrac{R_2}
 
 ### Primer 3 (težji, izpitna raven): prilagoditev in izkoristek
 
-Vezju iz Primera 2 dodamo upor $R_3 = 3{,}6\,\Omega$ od A do sponk, na katere priključimo črpalko z uporom $R_\mathrm{L}$. (a) Določi Theveninov in Nortonov nadomestni vir. (b) Pri katerem $R_\mathrm{L}$ je moč na črpalki največja in koliko je? (c) Kolikšen je takrat izkoristek prvotnega vezja?
+Vezju iz Primera 2 dodamo upor $R_3 = 3{,}6\,\Omega$ od A do sponk, na katere priključimo črpalko z uporom $R_\mathrm{L}$. (a) Določi Theveninov in Nortonov nadomestni vir. (b) Pri katerem $R_\mathrm{L}$ je moč na črpalki največja in kolikšna je? (c) Kolikšen je takrat izkoristek prvotnega vezja?
 
 **Podatki:** $U_1 = 12\,\mathrm{V}$, $R_1 = 4\,\Omega$, $R_2 = 6\,\Omega$, $I_0 = 2\,\mathrm{A}$, $R_3 = 3{,}6\,\Omega$
 **Iščemo:** $U_\mathrm{Th}$, $R_\mathrm{Th}$, $I_\mathrm{N}$, $R_\mathrm{L}$ za največjo moč, $P_\mathrm{max}$, izkoristek $\eta$
@@ -157,7 +157,7 @@ $R_\mathrm{L} = R_\mathrm{Th}$, $P_\mathrm{max} = \dfrac{U_\mathrm{Th}^2}{4R_\ma
 3. Zdaj izberi $R_\mathrm{L}$ in izračunaj največjo moč sam.
 
 :::premisli
-Koliko sta $R_\mathrm{L}$ in $P_\mathrm{max}$? Preveri še, da je pri $R_\mathrm{L} = 2\,\Omega$ in $R_\mathrm{L} = 10\,\Omega$ moč res manjša.
+Kolikšna sta $R_\mathrm{L}$ in $P_\mathrm{max}$? Preveri še, da je pri $R_\mathrm{L} = 2\,\Omega$ in $R_\mathrm{L} = 10\,\Omega$ moč res manjša.
 ---
 $R_\mathrm{L} = 5\,\Omega$ in $P_\mathrm{max} = \frac{9^2}{4 \cdot 5} = 4{,}05\,\mathrm{W}$. Pri $2\,\Omega$ je $P = \left(\frac{9}{7}\right)^2 \cdot 2 \approx 3{,}31\,\mathrm{W}$, pri $10\,\Omega$ je $P = \left(\frac{9}{15}\right)^2 \cdot 10 = 3{,}6\,\mathrm{W}$. Oboje manj, kot napove izrek.
 :::

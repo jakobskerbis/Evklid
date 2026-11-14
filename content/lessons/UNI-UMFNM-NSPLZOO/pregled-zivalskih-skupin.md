@@ -126,12 +126,12 @@ Sploščen, brez telesne votline → ploski črvi; valjast, nečlenjen, s kutiku
 
 ### Primer 3: kdo je komu bližji
 
-Študent dobi tabelo znakov za štiri organizme. Ali je klop bolj soroden trakulji ali človeku?
+Študent dobi tabelo znakov za štiri organizme. Ali je klop bolj soroden metljaju ali človeku?
 
 | Organizem | prava tkiva | usta iz blastopore | levitev |
 |---|---|---|---|
 | spužva | ne | ne velja | ne |
-| trakulja | da | da | ne |
+| metljaj | da | da | ne |
 | klop | da | da | da |
 | človek | da | ne | ne |
 
@@ -144,11 +144,11 @@ Skupaj združi le skupine s skupnim **izpeljanim** znakom; znak ene same skupine
 
 **Rešitev:**
 
-1. Prava tkiva imajo trakulja, klop in človek, spužva ne. Spužva se odcepi prva.
-2. Usta iz blastopore imata trakulja in klop. To je skupen izpeljan znak, zato ju združimo v prvouste.
+1. Prava tkiva imajo metljaj, klop in človek, spužva ne. Spužva se odcepi prva.
+2. Usta iz blastopore imata metljaj in klop. To je skupen izpeljan znak, zato ju združimo v prvouste.
 3. Levitev ima samo klop, zato pri združevanju ne pomaga.
-4. Drevo: (spužva, (človek, (trakulja, klop))); v najbolj notranjem oklepaju sta najbližja sorodnika.
-5. Odgovor: klop je bližji trakulji, čeprav sta si na videz zelo različna.
+4. Drevo: (spužva, (človek, (metljaj, klop))); v najbolj notranjem oklepaju sta najbližja sorodnika.
+5. Odgovor: klop je bližji metljaju, čeprav sta si na videz zelo različna.
 
 ### Primer 4: zdaj ti
 
@@ -250,12 +250,12 @@ Za $n = 5$ je to $105$, za $n = 10$ že $34\,459\,425$. Zato drevesa iščemo z 
 ? Kateri znak kita kaže, da je bližje soroden človeku kot morskemu psu?
 - hidrodinamično telo
 ~ Tako telo ima tudi morski pes; nastalo je zaradi plavanja, torej je analogija.
-- plavuti
-~ Plavuti kot take so nastale neodvisno; kit jih je razvil iz okončin kopenskih prednikov.
+- plavutasta oblika okončin
+~ Plavutasta oblika je nastala neodvisno zaradi plavanja; kit jo je razvil iz okončin kopenskih prednikov.
 + mlečne žleze
 - življenje v morju
 ~ Okolje ni znak sorodnosti; v morju živi tudi morski pes.
-> Mlečne žleze so skupen izpeljan znak kita in človeka. Oblika telesa in plavuti so analogije zaradi plavanja.
+> Mlečne žleze so skupen izpeljan znak kita in človeka. Oblika telesa in plavutasta oblika okončin sta analogiji zaradi plavanja.
 
 ? Otroka srbi zadnjik, ponoči mama na koži opazi drobne bele, nečlenjene, valjaste črvičke. Kam spada zajedavec?
 - Med ploske črve, ker je majhen in bel.

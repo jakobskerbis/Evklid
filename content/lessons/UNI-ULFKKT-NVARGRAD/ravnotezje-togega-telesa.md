@@ -158,7 +158,7 @@ $F_q = q\,l$ pri $l/2$; $\sum F_x = 0$, $\sum F_y = 0$, $\sum M_A = 0$; dvojica 
 
 ### Primer 3 (težji)
 
-Nosilec $ACB$ s previsom ima nepomično členkasto podporo $A$ pri $x = 0$, pomično podporo $B$ pri $x = 6{,}0\,\mathrm{m}$ in prost konec $C$ pri $x = 8{,}0\,\mathrm{m}$. Na odseku $AB$ deluje trikotna obtežba, ki raste od $0$ pri $A$ do $3{,}0\,\mathrm{kN/m}$ pri $B$. V točki $C$ deluje sila $4{,}0\,\mathrm{kN}$, usmerjena navzdol in v desno pod kotom $60^\circ$ glede na vodoravnico, pri $x = 3{,}0\,\mathrm{m}$ pa dvojica $5{,}0\,\mathrm{kN\,m}$ v smeri urnega kazalca. Določi reakcije in jih preveri z neodvisno enačbo.
+Nosilec $ABC$ s previsom ima nepomično členkasto podporo $A$ pri $x = 0$, pomično podporo $B$ pri $x = 6{,}0\,\mathrm{m}$ in prost konec $C$ pri $x = 8{,}0\,\mathrm{m}$. Na odseku $AB$ deluje trikotna obtežba, ki raste od $0$ pri $A$ do $3{,}0\,\mathrm{kN/m}$ pri $B$. V točki $C$ deluje sila $4{,}0\,\mathrm{kN}$, usmerjena navzdol in v desno pod kotom $60^\circ$ glede na vodoravnico, pri $x = 3{,}0\,\mathrm{m}$ pa dvojica $5{,}0\,\mathrm{kN\,m}$ v smeri urnega kazalca. Določi reakcije in jih preveri z neodvisno enačbo.
 
 **Podatki:** $l_{AB} = 6{,}0\,\mathrm{m}$, $x_C = 8{,}0\,\mathrm{m}$; trikotna obtežba $q_0 = 3{,}0\,\mathrm{kN/m}$ pri $B$; $F_C = 4{,}0\,\mathrm{kN}$ pod $60^\circ$ navzdol in v desno; $M = -5{,}0\,\mathrm{kN\,m}$
 **Iščemo:** $A_x$, $A_y$, $B$
@@ -311,7 +311,7 @@ Prostoležeči nosilec razpona $8{,}0\,\mathrm{m}$ nosi dve sili: $12\,\mathrm{k
 
 $$\sum F_x = 0, \quad \sum F_y = 0, \quad \sum F_z = 0, \quad \sum M_x = 0, \quad \sum M_y = 0, \quad \sum M_z = 0.$$
 
-Momente računamo z vektorskim produktom $\vec{M} = \vec{r}\times\vec{F}$ glede na izbrano točko, momentne enačbe pa lahko zapišemo tudi glede na poljubne osi (ne nujno koordinatne), če so neodvisne. Prostorske podpore: kroglični členek (3 sile), cilindrični ležaj (2 sili pravokotno na os, lahko še 2 momenta), togo vpetje (3 sile in 3 momenti), vrv ali nihajna palica (1 sila v svoji smeri). Telo je statično določeno pri šestih pravilno razporejenih reakcijah. Primer: plošča na treh navpičnih nogah je pri navpični obtežbi določena (tri enačbe $\sum F_z$, $\sum M_x$, $\sum M_y$), miza s štirimi nogami pa je enkrat nedoločena – zato štirinoga miza na neravnih tleh majava.
+Momente računamo z vektorskim produktom $\vec{M} = \vec{r}\times\vec{F}$ glede na izbrano točko, momentne enačbe pa lahko zapišemo tudi glede na poljubne osi (ne nujno koordinatne), če so neodvisne. Prostorske podpore: kroglični členek (3 sile), cilindrični ležaj (2 sili pravokotno na os, lahko še 2 momenta), togo vpetje (3 sile in 3 momenti), vrv ali nihajna palica (1 sila v svoji smeri). Telo je statično določeno pri šestih pravilno razporejenih reakcijah. Primer: plošča na treh navpičnih nogah je pri navpični obtežbi določena (tri enačbe $\sum F_z$, $\sum M_x$, $\sum M_y$), miza s štirimi nogami pa je enkrat nedoločena – zato je štirinoga miza na neravnih tleh majava.
 
 **Ravnotežje in stabilnost.** Ravnotežje je lahko **stabilno** (po majhnem odmiku se telo vrne), **labilno** (odmik se poveča) ali **indiferentno**. Pri telesu na podlagi je merilo lega težišča: prevrnitev nastopi, ko nosilka rezultante teže in zunanjih sil pade iz podporne ploskve. Varnost proti prevrnitvi izrazimo z razmerjem stabilizirajočega in prevračalnega momenta glede na rob prevrnitve.
 
@@ -335,7 +335,7 @@ Momente računamo z vektorskim produktom $\vec{M} = \vec{r}\times\vec{F}$ glede 
 + $9{,}0\,\mathrm{kN}$
 > $A_y = F\,b/l = 12 \cdot 6{,}0/8{,}0\,\mathrm{kN} = 9{,}0\,\mathrm{kN}$, $B = 3{,}0\,\mathrm{kN}$; skupaj $12\,\mathrm{kN}$.
 
-? Na konec vpete konzole obesiš breme, nato ga premakneš na mesto dvakrat bolj oddaljeno od zidu. Kaj se zgodi z reakcijami vpetja?
+? Na sredino vpete konzole obesiš breme, nato ga premakneš na prosti konec, dvakrat dlje od zidu. Kaj se zgodi z reakcijami vpetja?
 + Navpična reakcija ostane enaka, moment vpetja se podvoji.
 - Obe reakciji se podvojita.
 ~ Navpična reakcija uravnoteži težo, ki se ni spremenila. Podvoji se le ročica in z njo moment.

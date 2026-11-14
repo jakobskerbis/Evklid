@@ -43,7 +43,7 @@ Na $\mathbb{Q}$ je neresnična, ker $\sqrt2$ ni racionalno število. Na $\mathbb
 $$\forall x \in A\colon P(x) \ \sim\ \forall x\,\big(x \in A \Rightarrow P(x)\big)$$
 $$\exists x \in A\colon P(x) \ \sim\ \exists x\,\big(x \in A \wedge P(x)\big)$$
 
-Pri $\forall$ je veznik implikacija, pri $\exists$ konjunkcija. Stavek »vsa praštevila, večja od $2$, so lihi« je torej $\forall x\,\big((x \text{ praštevilo} \wedge x > 2) \Rightarrow x \text{ liho}\big)$.
+Pri $\forall$ je veznik implikacija, pri $\exists$ konjunkcija. Stavek »vsa praštevila, večja od $2$, so liha« je torej $\forall x\,\big((x \text{ praštevilo} \wedge x > 2) \Rightarrow x \text{ liho}\big)$.
 
 **5. Negacija.** Izjava $\forall x\, P(x)$ je neresnična natanko tedaj, ko je v stolpcu $P$ kakšna ničla, torej ko obstaja $x$, za katerega $P(x)$ ne velja:
 
@@ -152,7 +152,7 @@ Negacija: $\forall M \in \mathbb{R}\ \exists n \in \mathbb{N}\colon n > M$. Ta j
 - **Zanikanje domene.** Napačno: negacija od $\forall x \in \mathbb{R}\colon x^2 \geq 0$ je $\exists x \notin \mathbb{R}\colon x^2 < 0$. Domena pove, o čem govorimo, in ni del trditve. Pravilno: $\exists x \in \mathbb{R}\colon x^2 < 0$.
 - **Napačna negacija implikacije pod kvantifikatorjem.** Napačno: $\neg\, \forall x\,(P \Rightarrow Q) \sim \exists x\,(P \Rightarrow \neg Q)$. Implikacija je neresnična le pri $P = 1$, $Q = 0$. Pravilno: $\exists x\,(P(x) \wedge \neg Q(x))$.
 - **Zamenjava vrstnega reda $\forall$ in $\exists$.** Kdor zamenja $\forall x\, \exists y$ z $\exists y\, \forall x$, iz »vsak ima svojega« naredi »eden velja za vse«. Prva izjava sledi iz druge, obratno pa ne. Pravilno: vrstni red ohrani tudi pri negaciji.
-- **Implikacija pri $\exists$.** Napačno: »neko praštevilo je sodo« zapišemo $\exists x\,(x \text{ praštevilo} \Rightarrow x \text{ sodo})$. To je resnično že pri $x = 4$, ker je premisa neresnična. Pravilno: $\exists x\,(x \text{ praštevilo} \wedge x \text{ sodo})$.
+- **Implikacija pri $\exists$.** Napačno: »neko praštevilo je sodo« zapišemo $\exists x\,(x \text{ praštevilo} \Rightarrow x \text{ sodo})$. To je resnično že pri $x = 4$, ker je premisa neresnična; veljalo bi tudi, če sodega praštevila sploh ne bi bilo. Pravilno: $\exists x\,(x \text{ praštevilo} \wedge x \text{ sodo})$.
 
 ## Povzetek
 
@@ -241,7 +241,7 @@ Recept za negacijo izjave s kvantifikatorji, na primeru $\forall \varepsilon > 0
 
 ? Zaporedje $(a_n)$ je omejeno, če velja $\exists M > 0\ \forall n \in \mathbb{N}\colon |a_n| \leq M$. Kaj pomeni, da zaporedje *ni* omejeno?
 - $\exists M > 0\ \forall n \in \mathbb{N}\colon |a_n| > M$
-~ Zanikal si le predikat, kvantifikatorja pa nisi obrnil. Ob negaciji se obrne vsak.
+~ Zanikal si le predikat, kvantifikatorjev pa nisi obrnil. Ob negaciji se obrne vsak.
 - $\forall M > 0\ \forall n \in \mathbb{N}\colon |a_n| > M$
 ~ Obrnil si le prvi kvantifikator. Tudi $\forall n$ mora postati $\exists n$.
 + $\forall M > 0\ \exists n \in \mathbb{N}\colon |a_n| > M$

@@ -61,7 +61,7 @@ $$\sum_{n=1}^{\infty} \frac{1}{n^p} \quad \text{konvergira natanko tedaj, ko je 
 
 Tako $\sum \frac{1}{n^2}$ konvergira (vsota je $\pi^2/6$), $\sum \frac{1}{\sqrt n}$ pa divergira.
 
-**Kako izbrati kriterij.** Pri racionalnih izrazih v $n$ (npr. $\frac{n}{n^3 + 1}$) primerjaj s $\frac{1}{n^p}$, kjer je $p$ razlika stopenj imenovalca in števca. Pri potencah $c^n$ in fakultetah $n!$ uporabi kvocientni kriterij, pri izrazih oblike $(\dots)^n$ pa korenski kriterij.
+**Kako izbrati kriterij.** Pri racionalnih izrazih v $n$ (npr. $\frac{n}{n^3 + 1}$) primerjaj z $\frac{1}{n^p}$, kjer je $p$ razlika stopenj imenovalca in števca. Pri potencah $c^n$ in fakultetah $n!$ uporabi kvocientni kriterij, pri izrazih oblike $(\dots)^n$ pa korenski kriterij.
 
 :::premisli
 Ali vrsta $\sum \frac{\sqrt n}{n^2 + 1}$ konvergira? S katero vrsto jo primerjaš?
@@ -77,7 +77,7 @@ Stopnja števca je $\frac12$, imenovalca $2$, zato primerjamo z $\frac{1}{n^{3/2
 
 $$\sum_{n=0}^{\infty} c_n\,(x - x_0)^n$$
 
-je **potenčna vrsta** s središčem $x_0$. *Izrek.* Za vsako potenčno vrsto obstaja **konvergenčni polmer** $R \in [0, \infty]$: vrsta absolutno konvergira za $|x - x_0| < R$ in divergira za $|x - x_0| > R$. *Jedro dokaza:* če vrsta konvergira v točki $x_1$, gredo členi $c_n (x_1 - x_0)^n$ proti $0$ (potrebni pogoj), zato so po absolutni vrednosti omejeni z nekim $M$; za $|x - x_0| < |x_1 - x_0|$ je zato $|c_n (x - x_0)^n| \le M\theta^n$ s $\theta = \frac{|x - x_0|}{|x_1 - x_0|} < 1$, kar je člen konvergentne geometrijske vrste. Na robu ($|x - x_0| = R$) lahko konvergira ali divergira, zato robni točki preverimo posebej. Polmer pogosto izračunamo s
+je **potenčna vrsta** s središčem $x_0$. *Izrek.* Za vsako potenčno vrsto obstaja **konvergenčni polmer** $R \in [0, \infty]$: vrsta absolutno konvergira za $|x - x_0| < R$ in divergira za $|x - x_0| > R$. *Jedro dokaza:* če vrsta konvergira v točki $x_1$, gredo členi $c_n (x_1 - x_0)^n$ proti $0$ (potrebni pogoj), zato so po absolutni vrednosti omejeni z nekim $M$; za $|x - x_0| < |x_1 - x_0|$ je zato $|c_n (x - x_0)^n| \le M\theta^n$ s $\theta = \frac{|x - x_0|}{|x_1 - x_0|} < 1$, kar je člen konvergentne geometrijske vrste. Na robu ($|x - x_0| = R$) lahko konvergira ali divergira, zato robni točki preverimo posebej. Polmer pogosto izračunamo z
 
 $$R = \lim_{n \to \infty}\left|\frac{c_n}{c_{n+1}}\right| \qquad \text{ali} \qquad \frac1R = \lim_{n \to \infty}\sqrt[n]{|c_n|},$$
 
@@ -241,7 +241,7 @@ Delne vsote si lahko narišeš tudi kot točke $(n, S_n)$. Pri konvergentni vrst
 
 **Farmakokinetika.** Bolnik vsakih $12\,\mathrm{h}$ vzame $100\,\mathrm{mg}$ zdravila. V $12$ urah se izloči toliko, da ostane $25\,\%$ prejšnje količine. Tik po $n$-tem odmerku je v telesu $100 + 100 \cdot 0{,}25 + 100 \cdot 0{,}25^2 + \dots + 100 \cdot 0{,}25^{n-1}\,\mathrm{mg}$. Po dolgem času je to geometrijska vrsta z vsoto $\dfrac{100}{1 - 0{,}25} \approx 133\,\mathrm{mg}$ (največja količina), tik pred odmerkom pa $133 - 100 = 33\,\mathrm{mg}$ (najmanjša). Farmakologi tako določajo odmerke, da je stacionarna koncentracija v terapevtskem območju.
 
-**Fizikalna kemija.** Nihajna particijska funkcija dvoatomne molekule je geometrijska vrsta: $q = \sum_{v=0}^\infty e^{-vx} = \frac{1}{1 - e^{-x}}$ z $x = \frac{hc\tilde\nu}{k_\mathrm{B}T}$. Za $\mathrm{I_2}$ ($\tilde\nu = 214\,\mathrm{cm^{-1}}$) pri $298\,\mathrm{K}$ je $x \approx 1{,}033$, $q \approx 1{,}55$, v osnovnem nihajnem stanju pa je delež $\frac{1}{q} \approx 0{,}64$ molekul. Iz $q$ nato izračunamo nihajni prispevek k notranji energiji in entropiji.
+**Fizikalna kemija.** Nihajna particijska funkcija dvoatomne molekule je geometrijska vrsta: $q = \sum_{v=0}^\infty \mathrm{e}^{-vx} = \frac{1}{1 - \mathrm{e}^{-x}}$ z $x = \frac{hc\tilde\nu}{k_\mathrm{B}T}$. Za $\mathrm{I_2}$ ($\tilde\nu = 214\,\mathrm{cm^{-1}}$) pri $298\,\mathrm{K}$ je $x \approx 1{,}033$, $q \approx 1{,}55$, v osnovnem nihajnem stanju pa je delež $\frac{1}{q} \approx 0{,}64$ molekul. Iz $q$ nato izračunamo nihajni prispevek k notranji energiji in entropiji.
 
 **Približki z oceno napake.** Iz $\ln(1 - x) = -x - \frac{x^2}{2} - \dots$ dobimo za razredčene raztopine z molskim deležem topljenca $x_B$ približek $\ln(1 - x_B) \approx -x_B$, na katerem slonijo izpeljave znižanja tališča, zvišanja vrelišča in osmoznega tlaka. Pri $x_B = 0{,}01$ je prvi izpuščeni člen $5 \cdot 10^{-5}$, torej je relativna napaka približka okoli $0{,}5\,\%$.
 
@@ -286,25 +286,33 @@ $$\frac{1}{R} = \limsup_{n \to \infty} \sqrt[n]{|c_n|}$$
 
 ? Koliko je vsota vrste $\displaystyle\sum_{n=0}^{\infty} \left(\frac13\right)^n$?
 - $\dfrac12$
+~ Seštevati si začel pri $n = 1$ (prvi člen $\frac13$); tu je prvi člen $1$.
 + $\dfrac32$
 - $3$
+~ To je $\frac1q$; vsota je $\frac{a}{1 - q}$ s prvim členom $a = 1$.
 > Geometrijska vrsta s prvim členom $1$ in $q = \frac13$: $\dfrac{1}{1 - 1/3} = \dfrac32$. $\frac12$ bi dobil, če bi seštevanje začel pri $n = 1$.
 
 ? Katera vrsta divergira?
 + $\displaystyle\sum_{n=1}^{\infty} \frac{1}{\sqrt n}$
 - $\displaystyle\sum_{n=1}^{\infty} \frac{1}{n^2}$
+~ To je posplošena harmonična vrsta s $p = 2 > 1$, ki konvergira.
 - $\displaystyle\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$
+~ Ta vrsta konvergira po Leibnizovem kriteriju; divergira le vrsta njenih absolutnih vrednosti.
 > $\sum \frac{1}{n^p}$ konvergira le za $p > 1$; pri $\frac{1}{\sqrt n}$ je $p = \frac12$. Vrsta $\sum \frac{1}{n^2}$ konvergira ($p = 2$), alternirajoča harmonična pa po Leibnizu (pogojno).
 
 ? Za vrsto $\sum a_n$ vemo, da je $\lim_{n \to \infty} a_n = 0$. Kaj lahko sklepamo?
 - Vrsta zagotovo konvergira.
+~ Potrebni pogoj si zamenjal z zadostnim: harmonična vrsta ima $a_n \to 0$, a divergira.
 - Vrsta zagotovo divergira.
+~ Pogoj $a_n \to 0$ konvergence ne izključuje: $\sum \frac{1}{n^2}$ konvergira.
 + Iz tega ne moremo sklepati, ali vrsta konvergira.
 > Pogoj $a_n \to 0$ je potreben, ni pa zadosten: $\sum \frac1{n^2}$ konvergira, $\sum \frac1n$ divergira, pri obeh pa členi gredo proti $0$.
 
 ? Kolikšen je konvergenčni polmer potenčne vrste $\displaystyle\sum_{n=0}^{\infty} \frac{x^n}{n!}$?
 - $R = 0$
+~ Polmer $0$ bi imela vrsta s koeficienti $n!$; tu je $c_n = \frac{1}{n!}$ in kvocient $\left|\frac{c_n}{c_{n+1}}\right|$ raste čez vse meje.
 - $R = 1$
+~ Polmer $1$ ima geometrijska vrsta $\sum x^n$ s koeficienti $1$; tu koeficienti $\frac{1}{n!}$ hitro padajo.
 + $R = \infty$
 > $\left|\dfrac{c_n}{c_{n+1}}\right| = \dfrac{(n+1)!}{n!} = n + 1 \to \infty$. Vrsta konvergira za vsak realni $x$; njena vsota je $\mathrm{e}^x$.
 

@@ -61,7 +61,7 @@ Notranje stene votlin in organe v njih prekriva tanka, gladka **serozna mrena**.
 :::premisli
 Pacientu se v trebušni votlini nabere tekočina. Kje se bo zbrala, ko pacient stoji? Bi lahko na enak način tekočina iz prsne votline stekla v trebuh?
 ---
-Lahko. Med trebušno in medenično votlino ni stene, meja je samo namišljena ravnina. Tekočina zato po teži zdrsne v najnižji del, v medenico. Med prsno in trebušno votlino pa stoji prepona, zato tam tak prehod ni mogoč.
+V medenični votlini. Med trebušno in medenično votlino ni stene, meja je samo namišljena ravnina. Tekočina zato po teži zdrsne v najnižji del, v medenico. Med prsno in trebušno votlino pa stoji prepona, zato tam tak prehod ni mogoč.
 :::
 
 **Na koncu še oznake.** V izvidih boš srečal latinske oblike: *dexter/sinister* (desni/levi), *planum medianum*, *cavitas thoracis*, *cavitas abdominis*. Trebuh pogosto razdelimo na **štiri kvadrante** z mediano ravnino in transverzalno ravnino skozi popek: desni zgornji, levi zgornji, desni spodnji in levi spodnji.
@@ -90,7 +90,7 @@ Medialno = bliže mediani ravnini; lateralno = dlje od nje. Vedno v anatomskem p
 
 Nogometaš zamahne z nogo naprej za strel. Pri ogrevanju dela »poskok v razkorak«, pri katerem roki in nogi zamahnejo v stran. Drsalka se zavrti v pirueti okoli sebe. V kateri ravnini in okoli katere osi poteka vsak gib?
 
-**Podatki:** strel (noga naprej in nazaj), poskok v razkorak (uda v stran), pirueta (vrtenje telesa okoli sebe)
+**Podatki:** strel (noga naprej in nazaj), poskok v razkorak (udi v stran), pirueta (vrtenje telesa okoli sebe)
 **Iščemo:** ravnino in os vsakega giba
 
 :::formula
@@ -100,7 +100,7 @@ Gib poteka v ravnini; os je na to ravnino pravokotna.
 **Rešitev:**
 
 1. Pri strelu se noga premika naprej in nazaj ob boku. Taka pot leži v sagitalni ravnini. Pravokotno nanjo je frontalna os, ki gre skozi kolk od leve proti desni.
-2. Pri poskoku gredo uda v stran in nazaj k telesu. To je gibanje v frontalni ravnini, okoli sagitalnih osi skozi ramena in kolke. Gib stran je abdukcija, nazaj k telesu addukcija.
+2. Pri poskoku gredo udi v stran in nazaj k telesu. To je gibanje v frontalni ravnini, okoli sagitalnih osi skozi ramena in kolke. Gib stran je abdukcija, nazaj k telesu addukcija.
 3. Pri pirueti se telo vrti, kot bi se vrtela vodoravna plošča. To je transverzalna ravnina, os pa je vertikalna.
 4. Odgovor: strel poteka v sagitalni ravnini okoli frontalne osi, poskok v frontalni ravnini okoli sagitalnih osi, pirueta v transverzalni ravnini okoli vertikalne osi.
 
@@ -150,7 +150,7 @@ Leva plevralna votlina z levim pljučnim krilom. Obdaja jo popljučnica (plevra)
 
 **Pest v balonu.** Napol napihnjen balon potisni s pestjo. Balon se ovije okoli pesti v dveh plasteh. Notranja plast, ki se dotika pesti, je visceralni list. Zunanja plast je parietalni list. Zrak med njima je serozna votlina, v telesu pa je namesto zraka tanka plast tekočine. Pest je organ: je obdana z mreno, a ni v njeni votlini.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 V fitnesu se vaje imenujejo po ravninah. »Odročenje z utežmi« dvigne roki v stran: abdukcija v rami, frontalna ravnina. »Predročenje« dvigne roki naprej: fleksija v rami, sagitalna ravnina. »Ruski zasuk« na tleh zavrti trup okoli vertikalne osi: transverzalna ravnina.
 

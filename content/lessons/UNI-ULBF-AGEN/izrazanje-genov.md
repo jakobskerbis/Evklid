@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ko so leta 2001 objavili prvo različico človeškega genoma, je presenetila številka: le okoli $20\,000$ genov za beljakovine, približno toliko kot pri drobni glisti. Še bolj presenetljiv je drug podatek: zaporedja, ki dejansko določajo beljakovine, zavzemajo le $1$–$2\,\%$ genoma. Gen za distrofin je dolg okoli $2{,}2$ milijona baznih parov, njegova zrela mRNA pa le okoli $14\,000$ nukleotidov; samo prepis enega gena traja približno $16$ ur.
+Ko so leta 2001 objavili prvo različico človeškega genoma, je presenetilo majhno število genov: po današnjih ocenah le okoli $20\,000$ genov za beljakovine, približno toliko kot pri drobni glisti. Še bolj presenetljiv je drug podatek: zaporedja, ki dejansko določajo beljakovine, zavzemajo le $1$–$2\,\%$ genoma. Gen za distrofin je dolg okoli $2{,}2$ milijona baznih parov, njegova zrela mRNA pa le okoli $14\,000$ nukleotidov; samo prepis enega gena traja približno $16$ ur.
 
 Če bi bil gen preprosto »recept«, ki se prebere od začetka do konca, takih podatkov ne bi razumeli. Izražanje gena je večstopenjska obdelava informacije: prepis (**transkripcija**), obdelava prepisa, prevod (**translacija**) po **genskem kodu**. Vsak korak je merljiv: koliko nukleotidov, koliko kodonov, koliko aminokislin in koliko energije. Ti računi so vsakdan v laboratoriju, od načrtovanja začetnih oligonukleotidov do iskanja genov v zaporedjih.
 
@@ -210,7 +210,7 @@ Opiši translacijo pri bakterijah od vezave ribosoma do sprostitve verige in nav
 1. Iniciacija: mala podenota $30\mathrm{S}$ se z rRNA pari s Shine-Dalgarnovim zaporedjem; iniciatorska tRNA s formilmetioninom se pari z AUG na mestu P; pridruži se velika podenota $50\mathrm{S}$ (porabi se GTP).
 2. Elongacija: aminoacil-tRNA z ustreznim antikodonom vstopi na mesto A; peptidil-transferaza (rRNA velike podenote) naredi peptidno vez in prenese verigo na tRNA na mestu A.
 3. Translokacija: ribosom se pomakne za en kodon v smeri $3'$; tRNA z verigo je na P, prazna na E in odide; mesto A je prosto za naslednji kodon.
-4. Terminacija: ko je na mestu A stop kodon, se veže sprostitveni dejavnik; veriga se hidrolitsko sprosti, podenoti razpadeta.
+4. Terminacija: ko je na mestu A stop kodon, se veže sprostitveni dejavnik; veriga se hidrolitsko sprosti, ribosom razpade na podenoti.
 5. Razlike pri evkariontih: ribosom $80\mathrm{S}$; mala podenota se veže na kapo in skenira do AUG (ni Shine-Dalgarnovega zaporedja); prva aminokislina je metionin, ne formilmetionin; translacija je ločena od transkripcije (jedro, citoplazma).
 6. Energija: vsako aminokislino pripne sintetaza z ATP do AMP, kar sta $2$ vezi: $400 \cdot 2 = 800$.
 7. Elongacija: $399$ peptidnih vezi po $2$ GTP: $399 \cdot 2 = 798$.

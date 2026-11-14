@@ -199,7 +199,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Ovinek avtoceste s polmerom $80\,\mathrm{m}$ je nagnjen za $15^\circ$ proti središču. Koeficient lepenja med gumami in cesto je $0{,}60$, $g = 9{,}81\,\mathrm{m/s^2}$. (a) Pri kateri hitrosti avto pelje skozi ovinek brez pomoči lepenja? (b) Izpelji izraz za največjo hitrost brez zdrsa in jo izračunaj. (c) Utemelji, ali lahko avto v ovinku stoji, ne da bi zdrsnil navzdol.
+Ovinek ceste na dirkališču s polmerom $80\,\mathrm{m}$ je nagnjen za $15^\circ$ proti središču. Koeficient lepenja med gumami in cesto je $0{,}60$, $g = 9{,}81\,\mathrm{m/s^2}$. (a) Pri kateri hitrosti avto pelje skozi ovinek brez pomoči lepenja? (b) Izpelji izraz za največjo hitrost brez zdrsa in jo izračunaj. (c) Utemelji, ali lahko avto v ovinku stoji, ne da bi zdrsnil navzdol.
 
 **Rešitev:**
 
@@ -335,7 +335,7 @@ k_l | koeficient lepenja | | – | telo zdrsne, ko tan α > k_l
 G | gravitacijska konstanta | | N\,m^2/kg^2 | 6,674 · 10⁻¹¹ N m²/kg²
 \vec{G} | gibalna količina | \vec{G} = m\vec{v} | kg\,m/s
 m | masa telesa | | kg
-m_1, m_2 | masi telesa, ki se privlačita | | kg
+m_1, m_2 | masi teles, ki se privlačita | | kg
 M | masa osrednjega telesa (npr. Zemlje) | | kg
 M_Z | masa Zemlje | | kg | 5,972 · 10²⁴ kg
 \vec{a} | vektor pospeška | | m/s^2

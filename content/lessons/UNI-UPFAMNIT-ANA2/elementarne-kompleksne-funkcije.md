@@ -85,7 +85,7 @@ Neskončno. Iz $e^{x}(\cos y + i\sin y) = 1$ sledi $e^{x} = 1$ in kot $y$ je ve�
 
 $$\cos z = \frac{e^{iz} + e^{-iz}}{2}, \qquad \sin z = \frac{e^{iz} - e^{-iz}}{2i}.$$
 
-Ti formuli vzamemo za definicijo pri kompleksnem $z$. Ujemata se s Taylorjevima vrstama. Pozor: kompleksni kosinus ni omejen, saj je $\cos i = \dfrac{e^{-1} + e}{2} \approx 1{,}543$.
+Ti formuli vzamemo za definicijo pri kompleksnem $z$. Ujemata se s Taylorjevima vrstama. Pozor: kompleksni kosinus ni omejen: že $\cos i = \dfrac{e^{-1} + e}{2} \approx 1{,}543$ je večji od $1$, $\cos(iy) = \dfrac{e^{-y} + e^{y}}{2}$ pa z $y$ raste čez vse meje.
 
 **Logaritem.** Ker $\exp$ ni injektiven, ima enačba $e^{w} = z$ za $z \neq 0$ neskončno rešitev: $w = \ln|z| + i(\varphi + 2k\pi)$, kjer je $\varphi$ kot števila $z$. Kompleksni logaritem je zato večličen: vsako $z \neq 0$ ima neskončno logaritmov. Za računanje izberemo eno vejo (en izbor $k$), običajno tisto s $\varphi \in (-\pi, \pi]$.
 
@@ -177,7 +177,7 @@ Kot je določen do večkratnika $2\pi$: $y = \pi + 2k\pi$. Rešitve so $z = \ln 
 - **Seštevanje namesto množenja.** Kdor piše $e^{x+iy} = e^{x} + e^{iy}$, zamenja pravilo za potence s pravilom za vsote. Pravilno je $e^{x+iy} = e^{x}e^{iy}$.
 - **Koti v stopinjah.** Eulerjeva formula izhaja iz Taylorjevih vrst, te pa veljajo le za radiane. $e^{i\cdot 90}$ ni $i$; pravilno je $e^{i\pi/2} = i$.
 - **»$|e^{z}| = e^{|z|}$.«** Velikost določa le realni del. Na primer $|e^{3i}| = 1$, ne $e^{3}$.
-- **Ena rešitev enačbe $e^{z} = w$.** Ker je $\exp$ periodičen s periodo $2\pi i$, je rešitev neskončno, vse se razlikujejo za $2k\pi i$.
+- **Ena rešitev enačbe $e^{z} = w$ ($w \neq 0$).** Ker je $\exp$ periodičen s periodo $2\pi i$, je rešitev neskončno, vse se razlikujejo za $2k\pi i$.
 
 ## Povzetek
 

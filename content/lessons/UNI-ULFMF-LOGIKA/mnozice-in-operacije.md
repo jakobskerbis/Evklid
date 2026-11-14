@@ -188,7 +188,7 @@ Kartezični produkt nariši kot mrežo: na vodoravno os nanesi elemente $A$, na 
 
 **Zakaj $|\mathcal{P}(A)| = 2^n$, z indukcijo.** Za $n = 0$ je $\mathcal{P}(\emptyset) = \{\emptyset\}$, torej $1 = 2^0$ element. Naj trditev velja za množice z $n$ elementi in naj bo $A' = A \cup \{a\}$, $a \notin A$. Vsaka podmnožica $A'$ je bodisi podmnožica $A$ bodisi podmnožica $A$ z dodanim $a$. Obeh vrst je $2^n$ in se ne prekrivata, zato je podmnožic $A'$ skupaj $2 \cdot 2^n = 2^{n+1}$.
 
-**Urejeni par kot množica.** Par lahko definiramo z le množicami: $(a, b) = \{\{a\}, \{a, b\}\}$ (Kuratowski). Iz te definicije sledi bistvena lastnost: $(a, b) = (c, d) \iff a = c \wedge b = d$.
+**Urejeni par kot množica.** Par lahko definiramo samo z množicami: $(a, b) = \{\{a\}, \{a, b\}\}$ (Kuratowski). Iz te definicije sledi bistvena lastnost: $(a, b) = (c, d) \iff a = c \wedge b = d$.
 
 **Russellov paradoks.** Množice ne smemo podati s poljubno lastnostjo. Če bi obstajala $R = \{x ;\ x \notin x\}$, bi veljalo $R \in R \iff R \notin R$, kar je protislovje. Zato aksiomi teorije množic dovolijo le $\{x \in A ;\ \varphi(x)\}$: izbor elementov iz že znane množice $A$.
 
@@ -196,7 +196,7 @@ Kartezični produkt nariši kot mrežo: na vodoravno os nanesi elemente $A$, na 
 
 ? Katera trditev je resnična za $A = \{1, 2, 3\}$?
 - $\{2\} \in A$
-~ Elementi $A$ so števila $1, 2, 3$, množica $\{2\}$ ni med njimi. Velja $2 \in A$ ali $\{2\} \subseteq A$.
+~ Elementi $A$ so števila $1, 2, 3$, množica $\{2\}$ ni med njimi. Veljata pa $2 \in A$ in $\{2\} \subseteq A$.
 + $\emptyset \subseteq A$
 - $\emptyset \in A$
 ~ Prazna množica je *podmnožica* vsake množice, ni pa element $A$, ker med naštetimi elementi ni.
@@ -218,9 +218,9 @@ Kartezični produkt nariši kot mrežo: na vodoravno os nanesi elemente $A$, na 
 ~ To je področje zunaj obeh krogov: po De Morganu je $A^c \cap B^c = (A \cup B)^c$.
 > Iz unije odstranimo lečo, kjer je $x$ v obeh. Ostaneta $A \setminus B$ in $B \setminus A$.
 
-? Naj bo $A = \{1, 2, 3\}$ in $B = \{p, q, r, s\}$. Katera trditev je resnična?
+? Naj bo $A = \{1, 2, 3\}$ in $B = \{k, l, m, s\}$. Katera trditev je resnična?
 - $A \times B = B \times A$
-~ Par $(1, p)$ je v $A \times B$, ni pa v $B \times A$, kjer je prva komponenta iz $B$. Enaka je le moč.
+~ Par $(1, k)$ je v $A \times B$, ni pa v $B \times A$, kjer je prva komponenta iz $B$. Enaka je le moč.
 - $|A \times B| = 7$
 ~ To je $|A| + |B|$. Parov je toliko kot celic tabele s $3$ vrsticami in $4$ stolpci, torej produkt.
 + $|A \times B| = 12$

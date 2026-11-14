@@ -155,7 +155,7 @@ $33 / 40 = 0{,}825$, oblikovano kot odstotek $82{,}5\,\%$.
 ## Pogoste napake
 
 - **Številke namesto sklicev.** `=18+22+15+25` da pravi rezultat le, dokler se podatki ne spremenijo. Napačna misel je »rezultat je isti, torej je vseeno«. Formula naj vedno bere celice (`=SUM(B2:B5)`), da se ob popravku preračuna.
-- **Kopiranje brez <code>&#36;</code>.** Kdor vrednost zmage da v `F1` in piše `=F1*B2+C2`, pričakuje, da se `F1` ne bo premikal. Pri kopiranju se premakne v `F2`, `F3` … , ki so prazni, zato ekipe ostanejo le pri remijih. Celico, ki je skupna vsem vrsticam, zakleni: <code>&#36;F&#36;1</code>.
+- **Kopiranje brez <code>&#36;</code>.** Kdor vrednost zmage da v `F1` in piše `=F1*B2+C2`, pričakuje, da se `F1` ne bo premikal. Pri kopiranju se premakne v `F2`, `F3` …, ki so prazni, zato ekipe ostanejo le pri remijih. Celico, ki je skupna vsem vrsticam, zakleni: <code>&#36;F&#36;1</code>.
 - **Ničla namesto prazne celice.** Videti je, da sta »nič« in »prazno« isto. Za `AVERAGE` nista: ničla se šteje kot podatek in zniža povprečje, prazna celica se izpusti. Tekme, ki je ni bilo, ne vpiši kot $0$.
 - **Pozabljen enačaj.** Brez `=` na začetku program vsebino shrani kot besedilo in nič ne izračuna. Formula se vedno začne z `=`.
 - **Graf po videzu.** Črtni graf za točke ekip na lestvici je napačen, ker črta med ekipama nakazuje razvoj, ki ga ni. Za primerjavo kategorij izberi stolpčni graf, za spremembo v času črtnega.
@@ -228,7 +228,7 @@ Postopek za ligaško lestvico, ki jo boš lahko spreminjal:
 
 ? V `F1` je $3$, v `D2` je <code>=&#36;F&#36;1&#42;B2+C2</code>. Ekipa ima v `B2` $9$ zmag in v `C2` $4$ neodločene izide. Koliko točk pokaže `D2`?
 - $16$
-~ To je $3 + 9 + 4$: točke za zmago so prišteta, ne pomnožena z zmagami.
+~ To je $3 + 9 + 4$: točke za zmago so prištete, ne pomnožene z zmagami.
 - $39$
 ~ To je $3 \cdot (9 + 4)$: tudi neodločeni so pomnoženi s $3$. Remi prinese le $1$ točko.
 + $31$

@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ko so konec 18. stoletja gradili parne stroje, so morali inženirji, med njimi James Watt, z ročicami in drogovi pretvarjati nihanje vzvoda v premo gibanje bata. Za vsak del mehanizma so potrebovali hitrost v vsaki legi, računati pa so znali le gibanje točk. Pomagala je ideja, ki jo je že Johann Bernoulli uporabil za kotaljenje, splošno pa jo je v 19. stoletju dokazal Michel Chasles: vsako ravninsko gibanje togega telesa je v danem trenutku **vrtenje okoli ene same točke**. Tej točki pravimo **trenutni pol hitrosti**.
+Ko so konec 18. stoletja gradili parne stroje, so morali inženirji, med njimi James Watt, z ročicami in drogovi pretvarjati nihanje vzvoda v premo gibanje bata. Za vsak del mehanizma so potrebovali hitrost v vsaki legi, računati pa so znali le gibanje točk. Pomagala je ideja, ki jo je že Johann Bernoulli uporabil za kotaljenje, splošno pa jo je v 19. stoletju dokazal Michel Chasles: vsako ravninsko gibanje togega telesa je v danem trenutku translacija ali **vrtenje okoli ene same točke**. Tej točki pravimo **trenutni pol hitrosti**.
 
 Preizkusi jo s poskusom, ki ga lahko narediš doma. Na obod kolesa pritrdi lučko, v temi kolo enakomerno zakotali in ga posnemi z dolgo osvetlitvijo. Lučka nariše loke (cikloido), ki se pri tleh za hip ustavijo in na vrhu raztegnejo. Katera točka kolesa je najhitrejša in katera miruje? Odgovor, ki ga da pol, je natančen in hiter, in ravno to izpit od tebe pričakuje: hitrosti in pospeške točk mehanizma v dani legi.
 
@@ -149,7 +149,7 @@ $v_A = \omega_1 r$, $\omega_2 = \dfrac{v_A}{r_{PA}}$, $v_B = \omega_2 r_{PB}$; $
 6. **Enačba pospeškov.** Z $\vec{\alpha}_2 = \alpha_2\vec{k}$ je $\vec{\alpha}_2 \times \vec{r}_{AB} = (0{,}0866\,\alpha_2;\ 0{,}3905\,\alpha_2)$, $\omega_2^2 \approx 6{,}557\,\mathrm{s^{-2}}$ in $\omega_2^2\vec{r}_{AB} \approx (2{,}561;\ -0{,}568)\,\mathrm{m/s^2}$. Pospešek bata je vodoraven, $\vec{a}_B = (a_B;\ 0)$.
 7. Komponenta $y$: $0 = -34{,}64 + 0{,}3905\,\alpha_2 + 0{,}568$, zato $\alpha_2 = 34{,}07/0{,}3905\,\mathrm{s^{-2}} \approx 87{,}3\,\mathrm{s^{-2}}$ (pozitivna smer).
 8. Komponenta $x$: $a_B = -20 + 0{,}0866 \cdot 87{,}25 - 2{,}561\,\mathrm{m/s^2} \approx -20 + 7{,}56 - 2{,}56 = -15{,}0\,\mathrm{m/s^2}$.
-9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje s $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v pozitivni smeri (nasprotno od urinega kazalca, torej ojnica se vrti vse počasneje), pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, bat ne giblje enakomerno.
+9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje s $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v pozitivni smeri (nasprotno od urinega kazalca, ojnica se torej vrti vse počasneje), pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, se bat ne giblje enakomerno.
 
 ### Primer 4 – zdaj ti
 
@@ -187,7 +187,7 @@ Pol je na razdalji $v_{sp}/\omega = 3{,}0/10\,\mathrm{m} = 0{,}30\,\mathrm{m}$ n
 - Ravninsko gibanje togega telesa = translacija + vrtenje; $\omega$ in $\alpha$ sta skupna vsemu telesu.
 - Hitrosti: $\vec{v}_B = \vec{v}_A + \vec{\omega} \times \vec{r}_{AB}$; projekciji hitrosti na $AB$ sta enaki.
 - Trenutni pol $P$: $\vec{v}_P = 0$, $r_{AP} = v_A/\omega$; leži na presečišču pravokotnic na hitrosti; $v_B = \omega\,r_{PB}$, pravokotno na $PB$.
-- Vzporedne hitrosti in $\omega = 0$: trenutna translacija. Kotaljenje: pol v stični točki, $v_S = \omega R$.
+- Vzporedni hitrosti, ki nista pravokotni na $AB$: trenutna translacija, $\omega = 0$. Kotaljenje: pol v stični točki, $v_S = \omega R$.
 - Pospeški: $\vec{a}_B = \vec{a}_A + \vec{\alpha} \times \vec{r}_{AB} - \omega^2\vec{r}_{AB}$; pol ima v splošnem pospešek, ki ni nič.
 - Mehanizem: lega → kotne hitrosti (pol) → enačbe pospeškov po komponentah → preizkus.
 

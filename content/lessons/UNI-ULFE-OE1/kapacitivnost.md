@@ -57,12 +57,12 @@ $$\frac{E_1}{E_2} = \frac{\varepsilon_{r2}}{\varepsilon_{r1}}.$$
 Polje je večje v snovi z manjšo dielektričnostjo.
 
 :::premisli
-V izolaciji z $\varepsilon_r = 4$ je majhen zračni mehurček, sploščen pravokotno na polje. Napoveš, ali je polje v mehurčku manjše, enako ali večje kot v izolaciji? Zakaj je to za visokonapetostne kable nevarno?
+V izolaciji z $\varepsilon_r = 4$ je majhen zračni mehurček, sploščen pravokotno na polje. Napovej, ali je polje v mehurčku manjše, enako ali večje kot v izolaciji. Zakaj je to za visokonapetostne kable nevarno?
 ---
 Večje, približno štirikrat: $D$ je zvezen, $\varepsilon_r$ zraka je $1$. Zrak se prebije pri okoli $3\,\mathrm{MV/m}$, veliko prej kot trdna izolacija. V mehurčku nastajajo **delne razelektritve**, ki izolacijo počasi razjedajo, dokler kabel ne odpove.
 :::
 
-**6. Vezave in povezovanje nabitih kondenzatorjev.** Vzporedno $C = C_1 + C_2$, zaporedno $\frac{1}{C} = \frac{1}{C_1} + \frac{1}{C_2}$. Dokaz: vzporedna kondenzatorja imata isto napetost, naboja se seštejeta, $Q = C_1U + C_2U$; zaporedna nosita isti naboj (srednji otok je nevtralen), napetosti se seštejeta, $U = Q/C_1 + Q/C_2$. Dve zaporedno vezani kapacitivnosti sta **kapacitivni delilnik**: oba nosita isti $Q$, zato je napetost na prvem
+**6. Vezave in povezovanje nabitih kondenzatorjev.** Vzporedno $C = C_1 + C_2$, zaporedno $\frac{1}{C} = \frac{1}{C_1} + \frac{1}{C_2}$. Dokaz: vzporedna kondenzatorja imata isto napetost, naboja se seštejeta, $Q = C_1U + C_2U$; zaporedna nosita isti naboj (srednji otok je nevtralen), napetosti se seštejeta, $U = Q/C_1 + Q/C_2$. Dve zaporedno vezani kapacitivnosti sta **kapacitivni delilnik**: oba kondenzatorja nosita isti $Q$, zato je napetost na prvem
 $$U_1 = U\frac{C_2}{C_1 + C_2}.$$
 Večja napetost je na *manjši* kapacitivnosti.
 
@@ -198,7 +198,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Odgovori na vprašanje iz uvoda: kabel z zunanjim polmerom $b = 8{,}0\,\mathrm{mm}$, polietilen z $\varepsilon_r = 2{,}3$ in dopustnim poljem $E_{\text{dop}} = 10\,\mathrm{MV/m}$. (a) Pri katerem $a$ je dopustna napetost največja in kolikšna je? (b) Primerjaj z $a = 1{,}0\,\mathrm{mm}$ in $a = 2{,}0\,\mathrm{mm}$. (c) Kolikšni sta pri optimalnem $a$ kapacitivnost na meter in energija na meter pri največji napetosti?
+Odgovori na vprašanje iz uvoda: kabel z notranjim polmerom zunanjega vodnika $b = 8{,}0\,\mathrm{mm}$, polietilen z $\varepsilon_r = 2{,}3$ in dopustnim poljem $E_{\text{dop}} = 10\,\mathrm{MV/m}$. (a) Pri katerem $a$ je dopustna napetost največja in kolikšna je? (b) Primerjaj z $a = 1{,}0\,\mathrm{mm}$ in $a = 2{,}0\,\mathrm{mm}$. (c) Kolikšni sta pri optimalnem $a$ kapacitivnost na meter in energija na meter pri največji napetosti?
 
 **Rešitev:**
 

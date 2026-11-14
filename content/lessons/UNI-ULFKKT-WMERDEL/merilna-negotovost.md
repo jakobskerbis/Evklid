@@ -40,12 +40,12 @@ Ker $\sigma$ ne poznamo, jo ocenimo s $s$ (formula je v točki 6). Imenovalec $n
 :::premisli
 Trener želi negotovost povprečja razpoloviti. Koliko meritev mora opraviti namesto 5 in kaj se pri tem zgodi s širino oblaka $s$?
 ---
-Širina oblaka ostane približno enaka, saj je to lastnost štoparice in trenerjeve roke. Negotovost povprečja pa se deli z $\sqrt{n}$, zato je pri 20 meritvah približno pol manjša kot pri 5: štirikrat več meritev za pol manjšo negotovost.
+Širina oblaka ostane približno enaka, saj je to lastnost štoparice in trenerjeve roke. Negotovost povprečja pa se deli s $\sqrt{n}$, zato je pri 20 meritvah približno pol manjša kot pri 5: štirikrat več meritev za pol manjšo negotovost.
 :::
 
 **3. Kalibracija premakne cel oblak.** Ponavljanje ne pokaže, ali je oblak na pravem mestu. Štoparica, ki vedno zamudi $0{,}1\,\mathrm{s}$, da lep, ozek oblak, a zamaknjen. Tak stalen zamik je **sistematični pogrešek**: tisti del merilnega pogreška (razlike med izmerjeno in pravo vrednostjo), ki pri ponovljenih meritvah ostane enak ali se spreminja predvidljivo. Del, ki se od meritve do meritve nepredvidljivo spreminja, je **naključni pogrešek**.
 
-Sistematični pogrešek odkrije le **kalibracija**: primerjava merilnika z **etalonom**, to je virom z znano vrednostjo in znano negotovostjo. Merilnik hrupa na primer priključimo na zvočni kalibrator, ki daje natanko $94{,}0\,\mathrm{dB}$. Če merilnik pokaže $94{,}4\,\mathrm{dB}$, sedi njegov oblak $0{,}4\,\mathrm{dB}$ desno od prave vrednosti. **Popravek** je razlika med referenco in odčitkom, tu $-0{,}4\,\mathrm{dB}$. Prištejemo ga vsem nadaljnjim odčitkom.
+Sistematični pogrešek odkrije le **kalibracija**: primerjava merilnika z **etalonom**, to je virom z znano vrednostjo in znano negotovostjo. Merilnik hrupa na primer priključimo na zvočni kalibrator, ki daje raven $94{,}0\,\mathrm{dB}$. Če merilnik pokaže $94{,}4\,\mathrm{dB}$, sedi njegov oblak $0{,}4\,\mathrm{dB}$ desno od prave vrednosti. **Popravek** je razlika med referenco in odčitkom, tu $-0{,}4\,\mathrm{dB}$. Prištejemo ga vsem nadaljnjim odčitkom.
 
 :::premisli
 Štoparica vedno zamudi $0{,}1\,\mathrm{s}$. Trener opravi sto meritev namesto petih. Ali je povprečje zdaj bližje pravemu času?
@@ -118,7 +118,7 @@ $\bar{x} = \dfrac{\sum x_i}{n}$, $\quad s = \sqrt{\dfrac{\sum (x_i - \bar{x})^2}
 2. Odmiki od povprečja so $0{,}04$; $-0{,}10$; $-0{,}03$; $0{,}13$ in $-0{,}04\,\mathrm{s}$. Njihovi kvadrati dajo vsoto $0{,}031\,\mathrm{s^2}$.
 3. Delimo z $n - 1 = 4$, ker smo povprečje izračunali iz istih podatkov: $s = \sqrt{0{,}031 / 4} \approx 0{,}088\,\mathrm{s}$.
 4. Negotovost povprečja: $u_A = 0{,}088 / \sqrt{5} \approx 0{,}039\,\mathrm{s}$.
-5. Odgovor: povprečni čas je $11{,}28\,\mathrm{s}$, posamezna meritev raztrosi za približno $0{,}09\,\mathrm{s}$, standardna negotovost povprečja pa je približno $0{,}04\,\mathrm{s}$.
+5. Odgovor: povprečni čas je $11{,}28\,\mathrm{s}$, raztros posamezne meritve je približno $0{,}09\,\mathrm{s}$, standardna negotovost povprečja pa je približno $0{,}04\,\mathrm{s}$.
 
 ### Primer 2: popravek iz kalibracije
 

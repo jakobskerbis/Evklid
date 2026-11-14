@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Starejši pacient vstaja s stola. Če sede povsem pokončno, ne more vstati, dokler se ne nagne močno naprej. Medicinska sestra, ki v eni roki nese težko torbo z instrumenti, se nehote nagne na drugo stran.
+Starejši pacient vstaja s stola. Če sedi povsem pokončno, ne more vstati, dokler se ne nagne močno naprej. Medicinska sestra, ki v eni roki nese težko torbo z instrumenti, se nehote nagne na drugo stran.
 
-**Težišče** je točka, v kateri si lahko mislimo, da prijemlje celotna teža telesa. Telo ga v obeh primerih brez razmisleka premakne nad podporno ploskev, torej nad stopala. Sicer ga teža zavrti in pade. V mehaniki ga potrebuješ povsod, kjer nadomeščaš razporejeno težo ali ploskev z eno samo silo ali eno točko: pri reakcijah nosilcev, pri prevrnitvi, pri upogibu prerezov in pri računanju prostornin vrtenin.
+**Težišče** je točka, v kateri si lahko mislimo, da prijemlje celotna teža telesa. Telo ga v obeh primerih brez razmisleka premakne nad podporno ploskev, torej nad stopala. Sicer teža telo zavrti in človek pade. V mehaniki ga potrebuješ povsod, kjer nadomeščaš razporejeno težo ali ploskev z eno samo silo ali eno točko: pri reakcijah nosilcev, pri prevrnitvi, pri upogibu prerezov in pri računanju prostornin vrtenin.
 
 ## Razlaga
 
@@ -40,7 +40,7 @@ $$y_T = \frac{600 \cdot 5 + 400 \cdot 30}{1000} = 15\,\text{mm}$$
 
 Težišče je pri $(20, 15)\,\text{mm}$: bliže vogalu, kot je kazala bližnjica, in tik nad snovjo. Produkt $A_i x_i$ se imenuje **statični moment ploskve** glede na os $y$. Isto pravilo poznaš iz momentov sil: rezultanta mora imeti enak moment kot vsi deli skupaj.
 
-**3. Telesa.** Za telo namesto ploščin utežimo prostornine $V_i$ ali mase $m_i$. Pri telesu iz ene snovi sta težišče in središče mase isto. Za sestavljene oblike uporabljamo znana težišča osnovnih likov in teles:
+**3. Telesa.** Za telo namesto ploščin utežimo prostornine $V_i$ ali mase $m_i$. Pri telesu iz ene snovi geometrijsko težišče (težišče prostornine) sovpada s središčem mase. Za sestavljene oblike uporabljamo znana težišča osnovnih likov in teles:
 
 | oblika | težišče, merjeno od osnovnice |
 |---|---|

@@ -17,7 +17,7 @@ Vsak razdelek spodaj se začne s predstavo, ki se zdi naravna, a vodi v napako. 
 
 ### »Vektor je puščica«
 
-Puščica je le en primer. Pomembno ni, kako je vektor videti, ampak kaj z vektorji znamo početi. Vektorski prostor nad $\mathbb{R}$ je množica $V$, v kateri znamo vektorje seštevati ($u + v \in V$) in množiti s skalarjem ($\lambda u \in V$ za $\lambda \in \mathbb{R}$). Operaciji morata ustrezati običajnim pravilom: seštevanje je asociativno in komutativno, obstaja ničelni vektor $\mathbf{0}$, vsak $u$ ima nasprotni vektor $-u$, veljata distributivnosti in $1 \cdot u = u$.
+Puščica je le en primer. Pomembno ni, kako je vektor videti, ampak kaj z vektorji znamo početi. Vektorski prostor nad $\mathbb{R}$ je množica $V$, v kateri znamo vektorje seštevati ($u + v \in V$) in množiti s skalarjem ($\lambda u \in V$ za $\lambda \in \mathbb{R}$). Operaciji morata ustrezati običajnim pravilom: seštevanje je asociativno in komutativno, obstaja ničelni vektor $\mathbf{0}$, vsak $u$ ima nasprotni vektor $-u$, veljata distributivnosti, $\lambda(\mu u) = (\lambda\mu) u$ in $1 \cdot u = u$.
 
 Primeri, ki jih boš srečeval ves čas:
 

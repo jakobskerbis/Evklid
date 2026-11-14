@@ -37,7 +37,7 @@ $$T(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x - a)^n.$$
 
 Pri $a = 0$ ji pravimo **Maclaurinova vrsta**. Delne vsote Taylorjeve vrste so ravno Taylorjevi polinomi $T_n$.
 
-*Preizkus:* kateri so prvi trije členi Taylorjeve vrste funkcije $f(x) = x^3$ okoli $a = 1$? (Ker je $f(1) = 1$, $f'(1) = 3$, $f''(1) = 6$, $f'''(1) = 6$ in višji odvodi nič, je vrsta končna: $1 + 3(x - 1) + 3(x - 1)^2 + (x - 1)^3$.)
+*Preizkus:* kakšna je Taylorjeva vrsta funkcije $f(x) = x^3$ okoli $a = 1$? (Ker je $f(1) = 1$, $f'(1) = 3$, $f''(1) = 6$, $f'''(1) = 6$ in višji odvodi nič, je vrsta končna: $1 + 3(x - 1) + 3(x - 1)^2 + (x - 1)^3$.)
 
 **2. Kdaj je vrsta enaka funkciji.** Taylorjeva vrsta je potenčna vrsta, zato ima konvergenčni polmer. A tudi tam, kjer konvergira, še ni nujno enaka $f$. To odloči ostanek.
 
@@ -51,7 +51,7 @@ Za uporabo potrebujemo zadostni pogoj, ki ga preverimo brez $\xi$.
 
 **Dokaz.** Iz Lagrangeove oblike je $|R_n(x)| \le \frac{M\,|x - a|^{n+1}}{(n+1)!}$. Pokažimo, da za vsak $r \ge 0$ velja $\frac{r^n}{n!} \to 0$. Za $n \ge N > 2r$ je $\frac{r^{n+1}}{(n+1)!} = \frac{r^n}{n!} \cdot \frac{r}{n+1} \le \frac12 \cdot \frac{r^n}{n!}$, zato se člen od $N$ naprej pri vsakem koraku vsaj razpolovi in gre proti $0$. Z $r = |x - a|$ dobimo $R_n(x) \to 0$. $\square$
 
-Pogoj o vseh odvodih ni odveč. Funkcija $f(x) = \mathrm{e}^{-1/x^2}$ (in $f(0) = 0$) ima v $0$ vse odvode enake $0$, zato je njena Maclaurinova vrsta enaka $0$ za vsak $x$, funkcija pa je za $x \ne 0$ pozitivna. Vrsta konvergira povsod, a k napačni funkciji. Dokaz je v Nalogi 3 razdelka Za izpit.
+Pogoj o omejenosti odvodov ni odveč. Funkcija $f(x) = \mathrm{e}^{-1/x^2}$ (in $f(0) = 0$) ima v $0$ vse odvode enake $0$, zato je njena Maclaurinova vrsta enaka $0$ za vsak $x$, funkcija pa je za $x \ne 0$ pozitivna. Vrsta konvergira povsod, a k napačni funkciji. Dokaz je v Nalogi 3 razdelka Za izpit.
 
 :::premisli
 Odvodi funkcije $\sin x$ so $\pm\sin x$ in $\pm\cos x$. Zakaj iz tega takoj sledi, da je $\sin x$ enak svoji Maclaurinovi vrsti za **vsak** realni $x$, ne le za majhne?
@@ -398,7 +398,7 @@ x | spremenljivka | | |
 n, k, j | indeksi seštevanja | | |
 N | indeks, od katerega se členi razpolavljajo | | |
 \xi | vmesna točka med $a$ in $x$ | | |
-t | integracijska spremenljivka | | |
+t | integracijska spremenljivka (v Primeru 1 čas) | | |
 M | meja za absolutne vrednosti odvodov | | |
 r | razdalja $|x - a|$ | | |
 c_n | koeficient potenčne vrste | c_n = \frac{f^{(n)}(a)}{n!} | |

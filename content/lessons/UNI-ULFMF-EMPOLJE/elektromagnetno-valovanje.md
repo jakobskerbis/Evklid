@@ -25,7 +25,7 @@ Predstavljaj si val, ki potuje v smeri osi $z$. V vsaki točki na osi narišemo 
   y (B): iz ravnine, v fazi z E
 ```
 
-- Električno polje $\vec{E}$ niha v smeri $x$, magnetno $\vec{B}$ v smeri $y$, val potuje v smeri $z$: vsi trije so med seboj pravokotni. Valovanje je **transverzalno**.
+- Električno polje $\vec{E}$ niha v smeri $x$, magnetno $\vec{B}$ v smeri $y$, val potuje v smeri $z$: vse tri smeri so med seboj pravokotne. Valovanje je **transverzalno**.
 - $\vec{E}$ in $\vec{B}$ nihata **v fazi**: kjer je eno največje, je največje tudi drugo.
 - Smer širjenja kaže $\vec{E}\times\vec{B}$.
 - Razmerje velikosti je v vsaki točki enako, $B = E/c$.
@@ -392,13 +392,13 @@ m | masa | | kg
 \alpha | vpadni kot | | °
 \alpha' | odbojni kot | | °
 \beta | lomni kot | | °
-R | odbojnost | R = \left(\frac{n_1 - n_2}{n_1 + n_2}\right)^2 | – | pri pravokotnem vpadu
+R | odbojnost | R = \left(\frac{n_1 - n_2}{n_1 + n_2}\right)^2 | – | pri pravokotnem vpadu; v Nalogi 2 je $R$ polmer telesa
 \alpha_m | mejni kot totalnega odboja | \sin\alpha_m = \frac{n_2}{n_1} | °
 \alpha_B | Brewstrov kot | \tan\alpha_B = \frac{n_2}{n_1} | °
 \theta | vpadni kot na čelno ploskev vlakna | | °
 \theta_1 | kot žarka z osjo v jedru | | °
 r_s, r_p | amplitudna odbojna koeficienta za polarizaciji s in p | | –
-r | amplitudni odbojni koeficient | | – | $R = r^2$
+r | amplitudni odbojni koeficient | | – | $R = r^2$; v Nalogi 2 je $r$ razdalja do Sonca
 \vec{H}, H | magnetna poljska jakost | H = \frac{B}{\mu_0} | A/m | v nemagnetni snovi
 \varepsilon_r | relativna dielektričnost | | –
 \mu_r | relativna permeabilnost | | –

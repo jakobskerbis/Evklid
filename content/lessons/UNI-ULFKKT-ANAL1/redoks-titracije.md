@@ -32,7 +32,7 @@ $$\mathrm{MnO_4^- + 5\,Fe^{2+} + 8\,H^+ \rightarrow Mn^{2+} + 5\,Fe^{3+} + 4\,H_
 
 Tu se Luka zmoti: $n(\mathrm{Fe^{2+}}) = 5\,n(\mathrm{MnO_4^-})$.
 
-**Pravilo za ekvivalenčno točko.** Naj reducent v svoji polreakciji odda $z_\mathrm{red}$ elektronov na delec, oksidant pa sprejme $z_\mathrm{ox}$ elektronov na delec. Ker se elektroni ne kopičijo, je v ekvivalenčni točki število oddanih elektronov enako številu sprejetih:
+**Pravilo za ekvivalentno točko.** Naj reducent v svoji polreakciji odda $z_\mathrm{red}$ elektronov na delec, oksidant pa sprejme $z_\mathrm{ox}$ elektronov na delec. Ker se elektroni ne kopičijo, je v ekvivalentni točki število oddanih elektronov enako številu sprejetih:
 $$z_\mathrm{red}\,n(\text{reducent}) = z_\mathrm{ox}\,n(\text{oksidant}).$$
 Za železo in permanganat: $1 \cdot n(\mathrm{Fe^{2+}}) = 5 \cdot n(\mathrm{MnO_4^-})$.
 
@@ -50,15 +50,15 @@ $$E = E^\circ + \frac{0{,}0592\ \mathrm{V}}{n}\log\frac{[\mathrm{ox}]}{[\mathrm{
 
 Druga je **Nernstova enačba**, $n$ je število izmenjanih elektronov (isto kot $z$ zgoraj, ne množina). Natančno: naj bo polreakcija $\mathrm{ox} + n\,\mathrm{e^-} \rightleftharpoons \mathrm{red}$ na elektrodi v ravnotežju. Potem je $E = E^\circ + \dfrac{RT}{nF}\ln\dfrac{a_\mathrm{ox}}{a_\mathrm{red}}$; pri $25\,^\circ\mathrm{C}$ je $\dfrac{RT\ln 10}{F} = 0{,}0592\ \mathrm{V}$, v razredčenih raztopinah pa aktivnosti nadomestimo s koncentracijami. Če v polreakciji nastopajo še druge zvrsti, vstopijo s koeficienti kot potencami, npr. $E = E^\circ + \dfrac{0{,}0592\ \mathrm{V}}{5}\log\dfrac{[\mathrm{MnO_4^-}][\mathrm{H^+}]^8}{[\mathrm{Mn^{2+}}]}$. Potencial permanganata je zato močno odvisen od kislosti.
 
-Pri polovični titraciji kisline velja $\mathrm{pH} = \mathrm{p}K_a$. Pri polovični oksidaciji železa je $[\mathrm{Fe^{3+}}] = [\mathrm{Fe^{2+}}]$, logaritem je $0$ in $E = E^\circ(\mathrm{Fe^{3+}/Fe^{2+}}) = 0{,}77\ \mathrm{V}$. Čim bolj se $E^\circ$ titranta in analita razlikujeta, tem višji je preskok potenciala v ekvivalenčni točki, tako kot je pri kislinah preskok pH večji pri močnejši kislini.
+Pri polovični titraciji kisline velja $\mathrm{pH} = \mathrm{p}K_a$. Pri polovični oksidaciji železa je $[\mathrm{Fe^{3+}}] = [\mathrm{Fe^{2+}}]$, logaritem je $0$ in $E = E^\circ(\mathrm{Fe^{3+}/Fe^{2+}}) = 0{,}77\ \mathrm{V}$. Čim bolj se $E^\circ$ titranta in analita razlikujeta, tem višji je preskok potenciala v ekvivalentni točki, tako kot je pri kislinah preskok pH večji pri močnejši kislini.
 
-**Potencial v ekvivalenčni točki.** *Izrek:* pri titraciji $\mathrm{Fe^{2+}}$ s $\mathrm{MnO_4^-}$ pri $[\mathrm{H^+}] = 1\ \mathrm{mol/L}$ je $E_\mathrm{EP} = \dfrac{1 \cdot E^\circ_\mathrm{Fe} + 5 \cdot E^\circ_\mathrm{Mn}}{6}$. *Dokaz:* med titracijo sta oba para v ravnotežju, zato ima raztopina en sam potencial. Zapišemo $E = E^\circ_\mathrm{Fe} + 0{,}0592\log\dfrac{[\mathrm{Fe^{3+}}]}{[\mathrm{Fe^{2+}}]}$ in $5E = 5E^\circ_\mathrm{Mn} + 0{,}0592\log\dfrac{[\mathrm{MnO_4^-}][\mathrm{H^+}]^8}{[\mathrm{Mn^{2+}}]}$ ter enačbi seštejemo. V EP je po stehiometriji $[\mathrm{Fe^{3+}}] = 5[\mathrm{Mn^{2+}}]$ in $[\mathrm{Fe^{2+}}] = 5[\mathrm{MnO_4^-}]$, zato je argument skupnega logaritma $[\mathrm{H^+}]^8 = 1$ in $6E = E^\circ_\mathrm{Fe} + 5E^\circ_\mathrm{Mn}$. Številsko: $E_\mathrm{EP} = (0{,}77 + 5 \cdot 1{,}51)/6\ \mathrm{V} \approx 1{,}39\ \mathrm{V}$. Enako v splošnem: če prvi par izmenja $z_1$, drugi $z_2$ elektronov, je $E_\mathrm{EP} = \dfrac{z_1E^\circ_1 + z_2E^\circ_2}{z_1 + z_2}$, kadar ima v vsaki polreakciji oksidirana oblika enak koeficient kot reducirana in so vse druge zvrsti (npr. $\mathrm{H^+}$) pri $1\ \mathrm{mol/L}$.
+**Potencial v ekvivalentni točki.** *Izrek:* pri titraciji $\mathrm{Fe^{2+}}$ s $\mathrm{MnO_4^-}$ pri $[\mathrm{H^+}] = 1\ \mathrm{mol/L}$ je $E_\mathrm{EP} = \dfrac{1 \cdot E^\circ_\mathrm{Fe} + 5 \cdot E^\circ_\mathrm{Mn}}{6}$. *Dokaz:* med titracijo sta oba para v ravnotežju, zato ima raztopina en sam potencial. Zapišemo $E = E^\circ_\mathrm{Fe} + 0{,}0592\log\dfrac{[\mathrm{Fe^{3+}}]}{[\mathrm{Fe^{2+}}]}$ in $5E = 5E^\circ_\mathrm{Mn} + 0{,}0592\log\dfrac{[\mathrm{MnO_4^-}][\mathrm{H^+}]^8}{[\mathrm{Mn^{2+}}]}$ ter enačbi seštejemo. V EP je po stehiometriji $[\mathrm{Fe^{3+}}] = 5[\mathrm{Mn^{2+}}]$ in $[\mathrm{Fe^{2+}}] = 5[\mathrm{MnO_4^-}]$, zato je argument skupnega logaritma $[\mathrm{H^+}]^8 = 1$ in $6E = E^\circ_\mathrm{Fe} + 5E^\circ_\mathrm{Mn}$. Številsko: $E_\mathrm{EP} = (0{,}77 + 5 \cdot 1{,}51)/6\ \mathrm{V} \approx 1{,}39\ \mathrm{V}$. Enako v splošnem: če prvi par izmenja $z_1$, drugi $z_2$ elektronov, je $E_\mathrm{EP} = \dfrac{z_1E^\circ_1 + z_2E^\circ_2}{z_1 + z_2}$, kadar ima v vsaki polreakciji oksidirana oblika enak koeficient kot reducirana in so vse druge zvrsti (npr. $\mathrm{H^+}$) pri $1\ \mathrm{mol/L}$.
 
-**Ravnotežna konstanta.** Ko izenačimo potenciala obeh parov v ravnotežju in pomnožimo z $5$, dobimo $\dfrac{5(E^\circ_\mathrm{Mn} - E^\circ_\mathrm{Fe})}{0{,}0592\ \mathrm{V}} = \log\dfrac{[\mathrm{Mn^{2+}}][\mathrm{Fe^{3+}}]^5}{[\mathrm{MnO_4^-}][\mathrm{H^+}]^8[\mathrm{Fe^{2+}}]^5} = \log K$. V splošnem je $\log K = \dfrac{z\,\Delta E^\circ}{0{,}0592\ \mathrm{V}}$, kjer je $z$ skupno število izmenjanih elektronov. Za permanganat in železo je $\log K = 5 \cdot 0{,}74/0{,}0592 = 62{,}5$: reakcija poteče praktično do konca.
+**Ravnotežna konstanta.** Ko izenačimo potenciala obeh parov v ravnotežju in pomnožimo s $5$, dobimo $\dfrac{5(E^\circ_\mathrm{Mn} - E^\circ_\mathrm{Fe})}{0{,}0592\ \mathrm{V}} = \log\dfrac{[\mathrm{Mn^{2+}}][\mathrm{Fe^{3+}}]^5}{[\mathrm{MnO_4^-}][\mathrm{H^+}]^8[\mathrm{Fe^{2+}}]^5} = \log K$. V splošnem je $\log K = \dfrac{z\,\Delta E^\circ}{0{,}0592\ \mathrm{V}}$, kjer je $z$ skupno število izmenjanih elektronov. Za permanganat in železo je $\log K = 5 \cdot 0{,}74/0{,}0592 = 62{,}5$: reakcija poteče praktično do konca.
 
 **Četrta razlika: indikator.** Kislinsko-bazni indikator je sam šibka kislina. Pri redoksu imamo tri možnosti. **Samoindikator**: titrant je obarvan, produkt ne. **Specifični indikator**: škrob z jodom tvori temno modro spojino. **Redoks indikator** (npr. feroin) spremeni barvo pri določenem potencialu.
 
-**Manganometrija.** Titrant je $\mathrm{KMnO_4}$ ($E^\circ = 1{,}51\ \mathrm{V}$), zelo močan oksidant. Ion $\mathrm{MnO_4^-}$ je vijoličast, $\mathrm{Mn^{2+}}$ skoraj brezbarven. Do ekvivalenčne točke se vsaka kapljica takoj razbarva. Prva kapljica v prebitku obarva raztopino trajno rožnato. Za to potrebujemo:
+**Manganometrija.** Titrant je $\mathrm{KMnO_4}$ ($E^\circ = 1{,}51\ \mathrm{V}$), zelo močan oksidant. Ion $\mathrm{MnO_4^-}$ je vijoličast, $\mathrm{Mn^{2+}}$ skoraj brezbarven. Do ekvivalentne točke se vsaka kapljica takoj razbarva. Prva kapljica v prebitku obarva raztopino trajno rožnato. Za to potrebujemo:
 
 - **močno kisel medij z $\mathrm{H_2SO_4}$**, sicer nastaja rjav $\mathrm{MnO_2}$ in elektronov je samo 3;
 - **ne $\mathrm{HCl}$**, ker bi permanganat oksidiral $\mathrm{Cl^-}$ v $\mathrm{Cl_2}$, in ne $\mathrm{HNO_3}$, ki je sama oksidant;
@@ -88,7 +88,7 @@ Pol mola $\mathrm{O_2}$ da en mol $\mathrm{I_2}$, ta pa porabi dva mola tiosulfa
 
 ### Primer 1: železo v limonitu
 
-Limonit je rjava železova ruda, ki nastane s preperevanjem železovih mineralov na zraku in v deževnici. Vzorec z maso $0{,}2500\ \mathrm{g}$ raztopimo, vse železo reduciramo v $\mathrm{Fe^{2+}}$ in titriramo z $\mathrm{KMnO_4}$ s koncentracijo $0{,}02000\ \mathrm{mol/L}$. Do trajne rožnate barve porabimo $22{,}40\ \mathrm{mL}$. Kolikšen je masni delež železa?
+Limonit je rjava železova ruda, ki nastane s preperevanjem železovih mineralov na zraku in v deževnici. Vzorec z maso $0{,}2500\ \mathrm{g}$ raztopimo, vse železo reduciramo v $\mathrm{Fe^{2+}}$ in titriramo s $\mathrm{KMnO_4}$ s koncentracijo $0{,}02000\ \mathrm{mol/L}$. Do trajne rožnate barve porabimo $22{,}40\ \mathrm{mL}$. Kolikšen je masni delež železa?
 
 **Podatki:** $m(\text{vzorec}) = 0{,}2500\ \mathrm{g}$, $c(\mathrm{KMnO_4}) = 0{,}02000\ \mathrm{mol/L}$, $V = 22{,}40\ \mathrm{mL}$, $M(\mathrm{Fe}) = 55{,}845\ \mathrm{g/mol}$
 **Iščemo:** masni delež $w(\mathrm{Fe})$
@@ -151,7 +151,7 @@ $n(\mathrm{O_2}) = \dfrac{n(\mathrm{S_2O_3^{2-}})}{4}$, $\quad \gamma(\mathrm{O_
 - **»Vedno 1 : 1«.** Luka je prenesel razmerje iz kislinsko-baznih titracij in EDTA. Pri redoksu razmerje določa število elektronov: $\mathrm{MnO_4^-}$ sprejme 5, $\mathrm{Fe^{2+}}$ odda 1. Najprej uravnoteži elektrone, šele nato računaj množine.
 - **Nakisanje s $\mathrm{HCl}$.** »Kislina je kislina.« Permanganat oksidira tudi klorid, zato porabimo preveč titranta in dobimo previsok rezultat. Pri manganometriji nakisamo z $\mathrm{H_2SO_4}$.
 - **Škrob na začetku.** Zdi se, da je zgodnji indikator varnejši. Pri veliki koncentraciji joda pa se jod ujame v škrob in sprošča počasi, končna točka zamuja. Škrob dodaj pri bledo rumeni barvi.
-- **Winkler 1 : 2.** Ker $\mathrm{I_2}$ porabi dva tiosulfata, učenci pišejo $n(\mathrm{O_2}) = n(\mathrm{S_2O_3^{2-}})/2$. Pozabijo, da en $\mathrm{O_2}$ sprosti dva $\mathrm{I_2}$. Pravilno: $n(\mathrm{O_2}) = n(\mathrm{S_2O_3^{2-}})/4$.
+- **Winkler 1 : 2.** Ker $\mathrm{I_2}$ porabi dva tiosulfata, študenti pišejo $n(\mathrm{O_2}) = n(\mathrm{S_2O_3^{2-}})/2$. Pozabijo, da en $\mathrm{O_2}$ sprosti dva $\mathrm{I_2}$. Pravilno: $n(\mathrm{O_2}) = n(\mathrm{S_2O_3^{2-}})/4$.
 - **Zamenjava jodometrije in jodimetrije.** Pri jodometriji je analit oksidant in titrant tiosulfat; pri jodimetriji je analit reducent in titrant jod. Najprej se vprašaj: ali analit jod sprošča ali porablja?
 
 ## Povzetek
@@ -166,15 +166,15 @@ $n(\mathrm{O_2}) = \dfrac{n(\mathrm{S_2O_3^{2-}})}{4}$, $\quad \gamma(\mathrm{O_
 
 Znati moraš povedati:
 
-- definicije oksidanta, reducenta in polreakcije ter pravilo $z_\mathrm{red}\,n(\text{reducent}) = z_\mathrm{ox}\,n(\text{oksidant})$ v ekvivalenčni točki;
+- definicije oksidanta, reducenta in polreakcije ter pravilo $z_\mathrm{red}\,n(\text{reducent}) = z_\mathrm{ox}\,n(\text{oksidant})$ v ekvivalentni točki;
 - Nernstovo enačbo s pogoji (ravnotežje, temperatura, aktivnosti, vpliv $\mathrm{H^+}$);
-- izpeljavo potenciala v ekvivalenčni točki $E_\mathrm{EP} = \dfrac{z_1E^\circ_1 + z_2E^\circ_2}{z_1 + z_2}$ in pogoj, pod katerim velja;
+- izpeljavo potenciala v ekvivalentni točki $E_\mathrm{EP} = \dfrac{z_1E^\circ_1 + z_2E^\circ_2}{z_1 + z_2}$ in pogoj, pod katerim velja;
 - izpeljavo $\log K = z\,\Delta E^\circ / 0{,}0592\ \mathrm{V}$ in kdaj reakcija poteče kvantitativno;
 - stehiometrijo manganometrije, jodometrije in Winklerjeve metode.
 
 ### Naloga 1
 
-Raztopino $\mathrm{KMnO_4}$ umerimo s $0{,}1340\ \mathrm{g}$ $\mathrm{Na_2C_2O_4}$ ($M = 134{,}00\ \mathrm{g/mol}$) v $\mathrm{H_2SO_4}$ pri $70\,^\circ\mathrm{C}$; porabimo $20{,}15\ \mathrm{mL}$. Nato $0{,}2000\ \mathrm{g}$ apnenca raztopimo v kislini, kalcij oborimo kot $\mathrm{CaC_2O_4}$, oborino speremo in raztopimo v $\mathrm{H_2SO_4}$. Sproščeni oksalat porabi $31{,}40\ \mathrm{mL}$ permanganata. Izračunaj masni delež $\mathrm{CaCO_3}$ v apnencu ($M(\mathrm{CaCO_3}) = 100{,}09\ \mathrm{g/mol}$).
+Raztopino $\mathrm{KMnO_4}$ umerimo z $0{,}1340\ \mathrm{g}$ $\mathrm{Na_2C_2O_4}$ ($M = 134{,}00\ \mathrm{g/mol}$) v $\mathrm{H_2SO_4}$ pri $70\,^\circ\mathrm{C}$; porabimo $20{,}15\ \mathrm{mL}$. Nato $0{,}2000\ \mathrm{g}$ apnenca raztopimo v kislini, kalcij oborimo kot $\mathrm{CaC_2O_4}$, oborino speremo in raztopimo v $\mathrm{H_2SO_4}$. Sproščeni oksalat porabi $31{,}40\ \mathrm{mL}$ permanganata. Izračunaj masni delež $\mathrm{CaCO_3}$ v apnencu ($M(\mathrm{CaCO_3}) = 100{,}09\ \mathrm{g/mol}$).
 
 **Rešitev:**
 
@@ -189,17 +189,17 @@ Raztopino $\mathrm{KMnO_4}$ umerimo s $0{,}1340\ \mathrm{g}$ $\mathrm{Na_2C_2O_4
 
 ### Naloga 2
 
-Utemelji, kdaj redoks reakcija $\mathrm{ox_1 + red_2 \rightarrow red_1 + ox_2}$, pri kateri vsak par izmenja $z$ elektronov, poteče v ekvivalenčni točki vsaj $99{,}9\ \%$. Izpelji pogoj za $\Delta E^\circ$ in ga uporabi za titracijo $\mathrm{Fe^{2+}}$ s $\mathrm{Ce^{4+}}$ (formalni potencial, to je potencial pri $[\mathrm{Ce^{4+}}] = [\mathrm{Ce^{3+}}]$ v $1\ \mathrm{mol/L}$ $\mathrm{H_2SO_4}$: $E^\circ{}' = 1{,}44\ \mathrm{V}$; $E^\circ(\mathrm{Fe^{3+}/Fe^{2+}}) = 0{,}77\ \mathrm{V}$). Izračunaj še potencial v ekvivalenčni točki.
+Utemelji, kdaj redoks reakcija $\mathrm{ox_1 + red_2 \rightarrow red_1 + ox_2}$, pri kateri vsak par izmenja $z$ elektronov, poteče v ekvivalentni točki vsaj $99{,}9\ \%$. Izpelji pogoj za $\Delta E^\circ$ in ga uporabi za titracijo $\mathrm{Fe^{2+}}$ s $\mathrm{Ce^{4+}}$ (formalni potencial, to je potencial pri $[\mathrm{Ce^{4+}}] = [\mathrm{Ce^{3+}}]$ v $1\ \mathrm{mol/L}$ $\mathrm{H_2SO_4}$: $E^\circ{}' = 1{,}44\ \mathrm{V}$; $E^\circ(\mathrm{Fe^{3+}/Fe^{2+}}) = 0{,}77\ \mathrm{V}$). Izračunaj še potencial v ekvivalentni točki.
 
 **Rešitev:**
 
 1. V ravnotežju sta potenciala obeh parov enaka: $E^\circ_1 + \dfrac{0{,}0592}{z}\log\dfrac{[\mathrm{ox_1}]}{[\mathrm{red_1}]} = E^\circ_2 + \dfrac{0{,}0592}{z}\log\dfrac{[\mathrm{ox_2}]}{[\mathrm{red_2}]}$.
 2. Preuredimo: $\log K = \log\dfrac{[\mathrm{red_1}][\mathrm{ox_2}]}{[\mathrm{ox_1}][\mathrm{red_2}]} = \dfrac{z(E^\circ_1 - E^\circ_2)}{0{,}0592\ \mathrm{V}}$.
-3. V ekvivalenčni točki sta začetni množini enaki. Če zreagira $99{,}9\ \%$, je $[\mathrm{red_1}] = [\mathrm{ox_2}] = 0{,}999\,c$ in $[\mathrm{ox_1}] = [\mathrm{red_2}] = 0{,}001\,c$.
+3. V ekvivalentni točki sta začetni množini enaki. Če zreagira $99{,}9\ \%$, je $[\mathrm{red_1}] = [\mathrm{ox_2}] = 0{,}999\,c$ in $[\mathrm{ox_1}] = [\mathrm{red_2}] = 0{,}001\,c$.
 4. Zato mora biti $K \geq (0{,}999/0{,}001)^2 \approx 10^6$, torej $\dfrac{z\,\Delta E^\circ}{0{,}0592\ \mathrm{V}} \geq 6$ in $\Delta E^\circ \geq \dfrac{6 \cdot 0{,}0592}{z}\ \mathrm{V} \approx \dfrac{0{,}36}{z}\ \mathrm{V}$.
 5. Za $\mathrm{Ce^{4+}/Fe^{2+}}$ je $z = 1$ in $\Delta E^\circ = 1{,}44 - 0{,}77 = 0{,}67\ \mathrm{V}$, kar je več od $0{,}36\ \mathrm{V}$; $\log K = 0{,}67/0{,}0592 \approx 11{,}3$.
-6. Potencial v ekvivalenčni točki: $E_\mathrm{EP} = \dfrac{0{,}77 + 1{,}44}{2}\ \mathrm{V} \approx 1{,}11\ \mathrm{V}$, na sredini skoka, ker oba para izmenjata po en elektron.
-7. Odgovor: reakcija je kvantitativna, če je $\Delta E^\circ \geq 0{,}36\ \mathrm{V}/z$; cerimetrija železa ta pogoj izpolni ($0{,}67\ \mathrm{V}$, $K \approx 10^{11{,}3}$), potencial v ekvivalenčni točki je okoli $1{,}11\ \mathrm{V}$, krivulja pa je simetrična.
+6. Potencial v ekvivalentni točki: $E_\mathrm{EP} = \dfrac{0{,}77 + 1{,}44}{2}\ \mathrm{V} \approx 1{,}11\ \mathrm{V}$, na sredini skoka, ker oba para izmenjata po en elektron.
+7. Odgovor: reakcija je kvantitativna, če je $\Delta E^\circ \geq 0{,}36\ \mathrm{V}/z$; cerimetrija železa ta pogoj izpolni ($0{,}67\ \mathrm{V}$, $K \approx 10^{11{,}3}$), potencial v ekvivalentni točki je okoli $1{,}11\ \mathrm{V}$, krivulja pa je simetrična.
 
 ## Drugače: Na sliki
 
@@ -208,10 +208,10 @@ Postavi krivulji drugo ob drugo. Pri titraciji šibke kisline z bazo pH najprej 
 | delež titracije | potencial $E$ | kaj ga določa |
 |---|---|---|
 | 50 % | $0{,}77\ \mathrm{V}$ | par $\mathrm{Fe^{3+}/Fe^{2+}}$, enako zastopan |
-| 100 % | $\approx 1{,}39\ \mathrm{V}$ | ekvivalenčna točka |
+| 100 % | $\approx 1{,}39\ \mathrm{V}$ | ekvivalentna točka |
 | 200 % | $\approx 1{,}51\ \mathrm{V}$ | par $\mathrm{MnO_4^-/Mn^{2+}}$, enako zastopan |
 
-Potencial v ekvivalenčni točki je tehtano povprečje: $\dfrac{1 \cdot 0{,}77 + 5 \cdot 1{,}51}{6}\ \mathrm{V} \approx 1{,}39\ \mathrm{V}$. Ker permanganat izmenja več elektronov, točka ni na sredini skoka, ampak bližje $1{,}51\ \mathrm{V}$. Krivulja je zato nesimetrična, kar pri titraciji 1 : 1 ne vidiš.
+Potencial v ekvivalentni točki je tehtano povprečje: $\dfrac{1 \cdot 0{,}77 + 5 \cdot 1{,}51}{6}\ \mathrm{V} \approx 1{,}39\ \mathrm{V}$. Ker permanganat izmenja več elektronov, točka ni na sredini skoka, ampak bližje $1{,}51\ \mathrm{V}$. Krivulja je zato nesimetrična, česar pri titraciji 1 : 1 ne vidiš.
 
 Potencial na lestvici:
 

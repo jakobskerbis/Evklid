@@ -87,7 +87,7 @@ $N = k \cdot i$; za vsak element: atomi levo $=$ atomi desno
 **Rešitev:**
 
 1. Štejemo: levo Cu 1, O 2; desno Cu 1, O 1. Kisik se ne ujema.
-2. Kisika je desno premalo, zato pred $\mathrm{CuO}$ damo 2: $\mathrm{Cu + O_2 \rightarrow 2\,CuO}$. Desno je zdaj $2 \cdot 1 = 2$ atoma Cu in $2 \cdot 1 = 2$ atoma O.
+2. Kisika je desno premalo, zato pred $\mathrm{CuO}$ damo 2: $\mathrm{Cu + O_2 \rightarrow 2\,CuO}$. Desno sta zdaj $2 \cdot 1 = 2$ atoma Cu in $2 \cdot 1 = 2$ atoma O.
 3. Bakra je zdaj levo premalo (1 proti 2), zato pred Cu damo 2.
 4. Preverimo: Cu 2 = 2, O 2 = 2. ✓
 5. Odgovor: urejena enačba je
@@ -110,7 +110,7 @@ $N = k \cdot i$; element, ki je v več formulah (tu kisik), uredimo nazadnje
 **Rešitev:**
 
 1. Ogljik: levo 1, desno 1. ✓
-2. Vodik: levo 4, desno 2. Pred vodo damo 2, da je desno $2 \cdot 2 = 4$ atomov H: $\mathrm{CH_4 + O_2 \rightarrow CO_2 + 2\,H_2O}$.
+2. Vodik: levo 4, desno 2. Pred vodo damo 2, da so desno $2 \cdot 2 = 4$ atomi H: $\mathrm{CH_4 + O_2 \rightarrow CO_2 + 2\,H_2O}$.
 3. Kisik nazadnje, ker je v dveh produktih: desno $2 + 2 \cdot 1 = 4$, levo 2. Pred kisik damo 2, da je levo $2 \cdot 2 = 4$.
 4. Preverimo: C 1 = 1, H 4 = 4, O 4 = 4. ✓
 5. Odgovor: urejena enačba je
@@ -138,7 +138,7 @@ formula oksida po križnem pravilu; $N = k \cdot i$; pri indeksih 2 in 3 poišč
 :::premisli
 Koliko atomov Fe je zdaj desno in kateri koeficient mora stati pred Fe? Zapiši urejeno enačbo.
 ---
-Desno je $2 \cdot 2 = 4$ atomov Fe, zato pred Fe damo 4: $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$. Preverimo: Fe 4 = 4, O 6 = 6.
+Desno so $2 \cdot 2 = 4$ atomi Fe, zato pred Fe damo 4: $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$. Preverimo: Fe 4 = 4, O 6 = 6.
 :::
 
 ## Pogoste napake
@@ -199,7 +199,7 @@ Vsaka molekula propana potrebuje 5 molekul kisika. Zato plinski grelnik v zaprte
 + $\mathrm{CH_4 + O_2 \rightarrow CO_2 + 2\,H_2O}$
 - $\mathrm{2\,Mg + O_2 \rightarrow 2\,MgO}$
 ~ Ta je urejena: Mg 2 = 2, O 2 = 2.
-> Pri metanu je levo 2 atoma O, desno $2 + 2 \cdot 1 = 4$. Pred $\mathrm{O_2}$ manjka koeficient 2.
+> Pri metanu sta levo 2 atoma O, desno $2 + 2 \cdot 1 = 4$. Pred $\mathrm{O_2}$ manjka koeficient 2.
 
 ? Pri urejanju vode učenec $\mathrm{H_2O}$ spremeni v $\mathrm{H_2O_2}$. Kaj je posledica?
 - Enačba je urejena in še vedno opisuje nastanek vode.
@@ -214,8 +214,8 @@ Vsaka molekula propana potrebuje 5 molekul kisika. Zato plinski grelnik v zaprte
 ~ Korak 1 je pravilen: $3 \cdot 2 = 6$ in $2 \cdot 3 = 6$ atomov O.
 + Korak 2
 - Noben, enačba $\mathrm{2\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$ je urejena.
-~ Desno je $2 \cdot 2 = 4$ atomov Fe, levo le 2. Enačba ni urejena.
-> V $2\,\mathrm{Fe_2O_3}$ je $2 \cdot 2 = 4$ atomov Fe, zato pred Fe damo 4: $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$.
+~ Desno so $2 \cdot 2 = 4$ atomi Fe, levo le 2. Enačba ni urejena.
+> V $2\,\mathrm{Fe_2O_3}$ so $2 \cdot 2 = 4$ atomi Fe, zato pred Fe damo 4: $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$.
 
 ? Pri odrskih ognjemetih na koncertu gori magnezij s svetlim bliskom, nastane magnezijev oksid ($\mathrm{MgO}$). Kateri zapis je pravilno urejena enačba?
 - $\mathrm{Mg + O_2 \rightarrow MgO_2}$

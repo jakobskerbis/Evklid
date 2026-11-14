@@ -145,7 +145,7 @@ Zapis `t += 15` pomeni `t = t + 15`. Koliko obvestil pošlje? Koliko bi jih, če
 **Iščemo:** število obhodov zanke
 
 :::formula
-Obhod se izvede za vsako vrednost števca, pri kateri je pogoj resničen. Število obhodov $= \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1$, kjer sta prva in zadnja vrednost števca, pri katerih je pogoj še resničen.
+Obhod se izvede za vsako vrednost števca, pri kateri je pogoj resničen. Velja $\text{število~obhodov} = \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1$, kjer sta prva in zadnja vrednost števca, pri katerih je pogoj še resničen.
 :::
 
 **Rešitev:**
@@ -225,7 +225,7 @@ Koliko je `s` in koliko `preneseno`, ko se zanka konča? Zakaj `preneseno` ni na
 - **Za ena preveč ali premalo.** »Od 8.00 do 10.00 vsakih 15 minut je $120 : 15 = 8$ obvestil.« Pozabiš prvo vrednost ali zamešaš `<` in `<=`. Popravek: izpiši prve in zadnje vrednosti števca in preveri pogoj na meji.
 - **Zanka, ki se ne konča.** `while (b > 0) { ure++; }` se vrti v nedogled, ker se `b` v telesu ne spremeni. Pogoj se ne preverja »sam od sebe«: nekaj v telesu ga mora premakniti proti `false`. Popravek: pri vsaki zanki poišči vrstico, ki spremeni spremenljivko iz pogoja.
 - **Napačen vrstni red v verigi.** Če zapišeš najprej `if (b <= 20)` in šele nato `else if (b <= 5)`, pri $3$ odstotkih dobiš »varčevanje«, ker se izvede le prva resnična veja. Popravek: v verigi postavi ožje pogoje pred širše.
-- **Prirejanje namesto primerjave.** `if (b = 20)` ne vpraša, ali je `b` enak $20$, ampak mu prireja $20$; v Javi to ni pogoj. Popravek: primerjava je `==`.
+- **Prirejanje namesto primerjave.** `if (b = 20)` ne vpraša, ali je `b` enak $20$, ampak mu prireja $20$; v Javi to ni pogoj (rezultat ni tipa `boolean`), zato prevajalnik javi napako. Popravek: primerjava je `==`.
 
 ## Povzetek
 
@@ -320,7 +320,7 @@ Paketov je veliko, a Jure nima stotih enakih listkov, le enega: »Dokler je v ko
 \text{prva} | prva vrednost števca, pri kateri je pogoj resničen | | |
 \text{zadnja} | zadnja vrednost števca, pri kateri je pogoj še resničen | | | odvisna od meje < ali <=
 \text{korak} | sprememba števca v enem obhodu | | |
-\text{število obhodov} | število obhodov zanke for | \text{število obhodov} = \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1 | – |
+\text{število~obhodov} | število obhodov zanke for | \text{število~obhodov} = \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1 | – |
 t | čas (števec zanke) | | min |
 b | stanje baterije | | \% |
 b_1, b_2 | stanji baterije v primeru | | \% | v primeru $20\,\%$ in $3\,\%$

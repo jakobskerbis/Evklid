@@ -62,7 +62,7 @@ Ostane enaka. Produkt $b \cdot c$ se ne spremeni: svetloba na poti sreča enako 
 
 **5. Umeritvena premica.** V praksi $\varepsilon$ redko vzamemo iz tabel. Izmerimo nekaj **standardov** z znano koncentracijo, narišemo $A$ proti $c$ in dobimo premico skozi izhodišče. Koncentracijo vzorca odčitamo s premice. Linearnost velja približno do $A \approx 1$; pri večjih absorbancah pride do detektorja premalo svetlobe in premica se ukrivi, zato vzorec razredčimo.
 
-*Hiter preizkus:* standard z $c = 2{,}0\,\mathrm{mg/L}$ ima $A = 0{,}10$. Kolikšna je $c$ vzorca z $A = 0{,}30$? (Odgovor: $6{,}0\,\mathrm{mg/L}$.)
+*Hiter preizkus:* standard s $c = 2{,}0\,\mathrm{mg/L}$ ima $A = 0{,}10$. Kolikšna je $c$ vzorca z $A = 0{,}30$? (Odgovor: $6{,}0\,\mathrm{mg/L}$.)
 
 **6. UV-VIS spektrometrija.** Molekule vpijajo ultravijolično ($200$–$400\,\mathrm{nm}$) in vidno svetlobo ($400$–$800\,\mathrm{nm}$), ko elektroni preskočijo v višje energijsko stanje. Spektrometer ima vir (devterijeva žarnica za UV, volframova za VIS), **monokromator**, ki izbere eno valovno dolžino, kiveto in detektor.
 

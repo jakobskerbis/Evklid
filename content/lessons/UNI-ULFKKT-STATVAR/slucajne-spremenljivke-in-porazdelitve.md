@@ -235,7 +235,7 @@ Nariši stolpčni diagram za $\mathrm{Bin}(7; 0{,}3)$:
 | 4 | 0,097 | ▇▇ |
 | 5–7 | 0,029 | ▇ |
 
-Višine stolpcev se seštejejo v $1$. Pri zvezni porazdelitvi si predstavljaj, da stolpce zožiš in jih je neskončno: dobiš gladko krivuljo, gostoto. Eksponentna gostota pada od največje vrednosti pri $t = 0$ kot smučarska skakalnica; normalna je zvon s vrhom pri $\mu$; enakomerna je vodoraven pravokotnik nad $[a, b]$ z višino $\frac{1}{b-a}$, da je njegova ploščina $1$.
+Višine stolpcev se seštejejo v $1$. Pri zvezni porazdelitvi si predstavljaj, da stolpce zožiš in jih je neskončno: dobiš gladko krivuljo, gostoto. Eksponentna gostota pada od največje vrednosti pri $t = 0$ kot smučarska skakalnica; normalna je zvon z vrhom pri $\mu$; enakomerna je vodoraven pravokotnik nad $[a, b]$ z višino $\frac{1}{b-a}$, da je njegova ploščina $1$.
 
 ## Drugače: Uporaba v stroki
 

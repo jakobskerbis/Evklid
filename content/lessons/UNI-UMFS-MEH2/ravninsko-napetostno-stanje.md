@@ -59,7 +59,7 @@ $$R = \sqrt{\left(\frac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2}$$
 
 $$\tan 2\varphi_0 = \frac{2\tau_{xy}}{\sigma_x - \sigma_y}$$
 
-Kot $\varphi_0$ pove, za koliko je glavna smer zavrtena od osi $x$. Kadar je $\sigma_x > \sigma_y$, ta kot kaže na $\sigma_1$. Največja strižna napetost je $\tau_{\max} = R$. Deluje na ploskvah, ki so za $45^\circ$ zavrtene od glavnih smeri.
+Kot $\varphi_0$ pove, za koliko je glavna smer zavrtena od osi $x$. Kadar je $\sigma_x > \sigma_y$, ta kot kaže na $\sigma_1$. Največja strižna napetost v ravnini $xy$ je $\tau_{\max} = R$. Deluje na ploskvah, ki so za $45^\circ$ zavrtene od glavnih smeri.
 
 **6. Mohrov krog.** Obe formuli iz točke 4 skupaj opisujeta krog v ravnini $(\sigma, \tau)$. Nariši ga takole:
 
@@ -228,7 +228,7 @@ pokaže, da ima $\sigma_\varphi$ ekstrem natanko tam, kjer je $\tau_\varphi = 0$
 + $\sigma_1 > \sigma_x > \tau_{\max}$
 > $\sigma_s = 10\,\mathrm{MPa}$, $R = \sqrt{20^2 + 15^2} = 25\,\mathrm{MPa}$, torej $\sigma_1 = 35\,\mathrm{MPa} > \sigma_x = 30\,\mathrm{MPa} > \tau_{\max} = 25\,\mathrm{MPa}$.
 
-? Kaj se zgodi z Mohrovim krogom, če $\tau_{xy}$ povečamo, $\sigma_x$ in $\sigma_y$ pa ostaneta enaki?
+? Kaj se zgodi z Mohrovim krogom, če $\tau_{xy}$ povečamo, $\sigma_x$ in $\sigma_y$ pa ostaneta nespremenjeni (in različni med seboj)?
 - Središče se premakne v desno.
 ~ Središče je $\sigma_s = (\sigma_x + \sigma_y)/2$ in od striga ni odvisno.
 - Polmer se poveča natanko za toliko, kot se je povečal $\tau_{xy}$.

@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Podrgni napihnjen balon ob suhe lase in ga približaj koščkom papirja: poskočijo k njemu, še preden se jih dotakne. To je elektrostatika, sila med mirujočimi naboji. Ista sila drži skupaj atome, molekule in kristale; ionska vez, vodikova vez in vezava zdravila na receptor so v jedru električne interakcije. V laboratoriju z njo elektroforeza ločuje DNK po naboju, v masnem spektrometru in elektronskem mikroskopu pa polje pospeši nabite delce.
+Podrgni napihnjen balon ob suhe lase in ga približaj koščkom papirja: poskočijo k njemu, še preden se jih dotakne. To je elektrostatika, sila med mirujočimi naboji. Ista sila drži skupaj atome, molekule in kristale; ionska vez, vodikova vez in vezava zdravila na receptor so v jedru električne interakcije. V laboratoriju z njo elektroforeza ločuje nabite molekule, kot so DNK in beljakovine, v masnem spektrometru in elektronskem mikroskopu pa polje pospeši nabite delce.
 
 Vse to stoji na štirih pojmih, ki se gradijo drug na drugem: **Coulombov zakon**, **električno polje**, **električni potencial** in **kondenzator**.
 
@@ -64,7 +64,7 @@ $$A = qU_{AB}.$$
 
 *Dokaz:* delo konservativne sile je enako zmanjšanju potencialne energije, $A = q\varphi_A - q\varphi_B = qU_{AB}$.
 
-Primerjava s težo: potencial ima vlogo produkta $gh$, napetost vlogo višinske razlike. Razlika je v predznaku: kamen vedno pade navzdol, naboj pa »pade« proti nižjemu ali višjemu potencialu, odvisno od svojega predznaka.
+Primerjava s težo: potencial ima vlogo produkta $gh$, napetost vlogo razlike $g\,\Delta h$ med dvema višinama. Razlika je v predznaku: kamen vedno pade navzdol, naboj pa »pade« proti nižjemu ali višjemu potencialu, odvisno od svojega predznaka.
 
 Potencial točkastega naboja $Q$ (z ničlo v neskončnosti) je
 

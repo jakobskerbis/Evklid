@@ -282,7 +282,7 @@ Akson z mielinom, signal skače med zažemki:
 
 ## Drugače: Uporaba v stroki
 
-**Diagnostika infarkta.** Srčni troponin I in T sta oblike troponina, ki jih ima le srčna mišičnina. Ko kardiomiociti odmrejo, ju je v krvi več, zato je meritev troponina glavni laboratorijski test za infarkt.
+**Diagnostika infarkta.** Srčni troponin I in T sta obliki troponina, ki ju ima le srčna mišičnina. Ko kardiomiociti odmrejo, ju je v krvi več, zato je meritev troponina glavni laboratorijski test za infarkt.
 
 **Ekotoksikologija.** Zaviranje acetilholinesteraze pri ribah in školjkah je standardni biomarker pesticidov v vodah. Pri čebelah se raziskuje, kako subletalni odmerki neonikotinoidov motijo orientacijo; zato je EU uporabo nekaterih neonikotinoidov na prostem prepovedala.
 

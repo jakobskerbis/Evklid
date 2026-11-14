@@ -70,7 +70,7 @@ Za les na lesu je $k_{tr}$ okoli $0{,}3$, za gumo na suhem betonu okoli $0{,}7$,
 Paket plenic s težo $90\,\mathrm{N}$ porineš po tleh trgovine. Koeficient trenja med kartonom in ploščicami je $0{,}3$. S kolikšno silo moraš potiskati, da paket drsi enakomerno?
 
 **Podatki:** $F_g = 90\,\mathrm{N}$, $k_{tr} = 0{,}3$, tla so vodoravna
-**Iščemo:** silo trenja $F_{tr}$ (enako veliko mora biti tvoja sila)
+**Iščemo:** silo trenja $F_{tr}$ (enako velika mora biti tvoja sila)
 
 :::formula
 $F_{tr} = k_{tr} \cdot F_N$, na vodoravnih tleh $F_N = F_g$
@@ -203,7 +203,7 @@ Prispodoba ima mejo: ploskve nimajo ščetin, so le hrapave, in zrak niso ljudje
 - Zmanjša se, ker je stična ploskev manjša.
 ~ Trenje ni odvisno od ploščine stika, ampak od pritisne sile in vrste ploskev.
 + Ostane skoraj enaka.
-> Pritisna sila (teža) in vrsta ploskev se nista spremenili, zato je $F_{tr} = k_{tr} \cdot F_N$ enak.
+> Pritisna sila (teža) in vrsta ploskev se nista spremenili, zato je $F_{tr} = k_{tr} \cdot F_N$ enaka.
 
 ? Škatla s težo $150\,\mathrm{N}$ drsi po tleh, koeficient trenja je $0{,}2$. Kolikšna je sila trenja?
 - $750\,\mathrm{N}$
@@ -230,8 +230,8 @@ m | masa | | kg
 g | gravitacijski pospešek | | N/kg | na Zemlji $9{,}81\,\mathrm{N/kg}$
 F | sila, s katero potiskaš | | N
 R | rezultanta | R = F - F_{tr} | N | sili v nasprotnih smereh
-F_{g1} | teža prazne škatle | | N
-F_{tr1} | sila trenja prazne škatle | | N
-F_{N2} | pritisna sila polne škatle | | N
-F_{tr2} | sila trenja polne škatle | F_{tr2} = k_{tr} \cdot F_{N2} | N
+F_{g1} | teža škatle brez moke | | N
+F_{tr1} | sila trenja pri škatli brez moke | | N
+F_{N2} | pritisna sila škatle z moko | | N
+F_{tr2} | sila trenja pri škatli z moko | F_{tr2} = k_{tr} \cdot F_{N2} | N
 :::

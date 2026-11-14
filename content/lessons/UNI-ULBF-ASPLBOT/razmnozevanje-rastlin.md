@@ -39,7 +39,7 @@ Pri različnih skupinah je ena generacija velika, druga majhna:
 |---|---|---|
 | Mahovi | zelena blazinica, prevladuje | trosovnik na peclju, raste na gametofitu |
 | Praprotnice | drobna ploščica (protalij), samostojna | velika praprot z listi, prevladuje |
-| Semenke | pelodno zrno in zarodni mešiček, le nekaj celic | drevo ali zelišče, prevladuje |
+| Kritosemenke | pelodno zrno in zarodni mešiček, le nekaj celic | drevo ali zelišče, prevladuje |
 
 Od mahov proti semenkam se gametofit krči.
 
@@ -187,7 +187,7 @@ $n = \dfrac{21}{3} = 7$, zato ima semenska celica $7$ kromosomov, celica lista p
 ## Povzetek
 
 - Menjava generacij: sporofit ($2n$) z mejozo tvori spore ($n$); iz spore zraste gametofit ($n$), ki z mitozo tvori gamete; oploditev da zigoto ($2n$).
-- Pri mahovih prevladuje gametofit, pri praprotnicah in semenkah sporofit. Pri semenkah je moški gametofit pelodno zrno, ženski pa zarodni mešiček (7 celic, 8 jeder).
+- Pri mahovih prevladuje gametofit, pri praprotnicah in semenkah sporofit. Pri kritosemenkah je moški gametofit pelodno zrno, ženski pa zarodni mešiček (7 celic, 8 jeder).
 - Cvet: čaša, venec, prašniki (prašna nit, prašnica), pestič (brazda, vrat, plodnica s semenskimi zasnovami).
 - Opraševanje je prenos peloda na brazdo (samo- ali navzkrižno; veter, žuželke, ptiči, voda). Samonezdružljive rastline potrebujejo pelod drugega osebka ali sorte.
 - Dvojna oploditev: semenska celica + jajčna celica → zigota ($2n$); semenska celica + osrednja celica → endosperm ($3n$).
@@ -203,7 +203,7 @@ Analogija ima mejo: vozilo pelje po zgrajeni cesti, pelodna cev pa sproti raste 
 ## Drugače: Iz vsakdanjega življenja
 
 - **Koruzni storž z luknjami.** Če med cvetenjem piha vroč, suh veter, se nekateri laski ne oprašijo. Na storžu potem manjkajo zrna, in to na mestih teh laskov.
-- **Alergija na pelod.** Pelod breze, leske in trav draži, ker so vetrocvetke: sproščajo ogromno lahkega peloda, saj ga večina zgreši brazdo.
+- **Alergija na pelod.** Pelod breze, leske in trav draži, ker so to vetrocvetke: sproščajo ogromno lahkega peloda, saj ga večina zgreši brazdo.
 - **Kivi brez plodov.** Kivi je dvodomen: en osebek ima samo moške, drugi samo ženske cvetove. Kdor posadi le eno rastlino, plodov ne dobi.
 
 ## Drugače: Bolj natančno

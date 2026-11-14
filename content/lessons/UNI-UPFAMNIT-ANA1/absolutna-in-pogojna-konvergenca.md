@@ -160,7 +160,7 @@ Ker je $\frac{1}{\sqrt n} \ge \frac1n$ in $\sum \frac1n$ divergira, po primerjal
 
 - Absolutna konvergenca: $\sum |a_n|$ konvergira. Iz nje sledi konvergenca $\sum a_n$.
 - Pogojna konvergenca: $\sum a_n$ konvergira, $\sum |a_n|$ divergira (npr. $\sum \frac{(-1)^{n+1}}{n} = \ln 2$).
-- Za $\sum |a_n|$: primerjalni, kvocientni in korenski kriterij; pri $q = 1$ ne odločita.
+- Za $\sum |a_n|$: primerjalni, kvocientni in korenski kriterij; pri $q = 1$ kvocientni in korenski ne odločita.
 - Leibniz: $a_n \searrow 0 \Rightarrow \sum (-1)^{n+1} a_n$ konvergira in $|S - S_n| \le a_{n+1}$.
 - Absolutno konvergentno vrsto smemo preurediti brez spremembe vsote; pogojno konvergentno lahko preuredimo do poljubne vsote (Riemann).
 
@@ -183,7 +183,7 @@ Prav to je ideja dokaza Riemannovega izreka.
 
 **Riemannov izrek (skica).** Naj $\sum a_n$ konvergira pogojno in naj bo $c \in \mathbb R$. Označimo s $p_k$ pozitivne in z $-m_k$ negativne člene. Obe vrsti $\sum p_k$ in $\sum m_k$ divergirata, $p_k, m_k \to 0$. Jemljemo pozitivne člene, dokler delna vsota ne preseže $c$, nato negativne, dokler ne pade pod $c$, in ponavljamo. Odmik od $c$ je po vsakem preskoku največ zadnji uporabljeni člen, ta pa gre proti $0$.
 
-**Dirichletov izrek.** Če $\sum a_n$ konvergira absolutno, ima vsaka preureditev isto vsoto. Dokaz: za $\varepsilon > 0$ izberi $N$ z $\sum_{n > N} |a_n| < \varepsilon$. Ko preurejena vrsta vsebuje vse člene $a_1, \ldots, a_N$, se od $S$ razlikuje za manj kot $2\varepsilon$.
+**Dirichletov izrek.** Če $\sum a_n$ konvergira absolutno, ima vsaka preureditev isto vsoto. Dokaz: za $\varepsilon > 0$ izberi $N$ z $\sum_{n > N} |a_n| < \varepsilon$. Ko delna vsota preurejene vrste vsebuje vse člene $a_1, \ldots, a_N$, se od $S$ razlikuje za manj kot $2\varepsilon$.
 
 ## Preveri se
 

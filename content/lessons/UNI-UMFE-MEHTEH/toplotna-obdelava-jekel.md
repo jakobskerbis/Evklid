@@ -15,9 +15,9 @@ Ista ideja velja za jeklo na Zemlji. Vzemi dva enaka noža iz iste palice in ju 
 
 ## Razlaga
 
-Vse se začne v faznem diagramu železo-ogljik, zato ga najprej na kratko obnovimo.
+Vse se začne v faznem diagramu železo–ogljik, zato ga najprej na kratko obnovimo.
 
-**Faze jekla.** Jeklo je zlitina železa z do $2{,}11\,\%$ ogljika. Nad črto $A_3$, ki je odvisna od deleža ogljika, je jeklo ves **avstenit** (γ, mreža KPloC), ki raztopi veliko ogljika. Pod $A_1 = 727\,^\circ\mathrm{C}$ sta v ravnotežju **ferit** (α, KPC, raztopi največ $0{,}022\,\%$ C) in trdi **cementit** $\mathrm{Fe_3C}$. Pri $0{,}77\,\%$ C (evtektoidno jeklo) nastane iz avstenita sam **perlit**: tanke izmenične plasti ferita in cementita. Jeklo z manj ogljika je **podevtektoidno**, z več **nadevtektoidno**.
+**Faze jekla.** Jeklo je zlitina železa z do $2{,}11\,\%$ ogljika. Nad črto $A_3$, ki je odvisna od deleža ogljika, je podevtektoidno jeklo ves **avstenit** (γ, mreža KPloC), ki raztopi veliko ogljika. Pod $A_1 = 727\,^\circ\mathrm{C}$ sta v ravnotežju **ferit** (α, KPC, raztopi največ $0{,}022\,\%$ C) in trdi **cementit** $\mathrm{Fe_3C}$. Pri $0{,}77\,\%$ C (evtektoidno jeklo) nastane iz avstenita sam **perlit**: tanke izmenične plasti ferita in cementita. Jeklo z manj ogljika je **podevtektoidno**, z več **nadevtektoidno**.
 
 *Hitri test:* katere faze vidiš v jeklu z $0{,}45\,\%$ C po počasnem ohlajanju? (Ferit in perlit.)
 
@@ -46,7 +46,7 @@ Kos se zakali, če se ohlaja hitreje od **kritične hitrosti ohlajanja** $v_\mat
 
 $$v = \frac{\Delta T}{\Delta t}$$
 
-kjer je $\Delta T$ padec temperature in $\Delta t$ čas, v katerem se zgodi. Voda ohlaja najhitreje, a ustvari velike notranje napetosti, ki kos lahko zvijejo ali celo razpočijo. Legirni elementi (Cr, Mn, Mo, Ni) zmanjšajo $v_\mathrm{k}$. Takšno jeklo se zakali že v olju ali na zraku in tudi globlje pod površino. To lastnost imenujemo **prekaljivost**.
+kjer je $\Delta T$ padec temperature in $\Delta t$ čas, v katerem se zgodi. Voda ohlaja najhitreje, a ustvari velike notranje napetosti, zaradi katerih se kos lahko zvije ali celo razpoči. Legirni elementi (Cr, Mn, Mo, Ni) zmanjšajo $v_\mathrm{k}$. Takšno jeklo se zakali že v olju ali na zraku in tudi globlje pod površino. To lastnost imenujemo **prekaljivost**.
 
 *Hitri test:* zakaj podevtektoidnega jekla ne kalimo z nižje temperature, na primer tik nad $A_1$? (Del ferita se ne bi pretvoril v avstenit, zato bi v kosu ostale mehke lise.)
 

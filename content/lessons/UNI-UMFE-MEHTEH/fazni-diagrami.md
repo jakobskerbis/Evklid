@@ -31,7 +31,7 @@ To je že fazni diagram. Preden ga razložimo, potrebujemo natančne pojme.
 
 **Definicija.** *Ravnotežni fazni diagram* binarnega sistema pri stalnem tlaku pokaže, katere faze so v ravnotežju pri dani temperaturi $T$ in sestavi $c_0$. Sestavo merimo v **masnih odstotkih** ene komponente. *Likvidus* je krivulja, nad katero je vse talina. *Solidus* je krivulja, pod katero je vse trdno. *Solvus* je meja topnosti v trdnem.
 
-Baker in nikelj imata obe mreži KPloC in podobna atomska polmera, zato se mešata v vseh razmerjih. Tak sistem je **izomorfen**: v trdnem je ena sama trdna raztopina $\alpha$, med likvidusom in solidusom pa leži dvofazno področje $\mathrm{L} + \alpha$ v obliki leče.
+Baker in nikelj imata oba mrežo KPloC in podobna atomska polmera, zato se mešata v vseh razmerjih. Tak sistem je **izomorfen**: v trdnem je ena sama trdna raztopina $\alpha$, med likvidusom in solidusom pa leži dvofazno področje $\mathrm{L} + \alpha$ v obliki leče.
 
 ### Pravilo faz
 
@@ -70,17 +70,17 @@ $$c_0 = c_\mathrm{L}\,W_\mathrm{L} + c_\alpha\,(1 - W_\mathrm{L})$$
 
 Od tod $W_\mathrm{L}\,(c_\alpha - c_\mathrm{L}) = c_\alpha - c_0$, kar je prva formula. Druga sledi iz $W_\alpha = 1 - W_\mathrm{L}$. ∎
 
-Pravilo velja le v dvofaznem področju, kjer vezna premica obstaja. V enofaznem področju je delež edine faze $1$, njena sestava pa je $c_0$. Ista formula velja za katerikoli par faz: namesto $\mathrm{L}$ in $\alpha$ vstavimo faze, ki ležita na krajiščih vezne premice.
+Pravilo velja le v dvofaznem področju, kjer vezna premica obstaja. V enofaznem področju je delež edine faze $1$, njena sestava pa je $c_0$. Ista formula velja za katerikoli par faz: namesto $\mathrm{L}$ in $\alpha$ vstavimo fazi, ki ležita na krajiščih vezne premice.
 
 ### Evtektični sistem
 
-Srebro in baker imata obe mreži KPloC, a se v trdnem mešata le delno. Diagram Ag-Cu ima dve trdni raztopini: $\alpha$, bogato z bakrom, ki pri $779\,^\circ\mathrm{C}$ raztopi največ $8{,}0\,\%$ Ag, in $\beta$, bogato s srebrom, ki raztopi največ $8{,}8\,\%$ Cu (to je $91{,}2\,\%$ Ag). Likvidusa obeh strani padata in se sekata v **evtektični točki** E: $71{,}9\,\%$ Ag pri $779\,^\circ\mathrm{C}$.
+Srebro in baker imata oba mrežo KPloC, a se v trdnem mešata le delno. Diagram Ag-Cu ima dve trdni raztopini: $\alpha$, bogato z bakrom, ki pri $779\,^\circ\mathrm{C}$ raztopi največ $8{,}0\,\%$ Ag, in $\beta$, bogato s srebrom, ki raztopi največ $8{,}8\,\%$ Cu (to je $91{,}2\,\%$ Ag). Likvidusa obeh strani padata in se sekata v **evtektični točki** E: $71{,}9\,\%$ Ag pri $779\,^\circ\mathrm{C}$.
 
 **Definicija.** *Evtektična reakcija* je izotermna pretvorba ene taline v dve trdni fazi:
 
 $$\mathrm{L} \to \alpha + \beta$$
 
-Zlitina z evtektično sestavo se strdi pri eni temperaturi, najnižji v sistemu. Nastane **evtektik**: drobna, pogosto lamelarna zmes faz $\alpha$ in $\beta$. Zlitina levo od E je *podevtektična*: najprej se izločajo **primarni** kristali $\alpha$, preostala talina se bogati s srebrom in pri $779\,^\circ\mathrm{C}$ doseže sestavo E. Takrat se strdi kot evtektik. Zlitina desno od E je *nadevtektična* in ima primarne kristale $\beta$.
+Zlitina z evtektično sestavo se strdi pri eni temperaturi, najnižji v sistemu. Nastane **evtektik**: drobna, pogosto lamelarna zmes faz $\alpha$ in $\beta$. Zlitina levo od E (z več kot $8{,}0\,\%$ Ag) je *podevtektična*: najprej se izločajo **primarni** kristali $\alpha$, preostala talina se bogati s srebrom in pri $779\,^\circ\mathrm{C}$ doseže sestavo E. Takrat se strdi kot evtektik. Zlitina desno od E je *nadevtektična* in ima primarne kristale $\beta$.
 
 Ločiti moramo dve vprašanji. Katere **faze** so v zlitini? Pod evtektično temperaturo le $\alpha$ in $\beta$. Katere **sestavine mikrostrukture** vidimo? Primarni $\alpha$ in evtektik. Evtektik ni faza, je zmes dveh faz z značilno obliko. Vzvodno pravilo za sestavine uporabimo tik pod evtektično temperaturo, na vezni premici od $c_\alpha = 8{,}0\,\%$ do točke E.
 
@@ -281,7 +281,7 @@ Sledimo jeklu z $0{,}4\,\%$ C od $900\,^\circ\mathrm{C}$ navzdol in opazujmo, ka
 4. *Tik nad $727\,^\circ\mathrm{C}$:* avstenit ima $0{,}77\,\%$, ferita je $\frac{0{,}77 - 0{,}4}{0{,}748} \approx 0{,}49$.
 5. *Tik pod $727\,^\circ\mathrm{C}$:* preostali avstenit postane perlit, $W_\mathrm{per} \approx 0{,}51$.
 
-Vidiš vzorec: ko temperatura pada, avstenit se krči in bogati z ogljikom, dokler ne doseže točke S. Jeklo z $0{,}4\,\%$ C ima zato približno pol perlita, kar je dobro pravilo za hitro oceno: delež perlita je približno $c_0 / 0{,}77$.
+Vidiš vzorec: ko temperatura pada, se avstenit krči in bogati z ogljikom, dokler ne doseže točke S. Jeklo z $0{,}4\,\%$ C ima zato približno pol perlita, kar je dobro pravilo za hitro oceno: delež perlita je približno $c_0 / 0{,}77$.
 
 ## Drugače: Bolj natančno
 

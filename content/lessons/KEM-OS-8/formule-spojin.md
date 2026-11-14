@@ -187,7 +187,7 @@ Pri aluminijevem oksidu je enako. Vsak $\mathrm{Al^{3+}}$ je skupina treh »plus
 
 ## Drugače: Bolj natančno
 
-Ionska spojina ni iz molekul. Kristal safirja je neskončna mreža ionov, kjer je na vsaka dva aluminijeva iona trije oksidni. Zato $\mathrm{Al_2O_3}$ imenujemo **formulska enota**, ne molekula. Pri $\mathrm{CO_2}$ pa formula res opisuje eno samostojno molekulo.
+Ionska spojina ni iz molekul. Kristal safirja je neskončna mreža ionov, kjer so na vsaka dva aluminijeva iona trije oksidni. Zato $\mathrm{Al_2O_3}$ imenujemo **formulska enota**, ne molekula. Pri $\mathrm{CO_2}$ pa formula res opisuje eno samostojno molekulo.
 
 Nekatere kovine, predvsem prehodne, tvorijo ione z različnimi naboji. Železo je lahko $\mathrm{Fe^{2+}}$ ali $\mathrm{Fe^{3+}}$. Naboj tedaj povemo z rimsko številko: $\mathrm{FeO}$ je železov(II) oksid, $\mathrm{Fe_2O_3}$ železov(III) oksid. Prav slednji je bil v magnetni plasti starih avdiokaset, na katere so snemali glasbo.
 
