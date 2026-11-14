@@ -1162,7 +1162,7 @@ function promoBox(acc, paid) {
   if (paid) return admin;
   return `<details class="promo-code"${store.get("evklid_koda") ? " open" : ""}><summary>${esc(t("gift.codeSummary"))}</summary>
       <form id="promo-form" class="inline form">
-        <input name="code" maxlength="40" required autocapitalize="characters" aria-label="${esc(t("gift.codeSummary"))}" placeholder="${esc(t("acct.codeExample", { code: "EVKLID3X" }))}" value="${esc(store.get("evklid_koda") || "")}">
+        <input name="code" maxlength="40" required autocapitalize="characters" aria-label="${esc(t("gift.codeSummary"))}" placeholder="${esc(t("acct.codeExample", { code: "KODA-2026" }))}" value="${esc(store.get("evklid_koda") || "")}">
         <button class="primary" type="submit">${esc(t("acct.activate"))}</button>
         <p class="form-error" hidden></p>
       </form></details>${admin}`;
