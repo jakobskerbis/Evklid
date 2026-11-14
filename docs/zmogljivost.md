@@ -49,20 +49,30 @@ odgovorov je hitrejših, p95 = 95 % jih je hitrejših.
 | 60 | 17,5 s | 15,7 s |
 | 80 | 25,5 s | 20,1 s |
 
-| Hkrati | p50 potem | foto p95 potem |
+| Hkrati | p50 prej | p50 potem |
 |---|---|---|
-| 20 | 4,0 s | 5,0 s |
-| 40 | 8,3 s | 12,2 s |
-| 60 | 12,8 s | 19,0 s |
-| 80 | 16,7 s | 29,9 s |
+| 20 | 4,0 s | 4,0 s |
+| 40 | 8,9 s | 8,3 s |
+| 60 | 12,9 s | 12,8 s |
+| 80 | 17,0 s | 16,7 s |
 
-- Zahteve (prej / potem): 727 / 730, 653 / 694, 665 / 681, 693 / 693; vse uspešne, 0 napak, 0 OOM.
-- Največ pomnilnika potem (anon / RSS): 242 / 298, 266 / 322, 281 / 337, 289 / 345 MB.
+S fotografijo:
+
+| Hkrati | p95 prej | p95 potem |
+|---|---|---|
+| 20 | 5,6 s | 5,0 s |
+| 40 | 13,2 s | 12,2 s |
+| 60 | 20,9 s | 19,0 s |
+| 80 | 26,2 s | 29,9 s |
+
+- Zahteve pri 20 / 40 / 60 / 80 (prej → potem): 727 → 730; 653 → 694; 665 → 681; 693 → 693. Vse uspešne,
+  0 napak, 0 OOM.
+- Največ pomnilnika potem pri 20 / 40 / 60 / 80 (anon / RSS MB): 242 / 298; 266 / 322; 281 / 337; 289 / 345.
 
 - Prepustnost je pri vseh stopnjah enaka (~4 sporočila/s): strežnik je ves čas zaseden (kvota CPU je bila porabljena
   in proces ustavljen skupaj 49–57 s od 120 s).
 - Na majhni bazi (merjena baza ima le testne učence) D1–D3 skoraj ne vplivajo; pri veliki bazi glej spodaj.
-- Šum meritve je po oceni ±10–20 % (stroj deli jedra z drugim delom), zato razlike prej/potem v tej tabeli niso
+- Šum meritve je po oceni ±10–20 % (stroj deli jedra z drugim delom), zato razlike prej/potem v teh tabelah niso
   pomembne (pri 80 je p95 s fotografijo celo višji).
 - Pomnilnik po stopnjah (mirovanje RSS): 273 → 307 → 323 → 314 MB. Rast se umiri (verjetno polnjenje
   predpomnilnikov); puščanje bi dokončno izključila šele dolga meritev (več ur).
@@ -81,9 +91,9 @@ V ponovljeni meritvi z razpršenim začetkom (spodaj) ni bilo nobene napake. Po 
 | 120 | 5,2 s | 10,3 s | 10,7 s |
 | 160 | 11,1 s | 21,4 s | 22,7 s |
 
-- Zahteve: 205, 438, 603, 632; vse uspešne, 0 napak, 0 OOM.
-- Sporočil na sekundo: 1,0, 2,0, 2,7, 2,8.
-- Največ pomnilnika (anon / RSS): 232 / 289, 236 / 292, 254 / 310, 287 / 343 MB.
+- Zahteve pri 40 / 80 / 120 / 160: 205; 438; 603; 632. Vse uspešne, 0 napak, 0 OOM.
+- Sporočil na sekundo pri 40 / 80 / 120 / 160: 1,0; 2,0; 2,7; 2,8.
+- Največ pomnilnika pri 40 / 80 / 120 / 160 (anon / RSS MB): 232 / 289; 236 / 292; 254 / 310; 287 / 343.
 
 - Do ~80 učencev strežnik ni nasičen (odgovor ~1–2 s, od tega ~0,7 s preizkusni »model«); pri 120 in več je
   procesor polno zaseden in čakanje hitro raste.
@@ -113,14 +123,14 @@ procesov kratki.
 
 Vse z isto skripto pred spremembo in po njej. Surovi izpisi meritev D6: `docs/meritve/obremenitev-2026-11-14-*.md`.
 
-- **D1 indeksi (#680):** sporočilo inštruktorju na veliki bazi (5000 profilov, 1 M vrstic porabe) 9,7 s → 4,1 s
-  (p50); fotografija 3,6 s → 1,3 s.
+- **D1 indeksi (#680):** velika baza (5000 profilov, 1 M vrstic porabe), p50: sporočilo inštruktorju
+  9,7 s → 4,1 s; fotografija 3,6 s → 1,3 s.
 - **D2 poraba »danes« (#681):** `deepToday` 43 ms → 4,6 ms.
 - **D3 zgodovina enkrat (#682):** pogovor s 60 sporočili in 4 fotografijami: 51 ms → 23 ms strežnika na sporočilo
   (3 branja → 1).
 - **D4 Straža pomnilnika (#683):** prej ni opozorila pri nobeni porabi; zdaj opozorilo nad 85 % v zadnjih 30 min.
 - **D5 izpis med pretakanjem (#684):** 3085 znakov, 24 formul: 1188 ms → 67 ms procesorja.
-- **D6 obremenitev (#688, ta dokument):** proces ne pade (80 učencev brez premora, 160 s premorom); ~80 hkrati
+- **D6 obremenitev (#688, ta dokument):** proces ne pade (80 učencev brez premora, 160 učencev s premorom); ~80 hkrati
   aktivnih udobno; zaklep baze popravljen.
 
 ## Kar ostane
