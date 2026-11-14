@@ -29,7 +29,9 @@ export const LEVEL_NAMES = { 1: "težja", 2: "zahtevna", 3: "izziv" };
 // tekmovanje šele v razredu, v katerem učenec njeno snov po učnem načrtu že pozna (razporeditev snovi po
 // razredih kot v rednih poteh MAT-OS-6 … KEM-SS-4 v curriculum-data.js, npr. Pitagorov izrek v 8. razredu,
 // množina snovi v 9., Coulombov zakon v 2. letniku). Teme samo za tekmovanja (Dirichletovo načelo,
-// kongruence, invariante) so od razreda, v katerem učenec obvlada potrebno računanje.
+// kongruence, invariante) so na voljo od razreda, v katerem učenec obvlada potrebno računanje; razred je
+// preverjen tudi po vsebini generatorjev (npr. razporeditve uporabljajo n! in binomske simbole, simetrija
+// notranje kote mnogokotnikov, štetje deliteljev potence prafaktorjev).
 // test/tekmovanja-razred.test.js preveri, da ima vsaka tema vpis.
 export const MIN_YEAR = {
   "MAT-TEK-OS": {
@@ -62,19 +64,19 @@ export const MIN_YEAR = {
     "cauchy-schwarzeva-neenakost-in-urejanje": 11,
     "polinomi-in-vietove-formule": 11, // kvadratna enačba: 2. letnik
     "funkcijske-enacbe": 11, // funkcije: 2. letnik
-    "zaporedja-rekurzije-in-indukcija": 12,
+    "zaporedja-rekurzije-in-indukcija": 12, // rekurzije z zaprto obliko rabijo geometrijsko zaporedje (v poti 4. letnik)
     "stetje-z-bijekcijami": 10,
     "dirichletovo-nacelo": 10,
     "invariante-in-monovariante": 10,
     "ekstremalni-princip": 10,
     "grafi-in-barvanja": 10,
     "koti-v-kroznici-in-tetivni-stirikotniki": 10,
-    "potenca-tocke-in-radikalna-os": 11, // podobnost: 2. letnik
+    "potenca-tocke-in-radikalna-os": 11, // podobnost v SŠ: 2. letnik
     "podobnost-menelaj-in-ceva": 11,
     "znacilne-tocke-trikotnika": 10,
     "geometrijske-neenakosti-in-ekstremi": 10,
   },
-  // Fizika in kemija sta v OŠ v 8. in 9. razredu (Stefanovo in Preglovo priznanje za OŠ tudi).
+  // Fizika in kemija sta v OŠ v 8. in 9. razredu (tudi Stefanovo in Preglovo priznanje sta v OŠ le za 8. in 9. razred).
   "FIZ-TEK-OS": {
     "branje-in-risanje-grafov-gibanja": 8,
     "ocenjevanje-in-merske-napake": 8,
