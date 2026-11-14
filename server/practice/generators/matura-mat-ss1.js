@@ -93,7 +93,7 @@ const GENS = [
             return {
               text: txt,
               answer: num(m * n, null, [
-                { value: m + n, why: "Vsako izbiro iz prve množice združiš z vsako iz druge, zato števili zmnožiš, ne seštejem." },
+                { value: m + n, why: "Vsako izbiro iz prve množice združiš z vsako iz druge, zato števili zmnožiš, ne sešteješ." },
                 { value: Math.max(m, n) ** 2, why: "Upoštevaj obe množici: prva komponenta para je iz ene, druga iz druge." },
               ]),
               hint: "Vsak izbor je urejen par. Koliko parov dobiš, če vsak element prve množice združiš z vsakim elementom druge?",
@@ -110,7 +110,7 @@ const GENS = [
           return {
             text: `Dani sta množici $A = ${setT(A)}$ in $B = ${setT(B)}$. Koliko elementov ima množica $${X} \\times ${Y}$?`,
             answer: num(val, null, [
-              { value: sz[X] + sz[Y], why: "Kartezični produkt sestavljajo vsi urejeni pari, zato moči zmnožiš, ne seštejem." },
+              { value: sz[X] + sz[Y], why: "Kartezični produkt sestavljajo vsi urejeni pari, zato moči zmnožiš, ne sešteješ." },
               X === Y ? { value: sz[X], why: `Tudi pri $${X} \\times ${X}$ so elementi pari: vsak element združiš z vsakim, tudi s samim sabo.` } : { value: sz[X] ** 2, why: `Druga komponenta para je iz $${Y}$, ne iz $${X}$.` },
             ]),
             hint: `Preštej elemente obeh množic. Vsak element prve množice tvori par z vsakim elementom druge.`,
@@ -149,19 +149,24 @@ const GENS = [
             solution: `Prva komponenta mora biti iz $${XN} = ${setT(Xs)}$, druga iz $${YN} = ${setT(Ys)}$.\n$${x} \\in ${XN}$ in $${y} \\in ${YN}$, zato je $${pr([x, y])} \\in ${XN} \\times ${YN}$.\nPar $${pr([y, x])}$ pa ni v $${XN} \\times ${YN}$: vrstni red je pomemben.`,
           };
         }
-        const n = r.int(2, 6);
+        // osnovna raven: majhno množico izpišemo (obrazec 2^n je višja raven)
+        const n = r.int(2, 3);
         const A = r.next() < 0.5 ? pickSet(r, range(1, 12), n) : pickSet(r, LET, n);
+        const subs = range(0, 2 ** n - 1)
+          .map((mask) => A.filter((_, i) => (mask >> i) & 1))
+          .sort((u, v) => u.length - v.length)
+          .map((s) => (s.length ? setT(s) : "\\emptyset"));
         return {
           text: `Koliko elementov ima potenčna množica $\\mathcal{P}(A)$ množice $A = ${setT(A)}$?`,
           answer: num(2 ** n, null, [
             { value: 2 ** n - 1, why: "Prazna množica je podmnožica vsake množice, zato je tudi element $\\mathcal{P}(A)$." },
-            { value: n * n, why: "Moč potenčne množice ni kvadrat moči: vsak element je v podmnožici ali pa ga ni, to je $2$ možnosti za vsak element." },
-            { value: 2 * n, why: "Možnosti za posamezne elemente se zmnožijo, ne seštejejo: $2 \\cdot 2 \\cdot \\ldots \\cdot 2$." },
+            { value: 2 ** n - 2, why: "Med podmnožice množice $A$ spadata tudi $\\emptyset$ in $A$ sama." },
+            { value: n, why: "Elementi $\\mathcal{P}(A)$ so podmnožice množice $A$, ne njeni elementi." },
           ]),
-          hint: "Za vsak element se odločiš, ali je v podmnožici ali ne. Koliko je vseh izbir skupaj?",
+          hint: "Izpiši vse podmnožice množice $A$, urejene po številu elementov. Ne pozabi na prazno množico in na $A$.",
           data: { given: [`A = ${setT(A)}`], find: ["|\\mathcal{P}(A)|"] },
-          formula: PP,
-          solution: `$|A| = ${n}$\nVsak element je v podmnožici ali pa ga ni: $2$ možnosti za vsak element.\n$|\\mathcal{P}(A)| = 2^{${n}} = ${2 ** n}$ (med njimi sta $\\emptyset$ in $A$).`,
+          formula: "\\mathcal{P}(A) = \\{X \\mid X \\subseteq A\\}",
+          solution: `Podmnožice izpišemo po številu elementov, od $\\emptyset$ do $A$:\n$\\mathcal{P}(A) = \\{${subs.join(", ")}\\}$\n$|\\mathcal{P}(A)| = ${2 ** n}$`,
         };
       }
       if (level === 2) {
@@ -326,7 +331,7 @@ const GENS = [
       return {
         text: `Dani sta množici $A = \\{x \\in \\mathbb{Z} \\mid |x| \\le ${a}\\}$ in $B = \\{y \\in \\mathbb{Z} \\mid |y| < ${b}\\}$. Koliko točk ima graf množice $A \\times B$ v koordinatnem sistemu?`,
         answer: num(val, null, [
-          { value: 2 * a * (2 * b - 2), why: "Tudi $0$ je celo število z $|0| \\le$ vsakega pozitivnega števila: ne pozabi ga." },
+          { value: 2 * a * (2 * b - 2), why: `Ne pozabi na število $0$: tudi zanj velja $|0| \\le ${a}$ in $|0| < ${b}$.` },
           { value: (2 * a + 1) * (2 * b + 1), why: `Pri $|y| < ${b}$ število $\\pm ${b}$ ni vključeno.` },
           { value: (a + 1) * b, why: "Absolutna vrednost: v množico spadajo tudi negativna števila." },
         ]),
@@ -401,7 +406,7 @@ const GENS = [
         const big = r.next() < 0.6;
         return big
           ? {
-              text: `Katero je največje naravno število, ki ga lahko zapišemo z ${n} dvojiškimi števkami? Odgovor zapiši v desetiškem sestavu.`,
+              text: `Katero je največje naravno število, ki ima v dvojiškem zapisu največ ${sk(n, "števko", "števki", "števke", "števk")}? Odgovor zapiši v desetiškem sestavu.`,
               answer: num(2 ** n - 1, null, [
                 { value: 2 ** n, why: `$2^{${n}}$ je v dvojiškem sestavu enica in ${n} ničel, to je že $${n + 1}$ števk.` },
                 { value: 2 ** (n - 1), why: "To je najmanjše število s toliko števkami. Največje ima same enice." },
@@ -413,7 +418,7 @@ const GENS = [
               solution: `Največje število ima same enice: $${bT("1".repeat(n))}$.\nČe mu prištejemo $1$, dobimo $${bT("1" + "0".repeat(n))} = 2^{${n}} = ${2 ** n}$.\nZato je $x_{\\max} = 2^{${n}} - 1 = ${2 ** n - 1}$.`,
             }
           : {
-              text: `Katero je najmanjše naravno število, ki ima v dvojiškem zapisu natanko ${n} števk? Odgovor zapiši v desetiškem sestavu.`,
+              text: `Katero je najmanjše naravno število, ki ima v dvojiškem zapisu natanko ${sk(n, "števko", "števki", "števke", "števk")}? Odgovor zapiši v desetiškem sestavu.`,
               answer: num(2 ** (n - 1), null, [
                 { value: 2 ** n, why: `$2^{${n}}$ ima v dvojiškem zapisu že $${n + 1}$ števk.` },
                 { value: 2 ** (n - 1) - 1, why: `To število ima same enice in le $${n - 1}$ števk.` },
@@ -546,7 +551,7 @@ const GENS = [
         hint: `Množenje z $2$ v dvojiškem sestavu deluje kot množenje z $10$ v desetiškem. Kako zapišeš $${2 ** k}$ kot potenco števila $2$?`,
         data: { given: [`x = ${bT(sx)}`, `${mul ? "\\text{faktor}" : "\\text{delitelj}"} = ${2 ** k}`], find: [mul ? "x \\cdot " + 2 ** k : `x : ${2 ** k}`] },
         formula: "x \\cdot 2^k: \\text{ na konec dodaš } k \\text{ ničel}",
-        solution: `$${2 ** k} = 2^{${k}}$\n${mul ? `Na konec dodamo ${NIC[k]}` : `Na koncu odstranimo ${NIC[k]}`}:$${bT(sr)}$\nPreizkus: $${x} ${mul ? "\\cdot" : ":"} ${2 ** k} = ${res}$ in $${bT(sr)} = ${res}$.`,
+        solution: `$${2 ** k} = 2^{${k}}$\n${mul ? `Na konec dodamo ${NIC[k]}` : `Na koncu odstranimo ${NIC[k]}`}: $${bT(sr)}$\nPreizkus: $${x} ${mul ? "\\cdot" : ":"} ${2 ** k} = ${res}$ in $${bT(sr)} = ${res}$.`,
       };
     },
   },
@@ -577,7 +582,7 @@ const GENS = [
               text: `Zaokroži število $${tx(x)}$ na ${PLACE[d]}.`,
               answer: num(v, d, [
                 { value: tr, why: "Odvrženih števk ne smeš samo odrezati: če je prva odvržena števka $5$ ali več, zadnjo ohranjeno povečaš za $1$." },
-                d > 1 ? { value: roundHalfUp(x, d - 1), why: `${PLACE[d][0].toUpperCase() + PLACE[d].slice(1)} so ${d}. decimalno mesto: ohraniti moraš $${d}$ decimalk.` } : null,
+                d > 1 ? { value: roundHalfUp(x, d - 1), why: `${PLACE[d][0].toUpperCase() + PLACE[d].slice(1)} so ${d}. decimalno mesto: ohraniti moraš ${d === 2 ? "dve decimalki" : "tri decimalke"}.` } : null,
               ]),
               hint: "Poišči mesto, na katero zaokrožuješ, in poglej prvo odvrženo števko.",
               data: { given: [`x = ${tx(x)}`], find: ["\\bar{x}"] },
@@ -769,11 +774,12 @@ const GENS = [
         return askRel
           ? {
               text: `${base} Oceni relativno napako ploščine v odstotkih. Zaokroži na desetinko odstotka.`,
-              answer: pct(dRel * 100, 1, [
+              // Ocena je pravilna; sprejmemo tudi natančno mejo (a + Δa)(b + Δb) - ab.
+              answer: { ...pct(dRel * 100, 1, [
                 { value: Math.abs(da / a - db / b) * 100, why: "Relativni napaki se pri produktu seštejeta, ne odštejeta." },
                 { value: ((da + db) / S) * 100, why: "Pri produktu ne seštevaš absolutnih napak: seštej relativni napaki stranic." },
                 { value: (da / a) * 100, why: "Upoštevaj napaki obeh stranic." },
-              ]),
+              ]), alsoAccept: [((1 + da / a) * (1 + db / b) - 1) * 100] },
               hint: "Izračunaj relativni napaki obeh stranic. Kaj velja za relativno napako produkta?",
               data: { given, find: ["\\delta S\\ (\\%)"] },
               formula: ["\\delta(a \\cdot b) \\approx \\delta a + \\delta b", "\\delta a = \\frac{\\Delta a}{a}"],
@@ -781,11 +787,11 @@ const GENS = [
             }
           : {
               text: `${base} Oceni absolutno napako ploščine (v cm², na dve decimalki).`,
-              answer: withU(dS, 2, [
+              answer: { ...withU(dS, 2, [
                 { value: da * db, why: "Napaki se ne zmnožita: pri produktu se seštejeta relativni napaki." },
                 { value: da + db, why: "Pri produktu se ne seštejeta absolutni, ampak relativni napaki." },
                 { value: b * da, why: "Upoštevaj napaki obeh stranic: $\\Delta S \\approx b\\,\\Delta a + a\\,\\Delta b$." },
-              ], "cm²", ["cm2", "cm^2"]),
+              ], "cm²", ["cm2", "cm^2"]), alsoAccept: [(a + da) * (b + db) - a * b] },
               hint: "Najprej oceni relativno napako ploščine, nato jo pomnoži s ploščino.",
               data: { given, find: ["\\Delta S"] },
               formula: ["\\delta(a \\cdot b) \\approx \\delta a + \\delta b", "\\Delta S = S \\cdot \\delta S"],
@@ -801,11 +807,11 @@ const GENS = [
         const dRel = ds / s + dt / tt;
         return {
           text: `${nm} je ${g(nm, "pretekel", "pretekla")} $s = (${s} \\pm ${tx(ds)})\\ \\mathrm{m}$ v času $t = (${md(tt, dt)} \\pm ${tx(dt)})\\ \\mathrm{s}$. Oceni relativno napako povprečne hitrosti $v = \\frac{s}{t}$ v odstotkih. Zaokroži na desetinko odstotka.`,
-          answer: pct(dRel * 100, 1, [
+          answer: { ...pct(dRel * 100, 1, [
             { value: Math.abs(ds / s - dt / tt) * 100, why: "Tudi pri količniku se relativni napaki seštejeta, ne odštejeta: najslabše je, ko je pot prevelika in čas premajhen." },
             { value: (ds / dt / (s / tt)) * 100, why: "Napake ne deliš: seštej relativni napaki poti in časa." },
             { value: (dt / tt) * 100, why: "Upoštevaj napaki obeh meritev." },
-          ]),
+          ]), alsoAccept: [((1 + ds / s) / (1 - dt / tt) - 1) * 100] },
           hint: "Izračunaj relativni napaki poti in časa. Kaj velja za relativno napako količnika?",
           data: { given: [`s = ${s}\\ \\mathrm{m}`, `\\Delta s = ${tx(ds)}\\ \\mathrm{m}`, `t = ${md(tt, dt)}\\ \\mathrm{s}`, `\\Delta t = ${tx(dt)}\\ \\mathrm{s}`], find: ["\\delta v\\ (\\%)"] },
           formula: ["\\delta\\left(\\frac{s}{t}\\right) \\approx \\delta s + \\delta t", "\\delta s = \\frac{\\Delta s}{s}"],
@@ -819,12 +825,12 @@ const GENS = [
       const dRel = (k * da) / a;
       const what = k === 2 ? "ploščine kvadrata" : "prostornine kocke";
       return {
-        text: `Rob ${k === 2 ? "kvadrata" : "kocke"} smo izmerili: $a = (${md(a, da)} \\pm ${tx(da)})\\ \\mathrm{cm}$. Oceni relativno napako ${what} v odstotkih. Zaokroži na desetinko odstotka.`,
-        answer: pct(dRel * 100, 1, [
+        text: `${k === 2 ? "Stranico kvadrata" : "Rob kocke"} smo izmerili: $a = (${md(a, da)} \\pm ${tx(da)})\\ \\mathrm{cm}$. Oceni relativno napako ${what} v odstotkih. Zaokroži na desetinko odstotka.`,
+        answer: { ...pct(dRel * 100, 1, [
           { value: (da / a) * 100, why: `${k === 2 ? "Ploščina $a \\cdot a$" : "Prostornina $a \\cdot a \\cdot a$"} je produkt: relativna napaka vsakega faktorja se prišteje.` },
-          { value: k * da, why: "Absolutno napako deli z dolžino roba, da dobiš relativno napako." },
+          { value: k * da, why: `Absolutno napako deli z dolžino ${k === 2 ? "stranice" : "roba"}, da dobiš relativno napako.` },
           { value: ((da / a) ** k) * 100, why: "Relativne napake faktorjev se seštejejo, ne zmnožijo." },
-        ]),
+        ]), alsoAccept: [((1 + da / a) ** k - 1) * 100] },
         hint: `$a^${k}$ je produkt ${k === 2 ? "dveh" : "treh"} enakih faktorjev. Kaj se zgodi z relativnimi napakami pri produktu?`,
         data: { given: [`a = ${md(a, da)}\\ \\mathrm{cm}`, `\\Delta a = ${tx(da)}\\ \\mathrm{cm}`], find: [`\\delta(a^${k})\\ (\\%)`] },
         formula: ["\\delta(a \\cdot b) \\approx \\delta a + \\delta b", `\\delta(a^${k}) \\approx ${k}\\,\\delta a`],
@@ -1048,7 +1054,7 @@ const GENS = [
         const list = sortV([ans, ...bigger, ...smaller]);
         const half = k % 2 === 0;
         const m = half ? k / 2 : k / 3;
-        const A1 = half ? base ** m - 1 : base ** m - 1;
+        const A1 = base ** m - 1;
         const A2 = half ? base ** m + 1 : base ** (2 * m) + base ** m + 1;
         const divL = list.filter((p) => N % p === 0);
         return {
@@ -1425,7 +1431,7 @@ const GENS = [
             hint: "Začni pri zadnji enačbi: izračunaj $z$, ga vstavi v drugo enačbo in nadaljuj navzgor.",
             data: { given: [eq3(E1), eq3(E2), eq3(E3)], find: [ask] },
             formula: FG[1],
-            solution: `Iz 3. enačbe: $z = ${z}$\nIz 2. enačbe: $y = ${E2[3]} ${sg(-c)} \\cdot ${pt(z)} = ${y}$${ask === "x" ? `\nIz 1. enačbe: $x = ${E1[3]} ${sg(-a * y)} ${sg(-b * z)} = ${x}$` : ""}`,
+            solution: `Iz 3. enačbe: $z = ${z}$\nIz 2. enačbe: $y = ${E2[3]} ${sg(-c)} \\cdot ${pt(z)} = ${y}$${ask === "x" ? `\nIz 1. enačbe: $x = ${E1[3]}${y ? ` ${sg(-a * y)}` : ""} ${sg(-b * z)} = ${x}$` : ""}`,
           };
         }
         if (t === 1) {
@@ -1453,11 +1459,12 @@ const GENS = [
         const I1 = mk();
         const I2 = mk();
         const key = I1.ok && I2.ok ? 0 : !I1.ok && I2.ok ? 1 : I1.ok && !I2.ok ? 2 : 3;
-        const O = ["Da, zadošča obema neenačbama.", "Ne, ne zadošča prvi neenačbi.", "Ne, ne zadošča drugi neenačbi.", "Ne, ne zadošča nobeni neenačbi."];
+        // Možnosti se izključujejo (pri key = 3 bi bila »ne zadošča prvi« tudi resnična).
+        const O = ["Da, zadošča obema neenačbama.", "Ne, zadošča le drugi neenačbi.", "Ne, zadošča le prvi neenačbi.", "Ne, ne zadošča nobeni neenačbi."];
         const W = [
           "Točka ne zadošča vsaj eni neenačbi: vstavi koordinati v obe in primerjaj.",
-          "Prva neenačba je izpolnjena: vstavi koordinati še enkrat in pazi na strogost znaka.",
-          "Druga neenačba je izpolnjena: vstavi koordinati še enkrat in pazi na strogost znaka.",
+          I1.ok ? "Prva neenačba je izpolnjena: vstavi koordinati še enkrat in pazi na strogost znaka." : "Tudi druga neenačba ni izpolnjena: vstavi koordinati še enkrat in pazi na strogost znaka.",
+          I2.ok ? "Druga neenačba je izpolnjena: vstavi koordinati še enkrat in pazi na strogost znaka." : "Tudi prva neenačba ni izpolnjena: vstavi koordinati še enkrat in pazi na strogost znaka.",
           "Vsaj ena neenačba je izpolnjena: preveri vsako posebej.",
         ];
         const c = pickAns(r, O[key], O.map((o, i) => [o, W[i]]).filter((_, i) => i !== key));
@@ -1512,7 +1519,7 @@ const GENS = [
               : offBy(Pq).map((v) => ({ value: v, why: "Preveri krajišči: pri strogi neenačbi krajišče ni rešitev, pri $\\le$ in $\\ge$ je." }))),
             zeroOk: askSum,
             hint: "Pri deljenju z negativnim številom se znak neenačbe obrne. Rešitev sistema je presek obeh rešitev.",
-            data: { given: [`M_1 = \\{x \\mid ${A.tex}\\}`, `M_2 = \\{x \\mid ${B.tex}\\}`], find:[askSum ? "\\text{vsota celih rešitev}" : "\\text{število celih rešitev}"] },
+            data: { given: [`M_1 = \\{x \\mid ${A.tex}\\}`, `M_2 = \\{x \\mid ${B.tex}\\}`], find: [askSum ? "\\text{vsota celih rešitev}" : "\\text{število celih rešitev}"] },
             formula: ["ax < b,\\ a < 0 \\Rightarrow x > \\frac{b}{a}", "\\text{rešitev sistema} = \\text{presek rešitev}"],
             solution: `${ineqSteps(A)}\n${ineqSteps(B)}\nCela števila v preseku: $${ks.join(", ")}$${askSum ? `, vsota je $${sum}$` : `, teh je $${ks.length}$`}.`,
           };
@@ -1546,7 +1553,7 @@ const GENS = [
           hint: "Za vsako točko vstavi koordinati v obe neenačbi.",
           data: { given: [`M = \\{(x, y) \\mid ${I1},\\ ${I2}\\}`], find: ["\\text{število danih točk v } M"] },
           formula: "\\text{rešitev sistema} = \\text{presek polravnin}",
-          solution: `${pts.map((p, i) => `$${L[i]}$: $${p[1]} ${REL[rel1]} ${a * p[0] + c}$ ${holds(p[1], a * p[0] + c, rel1) ? "velja" : "ne velja"}, $${p[0] + p[1]} ${REL[rel2]} ${k}$ ${holds(p[0] + p[1], k, rel2) ? "velja" : "ne velja"}`).join("\n")}\nSistemu zadošča $${cnt}$ ${cnt === 1 ? "točka" : cnt === 2 ? "točki" : "točke"}.`,
+          solution: `${pts.map((p, i) => `$${L[i]}$: $${p[1]} ${REL[rel1]} ${a * p[0] + c}$ ${holds(p[1], a * p[0] + c, rel1) ? "velja" : "ne velja"}, $${p[0] + p[1]} ${REL[rel2]} ${k}$ ${holds(p[0] + p[1], k, rel2) ? "velja" : "ne velja"}`).join("\n")}\nSistemu ${cnt === 1 ? "zadošča" : cnt === 2 ? "zadoščata" : "zadoščajo"} $${cnt}$ ${cnt === 1 ? "točka" : cnt === 2 ? "točki" : "točke"}.`,
         };
       }
       // level 3
@@ -1637,10 +1644,11 @@ const GENS = [
           text: `Reši sistem neenačb $${T1}$ in $${T2}$. ${askSum ? "Koliko je vsota vseh celih rešitev?" : "Koliko celih števil reši sistem?"}`,
           answer: num(agg(ks), null, [
             { value: agg(closed), why: "Preveri krajišči: pri strogi neenačbi krajišče ni rešitev." },
-            { value: agg(open), why: "Pri $\\le$ in $\\ge$ je krajišče rešitev." },          ]),
+            { value: agg(open), why: "Pri $\\le$ in $\\ge$ je krajišče rešitev." },
+          ]),
           zeroOk: askSum,
           hint: `Obe neenačbi pomnoži, da se znebiš ulomkov. Pri množenju z negativnim številom se znak obrne.`,
-          data: { given: [`M_1 = \\{x \\mid ${T1}\\}`, `M_2 = \\{x \\mid ${T2}\\}`], find:[askSum ? "\\text{vsota celih rešitev}" : "\\text{število celih rešitev}"] },
+          data: { given: [`M_1 = \\{x \\mid ${T1}\\}`, `M_2 = \\{x \\mid ${T2}\\}`], find: [askSum ? "\\text{vsota celih rešitev}" : "\\text{število celih rešitev}"] },
           formula: ["\\cdot (-k): \\text{ znak se obrne}", "\\text{rešitev sistema} = \\text{presek rešitev}"],
           solution: `1. neenačba: $x ${sg(-p)} ${REL[rel1]} ${q1}$, $x ${REL[rel1]} ${lo}$\n2. neenačba: $-\\frac{x}{${k2}} ${REL[rel2]} ${R2 - s}$, pomnožimo z $-${k2}$: $x ${REL[relX2]} ${hi}$\nCela števila: $${ks.join(", ")}$${askSum ? `, vsota je $${sum}$` : `, teh je $${ks.length}$`}.`,
         };
