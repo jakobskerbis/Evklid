@@ -13,16 +13,16 @@ Pri načrtovalni nalogi iz danih podatkov z ravnilom in šestilom načrtaš lik 
 
 ## Razlaga
 
-**1. Trije podatki, en trikotnik?** Mamljivo je misliti, da trije podatki vedno določijo natanko en trikotnik. Izreki o skladnosti (SSS, SKS, KSK, SsK) pa veljajo le za določene nabore. Nika je imela dve stranici in kot, ki ne leži med njima, nasproti *krajše* od njiju ($4 < 6$). Tak nabor ni SsK, zato sta lahko dve rešitvi, ena ali nobena. Zato vsako načrtovalno nalogo končaš z **diskusijo**.
+**1. Trije podatki, en trikotnik?** Mamljivo je misliti, da trije podatki vedno določijo natanko en trikotnik. Izreki o skladnosti (SSS, SKS, KSK, SsK) pa veljajo le za določene nabore. Nika je imela dve stranici in kot nasproti *krajše* od njiju ($4 < 6$). SsK zahteva kot nasproti daljše, zato sta lahko dve rešitvi, ena ali nobena. Zato vsako načrtovalno nalogo končaš z **diskusijo**.
 
-**2. Štirje koraki.** Popolna rešitev ima štiri dele. Na maturi (v drugi izpitni poli) jih pričakujejo vse štiri.
+**2. Štirje koraki.** Popolna rešitev ima štiri dele. Na maturi jih pričakujejo vse štiri.
 
 1. **Skica z danimi podatki (analiza).** Prostoročno nariši lik, kot da je že narejen. Dane podatke označi (z oznako ali krepko, ne samo z barvo). Poišči del, ki ga lahko narišeš takoj, in premisli, kje leži manjkajoče oglišče.
 2. **Opis načrtovanja.** Kratki koraki s simboli, na primer: »$AB = c$; kot $\alpha$ v $A$; $k(B, a)$ seka krak v $C$.« $k(B, a)$ je krožnica s središčem $B$ in polmerom $a$.
 3. **Načrtovanje.** Natančen načrt z ravnilom in šestilom. Konstrukcijskih črt in lokov ne brišeš.
 4. **Diskusija.** Koliko rešitev ima naloga in pri katerih podatkih rešitve ni.
 
-**3. Osnovne konstrukcije.** Iz osnovne šole znaš načrtati simetralo daljice in kota, pravokotnico in vzporednico. Kot $60^\circ$ je kot enakostraničnega trikotnika: iz vrha zariši lok, ki seka krak v $P$, in z istim polmerom lok iz $P$. Simetrala da njegove polovice: $30^\circ$ in $15^\circ$. Pravokotnica da $90^\circ$, njena simetrala $45^\circ$, dva kota po $60^\circ$ pa $120^\circ$.
+**3. Osnovne konstrukcije.** Iz osnovne šole znaš načrtati simetralo daljice in kota, pravokotnico in vzporednico. Kot $60^\circ$ je kot enakostraničnega trikotnika: iz vrha $V$ zariši lok, ki seka krak v $P$, in z istim polmerom lok iz $P$, ki prvega seka v $Q$; $VQ$ je drugi krak. Simetrala kota ga razpolovi: iz $60^\circ$ dobiš $30^\circ$, iz $30^\circ$ pa $15^\circ$. Pravokotnica da $90^\circ$, njena simetrala $45^\circ$, dva kota po $60^\circ$ pa $120^\circ$.
 
 :::premisli
 Kako bi z ravnilom in šestilom načrtal kot $75^\circ$? Najprej poišči dva kota, ki ju že znaš.
@@ -41,7 +41,7 @@ Na primer $75^\circ = 60^\circ + 15^\circ$: načrtaj $60^\circ$, ob njegovem kra
 | težiščnica $t_c$ | krožnici s središčem v razpolovišču $AB$ in polmerom $t_c$ |
 | polmer $R$ očrtanega kroga | krožnici s polmerom $R$, ki ima središče na simetrali $AB$ in gre skozi $A$ |
 
-**5. Diskusija.** Vrnimo se k Niki: $c = 6\,\mathrm{cm}$, $\alpha = 30^\circ$, $a$ spreminjamo. Naj bo $D$ nožišče pravokotnice iz $B$ na krak. Trikotnik $ABD$ je polovica enakostraničnega trikotnika s stranico $c$, zato je razdalja $d = |BD| = \frac{c}{2} = 3\,\mathrm{cm}$.
+**5. Diskusija.** Vrnimo se k Niki: $c = 6\,\mathrm{cm}$, $\alpha = 30^\circ$, $a$ spreminjamo. Naj bo $D$ nožišče pravokotnice iz $B$ na krak. Trikotnik $ABD$ (kota $30^\circ$ in $90^\circ$) je polovica enakostraničnega trikotnika s stranico $c$, zato je razdalja $d = |BD| = \frac{c}{2} = 3\,\mathrm{cm}$.
 
 :::risba graf
 opis: Daljica AB dolžine 6 cm leži na osi x, A je v izhodišču, B v točki (6, 0). Iz A gre krak kota 30 stopinj. Črtkana krožnica ima središče B in polmer a = {a} cm. Njena presečišča s krakom sta možni legi oglišča C, označeni s C₁ in C₂. V aplikaciji a spreminjaš z drsnikom od 1 do 7.
@@ -54,15 +54,15 @@ f: x/sqrt(3) | modra | 0 .. 13
 krog: 6; 0 | a | oranžna črtkano
 točka: 0; 0 | A | pod levo
 točka: 6; 0 | B | pod
-točka: (3*sqrt(3) - sqrt(a^2 - 9))*sqrt(3)/2 + 0*sqrt(3*sqrt(3) - sqrt(a^2 - 9)); (3*sqrt(3) - sqrt(a^2 - 9))/2 | C_1 | nad levo
-točka: (3*sqrt(3) + sqrt(a^2 - 9))*sqrt(3)/2; (3*sqrt(3) + sqrt(a^2 - 9))/2 | C_2 | nad levo
+točka: (3*sqrt(3) - sqrt(a^2 - 9))*sqrt(3)/2 + 0*sqrt(3*sqrt(3) - sqrt(a^2 - 9) - 0.001); (3*sqrt(3) - sqrt(a^2 - 9))/2 | C_1 | nad levo
+točka: (3*sqrt(3) + sqrt(a^2 - 9))*sqrt(3)/2 + 0*sqrt(sqrt(a^2 - 9) - 0.001); (3*sqrt(3) + sqrt(a^2 - 9))/2 | C_2 | nad levo
 podnapis: Krožnica k(B, a) in krak kota 30° pri a = {a} cm
 :::
 
 Štej presečišča krožnice s krakom:
 
 - $a < 3\,\mathrm{cm}$: krožnica kraka ne doseže, rešitve ni;
-- $a = 3\,\mathrm{cm}$: ena rešitev, pravokotni trikotnik;
+- $a = 3\,\mathrm{cm}$: ena rešitev;
 - $3\,\mathrm{cm} < a < 6\,\mathrm{cm}$: dve rešitvi (Nikin primer);
 - $a \ge 6\,\mathrm{cm}$: ena rešitev, saj drugo presečišče ni več na kraku (pri $a = 6\,\mathrm{cm}$ je to točka $A$).
 
@@ -76,7 +76,7 @@ Krožnica $k(B, 3\,\mathrm{cm})$ se kraka le dotakne, in to v nožišču $D$. Za
 
 V simulaciji spodaj (»Načrtovanje trikotnikov in štirikotnikov«) izberi trikotnik iz treh stranic. Nastavi $a = 3$, $b = 3$ in $c = 7$ (cm) in pojdi do zadnjega koraka. Opazi, da se loka ne sekata, ker je $3 + 3 < 7$.
 
-**6. Programi za dinamično geometrijo (višja raven).** V brezplačnem programu GeoGebra načrtuješ z orodji, ki posnemajo ravnilo in šestilo: daljica z dano dolžino, krožnica s središčem in polmerom, kot z dano velikostjo, vzporednica, pravokotnica, presečišče. Program si zapomni, kako je vsaka točka nastala: ko povlečeš prosto točko, se vse, kar je iz nje načrtano, premakne z njo in lastnosti ostanejo. To je **test vlečenja**: dobro načrtan kvadrat ostane kvadrat, kvadrat, narisan na oko, razpade. Število rešitev preveriš z drsnikom za dolžino $a$: opazuj, kdaj presečišča izginejo ali se zlijejo, kot na risbi zgoraj. Na maturi pa načrtuješ na papirju.
+**6. Programi za dinamično geometrijo (višja raven).** V brezplačnem programu GeoGebra načrtuješ z orodji, ki posnemajo ravnilo in šestilo: daljica z dano dolžino, krožnica s središčem in polmerom, kot z dano velikostjo, vzporednica, pravokotnica, presečišče. Program si zapomni, kako je vsaka točka nastala: ko povlečeš prosto točko, se vse, kar je iz nje načrtano, premakne z njo in lastnosti ostanejo. To je **test vlečenja**: dobro načrtan kvadrat ostane kvadrat, kvadrat, narisan na oko, razpade. Število rešitev preveriš z drsnikom za dolžino $a$: opazuj, kdaj presečišča izginejo ali se zlijejo, kot na risbi zgoraj.
 
 ## Rešeni primeri
 
@@ -133,7 +133,7 @@ $C$ je presečišče kraka kota $\alpha$ in vzporednice $p$ z $AB$ na razdalji $
 **Rešitev:**
 
 1. Skica: $v_c$ ni stranica, ampak razdalja točke $C$ od nosilke $AB$. Zato $C$ leži na vzporednici $p$ z $AB$, ki je od nje oddaljena 4 cm.
-2. Opis: $AB = 7\,\mathrm{cm}$; v $A$ pravokotnica na $AB$ in njena simetrala z $AB$ da kot $45^\circ$; na pravokotnico naneseš 4 cm in skozi to točko narišeš $p \parallel AB$; $C$ je presečišče kraka in $p$; nariši $BC$.
+2. Opis: $AB = 7\,\mathrm{cm}$; v $A$ pravokotnica na $AB$, simetrala tega pravega kota je krak kota $45^\circ$; na pravokotnico od $A$ naneseš 4 cm in skozi to točko narišeš $p \parallel AB$; $C$ je presečišče kraka in $p$; nariši $BC$.
 3. Načrt je na risbi. Pri $\alpha = 45^\circ$ sta kateti enaki, zato je nožišče višine 4 cm od $A$.
 4. Diskusija: krak kota $45^\circ$ ni vzporeden s $p$, zato ga seka v eni točki. Rešitev je ena (trikotnik na drugi strani $AB$ je z njim skladen).
 
@@ -190,7 +190,7 @@ Diagonala $AC$ razdeli paralelogram na skladna trikotnika $ABC$ in $CDA$ (SSS).
 
 1. Skica: trikotnik $ABC$ ima stranice $a$, $b$ in $e$, zato ga načrtaš takoj.
 2. Opis: $AB = 5\,\mathrm{cm}$; $k(A, 7\,\mathrm{cm})$ in $k(B, 3\,\mathrm{cm})$ se sekata v $C$.
-3. Dokončaj sam: kako dobiš $D$ in kaj pove diskusija? Nato preveri:
+3. Dokončaj sam, nato preveri:
 
 :::premisli
 Kako dobiš $D$ in koliko rešitev ima naloga?
@@ -259,8 +259,8 @@ napis: 7,4; 1,2 | 4 | desno
 ~ Višina ni stranica, a vseeno zadošča: $C$ je presečišče kraka in vzporednice na razdalji $v_c$, torej ena točka.
 - $c = 5\,\mathrm{cm}$, $\alpha = 40^\circ$, $\beta = 70^\circ$
 ~ To je KSK in $40^\circ + 70^\circ < 180^\circ$: kraka se sekata v eni točki.
-+ $c = 6\,\mathrm{cm}$, $a = 4\,\mathrm{cm}$, $\alpha = 30^\circ$
-> Kot ne leži med stranicama in je nasproti krajše. Razdalja $B$ od kraka je $3\,\mathrm{cm}$; ker je $3 < 4 < 6$, sta rešitvi dve.
++ $c = 8\,\mathrm{cm}$, $a = 6\,\mathrm{cm}$, $\alpha = 30^\circ$
+> Kot ne leži med stranicama in je nasproti krajše. Razdalja $B$ od kraka je $4\,\mathrm{cm}$; ker je $4 < 6 < 8$, sta rešitvi dve.
 
 ? (brez računala) Dve stranici trikotnika merita $4\,\mathrm{cm}$ in $9\,\mathrm{cm}$. Največ koliko centimetrov sme meriti tretja stranica, če je njena dolžina celo število?
 = 12 cm
@@ -342,8 +342,8 @@ t_c | težiščnica na stranico $c$ | | cm
 R | polmer očrtanega kroga | | cm
 k | krožnica; $k(B, a)$ ima središče $B$ in polmer $a$ | | 
 A, B, C | oglišča trikotnika | | 
-D | nožišče pravokotnice iz $B$ na krak | | 
-d | razdalja točke $B$ od kraka kota | d = \dfrac{c}{2} | km | pri $\alpha = 30^\circ$
+D | nožišče pravokotnice iz $B$ na krak; pri štirikotniku oglišče | | 
+d | razdalja točke $B$ od kraka kota | d = \dfrac{c}{2} | cm | pri $\alpha = 30^\circ$; pri trapezu je $d$ krak $AD$
 e | diagonala $AC$ paralelograma | | cm
 v | višina trapeza | | cm
 C_1, C_2 | presečišči kraka in krožnice $k(B, a)$ | | 

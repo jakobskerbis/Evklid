@@ -32,7 +32,7 @@ Nobene. Vsaka točka se premakne za isto dolžino $|PQ| > 0$, zato nobena ne ost
 - čez os $x$: $(x, y) \mapsto (x, -y)$,
 - čez os $y$: $(x, y) \mapsto (-x, y)$.
 
-**5. Zrcaljenje čez točko (središčna simetrija).** Določa ga točka $S$, **središče**. Točka $S$ je razpolovišče daljice $TT'$. Čez izhodišče $O$ se spremenita predznaka obeh koordinat: $(x, y) \mapsto (-x, -y)$. Čez točko $S(x_S, y_S)$ od $T$ do $S$ narediš korak, nato še enkrat enak korak naprej:
+**5. Zrcaljenje čez točko (središčna simetrija).** Določa ga točka $S$, **središče**. Točka $S$ je razpolovišče daljice $TT'$. Čez izhodišče $O$ se spremenita predznaka obeh koordinat: $(x, y) \mapsto (-x, -y)$. Čez točko $S(x_S, y_S)$ greš od $T$ do $S$ in še enkrat enako daleč naprej, zato $x' = x_S + (x_S - x)$:
 
 $$x' = 2x_S - x \qquad y' = 2y_S - y$$
 
@@ -62,7 +62,7 @@ podnapis: Zrcaljenje čez os y (črtkano) in zrcaljenje čez izhodišče O
 :::premisli
 Sošolec trdi: »Zrcaljenje čez izhodišče je isto kot zrcaljenje čez os $x$, saj gre oboje skozi $O$.« Napovej sliko točke $T(2, 1)$ pri obeh in presodi.
 ---
-Čez $O$ dobiš $(-2, -1)$, čez os $x$ pa $(2, -1)$. Sliki sta različni, torej premika nista enaka. Na risbi se razlikujeta tudi po orientaciji (točka 7).
+Čez $O$ dobiš $(-2, -1)$, čez os $x$ pa $(2, -1)$. Sliki sta različni, torej premika nista enaka. Razlikujeta se tudi po orientaciji: zrcaljenje čez os jo obrne, zrcaljenje čez $O$ ne (točka 7).
 :::
 
 **6. Vrtež.** Določajo ga središče $S$, kot $\varphi$ in smer. **Pozitivna smer** je nasprotna gibanju urinega kazalca, **negativna** je v smeri urinega kazalca. Slika $T'$ je enako daleč od $S$ kot $T$, kot $TST'$ pa meri $\varphi$. Središče ostane na mestu. Vrtež za $90^\circ$ okoli izhodišča v pozitivni smeri:
@@ -82,7 +82,7 @@ Potiskanje po mizi je vzporedni premik, vrtenje je vrtež. Oba orientacijo **ohr
 | zrcaljenje čez točko | središče $S$ | $O$: $(-x, -y)$ | ohrani |
 | vrtež | $S$, $\varphi$, smer | $90^\circ$: $(-y, x)$ | ohrani |
 
-**8. Skladnost.** Lika sta skladna, če enega s togim premikom (ali z več zaporednimi) preslikamo na drugega. Izreki SSS, SKS, KSK in SsK povedo, kdaj tak premik obstaja. Skladna trikotnika z enako orientacijo preslikaš s premikom ali vrtežem. Pri nasprotni orientaciji potrebuješ tudi zrcaljenje čez premico.
+**8. Skladnost.** Lika sta skladna, če enega s togim premikom (ali z več zaporednimi) preslikamo na drugega. Izreki SSS, SKS, KSK in SsK povedo, kdaj tak premik obstaja. Skladna trikotnika z enako orientacijo preslikaš z vzporednim premikom ali vrtežem. Pri nasprotni orientaciji potrebuješ tudi zrcaljenje čez premico.
 
 V simulaciji spodaj (»Zrcaljenje čez premico in točko, orientacija«) izberi »Navpična os« in povleci točko $A$ na os. Opazi, da $A'$ tedaj sovpade z $A$. Nato preklopi na »Središčna« in primerjaj, v katero smer se obhodita $ABC$ in $A'B'C'$.
 
@@ -120,7 +120,7 @@ $T(x, y) \mapsto T'(-y, x)$
 
 **Rešitev:**
 
-1. Nova abscisa je nasprotna stara ordinata, nova ordinata je stara abscisa: $A(1, 1) \mapsto A'(-1, 1)$.
+1. Nova abscisa je nasprotna vrednost stare ordinate, nova ordinata je stara abscisa: $A(1, 1) \mapsto A'(-1, 1)$.
 2. $B(4, 1) \mapsto B'(-1, 4)$ in $C(4, 3) \mapsto C'(-3, 4)$.
 3. Preizkus pravega kota: pri $B$ je stranica $AB$ vodoravna in $BC$ navpična. Pri $B'$ je $A'B'$ navpična in $B'C'$ vodoravna, zato je kot še vedno pravi.
 4. Orientacija: pri $ABC$ gremo desno, nato gor, torej nasproti urinemu kazalcu. Pri $A'B'C'$ gremo gor, nato levo, spet nasproti urinemu kazalcu.
@@ -208,7 +208,7 @@ $Z_2(-3, 5)$. V primerjavi z $Z(3, -5)$ sta obe koordinati nasprotni: $(x, y) \m
 - **Zrcaljenje čez točko zamenjaš z zrcaljenjem čez premico.** Učenec $T(2, 1)$ zrcali čez $O$ in dobi $(2, -1)$. To je zrcaljenje čez os $x$. Čez točko se spremenita *obe* koordinati: $(-2, -1)$.
 - **Napačna smer vrteža.** Pravilo $(x, y) \mapsto (y, -x)$ zavrti za $90^\circ$ v smeri urinega kazalca, to je v negativni smeri. Pozitivna smer je nasprotna: $(x, y) \mapsto (-y, x)$. Preveri na točki $(1, 0)$, ki mora iti v $(0, 1)$.
 - **»Središčna simetrija obrne orientacijo, saj je zrcaljenje.«** Zrcaljenje čez točko je vrtež za $180^\circ$, zato orientacijo ohrani. Obrne jo le zrcaljenje čez premico.
-- **Predznak pri zrcaljenju čez točko $S \ne O$.** Iz $A(3, -2)$ in $S(1, 1)$ je $y' = 2 \cdot 1 - (-2) = 4$. Kdor izgubi oklepaj, dobi napačno $2 - 2 = 0$.
+- **Predznak pri zrcaljenju čez točko $S \ne O$.** Negativni $y$ vstavi v $y' = 2y_S - y$ z oklepajem, sicer dobiš napačen predznak.
 - **»Po dveh zrcaljenjih je orientacija obrnjena.«** Vsako zrcaljenje čez premico jo obrne enkrat, dvakrat obrnjena pa je spet prvotna.
 
 ## Povzetek
@@ -227,7 +227,7 @@ Tjaša je po zimskem treningu tekla domov čez zasneženo igrišče. Zjutraj je 
 
 Vsi levi odtisi so si enaki. Vsak naslednji je le *premaknjen* naprej, zato bi lahko enega potisnila na drugega. Levi in desni odtis sta skladna, saj sta čevlja enako velika. Pa vendar levega odtisa ne more prekriti z desnim, če ga samo potiska in vrti po snegu. Levi čevelj ne gre na desno nogo, pa naj ga obrača kakor koli.
 
-Desni odtis je zrcalna slika levega. Os zrcaljenja je kar črta, po kateri je tekla. Zrcaljenje obrne orientacijo, premik in vrtež pa je ne moreta.
+Desni odtis je levi, zrcaljen čez črto, po kateri je tekla, in še pomaknjen naprej. Zrcaljenje obrne orientacijo, premik in vrtež pa je ne moreta.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -248,7 +248,7 @@ Vzemi točko $T(3, 1)$ in jo preslikaj na več načinov:
 
 ## Preveri se
 
-? Trikotniki 1, 2 in 3 so slike trikotnika $ABC$ pri treh togih premikih. Kateri ne sodi zraven?
+? Trikotniki 1, 2 in 3 so slike trikotnika $ABC$ pri treh togih premikih. Katerega ne dobiš s potiskanjem in vrtenjem?
 :::risba graf
 opis: Trikotnik ABC z oglišči A(1, 2), B(4, 2), C(1, 4). Trikotnik 1 ima oglišča A₁(−2, 1), B₁(−2, 4), C₁(−4, 1). Trikotnik 2 ima oglišča A₂(1, −2), B₂(4, −2), C₂(1, −4). Trikotnik 3 ima oglišča A₃(−1, −2), B₃(−4, −2), C₃(−1, −4).
 x: -5 .. 5 | 1 | x
@@ -294,7 +294,7 @@ točka: -1; -4 | C_3 | pod
 = -4
 ~ 4 | To je vrtež v smeri urinega kazalca: $(y, -x) = (4, 3)$. Pozitivna smer je nasprotna.
 ~ 3 | To je zrcaljenje čez izhodišče $(3, -4)$, vrtež za $180^\circ$, ne za $90^\circ$.
-~ -3 | Abscisa se pri vrtežu ne ohrani: nova abscisa je nasprotna stara ordinata.
+~ -3 | Abscisa se pri vrtežu ne ohrani: nova abscisa je nasprotna vrednost stare ordinate.
 > $(x, y) \mapsto (-y, x)$ da $T'(-4, -3)$. Iz drugega kvadranta smo se pomaknili v tretjega, torej nasproti urinemu kazalcu.
 
 ? Nina zrcali točko $A(3, -2)$ čez točko $S(1, 1)$. Zapisala je:
@@ -304,11 +304,11 @@ točka: -1; -4 | C_3 | pod
 | 2 | $x' = 2 \cdot 1 - 3 = -1$ |
 | 3 | $y' = 2 \cdot 1 - 2 = 0$ |
 | 4 | $A'(-1, 0)$ |
-V katerem koraku je napaka? Popravi ga in vpiši pravilno ordinato $y'$.
+Poišči napačni korak, ga popravi in vpiši le pravilno ordinato $y'$.
 = 4
 ~ 0 | To je Ninin rezultat. V 3. koraku je izgubila oklepaj: odšteti mora $-2$, ne $2$.
-~ -4 | Pravilna je velikost, ne pa predznak: $2 \cdot 1 - (-2) = 2 + 2 = 4$.
-~ 2 | Samo spremenila si predznak ordinate, kot pri zrcaljenju čez os $x$. Središče ni $O$, zato velja $y' = 2y_S - y$.
+~ -4 | Odšteto je v napačnem vrstnem redu: $y - 2y_S = -2 - 2 = -4$. Prav je $y' = 2y_S - y = 2 \cdot 1 - (-2) = 4$.
+~ 2 | To je le nasprotna ordinata, kot pri zrcaljenju čez os $x$. Središče ni $O$, zato velja $y' = 2y_S - y$.
 > Napaka je v 3. koraku: $y' = 2y_S - y = 2 \cdot 1 - (-2) = 4$. Pravilna slika je $A'(-1, 4)$.
 
 ? Razvrsti korake, s katerimi z ravnilom, kotomerom in šestilom zavrtiš točko $T$ okoli središča $S$ za kot $\varphi$ v pozitivni smeri.
@@ -342,9 +342,9 @@ x', y' | koordinati slike $T'$ | |
 p | premik v smeri osi $x$ | | 
 q | premik v smeri osi $y$ | | 
 x_S, y_S | koordinati središča $S$ | | 
-B' | slika rdeče krogle pri zrcaljenju čez rob | | 
+B' | slika točke $B$ (v primeru 3 rdeča krogla, zrcaljena čez rob) | | 
 x_B, y_B | koordinati točke $B$ | | 
-A, B | bela in rdeča krogla | | 
+A, B | točki, oglišči trikotnika (v primeru 3 bela in rdeča krogla) | | 
 R | točka odboja na robu mize | | 
 \varphi | kot vrteža | | 
 :::
