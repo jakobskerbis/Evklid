@@ -64,6 +64,16 @@ Koliko rešitev ima $\sin x = 1$ na intervalu $[0^\circ, 360^\circ)$? Zakaj se o
 Samo eno, $x = 90^\circ$. Premica $y = 1$ se krožnice le dotakne. Druga družina da $180^\circ - 90^\circ = 90^\circ$, isti kot kot prva.
 :::
 
+**6. Vsota v produkt in polovični koti (višja raven).** Če enačba vsebuje vsoto ali razliko dveh sinusov (ali kosinusov) z različnima argumentoma, jo s formulo »vsota v produkt« razstavimo, na primer
+
+$$\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$$
+
+Produkt je $0$, ko je vsaj en faktor $0$, zato dobimo dve enostavni enačbi (Primer 5).
+
+Kadar nastopata kota $x$ in $\frac{x}{2}$, vse zapišemo s polovičnim kotom. V enačbi $1 + \cos x = \cos\frac{x}{2}$ po formuli polovičnega kota zamenjamo $1 + \cos x = 2\cos^2\frac{x}{2}$, prenesemo na levo in izpostavimo: $\cos\frac{x}{2}\left(2\cos\frac{x}{2} - 1\right) = 0$.
+
+Iz $\cos\frac{x}{2} = 0$ sledi $\frac{x}{2} = 90^\circ + k \cdot 180^\circ$, torej $x = 180^\circ + k \cdot 360^\circ$. Iz $\cos\frac{x}{2} = \frac{1}{2}$ sledi $\frac{x}{2} = \pm 60^\circ + k \cdot 360^\circ$, torej $x = \pm 120^\circ + k \cdot 720^\circ$. Pozor: ko pomnožimo z $2$, se podvoji tudi korak.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): kosinus
@@ -147,6 +157,25 @@ Katere so vse rešitve na $[0^\circ, 360^\circ)$?
 $\cos x = 0$: $x = 90^\circ$ in $x = 270^\circ$. $\sin x = \frac{1}{2}$: $x = 30^\circ$ in $x = 150^\circ$. Skupaj štiri rešitve: $30^\circ$, $90^\circ$, $150^\circ$, $270^\circ$.
 :::
 
+### Primer 5 (višja raven): vsota sinusov
+
+Reši enačbo $\sin 3x + \sin x = \cos x$ na $[0^\circ, 360^\circ)$.
+
+**Podatki:** $\sin 3x + \sin x = \cos x$, interval $[0^\circ, 360^\circ)$
+**Iščemo:** vse rešitve na intervalu
+
+:::formula
+$\sin\alpha + \sin\beta = 2\sin\dfrac{\alpha + \beta}{2}\cos\dfrac{\alpha - \beta}{2}$; produkt je $0$, ko je vsaj en faktor $0$.
+:::
+
+**Rešitev:**
+
+1. Levo stran zapišemo kot produkt. Ker je $\frac{3x + x}{2} = 2x$ in $\frac{3x - x}{2} = x$, velja $\sin 3x + \sin x = 2\sin 2x\cos x$.
+2. Enačba je zdaj $2\sin 2x\cos x = \cos x$. Vse prenesemo na levo in izpostavimo: $\cos x\,(2\sin 2x - 1) = 0$. S $\cos x$ ne delimo.
+3. $\cos x = 0$: $x = 90^\circ$ ali $x = 270^\circ$.
+4. $\sin 2x = \frac{1}{2}$: $2x = 30^\circ + k \cdot 360^\circ$ ali $2x = 150^\circ + k \cdot 360^\circ$, torej $x = 15^\circ + k \cdot 180^\circ$ ali $x = 75^\circ + k \cdot 180^\circ$. Na intervalu so to $15^\circ$, $75^\circ$, $195^\circ$ in $255^\circ$.
+5. Odgovor: enačba ima na intervalu šest rešitev: $15^\circ$, $75^\circ$, $90^\circ$, $195^\circ$, $255^\circ$ in $270^\circ$.
+
 ## Pogoste napake
 
 - **Ena sama rešitev s kalkulatorja.** Kalkulator vrne le osnovno rešitev. Na krožnici sta pri sinusu in kosinusu navadno dve točki. Vedno dopiši drugo družino: $180^\circ - x_1$ pri sinusu, $-x_1$ pri kosinusu.
@@ -164,6 +193,7 @@ $\cos x = 0$: $x = 90^\circ$ in $x = 270^\circ$. $\sin x = \frac{1}{2}$: $x = 30
 - Za $|a| > 1$ enačbi s sinusom in kosinusom nimata rešitev.
 - V radianih $360^\circ \to 2\pi$, $180^\circ \to \pi$. Pri $\sin(bx) = a$ najprej reši za $bx$, nato deli z $b$.
 - Kotnih funkcij ne krajšaj, ampak izpostavi.
+- (višja raven) Vsoto sinusov ali kosinusov spremeni v produkt in vsak faktor izenači z $0$. Pri kotih $x$ in $\frac{x}{2}$ vse zapiši s polovičnim kotom ($1 + \cos x = 2\cos^2\frac{x}{2}$).
 
 ## Drugače: Korak za korakom s številkami
 
@@ -233,6 +263,13 @@ Drugi popravek: doda še kot $180^\circ - 30^\circ = 150^\circ$. Zdaj telefon za
 ~ To sta le časa v prvem obratu. V $24\,\text{s}$ naredi telefon dva obrata.
 > $\sin x = -0{,}5$ da $x = 210^\circ$, $330^\circ$, $570^\circ$, $690^\circ$. Deljeno s $30^\circ$ na sekundo: $7$, $11$, $19$ in $23\,\text{s}$.
 
+<<RACUN
+enako: sin(3*x)+sin(x) | 2*sin(2*x)*cos(x)
+resi: sin(3*x)+sin(x)=cos(x) | x | pi/2+k*pi, pi/12+k*pi, 5*pi/12+k*pi
+enako: 1+cos(x) | 2*cos(x/2)^2
+resi: 1+cos(x)=cos(x/2) | x | pi+2*k*pi, 2*pi/3+4*k*pi, -2*pi/3+4*k*pi
+>>
+
 :::simboli
 x | kot zasuka (neznanka) | |
 a | desna stran enačbe (dana vrednost) | |
@@ -241,4 +278,5 @@ k | poljubno celo število | | – | $k \in \mathbb{Z}$
 u | napetost v vtičnici | u = 325\,\text{V} \cdot \sin(100\pi t) | V
 t | čas | | s
 y | nova neznanka (celoten argument sinusa) | y = 100\pi t | rad
+\alpha, \beta | kota v formuli vsota v produkt | |
 :::

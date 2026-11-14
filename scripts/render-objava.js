@@ -8,15 +8,19 @@
 export const MIRNO_MIN = 10; // toliko minut nihče ni nič poslal
 export const MED_OBJAVAMA_MIN = 60;
 export const NAJDLJE_MIN = 180;
+// Začasno (j, 14. 11. 2026: »Odstrani to pravilo o objavah do ponedeljka«): do ponedeljka 16. 11. 00:00 (Ljubljana)
+// se vsaka združitev v main objavi takoj, brez čakanja na miren strežnik in brez ure med objavama.
+export const TAKOJ_DO = Date.parse("2026-11-16T00:00:00+01:00");
 
 // stanje: odgovor /healthz/stanje ali null (strežnik ni dosegljiv)
 // cakaMin: koliko minut je stara najstarejša neobjavljena sprememba v main
 // zadnja: { sha, at } zadnje sprožene objave (predpomnilnik GitHub Actions) ali null
-export function decide({ stanje, mainSha, cakaMin, rocno = false, zadnja = null, now = Date.now() }) {
+export function decide({ stanje, mainSha, cakaMin, rocno = false, takoj = false, zadnja = null, now = Date.now() }) {
   if (stanje && mainSha.startsWith(stanje.razlicica || "\0")) return { objavi: false, zakaj: "že teče zadnja različica" };
   if (rocno) return { objavi: true, zakaj: "ročni zagon" };
   // Ista različica je bila sprožena, a ne teče: objava še poteka ali ni uspela. Ne ponavljaj ob vsakem teku.
   if (zadnja?.sha === mainSha && now - zadnja.at < NAJDLJE_MIN * 60000) return { objavi: false, zakaj: "ta različica je že bila sprožena (objava poteka ali ni uspela)" };
+  if (takoj) return { objavi: true, zakaj: "pravila o mirnem trenutku začasno ne veljajo (TAKOJ_DO)" };
   // Sprožena pred kratkim (druga različica): objava morda še poteka ali ni uspela – strežnik je še star, gorMs velik.
   const sprozenaMin = zadnja?.at ? (now - zadnja.at) / 60000 : Infinity;
   if (!stanje) return cakaMin >= MED_OBJAVAMA_MIN && sprozenaMin >= MED_OBJAVAMA_MIN ? { objavi: true, zakaj: "strežnik ni dosegljiv, sprememba čaka že dolgo" } : { objavi: false, zakaj: "strežnik ni dosegljiv (morda se ravno objavlja)" };
@@ -79,7 +83,7 @@ async function main() {
       const t = pendingSince(cmp.commits || [], mainSha);
       if (t) cakaMin = (Date.now() - t) / 60000;
     } catch {}
-    const d = decide({ stanje, mainSha, cakaMin, rocno: ROCNO === "1", zadnja });
+    const d = decide({ stanje, mainSha, cakaMin, rocno: ROCNO === "1", takoj: Date.now() < TAKOJ_DO, zadnja });
     console.log(`${new Date().toISOString().slice(11, 16)} main ${mainSha.slice(0, 12)}, strežnik ${stanje?.razlicica || "?"}, čaka ${Math.round(cakaMin)} min: ${d.zakaj}`);
     if (d.objavi) {
       const r = await fetch(HOOK, { method: "POST" });

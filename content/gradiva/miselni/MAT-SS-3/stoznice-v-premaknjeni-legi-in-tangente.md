@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Premik
+  - vsaka točka se premakne za isti vektor
+  - središče $S(x_0, y_0)$, oblika ostane
+- Premaknjena elipsa
+  - $\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$
+  - gorišči $(x_0 \pm e, y_0)$
+  - pozor: $x + 2$ pomeni $x_0 = -2$
+- Dopolnjevanje kvadrata
+  - dodano odštej, pomnoženo s koeficientom
+  - deli, da je desno $1$
+- Raztezanje krožnice
+  - $y$ pomnoži s faktorjem $\frac{b}{a}$
+  - iz $x^2 + y^2 = 25$ nastane $\frac{x^2}{25} + \frac{y^2}{9} = 1$
+- Hiperbola in parabola
+  - nasprotna predznaka kvadratov: hiperbola
+  - en sam kvadrat: parabola $(y - y_0)^2 = 2p(x - x_0)$
+- Tangenta v točki
+  - en faktor kvadrata zamenjaj s koordinato točke
+  - velja le za točko na stožnici
+- Tangenta z diskriminanto
+  - vstavi $y = kx + n$
+  - $D = 0$ pomeni dotik
