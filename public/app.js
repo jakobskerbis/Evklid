@@ -23,6 +23,7 @@ import { initSubjectSwitch } from "./subject-switch.js";
 import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower, openLessonId } from "./textbook.js";
 import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
+import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
@@ -1359,15 +1360,17 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     const takoj = lokalnoNujno(text);
     if (takoj?.vrsta !== "pogovor") showNujno(takoj, { before: bubble });
     const box = $("#messages");
-    const paint = (shown) => {
+    // D5: med izpisom dokončani bloki iz predpomnilnika in največ en izris na sličico; končni izris cel in takoj.
+    const izrisBlokov = createIzrisBlokov(chatRich);
+    const paint = enIzrisNaSlicico((shown, koncno) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
+      bubble.innerHTML = (koncno ? chatRich(shown) : izrisBlokov(streamSafe(shown))) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
       // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
       if (atBottom && nujnoEl?.isConnected) box.scrollTop = Math.min(box.scrollTop, box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8);
-    };
-    paint("");
+    });
+    paint("", true);
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
     pacer = createPacer(currentPace(), paint);
     state.pacer = pacer;

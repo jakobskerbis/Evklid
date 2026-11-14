@@ -82,7 +82,7 @@ export function createPacer(pace, paint, { setTimer = setTimeout, clearTimer = c
 
   const finishIfDone = () => {
     if (final && shown >= raw.length) {
-      paint(raw);
+      paint(raw, true); // končni izris (izpis-toka.js: takoj, ne ob naslednji sličici)
       resolveDone();
       return true;
     }
