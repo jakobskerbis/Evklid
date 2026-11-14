@@ -87,6 +87,8 @@ const GESLO = "geslo-meritve-1234";
 const LEKCIJA = "MAT-OS-8/algebrski-izrazi";
 const SLIKA_PNG = fs.readFileSync(path.join(ROOT, "assets", `${BRAND.slug}.png`)); // 342 KB, kot fotografija naloge
 const SLIKA = `data:image/png;base64,${SLIKA_PNG.toString("base64")}`;
+// Besedilo v celici tabele Markdown: najprej poševnica, nato navpičnica.
+const mdCelica = (t) => String(t).replace(/\\/g, "\\\\").replace(/\|/g, "\\|");
 const log = (...a) => console.error(`[meritev ${new Date().toISOString().slice(11, 19)}]`, ...a);
 // Ctrl-C ali ukinitev: brez tega bi »finally« na koncu ne tekel in začasna mapa bi ostala (strežniki so v isti
 // skupini procesov in dobijo isti signal; prazno skupino cgroup pobriše naslednji zagon).
@@ -268,8 +270,9 @@ async function zazeniStreznik(dbFile, { predlog = true, okolje = {}, cgroup = nu
   const nodeArgs = ["--disable-warning=ExperimentalWarning", ...(predlog ? ["--import", pathToFileURL(PREDLOG_DAT).href] : []), "server/index.js"];
   let [cmd, argv] = ukazNode(nodeArgs);
   if (cgroup?.length) {
-    const vpis = cgroup.map((f) => `echo $$ > '${f}'`).join(" && ");
-    [cmd, argv] = ["sh", ["-c", `${vpis} && exec "$@"`, "sh", cmd, ...argv]];
+    // Poti skupine kot argumenti (ne vstavljene v ukaz): lupina vpiše svoj PID v vsako, nato exec strežnika.
+    const vpis = 'while [ "$1" != "--" ]; do echo $$ > "$1" || exit 1; shift; done; shift; exec "$@"';
+    [cmd, argv] = ["sh", ["-c", vpis, "sh", ...cgroup, "--", cmd, ...argv]];
   }
   const t0 = performance.now();
   const srv = spawn(cmd, argv, { cwd: ROOT, env: { ...OKOLJE, PORT: String(port), EVKLID_DB: dbFile, ...okolje }, stdio: ["ignore", "pipe", "pipe", "ipc"] });
@@ -1593,7 +1596,7 @@ function povzetek(R) {
     L.push("|---|---|---|");
     for (const s of scan)
       for (const x of s.scan)
-        L.push(`| ${x.tabela} (${x.vrstic}) | ${Object.keys(s.poti).join(", ")} | \`${s.sql.replace(/\s+/g, " ").replace(/\|/g, "\\|").slice(0, 220)}\` |`);
+        L.push(`| ${x.tabela} (${x.vrstic}) | ${Object.keys(s.poti).join(", ")} | \`${mdCelica(s.sql.replace(/\s+/g, " ").slice(0, 220))}\` |`);
     const pi = sql.sql.filter((s) => s.polniIndeks.length);
     if (pi.length) {
       L.push("\nPolni pregled indeksa (SCAN … USING INDEX):\n");
@@ -1606,7 +1609,7 @@ function povzetek(R) {
     L.push("|---|---|---|---|---|---|---|");
     for (const s of [...sql.sql].sort((a, b) => b.ms - a.ms).slice(0, 12))
       L.push(
-        `| ${s.ms} | ${s.klicev} | ${s.klicev ? r1(s.ms / s.klicev) : "–"} | ${s.max} | ${Object.keys(s.poti).join(", ")} | \`${s.sql.replace(/\s+/g, " ").replace(/\|/g, "\\|").slice(0, 160)}\` | ${s.plan.join("; ").replace(/\|/g, "\\|")} |`,
+        `| ${s.ms} | ${s.klicev} | ${s.klicev ? r1(s.ms / s.klicev) : "–"} | ${s.max} | ${Object.keys(s.poti).join(", ")} | \`${mdCelica(s.sql.replace(/\s+/g, " ").slice(0, 160))}\` | ${mdCelica(s.plan.join("; "))} |`,
       );
     const td = sql.sql.filter((s) => s.zacasnoDrevo.length);
     if (td.length) L.push(`\nZačasno drevo B (TEMP B-TREE) v ${td.length} stavkih.`);
