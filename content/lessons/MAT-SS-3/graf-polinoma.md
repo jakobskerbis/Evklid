@@ -95,6 +95,15 @@ V simulaciji spodaj, »Graf polinoma: ničle in njihova stopnja«, nastavi stopn
 
 **Rešitev uganke.** V modelu $T(t) = -0{,}04\,(t - 2)(t - 7)^2$ je $t = 7$ ničla stopnje $2$. Graf se osi le dotakne, predznak se ne zamenja. Med $t = 2$ in $t = 7$ je temperatura negativna, npr. $T(5) = -0{,}04 \cdot 3 \cdot 4 = -0{,}48$. Zato je negativna tudi po $t = 7$. Ob 1.00 se je zrak le ogrel do ledišča in se spet ohladil, nad ledišče se do 4.00 ni dvignil.
 
+**8. Sestavljanje modela (višja raven).** Model iz uganke je bil podan. Kako ga sestavimo sami?
+
+1. Izberemo spremenljivki z enotama in območje, na katerem model velja.
+2. Izberemo obliko. Če poznamo ničle in vemo, ali graf ob njih os seka ali se je dotakne, vzamemo razcepljeno obliko $a\,(x - x_1)^{k_1}\cdots$, neznan je le $a$. Če imamo le meritve, vzamemo razvito obliko z neznanimi koeficienti. Polinom stopnje $n$ ima $n + 1$ koeficientov, zato ga določa $n + 1$ točk z različnimi $x$.
+3. Koeficiente izračunamo: $a$ iz ene točke, v razviti obliki pa iz sistema linearnih enačb (vsaka točka da eno enačbo).
+4. Model preverimo z meritvijo, ki je nismo uporabili, in povemo, kje ni več smiseln.
+
+Izberemo najmanjšo stopnjo, ki ustreza podatkom. Kraki grafa gredo v $\pm\infty$, zato polinomski model velja le na omejenem območju.
+
 ## Rešeni primeri
 
 ### Primer 1: skica iz razcepa
@@ -160,6 +169,33 @@ Koliko je $a$ in kam gresta kraka?
 ---
 Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$. Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.
 :::
+
+### Primer 4 (višja raven): model iz meritev
+
+Po zaužitju tablete merijo koncentracijo zdravila v krvi $C$ (v $\mathrm{mg/l}$) ob času $t$ (v urah):
+
+| $t$ | $0$ | $1$ | $2$ | $3$ | $4$ |
+|---|---|---|---|---|---|
+| $C$ | $0$ | $25$ | $32$ | $27$ | $16$ |
+
+Iz prvih štirih meritev sestavi model s polinomom tretje stopnje, ga preveri s peto in ugotovi, kdaj po modelu zdravila v krvi ni več.
+
+**Podatki:** meritve $(0, 0)$, $(1, 25)$, $(2, 32)$, $(3, 27)$, kontrolna $(4, 16)$; polinom tretje stopnje
+**Iščemo:** model $C(t)$, njegovo ničlo po zaužitju in območje veljavnosti
+
+:::formula
+$C(t) = a_3 t^3 + a_2 t^2 + a_1 t + a_0$; vsaka meritev $(t_i, C_i)$ da enačbo $C(t_i) = C_i$.
+:::
+
+**Rešitev:**
+
+1. Iz $C(0) = 0$ sledi $a_0 = 0$.
+2. Ostale tri meritve dajo sistem (drugo in tretjo enačbo smo delili z $2$ in $3$): $a_3 + a_2 + a_1 = 25$, $4a_3 + 2a_2 + a_1 = 16$, $9a_3 + 3a_2 + a_1 = 9$.
+3. Odštejemo zaporedni enačbi: $3a_3 + a_2 = -9$ in $5a_3 + a_2 = -7$. Od tod $2a_3 = 2$, torej $a_3 = 1$, $a_2 = -12$, $a_1 = 36$.
+4. Model: $C(t) = t^3 - 12t^2 + 36t = t\,(t - 6)^2$.
+5. Preizkus s peto meritvijo: $C(4) = 4 \cdot 4 = 16$. Ujema se.
+6. Ničla $6$ je stopnje $2$: graf se osi dotakne in se obrne navzgor. Za $t > 6$ bi koncentracija spet rasla, česar brez nove tablete ni.
+7. Odgovor: $C(t) = t\,(t - 6)^2$; po modelu zdravila v krvi ni več po $6$ urah, model velja za $0 \le t \le 6$.
 
 ## Pogoste napake
 
@@ -353,6 +389,11 @@ Vsak ulomek v oklepaju ima v imenovalcu potenco $x$, zato gre proti $0$, ko $|x|
 + Le po $t = 6$, torej po polnoči.
 > Za $t > 6$ je $(t - 6) > 0$ in $(t - 1)^2 > 0$, pred njima pa $-0{,}1$, zato $T < 0$; npr. $T(7) = -3{,}6\,^\circ\mathrm{C}$. Pri sodi ničli $1$ se predznak ne zamenja, zato je pred $t = 6$ temperatura nad lediščem.
 
+? (višja raven) O ničlah ne vemo ničesar, imamo le meritve z različnimi časi. Najmanj koliko meritev potrebujemo, da enolično določimo model s polinomom četrte stopnje?
+= 5
+~ 4 | Polinom četrte stopnje ima pet koeficientov, od $a_4$ do $a_0$; vsaka meritev da le eno enačbo.
+> Neznanih koeficientov je $4 + 1 = 5$, zato potrebujemo pet enačb, torej pet meritev.
+
 <<RACUN
 enako: x^3-4*x^2+4*x | x*(x-2)^2
 neenacba: x^3-4*x^2+4*x<=0 | x | (-oo, 0] U {2}
@@ -368,11 +409,14 @@ resi: d^2-12*d+16=0 | d | 6-2*sqrt(5), 6+2*sqrt(5)
 vrednost: 6-2*sqrt(5) | 1.5279
 vrednost: 2*sqrt(5)-2 | 2.4721
 vrednost: (2*sqrt(5)-2)*24 | 59.33
+resi: a+b+c=25, 8*a+4*b+2*c=32, 27*a+9*b+3*c=27 | a, b, c | a=1, b=-12, c=36
+enako: t^3-12*t^2+36*t | t*(t-6)^2
+vrednost: 4*(4-6)^2 | 16
 >>
 
 :::simboli
 T | temperatura zraka | | ^\circ C | model iz uganke
-t | čas po 18.00 | | h
+t | čas (v uganki po 18.00, v primeru 4 po zaužitju tablete) | | h
 p | polinom | |
 x | neodvisna spremenljivka | |
 a | koeficient pred oklepaji (vodilni koeficient) | |
@@ -384,4 +428,7 @@ c | ničla polinoma | p(c) = 0 |
 k | stopnja ničle $c$ | | | eksponent faktorja $(x - c)^k$
 v | odmik gladine od običajne višine | | cm
 d | čas od začetka merjenja | | dan
+C | koncentracija zdravila v krvi | C(t) = t\,(t - 6)^2 | mg/l | model iz primera 4, $0 \le t \le 6$
+a_3, a_2, a_1, a_0 | koeficienti modela | | | določimo jih iz meritev
+t_i, C_i | čas in koncentracija pri $i$-ti meritvi | | |
 :::

@@ -67,6 +67,19 @@ Osemkrat, ker je v prostornini $r^3$ in $2^3 = 8$. Zrno s premerom $4\,\text{cm}
 
 Pri piramidi in stožcu primerjava velja le pri isti osnovni ploskvi in isti višini. Kroglo primerjamo z valjem, ki ima enak polmer in višino $v = 2r$.
 
+**8. Koti v telesih.** Naloga pogosto ne da višine, ampak kot, na primer naklon strehe. Takrat v telesu poiščemo pravokotni trikotnik in uporabimo kotne funkcije. Kot med premico in ravnino poznaš iz lekcije o premicah in ravninah v prostoru: je kot med premico in njeno pravokotno projekcijo.
+
+Pri pravilni štiristrani piramidi z osnovnim robom $a$ pade višina $v$ v središče kvadrata. Od tam vodita po osnovni ploskvi dve pomembni daljici: do sredine roba in do oglišča. Vsaka je kateta pravokotnega trikotnika, katerega druga kateta je $v$:
+
+| kateta v osnovni ploskvi | hipotenuza | kot ob osnovni ploskvi |
+|---|---|---|
+| $\frac{a}{2}$ (do sredine roba) | $v_s$ | $\alpha$: naklon stranske ploskve |
+| $\frac{a\sqrt{2}}{2}$ (do oglišča) | stranski rob $l$ | $\varphi$: naklon stranskega roba |
+
+Naklon stranske ploskve je kot med dvema ravninama. Merimo ga med daljicama, ki sta obe pravokotni na skupni osnovni rob: v osnovni ploskvi je to $\frac{a}{2}$, v stranski ploskvi $v_s$. Zato v njem nastopa $v_s$, ne stranski rob. Iz tabele preberemo $\tan\alpha = \frac{2v}{a}$ in $\tan\varphi = \frac{2v}{a\sqrt{2}}$. Ker je polovica diagonale daljša od polovice roba, je stranski rob vedno položnejši od stranske ploskve: $\varphi < \alpha$.
+
+Pri stožcu je osni presek enakokraki trikotnik s krakoma $s$ in osnovnico $2r$. Stranica oklepa z osnovno ploskvijo kot $\alpha$, za katerega velja $\cos\alpha = \frac{r}{s}$ in $\tan\alpha = \frac{v}{r}$. Kot ob vrhu osnega preseka meri $180^\circ - 2\alpha$.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): pravilna štiristrana piramida
@@ -162,6 +175,28 @@ Koliko je $v$?
 $v = \dfrac{500}{201{,}1} \approx 2{,}49\,\text{cm} \approx 25\,\text{mm}$. Padlo je okoli $25\,\text{mm}$ dežja. Voda v pokončnem valju stoji enako visoko kot plast dežja na ravnih tleh, zato dež merimo v milimetrih.
 :::
 
+### Primer 5: streha stolpa
+
+Stolp ima kvadratni tloris z robom $a = 8\,\text{m}$. Streha je pravilna štiristrana piramida, njene stranske ploskve so nagnjene proti vodoravni ravnini za $60^\circ$. Kako visoka je streha, koliko kritine potrebujemo in pod kolikšnim kotom so nagnjeni stranski robovi strehe?
+
+**Podatki:** osnovni rob $a = 8\,\text{m}$, naklon stranske ploskve $\alpha = 60^\circ$
+**Iščemo:** višino $v$, ploščino plašča $S_p$, naklon stranskega roba $\varphi$
+
+:::formula
+$\tan\alpha = \dfrac{v}{a/2}$, $\cos\alpha = \dfrac{a/2}{v_s}$, $S_p = 4 \cdot \dfrac{a \cdot v_s}{2}$, $\tan\varphi = \dfrac{v}{a\sqrt{2}/2}$
+:::
+
+**Rešitev:**
+
+1. **Skica.** Višina $v$, polovica roba $\frac{a}{2} = 4\,\text{m}$ in višina stranske ploskve $v_s$ tvorijo pravokotni trikotnik. Kot $60^\circ$ leži ob kateti $\frac{a}{2}$.
+2. **Višina:** $v = \dfrac{a}{2} \cdot \tan 60^\circ = 4\sqrt{3} \approx 6{,}93\,\text{m}$, ker je $v$ nasprotna kateta kota.
+3. **Višina stranske ploskve:** $v_s = \dfrac{a/2}{\cos 60^\circ} = \dfrac{4}{0{,}5} = 8\,\text{m}$, ker je $v_s$ hipotenuza.
+4. **Kritina** pokrije plašč (dna strehe ne pokrivamo): $S_p = 4 \cdot \dfrac{8 \cdot 8}{2} = 128\,\text{m}^2$.
+5. **Stranski rob** se projicira na polovico diagonale kvadrata: $\dfrac{a\sqrt{2}}{2} = 4\sqrt{2} \approx 5{,}66\,\text{m}$. Zato je $\tan\varphi = \dfrac{4\sqrt{3}}{4\sqrt{2}} \approx 1{,}2247$ in $\varphi \approx 50{,}8^\circ$.
+6. Odgovor: streha je visoka približno $6{,}93\,\text{m}$, potrebujemo $128\,\text{m}^2$ kritine, stranski robovi so nagnjeni za približno $50{,}8^\circ$.
+
+Opazi: rob je položnejši od ploskve ($50{,}8^\circ < 60^\circ$), ker je njegova projekcija daljša.
+
 ## Pogoste napake
 
 - **Pozabljen faktor $\frac13$.** Učenec za stožec z $r = 3\,\text{cm}$, $v = 4\,\text{cm}$ računa $\pi \cdot 9 \cdot 4 = 36\pi$, kot pri valju. To je prostornina valja, stožec pa se proti vrhu oži in zavzame le tretjino. Popravek: pri piramidi in stožcu deli s $3$.
@@ -179,6 +214,7 @@ $v = \dfrac{500}{201{,}1} \approx 2{,}49\,\text{cm} \approx 25\,\text{mm}$. Padl
 - Stožec: $P = \pi r(r+s)$, $V = \dfrac{\pi r^2 v}{3}$, $s = \sqrt{r^2+v^2}$.
 - Krogla: $P = 4\pi r^2$, $V = \dfrac{4\pi r^3}{3}$.
 - Pri sestavljenih telesih računaj posebej vsak del in pazi, katere ploskve so res zunaj.
+- Kote v telesih računaš v pravokotnih trikotnikih z višino: naklon stranske ploskve s $\frac{a}{2}$ in $v_s$, naklon stranskega roba s polovico diagonale, naklon stranice stožca z $r$ in $s$.
 
 ## Za maturo
 
@@ -351,6 +387,12 @@ Krogla je dvakrat tolikšna: $V = \dfrac{4\pi r^3}{3}$.
 ~ To je prostornina $\frac{\pi \cdot 25 \cdot 12}{3}$, ne površina. Površina je v $\text{cm}^2$ in se računa s ploščinami.
 > Stranica je $s = \sqrt{25 + 144} = 13\,\text{cm}$. Potem $P = \pi r^2 + \pi r s = 25\pi + 65\pi = 90\pi$. Odgovor $85\pi$ uporabi $v$ namesto $s$, $65\pi$ je samo plašč, $100\pi$ pa je prostornina.
 
+? (brez računala) Stožec ima polmer osnovne ploskve $5\,\text{cm}$ in stranico $10\,\text{cm}$. Kolikšen kot (v stopinjah) oklepa stranica z ravnino osnovne ploskve?
+= 60 | 0,5
+~ 30 | To je kot med stranico in višino ob vrhu. Polmer $5$ je priležna kateta kota ob osnovni ploskvi, zato velja $\cos\alpha = \frac{5}{10}$.
+~ 63,4 | Uporabil si $\tan\alpha = \frac{10}{5}$, a stranica $10$ je hipotenuza, ne kateta. S stranico in polmerom računaš kosinus.
+> V osnem preseku je polmer priležna kateta, stranica hipotenuza: $\cos\alpha = \frac{5}{10} = \frac{1}{2}$, zato $\alpha = 60^\circ$.
+
 <<RACUN
 vrednost: 27^(1/3) | 3
 vrednost: 2*pi*3^3 | 54*pi
@@ -370,6 +412,13 @@ resi: 10*x=6*(8-x) | x | 3
 vrednost: 4*pi*3^3/3 | 36*pi
 vrednost: (36*pi)/(96*pi) | 3/8
 vrednost: 48/16 | 3
+vrednost: 4*tan(60°) | 6.93
+vrednost: 4/cos(60°) | 8
+vrednost: 4*8*8/2 | 128
+vrednost: 8*sqrt(2)/2 | 4*sqrt(2)
+vrednost: (4*sqrt(3))/(4*sqrt(2)) | 1.2247
+vrednost: atan(sqrt(3)/sqrt(2))*180/pi | 50.8
+vrednost: acos(5/10)*180/pi | 60
 >>
 
 :::simboli
@@ -383,5 +432,8 @@ V | prostornina telesa | | |
 v | višina telesa | | |
 r | polmer (osnovne ploskve ali krogle) | | |
 s | stranica stožca | s = \sqrt{r^2 + v^2} | |
+\alpha | naklon stranske ploskve piramide ali stranice stožca proti osnovni ploskvi | | ° | pri stožcu $\cos\alpha = \frac{r}{s}$
+\varphi | naklon stranskega roba piramide proti osnovni ploskvi | | ° |
+l | stranski rob piramide | | |
 V_{\text{polkrogle}} | prostornina polkrogle | V_{\text{polkrogle}} = \frac{2\pi r^3}{3} | | valj minus stožec z višino r
 :::

@@ -119,7 +119,25 @@ Katero stožnico skriva splošna enačba, pove že pogled na kvadrate:
 
 Po dopolnjevanju mora biti pri elipsi desna stran pozitivna, sicer krivulje ni, tako kot pri krožnici.
 
-**5. Tangenta v točki stožnice (višja raven).** Za točko $T_1(x_1, y_1)$, ki **leži** na stožnici, je pravilo kratko: v vsakem kvadratu en faktor zamenjaj s koordinato točke. Pri elipsi je enačba tangente
+**5. Presečišča s premico.** Skupne točke stožnice in premice iščeš enako kot pri krožnici: rešiš sistem obeh enačb. Iz enačbe premice izraziš eno spremenljivko in jo vstaviš v enačbo stožnice. Pri elipsi dobiš kvadratno enačbo. Dve rešitvi dasta dve presečišči. Če realnih rešitev ni, premica elipse ne seka.
+
+Primer: elipsa $\frac{x^2}{100} + \frac{y^2}{25} = 1$ in premica $y = \frac12 x + 1$. Enačbo elipse pomnožimo s $100$: $x^2 + 4y^2 = 100$. Vstavimo $y$: $x^2 + 4\left(\frac14 x^2 + x + 1\right) = 100$, torej $2x^2 + 4x - 96 = 0$ oziroma $x^2 + 2x - 48 = 0$. Diskriminanta je $4 + 192 = 196 = 14^2$, zato $x = \frac{-2 \pm 14}{2}$: $x = 6$ ali $x = -8$. Ordinati dobimo iz enačbe premice, $y = 4$ in $y = -3$. Presečišči sta $P_1(6, 4)$ in $P_2(-8, -3)$. Preizkus za $P_1$: $\frac{36}{100} + \frac{16}{25} = 0{,}36 + 0{,}64 = 1$.
+
+:::risba graf
+opis: Elipsa s središčem v izhodišču, polosjo 10 vzdolž osi x in 5 vzdolž osi y. Oranžna premica y = x/2 + 1 jo seka v točkah P₁(6, 4) in P₂(−8, −3).
+x: -11 .. 11 | 1 | x
+y: -6 .. 7 | 1 | y
+enako: da
+f: 5*sqrt(1 - x^2/100) | modra debelo | -10 .. 10
+f: -5*sqrt(1 - x^2/100) | modra debelo | -10 .. 10
+f: x/2 + 1 | oranžna | -11 .. 11
+točka: 6; 4 | P_1 | nad
+točka: -8; -3 | P_2 | pod
+:::
+
+Grafično presečišči odčitaš s skice. Skica tudi pove, koliko rešitev mora dati račun. Pri hiperboli in paraboli je postopek enak. Le pri premici, vzporedni z asimptoto hiperbole ali z osjo parabole, je enačba linearna in da eno samo presečišče.
+
+**6. Tangenta v točki stožnice (višja raven).** Za točko $T_1(x_1, y_1)$, ki **leži** na stožnici, je pravilo kratko: v vsakem kvadratu en faktor zamenjaj s koordinato točke. Pri elipsi je enačba tangente
 
 $$\frac{(x_1 - x_0)(x - x_0)}{a^2} + \frac{(y_1 - y_0)(y - y_0)}{b^2} = 1$$
 
@@ -129,7 +147,7 @@ $$(y_1 - y_0)(y - y_0) = p\big((x - x_0) + (x_1 - x_0)\big)$$
 
 Pri stožnici s središčem oziroma temenom v izhodišču se pravilo skrči: tangenta elipse je $\frac{x_1 x}{a^2} + \frac{y_1 y}{b^2} = 1$, hiperbole $\frac{x_1 x}{a^2} - \frac{y_1 y}{b^2} = 1$, parabole $y^2 = 2px$ pa $y_1 y = p(x + x_1)$.
 
-**6. Tangenta z diskriminanto (višja raven).** Kadar poznaš smer tangente ali točko zunaj stožnice, uporabi isti postopek kot pri krožnici. Premico $y = kx + n$ vstaviš v enačbo stožnice in dobiš kvadratno enačbo za $x$. Diskriminanta pove lego: $D > 0$ sekanta, $D = 0$ tangenta, $D < 0$ mimobežnica. Za stožnice s središčem oziroma temenom v izhodišču ta račun vedno da pogoj tangentnosti: pri elipsi $a^2k^2 + b^2 = n^2$, pri hiperboli $a^2k^2 - b^2 = n^2$, pri paraboli $y^2 = 2px$ pogoj $p = 2kn$.
+**7. Tangenta z diskriminanto (višja raven).** Kadar poznaš smer tangente ali točko zunaj stožnice, uporabi isti postopek kot pri krožnici. Premico $y = kx + n$ vstaviš v enačbo stožnice in dobiš kvadratno enačbo za $x$. Diskriminanta pove lego: $D > 0$ sekanta, $D = 0$ tangenta, $D < 0$ mimobežnica. Za stožnice s središčem oziroma temenom v izhodišču ta račun vedno da pogoj tangentnosti: pri elipsi $a^2k^2 + b^2 = n^2$, pri hiperboli $a^2k^2 - b^2 = n^2$, pri paraboli $y^2 = 2px$ pogoj $p = 2kn$.
 
 :::premisli
 Premica, vzporedna asimptoti hiperbole, seka hiperbolo v natanko eni točki. Zakaj kljub temu ni tangenta?
@@ -252,6 +270,7 @@ $0{,}2x - 0{,}4 + 0{,}4y + 1{,}2 = 1$, torej $0{,}2x + 0{,}4y = 0{,}2$ in po mno
 - (višja raven) Elipsa nastane iz krožnice $x^2 + y^2 = a^2$ z raztegom vzdolž osi $y$ s faktorjem $\frac{b}{a}$.
 - (višja raven) Hiperbola: $\frac{(x - x_0)^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1$, asimptoti $y - y_0 = \pm\frac{b}{a}(x - x_0)$, $e = \sqrt{a^2 + b^2}$.
 - (višja raven) Parabola: $(y - y_0)^2 = 2p(x - x_0)$, gorišče $\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$.
+- Presečišča stožnice s premico: eno spremenljivko iz premice vstaviš v enačbo stožnice; vsaka rešitev da eno presečišče.
 - (višja raven) Tangenta v točki stožnice: en faktor vsakega kvadrata zamenjaš s koordinato točke. Tangenta z dano smerjo ali skozi zunanjo točko: vstaviš $y = kx + n$ in zahtevaš $D = 0$.
 
 ## Za maturo
@@ -388,6 +407,12 @@ točka: 0; 3
 ~ -22 | Pri prenosu na desno si obdržal predznaka: $-9$ in $-4$ na levi postaneta $+9$ in $+4$ na desni.
 > $(x^2 - 6x) + 4(y^2 + 2y) = -9$, nato $(x - 3)^2 - 9 + 4(y + 1)^2 - 4 = -9$, torej $c = -9 + 9 + 4 = 4$. Po deljenju s $4$: $\frac{(x - 3)^2}{4} + (y + 1)^2 = 1$, elipsa s središčem $(3, -1)$.
 
+? Premica $x - 2y = 6$ seka elipso $x^2 + 4y^2 = 20$ v dveh točkah. Vpiši absciso tistega presečišča, ki je bližje osi $y$ (brez računala).
+= 2
+~ 4 | To je abscisa presečišča $(4, -1)$, ki je od osi $y$ dlje.
+~ -2 | To je ordinata presečišča $(2, -2)$, ne abscisa.
+> Iz premice $x = 2y + 6$. Vstavimo: $(2y + 6)^2 + 4y^2 = 20$, torej $8y^2 + 24y + 16 = 0$ oziroma $y^2 + 3y + 2 = 0$. Rešitvi $y = -1$ in $y = -2$ dasta $x = 4$ in $x = 2$. Presečišči sta $(4, -1)$ in $(2, -2)$; bližje osi $y$ je $(2, -2)$.
+
 ? (višja raven) Premica $y = x + n$ je tangenta parabole $(y - 1)^2 = 4(x + 2)$. Vpiši $n$.
 = 4
 ~ 3 | Premica skozi teme $(-2, 1)$ ni tangenta: parabolo seka še v eni točki.
@@ -436,6 +461,19 @@ enako: (38-6*n)^2 - 4*((n-1)^2 - 24) | 32*(n-6)*(n-8)
 resi: x^2 + 10*x + 25 = 0 | x | -5
 vrednost: 8*(-5+2)^2 - (-7-1)^2 | 8
 enako: (x^2/a^2 - ((b/a)*x + 1)^2/b^2) | -2*x/(a*b) - 1/b^2
+enako: x^2 + 4*(x/2 + 1)^2 - 100 | 2*(x^2 + 2*x - 48)
+vrednost: 2^2 + 4*48 | 196
+resi: x^2 + 2*x - 48 = 0 | x | -8, 6
+vrednost: 6/2 + 1 | 4
+vrednost: -8/2 + 1 | -3
+vrednost: 36/100 + 16/25 | 1
+vrednost: (-8)^2/100 + (-3)^2/25 | 1
+enako: (2*y + 6)^2 + 4*y^2 - 20 | 8*(y^2 + 3*y + 2)
+resi: y^2 + 3*y + 2 = 0 | y | -2, -1
+vrednost: 2*(-2) + 6 | 2
+vrednost: 2*(-1) + 6 | 4
+vrednost: 2^2 + 4*(-2)^2 | 20
+vrednost: 4^2 + 4*(-1)^2 | 20
 >>
 
 :::simboli
@@ -455,4 +493,5 @@ r | polmer krožnice | |
 F, F_1, F_2 | gorišče; gorišči | |
 S | središče | |
 T, T_1 | teme parabole; dotikališče | |
+P_1, P_2 | presečišči premice in elipse | | | v bloku 5 $P_1(6, 4)$ in $P_2(-8, -3)$
 :::
