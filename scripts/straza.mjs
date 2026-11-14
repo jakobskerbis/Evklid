@@ -27,6 +27,10 @@ export const PREIZKUSI = [
       const j = await r.json();
       if (!j.razlicica || !j.id) throw new Error("manjka različica ali id");
       if (j.kopije?.napaka) throw new Error("varnostna kopija baze javlja napako");
+      // Točka D4: opozorilo, ko je bil pomnilnik v zadnjih 15 minutah nad 85 % meje (Render ob meji proces ubije).
+      const pm = j.pomnilnik;
+      if (pm && pm.najvecDelez15min > (pm.opozorilo ?? 85))
+        throw new Error(`pomnilnik ${pm.najvecDelez15min} % meje ${pm.mejaMb} MB v zadnjih 15 min (opozorilo nad ${pm.opozorilo ?? 85} %; zdaj ${pm.rssMb} MB)`);
     },
   },
   { ime: "Domača stran", pot: "/", preveri: async (r) => { const t = await r.text(); if (!t.includes("<title>" + brand.name) || !t.includes("zagon.js")) throw new Error("manjka naslov ali zagonski skript"); } },
