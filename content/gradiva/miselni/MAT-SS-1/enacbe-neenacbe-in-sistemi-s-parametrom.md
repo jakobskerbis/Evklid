@@ -14,8 +14,8 @@ stanje: osnutek
   - ne deli z izrazom, ki je $0$
 - Enačba $ax = b$
   - $a \neq 0$: ena rešitev
-  - $0 = b \neq 0$: ni rešitve
-  - $0 = 0$: vsa realna števila
+  - $a = 0$, $b \neq 0$: ni rešitve
+  - $a = 0$, $b = 0$: vsa realna števila
 - Sistem s parametrom
   - prevedi na enačbo $Ax = B$
   - ena, nobena ali neskončno rešitev

@@ -23,7 +23,7 @@ Recimo, da se količina vsako uro zmanjša za $2\,\text{mg}$, torej $a = -2$. Do
 
 Pri $a = 3$ (dovajanje prevlada) je $3t \ge -8$, torej $t \ge -\dfrac{8}{3}$. To velja za vsak $t \ge 0$: zdravilo deluje ves čas. Pri $a = 0$ dobimo $0 \cdot t \ge -8$, kar prav tako velja vedno.
 
-Ista neenačba je dala tri različne vrste odgovorov. Odločil je predznak števila $a$.
+Ista neenačba je zahtevala tri različne korake: deljenje z obratom znaka, deljenje brez obrata in neenačbo, v kateri $t$ sploh ni. Odločil je predznak števila $a$.
 
 **2. Splošno: neenačba $ax > b$.** Črka $a$ je zdaj parameter. Deliti smemo le z $a \neq 0$, pri negativnem $a$ pa se znak obrne:
 
@@ -88,7 +88,7 @@ Ko enačbe sistema združimo v eno enačbo $Ax = B$ (tu $A = -(m-2)(m+1)$, $B = 
 | neskončno | sovpadata | $A = 0$, $B = 0$ |
 
 :::premisli
-Pri katerih dveh vrednostih $m$ imata premici sistema enak smerni koeficient? Napovej, kaj se zgodi z rešitvijo pri vsaki.
+Posebni vrednosti $m = 2$ in $m = -1$ bi lahko našel brez izenačevanja, le s pogledom na enačbi sistema. Kako? In kako potem ločiš, ali premici sovpadata ali sta vzporedni?
 ---
 Smerna koeficienta sta $m$ in $m^2 - 2$; enaka sta, ko je $m^2 - m - 2 = 0$, torej pri $m = 2$ in $m = -1$. Pri $m = 2$ sta tudi začetni vrednosti enaki ($1$ in $1$), premici sovpadata in rešitev je neskončno. Pri $m = -1$ sta začetni vrednosti $1$ in $-2$, premici sta vzporedni in rešitve ni.
 :::
@@ -156,7 +156,7 @@ zamenjava: iz prve enačbe $x = 2 - my$, vstavi v drugo; dobiš enačbo $Ay = B$
 3. Razstavimo: $(2 - m)(2 + m)y = 2(2 - m)$.
 4. Za $m \neq \pm 2$: $y = \dfrac{2}{m+2}$ in $x = 2 - \dfrac{2m}{m+2} = \dfrac{4}{m+2}$.
 5. Za $m = 2$: $0 \cdot y = 0$. Druga enačba $2x + 4y = 4$ je dvakratnik prve: premici sovpadata, rešitev je neskončno.
-6. Za $m = -2$: $0 \cdot y = 8$. Enačbi sta $x - 2y = 2$ in $x - 2y = -2$: vzporedni premici, rešitve ni.
+6. Za $m = -2$: $0 \cdot y = 8$. Enačbi sta $x - 2y = 2$ in $-2x + 4y = 4$, kar je po deljenju z $-2$ enako $x - 2y = -2$: vzporedni premici, rešitve ni.
 7. Preizkus pri $m = 0$: sistem $x = 2$, $4y = 4$ ima rešitev $(2, 1)$, formula da $\left(\dfrac{4}{2}, \dfrac{2}{2}\right) = (2, 1)$.
 8. Odgovor: za $m \neq \pm 2$ je ena rešitev $\left(\dfrac{4}{m+2}, \dfrac{2}{m+2}\right)$; za $m = 2$ jih je neskončno, za $m = -2$ ni nobene.
 
@@ -201,7 +201,7 @@ Za $a > 0$ delimo s pozitivnim številom in znak ostane: $t \le \dfrac{15}{a}$. 
 
 ## Drugače: Z analogijo
 
-**Podzemna garaža.** Nadstropje $3$ je višje od nadstropja $1$. Pod zemljo pa je $-3$ globlje od $-1$. Množenje z negativnim številom »prezrcali« števila čez $0$ in vrstni red se obrne. Zato se pri deljenju z negativnim parametrom obrne znak neenačbe. Pri parametru ne vemo vnaprej, ali smo nad zemljo ali pod njo, zato pogledamo oba primera.
+**Podzemna garaža.** Nadstropje $3$ je višje od nadstropja $1$. Pod zemljo pa je $-3$ globlje od $-1$. Množenje z $-1$ »prezrcali« nadstropji $1$ in $3$ čez $0$ v $-1$ in $-3$ in vrstni red se obrne. Zato se pri deljenju z negativnim parametrom obrne znak neenačbe. Pri parametru ne vemo vnaprej, ali smo nad zemljo ali pod njo, zato pogledamo oba primera.
 
 **Dve planinski poti.** Dve ravni poti se lahko križata v eni točki, tečeta vzporedno in se nikoli ne srečata ali pa sta ena in ista pot. Parameter je kot vremenska ujma, ki eno pot premakne ali zasuče. Za večino vrednosti se poti še vedno križata. Le pri posebnih vrednostih postaneta vzporedni ali se prekrijeta.
 
@@ -213,7 +213,7 @@ $$a_1 b_2 = a_2 b_1$$
 
 Pri $b_1 \neq 0$ in $b_2 \neq 0$ je to isto kot $-\dfrac{a_1}{b_1} = -\dfrac{a_2}{b_2}$, torej enaka smerna koeficienta; pogoj pa zajame tudi navpične premice. V Primeru 3 je $a_1 = 1$, $b_1 = m$, $a_2 = m$, $b_2 = 4$, pogoj $4 = m^2$ pa da ravno $m = \pm 2$. Ali sta premici vzporedni ali isti, nato pove še prosti člen. Številu $a_1 b_2 - a_2 b_1$ boš kasneje rekel determinanta sistema.
 
-Pri neenačbi je razlog za obrat znaka tale: če je $a < 0$ in $ax > b$, potem pomnožimo z negativnim številom $\dfrac{1}{a}$, to pa obrne vrstni red vseh števil na številski premici.
+Pri neenačbi je razlog za obrat znaka tale: če je $a < 0$, neenačbo $ax > b$ pomnožimo z negativnim številom $\dfrac{1}{a}$, to pa obrne vrstni red vseh števil na številski premici.
 
 ## Preveri se
 
@@ -227,7 +227,7 @@ Pri neenačbi je razlog za obrat znaka tale: če je $a < 0$ in $ax > b$, potem p
 ~ Pomnožiš z $-3$ in obrneš znak: $x < -3$.
 > Prve tri imajo rešitev $x < -3$. Pri $-2x < 6$ deljenje z $-2$ obrne znak in da $x > -3$.
 
-? Na sliki sta premici sistema $y = mx + 1$ in $y = -2x + 3$ pri $m = 0$. Parameter $m$ spreminja le naklon modre premice. Za kateri $m$ sistem nima rešitve?
+? Na sliki sta premici sistema $y = mx + 1$ in $y = -2x + 3$ pri $m = 0$. Parameter $m$ spreminja le naklon modre polne premice $y = mx + 1$. Za kateri $m$ sistem nima rešitve?
 :::risba graf
 opis: Modra vodoravna premica y = 1 (sistem pri m = 0) in oranžna črtkana padajoča premica y = −2x + 3. Sekata se v točki (1, 1).
 x: -2 .. 4 | 1 | x
@@ -299,8 +299,8 @@ neenacba: -x/3>1 | x | (-oo, -3)
 >>
 
 :::simboli
-a | koeficient pri $x$ (odvisen od parametra) | | | 
-b | desna stran neenačbe | | | 
+a | koeficient pri neznanki (v Primeru 2 sam parameter, pri zdravilu sprememba v $\text{mg}$ na uro) | | | njegov predznak odloči, ali se znak obrne
+b | desna stran enačbe ali neenačbe | | | 
 x | neznanka | | | 
 t | čas od začetka opazovanja | | h | 
 y | druga neznanka sistema | | | 

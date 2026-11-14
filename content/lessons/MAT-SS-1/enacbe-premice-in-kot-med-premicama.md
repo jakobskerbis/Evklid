@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na poti na počitnice ob cesti stoji znak »vzpon 12 %«. To pomeni, da se cesta na $100\,\text{m}$ vodoravne razdalje dvigne za $12\,\text{m}$. Doma je klančina v garažo, ki se na $4\,\text{m}$ dvigne za $60\,\text{cm}$. Katera je bolj strma? In koliko stopinj je to, če bi strmino meril s kotomerom?
+Na poti na počitnice ob cesti stoji znak »vzpon 12 %«. To pomeni, da se cesta na $100\,\text{m}$ vodoravne razdalje dvigne za $12\,\text{m}$. Doma je klančina v garažo, ki se na $4\,\text{m}$ vodoravne razdalje dvigne za $60\,\text{cm}$. Katera je bolj strma? In koliko stopinj je to, če bi strmino meril s kotomerom?
 
 Enaka vprašanja si zastavlja tesar, ko riše ostrešje, ali mizar, ko pritrdi poševno oporo pod polico. Na načrtu v koordinatnem sistemu je vsaka letev del **premice**. Premico lahko zapišemo z več enačbami. Vsaka hitro pove nekaj drugega: naklon, presečišči z osema ali točko, skozi katero gre. Iz enačb potem izračunamo tudi kot med dvema letvama.
 
@@ -43,7 +43,7 @@ To je **odsekovna oblika**: $m$ je odsek na osi $x$, $n$ odsek na osi $y$. Na de
 
 $$y - y_1 = k(x - x_1)$$
 
-Za točko $T$ je leva stran $0$ in desna tudi, zato premica res gre skozi $T$. Pri dveh točkah najprej izračunaš $k = \dfrac{y_2 - y_1}{x_2 - x_1}$, nato uporabiš eno od točk. Če je $x_1 = x_2$, je premica navpična: $x = x_1$.
+Če vstaviš točko $T$ ($x = x_1$, $y = y_1$), je leva stran $0$ in desna tudi, zato premica res gre skozi $T$. Pri dveh točkah najprej izračunaš $k = \dfrac{y_2 - y_1}{x_2 - x_1}$, nato uporabiš eno od točk. Če je $x_1 = x_2$, je premica navpična: $x = x_1$.
 
 *Hitri preizkus:* katera premica gre skozi $T(1, 4)$ in ima $k = 3$? ($y - 4 = 3(x - 1)$, torej $y = 3x + 1$.)
 
@@ -55,7 +55,7 @@ Pravokotni premici pa imata smerna koeficienta, katerih produkt je $-1$:
 
 $$k_1 \cdot k_2 = -1$$
 
-Premica $y = 2x$ je torej pravokotna na $y = -\dfrac{1}{2}x + 4$, ker je $2 \cdot \left(-\dfrac{1}{2}\right) = -1$. Izjema: navpična premica $x = a$ je pravokotna na vsako vodoravno premico $y = n$.
+Premica $y = 2x$ je torej pravokotna na $y = -\dfrac{1}{2}x + 4$, ker je $2 \cdot \left(-\dfrac{1}{2}\right) = -1$. Izjema: navpična premica $x = \text{konst.}$ je pravokotna na vsako vodoravno premico $y = n$.
 
 :::premisli
 Premica ima $k = 3$. Napovej smerni koeficient pravokotnice nanjo, preden pogledaš. Zakaj ni $-3$?
@@ -80,13 +80,13 @@ napis: 4; 1,5 | 3 | desno
 napis: 0,9; 0,3 | α | desno
 :::
 
-Razmerje nasprotne katete (dvig) in priležne katete (pomik) imenujemo **tangens** kota: $\tan\alpha = \dfrac{3}{4}$. To razmerje je ravno smerni koeficient:
+Kateto nasproti kota $\alpha$ (dvig) delimo s kateto ob kotu $\alpha$ (pomik). To razmerje imenujemo **tangens** kota: $\tan\alpha = \dfrac{3}{4}$. Pri večjem trikotniku z enakim kotom se obe kateti povečata v istem razmerju, zato je tangens odvisen le od kota. In to razmerje je ravno smerni koeficient:
 
 $$k = \tan\alpha$$
 
-Kot iz $k$ dobiš na računalu s tipko $\tan^{-1}$ (pogosto SHIFT in tan). Računalo mora biti nastavljeno na stopinje (DEG). Tu: $\alpha = \tan^{-1} 0{,}75 \approx 36{,}87^\circ$. Pri $k < 0$ računalo vrne negativen kot; naklonski kot je takrat $180^\circ$ minus kot, ki ga dobiš za $|k|$.
+Kot iz $k$ dobiš na računalu s tipko $\tan^{-1}$ (pogosto SHIFT in tan). Računalo mora biti nastavljeno na stopinje (DEG). Tu: $\alpha = \tan^{-1} 0{,}75 \approx 36{,}87^\circ$. Pri $k < 0$ računalo vrne negativen kot; naklonski kot je takrat $180^\circ$ minus kot, ki ga dobiš za $|k|$ (npr. pri $k = -1$ je $\alpha = 180^\circ - 45^\circ = 135^\circ$).
 
-Nekaj vrednosti velja zapomniti (dobimo jih iz enakokrakega pravokotnega trikotnika in iz polovice enakostraničnega trikotnika):
+Nekaj vrednosti velja zapomniti (dobimo jih iz enakokrakega pravokotnega trikotnika in iz polovice enakostraničnega trikotnika). Pri $k = 1$ sta dvig in pomik enaka, trikotnik je enakokrak in zato $\alpha = 45^\circ$:
 
 | $k$ | $\alpha$ |
 |---|---|
@@ -116,7 +116,7 @@ Zakaj je v formuli za $\tan\varphi$ absolutna vrednost? Kaj bi dobil brez nje, �
 Brez nje bi zamenjava $k_1$ in $k_2$ spremenila predznak ulomka, kot pa je med premicama vedno isti. Absolutna vrednost poskrbi, da dobimo pozitiven tangens, torej oster kot med $0^\circ$ in $90^\circ$.
 :::
 
-V simulaciji spodaj (»Premica skozi dve točki«) premikaj eno od točk tako, da sta točki na isti navpičnici. Opazi, da smerni koeficient izgine in enačba postane oblike $x = a$.
+V simulaciji spodaj (»Premica skozi dve točki«) premikaj eno od točk tako, da sta točki na isti navpičnici. Opazi, da smerni koeficient izgine in enačba postane oblike $x = \text{konst.}$
 
 ## Rešeni primeri
 
@@ -176,7 +176,7 @@ $\tan\varphi = \left|\dfrac{k_2 - k_1}{1 + k_1 k_2}\right|$, $k = \tan\alpha$
 2. Desna strešina: $k_2 = \dfrac{0 - 3}{10 - 4} = -0{,}5$; skozi $S$: $y - 3 = -0{,}5(x - 4)$, torej $y = -0{,}5x + 5$.
 3. $\tan\varphi = \left|\dfrac{-0{,}5 - 0{,}75}{1 + 0{,}75 \cdot (-0{,}5)}\right| = \dfrac{1{,}25}{0{,}625} = 2$, zato $\varphi \approx 63{,}43^\circ$.
 4. Formula da oster kot. Pri slemenu pa je streha »odprta« navzdol in kot je top: sokot, $180^\circ - 63{,}43^\circ = 116{,}57^\circ$.
-5. Preizkus z naklonskima kotoma: $\alpha_1 = \tan^{-1} 0{,}75 \approx 36{,}87^\circ$, desna strešina pada pod kotom $\tan^{-1} 0{,}5 \approx 26{,}57^\circ$, in $180^\circ - 36{,}87^\circ - 26{,}57^\circ = 116{,}56^\circ$ (razlika v zadnji decimalki je zaradi zaokroževanja).
+5. Preizkus z naklonskima kotoma: $\alpha_1 = \tan^{-1} 0{,}75 \approx 36{,}87^\circ$, desna strešina pada pod kotom $\tan^{-1} 0{,}5 \approx 26{,}57^\circ$; to sta kota trikotnika ob tleh, zato je po vsoti kotov v trikotniku kot pri slemenu $180^\circ - 36{,}87^\circ - 26{,}57^\circ = 116{,}56^\circ$ (razlika v zadnji decimalki je zaradi zaokroževanja).
 6. Odgovor: strešini ležita na $y = 0{,}75x$ in $y = -0{,}5x + 5$; kot med premicama je približno $63{,}43^\circ$, pri slemenu pa strešini oklepata približno $116{,}57^\circ$.
 
 ### Primer 4: zdaj ti
@@ -207,7 +207,7 @@ $\alpha = \tan^{-1} \dfrac{4}{3} \approx 53{,}13^\circ$, zato $\varphi = 90^\cir
 - **Smerni koeficient iz splošne oblike brez minusa.** »Pri $3x - 4y + 12 = 0$ je $k = 3$.« Število ob $x$ je $a$, ne $k$; $y$ še ni izražen. Popravek: izrazi $y$ ali uporabi $k = -\dfrac{a}{b}$; tu $k = \dfrac{3}{4}$.
 - **Odsekovna oblika brez deljenja.** »$2x + 3y = 6$ je $\dfrac{x}{2} + \dfrac{y}{3} = 1$.« Koeficienta nista odseka. Odseka dobiš z vstavljanjem $y = 0$ in $x = 0$ ali z deljenjem z desno stranjo: $\dfrac{x}{3} + \dfrac{y}{2} = 1$.
 - **Pravokotnica z napačnim $k$.** »Pravokotnica na $k = 2$ ima $k = -2$« (ali $\dfrac{1}{2}$). Popravek: vzemi obratno vrednost in spremeni predznak, $k_2 = -\dfrac{1}{k_1}$; preveri, da je $k_1 k_2 = -1$.
-- **Računalo v radianih ali obrnjeno razmerje.** $\tan^{-1} 0{,}08$ v načinu RAD da $0{,}08$, ne $4{,}57^\circ$. Kdor deli pomik z dvigom, dobi sokot do $90^\circ$. Popravek: način DEG, $k$ je vedno dvig deljeno s pomikom.
+- **Računalo v radianih ali obrnjeno razmerje.** $\tan^{-1} 0{,}08$ v načinu RAD da $0{,}08$, ne $4{,}57^\circ$. Kdor deli pomik z dvigom, dobi kot, ki pravega dopolni do $90^\circ$. Popravek: način DEG, $k$ je vedno dvig deljeno s pomikom.
 - **Kot med premicama kot vsota ali prevelika razlika.** Naklonskih kotov ne seštevamo, razlika nad $90^\circ$ pa še ni kot med premicama. Popravek: vzemi $|\alpha_2 - \alpha_1|$, in če je več kot $90^\circ$, $180^\circ$ minus to.
 
 ## Povzetek
@@ -275,7 +275,7 @@ točka: 0; 2 | B | desno
 ~ Negativen $k$ v formuli ni težava, zato je tam absolutna vrednost.
 > $1 + 2 \cdot \left(-\dfrac{1}{2}\right) = 0$, z $0$ ne delimo. Tangens kota $90^\circ$ ne obstaja, premici pa sta pravokotni.
 
-? Klančina za voziček se na $5\,\text{m}$ vodoravne razdalje dvigne za $40\,\text{cm}$. Oceni njen naklonski kot v stopinjah.
+? Klančina za voziček se na $5\,\text{m}$ vodoravne razdalje dvigne za $40\,\text{cm}$. Izračunaj njen naklonski kot v stopinjah, zaokrožen na dve decimalki.
 = 4,57 ° | 0,05
 ~ 0,08 | To je smerni koeficient, ne kot; ali pa je bilo računalo v radianih. Uporabi $\tan^{-1}$ v načinu DEG.
 ~ 85,43 | Delil si pomik z dvigom. Smerni koeficient je dvig deljeno s pomikom.
