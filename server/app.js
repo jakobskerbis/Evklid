@@ -1040,8 +1040,9 @@ export function createApp(store, opts = {}) {
       if (note) send("delta", { text: note });
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
-      // Zgodovina z zdaj shranjenim sporočilom (isto kot ponovno branje iz baze: pogovor je med odgovorom zaseden, busy,
-      // zato vmes ne pride nobeno drugo sporočilo), zato +1: njegova slika ostane vedno.
+      // Zgodovina z zdaj shranjenim sporočilom, isto kot ponovno branje iz baze: med branjem zgoraj in tem mestom ni
+      // nobenega await (vmes ne more pisati nobena druga zahteva), pogovor pa je tudi zaseden (busy). +1: slika
+      // trenutnega sporočila ostane vedno.
       const fullHistory = staleImages([...zgodovina, { role: "user", content: userContent }], LIMITS.historyImageTurns() + 1);
       const shortDeep = deep && !routed.boosted;
       let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
