@@ -83,7 +83,7 @@ const PAIRS45 = [
   [5, 1, -3, 2],
   [1, 2, 3, 1],
   [4, 1, -5, 3],
-  [-4, 1, 3, 5],
+  [-4, 1, -3, 5],
 ];
 const KOT_FORMULA = "\\tan\\varphi = \\left|\\frac{k_2 - k_1}{1 + k_1 k_2}\\right|";
 
@@ -95,7 +95,7 @@ function premicaL1(r) {
     const eq = gen3(a, b, c);
     const sol = [
       `Izrazimo $y$: $${tx(b)}y = ${lc([[-a, "x"]], -c)}$`,
-      `Delimo s $${tx(b)}$: $${explT(-a, b, -c, b)}$`,
+      `Delimo s koeficientom $${tx(b)}$: $${explT(-a, b, -c, b)}$`,
       askK ? `Smerni koeficient je število ob $x$: $k = -\\frac{a}{b} = ${ft(-a, b)}$` : `Začetna vrednost je prosti člen: $n = -\\frac{c}{b} = ${ft(-c, b)}$`,
     ];
     return {
@@ -130,7 +130,12 @@ function premicaL1(r) {
       text: `Premica je dana v odsekovni obliki $${eq}$. V kateri točki seka os $${askY ? "y" : "x"}$? Vpiši ${askY ? "$y$" : "$x$"}-koordinato presečišča.`,
       answer: num(v, null, [
         { value: other, why: `Pod $x$ je odsek na osi $x$, pod $y$ odsek na osi $y$. Iskal si presečišče z osjo $${askY ? "y" : "x"}$.` },
-        { value: -v, why: "Minus pred ulomkom spada k odseku: $-\\frac{y}{4} = \\frac{y}{-4}$, odsek je negativen." },
+        {
+          value: -v,
+          why: v < 0
+            ? `Minus pred ulomkom spada k odseku: $-\\frac{${askY ? "y" : "x"}}{${-v}} = \\frac{${askY ? "y" : "x"}}{${v}}$, odsek je negativen.`
+            : "Pred tem ulomkom ni minusa, zato je odsek pozitiven.",
+        },
         { value: 1 / v, why: "Odsek je imenovalec ulomka, ne njegova obratna vrednost." },
       ]),
       hint: `V odsekovni obliki $\\frac{x}{m} + \\frac{y}{n} = 1$ vstavi $${askY ? "x" : "y"} = 0$.`,
@@ -171,9 +176,9 @@ function premicaL1(r) {
       { value: 90 - phi, why: "Naklonski kot merimo od osi $x$, ne od osi $y$." },
     ]),
     hint: "Tangens naklonskega kota je enak smernemu koeficientu. Na računalu uporabi tipko $\\tan^{-1}$ (v stopinjah).",
-    data: { given: [eq], find: ["\\varphi"] },
-    formula: "\\tan\\varphi = k",
-    solution: `Smerni koeficient: $k = ${tx(k)}$\n$\\tan\\varphi = ${tx(k)}$\n$\\varphi = \\tan^{-1}(${tx(k)}) ${ap(phi, 1)} ${deg(rd(phi, 1), 1)}$`,
+    data: { given: [eq], find: ["\\alpha"] },
+    formula: "\\tan\\alpha = k",
+    solution: `Smerni koeficient: $k = ${tx(k)}$\n$\\tan\\alpha = ${tx(k)}$\n$\\alpha = \\tan^{-1}(${tx(k)}) ${ap(phi, 1)} ${deg(rd(phi, 1), 1)}$`,
   };
 }
 
@@ -185,6 +190,8 @@ function premicaL2(r) {
     const [kn, kd] = perp ? fr(b, a) : fr(-a, b);
     const x0 = r.nonZero(-5, 5);
     const y0 = r.int(-6, 6);
+    // Točka na dani premici: »vzporednica« bi bila ista premica.
+    if (!perp && a * x0 + b * y0 + c === 0) return null;
     const nAt = (k) => y0 - k * x0;
     const k = kn / kd;
     const eq = gen3(a, b, c);
@@ -226,7 +233,7 @@ function premicaL2(r) {
       hint: "Prosti člen prenesi na desno stran in celo enačbo deli z njim, da je desna stran enaka $1$.",
       data: { given: [eq], find: [askX ? "m" : "n"] },
       formula: ["ax + by = -c", "m = -\\frac{c}{a},\\ n = -\\frac{c}{b}"],
-      solution: `Prosti člen prenesemo: $${lc([[a, "x"], [b, "y"]])} = ${-c}$\nDelimo z $${-c}$: $\\frac{${lc([[a, "x"]])}}{${-c}} + \\frac{${lc([[b, "y"]])}}{${-c}} = 1$\n$m = ${frT(-c, a)}$, $n = ${frT(-c, b)}$\nIskani odsek: $${askX ? "m" : "n"} = ${ft(-c, d)}$`,
+      solution: `Prosti člen prenesemo: $${lc([[a, "x"], [b, "y"]])} = ${-c}$\nDelimo z desno stranjo $${-c}$: $\\frac{${lc([[a, "x"]])}}{${-c}} + \\frac{${lc([[b, "y"]])}}{${-c}} = 1$\n$m = ${frT(-c, a)}$, $n = ${frT(-c, b)}$\nIskani odsek: $${askX ? "m" : "n"} = ${ft(-c, d)}$`,
     };
   }
   if (t === 2) {
@@ -246,9 +253,9 @@ function premicaL2(r) {
         { value: nak(-b / a), why: "Smerni koeficient je $-\\frac{a}{b}$ (koeficient ob $x$ v števcu), ne $-\\frac{b}{a}$." },
       ]),
       hint: "Najprej določi smerni koeficient $k = -\\frac{a}{b}$. Ker je negativen, je naklonski kot top.",
-      data: { given: [eq], find: ["\\varphi"] },
-      formula: ["k = -\\frac{a}{b}", "\\tan\\varphi = k,\\ 0^\\circ \\le \\varphi < 180^\\circ"],
-      solution: `$k = -\\frac{a}{b} = ${ft(-a, b)}$\nRačunalo: $\\tan^{-1}(${ft(-a, b)}) ${ap(atanDeg(k), 1)} ${deg(rd(atanDeg(k), 1), 1)}$\nKer je $k < 0$, prištejemo $180^\\circ$: $\\varphi ${ap(phi, 1)} ${deg(rd(phi, 1), 1)}$`,
+      data: { given: [eq], find: ["\\alpha"] },
+      formula: ["k = -\\frac{a}{b}", "\\tan\\alpha = k,\\ 0^\\circ \\le \\alpha < 180^\\circ"],
+      solution: `$k = -\\frac{a}{b} = ${ft(-a, b)}$\nRačunalo: $\\tan^{-1}(${ft(-a, b)}) ${ap(atanDeg(k), 1)} ${deg(rd(atanDeg(k), 1), 1)}$\nKer je $k < 0$, prištejemo $180^\\circ$: $\\alpha ${ap(phi, 1)} ${deg(rd(phi, 1), 1)}$`,
     };
   }
   // brez računala: k = ±1, ±√3, ±√3/3
@@ -270,9 +277,9 @@ function premicaL2(r) {
     text: `Brez računala določi naklonski kot premice $${eq}$ (v stopinjah, med $0^\\circ$ in $180^\\circ$).`,
     answer: num(phi, null, ms),
     hint: `Najprej zapiši smerni koeficient. Spomni se vrednosti $\\tan 30^\\circ$, $\\tan 45^\\circ$ in $\\tan 60^\\circ$.`,
-    data: { given: [eq], find: ["\\varphi"] },
-    formula: ["\\tan\\varphi = k", "\\tan 30^\\circ = \\frac{\\sqrt{3}}{3},\\ \\tan 45^\\circ = 1,\\ \\tan 60^\\circ = \\sqrt{3}"],
-    solution: `Smerni koeficient: $k = ${s < 0 ? "-" : ""}${e.t || "1"}$\n$\\tan ${e.base}^\\circ = ${e.t || "1"}$\n${s > 0 ? `$\\varphi = ${e.base}^\\circ$` : `Ker je $k < 0$, je kot top: $\\varphi = 180^\\circ - ${e.base}^\\circ = ${phi}^\\circ$`}`,
+    data: { given: [eq], find: ["\\alpha"] },
+    formula: ["\\tan\\alpha = k", "\\tan 30^\\circ = \\frac{\\sqrt{3}}{3},\\ \\tan 45^\\circ = 1,\\ \\tan 60^\\circ = \\sqrt{3}"],
+    solution: `Smerni koeficient: $k = ${s < 0 ? "-" : ""}${e.t || "1"}$\n$\\tan ${e.base}^\\circ = ${e.t || "1"}$\n${s > 0 ? `$\\alpha = ${e.base}^\\circ$` : `Ker je $k < 0$, je kot top: $\\alpha = 180^\\circ - ${e.base}^\\circ = ${phi}^\\circ$`}`,
   };
 }
 
@@ -355,6 +362,8 @@ function premicaL3(r) {
     const B = r.nonZero(-5, 5);
     const C = r.nonZero(-9, 9);
     const perp = r.next() < 0.5;
+    // Pri vzporednosti premici ne smeta sovpadati (C : B = c₁ : b₁).
+    if (!perp && C * b1 === c1 * B) return null;
     const e1 = gen3(a1, b1, c1);
     const e2 = `ax ${B < 0 ? "-" : "+"} ${Math.abs(B) === 1 ? "" : Math.abs(B)}y ${sg(C)} = 0`;
     const [an, ad] = perp ? fr(-B * b1, a1) : fr(B * a1, b1);
@@ -394,9 +403,9 @@ function premicaL3(r) {
       { value: 90 - phi, why: "Naklonski kot merimo od pozitivnega dela osi $x$." },
     ]),
     hint: "Najprej izračunaj smerni koeficient iz koordinat obeh točk.",
-    data: { given: [`A = ${pnt(x1, y1)}`, `B = ${pnt(x2, y2)}`], find: ["\\varphi"] },
-    formula: ["k = \\frac{y_2 - y_1}{x_2 - x_1}", "\\tan\\varphi = k"],
-    solution: `$k = \\frac{${y2} - ${pt(y1)}}{${x2} - ${pt(x1)}} = \\frac{${dy}}{${dx}} = ${ft(dy, dx)}$\n$\\tan^{-1}(${ft(dy, dx)}) ${ap(atanDeg(k), 1)} ${deg(rd(atanDeg(k), 1), 1)}$\n${k < 0 ? `Ker je $k < 0$, prištejemo $180^\\circ$: ` : ""}$\\varphi ${ap(phi, 1)} ${deg(rd(phi, 1), 1)}$`,
+    data: { given: [`A = ${pnt(x1, y1)}`, `B = ${pnt(x2, y2)}`], find: ["\\alpha"] },
+    formula: ["k = \\frac{y_2 - y_1}{x_2 - x_1}", "\\tan\\alpha = k"],
+    solution: `$k = \\frac{${y2} - ${pt(y1)}}{${x2} - ${pt(x1)}} = \\frac{${dy}}{${dx}} = ${ft(dy, dx)}$\n$\\tan^{-1}(${ft(dy, dx)}) ${ap(atanDeg(k), 1)} ${deg(rd(atanDeg(k), 1), 1)}$\n${k < 0 ? `Ker je $k < 0$, prištejemo $180^\\circ$: ` : ""}$\\alpha ${ap(phi, 1)} ${deg(rd(phi, 1), 1)}$`,
   };
 }
 
@@ -409,8 +418,8 @@ const REFL = {
   e: { f: ([x, y]) => [-y, -x], t: "premico $y = -x$", rule: "(x, y) \\mapsto (-y, -x)", why: "Pri zrcaljenju čez premico $y = -x$ koordinati zamenjata mesti in obe spremenita predznak." },
 };
 const ROT = {
-  p: { f: ([x, y]) => [-y, x], t: "za $90^\\circ$ v pozitivni smeri (nasprotno od urnega kazalca)", rule: "(x, y) \\mapsto (-y, x)" },
-  m: { f: ([x, y]) => [y, -x], t: "za $90^\\circ$ v smeri urnega kazalca", rule: "(x, y) \\mapsto (y, -x)" },
+  p: { f: ([x, y]) => [-y, x], t: "za $90^\\circ$ v pozitivni smeri (nasproti urinemu kazalcu)", rule: "(x, y) \\mapsto (-y, x)" },
+  m: { f: ([x, y]) => [y, -x], t: "za $90^\\circ$ v smeri urinega kazalca", rule: "(x, y) \\mapsto (y, -x)" },
   h: { f: ([x, y]) => [-x, -y], t: "za $180^\\circ$", rule: "(x, y) \\mapsto (-x, -y)" },
 };
 const coordName = (i) => (i === 0 ? "x" : "y");
@@ -516,7 +525,7 @@ function togiL2(r) {
     const m = ROT[key];
     const img = m.f([x, y]);
     const ms = [];
-    if (key !== "h") ms.push({ value: ROT[key === "p" ? "m" : "p"].f([x, y])[i], why: "Pozitivna smer vrteža je nasprotna smeri urnega kazalca: $(x, y) \\mapsto (-y, x)$. Preveri smer." });
+    if (key !== "h") ms.push({ value: ROT[key === "p" ? "m" : "p"].f([x, y])[i], why: "Pozitivna smer vrteža je nasprotna smeri urinega kazalca: $(x, y) \\mapsto (-y, x)$. Preveri smer." });
     ms.push({ value: [y, x][i], why: "Pri vrtežu ne zamenjaš le koordinat, ena od njiju spremeni še predznak." });
     if (key === "h") ms.push({ value: [x, -y][i], why: "Pri vrtežu za $180^\\circ$ spremenita predznak obe koordinati." });
     const who = name(r);
@@ -545,7 +554,7 @@ function togiL2(r) {
     hint: `Izračunaj, za koliko je točka oddaljena od premice $${L} = ${a}$, in pojdi enako daleč na drugo stran.`,
     data: { given: [`T = ${pnt(x, y)}`, `${L} = ${a}`], find: [`${L}'`] },
     formula: `${L}' = 2 \\cdot ${pt(a)} - ${L}`,
-    solution: `Razdalja od premice: $${v} - ${pt(a)} = ${v - a}$\nNa drugi strani: $${L}' = ${a} - ${pt(v - a)} = ${im}$\nDruga koordinata se ne spremeni: $T'${ptr(vert ? [im, y] : [x, im])}$`,
+    solution: `Odmik od premice (s predznakom): $${v} - ${pt(a)} = ${v - a}$\nNa drugi strani: $${L}' = ${a} - ${pt(v - a)} = ${im}$\nDruga koordinata se ne spremeni: $T'${ptr(vert ? [im, y] : [x, im])}$`,
   };
 }
 
@@ -711,7 +720,8 @@ function heronL1(r) {
   }
   if (t === 1) {
     const rr = r.pick([1, 2, 3, 4, 5, 1.5, 2.5, 3.5]);
-    const s = r.int(6, 30);
+    // Polmer včrtane krožnice je največ s/(3√3); s ≥ 6r, da trikotnik res obstaja.
+    const s = r.int(Math.ceil(6 * rr), Math.ceil(6 * rr) + 24);
     const S = rr * s;
     const ctx = r.pick(["trikotnika", "trikotne mize", "trikotne gredice", "trikotnega prta"]);
     return {
@@ -984,9 +994,9 @@ function nacrtL1(r) {
     };
   }
   const st = r.pick(STEPS);
-  const fig = r.pick(["trikotnika", "paralelograma", "trapeza", "deltoida", "romba"]);
+  const fig = r.pick(["trikotnik", "paralelogram", "trapez", "deltoid", "romb"]);
   return {
-    text: `Pri načrtovanju ${fig} ${st.d}. Kateri korak načrtovalne naloge je to?`,
+    text: `Pri načrtovalni nalogi, v kateri iščemo ${fig}, ${st.d}. Kateri korak načrtovalne naloge je to?`,
     answer: pickAns(r, st.k, STEPS.filter((x) => x.k !== st.k).map((x) => [x.k, STEP_WHY[x.k]])),
     hint: "Spomni se vrstnega reda: analiza, opis, načrtovanje, diskusija.",
     data: { given: [`\\text{korak} = \\text{${st.d}}`], find: ["\\text{korak}"] },
