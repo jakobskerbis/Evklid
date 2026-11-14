@@ -372,5 +372,11 @@ test("javne strani (Za starše, Za šole, Zasebnost) imajo videz po napravi, bre
   // Obvestilo »Vaš otrok bi rad …« samo po povezavi, ki jo pošlje otrok (?prosnja=1), ne s klikom na »Za starše«.
   assert.match(read("starsi.html"), /<p class="ask" id="ask" hidden>/);
   assert.match(read("starsi.js"), /if \(q\.has\("prosnja"\) \|\| ime\) document\.getElementById\("ask"\)\.hidden = false;/);
-  assert.match(read("account.js"), /prosnja=1/);
+  assert.ok(read("account.js").includes("/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : \"\"}prosnja=1"), "povezava v prošnji otroka");
+  for (const href of ['href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}', 'href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink")'])
+    assert.ok(read("account.js").includes(href), href);
+  // V aplikaciji (WebView) brez dvojnega odmika, enako kot theme.js.
+  const app = read("v-aplikaciji.js").match(/\(function \(\) \{[\s\S]*\}\)\(\);/)[0];
+  assert.ok(read("theme.js").includes(app), "v-aplikaciji.js = blok iz theme.js");
+  for (const f of ["starsi.html", "sole.html", "zasebnost.html"]) assert.ok(read(f).includes('<script src="/v-aplikaciji.js"></script>'), f);
 });

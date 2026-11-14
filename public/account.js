@@ -825,7 +825,7 @@ function bindBirthForm(form, onDone) {
 // Mlajši od starosti digitalne privolitve: datum je shranjen, za soglasje pa velja pot prek staršev kot pri registraciji.
 const underAgeHtml = (minAge) => `<div class="birth-under" role="status">
       <p>${esc(t("birth.underAge", { age: minAge }))}</p>
-      <p><a href="/starsi.html" target="_blank">${esc(t("birth.parents"))}</a></p>
+      <p><a href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}</a></p>
     </div>`;
 
 function renderBirth() {
@@ -1498,7 +1498,7 @@ function bindGuestForms(after) {
       btn.disabled = false;
       showError(f, err);
       if (err.data?.under_age) {
-        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html", target: "_blank", textContent: t("guest.parentLink") }));
+        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink") }));
       }
       if (err.data?.exists) {
         const login = $("#guest-login-form");
