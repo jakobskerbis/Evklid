@@ -410,6 +410,8 @@ async function openStartScreen(z) {
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden" && (currentView === "chat" || isFloating("chat"))) leaveChat();
   if (document.visibilityState === "hidden") return saveSnapshot();
+  // Vrnitev iz ozadja z odprtim inštruktorjem: pravilo »10 min zunaj« (freshChatIfStale) velja tudi tu (j, 14. 11. 2026).
+  if (currentView === "chat" || isFloating("chat")) freshChatIfStale();
   // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
   const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
   // Tekmovanje z uro ali neposlano besedilo (klepet, odgovor) ostaneta na zaslonu.
