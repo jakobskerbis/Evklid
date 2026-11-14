@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import katex from "katex";
-import { splitFormulas, toTex, hasFormula } from "../public/vnos-formul.js";
+import { splitFormulas, toTex, hasFormula, varnaMesta, brisiNazaj, delisKazalcem, OZNAKA } from "../public/vnos-formul.js";
 import { TUTOR_CHIPS, applyTemplate } from "../public/tipkovnica-data.js";
 
 // Ulomki, integrali, zaporedja in vsote v klepetu z inštruktorjem (j, 4. 11.): zapis s tipk se izriše kot formula.
@@ -78,4 +78,31 @@ test("tutor: a reply cut off mid-stream keeps what arrived and loses the typing 
   const c = app.slice(app.indexOf("  } catch (err) {\n    // Odgovor, prekinjen sredi izpisa"));
   assert.ok(c.length > 0 && c.indexOf('bubble.classList.remove("typing")') < c.indexOf("err.chatOff"));
   assert.match(c, /pacer\.finish\(\);\s*pacer\.skip\(\);/);
+});
+
+// Polje, ki zapis pokaže kot formulo (j, 14. 11.: »Ulomek naj se izpiše namesto surovega zapisa«): kazalec ne sme stati
+// med »)/(«, ⌫ na znaku zgradbe ulomka ne razbije.
+
+test("varnaMesta: kazalec v števcu, imenovalcu, pred in za ulomkom, ne med )/( ali med √ in (", () => {
+  assert.deepEqual(varnaMesta("π()/()"), [0, 1, 2, 5, 6]);
+  assert.deepEqual(varnaMesta("(3)/(4)"), [0, 1, 2, 5, 6, 7]);
+  assert.deepEqual(varnaMesta("√(2)"), [0, 2, 3, 4]);
+  assert.deepEqual(varnaMesta("12"), [0, 1, 2]);
+  // med dvema ulomkoma sme stati povsod (zapis ostane enak, tudi ko se formuli združita)
+  assert.ok([7, 8, 9, 10].every((p) => varnaMesta("(1)/(2) + (3)/(4)").includes(p)));
+});
+
+test("delisKazalcem: oznaka kazalca je v števcu ulomka", () => {
+  assert.deepEqual(delisKazalcem("π()/()", 2), [{ text: "π" }, { tex: `\\frac{${OZNAKA}}{}` }]);
+});
+
+test("brisiNazaj: prazen ulomek izgine cel, iz imenovalca skok v števec, navaden znak se zbriše normalno", () => {
+  assert.deepEqual(brisiNazaj("π()/()", 5), { value: "π", caret: 1 });
+  assert.deepEqual(brisiNazaj("π()/()", 2), { value: "π", caret: 1 });
+  assert.deepEqual(brisiNazaj("π(1)/(5)", 6), { value: "π(1)/(5)", caret: 3 });
+  assert.deepEqual(brisiNazaj("(3)/(4)", 1), { value: "(3)/(4)", caret: 0 });
+  assert.deepEqual(brisiNazaj("x^()", 3), { value: "x", caret: 1 });
+  assert.deepEqual(brisiNazaj("√(2)", 2), { value: "√(2)", caret: 0 });
+  assert.equal(brisiNazaj("(3)/(4)", 2), null, "števka 3 se zbriše kot vsak znak");
+  assert.equal(brisiNazaj("1/5", 3), null, "brez zapisa formule navaden ⌫");
 });
