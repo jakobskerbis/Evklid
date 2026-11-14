@@ -351,14 +351,11 @@ Vsak ulomek v oklepaju ima v imenovalcu potenco $x$, zato gre proti $0$, ko $|x|
 ~ Ničla je ena sama; stopnja $2$ pove, da se faktor $(x - c)$ v razcepu ponovi dvakrat.
 > Pri ničli sode stopnje se graf osi dotakne in obrne nazaj, predznak se ne zamenja.
 
-? Koliko je $p(0)$ za $p(x) = -2(x - 1)^3(x + 4)^2$?
-- $-32$
-~ $(0 - 1)^3 = -1$, ne $1$: liha potenca negativnega števila je negativna.
-+ $32$
-- $8$
-~ Izpustil si kvadrat: $(0 + 4)^2 = 16$, ne $4$.
-- $-8$
-~ Tu sta dve napaki hkrati: $(-1)^3$ si vzel kot $1$, $4^2$ pa kot $4$.
+? (brez računala) Koliko je $p(0)$ za $p(x) = -2(x - 1)^3(x + 4)^2$?
+= 32 | 0,01
+~ -32 | $(0 - 1)^3 = -1$, ne $1$: liha potenca negativnega števila je negativna.
+~ 8 | Izpustil si kvadrat: $(0 + 4)^2 = 16$, ne $4$.
+~ -8 | Tu sta dve napaki hkrati: $(-1)^3$ si vzel kot $1$, $4^2$ pa kot $4$.
 > $p(0) = -2 \cdot (-1)^3 \cdot 4^2 = -2 \cdot (-1) \cdot 16 = 32$.
 
 ? Jana je določila predznake polinoma $p(x) = (x + 1)(x - 2)^2$: za $x < -1$ negativen, med $-1$ in $2$ pozitiven, za $x > 2$ negativen. Kje se je zmotila?

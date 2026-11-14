@@ -273,15 +273,11 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 ~ Prvi člen vpliva le na velikost vsote. O konvergenci odloča količnik $q$.
 > V $S_n = a_1 \cdot \frac{1 - q^n}{1 - q}$ gre pri $|q| < 1$ potenca $q^n$ proti $0$, zato gre $S_n$ proti $\frac{a_1}{1 - q}$.
 
-? Koliko je vsota vrste $20 + 15 + 11{,}25 + \dots$?
-- $46{,}25$
-~ To je le vsota treh napisanih členov. Vrsta se nadaljuje v neskončnost.
-- približno $11{,}43$
-~ To je $\frac{20}{1 + 0{,}75}$. V imenovalcu je $1 - q$, ne $1 + q$.
-+ $80$
-- Vsote ni, ker so vsi členi pozitivni in jih je neskončno.
-~ To je Zenonova napaka. Pri $|q| < 1$ so delne vsote omejene in vrsta konvergira.
-> $q = \frac{15}{20} = 0{,}75$, $S = \frac{20}{1 - 0{,}75} = \frac{20}{0{,}25} = 80$.
+? (brez računala) Koliko je vsota vrste $20 + 15 + 11{,}25 + \dots$?
+= 80 | 0,01
+~ 46,25 | To je le vsota treh napisanih členov. Vrsta se nadaljuje v neskončnost.
+~ 11,4 | To je $\frac{20}{1 + 0{,}75}$. V imenovalcu je $1 - q$, ne $1 + q$.
+> $q = \frac{15}{20} = 0{,}75$, $S = \frac{20}{1 - 0{,}75} = \frac{20}{0{,}25} = 80$. Vsota obstaja, čeprav so vsi členi pozitivni in jih je neskončno: pri $|q| < 1$ so delne vsote omejene (misliti nasprotno je Zenonova napaka).
 
 ? Rok je izračunal vsoto vrste $3 + 6 + 12 + \dots$ takole: (1) $q = \frac{6}{3} = 2$; (2) $S = \frac{a_1}{1 - q}$; (3) $S = \frac{3}{1 - 2} = -3$. Kateri korak je napačen?
 - Korak (1).
@@ -293,15 +289,11 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 ~ Vsota pozitivnih števil ne more biti negativna. Delne vsote $3, 9, 21, \dots$ rastejo brez meje.
 > Pri $q = 2$ je $|q| > 1$, zato vrsta divergira. Formula $S = \frac{a_1}{1-q}$ tu ne velja.
 
-? Teniško žogico spustimo z višine $1\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine. Kolikšno pot opravi, preden obmiruje?
-- $2\,\mathrm{m}$
-~ To je $\frac{1}{1 - 0{,}5}$. Pozabil si, da vsako višino po odboju žogica prepotuje dvakrat, gor in dol.
-+ $3\,\mathrm{m}$
-- $4\,\mathrm{m}$
-~ Tu je tudi prvi padec štet dvakrat. Prvih $1\,\mathrm{m}$ žogica opravi le navzdol.
-- Neskončno, ker se odbija neskončnokrat.
-~ Neskončno mnogo odbojev še ne pomeni neskončne poti. Višine tvorijo vrsto s $q = 0{,}5$, ki konvergira.
-> Prvi padec $1\,\mathrm{m}$, dvigi $0{,}5 + 0{,}25 + \dots = \frac{0{,}5}{1 - 0{,}5} = 1\,\mathrm{m}$, ki jih žogica prepotuje dvakrat: $s = 1\,\mathrm{m} + 2 \cdot 1\,\mathrm{m} = 3\,\mathrm{m}$.
+? Teniško žogico spustimo z višine $1\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine. Kolikšno pot (v metrih) opravi, preden obmiruje?
+= 3 m | 0,01
+~ 2 | To je $\frac{1}{1 - 0{,}5}$. Pozabil si, da vsako višino po odboju žogica prepotuje dvakrat, gor in dol.
+~ 4 | Tu je tudi prvi padec štet dvakrat. Prvih $1\,\mathrm{m}$ žogica opravi le navzdol.
+> Prvi padec $1\,\mathrm{m}$, dvigi $0{,}5 + 0{,}25 + \dots = \frac{0{,}5}{1 - 0{,}5} = 1\,\mathrm{m}$, ki jih žogica prepotuje dvakrat: $s = 1\,\mathrm{m} + 2 \cdot 1\,\mathrm{m} = 3\,\mathrm{m}$. Neskončno mnogo odbojev torej ne pomeni neskončne poti: višine tvorijo vrsto s $q = 0{,}5$, ki konvergira.
 
 <<RACUN
 vrednost: 0.07/(1-0.1) | 7/90

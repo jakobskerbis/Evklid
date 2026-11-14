@@ -270,14 +270,11 @@ Neznani kot izračunamo s sinusnim izrekom, ta pa da le njegov sinus. Med $0^\ci
 ~ Stranica ni sorazmerna s kotom. Spreminja se po kosinusnem izreku, ne linearno.
 > Pri $\gamma = 120^\circ$ je $\cos\gamma < 0$, zato je $c^2 = a^2 + b^2 + 2ab \cdot 0{,}5$, kar je več kot pri $60^\circ$. Šestilo je bolj odprto, konici sta dlje.
 
-? V trikotniku je $a = 5\,\mathrm{cm}$, $b = 7\,\mathrm{cm}$ in $\gamma = 60^\circ$. Koliko meri $c$?
-- $8{,}60\,\mathrm{cm}$
-~ To je $\sqrt{25 + 49}$, Pitagorov izrek. Trikotnik ni pravokoten, zato manjka popravek $-2ab\cos\gamma$.
-+ $6{,}24\,\mathrm{cm}$
-- $10{,}44\,\mathrm{cm}$
-~ Tako dobiš, če popravek prišteješ: $\sqrt{74 + 35}$. Pri ostrem kotu se popravek odšteje.
-- $39\,\mathrm{cm}$
-~ To je $c^2$. Na koncu moraš še koreniti.
+? V trikotniku je $a = 5\,\mathrm{cm}$, $b = 7\,\mathrm{cm}$ in $\gamma = 60^\circ$. Koliko meri $c$? Vpiši v centimetrih, zaokroženo na dve decimalki.
+= 6,24 cm | 0,01
+~ 8,60 | To je $\sqrt{25 + 49}$, Pitagorov izrek. Trikotnik ni pravokoten, zato manjka popravek $-2ab\cos\gamma$.
+~ 10,44 | Tako dobiš, če popravek prišteješ: $\sqrt{74 + 35}$. Pri ostrem kotu se popravek odšteje.
+~ 39 | To je $c^2$. Na koncu moraš še koreniti.
 > $c^2 = 25 + 49 - 2 \cdot 5 \cdot 7 \cdot 0{,}5 = 39$, torej $c = \sqrt{39}\,\mathrm{cm} \approx 6{,}24\,\mathrm{cm}$.
 
 ? Luka išče kot $\alpha$ v trikotniku z $a = 9\,\mathrm{cm}$, $b = 5\,\mathrm{cm}$ in $\beta = 30^\circ$. Korak 1: $\dfrac{a}{\sin\alpha} = \dfrac{b}{\sin\beta}$. Korak 2: $\sin\alpha = \dfrac{9 \cdot 0{,}5}{5} = 0{,}9$. Korak 3: $\alpha \approx 64{,}2^\circ$, in to je edina rešitev. Kateri korak je napačen?
@@ -299,6 +296,13 @@ Neznani kot izračunamo s sinusnim izrekom, ta pa da le njegov sinus. Med $0^\ci
 - $3{,}61\,\mathrm{km}$
 ~ To je $\sqrt{9 + 4}$, Pitagorov izrek. Velja le za zavoj za $90^\circ$.
 > Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.
+
+? (brez računala) V trikotniku je $a = 7\,\mathrm{cm}$, $b = 8\,\mathrm{cm}$ in $\gamma = 120^\circ$. Koliko centimetrov meri $c$?
+= 13 cm | 0,01
+~ 7,55 | Vzel si $\cos 120^\circ = 0{,}5$. Kot je top, zato je $\cos 120^\circ = -0{,}5$ in se popravek $2ab \cdot 0{,}5$ prišteje.
+~ 10,63 | To je $\sqrt{49 + 64}$, Pitagorov izrek. Trikotnik ni pravokoten, zato manjka popravek $-2ab\cos\gamma$.
+~ 169 | To je $c^2$. Na koncu moraš še koreniti.
+> $c^2 = 49 + 64 - 2 \cdot 7 \cdot 8 \cdot \left(-\frac{1}{2}\right) = 113 + 56 = 169$, torej $c = 13\,\mathrm{cm}$.
 
 <<RACUN
 vrednost: (3^2+5^2-7^2)/(2*3*5) | -1/2

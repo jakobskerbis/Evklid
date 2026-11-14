@@ -352,14 +352,11 @@ Luka preveri z $\alpha = \beta = 60^\circ$: $2 \cdot \frac{\sqrt{3}}{2} \cdot \f
 ~ Dvojka pred kotom ni dvojka pred funkcijo: $\sin 2\alpha = 2\sin\alpha\cos\alpha$.
 > Pri kosinusu vsote ostaneta skupaj enaki funkciji, med členoma je minus. Preizkus: $\cos(30^\circ + 60^\circ) = 0$.
 
-? Za kot $\alpha$ velja $\sin\alpha = 0{,}6$ in $\cos\alpha = 0{,}8$. Koliko je $\sin 2\alpha$?
-- $1{,}2$
-~ To je $2\sin\alpha$. Pozabil si na faktor $\cos\alpha$.
-- $0{,}48$
-~ To je le $\sin\alpha\cos\alpha$, manjka dvojka.
-+ $0{,}96$
-- $0{,}28$
-~ To je $\cos 2\alpha = 0{,}64 - 0{,}36$, ne sinus dvojnega kota.
+? (brez računala) Za kot $\alpha$ velja $\sin\alpha = 0{,}6$ in $\cos\alpha = 0{,}8$. Koliko je $\sin 2\alpha$? Vpiši decimalno število.
+= 0,96 | 0,001
+~ 1,2 | To je $2\sin\alpha$. Pozabil si na faktor $\cos\alpha$.
+~ 0,48 | To je le $\sin\alpha\cos\alpha$, manjka dvojka.
+~ 0,28 | To je $\cos 2\alpha = 0{,}64 - 0{,}36$, ne sinus dvojnega kota.
 > $\sin 2\alpha = 2 \cdot 0{,}6 \cdot 0{,}8 = 0{,}96$.
 
 ? Nina računa $\cos 75^\circ$. (1) $75^\circ = 45^\circ + 30^\circ$. (2) $\cos 75^\circ = \cos 45^\circ\cos 30^\circ + \sin 45^\circ\sin 30^\circ$. (3) Rezultat: $\dfrac{\sqrt{6} + \sqrt{2}}{4} \approx 0{,}966$. Kje je napaka?
@@ -382,12 +379,10 @@ Luka preveri z $\alpha = \beta = 60^\circ$: $2 \cdot \frac{\sqrt{3}}{2} \cdot \f
 ~ Za vse ostre kote velja $0 < \cos\alpha < 1$, zato je odnos vedno enak.
 > $\sin 2\alpha = 2\sin\alpha \cdot \cos\alpha$ in $0 < \cos\alpha < 1$, zato je $\sin 2\alpha < 2\sin\alpha$.
 
-? Skodelica je na krožniku mikrovalovne pečice v točki $(10\,\text{cm};\ 0)$. Krožnik se zavrti za $45^\circ$ in nato še za $30^\circ$ v pozitivni smeri. Kolikšna je zdaj koordinata $y$ skodelice?
-- $12{,}07\,\text{cm}$
-~ To je $10\,\text{cm} \cdot (\sin 45^\circ + \sin 30^\circ)$. Koordinata $y$ bi bila večja od razdalje skodelice od središča ($10\,\text{cm}$), kar ni mogoče.
-+ $9{,}66\,\text{cm}$
-- $2{,}59\,\text{cm}$
-~ To je $10\,\text{cm} \cdot \sin 15^\circ$. Kota zasukov se seštejeta, ne odštejeta.
+? Skodelica je na krožniku mikrovalovne pečice v točki $(10\,\text{cm};\ 0)$. Krožnik se zavrti za $45^\circ$ in nato še za $30^\circ$ v pozitivni smeri. Kolikšna je zdaj koordinata $y$ skodelice? Vpiši jo v centimetrih, zaokroženo na dve decimalki.
+= 9,66 cm | 0,01
+~ 12,07 | To je $10\,\text{cm} \cdot (\sin 45^\circ + \sin 30^\circ)$. Koordinata $y$ bi bila večja od razdalje skodelice od središča ($10\,\text{cm}$), kar ni mogoče.
+~ 2,59 | To je $10\,\text{cm} \cdot \sin 15^\circ$. Kota zasukov se seštejeta, ne odštejeta.
 > Skupni zasuk je $75^\circ$, zato $y = 10\,\text{cm} \cdot \sin 75^\circ = 10\,\text{cm} \cdot \dfrac{\sqrt{6} + \sqrt{2}}{4} \approx 9{,}66\,\text{cm}$.
 
 <<RACUN

@@ -357,14 +357,11 @@ Krogla je dvakrat tolikšna: $V = \dfrac{4\pi r^3}{3}$.
 ~ Stranica nastopa v plašču, ne v prostornini. Tretjina pride iz oženja proti vrhu.
 > Valj je zložen iz enakih plasti $\pi r^2$ do višine $v$. Pri stožcu se plasti proti vrhu manjšajo, skupaj dajo natanko tretjino.
 
-? Krogla ima prostornino $288\pi\,\text{cm}^3$. Kolikšen je njen polmer?
-- $\sqrt[3]{288} \approx 6{,}6\,\text{cm}$
-~ Pozabljen je faktor $\frac{4}{3}$: iz $\frac{4\pi r^3}{3} = 288\pi$ najprej dobiš $r^3 = 216$.
-+ $6\,\text{cm}$
-- $\sqrt{216} \approx 14{,}7\,\text{cm}$
-~ Prostornina krogle vsebuje $r^3$, ne $r^2$, zato koreniš s tretjim korenom.
-- $216\,\text{cm}$
-~ To je $r^3$. Iz njega moraš še izračunati tretji koren.
+? (brez računala) Krogla ima prostornino $288\pi\,\text{cm}^3$. Kolikšen je njen polmer v centimetrih?
+= 6 cm | 0,01
+~ 6,6 | To je $\sqrt[3]{288}$. Pozabljen je faktor $\frac{4}{3}$: iz $\frac{4\pi r^3}{3} = 288\pi$ najprej dobiš $r^3 = 216$.
+~ 14,7 | To je $\sqrt{216}$. Prostornina krogle vsebuje $r^3$, ne $r^2$, zato koreniš s tretjim korenom.
+~ 216 | To je $r^3$. Iz njega moraš še izračunati tretji koren.
 > Iz $\dfrac{4\pi r^3}{3} = 288\pi$ sledi $r^3 = \dfrac{3 \cdot 288}{4} = 216$, torej $r = \sqrt[3]{216} = 6\,\text{cm}$.
 
 ? Ob cesti je za zimo nasut kup soli v obliki stožca s polmerom $2\,\text{m}$ in višino $1{,}5\,\text{m}$. Približno koliko soli je v kupu?

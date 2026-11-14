@@ -296,13 +296,11 @@ Ko s prijatelji izbirate, katere $3$ od $7$ znamenitosti v Rimu boste obiskali v
 > $6! = 720$, $7! = 7 \cdot 6! = 5040$. Novi kraj lahko vstaviš na $7$ mest v vsakem od starih vrstnih redov.
 
 ? Ključavnica na kovčku ima $4$ kolesca, na vsakem so števke od $0$ do $9$. Koliko različnih kod lahko nastaviš?
-- $5040$
-~ To je $10 \cdot 9 \cdot 8 \cdot 7$, kot da se števke ne smejo ponavljati. Koda $1111$ pa je povsem dovoljena.
-- $210$
-~ To je $\binom{10}{4}$, kot da vrstni red ni pomemben. Koda $1234$ ni ista kot $4321$.
-+ $10\,000$
-- $40$
-~ To je $4 \cdot 10$, seštevanje možnosti kolesc. Kolesca so zaporedne izbire, zato možnosti množiš.
+= 10000
+~ 5040 | To je $10 \cdot 9 \cdot 8 \cdot 7$, kot da se števke ne smejo ponavljati. Koda $1111$ pa je povsem dovoljena.
+~ 210 | To je $\binom{10}{4}$, kot da vrstni red ni pomemben. Koda $1234$ ni ista kot $4321$.
+~ 40 | To je $4 \cdot 10$, seštevanje možnosti kolesc. Kolesca so zaporedne izbire, zato možnosti množiš.
+~ 10 | Če si vpisal »10.000«: pika pri vpisu pomeni decimalno vejico, zato se prebere kot $10$. Tisočice loči s presledkom ($10\,000$) ali pa jih ne loči.
 > Vsako kolesce ima $10$ možnosti, vrstni red je pomemben in ponavljanje je dovoljeno: $10^4 = 10\,000$ kod.
 
 ? Iz skupine $10$ popotnikov izberejo tri: prvi nosi zemljevid, drugi kompas, tretji GPS-napravo. Na koliko načinov lahko razdelijo naloge?

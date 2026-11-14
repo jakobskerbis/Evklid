@@ -343,21 +343,18 @@ Pri izdelkih, ki jih tovarna dela v velikih količinah (trajanje baterije, masa 
 ~ Zunaj $\mu \pm 3\sigma$ je le še $0{,}3\,\%$ ploščine, a krivulja osi $x$ nikoli ne doseže, saj je $e^{\ldots} > 0$.
 > Ploščina pod gostoto je verjetnost, vse vrednosti skupaj imajo verjetnost $1$.
 
-? Število aplikacij na telefonih petih dijakov: $9, 4, 13, 7, 7$. Kolikšna je mediana?
-- $13$
-~ To je srednji podatek neurejenega niza. Najprej uredi: $4, 7, 7, 9, 13$.
-- $8$
-~ To je aritmetična sredina ($40 : 5$), ne mediana.
-+ $7$
+? (brez računala) Število aplikacij na telefonih petih dijakov: $9, 4, 13, 7, 7$. Kolikšna je mediana?
+= 7
+~ 13 | To je srednji podatek neurejenega niza. Najprej uredi: $4, 7, 7, 9, 13$.
+~ 8 | To je aritmetična sredina ($40 : 5$), ne mediana.
 > Urejeno: $4, 7, 7, 9, 13$; na srednjem, 3. mestu je $7$.
 
-? Maja je izračunala delež baterij, ki zdržijo **manj** kot $23\,\mathrm{h}$ ($\mu = 20\,\mathrm{h}$, $\sigma = 2\,\mathrm{h}$): »$z = 1{,}5$, $\Phi(1{,}5) = 0{,}4332$, torej $43{,}32\,\%$.« Kje je napaka?
-- $z$ bi moral biti $\dfrac{23 - 20}{4} = 0{,}75$.
-~ V imenovalcu je standardni odklon $\sigma = 2$, ne varianca $\sigma^2 = 4$.
-- Odgovor bi moral biti $0{,}5 - 0{,}4332 = 6{,}68\,\%$.
-~ To je delež baterij, ki zdržijo **več** kot $23\,\mathrm{h}$. Maja išče manj.
-+ Pozabila je prišteti levo polovico: pravilno je $0{,}5 + 0{,}4332 = 93{,}32\,\%$.
-> $\Phi(z)$ šteje le od sredine do $z$. Vse baterije pod sredino ($50\,\%$) tudi zdržijo manj kot $23\,\mathrm{h}$.
+? Maja je izračunala delež baterij, ki zdržijo **manj** kot $23\,\mathrm{h}$ ($\mu = 20\,\mathrm{h}$, $\sigma = 2\,\mathrm{h}$): »$z = 1{,}5$, $\Phi(1{,}5) = 0{,}4332$, torej $43{,}32\,\%$.« Maja se je zmotila. Kolikšen je pravilni delež? Vpiši ga v odstotkih na dve decimalki.
+= 93,32 % | 0,01
+~ 0,93 | To je delež kot decimalno število ($0{,}9332$). Vpiši ga v odstotkih: $93{,}32\,\%$.
+~ 43,32 | To je Majin odgovor. $\Phi(1{,}5)$ šteje le baterije med $20$ in $23\,\mathrm{h}$; pozabila je prišteti levo polovico.
+~ 6,68 | To je $0{,}5 - 0{,}4332$, delež baterij, ki zdržijo **več** kot $23\,\mathrm{h}$. Maja išče manj.
+> Majin $z = \dfrac{23 - 20}{2} = 1{,}5$ je pravilen (v imenovalcu je standardni odklon $\sigma = 2$, ne varianca $\sigma^2 = 4$). $\Phi(z)$ pa šteje le od sredine do $z$. Vse baterije pod sredino ($50\,\%$) tudi zdržijo manj kot $23\,\mathrm{h}$: $0{,}5 + 0{,}4332 = 0{,}9332 = 93{,}32\,\%$.
 
 ? Oba modela imata $\mu = 20\,\mathrm{h}$, model A ima $\sigma = 1\,\mathrm{h}$, model B $\sigma = 3\,\mathrm{h}$. Pri katerem je verjetnost, da baterija zdrži več kot $23\,\mathrm{h}$, večja?
 - Pri A, ker je bolj zanesljiv.

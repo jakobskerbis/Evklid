@@ -365,23 +365,16 @@ Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na e
 ~ Limita gleda vrednosti v bližini točke, te pa obstajajo.
 > Imenovalec je pozitiven in gre proti $0$, zato $f(x)$ raste čez vse meje: $\lim\limits_{x \to 1} f(x) = \infty$, navpična asimptota $x = 1$.
 
-? Koliko je $\lim\limits_{x \to -2} \dfrac{x^2 + 5x + 6}{x + 2}$?
-- $0$
-~ Vstavljanje da $\frac{0}{0}$, kar ni $0$, ampak nedoločeni izraz.
-- Limita ne obstaja, ker je imenovalec pri $x = -2$ enak $0$.
-~ Limita ne gleda točke $-2$ same, ampak njeno bližino. Izraz najprej razstavi.
-+ $1$
-> $x^2 + 5x + 6 = (x + 2)(x + 3)$; po krajšanju ostane $x + 3$, pri $x = -2$ je to $1$.
+? (brez računala) Koliko je $\lim\limits_{x \to -2} \dfrac{x^2 + 5x + 6}{x + 2}$?
+= 1 | 0,01
+~ 0 | Vstavljanje da $\frac{0}{0}$, kar ni $0$, ampak nedoločeni izraz. Izraz najprej razstavi.
+> $x^2 + 5x + 6 = (x + 2)(x + 3)$; po krajšanju ostane $x + 3$, pri $x = -2$ je to $1$. Limita obstaja, čeprav je imenovalec pri $x = -2$ enak $0$: limita ne gleda točke $-2$ same, ampak njeno bližino.
 
 ? Po vklopu ojačevalnika se relativna glasnost v dvorani spreminja po formuli $v(t) = \dfrac{12t^2 + 5}{4t^2 + 5}$. Kateri vrednosti se glasnost približuje, ko $t \to \infty$?
-- $1$
-~ To je $\frac{\infty}{\infty} = 1$, kar ne velja. (Vrednost $1$ ima glasnost ob vklopu, pri $t = 0$.)
-- $\infty$
-~ Števec res raste čez vse meje, a tudi imenovalec; oba rasteta s $t^2$, zato je ulomek omejen.
-+ $3$
-- $12$
-~ Upoštevati moraš tudi vodilni koeficient imenovalca, $4$.
-> Delimo s $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$.
+= 3 | 0,01
+~ 1 | To je $\frac{\infty}{\infty} = 1$, kar ne velja. (Vrednost $1$ ima glasnost ob vklopu, pri $t = 0$.)
+~ 12 | Upoštevati moraš tudi vodilni koeficient imenovalca, $4$.
+> Delimo s $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$. Števec res raste čez vse meje, a tudi imenovalec; oba rasteta s $t^2$, zato je ulomek omejen.
 
 ? Na katerih intervalih je funkcija $f(x) = \dfrac{x + 1}{x^2 - 4x}$ zvezna?
 - $(-\infty, -1)$ in $(-1, \infty)$

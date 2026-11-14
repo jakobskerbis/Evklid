@@ -584,7 +584,7 @@ točka: 5; 4
 ~ Premik prebereš šele iz oblike $2(x - c)$. Brez izpostavljanja dobiš $\frac{\pi}{3}$, kar je dvakrat preveč.
 > $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$, zato je $c = \frac{\pi}{6}$: premik za $\frac{\pi}{6}$ v desno. Korak (1) je pravilen.
 
-? Lučka za obvestila na telefonu »diha«: njena svetlost je $s(t) = 40\cos(\pi t) + 50$ (v odstotkih, $t$ v sekundah). Kolikšna je najmanjša svetlost lučke?
+? (brez računala) Lučka za obvestila na telefonu »diha«: njena svetlost je $s(t) = 40\cos(\pi t) + 50$ (v odstotkih, $t$ v sekundah). Kolikšna je najmanjša svetlost lučke?
 = 10 % | 0,5
 ~ -40 | Prezrl si premik $d = 50$: ves val je dvignjen za $50$. Negativne svetlosti ni.
 ~ 50 | To je srednja črta. Val niha za $40$ nad njo in za $40$ pod njo.

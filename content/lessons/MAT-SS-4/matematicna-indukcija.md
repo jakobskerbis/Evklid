@@ -254,14 +254,11 @@ Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsa
 ~ To je indukcijski korak, osrednji del dokaza.
 > Preverjanje primerov je koristno za domnevo, ni pa del dokaza: tudi sto pravilnih primerov ne zagotovi stoprvega.
 
-? Koliko potez najmanj potrebuješ za Hanojski stolp s $7$ ploščicami?
-- $128$
-~ To je $2^7$; pozabil si odšteti $1$. Za eno ploščico je $2^1 = 2$, potrebuješ pa le $1$ potezo.
-+ $127$
-- $49$
-~ To je $7^2$. Število potez se z vsako ploščico približno podvoji, ne raste kot kvadrat.
-- $14$
-~ To je $2 \cdot 7$. Velja $H_{n + 1} = 2H_n + 1$, zato se število potez podvaja, ne prišteva.
+? (brez računala) Koliko potez najmanj potrebuješ za Hanojski stolp s $7$ ploščicami?
+= 127
+~ 128 | To je $2^7$; pozabil si odšteti $1$. Za eno ploščico je $2^1 = 2$, potrebuješ pa le $1$ potezo.
+~ 49 | To je $7^2$. Število potez se z vsako ploščico približno podvoji, ne raste kot kvadrat.
+~ 14 | To je $2 \cdot 7$. Velja $H_{n + 1} = 2H_n + 1$, zato se število potez podvaja, ne prišteva.
 > $H_7 = 2^7 - 1 = 127$.
 
 ? Za trditev $2^n > n^2$ velja baza pri $n = 5$, korak pa je dokazan za vse $n \ge 3$. Kaj sledi?
@@ -282,13 +279,12 @@ Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsa
 ~ Predpostavka za en $n$ je del vsake indukcije; napačna je šele, če z njo začnemo pri $n + 1$.
 > Brez baze korak ne dokaže ničesar. Pravilna formula je $\frac{n(n + 1)}{2}$.
 
-? Na tekmovanju v podiranju domin postavijo $500$ domin. Vsaka padajoča podre naslednjo, le med $120.$ in $121.$ je razmik prevelik. Podrejo prvo. Katere padejo?
-- Vse, ker padec vsake podre naslednjo.
-~ Korak ne velja pri $120 \to 121$, zato se veriga tam pretrga.
-+ Domine od $1.$ do $120.$
-- Nobena, ker korak ne velja povsod.
-~ Prva pade, korak pa velja pri vseh prehodih do $120.$ domine, zato padejo vse do te vrzeli.
-> Indukcija potrebuje korak za vsak $n$; kjer manjka, se veriga ustavi.
+? Na tekmovanju v podiranju domin postavijo $500$ domin. Vsaka padajoča podre naslednjo, le med $120.$ in $121.$ je razmik prevelik. Podrejo prvo. Koliko domin pade?
+= 120
+~ 500 | Ne padejo vse: korak ne velja pri $120 \to 121$, zato se veriga tam pretrga.
+~ 0 | Prva pade, korak pa velja pri vseh prehodih do $120.$ domine, zato padejo vse do te vrzeli.
+~ 121 | Prehod $120 \to 121$ je ravno tisti, kjer korak ne velja: $120.$ domina pade, a $121.$ ne podre, zato ta ostane pokonci.
+> Padejo domine od $1.$ do $120.$ Indukcija potrebuje korak za vsak $n$; kjer manjka, se veriga ustavi.
 
 <<RACUN
 vrednost: 3*2-2 | 4

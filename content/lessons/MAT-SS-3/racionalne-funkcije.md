@@ -314,12 +314,10 @@ Primer je $f(x) = \frac{x^2 - 1}{x - 1}$, ki pri $x = 1$ ni definirana. Po kraj�
 ~ To je cena na kilometer pri vožnji $1\,\mathrm{km}$, ne pri dolgih vožnjah.
 > Stopnji števca in imenovalca sta $1$, vodilna koeficienta $0{,}8$ in $1$, zato je asimptota $y = 0{,}8$.
 
-? Čoln pluje $20\,\mathrm{km}$ proti toku reke, ki teče s $4\,\mathrm{km/h}$. Čas je $t(v) = \dfrac{20}{v - 4}$. Pri kateri hitrosti $v$ čoln v mirni vodi porabi $2\,\mathrm{h}$?
-- $10\,\mathrm{km/h}$
-~ To je $v - 4$, hitrost čolna glede na breg. Prišteti moraš še hitrost reke.
-+ $14\,\mathrm{km/h}$
-- $44\,\mathrm{km/h}$
-~ To je $20 \cdot 2 + 4$. Iz $\frac{20}{v - 4} = 2$ sledi $v - 4 = \frac{20}{2}$, ne $20 \cdot 2$.
+? Čoln pluje $20\,\mathrm{km}$ proti toku reke, ki teče s $4\,\mathrm{km/h}$. Čas je $t(v) = \dfrac{20}{v - 4}$. Pri kateri hitrosti $v$ čoln v mirni vodi porabi $2\,\mathrm{h}$? Vpiši jo v $\mathrm{km/h}$.
+= 14 km/h | 0,01
+~ 10 | To je $v - 4$, hitrost čolna glede na breg. Prišteti moraš še hitrost reke.
+~ 44 | To je $20 \cdot 2 + 4$. Iz $\frac{20}{v - 4} = 2$ sledi $v - 4 = \frac{20}{2}$, ne $20 \cdot 2$.
 > $\dfrac{20}{v - 4} = 2$, torej $v - 4 = 10$ in $v = 14\,\mathrm{km/h}$.
 
 ? (brez računala) Reši enačbo $\dfrac{x}{x - 3} - \dfrac{1}{x} = \dfrac{3}{x^2 - 3x}$. Vpiši njeno rešitev.

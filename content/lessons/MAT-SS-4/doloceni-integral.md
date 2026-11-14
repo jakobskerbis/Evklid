@@ -325,14 +325,11 @@ Podobno računa aplikacija za kolesarjenje porabljeno energijo: moč v vatih kra
 ~ Osemkrat bi se povečala, če bi podvojil tudi dolžino telesa (vse tri mere). Tu se dolžina ne spremeni.
 > $V = \pi \int_a^b \bigl(2f(x)\bigr)^2\,dx = 4\pi \int_a^b f(x)^2\,dx$: vsaka rezina ima dvakrat večji polmer, zato štirikrat večjo ploskev.
 
-? Koliko je $\int_1^3 2x\,dx$?
-- $-8$
-~ Odšteval si v napačnem vrstnem redu, $F(1) - F(3)$. Pravilno je zgornja minus spodnja.
-- $9$
-~ To je le $F(3)$. Odšteti moraš še vrednost pri spodnji meji, $F(1) = 1$.
-+ $8$
-- $4$
-~ To je pravokotnik z višino $f(1) = 2$ in širino $2$. Funkcija pa na intervalu raste, zato je lik večji.
+? (brez računala) Koliko je $\int_1^3 2x\,dx$?
+= 8 | 0,01
+~ -8 | Odšteval si v napačnem vrstnem redu, $F(1) - F(3)$. Pravilno je zgornja minus spodnja.
+~ 9 | To je le $F(3)$. Odšteti moraš še vrednost pri spodnji meji, $F(1) = 1$.
+~ 4 | To je pravokotnik z višino $f(1) = 2$ in širino $2$. Funkcija pa na intervalu raste, zato je lik večji.
 > $F(x) = x^2$, zato $\int_1^3 2x\,dx = 9 - 1 = 8$.
 
 ? Kolikšna je ploščina lika med grafom $f(x) = x^2 - 1$ in osjo $x$ na intervalu $[0, 2]$?
@@ -345,8 +342,8 @@ Podobno računa aplikacija za kolesarjenje porabljeno energijo: moč v vatih kra
 ~ To je samo integral na $[0, 1]$, ki je negativen. Ploščina ne more biti negativna.
 > Ničla je $x = 1$. $\int_0^1 (x^2 - 1)\,dx = -\frac{2}{3}$, $\int_1^2 (x^2 - 1)\,dx = \frac{4}{3}$. Ploščina je $\frac{2}{3} + \frac{4}{3} = 2$.
 
-? Znano je $\int_0^4 f(x)\,dx = 10$ in $\int_0^1 f(x)\,dx = 3$. Koliko je $\int_4^1 f(x)\,dx$?
-= -7
+? (brez računala) Znano je $\int_0^4 f(x)\,dx = 10$ in $\int_0^1 f(x)\,dx = 3$. Koliko je $\int_4^1 f(x)\,dx$?
+= -7 | 0,01
 ~ 7 | To je $\int_1^4 f(x)\,dx$. Meji sta zamenjani, zato se spremeni predznak.
 ~ 13 | Integralov ne seštej: iz $\int_0^1 f\,dx + \int_1^4 f\,dx = \int_0^4 f\,dx$ sledi $\int_1^4 f\,dx = 10 - 3$.
 ~ -13 | Integralov ne seštej: najprej odštej $10 - 3$, nato zamenjaj predznak.

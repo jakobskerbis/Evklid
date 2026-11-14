@@ -345,20 +345,16 @@ Enako je pri ceni rogljičkov: prihodek je največji tam, kjer podražitev neha 
 + Pade, s $312{,}50\,€$ na $308\,€$.
 > Desno od maksimuma je $R' < 0$, prihodek pada: $R(1{,}40) = 1{,}40 \cdot 220 = 308\,€$.
 
-? Katera je enačba tangente na graf $f(x) = x^2 - 2x$ v točki z absciso $3$?
-- $y = 3x - 6$
-~ Za smerni koeficient je vzeta vrednost $f(3) = 3$ namesto $f'(3)$.
-+ $y = 4x - 9$
-- $y = 4x + 3$
-~ Za začetno vrednost $n$ je vzet $f(3)$, premik $(x - 3)$ pa izpuščen.
+? Tangenta na graf $f(x) = x^2 - 2x$ v točki z absciso $3$ ima enačbo $y = kx + n$. Koliko je $n$?
+= -9 | 0,01
+~ -6 | Za smerni koeficient je vzeta vrednost $f(3) = 3$ namesto $f'(3) = 4$, tako dobiš $y = 3x - 6$.
+~ 3 | Za začetno vrednost $n$ je vzet $f(3)$, premik $(x - 3)$ pa izpuščen.
 > $f(3) = 3$, $f'(x) = 2x - 2$, $f'(3) = 4$; $y = 3 + 4(x - 3) = 4x - 9$.
 
-? Dnevni dobiček delavnice je $D(x) = -2x^2 + 120x - 1000$ evrov, kjer je $x$ število izdelkov. Kolikšen je največji dobiček?
-- $30\,€$
-~ $30$ je število izdelkov, pri katerem je dobiček največji, ne dobiček.
-- $0\,€$
-~ To je $D'(30)$. Vrednost dobička dobiš, ko $30$ vstaviš v $D$, ne v $D'$.
-+ $800\,€$
+? (brez računala) Dnevni dobiček delavnice je $D(x) = -2x^2 + 120x - 1000$ evrov, kjer je $x$ število izdelkov. Kolikšen je največji dobiček?
+= 800 € | 0,01
+~ 30 | $30$ je število izdelkov, pri katerem je dobiček največji, ne dobiček.
+~ 0 | To je $D'(30)$. Vrednost dobička dobiš, ko $30$ vstaviš v $D$, ne v $D'$.
 > $D'(x) = -4x + 120 = 0$ da $x = 30$; $D(30) = -1800 + 3600 - 1000 = 800$, predznak $D'$ gre iz $+$ v $-$.
 
 :::simboli

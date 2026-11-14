@@ -345,14 +345,11 @@ $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(
 ~ To je matematična verjetnost: $13$ ugodnih od $52$ enako verjetnih izidov.
 > Ocena sošolca temelji na občutku in izkušnjah, ne na štetju izidov ali ponavljanju poskusa.
 
-? Za dogodka $A$ in $B$ velja $P(A) = 0{,}5$, $P(B) = 0{,}4$ in $P(A + B) = 0{,}6$. Kolikšna je $P(A \cdot B)$?
-- $0{,}2$
-~ To je $P(A) \cdot P(B)$, kar velja le za neodvisna dogodka. Tu ne veš, da sta neodvisna, zato uporabi formulo za vsoto.
-- $0$
-~ Nič bi bilo pri nezdružljivih dogodkih, a takrat bi bila $P(A + B) = 0{,}9$, ne $0{,}6$.
-+ $0{,}3$
-- $0{,}9$
-~ To je $P(A) + P(B)$. Produkt $A \cdot B$ pomeni »oba hkrati« in ne more biti verjetnejši od $A$ samega.
+? Za dogodka $A$ in $B$ velja $P(A) = 0{,}5$, $P(B) = 0{,}4$ in $P(A + B) = 0{,}6$. Kolikšna je $P(A \cdot B)$? Vpiši kot decimalno število.
+= 0,3 | 0,01
+~ 0,2 | To je $P(A) \cdot P(B)$, kar velja le za neodvisna dogodka. Tu ne veš, da sta neodvisna, zato uporabi formulo za vsoto.
+~ 0,9 | To je $P(A) + P(B)$. Produkt $A \cdot B$ pomeni »oba hkrati« in ne more biti verjetnejši od $A$ samega.
+~ 0,0 | Nič bi bilo pri nezdružljivih dogodkih, a takrat bi bila $P(A + B) = 0{,}9$, ne $0{,}6$.
 > Iz $P(A + B) = P(A) + P(B) - P(A \cdot B)$ sledi $P(A \cdot B) = 0{,}5 + 0{,}4 - 0{,}6 = 0{,}3$.
 
 ? (višja raven) Za dogodka $A$ in $B$ velja $P(A) = 0{,}6$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}12$. Kolikšna je $P(A \mid B)$?

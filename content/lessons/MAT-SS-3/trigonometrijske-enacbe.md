@@ -377,6 +377,13 @@ Drugi popravek: doda še kot $180^\circ - 30^\circ = 150^\circ$. Zdaj telefon za
 ~ 210 | Tudi $\cos 210^\circ = -\frac{\sqrt{3}}{2}$, a $210^\circ$ ni med $0^\circ$ in $180^\circ$.
 > $\cos 30^\circ = \frac{\sqrt{3}}{2}$, zato je $\arccos\left(-\frac{\sqrt{3}}{2}\right) = 180^\circ - 30^\circ = 150^\circ$.
 
+? (brez računala) Kolikšna je najmanjša pozitivna rešitev enačbe $\tan x = -1$? Vpiši jo v stopinjah.
+= 135
+~ -45 | To je osnovna rešitev $\arctan(-1)$, ki ni pozitivna. Prištej periodo tangensa $180^\circ$.
+~ 315 | Tudi $315^\circ$ je rešitev, a ni najmanjša: tangens ima periodo $180^\circ$, zato je rešitev že $-45^\circ + 180^\circ$.
+~ 45 | Pri $45^\circ$ je tangens $1$, ne $-1$. Negativen je v II. in IV. kvadrantu.
+> $\arctan(-1) = -45^\circ$, splošna rešitev je $x = -45^\circ + k \cdot 180^\circ$. Najmanjša pozitivna je pri $k = 1$: $x = 135^\circ$.
+
 <<RACUN
 vrednost: asin(sqrt(3)/2)*180/pi | 60
 vrednost: acos(0)*180/pi | 90
