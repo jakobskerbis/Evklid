@@ -74,6 +74,7 @@ import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack, startPilotScan } from "./scan/scan.js";
 import { initPilot, loadPilot, showPilot, scanTask, isPilotMember } from "./pilot-naloge.js";
+import { initAnketa, preveriAnketo } from "./anketa-teden.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -443,7 +444,10 @@ function initView(name) {
   if (name === "uci") showUci();
   if (name === "scan") showScan();
   if (name === "league") loadLeague(state.student.id);
-  if (name === "path") loadPath();
+  if (name === "path") {
+    loadPath();
+    preveriAnketo(); // B3: anketa po 7 dneh (public/anketa-teden.js)
+  }
   if (name === "competition") (regionalExams() ? loadExams() : loadCompetition());
   if (name === "exams") loadExams();
   if (name === "feedback") showFeedback();
@@ -4853,6 +4857,8 @@ function syncOpinion(member, published = false) {
   opinionP.then((m) => m.loadOpinion()).catch(() => (opinionP = null));
 }
 // Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid«.
+// Anketa po 7 dneh (točka B3, public/anketa-teden.js): samo na Učni poti.
+initAnketa({ api, toast, getStudent: () => state.student, currentView: () => currentView });
 initPilot({
   api,
   toast,
