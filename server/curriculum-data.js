@@ -463,6 +463,7 @@ export const PATHS = {
       ["Potence in koreni", [
         "Koreni | pravila za računanje, delno korenjenje, racionalizacija",
         "Potence z racionalnimi eksponenti | zveza s koreni",
+        "Iracionalne enačbe | reševanje s kvadriranjem, pogoji in preizkus rešitev (višja raven)",
       ]],
       ["Kompleksna števila", [
         "Kompleksna števila | računanje, konjugirano število, absolutna vrednost",
@@ -470,12 +471,14 @@ export const PATHS = {
       ["Funkcije", [
         "Funkcije in njihove lastnosti | definicijsko območje, zaloga vrednosti, ničle, naraščanje in padanje, sodost in lihost, injektivnost, sestavljena in inverzna funkcija",
         "Transformacije grafov | vzporedni premik, zrcaljenje čez osi in raztezanje grafa funkcije",
+        "Grafi z absolutno vrednostjo in stopničaste funkcije | graf stopničaste funkcije; graf funkcije z absolutno vrednostjo po primerih (višja raven)",
         "Potenčna in korenska funkcija | grafi in lastnosti potenčnih funkcij s celim eksponentom, korenska funkcija kot inverzna funkcija, modeliranje",
       ]],
       ["Kvadratna funkcija", [
         "Kvadratna funkcija | oblike zapisa, teme, ničle, graf",
         "Kvadratna enačba | diskriminanta, Vietove formule",
         "Kvadratna neenačba | reševanje z grafom",
+        "Presečišča parabol in sistemi kvadratnih neenačb | presečišče parabole in premice ter dveh parabol; sistem kvadratnih neenačb (višja raven)",
       ]],
       ["Eksponentna in logaritemska funkcija", [
         "Eksponentna funkcija | graf, lastnosti",

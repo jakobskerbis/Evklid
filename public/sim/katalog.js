@@ -273,10 +273,12 @@ export const SIM_TOPICS = {
   // ---------------------------------------------------------------- MAT SŠ 2
   "MAT-SS-2/koreni": [["koren", "Kvadratni koren in približki"], ["graf", "Grafi korenskih funkcij", { preset: "koreni" }]],
   "MAT-SS-2/potence-z-racionalnimi-eksponenti": ["graf", "Potenčna funkcija z racionalnim eksponentom", { preset: "potencna" }],
+  "MAT-SS-2/iracionalne-enacbe": ["graf", "Korenska funkcija in premica", { preset: "koreni" }],
   "MAT-SS-2/kompleksna-stevila": ["kompleksna", "Kompleksna števila v ravnini"],
   "MAT-SS-2/kvadratna-funkcija": ["graf", "Kvadratna funkcija v temenski obliki", { preset: "kvadratna" }],
   "MAT-SS-2/kvadratna-enacba": ["graf", "Kvadratna enačba in diskriminanta", { preset: "kvadratna-enacba" }],
   "MAT-SS-2/kvadratna-neenacba": ["graf", "Kvadratna neenačba", { preset: "kvadratna-neenacba" }],
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb": ["graf", "Parabola in njena lega glede na os", { preset: "kvadratna-neenacba" }],
   "MAT-SS-2/eksponentna-funkcija": ["graf", "Eksponentna funkcija", { preset: "eksponentna" }],
   "MAT-SS-2/eksponentne-enacbe": ["graf", "Eksponentna enačba grafično", { preset: "eksponentna-enacba" }],
   "MAT-SS-2/logaritem": ["graf", "Logaritem kot obratna funkcija", { preset: "logaritem" }],
@@ -285,6 +287,7 @@ export const SIM_TOPICS = {
   "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku": ["trig-trikotnik", "Kotne funkcije v pravokotnem trikotniku"],
   "MAT-SS-2/funkcije-in-njihove-lastnosti": ["graf", "Lastnosti funkcije in inverzna funkcija", { preset: "lastnosti" }],
   "MAT-SS-2/transformacije-grafov": ["graf", "Premik, zrcaljenje in raztezanje grafa", { preset: "transformacije" }],
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije": ["graf", "Premik in zrcaljenje grafa", { preset: "transformacije" }],
   "MAT-SS-2/potencna-in-korenska-funkcija": [["graf", "Potenčne funkcije s celim eksponentom", { preset: "potencna-cela" }], ["graf", "Korenska funkcija kot inverzna funkcija", { preset: "koreni" }]],
   // ---------------------------------------------------------------- MAT SŠ 3
   "MAT-SS-3/kotne-funkcije-poljubnega-kota": ["enotska", "Enotska krožnica", { mode: "krog" }],

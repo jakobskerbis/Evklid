@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ničle niso presečišča
+  - $f(x) = 0$ je presek z osjo $x$
+  - Lara: točka $(20, 0)$ leži v hribu
+- Izenačevanje
+  - $f(x) = g(x)$, vse na eno stran
+  - ordinata iz enačbe premice
+- Parabola in premica
+  - $ax^2 + (b - k)x + (c - n) = 0$
+  - $D = (b - k)^2 - 4a(c - n)$
+- Lega premice
+  - $D > 0$: sekanta, dve točki
+  - $D = 0$: tangenta, dotikališče
+  - $D < 0$: mimobežnica
+- Dve paraboli
+  - enak postopek, $f(x) - g(x) = 0$
+  - enak $a$: linearna enačba, ena točka
+- Sistem neenačb (višja raven)
+  - vsako neenačbo reši posebej
+  - presek na številski premici, ne unija
+  - $a > 0$: $\ge 0$ zunaj ničel
