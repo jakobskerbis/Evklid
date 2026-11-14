@@ -9,18 +9,20 @@
 const OZNAKA_SEZNAMA = /^(\d{1,9}[.)]|[-*+])(\s|$)/;
 
 // Razdeli besedilo na bloke; bloki skupaj dajo isto besedilo. Meja je samo prazna vrstica, za katero se začne nov
-// odstavek na začetku vrstice (ne seznam, citat, tabela ali zamaknjeno nadaljevanje) in ki ni v ``` ali $$.
+// odstavek na začetku vrstice (ne seznam, citat, tabela ali zamaknjeno nadaljevanje) in ki ni v ```, $$, \[ … \] ali
+// \begin … \end.
 export function razdeliBloke(text) {
   const vrstice = String(text ?? "").split("\n");
   const bloki = [];
   let trenutni = [];
   let vOgradi = false;
   let vFormuli = false;
+  let globina = 0; // \[ … \] in \begin{…} … \end{…} čez več vrstic
   let prazna = false;
   for (let i = 0; i < vrstice.length; i++) {
     const v = vrstice[i];
     const meja =
-      prazna && !vOgradi && !vFormuli && v.trim() !== "" && !/^\s/.test(v) && !OZNAKA_SEZNAMA.test(v) && !/^[>|]/.test(v) && trenutni.some((x) => x.trim() !== "");
+      prazna && !vOgradi && !vFormuli && globina === 0 && v.trim() !== "" && !/^\s/.test(v) && !OZNAKA_SEZNAMA.test(v) && !/^[>|]/.test(v) && trenutni.some((x) => x.trim() !== "");
     if (meja) {
       bloki.push(trenutni.join("\n") + "\n");
       trenutni = [];
@@ -28,6 +30,7 @@ export function razdeliBloke(text) {
     trenutni.push(v);
     if (/^\s*(```|~~~)/.test(v)) vOgradi = !vOgradi;
     if (!vOgradi && (v.split("$$").length - 1) % 2) vFormuli = !vFormuli;
+    if (!vOgradi) globina = Math.max(0, globina + (v.match(/\\\[|\\begin\{/g) || []).length - (v.match(/\\\]|\\end\{/g) || []).length);
     prazna = v.trim() === "";
   }
   bloki.push(trenutni.join("\n"));

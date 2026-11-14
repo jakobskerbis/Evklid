@@ -46,6 +46,13 @@ test("D5 bloki: skupaj dajo isto besedilo; meja ni v seznamu, formuli $$, kodi, 
   assert.ok(b.some((x) => x.includes("koda\n\nše koda")), "koda ostane skupaj");
   assert.match(b.at(-1), /^Rezultat je/);
   assert.deepEqual(razdeliBloke(""), [""]);
+  // Pregled 3: \[ … \] in \begin … \end s prazno vrstico ostaneta v enem bloku.
+  const okoljaj = "Velja\n\n\\[\na = b\n\nc\n\\]\n\nVmes\n\n\\begin{aligned}\nx &= 1\n\ny &= 2\n\\end{aligned}\n\nKonec.";
+  const bo = razdeliBloke(okoljaj);
+  assert.equal(bo.join(""), okoljaj);
+  assert.ok(bo.some((x) => x.startsWith("\\[") && x.includes("c\n\\]")), JSON.stringify(bo));
+  assert.ok(bo.some((x) => x.startsWith("\\begin{aligned}") && x.includes("\\end{aligned}")), JSON.stringify(bo));
+  assert.match(bo.at(-1), /^Konec/);
 });
 
 test("D5 izris med tokom: dokončani bloki enkrat; končni izris enak celemu izrisu", () => {
