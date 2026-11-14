@@ -31,7 +31,9 @@ test("D3 sporočilo inštruktorju: zgodovina pogovora se prebere enkrat, model d
     const prazen = store.hasMessages(c.id);
     assert.equal(prazen, false);
 
-    assert.equal((await post(`/api/conversations/${c.id}/messages`, { text: "Koliko je 1/2 + 1/3?" })).status, 200);
+    const prvi = await post(`/api/conversations/${c.id}/messages`, { text: "Koliko je 1/2 + 1/3?" });
+    assert.equal(prvi.status, 200);
+    await prvi.text(); // do konca odgovora, sicer bi bil pogovor morda še zaseden (409)
     assert.equal(branja, 1, "prvo sporočilo: eno branje zgodovine");
     assert.equal(store.hasMessages(c.id), true);
 
