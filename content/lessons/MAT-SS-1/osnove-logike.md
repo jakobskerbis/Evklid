@@ -200,6 +200,83 @@ V vrstici PN je $\neg B$ = P, v NP je $\neg A$ = P, v NN sta obe P. Disjunkcija 
 - Enakovredni izjavi ($\equiv$) se ujemata v vseh vrsticah: $A \Rightarrow B \equiv \neg B \Rightarrow \neg A \equiv \neg A \vee B$; obrat $B \Rightarrow A$ ni enakovreden.
 - De Morgan: $\neg(A \wedge B) \equiv \neg A \vee \neg B$ in $\neg(A \vee B) \equiv \neg A \wedge \neg B$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izjavi $A$ in $C$ sta nepravilni, izjava $B$ pa je pravilna. Določi logično vrednost izjave $\neg A \wedge B \Rightarrow C \vee \neg B$.
+
+**Rešitev:**
+
+1. Po vrstnem redu operacij (najprej $\neg$, nato $\wedge$, $\vee$ in šele nato $\Rightarrow$) izjavo beremo kot $(\neg A \wedge B) \Rightarrow (C \vee \neg B)$.
+2. Predpostavka: $\neg A$ je P in $B$ je P, zato je $\neg A \wedge B$ pravilna (P).
+3. Posledica: $C$ je N in $\neg B$ je N, zato je $C \vee \neg B$ nepravilna (N).
+4. Implikacija s pravilno predpostavko in nepravilno posledico je nepravilna.
+5. Odgovor: izjava $\neg A \wedge B \Rightarrow C \vee \neg B$ je nepravilna (N).
+
+**Točkovanje:** 1 točka za pravilno postavljene oklepaje (vrstni red operacij), 1 točka za vrednosti predpostavke (P) in posledice (N), 1 točka za končno vrednost N.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Naj bosta $A$ in $B$ poljubni izjavi.
+
+a) Sestavi pravilnostno tabelo za izjavi $\neg(A \Rightarrow B)$ in $A \wedge \neg B$. (2 točki)
+b) Ali sta izjavi iz a) enakovredni? Odgovor utemelji. (1 točka)
+c) Naj bo $A$ izjava »Piha močan veter«, $B$ pa izjava »Trajekt ostane v pristanišču«. Z besedami zapiši izjavo $A \Rightarrow B$ in njeno negacijo, pri čemer v negaciji ne uporabiš besed »ni res, da«. (2 točki)
+d) Ali je izjava $(A \Rightarrow B) \vee (B \Rightarrow A)$ tavtologija? Odgovor utemelji. (2 točki)
+
+**Rešitev:**
+
+1. a) Tabela ima $2^2 = 4$ vrstice. Implikacija $A \Rightarrow B$ je nepravilna le v vrstici $A$ = P, $B$ = N (po vrsticah P, N, P, P), zato je $\neg(A \Rightarrow B)$ pravilna le v tej vrstici. Negacija $\neg B$ je po vrsticah N, P, N, P, zato je $A \wedge \neg B$ pravilna le pri $A$ = P, $B$ = N:
+
+| $A$ | $B$ | $\neg(A \Rightarrow B)$ | $A \wedge \neg B$ |
+|---|---|---|---|
+| P | P | N | N |
+| P | N | P | P |
+| N | P | N | N |
+| N | N | N | N |
+
+2. b) Stolpca izjav $\neg(A \Rightarrow B)$ in $A \wedge \neg B$ se ujemata v vseh štirih vrsticah (N, P, N, N), zato sta izjavi enakovredni: $\neg(A \Rightarrow B) \equiv A \wedge \neg B$.
+3. c) Implikacija $A \Rightarrow B$: »Če piha močan veter, trajekt ostane v pristanišču.«
+4. c) Po b) je negacija enakovredna izjavi $A \wedge \neg B$: »Piha močan veter in trajekt ne ostane v pristanišču.«
+5. d) Sestavimo tabelo obeh implikacij:
+
+| $A$ | $B$ | $A \Rightarrow B$ | $B \Rightarrow A$ |
+|---|---|---|---|
+| P | P | P | P |
+| P | N | N | P |
+| N | P | P | N |
+| N | N | P | P |
+
+6. d) V vsaki vrstici je pravilna vsaj ena od obeh implikacij, zato je disjunkcija $(A \Rightarrow B) \vee (B \Rightarrow A)$ v vseh štirih vrsticah pravilna (P, P, P, P) in je tavtologija. Razlog: $A \Rightarrow B$ je nepravilna le pri $A$ = P in $B$ = N, takrat pa je $B \Rightarrow A$ pravilna.
+7. Odgovor: izjavi $\neg(A \Rightarrow B)$ in $A \wedge \neg B$ sta enakovredni; negacija je »Piha močan veter in trajekt ne ostane v pristanišču«; izjava $(A \Rightarrow B) \vee (B \Rightarrow A)$ je tavtologija.
+
+**Točkovanje:** a) 1 točka za stolpec $\neg(A \Rightarrow B)$, 1 točka za stolpec $A \wedge \neg B$; b) 1 točka za sklep o enakovrednosti z utemeljitvijo (ujemanje v vseh vrsticah); c) 1 točka za implikacijo z besedami, 1 točka za pravilno negacijo; d) 1 točka za vrednosti obeh implikacij v vseh vrsticah ali razmislek o edini vrstici, v kateri je $A \Rightarrow B$ nepravilna, 1 točka za sklep, da je izjava tavtologija.
+
+### Ustno vprašanje 1
+
+:::premisli
+Koliko vrstic ima pravilnostna tabela sestavljene izjave z $n$ enostavnimi izjavami? Odgovor utemelji.
+---
+Pravilnostna tabela sestavljene izjave z $n$ enostavnimi izjavami ima $2^n$ vrstic. Vsaka enostavna izjava je lahko pravilna ali nepravilna, torej ima dve možni vrednosti. Vsaka nova izjava število vrstic podvoji, saj vsako dosedanjo kombinacijo vzamemo enkrat z vrednostjo P in enkrat z vrednostjo N.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj je tavtologija? Navedi primer in pojasni, kako preverimo, ali je izjava tavtologija.
+---
+Tavtologija je sestavljena izjava, ki je pravilna pri vseh vrednostih enostavnih izjav, iz katerih je sestavljena. Primer je izjava $A \vee \neg A$, saj je vedno pravilna izjava $A$ ali njena negacija. Tavtologijo preverimo s pravilnostno tabelo. V stolpcu izjave so v vseh vrsticah same P. Izjava, ki je nepravilna v vseh vrsticah, je protislovje, na primer $A \wedge \neg A$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kaj sta obrat in kontrapozicija implikacije $A \Rightarrow B$? Kateri od njiju je implikaciji enakovreden?
+---
+Obrat implikacije $A \Rightarrow B$ je izjava $B \Rightarrow A$, kontrapozicija pa izjava $\neg B \Rightarrow \neg A$. Kontrapozicija je implikaciji enakovredna, saj sta obe nepravilni le pri $A$ = P in $B$ = N. Obrat ni enakovreden, ker je pri $A$ = N in $B$ = P implikacija $A \Rightarrow B$ pravilna, obrat $B \Rightarrow A$ pa nepravilen. Na enakovrednosti implikacije in kontrapozicije temelji posredni dokaz.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si delavnico z lučjo in dvema stikaloma. Stikalo $A$ je vklopljeno, ko je izjava $A$ pravilna, in luč sveti, ko je sestavljena izjava pravilna.
@@ -275,6 +352,10 @@ Implikacijo si nariši kot tabelo s štirimi polji in prečrtaj samo polje »$A$
 - Luka in Ana, ker sta oba brez očal.
 ~ Gledaš samo posledico. Ana ne brusi, zato je predpostavka nepravilna in pravila ne krši.
 > Implikacija je nepravilna samo pri predpostavki P in posledici N: Luka brusi (P), očal nima (N).
+
+<<RACUN
+vrednost: 2^2 | 4
+>>
 
 :::simboli
 A, B, C | izjava | | | pravilna (P) ali nepravilna (N)

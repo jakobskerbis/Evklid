@@ -181,6 +181,71 @@ $7 - 4 = 3$ in $7 + 4 = 11$, zato je $3\,\text{km} < c < 11\,\text{km}$. Razdalj
 - Včrtana krožnica: $r = \dfrac{S}{s}$; v pravokotnem trikotniku je $R = \dfrac{c}{2}$.
 - Pitagorov izrek v pravokotnem trikotniku: $a^2 + b^2 = c^2$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Zunanji kot pri oglišču $C$ trikotnika $ABC$ meri $126^\circ$. Notranji kot $\alpha$ je za $18^\circ$ večji od notranjega kota $\beta$. Izračunaj vse tri notranje kote trikotnika in utemelji, katera stranica trikotnika je najdaljša.
+
+**Rešitev:**
+
+1. Notranji kot pri $C$ je sokot zunanjega: $\gamma = 180^\circ - 126^\circ = 54^\circ$.
+2. Zunanji kot je enak vsoti nenaležnih notranjih kotov: $\alpha + \beta = 126^\circ$. Ker je $\alpha - \beta = 18^\circ$, sledi $2\alpha = 126^\circ + 18^\circ = 144^\circ$, zato $\alpha = 72^\circ$ in $\beta = 126^\circ - 72^\circ = 54^\circ$.
+3. Preverimo: $72^\circ + 54^\circ + 54^\circ = 180^\circ$.
+4. Nasproti največjega kota leži najdaljša stranica. Največji kot je $\alpha = 72^\circ$, zato je najdaljša stranica $a$. Ker je $\beta = \gamma$, je $b = c$: trikotnik je enakokrak z osnovnico $a$.
+5. Odgovor: $\alpha = 72^\circ$, $\beta = 54^\circ$, $\gamma = 54^\circ$; najdaljša je stranica $a$, ker leži nasproti največjega kota.
+
+**Točkovanje:** 1 točka za $\gamma = 54^\circ$ in zvezo $\alpha + \beta = 126^\circ$, 1 točka za $\alpha = 72^\circ$ in $\beta = 54^\circ$, 1 točka za najdaljšo stranico $a$ z utemeljitvijo (nasproti večjega kota leži večja stranica).
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
+
+Enakokraki trikotnik $ABC$ ima osnovnico $c = |AB| = 10\,\text{cm}$ in kraka $a = b = 7\,\text{cm}$. Točka $D$ je razpolovišče osnovnice $AB$.
+
+a) Izračunaj višino $v_c$ in ploščino trikotnika. Rezultata zaokroži na stotinko. (2 točki)
+b) Utemelji, ali je kot $\gamma$ pri vrhu $C$ oster, pravi ali top, in ugotovi, ali središče $O$ očrtane krožnice leži znotraj trikotnika. (2 točki)
+c) Izračunaj polmer $r$ včrtane krožnice. Rezultat zaokroži na stotinko centimetra. (2 točki)
+d) Izračunaj razdaljo težišča $T$ od vrha $C$. Rezultat zaokroži na stotinko centimetra. (2 točki)
+
+**Rešitev:**
+
+1. a) V enakokrakem trikotniku pade višina iz vrha $C$ v razpolovišče $D$ osnovnice. Trikotnik $ADC$ je pravokoten s pravim kotom pri $D$, s hipotenuzo $b = 7\,\text{cm}$ in kateto $|AD| = 5\,\text{cm}$.
+2. a) $v_c = |DC| = \sqrt{7^2 - 5^2}\,\text{cm} = \sqrt{24}\,\text{cm} \approx 4{,}899\,\text{cm} \approx 4{,}90\,\text{cm}$.
+3. a) $S = \dfrac{c \cdot v_c}{2} = \dfrac{10 \cdot \sqrt{24}}{2}\,\text{cm}^2 = 5\sqrt{24}\,\text{cm}^2 \approx 24{,}495\,\text{cm}^2 \approx 24{,}49\,\text{cm}^2$.
+4. b) V pravokotnem trikotniku $ADC$ je $|AD| = 5\,\text{cm} > |DC| \approx 4{,}90\,\text{cm}$. Nasproti večje stranice leži večji kot, zato je $\angle ACD > \angle CAD$. Kota skupaj merita $90^\circ$, zato je $\angle ACD > 45^\circ$.
+5. b) Trikotnika $ADC$ in $BDC$ sta skladna (SSS), zato višina razpolovi kot pri vrhu in je $\gamma = 2 \cdot \angle ACD > 90^\circ$: kot $\gamma$ je top. (Enako sledi iz Talesovega izreka: $C$ leži znotraj krožnice s premerom $AB$, ker je $|DC| < 5\,\text{cm}$.)
+6. b) Trikotnik je topokoten, zato središče $O$ očrtane krožnice leži zunaj trikotnika (onkraj osnovnice $AB$).
+7. c) Polobseg: $s = \dfrac{10 + 7 + 7}{2}\,\text{cm} = 12\,\text{cm}$.
+8. c) $r = \dfrac{S}{s} = \dfrac{5\sqrt{24}}{12}\,\text{cm} \approx 2{,}041\,\text{cm} \approx 2{,}04\,\text{cm}$.
+9. d) Težiščnica $t_c$ gre od $C$ do razpolovišča $D$, torej sovpada z višino: $t_c = v_c = \sqrt{24}\,\text{cm}$.
+10. d) Težišče deli težiščnico v razmerju $2:1$ od oglišča: $|TC| = \dfrac{2}{3}\sqrt{24}\,\text{cm} \approx 3{,}266\,\text{cm} \approx 3{,}27\,\text{cm}$.
+11. Odgovor: a) $v_c \approx 4{,}90\,\text{cm}$, $S \approx 24{,}49\,\text{cm}^2$; b) kot $\gamma$ je top, $O$ leži zunaj trikotnika; c) $r \approx 2{,}04\,\text{cm}$; d) $|TC| \approx 3{,}27\,\text{cm}$.
+
+**Točkovanje:** a) 1 točka za $v_c \approx 4{,}90\,\text{cm}$ in 1 točka za $S \approx 24{,}49\,\text{cm}^2$; b) 1 točka za utemeljitev, da je $\gamma$ top (primerjava $|AD| > |DC|$, Talesov izrek ali enakovredno), 1 točka za sklep, da $O$ leži zunaj trikotnika; c) 1 točka za $s = 12\,\text{cm}$, 1 točka za $r \approx 2{,}04\,\text{cm}$; d) 1 točka za $t_c = v_c$, 1 točka za $|TC| \approx 3{,}27\,\text{cm}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Dokaži, da je vsota notranjih kotov trikotnika $180^\circ$, in izpelji, koliko meri zunanji kot trikotnika.
+---
+Skozi oglišče $C$ potegnemo vzporednico stranici $AB$. Ob kotu $\gamma$ nastaneta pri $C$ še dva kota, ki sta kot izmenična kota ob vzporednicah enaka kotoma $\alpha$ in $\beta$. Ti trije koti skupaj tvorijo iztegnjeni kot, zato je $\alpha + \beta + \gamma = 180^\circ$. Zunanji kot pri $C$ je sokot notranjega kota, $\gamma' = 180^\circ - \gamma$. Iz vsote kotov sledi $\gamma' = \alpha + \beta$, torej je zunanji kot enak vsoti nenaležnih notranjih kotov.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Naštej izreke o skladnosti trikotnikov in pojasni, kakšen pogoj velja pri izreku SsK.
+---
+Trikotnika sta skladna, če se ujemata v vseh treh stranicah (SSS) ali v dveh stranicah in kotu med njima (SKS). Skladna sta tudi, če se ujemata v stranici in obeh kotih ob njej (KSK) ali v dveh stranicah in kotu nasproti daljše od njiju (SsK). Pri izreku SsK mora kot ležati nasproti daljše stranice. Če leži nasproti krajše, lahko krožnica s središčem v tistem krajišču daljše stranice, ki ni vrh kota, in s polmerom krajše stranice seka drugi krak kota v dveh točkah, zato z istimi podatki dobimo dva neskladna trikotnika.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni, zakaj se simetrale vseh treh stranic trikotnika sekajo v eni točki, in povej, kaj je ta točka.
+---
+Točke simetrale daljice so natanko tiste, ki so enako oddaljene od njenih krajišč. Presečišče $O$ simetral stranic $AB$ in $BC$ zato zadošča $|OA| = |OB|$ in $|OB| = |OC|$. Sledi $|OA| = |OC|$, zato $O$ leži tudi na simetrali stranice $AC$. Točka $O$ je enako oddaljena od vseh treh oglišč, zato je središče trikotniku očrtane krožnice. Pri ostrokotnem trikotniku leži znotraj trikotnika, pri pravokotnem na sredini hipotenuze, pri topokotnem zunaj.
+:::
+
 ## Drugače: Na sliki
 
 V simulaciji spodaj »Trikotnik: stranice in koti« vleci oglišče $C$ proti daljici $AB$. Kot $\gamma$ raste proti $180^\circ$, kota $\alpha$ in $\beta$ padata proti $0^\circ$, vsota pa ves čas kaže $180^\circ$. Hkrati vidiš trikotniško neenakost: ko je $C$ skoraj na daljici, je $a + b$ le malo večje od $c$.
@@ -261,6 +326,19 @@ O | središče očrtane krožnice | | | presečišče simetral stranic
 I | središče včrtane krožnice | | | presečišče simetral kotov
 V | višinska točka | | | presečišče nosilk višin
 T | težišče | | | deli težiščnico v razmerju $2:1$ od oglišča
-C | oglišče trikotnika | | | v primeru oglišče s pravim kotom
+C | oglišče trikotnika | | | v Primeru 3 oglišče s pravim kotom
 t_c | težiščnica iz oglišča C | | |
+v_c | višina na stranico c | S = \frac{c \cdot v_c}{2} | |
 :::
+
+<<RACUN
+vrednost: 180-126 | 54
+vrednost: (126+18)/2 | 72
+vrednost: (126-18)/2 | 54
+vrednost: 72+54+54 | 180
+vrednost: sqrt(7^2-5^2) | 4.90
+vrednost: 10*sqrt(24)/2 | 24.49
+vrednost: (10+7+7)/2 | 12
+vrednost: 5*sqrt(24)/12 | 2.04
+vrednost: 2*sqrt(24)/3 | 3.27
+>>

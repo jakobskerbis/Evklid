@@ -168,6 +168,91 @@ Delimo z $-2$, zato se znak obrne: $x \le -5$. Interval je $(-\infty, -5]$, kraj
 - Rešitev zapišemo kot interval: okrogel oklepaj pri strogi neenačbi in pri $\pm\infty$, oglati oklepaj pri $\le$, $\ge$.
 - Pri besedilnih nalogah upoštevamo še smiselnost rešitve (npr. $x \ge 0$).
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Reši neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in rešitev zapiši z intervalom.
+
+**Rešitev:**
+
+1. Pomnožimo s pozitivnim številom $6$, znak ostane: $2(x - 1) - 3(x + 2) \ge x - 6$.
+2. Odpremo oklepaje: $2x - 2 - 3x - 6 \ge x - 6$, torej $-x - 8 \ge x - 6$ in $-2x \ge 2$.
+3. Delimo z negativnim številom $-2$, zato se znak obrne: $x \le -1$.
+4. Preizkus: pri $x = -1$ je leva stran $-\dfrac{2}{3} - \dfrac{1}{2} = -\dfrac{7}{6}$ in desna $-\dfrac{1}{6} - 1 = -\dfrac{7}{6}$, zato je $-1$ rešitev. Pri $x = 0$ dobimo $-\dfrac{1}{3} - 1 = -\dfrac{4}{3}$, kar ni večje ali enako $-1$, zato $0$ ni rešitev.
+5. Odgovor: $x \in (-\infty, -1]$.
+
+**Točkovanje:** 1 točka za neenačbo brez ulomkov, 1 točka za $-2x \ge 2$ ali enakovredno neenačbo, 1 točka za $x \le -1$ z obrnjenim znakom in interval $(-\infty, -1]$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Podjetje izdeluje majice s potiskom. Mesečni stalni stroški so $1350\,\text{€}$, izdelava ene majice stane $4{,}20\,\text{€}$, majico pa prodajo za $11{,}70\,\text{€}$. Z $x$ označimo število majic, ki jih v mesecu izdelajo in prodajo.
+
+a) Zapiši izraz za mesečni dobiček v odvisnosti od $x$. (1 točka)
+b) Zapiši in reši neenačbo, s katero ugotoviš, najmanj koliko majic mora podjetje prodati, da bo dobiček pozitiven. (2 točki)
+c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,\%$ prihodka od prodaje? Mejo izračunaj na dve decimalni mesti natančno in odgovor utemelji. (3 točke)
+
+**Rešitev:**
+
+1. a) Prihodek je $11{,}70x$, stroški so $1350 + 4{,}20x$. Dobiček je $11{,}70x - 4{,}20x - 1350 = 7{,}50x - 1350$ (v evrih).
+2. b) $7{,}50x - 1350 > 0$, torej $7{,}50x > 1350$. Delimo s pozitivnim številom, znak ostane: $x > 180$.
+3. b) Pri $180$ majicah je dobiček $0\,\text{€}$, zato mora podjetje prodati najmanj $181$ majic.
+4. c) $20\,\%$ prihodka je $0{,}2 \cdot 11{,}70x = 2{,}34x$. Neenačba: $7{,}50x - 1350 \ge 2{,}34x$.
+5. c) $5{,}16x \ge 1350$, torej $x \ge \dfrac{1350}{5{,}16} = 261{,}627\ldots \approx 261{,}63$.
+6. c) Število majic je celo, zato je najmanjše tako število $262$. Preizkus: pri $262$ majicah je dobiček $7{,}50 \cdot 262 - 1350 = 615\,\text{€}$, $20\,\%$ prihodka pa $2{,}34 \cdot 262 = 613{,}08\,\text{€}$. Pri $261$ majicah je dobiček $607{,}50\,\text{€}$, kar je manj od $2{,}34 \cdot 261 = 610{,}74\,\text{€}$.
+7. Odgovor: a) dobiček je $7{,}50x - 1350$ evrov; b) najmanj $181$ majic; c) najmanj $262$ majic.
+
+**Točkovanje:** a) 1 točka za izraz $7{,}50x - 1350$; b) 1 točka za neenačbo in $x > 180$, 1 točka za odgovor $181$ majic; c) 1 točka za neenačbo $7{,}50x - 1350 \ge 2{,}34x$; 1 točka za mejo $261{,}63$; 1 točka za odgovor $262$ majic z utemeljitvijo, zakaj zaokrožimo navzgor.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dani sta linearni funkciji $f(x) = \dfrac{x + 7}{2}$ in $g(x) = \dfrac{4x - 2}{3}$.
+
+a) Reši neenačbo $f(x) \ge g(x)$ in rešitev zapiši z intervalom. (3 točke)
+b) Pojasni, kaj rešitev iz a) pove o legi grafov funkcij $f$ in $g$. (1 točka)
+c) Za katera števila $x$ sta vrednosti obeh funkcij pozitivni? (2 točki)
+d) Zapiši množico števil $x$, ki izpolnjujejo pogoja iz a) in c) hkrati. (1 točka)
+e) Določi realni parameter $p$ tako, da bo množica rešitev neenačbe $f(x) \ge g(x) + p$ enaka $(-\infty, 2]$. (3 točke)
+
+**Rešitev:**
+
+1. a) Pomnožimo s $6$: $3(x + 7) \ge 2(4x - 2)$, torej $3x + 21 \ge 8x - 4$.
+2. a) Uredimo: $-5x \ge -25$. Delimo z negativnim številom $-5$ in znak obrnemo: $x \le 5$, torej $x \in (-\infty, 5]$.
+3. b) Pri $x = 5$ je $f(5) = g(5) = 6$, zato se grafa sekata v točki $(5, 6)$. Levo od presečišča leži graf funkcije $f$ nad grafom funkcije $g$, desno od njega pa pod njim.
+4. c) $f(x) > 0$ velja za $x + 7 > 0$, torej $x > -7$. $g(x) > 0$ velja za $4x - 2 > 0$, torej $x > \dfrac{1}{2}$.
+5. c) Obe vrednosti sta pozitivni, ko velja oboje, torej za $x > \dfrac{1}{2}$ oziroma $x \in \left(\dfrac{1}{2}, \infty\right)$.
+6. d) Presek intervalov $(-\infty, 5]$ in $\left(\dfrac{1}{2}, \infty\right)$ je $\left(\dfrac{1}{2}, 5\right]$.
+7. e) Pomnožimo s $6$: $3x + 21 \ge 8x - 4 + 6p$, torej $-5x \ge 6p - 25$ in po deljenju z $-5$ (znak se obrne) $x \le \dfrac{25 - 6p}{5}$.
+8. e) Zahtevamo $\dfrac{25 - 6p}{5} = 2$, torej $25 - 6p = 10$ in $p = \dfrac{5}{2}$.
+9. e) Preizkus: $f(2) = \dfrac{9}{2}$ in $g(2) + \dfrac{5}{2} = 2 + \dfrac{5}{2} = \dfrac{9}{2}$, zato je $2$ krajišče intervala rešitev.
+10. Odgovor: a) $(-\infty, 5]$; b) za $x \le 5$ graf funkcije $f$ leži nad grafom funkcije $g$ ali ga seka, presečišče je $(5, 6)$; c) $\left(\dfrac{1}{2}, \infty\right)$; d) $\left(\dfrac{1}{2}, 5\right]$; e) $p = \dfrac{5}{2}$.
+
+**Točkovanje:** a) 1 točka za neenačbo brez ulomkov, 1 točka za $-5x \ge -25$, 1 točka za $x \le 5$ z obrnjenim znakom in interval $(-\infty, 5]$; b) 1 točka za pojasnilo s presečiščem $(5, 6)$; c) 1 točka za $x > -7$, 1 točka za $x > \dfrac{1}{2}$ in skupni interval; d) 1 točka za $\left(\dfrac{1}{2}, 5\right]$; e) 1 točka za $x \le \dfrac{25 - 6p}{5}$, 1 točka za enačbo $\dfrac{25 - 6p}{5} = 2$, 1 točka za $p = \dfrac{5}{2}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Katera preoblikovanja linearne neenačbe so ekvivalentna? Dokaži, da se pri množenju z negativnim številom znak neenačbe obrne.
+---
+Na obeh straneh smemo prišteti ali odšteti isto število in obe strani pomnožiti ali deliti z istim pozitivnim številom, ne da bi se znak spremenil. Pri množenju ali deljenju z negativnim številom se znak obrne. Za dokaz vzemimo $a < b$ in $c < 0$. Tedaj je $b - a > 0$, zato je produkt $c(b - a)$ negativen. Iz $cb - ca < 0$ sledi $cb < ca$, torej $ca > cb$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako zapišemo množico rešitev linearne neenačbe z intervalom? Pojasni pomen okroglega in oglatega oklepaja ter navedi primer.
+---
+Rešitev linearne neenačbe je navadno neskončna množica števil, ki jo zapišemo kot interval. Oglati oklepaj pomeni, da krajišče pripada množici, kar je pri znakih $\le$ in $\ge$. Okrogli oklepaj pomeni, da krajišče ne pripada množici, kar je pri znakih $<$ in $>$; pri $\infty$ in $-\infty$ je oklepaj vedno okrogel. Rešitev neenačbe $x \le 3$ je na primer interval $(-\infty, 3]$, rešitev neenačbe $x > 3$ pa interval $(3, \infty)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer linearne neenačbe brez rešitve in primer neenačbe, ki jo reši vsako realno število, ter pojasni, kako to prepoznaš.
+---
+Če se pri poenostavljanju členi z $x$ odštejejo, ostane neenačba brez neznanke, ki je resnična ali neresnična. Pri neenačbi $x + 2 < x$ po odštevanju $x$ dobimo $2 < 0$, kar ni res, zato neenačba nima rešitve. Pri neenačbi $x + 2 > x$ dobimo $2 > 0$, kar je vedno res, zato jo reši vsako realno število. Množica rešitev je v prvem primeru prazna, v drugem pa je to interval $(-\infty, \infty)$.
+:::
+
 ## Drugače: Na sliki
 
 Na številski premici je rešitev neenačbe **del premice**, ki ga pobarvamo.
@@ -288,4 +373,30 @@ x | neznanka (v besedilnih nalogah število letev) | | |
 a | koeficient pri $x$ | | | njegov predznak odloči, ali se znak obrne; v preglednici intervalov je $a$ krajišče
 b | število na desni strani neenačbe $ax < b$ | | | v obliki $ax + b < c$ je $b$ prosti člen na levi
 c | število na desni strani neenačbe $ax + b < c$ | | | v dokazu obrnitve znaka negativno število, s katerim množimo
+f, g | linearni funkciji | | |
+p | parameter | | | dano realno število
 :::
+
+<<RACUN
+neenacba: (x-1)/3-(x+2)/2>=x/6-1 | x | (-oo, -1]
+neenacba: -2*x>=2 | x | (-oo, -1]
+vrednost: (-1-1)/3-(-1+2)/2 | -7/6
+vrednost: -1/6-1 | -7/6
+enako: 11.7*x-4.2*x-1350 | 7.5*x-1350
+neenacba: 7.5*x-1350>0 | x | (180, oo)
+neenacba: 15/2*x-1350>=234/100*x | x | [11250/43, oo)
+vrednost: 1350/5.16 | 261.63
+vrednost: 7.5*262-1350 | 615
+vrednost: 2.34*262 | 613.08
+vrednost: 7.5*261-1350 | 607.5
+vrednost: 2.34*261 | 610.74
+neenacba: (x+7)/2>=(4*x-2)/3 | x | (-oo, 5]
+vrednost: (5+7)/2 | 6
+vrednost: (4*5-2)/3 | 6
+neenacba: (x+7)/2>0 | x | (-7, oo)
+neenacba: (4*x-2)/3>0 | x | (1/2, oo)
+neenacba: (x+7)/2>=(4*x-2)/3+5/2 | x | (-oo, 2]
+resi: (25-6*p)/5=2 | p | 5/2
+neenacba: x+2<x | x | none
+neenacba: x+2>x | x | (-oo, oo)
+>>

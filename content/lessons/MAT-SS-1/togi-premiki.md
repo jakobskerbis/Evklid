@@ -221,6 +221,65 @@ $Z_2(-3, 5)$. V primerjavi z $Z(3, -5)$ sta obe koordinati nasprotni: $(x, y) \m
 - Zrcaljenje čez premico obrne orientacijo trikotnika; premik, vrtež in zrcaljenje čez točko jo ohranijo.
 - Lika sta skladna, če enega s togimi premiki preslikamo na drugega.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Pri zrcaljenju čez točko $S$ se točka $A(-3, 5)$ preslika v točko $A'(7, -1)$. Določi središče $S$ in sliko točke $B(2, 4)$ pri istem zrcaljenju.
+
+**Rešitev:**
+
+1. Središče $S$ je razpolovišče daljice $AA'$: $x_S = \dfrac{-3 + 7}{2} = 2$, $y_S = \dfrac{5 + (-1)}{2} = 2$, torej $S(2, 2)$.
+2. Za sliko točke $B$ velja $x' = 2x_S - x$ in $y' = 2y_S - y$.
+3. $x' = 2 \cdot 2 - 2 = 2$ in $y' = 2 \cdot 2 - 4 = 0$.
+4. Odgovor: $S(2, 2)$, slika točke $B$ je $B'(2, 0)$.
+
+**Točkovanje:** 1 točka za središče $S(2, 2)$, 1 točka za pravilo $x' = 2x_S - x$, $y' = 2y_S - y$ (ali enakovreden razmislek), 1 točka za $B'(2, 0)$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Trikotnik $ABC$ ima oglišča $A(2, 1)$, $B(5, 2)$ in $C(3, 4)$.
+
+a) Trikotnik $ABC$ zavrti okoli izhodišča za $90^\circ$ v pozitivni smeri. Zapiši oglišča slike $A'B'C'$. (2 točki)
+b) Trikotnik $A'B'C'$ zrcali čez os $y$. Zapiši oglišča slike $A''B''C''$. (2 točki)
+c) Zapiši predpis, ki točko $T(x, y)$ preslika naravnost v njeno končno sliko $T''$. Utemelji, ali bi trikotnik $A''B''C''$ lahko dobil iz trikotnika $ABC$ samo z vzporednimi premiki in vrteži. (2 točki)
+
+**Rešitev:**
+
+1. a) Pri vrtežu za $90^\circ$ v pozitivni smeri je $(x, y) \mapsto (-y, x)$.
+2. a) $A'(-1, 2)$, $B'(-2, 5)$, $C'(-4, 3)$.
+3. b) Pri zrcaljenju čez os $y$ je $(x, y) \mapsto (-x, y)$, zato $A''(1, 2)$, $B''(2, 5)$, $C''(4, 3)$.
+4. c) Zaporedoma: $(x, y) \mapsto (-y, x) \mapsto (y, x)$. Predpis je $T(x, y) \mapsto T''(y, x)$: koordinati zamenjata mesti.
+5. c) Obhod $A \to B \to C$ gre nasproti urinemu kazalcu, zato je $ABC$ pozitivno orientiran. Obhod $A'' \to B'' \to C''$ gre v smeri urinega kazalca, zato je $A''B''C''$ negativno orientiran. (Od $A$ do $B$ gremo desno in rahlo navzgor, pri $B$ pa zavijemo levo navzgor proti $C$; od $A''$ do $B''$ gremo navzgor, pri $B''$ pa zavijemo desno navzdol proti $C''$.)
+6. c) Vzporedni premiki in vrteži orientacijo ohranijo, zato trikotnika $A''B''C''$ iz $ABC$ samo z njimi ne dobimo. Orientacijo je obrnilo zrcaljenje čez os $y$; za takšno sliko je potrebno zrcaljenje čez premico.
+7. Odgovor: $A'(-1, 2)$, $B'(-2, 5)$, $C'(-4, 3)$; $A''(1, 2)$, $B''(2, 5)$, $C''(4, 3)$; predpis $(x, y) \mapsto (y, x)$; samo z vzporednimi premiki in vrteži trikotnika $A''B''C''$ ne dobimo, ker ima nasprotno orientacijo kot $ABC$.
+
+**Točkovanje:** a) 1 točka za pravilo $(x, y) \mapsto (-y, x)$, 1 točka za vsa tri oglišča $A'$, $B'$, $C'$; b) 1 točka za pravilo $(x, y) \mapsto (-x, y)$, 1 točka za vsa tri oglišča $A''$, $B''$, $C''$; c) 1 točka za predpis $(x, y) \mapsto (y, x)$, 1 točka za utemeljitev z orientacijo.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je togi premik in katere lastnosti likov se pri njem ohranijo?
+---
+Togi premik je preslikava ravnine, ki ohranja razdalje: za poljubni točki $A$ in $B$ velja $|A'B'| = |AB|$. Ker se ohranijo dolžine, se ohranijo tudi koti, zato je slika lika z njim skladen lik. Osnovni togi premiki so vzporedni premik, zrcaljenje čez premico, zrcaljenje čez točko in vrtež, togi premik pa je tudi vsako njihovo zaporedje. Od osnovnih premikov orientacijo trikotnika obrne le zrcaljenje čez premico, drugi jo ohranijo.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji koordinate slike točke $T(x, y)$ pri zrcaljenju čez točko $S(x_S, y_S)$.
+---
+Pri zrcaljenju čez točko $S$ je $S$ razpolovišče daljice $TT'$. Po formuli za razpolovišče velja $x_S = \dfrac{x + x'}{2}$ in $y_S = \dfrac{y + y'}{2}$. Enačbi pomnožimo z $2$ in izrazimo $x' = 2x_S - x$ ter $y' = 2y_S - y$. Za središče v izhodišču dobimo sliko $T'(-x, -y)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Utemelji, zakaj je zrcaljenje čez točko enako vrtežu za $180^\circ$ in zakaj zato ohranja orientacijo.
+---
+Pri vrtežu okoli $S$ za $180^\circ$ je slika $T'$ enako daleč od $S$ kot $T$, kot $TST'$ pa je iztegnjeni kot. Zato točke $T$, $S$ in $T'$ ležijo na isti premici, $S$ pa je razpolovišče daljice $TT'$. To je natanko opis zrcaljenja čez točko $S$, zato sta preslikavi enaki. Vrtež orientacijo ohrani, zato jo ohrani tudi zrcaljenje čez točko.
+:::
+
 ## Drugače: Kot zgodba
 
 Tjaša je po zimskem treningu tekla domov čez zasneženo igrišče. Zjutraj je opazila svoje sledi: levi odtis, desni, levi, desni.
@@ -332,6 +391,10 @@ vrednost: 2*1-3 | -1
 vrednost: 2*1-(-2) | 4
 vrednost: 2*2-1 | 3
 vrednost: -1-(-3) | 2
+vrednost: (-3+7)/2 | 2
+vrednost: (5+(-1))/2 | 2
+vrednost: 2*2-2 | 2
+vrednost: 2*2-4 | 0
 >>
 
 :::simboli
@@ -339,6 +402,7 @@ T | točka (original) | |
 T' | slika točke $T$ | | 
 x, y | koordinati točke $T$ | | 
 x', y' | koordinati slike $T'$ | | 
+T'' | slika točke $T$ po dveh zaporednih premikih | | 
 p | premik v smeri osi $x$ | | 
 q | premik v smeri osi $y$ | | 
 x_S, y_S | koordinati središča $S$ | | 

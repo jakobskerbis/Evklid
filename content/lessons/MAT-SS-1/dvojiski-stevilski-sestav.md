@@ -196,6 +196,75 @@ $10 = 8 + 2$, torej $58 = 32 + 16 + 8 + 2$. Mesta $4$ in $1$ dobita ničlo: $111
 - Zadnja števka je ostanek pri deljenju z $2$: $0$ pri sodem, $1$ pri lihem številu.
 - S $k$ biti zapišeš števila od $0$ do $2^k - 1$.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Števec na vhodu v muzej število obiskovalcev prikazuje v dvojiškem sestavu. Opoldne je pokazal $1110011_{(2)}$. V celem dnevu je prišlo $200$ obiskovalcev.
+
+a) Koliko obiskovalcev je prišlo do opoldneva? Rezultat zapiši desetiško. (2 točki)
+b) Število $200$ z zaporednim deljenjem z $2$ zapiši v dvojiškem sestavu. (2 točki)
+c) Koliko obiskovalcev je prišlo popoldne? Rezultat zapiši desetiško in dvojiško. (2 točki)
+d) Samo iz dvojiškega zapisa iz b) utemelji, ali je število $200$ deljivo z $8$. (1 točka)
+
+**Rešitev:**
+
+1. a) Zapis ima $7$ mest, mestne vrednosti od leve so $64$, $32$, $16$, $8$, $4$, $2$, $1$. Enice stojijo na mestih $64$, $32$, $16$, $2$ in $1$: $64 + 32 + 16 + 2 + 1 = 115$.
+2. b) $200 = 100 \cdot 2 + 0$, $100 = 50 \cdot 2 + 0$, $50 = 25 \cdot 2 + 0$, $25 = 12 \cdot 2 + 1$, $12 = 6 \cdot 2 + 0$, $6 = 3 \cdot 2 + 0$, $3 = 1 \cdot 2 + 1$, $1 = 0 \cdot 2 + 1$.
+3. b) Ostanke beremo od spodaj navzgor: $200 = 11001000_{(2)}$. Preizkus: $128 + 64 + 8 = 200$.
+4. c) Popoldne je prišlo $200 - 115 = 85$ obiskovalcev. Ker je $85 = 64 + 16 + 4 + 1$, je $85 = 1010101_{(2)}$.
+5. d) Zapis $11001000_{(2)}$ se konča s tremi ničlami. Vse mestne vrednosti od četrtega mesta naprej ($8$, $16$, $32$ …) so večkratniki števila $8$, zadnja tri mesta pa ne prispevajo ničesar. Zato je $200$ deljivo z $8$.
+6. Odgovor: do opoldneva je prišlo $115$ obiskovalcev, popoldne $85 = 1010101_{(2)}$; $200 = 11001000_{(2)}$ je deljivo z $8$.
+
+**Točkovanje:** a) 1 točka za pravilne mestne vrednosti, 1 točka za $115$; b) 1 točka za pravilno zaporedje deljenj z ostanki, 1 točka za $11001000_{(2)}$; c) 1 točka za $85$, 1 točka za $1010101_{(2)}$; d) 1 točka za utemeljitev s tremi končnimi ničlami.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Šola vsakemu dijaku dodeli številko kartice. Številke so zapisane dvojiško z enakim številom bitov (spredaj so lahko ničle) in se začnejo pri $0$.
+
+a) Koliko različnih številk lahko zapišemo z $9$ biti? Katera je največja? Zapiši jo desetiško. (2 točki)
+b) Šola ima $700$ dijakov, ki dobijo številke od $0$ do $699$. Najmanj koliko bitov potrebuje? Odgovor utemelji. (2 točki)
+c) Dijakinja ima kartico s številko $1001011010_{(2)}$. Pretvori jo v desetiški sestav. (2 točki)
+d) Največjo številko $699$ z zaporednim deljenjem z $2$ zapiši v dvojiškem sestavu. (2 točki)
+e) Brez pretvarjanja zapiši dvojiški zapis števila, ki je dvakrat večje od številke dijakinje iz c). Pravilo utemelji z zapisom $n = a_k \cdot 2^k + \dots + a_1 \cdot 2 + a_0$. (2 točki)
+
+**Rešitev:**
+
+1. a) Vsak od $9$ bitov je $0$ ali $1$, zato je različnih zapisov $2^9 = 512$. Največji so same enice, $111111111_{(2)} = 2^9 - 1 = 511$.
+2. b) Z $9$ biti je le $512$ številk, kar je manj od $700$. Z $10$ biti je $2^{10} = 1\,024 \ge 700$ številk, največja je $1\,023 \ge 699$. Šola potrebuje najmanj $10$ bitov.
+3. c) Mestne vrednosti desetmestnega zapisa od leve so $512$, $256$, $128$, $64$, $32$, $16$, $8$, $4$, $2$, $1$. Enice stojijo na mestih $512$, $64$, $16$, $8$ in $2$: $512 + 64 + 16 + 8 + 2 = 602$.
+4. d) $699 = 349 \cdot 2 + 1$, $349 = 174 \cdot 2 + 1$, $174 = 87 \cdot 2 + 0$, $87 = 43 \cdot 2 + 1$, $43 = 21 \cdot 2 + 1$, $21 = 10 \cdot 2 + 1$, $10 = 5 \cdot 2 + 0$, $5 = 2 \cdot 2 + 1$, $2 = 1 \cdot 2 + 0$, $1 = 0 \cdot 2 + 1$.
+5. d) Ostanke beremo od spodaj navzgor: $699 = 1010111011_{(2)}$. Preizkus: $512 + 128 + 32 + 16 + 8 + 2 + 1 = 699$.
+6. e) Če je $n = a_k \cdot 2^k + \dots + a_1 \cdot 2 + a_0$, je $2n = a_k \cdot 2^{k+1} + \dots + a_1 \cdot 2^2 + a_0 \cdot 2 + 0$. Vsaka števka se premakne za eno mesto v levo, na zadnje mesto pride $0$.
+7. e) Dvakratnik številke $1001011010_{(2)}$ je zato $10010110100_{(2)}$. Preizkus: $1\,024 + 128 + 32 + 16 + 4 = 1\,204 = 2 \cdot 602$.
+8. Odgovor: z $9$ biti je $512$ številk, največja je $511$; šola potrebuje $10$ bitov; dijakinja ima številko $602$; $699 = 1010111011_{(2)}$; dvakratnik številke $602$ je $10010110100_{(2)}$.
+
+**Točkovanje:** a) 1 točka za $512$ številk, 1 točka za $511$; b) 1 točka za primerjavo $2^9 = 512 < 700 \le 2^{10}$, 1 točka za $10$ bitov; c) 1 točka za pravilne mestne vrednosti, 1 točka za $602$; d) 1 točka za pravilno zaporedje deljenj z ostanki, 1 točka za $1010111011_{(2)}$; e) 1 točka za $10010110100_{(2)}$, 1 točka za utemeljitev z zapisom $2n$.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Kako je zgrajen dvojiški številski sestav in kako izračunamo vrednost dvojiško zapisanega števila?
+---
+Dvojiški sestav ima osnovo $2$ in le dve števki, $0$ in $1$. Mestne vrednosti so od desne proti levi potence števila $2$: $2^0 = 1$, $2^1 = 2$, $2^2 = 4$ in tako naprej, vsaka je dvakrat večja od prejšnje. Število z zapisom $a_k \dots a_1 a_0$ ima vrednost $n = a_k \cdot 2^k + \dots + a_1 \cdot 2 + a_0$. Vrednost torej dobimo tako, da seštejemo mestne vrednosti na mestih, kjer stoji enica.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Opiši pretvorbo desetiškega števila v dvojiški sestav z zaporednim deljenjem z $2$ in utemelji postopek.
+---
+Število delimo z $2$ z ostankom po izreku $a = q \cdot 2 + r$, kjer je ostanek $r$ enak $0$ ali $1$. Ostanek je zadnja dvojiška števka, ker so vse mestne vrednosti razen $1$ sode. Količnik ima ostale števke, premaknjene za eno mesto v desno, zato ga spet delimo z $2$ in dobimo predzadnjo števko. Postopek ponavljamo, dokler ni količnik $0$, ostanke pa beremo od zadnjega proti prvemu.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Koliko različnih števil lahko zapišemo s $k$ biti in katero je največje? Odgovor utemelji.
+---
+S $k$ biti zapišemo števila od $0$ do $2^k - 1$, to je $2^k$ različnih števil. Vsak bit je neodvisno od drugih $0$ ali $1$, zato je vseh zapisov $2 \cdot 2 \cdots 2 = 2^k$. Največje je število iz samih enic. Če mu prištejemo $1$, dobimo enico s $k$ ničlami, to je $2^k$, zato je največje število $2^k - 1$.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Pretvorimo $150$ in preverimo.
@@ -305,6 +374,18 @@ vrednost: 64+32+4+1 | 101
 vrednost: 128+16+4+2 | 150
 vrednost: 2^10-1 | 1023
 vrednost: 32+16+8+4+2+1 | 63
+vrednost: 64+32+16+2+1 | 115
+vrednost: 128+64+8 | 200
+vrednost: 200-115 | 85
+vrednost: 64+16+4+1 | 85
+vrednost: 200/8 | 25
+vrednost: 2^9 | 512
+vrednost: 2^9-1 | 511
+vrednost: 2^10 | 1024
+vrednost: 512+64+16+8+2 | 602
+vrednost: 512+128+32+16+8+2+1 | 699
+vrednost: 2*602 | 1204
+vrednost: 1024+128+32+16+4 | 1204
 >>
 
 :::simboli

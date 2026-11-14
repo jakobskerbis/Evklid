@@ -193,6 +193,68 @@ Kakšen je ulomek in koliko sekund trajata oba dela pri $t = 100$?
 - Pri odštevanju drugi števec zapiši v oklepaju. Na koncu poskusi rezultat še krajšati.
 - Faktorja $a-b$ in $b-a$ sta nasprotna: $b - a = -(a-b)$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Okrajšaj ulomljeni izraz $\dfrac{x^2 - 5x + 6}{18 - 2x^2}$ in zapiši, za katere vrednosti $x$ velja dobljena enakost.
+
+**Rešitev:**
+
+1. Števec razstavimo po Vietovem pravilu: $x^2 - 5x + 6 = (x - 2)(x - 3)$.
+2. Imenovalec: $18 - 2x^2 = 2(9 - x^2) = 2(3 - x)(3 + x)$. Imenovalec je enak $0$ pri $x = 3$ in pri $x = -3$, zato mora veljati $x \neq 3$ in $x \neq -3$.
+3. Faktorja $x - 3$ in $3 - x$ sta nasprotna, saj je $3 - x = -(x - 3)$. Zato je $\dfrac{(x - 2)(x - 3)}{2(3 - x)(3 + x)} = \dfrac{(x - 2)(x - 3)}{-2(x - 3)(x + 3)} = -\dfrac{x - 2}{2(x + 3)} = \dfrac{2 - x}{2(x + 3)}$.
+4. Preizkus pri $x = 0$: $\dfrac{6}{18} = \dfrac{1}{3}$ in $\dfrac{2}{6} = \dfrac{1}{3}$.
+5. Odgovor: $\dfrac{x^2 - 5x + 6}{18 - 2x^2} = \dfrac{2 - x}{2(x + 3)}$ za $x \neq 3$ in $x \neq -3$.
+
+**Točkovanje:** 1 točka za razstavljena števec in imenovalec, 1 točka za pogoja $x \neq 3$ in $x \neq -3$, 1 točka za pravilno okrajšan izraz s pravilnim predznakom.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dan je izraz
+
+$$\left(\frac{x+1}{x-1} - \frac{x-1}{x+1}\right) : \frac{2x}{x^2-1}.$$
+
+a) Zapiši vse vrednosti $x$, za katere izraz ni definiran, in vsako utemelji. (2 točki)
+b) Razliko v oklepaju zapiši kot en ulomek in ga poenostavi. (2 točki)
+c) Poenostavi dani izraz. Kaj opaziš o njegovi vrednosti? (2 točki)
+
+**Rešitev:**
+
+1. a) Imenovalci $x - 1$, $x + 1$ in $x^2 - 1 = (x - 1)(x + 1)$ ne smejo biti enaki $0$, zato je $x \neq 1$ in $x \neq -1$.
+2. a) Z ulomkom $\dfrac{2x}{x^2-1}$ delimo, zato ne sme biti enak $0$: $2x \neq 0$, torej $x \neq 0$. Izraz ni definiran pri $x = 1$, $x = -1$ in $x = 0$.
+3. b) Skupni imenovalec je $(x - 1)(x + 1)$: $\dfrac{(x + 1)^2 - (x - 1)^2}{(x - 1)(x + 1)}$.
+4. b) Števec: $(x^2 + 2x + 1) - (x^2 - 2x + 1) = 4x$. Razlika v oklepaju je $\dfrac{4x}{(x - 1)(x + 1)}$.
+5. c) Deljenje zapišemo kot množenje z obratnim ulomkom: $\dfrac{4x}{(x - 1)(x + 1)} \cdot \dfrac{(x - 1)(x + 1)}{2x}$.
+6. c) Okrajšamo $(x - 1)(x + 1)$ in $2x$, ostane $2$. Preizkus pri $x = 2$: $\left(3 - \dfrac{1}{3}\right) : \dfrac{4}{3} = \dfrac{8}{3} \cdot \dfrac{3}{4} = 2$.
+7. Odgovor: a) $x = 1$, $x = -1$ in $x = 0$; b) $\dfrac{4x}{(x - 1)(x + 1)}$; c) izraz je za vse dopustne $x$ enak $2$, njegova vrednost ni odvisna od $x$.
+
+**Točkovanje:** a) 1 točka za $x \neq 1$ in $x \neq -1$, 1 točka za $x \neq 0$ z utemeljitvijo, da z $0$ ne delimo; b) 1 točka za skupni imenovalec in števec $(x + 1)^2 - (x - 1)^2$, 1 točka za $\dfrac{4x}{(x - 1)(x + 1)}$; c) 1 točka za množenje z obratnim ulomkom, 1 točka za rezultat $2$ z ugotovitvijo, da vrednost ni odvisna od $x$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je ulomljeni izraz in kako določimo, za katere vrednosti spremenljivke je definiran?
+---
+Ulomljeni izraz je količnik $\dfrac{A}{B}$ dveh algebrskih izrazov, pri katerem imenovalec $B$ vsebuje spremenljivko. Izraz je definiran le za tiste vrednosti spremenljivke, pri katerih imenovalec ni enak $0$, ker z $0$ ne delimo. Te vrednosti poiščemo tako, da imenovalec razstavimo in izločimo ničle vseh njegovih faktorjev. Pri deljenju z ulomkom mora biti od $0$ različen tudi števec delitelja.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj smemo ulomljeni izraz krajšati s skupnim faktorjem števca in imenovalca in zakaj pogoji pri tem ostanejo.
+---
+Za $C \neq 0$ je $\dfrac{C}{C} = 1$, zato je $\dfrac{A \cdot C}{B \cdot C} = \dfrac{A}{B} \cdot \dfrac{C}{C} = \dfrac{A}{B}$. Krajšamo lahko samo faktorje, s katerimi sta pomnožena ves števec in ves imenovalec, zato izraz najprej razstavimo. Prvotni izraz ni definiran pri ničlah faktorja $C$, okrajšani pa morda je. Izraza sta enaka le tam, kjer sta definirana oba, zato pogoje zapišemo iz prvotnega imenovalca, preden krajšamo.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Opiši, kako seštejemo ulomljena izraza z različnima imenovalcema, in pojasni, zakaj razširjanje ne spremeni vrednosti.
+---
+Ulomka z enakim imenovalcem seštejemo tako, da seštejemo števca, imenovalec pa ohranimo. Pri različnih imenovalcih ju razstavimo in za skupni imenovalec vzamemo njun najmanjši skupni večkratnik. Vsak ulomek razširimo z manjkajočimi faktorji. Števec in imenovalec pomnožimo z istim neničelnim izrazom, kar je množenje ulomka z $1$, zato se njegova vrednost ne spremeni. Nato seštejemo števca, rezultat poenostavimo in ga poskusimo okrajšati. V splošnem velja $\dfrac{A}{B} + \dfrac{C}{D} = \dfrac{AD + BC}{BD}$.
+:::
+
 ## Drugače: Z analogijo
 
 **Skupni imenovalec kot mreža v programu za snemanje.** V programu za snemanje glasbe udarec razdeliš na enake kvadratke, to je mreža. Triolska osminka traja $\dfrac{1}{3}$ udarca, šestnajstinka $\dfrac{1}{4}$ udarca. Na mrežo tretjin šestnajstinke ne moreš postaviti, na mrežo četrtin pa ne triolske osminke. Mreža dvanajstin ustreza obema: triolska osminka zasede $4$ kvadratke, šestnajstinka $3$. Skupaj je to $7$ kvadratkov od $12$, torej $\dfrac{1}{3} + \dfrac{1}{4} = \dfrac{7}{12}$ udarca.
@@ -276,3 +338,15 @@ x, y | spremenljivki | | |
 t | tempo (število udarcev v minuti) | | 1/min | $t \neq 0$
 a, b, c | števila ali izrazi v obrazcih | | |
 :::
+
+<<RACUN
+enako: x^2-5*x+6 | (x-2)*(x-3)
+enako: 18-2*x^2 | 2*(3-x)*(3+x)
+enako: (x^2-5*x+6)/(18-2*x^2) | (2-x)/(2*(x+3))
+vrednost: (0^2-5*0+6)/(18-2*0^2) | 1/3
+enako: (x+1)^2-(x-1)^2 | 4*x
+enako: (x+1)/(x-1)-(x-1)/(x+1) | 4*x/((x-1)*(x+1))
+enako: ((x+1)/(x-1)-(x-1)/(x+1))/(2*x/(x^2-1)) | 2
+vrednost: (3-1/3)/(4/3) | 2
+enako: A/B+C/D | (A*D+B*C)/(B*D)
+>>

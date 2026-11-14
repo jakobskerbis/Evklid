@@ -189,6 +189,90 @@ $147 = 7 \cdot 21 + 0$, zato je $D(1071, 462) = 21$. Res je $1\,071 = 21 \cdot 5
 - $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. (Višja raven) velja $D(a, b) \cdot v(a, b) = a \cdot b$.
 - (višja raven) Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V petmestnem številu $\overline{531x2}$ je $x$ neznana števka. Določi $x$ tako, da bo število deljivo s $36$. Odgovor utemelji.
+
+**Rešitev:**
+
+1. Velja $36 = 4 \cdot 9$, števili $4$ in $9$ sta tuji. Število je zato deljivo s $36$ natanko tedaj, ko je deljivo s $4$ in z $9$.
+2. Deljivost s $4$: zadnji dve števki tvorita število $\overline{x2}$. Med števili $02, 12, 22, \dots, 92$ so s $4$ deljiva $12$, $32$, $52$, $72$ in $92$, zato mora biti $x$ liha števka.
+3. Deljivost z $9$: vsota števk $5 + 3 + 1 + x + 2 = 11 + x$ mora biti deljiva z $9$. Ker je $0 \le x \le 9$, je to le pri $11 + x = 18$, torej $x = 7$. Števka $7$ je liha, zato ustreza tudi pogoju iz 2. koraka.
+4. Odgovor: $x = 7$. Res je $53\,172 = 36 \cdot 1\,477$.
+
+**Točkovanje:** 1 točka za razstavitev $36 = 4 \cdot 9$ na tuja faktorja, 1 točka za pravilno uporabo obeh meril (zadnji dve števki, vsota števk), 1 točka za $x = 7$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Pravokotna tla merijo $336\,\text{cm} \times 210\,\text{cm}$. Prekriti jih želimo z enakimi kvadratnimi ploščicami brez rezanja. Stranica ploščice naj meri celo število centimetrov in naj bo čim večja.
+
+a) Števili $336$ in $210$ razcepi na prafaktorje. (2 točki)
+b) Določi največjo možno stranico ploščice in utemelji, zakaj je to največji skupni delitelj. (2 točki)
+c) Koliko takih ploščic potrebujemo? (1 točka)
+d) V trgovini imajo le ploščice s stranico $40\,\text{cm}$. Ob daljši stranici tal položimo v vrsto čim več celih ploščic. Zapiši deljenje števila $336$ s $40$ z ostankom in odgovori, koliko celih ploščic gre v vrsto in koliko centimetrov ostane nepokritih. (2 točki)
+
+**Rešitev:**
+
+1. a) $336 = 2 \cdot 168 = 2 \cdot 2 \cdot 84 = 2 \cdot 2 \cdot 2 \cdot 42 = 2 \cdot 2 \cdot 2 \cdot 2 \cdot 21 = 2^4 \cdot 3 \cdot 7$.
+2. a) $210 = 2 \cdot 105 = 2 \cdot 3 \cdot 35 = 2 \cdot 3 \cdot 5 \cdot 7$.
+3. b) Stranica ploščice mora brez ostanka deliti obe stranici tal, torej je skupni delitelj števil $336$ in $210$. Ker naj bo čim večja, je to $D(336, 210)$.
+4. b) Skupni prafaktorji z manjšim eksponentom: $D(336, 210) = 2 \cdot 3 \cdot 7 = 42$. Stranica ploščice meri $42\,\text{cm}$.
+5. c) Ob daljši stranici je $336 : 42 = 8$ ploščic, ob krajši $210 : 42 = 5$ ploščic. Skupaj je to $8 \cdot 5 = 40$ ploščic.
+6. d) $336 = 8 \cdot 40 + 16$, ostanek $16$ je med $0$ in $40$.
+7. Odgovor: stranica ploščice meri največ $42\,\text{cm}$, potrebujemo $40$ ploščic. S ploščicami s stranico $40\,\text{cm}$ gre v vrsto $8$ celih ploščic, nepokritih ostane $16\,\text{cm}$.
+
+**Točkovanje:** a) 1 točka za razcep $336 = 2^4 \cdot 3 \cdot 7$, 1 točka za razcep $210 = 2 \cdot 3 \cdot 5 \cdot 7$; b) 1 točka za utemeljitev, da je stranica največji skupni delitelj, 1 točka za $42\,\text{cm}$; c) 1 točka za $40$ ploščic; d) 1 točka za zapis $336 = 8 \cdot 40 + 16$, 1 točka za odgovor ($8$ ploščic, $16\,\text{cm}$).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Zobnika s $154$ in $126$ zobmi sta v stiku. Na vsakem zobniku označimo en zob. Na začetku se označena zoba dotikata. Ko se zobnika vrtita, gre skozi stično točko na obeh zobnikih enako število zob.
+
+a) Z Evklidovim algoritmom določi $D(154, 126)$. (3 točke)
+b) Z zvezo $D(a, b) \cdot v(a, b) = a \cdot b$ izračunaj $v(154, 126)$. (2 točki)
+c) Po koliko obratih večjega zobnika se označena zoba prvič spet dotakneta? Koliko obratov naredi do takrat manjši zobnik? (2 točki)
+d) Manjši zobnik zamenjamo z zobnikom, ki ima $z$ zob, kjer je $20 < z < 154$. Določi vse $z$, pri katerih se označena zoba prvič spet dotakneta natanko po $2$ obratih večjega zobnika. (3 točke)
+
+**Rešitev:**
+
+1. a) $154 = 1 \cdot 126 + 28$, nadaljujemo s $126$ in $28$.
+2. a) $126 = 4 \cdot 28 + 14$, ker je $4 \cdot 28 = 112$. Nadaljujemo z $28$ in $14$.
+3. a) $28 = 2 \cdot 14 + 0$. Zadnji ostanek, ki ni $0$, je $14$, zato je $D(154, 126) = 14$.
+4. b) $v(154, 126) = \dfrac{154 \cdot 126}{14} = 11 \cdot 126 = 1\,386$.
+5. c) Označena zoba se spet dotakneta, ko je skozi stično točko šlo število zob, ki je večkratnik števila $154$ in števila $126$. Prvič se to zgodi po $v(154, 126) = 1\,386$ zobeh.
+6. c) Večji zobnik naredi $1\,386 : 154 = 9$ obratov, manjši pa $1\,386 : 126 = 11$ obratov.
+7. d) Po $2$ obratih večjega zobnika gre skozi stično točko $2 \cdot 154 = 308$ zob. Označena zoba se prvič spet dotakneta po teh $2$ obratih natanko tedaj, ko je $v(154, z) = 308$.
+8. d) Razcepa: $154 = 2 \cdot 7 \cdot 11$ in $308 = 2^2 \cdot 7 \cdot 11$. Število $z$ deli svoj večkratnik $v(154, z) = 308$. Faktor $2^2$ v $v$ lahko prispeva le $z$, ker ima $154$ en sam faktor $2$, zato je $z$ deljiv s $4$.
+9. d) Delitelji števila $308$, deljivi s $4$, so $4$, $28$, $44$ in $308$. Pogoju $20 < z < 154$ ustrezata $z = 28 = 2^2 \cdot 7$ in $z = 44 = 2^2 \cdot 11$. Preverba: $v(154, 28) = 2^2 \cdot 7 \cdot 11 = 308$ in $v(154, 44) = 2^2 \cdot 7 \cdot 11 = 308$.
+10. Odgovor: $D(154, 126) = 14$, $v(154, 126) = 1\,386$; zoba se spet dotakneta po $9$ obratih večjega in $11$ obratih manjšega zobnika; novi zobnik ima $28$ ali $44$ zob.
+
+**Točkovanje:** a) 1 točka za $154 = 1 \cdot 126 + 28$, 1 točka za koraka $126 = 4 \cdot 28 + 14$ in $28 = 2 \cdot 14 + 0$, 1 točka za $D = 14$; b) 1 točka za nastavek $v = \dfrac{154 \cdot 126}{14}$, 1 točka za $1\,386$; c) 1 točka za $9$ obratov večjega, 1 točka za $11$ obratov manjšega zobnika; d) 1 točka za pogoj $v(154, z) = 308$, 1 točka za sklep, da $z$ deli $308$ in je deljiv s $4$ (ali za enakovreden sklep po drugi poti, npr. iz $D(154, z) \cdot 308 = 154 \cdot z$ sledi $z = 2 \cdot D(154, z)$, nato preverba kandidatov), 1 točka za $z = 28$ in $z = 44$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj pomeni zapis $a \mid b$ za celi števili $a$ in $b$? Naštej lastnosti relacije deljivosti in eno od njih utemelji.
+---
+Za celi števili $a \neq 0$ in $b$ zapis $a \mid b$ pomeni, da obstaja tako celo število $k$, da je $b = k \cdot a$. Za vsak $a \neq 0$ velja $a \mid a$ in $a \mid 0$, število $1$ pa deli vsako celo število. Če $a \mid b$ in $b \mid c$, potem $a \mid c$. Če $a \mid b$ in $a \mid c$, potem $a \mid (b + c)$, ker iz $b = k \cdot a$ in $c = l \cdot a$ sledi $b + c = (k + l) \cdot a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži izrek, da je praštevil neskončno mnogo.
+---
+Dokazujemo s protislovjem: denimo, da je praštevil le končno mnogo, $p_1, p_2, \dots, p_n$. Tvorimo število $N = p_1 \cdot p_2 \cdots p_n + 1$. Pri deljenju z vsakim od praštevil $p_i$ da $N$ ostanek $1$, zato ga nobeno od njih ne deli. Ker je $N > 1$, ima $N$ vsaj en prafaktor, ta pa ni nobeno od števil $p_1, \dots, p_n$. To je protislovje, zato je praštevil neskončno mnogo.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Opiši Evklidov algoritem za iskanje največjega skupnega delitelja in utemelji, zakaj deluje.
+---
+Število $a$ delimo z ostankom s $b$, tako da je $a = q \cdot b + r$ in $0 \le r < b$, nato na enak način delimo $b$ z $r$ in postopek ponavljamo z zadnjima številoma. Zadnji ostanek, ki ni enak $0$, je $D(a, b)$. Algoritem deluje, ker je $D(a, b) = D(b, r)$: vsak skupni delitelj števil $a$ in $b$ deli $r = a - q \cdot b$, vsak skupni delitelj števil $b$ in $r$ pa deli $a = q \cdot b + r$. Ostanki so nenegativni in se strogo manjšajo, zato po končno mnogo korakih dobimo ostanek $0$.
+:::
+
 ## Drugače: Na sliki
 
 Na številski premici so naravna števila desno od ničle, nasprotna števila pa levo, na enaki razdalji od ničle. Ta razdalja je $|a|$.
@@ -251,6 +335,27 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 + Ob 13.00.
 > $15 = 3 \cdot 5$ in $20 = 2^2 \cdot 5$, zato je $v(15, 20) = 2^2 \cdot 3 \cdot 5 = 60$ minut, torej ena ura.
 
+<<RACUN
+vrednost: 5+3+1+7+2 | 18
+vrednost: 72/4 | 18
+vrednost: 53172/36 | 1477
+vrednost: 2^4*3*7 | 336
+vrednost: 2*3*5*7 | 210
+vrednost: gcd(336, 210) | 42
+vrednost: (336/42)*(210/42) | 40
+vrednost: 8*40+16 | 336
+vrednost: 154-1*126 | 28
+vrednost: 126-4*28 | 14
+vrednost: gcd(154, 126) | 14
+vrednost: 154*126/14 | 1386
+vrednost: lcm(154, 126) | 1386
+vrednost: 1386/154 | 9
+vrednost: 1386/126 | 11
+vrednost: 2*154 | 308
+vrednost: lcm(154, 28) | 308
+vrednost: lcm(154, 44) | 308
+>>
+
 :::simboli
 a | celo število; pri $a \mid b$ delitelj, pri deljenju z ostankom deljenec | a = q \cdot b + r | |
 b | celo število; pri $a \mid b$ večkratnik, pri deljenju z ostankom delitelj (naravno število) | | |
@@ -260,4 +365,6 @@ D | največji skupni delitelj | | | $D \cdot v = a \cdot b$
 v | najmanjši skupni večkratnik | v = \dfrac{a \cdot b}{D} | |
 n | naravno število; v Primeru 3 število sadik | n = q \cdot d + 3 | | v Primeru 3 ostanek $3$ pri deljenju s $4$, $5$ in $6$
 d | delitelj ($4$, $5$ ali $6$) | | |
+x | neznana števka (Za maturo, naloga 1) | | | $0 \le x \le 9$
+z | število zob novega zobnika (Za maturo, naloga 3) | | |
 :::

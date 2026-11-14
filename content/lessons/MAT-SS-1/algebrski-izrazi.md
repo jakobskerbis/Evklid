@@ -189,6 +189,67 @@ $6 \cdot 100 - 12 \cdot 10 + 8 = 600 - 120 + 8 = 488$. Preizkus: $1000 - 512 = 4
 - Kub dvočlenika: $(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$, koeficienti so $1, 3, 3, 1$.
 - Razvit izraz preveri tako, da v oba izraza vstaviš isto majhno število, ki ni $0$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Poenostavi izraz $(x + 2)^3 - x(x + 3)^2$.
+
+**Rešitev:**
+
+1. Kub vsote: $(x + 2)^3 = x^3 + 3 \cdot x^2 \cdot 2 + 3 \cdot x \cdot 2^2 + 2^3 = x^3 + 6x^2 + 12x + 8$.
+2. Kvadrat vsote in množenje z $x$: $x(x + 3)^2 = x(x^2 + 6x + 9) = x^3 + 6x^2 + 9x$.
+3. Odštejemo, minus spremeni predznak vsem členom: $x^3 + 6x^2 + 12x + 8 - x^3 - 6x^2 - 9x = 3x + 8$.
+4. Preizkus pri $x = 1$: izvirni izraz je $3^3 - 1 \cdot 4^2 = 27 - 16 = 11$, rezultat pa $3 + 8 = 11$.
+5. Odgovor: $(x + 2)^3 - x(x + 3)^2 = 3x + 8$.
+
+**Točkovanje:** 1 točka za razvoj $(x + 2)^3 = x^3 + 6x^2 + 12x + 8$, 1 točka za $x(x + 3)^2 = x^3 + 6x^2 + 9x$, 1 točka za rezultat $3x + 8$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Kvader ima robove dolge $x$, $x + 2$ in $x - 2$ centimetrov, pri čemer je $x > 2$.
+
+a) Prostornino kvadra zapiši kot mnogočlenik. (2 točki)
+b) Površino kvadra zapiši kot mnogočlenik. (2 točki)
+c) Kocka ima rob $x + 1$ centimetrov. Kot mnogočlenik zapiši, za koliko je prostornina kocke večja od prostornine kvadra, in rezultat preveri pri $x = 5$. (3 točke)
+
+**Rešitev:**
+
+1. a) Zmnožek vsote in razlike: $(x + 2)(x - 2) = x^2 - 4$.
+2. a) Prostornina kvadra: $x(x + 2)(x - 2) = x(x^2 - 4) = (x^3 - 4x)\,\text{cm}^3$.
+3. b) Ploščine treh različnih ploskev: $x(x + 2) = x^2 + 2x$, $x(x - 2) = x^2 - 2x$ in $(x + 2)(x - 2) = x^2 - 4$.
+4. b) Površina: $2\big[(x^2 + 2x) + (x^2 - 2x) + (x^2 - 4)\big] = 2(3x^2 - 4) = (6x^2 - 8)\,\text{cm}^2$.
+5. c) Kub vsote: $(x + 1)^3 = x^3 + 3x^2 + 3x + 1$.
+6. c) Razlika prostornin: $(x^3 + 3x^2 + 3x + 1) - (x^3 - 4x) = x^3 + 3x^2 + 3x + 1 - x^3 + 4x = 3x^2 + 7x + 1$.
+7. c) Preizkus pri $x = 5$: kocka ima rob $6$, kvader robove $5$, $7$ in $3$, zato je razlika $216 - 105 = 111$. Mnogočlenik da $3 \cdot 25 + 7 \cdot 5 + 1 = 111$.
+8. Odgovor: prostornina kvadra je $(x^3 - 4x)\,\text{cm}^3$, površina $(6x^2 - 8)\,\text{cm}^2$, prostornina kocke je večja za $(3x^2 + 7x + 1)\,\text{cm}^3$, pri $x = 5$ za $111\,\text{cm}^3$.
+
+**Točkovanje:** a) 1 točka za $(x + 2)(x - 2) = x^2 - 4$, 1 točka za $x^3 - 4x$; b) 1 točka za ploščine treh ploskev, 1 točka za površino $6x^2 - 8$; c) 1 točka za razvoj $(x + 1)^3$, 1 točka za $3x^2 + 7x + 1$ (s pravilnimi predznaki po odpravi oklepaja), 1 točka za preizkus pri $x = 5$ ($111$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Navedi primer, ki pokaže, da kvadrat vsote ni enak vsoti kvadratov, in pojasni, kateri člen manjka.
+---
+Na primer $(2 + 3)^2 = 25$, vsota kvadratov pa je $2^2 + 3^2 = 13$. Pravilno je $(a + b)^2 = (a + b)(a + b) = a^2 + 2ab + b^2$, manjka torej dvakratni zmnožek obeh členov $2ab$. Geometrijsko kvadrat s stranico $a + b$ razpade na kvadrata s ploščinama $a^2$ in $b^2$ ter na dva pravokotnika s ploščino $ab$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji pravilo za kub dvočlenika $(a + b)^3$ in iz njega zapiši še pravilo za $(a - b)^3$.
+---
+Kub zapišemo kot $(a + b)^3 = (a + b)^2(a + b) = (a^2 + 2ab + b^2)(a + b)$. Ko pomnožimo vsak člen z vsakim, dobimo $a^3 + a^2b + 2a^2b + 2ab^2 + ab^2 + b^3$. Po združevanju podobnih členov je $(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$. Če namesto $b$ vstavimo $-b$, dobimo $(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$, saj imajo lihe potence števila $-b$ negativen predznak.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni razliko med algebrskim izrazom in enačbo ter med spremenljivko in neznanko.
+---
+Algebrski izraz je zapis iz števil, spremenljivk in računskih operacij brez enačaja, ki ga lahko poenostavimo ali izračunamo njegovo vrednost. Enačba je trditev, da sta dva izraza enaka, zato je pri danih vrednostih črk resnična ali neresnična. Spremenljivka je črka, ki lahko zavzame poljubno vrednost iz dane množice, izraz pa ima pri vsaki vrednosti svojo vrednost. Neznanka je črka v enačbi, katere vrednost iščemo: iščemo števila, pri katerih je enačba resnična, in ta števila so rešitve enačbe.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Razvijmo $(2x - 5)^2$ po korakih in rezultat preverimo.
@@ -263,6 +324,18 @@ Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$.
 - $3n^2 + 1$
 ~ Dodal si tri plošče, pozabil pa tri palčke. Člen $3ab^2$ da pri $b = 1$ še $3n$.
 > Dodati moraš $(n + 1)^3 - n^3 = 3n^2 + 3n + 1$: tri plošče $n \cdot n$, tri palčke dolžine $n$ in eno kocko v kotu. Pri $n = 2$ je to $12 + 6 + 1 = 19$, res $27 - 8 = 19$.
+
+<<RACUN
+enako: (x+2)^3 | x^3+6*x^2+12*x+8
+enako: x*(x+3)^2 | x^3+6*x^2+9*x
+enako: (x+2)^3-x*(x+3)^2 | 3*x+8
+vrednost: 3^3-1*4^2 | 11
+enako: x*(x+2)*(x-2) | x^3-4*x
+enako: 2*(x*(x+2)+x*(x-2)+(x+2)*(x-2)) | 6*x^2-8
+enako: (x+1)^3-(x^3-4*x) | 3*x^2+7*x+1
+vrednost: 6^3-5*7*3 | 111
+vrednost: 3*5^2+7*5+1 | 111
+>>
 
 :::simboli
 x | spremenljivka | | |
