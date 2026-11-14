@@ -412,7 +412,9 @@ function stolpci(b) {
   if (!(step > 0) || max / step > 20) fail("stolpci: korak mora biti pozitiven in dati največ 20 črt na osi");
   const top = Math.ceil(max / step - 1e-9) * step || step;
   const axis = b.one("os");
-  const [L, T, H] = [34, axis ? 30 : 14, 150];
+  const H = 150;
+  // Napis vrednosti nad stolpcem, ki seže (skoraj) do vrha osi, ne sme prekriti imena osi: tedaj dodatna vrstica prostora.
+  const [L, T] = [34, axis ? ((1 - max / top) * H < FS ? 30 + FS : 30) : 14];
   const Y = (v) => T + H - (v / top) * H;
   const slot = (W - L - 6) / bars.length;
   const st = style(b.one("barva", "modra"));
