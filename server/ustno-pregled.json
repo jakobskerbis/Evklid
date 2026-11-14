@@ -2305,6 +2305,29 @@
    "h": "d17e86d20f84",
    "o": "D"
   },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p0": {
+   "h": "f10b80c763ad",
+   "o": "I",
+   "r": "sklic na zgodbo o štručkah (600 g) iz lekcije"
+  },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p1": {
+   "h": "bd8a44e9d33d",
+   "o": "D",
+   "k": [
+    "Nič se ne spremeni",
+    "Funkcija $x^2 - 4$ je soda, ker je $(-x)^2 = x^2$",
+    "Njena leva polovica je že zrcalna slika desne, zato zrcaljenje desne polovice da isti graf"
+   ]
+  },
+  "MAT-SS-2/iracionalne-enacbe#p0": {
+   "h": "89cd692ee00f",
+   "o": "I",
+   "r": "ne pove enačbe iz lekcije, za katero velja pogoj"
+  },
+  "MAT-SS-2/iracionalne-enacbe#p1": {
+   "h": "e5bef783ee0c",
+   "o": "D"
+  },
   "MAT-SS-2/koreni#p1": {
    "h": "ddb428c98211",
    "o": "D"
@@ -2347,6 +2370,15 @@
    "h": "3c20dfbebc7b",
    "o": "D",
    "r": "Samostojno vprašanje; oba dela (kateri x in kaj storiti) pokrijejo vsi štirje pojmi."
+  },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p0": {
+   "h": "5608ff8b236d",
+   "o": "I",
+   "r": "sklic na Laro in parabolo iz zgodbe lekcije"
+  },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p1": {
+   "h": "313299f5e2e9",
+   "o": "D"
   },
   "MAT-SS-2/transformacije-grafov#p0": {
    "h": "6eb30da6d32a",
