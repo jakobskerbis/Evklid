@@ -168,6 +168,72 @@ $b_1 = 1{,}5\,\mathrm{m}$. Pri dvakrat daljši plošči je širina dvakrat manj�
 - $\sqrt[n]{x}$ je inverz od $x^n$; lihi $n$: $D = \mathbb{R}$; sodi $n$: le za $x \ge 0$, potenco zožimo na $[0, \infty)$. Graf zrcalimo čez $y = x$.
 - $\sqrt{x^2} = |x|$; pri modeliranju: $V = a^3$ ima inverz $a = \sqrt[3]{V}$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Dana je funkcija $g(x) = (x - 1)^{-2} + 2$. Zapiši njeno definicijsko območje, zalogo vrednosti in enačbi obeh asimptot.
+
+**Rešitev:**
+
+1. $g(x) = \dfrac{1}{(x - 1)^2} + 2$; graf funkcije $g$ je graf funkcije $y = x^{-2}$, premaknjen za $1$ v desno in za $2$ navzgor.
+2. Imenovalec je $0$ pri $x = 1$, zato je $D_g = \mathbb{R} \setminus \{1\}$.
+3. Funkcija $y = x^{-2}$ ima zalogo vrednosti $(0, \infty)$; premik za $2$ navzgor da $Z_g = (2, \infty)$.
+4. Asimptoti funkcije $y = x^{-2}$ sta $x = 0$ in $y = 0$; po premiku sta to premici $x = 1$ in $y = 2$.
+5. Odgovor: $D_g = \mathbb{R} \setminus \{1\}$, $Z_g = (2, \infty)$, asimptoti sta $x = 1$ in $y = 2$.
+
+**Točkovanje:** 1 točka za $D_g = \mathbb{R} \setminus \{1\}$, 1 točka za $Z_g = (2, \infty)$, 1 točka za obe asimptoti $x = 1$ in $y = 2$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Dijaki so merili nihajni čas $T$ nihala v odvisnosti od dolžine vrvice $l$. Izmerjene čase so zaokrožili na desetinko sekunde:
+
+| $l$ (m) | $0{,}25$ | $1{,}00$ | $2{,}25$ | $4{,}00$ |
+|---|---|---|---|---|
+| $T$ (s) | $1{,}0$ | $2{,}0$ | $3{,}0$ | $4{,}0$ |
+
+a) Utemelji, da nihajni čas ni premo sorazmeren z dolžino vrvice. (2 točki)
+b) Pokaži, da podatki ustrezajo modelu $T = c \cdot \sqrt{l}$, in določi konstanto $c$. (2 točki)
+c) Po modelu izračunaj nihajni čas nihala z dolžino $1{,}5\,\mathrm{m}$. Rezultat zaokroži na stotinko sekunde. (1 točka)
+d) Iz modela izrazi $l$ kot funkcijo $T$ in izračunaj dolžino nihala z nihajnim časom $1{,}5\,\mathrm{s}$. Rezultat zaokroži na centimeter. (2 točki)
+
+**Rešitev:**
+
+1. a) Pri premem sorazmerju bi bil količnik $\dfrac{T}{l}$ stalen. Iz tabele je $\dfrac{1{,}0}{0{,}25} = 4$; $\dfrac{2{,}0}{1{,}00} = 2$; $\dfrac{3{,}0}{2{,}25} \approx 1{,}33$ in $\dfrac{4{,}0}{4{,}00} = 1$.
+2. a) Količnik ni stalen: ko se dolžina poveča s $1\,\mathrm{m}$ na $4\,\mathrm{m}$ (štirikrat), se nihajni čas le podvoji. Zato $T$ ni premo sorazmeren z $l$.
+3. b) Korenimo dolžine: $\sqrt{0{,}25} = 0{,}5$; $\sqrt{1} = 1$; $\sqrt{2{,}25} = 1{,}5$; $\sqrt{4} = 2$. Količniki $\dfrac{T}{\sqrt{l}}$ so $\dfrac{1{,}0}{0{,}5} = \dfrac{2{,}0}{1} = \dfrac{3{,}0}{1{,}5} = \dfrac{4{,}0}{2} = 2$, torej stalni.
+4. b) Podatki ustrezajo modelu $T = 2\sqrt{l}$, konstanta je $c = 2$ (za $l$ v metrih in $T$ v sekundah).
+5. c) $T = 2\sqrt{1{,}5} \approx 2{,}4495$, torej približno $2{,}45\,\mathrm{s}$.
+6. d) Iz $T = 2\sqrt{l}$ dobimo $\sqrt{l} = \dfrac{T}{2}$ in po kvadriranju $l = \dfrac{T^2}{4}$. Dolžina je potenčna funkcija nihajnega časa z eksponentom $2$, inverzna h korenski funkciji $T = 2\sqrt{l}$.
+7. d) Za $T = 1{,}5\,\mathrm{s}$: $l = \dfrac{1{,}5^2}{4} = \dfrac{2{,}25}{4} = 0{,}5625\,\mathrm{m}$, torej približno $56\,\mathrm{cm}$.
+8. Odgovor: količnik $\frac{T}{l}$ ni stalen; model je $T = 2\sqrt{l}$; nihalo z dolžino $1{,}5\,\mathrm{m}$ ima nihajni čas približno $2{,}45\,\mathrm{s}$; $l = \frac{T^2}{4}$, za $T = 1{,}5\,\mathrm{s}$ je $l \approx 56\,\mathrm{cm}$.
+
+**Točkovanje:** a) 1 točka za izračunane količnike $\frac{T}{l}$ (ali primerjavo štirikratne dolžine z dvakratnim časom), 1 točka za sklep, da količnik ni stalen; b) 1 točka za stalni količnik $\frac{T}{\sqrt{l}}$, 1 točka za $c = 2$; c) 1 točka za $2{,}45\,\mathrm{s}$; d) 1 točka za $l = \frac{T^2}{4}$, 1 točka za $56\,\mathrm{cm}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Opiši lastnosti potenčne funkcije $f(x) = x^{-n}$ z negativnim celim eksponentom, kjer je $n$ naravno število.
+---
+Funkcija je $f(x) = \frac{1}{x^n}$, zato je definirana za vse $x \ne 0$ in nikoli ne doseže vrednosti $0$. Njen graf je hiperbola z asimptotama $x = 0$ in $y = 0$. Pri sodem $n$ je funkcija soda, vse vrednosti so pozitivne in graf gre skozi točki $(-1, 1)$ in $(1, 1)$. Pri lihem $n$ je funkcija liha, $Z_f = \mathbb{R} \setminus \{0\}$, veji ležita v 1. in 3. kvadrantu in graf gre skozi točki $(-1, -1)$ in $(1, 1)$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Pojasni, kdaj ima potenčna funkcija $f(x) = x^n$ z naravnim eksponentom $n \ge 2$ inverzno funkcijo in katera je ta funkcija.
+---
+Inverzna funkcija obstaja le za injektivno funkcijo, ki vsako vrednost doseže pri enem samem $x$. Pri lihem $n$ funkcija $x^n$ narašča na vsem $\mathbb{R}$, zato ima inverzno funkcijo $\sqrt[n]{x}$, definirano za vsa realna števila. Pri sodem $n$ je $(-x)^n = x^n$, zato funkcija ni injektivna. Zato jo zožimo na $[0, \infty)$ in njena inverzna funkcija je $\sqrt[n]{x}$ za $x \ge 0$. Graf korenske funkcije dobimo z zrcaljenjem grafa potence čez premico $y = x$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer potenčne odvisnosti iz vsakdanjega življenja in pojasni, po čem jo ločiš od premega sorazmerja.
+---
+Primer je prostornina kocke v odvisnosti od roba, $V = a^3$. Pri premem sorazmerju je količnik $\frac{y}{x}$ stalen, zato se pri dvakrat večjem $x$ tudi $y$ poveča dvakrat. Pri potenčni odvisnosti $y = c \cdot x^n$ je stalen količnik $\frac{y}{x^n}$, zato se pri dvakrat večjem $x$ vrednost $y$ poveča $2^n$-krat. Pri kocki dvakrat daljši rob da osemkrat večjo prostornino, zato prostornina ni premo sorazmerna z robom.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Graf korena lahko narišeš iz tabele potence, ne da bi karkoli korenil.
@@ -253,4 +319,19 @@ V_1 | prostornina prvega zabojnika | | m^3
 V_2 | dvakrat večja prostornina | V_2 = 2 V_1 | m^3
 S | ploščina plošče | S = a \cdot b | m^2
 b | širina plošče | b = S \cdot a^{-1} | m
+g | premaknjena potenčna funkcija | g(x) = (x - 1)^{-2} + 2 |
+T | nihajni čas nihala | T = c \cdot \sqrt{l} | s
+l | dolžina vrvice nihala | l = \dfrac{T^2}{4} | m
+c | stalni koeficient potenčne odvisnosti | | | pri nihalu $c = 2$ za $l$ v m in $T$ v s
 :::
+
+<<RACUN
+limita: (x-1)^(-2)+2 | x | oo | 2
+limita: (x-1)^(-2)+2 | x | 1 | oo
+vrednost: 3.0/2.25 | 1.33
+vrednost: 3.0/sqrt(2.25) | 2
+vrednost: 1.0/sqrt(0.25) | 2
+vrednost: 2*sqrt(1.5) | 2.4495
+resi: 2*sqrt(l)=1.5 | l | 0.5625
+vrednost: 1.5^2/4 | 0.5625
+>>

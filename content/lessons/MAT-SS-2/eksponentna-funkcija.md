@@ -280,6 +280,89 @@ točka: 1; 0 | (1, 0) | pod desno
 - $y = c \cdot a^x$, $c > 0$: razteg v smeri osi $y$; graf gre skozi $(0, c)$.
 - Naravna eksponentna funkcija: $e^x$, $e \approx 2{,}718$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Graf funkcije $f(x) = c \cdot a^x$, kjer je $c > 0$, $a > 0$ in $a \ne 1$, poteka skozi točki $A(-1, 12)$ in $B(1, 3)$. Določi $a$ in $c$ ter utemelji, ali je funkcija $f$ naraščajoča ali padajoča.
+
+**Rešitev:**
+
+1. Iz točk dobimo $c \cdot a^{-1} = 12$ in $c \cdot a = 3$. Drugo enačbo delimo s prvo: $\dfrac{c \cdot a}{c \cdot a^{-1}} = a^2 = \dfrac{3}{12} = \dfrac{1}{4}$.
+2. Ker je $a > 0$, je $a = \dfrac{1}{2}$. Iz $c \cdot \dfrac{1}{2} = 3$ sledi $c = 6$. Preizkus: $6 \cdot \left(\dfrac{1}{2}\right)^{-1} = 6 \cdot 2 = 12$.
+3. Osnova $a = \dfrac{1}{2}$ leži med $0$ in $1$, faktor $c = 6$ pa je pozitiven, zato je $f$ strogo padajoča.
+4. Odgovor: $a = \dfrac{1}{2}$, $c = 6$, torej $f(x) = 6 \cdot \left(\dfrac{1}{2}\right)^x$; funkcija je padajoča.
+
+**Točkovanje:** 1 točka za $a = \dfrac{1}{2}$ (z zavrnjeno negativno vrednostjo ali z utemeljitvijo $a > 0$), 1 točka za $c = 6$, 1 točka za padanje z utemeljitvijo z osnovo $0 < a < 1$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
+
+Bolnik zaužije tableto, po kateri je v njegovi krvi $400\,\mathrm{mg}$ zdravila. Vsako uro telo izloči $15\,\%$ količine zdravila, ki je bila v krvi na začetku te ure. Z $m(t)$ označimo količino zdravila v krvi (v mg) $t$ ur po zaužitju.
+
+a) Zapiši predpis funkcije $m$. (2 točki)
+b) Koliko zdravila je v krvi $3$ ure po zaužitju? Rezultat zaokroži na cele miligrame. (2 točki)
+c) Po koliko celih urah je v krvi prvič manj kot $200\,\mathrm{mg}$ zdravila? Utemelji. (2 točki)
+d) Za koliko odstotkov se količina zdravila zmanjša v dveh urah? (2 točki)
+
+**Rešitev:**
+
+1. a) V vsaki uri ostane $100\,\% - 15\,\% = 85\,\%$ količine, zato se količina vsako uro pomnoži z $0{,}85$.
+2. a) Predpis je $m(t) = 400 \cdot 0{,}85^t$.
+3. b) $m(3) = 400 \cdot 0{,}85^3 = 400 \cdot 0{,}614125 = 245{,}65$, zaokroženo $246\,\mathrm{mg}$.
+4. c) Osnova $0{,}85$ je med $0$ in $1$, zato $m$ strogo pada. Izračunamo zaporedne vrednosti: $m(4) = 400 \cdot 0{,}85^4 \approx 208{,}80\,\mathrm{mg}$ in $m(5) = 400 \cdot 0{,}85^5 \approx 177{,}48\,\mathrm{mg}$.
+5. c) Ker $m$ pada, je do četrte ure količina vedno vsaj $208{,}80\,\mathrm{mg}$, po peti uri pa manjša od $200\,\mathrm{mg}$.
+6. d) V dveh urah se količina pomnoži z $0{,}85^2 = 0{,}7225$, ostane torej $72{,}25\,\%$ začetne količine.
+7. d) Zmanjšanje je $100\,\% - 72{,}25\,\% = 27{,}75\,\%$, kar je manj kot $2 \cdot 15\,\% = 30\,\%$, ker druga ura vzame $15\,\%$ že manjše količine.
+8. Odgovor: a) $m(t) = 400 \cdot 0{,}85^t$; b) približno $246\,\mathrm{mg}$; c) po $5$ urah; d) za $27{,}75\,\%$.
+
+**Točkovanje:** a) 1 točka za faktor $0{,}85$; 1 točka za predpis $m(t) = 400 \cdot 0{,}85^t$; b) 1 točka za račun $400 \cdot 0{,}85^3 = 245{,}65$; 1 točka za zaokrožen rezultat $246\,\mathrm{mg}$ z enoto; c) 1 točka za $m(4) \approx 208{,}8\,\mathrm{mg}$ in $m(5) \approx 177{,}5\,\mathrm{mg}$; 1 točka za odgovor $5$ ur z utemeljitvijo, da $m$ pada; d) 1 točka za faktor $0{,}85^2 = 0{,}7225$; 1 točka za $27{,}75\,\%$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dani sta funkciji $f(x) = 2^{x-1} + 1$ in $g(x) = x + 1$.
+
+a) Zapiši definicijsko območje, zalogo vrednosti in enačbo vodoravne asimptote funkcije $f$. (3 točke)
+b) Izračunaj presečišče grafa funkcije $f$ z osjo $y$ in utemelji, zakaj $f$ nima ničel. (2 točki)
+c) V isti koordinatni sistem nariši grafa funkcij $f$ in $g$ za $x$ od $-2$ do $3$. (2 točki)
+d) Z grafa razberi, za katere $x$ z intervala $[-2, 3]$ velja $f(x) \le g(x)$, in abscisi presečišč grafov preveri z računom. (3 točke)
+
+**Rešitev:**
+
+1. a) Graf $f$ dobimo iz grafa $y = 2^x$ s premikom za $1$ v desno in za $1$ navzgor. Potenco izračunamo za vsak $x$, zato je $D_f = \mathbb{R}$.
+2. a) Ker je $2^{x-1} > 0$, je $f(x) > 1$; zaloga vrednosti je $Z_f = (1, \infty)$, vodoravna asimptota pa premica $y = 1$.
+3. b) $f(0) = 2^{-1} + 1 = \dfrac{3}{2}$, presečišče z osjo $y$ je točka $\left(0, \dfrac{3}{2}\right)$.
+4. b) Ker je $f(x) > 1 > 0$ za vsak $x$, vrednosti $0$ funkcija ne doseže, zato nima ničel.
+5. c) Točke grafa $f$: $\left(-2, \dfrac{9}{8}\right)$, $\left(-1, \dfrac{5}{4}\right)$, $\left(0, \dfrac{3}{2}\right)$, $(1, 2)$, $(2, 3)$, $(3, 5)$; graf se na levi približuje asimptoti $y = 1$. Graf $g$ je premica skozi $(-1, 0)$ in $(0, 1)$.
+6. d) Z grafa razberemo, da se grafa sekata v točkah $(1, 2)$ in $(2, 3)$. Preverimo: $f(1) = 2^0 + 1 = 2 = g(1)$ in $f(2) = 2^1 + 1 = 3 = g(2)$.
+7. d) Med presečiščema leži graf $f$ pod premico, na primer $f\!\left(\dfrac{3}{2}\right) = \sqrt{2} + 1 < \dfrac{5}{2} = g\!\left(\dfrac{3}{2}\right)$, ker je $\sqrt{2} < \dfrac{3}{2}$. Na preostalem delu intervala $[-2, 3]$, levo od $x = 1$ in desno od $x = 2$, leži nad njo, na primer $f(0) = \dfrac{3}{2} > 1 = g(0)$ in $f(3) = 5 > 4 = g(3)$.
+8. Odgovor: a) $D_f = \mathbb{R}$, $Z_f = (1, \infty)$, asimptota $y = 1$; b) $\left(0, \dfrac{3}{2}\right)$, ničel ni, ker je $f(x) > 1$; d) na intervalu $[-2, 3]$ velja $f(x) \le g(x)$ natanko za $x \in [1, 2]$.
+
+**Točkovanje:** a) 1 točka za $D_f = \mathbb{R}$, 1 točka za $Z_f = (1, \infty)$, 1 točka za asimptoto $y = 1$; b) 1 točka za presečišče $\left(0, \dfrac{3}{2}\right)$, 1 točka za utemeljitev $f(x) > 1$; c) 1 točka za graf $f$ (pravilne točke in asimptota $y = 1$), 1 točka za premico $g$; d) 1 točka za presečišči $(1, 2)$ in $(2, 3)$, 1 točka za računsko preverjanje obeh, 1 točka za rešitev $[1, 2]$ z vključenima krajiščema.
+
+### Ustno vprašanje 1
+
+:::premisli
+Definiraj eksponentno funkcijo in pojasni, zakaj mora biti njena osnova pozitivna in različna od $1$.
+---
+Eksponentna funkcija je funkcija s predpisom $f(x) = a^x$, kjer je osnova $a > 0$ in $a \ne 1$. Pri negativni osnovi potenca ni definirana za vse realne eksponente, na primer $(-2)^{\frac{1}{2}}$ ni realno število. Pri $a = 1$ je $1^x = 1$ za vsak $x$, zato bi bila funkcija konstantna. Definicijsko območje eksponentne funkcije je $\mathbb{R}$, zaloga vrednosti pa $(0, \infty)$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži, da je eksponentna funkcija $f(x) = a^x$ z osnovo $a > 1$ strogo naraščajoča.
+---
+Vzemimo poljubna $x_1 < x_2$, tedaj je razlika $x_2 - x_1$ pozitivna. Zapišemo $a^{x_2} = a^{x_1} \cdot a^{x_2 - x_1}$. Ker je $a > 1$ in eksponent $x_2 - x_1$ pozitiven, je $a^{x_2 - x_1} > 1$. Ker je še $a^{x_1} > 0$, sledi $a^{x_2} > a^{x_1}$, zato je funkcija strogo naraščajoča.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer pojava, ki ga opisuje eksponentna funkcija, in pojasni, po čem ga ločiš od linearne rasti.
+---
+Primer je kapital na banki pri obrestnem obrestovanju, ki se vsako leto pomnoži z istim faktorjem, večjim od $1$. Pri eksponentni odvisnosti se vrednost v enakih časovnih korakih pomnoži z istim faktorjem. Pri linearni odvisnosti se vrednosti v enakih korakih prišteje isto število. Zato ima eksponentna odvisnost stalna razmerja zaporednih vrednosti, linearna pa stalne razlike.
+:::
+
 ## Drugače: Z analogijo
 
 Eksponentna rast je kot prepogibanje lista papirja. List je debel $0{,}1\,\mathrm{mm}$, vsak pregib debelino podvoji. Po $n$ pregibih je sveženj debel $0{,}1 \cdot 2^n$ milimetrov. Če bi list lahko prepognil $10$-krat, bi bil debel že $0{,}1 \cdot 1024 = 102{,}4\,\mathrm{mm}$, več kot $10\,\mathrm{cm}$. Pri linearni rasti bi vsak pregib dodal le $0{,}1\,\mathrm{mm}$ in sveženj bi meril komaj $1{,}1\,\mathrm{mm}$.
@@ -368,7 +451,7 @@ f: 2^x - 3 | modra debelo
 
 :::simboli
 f | eksponentna funkcija; v primeru 1 $f(x) = 3^x$, v kvizu $f(x) = 3^{x-2} - 1$ | f(x) = a^x | |
-g | druga funkcija: v točki 4 $g(x) = \left(\frac{1}{2}\right)^x$, v primeru 4 $g(x) = 2^{x+1} - 4$ | | |
+g | druga funkcija: v točki 4 $g(x) = \left(\frac{1}{2}\right)^x$, v primeru 4 $g(x) = 2^{x+1} - 4$, v Za maturo (naloga 3) $g(x) = x + 1$ | | |
 x | neodvisna spremenljivka (eksponent) | | |
 a | osnova | | | $a > 0$, $a \ne 1$
 e | Eulerjevo število, osnova naravne eksponentne funkcije | | | $e \approx 2{,}718$
@@ -383,4 +466,24 @@ u, v | eksponenta v pravilu za produkt potenc | | |
 D_f, D_g | definicijsko območje funkcije $f$ oziroma $g$ | | | pri $a^x$ je $\mathbb{R}$
 Z_f, Z_g | zaloga vrednosti funkcije $f$ oziroma $g$ | | | pri $a^x$ je $(0, \infty)$
 k | smerni koeficient linearne funkcije (stalni prirastek) | | |
+m | količina zdravila v krvi (Za maturo, naloga 2) | m(t) = 400 \cdot 0{,}85^t | mg |
+t | čas od zaužitja tablete (Za maturo, naloga 2) | | h |
 :::
+
+<<RACUN
+vrednost: 3/12 | 1/4
+vrednost: 3/(1/2) | 6
+vrednost: 6*(1/2)^(-1) | 12
+vrednost: 400*0.85^3 | 245.65
+vrednost: 400*0.85^4 | 208.80
+vrednost: 400*0.85^5 | 177.48
+vrednost: 0.85^2 | 0.7225
+vrednost: 1-0.85^2 | 0.2775
+vrednost: 2^(-1)+1 | 3/2
+vrednost: 2^(-2)+1 | 5/4
+vrednost: 2^(-3)+1 | 9/8
+vrednost: 2^(1-1)+1 | 2
+vrednost: 2^(2-1)+1 | 3
+vrednost: 2^(3-1)+1 | 5
+vrednost: 2^(3/2-1)+1 | 2.414
+>>

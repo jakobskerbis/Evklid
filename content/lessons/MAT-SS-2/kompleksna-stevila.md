@@ -195,6 +195,66 @@ Iz druge enačbe je $a = 2b - 1$. Vstavimo v prvo: $4(2b - 1) - b = 10$, torej $
 - Absolutna vrednost: $|z| = \sqrt{a^2 + b^2}$ je razdalja točke $(a, b)$ od izhodišča v kompleksni ravnini.
 - Enakost: $a + bi = c + di$ natanko tedaj, ko je $a = c$ in $b = d$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Dano je število $z = 2 + i^{23}$. Izračunaj obratno vrednost $\dfrac{1}{z}$ in jo zapiši v obliki $a + bi$.
+
+**Rešitev:**
+
+1. Ker je $23 = 5 \cdot 4 + 3$, je $i^{23} = \left(i^4\right)^5 \cdot i^3 = 1 \cdot (-i) = -i$. Torej je $z = 2 - i$.
+2. Ulomek razširimo s številom, konjugiranim imenovalcu: $\dfrac{1}{2 - i} = \dfrac{2 + i}{(2 - i)(2 + i)}$, imenovalec je $2^2 + 1^2 = 5$.
+3. $\dfrac{1}{z} = \dfrac{2 + i}{5} = \dfrac{2}{5} + \dfrac{1}{5}\,i$.
+4. Odgovor: $\dfrac{1}{z} = \dfrac{2}{5} + \dfrac{1}{5}\,i$.
+
+**Točkovanje:** 1 točka za $i^{23} = -i$ (oziroma $z = 2 - i$), 1 točka za razširitev s številom $2 + i$ in imenovalec $5$, 1 točka za $\frac{2}{5} + \frac{1}{5}\,i$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je enačba $x^2 - 4x + 13 = 0$.
+
+a) Reši enačbo v množici kompleksnih števil. (2 točki)
+b) Rešitev s pozitivnim imaginarnim delom označi z $z_1$, drugo z $z_2$. Opiši, kje v kompleksni ravnini ležita in kako sta povezani, ter izračunaj njuni absolutni vrednosti. (2 točki)
+c) Izračunaj količnik $\dfrac{z_1}{z_2}$ v obliki $a + bi$ in njegovo absolutno vrednost. (3 točke)
+
+**Rešitev:**
+
+1. a) Diskriminanta: $D = (-4)^2 - 4 \cdot 1 \cdot 13 = 16 - 52 = -36$, zato je $\sqrt{D} = \sqrt{-36} = 6i$.
+2. a) $x_{1,2} = \dfrac{4 \pm 6i}{2} = 2 \pm 3i$.
+3. b) $z_1 = 2 + 3i$ je točka $(2, 3)$, $z_2 = 2 - 3i$ je točka $(2, -3)$. Števili sta konjugirani, $z_2 = \bar{z}_1$, zato sta točki zrcalni glede na realno os.
+4. b) $|z_1| = |z_2| = \sqrt{2^2 + 3^2} = \sqrt{13}$; zrcaljenje razdalje od izhodišča ne spremeni.
+5. c) Ulomek razširimo s številom $2 + 3i$, ki je konjugirano imenovalcu: števec $(2 + 3i)^2 = 4 + 12i + 9i^2 = -5 + 12i$, imenovalec $(2 - 3i)(2 + 3i) = 4 + 9 = 13$.
+6. c) $\dfrac{z_1}{z_2} = \dfrac{-5 + 12i}{13} = -\dfrac{5}{13} + \dfrac{12}{13}\,i$.
+7. c) $\left|\dfrac{z_1}{z_2}\right| = \dfrac{\sqrt{25 + 144}}{13} = \dfrac{13}{13} = 1$. To se ujema z $\dfrac{|z_1|}{|z_2|} = \dfrac{\sqrt{13}}{\sqrt{13}} = 1$.
+8. Odgovor: $z_1 = 2 + 3i$, $z_2 = 2 - 3i$; točki sta zrcalni glede na realno os, $|z_1| = |z_2| = \sqrt{13}$; $\dfrac{z_1}{z_2} = -\dfrac{5}{13} + \dfrac{12}{13}\,i$ z absolutno vrednostjo $1$.
+
+**Točkovanje:** a) 1 točka za $D = -36$, 1 točka za rešitvi $2 \pm 3i$; b) 1 točka za lego točk in zrcaljenje čez realno os (konjugirani števili), 1 točka za $|z_1| = |z_2| = \sqrt{13}$; c) 1 točka za razširitev s številom $2 + 3i$ in imenovalec $13$, 1 točka za $-\frac{5}{13} + \frac{12}{13}\,i$, 1 točka za absolutno vrednost $1$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je konjugirano število kompleksnega števila $z = a + bi$, kaj pomeni v kompleksni ravnini in koliko je produkt $z \cdot \bar{z}$?
+---
+Konjugirano število je $\bar{z} = a - bi$: realni del ostane, imaginarni del spremeni predznak. V kompleksni ravnini je $\bar{z}$ zrcalna slika točke $z$ čez realno os. Produkt je $z \cdot \bar{z} = a^2 + b^2$, torej realno nenegativno število, enako $|z|^2$. Zato pri deljenju ulomek razširimo s številom, konjugiranim imenovalcu, da imenovalec postane realen.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji pravilo za računanje potenc imaginarne enote $i^n$, kjer je $n$ naravno število.
+---
+Po definiciji je $i^1 = i$ in $i^2 = -1$. Od tod je $i^3 = i^2 \cdot i = -i$ in $i^4 = \left(i^2\right)^2 = 1$. Ker je $i^4 = 1$, za $n = 4k + r$ velja $i^n = \left(i^4\right)^k \cdot i^r = i^r$, zato se potence ponavljajo s periodo $4$. Vrednost $i^n$ je odvisna le od ostanka $r$ pri deljenju $n$ s $4$: ostankom $0, 1, 2, 3$ pripadajo vrednosti $1, i, -1, -i$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni, zakaj vpeljemo kompleksna števila, in navedi primer kvadratne enačbe z realnimi koeficienti, ki ima rešitve le v množici kompleksnih števil.
+---
+Kvadrat vsakega realnega števila je nenegativen, zato enačba $x^2 = -1$ v realnih številih nima rešitve. Vpeljemo imaginarno enoto $i$ z lastnostjo $i^2 = -1$ in kompleksna števila $a + bi$, v katerih ima vsaka kvadratna enačba rešitev. Primer je enačba $x^2 + 4 = 0$ z rešitvama $x = 2i$ in $x = -2i$. Kvadratna enačba z realnimi koeficienti in negativno diskriminanto ima vedno dve konjugirani kompleksni rešitvi.
+:::
+
 ## Drugače: Z analogijo
 
 Pri korenih si računal z izrazi, kot je $3 + 2\sqrt{5}$. S $\sqrt{5}$ si ravnal kot s črko in šele na koncu upošteval $\left(\sqrt{5}\right)^2 = 5$. S številom $i$ ravnaš enako, le pravilo je $i^2 = -1$.
@@ -286,4 +346,21 @@ d | imaginarni del drugega števila | | |
 z_1, z_2 | kompleksni števili (v primeru 3 premika) | | | pri deljenju $z_2 \ne 0$
 w | drugo kompleksno število: v primeru 2 količnik, v simulaciji drugi faktor | | |
 n | eksponent potence $i^n$ | | | naravno število
+k | količnik pri deljenju eksponenta $n$ s $4$ | n = 4k + r | |
+r | ostanek pri deljenju eksponenta $n$ s $4$ | | | $0$, $1$, $2$ ali $3$
+x | neznanka kvadratne enačbe | | |
+D | diskriminanta kvadratne enačbe | | | v enačbi $x^2 - 4x + 13 = 0$ je $D = -36$
 :::
+
+<<RACUN
+vrednost: I^23 | -I
+enako: 1/(2-I) | 2/5+I/5
+vrednost: (-4)^2-4*1*13 | -36
+enako: (x-2-3*I)*(x-2+3*I) | x^2-4*x+13
+vrednost: (4+sqrt(-36))/2 | 2+3*I
+enako: (2+3*I)^2 | -5+12*I
+enako: (2+3*I)/(2-3*I) | -5/13+12*I/13
+vrednost: abs(2+3*I) | sqrt(13)
+vrednost: abs(-5/13+12*I/13) | 1
+enako: (x-2*I)*(x+2*I) | x^2+4
+>>

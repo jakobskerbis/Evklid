@@ -334,6 +334,90 @@ Enačba je $5 = a \cdot 2^2 - 3$, torej $4a = 8$, $a = 2$ in $g(x) = 2(x + 2)^2 
 - $f(kx)$ s $k > 0$: skrčitev v smeri osi $x$ s faktorjem $k$.
 - $a \cdot f(x - p) + q$: točka $(x, y)$ preide v $(x + p,\ ay + q)$; teme $x^2$ gre v $(p, q)$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Graf funkcije $f(x) = \sqrt{x}$ najprej premaknemo za $4$ enote v levo, nato ga zrcalimo čez os $x$ in ga na koncu premaknemo za $3$ enote navzgor. Zapiši predpis dobljene funkcije $g$, njeno definicijsko območje in zalogo vrednosti.
+
+**Rešitev:**
+
+1. Premik za $4$ v levo: $f(x + 4) = \sqrt{x + 4}$. Zrcaljenje čez os $x$: $-\sqrt{x + 4}$. Premik za $3$ navzgor: $g(x) = -\sqrt{x + 4} + 3$.
+2. Pod korenom mora biti $x + 4 \ge 0$, torej $D_g = [-4, \infty)$. Začetna točka $(0, 0)$ grafa $f$ preide v $(-4, 3)$.
+3. Vrednosti $\sqrt{x + 4}$ so vsa nenegativna števila, vrednosti $-\sqrt{x + 4}$ vsa nepozitivna, zato je $Z_g = (-\infty, 3]$. Preizkus: $g(-4) = 3$ in $g(5) = -\sqrt{9} + 3 = 0$.
+4. Odgovor: $g(x) = -\sqrt{x + 4} + 3$, $D_g = [-4, \infty)$, $Z_g = (-\infty, 3]$.
+
+**Točkovanje:** 1 točka za predpis $g(x) = -\sqrt{x + 4} + 3$, 1 točka za $D_g = [-4, \infty)$, 1 točka za $Z_g = (-\infty, 3]$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $g(x) = \frac{1}{2}(x - 4)^2 - 2$.
+
+a) Opiši, s katerimi preslikavami dobimo graf funkcije $g$ iz grafa funkcije $y = x^2$, in zapiši teme parabole. (2 točki)
+b) Izračunaj ničli funkcije $g$ in presečišče njenega grafa z osjo $y$. (2 točki)
+c) Zapiši zalogo vrednosti funkcije $g$. (1 točka)
+d) Graf funkcije $g$ zrcalimo čez os $y$. Zapiši predpis funkcije, ki ima za graf dobljeno krivuljo, in teme njenega grafa. (2 točki)
+
+**Rešitev:**
+
+1. a) Graf $y = x^2$ s faktorjem $\frac{1}{2}$ skrčimo v smeri osi $y$ (parabola postane širša), premaknemo za $4$ v desno in za $2$ navzdol.
+2. a) Teme $(0, 0)$ preide v $(4, -2)$.
+3. b) Iz $\frac{1}{2}(x - 4)^2 - 2 = 0$ sledi $(x - 4)^2 = 4$, torej $x - 4 = \pm 2$ in $x = 2$ ali $x = 6$.
+4. b) $g(0) = \frac{1}{2} \cdot 16 - 2 = 6$, presečišče z osjo $y$ je $(0, 6)$.
+5. c) Parabola je odprta navzgor in ima najnižjo točko v temenu, zato je $Z_g = [-2, \infty)$.
+6. d) Zrcaljenje čez os $y$ da $g(-x) = \frac{1}{2}(-x - 4)^2 - 2 = \frac{1}{2}(x + 4)^2 - 2$, ker je $(-x - 4)^2 = (x + 4)^2$.
+7. d) Teme $(4, -2)$ preide v $(-4, -2)$.
+8. Odgovor: teme $(4, -2)$; ničli $2$ in $6$, presečišče $(0, 6)$; $Z_g = [-2, \infty)$; zrcaljeni graf ima predpis $y = \frac{1}{2}(x + 4)^2 - 2$ in teme $(-4, -2)$.
+
+**Točkovanje:** a) 1 točka za opis vseh treh preslikav, 1 točka za teme $(4, -2)$; b) 1 točka za ničli $2$ in $6$, 1 točka za presečišče $(0, 6)$; c) 1 točka za $Z_g = [-2, \infty)$; d) 1 točka za predpis $\frac{1}{2}(x + 4)^2 - 2$, 1 točka za teme $(-4, -2)$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = 2|x - 1| - 4$.
+
+a) Opiši, kako dobimo graf funkcije $f$ iz grafa $y = |x|$, in zapiši teme grafa. (2 točki)
+b) Izračunaj ničli funkcije $f$ in vrednost $f(0)$ ter zapiši zalogo vrednosti $Z_f$. (3 točke)
+c) Naj bo $g(x) = f(2x)$. Zapiši predpis funkcije $g$, teme njenega grafa in njeni ničli. (2 točki)
+d) Reši neenačbo $f(x) \le x - 1$. (3 točke)
+
+**Rešitev:**
+
+1. a) Graf $y = |x|$ raztegnemo s faktorjem $2$ v smeri osi $y$, premaknemo za $1$ v desno in za $4$ navzdol. Teme $(0, 0)$ preide v $(1, -4)$.
+2. b) Iz $2|x - 1| - 4 = 0$ sledi $|x - 1| = 2$, torej $x - 1 = \pm 2$ in $x = -1$ ali $x = 3$.
+3. b) $f(0) = 2 \cdot 1 - 4 = -2$. Graf je »V« z najnižjo točko v temenu, zato je $Z_f = [-4, \infty)$.
+4. c) $g(x) = 2|2x - 1| - 4$. Vodoravna skrčitev s faktorjem $2$ prepolovi abscise: teme $(1, -4)$ preide v $\left(\frac{1}{2}, -4\right)$, ničli $-1$ in $3$ v $-\frac{1}{2}$ in $\frac{3}{2}$.
+5. c) Preizkus: $g\left(\frac{3}{2}\right) = 2 \cdot |2| - 4 = 0$.
+6. d) Po definiciji absolutne vrednosti ločimo dva primera. Za $x \ge 1$ je $f(x) = 2(x - 1) - 4 = 2x - 6$. Iz $2x - 6 \le x - 1$ sledi $x \le 5$, s pogojem $x \ge 1$ torej $1 \le x \le 5$.
+7. d) Za $x < 1$ je $f(x) = -2(x - 1) - 4 = -2x - 2$. Iz $-2x - 2 \le x - 1$ sledi $-3x \le 1$ in $x \ge -\frac{1}{3}$, s pogojem $x < 1$ torej $-\frac{1}{3} \le x < 1$.
+8. d) Rešitev je unija obeh delov, $\left[-\frac{1}{3}, 5\right]$. Preizkus krajišč: $f(5) = 4 = 5 - 1$ in $f\left(-\frac{1}{3}\right) = -\frac{4}{3} = -\frac{1}{3} - 1$.
+9. Odgovor: teme $(1, -4)$; ničli $-1$ in $3$, $f(0) = -2$, $Z_f = [-4, \infty)$; $g(x) = 2|2x - 1| - 4$ s temenom $\left(\frac{1}{2}, -4\right)$ in ničlama $-\frac{1}{2}$, $\frac{3}{2}$; neenačba velja za $x \in \left[-\frac{1}{3}, 5\right]$.
+
+**Točkovanje:** a) 1 točka za opis preslikav, 1 točka za teme $(1, -4)$; b) 1 točka za ničli $-1$ in $3$, 1 točka za $f(0) = -2$, 1 točka za $Z_f = [-4, \infty)$; c) 1 točka za predpis in teme $\left(\frac{1}{2}, -4\right)$, 1 točka za ničli $-\frac{1}{2}$ in $\frac{3}{2}$; d) 1 točka za primer $x \ge 1$ ($1 \le x \le 5$), 1 točka za primer $x < 1$ ($-\frac{1}{3} \le x < 1$), 1 točka za rešitev $\left[-\frac{1}{3}, 5\right]$ (enakovredna je rešitev z grafoma $f$ in $y = x - 1$ ter izračunanima presečiščema).
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako se graf funkcije $f$ premakne pri preslikavah $f(x) + q$ in $f(x - p)$, kjer sta $p$ in $q$ pozitivni števili? Pojasni, zakaj se pri $f(x - p)$ graf premakne v desno.
+---
+Pri $f(x) + q$ se vsaka vrednost poveča za $q$, točka $(x, y)$ preide v $(x, y + q)$ in graf se premakne za $q$ enot navzgor. Funkcija $g(x) = f(x - p)$ pri vhodu $x$ izračuna isto vrednost, kot jo $f$ izračuna pri $x - p$. Vrednost, ki jo ima $f$ pri neki abscisi, ima $g$ zato šele $p$ enot bolj desno, točka $(x, y)$ preide v $(x + p, y)$ in graf se premakne za $p$ enot v desno. Pri $(x - 2)^2$ je na primer teme pri $x = 2$, kjer je oklepaj enak $0$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako se graf funkcije $f$ spremeni pri preslikavah $-f(x)$ in $f(-x)$? Navedi primer funkcije, katere graf se pri zrcaljenju čez os $y$ ne spremeni.
+---
+Pri $-f(x)$ vsaka vrednost spremeni predznak, točka $(x, y)$ preide v $(x, -y)$ in graf se zrcali čez os $x$. Pri $f(-x)$ se spremeni predznak vhoda, točka $(x, y)$ preide v $(-x, y)$ in graf se zrcali čez os $y$. Graf sode funkcije, na primer $x^2$ ali $|x|$, se pri zrcaljenju čez os $y$ ne spremeni, ker velja $f(-x) = f(x)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kaj z grafom funkcije $f$ naredita predpisa $a \cdot f(x)$ in $f(kx)$, kjer sta $a$ in $k$ pozitivni števili?
+---
+Pri $a \cdot f(x)$ se vsaka vrednost pomnoži z $a$ in točka $(x, y)$ preide v $(x, ay)$. Pri $a > 1$ se graf raztegne v smeri osi $y$, pri $0 < a < 1$ se skrči proti osi $x$. Pri $f(kx)$ točka $(x, y)$ preide v $\left(\frac{x}{k}, y\right)$, zato se graf v smeri osi $x$ skrči s faktorjem $k$. Pri $k > 1$ je graf ožji, pri $0 < k < 1$ pa širši.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Za $g(x) = 3\sqrt{x + 1} - 2$ sledi trem točkam skozi vse korake.
@@ -445,4 +529,18 @@ enako: (2*x)^2 | 4*x^2
 vrednost: -2*2+3 | -1
 vrednost: -2*sqrt(4-1)+3 | -0.46
 vrednost: -2*abs(2-1)+3 | 1
+vrednost: -sqrt(-4+4)+3 | 3
+vrednost: -sqrt(5+4)+3 | 0
+resi: 1/2*(x-4)^2-2=0 | x | 2, 6
+vrednost: 1/2*(0-4)^2-2 | 6
+enako: 1/2*(-x-4)^2-2 | 1/2*(x+4)^2-2
+resi: 2*abs(x-1)-4=0 | x | -1, 3
+vrednost: 2*abs(0-1)-4 | -2
+resi: 2*abs(2*x-1)-4=0 | x | -1/2, 3/2
+vrednost: 2*abs(2*(3/2)-1)-4 | 0
+neenacba: 2*x-6<=x-1 | x | (-oo, 5]
+neenacba: -2*x-2<=x-1 | x | [-1/3, oo)
+vrednost: 2*abs(-1/3-1)-4 | -4/3
+resi: 2*abs(x-1)-4=x-1 | x | -1/3, 5
+neenacba: 2*abs(x-1)-4<=x-1 | x | [-1/3, 5]
 >>

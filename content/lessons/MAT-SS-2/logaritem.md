@@ -177,6 +177,93 @@ $\log 0{,}4936 \approx -0{,}3066$ in $\log 0{,}88 \approx -0{,}0555$. Oba logari
 - Prehod na novo osnovo (višja raven): $\log_a b = \dfrac{\log_c b}{\log_c a} = \dfrac{\log b}{\log a}$.
 - Za logaritem vsote ali razlike ni pravila.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Brez računala izračunaj vrednost izraza $\log_2 24 + \log_2 \dfrac{2}{3} - \log_5 \sqrt{5}$.
+
+**Rešitev:**
+
+1. Logaritma z osnovo $2$ združimo: $\log_2 24 + \log_2 \dfrac{2}{3} = \log_2 \left(24 \cdot \dfrac{2}{3}\right) = \log_2 16 = 4$.
+2. Ker je $\sqrt{5} = 5^{\frac{1}{2}}$, je $\log_5 \sqrt{5} = \dfrac{1}{2}$.
+3. Vrednost izraza je $4 - \dfrac{1}{2} = \dfrac{7}{2}$.
+4. Odgovor: vrednost izraza je $\dfrac{7}{2}$.
+
+**Točkovanje:** 1 točka za združitev v $\log_2 16$ (ali $\log_2 16 = 4$); 1 točka za $\log_5 \sqrt{5} = \dfrac{1}{2}$; 1 točka za rezultat $\dfrac{7}{2}$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
+
+Glasnost zvoka $L$ v decibelih izračunamo po formuli $L = 10 \log \dfrac{I}{I_0}$, kjer je $I$ jakost zvoka v $\mathrm{W/m^2}$, $I_0 = 10^{-12}\,\mathrm{W/m^2}$ pa jakost zvoka na pragu slišnosti.
+
+a) Kolikšna je glasnost pogovora z jakostjo $I = 10^{-6}\,\mathrm{W/m^2}$? (2 točki)
+b) Kolikšna je glasnost sesalnika z jakostjo $I = 3{,}2 \cdot 10^{-5}\,\mathrm{W/m^2}$? Rezultat zaokroži na desetinko decibela. (2 točki)
+c) Kolikšna je jakost zvoka z glasnostjo $85\,\mathrm{dB}$? Rezultat zapiši na tri veljavna mesta. (2 točki)
+d) Za koliko decibelov se poveča glasnost, če jakost zvoka povečamo za faktor $5$? Rezultat zaokroži na desetinko decibela. (2 točki)
+
+**Rešitev:**
+
+1. a) $\dfrac{I}{I_0} = \dfrac{10^{-6}}{10^{-12}} = 10^6$, zato je $L = 10 \log 10^6 = 10 \cdot 6 = 60\,\mathrm{dB}$.
+2. b) $\dfrac{I}{I_0} = \dfrac{3{,}2 \cdot 10^{-5}}{10^{-12}} = 3{,}2 \cdot 10^7$.
+3. b) $L = 10 \log \left(3{,}2 \cdot 10^7\right) = 10 \left(\log 3{,}2 + 7\right) \approx 10 \cdot 7{,}50515 \approx 75{,}05$, zaokroženo $75{,}1\,\mathrm{dB}$.
+4. c) Iz $10 \log \dfrac{I}{I_0} = 85$ sledi $\log \dfrac{I}{I_0} = 8{,}5$ in po definiciji logaritma $\dfrac{I}{I_0} = 10^{8{,}5}$.
+5. c) $I = 10^{-12} \cdot 10^{8{,}5} = 10^{-3{,}5} \approx 3{,}162 \cdot 10^{-4}$, zaokroženo $3{,}16 \cdot 10^{-4}\,\mathrm{W/m^2}$.
+6. d) Pri jakosti $5I$ je glasnost $10 \log \dfrac{5I}{I_0} = 10 \log 5 + 10 \log \dfrac{I}{I_0}$, kar je za $10 \log 5$ več kot prej.
+7. d) $10 \log 5 \approx 10 \cdot 0{,}69897 \approx 6{,}99$, zaokroženo $7{,}0\,\mathrm{dB}$, ne glede na začetno jakost.
+8. Odgovor: a) $60\,\mathrm{dB}$; b) $75{,}1\,\mathrm{dB}$; c) $3{,}16 \cdot 10^{-4}\,\mathrm{W/m^2}$; d) za približno $7{,}0\,\mathrm{dB}$.
+
+**Točkovanje:** a) 1 točka za $\dfrac{I}{I_0} = 10^6$; 1 točka za $60\,\mathrm{dB}$; b) 1 točka za vstavljeno razmerje $3{,}2 \cdot 10^7$; 1 točka za $75{,}1\,\mathrm{dB}$; c) 1 točka za $\dfrac{I}{I_0} = 10^{8{,}5}$; 1 točka za $3{,}16 \cdot 10^{-4}\,\mathrm{W/m^2}$; d) 1 točka za uporabo pravila za logaritem produkta (razlika $10 \log 5$); 1 točka za $7{,}0\,\mathrm{dB}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 11 točk, pola 1 (brez računala)
+
+Naj bo $r = \log_2 3$.
+
+a) Z $r$ izrazi $\log_2 18$ in $\log_2 \dfrac{9}{16}$. (2 točki)
+b) Z $r$ izrazi $\log_3 2$ in $\log_{18} 12$. (3 točke)
+c) Z $r$ izrazi $\log_8 \sqrt{27}$. (2 točki)
+d) Pokaži, da je $\log_2 3 \cdot \log_3 4 \cdot \log_4 5 \cdot \log_5 6 \cdot \log_6 7 \cdot \log_7 8 = 3$. (2 točki)
+e) Na logaritemski skali leži oznaka vsakega števila, večjega od $1$, toliko centimetrov desno od oznake števila $1$, kolikor je njegov logaritem z osnovo $2$. Z $r$ izrazi, kje ležita oznaki števil $3$ in $12$, in ugotovi, katero število ima oznako natanko na sredini med njima. (2 točki)
+
+**Rešitev:**
+
+1. a) $\log_2 18 = \log_2 (2 \cdot 3^2) = \log_2 2 + 2\log_2 3 = 1 + 2r$.
+2. a) $\log_2 \dfrac{9}{16} = \log_2 3^2 - \log_2 2^4 = 2r - 4$.
+3. b) S prehodom na osnovo $2$: $\log_3 2 = \dfrac{\log_2 2}{\log_2 3} = \dfrac{1}{r}$.
+4. b) $\log_{18} 12 = \dfrac{\log_2 12}{\log_2 18} = \dfrac{\log_2 (2^2 \cdot 3)}{1 + 2r} = \dfrac{2 + r}{1 + 2r}$, kjer smo imenovalec vzeli iz a).
+5. c) $\sqrt{27} = 3^{\frac{3}{2}}$ in $8 = 2^3$, zato je $\log_8 \sqrt{27} = \dfrac{\log_2 3^{\frac{3}{2}}}{\log_2 8} = \dfrac{\frac{3}{2}r}{3} = \dfrac{r}{2}$.
+6. d) Vsak faktor zapišemo z desetiškimi logaritmi: $\log_k (k + 1) = \dfrac{\log (k + 1)}{\log k}$ za $k = 2, 3, \ldots, 7$.
+7. d) Produkt je $\dfrac{\log 3}{\log 2} \cdot \dfrac{\log 4}{\log 3} \cdot \dfrac{\log 5}{\log 4} \cdot \dfrac{\log 6}{\log 5} \cdot \dfrac{\log 7}{\log 6} \cdot \dfrac{\log 8}{\log 7}$. Vsak števec se okrajša z imenovalcem naslednjega faktorja.
+8. d) Ostane $\dfrac{\log 8}{\log 2} = \log_2 8 = 3$, kar smo želeli pokazati.
+9. e) Oznaka števila $3$ leži $\log_2 3 = r$ centimetrov desno od oznake števila $1$, oznaka števila $12$ pa $\log_2 12 = 2 + r$ centimetrov (kot v b)).
+10. e) Sredina med oznakama leži $\dfrac{r + (2 + r)}{2} = 1 + r$ centimetrov desno od oznake števila $1$. Ker je $1 + r = \log_2 2 + \log_2 3 = \log_2 6$, je tam oznaka števila $6$, ne aritmetične sredine $\dfrac{3 + 12}{2} = 7{,}5$.
+11. Odgovor: a) $1 + 2r$ in $2r - 4$; b) $\dfrac{1}{r}$ in $\dfrac{2 + r}{1 + 2r}$; c) $\dfrac{r}{2}$; d) produkt je enak $3$; e) oznaki ležita $r$ in $2 + r$ centimetrov desno od oznake števila $1$, na sredini med njima je oznaka števila $6$.
+
+**Točkovanje:** a) 1 točka za $1 + 2r$; 1 točka za $2r - 4$; b) 1 točka za $\log_3 2 = \dfrac{1}{r}$; 1 točka za prehod $\log_{18} 12 = \dfrac{\log_2 12}{\log_2 18}$; 1 točka za $\dfrac{2 + r}{1 + 2r}$; c) 1 točka za prehod na osnovo $2$ z $\log_2 \sqrt{27} = \dfrac{3}{2}r$; 1 točka za $\dfrac{r}{2}$; d) 1 točka za zapis faktorjev s prehodom na skupno osnovo; 1 točka za krajšanje do $\log_2 8 = 3$; e) 1 točka za legi $r$ in $2 + r$; 1 točka za število $6$ z utemeljitvijo $1 + r = \log_2 6$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Definiraj logaritem števila $b$ z osnovo $a$ in navedi pogoje, ki jih morata izpolnjevati $a$ in $b$.
+---
+Logaritem števila $b$ z osnovo $a$ je eksponent $x$, na katerega moramo potencirati $a$, da dobimo $b$: $\log_a b = x \iff a^x = b$. Osnova mora biti pozitivna in različna od $1$. Logaritmand $b$ mora biti pozitiven, ker je potenca s pozitivno osnovo vedno pozitivna. Sam logaritem je lahko poljubno realno število.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži pravilo za logaritem produkta $\log_a (xy) = \log_a x + \log_a y$ za pozitivni števili $x$ in $y$.
+---
+Označimo $u = \log_a x$ in $v = \log_a y$. Po definiciji logaritma je $x = a^u$ in $y = a^v$. Po pravilu za množenje potenc z isto osnovo je $xy = a^u \cdot a^v = a^{u+v}$. Po definiciji logaritma je zato $\log_a (xy) = u + v = \log_a x + \log_a y$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Izpelji formulo za prehod na novo osnovo logaritma in pojasni, zakaj jo potrebujemo pri računalu.
+---
+Naj bo $x = \log_a b$, torej $a^x = b$. Obe strani logaritmiramo z novo osnovo $c$, kjer je $c > 0$ in $c \ne 1$, in po pravilu za logaritem potence dobimo $x \cdot \log_c a = \log_c b$. Ker je $a \ne 1$, je $\log_c a \ne 0$, zato smemo deliti in dobimo $\log_a b = \dfrac{\log_c b}{\log_c a}$. Računalo ima navadno le desetiški in naravni logaritem, zato s to formulo izračunamo logaritem s poljubno osnovo.
+:::
+
 ## Drugače: Na sliki
 
 Nariši tabelo potenc števila $2$ in jo beri v obe smeri:
@@ -292,4 +379,28 @@ u, v | eksponenta potenc z osnovo $a$ | u = \log_a x | |
 p | zračni tlak na višini $h$ | p = p_0 \cdot 0{,}88^h | hPa |
 p_0 | zračni tlak pri tleh | | hPa | $1013\,\mathrm{hPa}$
 h | nadmorska višina | | km |
+L | glasnost zvoka | L = 10 \log \frac{I}{I_0} | dB |
+I | jakost zvoka | | W/m² |
+I_0 | jakost zvoka na pragu slišnosti | | W/m² | $10^{-12}\,\mathrm{W/m^2}$
+r | okrajšava za $\log_2 3$ (Za maturo, naloga 3) | r = \log_2 3 | |
+k | osnova faktorja v produktu (Za maturo, naloga 3 d) | | | $k = 2, 3, \ldots, 7$
 :::
+
+<<RACUN
+vrednost: 24*2/3 | 16
+vrednost: log(24, 2)+log(2/3, 2)-log(sqrt(5), 5) | 7/2
+vrednost: 10*log(10^(-6)/10^(-12), 10) | 60
+vrednost: 3.2*10^(-5)/10^(-12) | 3.2*10^7
+vrednost: 10*log(3.2*10^(-5)/10^(-12), 10) | 75.05
+vrednost: 10^(-12)*10^8.5 | 3.162*10^(-4)
+vrednost: 10*log(5, 10) | 6.99
+enako: log(18, 2) | 1+2*log(3, 2)
+enako: log(9/16, 2) | 2*log(3, 2)-4
+enako: log(2, 3) | 1/log(3, 2)
+enako: log(12, 18) | (2+log(3, 2))/(1+2*log(3, 2))
+enako: log(sqrt(27), 8) | log(3, 2)/2
+vrednost: log(3, 2)*log(4, 3)*log(5, 4)*log(6, 5)*log(7, 6)*log(8, 7) | 3
+enako: log(12, 2) | 2+log(3, 2)
+enako: (log(3, 2)+log(12, 2))/2 | log(6, 2)
+vrednost: (3+12)/2 | 7.5
+>>

@@ -177,6 +177,65 @@ Drugi ulomek: imenovalec je $3 - 2 = 1$, števec $\left(\sqrt{3} - \sqrt{2}\righ
 - Racionalizacija: $\dfrac{a}{\sqrt{b}} = \dfrac{a\sqrt{b}}{b}$.
 - Konjugirani izraz: $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izračunaj in rezultat zapiši čim preprosteje: $\sqrt{48} + \dfrac{9}{\sqrt{3}} - \sqrt{75}$.
+
+**Rešitev:**
+
+1. Delno korenimo: $\sqrt{48} = \sqrt{16 \cdot 3} = 4\sqrt{3}$ in $\sqrt{75} = \sqrt{25 \cdot 3} = 5\sqrt{3}$.
+2. Racionaliziramo: $\dfrac{9}{\sqrt{3}} = \dfrac{9\sqrt{3}}{3} = 3\sqrt{3}$.
+3. Seštejemo istovrstne korene: $4\sqrt{3} + 3\sqrt{3} - 5\sqrt{3} = 2\sqrt{3}$.
+4. Odgovor: $2\sqrt{3}$.
+
+**Točkovanje:** 1 točka za delno korenjenje obeh korenov, 1 točka za racionalizacijo $\dfrac{9}{\sqrt{3}} = 3\sqrt{3}$, 1 točka za rezultat $2\sqrt{3}$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Kocka ima prostornino $V = 128\,\text{cm}^3$.
+
+a) Zapiši enačbo za rob $c$ kocke in iz nje izrazi $c$ natančno, z delno korenjenim kubičnim korenom. (2 točki)
+b) Izračunaj rob $c$ in diagonalo ploskve kocke $D = c\sqrt{2}$. Rezultata zaokroži na dve decimalni mesti. (2 točki)
+c) Izračunaj natančno prostornino kocke, katere rob je dolg $D$, in jo nato zaokroži na cele kubične centimetre. (2 točki)
+
+**Rešitev:**
+
+1. a) $c^3 = 128$. Eksponent $3$ je lih, zato ima enačba natanko eno realno rešitev $c = \sqrt[3]{128}$.
+2. a) $128 = 64 \cdot 2 = 4^3 \cdot 2$, zato je $c = \sqrt[3]{4^3 \cdot 2} = 4\sqrt[3]{2}\,\text{cm}$.
+3. b) Z računalom (tipka za $n$-ti koren ali potenca $128^{1/3}$): $c \approx 5{,}039684$, torej $c \approx 5{,}04\,\text{cm}$.
+4. b) $D = c\sqrt{2} \approx 5{,}039684 \cdot 1{,}414214 \approx 7{,}127190$, torej $D \approx 7{,}13\,\text{cm}$.
+5. c) $D^3 = \left(c\sqrt{2}\right)^3 = c^3 \cdot \left(\sqrt{2}\right)^3 = 128 \cdot 2\sqrt{2} = 256\sqrt{2}\,\text{cm}^3$.
+6. c) $256\sqrt{2} \approx 362{,}0387$, torej približno $362\,\text{cm}^3$.
+7. Odgovor: $c = 4\sqrt[3]{2}\,\text{cm} \approx 5{,}04\,\text{cm}$; $D \approx 7{,}13\,\text{cm}$; prostornina večje kocke je $256\sqrt{2}\,\text{cm}^3 \approx 362\,\text{cm}^3$.
+
+**Točkovanje:** a) 1 točka za enačbo $c^3 = 128$, 1 točka za $c = 4\sqrt[3]{2}\,\text{cm}$; b) 1 točka za $c \approx 5{,}04\,\text{cm}$ in 1 točka za $D \approx 7{,}13\,\text{cm}$; c) 1 točka za natančno vrednost $256\sqrt{2}\,\text{cm}^3$ in 1 točka za zaokroženo vrednost $362\,\text{cm}^3$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Pod kakšnimi pogoji obstaja $n$-ti koren realnega števila $a$ in koliko realnih rešitev ima enačba $x^n = a$?
+---
+Pri sodem korenskem eksponentu $n$ je $\sqrt[n]{a}$ definiran le za $a \ge 0$ in je po dogovoru nenegativen. Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$, če je $a > 0$, eno rešitev $0$, če je $a = 0$, in nobene realne rešitve, če je $a < 0$. Pri lihem $n$ je $\sqrt[n]{a}$ definiran za vsako realno število $a$, tudi za negativno. Enačba $x^n = a$ ima pri lihem $n$ natanko eno realno rešitev $x = \sqrt[n]{a}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj pomeni racionalizirati imenovalec ulomka in kako to naredimo, kadar je v imenovalcu razlika dveh kvadratnih korenov?
+---
+Racionalizirati imenovalec pomeni ulomek preoblikovati v enak ulomek, ki v imenovalcu nima korena. Ulomek razširimo, torej števec in imenovalec pomnožimo z istim izrazom, zato se njegova vrednost ne spremeni. Pri imenovalcu $\sqrt{a} - \sqrt{b}$ razširimo s konjugiranim izrazom $\sqrt{a} + \sqrt{b}$. Po razliki kvadratov je $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$, kar ne vsebuje več korena.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da je število $\sqrt{2}$ iracionalno, torej ga ne moremo zapisati kot ulomek.
+---
+Denimo nasprotno, da je $\sqrt{2} = \frac{p}{q}$, kjer sta $p$ in $q$ tuji naravni števili. S kvadriranjem dobimo $p^2 = 2q^2$, zato je $p^2$ sodo število in je sodo tudi $p$, saj je kvadrat lihega števila lih. Zapišemo $p = 2r$ in dobimo $4r^2 = 2q^2$, torej $q^2 = 2r^2$, zato je sodo tudi $q$. Števili $p$ in $q$ sta tedaj obe sodi, kar nasprotuje predpostavki, da sta tuji, zato $\sqrt{2}$ ni racionalno število.
+:::
+
 ## Drugače: Na sliki
 
 Kvadratni koren je **dolžina stranice kvadrata** z dano ploščino. Kvadrat s stranico $1\,\text{cm}$ ima ploščino $1\,\text{cm}^2$, njegova diagonala pa je po Pitagorovem izreku dolga $\sqrt{2}\,\text{cm}$. Kvadrat s ploščino $2\,\text{cm}^2$ ima stranico $\sqrt{2}\,\text{cm} \approx 1{,}41\,\text{cm}$.
@@ -277,6 +336,19 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 ~ Iz korena izvlečeš $\sqrt{900} = 30$, ne $900$.
 > $\sqrt{30^2 + 30^2} = \sqrt{900 \cdot 2} = 30\sqrt{2} \approx 42{,}4\,\text{cm}$.
 
+<<RACUN
+enako: sqrt(48) | 4*sqrt(3)
+enako: sqrt(75) | 5*sqrt(3)
+enako: 9/sqrt(3) | 3*sqrt(3)
+enako: sqrt(48)+9/sqrt(3)-sqrt(75) | 2*sqrt(3)
+resi: c^3=128 | c | 4*2^(1/3)
+enako: 128^(1/3) | 4*2^(1/3)
+vrednost: 128^(1/3) | 5.04
+vrednost: 128^(1/3)*sqrt(2) | 7.13
+enako: (4*2^(1/3)*sqrt(2))^3 | 256*sqrt(2)
+vrednost: 256*sqrt(2) | 362.04
+>>
+
 :::simboli
 a | korenjenec; pri delnem korenjenju faktor pred korenom, pri racionalizaciji števec ulomka | | | a ≥ 0 pri kvadratnem korenu
 n, m | korenski eksponent | | | naravno število, n ≥ 2
@@ -286,4 +358,7 @@ p, q | koeficienta pred istim korenom | | | v dokazu iracionalnosti števila $\s
 S | ploščina ploščice | | cm^2 |
 s | stranica kvadrata | s = \sqrt{S} | cm |
 d | dolžina stene | | cm |
+V | prostornina kocke | V = c^3 | cm^3 |
+c | rob kocke | c = \sqrt[3]{V} | cm |
+D | diagonala ploskve kocke | D = c\sqrt{2} | cm |
 :::
