@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kocka brez kocke
+  - tri plošče debeline $a - b$
+  - ploskve $a^2$, $ab$, $b^2$
+- Razlika kubov
+  - $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$
+  - $999 = 9 \cdot 111$
+- Vsota kubov
+  - $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$
+  - znaki: isti, nasprotni, vedno plus
+- Pasti
+  - $a^3 + b^3 \neq (a + b)^3$
+  - drugi oklepaj ni $(a - b)^2$
+- Najprej izpostavi
+  - $2a^4 + 54a = 2a(a + 3)(a^2 - 3a + 9)$
+- Potence aⁿ ± bⁿ
+  - (višja raven) $a^n - b^n$ ima faktor $a - b$ za vsak $n$
+  - (višja raven) $a^n + b^n$ ima faktor $a + b$ le pri lihem $n$
+- Sode potence
+  - (višja raven) $a^2 + b^2$, $a^4 + b^4$ brez faktorja $a \pm b$
+  - (višja raven) najprej razlika kvadratov: $x^6 - 1$
+- Deljivost
+  - $2^{10} - 1 = 31 \cdot 33$
+  - $1001 = 7 \cdot 11 \cdot 13$

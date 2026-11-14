@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Eksplicitna oblika
+  - $y = kx + n$
+  - $(0, n)$ na osi $y$
+- Splošna oblika
+  - $ax + by + c = 0$
+  - $k = -\dfrac{a}{b}$, ne $k = a$
+  - $b = 0$: navpična $x = \text{konst.}$, brez $k$
+- Odsekovna oblika
+  - $\dfrac{x}{m} + \dfrac{y}{n} = 1$
+  - $2x + 3y = 6$ da $\dfrac{x}{3} + \dfrac{y}{2} = 1$
+- Premica skozi točko
+  - $y - y_1 = k(x - x_1)$
+  - dve točki: najprej $k$
+- Vzporedno in pravokotno
+  - $k_1 = k_2$
+  - $k_1 \cdot k_2 = -1$
+- Naklonski kot
+  - $k = \tan\alpha$
+  - računalo v DEG, tipka $\tan^{-1}$
+  - $k = 1$: $45^\circ$
+- Kot med premicama
+  - $\tan\varphi = \left|\dfrac{k_2 - k_1}{1 + k_1 k_2}\right|$
+  - vedno $0^\circ \le \varphi \le 90^\circ$
+  - navpična premica: $|90^\circ - \alpha|$

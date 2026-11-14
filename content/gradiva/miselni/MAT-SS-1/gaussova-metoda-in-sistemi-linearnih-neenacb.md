@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Več pogojev hkrati
+  - enačbe dajo eno rešitev, neenačbe območje
+  - košarka: $30$ košev, $58$ točk
+- Trikotna oblika
+  - odstrani $x$ iz 2. in 3. enačbe
+  - nato $y$ iz 3. enačbe z novo drugo
+  - desno stran vedno preoblikuj skupaj z levo
+- Vstavljanje nazaj
+  - najprej $z$, nato $y$, na koncu $x$
+  - preizkus v prvotnih enačbah
+- Posebni primeri
+  - $0 = c$, $c \neq 0$: ni rešitve
+  - $0 = 0$: neskončno rešitev, $z = t$
+- Ena neznanka
+  - reši vsako neenačbo posebej
+  - presek intervalov, npr. $(-2, 4]$
+  - pri deljenju z negativnim obrni znak
+- Polravnina
+  - rob je premica $ax + by = c$
+  - stran izbere testna točka $(0, 0)$
+  - $<$, $>$ črtkano; $\le$, $\ge$ polno
+- Presek polravnin
+  - območje, pogosto trikotnik
+  - preizkus s točko v notranjosti
