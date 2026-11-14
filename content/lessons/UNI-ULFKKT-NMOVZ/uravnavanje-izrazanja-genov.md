@@ -23,10 +23,31 @@ Celica lahko uravnava tudi pozneje (razgradnjo mRNA, prevajanje, aktivnost belja
 
 **Operon.** Pri bakterijah so geni za encime iste presnovne poti pogosto zloženi skupaj in se prepišejo skupaj. **Operon** je enota prokariontske DNA iz promotorja, operatorja in enega ali več **strukturnih genov** (genov za beljakovine, tu encime). Strukturni geni se z istega promotorja prepišejo v eno mRNA, zato se vklapljajo in izklapljajo skupaj. Za *lac* operon si nariši vrsto na DNA:
 
-```
-[lacI]   ...   [P][O][ lacZ ][ lacY ][ lacA ]
-represor        ←──── lac operon ────────→
-```
+:::risba skica
+opis: Vrsta na DNA od leve proti desni. Skrajno levo, ločeno od ostalega, je gen lacI, ki kodira represor. Desno od njega si brez presledkov sledijo promotor P, operator O ter strukturni geni lacZ, lacY in lacA; teh pet delov skupaj je lac operon. Puščica od lacI do O kaže, da se represor veže na operator.
+območje: 0; 0 .. 20; 6,6
+črta: 0,5; 2,5 -> 19,5; 2,5 | siva
+pravokotnik: 2,5; 2 .. 5; 3 | oranžna polno
+pravokotnik: 7,5; 2 .. 8,5; 3 | zelena polno
+pravokotnik: 8,5; 2 .. 9,5; 3 | rdeča polno
+pravokotnik: 9,5; 2 .. 13; 3 | modra polno
+pravokotnik: 13; 2 .. 16; 3 | modra polno
+pravokotnik: 16; 2 .. 19; 3 | modra polno
+črta: 13; 2 -> 13; 3
+črta: 16; 2 -> 16; 3
+napis: 3,75; 3,1 | lacI | nad
+napis: 8; 3,1 | P | nad
+napis: 9; 3,1 | O | nad
+napis: 11,25; 3,1 | lacZ | nad
+napis: 14,5; 3,1 | lacY | nad
+napis: 17,5; 3,1 | lacA | nad
+črta: 3,75; 4 -> 3,75; 5,4 -> 9; 5,4
+puščica: 9; 5,4 -> 9; 4,4
+napis: 6,4; 5,5 | represor | nad
+napis: 3,75; 1,8 | regulatorni gen | pod
+črta: 7,5; 1,7 -> 7,5; 1,4 -> 19; 1,4 -> 19; 1,7
+napis: 13,25; 1,3 | lac operon | pod
+:::
 
 - **promotor (P)**: mesto, kamor se veže RNA-polimeraza,
 - **operator (O)**: kratko zaporedje, ki se prekriva s promotorjem; nanj se lahko veže represor,

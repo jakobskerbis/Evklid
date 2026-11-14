@@ -35,14 +35,17 @@ Pomožna naj bo skupna dolžina $(40)$ ali glava. Dolžina konusa je funkcijska,
 
 Vsaka kota ima štiri dele. Skica (ni v merilu):
 
-```
-        60
-   |<--------->|
-   |           |
-   +-----------+
-   |           |
-   +-----------+
-```
+:::risba skica
+opis: Pravokoten predmet, širok 60 mm, s koto nad zgornjim robom. Od levega in desnega oglišča gresta navzgor navpični pomožni kotirni črti. Med njima je vodoravna kotirna črta s puščicama na obeh koncih, nad njeno sredino je kotirno število 60. Pomožni črti segata malo čez kotirno črto.
+območje: -10; -4 .. 70; 34
+pravokotnik: 0; 0 .. 60; 15
+črta: 0; 0 -> 60; 0 -> 60; 15 -> 0; 15 | debelo zaprto
+črta: 0; 15 -> 0; 27
+črta: 60; 15 -> 60; 27
+črta: 30; 25 -> 0; 25 | puščica
+črta: 30; 25 -> 60; 25 | puščica
+napis: 30; 25,5 | 60 | nad
+:::
 
 - **Pomožni kotirni črti** (navpični črti levo in desno) podaljšata rob predmeta. Narišemo ju s tanko neprekinjeno črto, pravokotno na merjeno dolžino, in ju potegnemo nekoliko čez kotirno črto (okoli $2\,\mathrm{mm}$).
 - **Kotirna črta** je tanka neprekinjena črta, vzporedna z merjeno dolžino. Od roba predmeta je v praksi oddaljena okoli $10\,\mathrm{mm}$, vzporedne kotirne črte med seboj okoli $7\,\mathrm{mm}$.
@@ -63,16 +66,46 @@ Pred kotirno število pišemo simbole, ki povedo vrsto oblike:
 
 Kako uredimo mere položajev, na primer vrtin v ploščici? Poznamo štiri sisteme. Pri vseh merimo vrtine od levega roba ploščice:
 
-```
-zaporedno (verižno):
-|<-15->|<-25->|<-25->|<-25->|
-
-vzporedno (od baze):
-|<-15->|
-|<----40----->|
-|<--------65-------->|
-|<-----------90------------>|
-```
+:::risba skica
+opis: Dva načina kotiranja istih štirih vrtin, ki so 15, 40, 65 in 90 mm od levega roba. Zgoraj zaporedno (verižno) kotiranje: na eni kotirni črti si sledijo mere 15, 25, 25 in 25. Spodaj vzporedno kotiranje od baze: štiri kotirne črte druga pod drugo, vse se začnejo na levem robu, mere so 15, 40, 65 in 90.
+območje: -5; -3 .. 95; 68
+napis: 0; 64,5 | zaporedno (verižno) | desno
+črta: 0; 50 -> 0; 56
+črta: 15; 50 -> 15; 56
+črta: 40; 50 -> 40; 56
+črta: 65; 50 -> 65; 56
+črta: 90; 50 -> 90; 56
+črta: 7,5; 53 -> 0; 53 | puščica
+črta: 7,5; 53 -> 15; 53 | puščica
+črta: 27,5; 53 -> 15; 53 | puščica
+črta: 27,5; 53 -> 40; 53 | puščica
+črta: 52,5; 53 -> 40; 53 | puščica
+črta: 52,5; 53 -> 65; 53 | puščica
+črta: 77,5; 53 -> 65; 53 | puščica
+črta: 77,5; 53 -> 90; 53 | puščica
+napis: 7,5; 53,5 | 15 | nad
+napis: 27,5; 53,5 | 25 | nad
+napis: 52,5; 53,5 | 25 | nad
+napis: 77,5; 53,5 | 25 | nad
+napis: 0; 42,5 | vzporedno (od baze) | desno
+črta: 0; -1 -> 0; 34 | debelo
+črta: 15; 29 -> 15; 34
+črta: 40; 19 -> 40; 24
+črta: 65; 9 -> 65; 14
+črta: 90; -1 -> 90; 4
+črta: 7,5; 31 -> 0; 31 | puščica
+črta: 7,5; 31 -> 15; 31 | puščica
+črta: 20; 21 -> 0; 21 | puščica
+črta: 20; 21 -> 40; 21 | puščica
+črta: 32,5; 11 -> 0; 11 | puščica
+črta: 32,5; 11 -> 65; 11 | puščica
+črta: 45; 1 -> 0; 1 | puščica
+črta: 45; 1 -> 90; 1 | puščica
+napis: 7,5; 31,5 | 15 | nad
+napis: 20; 21,5 | 40 | nad
+napis: 32,5; 11,5 | 65 | nad
+napis: 45; 1,5 | 90 | nad
+:::
 
 - **Zaporedno (verižno) kotiranje**: vsaka mera se začne, kjer se prejšnja konča. Pregledno, a odstopanja se **seštevajo**. Uporabno, kadar je funkcijska razdalja med sosednjima elementoma.
 - **Vzporedno kotiranje**: vse mere izhajajo iz skupne **baze** (referenčnega roba ali osi). Odstopanja se ne seštevajo; vsak položaj je odvisen le od svoje mere. Zahteva več prostora.

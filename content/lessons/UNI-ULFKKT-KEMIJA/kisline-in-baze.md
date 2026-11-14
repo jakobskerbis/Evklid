@@ -255,11 +255,14 @@ Naj bo $\mathrm{HA}$ šibka enoprotonska kislina s konstanto $K_a$ in začetno k
 
 Lestvica pH z znanimi snovmi (vsak korak v levo pomeni desetkrat več $\mathrm{H_3O^+}$):
 
-```
- 0    1    2    3    4    5    6    7    8    9   10   11   12   13   14
- |----|----|----|----|----|----|----|----|----|----|----|----|----|----|
- <---------- kislo -------------->  7  <------------ bazično ----------->
-```
+:::risba premica
+opis: Lestvica pH od 0 do 14 s korakom 1. Od 0 do 7 je območje kislo, pri 7 je raztopina nevtralna (pri 25 °C), od 7 do 14 je območje bazično.
+od: 0
+do: 14
+interval: 0 .. 7 | kislo
+interval: 7 .. 14 | bazično
+točka: 7 | nevtralno
+:::
 
 | Snov | pH (okvirno) |
 |---|---|

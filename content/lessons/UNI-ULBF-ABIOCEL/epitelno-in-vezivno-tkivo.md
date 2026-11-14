@@ -143,6 +143,60 @@ $V = \dfrac{274\,\mathrm{mg}}{1{,}2\,\mathrm{mg/mL}} \approx 228\,\mathrm{mL}$, 
 - Hrustanec: kolagen II in agrekan, hondrociti v lakunah, brez žil; hialini, elastični, vlaknati.
 - Kost: kolagen I + hidroksiapatit; osteoblasti gradijo, osteociti vzdržujejo, osteoklasti razgrajujejo; osteon s Haversovim kanalom; intramembransko in enhondralno zakostenevanje.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo tkiva (celice in zunajcelični matriks) in po čem se epitel razlikuje od veziva;
+- značilnosti epitela: polarnost, bazalna lamina, brez žil, vrste stikov in na kateri del citoskeleta je vezan vsak;
+- pravilo za poimenovanje krovnega epitela, vse vrste s primerom in razliko med večvrstnim in večskladnim;
+- tri načine izločanja eksokrinih žlez;
+- sestavo zunajceličnega matriksa: vrste vlaken, tipe kolagena in kje so, osnovno substanco ter zgradbo kolagena z vlogo vitamina C;
+- zgradbo in vrste hrustanca, zgradbo kosti (osteon, celice, matriks) in oba načina zakostenevanja.
+
+### Naloga 1
+
+Okostje odrasle ženske vsebuje $1000\,\mathrm{g}$ kalcija. Po menopavzi osteoklasti vsako leto razgradijo $12\,\%$ kostne mase, osteoblasti pa zgradijo le $10\,\%$ (oboje glede na maso na začetku leta). (a) Koliko miligramov kalcija se v prvem letu povprečno na dan sprosti iz kosti, koliko se ga vgradi in koliko ga kost na dan izgubi? (b) Koliko kalcija je v okostju po $10$ letih? (c) Po koliko celih letih izguba prvič preseže $30\,\%$? (d) Katere celice mora zavreti zdravilo, da izgubo ustavi?
+
+**Rešitev:**
+
+1. (a) Razgradnja v prvem letu: $1000 \cdot 0{,}12 = 120$, torej $120\,\mathrm{g}$; na dan $\dfrac{120\,\mathrm{g}}{365} \approx 0{,}329\,\mathrm{g} = 329\,\mathrm{mg}$.
+2. Gradnja: $1000 \cdot 0{,}1 = 100$, torej $100\,\mathrm{g}$; na dan $\dfrac{100\,\mathrm{g}}{365} \approx 0{,}274\,\mathrm{g} = 274\,\mathrm{mg}$.
+3. Izguba na dan: $329 - 274 = 55$, torej okoli $55\,\mathrm{mg}$.
+4. (b) Vsako leto ostane $1 - 0{,}12 + 0{,}10 = 0{,}98$ mase z začetka leta. Po $10$ letih: $0{,}98^{10} \approx 0{,}817$.
+5. Kalcija po $10$ letih: $1000 \cdot 0{,}817 = 817$, torej okoli $817\,\mathrm{g}$; izguba je $183\,\mathrm{g}$.
+6. (c) Iščemo najmanjši $n$, za katerega je $0{,}98^{n} < 0{,}70$: $n > \dfrac{\ln 0{,}70}{\ln 0{,}98} \approx 17{,}7$.
+7. Preverba: $0{,}98^{17} \approx 0{,}709$ (izguba $29{,}1\,\%$), $0{,}98^{18} \approx 0{,}695$ (izguba $30{,}5\,\%$).
+8. (d) Izgubo povzroča presežek razgradnje, zato mora zdravilo zavreti osteoklaste (ali spodbuditi osteoblaste).
+9. Odgovor: na dan se sprosti okoli $329\,\mathrm{mg}$ in vgradi $274\,\mathrm{mg}$ kalcija, izguba je okoli $55\,\mathrm{mg}$ na dan. Po $10$ letih ostane okoli $817\,\mathrm{g}$ kalcija, izguba preseže $30\,\%$ po $18$ letih. Majhna dnevna razlika med delom osteoklastov in osteoblastov se v letih sešteje v osteoporozo.
+
+### Naloga 2
+
+Natančno navedi pravilo, po katerem poimenujemo krovni epitel, in utemelji razliko med večvrstnim in večskladnim epitelom. Nato za pljučni mešiček, tanko črevo, sapnik in požiralnik navedi vrsto epitela in utemelji, kako zgradba ustreza nalogi.
+
+**Rešitev:**
+
+1. Pravilo: ime sestavljata število plasti in oblika celic v vrhnji plasti; dodamo posebnosti površine (migetalke, mikrovili, poroženevanje).
+2. Večskladni epitel ima več plasti celic druga na drugi, bazalne lamine se dotika le spodnja plast. Pri večvrstnem se bazalne lamine dotikajo vse celice, le do površine ne segajo vse. Jedra so zato na več višinah, plast pa je ena.
+3. Pljučni mešiček: enoskladni ploščati epitel. Tanka plast pomeni kratko pot za difuzijo plinov.
+4. Tanko črevo: enoskladni prizmatski epitel z mikrovili. Visoke celice imajo prostor za organele, ki vsrkavajo in izločajo, mikrovili povečajo površino.
+5. Sapnik: večvrstni prizmatski migetalčni epitel z vrčastimi celicami. Sluz ujame prah, migetalke jo potiskajo proti žrelu.
+6. Požiralnik: večskladni ploščati neporoženevajoči epitel. Več plasti ščiti pred drgnjenjem, spodnje celice z mitozo nadomeščajo odluščene zgornje.
+7. Sklep: število plasti pove, ali epitel prepušča (ena plast) ali ščiti (več plasti); oblika vrhnjih celic pove, kaj delajo.
+
+### Naloga 3
+
+Primerjaj hialini hrustanec in kompaktno kost po matriksu, celicah in prehrani. (a) Utemelji, zakaj se zlom kosti zaceli, poškodba sklepnega hrustanca pa skoraj ne. (b) Osteon ima premer $250\,\mathrm{\mu m}$, Haversov kanal $50\,\mathrm{\mu m}$, ena lamela je debela $5\,\mathrm{\mu m}$. Kako daleč od žile je najbolj oddaljen osteocit in koliko lamel ima osteon?
+
+**Rešitev:**
+
+1. Matriks: hrustanec je čvrst gel z veliko vode, kolagenom tipa II in agrekanom na hialuronanu. Kost ima kolagen tipa I z vgrajenimi kristali hidroksiapatita; kolagen daje žilavost, mineral trdoto.
+2. Celice: v hrustancu so hondrociti v lakunah, pogosto v izogenih skupinah. V kosti osteoblasti gradijo, osteociti vzdržujejo, osteoklasti razgrajujejo.
+3. Prehrana: hrustanec nima žil, hranila pridejo z difuzijo iz perihondrija ali sklepne tekočine. Kost ima žile v Haversovih in Volkmannovih kanalih, osteociti so z njimi povezani po kanalčkih.
+4. (a) V kost po žilah pridejo nove celice in hranila, osteoblasti zgradijo nov matriks, osteoklasti ga preoblikujejo. V hrustancu so hondrociti ujeti v lakunah, hranila prihajajo le počasi skozi gost matriks, zato se poškodba skoraj ne popravi.
+5. (b) Debelina stene osteona: $\dfrac{250 - 50}{2} = 100$, torej $100\,\mathrm{\mu m}$. Toliko je od žile oddaljen najbolj zunanji osteocit.
+6. Število lamel: $\dfrac{100}{5} = 20$.
+7. Odgovor: hrustanec je brezžilni gel s kolagenom II, kost mineralizirano tkivo z žilami in kolagenom I. Žile omogočajo celjenje kosti. V danem osteonu je pot do žile največ $100\,\mathrm{\mu m}$, lamel je $20$.
+
 ## Drugače: Kot zgodba
 
 Sledimo eni molekuli kolagena v koži. Fibroblast prepiše gen, na zrnatem endoplazemskem retikulumu nastajajo tri verige. Encimi hidroksilirajo prolin, pri tem jim pomaga vitamin C. Verige se zvijejo v trojno vijačnico, Golgijev aparat jo zapakira v mešiček, ta se z eksocitozo izprazni iz celice. Zunaj encimi odrežejo konca molekule. Šele zdaj se molekule same zložijo druga ob drugo v vlakence, kot vrvice v vrv, in se prečno povežejo.

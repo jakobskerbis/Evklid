@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Von Neumannova števila
+  - $0 = \emptyset$, $S(n) = n \cup \{n\}$
+  - $n = \{0, \ldots, n-1\}$, $m < n$ pomeni $m \in n$
+- Aksiomi ZFC
+  - deset aksiomov, brez izbire: ZF
+  - separacija le iz obstoječe množice
+  - Russell: množice vseh množic ni
+- Množica $\omega$
+  - najmanjša induktivna množica
+  - obstoj zagotovi aksiom neskončnosti
+- Peanova aritmetika
+  - indukcija sledi iz minimalnosti $\omega$
+  - $a + S(b) = S(a + b)$, $a \cdot S(b) = a \cdot b + a$
+- Matematična indukcija
+  - baza $P(0)$ in korak $P(n) \Rightarrow P(n+1)$
+  - enakovredni: krepka indukcija, dobra urejenost
+  - napaka: korak odpove pri majhnem $n$
+- Aksiom izbire
+  - izbirna funkcija za družino nepraznih množic
+  - končne družine: zadošča ZF
+- Zornova lema
+  - vsaka veriga ima zgornjo mejo v $P$ ⇒ maksimalni element
+  - maksimalni ni nujno največji
+  - enakovredna AC; primer: vpeto drevo neskončnega grafa

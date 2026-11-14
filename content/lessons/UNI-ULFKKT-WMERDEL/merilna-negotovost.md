@@ -15,15 +15,23 @@ Tam je ocena negotovosti odločilna. Raven hrupa $84\,\mathrm{dB}$ ali $86\,\mat
 
 ## Razlaga
 
-**1. Oblak meritev na številski premici.** Trener isti posnetek teka petkrat izmeri z ročno štoparico. Dobi $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$ in $11{,}24\,\mathrm{s}$. Vrišimo jih na premico (en znak je $0{,}01\,\mathrm{s}$):
+**1. Oblak meritev na številski premici.** Trener isti posnetek teka petkrat izmeri z ročno štoparico. Dobi $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$ in $11{,}24\,\mathrm{s}$. Vrišimo jih na premico (ena črtica je $0{,}01\,\mathrm{s}$):
 
-```
-11,1      11,2      11,3      11,4      11,5  t [s]
-|---------|---------|---------|---------|
-        •     ••      •        •
-                  ▲ povprečje 11,28
-         [-----------------]  povprečje ± s
-```
+:::risba premica
+opis: Številska premica časa t v sekundah od 11,1 do 11,5. Na njej je pet meritev: 11,18; 11,24; 11,25; 11,32 in 11,41. Povprečje 11,28 je označeno posebej. Pas povprečje ± s sega od 11,19 do 11,37; v njem so tri meritve, zunaj njega 11,18 in 11,41.
+od: 11,1
+do: 11,5
+korak: 0,01
+oznake: 0,1
+točka: 11,18
+točka: 11,24
+točka: 11,25
+točka: 11,32
+točka: 11,41
+točka: 11,28 | povprečje 11,28 | prazna
+interval: 11,19 .. 11,37
+podnapis: Debela črta je pas povprečje ± s od 11,19 do 11,37 s; črtice so na 0,01 s.
+:::
 
 Točke tvorijo oblak. Njegova sredina je **povprečje** $\bar{x}$, njegova širina pa je **raztros**. Raztros meri **standardni odmik** $s$: približno dve tretjini meritev leži znotraj pasu $\bar{x} \pm s$.
 

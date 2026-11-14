@@ -13,11 +13,41 @@ Prvi del lekcije pojasni, zakaj je keramika taka: kakšna je njena zgradba in za
 
 **1. Slika najprej: kristal keramike.** Zamisli si ravnino kristala magnezijevega oksida MgO:
 
-```
- O Mg  O Mg  O
-Mg  O Mg  O Mg
- O Mg  O Mg  O
-```
+:::risba skica
+opis: Ravnina kristala MgO: tri vrste po pet ionov. V vsaki vrsti in vsakem stolpcu se izmenjujeta veliki ion O²⁻ in mali ion Mg²⁺ (prva vrsta O, Mg, O, Mg, O; druga Mg, O, Mg, O, Mg; tretja kot prva). Vsak ion ima v ravnini za najbližje sosede štiri ione z nasprotnim nabojem; ioni z enakim nabojem se ne dotikajo.
+območje: -0,9; -0,9 .. 4,9; 2,9
+krog: 0; 2 | 0,66 | modra ozadje
+krog: 2; 2 | 0,66 | modra ozadje
+krog: 4; 2 | 0,66 | modra ozadje
+krog: 1; 1 | 0,66 | modra ozadje
+krog: 3; 1 | 0,66 | modra ozadje
+krog: 0; 0 | 0,66 | modra ozadje
+krog: 2; 0 | 0,66 | modra ozadje
+krog: 4; 0 | 0,66 | modra ozadje
+krog: 1; 2 | 0,34 | oranžna polno
+krog: 3; 2 | 0,34 | oranžna polno
+krog: 0; 1 | 0,34 | oranžna polno
+krog: 2; 1 | 0,34 | oranžna polno
+krog: 4; 1 | 0,34 | oranžna polno
+krog: 1; 0 | 0,34 | oranžna polno
+krog: 3; 0 | 0,34 | oranžna polno
+napis: 0; 2 | O | sredina
+napis: 2; 2 | O | sredina
+napis: 4; 2 | O | sredina
+napis: 1; 1 | O | sredina
+napis: 3; 1 | O | sredina
+napis: 0; 0 | O | sredina
+napis: 2; 0 | O | sredina
+napis: 4; 0 | O | sredina
+napis: 1; 2 | Mg | sredina
+napis: 3; 2 | Mg | sredina
+napis: 0; 1 | Mg | sredina
+napis: 2; 1 | Mg | sredina
+napis: 4; 1 | Mg | sredina
+napis: 1; 0 | Mg | sredina
+napis: 3; 0 | Mg | sredina
+podnapis: Ravnina kristala MgO: veliki krogi so ioni O²⁻, mali ioni Mg²⁺
+:::
 
 Vsak ion Mg²⁺ ima za sosede štiri ione O²⁻ v ravnini ter še enega nad in enega pod njo, skupaj šest. Ioni z enakim nabojem se nikoli ne dotikajo. Če bi hoteli eno vrstico premakniti za en ion v desno, bi za trenutek prišli $\mathrm{Mg^{2+}}$ ob $\mathrm{Mg^{2+}}$ in $\mathrm{O^{2-}}$ ob $\mathrm{O^{2-}}$; odboj je ogromen. To je bistvo krhkosti.
 
@@ -42,15 +72,20 @@ Pri **silikatih** je osnovna enota tetraeder $\mathrm{SiO_4^{4-}}$: ion silicija
 
 Posledica: keramika se do loma deformira le elastično. Vsaka razpoka, pora ali zrno nečistoče je mesto, kjer se napetost zbere, ne pa »razmaže« s plastično deformacijo.
 
-```
-   sigma
-    |
- ---|---
-  > |<  razpoka
- ---|---  dolžina a
-    |
-   sigma
-```
+:::risba skica
+opis: Keramična plošča v nategu. Napetost sigma jo vleče navzgor in navzdol (puščici). Z levega roba sega vodoravno v ploščo ostra razpoka dolžine a; ob njeni konici se napetost zbere.
+območje: -1,6; -1,3 .. 6; 5,3
+pravokotnik: 0; 0 .. 4; 4 | siva ozadje
+lik: 0; 2,12 -> 1,5; 2 -> 0; 1,88 | rdeča polno
+puščica: 2; 4 -> 2; 5 | σ | desno
+puščica: 2; 0 -> 2; -1 | σ | desno
+črta: 0; 1,4 -> 1,5; 1,4 | siva
+črta: 0; 1,3 -> 0; 1,5 | siva
+črta: 1,5; 1,3 -> 1,5; 1,5 | siva
+napis: 0,75; 1,4 | a | pod
+točka: 1,5; 2 | konica razpoke | nad | rdeča
+podnapis: Razpoka dolžine a v plošči, obremenjeni z natezno napetostjo σ
+:::
 
 Na konici razpoke z dolžino $a$ in polmerom konice $\rho$ je napetost približno $\sigma_\mathrm{max} = 2\sigma\sqrt{a/\rho}$, pri ostri razpoki večkrat večja od povprečne. Inženirska mera odpornosti je **lomna žilavost** $K_\mathrm{Ic}$:
 

@@ -201,19 +201,87 @@ $h = \dfrac{315360 \cdot 0{,}06538}{2 \cdot 96485 \cdot 7140} \approx 1{,}50 \cd
 - Vrste: enakomerna, galvanska, jamičasta, špranjska, interkristalna, selektivna, napetostna, erozijska.
 - V resničnem okolju odloča galvanska vrsta; pasivne kovine so plemenitejše, kot kaže $E^\circ$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- anodno in katodno reakcijo (v nevtralni vodi s kisikom in v kislini) ter kje se kovina raztaplja;
+- štiri pogoje za delovanje korozijskega člena in kaj se zgodi, če enega odstraniš;
+- kako iz potencialov določiš anodo in $\Delta E = E_k - E_a$ ter zakaj je v resničnem okolju zanesljivejša galvanska vrsta (pasivnost);
+- Faradayev zakon $m = \dfrac{I\,t\,M}{z\,F}$ in izpeljavo stanjšanja $h = \dfrac{i\,t\,M}{z\,F\,\rho}$;
+- zakaj je majhna anoda ob veliki katodi najnevarnejša kombinacija;
+- vrste korozije s primeri in mehanizem senzibilizacije nerjavnega jekla.
+
+### Naloga 1
+
+Vkopan jeklen rezervoar s steno debeline $6\,\mathrm{mm}$ je električno spojen z bakreno cevjo. Galvanski tok med njima je $0{,}5\,\mathrm{mA}$ in ga določa bakrena katoda, zato je v vseh primerih enak. Za železo vzemi $M = 55{,}85\,\mathrm{g/mol}$, $z = 2$, $\rho = 7870\,\mathrm{kg/m^3}$, eno leto je $3{,}1536 \cdot 10^{7}\,\mathrm{s}$, $F = 96\,485\,\mathrm{C/mol}$. (a) Rezervoar je premazan, premaz pa ima eno poškodbo s ploščino $2\,\mathrm{cm^2}$. Za koliko se stena na poškodbi stanjša v enem letu in po kolikšnem času je prebita? (b) Kolikšno je letno stanjšanje, če rezervoar ni premazan in je v stiku z vlažno zemljo $0{,}8\,\mathrm{m^2}$ jekla? (c) Kolikšna sme biti največ gostota toka, da stena v $25$ letih izgubi največ $1\,\mathrm{mm}$? (d) Kaj sklepaš o premazovanju anode?
+
+**Rešitev:**
+
+1. Anoda je jeklo, ker ima železo bolj negativen potencial od bakra ($-0{,}44\,\mathrm{V}$ proti $+0{,}34\,\mathrm{V}$).
+2. (a) Ploščina poškodbe: $2\,\mathrm{cm^2} = 0{,}0002\,\mathrm{m^2}$. Gostota toka: $i_a = \dfrac{0{,}0005\,\mathrm{A}}{0{,}0002\,\mathrm{m^2}} = 2{,}5\,\mathrm{A/m^2}$.
+3. Molska masa v osnovnih enotah: $M = 0{,}05585\,\mathrm{kg/mol}$.
+4. Letno stanjšanje: $h_a = \dfrac{2{,}5 \cdot 3{,}1536 \cdot 10^{7} \cdot 0{,}05585}{2 \cdot 96485 \cdot 7870} \approx 2{,}90 \cdot 10^{-3}\,\mathrm{m}$, torej $2{,}9\,\mathrm{mm}$ na leto.
+5. Čas do preboja: $\dfrac{6}{2{,}90} \approx 2{,}07$, torej približno $2{,}1$ leta (okoli $25$ mesecev).
+6. (b) Gostota toka: $i_b = \dfrac{0{,}0005\,\mathrm{A}}{0{,}8\,\mathrm{m^2}} = 0{,}000625\,\mathrm{A/m^2}$, to je $4000$-krat manj kot v (a).
+7. Stanjšanje je sorazmerno gostoti toka: $h_b = \dfrac{2{,}90 \cdot 10^{-3}}{4000} \approx 7{,}2 \cdot 10^{-7}\,\mathrm{m}$, torej okoli $0{,}7\,\mu\mathrm{m}$ na leto.
+8. (c) Iz $h = \dfrac{i\,t\,M}{z\,F\,\rho}$ izrazimo $i = \dfrac{h\,z\,F\,\rho}{t\,M}$. Čas: $25 \cdot 3{,}1536 \cdot 10^{7} = 7{,}884 \cdot 10^{8}\,\mathrm{s}$.
+9. $i_{max} = \dfrac{0{,}001 \cdot 2 \cdot 96485 \cdot 7870}{7{,}884 \cdot 10^{8} \cdot 0{,}05585} \approx 0{,}0345\,\mathrm{A/m^2}$.
+10. Odgovor: (a) $2{,}9\,\mathrm{mm}$ na leto, stena je prebita v približno dveh letih; (b) okoli $0{,}7\,\mu\mathrm{m}$ na leto; (c) največ okoli $0{,}034\,\mathrm{A/m^2}$; (d) premaz samo na anodi je nevaren, ker se ves tok zbere na poškodbah (majhna anoda ob veliki katodi). Premazati je treba katodo ali obe kovini, še bolje pa kovini električno ločiti.
+
+### Naloga 2
+
+Natančno navedi pogoje za delovanje korozijskega člena. Zapiši anodno in katodno reakcijo pri rjavenju jekla pod kapljico nevtralne vode ter skupno reakcijo do $\mathrm{Fe(OH)_2}$. Utemelji, kje pod kapljico je anoda in kje se izloči rja.
+
+**Rešitev:**
+
+1. Pogoji: anoda (kovina oddaja elektrone), katoda (elektroni se porabijo), elektrolit, ki med njima prevaja ione, in električni stik skozi kovino za elektrone. Brez kateregakoli korozija skoraj obstane.
+2. Anoda: $\mathrm{Fe} \rightarrow \mathrm{Fe^{2+}} + 2e^-$ (oksidacija).
+3. Katoda: $\mathrm{O_2} + 2\mathrm{H_2O} + 4e^- \rightarrow 4\,\mathrm{OH^-}$ (redukcija).
+4. Bilanca elektronov: ena molekula $\mathrm{O_2}$ porabi $4$ elektrone, torej elektrone dveh atomov železa. Skupaj: $2\,\mathrm{Fe} + \mathrm{O_2} + 2\mathrm{H_2O} \rightarrow 2\,\mathrm{Fe(OH)_2}$; ta se s kisikom oksidira naprej v rjo.
+5. Ob robu kapljice je plast vode tanka, kisik hitro pride do kovine, zato tam poteka redukcija: rob je katoda. V sredini kisika primanjkuje, tam se železo raztaplja: sredina je anoda.
+6. Elektroni tečejo skozi jeklo od sredine proti robu, ioni $\mathrm{Fe^{2+}}$ in $\mathrm{OH^-}$ pa skozi vodo drug proti drugemu. Rja se izloči v obroču med sredino in robom, kjer se srečajo, torej ne tam, kjer je kovina izginila.
+7. Sklep: člen nastane na enem samem kosu kovine zaradi razlike v dostopu kisika. Enako velja za špranjo, kjer je reža anoda.
+
+### Naloga 3
+
+Iz Faradayevega zakona izpelji enačbo za stanjšanje stene $h$ in preveri enoto. Nato utemelji, ali standardni potenciali zadoščajo za napoved, katera kovina korodira v paru aluminij–nerjavno jeklo in kako hitro.
+
+**Rešitev:**
+
+1. Vsak atom odda $z$ elektronov, zato naboj $Q = I\,t$ raztopi $n = \dfrac{I\,t}{z\,F}$ molov kovine z maso $m = n\,M = \dfrac{I\,t\,M}{z\,F}$.
+2. Raztopljena prostornina je $V = \dfrac{m}{\rho}$. Če se enakomerno raztaplja anoda s ploščino $A$, je $V = A\,h$, torej $h = \dfrac{m}{\rho\,A}$.
+3. Vstavimo $m$ in $i = \dfrac{I}{A}$: $h = \dfrac{I\,t\,M}{z\,F\,\rho\,A} = \dfrac{i\,t\,M}{z\,F\,\rho}$.
+4. Enota: $\dfrac{\mathrm{A/m^2} \cdot \mathrm{s} \cdot \mathrm{kg/mol}}{\mathrm{C/mol} \cdot \mathrm{kg/m^3}} = \dfrac{\mathrm{A\,s}}{\mathrm{C}} \cdot \mathrm{m} = \mathrm{m}$, ker je $1\,\mathrm{C} = 1\,\mathrm{A\,s}$. Molska masa mora biti zato v $\mathrm{kg/mol}$.
+5. Katera kovina: aluminij ima $E^\circ = -1{,}66\,\mathrm{V}$, železo $-0{,}44\,\mathrm{V}$, zato tabela pravilno napove, da je anoda aluminij. Velikost razlike pa zavaja: obe kovini prekriva pasivna oksidna plast, zato se v okolju obnašata plemeniteje kot po $E^\circ$. Zanesljivejša je galvanska vrsta, izmerjena v tistem okolju.
+6. Kako hitro: tega potenciali ne povedo. $\Delta E > 0$ pomeni le, da reakcija lahko poteče; stanjšanje določa gostota toka na anodi, ta pa je odvisna od razmerja ploščin katode in anode ter od elektrolita.
+7. Sklep: standardni potenciali dajo smer (anoda je manj plemenita kovina), ne pa hitrosti. Za hitrost potrebuješ tok in ploščino anode, za zanesljivo smer pa galvansko vrsto.
+
 ## Drugače: Na sliki
 
 Prerez kapljice vode na jekleni pločevini:
 
-```
-        zrak (O2)
-   _________________
-  /  K      A      K \     <- kapljica vode
- /  OH-   Fe2+   OH-  \
-=====+======-======+=====  jeklo
-     |<-- e- --|-- e- -->|
-   katoda   anoda   katoda
-```
+:::risba skica
+opis: Prerez kapljice vode na jekleni pločevini. Nad kapljico je zrak s kisikom O₂. V sredini kapljice je anoda A, kjer železo prehaja v vodo kot ioni Fe²⁺. Ob levem in desnem robu kapljice sta katodi K, kjer nastajajo ioni OH⁻. Elektroni e⁻ tečejo skozi jeklo od anode v sredini proti katodama ob robu.
+območje: 0; -3,8 .. 16; 5
+pravokotnik: 0; -2 .. 16; 0 | siva
+lik: 14; 0 -> 13,8; 0,78 -> 13,2; 1,5 -> 12,24; 2,12 -> 11; 2,6 -> 9,55; 2,9 -> 8; 3 -> 6,45; 2,9 -> 5; 2,6 -> 3,76; 2,12 -> 2,8; 1,5 -> 2,2; 0,78 -> 2; 0 | modra
+črta: 0; 0 -> 16; 0 | debelo
+napis: 8; 4,2 | zrak (O_2)
+napis: 8; 2,2 | A | sredina | debelo
+napis: 8; 0,8 | Fe^{2+}
+napis: 3,6; 1,5 | K | sredina | debelo
+napis: 3,6; 0,5 | OH^-
+napis: 12,4; 1,5 | K | sredina | debelo
+napis: 12,4; 0,5 | OH^-
+puščica: 7; -1,4 -> 4; -1,4 | e^- | nad
+puščica: 9; -1,4 -> 12; -1,4 | e^- | nad
+napis: 14,6; -1 | jeklo
+napis: 3,6; -2,9 | katoda
+napis: 8; -2,9 | anoda
+napis: 12,4; -2,9 | katoda
+podnapis: Kapljica vode na jeklu: anoda v sredini, katoda ob robu
+:::
 
 - **A (sredina):** kisika je malo, železo oddaja elektrone in prehaja v vodo kot $\mathrm{Fe^{2+}}$. Tu nastane jamica.
 - **K (rob):** kisik zlahka pride do kovine in porabi elektrone, nastajajo ioni $\mathrm{OH^-}$.

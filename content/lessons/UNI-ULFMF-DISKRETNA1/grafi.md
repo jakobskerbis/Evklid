@@ -28,15 +28,23 @@ Posledica: število vozlišč lihe stopnje je vedno sodo, saj je vsota stopenj s
 
 Tloris iz uvoda:
 
-```
-   A --- B
-   |   / |
-   |  /  |
-   C --- D
-    \   /
-     \ /
-      E
-```
+:::risba skica
+opis: Graf s petimi vozlišči. A je levo zgoraj, B desno zgoraj, C levo v sredini, D desno v sredini, E spodaj na sredini. Povezav je sedem: A–B, A–C, B–C, B–D, C–D, C–E in D–E.
+območje: -1; -0,8 .. 5; 4,8
+enota: 40
+črta: 0; 4 -> 4; 4
+črta: 0; 4 -> 0; 2
+črta: 4; 4 -> 0; 2
+črta: 4; 4 -> 4; 2
+črta: 0; 2 -> 4; 2
+črta: 0; 2 -> 2; 0
+črta: 4; 2 -> 2; 0
+točka: 0; 4 | A | levo
+točka: 4; 4 | B | desno
+točka: 0; 2 | C | levo
+točka: 4; 2 | D | desno
+točka: 2; 0 | E | pod
+:::
 
 Stopnje so $\deg(A) = 2$, $\deg(B) = 3$, $\deg(C) = 4$, $\deg(D) = 3$, $\deg(E) = 2$; vsota je $14$, povezav je $7$.
 

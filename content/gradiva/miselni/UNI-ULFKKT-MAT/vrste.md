@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delne vsote
+  - $S_n = a_1 + a_2 + \dots + a_n$
+  - vsota vrste: $S = \lim S_n$
+  - vrsta ni zaporedje členov
+- Geometrijska vrsta
+  - $\sum_{n=0}^{\infty} aq^n = \frac{a}{1-q}$ za $|q| < 1$
+  - prvi člen deljeno z $1 - q$
+  - $0{,}\overline{9} = 1$
+- Potrebni pogoj
+  - konvergenca ⇒ $a_n \to 0$
+  - obrat ne velja: $\sum \frac{1}{n}$ divergira
+- Pozitivne vrste
+  - $\sum \frac{1}{n^p}$ konvergira natanko za $p > 1$
+  - kvocientni, korenski: $L < 1$ konvergira
+  - napaka: »sklep pri $L = 1$«
+- Leibnizov kriterij
+  - $b_n$ pada proti $0$
+  - ocena napake: $|S - S_n| \le b_{n+1}$
+- Absolutna in pogojna
+  - $\sum |a_n|$ konvergira ⇒ $\sum a_n$ konvergira
+  - pogojna: $\sum \frac{(-1)^{n+1}}{n} = \ln 2$
+- Potenčne vrste
+  - $R = \lim \left|\frac{c_n}{c_{n+1}}\right|$
+  - absolutno za $|x - x_0| < R$
+  - robni točki preveri posebej

@@ -34,16 +34,24 @@ Glasilna špranja je najožje mesto poti pri odraslem. Tujek, ki gre skozi njo, 
 
 **Glavna bronha** se razlikujeta. Skica razcepa:
 
-```
-         sapnik
-           |
-    +------+------+
-  desni         levi
-  kratek        daljši
-  širok         ožji
-  strm          položen
-  3 režnji      2 režnja
-```
+:::risba skica
+opis: Razcep sapnika na glavna bronha. Sapnik teče navpično navzdol in se razcepi. Desni glavni bronh (na sliki levo) je kratek, širok in strm ter vodi v pljučno krilo s 3 režnji. Levi glavni bronh (na sliki desno) je daljši, ožji in položen ter vodi v pljučno krilo z 2 režnjema.
+območje: 0; 25 .. 300; 205
+črta: 150; 198 -> 150; 130 | debelo
+črta: 150; 130 -> 133,1; 93,7 | debelo
+črta: 150; 130 -> 206,6; 73,4
+napis: 158; 170 | sapnik | desno
+napis: 70; 112 | desni | sredina | debelo
+napis: 70; 94 | kratek
+napis: 70; 76 | širok
+napis: 70; 58 | strm
+napis: 70; 40 | 3 režnji
+napis: 255; 112 | levi | sredina | debelo
+napis: 255; 94 | daljši
+napis: 255; 76 | ožji
+napis: 255; 58 | položen
+napis: 255; 40 | 2 režnja
+:::
 
 Desni glavni bronh je dolg okoli $2{,}5\,\mathrm{cm}$, širši in od navpičnice odklonjen le okoli $25°$. Levi je dolg okoli $5\,\mathrm{cm}$, ožji in odklonjen okoli $45°$, ker mora pod aortnim lokom mimo srca.
 

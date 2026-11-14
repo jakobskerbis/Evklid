@@ -257,17 +257,24 @@ Natančno definiraj trenutno hitrost in pospešek točkastega telesa. Dokaži, d
 
 Tir poševnega meta je parabola. Na vsaki točki nariši vektor hitrosti kot puščico, tangentno na tir:
 
-```
-              v_x (v najvišji točki ostane samo vodoravna komponenta)
-             ---->
-          .         .
-       .               .
-     .  ^ v             .
-   .   /                  .
-  .   /  alfa              .
- ------------------------------
- |<----------- D ------------>|
-```
+:::risba graf
+opis: Tir poševnega meta je parabola od izmeta v izhodišču do pristanka na isti višini, razdalja med njima je domet D. V izhodišču je narisana puščica začetne hitrosti v₀ pod kotom alfa glede na vodoravnico, tangentno na tir. V najvišji točki, na sredini dometa, je puščica hitrosti vodoravna: ostane samo vodoravna komponenta.
+x: -0,5 .. 9
+y: -1,2 .. 3
+enako: da
+oznake: ne
+f: x - x^2/8 | modra | 0 .. 8
+puščica: 0; 0 -> 1,5; 1,5 | | | oranžna
+napis: 1,6; 1,6 | v_0 | nad | oranžna
+napis: 1,1; 0,35 | α
+puščica: 4; 2 -> 5,5; 2 | v_x | nad | oranžna
+točka: 4; 2
+črta: 4; 0 -> 4; 2 | črtkano siva
+puščica: 4; -0,8 -> 8; -0,8
+puščica: 4; -0,8 -> 0; -0,8
+napis: 4; -0,4 | D | sredina
+podnapis: V najvišji točki ostane samo vodoravna komponenta hitrosti; D je domet.
+:::
 
 Vodoravna komponenta puščice je povsod enako dolga, navpična se enakomerno krajša, v vrhu izgine in nato raste navzdol. Pospešek $\vec{g}$ je v vsaki točki enak: kratka puščica navpično navzdol.
 

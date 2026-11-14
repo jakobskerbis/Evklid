@@ -277,33 +277,45 @@ Izpelji toplotni upor krogelne plasti s polmeroma $r_1 < r_2$ in stalno $\lambda
 
 Profil temperature v panelu zamrzovalne komore (jeklo – pena – jeklo), toplo zunaj levo:
 
-```
- T
- |##
- |##\
- |## \
- |##  \
- |##   \
- |##    \
- |##     \##
- |##      ##
- +--------------> x
- jeklo pena jeklo
-```
+:::risba graf
+opis: Temperatura v panelu v odvisnosti od globine x v milimetrih, toplo zunaj levo. V zunanji jekleni pločevini od 0 do 1 mm je črta vodoravna pri 25 °C. V peni od 1 do 101 mm temperatura premo pade s 25 °C na −20 °C. V notranji pločevini od 101 do 102 mm je črta spet vodoravna pri −20 °C.
+x: -10 .. 122 | 20 | x [mm]
+y: -30 .. 35 | 10 | T [°C]
+pravokotnik: 0; -30 .. 1; 35 | siva
+pravokotnik: 101; -30 .. 102; 35 | siva
+črta: 0; 25 -> 1; 25 -> 101; -20 -> 102; -20 | modra debelo
+točka: 1; 25 | 25 °C | nad desno
+točka: 101; -20 | −20 °C | pod levo
+napis: 10; -10 | pena, 100 mm | desno
+napis: 1; -25 | jeklo, 1 mm | desno
+napis: 101; 30 | jeklo, 1 mm | levo
+podnapis: Profil temperature v panelu jeklo – pena – jeklo (Primer 2)
+:::
 
 V tankih jeklenih plasteh je črta vodoravna, ker imajo zanemarljiv upor. V peni je premica, ker je $\lambda$ stalna in tok povsod enak. V valjasti izolaciji bi se ista črta krivila: strma pri cevi, položna navzven, ker se ploščina z $r$ veča.
 
 Električna analogija za Primer 2:
 
-```
- 25 °C (zunaj)
-   |
- [jeklo]  R = 0,00006
- [ pena]  R = 4,0
- [jeklo]  R = 0,00006
-   |
--20 °C (znotraj)
-```
+:::risba skica
+opis: Trije zaporedni upori med zunanjo površino pri 25 °C zgoraj in notranjo pri −20 °C spodaj. Jeklo ima ploskovni upor 0,0000625 m² K/W, pena 4,0 m² K/W, drugo jeklo 0,0000625 m² K/W. Skozi vse tri teče ista gostota toka q = 11,25 W/m², navzdol.
+območje: 0; 0 .. 16; 11
+napis: 4; 10,3 | 25 °C (zunaj)
+črta: 4; 9,7 -> 4; 8,5
+pravokotnik: 2,5; 7 .. 5,5; 8,5 | siva
+napis: 4; 7,75 | jeklo
+napis: 6; 7,75 | R_A = 0,0000625 m² K/W | desno
+črta: 4; 7 -> 4; 6,25
+pravokotnik: 2,5; 4,75 .. 5,5; 6,25 | oranžna
+napis: 4; 5,5 | pena
+napis: 6; 5,5 | R_A = 4,0 m² K/W | desno
+črta: 4; 4,75 -> 4; 4
+pravokotnik: 2,5; 2,5 .. 5,5; 4 | siva
+napis: 4; 3,25 | jeklo
+napis: 6; 3,25 | R_A = 0,0000625 m² K/W | desno
+črta: 4; 2,5 -> 4; 1,3
+napis: 4; 0,7 | −20 °C (znotraj)
+puščica: 1,2; 8,5 -> 1,2; 2,5 | q | levo | modra
+:::
 
 Upori so zaporedni, isti »tok« $q$ teče skozi vse tri, »napetost« (padec temperature) se razdeli v razmerju uporov.
 

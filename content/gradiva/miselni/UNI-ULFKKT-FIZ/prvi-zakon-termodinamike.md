@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sistem in stanje
+  - zaprt sistem: izmenjuje energijo, ne snovi
+  - $W_n$ funkcija stanja, $Q$ in $A$ nista
+- Notranja energija
+  - idealni plin: $\Delta W_n = nC_V\Delta T$ vedno
+  - pazi: $nC_p\Delta T$ je toplota pri stalnem $p$, ne $\Delta W_n$
+- Delo plina
+  - $A = -\int p\,\mathrm{d}V$, prejeto delo
+  - ploščina pod krivuljo $p(V)$
+  - litri v $\mathrm{m^3}$: $\mathrm{Pa\,m^3} = \mathrm{J}$
+- Prvi zakon
+  - $\Delta W_n = Q + A$
+  - krožna sprememba: $Q + A = 0$
+  - strojništvo piše $\Delta U = Q - W$
+- Izohorna in izobarna
+  - izohorna: $A = 0$, $Q = nC_V\Delta T$
+  - izobarna: $A = -p\Delta V$, $Q = nC_p\Delta T$
+  - Mayer: $C_p = C_V + R$
+- Izotermna
+  - $\Delta W_n = 0$, $Q = -A$
+  - $A = -nRT\ln(V_2/V_1)$, naravni logaritem
+- Adiabatna
+  - $Q = 0$, $pV^\kappa = \text{konst.}$, $TV^{\kappa-1} = \text{konst.}$
+  - $A = (p_2V_2 - p_1V_1)/(\kappa - 1)$
+  - dizel: razmerje $10$ da okoli $754\,\mathrm{K}$
+- Entalpija
+  - $H = W_n + pV$
+  - stalen tlak: $\Delta H = Q_p$

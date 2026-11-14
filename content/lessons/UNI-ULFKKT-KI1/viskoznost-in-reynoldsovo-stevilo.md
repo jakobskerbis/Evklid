@@ -15,15 +15,26 @@ Bernoullijeva enačba trenja ne pozna. V ceveh, črpalkah, reaktorjih in žilah 
 
 **Viskoznost kot notranje trenje.** Vzemi tanko plast tekočine med dvema vzporednima ploščama. Spodnja plošča miruje, zgornjo vlečemo s stalno hitrostjo. Tekočina se drži obeh plošč: ob spodnji miruje, ob zgornji se giblje z njo. Vmes plasti tekočine drsijo druga ob drugi, vsaka nekoliko hitreje od tiste pod njo.
 
-Diagram v besedah (prerez, hitrost plasti je dolžina puščice):
+Prerez (hitrost plasti je dolžina puščice):
 
-```
-zgornja plošča  ==========>  v
-                --------->
-                ------>
-                --->
-spodnja plošča  ==========   0
-```
+:::risba skica
+opis: Prerez plasti tekočine med dvema vzporednima ploščama. Spodnja plošča miruje, zgornja se giblje v desno s hitrostjo v₀. Puščice kažejo hitrost plasti: ob spodnji plošči je nič, nato enakomerno narašča z višino do v₀ ob zgornji plošči. Razdalja med ploščama je δ.
+območje: 0; -1,6 .. 13; 6,4
+pravokotnik: 2; -0,3 .. 10; 0 | siva polno
+pravokotnik: 2; 4 .. 10; 4,3 | siva polno
+črta: 3; 0 -> 3; 4 | siva
+puščica: 3; 1 -> 4,5; 1 | | | modra
+puščica: 3; 2 -> 6; 2 | | | modra
+puščica: 3; 3 -> 7,5; 3 | | | modra
+puščica: 3; 4,8 -> 9; 4,8 | | | modra debelo
+napis: 9,2; 4,8 | v_0 | desno | modra
+črta: 3; 0 -> 9; 4 | črtkano
+napis: 6; 5,3 | zgornja plošča se giblje | nad
+napis: 6; -0,8 | spodnja plošča miruje, v = 0 | pod
+črta: 11; 0 -> 11; 4 | siva
+napis: 11,2; 2 | δ | desno
+podnapis: Hitrost plasti (dolžina puščice) narašča linearno od 0 ob spodnji plošči do v₀ ob zgornji.
+:::
 
 Za vlečenje potrebujemo silo. Sila na enoto ploskve je **strižna napetost** $\tau$ (v Pa). Spremembi hitrosti s prečno razdaljo $\dfrac{\mathrm{d}v}{\mathrm{d}y}$ rečemo **strižna hitrost** (v $\mathrm{s^{-1}}$).
 
@@ -62,10 +73,20 @@ Olju viskoznost močno pade (večkrat), ker se molekule kapljevine lažje premik
 
 ### Slika 2: nit barvila v cevi
 
-```
-majhna hitrost:  ═══════════════════════   nit ostane ravna
-velika hitrost:  ═════~~≈≈≋≋▒▒▒▒▒▒▒▒▒▒▒▒   nit se raztrga, barvilo zapolni presek
-```
+:::risba skica
+opis: Dve vodoravni cevi z nitjo barvila, tok teče v desno. V zgornji cevi (majhna hitrost) nit ostane ravna do konca cevi. V spodnji cevi (velika hitrost) nit po kratki ravni poti zaniha, se raztrga in barvilo zapolni ves presek cevi.
+območje: 0; 0 .. 14; 7
+pravokotnik: 1; 4,5 .. 13; 5,5
+črta: 1; 5 -> 13; 5 | modra debelo
+napis: 7; 5,7 | majhna hitrost: nit ostane ravna | nad
+pravokotnik: 7; 1 .. 13; 2 | modra polno
+pravokotnik: 1; 1 .. 13; 2
+črta: 1; 1,5 -> 4; 1,5 -> 4,25; 1,54 -> 4,5; 1,43 -> 4,75; 1,61 -> 5; 1,35 -> 5,25; 1,69 -> 5,5; 1,27 -> 5,75; 1,76 -> 6; 1,2 -> 6,25; 1,84 -> 6,5; 1,12 -> 6,75; 1,91 -> 7; 1,05 | modra debelo
+napis: 7; 2,2 | velika hitrost: nit se raztrga | nad
+puščica: 1; 0,4 -> 3; 0,4 | | | siva
+napis: 3,2; 0,4 | smer toka | desno | siva
+podnapis: Pri veliki hitrosti barvilo po kratki poti zapolni ves presek cevi.
+:::
 
 **Reynoldsov poskus.** Osborne Reynolds je v stekleno cev z vodo vbrizgal tanko nit barvila. Pri majhni hitrosti je nit ostala ravna in ostra do konca cevi. Tak tok je **laminaren**: plasti tečejo vzporedno, brez mešanja. Pri veliki hitrosti se je nit po kratki razdalji raztrgala in barvilo je obarvalo ves presek. Tak tok je **turbulenten**: hitrost se na vsakem mestu nenehno spreminja po smeri in velikosti, nastajajo vrtinci.
 
@@ -77,10 +98,20 @@ Tu je $v$ povprečna hitrost (prostorninski pretok, deljen s presekom), $D$ notr
 
 Za tok v ravni okrogli cevi Re razdeli številsko premico na tri območja:
 
-```
-   laminarno       prehodno (nestabilno)      turbulentno
-0 ─────────────── 2100 ─────────────── 4000 ──────────────► Re
-```
+:::risba premica
+opis: Številska premica Reynoldsovega števila od 0 do 6000 za tok v ravni okrogli cevi. Od 0 do 2100 je tok laminaren, od 2100 do 4000 prehoden (nestabilen), nad 4000 turbulenten.
+od: 0
+do: 6000
+korak: 6000
+oznake: ne
+oznaka: 0 | 0
+oznaka: 2100 | 2100
+oznaka: 4000 | 4000
+oznaka: 6000 | Re
+interval: 0 .. 2100 | laminarno
+interval: 2100 .. 4000 | prehodno
+interval: 4000 .. 6000 | turbulentno
+:::
 
 - $\mathrm{Re} < 2100$: laminarni tok,
 - $2100 < \mathrm{Re} < 4000$: prehodno območje (tok je nestabilen),
@@ -90,14 +121,37 @@ Meja $2100$ je dogovorna; nekateri viri navajajo $2300$. V zelo gladkih cevih br
 
 ### Slika 3: profil hitrosti v preseku
 
-```
-  laminarno         turbulentno
- |->               |------>
- |------>          |-------->
- |---------->      |-------->
- |------>          |-------->
- |->               |------>
-```
+:::risba skica
+opis: Profila hitrosti v vzdolžnem prerezu cevi pri enaki povprečni hitrosti, tok teče v desno, ob obeh stenah je hitrost nič. Levo laminarni tok: profil je parabola, hitrost na osi je dvakrat večja od povprečne. Desno turbulentni tok: profil je sredi cevi skoraj raven in ob stenah strmo pade, hitrost na osi je približno 1,25-kratnik povprečne (povprečna je približno 0,8 največje). Črtkana črta v obeh ceveh kaže povprečno hitrost.
+območje: 0; -3,8 .. 14,5; 3,8
+črta: 1; -2 -> 6; -2 | debelo
+črta: 1; 2 -> 6; 2 | debelo
+črta: 1; -2 -> 1; 2 | siva
+puščica: 1; -1,6 -> 2,44; -1,6 | | | modra
+puščica: 1; -0,8 -> 4,36; -0,8 | | | modra
+puščica: 1; 0 -> 5; 0 | | | modra
+puščica: 1; 0,8 -> 4,36; 0,8 | | | modra
+puščica: 1; 1,6 -> 2,44; 1,6 | | | modra
+črta: 1; -2 -> 1,04; -1,99 -> 1,2; -1,95 -> 1,39; -1,9 -> 1,76; -1,8 -> 2,44; -1,6 -> 3,56; -1,2 -> 4,36; -0,8 -> 4,84; -0,4 -> 5; 0 -> 4,84; 0,4 -> 4,36; 0,8 -> 3,56; 1,2 -> 2,44; 1,6 -> 1,76; 1,8 -> 1,39; 1,9 -> 1,2; 1,95 -> 1,04; 1,99 -> 1; 2 | modra
+črta: 3; -2 -> 3; 2 | črtkano
+napis: 3,5; 3 | laminarno | nad
+napis: 3; 2,1 | v̄ | nad
+napis: 3,5; -2,3 | v_{max} = 2 v̄ | pod
+črta: 8,5; -2 -> 13,5; -2 | debelo
+črta: 8,5; 2 -> 13,5; 2 | debelo
+črta: 8,5; -2 -> 8,5; 2 | siva
+puščica: 8,5; -1,6 -> 10,49; -1,6 | | | oranžna
+puščica: 8,5; -0,8 -> 10,82; -0,8 | | | oranžna
+puščica: 8,5; 0 -> 11; 0 | | | oranžna
+puščica: 8,5; 0,8 -> 10,82; 0,8 | | | oranžna
+puščica: 8,5; 1,6 -> 10,49; 1,6 | | | oranžna
+črta: 8,5; -2 -> 9,67; -1,99 -> 9,98; -1,95 -> 10,13; -1,9 -> 10,3; -1,8 -> 10,49; -1,6 -> 10,69; -1,2 -> 10,82; -0,8 -> 10,92; -0,4 -> 11; 0 -> 10,92; 0,4 -> 10,82; 0,8 -> 10,69; 1,2 -> 10,49; 1,6 -> 10,3; 1,8 -> 10,13; 1,9 -> 9,98; 1,95 -> 9,67; 1,99 -> 8,5; 2 | oranžna
+črta: 10,5; -2 -> 10,5; 2 | črtkano
+napis: 11; 3 | turbulentno | nad
+napis: 10,5; 2,1 | v̄ | nad
+napis: 11; -2,3 | v_{max} ≈ 1,25 v̄ | pod
+podnapis: Dolžina puščice je hitrost na tisti oddaljenosti od osi; črtkano je povprečna hitrost.
+:::
 
 **Profil hitrosti.** Ob steni je hitrost vedno nič. V laminarnem toku je profil parabola, največja hitrost na osi je dvakrat večja od povprečne. V turbulentnem toku vrtinci premešajo tekočino, zato je profil sredi cevi skoraj raven, povprečna hitrost je približno $0{,}8$ največje.
 

@@ -261,14 +261,28 @@ Natančno navedi Gaussov zakon. Z njim izpelji poljsko jakost in kapaciteto plo�
 
 Polje dipola iz Primera 2 ($+$ levo, $-$ desno, točka $P$ zgoraj na simetrali):
 
-```
-                 P
-              ↗  →  ↘
-            /    |    \
-          /      |      \
-     (+)--------+--------(-)
-   -3 cm         0        3 cm
-```
+:::risba skica
+opis: Dipol iz Primera 2 v koordinatah v centimetrih. Naboj +4,0 nC je v točki (−3; 0), naboj −4,0 nC v točki (3; 0), točka P je na simetrali v (0; 4), od vsakega naboja oddaljena 5 cm. Polje E₁ pozitivnega naboja kaže v P poševno navzgor v desno, stran od naboja; polje E₂ negativnega naboja kaže poševno navzdol v desno, proti naboju. Puščici sta enako dolgi. Njuna vsota E kaže vodoravno v desno in je 1,2-krat daljša od vsake od njiju.
+območje: -5,5; -1,6 .. 5,5; 6
+enota: 28
+črta: -4,5; 0 -> 4,5; 0 | siva
+črta: 0; -0,6 -> 0; 5,6 | siva črtkano
+črta: -3; 0 -> 0; 4 | črtkano
+črta: 3; 0 -> 0; 4 | črtkano
+točka: -3; 0 | +4,0 nC | pod | rdeča
+točka: 3; 0 | −4,0 nC | pod | modra
+napis: -3; -1,2 | −3 cm
+napis: 3; -1,2 | 3 cm
+napis: 0; -1,2 | 0
+napis: -1,7; 2,2 | 5 cm | levo
+puščica: 0; 4 -> 0,9; 5,2 | | | rdeča
+puščica: 0; 4 -> 0,9; 2,8 | | | modra
+puščica: 0; 4 -> 1,8; 4 | | | debelo
+napis: 1; 5,2 | E_1 | desno | rdeča
+napis: 1; 2,8 | E_2 | desno | modra
+napis: 1,9; 4 | E | desno
+točka: 0; 4 | P | levo
+:::
 
 Polje $+$ kaže od njega, polje $-$ k njemu; navpični komponenti se izničita, zato v $P$ polje kaže vodoravno v desno. Simetrala dipola je ekvipotencialna ploskev s potencialom nič. Pri ploščatem kondenzatorju so silnice vzporedne in enakomerno razmaknjene, ekvipotencialne ploskve pa ravnine, vzporedne s ploščama.
 

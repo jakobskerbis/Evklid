@@ -13,15 +13,24 @@ Vetrne elektrarne na odprtem morju pošiljajo energijo na kopno po podmorskih en
 
 Postavimo nekaj kompasov na karton, skozi katerega navpično teče tok. Igle se ne obrnejo k vodniku, ampak se postavijo **tangentno** na krožnice okoli njega. Bližje vodniku se igle ob vklopu toka odklonijo močneje; daleč stran jih polje toka komaj premakne in kažejo skoraj po zemeljskem polju.
 
-```
-       .---------.
-     /   .-----.   \
-    |   |   ⊙   |   |
-     \   '-----'   /
-       '---------'
-  ⊙ tok teče iz lista;
-  silnice so krožnice
-```
+:::risba skica
+opis: Prerez pravokotno na vodnik. V sredini je vodnik, označen s krožcem in piko: tok teče iz lista proti nam. Okoli njega sta dve soosni krožni silnici magnetnega polja. Puščice na silnicah kažejo smer polja B: v nasprotni smeri urinega kazalca.
+območje: -5; -4,8 .. 5; 3,8
+krog: 0; 0 | 1,5 | modra
+krog: 0; 0 | 3 | modra
+krog: 0; 0 | 0,35 | debelo
+točka: 0; 0
+puščica: 1,5; -0,35 -> 1,5; 0,35 | | | modra
+puščica: 0,35; 1,5 -> -0,35; 1,5 | | | modra
+puščica: -1,5; 0,35 -> -1,5; -0,35 | | | modra
+puščica: -0,35; -1,5 -> 0,35; -1,5 | | | modra
+puščica: 3; -0,35 -> 3; 0,35 | B | desno | modra
+puščica: 0,35; 3 -> -0,35; 3 | | | modra
+puščica: -3; 0,35 -> -3; -0,35 | | | modra
+puščica: -0,35; -3 -> 0,35; -3 | | | modra
+napis: 0,5; 0,55 | I | desno
+napis: 0; -4,2 | tok I teče iz lista; silnice so krožnice | sredina
+:::
 
 Smer silnic da **pravilo desne roke**: palec v smeri toka, upognjeni prsti kažejo smer polja. Na sliki zgoraj (tok iz lista) silnice tečejo v nasprotni smeri urinega kazalca.
 
@@ -147,14 +156,27 @@ $B(z) = \dfrac{\mu_0 N I R^2}{2\left(R^2 + z^2\right)^{3/2}}$, v središču $B_0
 
 Dva podmorska kabla ležita vodoravno drug ob drugem, osi sta $10\,\mathrm{cm}$ narazen, $1{,}0\,\mathrm{m}$ pod morskim dnom. Po vsakem teče $1200\,\mathrm{A}$, v nasprotnih smereh. a) Kolikšna je gostota polja na dnu neposredno nad sredino med kabloma in kam kaže? b) Kolikšno je to polje v primerjavi s poljem enega kabla na isti razdalji? c) Kolikšno je polje $5{,}0\,\mathrm{m}$ nad dnom (nad sredino) in kolikšno razmerje s poljem enega kabla?
 
-```
-          P  (dno)
-          |
-          | h = 1,0 m
-          |
-      ⊙---+---⊗
-        d = 10 cm
-```
+:::risba skica
+opis: Prerez pravokotno na kabla (ni v merilu). Spodaj ležita kabla drug ob drugem, razdalja med osema je d = 10 cm. V levem teče tok iz lista (krožec s piko), v desnem v list (krožec s križcem). Točka P leži na morskem dnu, h = 1,0 m navpično nad sredino med kabloma.
+območje: -6,5; -2 .. 6,5; 6,4
+črta: -5; 5 -> 5; 5 | siva debelo
+črta: -1,6; 0 -> 1,6; 0
+črta: 0; 0 -> 0; 5 | črtkano
+krog: -2; 0 | 0,4 | debelo
+točka: -2; 0
+krog: 2; 0 | 0,4 | debelo
+črta: 1,72; -0,28 -> 2,28; 0,28
+črta: 1,72; 0,28 -> 2,28; -0,28
+točka: 0; 5 | P | nad
+napis: 5; 5,5 | dno | levo | siva
+napis: 0,3; 2,5 | h = 1,0 m | desno
+črta: -2; -1,2 -> 2; -1,2 | siva
+črta: -2; -0,9 -> -2; -1,5 | siva
+črta: 2; -0,9 -> 2; -1,5 | siva
+napis: 0; -1,3 | d = 10 cm | pod
+napis: -2,6; 0 | I iz lista | levo
+napis: 2,6; 0 | I v list | desno
+:::
 
 **Podatki:** $d = 0{,}10\,\mathrm{m}$, $h = 1{,}0\,\mathrm{m}$, $I = 1200\,\mathrm{A}$ (nasprotni smeri), višina $5{,}0\,\mathrm{m}$ nad dnom, torej $h_2 = 6{,}0\,\mathrm{m}$ nad kabloma, $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{V\,s/(A\,m)}$
 **Iščemo:** $B_P$ in smer, razmerje z enim kablom, $B$ pri $h_2$

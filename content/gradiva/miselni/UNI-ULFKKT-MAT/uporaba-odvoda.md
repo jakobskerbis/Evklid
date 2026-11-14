@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Izreki o srednji vrednosti
+  - Rolle: $f(a) = f(b)$, torej $f'(\xi) = 0$
+  - Lagrange: $f'(\xi) = \frac{f(b) - f(a)}{b - a}$
+  - pogoj: zvezna na $[a, b]$, odvedljiva na $(a, b)$
+- Monotonost
+  - $f' > 0$: strogo narašča; $f' < 0$: strogo pada
+  - obrat ne velja: $x^3$ ima $f'(0) = 0$
+- Lokalni ekstremi
+  - Fermat: v notranjem ekstremu je $f'(x_0) = 0$
+  - $f''(x_0) < 0$ maksimum, $f''(x_0) > 0$ minimum
+  - pazi: stacionarna točka ni vedno ekstrem
+- Globalni ekstremi
+  - stacionarne točke, točke brez odvoda, krajišči
+  - napaka: pozabljeni krajišči $a$ in $b$
+- Konveksnost in prevoji
+  - $f'' > 0$ konveksna, $f'' < 0$ konkavna
+  - prevoj: $f''$ spremeni predznak
+- Potek funkcije
+  - območje, ničle, asimptote, $f'$, $f''$, skica
+- L'Hospitalovo pravilo
+  - $\lim \frac{f}{g} = \lim \frac{f'}{g'}$ pri $\frac{0}{0}$ ali $\frac{\infty}{\infty}$
+  - števec in imenovalec odvajaj ločeno
+  - $\lim_{x \to 0^+} x \ln x = 0$
+- Taylorjev polinom
+  - $T_n(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x - a)^k$
+  - ostanek $R_n = \frac{f^{(n+1)}(\xi)}{(n + 1)!}(x - a)^{n+1}$
+  - $e^x \approx 1 + x + \frac{x^2}{2}$

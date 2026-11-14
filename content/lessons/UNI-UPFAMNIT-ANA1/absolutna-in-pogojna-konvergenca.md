@@ -164,6 +164,66 @@ Ker je $\frac{1}{\sqrt n} \ge \frac1n$ in $\sum \frac1n$ divergira, po primerjal
 - Leibniz: $a_n \searrow 0 \Rightarrow \sum (-1)^{n+1} a_n$ konvergira in $|S - S_n| \le a_{n+1}$.
 - Absolutno konvergentno vrsto smemo preurediti brez spremembe vsote; pogojno konvergentno lahko preuredimo do poljubne vsote (Riemann).
 
+## Za izpit
+
+Znati moraš povedati:
+- definiciji absolutne in pogojne konvergence ter dokaz, da iz absolutne konvergence sledi konvergenca (Cauchyjev pogoj in trikotniška neenakost);
+- primerjalni, kvocientni in korenski kriterij z vsemi pogoji (nenegativni členi, limita $q$) in primera, ki pokažeta, da pri $q = 1$ kriterija ne odločita;
+- Leibnizov kriterij z oceno napake $|S - S_n| \le a_{n+1}$ in njegov dokaz (sode delne vsote naraščajo, lihe padajo);
+- definicijo preureditve, Dirichletov izrek za absolutno konvergentne vrste in Riemannov izrek za pogojno konvergentne, s skico dokaza;
+- zakaj pri pogojno konvergentni vrsti divergirata vsota pozitivnih in vsota negativnih členov.
+
+### Naloga 1
+
+Dana je vrsta $\displaystyle\sum_{n=1}^{\infty} \frac{(x-2)^n}{n \cdot 3^n}$, $x \in \mathbb R$. (a) Za vsak realni $x$ ugotovi, ali vrsta konvergira absolutno, konvergira pogojno ali divergira. (b) Za $x = \frac12$ določi najmanjši $n$, pri katerem Leibnizova ocena zagotovi $|S - S_n| \le 10^{-4}$, in izračunaj $S_n$ na štiri decimalke.
+
+**Rešitev:**
+
+1. Absolutne vrednosti členov: $|a_n| = \dfrac{|x-2|^n}{n \cdot 3^n}$. Pri $x = 2$ so vsi členi $0$ in vrsta konvergira absolutno; naj bo odslej $x \ne 2$.
+2. Kvocientni kriterij: $\dfrac{|a_{n+1}|}{|a_n|} = \dfrac{|x-2|}{3} \cdot \dfrac{n}{n+1} \to \dfrac{|x-2|}{3} = q$.
+3. $q < 1$ natanko za $|x - 2| < 3$, torej za $-1 < x < 5$: tam vrsta konvergira absolutno.
+4. $q > 1$ za $x < -1$ ali $x > 5$: od nekega $n$ naprej $|a_n|$ narašča, zato členi ne gredo proti $0$ in vrsta divergira.
+5. $q = 1$ pri $x = 5$ in $x = -1$, kriterij ne odloči, zato krajišči pregledamo posebej.
+6. $x = 5$: $a_n = \dfrac{3^n}{n \cdot 3^n} = \dfrac1n$, harmonična vrsta, divergira.
+7. $x = -1$: $a_n = \dfrac{(-3)^n}{n \cdot 3^n} = \dfrac{(-1)^n}{n}$. Ker $\frac1n$ pada proti $0$, vrsta po Leibnizu konvergira; $\sum |a_n| = \sum \frac1n$ divergira, torej je konvergenca pogojna.
+8. Pri $x = \frac12$ je $x - 2 = -\frac32$ in $a_n = \dfrac{(-1)^n}{n \cdot 2^n}$. Zaporedje $b_n = \dfrac{1}{n \cdot 2^n}$ pada proti $0$, zato velja $|S - S_n| \le b_{n+1}$.
+9. $b_9 = \dfrac{1}{9 \cdot 512} = \dfrac{1}{4608} \approx 2{,}17 \cdot 10^{-4}$ je preveč, $b_{10} = \dfrac{1}{10 \cdot 1024} = \dfrac{1}{10\,240} \approx 9{,}77 \cdot 10^{-5} \le 10^{-4}$. Potrebujemo $n + 1 = 10$, torej $n = 9$.
+10. $S_9 = -\frac12 + \frac18 - \frac1{24} + \frac1{64} - \frac1{160} + \frac1{384} - \frac1{896} + \frac1{2048} - \frac1{4608} \approx -0{,}4055$.
+11. Odgovor: vrsta konvergira absolutno za $-1 < x < 5$, pogojno pri $x = -1$, divergira za $x < -1$ in $x \ge 5$. Pri $x = \frac12$ zadošča $9$ členov, $S \approx -0{,}4055$ z napako največ $10^{-4}$ (točno je $S = -\ln\frac32 \approx -0{,}40547$).
+
+### Naloga 2
+
+Naj bo $A_n$ $n$-ta delna vsota vrste $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$ z vsoto $\ln 2$ in $T_n$ $n$-ta delna vsota preureditve $1 + \frac13 - \frac12 + \frac15 + \frac17 - \frac14 + \cdots$ (dva zaporedna pozitivna člena, nato en negativen). Izpelji zvezo $T_{3k} = A_{4k} + \frac12 A_{2k}$ in z njo dokaži, da preureditev konvergira k $\frac32 \ln 2$. Utemelji, zakaj to ni v nasprotju z Dirichletovim izrekom.
+
+**Rešitev:**
+
+1. Označimo $H_n = 1 + \frac12 + \cdots + \frac1n$. V $A_{2m}$ prištejemo in odštejemo sode člene: $A_{2m} = H_{2m} - 2\left(\frac12 + \frac14 + \cdots + \frac1{2m}\right) = H_{2m} - H_m$.
+2. Po $k$ trojicah vsebuje $T_{3k}$ pozitivne člene $1, \frac13, \ldots, \frac{1}{4k-1}$ (prvih $2k$ lihih imenovalcev) in negativne $\frac12, \frac14, \ldots, \frac1{2k}$ (prvih $k$ sodih).
+3. Vsota lihih: $1 + \frac13 + \cdots + \frac1{4k-1} = H_{4k} - \frac12 H_{2k}$. Vsota sodih: $\frac12 + \cdots + \frac1{2k} = \frac12 H_k$.
+4. Torej $T_{3k} = H_{4k} - \frac12 H_{2k} - \frac12 H_k$.
+5. Po koraku 1 je $A_{4k} + \frac12 A_{2k} = (H_{4k} - H_{2k}) + \frac12 (H_{2k} - H_k) = H_{4k} - \frac12 H_{2k} - \frac12 H_k = T_{3k}$.
+6. Preverba pri $k = 1$: $T_3 = 1 + \frac13 - \frac12 = \frac56$ in $A_4 + \frac12 A_2 = \frac7{12} + \frac14 = \frac56$.
+7. Ker $A_n \to \ln 2$, gre $T_{3k} \to \ln 2 + \frac12 \ln 2 = \frac32 \ln 2 \approx 1{,}0397$.
+8. Preostale delne vsote: $T_{3k+1} = T_{3k} + \frac{1}{4k+1}$ in $T_{3k+2} = T_{3k+1} + \frac{1}{4k+3}$. Dodana člena gresta proti $0$, zato imajo vsa tri podzaporedja isto limito in $T_n \to \frac32 \ln 2$.
+9. Dirichletov izrek zahteva absolutno konvergenco. Tu je $\sum \left|\frac{(-1)^{n+1}}{n}\right| = \sum \frac1n$ divergentna, vrsta konvergira le pogojno, zato izreka ne moremo uporabiti in je sprememba vsote dovoljena (Riemannov izrek).
+10. Odgovor: preureditev ima vsoto $\frac32 \ln 2$, za polovico več od prvotne vrste.
+
+### Naloga 3
+
+Natančno navedi Leibnizov kriterij skupaj z oceno napake in ga dokaži. S primerom utemelji, da pogoja o padanju členov ne smemo izpustiti: poišči zaporedje $a_n > 0$ z $a_n \to 0$, za katero vrsta $\sum (-1)^{n+1} a_n$ divergira.
+
+**Rešitev:**
+
+1. Izrek: če zaporedje $a_n \ge 0$ pada in je $\lim a_n = 0$, vrsta $\sum_{n=1}^{\infty} (-1)^{n+1} a_n$ konvergira; za njeno vsoto $S$ in delne vsote $S_n$ velja $|S - S_n| \le a_{n+1}$.
+2. Sode delne vsote naraščajo: $S_{2n+2} - S_{2n} = a_{2n+1} - a_{2n+2} \ge 0$, ker $a_n$ pada.
+3. Lihe delne vsote padajo: $S_{2n+1} - S_{2n-1} = -a_{2n} + a_{2n+1} \le 0$.
+4. Velja $S_{2n} \le S_{2n} + a_{2n+1} = S_{2n+1} \le S_1$. Zaporedje $S_{2n}$ je naraščajoče in navzgor omejeno, zato ima limito $S$.
+5. Ker je $S_{2n+1} = S_{2n} + a_{2n+1}$ in $a_{2n+1} \to 0$, gre tudi $S_{2n+1} \to S$. Sode in lihe delne vsote imajo isto limito, torej $S_n \to S$.
+6. Ocena napake: $S_{2n} \le S \le S_{2n+1}$ za vsak $n$, zato $S$ leži med poljubnima zaporednima delnima vsotama $S_n$ in $S_{n+1}$. Od tod $|S - S_n| \le |S_{n+1} - S_n| = a_{n+1}$.
+7. Protiprimer: naj bo $a_{2k-1} = \frac1k$ in $a_{2k} = \frac{1}{k^2}$, torej vrsta $1 - 1 + \frac12 - \frac14 + \frac13 - \frac19 + \cdots$. Členi so pozitivni in gredo proti $0$, zaporedje pa ne pada (na primer $a_4 = \frac14 < a_5 = \frac13$).
+8. Njena $2k$-ta delna vsota je $S_{2k} = \sum_{j=1}^{k} \frac1j - \sum_{j=1}^{k} \frac1{j^2}$. Prva vsota raste čez vse meje (harmonična vrsta), druga je omejena, ker $\sum \frac1{j^2}$ konvergira. Zato $S_{2k} \to +\infty$ in vrsta divergira.
+9. Sklep: sama pogoja $a_n > 0$ in $a_n \to 0$ ne zadoščata; monotonost je v dokazu uporabljena v korakih 2 in 3 in brez nje izrek ne velja.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si vlečenje vrvi. Na levi ekipi stojijo negativni členi, na desni pozitivni. Igralci se priključujejo eden za drugim, vsak naslednji je šibkejši.

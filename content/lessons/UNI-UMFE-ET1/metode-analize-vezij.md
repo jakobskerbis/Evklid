@@ -15,13 +15,31 @@ Te tri zamisli so še danes osnovno orodje elektrotehnika: z njimi izračunaš v
 
 Najprej vezje, ki ga bomo ves čas uporabljali. Nariši ga kot majhen zemljevid:
 
-```
-  +---R1---A---R2---+
-  |        |        |
- (U1)      R3      (U2)
-  |        |        |
-  +--------D--------+
-```
+:::risba skica
+opis: Vezje z dvema viroma. Zgoraj na sredini je vozlišče A, spodaj na sredini vozlišče D. Leva veja od D do A vsebuje vir U 1 in upornik R 1, desna veja od D do A vir U 2 in upornik R 2, srednja veja od A do D upornik R 3. Pozitivni pol obeh virov je zgoraj.
+območje: 0; 0 .. 10; 6
+črta: 1; 3,6 -> 1; 5 -> 2; 5
+črta: 4; 5 -> 6; 5
+črta: 8; 5 -> 9; 5 -> 9; 3,6
+črta: 9; 2,4 -> 9; 1 -> 1; 1 -> 1; 2,4
+črta: 5; 5 -> 5; 3,8
+črta: 5; 2,2 -> 5; 1
+krog: 1; 3 | 0,6 | modra
+krog: 9; 3 | 0,6 | modra
+pravokotnik: 2; 4,7 .. 4; 5,3 | oranžna
+pravokotnik: 6; 4,7 .. 8; 5,3 | oranžna
+pravokotnik: 4,7; 2,2 .. 5,3; 3,8 | oranžna
+napis: 1; 3 | U_1 | sredina | modra
+napis: 9; 3 | U_2 | sredina | modra
+napis: 1,2; 4 | + | desno
+napis: 8,8; 4 | + | levo
+napis: 3; 5,4 | R_1 | nad
+napis: 7; 5,4 | R_2 | nad
+napis: 5,4; 3 | R_3 | desno
+točka: 5; 5 | A | nad
+točka: 5; 1 | D | pod
+podnapis: Vezje z dvema viroma in vozliščema A in D.
+:::
 
 Levo je vir $U_1 = 12\,\mathrm{V}$ z upornikom $R_1 = 2\,\Omega$, desno vir $U_2 = 3\,\mathrm{V}$ z upornikom $R_2 = 2\,\Omega$, v sredini upornik $R_3 = 4\,\Omega$. Pozitivni pol obeh virov je zgoraj. Zaporedne in vzporedne vezave tu ne prepoznaš, ker sta vira na različnih vejah.
 
@@ -178,6 +196,64 @@ Večina napak pri teh metodah ne izvira iz algebre, ampak iz slike vezja.
 - Trikot $\to$ zvezda: $R_A = \frac{R_{AB} R_{CA}}{\Sigma}$; pri enakih upornikih $R_Y = R_\Delta / 3$.
 - Negativen rezultat pomeni le nasprotno smer toka.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije vozlišča, veje in zanke ter oba Kirchhoffova zakona (KZT, KZN);
+- število neodvisnih enačb: $n - 1$ vozliščnih in $b - n + 1$ zančnih, in kdaj je katera metoda krajša;
+- postopek metode vozliščnih potencialov (referenčno vozlišče, tokovi vej z Ohmovim zakonom, KZT) in metode zančnih tokov (tok v skupni veji je razlika zančnih tokov, KZN);
+- Theveninov izrek s pogojem (linearni uporniki in viri), določitev $U_\mathrm{Th}$ in $R_\mathrm{Th}$ ter zvezo $R_\mathrm{Th} = \frac{U_\mathrm{Th}}{I_k}$;
+- formule za pretvorbo trikot $\to$ zvezda in zvezda $\to$ trikot s pogojem enakovrednosti ter poseben primer $R_Y = \frac{R_\Delta}{3}$.
+
+### Naloga 1
+
+Mostiček napaja vir $U = 10\,\mathrm{V}$ med zgornjim vozliščem $P$ in spodnjim vozliščem $Q$ (pozitivni pol je v $P$). Od $P$ do $B$ je upornik $R_1 = 100\,\Omega$, od $B$ do $Q$ upornik $R_2 = 150\,\Omega$, od $P$ do $C$ upornik $R_3 = 200\,\Omega$, od $C$ do $Q$ upornik $R_4 = 50\,\Omega$. Med $B$ in $C$ je priključen merilnik z upornostjo $R_5 = 100\,\Omega$. (a) S Theveninovim nadomestnim virom glede na sponki $B$ in $C$ izračunaj tok skozi merilnik. (b) Rezultat preveri z metodo vozliščnih potencialov. (c) Kolikšen tok daje vir?
+
+**Rešitev:**
+
+1. Merilnik odklopimo. Ostaneta dva neodvisna delilnika. Z referenčnim vozliščem $Q$: $V_B = 10 \cdot \frac{150}{100 + 150} = 6\,\mathrm{V}$, $V_C = 10 \cdot \frac{50}{200 + 50} = 2\,\mathrm{V}$.
+2. Napetost odprtih sponk: $U_\mathrm{Th} = V_B - V_C = 6 - 2 = 4\,\mathrm{V}$ (sponka $B$ je na višjem potencialu).
+3. Vir kratko sklenemo; $P$ in $Q$ postaneta ista točka. Med $B$ in to točko sta vzporedno $R_1$ in $R_2$: $\frac{100 \cdot 150}{250} = 60\,\Omega$. Med $C$ in to točko sta vzporedno $R_3$ in $R_4$: $\frac{200 \cdot 50}{250} = 40\,\Omega$.
+4. Para sta med $B$ in $C$ zaporedna: $R_\mathrm{Th} = 60 + 40 = 100\,\Omega$.
+5. Tok skozi merilnik: $I_5 = \frac{U_\mathrm{Th}}{R_\mathrm{Th} + R_5} = \frac{4}{100 + 100} = 0{,}02\,\mathrm{A}$, od $B$ proti $C$.
+6. Preverjanje z vozliščnima potencialoma (neznanki $V_B$, $V_C$). KZT v $B$: $\frac{10 - V_B}{100} = \frac{V_B}{150} + \frac{V_B - V_C}{100}$. Pomnožimo s $300$: $8 V_B - 3 V_C = 30$.
+7. KZT v $C$: $\frac{10 - V_C}{200} + \frac{V_B - V_C}{100} = \frac{V_C}{50}$. Pomnožimo z $200$: $-2 V_B + 7 V_C = 10$.
+8. Drugo enačbo pomnožimo s $4$ in prištejemo prvi: $25 V_C = 70$, torej $V_C = 2{,}8\,\mathrm{V}$. Iz prve: $V_B = \frac{30 + 3 \cdot 2{,}8}{8} = 4{,}8\,\mathrm{V}$.
+9. $I_5 = \frac{4{,}8 - 2{,}8}{100} = 0{,}02\,\mathrm{A}$. Ujema se s točko 5.
+10. Tok vira je vsota tokov skozi $R_1$ in $R_3$: $\frac{10 - 4{,}8}{100} + \frac{10 - 2{,}8}{200} = 0{,}052 + 0{,}036 = 0{,}088\,\mathrm{A}$.
+11. Odgovor: skozi merilnik teče $20\,\mathrm{mA}$ od $B$ proti $C$, vir daje $88\,\mathrm{mA}$. Thevenin je dal tok merilnika v petih korakih brez sistema enačb; vozliščna metoda je dala še vse potenciale.
+
+### Naloga 2
+
+Izpelji formule za pretvorbo trikota upornikov $R_{AB}$, $R_{BC}$, $R_{CA}$ v enakovredno zvezdo $R_A$, $R_B$, $R_C$. Natančno navedi pogoj enakovrednosti, iz katerega izhajaš.
+
+**Rešitev:**
+
+1. Pogoj: vezji sta enakovredni, če je upornost med vsakim parom točk enaka v obeh vezjih, ko je tretja točka odprta.
+2. Med $A$ in $B$ ($C$ odprta) je v trikotu $R_{AB}$ vzporedno z zaporedno vezavo $R_{BC} + R_{CA}$, v zvezdi pa sta zaporedno $R_A$ in $R_B$. Z oznako $\Sigma = R_{AB} + R_{BC} + R_{CA}$: $R_A + R_B = \frac{R_{AB}(R_{BC} + R_{CA})}{\Sigma}$.
+3. Enako za druga para: $R_B + R_C = \frac{R_{BC}(R_{CA} + R_{AB})}{\Sigma}$ in $R_C + R_A = \frac{R_{CA}(R_{AB} + R_{BC})}{\Sigma}$.
+4. Prvo in tretjo enačbo seštejemo ter odštejemo drugo. Na levi ostane $2 R_A$.
+5. Na desni je števec $R_{AB} R_{BC} + R_{AB} R_{CA} + R_{CA} R_{AB} + R_{CA} R_{BC} - R_{BC} R_{CA} - R_{BC} R_{AB} = 2 R_{AB} R_{CA}$.
+6. Torej $R_A = \frac{R_{AB} R_{CA}}{\Sigma}$. S ciklično zamenjavo oznak dobimo $R_B = \frac{R_{AB} R_{BC}}{\Sigma}$ in $R_C = \frac{R_{BC} R_{CA}}{\Sigma}$.
+7. Preverjanje s posebnim primerom: pri treh enakih upornikih $R_\Delta$ je $R_Y = \frac{R_\Delta^2}{3 R_\Delta} = \frac{R_\Delta}{3}$.
+8. Sklep: upornik zvezde ob oglišču je zmnožek upornikov trikota, ki se v tem oglišču stikata, deljen z vsoto vseh treh. Enakovrednost velja le za sponke $A$, $B$, $C$; tokovi v samih upornikih trikota in zvezde so različni.
+
+### Naloga 3
+
+Vezje iz linearnih upornikov in virov je zaprto v škatli z dvema sponkama. Ko nanju priključimo upornik $10\,\Omega$, izmerimo na njem napetost $4\,\mathrm{V}$; pri uporniku $40\,\Omega$ izmerimo $8\,\mathrm{V}$. (a) Določi $U_\mathrm{Th}$, $R_\mathrm{Th}$ in tok kratkega stika. (b) Natančno navedi Theveninov izrek in utemelji, zakaj dve meritvi zadoščata.
+
+**Rešitev:**
+
+1. Toka bremen: $\frac{4}{10} = 0{,}4\,\mathrm{A}$ in $\frac{8}{40} = 0{,}2\,\mathrm{A}$.
+2. Za nadomestni vir velja $U_\mathrm{Th} = U_\mathrm{p} + R_\mathrm{Th} I_\mathrm{p}$, kjer je $U_\mathrm{p}$ napetost na bremenu. Dve meritvi: $U_\mathrm{Th} = 4 + 0{,}4 R_\mathrm{Th}$ in $U_\mathrm{Th} = 8 + 0{,}2 R_\mathrm{Th}$.
+3. Enačbi izenačimo: $0{,}2 R_\mathrm{Th} = 4$, torej $R_\mathrm{Th} = 20\,\Omega$.
+4. $U_\mathrm{Th} = 4 + 0{,}4 \cdot 20 = 12\,\mathrm{V}$.
+5. Tok kratkega stika: $I_k = \frac{U_\mathrm{Th}}{R_\mathrm{Th}} = \frac{12}{20} = 0{,}6\,\mathrm{A}$.
+6. Preverjanje: pri $40\,\Omega$ je $I_\mathrm{p} = \frac{12}{20 + 40} = 0{,}2\,\mathrm{A}$ in napetost $40 \cdot 0{,}2 = 8\,\mathrm{V}$. Drži.
+7. Izrek: vsako vezje iz linearnih upornikov in virov se glede na dve sponki obnaša kot idealni napetostni vir $U_\mathrm{Th}$ (napetost odprtih sponk) z zaporednim upornikom $R_\mathrm{Th}$ (upornost med sponkama, ko so napetostni viri kratko sklenjeni in tokovni prekinjeni).
+8. Utemeljitev: nadomestni vir ima le dva parametra, zveza med napetostjo in tokom na sponkah pa je premica $U_\mathrm{p} = U_\mathrm{Th} - R_\mathrm{Th} I_\mathrm{p}$. Premico določata dve točki, zato zadoščata dve različni bremeni; odprte sponke in kratek stik sta le posebna izbira teh dveh točk. Pri nelinearnem vezju zveza ni premica in sklep ne velja.
+9. Odgovor: $U_\mathrm{Th} = 12\,\mathrm{V}$, $R_\mathrm{Th} = 20\,\Omega$, $I_k = 0{,}6\,\mathrm{A}$.
+
 ## Drugače: Z analogijo
 
 Električni potencial si predstavljaj kot nadmorsko višino na planinskem zemljevidu. Referenčno vozlišče je morska gladina. Napetost med dvema točkama je višinska razlika.
@@ -189,11 +265,13 @@ Električni potencial si predstavljaj kot nadmorsko višino na planinskem zemlje
 
 Vozliščna metoda vpraša, na kateri višini je vsako razpotje. Zančna metoda spremlja skupine pohodnikov, ki krožijo po posameznih krožnih poteh. Thevenin pove, da je za obiskovalca enega razgledišča vsa pokrajina za njim enakovredna eni žičnici in eni poti. Zvezda in trikot sta dve mreži poti, ki med tremi kočami dasta enak »napor«.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Pred dolgo vožnjo zaženeš avto s prižganimi lučmi. Luči za trenutek potemnijo. Akumulator se navzven obnaša kot Theveninov vir: brez bremena ima okoli $12{,}6\,\mathrm{V}$, njegova notranja upornost je le kakšna stotinka ohma.
+**Preizkus akumulatorja.** Serviser akumulatorja ne razstavlja, ampak mu izmeri Theveninova parametra. Brez bremena odčita $12{,}6\,\mathrm{V}$. Nato ga z bremenskim testerjem obremeni z $200\,\mathrm{A}$ in na sponkah odčita $10{,}6\,\mathrm{V}$. Na notranji upornosti se torej izgubi $2\,\mathrm{V}$, zato je $R_\mathrm{Th} = \frac{2}{200} = 0{,}01\,\Omega$. Ko se akumulator stara, $R_\mathrm{Th}$ raste; po njej serviser presodi, ali bo akumulator pozimi še zagnal motor.
 
-Zaganjalnik pa potegne nekaj sto amperov. Pri $200\,\mathrm{A}$ in $0{,}01\,\Omega$ se na notranji upornosti izgubi $2\,\mathrm{V}$, zato na sponkah ostane le okoli $10{,}6\,\mathrm{V}$ in luči svetijo šibkeje. Ko motor teče, tok pade in napetost se vrne. Enako opaziš pri starem powerbanku: brez telefona kaže polno napetost, ob polnjenju pa ta pade, ker je njegova $R_\mathrm{Th}$ narasla.
+**Merilni mostiček.** Tehtnice in merilniki sile imajo štiri merilne lističe po $350\,\Omega$ v mostičku, napajanem s $5\,\mathrm{V}$. Načrtovalec mostiček nadomesti s Theveninovim virom z $R_\mathrm{Th} = 350\,\Omega$. Če se en listič spremeni za $0{,}1\,\%$, je $U_\mathrm{Th} \approx 1{,}25\,\mathrm{mV}$. Ojačevalnik mora imeti vhodno upornost veliko večjo od $R_\mathrm{Th}$: pri $1\,\mathrm{M\Omega}$ je napaka le $0{,}035\,\%$.
+
+**Simulatorji vezij.** Programi iz družine SPICE vezje rešujejo z razširjeno metodo vozliščnih potencialov: za vsako vozlišče razen referenčnega samodejno zapišejo KZT in rešijo sistem linearnih enačb, tudi pri vezjih z več tisoč vozlišči.
 
 ## Preveri se
 

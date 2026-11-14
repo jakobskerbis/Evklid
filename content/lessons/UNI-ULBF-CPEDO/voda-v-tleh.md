@@ -15,16 +15,15 @@ Pri tleh je vprašanje enako: ne koliko vode je v tleh, ampak kako močno jo tla
 
 **Slika: tla po močnem dežju.** Predstavljaj si prst, ki je po nalivu popolnoma namočena. Vse pore so polne vode, zraka ni. Sledimo ji, kako se suši:
 
-```
- Ψ [kPa]   pF    stanje tal
-      0     –    nasičena tla
-           ↓     odteka gravitacijska voda
-    −33    2,5   poljska kapaciteta
-           ↓     rastlinam dostopna voda
-  −1500    4,2   točka venenja
-           ↓     nedostopna voda
-   −10⁵    ≈ 6   zračno suha tla
-```
+| $\Psi$ [kPa] | pF | Stanje tal |
+|---|---|---|
+| $0$ | – | nasičena tla |
+| | ↓ | odteka gravitacijska voda |
+| $-33$ | $2{,}5$ | poljska kapaciteta |
+| | ↓ | rastlinam dostopna voda |
+| $-1500$ | $4{,}2$ | točka venenja |
+| | ↓ | nedostopna voda |
+| $-10^5$ | $\approx 6$ | zračno suha tla |
 
 Na levi je **vodni potencial** $\Psi$. Pove, kako močno tla »vlečejo« vodo nase. Nič pomeni prosto vodo v kozarcu. Bolj negativen potencial pomeni, da tla vodo drže močneje. Stolpec pF je isti podatek na logaritemski lestvici; razložimo ga na koncu.
 
@@ -174,6 +173,63 @@ $0{,}12 \cdot 300\,\mathrm{mm} = 36\,\mathrm{mm}$, kar je $36\,\mathrm{L/m^2}$. 
 - Pesek: malo vode, skoraj vsa dostopna. Glina: veliko vode, velik del nedostopen. Ilovica: največ dostopne vode.
 - Soli znižajo $\Psi_o$ in zmanjšajo dostopnost tudi v mokrih tleh.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo vodnega potenciala (energija vode na enoto prostornine glede na čisto prosto vodo, enota Pa) in njegove tri sestavine;
+- pravilo o smeri toka: voda teče od višjega k nižjemu potencialu; med dvema točkama v tleh odločata matrični in gravitacijski del, osmotski le ob polprepustni membrani (korenina);
+- definicije poljske kapacitete, točke venenja in rastlinam dostopne vode s potenciali in velikostjo por;
+- zvezo med potencialom, višino vodnega stolpca in pF: $\mathrm{pF} = \log_{10} h$, $h$ v cm;
+- pretvorbo masnega deleža vode v volumskega in račun RDV v mm;
+- vpliv teksture na PK, TV in RDV ter vpliv soli prek $\Psi_o = -i\,c\,R\,T$.
+
+### Naloga 1
+
+Koruza korenini v dveh plasteh. Zgornja ($0$–$30\,\mathrm{cm}$) ima masna deleža vode $w_{PK} = 24\,\%$ in $w_{TV} = 10\,\%$ ter volumsko gostoto $1{,}35\,\mathrm{g/cm^3}$. Spodnja ($30$–$70\,\mathrm{cm}$) ima $w_{PK} = 28\,\%$, $w_{TV} = 17\,\%$ in $1{,}5\,\mathrm{g/cm^3}$. Koruza porabi $5\,\mathrm{mm}$ vode na dan. (a) Kolikšna je RDV koreninskega sloja? (b) Namakati začnemo, ko je porabljena polovica RDV. Po koliko dneh brez dežja je to in koliko $\mathrm{m^3}$ vode na hektar vrne tla na PK? (c) Talna raztopina zgornje plasti ima pri PK $0{,}02\,\mathrm{mol/L}$ NaCl. Kolikšen je njen osmotski potencial pri PK in kolikšen, ko zgornja plast izgubi polovico svoje RDV, soli pa ostanejo v njej? Vzemi $T = 293\,\mathrm{K}$.
+
+**Rešitev:**
+
+1. Zgornja plast: $\theta_{PK} = 0{,}24 \cdot 1{,}35 = 0{,}324$ in $\theta_{TV} = 0{,}10 \cdot 1{,}35 = 0{,}135$.
+2. RDV zgornje plasti: $(0{,}324 - 0{,}135) \cdot 300 = 56{,}7$ mm.
+3. Spodnja plast: $\theta_{PK} = 0{,}28 \cdot 1{,}5 = 0{,}42$ in $\theta_{TV} = 0{,}17 \cdot 1{,}5 = 0{,}255$.
+4. RDV spodnje plasti: $(0{,}42 - 0{,}255) \cdot 400 = 66$ mm.
+5. (a) Skupaj: $56{,}7 + 66 = 122{,}7$ mm.
+6. (b) Polovica: $122{,}7 / 2 = 61{,}35$ mm. Čas: $61{,}35 / 5 = 12{,}27$ dneva, torej po dobrih $12$ dneh.
+7. Namakalni obrok: $1\,\mathrm{mm}$ je $1\,\mathrm{L/m^2}$, to je $10\,\mathrm{m^3/ha}$. Potrebnih je $61{,}35 \cdot 10 = 613{,}5\,\mathrm{m^3/ha}$.
+8. (c) Pri PK: $c = 20\,\mathrm{mol/m^3}$, $\Psi_o = -2 \cdot 20 \cdot 8{,}314 \cdot 293\,\mathrm{Pa} \approx -97\,400\,\mathrm{Pa} \approx -97\,\mathrm{kPa}$.
+9. Ko plast izgubi polovico RDV, je $\theta = 0{,}324 - \dfrac{0{,}324 - 0{,}135}{2} = 0{,}2295$.
+10. Ista množina soli je v manj vode: $c = 20 \cdot \dfrac{0{,}324}{0{,}2295} \approx 28{,}24\,\mathrm{mol/m^3}$.
+11. $\Psi_o = -2 \cdot 28{,}24 \cdot 8{,}314 \cdot 293\,\mathrm{Pa} \approx -137\,600\,\mathrm{Pa} \approx -138\,\mathrm{kPa}$.
+12. Odgovor: RDV je $122{,}7\,\mathrm{mm}$; namakamo po dobrih $12$ dneh z okrog $614\,\mathrm{m^3/ha}$. Osmotski potencial pade z okrog $-97$ na okrog $-138\,\mathrm{kPa}$: ko se tla sušijo, se soli koncentrirajo, zato skupni potencial pada hitreje kot matrični.
+
+### Naloga 2
+
+Tenziometra na isti njivi pokažeta matrični potencial $-60\,\mathrm{kPa}$ v globini $20\,\mathrm{cm}$ (točka A) in $-56\,\mathrm{kPa}$ v globini $80\,\mathrm{cm}$ (točka B). Osmotski potencial je v obeh točkah enak. (a) Izračunaj pF v obeh točkah. (b) Izračunaj gravitacijski potencial točke A glede na točko B. (c) Utemelji, v katero smer teče voda med točkama. Vzemi $\rho = 1000\,\mathrm{kg/m^3}$ in $g = 9{,}81\,\mathrm{m/s^2}$.
+
+**Rešitev:**
+
+1. (a) Višina vodnega stolpca iz $|\Psi_m| = \rho g h$. Točka A: $h = \dfrac{60\,000}{1000 \cdot 9{,}81} \approx 6{,}12\,\mathrm{m} = 612\,\mathrm{cm}$, $\mathrm{pF} = \log_{10} 612 \approx 2{,}79$.
+2. Točka B: $h = \dfrac{56\,000}{1000 \cdot 9{,}81} \approx 5{,}71\,\mathrm{m} = 571\,\mathrm{cm}$, $\mathrm{pF} = \log_{10} 571 \approx 2{,}76$.
+3. (b) Točka A leži $80 - 20 = 60\,\mathrm{cm}$ nad točko B. $\Psi_g = \rho g \,\Delta z = 1000 \cdot 9{,}81 \cdot 0{,}6\,\mathrm{Pa} = 5886\,\mathrm{Pa} \approx 5{,}9\,\mathrm{kPa}$; v točki B je $\Psi_g = 0$.
+4. (c) Osmotski del je v obeh točkah enak in se pri primerjavi odšteje. Skupni potencial: A $-60 + 5{,}9 = -54{,}1\,\mathrm{kPa}$, B $-56 + 0 = -56\,\mathrm{kPa}$.
+5. Ker je $-54{,}1 > -56$, ima točka A višji skupni potencial.
+6. Odgovor: pF je $2{,}79$ v točki A in $2{,}76$ v točki B, obe sta med PK in TV. Voda teče navzdol, od A proti B, čeprav so tla v točki A bolj suha. Samo po matričnem potencialu bi sklepal na tok navzgor; odloča skupni potencial.
+
+### Naloga 3
+
+Natančno opredeli poljsko kapaciteto, točko venenja in rastlinam dostopno vodo. Nato utemelji, zakaj ima ilovica več rastlinam dostopne vode kot pesek in kot glina.
+
+**Rešitev:**
+
+1. Poljska kapaciteta je vsebnost vode, ki jo tla obdržijo proti težnosti, ko gravitacijska voda odteče (po enem do treh dneh). Ustreza matričnemu potencialu od $-10$ do $-33\,\mathrm{kPa}$ (pF $2$ do $2{,}5$).
+2. Točka venenja je vsebnost vode pri $-1500\,\mathrm{kPa}$ (pF $4{,}2$). Korenine večine kmetijskih rastlin močnejšega sesanja ne ustvarijo; rastlina ovene in si niti čez noč ne opomore.
+3. Rastlinam dostopna voda je razlika med vsebnostjo pri PK in pri TV; v plasti debeline $z$ je $\mathrm{RDV} = (\theta_{PK} - \theta_{TV}) \cdot z$.
+4. Povezava s porami: iz por, širših od okrog $10\,\mathrm{\mu m}$, voda odteče. Pore med $0{,}2$ in $10\,\mathrm{\mu m}$ držijo dostopno vodo. Voda v porah pod $0{,}2\,\mathrm{\mu m}$ in v ovojih okrog delcev je nedostopna.
+5. Pesek ima večinoma velike pore: večina vode odteče, PK je nizka ($12\,\%$), TV tudi ($5\,\%$), RDV je le $12 - 5 = 7\,\%$.
+6. Glina ima največ drobnih por in veliko površino delcev: PK je visoka ($44\,\%$), a tudi TV ($28\,\%$), RDV je $44 - 28 = 16\,\%$.
+7. Ilovica ima največji delež srednjih por: $32 - 14 = 18\,\%$.
+8. Sklep: o dostopni vodi odloča delež srednjih por, torej razlika PK − TV, ne skupna vsebnost vode.
+
 ## Drugače: Z analogijo
 
 Tla so kot kuhinjska goba.
@@ -185,13 +241,13 @@ Tla so kot kuhinjska goba.
 
 Goba z drobnimi porami (glina) je po stisku še zelo mokra. Goba z velikimi luknjami (pesek) malo vode sploh zadrži, a jo skoraj vso izpusti.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Lonček z rožo zaliješ do vrha. Voda priteče v podstavek: to je gravitacijska voda, ki jo je treba izliti, sicer korenine nimajo zraka.
+**Pedološki laboratorij.** Neporušen vzorec tal v kovinskem valju nasitijo z vodo in položijo na keramično ploščo v tlačni komori. Pri nadtlaku $33\,\mathrm{kPa}$ počakajo, da voda neha odtekati: vsebnost ustreza poljski kapaciteti. Pri $1500\,\mathrm{kPa}$ dobijo točko venenja. Vzorec stehtajo, posušijo pri $105\,^\circ\mathrm{C}$ in spet stehtajo; iz masnega deleža in volumske gostote izračunajo $\theta$.
 
-Če rože nekaj dni ne zaliješ, listi popoldne povesijo glavo, zvečer pa se spet dvignejo. Rastlina je blizu meje, ne pa še na njej. Ko se ne dvignejo niti čez noč, so tla na točki venenja.
+**Vodenje namakanja.** Agronom v nasadu spremlja tenziometre, ki merijo sesanje do okrog $80\,\mathrm{kPa}$, ali sonde za volumski delež vode. Namakati začne, ko je porabljena približno polovica RDV. Na ilovici z RDV $18\,\%$ in s koreninami do $40\,\mathrm{cm}$ je zaloga $72\,\mathrm{mm}$, obrok pa $36\,\mathrm{mm}$, to je $360\,\mathrm{m^3}$ vode na hektar. Večji obrok bi odtekel pod korenine in odnesel nitrat.
 
-V vrtu po dolgem dežju dva dni ne moreš kopati, potem je prst ravno prav vlažna: odtekla je gravitacijska voda, tla so na poljski kapaciteti. Tenziometer, zapičen v gredico, to pokaže kot sesanje okoli $10$ do $30\,\mathrm{kPa}$.
+**Zasoljenost v rastlinjaku.** Pri kapljičnem namakanju z gnojili se soli kopičijo. Svetovalec meri električno prevodnost talnega izvlečka in po potrebi tla spere z večjim obrokom vode, ker nizek osmotski potencial zmanjša dostopnost vode tudi v mokrih tleh.
 
 ## Preveri se
 

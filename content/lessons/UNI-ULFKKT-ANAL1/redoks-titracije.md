@@ -215,12 +215,27 @@ Potencial v ekvivalentni točki je tehtano povprečje: $\dfrac{1 \cdot 0{,}77 + 
 
 Potencial na lestvici:
 
-```
- 0,08 V      0,54 V      0,77 V              1,51 V
- S4O6/S2O3   I2/I-       Fe3+/Fe2+           MnO4-/Mn2+
- ----|-----------|-----------|-------------------|---->  E°
-   močnejši reducent               močnejši oksidant
-```
+:::risba skica
+opis: Lestvica standardnih potencialov E° od 0 do 1,6 V. Od leve proti desni si sledijo pari: tetrationat/tiosulfat pri 0,08 V, jod/jodid pri 0,54 V, Fe³⁺/Fe²⁺ pri 0,77 V in MnO₄⁻/Mn²⁺ pri 1,51 V. Levo so močnejši reducenti, desno močnejši oksidanti.
+območje: 0; 0 .. 20; 3,8
+puščica: 0,2; 1,2 -> 17,4; 1,2
+napis: 17,4; 1,2 | E°/V | desno
+črta: 1,3; 1,2 -> 1,3; 2,6 | črtkano siva
+črta: 15,6; 1,2 -> 15,6; 2,6 | črtkano siva
+točka: 1,3; 1,2 | | | modra
+točka: 5,9; 1,2 | | | modra
+točka: 8,2; 1,2 | | | modra
+točka: 15,6; 1,2 | | | modra
+napis: 1,3; 1 | 0,08 | pod
+napis: 5,9; 1 | 0,54 | pod
+napis: 8,2; 1 | 0,77 | pod
+napis: 15,6; 1 | 1,51 | pod
+napis: 1,3; 2,6 | S₄O₆²⁻/S₂O₃²⁻ | nad desno
+napis: 5,9; 1,4 | I₂/I⁻ | nad
+napis: 8,2; 1,4 | Fe³⁺/Fe²⁺ | nad desno
+napis: 15,6; 2,6 | MnO₄⁻/Mn²⁺ | nad levo
+podnapis: E° v voltih: levo močnejši reducent, desno močnejši oksidant
+:::
 
 Vsak oksidant oksidira vse reducente, ki so na lestvici levo od njega. Zato jod oksidira tiosulfat, permanganat pa železo (in žal tudi klorid pri $1{,}36\ \mathrm{V}$).
 

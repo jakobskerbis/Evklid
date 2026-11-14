@@ -182,6 +182,57 @@ $\int_1^b e^{-x}\,dx = e^{-1} - e^{-b} \to e^{-1} = \frac1e \approx 0{,}368$. In
 - Primerjalni kriterij za $0 \leq f \leq g$: iz konvergence $\int g$ sledi konvergenca $\int f$, iz divergence $\int f$ divergenca $\int g$.
 - Pogoj $f(x) \to 0$ ni dovolj za konvergenco.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo posplošenega integrala na neomejenem intervalu in pri singularnosti na robu (kot limito) ter kaj pomeni, da konvergira ali divergira;
+- kako ravnamo pri singularnosti v notranjosti in pri dveh neskončnih mejah (razdelitev, meji neodvisno) in zakaj simetrična limita ni dovolj;
+- pravilo za potence z izpeljavo: $\int_1^\infty \frac{dx}{x^p}$ konvergira natanko za $p > 1$, $\int_0^1 \frac{dx}{x^p}$ natanko za $p < 1$;
+- primerjalni kriterij z vsemi predpostavkami ($0 \le f \le g$) in njegov dokaz;
+- protiprimer, da $f(x) \to 0$ ne zadošča za konvergenco;
+- pojma absolutna in pogojna konvergenca s primerom $\int_1^\infty \frac{\sin x}{x}\,dx$.
+
+### Naloga 1
+
+Izračunaj $\displaystyle\int_0^\infty \frac{dx}{\sqrt x\,(1+x)}$, če konvergira.
+
+**Rešitev:**
+
+1. Težavi sta dve: singularnost v $x = 0$ (integrand tam ni omejen) in neskončna zgornja meja. Integral razdelimo v točki $1$: $\int_0^1 + \int_1^\infty$.
+2. Primitivna funkcija: s substitucijo $x = u^2$, $dx = 2u\,du$ dobimo $\int \dfrac{2u\,du}{u(1+u^2)} = 2\operatorname{arctg} u + C = 2\operatorname{arctg}\sqrt x + C$.
+3. Prvi del: $\int_\varepsilon^1 \dfrac{dx}{\sqrt x\,(1+x)} = 2\operatorname{arctg} 1 - 2\operatorname{arctg}\sqrt\varepsilon = \dfrac\pi2 - 2\operatorname{arctg}\sqrt\varepsilon \to \dfrac\pi2$, ko $\varepsilon \to 0^+$.
+4. Drugi del: $\int_1^b \dfrac{dx}{\sqrt x\,(1+x)} = 2\operatorname{arctg}\sqrt b - \dfrac\pi2 \to 2 \cdot \dfrac\pi2 - \dfrac\pi2 = \dfrac\pi2$, ko $b \to \infty$.
+5. Oba dela konvergirata, zato konvergira ves integral: $\dfrac\pi2 + \dfrac\pi2 = \pi$.
+6. Odgovor: integral konvergira in je enak $\pi \approx 3{,}14$.
+
+### Naloga 2
+
+Določi vse $p \in \mathbb{R}$, za katere konvergira $\displaystyle\int_0^\infty \frac{dx}{x^p(1+x)}$. Uporabi primerjalni kriterij in pravilo za potence.
+
+**Rešitev:**
+
+1. Integrand $f(x) = \dfrac{1}{x^p(1+x)}$ je na $(0, \infty)$ pozitiven in zvezen. Integral razdelimo v točki $1$; konvergira natanko tedaj, ko konvergirata oba dela.
+2. Na $(0, 1]$ je $1 \le 1 + x \le 2$, zato $\dfrac{1}{2x^p} \le f(x) \le \dfrac{1}{x^p}$.
+3. Če je $p < 1$, $\int_0^1 \dfrac{dx}{x^p}$ konvergira, zato po primerjalnem kriteriju konvergira $\int_0^1 f$. Če je $p \ge 1$, $\int_0^1 \dfrac{dx}{2x^p}$ divergira, zato divergira tudi $\int_0^1 f$. Prvi del torej konvergira natanko za $p < 1$.
+4. Na $[1, \infty)$ je $x \le 1 + x \le 2x$, zato $\dfrac{1}{2x^{p+1}} \le f(x) \le \dfrac{1}{x^{p+1}}$.
+5. Če je $p + 1 > 1$, $\int_1^\infty \dfrac{dx}{x^{p+1}}$ konvergira, zato konvergira $\int_1^\infty f$. Če je $p + 1 \le 1$, $\int_1^\infty \dfrac{dx}{2x^{p+1}}$ divergira, zato divergira $\int_1^\infty f$. Drugi del torej konvergira natanko za $p > 0$.
+6. Oba pogoja skupaj: $0 < p < 1$.
+7. Odgovor: integral konvergira natanko za $0 < p < 1$. Preizkus: $p = \frac12$ je v tem intervalu in po nalogi 1 je integral enak $\pi$.
+
+### Naloga 3
+
+Natančno navedi primerjalni kriterij za integrale na $[a, \infty)$ in ga dokaži. Nato utemelji, ali smemo predpostavko $f \ge 0$ izpustiti, torej zahtevati le $f(x) \le g(x)$.
+
+**Rešitev:**
+
+1. Izrek: naj bosta $f$ in $g$ integrabilni na vsakem $[a, b]$ in $0 \le f(x) \le g(x)$ za vse $x \ge a$. Če $\int_a^\infty g$ konvergira, konvergira tudi $\int_a^\infty f$ in velja $\int_a^\infty f \le \int_a^\infty g$. Enakovredno: če $\int_a^\infty f$ divergira, divergira tudi $\int_a^\infty g$.
+2. Dokaz: označimo $F(b) = \int_a^b f(x)\,dx$. Ker je $f \ge 0$, je $F$ naraščajoča: za $b < b'$ je $F(b') - F(b) = \int_b^{b'} f \ge 0$.
+3. $F$ je navzgor omejena: $F(b) \le \int_a^b g \le \int_a^\infty g$. Druga neenakost velja, ker je zaradi $g \ge 0$ tudi $b \mapsto \int_a^b g$ naraščajoča in zato ne preseže svoje limite.
+4. Množica vrednosti $\{F(b) : b \ge a\}$ je neprazna in navzgor omejena, zato ima po aksiomu o polnosti supremum $s$. Za vsak $\varepsilon > 0$ obstaja $b_0$ z $F(b_0) > s - \varepsilon$; ker $F$ narašča, je $s - \varepsilon < F(b) \le s$ za vse $b \ge b_0$. Torej $\lim_{b\to\infty} F(b) = s$ in integral $\int_a^\infty f$ konvergira. Iz $F(b) \le \int_a^\infty g$ sledi še $s \le \int_a^\infty g$.
+5. Predpostavke $f \ge 0$ ne smemo izpustiti. Protiprimer: $f(x) = -1$, $g(x) = 0$ na $[1, \infty)$. Velja $f \le g$ in $\int_1^\infty g = 0$ konvergira, a $\int_1^b f = -(b - 1) \to -\infty$, torej $\int_1^\infty f$ divergira.
+6. Sklep: nenegativnost zagotovi, da je $F$ naraščajoča; brez nje omejenost navzgor ne da limite. Za funkcije spremenljivega predznaka zato primerjamo $|f|$ in uporabimo absolutno konvergenco.
+
 ## Drugače: Na sliki
 
 Nariši $y = \frac1x$ in $y = \frac1{x^2}$ za $x \geq 1$. Obe krivulji se začneta v točki $(1, 1)$ in se proti desni lepita na os $x$.

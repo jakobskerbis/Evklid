@@ -191,18 +191,99 @@ Na srednjem stebru je padec $2 \cdot 10^{5} \cdot 2 \cdot 10^{-3}\,\mathrm A = 4
 - Razvejani krog: v razcepišču velja $\sum \Phi = 0$, vzporedne veje računaš kot vzporedne upore.
 - Model je linearen le, dokler železo ni nasičeno.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije magnetne napetosti $\Theta = N I$, pretoka $\Phi$ in magnetnega upora $R_{\mathrm{m}}$ z enotami ter analogijo z električnim krogom;
+- izpeljavo $R_{\mathrm{m}} = \dfrac{l}{\mu_0 \mu_{\mathrm{r}} A}$ in Ohmovega zakona $\Theta = R_{\mathrm{m}} \Phi$ iz Amperovega zakona za obroč;
+- oba Kirchhoffova zakona magnetnega kroga in njun izvor (Amperov zakon, brezizvornost polja $B$);
+- račun jedra z režo: zaporedna vezava, enakovredna dolžina zraka $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$, delitev magnetne napetosti;
+- postopek za razvejani krog (nadomestni upor, skupni pretok, padec na vzporedni veji, pretoki vej);
+- predpostavke modela (enakomerna gostota, brez raztrosa, stalni $\mu_{\mathrm{r}}$) in račun s krivuljo magnetenja, ko železo ni več linearno.
+
+### Naloga 1
+
+Jedro oblike E ima $\mu_{\mathrm{r}} = 2000$. Srednji steber je dolg $8\,\mathrm{cm}$, ima presek $6\,\mathrm{cm^2}$ in nima reže. Vsak stranski steber z delom jarma ima dolžino poti v železu $24\,\mathrm{cm}$ in presek $3\,\mathrm{cm^2}$. V levem stebru je reža $\delta_1 = 0{,}5\,\mathrm{mm}$, v desnem reža $\delta_2 = 1{,}5\,\mathrm{mm}$. Tuljava s $600$ ovoji je na srednjem stebru. Raztros zanemari. (a) Izračunaj magnetne upore srednjega, levega in desnega stebra. (b) Kolikšen tok potrebuješ, da bo gostota v desni reži $0{,}4\,\mathrm T$? (c) Kolikšni sta takrat gostoti v levem in srednjem stebru in ali je linearni model upravičen? (d) Kolikšen delež magnetnega padca na desnem stebru porabi reža?
+
+**Rešitev:**
+
+1. Srednji steber: $R_{\mathrm{s}} = \dfrac{0{,}08}{4\pi \cdot 10^{-7} \cdot 2000 \cdot 6 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 5{,}31 \cdot 10^{4}\,\mathrm{A/Wb}$.
+2. Železo enega stranskega stebra: $R_{\mathrm{Fe}} = \dfrac{0{,}24}{4\pi \cdot 10^{-7} \cdot 2000 \cdot 3 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 3{,}18 \cdot 10^{5}\,\mathrm{A/Wb}$.
+3. Reži: $R_{\delta 1} = \dfrac{0{,}5 \cdot 10^{-3}}{4\pi \cdot 10^{-7} \cdot 3 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 1{,}326 \cdot 10^{6}\,\mathrm{A/Wb}$ in $R_{\delta 2} = \dfrac{1{,}5 \cdot 10^{-3}}{4\pi \cdot 10^{-7} \cdot 3 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 3{,}979 \cdot 10^{6}\,\mathrm{A/Wb}$.
+4. Železo in reža sta v stebru zaporedna: $R_1 = R_{\mathrm{Fe}} + R_{\delta 1} \approx 1{,}645 \cdot 10^{6}\,\mathrm{A/Wb}$, $R_2 = R_{\mathrm{Fe}} + R_{\delta 2} \approx 4{,}297 \cdot 10^{6}\,\mathrm{A/Wb}$.
+5. Pretok v desnem stebru: $\Phi_2 = 0{,}4\,\mathrm T \cdot 3 \cdot 10^{-4}\,\mathrm{m^2} = 1{,}2 \cdot 10^{-4}\,\mathrm{Wb}$.
+6. Padec na desnem (in zato tudi na levem) stebru: $V_{\mathrm{p}} = R_2 \Phi_2 \approx 4{,}297 \cdot 10^{6} \cdot 1{,}2 \cdot 10^{-4}\,\mathrm A \approx 515{,}7\,\mathrm A$.
+7. Levi steber: $\Phi_1 = \dfrac{V_{\mathrm{p}}}{R_1} \approx \dfrac{515{,}7\,\mathrm A}{1{,}645 \cdot 10^{6}\,\mathrm{A/Wb}} \approx 3{,}135 \cdot 10^{-4}\,\mathrm{Wb}$.
+8. Srednji steber: $\Phi_{\mathrm{s}} = \Phi_1 + \Phi_2 \approx 4{,}335 \cdot 10^{-4}\,\mathrm{Wb}$; padec na njem je $R_{\mathrm{s}} \Phi_{\mathrm{s}} \approx 23{,}0\,\mathrm A$.
+9. Vzbujanje in tok: $\Theta = R_{\mathrm{s}} \Phi_{\mathrm{s}} + V_{\mathrm{p}} \approx 23{,}0\,\mathrm A + 515{,}7\,\mathrm A = 538{,}7\,\mathrm A$, $I = \dfrac{\Theta}{N} = \dfrac{538{,}7\,\mathrm A}{600} \approx 0{,}90\,\mathrm A$.
+10. Gostoti: levi steber $B_1 = \dfrac{3{,}135 \cdot 10^{-4}\,\mathrm{Wb}}{3 \cdot 10^{-4}\,\mathrm{m^2}} \approx 1{,}05\,\mathrm T$, srednji steber $B_{\mathrm{s}} = \dfrac{4{,}335 \cdot 10^{-4}\,\mathrm{Wb}}{6 \cdot 10^{-4}\,\mathrm{m^2}} \approx 0{,}72\,\mathrm T$. Vse gostote so pod približno $1{,}5\,\mathrm T$, zato je stalni $\mu_{\mathrm{r}}$ upravičen.
+11. Delež reže v desnem stebru: $\dfrac{R_{\delta 2}}{R_2} \approx \dfrac{3{,}979}{4{,}297} \approx 0{,}93$.
+12. Odgovor: $R_{\mathrm{s}} \approx 5{,}3 \cdot 10^{4}$, $R_1 \approx 1{,}64 \cdot 10^{6}$, $R_2 \approx 4{,}30 \cdot 10^{6}\,\mathrm{A/Wb}$; potreben tok je približno $0{,}90\,\mathrm A$; v levem stebru je $1{,}05\,\mathrm T$, v srednjem $0{,}72\,\mathrm T$, model je upravičen; reža porabi okoli $93\,\%$ padca na desnem stebru. Levi steber z ožjo režo vodi $2{,}6$-krat več pretoka kot desni.
+
+### Naloga 2
+
+Izpelji gostoto $B$ v reži nerazvejanega jedra s stalnim presekom, dolžino poti v železu $l_{\mathrm{Fe}}$, relativno permeabilnostjo $\mu_{\mathrm{r}}$ in režo $\delta$, ki ga vzbuja tuljava z $N$ ovoji in tokom $I$. Navedi predpostavke. Utemelji, kdaj smeš železo zanemariti in zakaj je tedaj zveza med $B$ in $I$ linearna, čeprav železo ni linearna snov.
+
+**Rešitev:**
+
+1. Predpostavke: gostota je po preseku enakomerna, ves pretok ostane v jedru, ob reži ni raztrosa (presek reže je enak preseku železa).
+2. Polje $B$ nima izvorov, zato je pretok $\Phi$ skozi železo in režo isti. Ker je presek enak, je enaka tudi gostota: $B_{\mathrm{Fe}} = B_\delta = B$.
+3. Poljski jakosti sta različni: $H_{\mathrm{Fe}} = \dfrac{B}{\mu_0 \mu_{\mathrm{r}}}$ in $H_\delta = \dfrac{B}{\mu_0}$. V reži je $H$ torej $\mu_{\mathrm{r}}$-krat večja.
+4. Amperov zakon po srednji silnici: $H_{\mathrm{Fe}} l_{\mathrm{Fe}} + H_\delta \delta = N I$.
+5. Vstavimo: $\dfrac{B}{\mu_0}\left(\dfrac{l_{\mathrm{Fe}}}{\mu_{\mathrm{r}}} + \delta\right) = N I$, torej $B = \dfrac{\mu_0 N I}{\dfrac{l_{\mathrm{Fe}}}{\mu_{\mathrm{r}}} + \delta}$.
+6. To je Ohmov zakon $\Theta = (R_{\mathrm{Fe}} + R_\delta)\,\Phi$, deljen s presekom; $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ je enakovredna dolžina zraka.
+7. Železo smeš zanemariti, ko je $\dfrac{l_{\mathrm{Fe}}}{\mu_{\mathrm{r}}} \ll \delta$. Tedaj je $B \approx \dfrac{\mu_0 N I}{\delta}$.
+8. V tem izrazu $\mu_{\mathrm{r}}$ ne nastopa več. Dokler železo ni nasičeno (in je $\mu_{\mathrm{r}}$ velik), sprememba $\mu_{\mathrm{r}}$ s tokom skoraj ne vpliva na $B$: krog določa zrak, ki je linearen. Ko se železo nasiči, $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ zraste, pogoj ne velja več in zveza se ukrivi.
+
+### Naloga 3
+
+Jedro iz elektropločevine ima dolžino poti v železu $40\,\mathrm{cm}$, stalen presek in režo $0{,}8\,\mathrm{mm}$. Tuljava ima $400$ ovojev. Krivulja magnetenja pločevine je dana s točkami:
+
+| $B$ (T) | $1{,}0$ | $1{,}2$ | $1{,}4$ | $1{,}6$ |
+|---|---|---|---|---|
+| $H$ (A/m) | $250$ | $400$ | $1000$ | $4000$ |
+
+(a) Kolikšen tok potrebuješ za $B = 1{,}2\,\mathrm T$ v reži? (b) Kolikšen za $B = 1{,}6\,\mathrm T$? (c) Kolikšen tok za $1{,}6\,\mathrm T$ bi napovedal linearni model s stalnim $\mu_{\mathrm{r}}$, določenim pri $1{,}2\,\mathrm T$? Utemelji razliko. Raztros zanemari.
+
+**Rešitev:**
+
+1. Pretok je dan, zato je račun premočrten: $\Theta = H_{\mathrm{Fe}} l_{\mathrm{Fe}} + \dfrac{B}{\mu_0}\,\delta$, pri čemer $H_{\mathrm{Fe}}$ odčitamo iz tabele.
+2. (a) Železo: $400\,\mathrm{A/m} \cdot 0{,}4\,\mathrm m = 160\,\mathrm A$. Reža: $\dfrac{1{,}2}{4\pi \cdot 10^{-7}} \cdot 0{,}8 \cdot 10^{-3}\,\mathrm A \approx 763{,}9\,\mathrm A$.
+3. $\Theta \approx 160\,\mathrm A + 763{,}9\,\mathrm A = 923{,}9\,\mathrm A$, $I = \dfrac{923{,}9\,\mathrm A}{400} \approx 2{,}31\,\mathrm A$.
+4. (b) Železo: $4000\,\mathrm{A/m} \cdot 0{,}4\,\mathrm m = 1600\,\mathrm A$. Reža: $\dfrac{1{,}6}{4\pi \cdot 10^{-7}} \cdot 0{,}8 \cdot 10^{-3}\,\mathrm A \approx 1018{,}6\,\mathrm A$.
+5. $\Theta \approx 1600\,\mathrm A + 1018{,}6\,\mathrm A = 2618{,}6\,\mathrm A$, $I = \dfrac{2618{,}6\,\mathrm A}{400} \approx 6{,}55\,\mathrm A$.
+6. (c) V linearnem modelu je $\Theta$ sorazmeren z $B$: $\Theta \approx 923{,}9\,\mathrm A \cdot \dfrac{1{,}6}{1{,}2} \approx 1231{,}9\,\mathrm A$, $I \approx \dfrac{1231{,}9\,\mathrm A}{400} \approx 3{,}08\,\mathrm A$.
+7. Razlika: pri $1{,}2\,\mathrm T$ železo porabi le $160\,\mathrm A$ od $924\,\mathrm A$ (okoli $17\,\%$), pri $1{,}6\,\mathrm T$ pa $1600\,\mathrm A$ od $2619\,\mathrm A$ (okoli $61\,\%$). Železo je nasičeno, njegov $\mu_{\mathrm{r}}$ je padel z okoli $2390$ na okoli $320$, zato magnetni upor železa ni več majhen proti reži.
+8. Odgovor: za $1{,}2\,\mathrm T$ potrebuješ približno $2{,}31\,\mathrm A$, za $1{,}6\,\mathrm T$ približno $6{,}55\,\mathrm A$. Linearni model bi napovedal le $3{,}08\,\mathrm A$, več kot dvakrat premalo: gostota zraste za tretjino, tok pa na $2{,}8$-kratnik.
+
 ## Drugače: Na sliki
 
 Jedro oblike E prerišemo v nadomestno vezje. Vsak odsek iz iste snovi in z istim presekom je en upor. Vsaka reža je svoj upor. Tuljava je vir.
 
-```
-        Rs
-  +---[====]---+--------+
-  |            |        |
- (Θ)         [R1]     [R2]
-  |            |      (reža)
-  +------------+--------+
-```
+:::risba skica
+opis: Nadomestno vezje jedra oblike E. Levo je vir magnetne napetosti theta, enake N krat I. Iz njega vodi zgoraj upor srednjega stebra R s do zgornjega razcepišča. Med zgornjim in spodnjim razcepiščem sta vzporedno vezana upor levega stebra R 1 in upor desnega stebra z režo R 2. Pretok fi s teče iz vira skozi R s in se v zgornjem razcepišču razdeli na fi 1 in fi 2.
+območje: 0; 0 .. 11; 6
+črta: 1; 3,6 -> 1; 5 -> 2,5; 5
+črta: 4,5; 5 -> 9; 5 -> 9; 3,8
+črta: 9; 2,2 -> 9; 1 -> 1; 1 -> 1; 2,4
+črta: 6; 5 -> 6; 3,8
+črta: 6; 2,2 -> 6; 1
+krog: 1; 3 | 0,6 | modra
+pravokotnik: 2,5; 4,7 .. 4,5; 5,3 | oranžna
+pravokotnik: 5,7; 2,2 .. 6,3; 3,8 | oranžna
+pravokotnik: 8,7; 2,2 .. 9,3; 3,8 | oranžna
+napis: 1; 3 | Θ | sredina | modra
+napis: 3,5; 5,4 | R_s | nad
+napis: 5,6; 3 | R_1 | levo
+napis: 9,4; 3 | R_2 | desno
+napis: 9,4; 2,4 | (reža) | desno
+točka: 6; 5 | razcepišče | nad
+točka: 6; 1 | razcepišče | pod
+puščica: 4,7; 4,6 -> 5,7; 4,6 | Φ_s | pod | zelena
+puščica: 6,6; 4,6 -> 6,6; 3,9 | Φ_1 | desno | zelena
+puščica: 9,6; 4,8 -> 9,6; 4,1 | Φ_2 | desno | zelena
+podnapis: Nadomestno vezje jedra oblike E: vir, zaporedni upor srednjega stebra in vzporedna upora stranskih stebrov.
+:::
 
 - Levo je vir $\Theta = N I$ z uporom srednjega stebra $R_{\mathrm{s}}$.
 - Desno sta vzporedno vezana upora stranskih stebrov $R_1$ in $R_2$.

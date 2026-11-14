@@ -29,24 +29,34 @@ Na medialnem robu je **hilus**: vanj vstopa ledvična arterija, izstopata ledvi�
 
 Nefron sestavljata **ledvično telesce** in **cevka (tubul)**:
 
-```
-aferentna   eferentna
-arteriola   arteriola
-     \  ___  /
-      (glom.)    skorja
-     [Bowman]
-        |
-  proksimalni tubul
-        |
-   +----+----+   sredica
-   | Henleje-|
-   | va zanka|
-   +----+----+
-        |
-   distalni tubul
-        |
-  zbiralce -> papila
-```
+:::risba skica
+opis: Shema nefrona. Zgoraj v skorji aferentna arteriola vstopa v glomerul, eferentna arteriola iz njega izstopa. Glomerul obdaja Bowmanova kapsula. Iz nje vodi proksimalni tubul, ta se nadaljuje v Henlejevo zanko, ki se spusti v sredico in se vrne v skorjo. Sledi distalni tubul, ki se izliva v zbiralce. Zbiralce teče skozi sredico navzdol do papile.
+območje: 0; 40 .. 320; 412
+črta: 0; 180 -> 320; 180 | črtkano siva
+napis: 6; 194 | skorja | desno | siva
+napis: 6; 166 | sredica | desno | siva
+krog: 90; 310 | 44
+krog: 90; 310 | 34 | oranžna
+napis: 90; 310 | glomerul
+napis: 142; 310 | Bowmanova kapsula | desno
+puščica: 52; 378 -> 74; 336
+puščica: 106; 336 -> 128; 378
+napis: 46; 404 | aferentna
+napis: 46; 390 | arteriola
+napis: 134; 404 | eferentna
+napis: 134; 390 | arteriola
+črta: 90; 266 -> 90; 256
+pravokotnik: 24; 232 .. 156; 256
+napis: 90; 244 | proksimalni tubul
+črta: 90; 232 -> 90; 90 -> 130; 90 -> 130; 205 -> 170; 205
+napis: 138; 150 | Henlejeva zanka | desno
+pravokotnik: 170; 193 .. 278; 217
+napis: 224; 205 | distalni tubul
+črta: 278; 205 -> 292; 205
+puščica: 292; 205 -> 292; 64
+napis: 286; 110 | zbiralce | levo
+napis: 292; 52 | papila
+:::
 
 1. **Glomerul**, klobčič kapilar, obdaja **Bowmanova kapsula**. Skupaj tvorita ledvično telesce, ki leži v skorji.
 2. **Proksimalni zviti tubul** vrne večino vode, natrija, vso glukozo in aminokisline. Celice imajo krtačast obrobek (mikrovile) in veliko mitohondrijev.

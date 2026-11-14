@@ -17,11 +17,11 @@ Ko so leta 2001 objavili prvo različico človeškega genoma, je presenetilo maj
 
 Verigi DNA sta antiparalelni. **Matrična** (nekodirajoča) veriga je tista, ki jo RNA-polimeraza bere; **kodirajoča** veriga ima enako zaporedje kot mRNA, le da je namesto T uracil U. Zaporedja pišemo od konca $5'$ proti koncu $3'$.
 
-```
-kodirajoča 5'-ATG AAA GCT-3'
-matrična   3'-TAC TTT CGA-5'
-mRNA       5'-AUG AAA GCU-3'
-```
+| Veriga | Zaporedje |
+|---|---|
+| kodirajoča | `5'-ATG AAA GCT-3'` |
+| matrična | `3'-TAC TTT CGA-5'` |
+| mRNA | `5'-AUG AAA GCU-3'` |
 
 **3. Transkripcija.** **RNA-polimeraza** sintetizira RNA v smeri $5' \to 3'$ in pri tem bere matrično verigo v smeri $3' \to 5'$. Začetnega oligonukleotida ne potrebuje (za razliko od DNA-polimeraze).
 

@@ -164,6 +164,69 @@ $x^2 - 1 = (x + 1)(x - 1) + 0$. Ostanek je $0$, zato je zadnji neničelni ostane
 - Nad celim kolobarjem ima polinom stopnje $n$ največ $n$ ničel; v $\mathbb{Z}_{12}$ ima $x^2 - 1$ štiri.
 - Polinom stopnje $2$ ali $3$ je nerazcepen natanko tedaj, ko nima ničle.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije kolobarja, delitelja niča, obrnljivega elementa, celega kolobarja in polja, vsako s primerom in protiprimerom,
+- kdaj je $k$ obrnljiv v $\mathbb{Z}_n$ in kdaj je $\mathbb{Z}_n$ polje; dokaz, da je vsako polje cel kolobar,
+- izrek o deljenju polinomov z ostankom nad poljem (obstoj in enoličnost $q$ in $r$) in zakaj je potrebno polje,
+- izrek o ostanku z dokazom in posledico $f(a) = 0 \iff (x - a) \mid f$,
+- trditev, da ima neničelni polinom stopnje $n$ nad celim kolobarjem največ $n$ ničel, z dokazom in protiprimerom v $\mathbb{Z}_{12}$,
+- definicijo nerazcepnega polinoma in kriterij z ničlami za stopnji $2$ in $3$ (ter zakaj pri stopnji $4$ ne zadošča).
+
+### Naloga 1
+
+V $\mathbb{Z}_5[x]$ sta dana polinoma $f = x^4 + x^3 + 3x^2 + 2x + 2$ in $g = x^3 + 3x^2 + 2x + 1$. (a) Z Evklidovim algoritmom poišči normiran $\gcd(f, g)$. (b) Razcepi $f$ in $g$ na nerazcepne faktorje nad $\mathbb{Z}_5$. (c) Koliko ničel ima $f$ in koliko $g$ v $\mathbb{Z}_5$?
+
+**Rešitev:**
+
+1. Prvo deljenje, $f$ z $g$. $x^4 : x^3 = x$; odštejemo $x\,g = x^4 + 3x^3 + 2x^2 + x$ in ostane $-2x^3 + x^2 + x + 2 \equiv 3x^3 + x^2 + x + 2$.
+2. $3x^3 : x^3 = 3$; odštejemo $3g = 3x^3 + 9x^2 + 6x + 3 \equiv 3x^3 + 4x^2 + x + 3$ in ostane $-3x^2 - 1 \equiv 2x^2 + 4$. Torej $f = (x + 3)\,g + (2x^2 + 4)$.
+3. Drugo deljenje, $g$ z $r_1 = 2x^2 + 4$. Delimo z vodilnim koeficientom $2$, njegov inverz v $\mathbb{Z}_5$ je $3$, ker je $2 \cdot 3 = 6 \equiv 1$. Zato je prvi člen kvocienta $3x$ (ker je $3x \cdot 2x^2 = 6x^3 \equiv x^3$); odštejemo $3x\,r_1 = 6x^3 + 12x \equiv x^3 + 2x$ in ostane $3x^2 + 1$.
+4. Drugi člen kvocienta je $3 \cdot 3 = 9 \equiv 4$ (vodilni koeficient $3$ krat inverz $3$); odštejemo $4r_1 = 8x^2 + 16 \equiv 3x^2 + 1$ in ostane $0$. Torej $g = (3x + 4)\,r_1$.
+5. Zadnji neničelni ostanek je $2x^2 + 4$. Normiramo ga z množenjem s $3$: $3(2x^2 + 4) = 6x^2 + 12 \equiv x^2 + 2$. Torej $\gcd(f, g) = x^2 + 2$.
+6. (b) Iz koraka 4: $g = (3x + 4) \cdot 2\,(x^2 + 2) = (6x + 8)(x^2 + 2) \equiv (x + 3)(x^2 + 2)$.
+7. Delimo $f$ z $x^2 + 2$: $x^4 : x^2 = x^2$, ostane $x^3 + x^2 + 2x + 2$; $x^3 : x^2 = x$, ostane $x^2 + 2$; $x^2 : x^2 = 1$, ostane $0$. Torej $f = (x^2 + x + 1)(x^2 + 2)$.
+8. Nerazcepnost kvadratnih faktorjev preverimo z ničlami. Vrednosti $x^2 + 2$ pri $x = 0, 1, 2, 3, 4$ so $2, 3, 1, 1, 3$ (po modulu $5$), vrednosti $x^2 + x + 1$ pa $1, 3, 2, 3, 1$. Nobena ni $0$, zato sta oba faktorja stopnje $2$ nerazcepna.
+9. (c) Ker je $\mathbb{Z}_5$ polje, je produkt nič le, če je nič eden od faktorjev. $f$ je produkt dveh faktorjev brez ničel, zato nima nobene ničle. $g$ ima natanko eno: $x + 3 = 0$, torej $x = -3 \equiv 2$.
+10. Odgovor: $\gcd(f, g) = x^2 + 2$; $f = (x^2 + 2)(x^2 + x + 1)$, $g = (x^2 + 2)(x + 3)$; $f$ nima ničel v $\mathbb{Z}_5$, $g$ ima eno, $x = 2$.
+
+### Naloga 2
+
+Nad poljem $\mathbb{Z}_3$ sta dana $p = x^3 + 2x + 1$ in $h = x^4 + 1$. (a) Dokaži, da je $p$ nerazcepen. (b) Pokaži, da $h$ nima ničle v $\mathbb{Z}_3$, in utemelji, ali je nerazcepen. (c) Koliko elementov ima $\mathbb{Z}_3[x]/(p)$ in kateri element je v njem inverz elementa $x$? Ali je $\mathbb{Z}_3[x]/(h)$ polje?
+
+**Rešitev:**
+
+1. (a) $p(0) = 1$, $p(1) = 1 + 2 + 1 = 4 \equiv 1$, $p(2) = 8 + 4 + 1 = 13 \equiv 1$. Polinom $p$ nima ničle v $\mathbb{Z}_3$.
+2. Če bi bil $p$ produkt dveh polinomov nižje stopnje, bi bil eden stopnje $1$ (ker je $3 = 1 + 2$) in bi dal ničlo. Zato je $p$ nerazcepen.
+3. (b) $h(0) = 1$, $h(1) = 2$, $h(2) = 16 + 1 = 17 \equiv 2$. Ničle ni, torej $h$ nima linearnega faktorja. Pri stopnji $4$ to še ne pomeni nerazcepnosti: možen je razcep na dva kvadratna faktorja.
+4. Nastavek z normiranima faktorjema: $(x^2 + ax + b)(x^2 + cx + d) = x^4 + (a + c)x^3 + (b + d + ac)x^2 + (ad + bc)x + bd$. Primerjamo z $x^4 + 1$: $a + c = 0$, $b + d + ac = 0$, $ad + bc = 0$, $bd = 1$.
+5. Iz $c = -a$ dobimo $a(d - b) = 0$ in $b + d = a^2$. Če je $a = 0$, je $d = -b$ in $bd = -b^2 = 1$, torej $b^2 = 2$; to v $\mathbb{Z}_3$ ni mogoče, ker sta kvadrata le $0$ in $1$. Torej $a \neq 0$ in $d = b$.
+6. Potem je $b^2 = 1$ in $2b = a^2 = 1$ (kvadrat neničelnega elementa v $\mathbb{Z}_3$ je $1$). Iz $2b = 1$ sledi $b = 2$, in res $b^2 = 4 \equiv 1$. Vzamemo $a = 1$, $c = 2$.
+7. Preizkus: $(x^2 + x + 2)(x^2 + 2x + 2) = x^4 + 3x^3 + 6x^2 + 6x + 4 \equiv x^4 + 1$. Polinom $h$ je torej razcepen, čeprav nima ničle.
+8. (c) Elementi $\mathbb{Z}_3[x]/(p)$ so ostanki $a_0 + a_1x + a_2x^2$ s koeficienti iz $\mathbb{Z}_3$; teh je $3^3 = 27$. Ker je $p$ nerazcepen, je to polje.
+9. V njem je $x^3 + 2x \equiv -1$, torej $x(x^2 + 2) \equiv -1$ in $x \cdot \bigl(-(x^2 + 2)\bigr) \equiv 1$. Inverz je $-(x^2 + 2) = -x^2 - 2 \equiv 2x^2 + 1$.
+10. $\mathbb{Z}_3[x]/(h)$ ni polje: ostanka $x^2 + x + 2$ in $x^2 + 2x + 2$ sta neničelna, njun produkt pa je $h \equiv 0$. To sta delitelja niča, enako kot $3$ in $4$ v $\mathbb{Z}_{12}$.
+11. Odgovor: $p$ je nerazcepen; $h = (x^2 + x + 2)(x^2 + 2x + 2)$ je razcepen brez ničel; $\mathbb{Z}_3[x]/(p)$ je polje s $27$ elementi, inverz elementa $x$ je $2x^2 + 1$; $\mathbb{Z}_3[x]/(h)$ ni polje.
+
+### Naloga 3
+
+Natančno navedi izrek o deljenju polinomov z ostankom in dokaži enoličnost kvocienta in ostanka. Nato navedi in dokaži izrek o ostanku ter trditev o številu ničel polinoma. Utemelji, na katerem mestu dokaz odpove v $\mathbb{Z}_{12}[x]$.
+
+**Rešitev:**
+
+1. Izrek: naj bo $F$ polje in $f, g \in F[x]$, $g \neq 0$. Potem obstajata enolično določena $q, r \in F[x]$ z $f = qg + r$ in $\deg r < \deg g$ (ali $r = 0$).
+2. Enoličnost: naj bo $f = q_1g + r_1 = q_2g + r_2$, oba ostanka stopnje manj kot $\deg g$. Potem je $(q_1 - q_2)\,g = r_2 - r_1$.
+3. Če bi bil $q_1 \neq q_2$, bi imela leva stran stopnjo $\deg(q_1 - q_2) + \deg g \geq \deg g$, ker v polju ni deliteljev niča in se stopnji seštejeta. Desna stran ima stopnjo manj kot $\deg g$. Protislovje, zato $q_1 = q_2$ in potem $r_1 = r_2$.
+4. Izrek o ostanku: ostanek pri deljenju $f$ z $x - a$ je $f(a)$. Dokaz: $f = q\,(x - a) + r$ z $\deg r < 1$, torej je $r$ konstanta. Vstavimo $x = a$: $f(a) = q(a) \cdot 0 + r = r$.
+5. Posledica: $f(a) = 0$ natanko tedaj, ko je $r = 0$, torej ko $(x - a) \mid f$.
+6. Trditev: neničelni polinom stopnje $n$ nad poljem (ali celim kolobarjem) ima največ $n$ ničel. Dokaz z indukcijo po $n$. Pri $n = 0$ je $f$ neničelna konstanta in nima ničel.
+7. Korak: naj bo $\deg f = n \geq 1$. Če $f$ nima ničle, ni kaj dokazovati. Sicer naj bo $a$ ničla; po koraku 5 je $f = q\,(x - a)$ z $\deg q = n - 1$.
+8. Za vsako drugo ničlo $b \neq a$ je $0 = f(b) = q(b)(b - a)$. Ker je $b - a \neq 0$ in deliteljev niča ni, je $q(b) = 0$. Vse ničle razen $a$ so torej ničle $q$, teh je po indukcijski predpostavki največ $n - 1$. Skupaj jih je največ $n$.
+9. V $\mathbb{Z}_{12}$ odpove sklep v koraku 8: iz $q(b)(b - a) = 0$ ne sledi $q(b) = 0$. Za $f = x^2 - 1$, $a = 1$, $q = x + 1$ in $b = 5$ je $q(5)(5 - 1) = 6 \cdot 4 = 24 \equiv 0$, čeprav $q(5) = 6 \neq 0$. Zato ima $x^2 - 1$ tam štiri ničle: $1, 5, 7, 11$.
+10. Odgovor: deljenje z ostankom je nad poljem enolično zaradi primerjave stopenj; ostanek pri deljenju z $x - a$ je $f(a)$; meja $n$ ničel sloni na odsotnosti deliteljev niča in zato v $\mathbb{Z}_{12}$ ne velja. (Izrek o ostanku sam velja nad vsakim komutativnim kolobarjem, ker je $x - a$ normiran.)
+
 ## Drugače: Kot zgodba
 
 V 16. stoletju so italijanski matematiki reševali kubične enačbe in v formulah naleteli na $\sqrt{-1}$. Ničesar takega ni bilo, a račun je na koncu dal pravilne realne rešitve. Kako si izmisliti število, ki ne obstaja?

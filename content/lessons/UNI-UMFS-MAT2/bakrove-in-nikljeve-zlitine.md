@@ -17,20 +17,24 @@ Baker in nikelj imata enako kristalno mrežo (ploskovno centrirano kubično), sk
 
 Fazni diagram takega para je **izomorfni** diagram: zgoraj talina, spodaj $\alpha$, vmes leča, kjer sta talina in $\alpha$ skupaj.
 
-```
-T ^                    o 1455
-  |       L        _.-'|
-  |            _.-'  _/
-  |        _.-' L+a_/
-  |    _.-'    __/
-  |_.-'    __/    a
-  o____---
-  | 1085
-  +-------------------> % Ni
-  Cu                  Ni
-```
+:::risba graf
+opis: Izomorfni fazni diagram baker–nikelj. Na vodoravni osi je masni delež niklja od 0 do 100 odstotkov, na navpični temperatura od 1000 do 1500 stopinj Celzija. Leva točka je tališče bakra pri 1085 stopinjah, desna tališče niklja pri 1455 stopinjah. Točki povezujeta dve krivulji, ki oklepata lečo: zgornja je likvidus, spodnja solidus. Nad lečo je talina L, v ozki leči sta skupaj talina in faza α (področje L + α), pod lečo je faza α.
+x: 0 .. 100 | 20 | % Ni
+y: 1000 .. 1500 | 100 | T [°C]
+f: 1085 + 5,945*x - 0,02245*x^2 | modra | 0 .. 100
+f: 1085 + 4,017*x - 0,00317*x^2 | oranžna | 0 .. 100
+točka: 0; 1085 | 1085 | pod desno
+točka: 100; 1455 | 1455 | nad levo
+napis: 25; 1380 | L | sredina | debelo
+črta: 60; 1338 -> 70; 1262 | siva
+napis: 72; 1240 | L + α | sredina
+napis: 55; 1130 | α | sredina | debelo
+napis: 38; 1330 | likvidus | levo | modra
+napis: 82; 1352 | solidus | desno | oranžna
+podnapis: Fazni diagram Cu-Ni: levo čisti baker, desno čisti nikelj
+:::
 
-Na skici je a faza $\alpha$. Zgornja krivulja je **likvidus**, spodnja **solidus**. Leva točka je tališče bakra ($1085\,^\circ\mathrm C$), desna tališče niklja ($1455\,^\circ\mathrm C$). Zlitina se ne strdi pri eni temperaturi, temveč v intervalu med likvidusom in solidusom.
+Zgornja krivulja je **likvidus**, spodnja **solidus**. Leva točka je tališče bakra ($1085\,^\circ\mathrm C$), desna tališče niklja ($1455\,^\circ\mathrm C$). Zlitina se ne strdi pri eni temperaturi, temveč v intervalu med likvidusom in solidusom.
 
 V dvofaznem področju potegnemo vodoravno **vezno črto** pri dani temperaturi. Kjer seka likvidus, odčitamo sestavo taline $C_\mathrm{L}$, kjer seka solidus, sestavo trdne faze $C_\alpha$. Deleža faz da **vzvodno pravilo**:
 

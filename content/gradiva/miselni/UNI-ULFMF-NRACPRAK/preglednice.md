@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Celice in formule
+  - naslov `B3`, območje `B2:B6`
+  - formula se začne z `=`
+- Relativni sklic
+  - ob kopiranju se premakne s formulo
+  - `=B2*C2*D2` postane `=B3*C3*D3`
+- Absolutni in mešani sklic
+  - dolar zaklene stolpec, vrstico ali oboje
+  - DDV v eni celici: sklic zakleni
+  - pazi: prazna celica šteje kot $0$
+- Statistika
+  - `AVERAGE`, `MEDIAN`, `STDEV.S`
+  - $s = \sqrt{\frac{1}{n-1}\sum (x_i - \bar{x})^2}$
+  - argumente loči podpičje
+- Skrajni podatki
+  - povprečje se premakne, mediana skoraj ne
+  - deska: $117{,}2$ proti $120{,}2\,\mathrm{cm}$
+- Grafi
+  - raztreseni: dve številski količini
+  - stolpčni: kategorije; tortni: deli celote
+  - osi z naslovi in enotami
+- Pogoste napake
+  - decimalna vejica, ne pika
+  - vpiši formulo, ne izračunanega števila

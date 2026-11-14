@@ -227,11 +227,29 @@ Utemelji, ali velja: (a) če je $a_n > 0$ in $\sum a_n$ konvergira, konvergira t
 
 Vrsto $\sum_{n=1}^\infty \frac{1}{2^n} = \frac12 + \frac14 + \frac18 + \dots$ si predstavljaj kot daljico z dolžino $1$. Najprej pobarvaš polovico, nato polovico preostanka, nato spet polovico preostanka:
 
-```
-|<------------------- 1 ------------------->|
-[################||########||####||##||#|...]
-       1/2            1/4      1/8  1/16
-```
+:::risba skica
+opis: Daljica z dolžino 1, narisana kot trak od 0 do 1. Po vrsti so pobarvani deli z dolžinami 1/2 (od 0 do 0,5), 1/4 (od 0,5 do 0,75), 1/8 (od 0,75 do 0,875) in 1/16 (od 0,875 do 0,9375). Nepobarvan ostane le ozek del do 1, ki se z vsakim korakom razpolovi.
+območje: -0,5; -1,2 .. 16,5; 4
+pravokotnik: 0; 0 .. 8; 1,6 | modra
+pravokotnik: 8; 0 .. 12; 1,6 | oranžna
+pravokotnik: 12; 0 .. 14; 1,6 | zelena
+pravokotnik: 14; 0 .. 15; 1,6 | rdeča
+pravokotnik: 15; 0 .. 16; 1,6
+napis: 4; 0,8 | 1/2 | sredina
+napis: 10; 0,8 | 1/4 | sredina
+napis: 13; 0,8 | 1/8 | sredina
+napis: 14,5; 2,1 | 1/16 | sredina
+napis: 15,6; 0,8 | … | sredina
+puščica: 0; 2,8 -> 16; 2,8
+puščica: 16; 2,8 -> 0; 2,8
+napis: 8; 3,45 | celotna dolžina 1 | sredina
+napis: 0; -0,7 | 0 | sredina
+napis: 8; -0,7 | 0,5 | sredina
+napis: 12; -0,7 | 0,75 | sredina
+napis: 14; -0,7 | 0,875 | sredina
+napis: 16; -0,7 | 1 | sredina
+podnapis: Vsak pobarvani del je polovica preostanka.
+:::
 
 Pobarvani del se bliža celi daljici, a je nikoli ne preseže: delne vsote $0{,}5$; $0{,}75$; $0{,}875$; $0{,}9375$ se bližajo $1$.
 

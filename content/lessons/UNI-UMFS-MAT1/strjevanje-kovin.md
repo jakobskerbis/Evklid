@@ -187,6 +187,60 @@ Imenovalec je $3{,}54$, zato $\Delta T = \dfrac{543{,}2}{3{,}54} \approx 153\,\m
 - Ingot ima skorjasto, stebričasto in središčno enakoosno cono.
 - Drobna zrna (hitro ohlajanje, cepiva) povečajo mejo tečenja: $\sigma_y = \sigma_0 + k\,d^{-1/2}$; velikost merimo z $\bar{l} = L/(N\,M)$.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije podhladitve, stabilne kali, kritičnega radija $r_{kr}$ in energijske ovire $\Delta G_{kr}$;
+- izraz $\Delta G(r) = -\tfrac{4}{3}\pi r^3\,\Delta G_v + 4\pi r^2\,\gamma$ s pomenom obeh členov in izpeljavo $r_{kr}$ in $\Delta G_{kr}$ iz njega;
+- gonilno silo $\Delta G_v = \dfrac{\Delta H_f\,\Delta T}{T_m}$ s predpostavko, pod katero velja, ter odvisnosti $r_{kr} \propto 1/\Delta T$ in $\Delta G_{kr} \propto 1/\Delta T^2$;
+- razliko med homogeno in heterogeno nukleacijo, faktor $S(\theta)$ z mejnima primeroma in zakaj kapica ohrani isti $r_{kr}$;
+- nastanek dendritov in izcejanja ter tri cone prečnega prereza ingota z vzrokom za vsako;
+- Hall-Petchevo zvezo, metodo linijskih presečišč in načine za zmanjšanje zrn.
+
+### Naloga 1
+
+Za aluminij veljajo podatki $T_m = 933\,\mathrm{K}$, $\Delta H_f = 1{,}07 \cdot 10^{9}\,\mathrm{J/m^3}$ in $\gamma = 0{,}093\,\mathrm{J/m^2}$. V zelo čisti talini se homogena nukleacija začne pri podhladitvi $130\,\mathrm{K}$. (a) Izračunaj kritični radij in energijsko oviro pri tej podhladitvi. (b) Talini dodamo cepivo, na katerem ima kal močitveni kot $15^\circ$. Privzemi, da se nukleacija začne, ko je ovira enaka kot v primeru (a). Pri kolikšni podhladitvi se začne strjevanje na cepivu? (c) Kolikšen je kritični radij pri podhladitvi iz (b) in kaj to pove o najmanjši uporabni velikosti delcev cepiva?
+
+**Rešitev:**
+
+1. Gonilna sila pri $130\,\mathrm{K}$: $\Delta G_v = \dfrac{1{,}07 \cdot 10^{9} \cdot 130}{933} \approx 1{,}491 \cdot 10^{8}\,\mathrm{J/m^3}$.
+2. Kritični radij: $r_{kr} = \dfrac{2 \cdot 0{,}093}{1{,}491 \cdot 10^{8}} \approx 1{,}25 \cdot 10^{-9}\,\mathrm{m}$, to je $1{,}25\,\mathrm{nm}$.
+3. Homogena ovira: $\Delta G_{kr} = \dfrac{16\pi \cdot 0{,}093^3}{3 \cdot (1{,}491 \cdot 10^{8})^2} \approx 6{,}06 \cdot 10^{-19}\,\mathrm{J}$.
+4. Faktor oblike kapice: $\cos 15^\circ \approx 0{,}96593$, zato $S = \dfrac{2{,}96593 \cdot 0{,}03407^2}{4} \approx 8{,}61 \cdot 10^{-4}$.
+5. Ovira je sorazmerna z $1/\Delta T^2$. Zapišimo $\Delta G_{kr} = \dfrac{K}{\Delta T^2}$, kjer je $K = \dfrac{16\pi\gamma^3 T_m^2}{3\,\Delta H_f^2}$. Pogoj za cepivo je $S\,\dfrac{K}{\Delta T_{het}^2} = \dfrac{K}{\Delta T_{hom}^2}$, od koder sledi $\Delta T_{het} = \Delta T_{hom}\sqrt{S}$.
+6. Številsko: $\sqrt{8{,}61 \cdot 10^{-4}} \approx 0{,}02934$, zato $\Delta T_{het} \approx 130\,\mathrm{K} \cdot 0{,}02934 \approx 3{,}81\,\mathrm{K}$.
+7. Kritični radij je obratno sorazmeren s podhladitvijo: $r_{kr,het} = \dfrac{r_{kr}}{\sqrt{S}} \approx \dfrac{1{,}248\,\mathrm{nm}}{0{,}02934} \approx 42{,}5\,\mathrm{nm}$.
+8. Odgovor: (a) $r_{kr} \approx 1{,}25\,\mathrm{nm}$ in $\Delta G_{kr} \approx 6{,}06 \cdot 10^{-19}\,\mathrm{J}$. (b) Na cepivu se strjevanje začne že pri podhladitvi približno $3{,}8\,\mathrm{K}$ namesto $130\,\mathrm{K}$. (c) Kapica ima pri tem krivinski radij okoli $43\,\mathrm{nm}$. Premer njenega roba na podlagi je $2\,r_{kr,het}\sin\theta \approx 22\,\mathrm{nm}$, zato mora biti ravna ploskev delca cepiva vsaj tako velika. Delci z manjšimi ploskvami pri tej podhladitvi ne delujejo.
+
+### Naloga 2
+
+Izpelji izraza za kritični radij $r_{kr}$ in energijsko oviro $\Delta G_{kr}$ kroglaste kali pri homogeni nukleaciji. Utemelji, da gre pri $r_{kr}$ za maksimum, in pokaži, da je ovira enaka tretjini površinske energije kritične kali. Utemelji še, zakaj se talina točno pri tališču ne more strditi.
+
+**Rešitev:**
+
+1. Izhodišče: $\Delta G(r) = -\tfrac{4}{3}\pi r^3\,\Delta G_v + 4\pi r^2\,\gamma$. Prvi člen je prihranek zaradi prostornine trdne faze, drugi je cena nove meje trdno–talina. Pod tališčem je $\Delta G_v > 0$.
+2. Odvod izenačimo z nič: $\dfrac{d\,\Delta G}{dr} = -4\pi r^2\,\Delta G_v + 8\pi r\,\gamma = 0$. Rešitev $r = 0$ ni zanimiva, druga je $r_{kr} = \dfrac{2\gamma}{\Delta G_v}$.
+3. Drugi odvod: $\dfrac{d^2\Delta G}{dr^2} = -8\pi r\,\Delta G_v + 8\pi\gamma$. Pri $r = r_{kr}$ je to $-16\pi\gamma + 8\pi\gamma = -8\pi\gamma < 0$, torej je tam maksimum. Ravnovesje je nestabilno: manjši skupek se raztopi, večji raste.
+4. Vstavimo $r_{kr}$ v $\Delta G(r)$: $\Delta G_{kr} = -\tfrac{4}{3}\pi\,\dfrac{8\gamma^3}{\Delta G_v^3}\,\Delta G_v + 4\pi\,\dfrac{4\gamma^2}{\Delta G_v^2}\,\gamma = \dfrac{16\pi\gamma^3}{\Delta G_v^2}\left(1 - \dfrac{2}{3}\right) = \dfrac{16\pi\gamma^3}{3\,\Delta G_v^2}$.
+5. Površinska energija kritične kali je $4\pi r_{kr}^2\,\gamma = \dfrac{16\pi\gamma^3}{\Delta G_v^2}$. Ovira je natanko tretjina te vrednosti: $\Delta G_{kr} = \tfrac{1}{3} \cdot 4\pi r_{kr}^2\,\gamma$. Prostorninski člen torej pri $r_{kr}$ pokrije dve tretjini cene površine.
+6. Z $\Delta G_v = \dfrac{\Delta H_f\,\Delta T}{T_m}$ dobimo $r_{kr} = \dfrac{2\gamma\,T_m}{\Delta H_f\,\Delta T}$ in $\Delta G_{kr} = \dfrac{16\pi\gamma^3 T_m^2}{3\,\Delta H_f^2\,\Delta T^2}$. Zveza za $\Delta G_v$ velja ob predpostavki, da sta talilna toplota in talilna entropija blizu tališča konstantni.
+7. Pri tališču je $\Delta T = 0$, zato je $\Delta G_v = 0$. V $\Delta G(r)$ ostane le pozitivni površinski člen, ki z $r$ samo narašča. Radij $r_{kr}$ in ovira $\Delta G_{kr}$ sta neskončna, zato noben skupek ni stabilen. Strjevanje se začne šele pri končni podhladitvi.
+
+### Naloga 3
+
+Dva vzorca iste bakrove zlitine imata povprečna premera zrn $100\,\mu\mathrm{m}$ in $25\,\mu\mathrm{m}$ ter meji tečenja $60\,\mathrm{MPa}$ in $90\,\mathrm{MPa}$. (a) Določi konstanti $\sigma_0$ in $k$ v Hall-Petchevi zvezi. (b) Kolikšen premer zrn potrebuješ za mejo tečenja $120\,\mathrm{MPa}$? (c) Koliko presečišč z mejami zrn pričakuješ pri takem vzorcu na črti dolžine $100\,\mathrm{mm}$ na mikroposnetku s povečavo $500\times$, če vzameš $d \approx \bar{l}$? (d) Utemelji, ali se meja tečenja podvoji, če premer zrn zmanjšaš na četrtino.
+
+**Rešitev:**
+
+1. Premera v milimetrih: $d_1 = 0{,}1\,\mathrm{mm}$ in $d_2 = 0{,}025\,\mathrm{mm}$. Ker je $d_2 = d_1/4$, je $d_2^{-1/2} = 2\,d_1^{-1/2}$. Številsko: $d_1^{-1/2} \approx 3{,}162\,\mathrm{mm^{-1/2}}$ in $d_2^{-1/2} \approx 6{,}325\,\mathrm{mm^{-1/2}}$.
+2. Zapišemo enačbi $60 = \sigma_0 + k\,d_1^{-1/2}$ in $90 = \sigma_0 + 2k\,d_1^{-1/2}$. Odštejemo: $k\,d_1^{-1/2} = 30\,\mathrm{MPa}$.
+3. Konstanta $k$: $k = \dfrac{30}{3{,}162} \approx 9{,}49\,\mathrm{MPa\,mm^{1/2}}$.
+4. Konstanta $\sigma_0$: $\sigma_0 = 60 - 30 = 30\,\mathrm{MPa}$.
+5. Za $120\,\mathrm{MPa}$ mora biti $k\,d^{-1/2} = 120 - 30 = 90\,\mathrm{MPa}$, to je trikrat več kot pri $d_1$. Zato je $d^{-1/2} = 3\,d_1^{-1/2}$ in $d = \dfrac{d_1}{9} = \dfrac{0{,}1\,\mathrm{mm}}{9} \approx 0{,}0111\,\mathrm{mm}$, to je $11{,}1\,\mu\mathrm{m}$.
+6. Iz $\bar{l} = \dfrac{L}{N\,M}$ izrazimo $N = \dfrac{L}{\bar{l}\,M} = \dfrac{100\,\mathrm{mm} \cdot 9}{0{,}1\,\mathrm{mm} \cdot 500} = 18$.
+7. Štirikrat manjši $d$ podvoji le člen $k\,d^{-1/2}$, stalni člen $\sigma_0$ ostane. Pri naših vzorcih meja tečenja zraste s $60$ na $90\,\mathrm{MPa}$, torej za polovico. Podvojila bi se samo pri $\sigma_0 = 0$.
+8. Odgovor: (a) $\sigma_0 = 30\,\mathrm{MPa}$ in $k \approx 9{,}49\,\mathrm{MPa\,mm^{1/2}}$. (b) Potreben premer zrn je približno $11\,\mu\mathrm{m}$. (c) Črta seka $18$ mej. (d) Ne, podvoji se le prispevek mej zrn, ne celotna meja tečenja.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si prazno pokrajino, v katero prihajajo naseljenci. Ena sama družina ne vzdrži: preveč dela je z obrambo meja svoje parcele in prej ali slej odide. Naselje preživi šele, ko je dovolj veliko, da skupni pridelek odtehta stroške meja. To je kritični radij.

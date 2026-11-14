@@ -48,16 +48,30 @@ Zbirke so v paketu `java.util` (`import java.util.*;`) in hranijo le objekte: na
 
 Zdaj primer posplošimo. Zbirke so zgrajene iz **vmesnikov** (kaj zbirka zna) in **izvedb** (kako to dela). Spremenljivko napovemo z vmesnikom, objekt ustvarimo z izvedbo: `List<String> s = new ArrayList<>();`. Tako lahko izvedbo pozneje zamenjamo, ne da bi spreminjali ostalo kodo.
 
-```
-       Iterable
-          |
-      Collection
-       /      \
-    List      Set        Map
-     |       /   \      /   \
-ArrayList Hash- Tree- Hash- Tree-
-LinkedList Set  Set   Map   Map
-```
+:::risba skica
+opis: Drevo ogrodja zbirk. Na vrhu Iterable, pod njim Collection, ta se razveji v List in Set. Pod List sta izvedbi ArrayList in LinkedList, pod Set sta HashSet in TreeSet. Map stoji posebej, brez povezave s Collection, pod njim sta HashMap in TreeMap.
+območje: 0; 0 .. 30; 13
+napis: 10; 12 | Iterable
+črta: 10; 11,2 -> 10; 10,3
+napis: 10; 9,5 | Collection
+črta: 9; 8,7 -> 5,8; 7,8
+črta: 11; 8,7 -> 14,2; 7,8
+napis: 5; 7 | List
+napis: 15; 7 | Set
+napis: 25; 7 | Map
+črta: 5; 6,2 -> 5; 4,5
+črta: 15; 6,2 -> 15; 4,5
+črta: 25; 6,2 -> 25; 4,5
+pravokotnik: 0,5; 0,5 .. 9,5; 4,5
+pravokotnik: 10,5; 0,5 .. 19,5; 4,5
+pravokotnik: 20,5; 0,5 .. 29,5; 4,5
+napis: 5; 3,4 | ArrayList
+napis: 5; 1,6 | LinkedList
+napis: 15; 3,4 | HashSet
+napis: 15; 1,6 | TreeSet
+napis: 25; 3,4 | HashMap
+napis: 25; 1,6 | TreeMap
+:::
 
 Vmesnik `Map` ne deduje od `Collection`, ker ne hrani posameznih elementov, ampak pare.
 

@@ -34,19 +34,25 @@ Drugi zakon postavi zgornjo mejo: noben proces, ki dobiva toploto največ pri $T
 - 3–4 adiabatna ekspanzija (delovni gib),
 - 4–1 izohorno oddajanje toplote (izpuh).
 
-```
-p
-|  3
-|  |\
-|  | \_
-|  |   \__
-|  2      \__ 4
-|   \_       |
-|     \__    |
-|        \__ 1
-+-------------- V
-   V2       V1
-```
+:::risba graf
+opis: Diagram p–V Ottovega procesa. Na vodoravni osi je prostornina z oznakama V₂ (manjša) in V₁ (večja), na navpični tlak. Točka 1 je desno spodaj pri V₁. Adiabata 1–2 se strmo dviga v levo do točke 2 pri V₂. Navpična izohora 2–3 vodi navzgor do točke 3, najvišjega tlaka. Adiabata 3–4 pada v desno do točke 4 pri V₁, ki leži nad točko 1. Navpična izohora 4–1 sklene krog.
+x: 0 .. 5 | 1 | V
+y: 0 .. 18 | 2 | p
+oznake: ne
+mreža: ne
+oznakax: 1 | V_2
+oznakax: 4 | V_1
+f: (4/x)^(7/5) | modra | 1 .. 4
+f: 16*(1/x)^(7/5) | oranžna | 1 .. 4
+črta: 1; 6,964 -> 1; 16 | debelo
+črta: 4; 2,297 -> 4; 1 | debelo
+črta: 1; 0 -> 1; 6,964 | črtkano siva
+črta: 4; 0 -> 4; 1 | črtkano siva
+točka: 4; 1 | 1 | desno
+točka: 1; 6,964 | 2 | levo
+točka: 1; 16 | 3 | levo
+točka: 4; 2,297 | 4 | desno
+:::
 
 **Kompresijsko razmerje** je $\varepsilon = \frac{V_1}{V_2}$.
 

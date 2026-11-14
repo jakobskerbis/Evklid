@@ -196,6 +196,66 @@ $\mathrm{KV} = 20\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2} \cdot 0{,}10\,\mathr
 - Žilavost meri Charpyjev preizkus z zarezo: $\mathrm{KV} = mg(h_1 - h_2)$ v J. Feritna jekla imajo prehodno temperaturo, pod katero se lomijo krhko.
 - Trdota in žilavost sta pogosto v nasprotju: kaljenje poveča trdoto, popuščanje vrne žilavost.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije napetosti $\sigma = F/S_0$ in raztezka $\varepsilon = \Delta L/L_0$ ter zakaj z njima opišemo material neodvisno od velikosti kosa;
+- potek diagrama napetost–raztezek z elastičnim in plastičnim področjem ter definicije $R_e$, $R_{p0,2}$, $R_m$ in $A$;
+- Hookov zakon, pogoj za njegovo veljavnost in razliko med togostjo ($E$) in trdnostjo ($R_e$, $R_m$);
+- zakaj krivulja po $R_m$ pada, čeprav material ne postane šibkejši;
+- postopke merjenja trdote po Brinellu, Vickersu in Rockwellu, Brinellovo enačbo in oceno $R_m \approx 3{,}5 \cdot \mathrm{HB}$ z območjem veljavnosti;
+- Charpyjev preizkus, izpeljavo $\mathrm{KV} = mg(h_1 - h_2)$ iz ohranitve energije in pomen prehodne temperature.
+
+### Naloga 1
+
+Okrogel preizkušanec iz neznane kovine ima $d_0 = 10\,\mathrm{mm}$ in $L_0 = 50\,\mathrm{mm}$. Trgalni stroj izmeri: pri sili $5{,}5\,\mathrm{kN}$ je podaljšek $0{,}050\,\mathrm{mm}$ (ravni del diagrama); pri sili $21{,}2\,\mathrm{kN}$ je podaljšek $0{,}293\,\mathrm{mm}$; največja sila je $24{,}3\,\mathrm{kN}$; po pretrgu je $L_u = 56{,}0\,\mathrm{mm}$. (a) Izračunaj $E$ in presodi, ali je kovina jeklo ali aluminijeva zlitina. (b) Z računom pokaži, da je napetost pri $21{,}2\,\mathrm{kN}$ dogovorna meja tečenja $R_{p0,2}$. (c) Izračunaj $R_m$ in $A$. (d) Iz te kovine naredimo natezno vez dolžine $2{,}0\,\mathrm{m}$ za silo $30\,\mathrm{kN}$. Napetost ne sme preseči $R_{p0,2}/1{,}5$. Na voljo so palice s premeri $12$, $14$ in $16\,\mathrm{mm}$. Katero izbereš in za koliko se vez podaljša?
+
+**Rešitev:**
+
+1. Presek: $S_0 = \dfrac{\pi \cdot 10^2}{4}\,\mathrm{mm^2} \approx 78{,}54\,\mathrm{mm^2}$.
+2. V ravnem delu: $\sigma = \dfrac{5500}{78{,}54} \approx 70{,}03\,\mathrm{MPa}$ in $\varepsilon = \dfrac{0{,}050}{50} = 0{,}001$.
+3. $E = \dfrac{70{,}03}{0{,}001} = 70\,030\,\mathrm{MPa} \approx 70\,\mathrm{GPa}$. To je tretjina vrednosti za jeklo ($210\,\mathrm{GPa}$), torej gre za aluminijevo zlitino.
+4. Pri $21{,}2\,\mathrm{kN}$: $\sigma = \dfrac{21\,200}{78{,}54} \approx 269{,}9\,\mathrm{MPa}$, celotni raztezek $\varepsilon = \dfrac{0{,}293}{50} = 0{,}00586$.
+5. Elastični del raztezka bi po razbremenitvi izginil: $\varepsilon_\mathrm{el} = \dfrac{269{,}9}{70\,030} \approx 0{,}00385$.
+6. Trajni del: $0{,}00586 - 0{,}00385 = 0{,}00201$, torej $0{,}2\,\%$. Po definiciji je zato $R_{p0,2} \approx 270\,\mathrm{MPa}$.
+7. $R_m = \dfrac{24\,300}{78{,}54} \approx 309\,\mathrm{MPa}$ in $A = \dfrac{56{,}0 - 50}{50} \cdot 100\,\% = 12\,\%$.
+8. Dopustna napetost: $\dfrac{270}{1{,}5} = 180\,\mathrm{MPa}$. Potrebni presek: $\dfrac{30\,000}{180} \approx 166{,}7\,\mathrm{mm^2}$.
+9. Najmanjši premer: $d = \sqrt{\dfrac{4 \cdot 166{,}7}{\pi}} \approx 14{,}57\,\mathrm{mm}$. Palica s $14\,\mathrm{mm}$ je pretanka, izberemo $16\,\mathrm{mm}$.
+10. Za $16\,\mathrm{mm}$: $S = \dfrac{\pi \cdot 16^2}{4} \approx 201{,}1\,\mathrm{mm^2}$, $\sigma = \dfrac{30\,000}{201{,}1} \approx 149{,}2\,\mathrm{MPa}$.
+11. Podaljšek: $\Delta L = \dfrac{149{,}2}{70\,030} \cdot 2000\,\mathrm{mm} \approx 4{,}26\,\mathrm{mm}$.
+12. Odgovor: (a) $E \approx 70\,\mathrm{GPa}$, aluminijeva zlitina; (b) trajni raztezek je $0{,}2\,\%$, zato $R_{p0,2} \approx 270\,\mathrm{MPa}$; (c) $R_m \approx 309\,\mathrm{MPa}$, $A = 12\,\%$; (d) palica s premerom $16\,\mathrm{mm}$, ki se podaljša za približno $4{,}3\,\mathrm{mm}$. Enako obremenjena jeklena vez enakega preseka bi se podaljšala le za tretjino tega.
+
+### Naloga 2
+
+Natančno navedi definicije meje tečenja $R_e$, dogovorne meje tečenja $R_{p0,2}$, natezne trdnosti $R_m$ in raztezka po pretrgu $A$. Utemelji, zakaj krivulja napetost–raztezek po $R_m$ pada. Nato utemelji, ali drži trditev: »Vzmetno jeklo z $R_e = 1200\,\mathrm{MPa}$ je bolj togo od jekla S235.« Pri tem za obe jekli izračunaj raztezek na meji tečenja ($E = 210\,\mathrm{GPa}$).
+
+**Rešitev:**
+
+1. $R_e$ je napetost, pri kateri material začne teči: raztezek narašča brez povečanja sile in začne se trajna (plastična) deformacija; na diagramu se tam ravna črta prelomi.
+2. $R_{p0,2}$ uporabimo, kadar izrazite meje ni: to je napetost, pri kateri po razbremenitvi ostane trajni raztezek $0{,}2\,\%$.
+3. $R_m = F_m/S_0$ je največja sila preizkusa, deljena z začetnim presekom; $A = \dfrac{L_u - L_0}{L_0} \cdot 100\,\%$ je trajni relativni podaljšek merilne dolžine po pretrgu in meri duktilnost.
+4. Padec po $R_m$: pri $R_m$ se začne tvoriti vrat. Presek v vratu se hitro manjša, zato preizkušanec nosi manjšo silo. Napetost pa še vedno računamo z začetnim $S_0$, zato izračunana vrednost pada, čeprav material v vratu ni šibkejši.
+5. Raztezek na meji tečenja: S235 $\varepsilon = \dfrac{235}{210\,000} \approx 0{,}00112$, vzmetno jeklo $\varepsilon = \dfrac{1200}{210\,000} \approx 0{,}00571$.
+6. Trditev ne drži. Togost meri $E$, naklon ravnega dela, ki je pri obeh jeklih $210\,\mathrm{GPa}$, ker ga določajo vezi med atomi. Pri enaki napetosti je raztezek obeh enak.
+7. Sklep: jekli se razlikujeta v trdnosti. Vzmetno jeklo se lahko elastično raztegne do $0{,}57\,\%$, S235 le do $0{,}11\,\%$, torej približno petkrat manj; zato je prvo primerno za vzmeti.
+
+### Naloga 3
+
+(a) Naročnik za ploščo iz nelegiranega jekla zahteva $R_m \geq 470\,\mathrm{MPa}$. Kontrolor meri trdoto po Brinellu s kroglico $D = 10\,\mathrm{mm}$ in silo $29\,420\,\mathrm{N}$. Kolikšen sme biti največ premer odtisa, da plošča po oceni $R_m \approx 3{,}5 \cdot \mathrm{HB}$ še ustreza? (b) Charpyjevo nihalo ima maso $22\,\mathrm{kg}$, težišče je $0{,}80\,\mathrm{m}$ od osi. Spustimo ga z odklona $140°$ od navpičnice. Po lomu preizkušanca pri $+20\,^\circ\mathrm{C}$ se dvigne do $115°$, pri $-20\,^\circ\mathrm{C}$ do $128°$. Višina težišča nad najnižjo lego je $h = l(1 - \cos\alpha)$. Ali jeklo izpolni zahtevo $\mathrm{KV} \geq 27\,\mathrm{J}$ pri $-20\,^\circ\mathrm{C}$? Uporabi $\cos 140° = -0{,}766$, $\cos 115° = -0{,}423$, $\cos 128° = -0{,}616$.
+
+**Rešitev:**
+
+1. Najmanjša trdota: $\mathrm{HB} = \dfrac{470}{3{,}5} \approx 134{,}3$.
+2. Iz Brinellove enačbe izrazimo oklepaj: $D - \sqrt{D^2 - d^2} = \dfrac{0{,}102 \cdot 2F}{\pi D \cdot \mathrm{HB}} = \dfrac{6002}{\pi \cdot 10 \cdot 134{,}3} \approx 1{,}423$ (v mm).
+3. Koren: $\sqrt{D^2 - d^2} = 10 - 1{,}423 = 8{,}577$ (v mm).
+4. $d = \sqrt{100 - 8{,}577^2} = \sqrt{100 - 73{,}56} \approx 5{,}14$ (v mm). Večji odtis pomeni manjšo trdoto, zato mora biti $d \leq 5{,}14\,\mathrm{mm}$.
+5. Charpy: iz $h = l(1 - \cos\alpha)$ sledi $h_1 - h_2 = l(\cos\alpha_2 - \cos\alpha_1)$, torej $\mathrm{KV} = m g\, l(\cos\alpha_2 - \cos\alpha_1)$.
+6. Stalni del: $m g\, l = 22 \cdot 9{,}81 \cdot 0{,}80 \approx 172{,}7$ (v J).
+7. Pri $+20\,^\circ\mathrm{C}$: $\cos 115° - \cos 140° = -0{,}423 + 0{,}766 = 0{,}343$, $\mathrm{KV} \approx 172{,}7 \cdot 0{,}343 \approx 59{,}2\,\mathrm{J}$.
+8. Pri $-20\,^\circ\mathrm{C}$: $-0{,}616 + 0{,}766 = 0{,}150$, $\mathrm{KV} \approx 172{,}7 \cdot 0{,}150 \approx 25{,}9\,\mathrm{J}$.
+9. Odgovor: (a) odtis sme imeti premer največ $5{,}14\,\mathrm{mm}$; (b) $25{,}9\,\mathrm{J} < 27\,\mathrm{J}$, jeklo zahteve pri $-20\,^\circ\mathrm{C}$ ne izpolni, čeprav ima pri sobni temperaturi $59\,\mathrm{J}$. Prehodna temperatura tega jekla je previsoka za zimsko uporabo.
+
 ## Drugače: Korak za korakom s številkami
 
 Preizkušanec iz S235 ima $d_0 = 10\,\mathrm{mm}$ ($S_0 \approx 78{,}54\,\mathrm{mm^2}$) in $L_0 = 50\,\mathrm{mm}$. Stroj izpiše:

@@ -220,10 +220,36 @@ Natančno navedi Beer-Lambertov zakon z vsemi pogoji in ga izpelji. Nato utemelj
 
 Pot svetlobe v obeh napravah si nariši kot verigo:
 
-```
-UV-VIS:  žarnica (zvezni spekter) → monokromator → kiveta z raztopino → detektor
-AAS:     votla katodna žarnica (črte) → plamen z atomi → monokromator → detektor
-```
+:::risba skica
+opis: Dve navpični verigi s po štirimi okvirji, povezanimi s puščicami navzdol. UV-VIS: žarnica z zveznim spektrom, nato monokromator, nato kiveta z raztopino, nato detektor. AAS: votla katodna žarnica s črtami, nato plamen z atomi, nato monokromator, nato detektor.
+območje: 0; 0 .. 14; 10,4
+napis: 3,5; 9,7 | UV-VIS | sredina | debelo
+napis: 10,5; 9,7 | AAS | sredina | debelo
+pravokotnik: 0,5; 7,6 .. 6,5; 9 | oranžna | ozadje
+napis: 3,5; 8,6 | žarnica | sredina
+napis: 3,5; 8 | (zvezni spekter) | sredina
+puščica: 3,5; 7,6 -> 3,5; 6,8
+pravokotnik: 0,5; 5,4 .. 6,5; 6,8 | zelena | ozadje
+napis: 3,5; 6,1 | monokromator | sredina
+puščica: 3,5; 5,4 -> 3,5; 4,6
+pravokotnik: 0,5; 3,2 .. 6,5; 4,6 | modra | ozadje
+napis: 3,5; 3,9 | kiveta z raztopino | sredina
+puščica: 3,5; 3,2 -> 3,5; 2,4
+pravokotnik: 0,5; 1 .. 6,5; 2,4 | siva | ozadje
+napis: 3,5; 1,7 | detektor | sredina
+pravokotnik: 7,5; 7,6 .. 13,5; 9 | oranžna | ozadje
+napis: 10,5; 8,6 | votla katodna | sredina
+napis: 10,5; 8 | žarnica (črte) | sredina
+puščica: 10,5; 7,6 -> 10,5; 6,8
+pravokotnik: 7,5; 5,4 .. 13,5; 6,8 | modra | ozadje
+napis: 10,5; 6,1 | plamen z atomi | sredina
+puščica: 10,5; 5,4 -> 10,5; 4,6
+pravokotnik: 7,5; 3,2 .. 13,5; 4,6 | zelena | ozadje
+napis: 10,5; 3,9 | monokromator | sredina
+puščica: 10,5; 3,2 -> 10,5; 2,4
+pravokotnik: 7,5; 1 .. 13,5; 2,4 | siva | ozadje
+napis: 10,5; 1,7 | detektor | sredina
+:::
 
 Pri UV-VIS monokromator stoji *pred* vzorcem in izbere eno barvo iz mavrice. Pri AAS stoji *za* plamenom: plamen sam sveti, monokromator pa izloči vse razen črte elementa.
 

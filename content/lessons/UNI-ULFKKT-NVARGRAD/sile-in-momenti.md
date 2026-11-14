@@ -297,25 +297,50 @@ Pravokotna plošča ima oglišča $O(0; 0)$, $A(4; 0)$, $B(4; 3)$ in $C(0; 3)$, 
 
 ## Drugače: Na sliki
 
-Nosilec iz Primera 3, gledan od strani (merilo: štirje znaki na meter; puščice so sile, $q$ je enakomerna obtežba, sila $5\,\mathrm{kN}$ v $B$ kaže poševno navzdol in v levo, dvojica $+6\,\mathrm{kN\,m}$ ni narisana):
+Nosilec iz Primera 3, gledan od strani (puščice so sile, $q$ je enakomerna obtežba, sila $5\,\mathrm{kN}$ v $B$ kaže poševno navzdol in v levo, dvojica $+6\,\mathrm{kN\,m}$ ni narisana):
 
-```
-      10 kN  q = 4 kN/m
-        |   |  |  |  |  |  /
-        v   v  v  v  v  v v
-A=======*===*===========B
-0      2,0 3,0        6,0
-```
+:::risba skica
+opis: Vodoravni nosilec od A pri 0 do B pri 6,0 m. Pri 2,0 m deluje navpično navzdol sila 10 kN. Od 3,0 m do 6,0 m deluje navzdol enakomerna obtežba q = 4 kN/m, narisana kot vrsta enakih puščic pod skupno črto. V B prijemlje sila 5 kN, ki kaže poševno navzdol in v levo pod kotom 30° pod vodoravnico.
+območje: -0,9; -1,1 .. 8,3; 2,5
+črta: 0; 0 -> 6; 0 | debelo
+puščica: 2; 1,7 -> 2; 0 | 10 kN | levo | oranžna
+črta: 3; 1 -> 6; 1 | modra
+puščica: 3; 1 -> 3; 0 | | | modra
+puščica: 3,75; 1 -> 3,75; 0 | | | modra
+puščica: 4,5; 1 -> 4,5; 0 | | | modra
+puščica: 5,25; 1 -> 5,25; 0 | | | modra
+puščica: 6; 1 -> 6; 0 | | | modra
+napis: 4,5; 1,1 | q = 4 kN/m | nad | modra
+puščica: 7,39; 0,8 -> 6; 0 | | | oranžna
+napis: 7,39; 0,85 | 5 kN | nad | oranžna
+črta: 0; -0,12 -> 0; 0,12
+črta: 2; 0 -> 2; -0,12
+črta: 3; 0 -> 3; -0,12
+črta: 6; -0,12 -> 6; 0,12
+napis: 0; 0 | A | levo
+napis: 6,3; -0,05 | B | desno
+napis: 0; -0,2 | 0 | pod
+napis: 2; -0,2 | 2,0 | pod
+napis: 3; -0,2 | 3,0 | pod
+napis: 6; -0,2 | 6,0 m | pod
+:::
 
 Isti sistem po redukciji na $A$: ena sila $24{,}9\,\mathrm{kN}$ v točki $A$ in dvojica $-83\,\mathrm{kN\,m}$. Po premiku rezultante ostane ena sama puščica pod kotom $80^\circ$ glede na vodoravnico, ki seka os pri $3{,}39\,\mathrm{m}$; dvojice ni več:
 
-```
-          24,9 kN
-               /
-              v
-A=============*=========B
-0           3,39      6,0
-```
+:::risba skica
+opis: Isti nosilec od A pri 0 do B pri 6,0 m z eno samo silo 24,9 kN. Sila kaže navzdol in malo v levo pod kotom 80° glede na vodoravnico, njena nosilka seka os nosilca 3,39 m od A. Dvojice ni.
+območje: -0,9; -1,1 .. 8,3; 2,5
+črta: 0; 0 -> 6; 0 | debelo
+puščica: 3,737; 1,97 -> 3,39; 0 | 24,9 kN | desno | oranžna
+črta: 0; -0,12 -> 0; 0,12
+črta: 3,39; 0 -> 3,39; -0,12
+črta: 6; -0,12 -> 6; 0,12
+napis: 0; 0 | A | levo
+napis: 6; 0 | B | desno
+napis: 0; -0,2 | 0 | pod
+napis: 3,39; -0,2 | 3,39 | pod
+napis: 6; -0,2 | 6,0 m | pod
+:::
 
 Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev togega telesa**. Za notranje sile v nosilcu (kasneje: upogibni momenti) pa niso enake – redukcija velja le za učinek na telo kot celoto.
 

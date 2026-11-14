@@ -15,18 +15,34 @@ Nekaj let kasneje je skupina pri IBM pod vodstvom Johna Backusa razvila jezik FO
 
 Temperature v Ljubljani en teden ob 14. uri (levo indeks, desno vrednost v predalu):
 
-```
- i    t[i]
-    +------+
- 0  | 18,4 |
- 1  | 21,0 |
- 2  | 24,6 |
- 3  | 23,2 |
- 4  | 19,8 |
- 5  | 17,5 |
- 6  | 20,3 |
-    +------+
-```
+:::risba skica
+opis: Sedem predalov, zloženih drug pod drugim. Levo ob vsakem je indeks i, v predalu vrednost t[i]: indeks 0 vrednost 18,4; indeks 1 vrednost 21,0; indeks 2 vrednost 24,6; indeks 3 vrednost 23,2; indeks 4 vrednost 19,8; indeks 5 vrednost 17,5; indeks 6 vrednost 20,3.
+območje: 0; 0 .. 140; 198
+enota: 1
+napis: 20; 186 | i | sredina | debelo
+napis: 85; 186 | t[i] | sredina | debelo
+pravokotnik: 40; 148 .. 130; 172 | modra
+napis: 20; 160 | 0 | sredina
+napis: 85; 160 | 18,4 | sredina
+pravokotnik: 40; 124 .. 130; 148 | modra
+napis: 20; 136 | 1 | sredina
+napis: 85; 136 | 21,0 | sredina
+pravokotnik: 40; 100 .. 130; 124 | modra
+napis: 20; 112 | 2 | sredina
+napis: 85; 112 | 24,6 | sredina
+pravokotnik: 40; 76 .. 130; 100 | modra
+napis: 20; 88 | 3 | sredina
+napis: 85; 88 | 23,2 | sredina
+pravokotnik: 40; 52 .. 130; 76 | modra
+napis: 20; 64 | 4 | sredina
+napis: 85; 64 | 19,8 | sredina
+pravokotnik: 40; 28 .. 130; 52 | modra
+napis: 20; 40 | 5 | sredina
+napis: 85; 40 | 17,5 | sredina
+pravokotnik: 40; 4 .. 130; 28 | modra
+napis: 20; 16 | 6 | sredina
+napis: 85; 16 | 20,3 | sredina
+:::
 
 Vse vrednosti so istega tipa, vsaka ima svoj **indeks**, štetje se začne pri $0$. Zadnji indeks je za ena manjši od dolžine. Do vrednosti prideš neposredno po indeksu, ne da bi šel čez prejšnje: `t[2]` je $24{,}6$.
 
@@ -98,12 +114,42 @@ for (int i = 0; i < n / 2; i++) {
 
 Mesečne povprečne temperature treh postaj (p 0, p 1, p 2) za štiri mesece (januar–april) so **dvodimenzionalna tabela** s $3$ vrsticami in $4$ stolpci:
 
-```
-      jan  feb  mar  apr
-p 0: [ 2,1  4,5  9,8 14,2]
-p 1: [-1,3  1,2  6,4 11,0]
-p 2: [ 0,4  3,0  8,1 12,6]
-```
+:::risba skica
+opis: Tabela s 3 vrsticami in 4 stolpci. Stolpci so meseci jan, feb, mar, apr, vrstice so postaje p 0, p 1, p 2. Vrstica p 0: 2,1; 4,5; 9,8; 14,2. Vrstica p 1: −1,3; 1,2; 6,4; 11,0. Vrstica p 2: 0,4; 3,0; 8,1; 12,6.
+območje: 0; 0 .. 274; 118
+enota: 1
+napis: 72; 104 | jan | sredina
+napis: 128; 104 | feb | sredina
+napis: 184; 104 | mar | sredina
+napis: 240; 104 | apr | sredina
+napis: 20; 76 | p 0 | sredina
+pravokotnik: 44; 62 .. 100; 90 | modra
+napis: 72; 76 | 2,1 | sredina
+pravokotnik: 100; 62 .. 156; 90 | modra
+napis: 128; 76 | 4,5 | sredina
+pravokotnik: 156; 62 .. 212; 90 | modra
+napis: 184; 76 | 9,8 | sredina
+pravokotnik: 212; 62 .. 268; 90 | modra
+napis: 240; 76 | 14,2 | sredina
+napis: 20; 48 | p 1 | sredina
+pravokotnik: 44; 34 .. 100; 62 | modra
+napis: 72; 48 | −1,3 | sredina
+pravokotnik: 100; 34 .. 156; 62 | modra
+napis: 128; 48 | 1,2 | sredina
+pravokotnik: 156; 34 .. 212; 62 | modra
+napis: 184; 48 | 6,4 | sredina
+pravokotnik: 212; 34 .. 268; 62 | modra
+napis: 240; 48 | 11,0 | sredina
+napis: 20; 20 | p 2 | sredina
+pravokotnik: 44; 6 .. 100; 34 | modra
+napis: 72; 20 | 0,4 | sredina
+pravokotnik: 100; 6 .. 156; 34 | modra
+napis: 128; 20 | 3,0 | sredina
+pravokotnik: 156; 6 .. 212; 34 | modra
+napis: 184; 20 | 8,1 | sredina
+pravokotnik: 212; 6 .. 268; 34 | modra
+napis: 240; 20 | 12,6 | sredina
+:::
 
 ```java
 double[][] m = new double[3][4];

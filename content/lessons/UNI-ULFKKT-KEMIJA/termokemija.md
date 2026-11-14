@@ -243,18 +243,21 @@ Natančno navedi Hessov zakon in ga dokaži iz prvega zakona termodinamike. Utem
 
 Hessov zakon iz Primera 2 si predstavljaj kot entalpijski diagram z dvema potema od istega začetka do istega konca:
 
-```
- H
- |   C(s) + O2(g)  ------------------+
- |        |                           |
- |        | -110,5 kJ                 |
- |        v                           |  -393,5 kJ
- |   CO(g) + 1/2 O2(g)                |  (neposredno)
- |        |                           |
- |        | -283,0 kJ                 |
- |        v                           v
- |   CO2(g)  <------------------------+
-```
+:::risba skica
+opis: Entalpijski diagram za Primer 2 z navpično osjo H. Najvišja raven je C(s) + O₂(g). Leva pot ima dve stopnji: puščica navzdol za −110,5 kJ do ravni CO(g) + ½ O₂(g) in nato puščica navzdol za −283,0 kJ do najnižje ravni CO₂(g). Desna, neposredna puščica vodi z najvišje ravni naravnost do ravni CO₂(g) in meri −393,5 kJ. Obe poti se končata na isti ravni.
+območje: 0; -4,9 .. 12; 1
+puščica: 0,6; -4,6 -> 0,6; 0,8 | H | desno
+črta: 1,5; 0 -> 11,5; 0 | debelo
+napis: 6,25; 0 | C(s) + O_2(g) | nad
+črta: 1,5; -1,105 -> 5; -1,105 | debelo
+napis: 5,1; -1,105 | CO(g) + ½ O_2(g) | desno
+črta: 1,5; -3,935 -> 11,5; -3,935 | debelo
+napis: 6,25; -3,935 | CO_2(g) | pod
+puščica: 3; 0 -> 3; -1,105 | −110,5 kJ | desno | modra
+puščica: 3; -1,105 -> 3; -3,935 | −283,0 kJ | desno | modra
+puščica: 10,5; 0 -> 10,5; -3,935 | −393,5 kJ | levo | oranžna
+podnapis: Dve poti od C(s) + O₂(g) do CO₂(g): čez CO (modro) in neposredno (oranžno)
+:::
 
 Pot čez $\mathrm{CO}$ in neposredna pot se končata na isti višini: $-110{,}5 + (-283{,}0) = -393{,}5\,\mathrm{kJ/mol}$. Tako kot pri vzponu na goro: višinska razlika med izhodiščem in vrhom ni odvisna od poti.
 

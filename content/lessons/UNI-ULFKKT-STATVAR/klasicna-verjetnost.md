@@ -271,15 +271,24 @@ Dvakrat vržemo pošten kovanec. Naj bo $A$ »prvi met je cifra«, $B$ »drugi m
 
 Presejalni test iz uvoda kot drevo verjetnosti za $100\,000$ ljudi:
 
-```
-100 000 testiranih
-├─ bolni 100
-│  ├─ test + : 99
-│  └─ test − : 1
-└─ zdravi 99 900
-   ├─ test + : 4995
-   └─ test − : 94 905
-```
+:::risba skica
+opis: Drevo verjetnosti za 100 000 testiranih. Prva razvejitev: bolni 100 in zdravi 99 900. Pri bolnih: test pozitiven 99, test negativen 1. Pri zdravih: test pozitiven 4995, test negativen 94 905. Veji s pozitivnim testom sta poudarjeni.
+območje: 0; 0 .. 12; 8
+napis: 6; 7,4 | 100 000 testiranih | sredina
+črta: 6; 7 -> 3; 5,4
+črta: 6; 7 -> 9; 5,4
+napis: 3; 5 | bolni 100 | sredina
+napis: 9; 5 | zdravi 99 900 | sredina
+črta: 3; 4,6 -> 1,6; 2,8 | oranžna debelo
+črta: 3; 4,6 -> 4,4; 1,4
+črta: 9; 4,6 -> 7,6; 2,8 | oranžna debelo
+črta: 9; 4,6 -> 10,2; 1,4
+napis: 1,6; 2,4 | test +: 99 | sredina
+napis: 4,4; 1 | test −: 1 | sredina
+napis: 7,6; 2,4 | test +: 4995 | sredina
+napis: 10,2; 1 | test −: 94 905 | sredina
+podnapis: Poudarjeni veji se končata s »test +«: 99 + 4995 = 5094
+:::
 
 Bayesova formula je na drevesu le delež: med vsemi vejami »test +« ($99 + 4995 = 5094$) je bolnih $99$, torej $99/5094 \approx 1{,}9\,\%$. Formula o popolni verjetnosti sešteje vse veje, ki se končajo s »test +«.
 

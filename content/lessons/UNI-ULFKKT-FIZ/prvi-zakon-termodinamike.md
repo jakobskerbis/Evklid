@@ -242,17 +242,18 @@ Idealni plin preide iz stanja $(p_1; V_1) = (2{,}0\,\mathrm{bar}; 1{,}0\,\mathrm
 
 V diagramu $p(V)$ nariši izotermo in adiabato skozi isto začetno točko:
 
-```
- p
- |  \
- |   \ adiabata (bolj strma)
- |    \.
- |     \ '.
- |      \   '. izoterma
- |       \     ' - .
- |        \           ' - - .
- +---------------------------------> V
-```
+:::risba graf
+opis: Diagram p(V) v relativnih enotah: na vodoravni osi je V/V₁, na navpični p/p₁. Iz skupne začetne točke (1; 1) izhajata dve padajoči krivulji razširjanja. Izoterma p = p₁V₁/V pada počasneje in pri V = 3V₁ doseže 0,33 p₁. Adiabata za κ = 1,4 je bolj strma in pri V = 3V₁ doseže le 0,21 p₁, zato leži pod izotermo.
+x: 0 .. 4 | 1 | V/V_1
+y: 0 .. 1,2 | 0,2 | p/p_1
+f: 1/x | modra | 1 .. 4
+f: 1/x^1.4 | oranžna debelo | 1 .. 4
+točka: 1; 1 | začetno stanje | desno
+napis: 2,6; 0,5 | izoterma | desno | modra
+napis: 1,2; 0,25 | adiabata (bolj strma) | pod | oranžna
+črta: 3; 0 -> 3; 0,333 | črtkano siva
+podnapis: Izoterma in adiabata (κ = 1,4) skozi isto začetno stanje
+:::
 
 Pri razširjanju adiabata pade hitreje kot izoterma, ker se plin hkrati ohlaja. Ploščina pod krivuljo je delo, ki ga opravi plin: pri adiabatnem razširjanju je manjša kot pri izotermnem, ker plin ne dobiva toplote.
 

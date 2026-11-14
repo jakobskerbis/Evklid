@@ -174,6 +174,59 @@ Toplotna obdelava spreminja strukturo jekla, ne njegove sestave.
 - Žarjenje: segrevanje, držanje, počasno ohlajanje. Vrste: normalizacijsko, mehko, za odpravo napetosti, rekristalizacijsko.
 - Legirni elementi zmanjšajo $v_\mathrm{k}$ in povečajo prekaljivost.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo toplotne obdelave in zakaj spremeni strukturo, ne pa sestave jekla;
+- nastanek perlita z difuzijo ogljika in nastanek martenzita brez difuzije ter zakaj je martenzit trd in krhek;
+- tri korake kaljenja, temperaturo kaljenja za podevtektoidna in nadevtektoidna jekla ter pogoj $v > v_\mathrm{k}$;
+- namen popuščanja, tri temperaturna območja z uporabo, pojem poboljšanja in zakaj popuščamo pod $A_1$;
+- štiri vrste žarjenja s temperaturami in namenom;
+- vpliv ogljika na trdoto martenzita in vpliv legirnih elementov na $v_\mathrm{k}$ in prekaljivost.
+
+### Naloga 1
+
+Gred s premerom $40\,\mathrm{mm}$ iz jekla z $0{,}40\,\%$ C je treba poboljšati na $32$ do $34\,\mathrm{HRC}$. Iz faznega diagrama je $A_3 = 800\,^\circ\mathrm{C}$ pri $0{,}35\,\%$ C in $780\,^\circ\mathrm{C}$ pri $0{,}45\,\%$ C. Med $800$ in $500\,^\circ\mathrm{C}$ se gred ohlaja: v vodi površina $1{,}2\,\mathrm{s}$ in jedro $7{,}5\,\mathrm{s}$, v olju površina $4\,\mathrm{s}$ in jedro $15\,\mathrm{s}$. Na voljo sta nelegirano jeklo z $v_\mathrm{k} = 180\,^\circ\mathrm{C/s}$ in jeklo, legirano s Cr in Mo, z $v_\mathrm{k} = 15\,^\circ\mathrm{C/s}$ (enak delež ogljika in približno enak $A_3$). Za legirano jeklo proizvajalec za dveurno popuščanje podaja $500\,^\circ\mathrm{C} \to 38\,\mathrm{HRC}$ in $600\,^\circ\mathrm{C} \to 30\,\mathrm{HRC}$. (a) Določi območje temperature kaljenja. (b) Katero jeklo in katero sredstvo izbereš, da bo gred zakaljena skozi in skozi? (c) Določi temperaturo popuščanja in preveri, ali je dopustna.
+
+**Rešitev:**
+
+1. Jeklo je podevtektoidno ($0{,}40\,\% < 0{,}77\,\%$ C), merilo je $A_3$. Linearna interpolacija: $A_3 = 800 - 20 \cdot \dfrac{0{,}40 - 0{,}35}{0{,}45 - 0{,}35} = 790$, torej $790\,^\circ\mathrm{C}$.
+2. Temperatura kaljenja: $790 + 30 = 820$ in $790 + 50 = 840$, torej $820$ do $840\,^\circ\mathrm{C}$.
+3. Hitrosti v vodi ($\Delta T = 300\,^\circ\mathrm{C}$): površina $\dfrac{300}{1{,}2} = 250\,^\circ\mathrm{C/s}$, jedro $\dfrac{300}{7{,}5} = 40\,^\circ\mathrm{C/s}$.
+4. Hitrosti v olju: površina $\dfrac{300}{4} = 75\,^\circ\mathrm{C/s}$, jedro $\dfrac{300}{15} = 20\,^\circ\mathrm{C/s}$.
+5. Nelegirano jeklo ($v_\mathrm{k} = 180\,^\circ\mathrm{C/s}$): v vodi se zakali le površina ($250 > 180$), jedro ne ($40 < 180$); v olju se ne zakali niti površina ($75 < 180$). Gred ni zakaljena skozi in skozi.
+6. Legirano jeklo ($v_\mathrm{k} = 15\,^\circ\mathrm{C/s}$): v olju sta površina ($75 > 15$) in jedro ($20 > 15$) hitrejša od $v_\mathrm{k}$, zato martenzit nastane po vsem preseku. Zakalilo bi se tudi v vodi, a voda povzroči večje notranje napetosti, zvijanje in razpoke. Izberemo legirano jeklo in olje.
+7. Popuščanje za $34\,\mathrm{HRC}$: $T_\mathrm{p} = 500 + 100 \cdot \dfrac{38 - 34}{38 - 30} = 550$, torej $550\,^\circ\mathrm{C}$.
+8. Za $32\,\mathrm{HRC}$: $T_\mathrm{p} = 500 + 100 \cdot \dfrac{38 - 32}{38 - 30} = 575$, torej $575\,^\circ\mathrm{C}$.
+9. Območje $550$ do $575\,^\circ\mathrm{C}$ je pod $A_1 = 727\,^\circ\mathrm{C}$ in spada v visoko popuščanje ($500$–$650\,^\circ\mathrm{C}$), zato je dopustno.
+10. Odgovor: (a) kalimo z $820$ do $840\,^\circ\mathrm{C}$; (b) legirano jeklo, ohlajeno v olju; (c) popuščamo takoj po kaljenju pri okoli $560\,^\circ\mathrm{C}$. Kaljenje z visokim popuščanjem je poboljšanje.
+
+### Naloga 2
+
+Natančno opiši, kako iz avstenita nastaneta perlit in martenzit. Utemelji, zakaj je martenzit trd, zakaj se pri njegovem nastanku sestava ne spremeni in zakaj se jeklo z $0{,}10\,\%$ C s kaljenjem skoraj ne utrdi.
+
+**Rešitev:**
+
+1. Izhodišče: nad $A_3$ je jeklo avstenit (mreža KPloC), v katerem je raztopljen ves ogljik.
+2. Perlit: pod $A_1$ avstenit prehaja v ferit, ki raztopi največ $0{,}022\,\%$ C. Odvečni ogljik mora z difuzijo iz ferita v cementit $\mathrm{Fe_3C}$. Nastanejo izmenične plasti ferita in cementita. Difuzija potrebuje čas, zato perlit nastane le pri dovolj počasnem ohlajanju; čim počasnejše je, tem debelejše so plasti in mehkejše je jeklo.
+3. Martenzit: pri ohlajanju, hitrejšem od $v_\mathrm{k}$, ogljik ne utegne difundirati. Mreža KPloC se z naglim strižnim premikom preklopi v prostorsko centrirano mrežo, ogljik ostane ujet in mrežo raztegne v eni smeri: mreža je tetragonalna.
+4. Sestava: ker ni difuzije, vsak atom ogljika ostane tam, kjer je bil v avstenitu. Martenzit ima zato enak delež ogljika kot avstenit; spremeni se le kristalna mreža.
+5. Trdota: ujeti atomi ogljika in napetosti v prenasičeni mreži ovirajo gibanje dislokacij. Plastična deformacija poteka z gibanjem dislokacij, zato je martenzit zelo trd, hkrati pa krhek.
+6. Jeklo z $0{,}10\,\%$ C: trdota martenzita raste z deležem ogljika. Pri tako malo ujetega ogljika je mreža le malo napeta in dislokacije so slabo ovirane. Opazna utrditev se začne pri okoli $0{,}3\,\%$ C; takemu jeklu zato pred kaljenjem površino obogatijo z ogljikom (cementiranje).
+
+### Naloga 3
+
+Za vsako trditev utemelji, ali drži. (a) »Varjeni okvir iz konstrukcijskega jekla po varjenju žarimo pri $600\,^\circ\mathrm{C}$, da dobimo drobno zrno.« (b) »Dleto iz jekla z $0{,}8\,\%$ C po kaljenju popuščamo pri $600\,^\circ\mathrm{C}$, da bo čim bolj žilavo.« (c) »Jeklo z $0{,}45\,\%$ C in $A_3 = 780\,^\circ\mathrm{C}$ lahko kalimo s $750\,^\circ\mathrm{C}$, ker je to nad $A_1$.«
+
+**Rešitev:**
+
+1. (a) Ne drži. Pri $600\,^\circ\mathrm{C}$ smo pod $A_1 = 727\,^\circ\mathrm{C}$, zato se jeklo ne pretvori v avstenit in zrno se ne zdrobi. To je žarjenje za odpravo napetosti ($550$–$650\,^\circ\mathrm{C}$), ki je po varjenju res smiselno, a z drugim namenom.
+2. Drobno, enakomerno zrno da normalizacijsko žarjenje: segrevanje na $A_3 + 30$–$50\,^\circ\mathrm{C}$ in ohlajanje na zraku.
+3. (b) Ne drži. $600\,^\circ\mathrm{C}$ je visoko popuščanje, namenjeno strojnim delom (gredi, zobniki, vijaki). Trdota bi padla preveč in rezilo bi se hitro skrhalo. Orodja popuščamo nizko, pri $150$–$250\,^\circ\mathrm{C}$: trdota se zmanjša le malo, krhkost pa dovolj.
+4. (c) Ne drži. Jeklo je podevtektoidno, med $A_1$ in $A_3$ je še delno ferit. Ta se pri kaljenju ne pretvori v martenzit, zato v kosu ostanejo mehke lise.
+5. Pravilno območje je $780 + 30 = 810$ do $780 + 50 = 830$, torej $810$ do $830\,^\circ\mathrm{C}$. Nad $A_1$ zadošča le pri nadevtektoidnih jeklih.
+
 ## Drugače: Na sliki
 
 Predstavljaj si graf: vodoravno čas (v logaritemskem merilu, od $0{,}1\,\mathrm{s}$ do enega dne), navpično temperatura. Vanj inženirji narišejo **diagram izotermne pretvorbe** (TTT). Za evtektoidno jeklo ima obliko črke C, z »nosom« pri okoli $550\,^\circ\mathrm{C}$ in okoli $1\,\mathrm{s}$. Levo od črke C je še avstenit, desno je pretvorba končana.

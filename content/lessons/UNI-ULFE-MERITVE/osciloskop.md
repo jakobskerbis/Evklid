@@ -30,15 +30,26 @@ kjer sta $y$ in $x$ odčitka v razdelkih. Iz periode dobimo frekvenco $f = 1/T$.
 
 Iz napetosti od temena do temena $U_{pp}$ dobimo temensko vrednost $U_p = U_{pp}/2$. Za sinusni signal je efektivna vrednost $U_p/\sqrt{2}$, za druge oblike pa ne: zato sodobni osciloskopi efektivno vrednost računajo iz vzorcev.
 
-```
- |<---- 10 razdelkov ---->|
- +------------------------+
- |  .-.     .-.     .-.   |
- |-*---\---/---\---/---\--|
- |      '-'     '-'     '-|
- +------------------------+
- * prožitev: nivo in naklon
-```
+:::risba graf
+opis: Zaslon osciloskopa z mrežo 10 razdelkov vodoravno in 8 navpično. Na njem sta dve periodi sinusnega signala: ena perioda traja 5 razdelkov, od dna do vrha pa signal sega čez 4,6 razdelka (2,3 razdelka nad in pod sredino zaslona). Vodoravna črtkana črta na sredini je nivo proženja. Točka proženja je na levem robu zaslona, kjer signal prečka nivo navzgor (naraščajoči naklon).
+x: 0 .. 10 | 1 | x (razdelki)
+y: 0 .. 8 | 1 | y (razdelki)
+višina: 260
+f: 4 + 2,3*sin(2*pi*x/5) | modra
+črta: 0; 4 -> 10; 4 | črtkano oranžna
+puščica: 8,1; 6,7 -> 8,1; 4,1 | | | oranžna
+napis: 8,1; 6,8 | nivo proženja | nad | oranžna
+puščica: 1,1; 7,6 -> 0,4; 5,2 | | | oranžna
+napis: 1,15; 7,6 | naraščajoči naklon | desno | oranžna
+točka: 0; 4 | prožitev | pod desno | oranžna
+puščica: 0; 0,8 -> 5; 0,8
+črta: 5; 0,5 -> 5; 1,1
+napis: 2,8; 0,8 | perioda: 5 razdelkov | nad
+črta: 1,25; 6,3 -> 3,75; 6,3 | črtkano siva
+puščica: 3,75; 1,7 -> 3,75; 6,3
+napis: 3,75; 6,4 | 4,6 razdelka | nad
+podnapis: Zaslon z 10 × 8 razdelki; prožitev določata nivo in naklon
+:::
 
 ### Proženje: zakaj slika stoji
 

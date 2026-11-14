@@ -252,26 +252,60 @@ Naj bo $b_n$ število načinov, kako plačaš $n$ evrov s kovanci za $1$ in $2$ 
 
 Tlakovanje poti dolžine $4$; vsako tlakovanje se konča s ploščo $1$ ali $2$:
 
-```
- konec z [1]:      konec z [2]:
- [1][1][1] [1]     [1][1] [ 2 ]
- [ 2 ][1]  [1]     [ 2 ]  [ 2 ]
- [1][ 2 ]  [1]
- 3 = t_3           2 = t_2
-```
+:::risba skica
+opis: Pet tlakovanj poti dolžine 4 v dveh skupinah. Levo so tri tlakovanja, ki se končajo s ploščo 1: 1, 1, 1 in 1; 2, 1 in 1; 1, 2 in 1. Pod njimi piše 3 = t₃. Desno sta dve tlakovanji, ki se končata s ploščo 2: 1, 1 in 2; 2 in 2. Pod njima piše 2 = t₂. Zadnja plošča je v vsakem tlakovanju poudarjena.
+območje: -0,5; 0,4 .. 10,5; 6,4
+napis: 2; 5,8 | konec s ploščo 1 | sredina
+pravokotnik: 0; 4,4 .. 1; 5,2
+pravokotnik: 1; 4,4 .. 2; 5,2
+pravokotnik: 2; 4,4 .. 3; 5,2
+pravokotnik: 3; 4,4 .. 4; 5,2 | oranžna debelo
+napis: 0,5; 4,8 | 1 | sredina
+napis: 1,5; 4,8 | 1 | sredina
+napis: 2,5; 4,8 | 1 | sredina
+napis: 3,5; 4,8 | 1 | sredina
+pravokotnik: 0; 3,2 .. 2; 4
+pravokotnik: 2; 3,2 .. 3; 4
+pravokotnik: 3; 3,2 .. 4; 4 | oranžna debelo
+napis: 1; 3,6 | 2 | sredina
+napis: 2,5; 3,6 | 1 | sredina
+napis: 3,5; 3,6 | 1 | sredina
+pravokotnik: 0; 2 .. 1; 2,8
+pravokotnik: 1; 2 .. 3; 2,8
+pravokotnik: 3; 2 .. 4; 2,8 | oranžna debelo
+napis: 0,5; 2,4 | 1 | sredina
+napis: 2; 2,4 | 2 | sredina
+napis: 3,5; 2,4 | 1 | sredina
+napis: 2; 1 | 3 = t_3 | sredina
+napis: 8; 5,8 | konec s ploščo 2 | sredina
+pravokotnik: 6; 4,4 .. 7; 5,2
+pravokotnik: 7; 4,4 .. 8; 5,2
+pravokotnik: 8; 4,4 .. 10; 5,2 | oranžna debelo
+napis: 6,5; 4,8 | 1 | sredina
+napis: 7,5; 4,8 | 1 | sredina
+napis: 9; 4,8 | 2 | sredina
+pravokotnik: 6; 3,2 .. 8; 4
+pravokotnik: 8; 3,2 .. 10; 4 | oranžna debelo
+napis: 7; 3,6 | 2 | sredina
+napis: 9; 3,6 | 2 | sredina
+napis: 8; 1 | 2 = t_2 | sredina
+:::
 
 Skupaj $t_4 = 3 + 2 = 5$. Leva skupina so vsa tlakovanja dolžine $3$ z dodano ploščo $1$, desna vsa tlakovanja dolžine $2$ z dodano ploščo $2$; nobeno tlakovanje ni šteto dvakrat.
 
 Model ogljika iz Primera 1 kot pot proti negibni točki:
 
-```
- a_n
- 500 - - - - - - - - - - - -
- 400            ___...--
- 333      __..--
- 250 __.--
-     0     20    46     n
-```
+:::risba graf
+opis: Graf presežka aₙ = 500 − 250 · 0,98ⁿ za n od 0 do 60. Krivulja se začne pri 250 (n = 0), gre skozi približno 333 pri n = 20 in približno 401 pri n = 46 ter se vse počasneje približuje črtkani vodoravni črti pri 500, ki je negibna točka.
+x: 0 .. 60 | 10 | n
+y: 200 .. 550 | 50 | a_n
+f: 500 - 250*0,98^x
+črta: 0; 500 -> 60; 500 | črtkano siva
+napis: 30; 500 | negibna točka 500 | nad
+točka: 0; 250 | 250 | pod desno
+točka: 20; 333,1 | 333 | pod desno
+točka: 46; 401,3 | 401 | pod desno
+:::
 
 Razlika do $500$ se vsako leto pomnoži z $0{,}98$, zato se presežek negibni točki približuje vse počasneje.
 

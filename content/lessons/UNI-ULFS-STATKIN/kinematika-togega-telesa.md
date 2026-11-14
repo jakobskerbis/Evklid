@@ -246,28 +246,42 @@ Kolo s polmerom $0{,}50\,\mathrm{m}$ se brez spodrsavanja kotali v desno; v opaz
 
 Lestev ob steni; $P$ je trenutni pol, pravokotnici na hitrosti se sekata v njem:
 
-```
- stena
-  |B . . . . . P
-  | \          .
-  |  \         .
-  |   \ lestev .
-  |    \       .
-  |     \      .
-  |      \     .
-  +-------A------- tla
-          -> vA
-```
+:::risba skica
+opis: Lestev AB, prislonjena ob navpično steno. Spodnji konec A je na tleh 3,83 m od stene, zgornji konec B na steni 3,21 m nad tlemi. Hitrost A kaže vodoravno stran od stene, hitrost B navpično navzdol. Črtkana vodoravnica skozi B in črtkana navpičnica skozi A se sekata v trenutnem polu P, ki je nasprotno oglišče pravokotnika nad vogalom.
+območje: -1,2; -0,9 .. 6; 4,4
+črta: 0; 0 -> 0; 4,2 | debelo
+črta: 0; 0 -> 5,8; 0 | debelo
+napis: 0; 4,2 | stena | levo
+napis: 5,5; 0 | tla | nad
+črta: 3,83; 0 -> 0; 3,21 | modra debelo
+napis: 1,915; 1,605 | lestev | levo | modra
+črta: 0; 3,21 -> 3,83; 3,21 | črtkano
+črta: 3,83; 0 -> 3,83; 3,21 | črtkano
+puščica: 3,83; 0 -> 5,03; 0 | v_A | pod | oranžna
+puščica: 0; 3,21 -> 0; 1,78 | v_B | levo | oranžna
+točka: 3,83; 0 | A | pod
+točka: 0; 3,21 | B | levo
+točka: 3,83; 3,21 | P | desno | rdeča
+:::
 
-Hitrost $B$ je navpična, zato je pravokotnica nanjo vodoravna (pikčasta črta skozi $B$). Hitrost $A$ je vodoravna, pravokotnica navpična (skozi $A$). Hitrost vsake točke lestve je pravokotna na zveznico s $P$ in sorazmerna z razdaljo do $P$. Sredina je presečišče diagonal pravokotnika, zato je od $P$ in od vogala oddaljena $L/2$. Ker je njena razdalja do vogala ves čas $L/2$, sredina lestve opiše četrtinko kroga okoli vogala; njena hitrost je pravokotna na zveznico s $P$.
+Hitrost $B$ je navpična, zato je pravokotnica nanjo vodoravna (črtkana črta skozi $B$). Hitrost $A$ je vodoravna, pravokotnica navpična (skozi $A$). Hitrost vsake točke lestve je pravokotna na zveznico s $P$ in sorazmerna z razdaljo do $P$. Sredina je presečišče diagonal pravokotnika, zato je od $P$ in od vogala oddaljena $L/2$. Ker je njena razdalja do vogala ves čas $L/2$, sredina lestve opiše četrtinko kroga okoli vogala; njena hitrost je pravokotna na zveznico s $P$.
 
 Kolo: hitrosti točk navpičnega premera rastejo linearno od pola navzgor:
 
-```
- vrh   ------->  2v
- os    --->       v
- tla   .          0  (pol)
-```
+:::risba skica
+opis: Kolo s polmerom R na vodoravnih tleh. Na navpičnem premeru so narisane vodoravne hitrosti: v stični točki s tlemi (pol) je hitrost 0, v osi v, na vrhu 2v. Črtkana premica od pola skozi konici obeh puščic kaže, da hitrost raste linearno z višino nad polom.
+območje: -1,8; -0,6 .. 3,2; 2,5
+črta: -1,6; 0 -> 3; 0 | debelo
+krog: 0; 1 | 1
+črta: 0; 0 -> 0; 2 | siva
+puščica: 0; 2 -> 2; 2 | 2v | nad | oranžna
+puščica: 0; 1 -> 1; 1 | v | nad | oranžna
+črta: 0; 0 -> 2; 2 | črtkano
+točka: 0; 2 | vrh | nad levo
+točka: 0; 1 | os | levo
+točka: 0; 0 | pol, 0 | pod | rdeča
+napis: 2,6; 0 | tla | nad
+:::
 
 ## Drugače: Uporaba v stroki
 

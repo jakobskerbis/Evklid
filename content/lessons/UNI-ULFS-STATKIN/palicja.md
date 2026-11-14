@@ -118,19 +118,45 @@ vozlišče $C$: $\sum F_x = 0$, $\sum F_y = 0$; smer palice $(x_j - x_i;\ y_j - 
 
 Prattovo paličje ima spodnja vozlišča $L_0(0; 0)$, $L_1(3; 0)$, $L_2(6; 0)$, $L_3(9; 0)$, $L_4(12; 0)$ in zgornja $U_1(3; 4)$, $U_2(6; 4)$, $U_3(9; 4)$ (v metrih). Palice: spodnji pas $L_0L_1$, $L_1L_2$, $L_2L_3$, $L_3L_4$; zgornji pas $U_1U_2$, $U_2U_3$; krajni palici $L_0U_1$ in $U_3L_4$; vertikale $U_1L_1$, $U_2L_2$, $U_3L_3$; diagonali $U_1L_2$ in $U_3L_2$. V $L_0$ je nepomična, v $L_4$ pomična podpora. V vozliščih $L_1$, $L_2$, $L_3$ visi po $12\,\mathrm{kN}$. Preveri statično določenost, poišči ničelno palico in izračunaj sile v levi polovici.
 
-```
-        U1      U2      U3
-        o-------o-------o
-      / | \     |     / | \
-    /   |   \   |   /   |   \
-  /     |     \ | /     |     \
-o-------o-------o-------o-------o
-L0      L1      L2      L3      L4
-/\      v       v       v       ()
-       12 kN   12 kN   12 kN
-```
+:::risba skica
+opis: Prattovo paličje. Spodnji pas ima vozlišča L0, L1, L2, L3, L4 na razdaljah po 3 m, zgornji pas vozlišča U1, U2, U3 na višini 4 m nad L1, L2, L3. Krajni poševni palici sta L0U1 in U3L4, vertikale U1L1, U2L2, U3L3, diagonali U1L2 in U3L2 se stikata v L2. V L0 je nepomična podpora (trikotnik na šrafirani podlagi), v L4 pomična (trikotnik na valjčkih). V L1, L2 in L3 visi breme 12 kN navzdol.
+območje: -1,9; -3,2 .. 13,9; 5,1
+črta: 0; 0 -> 12; 0 | debelo
+črta: 3; 4 -> 9; 4 | debelo
+črta: 0; 0 -> 3; 4 | debelo
+črta: 9; 4 -> 12; 0 | debelo
+črta: 3; 4 -> 3; 0
+črta: 6; 4 -> 6; 0
+črta: 9; 4 -> 9; 0
+črta: 3; 4 -> 6; 0
+črta: 9; 4 -> 6; 0
+lik: 0; 0 -> -0,55; -0,9 -> 0,55; -0,9
+črta: -0,9; -0,9 -> 0,9; -0,9 | debelo
+črta: -0,6; -0,9 -> -0,9; -1,3 | siva
+črta: -0,1; -0,9 -> -0,4; -1,3 | siva
+črta: 0,4; -0,9 -> 0,1; -1,3 | siva
+črta: 0,9; -0,9 -> 0,6; -1,3 | siva
+lik: 12; 0 -> 11,45; -0,7 -> 12,55; -0,7
+krog: 11,7; -0,9 | 0,2
+krog: 12,3; -0,9 | 0,2
+črta: 11,1; -1,1 -> 12,9; -1,1 | debelo
+puščica: 3; 0 -> 3; -1,7 | | | oranžna
+puščica: 6; 0 -> 6; -1,7 | | | oranžna
+puščica: 9; 0 -> 9; -1,7 | | | oranžna
+napis: 3; -1,8 | 12 kN | pod | oranžna
+napis: 6; -1,8 | 12 kN | pod | oranžna
+napis: 9; -1,8 | 12 kN | pod | oranžna
+točka: 0; 0 | L_0 | levo
+točka: 3; 0 | L_1 | pod desno
+točka: 6; 0 | L_2 | pod desno
+točka: 9; 0 | L_3 | pod desno
+točka: 12; 0 | L_4 | desno
+točka: 3; 4 | U_1 | nad levo
+točka: 6; 4 | U_2 | nad levo
+točka: 9; 4 | U_3 | nad desno
+:::
 
-Polja so široka $3\,\mathrm{m}$, visoka $4\,\mathrm{m}$; $/\backslash$ je nepomična, $()$ pomična podpora, bremena visijo v spodnjih vozliščih.
+Polja so široka $3\,\mathrm{m}$, visoka $4\,\mathrm{m}$; trikotnik na šrafirani podlagi je nepomična, trikotnik na valjčkih pomična podpora, bremena visijo v spodnjih vozliščih.
 
 **Podatki:** koordinate vozlišč in palice zgoraj; $F = 12\,\mathrm{kN}$ navzdol v $L_1$, $L_2$, $L_3$; podpori $L_0$ (nepomična), $L_4$ (pomična)
 **Iščemo:** $2v = p + r$?, ničelne palice, $S_{L_0U_1}$, $S_{L_0L_1}$, $S_{U_1L_1}$, $S_{L_1L_2}$, $S_{U_1L_2}$, $S_{U_1U_2}$

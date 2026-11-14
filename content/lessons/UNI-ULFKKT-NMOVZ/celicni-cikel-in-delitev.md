@@ -238,19 +238,43 @@ Materin kromosom nariši z debelo, očetovega s tanko črto; po S fazi je vsak �
 
 Mitoza, v metafazi:
 
-```
-   pol  ←   X (debel)   →  pol
-   pol  ←   X (tanek)   →  pol
-```
+:::risba skica
+opis: Metafaza mitoze. Levo in desno sta pola vretena, na sredini je navpična črtkana ekvatorialna ravnina. Na njej sta eden nad drugim dva kromosoma v obliki črke X: zgornji, materin, je narisan debelo, spodnji, očetov, tanko. Od vsakega kromosoma kažeta puščici na oba pola: sestrski kromatidi gresta vsaka na svoj pol.
+območje: 0; 0 .. 12; 6
+črta: 6; 0,95 -> 6; 5,05 | siva črtkano
+točka: 1; 3 | pol | levo
+točka: 11; 3 | pol | desno
+črta: 5,6; 3,7 -> 6,4; 4,9 | modra debelo
+črta: 5,6; 4,9 -> 6,4; 3,7 | modra debelo
+črta: 5,6; 1,1 -> 6,4; 2,3 | oranžna
+črta: 5,6; 2,3 -> 6,4; 1,1 | oranžna
+puščica: 5,3; 4,2 -> 1,4; 3,2
+puščica: 6,7; 4,2 -> 10,6; 3,2
+puščica: 5,3; 1,8 -> 1,4; 2,8
+puščica: 6,7; 1,8 -> 10,6; 2,8
+napis: 6; 5,1 | materin (debel) | nad | modra
+napis: 6; 0,9 | očetov (tanek) | pod | oranžna
+:::
 
 Vsak pol dobi eno debelo in eno tanko črto.
 
 Mejoza I, v metafazi I:
 
-```
-   pol  ←   X (debel)
-            X (tanek)   →  pol
-```
+:::risba skica
+opis: Metafaza I mejoze. Levo in desno sta pola vretena, na sredini je navpična črtkana ekvatorialna ravnina. Homologna kromosoma v obliki črke X ležita drug ob drugem, vsak na svoji strani ravnine: debeli materin levo, tanki očetov desno. Od materinega kaže ena puščica na levi pol, od očetovega ena puščica na desni pol: vsak kromosom gre cel na svoj pol.
+območje: 0; 0 .. 12; 6
+črta: 6; 0,4 -> 6; 5,6 | siva črtkano
+točka: 1; 3 | pol | levo
+točka: 11; 3 | pol | desno
+črta: 4,8; 2,4 -> 5,6; 3,6 | modra debelo
+črta: 4,8; 3,6 -> 5,6; 2,4 | modra debelo
+črta: 6,4; 2,4 -> 7,2; 3,6 | oranžna
+črta: 6,4; 3,6 -> 7,2; 2,4 | oranžna
+puščica: 4,5; 3 -> 1,4; 3
+puščica: 7,5; 3 -> 10,6; 3
+napis: 5,2; 3,8 | materin (debel) | nad levo | modra
+napis: 6,8; 2,2 | očetov (tanek) | pod desno | oranžna
+:::
 
 Na en pol gre cel debel »X«, na drugega cel tanek; v mejozi II se »X« razpre kot v mitozi.
 

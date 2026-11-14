@@ -149,6 +149,63 @@ $6q = 60$, torej $q = 10$ količin.
 - Dirichletovo načelo: $n$ predmetov v $k$ predalih, neki predal ima vsaj $\left\lceil \frac{n}{k} \right\rceil$ predmetov; za ponovitev mora biti $n > k$.
 - Načela povedo, koliko je možnosti ali da nekaj obstaja, brez izpisovanja vseh primerov.
 
+## Za izpit
+
+Znati moraš povedati:
+- načelo vsote s pogojem disjunktnosti: za disjunktni končni množici velja $|A \cup B| = |A| + |B|$, in kaj gre narobe, če se množici prekrivata;
+- načelo produkta: $|A \times B| = |A| \cdot |B|$, s pogojem, da ima drugi korak pri *vsakem* izidu prvega enako število izidov; posledico, da je zaporedij dolžine $k$ iz $n$ simbolov $n^k$;
+- dvojno preštevanje: isto množico parov preštejemo na dva načina in izenačimo; izpeljavo enakosti $\sum_v \deg v = 2|E|$ in sklep, da je vsota stopenj soda;
+- Dirichletovo načelo in njegovo posplošitev: pri $n$ predmetih v $k$ predalih ima neki predal vsaj $\left\lceil \frac{n}{k} \right\rceil$ predmetov, z dokazom s protislovjem;
+- da Dirichletovo načelo zagotovi obstoj predala, ne pove pa, kateri je, in da pri $n = k$ ponovitve ne zagotovi.
+
+### Naloga 1
+
+Vsaka vremenska postaja dobi oznako iz $5$ znakov. Oznaka je bodisi tipa A: najprej $2$ črki, nato $3$ števke, bodisi tipa B: najprej $3$ črke, nato $2$ števki. Črke so iz abecede s $25$ črkami, števk je $10$. (a) Koliko je vseh oznak? (b) Koliko je oznak, v katerih se noben znak ne ponovi? (c) Najmanj koliko postaj mora biti v mreži, da se oznake zagotovo vsaj štirih postaj začnejo z isto črko in končajo z isto števko?
+
+**Rešitev:**
+
+1. Tip A po načelu produkta: $25 \cdot 25 \cdot 10 \cdot 10 \cdot 10 = 625\,000$ oznak.
+2. Tip B: $25 \cdot 25 \cdot 25 \cdot 10 \cdot 10 = 1\,562\,500$ oznak.
+3. Tipa sta disjunktna, ker je tretji znak pri tipu A števka, pri tipu B pa črka. Po načelu vsote je vseh oznak $625\,000 + 1\,562\,500 = 2\,187\,500$.
+4. Brez ponovitev se črka ne more ponoviti s števko, zato črke in števke izbiramo ločeno. Pri vsakem naslednjem znaku iste vrste je ena možnost manj, ne glede na to, kateri znaki so bili izbrani prej. Tip A: $25 \cdot 24 \cdot 10 \cdot 9 \cdot 8 = 432\,000$.
+5. Tip B: $25 \cdot 24 \cdot 23 \cdot 10 \cdot 9 = 1\,242\,000$.
+6. Skupaj brez ponovitev: $432\,000 + 1\,242\,000 = 1\,674\,000$ oznak.
+7. Za del (c) so postaje predmeti, predali pa pari (prva črka, zadnja števka). Pri obeh tipih je prvi znak črka in zadnji števka, zato je predalov $25 \cdot 10 = 250$.
+8. Če so v vsakem predalu največ $3$ postaje, je postaj največ $250 \cdot 3 = 750$. Tako razporeditev res lahko sestavimo, ker je v vsakem predalu dovolj različnih oznak, zato $750$ postaj še ne zadošča.
+9. Pri $751$ postajah so v nekem predalu vsaj $\left\lceil \frac{751}{250} \right\rceil = 4$ postaje.
+10. Odgovor: (a) $2\,187\,500$ oznak, (b) $1\,674\,000$ oznak, (c) najmanj $751$ postaj.
+
+### Naloga 2
+
+V mreži je $20$ vremenskih postaj, povezanih z $42$ radijskimi zvezami. Vsaka zveza povezuje dve različni postaji, med dvema postajama je največ ena zveza. Vsaka postaja ima natanko $3$ ali natanko $5$ zvez. (a) Koliko postaj ima $3$ zveze in koliko $5$? (b) Utemelji, ali lahko obstaja mreža z $21$ postajami, v kateri ima vsaka postaja $3$ ali $5$ zvez. (c) Dokaži, da imata v vsaki mreži z vsaj dvema postajama, ki ustreza pogojem iz drugega stavka, neki dve postaji enako število zvez.
+
+**Rešitev:**
+
+1. Naj bo $a$ število postaj s $3$ zvezami in $b$ število postaj s $5$ zvezami. Velja $a + b = 20$.
+2. Dvojno preštevanje parov (postaja, zveza): vsota stopenj je $3a + 5b$, po drugi strani pa $2|E| = 2 \cdot 42 = 84$. Torej $3a + 5b = 84$.
+3. Vstavimo $a = 20 - b$: $60 + 2b = 84$, zato $b = 12$ in $a = 8$.
+4. Preizkus: $3 \cdot 8 + 5 \cdot 12 = 84$.
+5. Del (b): pri $21$ postajah bi bila vsota stopenj vsota $21$ lihih števil, torej liha. Vsota stopenj je vedno $2|E|$, torej soda. Taka mreža ne obstaja.
+6. Del (c): naj ima mreža $m \ge 2$ postaj. Stopnja vsake postaje je eno od števil $0, 1, \dots, m - 1$, ker je postaja povezana z največ $m - 1$ drugimi.
+7. Stopnji $0$ in $m - 1$ se ne moreta pojaviti hkrati: postaja stopnje $m - 1$ je povezana z vsemi drugimi, tudi s postajo, ki naj bi bila brez zvez.
+8. Med stopnjami postaj je zato največ $m - 1$ različnih vrednosti. Postaje so predmeti, vrednosti stopenj predali; ker je $m > m - 1$, imata po Dirichletovem načelu dve postaji enako stopnjo.
+9. Odgovor: (a) $8$ postaj ima $3$ zveze, $12$ postaj jih ima $5$; (b) ne, ker bi bila vsota stopenj liha; (c) trditev velja za vsako tako mrežo.
+
+### Naloga 3
+
+Natančno navedi posplošeno Dirichletovo načelo in ga dokaži. Nato utemelji, da meje v načelu ni mogoče izboljšati, in izpelji, najmanj koliko predmetov potrebuješ, da je v nekem od $k$ predalov zagotovo vsaj $r$ predmetov.
+
+**Rešitev:**
+
+1. Izrek: če $n$ predmetov razporedimo v $k$ predalov ($n$ in $k$ sta naravni števili), je v nekem predalu vsaj $\left\lceil \frac{n}{k} \right\rceil$ predmetov.
+2. Dokaz s protislovjem: denimo, da je v vsakem predalu največ $\left\lceil \frac{n}{k} \right\rceil - 1$ predmetov.
+3. Za zgornji celi del velja $\left\lceil \frac{n}{k} \right\rceil < \frac{n}{k} + 1$, torej $\left\lceil \frac{n}{k} \right\rceil - 1 < \frac{n}{k}$.
+4. Vseh predmetov bi bilo tedaj največ $k\left(\left\lceil \frac{n}{k} \right\rceil - 1\right) < k \cdot \frac{n}{k} = n$. To je v protislovju s tem, da je predmetov $n$. Izrek je dokazan.
+5. Meje ni mogoče izboljšati: predmete delimo po vrsti v predale $1, 2, \dots, k, 1, 2, \dots$ Števili predmetov v dveh predalih se tedaj razlikujeta za največ $1$, zato ima vsak predal $\left\lfloor \frac{n}{k} \right\rfloor$ ali $\left\lceil \frac{n}{k} \right\rceil$ predmetov. Noben predal jih nima več kot $\left\lceil \frac{n}{k} \right\rceil$, torej večjega števila ne moremo zagotoviti.
+6. Najmanjši $n$ za $r$ predmetov v nekem predalu: pri $n = k(r - 1)$ lahko damo v vsak predal natanko $r - 1$ predmetov, zato to še ne zadošča.
+7. Pri $n = k(r - 1) + 1$ je $\frac{n}{k} = r - 1 + \frac{1}{k}$, zato $\left\lceil \frac{n}{k} \right\rceil = r$ in po izreku ima neki predal vsaj $r$ predmetov.
+8. Odgovor: potrebuješ najmanj $k(r - 1) + 1$ predmetov. Za $k = 3$ simbole in $r = 4$ je to $3 \cdot 3 + 1 = 10$ dni, kot v razlagi.
+
 ## Drugače: Korak za korakom s številkami
 
 Vzemimo nalogo: koliko gesel za dostop do vremenske postaje ima $2$ ali $3$ znake, kjer je vsak znak ena od $10$ števk?

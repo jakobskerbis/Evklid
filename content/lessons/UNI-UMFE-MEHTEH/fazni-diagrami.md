@@ -100,20 +100,36 @@ Ključne točke:
 
 **Definicija.** *Evtektoidna reakcija* je izotermna pretvorba ene **trdne** faze v dve drugi trdni fazi. Od evtektične se loči le po tem, da je izhodna faza trdna.
 
-Meja med jeklom in litim železom je $2{,}11\,\%$ C. Jeklo z manj kot $0{,}77\,\%$ C je **podevtektoidno**, z več **nadevtektoidno**. Skica področja jekel (ni v merilu):
+Meja med jeklom in litim železom je $2{,}11\,\%$ C. Jeklo z manj kot $0{,}77\,\%$ C je **podevtektoidno**, z več **nadevtektoidno**. Skica področja jekel (meje so poenostavljene v ravne črte):
 
-```
- T/°C
- 1147 +                /
-      |      γ        /
-  912 +.             / γ+Fe3C
-      |  `.         /
-      | α+γ `.     /
-  727 +-------S---------------
-      |  α+P  |    P+Fe3C
-      +-------+-------------->
-      0     0,77        2,11 %C
-```
+:::risba graf
+opis: Področje jekel v diagramu železo-cementit. Vodoravna os je masni delež ogljika od 0 do 2,4 odstotka, navpična temperatura od 600 do 1200 stopinj Celzija. Črta A₃ pada od 912 stopinj pri 0 odstotkih do točke S pri 0,77 odstotka in 727 stopinjah. Vodoravnica A₁ poteka pri 727 stopinjah. Črta A cm se od točke S dviga do 2,11 odstotka pri 1147 stopinjah. Nad A₃ in A cm je avstenit γ, med A₃ in A₁ področje α + γ, desno od A cm področje γ + Fe₃C. Pod A₁ je levo od 0,77 odstotka α + P, desno P + Fe₃C.
+x: 0 .. 2,4 | 0,5 | % C
+y: 600 .. 1200 | 100 | T/°C
+oznake: ne
+oznakax: 0 | 0
+oznakax: 0,77 | 0,77
+oznakax: 2,11 | 2,11
+oznakay: 727 | 727
+oznakay: 912 | 912
+oznakay: 1147 | 1147
+črta: 0; 912 -> 0,77; 727 | modra debelo
+črta: 0; 727 -> 2,4; 727 | oranžna debelo
+črta: 0,77; 727 -> 2,11; 1147 | zelena debelo
+črta: 0,77; 600 -> 0,77; 727 | siva črtkano
+črta: 2,11; 600 -> 2,11; 1147 | siva črtkano
+črta: 0; 1147 -> 2,11; 1147 | siva črtkano
+točka: 0,77; 727 | S | pod desno
+napis: 0,28; 880 | A_3 | desno | modra
+napis: 1,9; 727 | A_1 | nad | oranžna
+napis: 1,35; 960 | A_{cm} | levo | zelena
+napis: 0,8; 1050 | γ | sredina
+napis: 0,22; 770 | α + γ | sredina
+napis: 1,75; 900 | γ + Fe_3C | sredina
+napis: 0,38; 660 | α + P | sredina
+napis: 1,45; 660 | P + Fe_3C | sredina
+podnapis: Področje jekel v diagramu Fe-Fe₃C; meje so poenostavljene v ravne črte
+:::
 
 Črta od $912\,^\circ\mathrm{C}$ do točke S je $A_3$, vodoravnica pri $727\,^\circ\mathrm{C}$ je $A_1$, črta od S navzgor proti $2{,}11\,\%$ pa $A_\mathrm{cm}$. P pomeni perlit.
 

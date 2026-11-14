@@ -227,17 +227,30 @@ Natančno navedi in dokaži izrek o enoličnosti komplementa v omejeni distribut
 
 Hassejev diagram $\mathcal P(\{a, b, c\})$ je kocka:
 
-```
-       {a,b,c}
-      /   |   \
-  {a,b} {a,c} {b,c}
-    | \  / \  / |
-    |  \/   \/  |
-    |  /\   /\  |
-   {a}   {b}   {c}
-      \   |   /
-         { }
-```
+:::risba skica
+opis: Hassejev diagram potenčne množice {a, b, c} v štirih ravneh. Spodaj je prazna množica, nad njo {a}, {b}, {c}, nad njimi {a, b}, {a, c}, {b, c}, na vrhu {a, b, c}. Prazna množica je povezana z vsemi tremi enoelementnimi, {a} z {a, b} in {a, c}, {b} z {a, b} in {b, c}, {c} z {a, c} in {b, c}, vse tri dvoelementne pa z {a, b, c}. Povezav je dvanajst, kot robov kocke.
+območje: -1,4; -0,9 .. 9,4; 6,9
+črta: 4; 0 -> 1; 2
+črta: 4; 0 -> 4; 2
+črta: 4; 0 -> 7; 2
+črta: 1; 2 -> 1; 4
+črta: 1; 2 -> 4; 4
+črta: 4; 2 -> 1; 4
+črta: 4; 2 -> 7; 4
+črta: 7; 2 -> 4; 4
+črta: 7; 2 -> 7; 4
+črta: 1; 4 -> 4; 6
+črta: 4; 4 -> 4; 6
+črta: 7; 4 -> 4; 6
+točka: 4; 0 | { } | pod
+točka: 1; 2 | {a} | levo
+točka: 4; 2 | {b} | pod desno
+točka: 7; 2 | {c} | desno
+točka: 1; 4 | {a, b} | levo
+točka: 4; 4 | {a, c} | nad desno
+točka: 7; 4 | {b, c} | desno
+točka: 4; 6 | {a, b, c} | nad
+:::
 
 Vsaka enoelementna množica je povezana z dvema dvoelementnima, ki jo vsebujeta ($\{a\}$ z $\{a, b\}$ in $\{a, c\}$). Vsaka raven ima množice z enakim številom elementov. Supremum dveh točk poiščeš tako, da greš iz obeh navzgor do prve skupne točke; infimum navzdol. Komplement je točka, »zrcalna« čez središče kocke: $\{a\}$ in $\{b, c\}$. Diagram $D_{30}$ je ista kocka, le z oznakami $1$, $2$, $3$, $5$, $6$, $10$, $15$, $30$. Diagram $D_{12}$ pa je pravokotnik $3 \times 2$ točk, ki nima te simetrije; zato komplementi manjkajo.
 

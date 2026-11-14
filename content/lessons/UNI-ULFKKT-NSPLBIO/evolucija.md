@@ -64,14 +64,28 @@ V mejozi I se homologni kromosomi združijo v pare. Pri treh kopijah vsakega kro
 
 **Filogenija.** Ker vse vrste izvirajo iz skupnih prednikov, njihovo sorodnost narišemo kot **filogenetsko drevo**. Vrhovi vej so današnje vrste. Vsako **vozlišče** je skupni prednik vrst, ki izhajajo iz njega. Koren je zadnji skupni prednik vseh vrst na drevesu (najstarejše vozlišče).
 
-```
-        ┌──── zebra
-     ┌──┤
-  ┌──┤  └──── osel
-  │  └─────── konj
-──┤
-  └────────── nosorog
-```
+:::risba skica
+opis: Filogenetsko drevo štirih vrst, koren je levo, vrhovi vej desno. Iz korena gre ena veja naravnost do nosoroga, druga do vozlišča, iz katerega izhajata konj in še eno vozlišče. Iz tega najmlajšega vozlišča izhajata zebra in osel. Dolžine vej niso v merilu.
+območje: 0; 0 .. 10; 5
+črta: 1; 1,875 -> 2; 1,875
+črta: 2; 1 -> 2; 2,75
+črta: 2; 1 -> 7; 1
+črta: 2; 2,75 -> 3,5; 2,75
+črta: 3,5; 2 -> 3,5; 3,5
+črta: 3,5; 2 -> 7; 2
+črta: 3,5; 3,5 -> 5; 3,5
+črta: 5; 3 -> 5; 4
+črta: 5; 3 -> 7; 3
+črta: 5; 4 -> 7; 4
+točka: 2; 1,875 | koren | nad levo
+točka: 3,5; 2,75 | | nad levo
+točka: 5; 3,5 | | nad levo
+napis: 7,2; 4 | zebra | desno
+napis: 7,2; 3 | osel | desno
+napis: 7,2; 2 | konj | desno
+napis: 7,2; 1 | nosorog | desno
+podnapis: Vozlišča (pike) so skupni predniki; zebra in osel imata najmlajšega.
+:::
 
 Sorodnost bereš po vozliščih, ne po vrstnem redu vrhov. Zebra in osel imata najmlajšega skupnega prednika, zato sta si najbližja. Vejo pri vozlišču lahko zasukaš (osla narišeš nad zebro) in drevo ostane isto. Skupina, ki obsega prednika in *vse* njegove potomce, je **klad** (monofiletska skupina). Skupina s prednikom in le delom potomcev je **parafiletska** (plazilci brez ptic).
 

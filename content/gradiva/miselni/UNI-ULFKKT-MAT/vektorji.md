@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vektor v koordinatah
+  - $\overrightarrow{AB}$: konec minus začetek
+  - $|\vec{a}| = \sqrt{a_1^2 + a_2^2 + a_3^2}$
+- Skalarni produkt
+  - $\vec{a} \cdot \vec{b} = a_1b_1 + a_2b_2 + a_3b_3 = |\vec{a}||\vec{b}|\cos\varphi$
+  - pravokotnost: $\vec{a} \cdot \vec{b} = 0$
+  - pazi: rezultat je število, ne vektor
+- Vektorski produkt
+  - pravokoten na oba, desna roka
+  - $|\vec{a} \times \vec{b}| = |\vec{a}||\vec{b}|\sin\varphi$: ploščina paralelograma
+  - $\vec{b} \times \vec{a} = -\vec{a} \times \vec{b}$, trikotnik polovica
+- Mešani produkt
+  - $(\vec{a}, \vec{b}, \vec{c}) = (\vec{a} \times \vec{b}) \cdot \vec{c}$: determinanta
+  - paralelepiped $|(\vec{a}, \vec{b}, \vec{c})|$, tetraeder $\frac{1}{6}$
+  - koplanarnost: $(\vec{a}, \vec{b}, \vec{c}) = 0$
+- Premica
+  - $\vec{r} = \vec{r}_0 + t\vec{s}$, $t \in \mathbb{R}$
+  - skozi $A$, $B$: smer $\overrightarrow{AB}$
+- Ravnina
+  - $ax + by + cz = d$, normala $(a, b, c)$
+  - tri točke: $\vec{n} = \overrightarrow{AB} \times \overrightarrow{AC}$
+  - razdalja $\frac{|ax_1 + by_1 + cz_1 - d|}{\sqrt{a^2 + b^2 + c^2}}$
+- Lega premic
+  - vzporedni: $\vec{s}_1 \times \vec{s}_2 = \vec{0}$
+  - sekata se: $(\vec{s}_1, \vec{s}_2, \overrightarrow{T_1T_2}) = 0$, sicer mimobežni
+  - mimobežnici: $d = \frac{|(\vec{s}_1, \vec{s}_2, \overrightarrow{T_1T_2})|}{|\vec{s}_1 \times \vec{s}_2|}$

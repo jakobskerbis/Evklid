@@ -239,20 +239,32 @@ Natančno navedi Bohrova postulata. Iz njiju izpelji polmere tirov in energije n
 
 Energijski nivoji vodika (ne v merilu):
 
-```
-  0,00 eV  ----------------------  n = ∞  (ionizacija)
- -0,85 eV  ----------------------  n = 4
-                        |
- -1,51 eV  ----------------------  n = 3
-               |        |
-               | 656 nm | 486 nm (s 4 na 2)
-               v        v
- -3,40 eV  ----------------------  n = 2   ← Balmerjeva serija
-               |
-               | 122 nm (Lyman α)
-               v
--13,6 eV   ----------------------  n = 1   ← osnovno stanje
-```
+:::risba skica
+opis: Energijski nivoji vodika kot vodoravne črte, od spodaj navzgor: n = 1 pri −13,6 eV (osnovno stanje), n = 2 pri −3,40 eV, n = 3 pri −1,51 eV, n = 4 pri −0,85 eV in n = ∞ pri 0 eV (ionizacija). Puščice navzdol kažejo prehode: s 3 na 2 izseva 656 nm, s 4 na 2 izseva 486 nm (oba Balmerjeva serija), z 2 na 1 izseva 122 nm (Lyman alfa). Razmiki niso v merilu.
+območje: 0; -4,6 .. 12; 8,8
+črta: 2,9; 7,6 -> 7,6; 7,6 | črtkano
+črta: 2,9; 6,6 -> 7,6; 6,6
+črta: 2,9; 5,6 -> 7,6; 5,6
+črta: 2,9; 3,6 -> 7,6; 3,6
+črta: 2,9; -3,4 -> 7,6; -3,4 | debelo
+napis: 2,7; 7,6 | 0,00 eV | levo
+napis: 2,7; 6,6 | −0,85 eV | levo
+napis: 2,7; 5,6 | −1,51 eV | levo
+napis: 2,7; 3,6 | −3,40 eV | levo
+napis: 2,7; -3,4 | −13,6 eV | levo
+napis: 7,8; 7,6 | n = ∞ | desno
+napis: 7,8; 6,6 | n = 4 | desno
+napis: 7,8; 5,6 | n = 3 | desno
+napis: 7,8; 3,6 | n = 2 | desno
+napis: 7,8; -3,4 | n = 1 | desno
+napis: 5,25; 7,6 | ionizacija | nad
+napis: 5,25; -3,4 | osnovno stanje | pod
+puščica: 4; 5,6 -> 4; 3,6 | 656 nm | levo | rdeča
+puščica: 6,4; 6,6 -> 6,4; 3,6 | | | modra
+napis: 6,6; 4,5 | 486 nm | desno | modra
+puščica: 5,2; 3,6 -> 5,2; -3,4 | 122 nm (Lyman α) | desno
+podnapis: Prehoda na n = 2 (656 nm in 486 nm) spadata v Balmerjevo serijo
+:::
 
 Nivoji se z večanjem $n$ zgoščujejo proti nič; dolžina puščice je energija izsevanega fotona.
 

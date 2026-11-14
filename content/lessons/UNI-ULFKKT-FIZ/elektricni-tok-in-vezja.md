@@ -239,17 +239,39 @@ Izpelji diferencialno enačbo za polnjenje praznega kondenzatorja s kapaciteto $
 
 Vezje iz Primera 2 (vozlišče $A$ zgoraj, $B$ spodaj):
 
-```
-  A o-------------o-------------o
-    |             |             |
-   [R1]          [R3]          [R2]
-    |             |             |
-   (+)            |            (+)
-   U1             |            U2
-   (-)            |            (-)
-    |             |             |
-  B o-------------o-------------o
-```
+:::risba skica
+opis: Vezje iz Primera 2 s tremi navpičnimi vejami med vozliščema A (zgornja žica) in B (spodnja žica). Leva veja: upor R₁ = 2,0 Ω in pod njim vir U₁ = 12 V, pozitivni pol (daljša plošča) je obrnjen proti A. Srednja veja: samo upor R₃ = 6,0 Ω. Desna veja: upor R₂ = 4,0 Ω in pod njim vir U₂ = 6,0 V, pozitivni pol proti A. Izbrane smeri tokov: I₁ in I₂ navzgor proti A, I₃ skozi srednji upor navzdol.
+območje: -3,5; -1,5 .. 23; 11,5
+črta: 2; 10 -> 18; 10
+črta: 2; 0 -> 18; 0
+črta: 2; 10 -> 2; 8
+črta: 2; 6 -> 2; 3,5
+črta: 2; 2,5 -> 2; 0
+črta: 10; 10 -> 10; 6
+črta: 10; 4 -> 10; 0
+črta: 18; 10 -> 18; 8
+črta: 18; 6 -> 18; 3,5
+črta: 18; 2,5 -> 18; 0
+pravokotnik: 1,4; 6 .. 2,6; 8 | ozadje
+pravokotnik: 9,4; 4 .. 10,6; 6 | ozadje
+pravokotnik: 17,4; 6 .. 18,6; 8 | ozadje
+črta: 1; 3,5 -> 3; 3,5 | debelo
+črta: 1,5; 2,5 -> 2,5; 2,5 | debelo
+črta: 17; 3,5 -> 19; 3,5 | debelo
+črta: 17,5; 2,5 -> 18,5; 2,5 | debelo
+napis: 1,2; 7 | R_1 | levo
+napis: 10,8; 5 | R_3 | desno
+napis: 18,8; 7 | R_2 | desno
+napis: 0,8; 3 | U_1 | levo
+napis: 19,2; 3 | U_2 | desno
+napis: 3,2; 3,9 | + | desno
+napis: 16,8; 3,9 | + | levo
+puščica: 3,2; 4,6 -> 3,2; 6,6 | I_1 | desno
+puščica: 11,6; 9,2 -> 11,6; 7,2 | I_3 | desno
+puščica: 16,8; 4,6 -> 16,8; 6,6 | I_2 | levo
+točka: 10; 10 | A | nad
+točka: 10; 0 | B | pod
+:::
 
 Vsaka navpična črta je veja z enim tokom. Zanka »levo + sredina« vsebuje $U_1$, $R_1$ in $R_3$, zanka »desno + sredina« pa $U_2$, $R_2$ in $R_3$.
 

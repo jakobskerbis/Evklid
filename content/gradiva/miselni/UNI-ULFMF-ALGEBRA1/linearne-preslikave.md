@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Definicija linearnosti
+  - $L(u + v) = L(u) + L(v)$, $L(\lambda u) = \lambda L(u)$
+  - vedno $L(\mathbf{0}) = \mathbf{0}$
+  - $2x + 1$ ni linearna, je afina
+- Slike baznih vektorjev
+  - $L(u) = \alpha_1 L(u_1) + \ldots + \alpha_n L(u_n)$
+  - slike baze določijo $L$ povsod
+- Matrika preslikave
+  - $j$-ti stolpec: koordinate $L(u_j)$ v bazi $C$
+  - $[L(u)]_C = A\,[u]_B$, velikost $\dim V \times \dim U$
+  - napaka: »slike v vrstice«
+- Jedro
+  - $\ker L$: rešitve $A\mathbf{x} = \mathbf{0}$, podprostor domene
+  - injektivna $\iff \ker L = \{\mathbf{0}\}$
+- Slika
+  - $\operatorname{im} L$: ogrinjača stolpcev, podprostor kodomene
+  - baza: prvotni stolpci z vodilnimi elementi
+- Dimenzijska formula
+  - $\dim \ker L + \dim \operatorname{im} L = \dim U$
+  - rang $= \dim \operatorname{im} L$
+  - $\mathbb{R}^3 \to \mathbb{R}^2$ ni nikoli injektivna
+- Prehod med bazami
+  - $P$: nova baza v stolpcih, $[u]_B = P\,[u]_{B'}$
+  - $A' = P^{-1}AP$, ne $PAP^{-1}$
+  - podobni matriki: enaka determinanta in rang

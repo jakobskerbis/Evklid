@@ -77,15 +77,28 @@ Plašč na membrano pripeljejo majhne GTPaze (Sar1 za COPII, ARF za COPI). Pravo
 
 **Vračanje.** Proteini ER, ki jih tok odnese naprej, imajo na C-koncu signal **KDEL** (Lys–Asp–Glu–Leu). Receptor KDEL v cis Golgiju jih ujame in s COPI mešički vrne v ER.
 
-```
-ER --COPII--> cis-Golgi
- ^              |
- +----COPI------+
-                v
-            trans (TGN)
-           /    |    \
-     endosom  mešiček  plazmalema
-```
+:::risba skica
+opis: Shema poti mešičkov z okvirji od zgoraj navzdol. Zgoraj je ER, pod njim cis-Golgi. Puščica navzdol iz ER v cis-Golgi ima oznako COPII (naprej), puščica navzgor iz cis-Golgija nazaj v ER oznako COPI (nazaj). Iz cis-Golgija vodi puščica navzdol v trans Golgi (TGN). Iz TGN vodijo tri puščice: v endosom, v mešiček in v plazmalemo.
+območje: 0; 0 .. 14; 10,4
+pravokotnik: 4,5; 8,6 .. 9,5; 9,8 | oranžna | ozadje
+napis: 7; 9,2 | ER | sredina
+puščica: 6; 8,6 -> 6; 7 | COPII (naprej) | levo
+puščica: 8; 7 -> 8; 8,6 | COPI (nazaj) | desno
+pravokotnik: 4,5; 5,8 .. 9,5; 7 | zelena | ozadje
+napis: 7; 6,4 | cis-Golgi | sredina
+puščica: 7; 5,8 -> 7; 4,6
+pravokotnik: 4,5; 3,4 .. 9,5; 4,6 | modra | ozadje
+napis: 7; 4 | trans (TGN) | sredina
+puščica: 5,5; 3,4 -> 2,5; 1,8
+puščica: 7; 3,4 -> 7; 1,8
+puščica: 8,5; 3,4 -> 11,5; 1,8
+pravokotnik: 0,5; 0,6 .. 4,5; 1,8 | siva | ozadje
+napis: 2,5; 1,2 | endosom | sredina
+pravokotnik: 5; 0,6 .. 9; 1,8 | siva | ozadje
+napis: 7; 1,2 | mešiček | sredina
+pravokotnik: 9,5; 0,6 .. 13,5; 1,8 | siva | ozadje
+napis: 11,5; 1,2 | plazmalema | sredina
+:::
 
 :::premisli
 Pri bolezni I-celic (mukolipidoza II) celicam manjka encim, ki lizosomskim encimom doda M6P. Kje bomo te encime našli in kakšni bodo lizosomi?

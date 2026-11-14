@@ -235,15 +235,43 @@ Izpelji, da je za razredčeno raztopino nehlapnega topljenca relativno znižanje
 
 Redčenje si predstavljaj kot isto število »kroglic« topljenca v večji posodi:
 
-```
-   pred redčenjem          po redčenju
-   +--------+              +-------------------------+
-   | ****** |  + voda  ->  |  *    *     *    *   *  |
-   | ****** |              |    *    *     *     *   |
-   +--------+              |  *    *    *    *    *  |
-   V1 = 10 mL              +-------------------------+
-   c1 = 1,0 mol/L          V2 = 100 mL,  c2 = 0,10 mol/L
-```
+:::risba skica
+opis: Redčenje. Levo majhna posoda z 12 kroglicami topljenca, prostornina V₁ = 10 mL, koncentracija c₁ = 1,0 mol/L. Puščica z napisom »+ voda« kaže na desno, desetkrat večjo posodo z istimi 12 kroglicami, ki so razmaknjene: V₂ = 100 mL, c₂ = 0,10 mol/L.
+območje: 0; -16 .. 320; 116
+pravokotnik: 35; 20 .. 65; 65 | ozadje
+pravokotnik: 130; 20 .. 310; 95 | ozadje
+krog: 42; 26 | 2,5 | modra polno
+krog: 50; 26 | 2,5 | modra polno
+krog: 58; 26 | 2,5 | modra polno
+krog: 42; 37 | 2,5 | modra polno
+krog: 50; 37 | 2,5 | modra polno
+krog: 58; 37 | 2,5 | modra polno
+krog: 42; 48 | 2,5 | modra polno
+krog: 50; 48 | 2,5 | modra polno
+krog: 58; 48 | 2,5 | modra polno
+krog: 42; 59 | 2,5 | modra polno
+krog: 50; 59 | 2,5 | modra polno
+krog: 58; 59 | 2,5 | modra polno
+krog: 244,7; 30,3 | 2,5 | modra polno
+krog: 195,1; 36,3 | 2,5 | modra polno
+krog: 245,9; 75 | 2,5 | modra polno
+krog: 199,1; 82,5 | 2,5 | modra polno
+krog: 159; 83,9 | 2,5 | modra polno
+krog: 271,9; 38,9 | 2,5 | modra polno
+krog: 211,3; 57,2 | 2,5 | modra polno
+krog: 250,2; 57,2 | 2,5 | modra polno
+krog: 288,1; 53,6 | 2,5 | modra polno
+krog: 291,2; 80,9 | 2,5 | modra polno
+krog: 148,7; 35,7 | 2,5 | modra polno
+krog: 149,3; 54,5 | 2,5 | modra polno
+puščica: 72; 42 -> 122; 42 | + voda | nad
+napis: 50; 74 | pred redčenjem
+napis: 220; 106 | po redčenju
+napis: 50; 8 | V_1 = 10 mL
+napis: 50; -8 | c_1 = 1,0 mol/L
+napis: 220; 8 | V_2 = 100 mL
+napis: 220; -8 | c_2 = 0,10 mol/L
+:::
 
 Kroglic je enako ($n = c_1V_1 = c_2V_2$), prostornina je desetkrat večja, zato je koncentracija desetkrat manjša.
 

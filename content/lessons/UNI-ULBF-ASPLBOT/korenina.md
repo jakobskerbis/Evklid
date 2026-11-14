@@ -182,6 +182,62 @@ $1 - 0{,}16 = 0{,}84$, torej $84\,\%$. Kambij korenčka navzven tvori veliko flo
 - Sekundarna zgradba: kambij tvori ksilem navznoter, floem navzven; felogen iz pericikla tvori periderm, skorja odpade.
 - Metamorfoze: založne, koreninski gomolji, oporne, oprijemalne, zračne, dihalne, haustoriji, krčilne.
 
+## Za izpit
+
+Znati moraš povedati:
+- po čem ločiš korenino od podzemnega stebla ter glavni koreninski sistem od šopastega;
+- štiri cone koreninskega vršička z nalogami, vlogo čepice in statolitov;
+- plasti primarne zgradbe od rizodermisa do radialnega žilnega snopa in razlike med dvokaličnicami in enokaličnicami (število krakov, stržen);
+- pot vode po apoplastu in simplastu ter vlogo Casparyjevega traku v endodermu;
+- kje in kako nastanejo stranske korenine (endogeno, iz pericikla);
+- nastanek žilnega kambija in felogena, razporeditev tkiv v sekundarni zgradbi in metamorfoze korenin s primeri.
+
+### Naloga 1
+
+Koreninica kalčka ima premer $0{,}5\,\mathrm{mm}$. Cona koreninskih laskov je dolga $12\,\mathrm{mm}$. Na vsakem milimetru dolžine je $250$ laskov, dolgih $0{,}8\,\mathrm{mm}$, s premerom $0{,}012\,\mathrm{mm}$. Računaj s plašči valjev. (a) Kolikokrat laski povečajo površino in kolikšna je površina cele cone? (b) Pri presajanju se odtrga $70\,\%$ laskov. Za koliko odstotkov se zmanjša površina cone? (c) Koliko laskov na milimeter bi korenina potrebovala, da bi bila površina $10$-krat večja kot brez laskov?
+
+**Rešitev:**
+
+1. Korenina brez laskov, en milimeter: $A_\mathrm{K} = \pi \cdot 0{,}5\,\mathrm{mm} \cdot 1\,\mathrm{mm} = 0{,}5\pi\,\mathrm{mm^2} \approx 1{,}57\,\mathrm{mm^2}$.
+2. En lasek: $A_\mathrm{L} = \pi \cdot 0{,}012\,\mathrm{mm} \cdot 0{,}8\,\mathrm{mm} = 0{,}0096\pi\,\mathrm{mm^2} \approx 0{,}0302\,\mathrm{mm^2}$.
+3. Vseh $250$ laskov na milimetru: $250 \cdot 0{,}0096 = 2{,}4$, torej $2{,}4\pi\,\mathrm{mm^2} \approx 7{,}54\,\mathrm{mm^2}$.
+4. Povečanje: $k = \dfrac{0{,}5\pi + 2{,}4\pi}{0{,}5\pi} = \dfrac{2{,}9}{0{,}5} = 5{,}8$.
+5. Cela cona: $12 \cdot 2{,}9 = 34{,}8$, torej $34{,}8\pi\,\mathrm{mm^2} \approx 109\,\mathrm{mm^2}$.
+6. Po presajanju ostane $30\,\%$ laskov: $0{,}3 \cdot 2{,}4 = 0{,}72$. Površina na milimeter je $(0{,}5 + 0{,}72)\pi\,\mathrm{mm^2} = 1{,}22\pi\,\mathrm{mm^2}$.
+7. Razmerje po presajanju in pred njim: $\dfrac{1{,}22}{2{,}9} \approx 0{,}421$. Površina se zmanjša za okoli $58\,\%$. To je manj kot $70\,\%$, ker površina same korenine ostane.
+8. Pogoj za (c): $\dfrac{0{,}5 + 0{,}0096 \cdot n}{0{,}5} = 10$, torej $0{,}0096 \cdot n = 4{,}5$ in $n = \dfrac{4{,}5}{0{,}0096} \approx 469$.
+9. Odgovor: (a) laski povečajo površino $5{,}8$-krat, cona ima okoli $109\,\mathrm{mm^2}$; (b) površina se zmanjša za okoli $58\,\%$; (c) potrebnih bi bilo okoli $469$ laskov na milimeter.
+
+### Naloga 2
+
+Natančno navedi pot vode in ionov od tal do ksilema mlade korenine in utemelji, zakaj Casparyjev trak rastlini omogoča izbiro ionov, vode pa ne ustavi.
+
+**Rešitev:**
+
+1. Vodo in ione sprejme rizodermis v coni koreninskih laskov. Rizodermis nima kutikule, laski pa povečajo površino.
+2. Skozi primarno skorjo vodita dve poti. Apoplast so celične stene in medcelični prostori. Simplast je citoplazma celic, ki je povezana s plazmodezmami.
+3. Po apoplastu snovi potujejo, ne da bi prešle membrano. Na tej poti zato ni izbire.
+4. V endodermu, najbolj notranji plasti skorje, je v radialnih in prečnih stenah Casparyjev trak. Prepojen je s suberinom in ligninom, zato stena tam ne prepušča vode.
+5. Trak zapre le apoplast. Voda in ioni morajo na endodermu skozi membrano endodermalne celice v simplast.
+6. Membrana je izbirno prepustna: ion vstopi le, če ima zanj prenašalec ali kanal. Ion, ki ga membrana ne prepusti, ostane zunaj centralnega cilindra.
+7. Iz endoderma gredo voda in ioni skozi pericikel v ksilem radialnega snopa in po njem v steblo.
+8. Sklep: trak ne ustavi vode, ampak jo preusmeri skozi žive celice. Tako vse, kar pride v ksilem, vsaj enkrat preide membrano, in rastlina nadzira sprejem ionov.
+
+### Naloga 3
+
+Opiši nastanek sekundarne zgradbe korenine dvokaličnice. Navedi zaporedje tkiv od sredine do površine v nekaj let stari korenini in utemelji, zakaj v njej ni več primarne skorje.
+
+**Rešitev:**
+
+1. Žilni kambij nastane iz prokambijskih celic med primarnim floemom in primarnim ksilemom. Nasproti ksilemskim krakom ga dopolni pericikel.
+2. Kambij je najprej vijugast, ker sledi zvezdi ksilema, nato postane okrogel.
+3. Navznoter tvori sekundarni ksilem, navzven sekundarni floem.
+4. Iz pericikla nastane še felogen. Navzven tvori pluto, navznoter feloderm; skupaj so periderm.
+5. Zaporedje od sredine navzven: primarni ksilem, sekundarni ksilem, žilni kambij, sekundarni floem, ostanki primarnega floema, periderm.
+6. Primarni ksilem ostane v sredini, ker kambij nov ksilem odlaga navznoter. Primarni floem se pomika proti obodu, ker ga sekundarni floem potiska navzven.
+7. Felogen nastane v centralnem cilindru, torej znotraj endoderma. Pluta ne prepušča vode in hrane, zato endoderm, primarna skorja in rizodermis odmrejo in odpadejo.
+8. Sklep: stara korenina ima na površini periderm in je rjava. Enokaličnice kambija običajno nimajo, zato ohranijo primarno zgradbo.
+
 ## Drugače: Na sliki
 
 Nariši tri kroge drug v drugem:

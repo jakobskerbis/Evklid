@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Celica in sklic
+  - naslov: črka stolpca in številka vrstice, `B3`
+  - formula se začne z `=`
+  - sklic bere celico, zato se rezultat preračuna
+- Funkcije in obsegi
+  - obseg `B2:B5`, argumenti ločeni s `;`
+  - `SUM`, `AVERAGE`, `MIN`, `MAX`, `COUNT`, `IF`
+- Prazna celica in ničla
+  - `AVERAGE` in `COUNT` prazno izpustita, ničlo štejeta
+  - napaka: $0$ za tekmo, ki je ni bilo
+- Relativni sklic
+  - pri kopiranju se premakne s formulo
+  - `=3*B2+C2` postane `=3*B3+C3`
+- Absolutni in mešani sklic
+  - <code>&#36;F&#36;1</code> ostane, kamorkoli kopiraš
+  - <code>&#36;F1</code> zaklene stolpec, <code>F&#36;1</code> vrstico
+  - konstanta v svoji celici: <code>=&#36;F&#36;1&#42;B2+C2</code>
+- Izbira grafa
+  - stolpčni za primerjavo, črtni za čas
+  - tortni za dele celote, raztreseni za povezavo

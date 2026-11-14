@@ -167,6 +167,62 @@ $r_T = \dfrac{7238}{2\pi \cdot 226{,}2} \approx 5{,}09\,\text{mm}$. Splošno $r_
 - Sredina obrisa in navadno povprečje središč delov sta napačni bližnjici.
 - Pappus-Guldin: površina vrtenine $A = 2\pi r_T s$, prostornina $V = 2\pi r_T A$; $r_T$ je razdalja težišča krivulje oz. lika od osi.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo težišča in statičnega momenta ploskve ter obrazca $x_T = \dfrac{\sum A_i x_i}{\sum A_i}$, $y_T = \dfrac{\sum A_i y_i}{\sum A_i}$ (pri telesih z $V_i$ ali $m_i$);
+- integralsko obliko $x_T = \dfrac{1}{A}\int_A x\,\mathrm{d}A$ in kdaj geometrijsko težišče sovpada s središčem mase;
+- da težišče leži na simetrijski osi in da luknja vstopi z negativno ploščino v števec in imenovalec;
+- težišča osnovnih oblik: trikotnik $h/3$, polkrog $\dfrac{4r}{3\pi}$, polkrogla $\dfrac{3r}{8}$, stožec $h/4$;
+- obe Pappus-Guldinovi pravili s pogojem, da os leži v ravnini lika in ga ne seka, ter dokaz drugega pravila.
+
+### Naloga 1
+
+Jeklena plošča je sestavljena iz pravokotnika z oglišči $(0, 0)$, $(120, 0)$, $(120, 80)$, $(0, 80)$ in pravokotnega trikotnika z oglišči $(120, 0)$, $(180, 0)$, $(120, 80)$; vse mere so v mm. V pravokotnik je izvrtana krožna luknja s polmerom $20\,\text{mm}$ in središčem $(40, 40)$. (a) Določi težišče plošče. (b) Lik zavrtimo okoli osi $y$ (leva stranica pravokotnika). Kolikšna je prostornina nastale vrtenine?
+
+**Rešitev:**
+
+1. Ploščine: pravokotnik $A_1 = 120 \cdot 80 = 9600\,\text{mm}^2$, trikotnik $A_2 = \dfrac{60 \cdot 80}{2} = 2400\,\text{mm}^2$, luknja $A_3 = \pi \cdot 20^2 \approx 1256{,}6\,\text{mm}^2$.
+2. Težišča delov: pravokotnik $(60, 40)$, luknja $(40, 40)$. Težišče trikotnika je tretjino kraka od pravega kota: $x_2 = 120 + \dfrac{60}{3} = 140\,\text{mm}$, $y_2 = \dfrac{80}{3} \approx 26{,}67\,\text{mm}$.
+3. Skupna ploščina (luknjo odštejemo): $A \approx 9600 + 2400 - 1256{,}6 = 10743{,}4\,\text{mm}^2$.
+4. Statični moment glede na os $y$: $9600 \cdot 60 + 2400 \cdot 140 - 1256{,}6 \cdot 40 \approx 576000 + 336000 - 50265 = 861735\,\text{mm}^3$.
+5. Statični moment glede na os $x$: $9600 \cdot 40 + 2400 \cdot \dfrac{80}{3} - 1256{,}6 \cdot 40 \approx 384000 + 64000 - 50265 = 397735\,\text{mm}^3$.
+6. $x_T \approx \dfrac{861735}{10743{,}4} \approx 80{,}2\,\text{mm}$ in $y_T \approx \dfrac{397735}{10743{,}4} \approx 37{,}0\,\text{mm}$.
+7. Smiselnost: brez luknje bi bilo $x_T = \dfrac{912000}{12000} = 76\,\text{mm}$; luknja na levi potisne težišče v desno, stran od sebe.
+8. Os $y$ leži v ravnini lika in ga ne seka (le dotika se roba), zato velja drugo pravilo z $r_T = x_T$: $V = 2\pi x_T A = 2\pi \cdot 861735 \approx 5{,}414 \cdot 10^6\,\text{mm}^3$.
+9. Odgovor: težišče je pri približno $(80{,}2;\ 37{,}0)\,\text{mm}$; vrtenina ima prostornino približno $5414\,\text{cm}^3$. Produkt $x_T A$ je kar statični moment iz 4. koraka, zato težišča za prostornino ni treba posebej računati.
+
+### Naloga 2
+
+Natančno navedi obe Pappus-Guldinovi pravili s pogoji, pod katerimi veljata. Dokaži drugo pravilo in na primeru kroga, ki ga zavrtimo okoli lastnega premera, utemelji, zakaj os ne sme sekati lika.
+
+**Rešitev:**
+
+1. Prvo pravilo: ravninska krivulja dolžine $s$, ki jo zavrtimo za poln obrat okoli osi v isti ravnini, opiše ploskev s površino $A = 2\pi r_T\, s$; $r_T$ je razdalja težišča *krivulje* od osi.
+2. Drugo pravilo: ravninski lik s ploščino $A$, ki ga zavrtimo za poln obrat okoli osi v isti ravnini, opiše telo s prostornino $V = 2\pi r_T\, A$; $r_T$ je razdalja težišča *lika* od osi.
+3. Pogoja: os leži v ravnini krivulje oziroma lika in ga ne seka (ves lik je na eni strani osi; rob se je sme dotikati).
+4. Dokaz: os vrtenja naj bo os $x$, lik naj leži pri $y \geq 0$. Košček $\mathrm{d}A$ na razdalji $y$ od osi pri vrtenju opiše tanek obroč z dolžino $2\pi y$ in prerezom $\mathrm{d}A$, torej s prostornino $\mathrm{d}V = 2\pi y\,\mathrm{d}A$.
+5. Seštejemo po liku: $V = 2\pi \int_A y\,\mathrm{d}A$. Po definiciji težišča je $\int_A y\,\mathrm{d}A = y_T A$, zato $V = 2\pi y_T A$.
+6. Krog s polmerom $r$ okoli premera: težišče kroga leži na osi, $r_T = 0$, in pravilo bi dalo $V = 0$. V resnici nastane krogla s prostornino $\dfrac{4}{3}\pi r^3$.
+7. Razlog: pri liku na obeh straneh osi ima $y$ v integralu $\int_A y\,\mathrm{d}A$ na eni strani negativen predznak, prostornina obroča pa je odvisna od $|y|$. Prispevki se v integralu odštejejo, v telesu pa ne; poleg tega obe polovici opišeta isto telo.
+8. Pravilna uporaba: vrtimo le polkrog na eni strani osi, $r_T = \dfrac{4r}{3\pi}$, $A = \dfrac{\pi r^2}{2}$: $V = 2\pi \cdot \dfrac{4r}{3\pi} \cdot \dfrac{\pi r^2}{2} = \dfrac{4}{3}\pi r^3$.
+
+### Naloga 3
+
+Izpelji lego težišča trikotnika z osnovnico $b$ in višino $h$, merjeno od osnovnice. Nato z drugim Pappus-Guldinovim pravilom izpelji prostornino stožca s polmerom $r$ in višino $h$ ter izračunaj maso jeklenega stožca z $r = 30\,\text{mm}$, $h = 80\,\text{mm}$ in gostoto $7{,}85\,\text{g/cm}^3$.
+
+**Rešitev:**
+
+1. Os $y$ merimo od osnovnice proti vrhu. Na višini $y$ je širina trikotnika zaradi podobnosti $b\left(1 - \dfrac{y}{h}\right)$, vodoravni trak ima ploščino $\mathrm{d}A = b\left(1 - \dfrac{y}{h}\right)\mathrm{d}y$.
+2. Ploščina: $A = \int_0^h b\left(1 - \dfrac{y}{h}\right)\mathrm{d}y = bh - \dfrac{bh}{2} = \dfrac{bh}{2}$.
+3. Statični moment: $\int_0^h y\, b\left(1 - \dfrac{y}{h}\right)\mathrm{d}y = \dfrac{bh^2}{2} - \dfrac{bh^2}{3} = \dfrac{bh^2}{6}$.
+4. $y_T = \dfrac{bh^2/6}{bh/2} = \dfrac{h}{3}$. Rezultat ni odvisen od tega, kako je vrh zamaknjen vzdolž osnovnice, ker je širina traku odvisna le od $y$.
+5. Stožec nastane, ko pravokotni trikotnik s katetama $r$ in $h$ zavrtimo okoli katete $h$. Glede na to kateto je »osnovnica« $h$ in »višina« $r$, zato je težišče od osi oddaljeno $r_T = \dfrac{r}{3}$.
+6. Os je stranica lika in ga ne seka: $V = 2\pi \cdot \dfrac{r}{3} \cdot \dfrac{rh}{2} = \dfrac{\pi r^2 h}{3}$.
+7. Številsko: $V = \dfrac{\pi \cdot 30^2 \cdot 80}{3} \approx 75398\,\text{mm}^3 \approx 75{,}4\,\text{cm}^3$.
+8. Masa: $m = 7{,}85 \cdot 75{,}4 \approx 592\,\text{g}$.
+9. Odgovor: težišče trikotnika je na $\dfrac{h}{3}$ od osnovnice; stožec ima prostornino $\dfrac{\pi r^2 h}{3}$, jekleni stožec z danimi merami približno $75{,}4\,\text{cm}^3$ in maso približno $0{,}59\,\text{kg}$.
+
 ## Drugače: Kot zgodba
 
 Inženirka v podjetju za medicinske pripomočke dobi reklamacijo: nova bergla se na stojalu ob postelji prevrača. Bergla je iz treh delov: lahke aluminijaste cevi, težkega gumijastega čepa spodaj in plastičnega ročaja. Konstruktor je stojalo postavil na polovico dolžine bergle, »na sredino«.

@@ -70,14 +70,42 @@ Med strojna jekla sodijo še **poboljšana** jekla ($0{,}3$ do $0{,}5\,\%$ C, na
 
 Skica pod mikroskopom (grafit je temen):
 
-```
-  siva (GJL)     nodularna (GJS)
-  ~~  ~  ~~       o   o   o
-   ~ ~~  ~          o   o
-  ~~  ~ ~~        o   o   o
-  lamele:          kroglice:
-  ostri robovi     brez robov
-```
+:::risba skica
+opis: Dve polji pod mikroskopom, grafit je temen. Levo siva litina (GJL): grafit v tankih, različno obrnjenih lamelah z ostrimi konicami. Desno nodularna litina (GJS): grafit v ločenih okroglih kroglicah brez robov.
+območje: 0; 0 .. 32; 16,5
+pravokotnik: 1; 4,5 .. 15; 14 | ozadje
+pravokotnik: 17; 4,5 .. 31; 14 | ozadje
+lik: 1,5; 11,45 -> 2,84; 12,44 -> 4,5; 12,55 -> 2,99; 12,03 | polno
+lik: 5,94; 13,05 -> 7,27; 12,69 -> 8,06; 11,55 -> 7,02; 12,32 | polno
+lik: 10,8; 10,79 -> 11,09; 12,23 -> 12,2; 13,21 -> 11,47; 12,02 | polno
+lik: 12,34; 10,81 -> 13,62; 10,95 -> 14,66; 10,19 -> 13,51; 10,53 | polno
+lik: 3,54; 11,15 -> 4,86; 10,3 -> 5,46; 8,85 -> 4,52; 10,02 | polno
+lik: 6,83; 9,5 -> 8,42; 10,26 -> 10,17; 10,1 -> 8,49; 9,83 | polno
+lik: 1,74; 7,05 -> 2,53; 8,19 -> 3,86; 8,55 -> 2,78; 7,82 | polno
+lik: 5,18; 7,98 -> 6,66; 7,94 -> 7,82; 7,02 -> 6,51; 7,53 | polno
+lik: 10,19; 6,44 -> 10,05; 7,72 -> 10,81; 8,76 -> 10,47; 7,61 | polno
+lik: 12,08; 7,92 -> 13,33; 7,33 -> 13,92; 6,08 -> 13,02; 7,02 | polno
+lik: 3,11; 5,88 -> 4,46; 6,47 -> 5,89; 6,12 -> 4,5; 6,03 | polno
+lik: 8,6; 6,59 -> 9,41; 6,14 -> 9,4; 5,21 -> 9,03; 5,92 | polno
+krog: 19; 12,5 | 0,55 | polno
+krog: 23,5; 12,8 | 0,55 | polno
+krog: 28,5; 12,3 | 0,55 | polno
+krog: 21,2; 10,3 | 0,55 | polno
+krog: 26; 10,5 | 0,55 | polno
+krog: 29,5; 9,6 | 0,55 | polno
+krog: 18,8; 8 | 0,55 | polno
+krog: 23,6; 8,2 | 0,55 | polno
+krog: 27,8; 7,6 | 0,55 | polno
+krog: 20,8; 6 | 0,55 | polno
+krog: 25,2; 6 | 0,55 | polno
+krog: 29,6; 5,8 | 0,55 | polno
+napis: 8; 15,3 | siva (GJL) | sredina | debelo
+napis: 24; 15,3 | nodularna (GJS) | sredina | debelo
+napis: 8; 3,2 | lamele:
+napis: 8; 1,4 | ostri robovi
+napis: 24; 3,2 | kroglice:
+napis: 24; 1,4 | brez robov
+:::
 
 :::premisli
 Siva in nodularna litina imata lahko enako sestavo. Kaj se zgodi z nateznim raztezkom, če lamele grafita spremenimo v kroglice, in zakaj?

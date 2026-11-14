@@ -249,12 +249,34 @@ Natančno definiraj mrežno entalpijo in izpelji Born-Haberjev izraz za $\mathrm
 
 Predstavljaj si atom kot jedro z »lupinami« čebule.
 
-```
-Li:  (jedro) )  •            zunanji e⁻ blizu, močno vezan
-Na:  (jedro) ) )   •
-K:   (jedro) ) ) )    •
-Cs:  (jedro) ) ) ) ) )      •    zunanji e⁻ daleč, šibko vezan
-```
+:::risba skica
+opis: Štirje atomi drug pod drugim: Li, Na, K in Cs. Levo je jedro, desno od njega notranje lupine kot navpične črtice: Li ima 1, Na 2, K 3, Cs 5. Zunanji elektron je točka za zadnjo lupino: pri Li na razdalji 2 enot od jedra (blizu, močno vezan), pri Na 3, pri K 4, pri Cs 6 enot (daleč, šibko vezan).
+območje: -2; -0,8 .. 16; 3,8
+napis: -1,3; 3 | Li | sredina
+krog: 0; 3 | 0,3 | siva polno
+črta: 1; 2,65 -> 1; 3,35 | siva
+točka: 2; 3 | e⁻ blizu, močno vezan | desno | modra
+napis: -1,3; 2 | Na | sredina
+krog: 0; 2 | 0,3 | siva polno
+črta: 1; 1,65 -> 1; 2,35 | siva
+črta: 2; 1,65 -> 2; 2,35 | siva
+točka: 3; 2 | e⁻ | desno | modra
+napis: -1,3; 1 | K | sredina
+krog: 0; 1 | 0,3 | siva polno
+črta: 1; 0,65 -> 1; 1,35 | siva
+črta: 2; 0,65 -> 2; 1,35 | siva
+črta: 3; 0,65 -> 3; 1,35 | siva
+točka: 4; 1 | e⁻ | desno | modra
+napis: -1,3; 0 | Cs | sredina
+krog: 0; 0 | 0,3 | siva polno
+črta: 1; -0,35 -> 1; 0,35 | siva
+črta: 2; -0,35 -> 2; 0,35 | siva
+črta: 3; -0,35 -> 3; 0,35 | siva
+črta: 4; -0,35 -> 4; 0,35 | siva
+črta: 5; -0,35 -> 5; 0,35 | siva
+točka: 6; 0 | e⁻ daleč, šibko vezan | desno | modra
+podnapis: Več notranjih lupin: zunanji elektron je dlje od jedra in šibkeje vezan.
+:::
 
 Vsaka nova lupina potisne zunanji elektron dlje in ga zakrije pred jedrom, zato ga cezij odda najlaže. Pri 2. skupini ima jedro en proton več in oba zunanja elektrona drži močneje, zato je magnezij manj reaktiven od natrija.
 

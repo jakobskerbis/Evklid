@@ -25,11 +25,19 @@ Beri od desne proti levi: »vrednost `19` shrani pod ime `starost`«. Znak `=` t
 
 Predstavljaj si nalepko z imenom, prilepljeno na škatlo z vrednostjo:
 
-```
-starost  ──►  [ 19 ]
-po starost = starost + 1:
-starost  ──►  [ 20 ]
-```
+:::risba skica
+opis: Dve vrstici. Zgoraj ime starost s puščico kaže na škatlo z vrednostjo 19. Spodaj, po ukazu starost = starost + 1, isto ime starost s puščico kaže na škatlo z vrednostjo 20.
+območje: 0; 0 .. 8; 4
+napis: 1,2; 3,2 | starost | sredina | debelo
+puščica: 2,4; 3,2 -> 4,4; 3,2
+pravokotnik: 4,5; 2,8 .. 6,1; 3,6 | modra
+napis: 5,3; 3,2 | 19 | sredina
+napis: 0,3; 2 | po starost = starost + 1: | desno
+napis: 1,2; 0,8 | starost | sredina | debelo
+puščica: 2,4; 0,8 -> 4,4; 0,8
+pravokotnik: 4,5; 0,4 .. 6,1; 1,2 | oranžna
+napis: 5,3; 0,8 | 20 | sredina
+:::
 
 Ime se začne s črko ali podčrtajem, vsebuje le črke, števke in `_` (brez presledkov) in ne sme biti rezervirana beseda jezika (`if`, `for`, `True`, `None` …). Velike in male črke se razlikujejo: `Starost` in `starost` sta dve različni imeni. Dobra imena povedo, kaj hranijo: `cena`, ne `x7`.
 

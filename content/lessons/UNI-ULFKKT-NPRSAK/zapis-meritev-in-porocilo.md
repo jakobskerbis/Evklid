@@ -19,11 +19,20 @@ V laboratoriju se to zgodi vsak dan. Tehtnica, bireta in termometer dajo števil
 
 **Branje skale.** Predstavljaj si bireto pri koncu titracije. Spodnji rob meniskusa je med črticama za $24{,}3$ in $24{,}4\,\text{mL}$, približno na sredini:
 
-```
-24,3 mL ──────────────
-           ‿  ← spodnji rob meniskusa
-24,4 mL ──────────────
-```
+:::risba skica
+opis: Izsek birete. Zgornja črtica skale je pri 24,3 mL, spodnja pri 24,4 mL, ker številke na bireti rastejo navzdol. Gladina tekočine je ukrivljena navzdol; spodnji rob meniskusa je približno na sredini med črticama.
+območje: 0; 0 .. 20; 6
+lik: 4; 0 -> 4; 3,6 -> 4,5; 3,337 -> 5; 3,15 -> 5,5; 3,038 -> 6; 3 -> 6,5; 3,038 -> 7; 3,15 -> 7,5; 3,337 -> 8; 3,6 -> 8; 0 | modra
+črta: 4; 3,6 -> 4,5; 3,337 -> 5; 3,15 -> 5,5; 3,038 -> 6; 3 -> 6,5; 3,038 -> 7; 3,15 -> 7,5; 3,337 -> 8; 3,6 | debelo
+črta: 4; 0 -> 4; 6
+črta: 8; 0 -> 8; 6
+črta: 4; 5 -> 5,5; 5 | debelo
+črta: 4; 1 -> 5,5; 1 | debelo
+napis: 3,6; 5 | 24,3 mL | levo
+napis: 3,6; 1 | 24,4 mL | levo
+puščica: 9,6; 2 -> 6,15; 2,9
+napis: 9,9; 2 | spodnji rob meniskusa | desno
+:::
 
 Zapišeš $24{,}35\,\text{mL}$. Prve tri števke ($2$, $4$, $3$) si prebral s skale, zadnjo ($5$) si **ocenil**. Vse skupaj so **značilne števke**: vse zanesljive števke in še ena ocenjena. Zapis $24{,}35\,\text{mL}$ ima štiri značilne števke. Zapis $24{,}3500\,\text{mL}$ bi lagal, saj trdi, da poznaš desettisočinke mililitra.
 

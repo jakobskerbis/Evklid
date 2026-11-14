@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dinamično ravnotežje
+  - hitrosti v obe smeri enaki
+  - sestava stalna, reakcija ne miruje
+- Konstanta ravnotežja
+  - $K_c = \frac{[\mathrm{C}]^c[\mathrm{D}]^d}{[\mathrm{A}]^a[\mathrm{B}]^b}$, ravnotežne koncentracije
+  - trdnih snovi in topila ne pišemo
+  - $\Delta_\mathrm{r}G^\circ = -RT\ln K$
+- Ravnotežje plinov
+  - $K_p = K_c(RT)^{\Delta n}$
+  - $\Delta n$ šteje le pline
+- Računanje s konstantami
+  - obrnjena reakcija: $1/K$
+  - množenje z $m$: $K^m$; vsota: $K_1K_2$
+- Kvocient reakcije
+  - $Q < K$ v desno, $Q > K$ v levo
+  - v $Q$ gredo trenutne koncentracije
+- Preglednica ravnotežja
+  - začetek, sprememba, ravnotežje
+  - $\mathrm{2\,HI}$: sprememba $+2x$
+  - negativno koncentracijo zavrzi
+- Le Chatelierovo načelo
+  - manjša prostornina: k manj molekulam plina
+  - katalizator, inertni plin pri stalni $V$: brez premika
+- Vpliv temperature
+  - edina spremeni $K$
+  - van 't Hoff: $\ln\frac{K_2}{K_1} = -\frac{\Delta_\mathrm{r}H^\circ}{R}\left(\frac{1}{T_2} - \frac{1}{T_1}\right)$
+  - eksotermna reakcija: višja $T$ zmanjša $K$
