@@ -26,6 +26,10 @@ test("A9 meja telesa: 100 kb privzeto, večja samo za fotografije in dolgo vsebi
     // Graf s sličico (do 200 000 znakov podatkov + 80 000 sličica) ostane mogoč.
     const graf = await call(`/api/students/${kid.id}/graphs`, { method: "POST", body: { title: "g", data: { items: [{ type: "expr", text: besedilo(150_000) }] } } });
     assert.notEqual(graf.status, 413);
+    // Vrsta odgovorov brez povezave (1200 odgovorov ≈ 135 kB) se še sinhronizira (pregled 2).
+    const vrsta = Array.from({ length: 1200 }, (_, i) => ({ topic_id: "mat-os-ulomki", level: 1, seed: 1000 + i, answer: "3/4", correct: true, at: new Date().toISOString() }));
+    const sinh = await call(`/api/students/${kid.id}/offline-sync`, { method: "POST", body: { results: vrsta } });
+    assert.notEqual(sinh.status, 413);
     // Tudi velike poti imajo zgornjo mejo: 12 MB je preveč.
     const prevec = await call(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: "x", image: { media_type: "image/png", data: "A".repeat(12_000_000) } } });
     assert.equal(prevec.status, 413);

@@ -304,6 +304,7 @@ export function createApp(store, opts = {}) {
     [/^\/api\/students\/[^/]+\/schedule\/ics$/i, "4mb"], // vsebina datoteke .ics (do 3 MB)
     [/^\/api\/students\/[^/]+\/graphs(\/[^/]+)?$/i, "1mb"], // graf s sličico (MAX_DATA + MAX_THUMB)
     [/^\/api\/conversations\/[^/]+\/messages\/[^/]+\/report$/i, "1mb"], // prijava odgovora z izrisanim HTML (SHOWN_MAX)
+    [/^\/api\/students\/[^/]+\/offline-sync$/i, "1mb"], // vrsta odgovorov brez povezave (odjemalec je ne omeji; ~125 B na odgovor)
   ].map(([pot, limit]) => [pot, express.json({ limit })]);
   const jsonZa = (req) => (req.method === "POST" || req.method === "PUT" ? VELIKA_TELESA.find(([pot]) => pot.test(req.path))?.[1] : null) || smallJson;
   app.use((req, res, next) => (!accounts ? bigJson : !req.parent ? smallJson : jsonZa(req))(req, res, next));
