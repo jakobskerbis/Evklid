@@ -63,8 +63,6 @@ test("B3 pouk: med uro po Urniku in v šolskem času brez Urnika (šolski učene
   const b = createAnketa(db, { accounts: { schools: { membership: () => ({ inSchool: true }) } } });
   assert.equal(b.stanje(sola, pon).pokazi, false, "šolski čas brez Urnika");
   assert.equal(b.stanje(sola, T0).pokazi, true, "sobota");
-  const izklop = createAnketa(db, { accounts: { schools: { membership: () => ({ offersOff: true }) } } });
-  assert.equal(izklop.stanje(sola, T0).pokazi, false, "učitelj je izklopil");
 });
 
 test("B3 Pozneje: skrije za 2 dni, največ dvakrat; tretjič je anketa zaprta brez odgovora", () => {
@@ -102,7 +100,7 @@ test("B3 oddaja: vsi trije odgovori iz seznama, enkrat; brez točk XP", () => {
   assert.equal(a.oddaj(ucenec([2, 1]), ODG, T0).status, 409);
 });
 
-test("B3 poročilo: pod 3 odgovori brez vsot; tretje vprašanje po različicah; skrbnik ni štet", () => {
+test("B3 poročilo: vsote po blokih (3, plačilo 5); tretje vprašanje samo, ko imata obe različici dovolj; skrbnik ni štet", () => {
   const { db, ucenec } = baza();
   migrateAccounts(db);
   const pid = db
@@ -116,24 +114,74 @@ test("B3 poročilo: pod 3 odgovori brez vsot; tretje vprašanje po različicah; 
     starost.set(s, age);
     assert.equal(a.oddaj(s, o, T0).status, 200);
   };
-  odda(18, ODG);
-  odda(17, { pomaga: "malo", naprej: "mogoce", tretje: "ne" });
-  odda(40, ODG, true);
+  const DA = ODG;
+  const NE = { pomaga: "ne", naprej: "ne", tretje: "ne" };
+  odda(18, DA);
+  odda(17, NE);
+  odda(40, DA, true);
   let r = a.porocilo();
-  assert.deepEqual([r.n, r.pomaga, r.placal], [2, null, null], "2 odgovora: brez vsot");
-  odda(16, { pomaga: "ne", naprej: "ne", tretje: "da" });
-  odda(12, ODG);
-  const z = ucenec([10, 1]);
-  a.pozneje(z, T0);
-  a.pozneje(z, T0 + 2 * DAY);
-  a.pozneje(z, T0 + 4 * DAY);
+  assert.deepEqual([r.n, r.pomaga, r.placal, r.zavrnili], ["< 3", null, null, 0], "2 odgovora: brez vsot");
+  odda(16, NE);
   r = a.porocilo();
-  assert.equal(r.n, 4);
-  assert.deepEqual(r.pomaga, { zelo: 2, malo: 1, ne: 1 });
-  assert.deepEqual(r.naprej, { da: 2, mogoce: 1, ne: 1 });
-  assert.deepEqual(r.placal, { da: 1, mogoce: 1, ne: 1 });
-  assert.equal(r.priporocil, null, "samo en odgovor pod 15: skrit");
-  assert.equal(r.zavrnili, 1);
+  assert.deepEqual([r.n, r.prikazano, r.pomaga], [3, 3, { zelo: 1, malo: 0, ne: 2 }]);
+  assert.equal(r.placal, null, "3 odgovori o plačilu (prag 5) in 0 priporočil");
+  // 4. odgovor (pod 15) ne spremeni vsot, dokler ni novega bloka (razlika ne izda posameznika).
+  odda(12, DA);
+  const r4 = a.porocilo();
+  assert.equal(r4.n, 4);
+  assert.deepEqual(r4.pomaga, r.pomaga);
+  assert.deepEqual(r4.naprej, r.naprej);
+  // 2 × plačilo več (5) in 3 priporočila: obe različici vidni.
+  odda(19, DA);
+  odda(20, DA);
+  odda(13, NE);
+  odda(14, DA);
+  r = a.porocilo();
+  assert.deepEqual(r.placal, { da: 0, mogoce: 3, ne: 2 });
+  assert.deepEqual(r.priporocil, { da: 0, mogoce: 2, ne: 1 });
+  assert.equal(r.prikazano, 6, "8 odgovorov: 2 bloka po 3");
+});
+
+test("B3 Pozneje po oddaji anketo pusti zaprto; Pozneje pred odprtjem ali med skritjem ne šteje", () => {
+  const { db, ucenec } = baza();
+  const a = createAnketa(db);
+  const s = ucenec([10, 1]);
+  assert.equal(a.oddaj(s, ODG, T0).status, 200);
+  a.pozneje(s, T0);
+  assert.equal(a.oddaj(s, ODG, T0).status, 409, "ne odpre znova");
+  assert.ok(db.prepare("SELECT koncano FROM anketa_teden WHERE student_id = ?").get(s).koncano);
+  const prezgodaj = ucenec([3, 1]);
+  for (let i = 0; i < 3; i++) a.pozneje(prezgodaj, T0);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM anketa_teden WHERE student_id = ?").get(prezgodaj).n, 0);
+  const dva = ucenec([10, 1]);
+  a.pozneje(dva, T0);
+  a.pozneje(dva, T0 + 60000); // drugi zavihek
+  assert.equal(db.prepare("SELECT pozneje FROM anketa_teden WHERE student_id = ?").get(dva).pozneje, 1);
+  // 48 ur: tik pred iztekom še skrita, nato spet odprta (tudi čez polnoč po UTC).
+  assert.equal(a.stanje(dva, T0 + 2 * DAY - 60000).pokazi, false);
+  assert.equal(a.stanje(dva, T0 + 2 * DAY + 60000).pokazi, true);
+});
+
+test("B3 različica: shrani se različica, ki jo je učenec videl, nikoli »placal« za mlajšega od 15", () => {
+  const { db, ucenec } = baza();
+  const starost = new Map();
+  const a = createAnketa(db, { accounts: { ageOfStudent: (id) => starost.get(id) ?? null } });
+  const v3 = (s) => db.prepare("SELECT vprasanje3 FROM anketa_teden WHERE student_id = ?").get(s).vprasanje3;
+  const x = ucenec([10, 1]);
+  starost.set(x, 15); // videl je »priporocil« pri 14, ob oddaji je že 15
+  a.oddaj(x, { ...ODG, vprasanje3: "priporocil" }, T0);
+  assert.equal(v3(x), "priporocil");
+  const y = ucenec([10, 1]);
+  starost.set(y, 14);
+  a.oddaj(y, { ...ODG, vprasanje3: "placal" }, T0);
+  assert.equal(v3(y), "priporocil");
+});
+
+test("B3 izklop ponudb pri učitelju ankete ne skrije (ni ponudba)", () => {
+  const { db, ucenec } = baza();
+  const s = ucenec([8, 1]);
+  const a = createAnketa(db, { accounts: { schools: { membership: () => ({ inSchool: true, offersOff: true }) } } });
+  assert.equal(a.stanje(s, T0).pokazi, true);
 });
 
 test("B3 poti: stanje, Pozneje, oddaja; tuj profil 404; skrbniško poročilo 403 za starša; izvoz in izbris", async () => {

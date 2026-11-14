@@ -4858,7 +4858,7 @@ function syncOpinion(member, published = false) {
 }
 // Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid«.
 // Anketa po 7 dneh (točka B3, public/anketa-teden.js): samo na Učni poti.
-initAnketa({ api, toast, getStudent: () => state.student, currentView: () => currentView });
+initAnketa({ api, toast, getStudent: () => state.student, currentView: () => currentView, floatingViews });
 initPilot({
   api,
   toast,

@@ -11,7 +11,10 @@ const VPRASANJA = { pomaga: ["zelo", "malo", "ne"], naprej: ["da", "mogoce", "ne
 const OZNAKA = { zelo: "ank.a.zelo", malo: "ank.a.malo", da: "fb.yes", mogoce: "fb.maybe", ne: "fb.no" };
 
 let D = null;
-let poskusano = false; // največ en poskus na nalaganje strani
+// Zadnje preverjanje po profilu: zaprta anketa (ali prikazana) se na tem nalaganju ne preverja več, »ne zdaj« (npr. med
+// poukom) pa šele po PONOVNO ms, da dolgo odprta aplikacija vpraša znova zvečer.
+const PONOVNO = 30 * 60000;
+const preverjeno = new Map(); // id profila → čas (Infinity = ne več na tem nalaganju)
 let casovnik = null;
 
 export function initAnketa(deps) {
@@ -19,26 +22,37 @@ export function initAnketa(deps) {
 }
 
 // Drugo okno, uvodni ogled ali vprašalnik: anketa počaka do naslednjega nalaganja (ne sili čez).
+// Liga, izpit ali tekmovanje v premičnem oknu (public/okna.js) šteje kot zasedeno: ne med ligo ali preizkusom.
+const MED_PREIZKUSOM = ["league", "exams", "competition"];
 const zasedeno = () =>
-  document.body.classList.contains("onboarding") || !$("#tour")?.hidden || !!document.querySelector("dialog[open]") || !!document.querySelector(".lock-card, .iq, .xp-cele-card");
+  document.body.classList.contains("onboarding") ||
+  !$("#tour")?.hidden ||
+  !!document.querySelector("dialog[open]") ||
+  !!document.querySelector(".lock-card, .iq, .xp-cele-card") ||
+  (D.floatingViews?.() || []).some((v) => MED_PREIZKUSOM.includes(v));
 
 /** Klic ob prikazu Učne poti: po kratkem zamiku vpraša strežnik, ali je anketa odprta. Če je odprto drugo okno
  * (npr. vprašalnik zanimanj), počaka in poskusi znova (največ nekaj minut). */
 export function preveriAnketo(poskus = 0) {
-  if (poskusano || !D) return;
+  if (!D) return;
+  const s0 = D.getStudent();
+  if (!s0 || Date.now() - (preverjeno.get(s0.id) ?? -Infinity) < PONOVNO) return;
   clearTimeout(casovnik);
   casovnik = setTimeout(async () => {
     const s = D.getStudent();
-    if (poskusano || !s || D.currentView() !== "path") return;
+    if (!s || D.currentView() !== "path" || Date.now() - (preverjeno.get(s.id) ?? -Infinity) < PONOVNO) return;
     if (zasedeno()) return poskus < 40 && preveriAnketo(poskus + 1);
-    poskusano = true;
     let st;
     try {
       st = await D.api(`/api/students/${s.id}/anketa-teden`);
     } catch {
       return;
     }
-    if (!st?.pokazi || D.getStudent()?.id !== s.id || D.currentView() !== "path" || zasedeno()) return;
+    if (D.getStudent()?.id !== s.id) return;
+    if (!st?.pokazi) return preverjeno.set(s.id, Date.now());
+    // Med čakanjem se je odprlo drugo okno ali pogled: poskusi ob naslednjem prikazu Učne poti.
+    if (D.currentView() !== "path" || zasedeno()) return;
+    preverjeno.set(s.id, Infinity);
     pokazi(s.id, st);
   }, poskus ? 4000 : 2500);
 }
@@ -96,10 +110,11 @@ function pokazi(id, st) {
     }
     b.disabled = true;
     try {
-      await D.api(`/api/students/${id}/anketa-teden`, { method: "POST", body: izbira });
+      await D.api(`/api/students/${id}/anketa-teden`, { method: "POST", body: { ...izbira, vprasanje3: st.vprasanje3 } });
       zapri();
       D.toast(t("mob.thanks"));
     } catch (ex) {
+      if (ex.status === 409) return zapri(); // že oddana (npr. v drugem zavihku) ali ni več odprta
       b.disabled = false;
       err.textContent = ex.message;
       err.hidden = false;
