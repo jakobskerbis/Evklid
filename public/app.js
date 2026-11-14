@@ -655,7 +655,7 @@ function backStep(wasOverlay) {
   if (closeByEsc()) return true;
   if (currentView === "path") return false;
   const subMe = meView(currentView) && currentView !== "me";
-  // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, kamor vodi gumb ← v njegovi glavi).
+  // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
   // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
   const up = subMe && tabbarShown() ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {

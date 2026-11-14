@@ -716,18 +716,18 @@ async function calculator(p, label) {
   }
   // Znanstveni: izračun.
   await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
-  // Tipka Nazaj ob odprti plošči funkcij (⋯) in ob povečanem grafu (telefon) zapre samo to, kalkulator ostane (j, 14. 11. 2026).
+  // Tipka Nazaj ob odprti plošči funkcij (⋯) in ob povečanem grafu (telefon) zapre samo to plast, kalkulator ostane
+  // (j, 14. 11. 2026). Klik prek DOM: na telefonu tipko ⋯ lahko prekrije mehurček klepeta.
   const layers = [
-    ['#view-graph .sc-key[data-ins="#more"]', "#view-graph .sc.sc-panel-open", "plošča funkcij"],
-    ['#view-graph [data-act="expand"]', "#view-graph .gc.gc-full", "povečan graf"],
+    ["sci", '#view-graph .sc-key[data-ins="#more"]', "#view-graph .sc.sc-panel-open", "plošča funkcij"],
+    ["graph", '#view-graph [data-act="expand"]', "#view-graph .gc.gc-full", "povečan graf"],
   ];
-  for (const [btn, open, what] of layers) {
-    if (what === "povečan graf") {
-      await click(p, '#view-graph [data-calc-mode="graph"]', { wait: 400 });
-      if (!(await p.locator(btn).isVisible())) continue; // gumb za povečan graf je samo na ozkem zaslonu
-    }
-    await click(p, btn, { wait: 200 });
-    if (!(await p.locator(open).count())) throw new Error(`${what} se ni odprl(a)`);
+  for (const [mode, btn, open, what] of layers) {
+    await click(p, `#view-graph [data-calc-mode="${mode}"]`, { wait: 400 });
+    if (!(await p.locator(btn).isVisible())) continue; // gumb za povečan graf je samo na ozkem zaslonu
+    await p.locator(btn).evaluate((b) => b.click());
+    await settle(p, 200);
+    if (!(await p.locator(open).count())) throw new Error(`ni se odprla plast »${what}«`);
     await p.goBack();
     await settle(p, 300);
     if ((await currentView(p)) !== "view-graph") throw new Error(`tipka Nazaj ob odprti plasti »${what}« zapre kalkulator (${await currentView(p)})`);
