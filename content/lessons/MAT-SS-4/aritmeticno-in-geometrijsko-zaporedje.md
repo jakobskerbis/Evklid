@@ -79,6 +79,17 @@ Pri $q = 1$ so vsi členi enaki $a_1$, zato je $S_n = n \cdot a_1$.
 
 V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom večjim od $1$ opazi, da so razmiki med sosednjimi točkami vedno večji.
 
+**7. Zaporedje po vzorcu.** Pri nalogi »nadaljuj zaporedje« iščemo pravilo, ki ga izpolnjujejo vsi dani členi. Iz nekaj primerov sklepamo na splošno pravilo: temu rečemo **induktivno sklepanje**. Pomagajo vprašanja po vrsti:
+
+1. Ali so razlike sosednjih členov enake (aritmetično zaporedje)? Ali so količniki enaki (geometrijsko)?
+2. Če ne, ali razlike same tvorijo preprosto zaporedje? Pri $1, 4, 9, 16, \ldots$ so razlike $3, 5, 7$: vsaka je za $2$ večja, zato je naslednja razlika $9$ in naslednji člen $25$.
+3. Ali je člen povezan s svojim indeksom $n$ ali z znanim zaporedjem (kvadrati, potence)? Členi $1, 4, 9, 16$ so kvadrati: $a_n = n^2$. Členi $4, 10, 28, 82$ so za $1$ večji od potenc števila $3$: $a_n = 3^n + 1$, naslednji člen je $244$.
+4. Domnevo za splošni člen **preveri pri vseh danih členih**. Šele nato je posplošitev smiselna.
+
+Nekaj danih členov zaporedja ne določa enolično. Zaporedje $1, 2, 4, \ldots$ lahko nadaljuješ z $8$ (podvajanje) ali s $7$ (razlike $1, 2, 3$). Zato zapiši pravilo, ki si ga uporabil. Formula, dobljena z induktivnim sklepanjem, je le domneva. Da velja za vsak $n$, moramo šele dokazati, na primer z matematično indukcijo.
+
+*Preveri:* nadaljuj zaporedje $1, 3, 7, 15, 31, \ldots$ in zapiši splošni člen. *(Odgovor: $63$; vsak člen je za $1$ manjši od potence števila $2$, $a_n = 2^n - 1$.)*
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -137,7 +148,27 @@ $S_n = \dfrac{n}{2}\,\bigl(2a_1 + (n-1)\,d\bigr)$, $\quad a_n = a_1 + (n-1)\,d$
 6. Najnižja vrsta: $a_{20} = 18 + 19 \cdot 2 = 56$. Preizkus: $\dfrac{20}{2} \cdot (18 + 56) = 740$.
 7. Odgovor: streha ima $20$ vrst, v najnižji vrsti je $56$ strešnikov.
 
-### Primer 4: zdaj ti
+### Primer 4: nadaljuj in posploši
+
+Zaporedje se začne s členi $2, 6, 12, 20, 30, \ldots$ Nadaljuj ga z dvema členoma, ugani splošni člen in ugotovi, kateri člen zaporedja je enak $420$.
+
+**Podatki:** $a_1 = 2$, $a_2 = 6$, $a_3 = 12$, $a_4 = 20$, $a_5 = 30$, $a_n = 420$
+**Iščemo:** $a_6$, $a_7$, splošni člen $a_n$ in indeks $n$ člena $420$
+
+:::formula
+Razlike sosednjih členov $a_{n+1} - a_n$; domnevo za $a_n$ preveri pri vseh danih členih.
+:::
+
+**Rešitev:**
+
+1. Razlike so $4, 6, 8, 10$, zato zaporedje ni aritmetično. Količniki $3$; $2$; $1{,}67$ … niso enaki, zato tudi ni geometrijsko.
+2. Razlike se vsakič povečajo za $2$. Naslednji razliki sta $12$ in $14$, zato je $a_6 = 30 + 12 = 42$ in $a_7 = 42 + 14 = 56$.
+3. Posplošimo: $2 = 1 \cdot 2$, $6 = 2 \cdot 3$, $12 = 3 \cdot 4$, $20 = 4 \cdot 5$, $30 = 5 \cdot 6$. Vsak člen je produkt indeksa in naslednjega števila, domneva je $a_n = n(n + 1)$.
+4. Preizkus na novih členih: $a_6 = 6 \cdot 7 = 42$ in $a_7 = 7 \cdot 8 = 56$, kar se ujema s korakom 2.
+5. Člen $420$: enačba $n(n + 1) = 420$ oziroma $n^2 + n - 420 = 0$ ima rešitvi $n = 20$ in $n = -21$. Indeks je naravno število, zato $n = 20$.
+6. Odgovor: naslednja člena sta $42$ in $56$, splošni člen je $a_n = n(n + 1)$, število $420$ je dvajseti člen.
+
+### Primer 5: zdaj ti
 
 V geometrijskem zaporedju je $a_2 = 6$ in $a_5 = 48$. Izračunaj vsoto prvih šestih členov.
 
@@ -176,6 +207,7 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 - $a_n = a_1 \cdot q^{\,n-1}$ in za $q \ne 1$: $S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$; za $q = 1$: $S_n = n\,a_1$.
 - Od $a_1$ do $a_n$ je $n - 1$ korakov; formulo vedno preveri pri $n = 1$.
 - Vrsto zaporedja določi šele, ko preveriš razliko oziroma količnik pri vseh danih parih.
+- Zaporedje po vzorcu: išči enake razlike, količnike, vzorec v razlikah ali zvezo z indeksom $n$; domnevo za $a_n$ preveri pri vseh danih členih.
 
 ## Za maturo
 
@@ -298,6 +330,22 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 ~ To je $500 \cdot 0{,}2^3$. Ostane $80\,\%$ vrednosti, zato je $q = 0{,}8$, ne $0{,}2$.
 > Vrednosti tvorijo geometrijsko zaporedje s $q = 0{,}8$: po $3$ letih je vrtalnik vreden $500 \cdot 0{,}8^3 = 256\,\text{€}$.
 
+? (brez računala) Nadaljuj zaporedje $1, 5, 11, 19, 29, \ldots$ po vzorcu. Koliko je šesti člen?
+= 41
+~ 39 | Razlike niso enake: $4, 6, 8, 10$. Vsaka je za $2$ večja od prejšnje, zato je naslednja $12$, ne $10$.
+~ 58 | Zaporedje ni geometrijsko: $\frac{5}{1} \ne \frac{11}{5}$. Poglej razlike sosednjih členov.
+> Razlike so $4, 6, 8, 10$, naslednja je $12$: $a_6 = 29 + 12 = 41$. Splošni člen je $a_n = n^2 + n - 1$.
+
+? Kateri splošni člen ustreza zaporedju $3, 8, 15, 24, \ldots$?
+- $a_n = 5n - 2$
+~ Ta formula da $3$ in $8$, tretji člen pa bi bil $13$, ne $15$. Domnevo preveri pri vseh danih členih.
+- $a_n = n^2 + 2$
+~ Ta da $3, 6, 11, \ldots$: ujema se le prvi člen.
++ $a_n = n(n + 2)$
+- $a_n = 3n$
+~ Ta da $3, 6, 9, \ldots$: drugi člen ni $8$.
+> $1 \cdot 3 = 3$, $2 \cdot 4 = 8$, $3 \cdot 5 = 15$, $4 \cdot 6 = 24$. Vsak člen je za $1$ manjši od kvadrata: $a_n = (n + 1)^2 - 1 = n(n + 2)$.
+
 <<RACUN
 vrednost: (43-7)/9 | 4
 vrednost: 10/2*(7+43) | 250
@@ -310,10 +358,17 @@ vrednost: 120*1.08^10 | 259.1
 vrednost: 10/2*(2*120+9*12) | 1740
 vrednost: 1740-120*(1.08^10-1)/(1.08-1) | 1.6
 enako: (a+d)^2-a*(a+2*d) | d^2
+vrednost: 3^5+1 | 244
+vrednost: 2^6-1 | 63
+vrednost: 6*7 | 42
+vrednost: 7*8 | 56
+resi: n^2+n-420=0 | n | -21, 20
+vrednost: 6^2+6-1 | 41
+enako: (n+1)^2-1 | n*(n+2)
 >>
 
 :::simboli
-a_n | splošni ($n$-ti) člen zaporedja | a_n = a_1 + (n-1)\,d | | geometrijsko: $a_n = a_1 q^{n-1}$
+a_n | splošni ($n$-ti) člen zaporedja | a_n = a_1 + (n-1)\,d | | geometrijsko: $a_n = a_1 q^{n-1}$; pri zaporedju po vzorcu ga uganemo iz danih členov
 a_{n+1} | člen, ki sledi členu $a_n$ | | |
 a_1 | prvi člen zaporedja | | |
 d | diferenca aritmetičnega zaporedja | d = a_{n+1} - a_n | |

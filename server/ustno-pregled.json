@@ -2843,13 +2843,8 @@
    "o": "D"
   },
   "MAT-SS-4/obrestni-racun#p4": {
-   "h": "b0a3b55ceb99",
-   "o": "D",
-   "k": [
-    "Relativna obrestna mera je letna obrestna mera, deljena s številom pripisov v enem letu, na primer $\\frac{p}{12}$ pri mesečnem pripisu",
-    "Pri $m$ pripisih na leto se stanje ob vsakem pripisu pomnoži s faktorjem $1 + \\frac{p}{100\\,m}$",
-    "V $n$ letih je $m \\cdot n$ pripisov, zato je končno stanje $G = G_0 \\left(1 + \\frac{p}{100\\,m}\\right)^{m n}$"
-   ]
+   "h": "bac7dbbc9c02",
+   "o": "D"
   },
   "MAT-SS-4/obrestni-racun#p5": {
    "h": "f97145bb5f63",

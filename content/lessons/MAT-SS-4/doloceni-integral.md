@@ -51,9 +51,18 @@ Napovej, koliko je $\int_{-1}^{1} x^3\,dx$, preden kaj računaš. Kolikšna pa j
 Integral je $0$: graf je simetričen glede na izhodišče, del pod osjo je enako velik kot del nad njo. Ploščina pa je $2 \cdot \int_0^1 x^3\,dx = 2 \cdot \frac{1}{4} = \frac{1}{2}$.
 :::
 
-**6. Ploščina med krivuljama.** Če je na intervalu $[a, b]$ graf $g$ ves čas nad grafom $f$, je ploščina vmes $\int_a^b \bigl(g(x) - f(x)\bigr)\,dx$: zgornja minus spodnja. Tanek trak pri $x$ je namreč visok $g(x) - f(x)$, ne glede na to, kje leži os $x$.
+**6. Lastnosti določenega integrala.** Vse sledijo iz Newton-Leibnizove formule. Naj bo $F$ primitivna funkcija za $f$.
 
-**7. Prostornina vrtenine (višja raven).** Graf $f$ zavrtimo okoli osi $x$. Nastane **vrtenina**, telo kot vaza ali žoga. Predstavljaj si, da jo narežeš kot salamo na tanke rezine. Vsaka rezina je skoraj valj s polmerom $f(x)$ in debelino $dx$, njena prostornina je $\pi f(x)^2\,dx$. Seštejemo vse rezine:
+- **Enaki meji.** $\int_a^a f(x)\,dx = F(a) - F(a) = 0$: lik brez širine nima ploščine.
+- **Zamenjava mej.** $\int_b^a f(x)\,dx = F(a) - F(b) = -\int_a^b f(x)\,dx$: ko meji zamenjaš, integral spremeni predznak.
+- **Aditivnost glede na interval.** $\int_a^b f(x)\,dx + \int_b^c f(x)\,dx = \int_a^c f(x)\,dx$, saj je $\bigl(F(b) - F(a)\bigr) + \bigl(F(c) - F(b)\bigr) = F(c) - F(a)$. Lik z navpično črto pri $x = b$ razrežemo na dva dela, ploščini pa seštejemo. Zaradi zamenjave mej pravilo velja tudi, če $b$ ne leži med $a$ in $c$.
+- **Linearnost.** Integral vsote je vsota integralov, $\int_a^b \bigl(f(x) + g(x)\bigr)\,dx = \int_a^b f(x)\,dx + \int_a^b g(x)\,dx$, konstantni faktor pa izpostavimo: $\int_a^b k\,f(x)\,dx = k\int_a^b f(x)\,dx$. Ti pravili že poznaš pri nedoločenem integralu.
+
+Aditivnost smo že uporabili: v bloku 5 smo interval za ploščino razdelili v ničli. Številski zgled: če je $\int_0^2 f(x)\,dx = 3$ in $\int_0^5 f(x)\,dx = 7$, je $\int_2^5 f(x)\,dx = 7 - 3 = 4$ in $\int_5^2 f(x)\,dx = -4$.
+
+**7. Ploščina med krivuljama.** Če je na intervalu $[a, b]$ graf $g$ ves čas nad grafom $f$, je ploščina vmes $\int_a^b \bigl(g(x) - f(x)\bigr)\,dx$: zgornja minus spodnja. Tanek trak pri $x$ je namreč visok $g(x) - f(x)$, ne glede na to, kje leži os $x$.
+
+**8. Prostornina vrtenine (višja raven).** Graf $f$ zavrtimo okoli osi $x$. Nastane **vrtenina**, telo kot vaza ali žoga. Predstavljaj si, da jo narežeš kot salamo na tanke rezine. Vsaka rezina je skoraj valj s polmerom $f(x)$ in debelino $dx$, njena prostornina je $\pi f(x)^2\,dx$. Seštejemo vse rezine:
 
 $$V = \pi \int_a^b f(x)^2\,dx$$
 
@@ -100,7 +109,29 @@ Interval razdeli v ničli, nato $p = \left|\int_0^3 f(x)\,dx\right| + \left|\int
 5. Seštejemo: $p = 9 + \frac{7}{3} = \frac{34}{3} \approx 11{,}33$.
 6. Odgovor: ploščina je $\frac{34}{3}$. Integral čez cel interval bi dal le $-\frac{20}{3}$, ker se dela odštejeta.
 
-### Primer 3 (težji, višja raven): prostornina žoge za ragbi
+### Primer 3: lastnosti integrala
+
+Funkcija $f$ je zvezna na $[0, 6]$. Znano je $\int_0^6 f(x)\,dx = 10$ in $\int_2^6 f(x)\,dx = 4$. Izračunaj a) $\int_0^2 f(x)\,dx$ in b) $\int_6^0 \bigl(3f(x) - 2\bigr)\,dx$. c) Z aditivnostjo izračunaj še $\int_{-1}^{2} |x|\,dx$.
+
+**Podatki:** $\int_0^6 f(x)\,dx = 10$, $\int_2^6 f(x)\,dx = 4$; pri c) funkcija $|x|$ na $[-1, 2]$
+**Iščemo:** a) $\int_0^2 f(x)\,dx$, b) $\int_6^0 \bigl(3f(x) - 2\bigr)\,dx$, c) $\int_{-1}^{2} |x|\,dx$
+
+:::formula
+$\int_a^b f\,dx + \int_b^c f\,dx = \int_a^c f\,dx$, $\quad \int_b^a f\,dx = -\int_a^b f\,dx$, $\quad \int_a^b k\,dx = k\,(b - a)$
+:::
+
+**Rešitev:**
+
+1. a) Aditivnost: $\int_0^2 f\,dx + \int_2^6 f\,dx = \int_0^6 f\,dx$, zato je $\int_0^2 f(x)\,dx = 10 - 4 = 6$.
+2. b) Najprej računamo z mejama v običajnem vrstnem redu. Linearnost: $\int_0^6 \bigl(3f(x) - 2\bigr)\,dx = 3 \cdot 10 - \int_0^6 2\,dx$.
+3. b) $\int_0^6 2\,dx$ je ploščina pravokotnika s stranicama $6$ in $2$, torej $12$. Zato je $\int_0^6 \bigl(3f(x) - 2\bigr)\,dx = 30 - 12 = 18$.
+4. b) Zamenjava mej spremeni predznak: $\int_6^0 \bigl(3f(x) - 2\bigr)\,dx = -18$.
+5. c) Za $x < 0$ je $|x| = -x$, za $x \ge 0$ je $|x| = x$. Interval razdelimo pri $0$: $\int_{-1}^{2} |x|\,dx = \int_{-1}^{0} (-x)\,dx + \int_0^2 x\,dx$.
+6. c) $\int_{-1}^{0} (-x)\,dx = -\frac{x^2}{2}\Big|_{-1}^{0} = 0 + \frac{1}{2} = \frac{1}{2}$ in $\int_0^2 x\,dx = \frac{x^2}{2}\Big|_0^2 = 2$.
+7. c) Seštejemo: $\frac{1}{2} + 2 = \frac{5}{2}$. Preizkus z liki: pod grafom sta trikotnika s ploščinama $\frac{1 \cdot 1}{2}$ in $\frac{2 \cdot 2}{2}$.
+8. Odgovor: a) $6$; b) $-18$; c) $\frac{5}{2}$.
+
+### Primer 4 (težji, višja raven): prostornina žoge za ragbi
 
 Žoga za ragbi je dolga $30\,\mathrm{cm}$, na sredini ima premer $18\,\mathrm{cm}$. Njen obris opišemo s parabolo $f(x) = 9 - \frac{x^2}{25}$ za $-15 \le x \le 15$ (vse v centimetrih). Koliko litrov zraka je v žogi?
 
@@ -122,7 +153,7 @@ $V = \pi \int_{-15}^{15} f(x)^2\,dx$
 7. Ker je $1\,\mathrm{L} = 1000\,\mathrm{cm^3}$, je $V \approx 4{,}07\,\mathrm{L}$.
 8. Odgovor: v žogi je približno $4{,}1$ litra zraka.
 
-### Primer 4 (višja raven): zdaj ti
+### Primer 5 (višja raven): zdaj ti
 
 Na treningu imajo plastične stožce, visoke $30\,\mathrm{cm}$, s polmerom osnovne ploskve $10\,\mathrm{cm}$. Da jih veter ne odnese, jih napolnijo s peskom. Koliko peska gre v en stožec?
 
@@ -158,6 +189,7 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 - Določeni integral $\int_a^b f(x)\,dx$ je limita vsot ploščin pravokotnikov pod grafom; rezultat je število.
 - Newton-Leibnizova formula: $\int_a^b f(x)\,dx = F(b) - F(a)$, kjer je $F$ katera koli primitivna funkcija; $C$ se izniči.
 - Integral šteje dele nad osjo s plusom, pod osjo z minusom. Za ploščino razdeli interval v ničlah in seštej absolutne vrednosti.
+- Lastnosti: $\int_a^a f\,dx = 0$, $\int_b^a f\,dx = -\int_a^b f\,dx$, $\int_a^b f\,dx + \int_b^c f\,dx = \int_a^c f\,dx$; integral vsote je vsota integralov, konstantni faktor izpostavimo.
 - Ploščina med krivuljama: $\int_a^b (g - f)\,dx$, kjer je $g$ zgoraj.
 - (višja raven) Prostornina vrtenine okoli osi $x$: $V = \pi \int_a^b f(x)^2\,dx$.
 - Pot je integral hitrosti po času: $s = \int_{t_1}^{t_2} v(t)\,dt$.
@@ -313,6 +345,13 @@ Podobno računa aplikacija za kolesarjenje porabljeno energijo: moč v vatih kra
 ~ To je samo integral na $[0, 1]$, ki je negativen. Ploščina ne more biti negativna.
 > Ničla je $x = 1$. $\int_0^1 (x^2 - 1)\,dx = -\frac{2}{3}$, $\int_1^2 (x^2 - 1)\,dx = \frac{4}{3}$. Ploščina je $\frac{2}{3} + \frac{4}{3} = 2$.
 
+? Znano je $\int_0^4 f(x)\,dx = 10$ in $\int_0^1 f(x)\,dx = 3$. Koliko je $\int_4^1 f(x)\,dx$?
+= -7
+~ 7 | To je $\int_1^4 f(x)\,dx$. Meji sta zamenjani, zato se spremeni predznak.
+~ 13 | Integralov ne seštej: iz $\int_0^1 f\,dx + \int_1^4 f\,dx = \int_0^4 f\,dx$ sledi $\int_1^4 f\,dx = 10 - 3$.
+~ -13 | Integralov ne seštej: najprej odštej $10 - 3$, nato zamenjaj predznak.
+> Aditivnost: $\int_1^4 f(x)\,dx = 10 - 3 = 7$. Zamenjava mej: $\int_4^1 f(x)\,dx = -7$.
+
 <<RACUN
 integral: 3*sin(x)+2*cos(x) | x | 0 | pi/2 | 5
 resi: 4-x^2=x+2 | x | -2, 1
@@ -325,6 +364,12 @@ integral: pi*(12/sqrt(x))^2 | x | 4 | 16 | 144*pi*ln(4)
 vrednost: 144*pi*ln(4) | 627.14
 resi: 144*pi*ln(c/4)=72*pi*ln(4) | c | 8
 integral: 2*12/sqrt(x) | x | 4 | 16 | 96
+vrednost: 10-4 | 6
+vrednost: -(3*10-2*6) | -18
+integral: -x | x | -1 | 0 | 1/2
+integral: x | x | 0 | 2 | 2
+vrednost: 1/2+2 | 5/2
+vrednost: -(10-3) | -7
 >>
 
 :::simboli
@@ -340,7 +385,9 @@ v | hitrost | | m/s |
 t | čas | | s |
 G | primitivna funkcija za $f(x)^2$ | G' = f^2 | |
 p | ploščina lika | | |
-g | funkcija z zgornjim grafom pri ploščini med krivuljama | | |
+g | funkcija z zgornjim grafom pri ploščini med krivuljama | | | pri linearnosti druga funkcija pod integralom
+c | tretja meja pri aditivnosti | | | v Nalogi 3 za maturo iskana zgornja meja dela posode
+k | konstanta (konstantni faktor ali konstantni integrand) | | |
 A | ploščina pod grafom od $a$ do $x$ | A' = f | |
 d | oznaka v $dx$ (spremenljivka integracije $x$) | | | $dx$ je širina tankega pravokotnika
 :::

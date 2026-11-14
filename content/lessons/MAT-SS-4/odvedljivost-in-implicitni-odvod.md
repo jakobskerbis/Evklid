@@ -77,6 +77,8 @@ Ko gre $h \to 0$, gre prvi faktor proti $f'(a)$, drugi proti $0$. Produkt gre pr
 
 (višja raven) Obrat ne velja: $|x|$ je v $0$ zvezna, odvedljiva pa ne. Velja pa enakovreden zapis izreka: kjer je funkcija nezvezna, ni odvedljiva. Zato je vsak skok, luknja ali pol hkrati točka neodvedljivosti.
 
+(višja raven) Izrek velja v vsaki točki posebej, zato tudi na intervalu: funkcija, ki je odvedljiva v vsaki točki intervala, je na tem intervalu zvezna. Na primer $x^3 - 2x$ je odvedljiva na $\mathbb{R}$, zato je na $\mathbb{R}$ zvezna. Zvezna funkcija pa na intervalu ni nujno odvedljiva: $|x|$ je zvezna na $(-1, 1)$, odvedljiva pa le na $(-1, 0)$ in $(0, 1)$. Pri funkciji z več predpisi zato najprej preveriš zveznost v točkah stika. Kjer ni zvezna, tudi odvedljiva ni. Kjer je zvezna, primerjaš še smerna koeficienta z leve in z desne, kot v Primeru 1.
+
 **4. Odvod implicitno podane funkcije (višja raven).** Narišimo krožnico $x^2 + y^2 = 25$ in na njej točko $T(3, 4)$.
 
 :::risba graf
@@ -224,7 +226,7 @@ $k = -\frac{2 + 2}{1 + 4} = -\frac{4}{5} = -0{,}8$. Tangenta: $y - 2 = -0{,}8(x 
 
 - $f$ je odvedljiva v $a$, če obstaja $f'(a)$: limiti diferenčnega količnika z leve in z desne obstajata in sta enaki.
 - Na grafu $f$ ni odvedljiva v vogalu ($|x|$), osti ($\sqrt[3]{x^2}$), pri navpični tangenti ($\sqrt[3]{x}$) in v točki nezveznosti.
-- (višja raven) Odvedljiva funkcija je zvezna; obrat ne velja ($|x|$). Nezvezna funkcija ni odvedljiva.
+- (višja raven) Odvedljiva funkcija je zvezna, v točki in na intervalu; obrat ne velja ($|x|$). Nezvezna funkcija ni odvedljiva.
 - (višja raven) Implicitni odvod: obe strani enačbe odvajaj po $x$, $y$ je funkcija od $x$: $(y^2)' = 2y\,y'$, $(xy)' = y + x\,y'$; izrazi $y'$ in nato vstavi točko.
 - (višja raven) Krožnica $x^2 + y^2 = r^2$: $y' = -\frac{x}{y}$; pri $y = 0$ je tangenta navpična.
 
@@ -371,6 +373,16 @@ f: abs(x^2 - 4) | modra debelo
 - Ni nujno: če sta kosa grafa vzporedna, je odvedljiva.
 ~ Tudi pri vzporednih kosih $f(a + h) - f(a)$ ne gre proti $0$, zato diferenčni količnik z ene strani raste čez vse meje.
 > Odvedljiva ⇒ zvezna. Ker $f$ v $a$ ni zvezna, ne more biti odvedljiva.
+
+? (višja raven) Funkcija $f$ je odvedljiva v vsaki točki intervala $(0, 5)$. Kaj zagotovo velja?
++ $f$ je zvezna na intervalu $(0, 5)$.
+- $f$ je zvezna tudi v točki $0$.
+~ Izrek velja le v točkah intervala, $0$ pa ne leži v $(0, 5)$. Funkcija $\frac{1}{x}$ je odvedljiva na $(0, 5)$, v $0$ pa ni niti definirana.
+- Vsaka funkcija, ki je zvezna na $(0, 5)$, je tam tudi odvedljiva.
+~ Obrat ne velja: $\lvert x - 2 \rvert$ je zvezna na $(0, 5)$, v $x = 2$ pa ima vogal.
+- Odvod $f'$ je na $(0, 5)$ povsod različen od $0$.
+~ Odvedljivost ne izključuje vodoravne tangente: $(x - 2)^2$ je odvedljiva na $(0, 5)$, pa je njen odvod pri $x = 2$ enak $0$.
+> Funkcija, odvedljiva v vsaki točki intervala, je v vsaki točki intervala zvezna, torej zvezna na tem intervalu. O krajiščih in o obratu izrek ne pove ničesar.
 
 ? (višja raven) (brez računala) Kolikšen je smerni koeficient tangente na krožnico $x^2 + y^2 = 25$ v točki $(-3, 4)$?
 = 0,75 | 0,001

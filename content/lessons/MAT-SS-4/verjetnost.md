@@ -7,7 +7,7 @@ avtor: AI
 
 Za palačinke potrebuješ dve jajci. V škatli jih je $12$, a dve sta počeni, česar ne vidiš. Brez gledanja vzameš dve. Kolikšna je verjetnost, da sta obe celi? Mnogi rečejo $\frac{10}{12} \cdot \frac{10}{12} \approx 0{,}69$, a to ni čisto prav, ker prvo jajce ne gre nazaj v škatlo.
 
-Klasično definicijo že znaš: če je vseh enako verjetnih izidov $n$, ugodnih za dogodek $A$ pa $m$, je
+Pri enem jemanju je preprosto: če je vseh enako verjetnih izidov $n$, ugodnih za dogodek $A$ pa $m$, je
 $$P(A) = \frac{m}{n}.$$
 Ugodne in vse izide štejemo s kombinatoriko. Pri jajcih pa se zgodita *dve stvari zapored* in druga je odvisna od prve. Podobno razmišljajo zavarovalnice, zdravniki pri branju izvidov in tovarne pri nadzoru kakovosti. Za take naloge potrebuješ tri orodja: **verjetnost vsote dogodkov**, **verjetnost produkta dogodkov** in **pogojno verjetnost**.
 
@@ -23,9 +23,21 @@ $$P(\overline{A}) = 1 - P(A).$$
 
 Preveri: kaj je nasprotni dogodek dogodka »vsaj eno od dveh jajc je počeno«? (Obe jajci sta celi.)
 
-V simulaciji spodaj (»Verjetnost in relativna frekvenca«) izberi met kocke in klikni »1000«. Opazuj, kako se delež šestic ustali blizu $\frac{1}{6} \approx 0{,}17$: verjetnost je delež, ki ga dobiš pri zelo veliko poskusih.
+**Vsi dogodki poskusa.** Dogodek je katera koli podmnožica vzorčnega prostora, tudi prazna množica $\emptyset$ (nemogoč dogodek) in cel vzorčni prostor (gotov dogodek). Pri metu kovanca z izidoma »grb« in »cifra« so vsi dogodki $\emptyset$, $\{\text{grb}\}$, $\{\text{cifra}\}$ in $\{\text{grb}, \text{cifra}\}$. Poskus z $n$ izidi ima $2^n$ dogodkov, saj za vsak izid izberemo, ali je v dogodku ali ne.
 
-**2. Vsota in produkt dogodkov.**
+**2. Matematična, empirična in subjektivna verjetnost.** Verjetnost $P(A)$ pove, kako pričakovan je dogodek $A$. Do nje pridemo na tri načine.
+
+- **Matematična (klasična) verjetnost.** Če ima poskus **končno mnogo** izidov in so vsi **enako verjetni**, je $P(A) = \frac{m}{n}$, kjer je $n$ število vseh izidov, $m$ pa število izidov, ugodnih za $A$. Izračunamo jo pred poskusom, brez metanja: pri pošteni kocki je $P(\text{sodo}) = \frac{3}{6} = \frac{1}{2}$. Oba pogoja sta nujna. Vsota pik pri dveh kockah ima $11$ možnih vrednosti, a vsota $2$ je redkejša od vsote $7$, zato $P(\text{vsota } 7) \ne \frac{1}{11}$. Enako verjetni so urejeni pari $(a, b)$, teh je $36$, ugodnih $6$, torej $P = \frac{6}{36} = \frac{1}{6}$.
+- **Empirična verjetnost** je relativna frekvenca: število poskusov, v katerih se je $A$ zgodil, deljeno s številom vseh poskusov. Nova serija poskusov da navadno malo drugačno število. Uporabimo jo, kadar matematične verjetnosti ne moremo izračunati. Risalni žebljiček vržemo $500$-krat in $310$-krat pade s konico navzgor, zato je empirična verjetnost $\frac{310}{500} = 0{,}62$.
+- **Subjektivna verjetnost** je osebna ocena na podlagi izkušenj, kadar poskusa ne moremo ponavljati in izidov ne moremo šteti: »Ocenjujem, da bo naša ekipa jutri zmagala z verjetnostjo $0{,}8$.« Nekdo drug lahko isti dogodek oceni drugače; take ocene ne izračunamo in ne preverimo s ponavljanjem.
+
+Preveri: ali je verjetnost, da žebljiček pade s konico navzgor, enaka $\frac{1}{2}$? (Ne: izida nista enako verjetna, zato formula $\frac{m}{n}$ ne velja. Poskusi kažejo približno $0{,}62$.)
+
+**Povezava empirične in matematične verjetnosti.** Če poskus ponavljamo vedno večkrat, se relativna frekvenca ustali okoli matematične verjetnosti (**zakon velikih števil**). Pri malo ponovitvah lahko močno odstopa: v $10$ metih kocke lahko padejo $4$ šestice, delež $0{,}4$. Zato z relativno frekvenco iz veliko poskusov ocenimo verjetnost, kadar je ne znamo izračunati (žebljiček). Obratno pa matematična verjetnost napove, kaj bomo videli pri veliko ponovitvah: v $600$ metih kocke pričakujemo približno $100$ šestic, ne pa natanko $100$.
+
+V simulaciji spodaj (»Verjetnost in relativna frekvenca«) izberi met kocke in klikni »1000«. Opazuj, kako se delež šestic ustali blizu matematične verjetnosti $\frac{1}{6} \approx 0{,}17$.
+
+**3. Vsota in produkt dogodkov.**
 
 - **Vsota** $A + B$: zgodi se $A$ ali $B$ (vsaj eden od njiju).
 - **Produkt** $A \cdot B$: zgodita se $A$ in $B$ hkrati.
@@ -34,7 +46,7 @@ Dogodka sta **nezdružljiva**, če se ne moreta zgoditi hkrati, torej je $A \cdo
 
 Preveri: ali sta »padlo je sodo« in »padla je 6« nezdružljiva? (Ne, šestica je soda, zato se lahko zgodita hkrati.)
 
-**3. Verjetnost vsote.** Pri splošnih dogodkih velja
+**4. Verjetnost vsote.** Pri splošnih dogodkih velja
 $$P(A + B) = P(A) + P(B) - P(A \cdot B).$$
 Izide, ki so v obeh dogodkih, bi pri seštevanju šteli dvakrat, zato jih enkrat odštejemo. Če sta $A$ in $B$ nezdružljiva, je $P(A \cdot B) = 0$ in dobimo preprosto
 $$P(A + B) = P(A) + P(B).$$
@@ -45,7 +57,7 @@ V kuhinji je verjetnost, da je v hladilniku mleko, $0{,}7$, da so jajca, pa $0{,
 Ne, verjetnost ne more biti večja od $1$. Dneve, ko sta v hladilniku oboje, smo šteli dvakrat. Odšteti moramo $P(A \cdot B)$; ta je vsaj $0{,}3$, saj mora biti vsota največ $1$.
 :::
 
-**4. Pogojna verjetnost (višja raven).** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (z $P(B) > 0$), je
+**5. Pogojna verjetnost (višja raven).** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (z $P(B) > 0$), je
 $$P(A \mid B) = \frac{P(A \cdot B)}{P(B)}.$$
 Pogoj $B$ »zoži svet« na izide, v katerih se je $B$ zgodil, in med njimi gledamo, kolikšen delež jih je ugodnih za $A$.
 
@@ -55,7 +67,7 @@ Prvo jajce iz škatle je bilo celo. Kolikšna je zdaj verjetnost, da je celo tud
 $\frac{9}{11}$. V škatli je ostalo $11$ jajc, celih je še $9$. Pogoj »prvo je bilo celo« je spremenil vsebino škatle.
 :::
 
-**5. Verjetnost produkta (višja raven).** Iz definicije pogojne verjetnosti sledi
+**6. Verjetnost produkta (višja raven).** Iz definicije pogojne verjetnosti sledi
 $$P(A \cdot B) = P(B) \cdot P(A \mid B).$$
 Verjetnost, da se zgodita oba dogodka, je verjetnost prvega, pomnožena z verjetnostjo drugega, ko je prvi že nastopil. To je pravilo za računanje po stopnjah (npr. dva izvlečka brez vračanja).
 
@@ -90,7 +102,7 @@ Na zgornji poti pomnožimo: $P = \frac{10}{12} \cdot \frac{9}{11} = \frac{90}{13
 
 Preveri: kolikšna je verjetnost, da sta obe jajci počeni? ($\frac{2}{12} \cdot \frac{1}{11} = \frac{2}{132} = \frac{1}{66}$.)
 
-**6. Neodvisna dogodka (višja raven).** Dogodka $A$ in $B$ sta **neodvisna**, če informacija o enem ne spremeni verjetnosti drugega, torej $P(A \mid B) = P(A)$. Takrat velja
+**7. Neodvisna dogodka (višja raven).** Dogodka $A$ in $B$ sta **neodvisna**, če informacija o enem ne spremeni verjetnosti drugega, torej $P(A \mid B) = P(A)$. Takrat velja
 $$P(A \cdot B) = P(A) \cdot P(B).$$
 Primer: dva zaporedna meta kovanca. Pri vlečenju brez vračanja dogodka nista neodvisna.
 
@@ -98,7 +110,29 @@ Preveri: sta »prvo jajce je celo« in »drugo jajce je celo« neodvisna? (Ne: $
 
 ## Rešeni primeri
 
-### Primer 1 (lažji): vsota dogodkov pri metu kocke
+### Primer 1 (lažji): vsi dogodki poskusa
+
+V vrečki so rdeča, modra in zelena kroglica. Na slepo izvlečemo eno. Naštej vse dogodke tega poskusa in vsakemu določi verjetnost.
+
+**Podatki:** vzorčni prostor $\{R, M, Z\}$, $3$ enako verjetni izidi
+**Iščemo:** vse dogodke in njihove verjetnosti
+
+:::formula
+število dogodkov $= 2^n$, $P(A) = \dfrac{m}{n}$
+:::
+
+**Rešitev:**
+
+1. Dogodkov je $2^3 = 8$. Naštejemo jih po številu izidov, da nobenega ne izpustimo.
+2. Brez izidov: $\emptyset$ (nemogoč dogodek), $P = \dfrac{0}{3} = 0$.
+3. En izid: $\{R\}$, $\{M\}$, $\{Z\}$, vsak s $P = \dfrac{1}{3}$.
+4. Dva izida: $\{R, M\}$, $\{R, Z\}$, $\{M, Z\}$, vsak s $P = \dfrac{2}{3}$.
+5. Trije izidi: $\{R, M, Z\}$ (gotov dogodek), $P = \dfrac{3}{3} = 1$.
+6. Preverimo: $1 + 3 + 3 + 1 = 8$. Matematično verjetnost smemo uporabiti, ker so trije izidi enako verjetni.
+
+Odgovor: poskus ima $8$ dogodkov z verjetnostmi $0$, $\frac{1}{3}$ (trije), $\frac{2}{3}$ (trije) in $1$.
+
+### Primer 2 (lažji): vsota dogodkov pri metu kocke
 
 Vržemo pošteno kocko. Dogodek $A$: padlo je sodo število. Dogodek $B$: padlo je število, večje od $3$. Izračunaj $P(A + B)$.
 
@@ -119,7 +153,7 @@ $$P(A + B) = \frac{1}{2} + \frac{1}{2} - \frac{1}{3} = \frac{2}{3}.$$
 5. Preverimo z neposrednim štetjem: $A + B = \{2, 4, 5, 6\}$ ima $4$ izide, $\dfrac{4}{6} = \dfrac{2}{3}$. Ujemanje potrdi račun.
 6. Odgovor: verjetnost, da pade sodo število ali število, večje od $3$, je $\frac{2}{3}$.
 
-### Primer 2 (višja raven): produkt dogodkov brez vračanja
+### Primer 3 (višja raven): produkt dogodkov brez vračanja
 
 V košari je $5$ rdečih in $3$ zelena jabolka. Za zavitek brez gledanja vzameš dve. Kolikšna je verjetnost, da sta (a) obe rdeči, (b) različnih barv?
 
@@ -146,7 +180,7 @@ $P(A \cdot B) = P(A) \cdot P(B \mid A)$; za nezdružljiva dogodka $P(A + B) = P(
 
 Odgovor: obe jabolki sta rdeči z verjetnostjo $\frac{5}{14}$, različnih barv pa z verjetnostjo $\frac{15}{28}$.
 
-### Primer 3 (težji, višja raven): pogojna verjetnost pri kontroli kakovosti
+### Primer 4 (težji, višja raven): pogojna verjetnost pri kontroli kakovosti
 
 Tovarna ima dva stroja. Stroj $A$ izdela $60\,\%$ vseh izdelkov, stroj $B$ pa $40\,\%$. Pri stroju $A$ je $2\,\%$ izdelkov pokvarjenih, pri stroju $B$ pa $5\,\%$. Naključno izberemo en izdelek in je pokvarjen. Kolikšna je verjetnost, da ga je izdelal stroj $A$?
 
@@ -182,7 +216,8 @@ $P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}37
 
 ## Povzetek
 
-- Dogodek je podmnožica izidov. Za nasprotni dogodek velja $P(\overline{A}) = 1 - P(A)$.
+- Dogodek je podmnožica izidov; poskus z $n$ izidi ima $2^n$ dogodkov. Za nasprotni dogodek velja $P(\overline{A}) = 1 - P(A)$.
+- Matematična verjetnost $\frac{m}{n}$ velja za končno mnogo enako verjetnih izidov, empirična je relativna frekvenca, subjektivna je osebna ocena.
 - Vsota $A + B$ pomeni »$A$ ali $B$«, produkt $A \cdot B$ pa »$A$ in $B$«.
 - $P(A + B) = P(A) + P(B) - P(A \cdot B)$. Pri nezdružljivih dogodkih se zmanjša na $P(A) + P(B)$.
 - Pogojna verjetnost (višja raven): $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)}$.
@@ -292,9 +327,23 @@ $$P(A + B) = P(A) + P(B) - P(A \cdot B).$$
 **Zakaj je pogojna verjetnost takšna (višja raven)?** Pri klasični verjetnosti ima $B$ $|B|$ izidov. Če vemo, da se je $B$ zgodil, je prostor izidov zožen na $B$, ugodni pa so izidi iz $A \cdot B$. Zato
 $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(A \cdot B)}{P(B)}.$$
 
-**Neodvisnost (višja raven).** Dogodka sta neodvisna natanko tedaj, ko je $P(A \mid B) = P(A)$, kar je po definiciji pogojne verjetnosti ekvivalentno $P(A \cdot B) = P(A) \cdot P(B)$. V Primeru 1 je $P(A \cdot B) = \dfrac{1}{3}$, medtem ko je $P(A) \cdot P(B) = \dfrac{1}{4}$. Ker se vrednosti razlikujeta, dogodka »sodo število« in »večje od $3$« nista neodvisna.
+**Neodvisnost (višja raven).** Dogodka sta neodvisna natanko tedaj, ko je $P(A \mid B) = P(A)$, kar je po definiciji pogojne verjetnosti ekvivalentno $P(A \cdot B) = P(A) \cdot P(B)$. V Primeru 2 je $P(A \cdot B) = \dfrac{1}{3}$, medtem ko je $P(A) \cdot P(B) = \dfrac{1}{4}$. Ker se vrednosti razlikujeta, dogodka »sodo število« in »večje od $3$« nista neodvisna.
 
 ## Preveri se
+
+? (brez računala) Poskus ima $4$ izide. Koliko dogodkov ima, če štejemo tudi nemogoč in gotov dogodek?
+= 16
+~ 14 | Izpustil si nemogoč in gotov dogodek.
+~ 4 | To so le elementarni dogodki.
+> Vsak izid je v dogodku ali ni, zato je dogodkov $2^4 = 16$.
+
+? Katera verjetnost je subjektivna?
+- v $200$ metih kovanca je padlo $96$ grbov, torej $0{,}48$
+~ To je relativna frekvenca iz poskusov, empirična verjetnost.
++ sošolec ocenjuje, da bo pri testu dobil petico z verjetnostjo $0{,}7$
+- iz kupa $52$ kart izvlečemo srce z verjetnostjo $\frac{13}{52}$
+~ To je matematična verjetnost: $13$ ugodnih od $52$ enako verjetnih izidov.
+> Ocena sošolca temelji na občutku in izkušnjah, ne na štetju izidov ali ponavljanju poskusa.
 
 ? Za dogodka $A$ in $B$ velja $P(A) = 0{,}5$, $P(B) = 0{,}4$ in $P(A + B) = 0{,}6$. Kolikšna je $P(A \cdot B)$?
 - $0{,}2$
@@ -361,6 +410,14 @@ N | dogodek, da je izdelek pokvarjen | | |
 :::
 
 <<RACUN
+vrednost: 6/36 | 1/6
+vrednost: 310/500 | 0.62
+vrednost: 600/6 | 100
+vrednost: 4/10 | 0.4
+vrednost: 96/200 | 0.48
+vrednost: 2**3 | 8
+vrednost: 1+3+3+1 | 8
+vrednost: 2**4 | 16
 vrednost: 5/(6*6) | 5/36
 vrednost: factorial(12)/(factorial(3)*factorial(9)) | 220
 vrednost: factorial(5)/(factorial(3)*factorial(2))/220 | 1/22

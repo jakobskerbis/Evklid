@@ -22,9 +22,9 @@ krajših strukturiranih nalog (5–8 točk, skupaj 40). Višja raven: na vsaki p
 
 ## Povzetek pokritosti
 
-Postavk (vsebin in ciljev): 513. Pokrito (»da«): 432, delno: 76, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 75, delno 12, manjka 0).
+Postavk (vsebin in ciljev): 513. Pokrito (»da«): 448, delno: 60, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 78, delno 9, manjka 0).
 
-Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, vsi štirje letniki: 14. 11. 2026); opomba »C4« pomeni dopolnitev ob nalogah za maturo.
+Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, vsi štirje letniki: 14. 11. 2026); opomba »C4« pomeni dopolnitev ob nalogah za maturo, opomba »C3b« pa dopolnitev prej delno pokritih postavk v obstoječih lekcijah.
 
 ### Manjka
 
@@ -117,8 +117,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 |---|---|---|---|
 | Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/racionalna-stevila` | delno – zakoni računskih operacij niso izrecno navedeni |
 | Desetiški zapis racionalnih števil | OR+VR | `MAT-SS-1/racionalna-stevila` | da |
-| Deleži in odstotki | OR+VR | `MAT-SS-1/racionalna-stevila`, `MAT-SS-4/obrestni-racun` | delno – deleži da; odstotki le mimogrede (obresti) |
-| Procentni račun | OR+VR | `MAT-SS-4/obrestni-racun` | delno – osnovni procentni račun (osnova, delež, povečanje) ni posebej razložen |
+| Deleži in odstotki | OR+VR | `MAT-SS-1/racionalna-stevila`, `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
+| Procentni račun | OR+VR | `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
@@ -127,7 +127,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | računa z racionalnimi števili | OR+VR | `MAT-SS-1/racionalna-stevila` | da |
 | uporablja in utemelji decimalni zapis racionalnega števila ter razlikuje med desetiškimi in nedesetiškimi ulomki | OR+VR | `MAT-SS-1/racionalna-stevila` | da – blok 4: imenovalec le 2 in 5 |
 | računa z decimalnimi števili | OR+VR | `MAT-SS-1/racionalna-stevila` | OŠ |
-| uporablja deleže in odstotke ter procentni račun v nalogah iz vsakdanjega življenja in spretno uporablja računalo | OR+VR | `MAT-SS-4/obrestni-racun` | delno – odstotki le pri obrestih; uporaba računala ni prikazana |
+| uporablja deleže in odstotke ter procentni račun v nalogah iz vsakdanjega življenja in spretno uporablja računalo | OR+VR | `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
 
 
 ### 4.3.3 Realna števila
@@ -386,7 +386,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | uporablja limito pri računanju asimptot funkcij | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije`, `MAT-SS-3/racionalne-funkcije` | da |
 | prepozna zveznost funkcije, ki je podana s svojim grafom | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da |
 | razloži zveznost s predpisom podane funkcije | **VR** | `MAT-SS-4/limita-in-zveznost-funkcije` | da – Primer 3; vprašanje vr. 219 mejno (definicija zveznosti) |
-| poišče intervale, na katerih je dana funkcija zvezna | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | delno – le trditev o zveznosti elementarnih funkcij, brez naloge |
+| poišče intervale, na katerih je dana funkcija zvezna | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da – C3b (14. 11. 2026) |
 | sklepa o lastnostih konkretne zvezne funkcije na zaprtem intervalu | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
 | poišče ničlo ali točko na krivulji na predvideno natančnost z uporabo tehnologije | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
 
@@ -652,7 +652,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| navede primer, induktivno sklepa, posplošuje in nadaljuje zaporedje | OR+VR | `MAT-SS-4/zaporedja`, `MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje` | delno – ni vaj z nadaljevanjem zaporedja po vzorcu |
+| navede primer, induktivno sklepa, posplošuje in nadaljuje zaporedje | OR+VR | `MAT-SS-4/zaporedja`, `MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje` | da – C3b (14. 11. 2026) |
 | najde in zapiše zvezo med členi zaporedja | OR+VR | `MAT-SS-4/zaporedja`, `MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje` | da |
 | zapiše člene zaporedja pri danih začetnih členih in rekurzivni formuli | OR+VR | `MAT-SS-4/zaporedja` | da |
 | ugotovi in analizira lastnosti različno predstavljenih zaporedij (številske predstavitve, grafični prikaz, analitični zapis …) | OR+VR | `MAT-SS-4/zaporedja` | da |
@@ -664,7 +664,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | izračuna vsoto n členov zaporedja | OR+VR | `MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje` | da |
 | izračuna vsoto geometrijske vrste | OR+VR | `MAT-SS-4/geometrijska-vrsta` | da |
 | razlikuje navadno in obrestno obrestovanje | OR+VR | `MAT-SS-4/obrestni-racun` | da |
-| razlikuje med konformno in relativno obrestno mero | OR+VR | `MAT-SS-4/obrestni-racun` | delno – relativna le v Bolj natančno; konformna obrestna mera manjka |
+| razlikuje med konformno in relativno obrestno mero | OR+VR | `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
 | uporabi načelo ekvivalence glavnic | OR+VR | `MAT-SS-4/anuitete-in-amortizacijski-nacrt` | da – C3 (14. 11. 2026) |
 | poišče realne primere obrestovanja, napove pričakovanja in se odloči na osnovi simulativnih izračunov | OR+VR | `MAT-SS-4/obrestni-racun` | da – uganka z bankama A in B, primerjalna tabela |
 | izračuna anuiteto in izdela amortizacijski načrt | OR+VR | `MAT-SS-4/anuitete-in-amortizacijski-nacrt` | da – C3 (14. 11. 2026) |
@@ -690,8 +690,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | izračuna vrednost diferenčnega količnika | OR+VR | `MAT-SS-4/odvod` | da |
 | izračuna limito diferenčnega količnika | OR+VR | `MAT-SS-4/odvod` | da |
 | razloži geometrijski pomen odvoda | OR+VR | `MAT-SS-4/odvod`, `MAT-SS-4/uporaba-odvoda` | da |
-| izpelje preprosta pravila odvajanja z uporabo definicije odvoda | **VR** | `MAT-SS-4/odvod` | delno – le vzorec za x², x³ (blok 3); izpeljave pravil za vsoto, produkt manjkajo |
-| izpelje odvode funkcij z uporabo pravil za odvajanje | **VR** | `MAT-SS-4/odvod` | delno – tabela odvodov brez izpeljav, npr. (tan x)' ni izpeljan |
+| izpelje preprosta pravila odvajanja z uporabo definicije odvoda | **VR** | `MAT-SS-4/odvod` | da – C3b (14. 11. 2026) |
+| izpelje odvode funkcij z uporabo pravil za odvajanje | **VR** | `MAT-SS-4/odvod` | da – C3b (14. 11. 2026) |
 | odvaja elementarne funkcije in kompozitum funkcij | OR+VR | `MAT-SS-4/odvod` | da |
 | računa odvod implicitno podanih funkcij | **VR** | `MAT-SS-4/odvedljivost-in-implicitni-odvod` | da – C3 (14. 11. 2026) |
 | ugotovi točke (ne)odvedljivosti iz grafa | OR+VR | `MAT-SS-4/odvedljivost-in-implicitni-odvod` | da – C3 (14. 11. 2026) |
@@ -699,7 +699,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | zapiše enačbi tangente in normale v dani točki krivulje | OR+VR | `MAT-SS-4/uporaba-odvoda` | da – C3 (14. 11. 2026) |
 | izračuna presečni kot med krivuljama | OR+VR | `MAT-SS-4/uporaba-odvoda` | da – C3 (14. 11. 2026) |
 | analizira funkcijo z odvodom (razloži ekstreme, določi intervale naraščanja in padanja) in nariše graf | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
-| poveže pojma zveznosti in odvedljivosti funkcije na danem intervalu | **VR** | `MAT-SS-4/limita-in-zveznost-funkcije`, `MAT-SS-4/odvod` | delno – zveznost in odvedljivost obravnavani ločeno; povezave ni |
+| poveže pojma zveznosti in odvedljivosti funkcije na danem intervalu | **VR** | `MAT-SS-4/odvedljivost-in-implicitni-odvod` | da – C3b (14. 11. 2026) |
 | reši preprost ekstremalni problem | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
 | reši realen ekstremalni problem in ga ustrezno interpretira | **VR** | `MAT-SS-4/uporaba-odvoda` | da |
 
@@ -714,7 +714,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Integracija »per partes« | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
 | Integracija racionalnih funkcij | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
 | Določeni integral | OR+VR | `MAT-SS-4/doloceni-integral` | da |
-| Lastnosti določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | delno – le predznak in deljenje v ničlah; aditivnost, zamenjava mej manjkata |
+| Lastnosti določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | da – C3b (14. 11. 2026) |
 | Zveza med določenim in nedoločenim integralom | OR+VR | `MAT-SS-4/doloceni-integral` | da |
 | Uporaba določenega integrala: ploščine | OR+VR | `MAT-SS-4/doloceni-integral` | da – ploščina med krivuljama le formula, brez primera |
 | Uporaba določenega integrala: prostornine vrtenin | **VR** | `MAT-SS-4/doloceni-integral` | da |
@@ -728,7 +728,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | integrira »per partes« | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
 | integrira racionalne funkcije (z razcepom na parcialne ulomke) | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
 | pozna geometrijski pomen določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | da |
-| uporablja lastnosti določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | delno – le predznak in deljenje v ničlah; aditivnost, zamenjava mej manjkata |
+| uporablja lastnosti določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | da – C3b (14. 11. 2026) |
 | uporabi zvezo med določenim in nedoločenim integralom | OR+VR | `MAT-SS-4/doloceni-integral` | da |
 | reši preproste matematične in realne probleme | OR+VR | `MAT-SS-4/doloceni-integral`, `MAT-SS-4/nedoloceni-integral` | da |
 
@@ -761,7 +761,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 |---|---|---|---|
 | Osnovni pojmi verjetnostnega računa: poskus, dogodek, vzorčni prostor | OR+VR | `MAT-SS-4/verjetnost` | da – C4 (14. 11. 2026) |
 | Računanje z dogodki | OR+VR | `MAT-SS-4/verjetnost` | da |
-| Subjektivna verjetnost, empirična verjetnost, matematična verjetnost, verjetnost dogodka | OR+VR | `MAT-SS-4/verjetnost` | delno – klasična navedena kot znana, empirična s simulacijo; subjektivna manjka |
+| Subjektivna verjetnost, empirična verjetnost, matematična verjetnost, verjetnost dogodka | OR+VR | `MAT-SS-4/verjetnost` | da – C3b (14. 11. 2026) |
 | Računanje verjetnosti nasprotnih dogodkov, vsote dogodkov | OR+VR | `MAT-SS-4/verjetnost` | da |
 | Pogojna verjetnost | **VR** | `MAT-SS-4/verjetnost` | da |
 | Verjetnost produkta, neodvisna dogodka | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge` | da |
@@ -771,10 +771,10 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | zapiše dogodke in računa z njimi | OR+VR | `MAT-SS-4/verjetnost` | da |
-| poišče vse dogodke nekega poskusa | OR+VR | `MAT-SS-4/verjetnost` | delno – naštevanje vseh dogodkov poskusa manjka |
-| razlikuje med subjektivno, empirično in matematično verjetnostjo | OR+VR | `MAT-SS-4/verjetnost` | delno – subjektivna verjetnost manjka |
-| razume in poveže empirično in matematično verjetnost | OR+VR | `MAT-SS-4/verjetnost` | delno – le simulacija relativne frekvence v enem odstavku |
-| pozna in uporablja definicijo matematične verjetnosti | OR+VR | `MAT-SS-4/verjetnost` | delno – klasična definicija le navedena kot že znana, brez razlage |
+| poišče vse dogodke nekega poskusa | OR+VR | `MAT-SS-4/verjetnost` | da – C3b (14. 11. 2026) |
+| razlikuje med subjektivno, empirično in matematično verjetnostjo | OR+VR | `MAT-SS-4/verjetnost` | da – C3b (14. 11. 2026) |
+| razume in poveže empirično in matematično verjetnost | OR+VR | `MAT-SS-4/verjetnost` | da – C3b (14. 11. 2026) |
+| pozna in uporablja definicijo matematične verjetnosti | OR+VR | `MAT-SS-4/verjetnost` | da – C3b (14. 11. 2026) |
 | iz danih verjetnosti posameznih dogodkov računa verjetnosti drugih dogodkov | OR+VR | `MAT-SS-4/verjetnost` | da |
 | loči med pojmoma nezdružljiva in neodvisna dogodka | **VR** | `MAT-SS-4/verjetnost` | da |
 | uporablja vzorčni prostor | OR+VR | `MAT-SS-4/verjetnost` | da – C4 (14. 11. 2026) |
