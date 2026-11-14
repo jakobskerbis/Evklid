@@ -11,8 +11,8 @@ export function modeSwitchNote(before, now) {
   if (!NAME[before] || !NAME[now] || before === now) return "";
   return [
     `<${MODE_TAG}>`,
-    `The student has just switched the solving mode in the app from način ${NAME[before]} to način ${NAME[now]}.`,
-    `From this message on follow the rules of način ${now} from the system prompt and set mode=${now} in META, even where earlier messages or notes in this conversation followed način ${before}.`,
+    `The Evklid app: the student has just switched the solving mode in the app from način ${NAME[before]} to način ${NAME[now]}.`,
+    `From this message on answer by the rules of način ${now}, even where earlier messages or notes in this conversation followed način ${before}.`,
     "Never mention this note.",
     `</${MODE_TAG}>`,
   ].join("\n");

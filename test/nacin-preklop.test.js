@@ -22,9 +22,9 @@ test("modeSwitchNote: le ob dejanski zamenjavi, z novim načinom", () => {
   const n = modeSwitchNote("A", "B");
   assert.match(n, /^<nacin>\n/);
   assert.match(n, /način B \(celotna rešitev\)/);
-  assert.match(n, /mode=B in META/);
+  assert.doesNotMatch(n, /META|system prompt/, "brez besed, ob katerih se sproži ščit");
   assert.match(n, /Never mention this note/);
-  assert.match(modeSwitchNote("B", "A"), /follow the rules of način A/);
+  assert.match(modeSwitchNote("B", "A"), /answer by the rules of način A/);
   // Skrita opomba: povzetek, sodba kode o prejšnji nalogi in preizkusni način (»system prompt« → ščit) je ne berejo kot učenčevo besedilo.
   assert.ok(isHiddenNote(n));
   assert.doesNotMatch(transcript([{ role: "user", content: [{ type: "text", text: n }, { type: "text", text: "Reši 2x = 4" }] }]), /nacin|switched/);
