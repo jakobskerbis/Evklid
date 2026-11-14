@@ -1348,7 +1348,8 @@ export function mountAccounts(app, store, opts = {}) {
     inviteToThrottle.fail(email);
     inviteAllThrottle.fail("*");
     const name = String(req.body?.name || "").replace(/[^\p{L}\p{M} '-]/gu, "").replace(/\s+/g, " ").trim().slice(0, 30);
-    const url = `${baseUrl(req)}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
+    // »prosnja=1«: stran za starše pokaže obvestilo »Vaš otrok bi rad …« samo staršu, ki mu je otrok poslal povezavo.
+    const url = `${baseUrl(req)}/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : ""}prosnja=1`;
     const sent = await sendMail(email, parentInviteEmail(url, name));
     if (!sent) return res.status(502).json({ error: "Sporočila ni bilo mogoče poslati. Pošlji povezavo drugače.", mail: false });
     res.json({ ok: true });
