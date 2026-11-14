@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Štirje koraki
+  - skica s podatki, opis, načrtovanje, diskusija
+  - na maturi so potrebni vsi štirje deli
+- Osnovne konstrukcije
+  - simetrala daljice in kota, pravokotnica, vzporednica
+  - $60^\circ$ iz enakostraničnega trikotnika, nato $30^\circ$ in $15^\circ$
+- Iskanje oglišča
+  - presečišče dveh množic točk
+  - dana $a$: krožnica $k(B, a)$
+  - dana $v_c$: vzporednica z $AB$ na razdalji $v_c$
+- Diskusija
+  - SSS: $|a - b| < c < a + b$
+  - KSK: $\alpha + \beta < 180^\circ$
+  - kot nasproti krajše stranice: 0, 1 ali 2 rešitvi
+- Pogoste napake
+  - višina ni stranica
+  - pri $a + b = c$ trikotnika ni
+- Dinamična geometrija
+  - (višja raven) test vlečenja: lik ohrani lastnosti
+  - (višja raven) drsnik pokaže število rešitev

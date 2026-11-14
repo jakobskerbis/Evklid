@@ -7,9 +7,9 @@ avtor: AI
 
 Grški matematik Evklid je v *Elementih* dokazal, da sta trikotnika z enakima stranicama in enakim vmesnim kotom skladna. Pri tem je uporabil preprosto zamisel: en trikotnik je v mislih dvignil, prenesel in položil na drugega. Če se pokrijeta, sta skladna.
 
-Poznejši matematiki so ga pri tem dokazu ujeli. Kaj natanko pomeni »prenesti lik, ne da bi se spremenil«? To ni bilo nikjer zapisano. V 19. stoletju je Felix Klein predlagal novo gledanje: geometrija preučuje lastnosti, ki se pri določenih premikih ravnine ne spremenijo. Premikom, ki ohranijo velikost in obliko, rečemo **togi premiki**.
+Poznejši matematiki so vprašali: kaj natanko pomeni »prenesti lik, ne da bi se spremenil«? V 19. stoletju je Felix Klein predlagal novo gledanje: geometrija preučuje lastnosti, ki se pri določenih premikih ravnine ne spremenijo. Premikom, ki ohranijo velikost in obliko, rečemo **togi premiki**.
 
-Danes jih srečaš pri vsaki računalniški igri. Ko se lik na zaslonu premakne ali zavrti, mora program izračunati nove koordinate njegovih oglišč. Dober igralec biljarda pa z zrcaljenjem poišče točko na robu mize, od katere se krogla odbije naravnost v cilj.
+Ko se lik v računalniški igri premakne ali zavrti, program izračuna nove koordinate njegovih oglišč. Igralec biljarda pa z zrcaljenjem poišče točko na robu mize, od katere se krogla odbije v cilj.
 
 ## Razlaga
 
@@ -62,7 +62,7 @@ podnapis: Zrcaljenje čez os y (črtkano) in zrcaljenje čez izhodišče O
 :::premisli
 Sošolec trdi: »Zrcaljenje čez izhodišče je isto kot zrcaljenje čez os $x$, saj gre oboje skozi $O$.« Napovej sliko točke $T(2, 1)$ pri obeh in presodi.
 ---
-Čez $O$ dobiš $(-2, -1)$, čez os $x$ pa $(2, -1)$. Sliki sta različni, torej premika nista enaka. Na risbi zgoraj to vidiš tudi po orientaciji (točka 7).
+Čez $O$ dobiš $(-2, -1)$, čez os $x$ pa $(2, -1)$. Sliki sta različni, torej premika nista enaka. Na risbi se razlikujeta tudi po orientaciji (točka 7).
 :::
 
 **6. Vrtež.** Določajo ga središče $S$, kot $\varphi$ in smer. **Pozitivna smer** je nasprotna gibanju urinega kazalca, **negativna** je v smeri urinega kazalca. Slika $T'$ je enako daleč od $S$ kot $T$, kot $TST'$ pa meri $\varphi$. Središče ostane na mestu. Vrtež za $90^\circ$ okoli izhodišča v pozitivni smeri:
@@ -73,7 +73,7 @@ Preizkus: $T(3, 1)$ iz prvega kvadranta preide v $T'(-1, 3)$ v drugem kvadrantu,
 
 **7. Orientacija.** Obhodi oglišča trikotnika v vrstnem redu $A \to B \to C$. Če pri tem greš nasproti urinemu kazalcu, ima trikotnik **pozitivno orientacijo**, sicer **negativno**. Na risbi ima $ABC$ pozitivno orientacijo, $A'B'C'$ negativno, $A''B''C''$ spet pozitivno.
 
-Zdaj razumemo papirni poskus. Potiskanje po mizi je vzporedni premik, vrtenje je vrtež. Oba orientacijo **ohranita**. Obračanje papirja je zrcaljenje čez premico, ki orientacijo **obrne**.
+Potiskanje po mizi je vzporedni premik, vrtenje je vrtež. Oba orientacijo **ohranita**. Obračanje papirja je zrcaljenje čez premico, ki orientacijo **obrne**.
 
 | Premik | Določa ga | Primer | Orientacija |
 |---|---|---|---|
@@ -159,7 +159,7 @@ Zrcaljenje čez os $x$: $B(x_B, y_B) \mapsto B'(x_B, -y_B)$; točka $R$ leži na
 **Rešitev:**
 
 1. Zrcalimo rdečo kroglo čez rob: $B'(8, -1)$. Zrcaljenje ohranja razdalje, zato je $|RB'| = |RB|$ za vsako točko $R$ na robu.
-2. Zrcaljenje ohranja tudi kote: kot med $RB'$ in robom je enak odbojnemu kotu. Vpadni kot je z njim sovršen, zato $A$, $R$ in $B'$ ležijo na eni premici.
+2. Zrcaljenje ohranja tudi kote: kot med $RB'$ in robom je enak odbojnemu, torej tudi vpadnemu. Enaka kota na nasprotnih straneh roba sta sovršna, zato $A$, $R$ in $B'$ ležijo na eni premici.
 3. Od $A$ do $B'$ se $x$ poveča za $6$, $y$ pa zmanjša za $4$. Do roba se $y$ zmanjša za $3$, kar so tri četrtine celotnega spusta. Zato se $x$ poveča za $\frac{3}{4} \cdot 6 = 4{,}5$ in $x_R = 2 + 4{,}5 = 6{,}5$.
 4. Pot: $|AR| + |RB| = |AR| + |RB'| = |AB'|$. Po Pitagorovem izreku s katetama $6$ in $4$ je $|AB'| = \sqrt{6^2 + 4^2} = \sqrt{52} \approx 7{,}21$.
 5. Odgovor: krogla mora zadeti rob v točki $R(6{,}5; 0)$, do rdeče krogle opravi približno $7{,}2\,\mathrm{dm}$ poti.
@@ -167,7 +167,7 @@ Zrcaljenje čez os $x$: $B(x_B, y_B) \mapsto B'(x_B, -y_B)$; točka $R$ leži na
 :::risba skica
 opis: Biljardna miza od x = 0 do x = 10 in od y = 0 do y = 4. Bela krogla A(2, 3) in rdeča krogla B(8, 1). Pot gre od A do točke R(6,5; 0) na spodnjem robu in od tam do B. Pod robom je zrcalna slika B'(8, −1); črtkano nadaljevanje poti od R gre naravnost do B', zato A, R in B' ležijo na eni premici.
 območje: -0,5; -2 .. 10,5; 4,5
-enota: 30
+enota: 28
 mreža: da
 pravokotnik: 0; 0 .. 10; 4 | siva
 črta: 2; 3 -> 6,5; 0 -> 8; 1 | modra debelo
@@ -207,7 +207,7 @@ $Z_2(-3, 5)$. V primerjavi z $Z(3, -5)$ sta obe koordinati nasprotni: $(x, y) \m
 
 - **Zrcaljenje čez točko zamenjaš z zrcaljenjem čez premico.** Učenec $T(2, 1)$ zrcali čez $O$ in dobi $(2, -1)$. To je zrcaljenje čez os $x$. Čez točko se spremenita *obe* koordinati: $(-2, -1)$.
 - **Napačna smer vrteža.** Pravilo $(x, y) \mapsto (y, -x)$ zavrti za $90^\circ$ v smeri urinega kazalca, to je v negativni smeri. Pozitivna smer je nasprotna: $(x, y) \mapsto (-y, x)$. Preveri na točki $(1, 0)$, ki mora iti v $(0, 1)$.
-- **»Središčna simetrija obrne orientacijo, saj je zrcaljenje.«** Ime zavaja. Zrcaljenje čez točko je vrtež za $180^\circ$, zato orientacijo ohrani. Obrne jo le zrcaljenje čez premico.
+- **»Središčna simetrija obrne orientacijo, saj je zrcaljenje.«** Zrcaljenje čez točko je vrtež za $180^\circ$, zato orientacijo ohrani. Obrne jo le zrcaljenje čez premico.
 - **Predznak pri zrcaljenju čez točko $S \ne O$.** Iz $A(3, -2)$ in $S(1, 1)$ je $y' = 2 \cdot 1 - (-2) = 4$. Kdor izgubi oklepaj, dobi napačno $2 - 2 = 0$.
 - **»Po dveh zrcaljenjih je orientacija obrnjena.«** Vsako zrcaljenje čez premico jo obrne enkrat, dvakrat obrnjena pa je spet prvotna.
 
@@ -227,7 +227,7 @@ Tjaša je po zimskem treningu tekla domov čez zasneženo igrišče. Zjutraj je 
 
 Vsi levi odtisi so si enaki. Vsak naslednji je le *premaknjen* naprej, zato bi lahko enega potisnila na drugega. Levi in desni odtis sta skladna, saj sta čevlja enako velika. Pa vendar levega odtisa ne more prekriti z desnim, če ga samo potiska in vrti po snegu. Levi čevelj ne gre na desno nogo, pa naj ga obrača kakor koli.
 
-Desni odtis je zrcalna slika levega. Os zrcaljenja je kar črta, po kateri je tekla. Zrcaljenje obrne orientacijo, premik in vrtež pa je ne moreta. Zato tudi rokavico za levo roko spremeniš v desno šele tako, da jo obrneš na drugo stran.
+Desni odtis je zrcalna slika levega. Os zrcaljenja je kar črta, po kateri je tekla. Zrcaljenje obrne orientacijo, premik in vrtež pa je ne moreta.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -298,11 +298,12 @@ točka: -1; -4 | C_3 | pod
 > $(x, y) \mapsto (-y, x)$ da $T'(-4, -3)$. Iz drugega kvadranta smo se pomaknili v tretjega, torej nasproti urinemu kazalcu.
 
 ? Nina zrcali točko $A(3, -2)$ čez točko $S(1, 1)$. Zapisala je:
-1. $S$ je razpolovišče daljice $AA'$.
-2. $x' = 2 \cdot 1 - 3 = -1$
-3. $y' = 2 \cdot 1 - 2 = 0$
-4. $A'(-1, 0)$
-
+| Korak | Ninin zapis |
+|---|---|
+| 1 | $S$ je razpolovišče daljice $AA'$. |
+| 2 | $x' = 2 \cdot 1 - 3 = -1$ |
+| 3 | $y' = 2 \cdot 1 - 2 = 0$ |
+| 4 | $A'(-1, 0)$ |
 V katerem koraku je napaka? Popravi ga in vpiši pravilno ordinato $y'$.
 = 4
 ~ 0 | To je Ninin rezultat. V 3. koraku je izgubila oklepaj: odšteti mora $-2$, ne $2$.
@@ -327,10 +328,10 @@ vrednost: -1-(-4) | 3
 vrednost: 3/4*6 | 4.5
 vrednost: 2+4.5 | 6.5
 vrednost: sqrt(6^2+4^2) | 7.21
-vrednost: -(4) | -4
 vrednost: 2*1-3 | -1
 vrednost: 2*1-(-2) | 4
-vrednost: 2*1-(-1) | 3
+vrednost: 2*2-1 | 3
+vrednost: -1-(-3) | 2
 >>
 
 :::simboli
@@ -343,6 +344,7 @@ q | premik v smeri osi $y$ | |
 x_S, y_S | koordinati središča $S$ | | 
 B' | slika rdeče krogle pri zrcaljenju čez rob | | 
 x_B, y_B | koordinati točke $B$ | | 
-\overrightarrow{PQ} | usmerjena daljica (vektor) premika | | 
+A, B | bela in rdeča krogla | | 
+R | točka odboja na robu mize | | 
 \varphi | kot vrteža | | 
 :::

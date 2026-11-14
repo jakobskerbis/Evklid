@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Togi premik
+  - ohranja razdalje in kote
+  - slika lika je z njim skladen lik
+- Vzporedni premik
+  - $(x, y) \mapsto (x + p, y + q)$
+  - nobena točka ne ostane na mestu
+- Zrcaljenje čez premico
+  - os je simetrala daljice $TT'$
+  - čez os $x$: $(x, -y)$, čez os $y$: $(-x, y)$
+- Zrcaljenje čez točko
+  - središče je razpolovišče daljice $TT'$
+  - čez $O$: $(-x, -y)$, to je vrtež za $180^\circ$
+- Vrtež
+  - pozitivna smer je nasprotna urinemu kazalcu
+  - za $90^\circ$ okoli $O$: $(x, y) \mapsto (-y, x)$
+  - napaka: $(y, -x)$ je vrtež v negativni smeri
+- Orientacija trikotnika
+  - zrcaljenje čez premico jo obrne
+  - premik, vrtež in zrcaljenje čez točko jo ohranijo
+  - dve zrcaljenji čez premico jo ohranita
+- Uporaba
+  - skladna lika povežemo s togimi premiki
+  - biljard: cilj zrcali čez rob mize
