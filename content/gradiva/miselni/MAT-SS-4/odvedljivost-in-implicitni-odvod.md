@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lokalno raven graf
+  - pri povečavi postane premica
+  - tangenta s smernim koeficientom $f'(a)$
+- Vogal
+  - $|x|$ v $0$: naklona $-1$ in $1$
+  - infuzija ustavljena: vogal pri $t = 2\,\mathrm{h}$
+  - napaka: odvod kot povprečje $0$
+- Ost in navpična tangenta
+  - $\sqrt[3]{x^2}$ in $\sqrt[3]{x}$ v $0$
+  - diferenčni količnik raste čez vse meje
+- Nezveznost
+  - skok, luknja, pol
+  - nezvezna ni nikoli odvedljiva
+- Odvedljiva je zvezna
+  - višja raven
+  - obrat ne velja: $|x|$
+- Implicitni odvod
+  - višja raven
+  - $(y^2)' = 2y\,y'$
+  - odvod konstante na desni je $0$
+- Tangenta na krožnico
+  - $y' = -\frac{x}{y}$
+  - $T(3, 4)$: $k = -\frac{3}{4}$
+  - pri $y = 0$ navpična tangenta

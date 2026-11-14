@@ -69,6 +69,12 @@ Enaka sta, oba sta $35$. Ko izbereš $3$ kraje, ki jih boš obiskal, si s tem hk
 
 V simulaciji spodaj (»Permutacije, variacije in kombinacije«) izberi način »Izbiranje«, nastavi $n = 5$ in $k = 3$, nato vklapljaj in izklapljaj stikalo »vrstni red je pomemben«. Opazi, da število pade s $60$ na $10$, natanko za faktor $3! = 6$.
 
+**6. Pravilo vsote.** Doslej si izbiral eno *in* nato še drugo. Včasih pa izbereš le eno *ali* drugo: za vikend greš v gore (med $4$ kraji) ali na morje (med $3$ kraji). Izletov je $4 + 3 = 7$, ne $4 \cdot 3$. To je **pravilo vsote**: če se možnosti razdelijo na primere, ki se ne prekrivajo (noben izid ni v dveh primerih hkrati), in ima prvi primer $m$ možnosti, drugi pa $n$, je vseh možnosti $m + n$. Pravili se pogosto združita: gesel iz $2$ ali $3$ črk (izmed $26$, s ponavljanjem) je $26^2 + 26^3 = 676 + 17\,576 = 18\,252$.
+
+**7. Permutacije s ponavljanjem.** Koliko različnih besed dobiš s premetavanjem črk besede ANA? Če bi bili črki A različni (A₁ in A₂), bi bilo $3! = 6$ razvrstitev. A₁NA₂ in A₂NA₁ pa sta ista beseda, zato smo vsako besedo šteli $2! = 2$-krat. Besed je $\frac{3!}{2!} = 3$: ANA, AAN, NAA. Če je med $n$ elementi $k_1$ enakih prve vrste, $k_2$ enakih druge vrste … in $k_r$ enakih zadnje vrste ($k_1 + k_2 + \dots + k_r = n$), je različnih razvrstitev
+
+$$P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$$
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): pet krajev v enem izletu
@@ -148,6 +154,25 @@ Koliko je $n$?
 $n = 10$, ker je $10 \cdot 9 = 90$. Preizkus: $\binom{10}{2} = \frac{10 \cdot 9}{2} = 45$. Kvadratna enačba $n^2 - n - 90 = 0$ ima še rešitev $n = -9$, ki ni smiselna.
 :::
 
+### Primer 5: besede iz črk besede POPOTNIK
+
+Koliko različnih besed (tudi takih brez pomena) lahko sestaviš iz vseh osmih črk besede POPOTNIK?
+
+**Podatki:** $n = 8$ črk; P nastopi $2$-krat, O $2$-krat, T, N, I in K po enkrat
+**Iščemo:** število različnih razvrstitev črk
+
+:::formula
+$P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$
+:::
+
+**Rešitev:**
+
+1. Razvrščamo vse črke, vrstni red je pomemben, nekatere črke so enake: permutacije s ponavljanjem.
+2. Če bi bile vse črke različne, bi bilo $8! = 40\,320$ razvrstitev.
+3. Zamenjava obeh P ali obeh O ne da nove besede, zato delimo z $2! \cdot 2! = 4$ (črka, ki nastopi enkrat, da $1! = 1$).
+4. $\frac{8!}{2! \cdot 2!} = \frac{40\,320}{4} = 10\,080$.
+5. Odgovor: sestaviš lahko $10\,080$ različnih besed.
+
 ## Pogoste napake
 
 - **Vrstni red »na občutek«.** »Izbiram 3 kraje od 7, torej $7 \cdot 6 \cdot 5$.« Ta račun šteje Bled–Bohinj–Piran in Piran–Bohinj–Bled kot dva izbora. Vprašaj se: ali dobim nekaj drugega, če zamenjam dva izbrana elementa? Če ne, deli z $k!$ oziroma uporabi $\binom{n}{k}$.
@@ -163,6 +188,8 @@ $n = 10$, ker je $10 \cdot 9 = 90$. Preizkus: $\binom{10}{2} = \frac{10 \cdot 9}
 - Variacije ($k$ od $n$, vrstni red pomemben): $V_n^k = \frac{n!}{(n-k)!}$; s ponavljanjem $n^k$.
 - Kombinacije ($k$ od $n$, vrstni red ni pomemben): $C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!} = \frac{V_n^k}{k!}$.
 - Velja $\binom{n}{k} = \binom{n}{n-k}$.
+- Pravilo vsote: izbereš eno *ali* drugo iz primerov, ki se ne prekrivajo ($m$ in $n$ možnosti), vseh možnosti je $m + n$.
+- Permutacije s ponavljanjem ($n$ elementov, $k_1, \ldots, k_r$ enakih po vrstah): $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$.
 - Pred računanjem vprašaj: vsi ali le nekateri? Je vrstni red pomemben? Je ponavljanje dovoljeno?
 
 ## Drugače: Z analogijo
@@ -237,4 +264,16 @@ V_n | število variacij $V_n^k$ ($k$ od $n$, vrstni red pomemben) | V_n^k = \fra
 p | oznaka »s ponavljanjem« v $^{(p)}V_n^k$ | ^{(p)}V_n^k = n^k | | elementi se smejo ponavljati
 C_n | število kombinacij $C_n^k$ ($k$ od $n$, vrstni red ni pomemben) | C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!} | | $\binom{n}{k}$ beremo »$n$ nad $k$«
 P_5 | število vrstnih redov petih krajev | P_5 = 5! | |
+m | število možnosti prvega koraka oziroma primera | | |
+k_1, k_2, k_r | število enakih elementov posamezne vrste | | | $k_1 + k_2 + \dots + k_r = n$
 :::
+
+<<RACUN
+vrednost: 4+3 | 7
+vrednost: 26^2+26^3 | 18252
+vrednost: factorial(3)/factorial(2) | 3
+vrednost: factorial(8) | 40320
+vrednost: factorial(8)/(factorial(2)*factorial(2)) | 10080
+vrednost: factorial(6)/factorial(3)^2*factorial(4)/factorial(2)^2 | 120
+resi: n*(n-1)/2=45 | n | -9, 10
+>>

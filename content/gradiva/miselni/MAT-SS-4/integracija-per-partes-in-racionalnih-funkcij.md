@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mamljiva bližnjica
+  - integral produkta ni produkt integralov
+  - preveri z odvajanjem
+- Per partes
+  - $\int u\,v'\,dx = u\,v - \int u'\,v\,dx$
+  - iz pravila za odvod produkta
+- Izbira $u$
+  - polinom ali $\ln x$ odvajamo
+  - $e^x$, $\sin x$, $\cos x$ integriramo
+- Posebni primeri
+  - $\int \ln x\,dx = x\ln x - x + C$
+  - pri $x^2 e^x$ dvakrat per partes
+- Najprej deljenje
+  - ko stopnja števca ni manjša
+- Parcialni ulomki
+  - $\frac{A}{x - a} + \frac{B}{x - b}$
+  - $A$, $B$ z vstavljanjem ničel
+- Logaritmi
+  - $\int \frac{k}{x - a}\,dx = k\ln\lvert x - a\rvert + C$
+  - pri $\frac{1}{a - x}$ pride minus

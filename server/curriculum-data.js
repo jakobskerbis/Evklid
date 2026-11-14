@@ -526,20 +526,28 @@ export const PATHS = {
         "Aritmetično in geometrijsko zaporedje | splošni člen, vsota",
         "Geometrijska vrsta | konvergenca, vsota",
         "Obrestni račun | navadno in obrestno obrestovanje",
+        "Anuitete in amortizacijski načrt | načelo ekvivalence glavnic, anuiteta, amortizacijski načrt",
       ]],
       ["Odvod", [
         "Limita in zveznost funkcije | računanje limit",
+        "Zvezne funkcije in bisekcija | lastnosti zveznih funkcij na zaprtem intervalu, iskanje ničel z bisekcijo in tehnologijo (višja raven)",
         "Odvod | definicija, pravila odvajanja",
+        "Odvedljivost in implicitni odvod | točke neodvedljivosti iz grafa; zveznost odvedljivih funkcij in odvod implicitno podane funkcije (višja raven)",
         "Uporaba odvoda | tangenta, naraščanje, ekstremi, ekstremalni problemi",
+        "Drugi odvod, prevoj in konveksnost | drugi odvod, konveksnost, konkavnost in prevoj (višja raven)",
       ]],
       ["Integral", [
         "Nedoločeni integral | osnovni integrali, uvedba nove spremenljivke",
+        "Integracija per partes in racionalnih funkcij | integracija »per partes« in z razcepom na parcialne ulomke (višja raven)",
         "Določeni integral | ploščina, prostornina vrtenine",
       ]],
       ["Kombinatorika in verjetnost", [
         "Kombinatorika | permutacije, variacije, kombinacije",
+        "Binomski izrek | binomski simbol, Pascalov trikotnik, razvoj potence dvočlenika",
         "Verjetnost | dogodki, verjetnost vsote in produkta, pogojna verjetnost",
+        "Zaporedje neodvisnih poskusov | Bernoullijeva formula (višja raven)",
         "Statistika | normalna porazdelitev, obdelava podatkov",
+        "Statistična naloga | zbiranje podatkov, razsevni diagram in povezanost spremenljivk, empirično preiskovanje",
       ]],
       ["Priprava na maturo", [
         "Mešane maturitetne naloge | ponovitev vseh letnikov",
