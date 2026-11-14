@@ -167,7 +167,9 @@ function postavi(f, o) {
     fontSize: cs.fontSize,
     fontWeight: cs.fontWeight,
     color: cs.color,
-    opacity: f.disabled ? "0.6" : "",
+    opacity: cs.opacity === "1" ? "" : cs.opacity, // onemogočeno polje: kot polje samo (barva že sledi)
+    // Dolga formula se odreže na robu besedila kot v navadnem polju, ne šele ob obrobi (4 px za kazalec).
+    clipPath: `inset(0 ${Math.max(0, parseFloat(cs.paddingRight) - 4)}px 0 ${Math.max(0, parseFloat(cs.paddingLeft) - 4)}px)`,
     justifyContent: cs.textAlign === "center" ? "center" : cs.textAlign === "right" || cs.textAlign === "end" ? "flex-end" : "",
   });
   const v = o.firstChild;
@@ -264,7 +266,7 @@ const SLOG =
   ".vnos-izrisan::selection{background:transparent}" +
   ".vnos-izris{position:absolute;box-sizing:border-box;display:flex;align-items:center;overflow:hidden;white-space:pre;cursor:text;pointer-events:auto;line-height:1.2;z-index:1;border-radius:inherit;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}" +
   ".vnos-izris[hidden]{display:none!important}" +
-  ".vnos-izris-v{display:inline-block;padding:4px 0;flex:none}" +
+  ".vnos-izris-v{display:inline-block;padding:4px 0;flex:none;direction:ltr;unicode-bidi:isolate}" + // formula je tudi na strani RTL od leve proti desni
   ".vnos-izris.izbor .vnos-izris-v{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px}" +
   ".vnos-izris .katex{font-size:1.1em}" +
   ".vnos-kazalka{display:inline-block;width:0;height:1.15em;vertical-align:-0.22em;border-left:2px solid var(--accent);margin-right:-2px;animation:vnos-utrip 1.1s steps(1) infinite}" +
