@@ -22,9 +22,9 @@ krajših strukturiranih nalog (5–8 točk, skupaj 40). Višja raven: na vsaki p
 
 ## Povzetek pokritosti
 
-Postavk (vsebin in ciljev): 513. Pokrito (»da«): 430, delno: 78, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 75, delno 12, manjka 0).
+Postavk (vsebin in ciljev): 513. Pokrito (»da«): 432, delno: 76, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 75, delno 12, manjka 0).
 
-Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, vsi štirje letniki: 14. 11. 2026).
+Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, vsi štirje letniki: 14. 11. 2026); opomba »C4« pomeni dopolnitev ob nalogah za maturo.
 
 ### Manjka
 
@@ -759,7 +759,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Osnovni pojmi verjetnostnega računa: poskus, dogodek, vzorčni prostor | OR+VR | `MAT-SS-4/verjetnost` | delno – izraz vzorčni prostor in elementarni dogodki niso uporabljeni |
+| Osnovni pojmi verjetnostnega računa: poskus, dogodek, vzorčni prostor | OR+VR | `MAT-SS-4/verjetnost` | da – C4 (14. 11. 2026) |
 | Računanje z dogodki | OR+VR | `MAT-SS-4/verjetnost` | da |
 | Subjektivna verjetnost, empirična verjetnost, matematična verjetnost, verjetnost dogodka | OR+VR | `MAT-SS-4/verjetnost` | delno – klasična navedena kot znana, empirična s simulacijo; subjektivna manjka |
 | Računanje verjetnosti nasprotnih dogodkov, vsote dogodkov | OR+VR | `MAT-SS-4/verjetnost` | da |
@@ -777,7 +777,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | pozna in uporablja definicijo matematične verjetnosti | OR+VR | `MAT-SS-4/verjetnost` | delno – klasična definicija le navedena kot že znana, brez razlage |
 | iz danih verjetnosti posameznih dogodkov računa verjetnosti drugih dogodkov | OR+VR | `MAT-SS-4/verjetnost` | da |
 | loči med pojmoma nezdružljiva in neodvisna dogodka | **VR** | `MAT-SS-4/verjetnost` | da |
-| uporablja vzorčni prostor | OR+VR | `MAT-SS-4/verjetnost` | delno – vzorčni prostor ni poimenovan; uporablja se »množica izidov« |
+| uporablja vzorčni prostor | OR+VR | `MAT-SS-4/verjetnost` | da – C4 (14. 11. 2026) |
 
 
 ### 4.17 Statistika

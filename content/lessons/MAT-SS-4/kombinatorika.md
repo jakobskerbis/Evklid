@@ -192,6 +192,65 @@ $P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$
 - Permutacije s ponavljanjem ($n$ elementov, $k_1, \ldots, k_r$ enakih po vrstah): $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$.
 - Pred računanjem vprašaj: vsi ali le nekateri? Je vrstni red pomemben? Je ponavljanje dovoljeno?
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Koliko štirimestnih naravnih števil lahko zapišemo s števkami $0$, $1$, $2$, $3$, $4$ in $5$, če se nobena števka v številu ne ponovi?
+
+**Rešitev:**
+
+1. Na prvem mestu ne sme stati $0$, zato prvo števko izberemo na $5$ načinov.
+2. Za drugo mesto ostane $5$ števk (zdaj tudi $0$), za tretje $4$ in za četrto $3$.
+3. Po osnovnem izreku kombinatorike možnosti zmnožimo: $5 \cdot 5 \cdot 4 \cdot 3 = 300$.
+4. Odgovor: zapišemo lahko $300$ štirimestnih števil.
+
+**Točkovanje:** 1 točka za ugotovitev, da ima prvo mesto le $5$ možnosti (brez ničle), 1 točka za $5 \cdot 4 \cdot 3$ možnosti na ostalih mestih in množenje po osnovnem izreku, 1 točka za pravilen rezultat $300$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+V razredu je $14$ dijakov: $8$ fantov in $6$ deklet.
+
+a) Na koliko načinov lahko izberejo tričlansko delegacijo za šolski parlament? (2 točki)
+b) Koliko je tričlanskih delegacij, v katerih sta natanko dve dekleti? (2 točki)
+c) Koliko je tričlanskih delegacij, v katerih je vsaj eno dekle? (2 točki)
+d) Na koliko načinov lahko izmed vseh dijakov izberejo predsednika, namestnika predsednika in blagajnika razreda, če ima vsak dijak največ eno funkcijo in mora biti predsednik dekle? (2 točki)
+
+**Rešitev:**
+
+1. a) V delegaciji vrstni red ni pomemben, zato gre za kombinacije: $\binom{14}{3} = \frac{14 \cdot 13 \cdot 12}{3 \cdot 2 \cdot 1} = 364$.
+2. b) Dve dekleti izmed $6$ izberemo na $\binom{6}{2} = 15$ načinov, enega fanta izmed $8$ na $8$ načinov. Po osnovnem izreku je delegacij $15 \cdot 8 = 120$.
+3. c) Delegacij brez deklet (samo fantje) je $\binom{8}{3} = \frac{8 \cdot 7 \cdot 6}{3 \cdot 2 \cdot 1} = 56$, zato je delegacij z vsaj enim dekletom $364 - 56 = 308$.
+4. c) Preizkus s pravilom vsote (natanko $1$, $2$ ali $3$ dekleta): $6 \cdot \binom{8}{2} + 120 + \binom{6}{3} = 6 \cdot 28 + 120 + 20 = 308$.
+5. d) Predsednika izberemo izmed $6$ deklet na $6$ načinov. Preostali funkciji sta različni, zato je vrstni red pomemben, ponavljanja ni: namestnika in blagajnika izmed preostalih $13$ dijakov izberemo na $V_{13}^2 = 13 \cdot 12 = 156$ načinov. Po osnovnem izreku je načinov $6 \cdot 156 = 936$.
+6. Odgovor: a) $364$ delegacij, b) $120$ delegacij, c) $308$ delegacij, d) $936$ načinov.
+
+**Točkovanje:** a) 1 točka za prepoznavo kombinacij ($\binom{14}{3}$), 1 točka za $364$; b) 1 točka za zapis $\binom{6}{2} \cdot \binom{8}{1}$ (množenje obeh izborov), 1 točka za $120$; c) 1 točka za odštetje delegacij brez deklet ($\binom{8}{3} = 56$) ali za razdelitev na primere, 1 točka za $308$; d) 1 točka za zapis $6 \cdot 13 \cdot 12$ (predsednik izmed deklet, nato variacije brez ponavljanja), 1 točka za $936$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je variacija $k$-tega razreda iz $n$ elementov in kako izračunamo število variacij brez ponavljanja in s ponavljanjem?
+---
+Variacija $k$-tega razreda iz $n$ elementov je urejen izbor $k$ elementov izmed $n$ elementov, pri katerem je vrstni red pomemben. Če se elementi ne smejo ponavljati (takrat je $k \le n$), je variacij $V_n^k = n(n-1)\cdots(n-k+1) = \frac{n!}{(n-k)!}$. Če se elementi smejo ponavljati, je pri vsakem od $k$ izborov na voljo vseh $n$ elementov, zato je variacij $n^k$. Obe formuli sledita iz osnovnega izreka kombinatorike, saj izbiramo element za elementom in možnosti množimo.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formulo za število kombinacij $k$-tega razreda iz $n$ elementov iz števila variacij.
+---
+Kombinacija je neurejen izbor $k$ različnih elementov izmed $n$, variacija pa urejen izbor. Elemente vsake kombinacije lahko uredimo na $k!$ načinov, zato iz vsake kombinacije nastane natanko $k!$ različnih variacij. Velja torej $V_n^k = k! \cdot C_n^k$. Od tod sledi $C_n^k = \frac{V_n^k}{k!} = \frac{n!}{k!\,(n-k)!} = \binom{n}{k}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer uporabe pravila vsote in primer uporabe osnovnega izreka kombinatorike ter pojasni razliko med njima.
+---
+Pravilo vsote uporabimo, kadar izberemo eno ali drugo možnost iz primerov, ki se ne prekrivajo, in takrat števila možnosti seštejemo. Primer je izbira ene knjige, ki je roman ali strip: možnosti je toliko, kolikor je romanov in stripov skupaj. Osnovni izrek uporabimo, kadar izbiro opravimo v zaporednih korakih, in takrat števila možnosti zmnožimo. Primer je izbira enega romana in enega stripa: možnosti je toliko, kolikor je zmnožek števila romanov in števila stripov.
+:::
+
 ## Drugače: Z analogijo
 
 Misli na **fotografijo** in na **nahrbtnik**.
@@ -276,4 +335,11 @@ vrednost: factorial(8) | 40320
 vrednost: factorial(8)/(factorial(2)*factorial(2)) | 10080
 vrednost: factorial(6)/factorial(3)^2*factorial(4)/factorial(2)^2 | 120
 resi: n*(n-1)/2=45 | n | -9, 10
+vrednost: 5*5*4*3 | 300
+vrednost: factorial(14)/(factorial(3)*factorial(11)) | 364
+vrednost: factorial(6)/(factorial(2)*factorial(4))*8 | 120
+vrednost: factorial(8)/(factorial(3)*factorial(5)) | 56
+vrednost: 364-56 | 308
+vrednost: 6*28+120+20 | 308
+vrednost: 6*13*12 | 936
 >>

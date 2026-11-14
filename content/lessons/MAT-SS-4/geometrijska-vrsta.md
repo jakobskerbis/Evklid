@@ -168,6 +168,67 @@ $S = \dfrac{0{,}36}{0{,}99} = \dfrac{36}{99} = \dfrac{4}{11}$. Preizkus: $4 : 11
 - Negativen $q$: delne vsote skačejo okoli vsote. Pri $1 - q$ pazi na predznak.
 - Uporaba: Zenonov paradoks, pot odbijajoče se žoge, periodična decimalna števila kot ulomki.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Periodično decimalno število $1{,}2\overline{7}$ zapiši z vsoto geometrijske vrste in ga nato zapiši z okrajšanim ulomkom.
+
+**Rešitev:**
+
+1. $1{,}2\overline{7} = 1{,}2 + 0{,}07 + 0{,}007 + 0{,}0007 + \ldots$ Od drugega člena naprej je to geometrijska vrsta s prvim členom $0{,}07$ in količnikom $q = 0{,}1$.
+2. Ker je $|q| < 1$, vrsta konvergira, njena vsota je $\dfrac{0{,}07}{1 - 0{,}1} = \dfrac{0{,}07}{0{,}9} = \dfrac{7}{90}$.
+3. Seštejemo: $1{,}2 + \dfrac{7}{90} = \dfrac{108}{90} + \dfrac{7}{90} = \dfrac{115}{90} = \dfrac{23}{18}$.
+4. Odgovor: $1{,}2\overline{7} = \dfrac{23}{18}$.
+
+**Točkovanje:** 1 točka za zapis z geometrijsko vrsto (prvi člen in količnik), 1 točka za vsoto vrste $\dfrac{7}{90}$, 1 točka za okrajšan ulomek $\dfrac{23}{18}$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je vrsta $3 + 3(x - 2) + 3(x - 2)^2 + 3(x - 2)^3 + \ldots$, kjer je $x$ realno število.
+
+a) Za katera realna števila $x$ vrsta konvergira? (2 točki)
+b) Izračunaj vsoto vrste pri $x = \dfrac{3}{2}$. (2 točki)
+c) Za kateri $x$ je vsota vrste enaka $4$? (2 točki)
+d) Ali obstaja tak $x$, da je vsota vrste enaka $1$? Utemelji. (2 točki)
+
+**Rešitev:**
+
+1. a) Za $x \ne 2$ je to geometrijska vrsta s prvim členom $a_1 = 3$ in količnikom $q = x - 2$. Konvergira natanko tedaj, ko je $|x - 2| < 1$, torej $-1 < x - 2 < 1$.
+2. a) Pri $x = 2$ je vrsta $3 + 0 + 0 + \ldots$: vse delne vsote so enake $3$, zato vrsta konvergira in ima vsoto $3$.
+3. a) Vrsta konvergira za $1 < x < 3$, to je za $x \in (1, 3)$, vključno z $x = 2$.
+4. b) Pri $x = \dfrac{3}{2}$ je $q = -\dfrac{1}{2}$ in $|q| < 1$, zato je $S = \dfrac{3}{1 - \left(-\frac{1}{2}\right)} = \dfrac{3}{\frac{3}{2}} = 2$.
+5. c) Za $x \in (1, 3)$ je vsota $S = \dfrac{3}{1 - (x - 2)} = \dfrac{3}{3 - x}$ (tudi pri $x = 2$, kjer je $S = 3$). Iz enačbe $\dfrac{3}{3 - x} = 4$ sledi $3 - x = \dfrac{3}{4}$ in $x = \dfrac{9}{4}$.
+6. c) Preverimo pogoj konvergence: $\dfrac{9}{4}$ leži na intervalu $(1, 3)$, količnik je $q = \dfrac{1}{4}$, vsota pa $\dfrac{3}{3/4} = 4$.
+7. d) Enačba $\dfrac{3}{3 - x} = 1$ ima edino rešitev $x = 0$. Ta ne leži na intervalu $(1, 3)$: pri $x = 0$ je $q = -2$, vrsta divergira in vsote nima.
+8. Odgovor: a) vrsta konvergira za $1 < x < 3$; b) vsota je $2$; c) $x = \dfrac{9}{4}$; d) ne, takega $x$ ni.
+
+**Točkovanje:** a) 1 točka za količnik $q = x - 2$ in pogoj $|q| < 1$, 1 točka za interval $(1, 3)$ (interval brez $x = 2$ te točke ne dobi, ker vrsta pri $x = 2$ konvergira z vsoto $3$); b) 1 točka za količnik $q = -\dfrac{1}{2}$, 1 točka za vsoto $2$; c) 1 točka za enačbo $\dfrac{3}{3 - x} = 4$, 1 točka za $x = \dfrac{9}{4}$; d) 1 točka za rešitev enačbe $x = 0$, 1 točka za utemeljitev, da pri $x = 0$ vrsta divergira (enakovredno: za $1 < x < 3$ je $3 - x < 2$, zato je vsota $\dfrac{3}{3 - x}$ večja od $\dfrac{3}{2}$ in ne more biti $1$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako se vrsta razlikuje od zaporedja in kdaj pravimo, da vrsta konvergira?
+---
+Zaporedje je urejen seznam členov $a_1, a_2, a_3, \ldots$, vrsta pa je izraz $a_1 + a_2 + a_3 + \ldots$, v katerem te člene seštevamo v neskončnost. Vsoti prvih $n$ členov $S_n = a_1 + a_2 + \ldots + a_n$ rečemo $n$-ta delna vsota. Vrsta konvergira, če ima zaporedje delnih vsot $(S_n)$ limito $S$, ki ji rečemo vsota vrste. Če te limite ni, vrsta divergira in vsote nima.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formulo za vsoto geometrijske vrste in navedi pogoj, pri katerem velja.
+---
+Za $q \ne 1$ je $n$-ta delna vsota geometrijske vrste $S_n = a_1 \cdot \dfrac{1 - q^n}{1 - q}$. Če je $|q| < 1$, gre $q^n$ proti $0$, ko gre $n$ proti neskončnosti. Zato delne vsote konvergirajo k vsoti $S = \dfrac{a_1}{1 - q}$. Formula velja le pri $|q| < 1$, pri $|q| \ge 1$ in $a_1 \ne 0$ pa vrsta divergira.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer divergentne geometrijske vrste z negativnim količnikom in pojasni, zakaj nima vsote.
+---
+Primer je vrsta $1 - 2 + 4 - 8 + \ldots$ s količnikom $q = -2$. Njene delne vsote so $1, -1, 3, -5, \ldots$ in skačejo vse dlje gor in dol. Zaporedje delnih vsot zato nima limite in vrsta divergira. Formula $\dfrac{a_1}{1 - q}$ bi dala $\dfrac{1}{3}$, vendar je ne smemo uporabiti, ker je $|q| > 1$.
+:::
+
 ## Drugače: Z analogijo
 
 Imaš tablico čokolade. Poješ polovico. Od ostanka poješ spet polovico, nato polovico novega ostanka in tako naprej.
@@ -241,6 +302,21 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 - Neskončno, ker se odbija neskončnokrat.
 ~ Neskončno mnogo odbojev še ne pomeni neskončne poti. Višine tvorijo vrsto s $q = 0{,}5$, ki konvergira.
 > Prvi padec $1\,\mathrm{m}$, dvigi $0{,}5 + 0{,}25 + \dots = \frac{0{,}5}{1 - 0{,}5} = 1\,\mathrm{m}$, ki jih žogica prepotuje dvakrat: $s = 1\,\mathrm{m} + 2 \cdot 1\,\mathrm{m} = 3\,\mathrm{m}$.
+
+<<RACUN
+vrednost: 0.07/(1-0.1) | 7/90
+vrednost: 6/5+7/90 | 23/18
+vrednost: 115/90 | 23/18
+neenacba: abs(x-2)<1 | x | (1, 3)
+vrednost: 3/(1-(-1/2)) | 2
+vrednost: 3/(3-2) | 3
+enako: 3/(1-(x-2)) | 3/(3-x)
+resi: 3/(3-x)=4 | x | 9/4
+vrednost: 3/(1-1/4) | 4
+resi: 3/(3-x)=1 | x | 0
+vrednost: 1-2+4-8 | -5
+vrednost: 1/(1-(-2)) | 1/3
+>>
 
 :::simboli
 a_1 | prvi člen vrste | |

@@ -176,6 +176,66 @@ Oba ulomka gresta proti $0$, zato je $\lim\limits_{n \to \infty} a_n = \dfrac{2 
 - Konvergentno zaporedje je omejeno; monotono in omejeno zaporedje je konvergentno.
 - $\lim\limits_{n \to \infty} \dfrac{1}{n} = 0$; pri ulomkih deli z najvišjo potenco $n$ v imenovalcu.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Zaporedje je podano rekurzivno: $a_1 = 3$ in $a_{n+1} = 2a_n - 1$. Zapiši člene $a_2$, $a_3$ in $a_4$. Ali je število $129$ člen tega zaporedja? Če je, zapiši, kateri člen je.
+
+**Rešitev:**
+
+1. $a_2 = 2 \cdot 3 - 1 = 5$, $a_3 = 2 \cdot 5 - 1 = 9$, $a_4 = 2 \cdot 9 - 1 = 17$.
+2. Nadaljujemo po istem pravilu: $a_5 = 33$, $a_6 = 65$, $a_7 = 2 \cdot 65 - 1 = 129$. (Vsak člen je za $1$ večji od potence števila $2$: $a_n = 2^n + 1$, in $129 = 2^7 + 1$.)
+3. Odgovor: $a_2 = 5$, $a_3 = 9$, $a_4 = 17$; število $129$ je sedmi člen zaporedja, $a_7 = 129$.
+
+**Točkovanje:** 1 točka za člene $a_2$, $a_3$ in $a_4$, 1 točka za nadaljevanje zaporedja (ali za zapis $a_n = 2^n + 1$), 1 točka za odgovor $a_7 = 129$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dano je zaporedje s splošnim členom $a_n = \dfrac{2n + 5}{n + 1}$.
+
+a) Izračunaj prve tri člene zaporedja. (1 točka)
+b) Dokaži, da je zaporedje strogo padajoče. (2 točki)
+c) Utemelji, da je zaporedje omejeno, in izračunaj njegovo limito. (2 točki)
+d) Koliko členov zaporedja leži zunaj okolice limite s polmerom $\varepsilon = 0{,}05$? (2 točki)
+
+**Rešitev:**
+
+1. a) $a_1 = \dfrac{7}{2}$, $a_2 = \dfrac{9}{3} = 3$, $a_3 = \dfrac{11}{4}$.
+2. b) Člen preoblikujemo: $a_n = \dfrac{2(n + 1) + 3}{n + 1} = 2 + \dfrac{3}{n + 1}$.
+3. b) $a_{n+1} - a_n = \dfrac{3}{n + 2} - \dfrac{3}{n + 1} = \dfrac{3(n + 1) - 3(n + 2)}{(n + 1)(n + 2)} = -\dfrac{3}{(n + 1)(n + 2)}$. Imenovalec je pozitiven, zato je razlika za vsak $n$ negativna in zaporedje strogo pada.
+4. c) Ker je $\dfrac{3}{n + 1} > 0$, je $a_n > 2$. Ker zaporedje pada, je $a_n \le a_1 = \dfrac{7}{2}$. Torej je $2 < a_n \le \dfrac{7}{2}$ in zaporedje je omejeno.
+5. c) Ker gre $\dfrac{3}{n + 1}$ proti $0$, je $\lim\limits_{n \to \infty} a_n = 2$.
+6. d) Razdalja člena do limite je $|a_n - 2| = \dfrac{3}{n + 1}$. Pogoj $\dfrac{3}{n + 1} < 0{,}05$ da $n + 1 > 60$, torej $n > 59$.
+7. d) Člen $a_{59} = 2 + \dfrac{3}{60} = 2{,}05$ leži natanko na robu okolice, rob pa ne spada v okolico (odprti interval); od $a_{60}$ naprej so vsi členi v okolici.
+8. Odgovor: a) $\dfrac{7}{2}$, $3$, $\dfrac{11}{4}$; b) zaporedje je strogo padajoče; c) $2 < a_n \le \dfrac{7}{2}$, limita je $2$; d) zunaj okolice je $59$ členov, od $a_1$ do $a_{59}$.
+
+**Točkovanje:** a) 1 točka za tri pravilne člene; b) 1 točka za izračunano razliko $a_{n+1} - a_n$, 1 točka za utemeljen sklep o njenem predznaku (enakovredno: iz $a_n = 2 + \dfrac{3}{n + 1}$ utemeljen sklep, da ulomek z naraščajočim $n$ pada); c) 1 točka za spodnjo in zgornjo mejo z utemeljitvijo (ali za sklep, da je zaporedje konvergentno in zato omejeno), 1 točka za limito $2$; d) 1 točka za pravilno postavljeno neenačbo za razdaljo do limite in 1 točka za odgovor $59$ členov.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je število $L$ limita zaporedja $(a_n)$ in kdaj zaporedje imenujemo konvergentno?
+---
+Število $L$ je limita zaporedja, če v vsaki okolici $(L - \varepsilon, L + \varepsilon)$ ležijo vsi členi od nekega indeksa naprej. Drugače povedano, zunaj poljubne okolice števila $L$ je le končno mnogo členov. Zaporedje, ki ima limito, je konvergentno, zaporedje brez limite pa divergentno. Na primer $\lim\limits_{n \to \infty} \dfrac{1}{n} = 0$, zaporedje $(-1)^n$ pa limite nima.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kakšna je zveza med omejenostjo, monotonostjo in konvergentnostjo zaporedja?
+---
+Vsako konvergentno zaporedje je omejeno. Obratno ne velja, saj je zaporedje $(-1)^n$ omejeno, a ni konvergentno. Vsako monotono in omejeno zaporedje je konvergentno. Monotonost in omejenost skupaj torej zadoščata za obstoj limite, sama omejenost pa ne.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer rekurzivno podanega zaporedja in pojasni, kako se rekurzivni zapis razlikuje od zapisa s splošnim členom.
+---
+Primer je zaporedje z $a_1 = 1$ in $a_{n+1} = a_n + 2$, ki ima člene $1, 3, 5, 7$ in tako naprej. Rekurzivni zapis pove prvi člen in pravilo, kako iz prejšnjega člena dobimo naslednjega. Splošni člen je formula, iz katere $n$-ti člen izračunamo neposredno z vstavljanjem indeksa, pri tem zaporedju $a_n = 2n - 1$. Pri rekurzivnem zapisu moramo za oddaljen člen izračunati vse prejšnje člene, pri splošnem členu pa ne.
+:::
+
 ## Drugače: Z analogijo
 
 Graf zaporedja si predstavljaj kot cesto, ob kateri stojijo oštevilčeni kilometrski kamni $1, 2, 3, \ldots$; ob $n$-tem kamnu je cesta na višini $a_n$. **Naraščajoče** zaporedje je cesta, ki gre samo navkreber ali po ravnem. **Omejeno** je cesta med dvema ograjama: vijuga lahko, čez ograjo ne more.
@@ -239,6 +299,21 @@ Limita je ena sama: če bi imelo zaporedje limiti $L_1 \ne L_2$, bi izbrali $\va
 - Od $60$. ure naprej.
 ~ To je $30 \cdot 2$. Iz $\dfrac{30}{n} < 2$ sledi $n > \dfrac{30}{2}$, ne $n > 30 \cdot 2$.
 > $|v_n - 90| = \dfrac{30}{n} < 2$ velja za $n > 15$, torej od $n = 16$ naprej.
+
+<<RACUN
+vrednost: 2*3-1 | 5
+vrednost: 2*5-1 | 9
+vrednost: 2*9-1 | 17
+vrednost: 2*65-1 | 129
+vrednost: 2^7+1 | 129
+vrednost: (2*1+5)/(1+1) | 7/2
+vrednost: (2*3+5)/(3+1) | 11/4
+enako: (2*n+5)/(n+1) | 2+3/(n+1)
+enako: 3/(n+2)-3/(n+1) | -3/((n+1)*(n+2))
+limita: (2*n+5)/(n+1) | n | oo | 2
+resi: 3/(n+1)=0.05 | n | 59
+vrednost: 2+3/60 | 2.05
+>>
 
 :::simboli
 a_n | $n$-ti člen zaporedja | | |

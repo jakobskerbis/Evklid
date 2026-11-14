@@ -190,6 +190,78 @@ $\int x^2\,e^x\,dx = x^2\,e^x - 2(x\,e^x - e^x) + C = (x^2 - 2x + 2)\,e^x + C$. 
 - Racionalna funkcija: če je stopnja števca vsaj tolikšna kot stopnja imenovalca, najprej deli; imenovalec razcepi na različne linearne faktorje; $\frac{A}{x - a} + \frac{B}{x - b}$; $A$ in $B$ dobiš z vstavljanjem ničel imenovalca.
 - $\int \frac{k}{x - a}\,dx = k\ln\lvert x - a\rvert + C$, pri $\frac{1}{a - x}$ pa pride minus.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Oba integrala izračunaj z integracijo per partes.
+
+a) Izračunaj $\int (2x + 1)\,e^x\,dx$. (3 točke)
+
+b) Izračunaj $\int x\ln x\,dx$ za $x > 0$. (3 točke)
+
+**Rešitev:**
+
+1. a) Izberemo $u = 2x + 1$, ker se z odvajanjem poenostavi, in $v' = e^x$. Potem je $u' = 2$ in $v = e^x$.
+2. a) $\int (2x + 1)\,e^x\,dx = (2x + 1)\,e^x - \int 2e^x\,dx = (2x + 1)\,e^x - 2e^x + C = (2x - 1)\,e^x + C$.
+3. a) Preizkus: $\bigl((2x - 1)\,e^x\bigr)' = 2e^x + (2x - 1)\,e^x = (2x + 1)\,e^x$.
+4. b) Izberemo $u = \ln x$, ker se z odvajanjem poenostavi v $\frac{1}{x}$, in $v' = x$. Potem je $u' = \frac{1}{x}$ in $v = \frac{x^2}{2}$.
+5. b) $\int x\ln x\,dx = \frac{x^2}{2}\ln x - \int \frac{x^2}{2} \cdot \frac{1}{x}\,dx = \frac{x^2}{2}\ln x - \int \frac{x}{2}\,dx$.
+6. b) Ker je $\int \frac{x}{2}\,dx = \frac{x^2}{4}$, je $\int x\ln x\,dx = \frac{x^2}{2}\ln x - \frac{x^2}{4} + C$.
+7. Odgovor: a) $\int (2x + 1)\,e^x\,dx = (2x - 1)\,e^x + C$; b) $\int x\ln x\,dx = \frac{x^2}{2}\ln x - \frac{x^2}{4} + C$.
+
+**Točkovanje:** a) 1 točka za izbiro $u = 2x + 1$, $v' = e^x$ ter $u' = 2$, $v = e^x$, 1 točka za pravilno vstavljeno formulo per partes, 1 točka za rezultat s konstanto $C$; b) 1 točka za izbiro $u = \ln x$, $v' = x$ ter $u'$ in $v$, 1 točka za $\frac{x^2}{2}\ln x - \int \frac{x}{2}\,dx$, 1 točka za rezultat s konstanto $C$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = \dfrac{x^2 + x - 4}{x^2 - 2x - 3}$.
+
+a) Zapiši definicijsko območje funkcije $f$ in pokaži, da je $f(x) = 1 + \dfrac{3x - 1}{x^2 - 2x - 3}$. (2 točki)
+
+b) Ulomek $\dfrac{3x - 1}{x^2 - 2x - 3}$ razcepi na parcialne ulomke. (3 točke)
+
+c) Izračunaj $\int f(x)\,dx$. (3 točke)
+
+d) Na intervalu $(3, \infty)$ poišči tisto primitivno funkcijo $G$ funkcije $f$, za katero je $G(4) = 4$. (2 točki)
+
+**Rešitev:**
+
+1. a) Imenovalec razcepimo: $x^2 - 2x - 3 = (x - 3)(x + 1)$, zato je $D_f = \mathbb{R} \setminus \{-1, 3\}$.
+2. a) Stopnji števca in imenovalca sta enaki, zato najprej delimo: $x^2 + x - 4 = (x^2 - 2x - 3) + (3x - 1)$, torej $f(x) = 1 + \dfrac{3x - 1}{x^2 - 2x - 3}$.
+3. b) Nastavek $\dfrac{3x - 1}{(x - 3)(x + 1)} = \dfrac{A}{x - 3} + \dfrac{B}{x + 1}$ pomnožimo z imenovalcem: $3x - 1 = A(x + 1) + B(x - 3)$.
+4. b) Pri $x = 3$: $8 = 4A$, torej $A = 2$. Pri $x = -1$: $-4 = -4B$, torej $B = 1$.
+5. b) $\dfrac{3x - 1}{x^2 - 2x - 3} = \dfrac{2}{x - 3} + \dfrac{1}{x + 1}$.
+6. c) $\int f(x)\,dx = \int \left(1 + \dfrac{2}{x - 3} + \dfrac{1}{x + 1}\right) dx = x + 2\ln\lvert x - 3\rvert + \ln\lvert x + 1\rvert + C$.
+7. d) Na intervalu $(3, \infty)$ sta $x - 3$ in $x + 1$ pozitivna, zato je $G(x) = x + 2\ln(x - 3) + \ln(x + 1) + C$.
+8. d) $G(4) = 4 + 2\ln 1 + \ln 5 + C = 4 + \ln 5 + C$; iz $G(4) = 4$ sledi $C = -\ln 5$.
+9. Odgovor: a) $D_f = \mathbb{R} \setminus \{-1, 3\}$; b) $\dfrac{2}{x - 3} + \dfrac{1}{x + 1}$; c) $x + 2\ln\lvert x - 3\rvert + \ln\lvert x + 1\rvert + C$; d) $G(x) = x + 2\ln(x - 3) + \ln(x + 1) - \ln 5$.
+
+**Točkovanje:** a) 1 točka za razcep imenovalca in definicijsko območje, 1 točka za deljenje; b) 1 točka za nastavek in enačbo $3x - 1 = A(x + 1) + B(x - 3)$, 1 točka za $A = 2$, 1 točka za $B = 1$; c) 1 točka za člen $x$, 1 točka za $2\ln\lvert x - 3\rvert$, 1 točka za $\ln\lvert x + 1\rvert$ in konstanto $C$; d) 1 točka za $G(4) = 4 + \ln 5 + C$, 1 točka za $C = -\ln 5$ in zapis funkcije $G$.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Izpelji formulo za integracijo per partes in pojasni, kako izbereš funkcijo $u$.
+---
+Izhajamo iz pravila za odvod produkta $(uv)' = u'v + uv'$. Ko obe strani integriramo, dobimo $uv = \int u'v\,dx + \int uv'\,dx$, od koder izrazimo $\int uv'\,dx = uv - \int u'v\,dx$. Za $u$ izberemo faktor, ki se z odvajanjem poenostavi, na primer polinom ali $\ln x$. Za $v'$ izberemo faktor, ki ga znamo integrirati, na primer $e^x$, $\sin x$ ali $\cos x$. Izbira je dobra, če je novi integral $\int u'v\,dx$ lažji od prvotnega.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Opiši postopek integriranja racionalne funkcije z razcepom na parcialne ulomke in ga pokaži na integralu $\int \frac{dx}{x(x + 1)}$.
+---
+Če stopnja števca ni manjša od stopnje imenovalca, najprej delimo polinoma in razcepimo le ostanek. Imenovalec razcepimo na linearne faktorje; če sta to različna faktorja $x - a$ in $x - b$, ulomek zapišemo kot vsoto parcialnih ulomkov $\frac{A}{x - a} + \frac{B}{x - b}$. Koeficienta $A$ in $B$ dobimo, ko enakost pomnožimo z imenovalcem in vstavimo ničli imenovalca. Pri $\frac{1}{x(x + 1)}$ dobimo $1 = A(x + 1) + Bx$, torej $A = 1$ in $B = -1$. Vsak parcialni ulomek integriramo v logaritem: $\int \frac{dx}{x(x + 1)} = \ln\lvert x\rvert - \ln\lvert x + 1\rvert + C$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Navedi primer integrala, ki ga izračunamo s per partes, čeprav integrand ni zapisan kot produkt, in pojasni postopek.
+---
+Tak primer je $\int \ln x\,dx$ za $x > 0$, ki ga zapišemo kot $\int \ln x \cdot 1\,dx$. Izberemo $u = \ln x$ in $v' = 1$, zato je $u' = \frac{1}{x}$ in $v = x$. Po formuli per partes je $\int \ln x\,dx = x\ln x - \int x \cdot \frac{1}{x}\,dx = x\ln x - x + C$.
+:::
+
 ## Drugače: Kot zgodba
 
 Popotnica pride na mejo z bankovcem, ki ga v novi državi nihče ne sprejme: to je integral $\int u\,v'\,dx$. V menjalnici »per partes« dobi dvoje: gotovino $u\,v$, ki jo lahko porabi takoj, in nov bankovec $\int u'\,v\,dx$. Menjava se splača le, če je novi bankovec lažje porabiti od starega.
@@ -282,6 +354,16 @@ integral: 2*x*exp(x^2) | x | exp(x^2)
 enako: (3*x+1)/((x-1)*(x+1)) | 2/(x-1)+1/(x+1)
 enako: 2/(1-x^2) | 1/(1-x)+1/(1+x)
 odvod: ln(1+x)-ln(1-x) | x | 2/(1-x^2)
+integral: (2*x+1)*exp(x) | x | (2*x-1)*exp(x)
+odvod: (2*x-1)*exp(x) | x | (2*x+1)*exp(x)
+integral: x*ln(x) | x | x^2/2*ln(x)-x^2/4
+enako: x^2+x-4 | (x^2-2*x-3)+(3*x-1)
+enako: (x^2+x-4)/(x^2-2*x-3) | 1+(3*x-1)/(x^2-2*x-3)
+enako: (3*x-1)/(x^2-2*x-3) | 2/(x-3)+1/(x+1)
+integral: (x^2+x-4)/(x^2-2*x-3) | x | x+2*ln(x-3)+ln(x+1)
+vrednost: 4+2*ln(4-3)+ln(4+1)-ln(5) | 4
+enako: 1/(x*(x+1)) | 1/x-1/(x+1)
+integral: 1/(x*(x+1)) | x | ln(x)-ln(x+1)
 >>
 
 :::simboli

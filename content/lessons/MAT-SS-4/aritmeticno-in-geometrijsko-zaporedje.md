@@ -177,6 +177,67 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 - Od $a_1$ do $a_n$ je $n - 1$ korakov; formulo vedno preveri pri $n = 1$.
 - Vrsto zaporedja določi šele, ko preveriš razliko oziroma količnik pri vseh danih parih.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Med števili $7$ in $43$ vstavi osem števil tako, da vseh deset števil v tem vrstnem redu tvori aritmetično zaporedje. Zapiši vstavljena števila in izračunaj vsoto vseh desetih števil.
+
+**Rešitev:**
+
+1. Prvi člen je $a_1 = 7$, deseti $a_{10} = 43$. Iz $a_{10} = a_1 + 9d$ sledi $9d = 36$ in $d = 4$.
+2. Vstavljena števila so $11, 15, 19, 23, 27, 31, 35, 39$.
+3. Vsota: $S_{10} = \dfrac{10}{2}\,(7 + 43) = 5 \cdot 50 = 250$.
+4. Odgovor: vstavimo števila $11, 15, 19, 23, 27, 31, 35, 39$; vsota vseh desetih števil je $250$.
+
+**Točkovanje:** 1 točka za diferenco $d = 4$, 1 točka za vstavljena števila, 1 točka za vsoto $250$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
+
+Kolesarka se pripravlja na dirko. V prvem tednu priprav prevozi $120\,\text{km}$, nato vsak teden prevozi $8\,\%$ več kot v prejšnjem tednu.
+
+a) Koliko kilometrov prevozi v šestem tednu? Rezultat zaokroži na desetinko kilometra. (2 točki)
+b) Koliko kilometrov skupaj prevozi v prvih desetih tednih? Rezultat zaokroži na desetinko kilometra. (2 točki)
+c) V katerem tednu prvič prevozi več kot $250\,\text{km}$? (2 točki)
+d) Njen sotekmovalec v prvem tednu prav tako prevozi $120\,\text{km}$, nato pa vsak teden $12\,\text{km}$ več kot v prejšnjem tednu. Kdo v prvih desetih tednih skupaj prevozi več in za koliko? Razliko zaokroži na desetinko kilometra. (2 točki)
+
+**Rešitev:**
+
+1. a) Tedenske razdalje tvorijo geometrijsko zaporedje z $a_1 = 120$ in količnikom $q = 1{,}08$, ker je razdalja vsak teden za $8\,\%$ večja kot prejšnji teden.
+2. a) $a_6 = 120 \cdot 1{,}08^5 = 176{,}319\ldots \approx 176{,}3$ (km).
+3. b) $S_{10} = 120 \cdot \dfrac{1{,}08^{10} - 1}{1{,}08 - 1} = 1738{,}387\ldots \approx 1738{,}4$ (km).
+4. c) Pogoj $120 \cdot 1{,}08^{\,n-1} > 250$ preoblikujemo v $1{,}08^{\,n-1} > \dfrac{25}{12}$ in logaritmiramo: $n - 1 > \dfrac{\log \frac{25}{12}}{\log 1{,}08} \approx 9{,}54$.
+5. c) Najmanjše celo število, ki to izpolni, je $n - 1 = 10$, torej $n = 11$. Preizkus: $a_{10} = 120 \cdot 1{,}08^9 \approx 239{,}9$ in $a_{11} = 120 \cdot 1{,}08^{10} \approx 259{,}1$.
+6. d) Sotekmovalčeve razdalje tvorijo aritmetično zaporedje s prvim členom $120$ in diferenco $d = 12$. V desetih tednih prevozi $\dfrac{10}{2}\,(2 \cdot 120 + 9 \cdot 12) = 5 \cdot 348 = 1740$ (km).
+7. d) Razlika: $1740 - 1738{,}387\ldots \approx 1{,}6$ (km).
+8. Odgovor: a) približno $176{,}3\,\text{km}$; b) približno $1738{,}4\,\text{km}$; c) v $11.$ tednu; d) več prevozi sotekmovalec, približno za $1{,}6\,\text{km}$.
+
+**Točkovanje:** a) 1 točka za količnik $q = 1{,}08$ in zapis člena $a_6$, 1 točka za rezultat $176{,}3\,\text{km}$; b) 1 točka za pravilno vstavljeno formulo za vsoto geometrijskega zaporedja, 1 točka za rezultat $1738{,}4\,\text{km}$; c) 1 točka za neenačbo (ali za preizkus členov $a_{10}$ in $a_{11}$), 1 točka za odgovor $11.$ teden; d) 1 točka za vsoto $1740\,\text{km}$, 1 točka za sklep, da sotekmovalec prevozi približno $1{,}6\,\text{km}$ več.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je zaporedje aritmetično in kdaj geometrijsko? Zapiši splošni člen vsakega od njiju.
+---
+Zaporedje je aritmetično, če je razlika zaporednih členov stalna: $a_{n+1} - a_n = d$, kjer je $d$ diferenca. Njegov splošni člen je $a_n = a_1 + (n-1)\,d$. Zaporedje z neničelnimi členi je geometrijsko, če je količnik zaporednih členov stalen: $\dfrac{a_{n+1}}{a_n} = q$. Njegov splošni člen je $a_n = a_1 \cdot q^{\,n-1}$, ker od prvega do $n$-tega člena naredimo $n - 1$ korakov.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formulo za vsoto prvih $n$ členov geometrijskega zaporedja s količnikom $q \ne 1$.
+---
+Vsoto zapišemo kot $S_n = a_1 + a_1 q + \ldots + a_1 q^{n-1}$ in jo pomnožimo s $q$, da dobimo $q S_n = a_1 q + a_1 q^2 + \ldots + a_1 q^n$. Obe vsoti imata skupne vse člene razen $a_1$ in $a_1 q^n$, zato pri odštevanju ostane $S_n - q S_n = a_1 - a_1 q^n$. Ker je $q \ne 1$, izpostavimo $S_n$ in delimo z $1 - q$. Dobimo $S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer zaporedja, ki je hkrati aritmetično in geometrijsko, in pojasni, zakaj so taka le konstantna zaporedja.
+---
+Primer je konstantno zaporedje $5, 5, 5, \ldots$ z diferenco $d = 0$ in količnikom $q = 1$. Če so $a$, $a + d$ in $a + 2d$ zaporedni členi geometrijskega zaporedja, mora veljati pogoj $\dfrac{a + d}{a} = \dfrac{a + 2d}{a + d}$, torej enačba $(a + d)^2 = a(a + 2d)$. Po poenostavitvi ostane $d^2 = 0$, zato je $d = 0$. Vsako zaporedje, ki je hkrati aritmetično in geometrijsko, je torej konstantno z neničelnimi členi.
+:::
+
 ## Drugače: Na sliki
 
 Nariši točke $(n, a_n)$. Pri aritmetičnem zaporedju ležijo vse na eni premici: ko se pomakneš za eno mesto desno, se dvigneš za $d$. Diferenca je torej naklon te premice; pri negativnem $d$ premica pada.
@@ -236,6 +297,20 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 - $4\,\text{€}$
 ~ To je $500 \cdot 0{,}2^3$. Ostane $80\,\%$ vrednosti, zato je $q = 0{,}8$, ne $0{,}2$.
 > Vrednosti tvorijo geometrijsko zaporedje s $q = 0{,}8$: po $3$ letih je vrtalnik vreden $500 \cdot 0{,}8^3 = 256\,\text{€}$.
+
+<<RACUN
+vrednost: (43-7)/9 | 4
+vrednost: 10/2*(7+43) | 250
+vrednost: 7+8*4 | 39
+vrednost: 120*1.08^5 | 176.3
+vrednost: 120*(1.08^10-1)/(1.08-1) | 1738.4
+vrednost: log(25/12)/log(1.08) | 9.54
+vrednost: 120*1.08^9 | 239.9
+vrednost: 120*1.08^10 | 259.1
+vrednost: 10/2*(2*120+9*12) | 1740
+vrednost: 1740-120*(1.08^10-1)/(1.08-1) | 1.6
+enako: (a+d)^2-a*(a+2*d) | d^2
+>>
 
 :::simboli
 a_n | splošni ($n$-ti) člen zaporedja | a_n = a_1 + (n-1)\,d | | geometrijsko: $a_n = a_1 q^{n-1}$

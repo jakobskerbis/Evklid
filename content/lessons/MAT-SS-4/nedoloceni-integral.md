@@ -184,6 +184,92 @@ $\int u^4\,du = \dfrac{u^5}{5} + C$, torej $\dfrac{(x^3 - 2)^5}{5} + C$. Preverb
 - Nova spremenljivka (višja raven): $u = g(x)$, $du = g'(x)\,dx$, integriraj po $u$, vrni se k $x$. Pri $u = kx$ deliš s $k$.
 - Vedno preveri z odvajanjem.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izračunaj $\int \left(\dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x\right) dx$ za $x \ne 0$.
+
+**Rešitev:**
+
+1. Prvi člen zapišemo kot potenco, $\dfrac{3}{x^2} = 3x^{-2}$, zato je $\int 3x^{-2}\,dx = 3 \cdot \dfrac{x^{-1}}{-1} = -\dfrac{3}{x}$.
+2. Drugi člen: $\int \dfrac{2}{x}\,dx = 2\ln\lvert x\rvert$; tretji člen: $\int 4\cos x\,dx = 4\sin x$.
+3. Preverba: $\left(-\dfrac{3}{x} - 2\ln\lvert x\rvert + 4\sin x\right)' = \dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x$.
+4. Odgovor: $\int \left(\dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x\right) dx = -\dfrac{3}{x} - 2\ln\lvert x\rvert + 4\sin x + C$.
+
+**Točkovanje:** 1 točka za $-\dfrac{3}{x}$ (zapis s potenco $x^{-2}$ in pravilo za potence), 1 točka za $-2\ln\lvert x\rvert$, 1 točka za $4\sin x$ in integracijsko konstanto $C$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Za funkcijo $f$ velja $f'(x) = 3x^2 - 6x$, njen graf pa poteka skozi točko $T(1, 2)$.
+
+a) Zapiši predpis funkcije $f$. (2 točki)
+
+b) Izračunaj ničle funkcije $f$. (2 točki)
+
+c) Izračunaj koordinate lokalnih ekstremov funkcije $f$ in za vsakega utemelji, ali je lokalni maksimum ali lokalni minimum. (2 točki)
+
+**Rešitev:**
+
+1. a) Funkcija $f$ je primitivna funkcija za $f'$: $f(x) = \int (3x^2 - 6x)\,dx = x^3 - 3x^2 + C$.
+2. a) Iz $f(1) = 2$ sledi $1 - 3 + C = 2$, torej $C = 4$ in $f(x) = x^3 - 3x^2 + 4$.
+3. b) Ena ničla je $x = -1$, ker je $f(-1) = -1 - 3 + 4 = 0$. Z deljenjem z $(x + 1)$ dobimo $f(x) = (x + 1)(x^2 - 4x + 4) = (x + 1)(x - 2)^2$.
+4. b) Ničli sta $x_1 = -1$ (enostavna) in $x_2 = 2$ (dvojna).
+5. c) Stacionarni točki: $f'(x) = 3x^2 - 6x = 3x(x - 2) = 0$, torej $x = 0$ in $x = 2$; $f(0) = 4$ in $f(2) = 8 - 12 + 4 = 0$.
+6. c) Odvod $f'$ pri $x = 0$ spremeni predznak s $+$ na $-$, pri $x = 2$ pa z $-$ na $+$. Zato ima $f$ v točki $(0, 4)$ lokalni maksimum, v točki $(2, 0)$ pa lokalni minimum; tam se graf dotakne osi $x$, kar se ujema z dvojno ničlo.
+7. Odgovor: a) $f(x) = x^3 - 3x^2 + 4$; b) $x_1 = -1$, $x_2 = 2$ (dvojna ničla); c) lokalni maksimum v točki $(0, 4)$, lokalni minimum v točki $(2, 0)$.
+
+**Točkovanje:** a) 1 točka za $x^3 - 3x^2 + C$, 1 točka za $C = 4$ iz pogoja $f(1) = 2$; b) 1 točka za razcep (ali uganjeno ničlo in deljenje polinoma), 1 točka za obe ničli; c) 1 točka za stacionarni točki $x = 0$ in $x = 2$ z vrednostma $f(0) = 4$ in $f(2) = 0$, 1 točka za utemeljeno vrsto ekstremov (maksimum v $(0, 4)$, minimum v $(2, 0)$).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x\sqrt{x^2 + 9}$.
+
+a) Z uvedbo nove spremenljivke izračunaj $\int f(x)\,dx$. (3 točke)
+
+b) Poišči tisto primitivno funkcijo $F$ funkcije $f$, za katero je $F(0) = 0$, in izračunaj $F(4)$. (3 točke)
+
+c) Izračunaj $\int \sin^2 x\,\cos x\,dx$. (2 točki)
+
+d) Izračunaj $\int \dfrac{2x + 3}{x^2 + 3x + 5}\,dx$ in utemelji, zakaj v rezultatu absolutna vrednost ni potrebna. (2 točki)
+
+**Rešitev:**
+
+1. a) Notranja funkcija je $x^2 + 9$, njen odvod $2x$ je do faktorja $2$ že v integrandu. Uvedemo $u = x^2 + 9$, $du = 2x\,dx$, torej $x\,dx = \dfrac{du}{2}$.
+2. a) $\int \sqrt{u} \cdot \dfrac{du}{2} = \dfrac{1}{2} \cdot \dfrac{u^{3/2}}{3/2} = \dfrac{1}{3}\,u^{3/2}$, zato je $\int f(x)\,dx = \dfrac{1}{3}\,(x^2 + 9)\sqrt{x^2 + 9} + C$.
+3. b) $F(0) = \dfrac{1}{3} \cdot 9 \cdot 3 + C = 9 + C$; iz $F(0) = 0$ sledi $C = -9$.
+4. b) $F(4) = \dfrac{1}{3} \cdot 25 \cdot 5 - 9 = \dfrac{125}{3} - \dfrac{27}{3} = \dfrac{98}{3}$.
+5. c) Uvedemo $u = \sin x$, $du = \cos x\,dx$: $\int u^2\,du = \dfrac{u^3}{3} + C = \dfrac{\sin^3 x}{3} + C$.
+6. d) Števec je odvod imenovalca: $u = x^2 + 3x + 5$, $du = (2x + 3)\,dx$, zato je integral enak $\int \dfrac{du}{u} = \ln\lvert u\rvert + C$.
+7. d) Diskriminanta imenovalca je $D = 9 - 20 = -11 < 0$, vodilni koeficient pa je pozitiven, zato je $x^2 + 3x + 5 > 0$ za vsak $x$ in absolutna vrednost ne spremeni ničesar.
+8. Odgovor: a) $\dfrac{1}{3}\,(x^2 + 9)\sqrt{x^2 + 9} + C$; b) $F(x) = \dfrac{1}{3}\,(x^2 + 9)\sqrt{x^2 + 9} - 9$ in $F(4) = \dfrac{98}{3}$; c) $\dfrac{\sin^3 x}{3} + C$; d) $\ln(x^2 + 3x + 5) + C$.
+
+**Točkovanje:** a) 1 točka za $u = x^2 + 9$ in $x\,dx = \dfrac{du}{2}$, 1 točka za $\dfrac{1}{3}\,u^{3/2}$, 1 točka za rezultat, izražen z $x$, s konstanto $C$; b) 1 točka za $F(0) = 9 + C$, 1 točka za $C = -9$, 1 točka za $F(4) = \dfrac{98}{3}$; c) 1 točka za $u = \sin x$ in $du = \cos x\,dx$, 1 točka za rezultat; d) 1 točka za $\ln(x^2 + 3x + 5) + C$ (prizna se tudi zapis z absolutno vrednostjo), 1 točka za utemeljitev, da je imenovalec povsod pozitiven (negativna diskriminanta in pozitivni vodilni koeficient).
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je primitivna funkcija dane funkcije $f$ in kaj je nedoločeni integral funkcije $f$?
+---
+Funkcija $F$ je primitivna funkcija funkcije $f$ na intervalu, če za vsak $x$ s tega intervala velja $F'(x) = f(x)$. Če je $F$ primitivna funkcija za $f$, je primitivna funkcija tudi $F + C$ za vsako realno število $C$, ker je odvod konstante enak $0$. Dve primitivni funkciji iste funkcije se na intervalu razlikujeta le za konstanto. Množico vseh primitivnih funkcij imenujemo nedoločeni integral in pišemo $\int f(x)\,dx = F(x) + C$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj smemo pri nedoločenem integralu konstantni faktor nesti pred integral in vsoto integrirati člen za členom.
+---
+Obe lastnosti utemeljimo z odvajanjem, ker je primitivna funkcija določena s svojim odvodom. Če je $F' = f$ in $H' = h$, je po pravilih za odvajanje $(aF + bH)' = af + bh$. Zato je $aF + bH$ primitivna funkcija funkcije $af + bh$, torej velja $\int (af + bh)\,dx = a\int f\,dx + b\int h\,dx$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni, kako integriramo z uvedbo nove spremenljivke, in postopek pokaži na integralu $\int 2x\cos(x^2)\,dx$.
+---
+Metoda je obrat verižnega pravila in je uporabna, kadar je v integrandu sestavljena funkcija $f\bigl(g(x)\bigr)$ in zraven odvod notranje funkcije $g'(x)$. Notranjo funkcijo označimo z $u = g(x)$, izrazimo $du = g'(x)\,dx$ in integral zapišemo samo s spremenljivko $u$. Integriramo po $u$ in nato namesto $u$ vstavimo $g(x)$. Pri $\int 2x\cos(x^2)\,dx$ vzamemo $u = x^2$, $du = 2x\,dx$ in dobimo $\int \cos u\,du = \sin(x^2) + C$.
+:::
+
 ## Drugače: Z analogijo
 
 Pomisli na melodijo. Zapišeš lahko samo **korake**: »dva poltona gor, en polton dol, štiri gor«. To je kot odvod: pove, kako se višina tona spreminja.
@@ -246,6 +332,25 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 ~ To dobiš, če ves čas računaš s končnim tempom ($140 \cdot 3$) ali pri $20t$ pozabiš deliti z $2$. Tempo je na začetku manjši.
 + $330$
 > $N(t) = 80t + 10t^2 + C$, $N(0) = 0$ da $C = 0$; $N(3) = 240 + 90 = 330$.
+
+<<RACUN
+integral: 3/x^2-2/x+4*cos(x) | x | -3/x-2*ln(x)+4*sin(x)
+odvod: -3/x-2*ln(x)+4*sin(x) | x | 3/x^2-2/x+4*cos(x)
+integral: 3*x^2-6*x | x | x^3-3*x^2
+resi: 1-3+C=2 | C | 4
+enako: x^3-3*x^2+4 | (x+1)*(x-2)^2
+resi: x^3-3*x^2+4=0 | x | -1, 2
+resi: 3*x^2-6*x=0 | x | 0, 2
+vrednost: 0^3-3*0^2+4 | 4
+vrednost: 2^3-3*2^2+4 | 0
+integral: x*sqrt(x^2+9) | x | (x^2+9)*sqrt(x^2+9)/3
+vrednost: (0^2+9)*sqrt(0^2+9)/3 | 9
+vrednost: (4^2+9)*sqrt(4^2+9)/3-9 | 98/3
+integral: sin(x)^2*cos(x) | x | sin(x)^3/3
+integral: (2*x+3)/(x^2+3*x+5) | x | ln(x^2+3*x+5)
+vrednost: 3^2-4*5 | -11
+integral: 2*x*cos(x^2) | x | sin(x^2)
+>>
 
 :::simboli
 f | integrand (znan odvod) | f(x) = F'(x) |

@@ -162,6 +162,93 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 - (višja raven) Prostornina vrtenine okoli osi $x$: $V = \pi \int_a^b f(x)^2\,dx$.
 - Pot je integral hitrosti po času: $s = \int_{t_1}^{t_2} v(t)\,dt$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izračunaj $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx$.
+
+**Rešitev:**
+
+1. Primitivna funkcija: $F(x) = -3\cos x + 2\sin x$, ker je $(-3\cos x + 2\sin x)' = 3\sin x + 2\cos x$.
+2. Zgornja meja: $F\!\left(\frac{\pi}{2}\right) = -3 \cdot 0 + 2 \cdot 1 = 2$. Spodnja meja: $F(0) = -3 \cdot 1 + 2 \cdot 0 = -3$.
+3. $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx = F\!\left(\frac{\pi}{2}\right) - F(0) = 2 - (-3) = 5$.
+4. Odgovor: integral je enak $5$.
+
+**Točkovanje:** 1 točka za primitivno funkcijo $-3\cos x + 2\sin x$, 1 točka za vrednosti $F\!\left(\frac{\pi}{2}\right) = 2$ in $F(0) = -3$, 1 točka za rezultat $5$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dani sta funkciji $g(x) = 4 - x^2$ in $f(x) = x + 2$.
+
+a) Izračunaj koordinate presečišč grafov funkcij $f$ in $g$. (2 točki)
+
+b) Izračunaj ploščino lika, ki ga omejujeta grafa funkcij $f$ in $g$. (3 točke)
+
+c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $g$ in os $x$. Kolikšen delež te ploščine zavzema lik iz b)? (3 točke)
+
+**Rešitev:**
+
+1. a) Enačbo $4 - x^2 = x + 2$ preuredimo v $x^2 + x - 2 = 0$, torej $(x + 2)(x - 1) = 0$ in $x_1 = -2$, $x_2 = 1$.
+2. a) $f(-2) = 0$ in $f(1) = 3$, zato sta presečišči $P_1(-2, 0)$ in $P_2(1, 3)$.
+3. b) Na $[-2, 1]$ je parabola nad premico (na primer $g(0) = 4 > f(0) = 2$), zato je ploščina $p = \int_{-2}^{1} \bigl(g(x) - f(x)\bigr)\,dx = \int_{-2}^{1} (2 - x - x^2)\,dx$.
+4. b) Primitivna funkcija je $H(x) = 2x - \frac{x^2}{2} - \frac{x^3}{3}$, zato je $H(1) = 2 - \frac{1}{2} - \frac{1}{3} = \frac{7}{6}$ in $H(-2) = -4 - 2 + \frac{8}{3} = -\frac{10}{3}$.
+5. b) $p = H(1) - H(-2) = \frac{7}{6} + \frac{20}{6} = \frac{27}{6} = \frac{9}{2}$.
+6. c) Ničli funkcije $g$ sta $-2$ in $2$, med njima je graf nad osjo $x$: $p_1 = \int_{-2}^{2} (4 - x^2)\,dx = \left(4x - \frac{x^3}{3}\right)\Big|_{-2}^{2} = \frac{16}{3} - \left(-\frac{16}{3}\right) = \frac{32}{3}$.
+7. c) Premica je na $[-2, 1]$ nad osjo $x$, zato lik iz b) leži v tem liku. Delež: $\dfrac{p}{p_1} = \dfrac{9}{2} \cdot \dfrac{3}{32} = \dfrac{27}{64}$.
+8. Odgovor: a) $P_1(-2, 0)$ in $P_2(1, 3)$; b) $p = \frac{9}{2}$; c) ploščina je $\frac{32}{3}$, lik iz b) zavzema $\frac{27}{64}$ te ploščine (približno $42\,\%$).
+
+**Točkovanje:** a) 1 točka za abscisi $-2$ in $1$, 1 točka za obe presečišči; b) 1 točka za integral razlike (zgornja minus spodnja) z mejama $-2$ in $1$, 1 točka za primitivno funkcijo, 1 točka za $p = \frac{9}{2}$; c) 1 točka za meji $-2$ in $2$, 1 točka za $\frac{32}{3}$, 1 točka za delež $\frac{27}{64}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Notranjost posode ima obliko vrtenine, ki nastane, ko graf funkcije $f(x) = \frac{12}{\sqrt{x}}$ na intervalu $[4, 16]$ zavrtimo okoli osi $x$. Enota na obeh oseh je $1\,\mathrm{cm}$.
+
+a) Izračunaj polmera obeh krožnih robov posode in njeno višino. (1 točka)
+
+b) Izračunaj prostornino posode. Rezultat zaokroži na cele kubične centimetre. (4 točke)
+
+c) Določi število $c$, za katero ima del posode med $x = 4$ in $x = c$ natanko polovico celotne prostornine. (3 točke)
+
+d) Izračunaj ploščino osnega preseka posode, to je lika med grafoma funkcij $f$ in $-f$ na intervalu $[4, 16]$. (2 točki)
+
+**Rešitev:**
+
+1. a) $f(4) = \frac{12}{2} = 6$ in $f(16) = \frac{12}{4} = 3$, zato sta polmera $6\,\mathrm{cm}$ in $3\,\mathrm{cm}$; višina je $16 - 4 = 12$, torej $12\,\mathrm{cm}$.
+2. b) $V = \pi \int_4^{16} f(x)^2\,dx = \pi \int_4^{16} \frac{144}{x}\,dx$.
+3. b) Na intervalu $[4, 16]$ je $x > 0$, zato je primitivna funkcija za $\frac{144}{x}$ kar $144\ln x$ (brez absolutne vrednosti).
+4. b) $V = 144\pi(\ln 16 - \ln 4) = 144\pi\ln 4 \approx 627{,}14\,\mathrm{cm^3}$.
+5. c) Prostornina dela med $x = 4$ in $x = c$ je $\pi \int_4^{c} \frac{144}{x}\,dx = 144\pi\ln\frac{c}{4}$ in mora biti enaka $\frac{V}{2} = 72\pi\ln 4$.
+6. c) Sledi $\ln\frac{c}{4} = \frac{1}{2}\ln 4 = \ln 2$, torej $\frac{c}{4} = 2$ in $c = 8$.
+7. d) Ploščina preseka: $p = \int_4^{16} \bigl(f(x) - (-f(x))\bigr)\,dx = 2\int_4^{16} 12x^{-1/2}\,dx = 48\sqrt{x}\,\Big|_4^{16} = 48(4 - 2) = 96$.
+8. Odgovor: a) polmera $6\,\mathrm{cm}$ in $3\,\mathrm{cm}$, višina $12\,\mathrm{cm}$; b) $V \approx 627\,\mathrm{cm^3}$; c) $c = 8$; d) $p = 96\,\mathrm{cm^2}$.
+
+**Točkovanje:** a) 1 točka za oba polmera in višino; b) 1 točka za formulo $V = \pi \int_4^{16} f(x)^2\,dx$ z $f(x)^2 = \frac{144}{x}$, 1 točka za primitivno funkcijo $144\ln x$, 1 točka za $144\pi\ln 4$, 1 točka za $V \approx 627\,\mathrm{cm^3}$; c) 1 točka za enačbo $144\pi\ln\frac{c}{4} = 72\pi\ln 4$, 1 točka za $\ln\frac{c}{4} = \ln 2$, 1 točka za $c = 8$; d) 1 točka za $2\int_4^{16} \frac{12}{\sqrt{x}}\,dx$, 1 točka za $96\,\mathrm{cm^2}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako določeni integral definiramo s spodnjimi in zgornjimi vsotami in kakšen je njegov geometrijski pomen?
+---
+Interval $[a, b]$ razdelimo na majhne podintervale in nad vsakim narišemo pravokotnik z višino najmanjše oziroma največje vrednosti zvezne funkcije $f$ na tem podintervalu. Vsota ploščin teh pravokotnikov je spodnja oziroma zgornja vsota. Ko podintervale drobimo, se obe vsoti približujeta istemu številu, ki ga imenujemo določeni integral $\int_a^b f(x)\,dx$. Če je $f$ na $[a, b]$ nenegativna, je določeni integral ploščina lika med grafom in osjo $x$. Dele grafa pod osjo $x$ integral šteje negativno.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši Newton-Leibnizovo formulo, pojasni, zakaj velja, in zakaj v njej ne potrebujemo integracijske konstante.
+---
+Če je $F$ katera koli primitivna funkcija zvezne funkcije $f$ na intervalu $[a, b]$, velja $\int_a^b f(x)\,dx = F(b) - F(a)$. Naj bo $A(x)$ ploščina pod grafom od $a$ do $x$; ko se $x$ poveča za majhen $h$, se ploščina poveča približno za $f(x) \cdot h$, zato je $A'(x) = f(x)$. Funkcija $A$ je torej primitivna funkcija za $f$ in se od $F$ razlikuje le za konstanto: $A(x) = F(x) + C$. Iz $A(a) = 0$ sledi $C = -F(a)$, zato je $\int_a^b f(x)\,dx = A(b) = F(b) - F(a)$. Če namesto $F$ vzamemo drugo primitivno funkcijo $F + C$, se v razliki $\bigl(F(b) + C\bigr) - \bigl(F(a) + C\bigr)$ konstanta odšteje, zato je ne pišemo.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Izpelji formulo za prostornino vrtenine, ki nastane, ko graf funkcije $f$ na intervalu $[a, b]$ zavrtimo okoli osi $x$.
+---
+Vrtenino z ravninami, pravokotnimi na os $x$, razrežemo na tanke rezine debeline $dx$. Rezina pri $x$ je približno valj s polmerom $\lvert f(x)\rvert$, zato je njena prostornina $\pi f(x)^2\,dx$. Prostornina vrtenine je vsota prostornin vseh rezin, v limiti pa določeni integral $V = \pi \int_a^b f(x)^2\,dx$.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si števec kilometrov v avtu in merilnik hitrosti. Merilnik hitrosti kaže $f$, števec pa $F$: števec se spreminja tako hitro, kot kaže merilnik, zato je $F' = f$.
@@ -225,6 +312,20 @@ Podobno računa aplikacija za kolesarjenje porabljeno energijo: moč v vatih kra
 - $-\frac{2}{3}$
 ~ To je samo integral na $[0, 1]$, ki je negativen. Ploščina ne more biti negativna.
 > Ničla je $x = 1$. $\int_0^1 (x^2 - 1)\,dx = -\frac{2}{3}$, $\int_1^2 (x^2 - 1)\,dx = \frac{4}{3}$. Ploščina je $\frac{2}{3} + \frac{4}{3} = 2$.
+
+<<RACUN
+integral: 3*sin(x)+2*cos(x) | x | 0 | pi/2 | 5
+resi: 4-x^2=x+2 | x | -2, 1
+integral: (4-x^2)-(x+2) | x | -2 | 1 | 9/2
+vrednost: 2-1/2-1/3 | 7/6
+vrednost: -4-2+8/3 | -10/3
+integral: 4-x^2 | x | -2 | 2 | 32/3
+vrednost: (9/2)/(32/3) | 27/64
+integral: pi*(12/sqrt(x))^2 | x | 4 | 16 | 144*pi*ln(4)
+vrednost: 144*pi*ln(4) | 627.14
+resi: 144*pi*ln(c/4)=72*pi*ln(4) | c | 8
+integral: 2*12/sqrt(x) | x | 4 | 16 | 96
+>>
 
 :::simboli
 f | integrand (funkcija pod integralom) | | | višina grafa nad točko $x$

@@ -236,6 +236,78 @@ $\Phi(2) - \Phi(-1) = 0{,}4772 + 0{,}3413 = 0{,}8185$, torej približno $82\,\%$
 - Pravilo $68$–$95$–$99{,}7\,\%$ za $\mu \pm \sigma$, $\mu \pm 2\sigma$, $\mu \pm 3\sigma$.
 - $z = \frac{x - \mu}{\sigma}$; $P(X < x) = 0{,}5 + \Phi(z)$, $P(X > x) = 0{,}5 - \Phi(z)$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Deset dijakov je zapisalo, koliko minut traja njihova pot v šolo:
+
+$$15,\ 30,\ 8,\ 20,\ 12,\ 50,\ 16,\ 25,\ 10,\ 18$$
+
+Izračunaj medkvartilni razmik in z računom utemelji, ali je podatek $50$ osamelec.
+
+**Rešitev:**
+
+1. Podatke uredimo po velikosti: $8, 10, 12, 15, 16, 18, 20, 25, 30, 50$. Spodnja polovica je $8, 10, 12, 15, 16$, zgornja $18, 20, 25, 30, 50$.
+2. Prvi kvartil je mediana spodnje polovice, $Q_1 = 12$; tretji kvartil je mediana zgornje polovice, $Q_3 = 25$.
+3. Medkvartilni razmik: $Q_3 - Q_1 = 25 - 12 = 13$ minut.
+4. Osamelci zgoraj so podatki nad $Q_3 + 1{,}5 \cdot 13 = 25 + 19{,}5 = 44{,}5$.
+5. Odgovor: medkvartilni razmik je $13$ minut. Ker je $50 > 44{,}5$, je podatek $50$ osamelec.
+
+**Točkovanje:** 1 točka za urejene podatke in kvartila $Q_1 = 12$, $Q_3 = 25$; 1 točka za medkvartilni razmik $13$ in mejo $44{,}5$; 1 točka za utemeljen sklep, da je $50$ osamelec.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Sadjar je stehtal šest jabolk in dobil mase v gramih:
+
+$$174,\ 186,\ 171,\ 189,\ 183,\ 177$$
+
+a) Izračunaj aritmetično sredino in standardni odklon mas teh šestih jabolk. Standardni odklon zaokroži na dve decimalni mesti. (3 točke)
+
+Na podlagi velikega vzorca sadjar privzame, da je masa jabolka normalno porazdeljena s pričakovano vrednostjo $\mu = 180\,\mathrm{g}$ in standardnim odklonom $\sigma = 8\,\mathrm{g}$. Iz tabele: $\Phi(0{,}5) = 0{,}1915$, $\Phi(1{,}25) = 0{,}3944$, $\Phi(1{,}75) = 0{,}4599$. V delih b) in c) računaj s tem modelom.
+
+b) Kolikšen delež jabolk tehta manj kot $170\,\mathrm{g}$? Rezultat zapiši v odstotkih na dve decimalni mesti. (2 točki)
+
+c) Jabolka z maso med $176\,\mathrm{g}$ in $194\,\mathrm{g}$ gredo v prvi razred. Približno koliko od $2000$ jabolk gre v prvi razred? Zaokroži na celo število. (2 točki)
+
+**Rešitev:**
+
+1. a) $\bar x = \dfrac{174 + 186 + 171 + 189 + 183 + 177}{6} = \dfrac{1080}{6} = 180\,\mathrm{g}$.
+2. a) Odkloni od sredine so $-6, 6, -9, 9, 3, -3$, njihovi kvadrati $36, 36, 81, 81, 9, 9$, vsota kvadratov je $252$.
+3. a) Varianca šestih mas je $252 : 6 = 42$, njihov standardni odklon pa $\sqrt{42} = 6{,}4807\ldots \approx 6{,}48\,\mathrm{g}$.
+4. b) Standardiziramo: $z = \dfrac{170 - 180}{8} = -1{,}25$.
+5. b) $P(X < 170) = 0{,}5 + \Phi(-1{,}25) = 0{,}5 - 0{,}3944 = 0{,}1056$, torej $10{,}56\,\%$.
+6. c) Standardizirani meji: $z_1 = \dfrac{176 - 180}{8} = -0{,}5$ in $z_2 = \dfrac{194 - 180}{8} = 1{,}75$.
+7. c) Meji sta na različnih straneh sredine: $P(176 < X < 194) = \Phi(1{,}75) - \Phi(-0{,}5) = 0{,}4599 + 0{,}1915 = 0{,}6514$.
+8. c) Pričakovano število: $0{,}6514 \cdot 2000 = 1302{,}8 \approx 1303$.
+9. Odgovor: mase šestih jabolk imajo aritmetično sredino $180\,\mathrm{g}$ in standardni odklon približno $6{,}48\,\mathrm{g}$; manj kot $170\,\mathrm{g}$ tehta $10{,}56\,\%$ jabolk; v prvi razred gre približno $1303$ jabolk.
+
+**Točkovanje:** a) 1 točka za $\bar x = 180\,\mathrm{g}$, 1 točka za vsoto kvadratov odklonov $252$ oziroma varianco $42$, 1 točka za standardni odklon $6{,}48\,\mathrm{g}$; b) 1 točka za $z = -1{,}25$ in 1 točka za $10{,}56\,\%$; c) 1 točka za standardizirani meji in verjetnost $0{,}6514$ ter 1 točka za približno $1303$ jabolk.
+
+### Ustno vprašanje 1
+
+:::premisli
+Navedi primer podatkov, pri katerih se aritmetična sredina in mediana močno razlikujeta, in pojasni, katera bolje opiše tipično vrednost.
+---
+Primer so mesečne plače v podjetju, kjer večina zaposlenih zasluži podobno, direktor pa veliko več. Aritmetična sredina upošteva velikost vsakega podatka, zato jo en sam zelo velik podatek potegne navzgor. Mediana je srednji podatek urejenega niza, zato je velikost skrajnega podatka ne spremeni, dokler ta ostane na robu niza. Pri takih podatkih tipično vrednost bolje opiše mediana.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši lastnosti grafa gostote normalne porazdelitve s parametroma $\mu$ in $\sigma$.
+---
+Graf je zvonasta krivulja, ki je simetrična glede na premico $x = \mu$ in tam doseže maksimum. Prevoja ima pri $x = \mu - \sigma$ in $x = \mu + \sigma$. Krivulja leži povsod nad osjo $x$ in se ji na obeh straneh približuje, a je nikoli ne doseže. Ploščina pod celotno krivuljo je $1$, ploščina med $a$ in $b$ pa je verjetnost, da slučajna spremenljivka zavzame vrednost med $a$ in $b$. Večji $\sigma$ da širšo in nižjo krivuljo.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kaj meri standardni odklon, kako ga izračunamo in zakaj odklone od sredine pred povprečenjem kvadriramo?
+---
+Standardni odklon meri, kako so podatki razpršeni okoli aritmetične sredine. Najprej izračunamo varianco $\sigma^2 = \frac{(x_1 - \bar x)^2 + \dots + (x_N - \bar x)^2}{N}$, nato je $\sigma = \sqrt{\sigma^2}$. Odklonov ne smemo kar sešteti, ker je njihova vsota vedno $0$: $(x_1 - \bar x) + \dots + (x_N - \bar x) = N\bar x - N\bar x = 0$. Kvadrati so vsi nenegativni, zato se ne izničijo, koren na koncu pa vrne enoto podatkov.
+:::
+
 ## Drugače: Na sliki
 
 Nariši zvonasto krivuljo in pod njo navpične črte pri $\mu$, $\mu \pm \sigma$, $\mu \pm 2\sigma$. Ploščino razdeli na pasove:
@@ -325,3 +397,17 @@ z_a, z_b | standardizirani meji | | – |
 \sigma_A, \sigma_B | standardna odklona modelov A in B | | h |
 \bar x_A, \bar x_B | povprečni trajanji baterij | | h |
 :::
+
+<<RACUN
+vrednost: 25-12 | 13
+vrednost: 25+1.5*13 | 44.5
+vrednost: (174+186+171+189+183+177)/6 | 180
+vrednost: ((174-180)^2+(186-180)^2+(171-180)^2+(189-180)^2+(183-180)^2+(177-180)^2)/6 | 42
+vrednost: sqrt(42) | 6.48
+vrednost: (170-180)/8 | -1.25
+vrednost: 0.5-0.3944 | 0.1056
+vrednost: (176-180)/8 | -0.5
+vrednost: (194-180)/8 | 1.75
+vrednost: 0.4599+0.1915 | 0.6514
+vrednost: 0.6514*2000 | 1302.8
+>>

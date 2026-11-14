@@ -177,6 +177,72 @@ $P_5(5) = 0{,}8^5 = 0{,}32768$, skupaj $0{,}4096 + 0{,}32768 = 0{,}73728$. Sprej
 - Vse verjetnosti $P_n(0)$ do $P_n(n)$ so členi razvoja $(q+p)^n$, zato je njihova vsota $1$.
 - Pri vlečenju brez vračanja formula ne velja.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Lokostrelec zadene tarčo z verjetnostjo $\frac{2}{3}$, izidi strelov so med seboj neodvisni. Na tarčo ustreli $4$-krat.
+
+a) Utemelji, zakaj lahko uporabimo Bernoullijevo formulo, in zapiši $n$, $p$ in $q$. (1 točka)
+b) Izračunaj verjetnost, da tarčo zadene natanko dvakrat. (2 točki)
+c) Izračunaj verjetnost, da tarčo zadene vsaj enkrat. (2 točki)
+d) Izračunaj verjetnost, da tarčo zadene vsaj trikrat. (2 točki)
+
+**Rešitev:**
+
+1. a) Isti poskus (strel) ponovimo $4$-krat, zanima nas le, ali lokostrelec zadene, verjetnost zadetka je vsakič enaka in streli so neodvisni. Zato je $n = 4$, $p = \frac{2}{3}$, $q = 1 - p = \frac{1}{3}$.
+2. b) $P_4(2) = \binom{4}{2}\left(\frac{2}{3}\right)^2\left(\frac{1}{3}\right)^2 = 6 \cdot \frac{4}{9} \cdot \frac{1}{9} = \frac{24}{81} = \frac{8}{27}$.
+3. c) Nasprotni dogodek je »nobenega zadetka«: $P_4(0) = \left(\frac{1}{3}\right)^4 = \frac{1}{81}$, zato je $P = 1 - \frac{1}{81} = \frac{80}{81}$.
+4. d) »Vsaj trikrat« pomeni $k = 3$ ali $k = 4$: $P_4(3) = 4 \cdot \frac{8}{27} \cdot \frac{1}{3} = \frac{32}{81}$ in $P_4(4) = \left(\frac{2}{3}\right)^4 = \frac{16}{81}$.
+5. d) $P = \frac{32}{81} + \frac{16}{81} = \frac{48}{81} = \frac{16}{27}$.
+6. Odgovor: a) $n = 4$, $p = \frac{2}{3}$, $q = \frac{1}{3}$, b) $\frac{8}{27}$, c) $\frac{80}{81}$, d) $\frac{16}{27}$.
+
+**Točkovanje:** a) 1 točka za utemeljitev (isti poskus, enaka verjetnost, neodvisnost) in $n = 4$, $p = \frac{2}{3}$, $q = \frac{1}{3}$; b) 1 točka za pravilno vstavljeno Bernoullijevo formulo, 1 točka za $\frac{8}{27}$; c) 1 točka za nasprotni dogodek $1 - q^4$, 1 točka za $\frac{80}{81}$; d) 1 točka za $P_4(3) + P_4(4)$ s pravilnima členoma, 1 točka za $\frac{16}{27}$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Stroj izdela izdelek z napako z verjetnostjo $0{,}04$, neodvisno od drugih izdelkov. Izdelke pakirajo v škatle po $20$. Trgovina škatlo vrne, če sta v njej vsaj $2$ izdelka z napako. Rezultate zaokroži na štiri decimalna mesta.
+
+a) Izračunaj verjetnost, da v škatli ni nobenega izdelka z napako. (2 točki)
+b) Izračunaj verjetnost, da sta v škatli natanko $2$ izdelka z napako. (2 točki)
+c) Izračunaj verjetnost, da trgovina škatlo vrne. (3 točke)
+d) Trgovina prejme $5$ škatel. Izračunaj verjetnost, da ne vrne nobene od njih. (3 točke)
+
+**Rešitev:**
+
+1. a) Gre za zaporedje neodvisnih poskusov z $n = 20$; $p = 0{,}04$; $q = 0{,}96$. $P_{20}(0) = 0{,}96^{20} = 0{,}442002\ldots \approx 0{,}4420$.
+2. b) $P_{20}(2) = \binom{20}{2} \cdot 0{,}04^2 \cdot 0{,}96^{18} = 190 \cdot 0{,}0016 \cdot 0{,}479603\ldots = 0{,}145799\ldots \approx 0{,}1458$.
+3. c) Nasprotni dogodek dogodka »vsaj $2$ izdelka z napako« je »največ $1$ izdelek z napako«. $P_{20}(1) = 20 \cdot 0{,}04 \cdot 0{,}96^{19} = 0{,}368335\ldots$
+4. c) $P = 1 - P_{20}(0) - P_{20}(1) = 1 - 0{,}442002\ldots - 0{,}368335\ldots = 0{,}189662\ldots \approx 0{,}1897$.
+5. d) Škatla ni vrnjena z verjetnostjo $1 - 0{,}189662\ldots = 0{,}810337\ldots$. Izdelki so med seboj neodvisni, zato so neodvisni tudi dogodki »škatla ni vrnjena« za različne škatle in je $P = (0{,}810337\ldots)^5 = 0{,}349406\ldots \approx 0{,}3494$. (Z zaokroženo vrednostjo $0{,}8103$ dobimo $0{,}3493$, kar je tudi sprejemljivo.)
+6. Odgovor: a) $0{,}4420$; b) $0{,}1458$; c) $0{,}1897$; d) $0{,}3494$.
+
+**Točkovanje:** a) 1 točka za $0{,}96^{20}$ (pravilni $n$, $p$, $q$), 1 točka za $0{,}4420$; b) 1 točka za pravilno vstavljeno Bernoullijevo formulo z $\binom{20}{2} = 190$, 1 točka za $0{,}1458$; c) 1 točka za nasprotni dogodek »največ $1$«, 1 točka za vmesni rezultat $P_{20}(1) \approx 0{,}3683$ in 1 točka za $0{,}1897$; d) 1 točka za verjetnost $0{,}8103$, da škatla ni vrnjena, 1 točka za potenco z eksponentom $5$ (produkt neodvisnih dogodkov), 1 točka za $0{,}3494$ (ali $0{,}3493$, če računa z zaokroženo vrednostjo $0{,}8103$).
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Kdaj govorimo o zaporedju neodvisnih poskusov? Naštej pogoje in navedi primer, ki ni tako zaporedje.
+---
+O zaporedju neodvisnih poskusov govorimo, kadar isti poskus ponovimo $n$-krat. Pri vsaki ponovitvi nas zanima le, ali se dogodek $A$ zgodi ali ne, in verjetnost $P(A) = p$ je vsakič enaka. Poskusi so neodvisni, kar pomeni, da izid enega poskusa ne spremeni verjetnosti pri drugem. Tako zaporedje ni na primer vlečenje kart iz kupa brez vračanja, saj se po vsakem izvlečku sestava kupa in s tem verjetnost spremeni.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Izpelji Bernoullijevo formulo za verjetnost, da se dogodek v $n$ neodvisnih poskusih zgodi natanko $k$-krat.
+---
+Dogodek se v enem poskusu zgodi z verjetnostjo $p$ in ne zgodi z verjetnostjo $q = 1 - p$. En potek s $k$ uspehi in $n - k$ neuspehi je produkt neodvisnih dogodkov, zato ima verjetnost $p^k q^{n-k}$, ne glede na to, v katerih poskusih so uspehi. Mesta $k$ uspehov med $n$ poskusi lahko izberemo na $\binom{n}{k}$ načinov, zato je takih potekov $\binom{n}{k}$. Poteki so med seboj nezdružljivi, zato njihove verjetnosti seštejemo in dobimo $P_n(k) = \binom{n}{k}p^k q^{n-k}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Utemelji, zakaj je vsota verjetnosti $P_n(0) + P_n(1) + \dots + P_n(n)$ enaka $1$.
+---
+Verjetnosti $P_n(k) = \binom{n}{k}p^k q^{n-k}$ so natanko členi razvoja potence $(q + p)^n$ po binomskem izreku. Zato je njihova vsota enaka $(q + p)^n$. Ker je $q + p = 1$, je vsota enaka $1^n = 1$. To se ujema s tem, da dogodki »natanko $k$ uspehov« za $k = 0, 1, \dots, n$ zajemajo vse izide in so paroma nezdružljivi.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si mešalno mizo s petimi stikali. Vsako stikalo je lahko gor (uspeh) ali dol (neuspeh). Bernoullijeva formula odgovori na dve ločeni vprašanji. Prvo: na koliko načinov lahko postaviš točno štiri stikala gor? To je $\binom{5}{4} = 5$. Drugo: kako verjetna je ena taka postavitev? To je $p^4 q$. Zmnožek obeh je verjetnost, da so gor točno štiri stikala, ne glede na to, katera.
@@ -268,6 +334,19 @@ vrednost: 5*0.8^4*0.2 | 0.4096
 vrednost: 5*0.8^4*0.2+0.8^5 | 0.73728
 vrednost: 0.03^2 | 0.0009
 vrednost: 1-0.7^4-4*0.3*0.7^3 | 0.3483
+vrednost: 6*(2/3)^2*(1/3)^2 | 8/27
+vrednost: 1-(1/3)^4 | 80/81
+vrednost: 4*(2/3)^3*(1/3) | 32/81
+vrednost: 4*(2/3)^3*(1/3)+(2/3)^4 | 16/27
+vrednost: 0.96^20 | 0.4420
+vrednost: factorial(20)/(factorial(2)*factorial(18)) | 190
+vrednost: 0.96^18 | 0.4796
+vrednost: 190*0.04^2*0.96^18 | 0.1458
+vrednost: 20*0.04*0.96^19 | 0.3683
+vrednost: 1-0.96^20-20*0.04*0.96^19 | 0.1897
+vrednost: 0.96^20+20*0.04*0.96^19 | 0.8103
+vrednost: (0.96^20+20*0.04*0.96^19)^5 | 0.3494
+vrednost: 0.8103^5 | 0.3493
 >>
 
 :::simboli

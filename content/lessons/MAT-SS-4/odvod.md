@@ -203,6 +203,86 @@ $f'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$. Pri $x = 1$: $6 \cdot 1 \cdot 2
 - $(f g)' = f' g + f g'$, $\left(\frac{f}{g}\right)' = \dfrac{f' g - f g'}{g^2}$, $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$.
 - Najprej odvajaj, nato vstavi točko. $f' > 0$: funkcija narašča, $f' < 0$: pada.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Odvajaj funkcijo $f(x) = x^2 e^{2x}$ in določi vse $x$, za katere je $f'(x) = 0$.
+
+**Rešitev:**
+
+1. Po pravilu za produkt: $f'(x) = (x^2)' \cdot e^{2x} + x^2 \cdot (e^{2x})'$.
+2. Po pravilu za sestavljeno funkcijo je $(e^{2x})' = e^{2x} \cdot 2$, zato $f'(x) = 2x\,e^{2x} + 2x^2 e^{2x} = 2x(x + 1)\,e^{2x}$.
+3. Ker je $e^{2x} > 0$ za vsak $x$, je $f'(x) = 0$ natanko tedaj, ko je $2x(x + 1) = 0$.
+4. Odgovor: $f'(x) = 2x(x + 1)\,e^{2x}$; odvod je enak $0$ pri $x = 0$ in pri $x = -1$.
+
+**Točkovanje:** 1 točka za uporabo pravila za produkt, 1 točka za pravilni odvod $(e^{2x})' = 2e^{2x}$, 1 točka za obe rešitvi $x = 0$ in $x = -1$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = \dfrac{4}{x}$.
+
+a) Izračunaj diferenčni količnik funkcije $f$ na intervalu $[1, 4]$ in pojasni, kaj to število pomeni na grafu funkcije. (2 točki)
+b) Po definiciji odvoda izračunaj $f'(2)$. (3 točke)
+c) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakšni legi sta ta tangenta in sekanta skozi točki grafa z abscisama $1$ in $4$? Odgovor utemelji. (2 točki)
+
+**Rešitev:**
+
+1. a) $f(1) = 4$ in $f(4) = 1$, zato je diferenčni količnik $\dfrac{f(4) - f(1)}{4 - 1} = \dfrac{1 - 4}{3} = -1$.
+2. a) To je smerni koeficient sekante skozi točki $(1, 4)$ in $(4, 1)$ grafa, torej povprečna sprememba funkcije na intervalu $[1, 4]$.
+3. b) $\dfrac{f(2 + h) - f(2)}{h} = \dfrac{\frac{4}{2 + h} - 2}{h} = \dfrac{4 - 4 - 2h}{h(2 + h)} = \dfrac{-2}{2 + h}$ (krajšamo $h \ne 0$).
+4. b) $f'(2) = \lim\limits_{h \to 0} \dfrac{-2}{2 + h} = -1$.
+5. c) $f(2) = 2$, zato je tangenta $y = 2 - 1 \cdot (x - 2) = -x + 4$.
+6. c) Sekanta iz a) je $y = 4 - (x - 1) = -x + 5$. Premici imata enak smerni koeficient $-1$, zato sta vzporedni.
+7. Odgovor: diferenčni količnik je $-1$ (smerni koeficient sekante), $f'(2) = -1$, tangenta $y = -x + 4$ je vzporedna s sekanto $y = -x + 5$.
+
+**Točkovanje:** a) 1 točka za vrednost $-1$, 1 točka za pomen (smerni koeficient sekante skozi točki $(1, 4)$ in $(4, 1)$); b) 1 točka za zapis diferenčnega količnika, 1 točka za poenostavitev na $\frac{-2}{2 + h}$, 1 točka za limito $-1$; c) 1 točka za enačbo tangente, 1 točka za ugotovitev, da sta premici vzporedni (enaka smerna koeficienta).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+a) Z definicijo odvoda pokaži, da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$. (3 točke)
+b) Iz odvodov funkcij $\sin x$ in $\cos x$ izpelji odvod funkcije $\tan x$. (3 točke)
+c) Izračunaj $f'(4)$ za funkcijo $f(x) = \sqrt{x^2 + 9}$. (2 točki)
+d) Poišči vse točke na grafu funkcije $g(x) = \tan x$, $-\frac{\pi}{2} < x < \frac{\pi}{2}$, v katerih ima tangenta smerni koeficient $4$. (2 točki)
+
+**Rešitev:**
+
+1. a) Diferenčni količnik je $\dfrac{\sqrt{x + h} - \sqrt{x}}{h}$. Razširimo ga z $\sqrt{x + h} + \sqrt{x}$: $\dfrac{(x + h) - x}{h\,(\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$.
+2. a) Ko gre $h \to 0$, gre $\sqrt{x + h} \to \sqrt{x}$, zato je limita enaka $\dfrac{1}{2\sqrt{x}}$. Torej $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$.
+3. b) $\tan x = \dfrac{\sin x}{\cos x}$. Po pravilu za kvocient: $(\tan x)' = \dfrac{\cos x \cdot \cos x - \sin x \cdot (-\sin x)}{\cos^2 x} = \dfrac{\cos^2 x + \sin^2 x}{\cos^2 x}$.
+4. b) Ker je $\sin^2 x + \cos^2 x = 1$, je $(\tan x)' = \dfrac{1}{\cos^2 x}$ (za $\cos x \ne 0$).
+5. c) Sestavljena funkcija z notranjo funkcijo $x^2 + 9$: $f'(x) = \dfrac{1}{2\sqrt{x^2 + 9}} \cdot 2x = \dfrac{x}{\sqrt{x^2 + 9}}$.
+6. c) $f'(4) = \dfrac{4}{\sqrt{16 + 9}} = \dfrac{4}{5}$.
+7. d) Pogoj $\dfrac{1}{\cos^2 x} = 4$ da $\cos^2 x = \dfrac{1}{4}$. Na intervalu $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ je $\cos x > 0$, zato $\cos x = \dfrac{1}{2}$ in $x = \pm\dfrac{\pi}{3}$.
+8. d) $\tan\dfrac{\pi}{3} = \sqrt{3}$ in $\tan\left(-\dfrac{\pi}{3}\right) = -\sqrt{3}$.
+9. Odgovor: $(\sqrt{x})' = \frac{1}{2\sqrt{x}}$, $(\tan x)' = \frac{1}{\cos^2 x}$, $f'(4) = \frac{4}{5}$; iskani točki sta $\left(\frac{\pi}{3}, \sqrt{3}\right)$ in $\left(-\frac{\pi}{3}, -\sqrt{3}\right)$.
+
+**Točkovanje:** a) 1 točka za zapis diferenčnega količnika, 1 točka za razširitev in krajšanje, 1 točka za limito; b) 1 točka za pravilo za kvocient, 1 točka za pravilna odvoda sinusa in kosinusa v števcu, 1 točka za poenostavitev s $\sin^2 x + \cos^2 x = 1$; c) 1 točka za $f'(x)$, 1 točka za $f'(4) = \frac{4}{5}$; d) 1 točka za $x = \pm\frac{\pi}{3}$, 1 točka za obe točki z ordinatama.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako je definiran odvod funkcije $f$ v točki $a$ in kaj pomeni na grafu funkcije?
+---
+Odvod funkcije $f$ v točki $a$ je limita diferenčnega količnika: $f'(a) = \lim\limits_{h \to 0} \frac{f(a + h) - f(a)}{h}$, če ta limita obstaja. Diferenčni količnik je smerni koeficient sekante skozi točki $(a, f(a))$ in $(a + h, f(a + h))$ grafa. Ko gre $h$ proti $0$, se sekanta zavrti v tangento, zato je $f'(a)$ smerni koeficient tangente na graf v točki $(a, f(a))$. Odvod pove tudi, kako hitro se funkcija spreminja v točki $a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši pravilo za odvod sestavljene funkcije in ga uporabi na funkciji $\sin(x^2)$.
+---
+Pri sestavljeni funkciji $f(g(x))$ je $f$ zunanja in $g$ notranja funkcija. Če je $g$ odvedljiva v $x$ in $f$ odvedljiva v $g(x)$, velja $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$: odvajamo zunanjo funkcijo, notranjo pustimo nespremenjeno, in pomnožimo z odvodom notranje funkcije. Pri $\sin(x^2)$ je zunanja funkcija sinus, notranja pa $x^2$. Zato je $\bigl(\sin(x^2)\bigr)' = \cos(x^2) \cdot 2x$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Z definicijo odvoda izpelji pravilo za odvod vsote dveh funkcij, ki sta v točki $a$ odvedljivi.
+---
+Diferenčni količnik vsote je $\frac{(f + g)(a + h) - (f + g)(a)}{h}$. Členi se preuredijo v vsoto $\frac{f(a + h) - f(a)}{h} + \frac{g(a + h) - g(a)}{h}$. Ker sta $f$ in $g$ v $a$ odvedljivi, imata ulomka pri $h \to 0$ limiti $f'(a)$ in $g'(a)$. Limita vsote je vsota limit, zato je $(f + g)'(a) = f'(a) + g'(a)$.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Odvod funkcije $f(x) = x^3$ v točki $a = 2$ lahko »ujameš« s kalkulatorjem.
@@ -286,3 +366,21 @@ g | druga (pri sestavljeni notranja) funkcija |  |  |
 u | števec ulomka |  |  |
 v | imenovalec ulomka |  |  |
 :::
+
+<<RACUN
+odvod: x^2*exp(2*x) | x | 2*x*(x+1)*exp(2*x)
+resi: 2*x*(x+1)=0 | x | -1, 0
+vrednost: (4/4-4/1)/(4-1) | -1
+enako: (4/(2+h)-2)/h | -2/(2+h)
+limita: (4/(2+h)-2)/h | h | 0 | -1
+odvod: 4/x | x | -4/x^2
+enako: 2-(x-2) | -x+4
+enako: 4-(x-1) | -x+5
+limita: (sqrt(4+h)-sqrt(4))/h | h | 0 | 1/4
+enako: ((4+h)-4)/(h*(sqrt(4+h)+2)) | 1/(sqrt(4+h)+2)
+odvod: tan(x) | x | 1/cos(x)^2
+odvod: sqrt(x^2+9) | x | x/sqrt(x^2+9)
+vrednost: 4/sqrt(4^2+9) | 4/5
+vrednost: 1/cos(pi/3)^2 | 4
+vrednost: tan(pi/3) | sqrt(3)
+>>
