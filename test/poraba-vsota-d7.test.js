@@ -62,6 +62,13 @@ test("D7 skupna poraba: vsota ne bere tabele usage, ob prvem zagonu se napolni i
     store.db.close();
     store = openDb(datoteka);
     blizu(new Usage(store.db).monthTotal(), resnica, "po drugem zagonu");
+    // Manjka en sprožilec in vsota je napačna (ročni poseg): ob zagonu se vse ustvari znova in napolni.
+    store.db.exec("DROP TRIGGER usage_dnevno_del; UPDATE usage_dnevno SET usd = usd + 100");
+    store.db.close();
+    store = openDb(datoteka);
+    blizu(new Usage(store.db).monthTotal(), resnica, "po popravilu ob zagonu");
+    store.db.prepare("DELETE FROM usage WHERE id = (SELECT MAX(id) FROM usage)").run();
+    blizu(new Usage(store.db).monthTotal(), store.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')").get().s, "sprožilec brisanja deluje");
     // Načrt: skupna vsota bere usage_dnevno, ne usage.
     const plan = (q) => store.db.prepare(`EXPLAIN QUERY PLAN ${q}`).all().map((r) => r.detail).join("; ");
     const spy = [];
