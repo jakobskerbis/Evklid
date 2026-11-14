@@ -1294,6 +1294,7 @@ function growthHtml(g, loc) {
   const SRC = { "": "rast.src.none", priporocilo: "rast.src.ref", razred: "rast.src.class", drugo: "rast.src.other" };
   const src = (v) => (SRC[v] ? t(SRC[v]) : v);
   const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
+  const eurOf = (x) => Number(x).toLocaleString(loc, { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 3 });
   // Povezava v opombi je v \u2066 … \u2069 (LRI … PDI), da je v arabščini in perzijščini ne premeša smer besedila.
   return `<h3 class="rast-title">${esc(t("rast.title"))}</h3>
     <ul class="pilot-sum">
@@ -1302,11 +1303,14 @@ function growthHtml(g, loc) {
       <li><b>${pct(g.d1)}</b> ${esc(t("rast.d1", of(g.d1)))}</li>
       <li><b>${pct(g.d7)}</b> ${esc(t("rast.d7", of(g.d7)))} · ${esc(t("rast.goal", { pct: pc(g.goal.target) }))} <b>${esc(t(`rast.goal.${g.goal.status}`))}</b></li>
       <li><b>${nf(g.weeklyActive)}</b> ${esc(t("rast.wau"))}</li>
+      ${g.activeProfiles != null ? `<li><b>${nf(g.activeProfiles)}</b> ${esc(t("rast.activeProfiles"))}</li>` : ""}
     </ul>
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.week")}${th("rast.new")}${th("rast.active")}</tr></thead>
       <tbody>${[...g.weeks].reverse().map((w) => `<tr><td>${esc(`${dm(w.start)} – ${dm(w.end)}`)}</td><td>${nf(w.newProfiles)}</td><td>${nf(w.active)}</td></tr>`).join("")}</tbody></table></div>
     ${g.sources.length ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.visits")}${th("rast.profiles")}${th("rast.firstTask")}${th("rast.returned")}</tr></thead>
       <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    ${g.usageBySource?.length ? `<h4>${esc(t("rast.byUse"))}</h4><div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.active")}${th("rast.d1Col")}${th("rast.qCol")}${th("rast.aiCol")}</tr></thead>
+      <tbody>${g.usageBySource.map((u) => `<tr><td>${esc(src(u.vir))}</td><td>${nf(u.active)}</td><td>${u.d1Eligible ? `${nf(u.d1Returned)} / ${nf(u.d1Eligible)}` : "–"}</td><td>${u.askerDays ? nf(u.questionsPerAskerDay) : "–"}</td><td>${u.aiUsers ? eurOf(u.aiEurPerUser) : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
     <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
 }
 

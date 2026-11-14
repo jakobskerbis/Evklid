@@ -4,6 +4,7 @@
 // obiski s povezav z oznako so samo število na dan in oznako (source_visits).
 import { schoolStudents } from "./schools.js";
 import { BOT } from "./pilot.js";
+import { EUR_PER_USD } from "./usage.js";
 
 export const D7_TARGET = 0.4; // pogoj pilota v načrtu rasti: vsaj 40 % se vrne po 7 dneh
 const MIN_D7 = 5; // manj profilov, starejših od 7 dni = premalo za oceno
@@ -181,6 +182,57 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
   }
   const sources = [...bySource.values()].sort((a, b) => b.profiles - a.profiles || b.visits - a.visits || a.vir.localeCompare(b.vir));
 
+  // Točka B1 (pilot): uporaba po viru za vse štete profile (ne samo nove): aktivni v obdobju, vrnitev naslednji dan
+  // (novi profili), vprašanja na učenca na dan (dnevi, ko je kaj vprašal) in strošek AI na učenca, ki je AI uporabil.
+  const virOf = new Map();
+  for (const st of db.prepare("SELECT id, vir FROM students").all()) if (counted(st.id)) virOf.set(st.id, st.vir || "");
+  const byUse = new Map();
+  const use = (vir) => {
+    if (!byUse.has(vir)) byUse.set(vir, { vir, active: 0, d1Eligible: 0, d1Returned: 0, questions: 0, askerDays: 0, aiUsd: 0, aiUsers: 0 });
+    return byUse.get(vir);
+  };
+  let activeProfiles = 0;
+  for (const [id, ds] of active) {
+    if (![...ds].some((d) => d >= from)) continue;
+    activeProfiles++;
+    if (virOf.has(id)) use(virOf.get(id)).active++;
+  }
+  for (const st of cohort.filter(d1Eligible)) {
+    const u = use(st.vir || "");
+    u.d1Eligible++;
+    if (backOn(st, 1, 1)) u.d1Returned++;
+  }
+  const asked = db
+    .prepare(
+      `SELECT c.student_id AS s, substr(m.created_at, 1, 10) AS d, COUNT(*) AS n FROM conversations c CROSS JOIN messages m ON m.conversation_id = c.id
+       WHERE c.updated_at >= ? AND m.role = 'user' AND m.created_at >= ? GROUP BY c.student_id, d`,
+    )
+    .all(from, from);
+  for (const { s: id, d, n: q } of asked) {
+    if (!virOf.has(id) || d > today) continue;
+    const u = use(virOf.get(id));
+    u.questions += q;
+    u.askerDays++;
+  }
+  if (hasTable(db, "usage")) {
+    for (const { s: id, usd } of db.prepare("SELECT student_id AS s, SUM(cost_usd) AS usd FROM usage WHERE student_id IS NOT NULL AND created_at >= ? GROUP BY student_id").all(from)) {
+      if (!virOf.has(id) || !(usd > 0)) continue;
+      const u = use(virOf.get(id));
+      u.aiUsd += usd;
+      u.aiUsers++;
+    }
+  }
+  const round = (x, d) => Math.round(x * 10 ** d) / 10 ** d;
+  const usageBySource = [...byUse.values()]
+    .map((u) => ({
+      ...u,
+      aiUsd: round(u.aiUsd, 4),
+      d1Pct: u.d1Eligible ? round(u.d1Returned / u.d1Eligible, 3) : null,
+      questionsPerAskerDay: u.askerDays ? round(u.questions / u.askerDays, 1) : 0,
+      aiEurPerUser: u.aiUsers ? round((u.aiUsd * EUR_PER_USD()) / u.aiUsers, 3) : 0,
+    }))
+    .sort((a, b) => b.active - a.active || b.questions - a.questions || a.vir.localeCompare(b.vir));
+
   return {
     from,
     to: today,
@@ -192,6 +244,8 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     d7,
     goal: { target: D7_TARGET, status: d7.eligible < MIN_D7 ? "wait" : d7.pct >= D7_TARGET ? "met" : "notYet" },
     weeklyActive: weekRows.at(-1)?.active || 0,
+    activeProfiles,
+    usageBySource,
     weeks: weekRows,
     sources,
   };
