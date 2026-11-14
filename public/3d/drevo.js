@@ -2,7 +2,7 @@
 // pokaže njene podveje, zadnja veja pokaže modele. Ikone vej so izrisi Cycles v slogu aplikacije
 // (public/3d/ikone-drevo/<slog>/<id>.webp, scripts/3d-ikone-drevo/, docs/3d.md »Ikone vej drevesa«).
 // Vsak model iz public/3d/modeli/<področje>/index.js mora biti vsaj v eni veji (test/3d-drevo.test.js); model, ki ga
-// drevo še ne pozna, zbirka pokaže pod »Drugi modeli«, da ni nikoli skrit.
+// drevo še ne pozna, zbirka pokaže pod »Novo v 3D svetu«, da ni nikoli skrit.
 
 // Barve skupin (ista paleta kot ikone sloga Čist).
 export const BARVE = { bio: "#2fb36b", kem: "#9b6cf0", fiz: "#3d8bfd", mat: "#f0a020" };

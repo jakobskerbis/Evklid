@@ -3856,7 +3856,7 @@ export default {
   "a3.tree.polja": "Polja",
   "a3.tree.vesolje": "Vesolje",
   "a3.treePath": "Kje sem",
-  "a3.treeMore": "Drugi modeli",
+  "a3.treeMore": "Novo v 3D svetu",
   "a3.seeAll": "Pokaži vse",
   "a3.results": "Zadetki: {n}",
   "a3.noModels": "Ni zadetkov za »{q}«.",
