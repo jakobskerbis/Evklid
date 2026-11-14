@@ -341,6 +341,18 @@ Izraz v oglatem oklepaju je vsota nenegativnega kvadrata in pozitivnega števila
 ~ Neenačaj $\ge$ je nestrog, zato ničli spadata v rešitev: $f(2) = 0 \ge 0$.
 > Ničli sta $2$ in $4$. Parabola je odprta navzdol, nad osjo je med ničlama; neenačaj je nestrog, zato ničli vključimo.
 
+? (brez računala) Koliko celih števil reši neenačbo $x^2 - 2x - 8 < 0$?
+= 5
+~ 7 | Šteješ tudi ničli $-2$ in $4$. Neenačaj $<$ je strog: $f(-2) = 0$ ni manjše od $0$.
+~ 6 | To je dolžina intervala, $4 - (-2) = 6$, ne število celih števil v njem.
+> Ničli sta $-2$ in $4$ (razcep $(x + 2)(x - 4)$). Parabola je odprta navzgor, pod osjo je med ničlama: $x \in (-2, 4)$. Cela števila v njem so $-1$, $0$, $1$, $2$ in $3$, torej $5$.
+
+? (brez računala) Cesta čez drug prelaz ima višinski profil $h(x) = 1500 - 20x^2$ metrov, $x$ je vodoravna oddaljenost od vrha v km (vzhodno pozitivna, zahodno negativna). Snežna meja je na $1320\,\text{m}$. Koliko kilometrov ceste je nad snežno mejo?
+= 6 km | 0,01
+~ 3 | To je le pol odseka, vzhodno od vrha. Iz $x^2 < 9$ sledi $-3 < x < 3$, odsek sega $3\,\text{km}$ na vsako stran.
+~ 9 | To je meja za $x^2$. Dolžino odseka dobiš iz ničel $\pm 3$, ne iz $9$.
+> $1500 - 20x^2 > 1320$ da $180 - 20x^2 > 0$, torej $x^2 < 9$ in $x \in (-3, 3)$. Odsek je dolg $3 - (-3) = 6\,\text{km}$.
+
 :::simboli
 a | vodilni koeficient (pri $x^2$) | | | $a \ne 0$
 b | linearni koeficient (pri $x$) | | |

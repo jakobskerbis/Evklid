@@ -352,20 +352,17 @@ Samo števila, manjša od $-3$, ustrezajo, kar se ujema z rešitvijo. Če bi zna
 ~ Ta da $x \le 5$, torej $(-\infty, 5]$: zaradi $\ge$ je $5$ vključen, oklepaj bi bil oglat.
 > Odštejemo $7$: $-x > -5$. Delimo z $-1$ in obrnemo znak: $x < 5$. Znak je strog, zato je $5$ izključen.
 
-? Mizar reže letev dolžine $250\,\text{cm}$ na kose po $32\,\text{cm}$ (širino reza zanemari). Oceni brez kalkulatorja: koliko celih kosov največ dobi?
-- $8$
-~ $250 : 32 \approx 7{,}8$; zaokrožiš navzgor, a $8 \cdot 32 = 256\,\text{cm}$ je že več od $250\,\text{cm}$.
-+ $7$
-- $7{,}8$
-~ To je meja $x \le 7{,}8\ldots$ iz neenačbe, kosi pa so celi. Vzameš največje celo število v intervalu.
+? (brez računala) Mizar reže letev dolžine $250\,\text{cm}$ na kose po $32\,\text{cm}$ (širino reza zanemari). Koliko celih kosov največ dobi?
+= 7 | 0
+~ 7,8 | To je meja $x \le 7{,}8\ldots$ iz neenačbe, kosi pa so celi. Vzameš največje celo število v intervalu.
+~ 8 | $250 : 32 \approx 7{,}8$; zaokrožil si navzgor, a $8 \cdot 32 = 256\,\text{cm}$ je že več od $250\,\text{cm}$.
 > Neenačba $32x \le 250$ da $x \le 7{,}8\ldots$ Ocena: $7 \cdot 32 = 224 \le 250$, $8 \cdot 32 = 256 > 250$. Največ $7$ kosov.
 
-? Zidar zida steno, ki sme biti visoka največ $2{,}4\,\text{m}$. Temelj je visok $0{,}3\,\text{m}$, vsaka vrsta zidakov z malto $0{,}2\,\text{m}$. Koliko vrst $x$ največ lahko sezida?
-- $12$
-~ To je $2{,}4 : 0{,}2$: pozabil si odšteti temelj. Neenačba je $0{,}3 + 0{,}2x \le 2{,}4$.
-- $11$
-~ Iz $x \le 10{,}5$ si zaokrožil navzgor. Pri $11$ vrstah bi bila stena $2{,}5\,\text{m}$, kar je preveč.
-+ $10$
+? (brez računala) Zidar zida steno, ki sme biti visoka največ $2{,}4\,\text{m}$. Temelj je visok $0{,}3\,\text{m}$, vsaka vrsta zidakov z malto $0{,}2\,\text{m}$. Koliko vrst $x$ največ lahko sezida?
+= 10 | 0
+~ 10,5 | To je meja $x \le 10{,}5$ iz neenačbe, vrste pa so cele. Vzameš največje celo število v intervalu.
+~ 12 | To je $2{,}4 : 0{,}2$: pozabil si odšteti temelj. Neenačba je $0{,}3 + 0{,}2x \le 2{,}4$.
+~ 11 | Iz $x \le 10{,}5$ si zaokrožil navzgor. Pri $11$ vrstah bi bila stena $2{,}5\,\text{m}$, kar je preveč.
 > $0{,}3 + 0{,}2x \le 2{,}4$, odštejemo $0{,}3$: $0{,}2x \le 2{,}1$, delimo z $0{,}2$: $x \le 10{,}5$. Vrste so cele, zato največ $10$.
 
 :::simboli
@@ -399,4 +396,6 @@ neenacba: (x+7)/2>=(4*x-2)/3+5/2 | x | (-oo, 2]
 resi: (25-6*p)/5=2 | p | 5/2
 neenacba: x+2<x | x | none
 neenacba: x+2>x | x | (-oo, oo)
+neenacba: 32*x<=250 | x | (-oo, 125/16]
+neenacba: 0.3+0.2*x<=2.4 | x | (-oo, 21/2]
 >>

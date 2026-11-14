@@ -489,14 +489,14 @@ točka: 0; 1
 ~ -1 | Predznak je napačen: sredina med $-2$ in $4$ je desno od $0$.
 > Ničli ležita simetrično glede na os, zato je $p = \dfrac{x_1 + x_2}{2} = \dfrac{-2 + 4}{2} = 1$.
 
-? Kolikšna je druga koordinata $q$ temena parabole $f(x) = -x^2 - 6x + 7$?
+? (brez računala) Kolikšna je druga koordinata $q$ temena parabole $f(x) = -x^2 - 6x + 7$?
 = 16 | 0
 ~ -20 | V obrazec si vstavil $b = 6$ namesto $b = -6$ in dobil $p = 3$. Pravilno je $p = -\dfrac{-6}{2 \cdot (-1)} = -3$.
 ~ 34 | Računal si $(-3)^2 = 9$ in pozabil minus pred členom: $-x^2$ je pri $x = -3$ enako $-9$.
 ~ 7 | $7$ je prosti člen $c$, vrednost pri $x = 0$, ne v temenu.
 > $p = -\dfrac{-6}{2 \cdot (-1)} = -3$ in $q = f(-3) = -9 + 18 + 7 = 16$.
 
-? Kolikšna je najmanjša vrednost funkcije $f(x) = 2(x + 1)(x - 5)$?
+? (brez računala) Kolikšna je najmanjša vrednost funkcije $f(x) = 2(x + 1)(x - 5)$?
 = -18 | 0
 ~ -10 | To je $f(0)$, prosti člen $c$. Najmanjša vrednost je v temenu, ne pri $x = 0$.
 ~ -9 | Pozabil si vodilni koeficient $a = 2$ pred oklepajema.

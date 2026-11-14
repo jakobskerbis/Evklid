@@ -390,12 +390,10 @@ $$x_1 x_2 = \frac{(-b)^2 - D}{4a^2} = \frac{b^2 - b^2 + 4ac}{4a^2} = \frac{c}{a}
 ~ Produkt rešitev je $2 \cdot (-5) = -10$, ne $10$.
 > Vsota rešitev je $-3$, produkt $-10$, zato $x^2 - (-3)x + (-10) = x^2 + 3x - 10 = 0$.
 
-? Na Marsu je težni pospešek $3{,}72\,\text{m/s}^2$. Kamen, vržen navpično navzgor s hitrostjo $10\,\text{m/s}$, je po času $t$ na višini $h(t) = 10t - 1{,}86t^2$ metrov. Ali doseže $15\,\text{m}$?
-- Da, dvakrat, saj ima vsaka kvadratna enačba dve rešitvi.
-~ Dve rešitvi ima v $\mathbb{C}$, čas pa mora biti realen. Pri $D < 0$ realnega časa ni.
-- Da, enkrat, ker je to njegova najvišja točka.
-~ Najvišja točka bi pomenila $D = 0$, tu pa je $D$ negativen.
-+ Ne, ker ima enačba $1{,}86t^2 - 10t + 15 = 0$ negativno diskriminanto.
+? Na Marsu je težni pospešek $3{,}72\,\text{m/s}^2$. Kamen, vržen navpično navzgor s hitrostjo $10\,\text{m/s}$, je po času $t$ na višini $h(t) = 10t - 1{,}86t^2$ metrov. Kolikokrat med letom je na višini $15\,\text{m}$? Vpiši število.
+= 0
+~ 2 | Enačba $1{,}86t^2 - 10t + 15 = 0$ ima dve rešitvi le v $\mathbb{C}$, čas pa mora biti realen. Pri $D < 0$ realnega časa ni.
+~ 1 | Ena sama višina (najvišja točka) bi pomenila $D = 0$, tu pa je $D$ negativen.
 > $D = 10^2 - 4 \cdot 1{,}86 \cdot 15 = 100 - 111{,}6 = -11{,}6 < 0$. Realnega časa ni; kamen se dvigne le do približno $13{,}4\,\text{m}$.
 
 ? (brez računala) Koliko realnih rešitev ima enačba $x^3 = 16x$?

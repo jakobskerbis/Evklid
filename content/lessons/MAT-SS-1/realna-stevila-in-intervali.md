@@ -344,14 +344,11 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 + Postane $(-\infty, -1] \cup [3, \infty)$.
 > Nova rešitev so vsa števila, ki jih stara ni vsebovala: dva kosa zunaj, s krajiščema, ker sta oddaljeni natanko $2$.
 
-? Kolikšna je vrednost izraza $|3 - 8| - |{-2}|$?
-- $7$
-~ Absolutni vrednosti si seštel. Med njima je minus: $5 - 2$.
-+ $3$
-- $-7$
-~ Prvo absolutno vrednost si izpustil: $-5 - 2$. Najprej $|3 - 8| = |-5| = 5$.
-- $-3$
-~ Obe absolutni vrednosti si izpustil: $-5 - (-2)$. Absolutna vrednost ni nikoli negativna.
+? (brez računala) Kolikšna je vrednost izraza $|3 - 8| - |{-2}|$?
+= 3
+~ 7 | Absolutni vrednosti si seštel. Med njima je minus: $5 - 2$.
+~ -7 | Prvo absolutno vrednost si izpustil: $-5 - 2$. Najprej $|3 - 8| = |-5| = 5$.
+~ -3 | Obe absolutni vrednosti si izpustil: $-5 - (-2)$. Absolutna vrednost ni nikoli negativna.
 > Najprej $3 - 8 = -5$, torej $|{-5}| = 5$. Nato $|{-2}| = 2$. Rezultat je $5 - 2 = 3$.
 
 ? (višja raven) Tableta mora vsebovati zdravilno učinkovino z maso $m$, za katero velja $|m - 250| \le 15$ (v mg). Katera tableta NE ustreza?

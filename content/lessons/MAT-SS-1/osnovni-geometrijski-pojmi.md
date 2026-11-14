@@ -350,14 +350,11 @@ Lastnosti kotov ob prečnici izhajajo iz **aksioma o vzporednici**, ki ga je v n
 + Ker je vsak od njiju sokot istega kota, zato oba merita $180^\circ$ minus isto število.
 > Če je $\alpha + \beta = 180^\circ$ in $\gamma + \beta = 180^\circ$, je $\alpha = 180^\circ - \beta = \gamma$.
 
-? Kot in njegov komplementarni kot se razlikujeta za $20^\circ$. Koliko meri večji od njiju?
-- $100^\circ$
-~ To bi veljalo za suplementarna kota z vsoto $180^\circ$. Komplementarna kota imata vsoto $90^\circ$.
-+ $55^\circ$
-- $35^\circ$
-~ To je manjši kot. Vprašanje sprašuje po večjem.
-- $70^\circ$
-~ To je $90^\circ - 20^\circ$: razliko odšteješ od vsote, namesto da bi rešil sistem. Kota $70^\circ$ in $20^\circ$ se razlikujeta za $50^\circ$.
+? (brez računala) Kot in njegov komplementarni kot se razlikujeta za $20^\circ$. Koliko stopinj meri večji od njiju?
+= 55 ° | 0,01
+~ 100 | To bi veljalo za suplementarna kota z vsoto $180^\circ$. Komplementarna kota imata vsoto $90^\circ$.
+~ 35 | To je manjši kot. Vprašanje sprašuje po večjem.
+~ 70 | To je $90^\circ - 20^\circ$: razliko odšteješ od vsote, namesto da bi rešil sistem. Kota $70^\circ$ in $20^\circ$ se razlikujeta za $50^\circ$.
 > Velja $x + y = 90^\circ$ in $x - y = 20^\circ$. Seštejemo: $2x = 110^\circ$, $x = 55^\circ$, $y = 35^\circ$.
 
 ? Žice na rešetki pečice so vzporedne, ravna paličica jih seka. Pri prvi žici meri en notranji kot $72^\circ$. Koliko meri notranji kot na isti strani paličice pri sosednji žici?
@@ -387,6 +384,7 @@ vrednost: 90-50 | 40
 vrednost: sqrt(5^2-(4-1)^2) | 4
 vrednost: sqrt(13^2-(8-3)^2) | 12
 vrednost: sqrt(10^2-(9-1)^2) | 6
+resi: x+(x-20)=90 | x | 55
 >>
 
 :::simboli

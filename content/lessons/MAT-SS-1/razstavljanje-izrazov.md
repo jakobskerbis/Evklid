@@ -330,14 +330,11 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 ~ Produkt $1 \cdot 10 = 10$ je pravi, vsota pa je $11$. Srednji del bi bil $11x$.
 > Iščemo števili z vsoto $7$ in produktom $10$: to sta $2$ in $5$. Deli $2x + 5x = 7x$ dajo srednji člen, del $2 \cdot 5 = 10$ prosti člen.
 
-? Brez kalkulatorja: koliko je $x^2 + 4x + 4$ pri $x = 98$?
-- $9\,608$
-~ To je $98^2 + 2^2$. Izraz je $(x + 2)^2$, ta pa ni enak $x^2 + 4$, ker ima še srednji člen $4x$.
-- $9\,600$
-~ To je $(98 - 2)(98 + 2)$, razlika kvadratov. Tu sta oba predznaka plus, zato je to kvadrat vsote.
-- $9\,604$
-~ To je samo $98^2$. Pozabil si člena $4x + 4$.
-+ $10\,000$
+? (brez računala) Koliko je $x^2 + 4x + 4$ pri $x = 98$?
+= 10000
+~ 9608 | To je $98^2 + 2^2$. Izraz je $(x + 2)^2$, ta pa ni enak $x^2 + 4$, ker ima še srednji člen $4x$.
+~ 9600 | To je $(98 - 2)(98 + 2)$, razlika kvadratov. Tu sta oba predznaka plus, zato je to kvadrat vsote.
+~ 9604 | To je samo $98^2$. Pozabil si člena $4x + 4$.
 > $x^2 + 4x + 4 = (x + 2)^2$, pri $x = 98$ je to $100^2 = 10\,000$.
 
 ? Zakaj izraza $x^2 + 9$ ne moremo razstaviti v $(x + a)(x + b)$ z realnima $a$ in $b$?

@@ -294,14 +294,11 @@ Vsi trije grafi gredo skozi točki $(0, 0)$ in $(1, 1)$, ker je $1^r = 1$ za vsa
 + $a^{\frac{4}{3}}$
 > V $a^{\frac{4}{3}}$ sta števec in imenovalec zamenjana: to je $\sqrt[3]{a^4}$. Imenovalec eksponenta je stopnja korena.
 
-? Koliko je $64^{\frac{2}{3}}$?
-- $\dfrac{128}{3}$
-~ Eksponent $\frac{2}{3}$ ni množenje z $\frac{2}{3}$; pomeni kubični koren in kvadrat.
-- $8$
-~ $8 = \sqrt{64}$: vzel si kvadratni koren in pozabil na števec $2$ ter stopnjo $3$.
-+ $16$
-- $512$
-~ $512 = 64^{\frac{3}{2}}$: števec in imenovalec sta zamenjana.
+? (brez računala) Koliko je $64^{\frac{2}{3}}$?
+= 16 | 0,01
+~ 42,7 | To je $64 \cdot \frac{2}{3}$. Eksponent $\frac{2}{3}$ ni množenje z $\frac{2}{3}$; pomeni kubični koren in kvadrat.
+~ 8 | $8 = \sqrt{64}$: vzel si kvadratni koren in pozabil na števec $2$ ter stopnjo $3$.
+~ 512 | $512 = 64^{\frac{3}{2}}$: števec in imenovalec sta zamenjana.
 > $64^{\frac{2}{3}} = \left(\sqrt[3]{64}\right)^2 = 4^2 = 16$. Imenovalec $3$ je stopnja korena, števec $2$ eksponent.
 
 ? V potenci $a^{r}$ ($a > 0$) eksponent $r$ zamenjamo z $-r$. Kaj se zgodi z vrednostjo?
@@ -324,13 +321,10 @@ Vsi trije grafi gredo skozi točki $(0, 0)$ in $(1, 1)$, ker je $1^r = 1$ za vsa
 > Pri množenju potenc z isto osnovo eksponente **seštejemo**: $a^{\frac{1}{2} + \frac{1}{4}} = a^{\frac{3}{4}} = \sqrt[4]{a^3}$. Množimo jih pri potenciranju potence.
 
 ? Telesno površino bolnika ocenijo z izrazom $S = \left(\dfrac{h \cdot M}{3600}\right)^{\frac{1}{2}}$, kjer je $h$ višina v centimetrih, $M$ masa v kilogramih, $S$ pa v $\mathrm{m^2}$. Kolikšna je $S$ za $h = 162\,\mathrm{cm}$ in $M = 50\,\mathrm{kg}$?
-- $1{,}125\,\mathrm{m^2}$
-~ Eksponent $\frac{1}{2}$ si razumel kot deljenje z $2$; pomeni pa kvadratni koren.
-- $2{,}25\,\mathrm{m^2}$
-~ To je vrednost v oklepaju; pozabil si na eksponent $\frac{1}{2}$.
-+ $1{,}5\,\mathrm{m^2}$
-- $5{,}0625\,\mathrm{m^2}$
-~ Vrednost v oklepaju si kvadriral; eksponent $\frac{1}{2}$ pomeni koren, ne kvadrata.
+= 1,5 $\mathrm{m^2}$ | 0,01
+~ 1,1 | Eksponent $\frac{1}{2}$ si razumel kot deljenje z $2$; pomeni pa kvadratni koren.
+~ 2,25 | To je vrednost v oklepaju; pozabil si na eksponent $\frac{1}{2}$.
+~ 5,1 | Vrednost v oklepaju si kvadriral; eksponent $\frac{1}{2}$ pomeni koren, ne kvadrata.
 > $\dfrac{162 \cdot 50}{3600} = \dfrac{8100}{3600} = 2{,}25$ in $2{,}25^{\frac{1}{2}} = \sqrt{2{,}25} = 1{,}5$, torej $S = 1{,}5\,\mathrm{m^2}$.
 
 :::simboli

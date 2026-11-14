@@ -353,12 +353,10 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 + Število $59$ je praštevilo.
 > Praštevila $p$ s $p^2 \le 59$ so $2$, $3$, $5$ in $7$. Nobeno ne deli $59$, zato je $59$ praštevilo.
 
-? Koliko je $D(48, 36)$?
-- $6$
-~ $6$ je skupni delitelj, a ne največji: tudi $12$ deli obe števili.
-+ $12$
-- $144$
-~ To je $v(48, 36) = 2^4 \cdot 3^2$: vzel si večja eksponenta. Pri $D$ vzameš manjša.
+? (brez računala) Koliko je $D(48, 36)$?
+= 12
+~ 6 | $6$ je skupni delitelj, a ne največji: tudi $12$ deli obe števili.
+~ 144 | To je $v(48, 36) = 2^4 \cdot 3^2$: vzel si večja eksponenta. Pri $D$ vzameš manjša.
 > $48 = 2^4 \cdot 3$ in $36 = 2^2 \cdot 3^2$. Skupna prafaktorja z manjšima eksponentoma dasta $D = 2^2 \cdot 3 = 12$.
 
 ? Nika je računala $v(12, 18)$: »$12 = 2^2 \cdot 3$, $18 = 2 \cdot 3^2$, zato je $v = 2 \cdot 3 = 6$.« Kje je napaka?
@@ -426,6 +424,8 @@ vrednost: 1386/126 | 11
 vrednost: 2*154 | 308
 vrednost: lcm(154, 28) | 308
 vrednost: lcm(154, 44) | 308
+vrednost: gcd(48, 36) | 12
+vrednost: lcm(48, 36) | 144
 >>
 
 :::simboli

@@ -338,12 +338,10 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 ~ Napačen predznak pri zadnjem koraku. Iz $2x = 16$ sledi pozitiven $x$.
 > Člene z $x$ zberemo na levi: $5x - 3x = 9 + 7$, torej $2x = 16$ in $x = 8$. Odgovor $x = 1$ dobimo, če $7$ napačno odštejemo ($9 - 7 = 2$), odgovor $x = -8$ pa, če napačno obrnemo predznak.
 
-? Reši enačbo $\dfrac{x}{2} + \dfrac{x}{3} = 5$.
-- $x = 1$
-~ S $6$ si pomnožil samo ulomka, ne pa tudi $5$ na desni. Pomnožiti moraš vsak člen.
-- $x = 30$
-~ Ustavil si se pri $5x = 30$. Na koncu deliš s koeficientom $5$.
-+ $x = 6$
+? (brez računala) Reši enačbo $\dfrac{x}{2} + \dfrac{x}{3} = 5$. Vpiši rešitev $x$.
+= 6 | 0,01
+~ 1 | S $6$ si pomnožil samo ulomka, ne pa tudi $5$ na desni. Pomnožiti moraš vsak člen.
+~ 30 | Ustavil si se pri $5x = 30$. Na koncu deliš s koeficientom $5$.
 > Pomnožimo s $6$: $3x + 2x = 30$, torej $5x = 30$ in $x = 6$. Če pozabimo pomnožiti desno stran, dobimo $x = 1$. Če ne delimo s $5$, dobimo $30$.
 
 ? (višja raven) Za katero vrednost parametra $a$ enačba $ax - 2 = 4 + 2x$ nima rešitve?
@@ -418,4 +416,5 @@ vrednost: 5*4-2 | 18
 resi: 5*x-2=33 | x | 7
 vrednost: 5*33-2 | 163
 resi: 5*x=33-2 | x | 31/5
+resi: x/2+x/3=5 | x | 6
 >>

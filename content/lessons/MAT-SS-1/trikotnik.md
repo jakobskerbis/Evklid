@@ -340,12 +340,10 @@ V simulaciji »Značilne točke trikotnika« spreminjaj obliko trikotnika in pri
 + $5$, $6$, $10$
 > Najdaljša stranica je $10$, vsota drugih dveh je $11 > 10$, zato trikotnik obstaja.
 
-? Težiščnica trikotnika je dolga $8\,\text{cm}$. Približno kako daleč od oglišča je težišče?
-- $4\,\text{cm}$
-~ Težišče ni na polovici težiščnice; razmerje je $2:1$, ne $1:1$.
-- približno $2{,}7\,\text{cm}$
-~ To je ena tretjina, razdalja od težišča do sredine stranice. Razmerje $2:1$ velja od oglišča.
-+ približno $5{,}3\,\text{cm}$
+? Težiščnica trikotnika je dolga $8\,\text{cm}$. Kako daleč od oglišča je težišče? Vpiši v $\text{cm}$, zaokroženo na eno decimalko.
+= 5,3 cm | 0,05
+~ 4 | Težišče ni na polovici težiščnice; razmerje je $2:1$, ne $1:1$.
+~ 2,7 | To je ena tretjina, razdalja od težišča do sredine stranice. Razmerje $2:1$ velja od oglišča.
 > Od oglišča do težišča sta dve tretjini težiščnice: $\dfrac{2}{3} \cdot 8 \approx 5{,}3\,\text{cm}$.
 
 ? Zakaj dve stranici in kot nasproti **krajše** od njiju ne zadoščajo za skladnost?

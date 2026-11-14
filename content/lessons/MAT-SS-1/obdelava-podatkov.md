@@ -424,22 +424,17 @@ torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2,
 + Ker nekaj zelo visokih plač potegne povprečje navzgor, mediane pa skoraj ne premakne.
 > Pri devetih plačah po $1\,000\,\text{€}$ in eni po $11\,000\,\text{€}$ je povprečje $2\,000\,\text{€}$, mediana pa $1\,000\,\text{€}$, kar bolje opiše običajnega delavca.
 
-? Petkrat so izmerili, kako dolgo je bila vesoljska postaja ISS vidna na nebu: $5{,}8$; $6{,}0$; $6{,}1$; $5{,}9$ in $6{,}2$ minute. Oceni brez natančnega računa: kateri standardni odklon je najbolj verjeten?
-- $0\,\text{min}$
-~ $\sigma = 0$ velja le, če so vsi podatki enaki. Tu niso.
-- $0{,}02\,\text{min}$
-~ To je varianca $\sigma^2$ (in njena enota je $\text{min}^2$). Pozabil si koreniti.
-+ $0{,}14\,\text{min}$
-- $1{,}4\,\text{min}$
-~ Noben podatek ni od sredine $6{,}0$ oddaljen več kot $0{,}2\,\text{min}$, zato tipični odklon ne more biti večji.
+? Petkrat so izmerili, kako dolgo je bila vesoljska postaja ISS vidna na nebu: $5{,}8$; $6{,}0$; $6{,}1$; $5{,}9$ in $6{,}2$ minute. Izračunaj standardni odklon na dve decimalki.
+= 0,14 min | 0,01
+~ 0,02 | To je varianca $\sigma^2$ (in njena enota je $\text{min}^2$). Pozabil si koreniti.
+~ 1,4 | Noben podatek ni od sredine $6{,}0$ oddaljen več kot $0{,}2\,\text{min}$, zato tipični odklon ne more biti večji.
 > Odkloni od $6{,}0$ so med $-0{,}2$ in $0{,}2$, zato je $\sigma$ manjši od $0{,}2\,\text{min}$. Natančno: $\sigma^2 = \dfrac{0{,}1}{5} = 0{,}02$ in $\sigma \approx 0{,}14\,\text{min}$.
 
-? Sedem dijakov je zapisalo, koliko minut so reševali nalogo: $8, 3, 11, 5, 15, 6, 9$. Kolikšna je mediana?
-- $5$
-~ To je srednji podatek v prvotnem vrstnem redu. Mediana je srednji podatek šele, ko podatke uredimo.
-- $9$
-~ To je sredina med najmanjšim in največjim podatkom, $\dfrac{3 + 15}{2}$. Mediana je srednji podatek urejenega niza.
-+ $8$
+? (brez računala) Sedem dijakov je zapisalo, koliko minut so reševali nalogo: $8, 3, 11, 5, 15, 6, 9$. Kolikšna je mediana?
+= 8 min | 0
+~ 8,14 | To je aritmetična sredina.
+~ 5 | To je srednji podatek v prvotnem vrstnem redu. Mediana je srednji podatek šele, ko podatke uredimo.
+~ 9 | To je sredina med najmanjšim in največjim podatkom, $\dfrac{3 + 15}{2}$.
 > Urejeni podatki: $3, 5, 6, 8, 9, 11, 15$. Pri $n = 7$ je mediana četrti podatek, $M = 8\,\text{min}$.
 
 ? Vsakemu dijaku pri kontrolni nalogi prištejemo $5$ točk. Kaj se zgodi z aritmetično sredino in s standardnim odklonom?
@@ -472,6 +467,9 @@ vrednost: 136/6 | 22.67
 vrednost: sqrt(136/6) | 4.76
 vrednost: (240+54)/7 | 42
 vrednost: (1+2+3+4+100)/5 | 22
+vrednost: (5.8+6.0+6.1+5.9+6.2)/5 | 6
+vrednost: sqrt(((-0.2)^2+0^2+0.1^2+(-0.1)^2+0.2^2)/5) | 0.14
+vrednost: (8+3+11+5+15+6+9)/7 | 8.14
 >>
 
 :::simboli

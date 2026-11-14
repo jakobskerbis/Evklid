@@ -356,14 +356,11 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 
 ## Preveri se
 
-? Reši enačbo $5^{x} = \dfrac{1}{25}$.
-- $x = 2$
-~ Ker je $25 = 5^2$, je $\frac{1}{25}$ obratna vrednost, zato potrebuje negativni eksponent: $\frac{1}{25} = 5^{-2}$.
-+ $x = -2$
-- $x = \dfrac{1}{2}$
-~ Ulomek v eksponentu pomeni koren: $5^{\frac{1}{2}} = \sqrt{5}$, ne $\frac{1}{25}$.
-- $x = -\dfrac{1}{2}$
-~ Tu sta zamešana koren in obratna vrednost: $5^{-\frac{1}{2}} = \frac{1}{\sqrt{5}}$, ne $\frac{1}{25}$.
+? (brez računala) Reši enačbo $5^{x} = \dfrac{1}{25}$. Vpiši $x$.
+= -2 | 0,01
+~ 2 | Ker je $25 = 5^2$, je $\frac{1}{25}$ obratna vrednost, zato potrebuje negativni eksponent: $\frac{1}{25} = 5^{-2}$.
+~ 0,5 | Ulomek v eksponentu pomeni koren: $5^{\frac{1}{2}} = \sqrt{5}$, ne $\frac{1}{25}$.
+~ -0,5 | Tu sta zamešana koren in obratna vrednost: $5^{-\frac{1}{2}} = \frac{1}{\sqrt{5}}$, ne $\frac{1}{25}$.
 > $\dfrac{1}{25} = \dfrac{1}{5^2} = 5^{-2}$, zato je $x = -2$. Obratna vrednost pomeni negativni eksponent.
 
 ? Kateri prvi korak pri reševanju enačbe $2^{x+2} + 2^x = 40$ je pravilen?
@@ -396,14 +393,11 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 ~ Tudi ta korak je napačen, a le kot posledica koraka (3). Prva napaka je v koraku (3).
 > Enačba $2^x = -1$ nima rešitve, ker je $2^x > 0$. Vrednost $t = -1$ je treba zavreči, ne pa iz nje izpeljati $x = -1$. Edina rešitev je $x = 2$; preizkus: $16 - 12 - 4 = 0$.
 
-? Žogo spustimo z višine $4\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine, zato po $n$ odbojih doseže $4 \cdot \left(\frac{1}{2}\right)^n$ metrov. Po katerem odboju se dvigne le še do $0{,}5\,\mathrm{m}$?
-- po $8.$ odboju
-~ Število $8$ je razmerje $4 : 0{,}5$, ne število razpolovitev. Iz enačbe $\left(\frac{1}{2}\right)^n = \frac{1}{8}$ sledi $n = 3$, ker je $8 = 2^3$.
-- po $7.$ odboju
-~ To bi veljalo, če bi žoga ob vsakem odboju izgubila stalnih $0{,}5\,\mathrm{m}$. Višina se razpolavlja, ne zmanjšuje za stalno razliko.
-+ po $3.$ odboju
-- po $4.$ odboju
-~ Števila $4$; $2$; $1$; $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.
+? (brez računala) Žogo spustimo z višine $4\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine, zato po $n$ odbojih doseže $4 \cdot \left(\frac{1}{2}\right)^n$ metrov. Po katerem odboju se dvigne le še do $0{,}5\,\mathrm{m}$? Vpiši število odbojev $n$.
+= 3
+~ 8 | Število $8$ je razmerje $4 : 0{,}5$, ne število razpolovitev. Iz enačbe $\left(\frac{1}{2}\right)^n = \frac{1}{8}$ sledi $n = 3$, ker je $8 = 2^3$.
+~ 7 | To bi veljalo, če bi žoga ob vsakem odboju izgubila stalnih $0{,}5\,\mathrm{m}$. Višina se razpolavlja, ne zmanjšuje za stalno razliko.
+~ 4 | Števila $4$; $2$; $1$; $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.
 > Enačba $4 \cdot \left(\frac{1}{2}\right)^n = 0{,}5$ da $\left(\frac{1}{2}\right)^n = \frac{1}{8} = \left(\frac{1}{2}\right)^3$, zato je $n = 3$.
 
 ? (višja raven) Na sliki sta grafa funkcij $y = \left(\frac{1}{2}\right)^x$ in $y = x + 3$. Katera množica je rešitev neenačbe $\left(\frac{1}{2}\right)^x \le x + 3$?

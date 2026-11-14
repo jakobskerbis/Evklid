@@ -306,12 +306,10 @@ Vrednosti se ujemajo povsod, razen pri $x = 3$, kjer prvotni izraz ni definiran.
 + Razstavi, zapiši pogoje iz prvotnega imenovalca, nato okrajšaj $x+3$.
 > $\dfrac{(x-3)(x+3)}{x(x+3)} = \dfrac{x-3}{x}$ za $x \neq 0$ in $x \neq -3$. Pogoje zapišemo pred krajšanjem, sicer bi pogoj $x \neq -3$ izgubili.
 
-? Kaj se zgodi, če izraz $\dfrac{x-5}{5-x}$ okrajšaš, kot da sta $x - 5$ in $5 - x$ enaka faktorja?
-- Nič, ker sta $x - 5$ in $5 - x$ enaka.
-~ Sta nasprotna: pri $x = 7$ je $x - 5 = 2$, a $5 - x = -2$.
-+ Dobiš $1$, pravilno pa je $-1$ za $x \neq 5$.
-- Dobiš $0$, ker se faktorja odštejeta.
-~ Pri krajšanju delimo, ne odštevamo: $\dfrac{C}{C} = 1$, ne $0$.
+? (brez računala) Izraz $\dfrac{x-5}{5-x}$ ima za vsak $x \neq 5$ isto vrednost. Koliko je?
+= -1 | 0,01
+~ 1 | Okrajšal si, kot da sta $x - 5$ in $5 - x$ enaka faktorja. Sta nasprotna: pri $x = 7$ je $x - 5 = 2$, a $5 - x = -2$.
+~ 0 | Pri krajšanju delimo, ne odštevamo: $\dfrac{C}{C} = 1$, ne $0$. Poleg tega sta faktorja nasprotna.
 > Ker je $5 - x = -(x-5)$, je $\dfrac{x-5}{5-x} = \dfrac{x-5}{-(x-5)} = -1$ za $x \neq 5$.
 
 ? Poenostavi $\dfrac{3}{x-1} - \dfrac{2}{x+1}$.
@@ -331,6 +329,12 @@ Vrednosti se ujemajo povsod, razen pri $x = 3$, kjer prvotni izraz ni definiran.
 - $\dfrac{(x+1)(x+2)}{x}$
 ~ Imenovalec $x^2 + x = x(x+1)$ vsebuje faktor $x+1$, ki se okrajša s števcem.
 > Razstavimo: $\dfrac{x+1}{x-2} \cdot \dfrac{(x-2)(x+2)}{x(x+1)}$. Okrajšamo $x+1$ in $x-2$, ostane $\dfrac{x+2}{x}$. Pogoji so $x \neq 2$, $x \neq 0$ in $x \neq -1$.
+
+? (brez računala) Izraz $\dfrac{x^2-9}{x^2+3x}$ najprej okrajšaj, nato izračunaj njegovo vrednost pri $x = 100$. Vpiši kot decimalno število.
+= 0,97 | 0,001
+~ 1,03 | Okrajšal si napačni faktor in dobil $\dfrac{x+3}{x}$. Z imenovalcem $x(x+3)$ se okrajša $x+3$, ostane $\dfrac{x-3}{x}$.
+~ -0,03 | Okrajšal si $x^2$ in dobil $\dfrac{-9}{3x}$. $x^2$ je člen vsote, ne faktor, zato najprej razstavimo.
+> $\dfrac{x^2-9}{x^2+3x} = \dfrac{(x-3)(x+3)}{x(x+3)} = \dfrac{x-3}{x}$, pri $x = 100$ je to $\dfrac{97}{100} = 0{,}97$. Preizkus brez krajšanja: $\dfrac{10\,000 - 9}{10\,000 + 300} = \dfrac{9\,991}{10\,300} = 0{,}97$.
 
 :::simboli
 A, B, C, D | algebrski izrazi v števcih in imenovalcih | | | imenovalci morajo biti različni od 0
