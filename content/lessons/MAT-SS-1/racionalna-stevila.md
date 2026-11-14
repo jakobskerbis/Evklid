@@ -188,6 +188,66 @@ $100x - 10x = 27 - 2$, torej $90x = 25$ in $x = \dfrac{25}{90} = \dfrac{5}{18}$.
 - Primerjanje: skupni imenovalec ali $\dfrac{a}{b} < \dfrac{c}{d} \iff ad < bc$ ($b, d > 0$); levo na številski premici je manjše.
 - Gostost: med dvema racionalnima številoma je vedno še eno, npr. $\dfrac{p+q}{2}$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Število $0{,}\overline{135}$ zapiši kot nekrajšljiv ulomek. Nato brez računala ugotovi, katero od števil $0{,}\overline{135}$ in $\dfrac{2}{15}$ je večje.
+
+**Rešitev:**
+
+1. Naj bo $x = 0{,}\overline{135}$. Perioda ima tri števke, zato je $1000x = 135{,}\overline{135}$. Odštejemo $x$ in dobimo $999x = 135$.
+2. $x = \dfrac{135}{999} = \dfrac{5}{37}$, krajšali smo s $27$, saj je $135 = 27 \cdot 5$ in $999 = 27 \cdot 37$.
+3. Primerjamo $\dfrac{5}{37}$ in $\dfrac{2}{15}$: imenovalca sta pozitivna, $5 \cdot 15 = 75$ in $37 \cdot 2 = 74$. Ker je $75 > 74$, je $\dfrac{5}{37} > \dfrac{2}{15}$.
+4. Odgovor: $0{,}\overline{135} = \dfrac{5}{37}$, večje je število $0{,}\overline{135}$.
+
+**Točkovanje:** 1 točka za enačbo $999x = 135$, 1 točka za nekrajšljiv ulomek $\dfrac{5}{37}$, 1 točka za utemeljeno primerjavo in pravilen sklep.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Zbiralnik za deževnico je bil zjutraj napolnjen do $\dfrac{3}{8}$ svoje prostornine. Čez dan je natekla še voda, ki zavzema $\dfrac{5}{12}$ prostornine zbiralnika. Zvečer so za zalivanje porabili $\dfrac{2}{3}$ vode, ki je bila takrat v zbiralniku.
+
+a) Kolikšen del prostornine zbiralnika je bil napolnjen tik pred zalivanjem? (2 točki)
+b) Kolikšen del prostornine zbiralnika je bil napolnjen po zalivanju? Rezultat zapiši kot nekrajšljiv ulomek. (2 točki)
+c) Brez deljenja utemelji, ali ima ulomek iz b) končen ali periodičen decimalni zapis. Nato ga zapiši kot decimalno število. (2 točki)
+d) Prostornina zbiralnika je $360$ litrov. Koliko litrov vode je ostalo v zbiralniku po zalivanju? (1 točka)
+
+**Rešitev:**
+
+1. a) Skupni imenovalec je $v(8, 12) = 24$: $\dfrac{3}{8} + \dfrac{5}{12} = \dfrac{9}{24} + \dfrac{10}{24} = \dfrac{19}{24}$.
+2. b) Porabili so $\dfrac{2}{3}$ vode, ostala je $1 - \dfrac{2}{3} = \dfrac{1}{3}$ vode. To je $\dfrac{1}{3} \cdot \dfrac{19}{24} = \dfrac{19}{72}$ prostornine.
+3. b) Ulomek je nekrajšljiv, ker je $19$ praštevilo, ki ne deli $72$.
+4. c) $72 = 2^3 \cdot 3^2$. Nekrajšljiv ulomek ima v imenovalcu tudi praštevilo $3$, zato je decimalni zapis periodičen.
+5. c) Delimo $19 : 72$: $190 : 72 = 2$, ostanek $46$; $460 : 72 = 6$, ostanek $28$; $280 : 72 = 3$, ostanek $64$; $640 : 72 = 8$, ostanek $64$. Ostanek se ponovi, zato se ponavlja števka $8$: $\dfrac{19}{72} = 0{,}263\overline{8}$.
+6. d) $\dfrac{19}{72} \cdot 360\,\text{l} = 19 \cdot 5\,\text{l} = 95\,\text{l}$.
+7. Odgovor: pred zalivanjem je bilo napolnjenih $\dfrac{19}{24}$ prostornine, po zalivanju $\dfrac{19}{72} = 0{,}263\overline{8}$ prostornine (periodičen zapis), to je $95$ litrov vode.
+
+**Točkovanje:** a) 1 točka za razširitev na skupni imenovalec, 1 točka za $\dfrac{19}{24}$; b) 1 točka za množenje $\dfrac{1}{3} \cdot \dfrac{19}{24}$ (ali odštevanje $\dfrac{19}{24} - \dfrac{2}{3} \cdot \dfrac{19}{24}$), 1 točka za $\dfrac{19}{72}$; c) 1 točka za utemeljitev z razcepom imenovalca $72 = 2^3 \cdot 3^2$, 1 točka za $0{,}263\overline{8}$; d) 1 točka za $95$ litrov.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je racionalno število in zakaj množico celih števil razširimo z racionalnimi števili?
+---
+Racionalno število je število, ki ga lahko zapišemo kot ulomek $\dfrac{a}{b}$, kjer je $a$ celo število in $b$ naravno število. V množici celih števil deljenje ne uspe vedno, saj na primer enačba $3x = 1$ v $\mathbb{Z}$ nima rešitve. V množici $\mathbb{Q}$ so vsota, razlika, zmnožek in količnik dveh racionalnih števil (pri količniku z deliteljem, različnim od $0$) spet racionalna števila. Vsako celo število je tudi racionalno, zato velja $\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kdaj ima nekrajšljiv ulomek končen decimalni zapis? Pojasni in navedi primer.
+---
+Nekrajšljiv ulomek ima končen decimalni zapis natanko tedaj, ko ima njegov imenovalec v razcepu na prafaktorje le praštevili $2$ in $5$. Takrat ulomek razširimo na imenovalec $10$, $100$, $1000$ …, ki so zmnožki samih dvojk in petic, na primer $\dfrac{3}{8} = \dfrac{375}{1000} = 0{,}375$. Obratno je število s $k$ decimalkami enako ulomku z imenovalcem $10^k = 2^k \cdot 5^k$, zato imenovalec nekrajšljivega ulomka deli $10^k$ in nima drugih prafaktorjev kot $2$ in $5$. Če imenovalec vsebuje kako drugo praštevilo, zapis torej ni končen, ampak periodičen, na primer $\dfrac{1}{3} = 0{,}\overline{3}$. Ulomek moramo pred presojo skrajšati, saj ima $\dfrac{9}{15} = \dfrac{3}{5} = 0{,}6$ končen zapis, čeprav je v imenovalcu $15$ faktor $3$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da med dvema različnima racionalnima številoma vedno leži še eno racionalno število.
+---
+Naj bosta $p$ in $q$ racionalni števili in $p < q$. Njuno povprečje $\dfrac{p + q}{2}$ je racionalno število, ker sta vsota in količnik racionalnih števil (z deliteljem $2 \neq 0$) spet racionalni števili. Iz $p < q$ sledi $2p < p + q < 2q$, po deljenju s pozitivnim številom $2$ pa $p < \dfrac{p + q}{2} < q$. Postopek lahko ponavljamo, zato med $p$ in $q$ leži neskončno mnogo racionalnih števil in »naslednjega« racionalnega števila ni.
+:::
+
 ## Drugače: Kot zgodba
 
 Lana trenira na stezi, ob kateri stoji šest količkov z oznakami od $1$ do $6$. Med tekom deli $1 : 7$. Začne pri količku $1$, to je prvi ostanek. Na vsakem koraku ostanku pripiše ničlo, deli s $7$, zapiše števko in steče do novega ostanka:
@@ -260,6 +320,19 @@ Rezultat je $\dfrac{1}{6} = 0{,}1\overline{6}$.
 - Vse tri so izenačene.
 ~ Na eno decimalko so vsi deleži res približno $0{,}7$, a natančno se razlikujejo.
 > $\dfrac{11}{15} > \dfrac{8}{11}$, ker je $11 \cdot 11 = 121 > 15 \cdot 8 = 120$, in $\dfrac{8}{11} > \dfrac{13}{18}$, ker je $8 \cdot 18 = 144 > 11 \cdot 13 = 143$. Prva je ekipa A.
+
+<<RACUN
+resi: 999*x=135 | x | 5/37
+vrednost: 135/999 | 5/37
+vrednost: 5*15 | 75
+vrednost: 37*2 | 74
+vrednost: 3/8+5/12 | 19/24
+vrednost: 1-2/3 | 1/3
+vrednost: 1/3*19/24 | 19/72
+vrednost: 19/24-2/3*19/24 | 19/72
+vrednost: 19/72 | 0.2638889
+vrednost: 19/72*360 | 95
+>>
 
 :::simboli
 a | števec ulomka | | | celo število

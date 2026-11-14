@@ -214,6 +214,94 @@ $D$ je presečišče krožnic $k(A, 3\,\mathrm{cm})$ in $k(C, 5\,\mathrm{cm})$ n
 - Diskusija: SSS zahteva $|a - b| < c < a + b$, KSK pa $\alpha + \beta < 180^\circ$; dve stranici in kot nasproti krajše dasta 0, 1 ali 2 rešitvi.
 - (višja raven) V programu za dinamično geometrijo dober načrt prestane test vlečenja; z drsnikom preveriš število rešitev.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Z ravnilom in šestilom načrtaj kot $105^\circ$. Zapiši opis načrtovanja, iz katerega je razvidno, zakaj kot meri $105^\circ$.
+
+**Rešitev:**
+
+1. Razstavimo: $105^\circ = 60^\circ + 45^\circ$. Oba kota znamo načrtati.
+2. Kot $60^\circ$: nariši poltrak z vrhom $V$; iz $V$ zariši lok, ki seka poltrak v $P$; z istim polmerom zariši lok iz $P$, ki prvega seka v $Q$. Trikotnik $VPQ$ je enakostraničen, zato $\angle PVQ = 60^\circ$.
+3. Kot $45^\circ$ ob kraku $VQ$: v $V$ načrtaj pravokotnico na $VQ$ in vzemi njen poltrak na strani, ki je nasprotna točki $P$; pravi kot med $VQ$ in tem poltrakom razpolovi s simetralo kota. Nastali poltrak $VT$ oklepa z $VQ$ kot $45^\circ$.
+4. Kota ležita drug ob drugem, zato $\angle PVT = 60^\circ + 45^\circ = 105^\circ$.
+5. Odgovor: kot $PVT$ meri $105^\circ$. (Pravilne so tudi druge razstavitve, na primer $90^\circ + 15^\circ$ ali $120^\circ - 15^\circ$.)
+
+**Točkovanje:** 1 točka za razstavitev $105^\circ$ na kota, ki ju znamo načrtati, 1 točka za pravilen opis kota $60^\circ$ (enakostranični trikotnik), 1 točka za pravilen opis kota $45^\circ$ (pravokotnica in simetrala), prenesenega ob krak tako, da se kota seštejeta.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Trikotnik $ABC$ je določen s podatki $c = |AB| = 6\,\mathrm{cm}$, $v_c = 3\,\mathrm{cm}$ in $t_c = 5\,\mathrm{cm}$ ($t_c$ je težiščnica iz oglišča $C$). Točka $M$ je razpolovišče stranice $AB$.
+
+a) Na katerih dveh množicah točk leži oglišče $C$? (2 točki)
+b) Zapiši opis načrtovanja trikotnika. (2 točki)
+c) Izvedi diskusijo: koliko rešitev ima naloga pri danih podatkih in kako je število rešitev pri $c = 6\,\mathrm{cm}$ in $v_c = 3\,\mathrm{cm}$ odvisno od dolžine $t_c$? (2 točki)
+d) Za lego oglišča $C$, ki je bliže točki $B$ kot točki $A$, izračunaj dolžini stranic $a = |BC|$ in $b = |AC|$. (2 točki)
+
+**Rešitev:**
+
+1. a) Višina $v_c$ je razdalja točke $C$ od nosilke $AB$, zato $C$ leži na vzporednici $p$ z $AB$ na razdalji $3\,\mathrm{cm}$.
+2. a) Težiščnica $t_c$ povezuje $C$ z razpoloviščem $M$, zato $C$ leži na krožnici $k(M, 5\,\mathrm{cm})$.
+3. b) Opis: $AB = 6\,\mathrm{cm}$; s simetralo daljice $AB$ dobiš razpolovišče $M$; pravokotnica na $AB$, na njej $3\,\mathrm{cm}$ od $AB$ točka, skozi njo vzporednica $p \parallel AB$; $k(M, 5\,\mathrm{cm})$ seka $p$ v $C_1$ in $C_2$; nariši trikotnik $ABC_1$ (in $ABC_2$).
+4. c) Razdalja točke $M$ od premice $p$ je $3\,\mathrm{cm} < 5\,\mathrm{cm}$, zato krožnica seka $p$ v dveh točkah $C_1$ in $C_2$, ki sta simetrični glede na simetralo daljice $AB$. Trikotnika $ABC_1$ in $ABC_2$ sta zrcalni sliki, torej skladna: naloga ima (do skladnosti natančno) eno rešitev. Enako velja za vzporednico na drugi strani $AB$.
+5. c) V splošnem: pri $t_c > v_c$ dobimo dve presečišči in skladna trikotnika (ena rešitev); pri $t_c = v_c$ se krožnica premice $p$ dotakne nad točko $M$, trikotnik je enakokrak (ena rešitev); pri $t_c < v_c$ krožnica premice $p$ ne doseže in rešitve ni.
+6. d) Naj bo $N$ nožišče višine iz $C$. Trikotnik $MNC$ je pravokoten s hipotenuzo $|MC| = 5\,\mathrm{cm}$ in kateto $|NC| = 3\,\mathrm{cm}$, zato $|MN| = \sqrt{5^2 - 3^2}\,\mathrm{cm} = 4\,\mathrm{cm}$.
+7. d) Ker je $C$ bliže točki $B$, leži $N$ od $M$ proti $B$ in še čez $B$: $|BN| = 4\,\mathrm{cm} - 3\,\mathrm{cm} = 1\,\mathrm{cm}$ in $|AN| = 3\,\mathrm{cm} + 4\,\mathrm{cm} = 7\,\mathrm{cm}$.
+8. d) Po Pitagorovem izreku: $a = \sqrt{1^2 + 3^2}\,\mathrm{cm} = \sqrt{10}\,\mathrm{cm}$ in $b = \sqrt{7^2 + 3^2}\,\mathrm{cm} = \sqrt{58}\,\mathrm{cm}$.
+9. Odgovor: a) $C$ leži na vzporednici z $AB$ na razdalji $3\,\mathrm{cm}$ in na krožnici $k(M, 5\,\mathrm{cm})$; c) naloga ima eno rešitev (trikotnika $ABC_1$ in $ABC_2$ sta skladna); d) $a = \sqrt{10}\,\mathrm{cm}$, $b = \sqrt{58}\,\mathrm{cm}$.
+
+**Točkovanje:** a) 1 točka za vzporednico na razdalji $v_c$, 1 točka za krožnico $k(M, t_c)$; b) 1 točka za načrtovanje razpolovišča $M$ in vzporednice $p$, 1 točka za presečišče $p$ in $k(M, 5\,\mathrm{cm})$ ter trikotnik; c) 1 točka za ugotovitev, da sta presečišči dve, trikotnika pa skladna (ena rešitev), 1 točka za odvisnost od $t_c$ (dve presečišči, dotik, nobeno); d) 1 točka za $|MN| = 4\,\mathrm{cm}$, 1 točka za $a = \sqrt{10}\,\mathrm{cm}$ in $b = \sqrt{58}\,\mathrm{cm}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+V programu za dinamično geometrijo načrtujemo trikotnik $ABC$ s podatki $c = |AB| = 8\,\mathrm{cm}$ in $\alpha = 45^\circ$; dolžino stranice $a = |BC|$ spreminjamo z drsnikom.
+
+a) Opiši načrtovanje v programu tako, da bo načrt prestal test vlečenja: katera orodja uporabiš in katere točke so načrtane iz drugih. (2 točki)
+b) Naj bo $D$ nožišče pravokotnice iz $B$ na krak kota $\alpha$. Izračunaj razdaljo $d = |BD|$. (2 točki)
+c) Izvedi diskusijo: koliko trikotnikov dobimo v odvisnosti od dolžine $a$? (3 točke)
+d) Drsnik nastavimo na $a = 2\sqrt{10}\,\mathrm{cm}$. Izračunaj razdalji obeh mogočih leg oglišča $C$ od točke $A$. (2 točki)
+e) Sošolec je točko $C$ postavil na oko v presečišče kraka in krožnice ter z njo narisal trikotnik. Pojasni, kaj se zgodi, ko premakne drsnik, in zakaj. (1 točka)
+
+**Rešitev:**
+
+1. a) Drsnik za $a$; daljica $AB$ z dano dolžino $8\,\mathrm{cm}$; kot z dano velikostjo $45^\circ$ z vrhom $A$ in krakom $AB$ ter poltrak iz $A$ skozi novo točko (krak kota); krožnica s središčem $B$ in polmerom $a$ (polmer je drsnik); z orodjem presečišče točki $C_1$ in $C_2$; trikotnik $ABC_1$ (in $ABC_2$).
+2. a) Točki $C_1$ in $C_2$ sta dobljeni z orodjem presečišče, zato sta odvisni od $A$, $B$ in $a$: pri vlečenju točke $A$ ali $B$ in pri premiku drsnika se premakneta s krožnico in krakom.
+3. b) Trikotnik $ABD$ je pravokoten s pravim kotom pri $D$ in kotom $45^\circ$ pri $A$, zato je enakokrak: $|AD| = |BD| = d$. Po Pitagorovem izreku je $2d^2 = 8^2 = 64$, torej $d^2 = 32$ in $d = \sqrt{32}\,\mathrm{cm} = 4\sqrt{2}\,\mathrm{cm}$.
+4. c) Pri $a < 4\sqrt{2}\,\mathrm{cm}$ krožnica $k(B, a)$ kraka ne doseže: rešitve ni. Pri $a = 4\sqrt{2}\,\mathrm{cm}$ se kraka dotakne v $D$: ena rešitev, trikotnik s pravim kotom pri $C$.
+5. c) Pri $4\sqrt{2}\,\mathrm{cm} < a < 8\,\mathrm{cm}$ krožnica seka krak v dveh točkah: dva neskladna trikotnika.
+6. c) Pri $a \ge 8\,\mathrm{cm}$ je ena rešitev: drugo presečišče premice s krožnico ni več na kraku (pri $a = 8\,\mathrm{cm}$ je to točka $A$).
+7. d) Velja $4\sqrt{2} = \sqrt{32} < 2\sqrt{10} = \sqrt{40} < \sqrt{64} = 8$, zato sta legi dve. V pravokotnem trikotniku $BDC$ je $|DC| = \sqrt{a^2 - d^2} = \sqrt{40 - 32}\,\mathrm{cm} = \sqrt{8}\,\mathrm{cm} = 2\sqrt{2}\,\mathrm{cm}$.
+8. d) Točki ležita na kraku na obeh straneh točke $D$, $|AD| = 4\sqrt{2}\,\mathrm{cm}$: $|AC_1| = 4\sqrt{2}\,\mathrm{cm} - 2\sqrt{2}\,\mathrm{cm} = 2\sqrt{2}\,\mathrm{cm}$ in $|AC_2| = 4\sqrt{2}\,\mathrm{cm} + 2\sqrt{2}\,\mathrm{cm} = 6\sqrt{2}\,\mathrm{cm}$.
+9. e) Točka, postavljena na oko, je prosta točka in ni povezana s krožnico in krakom. Ko sošolec premakne drsnik, se krožnica spremeni, točka $C$ pa ostane na mestu, zato $|BC|$ ni več enaka $a$ in načrt ne prestane testa vlečenja. Točko $C$ mora dobiti z orodjem presečišče.
+10. Odgovor: b) $d = 4\sqrt{2}\,\mathrm{cm}$; c) brez rešitve pri $a < 4\sqrt{2}\,\mathrm{cm}$, ena pri $a = 4\sqrt{2}\,\mathrm{cm}$, dve pri $4\sqrt{2}\,\mathrm{cm} < a < 8\,\mathrm{cm}$ in ena pri $a \ge 8\,\mathrm{cm}$; d) $|AC_1| = 2\sqrt{2}\,\mathrm{cm}$ in $|AC_2| = 6\sqrt{2}\,\mathrm{cm}$.
+
+**Točkovanje:** a) 1 točka za zaporedje orodij (daljica, kot $45^\circ$, krožnica s polmerom $a$, presečišče), 1 točka za utemeljitev, da je $C$ načrtana (odvisna) točka; b) 1 točka za enakokraki pravokotni trikotnik $ABD$ (ali $2d^2 = 64$), 1 točka za $d = 4\sqrt{2}\,\mathrm{cm}$; c) 1 točka za mejo $a = 4\sqrt{2}\,\mathrm{cm}$ (nobena oziroma ena rešitev), 1 točka za dve rešitvi pri $4\sqrt{2}\,\mathrm{cm} < a < 8\,\mathrm{cm}$, 1 točka za eno rešitev pri $a \ge 8\,\mathrm{cm}$; d) 1 točka za $|DC| = 2\sqrt{2}\,\mathrm{cm}$, 1 točka za $|AC_1| = 2\sqrt{2}\,\mathrm{cm}$ in $|AC_2| = 6\sqrt{2}\,\mathrm{cm}$; e) 1 točka za pojasnilo, da točka na oko ni povezana s krožnico in zato ne sledi drsniku.
+
+### Ustno vprašanje 1
+
+:::premisli
+Naštej dele popolne rešitve načrtovalne naloge in pojasni, zakaj rešitev ni popolna brez diskusije.
+---
+Popolna rešitev ima štiri dele: skico z danimi podatki (analizo), opis načrtovanja, natančno načrtovanje z ravnilom in šestilom ter diskusijo. V analizi poiščemo del lika, ki ga lahko narišemo takoj, in množici točk, na katerih leži manjkajoče oglišče. Diskusija pove, koliko rešitev ima naloga in pri katerih podatkih rešitve ni. Brez nje rešitev ni popolna, ker trije podatki ne določajo vedno natanko enega trikotnika: pri dveh stranicah in kotu nasproti krajše od njiju so lahko dve rešitvi, ena ali nobena.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši, kako z ravnilom in šestilom načrtaš kot $30^\circ$, in utemelji, zakaj ima načrtani kot res to velikost.
+---
+Narišemo poltrak z vrhom $V$, iz $V$ zarišemo lok, ki seka poltrak v točki $P$, in z istim polmerom lok iz $P$, ki prvega seka v točki $Q$. Trikotnik $VPQ$ ima vse tri stranice enake polmeru, zato je enakostraničen in $\angle PVQ = 60^\circ$. Nato načrtamo simetralo tega kota: iz $P$ in $Q$ zarišemo enako velika loka, ki se sekata v točki $T$. Trikotnika $VPT$ in $VQT$ sta skladna po izreku SSS, zato poltrak $VT$ razpolovi kot in $\angle PVT = 30^\circ$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni, kaj je test vlečenja v programu za dinamično geometrijo, in navedi primer lika, ki ga test razkrije kot napačno načrtanega.
+---
+Program si zapomni, kako je vsaka točka nastala, zato se pri vlečenju proste točke premaknejo tudi vse točke, ki so iz nje načrtane. Pri testu vlečenja povlečemo prosto točko in pogledamo, ali lik ohrani zahtevane lastnosti. Dobro načrtan lik jih ohrani, ker so njegove točke dobljene z orodji, kot so pravokotnica, krožnica in presečišče. Primer je pravokotnik, ki mu je četrto oglišče postavljeno na oko: ko povlečemo eno od drugih oglišč, četrto ostane na mestu in lik ni več pravokotnik.
+:::
+
 ## Drugače: Kot zgodba
 
 Tine je na podstrešju našel star zemljevid z navodilom: »Zaklad je 50 korakov od starega hrasta in 40 korakov od velike skale.«
@@ -333,6 +421,17 @@ vrednost: 3^2+4^2 | 25
 vrednost: 2*(3*4/2)/5 | 2.4
 vrednost: 9+4-1 | 12
 vrednost: 8/2 | 4
+vrednost: 60+45 | 105
+vrednost: sqrt(5^2-3^2) | 4
+vrednost: 4-3 | 1
+vrednost: 3+4 | 7
+vrednost: sqrt(1^2+3^2) | sqrt(10)
+vrednost: sqrt(7^2+3^2) | sqrt(58)
+vrednost: sqrt(8^2/2) | 4*sqrt(2)
+vrednost: sqrt((2*sqrt(10))^2-32) | 2*sqrt(2)
+vrednost: 4*sqrt(2)-2*sqrt(2) | 2*sqrt(2)
+vrednost: 4*sqrt(2)+2*sqrt(2) | 6*sqrt(2)
+vrednost: sqrt((8-2)^2+2^2) | 2*sqrt(10)
 >>
 
 :::simboli
@@ -344,7 +443,7 @@ R | polmer očrtanega kroga | | cm
 k | krožnica; $k(B, a)$ ima središče $B$ in polmer $a$ | | 
 A, B, C | oglišča trikotnika | | 
 D | nožišče pravokotnice iz $B$ na krak; pri štirikotniku oglišče | | 
-d | razdalja točke $B$ od kraka kota | d = \dfrac{c}{2} | cm | pri $\alpha = 30^\circ$; pri trapezu je $d$ krak $AD$
+d | razdalja točke $B$ od kraka kota | | cm | pri $\alpha = 30^\circ$ je $d = \frac{c}{2}$, pri $\alpha = 45^\circ$ je $d = \frac{c\sqrt{2}}{2}$; pri trapezu je $d$ krak $AD$
 e | diagonala $AC$ paralelograma | | cm
 v | višina trapeza | | cm
 C_1, C_2 | presečišči kraka in krožnice $k(B, a)$ | | 

@@ -179,6 +179,89 @@ $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 -
 - Presek, unija in razlika intervalov: nariši na isto premico in preveri krajišča.
 - (višja raven) $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Reši enačbo $2|x + 1| - 3 = 5$.
+
+**Rešitev:**
+
+1. Absolutno vrednost osamimo: $2|x + 1| = 8$, torej $|x + 1| = 4$.
+2. Število $x + 1$ je od $0$ oddaljeno za $4$, zato je $x + 1 = 4$ ali $x + 1 = -4$.
+3. Iz prve enačbe dobimo $x = 3$, iz druge $x = -5$. Preizkus: $2|4| - 3 = 5$ in $2|{-4}| - 3 = 5$.
+4. Odgovor: rešitvi sta $x = 3$ in $x = -5$.
+
+**Točkovanje:** 1 točka za $|x + 1| = 4$, 1 točka za razdelitev na primera $x + 1 = 4$ in $x + 1 = -4$, 1 točka za obe rešitvi.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dana sta intervala $A = (-3, \sqrt{10}\,]$ in $B = [0, 6)$.
+
+a) Opiši, kako s pomočjo Pitagorovega izreka na številski premici z ravnilom in šestilom konstruiraš točko, ki pripada številu $\sqrt{10}$. (2 točki)
+b) Med katerima zaporednima celima številoma leži $\sqrt{10}$? Odgovor utemelji. (1 točka)
+c) Določi $A \cap B$ in $A \cup B$. (2 točki)
+d) Zapiši vsa cela števila, ki so v množici $A \setminus B$. (1 točka)
+
+**Rešitev:**
+
+1. a) Velja $10 = 3^2 + 1^2$. Na številski premici narišemo daljico od $0$ do $3$, v točki $3$ postavimo pravokotnico in nanjo nanesemo daljico dolžine $1$.
+2. a) Hipotenuza pravokotnega trikotnika s katetama $3$ in $1$ meri po Pitagorovem izreku $\sqrt{3^2 + 1^2} = \sqrt{10}$. S šestilom s središčem v $0$ jo prenesemo na številsko premico in dobimo točko $\sqrt{10}$.
+3. b) Ker je $3^2 = 9 < 10 < 16 = 4^2$, velja $3 < \sqrt{10} < 4$.
+4. c) $A$ so števila z $-3 < x \le \sqrt{10}$, $B$ pa števila z $0 \le x < 6$. Za presek vzamemo večjo levo mejo $0$ (vključena, ker $0 \in A$ in $0 \in B$) in manjšo desno mejo $\sqrt{10}$ (vključena, ker $\sqrt{10} \in A$ in $\sqrt{10} \in B$): $A \cap B = [0, \sqrt{10}\,]$.
+5. c) Intervala se prekrivata, zato je unija en interval od najmanjše do največje meje: $A \cup B = (-3, 6)$.
+6. d) $A \setminus B$ so števila iz $A$, ki niso v $B$, torej $-3 < x < 0$: $A \setminus B = (-3, 0)$. Cela števila v njem sta $-2$ in $-1$.
+7. Odgovor: $3 < \sqrt{10} < 4$, $A \cap B = [0, \sqrt{10}\,]$, $A \cup B = (-3, 6)$, v $A \setminus B$ sta celi števili $-2$ in $-1$.
+
+**Točkovanje:** a) 1 točka za pravokotni trikotnik s katetama $3$ in $1$, 1 točka za prenos hipotenuze s šestilom na premico; b) 1 točka za $3 < \sqrt{10} < 4$ z utemeljitvijo; c) 1 točka za $A \cap B = [0, \sqrt{10}\,]$, 1 točka za $A \cup B = (-3, 6)$; d) 1 točka za števili $-2$ in $-1$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Množica $A$ vsebuje vsa realna števila $x$, ki so od števila $2$ oddaljena največ za $3$. Množica $B$ je množica vseh rešitev neenačbe $|3 - 2x| > 5$.
+
+a) Zapiši pogoj za števila iz $A$ z absolutno vrednostjo in množico $A$ zapiši kot interval. (2 točki)
+b) Reši neenačbo $|3 - 2x| > 5$ in množico $B$ zapiši kot unijo intervalov. (3 točke)
+c) Določi $A \cap B$ in $A \cup B$. (2 točki)
+d) Množico $A \setminus B$ zapiši kot interval in z neenačbo oblike $|x - c| \le r$. (3 točke)
+
+**Rešitev:**
+
+1. a) Razdalja števila $x$ od $2$ je $|x - 2|$, pogoj je $|x - 2| \le 3$. Zato je $2 - 3 \le x \le 2 + 3$ in $A = [-1, 5]$.
+2. b) Izraz $3 - 2x$ je od $0$ oddaljen za več kot $5$, zato je $3 - 2x < -5$ ali $3 - 2x > 5$.
+3. b) Prvi primer: $-2x < -8$. Delimo z negativnim številom $-2$, zato se znak obrne: $x > 4$.
+4. b) Drugi primer: $-2x > 2$, po deljenju z $-2$ dobimo $x < -1$. Torej $B = (-\infty, -1) \cup (4, \infty)$.
+5. c) V preseku so števila iz $[-1, 5]$, ki so manjša od $-1$ ali večja od $4$. Manjših od $-1$ v $A$ ni, zato je $A \cap B = (4, 5]$.
+6. c) Unija: $B$ pokrije vsa števila levo od $-1$ in desno od $4$, $A$ pa vse od $-1$ do $5$. Vrzeli ni, zato je $A \cup B = \mathbb{R} = (-\infty, \infty)$.
+7. d) Iz $A = [-1, 5]$ odstranimo števila, večja od $4$: $A \setminus B = [-1, 4]$.
+8. d) Središče intervala je $c = \dfrac{-1 + 4}{2} = \dfrac{3}{2}$, polmer pa $r = \dfrac{4 - (-1)}{2} = \dfrac{5}{2}$. Krajišči sta vključeni, zato je $A \setminus B$ množica rešitev neenačbe $\left|x - \dfrac{3}{2}\right| \le \dfrac{5}{2}$.
+9. Odgovor: $A = [-1, 5]$, $B = (-\infty, -1) \cup (4, \infty)$, $A \cap B = (4, 5]$, $A \cup B = \mathbb{R}$, $A \setminus B = [-1, 4]$, kar je množica rešitev neenačbe $\left|x - \dfrac{3}{2}\right| \le \dfrac{5}{2}$.
+
+**Točkovanje:** a) 1 točka za pogoj $|x - 2| \le 3$, 1 točka za $A = [-1, 5]$; b) 1 točka za razdelitev na primera $3 - 2x < -5$ in $3 - 2x > 5$, 1 točka za pravilno obrnjena znaka pri deljenju z $-2$, 1 točka za $B = (-\infty, -1) \cup (4, \infty)$; c) 1 točka za $A \cap B = (4, 5]$, 1 točka za $A \cup B = \mathbb{R}$; d) 1 točka za $[-1, 4]$, 1 točka za središče $c = \dfrac{3}{2}$ in polmer $r = \dfrac{5}{2}$, 1 točka za neenačbo $\left|x - \dfrac{3}{2}\right| \le \dfrac{5}{2}$ (enakovredno $|2x - 3| \le 5$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako je definirana absolutna vrednost realnega števila in kaj pomeni na številski premici?
+---
+Absolutna vrednost je definirana z $|x| = x$ za $x \ge 0$ in $|x| = -x$ za $x < 0$. Na številski premici pomeni razdaljo točke $x$ od izhodišča $0$, zato je vedno nenegativna. Razdalja med točkama z abscisama $a$ in $b$ je $|a - b| = |b - a|$. Veljata še $|a \cdot b| = |a| \cdot |b|$ in trikotniška neenakost $|a + b| \le |a| + |b|$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj je iracionalno število? Navedi primer in pojasni, kako ga s Pitagorovim izrekom konstruiraš na številski premici.
+---
+Iracionalno število je realno število, ki ga ne moremo zapisati kot ulomek $\dfrac{a}{b}$ s celim $a$ in naravnim $b$, njegov decimalni zapis pa je neskončen in neperiodičen. Primera sta $\sqrt{2}$ in $\pi$. Za $\sqrt{2}$ narišemo pravokotni trikotnik s katetama dolžine $1$ tako, da ena kateta leži na premici od $0$ do $1$. Njegova hipotenuza po Pitagorovem izreku meri $\sqrt{1^2 + 1^2} = \sqrt{2}$. Hipotenuzo s šestilom s središčem v $0$ prenesemo na premico in dobimo točko $\sqrt{2}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Kako rešimo neenačbi $|x - c| < r$ in $|x - c| > r$ za $r > 0$ in kaj rešitvi pomenita na številski premici?
+---
+Izraz $|x - c|$ je razdalja števila $x$ od števila $c$ na številski premici. Neenačba $|x - c| < r$ pomeni, da je $x$ od $c$ oddaljen manj kot $r$, zato je $c - r < x < c + r$ in rešitev je interval $(c - r, c + r)$. Neenačba $|x - c| > r$ pomeni, da je $x$ od $c$ oddaljen več kot $r$, zato je rešitev unija $(-\infty, c - r) \cup (c + r, \infty)$. Pri znakih $\le$ in $\ge$ sta krajišči $c - r$ in $c + r$ vključeni v rešitev.
+:::
+
 ## Drugače: Kot zgodba (višja raven)
 
 Medicinska sestra Nina dela nočno izmeno. Zdravnik ji je naročil: »Pokliči me, če se temperatura bolnika od $37\,°\text{C}$ razlikuje za več kot $0{,}5\,°\text{C}$.« Nina si navodilo zapiše po svoje: kliči, če je $|t - 37| > 0{,}5$.
@@ -250,6 +333,19 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 - $250\,\text{mg}$
 ~ To je središče intervala z odmikom $0$, zato zagotovo ustreza.
 > Dovoljene mase so $[235, 265]\,\text{mg}$. Pri $234\,\text{mg}$ je odmik $|234 - 250| = 16 > 15$, zato tableta ne ustreza.
+
+<<RACUN
+resi: 2*abs(x+1)-3=5 | x | -5, 3
+vrednost: 2*abs(4)-3 | 5
+vrednost: 2*abs(-4)-3 | 5
+vrednost: 3^2+1^2 | 10
+neenacba: abs(x-2)<=3 | x | [-1, 5]
+neenacba: abs(3-2*x)>5 | x | (-oo, -1) U (4, oo)
+neenacba: abs(x-3/2)<=5/2 | x | [-1, 4]
+neenacba: abs(2*x-3)<=5 | x | [-1, 4]
+vrednost: (-1+4)/2 | 3/2
+vrednost: (4-(-1))/2 | 5/2
+>>
 
 :::simboli
 x | realno število (v primeru 3 srčni utrip) | | |

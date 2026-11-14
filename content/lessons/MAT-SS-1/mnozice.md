@@ -168,6 +168,90 @@ $9 + 6 + 5 = 20$. Sodelovalo je $36$ dijakov, natanko eno vrsto aplikacij jih up
 - Moč unije: $|A \cup B| = |A| + |B| - |A \cap B|$.
 - Pri treh množicah izpolnjuješ Vennov diagram od sredine navzven.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V razredu je $28$ dijakov. Košarko trenira $17$ dijakov, odbojko $12$, $4$ dijaki pa ne trenirajo nobenega od teh dveh športov. Koliko dijakov trenira oba športa in koliko samo košarko?
+
+**Rešitev:**
+
+1. Naj bo $A$ množica dijakov, ki trenirajo košarko, $B$ pa množica dijakov, ki trenirajo odbojko. Vsaj en šport trenira $|A \cup B| = 28 - 4 = 24$ dijakov.
+2. Iz $|A \cup B| = |A| + |B| - |A \cap B|$ sledi $|A \cap B| = |A| + |B| - |A \cup B| = 17 + 12 - 24 = 5$.
+3. Samo košarko trenira $|A \setminus B| = |A| - |A \cap B| = 17 - 5 = 12$ dijakov.
+4. Odgovor: oba športa trenira $5$ dijakov, samo košarko pa $12$ dijakov.
+
+**Točkovanje:** 1 točka za $|A \cup B| = 24$, 1 točka za $|A \cap B| = 5$ (s formulo ali z Vennovim diagramom), 1 točka za $12$ dijakov, ki trenirajo samo košarko.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Univerzalna množica je $\mathcal{U} = \{1, 2, 3, \dots, 15\}$. Dani sta množici $A = \{x \in \mathcal{U} \mid x \text{ je praštevilo}\}$ in $B = \{x \in \mathcal{U} \mid x \text{ je liho število}\}$.
+
+a) Zapiši množici $A$ in $B$ z naštevanjem elementov. (2 točki)
+b) Nariši Vennov diagram množic $A$ in $B$ v $\mathcal{U}$ in vanj vpiši vse elemente množice $\mathcal{U}$. (2 točki)
+c) Z naštevanjem elementov zapiši množice $A \cap B$, $B \setminus A$ in $(A \cup B)^c$. (2 točki)
+d) Ali velja $A \subseteq B$? Odgovor utemelji. (1 točka)
+
+**Rešitev:**
+
+1. a) Praštevila do $15$ so $A = \{2, 3, 5, 7, 11, 13\}$. Število $1$ ni praštevilo.
+2. a) Liha števila do $15$ so $B = \{1, 3, 5, 7, 9, 11, 13, 15\}$.
+3. b) Diagram: v preseku obeh krogov so $3, 5, 7, 11, 13$; samo v krogu $A$ je $2$; samo v krogu $B$ so $1, 9, 15$; v pravokotniku zunaj obeh krogov so $4, 6, 8, 10, 12, 14$.
+4. c) $A \cap B = \{3, 5, 7, 11, 13\}$ in $B \setminus A = \{1, 9, 15\}$.
+5. c) $A \cup B = \{1, 2, 3, 5, 7, 9, 11, 13, 15\}$, zato je $(A \cup B)^c = \{4, 6, 8, 10, 12, 14\}$. Preizkus: $|A \cup B| = 6 + 8 - 5 = 9$ in $15 - 9 = 6$.
+6. d) Ne velja: $2 \in A$, a $2 \notin B$, ker je $2$ sodo število.
+7. Odgovor: $A = \{2, 3, 5, 7, 11, 13\}$, $B = \{1, 3, 5, 7, 9, 11, 13, 15\}$, $A \cap B = \{3, 5, 7, 11, 13\}$, $B \setminus A = \{1, 9, 15\}$, $(A \cup B)^c = \{4, 6, 8, 10, 12, 14\}$; $A$ ni podmnožica množice $B$.
+
+**Točkovanje:** a) 1 točka za $A$, 1 točka za $B$; b) 1 točka za pravilno vpisane elemente v presek in v območji »samo $A$« in »samo $B$«, 1 točka za elemente zunaj obeh krogov; c) 1 točka za $A \cap B$ in $B \setminus A$, 1 točka za $(A \cup B)^c$; d) 1 točka za odgovor »ne« s protiprimerom $2$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Univerzalna množica je $\mathcal{U} = \{1, 2, 3, \dots, 12\}$. Dane so množice $A = \{x \in \mathcal{U} \mid x \text{ deli } 12\}$, $B = \{x \in \mathcal{U} \mid x \text{ je sodo število}\}$ in $C = \{x \in \mathcal{U} \mid x < 6\}$.
+
+a) Z naštevanjem elementov zapiši množici $A \cap (B \cup C)$ in $(A \cap B) \cup (A \cap C)$ ter ju primerjaj. Katero pravilo za računanje z množicami potrjuje rezultat? (3 točke)
+b) S pravili za računanje z množicami poenostavi izraz $(A^c \cup B)^c$, nato dobljeno množico zapiši z naštevanjem elementov. (3 točke)
+c) Koliko podmnožic ima množica $A$? Koliko izmed njih vsebuje število $12$? (2 točki)
+d) S formulo za moč unije treh množic izračunaj $|A \cup B \cup C|$. (2 točki)
+
+**Rešitev:**
+
+1. a) Naštejemo: $A = \{1, 2, 3, 4, 6, 12\}$, $B = \{2, 4, 6, 8, 10, 12\}$, $C = \{1, 2, 3, 4, 5\}$.
+2. a) $B \cup C = \{1, 2, 3, 4, 5, 6, 8, 10, 12\}$, zato je $A \cap (B \cup C) = \{1, 2, 3, 4, 6, 12\}$.
+3. a) $A \cap B = \{2, 4, 6, 12\}$ in $A \cap C = \{1, 2, 3, 4\}$, zato je $(A \cap B) \cup (A \cap C) = \{1, 2, 3, 4, 6, 12\}$. Množici sta enaki, kot zahteva distributivnost preseka glede na unijo.
+4. b) Po De Morganovem pravilu je $(A^c \cup B)^c = (A^c)^c \cap B^c$. Ker je $(A^c)^c = A$, dobimo $A \cap B^c = A \setminus B$.
+5. b) Iz $A$ odstranimo soda števila in ostane $A \setminus B = \{1, 3\}$.
+6. c) Ker je $|A| = 6$, ima $A$ natanko $2^6 = 64$ podmnožic.
+7. c) Vsako podmnožico, ki vsebuje $12$, dobimo tako, da eni od podmnožic množice $\{1, 2, 3, 4, 6\}$ dodamo število $12$. Teh je $2^5 = 32$.
+8. d) Moči: $|A| = 6$, $|B| = 6$, $|C| = 5$, $|A \cap B| = 4$, $|A \cap C| = 4$, $B \cap C = \{2, 4\}$, torej $|B \cap C| = 2$, in $A \cap B \cap C = \{2, 4\}$, torej $|A \cap B \cap C| = 2$.
+9. d) $|A \cup B \cup C| = 6 + 6 + 5 - 4 - 4 - 2 + 2 = 9$. Preizkus: zunaj unije so le števila $7$, $9$ in $11$, in res je $12 - 3 = 9$.
+10. Odgovor: $A \cap (B \cup C) = (A \cap B) \cup (A \cap C) = \{1, 2, 3, 4, 6, 12\}$ (distributivnost); $(A^c \cup B)^c = A \setminus B = \{1, 3\}$; $A$ ima $64$ podmnožic, $32$ izmed njih vsebuje število $12$; $|A \cup B \cup C| = 9$.
+
+**Točkovanje:** a) 1 točka za $A \cap (B \cup C)$, 1 točka za $(A \cap B) \cup (A \cap C)$, 1 točka za ugotovitev, da sta množici enaki, in ime pravila (distributivnost); b) 1 točka za uporabo De Morganovega pravila, 1 točka za poenostavitev v $A \cap B^c$ oziroma $A \setminus B$, 1 točka za $\{1, 3\}$; c) 1 točka za $64$, 1 točka za $32$ z utemeljitvijo; d) 1 točka za vse moči presekov, 1 točka za $9$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je množica $A$ podmnožica množice $B$ in kdaj sta dve množici enaki?
+---
+Množica $A$ je podmnožica množice $B$, zapisano $A \subseteq B$, če je vsak element množice $A$ tudi element množice $B$. Če velja $A \subseteq B$ in $A \neq B$, je $A$ prava podmnožica množice $B$. Množici $A$ in $B$ sta enaki natanko tedaj, ko velja $A \subseteq B$ in $B \subseteq A$, torej ko imata iste elemente. Vsaka množica je podmnožica same sebe, prazna množica pa je podmnožica vsake množice.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši formulo za moč unije dveh končnih množic in navedi primer, ko se moči obeh množic kar seštejeta.
+---
+Za končni množici velja $|A \cup B| = |A| + |B| - |A \cap B|$. Elemente preseka vsota $|A| + |B|$ prešteje dvakrat, zato jih enkrat odštejemo. Če sta množici disjunktni, je $A \cap B = \emptyset$, zato je $|A \cup B| = |A| + |B|$. Primer sta množici $\{1, 2\}$ in $\{3, 4, 5\}$, ki nimata skupnih elementov, zato ima njuna unija $2 + 3 = 5$ elementov.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Zapiši De Morganovi pravili za množice in utemelji eno od njiju.
+---
+De Morganovi pravili sta $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$. Element $x$ je v $(A \cup B)^c$ natanko tedaj, ko ni v $A$ in hkrati ni v $B$. To pomeni, da je $x \in A^c$ in $x \in B^c$, torej $x \in A^c \cap B^c$. Ker to velja za vsak element univerzalne množice, sta množici $(A \cup B)^c$ in $A^c \cap B^c$ enaki.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si pravokotnik, ki pomeni $\mathcal{U}$, in v njem dva kroga, ki se delno prekrivata. Krog levo je množica $A$, krog desno množica $B$. Pravokotnik se razdeli na štiri območja:
@@ -247,8 +331,22 @@ Galerija na telefonu deluje enako. »Letošnji videi« so presek dveh množic, �
 ~ To so fotografije, ki niso priljubljene. Med njimi jih ima nekaj lokacijo.
 > Unija: $45 + 30 - 12 = 63$. Komplement v $\mathcal{U}$ s $120$ fotografijami: $120 - 63 = 57$.
 
+<<RACUN
+vrednost: 28-4 | 24
+vrednost: 17+12-24 | 5
+vrednost: 17-5 | 12
+vrednost: 6+8-5 | 9
+vrednost: 15-9 | 6
+vrednost: 2^6 | 64
+vrednost: 2^5 | 32
+vrednost: 6+6+5-4-4-2+2 | 9
+vrednost: 12-3 | 9
+vrednost: 2+3 | 5
+>>
+
 :::simboli
 A, B | množici | | | moč množice je število njenih elementov
+C | tretja množica | | | Za maturo, Naloga 3
 x | element množice | | |
 X | poljubna množica | | |
 n | število elementov množice | | | množica z $n$ elementi ima $2^n$ podmnožic

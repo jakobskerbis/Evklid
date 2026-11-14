@@ -176,6 +176,72 @@ $x_5 = 80 - 63 = 17$ utrinkov. Preizkus: $\dfrac{63 + 17}{5} = 16$.
 - Osamelci vplivajo na povprečje, mediana in medkvartilni razmik sta odporna.
 - Prikazi: stolpčni diagram, krožni diagram (kot $\dfrac{f}{n}\cdot 360^\circ$), histogram, škatla z brki.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Sedem dijakov je naredilo $15$, $8$, $12$, $20$, $9$, $14$ in $11$ sklec. Zapiši pet števil, s katerimi narišemo škatlo z brki, in izračunaj medkvartilni (medčetrtinski) razmik.
+
+**Rešitev:**
+
+1. Urejeni podatki: $8, 9, 11, 12, 14, 15, 20$. Najmanjši podatek je $8$, največji $20$.
+2. Pri $n = 7$ je mediana četrti podatek: $M = 12$.
+3. Spodnja polovica brez mediane je $8, 9, 11$, zato je $Q_1 = 9$. Zgornja polovica je $14, 15, 20$, zato je $Q_3 = 15$.
+4. Medkvartilni razmik: $Q_3 - Q_1 = 15 - 9 = 6$.
+5. Meji za osamelce sta $9 - 1{,}5 \cdot 6 = 0$ in $15 + 1{,}5 \cdot 6 = 24$. Osamelcev ni, zato brka segata do $8$ in do $20$.
+6. Odgovor: pet števil je $8$, $9$, $12$, $15$ in $20$; medkvartilni razmik je $6$ sklec.
+
+**Točkovanje:** 1 točka za urejene podatke z najmanjšim in največjim podatkom, 1 točka za $M = 12$, 1 točka za $Q_1 = 9$, $Q_3 = 15$ in medkvartilni razmik $6$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
+
+Na dveh vremenskih postajah so šest dni zapored ob poldne izmerili hitrost vetra v km/h:
+
+- prva postaja: $38, 41, 40, 44, 37, 40$,
+- druga postaja: $35, 46, 39, 43, 33, 44$.
+
+a) Za vsako postajo izračunaj aritmetično sredino in mediano. (2 točki)
+b) Za vsako postajo izračunaj standardni odklon. Rezultat zaokroži na dve decimalni mesti. (3 točke)
+c) Na kateri postaji je bila hitrost vetra bolj enakomerna? Odgovor utemelji. (1 točka)
+d) Sedmi dan so na prvi postaji izmerili $54\,\text{km/h}$. Izračunaj novo aritmetično sredino in mediano vseh sedmih meritev prve postaje ter pojasni, zakaj se je sredina spremenila bolj kot mediana. (2 točki)
+
+**Rešitev:**
+
+1. a) Prva postaja: vsota je $38 + 41 + 40 + 44 + 37 + 40 = 240$, zato je $\bar{x} = \dfrac{240}{6} = 40\,\text{km/h}$. Urejeni podatki so $37, 38, 40, 40, 41, 44$, mediana je $M = \dfrac{40 + 40}{2} = 40\,\text{km/h}$.
+2. a) Druga postaja: vsota je $35 + 46 + 39 + 43 + 33 + 44 = 240$, zato je $\bar{x} = 40\,\text{km/h}$. Urejeni podatki so $33, 35, 39, 43, 44, 46$, mediana je $M = \dfrac{39 + 43}{2} = 41\,\text{km/h}$.
+3. b) Prva postaja: odkloni od $40$ so $-2, 1, 0, 4, -3, 0$, vsota kvadratov je $4 + 1 + 0 + 16 + 9 + 0 = 30$. Varianca je $\sigma^2 = \dfrac{30}{6} = 5$, standardni odklon $\sigma = \sqrt{5} = 2{,}2360\ldots \approx 2{,}24\,\text{km/h}$.
+4. b) Druga postaja: odkloni od $40$ so $-5, 6, -1, 3, -7, 4$, vsota kvadratov je $25 + 36 + 1 + 9 + 49 + 16 = 136$. Varianca je $\sigma^2 = \dfrac{136}{6} = 22{,}666\ldots$, standardni odklon $\sigma = 4{,}7609\ldots \approx 4{,}76\,\text{km/h}$.
+5. c) Aritmetični sredini sta enaki, standardni odklon prve postaje ($2{,}24\,\text{km/h}$) pa je manjši od polovice standardnega odklona druge postaje ($4{,}76\,\text{km/h}$). Na prvi postaji je bila hitrost vetra bolj enakomerna.
+6. d) Nova vsota je $240 + 54 = 294$, zato je $\bar{x} = \dfrac{294}{7} = 42\,\text{km/h}$. Urejeni podatki so $37, 38, 40, 40, 41, 44, 54$, mediana je četrti podatek, $M = 40\,\text{km/h}$.
+7. d) Podatek $54$ je precej večji od ostalih. V aritmetično sredino prispeva s svojo velikostjo in jo dvigne za $2\,\text{km/h}$, mediana pa je odvisna le od srednjih podatkov in ostane enaka.
+8. Odgovor: na obeh postajah je $\bar{x} = 40\,\text{km/h}$, mediani sta $40\,\text{km/h}$ in $41\,\text{km/h}$; standardna odklona sta približno $2{,}24\,\text{km/h}$ in $4{,}76\,\text{km/h}$, zato je bil veter bolj enakomeren na prvi postaji; po sedmi meritvi je na prvi postaji $\bar{x} = 42\,\text{km/h}$ in $M = 40\,\text{km/h}$.
+
+**Točkovanje:** a) 1 točka za obe aritmetični sredini, 1 točka za obe mediani; b) 1 točka za vsoti kvadratov odklonov $30$ in $136$ (ali za varianci $5$ in $22{,}67$), 1 točka za $\sigma \approx 2{,}24\,\text{km/h}$ na prvi postaji in 1 točka za $\sigma \approx 4{,}76\,\text{km/h}$ na drugi postaji; c) 1 točka za odgovor »prva postaja«, utemeljen z manjšim standardnim odklonom; d) 1 točka za $\bar{x} = 42\,\text{km/h}$ in $M = 40\,\text{km/h}$, 1 točka za pojasnilo.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj so statistična enota, spremenljivka in frekvenca? Pojasni jih na primeru.
+---
+Statistična enota je en predmet opazovanja, na primer en dijak v razredu. Spremenljivka je lastnost, ki jo pri enotah opazujemo, na primer število točk na testu. Frekvenca vrednosti pove, kolikokrat se ta vrednost pojavi med podatki. Relativna frekvenca je delež $\dfrac{f}{n}$, kjer je $n$ število vseh podatkov.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši, kako izračunamo standardni odklon podatkov, in pojasni, kaj pove.
+---
+Najprej izračunamo aritmetično sredino $\bar{x}$ in za vsak podatek njegov odklon $x_i - \bar{x}$. Odklone kvadriramo, ker bi se v vsoti pozitivni in negativni odkloni izničili. Povprečje kvadratov odklonov je varianca $\sigma^2$, standardni odklon pa je njen kvadratni koren $\sigma = \sqrt{\sigma^2}$. Standardni odklon ima enako enoto kot podatki in pove, kako močno so podatki razpršeni okoli aritmetične sredine.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni, zakaj je mediana manj občutljiva za osamelce kot aritmetična sredina, in navedi primer.
+---
+Mediana je srednji podatek urejenih podatkov, zato je odvisna le od podatkov na sredini. Aritmetična sredina upošteva velikost vsakega podatka, zato jo en sam zelo velik ali zelo majhen podatek močno premakne. Pri podatkih $1, 2, 3, 4, 100$ je mediana $3$, aritmetična sredina pa $22$. Kadar so med podatki osamelci, sredino podatkov zato bolje opiše mediana.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si urejene podatke iz Primera 2 na številski premici. Škatla z brki jih povzame s petimi številkami:
@@ -274,6 +340,22 @@ torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2,
 ~ Vsota podatkov se poveča za $5n$, zato se sredina poveča za $5$.
 + Sredina se poveča za $5$, standardni odklon ostane enak.
 > Vsi podatki in sredina se premaknejo za $5$, odkloni $x_i - \bar{x}$ ostanejo enaki, zato se $\sigma$ ne spremeni.
+
+<<RACUN
+vrednost: 15-9 | 6
+vrednost: 9-1.5*6 | 0
+vrednost: 15+1.5*6 | 24
+vrednost: (38+41+40+44+37+40)/6 | 40
+vrednost: (35+46+39+43+33+44)/6 | 40
+vrednost: (39+43)/2 | 41
+vrednost: (-2)^2+1^2+0^2+4^2+(-3)^2+0^2 | 30
+vrednost: (-5)^2+6^2+(-1)^2+3^2+(-7)^2+4^2 | 136
+vrednost: sqrt(30/6) | 2.24
+vrednost: 136/6 | 22.67
+vrednost: sqrt(136/6) | 4.76
+vrednost: (240+54)/7 | 42
+vrednost: (1+2+3+4+100)/5 | 22
+>>
 
 :::simboli
 \bar{x} | aritmetična sredina (povprečje) | \bar{x} = \frac{x_1 + x_2 + \cdots + x_n}{n}

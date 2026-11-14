@@ -218,6 +218,65 @@ $\alpha = \tan^{-1} \dfrac{4}{3} \approx 53{,}13^\circ$, zato $\varphi = 90^\cir
 - Naklonski kot: $k = \tan\alpha$, $0^\circ \le \alpha < 180^\circ$; na računalu $\tan^{-1}$ v stopinjah (DEG).
 - Kot med premicama: $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, $0^\circ \le \varphi \le 90^\circ$; pri navpični premici uporabi naklonska kota.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Premica gre skozi točko $T(2, 3)$ in je vzporedna premici $3x + 2y - 1 = 0$. Zapiši njeno enačbo v odsekovni obliki.
+
+**Rešitev:**
+
+1. Iz $3x + 2y - 1 = 0$ izrazimo $y = -\dfrac{3}{2}x + \dfrac{1}{2}$, zato je $k = -\dfrac{3}{2}$. Vzporedna premica ima enak smerni koeficient.
+2. Skozi $T$: $y - 3 = -\dfrac{3}{2}(x - 2)$, torej $y = -\dfrac{3}{2}x + 6$.
+3. Pomnožimo z $2$ in uredimo: $3x + 2y = 12$. Delimo z $12$: $\dfrac{x}{4} + \dfrac{y}{6} = 1$.
+4. Odgovor: $\dfrac{x}{4} + \dfrac{y}{6} = 1$.
+
+**Točkovanje:** 1 točka za $k = -\dfrac{3}{2}$, 1 točka za enačbo premice skozi $T$ (v kateri koli obliki), 1 točka za odsekovno obliko.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Dan je trikotnik z oglišči $A(-2, 1)$, $B(4, 4)$ in $C(3, -3)$.
+
+a) Zapiši enačbi premic $AB$ in $AC$ v splošni obliki. (2 točki)
+b) Izračunaj naklonski kot premice $AC$. Rezultat zaokroži na stotinko stopinje. (2 točki)
+c) Izračunaj notranji kot trikotnika pri oglišču $A$. Rezultat zaokroži na stotinko stopinje. (3 točke)
+
+**Rešitev:**
+
+1. a) $k_1 = \dfrac{4 - 1}{4 - (-2)} = \dfrac{1}{2}$; skozi $A$: $y - 1 = \dfrac{1}{2}(x + 2)$, torej $2y - 2 = x + 2$ in $AB\colon x - 2y + 4 = 0$.
+2. a) $k_2 = \dfrac{-3 - 1}{3 - (-2)} = -\dfrac{4}{5}$; skozi $A$: $y - 1 = -\dfrac{4}{5}(x + 2)$, torej $5y - 5 = -4x - 8$ in $AC\colon 4x + 5y + 3 = 0$.
+3. b) Ker je $k_2 = -0{,}8 < 0$, je naklonski kot top. Za $|k_2| = 0{,}8$ dobimo $\tan^{-1} 0{,}8 \approx 38{,}66^\circ$.
+4. b) Naklonski kot premice $AC$: $\alpha_2 = 180^\circ - 38{,}66^\circ = 141{,}34^\circ$.
+5. c) $\tan\varphi = \left|\dfrac{-\frac{4}{5} - \frac{1}{2}}{1 + \frac{1}{2} \cdot \left(-\frac{4}{5}\right)}\right| = \dfrac{\frac{13}{10}}{\frac{3}{5}} = \dfrac{13}{6}$, zato $\varphi = \tan^{-1} \dfrac{13}{6} \approx 65{,}22^\circ$.
+6. c) Točki $B$ in $C$ ležita desno od $A$: poltrak $AB$ se dviga pod kotom $\tan^{-1} 0{,}5 \approx 26{,}57^\circ$, poltrak $AC$ pa se spušča pod kotom $38{,}66^\circ$ glede na vodoravnico. Kot med poltrakoma je približno $26{,}57^\circ + 38{,}66^\circ \approx 65{,}2^\circ$, kar je manj kot $90^\circ$, zato je notranji kot oster in enak $\varphi$.
+7. Odgovor: $AB\colon x - 2y + 4 = 0$, $AC\colon 4x + 5y + 3 = 0$; naklonski kot premice $AC$ je približno $141{,}34^\circ$; notranji kot pri $A$ je približno $65{,}22^\circ$.
+
+**Točkovanje:** a) 1 točka za enačbo premice $AB$, 1 točka za enačbo premice $AC$; b) 1 točka za $k_2 = -0{,}8$ in kot $38{,}66^\circ$; 1 točka za $141{,}34^\circ$; c) 1 točka za $\tan\varphi = \dfrac{13}{6}$, 1 točka za $65{,}22^\circ$; 1 točka za utemeljitev, da je notranji kot oster (in ne $180^\circ - \varphi$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Naštej oblike enačbe premice v ravnini in za vsako pojasni, kaj iz nje neposredno preberemo.
+---
+Eksplicitna oblika $y = kx + n$ pove smerni koeficient $k$ in začetno vrednost $n$, torej presečišče z osjo $y$ v točki $(0, n)$. Splošna oblika $ax + by + c = 0$, kjer $a$ in $b$ nista oba $0$, zajame vse premice, tudi navpične; pri $b \ne 0$ je $k = -\dfrac{a}{b}$. Odsekovna oblika $\dfrac{x}{m} + \dfrac{y}{n} = 1$ pove odseka na oseh, saj premica seka osi v točkah $(m, 0)$ in $(0, n)$. Te oblike nimata premica skozi izhodišče in premica, vzporedna kateri od osi. Oblika $y - y_1 = k(x - x_1)$ pove smerni koeficient in točko $(x_1, y_1)$, skozi katero gre premica.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj je smerni koeficient premice enak tangensu njenega naklonskega kota.
+---
+Na naraščajoči premici izberemo točko in se od nje premaknemo za pomik $d > 0$ v desno; premica se pri tem dvigne za $kd$. Pomik, dvig in del premice tvorijo pravokotni trikotnik, v katerem je naklonski kot $\alpha$ ob vodoravni kateti. Tangens kota je razmerje nasprotne in priležne katete, torej $\tan\alpha = \dfrac{kd}{d} = k$, kar je neodvisno od izbire $d$. Pri padajoči premici je naklonski kot top; njegov sokot $180^\circ - \alpha$ je oster in ima tangens $|k|$, zato je $\tan\alpha = -\tan(180^\circ - \alpha) = -|k| = k$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kdaj sta dve premici vzporedni in kdaj pravokotni? Pojasni s smernima koeficientoma in navedi primer.
+---
+Nenavpični premici sta vzporedni, kadar imata enaka smerna koeficienta, $k_1 = k_2$, saj sta enako strmi. Pravokotni sta, kadar je produkt smernih koeficientov $k_1 \cdot k_2 = -1$, torej $k_2 = -\dfrac{1}{k_1}$. Premica $y = 2x + 1$ je na primer vzporedna premici $y = 2x - 3$ in pravokotna na premico $y = -\dfrac{1}{2}x$. Navpična premica je pravokotna na vsako vodoravno premico, čeprav navpična premica smernega koeficienta nima.
+:::
+
 ## Drugače: Na sliki
 
 Streha iz Primera 3 na sliki:
@@ -318,6 +377,21 @@ vrednost: atan(3)*180/pi | 71.57
 vrednost: atan(0.08)*180/pi | 4.57
 resi: -a/2=3 | a | -6
 vrednost: atan(sqrt(3))*180/pi-atan(1)*180/pi | 15
+resi: 3*x+2*y-1=0 | y | -3*x/2+1/2
+resi: y-3=-3/2*(x-2) | y | -3*x/2+6
+resi: 3*x+2*y=12, y=0 | x, y | x=4, y=0
+resi: 3*x+2*y=12, x=0 | x, y | x=0, y=6
+vrednost: (4-1)/(4-(-2)) | 1/2
+vrednost: (-3-1)/(3-(-2)) | -4/5
+resi: y-1=(x+2)/2 | y | x/2+2
+resi: y-1=-4*(x+2)/5 | y | -4*x/5-3/5
+resi: x-2*y+4=0 | y | x/2+2
+resi: 4*x+5*y+3=0 | y | -4*x/5-3/5
+vrednost: atan(0.8)*180/pi | 38.66
+vrednost: 180-atan(0.8)*180/pi | 141.34
+vrednost: abs((-4/5-1/2)/(1+(1/2)*(-4/5))) | 13/6
+vrednost: atan(13/6)*180/pi | 65.22
+vrednost: atan(0.5)*180/pi+atan(0.8)*180/pi | 65.22
 >>
 
 :::simboli

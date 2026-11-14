@@ -217,6 +217,102 @@ Dobiš $0 = 0$, zato je rešitev neskončno. Izberemo $z = t$: $y = 1 + t$ in $x
 - Neenačba z dvema neznankama: polravnina z robom $ax + by = c$; stran izbereš s testno točko; rob polno pri $\le$, $\ge$, črtkano pri $<$, $>$.
 - Sistem neenačb z dvema neznankama: presek polravnin; preizkus s točko v notranjosti.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dan je sistem enačb
+
+$$\begin{cases} x + y + 2z = 6 & (1)\\ 2x - y + z = 9 & (2)\\ 3x + 2y - z = 5 & (3) \end{cases}$$
+
+a) Reši sistem z Gaussovo metodo in naredi preizkus. (4 točke)
+b) Tretjo enačbo nadomestimo z enačbo $3x + 3z = 15$, prvi dve ostaneta. Pokaži, da ima novi sistem neskončno mnogo rešitev, in vse rešitve zapiši s parametrom. (3 točke)
+
+**Rešitev:**
+
+1. a) (2) $- 2 \cdot$ (1): $-3y - 3z = -3$, torej $y + z = 1$.
+2. a) (3) $- 3 \cdot$ (1): $-y - 7z = -13$, torej $y + 7z = 13$.
+3. a) Od druge nove enačbe odštejemo prvo: $6z = 12$. Sistem ima trikotno obliko $x + y + 2z = 6$, $y + z = 1$, $6z = 12$.
+4. a) Vstavljanje nazaj: $z = 2$, $y = 1 - 2 = -1$, $x = 6 - (-1) - 2 \cdot 2 = 3$.
+5. a) Preizkus: $3 - 1 + 4 = 6$, $6 + 1 + 2 = 9$, $9 - 2 - 2 = 5$.
+6. b) Prvi korak ostane enak: (2) $- 2 \cdot$ (1) da $y + z = 1$.
+7. b) Nova tretja $- 3 \cdot$ (1): $3x + 3z - 3x - 3y - 6z = 15 - 18$, torej $-3y - 3z = -3$ oziroma spet $y + z = 1$.
+8. b) Razlika obeh novih enačb je $0 = 0$, ki velja vedno, zato ima sistem neskončno mnogo rešitev.
+9. b) Izberemo $z = t$: $y = 1 - t$ in $x = 6 - y - 2z = 6 - (1 - t) - 2t = 5 - t$.
+10. b) Preizkus v novi tretji enačbi: $3(5 - t) + 3t = 15$.
+11. Odgovor: a) $(x, y, z) = (3, -1, 2)$; b) rešitve so $(5 - t, 1 - t, t)$ za vsak realni $t$ (pri $t = 2$ dobimo trojko iz a).
+
+**Točkovanje:** a) 1 točka za enačbi $y + z = 1$ in $y + 7z = 13$ (odstranjen $x$), 1 točka za trikotno obliko oziroma $6z = 12$, 1 točka za $z = 2$ in $y = -1$, 1 točka za $x = 3$; b) 1 točka za ponovno enačbo $y + z = 1$, 1 točka za vrstico $0 = 0$ in sklep, da je rešitev neskončno mnogo, 1 točka za zapis rešitev $(5 - t, 1 - t, t)$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dijaki za dobrodelno stojnico pripravijo $x$ pladnjev peciva in $y$ pladnjev sendvičev. Na stojnico gre največ $9$ pladnjev. Za pladenj peciva porabijo $2$ uri dela, za pladenj sendvičev $1$ uro, na voljo pa imajo največ $14$ ur. Sendvičev morajo pripraviti vsaj $2$ pladnja, peciva pa več kot nič.
+
+a) Zapiši sistem neenačb za $x$ in $y$, ki opisuje te pogoje. (2 točki)
+b) V koordinatnem sistemu nariši območje rešitev sistema. Označi, kateri robovi so polni in kateri črtkani. (3 točke)
+c) Izračunaj koordinate oglišč območja. Katera oglišča niso rešitve sistema? (2 točki)
+d) Ali lahko pripravijo $5$ pladnjev peciva in $3$ pladnje sendvičev? Koliko največ pladnjev sendvičev lahko pripravijo, če spečejo $4$ pladnje peciva? (3 točke)
+
+**Rešitev:**
+
+1. a) Pladnji: $x + y \le 9$. Ure dela: $2x + y \le 14$.
+2. a) Sendviči: $y \ge 2$. Pecivo: $x > 0$.
+3. b) Robovi so premice $x + y = 9$ (skozi $(0, 9)$ in $(9, 0)$), $2x + y = 14$ (skozi $(7, 0)$ in $(6, 2)$), $y = 2$ in $x = 0$. Prvi trije so polni (neenačbe $\le$ in $\ge$), rob $x = 0$ je črtkan (neenačba $>$).
+4. b) Testna točka $(0, 0)$ ustreza neenačbama $x + y \le 9$ in $2x + y \le 14$, zato sta to polravnini pod premicama. Neenačbi $y \ge 2$ ustrezajo točke nad premico $y = 2$, neenačbi $x > 0$ pa točke desno od osi $y$.
+5. b) Območje rešitev je presek: štirikotnik med osjo $y$, premico $y = 2$ in premicama $2x + y = 14$ ter $x + y = 9$.
+
+:::risba graf
+opis: Koordinatni sistem, x je število pladnjev peciva od 0 do 10, y število pladnjev sendvičev od 0 do 10. Polne premice x + y = 9, 2x + y = 14 in y = 2. Območje rešitev je štirikotnik z oglišči (0, 2), (6, 2), (5, 4) in (0, 9); njegova stranica na osi y je črtkana, ostale tri so polne. Točka (5, 3) leži v štirikotniku.
+x: 0 .. 10 | 1 | x
+y: 0 .. 10 | 1 | y
+enako: da
+f: 9 - x | modra | 0 .. 9
+f: 14 - 2*x | oranžna | 2 .. 7
+f: 2 | rdeča
+lik: 0; 2 -> 6; 2 -> 5; 4 -> 0; 9 | zelena črtkano
+črta: 0; 2 -> 6; 2 | rdeča
+črta: 6; 2 -> 5; 4 | oranžna
+črta: 5; 4 -> 0; 9 | modra
+črta: 0; 2 -> 0; 9 | zelena črtkano debelo
+točka: 5; 3 | (5, 3) | levo
+napis: 6,6; 3,4 | x + y = 9 | desno | modra
+napis: 2,3; 9,6 | 2x + y = 14 | desno | oranžna
+napis: 8,5; 2,5 | y = 2 | sredina | rdeča
+:::
+
+6. c) $x + y = 9$ in $2x + y = 14$: odštejemo, $x = 5$, $y = 4$; oglišče $(5, 4)$.
+7. c) $2x + y = 14$ in $y = 2$ da $(6, 2)$; $y = 2$ in $x = 0$ da $(0, 2)$; $x + y = 9$ in $x = 0$ da $(0, 9)$.
+8. c) Oglišči $(0, 2)$ in $(0, 9)$ ležita na črtkanem robu $x = 0$, zato nista rešitvi.
+9. d) Točka $(5, 3)$: $5 + 3 = 8 \le 9$, $10 + 3 = 13 \le 14$, $3 \ge 2$, $5 > 0$. Vse velja, tak načrt je mogoč.
+10. d) Pri $x = 4$: $4 + y \le 9$ da $y \le 5$, $8 + y \le 14$ da $y \le 6$. Obe hkrati veljata za $y \le 5$; pogoj $y \ge 2$ je izpolnjen.
+11. Odgovor: oglišča so $(0, 2)$, $(6, 2)$, $(5, 4)$ in $(0, 9)$, pri čemer $(0, 2)$ in $(0, 9)$ nista rešitvi; načrt s $5$ pladnji peciva in $3$ pladnji sendvičev je mogoč; pri $4$ pladnjih peciva lahko pripravijo največ $5$ pladnjev sendvičev.
+
+**Točkovanje:** a) 1 točka za $x + y \le 9$ in $2x + y \le 14$, 1 točka za $y \ge 2$ in $x > 0$; b) 1 točka za pravilno narisane robove s pravilno vrsto črte, 1 točka za pravilno izbrane polravnine, 1 točka za označeni presek; c) 1 točka za oglišče $(5, 4)$, 1 točka za ostala tri oglišča in ugotovitev, da $(0, 2)$ in $(0, 9)$ nista rešitvi; d) 1 točka za preverbo točke $(5, 3)$, 1 točka za pogoja $y \le 5$ in $y \le 6$, 1 točka za odgovor $5$ pladnjev.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Opiši Gaussovo eliminacijsko metodo za sistem treh linearnih enačb s tremi neznankami in naštej dovoljene preoblike.
+---
+Z ekvivalentnimi preoblikami spravimo sistem v trikotno obliko. S prvo enačbo odstranimo $x$ iz druge in tretje, nato z novo drugo enačbo odstranimo $y$ iz tretje. Iz zadnje enačbe izračunamo $z$, nato z vstavljanjem nazaj še $y$ in $x$. Dovoljene preoblike so zamenjava vrstnega reda enačb, množenje enačbe s številom, različnim od $0$, in prištevanje večkratnika ene enačbe drugi. Te preoblike ne spremenijo množice rešitev, na koncu pa naredimo preizkus v prvotnih enačbah.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Kako pri Gaussovi metodi prepoznamo, da sistem nima rešitve ali ima neskončno mnogo rešitev? Pojasni tudi geometrijsko.
+---
+Če med eliminacijo dobimo vrstico $0 = c$ s $c \ne 0$, sistem nima rešitve, ker te enakosti ne izpolni nobena trojka. Če protislovne vrstice ni, dobimo pa vrstico $0 = 0$, ta ne prinese nobenega pogoja in sistem ima neskončno mnogo rešitev. Tedaj eno neznanko izberemo kot parameter $t$ in ostali izrazimo z njim (če sta taki vrstici dve, sta parametra dva). Geometrijsko vsaka enačba s tremi neznankami določa ravnino v prostoru. Tri ravnine imajo lahko eno skupno točko, nobene skupne točke ali skupno premico (če sovpadajo, celo vso ravnino), kar ustreza eni rešitvi, nobeni rešitvi in neskončno mnogo rešitvam.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni, kako grafično rešimo sistem linearnih neenačb z dvema neznankama, in utemelji uporabo testne točke.
+---
+Vsaka neenačba $ax + by < c$ ima za rešitev polravnino, ki jo omejuje premica $ax + by = c$. Rob narišemo polno pri $\le$ ali $\ge$ in črtkano pri $<$ ali $>$, ker so točke na robu rešitve le pri nestrogi neenačbi. Stran polravnine izberemo s testno točko, ki ni na premici. Izraz $ax + by - c$ ima na vsej polravnini isti predznak, saj bi ga lahko zamenjal le na premici. Rešitev sistema je presek vseh polravnin, ki ga preverimo s točko v notranjosti.
+:::
+
 ## Drugače: Z analogijo
 
 Gaussova metoda je kot spust po stopnicah in vzpon nazaj. Navzdol na vsaki stopnici pustiš eno neznanko: prva enačba ima tri, druga dve, tretja eno. Na dnu je račun čisto preprost. Nato greš navzgor in na vsako stopnico prineseš, kar že veš.
@@ -315,4 +411,13 @@ enako: 4*2-(1+t)+t | 7
 resi: x+y+z=4, x+2*y+3*z=9, x-y+2*z=4 | x, y, z | x=1, y=1, z=2
 neenacba: 2*x+1>-5 | x | (-3, oo)
 neenacba: 4-x>=1 | x | (-oo, 3]
+resi: x+y+2*z=6, 2*x-y+z=9, 3*x+2*y-z=5 | x, y, z | x=3, y=-1, z=2
+resi: y+z=1, y+7*z=13 | y, z | y=-1, z=2
+enako: (5-t)+(1-t)+2*t | 6
+enako: 2*(5-t)-(1-t)+t | 9
+enako: 3*(5-t)+3*t | 15
+resi: x+y=9, 2*x+y=14 | x, y | x=5, y=4
+resi: 2*x+y=14, y=2 | x, y | x=6, y=2
+neenacba: 4+y<=9 | y | (-oo, 5]
+neenacba: 8+y<=14 | y | (-oo, 6]
 >>

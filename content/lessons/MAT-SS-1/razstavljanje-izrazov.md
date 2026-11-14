@@ -195,6 +195,66 @@ Prvi oklepaj je $x + 3 - x + 3 = 6$, drugi $2x$, zato je razlika $6 \cdot 2x = 1
 - Vietovo pravilo: $x^2 + px + q = (x+a)(x+b)$, kjer je $a + b = p$ in $a \cdot b = q$.
 - Vrstni red: skupni faktor, nato obrazec glede na število členov, nato preglej vse faktorje in na koncu preizkus.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Razstavi do konca izraz $x^4 - 13x^2 + 36$.
+
+**Rešitev:**
+
+1. Izraz je tričlenik v $x^2$: iščemo števili z vsoto $-13$ in zmnožkom $36$. To sta $-4$ in $-9$, zato je $x^4 - 13x^2 + 36 = (x^2 - 4)(x^2 - 9)$.
+2. Oba faktorja sta razliki kvadratov: $x^2 - 4 = (x - 2)(x + 2)$ in $x^2 - 9 = (x - 3)(x + 3)$.
+3. Preizkus pri $x = 1$: izvirni izraz je $1 - 13 + 36 = 24$, razcep pa $(-1) \cdot 3 \cdot (-2) \cdot 4 = 24$.
+4. Odgovor: $x^4 - 13x^2 + 36 = (x - 2)(x + 2)(x - 3)(x + 3)$.
+
+**Točkovanje:** 1 točka za razcep $(x^2 - 4)(x^2 - 9)$ po Vietovem pravilu, 1 točka za uporabo razlike kvadratov na obeh faktorjih, 1 točka za popoln razcep $(x - 2)(x + 2)(x - 3)(x + 3)$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dan je izraz $x^3 - 2x^2 - 4x + 8$.
+
+a) Izraz razstavi do konca; enake faktorje zapiši kot potenco. (3 točke)
+b) Reši enačbo $x^3 - 2x^2 - 4x + 8 = 0$. (2 točki)
+c) S pomočjo razcepa brez računala izračunaj vrednost izraza pri $x = 52$. (2 točki)
+
+**Rešitev:**
+
+1. a) Združimo prva dva in zadnja dva člena: $x^2(x - 2) - 4(x - 2)$.
+2. a) Izpostavimo skupni faktor $x - 2$: $(x - 2)(x^2 - 4)$.
+3. a) Drugi faktor je razlika kvadratov, $x^2 - 4 = (x - 2)(x + 2)$, zato je izraz enak $(x - 2)(x - 2)(x + 2) = (x - 2)^2(x + 2)$. Preizkus pri $x = 1$: $1 - 2 - 4 + 8 = 3$ in $(-1)^2 \cdot 3 = 3$.
+4. b) Enačba je $(x - 2)^2(x + 2) = 0$. Produkt je enak $0$ natanko takrat, ko je vsaj en faktor enak $0$.
+5. b) Iz $x - 2 = 0$ dobimo $x_1 = 2$ (faktor $x - 2$ nastopa dvakrat, a da isto rešitev), iz $x + 2 = 0$ pa $x_2 = -2$.
+6. c) Pri $x = 52$ je $x - 2 = 50$ in $x + 2 = 54$, zato je vrednost $50^2 \cdot 54 = 2500 \cdot 54$.
+7. c) $2500 \cdot 54 = 2500 \cdot 50 + 2500 \cdot 4 = 125\,000 + 10\,000 = 135\,000$.
+8. Odgovor: $x^3 - 2x^2 - 4x + 8 = (x - 2)^2(x + 2)$; rešitvi enačbe sta $2$ in $-2$; pri $x = 52$ je vrednost izraza $135\,000$.
+
+**Točkovanje:** a) 1 točka za združevanje v pare $x^2(x - 2) - 4(x - 2)$, 1 točka za $(x - 2)(x^2 - 4)$, 1 točka za popoln razcep $(x - 2)^2(x + 2)$; b) 1 točka za utemeljitev, da je produkt $0$, ko je vsaj en faktor $0$, 1 točka za obe rešitvi $2$ in $-2$; c) 1 točka za zmnožek $50^2 \cdot 54$, 1 točka za rezultat $135\,000$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj pomeni razstaviti algebrski izraz in kdaj je razcep popoln?
+---
+Razstaviti izraz pomeni zapisati ga kot produkt faktorjev. Razstavljanje je obratna pot od množenja, zato pravilnost preverimo tako, da faktorje zmnožimo in dobimo prvotni izraz. Razcep je popoln, ko nobenega faktorja ni več mogoče razstaviti naprej. Zato najprej izpostavimo največji skupni faktor in nato vsak nastali faktor preverimo, ali se da še razstaviti.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji Vietovo pravilo za razstavljanje tričlenika $x^2 + px + q$ in pojasni, kako si pri iskanju števil pomagaš s predznakoma $p$ in $q$.
+---
+Če zmnožimo $(x + a)(x + b)$, dobimo $x^2 + (a + b)x + ab$. Tričlenik $x^2 + px + q$ je zato enak $(x + a)(x + b)$, če velja $a + b = p$ in $a \cdot b = q$. Če je $q > 0$, imata števili enak predznak, in sicer predznak števila $p$. Če je $q < 0$, imata števili različna predznaka, in če je $p \neq 0$, ima predznak števila $p$ tisto, ki je po absolutni vrednosti večje.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da izraza $x^2 + c$, kjer je $c > 0$, ne moremo razstaviti v produkt $(x + a)(x + b)$ z realnima številoma $a$ in $b$.
+---
+Denimo, da bi za vsak $x$ veljalo $x^2 + c = (x + a)(x + b)$. Pri $x = -a$ je desna stran enaka $0$, ker je prvi faktor enak $0$. Leva stran je pri $x = -a$ enaka $a^2 + c$, kar je pozitivno, ker je $a^2 \ge 0$ in $c > 0$. To je protislovje, zato takega razcepa z realnima številoma ni.
+:::
+
 ## Drugače: Na sliki
 
 Izraze si predstavljaj kot ploščine pravokotnikov.
@@ -300,6 +360,19 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 ~ Iskal si le vsoto, in to s $p = 1$ namesto $-1$: $3 + (-2) = 1$. Produkt pa je $3 \cdot (-2) = -6$, ne $-12$: $(x + 3)(x - 2) = x^2 + x - 6$.
 + $(x - 4)\,\mathrm{m}$
 > Iščemo $b$ z $3 + b = -1$ in $3 \cdot b = -12$, torej $b = -4$. Preizkus: $(x + 3)(x - 4) = x^2 - x - 12$.
+
+<<RACUN
+enako: x^4-13*x^2+36 | (x^2-4)*(x^2-9)
+enako: x^4-13*x^2+36 | (x-2)*(x+2)*(x-3)*(x+3)
+vrednost: 1-13+36 | 24
+enako: x^3-2*x^2-4*x+8 | (x-2)*(x^2-4)
+enako: x^3-2*x^2-4*x+8 | (x-2)^2*(x+2)
+vrednost: 1-2-4+8 | 3
+resi: x^3-2*x^2-4*x+8=0 | x | -2, 2
+vrednost: 2500*54 | 135000
+vrednost: 52^3-2*52^2-4*52+8 | 135000
+vrednost: 50^2*54 | 135000
+>>
 
 :::simboli
 x, y | spremenljivki | | |

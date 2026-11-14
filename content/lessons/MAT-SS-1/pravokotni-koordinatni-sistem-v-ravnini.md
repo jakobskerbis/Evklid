@@ -202,6 +202,66 @@ Večina napak ni v formulah, ampak v predznakih in vrstnem redu.
 - Ploščina $0$ pomeni, da so točke kolinearne.
 - Negativne koordinate piši v oklepaje.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Točki $A(2, -1)$ in $B(x_B, 5)$ sta $10$ enot narazen. Izračunaj vse možne vrednosti $x_B$.
+
+**Rešitev:**
+
+1. Po formuli za razdaljo: $\sqrt{(x_B - 2)^2 + (5 - (-1))^2} = 10$.
+2. Kvadriramo: $(x_B - 2)^2 + 36 = 100$, zato je $(x_B - 2)^2 = 64$.
+3. $x_B - 2 = 8$ ali $x_B - 2 = -8$, torej $x_B = 10$ ali $x_B = -6$.
+4. Odgovor: $x_B = 10$ ali $x_B = -6$, torej $B(10, 5)$ ali $B(-6, 5)$.
+
+**Točkovanje:** 1 točka za enačbo z razdaljo, 1 točka za $(x_B - 2)^2 = 64$, 1 točka za obe rešitvi $x_B = 10$ in $x_B = -6$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dane so točke $A(-1, -3)$, $B(7, 3)$ in $C(-3, 8)$.
+
+a) Izračunaj dolžino daljice $AB$ in koordinati njenega razpolovišča $S_{AB}$. (2 točki)
+b) Pokaži, da je trikotnik $ABC$ enakokrak z osnovnico $AB$. (2 točki)
+c) Izračunaj ploščino trikotnika $ABC$ in iz nje dolžino višine na stranico $AB$. (2 točki)
+
+**Rešitev:**
+
+1. a) $d(A, B) = \sqrt{(7 - (-1))^2 + (3 - (-3))^2} = \sqrt{64 + 36} = \sqrt{100} = 10$.
+2. a) $S_{AB}\left(\dfrac{-1 + 7}{2}, \dfrac{-3 + 3}{2}\right) = S_{AB}(3, 0)$.
+3. b) $d(A, C) = \sqrt{(-3 - (-1))^2 + (8 - (-3))^2} = \sqrt{4 + 121} = \sqrt{125} = 5\sqrt{5}$.
+4. b) $d(B, C) = \sqrt{(-3 - 7)^2 + (8 - 3)^2} = \sqrt{100 + 25} = \sqrt{125} = 5\sqrt{5}$. Kraka $AC$ in $BC$ sta enako dolga, zato je trikotnik enakokrak z osnovnico $AB$.
+5. c) Premik od $A$ do $B$: $u_1 = 8$, $u_2 = 6$; premik od $A$ do $C$: $v_1 = -2$, $v_2 = 11$. Ploščina je $S = \dfrac{1}{2}\,|8 \cdot 11 - 6 \cdot (-2)| = \dfrac{1}{2} \cdot |88 + 12| = 50$.
+6. c) Ploščina je polovica produkta osnovnice in višine, zato je višina na $AB$ enaka $\dfrac{2S}{d(A, B)} = \dfrac{100}{10} = 10$.
+7. Preizkus: v enakokrakem trikotniku pade višina na osnovnico v njeno razpolovišče, in res je $d(C, S_{AB}) = \sqrt{(3 - (-3))^2 + (0 - 8)^2} = \sqrt{36 + 64} = 10$.
+8. Odgovor: $d(A, B) = 10$, $S_{AB}(3, 0)$; $d(A, C) = d(B, C) = 5\sqrt{5}$; ploščina je $50$ kvadratnih enot, višina na $AB$ meri $10$ enot.
+
+**Točkovanje:** a) 1 točka za $d(A, B) = 10$, 1 točka za $S_{AB}(3, 0)$; b) 1 točka za $d(A, C) = 5\sqrt{5}$, 1 točka za $d(B, C) = 5\sqrt{5}$ s sklepom o enakokrakem trikotniku; c) 1 točka za ploščino $50$, 1 točka za višino $10$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji formulo za razdaljo med točkama $A(x_A, y_A)$ in $B(x_B, y_B)$ v pravokotnem koordinatnem sistemu.
+---
+Iz točke $A$ gremo vodoravno do točke $(x_B, y_A)$ in nato navpično do $B$, tako nastane pravokotni trikotnik s hipotenuzo $AB$. Njegovi kateti merita $|x_B - x_A|$ in $|y_B - y_A|$. Po Pitagorovem izreku je $d(A, B)^2 = |x_B - x_A|^2 + |y_B - y_A|^2$, kvadrat absolutne vrednosti pa je enak kvadratu razlike. Zato je $d(A, B) = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako po predznakih koordinat ugotovimo, v katerem kvadrantu leži točka $T(x, y)$?
+---
+Koordinatni osi razdelita ravnino na štiri kvadrante, ki jih štejemo v nasprotni smeri urinega kazalca. V prvem kvadrantu sta obe koordinati pozitivni, v drugem je $x < 0$ in $y > 0$. V tretjem kvadrantu sta obe koordinati negativni, v četrtem je $x > 0$ in $y < 0$. Točke na koordinatnih oseh ne ležijo v nobenem kvadrantu.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kako s formulo za ploščino trikotnika preverimo, ali tri točke ležijo na isti premici, in zakaj to deluje?
+---
+Za točke $A$, $B$, $C$ izračunamo premika $u_1, u_2$ od $A$ do $B$ in $v_1, v_2$ od $A$ do $C$ ter ploščino $S = \frac{1}{2}|u_1 v_2 - u_2 v_1|$. Če točke ležijo na isti premici, se trikotnik splošči v daljico in ima ploščino $0$. Velja tudi obratno: ploščina je $0$ natanko tedaj, ko so točke kolinearne. Zato so točke na isti premici natanko tedaj, ko je $u_1 v_2 - u_2 v_1 = 0$.
+:::
+
 ## Drugače: Na sliki
 
 Nariši na karirast papir točki $A$ in $B$ in iz $A$ pojdi po črtah zvezka: najprej vodoravno, nato navpično do $B$. Prešteti kvadratki dajo kateti, poševna črta $AB$ pa je hipotenuza. Razdalja je vedno krajša od poti po kvadratkih, razen če ležita točki na isti vodoravnici ali navpičnici.
@@ -267,6 +327,19 @@ Pri ploščini je izraz $u_1 v_2 - u_2 v_1$ ploščina paralelograma, ki ga nape
 - Da, ker so vse tri točke v I. kvadrantu.
 ~ Točka $A(-1, -1)$ je v III. kvadrantu. Kvadrant tudi sicer ne pove, ali so točke na premici.
 > $u_1 = 2$, $u_2 = 3$, $v_1 = 6$, $v_2 = 9$; $S = \frac{1}{2}|2 \cdot 9 - 3 \cdot 6| = 0$. Točke so kolinearne, vrvica gre skozi vse tri.
+
+<<RACUN
+resi: (x-2)^2+(5-(-1))^2=100 | x | -6, 10
+vrednost: 100-36 | 64
+vrednost: sqrt((7-(-1))^2+(3-(-3))^2) | 10
+vrednost: (-1+7)/2 | 3
+vrednost: (-3+3)/2 | 0
+enako: sqrt((-3-(-1))^2+(8-(-3))^2) | 5*sqrt(5)
+enako: sqrt((-3-7)^2+(8-3)^2) | 5*sqrt(5)
+vrednost: abs(8*11-6*(-2))/2 | 50
+vrednost: 2*50/10 | 10
+vrednost: sqrt((3-(-3))^2+(0-8)^2) | 10
+>>
 
 :::simboli
 A, B, C | točke (oglišča, krajišča) | | | 

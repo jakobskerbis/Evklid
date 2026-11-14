@@ -199,6 +199,82 @@ Za $a > 0$ delimo s pozitivnim številom in znak ostane: $t \le \dfrac{15}{a}$. 
 - Sistem dveh linearnih enačb s parametrom prevedemo na enačbo $Ax = B$ s parametrom: ena rešitev (premici se sekata), nobene (vzporedni), neskončno (sovpadata).
 - Rezultat preverimo z vstavitvijo ene konkretne vrednosti parametra.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dana je neenačba $m(x - 1) \ge 3x - 6$ z neznanko $x$ in realnim parametrom $m$.
+
+a) Reši neenačbo za $m = 0$. (1 točka)
+b) Reši neenačbo za vse vrednosti parametra $m$. (4 točke)
+c) Za katere vrednosti $m$ je število $0$ rešitev neenačbe? (1 točka)
+
+**Rešitev:**
+
+1. a) Pri $m = 0$ je neenačba $0 \ge 3x - 6$, torej $3x \le 6$ in $x \le 2$, kar je interval $(-\infty, 2]$.
+2. b) Uredimo: $mx - m \ge 3x - 6$, $mx - 3x \ge m - 6$, torej $(m - 3)x \ge m - 6$.
+3. b) Za $m > 3$ je koeficient $m - 3$ pozitiven in znak ostane: $x \ge \dfrac{m - 6}{m - 3}$.
+4. b) Za $m < 3$ je koeficient negativen, zato se znak obrne: $x \le \dfrac{m - 6}{m - 3}$.
+5. b) Za $m = 3$ dobimo $0 \cdot x \ge -3$, kar velja za vsak $x$.
+6. b) Preizkus pri $m = 0$: $\dfrac{0 - 6}{0 - 3} = 2$ in $x \le 2$, enako kot v a). Pri $m = 4$: $4x - 4 \ge 3x - 6$ da $x \ge -2$, formula pa $\dfrac{4 - 6}{4 - 3} = -2$.
+7. c) Vstavimo $x = 0$: $m \cdot (0 - 1) \ge 0 - 6$, torej $-m \ge -6$ in $m \le 6$.
+8. Odgovor: a) $x \in (-\infty, 2]$; b) za $m > 3$ je $x \in \left[\dfrac{m - 6}{m - 3}, \infty\right)$, za $m < 3$ je $x \in \left(-\infty, \dfrac{m - 6}{m - 3}\right]$, za $m = 3$ je rešitev vsako realno število; c) $m \le 6$.
+
+**Točkovanje:** a) 1 točka za $x \le 2$; b) 1 točka za $(m - 3)x \ge m - 6$, 1 točka za primer $m > 3$, 1 točka za primer $m < 3$ z obrnjenim znakom, 1 točka za primer $m = 3$; c) 1 točka za $m \le 6$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dan je sistem enačb
+
+$$\begin{cases} (m + 1)x + 2y = 3 \\ 4x + (m - 1)y = m \end{cases}$$
+
+z neznankama $x$, $y$ in realnim parametrom $m$.
+
+a) Reši sistem za $m = 0$. (2 točki)
+b) Iz sistema izloči $y$ in pokaži, da velja $(m^2 - 9)x = m - 3$. (2 točki)
+c) Za katere vrednosti $m$ ima sistem natanko eno rešitev, za katere nobene in za katere neskončno rešitev? Za vsak primer opiši lego premic. (3 točke)
+d) Kadar je rešitev ena sama, jo izrazi s parametrom $m$. (2 točki)
+e) Za katero vrednost $m$ leži rešitev sistema na premici $y = 2x$? (1 točka)
+
+**Rešitev:**
+
+1. a) Pri $m = 0$ je sistem $x + 2y = 3$, $4x - y = 0$. Iz druge enačbe je $y = 4x$; vstavimo v prvo: $9x = 3$, torej $x = \dfrac{1}{3}$ in $y = \dfrac{4}{3}$.
+2. b) Prvo enačbo pomnožimo z $m - 1$, drugo z $2$: $(m + 1)(m - 1)x + 2(m - 1)y = 3(m - 1)$ in $8x + 2(m - 1)y = 2m$.
+3. b) Enačbi odštejemo: $\big((m + 1)(m - 1) - 8\big)x = 3(m - 1) - 2m$, torej $(m^2 - 9)x = m - 3$.
+4. c) Razstavimo: $(m - 3)(m + 3)x = m - 3$. Za $m \neq 3$ in $m \neq -3$ je koeficient različen od $0$, sistem ima natanko eno rešitev in premici se sekata.
+5. c) Za $m = 3$ sta obe enačbi $4x + 2y = 3$: premici sovpadata in rešitev je neskončno.
+6. c) Za $m = -3$ sta enačbi $-2x + 2y = 3$ in $4x - 4y = -3$. Druga, deljena z $-2$, je $-2x + 2y = \dfrac{3}{2}$. Premici sta vzporedni in različni, rešitve ni (enačba iz b) da $0 \cdot x = -6$).
+7. d) Za $m \neq \pm 3$ je $x = \dfrac{m - 3}{(m - 3)(m + 3)} = \dfrac{1}{m + 3}$.
+8. d) Iz prve enačbe: $2y = 3 - \dfrac{m + 1}{m + 3} = \dfrac{3m + 9 - m - 1}{m + 3} = \dfrac{2m + 8}{m + 3}$, torej $y = \dfrac{m + 4}{m + 3}$. Preizkus pri $m = 0$ da $\left(\dfrac{1}{3}, \dfrac{4}{3}\right)$, enako kot v a).
+9. e) Iz $y = 2x$ sledi $\dfrac{m + 4}{m + 3} = \dfrac{2}{m + 3}$, torej $m + 4 = 2$ in $m = -2$, kar ni izločena vrednost. Preizkus: pri $m = -2$ je rešitev $(1, 2)$; res je $-1 + 4 = 3$ in $4 - 6 = -2$.
+10. Odgovor: a) $\left(\dfrac{1}{3}, \dfrac{4}{3}\right)$; c) za $m \neq \pm 3$ ena rešitev (premici se sekata), za $m = 3$ neskončno rešitev (premici sovpadata), za $m = -3$ nobene (premici sta vzporedni); d) $\left(\dfrac{1}{m + 3}, \dfrac{m + 4}{m + 3}\right)$; e) $m = -2$.
+
+**Točkovanje:** a) 1 točka za postopek (zamenjava ali nasprotni koeficienti), 1 točka za $\left(\dfrac{1}{3}, \dfrac{4}{3}\right)$; b) 1 točka za pravilno izločitev $y$, 1 točka za $(m^2 - 9)x = m - 3$; c) 1 točka za eno rešitev pri $m \neq \pm 3$ s premicama, ki se sekata, 1 točka za $m = 3$ (premici sovpadata), 1 točka za $m = -3$ (premici sta vzporedni); d) 1 točka za $x = \dfrac{1}{m + 3}$, 1 točka za $y = \dfrac{m + 4}{m + 3}$; e) 1 točka za $m = -2$.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Pojasni, kako rešimo linearno neenačbo $ax > b$, v kateri je $a$ parameter, in zakaj moramo ločiti tri primere.
+---
+Za $a > 0$ obe strani delimo s pozitivnim številom, znak ostane in rešitev je $x > \dfrac{b}{a}$. Za $a < 0$ delimo z negativnim številom, zato se znak obrne in rešitev je $x < \dfrac{b}{a}$. Za $a = 0$ deliti ne smemo, neenačba postane $0 > b$ in ne vsebuje več neznanke. Ta neenačba velja za vsak $x$, če je $b < 0$, in za noben $x$, če je $b \ge 0$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Kako je število rešitev sistema dveh linearnih enačb z dvema neznankama povezano z lego premic? Navedi primer sistema s parametrom, ki za neko vrednost parametra nima rešitve.
+---
+Vsaka enačba sistema predstavlja premico v ravnini, rešitve sistema pa so skupne točke obeh premic. Če se premici sekata, ima sistem natanko eno rešitev, če sta vzporedni in različni, rešitve ni, če sovpadata, je rešitev neskončno. Primer je sistem $x + my = 1$, $x + y = 2$, ki ga pri $m = 1$ sestavljata premici $x + y = 1$ in $x + y = 2$. Ti premici sta vzporedni in različni, zato sistem pri $m = 1$ nima rešitve.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni, kaj pomenita enakosti $0 = 0$ in $0 = 5$, če ju dobiš pri reševanju enačbe ali sistema s parametrom.
+---
+Obe enakosti nastaneta, ko je pri posebni vrednosti parametra koeficient pri neznanki enak $0$ in neznanka izgine. Enakost $0 = 0$ je resnična za vsako vrednost neznanke, zato je rešitev vsako realno število, pri sistemu pa je rešitev neskončno, ker premici sovpadata. Enakost $0 = 5$ ni resnična za nobeno vrednost neznanke, zato enačba ali sistem nima rešitve, pri sistemu sta premici vzporedni. Napačno je sklepati, da $0 = 0$ pomeni $x = 0$.
+:::
+
 ## Drugače: Z analogijo
 
 **Podzemna garaža.** Nadstropje $3$ je višje od nadstropja $1$. Pod zemljo pa je $-3$ globlje od $-1$. Množenje z $-1$ »prezrcali« nadstropji $1$ in $3$ čez $0$ v $-1$ in $-3$ in vrstni red se obrne. Zato se pri deljenju z negativnim parametrom obrne znak neenačbe. Pri parametru ne vemo vnaprej, ali smo nad zemljo ali pod njo, zato pogledamo oba primera.
@@ -296,6 +372,19 @@ resi: -2*x+1=-2*x+3 | x | none
 resi: 2*x+3*y=1, 4*x+6*y=5 | x, y | none
 neenacba: -2*x<6 | x | (-3, oo)
 neenacba: -x/3>1 | x | (-oo, -3)
+neenacba: 0>=3*x-6 | x | (-oo, 2]
+enako: m*(x-1)-(3*x-6) | (m-3)*x-(m-6)
+neenacba: 4*(x-1)>=3*x-6 | x | [-2, oo)
+neenacba: -m>=-6 | m | (-oo, 6]
+resi: x+2*y=3, 4*x-y=0 | x, y | x=1/3, y=4/3
+enako: (m+1)*(m-1)-8 | m^2-9
+enako: 3*(m-1)-2*m | m-3
+enako: (m-3)/(m^2-9) | 1/(m+3)
+resi: -2*x+2*y=3, 4*x-4*y=-3 | x, y | none
+enako: (3-(m+1)/(m+3))/2 | (m+4)/(m+3)
+resi: (m+4)/(m+3)=2/(m+3) | m | -2
+resi: -x+2*y=3, 4*x-3*y=-2 | x, y | x=1, y=2
+resi: x+y=1, x+y=2 | x, y | none
 >>
 
 :::simboli

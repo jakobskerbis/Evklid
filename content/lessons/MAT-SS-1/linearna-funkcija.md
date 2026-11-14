@@ -175,6 +175,67 @@ Odštejemo $3$: $1{,}2x = 24$. Delimo z $1{,}2$: $x = 20$. Preizkus: $1{,}2 \cdo
 - Ničla: $x_0 = -\dfrac{n}{k}$ (za $k \ne 0$), presečišče z osjo $x$.
 - Vedno preveri z vstavljanjem v funkcijo.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Dana je linearna funkcija $f(x) = -\dfrac{2}{3}x + 4$. Izračunaj ničlo funkcije in ploščino trikotnika, ki ga graf funkcije oklepa s koordinatnima osema.
+
+**Rešitev:**
+
+1. Ničla: $-\dfrac{2}{3}x + 4 = 0$, torej $\dfrac{2}{3}x = 4$ in $x_0 = 6$. Graf seka os $x$ v točki $(6, 0)$.
+2. Začetna vrednost je $n = 4$, zato graf seka os $y$ v točki $(0, 4)$.
+3. Trikotnik z oglišči $(0, 0)$, $(6, 0)$ in $(0, 4)$ je pravokoten, kateti merita $6$ in $4$: $P = \dfrac{6 \cdot 4}{2} = 12$.
+4. Odgovor: ničla je $x_0 = 6$, ploščina trikotnika je $12$ kvadratnih enot.
+
+**Točkovanje:** 1 točka za ničlo $x_0 = 6$, 1 točka za presečišče z osjo $y$ v $(0, 4)$, 1 točka za ploščino $12$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Avtomobil ima ob začetku vožnje v rezervoarju $48$ litrov goriva in porabi $6{,}4$ litra goriva na $100\,\text{km}$. Količina goriva $y$ v rezervoarju (v litrih) je linearna funkcija prevožene poti $x$ (v kilometrih).
+
+a) Zapiši predpis te funkcije in pojasni, kaj pomeni njen smerni koeficient. (2 točki)
+b) Koliko goriva ostane v rezervoarju po $285\,\text{km}$ vožnje? Rezultat zaokroži na desetinko litra. (1 točka)
+c) Opozorilna lučka zasveti, ko je v rezervoarju še $7$ litrov goriva. Po koliko kilometrih vožnje zasveti? Rezultat zaokroži na cel kilometer. (2 točki)
+d) Izračunaj ničlo funkcije in pojasni njen pomen. Zapiši, za katere vrednosti $x$ je model smiseln. (2 točki)
+
+**Rešitev:**
+
+1. a) Na vsak kilometer se količina goriva zmanjša za $\dfrac{6{,}4}{100} = 0{,}064$ litra, zato je $k = -0{,}064$. Začetna količina je $n = 48$.
+2. a) Predpis: $y = -0{,}064x + 48$. Smerni koeficient pove, da se količina goriva z vsakim prevoženim kilometrom zmanjša za $0{,}064$ litra.
+3. b) $y = -0{,}064 \cdot 285 + 48 = -18{,}24 + 48 = 29{,}76$, torej približno $29{,}8$ litra.
+4. c) $-0{,}064x + 48 = 7$, torej $0{,}064x = 41$ in $x = 640{,}625$.
+5. c) Lučka zasveti po približno $641\,\text{km}$ vožnje.
+6. d) $-0{,}064x + 48 = 0$, torej $x_0 = \dfrac{48}{0{,}064} = 750$. Po $750\,\text{km}$ je rezervoar prazen.
+7. d) Prevožena pot ni negativna, količina goriva pa tudi ne, zato je model smiseln za $0 \le x \le 750$.
+8. Odgovor: $y = -0{,}064x + 48$; po $285\,\text{km}$ ostane približno $29{,}8$ litra; lučka zasveti po približno $641\,\text{km}$; ničla $750$ pomeni prazen rezervoar, model velja za $x \in [0, 750]$.
+
+**Točkovanje:** a) 1 točka za predpis $y = -0{,}064x + 48$, 1 točka za pomen smernega koeficienta (poraba na kilometer); b) 1 točka za $29{,}8$ litra; c) 1 točka za enačbo $-0{,}064x + 48 = 7$, 1 točka za $641\,\text{km}$; d) 1 točka za ničlo $750$ z razlago, 1 točka za interval $[0, 750]$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Definiraj linearno funkcijo in pojasni pomen koeficientov $k$ in $n$ v njenem predpisu.
+---
+Linearna funkcija je funkcija s predpisom $f(x) = kx + n$, kjer sta $k$ in $n$ realni števili, njen graf pa je premica. Smerni koeficient $k$ pove, za koliko se vrednost funkcije spremeni, ko se $x$ poveča za $1$. Pri $k > 0$ funkcija narašča, pri $k < 0$ pada, pri $k = 0$ je konstantna. Začetna vrednost $n$ je vrednost funkcije pri $x = 0$, zato graf seka os $y$ v točki $(0, n)$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži, da je za poljubni točki grafa linearne funkcije z različnima abscisama količnik $\dfrac{y_2 - y_1}{x_2 - x_1}$ enak smernemu koeficientu.
+---
+Točki na grafu funkcije $f(x) = kx + n$ imata koordinati $(x_1, kx_1 + n)$ in $(x_2, kx_2 + n)$. Razlika ordinat je $(kx_2 + n) - (kx_1 + n) = k(x_2 - x_1)$, saj se $n$ odšteje. Ker je $x_2 \ne x_1$, smemo deliti z $x_2 - x_1$ in dobimo količnik $k$. Količnik je torej za vsak par točk enak, zato smerni koeficient izračunamo iz katerih koli dveh točk grafa.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kdaj ima linearna funkcija ničlo? Navedi primer linearne funkcije brez ničle in pojasni, zakaj je nima.
+---
+Ničla je rešitev enačbe $kx + n = 0$. Pri $k \ne 0$ ima funkcija natanko eno ničlo $x_0 = -\dfrac{n}{k}$, kjer graf seka os $x$. Pri $k = 0$ in $n \ne 0$ ničle ni: funkcija $f(x) = 3$ ima na primer povsod vrednost $3$, njen graf je vodoravna premica, vzporedna osi $x$. Pri $k = 0$ in $n = 0$ je vsako realno število ničla.
+:::
+
 ## Drugače: Na sliki
 
 V demonstraciji »Graf funkcije $y = kx + n$« zgoraj spreminjaj drsnika za $k$ in $n$ ter opazuj premico.
@@ -287,3 +348,13 @@ x_1, x_2 | abscisi dveh točk grafa | | | x₁ ≠ x₂
 y_1, y_2 | ordinati dveh točk grafa | | |
 x_0 | ničla funkcije | x_0 = -\frac{n}{k} | | k ≠ 0; graf seka os x v (x₀, 0)
 :::
+
+<<RACUN
+resi: -2/3*x+4=0 | x | 6
+vrednost: 6*4/2 | 12
+vrednost: 6.4/100 | 0.064
+vrednost: -0.064*285+48 | 29.76
+resi: -0.064*x+48=7 | x | 640.625
+resi: -0.064*x+48=0 | x | 750
+vrednost: 48/0.064 | 750
+>>

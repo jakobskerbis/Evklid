@@ -193,6 +193,68 @@ $d = \sqrt{48100} \approx 219{,}3\,\text{cm}$. Obe diagonali morata meriti pribl
 - Obodni kot je polovica središčnega; obodni kot nad premerom je pravi (Talesov izrek).
 - Tetivni štirikotnik: vsota nasprotnih kotov je $180^\circ$. Tangentni: $a + c = b + d$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Štirikotnik $ABCD$ je včrtan v krožnico s središčem $S$, njegova diagonala $AC$ je premer krožnice. Kot $\angle BAC$ meri $34^\circ$, središčni kot $\angle CSD$ pa $76^\circ$. Izračunaj vse štiri notranje kote štirikotnika $ABCD$.
+
+**Rešitev:**
+
+1. Kota pri $B$ in $D$ sta obodna kota nad premerom $AC$, zato sta po Talesovem izreku prava: $\angle ABC = \angle ADC = 90^\circ$.
+2. Kot $\angle CAD$ je obodni kot nad lokom $CD$, zato je polovica središčnega kota $\angle CSD$: $\angle CAD = \dfrac{76^\circ}{2} = 38^\circ$. Diagonala $AC$ razdeli kot pri $A$ na dva dela: $\angle BAD = 34^\circ + 38^\circ = 72^\circ$.
+3. Štirikotnik je tetiven, zato imata nasprotna kota vsoto $180^\circ$: $\angle BCD = 180^\circ - 72^\circ = 108^\circ$.
+4. Preverimo z vsoto kotov štirikotnika: $72^\circ + 90^\circ + 108^\circ + 90^\circ = 360^\circ$.
+5. Odgovor: kot pri $A$ meri $72^\circ$, kota pri $B$ in $D$ po $90^\circ$, kot pri $C$ pa $108^\circ$.
+
+**Točkovanje:** 1 točka za prava kota pri $B$ in $D$ (Talesov izrek), 1 točka za $\angle CAD = 38^\circ$ in $\angle BAD = 72^\circ$, 1 točka za $\angle BCD = 108^\circ$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Enakokraki trapez $ABCD$ je včrtan v krožnico s središčem $S$ in polmerom $r = 13\,\text{cm}$. Osnovnici merita $a = |AB| = 24\,\text{cm}$ in $c = |CD| = 10\,\text{cm}$, središče $S$ leži med osnovnicama. Točki $E$ in $F$ sta razpolovišči osnovnic $AB$ in $CD$.
+
+a) Izračunaj razdalji $|SE|$ in $|SF|$ ter višino trapeza. (2 točki)
+b) Izračunaj krak in obseg trapeza. Rezultata zaokroži na stotinko centimetra. (2 točki)
+c) Kolikšen delež ploščine kroga pokriva trapez? Rezultat zapiši v odstotkih in ga zaokroži na desetinko odstotka. (3 točke)
+
+**Rešitev:**
+
+1. a) Simetrala tetive gre skozi središče krožnice, zato je $SE \perp AB$. Trikotnik $AES$ je pravokoten s hipotenuzo $|SA| = r = 13\,\text{cm}$ in kateto $|AE| = 12\,\text{cm}$: $|SE| = \sqrt{13^2 - 12^2}\,\text{cm} = \sqrt{25}\,\text{cm} = 5\,\text{cm}$.
+2. a) Enako v trikotniku $DFS$: $|SF| = \sqrt{13^2 - 5^2}\,\text{cm} = \sqrt{144}\,\text{cm} = 12\,\text{cm}$.
+3. a) Točke $E$, $S$ in $F$ ležijo na skupni simetrali obeh osnovnic, $S$ pa je med osnovnicama, zato je višina $v = |SE| + |SF| = 5\,\text{cm} + 12\,\text{cm} = 17\,\text{cm}$.
+4. b) Višina iz $D$ na $AB$ ima nožišče, ki je od $A$ oddaljeno $\dfrac{a - c}{2} = \dfrac{24 - 10}{2}\,\text{cm} = 7\,\text{cm}$. Krak je hipotenuza pravokotnega trikotnika s katetama $7\,\text{cm}$ in $17\,\text{cm}$: $b = \sqrt{7^2 + 17^2}\,\text{cm} = \sqrt{338}\,\text{cm} \approx 18{,}385\,\text{cm} \approx 18{,}38\,\text{cm}$.
+5. b) Obseg: $o = a + c + 2b = (24 + 10 + 2\sqrt{338})\,\text{cm} \approx 70{,}770\,\text{cm} \approx 70{,}77\,\text{cm}$.
+6. c) Ploščina trapeza: $\dfrac{(a + c)\, v}{2} = \dfrac{(24 + 10) \cdot 17}{2}\,\text{cm}^2 = 289\,\text{cm}^2$.
+7. c) Ploščina kroga: $\pi r^2 = 169\pi\,\text{cm}^2 \approx 530{,}93\,\text{cm}^2$.
+8. c) Delež: $\dfrac{289}{169\pi} \approx 0{,}5443$, torej približno $54{,}4\,\%$.
+9. Odgovor: a) $|SE| = 5\,\text{cm}$, $|SF| = 12\,\text{cm}$, višina meri $17\,\text{cm}$; b) krak meri približno $18{,}38\,\text{cm}$, obseg približno $70{,}77\,\text{cm}$; c) trapez pokriva približno $54{,}4\,\%$ kroga.
+
+**Točkovanje:** a) 1 točka za $|SE| = 5\,\text{cm}$ in $|SF| = 12\,\text{cm}$, 1 točka za $v = 17\,\text{cm}$; b) 1 točka za krak $b \approx 18{,}38\,\text{cm}$ in 1 točka za obseg $o \approx 70{,}77\,\text{cm}$; c) 1 točka za ploščino trapeza $289\,\text{cm}^2$, 1 točka za ploščino kroga $169\pi\,\text{cm}^2 \approx 530{,}93\,\text{cm}^2$ in 1 točka za delež približno $54{,}4\,\%$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Dokaži, da je obodni kot polovica središčnega kota nad istim lokom, kadar središče krožnice leži znotraj obodnega kota.
+---
+Naj bo $S$ središče krožnice, $A$ in $B$ krajišči loka in $C$ oglišče obodnega kota $\varphi = \angle ACB$. Premica $CS$ naj krožnico seka še v točki $D$. Trikotnika $SAC$ in $SBC$ sta enakokraka, ker sta $SA$, $SB$ in $SC$ polmeri, zato je $\angle SAC = \angle SCA = \varphi_1$ in $\angle SBC = \angle SCB = \varphi_2$. Kot $\angle ASD$ je zunanji kot trikotnika $SAC$, zato je enak vsoti nenaležnih notranjih kotov, $2\varphi_1$; enako je $\angle BSD = 2\varphi_2$. Ker leži $S$ znotraj obodnega kota, je $\varphi = \varphi_1 + \varphi_2$ in središčni kot $\alpha = \angle ASB = \angle ASD + \angle BSD = 2\varphi_1 + 2\varphi_2 = 2\varphi$, torej je obodni kot polovica središčnega.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Definiraj tetivni štirikotnik in utemelji, zakaj je vsota njegovih nasprotnih kotov $180^\circ$.
+---
+Tetivni štirikotnik je štirikotnik, ki mu lahko očrtamo krožnico, torej vsa štiri oglišča ležijo na eni krožnici. Nasprotna kota, na primer pri $A$ in $C$, sta obodna kota nad lokoma, ki skupaj sestavljata celo krožnico. Središčna kota teh dveh lokov imata vsoto $360^\circ$. Ker je obodni kot polovica središčnega, imata nasprotna kota vsoto $180^\circ$. Tetivna sta na primer pravokotnik in enakokraki trapez.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Izpelji formulo za ploščino trapeza z osnovnicama $a$ in $c$ ter višino $v$.
+---
+Trapezu dodamo enak trapez, zasukan za $180^\circ$ okoli razpolovišča enega kraka. Skupaj sestavita paralelogram z osnovnico $a + c$ in višino $v$. Ploščina paralelograma je $(a + c) \cdot v$, trapez pa je njegova polovica, zato je $S = \dfrac{(a + c)\, v}{2}$. Ker je srednjica $m = \dfrac{a + c}{2}$, velja tudi $S = m \cdot v$.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Vzemimo pravokotnik s stranicama $a = 9\,\text{cm}$ in $b = 12\,\text{cm}$ ter mu očrtajmo krožnico.
@@ -278,3 +340,19 @@ m | srednjica trapeza | m = \frac{a + c}{2} | |
 \varphi | obodni kot | \varphi = \frac{\alpha}{2} | | polovica središčnega kota nad istim lokom
 A, B, C, D | oglišča štirikotnika ABCD | | | v nalogi s krogom točke na krožnici
 :::
+
+<<RACUN
+vrednost: 76/2 | 38
+vrednost: 34+38 | 72
+vrednost: 180-72 | 108
+vrednost: 72+90+108+90 | 360
+vrednost: sqrt(13^2-12^2) | 5
+vrednost: sqrt(13^2-5^2) | 12
+vrednost: 5+12 | 17
+vrednost: (24-10)/2 | 7
+vrednost: sqrt(7^2+17^2) | 18.38
+vrednost: 24+10+2*sqrt(338) | 70.77
+vrednost: (24+10)*17/2 | 289
+vrednost: 169*pi | 530.93
+vrednost: 289/(169*pi)*100 | 54.4
+>>
