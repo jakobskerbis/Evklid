@@ -7,7 +7,7 @@ import { sameSubject } from "./subjects.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
-import { CONTEST, TRAINING_TASKS, isCompetitionPath } from "./competition.js";
+import { CONTEST, TRAINING_TASKS, isCompetitionPath, topicsForYear } from "./competition.js";
 import { isExamPath, mockPlan, scaledScore, examGrade } from "./exams.js";
 import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
@@ -127,9 +127,12 @@ export class Progress {
   }
 
   // ---------- pregled učne poti ----------
-  pathView(studentId, pathKey) {
+  // year (leto šolanja, games.js schoolYear): pri tekmovalni poti samo teme za učenčev razred (competition.js MIN_YEAR).
+  pathView(studentId, pathKey, year = null) {
     const path = getPath(pathKey);
     if (!path) return null;
+    const keep =
+      year && isCompetitionPath(pathKey) ? new Set(topicsForYear(path.units.flatMap((u) => u.topics.map((t) => t.id)), year)) : null;
     const states = Object.fromEntries(
       this.db
         .prepare("SELECT * FROM topic_state WHERE student_id = ? AND topic_id LIKE ?")
@@ -138,8 +141,10 @@ export class Progress {
     );
     const now = nowSql();
     const ui = this.uiLang(studentId);
-    const units = path.units.map((u) => {
-      const topics = u.topics.map((t0) => {
+    const units = path.units.flatMap((u) => {
+      const own = keep ? u.topics.filter((t) => keep.has(t.id)) : u.topics;
+      if (!own.length) return [];
+      const topics = own.map((t0) => {
         const t = localTopic(t0, ui);
         const s = states[t.id] || {};
         return {
@@ -155,14 +160,14 @@ export class Progress {
       });
       const gated = topics.filter((t) => t.practice);
       const relevant = gated.length ? gated : topics;
-      return {
+      return [{
         title: localUnitTitle(u, ui),
         topics,
         hasPractice: gated.length > 0,
         started: topics.some((t) => t.status !== "new"),
         mastered: relevant.every((t) => t.status === "mastered"),
         progress: relevant.filter((t) => t.status === "mastered").length / relevant.length,
-      };
+      }];
     });
     // Brez ključavnic (j, 31. 10. 2026): vsak sklop je vedno odprt. Sklop, pred katerim prejšnji sklop z vajami
     // še ni osvojen in ga učenec še ni začel, je »naprej« (ahead): pot zanj priporoči najprej temo iz prejšnjega
@@ -487,9 +492,10 @@ export class Progress {
   // ---------- tekmovanja ----------
   // Tekmovalni trening: prepletene naloge iz vseh tem tekmovalne poti. Teme, ki se
   // jih učenec že uči, pridejo večkrat; težavnost se prilagaja kot pri vadnici.
-  startCompetition(studentId, pathKey) {
+  // year: leto šolanja učenca; teme samo do njegovega razreda (competition.js topicsForYear).
+  startCompetition(studentId, pathKey, year = null) {
     if (!isPrepPath(pathKey)) return null;
-    const view = this.pathView(studentId, pathKey);
+    const view = this.pathView(studentId, pathKey, year);
     const topics = view?.units.flatMap((u) => u.topics).filter((t) => t.practice) || [];
     if (!topics.length) return null;
     const open = this.openSession(studentId, "tek", (x) => x.params.path === pathKey);
@@ -518,10 +524,12 @@ export class Progress {
 
   // Poskusno tekmovanje: 10 nalog iz različnih tem, od lažjih k težjim, na čas,
   // en poskus, brez namigov. Rezultat (točke) je viden šele na koncu.
-  startContest(studentId, pathKey) {
+  startContest(studentId, pathKey, year = null) {
     if (!isPrepPath(pathKey)) return null;
     const path = getPath(pathKey);
-    const topics = path.units.flatMap((u) => u.topics).filter((t) => hasGenerator(t.id)).map((t) => t.id);
+    const all = path.units.flatMap((u) => u.topics).filter((t) => hasGenerator(t.id)).map((t) => t.id);
+    // Tekmovanje: samo teme do učenčevega razreda (kot kategorije po razredih pri Kenguruju in Vegovem).
+    const topics = isCompetitionPath(pathKey) ? topicsForYear(all, year) : all;
     if (!topics.length) return null;
     const open = this.openSession(studentId, "contest", (x) => x.params.path === pathKey);
     if (open) {
