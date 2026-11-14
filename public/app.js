@@ -589,6 +589,9 @@ function closeByEsc() {
   document.body.dispatchEvent(ev);
   return ev.defaultPrevented || sig() !== before;
 }
+// Telefon: spodnja vrstica je v postavitvi, tudi ko se na zaslonu za branje (klepet, tema, kalkulator) umakne. Takrat je
+// position: fixed (touch.css) in offsetParent je vedno null, zato beremo display.
+const tabbarShown = () => getComputedStyle($("#tabbar")).display !== "none";
 // En korak Nazaj: zapre najvišjo plast ali odpre pogled nad trenutnim. Vrne false, ko na Učni poti ni česa zapreti.
 function backStep(wasOverlay) {
   // Okna in meniji: Nazaj jih le zapre, pogled ostane.
@@ -618,6 +621,8 @@ function backStep(wasOverlay) {
     closePad();
     return true;
   }
+  // Plast v kalkulatorju (plošča funkcij ali konstant, meni vrstice grafa, povečan graf): Nazaj zapre samo njo.
+  if (calcBack()) return true;
   if (calcOverlayOpen()) {
     closeCalcOverlay({ fromBack: true });
     return true;
@@ -638,7 +643,7 @@ function backStep(wasOverlay) {
     startTour.end?.(); // Nazaj zapre vodič (kot Esc ali »Preskoči«)
     return true;
   }
-  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent && $("#tabbar").offsetParent) {
+  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent && tabbarShown()) {
     setSidebar(false); // seznam pogovorov na telefonu
     return true;
   }
@@ -648,9 +653,10 @@ function backStep(wasOverlay) {
   if (currentView === "scan" && scanBack()) return true;
   if (closeByEsc()) return true;
   if (currentView === "path") return false;
-  const subMe = meView(currentView) && !["me", "graph"].includes(currentView);
-  // Telefon: s podstrani »Jaz« nazaj na »Jaz«. Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
-  const up = subMe && $("#tabbar").offsetParent ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  const subMe = meView(currentView) && currentView !== "me";
+  // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, kamor vodi gumb ← v njegovi glavi).
+  // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
+  const up = subMe && tabbarShown() ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {
     showView(up); // zapis v zgodovini doda showView (syncHistory)
     return true;
@@ -4425,8 +4431,15 @@ try {
 } catch {}
 const calcTools = {};
 let calcP = null; // grafični kalkulator
+let calcShownTool = null; // orodje, ki je trenutno prikazano (za tipko Nazaj)
 function calcOverlayOpen() {
   return !$("#graph-overlay").hidden;
+}
+// Tipka Nazaj ali Esc: odprto ploščo ali meni v prikazanem orodju zapre orodje samo (back() v sci.js, calc.js).
+function calcBack() {
+  const tool = calcShownTool;
+  if (!tool?.back || !(calcOverlayOpen() || currentView === "graph")) return false;
+  return !!tool.root.isConnected && !tool.root.hidden && !!tool.back();
 }
 function calcSlot() {
   return calcOverlayOpen() ? $("#graph-overlay-body") : $("#graph-slot");
@@ -4538,6 +4551,7 @@ async function setCalcMode(mode) {
     if (calcMode !== mode) return;
   }
   calcShown.add(tool.root);
+  calcShownTool = tool;
   showCalcRoot(calcSlot(), tool.root);
   tool.resize?.();
   prebuildCalc();
@@ -4624,7 +4638,7 @@ function closeCalcOverlay({ fromBack = false } = {}) {
 }
 $("#graph-close").addEventListener("click", () => closeCalcOverlay());
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && calcOverlayOpen() && !document.querySelector(".gc-pop:not([hidden])")) closeCalcOverlay();
+  if (e.key === "Escape" && calcOverlayOpen() && !e.defaultPrevented && !calcBack()) closeCalcOverlay();
 });
 // gumbi »Kalkulator« v Učni poti, vadnici in Inštruktorju
 document.querySelectorAll(".calc-open").forEach((b) =>
