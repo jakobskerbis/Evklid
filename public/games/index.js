@@ -269,6 +269,14 @@ function renderPortal() {
   if (filter.kind === "kid" && !kidEngines.length) filter.kind = "all";
   const kinds = ENGINES.filter((e) => filter.kind === "all" || e.id === filter.kind || (filter.kind === "kid" && kidEngines.includes(e.id)));
   const match = (c, e) => !q || `${conceptName(c)} ${areaName(c.area)} ${kindName(e)}`.toLowerCase().includes(q);
+  // Predmeti glede na stopnjo (j 2026-11-14): le predmeti z igrami za učenčevo stopnjo (pravilo »Zate«),
+  // gimnazijec npr. ne vidi Spoznavanja okolja. Brez profila vsi; iskanje še vedno najde vse igre.
+  const subjects = ctx.getStudent() ? SUBJECTS.filter((x) => CONCEPTS.some((c) => c.subject === x && forYou(c))) : SUBJECTS;
+  if (!subjects.length) subjects.push(...SUBJECTS);
+  if (!subjects.includes(filter.subject)) {
+    filter.subject = subjects.includes("MAT") ? "MAT" : subjects[0];
+    if (!["you", "all"].includes(filter.area)) filter.area = "you";
+  }
   // Iskanje gre čez vse predmete, sicer le izbrani predmet.
   // »Zate« brez iger za ta predmet (npr. fakultetni predmet v OŠ) → vsa področja predmeta.
   const anyForYou = CONCEPTS.some((c) => c.subject === filter.subject && forYou(c));
@@ -323,7 +331,7 @@ function renderPortal() {
         <label class="gm-search">${icon("search")}<input type="search" value="${esc(filter.q)}" placeholder="${esc(t("games.search"))}" aria-label="${esc(t("games.search"))}"></label>
       </div>
       ${ctx.getStudent() && !q ? dailyCard(daily, { t, lang: ctx.currentLang(), level: curDailyLevel(), suggested: suggestedDaily() }) : ""}
-      ${SUBJECTS.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${SUBJECTS.map((x) => chip(x, t(`subj.${x}`), filter.subject === x)).join("")}</div>` : ""}
+      ${subjects.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${subjects.map((x) => chip(x, t(`subj.${x}`), filter.subject === x)).join("")}</div>` : ""}
       <div class="chip-row gm-areas" role="group" aria-label="${esc(t("games.areas"))}">
         ${chip("you", t("games.forYou"), filter.area === "you")}${chip("all", t("games.all"), filter.area === "all")}
         ${AREAS.filter((a) => a[3] === filter.subject).map(([id]) => chip(id, areaName(id), filter.area === id)).join("")}
