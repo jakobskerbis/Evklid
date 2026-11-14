@@ -25,7 +25,8 @@ test("D2 poraba danes: dnevna meja močnejšega modela ne bere cele tabele usage
   assert.ok(sql, "deepToday bere usage");
   const nacrt = prepare(`EXPLAIN QUERY PLAN ${sql}`).all(s.id, "%x%").map((r) => r.detail).join(" | ");
   assert.doesNotMatch(nacrt, /SCAN usage/, nacrt);
-  assert.match(nacrt, /SEARCH usage USING INDEX/, nacrt);
+  // Razpon nad created_at mora biti v načrtu tudi z indeksom (student_id, created_at) iz D1 (pregled 3).
+  assert.match(nacrt, /SEARCH usage USING INDEX \w+ \((student_id=\? AND )?created_at>\? AND created_at<\?\)/, nacrt);
 });
 
 test("D2 poraba danes: šteje samo današnji dan (UTC), tudi zapise v obliki ISO", () => {
