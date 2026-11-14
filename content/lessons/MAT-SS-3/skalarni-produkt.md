@@ -61,6 +61,18 @@ $$\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$$
 
 Za računanje velja še: $\vec a \cdot \vec b = \vec b \cdot \vec a$, $\vec a \cdot (\vec b + \vec c) = \vec a \cdot \vec b + \vec a \cdot \vec c$ in $(k\vec a) \cdot \vec b = k(\vec a \cdot \vec b)$.
 
+**Kosinusni izrek iz skalarnega produkta.** V trikotniku $ABC$ vzemi vektorja iz oglišča $C$: $\vec a = \overrightarrow{CB}$ in $\vec b = \overrightarrow{CA}$. Njuni dolžini sta stranici $a$ in $b$, oklepata pa kot $\gamma$. Tretja stranica je $\vec a - \vec b = \overrightarrow{AB}$ z dolžino $c$. Kvadrat dolžine je skalarni produkt vektorja s samim seboj:
+
+$$|\vec a - \vec b|^2 = (\vec a - \vec b) \cdot (\vec a - \vec b)$$
+
+$$(\vec a - \vec b) \cdot (\vec a - \vec b) = \vec a \cdot \vec a - 2\,\vec a \cdot \vec b + \vec b \cdot \vec b$$
+
+Vstavimo $\vec a \cdot \vec a = a^2$, $\vec b \cdot \vec b = b^2$ in $\vec a \cdot \vec b = ab\cos\gamma$ ter dobimo kosinusni izrek:
+
+$$c^2 = a^2 + b^2 - 2ab\cos\gamma$$
+
+Pri $\gamma = 90^\circ$ je skalarni produkt $0$ in ostane Pitagorov izrek. Člen $-2ab\cos\gamma$ je torej dvakratni skalarni produkt z minusom.
+
 V simulaciji spodaj (»Skalarni produkt in projekcija«) postavi $\vec a = (3, 1)$ in vleci konico $\vec b$, dokler skalarni produkt ni $0$. Opazi, da projekcija takrat izgine in da $\vec b$ stoji pravokotno na $\vec a$.
 
 :::premisli
@@ -150,6 +162,23 @@ Koliko je $t$? Preveri tudi s produktom.
 $3t = -24$, zato $t = -8$. Preizkus: $4 \cdot 6 + 3 \cdot (-8) = 24 - 24 = 0$. Pešpot ima smer $(6, -8)$.
 :::
 
+### Primer 5: dolžina razlike vektorjev
+
+Vektorja $\vec a$ in $\vec b$ z dolžinama $3$ in $5$ oklepata kot $120^\circ$. Izračunaj dolžino vektorja $\vec a - \vec b$, torej tretjo stranico trikotnika, ki ga vektorja določata.
+
+**Podatki:** $|\vec a| = 3$, $|\vec b| = 5$, $\varphi = 120^\circ$
+**Iščemo:** $|\vec a - \vec b|$
+
+:::formula
+$|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$, $\quad \vec a \cdot \vec b = |\vec a|\,|\vec b|\cos\varphi$
+:::
+
+**Rešitev:**
+
+1. Skalarni produkt: $\vec a \cdot \vec b = 3 \cdot 5 \cdot (-0{,}5) = -7{,}5$. Kot je top: $\cos 120^\circ = -0{,}5$.
+2. Kvadrat dolžine: $|\vec a - \vec b|^2 = 9 - 2 \cdot (-7{,}5) + 25 = 49$. Minus krat minus da plus, zato je stranica daljša kot pri pravem kotu.
+3. Odgovor: $|\vec a - \vec b| = \sqrt{49} = 7$. Enako da kosinusni izrek pri $\gamma = 120^\circ$.
+
 ## Pogoste napake
 
 - **Rezultat zapišeš kot vektor.** Kdor računa $(3, 4) \cdot (5, -12) = (15, -48)$, je komponente zmnožil, ni pa jih seštel. Skalarni produkt je eno samo število: $15 + (-48) = -33$.
@@ -166,6 +195,7 @@ $3t = -24$, zato $t = -8$. Preizkus: $4 \cdot 6 + 3 \cdot (-8) = 24 - 24 = 0$. P
 - Kot: $\cos\varphi = \dfrac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$, nato $\arccos$.
 - Predznak: pozitiven pri ostrem, $0$ pri pravem, negativen pri topem kotu.
 - Neničelna vektorja sta pravokotna natanko tedaj, ko je $\vec a \cdot \vec b = 0$. Velja $\vec a \cdot \vec a = |\vec a|^2$.
+- Kosinusni izrek: iz $|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$ sledi $c^2 = a^2 + b^2 - 2ab\cos\gamma$.
 
 ## Drugače: Z analogijo
 
@@ -221,6 +251,12 @@ Fiziki temu rečejo **delo** sile: $\vec F \cdot \vec s = |\vec F|\,|\vec s|\cos
 + $135^\circ$
 > $\vec a \cdot \vec b = -6$, $|\vec a| = 2\sqrt2$, $|\vec b| = 3$, $\cos\varphi = \dfrac{-6}{6\sqrt2} \approx -0{,}707$, zato $\varphi = 135^\circ$.
 
+<<RACUN
+vrednost: 3*5*cos(120°) | -7.5
+vrednost: 9-2*(-7.5)+25 | 49
+vrednost: sqrt(3^2+5^2-2*3*5*cos(120°)) | 7
+>>
+
 :::simboli
 \vec a, \vec b | vektorja | |
 \vec c | smer ceste (primer 4); v pravilih računanja poljuben tretji vektor | |
@@ -234,4 +270,7 @@ a_x, a_y, a_z | komponente vektorja $\vec a$ | |
 b_x, b_y, b_z | komponente vektorja $\vec b$ | |
 A, B, C | kraji (točke) na zemljevidu | | km
 t | neznana komponenta smeri pešpoti | |
+a, b | dolžini vektorjev $\vec a$ in $\vec b$ (stranici trikotnika) | | | v kosinusnem izreku
+c | tretja stranica trikotnika, dolžina $\vec a - \vec b$ | c^2 = a^2 + b^2 - 2ab\cos\gamma |
+\gamma | kot trikotnika pri $C$, med $\vec a$ in $\vec b$ | |
 :::
