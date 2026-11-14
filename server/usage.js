@@ -204,7 +204,8 @@ export class Usage {
     const now = Date.now();
     if (!this.shareCache || now - this.shareCache.at > SHARE_TTL_MS) {
       const ids = this.db
-        .prepare("SELECT DISTINCT student_id AS id FROM usage WHERE student_id IS NOT NULL AND kind NOT IN ('reuse','hint') AND created_at >= datetime('now','-30 days')")
+        // INDEXED BY (D1): samo zadnjih 30 dni, ne vsa zgodovina prek idx_usage_student.
+        .prepare("SELECT DISTINCT student_id AS id FROM usage INDEXED BY idx_usage WHERE student_id IS NOT NULL AND kind NOT IN ('reuse','hint') AND created_at >= datetime('now','-30 days')")
         .all()
         .map((r) => r.id);
       let sum = 0;
