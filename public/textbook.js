@@ -8,6 +8,7 @@ import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
 import { jeFaks } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
+import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -287,7 +288,7 @@ async function renderHome() {
       </div>
       ${tb.browse ? "" : `<button type="button" class="text-btn tb-browse" id="tb-browse">${ic("library")}${esc(t("tbk.browse"))}</button>`}
       <div class="tb-filters"${tb.browse ? "" : " hidden"}>
-        <div class="seg" role="tablist" aria-label="${esc(t("set.subject"))}">${subjects
+        <div class="seg" role="tablist" aria-label="${esc(t("set.subject"))}">${predmetiNaRavni(subjects, tb.books, book)
           .map(([k, v]) => `<button type="button" role="tab" data-subj="${esc(k)}" class="${k === tb.subject ? "active" : ""}" aria-selected="${k === tb.subject}">${esc(v)}</button>`)
           .join("")}</div>
         ${books.length > 1 ? `<div class="seg" role="tablist" aria-label="${esc(t("tbk.level"))}">${books
@@ -324,8 +325,9 @@ async function renderHome() {
   });
   box.querySelectorAll("[data-subj]").forEach((b) =>
     b.addEventListener("click", () => {
+      const raven = tb.books.find((x) => x.key === tb.book)?.school;
       tb.subject = b.dataset.subj;
-      tb.book = null;
+      tb.book = knjigaNaRavni(tb.books, tb.subject, raven);
       tb.group = null;
       renderHome();
     }),
