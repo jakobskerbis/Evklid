@@ -55,7 +55,7 @@ for (const d of SAMO) if (!DELI.includes(d)) throw new Error(`neznan del »${d}�
 const HITRO = args.includes("--hitro");
 const STOPNJE = (arg("--stopnje") || "1,10,50").split(",").map(Number);
 const N_UPORABNIKOV = Math.max(Number(arg("--uporabniki")) || 50, ...STOPNJE);
-// Obremenitev (D6): stopnje sočasnih učencev, trajanje stopnje, meje cgroup, premor med dejanji učenca, zamik kosov
+// Obremenitev (D6): stopnje sočasnih učencev (isti --stopnje kot pri poteh; z --samo obremenitev privzeto 20,40,60,80), trajanje stopnje, meje cgroup, premor med dejanji učenca, zamik kosov
 // preizkusnega odgovora (server/claude.js mockReply: 6 znakov na kos).
 const O_STOPNJE = (arg("--stopnje") || "20,40,60,80").split(",").map(Number);
 const O_TRAJANJE_S = Number(arg("--trajanje")) || (HITRO ? 20 : 120);
@@ -88,6 +88,13 @@ const LEKCIJA = "MAT-OS-8/algebrski-izrazi";
 const SLIKA_PNG = fs.readFileSync(path.join(ROOT, "assets", `${BRAND.slug}.png`)); // 342 KB, kot fotografija naloge
 const SLIKA = `data:image/png;base64,${SLIKA_PNG.toString("base64")}`;
 const log = (...a) => console.error(`[meritev ${new Date().toISOString().slice(11, 19)}]`, ...a);
+// Ctrl-C ali ukinitev: brez tega bi »finally« na koncu ne tekel in začasna mapa bi ostala (strežniki so v isti
+// skupini procesov in dobijo isti signal; prazno skupino cgroup pobriše naslednji zagon).
+for (const sig of ["SIGINT", "SIGTERM"])
+  process.once(sig, () => {
+    fs.rmSync(TMP, { recursive: true, force: true });
+    process.exit(130);
+  });
 
 // Okolje strežnika: brez ključev in brez nastavitev iz lupine (tudi s predpono starega imena, brand.json → legacy).
 const PREDPONE = [BRAND.env, ...(BRAND.legacy || []).map((l) => l.env)].map((p) => `${p}_`);
@@ -406,6 +413,14 @@ async function pripraviUporabnike(seja, n) {
   const { seal, sealJson } = await import(pathToFileURL(path.join(ROOT, "server", "crypto-polje.js")).href);
   const db = new DatabaseSync(seja.dbFile);
   db.exec("PRAGMA busy_timeout = 10000");
+  try {
+    return await pripraviUporabnikeV(seja, n, db, seal, sealJson);
+  } finally {
+    db.close();
+  }
+}
+
+async function pripraviUporabnikeV(seja, n, db, seal, sealJson) {
   const uporabniki = [];
   const ena = async (i) => {
     const u = new Odjemalec(seja.base);
@@ -443,7 +458,6 @@ async function pripraviUporabnike(seja, n) {
     }
   }
   db.exec("COMMIT");
-  db.close();
   return uporabniki;
 }
 
@@ -1259,7 +1273,7 @@ const ponastaviVprasanja = (db) => {
 async function stopnjaObremenitve(s, cg, c, db) {
   const ziv = () => s.stanje().konec === null;
   await ukazRok(s, { meritev: "ponastavi" });
-  ponastaviVprasanja(db);
+  if (ponastaviVprasanja(db) < 0) log("!!! question_log ni ponastavljen (morebitni 429 so zaradi dnevne meje)");
   const oom0 = cg ? cgPolja(cgBeri(cg, "memory.oom_control")).oom_kill : null;
   const cpu0 = cg ? cgPolja(cgBeri(cg, "cpu.stat")) : null;
   const ponastavljenMax = cg ? cgPisi(cg, "memory.max_usage_in_bytes", "0") : false;

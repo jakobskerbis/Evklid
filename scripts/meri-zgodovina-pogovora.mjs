@@ -4,6 +4,10 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { pathToFileURL } from "node:url";
 process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
+// Nikoli pravi model (tudi ko je ključ v lupini): preizkusni način brez preverjanja v živo.
+process.env.EVKLID_MOCK = "1";
+process.env.EVKLID_LIVE_CHECK = "0";
+delete process.env.ANTHROPIC_API_KEY;
 const ROOT = path.resolve(process.argv[2] || path.join(path.dirname(new URL(import.meta.url).pathname), "..")); // za »prej«: koren starejše kopije
 const { openDb } = await import(pathToFileURL(path.join(ROOT, "server/db.js")).href);
 const { createApp } = await import(pathToFileURL(path.join(ROOT, "server/app.js")).href);

@@ -4,6 +4,7 @@
 # Rezultat: artefakt »meritev-zmogljivosti« (JSON in povzetek v Markdown). Chromium z omejitvami (CPU 4×, Slow 4G prek CDP),
 # WebKit brez omejitev (CDP ni na voljo). Repozitorij je javen: brez skrivnosti, samo pravica branja, akcije pripete na SHA.
 # Namestitev Playwrighta in predpomnilniki kot v testi.yml.
+# Del »obremenitev« (D6) je samo za lokalni zagon: potrebuje koren in cgroup v1, tu bi tekel brez omejitve 512 MB.
 name: Meritev zmogljivosti
 on:
   workflow_dispatch:

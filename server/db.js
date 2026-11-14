@@ -32,11 +32,12 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   migrateLegacyDb(file);
   const db = new DatabaseSync(file);
   db.exec(`
-    PRAGMA journal_mode = WAL;
-    PRAGMA foreign_keys = ON;
     -- D6: pisanje drugega procesa (skripta v lupini Render, zunanja kopija) zaklene bazo za kratek čas. Brez čakanja
     -- (privzeto 0) strežnik takoj vrže »database is locked« (500, izgubljen odgovor); tako počaka največ 2 s.
+    -- Prvo, da velja tudi za WAL in migracije ob zagonu.
     PRAGMA busy_timeout = 2000;
+    PRAGMA journal_mode = WAL;
+    PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS students (
       id INTEGER PRIMARY KEY,
       name TEXT NOT NULL,
