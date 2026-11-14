@@ -7,7 +7,7 @@ import { isLocalRequest } from "../feedback.js";
 import express from "express";
 import { migrateAccounts } from "./schema.js";
 import { hashPassword, verifyPassword, needsRehash, fakeVerify, unusablePasswordHash, randomToken, sha256, readCookie, Sessions, setSessionCookie, clearSessionCookie, Throttle } from "./auth.js";
-import { audit, detachAudit } from "../dnevnik-dostopov.js";
+import { audit, detachAudit, ensureAuditTable } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal, auditSecret } from "../crypto-polje.js";
@@ -226,6 +226,9 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Skrbnik po e-naslovu (EVKLID_ADMIN_EMAILS) šele po potrditvi e-naslova: sicer bi se kdorkoli registriral z njim.
   const isAdminEmail = (p) => !!p?.email_verified_at && adminEmails.includes(String(p.email).toLowerCase());
+  // Točka A9: skrbniške pravice šele po kodi na e-pošto (glej skrbnik_potrditve spodaj).
+  const skrbnikKoda =
+    env.EVKLID_ADMIN_KODA === "1" || (env.EVKLID_ADMIN_KODA !== "0" && (env.NODE_ENV === "production" || /^https:/i.test(env.EVKLID_BASE_URL || "")));
 
   // Imetnik računa, mlajši od 18 let (dijak, ki je račun ustvaril sam): sme imeti samo svoj profil.
   const isMinor = (p) => {
@@ -252,7 +255,9 @@ export function mountAccounts(app, store, opts = {}) {
     verified: !!p.email_verified_at,
     // Račun s prijavo z Apple nima gesla: splet za izvoz in izbris namesto gesla ponudi nastavitev gesla.
     has_password: !p.is_guest && !String(p.password_hash || "").startsWith("none$"),
-    is_admin: !!p.is_admin || isAdminEmail(p),
+    // S kodo za skrbnika (A9) je nova seja vedno nepotrjena: odgovori prijave skrbniških delov ne obljubijo
+    // (/api/account pove po seji).
+    is_admin: !skrbnikKoda && (!!p.is_admin || isAdminEmail(p)),
     weekly_email: !!p.weekly_email,
     referral_code: p.referral_code,
     trial_ends_at: p.trial_ends_at,
@@ -900,8 +905,7 @@ export function mountAccounts(app, store, opts = {}) {
   // potrditev 12 ur za to sejo. Do takrat je skrbnik navaden starš (req.parent.is_admin = 0). Velja v produkciji
   // (https EVKLID_BASE_URL ali NODE_ENV=production) ali z EVKLID_ADMIN_KODA=1; EVKLID_ADMIN_KODA=0 jo izklopi.
   // Meja AI lastnika (isOwnerParent) ni skrbniška pravica in ostane brez kode.
-  const skrbnikKoda =
-    env.EVKLID_ADMIN_KODA === "1" || (env.EVKLID_ADMIN_KODA !== "0" && (env.NODE_ENV === "production" || /^https:/i.test(env.EVKLID_BASE_URL || "")));
+  // (skrbnikKoda je zgoraj, ob isAdminEmail)
   const SKRBNIK_KODA_MS = 10 * 60000;
   const SKRBNIK_POTRJENO_MS = 12 * 3600000;
   const SKRBNIK_POSKUSOV = 5;
@@ -1469,14 +1473,25 @@ export function mountAccounts(app, store, opts = {}) {
   });
 
   // Točka A9: koda za skrbniški dostop (6 števk na e-naslov skrbnika), največ 3 na uro; potrditev velja 12 ur za to sejo.
-  const skrbnikThrottle = new Throttle(3, 3600000);
+  // Meje so v dnevniku dostopov (audit_log), ne v pomnilniku: ponovni zagon strežnika jih ne pobriše.
+  // Največ 10 napačnih kod v 24 urah (nato ni nove kode do naslednjega dne): ugibanje ostane brez možnosti.
+  const SKRBNIK_NAPAK_DAN = 10;
+  ensureAuditTable(db);
+  const auditSteje = (parentId, action, okVal, okno) =>
+    db.prepare(`SELECT COUNT(*) AS n FROM audit_log WHERE parent_id = ? AND action = ? AND ok = ? AND at >= datetime('now', ?)`).get(parentId, action, okVal, okno).n;
+  const skrbnikPrevecNapak = (parentId) => auditSteje(parentId, "admin_code", 0, "-1 day") >= SKRBNIK_NAPAK_DAN;
   app.post("/api/account/skrbnik/koda", json, async (req, res) => {
     const p = req.parent;
     const token = readCookie(req);
     if (!p || !token) return res.status(401).json({ error: "Prijavi se.", login: true });
     if (!req.skrbnikCaka) return res.status(400).json({ error: "Potrditev ni potrebna." });
-    if (skrbnikThrottle.blocked(`s${p.id}`)) return res.status(429).json({ error: "Preveč kod. Poskusi čez eno uro." });
-    skrbnikThrottle.fail(`s${p.id}`);
+    if (p.is_guest || !p.email || !p.email_verified_at) return res.status(400).json({ error: "Račun nima potrjenega e-naslova za kodo." });
+    // Brez e-pošte (Resend) kode ni mogoče poslati: skrbnik jo izklopi z EVKLID_ADMIN_KODA=0.
+    if (!mailer.enabled) return res.status(503).json({ error: "E-pošta ni nastavljena, kode ni mogoče poslati (EVKLID_ADMIN_KODA=0 jo izklopi)." });
+    if (skrbnikPrevecNapak(p.id)) return res.status(429).json({ error: "Preveč napačnih kod. Poskusi jutri ali zamenjaj geslo." });
+    if (auditSteje(p.id, "admin_code_sent", 1, "-1 hour") >= 3) return res.status(429).json({ error: "Preveč kod. Poskusi čez eno uro." });
+    // Zapis pred pošiljanjem: vzporedne zahteve ne morejo preseči meje (pošiljanje je asinhrono).
+    audit(db, { req, parentId: p.id, action: "admin_code_sent", ok: true });
     const code = String(crypto.randomInt(0, 1000000)).padStart(6, "0");
     const th = sha256(token);
     db.prepare(
@@ -1490,7 +1505,6 @@ export function mountAccounts(app, store, opts = {}) {
     } catch {
       return res.status(502).json({ error: "Kode ni bilo mogoče poslati. Poskusi znova." });
     }
-    audit(db, { req, parentId: p.id, action: "admin_code_sent", ok: true });
     res.json({ ok: true });
   });
   app.post("/api/account/skrbnik/potrdi", json, (req, res) => {
@@ -1498,6 +1512,10 @@ export function mountAccounts(app, store, opts = {}) {
     const token = readCookie(req);
     if (!p || !token) return res.status(401).json({ error: "Prijavi se.", login: true });
     if (!req.skrbnikCaka) return res.status(400).json({ error: "Potrditev ni potrebna." });
+    if (p.is_guest || !p.email || !p.email_verified_at) return res.status(400).json({ error: "Račun nima potrjenega e-naslova za kodo." });
+    // Brez e-pošte (Resend) kode ni mogoče poslati: skrbnik jo izklopi z EVKLID_ADMIN_KODA=0.
+    if (!mailer.enabled) return res.status(503).json({ error: "E-pošta ni nastavljena, kode ni mogoče poslati (EVKLID_ADMIN_KODA=0 jo izklopi)." });
+    if (skrbnikPrevecNapak(p.id)) return res.status(429).json({ error: "Preveč napačnih kod. Poskusi jutri ali zamenjaj geslo." });
     const th = sha256(token);
     const row = db.prepare("SELECT code_hash, code_expires, tries FROM skrbnik_potrditve WHERE token_hash = ? AND parent_id = ?").get(th, p.id);
     if (!row?.code_hash || row.code_expires < Date.now() || row.tries >= SKRBNIK_POSKUSOV) return res.status(400).json({ error: "Koda je potekla. Pošlji novo." });

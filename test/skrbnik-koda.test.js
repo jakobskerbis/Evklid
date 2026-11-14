@@ -71,3 +71,25 @@ test("A9 skrbnik: koda velja 10 minut, potrditev 12 ur; navaden starš kode ne m
     assert.equal((await call("/api/account")).body.skrbnik_potrditev, undefined);
   });
 });
+
+// Pregled 3: meje so v bazi (ponovni zagon jih ne pobriše); 10 napačnih kod v 24 urah ustavi nove kode.
+// Odgovor prijave ne obljubi skrbniških delov (nova seja ni potrjena).
+test("A9 skrbnik: meje kod v bazi, 10 napačnih v 24 urah ustavi kode; prijava ne pokaže is_admin", async () => {
+  await withAccounts(ENV, async ({ call, calls, store }) => {
+    const pid = store.db.prepare("SELECT id FROM parents WHERE email = 'meja@x.si'").get().id;
+    const zapis = (action, ok) => store.db.prepare("INSERT INTO audit_log (parent_id, actor, action, ok) VALUES (?, 'parent', ?, ?)").run(pid, action, ok);
+    for (let i = 0; i < 3; i++) zapis("admin_code_sent", 1); // kot pred ponovnim zagonom strežnika
+    assert.equal((await call("/api/account/skrbnik/koda", { method: "POST" })).status, 429, "3 kode v uri (iz baze)");
+    store.db.prepare("UPDATE audit_log SET at = datetime('now', '-2 hours') WHERE action = 'admin_code_sent'").run();
+    assert.equal((await call("/api/account/skrbnik/koda", { method: "POST" })).status, 200);
+    const koda = zadnjaKoda(calls);
+    for (let i = 0; i < 10; i++) zapis("admin_code", 0);
+    const r = await call("/api/account/skrbnik/potrdi", { method: "POST", body: { code: koda } });
+    assert.equal(r.status, 429, "10 napačnih v 24 urah: tudi prava koda ne velja");
+    assert.equal((await call("/api/account/skrbnik/koda", { method: "POST" })).status, 429);
+
+    const login = await call("/api/auth/login", { method: "POST", body: { email: "meja@x.si", password: "geslo1234" } });
+    assert.equal(login.status, 200);
+    assert.equal(login.body.parent.is_admin, false, "nova seja ni potrjena");
+  });
+});
