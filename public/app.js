@@ -4576,6 +4576,7 @@ async function setCalcMode(mode) {
   calcShownTool = tool;
   showCalcRoot(calcSlot(), tool.root);
   tool.resize?.();
+  refreshBubble(); // mehurček inštruktorja se umakne s tipk ali seznama tega orodja (okna.js KEEP_CLEAR)
   prebuildCalc();
   return tool;
 }
