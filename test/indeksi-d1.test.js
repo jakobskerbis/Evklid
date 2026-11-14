@@ -8,6 +8,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+// Besedilo stavka iz izvorne kode (niz v "…" v vrstici, ki vsebuje oznako), da test preverja pravi stavek.
+const izKode = (datoteka, oznaka) => {
+  const vrstica = fs.readFileSync(new URL(`../${datoteka}`, import.meta.url), "utf8").split("\n").find((v) => v.includes(oznaka));
+  return /"(SELECT[^"]+)"/.exec(vrstica)[1];
+};
 const nacrt = (db, sql, ...args) => db.prepare(`EXPLAIN QUERY PLAN ${sql}`).all(...args).map((r) => r.detail).join(" | ");
 
 test("D1 indeksi: pogovori, poraba, naloge seje, dogodki pogovora in razredi učenca gredo prek indeksa", () => {
@@ -22,6 +27,10 @@ test("D1 indeksi: pogovori, poraba, naloge seje, dogodki pogovora in razredi uč
     ["SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1", [1], /USING (COVERING )?INDEX idx_events_conv/],
     ["SELECT mode FROM events WHERE conversation_id = ? AND message_id IS NOT NULL ORDER BY id DESC LIMIT ?", [1, 5], /USING INDEX idx_events_conv/],
     ["SELECT c.* FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.student_id = ? ORDER BY m.joined_at, c.id", [1], /SEARCH m USING (COVERING )?INDEX idx_class_members_student/],
+    // Vsote za ves mesec ali 30 dni (pregled 2): stavka iz kode ostaneta na idx_usage(created_at) in ne bereta vse
+    // zgodovine prek idx_usage_student (planer bi ga sicer izbral zaradi GROUP BY oziroma student_id IS NOT NULL).
+    [izKode("server/accounts/index.js", "GROUP BY student_id\").all"), [], /SEARCH usage USING INDEX idx_usage \(created_at>\?\)/],
+    [izKode("server/usage.js", "SELECT DISTINCT student_id AS id FROM usage"), [], /SEARCH usage USING INDEX idx_usage \(created_at>\?\)/],
   ];
   for (const [sql, args, vzorec] of primeri) {
     const n = nacrt(db, sql, ...args);
