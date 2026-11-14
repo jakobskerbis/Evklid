@@ -191,8 +191,17 @@ export class Usage {
     this.kvSet(k, Math.round(((Number(this.kvGet(k)) || 0) + v) * 100) / 100);
     return true;
   }
+  // Skupna poraba vseh učencev (D7): iz dnevnih vsot usage_dnevno (server/db.js), ne iz vseh vrstic usage.
+  // Brez tabele (baza, odprta mimo openDb) iz usage kot prej.
+  vsotaOd(od) {
+    if (this.dnevno === undefined) this.dnevno = !!this.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'usage_dnevno'").get();
+    const q = this.dnevno
+      ? "SELECT COALESCE(SUM(usd),0) AS s FROM usage_dnevno WHERE dan >= date('now', ?)"
+      : "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now', ?)";
+    return this.db.prepare(q).get(od).s;
+  }
   todayTotal() {
-    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now')").get().s;
+    return this.vsotaOd("start of day");
   }
   // Poraba iz skupnega proračuna ta mesec (brez porabe iz dokupljenega kredita), za učenca ali vse.
   baseSpent(studentId = null) {
@@ -412,8 +421,8 @@ export class Usage {
     return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE kind = ? AND created_at >= date('now')").get(kind).s;
   }
   monthTotal(studentId = null) {
-    const q = `SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')${studentId ? " AND student_id = ?" : ""}`;
-    return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
+    if (!studentId) return this.vsotaOd("start of month");
+    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month') AND student_id = ?").get(studentId).s;
   }
   // Število odgovorov zmogljivejšega modela danes; prekinjeni odgovori štejejo (sicer bi prekinitev obšla dnevno mejo).
   // D2: »danes« kot razpon nad created_at (ne date(created_at) = …), da poizvedba uporabi indeks, ne bere cele tabele.

@@ -375,6 +375,35 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     CREATE INDEX IF NOT EXISTS idx_tasks_session ON tasks(session_id);
     CREATE INDEX IF NOT EXISTS idx_events_conv ON events(conversation_id, id);
   `);
+  // D7 (hitrost, j 14. 11.): poraba AI vseh učencev po dnevih (UTC), da skupna vsota za danes in za ta mesec ni
+  // seštevanje celega meseca vrstic usage ob vsakem sporočilu (pri 1 M vrsticah ~0,3 s na vsoto, ~11 vsot na
+  // sporočilo). Vsoto vzdržujejo sprožilci ob vsakem vpisu, spremembi in brisanju v usage (tudi iz drugega procesa),
+  // zato je vedno enaka SUM(cost_usd) nad istimi vrsticami. Ob prvem zagonu se napolni iz obstoječe porabe.
+  const imaDnevno = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'usage_dnevno'").get();
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS usage_dnevno (dan TEXT PRIMARY KEY, usd REAL NOT NULL DEFAULT 0);
+      CREATE TRIGGER IF NOT EXISTS usage_dnevno_ins AFTER INSERT ON usage BEGIN
+        INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+          ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+      END;
+      CREATE TRIGGER IF NOT EXISTS usage_dnevno_del AFTER DELETE ON usage BEGIN
+        UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+      END;
+      CREATE TRIGGER IF NOT EXISTS usage_dnevno_upd AFTER UPDATE OF cost_usd, created_at ON usage BEGIN
+        UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+        INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+          ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+      END;
+    `);
+    if (!imaDnevno)
+      db.exec("INSERT INTO usage_dnevno (dan, usd) SELECT substr(created_at, 1, 10), SUM(cost_usd) FROM usage GROUP BY 1");
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
