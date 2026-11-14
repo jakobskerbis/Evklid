@@ -18,7 +18,7 @@ import {
 import { imageCallReserveUsd } from "./meje-ai.js";
 import { jeFaks } from "../public/stopnja.js";
 
-export function mountSchedule(app, store, { loadStudent, progress, usage, schedules = new Schedules(store.db), photoFn = readTimetablePhoto, fetchFn = fetch, lookup, modelCapFor = () => null } = {}) {
+export function mountSchedule(app, store, { loadStudent, progress, usage, schedules = new Schedules(store.db), photoFn = readTimetablePhoto, fetchFn = null /* samo testi; brez njega prenos .ics prek server/prenos-uporabnik.js */, lookup, modelCapFor = () => null } = {}) {
   // Pogled urnika + Priprava na test, usklajena z najbližjim testom.
   const view = (s) => {
     const v = scheduleView(schedules.get(s.id), s.settings);
@@ -129,7 +129,7 @@ export function mountSchedule(app, store, { loadStudent, progress, usage, schedu
 
   app.get("/api/students/:id/schedule/sources", async (req, res) => {
     const s = loadStudent(req, res);
-    if (s) res.json({ sources: await scheduleSources({ fetchFn, settings: s.settings }) });
+    if (s) res.json({ sources: await scheduleSources({ fetchFn: fetchFn || fetch, settings: s.settings }) }); // stalen naslov FMF
   });
 
   // Kratka ponovitev pred uro / utrditev po uri za predmet iz urnika.
