@@ -1145,9 +1145,9 @@ async function napolniVelikoBazo(dbFile) {
 // premor 0–2× toliko med dejanji): 3 sporočila inštruktorju (SSE do konca), nato fotografija, izmenično v klepetu
 // (slika 342 KB) in v skeniranje (POST /api/students/:id/scan/read). Po 9 sporočilih v pogovoru začne nov pogovor (nova
 // naloga). Dnevna meja vprašanj na profil (question_log, server/accounts/index.js dailyBlock; z naročnino ≥ 60 na dan)
-// se iz merilnika ponastavi pred vsako stopnjo, ko ni nobene zahteve v teku: strežnik ima eno povezavo z bazo brez
-// busy_timeout, zato bi zapis drugega procesa med obremenitvijo povzročil »database is locked« (500). V eni stopnji
-// učenec pri privzetih nastavitvah naredi < 35 vprašanj; morebitni 429 so šteti posebej.
+// se iz merilnika ponastavi pred vsako stopnjo, ko ni nobene zahteve v teku: strežnik ima eno povezavo z bazo in na
+// zaklep drugega procesa čaka največ 2 s (busy_timeout v server/db.js), zato tuj zapis med obremenitvijo ne sodi v
+// meritev. V eni stopnji učenec pri privzetih nastavitvah naredi < 35 vprašanj; morebitni 429 so šteti posebej.
 // Stopnje (--stopnje, privzeto 20,40,60,80) tečejo zaporedno na istem strežniku; po vsaki 5 s mirovanja (RSS po
 // stopnji: puščanje pomnilnika). Ko strežnik pade, se meritev ustavi.
 const CG = "/sys/fs/cgroup";
@@ -1316,6 +1316,8 @@ async function stopnjaObremenitve(s, cg, c, db) {
     Array.from({ length: c }, async (_, i) => {
       const u = s.uporabniki[i];
       let k = i % 4; // zamik, da fotografije niso pri vseh učencih hkrati
+      // S premorom učenci ne začnejo vsi v isti milisekundi (sicer bi začetni naval določil p95 stopnje).
+      if (O_PREMOR_MS) await pocakaj(Math.random() * 2 * O_PREMOR_MS);
       while (performance.now() < konecT && ziv()) {
         k++;
         const vrsta = k % 4 === 0 ? (u.fotografij++ % 2 ? "skeniranje" : "slika") : "besedilo";
