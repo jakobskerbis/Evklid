@@ -79,13 +79,13 @@ f: (m*m - 2)*x + m - 1 | oranžna črtkano
 podnapis: Premici sistema pri m = {m}
 :::
 
-Število rešitev sistema in lega premic se ujemata:
+Ko enačbe sistema združimo v eno enačbo $Ax = B$ (tu $A = -(m-2)(m+1)$, $B = m - 2$), se število rešitev in lega premic ujemata:
 
-| rešitve | premici | koeficient pri $x$ |
+| rešitve | premici | $Ax = B$ |
 |---|---|---|
-| ena | se sekata | $\neq 0$ |
-| nobene | vzporedni, različni | $0$, desno $\neq 0$ |
-| neskončno | sovpadata | $0$, desno $0$ |
+| ena | se sekata | $A \neq 0$ |
+| nobene | vzporedni | $A = 0$, $B \neq 0$ |
+| neskončno | sovpadata | $A = 0$, $B = 0$ |
 
 :::premisli
 Pri katerih dveh vrednostih $m$ imata premici sistema enak smerni koeficient? Napovej, kaj se zgodi z rešitvijo pri vsaki.
@@ -305,7 +305,7 @@ x | neznanka | | |
 t | čas od začetka opazovanja | | h | 
 y | druga neznanka sistema | | | 
 m | parameter | | | dano, a poljubno realno število
-A, B | koeficient in desna stran enačbe za $y$ | | | v Primeru 3: $A = 4 - m^2$, $B = 4 - 2m$
+A, B | koeficient in desna stran združene enačbe sistema | | | odvisna od parametra
 a_1, b_1, c_1 | koeficienta in prosti člen prve enačbe | | | 
 a_2, b_2, c_2 | koeficienta in prosti člen druge enačbe | | | 
 :::

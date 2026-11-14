@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Maja pripravlja orientacijski pohod. Na zemljevidu je označila tri kontrolne točke in s sledilnikom izmerila razdalje med njimi: $5\,\text{km}$, $5\,\text{km}$ in $6\,\text{km}$. Reševalci jo vprašajo dvoje: kolikšno je območje med točkami in kako daleč mora seči radijski oddajnik, ki ga postavijo enako daleč od vseh treh točk.
+Maja pripravlja orientacijski pohod. Na zemljevidu je označila tri kontrolne točke in s sledilnikom izmerila razdalje med njimi: $5\,\text{km}$, $5\,\text{km}$ in $6\,\text{km}$. Reševalci jo vprašajo dvoje: kolikšna je ploščina območja med točkami in kako daleč mora seči radijski oddajnik, ki ga postavijo enako daleč od vseh treh točk.
 
 Višine trikotnika Maja nima, kotov tudi ne. Ima samo tri stranice. Ali to zadošča? Zadošča: iz treh stranic dobiš ploščino trikotnika ter oba polmera, včrtane in očrtane krožnice.
 
@@ -15,9 +15,11 @@ Višine trikotnika Maja nima, kotov tudi ne. Ima samo tri stranice. Ali to zado�
 
 Preverimo. Trikotnik je enakokrak z osnovnico $6$, zato višina na osnovnico razpolovi osnovnico. Po Pitagorovem izreku je višina $v = \sqrt{5^2 - 3^2} = \sqrt{16} = 4$, ploščina pa $\dfrac{6 \cdot 4}{2} = 12$. Bližnjica se je zmotila. Formula $S = \dfrac{ab}{2}$ velja le, kadar sta $a$ in $b$ kateti, torej med njima leži pravi kot. Pri splošnem trikotniku potrebujemo višino, ki je pogosto ne poznamo.
 
-**2. Heronova formula.** Ploščino trikotnika s stranicami $a$, $b$, $c$ dobimo brez višine. Najprej izračunamo polobseg $s$:
+**2. Heronova formula.** Ploščino trikotnika s stranicami $a$, $b$, $c$ dobimo brez višine. Najprej izračunamo polobseg $s$, to je polovico obsega:
 
 $$s = \frac{a + b + c}{2}$$
+
+Nato ploščino dobimo s korenom:
 
 $$S = \sqrt{s(s - a)(s - b)(s - c)}$$
 
@@ -53,7 +55,7 @@ napis: 2,2; 1,4 | c = 5 | nad desno
 napis: 1,1; 0,5 | r | desno | oranžna
 :::
 
-Seštejemo ploščine treh delov: $S = \dfrac{ar}{2} + \dfrac{br}{2} + \dfrac{cr}{2} = r \cdot s$, zato
+Seštejemo ploščine treh delov: $S = \dfrac{ar}{2} + \dfrac{br}{2} + \dfrac{cr}{2} = r \cdot \dfrac{a + b + c}{2} = r \cdot s$, zato
 
 $$r = \frac{S}{s}$$
 
@@ -62,6 +64,8 @@ $$r = \frac{S}{s}$$
 $$R = \frac{abc}{4S}$$
 
 Dokaz potrebuje sinusni izrek, ki ga spoznaš v 3. letniku. Formulo zdaj uporabljamo in jo preverimo na znanem primeru.
+
+Zdaj lahko odgovorimo še na drugo vprašanje reševalcev. Oddajnik, enako oddaljen od vseh treh točk, stoji v središču očrtane krožnice: $R = \dfrac{5 \cdot 5 \cdot 6}{4 \cdot 12} = \dfrac{150}{48} = 3{,}125$. Seči mora vsaj $3{,}125\,\text{km}$ (približno $3{,}1\,\text{km}$).
 
 **5. Preizkus na trikotniku $3$, $4$, $5$.** Trikotnik na risbi je pravokoten. Polobseg je $s = 6$, Heron da $S = \sqrt{6 \cdot 3 \cdot 2 \cdot 1} = \sqrt{36} = 6$, kar se ujema s $\dfrac{3 \cdot 4}{2} = 6$. Dalje $r = \dfrac{6}{6} = 1$ (središče $I$ je res v $(1, 1)$) in $R = \dfrac{3 \cdot 4 \cdot 5}{4 \cdot 6} = 2{,}5$. To je ravno $\dfrac{c}{2}$: po Talesovem izreku je hipotenuza premer očrtane krožnice. Formuli se ujemata z vsem, kar že veš.
 
@@ -106,7 +110,7 @@ $S = \sqrt{s(s - a)(s - b)(s - c)}$, $\;r = \dfrac{S}{s}$, $\;R = \dfrac{abc}{4S
 
 1. $s = \dfrac{10 + 17 + 21}{2} = 24\,\text{km}$.
 2. $S = \sqrt{24 \cdot 14 \cdot 7 \cdot 3} = \sqrt{7056} = 84$, torej $84\,\text{km}^2$.
-3. Točka, enako oddaljena od vseh oglišč, je središče očrtane krožnice: $R = \dfrac{10 \cdot 17 \cdot 21}{4 \cdot 84} = \dfrac{3570}{336} = 10{,}625$.
+3. Točka, enako oddaljena od vseh oglišč, je središče očrtane krožnice: $R = \dfrac{10 \cdot 17 \cdot 21}{4 \cdot 84} = \dfrac{3570}{336} = 10{,}625$. Ker je $21^2 = 441 > 10^2 + 17^2 = 389$, je trikotnik topokoten in oddajnik stoji zunaj trikotnika koč.
 4. Največji krog v trikotniku je včrtani: $r = \dfrac{84}{24} = 3{,}5$.
 5. Odgovor: oddajnik mora seči vsaj $10{,}625\,\text{km}$ (približno $10{,}6\,\text{km}$); največje krožno območje ima polmer $3{,}5\,\text{km}$.
 
@@ -132,7 +136,7 @@ Dolžine v naravi so $1000$-krat večje. Nato $S = \sqrt{s(s - a)(s - b)(s - c)}
 
 ### Primer 4 – zdaj ti
 
-Turistična pot povezuje tri razglednike, oddaljene $5\,\text{km}$, $12\,\text{km}$ in $13\,\text{km}$. Izračunaj polmera $r$ in $R$.
+Turistična pot povezuje tri razglednike, med seboj oddaljene $5\,\text{km}$, $12\,\text{km}$ in $13\,\text{km}$. Izračunaj polmera $r$ in $R$.
 
 **Podatki:** $a = 5\,\text{km}$, $b = 12\,\text{km}$, $c = 13\,\text{km}$
 **Iščemo:** $r$ in $R$
@@ -155,7 +159,7 @@ $r = \dfrac{30}{15} = 2\,\text{km}$ in $R = \dfrac{5 \cdot 12 \cdot 13}{4 \cdot 
 
 ## Pogoste napake
 
-**Polovica produkta dveh stranic.** $S = \dfrac{ab}{2}$ velja samo za kateti pravokotnega trikotnika. Pri trikotniku $5$, $5$, $6$ da $12{,}5$ namesto $12$. Če kota ne poznaš, uporabi Heronovo formulo.
+**Polovica produkta dveh stranic.** $S = \dfrac{ab}{2}$ velja samo za kateti pravokotnega trikotnika. Pri trikotniku $5$, $5$, $6$ da $12{,}5$ namesto $12$. Če ne veš, ali je med stranicama pravi kot, uporabi Heronovo formulo.
 
 **Obseg namesto polobsega.** Kdor v formulo vstavi $o = a + b + c$, dobi pri trikotniku $3$, $4$, $5$ napačno $\sqrt{12 \cdot 9 \cdot 8 \cdot 7} \approx 77{,}8$ namesto $6$. V formuli je vedno $s = \dfrac{o}{2}$. Enako pri $r$: $\dfrac{S}{o}$ je napačno in da polovico pravega polmera.
 
@@ -182,17 +186,17 @@ Heron iz Aleksandrije je v 1. stoletju v knjigi *Metrika* zapisal pravilo, ki po
 
 ## Drugače: Korak za korakom s številkami
 
-Vse tri formule za trikotnik $a = 10$, $b = 10$, $c = 12$:
+Vse tri formule za trikotnik $a = 13$, $b = 14$, $c = 15$:
 
 | korak | račun | rezultat |
 |---|---|---|
-| polobseg | $\frac{10 + 10 + 12}{2}$ | $s = 16$ |
-| razlike | $16 - 10$, $16 - 10$, $16 - 12$ | $6$, $6$, $4$ |
-| ploščina | $\sqrt{16 \cdot 6 \cdot 6 \cdot 4}$ | $S = 48$ |
-| včrtana | $\frac{48}{16}$ | $r = 3$ |
-| očrtana | $\frac{1200}{192}$ | $R = 6{,}25$ |
+| polobseg | $\frac{13 + 14 + 15}{2}$ | $s = 21$ |
+| razlike | $21 - 13$, $21 - 14$, $21 - 15$ | $8$, $7$, $6$ |
+| ploščina | $\sqrt{21 \cdot 8 \cdot 7 \cdot 6}$ | $S = 84$ |
+| včrtana | $\frac{84}{21}$ | $r = 4$ |
+| očrtana | $\frac{13 \cdot 14 \cdot 15}{4 \cdot 84}$ | $R = 8{,}125$ |
 
-Kontrola z višino: višina na osnovnico $12$ je $\sqrt{10^2 - 6^2} = 8$, ploščina $\dfrac{12 \cdot 8}{2} = 48$. Ujema se.
+Kontrola z višino: višina $12$ na stranico $14$ jo razdeli na $5$ in $9$, saj sta $5$, $12$, $13$ in $9$, $12$, $15$ pravokotna trikotnika. Ploščina je $\dfrac{14 \cdot 12}{2} = 84$. Ujema se.
 
 ## Preveri se
 
@@ -279,4 +283,10 @@ vrednost: 5*12*13/(4*30) | 6.5
 vrednost: sqrt(16*6*6*4) | 48
 vrednost: 10*10*12/(4*48) | 6.25
 vrednost: sqrt(21*14*6*1) | 42
+vrednost: 5*5*6/(4*12) | 3.125
+vrednost: sqrt(21*8*7*6) | 84
+vrednost: 13*14*15/(4*84) | 8.125
+vrednost: 84/21 | 4
+vrednost: sqrt(13^2-5^2) | 12
+vrednost: sqrt(15^2-9^2) | 12
 >>

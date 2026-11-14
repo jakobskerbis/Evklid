@@ -21,7 +21,7 @@ stanje: osnutek
   - (višja raven) $a^n + b^n$ ima faktor $a + b$ le pri lihem $n$
 - Sode potence
   - (višja raven) $a^2 + b^2$, $a^4 + b^4$ brez faktorja $a \pm b$
-  - (višja raven) najprej razlika kvadratov: $x^6 - 1$
+  - najprej razlika kvadratov: $x^6 - 1$
 - Deljivost
   - $2^{10} - 1 = 31 \cdot 33$
   - $1001 = 7 \cdot 11 \cdot 13$

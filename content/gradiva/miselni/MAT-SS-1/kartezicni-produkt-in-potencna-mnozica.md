@@ -22,6 +22,6 @@ stanje: osnutek
   - $\mathcal{P}(A)$: vse podmnožice množice $A$
   - vedno vsebuje $\emptyset$ in $A$
   - elementi so množice, npr. $\{1\}$, ne $1$
-- Moč potenčne množice
-  - (višja raven) $|\mathcal{P}(A)| = 2^n$ pri $|A| = n$
+- Moč potenčne množice (višja raven)
+  - $|\mathcal{P}(A)| = 2^n$ pri $|A| = n$
   - nov element podvoji število podmnožic

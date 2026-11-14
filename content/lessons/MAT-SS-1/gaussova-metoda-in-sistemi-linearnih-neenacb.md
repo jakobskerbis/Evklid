@@ -7,7 +7,7 @@ avtor: AI
 
 *(višja raven) Gaussovo metodo in sisteme linearnih neenačb matura preverja samo na višji ravni.*
 
-Prvi prizor: po košarkarski tekmi trener prebere statistiko. Ekipa je zadela $30$ košev in dosegla $58$ točk. Košev za dve točki je bilo dvakrat toliko kot prostih metov. Koliko je bilo trojk?
+Prvi prizor: po košarkarski tekmi trenerka prebere statistiko. Ekipa je zadela $30$ košev in dosegla $58$ točk. Košev za dve točki je bilo dvakrat toliko kot prostih metov. Koliko je bilo trojk?
 
 Drugi prizor: ista trenerka sestavlja tedenski načrt. Skupaj ima največ $10$ ur. Teka mora biti več kot vaj za moč, moči pa vsaj $2$ uri. Koliko ur česa lahko načrtuje?
 
@@ -21,7 +21,7 @@ $$\begin{cases} x + y + z = 30 & (1)\\ 3x + 2y + z = 58 & (2)\\ y - 2z = 0 & (3)
 
 Neznanke odstranjujemo eno za drugo.
 
-- Iz (2) odstranimo $x$: od nje odštejemo trikratnik (1). Dobimo $-y - 2z = -32$ oziroma $y + 2z = 32$. To je nova (2).
+- Iz (2) odstranimo $x$: od nje odštejemo trikratnik (1). Dobimo $-y - 2z = -32$, po množenju z $-1$ pa $y + 2z = 32$. To je nova (2).
 - Enačba (3) $x$ že nima. Odstranimo še $y$: od (3) odštejemo novo (2). Dobimo $-4z = -32$.
 
 Sistem ima zdaj **trikotno obliko**: zadnja enačba ima eno neznanko, predzadnja dve, prva tri. V shemi koeficientov se pod diagonalo pokažejo same ničle:
@@ -56,7 +56,7 @@ $$\begin{cases} x + y + z = 3\\ x + 2y + 3z = 5\\ 2x + 3y + 4z = 9 \end{cases}$$
 
 Iz druge odštejemo prvo, iz tretje dvakratnik prve: dobimo $y + 2z = 2$ in $y + 2z = 3$. Razlika teh dveh je $0 = 1$, kar ne velja. **Sistem nima rešitve.**
 
-Če bi bila na desni strani tretje enačbe namesto $9$ številka $8$, bi dobili $y + 2z = 2$ dvakrat in na koncu $0 = 0$. Ta vrstica vedno velja, torej ne določa ničesar. **Rešitev je neskončno.** Eno neznanko izberemo prosto, $z = t$, in izrazimo ostali: $y = 2 - 2t$, $x = 3 - y - z = 1 + t$. Za $t = 0$ dobimo $(1, 2, 0)$, za $t = 1$ pa $(2, 0, 1)$; obe trojki prestaneta preizkus.
+Če bi bila na desni strani tretje enačbe namesto $9$ število $8$, bi dobili $y + 2z = 2$ dvakrat in na koncu $0 = 0$. Ta vrstica vedno velja, torej ne določa ničesar. **Rešitev je neskončno.** Eno neznanko izberemo prosto, $z = t$, in izrazimo ostali: $y = 2 - 2t$, $x = 3 - y - z = 1 + t$. Za $t = 0$ dobimo $(1, 2, 0)$, za $t = 1$ pa $(2, 0, 1)$; obe trojki prestaneta preizkus.
 
 **4. Sistem neenačb z eno neznanko.** Vsako neenačbo rešimo posebej. Rešitev sistema so števila, ki ustrezajo **vsem** neenačbam, torej **presek** intervalov. Za $x \ge -1$ in $x < 3$ je to $[-1, 3)$:
 
@@ -164,6 +164,8 @@ f: 10 - x | oranžna | 2 .. 10
 f: x | rdeča črtkano | 0 .. 2
 f: x | rdeča črtkano | 5 .. 8
 lik: 2; 2 -> 8; 2 -> 5; 5 | zelena črtkano
+črta: 2; 2 -> 8; 2 | modra
+črta: 8; 2 -> 5; 5 | oranžna
 točka: 5; 3 | T(5, 3) | desno
 točka: 4; 4 | (4, 4) | levo
 napis: 9; 1,5 | y = 2 | sredina | modra
@@ -174,7 +176,7 @@ napis: 7,2; 7,6 | y = x | levo | rdeča
 4. Preizkus s $T(5, 3)$: $5 + 3 = 8 \le 10$, $3 < 5$, $3 \ge 2$. Vse velja, območje je pravo.
 5. Načrt $(4, 4)$: $4 < 4$ ne velja, točka je na črtkanem robu. Ne ustreza.
 6. Največji $y$: pri $y = 5$ bi moralo veljati $x > 5$ in $x \le 5$, kar ni mogoče. Pri $y = 4$ ustrezata $x = 5$ in $x = 6$.
-7. Odgovor: območje je trikotnik na risbi brez črtkane stranice; načrt $4 + 4$ ne ustreza; največ so $4$ ure moči (s $5$ ali $6$ urami teka).
+7. Odgovor: območje je trikotnik na risbi brez črtkane stranice; načrt $(4, 4)$ ne ustreza; največ so $4$ ure moči (na primer s $5$ ali $6$ urami teka).
 
 ### Primer 4 – zdaj ti
 
@@ -227,7 +229,7 @@ Zakaj Gaussova metoda ne izgubi ali doda rešitev? Če trojka ustreza enačbama 
 
 Geometrijsko vsaka linearna enačba s tremi neznankami opisuje ravnino v prostoru. Rešitev sistema je skupna točka treh ravnin. Ravnine se lahko sekajo v eni točki (ena rešitev), nimajo skupne točke (vrstica $0 = c$) ali imajo skupno premico (vrstica $0 = 0$, rešitve z enim parametrom).
 
-Testna točka deluje, ker izraz $ax + by - c$ na eni strani premice ne more zamenjati predznaka, ne da bi šel skozi $0$, to pa se zgodi le na premici.
+Testna točka deluje, ker ima izraz $ax + by - c$ na vsej polravnini isti predznak. Če bi ga zamenjal, bi moral vmes doseči $0$, to pa se zgodi le na premici.
 
 ## Preveri se
 
@@ -236,7 +238,7 @@ Testna točka deluje, ker izraz $ax + by - c$ na eni strani premice ne more zame
 ~ Vsaka enačba ima še $x$, zato zadnja ne vsebuje ene same neznanke.
 + $x + y + z = 4$, $y - z = 1$, $2z = 6$
 - $x = 1$, $x + y = 3$, $x + y + z = 6$
-~ Ta sistem je lahko rešljiv, a je oblika obrnjena: Gaussova metoda konča s tem, da ima zadnja enačba samo $z$.
+~ Tudi ta sistem se hitro reši, a je oblika obrnjena: Gaussova metoda konča s tem, da ima zadnja enačba samo $z$.
 - $x + y = 4$, $y + z = 1$, $x + z = 6$
 ~ Vsaka enačba ima dve neznanki, nobena pa ne same $z$; to še ni trikotna oblika.
 > V trikotni obliki ima zadnja enačba eno neznanko, predzadnja dve, prva tri. Iz $2z = 6$ takoj sledi $z = 3$.
@@ -260,13 +262,15 @@ f: 1 | modra
 f: x | rdeča črtkano | 0 .. 1
 f: x | rdeča črtkano | 5 .. 6
 lik: 1; 1 -> 5; 1 -> 5; 5 | zelena črtkano
+črta: 1; 1 -> 5; 1 | modra
+črta: 5; 1 -> 5; 5 | oranžna
 točka: 3; 3 | (3, 3) | levo
 napis: 5,5; 1,5 | y = 1 | sredina | modra
 napis: 5; 0,5 | x = 5 | levo | oranžna
 napis: 2; 3,5 | y = x | levo | rdeča
 :::
 - Območje se preseli na drugo stran premice $y = x$.
-~ Stran določa znak $<$ oziroma $\le$, ne to, ali je enakost dovoljena. Testna točka $(3, 1)$ ustreza obema.
+~ Stran določa smer neenačbe (»manjše«), ta pa ostane ista; enačaj vpliva le na rob. Testna točka $(3, 1)$ ustreza obema.
 + Trikotnik ostane isti, črtkana stranica postane polna in točke na njej, npr. $(3, 3)$, postanejo rešitve.
 - Nič se ne spremeni, ker robne točke niso pomembne.
 ~ Pomembne so: pri $\le$ je točka $(3, 3)$ rešitev, pri $<$ ni.
@@ -279,7 +283,7 @@ napis: 2; 3,5 | y = x | levo | rdeča
 ~ 3,6 | Pri drugi minus prva si odštel le levi strani; desno je $9 - 4 = 5$.
 ~ 2,8 | Pri tretji minus prva si pozabil odšteti desni strani; desno je $4 - 4 = 0$.
 ~ 1 | To je $x$ (ali $y$). Vprašanje sprašuje po $z$.
-> Druga minus prva: $y + 2z = 5$. Tretja minus prva: $-2y + z = 0$. Dvakratnik prve nove plus druga nova: $5z = 10$, $z = 2$; nato $y = 1$, $x = 1$.
+> Druga minus prva: $y + 2z = 5$. Tretja minus prva: $-2y + z = 0$. Novi tretji prištejemo dvakratnik nove druge: $5z = 10$, $z = 2$; nato $y = 1$, $x = 1$.
 
 ? Koliko celih števil reši sistem $2x + 1 > -5$ in $4 - x \ge 1$?
 = 6
@@ -291,7 +295,7 @@ napis: 2; 3,5 | y = x | levo | rdeča
 x | prva neznanka (pri tekmi število trojk, v načrtu ure teka) | |
 y | druga neznanka (pri tekmi koši za dve točki, v načrtu ure moči) | |
 z | tretja neznanka (pri tekmi prosti meti) | |
-t | parameter (prosto izbrano realno število) | | | pri neskončno rešitvah
+t | parameter (prosto izbrano realno število) | | | pri neskončno mnogo rešitvah
 a, b | koeficienta pri $x$ in $y$ v neenačbi | |
 c | desna stran neenačbe | |
 :::

@@ -9,7 +9,7 @@ avtor: AI
 
 Sošolec Matic je med odmorom trdil: »Računalnik pozna samo števki $0$ in $1$. Zato ne more zapisati niti števila $2$, kaj šele $8$, kolikor je planetov v Osončju.« Ima prav?
 
-Ne. Vesoljska sonda daleč za Neptunom pošilja na Zemljo fotografije, meritve temperature in razdalje, pa vse to v signalu, ki pozna le dve stanji: impulz je ali ga ni. Sporočilo, ki so ga z radijskim teleskopom Arecibo poslali proti zvezdni kopici M13, se začne kar s števili od $1$ do $10$, zapisanimi samo z dvema znakoma. Kako je to mogoče, pove **dvojiški številski sestav**. Na koncu lekcije boš Maticu znal pokazati, da z dvema števkama zapišeš vsako naravno število.
+Ne. Vesoljska sonda daleč za Neptunom pošilja na Zemljo fotografije, meritve temperature in razdalje, vse to pa v signalu, ki pozna le dve stanji: impulz je ali ga ni. Sporočilo, ki so ga z radijskim teleskopom Arecibo poslali proti zvezdni kopici M13, se začne kar s števili od $1$ do $10$, zapisanimi samo z dvema znakoma. Kako je to mogoče, pove **dvojiški številski sestav**. Na koncu lekcije boš Maticu znal pokazati, da z dvema števkama zapišeš vsako naravno število.
 
 ## Razlaga
 
@@ -24,7 +24,7 @@ Ne. Vesoljska sonda daleč za Neptunom pošilja na Zemljo fotografije, meritve t
 | $3$ | $11$ | $7$ | $111$ |
 | $4$ | $100$ | $8$ | $1000$ |
 
-Opaziš vzorec? Zapisi $1$, $10$, $100$, $1000$ pripadajo številom $1$, $2$, $4$, $8$. Ena enica in same ničle za njo vedno pomenijo novo število, ki je **dvakrat** večje od prejšnjega takega.
+Opaziš vzorec? Zapisi $1$, $10$, $100$, $1000$ pripadajo številom $1$, $2$, $4$, $8$. Vsak naslednji zapis z eno enico in samimi ničlami za njo pomeni **dvakrat** večje število od prejšnjega.
 
 :::premisli
 Napovej, kako se zapiše $16$ in katero število je zapisano s $1111$.
@@ -45,7 +45,7 @@ $16$ je spet podvojitev, zato je zapis $10000$. Zapis $1111$ je število tik pre
 | 7. | $2^6$ | $64$ |
 | 8. | $2^7$ | $128$ |
 
-Da dvojiškega zapisa ne zamenjamo z desetiškim, osnovo napišemo spodaj: $1011_{(2)}$. Števila brez oznake so desetiška. Zapis $1011_{(2)}$ beremo »ena nič ena ena v dvojiškem sestavu«, nikoli »tisoč enajst«. V splošnem je za števke $a_0, a_1, \dots, a_k$, ki so $0$ ali $1$,
+Da dvojiškega zapisa ne zamenjamo z desetiškim, osnovo napišemo desno spodaj v oklepaju: $1011_{(2)}$. Števila brez oznake so desetiška. Zapis $1011_{(2)}$ beremo »ena nič ena ena v dvojiškem sestavu«, nikoli »tisoč enajst«. V splošnem ima število z zapisom $a_k \dots a_2 a_1 a_0$ v dvojiškem sestavu (vsaka števka je $0$ ali $1$, $a_0$ je skrajno desna) vrednost
 
 $$n = a_k \cdot 2^k + \dots + a_2 \cdot 2^2 + a_1 \cdot 2 + a_0$$
 
@@ -79,11 +79,11 @@ Seštejemo $32 + 8 + 4 + 1 = 45$. Torej je $101101_{(2)}$ število $45$.
 
 **5. Iz desetiškega v dvojiški sestav: vsota potenc.** Pot nazaj: število zapišeš kot vsoto različnih potenc števila $2$. Vzemi največjo potenco, ki ni večja od števila, in jo odštej; ponavljaj z ostankom. Pri $45$: največja je $32$, ostane $13$; nato $8$, ostane $5$; nato $4$, ostane $1$; nato $1$. Torej $45 = 32 + 8 + 4 + 1$. Na mesta $32$, $8$, $4$, $1$ zapišeš enice, na mesta $16$ in $2$ **ničle**: $101101_{(2)}$.
 
-**6. Iz desetiškega v dvojiški sestav: zaporedno deljenje z 2.** Pri velikih številih je hitrejše deljenje. Spomni se osnovnega izreka o deljenju: za naravni števili $a$ in $b$ obstajata količnik $q$ in ostanek $r$, da je
+**6. Iz desetiškega v dvojiški sestav: zaporedno deljenje z 2.** Pri velikih številih je hitrejše deljenje. Spomni se osnovnega izreka o deljenju: za naravni števili $a$ in $b$ obstajata natanko en količnik $q$ in natanko en ostanek $r$, da je
 
 $$a = q \cdot b + r, \quad 0 \le r < b$$
 
-Pri $b = 2$ je ostanek $r$ lahko le $0$ ali $1$, torej ravno dvojiška števka. Zakaj je to **zadnja** števka? Vse mestne vrednosti razen $1$ so sode, zato je število sodo natanko takrat, ko je zadnja števka $0$. Količnik $q$ pa ima vse ostale števke, le premaknjene za eno mesto v desno. Zato deliš količnik spet z $2$ in tako dobiš predzadnjo števko. Ponavljaš, dokler ne dobiš količnika $0$. Ostanke **bereš od spodaj navzgor**, ker je prvi ostanek zadnja števka.
+Pri $b = 2$ je ostanek $r$ lahko le $0$ ali $1$, torej ravno dvojiška števka. Zakaj je to **zadnja** števka? Vse mestne vrednosti razen $1$ so sode, zato je število sodo natanko takrat, ko je zadnja števka $0$. Količnik $q$ pa ima vse ostale števke, le premaknjene za eno mesto v desno: $45 = 101101_{(2)}$ deljeno z $2$ da količnik $22 = 10110_{(2)}$ in ostanek $1$, torej zadnja enica preprosto odpade. Zato deliš količnik spet z $2$ in tako dobiš predzadnjo števko. Ponavljaš, dokler ne dobiš količnika $0$. Ostanke **bereš od spodaj navzgor**, ker je prvi ostanek zadnja števka.
 
 :::premisli
 Dvojiški zapis nekega števila se konča z dvema ničlama. Kaj zagotovo veš o tem številu? Zakaj?
@@ -185,7 +185,7 @@ $10 = 8 + 2$, torej $58 = 32 + 16 + 8 + 2$. Mesta $4$ in $1$ dobita ničlo: $111
 - **Mestne vrednosti od 2 naprej.** Dijak začne skrajno desno z $2$ namesto z $1$ in vse vrednosti so dvakrat prevelike: $101101_{(2)}$ mu da $90$ namesto $45$. Skrajno desno mesto je $2^0 = 1$.
 - **Pozabljene ničle.** Iz $40 = 32 + 8$ dijak zapiše $11_{(2)}$, kar je le $3$. Vsaka manjkajoča potenca med $32$ in $1$ dobi ničlo: $101000_{(2)}$.
 - **Seštevanje namesto podvajanja.** Mestne vrednosti niso $1, 2, 3, 4$ ali $2, 4, 6, 8$, ampak $1, 2, 4, 8, 16$: vsaka je **dvakrat** večja od prejšnje.
-- **Dvojiško prebrano desetiško.** Kdor $1100_{(2)}$ prebere kot »tisoč sto«, misli, da je to veliko število. V resnici je $8 + 4 = 12$. Zato oznake $_{(2)}$ nikoli ne izpusti.
+- **Dvojiško število prebrano kot desetiško.** Kdor $1100_{(2)}$ prebere kot »tisoč sto«, misli, da je to veliko število. V resnici je $8 + 4 = 12$. Zato oznake $_{(2)}$ nikoli ne izpusti.
 
 ## Povzetek
 
@@ -223,7 +223,7 @@ Ostanke beremo od spodnje vrstice navzgor: $10010110_{(2)}$.
 
 Astronavtka Eva je na vesoljski postaji pol leta. Koledarja na steni nima, ker se vse prilepljeno odlepi in odplava. Zato si dneve misije šteje kar s prsti ene roke. Prst, ki je iztegnjen, pomeni $1$, skrčen pomeni $0$. Mezinec je vreden $1$, prstanec $2$, sredinec $4$, kazalec $8$, palec $16$.
 
-Prvi dan iztegne mezinec. Drugi dan mezinec skrči in iztegne prstanec: to je $10_{(2)}$. Tretji dan iztegne oba. Četrti dan oba skrči in iztegne sredinec. Tako vsak dan »prenaša« kot števec v avtomobilu, le da ima vsako kolesce samo dve stanji.
+Prvi dan iztegne mezinec. Drugi dan mezinec skrči in iztegne prstanec: to je $10_{(2)}$. Tretji dan iztegne oba. Četrti dan oba skrči in iztegne sredinec. Tako vsak dan »prenaša« kot števec prevoženih kilometrov v avtomobilu, le da ima vsako kolesce samo dve stanji.
 
 Ko so iztegnjeni vsi prsti, je dan $16 + 8 + 4 + 2 + 1 = 31$. Ena roka ji torej zadošča za mesec. Ko vzame še drugo roko, deset prstov prešteje do $2^{10} - 1 = 1023$ dni, kar je dovolj za skoraj tri leta v vesolju. Matic bi ob tem verjetno priznal, da $0$ in $1$ le nista tako malo.
 
@@ -310,7 +310,7 @@ vrednost: 32+16+8+4+2+1 | 63
 :::simboli
 n | naravno število (desetiško) | | |
 a_0, a_1, a_2, a_3, a_4, a_5, a_k | dvojiške števke | | | vsaka je $0$ ali $1$; $a_0$ je skrajno desna
-k | številka mesta oziroma število bitov | | | mestna vrednost $k$-tega mesta je $2^k$
+k | indeks mesta (štejemo od $0$ na desni) oziroma število bitov | | | števka $a_k$ ima mestno vrednost $2^k$
 a | deljenec | a = q \cdot b + r | |
 b | delitelj (pri pretvorbi $b = 2$) | | |
 q | količnik | | |

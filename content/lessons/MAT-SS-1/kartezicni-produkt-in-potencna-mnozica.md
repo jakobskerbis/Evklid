@@ -11,7 +11,7 @@ Isto zamisel uporabljaš, ko na turističnem zemljevidu mesta iščeš grad v kv
 
 ## Razlaga
 
-**1. Zamikajoča napačna misel: par je kar množica dveh elementov.** Avtobusna vozovnica velja za relacijo Ljubljana–Koper. Če bi jo zapisali kot množico $\{\text{Ljubljana}, \text{Koper}\}$, bi bila enaka množici $\{\text{Koper}, \text{Ljubljana}\}$, saj pri množici vrstni red ne šteje. Vozovnica v obratno smer pa je druga vozovnica. Za take primere množica ni pravo orodje.
+**1. Zamikajoča napačna misel: par je kar množica dveh elementov.** Avtobusna vozovnica velja za vožnjo Ljubljana–Koper. Če bi jo zapisali kot množico $\{\text{Ljubljana}, \text{Koper}\}$, bi bila enaka množici $\{\text{Koper}, \text{Ljubljana}\}$, saj pri množici vrstni red ne šteje. Vozovnica v obratno smer pa je druga vozovnica. Za take primere množica ni pravo orodje.
 
 Popravek je **urejeni par** $(a, b)$. Element $a$ je **prva komponenta**, $b$ **druga komponenta**. Vozovnica Ljubljana–Koper je par $(\text{Ljubljana}, \text{Koper})$. Dva urejena para sta enaka le, če se ujemata v obeh komponentah:
 
@@ -37,7 +37,7 @@ Pri katerih množicah $A$ in $B$ pa vendarle velja $A \times B = B \times A$? Na
 
 $$|A \times B| = |A| \cdot |B|$$
 
-Zemljevid s štirimi stolpci in tremi vrsticami ima $4 \cdot 3 = 12$ kvadratov. Moči se torej **množita**, ne seštevata. Tudi zato produkt imenujemo produkt.
+Zemljevid s štirimi stolpci in tremi vrsticami ima $4 \cdot 3 = 12$ kvadratov. Moči se torej **množita**, ne seštevata. Od tod tudi ime produkt.
 
 :::premisli
 Koliko elementov ima $A \times \emptyset$, če ima $A$ pet elementov? Zakaj?
@@ -60,7 +60,7 @@ točka: 2; 2 | | | modra
 točka: 3; 2 | (3, 2) | desno | modra
 :::
 
-Prve komponente beremo na osi $x$, druge na osi $y$. Pri množicah naravnih števil so točke vedno v presečiščih mreže. Graf $\mathbb{N} \times \mathbb{N}$ so vse taka presečišča z obema koordinatama vsaj $1$; teh je neskončno mnogo.
+Prve komponente beremo na osi $x$, druge na osi $y$. Pri množicah naravnih števil so točke vedno v presečiščih mreže. Graf $\mathbb{N} \times \mathbb{N}$ so vsa taka presečišča z obema koordinatama vsaj $1$; teh je neskončno mnogo.
 
 Če sta množici **intervala**, se točke zlijejo v lik. Zapis $[1, 3]$ pomeni vsa realna števila $x$ z $1 \le x \le 3$, vključno z mejama (več o tem v lekciji o intervalih). Produkt $[1, 3] \times [0, 2]$ so vse točke $(x, y)$ z $1 \le x \le 3$ in $0 \le y \le 2$, torej pravokotnik skupaj z robom:
 
@@ -69,7 +69,7 @@ opis: Graf kartezičnega produkta intervalov [1, 3] in [0, 2]: osenčen pravokot
 x: 0 .. 4 | 1 | x
 y: 0 .. 3 | 1 | y
 enako: da
-pravokotnik: 1; 0 .. 3; 2 | modra ozadje
+pravokotnik: 1; 0 .. 3; 2 | modra
 točka: 1; 0 | (1, 0) | pod
 točka: 3; 2 | (3, 2) | nad desno
 :::
@@ -145,7 +145,7 @@ krog: 2; 2 | 0,2 | oranžna
 krog: 2; 3 | 0,2 | oranžna
 :::
 
-4. Grafa sta zrcalna glede na premico $y = x$, ker zamenjava komponent zamenja koordinati. Skupna je le točka $(2, 2)$, ker je $2$ edini element v $A$ in v $B$ hkrati.
+4. Grafa sta zrcalna glede na premico $y = x$, ker zamenjava komponent zamenja koordinati. Skupna točka mora imeti obe koordinati hkrati v $A$ in v $B$; tak element je le $2$, zato je skupna samo točka $(2, 2)$.
 5. Odgovor: grafa sta različna, zato $A \times B \neq B \times A$; skupna točka je samo $(2, 2)$.
 
 ### Primer 3 (težji): rezervat na zemljevidu
@@ -153,7 +153,7 @@ krog: 2; 3 | 0,2 | oranžna
 Na pohodniškem zemljevidu so koordinate v kilometrih. Gozdni rezervat je množica $R = [2, 5] \times [1, 3]$. Nariši $R$. Ali v rezervatu ležita koča $K(4, 2)$ in izvir $I(2, 4)$? Kolikšna je ploščina rezervata? Ali je $[1, 3] \times [2, 5]$ isti rezervat?
 
 **Podatki:** $R = [2, 5] \times [1, 3]$ (v km), $K(4, 2)$, $I(2, 4)$
-**Iščemo:** sliko $R$, ali sta $K$ in $I$ v $R$, ploščino $S$, primerjavo z $[1, 3] \times [2, 5]$
+**Iščemo:** sliko $R$, ali sta $K$ in $I$ v $R$, ploščino rezervata, primerjavo z $[1, 3] \times [2, 5]$
 
 :::formula
 $(x, y) \in [2, 5] \times [1, 3] \iff 2 \le x \le 5 \wedge 1 \le y \le 3$; ploščina pravokotnika je širina krat višina
@@ -168,7 +168,7 @@ opis: Zemljevid s koordinatami v kilometrih. Osenčen pravokotnik R od x = 2 do 
 x: 0 .. 6 | 1 | x [km]
 y: 0 .. 5 | 1 | y [km]
 enako: da
-pravokotnik: 2; 1 .. 5; 3 | zelena ozadje
+pravokotnik: 2; 1 .. 5; 3 | zelena
 napis: 3,5; 1,5 | R | sredina | zelena debelo
 točka: 4; 2 | K(4, 2) | desno | modra
 točka: 2; 4 | I(2, 4) | desno | rdeča
@@ -176,8 +176,8 @@ točka: 2; 4 | I(2, 4) | desno | rdeča
 
 2. Koča: $2 \le 4 \le 5$ in $1 \le 2 \le 3$; obe neenakosti držita, zato $K \in R$.
 3. Izvir: $2 \le 2 \le 5$ drži, a $4 > 3$, zato $I \notin R$. Ena koordinata zunaj je dovolj.
-4. Stranici merita $5 - 2 = 3$ km in $3 - 1 = 2$ km, zato je $S = 3 \cdot 2 = 6\,\text{km}^2$.
-5. Množica $[1, 3] \times [2, 5]$ je pravokotnik, širok $2$ km in visok $3$ km, na drugem mestu. Ima enako ploščino, a je drug rezervat, ker se faktorja zamenjata.
+4. Stranici merita $5 - 2 = 3$ km in $3 - 1 = 2$ km, zato je ploščina $3 \cdot 2 = 6\,\text{km}^2$.
+5. Množica $[1, 3] \times [2, 5]$ je pravokotnik, širok $2$ km in visok $3$ km, ki leži drugje. Ima enako ploščino, a je drug rezervat: zdaj je $[1, 3]$ na osi $x$ in $[2, 5]$ na osi $y$.
 6. Odgovor: koča je v rezervatu, izvir ne; ploščina je $6\,\text{km}^2$; $[1, 3] \times [2, 5]$ ni isti rezervat.
 
 ### Primer 4 – zdaj ti: načrti potovanja
@@ -226,9 +226,9 @@ Dva kraja: $\{\text{Piran}, \text{Bled}\}$, $\{\text{Piran}, \text{Ptuj}\}$, $\{
 
 Ana načrtuje poletno potovanje. Na mizi ima zemljevid, razdeljen na kvadrate: stolpci so označeni s črkami $a$ do $f$, vrstice s številkami od $1$ do $5$. Kamp, ki ga išče, je v kvadratu $(d, 4)$. Brat Jan ga išče v $(4, d)$ in ga seveda ne najde, ker na zemljevidu stolpca »4« sploh ni. Ana mu razloži: najprej črka, potem številka, sicer govoriš o drugem paru ali o ničemer.
 
-Jan prešteje kvadrate: $6$ stolpcev, v vsakem $5$ kvadratov, torej $6 \cdot 5 = 30$. To je moč produkta {stolpci} × {vrstice}.
+Jan prešteje kvadrate: $6$ stolpcev, v vsakem $5$ kvadratov, torej $6 \cdot 5 = 30$. To je moč kartezičnega produkta množice stolpcev in množice vrstic.
 
-Zvečer se pogovarjata, katere znamenitosti bi obiskala: grad, jamo, slap. Jan našteje: samo grad, samo jamo, samo slap, grad in jamo, grad in slap, jamo in slap, vse tri. Ana doda: »In možnost, da obiščeva nič in ves dan plavava.« Tako sta zapisala vseh $8$ elementov potenčne množice.
+Zvečer se pogovarjata, katere znamenitosti bi obiskala: grad, jamo, slap. Jan našteje: samo grad, samo jamo, samo slap, grad in jamo, grad in slap, jamo in slap, vse tri. Ana doda: »Pa možnost, da ne obiščeva ničesar in ves dan plavava.« Tako sta zapisala vseh $8$ elementov potenčne množice.
 
 (višja raven) Ko pa se spomnita še na muzej, Ana ugotovi, da načrtov ni $8 + 1$, ampak $16$: vsak stari načrt lahko izvedeta z muzejem ali brez njega.
 
@@ -326,7 +326,8 @@ c, d | komponenti drugega para | | |
 X | podmnožica množice $A$ | X \subseteq A | | element potenčne množice $\mathcal{P}(A)$
 n | število elementov množice $A$ | | | moč množice $A$
 K | množica krajev | | |
-V | množica prevozov | | |
+S | množica stolpcev zemljevida | | | v razlagi (točka 2)
+V | množica prevozov (Primer 1) ali vrstic zemljevida (razlaga) | | |
 k, v | kraj in prevoz | | | $k \in K$, $v \in V$
-x, y | koordinati točke | | km | v Primeru 3 v kilometrih
+x, y | koordinati točke | | | v Primeru 3 v kilometrih
 :::

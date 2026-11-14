@@ -5,7 +5,7 @@ stanje: osnutek
 - Več pogojev hkrati
   - enačbe dajo eno rešitev, neenačbe območje
   - košarka: $30$ košev, $58$ točk
-- Trikotna oblika
+- Gaussova metoda: trikotna oblika
   - odstrani $x$ iz 2. in 3. enačbe
   - nato $y$ iz 3. enačbe z novo drugo
   - desno stran vedno preoblikuj skupaj z levo
@@ -21,7 +21,7 @@ stanje: osnutek
   - pri deljenju z negativnim obrni znak
 - Polravnina
   - rob je premica $ax + by = c$
-  - stran izbere testna točka $(0, 0)$
+  - stran izbere testna točka, npr. $(0, 0)$
   - $<$, $>$ črtkano; $\le$, $\ge$ polno
 - Presek polravnin
   - območje, pogosto trikotnik

@@ -7,7 +7,7 @@ avtor: AI
 
 Aplikacija na telefonu ti pove, da je od parkirišča do planinske koče $4{,}0\,\mathrm{km}$. Na tabli ob koči piše $4{,}3\,\mathrm{km}$. Isti dan navigacija za vožnjo z Gorenjske do morja pokaže $105\,\mathrm{km}$, števec v avtu pa na koncu $105{,}3\,\mathrm{km}$.
 
-Obakrat se je telefon zmotil za $0{,}3\,\mathrm{km}$. Pa je bila zmota enako huda? Pri pohodu je $300\,\mathrm{m}$ dodatnega vzpona opazna razlika, pri vožnji do morja je skoraj nihče ne opazi.
+Obakrat se je telefon zmotil za $0{,}3\,\mathrm{km}$. Pa je bila zmota enako huda? Pri pohodu je $300\,\mathrm{m}$ dodatne hoje opazna razlika, pri vožnji do morja je skoraj nihče ne opazi.
 
 Števila, s katerimi računamo v resničnem svetu, so skoraj vedno **približki**: odčitki termometra, dežemera, metra ali štoparice. Zato moramo znati povedati dvoje: za koliko se približek lahko zmoti in ali je ta zmota velika ali majhna. V tej snovi gradimo to dvoje korak za korakom, na koncu pa ocenimo še, kako se napake prenesejo v vsoto, razliko, produkt in količnik.
 
@@ -36,7 +36,7 @@ Zaokrožujemo vedno iz **izvirnega** števila, nikoli v več korakih. Število $
 
 $$\Delta x = |\bar{x} - x|$$
 
-Za $\pi \approx 3{,}14$ je $\Delta x = |3{,}14 - 3{,}14159\ldots| \approx 0{,}0016$. Pri zaokroževanju na dve decimalki absolutna napaka nikoli ne preseže $0{,}005$, na eno decimalko pa ne $0{,}05$.
+Za $\pi \approx 3{,}14$ je $\Delta x = |3{,}14 - 3{,}14159\ldots| \approx 0{,}0016$. Pri zaokroževanju na dve decimalki absolutna napaka nikoli ne preseže $0{,}005$, na eno decimalko pa ne $0{,}05$: to je pol enote zadnje ohranjene decimalke.
 
 Pri meritvi točne vrednosti ne poznamo. Takrat je $\Delta x$ **meja napake**, ki jo določa merilo (npr. pol najmanjšega razdelka). Zapis $h = (42 \pm 1)\,\mathrm{cm}$ za višino snežne odeje pomeni, da točna vrednost leži v intervalu $[41, 43]$:
 
@@ -64,7 +64,7 @@ Pri koči je $\dfrac{0{,}3}{4{,}3} \approx 7{,}0\,\%$, pri morju $\dfrac{0{,}3}{
 :::premisli
 Pero ptice izmeriš na $(18{,}0 \pm 0{,}5)\,\mathrm{cm}$, drevo na $(24{,}0 \pm 0{,}5)\,\mathrm{m}$. Kateri meritvi bi zaupal bolj? Napovej, nato preveri z relativno napako.
 ---
-Drevesu. Absolutna napaka pri peresu je manjša ($0{,}5\,\mathrm{cm}$ proti $0{,}5\,\mathrm{m}$), relativna pa je večja: $\dfrac{0{,}5}{18} \approx 2{,}8\,\%$ proti $\dfrac{0{,}5}{24} \approx 2{,}1\,\%$. Natančnost primerjamo z relativno napako.
+Meritvi drevesa. Absolutna napaka pri peresu je manjša ($0{,}5\,\mathrm{cm}$ proti $0{,}5\,\mathrm{m}$), relativna pa je večja: $\dfrac{0{,}5}{18} \approx 2{,}8\,\%$ proti $\dfrac{0{,}5}{24} \approx 2{,}1\,\%$. Natančnost primerjamo z relativno napako.
 :::
 
 **5. Napaka vsote in razlike.** Na dveh merilnih mestih je padlo $x = (12 \pm 1)\,\mathrm{mm}$ in $y = (8 \pm 1)\,\mathrm{mm}$ dežja. V najslabšem primeru se obe napaki zgodita v isto smer, zato se **absolutni napaki seštejeta**:
@@ -75,7 +75,7 @@ Tudi pri razliki se napaki *seštejeta*: najmanjši $x$ in največji $y$ dasta n
 
 *Preizkus v eni vrstici:* koliko je $(30 \pm 0{,}5)\,\mathrm{m} - (10 \pm 0{,}5)\,\mathrm{m}$? Rešitev: $(20 \pm 1)\,\mathrm{m}$.
 
-**6. Napaka produkta in količnika.** Travnik je pravokotnik s stranicama $a = (40 \pm 0{,}5)\,\mathrm{m}$ in $b = (25 \pm 0{,}5)\,\mathrm{m}$. Ploščina je $S = 1000\,\mathrm{m^2}$. Absolutnih napak tu ne moremo sešteti: $0{,}5\,\mathrm{m} + 0{,}5\,\mathrm{m}$ so metri, ploščina pa ima kvadratne metre. Pri produktu in količniku se **približno seštejeta relativni napaki**:
+**6. Napaka produkta in količnika (kvocienta).** Travnik je pravokotnik s stranicama $a = (40 \pm 0{,}5)\,\mathrm{m}$ in $b = (25 \pm 0{,}5)\,\mathrm{m}$. Ploščina je $S = 1000\,\mathrm{m^2}$. Absolutnih napak tu ne moremo sešteti: $0{,}5\,\mathrm{m} + 0{,}5\,\mathrm{m}$ so metri, ploščina pa ima kvadratne metre. Pri produktu in količniku se **približno seštejeta relativni napaki**:
 
 $$\delta(x \cdot y) \approx \delta x + \delta y \qquad \delta\!\left(\frac{x}{y}\right) \approx \delta x + \delta y$$
 
@@ -84,17 +84,17 @@ Pravilo je **ocena**, ne natančna enakost. Preverimo ga na travniku na oba nač
 | način | spodnja meja | zgornja meja | napaka $S$ |
 |---|---|---|---|
 | natančno | $39{,}5 \cdot 24{,}5 = 967{,}75$ | $40{,}5 \cdot 25{,}5 = 1032{,}75$ | do $32{,}75\,\mathrm{m^2}$ |
-| ocena | | | $32{,}5\,\mathrm{m^2}$ |
+| ocena | $1000 - 32{,}5 = 967{,}5$ | $1000 + 32{,}5 = 1032{,}5$ | $32{,}5\,\mathrm{m^2}$ |
 
-Ocena: $\delta a + \delta b = \dfrac{0{,}5}{40} + \dfrac{0{,}5}{25} = 0{,}0325$, torej $3{,}25\,\%$ od $1000\,\mathrm{m^2}$, kar je $32{,}5\,\mathrm{m^2}$. Natančna meja je $32{,}75\,\mathrm{m^2}$. Razlika $0{,}25\,\mathrm{m^2}$ je ravno $0{,}5 \cdot 0{,}5$, majhen kotiček, ki ga ocena izpusti (glej »Drugače: Na sliki«).
+Ocena: $\delta a + \delta b = \dfrac{0{,}5}{40} + \dfrac{0{,}5}{25} = 0{,}0325$, torej $3{,}25\,\%$ od $1000\,\mathrm{m^2}$, kar je $32{,}5\,\mathrm{m^2}$. Natančna meja je $1032{,}75 - 1000 = 32{,}75\,\mathrm{m^2}$. Razlika $0{,}25\,\mathrm{m^2}$ je ravno $0{,}5 \cdot 0{,}5$, majhen kotiček, ki ga ocena izpusti (glej »Drugače: Na sliki«).
 
 :::premisli
-Zakaj pri produktu ne moremo kar sešteti absolutnih napak, pri vsoti pa jih lahko?
+Recimo, da je le stranica $a$ izmerjena $0{,}5\,\mathrm{m}$ prekratko. Napovej: za koliko kvadratnih metrov se zmoti ploščina? Kaj ti to pove o seštevanju absolutnih napak pri produktu?
 ---
-Pri vsoti imata podatka isto enoto in se njuni napaki neposredno seštejeta. Pri produktu se vsaka napaka še pomnoži z drugim podatkom (napaka v $a$ »raztegne« ves trak dolžine $b$), enoti pa se ne ujemata. Relativna napaka je brez enote in pove, kolikšen delež se spremeni, zato jo lahko seštejemo.
+Za cel pas $b \cdot \Delta a = 25 \cdot 0{,}5 = 12{,}5\,\mathrm{m^2}$, ne le za $0{,}5$. Pri vsoti imata podatka isto enoto in se njuni napaki neposredno seštejeta. Pri produktu se vsaka napaka še pomnoži z drugim podatkom, enoti pa se ne ujemata. Relativna napaka je brez enote in pove, kolikšen delež se spremeni, zato jo lahko seštejemo.
 :::
 
-Za količnik je tipičen zgled hitrost $v = \dfrac{s}{t}$: relativna napaka hitrosti je približno vsota relativnih napak poti in časa. Zato je pri merjenju hitrosti pomemben vsak podatek posebej, ne le tisti z večjo absolutno napako.
+Za količnik je tipičen zgled hitrost $v = \dfrac{s}{t}$: relativna napaka hitrosti je približno vsota relativnih napak poti in časa. Zato pri hitrosti ne odloča, kateri podatek ima večjo absolutno napako, temveč kateri ima večjo relativno.
 
 ## Rešeni primeri
 
@@ -230,7 +230,7 @@ Zapišimo največji možni vrednosti z relativnima napakama: $a(1 + \delta a)$ i
 
 $$ab(1 + \delta a)(1 + \delta b) = ab(1 + \delta a + \delta b + \delta a\,\delta b)$$
 
-Relativna napaka produkta je torej $\delta a + \delta b + \delta a\,\delta b$. Če sta $\delta a$ in $\delta b$ nekaj odstotkov, je njun produkt tisočinka ali manj, zato ga zanemarimo.
+Relativna napaka produkta je torej $\delta a + \delta b + \delta a\,\delta b$. Če sta $\delta a$ in $\delta b$ nekaj odstotkov, je njun produkt le nekaj tisočink ali manj, zato ga zanemarimo.
 
 Pri količniku je največja vrednost $\dfrac{x(1 + \delta x)}{y(1 - \delta y)}$. Za majhen $\delta y$ je $\dfrac{1}{1 - \delta y} \approx 1 + \delta y$ (npr. $\dfrac{1}{0{,}98} = 1{,}0204\ldots$), zato je spet $\delta \approx \delta x + \delta y$.
 
@@ -262,13 +262,13 @@ točka: 12,4 | izmerjeno
 + Ker se napaka ene stranice pomnoži z drugo stranico; delež spremembe (relativna napaka) pa se približno sešteje.
 > Pas ob stranici $a$ ima ploščino $b \cdot \Delta a$, kar je delež $\delta a$ ploščine. Enako za drugo stranico, zato $\delta S \approx \delta a + \delta b$.
 
-? (brez računala) Dva dežemera sta izmerila $(12 \pm 1)\,\mathrm{mm}$ in $(8 \pm 1)\,\mathrm{mm}$ dežja. Oceni relativno napako vsote v odstotkih.
-= 10 % | 0,5
-~ 21 | Seštel si relativni napaki $\dfrac{1}{12} + \dfrac{1}{8}$. Pri vsoti se seštejeta absolutni napaki: $\dfrac{2}{20}$.
-~ 5 | Vzel si le napako enega dežemera. Absolutni napaki se seštejeta v $2\,\mathrm{mm}$.
-> Vsota je $(20 \pm 2)\,\mathrm{mm}$, relativna napaka $\dfrac{2}{20} = 10\,\%$.
+? (brez računala) Dva dežemera sta izmerila $(17 \pm 1)\,\mathrm{mm}$ in $(8 \pm 1)\,\mathrm{mm}$ dežja. Oceni relativno napako vsote v odstotkih.
+= 8 % | 0,5
+~ 18 | Seštel si relativni napaki $\dfrac{1}{17} + \dfrac{1}{8}$. Pri vsoti se seštejeta absolutni napaki: $\dfrac{2}{25}$.
+~ 4 | Vzel si le napako enega dežemera. Absolutni napaki se seštejeta v $2\,\mathrm{mm}$.
+> Vsota je $(25 \pm 2)\,\mathrm{mm}$, relativna napaka $\dfrac{2}{25} = \dfrac{8}{100} = 8\,\%$.
 
-? Ploščina kvadratnega ribnika je ocenjena z relativno napako $4\,\%$. Kolikšna je največ relativna napaka, s katero so izmerili stranico (v odstotkih)?
+? Ploščina kvadratnega ribnika je ocenjena z relativno napako $4\,\%$. Kolikšna je bila največja relativna napaka meritve stranice (v odstotkih)?
 = 2 % | 0,1
 ~ 4 | Ploščina je $a \cdot a$, zato se relativna napaka stranice šteje dvakrat: $\delta S \approx 2\,\delta a$.
 ~ 8 | Napako si podvojil, a pot je obratna: iz $\delta S$ dobiš $\delta a$ z deljenjem z $2$.
@@ -299,9 +299,11 @@ vrednost: 0.035*1.25 | 0.044
 vrednost: 0.01*40 | 0.4
 vrednost: 9600*(1/120+1/80) | 200
 vrednost: 2/20*100 | 10
+vrednost: 2/25*100 | 8
 vrednost: 0.5/24*100 | 2.1
 vrednost: 0.5/18*100 | 2.8
 vrednost: 0.2/0.5*100 | 40
+vrednost: 25*0.5 | 12.5
 >>
 
 :::simboli
@@ -324,5 +326,7 @@ d | razlika višin (stopljeni sneg) | d = h_1 - h_2 | cm |
 v | hitrost potoka | v = \frac{s}{t} | m/s |
 s | pot lista | | m |
 t | čas | | s |
+\Delta s | absolutna napaka poti | | m |
+\Delta t | absolutna napaka časa | | s |
 \Delta v | absolutna napaka hitrosti | \Delta v \approx \delta v \cdot v | m/s |
 :::

@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-V 17. stoletju je v Parizu živel menih Marin Mersenne. Pisal je o glasbi in zvoku: raziskoval je, kako višina tona strune zavisi od njene dolžine, napetosti in debeline. Hkrati so ga zanimala števila oblike $2^n - 1$, na primer $3$, $7$, $31$, $127$. Katera med njimi so praštevila?
+V 17. stoletju je v Parizu živel menih Marin Mersenne. Pisal je o glasbi in zvoku: raziskoval je, kako je višina tona strune odvisna od njene dolžine, napetosti in debeline. Hkrati so ga zanimala števila oblike $2^n - 1$, na primer $3$, $7$, $31$, $127$, $1023$. Za katere $n$ je tako število praštevilo?
 
 Pri takem vprašanju ne pomaga deliti na slepo. Pomaga pa opazka, da se $2^n - 1$ včasih razstavi kot izraz, ne le kot število. Če je $n = 10$, je $2^{10} - 1 = 1023$, in že brez deljenja lahko pokažemo, da ga delita $3$ in $31$.
 
@@ -58,11 +58,11 @@ $a = 10$, $b = 1$: $(10 - 1)(100 + 10 + 1) = 9 \cdot 111 = 999$.
 
 $$a^3 + b^3 = (a + b)(a^2 - ab + b^2)$$
 
-Edina sprememba je srednji člen: $a \cdot (-b) = -ab$. Za znake si zapomni: v prvem oklepaju **isti** znak kot v nalogi, srednji člen **nasprotni**, zadnji člen **vedno plus**.
+Prvi oklepaj postane $a + b$, v drugem pa se spremeni le srednji člen: $a \cdot (-b) = -ab$. Za znake si zapomni: v prvem oklepaju **isti** znak kot v nalogi, srednji člen **nasprotni**, zadnji člen **vedno plus**.
 
 Drugega oklepaja $a^2 \pm ab + b^2$ z realnimi števili ne razstavimo naprej. To ni kvadrat dvočlenika: srednji člen je $ab$, pri kvadratu pa bi bil $2ab$.
 
-**3. Kje se zmotimo.** Razlika ni isto kot kub razlike: $a^3 - b^3 \neq (a - b)^3$, saj ima $(a - b)^3$ štiri člene. Pri $a = 2$, $b = 1$ dobiš $8 - 1 = 7$, a $(2 - 1)^3 = 1$. Prav tako drugi oklepaj ni $(a - b)^2$ ali $(a + b)^2$.
+**3. Kje se zmotimo.** Razlika kubov ni isto kot kub razlike: $a^3 - b^3 \neq (a - b)^3$, saj ima $(a - b)^3$ štiri člene. Pri $a = 2$, $b = 1$ dobiš $8 - 1 = 7$, a $(2 - 1)^3 = 1$. Prav tako drugi oklepaj ni $(a - b)^2$ ali $(a + b)^2$.
 
 **4. Vzorec za vse potence (višja raven).** Razstavimo še $a^4 - b^4$, $a^5 - b^5$ in opazujmo drugi faktor:
 
@@ -77,7 +77,7 @@ Potence $a$ padajo po ena, potence $b$ rastejo po ena, vseh členov je $n$, vsi 
 
 $$a^n - b^n = (a - b)(a^{n-1} + a^{n-2}b + \ldots + ab^{n-2} + b^{n-1})$$
 
-Zakaj? Ko zmnožiš, da $a$ krat oklepaj člene $a^n, a^{n-1}b, \ldots, ab^{n-1}$, člen $-b$ krat oklepaj pa $-a^{n-1}b, \ldots, -ab^{n-1}, -b^n$. Vsi srednji členi se odštejejo, ostaneta $a^n - b^n$.
+Zakaj? Zmnoži oklepaja. Ko z $a$ pomnožiš drugi oklepaj, dobiš $a^n, a^{n-1}b, \ldots, ab^{n-1}$. Ko ga pomnožiš z $-b$, dobiš $-a^{n-1}b, \ldots, -ab^{n-1}, -b^n$. Vsi vmesni členi se v parih izničijo, ostaneta le $a^n$ in $-b^n$.
 
 S tem tudi krajšamo: $\dfrac{x^5 - 1}{x - 1} = x^4 + x^3 + x^2 + x + 1$ za $x \neq 1$.
 
@@ -90,12 +90,14 @@ Na primer $a^5 + b^5 = (a + b)(a^4 - a^3b + a^2b^2 - ab^3 + b^4)$.
 :::premisli
 Zakaj obrazec za $a^n + b^n$ velja le za lih $n$? Kaj gre narobe pri $n = 2$?
 ---
-Pri sodem $n$ je $(-b)^n = +b^n$, zato vstavljanje $-b$ v $a^n - b^n$ spet da $a^n - b^n$, ne vsote. Pri $a = 1$, $b = -1$ bi faktor $a + b$ dal $0$, vsota $1^2 + (-1)^2 = 2$ pa ni $0$, zato $a + b$ ni faktor $a^2 + b^2$.
+Pri sodem $n$ je $(-b)^n = +b^n$, zato vstavljanje $-b$ v $a^n - b^n$ spet da $a^n - b^n$, ne vsote. Še preizkus: če je $a + b$ faktor, mora biti izraz enak $0$, kadar je $a + b = 0$. Pri $a = 1$, $b = -1$ bi faktor $a + b$ dal $0$, vsota $1^2 + (-1)^2 = 2$ pa ni $0$, zato $a + b$ ni faktor $a^2 + b^2$.
 :::
 
-**6. Sode potence (višja raven).** Izraza $a^2 + b^2$ in $a^4 + b^4$ s faktorjem $a + b$ ali $a - b$ ne razstavimo, enak preizkus z $a = 1$, $b = \pm 1$ da $2 \neq 0$. Izraza $a^2 + b^2$ z realnimi števili sploh ne razstavimo; $a^4 + b^4$ se da razstaviti le z drugačnim, zahtevnejšim prijemom, ki ga tu ne potrebujemo.
+**6. Sode potence.**
 
-Pri razliki sodih potenc **najprej uporabi razliko kvadratov**. Poglejmo $x^6 - 1$ na dva načina:
+(višja raven) Izraza $a^2 + b^2$ in $a^4 + b^4$ s faktorjem $a + b$ ali $a - b$ ne razstavimo: isti preizkus z $a = 1$, $b = \pm 1$ da $2 \neq 0$. Izraza $a^2 + b^2$ z realnimi števili sploh ne razstavimo; $a^4 + b^4$ se da razstaviti le z drugačnim, zahtevnejšim prijemom, ki ga tu ne potrebujemo.
+
+Pri razliki sodih potenc **najprej uporabi razliko kvadratov**. Razstavimo $x^6 - 1$ na dva načina:
 
 - kot razlika kvadratov: $x^6 - 1 = (x^3 - 1)(x^3 + 1)$, nato vsak oklepaj kot razlika oziroma vsota kubov:
   $$x^6 - 1 = (x - 1)(x^2 + x + 1)(x + 1)(x^2 - x + 1)$$
@@ -139,7 +141,7 @@ izpostavljanje, nato $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$
 1. Skupni faktor obeh členov je $2a$, ker je $D(2, 54) = 2$ in $a$ nastopa vsaj na prvo potenco: $2a(a^3 + 27)$.
 2. V oklepaju je vsota kubov: $27 = 3^3$.
 3. $a^3 + 27 = (a + 3)(a^2 - 3a + 9)$; srednji člen ima nasprotni znak.
-4. Faktor $a^2 - 3a + 9$ se ne razstavi naprej.
+4. Faktor $a^2 - 3a + 9$ je drugi oklepaj obrazca za vsoto kubov, zato se z realnimi števili ne razstavi naprej.
 5. Odgovor: $2a^4 + 54a = 2a(a + 3)(a^2 - 3a + 9)$.
 
 ### Primer 3 (težji): ohišje zvočnika
@@ -161,7 +163,7 @@ $V = a^3 - b^3 = (a - b)(a^2 + ab + b^2)$
 4. $V = 2 \cdot 2884 = 5768\,\mathrm{cm^3}$.
 5. Odgovor: mizar porabi $5768\,\mathrm{cm^3}$ lesa. Množenje $32 \cdot 32 \cdot 32$ in $30 \cdot 30 \cdot 30$ smo nadomestili z lažjimi kvadrati.
 
-### Primer 4 (višja raven): Mersennovo število – zdaj ti
+### Primer 4: Mersennovo število – zdaj ti
 
 Pokaži, da je $2^{10} - 1 = 1023$ deljivo s $3$ in z $31$.
 
@@ -169,7 +171,7 @@ Pokaži, da je $2^{10} - 1 = 1023$ deljivo s $3$ in z $31$.
 **Iščemo:** razcep, iz katerega se vidita delitelja $3$ in $31$
 
 :::formula
-$a^2 - b^2 = (a - b)(a + b)$, $\quad a^n - b^n = (a - b)(a^{n-1} + \ldots + b^{n-1})$
+$a^2 - b^2 = (a - b)(a + b)$
 :::
 
 **Rešitev:**
@@ -181,7 +183,9 @@ $a^2 - b^2 = (a - b)(a + b)$, $\quad a^n - b^n = (a - b)(a^{n-1} + \ldots + b^{n
 :::premisli
 Zakaj sta $3$ in $31$ delitelja števila $1023$?
 ---
-$31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \cdot 11 \cdot 31$. Do $3$ prideš tudi drugače: $2^{10} - 1 = 4^5 - 1^5 = (4 - 1)(4^4 + 4^3 + 4^2 + 4 + 1) = 3 \cdot 341$.
+$31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \cdot 11 \cdot 31$.
+
+(višja raven) Do $3$ prideš tudi drugače: $2^{10} - 1 = 4^5 - 1^5 = (4 - 1)(4^4 + 4^3 + 4^2 + 4 + 1) = 3 \cdot 341$.
 :::
 
 ## Pogoste napake
@@ -190,7 +194,7 @@ $31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \c
 - **Kvadrat v drugem oklepaju.** »$a^3 - b^3 = (a - b)(a - b)^2$« ali »$(a - b)(a + b)^2$«. Napačno, saj je srednji člen $ab$, ne $2ab$. Pri $13^3 - 12^3$ prvo da $1$, drugo $625$, prav pa je $469$. Popravek: drugi oklepaj je $a^2 + ab + b^2$.
 - **Napačen znak srednjega člena.** »$x^3 + 8 = (x + 2)(x^2 + 2x + 4)$.« Napačno: ta zmnožek da $x^3 + 4x^2 + 8x + 8$. Popravek: pri vsoti kubov je srednji člen negativen, $(x + 2)(x^2 - 2x + 4)$.
 - **Obrazec za vsoto pri sodi potenci (višja raven).** »$a^4 + b^4 = (a + b)(a^3 - a^2b + ab^2 - b^3)$.« Napačno: desno je $a^4 - b^4$. Popravek: $a^n + b^n$ s faktorjem $a + b$ razstavimo le pri lihem $n$.
-- **Nedokončan razcep (višja raven).** Pri $x^6 - 1$ prek kubov se ustaviš pri $x^4 + x^2 + 1$. Popravek: pri sodem $n$ začni z razliko kvadratov ali pa preveri, ali se zadnji faktor da še razstaviti.
+- **Nedokončan razcep.** Pri $x^6 - 1$ prek kubov se ustaviš pri $x^4 + x^2 + 1$. Popravek: pri sodem eksponentu začni z razliko kvadratov ali pa preveri, ali se zadnji faktor da še razstaviti.
 
 ## Povzetek
 
@@ -199,9 +203,10 @@ $31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \c
 - $a^3 \pm b^3 \neq (a \pm b)^3$, drugi oklepaj ni $(a \pm b)^2$.
 - Postopek: najprej izpostavi skupni faktor, nato prepoznaj kube ($8x^3 = (2x)^3$), na koncu preizkus z množenjem.
 - (višja raven) $a^n - b^n = (a - b)(a^{n-1} + a^{n-2}b + \ldots + b^{n-1})$ za vsak $n$; $a^n + b^n = (a + b)(a^{n-1} - a^{n-2}b + \ldots + b^{n-1})$ le za lih $n$.
-- (višja raven) $a^2 + b^2$ in $a^4 + b^4$ nimata faktorja $a \pm b$. Pri razliki sodih potenc najprej razlika kvadratov ($x^6 - 1$). Uporaba: krajšanje ulomkov in deljivost, npr. $2^{10} - 1 = 31 \cdot 33$.
+- (višja raven) $a^2 + b^2$ in $a^4 + b^4$ nimata faktorja $a \pm b$. Uporaba: krajšanje ulomkov, npr. $\dfrac{x^5 - 1}{x - 1}$.
+- Pri razliki sodih potenc najprej razlika kvadratov ($x^6 - 1$). Deljivost: $2^{10} - 1 = 31 \cdot 33$, $1001 = 7 \cdot 11 \cdot 13$.
 
-## Drugače: Z analogijo
+## Drugače: Z analogijo (višja raven)
 
 Drugi oklepaj pri $a^n - b^n$ je kot dva glasova v zboru, ki se gibljeta v nasprotnih smereh. Sopran začne visoko ($a^{n-1}$) in se spušča po en ton, bas začne na dnu ($b^0$) in se dviga po en ton. Na vsakem koraku je vsota obeh »višin« (eksponentov) enaka $n - 1$:
 
@@ -236,7 +241,7 @@ Podobno razlika kubov $999 = 10^3 - 1 = 9 \cdot 111$ pove, da je $999$ deljivo s
 = 469
 ~ 1 | To je $(13 - 12)^3$. Razlika kubov ni kub razlike.
 ~ 625 | Drugi oklepaj si zapisal kot $(13 + 12)^2$. Srednji člen je $13 \cdot 12$, ne $2 \cdot 13 \cdot 12$.
-~ 25 | Izračunal si le prvi in drugi faktor brez kvadratov. Drugi oklepaj je $13^2 + 13 \cdot 12 + 12^2$.
+~ 25 | Drugi oklepaj si zapisal kot $13 + 12$, kot pri razliki kvadratov. Drugi oklepaj je $13^2 + 13 \cdot 12 + 12^2$.
 > $(13 - 12)(169 + 156 + 144) = 1 \cdot 469 = 469$.
 
 ? (višja raven) Zakaj $a^4 + b^4$ ne razstavimo s faktorjem $a + b$?
@@ -292,8 +297,8 @@ vrednost: 7*11*13 | 1001
 >>
 
 :::simboli
-a | prvi člen (osnova) | | | v Primeru 3 zunanji rob kocke
-b | drugi člen (osnova) | | | v Primeru 3 notranji rob kocke
+a | osnova prve potence | | | v Primeru 3 zunanji rob kocke
+b | osnova druge potence | | | v Primeru 3 notranji rob kocke
 n | eksponent | | | naravno število
 x | spremenljivka | | |
 V | prostornina lesa | V = a^3 - b^3 | cm^3 |
