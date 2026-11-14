@@ -66,7 +66,7 @@ Graf vsake logaritemske funkcije gre skozi točko $(1, 0)$, ker je $\log_a 1 = 0
 
 Grafa funkcij $y = \log_a x$ in $y = \log_{\frac{1}{a}} x$ sta simetrična glede na os $x$, ker je $\log_{\frac{1}{a}} x = -\log_a x$: iz $a^y = x$ sledi $\left(\frac{1}{a}\right)^{-y} = x$. V simulaciji spodaj (»Logaritemska funkcija«) spremeni osnovo z $2$ na $\frac{1}{2}$ in opazuj: graf se prezrcali čez os $x$, točka $(1, 0)$ pa ostane na mestu.
 
-**5. Premiki grafa.** Funkcijo $g(x) = \log_a (x - p) + q$ dobimo iz $y = \log_a x$ s premikom za $p$ v smeri osi $x$ in za $q$ v smeri osi $y$:
+**5. Premiki in raztegi grafa.** Funkcijo $g(x) = \log_a (x - p) + q$ dobimo iz $y = \log_a x$ s premikom za $p$ v smeri osi $x$ in za $q$ v smeri osi $y$:
 
 - asimptota je premica $x = p$,
 - definicijsko območje je $(p, \infty)$, ker mora veljati $x - p > 0$,
@@ -80,6 +80,10 @@ Kje je asimptota grafa $y = \log_2 (x + 3)$ in kam se premakne točka $(1, 0)$? 
 Asimptota je $x = -3$, točka $(1, 0)$ pa preide v $(-2, 0)$. Tu je $p = -3$, ker je $x + 3 = x - (-3)$, zato se graf premakne za $3$ v levo. Preizkus: $\log_2 (-2 + 3) = \log_2 1 = 0$.
 :::
 
+**Raztegi.** Pri $g(x) = c \cdot \log_a x$ se vsaka vrednost pomnoži s $c$: točka $(x, y)$ preide v $(x, cy)$. Pri $c > 1$ se graf raztegne v smeri osi $y$, pri $0 < c < 1$ se skrči, pri $c < 0$ pa se še prezrcali čez os $x$. Ničla $x = 1$, asimptota $x = 0$ in $D_g = (0, \infty)$ ostanejo, točka $(a, 1)$ pa preide v $(a, c)$. Na primer $y = \log_4 x$ je graf $y = \log_2 x$, v smeri osi $y$ skrčen s faktorjem $\frac{1}{2}$, ker iz $4^y = x$ sledi $2^{2y} = x$.
+
+Pri $g(x) = \log_a (kx)$ s $k > 0$ se graf v smeri osi $x$ skrči s faktorjem $k$ (kot pri vsaki funkciji). Pri logaritmu pa je $\log_a (kx) = \log_a k + \log_a x$, zato je to hkrati premik za $\log_a k$ v smeri osi $y$: graf $y = \log_2 (4x)$ je graf $y = \log_2 x$, premaknjen za $2$ navzgor. Asimptota $x = 0$ ostane, ničla pa je $x = \frac{1}{k}$.
+
 **6. Definicijsko območje sestavljene funkcije.** Če je pod logaritmom izraz, zahtevamo, da je ta izraz **strogo pozitiven**. Za $f(x) = \log_3 (6 - 2x)$ rešimo neenačbo $6 - 2x > 0$ in dobimo $x < 3$, torej $D_f = (-\infty, 3)$. Če je pod logaritmom kvadratni izraz, rešimo kvadratno neenačbo. Pri $\log (x^2 - x - 6)$ ima izraz $(x - 3)(x + 2)$ ničli $-2$ in $3$; parabola je odprta navzgor, zato je izraz pozitiven zunaj ničel in $D = (-\infty, -2) \cup (3, \infty)$.
 
 **7. Logaritemske enačbe.** V logaritemski enačbi je neznanka v logaritmandu (ali v osnovi). Ker je logaritemska funkcija strogo monotona, nobene vrednosti ne zavzame dvakrat, zato iz enakosti logaritmov z isto osnovo sledi enakost logaritmandov. Glavni tipi:
@@ -90,6 +94,33 @@ Asimptota je $x = -3$, točka $(1, 0)$ pa preide v $(-2, 0)$. Tu je $p = -3$, ke
 - V enačbi nastopata $\log_a x$ in $(\log_a x)^2$: uvedemo **novo neznanko** $t = \log_a x$ in rešimo kvadratno enačbo.
 
 **8. Preizkus je obvezen.** Pri združevanju logaritmov se definicijsko območje lahko razširi (v Primeru 2 je produkt $(x + 3)(x - 1)$ pri $x = -7$ pozitiven, čeprav sta oba faktorja negativna), zato lahko dobimo »rešitev«, pri kateri prvotni logaritmi niso definirani. Zato **pred** reševanjem zapišemo pogoje (vsi logaritmandi so pozitivni), **po** reševanju pa vsako rešitev preverimo.
+
+**9. Eksponentna in logaritemska rast.** Obe funkciji $y = 2^x$ in $y = \log_2 x$ naraščata, a zelo različno:
+
+| $x$ | $\log_2 x$ | $2^x$ |
+|---|---|---|
+| $1$ | $0$ | $2$ |
+| $2$ | $1$ | $4$ |
+| $4$ | $2$ | $16$ |
+| $8$ | $3$ | $256$ |
+| $16$ | $4$ | $65\,536$ |
+
+Ko se $x$ poveča za $1$, se $2^x$ **podvoji**. Da se $\log_2 x$ poveča za $1$, pa se mora $x$ **podvojiti**. Eksponentna funkcija zato raste vse hitreje, logaritemska vse počasneje. Vrednost $1000$ doseže $2^x$ že pri $x \approx 9{,}97$, $\log_2 x$ pa šele pri $x = 2^{1000}$, številu s $302$ števkami.
+
+:::risba graf
+opis: Grafi funkcij y = 2 na x (modro), y = x (sivo črtkano) in y = log₂ x (oranžno) za x od −2 do 7. Eksponentni graf leži nad premico y = x in hitro raste navzgor, logaritemski leži pod njo in se vse bolj položi. Grafa sta zrcalna čez premico y = x; točki (2; 4) in (4; 2) sta označeni.
+x: -2 .. 7 | 1 | x
+y: -2 .. 7 | 1 | y
+enako: da
+f: 2^x | modra | -2 .. 2,8
+f: x | siva črtkano
+f: ln(x)/ln(2) | oranžna | 0,25 .. 7
+točka: 2; 4 | (2, 4) | levo
+točka: 4; 2 | (4, 2) | pod desno
+podnapis: Eksponentna funkcija raste nad premico y = x, logaritemska pod njo
+:::
+
+Grafa sta zrcalna čez premico $y = x$, graf $y = 2^x$ leži ves nad njo, graf $y = \log_2 x$ pa ves pod njo. Zato za vsak $x > 0$ velja $\log_2 x < x < 2^x$. Za vsako osnovo $a > 1$ velja še več: $a^x$ sčasoma prehiti vsako potenco $x^n$, $\log_a x$ pa sčasoma zaostane celo za $\sqrt{x}$ (pri $x = 2^{20}$ je $\log_2 x = 20$, $\sqrt{x} = 1024$).
 
 ## Rešeni primeri
 
@@ -182,6 +213,40 @@ Kateri sta rešitvi in ali obe prestaneta preizkus?
 Iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$. Obe sta pozitivni. Preizkus za $x = 10$: $1^2 - \log 1000 + 2 = 1 - 3 + 2 = 0$. Za $x = 100$: $2^2 - \log 10^6 + 2 = 4 - 6 + 2 = 0$. Rešitvi enačbe sta $x = 10$ in $x = 100$.
 :::
 
+### Primer 5: razteg in premik
+
+Graf funkcije $g(x) = c \log_2 (x - p)$ ima asimptoto $x = 1$ in gre skozi točko $(5, 6)$. Določi $p$ in $c$, ničlo funkcije $g$ ter opiši, kako graf $g$ nastane iz grafa $y = \log_2 x$.
+
+**Podatki:** $g(x) = c \log_2 (x - p)$; asimptota $x = 1$; točka $(5, 6)$ na grafu
+**Iščemo:** $p$, $c$, ničlo funkcije $g$ in zaporedje transformacij
+
+:::formula
+$g(x) = c \log_a (x - p)$: asimptota $x = p$; $\;(x, y) \mapsto (x + p,\ cy)$
+:::
+
+**Rešitev:**
+
+1. Asimptota premaknjenega grafa je $x = p$, zato je $p = 1$ in $g(x) = c \log_2 (x - 1)$.
+2. Vstavimo točko: $g(5) = c \log_2 4 = 2c = 6$, zato je $c = 3$.
+3. Ničla: $3 \log_2 (x - 1) = 0$ velja pri $x - 1 = 1$, torej $x = 2$.
+4. Graf $y = \log_2 x$ premaknemo za $1$ v desno in ga raztegnemo s faktorjem $3$ v smeri osi $y$. Točka $(4, 2)$ preide v $(5, 6)$, točka $(1, 0)$ v ničlo $(2, 0)$.
+5. Preizkus še v eni točki: $g(9) = 3 \log_2 8 = 9$, iz točke $(8, 3)$ dobimo $(9, 9)$.
+6. Odgovor: $p = 1$, $c = 3$, ničla je $x = 2$; graf nastane s premikom za $1$ v desno in raztegom s faktorjem $3$ v smeri osi $y$.
+
+:::risba graf
+opis: Graf y = log₂ x (sivo) in graf g(x) = 3 log₂ (x − 1) (modro) z navpično asimptoto x = 1 (oranžno črtkano). Modri graf seka os x v ničli (2; 0) in gre skozi točko (5; 6), ki nastane iz točke (4; 2) sivega grafa.
+x: -1 .. 10 | 1 | x
+y: -3 .. 10 | 1 | y
+višina: 240
+f: ln(x)/ln(2) | siva | 0,125 .. 10
+f: 3*ln(x - 1)/ln(2) | modra | 1,5 .. 10
+črta: 1; -3 -> 1; 10 | oranžna črtkano
+točka: 4; 2 | (4, 2) | pod desno | siva
+točka: 2; 0 | (2, 0) | pod desno
+točka: 5; 6 | (5, 6) | desno
+podnapis: Premik za 1 v desno in razteg s faktorjem 3 v smeri osi y
+:::
+
 ## Pogoste napake
 
 - **Rešitev brez preizkusa.** V Primeru 2 kvadratna enačba da tudi $x = -7$. Ko logaritme združimo, izraz $\log_2 \big((x + 3)(x - 1)\big)$ obstaja tudi pri $x = -7$, prvotna enačba pa ne. Pravilno: na začetku zapiši pogoje in na koncu vsako rešitev preveri v **prvotni** enačbi.
@@ -196,6 +261,8 @@ Iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$. Obe 
 - Graf je zrcalna slika grafa $y = a^x$ čez premico $y = x$; gre skozi $(1, 0)$ in $(a, 1)$, os $y$ je navpična asimptota.
 - Za $a > 1$ funkcija strogo narašča, za $0 < a < 1$ strogo pada.
 - $g(x) = \log_a (x - p) + q$: asimptota $x = p$, $D_g = (p, \infty)$.
+- $c \log_a x$: razteg v smeri osi $y$; $\log_a (kx) = \log_a k + \log_a x$.
+- $2^x$ raste vse hitreje, $\log_2 x$ vse počasneje: $\log_2 x < x < 2^x$.
 - Definicijsko območje: izraz pod logaritmom mora biti strogo pozitiven.
 - Enačbe: $\log_a A = c \Rightarrow A = a^c$; $\;\log_a A = \log_a B \Rightarrow A = B$; po potrebi $t = \log_a x$.
 - Na začetku zapiši pogoje, na koncu naredi preizkus.
@@ -358,25 +425,38 @@ Pri $1000$ številih zadošča $10$ vprašanj, pri milijardi pa le $30$. To je z
 ~ Negativen je lahko logaritem, ne logaritmand: frekvenca je pozitivna, le manjša od $440\,\mathrm{Hz}$.
 > Iz $12 \log_2 \dfrac{\nu}{440} = -12$ sledi $\log_2 \dfrac{\nu}{440} = -1$ in $\dfrac{\nu}{440} = 2^{-1}$, torej $\nu = 220\,\mathrm{Hz}$: ena oktava pod A.
 
+? (brez računala) Graf funkcije $g(x) = c \log_3 x$ gre skozi točko $(9, -4)$. Koliko je $c$?
+= -2
+~ 2 | Pozabil si na predznak: ker je $\log_3 9 = 2$ pozitiven, mora biti $c$ negativen, da je $g(9) = -4$.
+~ -0,44 | Delil si $-4$ z $9$. Faktor $c$ množi vrednost $\log_3 9 = 2$, ne abscise $9$.
+> $g(9) = c \log_3 9 = 2c = -4$, zato je $c = -2$: graf $\log_3 x$ je raztegnjen s faktorjem $2$ in prezrcaljen čez os $x$.
+
+? (brez računala) Funkcija $y = 2^x$ doseže vrednost $1024$ že pri $x = 10$. Pri katerem $x$ doseže vrednost $10$ funkcija $y = \log_2 x$?
+= 1024
+~ 10 | To je abscisa za $2^x$. Graf $\log_2 x$ je zrcalna slika čez $y = x$, zato se koordinati zamenjata.
+~ 20 | Logaritem ni produkt: iz $\log_2 x = 10$ sledi $x = 2^{10}$, ne $x = 2 \cdot 10$.
+> Iz $\log_2 x = 10$ sledi $x = 2^{10} = 1024$. Točka $(10, 1024)$ grafa $y = 2^x$ preide v točko $(1024, 10)$ grafa $y = \log_2 x$: eksponentna funkcija pride do $1024$ v desetih korakih, logaritemska pa potrebuje $1024$ enot, da pride do $10$.
+
 :::simboli
 f | logaritemska funkcija | f(x) = \log_a x | |
 x | spremenljivka (neznanka) | | | pri $\log_a x$ je $x > 0$
 a | osnova logaritma | | | $a > 0$, $a \ne 1$
 D_f, D_g | definicijsko območje funkcije | D_g = (p, \infty) | |
 Z_f | zaloga vrednosti funkcije | | |
-g | premaknjena logaritemska funkcija | g(x) = \log_a (x - p) + q | |
+g | premaknjena ali raztegnjena logaritemska funkcija | g(x) = \log_a (x - p) + q | | pri raztegu $g(x) = c \log_a x$
 p | premik grafa v smeri osi $x$ | | | asimptota je $x = p$
 q | premik grafa v smeri osi $y$ | | |
 A, B, C | izrazi z neznanko pod logaritmom | | | morajo biti pozitivni
-c | vrednost logaritma | | | $\log_a A = c$ pomeni $A = a^c$
+c | vrednost logaritma; pri $c \log_a x$ faktor raztega v smeri osi $y$ | | | $\log_a A = c$ pomeni $A = a^c$; pri $c < 0$ razteg še zrcali čez os $x$
 n | eksponent | | |
 t | nova neznanka | t = \log x | |
-k | število poltonov nad tonom A | k = 12 \log_2 \frac{\nu}{\nu_0} | – | negativno pod tonom A
+k | število poltonov nad tonom A; pri $\log_a (kx)$ faktor skrčitve v smeri osi $x$ | k = 12 \log_2 \frac{\nu}{\nu_0} | – | negativno pod tonom A; pri $\log_a (kx)$ je $k > 0$
 \nu | frekvenca tona | | Hz | $\nu > 0$
 \nu_0 | frekvenca tona A | | Hz | $440\,\mathrm{Hz}$
 h | hitrost tipkanja po $x$ tednih vadbe (Za maturo, naloga 3) | h(x) = r + s \log_2 (x + 1) | besed/min |
 r, s | parametra modela hitrosti tipkanja | | | $r = 20$, $s = 6$
 Z_{f^{-1}} | zaloga vrednosti obratne funkcije | Z_{f^{-1}} = D_f | |
+y | vrednost funkcije (ordinata točke grafa) | | |
 :::
 
 <<RACUN
@@ -395,4 +475,14 @@ vrednost: 2^(10/3) | 10.0794
 resi: 20+6*log(x+1, 2)=40 | x | 9.08
 resi: log(x, 2)+log(x-2, 2)=3 | x | 4
 resi: x*(x-2)=8 | x | -2, 4
+enako: log(4*x, 2) | 2+log(x, 2)
+enako: 2*log(x, 4) | log(x, 2)
+resi: c*log(4, 2)=6 | c | 3
+resi: 3*log(x-1, 2)=0 | x | 2
+vrednost: 3*log(8, 2) | 9
+resi: 2^x=1000 | x | 9.97
+vrednost: 1000*log(2, 10) | 301.03
+vrednost: sqrt(2^20) | 1024
+resi: c*log(9, 3)=-4 | c | -2
+resi: log(x, 2)=10 | x | 1024
 >>

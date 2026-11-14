@@ -89,6 +89,44 @@ Kaj se zgodi, če višina razdeli hipotenuzo na dva enaka odseka, $c_a = c_b$? K
 Iz $v_c^2 = c_a \cdot c_a = c_a^2$ sledi $v_c = c_a$: višina je enako dolga kot vsak odsek. Kateti sta enaki ($a^2 = c \cdot c_a = b^2$), zato je trikotnik enakokrak pravokotni, kota ob hipotenuzi sta $45^\circ$.
 :::
 
+**8. Središčni razteg.** Podobne like dobimo s preslikavo. Izberemo točko $S$, **središče raztega**, in število $k \ne 0$, **koeficient raztega**. **Središčni razteg** vsaki točki $T$ priredi točko $T'$ na premici $ST$, za katero je
+
+$$|ST'| = |k| \cdot |ST|$$
+
+Pri $k > 0$ leži $T'$ na isti strani središča kot $T$ (na poltraku $ST$), pri $k < 0$ na nasprotni strani. Središče $S$ se preslika samo vase. Tako deluje projektor: središče je v objektivu, slika na platnu je povečana. Tudi kovanec in Luna iz primera 2 sta povezana s središčnim raztegom s središčem v očesu.
+
+- Daljica se preslika v vzporedno daljico, ki je $|k|$-krat daljša: $|A'B'| = |k| \cdot |AB|$.
+- Koti se ohranijo.
+- Zato je slika lika podobna liku s koeficientom podobnosti $|k|$, ploščina pa se pomnoži s $k^2$.
+
+Pri $|k| > 1$ se lik poveča, pri $|k| < 1$ se pomanjša. Pri $k = 1$ ostane vse na mestu, pri $k = -1$ je razteg zrcaljenje čez točko $S$.
+
+V koordinatnem sistemu merimo odmik točke od središča in ga pomnožimo s $k$. Točka $T(x, y)$ se pri središču $S(x_S, y_S)$ preslika v $T'(x', y')$:
+
+$$x' = x_S + k\,(x - x_S), \qquad y' = y_S + k\,(y - y_S)$$
+
+Pri središču v izhodišču je preprosto $T'(kx, ky)$. Na risbi je središče v izhodišču: večji trikotnik je slika trikotnika $ABC$ pri $k = 2$, manjši na drugi strani središča pri $k = -\frac{1}{2}$.
+
+:::risba graf
+opis: Središčni razteg s središčem v izhodišču S. Modri trikotnik ABC ima oglišča A(2, 1), B(4, 1), C(3, 3). Pri k = 2 se preslika v oranžni trikotnik A'B'C' z oglišči (4, 2), (8, 2), (6, 6), ki ima dvakrat daljše stranice. Pri k = −1/2 se preslika v zeleni trikotnik z oglišči (−1; −0,5), (−2; −0,5), (−1,5; −1,5) na drugi strani središča. Črtkane premice skozi S povezujejo ustrezna oglišča.
+x: -3 .. 9 | 1 | x
+y: -2 .. 7 | 1 | y
+enako: da
+črta: -1; -0,5 -> 4; 2 | siva črtkano
+črta: -2; -0,5 -> 8; 2 | siva črtkano
+črta: -1,5; -1,5 -> 6; 6 | siva črtkano
+lik: 2; 1 -> 4; 1 -> 3; 3 | modra
+lik: 4; 2 -> 8; 2 -> 6; 6 | oranžna
+lik: -1; -0,5 -> -2; -0,5 -> -1,5; -1,5 | zelena
+točka: 0; 0 | S | nad levo
+točka: 2; 1 | A | pod
+točka: 4; 1 | B | pod
+točka: 3; 3 | C | levo
+točka: 4; 2 | A' | nad levo
+točka: 8; 2 | B' | pod
+točka: 6; 6 | C' | levo
+:::
+
 ## Rešeni primeri
 
 ### Primer 1: koeficient podobnosti in neznane stranice
@@ -171,6 +209,26 @@ Koliko merita $c_b$ in $v_c$?
 $c_b = 50 - 18 = 32\,\text{cm}$ in $v_c^2 = 18 \cdot 32 = 576$, zato $v_c = 24\,\text{cm}$. Preizkus: $b^2 = 50 \cdot 32 = 1600$, $b = 40\,\text{cm}$, in $30 \cdot 40 = 50 \cdot 24$, ker sta to dvakratni ploščini.
 :::
 
+### Primer 5: središčni razteg v koordinatah
+
+Trikotnik $ABC$ ima oglišča $A(2, 2)$, $B(4, 2)$ in $C(2, 3)$. Preslikaj ga s središčnim raztegom s središčem $S(1, 1)$ in koeficientom a) $k = 2$, b) $k = -1$. Primerjaj ploščine slik s ploščino trikotnika $ABC$.
+
+**Podatki:** $A(2, 2)$, $B(4, 2)$, $C(2, 3)$, središče $S(1, 1)$, koeficienta $k = 2$ in $k = -1$
+**Iščemo:** oglišča slik in njihove ploščine
+
+:::formula
+$x' = x_S + k\,(x - x_S)$, $\;y' = y_S + k\,(y - y_S)$; ploščina slike je $k^2$-krat ploščina lika
+:::
+
+**Rešitev:**
+
+1. Odmiki od središča: $A$ je $1$ desno in $1$ gor od $S$, $B$ je $3$ desno in $1$ gor, $C$ je $1$ desno in $2$ gor.
+2. a) Pri $k = 2$ odmike podvojimo: $A'(1 + 2, 1 + 2) = A'(3, 3)$, $B'(1 + 6, 1 + 2) = B'(7, 3)$, $C'(1 + 2, 1 + 4) = C'(3, 5)$.
+3. b) Pri $k = -1$ odmike obrnemo: $A''(1 - 1, 1 - 1) = A''(0, 0)$, $B''(1 - 3, 1 - 1) = B''(-2, 0)$, $C''(1 - 1, 1 - 2) = C''(0, -1)$.
+4. Trikotnik $ABC$ ima pravi kot pri $A$, kateti merita $|AB| = 2$ in $|AC| = 1$, zato je $P = \dfrac{2 \cdot 1}{2} = 1$.
+5. Slika pri $k = 2$ ima kateti $4$ in $2$: $P' = \dfrac{4 \cdot 2}{2} = 4 = 2^2 \cdot 1$. Slika pri $k = -1$ ima kateti $2$ in $1$: $P'' = 1 = (-1)^2 \cdot 1$.
+6. Odgovor: a) $A'(3, 3)$, $B'(7, 3)$, $C'(3, 5)$, ploščina je $4$-krat večja; b) $A''(0, 0)$, $B''(-2, 0)$, $C''(0, -1)$, trikotnik je skladen z $ABC$ (zrcaljen čez $S$), ploščina je enaka.
+
 ## Pogoste napake
 
 - **Napačno povezane stranice.** Razmerje mora povezovati *ustrezni* stranici, torej tisti, ki ležita nasproti enakih kotov. Preden zapišeš sorazmerje, označi enake kote.
@@ -187,6 +245,7 @@ $c_b = 50 - 18 = 32\,\text{cm}$ in $v_c^2 = 18 \cdot 32 = 576$, zato $v_c = 24\,
 - V pravokotnem trikotniku višina na hipotenuzo razdeli hipotenuzo na odseka $c_a$ in $c_b$ ter trikotnik na dva podobna trikotnika.
 - Evklidov izrek: $a^2 = c \cdot c_a$, $b^2 = c \cdot c_b$.
 - Višinski izrek: $v_c^2 = c_a \cdot c_b$.
+- Središčni razteg s središčem $S$ in koeficientom $k \ne 0$: $|ST'| = |k| \cdot |ST|$; pri $k < 0$ je $T'$ na drugi strani $S$. Slika je podobna liku s koeficientom $|k|$, ploščina se pomnoži s $k^2$.
 - Pri nalogah najprej nariši skico, označi enake kote in šele nato zapiši sorazmerje.
 
 ## Za maturo
@@ -347,18 +406,37 @@ $$a^2 + b^2 = c \cdot c_a + c \cdot c_b = c\,(c_a + c_b) = c \cdot c = c^2.$$
 ~ $25 \cdot 21$ uporabi odsek ob drugi kateti. Kateta ob odseku $4\,\text{cm}$ potrebuje prav ta odsek.
 > Najprej hipotenuza $c = 4 + 21 = 25\,\text{cm}$, nato Evklidov izrek $a^2 = 25 \cdot 4 = 100$, torej $a = 10\,\text{cm}$.
 
+? (brez računala) Središčni razteg s središčem $S(1, 2)$ in koeficientom $k = -2$ preslika točko $T(3, 5)$ v točko $T'$. Koliko je prva koordinata (abscisa) točke $T'$?
+= -3
+~ 5 | Vzel si $k = 2$. Pri negativnem $k$ leži $T'$ na drugi strani središča.
+~ -6 | Raztegnil si iz izhodišča, $-2 \cdot 3$. Odmik meriš od središča $S$.
+~ -4 | Če si izračunal $-2 \cdot (3 - 1)$, je to le pomnoženi odmik, prišteti mu moraš še $x_S = 1$. Če si izračunal drugo koordinato $y' = -4$: sprašujemo po prvi, $x'$.
+> $x' = 1 + (-2) \cdot (3 - 1) = 1 - 4 = -3$. (Druga koordinata: $y' = 2 + (-2) \cdot (5 - 2) = -4$, torej $T'(-3, -4)$.)
+
+? Lik s ploščino $5\,\text{cm}^2$ preslikamo s središčnim raztegom s koeficientom $k = -3$. Kolikšna je ploščina slike?
+= 45 cm²
+~ -45 | Ploščina ni negativna. Razmerje ploščin je $k^2 = (-3)^2 = 9$.
+~ 15 | Dolžine se pomnožijo s $|k| = 3$, ploščina pa s $k^2 = 9$.
+> Slika je podobna liku s koeficientom $|k| = 3$, zato je njena ploščina $9 \cdot 5\,\text{cm}^2 = 45\,\text{cm}^2$.
+
 :::simboli
 a, b, c | stranice trikotnika | | | pri višini na hipotenuzo: a, b kateti, c hipotenuza
 a', b', c' | ustrezne (istoležne) stranice podobnega trikotnika | | |
-k | koeficient podobnosti | k = \frac{a'}{a} | | k > 1: večji trikotnik, k < 1: manjši
+k | koeficient podobnosti; pri središčnem raztegu koeficient raztega | k = \frac{a'}{a} | | k > 1: večji trikotnik, k < 1: manjši; koeficient raztega je lahko tudi negativen
+S | središče središčnega raztega | | |
+T, T' | točka in njena slika pri središčnem raztegu | | |
+y | druga koordinata točke $T$ (pri središčnem raztegu) | | |
+x_S, y_S | koordinati središča raztega | | |
+x', y' | koordinati slike $T'$ | x' = x_S + k\,(x - x_S) | |
+P, P', P'' | ploščina trikotnika in njegovih slik | | |
 c_a | odsek hipotenuze ob kateti a | | | a² = c · c_a
 c_b | odsek hipotenuze ob kateti b | | | b² = c · c_b
 v_c | višina na hipotenuzo | v_c^2 = c_a \cdot c_b | |
-x | premer Lune | x = \frac{p \cdot R}{r} | km
+x | premer Lune | x = \frac{p \cdot R}{r} | km | pri središčnem raztegu prva koordinata točke $T$
 p | premer kovanca | | cm
 r | razdalja kovanca od očesa | | cm
 R | razdalja od Zemlje do Lune | | km
-A, B, C | oglišča trikotnika | | | pravi kot je pri C
+A, B, C | oglišča trikotnika | | | pravi kot je pri C; pri središčnem raztegu poljubni trikotnik, v primeru 5 je pravi kot pri A
 D | nožišče višine na hipotenuzo | | |
 M, N | presečišči vzporednice z AB s stranicama AC in BC (naloga 1 za maturo) | | |
 :::
@@ -375,4 +453,13 @@ vrednost: (6*sqrt(5))/(3*sqrt(5)) | 2
 vrednost: (12*6/2)/(3*6/2) | 4
 vrednost: 12*6/2 | 36
 vrednost: 3*6/2 | 9
+vrednost: 1+2*(2-1) | 3
+vrednost: 1+2*(4-1) | 7
+vrednost: 1+2*(3-1) | 5
+vrednost: 1-1*(4-1) | -2
+vrednost: 1-1*(3-1) | -1
+vrednost: 4*2/2 | 4
+vrednost: 1+(-2)*(3-1) | -3
+vrednost: 2+(-2)*(5-2) | -4
+vrednost: (-3)^2*5 | 45
 >>
