@@ -17,11 +17,19 @@ Na prvem kraju je vsaka noč skoraj enaka. Na drugem so bile nekatere noči obla
 
 ## Razlaga
 
-**1. Osnovni pojmi.** Statistična enota je en predmet opazovanja (učenec, meritev). Spremenljivka je lastnost, ki jo opazujemo (točke na testu). Vrednosti zapišemo kot $x_1, x_2, \ldots, x_n$, kjer je $n$ število podatkov. **Frekvenca** $f$ pove, kolikokrat se vrednost pojavi. **Relativna frekvenca** je delež $\dfrac{f}{n}$, običajno v odstotkih.
+**1. Osnovni pojmi.** **Populacija** so vse enote, ki nas zanimajo (vsi dijaki šole). **Vzorec** je del populacije, ki ga res opazujemo (en razred). **Statistična enota** je en predmet opazovanja (en dijak, ena meritev). **Spremenljivka** ali preučevana značilnost je lastnost enote, ki jo opazujemo (točke na testu, barva oči). **Vrednost spremenljivke** je podatek ene enote ($38$ točk, modre). Vrednosti zapišemo kot $x_1, x_2, \ldots, x_n$, kjer je $n$ število podatkov. **Frekvenca** $f$ pove, kolikokrat se vrednost pojavi. **Relativna frekvenca** je delež $\dfrac{f}{n}$, običajno v odstotkih.
 
 *Preveri:* V $40$ nočeh je bilo $10$ jasnih. Kolikšna je relativna frekvenca jasnih noči? ($\dfrac{10}{40} = 0{,}25$, torej $25\,\%$.)
 
-**2. Srednje vrednosti.** To so števila, ki predstavijo »sredino« podatkov.
+**2. Vrste podatkov.** Podatki so treh vrst.
+
+- **Opisni** (kvalitativni) podatki so besede ali oznake brez naravnega vrstnega reda: barva oči, kraj bivanja, najljubši planet.
+- **Vrstni** (ordinalni) podatki so opisi z naravnim vrstnim redom: ocena od nezadostno do odlično, odgovor »nikoli, redko, pogosto«. Uredimo jih lahko, razlik med njimi pa ne merimo.
+- **Številski** (kvantitativni) podatki so izmerjena ali prešteta števila, s katerimi je računanje smiselno: višina, čas, število bratov.
+
+Tudi število je lahko opisni podatek: številka na dresu je le oznaka. Ocene $1$ do $5$ so vrstni podatki; povprečna ocena je šolski dogovor.
+
+**3. Srednje vrednosti.** To so števila, ki predstavijo »sredino« podatkov.
 
 - **Aritmetična sredina** je vsota podatkov, deljena z njihovim številom:
 $$\bar{x} = \frac{x_1 + x_2 + \cdots + x_n}{n}$$
@@ -37,7 +45,17 @@ Napovej: kako se spremenita povprečje in mediana, če žepnina tistega dijaka n
 Povprečje skoči na $\dfrac{9 \cdot 10 + 2\,000}{10} = 209\,\text{€}$, mediana pa ostane $10\,\text{€}$. Mediana je odvisna le od srednjih podatkov, zato je skrajni podatek ne premakne.
 :::
 
-**3. Mere razpršenosti.** Pokažejo, kako se podatki raztezajo okoli sredine.
+**Kako povzamemo podatke?** Odloča vrsta podatkov.
+
+| Vrsta podatkov | Primeren povzetek |
+|---|---|
+| opisni | modus |
+| vrstni | mediana |
+| številski | aritmetična sredina; ob osamelcih mediana |
+
+Opisnih podatkov ne moremo urediti, zato ostane modus. Vrstne uredimo, ne seštejemo pa jih, zato vzamemo mediano: pri ocenah $1, 3, 3, 4, 5$ je to $3$ (dobro).
+
+**4. Mere razpršenosti.** Pokažejo, kako se podatki raztezajo okoli sredine.
 
 - **Razmah** (variacijski razmik) je $R = x_{\max} - x_{\min}$. Je preprost, a odvisen le od dveh skrajnih podatkov.
 - **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednjega podatka ne všteješ v nobeno polovico. **Medkvartilni** (medčetrtinski) **razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov.
@@ -53,19 +71,89 @@ Zakaj v varianci odklone kvadriramo? Kaj bi dobil, če bi jih samo seštel?
 Vsota odklonov je vedno $0$, ker se pozitivni in negativni izničijo. Na prvem kraju iz uvoda so odkloni od $20$ enaki $0, 2, -1, 1, -2$, vsota je $0$. Kvadrati so nenegativni, zato se ne izničijo, veliki odkloni pa štejejo več.
 :::
 
-**4. Osamelci.** Podatek je običajno osamelec, če leži pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$.
+**5. Osamelci.** Podatek je običajno osamelec, če leži pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$.
 
 *Preveri:* Je pri $Q_1 = 10$ in $Q_3 = 14$ podatek $21$ osamelec? (Da, zgornja meja je $14 + 1{,}5 \cdot 4 = 20$.)
 
-**5. Prikazi podatkov.**
+**6. Prikazi podatkov.**
 
 | Prikaz | Kdaj ga uporabimo |
 |---|---|
 | Frekvenčna tabela | urejen pregled vrednosti, frekvenc in deležev |
 | Stolpčni diagram | kategorije ali posamezne vrednosti; stolpci so ločeni |
-| Krožni diagram | deleži celote; središčni kot kroga je $\dfrac{f}{n}\cdot 360^\circ$ |
+| Krožni (tortni) diagram | deleži celote; središčni kot kroga je $\dfrac{f}{n}\cdot 360^\circ$ |
+| Pozicijski diagram | malo številskih podatkov; vsak podatek je pika nad številsko premico |
 | Histogram | števila, razvrščena v razrede iste širine; stolpci se dotikajo |
 | Škatla z brki | pet števil: najmanjši podatek, $Q_1$, $M$, $Q_3$, največji podatek; osamelce rišemo kot pike |
+| Linijski diagram | spreminjanje s časom; zaporedne točke povežemo z daljicami |
+| Krivuljni diagram | kot linijski, a z gladko krivuljo, ko se količina spreminja zvezno |
+| Razsevni diagram | dve številski spremenljivki; vsaka enota je točka $(x, y)$ |
+
+Opisne in vrstne podatke kažemo s stolpčnim ali krožnim diagramom, številske s pozicijskim diagramom, histogramom ali škatlo z brki.
+
+:::risba graf
+opis: Pozicijski diagram podatkov 6, 9, 7, 10, 8, 9, 5, 12 iz Primera 1. Nad številsko osjo od 4 do 13 je pri vrednostih 5, 6, 7, 8, 10 in 12 po ena pika, pri vrednosti 9 pa dve piki, druga nad drugo.
+x: 4 .. 13 | 1 | število utrinkov
+y: 0 .. 3 | 1 |
+višina: 130
+oznake: ne
+mreža: ne
+oznakax: 5 | 5
+oznakax: 6 | 6
+oznakax: 7 | 7
+oznakax: 8 | 8
+oznakax: 9 | 9
+oznakax: 10 | 10
+oznakax: 11 | 11
+oznakax: 12 | 12
+točka: 5; 1 | | | modra
+točka: 6; 1 | | | modra
+točka: 7; 1 | | | modra
+točka: 8; 1 | | | modra
+točka: 9; 1 | | | modra
+točka: 9; 2 | | | modra
+točka: 10; 1 | | | modra
+točka: 12; 1 | | | modra
+podnapis: Pozicijski diagram: vsak podatek je ena pika.
+:::
+
+:::risba graf
+opis: Linijski diagram števila utrinkov na prvem kraju iz uvoda. Na vodoravni osi so noči od 1 do 5, na navpični število utrinkov v eni uri od 0 do 25. Točke (1; 20), (2; 22), (3; 19), (4; 21) in (5; 18) so po vrsti povezane z daljicami.
+x: 0 .. 6 | 1 | noč
+y: 0 .. 25 | 5 | utrinki
+črta: 1; 20 -> 2; 22 -> 3; 19 -> 4; 21 -> 5; 18 | modra
+točka: 1; 20 | 20 | nad | modra
+točka: 2; 22 | 22 | nad | modra
+točka: 3; 19 | 19 | pod | modra
+točka: 4; 21 | 21 | nad | modra
+točka: 5; 18 | 18 | pod | modra
+podnapis: Linijski diagram: točke povežemo z daljicami.
+:::
+
+:::risba graf
+opis: Krivuljni diagram temperature zraka v enem dnevu. Na vodoravni osi so ure od 0 do 24, na navpični temperatura od 0 do 25 stopinj Celzija. Gladka krivulja ima najnižjo vrednost 9 stopinj ob 3. uri in najvišjo 21 stopinj ob 15. uri.
+x: 0 .. 24 | 3 | ura
+y: 0 .. 25 | 5 | °C
+f: 15 - 6*cos(pi*(x - 3)/12) | oranžna
+točka: 3; 9 | 9 °C | pod | oranžna
+točka: 15; 21 | 21 °C | nad | oranžna
+podnapis: Krivuljni diagram: temperatura se spreminja zvezno.
+:::
+
+:::risba graf
+opis: Razsevni diagram osmih noči. Na vodoravni osi je oblačnost od 0 do 100 %, na navpični število utrinkov v eni uri od 0 do 25. Točke (5; 24), (10; 22), (20; 19), (30; 18), (50; 12), (60; 10), (80; 5) in (90; 3) niso povezane in se spuščajo od levo zgoraj proti desno spodaj: v bolj oblačnih nočeh je utrinkov manj.
+x: 0 .. 100 | 20 | oblačnost (%)
+y: 0 .. 25 | 5 | utrinki
+točka: 5; 24 | | | modra
+točka: 10; 22 | | | modra
+točka: 20; 19 | | | modra
+točka: 30; 18 | | | modra
+točka: 50; 12 | | | modra
+točka: 60; 10 | | | modra
+točka: 80; 5 | | | modra
+točka: 90; 3 | | | modra
+podnapis: Razsevni diagram: vsaka noč je ena točka (oblačnost, utrinki).
+:::
 
 Pri razvrščenih podatkih vsak podatek nadomestimo z **razredno sredino**, to je s sredino njegovega razreda (za razred od $10$ do $20$ je to $15$). Rezultat je le približek, saj ne vemo, kje v razredu ležijo posamezni podatki.
 
@@ -158,6 +246,26 @@ Koliko je $x_5$?
 $x_5 = 80 - 63 = 17$ utrinkov. Preizkus: $\dfrac{63 + 17}{5} = 16$.
 :::
 
+### Primer 5: Pojmi in vrste podatkov
+
+Krožek je $60$ od $480$ dijakov šole vprašal, kateri planet jim je najljubši, kako pogosto opazujejo nebo (nikoli, redko, pogosto) in koliko knjig o vesolju so prebrali. Določi populacijo, vzorec, enoto, spremenljivke, njihove vrste in primeren povzetek.
+
+**Podatki:** $480$ dijakov šole, $60$ vprašanih, tri vprašanja
+**Iščemo:** populacijo, vzorec, enoto, spremenljivke, vrste podatkov, povzetke
+
+:::formula
+opisni podatki: modus; vrstni: mediana; številski: aritmetična sredina ali mediana
+:::
+
+**Rešitev:**
+
+1. Populacija je vseh $480$ dijakov, vzorec $60$ vprašanih, enota en vprašani dijak.
+2. Spremenljivke: najljubši planet, pogostost opazovanja, število knjig. Vrednosti enega dijaka so npr. »Saturn«, »redko«, $3$.
+3. Planet je opisni podatek (planetov ne urejamo): modus.
+4. Pogostost je vrstni podatek (ima vrstni red): mediana.
+5. Število knjig je številski podatek: aritmetična sredina, ob osamelcih pa mediana.
+6. Odgovor: populacija $480$ dijakov, vzorec $60$, enota dijak; povzetki modus, mediana in aritmetična sredina.
+
 ## Pogoste napake
 
 - **Mediana neurejenih podatkov.** Če vzameš srednji podatek v prvotnem vrstnem redu, dobiš napačno število. Mediana je definirana za *urejene* podatke. Najprej uredi, nato poišči sredino.
@@ -174,7 +282,8 @@ $x_5 = 80 - 63 = 17$ utrinkov. Preizkus: $\dfrac{63 + 17}{5} = 16$.
 - Varianca $\sigma^2 = \dfrac{\sum (x_i - \bar{x})^2}{n}$, standardni odklon $\sigma = \sqrt{\sigma^2}$.
 - Osamelec: pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$.
 - Osamelci vplivajo na povprečje, mediana in medkvartilni razmik sta odporna.
-- Prikazi: stolpčni diagram, krožni diagram (kot $\dfrac{f}{n}\cdot 360^\circ$), histogram, škatla z brki.
+- Vrste podatkov: opisni (modus), vrstni (mediana), številski (aritmetična sredina).
+- Prikazi: stolpčni, krožni (kot $\dfrac{f}{n}\cdot 360^\circ$), pozicijski, linijski, krivuljni in razsevni diagram, histogram, škatla z brki.
 
 ## Za maturo
 
@@ -340,6 +449,14 @@ torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2,
 ~ Vsota podatkov se poveča za $5n$, zato se sredina poveča za $5$.
 + Sredina se poveča za $5$, standardni odklon ostane enak.
 > Vsi podatki in sredina se premaknejo za $5$, odkloni $x_i - \bar{x}$ ostanejo enaki, zato se $\sigma$ ne spremeni.
+
+? Za katero spremenljivko je primeren povzetek mediana, aritmetična sredina pa nima smisla?
+- Barva avtomobila.
+~ Opisni podatek: ne uredimo ga, primeren je le modus.
+- Masa nahrbtnika v kilogramih.
+~ Številski podatek: aritmetična sredina ima smisel.
++ Zadovoljstvo z malico: nezadovoljen, delno zadovoljen, zadovoljen.
+> Vrstni podatek: odgovore uredimo, ne seštejemo pa jih, zato vzamemo mediano.
 
 <<RACUN
 vrednost: 15-9 | 6

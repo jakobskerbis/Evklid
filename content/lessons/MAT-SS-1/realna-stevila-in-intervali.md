@@ -48,6 +48,14 @@ Za vsa $x \le 0$. Pri negativnem $x$ je $-x$ pozitivno in enako razdalji od $0$,
 
 Podobno je $|x - c| = r$ ($r > 0$) enačba točk, ki so od $c$ oddaljene za $r$: $x = c - r$ ali $x = c + r$.
 
+Enako rešujemo, ko je v absolutni vrednosti drug izraz: iz $|u| = a$ z $a > 0$ sledi $u = a$ ali $u = -a$. Enačba $|2x - 1| = 7$ da $2x - 1 = 7$, torej $x = 4$, ali $2x - 1 = -7$, torej $x = -3$. Če absolutna vrednost ni sama na eni strani, jo najprej osamimo. Na koncu naredimo preizkus.
+
+**Absolutna vrednost izraza s spremenljivko.** Pri $|x - 3|$ ne vemo, ali je $x - 3$ pozitiven ali negativen. Odloči ničla izraza v absolutni vrednosti, tu $x = 3$:
+
+$$|x - 3| = \begin{cases} x - 3, & x \ge 3 \\ 3 - x, & x < 3 \end{cases}$$
+
+Če vemo, na katerem intervalu leži $x$, absolutno vrednost odpravimo. Za $x < 3$ je $|x - 3| + x = (3 - x) + x = 3$, izraz je tam stalen.
+
 **3. Intervali.** **Interval** je množica **vseh** realnih števil med dvema **krajiščema** $a$ in $b$ ($a < b$). Zapis $[2, 5]$ torej ne pomeni le »števila $2, 3, 4, 5$«, ampak vsebuje tudi $2{,}5$, $\pi$ in $\sqrt{10}$. Krajišče je lahko vključeno ali izključeno. Interval je lahko tudi neomejen, če se razteza v neskončnost.
 
 | Interval | Neenačba | Ime | Na številski premici |
@@ -162,6 +170,27 @@ Ali sta utripa $58$ in $96$ normalna?
 $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 - 80| = 16 \le 20$, zato je utrip $96$ normalen. Isto pove interval: $58 < 60$, $96$ pa leži v $[60, 100]$. Odgovor: pogoj je $|x - 80| \le 20$, normalen je le utrip $96$ na minuto.
 :::
 
+### Primer 4: Izraz in enačba z absolutno vrednostjo
+
+(a) Poenostavi izraz $E = |x + 1| + |x - 3|$ za $-1 \le x < 3$ in za $x \ge 3$. (b) Reši enačbo $|5 - 2x| = 3$.
+
+**Podatki:** izraz $E = |x + 1| + |x - 3|$, intervala $[-1, 3)$ in $[3, \infty)$, enačba $|5 - 2x| = 3$
+**Iščemo:** $E$ brez absolutnih vrednosti na obeh intervalih, rešitve enačbe
+
+:::formula
+$|u| = u$ za $u \ge 0$ in $|u| = -u$ za $u < 0$; $\;|u| = a$ z $a > 0$ $\iff u = a$ ali $u = -a$
+:::
+
+**Rešitev:**
+
+1. Ničli izrazov v absolutnih vrednostih sta $x = -1$ in $x = 3$. Na vsakem intervalu med njima ima vsak izraz stalen predznak.
+2. Za $-1 \le x < 3$ je $x + 1 \ge 0$ in $x - 3 < 0$, zato je $E = (x + 1) + (3 - x) = 4$. Preizkus z $x = 0$: $|1| + |-3| = 4$.
+3. Za $x \ge 3$ sta oba izraza nenegativna, zato je $E = (x + 1) + (x - 3) = 2x - 2$. Preizkus z $x = 5$: $|6| + |2| = 8 = 2 \cdot 5 - 2$.
+4. Na premici je $E$ vsota razdalj točke $x$ od $-1$ in od $3$. Za točke med njima je ta vsota enaka razdalji $4$ med $-1$ in $3$.
+5. Enačba: $5 - 2x = 3$ ali $5 - 2x = -3$. Prva da $-2x = -2$ in $x = 1$, druga $-2x = -8$ in $x = 4$.
+6. Preizkus: $|5 - 2| = 3$ in $|5 - 8| = |-3| = 3$.
+7. Odgovor: za $-1 \le x < 3$ je $E = 4$, za $x \ge 3$ je $E = 2x - 2$. Rešitvi enačbe sta $x = 1$ in $x = 4$.
+
 ## Pogoste napake
 
 - **»Absolutna vrednost vsote je vsota absolutnih vrednosti«: $|a + b| = |a| + |b|$.** To velja le, če imata $a$ in $b$ isti predznak (ali je eno od njiju $0$). Za $a = 3$, $b = -5$ je $|3 + (-5)| = |{-2}| = 2$, medtem ko je $|3| + |{-5}| = 8$. Pravilno: najprej izračunaj vsoto, nato ji vzemi absolutno vrednost. Splošno velja le $|a + b| \le |a| + |b|$.
@@ -174,7 +203,8 @@ $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 -
 
 - Realna števila: $\mathbb{R} = \mathbb{Q} \cup \mathbb{I}$. Iracionalna števila ($\sqrt{2}$, $\pi$) imajo neskončen neperiodičen decimalni zapis. Realna števila ustrezajo točkam na številski premici.
 - Absolutna vrednost: $|x| = x$ za $x \ge 0$, $|x| = -x$ za $x < 0$. Pomeni razdaljo od $0$, razdalja med $a$ in $b$ je $|a - b|$.
-- Lastnosti: $|{-x}| = |x|$, $|ab| = |a||b|$, $|a + b| \le |a| + |b|$. Enačba $|x| = a$ ima za $a > 0$ rešitvi $\pm a$, za $a = 0$ le $x = 0$, za $a < 0$ je brez rešitve.
+- Lastnosti: $|{-x}| = |x|$, $|ab| = |a||b|$, $|a + b| \le |a| + |b|$. Enačba $|x| = a$ ima za $a > 0$ rešitvi $\pm a$, za $a = 0$ le $x = 0$, za $a < 0$ je brez rešitve. Iz $|u| = a$ ($a > 0$) sledi $u = a$ ali $u = -a$.
+- Izraz s spremenljivko: predznak izraza v absolutni vrednosti se spremeni v njegovi ničli. Na intervalu s stalnim predznakom absolutno vrednost odpravimo po definiciji.
 - Intervali: $(a, b)$, $[a, b]$, $[a, b)$, $(a, b]$ in neomejeni. Okrogel oklepaj: krajišče ni vključeno. Oglat: je vključeno. Ob $\infty$ vedno okrogel.
 - Presek, unija in razlika intervalov: nariši na isto premico in preveri krajišča.
 - (višja raven) $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
@@ -334,7 +364,28 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 ~ To je središče intervala z odmikom $0$, zato zagotovo ustreza.
 > Dovoljene mase so $[235, 265]\,\text{mg}$. Pri $234\,\text{mg}$ je odmik $|234 - 250| = 16 > 15$, zato tableta ne ustreza.
 
+? (brez računala) Reši enačbo $|2x - 5| = 9$ in vpiši vsoto obeh rešitev.
+= 5
+~ 7 | To je le rešitev enačbe $2x - 5 = 9$. Druga je iz $2x - 5 = -9$, to je $x = -2$.
+~ -2 | To je le rešitev enačbe $2x - 5 = -9$. Druga je iz $2x - 5 = 9$, to je $x = 7$.
+> $2x - 5 = 9$ da $x = 7$, $2x - 5 = -9$ pa $x = -2$. Vsota je $7 + (-2) = 5$.
+
+? Za $x > 2$ poenostavi izraz $|2 - x| + x$.
+- $2$
+~ Absolutno vrednost si le izpustil. Za $x > 2$ je $2 - x < 0$, zato je $|2 - x| = -(2 - x) = x - 2$.
++ $2x - 2$
+- $2x + 2$
+~ Minus pred oklepajem spremeni predznak obema členoma: $-(2 - x) = -2 + x$, ne $2 + x$.
+> Za $x > 2$ je $2 - x < 0$, zato je $|2 - x| = x - 2$ in $|2 - x| + x = x - 2 + x = 2x - 2$.
+
 <<RACUN
+vrednost: abs(2-5)+5 | 8
+resi: abs(2*x-1)=7 | x | -3, 4
+resi: abs(5-2*x)=3 | x | 1, 4
+resi: abs(2*x-5)=9 | x | -2, 7
+vrednost: abs(0+1)+abs(0-3) | 4
+vrednost: abs(5+1)+abs(5-3) | 8
+vrednost: 2*5-2 | 8
 resi: 2*abs(x+1)-3=5 | x | -5, 3
 vrednost: 2*abs(4)-3 | 5
 vrednost: 2*abs(-4)-3 | 5
@@ -351,6 +402,8 @@ vrednost: (4-(-1))/2 | 5/2
 x | realno število (v primeru 3 srčni utrip) | | |
 A, B | intervala (množici realnih števil) | | | v primeru 1 točki na številski premici
 a, b | krajišči intervala ali abscisi točk $A$ in $B$ | | | razdalja točk je $\lvert b - a \rvert$; v enačbi $\lvert x \rvert = a$ je $a$ dano število
+u | izraz v absolutni vrednosti (npr. $2x - 1$) | | | iz $\lvert u \rvert = a$, $a > 0$, sledi $u = a$ ali $u = -a$
+E | izraz z absolutnimi vrednostmi v primeru 4 | E = \lvert x + 1 \rvert + \lvert x - 3 \rvert | |
 c | središče, od katerega merimo razdaljo | c = \frac{a + b}{2} | |
 r | polmer: največja razdalja od $c$ | r = \frac{b - a}{2} | | $r > 0$
 :::

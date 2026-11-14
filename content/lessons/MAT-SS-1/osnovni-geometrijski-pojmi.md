@@ -35,7 +35,40 @@ Premici $p$ in $q$ sta obe pravokotni na premico $r$ (vse tri ležijo v isti rav
 Sta vzporedni (ali sovpadata). Če bi se sekali v točki $T$, bi skozi $T$ potekali dve različni pravokotnici na $r$, skozi točko pa gre na dano premico samo ena pravokotnica.
 :::
 
-**4. Razdalja točke od premice.** Najkrajša pot od točke $T$ do premice $p$ je po pravokotnici na $p$ skozi $T$. Točka, kjer pravokotnica seka $p$, je **pravokotna projekcija** točke $T$ na $p$. Dolžina daljice od $T$ do nje je **razdalja točke od premice**. Vsaka točka premice $q \parallel p$ je od $p$ enako oddaljena, ta razdalja je **razdalja med vzporednicama**.
+**4. Razdalja točke od premice in pravokotna projekcija.** Najkrajša pot od točke $T$ do premice $p$ je po pravokotnici na $p$ skozi $T$. Točka $T'$, kjer pravokotnica seka $p$, je **pravokotna projekcija** točke $T$ na $p$. Dolžina daljice $TT'$ je **razdalja točke od premice**. Vsaka točka premice $q \parallel p$ je od $p$ enako oddaljena, ta razdalja je **razdalja med vzporednicama**.
+
+Projiciramo lahko tudi daljico. **Pravokotna projekcija daljice** $AB$ na premico $p$ je daljica $A'B'$ med projekcijama krajišč. Predstavljaj si senco palice na ravnih tleh, ko svetloba pada nanje navpično.
+
+- Če je $AB \parallel p$, je projekcija enako dolga kot daljica: $|A'B'| = |AB|$.
+- Če je $AB \perp p$, se daljica projicira v eno samo točko.
+- Sicer je projekcija krajša od daljice.
+
+Dolžino projekcije izračunamo iz razdalj krajišč od premice. Naj bosta $A$ in $B$ na isti strani premice $p$. Skozi $A$ potegnemo vzporednico s $p$, ki seka daljico $BB'$ v točki $C$:
+
+:::risba skica
+opis: Vodoravna premica p. Nad njo daljica AB: A je 1 enoto nad p, B pa 4 enote nad p in 4 enote bolj desno. Črtkani pravokotnici iz A in B padeta v projekciji A' in B' na p. Črtkana vzporednica s p skozi A seka BB' v točki C s pravim kotom. Daljica A'B' na p je projekcija in je enako dolga kot AC.
+območje: -0,5; -1 .. 7; 5
+enota: 40
+črta: -0,5; 0 -> 7; 0 | siva
+črta: 1; 1 -> 5; 4 | modra debelo
+črta: 1; 1 -> 1; 0 | siva črtkano
+črta: 5; 4 -> 5; 0 | siva črtkano
+črta: 1; 1 -> 5; 1 | oranžna črtkano
+črta: 1; 0 -> 5; 0 | oranžna debelo
+pravikot: 5; 1 | 1; 1 | 5; 4
+točka: 1; 1 | A | levo
+točka: 5; 4 | B | desno
+točka: 1; 0 | A' | pod
+točka: 5; 0 | B' | pod
+točka: 5; 1 | C | desno
+napis: 6,7; 0 | p | nad
+:::
+
+Trikotnik $ABC$ je pravokoten, kateta $AC$ je enako dolga kot projekcija $A'B'$, kateta $BC$ pa meri $|BB'| - |AA'|$. Po Pitagorovem izreku je
+
+$$|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$$
+
+Na sliki je $|AB| = 5$, $|AA'| = 1$ in $|BB'| = 4$, zato je $|A'B'|^2 = 25 - 9 = 16$ in $|A'B'| = 4$. Če ležita krajišči na različnih straneh premice, razdalji v oklepaju seštejemo. Ko boš spoznal kotne funkcije, boš isto dolžino dobil kot $|AB| \cos\varphi$, kjer je $\varphi$ kot med daljico in premico.
 
 **5. Simetrala daljice.** **Simetrala daljice** je premica, ki je pravokotna na daljico in gre skozi njeno razpolovišče. Vse njene točke so enako oddaljene od obeh krajišč.
 
@@ -167,6 +200,24 @@ Koliko merijo $x$, $3x$ in istoležni kot pri drugi žici?
 $x = 180^\circ : 4 = 45^\circ$ in $3x = 135^\circ$. Preizkus: $45^\circ + 135^\circ = 180^\circ$. Ker sta žici vzporedni, meri istoležni kot pri drugi žici prav tako $135^\circ$.
 :::
 
+### Primer 5: senca žice med drogovoma
+
+Na ravnih tleh stojita navpična drogova, visoka $3\,\text{m}$ in $8\,\text{m}$. Med njunima vrhovoma je napeta ravna žica, dolga $13\,\text{m}$. Kako dolga je pravokotna projekcija žice na tla in kako daleč narazen stojita drogova?
+
+**Podatki:** višini drogov $|AA'| = 3\,\text{m}$ in $|BB'| = 8\,\text{m}$ (razdalji vrhov $A$ in $B$ od tal $p$), žica $|AB| = 13\,\text{m}$
+**Iščemo:** dolžino projekcije $|A'B'|$, razdaljo med drogovoma
+
+:::formula
+$|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$, ko sta $A$ in $B$ na isti strani premice $p$.
+:::
+
+**Rešitev:**
+
+1. Drogova sta pravokotna na tla, zato sta njuni vznožji ravno projekciji $A'$ in $B'$ vrhov. Projekcija žice je daljica $A'B'$ med vznožjema.
+2. Vzporednica s tlemi skozi $A$ odreže na višjem drogu kateto $8\,\text{m} - 3\,\text{m} = 5\,\text{m}$.
+3. Pitagorov izrek: $|A'B'|^2 = 13^2 - 5^2 = 169 - 25 = 144$, zato $|A'B'| = 12\,\text{m}$.
+4. Odgovor: projekcija žice na tla meri $12\,\text{m}$, toliko sta drogova narazen.
+
 ## Pogoste napake
 
 - **Zamenjaš komplementarna in suplementarna kota.** Komplementarna imata vsoto $90^\circ$, suplementarna $180^\circ$. Razlog: obe besedi zveneta podobno. Pomagaj si z abecedo: **K** je pred **S**, tako kot $90^\circ$ pred $180^\circ$. Pravilno: najprej preveri, ali iščeš dopolnilo do $90^\circ$ ali do $180^\circ$.
@@ -179,6 +230,7 @@ $x = 180^\circ : 4 = 45^\circ$ in $3x = 135^\circ$. Preizkus: $45^\circ + 135^\c
 - Skozi dve različni točki gre natanko ena premica; skozi točko zunaj premice gre natanko ena vzporednica.
 - Premici v ravnini: sekata se, sta vzporedni ($p \parallel q$) ali sovpadata. Pravokotnost: $p \perp q$.
 - Razdalja točke od premice je dolžina pravokotnice. Simetrala daljice je pravokotna na daljico skozi razpolovišče.
+- Pravokotna projekcija daljice $AB$ na $p$ je daljica $A'B'$ med projekcijama krajišč; za krajišči na isti strani $p$ je $|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$.
 - Vrste kotov: ostri $<90^\circ$, pravi $90^\circ$, topi med $90^\circ$ in $180^\circ$, iztegnjeni $180^\circ$, polni $360^\circ$. Veljata $1^\circ = 60'$ in $1' = 60''$.
 - Sovršna kota sta enaka. Sokota: $\alpha + \beta = 180^\circ$. Komplementarna kota: $\alpha + \beta = 90^\circ$.
 - Pri $p \parallel q$ in prečnici: istoležna in izmenična kota sta enaka, notranja kota na isti strani imata vsoto $180^\circ$.
@@ -316,6 +368,13 @@ Lastnosti kotov ob prečnici izhajajo iz **aksioma o vzporednici**, ki ga je v n
 ~ To je dopolnilo do $90^\circ$. Notranja kota na isti strani prečnice dopolnjujeta do $180^\circ$.
 > Pri vzporednicah imata notranja kota na isti strani prečnice vsoto $180^\circ$: $180^\circ - 72^\circ = 108^\circ$.
 
+? (brez računala) Daljica $AB$ je dolga $10\,\text{cm}$. Krajišči ležita na isti strani premice $p$: $A$ je od nje oddaljena $1\,\text{cm}$, $B$ pa $9\,\text{cm}$. Koliko centimetrov meri pravokotna projekcija daljice $AB$ na $p$?
+= 6 cm
+~ 8 | To je razlika razdalj krajišč od premice, $9 - 1$, torej druga kateta. Projekcija je kateta $\sqrt{10^2 - 8^2}$.
+~ 10 | Tako dolga je projekcija le, če je daljica vzporedna s $p$. Tu sta krajišči različno oddaljeni od premice.
+~ 0 | Razdalji si seštel ($1 + 9 = 10$) in dobil $\sqrt{10^2 - 10^2} = 0$. Seštejemo le, kadar sta krajišči na različnih straneh premice.
+> Kateti pravokotnega trikotnika sta projekcija in razlika razdalj $9 - 1 = 8\,\text{cm}$, hipotenuza je $AB$: $|A'B'|^2 = 100 - 64 = 36$, zato $|A'B'| = 6\,\text{cm}$.
+
 <<RACUN
 enako: (129+20/60)/2 | 64+40/60
 enako: 180-(64+40/60) | 115+20/60
@@ -325,6 +384,9 @@ vrednost: 2*20+10 | 50
 vrednost: 4*20-30 | 50
 vrednost: 180-50 | 130
 vrednost: 90-50 | 40
+vrednost: sqrt(5^2-(4-1)^2) | 4
+vrednost: sqrt(13^2-(8-3)^2) | 12
+vrednost: sqrt(10^2-(9-1)^2) | 6
 >>
 
 :::simboli
@@ -333,4 +395,7 @@ vrednost: 90-50 | 40
 \gamma | sovršni kot, sokot ali izmenični kot | | ° | odvisno od primera
 x | manjši od dveh sokotov (Primer 4) | | ° |
 y | neznanka v izrazih za istoležna kota $2y + 10^\circ$ in $4y - 30^\circ$ | | ° |
+A, B | točki, krajišči daljice $AB$ | | | v Primeru 5 vrhova drogov
+p, q | premici | | | v bloku 4 je $p$ premica, na katero projiciramo, v Primeru 5 tla
+A', B' | pravokotni projekciji točk $A$ in $B$ na premico $p$ | | | $A'B'$ je projekcija daljice $AB$
 :::

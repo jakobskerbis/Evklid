@@ -22,17 +22,17 @@ krajših strukturiranih nalog (5–8 točk, skupaj 40). Višja raven: na vsaki p
 
 ## Povzetek pokritosti
 
-Postavk (vsebin in ciljev): 513. Pokrito (»da«): 492, delno: 16, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 87, delno 0, manjka 0).
+Postavk (vsebin in ciljev): 513. Pokrito (»da«): 508, delno: 0, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 87, delno 0, manjka 0).
 
 Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, vsi štirje letniki: 14. 11. 2026); opomba »C4« pomeni dopolnitev ob nalogah za maturo, opomba »C3b« pa dopolnitev prej delno pokritih postavk v obstoječih lekcijah (za ekstremalne probleme s kvadratno funkcijo z novo lekcijo).
 
 ### Manjka
 
-Nobena postavka kataloga ne manjka več: zadnje so dopolnjene v točki C3 (14. 11. 2026).
+Nobena postavka kataloga ne manjka več: zadnje so dopolnjene v točki C3 (14. 11. 2026). Tudi delno pokritih postavk ni več: dopolnjene so v točki C3b (14. 11. 2026).
 
 ## Oznaka višje ravni v lekcijah
 
-Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, primera ali razdelka »Drugače« oznako »(višja raven)« (`**5. Enačbe s parametrom (višja raven).**`, `### Primer 3 (težji, višja raven)`, `## Drugače: Kot zgodba (višja raven)`). Vprašanje v »Preveri se«, alineja ali odstavek se začne z »(višja raven)«. Lekcija, ki je v celoti snov višje ravni (`MAT-SS-4/matematicna-indukcija`), ima to zapisano v prvi vrstici. Normalna porazdelitev je po katalogu 2026 za obe ravni, zato v `MAT-SS-4/statistika` nima oznake. Ustno spraševanje oznako izpusti (`server/ustno.js`, `brezOznakeRavni`).
+Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, primera ali razdelka »Drugače« oznako »(višja raven)« (`**6. Enačbe s parametrom (višja raven).**`, `### Primer 3 (težji, višja raven)`, `## Drugače: Kot zgodba (višja raven)`). Vprašanje v »Preveri se«, alineja ali odstavek se začne z »(višja raven)«. Lekcija, ki je v celoti snov višje ravni (`MAT-SS-4/matematicna-indukcija`), ima to zapisano v prvi vrstici. Normalna porazdelitev je po katalogu 2026 za obe ravni, zato v `MAT-SS-4/statistika` nima oznake. Ustno spraševanje oznako izpusti (`server/ustno.js`, `brezOznakeRavni`).
 
 ## Po sklopih
 
@@ -83,7 +83,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | delno – zakoni (zamenljivost, združevalnost) niso izrecno navedeni |
+| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da – C3b (14. 11. 2026) |
 | Praštevila in sestavljena števila | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da |
 | Matematična indukcija | **VR** | `MAT-SS-4/matematicna-indukcija` | da – cela lekcija |
 | Desetiški mestni zapis | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | OŠ – uporabljen pri merilih deljivosti (7316 = 73·100 + 16) |
@@ -98,7 +98,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | pozna pomen naravnih števil in razloge za vpeljavo celih števil ter primere njihove uporabe | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da |
-| uporablja računske operacije v množici naravnih in celih števil in na primerih utemelji njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | delno – lastnosti operacij niso utemeljene na primerih |
+| uporablja računske operacije v množici naravnih in celih števil in na primerih utemelji njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da – C3b (14. 11. 2026) |
 | predstavi naravna in cela števila na številski premici | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da |
 | induktivno sklepa, posplošuje, posplošitev dokaže ali ovrže in dokazuje z matematično indukcijo | **VR** | `MAT-SS-4/matematicna-indukcija` | da – posploševanje (Primer 3) in ovržba (vprašanja) vključeni |
 | uporablja desetiški mestni zapis celega števila | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | OŠ |
@@ -115,7 +115,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/racionalna-stevila` | delno – zakoni računskih operacij niso izrecno navedeni |
+| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/racionalna-stevila` | da – C3b (14. 11. 2026) |
 | Desetiški zapis racionalnih števil | OR+VR | `MAT-SS-1/racionalna-stevila` | da |
 | Deleži in odstotki | OR+VR | `MAT-SS-1/racionalna-stevila`, `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
 | Procentni račun | OR+VR | `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
@@ -139,7 +139,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Intervali | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
 | Končni decimalni približki | OR+VR | `MAT-SS-1/realna-stevila-in-intervali`, `MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka` | da – C3 (14. 11. 2026) |
 | Absolutna vrednost realnega števila in njene lastnosti | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
-| Enačbe z absolutno vrednostjo | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | delno – pravilo \|x−c\| = r razloženo, brez rešenega primera ali naloge |
+| Enačbe z absolutno vrednostjo | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da – C3b (14. 11. 2026) |
 | Neenačbe z absolutno vrednostjo | **VR** | `MAT-SS-1/realna-stevila-in-intervali` | da – blok 5, Primer 3, oba Drugače, vprašanji |
 | Absolutna in relativna napaka | OR+VR | `MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka` | da – C3 (14. 11. 2026) |
 
@@ -151,7 +151,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | interpretira številsko premico kot realno os | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
 | zaokrožuje decimalna števila | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi` | OŠ – zaokroževanje le mimogrede (vprašanje o stopinjah) |
 | poveže geometrijsko in analitično predstavitev absolutne vrednosti realnih števil | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
-| poenostavlja izraze z absolutno vrednostjo ter reši preproste enačbe | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | delno – izrazi s spremenljivko in reševanje enačb brez primerov |
+| poenostavlja izraze z absolutno vrednostjo ter reši preproste enačbe | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da – C3b (14. 11. 2026) |
 | reši preproste neenačbe z absolutno vrednostjo realnih števil | **VR** | `MAT-SS-1/realna-stevila-in-intervali` | da |
 | primerja pomen absolutne in relativne napake ter oceni absolutno in relativno napako vsote, razlike, produkta in kvocienta dveh podatkov | OR+VR | `MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka` | da – C3 (14. 11. 2026) |
 
@@ -195,7 +195,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| primerja in razlikuje zapis in pomen izraza in enačbe ter spremenljivke in neznanke | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-1/linearne-enacbe` | delno – izraz/enačba in spremenljivka/neznanka nista izrecno primerjana |
+| primerja in razlikuje zapis in pomen izraza in enačbe ter spremenljivke in neznanke | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-1/linearne-enacbe` | da – C3b (14. 11. 2026) |
 | sešteva in množi algebrske izraze | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
 | uporablja in utemelji pravili za kvadrat in kub dvočlenika | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
 | s pomočjo Pascalovega trikotnika določi pravila za višje potence dvočlenika in jih tudi uporablja | OR+VR | `MAT-SS-4/binomski-izrek` | da – C3 (14. 11. 2026) |
@@ -246,7 +246,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Točke, premice in krožnice v ravnini | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi`, `MAT-SS-1/stirikotniki-in-krog` | da |
 | Razdalja, daljica, nosilka daljice, simetrala, poltrak, kot | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi` | da – izraz »nosilka« ni uporabljen |
 | Vrste kotov in odnosi med koti | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi` | da |
-| Trikotnik, večkotnik | OR+VR | `MAT-SS-1/trikotnik` | delno – večkotniki (vsota kotov, diagonale n-kotnika) manjkajo |
+| Trikotnik, večkotnik | OR+VR | `MAT-SS-1/trikotnik` | da – C3b (14. 11. 2026) |
 | Znamenite točke trikotnika | OR+VR | `MAT-SS-1/trikotnik` | da |
 | Togi premiki in skladnost | OR+VR | `MAT-SS-1/trikotnik`, `MAT-SS-1/togi-premiki` | da – C3 (14. 11. 2026) |
 | Vzporedni premik, zrcaljenje, vrtež, orientacija trikotnika | OR+VR | `MAT-SS-1/togi-premiki` | da – C3 (14. 11. 2026) |
@@ -343,14 +343,14 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Množice točk v ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | delno – le kvadranti; območja ob pogojih (x ≥ a, \|y\| < b) manjkajo |
+| Množice točk v ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da – C3b (14. 11. 2026) |
 | Razdalja med točkama v koordinatni ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 | Ploščina trikotnika | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | uporablja pravokotni koordinatni sistem v ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
-| odčita in nariše množico točk v koordinatni ravnini ob danih pogojih | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | delno – risanje množic točk ob pogojih manjka |
+| odčita in nariše množico točk v koordinatni ravnini ob danih pogojih | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da – C3b (14. 11. 2026) |
 | uporablja zvezo med urejenimi pari števil in točkami na ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 | izračuna razdaljo med točkama, izračuna ploščino trikotnika ter uporabi formuli v matematičnih problemih | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 
@@ -784,26 +784,26 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Osnovni statistični pojmi | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vzorec in populacija le v Bolj natančno |
-| Vrste podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – le omemba kategorij v povratni informaciji kviza |
+| Osnovni statistični pojmi | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
+| Vrste podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
 | Zbiranje podatkov | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | Urejanje in strukturiranje podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – frekvenčna tabela, razredi, razredna sredina |
-| Prikazovanje podatkov (stolpčni, pozicijski, tortni diagram, histogram, razsevni diagram, linijski in krivuljni diagram, škatla z brki) | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | delno – manjkajo pozicijski, razsevni, linijski in krivuljni diagram |
+| Prikazovanje podatkov (stolpčni, pozicijski, tortni diagram, histogram, razsevni diagram, linijski in krivuljni diagram, škatla z brki) | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika`, `MAT-SS-4/statisticna-naloga` | da – C3b (14. 11. 2026) |
 | Aritmetična sredina, mediana, modus | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | Variacijski razmik, standardni odklon, medčetrtinski razmik | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | Statistična naloga | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| loči med preučevano značilnostjo (spremenljivko), enoto, vrednostjo spremenljivke, vzorcem, populacijo | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vzorec, populacija le v Bolj natančno; brez vaj |
-| prepozna preučevano značilnost enote | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – le definicija spremenljivke; brez vaj |
-| razlikuje med opisnimi ali kvalitativnimi podatki, vrstnimi ali ordinalnimi ter številskimi ali kvantitativnimi podatki | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vrste podatkov (opisni, vrstni, številski) niso razložene |
+| loči med preučevano značilnostjo (spremenljivko), enoto, vrednostjo spremenljivke, vzorcem, populacijo | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
+| prepozna preučevano značilnost enote | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
+| razlikuje med opisnimi ali kvalitativnimi podatki, vrstnimi ali ordinalnimi ter številskimi ali kvantitativnimi podatki | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
 | zbere podatke, jih uredi in strukturira | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | izbere ustrezni diagram za prikaz podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da |
 | bere, izdela in interpretira statistične diagrame | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | razvija kritični odnos do interpretacije rezultatov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da – splošni cilj; kviza o plačah in povprečni porabi |
 | pozna in uporablja različne načine povzemanja podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
-| izbere primeren način povzemanja podatkov glede na vrsto podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | delno – izbira glede na osamelce; izbira glede na vrsto podatkov manjka |
+| izbere primeren način povzemanja podatkov glede na vrsto podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da – C3b (14. 11. 2026) |
 | izračuna, oceni in interpretira srednjo vrednost, modus in mediano kot mere osredinjenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | ocenjuje preproste povezave med statističnimi spremenljivkami | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | izračuna, oceni in interpretira variacijski razmik, standardni odklon in medčetrtinski razmik kot mere razpršenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |

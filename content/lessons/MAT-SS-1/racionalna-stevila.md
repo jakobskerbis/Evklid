@@ -60,9 +60,13 @@ Končen. Ulomek ni nekrajšljiv: $D(21, 28) = 7$, zato je $\dfrac{21}{28} = \dfr
 
 Splošno: število pomnožimo z dvema od števil $1$, $10$, $100$, … Razlikujeta se za toliko ničel, kolikor mest ima perioda, zato se »repa« ujemata in pri odštevanju izgineta.
 
+**Delež v odstotkih.** Odstotek je stotina: $1\,\% = \dfrac{1}{100} = 0{,}01$. Za odstotke delež zapišemo kot decimalno število in ga pomnožimo s $100$: Majin delež je $\dfrac{5}{8} = 0{,}625 = 62{,}5\,\%$, Anin pa $\dfrac{7}{12} = 0{,}58\overline{3} \approx 58{,}3\,\%$. Obratno: $35\,\% = \dfrac{35}{100} = \dfrac{7}{20}$, zato je $35\,\%$ od $60$ enako $\dfrac{7}{20} \cdot 60 = 21$. Procentni račun nadgradiš v lekciji o obrestnem računu.
+
 **6. Urejenost.** Pri primerjanju se hitro ujamemo v dve bližnjici: »$0{,}35 > 0{,}4$, ker je $35 > 4$« in »$-\dfrac{1}{2} > -\dfrac{1}{3}$, ker je $\dfrac{1}{2} > \dfrac{1}{3}$«. Obe sta napačni. Za poljubni racionalni števili $p$ in $q$ velja natanko ena od možnosti: $p < q$, $p = q$ ali $p > q$. Na številski premici je manjše število levo od večjega:
 
 $$-1 \;<\; -\tfrac{1}{2} \;<\; -\tfrac{1}{3} \;<\; 0 \;<\; 0{,}35 \;<\; 0{,}4 \;<\; 1$$
+
+Ulomek $\dfrac{a}{b}$ narišemo na premico tako, da enoto razdelimo na $b$ enakih delov in od $0$ odmerimo $|a|$ takih delov: v desno, če je število pozitivno, v levo, če je negativno (Primer 5).
 
 Kako primerjamo?
 
@@ -78,6 +82,18 @@ Obe strani neenakosti pomnožimo z istim pozitivnim številom $12 \cdot 8 = 96$.
 :::
 
 Racionalna števila so **gosta**: med različnima $p < q$ leži vsaj njuno povprečje $\dfrac{p+q}{2}$, npr. $\dfrac{5}{12}$ med $\dfrac{1}{3}$ in $\dfrac{1}{2}$. Zato »naslednjega« racionalnega števila ni, pri celih pa za $4$ pride $5$.
+
+**7. Zakoni računskih operacij.** Za vsa racionalna števila $p$, $q$ in $r$ veljajo isti zakoni kot za cela števila:
+
+- zamenljivost: $p + q = q + p$ in $p \cdot q = q \cdot p$,
+- združevalnost: $(p + q) + r = p + (q + r)$ in $(p \cdot q) \cdot r = p \cdot (q \cdot r)$,
+- razčlenitev: $p \cdot (q + r) = p \cdot q + p \cdot r$,
+- nevtralna elementa: $p + 0 = p$ in $p \cdot 1 = p$,
+- nasprotno število: $p + (-p) = 0$; obratna vrednost: $p \cdot \dfrac{1}{p} = 1$ za $p \neq 0$.
+
+Zakoni veljajo, ker z ulomki računamo prek števcev in imenovalcev, ki so cela števila. Tako je $\dfrac{a}{b} \cdot \dfrac{c}{d} = \dfrac{a \cdot c}{b \cdot d} = \dfrac{c \cdot a}{d \cdot b} = \dfrac{c}{d} \cdot \dfrac{a}{b}$. Nova je le obratna vrednost: v $\mathbb{Z}$ jo imata samo $1$ in $-1$, v $\mathbb{Q}$ pa vsako število razen $0$. Odštevanje in deljenje nista zamenljivi: $\dfrac{1}{2} : \dfrac{1}{4} = 2$, a $\dfrac{1}{4} : \dfrac{1}{2} = \dfrac{1}{2}$.
+
+Zakoni skrajšajo račun. Z zamenljivostjo in združevalnostjo: $\dfrac{5}{6} + \dfrac{2}{9} + \dfrac{1}{6} = \left(\dfrac{5}{6} + \dfrac{1}{6}\right) + \dfrac{2}{9} = 1 + \dfrac{2}{9} = \dfrac{11}{9}$. Z razčlenitvijo: $\dfrac{3}{7} \cdot \dfrac{5}{8} + \dfrac{3}{7} \cdot \dfrac{3}{8} = \dfrac{3}{7} \cdot \left(\dfrac{5}{8} + \dfrac{3}{8}\right) = \dfrac{3}{7} \cdot 1 = \dfrac{3}{7}$.
 
 ## Rešeni primeri
 
@@ -170,6 +186,37 @@ Kateri ulomek je $x$ in koliko zmag ima ekipa?
 $100x - 10x = 27 - 2$, torej $90x = 25$ in $x = \dfrac{25}{90} = \dfrac{5}{18}$. Ekipa je zmagala $5$ tekem od $18$.
 :::
 
+### Primer 5: Racionalna števila na številski premici
+
+Na številski premici predstavi števila $\dfrac{5}{4}$, $-\dfrac{3}{4}$ in $-1{,}5$.
+
+**Podatki:** števila $\dfrac{5}{4}$, $-\dfrac{3}{4}$ in $-1{,}5$
+**Iščemo:** lego vseh treh števil na številski premici
+
+:::formula
+Za $\dfrac{a}{b}$ enoto razdelimo na $b$ enakih delov in od $0$ odmerimo $|a|$ delov: v desno pri pozitivnem, v levo pri negativnem številu.
+:::
+
+**Rešitev:**
+
+1. Decimalno število zapišemo kot ulomek: $-1{,}5 = -\dfrac{3}{2} = -\dfrac{6}{4}$. Vsa tri števila imajo imenovalec $4$, zato enoto razdelimo na četrtine.
+2. $\dfrac{5}{4}$: od $0$ odmerimo $5$ četrtin v desno. To je ena cela in še ena četrtina, $\dfrac{5}{4} = 1\dfrac{1}{4}$.
+3. $-\dfrac{3}{4}$: od $0$ odmerimo $3$ četrtine v levo.
+4. $-\dfrac{6}{4}$: od $0$ odmerimo $6$ četrtin v levo, to je na sredini med $-2$ in $-1$.
+
+:::risba premica
+opis: Številska premica od −2 do 2, vsaka enota je razdeljena na četrtine, napisana so cela števila. Točka −3/2 leži na sredini med −2 in −1, točka −3/4 tri četrtine levo od 0, točka 5/4 eno četrtino desno od 1.
+od: -2
+do: 2
+korak: 0,25
+oznake: 1
+točka: -1,5 | −3/2 | modra
+točka: -0,75 | −3/4 | modra
+točka: 1,25 | 5/4 | modra
+:::
+
+5. Odgovor: z leve proti desni ležijo $-1{,}5 < -\dfrac{3}{4} < \dfrac{5}{4}$.
+
 ## Pogoste napake
 
 - **Seštevanje števcev in imenovalcev: $\dfrac{1}{2} + \dfrac{1}{3} = \dfrac{2}{5}$.** Kosa sta različno velika, $\dfrac{2}{5} = 0{,}4$ pa je celo manj kot $\dfrac{1}{2}$. Pravilno: skupni imenovalec $6$, $\dfrac{3}{6} + \dfrac{2}{6} = \dfrac{5}{6}$.
@@ -187,6 +234,7 @@ $100x - 10x = 27 - 2$, torej $90x = 25$ in $x = \dfrac{25}{90} = \dfrac{5}{18}$.
 - Periodično število v ulomek: pomnoži z $10$, $100$, … in odštej, da »rep« izgine.
 - Primerjanje: skupni imenovalec ali $\dfrac{a}{b} < \dfrac{c}{d} \iff ad < bc$ ($b, d > 0$); levo na številski premici je manjše.
 - Gostost: med dvema racionalnima številoma je vedno še eno, npr. $\dfrac{p+q}{2}$.
+- V $\mathbb{Q}$ veljajo zamenljivost, združevalnost in razčlenitev; vsako število razen $0$ ima obratno vrednost. Odstotek je stotina: $\dfrac{5}{8} = 62{,}5\,\%$.
 
 ## Za maturo
 
@@ -321,7 +369,52 @@ Rezultat je $\dfrac{1}{6} = 0{,}1\overline{6}$.
 ~ Na eno decimalko so vsi deleži res približno $0{,}7$, a natančno se razlikujejo.
 > $\dfrac{11}{15} > \dfrac{8}{11}$, ker je $11 \cdot 11 = 121 > 15 \cdot 8 = 120$, in $\dfrac{8}{11} > \dfrac{13}{18}$, ker je $8 \cdot 18 = 144 > 11 \cdot 13 = 143$. Prva je ekipa A.
 
+? Katera točka na premici pripada številu $-\dfrac{7}{5}$?
+:::risba premica
+opis: Številska premica od −2 do 2, vsaka enota je razdeljena na petine, napisana so cela števila. Točka A leži dve petini levo od −1, točka B dve petini levo od 0, točka C dve petini desno od 0, točka D dve petini desno od 1.
+od: -2
+do: 2
+korak: 0,2
+oznake: 1
+točka: -1,4 | A | modra
+točka: -0,4 | B | modra
+točka: 0,4 | C | modra
+točka: 1,4 | D | modra
+:::
++ A
+- B
+~ B je $-\dfrac{2}{5}$. Odmeriti moraš $7$ petin, to je cela enota in še $2$ petini.
+- C
+~ C je $\dfrac{2}{5}$: napačna sta smer in velikost. Negativno število leži levo od $0$.
+- D
+~ D je $\dfrac{7}{5}$. Velikost je prava, a negativno število leži levo od $0$.
+> $-\dfrac{7}{5} = -1\dfrac{2}{5}$: od $0$ odmerimo $7$ petin v levo, to je do $-1$ in še dve petini naprej, točka A.
+
+? (brez računala) Z razčlenitvijo izračunaj $\dfrac{3}{4} \cdot \dfrac{7}{9} + \dfrac{3}{4} \cdot \dfrac{2}{9}$. Rezultat vpiši kot decimalno število.
+= 0,75
+~ 1,5 | Faktor $\dfrac{3}{4}$ si vzel dvakrat. Pri razčlenitvi ga izpostaviš enkrat: $\dfrac{3}{4} \cdot \left(\dfrac{7}{9} + \dfrac{2}{9}\right)$.
+> $\dfrac{3}{4} \cdot \left(\dfrac{7}{9} + \dfrac{2}{9}\right) = \dfrac{3}{4} \cdot 1 = \dfrac{3}{4} = 0{,}75$.
+
+? Pri testu je Luka pravilno rešil $17$ od $20$ nalog. Koliko odstotkov nalog je rešil pravilno?
+= 85 %
+~ 17 | To je število nalog, ne delež.
+~ 0,85 | To je delež. V odstotkih ga pomnoži s $100$.
+> $\dfrac{17}{20} = \dfrac{85}{100} = 0{,}85 = 85\,\%$.
+
 <<RACUN
+vrednost: 5/8 | 0.625
+vrednost: 35/100 | 7/20
+vrednost: 7/20*60 | 21
+vrednost: 5/6+2/9+1/6 | 11/9
+vrednost: 3/7*5/8+3/7*3/8 | 3/7
+vrednost: (1/2)/(1/4) | 2
+vrednost: (1/4)/(1/2) | 1/2
+vrednost: -1.5*4 | -6
+vrednost: 3/4*7/9+3/4*2/9 | 0.75
+vrednost: 17/20*100 | 85
+vrednost: 7/12*100 | 58.3
+vrednost: 5/4 | 1.25
+vrednost: -7/5 | -1.4
 resi: 999*x=135 | x | 5/37
 vrednost: 135/999 | 5/37
 vrednost: 5*15 | 75
@@ -341,4 +434,5 @@ c | števec drugega ulomka | | |
 a', c' | števca ulomkov, razširjenih na skupni imenovalec | | |
 d | imenovalec drugega ulomka | | |
 v | skupni imenovalec | | | najmanjši skupni večkratnik imenovalcev
+p, q, r | racionalna števila (urejenost, gostost, zakoni računskih operacij) | | |
 :::
