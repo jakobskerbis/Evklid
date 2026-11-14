@@ -1292,7 +1292,7 @@ function growthHtml(g, loc) {
   const of = (s) => ({ a: nf(s.returned), b: nf(s.eligible) });
   const dm = (s) => new Date(`${s}T12:00:00`).toLocaleDateString(loc, { day: "numeric", month: "numeric" });
   const SRC = { "": "rast.src.none", priporocilo: "rast.src.ref", razred: "rast.src.class", drugo: "rast.src.other" };
-  const src = (v) => (SRC[v] ? t(SRC[v]) : v);
+  const src = (v) => (Object.hasOwn(SRC, v) ? t(SRC[v]) : v);
   const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
   const eurOf = (x) => Number(x).toLocaleString(loc, { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 3 });
   // Povezava v opombi je v \u2066 … \u2069 (LRI … PDI), da je v arabščini in perzijščini ne premeša smer besedila.

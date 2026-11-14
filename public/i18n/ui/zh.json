@@ -2991,7 +2991,7 @@
   "rast.activeProfiles": "期间内活跃的个人资料",
   "rast.byUse": "按来源的使用情况",
   "rast.d1Col": "次日",
-  "rast.qCol": "每日提问",
+  "rast.qCol": "每名学生每日提问",
   "rast.aiCol": "每位学生每月的 AI",
   "orders.title": "学校订单",
   "orders.empty": "暂无订单。",

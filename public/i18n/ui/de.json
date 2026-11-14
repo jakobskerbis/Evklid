@@ -3017,7 +3017,7 @@
   "rast.activeProfiles": "aktive Profile im Zeitraum",
   "rast.byUse": "Nutzung nach Quelle",
   "rast.d1Col": "Nächster Tag",
-  "rast.qCol": "Fragen pro Tag",
+  "rast.qCol": "Fragen pro Schüler und Tag",
   "rast.aiCol": "KI pro Schüler und Monat",
   "orders.title": "Schulbestellungen",
   "orders.empty": "Noch keine Bestellungen.",

@@ -3018,7 +3018,7 @@
   "rast.activeProfiles": "perfiles activos en el período",
   "rast.byUse": "Uso por fuente",
   "rast.d1Col": "Día siguiente",
-  "rast.qCol": "Preguntas por día",
+  "rast.qCol": "Preguntas por alumno al día",
   "rast.aiCol": "IA por alumno al mes",
   "orders.title": "Pedidos de escuelas",
   "orders.empty": "Aún no hay pedidos.",

@@ -2991,7 +2991,7 @@
   "rast.activeProfiles": "기간 내 활성 프로필",
   "rast.byUse": "유입 경로별 사용",
   "rast.d1Col": "다음 날",
-  "rast.qCol": "하루 질문 수",
+  "rast.qCol": "학생 1명당 하루 질문 수",
   "rast.aiCol": "학생당 월 AI",
   "orders.title": "학교 주문",
   "orders.empty": "아직 주문이 없습니다.",

@@ -67,3 +67,21 @@ test("B1 uporaba po viru: profili skrbnika se ne štejejo", () => {
   assert.equal(r.activeProfiles, 0);
   assert.deepEqual(r.usageBySource, []);
 });
+
+test("B1 strošek AI na mesec: star zapis skrbnika ne spremeni preračuna na mesec", () => {
+  const { db } = openDb(":memory:");
+  migrateAccounts(db);
+  const pid = db
+    .prepare("INSERT INTO parents (email, password_hash, is_admin, privacy_version, unsubscribe_token, referral_code) VALUES ('j@x.si', 'x', 1, 'v', 'u', 'r')")
+    .run().lastInsertRowid;
+  const admin = db.prepare("INSERT INTO students (name, settings, parent_id, created_at) VALUES ('J', '{}', ?, datetime('now', '-40 days'))").run(pid).lastInsertRowid;
+  const fb = db.prepare("INSERT INTO students (name, settings, vir, created_at) VALUES ('Fb', '{}', 'facebook', datetime('now', '-2 days'))").run().lastInsertRowid;
+  const cost = (s, daysAgo, usd) =>
+    db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd, created_at) VALUES (?, 'claude-haiku-5-5', 'chat', ?, datetime('now', ?))").run(s, usd, `-${daysAgo} days`);
+  cost(admin, 25, 0.01);
+  cost(fb, 2, 0.3);
+  const r = growthReport(db, { days: 30 });
+  const u = r.usageBySource.find((x) => x.vir === "facebook");
+  // Prva poraba štetih profilov je pred 2 dnevoma (3 dni z današnjim): × 30/3, ne × 30/26 zaradi skrbnika.
+  assert.equal(u.aiEurPerUserMonth, Math.round(0.3 * EUR_PER_USD() * 10 * 1000) / 1000);
+});

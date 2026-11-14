@@ -2991,7 +2991,7 @@
   "rast.activeProfiles": "期間內活躍的個人檔案",
   "rast.byUse": "依來源的使用情況",
   "rast.d1Col": "隔天",
-  "rast.qCol": "每日提問",
+  "rast.qCol": "每位學生每日提問",
   "rast.aiCol": "每位學生每月的 AI",
   "orders.title": "學校訂單",
   "orders.empty": "尚無訂單。",

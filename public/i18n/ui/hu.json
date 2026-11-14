@@ -3015,7 +3015,7 @@
   "rast.activeProfiles": "aktív profil az időszakban",
   "rast.byUse": "Használat forrás szerint",
   "rast.d1Col": "Másnap",
-  "rast.qCol": "Kérdés naponta",
+  "rast.qCol": "Kérdés tanulónként naponta",
   "rast.aiCol": "MI tanulónként havonta",
   "orders.title": "Iskolai rendelések",
   "orders.empty": "Még nincs rendelés.",

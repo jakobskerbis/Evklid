@@ -2991,7 +2991,7 @@
   "rast.activeProfiles": "期間中のアクティブなプロフィール",
   "rast.byUse": "流入元別の利用",
   "rast.d1Col": "翌日",
-  "rast.qCol": "1日あたりの質問",
+  "rast.qCol": "生徒1人あたり1日の質問",
   "rast.aiCol": "生徒1人あたりの月間AI",
   "orders.title": "学校からの注文",
   "orders.empty": "まだ注文はありません。",

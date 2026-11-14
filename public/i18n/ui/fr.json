@@ -3018,7 +3018,7 @@
   "rast.activeProfiles": "profils actifs sur la période",
   "rast.byUse": "Utilisation par source",
   "rast.d1Col": "Lendemain",
-  "rast.qCol": "Questions par jour",
+  "rast.qCol": "Questions par élève et par jour",
   "rast.aiCol": "IA par élève et par mois",
   "orders.title": "Commandes des écoles",
   "orders.empty": "Aucune commande pour l'instant.",

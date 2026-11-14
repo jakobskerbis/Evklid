@@ -214,17 +214,25 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     u.questions += q;
     u.askerDays++;
   }
-  // Strošek na mesec kot v server/pilot.js: od prve porabe v obdobju, preračunano na 30 dni.
+  // Strošek na mesec kot v server/pilot.js: od prve porabe v obdobju, preračunano na 30 dni. Prvi dan porabe
+  // šteje samo med štetimi profili (brez skrbnikov in drugih šol), sicer bi star zapis skrbnika znižal strošek.
   let mesec = 1;
   if (hasTable(db, "usage")) {
-    const prvi = db.prepare("SELECT MIN(substr(created_at, 1, 10)) AS d FROM usage WHERE student_id IS NOT NULL AND cost_usd > 0 AND created_at >= ?").get(from)?.d;
-    if (prvi) mesec = 30 / Math.max(1, dayDiff(today, prvi) + 1);
-    for (const { s: id, usd } of db.prepare("SELECT student_id AS s, SUM(cost_usd) AS usd FROM usage WHERE student_id IS NOT NULL AND created_at >= ? GROUP BY student_id").all(from)) {
+    let prvi = null;
+    const poraba = db
+      .prepare(
+        `SELECT student_id AS s, SUM(cost_usd) AS usd, MIN(CASE WHEN cost_usd > 0 THEN substr(created_at, 1, 10) END) AS d
+         FROM usage WHERE student_id IS NOT NULL AND created_at >= ? AND created_at < date(?, '+1 day') GROUP BY student_id`,
+      )
+      .all(from, today);
+    for (const { s: id, usd, d } of poraba) {
       if (!virOf.has(id) || !(usd > 0)) continue;
       const u = use(virOf.get(id));
       u.aiUsd += usd;
       u.aiUsers++;
+      if (d && (!prvi || d < prvi)) prvi = d;
     }
+    if (prvi) mesec = 30 / Math.max(1, dayDiff(today, prvi) + 1);
   }
   const round = (x, d) => Math.round(x * 10 ** d) / 10 ** d;
   const usageBySource = [...byUse.values()]
