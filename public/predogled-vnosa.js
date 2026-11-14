@@ -4,13 +4,16 @@
 // - Polje v eni vrstici (odgovor naloge, kviz …) pokaže formulo kar v sebi: čez polje leži izris z ulomki, koreni in
 //   potencami ter kazalcem, surovo besedilo polja je nevidno. Tap v izris postavi kazalec na najbližje mesto.
 // - Večvrstično polje (vmesni koraki) ima izris pod seboj kot doslej.
+// - Polje klepeta z inštruktorjem (#input, data-izris-v-polju; j, 14. 11.: »Naj se ulomki itd izpisujejo tudi pri vnosu v
+//   inštruktorja«) ima izris v sebi kot polje v eni vrstici, le da se besedilo prelomi v več vrstic. Višino polja nastavi
+//   app.js (autoGrow) po izrisu: dataset.izrisVisina in dogodek »vnos-izris-visina«.
 // Vrednost polja ostane nespremenjena (preverjanje odgovora dobi točno to, kar je napisano). Prazno mesto (»()/()«) je
-// okvirček. Klepet (svoj izris nad poljem) in kalkulator (sprotni izračun) imata svoje.
+// okvirček. Kalkulator (sprotni izračun) ima svoje.
 import { splitFormulas, hasFormula, varnaMesta, delisKazalcem, brisiNazaj, brisiNaprej, OZNAKA } from "./vnos-formul.js";
 
-// Polja s svojim izrisom: klepet (#formula-preview), kalkulator (sprotni izračun pod vnosom), skeniraj (.scan-preview);
+// Polja s svojim izrisom: kalkulator (sprotni izračun pod vnosom), skeniraj (.scan-preview);
 // iskalnik spustnega seznama (ikona kljukice je sosed polja: .dd-search input + .dd-check).
-const BREZ = "#input, [data-brez-predogleda], .graph-overlay, #graph-slot, .gc, .sc, .tl, .fm, .pse, .scan-confirm, .dd-search, .razpri-area";
+const BREZ = "[data-brez-predogleda], .graph-overlay, #graph-slot, .gc, .sc, .tl, .fm, .pse, .scan-confirm, .dd-search, .razpri-area";
 const predogledi = new WeakMap(); // večvrstično polje → element s predogledom pod njim
 const izrisi = new WeakMap(); // polje v eni vrstici → izris čez njega
 const zadnje = new WeakMap(); // polje → zadnji položaj kazalca (smer pomika s puščico)
@@ -53,8 +56,11 @@ function dodajSlog() {
   document.head.append(st);
 }
 
+/** Polje z izrisom v sebi: polje v eni vrstici in polje klepeta (data-izris-v-polju). */
+const vPolju = (f) => f.tagName === "INPUT" || f.hasAttribute("data-izris-v-polju");
+
 function posodobi(f) {
-  if (f.tagName === "INPUT") return izrisi.has(f) || hasFormula(f.value) ? posodobiIzris(f) : undefined;
+  if (vPolju(f)) return izrisi.has(f) || hasFormula(f.value) ? posodobiIzris(f) : undefined;
   let pv = predogledi.get(f);
   const pokazi = !!globalThis.katex && hasFormula(f.value);
   if (!pokazi) {
@@ -116,14 +122,15 @@ function posodobiIzris(f) {
     if (o) {
       o.hidden = true;
       f.classList.remove("vnos-izrisan");
-      visina(f, null);
+      if (o.classList.contains("vec")) novaVisina(f, null);
+      else visina(f, null);
     }
     return;
   }
   if (!o || !o.isConnected) {
     dodajSlog();
     o = document.createElement("div");
-    o.className = "vnos-izris";
+    o.className = f.tagName === "TEXTAREA" ? "vnos-izris vec" : "vnos-izris";
     o.setAttribute("aria-hidden", "true"); // bralnik zaslona bere polje samo
     o.innerHTML = '<span class="vnos-izris-v"></span>';
     o.vnosPolje = f; // tipkovnica: tap v izris je tap v polje (public/tipkovnica.js textField)
@@ -173,6 +180,7 @@ function postavi(f, o) {
     justifyContent: cs.textAlign === "center" ? "center" : cs.textAlign === "right" || cs.textAlign === "end" ? "flex-end" : "",
   });
   const v = o.firstChild;
+  if (o.classList.contains("vec")) return postaviVec(f, o, cs);
   const treba = Math.ceil(v.offsetHeight + 8);
   if (treba > f.clientHeight || f.dataset.vnosVisina) visina(f, treba);
   // Kazalec ostane viden, ko je formula širša od polja (kot pri navadnem polju).
@@ -184,6 +192,27 @@ function postavi(f, o) {
     if (r.right > b.right - pl) o.scrollLeft += r.right - (b.right - pl) + 2;
     else if (r.left < b.left + pl) o.scrollLeft -= b.left + pl - r.left + 2;
   } else if (document.activeElement !== f) o.scrollLeft = 0;
+}
+
+// Večvrstično polje z izrisom (klepet): besedilo se prelomi, polje zraste po izrisu (app.js), kazalec ostane viden.
+function postaviVec(f, o, cs) {
+  const pt = parseFloat(cs.paddingTop) || 0;
+  const pb = parseFloat(cs.paddingBottom) || 0;
+  Object.assign(o.style, { paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom, lineHeight: cs.lineHeight, textAlign: cs.textAlign });
+  const v = o.firstChild;
+  novaVisina(f, Math.ceil(v.offsetHeight + pt + pb));
+  const kz = v.querySelector(".vnos-kazalka");
+  if (!kz) return;
+  const r = kz.getBoundingClientRect();
+  const b = o.getBoundingClientRect();
+  if (r.bottom > b.bottom - pb) o.scrollTop += r.bottom - (b.bottom - pb) + 2;
+  else if (r.top < b.top + pt) o.scrollTop -= b.top + pt - r.top + 2;
+}
+function novaVisina(f, h) {
+  const prej = f.dataset.izrisVisina;
+  if (h == null) delete f.dataset.izrisVisina;
+  else f.dataset.izrisVisina = String(h);
+  if (prej !== f.dataset.izrisVisina) f.dispatchEvent(new Event("vnos-izris-visina"));
 }
 
 // Višina polja za visoko formulo: treba = potrebna notranja višina v px, null = nazaj na svojo.
@@ -247,7 +276,7 @@ function sledi(f) {
       },
     });
   }
-  if (f.tagName === "INPUT" && typeof f.setSelectionRange === "function") {
+  if (vPolju(f) && typeof f.setSelectionRange === "function") {
     const ssr = f.setSelectionRange;
     f.setSelectionRange = function (...a) {
       ssr.apply(this, a);
@@ -269,6 +298,9 @@ const SLOG =
   ".vnos-izris-v{display:inline-block;padding:4px 0;flex:none;direction:ltr;unicode-bidi:isolate}" + // formula je tudi na strani RTL od leve proti desni
   ".vnos-izris.izbor .vnos-izris-v{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px}" +
   ".vnos-izris .katex{font-size:1.1em}" +
+  // Klepet: besedilo se prelomi kot v polju; predolgo besedilo drsi navpično.
+  ".vnos-izris.vec{display:block;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:hidden;overflow-y:auto;line-height:inherit}" +
+  ".vnos-izris.vec .vnos-izris-v{display:block;padding:0}" +
   ".vnos-kazalka{display:inline-block;width:0;height:1.15em;vertical-align:-0.22em;border-left:2px solid var(--accent);margin-right:-2px;animation:vnos-utrip 1.1s steps(1) infinite}" +
   ".katex .vnos-kazalka{height:auto;vertical-align:baseline}" +
   "@keyframes vnos-utrip{55%{opacity:0}}" +

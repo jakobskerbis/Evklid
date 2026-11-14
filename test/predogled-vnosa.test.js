@@ -31,7 +31,7 @@ const TYPES = { ".js": "text/javascript", ".css": "text/css", ".html": "text/htm
 const PAGE = `<!doctype html><html lang="sl"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <link rel="stylesheet" href="/vendor/katex/katex.min.css"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css">
 <div class="card" style="margin:16px"><textarea id="koraki"></textarea><form class="answer-row"><input id="answer"><button class="primary">Preveri</button></form></div>
-<div class="sc"><input id="kalk"></div><textarea id="input"></textarea>
+<div class="sc"><input id="kalk"></div><div id="klepet" style="padding:8px"><textarea id="input" rows="1" data-izris-v-polju style="width:100%;font-size:16px;padding:8px;box-sizing:border-box;resize:none"></textarea></div>
 <script src="/vendor/katex/katex.min.js"></script>
 <script type="module">
 import { initPredogledVnosa } from "/predogled-vnosa.js";
@@ -65,7 +65,7 @@ test.after(async () => {
 });
 
 for (const [kind, browser] of browsers) {
-  test(`formula v polju (${kind}, 360 px): ulomek v odgovoru namesto surovega zapisa, predogled pod vmesnimi koraki, ne v kalkulatorju in klepetu`, async () => {
+  test(`formula v polju (${kind}, 360 px): ulomek v odgovoru namesto surovega zapisa, predogled pod vmesnimi koraki, v klepetu v polju, ne v kalkulatorju`, async () => {
     const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
     const p = await ctx.newPage();
     const errors = [];
@@ -93,7 +93,11 @@ for (const [kind, browser] of browsers) {
         koraki: [...(pv("koraki")?.querySelectorAll("annotation") || [])].map((x) => x.textContent),
         vrednost: f.value,
         kalk: !!pv("kalk") || !!document.querySelector(".sc .vnos-izris:not([hidden])"),
-        klepet: !!pv("input"),
+        klepet: (() => {
+          const i = document.getElementById("input");
+          const k = document.querySelector("#klepet .vnos-izris");
+          return { predogled: !!pv("input"), izris: !!k && !k.hidden && !!k.querySelector(".mfrac"), skrito: i.classList.contains("vnos-izrisan"), visina: Number(i.dataset.izrisVisina) || 0 };
+        })(),
         sirina: document.scrollingElement.scrollWidth,
       };
     });
@@ -103,7 +107,9 @@ for (const [kind, browser] of browsers) {
     assert.ok(r.znotraj, "izris je v polju");
     assert.deepEqual(r.koraki, ["\\displaystyle \\sqrt{2} + \\frac{\\square}{\\square}"]);
     assert.equal(r.vrednost, "(3)/(4)", "vrednost polja ostane, kot je napisana");
-    assert.ok(!r.kalk && !r.klepet, "kalkulator in klepet imata svoj izris");
+    assert.ok(!r.kalk, "kalkulator ima svoj izris");
+    assert.ok(!r.klepet.predogled && r.klepet.izris && r.klepet.skrito, "klepet: ulomek je izrisan v polju, surov zapis ni viden");
+    assert.ok(r.klepet.visina > 30, `polje klepeta je visoko kot izris (${r.klepet.visina})`);
     assert.ok(r.sirina <= 360);
     // Vrednost, ki jo nastavi koda (plošča Piši: prebrani zapis, Popravi), osveži izris brez dogodka »input«.
     await p.evaluate(() => (document.getElementById("answer").value = "(1)/(2)"));
@@ -131,6 +137,42 @@ for (const [kind, browser] of browsers) {
     assert.equal((await k())[1], 7);
     await p.evaluate(() => document.getElementById("answer").setSelectionRange(5, 5)); // med »)/(«
     await p.waitForFunction(() => [6, 3].includes(document.getElementById("answer").selectionStart));
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+}
+
+for (const [kind, browser] of browsers) {
+  test(`klepet (${kind}, 360 px): ulomek s tipke se izriše v polju, dolgo besedilo se prelomi, prazno polje brez izrisa`, async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const p = await ctx.newPage();
+    const errors = [];
+    p.on("pageerror", (e) => errors.push(e.message));
+    await p.goto(`http://127.0.0.1:${server.address().port}/t.html`);
+    await p.waitForFunction(() => window.ready);
+    await p.fill("#input", "()/()");
+    await p.evaluate(() => document.getElementById("input").setSelectionRange(1, 1));
+    await p.keyboard.type("3");
+    const st = () =>
+      p.evaluate(() => {
+        const i = document.getElementById("input");
+        const o = document.querySelector("#klepet .vnos-izris");
+        const a = i.getBoundingClientRect();
+        const b = o.getBoundingClientRect();
+        return { v: i.value, tex: o.querySelector("annotation")?.textContent, kz: !!o.querySelector(".vnos-kazalka"), hidden: o.hidden, sirina: Math.round(b.width - a.width), visina: o.querySelector(".vnos-izris-v").offsetHeight, w: document.scrollingElement.scrollWidth };
+      });
+    let s = await st();
+    assert.equal(s.v, "(3)/()");
+    assert.match(s.tex, /^\\displaystyle \\frac\{3.*\}\{\\square\}$/);
+    assert.ok(s.kz && !s.hidden && s.sirina <= 0 && s.sirina >= -4, JSON.stringify(s));
+    const ena = s.visina;
+    await p.fill("#input", "Koliko je (3)/(4) + (1)/(8)? Prosim razloži vsak korak posebej, da bom razumel, kako se seštevajo ulomki.");
+    s = await st();
+    assert.ok(s.visina > ena, "dolgo besedilo se prelomi v več vrstic");
+    assert.ok(s.w <= 360, "nič ne gleda čez rob");
+    await p.fill("#input", "");
+    s = await st();
+    assert.ok(s.hidden, "prazno polje: brez izrisa, viden je namig");
     assert.deepEqual(errors, []);
     await ctx.close();
   });
