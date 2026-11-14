@@ -130,7 +130,7 @@ Slika kaže graf pri $a = 2$: stopnica od $(0, 1)$ za $1$ v desno pripelje na vi
 
 **7. Zrcaljenje.** Ker je $\left(\dfrac{1}{a}\right)^x = a^{-x}$, je graf funkcije $y = \left(\dfrac{1}{a}\right)^x$ zrcalna slika grafa $y = a^x$ čez os $y$. Primer iz točke 4: vrednost $2^x$ pri $x = 3$ je enaka vrednosti $\left(\frac{1}{2}\right)^x$ pri $x = -3$.
 
-**8. Število $e$.** V naravoslovju najpogosteje uporabljamo osnovo $e \approx 2{,}718$, **Eulerjevo število**: z njo opisujemo zvezno rast in razpad (obrestovanje, radioaktivni razpad), spet pa jo srečaš pri naravnem logaritmu. Funkcijo $f(x) = e^x$ imenujemo **naravna eksponentna funkcija**. Ker je $2 < e < 3$, leži njen graf med grafoma $2^x$ in $3^x$.
+**8. Število $e$.** V naravoslovju najpogosteje uporabljamo osnovo $e \approx 2{,}718$, **Eulerjevo število**: z njo opisujemo zvezno rast in razpad (obrestovanje, radioaktivni razpad), spet pa jo srečaš pri naravnem logaritmu. Funkcijo $f(x) = e^x$ imenujemo **naravna eksponentna funkcija**. Ker je $2 < e < 3$, leži njen graf med grafoma $2^x$ in $3^x$. Od kod $e$? Zamisli si banko, ki $1$ € obrestuje s $100\,\%$ na leto, obresti pripiše $n$-krat, vsakič $\frac{100}{n}\,\%$. Po letu imamo $\left(1 + \frac{1}{n}\right)^n$ €: pri $n = 1, 2, 12, 365$ dobimo $2;\ 2{,}25;\ 2{,}613;\ 2{,}7146$. Z večanjem $n$ se vrednosti približujejo številu $e = 2{,}71828\ldots$.
 
 **9. Premiki grafa.** Iz grafa $y = a^x$ dobimo grafe sorodnih funkcij:
 
@@ -158,6 +158,8 @@ podnapis: p = {p}, q = {q}: točka (0, 1) se premakne v ({p}, {1+q}), vodoravna 
 Slika kaže $y = 2^{x-2} - 2$: točka $(0, 1)$ osnovnega grafa se preseli v $(2, -1)$, asimptota pa z osi $x$ na premico $y = -2$. Ker je asimptota zdaj pod osjo $x$, graf seka os $x$: ničla je pri $x = 3$, saj je $2^{1} - 2 = 0$. V aplikaciji premikaj najprej samo $p$: graf drsi levo in desno, asimptota miruje. Nato samo $q$: asimptota se premika skupaj z grafom. Pri $q \ge 0$ ničla izgine, ker je ves graf nad osjo $x$.
 
 **10. Primerjanje potenc.** Ker je funkcija pri $a > 1$ strogo naraščajoča, iz $x_1 < x_2$ sledi $a^{x_1} < a^{x_2}$. Pri $0 < a < 1$ je strogo padajoča, zato iz $x_1 < x_2$ sledi $a^{x_1} > a^{x_2}$. Potence z isto osnovo tako primerjamo brez računanja.
+
+**11. Potenčna ali eksponentna rast.** Primerjaj potenčno funkcijo $x^2$ in eksponentno $2^x$ pri $x = 1, 2, 3, 4, 5, 10$: $\;1 < 2,\; 4 = 4,\; 9 > 8,\; 16 = 16,\; 25 < 32,\; 100 < 1024$. Za $x > 0$ se grafa sekata v $(2, 4)$ in $(4, 16)$, za $x > 4$ pa je $2^x$ večja. Razlog: korak za $1$ vrednost $2^x$ vedno podvoji, vrednost $x^2$ pa pomnoži le z $\left(\frac{x+1}{x}\right)^2$, kar je pri velikih $x$ blizu $1$. Splošno: pri $a > 1$ funkcija $a^x$ prej ali slej preseže vsako potenco $x^n$, včasih šele pozno: $1{,}1^x$ prehiti $x^{10}$ pri $x \approx 685$.
 
 ## Rešeni primeri
 
@@ -317,7 +319,7 @@ d) Za koliko odstotkov se količina zdravila zmanjša v dveh urah? (2 točki)
 
 **Točkovanje:** a) 1 točka za faktor $0{,}85$; 1 točka za predpis $m(t) = 400 \cdot 0{,}85^t$; b) 1 točka za račun $400 \cdot 0{,}85^3 = 245{,}65$; 1 točka za zaokrožen rezultat $246\,\mathrm{mg}$ z enoto; c) 1 točka za $m(4) \approx 208{,}8\,\mathrm{mg}$ in $m(5) \approx 177{,}5\,\mathrm{mg}$; 1 točka za odgovor $5$ ur z utemeljitvijo, da $m$ pada; d) 1 točka za faktor $0{,}85^2 = 0{,}7225$; 1 točka za $27{,}75\,\%$.
 
-### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+### Naloga 3 (višja raven): strukturirana naloga, 11 točk, pola 1 (brez računala)
 
 Dani sta funkciji $f(x) = 2^{x-1} + 1$ in $g(x) = x + 1$.
 
@@ -325,6 +327,7 @@ a) Zapiši definicijsko območje, zalogo vrednosti in enačbo vodoravne asimptot
 b) Izračunaj presečišče grafa funkcije $f$ z osjo $y$ in utemelji, zakaj $f$ nima ničel. (2 točki)
 c) V isti koordinatni sistem nariši grafa funkcij $f$ in $g$ za $x$ od $-2$ do $3$. (2 točki)
 d) Z grafa razberi, za katere $x$ z intervala $[-2, 3]$ velja $f(x) \le g(x)$, in abscisi presečišč grafov preveri z računom. (3 točke)
+e) Dana je še funkcija $h(x) = e^{x-1} + 1$. Brez računanja vrednosti utemelji, da za vsak $x > 1$ leži graf funkcije $h$ nad grafom funkcije $f$. (1 točka)
 
 **Rešitev:**
 
@@ -335,9 +338,10 @@ d) Z grafa razberi, za katere $x$ z intervala $[-2, 3]$ velja $f(x) \le g(x)$, i
 5. c) Točke grafa $f$: $\left(-2, \dfrac{9}{8}\right)$, $\left(-1, \dfrac{5}{4}\right)$, $\left(0, \dfrac{3}{2}\right)$, $(1, 2)$, $(2, 3)$, $(3, 5)$; graf se na levi približuje asimptoti $y = 1$. Graf $g$ je premica skozi $(-1, 0)$ in $(0, 1)$.
 6. d) Z grafa razberemo, da se grafa sekata v točkah $(1, 2)$ in $(2, 3)$. Preverimo: $f(1) = 2^0 + 1 = 2 = g(1)$ in $f(2) = 2^1 + 1 = 3 = g(2)$.
 7. d) Med presečiščema leži graf $f$ pod premico, na primer $f\!\left(\dfrac{3}{2}\right) = \sqrt{2} + 1 < \dfrac{5}{2} = g\!\left(\dfrac{3}{2}\right)$, ker je $\sqrt{2} < \dfrac{3}{2}$. Na preostalem delu intervala $[-2, 3]$, levo od $x = 1$ in desno od $x = 2$, leži nad njo, na primer $f(0) = \dfrac{3}{2} > 1 = g(0)$ in $f(3) = 5 > 4 = g(3)$.
-8. Odgovor: a) $D_f = \mathbb{R}$, $Z_f = (1, \infty)$, asimptota $y = 1$; b) $\left(0, \dfrac{3}{2}\right)$, ničel ni, ker je $f(x) > 1$; d) na intervalu $[-2, 3]$ velja $f(x) \le g(x)$ natanko za $x \in [1, 2]$.
+8. e) Za $x > 1$ je eksponent $x - 1$ pozitiven. Pri pozitivnem eksponentu da večja osnova večjo potenco, in ker je $e \approx 2{,}718 > 2$, je $e^{x-1} > 2^{x-1}$. Zato je $h(x) = e^{x-1} + 1 > 2^{x-1} + 1 = f(x)$ za vsak $x > 1$.
+9. Odgovor: a) $D_f = \mathbb{R}$, $Z_f = (1, \infty)$, asimptota $y = 1$; b) $\left(0, \dfrac{3}{2}\right)$, ničel ni, ker je $f(x) > 1$; d) na intervalu $[-2, 3]$ velja $f(x) \le g(x)$ natanko za $x \in [1, 2]$; e) $h(x) > f(x)$, ker je $e > 2$ in $x - 1 > 0$.
 
-**Točkovanje:** a) 1 točka za $D_f = \mathbb{R}$, 1 točka za $Z_f = (1, \infty)$, 1 točka za asimptoto $y = 1$; b) 1 točka za presečišče $\left(0, \dfrac{3}{2}\right)$, 1 točka za utemeljitev $f(x) > 1$; c) 1 točka za graf $f$ (pravilne točke in asimptota $y = 1$), 1 točka za premico $g$; d) 1 točka za presečišči $(1, 2)$ in $(2, 3)$, 1 točka za računsko preverjanje obeh, 1 točka za rešitev $[1, 2]$ z vključenima krajiščema.
+**Točkovanje:** a) 1 točka za $D_f = \mathbb{R}$, 1 točka za $Z_f = (1, \infty)$, 1 točka za asimptoto $y = 1$; b) 1 točka za presečišče $\left(0, \dfrac{3}{2}\right)$, 1 točka za utemeljitev $f(x) > 1$; c) 1 točka za graf $f$ (pravilne točke in asimptota $y = 1$), 1 točka za premico $g$; d) 1 točka za presečišči $(1, 2)$ in $(2, 3)$, 1 točka za računsko preverjanje obeh, 1 točka za rešitev $[1, 2]$ z vključenima krajiščema; e) 1 točka za utemeljitev $e^{x-1} > 2^{x-1}$ z $e > 2$ in pozitivnim eksponentom $x - 1$.
 
 ### Ustno vprašanje 1
 
@@ -449,6 +453,10 @@ f: 2^x - 3 | modra debelo
 ~ 36 | Tabela je prava, a nadaljevana z razliko $+12$. Vsak korak vrednost podvoji: $24 \cdot 2$.
 > Le pri B je razmerje zaporednih vrednosti stalno: $\frac{6}{3} = \frac{12}{6} = \frac{24}{12} = 2$. Funkcija je $3 \cdot 2^x$, zato je pri $x = 4$ vrednost $24 \cdot 2 = 48$.
 
+? (brez računala) Vpiši celi del števila $e^2$.
+= 7
+> $2{,}7 < e < 2{,}8$, zato je $7{,}29 < e^2 < 7{,}84$.
+
 :::simboli
 f | eksponentna funkcija; v primeru 1 $f(x) = 3^x$, v kvizu $f(x) = 3^{x-2} - 1$ | f(x) = a^x | |
 g | druga funkcija: v točki 4 $g(x) = \left(\frac{1}{2}\right)^x$, v primeru 4 $g(x) = 2^{x+1} - 4$, v Za maturo (naloga 3) $g(x) = x + 1$ | | |
@@ -456,7 +464,7 @@ x | neodvisna spremenljivka (eksponent) | | |
 a | osnova | | | $a > 0$, $a \ne 1$
 e | Eulerjevo število, osnova naravne eksponentne funkcije | | | $e \approx 2{,}718$
 x_1, x_2 | dve vrednosti spremenljivke | | | $x_1 < x_2$
-n | števec korakov: poltoni (razlaga 1), prečka (primer 3), pregibi (analogija) | | | v $a^{-n}$ naravno število
+n | števec korakov: poltoni (razlaga 1), prečka (primer 3), pregibi (analogija), pripisi obresti (točka 8); v točki 11 eksponent potence $x^n$ | | | v $a^{-n}$ naravno število
 L | dolžina nihajočega dela strune | L(n) = 650 \cdot 2^{-\frac{n}{12}} | mm |
 y | ordinata točke grafa | | |
 p | premik grafa v smeri osi $x$ | | | pri $p > 0$ v desno
@@ -468,6 +476,7 @@ Z_f, Z_g | zaloga vrednosti funkcije $f$ oziroma $g$ | | | pri $a^x$ je $(0, \in
 k | smerni koeficient linearne funkcije (stalni prirastek) | | |
 m | količina zdravila v krvi (Za maturo, naloga 2) | m(t) = 400 \cdot 0{,}85^t | mg |
 t | čas od zaužitja tablete (Za maturo, naloga 2) | | h |
+h | funkcija z osnovo $e$ (Za maturo, naloga 3 e) | h(x) = e^{x-1} + 1 | |
 :::
 
 <<RACUN
@@ -486,4 +495,15 @@ vrednost: 2^(1-1)+1 | 2
 vrednost: 2^(2-1)+1 | 3
 vrednost: 2^(3-1)+1 | 5
 vrednost: 2^(3/2-1)+1 | 2.414
+vrednost: (1+1/2)^2 | 2.25
+vrednost: (1+1/12)^12 | 2.613
+vrednost: (1+1/365)^365 | 2.7146
+vrednost: exp(1) | 2.71828
+vrednost: exp(2) | 7.389
+vrednost: 2.7^2 | 7.29
+vrednost: 2.8^2 | 7.84
+vrednost: 2^5 | 32
+vrednost: 2^10 | 1024
+vrednost: 1.1^685/685^10 | 0.993
+vrednost: 1.1^686/686^10 | 1.077
 >>

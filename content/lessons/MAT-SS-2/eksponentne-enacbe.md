@@ -68,6 +68,17 @@ Ker je $2^x$ vedno pozitivno, enačba $2^x = t$ s $t \le 0$ nima rešitve. Vsako
 
 Kaj pa enačba $2^x = 5$? Števila $5$ ne znamo zapisati kot potenco števila $2$ s preprostim eksponentom. Rešitev vseeno obstaja, graf jo pokaže blizu $x \approx 2{,}3$. Natančno jo bomo zapisali šele v naslednji lekciji.
 
+**11. Grafično reševanje eksponentne neenačbe (višja raven).** Neenačba ima namesto enačaja znak $<$, $>$, $\le$ ali $\ge$. Neenačbo $f(x) < g(x)$ rešimo grafično tako, da poiščemo vse $x$, pri katerih leži graf funkcije $f$ **pod** grafom funkcije $g$ (pri $f(x) > g(x)$ iščemo, kje leži **nad** njim). Postopek:
+
+1. Neenačbo zapiši v obliki $f(x) < g(x)$ (ali z drugim znakom neenakosti), kjer znaš narisati graf vsake strani (eksponentna funkcija, premica …).
+2. Oba grafa nariši v isti koordinatni sistem.
+3. Poišči presečišča grafov in njihove abscise **preveri z računom**: vstavi jih v obe strani. Odčitek z grafa je le približek.
+4. Odčitaj intervale, na katerih je graf $f$ pod grafom $g$ (pri $>$ in $\ge$ nad njim). Pri znaku $\le$ ali $\ge$ abscise presečišč vključi, pri $<$ ali $>$ ne.
+
+Najpreprostejši primer je $2^x < 8$. Naraščajoča krivulja $y = 2^x$ je pod premico $y = 8$ levo od presečišča $(3, 8)$, zato velja za $x < 3$. Padajoča krivulja $y = \left(\frac{1}{2}\right)^x$ pa je pod premico $y = 8$ desno od presečišča $(-3, 8)$, zato neenačbo $\left(\frac{1}{2}\right)^x < 8$ rešijo vsi $x > -3$. Smer odčitka je torej odvisna od tega, ali krivulja narašča ali pada.
+
+Grafična metoda je najbolj uporabna, kadar je na drugi strani neenačbe premica, na primer $2^x \le x + 1$. Take neenačbe računsko ne znamo rešiti, z grafom pa jih rešimo v nekaj korakih (Primer 5).
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -154,6 +165,43 @@ $\left(\frac{1}{2}\right)^n = \dfrac{1}{2^n}$; $\;a^{u} = a^{v} \iff u = v$ (za 
 Po koliko krogih ostaneta finalista in koliko krogov ima turnir?
 ---
 Ker je $128 = 2^7$, je $\frac{1}{128} = \left(\frac{1}{2}\right)^7$ in $n = 7$. Preizkus: $256 \cdot \frac{1}{128} = 2$. Po $7$ krogih ostaneta finalista. Finale je še en krog, zato ima turnir $8$ krogov; po njem ostane $256 \cdot \left(\frac{1}{2}\right)^8 = 1$ zmagovalec.
+:::
+
+### Primer 5 (višja raven): neenačbi, rešeni z grafom
+
+Grafično reši neenačbi a) $2^x < 6 - x$ in b) $2^x \le x + 1$.
+
+**Podatki:** neenačba a) $2^x < 6 - x$, neenačba b) $2^x \le x + 1$
+**Iščemo:** vse $x$, ki rešijo neenačbo a), in vse, ki rešijo neenačbo b)
+
+:::formula
+Neenačbo $f(x) < g(x)$ rešijo abscise točk, v katerih je graf $f$ pod grafom $g$. Abscise presečišč preverimo z računom.
+:::
+
+**Rešitev:**
+
+1. Narišemo krivuljo $y = 2^x$ skozi točke $(-1; 0{,}5)$; $(0, 1)$; $(1, 2)$; $(2, 4)$ in $(3, 8)$ ter premici $y = 6 - x$ in $y = x + 1$.
+2. a) Krivulja seka premico $y = 6 - x$ v točki $(2, 4)$. Preizkus: $2^2 = 4$ in $6 - 2 = 4$. Krivulja narašča, premica pada, zato drugega presečišča ni.
+3. a) Levo od $x = 2$ je krivulja pod premico (pri $x = 0$ je $1 < 6$), desno nad njo. Znak $<$ je strog, zato $x = 2$ ni rešitev: rešitev je $x \in (-\infty, 2)$.
+4. b) Krivulja seka premico $y = x + 1$ v točkah $(0, 1)$ in $(1, 2)$. Preizkus: $2^0 = 1 = 0 + 1$ in $2^1 = 2 = 1 + 1$. Krivulja $y = 2^x$ je vse strmejša in se ukrivlja navzgor, zato jo premica seka največ v dveh točkah: tretjega presečišča ni.
+5. b) Med presečiščema je krivulja pod premico: pri $x = \frac{1}{2}$ je $2^{\frac{1}{2}} \approx 1{,}41 < 1{,}5$. Levo od $0$ in desno od $1$ je nad njo, na primer $2^{-1} = 0{,}5 > 0$ in $2^3 = 8 > 4$.
+6. b) Znak $\le$ dovoli tudi enakost, zato abscisi presečišč vključimo: rešitev je $x \in [0, 1]$.
+7. Odgovor: neenačbo a) rešijo vsi $x \in (-\infty, 2)$, neenačbo b) vsi $x \in [0, 1]$.
+
+:::risba graf
+opis: Krivulja y = 2ˣ (modra, polna) ter premici y = 6 − x (oranžna, padajoča) in y = x + 1 (zelena, črtkana, naraščajoča) za x od −2 do 4. Krivulja seka padajočo premico v točki (2, 4); levo od te točke je pod premico. Premico y = x + 1 seka v točkah (0, 1) in (1, 2); med njima je krivulja malo pod premico, levo in desno od njiju nad njo.
+x: -2 .. 4 | 1 | x
+y: -1 .. 9 | 1 | y
+f: 2^x | modra debelo | -2 .. 3
+f: 6 - x | oranžna | -2 .. 4
+f: x + 1 | zelena črtkano | -2 .. 4
+točka: 2; 4 | (2, 4) | desno
+točka: 0; 1 | (0, 1) | nad levo
+točka: 1; 2 | (1, 2) | pod desno
+napis: 2,3; 8,3 | y = 2^x | levo | modra
+napis: -1; 8,3 | y = 6 − x | sredina | oranžna
+napis: 3,4; 5,8 | y = x + 1 | sredina | zelena
+podnapis: a) krivulja je pod padajočo premico za x < 2; b) pod premico y = x + 1 je za x med 0 in 1.
 :::
 
 ## Pogoste napake
@@ -358,6 +406,24 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 ~ Števila $4$; $2$; $1$; $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.
 > Enačba $4 \cdot \left(\frac{1}{2}\right)^n = 0{,}5$ da $\left(\frac{1}{2}\right)^n = \frac{1}{8} = \left(\frac{1}{2}\right)^3$, zato je $n = 3$.
 
+? (višja raven) Na sliki sta grafa funkcij $y = \left(\frac{1}{2}\right)^x$ in $y = x + 3$. Katera množica je rešitev neenačbe $\left(\frac{1}{2}\right)^x \le x + 3$?
+:::risba graf
+opis: Padajoča krivulja y = (1/2)ˣ in naraščajoča premica y = x + 3 za x od −3 do 3. Sekata se v točki (−1, 2). Levo od te točke je krivulja nad premico, desno pod njo.
+x: -3 .. 3 | 1 | x
+y: -1 .. 8 | 1 | y
+f: 0.5^x | modra debelo
+f: x + 3 | oranžna
+točka: -1; 2 | (−1, 2) | levo
+:::
++ $[-1, \infty)$
+- $(-\infty, -1]$
+~ Tam je krivulja **nad** premico; to bi bila rešitev neenačbe z znakom $\ge$.
+- $(-1, \infty)$
+~ Znak $\le$ dovoli enakost, zato abscisa presečišča $-1$ sodi zraven.
+- $[2, \infty)$
+~ $2$ je ordinata presečišča. Rešitev beremo na osi $x$, abscisa presečišča je $-1$.
+> Preizkus presečišča: $\left(\frac{1}{2}\right)^{-1} = 2$ in $-1 + 3 = 2$. Desno od $x = -1$ je padajoča krivulja pod naraščajočo premico, zato je rešitev $x \in [-1, \infty)$.
+
 :::simboli
 a | osnova potence | | | $a > 0$, $a \ne 1$; v obrazcu za $t_{1,2}$ vodilni koeficient
 u, v | eksponenta na obeh straneh enačbe | | |
@@ -369,7 +435,8 @@ t_{1,2} | rešitvi kvadratne enačbe za $t$ | t_{1,2} = \frac{-b \pm \sqrt{b^2 -
 b | linearni koeficient kvadratne enačbe za $t$ | | | v točki 8 druga osnova potence, v grafičnem pogledu desna stran $y = b$
 c | prosti člen kvadratne enačbe za $t$ | | | v enačbi $a^x = c$ desna stran
 D | diskriminanta kvadratne enačbe za $t$ | D = b^2 - 4ac | |
-f | funkcija (Za maturo, naloga 2) | f(x) = 4^x - 6 \cdot 2^x + 8 | |
+f | funkcija (Za maturo, naloga 2) | f(x) = 4^x - 6 \cdot 2^x + 8 | | v točkah 10 in 11 leva stran enačbe oziroma neenačbe
+g | desna stran enačbe oziroma neenačbe (točki 10 in 11) | | |
 A, B | število bakterij v prvi in drugi kulturi po $x$ urah (Za maturo, naloga 3) | A(x) = 200 \cdot 2^x | | $B(x) = 25 \cdot 4^x$
 :::
 
@@ -390,4 +457,16 @@ resi: t^2+8*t-384=0 | t | -24, 16
 resi: 200*2^x+25*4^x=9600 | x | 4
 vrednost: 200*2^4+25*4^4 | 9600
 neenacba: 25*4^x>200*2^x | x | (3, oo)
+neenacba: 2^x<8 | x | (-oo, 3)
+vrednost: (1/2)^(-3) | 8
+vrednost: 2^2 | 4
+vrednost: 6-2 | 4
+resi: 2^x=4 | x | 2
+vrednost: 2^0 | 1
+vrednost: 2^1 | 2
+vrednost: 2^(1/2) | 1.41
+vrednost: 2^(-1) | 0.5
+vrednost: 2^3 | 8
+vrednost: (1/2)^(-1) | 2
+vrednost: -1+3 | 2
 >>

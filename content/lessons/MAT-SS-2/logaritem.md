@@ -74,6 +74,41 @@ Tako izračunamo tudi število z začetka: $\log_2 5 = \dfrac{\log 5}{\log 2} \a
 
 Posledica formule je še zveza $\log_a b \cdot \log_b a = 1$, na primer $\log_2 8 \cdot \log_8 2 = 3 \cdot \dfrac{1}{3} = 1$.
 
+**7. Računanje z naravnim logaritmom.** Za $\ln$ veljajo vse zveze iz blokov 3 in 5, le osnova je $\mathrm{e}$:
+
+$$\ln 1 = 0, \qquad \ln \mathrm{e} = 1, \qquad \ln \mathrm{e}^x = x, \qquad \mathrm{e}^{\ln b} = b.$$
+
+Na primer $\ln \mathrm{e}^5 = 5$, $\;\ln \dfrac{1}{\mathrm{e}^2} = -2$ in $\mathrm{e}^{\ln 7} = 7$. Enačbo $\mathrm{e}^x = b$ rešimo v enem koraku, $x = \ln b$: iz $\mathrm{e}^x = 20$ sledi $x = \ln 20 \approx 3{,}00$. Enačbo z drugo osnovo, na primer $3^x = 20$, logaritmiramo z $\ln$: $x \ln 3 = \ln 20$, zato je $x = \dfrac{\ln 20}{\ln 3} \approx 2{,}73$.
+
+**8. Logaritemska skala (višja raven).** Na navadni osi imajo enako oddaljene oznake enako **razliko** ($0, 1, 2, 3$), na **logaritemski skali** pa enak **količnik** ($1, 10, 100, 1000$). Razmik med sosednjima je **dekada**. Število $b$ leži $\log b$ dekade desno od oznake $1$: oznaka $2$ pri $\log 2 \approx 0{,}30$ dekade (ne na devetini), oznaka $5$ pri $\log 5 \approx 0{,}70$ dekade.
+
+:::risba premica
+opis: Logaritemska skala od 1 do 100. Glavne oznake 1, 10 in 100 so enako oddaljene, razdalja med sosednjima je ena dekada. Vmesne oznake 2, 3 in 5 ležijo 0,30; 0,48 in 0,70 dekade desno od oznake 1, oznake 20, 30 in 50 pa enako daleč desno od oznake 10. Oranžna točka na sredini med 10 in 100 pripada številu približno 31,6.
+od: 0
+do: 2
+korak: 1
+oznake: ne
+oznaka: 0 | 1
+oznaka: 0,301 | 2
+oznaka: 0,477 | 3
+oznaka: 0,699 | 5
+oznaka: 1 | 10
+oznaka: 1,301 | 20
+oznaka: 1,477 | 30
+oznaka: 1,699 | 50
+oznaka: 2 | 100
+točka: 1,5 | ≈ 31,6 | oranžna
+podnapis: Na logaritemski skali so enako oddaljena števila z enakim količnikom
+:::
+
+Točka, ki leži $t$ dekade desno od oznake $10^n$, pripada številu $10^{n + t}$. Sredina med $10$ in $100$ je zato $10^{1{,}5} \approx 31{,}6$, ne $55$. Tako beremo tudi os grafa z logaritemsko skalo: izmerimo razdaljo točke od zadnje glavne oznake v dekadah in potenciramo. Taka os pride prav, ko podatki segajo čez več velikostnih redov.
+
+**9. Sestavljanje logaritemskega modela (višja raven).** Zveza je logaritemska, kadar se ob vsakem **množenju** $x$ z istim faktorjem $y$ **spremeni za isti korak**. (Pri eksponentni zvezi isti korak pri $x$ pomnoži $y$ z istim faktorjem.) Model je
+
+$$y = A + B \log x.$$
+
+Postopek: preveri, da enaki količniki dajo enake razlike; iz dveh podatkov izračunaj $A$ in $B$; model preveri s tretjim. Tako nastane pH: ko se $c$ podeseteri, pH pade za $1$, pri $c = 1\,\text{mol/L}$ pa je $0$, torej $B = -1$ in $A = 0$. Na grafu z logaritemsko vodoravno osjo je model **premica**.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -158,6 +193,80 @@ Na kateri višini je plast s tlakom $500\,\text{hPa}$?
 ---
 $\log 0{,}4936 \approx -0{,}3066$ in $\log 0{,}88 \approx -0{,}0555$. Oba logaritma sta negativna (logaritmanda sta manjša od $1$), kvocient je pozitiven: $h \approx 5{,}52$. Smiselnost: $0{,}88^5 \approx 0{,}53$ in $0{,}88^6 \approx 0{,}46$, iskani $0{,}4936$ leži vmes, zato je $h$ med $5$ in $6$. Odgovor: plast s tlakom $500\,\text{hPa}$ je na višini približno $5{,}5\,\text{km}$.
 :::
+
+### Primer 5: naravni logaritem
+
+Brez računala izračunaj a) $\ln \mathrm{e}^3 + \ln \dfrac{1}{\mathrm{e}}$ in b) $\mathrm{e}^{2\ln 3}$. Z računalom reši c) enačbo $\mathrm{e}^{2x - 1} = 5$; rezultat zaokroži na dve decimalki.
+
+**Podatki:** izraza $\ln \mathrm{e}^3 + \ln \dfrac{1}{\mathrm{e}}$ in $\mathrm{e}^{2\ln 3}$; enačba $\mathrm{e}^{2x - 1} = 5$; zaokrožimo na dve decimalki
+**Iščemo:** vrednosti izrazov in rešitev $x$
+
+:::formula
+$\ln \mathrm{e}^x = x$, $\;\mathrm{e}^{\ln b} = b$, $\;n \ln x = \ln x^n$; $\;\mathrm{e}^x = b \iff x = \ln b$
+:::
+
+**Rešitev:**
+
+1. a) $\ln \mathrm{e}^3 = 3$ in $\ln \dfrac{1}{\mathrm{e}} = \ln \mathrm{e}^{-1} = -1$, vsota je $3 - 1 = 2$.
+2. b) Koeficient $2$ prenesemo v eksponent: $2\ln 3 = \ln 3^2 = \ln 9$.
+3. b) Zato je $\mathrm{e}^{2\ln 3} = \mathrm{e}^{\ln 9} = 9$.
+4. c) Po definiciji je $2x - 1 = \ln 5$, zato je $x = \dfrac{1 + \ln 5}{2}$.
+5. c) Z računalom: $\ln 5 \approx 1{,}6094$ in $x \approx \dfrac{2{,}6094}{2} \approx 1{,}3047$, zaokroženo $1{,}30$.
+6. Preizkus: $2 \cdot 1{,}3047 - 1 = 1{,}6094$ in $\mathrm{e}^{1{,}6094} \approx 5{,}000$.
+7. Odgovor: a) $2$; b) $9$; c) $x \approx 1{,}30$.
+
+### Primer 6 (višja raven): hitrost hoje v mestih
+
+Tabela kaže izmišljene podatke o povprečni hitrosti hoje pešcev v štirih mestih:
+
+| prebivalci $P$ | hitrost $v$ [m/s] |
+|---|---|
+| $1000$ | $1{,}10$ |
+| $10\,000$ | $1{,}25$ |
+| $100\,000$ | $1{,}40$ |
+| $1\,000\,000$ | $1{,}55$ |
+
+a) Sestavi model za $v$ v odvisnosti od $P$. b) Kolikšna je $v$ v mestu s $300\,000$ prebivalci? c) Vodoravna os grafa je logaritemska. Mesto M leži $0{,}3$ dekade desno od oznake $10^4$. Koliko prebivalcev ima in kolikšna je tam $v$?
+
+:::risba graf
+opis: Graf z logaritemsko vodoravno osjo P: oznake 10³, 10⁴, 10⁵ in 10⁶ prebivalcev so enako oddaljene. Navpična os kaže hitrost hoje v metrih na sekundo od 0,9 do 1,7. Štiri izmerjene točke (10³; 1,10), (10⁴; 1,25), (10⁵; 1,40) in (10⁶; 1,55) ležijo na isti premici. Oranžna točka M leži 0,3 dekade desno od oznake 10⁴, na premici pri hitrosti približno 1,3; črtkani črti jo povežeta z obema osema.
+x: 2,5 .. 6,5 | 1 | P
+y: 0,9 .. 1,7 | 0,1 | v
+oznake: ne
+oznakax: 3 | 10^3
+oznakax: 4 | 10^4
+oznakax: 5 | 10^5
+oznakax: 6 | 10^6
+oznakay: 1 | 1,0
+oznakay: 1,2 | 1,2
+oznakay: 1,4 | 1,4
+oznakay: 1,6 | 1,6
+f: 0.65 + 0.15*x | modra
+točka: 3; 1,1
+točka: 4; 1,25
+točka: 5; 1,4
+točka: 6; 1,55
+črta: 4,3; 0,9 -> 4,3; 1,295 -> 2,5; 1,295 | oranžna črtkano
+točka: 4,3; 1,295 | M | nad levo | oranžna
+podnapis: Hitrost hoje v m/s; vodoravna os ima logaritemsko skalo
+:::
+
+**Podatki:** tabela štirih parov $(P, v)$; $P = 300\,000$; M leži $0{,}3$ dekade desno od oznake $10^4$
+**Iščemo:** a) model $v(P)$, b) $v(300\,000)$, c) $P$ in $v$ za mesto M
+
+:::formula
+$v = A + B \log P$; točka $t$ dekade desno od oznake $10^n$ pripada številu $10^{n + t}$
+:::
+
+**Rešitev:**
+
+1. a) Ko se $P$ pomnoži z $10$, se $v$ poveča za $0{,}15\,\mathrm{m/s}$: enak količnik, enaka razlika. Model je torej $v = A + B \log P$.
+2. a) Iz prvih dveh vrstic: $A + 3B = 1{,}10$ in $A + 4B = 1{,}25$. Odštejemo: $B = 0{,}15$, nato $A = 1{,}10 - 0{,}45 = 0{,}65$.
+3. a) Preizkus z zadnjo vrstico: $0{,}65 + 0{,}15 \cdot 6 = 1{,}55$. Model je $v = 0{,}65 + 0{,}15 \log P$ (v $\mathrm{m/s}$).
+4. b) $\log 300\,000 \approx 5{,}4771$, zato je $v \approx 0{,}65 + 0{,}15 \cdot 5{,}4771 \approx 1{,}47\,\mathrm{m/s}$.
+5. c) M leži pri $\log P = 4 + 0{,}3 = 4{,}3$, zato je $P = 10^{4{,}3} \approx 19\,953$, približno $20\,000$ prebivalcev (ker je $\log 2 \approx 0{,}30$, je to faktor $2$ nad $10^4$).
+6. c) Točke ležijo na premici, ker je $v$ linearna funkcija števila $\log P$. Pri M je $v = 0{,}65 + 0{,}15 \cdot 4{,}3 \approx 1{,}3\,\mathrm{m/s}$.
+7. Odgovor: a) $v = 0{,}65 + 0{,}15 \log P$; b) približno $1{,}47\,\mathrm{m/s}$; c) približno $20\,000$ prebivalcev in hitrost približno $1{,}3\,\mathrm{m/s}$.
 
 ## Pogoste napake
 
@@ -367,15 +476,32 @@ Logaritme uporabljamo povsod, kjer se količine razlikujejo za veliko velikostni
 ~ $100$-kratna bi bila pri razliki pH za $2$, ker je $\log 100 = 2$.
 > Naj bo $c_1$ koncentracija v kislem, $c_2$ pa v čistem dežju: $\log c_1 - \log c_2 = -4{,}6 + 5{,}6 = 1$, torej $\log \dfrac{c_1}{c_2} = 1$ in $\dfrac{c_1}{c_2} = 10$.
 
+? (brez računala) Koliko je $\ln \mathrm{e}^4 + \mathrm{e}^{\ln 3} - \ln 1$?
+= 7
+~ 6 | Upošteval si $\ln 1 = 1$. Pravilno je $\ln 1 = 0$, ker je $\mathrm{e}^0 = 1$.
+~ 8 | Upošteval si $\ln 1 = -1$. Pravilno je $\ln 1 = 0$, ker je $\mathrm{e}^0 = 1$.
+> $\ln \mathrm{e}^4 = 4$, $\mathrm{e}^{\ln 3} = 3$ in $\ln 1 = 0$, zato je vrednost $4 + 3 - 0 = 7$.
+
+? (višja raven) Na logaritemski skali so oznake $1$, $10$, $100$ in $1000$ med seboj oddaljene $3\,\text{cm}$. Točka leži $2{,}1\,\text{cm}$ desno od oznake $10$. Kateremu številu pripada? Rezultat zaokroži na celo število.
+= 50 | 1
+~ 73 | Skalo si bral kot navadno: $10 + 0{,}7 \cdot 90 = 73$. Na logaritemski skali $0{,}7$ dekade pomeni faktor $10^{0{,}7}$.
+~ 1,7 | To je $\log b$; treba je še potencirati: $10^{1{,}7}$.
+> $2{,}1\,\text{cm}$ je $\dfrac{2{,}1}{3} = 0{,}7$ dekade. Točka leži pri $\log b = 1 + 0{,}7 = 1{,}7$, zato je $b = 10^{1{,}7} \approx 50$.
+
+? (višja raven) Velja $y = A + B \log x$. Pri $x = 10$ je $y = 7$, pri $x = 100$ pa $y = 11$. Koliko je $y$ pri $x = 50$? Rezultat zaokroži na dve decimalki.
+= 9,80 | 0,01
+~ 8,78 | Interpoliral si linearno v $x$, model pa je linearen v $\log x$.
+> Iz $A + B = 7$ in $A + 2B = 11$ sledi $B = 4$ in $A = 3$. Zato je $y = 3 + 4 \log 50 \approx 3 + 4 \cdot 1{,}6990 \approx 9{,}80$.
+
 :::simboli
 a | osnova logaritma | | | $a > 0$, $a \ne 1$
 b | logaritmand | | | $b > 0$
-x | logaritem števila $b$ (eksponent) | x = \log_a b | | v pravilih poljubno pozitivno število
-y | pozitivno število | | |
+x | logaritem števila $b$ (eksponent) | x = \log_a b | | v pravilih in v modelu $y = A + B \log x$ (blok 9) poljubno pozitivno število
+y | pozitivno število | | | v modelu $y = A + B \log x$ (blok 9) odvisna količina
 c | nova osnova | | | $c > 0$, $c \ne 1$; pri pH koncentracija $\mathrm{H_3O^+}$ v mol/L
 n | realno število (eksponent) | | | pri korenu naravno, $n \ge 2$
 m | eksponent v potenci | | |
-u, v | eksponenta potenc z osnovo $a$ | u = \log_a x | | 
+u | eksponent potence z osnovo $a$ | u = \log_a x | | 
 p | zračni tlak na višini $h$ | p = p_0 \cdot 0{,}88^h | hPa |
 p_0 | zračni tlak pri tleh | | hPa | $1013\,\mathrm{hPa}$
 h | nadmorska višina | | km |
@@ -384,6 +510,11 @@ I | jakost zvoka | | W/m² |
 I_0 | jakost zvoka na pragu slišnosti | | W/m² | $10^{-12}\,\mathrm{W/m^2}$
 r | okrajšava za $\log_2 3$ (Za maturo, naloga 3) | r = \log_2 3 | |
 k | osnova faktorja v produktu (Za maturo, naloga 3 d) | | | $k = 2, 3, \ldots, 7$
+\mathrm{e} | osnova naravnega logaritma | | | $\mathrm{e} \approx 2{,}718$
+t | število dekad desno od glavne oznake na logaritemski skali | | |
+A, B | parametra logaritemskega modela | y = A + B \log x | |
+P | število prebivalcev mesta | | |
+v | eksponent potence z osnovo $a$ ($v = \log_a y$); v Primeru 6 povprečna hitrost hoje v m/s | | | v Primeru 6 je $v = 0{,}65 + 0{,}15 \log P$
 :::
 
 <<RACUN
@@ -403,4 +534,23 @@ vrednost: log(3, 2)*log(4, 3)*log(5, 4)*log(6, 5)*log(7, 6)*log(8, 7) | 3
 enako: log(12, 2) | 2+log(3, 2)
 enako: (log(3, 2)+log(12, 2))/2 | log(6, 2)
 vrednost: (3+12)/2 | 7.5
+vrednost: log(20) | 3.00
+resi: 3^x=20 | x | 2.73
+vrednost: log(exp(3))+log(1/exp(1)) | 2
+vrednost: exp(2*log(3)) | 9
+vrednost: (1+log(5))/2 | 1.3047
+resi: exp(2*x-1)=5 | x | 1.30
+vrednost: log(2, 10) | 0.301
+vrednost: log(3, 10) | 0.477
+vrednost: log(5, 10) | 0.699
+vrednost: 10^1.5 | 31.6
+vrednost: 1.25-1.10 | 0.15
+vrednost: 1.10-3*0.15 | 0.65
+vrednost: 0.65+0.15*log(1000000, 10) | 1.55
+vrednost: 0.65+0.15*log(300000, 10) | 1.47
+vrednost: 10^4.3 | 19952.6
+vrednost: 0.65+0.15*4.3 | 1.295
+vrednost: log(exp(4))+exp(log(3))-log(1) | 7
+vrednost: 10^(1+2.1/3) | 50.1
+vrednost: 3+4*log(50, 10) | 9.80
 >>
