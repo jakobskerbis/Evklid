@@ -446,6 +446,16 @@ function bubbleEl() {
   drop.hidden = true;
   drop.innerHTML = `${icon("x")}<span class="sr-only">${t("win.bubbleHide")}</span>`;
   document.body.append(bubble, drop);
+  // Med drsenjem po strani je mehurček prosojen, da se vidi besedilo pod njim (pilot 14. 11. 2026).
+  let scrollTimer = 0;
+  addEventListener("scroll", (e) => {
+    if (bubble.hidden || bubble.classList.contains("dragging")) return;
+    // Samo drsenje strani: ne ob drsenju v klepetu ali oknu (npr. samodejni pomik med odgovorom).
+    if (e.target instanceof Element && e.target.closest("#view-chat, #messages, .okno")) return;
+    bubble.classList.add("scrolling");
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => bubble.classList.remove("scrolling"), 700);
+  }, { passive: true, capture: true });
   const main = bubble.querySelector(".cb-main");
   bubble.querySelector(".cb-x").addEventListener("click", dismissBubble);
   bubble.querySelector(".cb-preview").addEventListener("click", openChat);
@@ -466,6 +476,7 @@ function bubbleEl() {
       p.moved = true;
       clearTimeout(p.timer);
       bubble.classList.add("dragging");
+      bubble.classList.remove("scrolling"); // ob vlečenju takoj neprosojen
       hidePreview();
       drop.hidden = false;
     }

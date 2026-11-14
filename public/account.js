@@ -936,7 +936,17 @@ function bindChildForm(after) {
     const knownYear = own && status?.parent?.birth_year;
     f.querySelector(".year-field").hidden = fixedSelf || !!knownYear;
     f.birth_year.required = !(fixedSelf || knownYear);
+    fillName(own);
   };
+  // Lasten profil: ime iz registracije se vpiše samo (dijak ga ne tipka dvakrat). Pri profilu za otroka
+  // ostane prazno (ime imetnika je ime starša); samodejno vpisano ime se ob preklopu pobriše, ročno vpisano ne.
+  const ownName = String(status?.parent?.name || "").trim().slice(0, 40);
+  const fillName = (own) => {
+    if (own && ownName && !f.name.value.trim()) (f.name.value = ownName), (f.name.dataset.auto = "1");
+    else if (!own && f.name.dataset.auto) (f.name.value = ""), delete f.name.dataset.auto;
+  };
+  f.name.addEventListener("input", () => delete f.name.dataset.auto);
+  fillName(isSelf());
   f.querySelectorAll('input[name="whose"]').forEach((r) => r.addEventListener("change", sync));
   // Pri fakulteti je profil najpogosteje študentov lasten.
   const toggle = (_, track) => {
@@ -1152,7 +1162,7 @@ function promoBox(acc, paid) {
   if (paid) return admin;
   return `<details class="promo-code"${store.get("evklid_koda") ? " open" : ""}><summary>${esc(t("gift.codeSummary"))}</summary>
       <form id="promo-form" class="inline form">
-        <input name="code" maxlength="40" required autocapitalize="characters" aria-label="${esc(t("gift.codeSummary"))}" placeholder="${esc(t("acct.codeExample", { code: "EVKLID3X" }))}" value="${esc(store.get("evklid_koda") || "")}">
+        <input name="code" maxlength="40" required autocapitalize="characters" aria-label="${esc(t("gift.codeSummary"))}" placeholder="${esc(t("acct.codeExample", { code: "KODA-2026" }))}" value="${esc(store.get("evklid_koda") || "")}">
         <button class="primary" type="submit">${esc(t("acct.activate"))}</button>
         <p class="form-error" hidden></p>
       </form></details>${admin}`;
