@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -219,7 +219,7 @@ $\frac{2\pi}{3}$. Velja $\cos\frac{2\pi}{3} = -\frac12$ in $\frac{2\pi}{3}$ lež
 
 ## Pogoste napake
 
-- **»$\sin^{-1} x = \frac{1}{\sin x}$«** (napačno). Oznaka $^{-1}$ tu pomeni obratno funkcijo, ne potence. $\sin^{-1} 0{,}5$ je kot $\frac{\pi}{6}$, ulomek $\frac{1}{\sin x}$ pa je kosekans. Piši $\arcsin$, pa zmede ne bo.
+- **»$\sin^{-1} x = \frac{1}{\sin x}$«** (napačno). Oznaka $^{-1}$ tu pomeni obratno funkcijo, ne potence. $\sin^{-1} 0{,}5$ je kot $\frac{\pi}{6}$, ulomek $\frac{1}{\sin x}$ pa je obratna vrednost sinusa, pri tem kotu $2$. Piši $\arcsin$, pa zmede ne bo.
 - **»$\arcsin(\sin x)$ je vedno $x$.«** Arkus sinus vrača le kote z $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, zato je na primer $\arcsin\left(\sin\frac{5\pi}{4}\right) = -\frac{\pi}{4}$. Najprej izračunaj notranjo funkcijo, nato poišči kot v zalogi vrednosti.
 - **»Arkus kosinus je lih.«** Kdor misli tako, dobi $\arccos\left(-\frac12\right) = -\frac{\pi}{3}$. Negativni koti niso v $[0, \pi]$. Prav je $\pi - \frac{\pi}{3} = \frac{2\pi}{3}$.
 - **»Arkus sinus da vse rešitve enačbe.«** $\arcsin a$ je samo ena rešitev enačbe $\sin x = a$. Drugo družino dobiš iz $\pi - x_1$, nato prišteješ $2k\pi$.
@@ -234,6 +234,92 @@ $\frac{2\pi}{3}$. Velja $\cos\frac{2\pi}{3} = -\frac12$ in $\frac{2\pi}{3}$ lež
 - Graf krožne funkcije je zrcalna slika zoženega dela kotne funkcije čez $y = x$.
 - $\sin(\arcsin x) = x$ za vse $x \in [-1, 1]$; $\arcsin(\sin x) = x$ samo za $x \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$.
 - $\sin^{-1}$ na kalkulatorju je $\arcsin$, ne $\frac{1}{\sin}$. Arkus da le eno rešitev enačbe; ostale dobiš s splošno rešitvijo.
+
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = 2\arccos\frac{x}{2} - \pi$.
+
+a) Določi definicijsko območje $D_f$ in zalogo vrednosti $Z_f$ funkcije $f$. (2 točki)
+b) Izračunaj ničlo funkcije $f$ in reši enačbo $f(x) = \frac{\pi}{3}$. (3 točke)
+c) Skiciraj graf funkcije $f$. (2 točki)
+
+**Rešitev:**
+
+1. a) Arkus kosinus je definiran za argumente od $-1$ do $1$: iz $-1 \le \frac{x}{2} \le 1$ sledi $-2 \le x \le 2$, torej $D_f = [-2, 2]$.
+2. a) Velja $0 \le \arccos\frac{x}{2} \le \pi$, zato je $0 \le 2\arccos\frac{x}{2} \le 2\pi$ in $-\pi \le f(x) \le \pi$. Torej $Z_f = [-\pi, \pi]$.
+3. b) Iz $f(x) = 0$ sledi $\arccos\frac{x}{2} = \frac{\pi}{2}$, zato je $\frac{x}{2} = \cos\frac{\pi}{2} = 0$. Ničla je $x = 0$.
+4. b) Iz $f(x) = \frac{\pi}{3}$ sledi $2\arccos\frac{x}{2} = \frac{4\pi}{3}$ in $\arccos\frac{x}{2} = \frac{2\pi}{3}$. Kot $\frac{2\pi}{3}$ leži v $[0, \pi]$, zato je $\frac{x}{2} = \cos\frac{2\pi}{3} = -\frac12$ in $x = -1$.
+5. c) Arkus kosinus pada; raztezek s pozitivnim faktorjem $2$ in premik za $\pi$ navzdol potek ohranita, zato tudi $f$ pada. Krajišči grafa sta $f(-2) = 2\arccos(-1) - \pi = \pi$ in $f(2) = 2\arccos 1 - \pi = -\pi$.
+6. c) Graf je padajoča krivulja od točke $(-2, \pi)$ do točke $(2, -\pi)$, ki gre skozi točki $\left(-1, \frac{\pi}{3}\right)$ in $(0, 0)$:
+
+:::risba graf
+opis: Graf funkcije f(x) = 2 arccos(x/2) − π od točke (−2; π) do točke (2; −π). Krivulja pada in seka os x v izhodišču. Označena je tudi točka (−1; π/3).
+x: -2,5 .. 2,5 | 0,5 | x
+y: -3,5 .. 3,5 | 1 | y
+oznake: ne
+oznakax: -2 | −2
+oznakax: 2 | 2
+oznakay: 3,1416 | π
+oznakay: -3,1416 | −π
+f: 2*arccos(x/2) - pi | modra debelo | -2 .. 2
+točka: -2; 3,1416
+točka: -1; 1,0472 | (−1, π/3) | desno
+točka: 0; 0 | (0, 0) | desno
+točka: 2; -3,1416
+:::
+
+7. Odgovor: a) $D_f = [-2, 2]$, $Z_f = [-\pi, \pi]$; b) ničla je $x = 0$, enačba $f(x) = \frac{\pi}{3}$ ima rešitev $x = -1$; c) graf pada od $(-2, \pi)$ do $(2, -\pi)$.
+
+**Točkovanje:** a) 1 točka za $D_f = [-2, 2]$, 1 točka za $Z_f = [-\pi, \pi]$; b) 1 točka za ničlo $x = 0$ (iz $\arccos\frac{x}{2} = \frac{\pi}{2}$), 1 točka za $\arccos\frac{x}{2} = \frac{2\pi}{3}$, 1 točka za rešitev $x = -1$; c) 1 točka za pravilni krajišči grafa, 1 točka za padajočo krivuljo skozi ničlo in točko $\left(-1, \frac{\pi}{3}\right)$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Utež, obešena na vzmet, niha navpično nad mizo. Njena višina nad mizo je $t$ milisekund po začetku merjenja enaka $h(t) = 30 - 25\cos\frac{\pi t}{300}$ milimetrov. Ob $t = 0$ je utež v najnižji legi.
+
+a) Izračunaj, na kateri višini je utež $100\,\text{ms}$ po začetku merjenja, in koliko časa traja en nihaj. (2 točki)
+b) Svetlobni senzor zazna utež, kadar je ta vsaj $40\,\text{mm}$ nad mizo. Koliko časa v enem nihaju senzor zaznava utež? Rezultat zaokroži na celo milisekundo. (4 točke)
+c) V prvi polovici nihaja ($0 \le t \le 300$) se utež dviga. Za ta del gibanja izrazi čas $t$ z višino $h$ ter zapiši definicijsko območje in zalogo vrednosti dobljene funkcije. (4 točke)
+
+**Rešitev:**
+
+1. a) $h(100) = 30 - 25\cos\frac{\pi}{3} = 30 - 12{,}5 = 17{,}5$, utež je $17{,}5\,\text{mm}$ nad mizo.
+2. a) Perioda funkcije je $\dfrac{2\pi}{\pi/300} = 600$, en nihaj traja $600\,\text{ms}$ ($0{,}6\,\text{s}$).
+3. b) Iz $30 - 25\cos\frac{\pi t}{300} = 40$ sledi $\cos\frac{\pi t}{300} = -\frac{10}{25} = -0{,}4$.
+4. b) Arkus kosinus da prvo rešitev: $\frac{\pi t_1}{300} = \arccos(-0{,}4) \approx 1{,}98231$, torej $t_1 = \frac{300 \cdot 1{,}98231}{\pi} \approx 189{,}297\,\text{ms}$.
+5. b) Kosinus ima enako vrednost tudi pri kotu $2\pi - \arccos(-0{,}4)$, zato je v istem nihaju druga rešitev $t_2 = 600 - t_1 \approx 410{,}703\,\text{ms}$. Med $t_1$ in $t_2$ gre utež skozi najvišjo lego ($55\,\text{mm}$ pri $t = 300$), zato je ves ta čas višje od $40\,\text{mm}$.
+6. b) Senzor zaznava utež $t_2 - t_1 = 600 - 2t_1 \approx 221{,}406\,\text{ms} \approx 221\,\text{ms}$.
+7. c) Iz $h = 30 - 25\cos\frac{\pi t}{300}$ izrazimo $\cos\frac{\pi t}{300} = \frac{30 - h}{25}$.
+8. c) Za $0 \le t \le 300$ je $0 \le \frac{\pi t}{300} \le \pi$, kar je ravno zaloga vrednosti arkus kosinusa. Zato je $\frac{\pi t}{300} = \arccos\frac{30 - h}{25}$ in $t = \frac{300}{\pi}\arccos\frac{30 - h}{25}$.
+9. c) Argument arkus kosinusa mora biti med $-1$ in $1$: iz $-1 \le \frac{30 - h}{25} \le 1$ sledi $5 \le h \le 55$. Definicijsko območje je $[5, 55]$, zaloga vrednosti pa $[0, 300]$.
+10. Odgovor: a) $17{,}5\,\text{mm}$, en nihaj traja $600\,\text{ms}$; b) senzor zaznava utež približno $221\,\text{ms}$; c) $t = \frac{300}{\pi}\arccos\frac{30 - h}{25}$, $D = [5, 55]$, $Z = [0, 300]$.
+
+**Točkovanje:** a) 1 točka za višino $17{,}5\,\text{mm}$; 1 točka za čas nihaja $600\,\text{ms}$. b) 1 točka za enačbo $\cos\frac{\pi t}{300} = -0{,}4$; 1 točka za $t_1 \approx 189{,}3\,\text{ms}$; 1 točka za drugo rešitev $t_2 \approx 410{,}7\,\text{ms}$; 1 točka za čas $221\,\text{ms}$. c) 1 točka za $\cos\frac{\pi t}{300} = \frac{30 - h}{25}$; 1 točka za utemeljitev, da arkus kosinus vrne pravi kot (interval $[0, \pi]$); 1 točka za $t = \frac{300}{\pi}\arccos\frac{30 - h}{25}$; 1 točka za definicijsko območje $[5, 55]$ in zalogo vrednosti $[0, 300]$.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Definiraj funkcijo arkus sinus in pojasni, zakaj moramo sinus pred tem zožiti na interval $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$.
+---
+Sinus vsako vrednost med $-1$ in $1$ doseže pri neskončno mnogo kotih, zato na vsej realni osi nima obratne funkcije. Na intervalu $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ sinus narašča in vsako vrednost z $[-1, 1]$ doseže natanko enkrat. Arkus sinus števila $x \in [-1, 1]$ je tisti kot $y \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, za katerega velja $\sin y = x$. Definicijsko območje arkus sinusa je $[-1, 1]$, zaloga vrednosti $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, graf pa je zrcalna slika zoženega sinusa čez premico $y = x$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Dokaži, da za vsako število $x \in [-1, 1]$ velja $\arccos(-x) = \pi - \arccos x$.
+---
+Označimo $\varphi = \arccos x$; po definiciji je $0 \le \varphi \le \pi$ in $\cos\varphi = x$. Ker je $\cos(\pi - \varphi) = -\cos\varphi$, velja $\cos(\pi - \varphi) = -x$. Iz $0 \le \varphi \le \pi$ sledi tudi $0 \le \pi - \varphi \le \pi$. Ker je $\arccos(-x)$ edini kot z intervala $[0, \pi]$, katerega kosinus je $-x$, je $\arccos(-x) = \pi - \varphi = \pi - \arccos x$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Ali za vsako realno število $x$ velja $\arcsin(\sin x) = x$? Odgovor utemelji in navedi primer.
+---
+Ne, enakost velja samo za $x \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$. Arkus sinus namreč vrača le kote s tega intervala, zato ne more vrniti kota zunaj njega. Za $x = \frac{2\pi}{3}$ je $\sin\frac{2\pi}{3} = \frac{\sqrt3}{2}$, $\arcsin\frac{\sqrt3}{2}$ pa je $\frac{\pi}{3}$, kar ni enako $\frac{2\pi}{3}$. Obratno sestavljanje $\sin(\arcsin x) = x$ pa velja za vsak $x \in [-1, 1]$.
+:::
 
 ## Drugače: Kot zgodba
 
@@ -346,20 +432,35 @@ vrednost: acos(1/2)*180/pi | 60
 vrednost: asin(0.8)/(400*pi)*1000 | 0.738
 limita: 2*atan(x) | x | oo | pi
 resi: 2*sin(x)=-1 | x | -pi/6+2*k*pi, 7*pi/6+2*k*pi
+vrednost: 2*acos(0)-pi | 0
+vrednost: 2*acos(-1/2)-pi | pi/3
+resi: 2*acos(x/2)-pi=pi/3 | x | -1
+vrednost: 2*acos(-1)-pi | pi
+vrednost: 2*acos(1)-pi | -pi
+vrednost: 30-25*cos(pi/3) | 17.5
+vrednost: 2*pi/(pi/300) | 600
+vrednost: acos(-0.4) | 1.98231
+vrednost: 300*acos(-0.4)/pi | 189.297
+vrednost: 600-300*acos(-0.4)/pi | 410.703
+vrednost: 600-600*acos(-0.4)/pi | 221.406
+vrednost: 30-25*cos(pi*300/300) | 55
+vrednost: 300/pi*acos((30-5)/25) | 0
+vrednost: 300/pi*acos((30-55)/25) | 300
 >>
 
 :::simboli
 x | neodvisna spremenljivka (število ali kot) | |
 y | odvisna spremenljivka, kot; v Primeru 3 odmik membrane | |
 A | amplituda, največji odmik membrane | |
-f | frekvenca tona; v Primeru 2 ime funkcije | | Hz
-t | čas | | s
-t_1 | prvi čas z odmikom $\frac{A}{2}$ | | s
-t_2 | drugi čas z odmikom $\frac{A}{2}$ | | s
+f | frekvenca tona; v Primeru 2 in v Nalogi 1 za maturo ime funkcije | | Hz
+t | čas | | s | v Nalogi 2 za maturo v milisekundah
+t_1 | prvi čas z iskano vrednostjo | | s | v Primeru 3 z odmikom $\frac{A}{2}$, v Nalogi 2 za maturo z višino $40\,\text{mm}$ (v ms)
+t_2 | drugi čas z iskano vrednostjo | | s | v Primeru 3 z odmikom $\frac{A}{2}$, v Nalogi 2 za maturo z višino $40\,\text{mm}$ (v ms)
 x_1 | rešitev, ki jo da arkus | x_1 = \arcsin a |
 a | desna stran enačbe $\sin x = a$ | |
 k | poljubno celo število | |
 D, D_f | definicijsko območje | |
 Z, Z_f | zaloga vrednosti | |
 u | argument arkus sinusa | |
+h | višina uteži nad mizo | h = 30 - 25\cos\frac{\pi t}{300} | mm | v Nalogi 2 za maturo
 :::

@@ -177,6 +177,90 @@ Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}
 - Za velike $|x|$ je $p(x) \approx a_n x^n$. Sod $n$: kraka na isti strani; lih $n$: na nasprotnih. Predznak $a_n$ pove smer desnega kraka.
 - Presečišče z osjo $y$ je $(0, p(0))$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Reši neenačbo $x^3 - 4x^2 + 4x \le 0$.
+
+**Rešitev:**
+
+1. Razcep: $x^3 - 4x^2 + 4x = x(x^2 - 4x + 4) = x(x - 2)^2$. Ničli sta $0$ (stopnje $1$) in $2$ (stopnje $2$).
+2. Vodilni koeficient je pozitiven, zato je za $x > 2$ polinom pozitiven. Pri $2$ (soda stopnja) se predznak ne zamenja: na $(0, 2)$ je pozitiven. Pri $0$ (liha stopnja) se zamenja: za $x < 0$ je negativen.
+3. Polinom je negativen za $x < 0$, enak $0$ pa pri $x = 0$ in $x = 2$.
+4. Odgovor: $x \in (-\infty, 0] \cup \{2\}$.
+
+**Točkovanje:** 1 točka za razcep $x(x - 2)^2$, 1 točka za pravilne predznake (brez menjave pri $2$), 1 točka za rešitev $(-\infty, 0] \cup \{2\}$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dan je polinom $p(x) = -x^3 + 3x + 2$.
+
+a) Pokaži, da je število $2$ ničla polinoma $p$, in razcepi $p$ na linearne faktorje. (2 točki)
+b) Zapiši ničle polinoma $p$ z njihovimi stopnjami, presečišče grafa z osjo $y$ in obnašanje obeh krakov. Nato skiciraj graf polinoma $p$. (3 točke)
+c) Reši neenačbo $p(x) > 0$. (2 točki)
+
+**Rešitev:**
+
+1. a) Hornerjev algoritem z $2$ na koeficientih $-1, 0, 3, 2$: $-1$; $-2$; $-1$; $0$. Ostanek $0$ pomeni $p(2) = 0$, količnik je $-x^2 - 2x - 1 = -(x + 1)^2$.
+2. a) $p(x) = -(x - 2)(x + 1)^2$.
+3. b) Ničli: $-1$ stopnje $2$ (graf se osi dotakne) in $2$ stopnje $1$ (graf os seka). $p(0) = 2$, presečišče z osjo $y$ je $(0, 2)$.
+4. b) Vodilni člen je $-x^3$: stopnja je liha, koeficient negativen, zato gre levi krak v $+\infty$, desni v $-\infty$.
+5. b) Predznaki od desne: za $x > 2$ negativen; pri $2$ se zamenja, na $(-1, 2)$ pozitiven; pri $-1$ (soda) ostane, za $x < -1$ pozitiven. Skica: graf pride z leve od zgoraj, se pri $-1$ osi dotakne in se vrne navzgor, gre skozi $(0, 2)$, pri $2$ preseka os in pada proti $-\infty$.
+6. c) $p(x) > 0$ velja povsod levo od $2$, razen v ničli $-1$.
+7. Odgovor: $p(x) = -(x - 2)(x + 1)^2$; neenačba velja za $x \in (-\infty, -1) \cup (-1, 2)$.
+
+**Točkovanje:** a) 1 točka za $p(2) = 0$ in količnik, 1 točka za razcep $-(x - 2)(x + 1)^2$; b) 1 točka za ničli s stopnjama in točko $(0, 2)$, 1 točka za kraka, 1 točka za skico (dotik pri $-1$, sekanje pri $2$); c) 1 točka za $x < 2$, 1 točka za izločitev $x = -1$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Po močnem deževju se gladina zadrževalnika dvigne nad običajno višino. Odmik gladine od običajne višine $v$ (v centimetrih) $d$ dni po začetku dežja opišemo s polinomom tretje stopnje. Pri $d = 0$ je gladina na običajni višini. Pri $d = 8$ se vrne na običajno višino in graf se tam osi $d$ le dotakne. Pri $d = 2$ je bila gladina $36\,\mathrm{cm}$ nad običajno.
+
+a) Sestavi polinom $v(d)$, ki ustreza opisu. (3 točke)
+b) Za koliko centimetrov je bila gladina nad običajno višino pri $d = 5$? (1 točka)
+c) Zapornica je odprta, kadar je gladina vsaj $32\,\mathrm{cm}$ nad običajno. Pokaži, da je $d = 4$ rešitev enačbe $v(d) = 32$, in poišči še njeni drugi rešitvi. (3 točke)
+d) Koliko časa je zapornica odprta? Rezultat zaokroži na celo uro. (2 točki)
+e) Pojasni, zakaj model ne velja za $d > 8$. (1 točka)
+
+**Rešitev:**
+
+1. a) Ničli sta $0$ in $8$. Dotik pri $8$ pomeni sodo stopnjo ničle, torej faktor $(d - 8)^2$. Polinom je tretje stopnje, zato ostane za ničlo $0$ faktor $d$: $v(d) = a\,d\,(d - 8)^2$.
+2. a) Iz $v(2) = a \cdot 2 \cdot 36 = 72a = 36$ sledi $a = \frac{1}{2}$, torej $v(d) = \frac{1}{2}\,d\,(d - 8)^2$.
+3. b) $v(5) = \frac{1}{2} \cdot 5 \cdot 9 = 22{,}5\,\mathrm{cm}$.
+4. c) $v(4) = \frac{1}{2} \cdot 4 \cdot 16 = 32$, zato je $d = 4$ rešitev. Enačba $\frac{1}{2}\,d\,(d - 8)^2 = 32$ je enakovredna $d^3 - 16d^2 + 64d - 64 = 0$.
+5. c) Horner s $4$ na $1, -16, 64, -64$: $1$; $-12$; $16$; $0$. Količnik je $d^2 - 12d + 16$.
+6. c) $d^2 - 12d + 16 = 0$ da $d = 6 \pm 2\sqrt{5}$, torej $d \approx 1{,}5279$ ali $d \approx 10{,}4721$. Druga rešitev je zunaj območja modela $0 \le d \le 8$.
+7. d) Pri $d = 2$ je $v = 36 > 32$, zato je gladina vsaj $32\,\mathrm{cm}$ nad običajno med $d = 6 - 2\sqrt{5}$ in $d = 4$. Med $4$ in $8$ ni več nobene rešitve, zato tam ostane pod $32\,\mathrm{cm}$.
+8. d) Trajanje: $4 - (6 - 2\sqrt{5}) = 2\sqrt{5} - 2 \approx 2{,}4721$ dneva $\approx 59{,}33\,\mathrm{h}$.
+9. e) Za $d > 8$ sta $d$ in $(d - 8)^2$ pozitivna in desni krak gre v $+\infty$. Gladina bi se brez dežja dvigovala v nedogled, kar ni smiselno; model opisuje le $0 \le d \le 8$.
+10. Odgovor: $v(d) = \frac{1}{2}\,d\,(d - 8)^2$; $v(5) = 22{,}5\,\mathrm{cm}$; druga rešitev v območju modela je $d = 6 - 2\sqrt{5} \approx 1{,}53$; zapornica je odprta približno $59$ ur.
+
+**Točkovanje:** a) 1 točka za ničli $0$ in $8$ s pravima stopnjama, 1 točka za obliko $a\,d\,(d - 8)^2$, 1 točka za $a = \frac{1}{2}$; b) 1 točka za $22{,}5\,\mathrm{cm}$; c) 1 točka za $v(4) = 32$; 1 točka za količnik $d^2 - 12d + 16$; 1 točka za $d = 6 \pm 2\sqrt{5}$; d) 1 točka za interval $[6 - 2\sqrt{5}, 4]$; 1 točka za približno $59$ ur; e) 1 točka za utemeljitev.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako stopnja ničle vpliva na obliko grafa polinoma ob tej ničli in zakaj?
+---
+Če je $c$ ničla stopnje $k$, lahko polinom zapišemo kot $p(x) = (x - c)^k s(x)$, kjer je $s(c) \ne 0$. Blizu $c$ ima $s$ stalen predznak, zato se predznak $p$ zamenja natanko takrat, ko se zamenja predznak $(x - c)^k$. Pri lihi stopnji $k$ se predznak zamenja in graf seka os $x$. Pri sodi stopnji $k$ predznak ostane in se graf osi $x$ le dotakne. Pri stopnji $3$ ali več se graf ob ničli še splošči.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako iz stopnje in vodilnega koeficienta polinoma ugotovimo, kam gresta kraka njegovega grafa?
+---
+Za zelo velike $|x|$ vodilni člen prevlada nad drugimi, zato je $p(x) \approx a_n x^n$. Predznak vodilnega koeficienta $a_n$ pove, kam gre desni krak: pri $a_n > 0$ v $+\infty$, pri $a_n < 0$ v $-\infty$. Pri sodi stopnji $n$ gre levi krak v isto smer kot desni. Pri lihi stopnji $n$ gre levi krak v nasprotno smer.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni postopek reševanja polinomske neenačbe na primeru $(x - 1)^2(x + 2) > 0$.
+---
+Najprej določimo ničle in njihove stopnje: $1$ je ničla stopnje $2$, $-2$ pa ničla stopnje $1$. Vodilni koeficient je pozitiven, zato je polinom za $x > 1$ pozitiven. Pri ničli $1$ sode stopnje se predznak ne zamenja, zato je polinom pozitiven tudi na $(-2, 1)$; pri ničli $-2$ lihe stopnje se zamenja, zato je za $x < -2$ negativen. Ker je neenačba stroga, ničel ne vključimo, in rešitev je $(-2, 1) \cup (1, \infty)$.
+:::
+
 ## Drugače: Na sliki
 
 Os $x$ si predstavljaj kot gladino morja, graf pa kot pot delfina. Pri ničli lihe stopnje delfin preide gladino: iz vode skoči v zrak ali se iz zraka potopi. Pri ničli sode stopnje se gladine le dotakne s hrbtom in ostane na isti strani.
@@ -268,6 +352,23 @@ Vsak ulomek v oklepaju ima v imenovalcu potenco $x$, zato gre proti $0$, ko $|x|
 ~ Takrat je temperatura natanko $0\,^\circ\mathrm{C}$. Pod lediščem pomeni $T < 0$.
 + Le po $t = 6$, torej po polnoči.
 > Za $t > 6$ je $(t - 6) > 0$ in $(t - 1)^2 > 0$, pred njima pa $-0{,}1$, zato $T < 0$; npr. $T(7) = -3{,}6\,^\circ\mathrm{C}$. Pri sodi ničli $1$ se predznak ne zamenja, zato je pred $t = 6$ temperatura nad lediščem.
+
+<<RACUN
+enako: x^3-4*x^2+4*x | x*(x-2)^2
+neenacba: x^3-4*x^2+4*x<=0 | x | (-oo, 0] U {2}
+vrednost: -(2^3)+3*2+2 | 0
+enako: -x^3+3*x+2 | -(x-2)*(x+1)^2
+vrednost: -(0^3)+3*0+2 | 2
+neenacba: -x^3+3*x+2>0 | x | (-oo, -1) U (-1, 2)
+resi: a*2*(2-8)^2=36 | a | 1/2
+vrednost: 1/2*5*(5-8)^2 | 22.5
+vrednost: 1/2*4*(4-8)^2 | 32
+enako: d*(d-8)^2-64 | (d-4)*(d^2-12*d+16)
+resi: d^2-12*d+16=0 | d | 6-2*sqrt(5), 6+2*sqrt(5)
+vrednost: 6-2*sqrt(5) | 1.5279
+vrednost: 2*sqrt(5)-2 | 2.4721
+vrednost: (2*sqrt(5)-2)*24 | 59.33
+>>
 
 :::simboli
 T | temperatura zraka | | ^\circ C | model iz uganke

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -199,6 +199,90 @@ $c = d\tan 60^\circ = 5\sqrt{3} \approx 8{,}66\,\mathrm{cm}$.
 - Telesna diagonala kocke oklepa z osnovno ploskvijo kot $\approx 35{,}26^\circ$, ne glede na rob.
 - (višja raven) Enako oddaljene od dveh točk: simetralna ravnina; od točke: sfera; od premice: valjasta ploskev.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Pravilna štiristrana piramida ima osnovni rob $6\,\mathrm{cm}$ in stranski rob $6\,\mathrm{cm}$. Izračunaj kot med stranskim robom in ravnino osnovne ploskve.
+
+**Rešitev:**
+
+1. Vrh pravilne piramide se pravokotno projicira v središče kvadrata, to je v presečišče diagonal. Pravokotna projekcija stranskega roba je zato polovica diagonale osnovne ploskve.
+2. Diagonala kvadrata meri $6\sqrt{2}\,\mathrm{cm}$, projekcija stranskega roba torej $p = 3\sqrt{2}\,\mathrm{cm}$.
+3. Stranski rob $l = 6\,\mathrm{cm}$, projekcija in višina piramide tvorijo pravokotni trikotnik: $\cos\varphi = \dfrac{p}{l} = \dfrac{3\sqrt{2}}{6} = \dfrac{\sqrt{2}}{2}$, zato $\varphi = 45^\circ$.
+4. Odgovor: stranski rob oklepa z osnovno ploskvijo kot $45^\circ$.
+
+**Točkovanje:** 1 točka za ugotovitev, da je projekcija stranskega roba polovica diagonale osnovne ploskve, 1 točka za $p = 3\sqrt{2}\,\mathrm{cm}$, 1 točka za $\varphi = 45^\circ$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Kvader $ABCDEFGH$ ima osnovno ploskev $ABCD$ in robove $AB = 12\,\mathrm{cm}$, $BC = 4\,\mathrm{cm}$ in $AE = 3\,\mathrm{cm}$; oglišča $E$, $F$, $G$, $H$ ležijo po vrsti nad $A$, $B$, $C$, $D$. Kote zaokroži na stotinko stopinje.
+
+a) Zapiši vse robove kvadra, ki so z robom $AE$ mimobežni. (2 točki)
+b) Izračunaj kot med telesno diagonalo $AG$ in ravnino $ABCD$. (2 točki)
+c) Izračunaj kot med telesno diagonalo $AG$ in ravnino stranske ploskve $ABFE$. (3 točke)
+
+**Rešitev:**
+
+1. a) Rob $AE$ sekajo robovi $AB$, $AD$, $EF$ in $EH$, vzporedni z njim so $BF$, $CG$ in $DH$. Ostali robovi nimajo skupne točke z $AE$ in z njim niso vzporedni: $BC$, $CD$, $FG$ in $GH$.
+2. b) Projekcija oglišča $G$ na ravnino $ABCD$ je $C$, zato je projekcija diagonale $AG$ diagonala $AC = \sqrt{12^2 + 4^2} = \sqrt{160} \approx 12{,}649\,\mathrm{cm}$.
+3. b) V pravokotnem trikotniku $ACG$ je $\tan\varphi_1 = \dfrac{3}{\sqrt{160}} \approx 0{,}2372$, zato $\varphi_1 \approx 13{,}342^\circ \approx 13{,}34^\circ$.
+4. c) Rob $GF$ je pravokoten na $FB$ in na $FE$, ki se sekata in ležita v ravnini $ABFE$, zato je $GF$ pravokoten na to ravnino. Projekcija oglišča $G$ je $F$, projekcija diagonale $AG$ je $AF$, razdalja $G$ od ravnine pa $GF = BC = 4\,\mathrm{cm}$.
+5. c) Telesna diagonala: $AG = \sqrt{12^2 + 4^2 + 3^2} = \sqrt{169} = 13\,\mathrm{cm}$.
+6. c) $\sin\varphi_2 = \dfrac{4}{13} \approx 0{,}3077$, zato $\varphi_2 \approx 17{,}920^\circ \approx 17{,}92^\circ$.
+7. Odgovor: a) $BC$, $CD$, $FG$, $GH$; b) približno $13{,}34^\circ$; c) približno $17{,}92^\circ$.
+
+**Točkovanje:** a) 2 točki za vse štiri robove (1 točka za dva ali tri pravilne robove brez napačnega); b) 1 točka za projekcijo $AC = \sqrt{160}\,\mathrm{cm}$, 1 točka za $\varphi_1 \approx 13{,}34^\circ$; c) 1 točka za utemeljitev, da je projekcija oglišča $G$ točka $F$, 1 točka za $AG = 13\,\mathrm{cm}$, 1 točka za $\varphi_2 \approx 17{,}92^\circ$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Kocka $ABCDEFGH$ ima rob $4\,\mathrm{cm}$, osnovno ploskev $ABCD$ in oglišča $E$, $F$, $G$, $H$ po vrsti nad $A$, $B$, $C$, $D$. Točka $S$ je središče osnovne ploskve.
+
+a) Utemelji, da je premica $BD$ pravokotna na ravnino $ACGE$. (3 točke)
+b) Opiši množico vseh točk prostora, ki so enako oddaljene od vseh štirih oglišč osnovne ploskve $A$, $B$, $C$ in $D$, in odgovor utemelji. (2 točki)
+c) Opiši množico vseh točk prostora, ki so od premice $AE$ oddaljene $4\,\mathrm{cm}$. Katera oglišča kocke ležijo v tej množici? (2 točki)
+d) Izračunaj kot med diagonalo $BG$ stranske ploskve $BCGF$ in ravnino $ACGE$. (3 točke)
+
+**Rešitev:**
+
+1. a) Diagonali kvadrata $ABCD$ sta pravokotni, zato $BD \perp AC$.
+2. a) Rob $AE$ je pravokoten na ravnino $ABCD$, zato je pravokoten na vsako premico v njej, tudi na $BD$.
+3. a) Premica $BD$ je pravokotna na dve sekajoči se premici $AC$ in $AE$ ravnine $ACGE$, zato je pravokotna na celo ravnino.
+4. b) Točke, enako oddaljene od $B$ in $D$, tvorijo simetralno ravnino daljice $BD$: ravnino skozi razpolovišče $S$, pravokotno na $BD$. Ravnina $ACGE$ gre skozi $S$ in je po a) pravokotna na $BD$, zato je to ravnina $ACGE$. Enako so točke, enako oddaljene od $A$ in $C$, v simetralni ravnini $BDHF$ daljice $AC$.
+5. b) Iskane točke ležijo v obeh ravninah, torej na njuni presečnici: na premici skozi $S$ in središče zgornje ploskve, ki je pravokotna na ravnino $ABCD$. Vsaka točka $X$ te premice res ustreza, ker je $XA^2 = XS^2 + SA^2$ in so razdalje $SA$, $SB$, $SC$, $SD$ enake.
+6. c) Točke na razdalji $4\,\mathrm{cm}$ od premice $AE$ tvorijo valjasto ploskev z osjo $AE$ in polmerom $4\,\mathrm{cm}$.
+7. c) Robovi $AB$, $AD$, $EF$ in $EH$ so pravokotni na $AE$, zato so $B$, $D$, $F$ in $H$ od premice $AE$ oddaljeni $4\,\mathrm{cm}$. Oglišči $C$ in $G$ sta oddaljeni $4\sqrt{2}\,\mathrm{cm}$, $A$ in $E$ pa ležita na osi. V množici so oglišča $B$, $D$, $F$, $H$.
+8. d) Po a) je $BS \perp ACGE$, zato je projekcija oglišča $B$ na to ravnino točka $S$. Oglišče $G$ leži v ravnini, zato je projekcija daljice $BG$ daljica $SG$.
+9. d) Razdalja $B$ od ravnine je $BS = \frac{1}{2} \cdot 4\sqrt{2} = 2\sqrt{2}\,\mathrm{cm}$, diagonala ploskve pa $BG = 4\sqrt{2}\,\mathrm{cm}$.
+10. d) $\sin\varphi = \dfrac{BS}{BG} = \dfrac{2\sqrt{2}}{4\sqrt{2}} = \dfrac{1}{2}$, zato $\varphi = 30^\circ$.
+11. Odgovor: b) premica skozi $S$, pravokotna na ravnino $ABCD$ (skozi središči osnovne in zgornje ploskve); c) valjasta ploskev z osjo $AE$ in polmerom $4\,\mathrm{cm}$, na njej so $B$, $D$, $F$, $H$; d) $\varphi = 30^\circ$.
+
+**Točkovanje:** a) 1 točka za $BD \perp AC$, 1 točka za $BD \perp AE$, 1 točka za sklep s kriterijem dveh sekajočih se premic; b) 1 točka za simetralni ravnini $ACGE$ (daljice $BD$) in $BDHF$ (daljice $AC$), 1 točka za njuno presečnico, premico skozi $S$, pravokotno na $ABCD$; c) 1 točka za valjasto ploskev z osjo $AE$ in polmerom $4\,\mathrm{cm}$, 1 točka za oglišča $B$, $D$, $F$, $H$; d) 1 točka za projekcijo $SG$ (nožišče $S$), 1 točka za $BS = 2\sqrt{2}\,\mathrm{cm}$ in $BG = 4\sqrt{2}\,\mathrm{cm}$, 1 točka za $\varphi = 30^\circ$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Opiši možne medsebojne lege dveh premic v prostoru in navedi primer mimobežnih premic na kocki.
+---
+Dve različni premici v prostoru se sekata, sta vzporedni ali sta mimobežni. Sekajoči premici imata eno skupno točko, vzporedni nimata skupne točke in ležita v isti ravnini. Mimobežni premici nimata skupne točke in ne ležita v nobeni skupni ravnini. Na kocki $ABCDEFGH$ z osnovno ploskvijo $ABCD$, kjer je $H$ nad $D$, sta mimobežni na primer premici $AB$ in $DH$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kdaj je premica pravokotna na ravnino in zakaj za preverjanje ne zadošča ena pravokotnica v ravnini?
+---
+Premica je pravokotna na ravnino, če je pravokotna na vsako premico te ravnine. Po kriteriju zadošča, da je pravokotna na dve sekajoči se premici ravnine. Ena premica ne zadošča, ker je premica lahko pravokotna na eno premico ravnine in hkrati proti ravnini nagnjena. V kocki $ABCDEFGH$ z osnovno ploskvijo $ABCD$, kjer je $E$ nad $A$ in $F$ nad $B$, je ploskovna diagonala $AF$ pravokotna na osnovni rob $AD$, z osnovno ploskvijo pa oklepa kot $45^\circ$. Zato pravokotnost preverimo v dveh različnih smereh.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da je kot med telesno diagonalo kocke in osnovno ploskvijo neodvisen od dolžine roba.
+---
+Zgornje krajišče telesne diagonale se pravokotno projicira v oglišče pod njim, zato je projekcija telesne diagonale ploskovna diagonala dolžine $a\sqrt{2}$. Telesna diagonala, njena projekcija in navpični rob dolžine $a$ tvorijo pravokotni trikotnik s pravim kotom ob nožišču. Kot med diagonalo in ravnino je kot med diagonalo in projekcijo, zato je $\tan\varphi = \frac{a}{a\sqrt{2}} = \frac{1}{\sqrt{2}}$. Rob $a$ se pokrajša, zato je kot pri vsaki kocki enak, približno $35{,}26^\circ$.
+:::
+
 ## Drugače: Z analogijo
 
 - **Mimobežni premici** sta kot avtocesta in cesta na nadvozu. Na zemljevidu se »križata«, v resnici avto z ene nikoli ne pride na drugo. Nista vzporedni, sekata pa se tudi ne.
@@ -286,6 +370,16 @@ vrednost: sqrt(6^2+8^2) | 10
 vrednost: atan(10/10)*180/pi | 45
 vrednost: atan(10/8)*180/pi | 51.3
 vrednost: atan(10/6)*180/pi | 59.0
+vrednost: 6*sqrt(2)/2 | 3*sqrt(2)
+vrednost: acos(3*sqrt(2)/6)*180/pi | 45
+vrednost: sqrt(12^2+4^2) | 12.649
+vrednost: 3/sqrt(160) | 0.2372
+vrednost: atan(3/sqrt(160))*180/pi | 13.34
+vrednost: sqrt(12^2+4^2+3^2) | 13
+vrednost: 4/13 | 0.3077
+vrednost: asin(4/13)*180/pi | 17.92
+vrednost: 4*sqrt(2)/2 | 2*sqrt(2)
+vrednost: asin(2*sqrt(2)/(4*sqrt(2)))*180/pi | 30
 >>
 
 :::simboli

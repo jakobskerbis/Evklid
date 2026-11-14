@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -84,7 +84,7 @@ Ključna posledica: če sta $\vec a$ in $\vec b$ neodvisna in je $\alpha\vec a +
 :::premisli
 Naj bo $\vec b = 2\vec a$. Zapiši vektor $5\vec a$ na dva različna načina v obliki $\alpha\vec a + \beta\vec b$. Kaj bi dala primerjava koeficientov?
 ---
-Ker se isti vektor zapiše na več načinov. Pri $\vec b = 2\vec a$ sta $3\vec a + 1\vec b$ in $5\vec a + 0\vec b$ oba enaka $5\vec a$, koeficienti pa so različni. Primerjava bi dala nesmisel $3 = 5$.
+Pri odvisnih vektorjih se isti vektor zapiše na več načinov. Pri $\vec b = 2\vec a$ sta $3\vec a + 1\vec b$ in $5\vec a + 0\vec b$ oba enaka $5\vec a$, koeficienti pa so različni. Primerjava bi dala nesmisel $3 = 5$.
 :::
 
 **5. Delilno razmerje (višja raven).** Točka $D$ na daljici $AB$ jo deli v razmerju $m : n$, če je $AD : DB = m : n$. Od $A$ do $D$ je torej $\frac{m}{m + n}$ poti, $\overrightarrow{AD} = \frac{m}{m+n}\overrightarrow{AB}$. Prištejemo $\vec r_A$, dobimo $\vec r_D = \vec r_A + \frac{m}{m+n}(\vec r_B - \vec r_A)$, in uredimo:
@@ -237,6 +237,88 @@ Drži: $3\beta = 3 \cdot 3 = 9$. Torej je $\vec c = 2\vec a + 3\vec b$ in vsi tr
 - (višja raven) Delilno razmerje $AD : DB = m : n$: $\vec r_D = \frac{n\vec r_A + m\vec r_B}{m + n}$; razpolovišče $\frac{\vec r_A + \vec r_B}{2}$; težišče $\frac{\vec r_A + \vec r_B + \vec r_C}{3}$, deli težiščnico $2 : 1$.
 - (višja raven) Naloga »v kakšnem razmerju se sekata«: izberi neodvisna bazna vektorja, isti vektor zapiši na dva načina, primerjaj koeficiente. Diagonali paralelograma se razpolavljata.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Dane so točke $A(1, -2, 3)$, $B(3, 1, 2)$ in $C(p, 7, q)$. Določi števili $p$ in $q$ tako, da bodo točke $A$, $B$ in $C$ ležale na isti premici.
+
+**Rešitev:**
+
+1. $\overrightarrow{AB} = (3 - 1, 1 + 2, 2 - 3) = (2, 3, -1)$ in $\overrightarrow{AC} = (p - 1, 9, q - 3)$.
+2. Točke so kolinearne, če je $\overrightarrow{AC} = k\,\overrightarrow{AB}$. Iz druge komponente $9 = 3k$ dobimo $k = 3$.
+3. Prva komponenta: $p - 1 = 3 \cdot 2 = 6$, torej $p = 7$. Tretja komponenta: $q - 3 = 3 \cdot (-1) = -3$, torej $q = 0$.
+4. Odgovor: $p = 7$ in $q = 0$, točka je $C(7, 7, 0)$.
+
+**Točkovanje:** 1 točka za vektorja $\overrightarrow{AB}$ in $\overrightarrow{AC}$ s pogojem $\overrightarrow{AC} = k\,\overrightarrow{AB}$, 1 točka za $k = 3$, 1 točka za $p = 7$ in $q = 0$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dana sta vektorja $\vec a = (1, 0, 2)$ in $\vec b = (2, 1, -1)$.
+
+a) Vektor $\vec d = (4, 1, 3)$ zapiši kot linearno kombinacijo vektorjev $\vec a$ in $\vec b$. (2 točki)
+b) Določi število $u$ tako, da bodo vektorji $\vec a$, $\vec b$ in $\vec c = (u, 3, 1)$ koplanarni. (2 točki)
+c) Utemelji, ali so vektorji $\vec a$, $\vec b$ in $\vec e = (0, 1, 1)$ koplanarni. (2 točki)
+
+**Rešitev:**
+
+1. a) Iščemo $\alpha$ in $\beta$, da je $\alpha\vec a + \beta\vec b = (\alpha + 2\beta, \beta, 2\alpha - \beta) = (4, 1, 3)$.
+2. a) Iz druge komponente $\beta = 1$, iz prve $\alpha = 4 - 2 = 2$. Preizkus s tretjo: $2 \cdot 2 - 1 = 3$. Torej $\vec d = 2\vec a + \vec b$.
+3. b) Vektorja $\vec a$ in $\vec b$ nista kolinearna (druga komponenta $\vec a$ je $0$, druga komponenta $\vec b$ pa ne), zato določata ravnino. Vektor $\vec c$ leži v njej natanko tedaj, ko je $\vec c = \alpha\vec a + \beta\vec b$.
+4. b) $(\alpha + 2\beta, \beta, 2\alpha - \beta) = (u, 3, 1)$: iz druge komponente $\beta = 3$, iz tretje $2\alpha - 3 = 1$, torej $\alpha = 2$. Prva komponenta da $u = 2 + 2 \cdot 3 = 8$.
+5. c) Iz $(\alpha + 2\beta, \beta, 2\alpha - \beta) = (0, 1, 1)$ dobimo iz druge komponente $\beta = 1$ in iz prve $\alpha = -2$.
+6. c) Tretja komponenta bi morala biti $1$, a je $2 \cdot (-2) - 1 = -5$. Enačbe niso hkrati izpolnjene, zato $\vec e$ ni linearna kombinacija $\vec a$ in $\vec b$.
+7. Odgovor: a) $\vec d = 2\vec a + \vec b$; b) $u = 8$; c) vektorji $\vec a$, $\vec b$, $\vec e$ niso koplanarni.
+
+**Točkovanje:** a) 1 točka za sistem enačb po komponentah, 1 točka za $\vec d = 2\vec a + \vec b$; b) 1 točka za pogoj $\vec c = \alpha\vec a + \beta\vec b$ z $\alpha = 2$ in $\beta = 3$, 1 točka za $u = 8$; c) 1 točka za $\alpha = -2$ in $\beta = 1$ iz dveh enačb, 1 točka za protislovje v tretji komponenti in sklep, da niso koplanarni.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+V trikotniku $ABC$ leži točka $D$ na stranici $AB$ tako, da je $AD : DB = 1 : 2$. Točka $M$ je razpolovišče stranice $AC$. Daljici $CD$ in $BM$ se sekata v točki $Q$. Označimo $\vec a = \overrightarrow{AB}$ in $\vec b = \overrightarrow{AC}$.
+
+a) Vektorja $\overrightarrow{CD}$ in $\overrightarrow{BM}$ izrazi z $\vec a$ in $\vec b$. (2 točki)
+b) Utemelji, zakaj sta $\vec a$ in $\vec b$ linearno neodvisna, in zapiši $\overrightarrow{AQ}$ na dva načina, z neznanima deležema $\lambda$ in $\mu$, kjer je $\overrightarrow{CQ} = \lambda\,\overrightarrow{CD}$ in $\overrightarrow{BQ} = \mu\,\overrightarrow{BM}$. (3 točke)
+c) Izračunaj, v kakšnem razmerju točka $Q$ deli daljico $CD$ in v kakšnem daljico $BM$. (3 točke)
+d) Oglišča trikotnika so $A(0, 0)$, $B(10, 5)$ in $C(5, 10)$. Izračunaj koordinati točke $Q$ in težišča $T$ trikotnika ter utemelji, ali je $Q$ težišče. (2 točki)
+
+**Rešitev:**
+
+1. a) $\overrightarrow{AD} = \frac{1}{3}\vec a$ in $\overrightarrow{AM} = \frac{1}{2}\vec b$. Zato $\overrightarrow{CD} = \overrightarrow{AD} - \overrightarrow{AC} = \frac{1}{3}\vec a - \vec b$ in $\overrightarrow{BM} = \overrightarrow{AM} - \overrightarrow{AB} = \frac{1}{2}\vec b - \vec a$.
+2. b) $\vec a$ in $\vec b$ ležita na stranicah trikotnika, ki nista na isti premici, zato nista kolinearna. Dva nekolinearna vektorja sta linearno neodvisna, zato smemo pri njiju primerjati koeficiente.
+3. b) Prva pot, $Q$ leži na $CD$: $\overrightarrow{AQ} = \vec b + \lambda\left(\frac{1}{3}\vec a - \vec b\right) = \frac{\lambda}{3}\vec a + (1 - \lambda)\vec b$.
+4. b) Druga pot, $Q$ leži na $BM$: $\overrightarrow{AQ} = \vec a + \mu\left(\frac{1}{2}\vec b - \vec a\right) = (1 - \mu)\vec a + \frac{\mu}{2}\vec b$.
+5. c) Primerjamo koeficiente: $\frac{\lambda}{3} = 1 - \mu$ in $1 - \lambda = \frac{\mu}{2}$. Iz prve enačbe $\mu = 1 - \frac{\lambda}{3}$, vstavimo v drugo: $1 - \lambda = \frac{1}{2} - \frac{\lambda}{6}$, torej $\frac{5\lambda}{6} = \frac{1}{2}$ in $\lambda = \frac{3}{5}$, $\mu = \frac{4}{5}$.
+6. c) $\lambda = \frac{3}{5}$ pomeni $CQ : QD = 3 : 2$, $\mu = \frac{4}{5}$ pa $BQ : QM = 4 : 1$.
+7. d) Iz koraka 3 je $\overrightarrow{AQ} = \frac{1}{5}\vec a + \frac{2}{5}\vec b$, kjer je $\vec a = (10, 5)$ in $\vec b = (5, 10)$. Torej $\overrightarrow{AQ} = (2, 1) + (2, 4) = (4, 5)$ in ker je $A$ izhodišče, je $Q(4, 5)$.
+8. d) Težišče: $x_T = \frac{0 + 10 + 5}{3} = 5$ in $y_T = \frac{0 + 5 + 10}{3} = 5$, torej $T(5, 5)$. Točki sta različni; $Q$ ni težišče, ker $D$ ni razpolovišče stranice $AB$, zato $CD$ ni težiščnica.
+9. Odgovor: a) $\overrightarrow{CD} = \frac{1}{3}\vec a - \vec b$, $\overrightarrow{BM} = \frac{1}{2}\vec b - \vec a$; c) $CQ : QD = 3 : 2$ in $BQ : QM = 4 : 1$; d) $Q(4, 5)$, $T(5, 5)$, $Q$ ni težišče.
+
+**Točkovanje:** a) 1 točka za $\overrightarrow{CD}$, 1 točka za $\overrightarrow{BM}$; b) 1 točka za utemeljitev neodvisnosti (vektorja nista kolinearna), 1 točka za zapis $\overrightarrow{AQ}$ po poti čez $CD$, 1 točka za zapis po poti čez $BM$; c) 1 točka za sistem iz primerjave koeficientov, 1 točka za $\lambda = \frac{3}{5}$ in $\mu = \frac{4}{5}$, 1 točka za obe razmerji; d) 1 točka za $Q(4, 5)$, 1 točka za $T(5, 5)$ s sklepom, da $Q$ ni težišče.
+
+### Ustno vprašanje 1
+
+:::premisli
+Navedi primer treh vektorjev v prostoru, ki so koplanarni, čeprav nobena dva nista kolinearna, in pojasni, zakaj so koplanarni.
+---
+Vzemimo nekolinearna vektorja $\vec a$ in $\vec b$ ter tretji vektor $\vec c = \vec a + \vec b$. Nobena dva nista kolinearna, saj bi iz $\vec c = k\vec a$ sledilo $\vec b = (k - 1)\vec a$, kar ni res, in enako za $\vec b$. Vektorji so koplanarni, ker je $\vec c$ linearna kombinacija $\vec a$ in $\vec b$ in zato leži v ravnini, ki jo napenjata. Geometrijsko je $\vec c$ diagonala paralelograma s stranicama $\vec a$ in $\vec b$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Kdaj sta dva vektorja linearno neodvisna in zakaj smemo pri neodvisnih vektorjih primerjati koeficiente?
+---
+Vektorja $\vec a$ in $\vec b$ sta linearno neodvisna, če iz $\alpha\vec a + \beta\vec b = \vec 0$ sledi $\alpha = \beta = 0$. Dva vektorja sta neodvisna natanko tedaj, ko nista kolinearna, trije natanko tedaj, ko niso koplanarni. Če velja $\alpha\vec a + \beta\vec b = \gamma\vec a + \delta\vec b$, desno stran odštejemo in dobimo $(\alpha - \gamma)\vec a + (\beta - \delta)\vec b = \vec 0$. Zaradi neodvisnosti sta oba koeficienta enaka nič, torej $\alpha = \gamma$ in $\beta = \delta$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Izpelji formulo za krajevni vektor težišča trikotnika z oglišči $A$, $B$ in $C$.
+---
+Težišče $T$ leži na težiščnici $CS$, kjer je $S$ razpolovišče stranice $AB$, in jo deli v razmerju $CT : TS = 2 : 1$. Krajevni vektor razpolovišča je $\vec r_S = \frac{\vec r_A + \vec r_B}{2}$. Po formuli za delilno razmerje je $\vec r_T = \frac{\vec r_C + 2\,\vec r_S}{3}$, ker ima bližje krajišče $S$ večjo utež. Ko vstavimo $2\vec r_S = \vec r_A + \vec r_B$, dobimo $\vec r_T = \frac{\vec r_A + \vec r_B + \vec r_C}{3}$.
+:::
+
 ## Drugače: Z analogijo
 
 Linearna kombinacija je kot mešanje soka. Vektorja sta sestavini, koeficienta sta količini. Iz jabolčnega in pomarančnega soka zmešaš veliko okusov. Dve steklenici istega jabolčnega soka, ena dvakrat večja, pa novega okusa ne dasta: to sta kolinearna vektorja. Malinov sirup, ki ga iz prvih dveh sokov ne zmešaš, je tretji vektor zunaj ravnine. Odpre novo smer.
@@ -314,6 +396,19 @@ vrednost: (-1+3+7)/3 | 3
 vrednost: (2+5-1)/3 | 2
 resi: 6=-3*k | k | -2
 vrednost: 2*(-2) | -4
+resi: 9=3*k | k | 3
+resi: p-1=3*2 | p | 7
+resi: q-3=3*(-1) | q | 0
+resi: x+2*y=4, y=1 | x, y | x=2, y=1
+vrednost: 2*2-1 | 3
+resi: 2*x-3=1 | x | 2
+vrednost: 2+2*3 | 8
+vrednost: 2*(-2)-1 | -5
+resi: l/3=1-m, 1-l=m/2 | l, m | l=3/5, m=4/5
+vrednost: (1/5)*10+(2/5)*5 | 4
+vrednost: (1/5)*5+(2/5)*10 | 5
+vrednost: (0+10+5)/3 | 5
+vrednost: (0+5+10)/3 | 5
 >>
 
 :::simboli

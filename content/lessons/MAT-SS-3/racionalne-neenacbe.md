@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -79,7 +79,7 @@ Ulomek je pozitiven levo od $-1$ in desno od $2$ (preizkus: $x = -2$ da $4$, $x 
 :::premisli
 Sošolec pri $\frac{(x - 2)^2}{x + 3} > 0$ po intervalih od desne kar izmenično piše $+$, $-$, $+$. Katera intervala obravnava napačno in kakšna je prava rešitev?
 ---
-Ker $(x - 2)^2$ pri $x = 2$ ne zamenja predznaka. Ulomek je za vse $x > -3$ pozitiven, razen pri $x = 2$, kjer je $0$. Rešitev je $(-3, 2) \cup (2, \infty)$. Izmenično pisanje od desne bi interval $(-3, 2)$ napačno izločilo in $(-\infty, -3)$ napačno vzelo.
+Faktor $(x - 2)^2$ pri $x = 2$ ne zamenja predznaka. Ulomek je za vse $x > -3$ pozitiven, razen pri $x = 2$, kjer je $0$. Rešitev je $(-3, 2) \cup (2, \infty)$. Izmenično pisanje od desne bi interval $(-3, 2)$ napačno izločilo in $(-\infty, -3)$ napačno vzelo.
 :::
 
 V simulaciji spodaj (»Predznak racionalne funkcije«) nastavi $a = 1$, ničlo $2$, pol $-1$ in stopnjo pola $1$. Graf je nad osjo levo od $-1$ in desno od $2$. Nato stopnjo pola preklopi na $2$. Opazi, da graf ob polu ostane na isti strani osi: tam se predznak ne zamenja več.
@@ -228,11 +228,90 @@ Ulomek je pozitiven, kjer imata števec in imenovalec enak predznak: na $(-\inft
 - Pri $\le$, $\ge$ ničle vključimo, pri $<$, $>$ ne. Polov ne vključimo nikoli.
 - Rešitev $f(x) > 0$ so tisti $x$, kjer je graf racionalne funkcije nad osjo $x$.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dani sta funkciji $g(x) = \dfrac{x + 3}{x - 1}$ in $h(x) = x + 3$.
+
+a) Izračunaj koordinate presečišč grafov funkcij $g$ in $h$. (2 točki)
+b) Reši neenačbo $g(x) \ge h(x)$. (4 točke)
+c) Zapiši vse $x$, pri katerih leži graf funkcije $g$ pod grafom funkcije $h$. (1 točka)
+
+**Rešitev:**
+
+1. a) Za $x \ne 1$ rešimo enačbo $\dfrac{x + 3}{x - 1} = x + 3$. Pri enačbi smemo pomnožiti z $x - 1 \ne 0$: $x + 3 = (x + 3)(x - 1)$.
+2. a) Vse na eno stran in izpostavimo $x + 3$ (z njim ne delimo, da ne izgubimo rešitve): $(x + 3)(x - 1 - 1) = 0$, torej $(x + 3)(x - 2) = 0$. Rešitvi sta $x = -3$ in $x = 2$; $h(-3) = 0$, $h(2) = 5$. Presečišči sta $(-3, 0)$ in $(2, 5)$.
+3. b) Prenesemo na eno stran: $\dfrac{x + 3}{x - 1} - (x + 3) \ge 0$. Z $x - 1$ ne množimo, ker ne poznamo njegovega predznaka.
+4. b) En ulomek: $\dfrac{x + 3 - (x + 3)(x - 1)}{x - 1} = \dfrac{(x + 3)(2 - x)}{x - 1} \ge 0$. Ničli sta $-3$ in $2$, pol je $1$.
+5. b) Tabela predznakov:
+
+| interval | $(x + 3)(2 - x)$ | $x - 1$ | ulomek |
+|---|---|---|---|
+| $(-\infty, -3)$ | $-$ | $-$ | $+$ |
+| $(-3, 1)$ | $+$ | $-$ | $-$ |
+| $(1, 2)$ | $+$ | $+$ | $+$ |
+| $(2, \infty)$ | $-$ | $+$ | $-$ |
+
+6. b) Ulomek je pozitiven na $(-\infty, -3)$ in $(1, 2)$. Ničli $-3$ in $2$ vključimo, ker velja $\ge$; pol $1$ izločimo. Rešitev: $x \in (-\infty, -3] \cup (1, 2]$.
+7. c) Graf $g$ leži pod grafom $h$, kjer je $g(x) < h(x)$, torej kjer je ulomek iz koraka 4 negativen. V $-3$ in $2$ sta vrednosti enaki, v $1$ funkcija $g$ ni definirana, zato so vsa krajišča odprta: $x \in (-3, 1) \cup (2, \infty)$.
+8. Odgovor: a) $(-3, 0)$ in $(2, 5)$; b) $x \in (-\infty, -3] \cup (1, 2]$; c) $x \in (-3, 1) \cup (2, \infty)$.
+
+**Točkovanje:** a) 1 točka za enačbo $(x + 3)(x - 2) = 0$ z obema rešitvama, 1 točka za obe presečišči; b) 1 točka za zapis z enim ulomkom $\dfrac{(x + 3)(2 - x)}{x - 1} \ge 0$, 1 točka za ničli in pol, 1 točka za pravilne predznake na intervalih, 1 točka za rešitev s pravilnimi krajišči; c) 1 točka za $(-3, 1) \cup (2, \infty)$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Koncentracija zdravila v krvi $t$ ur po zaužitju je $c(t) = \dfrac{30t}{t^2 + 9}$ (v $\mathrm{mg/L}$), $t \ge 0$.
+
+a) Izračunaj koncentracijo zdravila $1$ uro in $6$ ur po zaužitju. (2 točki)
+b) Zapiši enačbo vodoravne asimptote grafa funkcije $c$ in pojasni, kaj pove o koncentraciji. (2 točki)
+c) Zdravilo učinkuje, ko je koncentracija vsaj $2{,}5\,\mathrm{mg/L}$. Z reševanjem neenačbe določi, od kdaj do kdaj zdravilo učinkuje in koliko časa. Čase zaokroži na celo minuto. (4 točke)
+d) Z reševanjem neenačbe $c(t) \le 5$ utemelji, da koncentracija nikoli ne preseže $5\,\mathrm{mg/L}$, in zapiši, kdaj je enaka $5\,\mathrm{mg/L}$. (2 točki)
+
+**Rešitev:**
+
+1. a) $c(1) = \dfrac{30}{1 + 9} = 3$ in $c(6) = \dfrac{180}{36 + 9} = 4$. Koncentraciji sta $3\,\mathrm{mg/L}$ in $4\,\mathrm{mg/L}$.
+2. b) Števec ima stopnjo $1$, imenovalec stopnjo $2$, zato je vodoravna asimptota $c = 0$ (os $t$). Po dolgem času se koncentracija bliža $0$: zdravilo se iz krvi izloči.
+3. c) Rešujemo $\dfrac{30t}{t^2 + 9} \ge 2{,}5$. Na eno stran in en ulomek: $\dfrac{30t - 2{,}5(t^2 + 9)}{t^2 + 9} = \dfrac{-2{,}5(t^2 - 12t + 9)}{t^2 + 9} \ge 0$.
+4. c) Imenovalec $t^2 + 9$ je vedno pozitiven (polov ni), zato je predznak ulomka enak predznaku števca. Delimo z $-2{,}5$ in obrnemo znak: $t^2 - 12t + 9 \le 0$.
+5. c) Ničli: $t_{1,2} = \dfrac{12 \pm \sqrt{144 - 36}}{2} = 6 \pm 3\sqrt{3}$, torej $t_1 \approx 0{,}8038$ in $t_2 \approx 11{,}1962$. Parabola je odprta navzgor, zato je izraz nepozitiven med ničlama: $t \in [6 - 3\sqrt{3}, 6 + 3\sqrt{3}]$.
+6. c) Pretvorba v minute: $0{,}8038 \cdot 60 \approx 48{,}2$ in $0{,}1962 \cdot 60 \approx 11{,}8$. Zdravilo učinkuje od približno $48\,\mathrm{min}$ do približno $11\,\mathrm{h}\ 12\,\mathrm{min}$ po zaužitju.
+7. c) Trajanje: $t_2 - t_1 = 6\sqrt{3} \approx 10{,}3923\,\mathrm{h}$ in $0{,}3923 \cdot 60 \approx 23{,}5$, torej približno $10\,\mathrm{h}\ 24\,\mathrm{min}$.
+8. d) $c(t) - 5 = \dfrac{30t - 5(t^2 + 9)}{t^2 + 9} = \dfrac{-5(t - 3)^2}{t^2 + 9}$.
+9. d) Števec je kvadrat, pomnožen z $-5$, zato ni pozitiven; imenovalec je pozitiven. Torej je $c(t) - 5 \le 0$ oziroma $c(t) \le 5$ za vsak $t \ge 0$. Ničla $t = 3$ je dvojna, zato predznak tam ostane enak; enakost velja le pri $t = 3$, preizkus $c(3) = \frac{90}{18} = 5$.
+10. Odgovor: a) $3\,\mathrm{mg/L}$ in $4\,\mathrm{mg/L}$; b) $c = 0$, zdravilo se sčasoma izloči; c) zdravilo učinkuje od $48\,\mathrm{min}$ do $11\,\mathrm{h}\ 12\,\mathrm{min}$ po zaužitju, približno $10\,\mathrm{h}\ 24\,\mathrm{min}$; d) koncentracija nikoli ne preseže $5\,\mathrm{mg/L}$, enaka je $5\,\mathrm{mg/L}$ natanko $3$ ure po zaužitju.
+
+**Točkovanje:** a) 1 točka za $c(1) = 3\,\mathrm{mg/L}$, 1 točka za $c(6) = 4\,\mathrm{mg/L}$; b) 1 točka za asimptoto $c = 0$, 1 točka za pomen; c) 1 točka za neenačbo $t^2 - 12t + 9 \le 0$ z utemeljitvijo, da je imenovalec pozitiven, 1 točka za ničli $6 \pm 3\sqrt{3}$, 1 točka za interval od $48\,\mathrm{min}$ do $11\,\mathrm{h}\ 12\,\mathrm{min}$, 1 točka za trajanje $10\,\mathrm{h}\ 24\,\mathrm{min}$; d) 1 točka za zapis $c(t) - 5 = \dfrac{-5(t - 3)^2}{t^2 + 9}$, 1 točka za sklep $c(t) \le 5$ in čas $3\,\mathrm{h}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Opiši postopek reševanja racionalne neenačbe in pojasni, zakaj je ne smemo pomnožiti z imenovalcem.
+---
+Imenovalec vsebuje neznanko, zato njegovega predznaka ne poznamo; pri množenju z negativnim izrazom bi se znak neenačbe obrnil in bi lahko izgubili ali dodali rešitve. Zato vse člene prenesemo na eno stran, da je na drugi $0$, in levo stran zapišemo kot en ulomek $\frac{p(x)}{q(x)}$. Števec in imenovalec razstavimo ter poiščemo ničle in pole, ki razdelijo realno os na intervale. S tabelo predznakov določimo predznak ulomka na vsakem intervalu in izberemo intervale s pravim predznakom. Pri nestrogi neenačbi ničle vključimo, polov pa nikoli.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Utemelji, zakaj racionalna funkcija lahko spremeni predznak le v ničlah in polih, in pojasni, kdaj ga v takšni točki ne spremeni.
+---
+Polinoma v števcu in imenovalcu sta zvezni funkciji, zato lahko zamenjata predznak le tam, kjer sta enaka $0$. Med dvema sosednjima ničlama ali poloma je zato predznak ulomka stalen in ga določimo z enim testnim številom. Če je $c$ ničla ali pol stopnje $m$, ulomek vsebuje faktor $(x - c)^m$, ostali faktorji pa v $c$ ne zamenjajo predznaka; pri lihi stopnji $m$ ta faktor v $c$ zamenja predznak, zato ga zamenja tudi ulomek. Pri sodi stopnji je faktor $(x - c)^m$ na obeh straneh točke $c$ pozitiven, zato predznak ulomka ostane enak.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Navedi primer racionalne neenačbe z eno ničlo in enim polom ter pojasni, katera krajišča spadajo v rešitev.
+---
+Primer je $\frac{x + 2}{x - 1} \ge 0$ z ničlo $-2$ in polom $1$. Ulomek je pozitiven levo od $-2$ in desno od $1$, med njima pa negativen. Ničlo $-2$ vključimo, ker je ulomek tam $0$, neenačba pa je nestroga. Pola $1$ ne vključimo, ker je tam imenovalec $0$ in ulomek ne obstaja, zato je rešitev $(-\infty, -2] \cup (1, \infty)$.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si dolg hodnik z lučjo in več stikali vzdolž stene. Hodiš od leve proti desni. Vsak linearni faktor je stikalo: ko greš mimo njegove ničle (ali pola), stikalo preklopi in predznak se obrne. Faktor $(x - 2)^2$ je kot dvojno stikalo, ki ga pritisneš dvakrat zapored: luč ostane taka, kot je bila.
 
-Predznak ulomka je stanje luči: o njem odloča, koliko faktorjev je trenutno negativnih. Pri lihem številu je ulomek negativen, pri sodem pozitiven. Pol pa je mesto, kjer v hodniku manjka del tal: čez njega lahko preklopiš, stati na njem ne moreš. Zato pol nikoli ni v rešitvi.
+Predznak ulomka je stanje luči: o njem odloča, koliko faktorjev je trenutno negativnih. Pri lihem številu je ulomek negativen, pri sodem pozitiven. Pol pa je mesto, kjer v hodniku manjka del tal: stikalo ob njem preklopiš, stati na njem pa ne moreš. Zato pol nikoli ni v rešitvi.
 
 ## Drugače: Bolj natančno
 
@@ -311,13 +390,27 @@ neenacba: (x-4)/(x+1)>=0 | x | (-oo, -1) U [4, oo)
 neenacba: (x-1)^2/(4*(x+2))>0 | x | (-2, 1) U (1, oo)
 neenacba: (x+3)/(x-2)<=0 | x | [-3, 2)
 neenacba: (x+6)/x>=4 | x | (0, 2]
+resi: (x+3)/(x-1)=x+3 | x | -3, 2
+enako: (x+3)/(x-1)-(x+3) | (x+3)*(2-x)/(x-1)
+neenacba: (x+3)/(x-1)>=x+3 | x | (-oo, -3] U (1, 2]
+neenacba: (x+3)/(x-1)<x+3 | x | (-3, 1) U (2, oo)
+vrednost: 30*1/(1^2+9) | 3
+vrednost: 30*6/(6^2+9) | 4
+limita: 30*t/(t^2+9) | t | oo | 0
+enako: 30*t/(t^2+9)-2.5 | -2.5*(t^2-12*t+9)/(t^2+9)
+neenacba: 30*t/(t^2+9)>=5/2 | t | [6-3*sqrt(3), 6+3*sqrt(3)]
+vrednost: (6-3*sqrt(3))*60 | 48.2
+vrednost: 6*sqrt(3) | 10.3923
+enako: 30*t/(t^2+9)-5 | -5*(t-3)^2/(t^2+9)
+neenacba: 30*t/(t^2+9)<=5 | t | (-oo, oo)
+neenacba: (x+2)/(x-1)>=0 | x | (-oo, -2] U (1, oo)
 >>
 
 :::simboli
 x | neznanka | |
 p | števec, polinom | |
 q | imenovalec, polinom | | | njegove ničle so poli
-f | slišana frekvenca | f = f_0 \cdot \frac{340}{340 - v} | Hz
+f | racionalna funkcija $f(x)$; v Primeru 3 slišana frekvenca | | | v Primeru 3: $f = f_0 \cdot \frac{340}{340 - v}$, enota Hz
 f_0 | frekvenca sirene | | Hz
 v | hitrost vozila | | m/s | proti poslušalcu
 :::

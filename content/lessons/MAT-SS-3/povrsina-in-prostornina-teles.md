@@ -9,7 +9,7 @@ Vremenska napoved opozarja: »Možna je toča s premerom do $4\,\text{cm}$.« Zr
 
 Ploščine likov in prostornino kocke ter kvadra že znaš. Zdaj to znanje razširimo na prizmo, piramido, valj, stožec in kroglo. Vsako novo telo postavimo ob sorodnika, ki ga že poznaš, in pogledamo, kaj je drugače.
 
-Površina pove, koliko materiala potrebuješ, da telo oblečeš: pločevine za konzervo, platna za šotor, barve za steno. Prostornina pove, koliko telo "drži": koliko vode gre v bazen, koliko sladoleda v kornet. Inženir, arhitekt in kuhar te količine računajo vsak dan.
+Površina pove, koliko materiala potrebuješ, da telo oblečeš: pločevine za konzervo, platna za šotor, barve za steno. Prostornina pove, koliko telo »drži«: koliko vode gre v bazen, koliko sladoleda v kornet. Inženir, arhitekt in kuhar te količine računajo vsak dan.
 
 ## Razlaga
 
@@ -111,7 +111,7 @@ a) Valj:
 
 b) Stožec:
 
-1. Najprej stranica: $s = \sqrt{r^2 + v^2} = \sqrt{9 + 16} = 5\,\text{cm}$. Potrebujemo jo za plašč, ker ta leži "poševno".
+1. Najprej stranica: $s = \sqrt{r^2 + v^2} = \sqrt{9 + 16} = 5\,\text{cm}$. Potrebujemo jo za plašč, ker ta leži »poševno«.
 2. $V = \dfrac{\pi \cdot 9 \cdot 4}{3} = 12\pi \approx 37{,}70\,\text{cm}^3$.
 3. $P = \pi r^2 + \pi r s = 9\pi + 15\pi = 24\pi \approx 75{,}40\,\text{cm}^2$.
 4. Odgovor: valj ima $V = 72\pi\,\text{cm}^3$ in $P = 66\pi\,\text{cm}^2$, stožec $V = 12\pi\,\text{cm}^3$ in $P = 24\pi\,\text{cm}^2$.
@@ -180,6 +180,91 @@ $v = \dfrac{500}{201{,}1} \approx 2{,}49\,\text{cm} \approx 25\,\text{mm}$. Padl
 - Krogla: $P = 4\pi r^2$, $V = \dfrac{4\pi r^3}{3}$.
 - Pri sestavljenih telesih računaj posebej vsak del in pazi, katere ploskve so res zunaj.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Valj ima višino enako premeru osnovne ploskve in prostornino $54\pi\,\text{cm}^3$. Izračunaj njegovo površino.
+
+**Rešitev:**
+
+1. Višina je enaka premeru: $v = 2r$. Zato je $V = \pi r^2 \cdot 2r = 2\pi r^3$.
+2. Iz $2\pi r^3 = 54\pi$ sledi $r^3 = 27$, torej $r = 3\,\text{cm}$ in $v = 6\,\text{cm}$.
+3. $P = 2\pi r(r + v) = 2\pi \cdot 3 \cdot 9 = 54\pi\,\text{cm}^2$.
+4. Odgovor: površina valja je $54\pi\,\text{cm}^2$.
+
+**Točkovanje:** 1 točka za zvezo $V = 2\pi r^3$, 1 točka za $r = 3\,\text{cm}$, 1 točka za $P = 54\pi\,\text{cm}^2$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Silos ima obliko valja s premerom $4\,\text{m}$ in višino $9\,\text{m}$. Pokriva ga streha v obliki stožca z enako osnovno ploskvijo kot valj. Stranica strehe oklepa z ravnino osnovne ploskve kot $35^\circ$.
+
+a) Izračunaj višino strehe in dolžino njene stranice. Zaokroži na centimeter. (2 točki)
+b) Izračunaj prostornino celotnega silosa. Zaokroži na desetinko $\text{m}^3$. (2 točki)
+c) S pločevino prekrijemo plašč valja in streho, dno je betonsko. Koliko $\text{m}^2$ pločevine potrebujemo? Zaokroži navzgor na cel $\text{m}^2$. (2 točki)
+d) Valjasti del silosa je do vrha napolnjen z žitom z gostoto $750\,\text{kg/m}^3$. Koliko ton žita je v silosu? Zaokroži na desetinko tone. (1 točka)
+
+**Rešitev:**
+
+1. a) Polmer je $r = 2\,\text{m}$, višina valja $v_1 = 9\,\text{m}$. Višina strehe $v_2$, polmer $r$ in stranica $s$ tvorijo pravokotni trikotnik s kotom $35^\circ$ ob osnovni ploskvi.
+2. a) $v_2 = r\tan 35^\circ = 2\tan 35^\circ \approx 1{,}4004\,\text{m} \approx 1{,}40\,\text{m}$ in $s = \dfrac{r}{\cos 35^\circ} \approx 2{,}4415\,\text{m} \approx 2{,}44\,\text{m}$.
+3. b) Valj: $V_1 = \pi r^2 v_1 = \pi \cdot 4 \cdot 9 = 36\pi \approx 113{,}097\,\text{m}^3$.
+4. b) Streha: $V_2 = \dfrac{\pi r^2 v_2}{3} \approx \dfrac{\pi \cdot 4 \cdot 1{,}4004}{3} \approx 5{,}866\,\text{m}^3$. Skupaj $V \approx 118{,}963\,\text{m}^3 \approx 119{,}0\,\text{m}^3$.
+5. c) Plašč valja: $2\pi r v_1 = 36\pi \approx 113{,}097\,\text{m}^2$. Plašč stožca: $\pi r s \approx \pi \cdot 2 \cdot 2{,}4415 \approx 15{,}341\,\text{m}^2$.
+6. c) Skupaj $\approx 128{,}44\,\text{m}^2$; pločevine ne sme zmanjkati, zato zaokrožimo navzgor na $129\,\text{m}^2$.
+7. d) Masa žita: $m = 113{,}097\,\text{m}^3 \cdot 750\,\text{kg/m}^3 \approx 84\,823\,\text{kg} \approx 84{,}8\,\text{t}$.
+8. Odgovor: a) streha je visoka približno $1{,}40\,\text{m}$, njena stranica meri $2{,}44\,\text{m}$; b) $V \approx 119{,}0\,\text{m}^3$; c) potrebujemo $129\,\text{m}^2$ pločevine; d) v silosu je približno $84{,}8\,\text{t}$ žita.
+
+**Točkovanje:** a) 1 točka za višino strehe $1{,}40\,\text{m}$ in 1 točka za stranico $2{,}44\,\text{m}$; b) 1 točka za prostornini valja in stožca, 1 točka za $119{,}0\,\text{m}^3$; c) 1 točka za ploščini obeh plaščev (brez dna in brez osnovne ploskve strehe), 1 točka za $129\,\text{m}^2$; d) 1 točka za $84{,}8\,\text{t}$ s pravilno pretvorbo enot.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Pokončni stožec ima polmer osnovne ploskve $r = 6\,\text{cm}$ in višino $v = 8\,\text{cm}$.
+
+a) Izračunaj površino in prostornino stožca. (2 točki)
+b) V stožec včrtamo kroglo, ki se dotika osnovne ploskve in plašča. Opiši osni prerez, utemelji, kje leži središče krogle, in izračunaj njen polmer $\rho$. (4 točke)
+c) Kolikšen delež prostornine stožca zavzame krogla? (2 točki)
+d) Vrh stožca premaknemo vzporedno z osnovno ploskvijo, tako da nastane poševni stožec z isto osnovno ploskvijo in isto višino. Kolikšna je njegova prostornina? Utemelji s Cavalierijevim načelom. (2 točki)
+
+**Rešitev:**
+
+1. a) Stranica: $s = \sqrt{6^2 + 8^2} = 10\,\text{cm}$. Površina: $P = \pi r^2 + \pi r s = 36\pi + 60\pi = 96\pi\,\text{cm}^2$.
+2. a) Prostornina: $V = \dfrac{\pi r^2 v}{3} = \dfrac{\pi \cdot 36 \cdot 8}{3} = 96\pi\,\text{cm}^3$.
+3. b) Osni prerez stožca je enakokraki trikotnik z osnovnico $12\,\text{cm}$, krakoma $10\,\text{cm}$ in višino $8\,\text{cm}$. Prerez krogle je krog, ki se dotika vseh treh stranic, torej trikotniku včrtani krog.
+4. b) Krogla je simetrična glede na os stožca, zato njeno središče $O$ leži na višini $TN$, kjer je $T$ vrh in $N$ središče osnovne ploskve. Ker se krogla dotika osnovne ploskve, je $ON = \rho$ in $OT = 8 - \rho$.
+5. b) Naj bo $M$ točka na robu osnovne ploskve v osnem prerezu in $D$ dotikališče na stranici $TM$. Trikotnika $TDO$ in $TNM$ sta podobna (skupen kot pri $T$, prav kot pri $D$ in pri $N$), zato $\dfrac{OD}{OT} = \dfrac{NM}{TM}$, torej $\dfrac{\rho}{8 - \rho} = \dfrac{6}{10}$.
+6. b) $10\rho = 48 - 6\rho$, $16\rho = 48$, $\rho = 3\,\text{cm}$. (Enako da formula za polmer včrtanega kroga: ploščina $48\,\text{cm}^2$ deljena s polobsegom $16\,\text{cm}$.)
+7. c) $V_k = \dfrac{4\pi \rho^3}{3} = \dfrac{4\pi \cdot 27}{3} = 36\pi\,\text{cm}^3$. Delež: $\dfrac{36\pi}{96\pi} = \dfrac{3}{8} = 37{,}5\,\%$.
+8. d) Oba stožca ležita med istima vzporednima ravninama (osnovna ploskev in ravnina skozi vrh). Na višini $h$ nad osnovno ploskvijo je prerez pri obeh krog s polmerom $\frac{6(8 - h)}{8}$, ker je prerez osnovna ploskev, pomanjšana v razmerju $\frac{8 - h}{8}$.
+9. d) Prereza imata na vsaki višini enako ploščino, zato imata stožca po Cavalierijevem načelu enako prostornino, $96\pi\,\text{cm}^3$.
+10. Odgovor: a) $P = 96\pi\,\text{cm}^2$, $V = 96\pi\,\text{cm}^3$; b) $\rho = 3\,\text{cm}$, središče je na osi $3\,\text{cm}$ nad osnovno ploskvijo; c) krogla zavzame $\frac{3}{8}$ prostornine; d) $96\pi\,\text{cm}^3$.
+
+**Točkovanje:** a) 1 točka za $P = 96\pi\,\text{cm}^2$ (s $s = 10\,\text{cm}$), 1 točka za $V = 96\pi\,\text{cm}^3$; b) 1 točka za osni prerez z včrtanim krogom, 1 točka za središče na osi z $ON = \rho$, 1 točka za pravilno nastavljeno enačbo (podobnost ali ploščina in polobseg), 1 točka za $\rho = 3\,\text{cm}$; c) 1 točka za $V_k = 36\pi\,\text{cm}^3$, 1 točka za delež $\frac{3}{8}$; d) 1 točka za utemeljitev z enakimi preseki na vsaki višini, 1 točka za $96\pi\,\text{cm}^3$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji formulo za ploščino plašča stožca s polmerom osnovne ploskve $r$ in stranico $s$.
+---
+Plašč stožca razrežemo vzdolž stranice in ga razgrnemo v ravnino. Dobimo krožni izsek s polmerom $s$, katerega lok je dolg toliko kot obseg osnovnega kroga, $2\pi r$. Ploščina krožnega izseka je polovica produkta dolžine loka in polmera. Zato je ploščina plašča $\frac{1}{2} \cdot 2\pi r \cdot s = \pi r s$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako se spremenita površina in prostornina krogle, če njen polmer povečamo $k$-krat? Utemelji.
+---
+Površina krogle je $P = 4\pi r^2$, zato se pri polmeru $k r$ poveča $k^2$-krat. Prostornina je $V = \frac{4\pi r^3}{3}$, zato se poveča $k^3$-krat. Prostornina torej raste hitreje kot površina. Enako velja za vsa podobna telesa: ploščine se povečajo s kvadratom, prostornine s kubom razmerja dolžin.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pokaži na kocki, da je prostornina piramide tretjina prostornine prizme z enako osnovno ploskvijo in enako višino.
+---
+Kocko z robom $a$ razdelimo na tri skladne štiristrane piramide s skupnim vrhom v enem oglišču kocke. Osnovne ploskve piramid so tri ploskve kocke, ki tega oglišča ne vsebujejo, zato ima vsaka osnovno ploskev $a^2$ in višino $a$. Ker so piramide skladne, ima vsaka tretjino prostornine kocke: $\frac{a^3}{3} = \frac{a^2 \cdot a}{3}$. Enako razmerje velja za vsako piramido in prizmo z enako osnovno ploskvijo in višino, zato je prostornina piramide $V = \frac{S\,v}{3}$, kjer je $S$ ploščina osnovne ploskve in $v$ višina.
+:::
+
 ## Drugače: Na sliki
 
 Razreži telo in ga razgrni v ravnino, dobiš **mrežo**.
@@ -206,7 +291,7 @@ Prostornino si predstavljaj kot plasti: prizma in valj sta zloženi iz enakih pl
 **Izpeljava prostornine krogle (višja raven).** Primerjaj polkroglo s polmerom $r$ in valj s polmerom $r$ in višino $r$, iz katerega izrezemo stožec (vrh v središču spodnje osnovne ploskve, osnovna ploskev je zgornji krog valja). Na višini $h$ nad osnovno ploskvijo:
 
 - presek polkrogle je krog s polmerom $\sqrt{r^2 - h^2}$, ploščina $\pi(r^2 - h^2)$,
-- presek "valja brez stožca" je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$.
+- presek »valja brez stožca« je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$.
 
 Preseka sta enaka, zato sta enaki tudi prostornini:
 
@@ -266,10 +351,32 @@ Krogla je dvakrat tolikšna: $V = \dfrac{4\pi r^3}{3}$.
 ~ To je prostornina $\frac{\pi \cdot 25 \cdot 12}{3}$, ne površina. Površina je v $\text{cm}^2$ in se računa s ploščinami.
 > Stranica je $s = \sqrt{25 + 144} = 13\,\text{cm}$. Potem $P = \pi r^2 + \pi r s = 25\pi + 65\pi = 90\pi$. Odgovor $85\pi$ uporabi $v$ namesto $s$, $65\pi$ je samo plašč, $100\pi$ pa je prostornina.
 
+<<RACUN
+vrednost: 27^(1/3) | 3
+vrednost: 2*pi*3^3 | 54*pi
+vrednost: 2*pi*3*(3+6) | 54*pi
+vrednost: 2*tan(35°) | 1.40
+vrednost: 2/cos(35°) | 2.44
+vrednost: pi*2^2*9 | 113.097
+vrednost: pi*2^2*2*tan(35°)/3 | 5.866
+vrednost: pi*2^2*9 + pi*2^2*2*tan(35°)/3 | 119.0
+vrednost: pi*2*2/cos(35°) | 15.341
+vrednost: 2*pi*2*9 + pi*2*2/cos(35°) | 128.44
+vrednost: pi*2^2*9*0.75 | 84.82
+vrednost: sqrt(6^2+8^2) | 10
+vrednost: pi*6^2+pi*6*10 | 96*pi
+vrednost: pi*6^2*8/3 | 96*pi
+resi: 10*x=6*(8-x) | x | 3
+vrednost: 4*pi*3^3/3 | 36*pi
+vrednost: (36*pi)/(96*pi) | 3/8
+vrednost: 48/16 | 3
+>>
+
 :::simboli
 P | površina telesa | | | vsota ploščin vseh mejnih ploskev
 S | ploščina osnovne ploskve | | |
 S_p | ploščina plašča | | | pri pokončni prizmi $S_p = o \cdot v$
+o | obseg osnovne ploskve | | |
 a | osnovni rob piramide | | |
 v_s | višina stranske ploskve | v_s^2 = v^2 + \left(\frac{a}{2}\right)^2 | | pri pravilni štiristrani piramidi
 V | prostornina telesa | | |

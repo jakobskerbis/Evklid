@@ -183,6 +183,89 @@ $-3 \cdot (-2) - 8 = -2$ in $-2 \cdot (-2) + 1 = 5$. Količnik je $2x^2 - 3x - 2
 - Hornerjev algoritem da hkrati $p(a)$ in količnik; manjkajoče potence nadomesti $0$, pri $x + c$ vzemi $a = -c$.
 - Cele ničle polinoma s celimi koeficienti so med delitelji prostega člena (oba predznaka). Polinom stopnje $n$ ima največ $n$ ničel.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Določi realno število $m$ tako, da bo polinom $p(x) = x^3 + mx^2 - 4x + 12$ deljiv z $x - 2$. Nato zapiši količnik pri tem deljenju.
+
+**Rešitev:**
+
+1. Po izreku o ostanku je $p$ deljiv z $x - 2$ natanko tedaj, ko je $p(2) = 0$.
+2. $p(2) = 8 + 4m - 8 + 12 = 4m + 12$. Iz $4m + 12 = 0$ sledi $m = -3$.
+3. Hornerjev algoritem z $a = 2$ na koeficientih $1, -3, -4, 12$: $1$; $1 \cdot 2 - 3 = -1$; $-1 \cdot 2 - 4 = -6$; $-6 \cdot 2 + 12 = 0$.
+4. Odgovor: $m = -3$, količnik je $k(x) = x^2 - x - 6$.
+
+**Točkovanje:** 1 točka za pogoj $p(2) = 0$, 1 točka za $m = -3$, 1 točka za količnik $x^2 - x - 6$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dan je polinom $p(x) = 2x^3 - 3x^2 - 11x + 6$.
+
+a) Pokaži, da je število $3$ ničla polinoma $p$. (1 točka)
+b) Razcepi $p$ na linearne faktorje in zapiši vse njegove ničle. (3 točke)
+c) Določi količnik in ostanek pri deljenju polinoma $p$ s polinomom $x^2 - 1$. (3 točke)
+
+**Rešitev:**
+
+1. a) $p(3) = 54 - 27 - 33 + 6 = 0$, zato je $3$ ničla.
+2. b) Hornerjev algoritem z $a = 3$ na koeficientih $2, -3, -11, 6$: $2$; $2 \cdot 3 - 3 = 3$; $3 \cdot 3 - 11 = -2$; $-2 \cdot 3 + 6 = 0$. Količnik je $2x^2 + 3x - 2$.
+3. b) Ničle količnika: $x = \dfrac{-3 \pm \sqrt{9 + 16}}{4} = \dfrac{-3 \pm 5}{4}$, torej $x = \dfrac{1}{2}$ ali $x = -2$. Zato je $2x^2 + 3x - 2 = (2x - 1)(x + 2)$.
+4. b) $p(x) = (x - 3)(2x - 1)(x + 2)$; ničle so $3$, $\dfrac{1}{2}$ in $-2$.
+5. c) $2x^3 : x^2 = 2x$; $2x(x^2 - 1) = 2x^3 - 2x$; ostane $-3x^2 - 9x + 6$.
+6. c) $-3x^2 : x^2 = -3$; $-3(x^2 - 1) = -3x^2 + 3$; ostane $-9x + 3$, ki je prve stopnje, zato končamo.
+7. c) Preizkus pri $x = 1$, kjer je $x^2 - 1 = 0$: $p(1) = 2 - 3 - 11 + 6 = -6$ in ostanek $-9 + 3 = -6$. Ujema se.
+8. Odgovor: $p(x) = (x - 3)(2x - 1)(x + 2)$ z ničlami $3$, $\frac{1}{2}$ in $-2$; pri deljenju z $x^2 - 1$ je količnik $2x - 3$, ostanek $-9x + 3$.
+
+**Točkovanje:** a) 1 točka za $p(3) = 0$; b) 1 točka za količnik $2x^2 + 3x - 2$, 1 točka za ničli $\frac{1}{2}$ in $-2$, 1 točka za razcep na linearne faktorje; c) 1 točka za pravilen prvi korak deljenja, 1 točka za količnik $2x - 3$, 1 točka za ostanek $-9x + 3$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Iz pravokotnega kosa kartona z merama $16\,\mathrm{cm}$ in $10\,\mathrm{cm}$ v vseh štirih vogalih izrežemo enake kvadrate s stranico $x$ (v centimetrih) in robove zapognemo navzgor. Nastane odprta škatla.
+
+a) Zapiši prostornino škatle $V(x)$ kot polinom v razviti obliki in določi, za katere $x$ ima naloga smisel. (3 točke)
+b) Določi vse $x$, pri katerih ima škatla prostornino $144\,\mathrm{cm^3}$. (5 točk)
+c) Z razcepom iz b) zapiši $V(x) - 144$ kot produkt linearnih faktorjev in utemelji, da nobena takšna škatla nima prostornine, večje od $144\,\mathrm{cm^3}$. (2 točki)
+
+**Rešitev:**
+
+1. a) Dno škatle meri $(16 - 2x)$ krat $(10 - 2x)$, višina je $x$. Zato $V(x) = x(16 - 2x)(10 - 2x)$.
+2. a) $(16 - 2x)(10 - 2x) = 160 - 52x + 4x^2$, torej $V(x) = 4x^3 - 52x^2 + 160x$.
+3. a) Vse tri mere morajo biti pozitivne: $x > 0$ in $10 - 2x > 0$ (takrat je tudi $16 - 2x > 0$). Naloga ima smisel za $0 < x < 5$.
+4. b) $4x^3 - 52x^2 + 160x = 144$; delimo s $4$ in prenesemo: $x^3 - 13x^2 + 40x - 36 = 0$.
+5. b) Cele ničle iščemo med delitelji $36$. $x = 1$: $1 - 13 + 40 - 36 = -8$; $x = 2$: $8 - 52 + 80 - 36 = 0$. Ničla je $2$.
+6. b) Horner z $a = 2$ na $1, -13, 40, -36$: $1$; $-11$; $18$; $0$. Količnik $x^2 - 11x + 18 = (x - 2)(x - 9)$.
+7. b) $x^3 - 13x^2 + 40x - 36 = (x - 2)^2(x - 9)$, ničli sta $2$ (dvojna) in $9$. Ker $9$ ni med $0$ in $5$, ostane $x = 2$.
+8. c) Iz korakov 4–7: $V(x) - 144 = 4(x^3 - 13x^2 + 40x - 36) = 4(x - 2)^2(x - 9)$.
+9. c) Za $0 < x < 5$ je $(x - 2)^2 \ge 0$ in $x - 9 < 0$, zato je $V(x) - 144 \le 0$, enakost pa velja le pri $x = 2$. Torej je $V(x) \le 144$.
+10. Odgovor: $V(x) = 4x^3 - 52x^2 + 160x$ za $0 < x < 5$; prostornina je $144\,\mathrm{cm^3}$ le pri $x = 2\,\mathrm{cm}$, in to je največja možna prostornina.
+
+**Točkovanje:** a) 1 točka za $V(x) = x(16 - 2x)(10 - 2x)$, 1 točka za razvito obliko, 1 točka za $0 < x < 5$; b) 1 točka za enačbo $x^3 - 13x^2 + 40x - 36 = 0$, 1 točka za najdeno ničlo $2$, 1 točka za količnik $x^2 - 11x + 18$, 1 točka za ničli $2$ in $9$, 1 točka za izločitev $x = 9$ in odgovor $x = 2$; c) 1 točka za razcep $V(x) - 144 = 4(x - 2)^2(x - 9)$, 1 točka za utemeljitev s predznakoma faktorjev.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj pove izrek o deljenju polinomov in kaj iz njega sledi pri deljenju polinoma z linearnim polinomom $x - a$?
+---
+Za polinoma $p$ in $q \ne 0$ obstajata natanko en količnik $k$ in natanko en ostanek $r$, da velja $p = q k + r$, pri čemer je $r = 0$ ali pa ima $r$ nižjo stopnjo kot $q$. Pri deljenju z $x - a$ je ostanek zato konstanta. Ko v $p(x) = (x - a)\,k(x) + r$ vstavimo $x = a$, dobimo $r = p(a)$. Od tod sledi, da je $a$ ničla polinoma $p$ natanko tedaj, ko je $p$ deljiv z $x - a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži, da je vsaka cela ničla polinoma s celimi koeficienti delitelj njegovega prostega člena.
+---
+Naj bo celo število $a$ ničla polinoma $p(x) = a_n x^n + \dots + a_1 x + a_0$ s celimi koeficienti, torej $a_n a^n + \dots + a_1 a + a_0 = 0$. Od tod je $a_0 = -a\,(a_n a^{n-1} + \dots + a_1)$. Izraz v oklepaju je celo število, ker so koeficienti in $a$ cela števila. Zato je $a_0$ večkratnik števila $a$, torej je $a$ delitelj prostega člena.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer polinoma tretje stopnje z eno samo realno ničlo in pojasni, zakaj ima polinom stopnje $n$ največ $n$ ničel.
+---
+Primer je $p(x) = x^3 + x = x(x^2 + 1)$: faktor $x^2 + 1$ je vedno pozitiven, zato je edina realna ničla $0$. Vsaka ničla $a$ odcepi linearni faktor $x - a$, saj je polinom po izreku o ostanku deljiv z $x - a$, količnik $k$ pa ima stopnjo za $1$ nižjo. Vsaka druga ničla $b \ne a$ je ničla količnika, saj iz $(b - a)\,k(b) = 0$ in $b - a \ne 0$ sledi $k(b) = 0$. Ker stopnja pri vsakem odcepu pade za $1$ in polinom stopnje $0$ nima ničel, ima polinom stopnje $n$ največ $n$ različnih ničel.
+:::
+
 ## Drugače: Na sliki
 
 Nariši graf $f(t) = (t - 1)(t - 2)(t - 3)$ in zraven tabelo predznakov:
@@ -251,6 +334,22 @@ Produkt je zaporedoma negativen, pozitiven, negativen in pozitiven. Graf torej p
 ~ $18$ je prosti člen, ne ničla: $h(18) \ne 0$.
 + Pri $t = 2$ in $t = 3$ minutah.
 > Ničle so $2$, $3$ in $-3$; v poštev prideta le nenegativni.
+
+<<RACUN
+resi: 4*m+12=0 | m | -3
+vrednost: 2^3-3*2^2-4*2+12 | 0
+enako: (x^3-3*x^2-4*x+12)/(x-2) | x^2-x-6
+vrednost: 2*3^3-3*3^2-11*3+6 | 0
+enako: (2*x^3-3*x^2-11*x+6)/(x-3) | 2*x^2+3*x-2
+enako: 2*x^3-3*x^2-11*x+6 | (x-3)*(2*x-1)*(x+2)
+resi: 2*x^3-3*x^2-11*x+6=0 | x | -2, 1/2, 3
+enako: 2*x^3-3*x^2-11*x+6 | (x^2-1)*(2*x-3)-9*x+3
+enako: x*(16-2*x)*(10-2*x) | 4*x^3-52*x^2+160*x
+enako: (x^3-13*x^2+40*x-36)/(x-2) | x^2-11*x+18
+enako: x^3-13*x^2+40*x-36 | (x-2)^2*(x-9)
+resi: 4*x^3-52*x^2+160*x=144 | x | 2, 9
+enako: 4*x^3-52*x^2+160*x-144 | 4*(x-2)^2*(x-9)
+>>
 
 :::simboli
 p | polinom (deljenec) | p(x) = a_n x^n + \dots + a_0 |
