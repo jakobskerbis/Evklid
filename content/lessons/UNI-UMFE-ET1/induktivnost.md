@@ -43,7 +43,7 @@ Induktivnost raste s kvadratom števila ovojev: dvakrat več ovojev pomeni dvakr
 :::premisli
 V jedro toroida zarežemo zračno režo, dolgo le $1\,\mathrm{mm}$. Ali se induktivnost zmanjša za $1\,\%$ (ker je reža $1\,\%$ dolžine) ali bolj? Zakaj?
 ---
-Precej bolj. Reža ima permeabilnost zraka, zato je njen magnetni upor tak kot upor $1000\,\mathrm{mm}$ železa. Skupni upor naraste z $7{,}96 \cdot 10^5$ na okoli $8{,}75 \cdot 10^6\,\mathrm{A/Wb}$, induktivnost pa pade skoraj enajstkrat.
+Precej bolj. Reža ima permeabilnost zraka, zato je njen magnetni upor tak kot upor $1000\,\mathrm{mm}$ železa. Skupni upor naraste s $7{,}96 \cdot 10^5$ na okoli $8{,}75 \cdot 10^6\,\mathrm{A/Wb}$, induktivnost pa pade skoraj enajstkrat.
 :::
 
 ### Medsebojna induktivnost
@@ -318,7 +318,7 @@ kjer je $r$ razdalja med kosoma. Formula je simetrična v indeksih $1$ in $2$, k
 - Iskra nastane zaradi statične elektrike na ohišju.
 ~ Statični naboj ni povezan s prekinitvijo toka v tuljavi.
 + Energija $\tfrac{1}{2}LI^2$ in napetost $L\,\mathrm{d}i/\mathrm{d}t$ ob hitri prekinitvi prebijeta zrak med kontaktoma.
-> Tuljava vzdržuje tok; ko kontakta razmakneta, napetost naraste, dokler zrak ne prevaja. Energija polja se porabi v iskri, ki kontakte žge.
+> Tuljava vzdržuje tok; ko se kontakta razmakneta, napetost naraste, dokler zrak ne prevaja. Energija polja se porabi v iskri, ki kontakte žge.
 
 :::simboli
 \Psi | spreženi magnetni pretok | \Psi = N\Phi | Wb

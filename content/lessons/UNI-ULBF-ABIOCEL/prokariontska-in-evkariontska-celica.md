@@ -51,7 +51,7 @@ Dokazi so ti:
 
 - mitohondrij in kloroplast imata **dvojno membrano**; notranja je podobna bakterijski, zunanja pa po klasični razlagi izvira iz gostiteljice, ki je bakterijo objela;
 - imata lastno **krožno DNA**, podobno bakterijski;
-- imata ribosome **$70\mathrm{S}$**, zato nekateri antibiotiki, ki zavirajo bakterijske ribosome, delno zavirajo tudi mitohondrijske;
+- imata ribosome bakterijskega tipa, **$70\mathrm{S}$** (mitohondrijski so pri sesalcih manjši, okoli $55\mathrm{S}$), zato nekateri antibiotiki, ki zavirajo bakterijske ribosome, delno zavirajo tudi mitohondrijske;
 - delita se **z delitvijo na dvoje**, podobno bakterijam, nove pa celica ne more zgraditi sama;
 - po velikosti so podobni bakterijam, približno $1\,\mu\mathrm{m}$;
 - zaporedja njihovih genov so najbolj podobna genom določenih bakterij.
@@ -201,7 +201,7 @@ Na tej lestvici je mitohondrij po velikosti skoraj enak bakteriji, kar se ujema 
 ? Antibiotik zavira ribosome $70\mathrm{S}$. Bakterije ubije, človeške celice pa večinoma pusti. Pri visokih odmerkih pa lahko oslabi delovanje mitohondrijev. Zakaj?
 - Ker so mitohondriji prokarionti, ki živijo v naših celicah.
 ~ Mitohondriji niso samostojni prokarionti, saj večina njihovih genov leži v jedru. Iz bakterij le izvirajo.
-+ Ker imajo mitohondriji zaradi bakterijskega izvora ribosome $70\mathrm{S}$, citosol pa $80\mathrm{S}$.
++ Ker imajo mitohondriji zaradi bakterijskega izvora ribosome bakterijskega tipa, citosol pa $80\mathrm{S}$.
 - Ker antibiotik uniči jedro, ki nadzoruje mitohondrije.
 ~ Antibiotik deluje na ribosome, ne na jedro. Ribosomi v citosolu so $80\mathrm{S}$ in nanje ne vpliva.
 > Mitohondriji so ohranili ribosome bakterijskega tipa, kar je eden od dokazov endosimbiontske teorije.

@@ -18,7 +18,7 @@ Zato se znakov in pravil ne učiš samo za laboratorij. Ko jih znaš prebrati, v
 - **Znak.** Na etiketi je bel kvadrat, postavljen na vogal (romb), z rdečim robom. V njem sta dve epruveti, iz katerih kaplja tekočina: ena kapljica pade na roko, druga na kovinsko ploščico, in obe sta razjedeni. To je znak za **jedko** snov.
 - **Opozorilna beseda.** Pod znakom piše »Nevarno«. Ta beseda pomeni hudo nevarnost. Pri manjši nevarnosti piše »Pozor«.
 - **Stavek o nevarnosti.** »Povzroča hude opekline kože in poškodbe oči.«
-- **Previdnostni stavki.** »Nositi zaščitne rokavice in zaščito za oči.« »Ob stiku z očmi: previdno izpirati z vodo več minut.«
+- **Previdnostni stavki.** »Nositi zaščitne rokavice in zaščito za oči.« »Pri stiku z očmi: previdno izpirati z vodo nekaj minut.«
 
 Iz te ene etikete že veš, kaj se lahko zgodi in kako se zaščitiš. Takim znakom rečemo **piktogrami za nevarnost**: piktogram je preprosta slika, ki jo razumeš brez branja.
 
@@ -47,7 +47,7 @@ Ne bi. Vsak znak opozarja na drugo nevarnost: plamen na požar, obris človeka n
 **3. Posplošitev: pravila v laboratoriju.** Etiketa pove, kaj zna snov narediti. Pravila povedo, kako delaš, da se to ne zgodi.
 
 1. Pred delom preberi navodilo do konca in poslušaj učitelja.
-2. Nosi zaščitna očala in haljo. Dolge lase speni.
+2. Nosi zaščitna očala in haljo. Dolge lase spni.
 3. V laboratoriju ne ješ, ne piješ in ničesar ne okušaš.
 4. Snovi ne vohaš neposredno. Hlape si z dlanjo nežno pahljaš proti nosu.
 5. Tekočino v epruveti segrevaš, če zavzema **največ tretjino** epruvete. Ustje epruvete obrni stran od sebe in sošolcev.
@@ -121,7 +121,7 @@ cena = število kosov $\cdot$ cena enega kosa; parov rokavic = učenci $\cdot$ v
 1. Znak za jedko snov zahteva zaščito oči in kože, zato potrebuje vsak učenec očala in rokavice.
 2. Manjka $26 - 20 = 6$ očal. Ta stanejo $6 \cdot 3{,}80\,€ = 22{,}80\,€$. Očala se po vaji očistijo in uporabijo znova.
 3. Rokavice so za enkratno uporabo, zato potrebujejo $26 \cdot 3 = 78$ parov.
-4. Ena škatla ima $50$ parov, kar je premalo; dve škatli imata $100$ parov. Stanejo $2 \cdot 6{,}90\,€ = 13{,}80\,€$.
+4. Ena škatla ima $50$ parov, kar je premalo; dve škatli imata $100$ parov. Staneta $2 \cdot 6{,}90\,€ = 13{,}80\,€$.
 5. Skupaj: $22{,}80\,€ + 13{,}80\,€ = 36{,}60\,€$.
 6. Odgovor: kupiti morajo $6$ očal in $2$ škatli rokavic, kar stane $36{,}60\,€$.
 
@@ -151,7 +151,7 @@ Kisline je $1$ del, torej $50\,\mathrm{mL}$, vode pa $4$ deli, torej $4 \cdot 50
 ## Pogoste napake
 
 - **»Brez znaka pomeni varno.«** Vroče steklo, razbita epruveta in vrela voda nimajo nobenega romba, pa vseeno ranijo. Znak opozarja na nevarnost snovi, pravila pa veljajo vedno.
-- **»Samo lobanja je zares nevarna, klicaj je malenkost.«** Klicaj pomeni manjšo, a resnično nevarnost: dražljivi hlapi lahko povzročijo kašelj ali vnetje oči. Vsak znak zahteva svoj ukrep.
+- **»Samo lobanja je zares nevarna, klicaj je malenkost.«** Klicaj pomeni manjšo, a resnično nevarnost: dražilni hlapi lahko povzročijo kašelj ali vnetje oči. Vsak znak zahteva svoj ukrep.
 - **»Kislina v vodo ali voda v kislino, je vseeno.«** Mešanica na koncu je res enaka, nevarnost med mešanjem pa ne. Voda, ki jo zliješ v kislino, lahko zavre in brizgne. Zato vedno najprej voda, nato kislina.
 - **»Ostanek vrnem v steklenico, da ne zapravljam.«** Z eno umazano kapljico pokvariš vso steklenico, sošolci pa naslednjič delajo z napačno snovjo. Ostanek gre v posodo, ki jo pokaže učitelj.
 - **»Da vem, kaj je v epruveti, povoham od blizu.«** Nekateri hlapi že v majhni količini dražijo nos in pljuča. Hlape pahljaš z dlanjo.
@@ -180,7 +180,7 @@ Etiketa nevarne snovi ima poleg piktogramov še:
 
 - **opozorilno besedo**: »Nevarno« ali »Pozor«;
 - **stavke o nevarnosti** z oznako H, na primer H225: »Lahko vnetljiva tekočina in hlapi.« ali H314: »Povzroča hude opekline kože in poškodbe oči.«;
-- **previdnostne stavke** z oznako P, na primer P210: »Hraniti ločeno od virov toplote, vročih površin, isker, odprtega ognja in drugih virov vžiga. Kajenje prepovedano.«
+- **previdnostne stavke** z oznako P, na primer P210: »Hraniti ločeno od vročine, vročih površin, isker, odprtega ognja in drugih virov vžiga. Kajenje prepovedano.«
 
 Za vsako kemikalijo obstaja tudi **varnostni list**: dokument z več strani, ki opiše nevarnosti, prvo pomoč, gašenje in odstranjevanje.
 

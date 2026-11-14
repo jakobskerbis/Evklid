@@ -7,7 +7,7 @@ avtor: AI
 
 Med drugo svetovno vojno so v ZDA zgradili več tisoč tovornih ladij razreda Liberty. Da bi jih izdelali hitro in poceni, so trup namesto kovičenja varili. Nekaj ladij je v mrzlem morju nenadoma počilo, nekatere celo na dvoje, čeprav niso bile preobremenjene. Preiskave so pokazale, da je bilo jeklo dovolj trdno, a pri nizki temperaturi **krhko**. Ni prenašalo udarca in razpoke.
 
-Od takrat jekla ne kupujemo le po ceni na kilogram. Na atestu (certifikatu) so napisane številke, ki povedo, kaj plačaš: meja tečenja, natezna trdnost, raztezek in udarna žilavost pri določeni temperaturi. Oznaka konstrukcijskega jekla S355J2 na primer pove, da ima meja tečenja vsaj $355\,\mathrm{MPa}$ in da epruveta pri $-20\,^\circ\mathrm{C}$ ob udarcu porabi vsaj $27\,\mathrm{J}$. Kako te številke izmerimo in kaj pomenijo, je vsebina te teme.
+Od takrat jekla ne kupujemo le po ceni na kilogram. Na atestu (certifikatu) so napisane številke, ki povedo, kaj plačaš: meja tečenja, natezna trdnost, raztezek in udarna žilavost pri določeni temperaturi. Oznaka konstrukcijskega jekla S355J2 na primer pove, da je meja tečenja vsaj $355\,\mathrm{MPa}$ in da epruveta pri $-20\,^\circ\mathrm{C}$ ob udarcu porabi vsaj $27\,\mathrm{J}$. Kako te številke izmerimo in kaj pomenijo, je vsebina te teme.
 
 ## Razlaga
 

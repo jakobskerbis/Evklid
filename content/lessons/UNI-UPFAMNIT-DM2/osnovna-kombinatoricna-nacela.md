@@ -79,7 +79,7 @@ Načelo vsote za izbiro med disjunktnima skupinama, nato načelo produkta za zap
 Vremenska služba vsak dan leta s $365$ dnevi uvrsti v eno od $4$ kategorij: jasno, delno oblačno, oblačno, padavine. Dokaži, da se neka kategorija pojavi vsaj $92$-krat.
 
 **Podatki:** $n = 365$ dni (predmeti), $k = 4$ kategorije (predali)
-**Iščemo:** najmanjše število dni, ki ga zagotovo doseže neka kategorija
+**Iščemo:** največje število dni, ki ga neka kategorija zagotovo doseže
 
 :::formula
 Posplošeno Dirichletovo načelo: v nekem predalu je vsaj $\left\lceil \frac{n}{k} \right\rceil$ predmetov.

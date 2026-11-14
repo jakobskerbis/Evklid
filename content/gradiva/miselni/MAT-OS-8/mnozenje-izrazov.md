@@ -11,7 +11,7 @@ stanje: osnutek
   - $3x \cdot 2x = 6x^2$
 - Vsak z vsakim
   - $(a + b)(c + d) = ac + ad + bc + bd$
-  - dva dvočlenika dajo štiri produkte
+  - dva dvočlenika dasta štiri produkte
 - Slika s pravokotnikom
   - štirje deli so štirje produkti
   - napaka: $(x + 3)^2 = x^2 + 9$

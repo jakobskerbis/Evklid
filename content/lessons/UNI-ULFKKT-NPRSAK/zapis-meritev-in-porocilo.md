@@ -56,7 +56,7 @@ Pri računu v več korakih vmesne rezultate obdrži z eno ali dvema števkama ve
 :::premisli
 Zakaj pri seštevanju štejemo decimalna mesta, pri množenju pa značilne števke?
 ---
-Pri seštevanju se seštevajo absolutne negotovosti (npr. $\pm 0{,}5\,\text{€}$), te pa so vezane na mesto zadnje števke. Pri množenju se ohranja relativna negotovost (v odstotkih), ta pa je odvisna od tega, koliko števk ima podatek.
+Pri seštevanju se seštevajo absolutne negotovosti (npr. $\pm 0{,}5\,\text{€}$), te pa so vezane na mesto zadnje števke. Pri množenju se seštevajo relativne negotovosti (v odstotkih), te pa so odvisne od tega, koliko števk ima podatek.
 :::
 
 **Izpeljava pravil.** Naj bosta $x \pm \Delta x$ in $y \pm \Delta y$ meritvi s pozitivnima vrednostma in majhnima negotovostma.
@@ -78,7 +78,7 @@ Relativno negotovost določa število značilnih števk, zato pri množenju in d
 
 Pravila: tabela ima številko in naslov **nad** tabelo (»Tabela 1: Topnost KNO$_3$ v vodi«). V glavi stolpca je količina z enoto, ločena s poševnico ($t$ / °C), da so v celicah samo števila. Vsako število ima toliko števk, kot jih je dala meritev.
 
-**Graf.** Iz tabele narišeš graf: na vodoravno os neodvisno spremenljivko (temperaturo, ki si jo nastavil), na navpično odvisno (maso, ki si jo izmeril). Dober graf ima osi z oznako in enoto ($t$ / °C, $m$ / g) ter merilo, ki zapolni večino površine. Meritve so ločene točke (križci ali krožci). Skozi njih potegneš **gladko krivuljo ali premico najboljšega ujemanja**, ne lomljene črte od točke do točke. Številka in naslov slike sta **pod** sliko.
+**Graf.** Iz tabele narišeš graf: na vodoravno os neodvisno spremenljivko (temperaturo, ki si jo nastavil), na navpično odvisno (maso, ki si jo izmeril). Dober graf ima osi z oznako in enoto ($t$ / °C, $m$ / g) ter merilo, ki zapolni večino površine. Meritve so ločene točke (križci ali krožci). Skoznje potegneš **gladko krivuljo ali premico najboljšega ujemanja**, ne lomljene črte od točke do točke. Številka in naslov slike sta **pod** sliko.
 
 **Zgradba poročila.** Poročilo mora drugemu kemiku omogočiti, da poskus ponovi in preveri tvoje sklepe. Običajni razdelki:
 

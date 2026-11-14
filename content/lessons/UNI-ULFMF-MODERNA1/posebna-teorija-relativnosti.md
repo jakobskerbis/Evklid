@@ -231,7 +231,7 @@ Invarianta je $E^2 - (pc)^2 = (mc^2)^2$, analog intervala. Zato je masa delca en
 ~ To je celotna energija $\gamma m c^2$; mirovne energije nisi odštel.
 > $\gamma = 1{,}25$, $E_k = (\gamma - 1)\,mc^2 = 0{,}25 \cdot 938{,}3\,\mathrm{MeV} \approx 234{,}6\,\mathrm{MeV}$.
 
-? Ladja leti mimo Zemlje s $0{,}8\,c$. Dogodek ima v zemeljskem sistemu $x = 2$ svetlobni leti in $t = 5$ let. Ob katerem času $t'$ se zgodi v sistemu ladje?
+? Ladja leti mimo Zemlje z $0{,}8\,c$. Dogodek ima v zemeljskem sistemu $x = 2$ svetlobni leti in $t = 5$ let. Ob katerem času $t'$ se zgodi v sistemu ladje?
 - $8{,}33$ leta
 ~ To je $\gamma t$: izpustil si člen $v x / c^2$, kot da bi bila sočasnost absolutna.
 - $3{,}00$ leta

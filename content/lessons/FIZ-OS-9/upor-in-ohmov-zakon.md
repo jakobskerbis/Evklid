@@ -26,7 +26,7 @@ Kolikšen tok bi pokazal ampermeter pri napetosti $10\,\text{V}$? Napovej, prede
 $0{,}5\,\text{A}$. Vsaka $2\,\text{V}$ prineseta $0{,}1\,\text{A}$, torej $10\,\text{V}$ prinese petkrat toliko kot $2\,\text{V}$.
 :::
 
-**2. Upor.** Količnik $\dfrac{U}{I}$ je pri tem upornik vedno enak: $\dfrac{2\,\text{V}}{0{,}1\,\text{A}} = 20\,\dfrac{\text{V}}{\text{A}}$. Ta stalni količnik imenujemo **električni upor**:
+**2. Upor.** Količnik $\dfrac{U}{I}$ je pri tem uporniku vedno enak: $\dfrac{2\,\text{V}}{0{,}1\,\text{A}} = 20\,\dfrac{\text{V}}{\text{A}}$. Ta stalni količnik imenujemo **električni upor**:
 
 $$R = \frac{U}{I}$$
 
@@ -151,7 +151,7 @@ Električni krog si predstavljaj kot vodovod:
 
 Če črpalka potiska dvakrat močneje, steče dvakrat več vode. Če cev zožiš, steče manj vode, čeprav črpalka dela enako. Natanko to pove $I = \dfrac{U}{R}$.
 
-Primerjava ima meje: v žici se elektroni ne "porabijo" in ne "iztečejo", ampak krožijo.
+Primerjava ima meje: v žici se elektroni ne »porabijo« in ne »iztečejo«, ampak krožijo.
 
 ## Drugače: Na sliki
 
@@ -160,7 +160,7 @@ V poskusu zgoraj so pikice elektroni. Opazuj:
 - Ko povečaš napetost, pikice tečejo hitreje in upornik se bolj segreva (močneje žari). Na grafu desno se točka pomakne gor po premici.
 - Ko povečaš upor, se pikice upočasnijo, premica na grafu postane bolj položna.
 
-Graf $I(U)$ je "prstni odtis" upornika: strmejša premica pomeni manjši upor.
+Graf $I(U)$ je »prstni odtis« upornika: strmejša premica pomeni manjši upor.
 
 ## Drugače: Korak za korakom s številkami
 

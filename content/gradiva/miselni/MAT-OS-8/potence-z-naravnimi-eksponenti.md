@@ -2,7 +2,7 @@
 avtor: AI
 stanje: osnutek
 ---
-- Ponavljajoče množenje
+- Množenje enakih faktorjev
   - $4 \cdot 4 \cdot 4 = 4^3$
   - kot $4 + 4 + 4 = 3 \cdot 4$
 - Osnova in eksponent

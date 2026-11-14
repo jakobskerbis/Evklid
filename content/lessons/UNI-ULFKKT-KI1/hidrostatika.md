@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Potapljač se na vdih spusti na dno $5\,\mathrm{m}$ globokega skakalnega bazena in začne ga boleti v ušesih. Na isti globini v jezeru čuti skoraj natanko enako bolečino, čeprav je jezero tisočkrat večje.
+Potapljač se na vdih spusti na dno $5\,\mathrm{m}$ globokega skakalnega bazena in v ušesih ga začne boleti. Na isti globini v jezeru čuti skoraj natanko enako bolečino, čeprav je jezero tisočkrat večje.
 
-Vaterpolist potisne žogo pod vodo in jo spusti. Žoga izstreli iz vode, kot bi jo nekdo brcnil od spodaj.
+Vaterpolist potisne žogo pod vodo in jo spusti. Žoga šine iz vode, kot bi jo nekdo brcnil od spodaj.
 
 Obe situaciji skrivata isto idejo: **tlak v mirujoči tekočini raste z globino in je odvisen samo od globine**. Bolečina v ušesu je razlika tlakov na bobniču. Žogo pa potiska navzgor razlika tlakov med njenim spodnjim in zgornjim delom. V procesnem inženirstvu ista ideja določa debelino sten rezervoarjev, silo na lopute in okna, odčitke manometrov in plavanje merilnih plovcev.
 
@@ -49,7 +49,7 @@ Sprememba tlaka na gladini se prenese v vse točke tekočine (**Pascalov zakon**
 
 **4. Absolutni tlak in nadtlak.** Večina merilnikov meri razliko do okoliškega zraka: to je **nadtlak** $p_\mathrm{n} = p - p_0 = \rho g h$. **Absolutni tlak** $p$ šteje od vakuuma. Merilnik v pnevmatiki kolesa, ki kaže $4\,\mathrm{bar}$, pomeni okoli $5\,\mathrm{bar}$ absolutno. Enote: $1\,\mathrm{bar} = 10^5\,\mathrm{Pa}$. Pri vodi vsakih $10\,\mathrm{m}$ globine doda približno $1\,\mathrm{bar}$.
 
-Kako to izgleda v vodi:
+Kako je to videti v vodi:
 
 | Globina $h$ | Nadtlak $\rho g h$ | Absolutni tlak |
 |---|---|---|
@@ -314,6 +314,6 @@ m_\mathrm{Pb} | masa svinčene uteži | | kg
 y | razdalja vzdolž ploskve od presečišča z gladino | | m
 \theta | naklonski kot ploskve proti gladini | | °
 y_\mathrm{T} | lega težišča ploskve, merjena vzdolž ploskve | | m
-y_\mathrm{P} | lega središča tlaka, merjena vzdolž ploskve | y_\mathrm{P} = y_\mathrm{T} + \frac{I_\mathrm{T}}{y_\mathrm{T} A} | m | središče tlaka je vedno pod težiščem
+y_\mathrm{P} | lega središča tlaka, merjena vzdolž ploskve | y_\mathrm{P} = y_\mathrm{T} + \frac{I_\mathrm{T}}{y_\mathrm{T} A} | m | pod težiščem, razen pri vodoravni ploskvi
 I_\mathrm{T} | ploskovni vztrajnostni moment okoli osi skozi težišče | | m^4 | za pravokotnik b a³/12
 :::

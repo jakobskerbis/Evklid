@@ -129,7 +129,7 @@ Pravilo vsote po dolžini, znotraj vsake dolžine pravilo produkta
 
 **Rešitev:**
 
-1. Kode razdelimo na trimestne in štirimestne. Teh skupin ne moremo zamešati, zato ju bomo na koncu sešteli.
+1. Kode razdelimo na trimestne in štirimestne. Skupini se ne prekrivata, zato ju bomo na koncu sešteli.
 2. Trimestne: prvi dve števki imata po $6$ možnosti, zadnja $3$, torej $6 \cdot 6 \cdot 3 = 108$.
 3. Štirimestne izračunaj sam, nato obe skupini seštej.
 
@@ -206,7 +206,7 @@ Naslednji dan sosed Bor ponudi še tri strehe iz slame. Ana zdaj pri polici ne i
 - $25$
 ~ To je $30 - 5$. Les in lak se kombinirata, zato se njuni števili množita, ne seštevata.
 - $150$
-~ To je $30 \cdot 5$. Iščeš faktor, ki z $5$ da $30$, zato deliš.
+~ To je $30 \cdot 5$. Iščeš faktor, ki s $5$ da $30$, zato deliš.
 + $6$
 > Po pravilu produkta je $5 \cdot x = 30$, torej $x = 6$ barv laka.
 

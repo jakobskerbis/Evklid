@@ -144,7 +144,7 @@ Ostane $16$ črnih in $18$ belih polj. $17$ domin bi pokrilo $17$ črnih in $17$
 
 - **»Zrcalna slika je samo zasukan lik.«** Učenec misli, da S z vrtenjem dobi Z. Vrtenje pa ohrani orientacijo, zrcaljenje jo obrne. Pri liku brez osi sta zrcalna slika in lik različna. Popravek: preveri, ali ima lik os; šele takrat sta isto.
 - **»Kdor se vrti, ima tudi os.«** Paralelogram in ikona ventilatorja se prekrijeta pri zasuku, osi pa nimata. Vrtilna simetrija ne prinese osi. Popravek: osi in vrtenje preveri vsako posebej.
-- **»Diagonali pravokotnika sta osi.«** Diagonala pravokotnik razpolovi na dva skladna trikotnika, a to ni zrcaljenje: trikotnika se prekrijeta šele po zasuku. Popravek: os mora vsako oglišče preslikati na oglišče.
+- **»Diagonali pravokotnika sta vedno osi.«** Diagonala pravokotnik razpolovi na dva skladna trikotnika, a to ni zrcaljenje: trikotnika se prekrijeta šele po zasuku. Popravek: os mora vsako oglišče preslikati na oglišče.
 - **»Vsak pravilni lik tlakuje.«** Pravilni petkotnik ima kot $108^\circ$, ki ne deli $360^\circ$. Popravek: preveri vsoto kotov v oglišču.
 - **»Ploščina se ujema, torej gre.«** Pri mreži brez dveh nasprotnih kotov ploščina ustreza, pokritja pa ni. Popravek: pri dominah vedno poskusi šahovsko barvanje.
 
@@ -190,7 +190,7 @@ pravokotnik: 1; 1 .. 2; 2
 pravokotnik: 1; 0 .. 2; 1
 :::
 
-Zgornji kvadratek je še vedno levo, spodnji desno. Tudi po zasuku za $180^\circ$ je spet S. Z vrtenjem se te »smeri stopnice« ne da zamenjati.
+Zgornji kvadratek je levo, spodnji desno, pa naj S zasukaš v levo ali v desno. Tudi po zasuku za $180^\circ$ je spet S. Z vrtenjem se te »smeri stopnice« ne da zamenjati.
 
 Oglišče vzorca iz Primera 3 si predstavljaj kot torto, razrezano na tri kose: kvadrat vzame $90^\circ$, šestkotnik $120^\circ$, dvanajstkotnik $150^\circ$. Skupaj je cela torta, $360^\circ$.
 

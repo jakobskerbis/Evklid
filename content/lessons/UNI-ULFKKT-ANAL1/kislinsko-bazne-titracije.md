@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Poskus za doma: v kozarec nalij $10\,\mathrm{mL}$ kisa in dodaj žlico soka rdečega zelja. Raztopina postane rdeča. Nato z injekcijsko brizgo kapljaj raztopino sode bikarbone in štej kaplje. Raztopina sicer peni (nastaja $\mathrm{CO_2}$), barva pa se dolgo ne spremeni. Potem se v nekaj kapljah barva preobrne v vijolično in nato modrikasto. Ponovi s pol manj kisa: kaplje, potrebne za preskok, se razpolovijo.
+Poskus za doma: v kozarec nalij $10\,\mathrm{mL}$ kisa in dodaj žlico soka rdečega zelja. Raztopina postane rdeča. Nato z injekcijsko brizgo kapljaj raztopino sode bikarbone in štej kaplje. Raztopina se sicer peni (nastaja $\mathrm{CO_2}$), barva pa se dolgo ne spremeni. Potem se v nekaj kapljah barva preobrne v vijolično in nato modrikasto. Ponovi s pol manj kisa: kaplje, potrebne za preskok, se razpolovijo.
 
 Število kapelj torej meri, koliko kisline je bilo v kozarcu. To je **titracija**. V laboratoriju namesto brizge uporabimo bireto, namesto zelja indikator ali pH-elektrodo. Sodobne elektrode se po Bluetoothu povežejo s telefonom ali tablico, ki med dodajanjem riše graf. Tako v tovarnah elektronike sproti preverjajo kisle kopeli za jedkanje bakra na tiskanih vezjih za telefone. Da razumeš, kaj tak graf pove, moraš vedeti, kje je skok, zakaj nastane in katero barvilo ga pokaže.
 
@@ -137,7 +137,7 @@ $c_\mathrm{k} = \dfrac{c_\mathrm{b} V_\mathrm{EP}}{V_\mathrm{k}}$; v EP: $K_\mat
 
 **Rešitev:**
 
-1. Množina kisline: $0{,}1000 \cdot 16{,}80 = 1{,}68\,\mathrm{mmol}$, zato $c = 1{,}68 / 10{,}00 = 0{,}168\,\mathrm{mol/L}$.
+1. Množina kisline: $0{,}1000 \cdot 16{,}80 = 1{,}68\,\mathrm{mmol}$, zato $c = 1{,}68 / 10{,}00 = 0{,}1680\,\mathrm{mol/L}$.
 2. V EP je vsa kislina pretvorjena v acetat: $1{,}68\,\mathrm{mmol}$ v $10{,}00 + 16{,}80 = 26{,}8\,\mathrm{mL}$, torej $c(\mathrm{A^-}) \approx 0{,}0627\,\mathrm{mol/L}$.
 3. Acetat je šibka baza: $K_\mathrm{b} = 1{,}0 \cdot 10^{-14} / 1{,}75 \cdot 10^{-5} \approx 5{,}71 \cdot 10^{-10}$.
 4. $c(\mathrm{OH^-}) = \sqrt{5{,}71 \cdot 10^{-10} \cdot 0{,}0627} \approx 5{,}99 \cdot 10^{-6}\,\mathrm{mol/L}$, $\mathrm{pOH} \approx 5{,}22$.
@@ -241,7 +241,7 @@ V vsakem območju najprej vprašaš: kaj je v čaši? Šele potem izbereš formu
 
 Predstavljaj si, da je v čaši dvorana, polna protonov, ki bi radi odšli. Iz birete prihajajo hidroksidni ioni, vsak odpelje en proton in z njim postane voda.
 
-Dokler je protonov veliko, odhod nekaj sto ne opazi nihče: pH se komaj premakne. Ko jih ostane le še peščica, pa vsak nov hidroksid odpelje velik del preostalih. Ko odide zadnji, novi hidroksidi nimajo s kom oditi in ostanejo v dvorani. Ozračje se v trenutku obrne iz kislega v bazično. To je skok.
+Dokler je protonov veliko, odhoda nekaj sto ne opazi nihče: pH se komaj premakne. Ko jih ostane le še peščica, pa vsak nov hidroksid odpelje velik del preostalih. Ko odide zadnji, novi hidroksidi nimajo s kom oditi in ostanejo v dvorani. Ozračje se v trenutku obrne iz kislega v bazično. To je skok.
 
 Pri ocetni kislini so protoni sramežljivi: večina jih ostaja vezana na molekule, zato je dvorana na začetku manj kisla. Hidroksidi jih morajo trgati z molekul, a odpeljejo jih ravno toliko kot prej. Ko odide zadnji, v dvorani ostanejo acetatni ioni, ki si sami malo izposojajo protone od vode in pustijo za sabo nekaj OH⁻. Zato dvorana v EP že rahlo diši po bazi, pH je okoli $8{,}7$.
 

@@ -47,7 +47,7 @@ Kot elementi halogeni tvorijo **dvoatomne molekule**: dva atoma si delita en par
 Navzdol po skupini se barva temni, snov pa prehaja od plina prek tekočine do trdne snovi. Vsi so strupeni ali dražilni.
 
 :::premisli
-Pri alkalijskih kovinah reaktivnost navzdol po skupini narašča. Halogen elektron sprejme, večji atom pa tuj elektron privlači šibkeje kot manjši. Kdo je reaktivnejši, fluor ali jod?
+Pri alkalijskih kovinah reaktivnost navzdol po skupini narašča. Halogen elektron sprejme, večji atom pa tuj elektron privlači šibkeje kot manjši. Kateri je reaktivnejši, fluor ali jod?
 ---
 Fluor. Pri halogenih reaktivnost navzdol pada, ravno obratno kot pri alkalijskih kovinah. Najmanjši atom, fluor, najmočneje pritegne dodatni elektron.
 :::

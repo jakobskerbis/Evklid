@@ -154,7 +154,7 @@ $f^{(5)}(x) = (x+5)\,e^x$, zato $f^{(5)}(0) = 5 \cdot e^0 = 5$. Formulo $f^{(n)}
 
 ## Pogoste napake
 
-- **Izrek brez preverjenih pogojev.** »$|x|$ ima na $[-1,1]$ enaki krajišči, torej je nekje $f' = 0$.« Napačno, ker $|x|$ v $0$ ni odvedljiva. Pred uporabo vedno preveri zveznost na $[a,b]$ in odvedljivost na $(a,b)$.
+- **Izrek brez preverjenih pogojev.** »$|x|$ ima v krajiščih intervala $[-1,1]$ enaki vrednosti, torej je nekje $f' = 0$.« Napačno, ker $|x|$ v $0$ ni odvedljiva. Pred uporabo vedno preveri zveznost na $[a,b]$ in odvedljivost na $(a,b)$.
 - **$\xi$ je sredina intervala.** Izrek pove le, da $\xi$ obstaja. Za $x^3$ na $[0,3]$ je $\xi = \sqrt 3$, ne $1{,}5$. Točko izračunaš iz enačbe $f'(\xi) = \frac{f(b)-f(a)}{b-a}$.
 - **$f'(c) = 0$ pomeni ekstrem.** Velja le obrat. Pri $x^3$ v $0$ je odvod $0$, ekstrema ni. Ničla odvoda je le kandidat.
 - **Diferencial je točna sprememba.** $\mathrm{d}f$ je sprememba po tangenti, $\Delta f$ po grafu. Za $x^2$ v $3$ pri $\mathrm{d}x = 0{,}1$ je $\mathrm{d}f = 0{,}6$, $\Delta f = 0{,}61$. Pri majhnih $\mathrm{d}x$ sta blizu, enaka pa nista.
@@ -261,15 +261,15 @@ f' | odvod funkcije f
 a, b | krajišči intervala
 \xi | vmesna točka na (a, b) | | | točk ξ je lahko več
 x | neodvisna spremenljivka | | | dx = Δx je njen prirastek
-g | pomožna funkcija v dokazu | g(x) = f(x) - f(a) - k\,(x-a) | | pri Cauchyjevem izreku druga funkcija
+g | pomožna funkcija v dokazu | g(x) = f(x) - f(a) - k\,(x-a) | | pri Cauchyjevem izreku druga funkcija; v Primeru 1 težni pospešek na Luni
 g' | odvod funkcije g
 k | naklon sekante skozi krajišči | k = \frac{f(b)-f(a)}{b-a} | | v Leibnizovi formuli indeks vsote
 n | red odvoda
 V | prostornina krogle | V(r) = \frac{4}{3}\pi r^3 | km^3
 V' | odvod prostornine po polmeru | V'(r) = 4\pi r^2 | km^2 | enak površini krogle
 r | polmer Lune | | km | dr = 2 km je negotovost
-v | hitrost rakete | | m/s | v (uv)' = u'v + uv' druga funkcija
-v' | pospešek rakete | v' = s'' | m/s^2
+v | hitrost sonde | | m/s | v (uv)' = u'v + uv' druga funkcija
+v' | pospešek sonde | v' = s'' | m/s^2
 s'' | drugi odvod poti (pospešek) | | m/s^2
 T | čas pospeševanja | | s
 u | funkcija v pravilu za odvod produkta

@@ -37,7 +37,7 @@ $$\nabla f = \left(f_x, f_y, f_z\right).$$
 
 **Posledici.**
 
-- Ker je $\nabla f \cdot \vec e = |\nabla f|\cos\varphi$, je smerni odvod največji v smeri gradienta in tam enak $|\nabla f|$; v nasprotni smeri je najmanjši, $-|\nabla f|$.
+- Ker je $\nabla f \cdot \vec e = |\nabla f|\cos\alpha$ ($\alpha$ je kot med gradientom in smerjo $\vec e$), je smerni odvod največji v smeri gradienta in tam enak $|\nabla f|$; v nasprotni smeri je najmanjši, $-|\nabla f|$.
 - Gradient je pravokoten na nivojsko ploskev $f = c$. Če krivulja $\vec r(t)$ leži na ploskvi, je $f(\vec r(t)) = c$; odvod da $\nabla f \cdot \vec r\,' = 0$, torej je gradient pravokoten na vsako tangento.
 
 :::premisli
@@ -327,6 +327,7 @@ V | prostornina | | L
 \theta, \vec\theta | zasuk koščka materiala | \vec\theta = \frac12 \operatorname{rot}\vec u | rad
 \vec v | hitrost točk | \vec v = \vec\omega \times \vec r | m/s
 \omega, \vec\omega | kotna hitrost | | s^{-1}
+\alpha | kot med gradientom in smerjo $\vec e$ | | rad
 \varphi | potencial | \nabla\varphi = \vec F |
 a | parameter v polju | |
 \vec E | električno polje točkastega naboja | \vec E = \frac{\vec r}{r^3} |

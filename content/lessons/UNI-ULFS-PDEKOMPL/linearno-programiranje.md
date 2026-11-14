@@ -42,7 +42,7 @@ Nivojnice $5x + 5y = c$ so vzporedne z robom moke $x + y = 6$. Optimalen je cel 
 
 **4. Simpleksna metoda.** Pri več kot treh spremenljivkah risanje odpade. Simpleksna metoda posnema sliko algebrsko: začne v oglišču in hodi po robovih do sosednjega oglišča z večjim $z$, dokler boljšega soseda ni.
 
-Neenačbe spremenimo v enačbe z **dodatnimi spremenljivkami** (koliko moke oziroma časa ostane):
+Neenačbe spremenimo v enačbe z **dopolnilnimi spremenljivkami** (koliko moke oziroma časa ostane):
 $$s_1 = 6 - x - y, \qquad s_2 = 10 - 2x - y, \qquad s_1, s_2 \ge 0.$$
 Spremenljivke na levi so **bazne**, tiste na desni so **nebazne** in v trenutnem oglišču enake $0$. Začnemo v $(0, 0)$: $s_1 = 6$, $s_2 = 10$, $z = 0$. Tak zapis imenujemo slovar. Simpleksna tabela vsebuje iste koeficiente, le zložene v vrstice.
 
@@ -152,7 +152,7 @@ Ura prinese $v = 2$ € in stane $1{,}50$ €, torej se splača, čisti dobiček
 - Linearni program: linearna funkcija $\to$ max ali min pri linearnih omejitvah; dopustno območje je konveksen polieder.
 - Če optimum obstaja, je dosežen v oglišču (lahko tudi na celem robu).
 - Grafična rešitev (2 spremenljivki): nariši polravnine, poišči oglišča, premikaj nivojnico ali primerjaj $z$ v ogliščih.
-- Simpleks: dodatne spremenljivke, vstop s pozitivnim koeficientom v $z$, izstop z najmanjšim količnikom, konec, ko so vsi koeficienti $\le 0$.
+- Simpleks: dopolnilne spremenljivke, vstop s pozitivnim koeficientom v $z$, izstop z najmanjšim količnikom, konec, ko so vsi koeficienti $\le 0$.
 - Dual problema $\max c^\top x$, $Ax \le b$, $x \ge 0$ je $\min b^\top y$, $A^\top y \ge c$, $y \ge 0$; $z \le w$, v optimumu $z = w$.
 - Optimalne dualne spremenljivke so senčne cene virov (kot Lagrangeevi multiplikatorji); neporabljen vir ima senčno ceno $0$.
 
@@ -166,7 +166,7 @@ Simpleks na tej sliki ne drsi po notranjosti, ampak skače po obodu. Iz $(0, 0)$
 
 ## Drugače: Bolj natančno
 
-Standardna oblika: $\max c^\top x$ pri $Ax \le b$, $x \ge 0$. Z dodatnimi spremenljivkami $s = b - Ax \ge 0$ dobimo sistem enačb. **Bazna dopustna rešitev** (izberemo $m$ baznih stolpcev, ostale spremenljivke so $0$) je natanko oglišče poliedra. Teh je končno mnogo, zato simpleks konča, če preprečimo ciklanje (npr. z Blandovim pravilom: med kandidati vedno izberi najmanjši indeks).
+Standardna oblika: $\max c^\top x$ pri $Ax \le b$, $x \ge 0$. Z dopolnilnimi spremenljivkami $s = b - Ax \ge 0$ dobimo sistem enačb. **Bazna dopustna rešitev** (izberemo $m$ baznih stolpcev, ostale spremenljivke so $0$) je natanko oglišče poliedra. Teh je končno mnogo, zato simpleks konča, če preprečimo ciklanje (npr. z Blandovim pravilom: med kandidati vedno izberi najmanjši indeks).
 
 **Šibka dualnost.** Za dopustna $x$ in $y$ velja
 $$c^\top x \le (A^\top y)^\top x = y^\top (A x) \le y^\top b.$$
@@ -197,7 +197,7 @@ Minimizacijo prevedemo v $\max(-c^\top x)$. Omejitve $\ge$ in enačbe zahtevajo 
 ? Restavracija z LP načrtuje jedilnik. Omejitve so meso, zelenjava in število kuharjev. Senčna cena omejitve kuharjev je $0$. Kaj to pomeni?
 - Kuharji restavracije ne stanejo nič.
 ~ Senčna cena ni plača. Pove, za koliko bi zrasel optimum pri eni enoti vira več.
-+ V optimalnem načrtu kuharji niso vsi polno zasedeni, zato dodatni kuhar dobička ne poveča.
++ Dodatni kuhar dobička ne poveča, praviloma zato, ker v optimalnem načrtu kuharji niso vsi polno zasedeni.
 - Brez kuharjev bi bil dobiček enak.
 ~ Senčna cena velja za majhne spremembe okoli optimuma. Brez kuharjev bi postala omejitev aktivna in dobiček bi padel.
 > Komplementarnost: dualna spremenljivka je pozitivna le pri omejitvi, ki je izpolnjena z enačajem.
@@ -219,15 +219,15 @@ Minimizacijo prevedemo v $\max(-c^\top x)$. Omejitve $\ge$ in enačbe zahtevajo 
 > Pri dobičku $p$ je $(5, 0)$ optimalno, ko je nivojnica vsaj tako strma kot rob pečice: $\frac{p}{3} \ge 2$, torej $p \ge 6$. Pri $p = 6$: $(5, 0)$ in $(4, 2)$ dasta oba $30$ €.
 
 :::simboli
-z | vrednost ciljne funkcije (dobiček) | z = 5x + 3y | | iščemo maksimum
+z | vrednost namenske funkcije (dobiček) | z = 5x + 3y | | iščemo maksimum
 x | število pladnjev pice | | | v splošnem zapisu vektor spremenljivk; pri prehrani porcije kosmičev
 y | število pladnjev pite | | | v dualu vektor dualnih spremenljivk; pri prehrani porcije jogurta
 s_1 | dopolnilna spremenljivka (neporabljena moka) | s_1 = 6 - x - y | | s₁ ≥ 0
 s_2 | dopolnilna spremenljivka (neizkoriščen čas pečice) | s_2 = 10 - 2x - y | | s₂ ≥ 0
 u | cena kilograma moke (dualna spremenljivka)
 v | cena ure pečice (dualna spremenljivka)
-w | vrednost dualne ciljne funkcije | w = 6u + 10v | | z ≤ w, v optimumu z = w
-c | koeficienti ciljne funkcije (vektor) | | | pri prehrani cena obrokov c = 0,5x + y
+w | vrednost dualne namenske funkcije | w = 6u + 10v | | z ≤ w, v optimumu z = w
+c | koeficienti namenske funkcije (vektor) | | | pri prehrani cena obrokov c = 0,5x + y
 A | matrika koeficientov omejitev
 b | vektor desnih strani omejitev
 :::

@@ -50,7 +50,7 @@ Enota $\mathrm{kJ/mol}$ pomeni »na mol reakcije, kot je zapisana«: ko zreagira
 
 Toplota pri dani množini snovi: $q = n \cdot \dfrac{|\Delta_\mathrm{r}H|}{\nu}$, kjer je $\nu$ koeficient te snovi v enačbi.
 
-**5. Standardno stanje.** Oznaka $^\circ$ pomeni standardne pogoje: tlak $p^\circ = 1\,\mathrm{bar}$, za raztopine $c^\circ = 1\,\mathrm{mol/L}$, snov v najstabilnejši obliki pri dani temperaturi (tabelirano običajno pri $298{,}15\,\mathrm{K}$).
+**5. Standardno stanje.** Oznaka $^\circ$ pomeni standardne pogoje: čista snov pri tlaku $p^\circ = 1\,\mathrm{bar}$ v navedenem agregatnem stanju, za raztopine $c^\circ = 1\,\mathrm{mol/L}$; temperatura ni predpisana (tabelirano običajno pri $298{,}15\,\mathrm{K}$). Za elemente vzamemo najstabilnejšo obliko pri dani temperaturi.
 
 **6. Hessov zakon.** Naj bo reakcija vsota stopenj (algebrska vsota njihovih termokemijskih enačb je enaka enačbi reakcije) in naj se vse stopnje nanašajo na iste pogoje ($T$, $p$, agregatna stanja). Potem je reakcijska entalpija enaka vsoti entalpij stopenj, ne glede na to, ali reakcija poteče v enem ali v več korakih:
 
@@ -86,7 +86,7 @@ Nekaj vrednosti pri $298\,\mathrm{K}$ ($\mathrm{kJ/mol}$):
 
 $$q = m\,c_p\,\Delta T,$$
 
-kjer je $c_p$ specifična toplota (za vodo in razredčene raztopine $4{,}18\,\mathrm{J\,g^{-1}\,K^{-1}}$). Če reakcija toploto sprosti, se raztopina segreje, zato je $\Delta H$ reakcije $-q/n$, kjer je $n$ množina zreagirane snovi. Pri natančnejših meritvah upoštevamo še toplotno kapaciteto kalorimetra $C$: $q = C\,\Delta T$.
+kjer je $c_p$ specifična toplota (za vodo in razredčene raztopine $4{,}18\,\mathrm{J\,g^{-1}\,K^{-1}}$). Če reakcija toploto sprosti, se raztopina segreje, zato je $\Delta H$ reakcije $-q/n$, kjer je $n$ množina zreagirane snovi. Pri natančnejših meritvah upoštevamo še toplotno kapaciteto kalorimetra $C$: $q = (m\,c_p + C)\,\Delta T$; pri bombnem kalorimetru je $C$ toplotna kapaciteta celotnega kalorimetra in $q = C\,\Delta T$.
 
 **9. $\Delta H$ in $\Delta U$.** Razlika izhaja iz dela razpenjanja plinov: $\Delta H = \Delta U + \Delta(pV)$. Naj bo temperatura začetnega in končnega stanja enaka, naj se plini vedejo idealno in naj bo prostornina trdnih snovi in tekočin zanemarljiva. Potem je
 
@@ -149,8 +149,8 @@ $q_V = C\,\Delta T$, $\quad \Delta_\mathrm{r}U = -q_V/n$, $\quad \Delta H = \Del
 **Rešitev:**
 
 1. Bomba ima stalno prostornino, zato izmerjena toplota da $\Delta U$: $q_V = 10{,}00\,\mathrm{kJ/K} \cdot 2{,}961\,\mathrm{K} = 29{,}61\,\mathrm{kJ}$, ki jih sprejme kalorimeter.
-2. Množina etanola: $n = 1{,}000/46{,}07 = 0{,}021\,71\,\mathrm{mol}$.
-3. Sistem toploto odda, zato $\Delta_\mathrm{r}U = -29{,}61\,\mathrm{kJ}/0{,}021\,71\,\mathrm{mol} = -1364{,}1\,\mathrm{kJ/mol}$.
+2. Množina etanola: $n = 1{,}000/46{,}07 = 0{,}021\,706\,\mathrm{mol}$.
+3. Sistem toploto odda, zato $\Delta_\mathrm{r}U = -29{,}61\,\mathrm{kJ}/0{,}021\,706\,\mathrm{mol} = -1364{,}1\,\mathrm{kJ/mol}$.
 4. Plini: levo $3\,\mathrm{mol}$ $\mathrm{O_2}$, desno $2\,\mathrm{mol}$ $\mathrm{CO_2}$ (voda je tekoča), $\Delta n_\mathrm{g} = 2 - 3 = -1$.
 5. $\Delta_\mathrm{r}H = -1364{,}1 + (-1) \cdot 8{,}314 \cdot 10^{-3} \cdot 298\,\mathrm{kJ/mol} = -1364{,}1 - 2{,}5 = -1366{,}6\,\mathrm{kJ/mol}$.
 6. Formulo s tvorbenimi entalpijami rešimo za edino neznanko, etanol ($\mathrm{O_2}$ ima $0$): produkti $2 \cdot (-393{,}5) + 3 \cdot (-285{,}8) = -1644{,}4\,\mathrm{kJ/mol}$, zato $\Delta_\mathrm{f}H^\circ(\mathrm{C_2H_5OH}) = -1644{,}4 - \Delta_\mathrm{r}H = -1644{,}4 + 1366{,}6 = -277{,}8\,\mathrm{kJ/mol}$.
@@ -264,7 +264,7 @@ Tvorbene entalpije si predstavljaj kot »nadmorske višine« spojin, merjene od 
 
 **Kurilnost goriv.** Laboratoriji kurilnost premoga, biomase in goriv merijo v bombnem kalorimetru, ki ga umerijo s sežigom benzojske kisline z znano $\Delta_\mathrm{c}U$ (okoli $-26{,}4\,\mathrm{kJ/g}$). Bomba da zgornjo kurilnost (voda tekoča), za metan $890{,}3/16{,}04 \approx 55{,}5\,\mathrm{MJ/kg}$; spodnja (voda kot para) je $802{,}3/16{,}04 \approx 50{,}0\,\mathrm{MJ/kg}$. Kondenzacijski kotli izkoristijo prav to razliko, izparilno entalpijo vode v dimnih plinih.
 
-**Varnost procesov.** Pred povečanjem sinteze z laboratorija v obrat izmerijo $\Delta_\mathrm{r}H$ v reakcijskem kalorimetru in ocenijo adiabatni dvig temperature, če hlajenje odpove: $\Delta T_\mathrm{ad} = c\,|\Delta_\mathrm{r}H|/(\rho\,c_p)$. Za $1\,\mathrm{mol/L}$ reakcije z $-100\,\mathrm{kJ/mol}$ v vodni raztopini je to $100\,000\,\mathrm{J}/(1000\,\mathrm{g} \cdot 4{,}18\,\mathrm{J\,g^{-1}\,K^{-1}}) \approx 24\,\mathrm{K}$; če pri tem vrelišče topila ali razkroj produkta doseže nevarno območje, postopek spremenijo (počasnejše dodajanje, razredčenje).
+**Varnost procesov.** Pred povečanjem sinteze z laboratorija v obrat izmerijo $\Delta_\mathrm{r}H$ v reakcijskem kalorimetru in ocenijo adiabatni dvig temperature, če hlajenje odpove: $\Delta T_\mathrm{ad} = c\,|\Delta_\mathrm{r}H|/(\rho\,c_p)$. Za $1\,\mathrm{mol/L}$ reakcije z $-100\,\mathrm{kJ/mol}$ v vodni raztopini je to $100\,000\,\mathrm{J}/(1000\,\mathrm{g} \cdot 4{,}18\,\mathrm{J\,g^{-1}\,K^{-1}}) \approx 24\,\mathrm{K}$; če temperatura pri tem doseže vrelišče topila ali območje razkroja produkta, postopek spremenijo (počasnejše dodajanje, razredčenje).
 
 **Žganje apna.** Razkroj $\mathrm{CaCO_3}$ ima $\Delta_\mathrm{r}H^\circ = +178{,}3\,\mathrm{kJ/mol}$, torej okoli $1{,}78\,\mathrm{MJ}$ na kilogram apnenca. Iz tega inženirji izračunajo najmanjšo porabo goriva apnenice, dejanska je večja zaradi toplotnih izgub.
 

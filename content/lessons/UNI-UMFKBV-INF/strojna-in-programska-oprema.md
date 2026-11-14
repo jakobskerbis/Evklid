@@ -20,7 +20,7 @@ Odgovori so v zgradbi računalnika. Ko jih poznaš, znaš izbrati primeren raču
 
 Brez recepta kuhar ne ve, kaj skuhati; brez kuhinje recept nič ne skuha. Enako velja za računalnik. Od tu naprej gradimo na razlikah med kuhinjo in računalnikom.
 
-**Procesor: kuhar, ki zna le drobne gibe.** **Procesor** (CPE, centralna procesna enota, angl. *CPU*) izvaja ukaze. Ima **aritmetično-logično enoto**, ki računa in primerja, in **krmilno enoto**, ki jemlje ukaze po vrsti in jih izvaja. Za vsak ukaz ponavlja isti krog: ukaz prevzame, ga razbere, ga izvede. Prva razlika s kuharjem: procesor ne razume »prepraži čebulo«. Pozna le zelo preproste ukaze, npr. »seštej dve števili« ali »skoči na drug ukaz«. Druga razlika: hitrost. Procesor ima notranjo uro, ki enakomerno »utripa«; en utrip je **takt**, v vsakem procesor opravi korak ukaza. Procesor s taktom $3\,\text{GHz}$ naredi $3$ milijarde taktov v sekundi, v eni milisekundi torej $3 \cdot 10^{6}$.
+**Procesor: kuhar, ki zna le drobne gibe.** **Procesor** (CPE, centralna procesna enota, angl. *CPU*) izvaja ukaze. Ima **aritmetično-logično enoto**, ki računa in primerja, in **krmilno enoto**, ki jemlje ukaze po vrsti in jih izvaja. Za vsak ukaz ponavlja isti krog: ukaz prevzame, ga razbere, ga izvede. Prva razlika s kuharjem: procesor ne razume »prepraži čebulo«. Pozna le zelo preproste ukaze, npr. »seštej dve števili« ali »skoči na drug ukaz«. Druga razlika: hitrost. Procesor ima notranjo uro, ki enakomerno »utripa«; en utrip je **takt**, v vsakem procesor opravi korak ukaza. Procesor s frekvenco takta $3\,\text{GHz}$ naredi $3$ milijarde taktov v sekundi, v eni milisekundi torej $3 \cdot 10^{6}$.
 
 **Pomnilnik: pult in shramba.** Kuhar ne kuha iz shrambe, ampak sestavine najprej prinese na pult. Tudi računalnik ima dve vrsti hrambe:
 
@@ -212,7 +212,7 @@ V tem zaporedju so vsi deli lekcije: vhod, OS, shramba, RAM, procesor, izhod.
 ~ Tako dobiš, če deliš $3$ s $500$ brez pretvorbe GB v MB.
 + približno $6\,\text{s}$
 - približno $170\,\text{s}$
-~ To je $500 : 3$, deljenje v obratni smeri. Čas je količina deljena s hitrostjo.
+~ To je $500 : 3$, deljenje v obratni smeri. Čas je količina, deljena s hitrostjo.
 - približno $1500\,\text{s}$
 ~ Časa ne dobiš z množenjem ($3000 \cdot 0{,}5$), ampak z deljenjem količine s hitrostjo.
 > $3\,\text{GB} = 3000\,\text{MB}$, $t = \dfrac{3000\,\text{MB}}{500\,\text{MB/s}} = 6\,\text{s}$.

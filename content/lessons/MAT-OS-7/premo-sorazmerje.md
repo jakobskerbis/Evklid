@@ -95,7 +95,7 @@ Sklepni račun: vrednost za $1\,\text{km}$ $=$ poraba $:$ pot, nato pomnožimo z
 
 Na vsej poti avto porabi $35$ litrov goriva.
 
-### Primer 3 (težji): od zemljevida do ure prihoda
+### Primer 3 (težji): od zemljevida do časa hoje
 
 Na zemljevidu Lana prebere, da $6\,\text{cm}$ pomeni $15\,\text{km}$. Pohodna pot do koče je na zemljevidu dolga $8{,}4\,\text{cm}$. Lana prehodi $4\,\text{km}$ v eni uri. Koliko časa bo hodila?
 
@@ -148,7 +148,7 @@ $0{,}06 \cdot 350 = 21$, torej $21$ litrov. Preizkus: $21 : 350 = 0{,}06$, koli�
 
 ## Povzetek
 
-- Količini sta premo sorazmerni, če se ob povečanju (zmanjšanju) ene za nekajkrat druga poveča (zmanjša) za enakokrat.
+- Količini sta premo sorazmerni, če velja: kolikokrat se poveča (zmanjša) ena, tolikokrat se poveča (zmanjša) druga.
 - Količnik $y : x$ je stalen; to je koeficient sorazmernosti $k$, zveza je $y = k \cdot x$. $k$ je vrednost za $1$ enoto.
 - Tabela: v vsakem stolpcu izračunaj $y : x$; vsi količniki morajo biti enaki.
 - Graf: točke ležijo na premici skozi izhodišče $(0, 0)$; večji $k$ pomeni strmejšo premico.

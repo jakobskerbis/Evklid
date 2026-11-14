@@ -172,7 +172,7 @@ Trojna vez: atoma si delita tri pare. Vsakemu atomu ostaneta $5 - 3 = 2$ elektro
 
 ## Pogoste napake
 
-- **»Eden vedno odda, drugi sprejme.«** Učenec ionsko vez prenese na vse spojine in nariše $\mathrm{H^+}$ in $\mathrm{O^{2-}}$ v vodi. Med dvema nekovinama nobeden atom ne odda elektronov rad, oba bi jih sprejela. Pravilno: nekovini si elektrone **delita** v skupnih parih.
+- **»Eden vedno odda, drugi sprejme.«** Učenec ionsko vez prenese na vse spojine in nariše $\mathrm{H^+}$ in $\mathrm{O^{2-}}$ v vodi. Med dvema nekovinama noben atom ne odda elektronov rad, oba bi jih sprejela. Pravilno: nekovini si elektrone **delita** v skupnih parih.
 - **Vezni par šteje samo enemu atomu.** Učenec misli, da ima kisik v vodi le $6$ elektronov, ker je »dva dal stran«. Skupni par pripada obema atomoma. Pravilno: vsak atom šteje oba elektrona vsakega svojega veznega para.
 - **Pozabljeni nevezni pari.** Narisan je le $\mathrm{H{-}O{-}H}$ brez pik, kisik pa ima tako na risbi le $4$ elektrone. Pravilno: na koncu preštej elektrone ob vsakem atomu; manjkajoče dopiši kot nevezne pare.
 - **Vodik z dvema vezema ali z osmimi elektroni.** Vodik ima samo lupino K, ki je polna z $2$ elektronoma. Pravilno: vodik ima vedno natanko eno vez in nobenega neveznega para, zato je vedno na robu molekule.
@@ -186,7 +186,7 @@ Trojna vez: atoma si delita tri pare. Vsakemu atomu ostaneta $5 - 3 = 2$ elektro
 - Število vezi atoma: $v = 8 - z$, kjer je $z$ število zunanjih elektronov (vodik: $v = 2 - 1 = 1$): H in Cl $1$, O $2$, N $3$, C $4$.
 - Lewisova formula: vezni par je črtica, nevezni par ena oznaka (dve piki ali »:«); enojna, dvojna ($\mathrm{O_2}$, $\mathrm{CO_2}$) in trojna vez.
 - Preverba ob vsakem atomu: vezni in nevezni pari so skupaj $4$ pari, to je $8$ elektronov (vodik: $1$ par, $2$ elektrona). C, N, O, F so v 2. periodi: lupina L sprejme največ $8$ elektronov, zato atom nikoli nima več kot $4$ parov.
-- $\mathrm{N_2}$: dušik (2. perioda, 15. skupina, $z = 5$) tvori $3$ vezi; edini sosed je drugi dušik, zato so vse tri med njima: trojna vez. Ostane mu $5 - 3 = 2$ elektrona, to je $1$ nevezni par: ${:}\mathrm{N}{\equiv}\mathrm{N}{:}$. Ob vsakem atomu: $3 + 1 = 4$ pari, $3 \cdot 2 + 1 \cdot 2 = 8$ elektronov.
+- $\mathrm{N_2}$: dušik (2. perioda, 15. skupina, $z = 5$) tvori $3$ vezi; edini sosed je drugi dušik, zato so vse tri med njima: trojna vez. Ostaneta mu $5 - 3 = 2$ elektrona, to je $1$ nevezni par: ${:}\mathrm{N}{\equiv}\mathrm{N}{:}$. Ob vsakem atomu: $3 + 1 = 4$ pari, $3 \cdot 2 + 1 \cdot 2 = 8$ elektronov.
 - Snovi iz molekul imajo pogosto nizko tališče in vrelišče.
 
 ## Drugače: Kot zgodba

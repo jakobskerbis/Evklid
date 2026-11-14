@@ -179,7 +179,7 @@ $f = \dfrac{\frac{8}{3}\pi r^3 \cdot 3\sqrt{3}}{64\,r^3} = \dfrac{\pi\sqrt{3}}{8
 - KPC: 2 atoma na celico, 8 sosedov, $a = \frac{4r}{\sqrt{3}}$, $f = 0{,}68$ (α-Fe, Cr, W).
 - KPloC: 4 atomi, 12 sosedov, $a = 2\sqrt{2}\,r$, $f = 0{,}74$ (Al, Cu, Au, γ-Fe). HGZ: 6 atomov, 12 sosedov, $f = 0{,}74$ (Zn, Mg, Ti).
 - Gostota iz mreže: $\rho = \frac{n M}{N_\mathrm{A} a^3}$.
-- Železo je alotropno: do $912\,^\circ\mathrm{C}$ KPC (ferit), nad tem KPloC (avstenit).
+- Železo je alotropno: do $912\,^\circ\mathrm{C}$ KPC (ferit), med $912$ in $1394\,^\circ\mathrm{C}$ KPloC (avstenit).
 - Napake: točkaste (praznine, intersticijski in substitucijski atomi), črtne (dislokacije), ploskovne (kristalne meje), prostorske (pore, vključki).
 - Plastična deformacija poteka z gibanjem dislokacij; vse, kar jih ovira, kovino utrdi.
 

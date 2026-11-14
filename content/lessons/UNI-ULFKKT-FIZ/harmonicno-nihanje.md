@@ -11,7 +11,7 @@ Isti model opiše strune glasbil, membrano zvočnika, atome, ki nihajo vzdolž v
 
 ## Razlaga
 
-Začni pri enem samem nihalu: utež na vzmeti potegneš navzdol in spustiš. Vzmet jo vleče nazaj, utež prešine ravnovesno lego, se ustavi na drugi strani in se vrne. Ta primer najprej razstavimo na pojme, enačbo in rešitev, potem pa ga posplošimo na nihalo na vrvici, energijo in dušenje.
+Začni pri enem samem nihalu: utež na vzmeti potegneš navzdol in spustiš. Vzmet jo vleče nazaj, utež gre skozi ravnovesno lego, se ustavi na drugi strani in se vrne. Ta primer najprej razstavimo na pojme, enačbo in rešitev, potem pa ga posplošimo na nihalo na vrvici, energijo in dušenje.
 
 ### Utež na vzmeti, korak za korakom
 
@@ -263,7 +263,7 @@ Harmonično nihanje je **senca enakomernega kroženja**. Predstavljaj si kroglic
 
 Ko kroglica obkroži krožnico enkrat, senca naredi en cel nihaj. Projekcija lege je $x_0\cos\omega_0 t$, projekcija hitrosti $-\omega_0x_0\sin\omega_0 t$, projekcija radialnega pospeška $-\omega_0^2x$. Iz te slike je jasno, zakaj je senca najhitrejša na sredini in se v skrajnih legah ustavi.
 
-Graf dušenega nihanja je kosinusna krivulja, ki jo od zgoraj in spodaj omejujeta eksponentni ovojnici $\pm x_0e^{-\beta t}$. Pri kritičnem dušenju krivulja le enkrat pade proti ničli, ne da bi jo prečkala.
+Graf dušenega nihanja je kosinusna krivulja, ki jo od zgoraj in spodaj omejujeta eksponentni ovojnici $\pm x_0e^{-\beta t}$. Pri kritičnem dušenju krivulja (če telo spustimo iz mirovanja) le enkrat pade proti ničli, ne da bi jo prečkala.
 
 ## Drugače: Uporaba v stroki
 

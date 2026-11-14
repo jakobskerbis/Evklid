@@ -54,9 +54,9 @@ Ne. Diamant je zelo trd (težko ga razi), a krhek. Usmerjene vezi ne dovolijo, d
 |---|---|---|---|
 | kovinska | skupni, prosti | Cu, Al, Fe | prevodna, kovna, sijajna |
 | ionska | preneseni, vezani na ione | NaCl, MgO | izolator, trda, krhka |
-| kovalentna | v parih med sosedoma | diamant, Si, $\mathrm{SiO_2}$ | izolator, trda, krhka |
+| kovalentna | v parih med sosedoma | diamant, Si, $\mathrm{SiO_2}$ | izolator (Si polprevodnik), trda, krhka |
 
-Zakaj je kovina kovna? Ko plast ionskih ostankov zdrsne za en atom, je okolica enaka kot prej: oblak se preprosto prerazporedi, vez ostane. Pri ionskem kristalu pa po zdrsu za pol razdalje pridejo $\mathrm{Na^+}$ nad $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ nad $\mathrm{Cl^-}$. Enaki naboji se odbijejo, kristal se razkolje po ravni ploskvi.
+Zakaj je kovina kovna? Ko plast ionskih ostankov zdrsne za en atom, je okolica enaka kot prej: oblak se preprosto prerazporedi, vez ostane. Pri ionskem kristalu pa po zdrsu za eno razdaljo med sosednjima ionoma pridejo $\mathrm{Na^+}$ nad $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ nad $\mathrm{Cl^-}$. Enaki naboji se odbijejo, kristal se razkolje po ravni ploskvi.
 
 :::premisli
 Zakaj trden NaCl ne prevaja toka, čeprav je sestavljen iz nabitih ionov? Kdaj ga začne prevajati?
@@ -157,7 +157,7 @@ $p_\mathrm{i} = 1 - e^{-0{,}25\,(\Delta\chi)^2}$
 :::premisli
 Koliko je $p_\mathrm{i}$ in kaj to pomeni za brusni kamen?
 ---
-$e^{-0{,}1056} \approx 0{,}900$, zato $p_\mathrm{i} \approx 0{,}10$, torej okoli $10\,\%$. Vez je pretežno kovalentna in usmerjena: SiC je zelo trd (zato brusi jeklo), a krhek, zato plošča ob udarcu poči in jo moramo uporabljati z zaščitnim pokrovom.
+$e^{-0{,}1056} \approx 0{,}900$, zato $p_\mathrm{i} \approx 0{,}10$, torej okoli $10\,\%$. Vez je pretežno kovalentna in usmerjena: SiC je zelo trd (zato brusi kamen in barvne kovine), a krhek, zato plošča ob udarcu poči in jo moramo uporabljati z zaščitnim pokrovom.
 :::
 
 ## Pogoste napake

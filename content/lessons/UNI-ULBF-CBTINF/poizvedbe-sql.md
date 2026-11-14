@@ -222,7 +222,7 @@ Eno vrstico: `SUM(kolicina)` je $8 + 40 = 48$ desk, `COUNT(*)` pa $2$ (dva proje
 - **Agregat v WHERE.** Napišeš `WHERE SUM(kolicina) > 20`, ker »pogoj je pogoj«. Baza javi napako: `WHERE` dela z vrsticami pred združevanjem, ko vsote še ni. Pogoj na skupino spada v `HAVING`.
 - **JOIN brez pravega pogoja.** Izpustiš `ON` ali napišeš `ON p.material_id = p.material_id`, ker je pogoj »samo formalnost«. Dobiš vse kombinacije vrstic ($7 \cdot 5 = 35$) in vsote so napihnjene. Vedno poveži tuji ključ s primarnim ključem druge tabele.
 - **Stolpec, ki ni ne v GROUP BY ne v agregatu.** `SELECT projekt, naziv, SUM(...) … GROUP BY projekt` se zdi smiseln, a skupina »lopa« ima štiri nazive in baza ne ve, katerega izpisati. V `SELECT` so le stolpci iz `GROUP BY` in agregati.
-- **Besedilo brez narekovajev.** `WHERE projekt = greda` baza razume kot primerjavo z *stolpcem* `greda`, ki ne obstaja. Besedilne vrednosti piši v enojnih narekovajih: `'greda'`.
+- **Besedilo brez narekovajev.** `WHERE projekt = greda` baza razume kot primerjavo s *stolpcem* `greda`, ki ne obstaja. Besedilne vrednosti piši v enojnih narekovajih: `'greda'`.
 
 ## Povzetek
 
@@ -261,7 +261,7 @@ $$N = n_A \cdot n_B$$
 
 Notranji `JOIN` (`INNER JOIN`) obdrži tiste pare, za katere je pogoj `ON` resničen. Če vsaka vrstica tabele `poraba` kaže na natanko en obstoječ material, ima rezultat toliko vrstic kot `poraba`.
 
-**LEFT JOIN in NULL.** `LEFT JOIN` obdrži tudi vrstice brez ujemanja; manjkajoči stolpci dobijo `NULL` (ni podatka). Primerjava `cena = NULL` ni nikoli resnična, pišemo `cena IS NULL`. `SUM`, `AVG` in `COUNT(stolpec)` vrednosti `NULL` izpustijo, `COUNT(*)` jih šteje, tako kot `COUNT` v preglednici izpusti prazne celice.
+**LEFT JOIN in NULL.** `LEFT JOIN` obdrži tudi vrstice brez ujemanja; manjkajoči stolpci dobijo `NULL` (ni podatka). Primerjava `cena = NULL` ni nikoli resnična, pišemo `cena IS NULL`. `SUM`, `AVG` in `COUNT(stolpec)` vrednosti `NULL` izpustijo, tako kot `COUNT` v preglednici izpusti prazne celice; `COUNT(*)` pa šteje vse vrstice, tudi tiste z `NULL`.
 
 ## Preveri se
 

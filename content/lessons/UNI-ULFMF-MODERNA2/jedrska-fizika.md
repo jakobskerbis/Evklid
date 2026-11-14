@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Najprej uganka. Jedro helija ${}^4\mathrm{He}$ je sestavljeno iz dveh protonov in dveh nevtronov. Masa protona je $1{,}007276\,\mathrm{u}$, masa nevtrona $1{,}008665\,\mathrm{u}$, skupaj torej $4{,}031882\,\mathrm{u}$. Izmerjena masa helijevega jedra pa je $4{,}001506\,\mathrm{u}$. Celota je **lažja** od svojih delov, za $0{,}030376\,\mathrm{u}$. Kam je izginila masa?
+Jedro helija ${}^4\mathrm{He}$ je sestavljeno iz dveh protonov in dveh nevtronov. Masa protona je $1{,}007276\,\mathrm{u}$, masa nevtrona $1{,}008665\,\mathrm{u}$, skupaj torej $4{,}031882\,\mathrm{u}$. Izmerjena masa helijevega jedra pa je $4{,}001506\,\mathrm{u}$. Celota je **lažja** od svojih delov, za $0{,}030376\,\mathrm{u}$. Kam je izginila masa?
 
 Ni izginila: ko se nukleoni povežejo v jedro, se sprosti energija, in po $E = mc^2$ odnese s seboj maso. Ta **masni defekt** je merilo, kako trdno je jedro vezano. Iz njega razberemo, zakaj Sonce sveti, zakaj jedrski reaktor iz urana dobi energijo, in zakaj so nekatera jedra nestabilna ter razpadajo. Razpad nestabilnih jeder uporabljamo vsak dan: s fosforjem ${}^{32}\mathrm{P}$ v molekularni biologiji označujemo DNA, s tehnecijem ${}^{99\mathrm{m}}\mathrm{Tc}$ in fluorom ${}^{18}\mathrm{F}$ v nuklearni medicini slikamo organe, z ogljikom ${}^{14}\mathrm{C}$ določamo starost organskih ostankov. Za vse to potrebujemo štiri pojme: vezavno energijo, zakon radioaktivnega razpada, razpolovni čas in aktivnost.
 
@@ -105,7 +105,7 @@ Enota je **becquerel**, $1\,\mathrm{Bq} = 1$ razpad na sekundo. Starejša enota 
 
 $$R(t) = R_0\,e^{-\lambda t}.$$
 
-Iz $R = \lambda N$ sledi pomembna posledica: pri enaki aktivnosti ima izotop z daljšim razpolovnim časom **več** jeder. Zato je ${}^{238}\mathrm{U}$ z $t_{1/2} \approx 4{,}5 \cdot 10^9$ let v kamninah prisoten v velikih količinah, a ima majhno aktivnost na gram, ${}^{18}\mathrm{F}$ z $t_{1/2} \approx 110\,\mathrm{min}$ pa ima že v nanogramih aktivnost, primerno za slikanje.
+Iz $R = \lambda N$ sledi pomembna posledica: pri enaki aktivnosti ima izotop z daljšim razpolovnim časom **več** jeder. Zato je ${}^{238}\mathrm{U}$ z $t_{1/2} \approx 4{,}5 \cdot 10^9$ let v kamninah prisoten v velikih količinah, a ima majhno aktivnost na gram, ${}^{18}\mathrm{F}$ z $t_{1/2} \approx 110\,\mathrm{min}$ pa ima že v desetinki nanograma aktivnost, primerno za slikanje.
 
 Razpolovni časi izotopov, ki jih pogosto srečaš v medicinski fiziki, biologiji in datiranju:
 
@@ -174,7 +174,7 @@ $\lambda = \dfrac{\ln 2}{t_{1/2}}$, $N = \dfrac{R}{\lambda}$, $R(t) = R_0\,e^{-\
 3. Masa: $m = N_0 \cdot 31{,}97\,\mathrm{u} \approx 6{,}58 \cdot 10^{13} \cdot 31{,}97 \cdot 1{,}66054 \cdot 10^{-27}\,\mathrm{kg} \approx 3{,}49 \cdot 10^{-12}\,\mathrm{kg}$, torej okoli $3{,}5\,\mathrm{ng}$.
 4. (b) $R = 37\,\mathrm{MBq} \cdot 2^{-30/14{,}27} \approx 37 \cdot 0{,}233\,\mathrm{MBq} \approx 8{,}6\,\mathrm{MBq}$.
 5. (c) Iz $R_m = R_0 \cdot 2^{-t_m/t_{1/2}}$: $t_m = t_{1/2}\log_2(R_0/R_m) = 14{,}27\,\mathrm{d} \cdot \log_2 3700 \approx 14{,}27 \cdot 11{,}85\,\mathrm{d} \approx 169\,\mathrm{d}$.
-6. (d) Pri razpadu $\beta^-$ ima hčerinski atom eno več elektronov v ovojnici, kar atomske mase že upoštevajo, zato $Q = (31{,}973907 - 31{,}972071) \cdot 931{,}494\,\mathrm{MeV} \approx 0{,}001836 \cdot 931{,}494\,\mathrm{MeV} \approx 1{,}71\,\mathrm{MeV}$.
+6. (d) Pri razpadu $\beta^-$ ima hčerinski atom en elektron več v ovojnici, kar atomske mase že upoštevajo, zato $Q = (31{,}973907 - 31{,}972071) \cdot 931{,}494\,\mathrm{MeV} \approx 0{,}001836 \cdot 931{,}494\,\mathrm{MeV} \approx 1{,}71\,\mathrm{MeV}$.
 7. Energija se razdeli med elektron in antinevtrino (odboj jedra je zanemarljiv), zato je $1{,}71\,\mathrm{MeV}$ največja energija elektrona; povprečna je okoli $0{,}7\,\mathrm{MeV}$, približno $40\,\%$ največje.
 8. Odgovor: $\lambda \approx 5{,}62 \cdot 10^{-7}\,\mathrm{s^{-1}}$, $N_0 \approx 6{,}6 \cdot 10^{13}$ jeder z maso le okoli $3{,}5\,\mathrm{ng}$; po $30\,\mathrm{d}$ ostane $8{,}6\,\mathrm{MBq}$, pod $10\,\mathrm{kBq}$ pade po okoli $169$ dneh (skoraj $12$ razpolovnih časov); elektroni imajo največ $1{,}71\,\mathrm{MeV}$, zato za zaščito uporabljamo pleksi steklo in ne svinec, v katerem bi nastalo zavorno sevanje.
 

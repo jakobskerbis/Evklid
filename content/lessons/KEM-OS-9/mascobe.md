@@ -156,7 +156,7 @@ $m_{\text{m}} \approx 44{,}7\,\text{g}$, torej manj kot polovica mase sladkorja.
 
 ## Pogoste napake
 
-- **Maščoba ni maščobna kislina.** Učenec sklepa, da je maščoba kisla, ker ima v imenu »kislina«. Maščoba je ester: skupine $\mathrm{{-}COOH}$ so se porabile za vez z glicerolom, zato je nevtralna.
+- **Maščoba ni maščobna kislina.** Učenec sklepa, da je maščoba kisla, ker nastane iz maščobnih kislin. Maščoba je ester: skupine $\mathrm{{-}COOH}$ so se porabile za vez z glicerolom, zato je nevtralna.
 - **Ena voda namesto treh.** Ker ester iz kisline in alkohola da eno vodo, mnogi tudi pri maščobi odštejejo le $18\,\text{g/mol}$. Glicerol ima tri skupine $\mathrm{{-}OH}$ in tvori tri estrske vezi, zato odidejo tri molekule vode.
 - **Tekoče pomeni nasičeno.** Nekateri mislijo, da je olje tekoče, ker je »polno« vodika. Res je obratno: dvojne vezi upognejo repe, ti se ne zložijo tesno, zato je olje tekoče. Nasičene maščobe so trdne.
 - **Olje se raztopi v vodi in je težje od nje.** V kozarcu se vidi, da olje plava in tvori svojo plast. Nepolarni repi se z vodo ne mešajo, gostota olja je manjša od gostote vode.
@@ -198,7 +198,7 @@ V celičnih membranah so **fosfolipidi**: podobni maščobam, le da je na glicer
 + nenasičena maščoba, tekoča pri sobni temperaturi, rastlinskega izvora
 - nenasičena maščobna kislina, kisla, topna v vodi
 ~ Olje je ester, ne prosta kislina: je nevtralno in se v vodi ne topi.
-> Olivno olje vsebuje veliko dvojnih vezi v repih; repi se ne zložijo tesno, zato je tekoče. Je rastlinsko.
+> Olivno olje ima v repih dvojne vezi; repi se ne zložijo tesno, zato je tekoče. Je rastlinsko.
 
 ? Približno koliko energije prinese žlica olja (okoli $10\,\text{g}$)?
 - okoli $38\,\text{kJ}$
@@ -220,7 +220,7 @@ V celičnih membranah so **fosfolipidi**: podobni maščobam, le da je na glicer
 ~ Olje ne vsebuje vode; maščobe se v vodi sploh ne topijo.
 > Nasičeni ravni repi se tesno zložijo in snov je trdna; upognjeni nenasičeni repi se ne in snov je tekoča.
 
-? Maščoba ima molsko maso $890\,\text{g/mol}$. Pri hidrolizi nastaneta glicerol ($92\,\text{g/mol}$) in tri enake maščobne kisline. Kolikšna je molska masa kisline?
+? Maščoba ima molsko maso $890\,\text{g/mol}$. Pri hidrolizi (razpadu z vodo) nastaneta glicerol ($92\,\text{g/mol}$) in tri enake maščobne kisline. Kolikšna je molska masa kisline?
 - $266\,\text{g/mol}$
 ~ To je $\dfrac{890 - 92}{3}$: pozabil si, da se pri hidrolizi vežejo tri molekule vode.
 + $284\,\text{g/mol}$

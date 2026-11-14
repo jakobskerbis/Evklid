@@ -250,7 +250,7 @@ Ista soba, dve števili, dve enoti. V trgovini zato prodajajo letvice v metrih, 
 - $270\,\text{cm}$
 ~ Tako bi računal pri obsegu ($600 : 2 - 30$). Tu je $600$ ploščina, ne obseg.
 - $18000\,\text{cm}$
-~ Pomnožil si, namesto da bi delil. Iščemo stranico, ki z $30$ da $600$.
+~ Pomnožil si, namesto da bi delil. Iščemo stranico, ki s $30$ da $600$.
 > $b = p : a = 600 : 30 = 20\,\text{cm}$. Preizkus: $30 \cdot 20 = 600$.
 
 ? Kvadratni kolač s stranico $24\,\text{cm}$ razrežemo na kvadratne koščke s stranico $6\,\text{cm}$. Koliko koščkov dobimo?
@@ -261,7 +261,7 @@ Ista soba, dve števili, dve enoti. V trgovini zato prodajajo letvice v metrih, 
 + $16$
 - $24$
 ~ $24$ je dolžina stranice v centimetrih, ne število koščkov.
-> Ob stranici gre $24 : 6 = 4$ koščke, vrst je $4$, skupaj $4 \cdot 4 = 16$. S ploščinami: $576 : 36 = 16$.
+> Ob stranici gredo $24 : 6 = 4$ koščki, vrst je $4$, skupaj $4 \cdot 4 = 16$. S ploščinami: $576 : 36 = 16$.
 
 :::simboli
 o | obseg lika | o = 2 \cdot (a + b) | | kvadrat: o = 4 · a

@@ -146,7 +146,7 @@ $\beta = 3 \cdot \alpha$, $\quad \gamma = 180^\circ - \beta$; pri deljenju ostan
 
 ### Primer 4 – zdaj ti
 
-Opoldne je Sonce najvišje na nebu. Na zemljepisni širini $\varphi$ je 21. junija opoldne na višini $90^\circ - \varphi + 23^\circ 26'$ nad obzorjem, 21. decembra pa na višini $90^\circ - \varphi - 23^\circ 26'$. Kot $23^\circ 26'$ je nagib zemeljske osi. Kako visoko je opoldansko Sonce v Ljubljani ($\varphi = 46^\circ 03'$) ob obeh dnevih? Za koliko je junija višje?
+Opoldne je Sonce najvišje na nebu. Na zemljepisni širini $\varphi$ je 21. junija opoldne na višini $90^\circ - \varphi + 23^\circ 26'$ nad obzorjem, 21. decembra pa na višini $90^\circ - \varphi - 23^\circ 26'$. Kot $23^\circ 26'$ je nagib zemeljske osi. Kako visoko je opoldansko Sonce v Ljubljani ($\varphi = 46^\circ 03'$) na oba dneva? Za koliko je junija višje?
 
 **Podatki:** $\varphi = 46^\circ 03'$, nagib osi $\varepsilon = 23^\circ 26'$
 **Iščemo:** višino Sonca $h_1$ (21. junij), $h_2$ (21. december) in razliko $h_1 - h_2$
@@ -226,7 +226,7 @@ Celotni sistem enot za kote je:
 
 $$1^\circ = 60' = 3600'' \qquad 1' = 60''$$
 
-Pri pretvarjanju minut v decimalni zapis bodi previden. $45' = 0{,}75^\circ$ je končno decimalno število, $20' = \dfrac{20}{60}{}^\circ = \dfrac{1}{3}{}^\circ = 0{,}333\ldots^\circ$ pa ni. Zato je zapis v stopinjah in minutah pogosto bolj natančen od zaokroženega decimalnega zapisa. Če računaš z žepnim računalom, ima ta pogosto posebno tipko za vnos stopinj, minut in sekund.
+Pri pretvarjanju minut v decimalni zapis bodi previden. $45' = 0{,}75^\circ$ je končno decimalno število, $20' = \dfrac{20}{60}{}^\circ = \dfrac{1}{3}{}^\circ = 0{,}333\ldots^\circ$ pa ni. Zato je zapis v stopinjah in minutah pogosto bolj natančen od zaokroženega decimalnega zapisa. Če računaš z žepnim računalom, ima to pogosto posebno tipko za vnos stopinj, minut in sekund.
 
 Zanimivost: ena kotna minuta zemljepisne širine ustreza na zemeljskem površju razdalji približno $1{,}85\,\text{km}$. Iz tega je nastala **navtična milja** ($1852\,\text{m}$), ki jo uporabljajo v pomorstvu in letalstvu.
 
@@ -282,7 +282,7 @@ točka: 0; 0 | O | levo
 ~ To je $3 \cdot 106^\circ 6'$. Iščemo kot, katerega trikratnik je $106^\circ 6'$, zato delimo s $3$.
 > $106^\circ 6' = 105^\circ 66'$; $105 : 3 = 35$ in $66' : 3 = 22'$. Preizkus: $3 \cdot 35^\circ 22' = 105^\circ 66' = 106^\circ 6'$.
 
-? Sonce je na nebu široko približno $32'$. Približno koliko Sončevih kolutov bi zložil v vrsto od obzorja do temena (točke naravnost nad glavo), to je čez $90^\circ$? Rezultat zaokroži na celo število.
+? Sonce je na nebu široko približno $32'$. Približno koliko Sončevih kolutov bi zložil v vrsto od obzorja do nadglavišča (točke naravnost nad glavo), to je čez $90^\circ$? Rezultat zaokroži na celo število.
 = 169 | 2
 ~ 281 | Računal si, kot da ima stopinja $100'$. Pravilno: $90^\circ = 90 \cdot 60' = 5400'$.
 ~ 3 | Stopinj ne smeš deliti z minutami. Najprej pretvori $90^\circ$ v minute.

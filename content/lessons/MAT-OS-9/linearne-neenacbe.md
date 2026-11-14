@@ -267,6 +267,6 @@ Pri prištevanju je drugače: $(b+c)-(a+c)=b-a>0$, zato ostane $a+c<b+c$, ne gle
 
 :::simboli
 x | neznanka | |
-a, b | števili, za kateri velja $a < b$ | |
+a, b | števili, za kateri velja $a < b$ | | | drugje: $a$ je meja rešitve ($x > a$) ali število pred $x$ v izrazu $ax + b$
 c | število, s katerim množimo | | | $c < 0$ obrne znak neenakosti
 :::

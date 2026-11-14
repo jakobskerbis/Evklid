@@ -10,7 +10,7 @@ V trgovini v isto košarico položiš steklenico kisa za $0{,}99$ €, mrežico 
 
 Odgovor je v tem, da sta kis in limonin sok **kisla**, čistilo za odtoke pa je **bazično**. Kisline in baze imajo vsaka svoje lastnosti. Nekatere so tako močne, da razjedajo kožo, kovine ali kamen.
 
-Isto vprašanje si postavljajo inženirji vesoljskih sond. Oblaki planeta Venera so iz drobnih kapljic žveplove kisline. Sonda, ki leti skozi njih, mora biti iz snovi, ki je kislina ne razje.
+Isto vprašanje si postavljajo inženirji vesoljskih sond. Oblaki planeta Venera so iz drobnih kapljic žveplove kisline. Sonda, ki leti skoznje, mora biti iz snovi, ki je kislina ne razje.
 
 Kislino od baze ločimo brez okušanja in tipanja. Pomagajo nam **indikatorji**, snovi, ki z barvo pokažejo, ali je raztopina kisla, bazična ali nevtralna.
 
@@ -28,7 +28,7 @@ Kislino od baze ločimo brez okušanja in tipanja. Pomagajo nam **indikatorji**,
 | ocetna | $\mathrm{CH_3COOH}$ | kis |
 | citronska | $\mathrm{C_6H_8O_7}$ | limone |
 
-Formule večine kislin se začnejo z vodikom (H), to ti pomaga pri prepoznavanju. Izjema je ocetna kislina: vodik, zaradi katerega je kisla, je v formuli $\mathrm{CH_3COOH}$ zapisan na koncu.
+Formule večine kislin se začnejo z vodikom (H), to ti pomaga pri prepoznavanju. Izjema je na primer ocetna kislina: vodik, zaradi katerega je kisla, je v formuli $\mathrm{CH_3COOH}$ zapisan na koncu.
 
 :::premisli
 Voda $\mathrm{H_2O}$ in metan $\mathrm{CH_4}$ imata v formuli vodik. Napovej: ali sta kislini?

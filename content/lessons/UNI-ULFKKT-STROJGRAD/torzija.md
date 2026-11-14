@@ -58,7 +58,7 @@ Največja napetost je na površini ($\rho = d/2$):
 
 $$\tau_{\max} = \frac{T\,d/2}{J} = \frac{16\,T}{\pi d^3}$$
 
-Kot zasuka $\varphi$ dobimo v **radianih**. V stopinje ga pretvorimo z $180^\circ/\pi$. Pri cevi je $\tau_{\max} = \frac{T\,D/2}{J_{\text{cev}}}$. Količnik med $J$ in polmerom zunanje površine imenujemo **polarni odpornostni moment**: $W_\mathrm{p} = J/(d/2)$ pri polni gredi in $W_\mathrm{p} = J_{\text{cev}}/(D/2)$ pri cevi. Tedaj je $\tau_{\max} = T/W_\mathrm{p}$.
+Kot zasuka $\varphi$ dobimo v **radianih**. V stopinje ga pretvorimo s $180^\circ/\pi$. Pri cevi je $\tau_{\max} = \frac{T\,D/2}{J_{\text{cev}}}$. Količnik med $J$ in polmerom zunanje površine imenujemo **polarni odpornostni moment**: $W_\mathrm{p} = J/(d/2)$ pri polni gredi in $W_\mathrm{p} = J_{\text{cev}}/(D/2)$ pri cevi. Tedaj je $\tau_{\max} = T/W_\mathrm{p}$.
 
 **Dimenzioniranje.** Gred mora izpolniti **trdnostni pogoj** $\tau_{\max} \le \tau_\mathrm{dop}$ in pogosto še **togostni pogoj** $\varphi/L \le \theta_\mathrm{dop}$ (dopustni zasuk na meter, npr. $0{,}25^\circ/\mathrm{m}$ pri pogonskih gredeh). Navor pogosto ni podan neposredno, ampak z močjo $P$ in vrtilno frekvenco $n$: iz $P = T\omega$ in $\omega = 2\pi n$ sledi $T = \frac{P}{2\pi n}$.
 
@@ -228,7 +228,7 @@ Ko zasučeš konec gredi za kot $\varphi$, se vse cevi zasučejo za isti kot. Zu
 
 ## Drugače: Uporaba v stroki
 
-- **Mešala in črpalke.** Motor mešala v reaktorju z močjo $5{,}5\,\mathrm{kW}$ pri $150\,\mathrm{min^{-1}}$ obremenjuje gred z $T = P/(2\pi n) \approx 350\,\mathrm{N\,m}$. Gred dimenzioniramo z rezervo, ker utor za moznik povzroči koncentracijo napetosti, ponavljajoči se zagoni pa utrujanje.
+- **Mešala in črpalke.** Motor mešala v reaktorju z močjo $5{,}5\,\mathrm{kW}$ pri $150\,\mathrm{min^{-1}}$ obremenjuje gred s $T = P/(2\pi n) \approx 350\,\mathrm{N\,m}$. Gred dimenzioniramo z rezervo, ker utor za moznik povzroči koncentracijo napetosti, ponavljajoči se zagoni pa utrujanje.
 - **Vzmeti varnostnih ventilov.** Žica vijačne vzmeti je obremenjena pretežno torzijsko, $\tau \approx \frac{8FD_\mathrm{v}}{\pi d^3}$ ($D_\mathrm{v}$ je srednji premer vzmeti), s popravnim faktorjem za ukrivljenost. Od nje je odvisno, pri katerem tlaku se ventil odpre.
 - **Merjenje navora.** Merilni lističi, nalepljeni na gred pod $\pm 45^\circ$, merijo glavni deformaciji; iz njiju dobimo $\gamma$ in navor. Tako delujejo merilne gredi na preizkuševališčih.
 - **Preiskava lomov.** Žilava gred, porušena s torzijo, ima gladek prečen prelom; krhka (litina) poči po vijačnici pod $45^\circ$, kot kreda med prsti. Pri preiskavi nesreče oblika preloma pove, ali je šlo za preobremenitev z navorom ali za utrujanje.

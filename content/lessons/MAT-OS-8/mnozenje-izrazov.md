@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Tina z družino načrtuje štiridnevno potovanje po Istri. Vsak dan se bodo iz kampa odpeljali na izlet: nekaj kilometrov po avtocesti, nato pa še $35\,\text{km}$ po ozkih obalnih cestah. Koliko meri avtocestni del, še ne vedo, zato ga Tina na zemljevidu označi kar s črko $x$.
+Tina z družino načrtuje štiridnevno potovanje po Italiji. Vsak dan se bodo odpeljali do naslednjega kampa: nekaj kilometrov po avtocesti, nato pa še $35\,\text{km}$ po ozkih obalnih cestah. Koliko meri avtocestni del, še ne vedo, zato ga Tina na zemljevidu označi kar s črko $x$.
 
 Oče jo prosi za izraz, ki pove, koliko kilometrov bodo prevozili v štirih dneh. Tina zapiše $4 \cdot (x + 35)$. Brat Miha jo popravi: »To je isto kot $4x + 35$.«
 
@@ -133,7 +133,7 @@ $p = (x + 8)(x + 5) - 3x$
 2. Odštejemo ploščino legende $3x$: $x^2 + 13x + 40 - 3x = x^2 + 10x + 40$.
 3. Vstavimo $x = 20$: $20^2 + 10 \cdot 20 + 40 = 400 + 200 + 40 = 640$.
 4. Preizkus brez izraza: list meri $28 \cdot 25 = 700\,\text{cm}^2$, legenda $20 \cdot 3 = 60\,\text{cm}^2$, razlika $700 - 60 = 640$.
-5. Odgovor: za zemljevid ostane $(x^2 + 10x + 40)\,\text{cm}^2$, pri $x = 20$ to je $640\,\text{cm}^2$.
+5. Odgovor: za zemljevid ostane $(x^2 + 10x + 40)\,\text{cm}^2$, pri $x = 20$ je to $640\,\text{cm}^2$.
 
 ### Primer 4: zdaj ti
 
@@ -163,7 +163,7 @@ $-2a^2 + 11a - 15$, ker je $2a^2 - 4a^2 = -2a^2$ in $7a + 4a = 11a$. Preizkus z 
 ## Pogoste napake
 
 - **Pomnožen le prvi člen.** »$4(x + 35) = 4x + 35$.« Število pred oklepajem pomnoži celo vsoto, torej vsak njen del, sicer del poti izgubiš. Popravek: od števila pred oklepajem nariši lok do vsakega člena; lokov mora biti toliko, kot je členov.
-- **Samo prvi s prvim in zadnji z zadnjim.** »$(x + 3)(x + 4) = x^2 + 12$.« Tako dobiš le dva od štirih delov pravokotnika, manjkata $4x$ in $3x$. Popravek: pri dveh dvočlenikih preštej produkte, biti jih mora štiri. Ista napaka je »$(x + 3)^2 = x^2 + 9$«.
+- **Samo prvi s prvim in zadnji z zadnjim.** »$(x + 3)(x + 4) = x^2 + 12$.« Tako dobiš le dva od štirih delov pravokotnika, manjkata $4x$ in $3x$. Popravek: pri dveh dvočlenikih preštej produkte, biti morajo štirje. Ista napaka je »$(x + 3)^2 = x^2 + 9$«.
 - **Izgubljen minus.** »Zadnji člen produkta $(x - 3)(x + 2)$ je $+6$.« Ni, ker je $-3 \cdot 2 = -6$. Popravek: predznak prepiši skupaj s členom, šele nato množi.
 - **Minus pred oklepajem zamenja le prvi predznak.** »$5 - (x - 3) = 5 - x - 3$.« Odšteti moraš celoten oklepaj, zato se zamenjajo vsi predznaki: $5 - x + 3 = 8 - x$. Popravek: najprej prepiši oklepaj z obrnjenimi predznaki, nato računaj.
 - **Združevanje nepodobnih členov.** »$x^2 + 7x = 8x^2$« ali »$x \cdot x = 2x$«. Člena $x^2$ in $x$ nista podobna, $x \cdot x$ pa je $x^2$. Popravek: seštevaš le člene z enakim črkovnim delom.

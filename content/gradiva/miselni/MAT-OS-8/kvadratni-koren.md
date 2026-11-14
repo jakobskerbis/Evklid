@@ -11,7 +11,7 @@ stanje: osnutek
   - $\sqrt{-9}$ ne obstaja
 - Popolni kvadrati
   - $1, 4, 9, \dots, 225$
-  - nikoli se ne končajo na $2$, $3$, $7$, $8$
+  - njihov koren je naravno število
 - Decimalna števila
   - $\sqrt{0{,}49} = 0{,}7$
   - napaka: $0{,}07$, ker je $0{,}07^2 = 0{,}0049$

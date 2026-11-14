@@ -244,7 +244,7 @@ za neki $\xi_n$ med $x_n$ in $r$. Zato obstaja okolica ničle, v kateri metoda k
 + Približki so se ustalili: zadnji popravek je bil manjši od izbrane tolerance.
 - Funkcija ima na krajiščih intervala različna predznaka.
 ~ To je začetni pogoj za bisekcijo, ne pomen konvergence. Newton sploh ne dela z intervalom.
-- Zanka je izvedla vseh dovoljenih korakov.
+- Zanka je izvedla vse dovoljene korake.
 ~ Ravno nasprotno: če zmanjka korakov, metoda ni konvergirala in program javi napako.
 > Konvergenca pomeni, da se zaporedje približkov približuje ničli; v programu to prepoznamo po tem, da je popravek $|x_{n+1} - x_n|$ padel pod toleranco.
 
@@ -274,9 +274,9 @@ za neki $\xi_n$ med $x_n$ in $r$. Zato obstaja okolica ničle, v kateri metoda k
 
 ? Bisekcijo začnemo na $[0, 1]$. Koliko korakov potrebujemo, da je širina intervala največ $0{,}001$?
 - $3$
-~ En korak ne prinese cele decimalke, le razpolovi interval. Za decimalko je treba okoli $3{,}3$ korakov.
+~ En korak ne prinese cele decimalke, le razpolovi interval. Za decimalko je treba okoli $3{,}3$ koraka.
 - $1000$
-~ To bi bilo tabeliranje s korakom $0{,}001$. Bisekcija vsakič prepolovi interval, zato raste eksponentno $2^n$.
+~ To bi bilo tabeliranje s korakom $0{,}001$. Bisekcija vsakič prepolovi interval, zato natančnost raste eksponentno, kot $2^n$.
 + $10$
 > $2^n \ge \frac{1}{0{,}001} = 1000$. Ker je $2^9 = 512$ premalo in $2^{10} = 1024$ dovolj, je $n = 10$.
 

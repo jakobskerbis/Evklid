@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ekonomisti in teoretiki iger poznajo postopek **iterativnega izločanja strogo dominiranih strategij**: v vsakem krogu iz igre odstranimo strategije, ki so slabše od neke druge ne glede na to, kaj igrajo nasprotniki, in ponavljamo. V končni igri se postopek ustavi po končno mnogo krogih. Pri igrah z neskončno mnogo strategijami (na primer ponudbe cen v neskončno majhnih korakih) pa so našli primere, kjer se po krogih $0, 1, 2, \dots$ postopek še ne ustavi: ko »opravimo vse kroge z naravnimi števili«, se v novem stanju pokažejo nove dominirane strategije. Potreben je krog *po vseh naravnih številih*, nato še eden in tako naprej.
+Ekonomisti in teoretiki iger poznajo postopek **iterativnega izločanja strogo dominiranih strategij**: v vsakem krogu iz igre odstranimo strategije, ki so slabše od neke druge ne glede na to, kaj igrajo nasprotniki, in ponavljamo. V končni igri se postopek ustavi po končno mnogo krogih. Pri igrah z neskončno mnogo strategijami (na primer ponudbe cen v poljubno majhnih korakih) pa so našli primere, kjer se po krogih $0, 1, 2, \dots$ postopek še ne ustavi: ko »opravimo vse kroge z naravnimi števili«, se v novem stanju pokažejo nove dominirane strategije. Potreben je krog *po vseh naravnih številih*, nato še eden in tako naprej.
 
 Naravna števila tu odpovejo kot števec: ne poznajo »koraka po vseh korakih«. Za takšne postopke potrebujemo **ordinalna števila**, ki štejejo *mesto* v vrsti, tudi onkraj neskončnosti, in **transfinitno indukcijo**, s katero o njih dokazujemo. Ob tem natančno ločimo dve vprašanji, ki ju pri končnih množicah ne ločimo: *koliko* je elementov (kardinalno število) in *v kakšnem vrstnem redu* so (ordinalno število).
 
@@ -32,7 +32,7 @@ Velja tudi obrat (za dokaz potrebujemo šibko obliko aksioma izbire), zato si do
 
 ### Blok 2: izomorfizem in ključna lema
 
-Urejenosti $(A, <)$ in $(B, \prec)$ sta **izomorfni**, če obstaja bijekcija $f\colon A \to B$, da iz $x < y$ sledi $f(x) \prec f(y)$. Izomorfne urejenosti imajo isti **tip urejenosti**.
+Linearni urejenosti $(A, <)$ in $(B, \prec)$ sta **izomorfni**, če obstaja bijekcija $f\colon A \to B$, da iz $x < y$ sledi $f(x) \prec f(y)$. Izomorfne urejenosti imajo isti **tip urejenosti**.
 
 **Lema.** Če je $(W, <)$ dobro urejena in $f\colon W \to W$ strogo naraščajoča, je $f(x) \ge x$ za vsak $x \in W$.
 
@@ -283,13 +283,13 @@ Kardinalno števec vidi le, koliko je črtic; vse štiri slike imajo $\aleph_0$ 
 - **Teorija iger in ekonomija.** Iterativno izločanje dominiranih strategij v neskončnih igrah lahko potrebuje transfinitno mnogo krogov; dokaz, da se postopek ustavi pri nekem ordinalu, je transfinitna indukcija.
 - **Računalništvo.** Dokaz, da se program ustavi, pogosto priredi stanju ordinal, ki se z vsakim korakom zmanjša. Ker padajoče zaporedje ordinalov ni neskončno, se program ustavi. Za izraze, ki se pri poenostavljanju razširijo, je potrebna mera v ordinalih do $\omega^\omega$ ali višje.
 - **Matematična logika.** Gentzen je s transfinitno indukcijo do ordinala $\varepsilon_0$ dokazal neprotislovnost Peanove aritmetike; »moč« teorij se meri z ordinali.
-- **Optimizacija in analiza.** Cantor-Bendixsonov postopek odstranjevanja izoliranih točk zaprte množice teče po ordinalih; podobni postopki se pojavijo v teoriji mere in pri iteracijah, ki jih ne moremo ustaviti v končno korakih.
+- **Optimizacija in analiza.** Cantor-Bendixsonov postopek odstranjevanja izoliranih točk zaprte množice teče po ordinalih; podobni postopki se pojavijo v teoriji mere in pri iteracijah, ki jih ne moremo ustaviti v končno mnogo korakih.
 
 ## Drugače: Bolj natančno
 
 **Dokaz Hessenbergovega izreka (skica).** Na $\kappa \times \kappa$ definiramo urejenost: $(\alpha, \beta) \prec (\gamma, \delta)$, če je $\max(\alpha, \beta) < \max(\gamma, \delta)$, ali je maksimum enak in je $(\alpha, \beta)$ leksikografsko manjši. To je dobra urejenost. Indukcija po neskončnih kardinalih: če $\kappa \cdot \kappa > \kappa$, ima njen tip začetni odsek dolžine $\kappa$, ki je vsebovan v nekem kvadratu $\gamma \times \gamma$ z $\lvert \gamma \rvert < \kappa$. Če je $\gamma$ končen, je $\gamma \times \gamma$ končna; sicer je po indukcijski predpostavki $\lvert \gamma \times \gamma \rvert = \lvert \gamma \rvert < \kappa$. Oboje je protislovje.
 
-**Kardinalna potenca brez aksioma izbire.** Brez aksioma izbire nekatere množice niso ekvipotentne nobenemu ordinalu; tedaj $\lvert A \rvert$ ni nujno kardinal v smislu te lekcije in moči niso vse primerljive. Aksiom izbire je enakovreden trditvi, da je vsaka množica dobro uredljiva (Zermelov izrek); to obravnava naslednja lekcija.
+**Kardinalna števila brez aksioma izbire.** Brez aksioma izbire nekatere množice niso ekvipotentne nobenemu ordinalu; tedaj $\lvert A \rvert$ ni nujno kardinal v smislu te lekcije in moči niso vse primerljive. Aksiom izbire je enakovreden trditvi, da je vsaka množica dobro uredljiva (Zermelov izrek); to obravnava naslednja lekcija.
 
 ## Preveri se
 

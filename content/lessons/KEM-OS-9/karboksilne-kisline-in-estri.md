@@ -42,7 +42,7 @@ Kako se imenuje kislina $\mathrm{C_4H_9COOH}$? Napovej, preden pogledaš.
 Pentanojska kislina. Atomov ogljika je pet: štirje v $\mathrm{C_4H_9}$ in eden v skupini $\mathrm{{-}COOH}$. Če bi pozabil na ogljik v skupini, bi napačno rekel »butanojska«.
 :::
 
-**3. Ocetna kislina in kis.** Kis je vodna raztopina ocetne kisline, navadno z $4$ do $9\,\%$ kisline. Nastaja iz vina ali jabolčnika. Bakterije ocetnega kisa z dovajanjem kisika iz zraka pretvorijo etanol v ocetno kislino. Temu rečemo **ocetnokislinsko vrenje**:
+**3. Ocetna kislina in kis.** Kis je vodna raztopina ocetne kisline, navadno z $4$ do $9\,\%$ kisline. Nastaja iz vina ali jabolčnika. Ocetnokislinske bakterije s kisikom iz zraka pretvorijo etanol v ocetno kislino. Temu rečemo **ocetnokislinsko vrenje**:
 
 $$\mathrm{C_2H_5OH + O_2 \rightarrow CH_3COOH + H_2O}$$
 

@@ -181,7 +181,7 @@ $I_n = 2I_{min} = 40\,\mathrm{W/m^2}$, $I_p = I_{max} - I_{min} = 30\,\mathrm{W/
 - **$\cos\theta$ namesto $\cos^2\theta$.** Polarizator projicira amplitudo, gostota toka pa je sorazmerna s kvadratom amplitude. Pri $60^\circ$ prepusti $25\,\%$, ne $50\,\%$.
 - **Vsak filter samo slabi, zato dodatni ne more pomagati.** Med prekrižanima polarizatorjema dodatni poševni polarizator poveča prepuščeno svetlobo z nič na do $I_0/8$, ker spremeni smer polarizacije.
 - **Brewstrov kot iz $\sin\theta_B = n_2/n_1$.** Ta zveza spominja na mejni kot totalnega odboja. Pravilno je $\tan\theta_B = n_2/n_1$; za vodo $53{,}1^\circ$, ne $\sin^{-1}$ česar koli.
-- **Pri Brewstrovem kotu se nič ne odbije.** Odbije se le p-komponenta ne; s-komponenta se odbije (pri steklu okoli $15\,\%$ njene gostote toka). Odbita svetloba je zato šibka, a v celoti polarizirana.
+- **Pri Brewstrovem kotu se nič ne odbije.** Ne odbije se le p-komponenta; s-komponenta se odbije (pri steklu okoli $15\,\%$ njene gostote toka). Odbita svetloba je zato šibka, a v celoti polarizirana.
 
 ## Povzetek
 
@@ -204,15 +204,15 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Pravi polarizatorji niso idealni: vsak prepusti le $90\,\%$ gostote toka komponente vzdolž prepustne osi (pravokotne komponente pa nič). Nepolarizirana svetloba vpada na verigo prekrižanih polarizatorjev, med katere vstaviš $N - 1$ vmesnih, tako da se smer osi spreminja v $N$ enakih korakih (skupaj je $N + 1$ polarizatorjev). Zapiši prepuščeni delež $I/I_0$ kot funkcijo $N$, utemelji, zakaj ima optimum, in poišči $N$, pri katerem je prepuščeni delež največji.
+Pravi polarizatorji niso idealni: vsak prepusti le $90\,\%$ gostote toka komponente vzdolž prepustne osi (pravokotne komponente pa nič). Nepolarizirana svetloba vpada na dva prekrižana polarizatorja, med katera vstaviš $N - 1$ vmesnih, tako da se smer osi spreminja v $N$ enakih korakih (skupaj je $N + 1$ polarizatorjev). Zapiši prepuščeni delež $I/I_0$ kot funkcijo $N$, utemelji, zakaj ima optimum, in poišči $N$, pri katerem je prepuščeni delež največji.
 
 **Rešitev:**
 
 1. Prvi polarizator prepusti $0{,}90 \cdot I_0/2$, vsak od preostalih $N$ pa delež $0{,}90\cos^2(90^\circ/N)$.
 2. Zato $\dfrac{I}{I_0} = \dfrac12 \cdot 0{,}90^{N+1}\cos^{2N}\dfrac{90^\circ}{N}$.
-3. Faktor $0{,}90^{N+1}$ z $N$ pada (izgube), faktor $\cos^{2N}(90^\circ/N)$ pa narašča proti $1$ (manjši zasuki). Produkt padajoče in naraščajoče funkcije ima vmes največjo vrednost.
+3. Faktor $0{,}90^{N+1}$ z $N$ pada (izgube), faktor $\cos^{2N}(90^\circ/N)$ pa narašča proti $1$ (manjši zasuki). Pri $N = 1$ je produkt nič ($\cos 90^\circ = 0$), pri velikih $N$ pa gre zaradi izgub spet proti nič, zato ima vmes največjo vrednost.
 4. Vrednosti: $N = 3$: $0{,}5 \cdot 0{,}6561 \cdot 0{,}4219 \approx 0{,}138$; $N = 4$: $0{,}5 \cdot 0{,}5905 \cdot 0{,}5308 \approx 0{,}157$; $N = 5$: $0{,}5 \cdot 0{,}5314 \cdot 0{,}6054 \approx 0{,}161$; $N = 6$: $0{,}5 \cdot 0{,}4783 \cdot 0{,}6597 \approx 0{,}158$.
-5. Za $N \ge 6$ vrednosti padajo naprej (pri $N = 10$ le še $0{,}123$), ker izgube rastejo hitreje, kot se zmanjšujejo zasuki.
+5. Za $N \ge 6$ vrednosti padajo naprej (pri $N = 10$ le še $0{,}122$), ker izgube rastejo hitreje, kot se zmanjšujejo zasuki.
 6. Odgovor: $I/I_0 = \tfrac12 \cdot 0{,}9^{N+1}\cos^{2N}(90^\circ/N)$; največ, okoli $16{,}1\,\%$, prepusti veriga s $N = 5$ koraki po $18^\circ$, torej s štirimi vmesnimi polarizatorji. Z idealnimi bi bilo $30{,}3\,\%$.
 
 ### Naloga 2
@@ -224,7 +224,7 @@ Natančno navedi in izpelji Malusov zakon. Nato dokaži Brewstrov zakon $\tan\th
 1. Malusov zakon: za linearno polarizirano svetlobo z gostoto toka $I_0$, katere smer polarizacije oklepa kot $\theta$ s prepustno osjo idealnega polarizatorja, je $I = I_0\cos^2\theta$. Izpeljava: prepuščena je komponenta $E_0\cos\theta$, $I \propto E^2$.
 2. Brewster: $r_p = \tan(\theta_1 - \theta_2)/\tan(\theta_1 + \theta_2)$ je nič, ko je $\theta_1 + \theta_2 = 90^\circ$ (in $\theta_1 \ne \theta_2$, torej $n_1 \ne n_2$).
 3. Lomni zakon z $\sin\theta_2 = \sin(90^\circ - \theta_1) = \cos\theta_1$ da $n_1\sin\theta_B = n_2\cos\theta_B$, torej $\tan\theta_B = n_2/n_1$.
-4. Pravokotnost: odbiti žarek oklepa z mejno ploskvijo kot $90^\circ - \theta_B$, lomljeni (na drugi strani pravokotnice) kot $90^\circ - \theta_2$. Kot med žarkoma je zato $180^\circ - (90^\circ - \theta_B) - (90^\circ - \theta_2) = \theta_B + \theta_2 = 90^\circ$.
+4. Pravokotnost: odbiti žarek oklepa z mejno ploskvijo kot $90^\circ - \theta_B$, lomljeni (na drugi strani pravokotnice) kot $90^\circ - \theta_2$. Kot med žarkoma je zato $(90^\circ - \theta_B) + (90^\circ - \theta_2) = 180^\circ - (\theta_B + \theta_2) = 90^\circ$.
 5. Voda–steklo: $\tan\theta_B = 1{,}52/1{,}33 \approx 1{,}143$, zato $\theta_B \approx 48{,}8^\circ$. Kot obstaja za vsak par $n_1 \ne n_2$, saj $\tan$ zavzame vse pozitivne vrednosti; ker je $n_2 > n_1$, totalnega odboja ni.
 6. Odgovor: $\theta_B \approx 48{,}8^\circ$; pri tem kotu je od vode na steklo odbita svetloba povsem s-polarizirana.
 

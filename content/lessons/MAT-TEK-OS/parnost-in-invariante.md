@@ -7,7 +7,7 @@ avtor: AI
 
 Imaš šahovnico $8 \times 8$ in $31$ domin. Vsaka domina pokrije natanko dve sosednji polji. Iz šahovnice izrežeš dve nasprotni kotni polji, npr. levo spodaj in desno zgoraj. Ostane $64 - 2 = 62$ polj, domine pa pokrijejo $31 \cdot 2 = 62$ polj. Števila se ujemajo. Ali lahko z dominami pokriješ celo okrnjeno šahovnico?
 
-Lahko poskušaš ure in ure, pa ne bo šlo. Toda »ni mi uspelo« ni dokaz. Morda si le premalo poskušal. V tej lekciji se naučiš, kako v nekaj vrsticah **dokažeš**, da nekaj ni mogoče. Orodje se imenuje **invarianta**, na tekmovanjih pa ga srečaš pri kovancih, številih na tabli, šahovnicah in igrah.
+Lahko poskušaš ure in ure, pa ne bo šlo. Toda »ni mi uspelo« ni dokaz. Morda si le premalo poskušal. Tu se naučiš, kako v nekaj vrsticah **dokažeš**, da nekaj ni mogoče. Orodje se imenuje **invarianta**, na tekmovanjih pa ga srečaš pri kovancih, številih na tabli, šahovnicah in igrah.
 
 ## Razlaga
 
@@ -198,7 +198,7 @@ Tudi skakač vsako potezo zamenja barvo polja. Po lihem številu potez je na dru
 :::premisli
 Iz šahovnice $8 \times 8$ zdaj izrežemo dva kota v isti vrstici (levo spodaj in desno spodaj). Ali barvanje dokaže, da pokritje ni mogoče? Napovej, nato preveri.
 ---
-Ne. Kota v isti vrstici sta različnih barv, ker ju loči $7$ polj, zato ostane $31$ temnih in $31$ belih polj. Barvanje ne prepove ničesar. Pokritje tu obstaja: preostalih $6$ polj spodnje vrstice pokrijejo $3$ vodoravne domine, vsako od ostalih $7$ vrstic pa $4$ domine. Skupaj $3 + 7 \cdot 4 = 31$ domin.
+Ne. Kota v isti vrstici sta različnih barv, ker sta $7$ korakov narazen, zato ostane $31$ temnih in $31$ belih polj. Barvanje ne prepove ničesar. Pokritje tu obstaja: preostalih $6$ polj spodnje vrstice pokrijejo $3$ vodoravne domine, vsako od ostalih $7$ vrstic pa $4$ domine. Skupaj $3 + 7 \cdot 4 = 31$ domin.
 :::
 
 V **simulaciji spodaj** (»Barvanje šahovnice in domine«) je tabla $6 \times 6$ brez dveh nasprotnih kotov. Preberi, koliko je belih in koliko temnih polj. Nato klikni en izrezan kot, da ga vrneš, in izreži polje tik ob njem. Opazuj, kako se števili izenačita in kdaj tlakovanje postane mogoče.
@@ -284,7 +284,7 @@ Ena domina pokrije eno temno in eno belo polje; potrebno je enako število temni
 
 **Rešitev:**
 
-1. Pobarvamo šahovsko, kote temno. V vrsticah se izmenjujejo vrstice s $4$ in $3$ temnimi polji, zato je temnih $4 + 3 + 4 + 3 + 4 + 3 + 4 = 25$ in belih $49 - 25 = 24$.
+1. Pobarvamo šahovsko, kote temno. Izmenjujejo se vrstice s $4$ in s $3$ temnimi polji, zato je temnih $4 + 3 + 4 + 3 + 4 + 3 + 4 = 25$ in belih $49 - 25 = 24$.
 2. Polje ob kotu je sosednje kotu, torej belo.
 3. Izračunaj sam, koliko temnih in koliko belih polj ostane, in sklepaj.
 
@@ -300,7 +300,7 @@ Ostane $25$ temnih in $24 - 1 = 23$ belih polj, skupaj $48$. Za $48$ polj bi pot
 - **»Invarianta se ujema, torej gre.«** Invarianta da le pogoj, ki mora veljati. Če velja, je cilj morda dosegljiv, ni pa nujno. Popravek: ko se invarianta ujema, pokaži konkretno pot (npr. razporeditev domin) ali poišči drugo invarianto.
 - **Napačna parnost vsote:** »liho $+$ liho je liho«. Npr. $3 + 5 = 8$, kar je sodo. Popravek: štej lihe sumande. Če jih je liho mnogo, je vsota liha, sicer soda.
 - **Invarianta je vzeta kar količina, ki se spreminja.** Učenec opazuje število grbov in ugotovi »spreminja se, torej ni invariante«. Popravek: če se količina spreminja vedno za sodo število, opazuj njeno parnost.
-- **Napačno štetje barv.** Pri tabli z lihim robom ($5 \times 5$, $7 \times 7$) učenec misli, da je barv enako. Popravek: kotna polja so iste barve in te barve je za eno polje več.
+- **Napačno štetje barv.** Pri tabli z lihim robom ($5 \times 5$, $7 \times 7$) učenec misli, da je polj obeh barv enako. Popravek: kotna polja so iste barve in te barve je za eno polje več.
 
 ## Povzetek
 
@@ -332,7 +332,7 @@ Pri kovancih iz primera 1: korak spremeni $g$ za $-2$, $0$ ali $+2$; začetek $g
 
 ## Drugače: Bolj natančno
 
-Parnost je ostanek pri deljenju z $2$. Včasih ta ne zadošča in pomaga ostanek pri deljenju s $3$ ali $4$. Primer: tablo $10 \times 10$ bi radi pokrili s ploščicami $1 \times 4$. Šahovsko barvanje tu ne pomaga, ker ploščica pokrije dve temni in dve beli polji. Pomaga pa barvanje s štirimi barvami po diagonalah (barva polja je ostanek $r + s$ pri deljenju s $4$, kjer sta $r$ in $s$ številki vrstice in stolpca). Vsaka ploščica pokrije po eno polje vsake barve, barv na tabli pa ni enako. To boš podrobneje spoznal pri deljivosti in ostankih.
+Parnost je ostanek pri deljenju z $2$. Včasih ta ne zadošča in pomaga ostanek pri deljenju s $3$ ali $4$. Primer: tablo $10 \times 10$ bi radi pokrili s ploščicami $1 \times 4$. Šahovsko barvanje tu ne pomaga, ker ploščica pokrije dve temni in dve beli polji. Pomaga pa barvanje s štirimi barvami po diagonalah (barva polja je ostanek vsote $r + s$ pri deljenju s $4$, kjer sta $r$ in $s$ številki vrstice in stolpca). Vsaka ploščica pokrije po eno polje vsake barve, polj posameznih barv na tabli pa ni enako. To boš podrobneje spoznal pri deljivosti in ostankih.
 
 Sorodno orodje je **monovarianta**: količina, ki se pri vsakem koraku samo poveča (ali samo zmanjša). Z njo dokažeš, da se postopek nekoč ustavi.
 
@@ -356,9 +356,9 @@ Sorodno orodje je **monovarianta**: količina, ki se pri vsakem koraku samo pove
 
 ? Pri tabli brez dveh polj šahovsko barvanje pokaže $31$ temnih in $31$ belih polj. Kaj sledi?
 - Pokritje z dominami gotovo obstaja.
-~ Enako število barv je le pogoj. Polja so lahko razporejena tako, da domin vseeno ne položiš.
+~ Enako število polj obeh barv je le pogoj. Polja so lahko razporejena tako, da domin vseeno ne položiš.
 - Pokritje z dominami ni mogoče.
-~ Barvanje prepove pokritje le, če je barv različno število. Tu ne prepove ničesar.
+~ Barvanje prepove pokritje le, če je polj ene barve več kot polj druge. Tu ne prepove ničesar.
 + Barvanje ne odloči; pokritje moramo pokazati ali najti drug razlog, da ga ni.
 > Invarianta dokaže le »ne gre«, kadar se vrednosti razlikujeta. Ko se ujemata, moramo pot (pokritje) pokazati.
 

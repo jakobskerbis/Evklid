@@ -152,7 +152,7 @@ $S = \int_a^b \big(f(x) - g(x)\big)\, dx$, kjer je $f \ge g$ na $[a, b]$, meji $
 
 ### Primer 3 (težji)
 
-Lik med grafom $f(x) = \sqrt{x}$, osjo $x$ in premico $x = 4$ zavrtimo okoli osi $x$. Dolžine so v decimetrih. Nastalo posodo postavimo pokonci, s temenom navzdol, tako da je $x$ višina nad dnom. Izračunaj prostornino posode v litrih in povprečno ploščino prečnega prereza. Do katere višine sega voda, ko je posoda polna do polovice prostornine? Kako hitro se dviga gladina pri višini $2\,\mathrm{dm}$, če dotekata $0{,}5\,\mathrm{L/s}$?
+Lik med grafom $f(x) = \sqrt{x}$, osjo $x$ in premico $x = 4$ zavrtimo okoli osi $x$. Dolžine so v decimetrih. Nastalo posodo postavimo pokonci, s temenom navzdol, tako da je $x$ višina nad dnom. Izračunaj prostornino posode v litrih in povprečno ploščino prečnega prereza. Do katere višine sega voda, ko je posoda polna do polovice prostornine? Kako hitro se dviga gladina pri višini $2\,\mathrm{dm}$, če doteka $0{,}5\,\mathrm{L/s}$?
 
 **Podatki:** $f(x) = \sqrt{x}$, interval $[0, 4]$, enota dolžine $1\,\mathrm{dm}$, $1\,\mathrm{dm^3} = 1\,\mathrm{L}$, dotok $\frac{dV}{dt} = 0{,}5\,\mathrm{L/s}$
 **Iščemo:** prostornino $V$, povprečno ploščino prereza $\bar A$, višino $h_{1/2}$ pri polovični prostornini in hitrost dviganja gladine $\frac{dh}{dt}$ pri $h = 2\,\mathrm{dm}$
@@ -193,7 +193,7 @@ $h = \int_0^2 i(t)\, dt$ (Newton-Leibniz: $F(b) - F(a)$); $\bar i = \dfrac{1}{b 
 :::premisli
 Koliko dežja pade in kolikšna je povprečna jakost?
 ---
-$h = F(2) - F(0) = 12 - 8 - 0 = 4\,\mathrm{mm}$, kar je $4$ litre vode na kvadratni meter. Povprečna jakost je $\bar i = \frac{4\,\mathrm{mm}}{2\,\mathrm{h}} = 2\,\mathrm{mm/h}$, manj od največje $i(1) = 3\,\mathrm{mm/h}$.
+$h = F(2) - F(0) = 12 - 8 - 0 = 4\,\mathrm{mm}$, kar so $4$ litri vode na kvadratni meter. Povprečna jakost je $\bar i = \frac{4\,\mathrm{mm}}{2\,\mathrm{h}} = 2\,\mathrm{mm/h}$, manj od največje $i(1) = 3\,\mathrm{mm/h}$.
 :::
 
 ## Pogoste napake
@@ -270,7 +270,7 @@ Utemelji, ali velja: če je $f$ zvezna in nenegativna na $[a, b]$ in je $\int_a^
 
 Nariši graf $y = x^2$ na $[0, 1]$ in pod njim štiri enako široke pravokotnike s širino $0{,}25$. Če višino vzameš v **desnem** krajišču vsakega podintervala, pravokotniki segajo čez graf; njihova vsota je **zgornja ocena**. Če višino vzameš v **levem** krajišču, so pravokotniki pod grafom; dobiš **spodnjo oceno**. Prava ploščina je vmes.
 
-Ko podintervale ožamo, se »stopnice« vse bolj prilegajo krivulji in razlika med zgornjo in spodnjo oceno izgine. Ta skupna limita je integral.
+Ko podintervale ožimo, se »stopnice« vse bolj prilegajo krivulji in razlika med zgornjo in spodnjo oceno izgine. Ta skupna limita je integral.
 
 Pri ploščini med grafoma si predstavljaj tanke navpične trakove: vsak ima višino $f(x) - g(x)$ (od spodnje do zgornje krivulje) in širino $dx$. Pri vrtenini pa je vsak trak zavrten v tanek kovanec s polmerom $f(x)$ in debelino $dx$; njegova prostornina je $\pi f(x)^2\, dx$.
 
@@ -367,7 +367,7 @@ i | zaporedna številka podintervala | | | i = 1, …, n
 F | primitivna funkcija funkcije f | F' = f |
 F' | odvod primitivne funkcije | F' = f |
 t | spremenljivka pod integralom | | | v primeru z zdravilom čas v urah
-h | prirastek spremenljivke x; v primeru 4 višina padavin | | | h ≠ 0, nato h → 0
+h | prirastek spremenljivke x; v primeru 3 višina gladine, v primeru 4 višina padavin | | | h ≠ 0, nato h → 0
 i | jakost padavin | | mm/h | v primeru 4
 \bar i | povprečna jakost padavin | \bar i = \frac{1}{b - a} \int_a^b i(t)\, dt | mm/h |
 \xi_h | točka med x in x + h | |

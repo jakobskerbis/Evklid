@@ -611,7 +611,7 @@ function enacbe(el) {
 // ------------------------------------------------------------ pH
 const SUBSTANCES = [
   ["želodčna kislina", 1.5], ["limonin sok", 2.4], ["kokakola", 2.5], ["kis", 2.9], ["pomarančni sok", 3.5], ["kava", 5], ["mleko", 6.6],
-  ["destilirana voda", 7], ["kri", 7.4], ["morska voda", 8.1], ["raztopina sode bikarbone", 8.3], ["milnica", 10], ["amoniak (čistilo)", 11.6], ["belilo", 12.5], ["raztopina NaOH", 14],
+  ["destilirana voda", 7], ["kri", 7.4], ["morska voda", 8.1], ["raztopina sode bikarbone", 8.3], ["milnica", 10], ["amonijak (čistilo)", 11.6], ["belilo", 12.5], ["raztopina NaOH", 14],
 ];
 // Barve univerzalnega indikatorja (približno).
 const PH_COLORS = ["#d7191c", "#e8402a", "#f46d43", "#f99c4d", "#fdc160", "#fee08b", "#e6f08f", "#a6d96a", "#66bd63", "#36a65a", "#1a9850", "#2b8cbe", "#3a5fb5", "#5a3fa0", "#6a2c91"];

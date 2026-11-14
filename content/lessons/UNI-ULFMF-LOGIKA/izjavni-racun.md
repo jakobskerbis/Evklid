@@ -193,13 +193,13 @@ Modus tollens: $p \Rightarrow q, \neg q \models \neg p$. Modus ponens: $p \Right
 - $\neg p$ je vse zunaj kroga $P$,
 - $p \wedge q$ je presek krogov,
 - $p \vee q$ je unija krogov,
-- $p \Rightarrow q$ je vse razen dela $P$, ki je zunaj $Q$. Implikacija je tavtologija natanko tedaj, ko krog $P$ v celoti leži v krogu $Q$.
+- $p \Rightarrow q$ je vse razen dela $P$, ki je zunaj $Q$. Implikacija je resnična v vseh stanjih natanko tedaj, ko krog $P$ v celoti leži v krogu $Q$.
 
 Tavtologija ustreza celemu pravokotniku, protislovje prazni množici. De Morganov zakon na sliki: zunanjost unije je presek zunanjosti.
 
 **Električna vezja.** Stikalo je zaprto ($1$) ali odprto ($0$). Dve stikali **zaporedno** prevajata tok, ko sta zaprti obe: to je $p \wedge q$. Dve stikali **vzporedno** prevajata, ko je zaprto vsaj eno: $p \vee q$. Na tem temeljijo logična vrata v računalniških čipih.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 **Programiranje.** Pogoj `if (temperatura > 30 && !klima)` je konjunkcija z negacijo. Pogoj »ni res, da je $a$ ali $b$« programer po De Morganu prepiše v `!a && !b`.
 
@@ -242,9 +242,9 @@ Preveri distributivni zakon $p \wedge (q \vee r) \sim (p \wedge q) \vee (p \wedg
 
 **Trditev.** $A_1, \dots, A_n \models B$ natanko tedaj, ko je $(A_1 \wedge \dots \wedge A_n) \Rightarrow B$ tavtologija.
 
-*Dokaz.* Implikacija je pri določilu $v$ neresnična natanko tedaj, ko je $v(A_1 \wedge \dots \wedge A_n) = 1$ in $v(B) = 0$, torej natanko tedaj, ko so vse predpostavke resnične in zaključek neresničen. Tavtologija je torej natanko tedaj, ko takega $v$ ni, kar je definicija logične posledice. $\square$
+*Dokaz.* Implikacija je pri določilu $v$ neresnična natanko tedaj, ko je $v(A_1 \wedge \dots \wedge A_n) = 1$ in $v(B) = 0$, torej natanko tedaj, ko so vse predpostavke resnične in zaključek neresničen. Implikacija je torej tavtologija natanko tedaj, ko takega $v$ ni, kar je definicija logične posledice. $\square$
 
-**Polni nabori veznikov in normalne oblike.** Vsaka resničnostna tabela (vsaka funkcija $\{0, 1\}^n \to \{0, 1\}$) pripada neki formuli. Za vsako vrstico z vrednostjo $1$ zapišemo konjunkcijo spremenljivk oziroma njihovih negacij (na primer $p \wedge \neg q \wedge r$ za vrstico $1, 0, 1$), nato vse take konjunkcije povežemo z disjunkcijo. Dobimo **disjunktivno normalno obliko** (DNO). Dualno dobimo **konjunktivno normalno obliko** (KNO). Zato je nabor $\{\neg, \wedge, \vee\}$ **poln**. Ker $p \vee q \sim \neg(\neg p \wedge \neg q)$, je poln že $\{\neg, \wedge\}$, prav tako $\{\neg, \Rightarrow\}$. Poln je celo en sam veznik, **Shefferjev** $p \uparrow q \sim \neg(p \wedge q)$ (NAND), saj $\neg p \sim p \uparrow p$ in $p \wedge q \sim (p \uparrow q) \uparrow (p \uparrow q)$.
+**Polni nabori veznikov in normalne oblike.** Vsaka resničnostna tabela (vsaka funkcija $\{0, 1\}^n \to \{0, 1\}$) pripada neki formuli. Za vsako vrstico z vrednostjo $1$ zapišemo konjunkcijo spremenljivk oziroma njihovih negacij (na primer $p \wedge \neg q \wedge r$ za vrstico $1, 0, 1$), nato vse take konjunkcije povežemo z disjunkcijo (če take vrstice ni, vzamemo protislovje $p \wedge \neg p$). Dobimo **disjunktivno normalno obliko** (DNO). Dualno dobimo **konjunktivno normalno obliko** (KNO). Zato je nabor $\{\neg, \wedge, \vee\}$ **poln**. Ker $p \vee q \sim \neg(\neg p \wedge \neg q)$, je poln že $\{\neg, \wedge\}$, prav tako $\{\neg, \Rightarrow\}$. Poln je celo en sam veznik, **Shefferjev** $p \uparrow q \sim \neg(p \wedge q)$ (NAND), saj $\neg p \sim p \uparrow p$ in $p \wedge q \sim (p \uparrow q) \uparrow (p \uparrow q)$.
 
 **Metode dokazovanja.** Pravilni sklepi izjavnega računa so podlaga za matematične dokaze: **neposredni** dokaz $p \Rightarrow q$ (predpostavimo $p$, izpeljemo $q$), dokaz s **kontrapozicijo** (predpostavimo $\neg q$, izpeljemo $\neg p$) in dokaz s **protislovjem** (iz $\neg q$ in $p$ izpeljemo protislovje), ki temelji na tavtologiji $\big((p \wedge \neg q) \Rightarrow (r \wedge \neg r)\big) \Rightarrow (p \Rightarrow q)$.
 
@@ -255,29 +255,41 @@ Preveri distributivni zakon $p \wedge (q \vee r) \sim (p \wedge q) \vee (p \wedg
 ? Pri katerem določilu je implikacija $p \Rightarrow q$ neresnična?
 + $p = 1$, $q = 0$
 - $p = 0$, $q = 1$
+~ Predpostavka je neresnična, zato obljuba ni prelomljena: implikacija je resnična.
 - $p = 0$, $q = 0$
+~ Tudi tu je predpostavka neresnična, zato je implikacija resnična.
 - implikacija je vedno resnična
+~ Pri $p = 1$, $q = 0$ je neresnična; $p \Rightarrow q$ ni tavtologija.
 > Implikacija je kot obljuba: prelomljena je le, ko predpostavka velja, posledica pa ne. Pri $p = 0$ je implikacija resnična ne glede na $q$.
 
 ? Katera izjava je negacija izjave »Raztopina je kisla in topla«?
 - Raztopina ni kisla in ni topla.
+~ Zanikal si vsak člen, veznika »in« pa nisi zamenjal z »ali«; ta izjava je neresnična tudi pri kisli in hladni raztopini.
 + Raztopina ni kisla ali ni topla.
 - Raztopina je bazična in hladna.
+~ To je le eden od primerov, v katerih je prvotna izjava neresnična; negacija mora zajeti vse.
 - Če raztopina ni kisla, ni topla.
+~ To je $\neg k \Rightarrow \neg t \sim k \vee \neg t$, kar je resnično tudi pri kisli in topli raztopini.
 > Po De Morganu je $\neg(p \wedge q) \sim \neg p \vee \neg q$. Izjava »ni kisla in ni topla« je močnejša: izključuje tudi primer, ko je raztopina kisla, a hladna.
 
 ? Koliko vrstic ima resničnostna tabela formule s štirimi izjavnimi spremenljivkami?
 - $8$
+~ To je $2^3$, tabela za tri spremenljivke (ali $2 \cdot 4$: možnosti se množijo, ne seštevajo).
 + $16$
 - $4$
+~ To je število spremenljivk oziroma $2^2$; vrstic je $2^n$, ne $n$.
 - $32$
+~ To je $2^5$, tabela za pet spremenljivk.
 > Vsaka spremenljivka ima dve vrednosti, zato je določil $2^4 = 16$.
 
 ? Katera formula je tavtologija?
 - $(p \Rightarrow q) \Rightarrow (q \Rightarrow p)$
+~ Implikacija in njen obrat nista enakovredna: pri $p = 0$, $q = 1$ je formula neresnična.
 - $(p \vee q) \Rightarrow p$
+~ Pri $p = 0$, $q = 1$ je disjunkcija resnična, $p$ pa ne.
 + $\big(p \wedge (p \Rightarrow q)\big) \Rightarrow q$
 - $p \wedge \neg p$
+~ To je protislovje: neresnično pri vseh določilih.
 > To je modus ponens: če sta $p$ in $p \Rightarrow q$ resnični, mora biti resnična $q$. Prvi dve formuli sta neresnični pri $p = 0$, $q = 1$, zadnja je protislovje.
 
 :::simboli

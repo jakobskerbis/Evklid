@@ -148,7 +148,7 @@ rožnata × rožnata (heterozigota): $1 : 2 : 1$; vsak genotip ima svoj fenotip
 
 ### Primer 3 (težji)
 
-Mendel je križal čisti liniji z okroglimi rumenimi ($RRYY$) in nagubanimi zelenimi semeni ($rryy$). Rastline F1 je samooplodil in v F2 dobil $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubanega rumenega in $32$ nagubanih zelenih semen. a) Ali se podatki ujemajo z razmerjem $9 : 3 : 3 : 1$ (stopnja značilnosti $0{,}05$)? b) S kolikšno verjetnostjo je naključno izbrana okrogla rumena rastlina F2 dvojni heterozigot? c) Kaj bi dalo testno križanje take rastline?
+Mendel je križal čisti liniji z okroglimi rumenimi ($RRYY$) in nagubanimi zelenimi semeni ($rryy$). Rastline F1 je samooplodil in v F2 dobil $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubano rumeno in $32$ nagubanih zelenih semen. a) Ali se podatki ujemajo z razmerjem $9 : 3 : 3 : 1$ (stopnja značilnosti $0{,}05$)? b) S kolikšno verjetnostjo je naključno izbrana okrogla rumena rastlina F2 dvojni heterozigot? c) Kaj bi dalo testno križanje take rastline?
 
 **Podatki:** F2: $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubanih rumenih, $32$ nagubanih zelenih; $R$ okroglo, $Y$ rumeno, oba dominantna; meja $\chi^2$ pri $3$ prostostnih stopnjah $7{,}81$
 **Iščemo:** $\chi^2$ in sklep, $P(RrYy \mid$ okrogla rumena$)$, izid testnega križanja
@@ -221,7 +221,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Ženska z normalnim barvnim vidom ima barvno slepega očeta; njen brat je albino, njena starša pa sta pigmentirana. Poroči se z moškim z normalnim vidom, ki je prenašalec albinizma. Barvna slepota je X-vezana recesivna ($X^b$), albinizem avtosomno recesiven ($a$); gena se dedujeta neodvisno. a) Kolikšna je verjetnost, da bo prvi otrok barvno slep sin z normalno pigmentacijo? b) Kolikšna je verjetnost, da bo prvi otrok brez obeh lastnosti? c) Ali je lahko hči barvno slepa?
+Ženska z normalnim barvnim vidom in normalno pigmentacijo ima barvno slepega očeta; njen brat je albino, njena starša pa sta pigmentirana. Poroči se z moškim z normalnim vidom, ki je prenašalec albinizma. Barvna slepota je X-vezana recesivna ($X^b$), albinizem avtosomno recesiven ($a$); gena se dedujeta neodvisno. a) Kolikšna je verjetnost, da bo prvi otrok barvno slep sin z normalno pigmentacijo? b) Kolikšna je verjetnost, da bo prvi otrok brez obeh lastnosti? c) Ali je lahko hči barvno slepa?
 
 **Rešitev:**
 

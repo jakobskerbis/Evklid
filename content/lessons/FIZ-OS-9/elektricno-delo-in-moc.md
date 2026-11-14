@@ -95,7 +95,7 @@ $P = U \cdot I$
 
 ### Primer 2: tok iz moči in poraba v enem mesecu
 
-Kuhalnik ima moč $1500\,\mathrm{W}$ in je priključen na $230\,\mathrm{V}$. a) Kolikšen tok teče skozi njega? b) Koliko energije porabi v $30$ dneh, če dnevno deluje $40\,\text{min}$, in koliko to stane pri ceni $0{,}20\,\text{€}$ za $1\,\mathrm{kWh}$?
+Kuhalnik ima moč $1500\,\mathrm{W}$ in je priključen na $230\,\mathrm{V}$. a) Kolikšen tok teče skozenj? b) Koliko energije porabi v $30$ dneh, če dnevno deluje $40\,\text{min}$, in koliko to stane pri ceni $0{,}20\,\text{€}$ za $1\,\mathrm{kWh}$?
 
 **Podatki:** $P = 1500\,\mathrm{W}$, $U = 230\,\mathrm{V}$, $30$ dni po $40\,\text{min}$ na dan, cena $0{,}20\,\text{€}$ za $1\,\mathrm{kWh}$
 **Iščemo:** a) tok $I$; b) električno delo $A$ v $\mathrm{kWh}$ in strošek
@@ -122,7 +122,7 @@ a) Iz $P = U \cdot I$ sledi $I = \dfrac{P}{U}$. b) $A = P \cdot t$ (moč v $\mat
 
 ### Primer 3 (težji): ali se LED žarnica izplača?
 
-Vrnimo se k Maji. Halogenka ima moč $42\,\mathrm{W}$ in stane $1{,}50\,\text{€}$, LED žarnica ima moč $6\,\mathrm{W}$ in stane $4{,}50\,\text{€}$. Svetilka sveti $3\,\mathrm{h}$ na dan, elektrika stane $0{,}20\,\text{€}$ za $1\,\mathrm{kWh}$. Po koliko dneh LED žarnica s cenejšo elektriko povrne višjo ceno nakupa?
+Vrnimo se k Maji. Halogenka ima moč $42\,\mathrm{W}$ in stane $1{,}50\,\text{€}$, LED žarnica ima moč $6\,\mathrm{W}$ in stane $4{,}50\,\text{€}$. Svetilka sveti $3\,\mathrm{h}$ na dan, elektrika stane $0{,}20\,\text{€}$ za $1\,\mathrm{kWh}$. Po koliko dneh LED žarnica z manjšo porabo elektrike povrne višjo ceno nakupa?
 
 **Podatki:** $P_1 = 42\,\mathrm{W}$, cena $1{,}50\,\text{€}$; $P_2 = 6\,\mathrm{W}$, cena $4{,}50\,\text{€}$; $t = 3\,\mathrm{h}$ na dan; $0{,}20\,\text{€}$ za $1\,\mathrm{kWh}$
 **Iščemo:** število dni $n$, po katerem se LED žarnica izplača

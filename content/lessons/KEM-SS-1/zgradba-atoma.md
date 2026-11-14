@@ -77,7 +77,7 @@ Kalij ima $Z = 19$. Do $3p$ je napolnjenih $18$ mest. Napovej: gre devetnajsti e
 V $4s$, ker ima ta podlupina nižjo energijo kot $3d$: $1s^2\,2s^2\,2p^6\,3s^2\,3p^6\,4s^1$. Tako kot natrij ima en sam elektron v zunanji lupini. Zato sta v isti skupini in se kemijsko podobno vedeta.
 :::
 
-**Kocka 8: valenčni elektroni.** To so elektroni v zunanji lupini. Sodelujejo pri kemijskih vezeh. Pri elementih glavnih skupin jih je toliko, kot kaže zadnja števka številke skupine (natrij: skupina 1, en valenčni elektron).
+**Kocka 8: valenčni elektroni.** To so elektroni v zunanji lupini. Sodelujejo pri kemijskih vezeh. Pri elementih glavnih skupin jih je toliko, kot kaže zadnja števka številke skupine (natrij: skupina 1, en valenčni elektron; izjema je helij v skupini 18, ki ima le dva).
 
 *Preveri:* koliko valenčnih elektronov ima $1s^2\,2s^2\,2p^3$? ($2 + 3 = 5$.)
 
@@ -258,6 +258,7 @@ $$A_r = \sum_i x_i\, m_i$$
 s | podlupina s | | | ena orbitala, največ 2 elektrona
 p | podlupina p | | | tri orbitale, največ 6 elektronov; p⁺ je proton
 d | podlupina d | | | pet orbital, največ 10 elektronov
+n | številka lupine (energijskega nivoja) | | – | n = 1, 2, 3, …; n⁰ je nevtron
 A | masno število | A = Z + N | – | število protonov in nevtronov skupaj
 Z | vrstno (atomsko) število | | – | število protonov
 N | število nevtronov | N = A - Z | –

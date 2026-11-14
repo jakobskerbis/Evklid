@@ -70,7 +70,7 @@ $$\eta_\mathrm{D} = 1 - \frac{1}{\varepsilon^{\kappa-1}} \cdot \frac{\varphi^\ka
 
 Drugi faktor je za $\varphi > 1$ večji od $1$ (glej Nalogo 2). Pri **enakem** $\varepsilon$ je Diesel torej slabši od Otta; v praksi je boljši, ker sme imeti skoraj dvakrat večji $\varepsilon$.
 
-**6. Jouleov proces** (plinska turbina, v angleški literaturi Braytonov). Zrak teče skozi stroje neprekinjeno: kompresor (1–2 adiabatno), zgorevalna komora (2–3 izobarno), turbina (3–4 adiabatno), oddajanje toplote (4–1 izobarno). **Tlačno razmerje** je $r_p = \frac{p_2}{p_1}$ (ponekod označeno s $\pi$).
+**6. Joulov proces** (plinska turbina, v angleški literaturi Braytonov). Zrak teče skozi stroje neprekinjeno: kompresor (1–2 adiabatno), zgorevalna komora (2–3 izobarno), turbina (3–4 adiabatno), oddajanje toplote (4–1 izobarno). **Tlačno razmerje** je $r_p = \frac{p_2}{p_1}$ (ponekod označeno s $\pi$).
 
 **Izpeljava.** Obe toploti sta izobarni, $q_\mathrm{dov} = c_p(T_3 - T_2)$ in $q_\mathrm{odv} = c_p(T_4 - T_1)$. Adiabati potekata med istima tlakoma, zato $\frac{T_2}{T_1} = \frac{T_3}{T_4} = r_p^{(\kappa-1)/\kappa}$ in
 
@@ -98,7 +98,7 @@ Pri izentropni ekspanziji je $s_4 = s_3$. Iz tega določimo **suhost** $x_4$ (ma
 :::premisli
 Zakaj parna elektrarna stiska vodo kot kapljevino in ne kot paro? Kaj bi se zgodilo z izkoristkom, če bi paro stiskali s kompresorjem kot plinska turbina?
 ---
-Delo stiskanja je $\int v\,dp$; kapljevina ima sto- do več tisočkrat manjšo specifično prostornino kot para (pri $0{,}1\,\mathrm{bar}$ okoli $14\,000$-krat), zato črpalka porabi le nekaj kJ/kg. Pri stiskanju pare bi kompresor požrl velik del dela turbine, kot pri Jouleovem procesu, in izkoristek bi močno padel.
+Delo stiskanja je $\int v\,dp$; kapljevina ima sto- do več tisočkrat manjšo specifično prostornino kot para (pri $0{,}1\,\mathrm{bar}$ okoli $14\,000$-krat), zato črpalka porabi le nekaj kJ/kg. Pri stiskanju pare bi kompresor požrl velik del dela turbine, kot pri Joulovem procesu, in izkoristek bi močno padel.
 :::
 
 **8. Pregled štirih procesov.**
@@ -177,7 +177,7 @@ $T_2 = T_1\varepsilon^{\kappa-1}$, $p_2 = p_1\varepsilon^\kappa$; $\varphi = \fr
 
 ### Primer 4 – zdaj ti
 
-Plinska turbina dela po idealnem Jouleovem procesu s tlačnim razmerjem $10$. Zrak vstopa v kompresor pri $300\,\mathrm{K}$, v turbino pri $1300\,\mathrm{K}$. Določi izkoristek in specifično delo.
+Plinska turbina dela po idealnem Joulovem procesu s tlačnim razmerjem $10$. Zrak vstopa v kompresor pri $300\,\mathrm{K}$, v turbino pri $1300\,\mathrm{K}$. Določi izkoristek in specifično delo.
 
 **Podatki:** $r_p = 10$, $T_1 = 300\,\mathrm{K}$, $T_3 = 1300\,\mathrm{K}$, $c_p = 1{,}005\,\mathrm{kJ/(kg\,K)}$, $\kappa = 1{,}4$
 **Iščemo:** $\eta_\mathrm{J}$, $w$
@@ -200,9 +200,9 @@ $T_4 = \frac{1300}{1{,}931} = 673{,}3\,\mathrm{K}$. Turbina: $1{,}005 \cdot (130
 
 ## Pogoste napake
 
-- **»Več toplote, večji izkoristek.«** Pri Ottovem in Jouleovem procesu $\eta$ ni odvisen od $q_\mathrm{dov}$ ali $T_3$; več toplote da le več dela. Najprej poglej, kaj je v formuli za $\eta$.
+- **»Več toplote, večji izkoristek.«** Pri Ottovem in Joulovem procesu $\eta$ ni odvisen od $q_\mathrm{dov}$ ali $T_3$; več toplote da le več dela. Najprej poglej, kaj je v formuli za $\eta$.
 - **Napačna specifična toplota.** Pri izohori je $q = c_v\Delta T$, pri izobari $q = c_p\Delta T$. Pri Dieslu je dovajanje izobarno, oddajanje izohorno; kdor obakrat vzame $c_v$, dobi napačen $\eta$.
-- **Zamenjana razmerja.** Pri Ottu je $\frac{T_2}{T_1} = \varepsilon^{\kappa-1}$ (razmerje prostornin), pri Jouleu $\frac{T_2}{T_1} = r_p^{(\kappa-1)/\kappa}$ (razmerje tlakov). Pri $r_p = 10$ je $10^{0{,}4} = 2{,}51$ napačno, pravilno je $1{,}93$.
+- **Zamenjana razmerja.** Pri Ottu je $\frac{T_2}{T_1} = \varepsilon^{\kappa-1}$ (razmerje prostornin), pri Joulu $\frac{T_2}{T_1} = r_p^{(\kappa-1)/\kappa}$ (razmerje tlakov). Pri $r_p = 10$ je $10^{0{,}4} = 2{,}51$ napačno, pravilno je $1{,}93$.
 - **Stopinje Celzija.** V adiabatah in Carnotovi meji so temperature v kelvinih. $T_1 = 27\,\mathrm{°C}$ vstavi kot $300\,\mathrm{K}$.
 - **Carnotova meja kot dejanski izkoristek.** $1 - \frac{T_\mathrm{min}}{T_\mathrm{max}}$ velja le, če vso toploto dovajamo pri $T_\mathrm{max}$ in vso oddajamo pri $T_\mathrm{min}$. Otto, Diesel in Joule toploto dovajajo pri naraščajoči in oddajajo pri padajoči temperaturi, zato so slabši.
 - **Rankine brez entropije.** $h_4$ ni $h''$ pri tlaku kondenzatorja; para iz turbine je mokra. Suhost dobiš iz $s_4 = s_3$, ne iz entalpije.
@@ -221,13 +221,13 @@ Znati moraš povedati:
 
 - definicijo krožnega procesa, termičnega izkoristka in Carnotove meje,
 - predpostavke zračnega standardnega procesa,
-- zaporedje sprememb in diagram $p$–$V$ za Ottov, Dieslov in Jouleov proces, za Rankinov tudi vlogo štirih naprav,
-- izpeljavo izkoristkov Otta, Diesla in Jouleja,
-- pogoj za največje delo Jouleovega procesa in dokaz.
+- zaporedje sprememb in diagram $p$–$V$ za Ottov, Dieslov in Joulov proces, za Rankinov tudi vlogo štirih naprav,
+- izpeljavo izkoristkov Otta, Diesla in Joula,
+- pogoj za največje delo Joulovega procesa in dokaz.
 
 ### Naloga 1
 
-Lopatice plinske turbine iz nikljeve superzlitine zdržijo vstopno temperaturo plina $1400\,\mathrm{K}$; zrak vstopa v kompresor pri $290\,\mathrm{K}$. (a) Dokaži, da je pri danih $T_1$ in $T_3$ specifično delo idealnega Jouleovega procesa največje pri $T_2 = \sqrt{T_1T_3}$. (b) Izračunaj optimalno tlačno razmerje, največje delo in izkoristek pri tem razmerju. (c) Keramična zaščitna plast dovoli $1600\,\mathrm{K}$. Za koliko odstotkov se poveča največje delo in kolikšen je novi izkoristek? Vzemi $c_p = 1{,}005\,\mathrm{kJ/(kg\,K)}$, $\kappa = 1{,}4$.
+Lopatice plinske turbine iz nikljeve superzlitine zdržijo vstopno temperaturo plina $1400\,\mathrm{K}$; zrak vstopa v kompresor pri $290\,\mathrm{K}$. (a) Dokaži, da je pri danih $T_1$ in $T_3$ specifično delo idealnega Joulovega procesa največje pri $T_2 = \sqrt{T_1T_3}$. (b) Izračunaj optimalno tlačno razmerje, največje delo in izkoristek pri tem razmerju. (c) Keramična zaščitna plast dovoli $1600\,\mathrm{K}$. Za koliko odstotkov se poveča največje delo in kolikšen je novi izkoristek? Vzemi $c_p = 1{,}005\,\mathrm{kJ/(kg\,K)}$, $\kappa = 1{,}4$.
 
 **Rešitev:**
 
@@ -293,7 +293,7 @@ Opazi: $\frac{T_4}{T_1} = \frac{T_3}{T_2}$. To je razlog, da se temperature v fo
 
 **Srednja temperatura dovajanja.** Za povračljiv proces je $q_\mathrm{dov} = \int T\,ds$. Če vpeljemo srednji temperaturi $\bar T_\mathrm{dov} = \frac{q_\mathrm{dov}}{\Delta s}$ in $\bar T_\mathrm{odv} = \frac{q_\mathrm{odv}}{\Delta s}$, velja za vsak krožni proces z dvema adiabatama $\eta = 1 - \frac{\bar T_\mathrm{odv}}{\bar T_\mathrm{dov}}$. Vse izboljšave elektrarn so poskusi, da bi $\bar T_\mathrm{dov}$ dvignili ali $\bar T_\mathrm{odv}$ znižali: višji tlak kotla, pregrevanje in vmesno pregrevanje pare, regenerativno predgrevanje napajalne vode z odvzemno paro, nižji tlak v kondenzatorju.
 
-**Realni stroji.** Kompresija in ekspanzija nista povračljivi. Upoštevamo ju z **notranjim izkoristkom** (izentropnim izkoristkom), na primer pri turbini $\eta_\mathrm{T} = \frac{h_3 - h_4}{h_3 - h_{4s}}$. Pri Jouleovem procesu je to usodno: zaradi velikega dela kompresorja že nekaj odstotkov izgub močno zmanjša koristno delo. Pri natančnem računu se spreminjata tudi $c_p$ in $\kappa$ s temperaturo, sestava plina pa se po zgorevanju spremeni.
+**Realni stroji.** Kompresija in ekspanzija nista povračljivi. Upoštevamo ju z **notranjim izkoristkom** (izentropnim izkoristkom), na primer pri turbini $\eta_\mathrm{T} = \frac{h_3 - h_4}{h_3 - h_{4s}}$. Pri Joulovem procesu je to usodno: zaradi velikega dela kompresorja že nekaj odstotkov izgub močno zmanjša koristno delo. Pri natančnem računu se spreminjata tudi $c_p$ in $\kappa$ s temperaturo, sestava plina pa se po zgorevanju spremeni.
 
 ## Preveri se
 
@@ -302,10 +302,10 @@ Opazi: $\frac{T_4}{T_1} = \frac{T_3}{T_2}$. To je razlog, da se temperature v fo
 ~ Ottov proces ima izohorno dovajanje toplote v zaprtem valju; tu zrak teče skozi komoro pri stalnem tlaku.
 - Dieslov proces
 ~ Dieslov proces ima sicer izobarno dovajanje, a izohorno oddajanje v valju z batom; tu je tudi oddajanje izobarno.
-+ Jouleov proces
++ Joulov proces
 - Rankinov proces
 ~ Rankinov proces ima delovno snov, ki se upari in kondenzira; zrak tu ostane plin.
-> Dve adiabati (kompresor, turbina) in dve izobari (zgorevalna komora, oddajanje pri tlaku okolice) so Jouleov (Braytonov) proces.
+> Dve adiabati (kompresor, turbina) in dve izobari (zgorevalna komora, oddajanje pri tlaku okolice) so Joulov (Braytonov) proces.
 
 ? Razvrsti idealne procese po izkoristku od največjega do najmanjšega: Otto z $\varepsilon = 8$, Diesel z $\varepsilon = 18$ in $\varphi = 2$, Joule z $r_p = 10$ (povsod $\kappa = 1{,}4$).
 - Otto, Diesel, Joule
@@ -354,7 +354,7 @@ q_\mathrm{odv} | oddana specifična toplota | | kJ/kg | pozitivna količina
 \eta | termični izkoristek | \eta = \frac{w}{q_\mathrm{dov}} | –
 \eta_\mathrm{O} | izkoristek Ottovega procesa | | –
 \eta_\mathrm{D} | izkoristek Dieslovega procesa | | –
-\eta_\mathrm{J} | izkoristek Jouleovega procesa | | –
+\eta_\mathrm{J} | izkoristek Joulovega procesa | | –
 \eta_\mathrm{R} | izkoristek Rankinovega procesa | | –
 \varepsilon | kompresijsko razmerje | \varepsilon = \frac{V_1}{V_2} | –
 \varphi | razmerje izobarnega raztezanja | \varphi = \frac{V_3}{V_2} | –

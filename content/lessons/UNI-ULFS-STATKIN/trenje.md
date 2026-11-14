@@ -36,7 +36,7 @@ Potiskaš s $P = 90\,\mathrm{N}$. Kolikšna je sila trenja in ali kovček miruje
 $60\,\mathrm{N}$. Potisk presega mejo $80\,\mathrm{N}$, zato kovček drsi in velja $\mu_\mathrm{t} N = 0{,}3 \cdot 200\,\mathrm{N}$. Preostalih $30\,\mathrm{N}$ ni uravnoteženih, zato kovček pospešuje.
 :::
 
-**Posplošitev 1: lepenje.** Dokler ploskvi ne drsita drug ob drugi, govorimo o **lepenju** (statičnem trenju). Sila lepenja ni podana vnaprej. Je neznanka, ki jo dobiš iz ravnotežnih enačb. Navzgor je omejena:
+**Posplošitev 1: lepenje.** Dokler ploskvi ne drsita druga ob drugi, govorimo o **lepenju** (statičnem trenju). Sila lepenja ni podana vnaprej. Je neznanka, ki jo dobiš iz ravnotežnih enačb. Navzgor je omejena:
 
 $$|F| \le \mu_\mathrm{l} N$$
 
@@ -266,6 +266,7 @@ G | teža telesa | | N
 P | potisna (vlečna) sila | | N
 \alpha | naklonski kot klanca | \tan\alpha = \frac{\Delta h}{d} | °
 \alpha_\mathrm{max} | mejni kot klanca | \tan\alpha_\mathrm{max} = \mu_\mathrm{l} | ° | pri večjem naklonu telo zdrsne
+\varphi_\mathrm{l} | mejni kot lepenja (torni kot) | \varphi_\mathrm{l} = \arctan\mu_\mathrm{l} | °
 \beta | kot vlečne sile (pasu) glede na vodoravnico | | °
 h | nadmorska višina | | m | Δh višinska razlika med plastnicama
 d | vodoravna razdalja (projekcija na karti) | | m

@@ -65,7 +65,7 @@ $$A = Q D Q^T.$$
 
 V stolpcih $Q$ so ortonormirani lastni vektorji, na diagonali $D$ pripadajoče lastne vrednosti. Od desne proti levi: $Q^T$ zasuka, $D$ raztegne vzdolž osi, $Q$ zasuka nazaj. Obrat velja tudi: če je $A = QDQ^T$, je $A^T = QD^TQ^T = A$. Realna matrika je torej ortogonalno diagonalizabilna natanko tedaj, ko je simetrična. Kompleksna verzija: hermitska matrika je $UDU^*$ z unitarno $U$ in realno $D$.
 
-Ista formula v obliki vsote projekcij: $A = \lambda_1 q_1 q_1^T + \dots + \lambda_n q_n q_n^T$.
+Ista formula v obliki vsote projekcij, kjer so $q_1, \dots, q_n$ stolpci $Q$: $A = \lambda_1 q_1 q_1^T + \dots + \lambda_n q_n q_n^T$.
 
 *Preveri:* koliko je $Q^{-1}$ v spektralnem razcepu? (Odgovor: $Q^T$, ker je $Q$ ortogonalna.)
 
@@ -181,10 +181,10 @@ $\lambda^2 - 2\lambda - 8 = (\lambda - 4)(\lambda + 2)$, torej $\lambda_1 = 4$, 
 ## Pogoste napake
 
 - **»Pravokotni stolpci že pomenijo ortogonalno matriko.«** Pozabiš na dolžine. Matrika $\begin{pmatrix}1&-1\\1&1\end{pmatrix}$ ima pravokotna stolpca, a vsako dolžino poveča za $\sqrt2$. Popravek: stolpci morajo biti *ortonormirani*, preveri $Q^TQ = I$.
-- **»Spektralni izrek velja za vsako diagonalizabilno matriko.«** Matrika $\begin{pmatrix}1&1\\0&2\end{pmatrix}$ je diagonalizabilna, a lastna vektorja $(1,0)$ in $(1,1)$ nista pravokotna. Pravokotnost dokažemo z $\langle Ax, y\rangle = \langle x, Ay\rangle$, kar velja samo za simetrične. Popravek: ortonormirana lastna baza obstaja natanko pri simetričnih (realno) oz. hermitskih (kompleksno) matrikah.
+- **»Spektralni izrek velja za vsako diagonalizabilno matriko.«** Matrika $\begin{pmatrix}1&1\\0&2\end{pmatrix}$ je diagonalizabilna, a lastna vektorja $(1,0)$ in $(1,1)$ nista pravokotna. Pravokotnost dokažemo z $\langle Ax, y\rangle = \langle x, Ay\rangle$, kar velja samo za simetrične. Popravek: ortonormirana lastna baza obstaja natanko pri simetričnih matrikah (realno); v kompleksnem natanko pri normalnih, med katerimi so hermitske.
 - **Cel mešani koeficient na obe mesti.** Za $5x^2 + 4xy + 2y^2$ napišeš $\begin{pmatrix}5&4\\4&2\end{pmatrix}$, kar da $5x^2 + 8xy + 2y^2$. Popravek: koeficient pri $xy$ razdeli na pol, ker se v $x^TAx$ pojavi dvakrat.
 - **Definitnost iz predznakov elementov.** »Vsi elementi $\begin{pmatrix}1&3\\3&1\end{pmatrix}$ so pozitivni, torej je pozitivno definitna.« A $q(1,-1) = -4$. Popravek: odločajo lastne vrednosti (pri $2\times2$: $\det > 0$ in sled $> 0$), ne posamezni elementi.
-- **»Ortogonalna pomeni vrtenje.«** Tudi zrcaljenje ohranja dolžine in kote, njegova determinanta je $-1$. Popravek: ortogonalna je vsaka $Q$ z $Q^TQ = I$; vrtenje so tiste z $\det Q = 1$.
+- **»Ortogonalna pomeni vrtenje.«** Tudi zrcaljenje ohranja dolžine in kote, njegova determinanta je $-1$. Popravek: ortogonalna je vsaka $Q$ s $Q^TQ = I$; vrtenje so tiste z $\det Q = 1$.
 
 ## Povzetek
 
@@ -235,7 +235,7 @@ Za pozitivno definitno kvadratno formo velja ista slika obrnjeno: nivojnice $q =
 ~ To naredi ortogonalna preslikava. Simetrična z lastnima vrednostma $3$ in $1$ dolžine spremeni.
 > Spektralni izrek: $A = QDQ^T$. Zasuk, raztezek za $3$ in $1$ vzdolž pravokotnih osi, zasuk nazaj. Krog postane elipsa s pravokotnima osema.
 
-? Oceni brez računanja: koliko je približno večja lastna vrednost matrike $\begin{pmatrix}4&0{,}1\\0{,}1&1\end{pmatrix}$?
+? Oceni brez računanja: kolikšna je približno večja izmed lastnih vrednosti matrike $\begin{pmatrix}4&0{,}1\\0{,}1&1\end{pmatrix}$?
 - Približno $4{,}1$.
 ~ Izvendiagonalnega elementa ne prištejemo kar diagonali. Popravek je približno $\dfrac{0{,}1^2}{4 - 1}$, torej zelo majhen.
 + Približno $4$.
@@ -285,6 +285,7 @@ I | identična (enotska) matrika
 \lambda, \mu | lastni vrednosti preslikave A | \det(A - \lambda I) = 0 | | λ₁, …, λₙ na diagonali D
 D | diagonalna matrika lastnih vrednosti
 q | kvadratna forma | q = x^TAx
+q_1, q_n | ortonormirani lastni vektorji (stolpci Q)
 u_1, u_2, u_n | koordinate v glavnih oseh (lastni bazi)
 c | vrednost kvadratne forme na krivulji q = c | | | v ax² + bxy + cy² pa koeficient
 :::

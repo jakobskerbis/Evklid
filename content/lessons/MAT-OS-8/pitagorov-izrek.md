@@ -124,7 +124,7 @@ Iščemo kateto: $b = \sqrt{c^2 - a^2}$
 
 Hiša je široka $9{,}6\,\text{m}$. Streha ima dve enaki strmini, ki se stikata v slemenu. Sleme je na sredini, $1{,}4\,\text{m}$ nad vrhom zidov. Tesar potrebuje tram od slemena do roba zida in še $0{,}6\,\text{m}$ čez rob, da streha moli čez zid. Kako dolg mora biti tram?
 
-**Podatki:** širina hiše $9{,}6\,\text{m}$, višina slemena $b = 1{,}4\,\text{m}$, previs čez zid $0{,}6\,\text{m}$
+**Podatki:** širina hiše $9{,}6\,\text{m}$, sleme na sredini, višina slemena $b = 1{,}4\,\text{m}$, previs čez zid $0{,}6\,\text{m}$
 **Iščemo:** dolžino trama
 
 :::formula

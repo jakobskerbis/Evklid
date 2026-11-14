@@ -184,7 +184,7 @@ $2\,600\,000\,\mathrm{kg} \cdot 1{,}603\,\mathrm{g/kg} \approx 4\,168\,000\,\mat
 
 ## Drugače: Na sliki
 
-Predstavljaj si glinen delec kot ploščico, na kateri so po vsej površini znaki minus. Okrog nje lebdi oblak kationov: veliko $\mathrm{Ca^{2+}}$, nekaj $\mathrm{Mg^{2+}}$ in $\mathrm{K^+}$, v kislih tleh pa vedno več $\mathrm{H^+}$ in $\mathrm{Al^{3+}}$. Ob ploščici je koreninski las. Iz njega izstopi $\mathrm{H^+}$, sede na prazno mesto minus, sosednji $\mathrm{Ca^{2+}}$ pa odplava k korenini. Število minusov na ploščici je KIK. Delež minusov, ob katerih sedijo bazični kationi, je bazična nasičenost.
+Predstavljaj si glinen delec kot ploščico, na kateri so po vsej površini znaki minus. Okrog nje lebdi oblak kationov: veliko $\mathrm{Ca^{2+}}$, nekaj $\mathrm{Mg^{2+}}$ in $\mathrm{K^+}$, v kislih tleh pa vedno več $\mathrm{H^+}$ in $\mathrm{Al^{3+}}$. Ob ploščici je koreninski las. Iz njega izstopita dva $\mathrm{H^+}$ in sedeta na mesti minus, $\mathrm{Ca^{2+}}$, ki sta ga izrinila, pa odplava k korenini. Število minusov na ploščici je KIK. Delež minusov, ob katerih sedijo bazični kationi, je bazična nasičenost.
 
 Dostopnost hranil glede na pH (■ dobro, ▪ srednje, · slabo):
 

@@ -258,7 +258,7 @@ Iz Biot-Savartovega zakona izpelji gostoto polja na osi krožne zanke s polmerom
 
 Iz elektrostatike že poznaš par zakonov, ki se obnaša enako:
 
-- **Coulombov zakon ↔ Biot-Savartov zakon.** Oba dasta polje majhnega izvora, ki pada s $1/r^2$; skupno polje dobimo s seštevanjem (integralom) prispevkov.
+- **Coulombov zakon ↔ Biot-Savartov zakon.** Oba dasta polje majhnega izvora, ki pada z $1/r^2$; skupno polje dobimo s seštevanjem (integralom) prispevkov.
 - **Gaussov zakon ↔ Amperov zakon.** Gauss šteje naboj **znotraj sklenjene ploskve**, Amper tok **skozi sklenjeno pot**. Oba sta vedno pravilna, a uporabna le ob simetriji: Gauss za kroglo, valj in ravnino, Amper za vodnik, toroid in tuljavo.
 - **Razlika.** Silnice električnega polja se začnejo in končajo na nabojih; magnetne silnice so sklenjene okoli tokov. Zato Gauss »objema« izvor s ploskvijo, Amper pa ga »obide« s potjo.
 

@@ -108,7 +108,7 @@ Za $2 \times 2$: $p_M(\lambda) = \lambda^2 - (\operatorname{sl} M)\lambda + \det
 
 Primerjaj matriki
 $$B = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{pmatrix}, \quad C = \begin{pmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{pmatrix}.$$
-Določi minimalna polinoma in ugotovi, kateri je diagonalizabilna.
+Določi minimalna polinoma in ugotovi, katera je diagonalizabilna.
 
 **Podatki:** matriki $B$ in $C$ zgoraj
 **Iščemo:** $m_B$, $m_C$ in diagonalizabilnost
@@ -174,8 +174,8 @@ $D - 2I = \begin{pmatrix} -1 & 1 \\ -1 & 1 \end{pmatrix} \ne 0$, zato $m_D = (\l
 - **»Isti karakteristični polinom, isto obnašanje.«** Primer 2 pokaže, da $B$ in $C$ delita $p$, a je le $C$ diagonalizabilna. Polinom $p_A$ pove lastne vrednosti, ne pa, kako so lastni vektorji razporejeni. Odloča $m_A$.
 - **»Ponovljena lastna vrednost pomeni, da matrika ni diagonalizabilna.«** Identiteta ima $p = (\lambda - 1)^n$ in je diagonalna. Ponovljena ničla v $p_A$ je le opozorilo, da je treba izračunati $m_A$.
 - **»Dokaz« z $\det(AI - A) = 0$.** Mešaš število in matriko. Pravi dokaz je v razdelku »Bolj natančno«.
-- **Minimalni polinom brez kakšne lastne vrednosti.** Kdo za $B$ predlaga $m_B = (\lambda - 2)^2$, ker »$3$ je tako ali tako enostavna«. Vendar ima $m_A$ vedno vse ničle $p_A$; $(B - 2I)^2 \ne 0$, saj je element $(3,3)$ enak $1$.
-- **Napačen predznak pri $2 \times 2$.** Prosti člen je $+\det A$, linearni člen je $-\operatorname{sl} A$. Kdo zamenja predznak, dobi napačne lastne vrednosti.
+- **Minimalni polinom brez kakšne lastne vrednosti.** Nekdo za $B$ predlaga $m_B = (\lambda - 2)^2$, ker »$3$ je tako ali tako enostavna«. Vendar ima $m_A$ vedno vse ničle $p_A$; $(B - 2I)^2 \ne 0$, saj je element $(3,3)$ enak $1$.
+- **Napačen predznak pri $2 \times 2$.** Prosti člen je $+\det A$, linearni člen je $-\operatorname{sl} A$. Kdor zamenja predznak, dobi napačne lastne vrednosti.
 
 ## Povzetek
 

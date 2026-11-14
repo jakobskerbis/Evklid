@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Postavi se v kot učilnice. Tla so ravnina, stene sta ravnini, rob med stenama je premica. Laserski žarek iz kazalnika je premica, ki zadene steno v eni točki. Vprašanja so konkretna: kje žarek zadene steno, pod kolikšnim kotom, kako daleč je luč na stropu od tal, ali se dva ravna kabla pod stropom dotikata?
+Postavi se v kot učilnice. Tla so ravnina, steni sta ravnini, rob med stenama je premica. Laserski žarek iz kazalnika je premica, ki zadene steno v eni točki. Vprašanja so konkretna: kje žarek zadene steno, pod kolikšnim kotom, kako daleč je luč na stropu od tal, ali se dva ravna kabla pod stropom dotikata?
 
 V ravnini že poznaš premico $ax + by = c$. V prostoru pa ista oblika z eno spremenljivko več, $ax + by + cz = d$, ne opisuje premice, ampak **ravnino**. Za premico potrebujemo drug zapis. Z vektorji, skalarnim in vektorskim produktom bomo vse te naloge rešili po enotnem receptu. Enako geometrijo kasneje srečaš pri sistemih linearnih enačb: vsaka enačba s tremi neznankami je ena ravnina.
 
@@ -266,7 +266,7 @@ a, b, c | komponente normale (koeficienti enačbe ravnine)
 d | prosti člen enačbe ravnine | d = \vec n \cdot \vec r_A
 \vec n | normala ravnine | \vec n = (a, b, c) | | pravokotna na ravnino
 \delta | razdalja (točke od ravnine, premice; med premicama) | \delta = \frac{\lvert a x_1 + b y_1 + c z_1 - d \rvert}{\sqrt{a^2 + b^2 + c^2}} | | zveza velja za razdaljo točke T od ravnine
-\varphi | kot med premicama ali premico in ravnino | \cos\varphi = \frac{\lvert \vec e_1 \cdot \vec e_2 \rvert}{\lvert \vec e_1 \rvert\,\lvert \vec e_2 \rvert} | | 0° ≤ φ ≤ 90°; pri premici in ravnini sin φ
+\varphi | kot med premicama, med ravninama ali med premico in ravnino | \cos\varphi = \frac{\lvert \vec e_1 \cdot \vec e_2 \rvert}{\lvert \vec e_1 \rvert\,\lvert \vec e_2 \rvert} | | 0° ≤ φ ≤ 90°; pri premici in ravnini sin φ
 \Sigma, \Sigma_1, \Sigma_2 | ravnina (ime ravnine) | | | Σ₁, Σ₂ vzporedni ravnini
 A | dana točka premice (ravnine)
 B | točka druge premice | | | pri ravnini skozi tri točke druga točka

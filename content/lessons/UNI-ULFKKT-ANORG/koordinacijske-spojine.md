@@ -122,9 +122,9 @@ naboj kompleksa = oksidacijsko število + vsota nabojev ligandov; z $\mathrm{Ag^
 
 ### Primer 2: izomeri kobaltovega kompleksa
 
-Za oktaedrski kompleks $[\mathrm{Co(NH_3)_3Cl_3}]$ določi število in vrsto stereoizomerov. Kaj se spremeni, če tri $\mathrm{NH_3}$ zamenjamo z enim tridonornim ligandom, ki lahko zasede le tri sosednja mesta na eni ploskvi?
+Za oktaedrski kompleks $[\mathrm{Co(NH_3)_3Cl_3}]$ določi število in vrsto stereoizomerov. Kaj se spremeni, če tri $\mathrm{NH_3}$ zamenjamo z enim troveznim ligandom, ki lahko zasede le tri sosednja mesta na eni ploskvi?
 
-**Podatki:** oktaeder, $\mathrm{MA_3B_3}$ ($\mathrm{A} = \mathrm{NH_3}$, $\mathrm{B} = \mathrm{Cl^-}$); v drugem delu tridonorni ligand le na eni ploskvi
+**Podatki:** oktaeder, $\mathrm{MA_3B_3}$ ($\mathrm{A} = \mathrm{NH_3}$, $\mathrm{B} = \mathrm{Cl^-}$); v drugem delu trovezni ligand le na eni ploskvi
 **Iščemo:** število stereoizomerov v obeh primerih
 
 :::formula
@@ -137,7 +137,7 @@ $\mathrm{MA_3B_3}$: *fac* (trije A na eni ploskvi) in *mer* (trije A na poldnevn
 2. Pri *fac* so koti A–Co–A vsi $90^\circ$; pri *mer* je en kot $180^\circ$.
 3. Oba izomera imata zrcalno ravnino, zato nista kiralna.
 4. Ligand, ki lahko zasede le tri sosednja mesta na eni ploskvi, dovoli le *fac*.
-5. Odgovor: $[\mathrm{Co(NH_3)_3Cl_3}]$ ima dva stereoizomera, *fac* in *mer*; s takim tridonornim ligandom ostane en sam (*fac*).
+5. Odgovor: $[\mathrm{Co(NH_3)_3Cl_3}]$ ima dva stereoizomera, *fac* in *mer*; s takim troveznim ligandom ostane en sam (*fac*).
 
 ### Primer 3: oblika iz magnetnega momenta
 
@@ -188,7 +188,7 @@ $\ln K = 9{,}67 \cdot \ln 10 \approx 22{,}27$, zato $\Delta G^\circ = -8{,}314 \
 
 - **KŠ = število ligandov.** $[\mathrm{Co(en)_3}]^{3+}$ ima tri ligande, a KŠ $6$. Štej donorske atome.
 - **Vsi kloridi se oborijo.** Klorid, vezan v notranji sferi, z $\mathrm{Ag^+}$ ne reagira hitro. Iz mase oborine sklepamo, koliko kloridov je zunaj, kar je bil Wernerjev dokaz zgradbe.
-- **Cis in trans pri tetraedru.** V tetraedru so vsi položaji sosednji, zato $\mathrm{MA_2B_2}$ ni geometrijskih izomerov. Dva izomera kažeta na kvadratno planarno obliko.
+- **Cis in trans pri tetraedru.** V tetraedru so vsi položaji sosednji, zato $\mathrm{MA_2B_2}$ nima geometrijskih izomerov. Dva izomera kažeta na kvadratno planarno obliko.
 - **Tetraedrski razcep kot oktaedrski.** V tetraedru sta spodaj *dve* orbitali ($e$), razcep je le okoli $\frac{4}{9}\Delta_\mathrm{o}$ in nizkospinskih tetraedrskih kompleksov skoraj ni.
 - **Abeceda s predponami.** Pri $[\mathrm{CoCl_2(NH_3)_4}]^+$ odloča prva črka imena liganda, ne predpona: amin je pred klorido, zato tetraamindikloridokobaltov(III) ion, ne »dikloridotetraaminkobaltov(III)«.
 
@@ -260,11 +260,11 @@ Oktaeder s šestimi mesti, oštevilčenimi tako, da sta $1$ in $6$ nasprotna:
 
 ```
         1
-        |
+        |  2
+        | /
    5 -- M -- 3
        /|
-      4 2
-        |
+      4 |
         6
 ```
 
@@ -281,7 +281,7 @@ Barvni krog pomaga pri barvi: kompleks z vrhom absorpcije v rumenem delu je vijo
 
 ## Drugače: Bolj natančno
 
-**Teorija ligandnega polja.** Kristalno polje ligande obravnava kot točkaste naboje in ne pojasni, zakaj je nevtralni $\mathrm{CO}$ močnejši ligand od $\mathrm{F^-}$. Teorija molekulskih orbital to pojasni z vezmi π: ligandi π-akceptorji ($\mathrm{CO}$, $\mathrm{CN^-}$) imajo prazne orbitale π*, ki znižajo $t_{2g}$ in povečajo $\Delta_\mathrm{o}$; ligandi π-donorji ($\mathrm{Cl^-}$, $\mathrm{OH^-}$) zapolnjene orbitale p dvignejo $t_{2g}$ in zmanjšajo $\Delta_\mathrm{o}$. Od tod vrstni red spektrokemijske vrste: π-donorji < čisti σ-donorji < π-akceptorji.
+**Teorija ligandnega polja.** Kristalno polje ligande obravnava kot točkaste naboje in ne pojasni, zakaj je nevtralni $\mathrm{CO}$ močnejši ligand od $\mathrm{F^-}$. Teorija molekulskih orbital to pojasni z vezmi π: ligandi π-akceptorji ($\mathrm{CO}$, $\mathrm{CN^-}$) imajo prazne orbitale π*, ki znižajo $t_{2g}$ in povečajo $\Delta_\mathrm{o}$; ligandi π-donorji ($\mathrm{Cl^-}$, $\mathrm{OH^-}$) z zapolnjenimi orbitalami p dvignejo $t_{2g}$ in zmanjšajo $\Delta_\mathrm{o}$. Od tod vrstni red spektrokemijske vrste: π-donorji < čisti σ-donorji < π-akceptorji.
 
 **Pravilo 18 elektronov.** Karbonilni kompleksi nizkovalentnih kovin so obstojni, kadar je vsota elektronov $d$ kovine in elektronov, ki jih podarijo ligandi, enaka $18$: $[\mathrm{Ni(CO)_4}]$ ima $10 + 4 \cdot 2 = 18$, $[\mathrm{Cr(CO)_6}]$ $6 + 6 \cdot 2 = 18$.
 
@@ -336,7 +336,7 @@ Barvni krog pomaga pri barvi: kompleks z vrhom absorpcije v rumenem delu je vijo
 :::simboli
 \Delta_\mathrm{o} | oktaedrski razcep kristalnega polja | | kJ/mol
 \Delta_\mathrm{t} | tetraedrski razcep kristalnega polja | \Delta_\mathrm{t} \approx \frac{4}{9}\Delta_\mathrm{o} | kJ/mol
-\mu | magnetni moment (samo spin) | \mu = \sqrt{n(n+2)}\,\mu_\mathrm{B} | –
+\mu | magnetni moment (samo spin) | \mu = \sqrt{n(n+2)}\,\mu_\mathrm{B} | \mu_\mathrm{B}
 n | število neparnih elektronov | | –
 n_e, n_t | število elektronov v $e$ oz. $t_2$ | | –
 \beta_3, \beta_6, \beta_3' | celokupne konstante tvorbe | | – | z ustreznimi enotami koncentracije

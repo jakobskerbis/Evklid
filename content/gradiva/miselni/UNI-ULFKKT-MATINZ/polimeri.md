@@ -19,7 +19,7 @@ stanje: osnutek
   - pod $T_g$ krhko, nad njim žilavo
   - amorfni polimer nima tališča
 - Tri skupine
-  - termoplasti: pretaljivi, reciklirni
+  - termoplasti: pretaljivi, jih recikliramo
   - duromeri: gosta mreža, razkroj
   - elastomeri: redka vozlišča nad $T_g$
 - Viskoelastičnost

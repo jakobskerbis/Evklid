@@ -30,7 +30,7 @@ Vzporedni premici morata torej izpolniti **dva** pogoja: ležita v isti ravnini 
 :::premisli
 Na risbi kocke se daljici $BG$ in $CF$ križata v eni točki. Napovej: ali sta premici $BG$ in $CF$ v prostoru sekajoči ali mimobežni?
 ---
-Sekajoči. Obe sta diagonali stranske ploskve $BCGF$, torej ležita v isti ravnini in se sekata v njenem središču. Pri $AB$ in $CG$ pa je križanje na risbi le videz, ker ne ležita v isti ravnini.
+Sekajoči. Obe sta diagonali stranske ploskve $BCGF$, torej ležita v isti ravnini in se sekata v njenem središču. Pri $DC$ in $BF$ pa je križanje na risbi le videz, ker ne ležita v isti ravnini.
 :::
 
 **Kako določimo ravnino.** Ravnino natanko določajo tri točke, ki ne ležijo na isti premici. Enako dobro jo določijo premica in točka zunaj nje, dve sekajoči premici ali dve vzporedni premici.
@@ -225,7 +225,7 @@ Pri vsakem koraku isti postopek: poišči daljico iz točke, ki je pravokotna na
 ~ $AB$ in $FG$ ne ležita v isti ravnini, zato ne moreta biti vzporedna.
 > $AB$ in $FG$ nimata skupne točke in ne ležita v isti ravnini, zato sta mimobežna. Pri $BC$ in $EH$ je ravnina $BCHE$, zato sta vzporedna.
 
-? Fotograf na tekmi postavi stojalo s tremi nogami na neravna tla. Zakaj stojalo ne maja, stol s štirimi nogami pa lahko?
+? Fotograf na tekmi postavi stojalo s tremi nogami na neravna tla. Zakaj se stojalo ne maje, stol s štirimi nogami pa se lahko?
 + Tri točke, ki ne ležijo na isti premici, vedno določajo eno ravnino, četrta točka pa v njej ne leži nujno.
 - Ker je trinožnik lažji od stola.
 ~ Teža ne odloča, ali se predmet maje. Odloča, ali vse noge hkrati ležijo v isti ravnini.

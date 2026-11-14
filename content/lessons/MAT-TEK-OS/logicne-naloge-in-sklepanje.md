@@ -52,7 +52,7 @@ Koliko vrstic ima tabela za $3$ osebe in koliko za $4$? Kdaj se ti tabela še sp
 Vsaka nova oseba vsako vrstico razcepi na dve (V ali O), zato se število vrstic podvoji: $3$ osebe dajo $8$ vrstic, $4$ osebe $16$. Pri treh osebah je tabela še obvladljiva. Pri več osebah najprej sklepaj in tabelo uporabi le za možnosti, ki ostanejo.
 :::
 
-**6. Orodje 3: mreža in izključevanje.** Pri nalogah »kdo ima kaj« nariši mrežo: v vrstice osebe, v stolpce predmete. Vsak podatek prepiši v znak: ✗ pomeni »ne«, ✓ pomeni »da«. Ko v polje vpišeš ✓, v isti vrstici in istem stolpcu povsod vpiši ✗, ker ima vsak natanko en predmet in vsak predmet natanko enega lastnika. Če v vrstici ostane eno prazno polje, vanj sodi ✓.
+**6. Orodje 3: mreža in izključevanje.** Pri nalogah »kdo ima kaj« nariši mrežo: v vrstice osebe, v stolpce predmete. Vsak podatek prepiši v znak: ✗ pomeni »ne«, ✓ pomeni »da«. Ko v polje vpišeš ✓, v isti vrstici in istem stolpcu povsod vpiši ✗, ker ima vsak natanko en predmet in vsak predmet natanko enega lastnika. Če v vrstici ali stolpcu ostane eno samo prazno polje, vanj sodi ✓.
 
 Pazi na **skrite podatke**: »Cene in lastnik psa hodita skupaj v šolo« pove, da Cene nima psa, saj ne hodi sam s sabo.
 
@@ -254,5 +254,5 @@ Uporaben trik: če kdo reče »X in jaz sva iste vrste«, je X gotovo vitez, ne 
 
 :::simboli
 n | število oseb v nalogi | | | tabela vseh možnosti ima $2^n$ vrstic
-p, q | izjavi | | | vsaka je resnična ali neresnična
+p, q | izjavi | | | vsaka je resnična ali lažna
 :::

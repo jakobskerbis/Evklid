@@ -124,10 +124,10 @@ $Q = m \cdot c \cdot \Delta T$, nato $t = \dfrac{Q}{P}$
 Kitarist Matic pusti kitaro v kovčku na soncu ob odru. Sonce sije na kovček z močjo $200\,\mathrm{W}$. Črn kovček od tega vpije $90\,\%$. Koliko energije vpije v $10$ minutah?
 
 **Podatki:** $P = 200\,\mathrm{W}$, vpije se $90\,\%$, $t = 10\,\mathrm{min}$
-**Iščemo:** vpito energijo $A$
+**Iščemo:** vpito energijo $Q_{\text{vpita}}$
 
 :::formula
-$P_{\text{vpita}} = 0{,}9 \cdot P$, nato $A = P_{\text{vpita}} \cdot t$
+$P_{\text{vpita}} = 0{,}9 \cdot P$, nato $Q_{\text{vpita}} = P_{\text{vpita}} \cdot t$
 :::
 
 **Rešitev:**
@@ -139,7 +139,7 @@ $P_{\text{vpita}} = 0{,}9 \cdot P$, nato $A = P_{\text{vpita}} \cdot t$
 :::premisli
 Koliko energije vpije črn kovček v $600\,\mathrm{s}$? In koliko bi je vpil bel kovček, ki vpije le $30\,\%$?
 ---
-Črn: $A = 180\,\mathrm{W} \cdot 600\,\mathrm{s} = 108\,000\,\mathrm{J}$. Bel: $0{,}3 \cdot 200\,\mathrm{W} \cdot 600\,\mathrm{s} = 36\,000\,\mathrm{J}$, torej trikrat manj. Za kitaro na soncu je svetel kovček veliko boljša izbira.
+Črn: $Q_{\text{vpita}} = 180\,\mathrm{W} \cdot 600\,\mathrm{s} = 108\,000\,\mathrm{J}$. Bel: $0{,}3 \cdot 200\,\mathrm{W} \cdot 600\,\mathrm{s} = 36\,000\,\mathrm{J}$, torej trikrat manj. Za kitaro na soncu je svetel kovček veliko boljša izbira.
 :::
 
 ## Pogoste napake
@@ -193,9 +193,9 @@ Analogija ima mejo: steklenica se pri podajanju ne zmanjša, energija pa se pri 
 - $300\,\mathrm{J}$
 ~ Tu je čas ostal v minutah. Vat je joule na *sekundo*, zato $2\,\mathrm{min} = 120\,\mathrm{s}$.
 - $75\,\mathrm{J}$
-~ Moč si delil s časom. Energija je produkt: $A = P \cdot t$.
+~ Moč si delil s časom. Energija je produkt: $Q = P \cdot t$.
 + $18\,000\,\mathrm{J}$
-> $A = P \cdot t = 150\,\mathrm{W} \cdot 120\,\mathrm{s} = 18\,000\,\mathrm{J}$.
+> $Q = P \cdot t = 150\,\mathrm{W} \cdot 120\,\mathrm{s} = 18\,000\,\mathrm{J}$.
 
 ? Zakaj se zrak, ki ga segreje radiator, dvigne proti stropu?
 - Ker toplota sama po sebi vedno potuje navzgor.
@@ -233,5 +233,5 @@ T_{\text{konč}} | končna temperatura | | ^\circ C
 t | čas segrevanja | t = \dfrac{Q}{P} | s
 P | moč (grelnikov ali sončnega sevanja) | | W
 P_{\text{vpita}} | moč, ki jo telo vpije | P_{\text{vpita}} = 0{,}9 \cdot P | W | tu se vpije 90 %
-A | vpita energija | A = P_{\text{vpita}} \cdot t | J
+Q_{\text{vpita}} | vpita energija | Q_{\text{vpita}} = P_{\text{vpita}} \cdot t | J
 :::

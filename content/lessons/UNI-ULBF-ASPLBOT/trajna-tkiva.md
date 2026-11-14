@@ -30,7 +30,7 @@ Na Mednarodni vesoljski postaji so astronavti leta 2015 vzgojili in pojedli sola
 
 **Osnovno tkivo: najmanj razlik.** **Parenhim** ima žive celice s tanko steno in veliko vakuolo, med njimi so medceličnine. Je najbolj podoben meristemu, zato se lahko ob poškodbi spet začne deliti. Po nalogi ločimo asimilacijski parenhim (s kloroplasti, npr. stebričasto in gobasto tkivo lista), založni parenhim (škrob v gomolju krompirja), zračni parenhim ali aerenhim (velike medceličnine pri vodnih rastlinah) in vodni parenhim (sukulente).
 
-**Mehansko tkivo: razlika je v debelini stene.** **Kolenhim** ima žive celice z neenakomerno odebeljenimi stenami iz celuloze in pektina. Je trden, a raztegljiv, zato podpira še rastoče dele, npr. peclje in mlada stebla. **Sklerenhim** ima enakomerno debele, olesenele stene z **ligninom**; ob zrelosti so celice večinoma mrtve. Dolge celice so **vlakna** (lan, konoplja), kratke so **sklereide** ali kamenice (zrnca v hruški, lupina oreha).
+**Mehansko tkivo: razlika je v debelini stene.** **Kolenhim** ima žive celice z neenakomerno odebeljenimi stenami iz celuloze in pektina. Je trden, a raztegljiv, zato podpira še rastoče dele, npr. peclje in mlada stebla. **Sklerenhim** ima enakomerno debele, olesenele stene z **ligninom**; ob zrelosti so celice večinoma mrtve. Dolge celice so **vlakna** (lan, konoplja), kratke so **sklereide** ali kamene celice (zrnca v hruški, lupina oreha).
 
 :::premisli
 Napovej: bi rastlina, vzgojena v breztežnosti, potrebovala več ali manj sklerenhima kot na Zemlji? Zakaj pa ne more opustiti tkiva, ki vodi vodo od korenin do listov?
@@ -38,7 +38,7 @@ Napovej: bi rastlina, vzgojena v breztežnosti, potrebovala več ali manj sklere
 Manj, ker ji ni treba držati lastne teže; pri nekaterih poskusih v vesolju so rastline res tvorile manj lignina. Tkivo za vodo (ksilem, spodaj) pa ostane, ker mora voda še vedno priti od korenin do listov, ne glede na težnost.
 :::
 
-**Prevajalno tkivo: razlika je v obliki in povezavi celic.** Celice so podolgovate in zložene v dolge vrste, ki tečejo skozi vso rastlino. Prevajalna tkiva sta dve, ksilem in floem; skupaj tvorita **žile** (prevajalne snope). Pri floemu potrebujemo dve besedi: **vir** je organ, ki sladkor izdeluje ali sprošča, **ponor** pa organ, ki ga porablja ali shranjuje. Zgrajena sta iz istega načela, a z nasprotno rešitvijo:
+**Prevajalno tkivo: razlika je v obliki in povezavi celic.** Celice so podolgovate in zložene v dolge vrste, ki tečejo skozi vso rastlino. Prevajalni tkivi sta dve, ksilem in floem; skupaj tvorita **žile** (prevajalne snope). Pri floemu potrebujemo dve besedi: **vir** je organ, ki sladkor izdeluje ali sprošča, **ponor** pa organ, ki ga porablja ali shranjuje. Zgrajena sta iz istega načela, a z nasprotno rešitvijo:
 
 | Lastnost | Ksilem (les) | Floem (ličje) |
 |---|---|---|
@@ -171,14 +171,14 @@ parenhim skorje           ← osnovno
 stržen (parenhim)         ← osnovno
 ```
 
-Opazi dve stvari. Floem je v snopu stebla praviloma bliže povrhnju kot ksilem. Mehansko tkivo leži na obodu, kjer se najbolje upira upogibu, tako kot je pri cevi najtrdnejši zunanji rob.
+Opazi dve stvari. Floem je v snopu stebla praviloma bliže površju kot ksilem. Mehansko tkivo leži na obodu, kjer se najbolje upira upogibu, tako kot je pri cevi najtrdnejši zunanji rob.
 
 ## Drugače: Iz vsakdanjega življenja
 
 - **Niti v steblu zelene:** ko jih izvlečeš iz stebla, držiš v rokah kolenhim in žilne snope.
 - **Zrnca v hruški:** sklereide, kratke olesenele celice sklerenhima.
 - **Lanena srajca:** tkana iz sklerenhimskih vlaken. **Bombaž** pa so laski povrhnjice semena.
-- **Zamašek steklenice:** pluta hrastovega plutovca, krovno tkivo debla.
+- **Zamašek steklenice:** pluta hrasta plutovca, krovno tkivo debla.
 - **Les za pohištvo:** ksilem drevesa, olesenele mrtve celice.
 - **Obročkanje:** če drevesu okrog debla odstraniš skorjo z ličjem, prekineš floem. Listi še nekaj časa dobivajo vodo po lesu, korenine pa ostanejo brez sladkorja, zato drevo počasi propade.
 
@@ -225,7 +225,7 @@ Opazi dve stvari. Floem je v snopu stebla praviloma bliže povrhnju kot ksilem. 
 > Obročkanje prekine floem. Korenine porabijo zaloge in odmrejo, nato drevo ne more več črpati vode.
 
 :::simboli
-t | čas prenosa po prevodnem tkivu | t = \dfrac{h}{v} | h
+t | čas prenosa po prevajalnem tkivu | t = \dfrac{h}{v} | h
 h | višina rastline | | m
 v | hitrost toka v ksilemu ali floemu | | m/h
 Q_\mathrm{t} | pretok vode skozi trahejo | | | Q je sorazmeren z r⁴

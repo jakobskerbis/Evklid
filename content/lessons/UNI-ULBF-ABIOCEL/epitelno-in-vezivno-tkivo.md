@@ -26,7 +26,7 @@ Celice drži skupaj več vrst stikov. **Tesni stiki** zatesnijo prostor med celi
 | enoskladni ploščati | ena plast tankih celic | pljučni mešički, endotelij žil |
 | enoskladni kubični | ena plast kock | ledvični kanalčki, ščitnica |
 | enoskladni prizmatski | ena plast visokih celic, pogosto z mikrovili | tanko črevo |
-| psevdovečskladni | vse celice na bazalni lamini, jedra na več višinah | sapnik (z migetalkami) |
+| večvrstni (navidezno večskladni) | vse celice na bazalni lamini, jedra na več višinah | sapnik (z migetalkami) |
 | večskladni ploščati | več plasti, na vrhu ploščate | koža (poroženevajoči), požiralnik (neporoženevajoči) |
 | prehodni (urotelij) | več plasti, vrhnje celice se raztegnejo | sečni mehur |
 
@@ -98,10 +98,10 @@ Ime = število plasti (koliko plasti celic leži druga na drugi; odločilno je, 
 
 **Rešitev:**
 
-1. Plasti: vse celice stojijo na bazalni lamini, zato je to ena plast, čeprav so jedra na več višinah. Epitel je *psevdo*večskladen.
+1. Plasti: vse celice stojijo na bazalni lamini, zato je to ena plast, čeprav so jedra na več višinah. Epitel je le *navidezno* večskladen, torej večvrsten.
 2. Oblika: celice, ki segajo do površine, so visoke, prizmatske.
 3. Posebnosti: migetalke in vrčaste celice.
-4. Odgovor: psevdovečskladni prizmatski migetalčni epitel z vrčastimi celicami. Sluz ujame prah, migetalke jo potiskajo proti žrelu.
+4. Odgovor: večvrstni prizmatski migetalčni epitel z vrčastimi celicami. Sluz ujame prah, migetalke jo potiskajo proti žrelu.
 
 ### Primer 3 (težji): kalcij in liter mleka
 
@@ -138,7 +138,7 @@ $V = \dfrac{274\,\mathrm{mg}}{1{,}2\,\mathrm{mg/mL}} \approx 228\,\mathrm{mL}$, 
 ## Povzetek
 
 - Tkivo = celice + zunajcelični matriks; epitel ima malo matriksa, vezivo veliko.
-- Epitel: polarne celice na bazalni lamini, brez žil, povezane s tesnimi stiki, pritrjevalnimi stiki in dezmosomi. Ime: število plasti + oblika vrhnjih celic (enoskladni ploščati, kubični, prizmatski; psevdovečskladni; večskladni ploščati; prehodni). Žleze: eksokrine (merokrino, apokrino, holokrino) in endokrine.
+- Epitel: polarne celice na bazalni lamini, brez žil, povezane s tesnimi stiki, pritrjevalnimi stiki in dezmosomi. Ime: število plasti + oblika vrhnjih celic (enoskladni ploščati, kubični, prizmatski; večvrstni; večskladni ploščati; prehodni). Žleze: eksokrine (merokrino, apokrino, holokrino) in endokrine.
 - ZCM: vlakna (kolagen I, II, III, IV; elastin) in osnovna substanca (glikozaminoglikani, proteoglikani, glikoproteini). Za kolagen je potreben vitamin C.
 - Hrustanec: kolagen II in agrekan, hondrociti v lakunah, brez žil; hialini, elastični, vlaknati.
 - Kost: kolagen I + hidroksiapatit; osteoblasti gradijo, osteociti vzdržujejo, osteoklasti razgrajujejo; osteon s Haversovim kanalom; intramembransko in enhondralno zakostenevanje.

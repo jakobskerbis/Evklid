@@ -152,25 +152,25 @@ $\Delta E_0' = 0{,}82 + 0{,}42 = 1{,}24\,\mathrm{V}$, $\Delta G_0' = -8 \cdot 96
 
 ## Drugače: Na sliki
 
-Predstavljaj si navpično merilo nadmorske višine. Spodaj, pri $-0{,}42\,\mathrm{V}$, je vodik. Malo višje, pri $-0{,}32\,\mathrm{V}$, je $\mathrm{NADH}$. Na vrhu, pri $+0{,}82\,\mathrm{V}$, je kisik.
+Predstavljaj si navpično merilo nadmorske višine. Zgoraj, pri $-0{,}42\,\mathrm{V}$, je vodik. Malo nižje, pri $-0{,}32\,\mathrm{V}$, je $\mathrm{NADH}$. Na dnu, pri $+0{,}82\,\mathrm{V}$, je kisik.
 
 ```
-+0,82  O2      ← vrh: največji padec
-+0,42  NO3-
--0,22  SO4 2-
+-0,42  H2      ← vrh: najmočnejši darovalec
 -0,32  NADH
--0,42  H2      ← dno: najmočnejši darovalec
+-0,22  SO4 2-
++0,42  NO3-
++0,82  O2      ← dno: največji padec
 ```
 
 Elektron je kot kamen, ki ga spustiš z darovalca do sprejemnika. Več kot je višinskih metrov med njima, več energije se sprosti. Na tej sliki vidiš vse oblike presnove:
 
-- aerobno dihanje: od $\mathrm{NADH}$ do vrha,
+- aerobno dihanje: od $\mathrm{NADH}$ do dna,
 - anaerobno dihanje: od $\mathrm{NADH}$ do vmesne postaje,
 - kemolitotrofija: kamen spustiš z drugega mesta, na primer z vodika,
 - fermentacija: kamen ostane skoraj na isti višini, ker sprejemnik nastane iz same glukoze,
 - fotosinteza: svetloba kamen najprej dvigne, nato pade.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 - **Kruh, vino in jogurt** so izdelki fermentacije. Kvasovke glukozo pretvorijo v etanol in $\mathrm{CO_2}$, mlečnokislinske bakterije v mlečno kislino.
 - **Čistilna naprava** odstranjuje nitrat z denitrifikacijo: bakterije z nitratom dihajo in ga pretvorijo v plin $\mathrm{N_2}$.
@@ -224,7 +224,7 @@ Elektron je kot kamen, ki ga spustiš z darovalca do sprejemnika. Več kot je vi
 > Nitrat je končni sprejemnik elektronov in se reducira do $\mathrm{N_2}$. To je denitrifikacija, oblika anaerobnega dihanja.
 
 :::simboli
-\Delta G_0' | standardna sprememba proste entalpije | \Delta G_0' = -n\,F\,\Delta E_0' | kJ/mol | negativna: reakcija sprošča energijo
+\Delta G_0' | standardna sprememba proste energije (proste entalpije) | \Delta G_0' = -n\,F\,\Delta E_0' | kJ/mol | negativna: reakcija sprošča energijo
 n | število prenesenih elektronov | | –
 F | Faradayeva konstanta | | kJ/(V mol) | 96,485 kJ/(V mol)
 \Delta E_0' | razlika standardnih redoks potencialov | \Delta E_0' = E_0'(\text{sprejemnik}) - E_0'(\text{darovalec}) | V | večja razlika, več energije

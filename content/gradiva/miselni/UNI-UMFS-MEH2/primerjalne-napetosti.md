@@ -13,7 +13,7 @@ stanje: osnutek
   - ravninsko stanje: tretja je $0$
 - Krhke snovi
   - $\sigma_{\mathrm{pr}} = \sigma_1$, primerjaj z $R_m$
-  - špageta poči po vijačnici pod $45^\circ$
+  - špaget poči po vijačnici pod $45^\circ$
 - Tresca
   - $\sigma_{\mathrm{pr}} = \sigma_1 - \sigma_3$
   - napaka: $\sigma' - \sigma''$ brez ničle

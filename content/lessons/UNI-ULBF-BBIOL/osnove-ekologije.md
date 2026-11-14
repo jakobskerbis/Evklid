@@ -40,7 +40,7 @@ Kaj napoveš za $N = 1000$ in kaj za $N = 1200$?
 Pri $N = K$ je oklepaj $0$, rast se ustavi. Pri $N = 1200$ je oklepaj negativen, zato populacija upada nazaj proti $K$. Populacija torej ne raste, dokler ne poje vse hrane, ampak se ustali okoli nosilne kapacitete.
 :::
 
-**Združba.** Populacije v združbi so povezane. Vrste **tekmujejo** za isti vir, **plenilec** lovi plen, **zajedavec** živi na račun gostitelja, pri **mutualizmu** imata korist obe vrsti (na primer gliva in korenine v mikorizi). Kdo koga je, prikaže **prehranjevalni splet**. Vsak organizem v njem zaseda **trofično raven**: proizvajalci (rastline, alge, cianobakterije), primarni potrošniki (rastlinojedi), sekundarni potrošniki (plenilci) in tako naprej. Ostanke vseh ravni razgradijo **razkrojevalci**, predvsem bakterije in glive.
+**Združba.** Populacije v združbi so povezane. Vrste **tekmujejo** za isti vir, **plenilec** lovi plen, **zajedavec** živi na račun gostitelja, pri **mutualizmu** imata korist obe vrsti (na primer gliva in korenine v mikorizi). Kdo koga jé, prikaže **prehranjevalni splet**. Vsak organizem v njem zaseda **trofično raven**: proizvajalci (rastline, alge, cianobakterije), primarni potrošniki (rastlinojedi), sekundarni potrošniki (plenilci) in tako naprej. Ostanke vseh ravni razgradijo **razkrojevalci**, predvsem bakterije in glive.
 
 **Ekosistem in prvi popravek: energija teče, ne kroži.** Proizvajalci s fotosintezo vežejo sončno energijo v organske snovi. Del te energije porabijo sami za dihanje. Kar ostane in se vgradi v novo biomaso, je **neto primarna produkcija**. Rastlinojed dobi le del te energije: veliko rastlin ostane nepojedenih, del pojedenega ne prebavi, večino prebavljenega pa porabi za lastno dihanje. Energija, porabljena za dihanje, na koncu preide v toploto in odide iz ekosistema. Nazaj je ni mogoče ujeti.
 
@@ -55,7 +55,7 @@ proizvajalci         100 000 kJ
 
 Že po treh stopnicah, na četrti ravni, ostane tisočinka. Zato prehranjevalne verige redko imajo več kot štiri ali pet členov.
 
-**Drugi popravek: snov kroži, a lahko ostane zaklenjena.** Atomi ogljika, dušika in fosforja se ne porabijo. Ogljik iz $\mathrm{CO_2}$ rastline vgradijo v sladkorje, dihanje vseh organizmov in razkroj ga vrneta v zrak. Dušik iz zraka ($\mathrm{N_2}$) lahko vežejo le nekatere bakterije, na primer v koreninskih gomoljih metuljnic. Druge bakterije ga pretvarjajo v nitrat, ki ga rastline sprejmejo, denitrifikacijske bakterije pa ga vrnejo v zrak. Brez razkrojevalcev bi se hranila kopičila v mrtvih ostankih. Snov je lahko zaklenjena tudi tam, kamor proizvajalci ne sežejo, na primer globoko pod površjem.
+**Drugi popravek: snov kroži, a lahko ostane zaklenjena.** Atomi ogljika, dušika in fosforja se ne porabijo. Ogljik iz $\mathrm{CO_2}$ rastline vgradijo v sladkorje, dihanje vseh organizmov in razkroj ga vrneta v zrak. Dušik iz zraka ($\mathrm{N_2}$) lahko vežejo le nekatere bakterije, na primer v koreninskih gomoljčkih metuljnic. Druge bakterije ga pretvarjajo v nitrat, ki ga rastline sprejmejo, denitrifikacijske bakterije pa ga vrnejo v zrak. Brez razkrojevalcev bi se hranila kopičila v mrtvih ostankih. Snov je lahko zaklenjena tudi tam, kamor proizvajalci ne sežejo, na primer globoko pod površjem.
 
 :::premisli
 Zdaj se vrni k zemljevidu iz uvoda. Zakaj je bistro tropsko morje skoraj puščava, čeprav ima največ sonca?
@@ -99,7 +99,7 @@ $\dfrac{R}{C} = \dfrac{M}{N} \quad\Rightarrow\quad N = \dfrac{M \cdot C}{R}$
 1. Delež označenih v drugem ulovu naj bo enak deležu označenih v vsej populaciji: $\dfrac{9}{45} = \dfrac{60}{N}$.
 2. $N = \dfrac{60 \cdot 45}{9} = 300$.
 3. Gostota: $\dfrac{300}{12} = 25$ voluharic na $\mathrm{km^2}$.
-4. Odgovor: populacija šteje približno $300$ osebkov, gostota je $25$ na $\mathrm{km^2}$. Ocena velja, če se označeni osebki dobro pomešajo z drugimi in oznake ne izgubijo.
+4. Odgovor: populacija šteje približno $300$ osebkov, gostota je $25$ na $\mathrm{km^2}$. Ocena velja, če se označeni osebki dobro pomešajo z drugimi in oznak ne izgubijo.
 
 ### Primer 3: žito ali meso
 
@@ -150,7 +150,7 @@ Spremljajmo dva popotnika, ki ob istem jutru prispeta v gorski gozd.
 
 Prvi je atom ogljika. V zraku je del molekule $\mathrm{CO_2}$. List bukve ga ujame in vgradi v sladkor. Jeseni srna pojé bukov žir in atom postane del njene mišice. Ris ujame srno in atom ogljika izdiha kot $\mathrm{CO_2}$, ki se vrne v zrak. Če bi atom ostal v risovem truplu, bi ga glive in bakterije sprostile čez nekaj mesecev. Popotovanje se začne znova. Atom ima povratno vozovnico.
 
-Drugi popotnik je obrok energije iz sončnega žarka. List ga ujame v isti sladkor. Srna ga porabi, ko teče čez jaso, in večina ga odide kot toplota iz njenega telesa v hladen zrak. Kar ostane, preide v risa. Tudi ris ga porabi in izseva. Toplote nihče v gozdu ne more več ujeti. Obrok energije ima samo enosmerno vozovnico. Zato mora sonce gozd oskrbovati vsak dan znova.
+Drugi popotnik je obrok energije iz sončnega žarka. List ga ujame v isti sladkor. Srna ga porabi, ko teče čez jaso, in večina ga odide kot toplota iz njenega telesa v hladen zrak. Kar ostane, preide v risa. Tudi ris ga porabi in izseva. Toplote nihče v gozdu ne more več ujeti. Obrok energije ima samo enosmerno vozovnico. Zato mora Sonce gozd oskrbovati vsak dan znova.
 
 ## Drugače: Korak za korakom s številkami
 

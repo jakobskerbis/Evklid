@@ -30,7 +30,7 @@ Iz teme o rastnih dejavnikih veš, da korenine potrebujejo vodo, zrak, toploto i
 **Dopolnilna obdelava** je plitva, od nekaj do $10\,\mathrm{cm}$. Iz grobih, zoranih tal naredi setvenico: zdrobi grude, poravna površino, zapre vlago v tleh (zrahljan vrhnji sloj zavre izhlapevanje vode iz globine) in uniči kaleči plevel. Orodja so brane, kultivatorji, valjarji in rotacijske brane. Kadar jih združimo v en stroj (npr. rotacijsko brano s sejalnico), govorimo o setveni kombinaciji, ki setvenico pripravi in poseje v enem prehodu.
 
 :::premisli
-Kmet je orjal jeseni, setev pa bo šele aprila. Zakaj zimo pusti zemljo v grobih brazdah in je ne poravna z brano takoj?
+Kmet je oral jeseni, setev pa bo šele aprila. Zakaj čez zimo pusti zemljo v grobih brazdah in je ne poravna z brano takoj?
 ---
 Groba površina zadrži več vode in snega, mraz pa grude razdrobi sam: voda v njih zmrzne, se razširi in jih razpoči. Spomladi je za setvenico potrebnega manj dela. Gladka jesenska površina bi se do pomladi zaskorjila in zbila.
 :::
@@ -46,7 +46,7 @@ Groba površina zadrži več vode in snega, mraz pa grude razdrobi sam: voda v n
 
 Vsak prehod porabi gorivo in čas, vsako kolo pa zbije tla. Ob tem obrnjena, gola tla ob nalivu odnaša voda (**erozija**). Zrahljana tla dobijo tudi več zraka, zato mikrobi hitreje razgradijo organsko snov.
 
-**Konzervirajoča (ohranitvena) obdelava** je odgovor na te slabosti. Po dogovoru je obdelava konzervirajoča, kadar po setvi ostane **vsaj $30\,\%$ površine pokrite z rastlinskimi ostanki**. Tla ne obračamo. Od najmočnejše do najšibkejše obdelave ločimo tri stopnje:
+**Konzervirajoča (ohranitvena) obdelava** je odgovor na te slabosti. Po dogovoru je obdelava konzervirajoča, kadar po setvi ostane **vsaj $30\,\%$ površine pokrite z rastlinskimi ostanki**. Tal ne obračamo. Od najmočnejše do najšibkejše obdelave ločimo tri stopnje:
 
 - **reducirana (zmanjšana) obdelava**: rahljanje s kultivatorjem ali rahljalnikom brez obračanja,
 - **obdelava v pasovih**: obdela se le ozek pas, kamor pride vrsta, vmes ostane ostanek,

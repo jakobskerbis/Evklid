@@ -52,7 +52,7 @@ Za naš baker je $r_{kr} \approx 1{,}30\,\mathrm{nm}$ (približno 780 atomov) in
 
 Iz formul razberemo dvoje. Večja podhladitev pomeni manjši $r_{kr}$, ovira pa pada celo s kvadratom, $\Delta G_{kr} \propto 1/\Delta T^2$. Pri $\Delta T = 0$ je $r_{kr}$ neskončen, zato se točno pri tališču nič ne strdi.
 
-**3. Homogena in heterogena nukleacija.** Kal sredi čiste taline nastane z **homogeno nukleacijo**. Zanjo bi baker potreboval podhladitev več kot $200\,\mathrm{K}$. Pravi ulitki se strdijo že pri nekaj kelvinih podhladitve. Kali namreč nastajajo na obstoječih površinah: na steni forme, na delcih oksidov in na namerno dodanih **cepivih** (npr. delci $\mathrm{TiB_2}$ v aluminijevih zlitinah). To je **heterogena nukleacija**.
+**3. Homogena in heterogena nukleacija.** Kal sredi čiste taline nastane s **homogeno nukleacijo**. Zanjo bi baker potreboval podhladitev več kot $200\,\mathrm{K}$. Pravi ulitki se strdijo že pri nekaj kelvinih podhladitve. Kali namreč nastajajo na obstoječih površinah: na steni forme, na delcih oksidov in na namerno dodanih **cepivih** (npr. delci $\mathrm{TiB_2}$ v aluminijevih zlitinah). To je **heterogena nukleacija**.
 
 Na podlagi kal ni cela kroglica, ampak kapica z **močitvenim kotom** $\theta$, to je kotom med površino kapice in podlago. Za isti $r_{kr}$ potrebuje manj atomov, zato je ovira manjša:
 
@@ -128,7 +128,7 @@ $\Delta G_{het} = S\,\Delta G_{kr}$, $S = \dfrac{(2+\cos\theta)(1-\cos\theta)^2}
 
 ### Primer 3: zemljevid zrn z merilom
 
-Mikroposnetek beremo kot planinski zemljevid: razdaljo na sliki delimo z merilom, da dobimo resnično. Iz ulitka medenine vzamemo dva vzorca. Vzorec A je s skorjaste cone, posnet pri povečavi $200\times$. Črta dolžine $100\,\mathrm{mm}$ seka $40$ mej zrn. Vzorec B je iz sredine, posnet pri $50\times$, ista črta seka $25$ mej. Za kolikšen delež je meja tečenja vzorca A večja od meje tečenja vzorca B? Vzemi $d \approx \bar{l}$.
+Mikroposnetek beremo kot planinski zemljevid: razdaljo na sliki delimo z merilom, da dobimo resnično. Iz ulitka medenine vzamemo dva vzorca. Vzorec A je s skorjaste cone, posnet pri povečavi $200\times$. Črta dolžine $100\,\mathrm{mm}$ seka $40$ mej zrn. Vzorec B je iz sredine, posnet pri $50\times$, ista črta seka $25$ mej. Za kolikšen delež je meja tečenja vzorca A večja od meje tečenja vzorca B? Za to medenino je $\sigma_0 = 25\,\mathrm{MPa}$ in $k = 12{,}5\,\mathrm{MPa\,mm^{1/2}}$. Vzemi $d \approx \bar{l}$.
 
 **Podatki:** $L = 100\,\mathrm{mm}$; A: $N_A = 40$, $M_A = 200$; B: $N_B = 25$, $M_B = 50$; $\sigma_0 = 25\,\mathrm{MPa}$, $k = 12{,}5\,\mathrm{MPa\,mm^{1/2}}$
 **Iščemo:** $\bar{l}_A$, $\bar{l}_B$, meji tečenja $\sigma_{y,A}$ in $\sigma_{y,B}$
@@ -140,7 +140,7 @@ $\bar{l} = \dfrac{L}{N\,M}$, nato $\sigma_y = \sigma_0 + k\,d^{-1/2}$
 **Rešitev:**
 
 1. Vzorec A: $\bar{l}_A = \dfrac{100\,\mathrm{mm}}{40 \cdot 200} = 0{,}0125\,\mathrm{mm}$, to je $12{,}5\,\mu\mathrm{m}$.
-2. Vzorec B: $\bar{l}_B = \dfrac{100\,\mathrm{mm}}{25 \cdot 50} = 0{,}08\,\mathrm{mm}$, to je $80\,\mu\mathrm{m}$. Čeprav ima B manj presečišč na sliki, ključna je manjša povečava.
+2. Vzorec B: $\bar{l}_B = \dfrac{100\,\mathrm{mm}}{25 \cdot 50} = 0{,}08\,\mathrm{mm}$, to je $80\,\mu\mathrm{m}$. B ima manj presečišč na sliki, še bolj pa odloča manjša povečava.
 3. Meja tečenja A: $\sigma_{y,A} = 25 + \dfrac{12{,}5}{\sqrt{0{,}0125}} \approx 25 + 111{,}8 = 136{,}8\,\mathrm{MPa}$.
 4. Meja tečenja B: $\sigma_{y,B} = 25 + \dfrac{12{,}5}{\sqrt{0{,}08}} \approx 25 + 44{,}2 = 69{,}2\,\mathrm{MPa}$.
 5. Razmerje: $\dfrac{136{,}8}{69{,}2} \approx 1{,}98$.
@@ -180,7 +180,7 @@ Imenovalec je $3{,}54$, zato $\Delta T = \dfrac{543{,}2}{3{,}54} \approx 153\,\m
 ## Povzetek
 
 - Strjevanje poteka v dveh korakih: nukleacija (nastanek kali) in rast kristalnih zrn.
-- Za kal se tekmujeta prihranek prostornine $\Delta G_v$ in cena površine $\gamma$; stabilna je kal z $r > r_{kr} = \dfrac{2\gamma\,T_m}{\Delta H_f\,\Delta T}$.
+- Pri kali tekmujeta prihranek prostornine $\Delta G_v$ in cena površine $\gamma$; stabilna je kal z $r > r_{kr} = \dfrac{2\gamma\,T_m}{\Delta H_f\,\Delta T}$.
 - Večja podhladitev pomeni manjši $r_{kr}$, ovira $\Delta G_{kr}$ pada z $1/\Delta T^2$.
 - Heterogena nukleacija (stena forme, cepiva) zmanjša oviro za faktor $S(\theta)$, zato ulitki potrebujejo le nekaj kelvinov podhladitve.
 - Zrna rastejo kot dendriti, dokler ne trčijo; meje zrn ostanejo med njimi.
@@ -203,7 +203,7 @@ Meja analogije: atomi ne izbirajo kraja. Kal nastane po naključju in preživi l
 
 **Vrh krivulje.** Kritični radij in oviro v literaturi pogosto označijo z $r^*$ in $\Delta G^*$. Iz $\dfrac{d\,\Delta G}{dr} = -4\pi r^2\,\Delta G_v + 8\pi r\,\gamma = 0$ sledi $r_{kr} = 2\gamma/\Delta G_v$. Ko ga vstavimo v $\Delta G(r)$, dobimo $\Delta G_{kr} = \dfrac{16\pi\gamma^3}{3\,\Delta G_v^2} = \dfrac{16\pi\gamma^3 T_m^2}{3\,\Delta H_f^2\,\Delta T^2}$.
 
-**Hitrost nukleacije.** Število kali na enoto prostornine in časa je sorazmerno z $\exp(-\Delta G_{kr}/k_B T)$ ($k_B$ je Boltzmannova konstanta), pomnoženim s faktorjem za difuzijo atomov do kali. Za baker pri $\Delta T = 236\,\mathrm{K}$ je $\Delta G_{kr}/k_B T \approx 91$. Ker je ovira v eksponentu in pada z $1/\Delta T^2$, se hitrost nukleacije v ozkem intervalu podhladitve spremeni za mnogo velikostnih razredov. Zato je začetek homogene nukleacije oster. Pri zelo veliki podhladitvi začne difuzija zaostajati, zato hitrost spet pade.
+**Hitrost nukleacije.** Število kali na enoto prostornine in časa je sorazmerno z $\exp(-\Delta G_{kr}/k_B T)$ ($k_B$ je Boltzmannova konstanta), pomnoženim s faktorjem za difuzijo atomov do kali. Za baker pri $\Delta T = 236\,\mathrm{K}$ je $\Delta G_{kr}/k_B T \approx 91$. Ker je ovira v eksponentu in pada z $1/\Delta T^2$, se hitrost nukleacije v ozkem intervalu podhladitve spremeni za mnogo velikostnih redov. Zato je začetek homogene nukleacije oster. Pri zelo veliki podhladitvi začne difuzija zaostajati, zato hitrost spet pade.
 
 **Kapica.** Iz ravnovesja površinskih napetosti na stiku treh faz sledi Youngova enačba $\gamma_{FT} = \gamma_{FK} + \gamma_{KT}\cos\theta$ (F forma, K kal, T talina). Ukrivljenost kapice je enaka kot pri prosti kali, zato ima isti $r_{kr}$. Prostornina kapice je le delež $S(\theta)$ prostornine krogle, enak delež velja za oviro. Mejna primera: pri $\theta = 180^\circ$ je $S = 1$ (podlaga ne pomaga), pri $\theta \to 0$ gre $S \to 0$ (podlaga je kot že zrasel kristal).
 

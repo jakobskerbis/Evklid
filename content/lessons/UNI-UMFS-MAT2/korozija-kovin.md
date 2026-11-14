@@ -93,7 +93,7 @@ Bakrena pločevina z jeklenimi zakovicami. Jeklo je anoda, a tu ima majhno ploš
 | jamičasta | kloridi lokalno prebijejo pasivno plast | nerjavna ograja ob soljeni cesti |
 | špranjska | v ozki reži zmanjka kisika, reža postane anoda | pod podložko, v prekrivnem spoju |
 | interkristalna | napad ob mejah zrn | nerjavna cev ob zvaru |
-| selektivna | iz zlitine se raztaplja ena komponenta | decinkacija medeninastih ventilov |
+| selektivna | iz zlitine se raztaplja ena komponenta | razcinkanje medeninastih ventilov |
 | napetostna | natezna napetost in okolje dajo razpoke | nerjavna sidra stropa v pokritem bazenu |
 | erozijska | tok tekočine odnaša zaščitno plast | bakrena cev za kolenom |
 

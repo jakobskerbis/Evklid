@@ -239,7 +239,7 @@ Kosov je $4 \cdot 5 = 20$, sinic je za $35 - 20 = 15$ več. Krajše: razlika $3$
 
 ## Drugače: Na sliki
 
-Dve vremenski postaji sta v enem letu našteli $48$ in $50$ deževnih dni. Ista števila sta spodaj narisana dvakrat. Levo se navpična os začne pri $0$, desno pri $46$.
+Dve vremenski postaji sta v enem letu našteli $48$ in $50$ deževnih dni. Isti števili sta spodaj narisani dvakrat. Levo se navpična os začne pri $0$, desno pri $46$.
 
 :::risba skica
 opis: Dva stolpčna prikaza istih števil 48 in 50. Levi ima os od 0: stolpca sta skoraj enako visoka. Desni ima os od 46: stolpec za 48 je visok 2 enoti, stolpec za 50 pa 4 enote, torej je videti dvakrat višji.
@@ -322,11 +322,11 @@ stolpec: april | 95
 
 ? V časopisu je stolpčni prikaz deževnih dni dveh mest: $48$ in $50$. Navpična os se začne pri $46$, zato je drugi stolpec videti dvakrat višji. Kaj je res?
 - Mesto s $50$ dnevi ima dvakrat več deževnih dni.
-~ Dvakrat višji je le stolpec, ker os ne začne pri $0$. Števili $48$ in $50$ se razlikujeta le za $2$.
+~ Dvakrat višji je le stolpec, ker se os ne začne pri $0$. Števili $48$ in $50$ se razlikujeta le za $2$.
 + Razlika je majhna, $2$ dneva; prikaz je zavajajoč.
 - Prikaz je pravilen, ker sta števili zapisani nad stolpcema.
 ~ Zapisani števili sta prav, slika pa kaže napačno razmerje. Kdor gleda samo stolpce, se zmoti.
-> $50 - 48 = 2$. Ker os začne pri $46$, sta stolpca visoka $2$ in $4$ enote, zato je drugi videti dvakrat višji.
+> $50 - 48 = 2$. Ker se os začne pri $46$, sta stolpca visoka $2$ in $4$ enote, zato je drugi videti dvakrat višji.
 
 <<RACUN
 vrednost: 9+6+5 | 20
@@ -341,6 +341,9 @@ vrednost: 8+12+14+10 | 44
 vrednost: 9-2 | 7
 vrednost: 6-2 | 4
 vrednost: 9-6 | 3
+vrednost: 7-4 | 3
+vrednost: 9-7 | 2
+vrednost: 7-3 | 4
 vrednost: 7*5 | 35
 vrednost: 4*5 | 20
 vrednost: 35-20 | 15

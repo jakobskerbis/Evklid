@@ -15,7 +15,7 @@ Tloris je tu le seznam prostorov in hodnikov med njimi, torej **graf**. Enak zap
 
 **Definicija.** (Enostavni) **graf** $G = (V, E)$ je končna neprazna množica **vozlišč** $V$ in množica **povezav** $E$, kjer je vsaka povezava neurejen par $\{u, v\}$ dveh različnih vozlišč. Pišemo $uv$; $u$ in $v$ sta **sosednji**. **Stopnja** $\deg(v)$ je število povezav, ki imajo krajišče v $v$. Največjo stopnjo v grafu označimo z $\Delta$.
 
-Pogosti so **poln graf** $K_n$ ($n$ vozlišč, vsako s vsakim, $\binom{n}{2}$ povezav), **cikel** $C_n$ ($n \ge 3$ vozlišč v krogu) in **poln dvodelni graf** $K_{p,q}$ (vsako od $p$ vozlišč na eni strani je povezano z vsakim od $q$ vozlišč na drugi).
+Pogosti so **poln graf** $K_n$ ($n$ vozlišč, vsako z vsakim, $\binom{n}{2}$ povezav), **cikel** $C_n$ ($n \ge 3$ vozlišč v krogu) in **poln dvodelni graf** $K_{p,q}$ (vsako od $p$ vozlišč na eni strani je povezano z vsakim od $q$ vozlišč na drugi).
 
 **Izrek (lema o rokovanju).** Za vsak graf z $m$ povezavami velja
 $$\sum_{v \in V} \deg(v) = 2m.$$
@@ -230,7 +230,7 @@ Bolnišnica ima $3$ laboratorije $L_1, L_2, L_3$ in $4$ oddelke $O_1, \ldots, O_
 
 1. Graf je $K_{3,4}$: $3 \cdot 4 = 12$ cevi. Stopnja vsakega laboratorija je $4$, vsakega oddelka $3$ (vsota $12 + 12 = 24 = 2 \cdot 12$).
 2. (b) Cikel v dvodelnem grafu izmenjuje strani, zato bi potreboval enako vozlišč na obeh straneh; $3 \ne 4$, zato Hamiltonovega cikla ni. Hamiltonova pot obstaja: $O_1, L_1, O_2, L_2, O_3, L_3, O_4$.
-3. (c) Lihe stopnje imajo vsi štirje oddelki, zato Eulerjevega obhoda (niti sprehoda) ni. Ponovljeni odseki morajo vsakemu oddelku dodati liho število obiskov in laboratorijem sodo; ponovitve tvorijo poti, ki pare oddelkov povezujejo.
+3. (c) Lihe stopnje imajo vsi štirje oddelki, zato Eulerjevega obhoda (niti sprehoda) ni. Ponovljeni odseki morajo vsakemu oddelku dodati liho število povezav in laboratorijem sodo; ponovitve tvorijo poti, ki pare oddelkov povezujejo.
 4. Dva oddelka sta na razdalji $2$ (prek kateregakoli laboratorija), zato je najceneje združiti oddelke v dva para in ponoviti dve poti dolžine $2$, npr. $O_1L_1O_2$ in $O_3L_1O_4$: $4$ ponovitve. Manj ne gre, ker vsak od štirih lihih oddelkov potrebuje vsaj eno ponovljeno cev, vsaka ponovljena cev pa ima le eno krajišče med oddelki.
 5. Po ponovitvi so stopnje oddelkov $4$, laboratorija $L_1$ pa $4 + 4 = 8$; vse sode, graf povezan, obhod obstaja. Skupaj $12 + 4 = 16$ odsekov.
 6. (d) Vsaka nova cev med oddelkoma popravi dva liha oddelka, zato sta potrebni vsaj $2$, npr. $O_1O_2$ in $O_3O_4$. Potem so vse stopnje $4$ in obhod dolžine $14$ obstaja.
@@ -289,7 +289,7 @@ Dokaži, da ima vsako drevo z $n \ge 2$ vozlišči vsaj dva lista in natanko $n 
 
 **Izrek o drevesih (skica dokaza).** (i)⇔(ii): dve različni poti med istima vozliščema dasta cikel. (i)⇒(iii), (iv): dokaz z listi zgoraj. (iii)⇒(i): povezan graf ima vpeto drevo z $n - 1$ povezavami, ki je zato kar $G$. (iv)⇒(i): graf brez ciklov s $c$ komponentami ima $n - c$ povezav, torej $c = 1$.
 
-**Močnejši izreki.** *Ore:* če je $\deg(u) + \deg(v) \ge n$ za vsak par nesosednjih vozlišč, je graf Hamiltonov (Dirac je poseben primer). *Brooks:* povezan graf, ki ni poln graf ali lih cikel, ima $\chi \le \Delta$. *Izrek o štirih barvah:* vsak ravninski graf ima $\chi \le 4$; dokaz iz leta 1976 je prvi večji izrek, dokazan z računalnikom. *Zahtevnost:* Eulerjev obhod najdemo v času $O(m)$, odločanje o Hamiltonovem ciklu in o $\chi \le 3$ je NP-polno.
+**Močnejši izreki.** *Ore:* če je v grafu z $n \ge 3$ vozlišči $\deg(u) + \deg(v) \ge n$ za vsak par nesosednjih vozlišč, je graf Hamiltonov (Dirac je poseben primer). *Brooks:* povezan graf, ki ni poln graf ali lih cikel, ima $\chi \le \Delta$. *Izrek o štirih barvah:* vsak ravninski graf ima $\chi \le 4$; dokaz iz leta 1976 je prvi večji izrek, dokazan z računalnikom. *Zahtevnost:* Eulerjev obhod najdemo v času $O(m)$, odločanje o Hamiltonovem ciklu in o $\chi \le 3$ je NP-polno.
 
 ## Preveri se
 
@@ -336,7 +336,7 @@ Dokaži, da ima vsako drevo z $n \ge 2$ vozlišči vsaj dva lista in natanko $n 
 - $5$
 ~ Vsako zdravilo v svojem terminu deluje, a ni najmanj: nesosednja zdravila smejo v isti termin.
 - $4$
-~ Graf nima vozlišča, ki bi bil sosed vseh ostalih; tri barve zadoščajo, npr. $1, 2, 1, 2, 3$.
+~ Graf nima vozlišča, ki bi bilo sosed vseh ostalih; tri barve zadoščajo, npr. $1, 2, 1, 2, 3$.
 > $\chi(C_5) = 3$: lih cikel ni dvodelen, barvanje $1, 2, 1, 2, 3$ pa pokaže, da tri zadoščajo.
 
 :::simboli

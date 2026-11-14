@@ -197,7 +197,7 @@ Za sekundarno zgradbo nariši med zvezdo in ovali vijugast kambij, ki se razšir
 
 **Gravitropizem.** Posedeni statoliti preusmerijo prenašalce avksina, ki se nabere na spodnji strani cone podaljševanja. V korenini avksin v visoki koncentraciji rast zavira, zato se konica ukrivi navzdol.
 
-**Endoderm v starejših koreninah.** Na stene se odloži še plast suberina, pri enokaličnicah pogosto tudi U-odebelitve. Nasproti ksilemskih krakov ostanejo tanjše **prepustne celice**.
+**Endoderm v starejših koreninah.** Na stene se odloži še plast suberina, pri enokaličnicah pogosto tudi U-odebelitve. Nasproti ksilemskim krakom ostanejo tanjše **prepustne celice**.
 
 **Eksarhni ksilem.** V korenini najprej dozori protoksilem na koncih krakov, metaksilem pa proti sredini (eksarhno, centripetalno). V steblu je vrstni red obraten (endarhen).
 

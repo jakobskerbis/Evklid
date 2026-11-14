@@ -54,7 +54,7 @@ if (odstotek < 0 || odstotek > 100) {
 }
 ```
 
-Nekatere izjeme so **preverjene** (npr. `IOException`): metoda jih mora ujeti ali v glavi napovedati s `throws IOException`. Izjeme iz `RuntimeException` so **nepreverjene**, te prevajalnik ne zahteva.
+Nekatere izjeme so **preverjene** (npr. `IOException`): metoda jih mora ujeti ali v glavi napovedati s `throws IOException`. Izjeme iz `RuntimeException` so **nepreverjene**, zanje prevajalnik tega ne zahteva.
 
 *Preveri:* ali se vrstica takoj za `throw` v istem bloku še izvede? (Ne, metoda se tam prekine.)
 
@@ -251,7 +251,7 @@ Kolikšna sta `imenik.size()` in `imenik.get("Ana")`?
 
 - Izjema je objekt, ki ga Java vrže ob napaki med izvajanjem; potuje navzgor po klicih, dokler je kdo ne ujame.
 - `try { … } catch (Tip e) { … } finally { … }`: `catch` ujame tip in njegove podrazrede; specifični tipi pred splošnimi; `finally` se izvede vedno.
-- `throw new …` vrže izjemo sami; preverjene izjeme je treba ujeti ali napovedati s `throws`.
+- S `throw new …` izjemo vržemo sami; preverjene izjeme je treba ujeti ali napovedati s `throws`.
 - `ArrayList`: urejen seznam spremenljive dolžine; `add`, `add(i, x)`, `get(i)`, `set(i, x)`, `remove(i)`, `size()`.
 - `HashMap`: pari ključ → vrednost, ključi enolični; `put` prepiše, `get` vrne `null`, če ključa ni.
 - Generiki (`List<String>`, `Par<A, B>`) dajo preverjanje tipov ob prevajanju; parametri so razredi (`Integer`, ne `int`).
@@ -276,7 +276,7 @@ HashMap:     "Ana" → 070 555 666                       ← nalepke namesto št
              "Bor" → 031 333 444
 ```
 
-Pri seznamu iščeš po številki predala, pri slovarju po nalepki. Vstavljanje v seznam premakne vse predale desno; v slovarju se nič ne premika.
+Pri seznamu iščeš po številki predala, pri slovarju po nalepki. Vstavljanje v seznam premakne vse predale od tistega mesta naprej za eno v desno; v slovarju se nič ne premika.
 
 ## Drugače: Bolj natančno
 

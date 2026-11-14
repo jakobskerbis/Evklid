@@ -118,7 +118,7 @@ $F_g = m \cdot g$, rezultanta $F = F_p - F_g$, nato $a = \dfrac{F}{m}$
 
 ### Primer 3: kaj pokaže telefon v avtu
 
-Telefon, pritrjen v nosilcu, z aplikacijo za pospeškomer izmeri, da avto pospešuje s $2\,\mathrm{m/s^2}$. Avto ima maso $1200\,\mathrm{kg}$, upor zraka in kotalno trenje ga skupaj zavirata s $400\,\mathrm{N}$. S kolikšno silo ga poganja motor?
+Telefon, pritrjen v nosilcu, z aplikacijo za pospeškomer izmeri, da avto pospešuje z $2\,\mathrm{m/s^2}$. Avto ima maso $1200\,\mathrm{kg}$, upor zraka in kotalno trenje ga skupaj zavirata s $400\,\mathrm{N}$. S kolikšno silo ga poganja motor?
 
 **Podatki:** $a = 2\,\mathrm{m/s^2}$, $m = 1200\,\mathrm{kg}$, zaviralna sila $F_u = 400\,\mathrm{N}$
 **Iščemo:** silo motorja $F_m$

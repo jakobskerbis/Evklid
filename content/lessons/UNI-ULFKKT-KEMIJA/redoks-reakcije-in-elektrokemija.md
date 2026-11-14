@@ -151,7 +151,7 @@ Metoda polreakcij (O z $\mathrm{H_2O}$, H z $\mathrm{H^+}$, naboj z $\mathrm{e^-
 
 **Rešitev:**
 
-1. Oksidacija: $\mathrm{Fe^{2+} \to Fe^{3+} + e^-}$ (oksidacijsko število železa naraste z $+2$ na $+3$, odda en elektron).
+1. Oksidacija: $\mathrm{Fe^{2+} \to Fe^{3+} + e^-}$ (oksidacijsko število železa naraste s $+2$ na $+3$, odda en elektron).
 2. Redukcija: $\mathrm{MnO_4^- \to Mn^{2+}}$. Kisik uredimo s $4\,\mathrm{H_2O}$ na desni, vodik z $8\,\mathrm{H^+}$ na levi: $\mathrm{MnO_4^- + 8\,H^+ \to Mn^{2+} + 4\,H_2O}$. Naboj levo $+7$, desno $+2$, zato dodamo $5\,\mathrm{e^-}$ na levo: $\mathrm{MnO_4^- + 8\,H^+ + 5\,e^- \to Mn^{2+} + 4\,H_2O}$.
 3. Oksidacijo pomnožimo s $5$, da je oddanih elektronov toliko kot sprejetih, in seštejemo: $\mathrm{MnO_4^- + 8\,H^+ + 5\,Fe^{2+} \to Mn^{2+} + 5\,Fe^{3+} + 4\,H_2O}$.
 4. Preizkus naboja: levo $-1 + 8 + 10 = +17$, desno $+2 + 15 = +17$. Atomi: Mn $1$, Fe $5$, O $4$, H $8$ na obeh straneh.

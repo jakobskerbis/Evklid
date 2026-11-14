@@ -181,12 +181,12 @@ Gugalnica ne pove, *koliko* telesa je pod gladino, ko plava. To pove ravnovesje:
 
 ## Preveri se
 
-? Steklenico olja obesiš na silomer: v zraku kaže $9\,\mathrm{N}$, v vodi $6\,\mathrm{N}$. Kaj pomenijo $3\,\mathrm{N}$ razlike?
-- Težo olja v steklenici
-~ Teža celotne steklenice z oljem je $9\,\mathrm{N}$, kar pokaže silomer v zraku. Razlika nastane šele v vodi.
-+ Vzgon, s katerim voda potiska steklenico navzgor
-- Silo trenja med steklenico in vodo
-~ Steklenica v vodi miruje, zato nanjo ne deluje upor ali trenje. Manjši odčitek povzroči sila vode navzgor.
+? Kamen obesiš na silomer: v zraku kaže $9\,\mathrm{N}$, v vodi $6\,\mathrm{N}$. Kaj pomenijo $3\,\mathrm{N}$ razlike?
+- Težo kamna
+~ Teža kamna je $9\,\mathrm{N}$, kar pokaže silomer v zraku. Razlika nastane šele v vodi.
++ Vzgon, s katerim voda potiska kamen navzgor
+- Silo trenja med kamnom in vodo
+~ Kamen v vodi miruje, zato nanj ne deluje upor ali trenje. Manjši odčitek povzroči sila vode navzgor.
 > Razlika odčitkov v zraku in v tekočini je vzgon: $F_{vz} = 9\,\mathrm{N} - 6\,\mathrm{N} = 3\,\mathrm{N}$.
 
 ? Kos železa s prostornino $1\,\mathrm{L}$ potopimo povsem v olje ($900\,\mathrm{kg/m^3}$), vodo ($1000\,\mathrm{kg/m^3}$) in slano vodo ($1100\,\mathrm{kg/m^3}$). Uredi tekočine od **največjega** do **najmanjšega** vzgona.

@@ -45,7 +45,7 @@ Ničla na nekem mestu pove, da tam ni ničesar. Kljub temu je pomembna, saj drž
 Večji je milijon, in sicer za $1$. Ko devetici na mestu enic prišteješ ena, nastane prenos skozi vsa mesta in dobiš sedemmestno število. Odloča število mest, ne velikost števk.
 :::
 
-**Urejanje.** Stanovanje A stane $285\,400$ €, stanovanje B $258\,900$ €. Obe števili imata šest mest. Zato primerjamo števke od leve: stotisočice sta pri obeh $2$, desettisočice pa $8$ in $5$. Ker je $8 > 5$, je A dražje: $285\,400 > 258\,900$.
+**Urejanje.** Stanovanje A stane $285\,400$ €, stanovanje B $258\,900$ €. Obe števili imata šest mest. Zato primerjamo števke od leve: stotisočici sta pri obeh $2$, desettisočici pa $8$ in $5$. Ker je $8 > 5$, je A dražje: $285\,400 > 258\,900$.
 
 Splošno pravilo za naravni števili:
 

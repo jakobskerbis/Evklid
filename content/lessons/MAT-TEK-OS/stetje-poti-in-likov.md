@@ -282,7 +282,7 @@ Vratar v lekarni napiše $1$: robot je že tam. Vratarji ob spodnjem in levem ro
 
 Drugi vratarji ne štejejo sami. Vsak pokliče soseda na levi in soseda spodaj ter vpraša: »Koliko si napisal ti?« Robot pride k njemu od enega ali od drugega, zato števili sešteje.
 
-Če križišče pomivajo, tamkajšnji vratar napiše $0$. Robot mimo njega ne more, zato njegovi sosedje od njega ne dobijo nič.
+Če križišče pomivajo, tamkajšnji vratar napiše $0$. Robot skozi to križišče ne more, zato njegovi sosedje od njega ne dobijo nič.
 
 Vratar pred otroškim oddelkom na koncu prebere svoj listek: $35$, ko je vse odprto, in $17$, ko je križišče X zaprto. Nihče ni moral narisati niti ene poti.
 

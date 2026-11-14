@@ -32,7 +32,7 @@ Kratki verigi (do približno 50 aminokislin) rečemo **peptid**. Dolgi verigi s 
 :::premisli
 Koliko molekul vode odide, ko nastane ena veriga iz $100$ aminokislin? In koliko, če iz istih $100$ aminokislin nastaneta dve ločeni verigi po $50$? Najprej napovej, nato preveri s pravilom.
 ---
-Pri eni verigi $99$. Prva aminokislina se veže z drugo, druga s tretjo in tako naprej do zadnje. Vezi je vedno za eno manj kot členov, tako kot je pri treh glicinih nastalo dvoje vezi. Pri dveh verigah $49 + 49 = 98$: vsaka veriga ima svoj začetek in konec, med obema verigama pa ni vezi.
+Pri eni verigi $99$. Prva aminokislina se veže z drugo, druga s tretjo in tako naprej do zadnje. Vezi je vedno za eno manj kot členov, tako kot sta pri treh glicinih nastali dve vezi. Pri dveh verigah $49 + 49 = 98$: vsaka veriga ima svoj začetek in konec, med obema verigama pa ni vezi.
 :::
 
 V simulaciji spodaj »Beljakovine iz aminokislin« sestavi verigo iz štirih aminokislin. Štej molekule vode, ki odidejo, in jih primerjaj s številom členov.
@@ -234,7 +234,7 @@ Biuretni reagent se obarva z verigami, ki imajo vsaj dve peptidni vezi. Posamezn
 - v 3. koraku
 ~ Račun $5 \cdot 18 = 90$ je pravilen, a že izhaja iz napačnega števila vezi.
 - nikjer, rezultat je pravilen
-~ Pri petih členih sta na koncih proste skupini, vezi so le med sosedi.
+~ Pri petih členih sta na koncih prosti skupini, vezi so le med sosedi.
 > Pri $5$ glicinih so le $4$ vezi. Pravilno: $375 - 4 \cdot 18 = 375 - 72 = 303$, torej $303\,\text{g/mol}$.
 
 ? Nika po napornem vadenju vpraša trenerja, zakaj mora jesti tudi jajca, mleko ali fižol, ne le kruh. Kaj je najboljši odgovor?

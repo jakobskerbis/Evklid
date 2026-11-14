@@ -65,7 +65,7 @@ Odpri simulacijo »Gibanje: srečanje in dohitevanje« spodaj in izberi vožnjo 
 :::premisli
 Zakaj pri dohitevanju z enakima hitrostma ni rešitve? Kaj se zgodi z enačbo $v t = d + v t$?
 ---
-Razdalja med vozili se ne manjša, ker obe vozita enako hitro. V enačbi odštejemo $v t$ na obeh straneh in ostane $0 = d$. To ne drži, ker je $d > 0$, zato enačba nima rešitve. Na grafu imata premici enak smerni koeficient, sta vzporedni in se nikoli ne sekata.
+Razdalja med voziloma se ne manjša, ker obe vozita enako hitro. V enačbi odštejemo $v t$ na obeh straneh in ostane $0 = d$. To ne drži, ker je $d > 0$, zato enačba nima rešitve. Na grafu imata premici enak smerni koeficient, sta vzporedni in se nikoli ne sekata.
 :::
 
 ## Rešeni primeri
@@ -198,7 +198,7 @@ Zato ima linearna enačba v besedilni nalogi lahko:
 
 - **eno rešitev**, ko imata premici različna smerna koeficienta in se sekata;
 - **nobene rešitve**, ko sta premici vzporedni ($k_1 = k_2$, $n_1 \ne n_2$), na primer pri dohitevanju z enakima hitrostma;
-- **neskončno rešitev**, ko premici sovpadata. Tedaj sta obe strani le dva zapisa iste stvari.
+- **neskončno mnogo rešitev**, ko premici sovpadata. Tedaj sta obe strani le dva zapisa iste stvari.
 
 Iz enačb za gibanje lahko izrazimo čas splošno. Pri srečanju iz $v_1 t + v_2 t = d$ izpostavimo $t$: $t = \dfrac{d}{v_1 + v_2}$. Pri dohitevanju iz $v_1 t = d + v_2 t$ dobimo $t = \dfrac{d}{v_1 - v_2}$. Formula pokaže, da je za dohitevanje potrebno $v_1 > v_2$. Pri $v_1 = v_2$ bi delili z nič.
 

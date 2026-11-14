@@ -19,7 +19,7 @@ $$\varphi = w'$$
 
 Zasuki so v praksi majhni, zato je nagib kar kot v radianih.
 
-*Preizkus:* kolikšen je zasuk tam, kjer je poves največji? *(Nič: tangenta je tam vodoravna.)*
+*Preizkus:* kolikšen je zasuk tam, kjer je poves nosilca na dveh podporah med podporama največji? *(Nič: tangenta je tam vodoravna.)*
 
 **Blok 2: ukrivljenost iz upogiba.** Pri upogibu si izpeljal, da se vlakno na razdalji $y$ od nevtralne osi raztegne za $\varepsilon = y/\rho$, kjer je $\rho$ polmer ukrivljenosti. Hookov zakon da $\sigma = E\varepsilon = E y/\rho$, iz upogiba pa poznaš $\sigma = M y / I$. Izenačimo in dobimo
 
@@ -46,7 +46,7 @@ Največja je ob vpetju, kjer je $\lvert M \rvert = F L$ največji. Na prostem ko
 | podpora | $w$ | $w'$ | $M$ |
 |---|---|---|---|
 | togo vpetje | 0 | 0 | ni znan |
-| členkasta podpora | 0 | ni znan | 0 |
+| členkasta podpora na koncu | 0 | ni znan | 0 |
 | prosti konec | ni znan | ni znan | 0 |
 
 *Preizkus:* katera dva pogoja uporabiš pri nosilcu na dveh členkastih podporah, pri $x = 0$ in $x = L$? *(Iz tabele: $w(0) = 0$ in $w(L) = 0$; zasuka na členkih nista znana.)*
@@ -122,7 +122,7 @@ Odgovor: nosilec se na sredini povesi za približno $3{,}65\,\mathrm{mm}$, ob po
 
 ### Primer 3: drog z instrumentom na Luni
 
-Na pristajalniku na Luni bo vodoravni aluminijast drog ($E = 70\,\mathrm{GPa}$), dolg $L = 2\,\mathrm{m}$, na koncu nosil kamero z maso $m = 12\,\mathrm{kg}$. Na Luni je $g_L = 1{,}62\,\mathrm{m/s^2}$. Konec se sme povesiti največ $w_{\max} = 1\,\mathrm{mm}$. Kolikšen najmanj mora biti $I$? Lastno težo droga zanemari.
+Na pristajalniku na Luni bo vodoravni, na enem koncu togo vpet aluminijast drog ($E = 70\,\mathrm{GPa}$), dolg $L = 2\,\mathrm{m}$, na koncu nosil kamero z maso $m = 12\,\mathrm{kg}$. Na Luni je $g_L = 1{,}62\,\mathrm{m/s^2}$. Konec se sme povesiti največ $w_{\max} = 1\,\mathrm{mm}$. Kolikšen najmanj mora biti $I$? Lastno težo droga zanemari.
 
 **Podatki:** $E = 7 \cdot 10^{10}\,\mathrm{Pa}$, $L = 2\,\mathrm{m}$, $m = 12\,\mathrm{kg}$, $g_L = 1{,}62\,\mathrm{m/s^2}$, $w_{\max} = 0{,}001\,\mathrm{m}$
 **Iščemo:** najmanjši $I$ in poves na Zemlji
@@ -170,7 +170,7 @@ Predstavljaj si konzolo antene od vpetja (levo) do prostega konca (desno) in pod
 3. **Zasuk** $w'$: parabola, ki začne pri nič ob vpetju in se na koncu zravna pri $\varphi_{\max}$.
 4. **Poves** $w$: kubična krivulja, ki začne vodoravno in je čedalje bolj strma.
 
-Vsak diagram je ploščina pod prejšnjim. Poves vzdolž konzole, v deležih $w_{\max}$:
+Zasuk in poves sta vsak ploščina pod prejšnjim diagramom. Poves vzdolž konzole, v deležih $w_{\max}$:
 
 | $x/L$ | $w/w_{\max}$ |
 |---|---|
@@ -237,7 +237,7 @@ Enačba je linearna, zato velja **superpozicija**: poves zaradi več bremen je v
 ~ Razlika je majhna, a ni nič: $0{,}8^3 = 0{,}512$, kar je malo več kot $0{,}5$.
 > $w \propto L^3 / I$: dvojni $I$ da $0{,}5$, dolžina $0{,}8\,L$ pa $0{,}512$. Dvojni $I$ je malenkost boljši.
 
-? Skakalna deska v bazenu je konzola. Potapljač stoji najprej na koncu deske, nato na njeni polovici. Kolikšen del prvega povesa (pod njim na koncu) je poves pod njegovimi nogami v drugem primeru?
+? Skakalna deska v bazenu je konzola. Skakalec stoji najprej na koncu deske, nato na njeni polovici. Kolikšen del prvega povesa (pod njim na koncu) je poves pod njegovimi nogami v drugem primeru?
 - Polovica
 ~ Poves ni linearen v dolžini ročice; tako bi bilo le, če bi bil sorazmeren z $L$.
 - Četrtina

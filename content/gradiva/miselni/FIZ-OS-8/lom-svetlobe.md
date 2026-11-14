@@ -11,7 +11,7 @@ stanje: osnutek
 - Optično gostejša snov
   - lom proti pravokotnici, $\beta < \alpha$
   - zrak, voda, steklo: vse bolj optično goste
-  - napaka: olje je lažje, a optično gostejše
+  - napaka: olje je redkejše, a optično gostejše
 - Optično redkejša snov
   - lom stran od pravokotnice, $\beta > \alpha$
   - kovanec v skodelici se zdi višje

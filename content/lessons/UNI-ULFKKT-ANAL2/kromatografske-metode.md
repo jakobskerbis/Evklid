@@ -123,7 +123,7 @@ $b = \dfrac{\sum (c_i - \bar c)(A_i - \bar A)}{\sum (c_i - \bar c)^2}$, $\quad a
 
 ### Primer 3 (težji): kolona za vesoljsko sondo
 
-Za kromatograf na sondi preizkušajo kolono dolžine $15\,\mathrm{m}$. Metan izide pri $t_\mathrm{M} = 1{,}20\,\mathrm{min}$, kritični par spojin pri $5{,}76$ in $6{,}00\,\mathrm{min}$, oba vrhova imata širino na bazni liniji $0{,}24\,\mathrm{min}$. Izračunaj $k_1$, $k_2$, $\alpha$, $N$ in $R_\mathrm{s}$ ter rezultat preveri s Purnellovo enačbo. Na voljo je tudi kolona dolžine $30\,\mathrm{m}$. Ali zadošča za bazno ločbo? Kako dolga kolona bi dala natanko $R_\mathrm{s} = 1{,}5$ in koliko bi trajala analiza do drugega vrha? Pogoji in polnitev kolone ostanejo enaki.
+Za kromatograf na sondi preizkušajo kolono dolžine $15\,\mathrm{m}$. Metan izide pri $t_\mathrm{M} = 1{,}20\,\mathrm{min}$, kritični par spojin pri $5{,}76$ in $6{,}00\,\mathrm{min}$, oba vrhova imata širino na bazni liniji $0{,}24\,\mathrm{min}$. Izračunaj $k_1$, $k_2$, $\alpha$, $N$ in $R_\mathrm{s}$ ter rezultat preveri s Purnellovo enačbo. Na voljo je tudi kolona dolžine $30\,\mathrm{m}$. Ali zadošča za bazno ločbo? Kako dolga kolona bi dala natanko $R_\mathrm{s} = 1{,}5$ in koliko bi trajala analiza do drugega vrha? Pogoji in stacionarna faza ostanejo enaki.
 
 **Podatki:** $L_1 = 15\,\mathrm{m}$, $t_\mathrm{M} = 1{,}20\,\mathrm{min}$, $t_\mathrm{R,1} = 5{,}76\,\mathrm{min}$, $t_\mathrm{R,2} = 6{,}00\,\mathrm{min}$, $w_1 = w_2 = 0{,}24\,\mathrm{min}$, $L_2 = 30\,\mathrm{m}$, cilj $R_\mathrm{s} = 1{,}5$
 **Iščemo:** $k_1$, $k_2$, $\alpha$, $N$, $R_\mathrm{s}$; $R_\mathrm{s}$ pri $30\,\mathrm{m}$, potrebna dolžina $L$, retencijski čas pri tej dolžini
@@ -220,7 +220,7 @@ Natančno definiraj retencijski faktor $k$ in selektivnost $\alpha$. Izpelji $t_
 4. Predpostavimo Gaussova vrhova z enakim $N$ in $w_1 \approx w_2 = 4t_\mathrm{R,2}/\sqrt N$. Potem $R_\mathrm{s} = \dfrac{2\,\Delta t_\mathrm{R}}{w_1 + w_2} = \dfrac{\sqrt N\,t_\mathrm{M}(k_2 - k_1)}{4\,t_\mathrm{M}(1 + k_2)}$.
 5. Z $\dfrac{k_2 - k_1}{1 + k_2} = \dfrac{\alpha - 1}{\alpha} \cdot \dfrac{k_2}{1 + k_2}$ dobimo $R_\mathrm{s} = \dfrac{\sqrt N}{4} \cdot \dfrac{\alpha - 1}{\alpha} \cdot \dfrac{k_2}{1 + k_2}$.
 6. Podvojitev $k_2$: $k_2/(1 + k_2)$ zraste z $10/11 \approx 0{,}909$ na $20/21 \approx 0{,}952$, $R_\mathrm{s}$ le za okoli $5\,\%$, čas analize pa se skoraj podvoji.
-7. Večja selektivnost: $(\alpha - 1)/\alpha$ zraste z $0{,}05/1{,}05 \approx 0{,}0476$ na $0{,}10/1{,}10 \approx 0{,}0909$, $R_\mathrm{s}$ pa za okoli $1{,}91$-krat.
+7. Večja selektivnost: $(\alpha - 1)/\alpha$ zraste z $0{,}05/1{,}05 \approx 0{,}0476$ na $0{,}10/1{,}10 \approx 0{,}0909$, $R_\mathrm{s}$ pa okoli $1{,}91$-krat.
 8. Odgovor: pri velikem $k$ je smiselno povečati $\alpha$ (druga stacionarna faza ali sestava mobilne faze), ne $k$.
 
 ## Drugače: Na sliki

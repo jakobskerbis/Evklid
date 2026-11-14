@@ -94,7 +94,7 @@ $$\ln\frac{k_2}{k_1} = \frac{E_a}{R}\left(\frac{1}{T_1} - \frac{1}{T_2}\right).$
 
 **Izrek.** Katalizator ne spremeni ne $\Delta H$ ne $\Delta G$ reakcije in zato ne ravnotežne konstante $K$; enako pospeši reakcijo v obe smeri, zato se ravnotežje le hitreje vzpostavi.
 
-**Utemeljitev.** $\Delta G^\circ = -RT\ln K$ je razlika med stanji izhodnih snovi in produktov, ki ju katalizator ne spremeni. Ker je za elementarni korak $K = k_{\to}/k_{\leftarrow}$ in se obe poti spustita skozi isto nižje prehodno stanje, se obe konstanti povečata za enak faktor.
+**Utemeljitev.** $\Delta G^\circ = -RT\ln K$ je razlika med stanji izhodnih snovi in produktov, ki ju katalizator ne spremeni. Ker je za elementarni korak $K = k_{\to}/k_{\leftarrow}$ in obe smeri potekata skozi isto nižje prehodno stanje, se obe konstanti povečata za enak faktor.
 
 **Homogena kataliza:** katalizator je v isti fazi kot reaktanti. Primer: jodidni ioni pri razpadu vodikovega peroksida v vodi, kisline pri estrenju.
 
@@ -125,7 +125,7 @@ $v = -\dfrac{1}{2}\dfrac{\Delta[\mathrm{N_2O_5}]}{\Delta t} = \dfrac{1}{4}\dfrac
 2. Hitrost reakcije delimo s koeficientom $2$, da je neodvisna od izbrane snovi: $v = 0{,}0031/(2 \cdot 100)\,\mathrm{mol\,L^{-1}\,s^{-1}} = 1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$.
 3. $\mathrm{NO_2}$ ima koeficient $4$: nastaja s $4v = 6{,}2 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$.
 4. $\mathrm{O_2}$ ima koeficient $1$: nastaja z $v = 1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$.
-5. Odgovor: povprečna hitrost reakcije je $1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$; $\mathrm{NO_2}$ nastaja štirikrat, $\mathrm{O_2}$ enako hitro.
+5. Odgovor: povprečna hitrost reakcije je $1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$; $\mathrm{NO_2}$ nastaja štirikrat hitreje, $\mathrm{O_2}$ pa enako hitro.
 
 ### Primer 2
 
@@ -205,7 +205,7 @@ $[\mathrm{A}] = 0{,}050 \cdot e^{-0{,}90}\,\mathrm{mol/L} \approx 0{,}050 \cdot 
 - **Razpolovni čas je pri vseh reakcijah stalen.** Stalen je le pri 1. redu. Pri 2. redu se z vsakim razpolovom podaljša, pri 0. redu skrajša.
 - **Temperatura v °C v Arrheniusovi enačbi.** Vstavi absolutno temperaturo v kelvinih; z °C dobiš napačen in pri $0\,^\circ\mathrm{C}$ celo nesmiseln rezultat.
 - **Katalizator premakne ravnotežje.** Katalizator ne spremeni $K$; ravnotežje se le hitreje vzpostavi. Ravnotežni izkoristek pri sintezi amoniaka poveča visok tlak; višja temperatura ga celo zmanjša (reakcija je eksotermna) in je potrebna le zaradi hitrosti. Katalizator samo skrajša čas do ravnotežja.
-- **Večja $\Delta H$ pomeni počasnejšo reakcijo.** Hitrost določa višina hriba $E_a$, ne razlika med dolinama. Zelo eksotermna reakcija je lahko zelo počasna (gorenje lesa pri sobni temperaturi).
+- **Bolj eksotermna reakcija je hitrejša.** Hitrost določa višina hriba $E_a$, ne razlika med dolinama. Zelo eksotermna reakcija je lahko zelo počasna (gorenje lesa pri sobni temperaturi).
 
 ## Povzetek
 

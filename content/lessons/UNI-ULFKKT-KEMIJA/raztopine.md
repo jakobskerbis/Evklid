@@ -300,11 +300,11 @@ Za vodo ($T_t^* = 273{,}15\,\mathrm{K}$, $M_1 = 0{,}018\,02\,\mathrm{kg/mol}$, $
 
 ? $10\,\mathrm{mL}$ raztopine s koncentracijo $1{,}0\,\mathrm{mol/L}$ razredčimo z vodo na končno prostornino $100\,\mathrm{mL}$. Kolikšna je nova koncentracija?
 + $0{,}10\,\mathrm{mol/L}$
-- $0{,}090\,\mathrm{mol/L}$
+- $0{,}091\,\mathrm{mol/L}$
 ~ Tako računaš, če $100\,\mathrm{mL}$ vode dodaš; v nalogi je $100\,\mathrm{mL}$ že končna prostornina.
 - $10\,\mathrm{mol/L}$
 ~ Pri redčenju koncentracija ne more narasti; zamenjal si $V_1$ in $V_2$.
-> $c_2 = c_1V_1/V_2 = 1{,}0 \cdot 10 / 100\,\mathrm{mol/L} = 0{,}10\,\mathrm{mol/L}$. $0{,}090$ bi dobil, če bi dodal $100\,\mathrm{mL}$ vode (končna prostornina $110\,\mathrm{mL}$).
+> $c_2 = c_1V_1/V_2 = 1{,}0 \cdot 10 / 100\,\mathrm{mol/L} = 0{,}10\,\mathrm{mol/L}$. $0{,}091$ bi dobil, če bi dodal $100\,\mathrm{mL}$ vode (končna prostornina $110\,\mathrm{mL}$).
 
 ? Katera vodna raztopina z molalnostjo $0{,}10\,\mathrm{mol/kg}$ ima najnižje tališče?
 - glukoza

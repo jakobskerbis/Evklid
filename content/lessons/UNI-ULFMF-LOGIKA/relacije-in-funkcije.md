@@ -38,7 +38,7 @@ Iz $c \sim a$ in $c \sim b$ po simetriji dobimo $a \sim c$ in $c \sim b$, po tra
 
 **4. Urejenost.** Relacija, ki je refleksivna, antisimetrična in tranzitivna, je **delna urejenost**. Običajno jo označimo z $\preceq$. Primera: $\le$ na $\mathbb{R}$ in $\subseteq$ na $\mathcal{P}(A)$. Če sta poleg tega poljubna dva elementa **primerljiva** ($a \preceq b$ ali $b \preceq a$), je urejenost **linearna**. Relacija $\le$ na $\mathbb{R}$ je linearna. Relacija »deli« na $\{1, 2, 3, 4, 6, 12\}$ je delna, ni pa linearna: $4 \nmid 6$ in $6 \nmid 4$.
 
-**5. Funkcija.** **Funkcija** $f: A \to B$ je relacija $f \subseteq A \times B$, pri kateri ima vsak $a \in A$ *natanko en* $b \in B$ s $(a, b) \in f$. Ta $b$ označimo s $f(a)$. Množica $A$ je **domena**, $B$ **kodomena**, $f(A) = \{f(a) ;\ a \in A\}$ je **zaloga vrednosti** (slika). Na puščičnem diagramu iz vsake točke v $A$ izhaja natanko ena puščica.
+**5. Funkcija.** **Funkcija** $f: A \to B$ je relacija med $A$ in $B$, torej $f \subseteq A \times B$, pri kateri ima vsak $a \in A$ *natanko en* $b \in B$ s $(a, b) \in f$. Ta $b$ označimo s $f(a)$. Množica $A$ je **domena**, $B$ **kodomena**, $f(A) = \{f(a) ;\ a \in A\}$ je **zaloga vrednosti** (slika). Na puščičnem diagramu iz vsake točke v $A$ izhaja natanko ena puščica.
 
 Funkcija $f$ je:
 

@@ -169,7 +169,7 @@ Obrnjena oblika: $[S] = \dfrac{\alpha K_\mathrm{M}\,v_0}{V_\mathrm{max} - v_0}$
 1. Faktor: $\alpha = 1 + \dfrac{0{,}5}{0{,}25} = 3$.
 2. Navidezna $K_\mathrm{M}$: $\alpha K_\mathrm{M} = 3 \cdot 2 = 6\,\mathrm{mM}$. $V_\mathrm{max}$ ostane, ker je inhibicija kompetitivna.
 3. $v_0 = \dfrac{120 \cdot 3}{6 + 3}\,\mu\mathrm{mol/min} = 40\,\mu\mathrm{mol/min}$. Hitrost je padla s $72$ na $40\,\mu\mathrm{mol/min}$.
-4. Za obratno vprašanje enačbo rešimo na $[S]$: $v_0(\alpha K_\mathrm{M} + [S]) = V_\mathrm{max}[S]$, od tod $[S] = \dfrac{\alpha K_\mathrm{M}\,v_0}{V_\mathrm{max} - v_0}$.
+4. Za obratno vprašanje iz enačbe izrazimo $[S]$: $v_0(\alpha K_\mathrm{M} + [S]) = V_\mathrm{max}[S]$, od tod $[S] = \dfrac{\alpha K_\mathrm{M}\,v_0}{V_\mathrm{max} - v_0}$.
 5. $[S] = \dfrac{6 \cdot 72}{120 - 72}\,\mathrm{mM} = 9\,\mathrm{mM}$.
 6. Polovična hitrost: iz $36(\alpha K_\mathrm{M} + 3) = 120 \cdot 3$ sledi $\alpha K_\mathrm{M} + 3 = 10$, torej $\alpha K_\mathrm{M} = 7\,\mathrm{mM}$ in $\alpha = 3{,}5$.
 7. Iz $\alpha = 1 + [I]/K_\mathrm{i}$: $[I] = (\alpha - 1)K_\mathrm{i} = 2{,}5 \cdot 0{,}25\,\mathrm{mM} = 0{,}625\,\mathrm{mM}$. To je $K_\mathrm{i}(1 + [S]/K_\mathrm{M})$: koncentracija za polovično zaviranje je odvisna od $[S]$.

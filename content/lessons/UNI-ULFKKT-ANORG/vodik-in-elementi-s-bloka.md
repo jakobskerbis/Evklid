@@ -42,7 +42,7 @@ $$\mathrm{NaH + H_2O \longrightarrow NaOH + H_2}$$
 | Rb | $[\mathrm{Kr}]\,5\mathrm{s}^1$ | 403 | 39 |
 | Cs | $[\mathrm{Xe}]\,6\mathrm{s}^1$ | 376 | 29 |
 
-Navzdol po skupini atomski polmer raste, zunanji elektron je dlje od jedra in bolj zasenčen. Ionizacijska energija zato pada, reaktivnost raste. Kovinska vez je šibka (en elektron na atom), zato so kovine mehke (režemo jih z nožem) in imajo nizka tališča. Li, Na in K so lažji od vode.
+Navzdol po skupini atomski polmer raste, zunanji elektron je dlje od jedra in bolj zasenčen. Ionizacijska energija zato pada, reaktivnost raste. Kovinska vez je šibka (en elektron na atom), zato so kovine mehke (režemo jih z nožem) in imajo nizka tališča. Li, Na in K imajo manjšo gostoto kot voda.
 
 :::premisli
 Zakaj natrij v spojinah nikoli nima oksidacijskega števila $+2$? Druga ionizacijska energija natrija je $4562\,\mathrm{kJ/mol}$.
@@ -103,7 +103,7 @@ $\mathrm{MgCO_3}$ da, razpade že pri nekaj sto stopinjah; $\mathrm{BaCO_3}$ ne,
 
 **8. Diagonalna podobnost.** Litij je po lastnostih bližje magneziju kot natriju: oba tvorita nitrid, njuna karbonata pri segrevanju razpadeta ($\mathrm{Na_2CO_3}$ ne), $\mathrm{LiOH}$ je slabše topen od $\mathrm{NaOH}$. Razlog je podobna gostota naboja ionov $\mathrm{Li^+}$ in $\mathrm{Mg^{2+}}$.
 
-**9. Pomembne spojine.** Elektroliza raztopine $\mathrm{NaCl}$ da $\mathrm{NaOH}$, $\mathrm{Cl_2}$ in $\mathrm{H_2}$. Iz apnenca dobimo žgano apno ($\mathrm{CaCO_3 \to CaO + CO_2}$), iz njega z vodo gašeno apno $\mathrm{Ca(OH)_2}$, ki na zraku s $\mathrm{CO_2}$ spet otrdi v $\mathrm{CaCO_3}$. Ioni $\mathrm{Ca^{2+}}$ in $\mathrm{Mg^{2+}}$ povzročajo trdoto vode; v vodi so raztopljeni kot hidrogenkarbonata, npr. $\mathrm{Ca(HCO_3)_2}$. Pri segrevanju se hidrogenkarbonat razgradi ($\mathrm{Ca(HCO_3)_2 \to CaCO_3 + H_2O + CO_2}$) in izloči se kotlovec $\mathrm{CaCO_3}$.
+**9. Pomembne spojine.** Elektroliza raztopine $\mathrm{NaCl}$ da $\mathrm{NaOH}$, $\mathrm{Cl_2}$ in $\mathrm{H_2}$. Iz apnenca dobimo žgano apno ($\mathrm{CaCO_3 \to CaO + CO_2}$), iz njega z vodo gašeno apno $\mathrm{Ca(OH)_2}$, ki na zraku s $\mathrm{CO_2}$ spet otrdi v $\mathrm{CaCO_3}$. Ioni $\mathrm{Ca^{2+}}$ in $\mathrm{Mg^{2+}}$ povzročajo trdoto vode; v vodi so raztopljeni večinoma kot hidrogenkarbonata, npr. $\mathrm{Ca(HCO_3)_2}$. Pri segrevanju se hidrogenkarbonat razgradi ($\mathrm{Ca(HCO_3)_2 \to CaCO_3 + H_2O + CO_2}$) in izloči se kotlovec $\mathrm{CaCO_3}$.
 
 ## Rešeni primeri
 
@@ -142,7 +142,7 @@ $\mathrm{2\,Na + 2\,H_2O \to 2\,NaOH + H_2}$, $n = \dfrac{m}{M}$, $V = \dfrac{nR
 1. Množina natrija: $n(\mathrm{Na}) = \dfrac{2{,}30\,\mathrm{g}}{22{,}99\,\mathrm{g/mol}} \approx 0{,}100\,\mathrm{mol}$.
 2. Iz enačbe: 2 mol Na dasta 1 mol $\mathrm{H_2}$, zato $n(\mathrm{H_2}) \approx 0{,}0500\,\mathrm{mol}$.
 3. Prostornina po splošni plinski enačbi: $V = \dfrac{0{,}0500 \cdot 8{,}314 \cdot 298{,}15}{100\,000}\,\mathrm{m^3} \approx 1{,}24 \cdot 10^{-3}\,\mathrm{m^3}$.
-4. NaOH nastane toliko molov kot je bilo natrija: $m(\mathrm{NaOH}) \approx 0{,}100\,\mathrm{mol} \cdot 40{,}00\,\mathrm{g/mol} \approx 4{,}00\,\mathrm{g}$.
+4. NaOH nastane toliko molov, kot je bilo natrija: $m(\mathrm{NaOH}) \approx 0{,}100\,\mathrm{mol} \cdot 40{,}00\,\mathrm{g/mol} \approx 4{,}00\,\mathrm{g}$.
 5. Odgovor: nastane $1{,}24\,\mathrm{L}$ vodika, v raztopini je $4{,}00\,\mathrm{g}$ NaOH.
 
 ### Primer 3 (težji): kateri hidrid je boljši vir vodika
@@ -320,7 +320,7 @@ Pri karbonatih si predstavljaj kation kot magnet: majhen $\mathrm{Mg^{2+}}$ od b
 + raztopina $\mathrm{BaCl_2}$
 - raztopina $\mathrm{Ba(OH)_2}$ v presežku, ker je hidroksid netopen
 ~ $\mathrm{Ba(OH)_2}$ je dobro topen; obori se $\mathrm{BaSO_4}$, presežek pa naredi vodo močno bazično.
-> Topnost sulfatov v 2. skupini navzdol pada. $\mathrm{Ba^{2+} + SO_4^{2-} \to BaSO_4}$ je praktično netopen in se obori.
+> Topnost sulfatov v 2. skupini navzdol pada. $\mathrm{BaSO_4}$, ki nastane po $\mathrm{Ba^{2+} + SO_4^{2-} \to BaSO_4}$, je praktično netopen in se obori.
 
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol | v ns: glavno kvantno število

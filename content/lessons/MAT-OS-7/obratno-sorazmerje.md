@@ -184,14 +184,18 @@ $12 \cdot y = 720$, torej $y = 720 : 12 = 60$ desk. Deske so ožje, zato jih je 
 
 Na karirast papir nariši vse pravokotnike, sestavljene iz $24$ kvadratkov:
 
-- $1$ krat $24$: zelo dolg in nizek,
+- $1$ krat $24$: zelo ozek in visok,
 - $2$ krat $12$,
 - $3$ krat $8$,
-- $4$ krat $6$.
+- $4$ krat $6$,
+- $6$ krat $4$,
+- $8$ krat $3$,
+- $12$ krat $2$,
+- $24$ krat $1$: zelo širok in nizek.
 
 Širina je število zidarjev, višina število dni. Vsi pravokotniki imajo enako ploščino, $24$ kvadratkov: to je stalni zmnožek $k$. Ko pravokotnik razširiš, se mora znižati, sicer kvadratkov ne bi bilo več $24$.
 
-Zgornja desna oglišča teh pravokotnikov vriši v koordinatni sistem: $(1, 24)$, $(2, 12)$, $(3, 8)$, $(4, 6)$, $(6, 4)$, $(8, 3)$. Ne ležijo na premici, kot pri premem sorazmerju, ampak na krivulji, ki najprej strmo, nato vse bolj položno pada. Osi se nikoli ne dotakne, ker noben zmnožek z ničlo ni $24$.
+Zgornja desna oglišča teh pravokotnikov vriši v koordinatni sistem: $(1, 24)$, $(2, 12)$, $(3, 8)$, $(4, 6)$, $(6, 4)$, $(8, 3)$, $(12, 2)$, $(24, 1)$. Ne ležijo na premici, kot pri premem sorazmerju, ampak na krivulji, ki najprej strmo, nato vse bolj položno pada. Osi se nikoli ne dotakne, ker noben zmnožek z ničlo ni $24$.
 
 ## Drugače: Bolj natančno
 

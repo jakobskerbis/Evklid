@@ -154,7 +154,7 @@ $|AB'|^2 = 6^2 + 8^2 = 36 + 64 = 100$, torej $10\,\text{m}$. Spet trojica $6$–
 V pravokotnem trikotniku je $c^2 = a^2 + b^2$; $c$ je hipotenuza, nasproti pravega kota.
 
 - Kvadrat na hipotenuzi ima ploščino enako vsoti ploščin kvadratov na katetah; pogosto zadostujejo ploščine brez korenov.
-- Razdalja v mreži: $d = \sqrt{\Delta x^2 + \Delta y^2}$; pot po črtah $\Delta x + \Delta y$ je daljša.
+- Razdalja v mreži: $d = \sqrt{\Delta x^2 + \Delta y^2}$; pot po črtah $\Delta x + \Delta y$ je daljša (razen na isti mrežni črti).
 - Obratna naloga: $b^2 = c^2 - a^2$.
 - Trojice: $3$–$4$–$5$, $5$–$12$–$13$, $8$–$15$–$17$, $7$–$24$–$25$, $20$–$21$–$29$ in večkratniki.
 - Skriti pravokotni trikotniki: višina enakokrakega trikotnika, diagonala pravokotnika, telesna diagonala kvadra (dvakrat izrek), najkrajša pot z zrcaljenjem.

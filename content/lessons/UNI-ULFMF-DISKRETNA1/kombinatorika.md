@@ -125,9 +125,9 @@ komplement in vključitve-izključitve: $|\overline{A} \cap \overline{B}| = N - 
 
 ### Primer 4: zdaj ti
 
-Takt ima $8$ osmink, na vsaki je udarec ali premor. Koliko ritmov ima natanko $3$ udarce, če mora biti na prvi osmini udarec?
+Takt ima $8$ osmink, na vsaki je udarec ali premor. Koliko ritmov ima natanko $3$ udarce, če mora biti na prvi osminki udarec?
 
-**Podatki:** $8$ osmink, natanko $3$ udarci, prva osmina je udarec
+**Podatki:** $8$ osmink, natanko $3$ udarci, prva osminka je udarec
 **Iščemo:** število ritmov
 
 :::formula
@@ -136,7 +136,7 @@ $\binom{n}{k}$: izbira $k$ mest izmed $n$ prostih
 
 **Rešitev:**
 
-1. Prvi udarec je že postavljen, prosta mesta so preostale $7$ osmine.
+1. Prvi udarec je že postavljen, prostih je preostalih $7$ osmink.
 2. Na njih razporedimo še $2$ udarca, vrstni red udarcev ne šteje.
 3. Izračunaj sam, nato preveri:
 
@@ -172,7 +172,7 @@ Predstavljaj si mešalno mizo s $7$ drsniki.
 
 ## Drugače: Iz vsakdanjega življenja
 
-Seznam predvajanja s $4$ pesmimi, ki jih želiš zaslišati vse: $4! = 24$ vrstnih redov. Če izmed $10$ priljubljenih pesmi izbereš $4$ za ples in vrstni red ni pomemben, je izbir $\binom{10}{4} = 210$. Če pa je vrstni red pomemben, jih je $10 \cdot 9 \cdot 8 \cdot 7 = 5040$, kar je $4! = 24$-krat več. Ključno vprašanje je vedno isto: ali je izid zaporedje ali množica?
+Seznam predvajanja s $4$ pesmimi, ki jih želiš predvajati vse: $4! = 24$ vrstnih redov. Če izmed $10$ priljubljenih pesmi izbereš $4$ za ples in vrstni red ni pomemben, je izbir $\binom{10}{4} = 210$. Če pa je vrstni red pomemben, jih je $10 \cdot 9 \cdot 8 \cdot 7 = 5040$, kar je $4! = 24$-krat več. Ključno vprašanje je vedno isto: ali je izid zaporedje ali množica?
 
 ## Drugače: Bolj natančno
 
@@ -233,7 +233,7 @@ m | število možnosti prve izbire | | | v dokazu: v koliko množicah leži elem
 a, b | člena binoma
 A, B, C | končne množice (dogodki, ki jih štejemo)
 A_i | i-ta množica v načelu vključitev in izključitev
-\bar{A}, \bar{B} | komplementa množic A in B | \lvert \bar{A} \cap \bar{B} \rvert = N - \lvert A \cup B \rvert
+\overline{A}, \overline{B} | komplementa množic A in B | \lvert \overline{A} \cap \overline{B} \rvert = N - \lvert A \cup B \rvert
 N | število vseh elementov (vseh možnosti)
 I | neprazna podmnožica indeksov {1, …, n}
 i, j | indeksa množic

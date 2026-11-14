@@ -112,7 +112,7 @@ vozlišče $C$: $\sum F_x = 0$, $\sum F_y = 0$; smer palice $(x_j - x_i;\ y_j - 
 2. Smeri od $C$ proti drugemu krajišču: proti $A$ je $(-1; 0)$; proti $B$ je $(-2{,}0; -1{,}5)/2{,}5 = (-0{,}8; -0{,}6)$, ker je $l_{BC} = \sqrt{2{,}0^2 + 1{,}5^2}\,\mathrm{m} = 2{,}5\,\mathrm{m}$.
 3. Navpično: $-6{,}0 - 0{,}6\,S_{BC} = 0$, torej $S_{BC} = -10\,\mathrm{kN}$.
 4. Vodoravno: $-S_{AC} - 0{,}8\,S_{BC} = 0$, torej $S_{AC} = -0{,}8 \cdot (-10)\,\mathrm{kN} = 8{,}0\,\mathrm{kN}$.
-5. Odgovor: zgornja palica je napeta s $8{,}0\,\mathrm{kN}$ (vleče vozlišče k steni), spodnja je stisnjena z $10\,\mathrm{kN}$ (potiska vozlišče stran od stene). Obe sili sta večji od teže table, ker je spodnja palica položna.
+5. Odgovor: zgornja palica je napeta z $8{,}0\,\mathrm{kN}$ (vleče vozlišče k steni), spodnja je stisnjena z $10\,\mathrm{kN}$ (potiska vozlišče stran od stene). Obe sili sta večji od teže table, ker je spodnja palica položna.
 
 ### Primer 2
 
@@ -278,7 +278,7 @@ Razlika od mreže: vrvica prenese le nateg, palica pa tudi tlak. Zato so paličj
 
 **Matrična oblika.** Enačbe vseh vozlišč zapišemo kot linearni sistem $\mathbf{A}\,\mathbf{s} = -\mathbf{f}$: vektor $\mathbf{s}$ vsebuje $p$ osnih sil in $r$ reakcij, $\mathbf{f}$ zunanje sile v vozliščih ($2v$ komponent), matrika $\mathbf{A}$ pa smerne kosinuse palic. Paličje je statično določeno natanko tedaj, ko je $\mathbf{A}$ kvadratna ($2v = p + r$) in obrnljiva ($\det\mathbf{A} \neq 0$). Geometrijska spremenljivost se pokaže kot $\det\mathbf{A} = 0$, čeprav je štetje pravilno. Tako paličja računajo programi za statiko; metoda vozlišč na roke je le zaporedno reševanje tega sistema.
 
-**Statično nedoločena paličja.** Pri $2v < p + r$ ima sistem neskončno rešitev, prava pa je tista, pri kateri se raztezki palic ($\Delta l = Sl/(EA)$, Hookov zakon za palico) ujemajo s skupnimi premiki vozlišč. To vodi v metodo pomikov, osnovo metode končnih elementov.
+**Statično nedoločena paličja.** Pri $2v < p + r$ ima sistem neskončno mnogo rešitev, prava pa je tista, pri kateri se raztezki palic ($\Delta l = Sl/(EA)$, Hookov zakon za palico) ujemajo s skupnimi premiki vozlišč. To vodi v metodo pomikov, osnovo metode končnih elementov.
 
 **Prostorska paličja.** Stolpi daljnovodov in strešne mreže so prostorska paličja: vsako vozlišče da tri enačbe, pogoj je $3v = p + r$, za togo podprto telo potrebujemo vsaj šest reakcij.
 
@@ -286,7 +286,7 @@ Razlika od mreže: vrvica prenese le nateg, palica pa tudi tlak. Zato so paličj
 
 ## Drugače: Uporaba v stroki
 
-**Mostovi in merjenje.** Na paličnih mostovih so na izbrane palice nalepljeni merilni lističi, ki merijo specifično deformacijo. Iz nje z Hookovim zakonom in prerezom palice izračunamo osno silo in jo primerjamo s silo, ki jo za znano obtežbo (npr. preizkusni tovornjak) da metoda prereza. Če se meritev in račun ne ujemata, je morda poškodovano vozlišče ali je palica popustila. Sistemi za stalni nadzor zbirajo take podatke ves čas in opozorijo na odstopanja.
+**Mostovi in merjenje.** Na paličnih mostovih so na izbrane palice nalepljeni merilni lističi, ki merijo specifično deformacijo. Iz nje s Hookovim zakonom in prerezom palice izračunamo osno silo in jo primerjamo s silo, ki jo za znano obtežbo (npr. preizkusni tovornjak) da metoda prereza. Če se meritev in račun ne ujemata, je morda poškodovano vozlišče ali je palica popustila. Sistemi za stalni nadzor zbirajo take podatke ves čas in opozorijo na odstopanja.
 
 **Strehe in hale.** Strešna paličja iz lesa ali jekla so pogosto enostavna paličja iz trikotnikov. Projektant najprej določi sile v palicah za lastno težo, sneg in veter (tudi srk, ki obrne predznake), nato tlačene palice dimenzionira na uklon, natezne na nosilnost prereza in spojev. Ničelne palice pri eni kombinaciji obtežbe so pri drugi pogosto merodajne.
 
