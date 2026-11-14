@@ -467,6 +467,14 @@ body.graph-open { overflow: hidden; }
 .fm-f { min-width: 0; overflow-x: auto; overflow-y: hidden; line-height: 1.55; padding: 2px 0; }
 .fm-f .katex { white-space: nowrap; }
 .fm-f p { margin: 0; }
+/* Štiri stopnje (OŠ, SŠ, Tekmovanja, Fakulteta) v vrstici ne gredo na telefon: dve po dve, brez pomikanja vstran;
+   dolg napis (npr. v španščini) se prelomi v dve vrstici. */
+@media (max-width: 720px) {
+  .fm-sel .fm-lvl { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; border-radius: 22px; }
+  .fm-sel .fm-lvl > button { min-width: 0; white-space: normal; }
+}
+/* zelo ozek telefon: »Mathématiques« in »Mathematics« sta preširoka za tri predmete v vrstici */
+@media (max-width: 360px) { .fm-sel .seg > button { padding: 6px 6px !important; } }
 @media (max-width: 600px) {
   .fm-wrap { padding: 0 12px 20px; }
   .fm-sel .seg { width: 100%; }
